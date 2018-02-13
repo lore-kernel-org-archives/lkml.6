@@ -1,169 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965860AbeBMUl5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 15:41:57 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:37361 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752344AbeBMUl4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 15:41:56 -0500
-X-Google-Smtp-Source: AH8x227c6kjLhFTbRv83mDVRx+s7XFfz5blsppj4CbyjHGEciI78fHcTxsGE98YmzyPpeTFz3AbSTw==
-From: Markus Mayer <mmayer@broadcom.com>
-To: Brian Norris <computersforpeace@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>
-Cc: Markus Mayer <mmayer@broadcom.com>,
-        Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
-        ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
+        id S965780AbeBMUpw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 15:45:52 -0500
+Received: from mga11.intel.com ([192.55.52.93]:42960 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965719AbeBMUpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 15:45:51 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,509,1511856000";
+   d="scan'208";a="203851891"
+Subject: Re: [PATCH] lib/scatterlist: Make sg_page_count() accessible to other
+ modules
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: chris@chris-wilson.co.uk,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] memory: brcmstb: dpfe: support new way of passing data from the DCPU
-Date: Tue, 13 Feb 2018 12:40:40 -0800
-Message-Id: <1518554440-21805-4-git-send-email-mmayer@broadcom.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518554440-21805-1-git-send-email-mmayer@broadcom.com>
-References: <1518554440-21805-1-git-send-email-mmayer@broadcom.com>
+References: <1518285964-31657-1-git-send-email-alexey.skidanov@intel.com>
+ <CAHp75VdzafHdDzpgnc74XZQOfUdgxuH6QwrtXw_YMvWEX0icUQ@mail.gmail.com>
+From: Alexey Skidanov <alexey.skidanov@intel.com>
+Message-ID: <dc425e86-2fc5-97dc-985b-a00d93b32c63@intel.com>
+Date: Tue, 13 Feb 2018 22:46:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VdzafHdDzpgnc74XZQOfUdgxuH6QwrtXw_YMvWEX0icUQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DCPU can now send message data in two ways:
-  - via the data RAM, as before (this is now message type 0)
-  - via the message RAM (this is message type 1)
 
-In order to support both methods, we check the message type of the
-response (bits 31:28) and then treat the offset (bits 27:0)
-accordingly.
 
-Signed-off-by: Markus Mayer <mmayer@broadcom.com>
----
- drivers/memory/brcmstb_dpfe.c | 65 ++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 55 insertions(+), 10 deletions(-)
+On 02/13/2018 10:14 PM, Andy Shevchenko wrote:
+> On Sat, Feb 10, 2018 at 8:06 PM, Alexey Skidanov
+> <alexey.skidanov@intel.com> wrote:
+>> Currently, sg_page_count() may be used only inside the scatterlist.c file.
+>>
+>> However, the same calculation is done outside of scatterlist.c file
+>> causing to code duplication.
+>>
+>> To fix this, we move the sg_page_count() to the scatterlist.h file, making it
+>> accessible to other modules.
+> 
+> Can you provide an example of potential (or existing?) use case?
+> 
+This one, for example - drivers/staging/android/ion/ion_heap.c:
+for_each_sg(table->sgl, sg, table->nents, i) {
+	int npages_this_entry = PAGE_ALIGN(sg->length) / PAGE_SIZE;
+	struct page *page = sg_page(sg);
+	BUG_ON(i >= npages);
+	for (j = 0; j < npages_this_entry; j++)
+		*(tmp++) = page++;
+}
 
-diff --git a/drivers/memory/brcmstb_dpfe.c b/drivers/memory/brcmstb_dpfe.c
-index 2013a91217a9..e9c1485c32b9 100644
---- a/drivers/memory/brcmstb_dpfe.c
-+++ b/drivers/memory/brcmstb_dpfe.c
-@@ -45,8 +45,16 @@
- #define REG_TO_DCPU_MBOX	0x10
- #define REG_TO_HOST_MBOX	0x14
- 
-+/* Macros to process offsets returned by the DCPU */
-+#define DRAM_MSG_ADDR_OFFSET	0x0
-+#define DRAM_MSG_TYPE_OFFSET	0x1c
-+#define DRAM_MSG_ADDR_MASK	((1UL << DRAM_MSG_TYPE_OFFSET) - 1)
-+#define DRAM_MSG_TYPE_MASK	((1UL << \
-+				 (BITS_PER_LONG - DRAM_MSG_TYPE_OFFSET)) - 1)
-+
- /* Message RAM */
--#define DCPU_MSG_RAM(x)		(0x100 + (x) * sizeof(u32))
-+#define DCPU_MSG_RAM_START	0x100
-+#define DCPU_MSG_RAM(x)		(DCPU_MSG_RAM_START + (x) * sizeof(u32))
- 
- /* DRAM Info Offsets & Masks */
- #define DRAM_INFO_INTERVAL	0x0
-@@ -255,6 +263,40 @@ static unsigned int get_msg_chksum(const u32 msg[])
- 	return sum;
- }
- 
-+static void __iomem *get_msg_ptr(struct private_data *priv, u32 response,
-+				 char *buf, ssize_t *size)
-+{
-+	unsigned int msg_type;
-+	unsigned int offset;
-+	void __iomem *ptr = NULL;
-+
-+	msg_type = (response >> DRAM_MSG_TYPE_OFFSET) & DRAM_MSG_TYPE_MASK;
-+	offset = (response >> DRAM_MSG_ADDR_OFFSET) & DRAM_MSG_ADDR_MASK;
-+
-+	/*
-+	 * msg_type == 1: the offset is relative to the message RAM
-+	 * msg_type == 0: the offset is relative to the data RAM (this is the
-+	 *                previous way of passing data)
-+	 * msg_type is anything else: there's critical hardware problem
-+	 */
-+	switch (msg_type) {
-+	case 1:
-+		ptr = priv->regs + DCPU_MSG_RAM_START + offset;
-+		break;
-+	case 0:
-+		ptr = priv->dmem + offset;
-+		break;
-+	default:
-+		dev_emerg(priv->dev, "invalid message reply from DCPU: %#x\n",
-+			response);
-+		if (buf && size)
-+			*size = sprintf(buf,
-+				"FATAL: communication error with DCPU\n");
-+	}
-+
-+	return ptr;
-+}
-+
- static int __send_command(struct private_data *priv, unsigned int cmd,
- 			  u32 result[])
- {
-@@ -528,7 +570,6 @@ static ssize_t show_refresh(struct device *dev,
- 	u32 response[MSG_FIELD_MAX];
- 	void __iomem *info;
- 	struct private_data *priv;
--	unsigned int offset;
- 	u8 refresh, sr_abort, ppre, thermal_offs, tuf;
- 	u32 mr4;
- 	ssize_t ret;
-@@ -538,8 +579,10 @@ static ssize_t show_refresh(struct device *dev,
- 		return ret;
- 
- 	priv = dev_get_drvdata(dev);
--	offset = response[MSG_ARG0];
--	info = priv->dmem + offset;
-+
-+	info = get_msg_ptr(priv, response[MSG_ARG0], buf, &ret);
-+	if (!info)
-+		return ret;
- 
- 	mr4 = readl_relaxed(info + DRAM_INFO_MR4) & DRAM_INFO_MR4_MASK;
- 
-@@ -561,7 +604,6 @@ static ssize_t store_refresh(struct device *dev, struct device_attribute *attr,
- 	u32 response[MSG_FIELD_MAX];
- 	struct private_data *priv;
- 	void __iomem *info;
--	unsigned int offset;
- 	unsigned long val;
- 	int ret;
- 
-@@ -574,8 +616,10 @@ static ssize_t store_refresh(struct device *dev, struct device_attribute *attr,
- 	if (ret)
- 		return ret;
- 
--	offset = response[MSG_ARG0];
--	info = priv->dmem + offset;
-+	info = get_msg_ptr(priv, response[MSG_ARG0], NULL, NULL);
-+	if (!info)
-+		return -EIO;
-+
- 	writel_relaxed(val, info + DRAM_INFO_INTERVAL);
- 
- 	return count;
-@@ -587,16 +631,17 @@ static ssize_t show_vendor(struct device *dev, struct device_attribute *devattr,
- 	u32 response[MSG_FIELD_MAX];
- 	struct private_data *priv;
- 	void __iomem *info;
--	unsigned int offset;
- 	ssize_t ret;
- 
- 	ret = generic_show(DPFE_CMD_GET_VENDOR, response, dev, buf);
- 	if (ret)
- 		return ret;
- 
--	offset = response[MSG_ARG0];
- 	priv = dev_get_drvdata(dev);
--	info = priv->dmem + offset;
-+
-+	info = get_msg_ptr(priv, response[MSG_ARG0], buf, &ret);
-+	if (!info)
-+		return ret;
- 
- 	return sprintf(buf, "%#x %#x %#x %#x %#x\n",
- 		       readl_relaxed(info + DRAM_VENDOR_MR5) & DRAM_VENDOR_MASK,
--- 
-2.7.4
+One more is in the patch I have submitted for review.
+>>
+>> Signed-off-by: Alexey Skidanov <alexey.skidanov@intel.com>
+>> ---
+>>  include/linux/scatterlist.h | 5 +++++
+>>  lib/scatterlist.c           | 5 -----
+>>  2 files changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
+>> index b7c8325..fe28148 100644
+>> --- a/include/linux/scatterlist.h
+>> +++ b/include/linux/scatterlist.h
+>> @@ -248,6 +248,11 @@ static inline void *sg_virt(struct scatterlist *sg)
+>>         return page_address(sg_page(sg)) + sg->offset;
+>>  }
+>>
+>> +static inline int sg_page_count(struct scatterlist *sg)
+>> +{
+>> +       return PAGE_ALIGN(sg->offset + sg->length) >> PAGE_SHIFT;
+>> +}
+>> +
+>>  int sg_nents(struct scatterlist *sg);
+>>  int sg_nents_for_len(struct scatterlist *sg, u64 len);
+>>  struct scatterlist *sg_next(struct scatterlist *);
+>> diff --git a/lib/scatterlist.c b/lib/scatterlist.c
+>> index 7c1c55f..4a59131 100644
+>> --- a/lib/scatterlist.c
+>> +++ b/lib/scatterlist.c
+>> @@ -486,11 +486,6 @@ void __sg_page_iter_start(struct sg_page_iter *piter,
+>>  }
+>>  EXPORT_SYMBOL(__sg_page_iter_start);
+>>
+>> -static int sg_page_count(struct scatterlist *sg)
+>> -{
+>> -       return PAGE_ALIGN(sg->offset + sg->length) >> PAGE_SHIFT;
+>> -}
+>> -
+>>  bool __sg_page_iter_next(struct sg_page_iter *piter)
+>>  {
+>>         if (!piter->__nents || !piter->sg)
+>> --
+>> 2.7.4
+>>
+> 
+> 
+> 
