@@ -1,80 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933639AbeBMHoz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 02:44:55 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:41756 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933463AbeBMHox (ORCPT
+        id S933613AbeBMHrp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 02:47:45 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:43106 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933463AbeBMHrn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 02:44:53 -0500
-X-Google-Smtp-Source: AH8x224zJIYcbjXdpFCmM00v9du5BN/Lowr6citLzXoaEcsRZgHZHRWBs57Sg1mtx7yyUbw+PpmaYw==
-From: Ulf Magnusson <ulfalizer@gmail.com>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: [PATCH] Makefile: Fix lying comment re. silentoldconfig
-Date: Tue, 13 Feb 2018 08:44:17 +0100
-Message-Id: <20180213074422.20608-1-ulfalizer@gmail.com>
-X-Mailer: git-send-email 2.14.1
+        Tue, 13 Feb 2018 02:47:43 -0500
+X-Google-Smtp-Source: AH8x2275qzKYcjHwa3WW9YLWxxYgKodBqEunuCv0u9x57VP9dB2Ehb4+C8DKWl/WibMDP57Q7JeH0g==
+Date: Tue, 13 Feb 2018 08:47:38 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: David Woodhouse <dwmw@amazon.co.uk>
+Cc: tglx@linutronix.de, x86@kernel.org, kvm@vger.kernel.org,
+        torvalds@linux-foundation.org, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, arjan.van.de.ven@intel.com,
+        dave.hansen@intel.com
+Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
+ CPUs
+Message-ID: <20180213074738.nrohmtchyr6fddhm@gmail.com>
+References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
+ <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The comment above the silentoldconfig invocation is outdated.
-'make oldconfig' updates just .config and doesn't touch the
-include/config/ tree.
 
-This came up in https://lkml.org/lkml/2018/2/12/415.
+* David Woodhouse <dwmw@amazon.co.uk> wrote:
 
-While fixing the comment, make it more informative by explaining the
-purpose of the unfortunately named silentoldconfig.
+> +extern enum spectre_v2_mitigation spectre_v2_enabled;
 
-I can't make sense of the comment re. auto.conf.cmd and a cleaned tree.
-include/config/auto.conf and include/config/auto.conf.cmd are both
-created simultaneously by silentoldconfig (in
-scripts/kconfig/confdata.c, by conf_write_autoconf()), and nothing seems
-to remove auto.conf.cmd that wouldn't remove auto.conf. Remove that part
-of the comment rather than blindly copying it. It might be a leftover
-from an older way of doing things.
+This needs to be exported if the KVM module wants to use it.
 
-The include/config/auto.conf.cmd prerequisite might be there to ensure
-that silentoldconfig gets rerun if conf_write_autoconf() fails between
-writing out auto.conf.cmd and auto.conf (a comment in the function
-indicates that auto.conf is deliberately written out last to mark
-completion of the operation). It seems the Makefile dependency between
-.config and include/config/auto.conf would already take care of that
-though, since .config would still be out of date re.
-include/config/auto.conf if the operation fails.
+> +static inline bool spectre_v2_ibrs_all(void)
+> +{
+> +	return spectre_v2_enabled == SPECTRE_V2_IBRS_ALL;
+> +}
 
-Cop out and leave the prerequisite in for now though.
+> +     if (vmx->spec_ctrl && !spectre_v2_ibrs_all())
 
-Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
----
- Makefile | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+> +	if (!spectre_v2_ibrs_all) {
 
-diff --git a/Makefile b/Makefile
-index 79ad2bfa24b6..61ed99ad4b1b 100644
---- a/Makefile
-+++ b/Makefile
-@@ -579,10 +579,13 @@ ifeq ($(KBUILD_EXTMOD),)
- # To avoid any implicit rule to kick in, define an empty command
- $(KCONFIG_CONFIG) include/config/auto.conf.cmd: ;
- 
--# If .config is newer than include/config/auto.conf, someone tinkered
--# with it and forgot to run make oldconfig.
--# if auto.conf.cmd is missing then we are probably in a cleaned tree so
--# we execute the config step to be sure to catch updated Kconfig files
-+# The actual configuration files used during the build are stored in
-+# include/generated/ and include/config/. Update them if .config is newer than
-+# include/config/auto.conf (which mirrors .config).
-+#
-+# The include/config/ tree manages dependencies between source files and
-+# Kconfig symbols and lets us avoid doing a full rebuild whenever the
-+# configuration is changed. See scripts/basic/fixdep.c
- include/config/%.conf: $(KCONFIG_CONFIG) include/config/auto.conf.cmd
- 	$(Q)$(MAKE) -f $(srctree)/Makefile silentoldconfig
- else
--- 
-2.14.1
+erm, that's a function, not a flag ...
+
+Thanks,
+
+	Ingo
