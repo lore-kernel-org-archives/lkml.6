@@ -1,111 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932910AbeBMAEy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 19:04:54 -0500
-Received: from mga05.intel.com ([192.55.52.43]:38701 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932773AbeBMAEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 19:04:39 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,504,1511856000";
-   d="scan'208";a="203567454"
-From: Andi Kleen <andi@firstfloor.org>
-To: tglx@linutronix.de
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de,
-        dwmw2@infradead.org, jpoimboe@redhat.com,
-        Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH 2/2] x86/retpoline: Fix return buffer filling
-Date: Mon, 12 Feb 2018 16:04:22 -0800
-Message-Id: <20180213000422.16916-2-andi@firstfloor.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180213000422.16916-1-andi@firstfloor.org>
-References: <20180213000422.16916-1-andi@firstfloor.org>
+        id S932897AbeBMAKm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 19:10:42 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:38126 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932403AbeBMAKk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 19:10:40 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2AF0660227
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=timur@codeaurora.org
+Subject: Re: [PATCH] arm64: Make L1_CACHE_SHIFT configurable
+To: Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: tchalamarla@cavium.com, rrichter@cavium.com, opendmb@gmail.com,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1518479125-14428-1-git-send-email-f.fainelli@gmail.com>
+ <ca6c47f9-86df-bcdb-bbe1-eac9db68ec33@codeaurora.org>
+ <ffc090d5-62c9-e608-32e2-8d13d01234e6@gmail.com>
+From: Timur Tabi <timur@codeaurora.org>
+Message-ID: <f5d6d768-d354-56b5-ce0c-4f46d4e6d642@codeaurora.org>
+Date: Mon, 12 Feb 2018 18:10:38 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <ffc090d5-62c9-e608-32e2-8d13d01234e6@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+On 02/12/2018 05:57 PM, Florian Fainelli wrote:
+> That is debatable, is there a good publicly available table of what the
+> typical L1 cache line size is on ARMv8 platforms?
 
-An earlier patch moved the RSB filling out of line, ending
-it with a return. This results in the return buffer filling
-only giving 15 instead of 16 usable returns because
-the return from fill_rsb already uses one up.
+I don't have that, but I was under the impression that we moved from 6 
+to 7 because more and more ARMv8 platforms have 128-byte caches, so that 
+is the "new normal".
 
-Since the kernel call chains can be quite deep that's
-somewhat dangerous and better avoided.
-
-Always do one extra return buffer fill in the caller.
-I added a STUFF_ONE_RSB macro for this, and fixed
-up all the caller
-
-An alternative would be to revert 1dde7415e999
-and just go back to the inline version.
-
-Needs the earlier patch to avoid lots of bogus warnings
-from objtool, but even with that there is one left.
-
-Fixes: 1dde7415e999 ("x86/retpoline: Simplify vmexit...")
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
----
- arch/x86/include/asm/nospec-branch.h | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 788c4da7dda9..af0ca73abb23 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -77,10 +77,19 @@
- #endif
- .endm
- 
-+.macro STUFF_ONE_RSB
-+#ifdef CONFIG_RETPOLINE
-+	call 581f
-+	pause ; lfence
-+581:	add  $(BITS_PER_LONG/8), %_ASM_SP
-+#endif
-+.endm
-+
- /* This clobbers the BX register */
- .macro FILL_RETURN_BUFFER nr:req ftr:req
- #ifdef CONFIG_RETPOLINE
--	ALTERNATIVE "", "call __clear_rsb", \ftr
-+	ALTERNATIVE "", "call __clear_rsb" , \ftr
-+	ALTERNATIVE "", "STUFF_ONE_RSB", \ftr
- #endif
- .endm
- 
-@@ -133,6 +142,20 @@
- # define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
- #endif
- 
-+#ifdef CONFIG_X86_64
-+#define STUFF_ONE_RSB	\
-+	"	call 881f\n"					\
-+	"	pause;lfence\n"					\
-+	"881:\n"						\
-+	"	addq $8,%%rsp\n"
-+#else
-+#define STUFF_ONE_RSB	\
-+	"	call 881f\n"					\
-+	"	pause;lfence\n"					\
-+	"881:\n"						\
-+	"	addl $4,%%esp\n"
-+#endif
-+
- /* The Spectre V2 mitigation variants */
- enum spectre_v2_mitigation {
- 	SPECTRE_V2_NONE,
-@@ -156,7 +179,7 @@ static inline void vmexit_fill_RSB(void)
- {
- #ifdef CONFIG_RETPOLINE
- 	alternative_input("",
--			  "call __fill_rsb",
-+			  "call __fill_rsb;" STUFF_ONE_RSB,
- 			  X86_FEATURE_RETPOLINE,
- 			  ASM_NO_INPUT_CLOBBER(_ASM_BX, "memory"));
- #endif
 -- 
-2.14.3
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
