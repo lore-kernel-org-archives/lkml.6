@@ -1,67 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965098AbeBMOLx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 09:11:53 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:39950 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964935AbeBMOLv (ORCPT
+        id S965073AbeBMONR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 09:13:17 -0500
+Received: from 9pmail.ess.barracuda.com ([64.235.150.224]:50224 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964935AbeBMONP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 09:11:51 -0500
-X-Google-Smtp-Source: AH8x225W1yDk0K27CVHULfBQtCHjORnQq4puR3O0DAVSg3+gAkcYhyRXPhn9JJDmaApQqgkJcd4jHQ==
-Subject: Re: [PATCH 1/2] i2c: piix4: Use request_muxed_region
-To: =?UTF-8?B?QsO2c3rDtnJtw6lueWkgWm9sdMOhbg==?= <zboszor@pr.hu>,
-        Jean Delvare <jdelvare@suse.de>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1514652658-6228-1-git-send-email-linux@roeck-us.net>
- <20180212111041.027edd85@endymion> <20180212185152.GA20877@roeck-us.net>
- <ca8f74c0-c249-7698-21f7-e3ee49cd5516@pr.hu>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <d9ed7023-84b3-366c-ac6b-74194aeffc78@roeck-us.net>
-Date: Tue, 13 Feb 2018 06:11:48 -0800
+        Tue, 13 Feb 2018 09:13:15 -0500
+Subject: Re: [PATCH v2 12/15] MIPS: memblock: Print out kernel virtual mem
+ layout
+To: Serge Semin <fancer.lancer@gmail.com>, <ralf@linux-mips.org>,
+        <miodrag.dinic@mips.com>, <jhogan@kernel.org>, <goran.ferenc@mips.com>,
+        <david.daney@cavium.com>, <paul.gortmaker@windriver.com>,
+        <paul.burton@mips.com>, <alex.belits@cavium.com>,
+        <Steven.Hill@cavium.com>
+CC: <alexander.sverdlin@nokia.com>, <kumba@gentoo.org>,
+        <marcin.nowakowski@mips.com>, <James.hogan@mips.com>,
+        <Peter.Wotton@mips.com>, <Sergey.Semin@t-platforms.ru>,
+        <linux-mips@linux-mips.org>, <linux-kernel@vger.kernel.org>
+References: <20180117222312.14763-1-fancer.lancer@gmail.com>
+ <20180202035458.30456-1-fancer.lancer@gmail.com>
+ <20180202035458.30456-13-fancer.lancer@gmail.com>
+From: Matt Redfearn <matt.redfearn@mips.com>
+Message-ID: <0448b8d7-48f1-7519-693c-47cdd162d000@mips.com>
+Date: Tue, 13 Feb 2018 14:05:31 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <ca8f74c0-c249-7698-21f7-e3ee49cd5516@pr.hu>
-Content-Type: text/plain; charset=iso-8859-2; format=flowed
+In-Reply-To: <20180202035458.30456-13-fancer.lancer@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.150.130.83]
+X-BESS-ID: 1518531066-637140-1058-164716-11
+X-BESS-VER: 2018.1-r1801291959
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.189978
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/13/2018 03:48 AM, Böszörményi Zoltán wrote:
-> 2018-02-12 19:51 keltezéssel, Guenter Roeck írta:
->> On Mon, Feb 12, 2018 at 11:10:41AM +0100, Jean Delvare wrote:
->>> Hi Guneter,
->>>
->>> Sorry for the delay :(
->>>
->>> On Sat, 30 Dec 2017 08:50:57 -0800, Guenter Roeck wrote:
->>>> Accesses to SB800_PIIX4_SMB_IDX can occur from multiple drivers.
->>>> Use request_muxed_region() to ensure synchronization.
->>>
->>> Which ones? Documenting it, at least in the commit message, would seem
->>> useful. Out of curiosity, have these other drivers been converted to
->>> use request_muxed_region already?
->>>
->> Primarily watchdog, but there is also unprotected initialization code
->> in several locations.
+Hi Serge,
+
+On 02/02/18 03:54, Serge Semin wrote:
+> It is useful to have the kernel virtual memory layout printed
+> at boot time so to have the full information about the booted
+> kernel. In some cases it might be unsafe to have virtual
+> addresses freely visible in logs, so the %pK format is used if
+> one want to hide them.
+
+Please could you update the commit message to reflect the guard on 
+CONFIG_DEBUG_KERNEL, and the %pK format is no longer used.
+
+It would be better to have this patch either at the start of the series, 
+or the end, since it is not strictly involved in switching between 
+bootmem and memblock.  It would be better to have a short sequence of 
+patches to make that transition, with patches to lead up to that or 
+clean up afterwards at the beginning and end of the series. It will just 
+make any future bisection easier.
+
+Thanks,
+Matt
+
+
 > 
-> There are three locations touching the same I/O ports:
-> the PCI-USB quirks code (still doesn't use locking AFAIK), i2c-piix4 and
-> the sp5100_tco watchdog drivers.
+> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+> ---
+>   arch/mips/mm/init.c | 49 +++++++++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 49 insertions(+)
 > 
-
-There are a few more in arch code, though probably not all of those (or maybe none ?)
-are relevant.
-
-arch/x86/kernel/quirks.c
-arch/x86/kernel/early-quirks.c
-arch/x86/pci/fixup.c
-arch/mips/loongson64/loongson-3/acpi_init.c
-drivers/usb/host/pci-quirks.c
-drivers/watchdog/sp5100_tco.[ch]
-drivers/i2c/busses/i2c-piix4.c
-
-Guenter
+> diff --git a/arch/mips/mm/init.c b/arch/mips/mm/init.c
+> index 84b7b592b834..eec92194d4dc 100644
+> --- a/arch/mips/mm/init.c
+> +++ b/arch/mips/mm/init.c
+> @@ -32,6 +32,7 @@
+>   #include <linux/kcore.h>
+>   #include <linux/export.h>
+>   #include <linux/initrd.h>
+> +#include <linux/sizes.h>
+>   
+>   #include <asm/asm-offsets.h>
+>   #include <asm/bootinfo.h>
+> @@ -60,6 +61,53 @@ EXPORT_SYMBOL_GPL(empty_zero_page);
+>   EXPORT_SYMBOL(zero_page_mask);
+>   
+>   /*
+> + * Print out the kernel virtual memory layout
+> + */
+> +#define MLK(b, t) (void *)b, (void *)t, ((t) - (b)) >> 10
+> +#define MLM(b, t) (void *)b, (void *)t, ((t) - (b)) >> 20
+> +#define MLK_ROUNDUP(b, t) (void *)b, (void *)t, DIV_ROUND_UP(((t) - (b)), SZ_1K)
+> +static void __init mem_print_kmap_info(void)
+> +{
+> +#ifdef CONFIG_DEBUG_KERNEL
+> +	pr_notice("Kernel virtual memory layout:\n"
+> +		  "    lowmem  : 0x%px - 0x%px  (%4ld MB)\n"
+> +		  "      .text : 0x%px - 0x%px  (%4td kB)\n"
+> +		  "      .data : 0x%px - 0x%px  (%4td kB)\n"
+> +		  "      .init : 0x%px - 0x%px  (%4td kB)\n"
+> +		  "      .bss  : 0x%px - 0x%px  (%4td kB)\n"
+> +		  "    vmalloc : 0x%px - 0x%px  (%4ld MB)\n"
+> +#ifdef CONFIG_HIGHMEM
+> +		  "    pkmap   : 0x%px - 0x%px  (%4ld MB)\n"
+> +#endif
+> +		  "    fixmap  : 0x%px - 0x%px  (%4ld kB)\n",
+> +		  MLM(PAGE_OFFSET, (unsigned long)high_memory),
+> +		  MLK_ROUNDUP(_text, _etext),
+> +		  MLK_ROUNDUP(_sdata, _edata),
+> +		  MLK_ROUNDUP(__init_begin, __init_end),
+> +		  MLK_ROUNDUP(__bss_start, __bss_stop),
+> +		  MLM(VMALLOC_START, VMALLOC_END),
+> +#ifdef CONFIG_HIGHMEM
+> +		  MLM(PKMAP_BASE, (PKMAP_BASE) + (LAST_PKMAP)*(PAGE_SIZE)),
+> +#endif
+> +		  MLK(FIXADDR_START, FIXADDR_TOP));
+> +
+> +	/* Check some fundamental inconsistencies. May add something else? */
+> +#ifdef CONFIG_HIGHMEM
+> +	BUILD_BUG_ON(VMALLOC_END < PAGE_OFFSET);
+> +	BUG_ON(VMALLOC_END < (unsigned long)high_memory);
+> +	BUILD_BUG_ON((PKMAP_BASE) + (LAST_PKMAP)*(PAGE_SIZE) < PAGE_OFFSET);
+> +	BUG_ON((PKMAP_BASE) + (LAST_PKMAP)*(PAGE_SIZE) <
+> +		(unsigned long)high_memory);
+> +#endif
+> +	BUILD_BUG_ON(FIXADDR_TOP < PAGE_OFFSET);
+> +	BUG_ON(FIXADDR_TOP < (unsigned long)high_memory);
+> +#endif /* CONFIG_DEBUG_KERNEL */
+> +}
+> +#undef MLK
+> +#undef MLM
+> +#undef MLK_ROUNDUP
+> +
+> +/*
+>    * Not static inline because used by IP27 special magic initialization code
+>    */
+>   void setup_zero_pages(void)
+> @@ -468,6 +516,7 @@ void __init mem_init(void)
+>   	free_all_bootmem();
+>   	setup_zero_pages();	/* Setup zeroed pages.  */
+>   	mem_init_free_highmem();
+> +	mem_print_kmap_info();
+>   	mem_init_print_info(NULL);
+>   
+>   #ifdef CONFIG_64BIT
+> 
