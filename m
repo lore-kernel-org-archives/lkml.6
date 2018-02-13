@@ -1,81 +1,87 @@
-Return-Path: <daniel.diaz@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1517955791; cv=none;
+Return-Path: <shuahkh@osg.samsung.com>
+X-Google-Smtp-Source: AH8x227iMbYiuybZhUDOBEJJs1sz42DguNaQNyru7USdqv0ZVGcSm8jahi3uyOslxg9NlLRzYTF5
+ARC-Seal: i=1; a=rsa-sha256; t=1518557087; cv=none;
         d=google.com; s=arc-20160816;
-        b=L30LaS80TIML2H/gLUl8/xwLVDAIOghSdwctiQSV7yBlRWbA4xf0uVmfRfJmGiH3Nt
-         9ZimfnDylKsa3oaFpFDTq48oVFAmrxeB/qWB4YC9ZMabln+MlnuL4uaBdhwr/fYtpgXa
-         a+Vp9k6nNXXZkPkZdQ5rWlcxi2HKybqsxxW6qz5ROzN0eOfsdwxT3jYPKD+9+lRzOVxd
-         FIdL91mtksG6uD7y5HzcJ7451yXhNCKOV53zCxgDlnORtMFwvt2Ish9xuoSQgJEhpYOL
-         C3rWJdHSLTz9QygdwwVI2KEZ8G8Uydi9akRl4fBm1bb7KngpahHYsvX6rRA8jPQKcwQN
-         Gg2Q==
+        b=jPu6GXvl2r5FQz9gzd4a6xd7lo/mRr3XcYQlFfawCWIDyXMdEjn01F4w6mCisvT/Rj
+         tYNtN0/v0sw49izNsThDm/GccUjizY9DcgHVRk/qE+Aw9Dy4WeBOhssFgxJxw+Ba4JKe
+         L4GM73X2Gn9O7mJorDcimtGYSYrpOLd4XhLXKz42mIVowAWpwjnJh3H/xFKjtlIhRe5m
+         MUi59ocg/gRlYhdCMS7sy7slTt4CnG4coR+8NH67ywU2EhzHEyDTiIi6eqtoIp2Jv5ME
+         e/RtrXPcKhNtlxjzLufbnTsULpIFQ1OTLtLWb6JI3ZPG+5uPl611Z8aJNslnF0QuylJG
+         xLhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:dkim-signature:arc-authentication-results;
-        bh=j2kU5Pwj083P/9VsS3PFvYepm0JigsbWcsxY1hsdVJA=;
-        b=PjaESmUJ5hZMyBIA52egx4+2AdnMAQ8PbJPITBuzxxPHeo5wU6BrkaAVXWbSP6zkIp
-         xX5bKcnh1fxdIYctjzZw5LRqJPzGGad8061n00JhJzQpRBORHUSrWwoBfnU09mZ9p5Z6
-         6D1simUDjna5ye1OCRZium1I/+WemhJXkUBg+sNsNYUnk0hX41zcU8rBd828bWDyh4CA
-         /7X5BOWyRIUV3PS+bqKEtGochinvTNRM1v79PbBvjC+BN4987/I3hCrqVQXyRc8y95Ir
-         Ektk5Cu7wjlITo3jZJ8152MyiQGD1xuXROjPnSLHYs5zmN7xjs2fpRyn12nDyEXk1GMG
-         PgdA==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=CiRmszO550eogyIvpNVr+iiKps5GOXpJyG2acrmPQfk=;
+        b=YvsYWH4BQlRnrXgIwm+uKkbeOL6MQnyPgdBYP+Cb/h8FYt//ZTNSTdGSiS30A6CK6z
+         +1WVaLcGYPUO/9F0JzLb4RzjljO2pKYsFFP8ucq4lXgUidctNAr55p4wvccqZKpyWaU0
+         GmTVgE210CHcIl+ibU3NborPd3Gi7NfH6qol8t/Qo66A6dzO3iy5Z+AnOzl7yq3ZFjue
+         zPkyxvst9PnS+C3J7M5hX75lWM2LX1QSYiyZboy+JViDRXY1wvTFpXreEnAoI+RGOGvE
+         e7J4iR4gla3V6SdibL6HgxgaX2H4GAT/zcj48l9+fbnE22Q4dg3rmUBgF7T9kGeAOUag
+         3zOA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=FtrDVLq7;
-       spf=pass (google.com: domain of daniel.diaz@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=daniel.diaz@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: domain of shuahkh@osg.samsung.com designates 64.30.133.232 as permitted sender) smtp.mailfrom=shuahkh@osg.samsung.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=FtrDVLq7;
-       spf=pass (google.com: domain of daniel.diaz@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=daniel.diaz@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AH8x226YrQB+RRZv0Tf3Rg/fGNitIBjHaMrbLf2nYuOQmhAomjMh9ZmruWWK5pQR/fGvYT0PNJx8oQ==
-From: =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>
-To: shuahkh@osg.samsung.com,
-	linux-kselftest@vger.kernel.org
-Cc: Anders Roxell <anders.roxell@linaro.org>,
-	=?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Mike Kravetz <mike.kravetz@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	=?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>,
-	SeongJae Park <sj38.park@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] selftests/memfd: add run_fuse_test.sh to TEST_FILES
-Date: Tue,  6 Feb 2018 16:22:57 -0600
-Message-Id: <1517955779-11386-1-git-send-email-daniel.diaz@linaro.org>
-X-Mailer: git-send-email 2.7.4
+       spf=pass (google.com: domain of shuahkh@osg.samsung.com designates 64.30.133.232 as permitted sender) smtp.mailfrom=shuahkh@osg.samsung.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+Subject: Re: [PATCH] selftests/memfd: add run_fuse_test.sh to TEST_FILES
+To: =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>,
+ linux-kselftest@vger.kernel.org
+Cc: Anders Roxell <anders.roxell@linaro.org>, Shuah Khan <shuah@kernel.org>,
+ Mike Kravetz <mike.kravetz@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ =?UTF-8?Q?Marc-Andr=c3=a9_Lureau?= <marcandre.lureau@redhat.com>,
+ SeongJae Park <sj38.park@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ Shuah Khan <shuahkh@osg.samsung.com>
+References: <1517955779-11386-1-git-send-email-daniel.diaz@linaro.org>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Message-ID: <de659f18-cba6-daeb-3289-b6b36cae1dbb@osg.samsung.com>
+Date: Tue, 13 Feb 2018 14:24:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1517955779-11386-1-git-send-email-daniel.diaz@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591692011940276570?=
-X-GMAIL-MSGID: =?utf-8?q?1591692011940276570?=
+X-GMAIL-MSGID: =?utf-8?q?1592322516680561520?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Anders Roxell <anders.roxell@linaro.org>
+On 02/06/2018 03:22 PM, Daniel Díaz wrote:
+> From: Anders Roxell <anders.roxell@linaro.org>
+> 
+> While testing memfd tests, there is a missing script, as reported by
+> kselftest:
+> 
+> ./run_tests.sh: line 7: ./run_fuse_test.sh: No such file or directory
+> 
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
+> ---
+>  tools/testing/selftests/memfd/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/testing/selftests/memfd/Makefile b/tools/testing/selftests/memfd/Makefile
+> index a5276a9..0862e6f 100644
+> --- a/tools/testing/selftests/memfd/Makefile
+> +++ b/tools/testing/selftests/memfd/Makefile
+> @@ -5,6 +5,7 @@ CFLAGS += -I../../../../include/
+>  CFLAGS += -I../../../../usr/include/
+>  
+>  TEST_PROGS := run_tests.sh
+> +TEST_FILES := run_fuse_test.sh
+>  TEST_GEN_FILES := memfd_test fuse_mnt fuse_test
+>  
+>  fuse_mnt.o: CFLAGS += $(shell pkg-config fuse --cflags)
+> 
 
-While testing memfd tests, there is a missing script, as reported by
-kselftest:
+Looks like Andrew applied this mm. It will go through mm tree.
 
-./run_tests.sh: line 7: ./run_fuse_test.sh: No such file or directory
-
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
----
- tools/testing/selftests/memfd/Makefile | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/testing/selftests/memfd/Makefile b/tools/testing/selftests/memfd/Makefile
-index a5276a9..0862e6f 100644
---- a/tools/testing/selftests/memfd/Makefile
-+++ b/tools/testing/selftests/memfd/Makefile
-@@ -5,6 +5,7 @@ CFLAGS += -I../../../../include/
- CFLAGS += -I../../../../usr/include/
- 
- TEST_PROGS := run_tests.sh
-+TEST_FILES := run_fuse_test.sh
- TEST_GEN_FILES := memfd_test fuse_mnt fuse_test
- 
- fuse_mnt.o: CFLAGS += $(shell pkg-config fuse --cflags)
--- 
-2.7.4
+thanks,
+-- Shuah
