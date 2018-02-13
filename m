@@ -1,53 +1,355 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965604AbeBMRGB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:06:01 -0500
-Received: from mail-qt0-f170.google.com ([209.85.216.170]:39754 "EHLO
-        mail-qt0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964840AbeBMRF6 (ORCPT
+        id S965563AbeBMRFg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:05:36 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:36713 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965167AbeBMRBf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:05:58 -0500
-X-Google-Smtp-Source: AH8x2248S2TdCNu2foDhFR+pR4m+QS8LU4+rdL3NgeAV4MyQ49Y8E9TJgt+5YoqYd7tFC6iKv0iC+G9mwhOiX8MFlVg=
-MIME-Version: 1.0
-In-Reply-To: <CAHp75Vc9T8umLVtBuBCK+HgAga9=ZKBhBTjA8Nmbvaw1zyVLng@mail.gmail.com>
-References: <20180127133209.28995-1-pali.rohar@gmail.com> <CAHp75VdWA-0a_FeicHSi_FfWurQ9EvkdW0raqgoRVySTyxDJ0Q@mail.gmail.com>
- <20180128144509.pobnj7cayc4psgrj@pali> <CAHp75VdU1OMTqLcDuzhQMHuX9rMhjw6p3CkSWaW5Y4kOy8ggqg@mail.gmail.com>
- <20180131120348.azy25aqvn5wrdkeh@pali> <CAHp75Vf=-RQvCtS684Q5+X=YKmZXgP_1kr0to8BGZX0jQAsuZw@mail.gmail.com>
- <20180212153012.vffvjmz26ifyxbj5@pali> <CAHp75VfF+qwCXcr3yuayE-Z+UG9wuMOKfGzLhdyPk79daEi9gQ@mail.gmail.com>
- <20180213150004.5d2v7y7wwuure4io@pali> <CAHp75VfxgbFiDxyrqyMRE8s85L1_EzkVvrA1NGYA5_su=5oGVQ@mail.gmail.com>
- <20180213165023.xmzovx7fd3gdljxw@pali> <CAHp75Vc9T8umLVtBuBCK+HgAga9=ZKBhBTjA8Nmbvaw1zyVLng@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Feb 2018 19:05:57 +0200
-Message-ID: <CAHp75Vd=LLLBFUoOHxFcM+G9A8F2wQ6E5a9vsQTM3rxcz1aGhg@mail.gmail.com>
-Subject: Re: [PATCH v2] i2c: i801: Register optional lis3lv02d i2c device on
- Dell machines
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,
-        Steven Honeyman <stevenhoneyman@gmail.com>,
-        Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
-        Jochen Eisinger <jochen@penguin-breeder.org>,
-        Gabriele Mazzotta <gabriele.mzt@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mario Limonciello <Mario_Limonciello@dell.com>,
-        Alex Hung <alex.hung@canonical.com>, Takashi Iwai <tiwai@suse.de>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 13 Feb 2018 12:01:35 -0500
+X-Google-Smtp-Source: AH8x224n+sJyvgKYAKM1osv7XQ8xaC8NlKf5zJcv5smWwag1ZXhpq6iGPVPqj9IWnZySpzOdX51SNA==
+From: srinivas.kandagatla@linaro.org
+To: andy.gross@linaro.org, broonie@kernel.org,
+        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
+Cc: david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, plai@codeaurora.org, bgoswami@codeaurora.org,
+        perex@perex.cz, tiwai@suse.com, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
+        spatakok@qti.qualcomm.com,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v3 14/25] ASoC: qcom: qdsp6: Add support to q6afe dai driver
+Date: Tue, 13 Feb 2018 16:58:26 +0000
+Message-Id: <20180213165837.1620-15-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
+References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 7:01 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-> Similar approach is used in spi-pxa2xx.c (check pxa2xx_spi_pci_compound_match).
+This patch adds support to q6afe backend dais driver.
 
-Another approach might be a registration of I2C board info from
-dell-smo8800.c. Not sure if it better, because theoretically user may
-disable that one, but leave i2c-i801 enabled.
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ sound/soc/qcom/qdsp6/Makefile    |   2 +-
+ sound/soc/qcom/qdsp6/q6afe-dai.c | 280 +++++++++++++++++++++++++++++++++++++++
+ sound/soc/qcom/qdsp6/q6afe.h     |   3 +
+ 3 files changed, 284 insertions(+), 1 deletion(-)
+ create mode 100644 sound/soc/qcom/qdsp6/q6afe-dai.c
 
+diff --git a/sound/soc/qcom/qdsp6/Makefile b/sound/soc/qcom/qdsp6/Makefile
+index 660afcab98fd..c7833842b878 100644
+--- a/sound/soc/qcom/qdsp6/Makefile
++++ b/sound/soc/qcom/qdsp6/Makefile
+@@ -1,5 +1,5 @@
+ obj-$(CONFIG_SND_SOC_QDSP6_COMMON) += q6dsp-common.o
+-obj-$(CONFIG_SND_SOC_QDSP6_AFE) += q6afe.o
++obj-$(CONFIG_SND_SOC_QDSP6_AFE) += q6afe.o q6afe-dai.o
+ obj-$(CONFIG_SND_SOC_QDSP6_ADM) += q6adm.o q6routing.o
+ obj-$(CONFIG_SND_SOC_QDSP6_ASM) += q6asm.o
+ obj-$(CONFIG_SND_SOC_QDSP6_CORE) += q6core.o
+diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
+new file mode 100644
+index 000000000000..f6a618e9db9e
+--- /dev/null
++++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
+@@ -0,0 +1,280 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2011-2016, The Linux Foundation
++ * Copyright (c) 2018, Linaro Limited
++ */
++
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/device.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <sound/pcm.h>
++#include <sound/soc.h>
++#include <sound/pcm_params.h>
++#include "q6afe.h"
++
++struct q6afe_dai_data {
++	struct q6afe_port *port[AFE_PORT_MAX];
++	struct q6afe_port_config port_config[AFE_PORT_MAX];
++	bool is_port_started[AFE_PORT_MAX];
++};
++
++static int q6hdmi_format_put(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct q6afe_dai_data *dai_data = kcontrol->private_data;
++	int value = ucontrol->value.integer.value[0];
++
++	dai_data->port_config[AFE_PORT_HDMI_RX].hdmi.datatype = value;
++
++	return 0;
++}
++
++static int q6hdmi_format_get(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++
++	struct q6afe_dai_data *dai_data = kcontrol->private_data;
++
++	ucontrol->value.integer.value[0] =
++		dai_data->port_config[AFE_PORT_HDMI_RX].hdmi.datatype;
++
++	return 0;
++}
++
++static const char * const hdmi_format[] = {
++	"LPCM",
++	"Compr"
++};
++
++static const struct soc_enum hdmi_config_enum[] = {
++	SOC_ENUM_SINGLE_EXT(2, hdmi_format),
++};
++
++static const struct snd_kcontrol_new q6afe_config_controls[] = {
++	SOC_ENUM_EXT("HDMI RX Format", hdmi_config_enum[0],
++				 q6hdmi_format_get,
++				 q6hdmi_format_put),
++};
++
++static int q6hdmi_hw_params(struct snd_pcm_substream *substream,
++				struct snd_pcm_hw_params *params,
++				struct snd_soc_dai *dai)
++{
++	struct q6afe_dai_data *dai_data = q6afe_get_dai_data(dai->dev);
++	int channels = params_channels(params);
++	struct q6afe_hdmi_cfg *hdmi = &dai_data->port_config[dai->id].hdmi;
++
++	hdmi->sample_rate = params_rate(params);
++	switch (params_format(params)) {
++	case SNDRV_PCM_FORMAT_S16_LE:
++		hdmi->bit_width = 16;
++		break;
++	case SNDRV_PCM_FORMAT_S24_LE:
++		hdmi->bit_width = 24;
++		break;
++	}
++
++	/*refer to HDMI spec CEA-861-E: Table 28 Audio InfoFrame Data Byte 4*/
++	switch (channels) {
++	case 2:
++		hdmi->channel_allocation = 0;
++		break;
++	case 3:
++		hdmi->channel_allocation = 0x02;
++		break;
++	case 4:
++		hdmi->channel_allocation = 0x06;
++		break;
++	case 5:
++		hdmi->channel_allocation = 0x0A;
++		break;
++	case 6:
++		hdmi->channel_allocation = 0x0B;
++		break;
++	case 7:
++		hdmi->channel_allocation = 0x12;
++		break;
++	case 8:
++		hdmi->channel_allocation = 0x13;
++		break;
++	default:
++		dev_err(dai->dev, "invalid Channels = %u\n", channels);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int q6afe_dai_startup(struct snd_pcm_substream *substream,
++				struct snd_soc_dai *dai)
++{
++	struct q6afe_dai_data *dai_data = q6afe_get_dai_data(dai->dev);
++
++	dai_data->is_port_started[dai->id] = false;
++
++	return 0;
++}
++
++static void q6afe_dai_shutdown(struct snd_pcm_substream *substream,
++				struct snd_soc_dai *dai)
++{
++	struct q6afe_dai_data *dai_data = q6afe_get_dai_data(dai->dev);
++	int rc;
++
++	rc = q6afe_port_stop(dai_data->port[dai->id]);
++	if (rc < 0)
++		dev_err(dai->dev, "fail to close AFE port\n");
++
++	dai_data->is_port_started[dai->id] = false;
++
++}
++
++static int q6afe_dai_prepare(struct snd_pcm_substream *substream,
++		struct snd_soc_dai *dai)
++{
++	struct q6afe_dai_data *dai_data = q6afe_get_dai_data(dai->dev);
++	int rc;
++
++	if (dai_data->is_port_started[dai->id]) {
++		/* stop the port and restart with new port config */
++		rc = q6afe_port_stop(dai_data->port[dai->id]);
++		if (rc < 0) {
++			dev_err(dai->dev, "fail to close AFE port\n");
++			return rc;
++		}
++	}
++
++	if (dai->id == AFE_PORT_HDMI_RX)
++		q6afe_hdmi_port_prepare(dai_data->port[dai->id],
++					&dai_data->port_config[dai->id].hdmi);
++
++	rc = q6afe_port_start(dai_data->port[dai->id]);
++	if (rc < 0) {
++		dev_err(dai->dev, "fail to start AFE port %x\n", dai->id);
++		return rc;
++	}
++	dai_data->is_port_started[dai->id] = true;
++
++	return 0;
++}
++
++static const struct snd_soc_dapm_route q6afe_dapm_routes[] = {
++	{"HDMI Playback", NULL, "HDMI_RX"},
++};
++
++static struct snd_soc_dai_ops q6hdmi_ops = {
++	.prepare	= q6afe_dai_prepare,
++	.hw_params	= q6hdmi_hw_params,
++	.shutdown	= q6afe_dai_shutdown,
++	.startup	= q6afe_dai_startup,
++};
++
++static int msm_dai_q6_dai_probe(struct snd_soc_dai *dai)
++{
++	struct q6afe_dai_data *dai_data = q6afe_get_dai_data(dai->dev);
++	struct snd_soc_dapm_context *dapm;
++	struct q6afe_port *port;
++
++	dapm = snd_soc_component_get_dapm(dai->component);
++
++	port = q6afe_port_get_from_id(dai->dev, dai->id);
++	if (IS_ERR(port)) {
++		dev_err(dai->dev, "Unable to get afe port\n");
++		return -EINVAL;
++	}
++	dai_data->port[dai->id] = port;
++
++	return 0;
++}
++
++static int msm_dai_q6_dai_remove(struct snd_soc_dai *dai)
++{
++	struct q6afe_dai_data *dai_data = q6afe_get_dai_data(dai->dev);
++
++	q6afe_port_put(dai_data->port[dai->id]);
++
++	return 0;
++}
++
++static struct snd_soc_dai_driver q6afe_dais[] = {
++	{
++		.playback = {
++			.stream_name = "HDMI Playback",
++			.rates = SNDRV_PCM_RATE_48000 |
++				 SNDRV_PCM_RATE_96000 |
++			 SNDRV_PCM_RATE_192000,
++			.formats = SNDRV_PCM_FMTBIT_S16_LE |
++				   SNDRV_PCM_FMTBIT_S24_LE,
++			.channels_min = 2,
++			.channels_max = 8,
++			.rate_max =     192000,
++			.rate_min =	48000,
++		},
++		.ops = &q6hdmi_ops,
++		.id = AFE_PORT_HDMI_RX,
++		.name = "HDMI",
++		.probe = msm_dai_q6_dai_probe,
++		.remove = msm_dai_q6_dai_remove,
++	},
++};
++
++static int q6afe_of_xlate_dai_name(struct snd_soc_component *component,
++				   struct of_phandle_args *args,
++				   const char **dai_name)
++{
++	int id = args->args[0];
++	int i, ret = -EINVAL;
++
++	for (i = 0; i  < ARRAY_SIZE(q6afe_dais); i++) {
++		if (q6afe_dais[i].id == id) {
++			*dai_name = q6afe_dais[i].name;
++			ret = 0;
++			break;
++		}
++	}
++
++	return ret;
++}
++
++static const struct snd_soc_dapm_widget q6afe_dai_widgets[] = {
++	SND_SOC_DAPM_AIF_OUT("HDMI_RX", "HDMI Playback", 0, 0, 0, 0),
++};
++
++static const struct snd_soc_component_driver q6afe_dai_component = {
++	.name		= "q6afe-dai-component",
++	.dapm_widgets = q6afe_dai_widgets,
++	.num_dapm_widgets = ARRAY_SIZE(q6afe_dai_widgets),
++	.controls = q6afe_config_controls,
++	.num_controls = ARRAY_SIZE(q6afe_config_controls),
++	.dapm_routes = q6afe_dapm_routes,
++	.num_dapm_routes = ARRAY_SIZE(q6afe_dapm_routes),
++	.of_xlate_dai_name = q6afe_of_xlate_dai_name,
++
++};
++
++int q6afe_dai_dev_probe(struct device *dev)
++{
++	int rc = 0;
++	struct q6afe_dai_data *dai_data;
++
++	dai_data = devm_kzalloc(dev, sizeof(*dai_data), GFP_KERNEL);
++	if (!dai_data)
++		rc = -ENOMEM;
++
++	q6afe_set_dai_data(dev, dai_data);
++
++	return  devm_snd_soc_register_component(dev, &q6afe_dai_component,
++					  q6afe_dais, ARRAY_SIZE(q6afe_dais));
++}
++EXPORT_SYMBOL_GPL(q6afe_dai_dev_probe);
++
++int q6afe_dai_dev_remove(struct device *dev)
++{
++	return 0;
++}
++EXPORT_SYMBOL_GPL(q6afe_dai_dev_remove);
++MODULE_DESCRIPTION("Q6 Audio Fronend dai driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/sound/soc/qcom/qdsp6/q6afe.h b/sound/soc/qcom/qdsp6/q6afe.h
+index 43df524f01bb..647ed2d15545 100644
+--- a/sound/soc/qcom/qdsp6/q6afe.h
++++ b/sound/soc/qcom/qdsp6/q6afe.h
+@@ -26,6 +26,9 @@ struct q6afe_port;
+ void q6afe_set_dai_data(struct device *dev, void *data);
+ void *q6afe_get_dai_data(struct device *dev);
+ 
++int q6afe_dai_dev_probe(struct device *dev);
++int q6afe_dai_dev_remove(struct device *dev);
++
+ struct q6afe_port *q6afe_port_get_from_id(struct device *dev, int id);
+ int q6afe_port_start(struct q6afe_port *port);
+ int q6afe_port_stop(struct q6afe_port *port);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.15.1
