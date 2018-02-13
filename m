@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934017AbeBMJI0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 04:08:26 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:34045 "EHLO
+        id S934038AbeBMJIf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 04:08:35 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:54189 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933897AbeBMJIF (ORCPT
+        with ESMTP id S933824AbeBMJIa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:08:05 -0500
-Date: Tue, 13 Feb 2018 01:07:42 -0800
-From: tip-bot for Jia Zhang <tipbot@zytor.com>
-Message-ID: <tip-595dd46ebfc10be041a365d0a3fa99df50b6ba73@git.kernel.org>
-Cc: torvalds@linux-foundation.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, jolsa@kernel.org, mingo@kernel.org,
-        zhang.jia@linux.alibaba.com, tglx@linutronix.de, peterz@infradead.org,
-        viro@zeniv.linux.org.uk
-Reply-To: peterz@infradead.org, viro@zeniv.linux.org.uk, tglx@linutronix.de,
-        zhang.jia@linux.alibaba.com, mingo@kernel.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        torvalds@linux-foundation.org
-In-Reply-To: <1518446694-21124-2-git-send-email-zhang.jia@linux.alibaba.com>
-References: <1518446694-21124-2-git-send-email-zhang.jia@linux.alibaba.com>
+        Tue, 13 Feb 2018 04:08:30 -0500
+Date: Tue, 13 Feb 2018 01:01:30 -0800
+From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
+Message-ID: <tip-f7bafa2b05ef25eda1d9179fd930b0330cf2b7d1@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, dvlasenk@redhat.com, brgerst@gmail.com,
+        torvalds@linux-foundation.org, luto@kernel.org, bp@alien8.de,
+        mingo@kernel.org, jpoimboe@redhat.com, tglx@linutronix.de,
+        peterz@infradead.org, linux@dominikbrodowski.net, hpa@zytor.com
+Reply-To: linux@dominikbrodowski.net, hpa@zytor.com, peterz@infradead.org,
+        tglx@linutronix.de, dvlasenk@redhat.com, linux-kernel@vger.kernel.org,
+        brgerst@gmail.com, torvalds@linux-foundation.org, bp@alien8.de,
+        luto@kernel.org, mingo@kernel.org, jpoimboe@redhat.com
+In-Reply-To: <20180211104949.12992-4-linux@dominikbrodowski.net>
+References: <20180211104949.12992-4-linux@dominikbrodowski.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] vfs/proc/kcore, x86/mm/kcore: Fix SMAP fault when
- dumping vsyscall user page
-Git-Commit-ID: 595dd46ebfc10be041a365d0a3fa99df50b6ba73
+Subject: [tip:x86/pti] x86/entry/64: Interleave XOR register clearing with
+ PUSH instructions
+Git-Commit-ID: f7bafa2b05ef25eda1d9179fd930b0330cf2b7d1
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,80 +36,190 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  595dd46ebfc10be041a365d0a3fa99df50b6ba73
-Gitweb:     https://git.kernel.org/tip/595dd46ebfc10be041a365d0a3fa99df50b6ba73
-Author:     Jia Zhang <zhang.jia@linux.alibaba.com>
-AuthorDate: Mon, 12 Feb 2018 22:44:53 +0800
+Commit-ID:  f7bafa2b05ef25eda1d9179fd930b0330cf2b7d1
+Gitweb:     https://git.kernel.org/tip/f7bafa2b05ef25eda1d9179fd930b0330cf2b7d1
+Author:     Dominik Brodowski <linux@dominikbrodowski.net>
+AuthorDate: Sun, 11 Feb 2018 11:49:44 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 09:15:58 +0100
+CommitDate: Tue, 13 Feb 2018 09:04:53 +0100
 
-vfs/proc/kcore, x86/mm/kcore: Fix SMAP fault when dumping vsyscall user page
+x86/entry/64: Interleave XOR register clearing with PUSH instructions
 
-Commit:
+Same as is done for syscalls, interleave XOR with PUSH instructions
+for exceptions/interrupts, in order to minimize the cost of the
+additional instructions required for register clearing.
 
-  df04abfd181a ("fs/proc/kcore.c: Add bounce buffer for ktext data")
-
-... introduced a bounce buffer to work around CONFIG_HARDENED_USERCOPY=y.
-However, accessing the vsyscall user page will cause an SMAP fault.
-
-Replace memcpy() with copy_from_user() to fix this bug works, but adding
-a common way to handle this sort of user page may be useful for future.
-
-Currently, only vsyscall page requires KCORE_USER.
-
-Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: jolsa@redhat.com
-Link: http://lkml.kernel.org/r/1518446694-21124-2-git-send-email-zhang.jia@linux.alibaba.com
+Cc: dan.j.williams@intel.com
+Link: http://lkml.kernel.org/r/20180211104949.12992-4-linux@dominikbrodowski.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/mm/init_64.c | 3 +--
- fs/proc/kcore.c       | 4 ++++
- include/linux/kcore.h | 1 +
- 3 files changed, 6 insertions(+), 2 deletions(-)
+ arch/x86/entry/calling.h  | 40 +++++++++++++++++++---------------------
+ arch/x86/entry/entry_64.S | 30 +++++++++++++++++++++---------
+ 2 files changed, 40 insertions(+), 30 deletions(-)
 
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 1ab42c8..6aa33d1 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1193,8 +1193,7 @@ void __init mem_init(void)
- 	register_page_bootmem_info();
+diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+index 3bda317..a05cbb8 100644
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -101,44 +101,42 @@ For 32-bit we have the following conventions - kernel is built with
+ 	addq	$-(15*8), %rsp
+ 	.endm
  
- 	/* Register memory areas for /proc/kcore */
--	kclist_add(&kcore_vsyscall, (void *)VSYSCALL_ADDR,
--			 PAGE_SIZE, KCORE_OTHER);
-+	kclist_add(&kcore_vsyscall, (void *)VSYSCALL_ADDR, PAGE_SIZE, KCORE_USER);
+-	.macro SAVE_REGS offset=0
++	.macro SAVE_AND_CLEAR_REGS offset=0
++	/*
++	 * Save registers and sanitize registers of values that a
++	 * speculation attack might otherwise want to exploit. The
++	 * lower registers are likely clobbered well before they
++	 * could be put to use in a speculative execution gadget.
++	 * Interleave XOR with PUSH for better uop scheduling:
++	 */
+ 	movq %rdi, 14*8+\offset(%rsp)
+ 	movq %rsi, 13*8+\offset(%rsp)
+ 	movq %rdx, 12*8+\offset(%rsp)
+ 	movq %rcx, 11*8+\offset(%rsp)
+ 	movq %rax, 10*8+\offset(%rsp)
+ 	movq %r8,  9*8+\offset(%rsp)
++	xorq %r8, %r8				/* nospec r8 */
+ 	movq %r9,  8*8+\offset(%rsp)
++	xorq %r9, %r9				/* nospec r9 */
+ 	movq %r10, 7*8+\offset(%rsp)
++	xorq %r10, %r10				/* nospec r10 */
+ 	movq %r11, 6*8+\offset(%rsp)
++	xorq %r11, %r11				/* nospec r11 */
+ 	movq %rbx, 5*8+\offset(%rsp)
++	xorl %ebx, %ebx				/* nospec rbx */
+ 	movq %rbp, 4*8+\offset(%rsp)
++	xorl %ebp, %ebp				/* nospec rbp */
+ 	movq %r12, 3*8+\offset(%rsp)
++	xorq %r12, %r12				/* nospec r12 */
+ 	movq %r13, 2*8+\offset(%rsp)
++	xorq %r13, %r13				/* nospec r13 */
+ 	movq %r14, 1*8+\offset(%rsp)
++	xorq %r14, %r14				/* nospec r14 */
+ 	movq %r15, 0*8+\offset(%rsp)
++	xorq %r15, %r15				/* nospec r15 */
+ 	UNWIND_HINT_REGS offset=\offset
+ 	.endm
  
- 	mem_init_print_info(NULL);
- }
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index e8a93bc..d1e8276 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -510,6 +510,10 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 			/* we have to zero-fill user buffer even if no read */
- 			if (copy_to_user(buffer, buf, tsz))
- 				return -EFAULT;
-+		} else if (m->type == KCORE_USER) {
-+			/* User page is handled prior to normal kernel page: */
-+			if (copy_to_user(buffer, (char *)start, tsz))
-+				return -EFAULT;
- 		} else {
- 			if (kern_addr_valid(start)) {
- 				/*
-diff --git a/include/linux/kcore.h b/include/linux/kcore.h
-index 7ff25a8..80db19d 100644
---- a/include/linux/kcore.h
-+++ b/include/linux/kcore.h
-@@ -10,6 +10,7 @@ enum kcore_type {
- 	KCORE_VMALLOC,
- 	KCORE_RAM,
- 	KCORE_VMEMMAP,
-+	KCORE_USER,
- 	KCORE_OTHER,
- };
+-	/*
+-	 * Sanitize registers of values that a speculation attack
+-	 * might otherwise want to exploit. The lower registers are
+-	 * likely clobbered well before they could be put to use in
+-	 * a speculative execution gadget:
+-	 */
+-	.macro CLEAR_REGS_NOSPEC
+-	xorl %ebp, %ebp
+-	xorl %ebx, %ebx
+-	xorq %r8, %r8
+-	xorq %r9, %r9
+-	xorq %r10, %r10
+-	xorq %r11, %r11
+-	xorq %r12, %r12
+-	xorq %r13, %r13
+-	xorq %r14, %r14
+-	xorq %r15, %r15
+-	.endm
+-
+ 	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
+ 	popq %r15
+ 	popq %r14
+@@ -177,7 +175,7 @@ For 32-bit we have the following conventions - kernel is built with
+  * is just setting the LSB, which makes it an invalid stack address and is also
+  * a signal to the unwinder that it's a pt_regs pointer in disguise.
+  *
+- * NOTE: This macro must be used *after* SAVE_REGS because it corrupts
++ * NOTE: This macro must be used *after* SAVE_AND_CLEAR_REGS because it corrupts
+  * the original rbp.
+  */
+ .macro ENCODE_FRAME_POINTER ptregs_offset=0
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 7351c91..07692b4 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -565,8 +565,7 @@ END(irq_entries_start)
+ 1:
  
+ 	ALLOC_PT_GPREGS_ON_STACK
+-	SAVE_REGS
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS
+ 	ENCODE_FRAME_POINTER
+ 
+ 	testb	$3, CS(%rsp)
+@@ -1114,8 +1113,7 @@ ENTRY(xen_failsafe_callback)
+ 	UNWIND_HINT_IRET_REGS
+ 	pushq	$-1 /* orig_ax = -1 => not a system call */
+ 	ALLOC_PT_GPREGS_ON_STACK
+-	SAVE_REGS
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS
+ 	ENCODE_FRAME_POINTER
+ 	jmp	error_exit
+ END(xen_failsafe_callback)
+@@ -1159,8 +1157,7 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
+ ENTRY(paranoid_entry)
+ 	UNWIND_HINT_FUNC
+ 	cld
+-	SAVE_REGS 8
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS 8
+ 	ENCODE_FRAME_POINTER 8
+ 	movl	$1, %ebx
+ 	movl	$MSR_GS_BASE, %ecx
+@@ -1211,8 +1208,7 @@ END(paranoid_exit)
+ ENTRY(error_entry)
+ 	UNWIND_HINT_FUNC
+ 	cld
+-	SAVE_REGS 8
+-	CLEAR_REGS_NOSPEC
++	SAVE_AND_CLEAR_REGS 8
+ 	ENCODE_FRAME_POINTER 8
+ 	testb	$3, CS+8(%rsp)
+ 	jz	.Lerror_kernelspace
+@@ -1399,18 +1395,34 @@ ENTRY(nmi)
+ 	pushq   (%rdx)		/* pt_regs->dx */
+ 	pushq   %rcx		/* pt_regs->cx */
+ 	pushq   %rax		/* pt_regs->ax */
++	/*
++	 * Sanitize registers of values that a speculation attack
++	 * might otherwise want to exploit. The lower registers are
++	 * likely clobbered well before they could be put to use in
++	 * a speculative execution gadget. Interleave XOR with PUSH
++	 * for better uop scheduling:
++	 */
+ 	pushq   %r8		/* pt_regs->r8 */
++	xorq    %r8, %r8	/* nospec   r8 */
+ 	pushq   %r9		/* pt_regs->r9 */
++	xorq    %r9, %r9	/* nospec   r9 */
+ 	pushq   %r10		/* pt_regs->r10 */
++	xorq    %r10, %r10	/* nospec   r10 */
+ 	pushq   %r11		/* pt_regs->r11 */
++	xorq    %r11, %r11	/* nospec   r11*/
+ 	pushq	%rbx		/* pt_regs->rbx */
++	xorl    %ebx, %ebx	/* nospec   rbx*/
+ 	pushq	%rbp		/* pt_regs->rbp */
++	xorl    %ebp, %ebp	/* nospec   rbp*/
+ 	pushq	%r12		/* pt_regs->r12 */
++	xorq    %r12, %r12	/* nospec   r12*/
+ 	pushq	%r13		/* pt_regs->r13 */
++	xorq    %r13, %r13	/* nospec   r13*/
+ 	pushq	%r14		/* pt_regs->r14 */
++	xorq    %r14, %r14	/* nospec   r14*/
+ 	pushq	%r15		/* pt_regs->r15 */
++	xorq    %r15, %r15	/* nospec   r15*/
+ 	UNWIND_HINT_REGS
+-	CLEAR_REGS_NOSPEC
+ 	ENCODE_FRAME_POINTER
+ 
+ 	/*
