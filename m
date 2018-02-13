@@ -1,29 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965117AbeBMP01 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 10:26:27 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:54403 "EHLO
+        id S965154AbeBMP0t (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 10:26:49 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:58203 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964929AbeBMP0Z (ORCPT
+        with ESMTP id S965072AbeBMP0r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 10:26:25 -0500
-Date: Tue, 13 Feb 2018 07:25:56 -0800
-From: tip-bot for Arnd Bergmann <tipbot@zytor.com>
-Message-ID: <tip-01684e72f16727e6ae0aeb1392f478e11ec5b8f7@git.kernel.org>
-Cc: mhiramat@kernel.org, torvalds@linux-foundation.org, arnd@arndb.de,
-        hpa@zytor.com, jbacik@fb.com, ast@kernel.org, nico@linaro.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@kernel.org,
-        tglx@linutronix.de
-Reply-To: tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, nico@linaro.org, ast@kernel.org, jbacik@fb.com,
-        hpa@zytor.com, arnd@arndb.de, torvalds@linux-foundation.org,
-        mhiramat@kernel.org
-In-Reply-To: <20180202145634.200291-3-arnd@arndb.de>
-References: <20180202145634.200291-3-arnd@arndb.de>
+        Tue, 13 Feb 2018 10:26:47 -0500
+Date: Tue, 13 Feb 2018 07:25:28 -0800
+From: tip-bot for Will Deacon <tipbot@zytor.com>
+Message-ID: <tip-2963962dc910e57becfa0bb3df013b1d5c23179a@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, peterz@infradead.org,
+        tglx@linutronix.de, hpa@zytor.com, torvalds@linux-foundation.org,
+        dan.j.williams@intel.com, will.deacon@arm.com
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        peterz@infradead.org, hpa@zytor.com, torvalds@linux-foundation.org,
+        will.deacon@arm.com, dan.j.williams@intel.com
+In-Reply-To: <1517840166-15399-1-git-send-email-will.deacon@arm.com>
+References: <1517840166-15399-1-git-send-email-will.deacon@arm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/error_inject: Make just_return_func() globally
- visible
-Git-Commit-ID: 01684e72f16727e6ae0aeb1392f478e11ec5b8f7
+Subject: [tip:x86/pti] nospec: Move array_index_nospec() parameter checking
+ into separate macro
+Git-Commit-ID: 2963962dc910e57becfa0bb3df013b1d5c23179a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,46 +34,92 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  01684e72f16727e6ae0aeb1392f478e11ec5b8f7
-Gitweb:     https://git.kernel.org/tip/01684e72f16727e6ae0aeb1392f478e11ec5b8f7
-Author:     Arnd Bergmann <arnd@arndb.de>
-AuthorDate: Fri, 2 Feb 2018 15:56:19 +0100
+Commit-ID:  2963962dc910e57becfa0bb3df013b1d5c23179a
+Gitweb:     https://git.kernel.org/tip/2963962dc910e57becfa0bb3df013b1d5c23179a
+Author:     Will Deacon <will.deacon@arm.com>
+AuthorDate: Mon, 5 Feb 2018 14:16:06 +0000
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 14:33:35 +0100
+CommitDate: Tue, 13 Feb 2018 14:22:44 +0100
 
-x86/error_inject: Make just_return_func() globally visible
+nospec: Move array_index_nospec() parameter checking into separate macro
 
-With link time optimizations enabled, I get a link failure:
+For architectures providing their own implementation of
+array_index_mask_nospec() in asm/barrier.h, attempting to use WARN_ONCE() to
+complain about out-of-range parameters using WARN_ON() results in a mess
+of mutually-dependent include files.
 
-  ./ccLbOEHX.ltrans19.ltrans.o: In function `override_function_with_return':
-  <artificial>:(.text+0x7f3): undefined reference to `just_return_func'
+Rather than unpick the dependencies, simply have the core code in nospec.h
+perform the checking for us.
 
-Marking the symbol .globl makes it work as expected.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Josef Bacik <jbacik@fb.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Nicolas Pitre <nico@linaro.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: 540adea3809f ("error-injection: Separate error-injection from kprobe")
-Link: http://lkml.kernel.org/r/20180202145634.200291-3-arnd@arndb.de
+Link: http://lkml.kernel.org/r/1517840166-15399-1-git-send-email-will.deacon@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/lib/error-inject.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/nospec.h | 36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/lib/error-inject.c b/arch/x86/lib/error-inject.c
-index 7b881d0..3cdf061 100644
---- a/arch/x86/lib/error-inject.c
-+++ b/arch/x86/lib/error-inject.c
-@@ -7,6 +7,7 @@ asmlinkage void just_return_func(void);
+diff --git a/include/linux/nospec.h b/include/linux/nospec.h
+index b99bced..fbc98e2 100644
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -20,20 +20,6 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
+ 						    unsigned long size)
+ {
+ 	/*
+-	 * Warn developers about inappropriate array_index_nospec() usage.
+-	 *
+-	 * Even if the CPU speculates past the WARN_ONCE branch, the
+-	 * sign bit of @index is taken into account when generating the
+-	 * mask.
+-	 *
+-	 * This warning is compiled out when the compiler can infer that
+-	 * @index and @size are less than LONG_MAX.
+-	 */
+-	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,
+-			"array_index_nospec() limited to range of [0, LONG_MAX]\n"))
+-		return 0;
+-
+-	/*
+ 	 * Always calculate and emit the mask even if the compiler
+ 	 * thinks the mask is not needed. The compiler does not take
+ 	 * into account the value of @index under speculation.
+@@ -44,6 +30,26 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
+ #endif
  
- asm(
- 	".type just_return_func, @function\n"
-+	".globl just_return_func\n"
- 	"just_return_func:\n"
- 	"	ret\n"
- 	".size just_return_func, .-just_return_func\n"
+ /*
++ * Warn developers about inappropriate array_index_nospec() usage.
++ *
++ * Even if the CPU speculates past the WARN_ONCE branch, the
++ * sign bit of @index is taken into account when generating the
++ * mask.
++ *
++ * This warning is compiled out when the compiler can infer that
++ * @index and @size are less than LONG_MAX.
++ */
++#define array_index_mask_nospec_check(index, size)				\
++({										\
++	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,			\
++	    "array_index_nospec() limited to range of [0, LONG_MAX]\n"))	\
++		_mask = 0;							\
++	else									\
++		_mask = array_index_mask_nospec(index, size);			\
++	_mask;									\
++})
++
++/*
+  * array_index_nospec - sanitize an array index after a bounds check
+  *
+  * For a code sequence like:
+@@ -61,7 +67,7 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
+ ({									\
+ 	typeof(index) _i = (index);					\
+ 	typeof(size) _s = (size);					\
+-	unsigned long _mask = array_index_mask_nospec(_i, _s);		\
++	unsigned long _mask = array_index_mask_nospec_check(_i, _s);	\
+ 									\
+ 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
+ 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
