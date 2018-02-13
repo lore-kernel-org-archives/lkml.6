@@ -1,222 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965349AbeBMRno (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:43:44 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:34095 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934279AbeBMRnn (ORCPT
+        id S965373AbeBMRnr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:43:47 -0500
+Received: from mail-wr0-f181.google.com ([209.85.128.181]:42853 "EHLO
+        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965169AbeBMRno (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:43:43 -0500
-X-Google-Smtp-Source: AH8x226fRYSXXVhgIUCjUXGzV3gM557YsoWcRIWFiVIf5SwhgYpnHmezcLgXEzTR+9vy4L+ZSUzTWEZzmQ4YcBbThmw=
-MIME-Version: 1.0
-In-Reply-To: <be0e422c-465f-954e-254f-21a5b5766bed@lechnology.com>
-References: <20180213152524.16620-1-brgl@bgdev.pl> <be0e422c-465f-954e-254f-21a5b5766bed@lechnology.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
+        Tue, 13 Feb 2018 12:43:44 -0500
+X-Google-Smtp-Source: AH8x225e+70Ivx+ll1EJ35YKPqdYf+rklHK0I/1rcbrCO+fBxIp391Nt+VsYWhVtNSbcPvqB9h8NBA==
 Date: Tue, 13 Feb 2018 18:43:41 +0100
-Message-ID: <CAMRc=Mc_CuwV+N8Kn_qhF8a4ReLPW+AEvDGJe+RVTv_-CKHqzQ@mail.gmail.com>
-Subject: Re: [PATCH] reset: add support for non-DT systems
-To: David Lechner <david@lechnology.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Thinkpad X1 Carbon 3rd - Reducing the compressed framebuffer size
+Message-ID: <20180213174341.abcjlfjymxbcz25t@pali>
+References: <20180206152143.vea6si7ncjj7sxyq@pali>
+ <20180213085030.kiksdi2a7ksae5wz@pali>
+ <20180213132726.GD5453@intel.com>
+ <20180213133842.i5z5jj3sllorsy2w@pali>
+ <20180213153654.GG5453@intel.com>
+ <20180213160437.gy5luyygjvuktuqx@pali>
+ <20180213161221.GK5453@intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="36owxysgwas25iow"
+Content-Disposition: inline
+In-Reply-To: <20180213161221.GK5453@intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-13 18:17 GMT+01:00 David Lechner <david@lechnology.com>:
-> On 02/13/2018 09:25 AM, Bartosz Golaszewski wrote:
->>
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> The reset framework only supports device-tree. There are some platforms
->> however, which need to use it even in legacy, board-file based mode.
->>
->> An example of such architecture is the DaVinci family of SoCs which
->> supports both device tree and legacy boot modes and we don't want to
->> introduce any regressions.
->>
->> We're currently working on converting the platform from its hand-crafted
->> clock API to using the common clock framework. Part of the overhaul will
->> be representing the chip's power sleep controller's reset lines using
->> the reset framework.
->>
->> This changeset extends the core reset code with a new field in the
->> reset controller struct which contains an array of lookup entries. Each
->> entry contains the device name and an additional, optional identifier
->> string.
->>
->> Drivers can register a set of reset lines using this lookup table and
->> concerned devices can access them using the regular reset_control API.
->>
->> This new function is only called as a fallback in case the of_node
->> field is NULL and doesn't change anything for current users.
->>
->> Tested with a dummy reset driver with several lookup entries.
->>
->> An example lookup table can look like this:
->>
->> static const struct reset_lookup foobar_reset_lookup[] = {
->>         [FOO_RESET] = { .dev = "foo", .id = "foo_id" },
->>         [BAR_RESET] = { .dev = "bar", .id = NULL },
->>         { }
->> };
->>
->> where FOO_RESET and BAR_RESET will correspond with the id parameters
->> of reset callbacks.
->>
->> Cc: Sekhar Nori <nsekhar@ti.com>
->> Cc: Kevin Hilman <khilman@baylibre.com>
->> Cc: David Lechner <david@lechnology.com>
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> ---
->
->
-> Looks good to me. I just made a few very minor comments. I will
-> try to use this in PSC driver later today.
->
 
-Cool, if it works for you - feel free to include it in your series.
+--36owxysgwas25iow
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
->>   drivers/reset/core.c             | 43
->> ++++++++++++++++++++++++++++++++++++++--
->>   include/linux/reset-controller.h | 13 ++++++++++++
->>   2 files changed, 54 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
->> index da4292e9de97..ba7011c6e06f 100644
->> --- a/drivers/reset/core.c
->> +++ b/drivers/reset/core.c
->> @@ -493,12 +493,51 @@ struct reset_control *__of_reset_control_get(struct
->> device_node *node,
->>   }
->>   EXPORT_SYMBOL_GPL(__of_reset_control_get);
->>   +static struct reset_control *
->> +__reset_control_get_lookup(struct device *dev, const char *id,
->
->
-> Based on the name of the function, I expected this to return
-> struct reset_lookup. Perhaps __reset_control_lookup() or
-> __reset_control_match_lookup() would be a slightly better name?
->
->
->> +                          bool shared, bool optional)
->> +{
->> +       struct reset_controller_dev *rcdev;
->> +       const char *dev_id = dev_name(dev);
->> +       struct reset_control *rstc = NULL;
->> +       const struct reset_lookup *lookup;
->> +       int index;
->> +
->> +       mutex_lock(&reset_list_mutex);
->> +
->> +       list_for_each_entry(rcdev, &reset_controller_list, list) {
->> +               if (!rcdev->lookup)
->> +                       continue;
->> +
->> +               lookup = rcdev->lookup;
->> +               for (index = 0; lookup->dev; index++, lookup++) {
->> +                       if (strcmp(dev_id, lookup->dev))
->> +                               continue;
->> +
->> +                       if ((!id && !lookup->id) ||
->> +                           (id && lookup->id && !strcmp(id, lookup->id)))
->> {
->> +                               rstc = __reset_control_get_internal(rcdev,
->> +                                                               index,
->> shared);
+On Tuesday 13 February 2018 18:12:21 Ville Syrj=C3=A4l=C3=A4 wrote:
+> On Tue, Feb 13, 2018 at 05:04:37PM +0100, Pali Roh=C3=A1r wrote:
+> > $ cat /sys/kernel/debug/dri/0/i915_gem_stolen
+> > Stolen:
+> >    ffff8b55bf17e080:    g        16KiB 40 40 [ 0 0 0 0 ] 0  LLC dirty (=
+pinned x 1) (ggtt offset: 00083000, size: 00004000, type: 0) (stolen: 00001=
+000)
+> >    ffff8b55c2693040:    g        16KiB 40 40 [ 0 0 0 0 ] 0  LLC dirty (=
+pinned x 1) (ggtt offset: 02b9f000, size: 00004000, type: 0) (stolen: 00005=
+000)
+> >    ffff8b55bf9a7300:    g        16KiB 40 40 [ 0 0 0 0 ] 0  LLC dirty (=
+pinned x 0) (ggtt offset: 0f6b4000, size: 00004000, type: 0) (stolen: 00009=
+000)
+> >    ffff8b55a6161040:    g        16KiB 40 40 [ 0 0 0 0 ] 0  LLC dirty (=
+pinned x 0) (ggtt offset: 0937f000, size: 00004000, type: 0) (stolen: 0000d=
+000)
+> >    ffff8b5563e0dac0:    g        16KiB 40 40 [ 0 0 0 0 ] 0  LLC dirty (=
+pinned x 0) (ggtt offset: 0f714000, size: 00004000, type: 0) (stolen: 00019=
+000)
+> >    ffff8b55bf17e800:    g         4KiB 41 00 [ 0 0 0 0 ] 0  LLC (pinned=
+ x 1) (ggtt offset: ffffe000, size: 00001000, type: 0) (stolen: 0012c000)
+> >    ffff8b55bf02d540:    g        16KiB 40 40 [ 0 0 0 0 ] 0  LLC dirty (=
+pinned x 1) (ggtt offset: 00141000, size: 00004000, type: 0) (stolen: 0012d=
+000)
+> >    ffff8b55c2989340:    g        16KiB 40 40 [ 0 0 0 0 ] 0  LLC dirty (=
+pinned x 1) (ggtt offset: 00148000, size: 00004000, type: 0) (stolen: 00131=
+000)
+> >    ffff8b55c29890c0:    g        16KiB 40 40 [ 0 0 0 0 ] 0  LLC dirty (=
+pinned x 1) (ggtt offset: 0014f000, size: 00004000, type: 0) (stolen: 00135=
+000)
+> >    ffff8b55c2989840:    g        16KiB 40 40 [ 0 0 0 0 ] 0  LLC dirty (=
+pinned x 1) (ggtt offset: 00156000, size: 00004000, type: 0) (stolen: 00139=
+000)
+> >    ffff8b55bf02da40:  p g     14400KiB 77 00 [ 0 0 0 0 ] 0  uncached di=
+rty (name: 1) (pinned x 1) (display) (ggtt offset: 0015a000, size: 00e10000=
+, type: 0) (stolen: 0013d000) (p mappable)
+> >    ffff8b556dfba780:    g        16KiB 40 40 [ 0 0 0 0 ] 0  LLC dirty (=
+pinned x 0) (ggtt offset: 0ad2a000, size: 00004000, type: 0) (stolen: 01655=
+000)
+> >=20
+> > > likely you'll have the fbdev framebuffer taking up a sizeable chunk.
+> >=20
+> > Seems 14MB.
+> >=20
+> > > You could get some back by reducing fbdev depth to 16bpp, or even 8bp=
+p,
+> > > but I'm not convinced the fbdev gamma LUT stuff really works currently
+> > > so you might end up with bogus colors in your vts with that.
+> >=20
+> > Ok, I could try it. Via fbset tool?
+>=20
+> Kernel command line. We don't allow resizing the fbdev fb once it's
+> created.
 
-Ugh, I noticed that this needs a break here, otherwise we'll always
-iterate over all the entries.
+Ok, will try.
 
->> +                       }
->> +               }
->> +       }
->> +
->> +       mutex_unlock(&reset_list_mutex);
->> +
->> +       if (!rstc)
->> +               return optional ? NULL : ERR_PTR(-ENOENT);
->> +
->> +       return rstc;
->> +}
->> +
->>   struct reset_control *__reset_control_get(struct device *dev, const char
->> *id,
->>                                           int index, bool shared, bool
->> optional)
->>   {
->>         if (dev->of_node)
->> -               return __of_reset_control_get(dev->of_node, id, index,
->> shared,
->> -                                             optional);
->> +               return __of_reset_control_get(dev->of_node, id,
->> +                                             index, shared, optional);
->
->
-> I don't understand why this line is changed. It is just being rearranged?
->
+> >=20
+> > > >=20
+> > > > [    0.000000] Memory: 7972840K/8282704K available (6196K kernel co=
+de, 1159K rwdata, 2848K rodata, 1408K init, 688K bss, 309864K reserved, 0K =
+cma-reserved)
+> > > >=20
+> > > > > The BIOS may or may not provide a knob to change the size
+> > > > > of the stolen memory.
+> > > >=20
+> > > > In BIOS Setup screen I have option to choose GPU memory and I set i=
+t to
+> > > > max 512MB. So this is not the right option...
+> > > >=20
+> > > > And why cannot kernel use some continuous check of RAM itself?
+> > >=20
+> > > Because the hardware won't allow it.
+> >=20
+> > So it can be done only once after reboot? Or only prior to booting kern=
+el?
+>=20
+> Never.
 
-Yes, but I can leave it out of this patch.
+Never? Now I'm lost. Why then dmesg message instruct user to try set up
+it in BIOS if you say it is never possible?
 
->
->> +       else
->> +               return __reset_control_get_lookup(dev, id, shared,
->> optional);
->>         return optional ? NULL : ERR_PTR(-EINVAL);
->>   }
->> diff --git a/include/linux/reset-controller.h
->> b/include/linux/reset-controller.h
->> index adb88f8cefbc..0c081336e08b 100644
->> --- a/include/linux/reset-controller.h
->> +++ b/include/linux/reset-controller.h
->> @@ -22,6 +22,17 @@ struct reset_control_ops {
->>         int (*status)(struct reset_controller_dev *rcdev, unsigned long
->> id);
->>   };
->>   +/**
->> + * struct reset_lookup - a single entry in a reset lookup table
->> + *
->> + * @dev: name of the device associated with this reset
->> + * @id: additional reset identifier (if the device uses multiple reset
->> lines)
->> + */
->> +struct reset_lookup {
->> +       const char *dev;
->> +       const char *id;
->> +};
->> +
->>   struct module;
->>   struct device_node;
->>   struct of_phandle_args;
->> @@ -34,6 +45,7 @@ struct of_phandle_args;
->>    * @list: internal list of reset controller devices
->>    * @reset_control_head: head of internal list of requested reset
->> controls
->>    * @of_node: corresponding device tree node as phandle target
->> + * @lookup: array of lookup entries associated with this request
->> controller
->
->
-> Might be nice to mention that this array must end with an empty struct (i.e.
-> lookup->dev == NULL)
->
->
->>    * @of_reset_n_cells: number of cells in reset line specifiers
->>    * @of_xlate: translation function to translate from specifier as found
->> in the
->>    *            device tree to id as given to the reset control ops
->> @@ -45,6 +57,7 @@ struct reset_controller_dev {
->>         struct list_head list;
->>         struct list_head reset_control_head;
->>         struct device_node *of_node;
->> +       const struct reset_lookup *lookup;
->>         int of_reset_n_cells;
->>         int (*of_xlate)(struct reset_controller_dev *rcdev,
->>                         const struct of_phandle_args *reset_spec);
->>
->
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
 
-Bartosz
+--36owxysgwas25iow
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCWoMjywAKCRCL8Mk9A+RD
+UpMbAJkBohPykjHUAY6fu51YkYdtlqE6QwCfeXdg/X5DSVoZbIYGA8HH8/vvRns=
+=88wb
+-----END PGP SIGNATURE-----
+
+--36owxysgwas25iow--
