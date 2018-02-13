@@ -1,114 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934754AbeBMQyC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 11:54:02 -0500
-Received: from mail-ve1eur01on0136.outbound.protection.outlook.com ([104.47.1.136]:22311
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        id S934828AbeBMQzt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 11:55:49 -0500
+Received: from mail-co1nam03on0078.outbound.protection.outlook.com ([104.47.40.78]:26704
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934279AbeBMQyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:54:00 -0500
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=avagin@virtuozzo.com;
-Date: Tue, 13 Feb 2018 08:53:38 -0800
-From: Andrei Vagin <avagin@virtuozzo.com>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: tip-bot for Jacob Shin <tipbot@zytor.com>,
-        kirill.shutemov@linux.intel.com, linux-tip-commits@vger.kernel.org,
-        tglx@linutronix.de, willy@infradead.org, gorcunov@openvz.org,
-        bp@suse.de, peterz@infradead.org, torvalds@linux-foundation.org,
-        mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        luto@amacapital.net
-Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Handle 5-level paging
- boot if kernel is above 4G
-Message-ID: <20180213165337.GA20735@outlook.office365.com>
-References: <tip-b4b56015ed1c98cbc9469e35ebbc4373a2844030@git.kernel.org>
- <20180213065155.GA14087@outlook.office365.com>
- <20180213080816.vwh64jiz23frjiot@node.shutemov.name>
- <20180213084121.GA19906@outlook.office365.com>
- <20180213090249.vnjwitt657jabnlt@node.shutemov.name>
+        id S934561AbeBMQzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 11:55:45 -0500
+Authentication-Results: spf=fail (sender IP is 192.88.168.50)
+ smtp.mailfrom=nxp.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=fail action=none header.from=nxp.com;
+From: Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
+To: <broonie@kernel.org>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <robh@kernel.org>
+CC: <mihai.serban@gmail.com>, <linux-imx@nxp.com>, <shegjiu.wang@nxp.com>,
+        <daniel.baluta@nxp.com>, <linux-kernel@vger.kernel.org>,
+        Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
+Subject: [PATCH v2 0/2] Add support for AK4458 DAC
+Date: Tue, 13 Feb 2018 16:14:46 +0200
+Message-ID: <1518531288-2017-1-git-send-email-cosmin.samoila@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-EOPAttributedMessage: 0
+X-Matching-Connectors: 131630145429392349;(91ab9b29-cfa4-454e-5278-08d120cd25b8);()
+X-Forefront-Antispam-Report: CIP:192.88.168.50;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39380400002)(396003)(376002)(39860400002)(346002)(2980300002)(1110001)(1109001)(339900001)(189003)(199004)(81156014)(104016004)(105606002)(97736004)(106466001)(8936002)(5660300001)(53936002)(81166006)(50226002)(316002)(16586007)(4326008)(110136005)(54906003)(47776003)(26826003)(305945005)(50466002)(956003)(498600001)(2906002)(356003)(2201001)(336011)(26005)(6666003)(86362001)(68736007)(8676002)(59450400001)(48376002)(51416003)(450100002)(36756003)(85426001)(42866002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM2PR03MB480;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;PTR:InfoDomainNonexistent;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD022;1:va2Tg9RqvwVoN0NuKsPeQ8eDI3MF9Zor/1AlTqLkMY19L1DOXwXUrtF6PFIQCasFBubzkBK7zEK7N8QGt0T2/H7myKgQmBcTe6yUkQ2jDKPYhqZON8vHtaQ3UVnjRfFV
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <20180213090249.vnjwitt657jabnlt@node.shutemov.name>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Originating-IP: [73.140.212.29]
-X-ClientProxiedBy: MWHPR06CA0010.namprd06.prod.outlook.com
- (2603:10b6:301:39::23) To HE1PR08MB0745.eurprd08.prod.outlook.com
- (2a01:111:e400:59b1::11)
+Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d5ef4f39-04a7-493b-3c4e-08d573025ded
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:HE1PR08MB0745;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR08MB0745;3:0gxksYzAmXDMjA1Mi092SJ9oAAczTJU4h9T1I90yYwjba0RZwbc6scF3jZfsfayl4ZngXtw+YJHkuj9yfJ/B5WIDjyYGrc4zSKYFrgG652tEGeysRQZ36tvQ2xvulqKSTvnhsx4klf0DK4ZgqtJUgp5tvPxAE5tW79NFuaR8IOWwO2/9+SL4OaW0ixufK1fB9wUb7woJCHgFSjDNDa+89sKCluP3CJ8TzbvYdvc4a5DsWhfWYzUoAgWqjHmXE/Oo;25:qzYM96JN6wsbWPT4w4qsCGx2+8pSGGzZKrWX9N9vgNbOk9vtCULZY+3NPBscF/fNjumC1xAqYz7Lm1mLsmtokTWXSR+2vZG3bqp5vrX+AmeorUUNLtEJDA+19F5vNLOmebTsUXtY3JIBw23IjMTGoJgL5873y2EvM48n0Gtf/5bVAPYZikkdhCYEedDn9Ge0MVnk5DBbUpjT0DhkTbpeXxym4/GKblGoqdQohDXFYpIACsSsMJwLMRMpkr4mMRyna5iG8KDMuNvFS1iSzLI0uKOIM3jLSK0eFFSh3trwlYZ/FHLwhayBfiwmhfVRyH/cKy51U6kHRtBAeDL88GcHnQ==;31:e4BQmJOTIVs5jDLbyMwQPE5tiMQj0S90n9HHyDKq4WjxKDp2v9fBr1GDY+kzEWBSHNMqzBt1pckqOxumlU2LdSL2cO6LdDDG8hVnc+jvCFXn8qbrowpyQ6Ak4yWr/+VZgeLRmPV/oOmlLTXoPzmUzlvqPCUHEPSTM+hXrlguIJFhYf6g5nCN0HD0c0cGk7bhf2KgbRXAnofDNEDHUdmKxRYJ395CrYKO9NSRwtVv8cE=
-X-MS-TrafficTypeDiagnostic: HE1PR08MB0745:
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR08MB0745;20:mOoaU0/9KhRm33it0woiLyOhRbLfsCdZtqKE7GWhI24rvPHiBMdSQreXS4N+Xi20s8YYDHzWCAc7oSdndD4hhGpetds0XPC1ZAvGMV5QDz/+UgoTDU6bhaV2Ft/g58IFrjz9vdi1PwEJFULPcPFGmUU3q7ZMYd8Qjwy7qa6+HB1dIsWLQ8MLbRs5y2hX+aeG8ncwLRau7t5dwu3vqCsk0iK8GfDsEQ1fkzhyAipytqgRSrdctJTLjRJ8Yw+7OG2YijJXlkokozagJYK1Gw8tWTOb+JeTnflCgrp4Vxh6DSSTTPH43cen8UqSML+0CVZAtxdSC3ZCCsKMCgIWOmwlS0ztx94Wt+Woe65N3E6OZGV9rFLG0xdFi0KyRl1LOHYRdWLQLfwy2yBqjYorXmiKMKY34voffsJeBik4VhQj/0x/PbxUYReDL/RnXq4aVRrd9fGyBMSYbxHk4QPnNXdJoLO7u6+z2vx+DxoKt06ULjSxfAz8miWncnopWwUwsu7n;4:6M94ojZ/8vRabCeuJF8hZWIp16Lg15smasLx4hh4kHOZdWqS1Hvdcpdp6qzfrhTmebHN3iq+cG5JAnHpHzNXhM3t/bH/RNLmxNteROps5a490+izvx/+uheFf9LHG1o7+hB3YCVHm3s1cPySt8zYhKAdQ1A6s3mLJwHl2jbadjDlx02CoEyBeITaiU5l3G78sHotyFsqUtX3KQBxxgCWKMvCwMvva57gKwYuvZcvQzKtgPeRvjEiPuzYKtmTybf2y2Wui6F37KtTiFzMfeUo5BcaT3zHnn6IuMEM1MTzYqkNz/M3K2AoU6EyVuaknfYM
-X-Microsoft-Antispam-PRVS: <HE1PR08MB07451655678C6400F1353BCACFF60@HE1PR08MB0745.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(251416522907027);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231101)(944501161)(6041288)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:HE1PR08MB0745;BCL:0;PCL:0;RULEID:;SRVR:HE1PR08MB0745;
+X-MS-Office365-Filtering-Correlation-Id: 6cb8b41c-7def-4591-891b-08d573029e7f
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603307);SRVR:DM2PR03MB480;
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB480;3:pGTePPi5QzTrBDc9jqj85G31NXV5Nkjj+xe9zt/sSodFiJ9jk0JMxh/jv3RSxjKGjDxp6e2H1D1ecF4CYr4+O94GS9gjnzt7OYNcjrUMUcAsp2luzomH0HABA3qUdpXOHum3yhMTOMI/tv0dSw/HkNKdTlyQIgBrEehqMALAwHXbXFqyPPwE+UW1qj2+S8CeCNuNlWAIlLmSJXzOvgSrdwO19M6fAKGN5zOgDAHaSJ0YtmyxQQKevarsX9EpYsdXro3meqkqRb1caNF67sgIkYbBqizyYfI4QLeAPS5QKnkQymVSI9UCH8H1Rfbae9oUiytmcvx2rKQqRBvSBVSqmgqfB/Wqb/72NY+6x+zjUjE=;25:IrcHtI/3eFv6+bRIMF4mhM02z2/cVBpfFAa1NkuOmb+aw0hB+ai8UUslBTbO0jCcbvUzO0i/asyXYI+7mhTWZcSTuyF3LRA6R1JPIXx66OG90dW0/dEXvfsyRTPG5HqfUpJzfVdYNqu/43epkNy16WaEPdHi2qDqlljOrNlge/JQHIKDLjv6q+QsR8Z0MfGvKlFG+kNLXgnDkns0a6+U3/EWeOTYdiOdKYzgn5JkIxo3AOg3h1BfJIQcjj8xi5yB0U0FIkKtrGXctS8VXXNeVknx4aSLzpVb3lamVoF+P6WhZILw9yKIhl0K48+rtzn4nYDNTGHu1TNlBfBL6e+xEA==
+X-MS-TrafficTypeDiagnostic: DM2PR03MB480:
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB480;31:oe84udcF9YvW7XG1GmkljAhWWGWfOgADgdCtDnsGWryoU68OrjzSO09rRGyL4RFbGvmzp31L8nHXlaOv0S+VbVSNQiUcSGWqsHtyYLZJwIHr190vo2DnmGMGoMVaJa9BzLBsQQnLXLzkzNlj0xsczp4QoHS61FQDxhkohmJUe4E67n6ABYCHKBtHXXEFliKYe3Mp5xmX3bwddQxogO06fWO/A/9xkUyOPeADI1wmEEk=;4:UBkpAKEXKRCNI0NVex5nCeHIENX5V5chN+xHpetw8SwJ+vwL+XYfa5ucrMJAQ011rKib5OfhohA35uHRLUtbi6Rc2PcEBaqHO0hFlHPT0Xf81ms/5TA1ap4s24WTGblUMKDzuTC2/YyNwd4OtJGiuzcLNV78ayrvkerApMt7+vz0oRFG1dLsi9mV25O4XAbJKuowh5/Dxblo/VZlVvVDsiODOm+KuaqtFTXt3S/SOHhIOeWqepkJTIYTZ8UaDCNALIwuwWAIuxwE7mLYegXo6w==
+X-Microsoft-Antispam-PRVS: <DM2PR03MB480A4EBA2FC4A753BDFAD049CF60@DM2PR03MB480.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(8121501046)(5005006)(3231101)(2400082)(944501161)(3002001)(93006095)(93001095)(10201501046)(6055026)(6096035)(20161123561025)(20161123556025)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123559100)(20161123565025)(20161123563025)(201708071742011);SRVR:DM2PR03MB480;BCL:0;PCL:0;RULEID:(400006);SRVR:DM2PR03MB480;
 X-Forefront-PRVS: 0582641F53
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(366004)(346002)(39850400004)(396003)(199004)(189003)(55016002)(97736004)(105586002)(8676002)(83506002)(86362001)(229853002)(575784001)(2906002)(93886005)(23686003)(106356001)(33656002)(58126008)(53936002)(6246003)(7736002)(305945005)(81156014)(81166006)(8936002)(69596002)(9686003)(5660300001)(53416004)(16586007)(7416002)(316002)(25786009)(6666003)(386003)(50466002)(6306002)(6506007)(1076002)(3846002)(6116002)(47776003)(16526019)(66066001)(186003)(26005)(4326008)(6916009)(7696005)(68736007)(2950100002)(52116002)(478600001)(966005)(76176011)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR08MB0745;H:outlook.office365.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?koi8-r?Q?1;HE1PR08MB0745;23:tGZZwa+dW46Ztmn6/d6AnasmPGZQr0yC9CqSY11UoJ3?=
- =?koi8-r?Q?Y/GWQm31q1OweoMABHsdBjJdj+ce5Y99HDhKtzB7752vKn+7SkynfyIbwYMLHj?=
- =?koi8-r?Q?d1nbz0cxokVvOixiPIQf6Ww4Z3m0CzxC5aJPUvJceRn98R55VSj2GFF/eT5RvJ?=
- =?koi8-r?Q?5EUCbBvzjtvSCtGPnxBlwrpnaebKvTQZoevPltO52pzDAU21Y9ajLDYSLIkMZR?=
- =?koi8-r?Q?zUT33QFIKTQpi/C2+5D4zdI131uSE+isgU6KajpVLYH/UCxWHlL5NeW21L+xc+?=
- =?koi8-r?Q?7AMS9hncqbFLF0q8FEpve9yWtvUGcsS7+z7dcPe4rYscypQNYdn2evayD4yAx4?=
- =?koi8-r?Q?nM873xkW6rZkMGUAui3rDELGYXVAwmqWC6LBPEMBXd1iZbRmdt3tB2HH0bradu?=
- =?koi8-r?Q?HdkEktNBGW98daTnGR8gEwXe2e+1w6ujdlBUEkz1tBO8MFhLiC4t7/qBa6/wSg?=
- =?koi8-r?Q?O2iqS1q51nlFBxMw9UmQBe1MjSOXwtn+EUGMNrUYNOySIsJ9XEo7RJMBYuACOD?=
- =?koi8-r?Q?AGTF7l7wwRZhUIBmdpY/0Ut8SJhIjvawp6V6Fn18YIdKD+Yi6I+M/edp02s/AR?=
- =?koi8-r?Q?YDXCuOzcM1/1mVPpsm9hThckix39Bk9fZgoXbbJZ8KQc7wasOrxKPONso9yoKX?=
- =?koi8-r?Q?2uLLEeWUni034o8HPS2ziJ8+pJ4zWD+1Mb0dFjPk+hQXKgb1DsiERhHFg1YoHN?=
- =?koi8-r?Q?G11rp4dnmJLESi4VAKRcI9XUDZ5GS0kspEH69gp12yqXIlomF5cvs5IJebs4wH?=
- =?koi8-r?Q?kFm5Tv1CeGD20sHxxDFwRjlvi1mNe+M0RBqLeuZ/2ZrZ2pbSgG7EpQOggC4cjz?=
- =?koi8-r?Q?yTPpaa4jiWDbLbETDobStRWzTBFpwfofgobemab08J6H92Mhd/KqZMS5uoxgbZ?=
- =?koi8-r?Q?k4Y5D6a1+Q3AzpHCqnoYaxYSSsAKyxdIa2DGQuplNe/+yH+DrKB1rSpuYsRwOD?=
- =?koi8-r?Q?tk9w8yezyBPMUX2py3lCp9/0xpI0OatdPL+hsPp1By8Oy7QyTu3D2VG5Keeg9i?=
- =?koi8-r?Q?YuX2oEkIctXuoLXuEm8ZVLQz/lkse17Ha4Z2H9PRuub6uDouKbhlDr87deNCKM?=
- =?koi8-r?Q?frKj71rcyTwLycXBxENdp2zXPgSiu1+9UHrfQz4Q+M5RCtv+fFTlM/IyWr556E?=
- =?koi8-r?Q?jyYTsbXin/VCN1CmYugk1o0Y/NErOq7Pun78suqwcgbH3n8I/WlKOpFwdYAlty?=
- =?koi8-r?Q?+Z139lFVPplHpEuphNe5DMr1hpYFky1aLurdFhx+jvTYRJOrf3KjgBdheK9zyD?=
- =?koi8-r?Q?d9wgSt62N2qxM/+0L/mfqvSQH2npVdDmpNRoh2gpjBRKgJeYeR+6kSDMdT2s3U?=
- =?koi8-r?Q?WzAtssMM4Iewo9+a/lTrQ=3D=3D?=
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR08MB0745;6:n6BWLQhoIz3vvVcIxi1mVEOyFySygB3/rcB0C0gTzK40VxBdMZRxfflupn5HeX/9RYamgEgWmu5HxOcBfUOOFMRQ3VHGMLokgc6X/bWI++w9CGFxoFmEzPEtzf+f4NkdjC0OjrbnS+P4fA199brTPWsLP3Xljr5de2JROBtH6xdewPmSUmA6cNOmzegGhODr11px4Xo7cmFQDaR8O+5O7DUKIsLlrgUOypCFCPOp2pEzsoit1ODKRcrp9Rb1plUtWWLhbGl9pS/PiU2oQq9OYCWNPLZ0/zmpHzYKskqKNmemTExk1PkgKiVRZ4olZjyjH/CUMHozWgzRXA3X1R8CXJh42KiY8rwyXxw/UNM/NJY=;5:9Qom5bghHxs3wVu43QuH4y9tcfRetB1wn+ZEkWAocM2JuYA27RxBZOtyozR/mpdwaNknl1fpl/Oi1wPuaykKaaBrgaWLYRv9EQqqo3JYKTNt+jcMc1I3q4o1d6aw6YFr2x6p0VPgMQVqz+bZChvfkEQ+lGUeFA65h5mCsFixY0M=;24:SM0EZiE8XvBkNcbbQBInlsmVpKVUvK6XG0oqBONefgraYUD9nUWziIulRIgbPt9YePTQ4kY6OHeHPxdQUnZJPz4eJvbg0JLMPnxjEAniZb8=;7:H4/yFmEZCdEeJPPBV7FQ9JjB7bWxUo0V4803qmelnTofnLLSYgH7rmsezo9rKCl+C2cnYNgbqyflfB/sAa4QaFQch/n0DqjtKUa5WUf7bLIis8dNKe2n14jMsmTx/Pp/mfUkxvdS1K4vQuUM+ZnCoROVNyetX68iHdh1aro1hS6sogiyWb/gqjV72KmJbhrZL+rgZFlZbUQLgqZovqWMZuhof+8A5pqDCH7C6pneIKMu2GLyHt2onSrBHxJ7jyfK
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM2PR03MB480;23:+MQQQtcadPI71gQt8rpmFBHfwsfk4N3J30as5v6NWQ?=
+ =?us-ascii?Q?24IfvZCX3r1ljF8yFuoKpkFwLY/NqJC9Umt1AcBtWLkqNmXIsNqvT8QWS3yl?=
+ =?us-ascii?Q?N9lqB7G3t5N+X0w/VxKwPA4j/to0P95IJqFJiyQiHdy8iht6wHK+5TPWJ+iD?=
+ =?us-ascii?Q?KDmyjSYfrBo/EYLnvKrxy2SBKJ8e41YA03StAoyOfwOjF7HWKDNQXpMccqoU?=
+ =?us-ascii?Q?qMQgIG6Azd1EO+Z1nkaaTyJeS9HYvYNJyueQML2G75NJGPRsx8iC6Z1wrQkP?=
+ =?us-ascii?Q?rvwaEhdwZ941B8DF3QxSRM8AAthDqA5pKIFjcyosIngumf1gD2NReG0mQZUN?=
+ =?us-ascii?Q?xnAN7Su9piVTloBpIZ7ApYALOCc4IN32qYVSMnRIa63i0wAPvfSuy3fg0FEf?=
+ =?us-ascii?Q?Ipi5oLm2WOyBpx1b+DCVi1op1sRzA23OdAoW6uEiH59BEU1AZZNjelvFTO0y?=
+ =?us-ascii?Q?neB6Q56NMP/8Bgdnb+kGG7Lg62HnLanuhl78q/NDuI1NyNofWeLRuwxN23yB?=
+ =?us-ascii?Q?H+ZjSWIKw03AbB5/6/gG6VHCZV4neEqnuOXRDbhej2Nz8zYVORtXxSzMUxsf?=
+ =?us-ascii?Q?rugxGggxJ/K3Sg/RP0xhvP1Q1bOeTWdRlKWwJaHzy+XH/RvVEsZsGdDNxyp3?=
+ =?us-ascii?Q?2XmIVLH4oExkh17JIBoFBhW6wyGQgDKQQSf6Az+toVtUxhDbHD9T2rU7f8MC?=
+ =?us-ascii?Q?/yu9M/JwSp1cdgnMv3wVB0EpPCMfA+MmH/sjwiJdnD9SQQ9a8Bt1NZJmeYcl?=
+ =?us-ascii?Q?OM9NdVjdoSCQNgEqH+jFX9Wxzt7+iETSUcOK0s4fy6jh6CPbICcKRFfTQQxy?=
+ =?us-ascii?Q?3gmyOUR7RGbz50dFRg6i5deCFTlrMOCB0wWh1x42EvA5MGaTuOb+4Y205OAL?=
+ =?us-ascii?Q?wOK7UU1XCnNfg7t4ldP6t+3C/UNLQvCCqbOccxj9Mo2aQTIzaooklClavZky?=
+ =?us-ascii?Q?TyWh7MFfq3siyI6XaxxApr8DWGtvP5CFfvOzxmjcCiVYsYfWafdmVtT12ppU?=
+ =?us-ascii?Q?IXWgxRwqBT27IRrm/vM1360XnztYhVdoFT3Dn2lbWYyPxq/6YI3N0VYxPNBz?=
+ =?us-ascii?Q?aq9F3qXue0tOvAm8QF2dIopExEvR6WSWYRxxBOagnQnPzi8VKWG0S4X1axJY?=
+ =?us-ascii?Q?cUTfOq6b4=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB480;6:Yp4iN50WVhdBaAQHN1ZNWJahPq10wZ1BAVQ1uOnLg2UEQFNAFyRK9Tw1cVbqXvQQ6DV3iWXQck6blUdBMDK2bAIjnma3ksW3P5msoHiV3Cceia+de9A7U5I0lIS/UAXhPmTIm4YmzXn/Yiu2BzbQF8UZBMOF7SmUuzw/w4KSkagRElF5mVOvrOdwjpAdDljdO/4U2PcgvKvUPVBL/eKBfuZlOZ/I+59+e23FUDSmj+oVJNLx6ujsAROyADkdF5L7esBJtsBPwPFs9AMAr/lH7NhRcj6/Eq1Tgmp3+POPbzYGKQb/X9dlmcN3u1MeLY6hPGbz5Mrh4whj8set5zDHYQJxzdJkPx0Dk/aiqyKC0Vw=;5:ZY0/zMpInRuV+LqoqGd0rFgMotaG6k8yLtrGRBNjtTZ3czZRyQ6sEFkplGCv3MbwSZLLas4nBwWbOWFw7XrAsy3EPt/e2khFwIXnplIQJsUIiBp+DgI2W/JnaUIPFcBuic/eB4IB7SaoGNGoC+F89BD6YY/6Oopn/cgxM3EwoUM=;24:b9aNDz7V4UPVqPgZ9hjctWEKbJq6w0RJLMKM6stQ1RXrbuyk9Q0yWCnRtdZwRyvgsSy2SBh+o1/9BC0yTGSJRVnKFsmML7dayV8yHcBiJck=;7:4MsItBaQozILCpGx/PU0oK1ynW+09Y5s/TfIcYQl3WkJRzpU2jpTcHodvldCehgJnB+CAn1IhgANz/kOf87CW7G37EdHiW1mAbOnh+s9P6xRIrI1rrx3rOEI4w3PhEymoB7PNZ1OVrdbpFIChb+g6kCJeN8vQHIL4epi1b+9dFKYn0tv573VazvW/Fzix/UUkuwVz9VokDkc5grLQNXU1R2TJCBWBFT/r4dRu9KhlhCFEj4vsPy6Jy7V4RR6l/zi
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR08MB0745;20:bInhY7K5OdNZ+x9WCwlswqM4GL0gS8vGOuYubzUcxy1/c6a5KQEb0fm9APOTHSs1XZLoB5T/0DKe7jwuyY5CDAc/WkV63RdoOxqk4K9cflfviP5pI8SxozWqwfmOaAJMC/9Td+wDp/E48dXDRamnS80p7EPyq6XdpwGp9ljvNp4=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2018 16:53:50.8092 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5ef4f39-04a7-493b-3c4e-08d573025ded
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR08MB0745
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2018 16:55:42.4400
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6cb8b41c-7def-4591-891b-08d573029e7f
+X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[192.88.168.50];Helo=[tx30smr01.am.freescale.net]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM2PR03MB480
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 12:02:49PM +0300, Kirill A. Shutemov wrote:
-> On Tue, Feb 13, 2018 at 12:41:22AM -0800, Andrei Vagin wrote:
-> > On Tue, Feb 13, 2018 at 11:08:16AM +0300, Kirill A. Shutemov wrote:
-> > > On Mon, Feb 12, 2018 at 10:51:56PM -0800, Andrei Vagin wrote:
-> > > > Hi Kirill,
-> > > > 
-> > > > Something is wrong in this patch.
-> 
-> Could you please check if this makes a difference?
+We support Normal Mode, TDM Mode and PM.
 
-The kernel booted with this patch. Thanks!
-https://travis-ci.org/avagin/linux/jobs/341030882
+Changes since V1:
+- support only i2c
+- i2c probe / remove/suspend/ resume moved into shared code
+- change enum array to separate variables
+- aggregate Volume control for Left and Right Channel
+- remove mux from DAPM
+- remove unused functions
+- remove unused controls
+- remove unused macros
+- use snd_soc_update_bits instead of soc_read + soc_write
+- use GPIOD
+- use SPDX identifier
+- use dac@10 instgitead of ak4458@10
+- use explicit power_on/off functions
+- add __maybe_unused attribute
+- use probe_new for i2c_probe
 
-> 
-> diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-> index 70b30f2bc9e0..99a0e7993252 100644
-> --- a/arch/x86/boot/compressed/head_64.S
-> +++ b/arch/x86/boot/compressed/head_64.S
-> @@ -332,7 +332,7 @@ ENTRY(startup_64)
->  
->  	/* Make sure we have GDT with 32-bit code segment */
->  	leaq	gdt(%rip), %rax
-> -	movl	%eax, gdt64+2(%rip)
-> +	movq	%rax, gdt64+2(%rip)
->  	lgdt	gdt64(%rip)
->  
->  	/*
-> -- 
->  Kirill A. Shutemov
+Cosmin-Gabriel Samoila (2):
+  ASoC: codecs: Add support for AK4458 DAC driver
+  ASoC: ak4458: Add bindings for AK4458 DAC
+
+ Documentation/devicetree/bindings/sound/ak4458.txt |  23 +
+ sound/soc/codecs/Kconfig                           |   6 +
+ sound/soc/codecs/Makefile                          |   2 +
+ sound/soc/codecs/ak4458.c                          | 684 +++++++++++++++++++++
+ sound/soc/codecs/ak4458.h                          |  75 +++
+ 5 files changed, 790 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/ak4458.txt
+ create mode 100644 sound/soc/codecs/ak4458.c
+ create mode 100644 sound/soc/codecs/ak4458.h
+
+-- 
+2.7.4
