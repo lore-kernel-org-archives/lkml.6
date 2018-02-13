@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934108AbeBMKOm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 05:14:42 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:46940 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933845AbeBMKOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 05:14:23 -0500
+        id S934584AbeBMKPw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 05:15:52 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5208 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934095AbeBMKOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 05:14:38 -0500
 From: Li Wei <liwei213@huawei.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <xuwei5@hisilicon.com>,
         <catalin.marinas@arm.com>, <will.deacon@arm.com>,
@@ -20,10 +20,12 @@ To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <xuwei5@hisilicon.com>,
 CC: <zangleigang@hisilicon.com>, <gengjianfeng@hisilicon.com>,
         <guodong.xu@linaro.org>, <zhangfei.gao@linaro.org>,
         <fengbaopeng@hisilicon.com>, <liwei213@huawei.com>
-Subject: [PATCH v8 0/5] scsi: ufs: add ufs driver code for Hisilicon Hi3660 SoC
-Date: Tue, 13 Feb 2018 18:14:07 +0800
-Message-ID: <20180213101412.5717-1-liwei213@huawei.com>
+Subject: [PATCH v8 4/5] arm64: defconfig: enable configs for Hisilicon ufs
+Date: Tue, 13 Feb 2018 18:14:11 +0800
+Message-ID: <20180213101412.5717-5-liwei213@huawei.com>
 X-Mailer: git-send-email 2.15.0
+In-Reply-To: <20180213101412.5717-1-liwei213@huawei.com>
+References: <20180213101412.5717-1-liwei213@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [100.107.89.192]
@@ -32,37 +34,28 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds driver support for UFS for Hi3660 SoC. It is verified on HiKey960 board.
+This enable configs for Hisilicon Hixxxx UFS driver.
 
-Li Wei (5):
-  scsi: ufs: add Hisilicon ufs driver code
-  dt-bindings: scsi: ufs: add document for hisi-ufs
-  arm64: dts: add ufs dts node
-  arm64: defconfig: enable configs for Hisilicon ufs
-  arm64: defconfig: enable f2fs and squashfs
+Signed-off-by: Li Wei <liwei213@huawei.com>
+Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
+---
+ arch/arm64/configs/defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
- Documentation/devicetree/bindings/ufs/ufs-hisi.txt |  37 ++
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi          |  19 +
- arch/arm64/configs/defconfig                       |  11 +
- drivers/scsi/ufs/Kconfig                           |   9 +
- drivers/scsi/ufs/Makefile                          |   1 +
- drivers/scsi/ufs/ufs-hisi.c                        | 623 +++++++++++++++++++++
- drivers/scsi/ufs/ufs-hisi.h                        | 116 ++++
- 7 files changed, 816 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/ufs/ufs-hisi.txt
- create mode 100644 drivers/scsi/ufs/ufs-hisi.c
- create mode 100644 drivers/scsi/ufs/ufs-hisi.h
-
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 6356c6da34ea..fa6f921eed86 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -174,6 +174,9 @@ CONFIG_BLK_DEV_SD=y
+ CONFIG_SCSI_SAS_ATA=y
+ CONFIG_SCSI_HISI_SAS=y
+ CONFIG_SCSI_HISI_SAS_PCI=y
++CONFIG_SCSI_UFSHCD=y
++CONFIG_SCSI_UFSHCD_PLATFORM=y
++CONFIG_SCSI_UFS_HISI=y
+ CONFIG_ATA=y
+ CONFIG_SATA_AHCI=y
+ CONFIG_SATA_AHCI_PLATFORM=y
 -- 
-Major changes in v7:
- - solve review comments from Philippe Ombredanne.
-   *use the new SPDX license ids instead of the GNU General Public License.
-
-Major changes in v8:
- - solve review comments from zhangfei.
-   *Add Version history.
- - solve review comments from Rob Herring.
-   *remove freq-table-hz.
- -  solve review comments from Riku Voipio.
-   *Add MODULE_DEVICE_TABLE for ufs driver.
 2.15.0
