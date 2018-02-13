@@ -1,27 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935078AbeBMMTh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:19:37 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51745 "EHLO
+        id S935151AbeBMMUC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:20:02 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:51419 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934918AbeBMMTg (ORCPT
+        with ESMTP id S934827AbeBMMUA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:19:36 -0500
-Date: Tue, 13 Feb 2018 04:09:10 -0800
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-jelngl9q1ooaizvkcput9tic@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, jolsa@kernel.org, ak@linux.intel.com,
-        yao.jin@linux.intel.com, hpa@zytor.com, wangnan0@huawei.com,
-        acme@redhat.com, peterz@infradead.org, kan.liang@intel.com,
-        mingo@kernel.org, tglx@linutronix.de, namhyung@kernel.org
-Reply-To: jolsa@kernel.org, ak@linux.intel.com, yao.jin@linux.intel.com,
-        hpa@zytor.com, acme@redhat.com, kan.liang@intel.com,
-        peterz@infradead.org, wangnan0@huawei.com, mingo@kernel.org,
-        tglx@linutronix.de, namhyung@kernel.org, linux-kernel@vger.kernel.org
+        Tue, 13 Feb 2018 07:20:00 -0500
+Date: Tue, 13 Feb 2018 04:09:36 -0800
+From: tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-6a669091c0d93cc1ac4a0de7af722d1359bfe98f@git.kernel.org>
+Cc: acme@redhat.com, jolsa@kernel.org, hpa@zytor.com, ak@linux.intel.com,
+        tglx@linutronix.de, namhyung@kernel.org, wangnan0@huawei.com,
+        kan.liang@intel.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, yao.jin@linux.intel.com, mingo@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, yao.jin@linux.intel.com,
+        peterz@infradead.org, wangnan0@huawei.com, kan.liang@intel.com,
+        namhyung@kernel.org, mingo@kernel.org, hpa@zytor.com, jolsa@kernel.org,
+        acme@redhat.com, ak@linux.intel.com, tglx@linutronix.de
+In-Reply-To: <1516310792-208685-14-git-send-email-kan.liang@intel.com>
+References: <1516310792-208685-14-git-send-email-kan.liang@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf evsel: Expose the perf_missing_features
- struct
-Git-Commit-ID: 5bcf848912d3c8669dcd5922f576162727be31b2
+Subject: [tip:perf/urgent] perf top: Add overwrite fall back
+Git-Commit-ID: 6a669091c0d93cc1ac4a0de7af722d1359bfe98f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,77 +35,86 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5bcf848912d3c8669dcd5922f576162727be31b2
-Gitweb:     https://git.kernel.org/tip/5bcf848912d3c8669dcd5922f576162727be31b2
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Fri, 2 Feb 2018 11:27:25 -0300
+Commit-ID:  6a669091c0d93cc1ac4a0de7af722d1359bfe98f
+Gitweb:     https://git.kernel.org/tip/6a669091c0d93cc1ac4a0de7af722d1359bfe98f
+Author:     Kan Liang <kan.liang@intel.com>
+AuthorDate: Thu, 18 Jan 2018 13:26:28 -0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 6 Feb 2018 10:11:51 -0300
 
-perf evsel: Expose the perf_missing_features struct
+perf top: Add overwrite fall back
 
-As tools may need to adjust to missing features, as 'perf top' will, in
-the next csets, to cope with a missing 'write_backward' feature.
+Switch to non-overwrite mode if kernel doesnot support overwrite
+ringbuffer.
 
+It's only effect when overwrite mode is supported.  No change to current
+behavior.
+
+Signed-off-by: Kan Liang <kan.liang@intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-jelngl9q1ooaizvkcput9tic@git.kernel.org
+Link: http://lkml.kernel.org/r/1516310792-208685-14-git-send-email-kan.liang@intel.com
+[ Use perf_missing_features.write_backward instead of the non merged is_write_backward_fail() ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evsel.c | 12 +-----------
- tools/perf/util/evsel.h | 14 ++++++++++++++
- 2 files changed, 15 insertions(+), 11 deletions(-)
+ tools/perf/builtin-top.c | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index ff359c9..ef35168 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -41,17 +41,7 @@
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 1778379..ee4bba1 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -943,6 +943,27 @@ static int perf_top__overwrite_check(struct perf_top *top)
+ 	return 0;
+ }
  
- #include "sane_ctype.h"
- 
--static struct {
--	bool sample_id_all;
--	bool exclude_guest;
--	bool mmap2;
--	bool cloexec;
--	bool clockid;
--	bool clockid_wrong;
--	bool lbr_flags;
--	bool write_backward;
--	bool group_read;
--} perf_missing_features;
-+struct perf_missing_features perf_missing_features;
- 
- static clockid_t clockid;
- 
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 846e416..a7487c6 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -149,6 +149,20 @@ union u64_swap {
- 	u32 val32[2];
- };
- 
-+struct perf_missing_features {
-+	bool sample_id_all;
-+	bool exclude_guest;
-+	bool mmap2;
-+	bool cloexec;
-+	bool clockid;
-+	bool clockid_wrong;
-+	bool lbr_flags;
-+	bool write_backward;
-+	bool group_read;
-+};
++static int perf_top_overwrite_fallback(struct perf_top *top,
++				       struct perf_evsel *evsel)
++{
++	struct record_opts *opts = &top->record_opts;
++	struct perf_evlist *evlist = top->evlist;
++	struct perf_evsel *counter;
 +
-+extern struct perf_missing_features perf_missing_features;
++	if (!opts->overwrite)
++		return 0;
 +
- struct cpu_map;
- struct target;
- struct thread_map;
++	/* only fall back when first event fails */
++	if (evsel != perf_evlist__first(evlist))
++		return 0;
++
++	evlist__for_each_entry(evlist, counter)
++		counter->attr.write_backward = false;
++	opts->overwrite = false;
++	ui__warning("fall back to non-overwrite mode\n");
++	return 1;
++}
++
+ static int perf_top__start_counters(struct perf_top *top)
+ {
+ 	char msg[BUFSIZ];
+@@ -967,6 +988,21 @@ static int perf_top__start_counters(struct perf_top *top)
+ try_again:
+ 		if (perf_evsel__open(counter, top->evlist->cpus,
+ 				     top->evlist->threads) < 0) {
++
++			/*
++			 * Specially handle overwrite fall back.
++			 * Because perf top is the only tool which has
++			 * overwrite mode by default, support
++			 * both overwrite and non-overwrite mode, and
++			 * require consistent mode for all events.
++			 *
++			 * May move it to generic code with more tools
++			 * have similar attribute.
++			 */
++			if (perf_missing_features.write_backward &&
++			    perf_top_overwrite_fallback(top, counter))
++				goto try_again;
++
+ 			if (perf_evsel__fallback(counter, errno, msg, sizeof(msg))) {
+ 				if (verbose > 0)
+ 					ui__warning("%s\n", msg);
