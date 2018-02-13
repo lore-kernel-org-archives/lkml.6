@@ -1,114 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933969AbeBMJK0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 04:10:26 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:42471 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933748AbeBMJHi (ORCPT
+        id S934484AbeBMJNv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 04:13:51 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:45204 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933494AbeBMJNq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:07:38 -0500
-Date: Tue, 13 Feb 2018 01:07:15 -0800
-From: tip-bot for Ingo Molnar <tipbot@zytor.com>
-Message-ID: <tip-d09a04140a61e82e938534b0c3983e8d90d5c54d@git.kernel.org>
-Cc: peterz@infradead.org, mingo@kernel.org, dsafonov@virtuozzo.com,
-        hpa@zytor.com, luto@kernel.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
-        torvalds@linux-foundation.org
-Reply-To: mingo@kernel.org, dsafonov@virtuozzo.com, peterz@infradead.org,
-        hpa@zytor.com, luto@kernel.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
-        torvalds@linux-foundation.org
-In-Reply-To: <20180211111013.16888-6-linux@dominikbrodowski.net>
-References: <20180211111013.16888-6-linux@dominikbrodowski.net>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] selftests/x86: Disable tests requiring 32-bit support
- on pure 64-bit systems
-Git-Commit-ID: d09a04140a61e82e938534b0c3983e8d90d5c54d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 13 Feb 2018 04:13:46 -0500
+Date: Tue, 13 Feb 2018 10:13:34 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Rafael Wysocki <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+        linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, daniel.lezcano@linaro.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/10] ARM: dts: sun[4-7]i: Remove
+ "cooling-{min|max}-level" for CPU nodes
+Message-ID: <20180213091333.rq4rtvvkwppn5ypu@flea.lan>
+References: <cover.1518166039.git.viresh.kumar@linaro.org>
+ <4d489d040ec1fc3821d8e4bf31ffcc2eebfa41e1.1518166039.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4d4boujzcki57u7y"
 Content-Disposition: inline
+In-Reply-To: <4d489d040ec1fc3821d8e4bf31ffcc2eebfa41e1.1518166039.git.viresh.kumar@linaro.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d09a04140a61e82e938534b0c3983e8d90d5c54d
-Gitweb:     https://git.kernel.org/tip/d09a04140a61e82e938534b0c3983e8d90d5c54d
-Author:     Ingo Molnar <mingo@kernel.org>
-AuthorDate: Tue, 13 Feb 2018 09:15:19 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 09:15:19 +0100
 
-selftests/x86: Disable tests requiring 32-bit support on pure 64-bit systems
+--4d4boujzcki57u7y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The ldt_gdt and ptrace_syscall selftests, even in their 64-bit variant, use
-hard-coded 32-bit syscall numbers and call "int $0x80".
+On Fri, Feb 09, 2018 at 02:28:04PM +0530, Viresh Kumar wrote:
+> The "cooling-min-level" and "cooling-max-level" properties are not
+> parsed by any part of the kernel currently and the max cooling state of
+> a CPU cooling device is found by referring to the cpufreq table instead.
+>=20
+> Remove the unused properties from the CPU nodes.
+>=20
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-This will fail on 64-bit systems with CONFIG_IA32_EMULATION=y disabled.
+Applied, thanks!
+Maxime
 
-Therefore, do not build these tests if we cannot build 32-bit binaries
-(which should be a good approximation for CONFIG_IA32_EMULATION=y being enabled).
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
 
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kselftest@vger.kernel.org
-Cc: shuah@kernel.org
-Link: http://lkml.kernel.org/r/20180211111013.16888-6-linux@dominikbrodowski.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- tools/testing/selftests/x86/Makefile | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+--4d4boujzcki57u7y
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-index 73b8ef6..aa6e2d7 100644
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -5,16 +5,26 @@ include ../lib.mk
- 
- .PHONY: all all_32 all_64 warn_32bit_failure clean
- 
--TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt ptrace_syscall test_mremap_vdso \
--			check_initial_reg_state sigreturn ldt_gdt iopl mpx-mini-test ioperm \
-+UNAME_M := $(shell uname -m)
-+CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC) trivial_32bit_program.c -m32)
-+CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
-+
-+TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt test_mremap_vdso \
-+			check_initial_reg_state sigreturn iopl mpx-mini-test ioperm \
- 			protection_keys test_vdso test_vsyscall
- TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault test_syscall_vdso unwind_vdso \
- 			test_FCMOV test_FCOMI test_FISTTP \
- 			vdso_restorer
- TARGETS_C_64BIT_ONLY := fsgsbase sysret_rip
-+# Some selftests require 32bit support enabled also on 64bit systems
-+TARGETS_C_32BIT_NEEDED := ldt_gdt ptrace_syscall
- 
--TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY)
-+TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY) $(TARGETS_C_32BIT_NEEDED)
- TARGETS_C_64BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_64BIT_ONLY)
-+ifeq ($(CAN_BUILD_I386)$(CAN_BUILD_X86_64),11)
-+TARGETS_C_64BIT_ALL += $(TARGETS_C_32BIT_NEEDED)
-+endif
-+
- BINARIES_32 := $(TARGETS_C_32BIT_ALL:%=%_32)
- BINARIES_64 := $(TARGETS_C_64BIT_ALL:%=%_64)
- 
-@@ -23,10 +33,6 @@ BINARIES_64 := $(patsubst %,$(OUTPUT)/%,$(BINARIES_64))
- 
- CFLAGS := -O2 -g -std=gnu99 -pthread -Wall -no-pie
- 
--UNAME_M := $(shell uname -m)
--CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC) trivial_32bit_program.c -m32)
--CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
--
- ifeq ($(CAN_BUILD_I386),1)
- all: all_32
- TEST_PROGS += $(BINARIES_32)
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqCrD0ACgkQ0rTAlCFN
+r3Smyg//QoNE7NIhBDcwyZ4ZhLCECasqLnAoCYZItq4CRCJ/FQ3imxHApe2RmK/W
+MKAcMtsAiIfQlenLAocUVkG/KZ2al6p5vqjMp1xz+vV6WLOeBOOfhVnEpYEhWuYz
+lJ/wlyULmzl1NQvCS+RB9y/VIbC8ppbjrzFpChBd0+4u6rA9bgS/0D41Z0bB7JNA
+uyGT1vAX3y3gR7jxUAQz6YiDFOSi6E46M6j/QOSKzG+LLYtvLc5NaBv/GyyJUOPe
+GCZkNyO+OMIZmRX7871wKlUwzkbsN5AIKd8V4GhmR3qmwzmK0JM2oSCkE/AoJVhq
+ajOM4yKT8SnVuowSBPzvP4dtj7uthg0CiFlXqVvpVjgoTz+Q81p6HIjJvnqSiv38
+8sem21Dii6M3sQgek4aV8s8gYMwODzyha2zP+oeq0SqeWfEKNXXNLsIJd9gYKyA3
+3FpUPOxoSDusTa+aCfww8TRj1s9ALWFJVBpbleirxIqDOr40u/k40Nwlzp4rEAOY
+DkrDbNpglmJ/HU/E10xFB7vAmUxggXT6RwBPdI5luZWnmpaWobATAs2RJ2WGdVWm
+AHF5kiFec8BO7BSTqudHUeU9bXJiwm9/MzDOFt51B0DUyW7T/vs3HlhykrfsbfJa
+p5ViZTApOwKXrj+bbm4EiRxiaoE4Y9wMbOGS2762azw2zzNTABw=
+=T13h
+-----END PGP SIGNATURE-----
+
+--4d4boujzcki57u7y--
