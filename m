@@ -1,93 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966071AbeBMWil (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 17:38:41 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:39318 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965942AbeBMWik (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 17:38:40 -0500
-X-Google-Smtp-Source: AH8x226vzzpo8b11oX6lTbuRWTgVa2szQq8ir/9P2g13yiCAoDbMewUvX48qgCD6ykhNakr9j/dfBw==
-Date: Tue, 13 Feb 2018 14:38:28 -0800
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: rostedt@goodmis.org, daniel@iogearbox.net, songliubraving@fb.com,
-        yhs@fb.com, ast@kernel.org, peterz@infradead.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        torvalds@linux-foundation.org, davem@davemloft.net, jbacik@fb.com
-Subject: Re: [tip:perf/core] perf/headers: Sync new perf_event.h with the
- tools/include/uapi version
-Message-ID: <20180213223827.wq4y6xemor6xj4gp@ast-mbp.dhcp.thefacebook.com>
-References: <20171206224518.3598254-5-songliubraving@fb.com>
- <tip-0d8dd67be013727ae57645ecd3ea2c36365d7da8@git.kernel.org>
+        id S966039AbeBMWuE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 17:50:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45600 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965942AbeBMWuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 17:50:03 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AC522172D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Tue, 13 Feb 2018 22:49:37 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Palmer Dabbelt <palmer@sifive.com>
+Cc: matt.redfearn@mips.com, antonynpavlov@gmail.com,
+        linux-mips@linux-mips.org, ralf@linux-mips.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib: Rename compiler intrinsic selects to GENERIC_LIB_*
+Message-ID: <20180213224937.GF4290@saruman>
+References: <1518182572-23376-1-git-send-email-matt.redfearn@mips.com>
+ <mhng-a034032e-b23a-4c52-8965-1e9d6e133f43@palmer-si-x1c4>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nYySOmuH/HDX6pKp"
 Content-Disposition: inline
-In-Reply-To: <tip-0d8dd67be013727ae57645ecd3ea2c36365d7da8@git.kernel.org>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <mhng-a034032e-b23a-4c52-8965-1e9d6e133f43@palmer-si-x1c4>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 06, 2018 at 03:52:59AM -0800, tip-bot for Song Liu wrote:
-> Commit-ID:  0d8dd67be013727ae57645ecd3ea2c36365d7da8
-> Gitweb:     https://git.kernel.org/tip/0d8dd67be013727ae57645ecd3ea2c36365d7da8
-> Author:     Song Liu <songliubraving@fb.com>
-> AuthorDate: Wed, 6 Dec 2017 14:45:14 -0800
-> Committer:  Ingo Molnar <mingo@kernel.org>
-> CommitDate: Tue, 6 Feb 2018 10:18:05 +0100
 
-any chance these patches can still make into this release considering
-they were ready back in December ?
-We have few followups for them and if we don't get them via Linus's tree
-into net-next/bpf-next we cannot really proceed further.
-The other option would be to cherry-pick them into bpf-next/net-next,
-but also a bit scary due to potential conflicts?
+--nYySOmuH/HDX6pKp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
+On Tue, Feb 13, 2018 at 01:48:18PM -0800, Palmer Dabbelt wrote:
+> On Fri, 09 Feb 2018 05:22:52 PST (-0800), matt.redfearn@mips.com wrote:
+> > When these are included into arch Kconfig files, maintaining
+> > alphabetical ordering of the selects means these get split up. To allow
+> > for keeping things tidier and alphabetical, rename the selects to
+> > GENERIC_LIB_*
+> >
+> > Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+>=20
+> Thanks!  Do you want me to take this in my tree?
+>=20
+> Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
 
-> perf/headers: Sync new perf_event.h with the tools/include/uapi version
-> 
-> perf_event.h is updated in previous patch, this patch applies the same
-> changes to the tools/ version. This is part is put in a separate
-> patch in case the two files are back ported separately.
-> 
-> Signed-off-by: Song Liu <songliubraving@fb.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Reviewed-by: Yonghong Song <yhs@fb.com>
-> Reviewed-by: Josef Bacik <jbacik@fb.com>
-> Acked-by: Alexei Starovoitov <ast@kernel.org>
-> Cc: <daniel@iogearbox.net>
-> Cc: <davem@davemloft.net>
-> Cc: <kernel-team@fb.com>
-> Cc: <rostedt@goodmis.org>
-> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Cc: Jiri Olsa <jolsa@redhat.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Link: http://lkml.kernel.org/r/20171206224518.3598254-5-songliubraving@fb.com
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> ---
->  tools/include/uapi/linux/perf_event.h | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-> index c77c9a2..5d49cfc 100644
-> --- a/tools/include/uapi/linux/perf_event.h
-> +++ b/tools/include/uapi/linux/perf_event.h
-> @@ -380,10 +380,14 @@ struct perf_event_attr {
->  	__u32			bp_type;
->  	union {
->  		__u64		bp_addr;
-> +		__u64		kprobe_func; /* for perf_kprobe */
-> +		__u64		uprobe_path; /* for perf_uprobe */
->  		__u64		config1; /* extension of config */
->  	};
->  	union {
->  		__u64		bp_len;
-> +		__u64		kprobe_addr; /* when kprobe_func == NULL */
-> +		__u64		probe_offset; /* for perf_[k,u]probe */
->  		__u64		config2; /* extension of config1 */
->  	};
->  	__u64	branch_sample_type; /* enum perf_branch_sample_type */
+Since a new version of the "MIPS: use generic GCC library routines from
+lib/" series would depend on it, and it makes sense for that series to
+go via the MIPS tree, I think it would be simpler for this patch to also
+be taken (with your ack) via the MIPS tree. Is that okay?
+
+Thanks
+James
+
+>=20
+> > ---
+> >  arch/riscv/Kconfig |  6 +++---
+> >  lib/Kconfig        | 12 ++++++------
+> >  lib/Makefile       | 12 ++++++------
+> >  3 files changed, 15 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > index 2c6adf12713a..5f1e2188d029 100644
+> > --- a/arch/riscv/Kconfig
+> > +++ b/arch/riscv/Kconfig
+> > @@ -99,9 +99,9 @@ config ARCH_RV32I
+> >  	bool "RV32I"
+> >  	select CPU_SUPPORTS_32BIT_KERNEL
+> >  	select 32BIT
+> > -	select GENERIC_ASHLDI3
+> > -	select GENERIC_ASHRDI3
+> > -	select GENERIC_LSHRDI3
+> > +	select GENERIC_LIB_ASHLDI3
+> > +	select GENERIC_LIB_ASHRDI3
+> > +	select GENERIC_LIB_LSHRDI3
+> >
+> >  config ARCH_RV64I
+> >  	bool "RV64I"
+> > diff --git a/lib/Kconfig b/lib/Kconfig
+> > index c5e84fbcb30b..946d0890aad6 100644
+> > --- a/lib/Kconfig
+> > +++ b/lib/Kconfig
+> > @@ -584,20 +584,20 @@ config STRING_SELFTEST
+> >
+> >  endmenu
+> >
+> > -config GENERIC_ASHLDI3
+> > +config GENERIC_LIB_ASHLDI3
+> >  	bool
+> >
+> > -config GENERIC_ASHRDI3
+> > +config GENERIC_LIB_ASHRDI3
+> >  	bool
+> >
+> > -config GENERIC_LSHRDI3
+> > +config GENERIC_LIB_LSHRDI3
+> >  	bool
+> >
+> > -config GENERIC_MULDI3
+> > +config GENERIC_LIB_MULDI3
+> >  	bool
+> >
+> > -config GENERIC_CMPDI2
+> > +config GENERIC_LIB_CMPDI2
+> >  	bool
+> >
+> > -config GENERIC_UCMPDI2
+> > +config GENERIC_LIB_UCMPDI2
+> >  	bool
+> > diff --git a/lib/Makefile b/lib/Makefile
+> > index d11c48ec8ffd..7e1ef77e86a3 100644
+> > --- a/lib/Makefile
+> > +++ b/lib/Makefile
+> > @@ -252,9 +252,9 @@ obj-$(CONFIG_SBITMAP) +=3D sbitmap.o
+> >  obj-$(CONFIG_PARMAN) +=3D parman.o
+> >
+> >  # GCC library routines
+> > -obj-$(CONFIG_GENERIC_ASHLDI3) +=3D ashldi3.o
+> > -obj-$(CONFIG_GENERIC_ASHRDI3) +=3D ashrdi3.o
+> > -obj-$(CONFIG_GENERIC_LSHRDI3) +=3D lshrdi3.o
+> > -obj-$(CONFIG_GENERIC_MULDI3) +=3D muldi3.o
+> > -obj-$(CONFIG_GENERIC_CMPDI2) +=3D cmpdi2.o
+> > -obj-$(CONFIG_GENERIC_UCMPDI2) +=3D ucmpdi2.o
+> > +obj-$(CONFIG_GENERIC_LIB_ASHLDI3) +=3D ashldi3.o
+> > +obj-$(CONFIG_GENERIC_LIB_ASHRDI3) +=3D ashrdi3.o
+> > +obj-$(CONFIG_GENERIC_LIB_LSHRDI3) +=3D lshrdi3.o
+> > +obj-$(CONFIG_GENERIC_LIB_MULDI3) +=3D muldi3.o
+> > +obj-$(CONFIG_GENERIC_LIB_CMPDI2) +=3D cmpdi2.o
+> > +obj-$(CONFIG_GENERIC_LIB_UCMPDI2) +=3D ucmpdi2.o
+
+--nYySOmuH/HDX6pKp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqDa4EACgkQbAtpk944
+dnrexxAAr9wXIGdNT2PyTPao1ezK/P+aQyddq2sONCsHURGcXn3CiPYNTHLktj/W
+Ef92Rxf2cW+vcnWt5mavdy322yE2iiNR6KgYOIkUXhdZ8Jax1xajLZPlcfxsT5en
+sWprcgFwTS5KCfzVxOCcWJtk6NjGfqqje/R/KWMiIzk1yeF7nIalA7lE36rx4CqU
+Q2nlgCNxsNLYnnTFYyYkAQ1RsYiiC2mh8AVF8ZcfWuAili58M2PKWVkHil+hAkBo
+I1OHFBFNYhT7aAxYKxFRKp/6M9lmvmPnB7MPp2kde1iW3AGfF58Lo1lMJ+3ISSr2
+aKBgPoX0MuOi0ZtXOFT7tbNWCiv3xVb4qdhuxF1JTW/W84B+MD9Je7xo6uSeW7hQ
+CjTEBga2C+52pcT/pwoza2Vgj7X3YPZoUh5rJGasY/zo9PMeQOFIqEqj0p9q5rUn
+70zzQ434xp/alcUkzUBN9OkA82mMFW6T5DYBszGolhMI86P/Cojx5qOcO4ORKMWb
+8YHMzCqOJRZkVuRtATRpvCgbzEfF+YPpjBdAaIYJLZP54IgDFqlZJJ6+EBBPFyWD
+DfA+Ob3QzYSR6T8iNoltatOkJiqmAHQUBBtD4cB8I+WjxzbQH+9fZrz45htROZHE
+uQkGIVlYm/k0CVMEbD08GjNLFoxXCxjeUGlivV6woBLES6wGfgk=
+=jPpu
+-----END PGP SIGNATURE-----
+
+--nYySOmuH/HDX6pKp--
