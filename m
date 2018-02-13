@@ -1,358 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934043AbeBMPgt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 10:36:49 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:42787 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933637AbeBMPgq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 10:36:46 -0500
-Date: Tue, 13 Feb 2018 07:29:45 -0800
-From: tip-bot for Andy Lutomirski <tipbot@zytor.com>
-Message-ID: <tip-084c63d0cf9b2b2e9ee77984e570571f5df65dd5@git.kernel.org>
-Cc: boris.ostrovsky@oracle.com, luto@kernel.org, keescook@google.com,
-        peterz@infradead.org, bp@alien8.de, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, hpa@zytor.com,
-        brgerst@gmail.com, tglx@linutronix.de, dave.hansen@intel.com,
-        torvalds@linux-foundation.org, riel@redhat.com, eduval@amazon.com,
-        mingo@kernel.org, hughd@google.com, jpoimboe@redhat.com,
-        jgross@suse.com
-Reply-To: hpa@zytor.com, brgerst@gmail.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, will.deacon@arm.com, bp@alien8.de,
-        peterz@infradead.org, keescook@google.com, luto@kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com, jpoimboe@redhat.com,
-        hughd@google.com, mingo@kernel.org, eduval@amazon.com, riel@redhat.com,
-        torvalds@linux-foundation.org, dave.hansen@intel.com,
-        tglx@linutronix.de
-In-Reply-To: <3303b02e3c3d049dc5235d5651e0ae6d29a34354.1517414378.git.luto@kernel.org>
-References: <3303b02e3c3d049dc5235d5651e0ae6d29a34354.1517414378.git.luto@kernel.org>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/mm: Rename flush_tlb_single() and flush_tlb_one()
- to __flush_tlb_one_[user|kernel]()
-Git-Commit-ID: 084c63d0cf9b2b2e9ee77984e570571f5df65dd5
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S934127AbeBMPhB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 10:37:01 -0500
+Received: from mga06.intel.com ([134.134.136.31]:50278 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933609AbeBMPg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 10:36:59 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,507,1511856000";
+   d="scan'208";a="18101888"
+Date: Tue, 13 Feb 2018 17:36:54 +0200
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Thinkpad X1 Carbon 3rd - Reducing the compressed framebuffer size
+Message-ID: <20180213153654.GG5453@intel.com>
+References: <20180206152143.vea6si7ncjj7sxyq@pali>
+ <20180213085030.kiksdi2a7ksae5wz@pali>
+ <20180213132726.GD5453@intel.com>
+ <20180213133842.i5z5jj3sllorsy2w@pali>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180213133842.i5z5jj3sllorsy2w@pali>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  084c63d0cf9b2b2e9ee77984e570571f5df65dd5
-Gitweb:     https://git.kernel.org/tip/084c63d0cf9b2b2e9ee77984e570571f5df65dd5
-Author:     Andy Lutomirski <luto@kernel.org>
-AuthorDate: Wed, 31 Jan 2018 08:03:10 -0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 15:11:59 +0100
+On Tue, Feb 13, 2018 at 02:38:42PM +0100, Pali Rohár wrote:
+> On Tuesday 13 February 2018 15:27:26 Ville Syrjälä wrote:
+> > On Tue, Feb 13, 2018 at 09:50:30AM +0100, Pali Rohár wrote:
+> > > On Tuesday 06 February 2018 16:21:43 Pali Rohár wrote:
+> > > > Hi! I'm periodically getting following message in dmesg on Lenovo
+> > > > Thinkpad X1 Carbon 3rd generation:
+> > > > 
+> > > > [drm] Reducing the compressed framebuffer size. This may lead to less power savings than a non-reduced-size. Try to increase stolen memory size if available in BIOS.
+> > > > 
+> > > > In BIOS I already set GPU size to 512M, but this did not help. Also
+> > > > update to last BIOS version did not help.
+> > > > 
+> > > > So why this message is periodically print in dmesg? And what can I do
+> > > > with this problem?
+> > > > 
+> > > > And why cannot Linux kernel allocate itself more memory for GPU (if BIOS
+> > > > can/could do that)? Is not 512MB for GPU enough?
+> > > 
+> > > And here is output from lspci, which clearly says that 512MB is already
+> > > set for GPU:
+> > 
+> > The PCI BAR size has nothing to do with the size of the stolen memory.
+> > The BAR just provides a window into the global GTT address space of the
+> > GPU. Stolen memory is a contiguous chunk of physical memory carved out
+> > by the BIOS.
+> 
+> Ok, how could I detect how much memory was stolen?
+> 
+> In dmesg I see following lines:
+> 
+> [    0.000000] e820: BIOS-provided physical RAM map:
+> [    0.000000] BIOS-e820: [mem 0x0000000000000000-0x0000000000057fff] usable
+> [    0.000000] BIOS-e820: [mem 0x0000000000058000-0x0000000000058fff] reserved
+> [    0.000000] BIOS-e820: [mem 0x0000000000059000-0x000000000008bfff] usable
+> [    0.000000] BIOS-e820: [mem 0x000000000008c000-0x000000000009ffff] reserved
+> [    0.000000] BIOS-e820: [mem 0x00000000000e0000-0x00000000000fffff] reserved
+> [    0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000ab908fff] usable
+> [    0.000000] BIOS-e820: [mem 0x00000000ab909000-0x00000000abb08fff] type 20
+> [    0.000000] BIOS-e820: [mem 0x00000000abb09000-0x00000000acbfefff] reserved
+> [    0.000000] BIOS-e820: [mem 0x00000000acbff000-0x00000000acd7efff] ACPI NVS
+> [    0.000000] BIOS-e820: [mem 0x00000000acd7f000-0x00000000acdfefff] ACPI data
+> [    0.000000] BIOS-e820: [mem 0x00000000acdff000-0x00000000acdfffff] usable
+> [    0.000000] BIOS-e820: [mem 0x00000000f80f8000-0x00000000f80f8fff] reserved
+> [    0.000000] BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
+> [    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000024dffffff] usable
+> 
+> [    0.000000] Reserving Intel graphics memory at 0x00000000ae000000-0x00000000afffffff
 
-x86/mm: Rename flush_tlb_single() and flush_tlb_one() to __flush_tlb_one_[user|kernel]()
+That's the one. Since you have a BDW the amount FBC can actually use
+will be 8MiB less than what's reported here. So looks like you should
+have 24MiB total, minus whatever else we end up allocating from stolen.
 
-flush_tlb_single() and flush_tlb_one() sound almost identical, but
-they really mean "flush one user translation" and "flush one kernel
-translation".  Rename them to flush_tlb_one_user() and
-flush_tlb_one_kernel() to make the semantics more obvious.
+Check /sys/kernel/debug/dri/0/i915_gem_stolen to see what's there. Most
+likely you'll have the fbdev framebuffer taking up a sizeable chunk.
+You could get some back by reducing fbdev depth to 16bpp, or even 8bpp,
+but I'm not convinced the fbdev gamma LUT stuff really works currently
+so you might end up with bogus colors in your vts with that.
 
-[ I was looking at some PTI-related code, and the flush-one-address code
-  is unnecessarily hard to understand because the names of the helpers are
-  uninformative.  This came up during PTI review, but no one got around to
-  doing it. ]
+> 
+> [    0.000000] Memory: 7972840K/8282704K available (6196K kernel code, 1159K rwdata, 2848K rodata, 1408K init, 688K bss, 309864K reserved, 0K cma-reserved)
+> 
+> > The BIOS may or may not provide a knob to change the size
+> > of the stolen memory.
+> 
+> In BIOS Setup screen I have option to choose GPU memory and I set it to
+> max 512MB. So this is not the right option...
+> 
+> And why cannot kernel use some continuous check of RAM itself?
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Eduardo Valentin <eduval@amazon.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Kees Cook <keescook@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux-MM <linux-mm@kvack.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Link: http://lkml.kernel.org/r/3303b02e3c3d049dc5235d5651e0ae6d29a34354.1517414378.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/include/asm/paravirt.h       |  4 ++--
- arch/x86/include/asm/paravirt_types.h |  2 +-
- arch/x86/include/asm/pgtable_32.h     |  2 +-
- arch/x86/include/asm/tlbflush.h       | 27 ++++++++++++++++++++-------
- arch/x86/kernel/paravirt.c            |  6 +++---
- arch/x86/mm/init_64.c                 |  2 +-
- arch/x86/mm/ioremap.c                 |  2 +-
- arch/x86/mm/kmmio.c                   |  2 +-
- arch/x86/mm/pgtable_32.c              |  2 +-
- arch/x86/mm/tlb.c                     |  6 +++---
- arch/x86/platform/uv/tlb_uv.c         |  2 +-
- arch/x86/xen/mmu_pv.c                 |  6 +++---
- include/trace/events/xen.h            |  2 +-
- 13 files changed, 39 insertions(+), 26 deletions(-)
+Because the hardware won't allow it.
 
-diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-index 892df37..554841f 100644
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -297,9 +297,9 @@ static inline void __flush_tlb_global(void)
- {
- 	PVOP_VCALL0(pv_mmu_ops.flush_tlb_kernel);
- }
--static inline void __flush_tlb_single(unsigned long addr)
-+static inline void __flush_tlb_one_user(unsigned long addr)
- {
--	PVOP_VCALL1(pv_mmu_ops.flush_tlb_single, addr);
-+	PVOP_VCALL1(pv_mmu_ops.flush_tlb_one_user, addr);
- }
- 
- static inline void flush_tlb_others(const struct cpumask *cpumask,
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 6ec54d0..f624f1f 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -217,7 +217,7 @@ struct pv_mmu_ops {
- 	/* TLB operations */
- 	void (*flush_tlb_user)(void);
- 	void (*flush_tlb_kernel)(void);
--	void (*flush_tlb_single)(unsigned long addr);
-+	void (*flush_tlb_one_user)(unsigned long addr);
- 	void (*flush_tlb_others)(const struct cpumask *cpus,
- 				 const struct flush_tlb_info *info);
- 
-diff --git a/arch/x86/include/asm/pgtable_32.h b/arch/x86/include/asm/pgtable_32.h
-index e67c062..e554667 100644
---- a/arch/x86/include/asm/pgtable_32.h
-+++ b/arch/x86/include/asm/pgtable_32.h
-@@ -61,7 +61,7 @@ void paging_init(void);
- #define kpte_clear_flush(ptep, vaddr)		\
- do {						\
- 	pte_clear(&init_mm, (vaddr), (ptep));	\
--	__flush_tlb_one((vaddr));		\
-+	__flush_tlb_one_kernel((vaddr));		\
- } while (0)
- 
- #endif /* !__ASSEMBLY__ */
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 2b8f18c..84137c2 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -140,7 +140,7 @@ static inline unsigned long build_cr3_noflush(pgd_t *pgd, u16 asid)
- #else
- #define __flush_tlb() __native_flush_tlb()
- #define __flush_tlb_global() __native_flush_tlb_global()
--#define __flush_tlb_single(addr) __native_flush_tlb_single(addr)
-+#define __flush_tlb_one_user(addr) __native_flush_tlb_one_user(addr)
- #endif
- 
- static inline bool tlb_defer_switch_to_init_mm(void)
-@@ -400,7 +400,7 @@ static inline void __native_flush_tlb_global(void)
- /*
-  * flush one page in the user mapping
-  */
--static inline void __native_flush_tlb_single(unsigned long addr)
-+static inline void __native_flush_tlb_one_user(unsigned long addr)
- {
- 	u32 loaded_mm_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
- 
-@@ -437,18 +437,31 @@ static inline void __flush_tlb_all(void)
- /*
-  * flush one page in the kernel mapping
-  */
--static inline void __flush_tlb_one(unsigned long addr)
-+static inline void __flush_tlb_one_kernel(unsigned long addr)
- {
- 	count_vm_tlb_event(NR_TLB_LOCAL_FLUSH_ONE);
--	__flush_tlb_single(addr);
-+
-+	/*
-+	 * If PTI is off, then __flush_tlb_one_user() is just INVLPG or its
-+	 * paravirt equivalent.  Even with PCID, this is sufficient: we only
-+	 * use PCID if we also use global PTEs for the kernel mapping, and
-+	 * INVLPG flushes global translations across all address spaces.
-+	 *
-+	 * If PTI is on, then the kernel is mapped with non-global PTEs, and
-+	 * __flush_tlb_one_user() will flush the given address for the current
-+	 * kernel address space and for its usermode counterpart, but it does
-+	 * not flush it for other address spaces.
-+	 */
-+	__flush_tlb_one_user(addr);
- 
- 	if (!static_cpu_has(X86_FEATURE_PTI))
- 		return;
- 
- 	/*
--	 * __flush_tlb_single() will have cleared the TLB entry for this ASID,
--	 * but since kernel space is replicated across all, we must also
--	 * invalidate all others.
-+	 * See above.  We need to propagate the flush to all other address
-+	 * spaces.  In principle, we only need to propagate it to kernelmode
-+	 * address spaces, but the extra bookkeeping we would need is not
-+	 * worth it.
- 	 */
- 	invalidate_other_asid();
- }
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 041096b..99dc79e 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -200,9 +200,9 @@ static void native_flush_tlb_global(void)
- 	__native_flush_tlb_global();
- }
- 
--static void native_flush_tlb_single(unsigned long addr)
-+static void native_flush_tlb_one_user(unsigned long addr)
- {
--	__native_flush_tlb_single(addr);
-+	__native_flush_tlb_one_user(addr);
- }
- 
- struct static_key paravirt_steal_enabled;
-@@ -401,7 +401,7 @@ struct pv_mmu_ops pv_mmu_ops __ro_after_init = {
- 
- 	.flush_tlb_user = native_flush_tlb,
- 	.flush_tlb_kernel = native_flush_tlb_global,
--	.flush_tlb_single = native_flush_tlb_single,
-+	.flush_tlb_one_user = native_flush_tlb_one_user,
- 	.flush_tlb_others = native_flush_tlb_others,
- 
- 	.pgd_alloc = __paravirt_pgd_alloc,
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 4a83728..60ae1fe 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -256,7 +256,7 @@ static void __set_pte_vaddr(pud_t *pud, unsigned long vaddr, pte_t new_pte)
- 	 * It's enough to flush this one mapping.
- 	 * (PGE mappings get flushed as well)
- 	 */
--	__flush_tlb_one(vaddr);
-+	__flush_tlb_one_kernel(vaddr);
- }
- 
- void set_pte_vaddr_p4d(p4d_t *p4d_page, unsigned long vaddr, pte_t new_pte)
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index c45b6ec..e2db83b 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -820,5 +820,5 @@ void __init __early_set_fixmap(enum fixed_addresses idx,
- 		set_pte(pte, pfn_pte(phys >> PAGE_SHIFT, flags));
- 	else
- 		pte_clear(&init_mm, addr, pte);
--	__flush_tlb_one(addr);
-+	__flush_tlb_one_kernel(addr);
- }
-diff --git a/arch/x86/mm/kmmio.c b/arch/x86/mm/kmmio.c
-index 58477ec..7c86867 100644
---- a/arch/x86/mm/kmmio.c
-+++ b/arch/x86/mm/kmmio.c
-@@ -168,7 +168,7 @@ static int clear_page_presence(struct kmmio_fault_page *f, bool clear)
- 		return -1;
- 	}
- 
--	__flush_tlb_one(f->addr);
-+	__flush_tlb_one_kernel(f->addr);
- 	return 0;
- }
- 
-diff --git a/arch/x86/mm/pgtable_32.c b/arch/x86/mm/pgtable_32.c
-index c3c5274..9bb7f0a 100644
---- a/arch/x86/mm/pgtable_32.c
-+++ b/arch/x86/mm/pgtable_32.c
-@@ -63,7 +63,7 @@ void set_pte_vaddr(unsigned long vaddr, pte_t pteval)
- 	 * It's enough to flush this one mapping.
- 	 * (PGE mappings get flushed as well)
- 	 */
--	__flush_tlb_one(vaddr);
-+	__flush_tlb_one_kernel(vaddr);
- }
- 
- unsigned long __FIXADDR_TOP = 0xfffff000;
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 012d026..0c93643 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -492,7 +492,7 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
- 	 *    flush that changes context.tlb_gen from 2 to 3.  If they get
- 	 *    processed on this CPU in reverse order, we'll see
- 	 *     local_tlb_gen == 1, mm_tlb_gen == 3, and end != TLB_FLUSH_ALL.
--	 *    If we were to use __flush_tlb_single() and set local_tlb_gen to
-+	 *    If we were to use __flush_tlb_one_user() and set local_tlb_gen to
- 	 *    3, we'd be break the invariant: we'd update local_tlb_gen above
- 	 *    1 without the full flush that's needed for tlb_gen 2.
- 	 *
-@@ -513,7 +513,7 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
- 
- 		addr = f->start;
- 		while (addr < f->end) {
--			__flush_tlb_single(addr);
-+			__flush_tlb_one_user(addr);
- 			addr += PAGE_SIZE;
- 		}
- 		if (local)
-@@ -660,7 +660,7 @@ static void do_kernel_range_flush(void *info)
- 
- 	/* flush range by one by one 'invlpg' */
- 	for (addr = f->start; addr < f->end; addr += PAGE_SIZE)
--		__flush_tlb_one(addr);
-+		__flush_tlb_one_kernel(addr);
- }
- 
- void flush_tlb_kernel_range(unsigned long start, unsigned long end)
-diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
-index 8538a67..7d5d53f 100644
---- a/arch/x86/platform/uv/tlb_uv.c
-+++ b/arch/x86/platform/uv/tlb_uv.c
-@@ -299,7 +299,7 @@ static void bau_process_message(struct msg_desc *mdp, struct bau_control *bcp,
- 		local_flush_tlb();
- 		stat->d_alltlb++;
- 	} else {
--		__flush_tlb_single(msg->address);
-+		__flush_tlb_one_user(msg->address);
- 		stat->d_onetlb++;
- 	}
- 	stat->d_requestee++;
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index d850762..aae88fe 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -1300,12 +1300,12 @@ static void xen_flush_tlb(void)
- 	preempt_enable();
- }
- 
--static void xen_flush_tlb_single(unsigned long addr)
-+static void xen_flush_tlb_one_user(unsigned long addr)
- {
- 	struct mmuext_op *op;
- 	struct multicall_space mcs;
- 
--	trace_xen_mmu_flush_tlb_single(addr);
-+	trace_xen_mmu_flush_tlb_one_user(addr);
- 
- 	preempt_disable();
- 
-@@ -2370,7 +2370,7 @@ static const struct pv_mmu_ops xen_mmu_ops __initconst = {
- 
- 	.flush_tlb_user = xen_flush_tlb,
- 	.flush_tlb_kernel = xen_flush_tlb,
--	.flush_tlb_single = xen_flush_tlb_single,
-+	.flush_tlb_one_user = xen_flush_tlb_one_user,
- 	.flush_tlb_others = xen_flush_tlb_others,
- 
- 	.pgd_alloc = xen_pgd_alloc,
-diff --git a/include/trace/events/xen.h b/include/trace/events/xen.h
-index b8adf05..7dd8f34 100644
---- a/include/trace/events/xen.h
-+++ b/include/trace/events/xen.h
-@@ -368,7 +368,7 @@ TRACE_EVENT(xen_mmu_flush_tlb,
- 	    TP_printk("%s", "")
- 	);
- 
--TRACE_EVENT(xen_mmu_flush_tlb_single,
-+TRACE_EVENT(xen_mmu_flush_tlb_one_user,
- 	    TP_PROTO(unsigned long addr),
- 	    TP_ARGS(addr),
- 	    TP_STRUCT__entry(
+> 
+> > > 
+> > > $ lspci -v -s 00:02.0
+> > > 00:02.0 VGA compatible controller: Intel Corporation HD Graphics 5500 (rev 09) (prog-if 00 [VGA controller])
+> > >         Subsystem: Lenovo HD Graphics 5500
+> > >         Flags: bus master, fast devsel, latency 0, IRQ 46
+> > >         Memory at e0000000 (64-bit, non-prefetchable) [size=16M]
+> > >         Memory at c0000000 (64-bit, prefetchable) [size=512M]
+> > >         I/O ports at 3000 [size=64]
+> > >         [virtual] Expansion ROM at 000c0000 [disabled] [size=128K]
+> > >         Capabilities: [90] MSI: Enable+ Count=1/1 Maskable- 64bit-
+> > >         Capabilities: [d0] Power Management version 2
+> > >         Capabilities: [a4] PCI Advanced Features
+> > >         Kernel driver in use: i915
+> > >         Kernel modules: i915
+> > > 
+> > > -- 
+> > > Pali Rohár
+> > > pali.rohar@gmail.com
+> > > _______________________________________________
+> > > dri-devel mailing list
+> > > dri-devel@lists.freedesktop.org
+> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > 
+> 
+> -- 
+> Pali Rohár
+> pali.rohar@gmail.com
+
+-- 
+Ville Syrjälä
+Intel OTC
