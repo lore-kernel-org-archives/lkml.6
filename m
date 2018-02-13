@@ -1,49 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965252AbeBMQoX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 11:44:23 -0500
-Received: from 8bytes.org ([81.169.241.247]:41470 "EHLO theia.8bytes.org"
+        id S934651AbeBMQqZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 11:46:25 -0500
+Received: from smtp1.it.da.ut.ee ([193.40.5.66]:41984 "EHLO smtp1.it.da.ut.ee"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934828AbeBMQoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:44:21 -0500
-Date: Tue, 13 Feb 2018 17:44:18 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Dmitry Safonov <dima@arista.com>
-Cc: linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
-        Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>, iommu@lists.linux-foundation.org
-Subject: Re: [PATCHv2 0/6] iommu/intel: Handle DMAR faults in a wq
-Message-ID: <20180213164418.x7pcjaveorx24rgz@8bytes.org>
-References: <20180212164825.22421-1-dima@arista.com>
+        id S934360AbeBMQqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 11:46:24 -0500
+Date: Tue, 13 Feb 2018 18:46:20 +0200 (EET)
+From: Meelis Roos <mroos@linux.ee>
+To: Christoph Hellwig <hch@lst.de>
+cc: linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        Linux Kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: pata-macio WARNING at dmam_alloc_coherent+0xec/0x110
+In-Reply-To: <20180213145120.GA14657@lst.de>
+Message-ID: <alpine.LRH.2.21.1802131845580.21385@math.ut.ee>
+References: <alpine.LRH.2.21.1802122246230.9153@math.ut.ee> <20180213145120.GA14657@lst.de>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180212164825.22421-1-dima@arista.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+> Does this fix your warning?
+> 
+> diff --git a/drivers/macintosh/macio_asic.c b/drivers/macintosh/macio_asic.c
+> index 62f541f968f6..07074820a167 100644
+> --- a/drivers/macintosh/macio_asic.c
+> +++ b/drivers/macintosh/macio_asic.c
+> @@ -375,6 +375,7 @@ static struct macio_dev * macio_add_one_device(struct macio_chip *chip,
+>  	dev->ofdev.dev.of_node = np;
+>  	dev->ofdev.archdata.dma_mask = 0xffffffffUL;
+>  	dev->ofdev.dev.dma_mask = &dev->ofdev.archdata.dma_mask;
+> +	dev->ofdev.dev.coherent_dma_mask = dev->ofdev.archdata.dma_mask;
+>  	dev->ofdev.dev.parent = parent;
+>  	dev->ofdev.dev.bus = &macio_bus_type;
+>  	dev->ofdev.dev.release = macio_release_dev;
 
-On Mon, Feb 12, 2018 at 04:48:19PM +0000, Dmitry Safonov wrote:
-> Dmitry Safonov (6):
->   iommu/intel: Add __init for dmar_register_bus_notifier()
->   iommu/intel: Clean/document fault status flags
->   iommu/intel: Introduce clear_primary_faults() helper
->   iommu/intel: Handle DMAR faults on workqueue
->   iommu/intel: Rename dmar_fault() => dmar_serve_faults()
->   iommu/intel: Ratelimit each dmar fault printing
+Yes, it does - thank you!
 
-I applied patches 1 and 2 because they are nice cleanups, thanks. For
-the rest, I am not convinced that work-queues are a good solution for
-the soft lockups you are seeing. Please consider the approach I outlined
-in my reply to patch 4.
+Tested-by: Meelis Roos <mroos@linux.ee>
 
-Also, please prefix your next patches with 'iommu/vt-d' instead of
-'iommu/intel'.
-
-Thanks,
-
-	Joerg
+-- 
+Meelis Roos (mroos@linux.ee)
