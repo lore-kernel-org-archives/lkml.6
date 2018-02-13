@@ -1,92 +1,1663 @@
-Return-Path: <arndbergmann@gmail.com>
-X-Cyrus-Session-Id: sloti22d1t05-3010894-1518618778-2-3473935552752805625
+Return-Path: <green.hu@gmail.com>
+X-Cyrus-Session-Id: sloti22d1t05-3695236-1518513082-2-7045193645789673725
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_NONE -0.0001,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FROM 0.001, RCVD_IN_DNSWL_NONE -0.0001,
   RCVD_IN_MSPIKE_H3 -0.01, RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001,
   LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.85.220.193', Host='mail-qk0-f193.google.com', Country='US',
-  FromHeader='de', MailFrom='com'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-source: IP='209.85.160.67', Host='mail-pl0-f67.google.com', Country='US',
+  FromHeader='com', MailFrom='com'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: arndbergmann@gmail.com
+X-Mail-from: green.hu@gmail.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518618777; b=FgnrPLTH28A0Qb86sv7vuSw/Gc/RSILXZq3Dnu7CQKn9N55
-    kLyheLEHvoKtT98Nd0E+emxVA3EUi0tsyiOxz2MUFt80eP0eHyz8VKRI1RTO9gZ0
-    8lhIlJVfaLXote71r284CQS8bI3sQdf8qqWZDbBcuXpCODSo2JZWcTRhS7r6GXMO
-    tPe1eMdxCBL46IvVbNCINywyaJEckbeH7r4x1u/+MMudFbRTRpmC4pJKUMIX66lH
-    DduflmthIkJswZ+uMGCDDAVFO+j6lLli+OwI6m9LLWvN2W0tytWkwBSJ+j/M0UEg
-    0UntHvlBGkhHuKIa9YgX0RejlZ7IGh2yixejNjQ==
+    t=1518513080; b=jokiOPQr3rYSQDKP2sgzlUTOOzpCggseEFdXHjr5ZTk+t2W
+    AXfTilDin8JlnypAsHRXhTxU+/iK0O/mDbkSsNCfiAUFJrEtU9q/5sHinO0ii5IS
+    9ZimwZUGDz7wFGSbGjYk2d+fd3cO4BNVloDbMuBX/HI34ssIDp/W4SsSX9LbvWVN
+    DA3LqKnMkdxIrMJCevNt2Z3C0FYcOWNXRL4BupBZ4R688IoNJIgRuXWvUFyTm8ta
+    O6gTvdgnmVtO2hCMHzaeXeqMZDBC7DDGifaZF/yziWHGubAgfIvpQqRMyieeGdkl
+    6GF/hjL04Bht9nnhK1kohRHIN+FDngXGWnvmFmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:sender:in-reply-to
-    :references:from:date:message-id:subject:to:cc:content-type; s=
-    arctest; t=1518618777; bh=z2nNFaCF8S6JSFxZoljWRRKjSPAr8oc+k607Gx
-    3BTU0=; b=mCAlBBSW8QIZlF+snEZmR/wLMZtPOHWgdyeO1iOQVVH9zAnotEQsDw
-    sz0p8/NQKQ+2Bk9Vx7iq8W7VCTwhfxwizavws/r3oNGrOh6OQ50qLtNsBfo7cRno
-    xigqiF0Ev/hEoTCZtTMwaspSbEkmSxAexf3+x1MoSqVofaq6tH4Ituiw3uf5MZ+O
-    XEGTa7YRHOt6kuz7KGnON2uJw4qwZMpeZudxMo4P/zEA/dhQHM4RdsbB529jDoit
-    ywi7RG9PkzRtXUGuk5/JkoEDsaJSpaEhv82eVeCIwRxGN2zDNi5PeOPifzrMR5LQ
-    amfS8OnLDzgGYWxreHnDG64RHfSytuBw==
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:in-reply-to:references; s=arctest; t=
+    1518513080; bh=Y9KwbKND7ndWpvMalupwbVELTJJl+Qe8jeuStL5pMOc=; b=A
+    hQ3YEYDEWuHbB/y1JCNBQcxKm7mJWfIXx/vxaCTIP8WuW9sanHXE7HtPCLIyTN8u
+    XvLziiHQTphQo5i/T8jlhWZBtKDYPYpEPi69R0+Wh5Hq8yInHi8JDBLU+3r8ECJ/
+    I+6drzZeZtysZ/8+f30HEA73DvRgSQovYl9Pt+DOSUyBJrlZpYgxL/auo8YIRzlW
+    uvn7TQAPRQdJQh5MeGdwioZfNndS4VDH5ltZ29G+IXqwGC2bOiuYXFfQXOlaD2Fs
+    MzmBdQbXW3ZC/yLE7T2jXfbQBbdMZ7JeYE5mpLInPF5UM17JxtpeDOSxtaMeCs/+
+    sZnuLNIUIr2f4Ss+niYoQ==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=MDBy6HFJ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,d=none) header.from=arndb.de;
-    iprev=pass policy.iprev=209.85.220.193 (mail-qk0-f193.google.com);
-    spf=pass smtp.mailfrom=arndbergmann@gmail.com smtp.helo=mail-qk0-f193.google.com;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=fIcs8+IA;
-    x-ptr=pass x-ptr-helo=mail-qk0-f193.google.com x-ptr-lookup=mail-qk0-f193.google.com;
-    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=X6q9wQU6 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.160.67 (mail-pl0-f67.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f67.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=bM1S7bZ6;
+    x-ptr=pass x-ptr-helo=mail-pl0-f67.google.com x-ptr-lookup=mail-pl0-f67.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=MDBy6HFJ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,d=none) header.from=arndb.de;
-    iprev=pass policy.iprev=209.85.220.193 (mail-qk0-f193.google.com);
-    spf=pass smtp.mailfrom=arndbergmann@gmail.com smtp.helo=mail-qk0-f193.google.com;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=fIcs8+IA;
-    x-ptr=pass x-ptr-helo=mail-qk0-f193.google.com x-ptr-lookup=mail-qk0-f193.google.com;
-    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=X6q9wQU6 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.160.67 (mail-pl0-f67.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f67.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=bM1S7bZ6;
+    x-ptr=pass x-ptr-helo=mail-pl0-f67.google.com x-ptr-lookup=mail-pl0-f67.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Google-Smtp-Source: AH8x224iFf8esCcnhg3lZvyntfGO4YGT276rXl4d8LKci10pwzLQLN6TWKBW+cLVLDQ+ZqnQcjSUVxcjUDtZbfOhJZE=
-MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <7f9139c13f0f84091245b8f5c70ba5d4308e8b36.1518505384.git.greentime@andestech.com>
-References: <cover.1518505384.git.greentime@andestech.com> <7f9139c13f0f84091245b8f5c70ba5d4308e8b36.1518505384.git.greentime@andestech.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 14 Feb 2018 15:32:54 +0100
-X-Google-Sender-Auth: x0auAUx_XFsj-YGrPFxdwCTjJXg
-Message-ID: <CAK8P3a3S=q6cHsj4ge8jjm0Pbu6dgKhMfy1Gqk=pWoudKHaZVA@mail.gmail.com>
-Subject: Re: [PATCH v7 23/37] nds32: Debugging support
-To: Greentime Hu <green.hu@gmail.com>
-Cc: Greentime <greentime@andestech.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>,
-	Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	Networking <netdev@vger.kernel.org>, Vincent Chen <deanbo422@gmail.com>,
-	DTML <devicetree@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-	David Howells <dhowells@redhat.com>, Will Deacon <will.deacon@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, linux-serial@vger.kernel.org,
-	Geert Uytterhoeven <geert.uytterhoeven@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>, Greg KH <greg@kroah.com>, Guo Ren <ren_guo@c-sky.com>,
-	Randy Dunlap <rdunlap@infradead.org>, David Miller <davem@davemloft.net>,
-	Jonas Bonn <jonas@southpole.se>,
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>,
+X-Google-Smtp-Source: AH8x225OQ/0VH5Lh0g7krpKYMOTd74jSv1IVIVF5MZbCSEYakmJB1bpmD/jqHKnauOsR3h+D4DsGPA==
+From: Greentime Hu <green.hu@gmail.com>
+X-Google-Original-From: Greentime Hu <greentime@andestech.com>
+To: greentime@andestech.com,
+	linux-kernel@vger.kernel.org,
+	arnd@arndb.de,
+	linux-arch@vger.kernel.org,
+	tglx@linutronix.de,
+	jason@lakedaemon.net,
+	marc.zyngier@arm.com,
+	robh+dt@kernel.org,
+	netdev@vger.kernel.org,
+	deanbo422@gmail.com,
+	devicetree@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	dhowells@redhat.com,
+	will.deacon@arm.com,
+	daniel.lezcano@linaro.org,
+	linux-serial@vger.kernel.org,
+	geert.uytterhoeven@gmail.com,
+	linus.walleij@linaro.org,
+	mark.rutland@arm.com,
+	greg@kroah.com,
+	ren_guo@c-sky.com,
+	rdunlap@infradead.org,
+	davem@davemloft.net,
+	jonas@southpole.se,
+	stefan.kristiansson@saunalahti.fi,
+	shorne@gmail.com
+Cc: green.hu@gmail.com,
 	Vincent Chen <vincentc@andestech.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v7 08/37] nds32: Exception handling
+Date: Tue, 13 Feb 2018 17:09:12 +0800
+Message-Id: <5d7538f6cad0763594f968d58625c7c7a99f3225.1518505384.git.greentime@andestech.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <cover.1518505384.git.greentime@andestech.com>
+References: <cover.1518505384.git.greentime@andestech.com>
+In-Reply-To: <cover.1518505384.git.greentime@andestech.com>
+References: <cover.1518505384.git.greentime@andestech.com>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 13, 2018 at 10:09 AM, Greentime Hu <green.hu@gmail.com> wrote:
-> This patch adds ptrace support.
->
-> Signed-off-by: Vincent Chen <vincentc@andestech.com>
-> Signed-off-by: Greentime Hu <greentime@andestech.com>
+This patch includes the exception/interrupt entries, pt_reg structure and
+related accessors.
 
-This new version looks good to me,
+/* Unaligned accessing handling*/
+Andes processors cannot load/store information which is not naturally
+aligned on the bus, i.e., loading a 4 byte data whose start address must
+be divisible by 4. If unaligned data accessing is happened, data
+unaligned exception will be triggered and user will get SIGSEGV or
+kernel oops according to the unaligned address. In order to make user be
+able to load/store data from an unaligned address, software load/store
+emulation is implemented in arch/nds32/mm/alignment.c to address data
+unaligned exception.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Unaligned accessing handling is disabled by default because it is not a
+normal case. User can enable this feature by following steps.
+
+A. Compile time:
+    1. Enable kernel config CONFIG_ALIGNMENT_TRAP
+B. Run time:
+    1. Enter /proc/sys/nds32/unaligned_acess folder
+    2. Write 1 to file enable_mode to enable unaligned accessing
+       handling. User can disable it by writing 0 to this file.
+    3. Write 1 to file debug to show which unaligned address is under
+       processing. User can disable it by writing 0 to this file.
+
+However, unaligned accessing handler cannot work if this unaligned
+address is not accessible such as protection violation. On this
+condition, the default behaviors for addressing data unaligned exception
+still happen
+
+Signed-off-by: Vincent Chen <vincentc@andestech.com>
+Signed-off-by: Greentime Hu <greentime@andestech.com>
+---
+ arch/nds32/include/asm/ptrace.h |  77 ++++++
+ arch/nds32/kernel/ex-entry.S    | 157 +++++++++++
+ arch/nds32/kernel/ex-exit.S     | 184 +++++++++++++
+ arch/nds32/kernel/stacktrace.c  |  47 ++++
+ arch/nds32/kernel/traps.c       | 442 ++++++++++++++++++++++++++++++
+ arch/nds32/mm/alignment.c       | 576 ++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 1483 insertions(+)
+ create mode 100644 arch/nds32/include/asm/ptrace.h
+ create mode 100644 arch/nds32/kernel/ex-entry.S
+ create mode 100644 arch/nds32/kernel/ex-exit.S
+ create mode 100644 arch/nds32/kernel/stacktrace.c
+ create mode 100644 arch/nds32/kernel/traps.c
+ create mode 100644 arch/nds32/mm/alignment.c
+
+diff --git a/arch/nds32/include/asm/ptrace.h b/arch/nds32/include/asm/ptrace.h
+new file mode 100644
+index 000000000000..c4538839055c
+--- /dev/null
++++ b/arch/nds32/include/asm/ptrace.h
+@@ -0,0 +1,77 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#ifndef __ASM_NDS32_PTRACE_H
++#define __ASM_NDS32_PTRACE_H
++
++#include <uapi/asm/ptrace.h>
++
++/*
++ * If pt_regs.syscallno == NO_SYSCALL, then the thread is not executing
++ * a syscall -- i.e., its most recent entry into the kernel from
++ * userspace was not via syscall, or otherwise a tracer cancelled the
++ * syscall.
++ *
++ * This must have the value -1, for ABI compatibility with ptrace etc.
++ */
++#define NO_SYSCALL (-1)
++#ifndef __ASSEMBLY__
++#include <linux/types.h>
++
++struct pt_regs {
++	union {
++		struct user_pt_regs user_regs;
++		struct {
++			long uregs[26];
++			long fp;
++			long gp;
++			long lp;
++			long sp;
++			long ipc;
++#if defined(CONFIG_HWZOL)
++			long lb;
++			long le;
++			long lc;
++#else
++			long dummy[3];
++#endif
++			long syscallno;
++		};
++	};
++	long orig_r0;
++	long ir0;
++	long ipsw;
++	long pipsw;
++	long pipc;
++	long pp0;
++	long pp1;
++	long fucop_ctl;
++	long osp;
++};
++
++static inline bool in_syscall(struct pt_regs const *regs)
++{
++	return regs->syscallno != NO_SYSCALL;
++}
++
++static inline void forget_syscall(struct pt_regs *regs)
++{
++	regs->syscallno = NO_SYSCALL;
++}
++static inline unsigned long regs_return_value(struct pt_regs *regs)
++{
++	return regs->uregs[0];
++}
++extern void show_regs(struct pt_regs *);
++/* Avoid circular header include via sched.h */
++struct task_struct;
++
++#define arch_has_single_step()		(1)
++#define user_mode(regs)			(((regs)->ipsw & PSW_mskPOM) == 0)
++#define interrupts_enabled(regs)	(!!((regs)->ipsw & PSW_mskGIE))
++#define user_stack_pointer(regs)	((regs)->sp)
++#define instruction_pointer(regs)	((regs)->ipc)
++#define profile_pc(regs) 		instruction_pointer(regs)
++
++#endif /* __ASSEMBLY__ */
++#endif
+diff --git a/arch/nds32/kernel/ex-entry.S b/arch/nds32/kernel/ex-entry.S
+new file mode 100644
+index 000000000000..a72e83d804f5
+--- /dev/null
++++ b/arch/nds32/kernel/ex-entry.S
+@@ -0,0 +1,157 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#include <linux/linkage.h>
++#include <asm/memory.h>
++#include <asm/nds32.h>
++#include <asm/errno.h>
++#include <asm/asm-offsets.h>
++#include <asm/page.h>
++
++#ifdef CONFIG_HWZOL
++	.macro push_zol
++	mfusr	$r14, $LB
++	mfusr	$r15, $LE
++	mfusr	$r16, $LC
++	.endm
++#endif
++
++	.macro	save_user_regs
++
++	smw.adm $sp, [$sp], $sp, #0x1
++	/* move $SP to the bottom of pt_regs */
++	addi    $sp, $sp, -OSP_OFFSET
++
++	/* push $r0 ~ $r25 */
++	smw.bim $r0, [$sp], $r25
++	/* push $fp, $gp, $lp */
++	smw.bim $sp, [$sp], $sp, #0xe
++
++	mfsr	$r12, $SP_USR
++	mfsr	$r13, $IPC
++#ifdef CONFIG_HWZOL
++	push_zol
++#endif
++	movi	$r17, -1
++	move	$r18, $r0
++	mfsr	$r19, $PSW
++	mfsr	$r20, $IPSW
++	mfsr	$r21, $P_IPSW
++	mfsr	$r22, $P_IPC
++	mfsr	$r23, $P_P0
++	mfsr	$r24, $P_P1
++	smw.bim $r12, [$sp], $r24, #0
++	addi	$sp, $sp, -FUCOP_CTL_OFFSET
++
++	/* Initialize kernel space $fp */
++	andi    $p0, $r20, #PSW_mskPOM
++	movi    $p1, #0x0
++	cmovz   $fp, $p1, $p0
++
++	andi	$r16, $r19, #PSW_mskINTL
++	slti	$r17, $r16, #4
++	bnez	$r17, 1f
++	addi	$r17, $r19, #-2
++	mtsr	$r17, $PSW
++	isb
++1:
++	/* If it was superuser mode, we don't need to update $r25 */
++	bnez	$p0, 2f
++	la	$p0, __entry_task
++	lw	$r25, [$p0]
++2:
++	.endm
++
++	.text
++
++/*
++ * Exception Vector
++ */
++exception_handlers:
++	.long	unhandled_exceptions	!Reset/NMI
++	.long	unhandled_exceptions	!TLB fill
++	.long	do_page_fault		!PTE not present
++	.long	do_dispatch_tlb_misc	!TLB misc
++	.long	unhandled_exceptions	!TLB VLPT
++	.long	unhandled_exceptions	!Machine Error
++	.long	do_debug_trap		!Debug related
++	.long	do_dispatch_general	!General exception
++	.long	eh_syscall		!Syscall
++	.long	asm_do_IRQ		!IRQ
++
++common_exception_handler:
++	save_user_regs
++	mfsr	$p0, $ITYPE
++	andi	$p0, $p0, #ITYPE_mskVECTOR
++	srli	$p0, $p0, #ITYPE_offVECTOR
++	andi	$p1, $p0, #NDS32_VECTOR_mskNONEXCEPTION
++	bnez	$p1, 1f
++	sethi	$lp, hi20(ret_from_exception)
++	ori	$lp, $lp, lo12(ret_from_exception)
++	sethi	$p1, hi20(exception_handlers)
++	ori	$p1, $p1, lo12(exception_handlers)
++	lw	$p1, [$p1+$p0<<2]
++	move	$r0, $p0
++	mfsr	$r1, $EVA
++	mfsr	$r2, $ITYPE
++	move	$r3, $sp
++	mfsr    $r4, $OIPC
++	/* enable gie if it is enabled in IPSW. */
++	mfsr	$r21, $PSW
++	andi	$r20, $r20, #PSW_mskGIE	/* r20 is $IPSW*/
++	or	$r21, $r21, $r20
++	mtsr	$r21, $PSW
++	dsb
++	jr	$p1
++
++	/* syscall */
++1:
++	addi	$p1, $p0, #-NDS32_VECTOR_offEXCEPTION
++	bnez	$p1, 2f
++	sethi	$lp, hi20(ret_from_exception)
++	ori	$lp, $lp, lo12(ret_from_exception)
++	sethi	$p1, hi20(exception_handlers)
++	ori	$p1, $p1, lo12(exception_handlers)
++	lwi	$p1, [$p1+#NDS32_VECTOR_offEXCEPTION<<2]
++	jr	$p1
++
++	/* interrupt */
++2:
++#ifdef CONFIG_TRACE_IRQFLAGS
++	jal     arch_trace_hardirqs_off
++#endif
++	move	$r0, $sp
++	sethi	$lp, hi20(ret_from_intr)
++	ori	$lp, $lp, lo12(ret_from_intr)
++	sethi	$p0, hi20(exception_handlers)
++	ori	$p0, $p0, lo12(exception_handlers)
++	lwi	$p0, [$p0+#NDS32_VECTOR_offINTERRUPT<<2]
++	jr	$p0
++
++	.macro	EXCEPTION_VECTOR_DEBUG
++	.align 4
++	mfsr     $p0, $EDM_CTL
++	andi     $p0, $p0, EDM_CTL_mskV3_EDM_MODE
++	tnez     $p0, SWID_RAISE_INTERRUPT_LEVEL
++	.endm
++
++	.macro	EXCEPTION_VECTOR
++	.align 4
++	sethi	 $p0, hi20(common_exception_handler)
++	ori	 $p0, $p0, lo12(common_exception_handler)
++	jral.ton $p0, $p0
++	.endm
++
++	.section	".text.init", #alloc, #execinstr
++	.global	exception_vector
++exception_vector:
++.rept 6
++	EXCEPTION_VECTOR
++.endr
++	EXCEPTION_VECTOR_DEBUG
++.rept 121
++	EXCEPTION_VECTOR
++.endr
++	.align 4
++	.global	exception_vector_end
++exception_vector_end:
+diff --git a/arch/nds32/kernel/ex-exit.S b/arch/nds32/kernel/ex-exit.S
+new file mode 100644
+index 000000000000..03e4f7788a18
+--- /dev/null
++++ b/arch/nds32/kernel/ex-exit.S
+@@ -0,0 +1,184 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#include <linux/linkage.h>
++#include <asm/unistd.h>
++#include <asm/assembler.h>
++#include <asm/nds32.h>
++#include <asm/asm-offsets.h>
++#include <asm/thread_info.h>
++#include <asm/current.h>
++
++
++
++#ifdef CONFIG_HWZOL
++	.macro pop_zol
++	mtusr	$r14, $LB
++	mtusr	$r15, $LE
++	mtusr	$r16, $LC
++	.endm
++#endif
++
++	.macro	restore_user_regs_first
++	setgie.d
++	isb
++
++	addi	$sp, $sp, FUCOP_CTL_OFFSET
++
++	lmw.adm $r12, [$sp], $r24, #0x0
++	mtsr	$r12, $SP_USR
++	mtsr	$r13, $IPC
++#ifdef CONFIG_HWZOL
++	pop_zol
++#endif
++	mtsr	$r19, $PSW
++	mtsr	$r20, $IPSW
++	mtsr    $r21, $P_IPSW
++	mtsr	$r22, $P_IPC
++	mtsr	$r23, $P_P0
++	mtsr	$r24, $P_P1
++	lmw.adm $sp, [$sp], $sp, #0xe
++	.endm
++
++	.macro	restore_user_regs_last
++	pop	$p0
++	cmovn	$sp, $p0, $p0
++
++	iret
++	nop
++
++	.endm
++
++	.macro	restore_user_regs
++	restore_user_regs_first
++	lmw.adm $r0, [$sp], $r25, #0x0
++	addi	$sp, $sp, OSP_OFFSET
++	restore_user_regs_last
++	.endm
++
++	.macro	fast_restore_user_regs
++	restore_user_regs_first
++	lmw.adm $r1, [$sp], $r25, #0x0
++	addi	$sp, $sp, OSP_OFFSET-4
++	restore_user_regs_last
++	.endm
++
++#ifdef CONFIG_PREEMPT
++	.macro	preempt_stop
++	.endm
++#else
++	.macro	preempt_stop
++	setgie.d
++	isb
++	.endm
++#define	resume_kernel	no_work_pending
++#endif
++
++ENTRY(ret_from_exception)
++	preempt_stop
++ENTRY(ret_from_intr)
++
++/*
++ * judge Kernel or user mode
++ *
++ */
++	lwi	$p0, [$sp+(#IPSW_OFFSET)]	! Check if in nested interrupt
++	andi	$p0, $p0, #PSW_mskINTL
++	bnez	$p0, resume_kernel		! done with iret
++	j	resume_userspace
++
++
++/*
++ * This is the fast syscall return path.  We do as little as
++ * possible here, and this includes saving $r0 back into the SVC
++ * stack.
++ * fixed: tsk - $r25, syscall # - $r7, syscall table pointer - $r8
++ */
++ENTRY(ret_fast_syscall)
++	gie_disable
++	lwi	$r1, [tsk+#TSK_TI_FLAGS]
++	andi	$p1, $r1, #_TIF_WORK_MASK
++	bnez	$p1, fast_work_pending
++	fast_restore_user_regs			! iret
++
++/*
++ * Ok, we need to do extra processing,
++ * enter the slow path returning from syscall, while pending work.
++ */
++fast_work_pending:
++	swi	$r0, [$sp+(#R0_OFFSET)]		! what is different from ret_from_exception
++work_pending:
++	andi	$p1, $r1, #_TIF_NEED_RESCHED
++	bnez	$p1, work_resched
++
++	andi	$p1, $r1, #_TIF_SIGPENDING|#_TIF_NOTIFY_RESUME
++	beqz	$p1, no_work_pending
++
++	move	$r0, $sp			! 'regs'
++	gie_enable
++	bal	do_notify_resume
++	b       ret_slow_syscall
++work_resched:
++	bal	schedule			! path, return to user mode
++
++/*
++ * "slow" syscall return path.
++ */
++ENTRY(resume_userspace)
++ENTRY(ret_slow_syscall)
++	gie_disable
++	lwi	$p0, [$sp+(#IPSW_OFFSET)]	! Check if in nested interrupt
++	andi	$p0, $p0, #PSW_mskINTL
++	bnez	$p0, no_work_pending		! done with iret
++	lwi	$r1, [tsk+#TSK_TI_FLAGS]
++	andi	$p1, $r1, #_TIF_WORK_MASK
++	bnez	$p1, work_pending		! handle work_resched, sig_pend
++
++no_work_pending:
++#ifdef CONFIG_TRACE_IRQFLAGS
++	lwi	$p0, [$sp+(#IPSW_OFFSET)]
++	andi	$p0, $p0, #0x1
++	la	$r10, trace_hardirqs_off
++	la	$r9, trace_hardirqs_on
++	cmovz	$r9, $p0, $r10
++	jral	$r9
++#endif
++	restore_user_regs			! return from iret
++
++
++/*
++ * preemptive kernel
++ */
++#ifdef CONFIG_PREEMPT
++resume_kernel:
++	gie_disable
++	lwi	$t0, [tsk+#TSK_TI_PREEMPT]
++	bnez	$t0, no_work_pending
++need_resched:
++	lwi	$t0, [tsk+#TSK_TI_FLAGS]
++	andi	$p1, $t0, #_TIF_NEED_RESCHED
++	beqz	$p1, no_work_pending
++
++	lwi	$t0, [$sp+(#IPSW_OFFSET)]	! Interrupts off?
++	andi	$t0, $t0, #1
++	beqz	$t0, no_work_pending
++
++	jal	preempt_schedule_irq
++	b	need_resched
++#endif
++
++/*
++ * This is how we return from a fork.
++ */
++ENTRY(ret_from_fork)
++	bal	schedule_tail
++	beqz	$r6, 1f				! r6 stores fn for kernel thread
++	move	$r0, $r7			! prepare kernel thread arg
++	jral	$r6
++1:
++	lwi	$r1, [tsk+#TSK_TI_FLAGS]		! check for syscall tracing
++	andi	$p1, $r1, #_TIF_WORK_SYSCALL_LEAVE	! are we tracing syscalls?
++	beqz	$p1, ret_slow_syscall
++	move    $r0, $sp
++	bal	syscall_trace_leave
++	b	ret_slow_syscall
+diff --git a/arch/nds32/kernel/stacktrace.c b/arch/nds32/kernel/stacktrace.c
+new file mode 100644
+index 000000000000..bc70113c0e84
+--- /dev/null
++++ b/arch/nds32/kernel/stacktrace.c
+@@ -0,0 +1,47 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#include <linux/sched/debug.h>
++#include <linux/sched/task_stack.h>
++#include <linux/stacktrace.h>
++
++void save_stack_trace(struct stack_trace *trace)
++{
++	save_stack_trace_tsk(current, trace);
++}
++
++void save_stack_trace_tsk(struct task_struct *tsk, struct stack_trace *trace)
++{
++	unsigned long *fpn;
++	int skip = trace->skip;
++	int savesched;
++
++	if (tsk == current) {
++		__asm__ __volatile__("\tori\t%0, $fp, #0\n":"=r"(fpn));
++		savesched = 1;
++	} else {
++		fpn = (unsigned long *)thread_saved_fp(tsk);
++		savesched = 0;
++	}
++
++	while (!kstack_end(fpn) && !((unsigned long)fpn & 0x3)
++	       && (fpn >= (unsigned long *)TASK_SIZE)) {
++		unsigned long lpp, fpp;
++
++		lpp = fpn[-1];
++		fpp = fpn[FP_OFFSET];
++		if (!__kernel_text_address(lpp))
++			break;
++
++		if (savesched || !in_sched_functions(lpp)) {
++			if (skip) {
++				skip--;
++			} else {
++				trace->entries[trace->nr_entries++] = lpp;
++				if (trace->nr_entries >= trace->max_entries)
++					break;
++			}
++		}
++		fpn = (unsigned long *)fpp;
++	}
++}
+diff --git a/arch/nds32/kernel/traps.c b/arch/nds32/kernel/traps.c
+new file mode 100644
+index 000000000000..8828b4aeb72b
+--- /dev/null
++++ b/arch/nds32/kernel/traps.c
+@@ -0,0 +1,442 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#include <linux/module.h>
++#include <linux/personality.h>
++#include <linux/kallsyms.h>
++#include <linux/hardirq.h>
++#include <linux/kdebug.h>
++#include <linux/sched/task_stack.h>
++#include <linux/uaccess.h>
++
++#include <asm/proc-fns.h>
++#include <asm/unistd.h>
++
++#include <linux/ptrace.h>
++#include <nds32_intrinsic.h>
++
++extern void show_pte(struct mm_struct *mm, unsigned long addr);
++
++/*
++ * Dump out the contents of some memory nicely...
++ */
++void dump_mem(const char *lvl, unsigned long bottom, unsigned long top)
++{
++	unsigned long first;
++	mm_segment_t fs;
++	int i;
++
++	/*
++	 * We need to switch to kernel mode so that we can use __get_user
++	 * to safely read from kernel space.  Note that we now dump the
++	 * code first, just in case the backtrace kills us.
++	 */
++	fs = get_fs();
++	set_fs(KERNEL_DS);
++
++	pr_emerg("%s(0x%08lx to 0x%08lx)\n", lvl, bottom, top);
++
++	for (first = bottom & ~31; first < top; first += 32) {
++		unsigned long p;
++		char str[sizeof(" 12345678") * 8 + 1];
++
++		memset(str, ' ', sizeof(str));
++		str[sizeof(str) - 1] = '\0';
++
++		for (p = first, i = 0; i < 8 && p < top; i++, p += 4) {
++			if (p >= bottom && p < top) {
++				unsigned long val;
++				if (__get_user(val, (unsigned long *)p) == 0)
++					sprintf(str + i * 9, " %08lx", val);
++				else
++					sprintf(str + i * 9, " ????????");
++			}
++		}
++		pr_emerg("%s%04lx:%s\n", lvl, first & 0xffff, str);
++	}
++
++	set_fs(fs);
++}
++
++EXPORT_SYMBOL(dump_mem);
++
++static void dump_instr(struct pt_regs *regs)
++{
++	unsigned long addr = instruction_pointer(regs);
++	mm_segment_t fs;
++	char str[sizeof("00000000 ") * 5 + 2 + 1], *p = str;
++	int i;
++
++	return;
++	/*
++	 * We need to switch to kernel mode so that we can use __get_user
++	 * to safely read from kernel space.  Note that we now dump the
++	 * code first, just in case the backtrace kills us.
++	 */
++	fs = get_fs();
++	set_fs(KERNEL_DS);
++
++	pr_emerg("Code: ");
++	for (i = -4; i < 1; i++) {
++		unsigned int val, bad;
++
++		bad = __get_user(val, &((u32 *) addr)[i]);
++
++		if (!bad) {
++			p += sprintf(p, i == 0 ? "(%08x) " : "%08x ", val);
++		} else {
++			p += sprintf(p, "bad PC value");
++			break;
++		}
++	}
++	pr_emerg("Code: %s\n", str);
++
++	set_fs(fs);
++}
++
++#ifdef CONFIG_FUNCTION_GRAPH_TRACER
++#include <linux/ftrace.h>
++static void
++get_real_ret_addr(unsigned long *addr, struct task_struct *tsk, int *graph)
++{
++	if (*addr == (unsigned long)return_to_handler) {
++		int index = tsk->curr_ret_stack;
++
++		if (tsk->ret_stack && index >= *graph) {
++			index -= *graph;
++			*addr = tsk->ret_stack[index].ret;
++			(*graph)++;
++		}
++	}
++}
++#else
++static inline void
++get_real_ret_addr(unsigned long *addr, struct task_struct *tsk, int *graph)
++{
++}
++#endif
++
++#define LOOP_TIMES (100)
++static void __dump(struct task_struct *tsk, unsigned long *base_reg)
++{
++	unsigned long ret_addr;
++	int cnt = LOOP_TIMES, graph = 0;
++	pr_emerg("Call Trace:\n");
++	if (!IS_ENABLED(CONFIG_FRAME_POINTER)) {
++		while (!kstack_end(base_reg)) {
++			ret_addr = *base_reg++;
++			if (__kernel_text_address(ret_addr)) {
++				get_real_ret_addr(&ret_addr, tsk, &graph);
++				print_ip_sym(ret_addr);
++			}
++			if (--cnt < 0)
++				break;
++		}
++	} else {
++		while (!kstack_end((void *)base_reg) &&
++		       !((unsigned long)base_reg & 0x3) &&
++		       ((unsigned long)base_reg >= TASK_SIZE)) {
++			unsigned long next_fp;
++#if !defined(NDS32_ABI_2)
++			ret_addr = base_reg[0];
++			next_fp = base_reg[1];
++#else
++			ret_addr = base_reg[-1];
++			next_fp = base_reg[FP_OFFSET];
++#endif
++			if (__kernel_text_address(ret_addr)) {
++				get_real_ret_addr(&ret_addr, tsk, &graph);
++				print_ip_sym(ret_addr);
++			}
++			if (--cnt < 0)
++				break;
++			base_reg = (unsigned long *)next_fp;
++		}
++	}
++	pr_emerg("\n");
++}
++
++void dump_stack(void)
++{
++	unsigned long *base_reg;
++	if (!IS_ENABLED(CONFIG_FRAME_POINTER))
++		__asm__ __volatile__("\tori\t%0, $sp, #0\n":"=r"(base_reg));
++	else
++		__asm__ __volatile__("\tori\t%0, $fp, #0\n":"=r"(base_reg));
++	__dump(NULL, base_reg);
++}
++
++EXPORT_SYMBOL(dump_stack);
++
++void show_stack(struct task_struct *tsk, unsigned long *sp)
++{
++	unsigned long *base_reg;
++
++	if (!tsk)
++		tsk = current;
++	if (!IS_ENABLED(CONFIG_FRAME_POINTER)) {
++		if (tsk != current)
++			base_reg = (unsigned long *)(tsk->thread.cpu_context.sp);
++		else
++			__asm__ __volatile__("\tori\t%0, $sp, #0\n":"=r"(base_reg));
++	} else {
++		if (tsk != current)
++			base_reg = (unsigned long *)(tsk->thread.cpu_context.fp);
++		else
++			__asm__ __volatile__("\tori\t%0, $fp, #0\n":"=r"(base_reg));
++	}
++	__dump(tsk, base_reg);
++	barrier();
++}
++
++DEFINE_SPINLOCK(die_lock);
++
++/*
++ * This function is protected against re-entrancy.
++ */
++void die(const char *str, struct pt_regs *regs, int err)
++{
++	struct task_struct *tsk = current;
++	static int die_counter;
++
++	console_verbose();
++	spin_lock_irq(&die_lock);
++	bust_spinlocks(1);
++
++	pr_emerg("Internal error: %s: %x [#%d]\n", str, err, ++die_counter);
++	print_modules();
++	pr_emerg("CPU: %i\n", smp_processor_id());
++	show_regs(regs);
++	pr_emerg("Process %s (pid: %d, stack limit = 0x%p)\n",
++		 tsk->comm, tsk->pid, task_thread_info(tsk) + 1);
++
++	if (!user_mode(regs) || in_interrupt()) {
++		dump_mem("Stack: ", regs->sp,
++			 THREAD_SIZE + (unsigned long)task_thread_info(tsk));
++		dump_instr(regs);
++		dump_stack();
++	}
++
++	bust_spinlocks(0);
++	spin_unlock_irq(&die_lock);
++	do_exit(SIGSEGV);
++}
++
++EXPORT_SYMBOL(die);
++
++void die_if_kernel(const char *str, struct pt_regs *regs, int err)
++{
++	if (user_mode(regs))
++		return;
++
++	die(str, regs, err);
++}
++
++int bad_syscall(int n, struct pt_regs *regs)
++{
++	siginfo_t info;
++
++	if (current->personality != PER_LINUX) {
++		send_sig(SIGSEGV, current, 1);
++		return regs->uregs[0];
++	}
++
++	info.si_signo = SIGILL;
++	info.si_errno = 0;
++	info.si_code = ILL_ILLTRP;
++	info.si_addr = (void __user *)instruction_pointer(regs) - 4;
++
++	force_sig_info(SIGILL, &info, current);
++	die_if_kernel("Oops - bad syscall", regs, n);
++	return regs->uregs[0];
++}
++
++void __pte_error(const char *file, int line, unsigned long val)
++{
++	pr_emerg("%s:%d: bad pte %08lx.\n", file, line, val);
++}
++
++void __pmd_error(const char *file, int line, unsigned long val)
++{
++	pr_emerg("%s:%d: bad pmd %08lx.\n", file, line, val);
++}
++
++void __pgd_error(const char *file, int line, unsigned long val)
++{
++	pr_emerg("%s:%d: bad pgd %08lx.\n", file, line, val);
++}
++
++extern char *exception_vector, *exception_vector_end;
++void __init trap_init(void)
++{
++	return;
++}
++
++void __init early_trap_init(void)
++{
++	unsigned long ivb = 0;
++	unsigned long base = PAGE_OFFSET;
++
++	memcpy((unsigned long *)base, (unsigned long *)&exception_vector,
++	       ((unsigned long)&exception_vector_end -
++		(unsigned long)&exception_vector));
++	ivb = __nds32__mfsr(NDS32_SR_IVB);
++	/* Check platform support. */
++	if (((ivb & IVB_mskNIVIC) >> IVB_offNIVIC) < 2)
++		panic
++		    ("IVIC mode is not allowed on the platform with interrupt controller\n");
++	__nds32__mtsr((ivb & ~IVB_mskESZ) | (IVB_valESZ16 << IVB_offESZ) |
++		      IVB_BASE, NDS32_SR_IVB);
++	__nds32__mtsr(INT_MASK_INITAIAL_VAL, NDS32_SR_INT_MASK);
++
++	/*
++	 * 0x800 = 128 vectors * 16byte.
++	 * It should be enough to flush a page.
++	 */
++	cpu_cache_wbinval_page(base, true);
++}
++
++void send_sigtrap(struct task_struct *tsk, struct pt_regs *regs,
++		  int error_code, int si_code)
++{
++	struct siginfo info;
++
++	tsk->thread.trap_no = ENTRY_DEBUG_RELATED;
++	tsk->thread.error_code = error_code;
++
++	memset(&info, 0, sizeof(info));
++	info.si_signo = SIGTRAP;
++	info.si_code = si_code;
++	info.si_addr = (void __user *)instruction_pointer(regs);
++	force_sig_info(SIGTRAP, &info, tsk);
++}
++
++void do_debug_trap(unsigned long entry, unsigned long addr,
++		   unsigned long type, struct pt_regs *regs)
++{
++	if (notify_die(DIE_OOPS, "Oops", regs, addr, type, SIGTRAP)
++	    == NOTIFY_STOP)
++		return;
++
++	if (user_mode(regs)) {
++		/* trap_signal */
++		send_sigtrap(current, regs, 0, TRAP_BRKPT);
++	} else {
++		/* kernel_trap */
++		if (!fixup_exception(regs))
++			die("unexpected kernel_trap", regs, 0);
++	}
++}
++
++void unhandled_interruption(struct pt_regs *regs)
++{
++	siginfo_t si;
++	pr_emerg("unhandled_interruption\n");
++	show_regs(regs);
++	if (!user_mode(regs))
++		do_exit(SIGKILL);
++	si.si_signo = SIGKILL;
++	si.si_errno = 0;
++	force_sig_info(SIGKILL, &si, current);
++}
++
++void unhandled_exceptions(unsigned long entry, unsigned long addr,
++			  unsigned long type, struct pt_regs *regs)
++{
++	siginfo_t si;
++	pr_emerg("Unhandled Exception: entry: %lx addr:%lx itype:%lx\n", entry,
++		 addr, type);
++	show_regs(regs);
++	if (!user_mode(regs))
++		do_exit(SIGKILL);
++	si.si_signo = SIGKILL;
++	si.si_errno = 0;
++	si.si_addr = (void *)addr;
++	force_sig_info(SIGKILL, &si, current);
++}
++
++extern int do_page_fault(unsigned long entry, unsigned long addr,
++			 unsigned int error_code, struct pt_regs *regs);
++
++/*
++ * 2:DEF dispatch for TLB MISC exception handler
++*/
++
++void do_dispatch_tlb_misc(unsigned long entry, unsigned long addr,
++			  unsigned long type, struct pt_regs *regs)
++{
++	type = type & (ITYPE_mskINST | ITYPE_mskETYPE);
++	if ((type & ITYPE_mskETYPE) < 5) {
++		/* Permission exceptions */
++		do_page_fault(entry, addr, type, regs);
++	} else
++		unhandled_exceptions(entry, addr, type, regs);
++}
++
++void do_revinsn(struct pt_regs *regs)
++{
++	siginfo_t si;
++	pr_emerg("Reserved Instruction\n");
++	show_regs(regs);
++	if (!user_mode(regs))
++		do_exit(SIGILL);
++	si.si_signo = SIGILL;
++	si.si_errno = 0;
++	force_sig_info(SIGILL, &si, current);
++}
++
++#ifdef CONFIG_ALIGNMENT_TRAP
++extern int unalign_access_mode;
++extern int do_unaligned_access(unsigned long addr, struct pt_regs *regs);
++#endif
++void do_dispatch_general(unsigned long entry, unsigned long addr,
++			 unsigned long itype, struct pt_regs *regs,
++			 unsigned long oipc)
++{
++	unsigned int swid = itype >> ITYPE_offSWID;
++	unsigned long type = itype & (ITYPE_mskINST | ITYPE_mskETYPE);
++	if (type == ETYPE_ALIGNMENT_CHECK) {
++#ifdef CONFIG_ALIGNMENT_TRAP
++		/* Alignment check */
++		if (user_mode(regs) && unalign_access_mode) {
++			int ret;
++			ret = do_unaligned_access(addr, regs);
++
++			if (ret == 0)
++				return;
++
++			if (ret == -EFAULT)
++				pr_emerg
++				    ("Unhandled unaligned access exception\n");
++		}
++#endif
++		do_page_fault(entry, addr, type, regs);
++	} else if (type == ETYPE_RESERVED_INSTRUCTION) {
++		/* Reserved instruction */
++		do_revinsn(regs);
++	} else if (type == ETYPE_TRAP && swid == SWID_RAISE_INTERRUPT_LEVEL) {
++		/* trap, used on v3 EDM target debugging workaround */
++		/*
++		 * DIPC(OIPC) is passed as parameter before
++		 * interrupt is enabled, so the DIPC will not be corrupted
++		 * even though interrupts are coming in
++		 */
++		/*
++		 * 1. update ipc
++		 * 2. update pt_regs ipc with oipc
++		 * 3. update pt_regs ipsw (clear DEX)
++		 */
++		__asm__ volatile ("mtsr %0, $IPC\n\t"::"r" (oipc));
++		regs->ipc = oipc;
++		if (regs->pipsw & PSW_mskDEX) {
++			pr_emerg
++			    ("Nested Debug exception is possibly happened\n");
++			pr_emerg("ipc:%08x pipc:%08x\n",
++				 (unsigned int)regs->ipc,
++				 (unsigned int)regs->pipc);
++		}
++		do_debug_trap(entry, addr, itype, regs);
++		regs->ipsw &= ~PSW_mskDEX;
++	} else
++		unhandled_exceptions(entry, addr, type, regs);
++}
+diff --git a/arch/nds32/mm/alignment.c b/arch/nds32/mm/alignment.c
+new file mode 100644
+index 000000000000..b96a01b10ca7
+--- /dev/null
++++ b/arch/nds32/mm/alignment.c
+@@ -0,0 +1,576 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#include <linux/proc_fs.h>
++#include <linux/uaccess.h>
++#include <linux/sysctl.h>
++#include <asm/unaligned.h>
++
++#define DEBUG(enable, tagged, ...)				\
++	do{							\
++		if (enable) {					\
++			if (tagged)				\
++			pr_warn("[ %30s() ] ", __func__);	\
++			pr_warn(__VA_ARGS__);			\
++		}						\
++	} while (0)
++
++#define RT(inst)	(((inst) >> 20) & 0x1FUL)
++#define RA(inst)	(((inst) >> 15) & 0x1FUL)
++#define RB(inst)	(((inst) >> 10) & 0x1FUL)
++#define SV(inst)	(((inst) >> 8) & 0x3UL)
++#define IMM(inst)	(((inst) >> 0) & 0x3FFFUL)
++
++#define RA3(inst)	(((inst) >> 3) & 0x7UL)
++#define RT3(inst)	(((inst) >> 6) & 0x7UL)
++#define IMM3U(inst)	(((inst) >> 0) & 0x7UL)
++
++#define RA5(inst)	(((inst) >> 0) & 0x1FUL)
++#define RT4(inst)	(((inst) >> 5) & 0xFUL)
++
++#define __get8_data(val,addr,err)	\
++	__asm__(					\
++	"1:	lbi.bi	%1, [%2], #1\n"			\
++	"2:\n"						\
++	"	.pushsection .text.fixup,\"ax\"\n"	\
++	"	.align	2\n"				\
++	"3:	movi	%0, #1\n"			\
++	"	j	2b\n"				\
++	"	.popsection\n"				\
++	"	.pushsection __ex_table,\"a\"\n"	\
++	"	.align	3\n"				\
++	"	.long	1b, 3b\n"			\
++	"	.popsection\n"				\
++	: "=r" (err), "=&r" (val), "=r" (addr)		\
++	: "0" (err), "2" (addr))
++
++#define get16_data(addr, val_ptr)				\
++	do {							\
++		unsigned int err = 0, v, a = addr;		\
++		__get8_data(v,a,err);				\
++		*val_ptr =  v << 0;				\
++		__get8_data(v,a,err);				\
++		*val_ptr |= v << 8;				\
++		if (err)					\
++			goto fault;				\
++		*val_ptr = le16_to_cpu(*val_ptr);		\
++	} while(0)
++
++#define get32_data(addr, val_ptr)				\
++	do {							\
++		unsigned int err = 0, v, a = addr;		\
++		__get8_data(v,a,err);				\
++		*val_ptr =  v << 0;				\
++		__get8_data(v,a,err);				\
++		*val_ptr |= v << 8;				\
++		__get8_data(v,a,err);				\
++		*val_ptr |= v << 16;				\
++		__get8_data(v,a,err);				\
++		*val_ptr |= v << 24;				\
++		if (err)					\
++			goto fault;				\
++		*val_ptr = le32_to_cpu(*val_ptr);		\
++	} while(0)
++
++#define get_data(addr, val_ptr, len)				\
++	if (len == 2)						\
++		get16_data(addr, val_ptr);			\
++	else							\
++		get32_data(addr, val_ptr);
++
++#define set16_data(addr, val)					\
++	do {							\
++		unsigned int err = 0, *ptr = addr ;		\
++		val = le32_to_cpu(val);				\
++		__asm__(					\
++                "1:	sbi.bi 	%2, [%1], #1\n"			\
++                "	srli 	%2, %2, #8\n"			\
++                "2:	sbi	%2, [%1]\n"			\
++		"3:\n"						\
++		"	.pushsection .text.fixup,\"ax\"\n"	\
++		"	.align	2\n"				\
++		"4:	movi	%0, #1\n"			\
++		"	j	3b\n"				\
++		"	.popsection\n"				\
++		"	.pushsection __ex_table,\"a\"\n"	\
++		"	.align	3\n"				\
++		"	.long	1b, 4b\n"			\
++		"	.long	2b, 4b\n"			\
++		"	.popsection\n"				\
++		: "=r" (err), "+r" (ptr), "+r" (val)		\
++		: "0" (err)					\
++		);						\
++		if (err)					\
++			goto fault;				\
++	} while(0)
++
++#define set32_data(addr, val)					\
++	do {							\
++		unsigned int err = 0, *ptr = addr ;		\
++		val = le32_to_cpu(val);				\
++		__asm__(					\
++                "1:	sbi.bi 	%2, [%1], #1\n"			\
++                "	srli 	%2, %2, #8\n"			\
++                "2:	sbi.bi 	%2, [%1], #1\n"			\
++                "	srli 	%2, %2, #8\n"			\
++                "3:	sbi.bi 	%2, [%1], #1\n"			\
++                "	srli 	%2, %2, #8\n"			\
++                "4:	sbi 	%2, [%1]\n"			\
++		"5:\n"						\
++		"	.pushsection .text.fixup,\"ax\"\n"	\
++		"	.align	2\n"				\
++		"6:	movi	%0, #1\n"			\
++		"	j	5b\n"				\
++		"	.popsection\n"				\
++		"	.pushsection __ex_table,\"a\"\n"	\
++		"	.align	3\n"				\
++		"	.long	1b, 6b\n"			\
++		"	.long	2b, 6b\n"			\
++		"	.long	3b, 6b\n"			\
++		"	.long	4b, 6b\n"			\
++		"	.popsection\n"				\
++		: "=r" (err), "+r" (ptr), "+r" (val)		\
++		: "0" (err)					\
++		);						\
++		if (err)					\
++			goto fault;				\
++	} while(0)
++#define set_data(addr, val, len)				\
++	if (len == 2)						\
++		set16_data(addr, val);				\
++	else							\
++		set32_data(addr, val);
++#define NDS32_16BIT_INSTRUCTION	0x80000000
++
++extern pte_t va_present(struct mm_struct *mm, unsigned long addr);
++extern pte_t va_kernel_present(unsigned long addr);
++extern int va_readable(struct pt_regs *regs, unsigned long addr);
++extern int va_writable(struct pt_regs *regs, unsigned long addr);
++
++int unalign_access_mode = 0, unalign_access_debug = 0;
++
++static inline unsigned long *idx_to_addr(struct pt_regs *regs, int idx)
++{
++	/* this should be consistent with ptrace.h */
++	if (idx >= 0 && idx <= 25)	/* R0-R25 */
++		return &regs->uregs[0] + idx;
++	else if (idx >= 28 && idx <= 30)	/* FP, GP, LP */
++		return &regs->fp + (idx - 28);
++	else if (idx == 31)	/* SP */
++		return &regs->sp;
++	else
++		return NULL;	/* cause a segfault */
++}
++
++static inline unsigned long get_inst(unsigned long addr)
++{
++	return be32_to_cpu(get_unaligned((u32 *) addr));
++}
++
++static inline unsigned long sign_extend(unsigned long val, int len)
++{
++	unsigned long ret = 0;
++	unsigned char *s, *t;
++	int i = 0;
++
++	val = cpu_to_le32(val);
++
++	s = (void *)&val;
++	t = (void *)&ret;
++
++	while (i++ < len)
++		*t++ = *s++;
++
++	if (((*(t - 1)) & 0x80) && (i < 4)) {
++
++		while (i++ <= 4)
++			*t++ = 0xff;
++	}
++
++	return le32_to_cpu(ret);
++}
++
++static inline int do_16(unsigned long inst, struct pt_regs *regs)
++{
++	int imm, regular, load, len, addr_mode, idx_mode;
++	unsigned long unaligned_addr, target_val, source_idx, target_idx,
++	    shift = 0;
++	switch ((inst >> 9) & 0x3F) {
++
++	case 0x12:		/* LHI333    */
++		imm = 1;
++		regular = 1;
++		load = 1;
++		len = 2;
++		addr_mode = 3;
++		idx_mode = 3;
++		break;
++	case 0x10:		/* LWI333    */
++		imm = 1;
++		regular = 1;
++		load = 1;
++		len = 4;
++		addr_mode = 3;
++		idx_mode = 3;
++		break;
++	case 0x11:		/* LWI333.bi */
++		imm = 1;
++		regular = 0;
++		load = 1;
++		len = 4;
++		addr_mode = 3;
++		idx_mode = 3;
++		break;
++	case 0x1A:		/* LWI450    */
++		imm = 0;
++		regular = 1;
++		load = 1;
++		len = 4;
++		addr_mode = 5;
++		idx_mode = 4;
++		break;
++	case 0x16:		/* SHI333    */
++		imm = 1;
++		regular = 1;
++		load = 0;
++		len = 2;
++		addr_mode = 3;
++		idx_mode = 3;
++		break;
++	case 0x14:		/* SWI333    */
++		imm = 1;
++		regular = 1;
++		load = 0;
++		len = 4;
++		addr_mode = 3;
++		idx_mode = 3;
++		break;
++	case 0x15:		/* SWI333.bi */
++		imm = 1;
++		regular = 0;
++		load = 0;
++		len = 4;
++		addr_mode = 3;
++		idx_mode = 3;
++		break;
++	case 0x1B:		/* SWI450    */
++		imm = 0;
++		regular = 1;
++		load = 0;
++		len = 4;
++		addr_mode = 5;
++		idx_mode = 4;
++		break;
++
++	default:
++		return -EFAULT;
++	}
++
++	if (addr_mode == 3) {
++		unaligned_addr = *idx_to_addr(regs, RA3(inst));
++		source_idx = RA3(inst);
++	} else {
++		unaligned_addr = *idx_to_addr(regs, RA5(inst));
++		source_idx = RA5(inst);
++	}
++
++	if (idx_mode == 3)
++		target_idx = RT3(inst);
++	else
++		target_idx = RT4(inst);
++
++	if (imm)
++		shift = IMM3U(inst) * len;
++
++	if (regular)
++		unaligned_addr += shift;
++
++	if (load) {
++		if (!access_ok(VERIFY_READ, (void *)unaligned_addr, len))
++			return -EACCES;
++
++		get_data(unaligned_addr, &target_val, len);
++		*idx_to_addr(regs, target_idx) = target_val;
++	} else {
++		if (!access_ok(VERIFY_WRITE, (void *)unaligned_addr, len))
++			return -EACCES;
++		target_val = *idx_to_addr(regs, target_idx);
++		set_data((void *)unaligned_addr, target_val, len);
++	}
++
++	if (!regular)
++		*idx_to_addr(regs, source_idx) = unaligned_addr + shift;
++	regs->ipc += 2;
++
++	return 0;
++fault:
++	return -EACCES;
++}
++
++static inline int do_32(unsigned long inst, struct pt_regs *regs)
++{
++	int imm, regular, load, len, sign_ext;
++	unsigned long unaligned_addr, target_val, shift;
++
++	unaligned_addr = *idx_to_addr(regs, RA(inst));
++
++	switch ((inst >> 25) << 1) {
++
++	case 0x02:		/* LHI       */
++		imm = 1;
++		regular = 1;
++		load = 1;
++		len = 2;
++		sign_ext = 0;
++		break;
++	case 0x0A:		/* LHI.bi    */
++		imm = 1;
++		regular = 0;
++		load = 1;
++		len = 2;
++		sign_ext = 0;
++		break;
++	case 0x22:		/* LHSI      */
++		imm = 1;
++		regular = 1;
++		load = 1;
++		len = 2;
++		sign_ext = 1;
++		break;
++	case 0x2A:		/* LHSI.bi   */
++		imm = 1;
++		regular = 0;
++		load = 1;
++		len = 2;
++		sign_ext = 1;
++		break;
++	case 0x04:		/* LWI       */
++		imm = 1;
++		regular = 1;
++		load = 1;
++		len = 4;
++		sign_ext = 0;
++		break;
++	case 0x0C:		/* LWI.bi    */
++		imm = 1;
++		regular = 0;
++		load = 1;
++		len = 4;
++		sign_ext = 0;
++		break;
++	case 0x12:		/* SHI       */
++		imm = 1;
++		regular = 1;
++		load = 0;
++		len = 2;
++		sign_ext = 0;
++		break;
++	case 0x1A:		/* SHI.bi    */
++		imm = 1;
++		regular = 0;
++		load = 0;
++		len = 2;
++		sign_ext = 0;
++		break;
++	case 0x14:		/* SWI       */
++		imm = 1;
++		regular = 1;
++		load = 0;
++		len = 4;
++		sign_ext = 0;
++		break;
++	case 0x1C:		/* SWI.bi    */
++		imm = 1;
++		regular = 0;
++		load = 0;
++		len = 4;
++		sign_ext = 0;
++		break;
++
++	default:
++		switch (inst & 0xff) {
++
++		case 0x01:	/* LH        */
++			imm = 0;
++			regular = 1;
++			load = 1;
++			len = 2;
++			sign_ext = 0;
++			break;
++		case 0x05:	/* LH.bi     */
++			imm = 0;
++			regular = 0;
++			load = 1;
++			len = 2;
++			sign_ext = 0;
++			break;
++		case 0x11:	/* LHS       */
++			imm = 0;
++			regular = 1;
++			load = 1;
++			len = 2;
++			sign_ext = 1;
++			break;
++		case 0x15:	/* LHS.bi    */
++			imm = 0;
++			regular = 0;
++			load = 1;
++			len = 2;
++			sign_ext = 1;
++			break;
++		case 0x02:	/* LW        */
++			imm = 0;
++			regular = 1;
++			load = 1;
++			len = 4;
++			sign_ext = 0;
++			break;
++		case 0x06:	/* LW.bi     */
++			imm = 0;
++			regular = 0;
++			load = 1;
++			len = 4;
++			sign_ext = 0;
++			break;
++		case 0x09:	/* SH        */
++			imm = 0;
++			regular = 1;
++			load = 0;
++			len = 2;
++			sign_ext = 0;
++			break;
++		case 0x0D:	/* SH.bi     */
++			imm = 0;
++			regular = 0;
++			load = 0;
++			len = 2;
++			sign_ext = 0;
++			break;
++		case 0x0A:	/* SW        */
++			imm = 0;
++			regular = 1;
++			load = 0;
++			len = 4;
++			sign_ext = 0;
++			break;
++		case 0x0E:	/* SW.bi     */
++			imm = 0;
++			regular = 0;
++			load = 0;
++			len = 4;
++			sign_ext = 0;
++			break;
++
++		default:
++			return -EFAULT;
++		}
++	}
++
++	if (imm)
++		shift = IMM(inst) * len;
++	else
++		shift = *idx_to_addr(regs, RB(inst)) << SV(inst);
++
++	if (regular)
++		unaligned_addr += shift;
++
++	if (load) {
++
++		if (!access_ok(VERIFY_READ, (void *)unaligned_addr, len))
++			return -EACCES;
++
++		get_data(unaligned_addr, &target_val, len);
++
++		if (sign_ext)
++			*idx_to_addr(regs, RT(inst)) =
++			    sign_extend(target_val, len);
++		else
++			*idx_to_addr(regs, RT(inst)) = target_val;
++	} else {
++
++		if (!access_ok(VERIFY_WRITE, (void *)unaligned_addr, len))
++			return -EACCES;
++
++		target_val = *idx_to_addr(regs, RT(inst));
++		set_data((void *)unaligned_addr, target_val, len);
++	}
++
++	if (!regular)
++		*idx_to_addr(regs, RA(inst)) = unaligned_addr + shift;
++
++	regs->ipc += 4;
++
++	return 0;
++fault:
++	return -EACCES;
++}
++
++int do_unaligned_access(unsigned long addr, struct pt_regs *regs)
++{
++	unsigned long inst;
++	int ret = -EFAULT;
++	mm_segment_t seg = get_fs();
++
++	inst = get_inst(regs->ipc);
++
++	DEBUG((unalign_access_debug > 0), 1,
++	      "Faulting addr: 0x%08lx, pc: 0x%08lx [inst: 0x%08lx ]\n", addr,
++	      regs->ipc, inst);
++
++	set_fs(USER_DS);
++
++	if (inst & NDS32_16BIT_INSTRUCTION)
++		ret = do_16((inst >> 16) & 0xffff, regs);
++	else
++		ret = do_32(inst, regs);
++	set_fs(seg);
++
++	return ret;
++}
++
++#ifdef CONFIG_PROC_FS
++
++static struct ctl_table alignment_tbl[3] = {
++	{
++	 .procname = "enable",
++	 .data = &unalign_access_mode,
++	 .maxlen = sizeof(unalign_access_mode),
++	 .mode = 0666,
++	 .proc_handler = &proc_dointvec
++	}
++	,
++	{
++	 .procname = "debug_info",
++	 .data = &unalign_access_debug,
++	 .maxlen = sizeof(unalign_access_debug),
++	 .mode = 0644,
++	 .proc_handler = &proc_dointvec
++	}
++	,
++	{}
++};
++
++static struct ctl_table nds32_sysctl_table[2] = {
++	{
++	 .procname = "unaligned_acess",
++	 .mode = 0555,
++	 .child = alignment_tbl},
++	{}
++};
++
++static struct ctl_path nds32_path[2] = {
++	{.procname = "nds32"},
++	{}
++};
++
++/*
++ * Initialize nds32 alignment-correction interface
++ */
++static int __init nds32_sysctl_init(void)
++{
++	register_sysctl_paths(nds32_path, nds32_sysctl_table);
++	return 0;
++}
++
++__initcall(nds32_sysctl_init);
++#endif /* CONFIG_PROC_FS */
+-- 
+2.16.1
