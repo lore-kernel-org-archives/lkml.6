@@ -1,75 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934954AbeBMLta (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 06:49:30 -0500
-Received: from ozlabs.org ([103.22.144.67]:40119 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934231AbeBMLt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 06:49:28 -0500
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Guenter Roeck <linux@roeck-us.net>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [PATCH 1/2] powerpc/kdump: Add missing optional dummy functions
-In-Reply-To: <1518474848-3158-1-git-send-email-linux@roeck-us.net>
-References: <1518474848-3158-1-git-send-email-linux@roeck-us.net>
-Date: Tue, 13 Feb 2018 22:49:22 +1100
-Message-ID: <877erh2jp9.fsf@concordia.ellerman.id.au>
+        id S934972AbeBMLtx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 06:49:53 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43374 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934231AbeBMLtw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 06:49:52 -0500
+Date: Tue, 13 Feb 2018 10:05:44 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: mingo@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched: typo: remove space in #ifdef
+Message-ID: <20180213090544.GE25201@hirez.programming.kicks-ass.net>
+References: <1518512382-29426-1-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518512382-29426-1-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guenter Roeck <linux@roeck-us.net> writes:
-
-> If KEXEC_CORE is not enabled, PowerNV builds fail as follows.
->
-> arch/powerpc/platforms/powernv/smp.c: In function 'pnv_smp_cpu_kill_self':
-> arch/powerpc/platforms/powernv/smp.c:236:4: error:
-> 	implicit declaration of function 'crash_ipi_callback'
->
-> Add dummy function calls, similar to kdump_in_progress(), to solve the
-> problem.
->
-> Fixes: 4145f358644b ("powernv/kdump: Fix cases where the kdump kernel ...")
-
-Personally I prefer these untruncated.
-
-> Cc: Balbir Singh <bsingharora@gmail.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+On Tue, Feb 13, 2018 at 09:59:42AM +0100, Vincent Guittot wrote:
+> Remove a useless space in # ifdef and align it with others
+> 
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 > ---
->  arch/powerpc/include/asm/kexec.h | 6 ++++++
->  1 file changed, 6 insertions(+)
-
-Thanks. Nathan sent a fix for this a few days ago, but I like this
-version because it uses the existing #ifdefs.
-
-I've taken this version but used the subject from his patch.
-
-cheers
-
-> diff --git a/arch/powerpc/include/asm/kexec.h b/arch/powerpc/include/asm/kexec.h
-> index 9dcbfa6bbb91..d8b1e8e7e035 100644
-> --- a/arch/powerpc/include/asm/kexec.h
-> +++ b/arch/powerpc/include/asm/kexec.h
-> @@ -140,6 +140,12 @@ static inline bool kdump_in_progress(void)
->  	return false;
+>  kernel/sched/fair.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 1070803..cad1932 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -2823,7 +2823,7 @@ void reweight_task(struct task_struct *p, int prio)
 >  }
 >  
-> +static inline void crash_ipi_callback(struct pt_regs *regs) { }
-> +
-> +static inline void crash_send_ipi(void (*crash_ipi_callback)(struct pt_regs *))
-> +{
-> +}
-> +
->  #endif /* CONFIG_KEXEC_CORE */
->  #endif /* ! __ASSEMBLY__ */
->  #endif /* __KERNEL__ */
-> -- 
-> 2.7.4
+>  #ifdef CONFIG_FAIR_GROUP_SCHED
+> -# ifdef CONFIG_SMP
+> +#ifdef CONFIG_SMP
+
+Heh, so this is one where Ingo and me disagree ;-) He likes that
+indented preprocessor nonsense, whereas I just find it really
+bothersome.
+
+I try and hide these in patches that touch the surrounding code.
