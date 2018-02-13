@@ -1,108 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933778AbeBMPff (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 10:35:35 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:36101 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933442AbeBMPfd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 10:35:33 -0500
-X-Google-Smtp-Source: AH8x226D+mxedQ5vCwWI5dz8SGq7h+7sTMMtklQbKlq3Ym4k1u0gWjTUQCWpeOHDxYzosq2px3SZuYsv/V3kQjvmYAk=
+        id S933876AbeBMPgM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 10:36:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39830 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933442AbeBMPgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 10:36:11 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F3C721780
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
+Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-trace-users@vger.kernel.org
+Subject: [RFC PATCH 0/8] tracing: probeevent: Improve fetcharg features
+Date: Wed, 14 Feb 2018 00:35:45 +0900
+Message-Id: <151853614489.31487.10683006682475678487.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20180213171647-mutt-send-email-mst@kernel.org>
-References: <20180207013525.1634-1-marcandre.lureau@redhat.com>
- <20180207013525.1634-4-marcandre.lureau@redhat.com> <20180212053104-mutt-send-email-mst@kernel.org>
- <CAMxuvawozzWQ98WkduM=nWQJMMmagSQuHPZMhOYbGZEG5a2aaQ@mail.gmail.com>
- <20180212160849-mutt-send-email-mst@kernel.org> <CAMxuvayUh=N3Lc6+ut8Ct5scVyS5dVRP_qDmpX7pCYf60hnQRA@mail.gmail.com>
- <20180213162038-mutt-send-email-mst@kernel.org> <CAMxuvaxq9boTcJ2uDOJsYyo3=_WYtn1==kuq3QbPygBfVc+8Zw@mail.gmail.com>
- <20180213171647-mutt-send-email-mst@kernel.org>
-From: Marc-Andre Lureau <mlureau@redhat.com>
-Date: Tue, 13 Feb 2018 16:35:32 +0100
-Message-ID: <CAMxuvaxyJJuXNxTmTULF7MyLe1yyu7GxUOhAO6VSmtrRHLwTig@mail.gmail.com>
-Subject: Re: [PATCH v13 3/4] fw_cfg: write vmcoreinfo details
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergio Lopez Pascual <slp@redhat.com>, Baoquan He <bhe@redhat.com>,
-        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 4:19 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> On Tue, Feb 13, 2018 at 04:16:08PM +0100, Marc-Andre Lureau wrote:
->> Hi
->>
->> On Tue, Feb 13, 2018 at 3:27 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
->> > On Tue, Feb 13, 2018 at 03:14:03PM +0100, Marc-Andre Lureau wrote:
->> >> Hi
->> >>
->> >> On Mon, Feb 12, 2018 at 10:00 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
->> >> > On Mon, Feb 12, 2018 at 11:04:49AM +0100, Marc-Andre Lureau wrote:
->> >> >> >> +}
->> >> >> >> +
->> >> >> >> +/* qemu fw_cfg device is sync today, but spec says it may become async */
->> >> >> >> +static void fw_cfg_wait_for_control(struct fw_cfg_dma *d)
->> >> >> >> +{
->> >> >> >> +     do {
->> >> >> >> +             u32 ctrl = be32_to_cpu(READ_ONCE(d->control));
->> >> >> >> +
->> >> >> >> +             if ((ctrl & ~FW_CFG_DMA_CTL_ERROR) == 0)
->> >> >> >> +                     return;
->> >> >> >> +
->> >> >> >> +             usleep_range(50, 100);
->> >> >> >> +     } while (true);
->> >> >> >
->> >> >> > And you need an smp rmb here.
->> >> >
->> >> > I'd just do rmb() in fact.
->> >> >
->> >> >> Could you explain? thanks
->> >> >
->> >> > See Documentation/memory-barriers.txt
->> >> > You know that control is valid, but following read of
->> >> > the structure could be reordered. So you need that barrier there.
->> >> > Same for write: wmb.
->> >>
->> >> Is this ok?
->> >> @@ -103,10 +104,14 @@ static ssize_t fw_cfg_dma_transfer(void
->> >> *address, u32 length, u32 control)
->> >>         dma = virt_to_phys(d);
->> >>
->> >>         iowrite32be((u64)dma >> 32, fw_cfg_reg_dma);
->> >> +       /* force memory to sync before notifying device via MMIO */
->> >> +       wmb();
->> >>         iowrite32be(dma, fw_cfg_reg_dma + 4);
->> >>
->> >>         fw_cfg_wait_for_control(d);
->> >>
->> >> +       /* do not reorder the read to d->control */
->> >> +       rmb();
->> >>         if (be32_to_cpu(READ_ONCE(d->control)) & FW_CFG_DMA_CTL_ERROR) {
->> >>                 ret = -EIO;
->> >>         }
->> >
->> > I think you need an rmb after the read of d->control.
->> >
->>
->>
->> There are two reads of d->control, one in fw_cfg_wait_for_control() to
->> wait for completion, and the other one here to handle error. Do you
->> mean that for clarity rmb() should be moved at the end of
->> fw_cfg_wait_for_control() instead?
->>
->> thanks
->
->
-> IMHO that's a reasonable way to do it, yes.
-> OTOH is looking at DMA data the only way to detect DMA is complete?
-> Isn't there an IO register for that?
+Hi,
 
-That's the only thing that indicate completion it seems:
+This series improves probeevent variable fetcharg framework,
 
-https://git.qemu.org/?p=qemu.git;a=blob;f=hw/nvram/fw_cfg.c;hb=HEAD#l389
+- Rewrite fetcharg framework with fetch_insn, switch-case based
+  instead of function pointer. (maybe good for retpoline)
+- Add "symbol" type support, which shows symbol+offset instead of
+  address value.
+- Add "$argN" fetcharg, which fetches function parameters.
+  (currently only for x86-64)
+- Add array type support for basic types (except for string),
+  which enables to get fixed length array from probeevents.
 
-The spec doesn't describe other ways either:
+All ideas came from Steve's function event tracer. Thanks Steve!
 
-https://git.qemu.org/?p=qemu.git;a=blob;f=docs/specs/fw_cfg.txt
+I'll add string (pointer) array support and testcases for these
+features in the next version.
+
+Here are examples:
+
+o 'symbol' type
+
+ # echo 'p vfs_read $stack0:symbol' > kprobe_events 
+ # echo 1 > events/kprobes/p_vfs_read_0/enable 
+ # tail -n 3 trace
+              sh-729   [007] ...2   105.753637: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=SyS_read+0x42/0x90
+            tail-736   [000] ...2   105.754904: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=kernel_read+0x2c/0x40
+            tail-736   [000] ...2   105.754929: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=kernel_read+0x2c/0x40
+
+
+o $argN 
+
+ # echo 'p vfs_read $arg0 $arg1 $arg2' > kprobe_events
+ # echo 1 > events/kprobes/p_vfs_read_0/enable 
+ # tail -n 3 trace
+              sh-726   [007] ...2   134.288973: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=0xffff88001d98ec00 arg2=0x7ffeb4330f79 arg3=0x1
+            tail-731   [000] ...2   134.289987: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=0xffff88001d9dd200 arg2=0xffff88001d8a0a00 arg3=0x80
+            tail-731   [000] ...2   134.290016: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=0xffff88001d9dd200 arg2=0xffff88001faf4a00 arg3=0x150
+
+
+o Array type
+
+ # echo 'p vfs_read +0($stack):x64 +0($stack):x8[8]' > kprobe_events 
+ # echo 1 > events/kprobes/p_vfs_read_0/enable 
+ # tail -n 3 trace
+              sh-729   [007] ...2    91.701664: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=0xffffffff811b1252 arg2={0x52,0x12,0x1b,0x81,0xff,0xff,0xff,0xff}
+            tail-734   [000] ...2    91.702366: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=0xffffffff811b0dec arg2={0xec,0xd,0x1b,0x81,0xff,0xff,0xff,0xff}
+            tail-734   [000] ...2    91.702386: p_vfs_read_0: (vfs_read+0x0/0x130) arg1=0xffffffff811b0dec arg2={0xec,0xd,0x1b,0x81,0xff,0xff,0xff,0xff}
+ #
+ # cat events/kprobes/p_vfs_read_0/format 
+name: p_vfs_read_0
+ID: 1069
+format:
+	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
+	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
+	field:int common_pid;	offset:4;	size:4;	signed:1;
+
+	field:unsigned long __probe_ip;	offset:8;	size:8;	signed:0;
+	field:u64 arg1;	offset:16;	size:0;	signed:0;
+	field:u8 arg2[8];	offset:24;	size:8;	signed:0;
+
+print fmt: "(%lx) arg1=0x%Lx arg2={0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x,0x%x}", REC->__probe_ip, REC->arg1, REC->arg2[0], REC->arg2[1], REC->arg2[2], REC->arg2[3], REC->arg2[4], REC->arg2[5], REC->arg2[6], REC->arg2[7]
+
+
+Thanks,
+
+---
+
+Masami Hiramatsu (8):
+      tracing: probeevent: Cleanup print argument functions
+      tracing: probeevent: Cleanup argument field definition
+      tracing: probeevent: Remove NOKPROBE_SYMBOL from print functions
+      tracing: probeevent: Introduce new argument fetching code
+      tracing: probeevent: Add symbol type
+      x86: ptrace: Add function argument access API
+      tracing: probeevent: Add $argN for accessing function args
+      tracing: probeevent: Add an array for basic types
+
+
+ Documentation/trace/kprobetrace.txt |   20 +
+ arch/Kconfig                        |    7 
+ arch/x86/Kconfig                    |    1 
+ arch/x86/include/asm/ptrace.h       |   38 ++
+ kernel/trace/trace_kprobe.c         |  396 +++++++++--------------
+ kernel/trace/trace_probe.c          |  614 ++++++++++++++++-------------------
+ kernel/trace/trace_probe.h          |  313 +++++++++---------
+ kernel/trace/trace_uprobe.c         |  188 ++++++-----
+ 8 files changed, 771 insertions(+), 806 deletions(-)
+
+--
+Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
