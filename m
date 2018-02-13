@@ -1,69 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934592AbeBMLKr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 06:10:47 -0500
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:9972 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934226AbeBMLKo (ORCPT
+        id S934669AbeBMLLz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 06:11:55 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:34700 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934226AbeBMLLw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 06:10:44 -0500
-Subject: Re: [PATCH v2 15/15] ARM: dts: dra7: Add high speed modes capability
- to MMC1/MMC2 dt node
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180206125806.19350-1-kishon@ti.com>
- <20180206125806.19350-16-kishon@ti.com>
- <210939ed-67fc-fa37-b4f2-c1faefcc4642@ti.com>
- <b411cf11-61e9-e688-6f04-e624fe52ac66@ti.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <4f18dab9-aee3-1023-d301-f142c6e2d358@ti.com>
-Date: Tue, 13 Feb 2018 16:40:07 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 13 Feb 2018 06:11:52 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Date: Tue, 13 Feb 2018 11:11:47 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <patches@opensource.cirrus.com>, Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 16/21] regulator: wm8994: Pass descriptor instead of GPIO
+ number
+Message-ID: <20180213111147.kr4kecqbhmcoq6w2@localhost.localdomain>
+References: <20180212131717.27193-1-linus.walleij@linaro.org>
+ <20180212131717.27193-17-linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <b411cf11-61e9-e688-6f04-e624fe52ac66@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180212131717.27193-17-linus.walleij@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=747 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1802130134
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday 07 February 2018 02:51 PM, Kishon Vijay Abraham I wrote:
-> Hi,
+On Mon, Feb 12, 2018 at 02:17:12PM +0100, Linus Walleij wrote:
+> Instead of passing a global GPIO number for the enable GPIO, pass
+> a descriptor looked up from the device tree node or the board file
+> decriptor table for the regulator.
 > 
-> On Wednesday 07 February 2018 02:41 PM, Sekhar Nori wrote:
->> Kishon,
->>
->> On Tuesday 06 February 2018 06:28 PM, Kishon Vijay Abraham I wrote:
->>> Add UHS/HS200/DDR speed mode capability to MMC1 and MMC2 dt nodes.
->>>
->>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>
->> Along with this, dont we need to have
->>
->> 	/delete-property/ mmc-hs200-1_8v;
->>
->> for eMMC on Beagle x15 which does not support HS200?
->>
->> Or are you planning to depend on lack of pinctrl entries for HS200 to
->> take care of that?
+> There is a single board file passing the GPIOs for LDO1 and LDO2
+> through platform data, so augment this to pass descriptors
+> associated with the i2c device as well.
 > 
-> right now it relies on lack of pinctrl entries but I think adding delete
-> property is appropriate. Actually I missed porting the patch that adds
-> /delete-property/.
+> Cc: patches@opensource.cirrus.com
+> Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Lee: this patch is touching the MFD core driver for WM8994,
+> but as with all other patches we just change the regulator
+> parts. Would be nice if you could ACK it.
+> ---
+>  arch/arm/mach-s3c64xx/mach-crag6410-module.c | 18 ++++++++++++++++--
+>  drivers/mfd/wm8994-core.c                    |  9 ---------
+>  drivers/regulator/wm8994-regulator.c         | 19 +++++++++++--------
+>  include/linux/mfd/wm8994/pdata.h             |  3 ---
+>  4 files changed, 27 insertions(+), 22 deletions(-)
+> 
+> +static struct gpiod_lookup_table wm8994_gpiod_table = {
+> +	.dev_id = "i2c-wm8958", /* I2C device name */
+> +	.table = {
+> +		GPIO_LOOKUP("GPION", 6,
+> +			    "wlf,ldo1ena", GPIO_ACTIVE_HIGH),
+> +		GPIO_LOOKUP("GPION", 4,
+> +			    "wlf,ldo2ena", GPIO_ACTIVE_HIGH),
+> +		{ },
+>  	},
+>  };
+>  
+> @@ -366,6 +379,7 @@ static int wlf_gf_module_probe(struct i2c_client *i2c,
+>  					    rev == gf_mods[i].rev))
+>  			break;
+>  
+> +	gpiod_add_lookup_table(&wm8994_gpiod_table);
 
-Actually, thinking more, this should be probably be handled using
-"no-1-8-v" property. Reading the comment above SDHCI_QUIRK2_NO_1_8_V, it
-is specifically meant for the case when system (board) does not support
-1.8V even when host (controller) does. Which is exactly the case with
-Beagle x15.
+Would it be nicer to add this as a new member of gf_mods and
+register it inside the loop? Since eventually we will need tables
+for wm5102, wm8994, wm2200, wm8996, wm5100 and wm0010.
 
 Thanks,
-Sekhar
+Charles
