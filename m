@@ -1,74 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934482AbeBMJZX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 04:25:23 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35453 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933807AbeBMJYv (ORCPT
+        id S934446AbeBMJ1p (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 04:27:45 -0500
+Received: from LGEAMRELO12.lge.com ([156.147.23.52]:42845 "EHLO
+        lgeamrelo12.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934449AbeBMJ1j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:24:51 -0500
-X-Google-Smtp-Source: AH8x224Y3iQy+Evc+XlAetGnukyrou3AHe2CC7CGjib3d0gEeRtsP6P7INU5RqDLLOl0MhkXfSm98Q==
-Subject: Re: [PATCH v3 2/5] clk: mediatek: modify MT7622 audsys to adapt MFD
- device
-To: Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>
-References: <cover.1518424204.git.ryder.lee@mediatek.com>
- <f8e87179bd7700130e294393592719fac8590c59.1518424204.git.ryder.lee@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <cb75cdaa-eb84-d01e-60bd-21a928ddc090@gmail.com>
-Date: Tue, 13 Feb 2018 10:24:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 13 Feb 2018 04:27:39 -0500
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: namhyung@kernel.org
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date: Tue, 13 Feb 2018 18:27:37 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-rt-users@vger.kernel.org, linux-trace-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Clark Williams <williams@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kernel-team@lge.com
+Subject: Re: [PATCH 17/18] tracing: Add indirect to indirect access for
+ function based events
+Message-ID: <20180213092737.GJ31513@sejong>
+References: <20180202230458.840252014@goodmis.org>
+ <20180202231019.582037880@goodmis.org>
+ <20180209051301.GE28206@sejong>
+ <20180209104758.093d31ad@gandalf.local.home>
+ <20180212021534.GH31513@sejong>
+ <20180212122354.1d2fb867@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <f8e87179bd7700130e294393592719fac8590c59.1518424204.git.ryder.lee@mediatek.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20180212122354.1d2fb867@gandalf.local.home>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Steve,
 
-
-On 02/12/2018 12:28 PM, Ryder Lee wrote:
-> As the new MFD device is in place, switch probing method to adapt it.
+On Mon, Feb 12, 2018 at 12:23:54PM -0500, Steven Rostedt wrote:
+> On Mon, 12 Feb 2018 11:15:34 +0900
+> Namhyung Kim <namhyung@kernel.org> wrote:
 > 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
->  drivers/clk/mediatek/clk-mt7622-aud.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+> > > It should have been:
+> > > 
+> > > 		return process_redirects(arg, val, buf);  
+> > 
+> > But I think you need to consider data type of the arg when
+> > dereferencing the last redirect.
 > 
-> diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
-> index 13f752d..68c52a9 100644
-> --- a/drivers/clk/mediatek/clk-mt7622-aud.c
-> +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
-> @@ -142,11 +142,16 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
->  {
->  	struct clk_onecell_data *clk_data;
->  	struct device_node *node = pdev->dev.of_node;
-> +	struct device_node *pnode = pdev->dev.parent->of_node;
->  	int r;
->  
->  	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
->  
-> -	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
-> +	/* Check if called from MFD */
-> +	if (!pnode)
-> +		pnode = node;
+> What for?
 
-This is needed for backwards compatibility, correct?
-Please change the comment accordingly. The same holds for mt2701 driver.
+Otherwise it'd return a value of unsigned long type regardless of the
+type of the arg.  I thought it should have same logic as indirect
+args.
+
+But it seems not matter since record_entry() would copy it only for
+the arg->size.  Then type check in __get_arg() might be unnecessary
+too.
+
+> 
+> Also this code has also changed. I haven't posted new patches but my
+> latest is in my git tree in the branch ftrace/dynamic-ftrace-events.
+
+I've checked it.  And it seems to have another problem for indirect
+(but not redirect) arrays and strings.  Like 'x32[1] foo[2]'?
 
 Thanks,
-Matthias
-
-> +
-> +	mtk_clk_register_gates(pnode, audio_clks, ARRAY_SIZE(audio_clks),
->  			       clk_data);
->  
->  	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> 
+Namhyung
