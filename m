@@ -1,115 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933576AbeBMHld (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 02:41:33 -0500
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:46234 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933463AbeBMHlc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 02:41:32 -0500
-X-Google-Smtp-Source: AH8x224QaHjqC1nw9PnkhEaCRi08J6GBZC0dV+pJEIKDB3WseAVvGskvmLsRDrCAQvNFv5STk+JGZg==
-Date: Tue, 13 Feb 2018 09:41:22 +0200
-From: Pekka Paalanen <ppaalanen@gmail.com>
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
-        Stefan Hajnoczi <stefanha@gmail.com>, Jason Wang <jasowang@redhat.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org, kernel@collabora.com
-Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
-Message-ID: <20180213094122.5675d5f9@eldfell>
-In-Reply-To: <20180212114540.iygbha554busy4ip@sirius.home.kraxel.org>
-References: <20180126135803.29781-1-tomeu.vizoso@collabora.com>
-        <20180126135803.29781-2-tomeu.vizoso@collabora.com>
-        <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
-        <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
-        <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
-        <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
-        <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
-        <fd557eb7-f539-2ecf-142c-8313b9f7ddb3@collabora.com>
-        <20180206142302.vdjyqmnoypydci4t@sirius.home.kraxel.org>
-        <04687943-847b-25a7-42ef-a21b4c7ef0cf@collabora.com>
-        <20180212114540.iygbha554busy4ip@sirius.home.kraxel.org>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S933627AbeBMHoA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 02:44:00 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41326 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933463AbeBMHn7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 02:43:59 -0500
+Date: Tue, 13 Feb 2018 15:43:55 +0800
+From: Baoquan He <bhe@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        x86@kernel.org, douly.fnst@cn.fujitsu.com, joro@8bytes.org,
+        uobergfe@redhat.com, prarit@redhat.com
+Subject: Re: [PATCH v3 2/5] x86/apic: Fix restoring boot irq mode in reboot
+ and kexec/kdump
+Message-ID: <20180213074355.GD13253@localhost.localdomain>
+References: <20180209121008.28980-1-bhe@redhat.com>
+ <20180209121008.28980-3-bhe@redhat.com>
+ <87r2pq9a60.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/S6BabFRhENcv38d7GI_W2Bn"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87r2pq9a60.fsf@xmission.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/S6BabFRhENcv38d7GI_W2Bn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Eric,
 
-On Mon, 12 Feb 2018 12:45:40 +0100
-Gerd Hoffmann <kraxel@redhat.com> wrote:
+On 02/11/18 at 09:08pm, Eric W. Biederman wrote:
+> Baoquan He <bhe@redhat.com> writes:
+> 
+> > This is a regression fix.
+> >
+> > Before, to fix erratum AVR31, commit 522e66464467 ("x86/apic: Disable
+> > I/O APIC before shutdown of the local APIC") moved lapic_shutdown()
+> > calling after disable_IO_APIC(). This introdued a regression. The
+> > root cause is that disable_IO_APIC() not only clears IO_APIC, also
+> > restore boot irq mode by setting LAPIC/APIC/IMCR, lapic_shutdown()
+> > after disable_IO_APIC() will disable LAPIC and ruin the possible
+> > virtual wire mode setting which the code has been trying to do all
+> > along.
+> > To fix this, just break down disable_IO_APIC(), then call
+> > clear_IO_APIC() to stop IO_APIC where disable_IO_APIC() was called,
+> > and call restore_boot_irq_mode() to restore boot irq mode before
+> > reboot or kexec/kdump jump.
+> 
+> Two things here.
+> a) This is missing a fixes tag and a CC stable.
+> b) What makes your change to the KEXEC_JUMP code path safe?
+>    Have the lapic and ioapic already been shut down?
+> 
+> The KEXEC_JUMP changes to machine_kexec_32.c and machine_kexec_64.c
+> either need to be documented in the change long why they are safe
+> so that this change becomes obviously safe and correct.
 
->   Hi,
->=20
-> > >    (a) software rendering: client allocates shared memory buffer, ren=
-ders
-> > >        into it, then passes a file handle for that shmem block togeth=
-er
-> > >        with some meta data (size, format, ...) to the wayland server.
-> > >=20
-> > >    (b) gpu rendering: client opens a render node, allocates a buffer,
-> > >        asks the cpu to renders into it, exports the buffer as dma-buf
-> > >        (DRM_IOCTL_PRIME_HANDLE_TO_FD), passes this to the wayland ser=
-ver
-> > >        (again including meta data of course).
-> > >=20
-> > > Is that correct? =20
-> >=20
-> > Both are correct descriptions of typical behaviors. But it isn't spec'ed
-> > anywhere who has to do the buffer allocation. =20
->=20
-> Well, according to Pekka's reply it is spec'ed that way, for the
-> existing buffer types.  So for server allocated buffers you need
-> (a) a wayland protocol extension and (b) support for the extension
-> in the clients.
+Re-read the code, I have to admit I didn't check the KEXEC_JUMP code
+path carefully. 
 
-Correct. Or simply a libEGL that uses such Wayland extension behind
-everyone's back. I believe such things did at least exist, but are
-probably not relevant for this discussion.
+kernel_kexec() {
+	if (kexec_image->preserve_context) {
+		...
+		freeze_processes();
+		...
+		disable_nonboot_cpus();
+		...
+		
+	else {
+		...
+		machine_shutdown();
+		...
+	}
+	machine_kexec(kexec_image);
+	...
+}
 
-(If there is a standard library, like libEGL, loaded and used by both a
-server and a client, that library can advertise custom private Wayland
-protocol extensions and the client side can take advantage of them,
-both without needing any code changes on either the server or the
-client.)
+  --machine_shutdown()
+    --native_machine_shutdown()
+      --disable_IO_APIC()
+      --lapic_shutdown()
 
-> We also need a solution for the keymap shmem block.  I guess the keymap
-> doesn't change all that often, so maybe it is easiest to just copy it
-> over (host proxy -> guest proxy) instead of trying to map the host shmem
-> into the guest?
+machine_kexec() {
+	...
+	if (image->preserve_context) {
+		disable_IO_APIC();
+	}
+	...
+}
 
-Yes, I believe that would be a perfectly valid solution for that
-particular case.
+KEXEC_JUMP code path is different than kexec/kdump, it doesn't call
+lapic_shutdown() before jump. So commit 522e66464467
+("x86/apic: Disable I/O APIC before shutdown of the local APIC") didn't
+impact it. And here I break down disable_IO_APIC() and change to only
+call restore_boot_irq_mode() to make a possible danger. I am not an
+expert on KEXEC_JUMP, and don't know how to test it, so will keep the
+code implementation consistent as before. For now, I plan to change it
+as below if you don't object. As you pointed out, I will describe this
+in patch log. 
+
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index 1f790cf9d38f..cb0c2d0a4c99 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -297,7 +297,7 @@ void machine_kexec(struct kimage *image)
+                 * one form or other. kexec jump path also need
+                 * one.
+                 */
+-               disable_IO_APIC();
++		clear_IO_APIC();
++               restore_boot_irq_mode();
+ #endif
+        }
 
 
-Thanks,
-pq
 
---Sig_/S6BabFRhENcv38d7GI_W2Bn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEJQjwWQChkWOYOIONI1/ltBGqqqcFAlqClqIACgkQI1/ltBGq
-qqcPag/+KR7kWEABD7egQVQqfbX0wcPINa9SBMPaCP+L/yorn0Uv/CuctYa+zAMb
-MirWq1cz1Ssm1Yewy2Jotmlwmlxr79U7diwkpBQ8Aj/a2Da4y9O4EVg+wNfRz61x
-hH2Vs6Ygtzrq+xaJXRRBHUvQrqmeIAqd3dLT/3q8XiFLPsEj4p8mBpZUZJ5f/Fs+
-l06ne5wo2VJUKJxtlRQEDLiPNi0/nq9B3+6fF+/d5VqUvrv8lR/2cVFGQ1saeRnT
-mJxU+xilloGqyPTu9CEZjYZjAYw37HXxuotZEedvbn0YsUMl50JkNX/o4SiKDzVU
-UQ3OJaTkzUgsfYKTtCTEeWAkhFH45D9vper1LrrWQmwEXEJ1Z57Z7+p2WuOSnv0A
-ruQo1OsKmS1mEqXsPCQcH7PVEzRIU1gF89My2CAM2KL8C+i/pV8n2zpkshka1QGL
-bOn7qSfY9KZZ8NjEdOIA1829vBtx1FLQbw+nGMpeyxUh/L0G4Oja4ik1BYdePfzS
-eXF5IrPgdIjy5ZjKeOOE3WBtPS/Jp+FbU6jlrnvnjEOJijBdlnoWnYaxkZ1OkMPB
-KfjwBwjNRxwi8R8CYT0+yvAwMhpHHhrUlL1ucj6TIPGfDw1Mrwd4bFmvOInAkC5G
-wXdbld2Nxa9GWmD6F3H3wlWCCV/VxeZKnAzev8lFAiy+Wmsx/lI=
-=JNFH
------END PGP SIGNATURE-----
-
---Sig_/S6BabFRhENcv38d7GI_W2Bn--
+> 
+> Otherwise we risk and trivial and obvious looking change causing another
+> regression like changing the order of lapic_shutdown and disable_IOAPIC
+> did.
+> 
+> Eric
+> 
+> 
+> >
+> > Signed-off-by: Baoquan He <bhe@redhat.com>
+> > ---
+> >  arch/x86/include/asm/io_apic.h     | 1 +
+> >  arch/x86/kernel/apic/io_apic.c     | 2 +-
+> >  arch/x86/kernel/crash.c            | 3 ++-
+> >  arch/x86/kernel/machine_kexec_32.c | 2 +-
+> >  arch/x86/kernel/machine_kexec_64.c | 2 +-
+> >  arch/x86/kernel/reboot.c           | 3 ++-
+> >  6 files changed, 8 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/arch/x86/include/asm/io_apic.h b/arch/x86/include/asm/io_apic.h
+> > index 558d1a6a13ad..0fa95bfacb39 100644
+> > --- a/arch/x86/include/asm/io_apic.h
+> > +++ b/arch/x86/include/asm/io_apic.h
+> > @@ -193,6 +193,7 @@ static inline unsigned int io_apic_read(unsigned int apic, unsigned int reg)
+> >  extern void setup_IO_APIC(void);
+> >  extern void enable_IO_APIC(void);
+> >  extern void disable_IO_APIC(void);
+> > +extern void clear_IO_APIC(void);
+> >  extern void restore_boot_irq_mode(void);
+> >  extern int IO_APIC_get_PCI_irq_vector(int bus, int devfn, int pin);
+> >  extern void print_IO_APICs(void);
+> > diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
+> > index 7b73b6b9b4b6..2d7cd2db77f5 100644
+> > --- a/arch/x86/kernel/apic/io_apic.c
+> > +++ b/arch/x86/kernel/apic/io_apic.c
+> > @@ -587,7 +587,7 @@ static void clear_IO_APIC_pin(unsigned int apic, unsigned int pin)
+> >  		       mpc_ioapic_id(apic), pin);
+> >  }
+> >  
+> > -static void clear_IO_APIC (void)
+> > +void clear_IO_APIC (void)
+> >  {
+> >  	int apic, pin;
+> >  
+> > diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+> > index 10e74d4778a1..1f6680427ff0 100644
+> > --- a/arch/x86/kernel/crash.c
+> > +++ b/arch/x86/kernel/crash.c
+> > @@ -199,9 +199,10 @@ void native_machine_crash_shutdown(struct pt_regs *regs)
+> >  #ifdef CONFIG_X86_IO_APIC
+> >  	/* Prevent crash_kexec() from deadlocking on ioapic_lock. */
+> >  	ioapic_zap_locks();
+> > -	disable_IO_APIC();
+> > +	clear_IO_APIC();
+> >  #endif
+> >  	lapic_shutdown();
+> > +	restore_boot_irq_mode();
+> >  #ifdef CONFIG_HPET_TIMER
+> >  	hpet_disable();
+> >  #endif
+> > diff --git a/arch/x86/kernel/machine_kexec_32.c b/arch/x86/kernel/machine_kexec_32.c
+> > index edfede768688..f78bb4432bfb 100644
+> > --- a/arch/x86/kernel/machine_kexec_32.c
+> > +++ b/arch/x86/kernel/machine_kexec_32.c
+> > @@ -199,7 +199,7 @@ void machine_kexec(struct kimage *image)
+> >  		 * one form or other. kexec jump path also need
+> >  		 * one.
+> >  		 */
+> > -		disable_IO_APIC();
+> > +		restore_boot_irq_mode();
+> >  #endif
+> >  	}
+> >  
+> > diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+> > index 1f790cf9d38f..cb0c2d0a4c99 100644
+> > --- a/arch/x86/kernel/machine_kexec_64.c
+> > +++ b/arch/x86/kernel/machine_kexec_64.c
+> > @@ -297,7 +297,7 @@ void machine_kexec(struct kimage *image)
+> >  		 * one form or other. kexec jump path also need
+> >  		 * one.
+> >  		 */
+> > -		disable_IO_APIC();
+> > +		restore_boot_irq_mode();
+> >  #endif
+> >  	}
+> >  
+> > diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
+> > index 2126b9d27c34..725624b6c0c0 100644
+> > --- a/arch/x86/kernel/reboot.c
+> > +++ b/arch/x86/kernel/reboot.c
+> > @@ -666,7 +666,7 @@ void native_machine_shutdown(void)
+> >  	 * Even without the erratum, it still makes sense to quiet IO APIC
+> >  	 * before disabling Local APIC.
+> >  	 */
+> > -	disable_IO_APIC();
+> > +	clear_IO_APIC();
+> >  #endif
+> >  
+> >  #ifdef CONFIG_SMP
+> > @@ -680,6 +680,7 @@ void native_machine_shutdown(void)
+> >  #endif
+> >  
+> >  	lapic_shutdown();
+> > +	restore_boot_irq_mode();
+> >  
+> >  #ifdef CONFIG_HPET_TIMER
+> >  	hpet_disable();
