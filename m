@@ -1,50 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935387AbeBMNaE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:30:04 -0500
-Received: from 8bytes.org ([81.169.241.247]:36288 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935174AbeBMNaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:30:02 -0500
-Date: Tue, 13 Feb 2018 14:29:59 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        jroedel@suse.de
-Subject: Re: [PATCH v3] iommu/amd: Add support for fast IOTLB flushing
-Message-ID: <20180213132959.kkavgzt37hm7n2tt@8bytes.org>
-References: <1517374874-93978-1-git-send-email-suravee.suthikulpanit@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1517374874-93978-1-git-send-email-suravee.suthikulpanit@amd.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S935410AbeBMNaP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:30:15 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57618 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935174AbeBMNaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 08:30:14 -0500
+From: Will Deacon <will.deacon@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH] atomic/bitops: Clarify ordering semantics for failed test_and_{}_bit()
+Date: Tue, 13 Feb 2018 13:30:19 +0000
+Message-Id: <1518528619-20049-1-git-send-email-will.deacon@arm.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suravee,
+A test_and_{}_bit() operation fails if the value of the bit is such that
+the modification does not take place. For example, if test_and_set_bit()
+returns 1. In these cases, follow the behaviour of cmpxchg and allow the
+operation to be unordered. This also applies to test_and_set_bit_lock()
+if the lock is found to be be taken already.
 
-thanks for working on this.
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+---
+ Documentation/atomic_bitops.txt   | 7 ++++++-
+ include/asm-generic/bitops/lock.h | 3 ++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-On Wed, Jan 31, 2018 at 12:01:14AM -0500, Suravee Suthikulpanit wrote:
-> +static void amd_iommu_iotlb_range_add(struct iommu_domain *domain,
-> +				      unsigned long iova, size_t size)
-> +{
-> +	struct amd_iommu_flush_entries *entry, *p;
-> +	unsigned long flags;
-> +	bool found = false;
-> +
-> +	spin_lock_irqsave(&amd_iommu_flush_list_lock, flags);
-
-I am not happy with introducing or using global locks when they are not
-necessary. Can this be a per-domain lock?
-
-Besides, did you check it makes sense to actually keep track of the
-ranges here? My approach would be to just make iotlb_range_add() an noop
-and do a full domain flush in iotlb_sync(). But maybe you did
-measurements you can share here to show there is a benefit.
-
-
-
-	Joerg
+diff --git a/Documentation/atomic_bitops.txt b/Documentation/atomic_bitops.txt
+index 5550bfdcce5f..be70b32c95d9 100644
+--- a/Documentation/atomic_bitops.txt
++++ b/Documentation/atomic_bitops.txt
+@@ -58,7 +58,12 @@ Like with atomic_t, the rule of thumb is:
+ 
+  - RMW operations that have a return value are fully ordered.
+ 
+-Except for test_and_set_bit_lock() which has ACQUIRE semantics and
++ - RMW operations that are conditional are unordered on FAILURE,
++   otherwise the above rules apply. In the case of test_and_{}_bit() operations,
++   if the bit in memory is unchanged by the operation then it is deemed to have
++   failed.
++
++Except for a successful test_and_set_bit_lock() which has ACQUIRE semantics and
+ clear_bit_unlock() which has RELEASE semantics.
+ 
+ Since a platform only has a single means of achieving atomic operations
+diff --git a/include/asm-generic/bitops/lock.h b/include/asm-generic/bitops/lock.h
+index bc397573c43a..67ab280ad134 100644
+--- a/include/asm-generic/bitops/lock.h
++++ b/include/asm-generic/bitops/lock.h
+@@ -7,7 +7,8 @@
+  * @nr: Bit to set
+  * @addr: Address to count from
+  *
+- * This operation is atomic and provides acquire barrier semantics.
++ * This operation is atomic and provides acquire barrier semantics if
++ * the returned value is 0.
+  * It can be used to implement bit locks.
+  */
+ #define test_and_set_bit_lock(nr, addr)	test_and_set_bit(nr, addr)
+-- 
+2.1.4
