@@ -1,85 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965736AbeBMUOT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 15:14:19 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:38353 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965611AbeBMUOR (ORCPT
+        id S965755AbeBMUPv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 15:15:51 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:35984 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965716AbeBMUPs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 15:14:17 -0500
-X-Google-Smtp-Source: AH8x225OahDK0CCECwiiJLIbEO+b7J8Swuf9yW48vIPOw9aTkMdE5nqBcuBaUq4a9tgXq9/JQxi+6l03h/QzVzIW7ic=
+        Tue, 13 Feb 2018 15:15:48 -0500
+X-Google-Smtp-Source: AH8x226EQTnFR30oPrcLUE107vU2nQPs3klXIo3JRHsjpzj6q7wEjY9L4N6PUl85zmVg6O9bICLNcaDO0vB5xl09+vc=
 MIME-Version: 1.0
-In-Reply-To: <1518285964-31657-1-git-send-email-alexey.skidanov@intel.com>
-References: <1518285964-31657-1-git-send-email-alexey.skidanov@intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Feb 2018 22:14:16 +0200
-Message-ID: <CAHp75VdzafHdDzpgnc74XZQOfUdgxuH6QwrtXw_YMvWEX0icUQ@mail.gmail.com>
-Subject: Re: [PATCH] lib/scatterlist: Make sg_page_count() accessible to other modules
-To: Alexey Skidanov <alexey.skidanov@intel.com>
-Cc: chris@chris-wilson.co.uk,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <CAPDqMeo+CbhE6LpXi7DQ1zp-jNXue8ETdcJ9zjLGT+r=HM+y5Q@mail.gmail.com>
+References: <001a114aca7419fa410561f23992@google.com> <CAPDqMeo+CbhE6LpXi7DQ1zp-jNXue8ETdcJ9zjLGT+r=HM+y5Q@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 13 Feb 2018 21:15:27 +0100
+Message-ID: <CACT4Y+ai9tCO6bHJ5G7EhBbcxtrd2ZkKXbi+xDEpjwh9EwXQXw@mail.gmail.com>
+Subject: Re: BUG: free active (active state 0) object type: work_struct hint: strp_work
+To: Tom Herbert <tom@quantonium.net>
+Cc: syzbot <syzbot+3c6c745b0d2f341bbf50@syzkaller.appspotmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Biggers <ebiggers@google.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com, Cong Wang <xiyou.wangcong@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 8:06 PM, Alexey Skidanov
-<alexey.skidanov@intel.com> wrote:
-> Currently, sg_page_count() may be used only inside the scatterlist.c file.
+On Thu, Jan 4, 2018 at 8:36 PM, Tom Herbert <tom@quantonium.net> wrote:
+> On Thu, Jan 4, 2018 at 4:10 AM, syzbot
+> <syzbot+3c6c745b0d2f341bbf50@syzkaller.appspotmail.com> wrote:
+>> Hello,
+>>
+>> syzkaller hit the following crash on
+>> 6bb8824732f69de0f233ae6b1a8158e149627b38
+>> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
+>> compiler: gcc (GCC) 7.1.1 20170620
+>> .config is attached
+>> Raw console output is attached.
+>> Unfortunately, I don't have any reproducer for this bug yet.
+>>
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+3c6c745b0d2f341bbf50@syzkaller.appspotmail.com
+>> It will help syzbot understand when the bug is fixed. See footer for
+>> details.
+>> If you forward the report, please keep this part and the footer.
+>>
+>> Use struct sctp_assoc_value instead
+>> sctp: [Deprecated]: syz-executor4 (pid 12483) Use of int in maxseg socket
+>> option.
+>> Use struct sctp_assoc_value instead
+>> ------------[ cut here ]------------
+>> ODEBUG: free active (active state 0) object type: work_struct hint:
+>> strp_work+0x0/0xf0 net/strparser/strparser.c:381
+>> WARNING: CPU: 1 PID: 3502 at lib/debugobjects.c:291
+>> debug_print_object+0x166/0x220 lib/debugobjects.c:288
+>> Kernel panic - not syncing: panic_on_warn set ...
+>>
+>> CPU: 1 PID: 3502 Comm: kworker/u4:4 Not tainted 4.15.0-rc5+ #170
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>> Google 01/01/2011
+>> Workqueue: kkcmd kcm_tx_work
+>> Call Trace:
+>>  __dump_stack lib/dump_stack.c:17 [inline]
+>>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>>  panic+0x1e4/0x41c kernel/panic.c:183
+>>  __warn+0x1dc/0x200 kernel/panic.c:547
+>>  report_bug+0x211/0x2d0 lib/bug.c:184
+>>  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+>>  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+>>  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+>>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>>  invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:1061
+>> RIP: 0010:debug_print_object+0x166/0x220 lib/debugobjects.c:288
+>> RSP: 0018:ffff8801c0ee7068 EFLAGS: 00010086
+>> RAX: dffffc0000000008 RBX: 0000000000000003 RCX: ffffffff8159bc3e
+>> RDX: 0000000000000000 RSI: 1ffff100381dcdc8 RDI: ffff8801db317dd0
+>> RBP: ffff8801c0ee70a8 R08: 0000000000000000 R09: 1ffff100381dcd9a
+>> R10: ffffed00381dce3c R11: ffffffff86137ad8 R12: 0000000000000001
+>> R13: ffffffff86113480 R14: ffffffff8560dc40 R15: ffffffff8146e5f0
+>>  __debug_check_no_obj_freed lib/debugobjects.c:745 [inline]
+>>  debug_check_no_obj_freed+0x662/0xf1f lib/debugobjects.c:774
+>>  kmem_cache_free+0x253/0x2a0 mm/slab.c:3745
 >
-> However, the same calculation is done outside of scatterlist.c file
-> causing to code duplication.
->
-> To fix this, we move the sg_page_count() to the scatterlist.h file, making it
-> accessible to other modules.
+> I believe we just need to defer kmem_cache_free to call_rcu.
 
-Can you provide an example of potential (or existing?) use case?
 
->
-> Signed-off-by: Alexey Skidanov <alexey.skidanov@intel.com>
-> ---
->  include/linux/scatterlist.h | 5 +++++
->  lib/scatterlist.c           | 5 -----
->  2 files changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
-> index b7c8325..fe28148 100644
-> --- a/include/linux/scatterlist.h
-> +++ b/include/linux/scatterlist.h
-> @@ -248,6 +248,11 @@ static inline void *sg_virt(struct scatterlist *sg)
->         return page_address(sg_page(sg)) + sg->offset;
->  }
->
-> +static inline int sg_page_count(struct scatterlist *sg)
-> +{
-> +       return PAGE_ALIGN(sg->offset + sg->length) >> PAGE_SHIFT;
-> +}
-> +
->  int sg_nents(struct scatterlist *sg);
->  int sg_nents_for_len(struct scatterlist *sg, u64 len);
->  struct scatterlist *sg_next(struct scatterlist *);
-> diff --git a/lib/scatterlist.c b/lib/scatterlist.c
-> index 7c1c55f..4a59131 100644
-> --- a/lib/scatterlist.c
-> +++ b/lib/scatterlist.c
-> @@ -486,11 +486,6 @@ void __sg_page_iter_start(struct sg_page_iter *piter,
->  }
->  EXPORT_SYMBOL(__sg_page_iter_start);
->
-> -static int sg_page_count(struct scatterlist *sg)
-> -{
-> -       return PAGE_ALIGN(sg->offset + sg->length) >> PAGE_SHIFT;
-> -}
-> -
->  bool __sg_page_iter_next(struct sg_page_iter *piter)
->  {
->         if (!piter->__nents || !piter->sg)
-> --
-> 2.7.4
->
+Hi Tom,
 
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Was this ever submitted? I don't any such change in net/kcm/kcmsock.c.
