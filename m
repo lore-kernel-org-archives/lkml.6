@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965409AbeBMRtH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:49:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42244 "EHLO mail.kernel.org"
+        id S965438AbeBMRtN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:49:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965057AbeBMRtE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:49:04 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853BE217BB
+        id S965057AbeBMRtI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 12:49:08 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0432217C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
 From: Kieran Bingham <kbingham@kernel.org>
@@ -17,97 +17,78 @@ Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v4 1/5] dt-bindings: media: adv7604: Extend bindings to allow specifying slave map addresses
-Date: Tue, 13 Feb 2018 17:48:53 +0000
-Message-Id: <1518544137-2742-2-git-send-email-kbingham@kernel.org>
+Subject: [PATCH v4 3/5] [RFT] ARM: dts: wheat: Fix ADV7513 address usage
+Date: Tue, 13 Feb 2018 17:48:55 +0000
+Message-Id: <1518544137-2742-4-git-send-email-kbingham@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
 References: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-The ADV7604 has thirteen 256-byte maps that can be accessed via the main
-I2C ports. Each map has it own I2C address and acts as a standard slave
-device on the I2C bus.
+The r8a7792 Wheat board has two ADV7513 devices sharing a single I2C
+bus, however in low power mode the ADV7513 will reset it's slave maps to
+use the hardware defined default addresses.
 
-Extend the device tree node bindings to be able to override the default
-addresses so that address conflicts with other devices on the same bus
-may be resolved at the board description level.
+The ADV7511 driver was adapted to allow the two devices to be registered
+correctly - but it did not take into account the fault whereby the
+devices reset the addresses.
 
-Signed-off-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
-[Kieran: Re-adapted for mainline]
+This results in an address conflict between the device using the default
+addresses, and the other device if it is in low-power-mode.
+
+Repair this issue by moving both devices away from the default address
+definitions.
+
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
 ---
-Based upon the original posting :
-  https://lkml.org/lkml/2014/10/22/469
-
 v2:
- - DT Binding update separated from code change
- - Minor reword to commit message to account for DT only change.
- - Collected Rob's RB tag.
+ - Addition to series
 
 v3:
  - Split map register addresses into individual declarations.
 
 v4:
- - Collect Laurents RB tag
- - Adapt commit title
- - Normalise I2C usage (I²C is harder to grep for)
+ - Normalise I2C usage
 
- .../devicetree/bindings/media/i2c/adv7604.txt          | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7792-wheat.dts | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.txt b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-index 9cbd92eb5d05..dcf57e7c60eb 100644
---- a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-+++ b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-@@ -13,7 +13,11 @@ Required Properties:
-     - "adi,adv7611" for the ADV7611
-     - "adi,adv7612" for the ADV7612
+diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
+index b9471b67b728..42fff8837eab 100644
+--- a/arch/arm/boot/dts/r8a7792-wheat.dts
++++ b/arch/arm/boot/dts/r8a7792-wheat.dts
+@@ -240,9 +240,16 @@
+ 	status = "okay";
+ 	clock-frequency = <400000>;
  
--  - reg: I2C slave address
-+  - reg: I2C slave addresses
-+    The ADV76xx has up to thirteen 256-byte maps that can be accessed via the
-+    main I2C ports. Each map has it own I2C address and acts as a standard
-+    slave device on the I2C bus. The main address is mandatory, others are
-+    optional and revert to defaults if not specified.
++	/*
++	 * The adv75xx resets its addresses to defaults during low power power
++	 * mode. Because we have two ADV7513 devices on the same bus, we must
++	 * change both of them away from the defaults so that they do not
++	 * conflict.
++	 */
+ 	hdmi@3d {
+ 		compatible = "adi,adv7513";
+-		reg = <0x3d>;
++		reg = <0x3d>, <0x2d>, <0x4d>, <0x5d>;
++		reg-names = "main", "cec", "edid", "packet";
  
-   - hpd-gpios: References to the GPIOs that control the HDMI hot-plug
-     detection pins, one per HDMI input. The active flag indicates the GPIO
-@@ -35,6 +39,11 @@ Optional Properties:
+ 		adi,input-depth = <8>;
+ 		adi,input-colorspace = "rgb";
+@@ -272,7 +279,8 @@
  
-   - reset-gpios: Reference to the GPIO connected to the device's reset pin.
-   - default-input: Select which input is selected after reset.
-+  - reg-names : Names of maps with programmable addresses.
-+		It can contain any map needing a non-default address.
-+		Possible maps names are :
-+		  "main", "avlink", "cec", "infoframe", "esdp", "dpp", "afe",
-+		  "rep", "edid", "hdmi", "test", "cp", "vdp"
+ 	hdmi@39 {
+ 		compatible = "adi,adv7513";
+-		reg = <0x39>;
++		reg = <0x39>, <0x29>, <0x49>, <0x59>;
++		reg-names = "main", "cec", "edid", "packet";
  
- Optional Endpoint Properties:
- 
-@@ -52,7 +61,12 @@ Example:
- 
- 	hdmi_receiver@4c {
- 		compatible = "adi,adv7611";
--		reg = <0x4c>;
-+		/*
-+		 * The edid page will be accessible @ 0x66 on the I2C bus. All
-+		 * other maps will retain their default addresses.
-+		 */
-+		reg = <0x4c>, <0x66>;
-+		reg-names "main", "edid";
- 
- 		reset-gpios = <&ioexp 0 GPIO_ACTIVE_LOW>;
- 		hpd-gpios = <&ioexp 2 GPIO_ACTIVE_HIGH>;
+ 		adi,input-depth = <8>;
+ 		adi,input-colorspace = "rgb";
 -- 
 2.7.4
