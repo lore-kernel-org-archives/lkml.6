@@ -1,216 +1,220 @@
-Return-Path: <kernel-hardening-return-11701-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x227/WZ9GYLfmJRYP0No+T07/33PHZOZiFGZKwbYvJCUIzae7D3lwBHaNrJLaaJ7ui6xaVhsS
-ARC-Seal: i=1; a=rsa-sha256; t=1518319371; cv=none;
+Return-Path: <kernel-hardening-return-11742-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x226HGdNCbBDb14dWYfkw6pzGrMj9VqeRJOUir2jxe8awlqHLA2ZWphDoRi+vwcFJtjSQlVEV
+ARC-Seal: i=1; a=rsa-sha256; t=1518489854; cv=none;
         d=google.com; s=arc-20160816;
-        b=nDvA6cOQi6Tj+kWyy4prjidzdmgX1otVCojrWDPA6K7gsdzBfprHYTFHHJwEBUKVgI
-         Md9TK5quOeTu0MA+5mGbLa4S8SRjCCPVv0esThcx20Hw/7ZPGkQNOBh78IlsmutSN/p4
-         6TpQlH0y7olIoihdTnRXRxaEVOQTf5UvDut7EZCWcbNDCz5WMtCOg+VAwMDSfMALVuhR
-         SMhcSZASztVunlh21r5V0jDPwY40hnIBLWjDu2QE5psmQrrZkP7xeQbO/wcocQZfQZbR
-         59+GPzi4NZu6q7l3LVhHEes++zBH2ULPlOtr0C9Qe2IastIMv0aCccYv/+NBCBvGLuR6
-         zTtA==
+        b=y4Pekqmc5GlvEfK8ehubgPfVCGx8y9XIMNndFhcz2s/RH3+nNFBzICOij0RTT2hljb
+         QtJ9FfY36W6/TwtFgYqERvCx/NO7zRaKhA+LxycL0jQOCZpO/MYEhzxr2MlwHLVo5V47
+         yRFsoCIKCMZuAAMJlVYjBGH8P+0Uys5S67ale5GNiVhIdPeyc04ObVgk8+onaCZ1KaxN
+         139td86YeIPB3e/pz13whXSy4RyR6aC9K8XSnoRyUee4OwG2BL8r254PPlCoXJSLfutW
+         LqwMRheF/tg8NyTq2S3qW7RSsD6DId3GAUY5Vld9UCWfhQcygsQvBky8GIfbrraSd6ak
+         DKjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=shQOJj/GlMjcHILefHz2LdfZ7FSIbWF6xOovWvItmZ0=;
-        b=wK8UGmV033bv/+9MCdsSUWOAe5FOY+uWGgEqlIXsKhE7UrsZPgYgvz+0apO34pJ8Du
-         3pob0BlzH+rr0WHeBPfsP5CBLSYu+UxnF+BmLzzAnnZN+4iXm2aYpmDwSnDGZ/6uJ/8Z
-         BO7/9xHNbvAoGK3wxhXBsCLazyJ1rpNWx6XAiGmzK1+u41DPWiK0odjGBHcG4Si/uCy1
-         hLedVSBXdtzRN6xSah0giv6YGLAIGmSnTrpfKoTnZYV3lJwyCuDecJkqH/9zafgwi+GL
-         WtMUhRw2rR17nLtpGzDqSup0Rz4lyoNkIWWq7iFRvzPdV6dAlco7RxayR/7qUEuQhXCh
-         wGMw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=EqAzzjKcBE2zRE8LM2hzTwRpiHOI0TgSR7yKSYiNFEQ=;
+        b=F9Gyz17T6k54RxJEVnH1RuDR+fuHYIo0OT9tSQjTJy6mtpXCeRu57ila/exTE44q2K
+         ahygSdRAusQ6EaLjB2SB+KTKK2w4Gpj/8B1apqd5hb6R0CsuIu6aX2sIucRjfQg0mb7m
+         BCTNSMIpxMXzJAufei93IjUcjYJ4DUS98hJfjvKCnYOPol8bcecK9IAyIn0s1M8WhQdH
+         BE2cG8jDgEZxf3YKPGQzekHYYjJnrEJUgHXbOjCdyTIAdHiB8PMI9KAyhxdFxzso6YPx
+         3NPo/9wzCcAc//PHvcGitQrPaZ2f9UzAA0vemkN9CD90HGMmIUI1g8eFBN7zdjkqli0u
+         wr8w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11701-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11701-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-11742-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11742-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11701-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11701-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-11742-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11742-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: Igor Stoppa <igor.stoppa@huawei.com>
-To: <willy@infradead.org>, <rdunlap@infradead.org>, <corbet@lwn.net>,
-	<keescook@chromium.org>, <mhocko@kernel.org>, <labbott@redhat.com>,
-	<jglisse@redhat.com>, <hch@infradead.org>
-CC: <cl@linux.com>, <linux-security-module@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<kernel-hardening@lists.openwall.com>, Igor Stoppa <igor.stoppa@huawei.com>
-Subject: [PATCH 5/6] Pmalloc: self-test
-Date: Sun, 11 Feb 2018 05:19:19 +0200
-Message-ID: <20180211031920.3424-6-igor.stoppa@huawei.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180211031920.3424-1-igor.stoppa@huawei.com>
-References: <20180211031920.3424-1-igor.stoppa@huawei.com>
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,505,1511856000";
+   d="gz'50?scan'50,208,50";a="203603074"
+Date: Tue, 13 Feb 2018 10:43:27 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Igor Stoppa <igor.stoppa@huawei.com>
+Cc: kbuild-all@01.org, willy@infradead.org, rdunlap@infradead.org,
+	corbet@lwn.net, keescook@chromium.org, mhocko@kernel.org,
+	labbott@redhat.com, jglisse@redhat.com, hch@infradead.org,
+	cl@linux.com, linux-security-module@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	Igor Stoppa <igor.stoppa@huawei.com>
+Subject: Re: [PATCH 5/6] Pmalloc: self-test
+Message-ID: <201802131011.XACTqdLh%fengguang.wu@intel.com>
+References: <20180211031920.3424-6-igor.stoppa@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.122.225.51]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/mixed; boundary="/04w6evG8XlLl3ft"
+Content-Disposition: inline
+In-Reply-To: <20180211031920.3424-6-igor.stoppa@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591490615808474286?=
-X-GMAIL-MSGID: =?utf-8?q?1592073253053250248?=
+X-GMAIL-MSGID: =?utf-8?q?1592252018121422752?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add basic self-test functionality for pmalloc.
 
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+--/04w6evG8XlLl3ft
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi Igor,
+
+Thank you for the patch! Yet something to improve:
+
+[auto build test ERROR on linus/master]
+[also build test ERROR on v4.16-rc1 next-20180212]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Igor-Stoppa/genalloc-track-beginning-of-allocations/20180212-192839
+config: arm-allnoconfig (attached as .config)
+compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        make.cross ARCH=arm 
+
+All errors (new ones prefixed by >>):
+
+   mm/pmalloc.o: In function `pmalloc_prealloc':
+>> pmalloc.c:(.text+0x268): undefined reference to `vfree_atomic'
+   mm/pmalloc.o: In function `pmalloc':
+   pmalloc.c:(.text+0x2ac): undefined reference to `vfree_atomic'
+   mm/pmalloc.o: In function `pmalloc_chunk_free':
+   pmalloc.c:(.text+0x86): undefined reference to `vfree_atomic'
+
 ---
- mm/Kconfig            |  9 ++++++++
- mm/Makefile           |  1 +
- mm/pmalloc-selftest.c | 63 +++++++++++++++++++++++++++++++++++++++++++++++++++
- mm/pmalloc-selftest.h | 24 ++++++++++++++++++++
- mm/pmalloc.c          |  2 ++
- 5 files changed, 99 insertions(+)
- create mode 100644 mm/pmalloc-selftest.c
- create mode 100644 mm/pmalloc-selftest.h
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index be578fbdce6d..098aefef78b1 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -766,3 +766,12 @@ config PROTECTABLE_MEMORY
-     depends on ARCH_HAS_SET_MEMORY
-     select GENERIC_ALLOCATOR
-     default y
-+
-+config PROTECTABLE_MEMORY_SELFTEST
-+	bool "Run self test for pmalloc memory allocator"
-+	depends on ARCH_HAS_SET_MEMORY
-+	select PROTECTABLE_MEMORY
-+	default n
-+	help
-+	  Tries to verify that pmalloc works correctly and that the memory
-+	  is effectively protected.
-diff --git a/mm/Makefile b/mm/Makefile
-index 959fdbdac118..f7bbbfde6967 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -66,6 +66,7 @@ obj-$(CONFIG_SPARSEMEM_VMEMMAP) += sparse-vmemmap.o
- obj-$(CONFIG_SLOB) += slob.o
- obj-$(CONFIG_MMU_NOTIFIER) += mmu_notifier.o
- obj-$(CONFIG_PROTECTABLE_MEMORY) += pmalloc.o
-+obj-$(CONFIG_PROTECTABLE_MEMORY_SELFTEST) += pmalloc-selftest.o
- obj-$(CONFIG_KSM) += ksm.o
- obj-$(CONFIG_PAGE_POISONING) += page_poison.o
- obj-$(CONFIG_SLAB) += slab.o
-diff --git a/mm/pmalloc-selftest.c b/mm/pmalloc-selftest.c
-new file mode 100644
-index 000000000000..05acd62d23ec
---- /dev/null
-+++ b/mm/pmalloc-selftest.c
-@@ -0,0 +1,63 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * pmalloc-selftest.c
-+ *
-+ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
-+ */
-+
-+#include <linux/pmalloc.h>
-+#include <linux/mm.h>
-+
-+#include "pmalloc-selftest.h"
-+
-+#define SIZE_1 (PAGE_SIZE * 3)
-+#define SIZE_2 1000
-+
-+#define validate_alloc(expected, variable, size)	\
-+	pr_notice("must be " expected ": %s",		\
-+		  is_pmalloc_object(variable, size) > 0 ? "ok" : "no")
-+
-+#define is_alloc_ok(variable, size)	\
-+	validate_alloc("ok", variable, size)
-+
-+#define is_alloc_no(variable, size)	\
-+	validate_alloc("no", variable, size)
-+
-+void pmalloc_selftest(void)
-+{
-+	struct gen_pool *pool_unprot;
-+	struct gen_pool *pool_prot;
-+	void *var_prot, *var_unprot, *var_vmall;
-+
-+	pr_notice("pmalloc self-test");
-+	pool_unprot = pmalloc_create_pool("unprotected", 0);
-+	pool_prot = pmalloc_create_pool("protected", 0);
-+	BUG_ON(!(pool_unprot && pool_prot));
-+
-+	var_unprot = pmalloc(pool_unprot,  SIZE_1 - 1, GFP_KERNEL);
-+	var_prot = pmalloc(pool_prot,  SIZE_1, GFP_KERNEL);
-+	*(int *)var_prot = 0;
-+	var_vmall = vmalloc(SIZE_2);
-+	is_alloc_ok(var_unprot, 10);
-+	is_alloc_ok(var_unprot, SIZE_1);
-+	is_alloc_ok(var_unprot, PAGE_SIZE);
-+	is_alloc_no(var_unprot, SIZE_1 + 1);
-+	is_alloc_no(var_vmall, 10);
-+
-+
-+	pfree(pool_unprot, var_unprot);
-+	vfree(var_vmall);
-+
-+	pmalloc_protect_pool(pool_prot);
-+
-+	/* This will intentionally trigger a WARN because the pool being
-+	 * destroyed is not protected, which is unusual and should happen
-+	 * on error paths only, where probably other warnings are already
-+	 * displayed.
-+	 */
-+	pmalloc_destroy_pool(pool_unprot);
-+
-+	/* This must not cause WARNings */
-+	pmalloc_destroy_pool(pool_prot);
-+}
-diff --git a/mm/pmalloc-selftest.h b/mm/pmalloc-selftest.h
-new file mode 100644
-index 000000000000..63e430de74f8
---- /dev/null
-+++ b/mm/pmalloc-selftest.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * pmalloc-selftest.h
-+ *
-+ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
-+ */
-+
-+
-+#ifndef __MM_PMALLOC_SELFTEST_H
-+#define __MM_PMALLOC_SELFTEST_H
-+
-+
-+#ifdef CONFIG_PROTECTABLE_MEMORY_SELFTEST
-+
-+void pmalloc_selftest(void);
-+
-+#else
-+
-+static inline void pmalloc_selftest(void){};
-+
-+#endif
-+
-+#endif
-diff --git a/mm/pmalloc.c b/mm/pmalloc.c
-index e94bfb407c92..c9a472730afc 100644
---- a/mm/pmalloc.c
-+++ b/mm/pmalloc.c
-@@ -22,6 +22,7 @@
- #include <asm/page.h>
- 
- #include <linux/pmalloc.h>
-+#include "pmalloc-selftest.h"
- /*
-  * pmalloc_data contains the data specific to a pmalloc pool,
-  * in a format compatible with the design of gen_alloc.
-@@ -492,6 +493,7 @@ static int __init pmalloc_late_init(void)
- 		}
- 	}
- 	mutex_unlock(&pmalloc_mutex);
-+	pmalloc_selftest();
- 	return 0;
- }
- late_initcall(pmalloc_late_init);
--- 
-2.14.1
+--/04w6evG8XlLl3ft
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+pmlVAAA=
+
+--/04w6evG8XlLl3ft--
