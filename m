@@ -1,31 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935185AbeBMMQL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:16:11 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36870 "EHLO
+        id S935199AbeBMMQR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:16:17 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37074 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934827AbeBMMQG (ORCPT
+        with ESMTP id S934827AbeBMMQN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:16:06 -0500
+        Tue, 13 Feb 2018 07:16:13 -0500
 From: Mark Brown <broonie@kernel.org>
 To: Wu Fengguang <fengguang.wu@intel.com>
 Cc: Fengguang Wu <fengguang.wu@intel.com>, Mark Brown <broonie@kernel.org>,
-        "oder_chiou@realtek.com" <oder_chiou@realtek.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
+        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Mark Brown <broonie@kernel.org>, kbuild-all@01.org,
-        Bard Liao <bardliao@realtek.com>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: rt5659: rt5659_intel_hd_header_probe_setup() can be static" to the asoc tree
-In-Reply-To: <20180212171606.GA15960@lkp-wsm-ep1>
-Message-Id: <E1elZV8-0005WJ-IN@debutante>
-Date: Tue, 13 Feb 2018 12:15:58 +0000
+        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: uniphier: aiodma_rb_get_rp() can be static" to the asoc tree
+In-Reply-To: <20180212175310.GA13659@lkp-wsm-ep1>
+Message-Id: <E1elZVD-0005XS-NF@debutante>
+Date: Tue, 13 Feb 2018 12:16:03 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: rt5659: rt5659_intel_hd_header_probe_setup() can be static
+   ASoC: uniphier: aiodma_rb_get_rp() can be static
 
 has been applied to the asoc tree at
 
@@ -50,31 +51,30 @@ to this mail.
 Thanks,
 Mark
 
->From 2fa0b7fdf8bd16b6cdda8516793989511c9322ed Mon Sep 17 00:00:00 2001
+>From d732d89b154af23946180bf785b7b0ec42275b49 Mon Sep 17 00:00:00 2001
 From: Wu Fengguang <fengguang.wu@intel.com>
-Date: Tue, 13 Feb 2018 01:16:06 +0800
-Subject: [PATCH] ASoC: rt5659: rt5659_intel_hd_header_probe_setup() can be
- static
+Date: Tue, 13 Feb 2018 01:53:10 +0800
+Subject: [PATCH] ASoC: uniphier: aiodma_rb_get_rp() can be static
 
-Fixes: 041e74b71491 ("ASoC: rt5659: Add the support of Intel HDA Header")
+Fixes: f37fe2f9987b ("ASoC: uniphier: add support for UniPhier AIO common driver")
 Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rt5659.c | 2 +-
+ sound/soc/uniphier/aio-core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt5659.c b/sound/soc/codecs/rt5659.c
-index ef3a44d6386b..b7721940b76f 100644
---- a/sound/soc/codecs/rt5659.c
-+++ b/sound/soc/codecs/rt5659.c
-@@ -4038,7 +4038,7 @@ static void rt5659_calibrate(struct rt5659_priv *rt5659)
- 	regmap_write(rt5659->regmap, RT5659_HP_CHARGE_PUMP_1, 0x0c16);
+diff --git a/sound/soc/uniphier/aio-core.c b/sound/soc/uniphier/aio-core.c
+index 7e9451ca24af..1e5f053d9f6b 100644
+--- a/sound/soc/uniphier/aio-core.c
++++ b/sound/soc/uniphier/aio-core.c
+@@ -904,7 +904,7 @@ void aiodma_ch_set_enable(struct uniphier_aio_sub *sub, int enable)
+ 	}
  }
  
--void rt5659_intel_hd_header_probe_setup(struct rt5659_priv *rt5659)
-+static void rt5659_intel_hd_header_probe_setup(struct rt5659_priv *rt5659)
+-u64 aiodma_rb_get_rp(struct uniphier_aio_sub *sub)
++static u64 aiodma_rb_get_rp(struct uniphier_aio_sub *sub)
  {
- 	int value;
- 
+ 	struct regmap *r = sub->aio->chip->regmap;
+ 	u32 pos_u, pos_l;
 -- 
 2.16.1
