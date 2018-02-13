@@ -1,86 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935291AbeBMN1l (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:27:41 -0500
-Received: from mga03.intel.com ([134.134.136.65]:36196 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935174AbeBMN1k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:27:40 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,507,1511856000";
-   d="scan'208";a="18074511"
-Date: Tue, 13 Feb 2018 15:27:26 +0200
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Thinkpad X1 Carbon 3rd - Reducing the compressed framebuffer size
-Message-ID: <20180213132726.GD5453@intel.com>
-References: <20180206152143.vea6si7ncjj7sxyq@pali>
- <20180213085030.kiksdi2a7ksae5wz@pali>
+        id S935345AbeBMN3R (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:29:17 -0500
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:35039 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935174AbeBMN3P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 08:29:15 -0500
+X-Google-Smtp-Source: AH8x224nSGurSSlxQbJpjPHldyyM2oULfPRZPw2xyB0K938aPDQT8/f6Sq7BqqE4M/YHsj/kvpyXBg==
+Date: Tue, 13 Feb 2018 16:29:11 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
+Subject: [PATCH] proc: do less stuff under ->pde_unload_lock
+Message-ID: <20180213132911.GA24298@avx2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180213085030.kiksdi2a7ksae5wz@pali>
 User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 09:50:30AM +0100, Pali Rohár wrote:
-> On Tuesday 06 February 2018 16:21:43 Pali Rohár wrote:
-> > Hi! I'm periodically getting following message in dmesg on Lenovo
-> > Thinkpad X1 Carbon 3rd generation:
-> > 
-> > [drm] Reducing the compressed framebuffer size. This may lead to less power savings than a non-reduced-size. Try to increase stolen memory size if available in BIOS.
-> > 
-> > In BIOS I already set GPU size to 512M, but this did not help. Also
-> > update to last BIOS version did not help.
-> > 
-> > So why this message is periodically print in dmesg? And what can I do
-> > with this problem?
-> > 
-> > And why cannot Linux kernel allocate itself more memory for GPU (if BIOS
-> > can/could do that)? Is not 512MB for GPU enough?
-> 
-> And here is output from lspci, which clearly says that 512MB is already
-> set for GPU:
+Commit ca469f35a8e9ef12571a4b80ac6d7fdc0260fb44
+("deal with races between remove_proc_entry() and proc_reg_release()")
+moved too much stuff under ->pde_unload_lock making a problem described
+at series "[PATCH v5] procfs: Improve Scaling in proc" worse.
 
-The PCI BAR size has nothing to do with the size of the stolen memory.
-The BAR just provides a window into the global GTT address space of the
-GPU. Stolen memory is a contiguous chunk of physical memory carved out
-by the BIOS. The BIOS may or may not provide a knob to change the size
-of the stolen memory.
+While RCU is being figured out, move kfree() out of ->pde_unload_lock.
 
-> 
-> $ lspci -v -s 00:02.0
-> 00:02.0 VGA compatible controller: Intel Corporation HD Graphics 5500 (rev 09) (prog-if 00 [VGA controller])
->         Subsystem: Lenovo HD Graphics 5500
->         Flags: bus master, fast devsel, latency 0, IRQ 46
->         Memory at e0000000 (64-bit, non-prefetchable) [size=16M]
->         Memory at c0000000 (64-bit, prefetchable) [size=512M]
->         I/O ports at 3000 [size=64]
->         [virtual] Expansion ROM at 000c0000 [disabled] [size=128K]
->         Capabilities: [90] MSI: Enable+ Count=1/1 Maskable- 64bit-
->         Capabilities: [d0] Power Management version 2
->         Capabilities: [a4] PCI Advanced Features
->         Kernel driver in use: i915
->         Kernel modules: i915
-> 
-> -- 
-> Pali Rohár
-> pali.rohar@gmail.com
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+On my potato, difference is only 0.5% speedup with concurrent
+open+read+close of /proc/cmdline, but the effect should be more
+noticeable on more capable machines.
 
--- 
-Ville Syrjälä
-Intel OTC
+$ perf stat -r 16 -- ./proc-j 16
+
+ Performance counter stats for './proc-j 16' (16 runs):
+
+     130569.502377      task-clock (msec)         #   15.872 CPUs utilized            ( +-  0.05% )
+            19,169      context-switches          #    0.147 K/sec                    ( +-  0.18% )
+                15      cpu-migrations            #    0.000 K/sec                    ( +-  3.27% )
+               437      page-faults               #    0.003 K/sec                    ( +-  1.25% )
+   300,172,097,675      cycles                    #    2.299 GHz                      ( +-  0.05% )
+    96,793,267,308      instructions              #    0.32  insn per cycle           ( +-  0.04% )
+    22,798,342,298      branches                  #  174.607 M/sec                    ( +-  0.04% )
+       111,764,687      branch-misses             #    0.49% of all branches          ( +-  0.47% )
+
+       8.226574400 seconds time elapsed                                          ( +-  0.05% )
+       ^^^^^^^^^^^
+
+
+$ perf stat -r 16 -- ./proc-j 16
+
+ Performance counter stats for './proc-j 16' (16 runs):
+
+     129866.777392      task-clock (msec)         #   15.869 CPUs utilized            ( +-  0.04% )
+            19,154      context-switches          #    0.147 K/sec                    ( +-  0.66% )
+                14      cpu-migrations            #    0.000 K/sec                    ( +-  1.73% )
+               431      page-faults               #    0.003 K/sec                    ( +-  1.09% )
+   298,556,520,546      cycles                    #    2.299 GHz                      ( +-  0.04% )
+    96,525,366,833      instructions              #    0.32  insn per cycle           ( +-  0.04% )
+    22,730,194,043      branches                  #  175.027 M/sec                    ( +-  0.04% )
+       111,506,074      branch-misses             #    0.49% of all branches          ( +-  0.18% )
+
+       8.183629778 seconds time elapsed                                          ( +-  0.04% )
+       ^^^^^^^^^^^
+
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
+
+ fs/proc/inode.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -138,7 +138,7 @@ static void unuse_pde(struct proc_dir_entry *pde)
+ 		complete(pde->pde_unload_completion);
+ }
+ 
+-/* pde is locked */
++/* pde is locked on entry, unlocked on exit */
+ static void close_pdeo(struct proc_dir_entry *pde, struct pde_opener *pdeo)
+ {
+ 	/*
+@@ -157,9 +157,10 @@ static void close_pdeo(struct proc_dir_entry *pde, struct pde_opener *pdeo)
+ 		pdeo->c = &c;
+ 		spin_unlock(&pde->pde_unload_lock);
+ 		wait_for_completion(&c);
+-		spin_lock(&pde->pde_unload_lock);
+ 	} else {
+ 		struct file *file;
++		struct completion *c;
++
+ 		pdeo->closing = true;
+ 		spin_unlock(&pde->pde_unload_lock);
+ 		file = pdeo->file;
+@@ -167,8 +168,10 @@ static void close_pdeo(struct proc_dir_entry *pde, struct pde_opener *pdeo)
+ 		spin_lock(&pde->pde_unload_lock);
+ 		/* After ->release. */
+ 		list_del(&pdeo->lh);
+-		if (unlikely(pdeo->c))
+-			complete(pdeo->c);
++		c = pdeo->c;
++		spin_unlock(&pde->pde_unload_lock);
++		if (unlikely(c))
++			complete(c);
+ 		kfree(pdeo);
+ 	}
+ }
+@@ -188,6 +191,7 @@ void proc_entry_rundown(struct proc_dir_entry *de)
+ 		struct pde_opener *pdeo;
+ 		pdeo = list_first_entry(&de->pde_openers, struct pde_opener, lh);
+ 		close_pdeo(de, pdeo);
++		spin_lock(&de->pde_unload_lock);
+ 	}
+ 	spin_unlock(&de->pde_unload_lock);
+ }
+@@ -375,7 +379,7 @@ static int proc_reg_release(struct inode *inode, struct file *file)
+ 	list_for_each_entry(pdeo, &pde->pde_openers, lh) {
+ 		if (pdeo->file == file) {
+ 			close_pdeo(pde, pdeo);
+-			break;
++			return 0;
+ 		}
+ 	}
+ 	spin_unlock(&pde->pde_unload_lock);
