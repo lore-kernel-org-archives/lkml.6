@@ -1,66 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751814AbeBMGIV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 01:08:21 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:44962 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751354AbeBMGIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 01:08:20 -0500
-From: Chen-Yu Tsai <wens@csie.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] gpio: Handle deferred probing in of_find_gpio() properly
-Date: Tue, 13 Feb 2018 14:08:14 +0800
-Message-Id: <20180213060814.18165-1-wens@csie.org>
-X-Mailer: git-send-email 2.16.1
+        id S1753143AbeBMGXZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 01:23:25 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:42924 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751354AbeBMGXW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 01:23:22 -0500
+X-Google-Smtp-Source: AH8x226k9HS0LJ/zMGMbSxpYMtGlK5GagQsp17bNaC10iHCrZP2Avwv/Cqyuf5TRXrb8OehekvuvFcvQILJD+k1MZKI=
+MIME-Version: 1.0
+In-Reply-To: <20180205235757.246758-3-brendanhiggins@google.com>
+References: <20180205235757.246758-1-brendanhiggins@google.com> <20180205235757.246758-3-brendanhiggins@google.com>
+From: Joel Stanley <joel@jms.id.au>
+Date: Tue, 13 Feb 2018 16:52:56 +1030
+X-Google-Sender-Auth: IcbHmKouHDF4Oh91lioBIt2Rt5o
+Message-ID: <CACPK8XdXOaPZ5i=qKns3=V87nhfY62PNr4kwH9xwVYxY0djo0g@mail.gmail.com>
+Subject: Re: [PATCH v9 2/3] arm: dts: add Nuvoton NPCM750 device tree
+To: Brendan Higgins <brendanhiggins@google.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc: Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, julien.thierry@arm.com,
+        pombredanne@nexb.com, devicetree <devicetree@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_get_named_gpiod_flags() used directly in of_find_gpio() or indirectly
-through of_find_spi_gpio() or of_find_regulator_gpio() can return
--EPROBE_DEFER. This gets overwritten by the subsequent of_find_*_gpio()
-calls.
+Hi Brendan,
 
-This patch fixes this by trying of_find_spi_gpio() or
-of_find_regulator_gpio() only if deferred probing was not requested by
-the previous of_get_named_gpiod_flags() call.
+On Tue, Feb 6, 2018 at 10:27 AM, Brendan Higgins
+<brendanhiggins@google.com> wrote:
+> Add a common device tree for all Nuvoton NPCM750 BMCs and a board
+> specific device tree for the NPCM750 (Poleg) evaluation board.
+>
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> Reviewed-by: Tomer Maimon <tmaimon77@gmail.com>
+> Reviewed-by: Avi Fishman <avifishman70@gmail.com>
+> Reviewed-by: Joel Stanley <joel@jms.id.au>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Tested-by: Tomer Maimon <tmaimon77@gmail.com>
+> Tested-by: Avi Fishman <avifishman70@gmail.com>
 
-Fixes: 6a537d48461d ("gpio: of: Support regulator nonstandard GPIO properties")
-Fixes: c85823390215 ("gpio: of: Support SPI nonstandard GPIO properties")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
+This looks well acked, reviewed and tested. How do you plan to have
+the ARM SoC maintainers merge your patches?
 
-Hi Linus,
+> ---
+>  .../arm/cpu-enable-method/nuvoton,npcm7xx-smp      |  42 ++++++
+>  .../devicetree/bindings/arm/npcm/npcm.txt          |   6 +
+>  arch/arm/boot/dts/nuvoton-npcm750-evb.dts          |  35 +++++
+>  arch/arm/boot/dts/nuvoton-npcm750.dtsi             | 162 +++++++++++++++++++++
+>  include/dt-bindings/clock/nuvoton,npcm7xx-clks.h   |  35 +++++
+>  5 files changed, 280 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/cpu-enable-method/nuvoton,npcm7xx-smp
+>  create mode 100644 Documentation/devicetree/bindings/arm/npcm/npcm.txt
+>  create mode 100644 arch/arm/boot/dts/nuvoton-npcm750-evb.dts
+>  create mode 100644 arch/arm/boot/dts/nuvoton-npcm750.dtsi
+>  create mode 100644 include/dt-bindings/clock/nuvoton,npcm7xx-clks.h
 
-Fresh fix for 4.16. I'm probably not the only one finding devices using
-gpios not working anymore. In my case it was pwrseq-mmc-simple probing
-before pinctrl/gpio, not being able to get the gpio, and then just
-consider the gpio missing instead of deferring. This in turn caused my
-SDIO WiFi to not work.
+You need to add nuvoton-npcm750-evb.dts to arch/arm/boot/dts/Makefile
 
----
- drivers/gpio/gpiolib-of.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Once you've done that you can add
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 564bb7a31da4..edad176a210a 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -246,11 +246,11 @@ struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
- 	}
- 
- 	/* Special handling for SPI GPIOs if used */
--	if (IS_ERR(desc))
-+	if (IS_ERR(desc) && PTR_ERR(desc) != -EPROBE_DEFER)
- 		desc = of_find_spi_gpio(dev, con_id, &of_flags);
- 
- 	/* Special handling for regulator GPIOs if used */
--	if (IS_ERR(desc))
-+	if (IS_ERR(desc) && PTR_ERR(desc) != -EPROBE_DEFER)
- 		desc = of_find_regulator_gpio(dev, con_id, &of_flags);
- 
- 	if (IS_ERR(desc))
--- 
-2.16.1
+Tested-by: Joel Stanley <joel@jms.id.au>
+
+as I tested this on an EVB.
+
+> diff --git a/arch/arm/boot/dts/nuvoton-npcm750.dtsi b/arch/arm/boot/dts/nuvoton-npcm750.dtsi
+> new file mode 100644
+> index 000000000000..08e906f88c49
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/nuvoton-npcm750.dtsi
+> @@ -0,0 +1,162 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018 Nuvoton Technology corporation.
+> +// Copyright 2018 Google, Inc.
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/nuvoton,npcm7xx-clks.h>
+> +
+> +/ {
+> +       #address-cells = <1>;
+> +       #size-cells = <1>;
+> +       interrupt-parent = <&gic>;
+> +
+> +       cpus {
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +               enable-method = "nuvoton,npcm7xx-smp";
+> +
+> +               cpu@0 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a9";
+> +                       clocks = <&clk NPCM7XX_CLK_CPU>;
+> +                       clock-names = "clk_cpu";
+> +                       reg = <0>;
+> +                       next-level-cache = <&l2>;
+> +               };
+> +
+> +               cpu@1 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a9";
+> +                       clocks = <&clk NPCM7XX_CLK_CPU>;
+> +                       clock-names = "clk_cpu";
+> +                       reg = <1>;
+> +                       next-level-cache = <&l2>;
+> +               };
+> +       };
+> +
+> +/* external clock signal rg1refck, supplied by the phy */
+> +clk-rg1refck {
+> +       compatible = "fixed-clock";
+> +       #clock-cells = <0>;
+> +       clock-frequency = <125000000>;
+> +};
+> +
+> +/* external clock signal rg2refck, supplied by the phy */
+> +clk-rg2refck {
+> +       compatible = "fixed-clock";
+> +       #clock-cells = <0>;
+> +       clock-frequency = <125000000>;
+> +};
+> +
+> +clk-xin {
+> +       compatible = "fixed-clock";
+> +       #clock-cells = <0>;
+> +       clock-frequency = <50000000>;
+> +};
+
+The whitespace here needs to be fixed.
+
+Cheers,
+
+Joel
+
+> +
+> +       soc {
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               compatible = "simple-bus";
+> +               interrupt-parent = <&gic>;
+> +               ranges = <0x0 0xf0000000 0x00900000>;
+> +
