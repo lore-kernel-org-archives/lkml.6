@@ -1,95 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965983AbeBMWBG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 17:01:06 -0500
-Received: from mail-ua0-f171.google.com ([209.85.217.171]:43538 "EHLO
-        mail-ua0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965907AbeBMWBE (ORCPT
+        id S965991AbeBMWBe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 17:01:34 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52750 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965865AbeBMWBc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 17:01:04 -0500
-X-Google-Smtp-Source: AH8x226U8jTMw1/34TUfQGmqoXb0aFm88SI/MBi22DLashQkuulHOoRIsJ9csuI3fwrDn8Fd2s3JpHq7DUycNAUJ2Yw=
+        Tue, 13 Feb 2018 17:01:32 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] arm64: dts: renesas: r8a77995: add FCPV nodes
+Date: Wed, 14 Feb 2018 00:02:03 +0200
+Message-ID: <32333358.gV5bavL9ol@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1518550237-16753-2-git-send-email-kbingham@kernel.org>
+References: <1518550237-16753-1-git-send-email-kbingham@kernel.org> <1518550237-16753-2-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <8737264c91.fsf@vajain21.in.ibm.com>
-References: <20180212085956.12016-1-vaibhav@linux.vnet.ibm.com>
- <CAKTCnz=cDmeU6rvqpHf_oW-JjtcVSNjeSQpwzwRMo5U_g+hAwg@mail.gmail.com> <8737264c91.fsf@vajain21.in.ibm.com>
-From: Balbir Singh <bsingharora@gmail.com>
-Date: Wed, 14 Feb 2018 09:01:02 +1100
-Message-ID: <CAKTCnzkBm1L75NZ9n5u6BLHC3y119cfk_RuEJ=8HCxOwhoZO6Q@mail.gmail.com>
-Subject: Re: [PATCH] powerpc/xmon: Dont register sysrq key when kernel param xmon=off
-To: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
-Cc: "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
-        <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Douglas Miller <dougmill@linux.vnet.ibm.com>,
-        Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 11:35 PM, Vaibhav Jain
-<vaibhav@linux.vnet.ibm.com> wrote:
-> Thanks for reviewing this patch Balbir
->
-> Balbir Singh <bsingharora@gmail.com> writes:
->
->> Any specific issue you've run into without this patch?
-> Without this patch since xmon is still accessible via sysrq and there is
-> no indication/warning on the xmon console mentioning that its is not
-> fully functional. Specifically xmon-console would still allow user to
-> set instruction/data breakpoint eventhough they wont work and will
-> result in a kernel-oops.
->
-> Below is command log illustrating this problem on one of my test system
-> where I tried setting an instruction breakpoint on cmdline_proc_show()
-> with xmon=off:
->
-> ~# cat /proc/cmdline
-> root=UUID=248ad10e-a272-4187-8672-5b25f701e8b9 ro xmon=off
->
-> ~# echo 'x' > /proc/sysrq-trigger
-> [  458.904802] sysrq: SysRq : Entering xmon
->
-> [ snip ]
->
-> 78:mon> ls cmdline_proc_show
-> cmdline_proc_show: c0000000004196e0
-> 78:mon> bi c0000000004196e0
-> 78:mon> x
->
-> ~# cat /proc/cmdline
-> [  505.618702] Oops: Exception in kernel mode, sig: 5 [#1]
-> [ snip ]
-> [  505.620082] NIP [c0000000004196e4] cmdline_proc_show+0x4/0x60
-> [  505.620136] LR [c0000000003b1db0] seq_read+0x130/0x5e0
-> [  505.620177] Call Trace:
-> [  505.620202] [c000200e5078fc00] [c0000000003b1d74] seq_read+0xf4/0x5e0 (unreliable)
-> [  505.620267] [c000200e5078fca0] [c00000000040cae0] proc_reg_read+0xb0/0x110
-> [  505.620322] [c000200e5078fcf0] [c00000000037687c] __vfs_read+0x6c/0x1b0
-> [  505.620376] [c000200e5078fd90] [c000000000376a7c] vfs_read+0xbc/0x1b0
-> [  505.620430] [c000200e5078fde0] [c00000000037724c] SyS_read+0x6c/0x110
-> [  505.620485] [c000200e5078fe30] [c00000000000b320] system_call+0x58/0x6c
-> [  505.620536] Instruction dump:
-> [  505.620570] 3c82ff2a 7fe3fb78 38a00000 3884dee0 4bf98c05 60000000 38210030 e8010010
-> [  505.620656] ebe1fff8 7c0803a6 4e800020 3c4c00d6 <38422120> 7c0802a6 f8010010 f821ff91
-> [  505.620728] ---[ end trace eaf583921860b3de ]---
-> [  506.629019]
-> Trace/breakpoint trap
-> ~#
->
->
->> I presume running xmon=off indicates we don't want xmon to take over in case of
->> panic/die/oops,
-> I believe that when xmon console is available it should be fully
-> functional rather than partially, otherwise it gets really confusing to
-> the user as to why Instruction/Data break points arent working.
->
+Hi Kieran,
 
-OK, so kernel breakpoints are broken with xmon=off and lead to oops as
-opposed to passing them on to a kprobe handler perhaps?
+Thank you for the patch.
 
-Balbir Singh.
+On Tuesday, 13 February 2018 21:30:34 EET Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> The FCPVB handles the interface between the VSPB and memory, while the
+> FCPVD handles the interface between the VSPD and memory.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> 
+>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> b/arch/arm64/boot/dts/renesas/r8a77995.dtsi index
+> cd3c6a30fc47..196a917afea6 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> @@ -691,6 +691,33 @@
+>  			#phy-cells = <0>;
+>  			status = "disabled";
+>  		};
+> +
+> +		fcpvb0: fcp@fe96f000 {
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xfe96f000 0 0x200>;
+> +			clocks = <&cpg CPG_MOD 607>;
+> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> +			resets = <&cpg 607>;
+> +			iommus = <&ipmmu_vp0 5>;
+> +		};
+> +
+> +		fcpvd0: fcp@fea27000 {
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xfea27000 0 0x200>;
+> +			clocks = <&cpg CPG_MOD 603>;
+> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> +			resets = <&cpg 603>;
+> +			iommus = <&ipmmu_vi0 8>;
+> +		};
+> +
+> +		fcpvd1: fcp@fea2f000 {
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xfea2f000 0 0x200>;
+> +			clocks = <&cpg CPG_MOD 602>;
+> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> +			resets = <&cpg 602>;
+> +			iommus = <&ipmmu_vi0 9>;
+> +		};
+>  	};
+> 
+>  	timer {
+
+
+-- 
+Regards,
+
+Laurent Pinchart
