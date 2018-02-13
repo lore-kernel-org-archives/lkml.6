@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965210AbeBMO4g (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 09:56:36 -0500
-Received: from mail-cys01nam02on0055.outbound.protection.outlook.com ([104.47.37.55]:22240
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S965254AbeBMO4o (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 09:56:44 -0500
+Received: from mail-by2nam01on0067.outbound.protection.outlook.com ([104.47.34.67]:47424
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965122AbeBMOzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 09:55:45 -0500
+        id S965118AbeBMOzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 09:55:44 -0500
 Authentication-Results: spf=fail (sender IP is 192.88.168.50)
  smtp.mailfrom=nxp.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=fail action=none header.from=nxp.com;
@@ -16,240 +16,131 @@ CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
         <shawnguo@kernel.org>, <Anson.Huang@nxp.com>, <ping.bai@nxp.com>,
         Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH RESEND V3 8/9] clk: imx: implement new clk_hw based APIs
-Date: Tue, 13 Feb 2018 21:28:13 +0800
-Message-ID: <1518528494-25723-9-git-send-email-aisheng.dong@nxp.com>
+Subject: [PATCH RESEND V3 0/9] clk: add imx7ulp clk support
+Date: Tue, 13 Feb 2018 21:28:05 +0800
+Message-ID: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
-References: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
 X-EOPAttributedMessage: 0
-X-Matching-Connectors: 131630073428078873;(91ab9b29-cfa4-454e-5278-08d120cd25b8);()
-X-Forefront-Antispam-Report: CIP:192.88.168.50;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(396003)(39380400002)(376002)(2980300002)(1109001)(1110001)(339900001)(54534003)(189003)(199004)(76176011)(498600001)(86362001)(50226002)(26826003)(4326008)(2906002)(450100002)(77096007)(26005)(8936002)(47776003)(336011)(51416003)(36756003)(97736004)(59450400001)(5660300001)(105606002)(68736007)(48376002)(85426001)(356003)(50466002)(2351001)(104016004)(8676002)(316002)(106466001)(81166006)(16586007)(81156014)(305945005)(53936002)(6666003)(54906003)(6916009)(2950100002)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR03MB1409;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;PTR:InfoDomainNonexistent;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD014;1:tXsdQvIRHq/jmqN8Up+1XyJb43J1X4/2yduPFGpeREYaD6tI9gmcHGDUT1CvdrNnG4g4SQ610Ww48q3plLPX6tUsy9FItdhIgNHYaO2a/IlbKecfkVzE9IBGc6hyY39h
+X-Matching-Connectors: 131630073429381499;(91ab9b29-cfa4-454e-5278-08d120cd25b8);()
+X-Forefront-Antispam-Report: CIP:192.88.168.50;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39380400002)(346002)(39860400002)(396003)(376002)(2980300002)(1109001)(1110001)(339900001)(54534003)(199004)(189003)(498600001)(26826003)(336011)(966005)(48376002)(50466002)(47776003)(2351001)(97736004)(26005)(81166006)(81156014)(106466001)(68736007)(8676002)(356003)(77096007)(8936002)(53936002)(305945005)(51416003)(5660300001)(2906002)(6916009)(6666003)(6306002)(86362001)(316002)(54906003)(105606002)(16586007)(4326008)(36756003)(450100002)(85426001)(50226002)(104016004)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN3PR03MB1415;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;PTR:InfoDomainNonexistent;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11OLC002;1:54QrYwdoUbfntU47mdToeakdZmSzG0KeEKp+ldIz7uOnxOypVii6aTb/E0SruYiyx83+Yj/JkU+TRbvJs3/NWn6XDPxfz5+7eO7FJ9gYtiDVmxefTQjCD0DRiHCej3uj
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b1d1c791-b21a-47f5-04b0-08d572f1dad2
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603307);SRVR:BLUPR03MB1409;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB1409;3:wTF3HTVCj4W+KZ5er0VooIpzzBTQAONj5pQqbTMA2rrodiry/7wRYJKPIeRpLrgUt8x+gJ9BKyB/TNGPpEByxvF57NOgxeKB+gCadaCCDPj3441nqUb/RSCp6nw5Vs+rQ0LVW6dR6hpDHOKSrZAnbYKczdqcrC4gVuB3ldmbSphpEOns8oNfv32n8n5l0YWpZqHAfZ8M21DLI4JzwBvgiyhZDeUpqa2EeCgrTUj38plUlniBAbsmwLhpd4oBmronQcSPIkPcE8VW1mV4pIo8yeqnJ3oqYX+bOi9Huf4rKdbdvGuXonA0EVW+ugcY+h0IIiGV2hwYvj+s4w4D4JIO20c8+QPLJe0JzoOXOnygqcY=;25:hjGT08aln3iQfli8zcPmm/iKUITEsgFpqvzRILC7RiCX6mnLDjwQ4GxyWhXw45lG3ZaLzdRvs4qjr/i0wXiujxlYSKU9WN9poBtetxvmCOHd1q/N65BRytlQTDML60H2s2GitLJhbXBUZaMmfaRbw1bMHmbVs3Z8cqucACGsuTBogOca53wlbDf6hABaGG+wZswa003j7Dx6TZuS24Bi39WUbCrzktPBPhI+/vzo/7dzqh428H6WsJPxSi+UpyRF3bnJlkeNU18QOS+2VsVoN2RfOSjouHGv9RfEIEEYrLqR4nl/cKwE7vEyunxiOsPp6+FTkYFwurixb2SrD6B7Tw==
-X-MS-TrafficTypeDiagnostic: BLUPR03MB1409:
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB1409;31:2ztodV2wGSWIoxpMtA5wfrz+s1QxKydKNdUfapPt74aD7S7T4iuDfJ7CZVZEtutEWez+8M53etvT0X6P0TXPh23OI7PhdvvJoZwmS1s66TfRu50DEkyjapzuDV6QeK8VCIdFgkfqq1uOmSyaUCdA1X/3vCMNn/BpTU2QwzBZhxmh/5tr54QdJPAITBtL543IRafnD8XNMih06Uu6AhyqHKcRxUtXwPN2oZ2tI3RfKF8=;4:lSyFLRU4dlchqaxL/u/Gr4VPLvBqiVlpHFXAI3WRg/fmb7nGuXass2SzlNcPcMhx3fabBq//b7UK1HQpzXBoXJ4EkD0fq7FBKZlDPCa5D09/2xGyD7C7LDQujHYXlkLMiuBsO99RSVi5ZmUfMEQyJ8xji1Ji8dPwWc8PitAJ6d8lHEY3+7l1LT22EfPpN1sWYgeZLoGWHVSeFVCAjFC7/n6PHBl0MEsMbBqkQ4IoT6RFlnX1Mr+Hapxae+SLs8E8Ny2HAsHdPoHCTmp3otRJjzSSrU5KVuRmlyNWJQ8SqYtLiULfUCS5s0pKpOo9Yl0a
-X-Microsoft-Antispam-PRVS: <BLUPR03MB14095F16CD0E1FD2806564FF80F60@BLUPR03MB1409.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(5005006)(8121501046)(3231101)(944501161)(3002001)(10201501046)(93006095)(93001095)(6055026)(6096035)(20161123559100)(20161123563025)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123556025)(20161123561025)(20161123565025)(201708071742011);SRVR:BLUPR03MB1409;BCL:0;PCL:0;RULEID:(400006);SRVR:BLUPR03MB1409;
+X-MS-Office365-Filtering-Correlation-Id: e29281e2-b0d4-4d8a-83bb-08d572f1dae3
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603307);SRVR:BN3PR03MB1415;
+X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB1415;3:2SGJgCx9frYBe5EogmmYZGWkVEEtpIiyLtL618H9xp7vj1riFtzuz+ZtBc23W6Ng/FVCWHq3qJGJMhMsEKwx6s5byM5LGgVf274DI+S0aluye4+sXrJLi38bQ6u4A5llMBoPM+YGgxTVoClO8QCWbluTjKIbdq++cRcJqvjNrZ7ZGc6n54AXgmqlNUHeBWRISCF8YiVHJLqlr9V0Dvub2jxpIOFqz6aIygkykkrfOoAW37++kZ1+In+LxeyJ4l8y8d+Nf8wzwUcP4rqHwh1Q0JBA9EYL7bBv5fKoKJ8h0JCJlUwkcFKNweTLgP+KWk96cw/AHFw9PgvQwt6xK/3p2tPPXxF5k80/w1NRV+WIYWA=;25:+0+qSfSSy6O+tB7c1xOVHkiVuWdh8XWYx0y3c/awyVySzffnfByPmI2YRtr9CFFY2U/FYFe8XOZVhtXr3wne9haizx+h5rgESSPAmWK04Pmddxz7vxm5F5yIGvqDrBeRa983WIU8HP1qnBrd6mfY2qPQ/5BDDggoloMN+9g3GzXGgjuL4vNhaBLFPzooa+sZmfvxqrye8jHCYGQKbK1yH1xbYYcgDRw2cnC205JsffQxdT3cZaLGkh7r9bgXVly4CEOXW9rpfxk4bOtiHqQWfpeTN4oED9oOfTphfSMVk2ouTnsB1bIhEqsujB0WfLuLv32zwBz/u4F00Cy2xnQ/zA==
+X-MS-TrafficTypeDiagnostic: BN3PR03MB1415:
+X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB1415;31:9rCAevU1MftDPHd7keeJm+a0tMddAYHABWq7n18k1Cp7uIEG0w4GvnICelA8bI/leBrkG6Zf7R/2ybQL0BQt+aY6JYjR0miZzQCCXzRy3Jo2oea3/lMWXPSc7XRewqPAimn7W08d2LcitfvBIxV0kP7wC4km5DkC7JISCihpME6Ox4Jmlp+VVi5OeiqxfJgEl4MOJ8oZYetbjme7s6Ga3eCAz0Y7smfUZDHBt0ktNTM=;4:Flhx7RNMXzG9tAYYx1L4YIGhHnIdLnO91zI1/QPOQvKMc5eMWl7DPT+CXX3+fcRLzQRetvjmF0r5nsWOhE1uPrl2nXptshCdgY9C2c/Neei3HQ15klrQviVNp5C2T268DW4EePs0Cwc7dzG4Le1K9yRjZHAOijZEmZDysY1S7XQHD5BOJXhJ1OePQ7CZmkHNgKwyoJn0AabMpzU4TKvRBZeXCvi1OPyLHt26gYloK5TO/Xl5ZNaoNHkfD4xSqWi8G0ItaOpaqTbO84xOWyVmnA==
+X-Microsoft-Antispam-PRVS: <BN3PR03MB141538F1AEECEB9DFA2BF3FC80F60@BN3PR03MB1415.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(8121501046)(5005006)(10201501046)(3231101)(944501161)(3002001)(93006095)(93001095)(6055026)(6096035)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123556025)(20161123563025)(20161123561025)(20161123559100)(20161123565025)(201708071742011);SRVR:BN3PR03MB1415;BCL:0;PCL:0;RULEID:(400006);SRVR:BN3PR03MB1415;
 X-Forefront-PRVS: 0582641F53
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR03MB1409;23:4mie7OY1yyPL8TNbCOLu3fRJzGuk5r8yFhT5CDXr8?=
- =?us-ascii?Q?1jgvNTo3XlXYaLbwuGBHD/ElAby98c+7EQe5DdKhWohLW/pLnmmS81A36QL3?=
- =?us-ascii?Q?G8tFV2guzsBXPiR2QQE6wJE/ugKXW39Od/vFywBrIu3f0T9bGeyEPlac6RB8?=
- =?us-ascii?Q?Qsfg2WTSyN36vYlFOG+x8Sn5zJjjPgfrA5267kNGCBJXCT9qijDt3Kji90bE?=
- =?us-ascii?Q?Wv6PvFHWYceb/9gFqigAy/ITYEy1a655UCyDNA3lK3Uo4a4/zGumU7XFqVHQ?=
- =?us-ascii?Q?lzAumKfqxbQ3qvuqsBzvMbgBSxCFkvjHxj7XtUVqLAqJouWhao9B72bkOaoK?=
- =?us-ascii?Q?+2kabEafb4VG/E8ImZEtc8utnp6IHMSI+5d9uuFZi8cjKSugrioWF1YOePdX?=
- =?us-ascii?Q?6eqfyNYe5zXj2EnYWIF0J8YKSTOjS0WPSAItKItWijs8RtRc6Wk2K8oPTVVT?=
- =?us-ascii?Q?717DD/OJnS80mJXsys1rXkD65+unv3faUJUINBiJUF5MoSATbudvMR2s+b/q?=
- =?us-ascii?Q?o8G3QoG+k3EEau3j14911vM8J1CVI8klA5o5EJZM0lZm5zR3eJizTQLiRjGA?=
- =?us-ascii?Q?Y8QUyIbuSXvu+5CfKoeuZbVGuO2Ovl2eIRZQItnO2QWQ8fh0o/t9OoeGonDf?=
- =?us-ascii?Q?CroDTIJVHmfrZbp3D2hJwcgAW20eC89oxScxR+t/hci1cD34igf+jJKeSTBx?=
- =?us-ascii?Q?u+pDlV58ehZiBro10kknOrxMcNfeesiOyGenWtkiJ7fh+HpqlHkDqpcD4fVn?=
- =?us-ascii?Q?z/9VKQXAipnOEn5nfM1hXQAWdqTpbR3yvAEfDPmWEboEOLKeNFf7RQf3ENDC?=
- =?us-ascii?Q?mafgKbbn55RgSG3PWDab8Gs6CM0unhyqrerfgtec06wyl71skx+pWU13zQhH?=
- =?us-ascii?Q?FBLERFyuhR5DKu+1mS6NSGWAcTZZ37Lwt3Kdo9GYWl0A8nNJvKMMrCZhpMY2?=
- =?us-ascii?Q?fzX0gjgVV0vTeBnZUjWtzJWpa5jJxyibyZ7d8DoNbEtX/udw9JTFM6fHjein?=
- =?us-ascii?Q?kRL+5UnPVM0sv5sf88pmMVCMChJ8tx9vxyfq8gtBvXTowocJZ0NfaD8NsKS9?=
- =?us-ascii?Q?CUxwPuMfccJQHdqZmgmW44TF86BNBDSvD8N2sUPz5lW+Qv7BaSKk+yTpFuwu?=
- =?us-ascii?Q?wvM/0EElKa0ePNWouUy/ZiC8nV6GsiyvxYoB5vKuYtL6n6MNqC6HgGxoHu/N?=
- =?us-ascii?Q?PSjOGURmaKNOJQ=3D?=
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB1409;6:pVwxNpcsq1ssGRTdgMOaL9G28HaFIwM0+0umeF3weGdqwXnERZLQBpdPHFmTtRozKb1DCCm3AwhY6A76gB+ZBmO/UtkDFlSl4mVu3D8yex6sDqifdbWNyRuXhYDoWaIX3PVXXCIUG1Odyo//zvwESArRQ0GGjLd0Ls++e/Dcx7ngWozp7R3jsY0Jo8h2dzIKD5ln232fUnkkaguQ/w/w+NQwT/i1WB7u99Yc7aaBGZU6Y4ljZ/IEkjUs7w75kXiW7TW2rMcW0GQ6pK+e4Yq83316V8A1cM/Jf4UqQsIbUPceZ04+zOFAdkMz8nft4mGf9/PFs+IjzoZXgbI9hy/M+l0YuKhEaiStc9giRRmYatU=;5:BSZO+ymH1OgnvvdRg1Iituwf9aQOPcZRgFIKacCdr0x9OHRHVckFGbHtmPzb7by5DHL2HmGnSM2tm+eDB3MmeHA1XeuV33P4k9okV+tUyCVbvH62oDQ/2If8oYor4n6Ahm2yKy6ojR9aXOHOvsr4fGRoYwFPkc40tgL6GjBXFZw=;24:yue3BxYhjTPcUg3i1jFOjr/K6EzJsT2Aw/yyv/GB27n+1ISotQ0qJXha5l549ougYLvXGHRGPMbEUn7p+PJwK+TZps/WsrC1S7M1Ro4w1S4=;7:2wZxNEbp/p4a057FeQVSaOPAqj/d/QNARFOyjDV4quaFhXZ5r38Efqb+VGe7z56JrJwdES+ffwulwg3uY6Z9unyAeFqHSwcrtxZIOEuJ+NjUY8XfgRu2T7FWxW+bkH4qZ1im0sx7n5wdzoucm30pjoYKAonro0VYVKcxacpTn99EcqfWOd/uU7F9zS0jMNEpLClipDenGLtuB2KCerlw3uJ4svoZvf2WabZSRLR13o8dBxsOfD3cQSwBXrMY+aJB
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN3PR03MB1415;23:dl8YZLT2jhNqQa49THAI4P9HbRaZulVmaHhskt9RB?=
+ =?us-ascii?Q?4CLdzM55xqINbeuKQ+I9FEoi3kv/zvcnC9WCSXClO6N6vHo+teN/2XaS2YNe?=
+ =?us-ascii?Q?/v+TZjgKPavLZ1hNFKZFlfCFX+dBhL2Edof0MXfUjUENuAAdscCNU1OPJTch?=
+ =?us-ascii?Q?jBQcpamOnJlouVkkbOi+vxfdg82NuAfRf9cB6Cknr+1APZVu8+ySPmeAzj/n?=
+ =?us-ascii?Q?HyBW8D4OwVlM0nmBzn3t6d/E8F6xRPeHttdbdbUksGoghS2AQfN84nWIZMnm?=
+ =?us-ascii?Q?6DxJVraEkrl27jp6CZE1UTQt0GKXVyFlKqohMk0I0uaLS2uPlD/iItA+g+DI?=
+ =?us-ascii?Q?O8+hqXAIqUIvUB2Qa67IwQ4B/cwKvzFypPJ6hJ53B23XeajVDJkTwDIOsEtG?=
+ =?us-ascii?Q?ukbTFTCn2n/frFhyvJAmgq9RyKR65SWzH+7fZN68L6jziEdH6i7Tb+4a3Ahm?=
+ =?us-ascii?Q?rvRrKqolpJHiZlEVvKjCWQwL2ng8GMRw+gBIKGbFa9lLf8XWZcxPBOCjPzdh?=
+ =?us-ascii?Q?ByUZ17R9YyQyGVghee3hOJe/T9lflYRybb6glhBLYqaicIylVVl1z/fKbmHp?=
+ =?us-ascii?Q?E4HfOKQxI9wgdBoNlMN9AP1Dn8xt40vDnXLvJiZQuyBdJsrGh7FnjcDnu9Lb?=
+ =?us-ascii?Q?bL2NgSrKJjG9YqrDt0hZsDtryFkaXT01dcpLqQPHovBt1yn/QEA3xbD81L8H?=
+ =?us-ascii?Q?AhTHJJ7IrhqdduEo4OH9oP8i4Nyr3HeTiiIxUREompmqyNVO4JLLQLTu0Pct?=
+ =?us-ascii?Q?+Oaca+xmrPSdGnlBUiv59riG6cbJ74RfZDff+OhgBjKRV1N6FyJ+sYYWYOM/?=
+ =?us-ascii?Q?oIkGHm6L284nFcwhyMVjOHiShB37S526m4tSAw2Vh/UwaRuz8yUWF2jquyHq?=
+ =?us-ascii?Q?3XJkpNag0OV5N4fP8GVWPqFDBneDCrmWP3XSZQtBgSYQXa5AOanQpIi0ZIpH?=
+ =?us-ascii?Q?jMQxOviSk9FS9baZX7SpC+IffQnlTRdh6rM+7zD4uHF+oXRzVZbKDz13cfOZ?=
+ =?us-ascii?Q?9uFrKmNkgqwvLNmW2xZLBgBFH3VNxf/IcmraXYi8Da9re0K7xk/RQYNIOEds?=
+ =?us-ascii?Q?CxfrSauyF0e9DHT5aueLuJOZq/9sYjgiAD2qY+ej7nA2Kn5p1wkOIE3+oK6W?=
+ =?us-ascii?Q?KXGnGTaBy1C+urvtAlshKhTGGVaiz9DkOVfEHaahRQ4nYQ438rkUQ=3D=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB1415;6:vkTLqbS+1Kq0NeeW5htzQrCZokLeNq1pSSneVE6PUk8WjdHJ4TnPXeShGCv7RszQxt5TcPsffJ40Iir1Vb6TvL2MvCIJGrVs2KP+fGchwst1efJp+3fCg5EdRZDpKjoe/GzCciGdn+Dj4+mKlmYdH7oa48f7IwIJiei/2Zqwaq1Zk/ZAzOYNvGLCZoK79GaQw6utGLg0EPOiC9v0fgGRl6fBejHi6iOAL5o5hIdJzogoHNz10A5y7jPRupDBXEz7JZNnpF66p4CyFQw/Du3zRJZkUrNbr3aRKzQbA3lBRmf2BkpxcUSE1GQw0j/Q5/N41/smCXq/Lak63AyJnafQrfUOwRS33j3oJn6m2upkRKM=;5:hP6Q0KVk+2beMdBHUBcYEKnTuSxmCz4pUcglyLiVaaPJ0nURQuej/of0gDJNlXbUjF1HGy/egFFx65jqKXzl91Ncnpbbqayx2U3p6S+0awrZr2am4LDHevI+XaJtWjZHqM9maRlU3WOyp7uUeb2E/U6WlkTTB1QW7cbjc3Q6dBU=;24:sAV2f/5SVpsuo1eocg+PPT04NM3UGiSxFM6pd+BCWZ9wCZw2S6qTPAWGdD9FiY+uKYWmHI9Ab313ytRNUI6zXQAj1u6ylnA0YjX8At6+RGo=;7:7IDpa2NM87BAO72yYvzLUDmZGASkC9IqLgqp0dOpe5+v0HGDRJp08iJEdkqZMwnsU2NnU/lgvupmserFY8JQ7JrT2EXLnXIocTfs7ONzxbRP8uYsku9xzBOpA1MOX/Xw4HXLHMhZye2ho8vtdYqFB7+9ErzCprc0MG8AL43KDrY7m7LYzV/3f9+KJnstHphaOvHv6Nb9aiMbCaUT89kppCyXttqyKUfPi27mof+DWOdcYQ0K3gSjMeXm/BDGaDgf
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2018 14:55:42.4802
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2018 14:55:42.2361
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1d1c791-b21a-47f5-04b0-08d572f1dad2
+X-MS-Exchange-CrossTenant-Network-Message-Id: e29281e2-b0d4-4d8a-83bb-08d572f1dae3
 X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[192.88.168.50];Helo=[tx30smr01.am.freescale.net]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR03MB1409
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR03MB1415
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clock providers are recommended to use the new struct clk_hw based API,
-so implement IMX clk_hw based provider helpers functions to the new
-approach.
+This is a resend patch series.
+See the original one from here:
+[PATCH V3 00/10] clk: add imx7ulp clk support
+https://lkml.org/lkml/2018/1/19/351
+No function changes but remove the last one which is used for the test.
+Rebased against clk-next branch.
 
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+This patch series intends to add imx7ulp clk support.
 
----
-ChangeLog:
+i.MX7ULP Clock functions are under joint control of the System
+Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
+modules, and Core Mode Controller (CMC)1 blocks
+
+The clocking scheme provides clear separation between M4 domain
+and A7 domain. Except for a few clock sources shared between two
+domains, such as the System Oscillator clock, the Slow IRC (SIRC),
+and and the Fast IRC clock (FIRCLK), clock sources and clock
+management are separated and contained within each domain.
+
+M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
+A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+
+Note: this series only adds A7 clock domain support as M4 clock
+domain will be handled by M4 seperately.
+
+Change Log:
 v2->v3:
- * no changes
-v1->v2:  new patches
----
- drivers/clk/imx/clk.c | 22 ++++++++++++++++++
- drivers/clk/imx/clk.h | 62 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 84 insertions(+)
+ * Patch 1 changed on: 1) split normal and gate ops 2) fix the possible racy
+   Others no changes.
 
-diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-index 9074e69..1efed86 100644
---- a/drivers/clk/imx/clk.c
-+++ b/drivers/clk/imx/clk.c
-@@ -18,6 +18,16 @@ void __init imx_check_clocks(struct clk *clks[], unsigned int count)
- 			       i, PTR_ERR(clks[i]));
- }
- 
-+void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < count; i++)
-+		if (IS_ERR(clks[i]))
-+			pr_err("i.MX clk %u: register failed with %ld\n",
-+			       i, PTR_ERR(clks[i]));
-+}
-+
- static struct clk * __init imx_obtain_fixed_clock_from_dt(const char *name)
- {
- 	struct of_phandle_args phandle;
-@@ -49,6 +59,18 @@ struct clk * __init imx_obtain_fixed_clock(
- 	return clk;
- }
- 
-+struct clk_hw * __init imx_obtain_fixed_clk_hw(struct device_node *np,
-+					       const char *name)
-+{
-+	struct clk *clk;
-+
-+	clk = of_clk_get_by_name(np, name);
-+	if (IS_ERR(clk))
-+		return ERR_PTR(-ENOENT);
-+
-+	return __clk_get_hw(clk);
-+}
-+
- /*
-  * This fixups the register CCM_CSCMR1 write value.
-  * The write/read/divider values of the aclk_podf field
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 956155c..3d58420 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -8,6 +8,7 @@
- extern spinlock_t imx_ccm_lock;
- 
- void imx_check_clocks(struct clk *clks[], unsigned int count);
-+void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
- void imx_register_uart_clocks(struct clk ** const clks[]);
- 
- extern void imx_cscmr1_fixup(u32 *val);
-@@ -54,6 +55,9 @@ struct clk *clk_register_gate2(struct device *dev, const char *name,
- struct clk * imx_obtain_fixed_clock(
- 			const char *name, unsigned long rate);
- 
-+struct clk_hw *imx_obtain_fixed_clk_hw(struct device_node *np,
-+				       const char *name);
-+
- struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
- 	 void __iomem *reg, u8 shift, u32 exclusive_mask);
- 
-@@ -90,6 +94,16 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
- 	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_fixed(const char *name, int rate)
-+{
-+	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
-+}
-+
-+static inline struct clk_hw *imx_get_clk_hw_fixed(const char *name, int rate)
-+{
-+	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
-+}
-+
- static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
- 			u8 shift, u8 width, const char * const *parents,
- 			int num_parents)
-@@ -113,6 +127,15 @@ static inline struct clk *imx_clk_divider(const char *name, const char *parent,
- 			reg, shift, width, 0, &imx_ccm_lock);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_divider(const char *name,
-+						const char *parent,
-+						void __iomem *reg, u8 shift,
-+						u8 width)
-+{
-+	return clk_hw_register_divider(NULL, name, parent, CLK_SET_RATE_PARENT,
-+				       reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_divider_flags(const char *name,
- 		const char *parent, void __iomem *reg, u8 shift, u8 width,
- 		unsigned long flags)
-@@ -121,6 +144,15 @@ static inline struct clk *imx_clk_divider_flags(const char *name,
- 			reg, shift, width, 0, &imx_ccm_lock);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_divider_flags(const char *name,
-+						   const char *parent,
-+						   void __iomem *reg, u8 shift,
-+						   u8 width, unsigned long flags)
-+{
-+	return clk_hw_register_divider(NULL, name, parent, flags,
-+				       reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_divider2(const char *name, const char *parent,
- 		void __iomem *reg, u8 shift, u8 width)
- {
-@@ -136,6 +168,13 @@ static inline struct clk *imx_clk_gate(const char *name, const char *parent,
- 			shift, 0, &imx_ccm_lock);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_gate(const char *name, const char *parent,
-+					     void __iomem *reg, u8 shift)
-+{
-+	return clk_hw_register_gate(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
-+				    shift, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
- 		void __iomem *reg, u8 shift)
- {
-@@ -208,6 +247,17 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
- 			reg, shift, width, 0, &imx_ccm_lock);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_mux2(const char *name, void __iomem *reg,
-+					     u8 shift, u8 width,
-+					     const char * const *parents,
-+					     int num_parents)
-+{
-+	return clk_hw_register_mux(NULL, name, parents, num_parents,
-+				   CLK_SET_RATE_NO_REPARENT |
-+				   CLK_OPS_PARENT_ENABLE,
-+				   reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_mux_flags(const char *name,
- 			void __iomem *reg, u8 shift, u8 width,
- 			const char * const *parents, int num_parents,
-@@ -218,6 +268,18 @@ static inline struct clk *imx_clk_mux_flags(const char *name,
- 			&imx_ccm_lock);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_mux_flags(const char *name,
-+						  void __iomem *reg, u8 shift,
-+						  u8 width,
-+						  const char * const *parents,
-+						  int num_parents,
-+						  unsigned long flags)
-+{
-+	return clk_hw_register_mux(NULL, name, parents, num_parents,
-+				   flags | CLK_SET_RATE_NO_REPARENT,
-+				   reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- struct clk *imx_clk_cpu(const char *name, const char *parent_name,
- 		struct clk *div, struct clk *mux, struct clk *pll,
- 		struct clk *step);
+v1->v2:
+ * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
+ * use clk_hw apis to register clocks
+ * use of_clk_add_hw_provider
+ * split the clocks register process into two parts: early part for possible
+   timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part for
+   the left normal peripheral clocks registered by a platform driver.
+
+
+Dong Aisheng (9):
+  clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
+  clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
+  clk: imx: add pllv4 support
+  clk: imx: add pfdv2 support
+  clk: imx: add composite clk support
+  dt-bindings: clock: add imx7ulp clock binding doc
+  clk: imx: make mux parent strings const
+  clk: imx: implement new clk_hw based APIs
+  clk: imx: add imx7ulp clk driver
+
+ .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 ++++++
+ drivers/clk/clk-divider.c                          | 152 ++++++++++++++
+ drivers/clk/clk-fractional-divider.c               |  10 +
+ drivers/clk/imx/Makefile                           |   6 +-
+ drivers/clk/imx/clk-busy.c                         |   2 +-
+ drivers/clk/imx/clk-composite.c                    |  90 ++++++++
+ drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
+ drivers/clk/imx/clk-imx7ulp.c                      | 232 +++++++++++++++++++++
+ drivers/clk/imx/clk-pfdv2.c                        | 207 ++++++++++++++++++
+ drivers/clk/imx/clk-pllv4.c                        | 188 +++++++++++++++++
+ drivers/clk/imx/clk.c                              |  22 ++
+ drivers/clk/imx/clk.h                              |  92 +++++++-
+ include/dt-bindings/clock/imx7ulp-clock.h          | 108 ++++++++++
+ include/linux/clk-provider.h                       |  17 ++
+ 14 files changed, 1180 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+ create mode 100644 drivers/clk/imx/clk-composite.c
+ create mode 100644 drivers/clk/imx/clk-imx7ulp.c
+ create mode 100644 drivers/clk/imx/clk-pfdv2.c
+ create mode 100644 drivers/clk/imx/clk-pllv4.c
+ create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
+
 -- 
 2.7.4
