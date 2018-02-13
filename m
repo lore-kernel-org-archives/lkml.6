@@ -1,96 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933830AbeBMI7c (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 03:59:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45851 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933740AbeBMI7b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 03:59:31 -0500
-Date: Tue, 13 Feb 2018 09:59:28 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Will Drewry <wad@chromium.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: samples/seccomp/ broken when cross compiling s390, ppc
- allyesconfig
-Message-ID: <20180213085928.GK3443@dhcp22.suse.cz>
-References: <20180212133731.GE3443@dhcp22.suse.cz>
- <87r2ppvaeq.fsf@concordia.ellerman.id.au>
- <CAGXu5j+DnkUv9pZn93wxA6_2s+c3Ap_Q34OR0weY7Y9MJ1aP9Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5j+DnkUv9pZn93wxA6_2s+c3Ap_Q34OR0weY7Y9MJ1aP9Q@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S933853AbeBMI7v (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 03:59:51 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36754 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933740AbeBMI7u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 03:59:50 -0500
+X-Google-Smtp-Source: AH8x227ckZO+NpFDcdamI9c8pLl5bF5ElvHDRvOe9hVdSG1xomHYNRv7BYtWGedJZ8EjA5moJ0v0bg==
+From: Vincent Guittot <vincent.guittot@linaro.org>
+To: peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH] sched: typo: remove space in #ifdef
+Date: Tue, 13 Feb 2018 09:59:42 +0100
+Message-Id: <1518512382-29426-1-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 12-02-18 21:54:39, Kees Cook wrote:
-> On Mon, Feb 12, 2018 at 7:25 PM, Michael Ellerman <mpe@ellerman.id.au> wrote:
-> > Michal Hocko <mhocko@kernel.org> writes:
-> >> Hi,
-> >> my build test machinery chokes on samples/seccomp when cross compiling
-> >> s390 and ppc64 allyesconfig. This has been the case for quite some
-> >> time already but I never found time to look at the problem and report
-> >> it. It seems this is not new issue and similar thing happend for
-> >> MIPS e9107f88c985 ("samples/seccomp/Makefile: do not build tests if
-> >> cross-compiling for MIPS").
-> >>
-> >> The build logs are attached.
-> >>
-> >> What is the best way around this? Should we simply skip compilation on
-> >> cross compile or is actually anybody relying on that? Or should I simply
-> >> disable it for s390 and ppc?
-> >
-> > The whole thing seems very confused. It's not building for the target,
-> > it's building for the host, ie. the Makefile sets hostprogs-m and
-> > HOSTCFLAGS etc.
-> >
-> > So it can't possibly work with cross compiling as it's currently
-> > written.
-> >
-> > Either the Makefile needs some serious work to properly support cross
-> > compiling or it should just be disabled when cross compiling.
-> 
-> Hrm, yeah, the goal was to entirely disable cross compiling, but I
-> guess we didn't hit it with a hard enough hammer. :)
+Remove a useless space in # ifdef and align it with others
 
-Hammer like this?
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+---
+ kernel/sched/fair.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
-index 0e349b80686e..ba942e3ead89 100644
---- a/samples/seccomp/Makefile
-+++ b/samples/seccomp/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
-+ifndef CROSS_COMPILE
- hostprogs-$(CONFIG_SAMPLE_SECCOMP) := bpf-fancy dropper bpf-direct
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 1070803..cad1932 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -2823,7 +2823,7 @@ void reweight_task(struct task_struct *p, int prio)
+ }
  
- HOSTCFLAGS_bpf-fancy.o += -I$(objtree)/usr/include
-@@ -16,7 +17,6 @@ HOSTCFLAGS_bpf-direct.o += -idirafter $(objtree)/include
- bpf-direct-objs := bpf-direct.o
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+-# ifdef CONFIG_SMP
++#ifdef CONFIG_SMP
+ /*
+  * All this does is approximate the hierarchical proportion which includes that
+  * global sum we all love to hate.
+@@ -2974,7 +2974,7 @@ static long calc_group_runnable(struct cfs_rq *cfs_rq, long shares)
  
- # Try to match the kernel target.
--ifndef CROSS_COMPILE
- ifndef CONFIG_64BIT
+ 	return clamp_t(long, runnable, MIN_SHARES, shares);
+ }
+-# endif /* CONFIG_SMP */
++#endif /* CONFIG_SMP */
  
- # s390 has -m31 flag to build 31 bit binaries
-@@ -35,12 +35,4 @@ HOSTLOADLIBES_bpf-fancy += $(MFLAG)
- HOSTLOADLIBES_dropper += $(MFLAG)
- endif
- always := $(hostprogs-m)
--else
--# MIPS system calls are defined based on the -mabi that is passed
--# to the toolchain which may or may not be a valid option
--# for the host toolchain. So disable tests if target architecture
--# is MIPS but the host isn't.
--ifndef CONFIG_MIPS
--always := $(hostprogs-m)
--endif
- endif
+ static inline int throttled_hierarchy(struct cfs_rq *cfs_rq);
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
