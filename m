@@ -1,135 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933069AbeBMAwE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 19:52:04 -0500
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:41464 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932838AbeBMAwB (ORCPT
+        id S933096AbeBMBDD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 20:03:03 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47546 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933043AbeBMBDB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 19:52:01 -0500
-X-Google-Smtp-Source: AH8x224AmWUGaid4WwhFsXq/UvtV2WbpPwIk2NwB06Ulnvi5IPavq3Wm6b5za7NeLMfyyQAR6GP2hBFOyzjC2iqhC2U=
+        Mon, 12 Feb 2018 20:03:01 -0500
+Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
+To: Michal Hocko <mhocko@kernel.org>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>
+References: <20180126140415.GD5027@dhcp22.suse.cz>
+ <15da8c87-e6db-13aa-01c8-a913656bfdb6@linux.vnet.ibm.com>
+ <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
+ <20180129132235.GE21609@dhcp22.suse.cz>
+ <87k1w081e7.fsf@concordia.ellerman.id.au>
+ <20180130094205.GS21609@dhcp22.suse.cz>
+ <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com>
+ <20180131131937.GA6740@dhcp22.suse.cz>
+ <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com>
+ <20180201134829.GL21609@dhcp22.suse.cz>
+ <20180212144831.GF3443@dhcp22.suse.cz>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
+From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Date: Tue, 13 Feb 2018 06:32:48 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
 MIME-Version: 1.0
-In-Reply-To: <20180212062832.2791-3-rnayak@codeaurora.org>
-References: <20180212062832.2791-1-rnayak@codeaurora.org> <20180212062832.2791-3-rnayak@codeaurora.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 12 Feb 2018 16:51:58 -0800
-X-Google-Sender-Auth: aWJPhT3ul3lviqKReEbIiK2wm4o
-Message-ID: <CAD=FV=UQ4YD7M8pqReBwE2etUbhuewye0akp0P9SuTnjwLgL4w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] arm64: dts: sdm845: Add minimal dts files for
- sdm845 SoC/MTP
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, evgreen@chromium.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180212144831.GF3443@dhcp22.suse.cz>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18021301-0008-0000-0000-000004CC1883
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18021301-0009-0000-0000-00001E5FD7B4
+Message-Id: <f81a5ef6-724a-6667-c5ce-47a6b1706c2c@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-12_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802130009
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 02/12/2018 08:18 PM, Michal Hocko wrote:
+> Did you have any chance to test the following hack, Anshuman?
 
-On Sun, Feb 11, 2018 at 10:28 PM, Rajendra Nayak <rnayak@codeaurora.org> wrote:
-> Add a skeletal sdm845 SoC dtsi and MTP board dts/dtsi files
->
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile       |   1 +
->  arch/arm64/boot/dts/qcom/sdm845-mtp.dts |  13 ++
->  arch/arm64/boot/dts/qcom/sdm845.dtsi    | 275 ++++++++++++++++++++++++++++++++
->  3 files changed, 289 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/sdm845-mtp.dts
->  create mode 100644 arch/arm64/boot/dts/qcom/sdm845.dtsi
->
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 55ec5ee7f7e8..9319e74b8906 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -6,3 +6,4 @@ dtb-$(CONFIG_ARCH_QCOM) += msm8916-mtp.dtb
->  dtb-$(CONFIG_ARCH_QCOM)        += msm8992-bullhead-rev-101.dtb
->  dtb-$(CONFIG_ARCH_QCOM)        += msm8994-angler-rev-101.dtb
->  dtb-$(CONFIG_ARCH_QCOM)        += msm8996-mtp.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)        += sdm845-mtp.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> new file mode 100644
-> index 000000000000..617c7bb25fb1
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> @@ -0,0 +1,13 @@
-> +// SPDX-License-Identifier: GPL-2.0
-
-It would, of course, be up to Qualcomm.  ...but might I suggest instead:
-
-// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-
-The device tree files really don't have any special secret sauce in
-them and IIRC allowing them to have a more permissive MIT license _or_
-a GPL allowed people to run other operating systems on these boards.
-This kind of thing is better to fix now so we don't have to go and get
-everyone's permission later on.
-
-In the past we went through this with Rockchip SoCs in commit
-b1772506206f ("ARM: dts: rockchip: relicense rk3288.dtsi under
-GPLv2/X11").
-
-
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-
-IMHO add an extra line to this comment with a description to avoid the
-bike shedding of how we're supposed to do 1-line comments in device
-tree files.  AKA:
-
-/*
- * SDM845 MTP board device tree source
- *
- * Copyright (c) 2018, The Linux Foundation. All rights reserved.
- */
-
-
-> +
-> +/dts-v1/;
-> +
-> +#include "sdm845.dtsi"
-> +
-> +/ {
-> +       model = "Qualcomm Technologies, Inc. SDM845 MTP";
-> +       compatible = "qcom,sdm845-mtp";
-
-For me checkpatch complains about this.  It looks like the file
-"Documentation/devicetree/bindings/arm/qcom.txt" needs to be updated
-with "sdm845".  I don't think that will make checkpatch be quiet
-(since  that file doesn't have a full list of every board), but it
-still should be the correct thing to do.
-
-
-> +};
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> new file mode 100644
-> index 000000000000..55a7e0b454e1
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -0,0 +1,275 @@
-> +// SPDX-License-Identifier: GPL-2.0
-
-As per above, suggest dual licensed?
-
-
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-
-As per above, suggest adding an extra line to avoid the bikeshed.
-
-SDM845 SoC device tree source
-
-
-Besides those things, everything looks good as far as I can see.  I'm
-not an expert on every one of the devices used in this file, but
-reading through bindings docs and looking at other users of them, it
-looks sane enough.  Thus, with the above nits fixed you can feel free
-to add my Reviewed-by.
-
-
--Doug
+The system has some issues at the moment, will get back on this.
