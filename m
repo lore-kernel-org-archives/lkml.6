@@ -1,103 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965435AbeBMSIY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 13:08:24 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35472 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965158AbeBMSIW (ORCPT
+        id S965451AbeBMSN7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 13:13:59 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36571 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965217AbeBMSN5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 13:08:22 -0500
-X-Google-Smtp-Source: AH8x227L8ocSem8Yiwo6j+fpeZWBlP8M0u9UZJHJChAoX18cBSxYvcKqRQb+JCHVAmD+ORRIM9tDFg==
-From: Mathieu Malaterre <malat@debian.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Mathieu Malaterre <malat@debian.org>, Rob Herring <robh@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] video: offb: Deallocate the color map
-Date: Tue, 13 Feb 2018 19:07:45 +0100
-Message-Id: <20180213180747.12666-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
+        Tue, 13 Feb 2018 13:13:57 -0500
+X-Google-Smtp-Source: AH8x225KRjWwPLzw/HPYvq4vUQ9P5oVtcIntXUxd21tv+0HCQ2+kGxDw3r1K7rcrPuGzP2uWkHsYmg==
+Date: Tue, 13 Feb 2018 12:13:52 -0600
+From: Dennis Zhou <dennisszhou@gmail.com>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com>,
+        Alexei Starovoitov <ast@kernel.org>, netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com
+Subject: Re: lost connection to test machine (4)
+Message-ID: <20180213181352.GA60936@localhost.uwnet.wisc.edu>
+References: <001a113f8734783e94056505f8fd@google.com>
+ <CACT4Y+ZBHw7VZBFOeqLmrpmzgn4owW88qvP5v=xnr9966hbM_Q@mail.gmail.com>
+ <00c45ca8-305d-1818-e974-a9903c8494b8@iogearbox.net>
+ <20180212170325.GW695913@devbig577.frc2.facebook.com>
+ <20180212200548.GG695913@devbig577.frc2.facebook.com>
+ <1518528926.3715.173.camel@gmail.com>
+ <20180213173438.GA60641@localhost.uwnet.wisc.edu>
+ <1518544167.3715.180.camel@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518544167.3715.180.camel@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function offb_destroy did not deallocate the color map leaving some
-memory around after destruction. Call the color map deallocate function to
-remove the memory leak.
+On Tue, Feb 13, 2018 at 09:49:27AM -0800, Eric Dumazet wrote:
+> On Tue, 2018-02-13 at 11:34 -0600, Dennis Zhou wrote:
+> > Hi Eric,
+> > 
+> > On Tue, Feb 13, 2018 at 05:35:26AM -0800, Eric Dumazet wrote:
+> > > 
+> > > Also I would consider using this fix as I had warnings of cpus being
+> > > stuck there for more than 50 ms :
+> > > 
+> > > 
+> > > diff --git a/mm/percpu-vm.c b/mm/percpu-vm.c
+> > > index 9158e5a81391ced4e268e3d5dd9879c2bc7280ce..6309b01ceb357be01e857e5f899429403836f41f 100644
+> > > --- a/mm/percpu-vm.c
+> > > +++ b/mm/percpu-vm.c
+> > > @@ -92,6 +92,7 @@ static int pcpu_alloc_pages(struct pcpu_chunk *chunk,
+> > >  			*pagep = alloc_pages_node(cpu_to_node(cpu), gfp, 0);
+> > >  			if (!*pagep)
+> > >  				goto err;
+> > > +			cond_resched();
+> > >  		}
+> > >  	}
+> > >  	return 0;
+> > > 
+> > > 
+> > 
+> > This function gets called from pcpu_populate_chunk while holding the
+> > pcpu_alloc_mutex and is called from two scenarios. First, when an
+> > allocation occurs to a place without backing pages, and second when the
+> > workqueue item is scheduled to replenish the number of empty pages. So,
+> > I don't think this is a good idea.
+> > 
+> 
+> That _is_ a good idea, we do this already in vmalloc(), and vmalloc()
+> can absolutely be called while some mutex(es) are held.
+> 
+> 
+> > My understanding is if we're seeing warnings here, that means we're
+> > struggling to find backing pages. I believe adding __GFP_NORETRY on the
+> > workqueue path as Tejun mentioned above would help with warnings as
+> > well, but not if they are caused by the allocation path.
+> > 
+> 
+> That is a separate concern.
+> 
+> My patch simply avoids latency spikes when huge percpu allocations are
+> happening, on systems with say 1024 cpus.
+> 
+> 
 
-Handle another case where color map should have been deallocated during an
-error code path.
+I see. I misunderstood thinking this was for the same concern.
 
-Fix memory leaks reported by kmemleak:
-
-# dmesg
-...
-[ 1884.719941] kmemleak: 3 new suspected memory leaks (see /sys/kernel/debug/kmemleak)
-# cat /sys/kernel/debug/kmemleak
-unreferenced object 0xde3d9000 (size 512):
-  comm "swapper", pid 1, jiffies 4294892827 (age 1906.784s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 aa aa aa aa aa aa aa aa  ................
-    55 55 55 55 55 55 55 55 ff ff ff ff ff ff ff ff  UUUUUUUU........
-  backtrace:
-    [<f1433400>] fb_alloc_cmap_gfp+0x54/0x15c
-    [<cb6b409b>] offb_init_nodriver+0x8e8/0xa3c
-    [<b5a1c019>] offb_init+0xd0/0x164
-    [<322f82a3>] do_one_initcall+0x4c/0x178
-    [<b592db9f>] kernel_init_freeable+0x138/0x1cc
-    [<2a17fa0e>] kernel_init+0x24/0x118
-    [<4079749a>] ret_from_kernel_thread+0x5c/0x64
-unreferenced object 0xde3d9200 (size 512):
-  comm "swapper", pid 1, jiffies 4294892827 (age 1906.784s)
-  hex dump (first 32 bytes):
-    00 00 00 00 aa aa aa aa 00 00 00 00 55 55 aa aa  ............UU..
-    55 55 55 55 ff ff ff ff 55 55 55 55 ff ff ff ff  UUUU....UUUU....
-  backtrace:
-    [<4bf3594d>] fb_alloc_cmap_gfp+0x6c/0x15c
-    [<cb6b409b>] offb_init_nodriver+0x8e8/0xa3c
-    [<b5a1c019>] offb_init+0xd0/0x164
-    [<322f82a3>] do_one_initcall+0x4c/0x178
-    [<b592db9f>] kernel_init_freeable+0x138/0x1cc
-    [<2a17fa0e>] kernel_init+0x24/0x118
-    [<4079749a>] ret_from_kernel_thread+0x5c/0x64
-unreferenced object 0xde3d9600 (size 512):
-  comm "swapper", pid 1, jiffies 4294892827 (age 1906.784s)
-  hex dump (first 32 bytes):
-    00 00 aa aa 00 00 aa aa 00 00 aa aa 00 00 aa aa  ................
-    55 55 ff ff 55 55 ff ff 55 55 ff ff 55 55 ff ff  UU..UU..UU..UU..
-  backtrace:
-    [<23a3ea03>] fb_alloc_cmap_gfp+0x84/0x15c
-    [<cb6b409b>] offb_init_nodriver+0x8e8/0xa3c
-    [<b5a1c019>] offb_init+0xd0/0x164
-    [<322f82a3>] do_one_initcall+0x4c/0x178
-    [<b592db9f>] kernel_init_freeable+0x138/0x1cc
-    [<2a17fa0e>] kernel_init+0x24/0x118
-    [<4079749a>] ret_from_kernel_thread+0x5c/0x64
-
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
- drivers/video/fbdev/offb.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/video/fbdev/offb.c b/drivers/video/fbdev/offb.c
-index 6f65d132eba1..30786445de04 100644
---- a/drivers/video/fbdev/offb.c
-+++ b/drivers/video/fbdev/offb.c
-@@ -282,6 +282,7 @@ static void offb_destroy(struct fb_info *info)
- 	if (info->screen_base)
- 		iounmap(info->screen_base);
- 	release_mem_region(info->apertures->ranges[0].base, info->apertures->ranges[0].size);
-+	fb_dealloc_cmap(&info->cmap);
- 	framebuffer_release(info);
- }
- 
-@@ -520,6 +521,7 @@ static void __init offb_init_fb(const char *name,
- 	return;
- 
- out_err:
-+	fb_dealloc_cmap(&info->cmap);
- 	iounmap(info->screen_base);
- out_aper:
- 	iounmap(par->cmap_adr);
--- 
-2.11.0
+Thanks,
+Dennis
