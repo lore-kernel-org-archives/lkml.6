@@ -1,184 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935067AbeBMMM5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:12:57 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:46983 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935049AbeBMMMx (ORCPT
+        id S935103AbeBMMOT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:14:19 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41667 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934938AbeBMMOS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:12:53 -0500
-Date: Tue, 13 Feb 2018 04:12:41 -0800
-From: tip-bot for Thomas Richter <tipbot@zytor.com>
-Message-ID: <tip-52a37001d51a320c1019269fb3ba473a1363650d@git.kernel.org>
-Cc: hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, tmricht@linux.vnet.ibm.com,
-        acme@redhat.com, heiko.carstens@de.ibm.com, tglx@linutronix.de,
-        schwidefsky@de.ibm.com
-Reply-To: acme@redhat.com, tmricht@linux.vnet.ibm.com,
-        brueckner@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, hpa@zytor.com, schwidefsky@de.ibm.com,
-        tglx@linutronix.de, heiko.carstens@de.ibm.com
-In-Reply-To: <20180117083831.101001-1-tmricht@linux.vnet.ibm.com>
-References: <20180117083831.101001-1-tmricht@linux.vnet.ibm.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf test: Fix test trace+probe_libc_inet_pton.sh
- for s390x
-Git-Commit-ID: 52a37001d51a320c1019269fb3ba473a1363650d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Tue, 13 Feb 2018 07:14:18 -0500
+X-Google-Smtp-Source: AH8x2259ui+YEg+U3fsfR4rg3GdkX62U52178pBRJCXY1oXhZ1Tv4225yKgtACv2WgYPnHmBD/XGLg==
+From: Philipp Rossak <embed3d@gmail.com>
+To: wens@csie.org, a.zummo@towertech.it,
+        alexandre.belloni@free-electrons.com
+Cc: linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-rtc@vger.kernel.org
+Subject: [PATCH v2] rtc: ac100: Fix ac100 determine rate bug
+Date: Tue, 13 Feb 2018 13:14:14 +0100
+Message-Id: <20180213121414.7000-1-embed3d@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  52a37001d51a320c1019269fb3ba473a1363650d
-Gitweb:     https://git.kernel.org/tip/52a37001d51a320c1019269fb3ba473a1363650d
-Author:     Thomas Richter <tmricht@linux.vnet.ibm.com>
-AuthorDate: Wed, 17 Jan 2018 09:38:31 +0100
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 6 Feb 2018 10:46:58 -0300
+This patch fixes a bug, that prevents the Allwinner A83T and the A80
+from a successful boot. You can find the shortend trace below:
 
-perf test: Fix test trace+probe_libc_inet_pton.sh for s390x
+Unable to handle kernel NULL pointer dereference at virtual address
+00000000
+pgd = (ptrval)
+[00000000] *pgd=00000000
+Internal error: Oops: 5 [#1] SMP ARM
+Modules linked in:
+CPU: 0 PID: 49 Comm: kworker/0:1 Not tainted 4.15.0-10190-gb89e32ccd1be #2
+Hardware name: Allwinner sun8i Family
+Workqueue: events deferred_probe_work_func
+PC is at clk_hw_get_rate+0x0/0x34
+LR is at ac100_clkout_determine_rate+0x48/0x19c
 
-On Intel test case trace+probe_libc_inet_pton.sh succeeds and the
-output is:
+[ ... ]
 
-[root@f27 perf]# ./perf trace --no-syscalls
-                  -e probe_libc:inet_pton/max-stack=3/ ping -6 -c 1 ::1
-PING ::1(::1) 56 data bytes
-64 bytes from ::1: icmp_seq=1 ttl=64 time=0.037 ms
+(clk_hw_get_rate) from (ac100_clkout_determine_rate+0x48/0x19c)
+(ac100_clkout_determine_rate) from  (clk_core_set_rate_nolock+0x3c/0x1a0)
+(clk_core_set_rate_nolock) from (clk_set_rate+0x30/0x88)
+(clk_set_rate) from (of_clk_set_defaults+0x200/0x364)
+(of_clk_set_defaults) from (platform_drv_probe+0x18/0xb0)
 
- --- ::1 ping statistics ---
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.037/0.037/0.037/0.000 ms
-     0.000 probe_libc:inet_pton:(7fa40ac618a0))
-              __GI___inet_pton (/usr/lib64/libc-2.26.so)
-              getaddrinfo (/usr/lib64/libc-2.26.so)
-              main (/usr/bin/ping)
+To fix that bug, we first check if the return of the
+clk_hw_get_parent_by_index is non zero. If it is zero we skip that
+clock parent.
 
-The kernel stack unwinder is used, it is specified implicitly
-as call-graph=fp (frame pointer).
+The BUG report could be found here: https://lkml.org/lkml/2018/2/10/198
 
-On s390x only dwarf is available for stack unwinding. It is also
-done in user space. This requires different parameter setup
-and result checking for s390x and Intel.
+Fixes: 04940631b8d2 ("rtc: ac100: Add clk output support")
 
-This patch adds separate perf trace setup and result checking
-for Intel and s390x. On s390x specify this command line to
-get a call-graph and handle the different call graph result
-checking:
-
-[root@s35lp76 perf]# ./perf trace --no-syscalls
-	-e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
-PING ::1(::1) 56 data bytes
-64 bytes from ::1: icmp_seq=1 ttl=64 time=0.041 ms
-
- --- ::1 ping statistics ---
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.041/0.041/0.041/0.000 ms
-     0.000 probe_libc:inet_pton:(3ffb9942060))
-            __GI___inet_pton (/usr/lib64/libc-2.26.so)
-            gaih_inet (inlined)
-            __GI_getaddrinfo (inlined)
-            main (/usr/bin/ping)
-            __libc_start_main (/usr/lib64/libc-2.26.so)
-            _start (/usr/bin/ping)
-[root@s35lp76 perf]#
-
-Before:
-[root@s8360047 perf]# ./perf test -vv 58
-58: probe libc's inet_pton & backtrace it with ping       :
- --- start ---
-test child forked, pid 26349
-PING ::1(::1) 56 data bytes
-64 bytes from ::1: icmp_seq=1 ttl=64 time=0.079 ms
- --- ::1 ping statistics ---
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.079/0.079/0.079/0.000 ms
-0.000 probe_libc:inet_pton:(3ff925c2060))
-test child finished with -1
- ---- end ----
-probe libc's inet_pton & backtrace it with ping: FAILED!
-[root@s8360047 perf]#
-
-After:
-[root@s35lp76 perf]# ./perf test -vv 57
-57: probe libc's inet_pton & backtrace it with ping       :
- --- start ---
-test child forked, pid 38708
-PING ::1(::1) 56 data bytes
-64 bytes from ::1: icmp_seq=1 ttl=64 time=0.038 ms
- --- ::1 ping statistics ---
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.038/0.038/0.038/0.000 ms
-0.000 probe_libc:inet_pton:(3ff87342060))
-__GI___inet_pton (/usr/lib64/libc-2.26.so)
-gaih_inet (inlined)
-__GI_getaddrinfo (inlined)
-main (/usr/bin/ping)
-__libc_start_main (/usr/lib64/libc-2.26.so)
-_start (/usr/bin/ping)
-test child finished with 0
- ---- end ----
-probe libc's inet_pton & backtrace it with ping: Ok
-[root@s35lp76 perf]#
-
-On Intel the test case runs unchanged and succeeds.
-
-Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Link: http://lkml.kernel.org/r/20180117083831.101001-1-tmricht@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Philipp Rossak <embed3d@gmail.com>
 ---
- .../perf/tests/shell/trace+probe_libc_inet_pton.sh | 23 +++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh b/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
-index 8b3da21..c446c89 100755
---- a/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
-@@ -22,10 +22,23 @@ trace_libc_inet_pton_backtrace() {
- 	expected[4]="rtt min.*"
- 	expected[5]="[0-9]+\.[0-9]+[[:space:]]+probe_libc:inet_pton:\([[:xdigit:]]+\)"
- 	expected[6]=".*inet_pton[[:space:]]\($libc\)$"
--	expected[7]="getaddrinfo[[:space:]]\($libc\)$"
--	expected[8]=".*\(.*/bin/ping.*\)$"
--
--	perf trace --no-syscalls -e probe_libc:inet_pton/max-stack=3/ ping -6 -c 1 ::1 2>&1 | grep -v ^$ | while read line ; do
-+	case "$(uname -m)" in
-+	s390x)
-+		eventattr='call-graph=dwarf'
-+		expected[7]="gaih_inet[[:space:]]\(inlined\)$"
-+		expected[8]="__GI_getaddrinfo[[:space:]]\(inlined\)$"
-+		expected[9]="main[[:space:]]\(.*/bin/ping.*\)$"
-+		expected[10]="__libc_start_main[[:space:]]\($libc\)$"
-+		expected[11]="_start[[:space:]]\(.*/bin/ping.*\)$"
-+		;;
-+	*)
-+		eventattr='max-stack=3'
-+		expected[7]="getaddrinfo[[:space:]]\($libc\)$"
-+		expected[8]=".*\(.*/bin/ping.*\)$"
-+		;;
-+	esac
-+
-+	perf trace --no-syscalls -e probe_libc:inet_pton/$eventattr/ ping -6 -c 1 ::1 2>&1 | grep -v ^$ | while read line ; do
- 		echo $line
- 		echo "$line" | egrep -q "${expected[$idx]}"
- 		if [ $? -ne 0 ] ; then
-@@ -33,7 +46,7 @@ trace_libc_inet_pton_backtrace() {
- 			exit 1
- 		fi
- 		let idx+=1
--		[ $idx -eq 9 ] && break
-+		[ -z "${expected[$idx]}" ] && break
- 	done
- }
+Changes in v2:
+	* add tag Fixes: ... to commit message
+	* add comment to if statement why we are doing this check
+
+ drivers/rtc/rtc-ac100.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
+index 8ff9dc3fe5bf..ba73201d8cc1 100644
+--- a/drivers/rtc/rtc-ac100.c
++++ b/drivers/rtc/rtc-ac100.c
+@@ -183,7 +183,17 @@ static int ac100_clkout_determine_rate(struct clk_hw *hw,
  
+ 	for (i = 0; i < num_parents; i++) {
+ 		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
+-		unsigned long tmp, prate = clk_hw_get_rate(parent);
++		unsigned long tmp, prate;
++
++		/*
++		 * We purposefully left open the possibility to use the clock
++		 * from the codec side but it is not implemented right now.
++		 * Thus we need to check if the parent exists.
++		 */
++		if (!parent)
++			continue;
++
++		prate = clk_hw_get_rate(parent);
+ 
+ 		tmp = ac100_clkout_round_rate(hw, req->rate, prate);
+ 
+-- 
+2.11.0
