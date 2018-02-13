@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935016AbeBMMaI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:30:08 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:42164 "EHLO
+        id S935336AbeBMMbF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:31:05 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:42170 "EHLO
         mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935246AbeBMMaD (ORCPT
+        with ESMTP id S935249AbeBMMaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:30:03 -0500
-X-Google-Smtp-Source: AH8x227lzTt52wfy2T43y6c+RzEb+7Tj8fxAsubotjeD3QmIjyaxdXmZgUMHz2gqwT5P7jIqL9ZXsQ==
+        Tue, 13 Feb 2018 07:30:07 -0500
+X-Google-Smtp-Source: AH8x224chzjDQ9rb0GOEmj86Ked7mbqIsD5vN+3EI/UOTELZlmNMqG+GBFmQ9WukGsiL56cQgNAb0A==
 From: Philipp Rossak <embed3d@gmail.com>
 To: mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         maxime.ripard@free-electrons.com, wens@csie.org, linux@armlinux.org.uk,
@@ -15,9 +15,9 @@ To: mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
 Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [RESEND PATCH v5 4/6] arm: dts: sun8i: a83t: Add support for the cir interface
-Date: Tue, 13 Feb 2018 13:29:50 +0100
-Message-Id: <20180213122952.8420-5-embed3d@gmail.com>
+Subject: [RESEND PATCH v5 6/6] arm: dts: sun8i: h3-h5: ir register size should be the whole memory block
+Date: Tue, 13 Feb 2018 13:29:52 +0100
+Message-Id: <20180213122952.8420-7-embed3d@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180213122952.8420-1-embed3d@gmail.com>
 References: <20180213122952.8420-1-embed3d@gmail.com>
@@ -25,37 +25,26 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cir interface is like on the H3 located at 0x01f02000 and is exactly
-the same. This patch adds support for the ir interface on the A83T.
+The size of the register should be the size of the whole memory block,
+not just the registers, that are needed.
 
 Signed-off-by: Philipp Rossak <embed3d@gmail.com>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index f7f78a27e21d..1e04a5cfd32d 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -704,6 +704,19 @@
- 			#reset-cells = <1>;
+diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+index 7a83b15225c7..22f6e126b8df 100644
+--- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
++++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+@@ -712,7 +712,7 @@
+ 			clock-names = "apb", "ir";
+ 			resets = <&r_ccu RST_APB0_IR>;
+ 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+-			reg = <0x01f02000 0x40>;
++			reg = <0x01f02000 0x400>;
+ 			status = "disabled";
  		};
  
-+		r_cir: ir@1f02000 {
-+			compatible = "allwinner,sun8i-a83t-ir",
-+				     "allwinner,sun5i-a13-ir";
-+			clocks = <&r_ccu CLK_APB0_IR>, <&r_ccu CLK_IR>;
-+			clock-names = "apb", "ir";
-+			resets = <&r_ccu RST_APB0_IR>;
-+			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x01f02000 0x400>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&r_cir_pin>;
-+			status = "disabled";
-+		};
-+
- 		r_pio: pinctrl@1f02c00 {
- 			compatible = "allwinner,sun8i-a83t-r-pinctrl";
- 			reg = <0x01f02c00 0x400>;
 -- 
 2.11.0
