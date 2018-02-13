@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935131AbeBMMnc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:43:32 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:42256 "EHLO
+        id S935167AbeBMMpM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:45:12 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:42278 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934971AbeBMMnb (ORCPT
+        with ESMTP id S934971AbeBMMpK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:43:31 -0500
+        Tue, 13 Feb 2018 07:45:10 -0500
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Kieran Bingham <kbingham@kernel.org>
 Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
@@ -21,12 +21,12 @@ Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
         <linux-arm-kernel@lists.infradead.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/4] arm64: dts: renesas: r8a77995: add VSPBS instance
-Date: Tue, 13 Feb 2018 14:44:01 +0200
-Message-ID: <6763077.5Ag4QoQhv0@avalon>
+Subject: Re: [PATCH 4/4] arm64: dts: renesas: r8a77995: add VSPD instances
+Date: Tue, 13 Feb 2018 14:45:41 +0200
+Message-ID: <4151746.tevFeqBdEH@avalon>
 Organization: Ideas on Board Oy
-In-Reply-To: <1518474330-8713-4-git-send-email-kbingham@kernel.org>
-References: <1518474330-8713-1-git-send-email-kbingham@kernel.org> <1518474330-8713-4-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1518474330-8713-5-git-send-email-kbingham@kernel.org>
+References: <1518474330-8713-1-git-send-email-kbingham@kernel.org> <1518474330-8713-5-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -38,52 +38,63 @@ Hi Kieran,
 
 Thank you for the patch.
 
-On Tuesday, 13 February 2018 00:25:28 EET Kieran Bingham wrote:
+On Tuesday, 13 February 2018 00:25:29 EET Kieran Bingham wrote:
 > From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > 
-> The r8a77995 has a VSPBS to support image processing such as blending of
-> 2 input images.
+> The r8a77995 has two VSPDs to handle display pipelines with a DU.
 > 
 > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > ---
->  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
 > 
 > diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
 > b/arch/arm64/boot/dts/renesas/r8a77995.dtsi index
-> 196a917afea6..50c891f6649f 100644
+> 50c891f6649f..2c14a8dfd201 100644
 > --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
 > +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> @@ -692,6 +692,16 @@
->  			status = "disabled";
+> @@ -711,6 +711,16 @@
+>  			iommus = <&ipmmu_vp0 5>;
 >  		};
 > 
-> +		vspbs: vsp@fe960000 {
+> +		vspd0: vsp@fea20000 {
 > +			compatible = "renesas,vsp2";
-> +			reg = <0 0xfe960000 0 0x4000>;
+> +			reg = <0 0xfea20000 0 0x4000>;
 
-Unless I'm mistaken the VSPD instance has a CLUT on RPF2, so you need to 
-extend the memory region to include it. It's probably safe to set the size to 
-0x8000 to include the whole VSP memory region, even if most of the 
-0x4000-0x7fff range is not used.
-
-It seems that r8a7795 and r8a7796 suffer from the same issue upstream, they 
-should be fixed.
+Same issue as in patch 3/4 (for which I have incorrectly mentioned VSPD 
+instead of VSPBS). I'd just extend the region size to 0x8000 for both VSPDs.
 
 Apart from that,
 
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-> +			interrupts = <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 627>;
+> +			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 623>;
 > +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-> +			resets = <&cpg 627>;
-> +			renesas,fcp = <&fcpvb0>;
+> +			resets = <&cpg 623>;
+> +			renesas,fcp = <&fcpvd0>;
 > +		};
 > +
->  		fcpvb0: fcp@fe96f000 {
+>  		fcpvd0: fcp@fea27000 {
 >  			compatible = "renesas,fcpv";
->  			reg = <0 0xfe96f000 0 0x200>;
+>  			reg = <0 0xfea27000 0 0x200>;
+> @@ -720,6 +730,16 @@
+>  			iommus = <&ipmmu_vi0 8>;
+>  		};
+> 
+> +		vspd1: vsp@fea80000 {
+> +			compatible = "renesas,vsp2";
+> +			reg = <0 0xfea28000 0 0x4000>;
+> +			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 622>;
+> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> +			resets = <&cpg 622>;
+> +			renesas,fcp = <&fcpvd1>;
+> +		};
+> +
+>  		fcpvd1: fcp@fea2f000 {
+>  			compatible = "renesas,fcpv";
+>  			reg = <0 0xfea2f000 0 0x200>;
 
 -- 
 Regards,
