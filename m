@@ -1,29 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933855AbeBMJEH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 04:04:07 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51451 "EHLO
+        id S933885AbeBMJEU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 04:04:20 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:50761 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933638AbeBMJEC (ORCPT
+        with ESMTP id S933638AbeBMJEK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:04:02 -0500
-Date: Tue, 13 Feb 2018 01:03:37 -0800
-From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
-Message-ID: <tip-b3ccefaed922529e6a67de7b30af5aa38c76ace9@git.kernel.org>
-Cc: tglx@linutronix.de, linux@dominikbrodowski.net, hpa@zytor.com,
-        fengguang.wu@intel.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        peterz@infradead.org, jpoimboe@redhat.com,
-        torvalds@linux-foundation.org
-Reply-To: torvalds@linux-foundation.org, jpoimboe@redhat.com,
-        linux-kernel@vger.kernel.org, fengguang.wu@intel.com, mingo@kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, linux@dominikbrodowski.net,
-        hpa@zytor.com
-In-Reply-To: <20180212174503.5acbymg5z6p32snu@treble>
-References: <20180212174503.5acbymg5z6p32snu@treble>
+        Tue, 13 Feb 2018 04:04:10 -0500
+Date: Tue, 13 Feb 2018 01:02:44 -0800
+From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
+Message-ID: <tip-dde3036d62ba3375840b10ab9ec0d568fd773b07@git.kernel.org>
+Cc: hpa@zytor.com, brgerst@gmail.com, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, linux@dominikbrodowski.net,
+        jpoimboe@redhat.com, tglx@linutronix.de, luto@kernel.org,
+        dvlasenk@redhat.com, peterz@infradead.org, bp@alien8.de,
+        mingo@kernel.org
+Reply-To: bp@alien8.de, peterz@infradead.org, dvlasenk@redhat.com,
+        mingo@kernel.org, linux@dominikbrodowski.net, tglx@linutronix.de,
+        jpoimboe@redhat.com, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, brgerst@gmail.com, hpa@zytor.com,
+        luto@kernel.org
+In-Reply-To: <20180211104949.12992-7-linux@dominikbrodowski.net>
+References: <20180211104949.12992-7-linux@dominikbrodowski.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/64: Fix paranoid_entry() frame pointer
- warning
-Git-Commit-ID: b3ccefaed922529e6a67de7b30af5aa38c76ace9
+Subject: [tip:x86/pti] x86/entry/64: Get rid of the ALLOC_PT_GPREGS_ON_STACK
+ and SAVE_AND_CLEAR_REGS macros
+Git-Commit-ID: dde3036d62ba3375840b10ab9ec0d568fd773b07
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,64 +38,210 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b3ccefaed922529e6a67de7b30af5aa38c76ace9
-Gitweb:     https://git.kernel.org/tip/b3ccefaed922529e6a67de7b30af5aa38c76ace9
-Author:     Josh Poimboeuf <jpoimboe@redhat.com>
-AuthorDate: Mon, 12 Feb 2018 11:45:03 -0600
+Commit-ID:  dde3036d62ba3375840b10ab9ec0d568fd773b07
+Gitweb:     https://git.kernel.org/tip/dde3036d62ba3375840b10ab9ec0d568fd773b07
+Author:     Dominik Brodowski <linux@dominikbrodowski.net>
+AuthorDate: Sun, 11 Feb 2018 11:49:47 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 09:04:55 +0100
+CommitDate: Tue, 13 Feb 2018 09:04:54 +0100
 
-x86/entry/64: Fix paranoid_entry() frame pointer warning
+x86/entry/64: Get rid of the ALLOC_PT_GPREGS_ON_STACK and SAVE_AND_CLEAR_REGS macros
 
-With the following commit:
+Previously, error_entry() and paranoid_entry() saved the GP registers
+onto stack space previously allocated by its callers. Combine these two
+steps in the callers, and use the generic PUSH_AND_CLEAR_REGS macro
+for that.
 
-  f09d160992d1 ("x86/entry/64: Get rid of the ALLOC_PT_GPREGS_ON_STACK and SAVE_AND_CLEAR_REGS macros")
+This adds a significant amount ot text size. However, Ingo Molnar points
+out that:
 
-... one of my suggested improvements triggered a frame pointer warning:
+	"these numbers also _very_ significantly over-represent the
+	extra footprint. The assumptions that resulted in
+	us compressing the IRQ entry code have changed very
+	significantly with the new x86 IRQ allocation code we
+	introduced in the last year:
 
-  arch/x86/entry/entry_64.o: warning: objtool: paranoid_entry()+0x11: call without frame pointer save/setup
+	- IRQ vectors are usually populated in tightly clustered
+	  groups.
 
-The warning is correct for the build-time code, but it's actually not
-relevant at runtime because of paravirt patching.  The paravirt swapgs
-call gets replaced with either a SWAPGS instruction or NOPs at runtime.
+	  With our new vector allocator code the typical per CPU
+	  allocation percentage on x86 systems is ~3 device vectors
+	  and ~10 fixed vectors out of ~220 vectors - i.e. a very
+	  low ~6% utilization (!). [...]
 
-Go back to the previous behavior by removing the ELF function annotation
-for paranoid_entry() and adding an unwind hint, which effectively
-silences the warning.
+	  The days where we allocated a lot of vectors on every
+	  CPU and the compression of the IRQ entry code text
+	  mattered are over.
 
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+	- Another issue is that only a small minority of vectors
+	  is frequent enough to actually matter to cache utilization
+	  in practice: 3-4 key IPIs and 1-2 device IRQs at most - and
+	  those vectors tend to be tightly clustered as well into about
+	  two groups, and are probably already on 2-3 cache lines in
+	  practice.
+
+	  For the common case of 'cache cold' IRQs it's the depth of
+	  the call chain and the fragmentation of the resulting I$
+	  that should be the main performance limit - not the overall
+	  size of it.
+
+	- The CPU side cost of IRQ delivery is still very expensive
+	  even in the best, most cached case, as in 'over a thousand
+	  cycles'. So much stuff is done that maybe contemporary x86
+	  IRQ entry microcode already prefetches the IDT entry and its
+	  expected call target address."[*]
+
+[*] http://lkml.kernel.org/r/20180208094710.qnjixhm6hybebdv7@gmail.com
+
+The "testb $3, CS(%rsp)" instruction in the idtentry macro does not need
+modification. Previously, %rsp was manually decreased by 15*8; with
+this patch, %rsp is decreased by 15 pushq instructions.
+
+[jpoimboe@redhat.com: unwind hint improvements]
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kbuild-all@01.org
-Cc: tipbuild@zytor.com
-Fixes: f09d160992d1 ("x86/entry/64: Get rid of the ALLOC_PT_GPREGS_ON_STACK and SAVE_AND_CLEAR_REGS macros")
-Link: http://lkml.kernel.org/r/20180212174503.5acbymg5z6p32snu@treble
+Cc: dan.j.williams@intel.com
+Link: http://lkml.kernel.org/r/20180211104949.12992-7-linux@dominikbrodowski.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/entry/entry_64.S | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/entry/calling.h  | 42 +-----------------------------------------
+ arch/x86/entry/entry_64.S | 20 +++++++++-----------
+ 2 files changed, 10 insertions(+), 52 deletions(-)
 
+diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+index d6a97e2..5967501 100644
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -97,46 +97,6 @@ For 32-bit we have the following conventions - kernel is built with
+ 
+ #define SIZEOF_PTREGS	21*8
+ 
+-	.macro ALLOC_PT_GPREGS_ON_STACK
+-	addq	$-(15*8), %rsp
+-	.endm
+-
+-	.macro SAVE_AND_CLEAR_REGS offset=0
+-	/*
+-	 * Save registers and sanitize registers of values that a
+-	 * speculation attack might otherwise want to exploit. The
+-	 * lower registers are likely clobbered well before they
+-	 * could be put to use in a speculative execution gadget.
+-	 * Interleave XOR with PUSH for better uop scheduling:
+-	 */
+-	movq %rdi, 14*8+\offset(%rsp)
+-	movq %rsi, 13*8+\offset(%rsp)
+-	movq %rdx, 12*8+\offset(%rsp)
+-	movq %rcx, 11*8+\offset(%rsp)
+-	movq %rax, 10*8+\offset(%rsp)
+-	movq %r8,  9*8+\offset(%rsp)
+-	xorq %r8, %r8				/* nospec r8 */
+-	movq %r9,  8*8+\offset(%rsp)
+-	xorq %r9, %r9				/* nospec r9 */
+-	movq %r10, 7*8+\offset(%rsp)
+-	xorq %r10, %r10				/* nospec r10 */
+-	movq %r11, 6*8+\offset(%rsp)
+-	xorq %r11, %r11				/* nospec r11 */
+-	movq %rbx, 5*8+\offset(%rsp)
+-	xorl %ebx, %ebx				/* nospec rbx */
+-	movq %rbp, 4*8+\offset(%rsp)
+-	xorl %ebp, %ebp				/* nospec rbp */
+-	movq %r12, 3*8+\offset(%rsp)
+-	xorq %r12, %r12				/* nospec r12 */
+-	movq %r13, 2*8+\offset(%rsp)
+-	xorq %r13, %r13				/* nospec r13 */
+-	movq %r14, 1*8+\offset(%rsp)
+-	xorq %r14, %r14				/* nospec r14 */
+-	movq %r15, 0*8+\offset(%rsp)
+-	xorq %r15, %r15				/* nospec r15 */
+-	UNWIND_HINT_REGS offset=\offset
+-	.endm
+-
+ 	.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax
+ 	/*
+ 	 * Push registers and sanitize registers of values that a
+@@ -211,7 +171,7 @@ For 32-bit we have the following conventions - kernel is built with
+  * is just setting the LSB, which makes it an invalid stack address and is also
+  * a signal to the unwinder that it's a pt_regs pointer in disguise.
+  *
+- * NOTE: This macro must be used *after* SAVE_AND_CLEAR_REGS because it corrupts
++ * NOTE: This macro must be used *after* PUSH_AND_CLEAR_REGS because it corrupts
+  * the original rbp.
+  */
+ .macro ENCODE_FRAME_POINTER ptregs_offset=0
 diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index cfbf433..1c5420420 100644
+index b06a4b5..cfbf433 100644
 --- a/arch/x86/entry/entry_64.S
 +++ b/arch/x86/entry/entry_64.S
-@@ -1128,6 +1128,7 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
+@@ -871,7 +871,9 @@ ENTRY(\sym)
+ 	pushq	$-1				/* ORIG_RAX: no syscall to restart */
+ 	.endif
+ 
+-	ALLOC_PT_GPREGS_ON_STACK
++	/* Save all registers in pt_regs */
++	PUSH_AND_CLEAR_REGS
++	ENCODE_FRAME_POINTER
+ 
+ 	.if \paranoid < 2
+ 	testb	$3, CS(%rsp)			/* If coming from userspace, switch stacks */
+@@ -1121,15 +1123,12 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
+ #endif
+ 
+ /*
+- * Save all registers in pt_regs, and switch gs if needed.
++ * Switch gs if needed.
+  * Use slow, but surefire "are we in kernel?" check.
   * Return: ebx=0: need swapgs on exit, ebx=1: otherwise
   */
  ENTRY(paranoid_entry)
-+	UNWIND_HINT_FUNC
+-	UNWIND_HINT_FUNC
  	cld
+-	SAVE_AND_CLEAR_REGS 8
+-	ENCODE_FRAME_POINTER 8
  	movl	$1, %ebx
  	movl	$MSR_GS_BASE, %ecx
-@@ -1141,7 +1142,7 @@ ENTRY(paranoid_entry)
+ 	rdmsr
+@@ -1142,7 +1141,7 @@ ENTRY(paranoid_entry)
  	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
  
  	ret
--ENDPROC(paranoid_entry)
-+END(paranoid_entry)
+-END(paranoid_entry)
++ENDPROC(paranoid_entry)
  
  /*
   * "Paranoid" exit path from exception stack.  This is invoked
+@@ -1173,14 +1172,12 @@ ENTRY(paranoid_exit)
+ END(paranoid_exit)
+ 
+ /*
+- * Save all registers in pt_regs, and switch gs if needed.
++ * Switch gs if needed.
+  * Return: EBX=0: came from user mode; EBX=1: otherwise
+  */
+ ENTRY(error_entry)
+-	UNWIND_HINT_FUNC
++	UNWIND_HINT_REGS offset=8
+ 	cld
+-	SAVE_AND_CLEAR_REGS 8
+-	ENCODE_FRAME_POINTER 8
+ 	testb	$3, CS+8(%rsp)
+ 	jz	.Lerror_kernelspace
+ 
+@@ -1571,7 +1568,8 @@ end_repeat_nmi:
+ 	 * frame to point back to repeat_nmi.
+ 	 */
+ 	pushq	$-1				/* ORIG_RAX: no syscall to restart */
+-	ALLOC_PT_GPREGS_ON_STACK
++	PUSH_AND_CLEAR_REGS
++	ENCODE_FRAME_POINTER
+ 
+ 	/*
+ 	 * Use paranoid_entry to handle SWAPGS, but no need to use paranoid_exit
