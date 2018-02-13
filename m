@@ -1,343 +1,135 @@
-Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AH8x225hm8sz+UsohUpg6rgoLj7l++cNO6baPxKZrEyeob56XnULsVtXX3OpimwsOTqvSdPA/8C8
-ARC-Seal: i=1; a=rsa-sha256; t=1519093466; cv=none;
-        d=google.com; s=arc-20160816;
-        b=NJ8hsl7bSsa4ED4FtWRTc/aGE4Cqb88v4NA88PmLhuHR/LeHmibeq4bMhQ4h7uAPvb
-         hcUft2/DJt4mQiQt+kI5Jjdtv0RCFSCgS8Cz+uptoVk8hvcr1VlgjxpRQve+OykVzkCt
-         YQoHu79J8Npfk9+Oop73YkM+NpNilLXM7k5wJKZAlwVBdA6u6cic7fOv4aclLCA4K6/+
-         Yk6m93ulzUtNc9310X7AYxsLD0MpkFC5gdqsh0x7nGlCJ0/BNMfTG49FsMIWqYYJg9od
-         UW+w2s+X+kTEOihB6AOJh27hq7NW+fVsQz+3JWkyhqiqhLVm5ottB2AO6RekCVJ7nEjb
-         fY3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:message-id:cc:subject:date:to:from
-         :arc-authentication-results;
-        bh=ud0XBZeq9IVOq2Zh4Oa+SZtfQIR8br3QO8gKqZj0Wbo=;
-        b=M2w4YQfbfyJ28eDMZ3QfNLQb9njIEEOYUL470So+8cxnXUU5e52zuYdDntmy/IJkgh
-         7Q8nzx98HopW5cB2PgnRTkwScDFOk+O8hvXqx8Y+Jk9av+tXz6lQO0LbjpMvFS9EMRRh
-         LsqmRu0t3DdkyRtiArM8zlUevUNtjG8LNOa/jLUX2YYdoNOvcmiv1ADCXYXY/kwkKaJk
-         QQ4D4pRZ8X3jxYO2lmDrtll8GrGUAa/XBJ0piagL2LqOReO/9j640evxodBXwIkfY74L
-         et1cjX0T7iHw8vsk8YarKQQzvWF/Me4pD4xt8zN9Wt2scmou+NIkfKwvoKGiL6vb/t9R
-         clzA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
-From: NeilBrown <neilb@suse.com>
-To: Oleg Drokin <oleg.drokin@intel.com>, James Simmons <jsimmons@infradead.org>,
- Andreas Dilger <andreas.dilger@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 20 Feb 2018 13:23:37 +1100
-Subject: [PATCH 01/21] staging: lustre: replace all CFS_CAP_* macros with
- CAP_*
-Cc: lkml <linux-kernel@vger.kernel.org>, lustre <lustre-devel@lists.lustre.org>
-Message-ID: <151909341755.25814.8807958574153162982.stgit@noble>
-In-Reply-To: <151909308778.25814.9912662268627044409.stgit@noble>
-References: <151909308778.25814.9912662268627044409.stgit@noble>
-User-Agent: StGit/0.17.1-dirty
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3350986-1518503439-2-14456919942277714870
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518503439; b=m7K86UPgD39LvJPZcXoDXurgsabboigwp3h2JVWmihec9Ol
+    dz2MCnLruvhatC75ou/zaH7EhWCmhlxOrySpL5FSO8joUAVa9ybF0nSQE8voNzJY
+    a0G86dCrcmgauhiDT1Eshhh11Zvjjp01wHSFQIrZ7tleMwDm8O/I4C02gaizdc4y
+    BEyLwQUQgh5ua+YMtyNwqD6HuJlokISaP6GJyH6KaSfrMwJ+SXz2jpQ4dFYNdwAG
+    YmgZwP3HzJz5pEQg9nAwYNbnubqOF9WuOk5G4YwwgaCjZvoJ67bP6BGSus9mRLAU
+    uT+Pk12UG3wl7ot5JJSCDRIKbT49ob6uIGjQhtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1518503439; bh=ybOzuwBO9hhAx1GoB6ElEAi3JW8niX0RICCQmZ
+    ANe00=; b=cC5Z5wD93UQBhvy30RmB7pxzuKqKjNuLX/0kDiN9F5Z4ZxVH7sAKXm
+    yKGQxdvik1FbWblntzd4SIDYMXtHpCUFycqparJ0woSwfjsVGxK6XT2jHM2JZJp/
+    4oU15r+drMKzxeWoEhxMBA5ygXHz5fVgQf0zvWE++Wg3cPadRu/Jr4heStzmrTSB
+    9+PrNPiYKy6ZZ1BLJ3P5qPC7npi9YeUjeOeaoESx31n62tivnKzwjgRNu/dzRpBF
+    b5F3/2zOnGA6s8W0HECaKArCTFklTiTgZOadGIg3l4vCk7b0fVUGans/WCNcLsNB
+    iY6D40xwrghbgJwerfAuZL6O01o/ELaw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=pTccOgcg x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=GLb/wpbM;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=pTccOgcg x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=GLb/wpbM;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933361AbeBMGaf (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Feb 2018 01:30:35 -0500
+Received: from mail-yw0-f169.google.com ([209.85.161.169]:40046 "EHLO
+        mail-yw0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933360AbeBMGae (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Tue, 13 Feb 2018 01:30:34 -0500
+X-Google-Smtp-Source: AH8x225uCVa5i73xsy9KUU6BYpgV6Sn4BgK7mvG0qUZwQd6w3n7BqTyzMfDX3/bDfH909p3e9hJ/LEQskjAQ9SmsHts=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAOQ4uxgJqn0CJaf=LMH-iv2g1MJZwPM97K6iCtzrcY3eoN6KjA@mail.gmail.com>
+References: <20171030124358.GF23278@quack2.suse.cz> <76a4d544-833a-5f42-a898-115640b6783b@alibaba-inc.com>
+ <20171031101238.GD8989@quack2.suse.cz> <20171109135444.znaksm4fucmpuylf@dhcp22.suse.cz>
+ <10924085-6275-125f-d56b-547d734b6f4e@alibaba-inc.com> <20171114093909.dbhlm26qnrrb2ww4@dhcp22.suse.cz>
+ <afa2dc80-16a3-d3d1-5090-9430eaafc841@alibaba-inc.com> <20171115093131.GA17359@quack2.suse.cz>
+ <CALvZod6HJO73GUfLemuAXJfr4vZ8xMOmVQpFO3vJRog-s2T-OQ@mail.gmail.com>
+ <CAOQ4uxg-mTgQfTv-qO6EVwfttyOy+oFyAHyFDKTQsDOkQPyyfA@mail.gmail.com>
+ <20180124103454.ibuqt3njaqbjnrfr@quack2.suse.cz> <CAOQ4uxhDpBBUrr0JWRBaNQTTaUeJ4=gnM0iij2KivaGgp1ggtg@mail.gmail.com>
+ <CALvZod4PyqfaqgEswegF5uOjNwVwbY1C4ptJB0Ouvgchv2aVFg@mail.gmail.com>
+ <CAOQ4uxhyZNghjQU5atNv5xtgdHzA75UayphCyQDzxjM8GDTv3Q@mail.gmail.com>
+ <CALvZod5H4eL=YtZ3zkGG3p8gD+3=qnC3siUw1zpKL+128KufAA@mail.gmail.com> <CAOQ4uxgJqn0CJaf=LMH-iv2g1MJZwPM97K6iCtzrcY3eoN6KjA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 13 Feb 2018 08:30:27 +0200
+Message-ID: <CAOQ4uxjgKUFJ_uhyrQdcTs1FzcN6JrR_JpPc9QBrGJEU+cf65w@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: fsnotify: account fsnotify metadata to kmemcg
+To: Shakeel Butt <shakeelb@google.com>
+Cc: Jan Kara <jack@suse.cz>, Yang Shi <yang.s@alibaba-inc.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592884950531229771?=
-X-GMAIL-MSGID: =?utf-8?q?1592884950531229771?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Lustre defines a few CFS_CAP_* macros which are exactly the
-same as the corresponding CAP_* macro, with one exception.
+On Thu, Jan 25, 2018 at 10:36 PM, Amir Goldstein <amir73il@gmail.com> wrote:
+> On Thu, Jan 25, 2018 at 10:20 PM, Shakeel Butt <shakeelb@google.com> wrote:
+>> On Wed, Jan 24, 2018 at 11:51 PM, Amir Goldstein <amir73il@gmail.com> wrote:
+>>>
+>>> There is a nicer alternative, instead of failing the file access,
+>>> an overflow event can be queued. I sent a patch for that and Jan
+>>> agreed to the concept, but thought we should let user opt-in for this
+>>> change:
+>>> https://marc.info/?l=linux-fsdevel&m=150944704716447&w=2
+>>>
+>>> So IMO, if user opts-in for OVERFLOW instead of ENOMEM,
+>>> charging the listener memcg would be non controversial.
+>>> Otherwise, I cannot say that starting to charge the listener memgc
+>>> for events won't break any application.
+>>>
+>>
 
-CFS_CAP_SYS_BOOT is 23
-CAP_SYS_BOOT is 22.
+Shakeel, Jan,
 
-CFS_CAP_SYS_BOOT is only used through CFS_CAP_FS_MASK and
-causes capability 23 (CAP_SYS_NICE) to be dropped in certain
-circumstances.
-It is probable that the intention was to drop CAP_SYS_BOOT,
-and this is what is now done.
+Reviving this thread and adding linux-api, because I think it is important to
+agree on the API before patches.
 
-CFS_CAP_CHOWN_MASK and CFS_CAP_SYS_RESOURCE_MASK are never
-used, so they have been removed.
+The last message on the thread you referenced suggest an API change
+for opting in for Q_OVERFLOW on ENOMEM:
+https://marc.info/?l=linux-api&m=150946878623441&w=2
 
-Signed-off-by: NeilBrown <neilb@suse.com>
----
- .../staging/lustre/include/linux/libcfs/curproc.h  |   28 ++++++--------------
- drivers/staging/lustre/lustre/include/lustre_sec.h |    3 --
- drivers/staging/lustre/lustre/llite/dir.c          |    8 +++---
- drivers/staging/lustre/lustre/llite/file.c         |    6 ++--
- drivers/staging/lustre/lustre/llite/llite_lib.c    |    4 +--
- drivers/staging/lustre/lustre/llite/xattr.c        |    2 +
- .../lustre/lustre/obdclass/linux/linux-module.c    |    2 +
- drivers/staging/lustre/lustre/obdclass/llog.c      |    6 ++--
- .../staging/lustre/lustre/obdecho/echo_client.c    |    8 +++---
- drivers/staging/lustre/lustre/osc/osc_cache.c      |    4 +--
- drivers/staging/lustre/lustre/osc/osc_page.c       |    2 +
- 11 files changed, 30 insertions(+), 43 deletions(-)
+However, the suggested API change in in fanotify_mark() syscall and
+this is not the time when fsnotify_group is initialized.
+I believe for opting-in to accounting events for listener, you
+will need to add an opt-in flag for the fanotify_init() syscall.
 
-diff --git a/drivers/staging/lustre/include/linux/libcfs/curproc.h b/drivers/staging/lustre/include/linux/libcfs/curproc.h
-index 3cb3f086148e..cdc549e2979f 100644
---- a/drivers/staging/lustre/include/linux/libcfs/curproc.h
-+++ b/drivers/staging/lustre/include/linux/libcfs/curproc.h
-@@ -56,25 +56,15 @@
- 
- typedef u32 cfs_cap_t;
- 
--#define CFS_CAP_CHOWN		   0
--#define CFS_CAP_DAC_OVERRIDE	    1
--#define CFS_CAP_DAC_READ_SEARCH	 2
--#define CFS_CAP_FOWNER		  3
--#define CFS_CAP_FSETID		  4
--#define CFS_CAP_LINUX_IMMUTABLE	 9
--#define CFS_CAP_SYS_ADMIN	      21
--#define CFS_CAP_SYS_BOOT	       23
--#define CFS_CAP_SYS_RESOURCE	   24
--
--#define CFS_CAP_FS_MASK (BIT(CFS_CAP_CHOWN) |		\
--			 BIT(CFS_CAP_DAC_OVERRIDE) |	\
--			 BIT(CFS_CAP_DAC_READ_SEARCH) |	\
--			 BIT(CFS_CAP_FOWNER) |		\
--			 BIT(CFS_CAP_FSETID) |		\
--			 BIT(CFS_CAP_LINUX_IMMUTABLE) | \
--			 BIT(CFS_CAP_SYS_ADMIN) |	\
--			 BIT(CFS_CAP_SYS_BOOT) |	\
--			 BIT(CFS_CAP_SYS_RESOURCE))
-+#define CFS_CAP_FS_MASK (BIT(CAP_CHOWN) |		\
-+			 BIT(CAP_DAC_OVERRIDE) |	\
-+			 BIT(CAP_DAC_READ_SEARCH) |	\
-+			 BIT(CAP_FOWNER) |		\
-+			 BIT(CAP_FSETID) |		\
-+			 BIT(CAP_LINUX_IMMUTABLE) | \
-+			 BIT(CAP_SYS_ADMIN) |	\
-+			 BIT(CAP_SYS_BOOT) |	\
-+			 BIT(CAP_SYS_RESOURCE))
- 
- void cfs_cap_raise(cfs_cap_t cap);
- void cfs_cap_lower(cfs_cap_t cap);
-diff --git a/drivers/staging/lustre/lustre/include/lustre_sec.h b/drivers/staging/lustre/lustre/include/lustre_sec.h
-index 64b6fd4fed8f..c5cb07acd0da 100644
---- a/drivers/staging/lustre/lustre/include/lustre_sec.h
-+++ b/drivers/staging/lustre/lustre/include/lustre_sec.h
-@@ -1058,9 +1058,6 @@ int sptlrpc_current_user_desc_size(void);
- int sptlrpc_pack_user_desc(struct lustre_msg *msg, int offset);
- int sptlrpc_unpack_user_desc(struct lustre_msg *req, int offset, int swabbed);
- 
--#define CFS_CAP_CHOWN_MASK (1 << CFS_CAP_CHOWN)
--#define CFS_CAP_SYS_RESOURCE_MASK (1 << CFS_CAP_SYS_RESOURCE)
--
- enum {
- 	LUSTRE_SEC_NONE	 = 0,
- 	LUSTRE_SEC_REMOTE       = 1,
-diff --git a/drivers/staging/lustre/lustre/llite/dir.c b/drivers/staging/lustre/lustre/llite/dir.c
-index 99b0b77c75f5..09e3a4999079 100644
---- a/drivers/staging/lustre/lustre/llite/dir.c
-+++ b/drivers/staging/lustre/lustre/llite/dir.c
-@@ -885,7 +885,7 @@ static int quotactl_ioctl(struct ll_sb_info *sbi, struct if_quotactl *qctl)
- 	switch (cmd) {
- 	case Q_SETQUOTA:
- 	case Q_SETINFO:
--		if (!capable(CFS_CAP_SYS_ADMIN))
-+		if (!capable(CAP_SYS_ADMIN))
- 			return -EPERM;
- 		break;
- 	case Q_GETQUOTA:
-@@ -893,7 +893,7 @@ static int quotactl_ioctl(struct ll_sb_info *sbi, struct if_quotactl *qctl)
- 		      !uid_eq(current_euid(), make_kuid(&init_user_ns, id))) ||
- 		     (type == GRPQUOTA &&
- 		      !in_egroup_p(make_kgid(&init_user_ns, id)))) &&
--		      !capable(CFS_CAP_SYS_ADMIN))
-+		      !capable(CAP_SYS_ADMIN))
- 			return -EPERM;
- 		break;
- 	case Q_GETINFO:
-@@ -1452,7 +1452,7 @@ static long ll_dir_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	}
- 	case OBD_IOC_CHANGELOG_SEND:
- 	case OBD_IOC_CHANGELOG_CLEAR:
--		if (!capable(CFS_CAP_SYS_ADMIN))
-+		if (!capable(CAP_SYS_ADMIN))
- 			return -EPERM;
- 
- 		rc = copy_and_ioctl(cmd, sbi->ll_md_exp, (void __user *)arg,
-@@ -1556,7 +1556,7 @@ static long ll_dir_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		return rc;
- 	}
- 	case LL_IOC_HSM_CT_START:
--		if (!capable(CFS_CAP_SYS_ADMIN))
-+		if (!capable(CAP_SYS_ADMIN))
- 			return -EPERM;
- 
- 		rc = copy_and_ioctl(cmd, sbi->ll_md_exp, (void __user *)arg,
-diff --git a/drivers/staging/lustre/lustre/llite/file.c b/drivers/staging/lustre/lustre/llite/file.c
-index 938b859b6650..4aad2e331948 100644
---- a/drivers/staging/lustre/lustre/llite/file.c
-+++ b/drivers/staging/lustre/lustre/llite/file.c
-@@ -1315,7 +1315,7 @@ static int ll_lov_setea(struct inode *inode, struct file *file,
- 					    sizeof(struct lov_user_ost_data);
- 	int			 rc;
- 
--	if (!capable(CFS_CAP_SYS_ADMIN))
-+	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 
- 	lump = libcfs_kvzalloc(lum_size, GFP_NOFS);
-@@ -1570,7 +1570,7 @@ int ll_fid2path(struct inode *inode, void __user *arg)
- 	size_t outsize;
- 	int rc;
- 
--	if (!capable(CFS_CAP_DAC_READ_SEARCH) &&
-+	if (!capable(CAP_DAC_READ_SEARCH) &&
- 	    !(ll_i2sbi(inode)->ll_flags & LL_SBI_USER_FID2PATH))
- 		return -EPERM;
- 
-@@ -1840,7 +1840,7 @@ int ll_hsm_state_set(struct inode *inode, struct hsm_state_set *hss)
- 	 * NOT defined in HSM_USER_MASK.
- 	 */
- 	if (((hss->hss_setmask | hss->hss_clearmask) & ~HSM_USER_MASK) &&
--	    !capable(CFS_CAP_SYS_ADMIN))
-+	    !capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 
- 	/* Detect out-of range archive id */
-diff --git a/drivers/staging/lustre/lustre/llite/llite_lib.c b/drivers/staging/lustre/lustre/llite/llite_lib.c
-index 9e96a8ee1783..07072ab92bb6 100644
---- a/drivers/staging/lustre/lustre/llite/llite_lib.c
-+++ b/drivers/staging/lustre/lustre/llite/llite_lib.c
-@@ -1450,7 +1450,7 @@ int ll_setattr_raw(struct dentry *dentry, struct iattr *attr, bool hsm_import)
- 	/* POSIX: check before ATTR_*TIME_SET set (from setattr_prepare) */
- 	if (attr->ia_valid & TIMES_SET_FLAGS) {
- 		if ((!uid_eq(current_fsuid(), inode->i_uid)) &&
--		    !capable(CFS_CAP_FOWNER))
-+		    !capable(CAP_FOWNER))
- 			return -EPERM;
- 	}
- 
-@@ -2597,7 +2597,7 @@ int ll_getparent(struct file *file, struct getparent __user *arg)
- 	u32 linkno;
- 	int rc;
- 
--	if (!capable(CFS_CAP_DAC_READ_SEARCH) &&
-+	if (!capable(CAP_DAC_READ_SEARCH) &&
- 	    !(ll_i2sbi(inode)->ll_flags & LL_SBI_USER_FID2PATH))
- 		return -EPERM;
- 
-diff --git a/drivers/staging/lustre/lustre/llite/xattr.c b/drivers/staging/lustre/lustre/llite/xattr.c
-index 532384c91447..a723056f7166 100644
---- a/drivers/staging/lustre/lustre/llite/xattr.c
-+++ b/drivers/staging/lustre/lustre/llite/xattr.c
-@@ -75,7 +75,7 @@ static int xattr_type_filter(struct ll_sb_info *sbi,
- 		return -EOPNOTSUPP;
- 
- 	if (handler->flags == XATTR_TRUSTED_T &&
--	    !capable(CFS_CAP_SYS_ADMIN))
-+	    !capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 
- 	return 0;
-diff --git a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
-index 57951237def2..5b1122c408fb 100644
---- a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
-+++ b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
-@@ -251,7 +251,7 @@ static long obd_class_ioctl(struct file *filp, unsigned int cmd,
- 	int err = 0;
- 
- 	/* Allow non-root access for OBD_IOC_PING_TARGET - used by lfs check */
--	if (!capable(CFS_CAP_SYS_ADMIN) && (cmd != OBD_IOC_PING_TARGET))
-+	if (!capable(CAP_SYS_ADMIN) && (cmd != OBD_IOC_PING_TARGET))
- 		return err = -EACCES;
- 	if ((cmd & 0xffffff00) == ((int)'T') << 8) /* ignore all tty ioctls */
- 		return err = -ENOTTY;
-diff --git a/drivers/staging/lustre/lustre/obdclass/llog.c b/drivers/staging/lustre/lustre/obdclass/llog.c
-index cd051e31233e..aa48b3d2199e 100644
---- a/drivers/staging/lustre/lustre/obdclass/llog.c
-+++ b/drivers/staging/lustre/lustre/obdclass/llog.c
-@@ -483,12 +483,12 @@ int llog_open(const struct lu_env *env, struct llog_ctxt *ctxt,
- 	(*lgh)->lgh_ctxt = ctxt;
- 	(*lgh)->lgh_logops = ctxt->loc_logops;
- 
--	raised = cfs_cap_raised(CFS_CAP_SYS_RESOURCE);
-+	raised = cfs_cap_raised(CAP_SYS_RESOURCE);
- 	if (!raised)
--		cfs_cap_raise(CFS_CAP_SYS_RESOURCE);
-+		cfs_cap_raise(CAP_SYS_RESOURCE);
- 	rc = ctxt->loc_logops->lop_open(env, *lgh, logid, name, open_param);
- 	if (!raised)
--		cfs_cap_lower(CFS_CAP_SYS_RESOURCE);
-+		cfs_cap_lower(CAP_SYS_RESOURCE);
- 	if (rc) {
- 		llog_free_handle(*lgh);
- 		*lgh = NULL;
-diff --git a/drivers/staging/lustre/lustre/obdecho/echo_client.c b/drivers/staging/lustre/lustre/obdecho/echo_client.c
-index 9c5ce5074b66..99a76db51ae0 100644
---- a/drivers/staging/lustre/lustre/obdecho/echo_client.c
-+++ b/drivers/staging/lustre/lustre/obdecho/echo_client.c
-@@ -1502,7 +1502,7 @@ echo_client_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
- 
- 	switch (cmd) {
- 	case OBD_IOC_CREATE:		    /* may create echo object */
--		if (!capable(CFS_CAP_SYS_ADMIN)) {
-+		if (!capable(CAP_SYS_ADMIN)) {
- 			rc = -EPERM;
- 			goto out;
- 		}
-@@ -1511,7 +1511,7 @@ echo_client_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
- 		goto out;
- 
- 	case OBD_IOC_DESTROY:
--		if (!capable(CFS_CAP_SYS_ADMIN)) {
-+		if (!capable(CAP_SYS_ADMIN)) {
- 			rc = -EPERM;
- 			goto out;
- 		}
-@@ -1534,7 +1534,7 @@ echo_client_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
- 		goto out;
- 
- 	case OBD_IOC_SETATTR:
--		if (!capable(CFS_CAP_SYS_ADMIN)) {
-+		if (!capable(CAP_SYS_ADMIN)) {
- 			rc = -EPERM;
- 			goto out;
- 		}
-@@ -1547,7 +1547,7 @@ echo_client_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
- 		goto out;
- 
- 	case OBD_IOC_BRW_WRITE:
--		if (!capable(CFS_CAP_SYS_ADMIN)) {
-+		if (!capable(CAP_SYS_ADMIN)) {
- 			rc = -EPERM;
- 			goto out;
- 		}
-diff --git a/drivers/staging/lustre/lustre/osc/osc_cache.c b/drivers/staging/lustre/lustre/osc/osc_cache.c
-index dacfab12c501..1c70a504ee89 100644
---- a/drivers/staging/lustre/lustre/osc/osc_cache.c
-+++ b/drivers/staging/lustre/lustre/osc/osc_cache.c
-@@ -2345,7 +2345,7 @@ int osc_prep_async_page(struct osc_object *osc, struct osc_page *ops,
- 	oap->oap_obj_off = offset;
- 	LASSERT(!(offset & ~PAGE_MASK));
- 
--	if (capable(CFS_CAP_SYS_RESOURCE))
-+	if (capable(CAP_SYS_RESOURCE))
- 		oap->oap_brw_flags = OBD_BRW_NOQUOTA;
- 
- 	INIT_LIST_HEAD(&oap->oap_pending_item);
-@@ -2384,7 +2384,7 @@ int osc_queue_async_io(const struct lu_env *env, struct cl_io *io,
- 
- 	/* Set the OBD_BRW_SRVLOCK before the page is queued. */
- 	brw_flags |= ops->ops_srvlock ? OBD_BRW_SRVLOCK : 0;
--	if (capable(CFS_CAP_SYS_RESOURCE)) {
-+	if (capable(CAP_SYS_RESOURCE)) {
- 		brw_flags |= OBD_BRW_NOQUOTA;
- 		cmd |= OBD_BRW_NOQUOTA;
- 	}
-diff --git a/drivers/staging/lustre/lustre/osc/osc_page.c b/drivers/staging/lustre/lustre/osc/osc_page.c
-index 6fdd521feb21..01a930dbbf64 100644
---- a/drivers/staging/lustre/lustre/osc/osc_page.c
-+++ b/drivers/staging/lustre/lustre/osc/osc_page.c
-@@ -307,7 +307,7 @@ void osc_page_submit(const struct lu_env *env, struct osc_page *opg,
- 	oap->oap_count = opg->ops_to - opg->ops_from;
- 	oap->oap_brw_flags = brw_flags | OBD_BRW_SYNC;
- 
--	if (capable(CFS_CAP_SYS_RESOURCE)) {
-+	if (capable(CAP_SYS_RESOURCE)) {
- 		oap->oap_brw_flags |= OBD_BRW_NOQUOTA;
- 		oap->oap_cmd |= OBD_BRW_NOQUOTA;
- 	}
+Something like FAN_GROUP_QUEUE  (better name is welcome)
+which is mutually exclusive (?) with FAN_UNLIMITED_QUEUE.
+
+The question is, do we need the user to also explicitly opt-in for
+Q_OVERFLOW on ENOMEM with FAN_Q_ERR mark mask?
+Should these 2 new APIs be coupled or independent?
+
+Another question is whether FAN_GROUP_QUEUE may require
+less than CAP_SYS_ADMIN? Of course for now, this is only a
+semantic change, because fanotify_init() requires CAP_SYS_ADMIN
+but as the documentation suggests, this may be relaxed in the future.
+
+Thought?
+
+Amir.
