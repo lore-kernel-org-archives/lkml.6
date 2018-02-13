@@ -1,28 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935226AbeBMMRF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:17:05 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:46025 "EHLO
+        id S935232AbeBMMR1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:17:27 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:46393 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934945AbeBMMRB (ORCPT
+        with ESMTP id S934951AbeBMMRY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:17:01 -0500
-Date: Tue, 13 Feb 2018 04:06:34 -0800
+        Tue, 13 Feb 2018 07:17:24 -0500
+Date: Tue, 13 Feb 2018 04:07:01 -0800
 From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-a41cf9d483fbf0a97e8b131b6a006f558fdd502d@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        yao.jin@linux.intel.com, tglx@linutronix.de, mingo@kernel.org,
-        acme@redhat.com, hpa@zytor.com, wangnan0@huawei.com, jolsa@kernel.org,
-        peterz@infradead.org, kan.liang@intel.com, namhyung@kernel.org
-Reply-To: mingo@kernel.org, tglx@linutronix.de, yao.jin@linux.intel.com,
-        linux-kernel@vger.kernel.org, ak@linux.intel.com, wangnan0@huawei.com,
-        hpa@zytor.com, acme@redhat.com, peterz@infradead.org, jolsa@kernel.org,
-        kan.liang@intel.com, namhyung@kernel.org
-In-Reply-To: <1516310792-208685-7-git-send-email-kan.liang@intel.com>
-References: <1516310792-208685-7-git-send-email-kan.liang@intel.com>
+Message-ID: <tip-f4075778f7c9f743109e59311b1bdd60f914804e@git.kernel.org>
+Cc: mingo@kernel.org, ak@linux.intel.com, wangnan0@huawei.com,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org, tglx@linutronix.de,
+        yao.jin@linux.intel.com, acme@redhat.com, namhyung@kernel.org,
+        hpa@zytor.com, kan.liang@intel.com, peterz@infradead.org
+Reply-To: namhyung@kernel.org, acme@redhat.com, yao.jin@linux.intel.com,
+        hpa@zytor.com, kan.liang@intel.com, peterz@infradead.org,
+        mingo@kernel.org, ak@linux.intel.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org, wangnan0@huawei.com
+In-Reply-To: <1516310792-208685-8-git-send-email-kan.liang@intel.com>
+References: <1516310792-208685-8-git-send-email-kan.liang@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf mmap: Discard 'prev' in perf_mmap__read()
-Git-Commit-ID: a41cf9d483fbf0a97e8b131b6a006f558fdd502d
+Subject: [tip:perf/urgent] perf mmap: Introduce perf_mmap__read_done()
+Git-Commit-ID: f4075778f7c9f743109e59311b1bdd60f914804e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,20 +35,21 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a41cf9d483fbf0a97e8b131b6a006f558fdd502d
-Gitweb:     https://git.kernel.org/tip/a41cf9d483fbf0a97e8b131b6a006f558fdd502d
+Commit-ID:  f4075778f7c9f743109e59311b1bdd60f914804e
+Gitweb:     https://git.kernel.org/tip/f4075778f7c9f743109e59311b1bdd60f914804e
 Author:     Kan Liang <kan.liang@intel.com>
-AuthorDate: Thu, 18 Jan 2018 13:26:21 -0800
+AuthorDate: Thu, 18 Jan 2018 13:26:22 -0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 6 Feb 2018 10:11:50 -0300
 
-perf mmap: Discard 'prev' in perf_mmap__read()
+perf mmap: Introduce perf_mmap__read_done()
 
-The 'start' and 'prev' variables are duplicates in perf_mmap__read().
+The direction of overwrite mode is backward. The last perf_mmap__read()
+will set tail to map->prev. Need to correct the map->prev to head which
+is the end of next read.
 
-Use 'map->prev' to replace 'start' in perf_mmap__read_*().
+It will be used later.
 
-Suggested-by: Wang Nan <wangnan0@huawei.com>
 Signed-off-by: Kan Liang <kan.liang@intel.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -56,96 +57,39 @@ Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/1516310792-208685-7-git-send-email-kan.liang@intel.com
+Link: http://lkml.kernel.org/r/1516310792-208685-8-git-send-email-kan.liang@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/mmap.c | 28 ++++++++++------------------
- 1 file changed, 10 insertions(+), 18 deletions(-)
+ tools/perf/util/mmap.c | 11 +++++++++++
+ tools/perf/util/mmap.h |  1 +
+ 2 files changed, 12 insertions(+)
 
 diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 38fa69d..125bfda 100644
+index 125bfda..4f59eae 100644
 --- a/tools/perf/util/mmap.c
 +++ b/tools/perf/util/mmap.c
-@@ -22,29 +22,27 @@ size_t perf_mmap__mmap_len(struct perf_mmap *map)
- 
- /* When check_messup is true, 'end' must points to a good entry */
- static union perf_event *perf_mmap__read(struct perf_mmap *map,
--					 u64 start, u64 end, u64 *prev)
-+					 u64 *startp, u64 end)
- {
- 	unsigned char *data = map->base + page_size;
- 	union perf_event *event = NULL;
--	int diff = end - start;
-+	int diff = end - *startp;
- 
- 	if (diff >= (int)sizeof(event->header)) {
- 		size_t size;
- 
--		event = (union perf_event *)&data[start & map->mask];
-+		event = (union perf_event *)&data[*startp & map->mask];
- 		size = event->header.size;
- 
--		if (size < sizeof(event->header) || diff < (int)size) {
--			event = NULL;
--			goto broken_event;
--		}
-+		if (size < sizeof(event->header) || diff < (int)size)
-+			return NULL;
- 
- 		/*
- 		 * Event straddles the mmap boundary -- header should always
- 		 * be inside due to u64 alignment of output.
- 		 */
--		if ((start & map->mask) + size != ((start + size) & map->mask)) {
--			unsigned int offset = start;
-+		if ((*startp & map->mask) + size != ((*startp + size) & map->mask)) {
-+			unsigned int offset = *startp;
- 			unsigned int len = min(sizeof(*event), size), cpy;
- 			void *dst = map->event_copy;
- 
-@@ -59,20 +57,15 @@ static union perf_event *perf_mmap__read(struct perf_mmap *map,
- 			event = (union perf_event *)map->event_copy;
- 		}
- 
--		start += size;
-+		*startp += size;
- 	}
- 
--broken_event:
--	if (prev)
--		*prev = start;
--
- 	return event;
+@@ -338,3 +338,14 @@ int perf_mmap__push(struct perf_mmap *md, bool overwrite,
+ out:
+ 	return rc;
  }
++
++/*
++ * Mandatory for overwrite mode
++ * The direction of overwrite mode is backward.
++ * The last perf_mmap__read() will set tail to map->prev.
++ * Need to correct the map->prev to head which is the end of next read.
++ */
++void perf_mmap__read_done(struct perf_mmap *map)
++{
++	map->prev = perf_mmap__read_head(map);
++}
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index 9ab2b48..95549d4 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -96,4 +96,5 @@ size_t perf_mmap__mmap_len(struct perf_mmap *map);
  
- union perf_event *perf_mmap__read_forward(struct perf_mmap *map)
- {
- 	u64 head;
--	u64 old = map->prev;
- 
- 	/*
- 	 * Check if event was unmapped due to a POLLHUP/POLLERR.
-@@ -82,13 +75,12 @@ union perf_event *perf_mmap__read_forward(struct perf_mmap *map)
- 
- 	head = perf_mmap__read_head(map);
- 
--	return perf_mmap__read(map, old, head, &map->prev);
-+	return perf_mmap__read(map, &map->prev, head);
- }
- 
- union perf_event *perf_mmap__read_backward(struct perf_mmap *map)
- {
- 	u64 head, end;
--	u64 start = map->prev;
- 
- 	/*
- 	 * Check if event was unmapped due to a POLLHUP/POLLERR.
-@@ -118,7 +110,7 @@ union perf_event *perf_mmap__read_backward(struct perf_mmap *map)
- 	else
- 		end = head + map->mask + 1;
- 
--	return perf_mmap__read(map, start, end, &map->prev);
-+	return perf_mmap__read(map, &map->prev, end);
- }
- 
- void perf_mmap__read_catchup(struct perf_mmap *map)
+ int perf_mmap__read_init(struct perf_mmap *md, bool overwrite,
+ 			 u64 *startp, u64 *endp);
++void perf_mmap__read_done(struct perf_mmap *map);
+ #endif /*__PERF_MMAP_H */
