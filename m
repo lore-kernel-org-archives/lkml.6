@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935332AbeBMMaN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:30:13 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:50874 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935210AbeBMMaA (ORCPT
+        id S935314AbeBMMaM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:30:12 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:43028 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935011AbeBMMaF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:30:00 -0500
-X-Google-Smtp-Source: AH8x225LTWemTjHQOJ2xFnl0ADu0YpPiufL19hlR0GryST5UITyhtee3DBU0TbsIyylV0HN7PzXpkg==
+        Tue, 13 Feb 2018 07:30:05 -0500
+X-Google-Smtp-Source: AH8x225q+zJt2ahcfnwfsaBqEUjqE540EhnsKgNZzUn8937NNJ8oTwTAiBgYIKKCcg+sPx8o2EDnEw==
 From: Philipp Rossak <embed3d@gmail.com>
 To: mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         maxime.ripard@free-electrons.com, wens@csie.org, linux@armlinux.org.uk,
@@ -15,9 +15,9 @@ To: mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
 Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [RESEND PATCH v5 2/6] media: dt: bindings: Update binding documentation for sunxi IR controller
-Date: Tue, 13 Feb 2018 13:29:48 +0100
-Message-Id: <20180213122952.8420-3-embed3d@gmail.com>
+Subject: [RESEND PATCH v5 5/6] arm: dts: sun8i: a83t: bananapi-m3: Enable IR controller
+Date: Tue, 13 Feb 2018 13:29:51 +0100
+Message-Id: <20180213122952.8420-6-embed3d@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180213122952.8420-1-embed3d@gmail.com>
 References: <20180213122952.8420-1-embed3d@gmail.com>
@@ -25,37 +25,32 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch updates documentation for Device-Tree bindings for sunxi IR
-controller and adds the new optional property for the base clock
-frequency.
+The Bananapi M3 has an onboard IR receiver.
+This enables the onboard IR receiver subnode.
+Unlike the other IR receivers this one needs a base clock frequency
+of 3000000 Hz (3 MHz), to be able to work.
 
 Signed-off-by: Philipp Rossak <embed3d@gmail.com>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 ---
- Documentation/devicetree/bindings/media/sunxi-ir.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/sunxi-ir.txt b/Documentation/devicetree/bindings/media/sunxi-ir.txt
-index 91648c569b1e..278098987edb 100644
---- a/Documentation/devicetree/bindings/media/sunxi-ir.txt
-+++ b/Documentation/devicetree/bindings/media/sunxi-ir.txt
-@@ -11,6 +11,8 @@ Required properties:
- Optional properties:
- - linux,rc-map-name: see rc.txt file in the same directory.
- - resets : phandle + reset specifier pair
-+- clock-frequency  : IR Receiver clock frequency, in Hertz. Defaults to 8 MHz
-+		     if missing.
+diff --git a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+index 6550bf0e594b..26c015fd4f4d 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+@@ -145,6 +145,11 @@
+ 	status = "okay";
+ };
  
- Example:
- 
-@@ -18,6 +20,7 @@ ir0: ir@1c21800 {
- 	compatible = "allwinner,sun4i-a10-ir";
- 	clocks = <&apb0_gates 6>, <&ir0_clk>;
- 	clock-names = "apb", "ir";
++&r_cir {
 +	clock-frequency = <3000000>;
- 	resets = <&apb0_rst 1>;
- 	interrupts = <0 5 1>;
- 	reg = <0x01C21800 0x40>;
++	status = "okay";
++};
++
+ &r_rsb {
+ 	status = "okay";
+ 
 -- 
 2.11.0
