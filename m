@@ -1,133 +1,159 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1420212-1518183917-2-14683555255684303201
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518183917; b=iMIh9KhoBVVKihkY/zMRlJ4LzgUaTvmvbzo52NzvDZw5t7s
-    XkTpQ7HfAmtYHGkfOTZvHHX9SxjMLWe3bUzNKp/xkvmd+kt0l5QMvHc+Y0ALoKKw
-    EMoRZNVdqMKS/g3y7uprnHPzEz3lbNM8nXphD6m3vy9vgM8YhorasP57ZUocYOwU
-    tmVvyvnmxFxheMxcy71sLk+Aiot5xeIFcmqg8o2kZ5wKb9XKNcuEeh0Zz4atpIVf
-    uKpkYtsb5MDO8U2xo4dB78CEgsOTf40ELRol5AKlgJggFLZhqrw5p1PuiHywNE8C
-    0vNZY5NwhFNLNZ8hMLmRtXTNwyEr2Rzgl7HkPuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518183917; bh=CMT0SuCvdlz4LxEQRs1dN3YayF
-    fpsEVnN5QCsaskPp8=; b=gkvDMj6copfUtC/I1jciWWT5oN95E2KM+Pv7u0EUxG
-    AaXwkBqqk9806bMmXO963OfV1ZJGdStSwvIRvnHahTN1t75bcBGGOl8hp13vnucR
-    1fTnowpHoujZWY5oMmCcxZNCA7c8Xfu+W4H0EeJ+CTMj9MebM/kgQy4PNiwDJc/T
-    zS9SWINIdRSuQa6RLTVZWtfmhtb4nLn3v/a6h/UW7+2dkky+uHLQZIsU6L+jQWy+
-    k7+QdtnNglCwFHq2dW7JJp/pGuPQblksdjG5Q3vnYsQL+GnsNGyf+Ir4b1C1M5la
-    Vb4KPPlma8YsvlYb8xFebN/QesKF99HxDAHEmwEpn67w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753582AbeBINpN (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Feb 2018 08:45:13 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51758 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752879AbeBINpN (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Feb 2018 08:45:13 -0500
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neal Cardwell <ncardwell@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Beyers Cronje <bcronje@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 14/22] tcp_bbr: fix pacing_gain to always be unity when using lt_bw
-Date: Fri,  9 Feb 2018 14:40:03 +0100
-Message-Id: <20180209133935.096742447@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180209133934.024795822@linuxfoundation.org>
-References: <20180209133934.024795822@linuxfoundation.org>
-User-Agent: quilt/0.65
+Return-Path: <tipbot@zytor.com>
+X-Google-Smtp-Source: AH8x2247FE3DXxyFdawLURF8LWv1S+ZhtLg6dEqh69IZKmshtdO3Mwi19ZQf5Y+5ey193ho1eSVu
+ARC-Seal: i=1; a=rsa-sha256; t=1518513315; cv=none;
+        d=google.com; s=arc-20160816;
+        b=SL1GEL3L4vSR+CZq/ZoWyl88BXA9mRE50FTPdeR5qq7Z4n59kEyOu4YWSg/1vMtKZ3
+         4SWQKNTs74jWEhGDpXDTbZ36DL3tEAsyuB3icv99TFnmh5tgmrFmODKwo3IfiuyerObT
+         /zNzU+5N8KezzB/hEiAtST/Uj1r//EKvEKh1nNhz7/f/fVJJLS9GoqzGeD6SM0cpO6fA
+         LWI0I+FYDiFdxdBX/RwCpG9UXOyatJYDca3pZg7ckuKDFrU0OCBgTgmZ/37oAMRve4ih
+         nU6NkgpD3m1MBNXt52538bknNVuuEc80lv0VfGqRjKeMVj9ReUh4gPaTbPyycgZW3W2H
+         TRDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=precedence:content-disposition:content-transfer-encoding
+         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
+         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
+         :arc-authentication-results;
+        bh=l3eUXxql30gFL4VZIBJVI5DW+FSLKxcfgHeTnFRKVeg=;
+        b=LfcGmsld4T6d7gJADbQvyMgUM6GBVy8KborW6WpX42QLbhrjxd/zsM91Hw3dQhnZTu
+         ciTtr1jX9wV699dvKgimUK1ceXTzj5SQ/uEAzozi0gGfqgJsgXMOsDfbQCg6kGvBvMi4
+         Dg3AsAWm3c0WtFAEeF0QhJqUSas7Z25DHY5Pl8+z8IODeK61su8qEMyyCTmBKO1rAzqP
+         kj9nZAZd4FvUI3497zmsC3V9bh/i2f4r2sltDJKj5xTyXdza/lKACcL0BtYG9dNAYJJj
+         U5PjxB+wjYbGuLlC2K6tGrI5DIpuU0BoBnJPrmCipeVqe/1gqK5xaPkoZTP0cRaUaN3o
+         hMzw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Date: Tue, 13 Feb 2018 00:58:49 -0800
+Sender: tip tree robot <tipbot@zytor.com>
+From: tip-bot for David Woodhouse <tipbot@zytor.com>
+Message-ID: <tip-928a4c39484281f8ca366f53a1db79330d058401@git.kernel.org>
+Cc: bp@alien8.de, dwmw@amazon.co.uk, dave.hansen@linux.intel.com,
+        arjan@linux.intel.com, sironi@amazon.de, torvalds@linux-foundation.org,
+        dan.j.williams@intel.com, peterz@infradead.org, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, gregkh@linuxfoundation.org, luto@kernel.org,
+        jpoimboe@redhat.com, dwmw2@infradead.org
+Reply-To: bp@alien8.de, dwmw@amazon.co.uk, dave.hansen@linux.intel.com,
+        arjan@linux.intel.com, sironi@amazon.de, torvalds@linux-foundation.org,
+        dan.j.williams@intel.com, peterz@infradead.org, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, gregkh@linuxfoundation.org, luto@kernel.org,
+        jpoimboe@redhat.com, dwmw2@infradead.org
+In-Reply-To: <1518305967-31356-4-git-send-email-dwmw@amazon.co.uk>
+References: <1518305967-31356-4-git-send-email-dwmw@amazon.co.uk>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] KVM/x86: Reduce retpoline performance impact in
+ slot_handle_level_range(), by always inlining iterator helper methods
+Git-Commit-ID: 928a4c39484281f8ca366f53a1db79330d058401
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592160357806412136?=
+X-GMAIL-MSGID: =?utf-8?q?1592276617998546461?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Commit-ID:  928a4c39484281f8ca366f53a1db79330d058401
+Gitweb:     https://git.kernel.org/tip/928a4c39484281f8ca366f53a1db79330d058401
+Author:     David Woodhouse <dwmw@amazon.co.uk>
+AuthorDate: Sat, 10 Feb 2018 23:39:24 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 13 Feb 2018 08:59:45 +0100
 
-------------------
+KVM/x86: Reduce retpoline performance impact in slot_handle_level_range(), by always inlining iterator helper methods
 
-From: Neal Cardwell <ncardwell@google.com>
+With retpoline, tight loops of "call this function for every XXX" are
+very much pessimised by taking a prediction miss *every* time. This one
+is by far the biggest contributor to the guest launch time with retpoline.
 
+By marking the iterator slot_handle_…() functions always_inline, we can
+ensure that the indirect function call can be optimised away into a
+direct call and it actually generates slightly smaller code because
+some of the other conditionals can get optimised away too.
 
-[ Upstream commit 3aff3b4b986e51bcf4ab249e5d48d39596e0df6a ]
+Performance is now pretty close to what we see with nospectre_v2 on
+the command line.
 
-This commit fixes the pacing_gain to remain at BBR_UNIT (1.0) when
-using lt_bw and returning from the PROBE_RTT state to PROBE_BW.
-
-Previously, when using lt_bw, upon exiting PROBE_RTT and entering
-PROBE_BW the bbr_reset_probe_bw_mode() code could sometimes randomly
-end up with a cycle_idx of 0 and hence have bbr_advance_cycle_phase()
-set a pacing gain above 1.0. In such cases this would result in a
-pacing rate that is 1.25x higher than intended, potentially resulting
-in a high loss rate for a little while until we stop using the lt_bw a
-bit later.
-
-This commit is a stable candidate for kernels back as far as 4.9.
-
-Fixes: 0f8782ea1497 ("tcp_bbr: add BBR congestion control")
-Signed-off-by: Neal Cardwell <ncardwell@google.com>
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Signed-off-by: Soheil Hassas Yeganeh <soheil@google.com>
-Reported-by: Beyers Cronje <bcronje@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Tested-by: Filippo Sironi <sironi@amazon.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Reviewed-by: Filippo Sironi <sironi@amazon.de>
+Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: arjan.van.de.ven@intel.com
+Cc: dave.hansen@intel.com
+Cc: jmattson@google.com
+Cc: karahmed@amazon.de
+Cc: kvm@vger.kernel.org
+Cc: rkrcmar@redhat.com
+Link: http://lkml.kernel.org/r/1518305967-31356-4-git-send-email-dwmw@amazon.co.uk
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- net/ipv4/tcp_bbr.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kvm/mmu.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/net/ipv4/tcp_bbr.c
-+++ b/net/ipv4/tcp_bbr.c
-@@ -481,7 +481,8 @@ static void bbr_advance_cycle_phase(stru
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index 2b8eb4d..cc83bdc 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -5058,7 +5058,7 @@ void kvm_mmu_uninit_vm(struct kvm *kvm)
+ typedef bool (*slot_level_handler) (struct kvm *kvm, struct kvm_rmap_head *rmap_head);
  
- 	bbr->cycle_idx = (bbr->cycle_idx + 1) & (CYCLE_LEN - 1);
- 	bbr->cycle_mstamp = tp->delivered_mstamp;
--	bbr->pacing_gain = bbr_pacing_gain[bbr->cycle_idx];
-+	bbr->pacing_gain = bbr->lt_use_bw ? BBR_UNIT :
-+					    bbr_pacing_gain[bbr->cycle_idx];
+ /* The caller should hold mmu-lock before calling this function. */
+-static bool
++static __always_inline bool
+ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 			slot_level_handler fn, int start_level, int end_level,
+ 			gfn_t start_gfn, gfn_t end_gfn, bool lock_flush_tlb)
+@@ -5088,7 +5088,7 @@ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 	return flush;
  }
  
- /* Gain cycling: cycle pacing gain to converge to fair share of available bw. */
-@@ -490,8 +491,7 @@ static void bbr_update_cycle_phase(struc
+-static bool
++static __always_inline bool
+ slot_handle_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 		  slot_level_handler fn, int start_level, int end_level,
+ 		  bool lock_flush_tlb)
+@@ -5099,7 +5099,7 @@ slot_handle_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 			lock_flush_tlb);
+ }
+ 
+-static bool
++static __always_inline bool
+ slot_handle_all_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 		      slot_level_handler fn, bool lock_flush_tlb)
  {
- 	struct bbr *bbr = inet_csk_ca(sk);
- 
--	if ((bbr->mode == BBR_PROBE_BW) && !bbr->lt_use_bw &&
--	    bbr_is_next_cycle_phase(sk, rs))
-+	if (bbr->mode == BBR_PROBE_BW && bbr_is_next_cycle_phase(sk, rs))
- 		bbr_advance_cycle_phase(sk);
+@@ -5107,7 +5107,7 @@ slot_handle_all_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
  }
  
+-static bool
++static __always_inline bool
+ slot_handle_large_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 			slot_level_handler fn, bool lock_flush_tlb)
+ {
+@@ -5115,7 +5115,7 @@ slot_handle_large_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
+ }
+ 
+-static bool
++static __always_inline bool
+ slot_handle_leaf(struct kvm *kvm, struct kvm_memory_slot *memslot,
+ 		 slot_level_handler fn, bool lock_flush_tlb)
+ {
