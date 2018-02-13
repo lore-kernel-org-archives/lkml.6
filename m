@@ -1,178 +1,139 @@
-Return-Path: <vivek.gautam@codeaurora.org>
-X-Google-Smtp-Source: AH8x225RQb6JLXFcVWDr1F5fSOu7mCyufllkNPxEeDg+jOTgIY3DRn+qNzBabQshKCYnEu+RYGCD
-ARC-Seal: i=1; a=rsa-sha256; t=1519407784; cv=none;
+Return-Path: <tfiga@chromium.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1518510686; cv=none;
         d=google.com; s=arc-20160816;
-        b=ClQY8kSjUEBUPLBl7fxsRYF+dm3bPekNeqeIOv9ks6d/KCDBgOBVTUQktdP83YGSDK
-         v2D/pRTUoFF8PzurOqS6as+Z6/jjSufeZ1j+mtaVyXWSjp/l5xTFDMIZJRv6N7z5od7w
-         NTYfFnzhe79Y0SWaeNulUDBpnXRMVL+woa3u0ackq1+QT6i3SyJ8GomYEGkRna2IymtS
-         ISxnstAeDM9hXR3CDHWoWZPwC8fMgP7Ed8WUcVu486Y3FkdkUcBevwdhCL7FVpaSYEm8
-         H6F+50yazHCR0gpRGDnKRElwLPM1XyGiqGykdCj+VaMfxWbXAMUl3KOBBZeKYfE7lqY6
-         DdYw==
+        b=rplxWqkNproJgPF4aumGin9Np7yg8Vh0jeGTM1QVccUw0QMNqUdZPftdGrV7ZZvRhf
+         PSCo22Oa96TYV/KjCikqXwi5oe3+TM7QdrNDviv1IaFcSSj9YQq1s9H/o7wUBQrGp6OL
+         0RACQgHL+JAd+iRSvUzXN9Vr5jTQVx0n15qQ9Gkir9ErWIu5pVXgniDG8R4Q1Cl2UA/E
+         M8sdl/A1qxtws9PYAt05wt/uN6CSH+i2tM0FrGnl2nkYwbEvGGGofTGDO5iiy4qPEIRJ
+         S/jWdJpS5v/Broomf3gBX19KWyGJDXKvEegRWR1pnvdsMdizilif1/DWE6i09u0r7JbH
+         MTKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:subject:message-id:date:from:references:in-reply-to:mime-version
-         :dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=KceLNzrLbCjqX6Hx/JweEcvlTAapiT7ki5a5J8/GHn4=;
-        b=quZoJ6Bj1WRRxoz9cHTC+/RNqbOC35NFkAUCWNUrzf8w8j0rWxPPFb+lg/uHVDSt15
-         F0VkABSgvFWtxRWr6W0ODqn3kA4xYZy98u8fnti7PG9EbLsCZ58gejEXQ/wHRqPI/75c
-         m+ait2ix5Gc/N7gKBHD8jMHNQuaU947eRiKU9SJtoZCxy677cS7TDYkdKfDZMhZRSkva
-         rpQyZfQM3FDWSa7AKIB8ilqmQczMs/b2Gwx9llgWyCJM/FYl84DpdarIBpa2HeDnwYxt
-         FxDtHHyCTmFsdBOXLNKxPVuu9470eqcoDSX4g5TRC0NmyJISPlRK66Pv+EgYK6tdxdSW
-         Jm7g==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=3qImykOaVkEOo/IUvwo5zkUlsXQPmIDn/KImcx8EjYI=;
+        b=0Wu5lbC4FlQaHJjMlHTtoYVwfEb2VRyjoRTWTDlEiyXVxzcJYBV5yB/X8Fr/XSwX9A
+         SoxkbNiugEspJUaU9mAphYmYK5NmMfKfrlWTJN2rK1D8WfGXoMTWMO8nnObxqFi3Cs21
+         vBteZPP2Yn5FFbcaqAvb+NB4+KYdPzdHPXiYQIWU6o1A1rQiD0SiKJOFwinImFl7F/t5
+         k5A35WtTdKOetoL+mQw+pCuLnhxi2hK+mmHdNJQ0l5mpJNS9IAAdvT1bg8U0KCoG/pra
+         ybM1CDAHA0N/TuejhmemS2hEgTJJWrpE+/QCwcST7yyX+0/EXRWA2HP2h8GFftCZuaOz
+         65kA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=cGKVPfBn;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=NW7b9Ax+;
-       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
+       dkim=pass header.i=@chromium.org header.s=google header.b=CSrhdcjJ;
+       spf=pass (google.com: domain of tfiga@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=tfiga@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=cGKVPfBn;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=NW7b9Ax+;
-       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A5FA860F6E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+       dkim=pass header.i=@chromium.org header.s=google header.b=CSrhdcjJ;
+       spf=pass (google.com: domain of tfiga@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=tfiga@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AH8x224jC15za5LUQ198XP5/S/hkyxCUW78K1bFLHhMF/EB6lZkJ9EyxpK0zMMWsSYG/ivZ1EknG7Q==
 MIME-Version: 1.0
-In-Reply-To: <20180223154048.GB18743@jcrouse-lnx.qualcomm.com>
-References: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org>
- <1517999482-17317-4-git-send-email-vivek.gautam@codeaurora.org>
- <20180222235200.GA18743@jcrouse-lnx.qualcomm.com> <CAFp+6iGQ5Vckui14Jb=V0uk_Pjes95hOxo=KBijR4yxPeDDzFg@mail.gmail.com>
- <20180223154048.GB18743@jcrouse-lnx.qualcomm.com>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Date: Fri, 23 Feb 2018 23:13:00 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iF+uiJW-zAYXvVCgQof7A41ZQwPBq9wRebsTrZJk1Ts2w@mail.gmail.com>
-Message-ID: <CAFp+6iF+uiJW-zAYXvVCgQof7A41ZQwPBq9wRebsTrZJk1Ts2w@mail.gmail.com>
-Subject: Re: [Freedreno] [PATCH v7 3/6] iommu/arm-smmu: Invoke pm_runtime
- during probe, add/remove device
-To: Vivek Gautam <vivek.gautam@codeaurora.org>,
-	"list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg Roedel <joro@8bytes.org>," <joro@8bytes.org>, "robh+dt" <robh+dt@kernel.org>,
+In-Reply-To: <1517999482-17317-4-git-send-email-vivek.gautam@codeaurora.org>
+References: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org> <1517999482-17317-4-git-send-email-vivek.gautam@codeaurora.org>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Tue, 13 Feb 2018 17:24:53 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5DxYhkK61VDAesby6bT+FtG2nqsbHQRvxkhrsSS0KWtog@mail.gmail.com>
+Message-ID: <CAAFQd5DxYhkK61VDAesby6bT+FtG2nqsbHQRvxkhrsSS0KWtog@mail.gmail.com>
+Subject: Re: [PATCH v7 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg Roedel <joro@8bytes.org>," <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
 	Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
 	Rob Clark <robdclark@gmail.com>,
 	"list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>, devicetree@vger.kernel.org,
-	open list <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	freedreno <freedreno@lists.freedesktop.org>, David Airlie <airlied@linux.ie>,
-	Greg KH <gregkh@linuxfoundation.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	dri-devel <dri-devel@lists.freedesktop.org>, freedreno@lists.freedesktop.org,
+	David Airlie <airlied@linux.ie>, Greg KH <gregkh@linuxfoundation.org>, sboyd@codeaurora.org,
+	linux-arm-msm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591737865178016622?=
-X-GMAIL-MSGID: =?utf-8?q?1593214536459486870?=
+X-GMAIL-MSGID: =?utf-8?q?1592273861426142221?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 23, 2018 at 9:10 PM, Jordan Crouse <jcrouse@codeaurora.org> wrote:
-> On Fri, Feb 23, 2018 at 04:06:39PM +0530, Vivek Gautam wrote:
->> On Fri, Feb 23, 2018 at 5:22 AM, Jordan Crouse <jcrouse@codeaurora.org> wrote:
->> > On Wed, Feb 07, 2018 at 04:01:19PM +0530, Vivek Gautam wrote:
->> >> From: Sricharan R <sricharan@codeaurora.org>
->> >>
->> >> The smmu device probe/remove and add/remove master device callbacks
->> >> gets called when the smmu is not linked to its master, that is without
->> >> the context of the master device. So calling runtime apis in those places
->> >> separately.
->> >>
->> >> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> >> [vivek: Cleanup pm runtime calls]
->> >> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->> >> ---
->> >>  drivers/iommu/arm-smmu.c | 42 ++++++++++++++++++++++++++++++++++++++----
->> >>  1 file changed, 38 insertions(+), 4 deletions(-)
->> >>
->> >> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->> >> index 9e2f917e16c2..c024f69c1682 100644
->> >> --- a/drivers/iommu/arm-smmu.c
->> >> +++ b/drivers/iommu/arm-smmu.c
->> >> @@ -913,11 +913,15 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
->> >>       struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
->> >>       struct arm_smmu_device *smmu = smmu_domain->smmu;
->> >>       struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
->> >> -     int irq;
->> >> +     int ret, irq;
->> >>
->> >>       if (!smmu || domain->type == IOMMU_DOMAIN_IDENTITY)
->> >>               return;
->> >>
->> >> +     ret = pm_runtime_get_sync(smmu->dev);
->> >> +     if (ret)
->> >> +             return;
->> >> +
->> >>       /*
->> >>        * Disable the context bank and free the page tables before freeing
->> >>        * it.
->> >> @@ -932,6 +936,8 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
->> >>
->> >>       free_io_pgtable_ops(smmu_domain->pgtbl_ops);
->> >>       __arm_smmu_free_bitmap(smmu->context_map, cfg->cbndx);
->> >> +
->> >> +     pm_runtime_put_sync(smmu->dev);
->> >>  }
->> >>
->> >>  static struct iommu_domain *arm_smmu_domain_alloc(unsigned type)
->> >> @@ -1407,14 +1413,22 @@ static int arm_smmu_add_device(struct device *dev)
->> >>       while (i--)
->> >>               cfg->smendx[i] = INVALID_SMENDX;
->> >>
->> >> -     ret = arm_smmu_master_alloc_smes(dev);
->> >> +     ret = pm_runtime_get_sync(smmu->dev);
->> >>       if (ret)
->> >>               goto out_cfg_free;
->> >
->> > Hey Vivek, I just hit a problem with this on sdm845. It turns out that
->> > pm_runtime_get_sync() returns a positive 1 if the device is already active.
->> >
->> > I hit this in the GPU code. The a6xx has two platform devices that each use a
->> > different sid on the iommu. The GPU is probed normally from a platform driver
->> > and it in turn initializes the GMU device by way of a phandle.
->> >
->> > Because the GMU isn't probed with a platform driver we need to call
->> > of_dma_configure() on the device to set up the IOMMU for the device which ends
->> > up calling through this path and we discover that the smmu->dev is already
->> > powered (pm_runtime_get_sync returns 1).
->> >
->> > I'm not immediately sure if this is a bug on sdm845 or not because a cursory
->> > inspection says that the SMMU device shouldn't be powered at this time but there
->> > might be a connection that I'm not seeing. Obviously if the SMMU was left
->> > powered thats a bad thing. But putting that aside it is obvious that this
->> > code should be accommodating of the possibility that the device is already
->> > powered, and so this should be
->> >
->> > if (ret < 0)
->> >         goto out_cfg_free;
->>
->> Right, as Tomasz also pointed, we should surely check the negative value of
->> pm_runtime_get_sync().
->
-> Sorry, I didn't notice that Tomasz had pointed it out as well. I wanted to
-> quickly get it on the mailing list so you could catch it in your time zone.
->
->> From your description, it may be that the GPU has turned on the smmu, and
->> then once if goes and probes the GMU, the GMU device also wants to turn-on
->> the same smmu device. But that's already active. So pm_runtime_get_sync()
->> returns 1.
->> Am i making sense?
->
-> My concern is that this is happening during the probe and we shouldn't be
-> energizing the GPU at this point. But it is entirely possible that the
-> bus is on for other reasons. I'll do a bit of digging today and see exactly
-> which device is at fault.
+Hi Vivek,
 
-I will try to check it myself too.
+Thanks for the patch. Please see my comments inline.
 
-regards
-Vivek
+On Wed, Feb 7, 2018 at 7:31 PM, Vivek Gautam
+<vivek.gautam@codeaurora.org> wrote:
+> From: Sricharan R <sricharan@codeaurora.org>
 >
+> The smmu device probe/remove and add/remove master device callbacks
+> gets called when the smmu is not linked to its master, that is without
+> the context of the master device. So calling runtime apis in those places
+> separately.
 >
-> Jordan
-> --
-> The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> [vivek: Cleanup pm runtime calls]
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> ---
+>  drivers/iommu/arm-smmu.c | 42 ++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 38 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index 9e2f917e16c2..c024f69c1682 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -913,11 +913,15 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
+>         struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>         struct arm_smmu_device *smmu = smmu_domain->smmu;
+>         struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
+> -       int irq;
+> +       int ret, irq;
+>
+>         if (!smmu || domain->type == IOMMU_DOMAIN_IDENTITY)
+>                 return;
+>
+> +       ret = pm_runtime_get_sync(smmu->dev);
+> +       if (ret)
+> +               return;
 
+pm_runtime_get_sync() will return 0 if the device was powered off, 1
+if it was already/still powered on or runtime PM is not compiled in,
+or a negative value on error, so shouldn't the test be (ret < 0)?
 
+Moreover, I'm actually wondering if it makes any sense to power up the
+hardware just to program it and power it down again. In a system where
+the IOMMU is located within a power domain, it would cause the IOMMU
+block to lose its state anyway.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Actually, reflecting back on "[PATCH v7 2/6] iommu/arm-smmu: Add
+pm_runtime/sleep ops", perhaps it would make more sense to just
+control the clocks independently of runtime PM? Then, runtime PM could
+be used for real power management, e.g. really powering the block up
+and down, for further power saving.
+
++Generally similar comments for other places in this patch.
+
+> +
+>         /*
+>          * Disable the context bank and free the page tables before freeing
+>          * it.
+> @@ -932,6 +936,8 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
+>
+>         free_io_pgtable_ops(smmu_domain->pgtbl_ops);
+>         __arm_smmu_free_bitmap(smmu->context_map, cfg->cbndx);
+> +
+> +       pm_runtime_put_sync(smmu->dev);
+
+Is there any point in the put being sync here?
+
+[snip]
+
+> @@ -2131,6 +2152,14 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+>         if (err)
+>                 return err;
+>
+> +       platform_set_drvdata(pdev, smmu);
+> +
+> +       pm_runtime_enable(dev);
+
+I suspect this may be a disaster for systems where IOMMUs are located
+inside power domains, because the driver doesn't take care of the
+IOMMU block losing its state on physical power down, as I mentioned in
+my comments above.
+
+Best regards,
+Tomasz
