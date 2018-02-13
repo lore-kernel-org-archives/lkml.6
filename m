@@ -1,85 +1,92 @@
-Return-Path: <daniel.diaz@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1517955837; cv=none;
+Return-Path: <shuahkh@osg.samsung.com>
+X-Google-Smtp-Source: AH8x225BK5NcqmCG6HDoXS8/axNLM5Ac14IX0Htl0T0SXPEWOhl4qJi078HURZcyH5T9KRa7xAgT
+ARC-Seal: i=1; a=rsa-sha256; t=1518557120; cv=none;
         d=google.com; s=arc-20160816;
-        b=bq9aBvZclxMj/YNbgIdCpOAXL2BapiRv6mu+/9hPz15ZSZsJUwDeOW4WjN4Tk1JRTQ
-         NhsMCqiaAx/MHGGCPQWtO7S+o9uDsm/3flniHTaziNVY6sYZk4Elin35EHsvVJHvAbSA
-         GI/ChPnLf2fx6+/nxR19A+oQ8xW/Fl+Say0omACtxR9aKDQG+H/WDPg6flWLJWaZGzPg
-         sTOwFtnSAAmCfrZMV3tH5Z7NA5dVNgw3hWIBh+9ykEG0C5k7E8o1OmMA82KSpSfSg8Yh
-         +vFXa0vQADn53HzwKyliMjjBV6C2y/eAjNQHPLbbz9CA5FW6EiAJ2VRjdbTkRIxbYcNq
-         oz2g==
+        b=fJ3NYCmHl5YB7G1r0HGbVzDzlpl6mD9Q2976Rjlqk54zNUejd8xwz9AgIwyzJhAUAt
+         dpaXkaPn157q1eul3VcDZxPPgmto8HxQw4Z/TNtxagFaHGNkk2yLQZs21fsVGoxNvOIM
+         LVnlLyAdDbgXX44PFWjbtMkn0IOxc6HFp3RIIv1lTaGo6ZgFt4TOvykBTYye0QiusbA+
+         I1Cho9bJnAR2S8pLRXhetvxyUcS0GWf7duX5+a/H5RBXcqUFiclrOA39h2RHdcPLOSih
+         LD7qyV2I8S/gxDsQYxXzqmsCMy3W3k2nyuS9DLausNM21RWtkpfsD5xEZUDzhCSnGe2s
+         l3IA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:dkim-signature:arc-authentication-results;
-        bh=+/4QNu3bfI+DD/4jZonwNVWqAP26cWn37tJyIJhClo0=;
-        b=zZUCTj4KKPt6AJ3VSO12+v1apxL/wTP0W4w//7V5eZ/44StF/fhC585py7kx5MDa0K
-         zSxakXb6KMNTx3dAAfpLQNAct52kMXvX+mmXsyvNRud9+5VDiFt8e0uBd0xlhTKJa6+d
-         RZ+1cRZNpIEpUn8hqZ6LXbOWhfU5NiV3AXbKO9yzyxmL5Hm22J/dN5O2X39urL+2iBcv
-         +/NIB7X4FC7Emm2GsVKgiNbucM3Hgv595CUUO5M8C8EJTMYPOExNdfsY+QCXbvFvYlIr
-         WtcYMefBNEOKaHgZ+0yJKawF07xs3NZaR7bbQMnDmFxwXpQFXR4E+e3f+R2nOL/KYfdB
-         GKAA==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=whBfjLmaDhjGWoA1M+4lE0KynTDYCtnLmOyxgBbJcog=;
+        b=vSeAeYhOAw+LfRXGN3DX8dCU7jLhRL60QZTNib/Nm9qU1iVgMOIGKBDp/yT+vQ3PeK
+         T7j9R2C2DuSNbYhz6yN1PDuxZiMBLjepkYLPagsiQK2StNXF5sZuvlcqYegPABDhJg+n
+         P5zpJ1FY+IVoebzFF+L18t1lRo5sU1i4NQG5SUg9ykXYxxRAJRAvVZAfN7E1BUVhjvxA
+         nYyEx5u993QX/FITrJazQh1oYgj2WIE7lEiJt6GJ0y3k42TLmDpziI/E4qKUJsjDbxnB
+         yaa6JbOmSnJ0UHasXCgnNG2un4ulytsbewMwwwF3WB1oHI3tlgBcgxRu0LWB9k+eD3+l
+         rrsg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=eH49kfYo;
-       spf=pass (google.com: domain of daniel.diaz@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=daniel.diaz@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: domain of shuahkh@osg.samsung.com designates 64.30.133.232 as permitted sender) smtp.mailfrom=shuahkh@osg.samsung.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=eH49kfYo;
-       spf=pass (google.com: domain of daniel.diaz@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=daniel.diaz@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AH8x226VsL0/3HG13sI1jydFhtj3jqg0FF+iGdRYkIDBJ2SyfJ0HmqQYgSKtT+CJoTeWNKNsP0/5yA==
-From: =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>
-To: shuahkh@osg.samsung.com,
-	linux-kselftest@vger.kernel.org
-Cc: Anders Roxell <anders.roxell@linaro.org>,
-	=?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] selftests: sync: missing CFLAGS while compiling
-Date: Tue,  6 Feb 2018 16:23:39 -0600
-Message-Id: <1517955821-11511-1-git-send-email-daniel.diaz@linaro.org>
-X-Mailer: git-send-email 2.7.4
+       spf=pass (google.com: domain of shuahkh@osg.samsung.com designates 64.30.133.232 as permitted sender) smtp.mailfrom=shuahkh@osg.samsung.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+Subject: Re: [PATCH v2] selftests: sync: missing CFLAGS while compiling
+To: =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>,
+ linux-kselftest@vger.kernel.org
+Cc: Anders Roxell <anders.roxell@linaro.org>, Shuah Khan <shuah@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Kate Stewart <kstewart@linuxfoundation.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ Shuah Khan <shuahkh@osg.samsung.com>
+References: <1517955821-11511-1-git-send-email-daniel.diaz@linaro.org>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Message-ID: <24ab9c58-2f4c-b433-7b36-421e51a2e79b@osg.samsung.com>
+Date: Tue, 13 Feb 2018 14:25:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1517955821-11511-1-git-send-email-daniel.diaz@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591692060061952233?=
-X-GMAIL-MSGID: =?utf-8?q?1591692060061952233?=
+X-GMAIL-MSGID: =?utf-8?q?1592322551672596082?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Anders Roxell <anders.roxell@linaro.org>
+On 02/06/2018 03:23 PM, Daniel Díaz wrote:
+> From: Anders Roxell <anders.roxell@linaro.org>
+> 
+> Based on patch: https://patchwork.kernel.org/patch/10042045/
+> 
+> arch64-linux-gnu-gcc -c sync.c -o sync/sync.o
+> sync.c:42:29: fatal error: linux/sync_file.h: No such file or directory
+>  #include <linux/sync_file.h>
+>                              ^
+> CFLAGS is not used during the compile step, so the system instead of
+> kernel headers are used.  Fix this by adding CFLAGS to the OBJS compile
+> rule.
+> 
+> Reported-by: Lei Yang <Lei.Yang@windriver.com>
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
+> ---
+>  tools/testing/selftests/sync/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/sync/Makefile b/tools/testing/selftests/sync/Makefile
+> index b3c8ba3..d0121a8 100644
+> --- a/tools/testing/selftests/sync/Makefile
+> +++ b/tools/testing/selftests/sync/Makefile
+> @@ -30,7 +30,7 @@ $(TEST_CUSTOM_PROGS): $(TESTS) $(OBJS)
+>  	$(CC) -o $(TEST_CUSTOM_PROGS) $(OBJS) $(TESTS) $(CFLAGS) $(LDFLAGS)
+>  
+>  $(OBJS): $(OUTPUT)/%.o: %.c
+> -	$(CC) -c $^ -o $@
+> +	$(CC) -c $^ -o $@ $(CFLAGS)
+>  
+>  $(TESTS): $(OUTPUT)/%.o: %.c
+>  	$(CC) -c $^ -o $@
+> 
 
-Based on patch: https://patchwork.kernel.org/patch/10042045/
+Thanks for the patch. Applied to linux-kselftest fixes for 4.16-rc3
 
-arch64-linux-gnu-gcc -c sync.c -o sync/sync.o
-sync.c:42:29: fatal error: linux/sync_file.h: No such file or directory
- #include <linux/sync_file.h>
-                             ^
-CFLAGS is not used during the compile step, so the system instead of
-kernel headers are used.  Fix this by adding CFLAGS to the OBJS compile
-rule.
-
-Reported-by: Lei Yang <Lei.Yang@windriver.com>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
----
- tools/testing/selftests/sync/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/sync/Makefile b/tools/testing/selftests/sync/Makefile
-index b3c8ba3..d0121a8 100644
---- a/tools/testing/selftests/sync/Makefile
-+++ b/tools/testing/selftests/sync/Makefile
-@@ -30,7 +30,7 @@ $(TEST_CUSTOM_PROGS): $(TESTS) $(OBJS)
- 	$(CC) -o $(TEST_CUSTOM_PROGS) $(OBJS) $(TESTS) $(CFLAGS) $(LDFLAGS)
- 
- $(OBJS): $(OUTPUT)/%.o: %.c
--	$(CC) -c $^ -o $@
-+	$(CC) -c $^ -o $@ $(CFLAGS)
- 
- $(TESTS): $(OUTPUT)/%.o: %.c
- 	$(CC) -c $^ -o $@
--- 
-2.7.4
+thanks,
+-- Shuah
