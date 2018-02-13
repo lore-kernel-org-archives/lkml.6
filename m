@@ -1,106 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754321AbeBMTR7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 14:17:59 -0500
-Received: from mout.web.de ([217.72.192.78]:49369 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754292AbeBMTR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 14:17:58 -0500
-From: Mario Leinweber <marioleinweber@web.de>
-To: akpm@linux-foundation.org
-Cc: mingo@kernel.org, kirill.shutemov@linux.intel.com,
-        aneesh.kumar@linux.vnet.ibm.com, mhocko@suse.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Mario Leinweber <marioleinweber@web.de>
-Subject: [PATCH] mm/gup: Fixed coding style error and warnings.
-Date: Tue, 13 Feb 2018 14:17:22 -0500
-Message-Id: <20180213191722.11228-1-marioleinweber@web.de>
-X-Mailer: git-send-email 2.14.3
-X-Provags-ID: V03:K0:MxJ5f4zgV63uyDeanzNACYwkrdHZTi45aYDQXfN0LCTwqipUciD
- FEc/3MuBHDfG/LHkIZNFnMOnFLRlcqDv40ksee9uyWBlF//RrfDCLIMni8xNALgwdn0oZ0Z
- 9me+jmE4BBgEJiI5i+lJpWwq+a5UwYxCPcIkr6UY1PCbcGAIvTAdcAmMaL79tOdGMYT1LPc
- w0tAKA6R5vXwf5F3GSTHQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:NMgv2yHml6c=:9eD/spYyEHAe5oOViK3TNx
- ExyE3FztxS7GBGcHa+A4JsupU041+UzYohTljHEe95mKY0slGHFA38N6zye6K4X4Y4pat6MDp
- x33Po9XCvZxR4Qltz7Ftqc1KosciljKNkW1fLr5/g9xKeGulHQE3708F4MBGe32gRKqZNospp
- lSa4W0ggecIsABkPYyOZkakKJjs+Ut7//1+47cKoh+L+A3y6CXwx8e0iXvwiLHvORu9DFn+aT
- HUYLaSqskGp7C1u8/dS/V0bGcVaM10df1yiD4gF+zSzatJoptuey+Tinil/Z5DGGy2QtXP2Oa
- 5L/5yaKzxEOno9itELXwt1gF7KdZLbtH0mH7UgKjFWO59qh29k3hq3AS9+nlkoIrIwhnbE4Ll
- ICMcWJ2uoyE2tzBlYA3sQoIlSDyBM5O2fxH+btTk8pttcbAguR9ay7pAs3OnDKiSJXH0bKgGS
- saw9i0Qv2JMsTZVFoG69Y4duxVNodM8DXQWqAATu8JotxLxxxUV5obuzrT9B7c5Sh57n8qPkd
- M4VjAbpDyv2n7Bc05UM8zy5eP2aScPrywyzeX5MEX0LPPhy+Vi62rSoExB8lh6itShUocurIv
- nBNq0Ks2C6oYBq0wM6bB6PWbd8PcuF2+k9jVBtkGXA3WnjbcuMivRQGR5Dh0NyvolaUWHMsXz
- PReWuLmTtAtT0enkCnPEW+SCg37Jac/7NdRgD+JvgKPJT957xe/ir9xOsrepihAVtgNLwpm5r
- e45L8Ii8hAXBy64xOk+siQ4l58nc0Sb8CQ/+u7b2ul9horm6ywokP9q73LvTTNCOpk0ctHnLQ
- 9N+8g2fzqoCsFmR2e2Y6PIMQ1SpQw==
+        id S965575AbeBMTWO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 14:22:14 -0500
+Received: from gateway21.websitewelcome.com ([192.185.46.109]:47341 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965508AbeBMTWL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 14:22:11 -0500
+Date: Tue, 13 Feb 2018 13:22:08 -0600
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] x86/kernel/cpu: Change type of x86_cache_size variable to
+ unsigned int
+Message-ID: <20180213192208.GA26414@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.4.238
+X-Source-L: No
+X-Exim-ID: 1elg9Z-003Ymz-MK
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.175.4.238]:37410
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Mario Leinweber <marioleinweber@web.de>
----
- mm/gup.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Currently, x86_cache_size is of type int, which makes no sense as we
+will never have a valid cache size equal or less than 0. So instead of
+initializing this variable to -1, it can perfectly be initialized to 0
+and use it as an unsigned variable instead.
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 1b46e6e74881..7e463042df4a 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -141,6 +141,7 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+Addresses-Coverity-ID: 1464429
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+---
+ arch/x86/include/asm/processor.h      | 2 +-
+ arch/x86/kernel/cpu/common.c          | 2 +-
+ arch/x86/kernel/cpu/microcode/intel.c | 2 +-
+ arch/x86/kernel/cpu/proc.c            | 4 ++--
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 23fdaf4..c4d66aa 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -109,7 +109,7 @@ struct cpuinfo_x86 {
+ 	char			x86_vendor_id[16];
+ 	char			x86_model_id[64];
+ 	/* in KB - valid for CPUS which support this call: */
+-	int			x86_cache_size;
++	unsigned int		x86_cache_size;
+ 	int			x86_cache_alignment;	/* In bytes */
+ 	/* Cache QoS architectural values: */
+ 	int			x86_cache_max_rmid;	/* max index */
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index d63f4b57..a37fd00 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1184,7 +1184,7 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 	int i;
  
- 	if (flags & FOLL_SPLIT && PageTransCompound(page)) {
- 		int ret;
-+
- 		get_page(page);
- 		pte_unmap_unlock(ptep, ptl);
- 		lock_page(page);
-@@ -272,6 +273,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 	c->loops_per_jiffy = loops_per_jiffy;
+-	c->x86_cache_size = -1;
++	c->x86_cache_size = 0;
+ 	c->x86_vendor = X86_VENDOR_UNKNOWN;
+ 	c->x86_model = c->x86_mask = 0;	/* So far unknown... */
+ 	c->x86_vendor_id[0] = '\0'; /* Unset */
+diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+index f7c55b0..e5edb92 100644
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -982,7 +982,7 @@ static struct microcode_ops microcode_intel_ops = {
+ 
+ static int __init calc_llc_size_per_core(struct cpuinfo_x86 *c)
+ {
+-	u64 llc_size = c->x86_cache_size * 1024;
++	u64 llc_size = c->x86_cache_size * 1024ULL;
+ 
+ 	do_div(llc_size, c->x86_max_cores);
+ 
+diff --git a/arch/x86/kernel/cpu/proc.c b/arch/x86/kernel/cpu/proc.c
+index e7eceda..f3da3bb 100644
+--- a/arch/x86/kernel/cpu/proc.c
++++ b/arch/x86/kernel/cpu/proc.c
+@@ -91,8 +91,8 @@ static int show_cpuinfo(struct seq_file *m, void *v)
  	}
- 	if (flags & FOLL_SPLIT) {
- 		int ret;
-+
- 		page = pmd_page(*pmd);
- 		if (is_huge_zero_page(page)) {
- 			spin_unlock(ptl);
-@@ -531,7 +533,7 @@ static int faultin_page(struct task_struct *tsk, struct vm_area_struct *vma,
- 	 * reCOWed by userspace write).
- 	 */
- 	if ((ret & VM_FAULT_WRITE) && !(vma->vm_flags & VM_WRITE))
--	        *flags |= FOLL_COW;
-+		*flags |= FOLL_COW;
- 	return 0;
- }
  
-@@ -667,12 +669,14 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 			vma = find_extend_vma(mm, start);
- 			if (!vma && in_gate_area(mm, start)) {
- 				int ret;
-+
- 				ret = get_gate_page(mm, start & PAGE_MASK,
- 						gup_flags, &vma,
- 						pages ? &pages[i] : NULL);
- 				if (ret)
- 					return i ? : ret;
- 				page_mask = 0;
-+
- 				goto next_page;
- 			}
+ 	/* Cache size */
+-	if (c->x86_cache_size >= 0)
+-		seq_printf(m, "cache size\t: %d KB\n", c->x86_cache_size);
++	if (c->x86_cache_size)
++		seq_printf(m, "cache size\t: %u KB\n", c->x86_cache_size);
  
-@@ -696,6 +700,7 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 		page = follow_page_mask(vma, start, foll_flags, &page_mask);
- 		if (!page) {
- 			int ret;
-+
- 			ret = faultin_page(tsk, vma, start, &foll_flags,
- 					nonblocking);
- 			switch (ret) {
-@@ -1635,7 +1640,7 @@ static int gup_pmd_range(pud_t pud, unsigned long addr, unsigned long end,
- 					 PMD_SHIFT, next, write, pages, nr))
- 				return 0;
- 		} else if (!gup_pte_range(pmd, addr, next, write, pages, nr))
--				return 0;
-+			return 0;
- 	} while (pmdp++, addr = next, addr != end);
- 
- 	return 1;
+ 	show_cpuinfo_core(m, c, cpu);
+ 	show_cpuinfo_misc(m, c);
 -- 
-2.14.3
+2.7.4
