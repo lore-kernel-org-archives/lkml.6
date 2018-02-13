@@ -1,69 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933032AbeBMAYd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 19:24:33 -0500
-Received: from mail-it0-f66.google.com ([209.85.214.66]:50513 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932994AbeBMAYa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 19:24:30 -0500
-X-Google-Smtp-Source: AH8x226b84sLfpTN++r5YZG9X3gOGngWbviWucholJgrsfVDAZKWZwj1hvgV+/Q17rcdhn0V1sszDw==
-Date: Mon, 12 Feb 2018 16:24:28 -0800 (PST)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: Jonathan Corbet <corbet@lwn.net>, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org
-Subject: [patch 2/2] mm, page_alloc: move mirrored_kernelcore to
- __meminitdata
-In-Reply-To: <alpine.DEB.2.10.1802121622470.179479@chino.kir.corp.google.com>
-Message-ID: <alpine.DEB.2.10.1802121623280.179479@chino.kir.corp.google.com>
-References: <alpine.DEB.2.10.1802121622470.179479@chino.kir.corp.google.com>
-User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+        id S932982AbeBMA1Z (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 19:27:25 -0500
+Received: from mga04.intel.com ([192.55.52.120]:20633 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932769AbeBMA1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 19:27:23 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,504,1511856000";
+   d="scan'208";a="30899383"
+Date: Tue, 13 Feb 2018 08:18:40 +0800
+From: "Du, Changbin" <changbin.du@intel.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: "Du, Changbin" <changbin.du@intel.com>,
+        "jolsa@redhat.com" <jolsa@redhat.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        "kernel-team@lge.com" <kernel-team@lge.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>
+Subject: Re: [PATCH v2] perf ftrace: Fix the buffer size in
+ __write_tracing_file
+Message-ID: <20180213001840.5gfqidjmsezv5uuo@intel.com>
+References: <1518077600-19615-1-git-send-email-changbin.du@intel.com>
+ <20180212015527.GE31513@sejong>
+ <20180212044815.luulsdte6co5uku4@intel.com>
+ <20180212061510.GI31513@sejong>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180212061510.GI31513@sejong>
+User-Agent: NeoMutt/20171027-42-ad8712
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mirrored_kernelcore can be in __meminitdata, so move it there.
+On Sun, Feb 11, 2018 at 10:15:10PM -0800, Namhyung Kim wrote:
+> On Mon, Feb 12, 2018 at 12:48:15PM +0800, Du, Changbin wrote:
+> > Hi,
+> > 
+> > On Mon, Feb 12, 2018 at 10:55:27AM +0900, Namhyung Kim wrote:
+> > > Hello,
+> > > 
+> > > On Thu, Feb 08, 2018 at 04:13:20PM +0800, changbin.du@intel.com wrote:
+> > > > From: Changbin Du <changbin.du@intel.com>
+> > > > 
+> > > > The terminal character '\0' should take into account into size of the
+> > > > string buffer. Without this fix, the '--graph-funcs', '--nograph-funcs'
+> > > > and '--trace-funcs' options didn't work as expected when the <func>
+> > > > doesn't exist. If usersapce writes a non-terminated string, the kernel
+> > > > side will always return success but actually no filter applied.
+> > > > 
+> > > > As discussed before, the kernel now support '\0' to mark the end of string:
+> > > > https://lkml.org/lkml/2018/1/16/116
+> > > > 
+> > > > After this fix in userspace, the perf will report correct error state. Also
+> > > > let it print an error if reset_tracing_files() fails.
+> > > 
+> > > But what about old kernels?  IIRC there was an error with this change.
+> > >
+> > Yes, you're right. I can't find a good compitable change. So what is the compatibilty policy for perf?
+> > If it must work with recent kernel, I think the only idea is leave as it was.
+> 
+> It should support *both* of kernels.  I suggest adding a space after
+> function name.  You can simply call write(fd, " ", 1) IMHO.
+> 
+hmm, I see. I will try it later mabye tommorow. Thanks!
 
-At the same time, fixup section specifiers to be after the name of the 
-variable per checkpatch.
----
- mm/page_alloc.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+> Thanks,
+> Namhyung
+> 
+> 
+> > > 
+> > > 
+> > > > 
+> > > > The problem:
+> > > > $ sudo ./perf ftrace -a --graph-depth 1 --graph-funcs abcdefg
+> > > >  0)   0.140 us    |  rcu_all_qs();
+> > > >  3)   0.304 us    |  mutex_unlock();
+> > > >  0)   0.153 us    |  find_vma();
+> > > >  3)   0.088 us    |  __fsnotify_parent();
+> > > >  0)   6.145 us    |  handle_mm_fault();
+> > > >  3)   0.089 us    |  fsnotify();
+> > > >  3)   0.161 us    |  __sb_end_write();
+> > > >  3)   0.710 us    |  SyS_close();
+> > > >  3)   7.848 us    |  exit_to_usermode_loop();
+> > > > 
+> > > > On above example, I specified function filter 'abcdefg' but all functions
+> > > > are enabled. The expected error is hidden.
+> > > > 
+> > > > Signed-off-by: Changbin Du <changbin.du@intel.com>
+> > > > ---
+> > > >  tools/perf/builtin-ftrace.c | 6 ++++--
+> > > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+> > > > index 25a42ac..a87e9b3 100644
+> > > > --- a/tools/perf/builtin-ftrace.c
+> > > > +++ b/tools/perf/builtin-ftrace.c
+> > > > @@ -69,7 +69,7 @@ static int __write_tracing_file(const char *name, const char *val, bool append)
+> > > >  {
+> > > >  	char *file;
+> > > >  	int fd, ret = -1;
+> > > > -	ssize_t size = strlen(val);
+> > > > +	ssize_t size = strlen(val) + 1;
+> > > >  	int flags = O_WRONLY;
+> > > >  	char errbuf[512];
+> > > >  
+> > > > @@ -280,8 +280,10 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace, int argc, const char **argv)
+> > > >  	signal(SIGCHLD, sig_handler);
+> > > >  	signal(SIGPIPE, sig_handler);
+> > > >  
+> > > > -	if (reset_tracing_files(ftrace) < 0)
+> > > > +	if (reset_tracing_files(ftrace) < 0) {
+> > > > +		pr_err("failed to reset ftrace\n");
+> > > >  		goto out;
+> > > > +	}
+> > > >  
+> > > >  	/* reset ftrace buffer */
+> > > >  	if (write_tracing_file("trace", "0") < 0)
+> > > > -- 
+> > > > 2.7.4
+> > > > 
+> > 
+> > -- 
+> > Thanks,
+> > Changbin Du
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -264,19 +264,19 @@ int min_free_kbytes = 1024;
- int user_min_free_kbytes = -1;
- int watermark_scale_factor = 10;
- 
--static unsigned long __meminitdata nr_kernel_pages;
--static unsigned long __meminitdata nr_all_pages;
--static unsigned long __meminitdata dma_reserve;
-+static unsigned long nr_kernel_pages __meminitdata;
-+static unsigned long nr_all_pages __meminitdata;
-+static unsigned long dma_reserve __meminitdata;
- 
- #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
--static unsigned long __meminitdata arch_zone_lowest_possible_pfn[MAX_NR_ZONES];
--static unsigned long __meminitdata arch_zone_highest_possible_pfn[MAX_NR_ZONES];
--static unsigned long __initdata required_kernelcore;
-+static unsigned long arch_zone_lowest_possible_pfn[MAX_NR_ZONES] __meminitdata;
-+static unsigned long arch_zone_highest_possible_pfn[MAX_NR_ZONES] __meminitdata;
-+static unsigned long required_kernelcore __initdata;
- static unsigned long required_kernelcore_percent __initdata;
--static unsigned long __initdata required_movablecore;
-+static unsigned long required_movablecore __initdata;
- static unsigned long required_movablecore_percent __initdata;
--static unsigned long __meminitdata zone_movable_pfn[MAX_NUMNODES];
--static bool mirrored_kernelcore;
-+static unsigned long zone_movable_pfn[MAX_NUMNODES] __meminitdata;
-+static bool mirrored_kernelcore __meminitdata;
- 
- /* movable_zone is the "real" zone pages in ZONE_MOVABLE are taken from */
- int movable_zone;
+-- 
+Thanks,
+Changbin Du
