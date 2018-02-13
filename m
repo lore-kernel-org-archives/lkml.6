@@ -1,71 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965387AbeBMRe6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:34:58 -0500
-Received: from mail-it0-f48.google.com ([209.85.214.48]:38198 "EHLO
-        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965099AbeBMRe4 (ORCPT
+        id S965303AbeBMRil (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:38:41 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:55542 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965099AbeBMRij (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:34:56 -0500
-X-Google-Smtp-Source: AH8x226cSlHDDhm/Zyh3yTLyl8aVHoyHudG5Kdxa3dXcmk+vS7STdNyj1/Yk5/rvDfVn16lLQ298Tg==
-Date: Tue, 13 Feb 2018 11:34:38 -0600
-From: Dennis Zhou <dennisszhou@gmail.com>
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: Tejun Heo <tj@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com>,
-        Alexei Starovoitov <ast@kernel.org>, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com
-Subject: Re: lost connection to test machine (4)
-Message-ID: <20180213173438.GA60641@localhost.uwnet.wisc.edu>
-References: <001a113f8734783e94056505f8fd@google.com>
- <CACT4Y+ZBHw7VZBFOeqLmrpmzgn4owW88qvP5v=xnr9966hbM_Q@mail.gmail.com>
- <00c45ca8-305d-1818-e974-a9903c8494b8@iogearbox.net>
- <20180212170325.GW695913@devbig577.frc2.facebook.com>
- <20180212200548.GG695913@devbig577.frc2.facebook.com>
- <1518528926.3715.173.camel@gmail.com>
+        Tue, 13 Feb 2018 12:38:39 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518528926.3715.173.camel@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 13 Feb 2018 09:38:38 -0800
+From: Channa <ckadabi@codeaurora.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-arm@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, sboyd@codeaurora.org, kyan@codeaurora.org
+Subject: Re: [PATCH 1/2] dt-bindings: Documentation for qcom,llcc
+In-Reply-To: <20180213143733.ts3dlcnhcf7jzbbm@lakrids.cambridge.arm.com>
+References: <1516924513-20183-1-git-send-email-ckadabi@codeaurora.org>
+ <1516924513-20183-2-git-send-email-ckadabi@codeaurora.org>
+ <20180201104434.7j27fl2hb4glqd3v@lakrids.cambridge.arm.com>
+ <d2751939f5813c296cdcb7a92d5698bf@codeaurora.org>
+ <20180202110532.n2eez3zqbmf2jelr@lakrids.cambridge.arm.com>
+ <2801cac8583d56260a9df0cdf7f41f47@codeaurora.org>
+ <20180213143733.ts3dlcnhcf7jzbbm@lakrids.cambridge.arm.com>
+Message-ID: <d0974a24890cf187324d60743f690249@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+On 2018-02-13 06:37, Mark Rutland wrote:
+> On Tue, Feb 06, 2018 at 11:56:50AM -0800, Channa wrote:
+>> On 2018-02-02 03:05, Mark Rutland wrote:
+>> > On Thu, Feb 01, 2018 at 12:39:09PM -0800, Channa wrote:
+>> > > On 2018-02-01 02:44, Mark Rutland wrote:
+>> > > > On Thu, Jan 25, 2018 at 03:55:12PM -0800, Channagoud Kadabi wrote:
+>> > > > > +- llcc-bank-off:
+>> > > > > +	Usage: required
+>> > > > > +	Value Type: <u32 array>
+>> > > > > +	Definition: Offsets of llcc banks from llcc base address starting
+>> > > > > from
+>> > > > > +		    LLCC bank0.
+>> > > > > +
+>> > > > > +- llcc-broadcast-off:
+>> > > > > +	Usage: required
+>> > > > > +	Value Type: <u32>
+>> > > > > +	Definition: Offset of broadcast register from LLCC bank0 address.
+>> > > >
+>> > > > Please could we use "offset" rather than "off" for both of these? That
+>> > > > way it's obvious these aren't properties for disabling some feature.
+>> > > >
+>> > > > How variable are these offsets in practice? Is the memory map not fixed?
+>> > >
+>> > > The offsets depends on the number of LLCC HW blocks. These number of
+>> > > HW
+>> > > blocks vary from
+>> > > chipset to chipset and new registers could be added that changes the
+>> > > offset.
+>> >
+>> > Surely if new registers are added, we need a new compatible string?
+>> >
+>> > Can't we encode the number of LLCC HW blocks, instead? Presumably that
+>> > would give enough information to cover both llcc-bank-off and
+>> > llcc-broadcast-off.
+>> >
+>> > [...]
+>> 
+>> Are you suggesting to move these offset handing out of DTS files and 
+>> manage
+>> in the driver?
+> 
+> Something like that, though it depends on how exactly the offsets can 
+> be
+> derived.
+> 
+> Using reg entries, as Matt suggested, sounds better though.
+> 
+>> > > > > +compatible devices:
+>> > > > > +		qcom,sdm845-llcc
+>> > > >
+>> > > > Huh? The "qcom,sdm845-llcc" bindings wasn't described above, and it's
+>> > > > not clear what this means.
+>> > > >
+>> > > > > +
+>> > > > > +Example:
+>> > > > > +
+>> > > > > +	qcom,system-cache@1300000 {
+>> > > > > +		compatible = "qcom,llcc-core", "syscon", "simple-mfd";
+>> > > >
+>> > > > This looks very wrong. Why do you need syscon and simple-mfd?
+>> > >
+>> > > LLCC HW block has 3 functionalities:
+>> > > System cache core, ECC & AMON drivers for debugging.
+>> > > All three drivers use the same register space for configuration,
+>> > > status etc.
+>> > > In order to avoid remapping the same address region across multiple
+>> > > drivers,
+>> > > I have implemented this driver as a syncon and simple-mfd.
+>> >
+>> > Please don't do that; that's completely dependent on Linux
+>> > implementation details.
+>> 
+>> Why do you think simple-mfd is not good here? The LLCC HW clock is 
+>> outside
+>> of CPUSS and has
+>> multiple functional blocks.
+> 
+> For one thing, there's no need for this to be a syscon *and* a
+> simple-mfd.
+> 
+> W.R.T. simple-mfd, I think it would bet better to decompose the device
+> in a top-level driver, as I described in my prior reply, rather than
+> describing a set of drivers (which are not themselves HW).
+> 
+>> > > > > +- cache-slices:
+>> > > > > +	Usage: required
+>> > > > > +	Value type: <prop-encoded-array>
+>> > > > > +	Definition: The tuple has phandle to llcc device as the first
+>> > > > > argument and the
+>> > > > > +		    second argument is the usecase id of the client.
+>> > > >
+>> > > > What is a "usecase id" ?
+>> > >
+>> > > Usecase id for use case that wants to use system cache for eg:
+>> > > video-encode
+>> > > and video-decode
+>> >
+>> > Sure, but how is the value used? Is it the index of a slice? Or
+>> > something more abstract?
+>> 
+>> This is used as an index to the SCT (System cache Table) configuration
+>> data that controls the behavior of each cache slice.
+> 
+> Ok. Where does that SCT live? Is that in HW? Is it programmed by SW, or
+> statically configured for a given platform?
 
-On Tue, Feb 13, 2018 at 05:35:26AM -0800, Eric Dumazet wrote:
-> 
-> Also I would consider using this fix as I had warnings of cpus being
-> stuck there for more than 50 ms :
-> 
-> 
-> diff --git a/mm/percpu-vm.c b/mm/percpu-vm.c
-> index 9158e5a81391ced4e268e3d5dd9879c2bc7280ce..6309b01ceb357be01e857e5f899429403836f41f 100644
-> --- a/mm/percpu-vm.c
-> +++ b/mm/percpu-vm.c
-> @@ -92,6 +92,7 @@ static int pcpu_alloc_pages(struct pcpu_chunk *chunk,
->  			*pagep = alloc_pages_node(cpu_to_node(cpu), gfp, 0);
->  			if (!*pagep)
->  				goto err;
-> +			cond_resched();
->  		}
->  	}
->  	return 0;
-> 
-> 
+SCT is in the HW. Kernel driver programs these settings for a given
+platform. The table is also used to lookup size, cache slice id details
+requested by client drivers.
 
-This function gets called from pcpu_populate_chunk while holding the
-pcpu_alloc_mutex and is called from two scenarios. First, when an
-allocation occurs to a place without backing pages, and second when the
-workqueue item is scheduled to replenish the number of empty pages. So,
-I don't think this is a good idea.
+> 
+> Thanks,
+> Mark.
 
-My understanding is if we're seeing warnings here, that means we're
-struggling to find backing pages. I believe adding __GFP_NORETRY on the
-workqueue path as Tejun mentioned above would help with warnings as
-well, but not if they are caused by the allocation path.
-
-Thanks,
-Dennis
+-- 
+--
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,
+a Linux Foundation Collaborative Project
