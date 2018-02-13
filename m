@@ -1,52 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965876AbeBMUf1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 15:35:27 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:39649 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965634AbeBMUcw (ORCPT
+        id S965798AbeBMUlL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 15:41:11 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:37247 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965676AbeBMUlK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 15:32:52 -0500
-X-Google-Smtp-Source: AH8x225oZDkGe2lOg354DtDVuXZ5Xg48ciemS4dVQo07AohLOJaT9G+f3WGDG1+a1624h8u4S/5gUw==
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: peterz@infradead.org
-Cc: lizefan@huawei.com, mingo@redhat.com, rostedt@goodmis.org,
-        claudio@evidence.eu.com, bristot@redhat.com,
-        tommaso.cucinotta@santannapisa.it, juri.lelli@redhat.com,
-        luca.abeni@santannapisa.it, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V3 01/10] sched/topology: Add check to backup comment about hotplug lock
-Date: Tue, 13 Feb 2018 13:32:38 -0700
-Message-Id: <1518553967-20656-2-git-send-email-mathieu.poirier@linaro.org>
+        Tue, 13 Feb 2018 15:41:10 -0500
+X-Google-Smtp-Source: AH8x226pfwUhJdLtfKcFBjzDV61IMF+3JqtjfYi+0uYf7fMqPyAUnaFXzSulytMRTEyjjUUy0o23Bw==
+From: Markus Mayer <mmayer@broadcom.com>
+To: Brian Norris <computersforpeace@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>
+Cc: Markus Mayer <mmayer@broadcom.com>,
+        Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
+        ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/3] Update for the Broadcom STB DPFE driver
+Date: Tue, 13 Feb 2018 12:40:37 -0800
+Message-Id: <1518554440-21805-1-git-send-email-mmayer@broadcom.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518553967-20656-1-git-send-email-mathieu.poirier@linaro.org>
-References: <1518553967-20656-1-git-send-email-mathieu.poirier@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The comment above function partition_sched_domains() clearly state that
-the cpu_hotplug_lock should be held but doesn't mandate one to abide to
-it.  Adding an explicit check backs that comment and make it impossible
-for anyone to miss the requirement.
+This series primarily introduces a new way of passing information from
+the DCPU to the host CPU.
 
-Suggested-by: Juri Lelli <juri.lelli@redhat.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- kernel/sched/topology.c | 1 +
- 1 file changed, 1 insertion(+)
+Previously, all communication was via the DCPU data RAM. This
+communication mode is still supported. In addition, we now support
+passing data via the message RAM. The driver will dynamically detect
+which method to use upon receiving a reply.
 
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 8010c2974d30..7c744c7425ec 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1863,6 +1863,7 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
- 	int i, j, n;
- 	int new_topology;
- 
-+	lockdep_assert_cpus_held();
- 	mutex_lock(&sched_domains_mutex);
- 
- 	/* Always unregister in case we don't destroy any domains: */
+The series also contains two fixes to the driver that have no direct
+relation with the new communication feature.
+
+Markus Mayer (3):
+  memory: brcmstb: dpfe: properly mask vendor error bits
+  memory: brcmstb: dpfe: fix type declaration of variable "ret"
+  memory: brcmstb: dpfe: support new way of passing data from the DCPU
+
+ drivers/memory/brcmstb_dpfe.c | 74 +++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 60 insertions(+), 14 deletions(-)
+
 -- 
 2.7.4
