@@ -1,198 +1,492 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1277903-1519858561-2-918310574022790349
+X-Cyrus-Session-Id: sloti22d1t05-3813382-1518515812-2-5608489236990058815
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519858560; b=NHhynb+k+gKQfoHyF2U6DbmA80tFqjGoCWG3jZ+OGvG8vgp
-    o4bp44QUkCK5IGJ7LDVcPBzyz6p/c1dSTqlb0aieZLQjqCVY1EG/pkpP2KTjGJIJ
-    jWiD2f1ee5EJrH2aneJGq+nHdMS1t313tZyWK+/nOpTZuOPgysZ3/aVfYkFsqOCu
-    fNnpHHp8WOkR2Z+a6C1jcJeitRYiC/4O0n2SWrnX/wfiLFZQJPIH+/Eu0xYXHoIu
-    hlJ3B+x5ZZ6Hft4hEtrPKtpcu4PwYQd5rNBjZUd+M7LgaWKpv6bG2oZ0oh+GWRUh
-    7tbs1K5KCiN0lBhpxCaUqv6H3FDWHs/LzmJJKiw==
+    t=1518515810; b=a6Ro7JCWXE5qNeLyALjvQUAxMzAGNkhLPeKueRjv2DsN9uJ
+    qDY48t1/DvQZMQECVxoddgPzJ1Moqs1xNAX6IdiL+h+WU3hWmW2oWAXHdJgQpMls
+    xSOL6ngQa5iZDKjKksQ/LPCZ+BKihzp/xiwTY82X1XJzNbnT6z2jK5oKRBmXQ78i
+    PHt+0or/dHlNe5PYEublh5Q+6yyJN9Kbd08POF9TqBgeH5VWyFKhdld8eE4CDSQs
+    FZX3MKxutbi1vEyCIq0X9FhuDaSEjk5Jy7MnvVQ/0Vs/soIrkAcvS9Utb+n22dWr
+    8xurvNuzFOYodgPiC0GQgXhjPDAcnPYRCk4gFlg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1519858560; bh=54aPNYbiQKtoS59Mb/jFRhKadHzVshOvvFabHO
-    6AaY0=; b=ln8AJClNx3p+wj56QftdTM6a3S72Lpw1ojMD6f3hV8BGpEG+JsIl+p
-    AgCj+peIcg8lGxWCaoPk8YcP9IEO7uf8gw6m6l2eP9l36sVgBiW5HUiuXvFhOzbZ
-    EiMDyLtpuYf3coB94nALwGE5/dNeOBGvf97g2ALFoWEtBgRz1Wo3TbGj9jMPOa+b
-    dK6R6jp64c6D7jF7cioMvLfXkrigImW1EJi1fQ561KZVyzvd6+Z/u+RpN7SYbFc2
-    cVemlXMYX0iRXhgy3R7fXgu0bwGtKc25Sww7qno/Uc1ATMW4ScZ/4L2JQl0pLf2u
-    x27nJp9lmZE1VtTTEzjNbQWmiQ970vXQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1518515810;
+    bh=niHKNplZKT4sYDJVdbr9iSg6EqoJRgxMRfEyNzwBXRs=; b=Msno1t/2ek1A
+    viEJ4NT3JEsnEF8aT5hoJUsuKRL58qH1y2Ehkq1WXOyDA5mb6M+B3nfnCwhTjiDI
+    DmjhuP5hu39yVrEJ5JC672TdMXqcSYfH4+txrSf2KYUDiDRd8u3YbQTJ+98fOv1q
+    LZkv2tKdqz7c8QQfkNFgJfqMHBaL7bdk9aGPFWoWzID4wQJ5gLEWnt9ofWPLbmJ6
+    OO24F3sd4YxVAE7FH9kHTexqF2+S6JyT3pZtOzgcBp/1yipseKh2TUwGzZTMJsCt
+    iVRthMToJhECs2Ycw8Osg61DqD8clws5ddn3Izm2n5sJfOPOdNhZqbqEteoeHxhg
+    D/A+binAkA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
+    x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
+    x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935539AbeB1Wz6 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Feb 2018 17:55:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57984 "EHLO mail.kernel.org"
+        id S934289AbeBMJ4J (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Feb 2018 04:56:09 -0500
+Received: from mga03.intel.com ([134.134.136.65]:27115 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935256AbeB1Wz5 (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Wed, 28 Feb 2018 17:55:57 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB82C21782
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-X-Google-Smtp-Source: AG47ELsyOTw7LHdi8ZWAuIeI7k/tmoPrHrbMNTXLywCN4trGkbsTU++arZE84JnVh0K4SsatxrnMwp0b273klMbg5Lo=
-MIME-Version: 1.0
-In-Reply-To: <1518513893-4719-14-git-send-email-hao.wu@intel.com>
-References: <1518513893-4719-1-git-send-email-hao.wu@intel.com> <1518513893-4719-14-git-send-email-hao.wu@intel.com>
-From: Alan Tull <atull@kernel.org>
-Date: Wed, 28 Feb 2018 16:55:15 -0600
-X-Gmail-Original-Message-ID: <CANk1AXSMtbnQDAO+XgVEOLh_F13OJyB3LCEPAc6_-U7CXnkfNw@mail.gmail.com>
-Message-ID: <CANk1AXSMtbnQDAO+XgVEOLh_F13OJyB3LCEPAc6_-U7CXnkfNw@mail.gmail.com>
-Subject: Re: [PATCH v4 13/24] fpga: region: add compat_id support
-To: Wu Hao <hao.wu@intel.com>
-Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, "Kang, Luwei" <luwei.kang@intel.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S933900AbeBMJfR (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Tue, 13 Feb 2018 04:35:17 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,507,1511856000";
+   d="scan'208";a="26889475"
+From: Wu Hao <hao.wu@intel.com>
+To: atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: linux-api@vger.kernel.org, luwei.kang@intel.com,
+        yi.z.zhang@intel.com, hao.wu@intel.com,
+        Enno Luebbers <enno.luebbers@intel.com>,
+        Xiao Guangrong <guangrong.xiao@linux.intel.com>
+Subject: [PATCH v4 01/24] docs: fpga: add a document for FPGA Device Feature List (DFL) Framework Overview
+Date: Tue, 13 Feb 2018 17:24:30 +0800
+Message-Id: <1518513893-4719-2-git-send-email-hao.wu@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518513893-4719-1-git-send-email-hao.wu@intel.com>
+References: <1518513893-4719-1-git-send-email-hao.wu@intel.com>
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 13, 2018 at 3:24 AM, Wu Hao <hao.wu@intel.com> wrote:
+Add a document for FPGA Device Feature List (DFL) Framework Overview.
 
-Hi Hao,
+Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
+Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
+Signed-off-by: Wu Hao <hao.wu@intel.com>
+---
+v2: added FME fpga-mgr/bridge/region platform driver to driver organization.
+    updated open discussion per current implementation.
+    fixed some typos.
+v3: use FPGA base region as container device instead of fpga-dev class.
+    split common enumeration code from pcie driver to functions exposed by
+    device feature list framework.
+    update FME performance reporting which supports both integrated (iperf/)
+    and discrete (dperf/) FPGA solutions.
+v4: rename this doc to Device Feature List (DFL) Framework Overview (dfl.txt)
+    add Device Feature List introduction and re-organize the content.
+    add description for port reset, bitstream_id/metadata and etc.
+---
+ Documentation/fpga/dfl.txt | 382 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 382 insertions(+)
+ create mode 100644 Documentation/fpga/dfl.txt
 
-> This patch introduces a compat_id member and sysfs interface for each
-> fpga-region, e.g userspace applications could read the compat_id
-> from the sysfs interface for compatibility checking before PR.
->
-> Signed-off-by: Wu Hao <hao.wu@intel.com>
-> ---
->  Documentation/ABI/testing/sysfs-class-fpga-region |  5 +++++
->  drivers/fpga/fpga-region.c                        | 19 +++++++++++++++++++
->  include/linux/fpga/fpga-region.h                  | 13 +++++++++++++
->  3 files changed, 37 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-class-fpga-region
->
-> diff --git a/Documentation/ABI/testing/sysfs-class-fpga-region b/Documentation/ABI/testing/sysfs-class-fpga-region
-> new file mode 100644
-> index 0000000..419d930
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-class-fpga-region
-> @@ -0,0 +1,5 @@
-> +What:          /sys/class/fpga_region/<region>/compat_id
-> +Date:          February 2018
-> +KernelVersion: 4.16
-> +Contact:       Wu Hao <hao.wu@intel.com>
-> +Description:   FPGA region id for compatibility check.
-> diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
-> index 660a91b..babec96 100644
-> --- a/drivers/fpga/fpga-region.c
-> +++ b/drivers/fpga/fpga-region.c
-> @@ -162,6 +162,24 @@ int fpga_region_program_fpga(struct fpga_region *region)
->  }
->  EXPORT_SYMBOL_GPL(fpga_region_program_fpga);
->
-> +static ssize_t compat_id_show(struct device *dev,
-> +                             struct device_attribute *attr, char *buf)
-> +{
-> +       struct fpga_region *region = to_fpga_region(dev);
+diff --git a/Documentation/fpga/dfl.txt b/Documentation/fpga/dfl.txt
+new file mode 100644
+index 0000000..28e4e22
+--- /dev/null
++++ b/Documentation/fpga/dfl.txt
+@@ -0,0 +1,382 @@
++===============================================================================
++              FPGA Device Feature List (DFL) Framework Overview
++-------------------------------------------------------------------------------
++                Enno Luebbers <enno.luebbers@intel.com>
++                Xiao Guangrong <guangrong.xiao@linux.intel.com>
++                Wu Hao <hao.wu@intel.com>
++
++The Device Feature List (DFL) FPGA framework (and drivers according to this
++this framework) hides the very details of low layer hardwares and provides
++unified interfaces for userspace applications to configure, enumerate, open
++and access FPGA accelerators on platforms implemented the DFL in the device
++memory, and enables system level management functions such as FPGA
++reconfiguration, power management and virtualization.
++
++Device Feature List (DFL) Overview
++==================================
++Device Feature List (DFL) defines a link list of feature headers within the
++device MMIO space to provide an extensible way of adding features. Software can
++walk through these predefined data structures to enumerate FPGA features:
++FPGA Interface Unit (FIU), Accelerated Function Unit (AFU) and Private Features,
++as illustrated below:
++
++    Header            Header            Header            Header
++ +----------+  +-->+----------+  +-->+----------+  +-->+----------+
++ |   Type   |  |   |  Type    |  |   |  Type    |  |   |  Type    |
++ |   FIU    |  |   | Private  |  |   | Private  |  |   | Private  |
++ +----------+  |   | Feature  |  |   | Feature  |  |   | Feature  |
++ | Next_DFH |--+   +----------+  |   +----------+  |   +----------+
++ +----------+      | Next_DFH |--+   | Next_DFH |--+   | Next_DFH |--> NULL
++ |    ID    |      +----------+      +----------+      +----------+
++ +----------+      |    ID    |      |    ID    |      |    ID    |
++ | Next_AFU |--+   +----------+      +----------+      +----------+
++ +----------+  |   | Feature  |      | Feature  |      | Feature  |
++ | Feature  |  |   | Region   |      | Region   |      | Region   |
++ | Region   |  |   +----------+      +----------+      +----------+
++ +----------+  |      Header
++               +-->+----------+
++                   |   Type   |
++                   |   AFU    |
++                   +----------+
++                   |   GUID   |
++                   +----------+
++                   |  Feature |
++                   |  Region  |
++                   +----------+
++
++FPGA Interface Unit (FIU) represents a standalone functional unit for the
++interface to FPGA, e.g the FPGA Management Engine (FME) and Port. (more
++descriptions on FME and Port in later sections). Accelerated Function Unit (AFU)
++represents a FPGA programmable region, and usually connects to a FIU as its
++child as illustrated above. Private Features are sub features of the FIUs/AFUs,
++they could be various function blocks with different ID, but they are linked to
++one list via the Next Device Feature Header (DFH) pointer as children. The
++registers for actual functions are grouped as feature regions which always
++follow the common header registers. The feature region located after the FIU
++header, is named as header register set for given FIU type. e.g FME Header
++Register Set.
++
++This Device Feature List provides a way of linking features together, it's
++convenient for software to locate each feature by walking through this list,
++and can be implemented in register regions of any FPGA device.
++
++FIU - FME (FPGA Management Engine)
++==================================
++The FPGA Management Engine performs power and thermal management, error
++reporting, reconfiguration, performance reporting for integrated and discrete
++solution, and other infrastructure functions. Each FPGA device only has one FME.
++
++User-space applications can acquire exclusive access to the FME using open(),
++and release it using close().
++
++The following functions are exposed through ioctls:
++
++ Get driver API version (FPGA_GET_API_VERSION)
++ Check for extensions (FPGA_CHECK_EXTENSION)
++ Assign port to PF (*FPGA_FME_PORT_ASSIGN)
++ Release port from PF (*FPGA_FME_PORT_RELEASE)
++ Program bitstream (FPGA_FME_PORT_PR)
++
++*FPGA_FME_PORT_ASSIGN/RELEASE are only used for FPGA virtualization. Please
++refer to later section "FPGA Virtualization - PCIe" for more details.
++
++More functions are exposed through sysfs
++(/sys/class/fpga_region/regionX/dfl-fme.n/):
++
++ Read bitstream ID (bitstream_id)
++     bitstream_id indicates version of the blue bitstream (static FPGA region).
++
++ Read bitstream metadata (bitstream_metadata)
++     bistream_metadata includes more detailed information of the blue bitstream
++     (static FPGA region), e.g synthesis date and seed.
++
++ Read number of ports (ports_num)
++     one FPGA device may have more than 1 port, this sysfs interface indicates
++     how many ports the FPGA device has.
++
++ Read socket ID (socket_id)
++     socket_id is only used in integrated solution, to indicate which socket
++     the FPGA device belongs to.
++
++ Read performance counters (iperf/ and dperf/)
++ Power management (power_mgmt/)
++ Thermal management (thermal_mgmt/)
++ Error reporting (errors/)
++
++FIU - PORT
++==========
++A port represents the interface between the static FPGA fabric (the "blue
++bitstream") and a partially reconfigurable region containing an AFU (the "green
++bitstream"). It controls the communication from SW to the accelerator and
++exposes features such as reset and debug. Each FPGA device may have more than
++1 port.
++
++AFU
++===
++An AFU is attached to a port FIU and exposes a fixed length MMIO region to be
++used for accelerator-specific control registers.
++
++User-space applications can acquire exclusive access to an AFU attached to a
++port by using open() on the port device node, and release it using close().
++
++The following functions are exposed through ioctls:
++
++ Get driver API version (FPGA_GET_API_VERSION)
++ Check for extensions (FPGA_CHECK_EXTENSION)
++ Get port info (FPGA_PORT_GET_INFO)
++ Get MMIO region info (FPGA_PORT_GET_REGION_INFO)
++ Map DMA buffer (FPGA_PORT_DMA_MAP)
++ Unmap DMA buffer (FPGA_PORT_DMA_UNMAP)
++ Reset AFU (*FPGA_PORT_RESET)
++ Enable UMsg (FPGA_PORT_UMSG_ENABLE)
++ Disable UMsg (FPGA_PORT_UMSG_DISABLE)
++ Set UMsg mode (FPGA_PORT_UMSG_SET_MODE)
++ Set UMsg base address (FPGA_PORT_UMSG_SET_BASE_ADDR)
++
++*FPGA_PORT_RESET: reset the FPGA Port and its AFU. Userspace can do Port reset
++at any time, e.g during DMA or Partial Reconfiguration. But it should never
++cause any system level issue, only functional failure (e.g DMA or PR operation
++failure) and be recoverable from the failure.
++
++User-space applications can also mmap() accelerator MMIO regions.
++
++More functions are exposed through sysfs:
++(/sys/class/fpga_region/<regionX>/<dfl-port.m>/):
++
++ Read Accelerator GUID (afu_id)
++ Error reporting (errors/)
++
++DFL Framework Overview
++======================
++
++         +----------+    +--------+ +--------+ +--------+
++         |   FME    |    |  AFU   | |  AFU   | |  AFU   |
++         |  Module  |    | Module | | Module | | Module |
++         +----------+    +--------+ +--------+ +--------+
++                 +-----------------------+
++                 | FPGA Container Device |    Device Feature List
++                 |  (FPGA Base Region)   |         Framework
++                 +-----------------------+
++--------------------------------------------------------------------
++               +----------------------------+
++               |   FPGA Bus Device Module   |
++               | (e.g PCIE/Platform Device) |
++               +----------------------------+
++                 +------------------------+
++                 |  FPGA Hardware Device  |
++                 +------------------------+
++
++DFL Framework in kernel provides common interfaces to create container device
++(FPGA base region), discover feature devices and their private features from the
++given Device Feature Lists, and create platform devices for feature devices
++(e.g FME, Port and AFU) with related resources under the container device. It
++also abstracts operations for the private features and exposes common ops to
++feature device drivers.
++
++The FPGA Bus Device could be different devices e.g PCIe device, platform device
++and etc. Its driver is always loaded first once the device is detected on its
++own bus. This driver plays an infrastructural role in the driver architecture.
++It locates the DFLs in the device memory, handles them and related resources
++to common interfaces from DFL framework for enumeration. (Please refer to
++drivers/fpga/dfl.c for detailed enumeration APIs).
++
++The FPGA Management Engine (FME) driver is a platform driver which is loaded
++automatically after FME platform device creation from the PCIE driver. It
++provides the key features for FPGA management, including:
++
++	a) Power and thermal management, error reporting, performance reporting
++	   and other infrastructure functions. Users can access these functions
++	   via sysfs interfaces exposed by FME driver.
++	b) Partial Reconfiguration. The FME driver creates FPGA manager, FPGA
++	   bridges and FPGA regions during PR sub feature initialization; Once
++	   it receives an FPGA_FME_PORT_PR ioctl from user, it invokes the
++	   common interface function from FPGA Region to complete the partial
++	   reconfiguration of the bitstream to the given port.
++	c) Port management for virtualization. The FME driver introduces two
++	   ioctls, FPGA_FME_PORT_RELEASE (releases given port from PF) and
++	   FPGA_FME_PORT_ASSIGN (assigns the port back to PF). Once the port is
++	   released from the PF, it can be assigned to the VF through the SRIOV
++	   interfaces provided by PCIE driver. (Refer to "FPGA virtualization"
++	   for more details).
++
++Similar to the the FME driver, the FPGA Accelerated Function Unit (AFU) driver
++is probed once the AFU platform device is created. The main function of this
++module is to provide an interface for userspace applications to access the
++individual accelerators, including basic reset control on port, AFU MMIO region
++export, dma buffer mapping service, UMsg notification, and remote debug
++functions (see above).
++
++After feature platform devices creation, matched platform drivers will be loaded
++automatically to handle different functionalities. Please refer to next sections
++for detailed information on functional units which has been already implemented
++under this DFL framework.
++
++Partial Reconfiguration
++=======================
++As mentioned above, accelerators can be reconfigured through partial
++reconfiguration of a green bitstream file (GBS). The green bitstream must have
++been generated for the exact blue bitstream and targeted reconfigurable region
++(port) of the FPGA; otherwise, the reconfiguration operation will fail and
++possibly cause system instability. This compatibility can be checked by
++comparing the interface ID noted in the GBS header against the interface ID
++exposed by the FME through sysfs (see above). This check is usually done by
++user-space before calling the reconfiguration IOCTL.
++
++FPGA virtualization - PCIe
++==========================
++This section describes the virtualization support on DFL based FPGA device to
++enable accessing an accelerator from applications running in a virtual machine
++(VM). This section only describes the PCIe based FPGA device with SRIOV support.
++
++Features supported by the particular FPGA device are exposed through Device
++Feature Lists, as illustrated below:
++
++  +-------------------------------+  +-------------+
++  |              PF               |  |     VF      |
++  +-------------------------------+  +-------------+
++      ^            ^         ^              ^
++      |            |         |              |
+++-----|------------|---------|--------------|-------+
++|     |            |         |              |       |
++|  +-----+     +-------+ +-------+      +-------+   |
++|  | FME |     | Port0 | | Port1 |      | Port2 |   |
++|  +-----+     +-------+ +-------+      +-------+   |
++|                  ^         ^              ^       |
++|                  |         |              |       |
++|              +-------+ +------+       +-------+   |
++|              |  AFU  | |  AFU |       |  AFU  |   |
++|              +-------+ +------+       +-------+   |
++|                                                   |
++|                 FPGA PCIe Device                  |
+++---------------------------------------------------+
++
++FME is always accessed through the physical function (PF).
++
++Ports (and related AFUs) are accessed via PF by default, but could be exposed
++through virtual function (VF) devices via PCIe SRIOV. Each VF only contains
++1 Port and 1 AFU for isolation. Users could assign individual VFs (accelerators)
++created via PCIe SRIOV interface, to virtual machines.
++
++The driver organization in virtualization case is illustrated below:
++
++  +-------++------++------+             |
++  | FME   || FME  || FME  |             |
++  | FPGA  || FPGA || FPGA |             |
++  |Manager||Bridge||Region|             |
++  +-------++------++------+             |
++  +-----------------------+  +--------+ |             +--------+
++  |          FME          |  |  AFU   | |             |  AFU   |
++  |         Module        |  | Module | |             | Module |
++  +-----------------------+  +--------+ |             +--------+
++        +-----------------------+       |       +-----------------------+
++        | FPGA Container Device |       |       | FPGA Container Device |
++        |  (FPGA Base Region)   |       |       |  (FPGA Base Region)   |
++        +-----------------------+       |       +-----------------------+
++          +------------------+          |         +------------------+
++          | FPGA PCIE Module |          | Virtual | FPGA PCIE Module |
++          +------------------+   Host   | Machine +------------------+
++ -------------------------------------- | ------------------------------
++           +---------------+            |          +---------------+
++           | PCI PF Device |            |          | PCI VF Device |
++           +---------------+            |          +---------------+
++
++FPGA PCIe device driver is always loaded first once a FPGA PCIe PF or VF device
++is detected. It:
++
++	a) finish enumeration on both FPGA PCIe PF and VF device using common
++	   interfaces from DFL framework.
++	b) supports SRIOV.
++
++The FME device driver plays a management role in this driver architecture, it
++provides ioctls to release Port from PF and assign Port to PF. After release
++a port from PF, then it's safe to expose this port through a VF via PCIe SRIOV
++sysfs interface.
++
++To enable accessing an accelerator from applications running in a VM, the
++respective AFU's port needs to be assigned to a VF using the following steps:
++
++	a) The PF owns all AFU ports by default. Any port that needs to be
++	   reassigned to a VF must first be released through the
++	   FPGA_FME_PORT_RELEASE ioctl on the FME device.
++
++	b) Once N ports are released from PF, then user can use command below
++	   to enable SRIOV and VFs. Each VF owns only one Port with AFU.
++
++	   echo N > $PCI_DEVICE_PATH/sriov_numvfs
++
++	c) Pass through the VFs to VMs
++
++	d) The AFU under VF is accessible from applications in VM (using the
++	   same driver inside the VF).
++
++Note that an FME can't be assigned to a VF, thus PR and other management
++functions are only available via the PF.
++
++Device enumeration
++==================
++This section introduces how applications enumerate the fpga device from
++the sysfs hierarchy under /sys/class/fpga_region.
++
++In the example below, two DFL based FPGA devices are installed in the host. Each
++fpga device has one FME and two ports (AFUs).
++
++FPGA regions are created under /sys/class/fpga_region/
++
++	/sys/class/fpga_region/region0
++	/sys/class/fpga_region/region1
++	/sys/class/fpga_region/region2
++	...
++
++Application needs to search each regionX folder, if feature device is found,
++(e.g "dfl-port.n" or "dfl-fme.m" is found), then it's the base
++fpga region which represents the FPGA device.
++
++Each base region has one FME and two ports (AFUs) as child devices:
++
++	/sys/class/fpga_region/region0/dfl-fme.0
++	/sys/class/fpga_region/region0/dfl-port.0
++	/sys/class/fpga_region/region0/dfl-port.1
++	...
++
++	/sys/class/fpga_region/region3/dfl-fme.1
++	/sys/class/fpga_region/region3/dfl-port.2
++	/sys/class/fpga_region/region3/dfl-port.3
++	...
++
++In general, the FME/AFU sysfs interfaces are named as follows:
++
++	/sys/class/fpga_region/<regionX>/<dfl-fme.n>/
++	/sys/class/fpga_region/<regionX>/<dfl-port.m>/
++
++with 'n' consecutively numbering all FMEs and 'm' consecutively numbering all
++ports.
++
++The device nodes used for ioctl() or mmap() can be referenced through:
++
++	/sys/class/fpga_region/<regionX>/<dfl-fme.n>/dev
++	/sys/class/fpga_region/<regionX>/<dfl-port.n>/dev
++
++Add new FIUs support
++====================
++It's possible that developers made some new function blocks (FIUs) under this
++DFL framework, then new platform device driver needs to be developed for the
++new feature dev (FIU) following the same way as existing feature dev drivers
++(e.g FME and Port/AFU platform device driver). Besides that, it requires
++modification on DFL framework enumeration code too, for new FIU type detection
++and related platform devices creation.
++
++Add new private features support
++================================
++In some cases, we may need to add some new private features to existing FIUs
++(e.g FME or Port). Developers don't need to touch enumeration code in DFL
++framework, as each private feature will be parsed automatically, and related
++mmio resources can be found under FIU platform device created by DFL framework.
++Developer only needs to provide a sub feature driver with matched feature id.
++FME Partial Reconfiguration Sub Feature driver (see drivers/fpga/dfl-fme-pr.c)
++could be a reference.
++
++Open discussion
++===============
++FME driver exports one ioctl (FPGA_FME_PORT_PR) for partial reconfiguration to
++user now. In the future, if unified user interfaces for reconfiguration are
++added, FME driver should switch to them from ioctl interface.
+-- 
+2.7.4
 
-This looks good, but not all users of FPGA are going to use compat_id.
-How would you feel about making it a pointer in struct fpga_region?
-With compat_id as a pointer, could check for non-null compat_id
-pointer and return an error if it wasn't initialized.
-
-> +
-> +       return sprintf(buf, "%016llx%016llx\n",
-> +                      (unsigned long long)region->compat_id.id_h,
-> +                      (unsigned long long)region->compat_id.id_l);
-> +}
-> +
-> +static DEVICE_ATTR_RO(compat_id);
-> +
-> +static struct attribute *fpga_region_attrs[] = {
-> +       &dev_attr_compat_id.attr,
-> +       NULL,
-> +};
-> +ATTRIBUTE_GROUPS(fpga_region);
-> +
->  int fpga_region_register(struct fpga_region *region)
->  {
->         struct device *dev = region->parent;
-> @@ -226,6 +244,7 @@ static int __init fpga_region_init(void)
->         if (IS_ERR(fpga_region_class))
->                 return PTR_ERR(fpga_region_class);
->
-> +       fpga_region_class->dev_groups = fpga_region_groups;
->         fpga_region_class->dev_release = fpga_region_dev_release;
->
->         return 0;
-> diff --git a/include/linux/fpga/fpga-region.h b/include/linux/fpga/fpga-region.h
-> index 423c87e..bf97dcc 100644
-> --- a/include/linux/fpga/fpga-region.h
-> +++ b/include/linux/fpga/fpga-region.h
-> @@ -6,6 +6,17 @@
->  #include <linux/fpga/fpga-bridge.h>
->
->  /**
-> + * struct fpga_region_compat_id - FPGA Region id for compatibility check
-> + *
-> + * @id_h: high 64bit of the compat_id
-> + * @id_l: low 64bit of the compat_id
-> + */
-> +struct fpga_region_compat_id {
-> +       u64 id_h;
-> +       u64 id_l;
-
-I guess each user will choose how to define these bits.
-
-> +};
-> +
-> +/**
->   * struct fpga_region - FPGA Region structure
->   * @dev: FPGA Region device
->   * @parent: parent device
-> @@ -13,6 +24,7 @@
->   * @bridge_list: list of FPGA bridges specified in region
->   * @mgr: FPGA manager
->   * @info: FPGA image info
-> + * @compat_id: FPGA region id for compatibility check.
->   * @priv: private data
->   * @get_bridges: optional function to get bridges to a list
->   * @groups: optional attribute groups.
-> @@ -24,6 +36,7 @@ struct fpga_region {
->         struct list_head bridge_list;
->         struct fpga_manager *mgr;
->         struct fpga_image_info *info;
-> +       struct fpga_region_compat_id compat_id;
-
-Here it would be a pointer instead.
-
-Alan
-
->         void *priv;
->         int (*get_bridges)(struct fpga_region *region);
->         const struct attribute_group **groups;
-> --
-> 2.7.4
->
