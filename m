@@ -1,441 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935359AbeBMMbl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:31:41 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47106 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935010AbeBMMbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:31:37 -0500
-Date: Tue, 13 Feb 2018 13:31:32 +0100
-From: Karel Zak <kzak@redhat.com>
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        util-linux@vger.kernel.org
-Subject: [ANNOUNCE] util-linux v2.32-rc1
-Message-ID: <20180213123132.jlhfn4z4ijtanjgc@ws.net.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: NeoMutt/20170912-66-504cd9
+        id S935391AbeBMMb4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:31:56 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:23636 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935010AbeBMMbu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 07:31:50 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180213123148epoutp047d52e5dbb2679c99a8e302012f62278e~S4opo0lkP2340323403epoutp04Q
+X-AuditID: b6c32a45-3ebff70000001023-05-5a82dab3c690
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Paul Bolle <pebolle@tiscali.nl>, Arnd Bergmann <arnd@arndb.de>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Hans de Goede <j.w.r.degoede@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH 02/11] video: fbdev: kconfig: Remove blank help text
+Date: Tue, 13 Feb 2018 13:31:45 +0100
+Message-id: <2836658.i9VlN9LAid@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <CAFkk2KQxPnwMKmvhCoKQ0BBciTc5JKqjJqHGHAMR5uHF0w13sg@mail.gmail.com>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTURjHObsvuxuurlProGaxiHLkK1Y3C9EwuoUfhApiRDb0MkWnc9Oh
+        CWV+UDOsacVEtHxJk6GmU2ozdOhMRU2MjGLlMsnA1FSWzLYmud0Jfvs95/md8/zP4RCIUI8F
+        EhnZeYwyW5olwvnoK3PoibAeS4kkUjt/knJVj3CppS0tSs1srOLU0nAJRo09WMOof30GDvWh
+        rw6nPmsWAPV78RrVZJlEqJWv2+60w4JQ/VYbiBfQTkc1oI21s1y6p01M63X3cPrb/VEOvb5g
+        QekxrR2lu1//4NA2fQjdb3OiyXwJ/2wak5WhZpQRcTf56dOOTq6iza9gUTvILQbFeysAj4Bk
+        DOxyutAKwCeEpAHAtdFphC3sAK7Ob+E7lqZjGWMbbwC0rXR4rQ0AG4brELeFk7GwqkwH3OxP
+        HoVWjQl3Swi5hUDT5LjnKD+ShsumAW4FIAiUPAIbiy+6lwVk6PboCY6bA8hLsHegzMM88jL8
+        4ppDWccXbj6yehghD8IB0xOM5ePw3UgncM+C5EMubBofBGzsRNhmeo6w7Ad/jfZyWQ6CP3Xd
+        3g06AP9+dHmLnu27fdrAWOsMNI++947YA8vNLk9qSApgeamQVWhYNV2Hs8sJsH0dZ1/FBqB9
+        cwbXgAO1u4LX7gpeuyt4A0B0YB+jUMlljCpaERWukspV+dmy8NQcuR54fpL4vAHUTCUNAZIA
+        Ih/BXP1diRCTqlWF8iEACUTkLyAaSyRCQZq08BajzElR5mcxqiEQRKCi/YLS5ESJkJRJ85hM
+        hlEwyp0uh+AFFoM77Zk1C7ENRdzbPHG8mqJKDwd+n2huEVfmGuqNyphWrbOuMpoJt7uC38pC
+        bhjT+qauJBkndb5BccEFYj/1yp/CUw59amvRpQhc3Jt7NS/gWWTBvLmps9D6NNiYYG7BbI8P
+        NdrbjzXHvrggrX/pkyK8Pjs+qe06nWm2ntNjYSJUlS6NEiNKlfQ/j1963UUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42I5/e+xgO7mW01RBn27lC3+TjrGbvH633QW
+        iytf37NZvD7SxGpxou8Dq8WfXTuYLC7vmsNmcWPCU0aLdy8jLBbdOsNs8fYOUO2FX7eYLfbe
+        +8zowOvx+9ckRo+ds+6ye2xeoeWxaVUnm8f97uNMHh+f3mLxODH9O4vHxu1PmDw+b5Lz2Pv5
+        N0sAVxSXTUpqTmZZapG+XQJXxoVf69gLVghXvJx+kL2BsYG/i5GTQ0LARGLC2jesXYxcHEIC
+        Oxkltm2YywzhfGWUWLxzFiNIFZuAlcTE9lVgtoiAusS9CfvZQIqYBRpYJN4/3g+WEBbwkHiz
+        fx97FyMHB4uAqsTCBk+QMK+ApsSH46eZQGxRAS+JLfvawWxOgWCJz2dXM0Esm88oseHMY3aI
+        BkGJH5PvsYDYzALyEvv2T2WFsLUk1u88zjSBkX8WkrJZSMpmISlbwMi8ilEytaA4Nz232KjA
+        KC+1XK84Mbe4NC9dLzk/dxMjMIa2Hdbq38H4eEn8IUYBDkYlHt6O2Y1RQqyJZcWVuYcYJTiY
+        lUR4ORY2RQnxpiRWVqUW5ccXleakFh9ilOZgURLn5c8/FikkkJ5YkpqdmlqQWgSTZeLglGpg
+        dJ/q7dBdYxLSee/vjhNXRdmcG/wKWqt1lj14vGCN0RL1rv2ndQRP/NW/umP3XKUTrMEn8nYp
+        zzh63yOVY4n07LNFuz8GBks6Hs7kKJHZWbzKrX32u5aAJROPe3FZME7r1jzQ6PC8K6Uvax/b
+        z9PPRU7fid/I7lJ56b/6yYCJi999CjRoeq24V4mlOCPRUIu5qDgRAABSuJ6dAgAA
+X-CMS-MailID: 20180213123147epcas2p2a2bb399e700dacef57a2340afcc0e459
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20180213123147epcas2p2a2bb399e700dacef57a2340afcc0e459
+X-RootMTR: 20180213123147epcas2p2a2bb399e700dacef57a2340afcc0e459
+References: <20180131093434.20050-1-ulfalizer@gmail.com>
+        <3132455.r9uCTL3ZTk@amdc3058>
+        <CAFkk2KQxPnwMKmvhCoKQ0BBciTc5JKqjJqHGHAMR5uHF0w13sg@mail.gmail.com>
+        <CGME20180213123147epcas2p2a2bb399e700dacef57a2340afcc0e459@epcas2p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The util-linux release v2.32-rc1 is available at
- 
-  http://www.kernel.org/pub/linux/utils/util-linux/v2.32/
- 
-Feedback and bug reports, as always, are welcomed.
- 
-  Karel
+On Thursday, February 01, 2018 05:56:18 PM Ulf Magnusson wrote:
+> On Thu, Feb 1, 2018 at 4:52 PM, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> >
+> > Hi,
+> >
+> > On Wednesday, January 31, 2018 10:34:21 AM Ulf Magnusson wrote:
+> >> Blank help texts are probably either a typo, a Kconfig misunderstanding,
+> >> or some kind of half-committing to adding a help text (in which case a
+> >> TODO comment would be clearer, if the help text really can't be added
+> >> right away).
+> >>
+> >> Best to remove them, IMO.
+> >
+> > How about actually adding some meaningful help texts instead
+> > (as a general rule each user visible option should have valid
+> > help text)?
+> >
+> >> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+> >> ---
+> >>  drivers/video/fbdev/Kconfig | 1 -
+> >>  1 file changed, 1 deletion(-)
+> >>
+> >> diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+> >> index 6962b4583fd7..11e699f1062b 100644
+> >> --- a/drivers/video/fbdev/Kconfig
+> >> +++ b/drivers/video/fbdev/Kconfig
+> >> @@ -1156,7 +1156,6 @@ config FB_I810_I2C
+> >>       bool "Enable DDC Support"
+> >>       depends on FB_I810 && FB_I810_GTF
+> >>       select FB_DDC
+> >> -     help
+> >
+> > Please add a missing help text instead (take a look at FB_SAVAGE_I2C
+> > config option to see how a valid help text entry should look like).
+> 
+> The FB_I810_I2C option was added in 74f6ae84b23 ("[PATCH] i810fb: Add
+> i2c/DDC support"). What do you think about adding this bit from the
+> commit message as the help text?
+> 
+>   Add DDC/I2C support for i810fb.  This will allow the driver to get display
+>   information, especially for monitors with fickle timings.
 
- 
-Util-linux 2.32 Release Notes
-=============================
+Seems fine to me, please add:
 
-Release highlights
-------------------
+    If unsure, say Y.
 
-The command cal(1) has been improved to provide better control on used calendar
-system. Now it is possible to switch between Gregorian and Julian exclusively,
-or use the current default (reform in September 1752). The new command line
-options --reform and --iso have been added. The command also follows terminal
-width to format output.
+and send it as a proper patch.
 
-The library libblkid has been extended to support LUKS2, Micron mpool, VDO and
-Atari partition table.
+> I'm not familiar with this code, so I don't want to do too much
+> guessing myself. :)
 
-The command rfkill(8) has been move to /usr/sbin to be compatible with the
-original rfkill implementation.
+:)
 
-The command dmesg(1) provides better support for multi-line messages and the
-new command line option --force-prefix to print facility, level or timestamp
-information to each line of a multi-line message
+> > In the longer term we should consider removing *_I2C config options
+> > and just make the main config options always enable I2C subsystem
+> > directly if needed/useful (some fbdev drivers are doing it this way
+> > already).
+> >
+> >>  config FB_LE80578
+> >>       tristate "Intel LE80578 (Vermilion) support"
+> >
+> > Best regards,
+> > --
+> > Bartlomiej Zolnierkiewicz
+> > Samsung R&D Institute Poland
+> > Samsung Electronics
+> >
+> 
+> Cheers,
+> Ulf
 
-The command fallocate(1) --dig-holes is faster and more effect now.
-
-The command fdisk(8) provides access to Protective MBR accessible from main
-menu. The Sun label support has been improved.
-
-The command lscpu(1) provides more details about ARM CPUs now.
-
-The command lsmem(1) supports memory zone awareness now.
-
-The command lsns(8) provides netnsid and nsfs columns now.
-
-The command rtcwake(8) waits stdin to settle down before entering a system
-sleep.
-
-The new command line option --kill-child has been added to unshare(1).
-
-
-Stable maintenance releases between v2.31 and v2.32
----------------------------------------------------
-
-util-linux 2.31.1 [Dec 19 2017]
-
- * https://www.kernel.org/pub/linux/utils/util-linux/v2.31/v2.31.1-ReleaseNotes
-   https://www.kernel.org/pub/linux/utils/util-linux/v2.31/v2.31.1-ChangeLog
-
-
-Changes between v2.31 and v2.32
--------------------------------
-
-agetty:
-   - Fix a use of uninitialised memory in an agetty error path.  [Steven Smith]
-   - add support for /etc/issue.d  [Karel Zak]
-   - remove unused flag  [Karel Zak]
-bash-completion:
-   - (umount) use findmnt, escape a space in paths  [Karel Zak]
-   - Exclude /dev/fd from fsck find  [Kevin Locke]
-blkid:
-   - Add support for LUKS2 and new LABEL attributes.  [Milan Broz]
-blockdev:
-   - be more explicit for BLKSSZ in blockdev.8  [Karel Zak]
-build-sys:
-   - (configure) fix bashisms  [Mike Frysinger]
-   - add --enable-asan and --memcheck-asan for tests  [Karel Zak]
-   - add missing include  [Karel Zak]
-   - automake is able to find headers in builddir ...  [Ruediger Meier]
-   - avoid using prog_DEPENDENCIES  [Ruediger Meier]
-   - don't check for swapon() number of arguments  [Karel Zak]
-   - gtkdoc-fixxref v1.27 requires module option  [Karel Zak]
-   - lsns requires libmount  [Karel Zak]
-   - move rfkill to /usr/sbin  [Karel Zak]
-   - remove generated headers from dist tar ball  [Ruediger Meier]
-   - remove redundant EXTRA_DIST files  [Ruediger Meier]
-   - remove unneeded dependencies on bla.h.in  [Ruediger Meier]
-cal:
-   - Use ALTMON_* correctly  [Rafal Luzynski]
-   - add ifdef TEST_CAL  [Karel Zak]
-   - add option to set Gregorian reform date  [J William Piggott]
-   - clean up man page synopsis syntax  [Karel Zak]
-   - do not set months_in_row with -3 option  [J William Piggott]
-   - don't use year header for -1, -3 or -n  [Karel Zak]
-   - explain magic values for day of week calculation  [Karel Zak]
-   - fix first week calculation  [J William Piggott]
-   - fix julian calendars for large years  [J William Piggott]
-   - fix multi-byte comment, explain in better way  [Karel Zak, J William Piggott]
-   - fix week calculations for 1752  [J William Piggott]
-   - follow terminal width  [Karel Zak]
-   - honor num_months when only a year argument  [J William Piggott]
-   - move REFORMATION_YEAR to control struct  [J William Piggott]
-   - remove extra space after year output  [Karel Zak]
-   - update man page  [J William Piggott]
-chmem:
-   - cleanup includes  [Karel Zak]
-   - cleanup usage()  [Karel Zak]
-column:
-   - add --table-noheadings  [Karel Zak]
-   - allow to hide unnamed columns  [Karel Zak]
-   - don't ignore space-char separators at begin of the line  [Karel Zak]
-   - use \x<hex> for invalid multibyte seq.  [Karel Zak]
-dmesg:
-   - Add --force-prefix option  [Prarit Bhargava]
-   - add note about -F format to the man page  [Karel Zak]
-   - fix compiler warning [-Wuninitialized]  [Karel Zak]
-   - use xstrdup() in xalloc.h based util  [Karel Zak]
-docs:
-   - add ISC licence  [Carlos Santos]
-   - improve setarch(8) manual page  [Sami Kerola]
-   - update AUTHORS file  [Karel Zak]
-   - update TODO  [Karel Zak]
-   - update TODO file  [Karel Zak]
-eject:
-   - remove list_speeds() #ifdef CDROM_SELECT_SPEED protection  [Sami Kerola]
-fallocate:
-   - dig holes only in data extents  [Karel Zak, Vaclav Dolezal]
-   - remove typo  [Karel Zak]
-fdisk:
-   - (gpt) make PMBR accessible from main menu  [Karel Zak]
-fincore:
-   - fix a typo in fincore.1  [Masatake YAMATO]
-findfs:
-   - don't include exitcodes.h  [Karel Zak]
-findmnt:
-   - findmnt.8 remove spurious spaces before "--tree" and "--verbose"  [Jakub Wilk]
-fsck.cramfs:
-   - Fix bus error on broken file system.  [Tobias Stoeckmann]
-   - fix crash when superblock size is too small  [Ruediger Meier]
-   - fix error message  [Ruediger Meier]
-fstrim:
-   - don't include exitcodes.h  [Karel Zak]
-hwclock:
-   - add --ul-debug implementing debug.h  [J William Piggott]
-   - add iso-8601 overflow check  [J William Piggott]
-   - fix debug regression  [J William Piggott]
-   - rename --debug option to --verbose  [J William Piggott]
-   - revert ioctl test  [Karel Zak]
-   - use reentrant time conversion functions  [J William Piggott]
-include/c:
-   - add errexec()  [Karel Zak]
-include/debug:
-   - don't print pointer address for SUID programs  [Karel Zak]
-   - improve debug message  [Karel Zak]
-   - introduce __UL_INIT_DEBUG_FROM_STRING()  [Karel Zak]
-   - print info when addresses suppressed  [Karel Zak]
-kill:
-   - Extract signal names into signames.h/signames.c  [Niklas Hambüchen]
-lib:
-   - Add simple crc32c() function  [John Groves]
-lib/exec_shell:
-   - (and pager) use errexec()  [Karel Zak]
-   - cleanup function attributes  [Karel Zak]
-lib/mangle:
-   - return size of the decoded buffer  [Karel Zak]
-lib/mbsalign:
-   - Fix escaping nonprintable multibyte characters  [Vaclav Dolezal]
-   - add mbs_invalid_encode()  [Karel Zak]
-   - encode \x to \xecx  [Karel Zak]
-   - encode backslash to prevent ambiguity  [Vaclav Dolezal]
-   - escape "\x" when HAVE_WIDECHAR not defined  [Vaclav Dolezal]
-lib/md5:
-   - use ul_/UL_ prefix  [Karel Zak]
-lib/path:
-   - make path_set_prefix() independent on cpu_set_t  [Karel Zak]
-lib/sha1:
-   - fix indention  [Karel Zak]
-   - use proper WORDS_BIGENDIAN macro  [Karel Zak]
-   - use ul_/UL_prefix for symbols  [Karel Zak]
-lib/signames:
-   - fix redefinition of 'sys_signame' on OSX  [Karel Zak]
-   - remove signame array from header file  [Karel Zak]
-   - remove unused function  [Sami Kerola]
-lib/timeutils:
-   - ISO_8601_BUFSIZ too small  [J William Piggott]
-   - add common ISO timestamp masks  [J William Piggott]
-   - add get_gmtoff()  [J William Piggott]
-lib/timeutils.c:
-   - bug fix Segmentation fault  [J William Piggott]
-   - strxxx_iso  do not wrap tm_year  [J William Piggott]
-   - strxxx_iso  test conversion errors  [J William Piggott]
-   - warn format_iso_time() overflow  [J William Piggott]
-libblkid:
-   - (bcache) cleanup magic string definition  [Karel Zak]
-   - Add VDO superblock information into blkid  [Sweet Tea Dorminy]
-   - Add support for Micron mpool formatted drives  [John Groves]
-   - Add support for stratis  [Tony Asleson]
-   - Mark char* params to blkid_dev_set_search as const  [Andy Grover]
-   - Support for Atari partitioning scheme  [Vaclav Dolezal]
-   - add debug messages when ignore useless devices  [Karel Zak]
-   - atari - don't add duplicate entries  [Vaclav Dolezal]
-   - atari - fix bad variable name  [Vaclav Dolezal]
-   - atari - reject devices with blocksize != 512  [Vaclav Dolezal]
-   - atari - test if any partition fits disk size  [Vaclav Dolezal]
-   - improve FreeBSD partitions parsing  [Karel Zak]
-   - make mpool independent on libuuid  [Karel Zak]
-   - udf  Fix parsing LVID location  [Pali Rohár]
-   - udf  Fix parsing UDF revision  [Pali Rohár]
-   - udf  Fix reading Logical Volume Integrity Descriptor Implementation Use (LVIDIU)  [Pali Rohár]
-   - udf  Optimize and fix probing when block size > 2048 bytes  [Pali Rohár]
-   - udf  Really try to read only first LVID  [Pali Rohár]
-   - udf  Stop scanning Volume Descriptors after we found Terminating Descriptor  [Pali Rohár]
-   - udf  Update copyright  [Pali Rohár]
-   - udf  Use UDF revision field from LVD domain id "*OSTA UDF Compliant" as a fallback value for ID_FS_VERSION when LVIDIU is missing  [Pali Rohár]
-   - vfat  Fix reading labels which starts with byte 0x05  [Pali Rohár]
-libfdisk:
-   - (dos) fix max heads  [Karel Zak]
-   - (gpt) add VMware specific UUIDs  [Karel Zak]
-   - (gpt) move backup header after device resize  [Karel Zak]
-   - (gpt) use fdisk_warn() for failed name setting  [Karel Zak]
-   - (script) be consistent in code with types  [Karel Zak]
-   - (script) support R (RAID) and V (LVM) shortcuts  [Karel Zak]
-   - (sun) enhance searching of free space  [Mikhail Vorobyov]
-   - (sun) fix creation of whole disk partition  [Mikhail Vorobyov]
-   - (sun) fix n-1 bug and whole-disk  [Karel Zak]
-   - (sun) move aligning of the first sector before availability check  [Mikhail Vorobyov]
-   - Fix uninitialized structure  [Roddy Shuler]
-   - allocate enough bytes for ucs2 to utf8 encoding  [Vaclav Dolezal]
-   - allow to start freespace for zero  [Karel Zak]
-   - extend API to provide label specific geometry ranges  [Karel Zak]
-   - gpt  properly encode string on rename  [Vaclav Dolezal]
-   - return bytes processed from gpt_entry_set_name(), process rc  [Vaclav Dolezal]
-libmount:
-   - Allow MNT_FORCE and MNT_DETACH at umount  [Joshua Watt]
-   - Use waitpid() when waiting for mount helper child process  [Vratislav Podzimek]
-   - add nsfs between pseudo filesystems  [Karel Zak]
-   - check waitpid() return code  [Karel Zak]
-   - fix access() utab write test  [Karel Zak]
-   - fix debug message  [Karel Zak]
-   - fix mnt_table_is_fs_mounted() for rbind  [Karel Zak]
-   - minimize utimensat() write test usage  [Karel Zak]
-   - use eacess() rather than open() to check mtab/utab  [Karel Zak]
-libsmartcols:
-   - don't add blank padding after left aligned title  [Karel Zak]
-   - fix mem-leaks in samples  [Karel Zak]
-login:
-   - add LOGIN_PLAIN_PROMPT to login.defs  [Karel Zak]
-login-utils:
-   - use free_getlogindefs_data()  [Karel Zak]
-lsblk:
-   - add hint about perms to man page  [Karel Zak]
-   - try device/dev to read devno  [Karel Zak]
-lscpu:
-   - (arm) cleanup code  [Karel Zak]
-   - Decode ARM CPUs  [Riku Voipio]
-   - Treat read failure on Xen Hypervisor properties as non-fatal  [Dirk Mueller]
-   - move ARM decoding to lscpu-arm.c  [Karel Zak]
-   - move struct lscpu_desc header file  [Karel Zak]
-lslocks:
-   - add note about OFDLCK  [Karel Zak]
-lsmem:
-   - add --split  [Karel Zak]
-   - add hint about block merges to the man page  [Karel Zak]
-   - improve path_read_xxx() usage  [Karel Zak]
-   - make --split optional, follow output by default  [Karel Zak]
-lsmem/chmem:
-   - add memory zone awareness  [Gerald Schaefer]
-   - add memory zone awareness to bash-completion  [Andre Wild]
-lsns:
-   - (man) write about using multi-line in NSFS cell of lsns  [Masatake YAMATO]
-   - add --nowrap(-W) option  [Masatake YAMATO]
-   - add a case for testing netnsid column  [Masatake YAMATO]
-   - add a case for testing nsfs column  [Masatake YAMATO]
-   - add netnsid column  [Masatake YAMATO]
-   - add nsfs column  [Masatake YAMATO]
-   - disable netnsid column by default  [Masatake YAMATO]
-   - initialize stuff when really necessary  [Karel Zak]
-   - nsfs stuff cleanup  [Karel Zak]
-   - rename notruns to no_trunc  [Karel Zak]
-man:
-   - use long options in text and add example to uuidgen  [Sami Kerola]
-mcookie:
-   - properly initialize hash  [Karel Zak]
-md5:
-   - declare byteReverse as static  [Luca Ceresoli]
-misc:
-   - fix printf i386 compiler warnings  [Ruediger Meier]
-   - fix typos  [Sami Kerola]
-   - remove %p from debug messages  [Karel Zak]
-mount:
-   - add hint about -t and root perms to the man page  [Karel Zak]
-   - add more details about UUIDs and LABELs to the man page  [Karel Zak]
-   - add note about "already mounted" behavior  [Karel Zak]
-   - be more accurate in man page about propagation flags  [Karel Zak]
-mount(8):
-   - drop redundant filesystem-specific sections  [Mike Frysinger]
-   - point people to the proc(5) page for mount options  [Mike Frysinger]
-   - umount does not (anymore?) say `none busy'  [Alan Jenkins]
-newgrp:
-   - use errexec()  [Karel Zak]
-nsenter:
-   - fix compiler warning [-Wuninitialized]  [Karel Zak]
-   - revert changes committed by accident  [Karel Zak]
-po:
-   - merge changes  [Karel Zak]
-   - update cs.po (from translationproject.org)  [Petr Písař]
-   - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
-   - update fi.po (from translationproject.org)  [Lauri Nurmi]
-   - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
-   - update pl.po (from translationproject.org)  [Jakub Bogusz]
-   - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
-   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
-rename:
-   - rename.1 fix typo, where -> were  [Kenyon Ralph]
-   - use access(3) to check if a file exists  [Sami Kerola]
-rfkill:
-   - provide RFKILL_TYPE_FM if undefined  [Ruediger Meier]
-rtcwake:
-   - add note about HW and sleep to the man page  [Karel Zak]
-   - fix sys vs. rtc time delta usage  [Karel Zak]
-   - wait stdin to settle down before entering a system sleep  [Sami Kerola]
-sample-scols-title:
-   - add left title without padding  [Karel Zak]
-schedutils:
-   - use errexec()  [Karel Zak]
-setarch:
-   - minor code clean up  [Sami Kerola]
-setsid:
-   - new option --fork  [Karel Zak]
-sfdisk:
-   - add hint about udev and flock to the man page  [Karel Zak]
-   - allow to disable bootable flag on all partitions  [Karel Zak]
-   - allow to use --activate for PMBR  [Karel Zak]
-   - cleanup shortcuts in man page too  [Karel Zak]
-   - create empty label on 'write' command  [Karel Zak]
-   - wait before re-read  [Karel Zak]
-signames:
-   - Make input char buffers const  [Niklas Hambüchen]
-su:
-   - build fix for the case where USE_PTY is not defined  [Samuel Thibault]
-   - use errexec()  [Karel Zak]
-sys-utils:
-   - use errexec()  [Karel Zak]
-test:
-   - Add UDF hdd image with final block size 4096 created by Linux mkudffs 1.3  [Pali Rohár]
-   - use subtests for jan1753 cal(1) test  [Karel Zak]
-test_sha1:
-   - update helper  [Karel Zak]
-tests:
-   - Add UDF cd image created by mkudfiso 20100208  [Pali Rohár]
-   - GPT device resize test  [Karel Zak]
-   - add LUKS test images  [Milan Broz]
-   - add cal(1) --week=40 1752  [Karel Zak]
-   - add fsck.cramfs bad-header test  [Karel Zak]
-   - add lock on shared resources (e.g. scsi_debug)  [Karel Zak]
-   - add mdadm locks  [Karel Zak]
-   - add mpool blkid test image  [Karel Zak]
-   - add set-x to lsns test  [Karel Zak]
-   - add tests for encode functions from lib/mbsalign.c  [Vaclav Dolezal]
-   - added missing expected outputs for partx (atari)  [Vaclav Dolezal]
-   - added test for libblkid atari pt  [Vaclav Dolezal]
-   - adjust for ISO timezone colon use  [J William Piggott]
-   - allow to use memory checks for libsmartcols  [Karel Zak]
-   - better lsns report on fail  [Karel Zak]
-   - check for HAVE_LINUX_NET_NAMESPACE_H  [Karel Zak]
-   - column(1) test for space-char separator  [Karel Zak]
-   - column(1) test non-space separator at begin of line  [Karel Zak]
-   - don't call tests with races in --parallel  [Karel Zak]
-   - don't use mount.<type> helpers in mount-by-pattern tests  [Karel Zak]
-   - fix fincore/count KNOWN_FAIL  [Ruediger Meier]
-   - fix lsns perms  [Karel Zak]
-   - make lsns test more robust  [Karel Zak]
-   - mark fincore/count as KNOWN_FAIL  [Karel Zak]
-   - mark mbsencode as KNOWN_FAIL  [Vaclav Dolezal]
-   - mbsencode - removed emoji, added control unicode character  [Vaclav Dolezal]
-   - mbsencode - test for HAVE_WIDECHAR  [Vaclav Dolezal]
-   - merge 1m and 3m cal(1) tests  [Karel Zak]
-   - merge sep1752 cal(1) tests  [Karel Zak]
-   - merge year cal(1) tests  [Karel Zak]
-   - rename --memcheck to --memcheck-valgrind  [Karel Zak]
-   - rename ts_valgrind to ts_run  [Karel Zak]
-   - rewrite cal(1) bigyear test  [Karel Zak]
-   - rewrite fsck-bad-header  [Ruediger Meier]
-   - simplify cal(1) sep1752w test  [Karel Zak]
-   - support multiple locks  [Karel Zak]
-   - suppress warning for old sync(1)  [root]
-   - unlocks on failed ts_scsi_debug_init  [Karel Zak]
-   - update build-sys tests  [Karel Zak]
-   - update cal(1) tests  [Karel Zak]
-   - update columns test due to dda229c7b2b16a31fae8e99079ab4f4ae5bc8eac  [Karel Zak]
-   - update default lsmem output  [Karel Zak]
-   - update libsmartcols/title  [Karel Zak]
-   - update lsmem  [Karel Zak]
-   - update setarch test  [Karel Zak]
-   - use TS_HELPER_CAL  [Karel Zak]
-   - use flock to modify fstab  [Karel Zak]
-   - use subtests for sep1752w test  [Karel Zak]
-   - use subtests for weekarg cal(1) tests  [Karel Zak]
-   - use subtests for weeknum cal(1) tests  [Karel Zak]
-tests/lsmem:
-   - update lsmem test with ZONES column  [Gerald Schaefer]
-text-utils:
-   - use errexec()  [Karel Zak]
-unshare:
-   - Add --kill-child option.  [Niklas Hambüchen]
-   - Allow passing <signame> to --kill-child  [Niklas Hambüchen]
-   - cleanup if-if code  [Karel Zak]
-vipw:
-   - do not let editor to inherit open file descriptors  [Sami Kerola]
-   - use errexec()  [Karel Zak]
-whereis:
-   - fix typo in debug message  [Karel Zak]
-zramctl:
-   - use xstrdup()  [Karel Zak]
-misc:
-   - priorty -> priority  [Yuri Chornoivan]
-   - use xstrdup()  [Karel Zak]
-
--- 
- Karel Zak  <kzak@redhat.com>
- http://karelzak.blogspot.com
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
