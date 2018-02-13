@@ -1,412 +1,673 @@
-Return-Path: <fengguang.wu@intel.com>
-X-Cyrus-Session-Id: sloti22d1t05-3973134-1518773464-2-13179315759911642653
+Return-Path: <green.hu@gmail.com>
+X-Cyrus-Session-Id: sloti22d1t05-3695236-1518513076-2-937990157619885330
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='192.55.52.120', Host='mga04.intel.com', Country='US', FromHeader='com',
-  MailFrom='com'
-X-Spam-charsets: plain='us-ascii'
-X-Attached: .config.gz
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FROM 0.001, RCVD_IN_DNSWL_NONE -0.0001,
+  RCVD_IN_MSPIKE_H3 -0.01, RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001,
+  LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.85.160.67', Host='mail-pl0-f67.google.com', Country='US',
+  FromHeader='com', MailFrom='com'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: fengguang.wu@intel.com
+X-Mail-from: green.hu@gmail.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518773461; b=O/nseB7HBJqhoEJkH+VGCbUds041tX+KINHa1O5SXUYe7no
-    1o/P2ry8RHZ6u6Lfi5Zlnncm9wJEVF6oi7dXAycEtRfyFNknBMP2bUsxZ8k3c827
-    p8RWdPOC/lipsvH8suvGWqfHCgahG+wma8pDyMhdBKHWF2XfOq9RoR+YhpacoqfX
-    UIQnkHJzBnCO7d3PZNr6gNYRg5dRB+K4mQuMiyCL0Kw+SHZ1Sz+C50uVxKscvADA
-    qh+jMAQYN4H1+ejHeIuWjOg9+ROWqTYAyDZ5at5FYgZmwCpXypNfAqB7tx1paGgq
-    JgUSYwxJh/51I6I21+a0FF+xQwYHaeIpX5ZvSoA==
+    t=1518513075; b=KO4ekEcVV+DLnHwPv4mlpYy8LRxlb9/baB1cCOZLQhX4bYs
+    AfoAWuKfXRC+7JAvt/MdjHCjWhPbGr1tQp1CxAmmVhFL6f88Qee0XqmhkxkWww5O
+    XWHIV8avwve0hNkG6VX/5aeXvsKzkZiYTRzwVXc6uSh10oOR4F6uHJgyC4VVuYgN
+    xTuMYtlqynoGfzSBvpFx3xgm/ZJ0vh2591maBul9mU4IaNsBoE2V++aGfDW8C/lB
+    yeyOQD/tnMasMSyxZ+c9vIjQ1uYVXgu7FpBYrhy2Cj0JqMsESAtgrUfWRDrFfsGj
+    x0SKIokypyGbbj/vJED64oNjw2qisbR4FNJdTlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to; s=arctest; t=
-    1518773461; bh=y/7ZB9elsB6zYAU0HEFrfGqIZ56aGdicopV1JaPFfYE=; b=V
-    VIx55/iOikXUDuiPPWrmRi6q9GwOaalvF9EgaaazG7ZZKBX2fCwvLI5cv9GIFo+o
-    M/g9NF4CWksnpt5vw/J9Tb/ptNw8ahJWzQQ4ywMxpvQrOFP8rdW1bwirfo50w5Gy
-    XIsxPG1tC72bBdbNiHbaixH6sUvf+9rcgr+xsXl3IY+ruezUgRIFSMFXoaM5piRd
-    Qv15iJbEIxrPMpTDFk/5hxyJ2xvR84rvB30dFApbr/D06ehaZflGZ7oc2a1Wj6dh
-    JZWFKRE0AECaCU8hEyW1XKWZGVVwyXNz775MK2BDNa5WCTjqKewnLPXUn4WiylMT
-    J+YhXQ9y2M/+LRLiFr1aA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=192.55.52.120 (mga04.intel.com);
-    spf=pass smtp.mailfrom=fengguang.wu@intel.com smtp.helo=mga04.intel.com;
-    x-aligned-from=domain_pass;
-    x-ptr=pass x-ptr-helo=mga04.intel.com x-ptr-lookup=mga04.intel.com;
-    x-return-mx=pass smtp.domain=intel.com smtp.result=pass smtp_is_org_domain=yes header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:in-reply-to:references; s=arctest; t=
+    1518513075; bh=ZSPPNBNkFATexU2J1HjJqZdw55jjuaXHFPpprCU9WJE=; b=C
+    wXNjwzKoJrmTY5M0Ao5xMQSMgQC2krIJnPaAwvQDf5y+zW0r5GkH2DmjVbaj2+jJ
+    AL8XdmjXykerVTPiji/jTndw+U1ie67GrEl/plQyHmabsnz13fXuX+a8Xax87/XO
+    mY6tZ4Eaiv+N/+fn/m8SG50mi/ux1egYHiSIpRmXDoQNsQQirAnLjuX8gLELvtF3
+    sp0Z3Fs4uDKsk3KG3ya6dTK3CQuQIjyRhKGtlKgD/H+UgeRbFB7dPetJcIgT7uRL
+    8/uPwiTxIYHLwU3lOsUV58vVKivvGua9LxzIO1yV6qxVmmZ6uz4GNGrXG+n4Vc8C
+    G/kZB2ojTPEQMqsce+ihQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=GFVRkq7b x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.160.67 (mail-pl0-f67.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f67.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=D0UgL76i;
+    x-ptr=pass x-ptr-helo=mail-pl0-f67.google.com x-ptr-lookup=mail-pl0-f67.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=192.55.52.120 (mga04.intel.com);
-    spf=pass smtp.mailfrom=fengguang.wu@intel.com smtp.helo=mga04.intel.com;
-    x-aligned-from=domain_pass;
-    x-ptr=pass x-ptr-helo=mga04.intel.com x-ptr-lookup=mga04.intel.com;
-    x-return-mx=pass smtp.domain=intel.com smtp.result=pass smtp_is_org_domain=yes header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=GFVRkq7b x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.160.67 (mail-pl0-f67.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f67.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=D0UgL76i;
+    x-ptr=pass x-ptr-helo=mail-pl0-f67.google.com x-ptr-lookup=mail-pl0-f67.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,519,1511856000";
-   d="gz'50?scan'50,208,50";a="201628468"
-Date: Fri, 16 Feb 2018 17:30:28 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Greentime Hu <green.hu@gmail.com>
-Cc: kbuild-all@01.org, greentime@andestech.com,
-	linux-kernel@vger.kernel.org, arnd@arndb.de,
-	linux-arch@vger.kernel.org, tglx@linutronix.de,
-	jason@lakedaemon.net, marc.zyngier@arm.com, robh+dt@kernel.org,
-	netdev@vger.kernel.org, deanbo422@gmail.com,
-	devicetree@vger.kernel.org, viro@zeniv.linux.org.uk,
-	dhowells@redhat.com, will.deacon@arm.com, daniel.lezcano@linaro.org,
-	linux-serial@vger.kernel.org, geert.uytterhoeven@gmail.com,
-	linus.walleij@linaro.org, mark.rutland@arm.com, greg@kroah.com,
-	ren_guo@c-sky.com, rdunlap@infradead.org, davem@davemloft.net,
-	jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
-	shorne@gmail.com, green.hu@gmail.com,
+X-Google-Smtp-Source: AH8x224P0yPppbDt9IGO5QNjCUWyRAEUELn4dMaPl7BJidKw6UokXmQOAf5SlS0/4stODEYO8wIlDQ==
+From: Greentime Hu <green.hu@gmail.com>
+X-Google-Original-From: Greentime Hu <greentime@andestech.com>
+To: greentime@andestech.com,
+	linux-kernel@vger.kernel.org,
+	arnd@arndb.de,
+	linux-arch@vger.kernel.org,
+	tglx@linutronix.de,
+	jason@lakedaemon.net,
+	marc.zyngier@arm.com,
+	robh+dt@kernel.org,
+	netdev@vger.kernel.org,
+	deanbo422@gmail.com,
+	devicetree@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	dhowells@redhat.com,
+	will.deacon@arm.com,
+	daniel.lezcano@linaro.org,
+	linux-serial@vger.kernel.org,
+	geert.uytterhoeven@gmail.com,
+	linus.walleij@linaro.org,
+	mark.rutland@arm.com,
+	greg@kroah.com,
+	ren_guo@c-sky.com,
+	rdunlap@infradead.org,
+	davem@davemloft.net,
+	jonas@southpole.se,
+	stefan.kristiansson@saunalahti.fi,
+	shorne@gmail.com
+Cc: green.hu@gmail.com,
 	Vincent Chen <vincentc@andestech.com>
-Subject: Re: [PATCH v7 02/37] asm-generic/io.h: move
- ioremap_nocache/ioremap_uc/ioremap_wc/ioremap_wt out of ifndef CONFIG_MMU
-Message-ID: <201802161724.hKyflUz5%fengguang.wu@intel.com>
-References: <ff404658ececd53f1bf111067c587c4e3eb695af.1518505384.git.greentime@andestech.com>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="AqsLC8rIMeq19msA"
-Content-Disposition: inline
-In-Reply-To: <ff404658ececd53f1bf111067c587c4e3eb695af.1518505384.git.greentime@andestech.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Subject: [PATCH v7 07/37] nds32: Kernel booting and initialization
+Date: Tue, 13 Feb 2018 17:09:11 +0800
+Message-Id: <7fe1c8908c84b873c98947b31bcce92daea6d67f.1518505384.git.greentime@andestech.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <cover.1518505384.git.greentime@andestech.com>
+References: <cover.1518505384.git.greentime@andestech.com>
+In-Reply-To: <cover.1518505384.git.greentime@andestech.com>
+References: <cover.1518505384.git.greentime@andestech.com>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+This patch includes the kernel startup code. It can get dtb pointer
+passed from bootloader. It will create a temp mapping by tlb
+instructions at beginning and goto start_kernel.
 
---AqsLC8rIMeq19msA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Greentime,
-
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.16-rc1 next-20180216]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Greentime-Hu/Andes-nds32-Linux-Kernel-Port/20180216-155013
-config: cris-etrax-100lx_v2_defconfig (attached as .config)
-compiler: cris-linux-gcc (GCC) 7.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        make.cross ARCH=cris 
-
-All warnings (new ones prefixed by >>):
-
-   In file included from arch/cris/include/asm/io.h:24:0,
-                    from include/linux/io.h:25,
-                    from arch/cris/mm/ioremap.c:14:
-   include/asm-generic/io.h:864:15: error: conflicting types for 'ioremap'
-    void __iomem *ioremap(phys_addr_t phys_addr, size_t size);
-                  ^~~~~~~
-   In file included from include/linux/io.h:25:0,
-                    from arch/cris/mm/ioremap.c:14:
-   arch/cris/include/asm/io.h:15:30: note: previous definition of 'ioremap' was here
-    static inline void __iomem * ioremap (unsigned long offset, unsigned long size)
-                                 ^~~~~~~
-   In file included from arch/cris/include/asm/io.h:24:0,
-                    from include/linux/io.h:25,
-                    from arch/cris/mm/ioremap.c:14:
-   include/asm-generic/io.h:865:25: error: conflicting types for 'ioremap_nocache'
-    #define ioremap_nocache ioremap_nocache
-                            ^
-   include/asm-generic/io.h:866:29: note: in expansion of macro 'ioremap_nocache'
-    static inline void __iomem *ioremap_nocache(phys_addr_t offset, size_t size)
-                                ^~~~~~~~~~~~~~~
-   In file included from include/linux/io.h:25:0,
-                    from arch/cris/mm/ioremap.c:14:
-   arch/cris/include/asm/io.h:22:23: note: previous declaration of 'ioremap_nocache' was here
-    extern void __iomem * ioremap_nocache(unsigned long offset, unsigned long size);
-                          ^~~~~~~~~~~~~~~
-   In file included from arch/cris/include/asm/io.h:24:0,
-                    from include/linux/io.h:25,
-                    from arch/cris/mm/ioremap.c:14:
-   include/asm-generic/io.h:865:25: error: conflicting types for 'ioremap_nocache'
-    #define ioremap_nocache ioremap_nocache
-                            ^
->> arch/cris/mm/ioremap.c:80:15: note: in expansion of macro 'ioremap_nocache'
-    void __iomem *ioremap_nocache(unsigned long phys_addr, unsigned long size)
-                  ^~~~~~~~~~~~~~~
-   include/asm-generic/io.h:865:25: note: previous definition of 'ioremap_nocache' was here
-    #define ioremap_nocache ioremap_nocache
-                            ^
-   include/asm-generic/io.h:866:29: note: in expansion of macro 'ioremap_nocache'
-    static inline void __iomem *ioremap_nocache(phys_addr_t offset, size_t size)
-                                ^~~~~~~~~~~~~~~
-
-vim +/ioremap_nocache +80 arch/cris/mm/ioremap.c
-
-e32cbc3d Haavard Skinnemoen 2006-09-30 @14  #include <linux/io.h>
-^1da177e Linus Torvalds     2005-04-16  15  #include <asm/pgalloc.h>
-556dcee7 Jesper Nilsson     2008-10-21  16  #include <arch/memmap.h>
-^1da177e Linus Torvalds     2005-04-16  17  
-^1da177e Linus Torvalds     2005-04-16  18  /*
-^1da177e Linus Torvalds     2005-04-16  19   * Generic mapping function (not visible outside):
-^1da177e Linus Torvalds     2005-04-16  20   */
-^1da177e Linus Torvalds     2005-04-16  21  
-^1da177e Linus Torvalds     2005-04-16  22  /*
-^1da177e Linus Torvalds     2005-04-16  23   * Remap an arbitrary physical address space into the kernel virtual
-^1da177e Linus Torvalds     2005-04-16  24   * address space. Needed when the kernel wants to access high addresses
-^1da177e Linus Torvalds     2005-04-16  25   * directly.
-^1da177e Linus Torvalds     2005-04-16  26   *
-^1da177e Linus Torvalds     2005-04-16  27   * NOTE! We need to allow non-page-aligned mappings too: we will obviously
-^1da177e Linus Torvalds     2005-04-16  28   * have to convert them into an offset in a page-aligned mapping, but the
-^1da177e Linus Torvalds     2005-04-16  29   * caller shouldn't need to know that small detail.
-^1da177e Linus Torvalds     2005-04-16  30   */
-4f18cfbf Mikael Starvik     2005-07-27  31  void __iomem * __ioremap_prot(unsigned long phys_addr, unsigned long size, pgprot_t prot)
-^1da177e Linus Torvalds     2005-04-16  32  {
-4f18cfbf Mikael Starvik     2005-07-27  33  	void __iomem * addr;
-^1da177e Linus Torvalds     2005-04-16  34  	struct vm_struct * area;
-^1da177e Linus Torvalds     2005-04-16  35  	unsigned long offset, last_addr;
-^1da177e Linus Torvalds     2005-04-16  36  
-^1da177e Linus Torvalds     2005-04-16  37  	/* Don't allow wraparound or zero size */
-^1da177e Linus Torvalds     2005-04-16  38  	last_addr = phys_addr + size - 1;
-^1da177e Linus Torvalds     2005-04-16  39  	if (!size || last_addr < phys_addr)
-^1da177e Linus Torvalds     2005-04-16  40  		return NULL;
-^1da177e Linus Torvalds     2005-04-16  41  
-^1da177e Linus Torvalds     2005-04-16  42  	/*
-^1da177e Linus Torvalds     2005-04-16  43  	 * Mappings have to be page-aligned
-^1da177e Linus Torvalds     2005-04-16  44  	 */
-^1da177e Linus Torvalds     2005-04-16  45  	offset = phys_addr & ~PAGE_MASK;
-^1da177e Linus Torvalds     2005-04-16  46  	phys_addr &= PAGE_MASK;
-^1da177e Linus Torvalds     2005-04-16  47  	size = PAGE_ALIGN(last_addr+1) - phys_addr;
-^1da177e Linus Torvalds     2005-04-16  48  
-^1da177e Linus Torvalds     2005-04-16  49  	/*
-^1da177e Linus Torvalds     2005-04-16  50  	 * Ok, go for it..
-^1da177e Linus Torvalds     2005-04-16  51  	 */
-^1da177e Linus Torvalds     2005-04-16  52  	area = get_vm_area(size, VM_IOREMAP);
-^1da177e Linus Torvalds     2005-04-16  53  	if (!area)
-^1da177e Linus Torvalds     2005-04-16  54  		return NULL;
-4f18cfbf Mikael Starvik     2005-07-27  55  	addr = (void __iomem *)area->addr;
-e32cbc3d Haavard Skinnemoen 2006-09-30  56  	if (ioremap_page_range((unsigned long)addr, (unsigned long)addr + size,
-e32cbc3d Haavard Skinnemoen 2006-09-30  57  			       phys_addr, prot)) {
-4f18cfbf Mikael Starvik     2005-07-27  58  		vfree((void __force *)addr);
-^1da177e Linus Torvalds     2005-04-16  59  		return NULL;
-^1da177e Linus Torvalds     2005-04-16  60  	}
-4f18cfbf Mikael Starvik     2005-07-27  61  	return (void __iomem *) (offset + (char __iomem *)addr);
-4f18cfbf Mikael Starvik     2005-07-27  62  }
-4f18cfbf Mikael Starvik     2005-07-27  63  
-4f18cfbf Mikael Starvik     2005-07-27  64  void __iomem * __ioremap(unsigned long phys_addr, unsigned long size, unsigned long flags)
-4f18cfbf Mikael Starvik     2005-07-27  65  {
-4f18cfbf Mikael Starvik     2005-07-27  66  	return __ioremap_prot(phys_addr, size,
-4f18cfbf Mikael Starvik     2005-07-27  67  		              __pgprot(_PAGE_PRESENT | __READABLE |
-4f18cfbf Mikael Starvik     2005-07-27  68  				       __WRITEABLE | _PAGE_GLOBAL |
-4f18cfbf Mikael Starvik     2005-07-27  69  				       _PAGE_KERNEL | flags));
-4f18cfbf Mikael Starvik     2005-07-27  70  }
-4f18cfbf Mikael Starvik     2005-07-27  71  
-4f18cfbf Mikael Starvik     2005-07-27  72  /**
-4f18cfbf Mikael Starvik     2005-07-27  73   * ioremap_nocache     -   map bus memory into CPU space
-4f18cfbf Mikael Starvik     2005-07-27  74   * @offset:    bus address of the memory
-4f18cfbf Mikael Starvik     2005-07-27  75   * @size:      size of the resource to map
-4f18cfbf Mikael Starvik     2005-07-27  76   *
-4f18cfbf Mikael Starvik     2005-07-27  77   * Must be freed with iounmap.
-4f18cfbf Mikael Starvik     2005-07-27  78   */
-4f18cfbf Mikael Starvik     2005-07-27  79  
-4f18cfbf Mikael Starvik     2005-07-27 @80  void __iomem *ioremap_nocache(unsigned long phys_addr, unsigned long size)
-4f18cfbf Mikael Starvik     2005-07-27  81  {
-4f18cfbf Mikael Starvik     2005-07-27  82          return __ioremap(phys_addr | MEM_NON_CACHEABLE, size, 0);
-^1da177e Linus Torvalds     2005-04-16  83  }
-82e6df1e Jesper Nilsson     2014-10-01  84  EXPORT_SYMBOL(ioremap_nocache);
-^1da177e Linus Torvalds     2005-04-16  85  
-
-:::::: The code at line 80 was first introduced by commit
-:::::: 4f18cfbf0990bfc2e8e7706eeb9e5bef898ae923 [PATCH] CRIS update: mm
-
-:::::: TO: Mikael Starvik <mikael.starvik@axis.com>
-:::::: CC: Linus Torvalds <torvalds@g5.osdl.org>
-
+Signed-off-by: Vincent Chen <vincentc@andestech.com>
+Signed-off-by: Greentime Hu <greentime@andestech.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ arch/nds32/kernel/head.S  | 188 ++++++++++++++++++++++++
+ arch/nds32/kernel/setup.c | 363 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 551 insertions(+)
+ create mode 100644 arch/nds32/kernel/head.S
+ create mode 100644 arch/nds32/kernel/setup.c
 
---AqsLC8rIMeq19msA
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-3WvPWNC5D/9/KaDsGkqGAAA=
-
---AqsLC8rIMeq19msA--
+diff --git a/arch/nds32/kernel/head.S b/arch/nds32/kernel/head.S
+new file mode 100644
+index 000000000000..71f57bd70f3b
+--- /dev/null
++++ b/arch/nds32/kernel/head.S
+@@ -0,0 +1,188 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#include <linux/linkage.h>
++#include <linux/init.h>
++#include <asm/ptrace.h>
++#include <asm/asm-offsets.h>
++#include <asm/page.h>
++#include <asm/pgtable.h>
++#include <asm/sizes.h>
++#include <asm/thread_info.h>
++
++#ifdef CONFIG_CPU_BIG_ENDIAN
++#define OF_DT_MAGIC 0xd00dfeed
++#else
++#define OF_DT_MAGIC 0xedfe0dd0
++#endif
++
++	.globl  swapper_pg_dir
++	.equ    swapper_pg_dir, TEXTADDR - 0x4000
++
++/*
++ * Kernel startup entry point.
++ */
++	.section ".head.text", "ax"
++	.type   _stext, %function
++ENTRY(_stext)
++	setgie.d                            ! Disable interrupt
++	isb
++/*
++ * Disable I/D-cache and enable it at a proper time
++ */
++	mfsr    $r0, $mr8
++	li      $r1, #~(CACHE_CTL_mskIC_EN|CACHE_CTL_mskDC_EN)
++	and     $r0, $r0, $r1
++	mtsr    $r0, $mr8
++
++/*
++ * Process device tree blob
++ */
++	andi 	$r0,$r2,#0x3
++	li	$r10, 0
++	bne     $r0, $r10, _nodtb
++	lwi	$r0, [$r2]
++	li	$r1, OF_DT_MAGIC
++	bne     $r0, $r1, _nodtb
++	move	$r10, $r2
++_nodtb:
++
++/*
++ * Create a temporary mapping area for booting, before start_kernel
++ */
++	sethi   $r4, hi20(swapper_pg_dir)
++	li      $p0, (PAGE_OFFSET - PHYS_OFFSET)
++	sub     $r4, $r4, $p0
++	tlbop   FlushAll            ! invalidate TLB\n"
++	isb
++	mtsr    $r4, $L1_PPTB       ! load page table pointer\n"
++
++/* set NTC0 cacheable/writeback, mutliple page size in use */
++	mfsr    $r3, $MMU_CTL
++	li      $r0, #~MMU_CTL_mskNTC0
++	and     $r3, $r3, $r0
++#ifdef CONFIG_ANDES_PAGE_SIZE_4KB
++	ori     $r3, $r3, #(MMU_CTL_mskMPZIU|(MMU_CTL_CACHEABLE_WB << MMU_CTL_offNTC0))
++#else
++	ori     $r3, $r3, #(MMU_CTL_mskMPZIU|(MMU_CTL_CACHEABLE_WB << MMU_CTL_offNTC0)|MMU_CTL_D8KB)
++#endif
++#ifdef CONFIG_HW_SUPPORT_UNALIGNMENT_ACCESS
++	li      $r0, #MMU_CTL_UNA
++	or      $r3, $r3, $r0
++#endif
++	mtsr    $r3, $MMU_CTL
++	isb
++
++/* set page size and size of kernel image */
++        mfsr    $r0, $MMU_CFG
++        srli    $r3, $r0, MMU_CFG_offfEPSZ
++        zeb     $r3, $r3
++        bnez    $r3, _extra_page_size_support
++#ifdef CONFIG_ANDES_PAGE_SIZE_4KB
++        li      $r5, #SZ_4K                 ! Use 4KB page size
++#else
++        li      $r5, #SZ_8K                 ! Use 8KB page size
++        li      $r3, #1
++#endif
++        mtsr    $r3, $TLB_MISC
++        b       _image_size_check
++
++_extra_page_size_support:                    ! Use epzs pages size
++        clz     $r6, $r3
++        subri   $r2, $r6, #31
++        li      $r3, #1
++        sll     $r3, $r3, $r2
++        /* MMU_CFG.EPSZ value -> meaning */
++        mul     $r5, $r3, $r3
++        slli    $r5, $r5, #14
++        /* MMU_CFG.EPSZ  -> TLB_MISC.ACC_PSZ */
++        addi    $r3, $r2, #0x2
++        mtsr    $r3, $TLB_MISC
++
++_image_size_check:
++        /* calculate the image maximum size accepted by TLB config */
++        andi    $r6, $r0, MMU_CFG_mskTBW
++        andi    $r0, $r0, MMU_CFG_mskTBS
++        srli    $r6, $r6, MMU_CFG_offTBW
++        srli    $r0, $r0, MMU_CFG_offTBS
++        /*
++         * we just map the kernel to the maximum way - 1 of tlb
++         * reserver one way for UART VA mapping
++         * it will cause page fault if UART mapping cover the kernel mapping
++         *
++         * direct mapping is not supported now.
++         */
++        li      $r2, 't'
++        beqz    $r6, __error                 ! MMU_CFG.TBW = 0 is direct mappin
++        addi    $r0, $r0, #0x2               ! MMU_CFG.TBS value -> meaning
++        sll     $r0, $r6, $r0                ! entries = k-way * n-set
++        mul     $r6, $r0, $r5                ! max size = entries * page size
++        /* check kernel image size */
++        la      $r3, (_end - PAGE_OFFSET)
++        li      $r2, 's'
++        bgt     $r3, $r6, __error
++
++	li      $r2, #(PHYS_OFFSET + TLB_DATA_kernel_text_attr)
++        li      $r3, PAGE_OFFSET
++        add     $r6, $r6, $r3
++
++_tlb:
++	mtsr    $r3, $TLB_VPN
++	dsb
++	tlbop   $r2, RWR
++	isb
++	add     $r3, $r3, $r5
++	add     $r2, $r2, $r5
++	bgt     $r6, $r3, _tlb
++	mfsr    $r3, $TLB_MISC      ! setup access page size
++	li      $r2, #~0xf
++	and     $r3, $r3, $r2
++#ifdef CONFIG_ANDES_PAGE_SIZE_8KB
++	ori    $r3, $r3, #0x1
++#endif
++	mtsr    $r3, $TLB_MISC
++
++	mfsr    $r0, $MISC_CTL      ! Enable BTB and RTP and shadow sp
++	ori     $r0, $r0, #MISC_init
++	mtsr    $r0, $MISC_CTL
++
++	mfsr    $p1, $PSW
++	li      $r15, #~PSW_clr             ! clear WBNA|DME|IME|DT|IT|POM|INTL|GIE
++	and     $p1, $p1, $r15
++	ori     $p1, $p1, #PSW_init
++	mtsr    $p1, $IPSW                  ! when iret, it will automatically enable MMU
++	la      $lp, __mmap_switched
++	mtsr    $lp, $IPC
++	iret
++	nop
++
++	.type   __switch_data, %object
++__switch_data:
++	.long   __bss_start                 ! $r6
++	.long   _end                        ! $r7
++	.long	__atags_pointer 	    ! $atag_pointer
++	.long   init_task                   ! $r9, move to $r25
++	.long   init_thread_union + THREAD_SIZE    ! $sp
++
++
++/*
++ * The following fragment of code is executed with the MMU on in MMU mode,
++ * and uses absolute addresses; this is not position independent.
++ */
++	.align
++	.type   __mmap_switched, %function
++__mmap_switched:
++	la  $r3, __switch_data
++	lmw.bim $r6, [$r3], $r9, #0b0001
++	move	$r25, $r9
++	move    $fp, #0             ! Clear  BSS (and zero $fp)
++	beq $r7, $r6, _RRT
++1:	swi.bi  $fp, [$r6], #4
++	bne $r7, $r6, 1b
++	swi	$r10, [$r8]
++
++_RRT:
++	b   start_kernel
++
++__error:
++	b   __error
+diff --git a/arch/nds32/kernel/setup.c b/arch/nds32/kernel/setup.c
+new file mode 100644
+index 000000000000..ba910e9e4ecb
+--- /dev/null
++++ b/arch/nds32/kernel/setup.c
+@@ -0,0 +1,363 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#include <linux/cpu.h>
++#include <linux/bootmem.h>
++#include <linux/seq_file.h>
++#include <linux/memblock.h>
++#include <linux/console.h>
++#include <linux/screen_info.h>
++#include <linux/delay.h>
++#include <linux/dma-mapping.h>
++#include <linux/of_fdt.h>
++#include <linux/of_platform.h>
++#include <asm/setup.h>
++#include <asm/sections.h>
++#include <asm/proc-fns.h>
++#include <asm/cache_info.h>
++#include <asm/elf.h>
++#include <nds32_intrinsic.h>
++
++#define HWCAP_MFUSR_PC		0x000001
++#define HWCAP_EXT		0x000002
++#define HWCAP_EXT2		0x000004
++#define HWCAP_FPU		0x000008
++#define HWCAP_AUDIO		0x000010
++#define HWCAP_BASE16		0x000020
++#define HWCAP_STRING		0x000040
++#define HWCAP_REDUCED_REGS	0x000080
++#define HWCAP_VIDEO		0x000100
++#define HWCAP_ENCRYPT		0x000200
++#define HWCAP_EDM		0x000400
++#define HWCAP_LMDMA		0x000800
++#define HWCAP_PFM		0x001000
++#define HWCAP_HSMP		0x002000
++#define HWCAP_TRACE		0x004000
++#define HWCAP_DIV		0x008000
++#define HWCAP_MAC		0x010000
++#define HWCAP_L2C		0x020000
++#define HWCAP_FPU_DP		0x040000
++#define HWCAP_V2		0x080000
++#define HWCAP_DX_REGS		0x100000
++
++unsigned long cpu_id, cpu_rev, cpu_cfgid;
++char cpu_series;
++char *endianness = NULL;
++
++unsigned int __atags_pointer __initdata;
++unsigned int elf_hwcap;
++EXPORT_SYMBOL(elf_hwcap);
++
++/*
++ * The following string table, must sync with HWCAP_xx bitmask,
++ * which is defined in <asm/procinfo.h>
++ */
++static const char *hwcap_str[] = {
++	"mfusr_pc",
++	"perf1",
++	"perf2",
++	"fpu",
++	"audio",
++	"16b",
++	"string",
++	"reduced_regs",
++	"video",
++	"encrypt",
++	"edm",
++	"lmdma",
++	"pfm",
++	"hsmp",
++	"trace",
++	"div",
++	"mac",
++	"l2c",
++	"dx_regs",
++	"v2",
++	NULL,
++};
++
++#ifdef CONFIG_CPU_DCACHE_WRITETHROUGH
++#define WRITE_METHOD "write through"
++#else
++#define WRITE_METHOD "write back"
++#endif
++
++struct cache_info L1_cache_info[2];
++static void __init dump_cpu_info(int cpu)
++{
++	int i, p = 0;
++	char str[sizeof(hwcap_str) + 16];
++
++	for (i = 0; hwcap_str[i]; i++) {
++		if (elf_hwcap & (1 << i)) {
++			sprintf(str + p, "%s ", hwcap_str[i]);
++			p += strlen(hwcap_str[i]) + 1;
++		}
++	}
++
++	pr_info("CPU%d Features: %s\n", cpu, str);
++
++	L1_cache_info[ICACHE].ways = CACHE_WAY(ICACHE);
++	L1_cache_info[ICACHE].line_size = CACHE_LINE_SIZE(ICACHE);
++	L1_cache_info[ICACHE].sets = CACHE_SET(ICACHE);
++	L1_cache_info[ICACHE].size =
++	    L1_cache_info[ICACHE].ways * L1_cache_info[ICACHE].line_size *
++	    L1_cache_info[ICACHE].sets / 1024;
++	pr_info("L1I:%dKB/%dS/%dW/%dB\n", L1_cache_info[ICACHE].size,
++		L1_cache_info[ICACHE].sets, L1_cache_info[ICACHE].ways,
++		L1_cache_info[ICACHE].line_size);
++	L1_cache_info[DCACHE].ways = CACHE_WAY(DCACHE);
++	L1_cache_info[DCACHE].line_size = CACHE_LINE_SIZE(DCACHE);
++	L1_cache_info[DCACHE].sets = CACHE_SET(DCACHE);
++	L1_cache_info[DCACHE].size =
++	    L1_cache_info[DCACHE].ways * L1_cache_info[DCACHE].line_size *
++	    L1_cache_info[DCACHE].sets / 1024;
++	pr_info("L1D:%dKB/%dS/%dW/%dB\n", L1_cache_info[DCACHE].size,
++		L1_cache_info[DCACHE].sets, L1_cache_info[DCACHE].ways,
++		L1_cache_info[DCACHE].line_size);
++	pr_info("L1 D-Cache is %s\n", WRITE_METHOD);
++	if (L1_cache_info[DCACHE].size != L1_CACHE_BYTES)
++		pr_crit
++		    ("The cache line size(%d) of this processor is not the same as L1_CACHE_BYTES(%d).\n",
++		     L1_cache_info[DCACHE].size, L1_CACHE_BYTES);
++#ifdef CONFIG_CPU_CACHE_ALIASING
++	{
++		int aliasing_num;
++		aliasing_num =
++		    L1_cache_info[ICACHE].size * 1024 / PAGE_SIZE /
++		    L1_cache_info[ICACHE].ways;
++		L1_cache_info[ICACHE].aliasing_num = aliasing_num;
++		L1_cache_info[ICACHE].aliasing_mask =
++		    (aliasing_num - 1) << PAGE_SHIFT;
++		aliasing_num =
++		    L1_cache_info[DCACHE].size * 1024 / PAGE_SIZE /
++		    L1_cache_info[DCACHE].ways;
++		L1_cache_info[DCACHE].aliasing_num = aliasing_num;
++		L1_cache_info[DCACHE].aliasing_mask =
++		    (aliasing_num - 1) << PAGE_SHIFT;
++	}
++#endif
++}
++
++static void __init setup_cpuinfo(void)
++{
++	unsigned long tmp = 0, cpu_name;
++
++	cpu_dcache_inval_all();
++	cpu_icache_inval_all();
++	__nds32__isb();
++
++	cpu_id = (__nds32__mfsr(NDS32_SR_CPU_VER) & CPU_VER_mskCPUID) >> CPU_VER_offCPUID;
++	cpu_name = ((cpu_id) & 0xf0) >> 4;
++	cpu_series = cpu_name ? cpu_name - 10 + 'A' : 'N';
++	cpu_id = cpu_id & 0xf;
++	cpu_rev = (__nds32__mfsr(NDS32_SR_CPU_VER) & CPU_VER_mskREV) >> CPU_VER_offREV;
++	cpu_cfgid = (__nds32__mfsr(NDS32_SR_CPU_VER) & CPU_VER_mskCFGID) >> CPU_VER_offCFGID;
++
++	pr_info("CPU:%c%ld, CPU_VER 0x%08x(id %lu, rev %lu, cfg %lu)\n",
++		cpu_series, cpu_id, __nds32__mfsr(NDS32_SR_CPU_VER), cpu_id, cpu_rev, cpu_cfgid);
++
++	elf_hwcap |= HWCAP_MFUSR_PC;
++
++	if (((__nds32__mfsr(NDS32_SR_MSC_CFG) & MSC_CFG_mskBASEV) >> MSC_CFG_offBASEV) == 0) {
++		if (__nds32__mfsr(NDS32_SR_MSC_CFG) & MSC_CFG_mskDIV)
++			elf_hwcap |= HWCAP_DIV;
++
++		if ((__nds32__mfsr(NDS32_SR_MSC_CFG) & MSC_CFG_mskMAC)
++		    || (cpu_id == 12 && cpu_rev < 4))
++			elf_hwcap |= HWCAP_MAC;
++	} else {
++		elf_hwcap |= HWCAP_V2;
++		elf_hwcap |= HWCAP_DIV;
++		elf_hwcap |= HWCAP_MAC;
++	}
++
++	if (cpu_cfgid & 0x0001)
++		elf_hwcap |= HWCAP_EXT;
++
++	if (cpu_cfgid & 0x0002)
++		elf_hwcap |= HWCAP_BASE16;
++
++	if (cpu_cfgid & 0x0004)
++		elf_hwcap |= HWCAP_EXT2;
++
++	if (cpu_cfgid & 0x0008)
++		elf_hwcap |= HWCAP_FPU;
++
++	if (cpu_cfgid & 0x0010)
++		elf_hwcap |= HWCAP_STRING;
++
++	if (__nds32__mfsr(NDS32_SR_MMU_CFG) & MMU_CFG_mskDE)
++		endianness = "MSB";
++	else
++		endianness = "LSB";
++
++	if (__nds32__mfsr(NDS32_SR_MSC_CFG) & MSC_CFG_mskEDM)
++		elf_hwcap |= HWCAP_EDM;
++
++	if (__nds32__mfsr(NDS32_SR_MSC_CFG) & MSC_CFG_mskLMDMA)
++		elf_hwcap |= HWCAP_LMDMA;
++
++	if (__nds32__mfsr(NDS32_SR_MSC_CFG) & MSC_CFG_mskPFM)
++		elf_hwcap |= HWCAP_PFM;
++
++	if (__nds32__mfsr(NDS32_SR_MSC_CFG) & MSC_CFG_mskHSMP)
++		elf_hwcap |= HWCAP_HSMP;
++
++	if (__nds32__mfsr(NDS32_SR_MSC_CFG) & MSC_CFG_mskTRACE)
++		elf_hwcap |= HWCAP_TRACE;
++
++	if (__nds32__mfsr(NDS32_SR_MSC_CFG) & MSC_CFG_mskAUDIO)
++		elf_hwcap |= HWCAP_AUDIO;
++
++	if (__nds32__mfsr(NDS32_SR_MSC_CFG) & MSC_CFG_mskL2C)
++		elf_hwcap |= HWCAP_L2C;
++
++	tmp = __nds32__mfsr(NDS32_SR_CACHE_CTL);
++	if (!IS_ENABLED(CONFIG_CPU_DCACHE_DISABLE))
++		tmp |= CACHE_CTL_mskDC_EN;
++
++	if (!IS_ENABLED(CONFIG_CPU_ICACHE_DISABLE))
++		tmp |= CACHE_CTL_mskIC_EN;
++	__nds32__mtsr_isb(tmp, NDS32_SR_CACHE_CTL);
++
++	dump_cpu_info(smp_processor_id());
++}
++
++static void __init setup_memory(void)
++{
++	unsigned long ram_start_pfn;
++	unsigned long free_ram_start_pfn;
++	phys_addr_t memory_start, memory_end;
++	struct memblock_region *region;
++
++	memory_end = memory_start = 0;
++
++	/* Find main memory where is the kernel */
++	for_each_memblock(memory, region) {
++		memory_start = region->base;
++		memory_end = region->base + region->size;
++		pr_info("%s: Memory: 0x%x-0x%x\n", __func__,
++			memory_start, memory_end);
++	}
++
++	if (!memory_end) {
++		panic("No memory!");
++	}
++
++	ram_start_pfn = PFN_UP(memblock_start_of_DRAM());
++	/* free_ram_start_pfn is first page after kernel */
++	free_ram_start_pfn = PFN_UP(__pa(&_end));
++	max_pfn = PFN_DOWN(memblock_end_of_DRAM());
++	/* it could update max_pfn */
++	if (max_pfn - ram_start_pfn <= MAXMEM_PFN)
++		max_low_pfn = max_pfn;
++	else {
++		max_low_pfn = MAXMEM_PFN + ram_start_pfn;
++		if (!IS_ENABLED(CONFIG_HIGHMEM))
++			max_pfn = MAXMEM_PFN + ram_start_pfn;
++	}
++	/* high_memory is related with VMALLOC */
++	high_memory = (void *)__va(max_low_pfn * PAGE_SIZE);
++	min_low_pfn = free_ram_start_pfn;
++
++	/*
++	 * initialize the boot-time allocator (with low memory only).
++	 *
++	 * This makes the memory from the end of the kernel to the end of
++	 * RAM usable.
++	 */
++	memblock_set_bottom_up(true);
++	memblock_reserve(PFN_PHYS(ram_start_pfn), PFN_PHYS(free_ram_start_pfn - ram_start_pfn));
++
++	early_init_fdt_reserve_self();
++	early_init_fdt_scan_reserved_mem();
++
++	memblock_dump_all();
++}
++
++void __init setup_arch(char **cmdline_p)
++{
++	early_init_devtree( __dtb_start);
++
++	setup_cpuinfo();
++
++	init_mm.start_code = (unsigned long)&_stext;
++	init_mm.end_code = (unsigned long)&_etext;
++	init_mm.end_data = (unsigned long)&_edata;
++	init_mm.brk = (unsigned long)&_end;
++
++	/* setup bootmem allocator */
++	setup_memory();
++
++	/* paging_init() sets up the MMU and marks all pages as reserved */
++	paging_init();
++
++	/* use generic way to parse */
++	parse_early_param();
++
++	unflatten_and_copy_device_tree();
++
++	if(IS_ENABLED(CONFIG_VT)) {
++		if(IS_ENABLED(CONFIG_DUMMY_CONSOLE))
++			conswitchp = &dummy_con;
++	}
++
++	*cmdline_p = boot_command_line;
++	early_trap_init();
++}
++
++static int c_show(struct seq_file *m, void *v)
++{
++	int i;
++
++	seq_printf(m, "Processor\t: %c%ld (id %lu, rev %lu, cfg %lu)\n",
++		   cpu_series, cpu_id, cpu_id, cpu_rev, cpu_cfgid);
++
++	seq_printf(m, "L1I\t\t: %luKB/%luS/%luW/%luB\n",
++		   CACHE_SET(ICACHE) * CACHE_WAY(ICACHE) *
++		   CACHE_LINE_SIZE(ICACHE) / 1024, CACHE_SET(ICACHE),
++		   CACHE_WAY(ICACHE), CACHE_LINE_SIZE(ICACHE));
++
++	seq_printf(m, "L1D\t\t: %luKB/%luS/%luW/%luB\n",
++		   CACHE_SET(DCACHE) * CACHE_WAY(DCACHE) *
++		   CACHE_LINE_SIZE(DCACHE) / 1024, CACHE_SET(DCACHE),
++		   CACHE_WAY(DCACHE), CACHE_LINE_SIZE(DCACHE));
++
++	seq_printf(m, "BogoMIPS\t: %lu.%02lu\n",
++		   loops_per_jiffy / (500000 / HZ),
++		   (loops_per_jiffy / (5000 / HZ)) % 100);
++
++	/* dump out the processor features */
++	seq_puts(m, "Features\t: ");
++
++	for (i = 0; hwcap_str[i]; i++)
++		if (elf_hwcap & (1 << i))
++			seq_printf(m, "%s ", hwcap_str[i]);
++
++	seq_puts(m, "\n\n");
++
++	return 0;
++}
++
++static void *c_start(struct seq_file *m, loff_t * pos)
++{
++	return *pos < 1 ? (void *)1 : NULL;
++}
++
++static void *c_next(struct seq_file *m, void *v, loff_t * pos)
++{
++	++*pos;
++	return NULL;
++}
++
++static void c_stop(struct seq_file *m, void *v)
++{
++}
++
++struct seq_operations cpuinfo_op = {
++	.start = c_start,
++	.next = c_next,
++	.stop = c_stop,
++	.show = c_show
++};
+-- 
+2.16.1
