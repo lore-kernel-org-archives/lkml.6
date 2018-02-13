@@ -1,161 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965437AbeBMRMg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:12:36 -0500
-Received: from mga06.intel.com ([134.134.136.31]:54592 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965352AbeBMRA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:00:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,508,1511856000";
-   d="scan'208";a="18120031"
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <yehezkel.bernat@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
-        Radion Mirchevsky <radion.mirchevsky@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 14/18] thunderbolt: Move driver ready handling to struct icm
-Date: Tue, 13 Feb 2018 20:00:14 +0300
-Message-Id: <20180213170018.9780-15-mika.westerberg@linux.intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
-References: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
+        id S965491AbeBMRNL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:13:11 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44772 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965158AbeBMRNI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 12:13:08 -0500
+Date: Tue, 13 Feb 2018 07:16:08 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Will Deacon <will.deacon@arm.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs: dcache: Avoid livelock between d_alloc_parallel and
+ __d_add
+Message-ID: <20180213151608.GA17791@bombadil.infradead.org>
+References: <1518526731-26546-1-git-send-email-will.deacon@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518526731-26546-1-git-send-email-will.deacon@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Intel Titan Ridge uses slightly different format for ICM driver ready
-response, so add a new ->driver_ready() callback to struct icm and move
-the existing handling to a separate function which we then use in Falcon
-Ridge and Alpine Ridge.
+On Tue, Feb 13, 2018 at 12:58:51PM +0000, Will Deacon wrote:
+> This patch resolves the livelock by not taking hlist_bl_lock in
+> d_alloc_parallel if the sequence counter is odd, since any subsequent
+> masked comparison with i_dir_seq will fail anyway.
+> 
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Will Deacon <will.deacon@arm.com>
 
-No functional changes intended.
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/thunderbolt/icm.c     | 42 +++++++++++++++++++++++++++++++-----------
- drivers/thunderbolt/tb_msgs.h |  6 ++++--
- 2 files changed, 35 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
-index a707a3b60f90..c7cb5cd36f68 100644
---- a/drivers/thunderbolt/icm.c
-+++ b/drivers/thunderbolt/icm.c
-@@ -59,6 +59,7 @@
-  * @is_supported: Checks if we can support ICM on this controller
-  * @get_mode: Read and return the ICM firmware mode (optional)
-  * @get_route: Find a route string for given switch
-+ * @driver_ready: Send driver ready message to ICM
-  * @device_connected: Handle device connected ICM message
-  * @device_disconnected: Handle device disconnected ICM message
-  * @xdomain_connected - Handle XDomain connected ICM message
-@@ -73,6 +74,8 @@ struct icm {
- 	bool (*is_supported)(struct tb *tb);
- 	int (*get_mode)(struct tb *tb);
- 	int (*get_route)(struct tb *tb, u8 link, u8 depth, u64 *route);
-+	int (*driver_ready)(struct tb *tb,
-+			    enum tb_security_level *security_level);
- 	void (*device_connected)(struct tb *tb,
- 				 const struct icm_pkg_header *hdr);
- 	void (*device_disconnected)(struct tb *tb,
-@@ -246,6 +249,27 @@ static int icm_fr_get_route(struct tb *tb, u8 link, u8 depth, u64 *route)
- 	return ret;
- }
- 
-+static int
-+icm_fr_driver_ready(struct tb *tb, enum tb_security_level *security_level)
-+{
-+	struct icm_fr_pkg_driver_ready_response reply;
-+	struct icm_pkg_driver_ready request = {
-+		.hdr.code = ICM_DRIVER_READY,
-+	};
-+	int ret;
-+
-+	memset(&reply, 0, sizeof(reply));
-+	ret = icm_request(tb, &request, sizeof(request), &reply, sizeof(reply),
-+			  1, ICM_TIMEOUT);
-+	if (ret)
-+		return ret;
-+
-+	if (security_level)
-+		*security_level = reply.security_level & ICM_FR_SLEVEL_MASK;
-+
-+	return 0;
-+}
-+
- static int icm_fr_approve_switch(struct tb *tb, struct tb_switch *sw)
- {
- 	struct icm_fr_pkg_approve_device request;
-@@ -869,21 +893,15 @@ static void icm_handle_event(struct tb *tb, enum tb_cfg_pkg_type type,
- static int
- __icm_driver_ready(struct tb *tb, enum tb_security_level *security_level)
- {
--	struct icm_pkg_driver_ready_response reply;
--	struct icm_pkg_driver_ready request = {
--		.hdr.code = ICM_DRIVER_READY,
--	};
-+	struct icm *icm = tb_priv(tb);
- 	unsigned int retries = 50;
- 	int ret;
- 
--	memset(&reply, 0, sizeof(reply));
--	ret = icm_request(tb, &request, sizeof(request), &reply, sizeof(reply),
--			  1, ICM_TIMEOUT);
--	if (ret)
-+	ret = icm->driver_ready(tb, security_level);
-+	if (ret) {
-+		tb_err(tb, "failed to send driver ready to ICM\n");
- 		return ret;
--
--	if (security_level)
--		*security_level = reply.security_level & 0xf;
-+	}
- 
- 	/*
- 	 * Hold on here until the switch config space is accessible so
-@@ -1329,6 +1347,7 @@ struct tb *icm_probe(struct tb_nhi *nhi)
- 	case PCI_DEVICE_ID_INTEL_FALCON_RIDGE_4C_NHI:
- 		icm->is_supported = icm_fr_is_supported;
- 		icm->get_route = icm_fr_get_route;
-+		icm->driver_ready = icm_fr_driver_ready;
- 		icm->device_connected = icm_fr_device_connected;
- 		icm->device_disconnected = icm_fr_device_disconnected;
- 		icm->xdomain_connected = icm_fr_xdomain_connected;
-@@ -1344,6 +1363,7 @@ struct tb *icm_probe(struct tb_nhi *nhi)
- 		icm->is_supported = icm_ar_is_supported;
- 		icm->get_mode = icm_ar_get_mode;
- 		icm->get_route = icm_ar_get_route;
-+		icm->driver_ready = icm_fr_driver_ready;
- 		icm->device_connected = icm_fr_device_connected;
- 		icm->device_disconnected = icm_fr_device_disconnected;
- 		icm->xdomain_connected = icm_fr_xdomain_connected;
-diff --git a/drivers/thunderbolt/tb_msgs.h b/drivers/thunderbolt/tb_msgs.h
-index 476bc04cac6c..931db2a7c7b3 100644
---- a/drivers/thunderbolt/tb_msgs.h
-+++ b/drivers/thunderbolt/tb_msgs.h
-@@ -127,14 +127,16 @@ struct icm_pkg_driver_ready {
- 	struct icm_pkg_header hdr;
- };
- 
--struct icm_pkg_driver_ready_response {
-+/* Falcon Ridge & Alpine Ridge common messages */
-+
-+struct icm_fr_pkg_driver_ready_response {
- 	struct icm_pkg_header hdr;
- 	u8 romver;
- 	u8 ramver;
- 	u16 security_level;
- };
- 
--/* Falcon Ridge & Alpine Ridge common messages */
-+#define ICM_FR_SLEVEL_MASK		0xf
- 
- struct icm_fr_pkg_get_topology {
- 	struct icm_pkg_header hdr;
--- 
-2.15.1
+I wonder whether it makes sense to turn i_dir_seq into a seqcount_t,
+which would give us the lockdep checking as well.
