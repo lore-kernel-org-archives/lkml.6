@@ -1,99 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965236AbeBMQ5T (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 11:57:19 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5237 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934845AbeBMQ44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:56:56 -0500
-From: John Garry <john.garry@huawei.com>
-To: <mika.westerberg@linux.intel.com>, <rafael@kernel.org>,
-        <lorenzo.pieralisi@arm.com>, <rjw@rjwysocki.net>,
-        <hanjun.guo@linaro.org>, <robh+dt@kernel.org>, <bhelgaas@google.com>,
-        <arnd@arndb.de>, <mark.rutland@arm.com>, <olof@lixom.net>,
-        <dann.frazier@canonical.com>, <andy.shevchenko@gmail.com>,
-        <robh@kernel.org>
-CC: <joe@perches.com>, <benh@kernel.crashing.org>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linuxarm@huawei.com>, <minyard@acm.org>,
-        <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <rdunlap@infradead.org>
-Subject: [PATCH v13 8/9] LPC, ACPI: Add the HISI LPC ACPI support
-Date: Wed, 14 Feb 2018 01:45:32 +0800
-Message-ID: <1518543933-22456-9-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
-References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
+        id S965323AbeBMQ7D (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 11:59:03 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:35511 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965218AbeBMQ7B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 11:59:01 -0500
+Date: Tue, 13 Feb 2018 08:58:35 -0800
+From: tip-bot for Dou Liyang <tipbot@zytor.com>
+Message-ID: <tip-afed7d172091040f38c75a2927fed170ea11585f@git.kernel.org>
+Cc: torvalds@linux-foundation.org, peterz@infradead.org,
+        douly.fnst@cn.fujitsu.com, linux-kernel@vger.kernel.org,
+        jgross@suse.com, hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org
+Reply-To: peterz@infradead.org, linux-kernel@vger.kernel.org,
+        douly.fnst@cn.fujitsu.com, torvalds@linux-foundation.org,
+        tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org, jgross@suse.com
+In-Reply-To: <20180117034543.26723-1-douly.fnst@cn.fujitsu.com>
+References: <20180117034543.26723-1-douly.fnst@cn.fujitsu.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/apic] x86/x2apic: Mark set_x2apic_phys_mode() as __init
+Git-Commit-ID: afed7d172091040f38c75a2927fed170ea11585f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Based on the previous patches, this patch supports the LPC host on
-Hip06/Hip07 for ACPI FW.
+Commit-ID:  afed7d172091040f38c75a2927fed170ea11585f
+Gitweb:     https://git.kernel.org/tip/afed7d172091040f38c75a2927fed170ea11585f
+Author:     Dou Liyang <douly.fnst@cn.fujitsu.com>
+AuthorDate: Wed, 17 Jan 2018 11:45:43 +0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 13 Feb 2018 17:24:36 +0100
 
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
-Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
-Tested-by: Dann Frazier <dann.frazier@canonical.com>
+x86/x2apic: Mark set_x2apic_phys_mode() as __init
+
+set_x2apic_phys_mode() is only called as part of early_param()
+initialization - so mark it as __init.
+
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180117034543.26723-1-douly.fnst@cn.fujitsu.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/acpi/arm64/acpi_indirectio.c |  1 +
- drivers/bus/hisi_lpc.c               | 17 ++++++++++++++++-
- 2 files changed, 17 insertions(+), 1 deletion(-)
+ arch/x86/kernel/apic/x2apic_phys.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/arm64/acpi_indirectio.c b/drivers/acpi/arm64/acpi_indirectio.c
-index 51a1b92..52519a21 100644
---- a/drivers/acpi/arm64/acpi_indirectio.c
-+++ b/drivers/acpi/arm64/acpi_indirectio.c
-@@ -225,6 +225,7 @@ static int acpi_indirect_io_setup(struct acpi_device *adev)
+diff --git a/arch/x86/kernel/apic/x2apic_phys.c b/arch/x86/kernel/apic/x2apic_phys.c
+index f8d9d69..e2829bf 100644
+--- a/arch/x86/kernel/apic/x2apic_phys.c
++++ b/arch/x86/kernel/apic/x2apic_phys.c
+@@ -14,7 +14,7 @@ int x2apic_phys;
  
- /* All the host devices which apply indirect-IO can be listed here. */
- static const struct acpi_device_id acpi_indirect_io_host_id[] = {
-+	{"HISI0191"},
- 	{}
- };
+ static struct apic apic_x2apic_phys;
  
-diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
-index 2290cf2..6211c95 100644
---- a/drivers/bus/hisi_lpc.c
-+++ b/drivers/bus/hisi_lpc.c
-@@ -439,7 +439,13 @@ static int hisilpc_probe(struct platform_device *pdev)
- 	}
- 
- 	/* register the LPC host PIO resources */
--	{
-+	if (has_acpi_companion(dev)) {
-+		lpcdev->io_host = find_io_range_by_fwnode(dev->fwnode);
-+		if (!lpcdev->io_host) {
-+			dev_err(dev, "range not registered!\n");
-+			return -EFAULT;
-+		}
-+	} else {
- 		struct logic_pio_hwaddr *range;
- 
- 		range = devm_kzalloc(dev, sizeof(*range), GFP_KERNEL);
-@@ -496,10 +502,19 @@ static int hisilpc_probe(struct platform_device *pdev)
- 	{},
- };
- 
-+#ifdef CONFIG_ACPI
-+static const struct acpi_device_id hisilpc_acpi_match[] = {
-+	{"HISI0191", },
-+	{},
-+};
-+
-+#endif
-+
- static struct platform_driver hisilpc_driver = {
- 	.driver = {
- 		.name           = "hisi_lpc",
- 		.of_match_table = hisilpc_of_match,
-+		.acpi_match_table = ACPI_PTR(hisilpc_acpi_match),
- 	},
- 	.probe = hisilpc_probe,
- };
--- 
-1.9.1
+-static int set_x2apic_phys_mode(char *arg)
++static int __init set_x2apic_phys_mode(char *arg)
+ {
+ 	x2apic_phys = 1;
+ 	return 0;
