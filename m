@@ -1,54 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965752AbeBMUM1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 15:12:27 -0500
-Received: from mga07.intel.com ([134.134.136.100]:57867 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965619AbeBMUMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 15:12:24 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,509,1511856000";
-   d="scan'208";a="174725001"
-Date: Wed, 14 Feb 2018 04:12:14 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: Martin Brandenburg <martin@omnibond.com>
-Cc: kbuild-all@01.org, Mike Marshall <hubcap@omnibond.com>,
-        devel@lists.orangefs.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH martinbrandenburg] orangefs: orangefs_write_inode() can
- be static
-Message-ID: <20180213201214.GA8637@lkp-wsm-ep2>
-References: <201802140422.EQO7RreI%fengguang.wu@intel.com>
+        id S965763AbeBMUMi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 15:12:38 -0500
+Received: from mail-pl0-f46.google.com ([209.85.160.46]:36625 "EHLO
+        mail-pl0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965608AbeBMUMg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 15:12:36 -0500
+X-Google-Smtp-Source: AH8x2268q7DWrqwKL/AjwWyVySPPd1goDHPaBkmBimvdtH6sCvRg8liGgMpfDPzs0o3Yc+epECqGYMl9jhP981RLukw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201802140422.EQO7RreI%fengguang.wu@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <d91da249-5a0f-7a1f-cfd5-68f10f0a2fc1@oracle.com>
+References: <089e08231920353a4805618b365c@google.com> <d91da249-5a0f-7a1f-cfd5-68f10f0a2fc1@oracle.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 13 Feb 2018 21:12:15 +0100
+Message-ID: <CACT4Y+bd6Tyq672JC3GNSHPX2CEHacVKkcbKOAgpi8o-=T8DRg@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in rds_find_bound
+To: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Cc: syzbot <syzbot+93a5839deb355537440f@syzkaller.appspotmail.com>,
+        linux-rdma@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        rds-devel@oss.oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Dec 30, 2017 at 8:41 PM, santosh.shilimkar@oracle.com
+<santosh.shilimkar@oracle.com> wrote:
+> On 12/30/17 1:17 AM, syzbot wrote:
+>>
+>> Hello,
+>>
+>> syzkaller hit the following crash on
+>> fba961ab29e5ffb055592442808bb0f7962e05da
+>> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
+>> compiler: gcc (GCC) 7.1.1 20170620
+>> .config is attached
+>> Raw console output is attached.
+>> Unfortunately, I don't have any reproducer for this bug yet.
+>>
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+93a5839deb355537440f@syzkaller.appspotmail.com
+>
+>
+> Posted a fix[1] for above issue. Didn't test it but looks straight
+> forward.
 
-Fixes: 525e7273bc80 ("orangefs: let setattr write to cached inode")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
----
- super.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/orangefs/super.c b/fs/orangefs/super.c
-index 49bb1ce..c38310c 100644
---- a/fs/orangefs/super.c
-+++ b/fs/orangefs/super.c
-@@ -150,7 +150,7 @@ static void orangefs_destroy_inode(struct inode *inode)
- 	call_rcu(&inode->i_rcu, orangefs_i_callback);
- }
- 
--int orangefs_write_inode(struct inode *inode, struct writeback_control *wbc)
-+static int orangefs_write_inode(struct inode *inode, struct writeback_control *wbc)
- {
- 	struct iattr iattr;
- 	gossip_debug(GOSSIP_SUPER_DEBUG, "orangefs_write_inode\n");
+Hi Santosh,
+
+What is that fix? You forgot to provide any link/reference. I also
+don't see any patches from you at around that date...
