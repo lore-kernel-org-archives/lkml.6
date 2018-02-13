@@ -1,176 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965095AbeBMNjM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:39:12 -0500
-Received: from outbound-smtp20.blacknight.com ([46.22.139.247]:47519 "EHLO
-        outbound-smtp20.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S964822AbeBMNhc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:37:32 -0500
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 3/6] sched/fair: Do not migrate on wake_affine_weight if weights are equal
-Date: Tue, 13 Feb 2018 13:37:27 +0000
-Message-Id: <20180213133730.24064-4-mgorman@techsingularity.net>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180213133730.24064-1-mgorman@techsingularity.net>
-References: <20180213133730.24064-1-mgorman@techsingularity.net>
+        id S965105AbeBMNjT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:39:19 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57448 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964822AbeBMNjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 08:39:15 -0500
+From: Jiri Olsa <jolsa@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH] perf tests: Use arch__compare_symbol_names to compare symbols
+Date: Tue, 13 Feb 2018 14:39:12 +0100
+Message-Id: <20180213133912.2869-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wake_affine_weight() will consider migrating a task to, or near, the current
-CPU if there is a load imbalance. If the CPUs share LLC then either CPU
-is valid as a search-for-idle-sibling target and equally appropriate for
-stacking two tasks on one CPU if an idle sibling is unavailable. If they do
-not share cache then a cross-node migration potentially impacts locality
-so while they are equal from a CPU capacity point of view, they are not
-equal in terms of memory locality. In either case, it's more appropriate
-to migrate only if there is a difference in their effective load.
+The symbol search called by machine__find_kernel_symbol_by_name
+is using internally arch__compare_symbol_names function to compare
+2 symbol names, because different archs have different ways of
+comparing symbols. Mostly for skipping '.' prefixes and similar.
 
-This patch modifies wake_affine_weight to only consider migrating a task
-if there is a load imbalance for normal wakeups but will allow potential
-stacking if the loads are equal and it's a sync wakeup.
+In test 1 when we try to find matching symbols in kallsyms and
+vmlinux, by address and by symbol name. When either is found
+we compare the pair symbol names  by simple strcmp, which is not
+good enough for reasons explained in previous paragraph.
 
-For the most part, the different in performance is marginal. For example,
-on a 4-socket server running netperf UDP_STREAM on localhost the differences
-are as follows
+On powerpc this can cause lockup, because even thought we found
+the pair, the compared names are different and don't match
+simple strcmp. Following code path is executed, that leads
+to lockup:
 
-                                     4.15.0                 4.15.0
-                                      16rc0          noequal-v1r23
-Hmean     send-64         355.47 (   0.00%)      349.50 (  -1.68%)
-Hmean     send-128        697.98 (   0.00%)      693.35 (  -0.66%)
-Hmean     send-256       1328.02 (   0.00%)     1318.77 (  -0.70%)
-Hmean     send-1024      5051.83 (   0.00%)     5051.11 (  -0.01%)
-Hmean     send-2048      9637.02 (   0.00%)     9601.34 (  -0.37%)
-Hmean     send-3312     14355.37 (   0.00%)    14414.51 (   0.41%)
-Hmean     send-4096     16464.97 (   0.00%)    16301.37 (  -0.99%)
-Hmean     send-8192     26722.42 (   0.00%)    26428.95 (  -1.10%)
-Hmean     send-16384    38137.81 (   0.00%)    38046.11 (  -0.24%)
-Hmean     recv-64         355.47 (   0.00%)      349.50 (  -1.68%)
-Hmean     recv-128        697.98 (   0.00%)      693.35 (  -0.66%)
-Hmean     recv-256       1328.02 (   0.00%)     1318.77 (  -0.70%)
-Hmean     recv-1024      5051.83 (   0.00%)     5051.11 (  -0.01%)
-Hmean     recv-2048      9636.95 (   0.00%)     9601.30 (  -0.37%)
-Hmean     recv-3312     14355.32 (   0.00%)    14414.48 (   0.41%)
-Hmean     recv-4096     16464.74 (   0.00%)    16301.16 (  -0.99%)
-Hmean     recv-8192     26721.63 (   0.00%)    26428.17 (  -1.10%)
-Hmean     recv-16384    38136.00 (   0.00%)    38044.88 (  -0.24%)
-Stddev    send-64           7.30 (   0.00%)        4.75 (  34.96%)
-Stddev    send-128         15.15 (   0.00%)       22.38 ( -47.66%)
-Stddev    send-256         13.99 (   0.00%)       19.14 ( -36.81%)
-Stddev    send-1024       105.73 (   0.00%)       67.38 (  36.27%)
-Stddev    send-2048       294.57 (   0.00%)      223.88 (  24.00%)
-Stddev    send-3312       302.28 (   0.00%)      271.74 (  10.10%)
-Stddev    send-4096       195.92 (   0.00%)      121.10 (  38.19%)
-Stddev    send-8192       399.71 (   0.00%)      563.77 ( -41.04%)
-Stddev    send-16384     1163.47 (   0.00%)     1103.68 (   5.14%)
-Stddev    recv-64           7.30 (   0.00%)        4.75 (  34.96%)
-Stddev    recv-128         15.15 (   0.00%)       22.38 ( -47.66%)
-Stddev    recv-256         13.99 (   0.00%)       19.14 ( -36.81%)
-Stddev    recv-1024       105.73 (   0.00%)       67.38 (  36.27%)
-Stddev    recv-2048       294.59 (   0.00%)      223.89 (  24.00%)
-Stddev    recv-3312       302.24 (   0.00%)      271.75 (  10.09%)
-Stddev    recv-4096       196.03 (   0.00%)      121.14 (  38.20%)
-Stddev    recv-8192       399.86 (   0.00%)      563.65 ( -40.96%)
-Stddev    recv-16384     1163.79 (   0.00%)     1103.86 (   5.15%)
+   - we find the pair in kallsyms by sym->start
+next_pair:
+   - we compare the names and it fails
+   - we find the pair by sym->name
+   - the pair addresses match so we call goto next_pair
+     because we assume the names match in this case
 
-The difference in overall performance is marginal but note that most
-measurements are less variable. There were similar observations for other
-netperf comparisons. hackbench with sockets or threads with processes or
-threads showed minor difference with some reduction of migration. tbench
-showed only marginal differences that were within the noise. dbench,
-regardless of filesystem, showed minor differences all of which are
-within noise. Multiple machines, both UMA and NUMA were tested without
-any regressions showing up.
-
-The biggest risk with a patch like this is affecting wakeup latencies.
-However, the schbench load from Facebook which is very sensitive to wakeup
-latency showed a mixed result with mostly improvements in wakeup latency
-
-                                     4.15.0                 4.15.0
-                                      16rc0          noequal-v1r23
-Lat 50.00th-qrtle-1        38.00 (   0.00%)       38.00 (   0.00%)
-Lat 75.00th-qrtle-1        49.00 (   0.00%)       41.00 (  16.33%)
-Lat 90.00th-qrtle-1        52.00 (   0.00%)       50.00 (   3.85%)
-Lat 95.00th-qrtle-1        54.00 (   0.00%)       51.00 (   5.56%)
-Lat 99.00th-qrtle-1        63.00 (   0.00%)       60.00 (   4.76%)
-Lat 99.50th-qrtle-1        66.00 (   0.00%)       61.00 (   7.58%)
-Lat 99.90th-qrtle-1        78.00 (   0.00%)       65.00 (  16.67%)
-Lat 50.00th-qrtle-2        38.00 (   0.00%)       38.00 (   0.00%)
-Lat 75.00th-qrtle-2        42.00 (   0.00%)       43.00 (  -2.38%)
-Lat 90.00th-qrtle-2        46.00 (   0.00%)       48.00 (  -4.35%)
-Lat 95.00th-qrtle-2        49.00 (   0.00%)       50.00 (  -2.04%)
-Lat 99.00th-qrtle-2        55.00 (   0.00%)       57.00 (  -3.64%)
-Lat 99.50th-qrtle-2        58.00 (   0.00%)       60.00 (  -3.45%)
-Lat 99.90th-qrtle-2        65.00 (   0.00%)       68.00 (  -4.62%)
-Lat 50.00th-qrtle-4        41.00 (   0.00%)       41.00 (   0.00%)
-Lat 75.00th-qrtle-4        45.00 (   0.00%)       46.00 (  -2.22%)
-Lat 90.00th-qrtle-4        50.00 (   0.00%)       50.00 (   0.00%)
-Lat 95.00th-qrtle-4        54.00 (   0.00%)       53.00 (   1.85%)
-Lat 99.00th-qrtle-4        61.00 (   0.00%)       61.00 (   0.00%)
-Lat 99.50th-qrtle-4        65.00 (   0.00%)       64.00 (   1.54%)
-Lat 99.90th-qrtle-4        76.00 (   0.00%)       82.00 (  -7.89%)
-Lat 50.00th-qrtle-8        48.00 (   0.00%)       46.00 (   4.17%)
-Lat 75.00th-qrtle-8        55.00 (   0.00%)       54.00 (   1.82%)
-Lat 90.00th-qrtle-8        60.00 (   0.00%)       59.00 (   1.67%)
-Lat 95.00th-qrtle-8        63.00 (   0.00%)       63.00 (   0.00%)
-Lat 99.00th-qrtle-8        71.00 (   0.00%)       69.00 (   2.82%)
-Lat 99.50th-qrtle-8        74.00 (   0.00%)       73.00 (   1.35%)
-Lat 99.90th-qrtle-8        98.00 (   0.00%)       90.00 (   8.16%)
-Lat 50.00th-qrtle-16       56.00 (   0.00%)       55.00 (   1.79%)
-Lat 75.00th-qrtle-16       68.00 (   0.00%)       67.00 (   1.47%)
-Lat 90.00th-qrtle-16       77.00 (   0.00%)       78.00 (  -1.30%)
-Lat 95.00th-qrtle-16       82.00 (   0.00%)       84.00 (  -2.44%)
-Lat 99.00th-qrtle-16       90.00 (   0.00%)       93.00 (  -3.33%)
-Lat 99.50th-qrtle-16       93.00 (   0.00%)       97.00 (  -4.30%)
-Lat 99.90th-qrtle-16      110.00 (   0.00%)      110.00 (   0.00%)
-Lat 50.00th-qrtle-32       68.00 (   0.00%)       62.00 (   8.82%)
-Lat 75.00th-qrtle-32       90.00 (   0.00%)       83.00 (   7.78%)
-Lat 90.00th-qrtle-32      110.00 (   0.00%)      100.00 (   9.09%)
-Lat 95.00th-qrtle-32      122.00 (   0.00%)      111.00 (   9.02%)
-Lat 99.00th-qrtle-32      145.00 (   0.00%)      133.00 (   8.28%)
-Lat 99.50th-qrtle-32      154.00 (   0.00%)      143.00 (   7.14%)
-Lat 99.90th-qrtle-32     2316.00 (   0.00%)      515.00 (  77.76%)
-Lat 50.00th-qrtle-35       69.00 (   0.00%)       72.00 (  -4.35%)
-Lat 75.00th-qrtle-35       92.00 (   0.00%)       95.00 (  -3.26%)
-Lat 90.00th-qrtle-35      111.00 (   0.00%)      114.00 (  -2.70%)
-Lat 95.00th-qrtle-35      122.00 (   0.00%)      124.00 (  -1.64%)
-Lat 99.00th-qrtle-35      142.00 (   0.00%)      144.00 (  -1.41%)
-Lat 99.50th-qrtle-35      150.00 (   0.00%)      154.00 (  -2.67%)
-Lat 99.90th-qrtle-35     6104.00 (   0.00%)     5640.00 (   7.60%)
-
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Link: http://lkml.kernel.org/n/tip-7m91et46nmwdnsr4dkkiw00j@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- kernel/sched/fair.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ tools/perf/tests/vmlinux-kallsyms.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index c1091cb023c4..28c8d9c91955 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5747,7 +5747,16 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
- 		prev_eff_load *= 100 + (sd->imbalance_pct - 100) / 2;
- 	prev_eff_load *= capacity_of(this_cpu);
+diff --git a/tools/perf/tests/vmlinux-kallsyms.c b/tools/perf/tests/vmlinux-kallsyms.c
+index 58349297f9fb..1e5adb65632a 100644
+--- a/tools/perf/tests/vmlinux-kallsyms.c
++++ b/tools/perf/tests/vmlinux-kallsyms.c
+@@ -125,7 +125,7 @@ int test__vmlinux_matches_kallsyms(struct test *test __maybe_unused, int subtest
  
--	return this_eff_load <= prev_eff_load ? this_cpu : nr_cpumask_bits;
-+	/*
-+	 * If sync, adjust the weight of prev_eff_load such that if
-+	 * prev_eff == this_eff that select_idle_sibling will consider
-+	 * stacking the wakee on top of the waker if no other CPU is
-+	 * idle.
-+	 */
-+	if (sync)
-+		prev_eff_load += 1;
-+
-+	return this_eff_load < prev_eff_load ? this_cpu : nr_cpumask_bits;
- }
- 
- static int wake_affine(struct sched_domain *sd, struct task_struct *p,
+ 		if (pair && UM(pair->start) == mem_start) {
+ next_pair:
+-			if (strcmp(sym->name, pair->name) == 0) {
++			if (arch__compare_symbol_names(sym->name, pair->name) == 0) {
+ 				/*
+ 				 * kallsyms don't have the symbol end, so we
+ 				 * set that by using the next symbol start - 1,
 -- 
-2.15.1
+2.13.6
