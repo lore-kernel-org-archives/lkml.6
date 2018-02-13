@@ -1,79 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965082AbeBMPTk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 10:19:40 -0500
-Received: from mail-yw0-f182.google.com ([209.85.161.182]:32849 "EHLO
-        mail-yw0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964828AbeBMPTg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 10:19:36 -0500
-X-Google-Smtp-Source: AH8x227n/PLVCB+/0d5JBaVIMNuUwrKUD6vK+/oA14aaNOvU+WMFo6AMksNFYiAFUUQ93gqX4D/qtODKDqCPTMSZVnE=
+        id S965118AbeBMPUF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 10:20:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36224 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964828AbeBMPUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 10:20:03 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39705217B9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AH8x225zQc1HXmLDlgyeHQ6HISSu0wG2JVBPZxkQMWff6XnBjcm/4lag8UTa+hFivz05emqtNO4mKWyCFo+hYwahClk=
 MIME-Version: 1.0
-In-Reply-To: <20180213081713.GA8239@wunner.de>
-References: <cover.1518338788.git.lukas@wunner.de> <CAHbf0-Fhi9j5H7VTxF84SENQph+UQE2zRbi2Q-u_DAMh6x+eSg@mail.gmail.com>
- <20180211192314.GA22869@wunner.de> <20180211194154.GB22869@wunner.de>
- <CAHbf0-HSNJmXs_Nm+bbcfUifoLEpFsMSpM96a-pVfLFMNz3GFw@mail.gmail.com>
- <20180212033947.GA19049@wunner.de> <CAHbf0-GFdw9M8rv0+xHms9_HdcK_cgHak7G1ugtz0ch1_k6=vQ@mail.gmail.com>
- <20180212094500.22nvzzzpy6vrbqgc@wunner.de> <CADnq5_OaLNDZ10wzaqKGKkkjGVNLSTBPP76tch0aJY_mJ-EV4Q@mail.gmail.com>
- <20180213081713.GA8239@wunner.de>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 13 Feb 2018 10:19:35 -0500
-Message-ID: <CADnq5_PSLqiZvYAc4DewM6cXEgsp_Qtkt27VWY_8Oro68GiozQ@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Fix deadlock on runtime suspend in DRM drivers
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Mike Lothian <mike@fireburn.co.uk>,
-        Ismo Toijala <ismo.toijala@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        nouveau <nouveau@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Maling list - DRI developers
-        <dri-devel@lists.freedesktop.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Ben Skeggs <bskeggs@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Dave Airlie <airlied@redhat.com>, Liviu Dudau <Liviu.Dudau@arm.com>,
-        Peter Wu <peter@lekensteyn.nl>
+In-Reply-To: <d55f95cc-228b-e65f-b46c-2f314f4fa582@gmail.com>
+References: <63f25fea-f163-f9cc-b5b2-f6f291d7f8d2@gmx.de> <d55f95cc-228b-e65f-b46c-2f314f4fa582@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 13 Feb 2018 09:19:41 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJXJA+Z7b6SoUx=MVK_C=vcMRAibapriOi+Wss6L1ahsw@mail.gmail.com>
+Message-ID: <CAL_JsqJXJA+Z7b6SoUx=MVK_C=vcMRAibapriOi+Wss6L1ahsw@mail.gmail.com>
+Subject: Re: RFC: build config via DT names
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: "Enrico Weigelt, metux IT consult" <metux@gmx.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 3:17 AM, Lukas Wunner <lukas@wunner.de> wrote:
-> On Mon, Feb 12, 2018 at 01:58:32PM -0500, Alex Deucher wrote:
->> On Mon, Feb 12, 2018 at 4:45 AM, Lukas Wunner <lukas@wunner.de> wrote:
->> > On Mon, Feb 12, 2018 at 09:03:26AM +0000, Mike Lothian wrote:
->> >> On 12 February 2018 at 03:39, Lukas Wunner <lukas@wunner.de> wrote:
->> >> > On Mon, Feb 12, 2018 at 12:35:51AM +0000, Mike Lothian wrote:
->> >> > > I've not been able to reproduce the original problem you're trying to
->> >> > > solve on amdgpu thats with or without your patch set and the above
->> >> > > "trigger" too
->> >
->> > Okay the reason you're not seeing deadlocks is because the output poll
->> > worker is not enabled.  And the output poll worker is not enabled
->> > because your discrete GPU doesn't have any outputs:
->> >
->> > [    0.265568] [drm:dc_create] *ERROR* DC: Number of connectors is zero!
->> >
->> > The outputs are only polled if there are connectors which have the
->> > DRM_CONNECTOR_POLL_CONNECT or DRM_CONNECTOR_POLL_DISCONNECT flag set.
->> > And that only ever seems to be the case for VGA and DVI.
->> >
->> > We know based on bugzilla reports that hybrid graphics laptops do exist
->> > which poll outputs with radeon and nouveau.  If there are no laptops
->> > supported by amdgpu whose discrete GPU has polled connectors, then
->> > patch [5/5] would be unnecessary.  That is for Alex to decide.
->>
->> Most hybrid laptops don't have display connectors on the dGPU and we
->> only use polling on analog connectors, so you are not likely to run
->> into this on recent laptops.  That said, I don't know if there is some
->> OEM system out there with a VGA port on the dGPU in a hybrid laptop.
->> I guess another option is to just disable polling on hybrid laptops.
+On Mon, Feb 12, 2018 at 5:13 PM, Frank Rowand <frowand.list@gmail.com> wrote:
+> + devicetree mail list
 >
-> If we don't know for sure, applying patch [5/5] would seem to be the
-> safest approach.  (Assuming it doesn't break anything else.)
+> On 02/10/18 07:52, Enrico Weigelt, metux IT consult wrote:
+>> Hi folks,
+>>
+>> I've regularily have the task of configuring a kernel for a given DT.
+>> To make this a little bit easier, I'd like to do this automatically.
+>>
+>> The tuff task here is getting a mapping between dt compatible strings
+>> and corresponding CONFIG_* flags. Automatically extracting it from the
+>> source code seems pretty tricky, especially w/ corner cases (eg. some
+>> drivers support groups of devices, depending on config options) - IMHO
+>> it will need some code changes anyways.
+>>
+>> Therefore I propose a simple approach using the existing Kconfig system:
+>>
+>> Add an extra (toplevel) menu and config flag naming scheme which
+>> directly map DT compatible strings to config flags. For example:
+>>
+>>> fsl,mpc5200-gpio <=> CONFIG_DTDEV_FSL_MPC5200_GPIO
+>>
+>>> config CONFIG_DTDEV_FSL_MPC5200_GPIO
+>>>    tristate "fsl,mpc5200-gpio"
+>>>    select GPIO_MPC5200
+>>
+>> Note that these flags are separate from the actual drivers - they just
+>> enable them automatically. Of course they'll have to be maintained by
+>> the driver maintainers.
+>>
+>>
+>> What do you think about this idea ?
 
+Doubling the number of driver config options is not going to fly. How
+would you handle multiple compatible strings per driver? We want fewer
+config options, not more.
 
-I don't have any objections.  I see no reason to leave out the amdgpu changes.
+We have all the data, so we should be able to generate this which
+dt_to_config tries to do. I think part of the problem is dt_to_config
+works at the source level for everything. Really we need a more robust
+way to map source files to config options and extracting match tables
+from drivers. Perhaps doing the latter with coccinelle which can match
+struct types, using the object files instead, or using module aliases
+(though that doesn't work for built-in drivers).
 
-Alex
+Rob
