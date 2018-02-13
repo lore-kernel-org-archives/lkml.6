@@ -1,43 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965080AbeBMOm0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 09:42:26 -0500
-Received: from mail-pg0-f45.google.com ([74.125.83.45]:43642 "EHLO
-        mail-pg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935370AbeBMOmY (ORCPT
+        id S965116AbeBMOnA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 09:43:00 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:46975 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935243AbeBMOm7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 09:42:24 -0500
-X-Google-Smtp-Source: AH8x224TNGYhfhwwWmiU64cLULT0WNO+xlrusPPTKLYIV9A+nYXQLTP90LSbTvkhEo/WNDm9pszkcg==
-Subject: Re: [PATCH v2 RESENT] blk: optimization for classic polling
-To: Nitesh Shetty <nj.shetty@samsung.com>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: linux-nvme@lists.infradead.org, joshi.k@samsung.com
-References: <3578876466-3733-1-git-send-email-nj.shetty@samsung.com>
- <CGME20180213082701epcas1p4d92a86f127a0918fb9d62120bd121cb6@epcas1p4.samsung.com>
- <1518548206-4766-1-git-send-email-nj.shetty@samsung.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <620867e2-2a0c-5c32-10c6-7cc5268ac944@kernel.dk>
-Date: Tue, 13 Feb 2018 07:42:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:58.0) Gecko/20100101
- Thunderbird/58.0
+        Tue, 13 Feb 2018 09:42:59 -0500
+X-Google-Smtp-Source: AH8x2266qyIQ9EtBlkb9GE/0c3+6dl4Eyhhfdd6cOxuGm2ahlX+sEQehQ7CzJqGWQOX3gq9/+4l2sA==
+Subject: Re: drivers/watchdog/rave-sp-wdt.c:278: undefined reference to
+ `nvmem_cell_get'
+To: Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+Cc: kbuild test robot <fengguang.wu@intel.com>, kbuild-all@01.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+References: <201802131728.QBRqHsyy%fengguang.wu@intel.com>
+ <20180213093013.rsoprhs5aoimyy2r@dell>
+ <CAHQ1cqHrTU+=tTxn_no-AdHLMi_j4-gDKLKCkaAuOF=v4TAHmg@mail.gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <8f269408-8234-3ad8-01b4-eb5114a8cc5e@roeck-us.net>
+Date: Tue, 13 Feb 2018 06:42:56 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1518548206-4766-1-git-send-email-nj.shetty@samsung.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAHQ1cqHrTU+=tTxn_no-AdHLMi_j4-gDKLKCkaAuOF=v4TAHmg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/13/18 11:56 AM, Nitesh Shetty wrote:
-> This removes the dependency on interrupts to wake up task. Set task
-> state as TASK_RUNNING, if need_resched() returns true,
-> while polling for IO completion.
-> Earlier, polling task used to sleep, relying on interrupt to wake it up.
-> This made some IO take very long when interrupt-coalescing is enabled in
-> NVMe.
+On 02/13/2018 06:20 AM, Andrey Smirnov wrote:
+> On Tue, Feb 13, 2018 at 1:30 AM, Lee Jones <lee.jones@linaro.org> wrote:
+>> On Tue, 13 Feb 2018, kbuild test robot wrote:
+>>
+>>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+>>> head:   178e834c47b0d01352c48730235aae69898fbc02
+>>> commit: c3bb333457218ca4ed9553be47c0f567b4ef8a38 watchdog: Add RAVE SP watchdog driver
+>>> date:   5 weeks ago
+>>> config: x86_64-randconfig-u0-02131401 (attached as .config)
+>>> compiler: gcc-5 (Debian 5.5.0-3) 5.4.1 20171010
+>>> reproduce:
+>>>          git checkout c3bb333457218ca4ed9553be47c0f567b4ef8a38
+>>>          # save the attached .config to linux build tree
+>>>          make ARCH=x86_64
+>>>
+>>> All errors (new ones prefixed by >>):
+>>>
+>>>     drivers/watchdog/rave-sp-wdt.o: In function `rave_sp_wdt_probe':
+>>>>> drivers/watchdog/rave-sp-wdt.c:278: undefined reference to `nvmem_cell_get'
+>>>>> drivers/watchdog/rave-sp-wdt.c:281: undefined reference to `nvmem_cell_read'
+>>>>> drivers/watchdog/rave-sp-wdt.c:287: undefined reference to `nvmem_cell_put'
+>>>     make[2]: *** [vmlinux] Error 1
+>>
+>> Looks like the RAVE Watchdog driver should select NVMEM?
+>>
+> 
+> AFAICT, this is happening when RAVE SP core and watchdog drivers are
+> built as built-in and NVMEM is selected as module. Looking at other
+> users on NVMEM in the kernel is seems that the pattern to prevent this
+> problem is to add "depends on NVMEM || !NVMEM" line to consumer's
+> Kconfig entry.
+> 
+> I'll submit a patch to that effect shortly.
+> 
 
-__set_current_state() should suffice here.
+Actually, no need to send it. Arnd Bergmann sent the patch already back in January,
+only for some reason it got lost in the commit window. I'll discuss with Wim how
+to send it upstream.
 
--- 
-Jens Axboe
+Guenter
