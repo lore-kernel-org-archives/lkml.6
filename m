@@ -1,113 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935182AbeBMMlN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:41:13 -0500
-Received: from mail-wr0-f179.google.com ([209.85.128.179]:34699 "EHLO
-        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934971AbeBMMlL (ORCPT
+        id S935131AbeBMMnc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:43:32 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:42256 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934971AbeBMMnb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:41:11 -0500
-X-Google-Smtp-Source: AH8x224uCcdXS6zmQ6wlKRCK4Qo93qlFbeObHj1Hcu4aQXVWGvpw9p+98VAdOmkNGGbwSlq3Q1P24Q==
-Date: Tue, 13 Feb 2018 13:41:06 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Andi Kleen <ak@linux.intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH v3 8/7] TESTING_ONLY x86/entry: reduce static footprint
- of idtentry
-Message-ID: <20180213124106.ycilgvmkwv2mrjt6@gmail.com>
-References: <20180211104949.12992-1-linux@dominikbrodowski.net>
- <20180211104949.12992-9-linux@dominikbrodowski.net>
- <20180212093742.6tj57fh7zagio3yj@gmail.com>
- <CA+55aFwLTF3EtaQ4OpDv2UM41J=EU7gfemv=eVq+uQi31-usSg@mail.gmail.com>
+        Tue, 13 Feb 2018 07:43:31 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/4] arm64: dts: renesas: r8a77995: add VSPBS instance
+Date: Tue, 13 Feb 2018 14:44:01 +0200
+Message-ID: <6763077.5Ag4QoQhv0@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1518474330-8713-4-git-send-email-kbingham@kernel.org>
+References: <1518474330-8713-1-git-send-email-kbingham@kernel.org> <1518474330-8713-4-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFwLTF3EtaQ4OpDv2UM41J=EU7gfemv=eVq+uQi31-usSg@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Kieran,
 
-* Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Thank you for the patch.
 
-> On Mon, Feb 12, 2018 at 1:37 AM, Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > Ok, so this does not look _that_ complicated, and the .text savings are
-> > significant:
+On Tuesday, 13 February 2018 00:25:28 EET Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > 
-> Honestly, I think we should do it. 3kB of assembly code is noticeable.
+> The r8a77995 has a VSPBS to support image processing such as blending of
+> 2 input images.
 > 
-> Also, that patch actually allows more cleanups and simplifications.
-> Look at the "interrupt" macro, which is used by 'apicinterrupt3', and
-> has a number of uses that way.
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
-> That code could be unified a lot, right now it does:
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> b/arch/arm64/boot/dts/renesas/r8a77995.dtsi index
+> 196a917afea6..50c891f6649f 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> @@ -692,6 +692,16 @@
+>  			status = "disabled";
+>  		};
 > 
->         testb   $3, CS-ORIG_RAX(%rsp)
->         jz      1f
->         SWAPGS
->         call    switch_to_thread_stack
-> 1:
-> 
->         ALLOC_PT_GPREGS_ON_STACK
->         SAVE_C_REGS
->         SAVE_EXTRA_REGS
->         ENCODE_FRAME_POINTER
-> 
->         testb   $3, CS(%rsp)
->         jz      1f
-> 
->         /*
->          * IRQ from user mode.
->          *
->          * We need to tell lockdep that IRQs are off.  We can't do this until
->          * we fix gsbase, and we should do it before enter_from_user_mode
->          * (which can take locks).  Since TRACE_IRQS_OFF idempotent,
->          * the simplest way to handle it is to just call it twice if
->          * we enter from user mode.  There's no reason to optimize this since
->          * TRACE_IRQS_OFF is a no-op if lockdep is off.
->          */
->         TRACE_IRQS_OFF
-> 
->         CALL_enter_from_user_mode
-> 
-> 1:
->         ENTER_IRQ_STACK old_rsp=%rdi
->         /* We entered an interrupt context - irqs are off: */
->         TRACE_IRQS_OFF
-> 
-> and *all* of that could be in a helper function rather than be
-> duplicated. and the apicinterrupt3 macro should end up just expanding
-> to
-> 
->         callq helper
->         pushq $~(\num)
->         callq \fn
->         jmp ret_from_intr
-> 
-> instead of expanding to all that code.
-> 
-> But that would require that same "save_ret" logic.
-> 
-> So it's not just the idtentry cases that can use this trick.
-> 
-> I admit that the trick isn't pretty, but it's not *horribly* ugly either.
+> +		vspbs: vsp@fe960000 {
+> +			compatible = "renesas,vsp2";
+> +			reg = <0 0xfe960000 0 0x4000>;
 
-Ok, agreed!
+Unless I'm mistaken the VSPD instance has a CLUT on RPF2, so you need to 
+extend the memory region to include it. It's probably safe to set the size to 
+0x8000 to include the whole VSP memory region, even if most of the 
+0x4000-0x7fff range is not used.
 
-Dominik, could you please do this on top latest tip:master? I have applied all the 
-other patches. Note that patch #8 now conflicts with recent annotation fixes.
+It seems that r8a7795 and r8a7796 suffer from the same issue upstream, they 
+should be fixed.
 
-Thanks,
+Apart from that,
 
-	Ingo
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> +			interrupts = <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 627>;
+> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> +			resets = <&cpg 627>;
+> +			renesas,fcp = <&fcpvb0>;
+> +		};
+> +
+>  		fcpvb0: fcp@fe96f000 {
+>  			compatible = "renesas,fcpv";
+>  			reg = <0 0xfe96f000 0 0x200>;
+
+-- 
+Regards,
+
+Laurent Pinchart
