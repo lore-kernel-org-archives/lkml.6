@@ -1,209 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966172AbeBMXte (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 18:49:34 -0500
+        id S966261AbeBMXxt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 18:53:49 -0500
 Received: from mga17.intel.com ([192.55.52.151]:53392 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966064AbeBMXtc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 18:49:32 -0500
+        id S966139AbeBMXtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 18:49:33 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,509,1511856000";
-   d="scan'208";a="29822289"
+   d="scan'208";a="29822311"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com
 Cc: gavin.hindman@intel.com, vikas.shivappa@linux.intel.com,
         dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: [RFC PATCH V2 00/22]  Intel(R) Resource Director Technology Cache Pseudo-Locking enabling
-Date: Tue, 13 Feb 2018 07:46:44 -0800
-Message-Id: <cover.1518443616.git.reinette.chatre@intel.com>
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: [RFC PATCH V2 05/22] x86/intel_rdt: Print more accurate pseudo-locking availability
+Date: Tue, 13 Feb 2018 07:46:49 -0800
+Message-Id: <9057ea509f1e7b5b10d695c176622214753cb41a.1518443616.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1518443616.git.reinette.chatre@intel.com>
+References: <cover.1518443616.git.reinette.chatre@intel.com>
+In-Reply-To: <cover.1518443616.git.reinette.chatre@intel.com>
+References: <cover.1518443616.git.reinette.chatre@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding MM maintainers to v2 to share the new MM change (patch 21/22) that
-enables large contiguous regions that was created to support large Cache
-Pseudo-Locked regions (patch 22/22). This week MM team received another
-proposal to support large contiguous allocations ("[RFC PATCH 0/3]
-Interface for higher order contiguous allocations" at
-http://lkml.kernel.org/r/20180212222056.9735-1-mike.kravetz@oracle.com).
-I have not yet tested with this new proposal but it does seem appropriate
-and I should be able to rework patch 22 from this series on top of that if
-it is accepted instead of what I have in patch 21 of this series.
+A region of cache is considered available for pseudo-locking when:
+ * Cache area is in use by default COS.
+ * Cache area is NOT in use by any other (other than default) COS.
+ * Cache area is not shared with any other entity. Specifically, the
+   cache area does not appear in "Bitmask of Shareable Resource with Other
+   executing entities" found in EBX during CAT enumeration.
+ * Cache area is not currently pseudo-locked.
 
-Changes since v1:
-- Enable allocation of contiguous regions larger than what SLAB allocators
-  can support. This removes the 4MB Cache Pseudo-Locking limitation
-  documented in v1 submission.
-  This depends on "mm: drop hotplug lock from lru_add_drain_all",
-  now in v4.16-rc1 as 9852a7212324fd25f896932f4f4607ce47b0a22f.
-- Convert to debugfs_file_get() and -put() from the now obsolete
-  debugfs_use_file_start() and debugfs_use_file_finish() calls.
-- Rebase on top of, and take into account, recent L2 CDP enabling.
-- Simplify tracing output to print cache hits and miss counts on same line.
+At this time the first three tests are possible and we update the "avail"
+file associated with pseudo-locking to print a more accurate reflection
+of pseudo-locking availability.
 
-This version is based on x86/cache of tip.git when the HEAD was
-(based on v4.15-rc8):
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 62 ++++++++++++++++++++++++++++-
+ 1 file changed, 61 insertions(+), 1 deletion(-)
 
-commit 31516de306c0c9235156cdc7acb976ea21f1f646
-Author: Fenghua Yu <fenghua.yu@intel.com>
-Date:   Wed Dec 20 14:57:24 2017 -0800
-
-    x86/intel_rdt: Add command line parameter to control L2_CDP
-
-Cc: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-
-No changes below. It is verbatim from first submission (except for
-diffstat at the end that reflects v2).
-
-Dear Maintainers,
-
-Cache Allocation Technology (CAT), part of Intel(R) Resource Director
-Technology (Intel(R) RDT), enables a user to specify the amount of cache
-space into which an application can fill. Cache pseudo-locking builds on
-the fact that a CPU can still read and write data pre-allocated outside
-its current allocated area on cache hit. With cache pseudo-locking data
-can be preloaded into a reserved portion of cache that no application can
-fill, and from that point on will only serve cache hits. The cache
-pseudo-locked memory is made accessible to user space where an application
-can map it into its virtual address space and thus have a region of
-memory with reduced average read latency.
-
-The cache pseudo-locking approach relies on generation-specific behavior
-of processors. It may provide benefits on certain processor generations,
-but is not guaranteed to be supported in the future. It is not a guarantee
-that data will remain in the cache. It is not a guarantee that data will
-remain in certain levels or certain regions of the cache. Rather, cache
-pseudo-locking increases the probability that data will remain in a certain
-level of the cache via carefully configuring the CAT feature and carefully
-controlling application behavior.
-
-Known limitations:
-Instructions like INVD, WBINVD, CLFLUSH, etc. can still evict pseudo-locked
-memory from the cache. Power management C-states may still shrink or power
-off cache causing eviction of cache pseudo-locked memory. We utilize
-PM QoS to prevent entering deeper C-states on cores associated with cache
-pseudo-locked regions at the time they (the pseudo-locked regions) are
-created.
-
-Known software limitation:
-Cache pseudo-locked regions are currently limited to 4MB, even on
-platforms that support larger cache sizes. Work is in progress to
-support larger regions.
-
-Graphs visualizing the benefits of cache pseudo-locking on an Intel(R)
-NUC NUC6CAYS (it has an Intel(R) Celeron(R) Processor J3455) with the
-default 2GB DDR3L-1600 memory are available. In these tests the patches
-from this series were applied on the x86/cache branch of tip.git at the
-time the HEAD was:
-
-commit 87943db7dfb0c5ee5aa74a9ac06346fadd9695c8 (tip/x86/cache)
-Author: Reinette Chatre <reinette.chatre@intel.com>
-Date:   Fri Oct 20 02:16:59 2017 -0700
-    x86/intel_rdt: Fix potential deadlock during resctrl mount
-
-DISCLAIMER: Tests document performance of components on a particular test,
-in specific systems. Differences in hardware, software, or configuration
-will affect actual performance. Performance varies depending on system
-configuration.
-
-- https://github.com/rchatre/data/blob/master/cache_pseudo_locking/rfc_v1/perfcount.png
-Above shows the few L2 cache misses possible with cache pseudo-locking
-on the Intel(R) NUC with default configuration. Each test, which is
-repeated 100 times, pseudo-locks schemata shown and then measure from
-the kernel via precision counters the number of cache misses when
-accessing the memory afterwards. This test is run on an idle system as
-well as a system with significant noise (using stress-ng) from a
-neighboring core associated with the same cache. This plot shows us that:
-(1) the number of cache misses remain consistent irrespective of the size
-of region being pseudo-locked, and (2) the number of cache misses for a
-pseudo-locked region remains low when traversing memory regions ranging
-in size from 256KB (4096 cache lines) to 896KB (14336 cache lines).
-
-- https://github.com/rchatre/data/blob/master/cache_pseudo_locking/rfc_v1/userspace_malloc_with_load.png
-Above shows the read latency experienced by an application running with
-default CAT CLOS after it allocated 256KB memory with malloc() (and using
-mlockall()). In this example the application reads randomly (to not trigger
-hardware prefetcher) from its entire allocated region at 2 second intervals
-while there is a noisy neighbor present. Each individual access is 32 bytes
-in size and the latency of each access is measured using the rdtsc
-instruction. In this visualization we can observe two groupings of data,
-the group with lower latency indicating cache hits, and the group with
-higher latency indicating cache misses. We can see a significant portion
-of memory reads experience larger latencies.
-
-- https://github.com/rchatre/data/blob/master/cache_pseudo_locking/rfc_v1/userspace_psl_with_load.png
-Above plots a similar test as the previous, but instead of the application
-reading from a 256KB malloc() region it reads from a 256KB pseudo-locked
-region that was mmap()'ed into its address space. When comparing these
-latencies to that of regular malloc() latencies we do see a significant
-improvement in latencies experienced.
-
-https://github.com/rchatre/data/blob/master/cache_pseudo_locking/rfc_v1/userspace_malloc_and_cat_with_load_clos0_fixed.png
-Applications that are sensitive to latencies may use existing CAT
-technology to isolate the sensitive application. In this plot we show an
-application running with a dedicated CAT CLOS double the size (512KB) of
-the memory being tested (256KB). A dedicated CLOS with CBM 0x0f is created and
-the default CLOS changed to CBM 0xf0. We see in this plot that even though
-the application runs within a dedicated portion of cache it still
-experiences significant latency accessing its memory (when compared to
-pseudo-locking).
-
-Your feedback about this proposal for enabling of Cache Pseudo-Locking
-will be greatly appreciated.
-
-Regards,
-
-Reinette
-
-Reinette Chatre (22):
-  x86/intel_rdt: Documentation for Cache Pseudo-Locking
-  x86/intel_rdt: Make useful functions available internally
-  x86/intel_rdt: Introduce hooks to create pseudo-locking files
-  x86/intel_rdt: Introduce test to determine if closid is in use
-  x86/intel_rdt: Print more accurate pseudo-locking availability
-  x86/intel_rdt: Create pseudo-locked regions
-  x86/intel_rdt: Connect pseudo-locking directory to operations
-  x86/intel_rdt: Introduce pseudo-locking resctrl files
-  x86/intel_rdt: Discover supported platforms via prefetch disable bits
-  x86/intel_rdt: Disable pseudo-locking if CDP enabled
-  x86/intel_rdt: Associate pseudo-locked regions with its domain
-  x86/intel_rdt: Support CBM checking from value and character buffer
-  x86/intel_rdt: Support schemata write - pseudo-locking core
-  x86/intel_rdt: Enable testing for pseudo-locked region
-  x86/intel_rdt: Prevent new allocations from pseudo-locked regions
-  x86/intel_rdt: Create debugfs files for pseudo-locking testing
-  x86/intel_rdt: Create character device exposing pseudo-locked region
-  x86/intel_rdt: More precise L2 hit/miss measurements
-  x86/intel_rdt: Support L3 cache performance event of Broadwell
-  x86/intel_rdt: Limit C-states dynamically when pseudo-locking active
-  mm/hugetlb: Enable large allocations through gigantic page API
-  x86/intel_rdt: Support contiguous memory of all sizes
-
- Documentation/x86/intel_rdt_ui.txt                |  229 ++-
- arch/x86/Kconfig                                  |   11 +
- arch/x86/kernel/cpu/Makefile                      |    4 +-
- arch/x86/kernel/cpu/intel_rdt.h                   |   24 +
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c       |   44 +-
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c       | 1894 +++++++++++++++++++++
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h |   52 +
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c          |   46 +-
- include/linux/hugetlb.h                           |    2 +
- mm/hugetlb.c                                      |   10 +-
- 10 files changed, 2290 insertions(+), 26 deletions(-)
- create mode 100644 arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
- create mode 100644 arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h
-
+diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+index ad8b97747024..a787a103c432 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
++++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+@@ -26,9 +26,69 @@
+ 
+ static struct kernfs_node *pseudo_lock_kn;
+ 
++/**
++ * pseudo_lock_avail_get - return bitmask of cache available for locking
++ * @r: resource to which this cache instance belongs
++ * @d: domain representing the cache instance
++ *
++ * Availability for pseudo-locking is determined as follows:
++ * * Cache area is in use by default COS.
++ * * Cache area is NOT in use by any other (other than default) COS.
++ * * Cache area is not shared with any other entity. Specifically, the
++ *   cache area does not appear in "Bitmask of Shareable Resource with Other
++ *   executing entities" found in EBX during CAT enumeration.
++ *
++ * Below is also required to determine availability and will be
++ * added in later:
++ * * Cache area is not currently pseudo-locked.
++ *
++ * LOCKING:
++ * rdtgroup_mutex is expected to be held when called
++ *
++ * RETURNS:
++ * Bitmask representing region of cache that can be locked, zero if nothing
++ * available.
++ */
++static u32 pseudo_lock_avail_get(struct rdt_resource *r, struct rdt_domain *d)
++{
++	u32 avail;
++	int i;
++
++	lockdep_assert_held(&rdtgroup_mutex);
++
++	avail = d->ctrl_val[0];
++	for (i = 1; i < r->num_closid; i++) {
++		if (closid_allocated(i))
++			avail &= ~d->ctrl_val[i];
++	}
++	avail &= ~r->cache.shareable_bits;
++
++	return avail;
++}
++
+ static int pseudo_lock_avail_show(struct seq_file *sf, void *v)
+ {
+-	seq_puts(sf, "0\n");
++	struct rdt_resource *r;
++	struct rdt_domain *d;
++	bool sep;
++
++	mutex_lock(&rdtgroup_mutex);
++
++	for_each_alloc_enabled_rdt_resource(r) {
++		sep = false;
++		seq_printf(sf, "%s:", r->name);
++		list_for_each_entry(d, &r->domains, list) {
++			if (sep)
++				seq_puts(sf, ";");
++			seq_printf(sf, "%d=%x", d->id,
++				   pseudo_lock_avail_get(r, d));
++			sep = true;
++		}
++		seq_puts(sf, "\n");
++	}
++
++	mutex_unlock(&rdtgroup_mutex);
++
+ 	return 0;
+ }
+ 
 -- 
 2.13.6
