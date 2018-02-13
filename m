@@ -1,83 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934757AbeBMLgu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 06:36:50 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:34793 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934086AbeBMLgs (ORCPT
+        id S934783AbeBMLhe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 06:37:34 -0500
+Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:52171 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934078AbeBMLhd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 06:36:48 -0500
-X-Google-Smtp-Source: AH8x224Jgt34yIEzoyols4oxXlFZ/CPCTahSuyewirkuOnO0pU1paOO4Nw9Yj+plLvKd4C7O30SWukeP4x8iPFfTW+Q=
+        Tue, 13 Feb 2018 06:37:33 -0500
+Subject: Re: [PATCH v2 05/15] MIPS: KASLR: Drop relocatable fixup from
+ reservation_init
+To: Serge Semin <fancer.lancer@gmail.com>, <ralf@linux-mips.org>,
+        <miodrag.dinic@mips.com>, <jhogan@kernel.org>, <goran.ferenc@mips.com>,
+        <david.daney@cavium.com>, <paul.gortmaker@windriver.com>,
+        <paul.burton@mips.com>, <alex.belits@cavium.com>,
+        <Steven.Hill@cavium.com>
+CC: <alexander.sverdlin@nokia.com>, <kumba@gentoo.org>,
+        <marcin.nowakowski@mips.com>, <James.hogan@mips.com>,
+        <Peter.Wotton@mips.com>, <Sergey.Semin@t-platforms.ru>,
+        <linux-mips@linux-mips.org>, <linux-kernel@vger.kernel.org>
+References: <20180117222312.14763-1-fancer.lancer@gmail.com>
+ <20180202035458.30456-1-fancer.lancer@gmail.com>
+ <20180202035458.30456-6-fancer.lancer@gmail.com>
+From: Matt Redfearn <matt.redfearn@mips.com>
+Message-ID: <25ae5315-0386-4709-ec73-d265ed342b58@mips.com>
+Date: Tue, 13 Feb 2018 11:30:53 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <d8ec2613-b773-9bab-cb4c-1f58eb1c1356@collabora.com>
-References: <20180207163150.16332-1-enric.balletbo@collabora.com>
- <20180207163150.16332-2-enric.balletbo@collabora.com> <6229682.fDmaELEjz4@phil>
- <d8ec2613-b773-9bab-cb4c-1f58eb1c1356@collabora.com>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Tue, 13 Feb 2018 12:36:47 +0100
-Message-ID: <CAFqH_52NtRib_nLrGnacdGK=cHOeh8Lfaa=38X1OA8gnu1r=hQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] arm64: dts: rockchip: add cdn-dp node for rk3399.
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Chris Zhong <zyw@rock-chips.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180202035458.30456-6-fancer.lancer@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.150.130.83]
+X-BESS-ID: 1518521760-637137-26795-167917-12
+X-BESS-VER: 2018.1-r1801291959
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.188374
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-13 11:42 GMT+01:00 Enric Balletbo i Serra
-<enric.balletbo@collabora.com>:
-> Hi Heiko,
->
-> On 10/02/18 17:16, Heiko Stuebner wrote:
->> Hi Enric,
->>
->> Am Mittwoch, 7. Februar 2018, 17:31:49 CET schrieb Enric Balletbo i Serra:
->>> From: Chris Zhong <zyw@rock-chips.com>
->>>
->>> Add a node for the cdn DP controller which is embedded in the rk3399
->>> SoC.
->>>
->>> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
->>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->>> ---
->>>  arch/arm64/boot/dts/rockchip/rk3399.dtsi | 50 ++++++++++++++++++++++++++++++++
->>
->> It looks like there is no binding document at all for cdn-dp? At least
->> I couldn't find one and the original series also didn't seem to include one.
->>
->> And while I don't see anything problematic right with the used properties
->> right now, I'd think we should really have a binding and give dt-maintainers
->> a chance to complain, before adding devicetree nodes based on it.
->>
->> I'd guess a mostly usable binding doc should already sit in the chromeos
->> tree, which you could base a v2 of this series on?
->>
->>
->
-> Sure, I'll send a v2 for this series. Thanks.
->
->   Enric
->
+Hi Serge,
 
-So seems that the binding was already discussed and accepted here [1]
-but for some reason never landed. So I think that I'll send v2 just
-including the binding patch so all can land together. Sounds good?
+On 02/02/18 03:54, Serge Semin wrote:
+> From: Matt Redfearn <matt.redfearn@mips.com>
+> 
+> A recent change ("MIPS: memblock: Discard bootmem initialization")
+> removed the reservation of all memory below the kernel's _end symbol in
+> bootmem. This makes the call to free_bootmem unnecessary, since the
+> memory region is no longer marked reserved.
+> 
+> Additionally, ("MIPS: memblock: Print out kernel virtual mem
+> layout") added a display of the kernel's virtual memory layout, so
+> printing the relocation information at this point is redundant.
+> 
+> Remove this section of code.
+> 
+> Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
 
-[1] https://patchwork.kernel.org/patch/9278077/
+Missing your SoB.
 
-Cheers,
- Enric
+I think this change should go after you introduce the new mechanism, 
+i.e. after "MIPS: memblock: Print out kernel virtual mem layout", which 
+should probably go nearer the start of the series.
 
+Thanks,
+Matt
 
->> Thanks
->> Heiko
->>
+> ---
+>   arch/mips/kernel/setup.c | 23 -----------------------
+>   1 file changed, 23 deletions(-)
+> 
+> diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+> index b5fcacf71b3f..cf3674977170 100644
+> --- a/arch/mips/kernel/setup.c
+> +++ b/arch/mips/kernel/setup.c
+> @@ -528,29 +528,6 @@ static void __init bootmem_init(void)
+>   		memory_present(0, start, end);
+>   	}
+>   
+> -#ifdef CONFIG_RELOCATABLE
+> -	/*
+> -	 * The kernel reserves all memory below its _end symbol as bootmem,
+> -	 * but the kernel may now be at a much higher address. The memory
+> -	 * between the original and new locations may be returned to the system.
+> -	 */
+> -	if (__pa_symbol(_text) > __pa_symbol(VMLINUX_LOAD_ADDRESS)) {
+> -		unsigned long offset;
+> -		extern void show_kernel_relocation(const char *level);
+> -
+> -		offset = __pa_symbol(_text) - __pa_symbol(VMLINUX_LOAD_ADDRESS);
+> -		free_bootmem(__pa_symbol(VMLINUX_LOAD_ADDRESS), offset);
+> -
+> -#if defined(CONFIG_DEBUG_KERNEL) && defined(CONFIG_DEBUG_INFO)
+> -		/*
+> -		 * This information is necessary when debugging the kernel
+> -		 * But is a security vulnerability otherwise!
+> -		 */
+> -		show_kernel_relocation(KERN_INFO);
+> -#endif
+> -	}
+> -#endif
+> -
+>   	/*
+>   	 * Reserve initrd memory if needed.
+>   	 */
+> 
