@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965466AbeBMRBc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:01:32 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:39242 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965415AbeBMRBT (ORCPT
+        id S965531AbeBMRBr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:01:47 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34412 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965452AbeBMRBb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:01:19 -0500
-X-Google-Smtp-Source: AH8x225dIzNQXnIwnFoasEuf+BhkZGM5C7ogrZf1x3mCs6D6v8+5dAiH4fMwquSCchI0p6HnI+pmmQ==
+        Tue, 13 Feb 2018 12:01:31 -0500
+X-Google-Smtp-Source: AH8x226/7xzqo1E+SLwVj3MzNxnSXQS96WetUqDX3bYALW8FKjgUhKdxWUYEnzZz0o5GhoGRwvLDzA==
 From: srinivas.kandagatla@linaro.org
 To: andy.gross@linaro.org, broonie@kernel.org,
         linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
@@ -18,9 +18,9 @@ Cc: david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
         spatakok@qti.qualcomm.com,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v3 02/25] soc: qcom: add support to APR bus driver
-Date: Tue, 13 Feb 2018 16:58:14 +0000
-Message-Id: <20180213165837.1620-3-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v3 11/25] ASoC: qcom: q6asm: add support to audio stream apis
+Date: Tue, 13 Feb 2018 16:58:23 +0000
+Message-Id: <20180213165837.1620-12-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
 References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
@@ -30,630 +30,664 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-This patch adds support toi APR bus (Asynchronous Packet Router) driver.
-ARP driver is made as a bus driver so that the apr devices can added removed
-more dynamically depending on the state of the services on the dsp.
-APR is used for communication between application processor and QDSP to
-use services on QDSP like Audio and others.
+This patch adds support to open, write and media format commands
+in the q6asm module.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/soc/qcom/Kconfig           |   9 +
- drivers/soc/qcom/Makefile          |   1 +
- drivers/soc/qcom/apr.c             | 381 +++++++++++++++++++++++++++++++++++++
- include/dt-bindings/soc/qcom,apr.h |  27 +++
- include/linux/mod_devicetable.h    |  11 ++
- include/linux/soc/qcom/apr.h       | 131 +++++++++++++
- 6 files changed, 560 insertions(+)
- create mode 100644 drivers/soc/qcom/apr.c
- create mode 100644 include/dt-bindings/soc/qcom,apr.h
- create mode 100644 include/linux/soc/qcom/apr.h
+ include/dt-bindings/sound/qcom,q6asm.h |  22 ++
+ sound/soc/qcom/qdsp6/q6asm.c           | 503 ++++++++++++++++++++++++++++++++-
+ sound/soc/qcom/qdsp6/q6asm.h           |  41 +++
+ 3 files changed, 564 insertions(+), 2 deletions(-)
+ create mode 100644 include/dt-bindings/sound/qcom,q6asm.h
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index e050eb83341d..a1273e3f9eb5 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -107,4 +107,13 @@ config QCOM_WCNSS_CTRL
- 	  Client driver for the WCNSS_CTRL SMD channel, used to download nv
- 	  firmware to a newly booted WCNSS chip.
- 
-+config QCOM_APR
-+	tristate "Qualcomm APR Bus (Asynchronous Packet Router)"
-+	depends on ARCH_QCOM
-+	depends on RPMSG
-+	help
-+          Enable APR IPC protocol support between
-+          application processor and QDSP6. APR is
-+          used by audio driver to configure QDSP6
-+          ASM, ADM and AFE modules.
- endmenu
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index 4e91e2a7c24c..92f9c8630291 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -13,3 +13,4 @@ obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
- obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
- obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
- obj-$(CONFIG_ARCH_MSM8996) +=	kryo-l2-accessors.o
-+obj-$(CONFIG_QCOM_APR) += apr.o
-diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
+diff --git a/include/dt-bindings/sound/qcom,q6asm.h b/include/dt-bindings/sound/qcom,q6asm.h
 new file mode 100644
-index 000000000000..4db41c218851
+index 000000000000..4e85bf804cec
 --- /dev/null
-+++ b/drivers/soc/qcom/apr.c
-@@ -0,0 +1,381 @@
++++ b/include/dt-bindings/sound/qcom,q6asm.h
+@@ -0,0 +1,22 @@
 +// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2011-2017, The Linux Foundation
-+ * Copyright (c) 2018, Linaro Limited
-+ */
++#ifndef __DT_BINDINGS_Q6_ASM_H__
++#define __DT_BINDINGS_Q6_ASM_H__
 +
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/device.h>
-+#include <linux/spinlock.h>
-+#include <linux/list.h>
-+#include <linux/slab.h>
-+#include <linux/of_device.h>
-+#include <linux/soc/qcom/apr.h>
-+#include <linux/rpmsg.h>
-+#include <linux/of.h>
++#define MSM_FRONTEND_DAI_MULTIMEDIA1	0
++#define MSM_FRONTEND_DAI_MULTIMEDIA2	1
++#define	MSM_FRONTEND_DAI_MULTIMEDIA3	2
++#define MSM_FRONTEND_DAI_MULTIMEDIA4	3
++#define MSM_FRONTEND_DAI_MULTIMEDIA5	4
++#define MSM_FRONTEND_DAI_MULTIMEDIA6	5
++#define	MSM_FRONTEND_DAI_MULTIMEDIA7	6
++#define	MSM_FRONTEND_DAI_MULTIMEDIA8	7
++#define	MSM_FRONTEND_DAI_MULTIMEDIA9	8
++#define	MSM_FRONTEND_DAI_MULTIMEDIA10	9
++#define	MSM_FRONTEND_DAI_MULTIMEDIA11	10
++#define	MSM_FRONTEND_DAI_MULTIMEDIA12	11
++#define	MSM_FRONTEND_DAI_MULTIMEDIA13	12
++#define	MSM_FRONTEND_DAI_MULTIMEDIA14	13
++#define	MSM_FRONTEND_DAI_MULTIMEDIA15	14
++#define	MSM_FRONTEND_DAI_MULTIMEDIA16	15
 +
-+struct apr {
-+	struct rpmsg_endpoint *ch;
-+	struct device *dev;
-+	spinlock_t svcs_lock;
-+	struct list_head svcs;
-+	int dest_domain_id;
-+};
++#endif /* __DT_BINDINGS_Q6_ASM_H__ */
+diff --git a/sound/soc/qcom/qdsp6/q6asm.c b/sound/soc/qcom/qdsp6/q6asm.c
+index 412275edb15c..0ee1e30a8d8e 100644
+--- a/sound/soc/qcom/qdsp6/q6asm.c
++++ b/sound/soc/qcom/qdsp6/q6asm.c
+@@ -10,6 +10,7 @@
+ #include <linux/soc/qcom/apr.h>
+ #include <linux/device.h>
+ #include <linux/of.h>
++#include <uapi/sound/asound.h>
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/mm.h>
+@@ -17,10 +18,26 @@
+ #include "q6dsp-errno.h"
+ #include "q6dsp-common.h"
+ 
++#define ASM_STREAM_CMD_CLOSE			0x00010BCD
++#define ASM_STREAM_CMD_FLUSH			0x00010BCE
++#define ASM_SESSION_CMD_PAUSE			0x00010BD3
++#define ASM_DATA_CMD_EOS			0x00010BDB
++#define ASM_DEFAULT_POPP_TOPOLOGY		0x00010BE4
++#define ASM_STREAM_CMD_FLUSH_READBUFS		0x00010C09
+ #define ASM_CMD_SHARED_MEM_MAP_REGIONS		0x00010D92
+ #define ASM_CMDRSP_SHARED_MEM_MAP_REGIONS	0x00010D93
+ #define ASM_CMD_SHARED_MEM_UNMAP_REGIONS	0x00010D94
+-
++#define ASM_DATA_CMD_MEDIA_FMT_UPDATE_V2	0x00010D98
++#define ASM_DATA_EVENT_WRITE_DONE_V2		0x00010D99
++#define ASM_SESSION_CMD_RUN_V2			0x00010DAA
++#define ASM_MEDIA_FMT_MULTI_CHANNEL_PCM_V2	0x00010DA5
++#define ASM_DATA_CMD_WRITE_V2			0x00010DAB
++#define ASM_SESSION_CMD_SUSPEND			0x00010DEC
++#define ASM_STREAM_CMD_OPEN_WRITE_V3		0x00010DB3
 +
-+/**
-+ * apr_send_pkt() - Send a apr message from apr device
-+ *
-+ * @adev: Pointer to previously registered apr device.
-+ * @buf: Pointer to buffer to send
-+ *
-+ * Return: Will be an negative on packet size on success.
-+ */
-+int apr_send_pkt(struct apr_device *adev, void *buf)
++#define ASM_LEGACY_STREAM_SESSION	0
++#define ASM_END_POINT_DEVICE_MATRIX	0
++#define ASM_DEFAULT_APP_TYPE		0
+ #define ASM_SYNC_IO_MODE		0x0001
+ #define ASM_ASYNC_IO_MODE		0x0002
+ #define ASM_TUN_READ_IO_MODE		0x0004	/* tunnel read write mode */
+@@ -46,6 +63,49 @@ struct avs_cmd_shared_mem_unmap_regions {
+ 	u32 mem_map_handle;
+ } __packed;
+ 
++struct asm_data_cmd_media_fmt_update_v2 {
++	u32 fmt_blk_size;
++} __packed;
++
++struct asm_multi_channel_pcm_fmt_blk_v2 {
++	struct apr_hdr hdr;
++	struct asm_data_cmd_media_fmt_update_v2 fmt_blk;
++	u16 num_channels;
++	u16 bits_per_sample;
++	u32 sample_rate;
++	u16 is_signed;
++	u16 reserved;
++	u8 channel_mapping[PCM_FORMAT_MAX_NUM_CHANNEL];
++} __packed;
++
++struct asm_data_cmd_write_v2 {
++	struct apr_hdr hdr;
++	u32 buf_addr_lsw;
++	u32 buf_addr_msw;
++	u32 mem_map_handle;
++	u32 buf_size;
++	u32 seq_id;
++	u32 timestamp_lsw;
++	u32 timestamp_msw;
++	u32 flags;
++} __packed;
++
++struct asm_stream_cmd_open_write_v3 {
++	struct apr_hdr hdr;
++	uint32_t mode_flags;
++	uint16_t sink_endpointype;
++	uint16_t bits_per_sample;
++	uint32_t postprocopo_id;
++	uint32_t dec_fmt_id;
++} __packed;
++
++struct asm_session_cmd_run_v2 {
++	struct apr_hdr hdr;
++	u32 flags;
++	u32 time_lsw;
++	u32 time_msw;
++} __packed;
++
+ struct audio_buffer {
+ 	phys_addr_t phys;
+ 	uint32_t used;
+@@ -131,7 +191,7 @@ static int q6asm_apr_send_session_pkt(struct q6asm *a, struct audio_client *ac,
+ 
+ 	rc = wait_event_timeout(a->mem_wait, (a->mem_state <= 0), 5 * HZ);
+ 	if (!rc) {
+-		dev_err(a->dev, "CMD timeout \n");
++		dev_err(a->dev, "CMD timeout\n");
+ 		rc = -ETIMEDOUT;
+ 	} else if (a->mem_state < 0) {
+ 		rc =  q6dsp_errno(a->mem_state);
+@@ -395,6 +455,108 @@ void *q6asm_get_dai_data(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(q6asm_get_dai_data);
+ 
++static int32_t q6asm_stream_callback(struct apr_device *adev,
++				     struct apr_client_message *data,
++				     int session_id)
 +{
-+	struct apr *apr = dev_get_drvdata(adev->dev.parent);
-+	struct apr_hdr *hdr;
-+	unsigned long flags;
-+	int ret;
++	struct q6asm *q6asm = dev_get_drvdata(&adev->dev);
++	struct aprv2_ibasic_rsp_result_t *result;
++	struct audio_port_data *port;
++	struct audio_client *ac;
++	uint32_t token;
++	uint32_t client_event = 0;
 +
-+	spin_lock_irqsave(&adev->lock, flags);
-+
-+	hdr = (struct apr_hdr *)buf;
-+	hdr->src_domain = APR_DOMAIN_APPS;
-+	hdr->src_svc = adev->svc_id;
-+	hdr->dest_domain = adev->domain_id;
-+	hdr->dest_svc = adev->svc_id;
-+
-+	ret = rpmsg_send(apr->ch, buf, hdr->pkt_size);
-+	if (ret) {
-+		dev_err(&adev->dev, "Unable to send APR pkt %d\n",
-+			hdr->pkt_size);
-+	} else {
-+		ret = hdr->pkt_size;
-+	}
-+
-+	spin_unlock_irqrestore(&adev->lock, flags);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(apr_send_pkt);
-+
-+static void apr_dev_release(struct device *dev)
-+{
-+	struct apr_device *adev = to_apr_device(dev);
-+
-+	kfree(adev);
-+}
-+
-+static int apr_callback(struct rpmsg_device *rpdev, void *buf,
-+				  int len, void *priv, u32 addr)
-+{
-+	struct apr *apr = dev_get_drvdata(&rpdev->dev);
-+	struct apr_client_message data;
-+	struct apr_device *p, *c_svc = NULL;
-+	struct apr_driver *adrv = NULL;
-+	struct apr_hdr *hdr;
-+	uint16_t hdr_size;
-+	uint16_t msg_type;
-+	uint16_t ver;
-+	uint16_t svc;
-+
-+	if (len <= APR_HDR_SIZE) {
-+		dev_err(apr->dev, "APR: Improper apr pkt received:%p %d\n",
-+			buf, len);
-+		return -EINVAL;
-+	}
-+
-+	hdr = buf;
-+	ver = APR_HDR_FIELD_VER(hdr->hdr_field);
-+	if (ver > APR_PKT_VER + 1)
-+		return -EINVAL;
-+
-+	hdr_size = APR_HDR_FIELD_SIZE_BYTES(hdr->hdr_field);
-+	if (hdr_size < APR_HDR_SIZE) {
-+		dev_err(apr->dev, "APR: Wrong hdr size:%d\n", hdr_size);
-+		return -EINVAL;
-+	}
-+
-+	if (hdr->pkt_size < APR_HDR_SIZE) {
-+		dev_err(apr->dev, "APR: Wrong paket size\n");
-+		return -EINVAL;
-+	}
-+
-+	msg_type = APR_HDR_FIELD_MT(hdr->hdr_field);
-+	if (msg_type >= APR_MSG_TYPE_MAX && msg_type != APR_BASIC_RSP_RESULT) {
-+		dev_err(apr->dev, "APR: Wrong message type: %d\n", msg_type);
-+		return -EINVAL;
-+	}
-+
-+	if (hdr->src_domain >= APR_DOMAIN_MAX ||
-+			hdr->dest_domain >= APR_DOMAIN_MAX ||
-+			hdr->src_svc >= APR_SVC_MAX ||
-+			hdr->dest_svc >= APR_SVC_MAX) {
-+		dev_err(apr->dev, "APR: Wrong APR header\n");
-+		return -EINVAL;
-+	}
-+
-+	svc = hdr->dest_svc;
-+	spin_lock(&apr->svcs_lock);
-+	list_for_each_entry(p, &apr->svcs, node) {
-+		if (svc == p->svc_id) {
-+			c_svc = p;
-+			if (c_svc->dev.driver)
-+				adrv = to_apr_driver(c_svc->dev.driver);
-+			break;
-+		}
-+	}
-+	spin_unlock(&apr->svcs_lock);
-+
-+	if (!adrv) {
-+		dev_err(apr->dev, "APR: service is not registered\n");
-+		return -EINVAL;
-+	}
-+
-+	data.payload_size = hdr->pkt_size - hdr_size;
-+	data.opcode = hdr->opcode;
-+	data.src_port = hdr->src_port;
-+	data.dest_port = hdr->dest_port;
-+	data.token = hdr->token;
-+	data.msg_type = msg_type;
-+
-+	if (data.payload_size > 0)
-+		data.payload = buf + hdr_size;
-+
-+	adrv->callback(c_svc, &data);
-+
-+	return 0;
-+}
-+
-+static int apr_device_match(struct device *dev, struct device_driver *drv)
-+{
-+	struct apr_device *adev = to_apr_device(dev);
-+	struct apr_driver *adrv = to_apr_driver(drv);
-+	const struct apr_device_id *id = adrv->id_table;
-+
-+	/* Attempt an OF style match first */
-+	if (of_driver_match_device(dev, drv))
-+		return 1;
-+
-+	if (!id)
++	ac = q6asm_get_audio_client(q6asm, session_id);
++	if (!ac)/* Audio client might already be freed by now */
 +		return 0;
 +
-+	while (id->domain_id != 0 || id->svc_id != 0) {
-+		if (id->domain_id == adev->domain_id &&
-+		    id->svc_id == adev->svc_id)
-+			return 1;
-+		id++;
-+	}
++	if (!q6asm_is_valid_audio_client(ac))
++		return -EINVAL;
 +
-+	return 0;
-+}
++	result = data->payload;
 +
-+static int apr_device_probe(struct device *dev)
-+{
-+	struct apr_device *adev = to_apr_device(dev);
-+	struct apr_driver *adrv = to_apr_driver(dev->driver);
++	switch (data->opcode) {
++	case APR_BASIC_RSP_RESULT:
++		token = data->token;
++		switch (result->opcode) {
++		case ASM_SESSION_CMD_PAUSE:
++			client_event = ASM_CLIENT_EVENT_CMD_PAUSE_DONE;
++			break;
++		case ASM_SESSION_CMD_SUSPEND:
++			client_event = ASM_CLIENT_EVENT_CMD_SUSPEND_DONE;
++			break;
++		case ASM_DATA_CMD_EOS:
++			client_event = ASM_CLIENT_EVENT_CMD_EOS_DONE;
++			break;
++			break;
++		case ASM_STREAM_CMD_FLUSH:
++			client_event = ASM_CLIENT_EVENT_CMD_FLUSH_DONE;
++			break;
++		case ASM_SESSION_CMD_RUN_V2:
++			client_event = ASM_CLIENT_EVENT_CMD_RUN_DONE;
++			break;
 +
-+	return adrv->probe(adev);
-+}
-+
-+static int apr_device_remove(struct device *dev)
-+{
-+	struct apr_device *adev = to_apr_device(dev);
-+	struct apr_driver *adrv;
-+	struct apr *apr = dev_get_drvdata(adev->dev.parent);
-+
-+	if (dev->driver) {
-+		adrv = to_apr_driver(dev->driver);
-+		if (adrv->remove)
-+			adrv->remove(adev);
-+		spin_lock(&apr->svcs_lock);
-+		list_del(&adev->node);
-+		spin_unlock(&apr->svcs_lock);
-+	}
-+
-+	return 0;
-+}
-+
-+struct bus_type aprbus_type = {
-+	.name		= "aprbus",
-+	.match		= apr_device_match,
-+	.probe		= apr_device_probe,
-+	.remove		= apr_device_remove,
-+	.force_dma	= true,
-+};
-+EXPORT_SYMBOL_GPL(aprbus_type);
-+
-+static int apr_add_device(struct device *dev, struct device_node *np,
-+			  const struct apr_device_id *id, bool is_svc)
-+{
-+	struct apr *apr = dev_get_drvdata(dev);
-+	struct apr_device *adev = NULL;
-+
-+	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-+	if (!adev)
-+		return -ENOMEM;
-+
-+	spin_lock_init(&adev->lock);
-+
-+	if (is_svc) {
-+		adev->svc_id = id->svc_id;
-+		adev->domain_id = id->domain_id;
-+		adev->version = id->svc_version;
-+		dev_set_name(&adev->dev, "aprsvc:%s:%x:%x", id->name,
-+			     id->domain_id, id->svc_id);
-+	} else  {
-+		dev_set_name(&adev->dev, "%s:%s", dev_name(dev), np->name);
-+	}
-+
-+	adev->dev.bus = &aprbus_type;
-+	adev->dev.parent = dev;
-+	adev->dev.of_node = np;
-+	adev->dev.release = apr_dev_release;
-+	adev->dev.driver = NULL;
-+
-+	spin_lock(&apr->svcs_lock);
-+	list_add_tail(&adev->node, &apr->svcs);
-+	spin_unlock(&apr->svcs_lock);
-+
-+	dev_info(dev, "Adding APR dev: %s\n", dev_name(&adev->dev));
-+
-+	return device_register(&adev->dev);
-+}
-+
-+static void of_register_apr_devices(struct device *dev)
-+{
-+	struct apr *apr = dev_get_drvdata(dev);
-+	struct device_node *node;
-+
-+	for_each_child_of_node(dev->of_node, node) {
-+		struct apr_device_id id = {0};
-+		const char *svc_name;
-+		bool is_svc = false;
-+
-+		if (of_find_property(node, "qcom,apr-svc-id", NULL) &&
-+		    of_find_property(node, "qcom,apr-svc-name", NULL)) {
-+			/* svc node */
-+			of_property_read_u32(node, "qcom,apr-svc-id",
-+					     &id.svc_id);
-+			of_property_read_string(node, "qcom,apr-svc-name",
-+						&svc_name);
-+			id.domain_id = apr->dest_domain_id;
-+
-+			memcpy(id.name, svc_name, strlen(svc_name) + 1);
-+			is_svc = true;
++		case ASM_STREAM_CMD_FLUSH_READBUFS:
++			if (token != ac->session) {
++				dev_err(ac->dev, "session invalid\n");
++				return -EINVAL;
++			}
++		case ASM_STREAM_CMD_CLOSE:
++			client_event = ASM_CLIENT_EVENT_CMD_CLOSE_DONE;
++			break;
++		case ASM_STREAM_CMD_OPEN_WRITE_V3:
++		case ASM_DATA_CMD_MEDIA_FMT_UPDATE_V2:
++			if (result->status != 0) {
++				dev_err(ac->dev,
++					"cmd = 0x%x returned error = 0x%x\n",
++					result->opcode, result->status);
++				ac->cmd_state = -result->status;
++				wake_up(&ac->cmd_wait);
++				return 0;
++			}
++			break;
++		default:
++			dev_err(ac->dev, "command[0x%x] not expecting rsp\n",
++				result->opcode);
++			break;
 +		}
 +
-+		if (apr_add_device(dev, node, &id, is_svc))
-+			dev_err(dev, "Failed to add arp %s svc\n", svc_name);
++		if (ac->cmd_state) {
++			ac->cmd_state = 0;
++			wake_up(&ac->cmd_wait);
++		}
++		if (ac->cb)
++			ac->cb(client_event, data->token,
++			       data->payload, ac->priv);
++
++		return 0;
++
++	case ASM_DATA_EVENT_WRITE_DONE_V2:
++		port =  &ac->port[SNDRV_PCM_STREAM_PLAYBACK];
++
++		client_event = ASM_CLIENT_EVENT_DATA_WRITE_DONE;
++
++		if (ac->io_mode & ASM_SYNC_IO_MODE) {
++			phys_addr_t phys = port->buf[data->token].phys;
++
++			if (lower_32_bits(phys) != result->opcode ||
++			    upper_32_bits(phys) != result->status) {
++				dev_err(ac->dev, "Expected addr %pa\n",
++					&port->buf[data->token].phys);
++				return -EINVAL;
++			}
++			token = data->token;
++			port->buf[token].used = 1;
++		}
++		break;
 +	}
-+}
 +
-+static int apr_probe(struct rpmsg_device *rpdev)
-+{
-+	struct device *dev = &rpdev->dev;
-+	struct apr *apr;
-+	int ret;
-+
-+	apr = devm_kzalloc(dev, sizeof(*apr), GFP_KERNEL);
-+	if (!apr)
-+		return -ENOMEM;
-+
-+	ret = of_property_read_u32(dev->of_node, "qcom,apr-dest-domain-id",
-+				   &apr->dest_domain_id);
-+	if (ret) {
-+		dev_err(dev, "APR Domain ID not specified in DT\n");
-+		return ret;
-+	}
-+
-+	dev_set_drvdata(dev, apr);
-+	apr->ch = rpdev->ept;
-+	apr->dev = dev;
-+	INIT_LIST_HEAD(&apr->svcs);
-+
-+	of_register_apr_devices(dev);
++	if (ac->cb)
++		ac->cb(client_event, data->token, data->payload, ac->priv);
 +
 +	return 0;
 +}
 +
-+static int apr_remove_device(struct device *dev, void *null)
-+{
-+	struct apr_device *adev = to_apr_device(dev);
+ static int q6asm_srvc_callback(struct apr_device *adev,
+ 			       struct apr_client_message *data)
+ {
+@@ -404,6 +566,11 @@ static int q6asm_srvc_callback(struct apr_device *adev,
+ 	struct audio_port_data *port;
+ 	uint32_t dir = 0;
+ 	uint32_t sid = 0;
++	int session_id;
 +
-+	device_unregister(&adev->dev);
-+
-+	return 0;
-+}
-+
-+static void apr_remove(struct rpmsg_device *rpdev)
-+{
-+	device_for_each_child(&rpdev->dev, NULL, apr_remove_device);
-+}
-+
-+/*
-+ * __apr_driver_register() - Client driver registration with aprbus
-+ *
-+ * @drv:Client driver to be associated with client-device.
-+ * @owner: owning module/driver
-+ *
-+ * This API will register the client driver with the aprbus
-+ * It is called from the driver's module-init function.
-+ */
-+int __apr_driver_register(struct apr_driver *drv, struct module *owner)
-+{
-+	drv->driver.bus = &aprbus_type;
-+	drv->driver.owner = owner;
-+
-+	return driver_register(&drv->driver);
-+}
-+EXPORT_SYMBOL_GPL(__apr_driver_register);
-+
-+/*
-+ * apr_driver_unregister() - Undo effect of apr_driver_register
-+ *
-+ * @drv: Client driver to be unregistered
-+ */
-+void apr_driver_unregister(struct apr_driver *drv)
-+{
-+	driver_unregister(&drv->driver);
-+}
-+EXPORT_SYMBOL_GPL(apr_driver_unregister);
-+
-+static const struct of_device_id apr_of_match[] = {
-+	{ .compatible = "qcom,apr"},
-+	{ .compatible = "qcom,apr-v2"},
-+	{}
-+};
-+
-+static struct rpmsg_driver apr_driver = {
-+	.probe = apr_probe,
-+	.remove = apr_remove,
-+	.callback = apr_callback,
-+	.drv = {
-+		.name = "qcom,apr",
-+		.of_match_table = apr_of_match,
-+	},
-+};
-+
-+static int __init apr_init(void)
-+{
-+	int ret;
-+
-+	ret = bus_register(&aprbus_type);
-+	if (!ret)
-+		ret = register_rpmsg_driver(&apr_driver);
-+
-+	return ret;
-+}
-+
-+static void __exit apr_exit(void)
-+{
-+	bus_unregister(&aprbus_type);
-+	unregister_rpmsg_driver(&apr_driver);
-+}
-+
-+subsys_initcall(apr_init);
-+module_exit(apr_exit);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("Qualcomm APR Bus");
-diff --git a/include/dt-bindings/soc/qcom,apr.h b/include/dt-bindings/soc/qcom,apr.h
-new file mode 100644
-index 000000000000..fb162ac4ca0e
---- /dev/null
-+++ b/include/dt-bindings/soc/qcom,apr.h
-@@ -0,0 +1,27 @@
-+#ifndef __DT_BINDINGS_QCOM_APR_H
-+#define __DT_BINDINGS_QCOM_APR_H
-+
-+/* Domain IDs */
-+#define APR_DOMAIN_SIM	0x1
-+#define APR_DOMAIN_PC	0x2
-+#define APR_DOMAIN_MODEM 0x3
-+#define APR_DOMAIN_ADSP	0x4
-+#define APR_DOMAIN_APPS	0x5
-+#define APR_DOMAIN_MAX	0x6
-+
-+/* ADSP service IDs */
-+#define APR_SVC_ADSP_CORE	0x3
-+#define APR_SVC_AFE		0x4
-+#define APR_SVC_VSM		0x5
-+#define APR_SVC_VPM		0x6
-+#define APR_SVC_ASM		0x7
-+#define APR_SVC_ADM		0x8
-+#define APR_SVC_ADSP_MVM	0x09
-+#define APR_SVC_ADSP_CVS	0x0A
-+#define APR_SVC_ADSP_CVP	0x0B
-+#define APR_SVC_USM		0x0C
-+#define APR_SVC_LSM		0x0D
-+#define APR_SVC_VIDC		0x16
-+#define APR_SVC_MAX		0x17
-+
-+#endif /* __DT_BINDINGS_QCOM_APR_H */
-diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
-index 48fb2b43c35a..c05c89b5a99e 100644
---- a/include/linux/mod_devicetable.h
-+++ b/include/linux/mod_devicetable.h
-@@ -471,6 +471,17 @@ struct slim_device_id {
- 	kernel_ulong_t driver_data;
- };
++	session_id = (data->dest_port >> 8) & 0xFF;
++	if (session_id)
++		return q6asm_stream_callback(adev, data, session_id);
  
-+#define APR_NAME_SIZE	32
-+#define APR_MODULE_PREFIX "apr:"
-+
-+struct apr_device_id {
-+	char name[APR_NAME_SIZE];
-+	__u32 domain_id;
-+	__u32 svc_id;
-+	__u32 svc_version;
-+	kernel_ulong_t driver_data;	/* Data private to the driver */
-+};
-+
- #define SPMI_NAME_SIZE	32
- #define SPMI_MODULE_PREFIX "spmi:"
+ 	result = data->payload;
+ 	sid = (data->token >> 8) & 0x0F;
+@@ -519,6 +686,338 @@ struct audio_client *q6asm_audio_client_alloc(struct device *dev, q6asm_cb cb,
+ }
+ EXPORT_SYMBOL_GPL(q6asm_audio_client_alloc);
  
-diff --git a/include/linux/soc/qcom/apr.h b/include/linux/soc/qcom/apr.h
-new file mode 100644
-index 000000000000..17bf0773e146
---- /dev/null
-+++ b/include/linux/soc/qcom/apr.h
-@@ -0,0 +1,131 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2011-2017, The Linux Foundation
-+ * Copyright (c) 2018, Linaro Limited
-+ */
++static int q6asm_ac_send_cmd_sync(struct audio_client *ac, void *cmd)
++{
++	int rc;
 +
-+#ifndef __QCOM_APR_H_
-+#define __QCOM_APR_H_
++	mutex_lock(&ac->lock);
++	ac->cmd_state = 1;
 +
-+#include <linux/spinlock.h>
-+#include <linux/device.h>
-+#include <linux/mod_devicetable.h>
-+#include <dt-bindings/soc/qcom,apr.h>
++	rc = apr_send_pkt(ac->adev, cmd);
++	if (rc < 0)
++		goto err;
 +
-+#define APR_HDR_LEN(hdr_len) ((hdr_len)/4)
++	rc = wait_event_timeout(ac->cmd_wait, (ac->cmd_state <= 0), 5 * HZ);
++	if (!rc) {
++		dev_err(ac->dev, "CMD timeout\n");
++		rc =  -ETIMEDOUT;
++		goto err;
++	}
 +
-+/*
-+ * HEADER field
-+ * version:0:3
-+ * header_size : 4:7
-+ * message_type : 8:9
-+ * reserved: 10:15
-+ */
-+#define APR_HDR_FIELD(msg_type, hdr_len, ver)\
-+	(((msg_type & 0x3) << 8) | ((hdr_len & 0xF) << 4) | (ver & 0xF))
++	if (ac->cmd_state > 0)
++		rc = q6dsp_errno(ac->cmd_state);
 +
-+#define APR_HDR_SIZE sizeof(struct apr_hdr)
-+#define APR_SEQ_CMD_HDR_FIELD APR_HDR_FIELD(APR_MSG_TYPE_SEQ_CMD, \
-+					    APR_HDR_LEN(APR_HDR_SIZE), \
-+					    APR_PKT_VER)
-+/* Version */
-+#define APR_PKT_VER		0x0
-+
-+/* Command and Response Types */
-+#define APR_MSG_TYPE_EVENT	0x0
-+#define APR_MSG_TYPE_CMD_RSP	0x1
-+#define APR_MSG_TYPE_SEQ_CMD	0x2
-+#define APR_MSG_TYPE_NSEQ_CMD	0x3
-+#define APR_MSG_TYPE_MAX	0x04
-+
-+/* APR Basic Response Message */
-+#define APR_BASIC_RSP_RESULT 0x000110E8
-+#define APR_RSP_ACCEPTED     0x000100BE
-+
-+struct aprv2_ibasic_rsp_result_t {
-+	uint32_t opcode;
-+	uint32_t status;
-+};
-+
-+/* hdr field Ver [0:3], Size [4:7], Message type [8:10] */
-+#define APR_HDR_FIELD_VER(h)		(h & 0x000F)
-+#define APR_HDR_FIELD_SIZE(h)		((h & 0x00F0) >> 4)
-+#define APR_HDR_FIELD_SIZE_BYTES(h)	(((h & 0x00F0) >> 4) * 4)
-+#define APR_HDR_FIELD_MT(h)		((h & 0x0300) >> 8)
-+
-+struct apr_hdr {
-+	uint16_t hdr_field;
-+	uint16_t pkt_size;
-+	uint8_t src_svc;
-+	uint8_t src_domain;
-+	uint16_t src_port;
-+	uint8_t dest_svc;
-+	uint8_t dest_domain;
-+	uint16_t dest_port;
-+	uint32_t token;
-+	uint32_t opcode;
-+};
-+
-+struct apr_client_message {
-+	uint16_t payload_size;
-+	uint16_t hdr_len;
-+	uint16_t msg_type;
-+	uint16_t src;
-+	uint16_t dest_svc;
-+	uint16_t src_port;
-+	uint16_t dest_port;
-+	uint32_t token;
-+	uint32_t opcode;
-+	void *payload;
-+};
-+
-+/* Bits 0 to 15 -- Minor version,  Bits 16 to 31 -- Major version */
-+#define APR_SVC_MAJOR_VERSION(v)	((v >> 16) & 0xFF)
-+#define APR_SVC_MINOR_VERSION(v)	(v & 0xFF)
-+
-+struct apr_device {
-+	struct device	dev;
-+	uint16_t	svc_id;
-+	uint16_t	domain_id;
-+	uint16_t	version;
-+	spinlock_t	lock;
-+	struct list_head node;
-+};
-+
-+#define to_apr_device(d) container_of(d, struct apr_device, dev)
-+
-+struct apr_driver {
-+	int	(*probe)(struct apr_device *sl);
-+	int	(*remove)(struct apr_device *sl);
-+	int	(*callback)(struct apr_device *a,
-+			    struct apr_client_message *d);
-+	struct device_driver		driver;
-+	const struct apr_device_id	*id_table;
-+};
-+
-+#define to_apr_driver(d) container_of(d, struct apr_driver, driver)
-+
-+/*
-+ * use a macro to avoid include chaining to get THIS_MODULE
-+ */
-+#define apr_driver_register(drv) __apr_driver_register(drv, THIS_MODULE)
-+
-+int __apr_driver_register(struct apr_driver *drv, struct module *owner);
-+void apr_driver_unregister(struct apr_driver *drv);
++err:
++	mutex_unlock(&ac->lock);
++	return rc;
++}
 +
 +/**
-+ * module_apr_driver() - Helper macro for registering a aprbus driver
-+ * @__aprbus_driver: aprbus_driver struct
++ * q6asm_open_write() - Open audio client for writing
 + *
-+ * Helper macro for aprbus drivers which do not do anything special in
-+ * module init/exit. This eliminates a lot of boilerplate. Each module
-+ * may only use this macro once, and calling it replaces module_init()
-+ * and module_exit()
++ * @ac: audio client pointer
++ * @format: audio sample format
++ * @bits_per_sample: bits per sample
++ *
++ * Return: Will be an negative value on error or zero on success
 + */
-+#define module_apr_driver(__apr_driver) \
-+	module_driver(__apr_driver, apr_driver_register, \
-+			apr_driver_unregister)
++int q6asm_open_write(struct audio_client *ac, uint32_t format,
++		     uint16_t bits_per_sample)
++{
++	struct asm_stream_cmd_open_write_v3 open;
++	int rc;
 +
-+int apr_send_pkt(struct apr_device *adev, void *buf);
++	q6asm_add_hdr(ac, &open.hdr, sizeof(open), true, ac->stream_id);
 +
-+#endif /* __QCOM_APR_H_ */
++	open.hdr.opcode = ASM_STREAM_CMD_OPEN_WRITE_V3;
++	open.mode_flags = 0x00;
++	open.mode_flags |= ASM_LEGACY_STREAM_SESSION;
++
++	/* source endpoint : matrix */
++	open.sink_endpointype = ASM_END_POINT_DEVICE_MATRIX;
++	open.bits_per_sample = bits_per_sample;
++	open.postprocopo_id = ASM_DEFAULT_POPP_TOPOLOGY;
++
++	switch (format) {
++	case FORMAT_LINEAR_PCM:
++		open.dec_fmt_id = ASM_MEDIA_FMT_MULTI_CHANNEL_PCM_V2;
++		break;
++	default:
++		dev_err(ac->dev, "Invalid format 0x%x\n", format);
++		return -EINVAL;
++	}
++
++	rc = q6asm_ac_send_cmd_sync(ac, &open);
++	if (rc < 0)
++		return rc;
++
++	ac->io_mode |= ASM_TUN_WRITE_IO_MODE;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(q6asm_open_write);
++
++static int __q6asm_run(struct audio_client *ac, uint32_t flags,
++	      uint32_t msw_ts, uint32_t lsw_ts, bool wait)
++{
++	struct asm_session_cmd_run_v2 run;
++
++	q6asm_add_hdr(ac, &run.hdr, sizeof(run), true, ac->stream_id);
++
++	run.hdr.opcode = ASM_SESSION_CMD_RUN_V2;
++	run.flags = flags;
++	run.time_lsw = lsw_ts;
++	run.time_msw = msw_ts;
++	if (wait)
++		return q6asm_ac_send_cmd_sync(ac, &run);
++	else
++		return  apr_send_pkt(ac->adev, &run);
++
++}
++
++/**
++ * q6asm_run() - start the audio client
++ *
++ * @ac: audio client pointer
++ * @flags: flags associated with write
++ * @msw_ts: timestamp msw
++ * @lsw_ts: timestamp lsw
++ *
++ * Return: Will be an negative value on error or zero on success
++ */
++int q6asm_run(struct audio_client *ac, uint32_t flags,
++	      uint32_t msw_ts, uint32_t lsw_ts)
++{
++	return __q6asm_run(ac, flags, msw_ts, lsw_ts, true);
++}
++EXPORT_SYMBOL_GPL(q6asm_run);
++
++/**
++ * q6asm_run_nowait() - start the audio client withou blocking
++ *
++ * @ac: audio client pointer
++ * @flags: flags associated with write
++ * @msw_ts: timestamp msw
++ * @lsw_ts: timestamp lsw
++ *
++ * Return: Will be an negative value on error or zero on success
++ */
++int q6asm_run_nowait(struct audio_client *ac, uint32_t flags,
++	      uint32_t msw_ts, uint32_t lsw_ts)
++{
++	return __q6asm_run(ac, flags, msw_ts, lsw_ts, false);
++}
++EXPORT_SYMBOL_GPL(q6asm_run_nowait);
++
++/**
++ * q6asm_media_format_block_multi_ch_pcm() - setup pcm configuration
++ *
++ * @ac: audio client pointer
++ * @rate: audio sample rate
++ * @channels: number of audio channels.
++ * @use_default_chmap: flag to use default ch map.
++ * @channel_map: channel map pointer
++ * @bits_per_sample: bits per sample
++ *
++ * Return: Will be an negative value on error or zero on success
++ */
++int q6asm_media_format_block_multi_ch_pcm(struct audio_client *ac,
++					  uint32_t rate, uint32_t channels,
++					  u8 channel_map[PCM_FORMAT_MAX_NUM_CHANNEL],
++					  uint16_t bits_per_sample)
++{
++	struct asm_multi_channel_pcm_fmt_blk_v2 fmt;
++	u8 *channel_mapping;
++	int rc;
++
++	q6asm_add_hdr(ac, &fmt.hdr, sizeof(fmt), true, ac->stream_id);
++
++	fmt.hdr.opcode = ASM_DATA_CMD_MEDIA_FMT_UPDATE_V2;
++	fmt.fmt_blk.fmt_blk_size = sizeof(fmt) - sizeof(fmt.hdr) -
++	    sizeof(fmt.fmt_blk);
++	fmt.num_channels = channels;
++	fmt.bits_per_sample = bits_per_sample;
++	fmt.sample_rate = rate;
++	fmt.is_signed = 1;
++
++	channel_mapping = fmt.channel_mapping;
++
++	if (channel_map) {
++		memcpy(channel_mapping, channel_map,
++		       PCM_FORMAT_MAX_NUM_CHANNEL);
++	} else {
++		if (q6dsp_map_channels(channel_mapping, channels)) {
++			dev_err(ac->dev, " map channels failed %d\n", channels);
++			return -EINVAL;
++		}
++	}
++
++	rc = q6asm_ac_send_cmd_sync(ac, &fmt);
++	if (rc < 0)
++		goto fail_cmd;
++
++	return 0;
++fail_cmd:
++	return rc;
++}
++EXPORT_SYMBOL_GPL(q6asm_media_format_block_multi_ch_pcm);
++
++/**
++ * q6asm_write_async() - non blocking write
++ *
++ * @ac: audio client pointer
++ * @len: lenght in bytes
++ * @msw_ts: timestamp msw
++ * @lsw_ts: timestamp lsw
++ * @flags: flags associated with write
++ *
++ * Return: Will be an negative value on error or zero on success
++ */
++int q6asm_write_async(struct audio_client *ac, uint32_t len, uint32_t msw_ts,
++		       uint32_t lsw_ts, uint32_t flags)
++{
++	struct asm_data_cmd_write_v2 write;
++	struct audio_port_data *port;
++	struct audio_buffer *ab;
++	int rc = 0;
++
++	if (!(ac->io_mode & ASM_SYNC_IO_MODE))
++		return 0;
++
++	port = &ac->port[SNDRV_PCM_STREAM_PLAYBACK];
++	q6asm_add_hdr(ac, &write.hdr, sizeof(write), false,
++		      ac->stream_id);
++
++	ab = &port->buf[port->dsp_buf];
++
++	write.hdr.token = port->dsp_buf;
++	write.hdr.opcode = ASM_DATA_CMD_WRITE_V2;
++	write.buf_addr_lsw = lower_32_bits(ab->phys);
++	write.buf_addr_msw = upper_32_bits(ab->phys);
++	write.buf_size = len;
++	write.seq_id = port->dsp_buf;
++	write.timestamp_lsw = lsw_ts;
++	write.timestamp_msw = msw_ts;
++	write.mem_map_handle =
++	    ac->port[SNDRV_PCM_STREAM_PLAYBACK].mem_map_handle;
++
++	if (flags == NO_TIMESTAMP)
++		write.flags = (flags & 0x800000FF);
++	else
++		write.flags = (0x80000000 | flags);
++
++	port->dsp_buf++;
++
++	if (port->dsp_buf >= port->num_periods)
++		port->dsp_buf = 0;
++
++	rc = apr_send_pkt(ac->adev, &write);
++	if (rc < 0)
++		return rc;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(q6asm_write_async);
++
++static void q6asm_reset_buf_state(struct audio_client *ac)
++{
++	int cnt = 0;
++	int loopcnt = 0;
++	int used;
++	struct audio_port_data *port = NULL;
++
++	if (!(ac->io_mode & ASM_SYNC_IO_MODE))
++		return;
++
++	used = (ac->io_mode & ASM_TUN_WRITE_IO_MODE ? 1 : 0);
++	mutex_lock(&ac->lock);
++	for (loopcnt = 0; loopcnt <= SNDRV_PCM_STREAM_CAPTURE;
++	     loopcnt++) {
++		port = &ac->port[loopcnt];
++		cnt = port->num_periods - 1;
++		port->dsp_buf = 0;
++		while (cnt >= 0) {
++			if (!port->buf)
++				continue;
++			port->buf[cnt].used = used;
++			cnt--;
++		}
++	}
++	mutex_unlock(&ac->lock);
++}
++
++static int __q6asm_cmd(struct audio_client *ac, int cmd, bool wait)
++{
++	int stream_id = ac->stream_id;
++	struct apr_hdr hdr;
++	int rc;
++
++	q6asm_add_hdr(ac, &hdr, sizeof(hdr), true, stream_id);
++
++	switch (cmd) {
++	case CMD_PAUSE:
++		hdr.opcode = ASM_SESSION_CMD_PAUSE;
++		break;
++	case CMD_SUSPEND:
++		hdr.opcode = ASM_SESSION_CMD_SUSPEND;
++		break;
++	case CMD_FLUSH:
++		hdr.opcode = ASM_STREAM_CMD_FLUSH;
++		break;
++	case CMD_OUT_FLUSH:
++		hdr.opcode = ASM_STREAM_CMD_FLUSH_READBUFS;
++		break;
++	case CMD_EOS:
++		hdr.opcode = ASM_DATA_CMD_EOS;
++		break;
++	case CMD_CLOSE:
++		hdr.opcode = ASM_STREAM_CMD_CLOSE;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	if (wait)
++		rc = q6asm_ac_send_cmd_sync(ac, &hdr);
++	else
++		return apr_send_pkt(ac->adev, &hdr);
++
++	if (rc < 0)
++		return rc;
++
++	if (cmd == CMD_FLUSH)
++		q6asm_reset_buf_state(ac);
++
++	return 0;
++}
++
++/**
++ * q6asm_cmd() - run cmd on audio client
++ *
++ * @ac: audio client pointer
++ * @cmd: command to run on audio client.
++ *
++ * Return: Will be an negative value on error or zero on success
++ */
++int q6asm_cmd(struct audio_client *ac, int cmd)
++{
++	return __q6asm_cmd(ac, cmd, true);
++}
++EXPORT_SYMBOL_GPL(q6asm_cmd);
++
++/**
++ * q6asm_cmd_nowait() - non blocking, run cmd on audio client
++ *
++ * @ac: audio client pointer
++ * @cmd: command to run on audio client.
++ *
++ * Return: Will be an negative value on error or zero on success
++ */
++int q6asm_cmd_nowait(struct audio_client *ac, int cmd)
++{
++	return __q6asm_cmd(ac, cmd, false);
++}
++EXPORT_SYMBOL_GPL(q6asm_cmd_nowait);
+ 
+ static int q6asm_probe(struct apr_device *adev)
+ {
+diff --git a/sound/soc/qcom/qdsp6/q6asm.h b/sound/soc/qcom/qdsp6/q6asm.h
+index a4f9fe636b7e..b5ef90bb724b 100644
+--- a/sound/soc/qcom/qdsp6/q6asm.h
++++ b/sound/soc/qcom/qdsp6/q6asm.h
+@@ -1,8 +1,35 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #ifndef __Q6_ASM_H__
+ #define __Q6_ASM_H__
++#include "q6dsp-common.h"
++#include <dt-bindings/sound/qcom,q6asm.h>
++
++/* ASM client callback events */
++#define CMD_PAUSE			0x0001
++#define ASM_CLIENT_EVENT_CMD_PAUSE_DONE		0x1001
++#define CMD_FLUSH				0x0002
++#define ASM_CLIENT_EVENT_CMD_FLUSH_DONE		0x1002
++#define CMD_EOS				0x0003
++#define ASM_CLIENT_EVENT_CMD_EOS_DONE		0x1003
++#define CMD_CLOSE				0x0004
++#define ASM_CLIENT_EVENT_CMD_CLOSE_DONE		0x1004
++#define CMD_OUT_FLUSH				0x0005
++#define ASM_CLIENT_EVENT_CMD_OUT_FLUSH_DONE	0x1005
++#define CMD_SUSPEND				0x0006
++#define ASM_CLIENT_EVENT_CMD_SUSPEND_DONE	0x1006
++#define ASM_CLIENT_EVENT_CMD_RUN_DONE		0x1008
++#define ASM_CLIENT_EVENT_DATA_WRITE_DONE	0x1009
++
++enum {
++	LEGACY_PCM_MODE = 0,
++	LOW_LATENCY_PCM_MODE,
++	ULTRA_LOW_LATENCY_PCM_MODE,
++	ULL_POST_PROCESSING_PCM_MODE,
++};
+ 
+ #define MAX_SESSIONS	16
++#define NO_TIMESTAMP    0xFF00
++#define FORMAT_LINEAR_PCM   0x0000
+ 
+ void q6asm_set_dai_data(struct device *dev, void *data);
+ void *q6asm_get_dai_data(struct device *dev);
+@@ -14,6 +41,20 @@ struct audio_client *q6asm_audio_client_alloc(struct device *dev,
+ 					      q6asm_cb cb, void *priv,
+ 					      int session_id);
+ void q6asm_audio_client_free(struct audio_client *ac);
++int q6asm_write_async(struct audio_client *ac, uint32_t len, uint32_t msw_ts,
++		       uint32_t lsw_ts, uint32_t flags);
++int q6asm_open_write(struct audio_client *ac, uint32_t format,
++		     uint16_t bits_per_sample);
++int q6asm_media_format_block_multi_ch_pcm(struct audio_client *ac,
++					  uint32_t rate, uint32_t channels,
++					  u8 channel_map[PCM_FORMAT_MAX_NUM_CHANNEL],
++					  uint16_t bits_per_sample);
++int q6asm_run(struct audio_client *ac, uint32_t flags, uint32_t msw_ts,
++	      uint32_t lsw_ts);
++int q6asm_run_nowait(struct audio_client *ac, uint32_t flags, uint32_t msw_ts,
++		     uint32_t lsw_ts);
++int q6asm_cmd(struct audio_client *ac, int cmd);
++int q6asm_cmd_nowait(struct audio_client *ac, int cmd);
+ int q6asm_get_session_id(struct audio_client *ac);
+ int q6asm_map_memory_regions(unsigned int dir,
+ 			     struct audio_client *ac,
 -- 
 2.15.1
