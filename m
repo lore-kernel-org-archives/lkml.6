@@ -1,73 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934749AbeBMJoR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 04:44:17 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40899 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933805AbeBMJoA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:44:00 -0500
-X-Google-Smtp-Source: AH8x226PAb19wGk6gbu9yZ04mo8ohUzljDamQPP2CrmkuOylMHRmeO/BmVxyIMRoxF65pwSwDtmbXA==
-Date: Tue, 13 Feb 2018 10:43:56 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Andrei Vagin <avagin@virtuozzo.com>,
-        tip-bot for Jacob Shin <tipbot@zytor.com>,
-        kirill.shutemov@linux.intel.com, linux-tip-commits@vger.kernel.org,
-        tglx@linutronix.de, willy@infradead.org, gorcunov@openvz.org,
-        bp@suse.de, peterz@infradead.org, torvalds@linux-foundation.org,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, luto@amacapital.net
-Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Handle 5-level paging
- boot if kernel is above 4G
-Message-ID: <20180213094355.jodz6cuh3n3brfmc@gmail.com>
-References: <tip-b4b56015ed1c98cbc9469e35ebbc4373a2844030@git.kernel.org>
- <20180213065155.GA14087@outlook.office365.com>
- <20180213080816.vwh64jiz23frjiot@node.shutemov.name>
- <20180213084121.GA19906@outlook.office365.com>
- <20180213090249.vnjwitt657jabnlt@node.shutemov.name>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180213090249.vnjwitt657jabnlt@node.shutemov.name>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        id S934787AbeBMJoz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 04:44:55 -0500
+Received: from mail.phycore.de ([217.6.246.34]:44462 "EHLO root.phytec.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934009AbeBMJoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 04:44:37 -0500
+From: Daniel Schultz <d.schultz@phytec.de>
+To: heiko@sntech.de, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] ARM: dts: rockchip: phycore: Fix supply node for card's power
+Date: Tue, 13 Feb 2018 10:44:33 +0100
+Message-Id: <1518515074-22526-2-git-send-email-d.schultz@phytec.de>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518515074-22526-1-git-send-email-d.schultz@phytec.de>
+References: <1518515074-22526-1-git-send-email-d.schultz@phytec.de>
+X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 13.02.2018 10:44:34,
+        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 13.02.2018 10:44:34,
+        Serialize complete at 13.02.2018 10:44:34
+X-TNEFEvaluated: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Wadim Egorov <w.egorov@phytec.de>
 
-* Kirill A. Shutemov <kirill@shutemov.name> wrote:
+The card is powered by the RK818 switch vdd_sd which is supplied
+by VCC9 (VDD_3V3_IO).
 
-> On Tue, Feb 13, 2018 at 12:41:22AM -0800, Andrei Vagin wrote:
-> > On Tue, Feb 13, 2018 at 11:08:16AM +0300, Kirill A. Shutemov wrote:
-> > > On Mon, Feb 12, 2018 at 10:51:56PM -0800, Andrei Vagin wrote:
-> > > > Hi Kirill,
-> > > > 
-> > > > Something is wrong in this patch.
-> 
-> Could you please check if this makes a difference?
-> 
-> diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-> index 70b30f2bc9e0..99a0e7993252 100644
-> --- a/arch/x86/boot/compressed/head_64.S
-> +++ b/arch/x86/boot/compressed/head_64.S
-> @@ -332,7 +332,7 @@ ENTRY(startup_64)
->  
->  	/* Make sure we have GDT with 32-bit code segment */
->  	leaq	gdt(%rip), %rax
-> -	movl	%eax, gdt64+2(%rip)
-> +	movq	%rax, gdt64+2(%rip)
->  	lgdt	gdt64(%rip)
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+---
+ arch/arm/boot/dts/rk3288-phycore-rdk.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-There's another suspicious looking pattern as well:
-
-        leaq    startup_32(%rip), %rax
-        movl    %eax, BP_code32_start(%rsi)
-...
-        movl    BP_code32_start(%esi), %eax
-        leaq    startup_64(%rax), %rax
-...
-
-
-Thanks,
-
-	Ingo
+diff --git a/arch/arm/boot/dts/rk3288-phycore-rdk.dts b/arch/arm/boot/dts/rk3288-phycore-rdk.dts
+index 1241cbc..ecb26f0 100644
+--- a/arch/arm/boot/dts/rk3288-phycore-rdk.dts
++++ b/arch/arm/boot/dts/rk3288-phycore-rdk.dts
+@@ -265,7 +265,7 @@
+ 	disable-wp;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_cd &sdmmc_bus4>;
+-	vmmc-supply = <&vdd_io_sd>;
++	vmmc-supply = <&vdd_sd>;
+ 	vqmmc-supply = <&vdd_io_sd>;
+ 	status = "okay";
+ };
+-- 
+2.7.4
