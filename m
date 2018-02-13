@@ -1,166 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934929AbeBMLcc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 06:32:32 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54530 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934443AbeBMLc1 (ORCPT
+        id S934829AbeBMLdq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 06:33:46 -0500
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:44247 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934410AbeBMLdk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 06:32:27 -0500
-X-Google-Smtp-Source: AH8x2268Es+xbtwrkERoj782mL47ZzpQDIGCEyHcsg1o7CiLk3+8REa71pZt86UHLxKnaFbHFtdBSA==
-Subject: Re: BUG: A31s Not booting anymore
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: linux-sunxi <linux-sunxi@googlegroups.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <e155f7fc-9c22-d8ac-d142-805812aa9988@gmail.com>
- <b421fae7-b807-5ed8-669d-6ba773ac3eca@gmail.com>
- <CAGb2v65qNOLRfQXMOoYzH1y-t+YDDhK_wAe1QUKs74Pzu8D84A@mail.gmail.com>
-From: Philipp Rossak <embed3d@gmail.com>
-Message-ID: <9f7123d1-a14b-c51a-d7a8-63c58a3f83dd@gmail.com>
-Date: Tue, 13 Feb 2018 12:32:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 13 Feb 2018 06:33:40 -0500
+X-Google-Smtp-Source: AH8x225emc0EOl9fOUj6y2gnXRmx4/XCJ4RH2XL4GinMyCviudJctrM7XxXvA6xzDIKDo1v+9/cOkg==
+Date: Tue, 13 Feb 2018 12:33:24 +0100
+From: Ulf Magnusson <ulfalizer@gmail.com>
+To: Sander Eikelenboom <linux@eikelenboom.it>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Woody Suwalski <terraluna977@gmail.com>, srivasta@debian.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 4.16-rc1: regression bisected, Debian kernel package tool
+ make-kpkg stalls indefinitely during kernel build due to commit "kconfig:
+ remove check_stdin()"
+Message-ID: <20180213113324.gm6sv37g72gs3qrc@huvuddator>
+References: <b7f71558-0e57-cacb-280c-a9d3baa030b2@eikelenboom.it>
+ <9d122a3c-b1fe-a9f8-17db-c38f42fdc4b1@gmail.com>
+ <CAK7LNAQRZ6F92s5QotKHoapAG+9BqxaUqmGSeKJRYOuu5izauQ@mail.gmail.com>
+ <27f3817b-0c92-5f92-e079-078a8b92eab4@eikelenboom.it>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v65qNOLRfQXMOoYzH1y-t+YDDhK_wAe1QUKs74Pzu8D84A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <27f3817b-0c92-5f92-e079-078a8b92eab4@eikelenboom.it>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 13, 2018 at 11:00:49AM +0100, Sander Eikelenboom wrote:
+> On 13/02/18 05:09, Masahiro Yamada wrote:
+> > 2018-02-13 12:00 GMT+09:00 Woody Suwalski <terraluna977@gmail.com>:
+> >> Sander Eikelenboom wrote:
+> >>>
+> >>> L.S.,
+> >>>
+> >>> The Debian kernel-package tool make-kpkg for easy building of upstream
+> >>> kernels on Debian fails with linux 4.16-rc1.
+> >>>
+> >>> The tool (perl script) while invoked with:
+> >>>      make-kpkg --initrd --append_to_version -20180212 kernel_image
+> >>>
+> >>> On a git tree with a .config from the previous kernel release, so new
+> >>> KConfig questions have to be asked on new or changed options.
+> >>>
+> >>> The script stalls indefinitely while it seems to be excuting:
+> >>>      exec make kpkg_version=13.018+nmu1 -f
+> >>> /usr/share/kernel-package/ruleset/minimal.mk debian
+> >>> APPEND_TO_VERSION=-t440s-20180212  INITRD=YES
+> >>>
+> >>> After using ctrl-c to break out it, i get:
+> >>>     ^CFailed to create a ./debian directory: No such file or directory at
+> >>> /usr/bin/make-kpkg line 970.
+> >>>
+> >>> Bisection turned up as culprit:
+> >>>      commit d2a04648a5dbc3d1d043b35257364f0197d4d868
+> >>>      kconfig: remove check_stdin()
+> >>>           Except silentoldconfig, valid_stdin is 1, so check_stdin() is
+> >>> no-op.
+> >>>           oldconfig and silentoldconfig work almost in the same way except
+> >>> that
+> >>>      the latter generates additional files under include/.  Both ask users
+> >>>      for input for new symbols.
+> >>>           I do not know why only silentoldconfig requires stdio be tty.
+> >>>             $ rm -f .config; touch .config
+> >>>        $ yes "" | make oldconfig > stdout
+> >>>        $ rm -f .config; touch .config
+> >>>        $ yes "" | make silentoldconfig > stdout
+> >>>        make[1]: *** [silentoldconfig] Error 1
+> >>>        make: *** [silentoldconfig] Error 2
+> >>>        $ tail -n 4 stdout
+> >>>        Console input/output is redirected. Run 'make oldconfig' to update
+> >>> configuration.
+> >>>             scripts/kconfig/Makefile:40: recipe for target
+> >>> 'silentoldconfig' failed
+> >>>        Makefile:507: recipe for target 'silentoldconfig' failed
+> >>>           Redirection is useful, for example, for testing where we want to
+> >>> give
+> >>>      particular key inputs from a test file, then check the result.
+> >>>           Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> >>>      Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
+> >>>
+> >>> Reverting this specific commit makes make-kpkg work again as usual.
+> >>>
+> >>> Version of the kernel-package used:
+> >>> ii  kernel-package
+> >>> 13.018+nmu1
+> >>>
+> >>>
+> >>> I also cc'ed the Debian developer who maintains the kernel-package
+> >>> package: Manoj Srivastava
+> >>>
+> >>> --
+> >>> Sander
+> >>>
+> >> I have noticed today the same - the kernel-build blockage was in (as I
+> >> recall)
+> >> srcipts/kconfig/conf -s --silentoldconfig Kbuild
+> >>
+> >> I have bypassed it by regenerating the .config "by hand"...
+> > 
+> > 
+> > silentoldconfig asks you values for new symbols.
+> > So, you must answer questions to proceed.
+> 
+> I know, but it stalls before asking the questions.
+>  
+> > 
+> > How does 'make-kpkg' handle silentoldconfig?
+> > 
+> > Re-direct stdio, then make it forcibly fail?
+> 
+> I don't know, it is a bunch of perl and shell scripts that gets invoked, not the most easy to comprehend if you are not familiar with them. I'm just a user of the tool.
+> 
+> So i would have to defer that question to the Debian package maintainer, hopefully he will chime in.
+> 
+> --
+> Sander
+> 
+> > 
+> > 
+> > 
+> 
 
+Hello,
 
-On 13.02.2018 03:59, Chen-Yu Tsai wrote:
-> On Tue, Feb 13, 2018 at 9:25 AM, Philipp Rossak <embed3d@gmail.com> wrote:
->>
->>
->> On 12.02.2018 19:21, Philipp Rossak wrote:
->>>
->>> Hey,
->>>
->>> When I try to boot my A31s (Bananapi M2) u-boot is showing only Starting
->>> kernel ... . After enabling the earlyprintk I could capture this log: [1].
->>>
->>> After reverting those 5 commits from Chen-Yu I was able to boot again:
->>>
->>>
->>> clk: sunxi-ng: Support fixed post-dividers on NM style clocks
->>> 7d333ef1cc1b8c8951f3a2c41f6406e2295d8be9
->>>
->>> clk: sunxi-ng: sun8i: a83t: Add /2 fixed post divider to audio PLL
->>> 10e6eb4f2c5b35ae71c9bc0db83d74238719b453
->>>
->>> clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL
->>> e952ca3c6b2ffdfbf9618e4bd3e9aad1ff3f5eb4
->>>
->>> clk: sunxi-ng: Support fixed post-dividers on MP style clocks
->>> 946797aa3f08e2f6f5992f3ec2be44791e9b9260
->>>
->>> clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider to MMC module clocks
->>> 83fe3be4d1974f5f50c5e2039a1609f4960e8579
->>>
->>>
->>> I allready tried to fix it with making them save against zero:
->>>
->>> if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV && \
->>>           cmp->fixed_post_div with)
->>>                  rate *= cmp->fixed_post_div;
->>>
->>> But that didn't help.
->>>
->>> Any ideas?
->>>
->>> Regards,
->>> Philipp
->>>
->>> [1]: https://pastebin.com/64Fzzqvg
->>
->>
->> It took me some time, but I have now a few more infos:
->>
->> Right now the code breaks at this point here [1], with this clock [2].
->> If we have a look now at the clock config [3], we see here a table which is
->> an u8 array and also a fixed_predivs struct.
-> 
-> The u8 array is for mapping the parents from the index in the parents
-> array to the actual register value you listed below.
-> 
-> How are you figuring out which clock is triggering this? Because that
-> is not even the right type of clock. The backtrace you posted shows
-> the error occurring in a DIV or M type clock, not the MP type you
-> are pointing to.
-> 
-> Could you add some noisy printk calls to the sunxi_ccu_probe()
-> function in drivers/clk/sunxi-ng/ccu_common.c so it's much clearer
-> which clock is failing?
+What the commit does is to make silentoldconfig not immediately exit(1)
+when both of the following apply:
 
-Thats what I basically did to find out which clock is failing. This here 
-are the changes I'm doing [1]  and thats the dirty log [2]. It fails at 
-clock NR 155 which is this one [3] mentioned before.
+    1. stdin is from something that's not a terminal
 
-> 
-> 
->>
->> If we have a look at the function call where it breaks [4], shouldn't the
->> table be a clk_div_table struct instead of an u8?
-> 
-> The table argument is an option. Did you go through how the sunxi-ng driver
-> calls this function? As mentioned above, you are looking at the wrong thing.
-> 
-> Thanks
-> ChenYu
+    2. New symbols are prompted for
 
-I followed the failing call to this function (through the clock driver). 
-As you can see I added an additional printk statement to see where it fails.
+All the outputs (.config and the include/generated/ and include/config/
+trees) are generated after the point where silentoldconfig would
+previously exit(1), afaics, so the effects of the commit can be
+summarized as follows:
 
-Regards,
-Philipp
-> 
->>
->> The a31s is the only board where we have this combination of a fixed_predivs
->> and a table.
->>
->> Philipp
->>
->>
->> Related Clock source register A31s:
->>
->> 0000: OSC24MHz/750=32KHz
->> 0001: LOSC
->> 0010: OSC24MHz
->> 0011: /
->> 0100: /
->> 0101: /
->> 0110: /
->> 0111: /
->> 1000: /
->> 1001: /
->> 1010: /
->> 1011: AXICLK/4
->> 1100: /
->> 1101: AHB1CLK/4
->> 1110: /
->> 1111: /
->>
->>
->> [1]:
->> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/clk-divider.c#L89
->>
->> [2]:
->> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/sunxi-ng/ccu-sun6i-a31.c#L1137
->>
->> [3]:
->> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/sunxi-ng/ccu-sun6i-a31.c#L749
->>
->> [4]:
->> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/clk-divider.c#L93
->>
+    * If no new symbols appear (that would be prompted for), the
+      behavior is exactly the same as before.
+      
+      (check_stdin() never seems to get called unless a value would
+      actually be prompted for, which makes sense.)
 
-[1]: https://pastebin.com/tvDunAWq
-[2]: https://pastebin.com/SBn2VQLu
-[3]: 
-http://lxr.bootlin.com/linux/v4.16-rc1/source/include/dt-bindings/clock/sun6i-a31-ccu.h#L187
+    * If new symbols appear and stdin is a tty, the behavior is also
+      exactly the same as before.
+
+And finally, the only case where the behavior differs:
+
+    * If new symbols appear and stdin is not a tty, the
+      new behavior is to prompt (to expect e.g. "n"/"m"/"y" from
+      wherever stdin is coming from).
+
+      The old behavior was to exit(1) without generating any output
+      files.
+
+Hopefully that clarifies it.
+
+The intent of the commit was just to clean up the code a bit, since
+there doesn't seem to be a good reason to bail just because stdin
+happens to not be a tty (plus it's inconsistent with the way oldconfig
+works, which never bailed).
+
+silentoldconfig is something of an internal implementation detail at
+this point by the way. It's basically oldconfig + generate the
+configuration stuff in include/generated/ and include/config/ that
+actually gets used during the build. Normally it's called automatically
+as needed when building the kernel.
+
+See https://www.spinics.net/lists/kernel/msg2720574.html for some more
+details re. silentoldconfig.
+
+Cheers,
+Ulf
