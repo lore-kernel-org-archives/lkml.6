@@ -1,50 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933409AbeBMDZF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 22:25:05 -0500
-Received: from ozlabs.org ([103.22.144.67]:36593 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933361AbeBMDZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 22:25:03 -0500
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Michal Hocko <mhocko@kernel.org>, Will Drewry <wad@chromium.org>,
-        Kees Cook <keescook@chromium.org>
-Cc: linux-s390@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: samples/seccomp/ broken when cross compiling s390, ppc allyesconfig
-In-Reply-To: <20180212133731.GE3443@dhcp22.suse.cz>
-References: <20180212133731.GE3443@dhcp22.suse.cz>
-Date: Tue, 13 Feb 2018 14:25:01 +1100
-Message-ID: <87r2ppvaeq.fsf@concordia.ellerman.id.au>
+        id S933384AbeBMDcx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 22:32:53 -0500
+Received: from mail-pl0-f47.google.com ([209.85.160.47]:38608 "EHLO
+        mail-pl0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933323AbeBMDcv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 22:32:51 -0500
+X-Google-Smtp-Source: AH8x227dpTtR873M7mnWtHBqPwq37XtX7reZinjtfXRi/saRlLOgasqTSSD5UJ92Gx6Ld4De53R3qg==
+To: linux-kernel@vger.kernel.org
+From: Aidan Hahn <aidanjacobhahn@gmail.com>
+Subject: Linux input driver issue with Elan touchscreen on 4.15 and 4.16-rc1
+Message-ID: <7927412e-ad49-f682-e62c-29e060df6799@gmail.com>
+Date: Mon, 12 Feb 2018 19:32:45 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Hocko <mhocko@kernel.org> writes:
-> Hi,
-> my build test machinery chokes on samples/seccomp when cross compiling
-> s390 and ppc64 allyesconfig. This has been the case for quite some
-> time already but I never found time to look at the problem and report
-> it. It seems this is not new issue and similar thing happend for
-> MIPS e9107f88c985 ("samples/seccomp/Makefile: do not build tests if
-> cross-compiling for MIPS").
->
-> The build logs are attached.
->
-> What is the best way around this? Should we simply skip compilation on
-> cross compile or is actually anybody relying on that? Or should I simply
-> disable it for s390 and ppc?
+Hello,
+I have a kernel.org bug 
+(https://bugzilla.kernel.org/show_bug.cgi?id=198715) that I am trying to 
+raise the visibility of.
 
-The whole thing seems very confused. It's not building for the target,
-it's building for the host, ie. the Makefile sets hostprogs-m and
-HOSTCFLAGS etc.
+The documentation on Bug Reporting mentioned emailing this list with my 
+issue so I figured I would post about it here.
 
-So it can't possibly work with cross compiling as it's currently
-written.
+I am running an HP Envy x360 powered by a Ryzen mobile chip and I am 
+having trouble getting the touchscreen to work. I have attached DMESG 
+logs from kernel 4.15 and 4.16 to the bugzilla ticket and I also decided 
+to upload a disassembled ACPI table after reading the following email 
+thread that is related to the issue I am having 
+(https://www.spinics.net/lists/linux-input/msg50784.html)
 
-Either the Makefile needs some serious work to properly support cross
-compiling or it should just be disabled when cross compiling.
-
-cheers
+Thank you,
+Aidan Hahn
