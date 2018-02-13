@@ -1,224 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965410AbeBMREC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:04:02 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54924 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965492AbeBMRBn (ORCPT
+        id S965579AbeBMREs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:04:48 -0500
+Received: from mail-qt0-f172.google.com ([209.85.216.172]:46533 "EHLO
+        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965481AbeBMRBj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:01:43 -0500
-X-Google-Smtp-Source: AH8x224tuYP5BNpqrWkoSXt/3GTxrrDhXCtrRXY1a6/RiMy7xR70mFdjzwT4XPEiB0euSi6SpXf3KA==
-From: srinivas.kandagatla@linaro.org
-To: andy.gross@linaro.org, broonie@kernel.org,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, plai@codeaurora.org, bgoswami@codeaurora.org,
-        perex@perex.cz, tiwai@suse.com, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
-        spatakok@qti.qualcomm.com,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v3 20/25] ASoC: qcom: q6afe: add support to MI2S sysclks
-Date: Tue, 13 Feb 2018 16:58:32 +0000
-Message-Id: <20180213165837.1620-21-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
-References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
+        Tue, 13 Feb 2018 12:01:39 -0500
+X-Google-Smtp-Source: AH8x224pbYAGErnd7qKzstLm7i0Y98itBk3t9QfspREspoda/6IX3/bwXw6G5tKlD6jZhaKzZebJPPHZ0MwwSVva04A=
+MIME-Version: 1.0
+In-Reply-To: <20180213165023.xmzovx7fd3gdljxw@pali>
+References: <20180127133209.28995-1-pali.rohar@gmail.com> <CAHp75VdWA-0a_FeicHSi_FfWurQ9EvkdW0raqgoRVySTyxDJ0Q@mail.gmail.com>
+ <20180128144509.pobnj7cayc4psgrj@pali> <CAHp75VdU1OMTqLcDuzhQMHuX9rMhjw6p3CkSWaW5Y4kOy8ggqg@mail.gmail.com>
+ <20180131120348.azy25aqvn5wrdkeh@pali> <CAHp75Vf=-RQvCtS684Q5+X=YKmZXgP_1kr0to8BGZX0jQAsuZw@mail.gmail.com>
+ <20180212153012.vffvjmz26ifyxbj5@pali> <CAHp75VfF+qwCXcr3yuayE-Z+UG9wuMOKfGzLhdyPk79daEi9gQ@mail.gmail.com>
+ <20180213150004.5d2v7y7wwuure4io@pali> <CAHp75VfxgbFiDxyrqyMRE8s85L1_EzkVvrA1NGYA5_su=5oGVQ@mail.gmail.com>
+ <20180213165023.xmzovx7fd3gdljxw@pali>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Feb 2018 19:01:37 +0200
+Message-ID: <CAHp75Vc9T8umLVtBuBCK+HgAga9=ZKBhBTjA8Nmbvaw1zyVLng@mail.gmail.com>
+Subject: Re: [PATCH v2] i2c: i801: Register optional lis3lv02d i2c device on
+ Dell machines
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,
+        Steven Honeyman <stevenhoneyman@gmail.com>,
+        Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
+        Jochen Eisinger <jochen@penguin-breeder.org>,
+        Gabriele Mazzotta <gabriele.mzt@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mario Limonciello <Mario_Limonciello@dell.com>,
+        Alex Hung <alex.hung@canonical.com>, Takashi Iwai <tiwai@suse.de>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1DH4qjE023262
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On Tue, Feb 13, 2018 at 6:50 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
+> On Tuesday 13 February 2018 17:06:19 Andy Shevchenko wrote:
+>> On Tue, Feb 13, 2018 at 5:00 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
+>> > On Tuesday 13 February 2018 16:55:00 Andy Shevchenko wrote:
+>> >> On Mon, Feb 12, 2018 at 5:30 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
+>> >> > On Wednesday 31 January 2018 14:27:51 Andy Shevchenko wrote:
 
-This patch adds support to LPASS Bit clock, LPASS Digital
-core clock and OSR clock. These clocks are required for both
-MI2S and PCM setup.
+>> >> > Following table already exists in dell-smo8800.c file:
+>> >> > Can we reuse it?
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- sound/soc/qcom/qdsp6/q6afe.c | 115 +++++++++++++++++++++++++++++++++++++++++++
- sound/soc/qcom/qdsp6/q6afe.h |  10 ++++
- 2 files changed, 125 insertions(+)
+>> >> >  Maybe moving array smo8800_ids[] into some header file
+>> >> > (which one?) and statically inline it?
+>> >>
+>> >> Bad idea.
+>> >>
+>> >> > Or having it only in
+>> >> > dell-smo8800.c file and exporting its symbol?
+>> >>
+>> >> Even worse.
+>> >>
+>> >> > Or is there better idea?
+>> >> >
+>> >> > For sure I do not want to copy paste this table into another module and
+>> >> > maintaining two copies of this list.
+>> >>
+>> >> The copy is fine. Can you guarantee that those two lists would be
+>> >> always the same? I'm not.
+>> >
+>> > Me neither.
+>> >
+>> >> And besides that explicitly over implicitly  is a really good thing. I
+>> >> would not like to grep for an ID followed by grepping include line and
+>> >> check each files to check if it uses it or not.
+>> >
+>> > So what do you suggest now?
+>>
+>> Copy'n'paste and maintain two lists.
+>> Yes, it's not the ideal, but working solution.
+>>
+>> You may put a comment before each list to explain what the second does
+>> and tell a contributor to look at it and update if needed.
+>
+> I'm not maintainer of i2c-i801.ko, Jean Delvare & Wolfram Sang are.
+> Therefore instructing future contributors would be up to them.
 
-diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
-index c04caea5481c..ea6fa3848007 100644
---- a/sound/soc/qcom/qdsp6/q6afe.c
-+++ b/sound/soc/qcom/qdsp6/q6afe.c
-@@ -31,6 +31,9 @@
- 
- #define AFE_PARAM_ID_CDC_SLIMBUS_SLAVE_CFG 0x00010235
- 
-+#define AFE_PARAM_ID_LPAIF_CLK_CONFIG	0x00010238
-+#define AFE_PARAM_ID_INTERNAL_DIGITAL_CDC_CLK_CONFIG	0x00010239
-+
- #define AFE_PARAM_ID_SLIMBUS_CONFIG    0x00010212
- #define AFE_PARAM_ID_I2S_CONFIG	0x0001020D
- 
-@@ -94,6 +97,11 @@
- #define AFE_PORT_ID_QUATERNARY_MI2S_RX      0x1006
- #define AFE_PORT_ID_QUATERNARY_MI2S_TX      0x1007
- 
-+#define Q6AFE_LPASS_MODE_CLK1_VALID 1
-+#define Q6AFE_LPASS_MODE_CLK2_VALID 2
-+#define Q6AFE_LPASS_CLK_SRC_INTERNAL 1
-+#define Q6AFE_LPASS_CLK_ROOT_DEFAULT 0
-+
- #define TIMEOUT_MS 1000
- #define AFE_CMD_RESP_AVAIL	0
- #define AFE_CMD_RESP_NONE	1
-@@ -191,6 +199,23 @@ struct afe_param_id_slimbus_cfg {
-  */
- } __packed;
- 
-+struct afe_clk_cfg {
-+	u32                  i2s_cfg_minor_version;
-+	u32                  clk_val1;
-+	u32                  clk_val2;
-+	u16                  clk_src;
-+	u16                  clk_root;
-+	u16                  clk_set_mode;
-+	u16                  reserved;
-+} __packed;
-+
-+struct afe_digital_clk_cfg {
-+	u32                  i2s_cfg_minor_version;
-+	u32                  clk_val;
-+	u16                  clk_root;
-+	u16                  reserved;
-+} __packed;
-+
- struct afe_param_id_i2s_cfg {
- 	u32	i2s_cfg_minor_version;
- 	u16	bit_width;
-@@ -208,6 +233,21 @@ union afe_port_config {
- 	struct afe_param_id_i2s_cfg	i2s_cfg;
- } __packed;
- 
-+struct afe_lpass_clk_config_command {
-+	struct apr_hdr			 hdr;
-+	struct afe_port_cmd_set_param_v2 param;
-+	struct afe_port_param_data_v2    pdata;
-+	struct afe_clk_cfg clk_cfg;
-+} __packed;
-+
-+struct afe_lpass_digital_clk_config_command {
-+	struct apr_hdr			 hdr;
-+	struct afe_port_cmd_set_param_v2 param;
-+	struct afe_port_param_data_v2    pdata;
-+	struct afe_digital_clk_cfg clk_cfg;
-+} __packed;
-+
-+/* This param id is used to configure internal clk */
- struct q6afe_port {
- 	wait_queue_head_t wait;
- 	union afe_port_config port_cfg;
-@@ -425,6 +465,81 @@ static int q6afe_port_set_param_v2(struct q6afe_port *port, void *data,
- 	return ret;
- }
- 
-+static int q6afe_set_lpass_clock(struct q6afe_port *port,
-+				 struct afe_clk_cfg *cfg)
-+{
-+	struct afe_lpass_clk_config_command clk_cfg = {0};
-+	int param_id = AFE_PARAM_ID_LPAIF_CLK_CONFIG;
-+	struct q6afe *afe = port->afe;
-+
-+	if (!cfg) {
-+		dev_err(afe->dev, "clock cfg is NULL\n");
-+		return -EINVAL;
-+	}
-+
-+	clk_cfg.clk_cfg = *cfg;
-+
-+	return q6afe_port_set_param_v2(port, &clk_cfg, param_id, sizeof(*cfg));
-+}
-+
-+static int q6afe_set_digital_codec_core_clock(struct q6afe_port *port,
-+					      struct afe_digital_clk_cfg *cfg)
-+{
-+	struct afe_lpass_digital_clk_config_command clk_cfg = {0};
-+	int param_id = AFE_PARAM_ID_INTERNAL_DIGITAL_CDC_CLK_CONFIG;
-+	struct q6afe *afe = port->afe;
-+
-+	if (!cfg) {
-+		dev_err(afe->dev, "clock cfg is NULL\n");
-+		return -EINVAL;
-+	}
-+
-+	clk_cfg.clk_cfg = *cfg;
-+
-+	return q6afe_port_set_param_v2(port, &clk_cfg, param_id, sizeof(*cfg));
-+}
-+
-+int q6afe_port_set_sysclk(struct q6afe_port *port, int clk_id,
-+			  int clk_src, int clk_root,
-+			  unsigned int freq, int dir)
-+{
-+	struct afe_clk_cfg ccfg = {0,};
-+	struct afe_digital_clk_cfg dcfg = {0,};
-+	int ret;
-+
-+	switch (clk_id) {
-+	case LPAIF_DIG_CLK:
-+		dcfg.i2s_cfg_minor_version = AFE_API_VERSION_I2S_CONFIG;
-+		dcfg.clk_val = freq;
-+		dcfg.clk_root = clk_root;
-+		ret = q6afe_set_digital_codec_core_clock(port, &dcfg);
-+		break;
-+	case LPAIF_BIT_CLK:
-+		ccfg.i2s_cfg_minor_version = AFE_API_VERSION_I2S_CONFIG;
-+		ccfg.clk_val1 = freq;
-+		ccfg.clk_src = clk_src;
-+		ccfg.clk_root = clk_root;
-+		ccfg.clk_set_mode = Q6AFE_LPASS_MODE_CLK1_VALID;
-+		ret = q6afe_set_lpass_clock(port, &ccfg);
-+		break;
-+
-+	case LPAIF_OSR_CLK:
-+		ccfg.i2s_cfg_minor_version = AFE_API_VERSION_I2S_CONFIG;
-+		ccfg.clk_val2 = freq;
-+		ccfg.clk_src = clk_src;
-+		ccfg.clk_root = clk_root;
-+		ccfg.clk_set_mode = Q6AFE_LPASS_MODE_CLK2_VALID;
-+		ret = q6afe_set_lpass_clock(port, &ccfg);
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(q6afe_port_set_sysclk);
-+
- static int afe_port_start(struct q6afe_port *port,
- 			  union afe_port_config *afe_config)
- {
-diff --git a/sound/soc/qcom/qdsp6/q6afe.h b/sound/soc/qcom/qdsp6/q6afe.h
-index 9114d68a79cb..c469f6de38d2 100644
---- a/sound/soc/qcom/qdsp6/q6afe.h
-+++ b/sound/soc/qcom/qdsp6/q6afe.h
-@@ -14,6 +14,13 @@
- #define AFE_MAX_CHAN_COUNT	8
- #define AFE_PORT_MAX_AUDIO_CHAN_CNT	0x8
- 
-+#define Q6AFE_LPASS_CLK_SRC_INTERNAL 1
-+#define Q6AFE_LPASS_CLK_ROOT_DEFAULT 0
-+
-+#define LPAIF_DIG_CLK	1
-+#define LPAIF_BIT_CLK	2
-+#define LPAIF_OSR_CLK	3
-+
- struct q6afe_hdmi_cfg {
- 	u16                  datatype;
- 	u16                  channel_allocation;
-@@ -61,4 +68,7 @@ void q6afe_slim_port_prepare(struct q6afe_port *port,
- 			  struct q6afe_slim_cfg *cfg);
- void q6afe_i2s_port_prepare(struct q6afe_port *port, struct q6afe_i2s_cfg *cfg);
- 
-+int q6afe_port_set_sysclk(struct q6afe_port *port, int clk_id,
-+			  int clk_src, int clk_root,
-+			  unsigned int freq, int dir);
- #endif /* __Q6AFE_H__ */
+Right. But from ACPI prospective the proposed change is not okay by my opinion.
+
+How can I see what drivers are binding / relying on certain ACPI ID?
+
+More precisely,
+
+% git grep -n -w SMO8800
+
+would be useless until one gets an idea to match against partial strings.
+
+> Jean, it is OK?
+
+>> > Having one file where it would be defined is a bad idea for you.
+>>
+>> Not just "one file", but "one *header* file". Or "exporting a symbol"
+>> which is basically not supposed to be exported.
+>> ID tables are part of the actual drivers, neither headers, nor libraries.
+>
+> But this is exactly what is needed. This ACPI ID table contains ACPI
+> names which says if accelerometer is present or not.
+
+In case of dell-smo8800.c the driver actually *binds* to these IDs.
+Your change just provide another table to match and answer to the
+question if XYZ is present on a such platform or not.
+
+Similar approach is used in spi-pxa2xx.c (check pxa2xx_spi_pci_compound_match).
+
 -- 
-2.15.1
+With Best Regards,
+Andy Shevchenko
