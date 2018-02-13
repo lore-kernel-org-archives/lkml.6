@@ -1,59 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935201AbeBMM3m (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:29:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37391 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935022AbeBMM3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:29:41 -0500
-Date: Tue, 13 Feb 2018 13:29:40 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] khungtaskd: Kick stuck processes
-Message-ID: <20180213122940.GS3443@dhcp22.suse.cz>
-References: <20180208190753.17690-1-chris@chris-wilson.co.uk>
- <20180213115642.GR3443@dhcp22.suse.cz>
- <151852369261.8633.4809735220536862770@mail.alporthouse.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <151852369261.8633.4809735220536862770@mail.alporthouse.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S935244AbeBMMaB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:30:01 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:35488 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935182AbeBMM35 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 07:29:57 -0500
+X-Google-Smtp-Source: AH8x224TFYceK7ClPtutfZJ3srFmbje+u1KCI8xpV3qipZCBWeQB4Rp5U3i0i4YIWa/L/rHyVcTnTg==
+From: Philipp Rossak <embed3d@gmail.com>
+To: mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        maxime.ripard@free-electrons.com, wens@csie.org, linux@armlinux.org.uk,
+        sean@mess.org, p.zabel@pengutronix.de, andi.shyti@samsung.com
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [RESEND PATCH v5 0/6] IR support for A83T
+Date: Tue, 13 Feb 2018 13:29:46 +0100
+Message-Id: <20180213122952.8420-1-embed3d@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 13-02-18 12:08:12, Chris Wilson wrote:
-> Quoting Michal Hocko (2018-02-13 11:56:42)
-> > On Thu 08-02-18 19:07:53, Chris Wilson wrote:
-> > > After spotting a stuck process, and having decided not to panic, give
-> > > the task a kick to see if that helps it to recover (e.g. to paper over a
-> > > missed wake up).
-> > 
-> > huh, this is just no-no. watchdog is there to report problems not
-> > interfere. You cannot never know whether the sleeper is prepared for
-> > spurious wakeups. Do not paper over bugs...
-> 
-> Aside from khungtaskd being a debug feature, we want to identify the bug
-> by kicking the stuck process and seeing what squeals. Being told that
-> khugepaged is stuck over and over again doesn't help resolve who is
-> holding onto that lock_page, or if it was just a missed wakeup as all
-> other processes are asleep.
+This patch series adds support for the sunxi A83T ir module and enhances 
+the sunxi-ir driver. Right now the base clock frequency for the ir driver
+is a hard coded define and is set to 8 MHz.
+This works for the most common ir receivers. On the Sinovoip Bananapi M3 
+the ir receiver needs, a 3 MHz base clock frequency to work without
+problems with this driver.
 
-And how exactly does kicking helps here? If the waiter uses lock_page
-then it would go sleep again because of PG_locked. If the page is not
-locked and this is a missed wake up then either unlock_page is wrong
-(which doesn't seem to be the case AFAICS) or somebody messes up with
-the page locking and this patch doesn't achieve anything.
+This patch series adds support for an optinal property that makes it able
+to override the default base clock frequency and enables the ir interface 
+on the a83t and the Bananapi M3.
 
-> We are trying to paper over other bugs so that we can fix ours.
+changes since v4:
+* rename cir pin from cir_pins to r_cir_pin
+* drop unit-adress from r_cir_pin
+* add a83t compatible to the cir node
+* move muxing options to dtsi
+* rename cir label and reorder it in the bananpim3.dts file
 
-But you do not want to break existing code which might be sensible to
-spurious wakeups. You could argue that such a code is broken already and
-I would tend to agree, but an artificial wake up is just nogo.
+changes since v3:
+* collecting all acks & reviewd by
+* fixed typos
+
+changes since v2:
+* reorder cir pin (alphabetical)
+* fix typo in documentation
+
+changes since v1:
+* fix typos, reword Documentation
+* initialize 'b_clk_freq' to 'SUNXI_IR_BASE_CLK' & remove if statement
+* change dev_info() to dev_dbg()
+* change naming to cir* in dts/dtsi
+* Added acked Ackedi-by to related patch
+* use whole memory block instead of registers needed + fix for h3/h5
+
+changes since rfc:
+* The property is now optinal. If the property is not available in 
+  the dtb the driver uses the default base clock frequency.
+* the driver prints out the the selected base clock frequency.
+* changed devicetree property from base-clk-frequency to clock-frequency
+
+Regards,
+Philipp
+
+Philipp Rossak (6):
+  media: rc: update sunxi-ir driver to get base clock frequency from
+    devicetree
+  media: dt: bindings: Update binding documentation for sunxi IR
+    controller
+  arm: dts: sun8i: a83t: Add the cir pin for the A83T
+  arm: dts: sun8i: a83t: Add support for the cir interface
+  arm: dts: sun8i: a83t: bananapi-m3: Enable IR controller
+  arm: dts: sun8i: h3-h5: ir register size should be the whole memory
+    block
+
+ Documentation/devicetree/bindings/media/sunxi-ir.txt |  3 +++
+ arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts         |  5 +++++
+ arch/arm/boot/dts/sun8i-a83t.dtsi                    | 18 ++++++++++++++++++
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi                   |  2 +-
+ drivers/media/rc/sunxi-cir.c                         | 19 +++++++++++--------
+ 5 files changed, 38 insertions(+), 9 deletions(-)
+
 -- 
-Michal Hocko
-SUSE Labs
+2.11.0
