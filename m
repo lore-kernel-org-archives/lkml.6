@@ -1,118 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935157AbeBMMPv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:15:51 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:44403 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934827AbeBMMPs (ORCPT
+        id S935185AbeBMMQL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:16:11 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36870 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934827AbeBMMQG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:15:48 -0500
-Date: Tue, 13 Feb 2018 04:04:21 -0800
-From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-d3035da2c854545f915ff5bcb54572860fe18ee7@git.kernel.org>
-Cc: peterz@infradead.org, wangnan0@huawei.com, hpa@zytor.com,
-        acme@redhat.com, yao.jin@linux.intel.com, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, mingo@kernel.org, tglx@linutronix.de,
-        jolsa@kernel.org, ak@linux.intel.com, kan.liang@intel.com
-Reply-To: yao.jin@linux.intel.com, acme@redhat.com, wangnan0@huawei.com,
-        peterz@infradead.org, hpa@zytor.com, kan.liang@intel.com,
-        ak@linux.intel.com, mingo@kernel.org, tglx@linutronix.de,
-        jolsa@kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org
-In-Reply-To: <1516310792-208685-2-git-send-email-kan.liang@intel.com>
-References: <1516310792-208685-2-git-send-email-kan.liang@intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf evlist: Remove stale mmap read for backward
-Git-Commit-ID: d3035da2c854545f915ff5bcb54572860fe18ee7
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Tue, 13 Feb 2018 07:16:06 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Wu Fengguang <fengguang.wu@intel.com>
+Cc: Fengguang Wu <fengguang.wu@intel.com>, Mark Brown <broonie@kernel.org>,
+        "oder_chiou@realtek.com" <oder_chiou@realtek.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, kbuild-all@01.org,
+        Bard Liao <bardliao@realtek.com>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: rt5659: rt5659_intel_hd_header_probe_setup() can be static" to the asoc tree
+In-Reply-To: <20180212171606.GA15960@lkp-wsm-ep1>
+Message-Id: <E1elZV8-0005WJ-IN@debutante>
+Date: Tue, 13 Feb 2018 12:15:58 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d3035da2c854545f915ff5bcb54572860fe18ee7
-Gitweb:     https://git.kernel.org/tip/d3035da2c854545f915ff5bcb54572860fe18ee7
-Author:     Kan Liang <kan.liang@intel.com>
-AuthorDate: Thu, 18 Jan 2018 13:26:16 -0800
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 6 Feb 2018 10:11:49 -0300
+The patch
 
-perf evlist: Remove stale mmap read for backward
+   ASoC: rt5659: rt5659_intel_hd_header_probe_setup() can be static
 
-perf_evlist__mmap_read_catchup() and perf_evlist__mmap_read_backward()
-are only for overwrite mode.
+has been applied to the asoc tree at
 
-But they read the evlist->mmap buffer which is for non-overwrite mode.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-It did not bring any serious problem yet, because there is no one use
-it.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Remove the unused interfaces.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Signed-off-by: Kan Liang <kan.liang@intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Wang Nan <wangnan0@huawei.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1516310792-208685-2-git-send-email-kan.liang@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 2fa0b7fdf8bd16b6cdda8516793989511c9322ed Mon Sep 17 00:00:00 2001
+From: Wu Fengguang <fengguang.wu@intel.com>
+Date: Tue, 13 Feb 2018 01:16:06 +0800
+Subject: [PATCH] ASoC: rt5659: rt5659_intel_hd_header_probe_setup() can be
+ static
+
+Fixes: 041e74b71491 ("ASoC: rt5659: Add the support of Intel HDA Header")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- tools/perf/util/evlist.c | 17 -----------------
- tools/perf/util/evlist.h |  4 ----
- 2 files changed, 21 deletions(-)
+ sound/soc/codecs/rt5659.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index ac35cd2..e5fc14e 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -715,28 +715,11 @@ union perf_event *perf_evlist__mmap_read_forward(struct perf_evlist *evlist, int
- 	return perf_mmap__read_forward(md);
+diff --git a/sound/soc/codecs/rt5659.c b/sound/soc/codecs/rt5659.c
+index ef3a44d6386b..b7721940b76f 100644
+--- a/sound/soc/codecs/rt5659.c
++++ b/sound/soc/codecs/rt5659.c
+@@ -4038,7 +4038,7 @@ static void rt5659_calibrate(struct rt5659_priv *rt5659)
+ 	regmap_write(rt5659->regmap, RT5659_HP_CHARGE_PUMP_1, 0x0c16);
  }
  
--union perf_event *perf_evlist__mmap_read_backward(struct perf_evlist *evlist, int idx)
--{
--	struct perf_mmap *md = &evlist->mmap[idx];
--
--	/*
--	 * No need to check messup for backward ring buffer:
--	 * We can always read arbitrary long data from a backward
--	 * ring buffer unless we forget to pause it before reading.
--	 */
--	return perf_mmap__read_backward(md);
--}
--
- union perf_event *perf_evlist__mmap_read(struct perf_evlist *evlist, int idx)
+-void rt5659_intel_hd_header_probe_setup(struct rt5659_priv *rt5659)
++static void rt5659_intel_hd_header_probe_setup(struct rt5659_priv *rt5659)
  {
- 	return perf_evlist__mmap_read_forward(evlist, idx);
- }
+ 	int value;
  
--void perf_evlist__mmap_read_catchup(struct perf_evlist *evlist, int idx)
--{
--	perf_mmap__read_catchup(&evlist->mmap[idx]);
--}
--
- void perf_evlist__mmap_consume(struct perf_evlist *evlist, int idx)
- {
- 	perf_mmap__consume(&evlist->mmap[idx], false);
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 75f8e0a..336b838 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -133,10 +133,6 @@ union perf_event *perf_evlist__mmap_read(struct perf_evlist *evlist, int idx);
- 
- union perf_event *perf_evlist__mmap_read_forward(struct perf_evlist *evlist,
- 						 int idx);
--union perf_event *perf_evlist__mmap_read_backward(struct perf_evlist *evlist,
--						  int idx);
--void perf_evlist__mmap_read_catchup(struct perf_evlist *evlist, int idx);
--
- void perf_evlist__mmap_consume(struct perf_evlist *evlist, int idx);
- 
- int perf_evlist__open(struct perf_evlist *evlist);
+-- 
+2.16.1
