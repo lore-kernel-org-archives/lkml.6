@@ -1,31 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933885AbeBMJEU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 04:04:20 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:50761 "EHLO
+        id S933898AbeBMJEo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 04:04:44 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38297 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933638AbeBMJEK (ORCPT
+        with ESMTP id S933638AbeBMJEk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:04:10 -0500
-Date: Tue, 13 Feb 2018 01:02:44 -0800
+        Tue, 13 Feb 2018 04:04:40 -0500
+Date: Tue, 13 Feb 2018 01:03:11 -0800
 From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
-Message-ID: <tip-dde3036d62ba3375840b10ab9ec0d568fd773b07@git.kernel.org>
-Cc: hpa@zytor.com, brgerst@gmail.com, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, linux@dominikbrodowski.net,
-        jpoimboe@redhat.com, tglx@linutronix.de, luto@kernel.org,
-        dvlasenk@redhat.com, peterz@infradead.org, bp@alien8.de,
-        mingo@kernel.org
-Reply-To: bp@alien8.de, peterz@infradead.org, dvlasenk@redhat.com,
-        mingo@kernel.org, linux@dominikbrodowski.net, tglx@linutronix.de,
-        jpoimboe@redhat.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, brgerst@gmail.com, hpa@zytor.com,
-        luto@kernel.org
-In-Reply-To: <20180211104949.12992-7-linux@dominikbrodowski.net>
-References: <20180211104949.12992-7-linux@dominikbrodowski.net>
+Message-ID: <tip-92816f571af81e9a71cc6f3dc8ce1e2fcdf7b6b8@git.kernel.org>
+Cc: hpa@zytor.com, bp@alien8.de, tglx@linutronix.de,
+        torvalds@linux-foundation.org, brgerst@gmail.com, jpoimboe@redhat.com,
+        luto@kernel.org, linux@dominikbrodowski.net,
+        linux-kernel@vger.kernel.org, dvlasenk@redhat.com,
+        peterz@infradead.org, mingo@kernel.org
+Reply-To: linux@dominikbrodowski.net, linux-kernel@vger.kernel.org,
+        jpoimboe@redhat.com, luto@kernel.org, brgerst@gmail.com,
+        mingo@kernel.org, peterz@infradead.org, dvlasenk@redhat.com,
+        bp@alien8.de, hpa@zytor.com, torvalds@linux-foundation.org,
+        tglx@linutronix.de
+In-Reply-To: <20180211104949.12992-8-linux@dominikbrodowski.net>
+References: <20180211104949.12992-8-linux@dominikbrodowski.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/64: Get rid of the ALLOC_PT_GPREGS_ON_STACK
- and SAVE_AND_CLEAR_REGS macros
-Git-Commit-ID: dde3036d62ba3375840b10ab9ec0d568fd773b07
+Subject: [tip:x86/pti] x86/entry/64: Indent PUSH_AND_CLEAR_REGS and POP_REGS
+ properly
+Git-Commit-ID: 92816f571af81e9a71cc6f3dc8ce1e2fcdf7b6b8
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,68 +38,17 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  dde3036d62ba3375840b10ab9ec0d568fd773b07
-Gitweb:     https://git.kernel.org/tip/dde3036d62ba3375840b10ab9ec0d568fd773b07
+Commit-ID:  92816f571af81e9a71cc6f3dc8ce1e2fcdf7b6b8
+Gitweb:     https://git.kernel.org/tip/92816f571af81e9a71cc6f3dc8ce1e2fcdf7b6b8
 Author:     Dominik Brodowski <linux@dominikbrodowski.net>
-AuthorDate: Sun, 11 Feb 2018 11:49:47 +0100
+AuthorDate: Sun, 11 Feb 2018 11:49:48 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 13 Feb 2018 09:04:54 +0100
 
-x86/entry/64: Get rid of the ALLOC_PT_GPREGS_ON_STACK and SAVE_AND_CLEAR_REGS macros
+x86/entry/64: Indent PUSH_AND_CLEAR_REGS and POP_REGS properly
 
-Previously, error_entry() and paranoid_entry() saved the GP registers
-onto stack space previously allocated by its callers. Combine these two
-steps in the callers, and use the generic PUSH_AND_CLEAR_REGS macro
-for that.
+... same as the other macros in arch/x86/entry/calling.h
 
-This adds a significant amount ot text size. However, Ingo Molnar points
-out that:
-
-	"these numbers also _very_ significantly over-represent the
-	extra footprint. The assumptions that resulted in
-	us compressing the IRQ entry code have changed very
-	significantly with the new x86 IRQ allocation code we
-	introduced in the last year:
-
-	- IRQ vectors are usually populated in tightly clustered
-	  groups.
-
-	  With our new vector allocator code the typical per CPU
-	  allocation percentage on x86 systems is ~3 device vectors
-	  and ~10 fixed vectors out of ~220 vectors - i.e. a very
-	  low ~6% utilization (!). [...]
-
-	  The days where we allocated a lot of vectors on every
-	  CPU and the compression of the IRQ entry code text
-	  mattered are over.
-
-	- Another issue is that only a small minority of vectors
-	  is frequent enough to actually matter to cache utilization
-	  in practice: 3-4 key IPIs and 1-2 device IRQs at most - and
-	  those vectors tend to be tightly clustered as well into about
-	  two groups, and are probably already on 2-3 cache lines in
-	  practice.
-
-	  For the common case of 'cache cold' IRQs it's the depth of
-	  the call chain and the fragmentation of the resulting I$
-	  that should be the main performance limit - not the overall
-	  size of it.
-
-	- The CPU side cost of IRQ delivery is still very expensive
-	  even in the best, most cached case, as in 'over a thousand
-	  cycles'. So much stuff is done that maybe contemporary x86
-	  IRQ entry microcode already prefetches the IDT entry and its
-	  expected call target address."[*]
-
-[*] http://lkml.kernel.org/r/20180208094710.qnjixhm6hybebdv7@gmail.com
-
-The "testb $3, CS(%rsp)" instruction in the idtentry macro does not need
-modification. Previously, %rsp was manually decreased by 15*8; with
-this patch, %rsp is decreased by 15 pushq instructions.
-
-[jpoimboe@redhat.com: unwind hint improvements]
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>
@@ -107,141 +56,47 @@ Cc: Brian Gerst <brgerst@gmail.com>
 Cc: Denys Vlasenko <dvlasenk@redhat.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: dan.j.williams@intel.com
-Link: http://lkml.kernel.org/r/20180211104949.12992-7-linux@dominikbrodowski.net
+Link: http://lkml.kernel.org/r/20180211104949.12992-8-linux@dominikbrodowski.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/entry/calling.h  | 42 +-----------------------------------------
- arch/x86/entry/entry_64.S | 20 +++++++++-----------
- 2 files changed, 10 insertions(+), 52 deletions(-)
+ arch/x86/entry/calling.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index d6a97e2..5967501 100644
+index 5967501..6985440 100644
 --- a/arch/x86/entry/calling.h
 +++ b/arch/x86/entry/calling.h
-@@ -97,46 +97,6 @@ For 32-bit we have the following conventions - kernel is built with
+@@ -97,7 +97,7 @@ For 32-bit we have the following conventions - kernel is built with
  
  #define SIZEOF_PTREGS	21*8
  
--	.macro ALLOC_PT_GPREGS_ON_STACK
--	addq	$-(15*8), %rsp
--	.endm
--
--	.macro SAVE_AND_CLEAR_REGS offset=0
--	/*
--	 * Save registers and sanitize registers of values that a
--	 * speculation attack might otherwise want to exploit. The
--	 * lower registers are likely clobbered well before they
--	 * could be put to use in a speculative execution gadget.
--	 * Interleave XOR with PUSH for better uop scheduling:
--	 */
--	movq %rdi, 14*8+\offset(%rsp)
--	movq %rsi, 13*8+\offset(%rsp)
--	movq %rdx, 12*8+\offset(%rsp)
--	movq %rcx, 11*8+\offset(%rsp)
--	movq %rax, 10*8+\offset(%rsp)
--	movq %r8,  9*8+\offset(%rsp)
--	xorq %r8, %r8				/* nospec r8 */
--	movq %r9,  8*8+\offset(%rsp)
--	xorq %r9, %r9				/* nospec r9 */
--	movq %r10, 7*8+\offset(%rsp)
--	xorq %r10, %r10				/* nospec r10 */
--	movq %r11, 6*8+\offset(%rsp)
--	xorq %r11, %r11				/* nospec r11 */
--	movq %rbx, 5*8+\offset(%rsp)
--	xorl %ebx, %ebx				/* nospec rbx */
--	movq %rbp, 4*8+\offset(%rsp)
--	xorl %ebp, %ebp				/* nospec rbp */
--	movq %r12, 3*8+\offset(%rsp)
--	xorq %r12, %r12				/* nospec r12 */
--	movq %r13, 2*8+\offset(%rsp)
--	xorq %r13, %r13				/* nospec r13 */
--	movq %r14, 1*8+\offset(%rsp)
--	xorq %r14, %r14				/* nospec r14 */
--	movq %r15, 0*8+\offset(%rsp)
--	xorq %r15, %r15				/* nospec r15 */
--	UNWIND_HINT_REGS offset=\offset
--	.endm
--
- 	.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax
+-	.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax
++.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax
  	/*
  	 * Push registers and sanitize registers of values that a
-@@ -211,7 +171,7 @@ For 32-bit we have the following conventions - kernel is built with
-  * is just setting the LSB, which makes it an invalid stack address and is also
-  * a signal to the unwinder that it's a pt_regs pointer in disguise.
-  *
-- * NOTE: This macro must be used *after* SAVE_AND_CLEAR_REGS because it corrupts
-+ * NOTE: This macro must be used *after* PUSH_AND_CLEAR_REGS because it corrupts
-  * the original rbp.
-  */
- .macro ENCODE_FRAME_POINTER ptregs_offset=0
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index b06a4b5..cfbf433 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -871,7 +871,9 @@ ENTRY(\sym)
- 	pushq	$-1				/* ORIG_RAX: no syscall to restart */
- 	.endif
+ 	 * speculation attack might otherwise want to exploit. The
+@@ -131,9 +131,9 @@ For 32-bit we have the following conventions - kernel is built with
+ 	pushq	%r15		/* pt_regs->r15 */
+ 	xorq    %r15, %r15	/* nospec   r15*/
+ 	UNWIND_HINT_REGS
+-	.endm
++.endm
  
--	ALLOC_PT_GPREGS_ON_STACK
-+	/* Save all registers in pt_regs */
-+	PUSH_AND_CLEAR_REGS
-+	ENCODE_FRAME_POINTER
+-	.macro POP_REGS pop_rdi=1 skip_r11rcx=0
++.macro POP_REGS pop_rdi=1 skip_r11rcx=0
+ 	popq %r15
+ 	popq %r14
+ 	popq %r13
+@@ -163,7 +163,7 @@ For 32-bit we have the following conventions - kernel is built with
  
- 	.if \paranoid < 2
- 	testb	$3, CS(%rsp)			/* If coming from userspace, switch stacks */
-@@ -1121,15 +1123,12 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
- #endif
+ 	.macro icebp
+ 	.byte 0xf1
+-	.endm
++.endm
  
  /*
-- * Save all registers in pt_regs, and switch gs if needed.
-+ * Switch gs if needed.
-  * Use slow, but surefire "are we in kernel?" check.
-  * Return: ebx=0: need swapgs on exit, ebx=1: otherwise
-  */
- ENTRY(paranoid_entry)
--	UNWIND_HINT_FUNC
- 	cld
--	SAVE_AND_CLEAR_REGS 8
--	ENCODE_FRAME_POINTER 8
- 	movl	$1, %ebx
- 	movl	$MSR_GS_BASE, %ecx
- 	rdmsr
-@@ -1142,7 +1141,7 @@ ENTRY(paranoid_entry)
- 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
- 
- 	ret
--END(paranoid_entry)
-+ENDPROC(paranoid_entry)
- 
- /*
-  * "Paranoid" exit path from exception stack.  This is invoked
-@@ -1173,14 +1172,12 @@ ENTRY(paranoid_exit)
- END(paranoid_exit)
- 
- /*
-- * Save all registers in pt_regs, and switch gs if needed.
-+ * Switch gs if needed.
-  * Return: EBX=0: came from user mode; EBX=1: otherwise
-  */
- ENTRY(error_entry)
--	UNWIND_HINT_FUNC
-+	UNWIND_HINT_REGS offset=8
- 	cld
--	SAVE_AND_CLEAR_REGS 8
--	ENCODE_FRAME_POINTER 8
- 	testb	$3, CS+8(%rsp)
- 	jz	.Lerror_kernelspace
- 
-@@ -1571,7 +1568,8 @@ end_repeat_nmi:
- 	 * frame to point back to repeat_nmi.
- 	 */
- 	pushq	$-1				/* ORIG_RAX: no syscall to restart */
--	ALLOC_PT_GPREGS_ON_STACK
-+	PUSH_AND_CLEAR_REGS
-+	ENCODE_FRAME_POINTER
- 
- 	/*
- 	 * Use paranoid_entry to handle SWAPGS, but no need to use paranoid_exit
+  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
