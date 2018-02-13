@@ -1,50 +1,53 @@
-Return-Path: <kernel-hardening-return-11785-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x227Ooc/liACmwEigJMm5BmUU008mBlGLB3IZRSocvpTCgB3Dy2nn0xRMP1AT9NgEuxWHh8Tx
-ARC-Seal: i=1; a=rsa-sha256; t=1518639245; cv=none;
+Return-Path: <kernel-hardening-return-11745-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x227dPfrIot29Fko5+lT7/EFYkyYk7YsB5Dr80nkSPVpLBjDb/OaLZe6QLu+r2yyoROPJDEym
+ARC-Seal: i=1; a=rsa-sha256; t=1518535233; cv=none;
         d=google.com; s=arc-20160816;
-        b=wTlp/DDAAPJ8T+Z9mfytEz+ea4M9eO+3HTUu8WCGjouCyxw6yQuMrdmzkQrk3S4J9Z
-         2WcgATysYqP4mB1vqeBDMqhTSEAFPn8KMMPTqiPb2y3VwBSMBRV0e1ngXEILrutH4/kD
-         FmfEqJCTd4+vYWAf18G66tPULS7xw1BXHLc8yZ0f40Ur4OELuVekRIdySUCDSfvIbiJh
-         Ohgc5kDZVocH6XX+cxZRmTeylMxtGsAoyiuJXusb8z1OLioqUJCG57w1nbSuc9EZ/iU+
-         kD5eJGRJO1IOtSkccRxV2DDlJvC5rquTCQaA6oY6qr1h5nB2zSb250KSmrEjGx6u5VEp
-         JWKQ==
+        b=Y6eON1IwCzVfggELyYBbQ8iLlMWAjjiIH+HJO8BmrVuAZwVLGP+Zuoqy/Bci+Ua5sM
+         UcK1rvc+C6BIXjFx4/8qZZ0lf+evlu4NkG9TtpMoxsgQuZxDJbgTLc2uHYbF0kN5/uY2
+         p0WoaAtzjySNwzNLCa+gQX3z2EQyYYKy8/o4pJ8lr0eh3dDHR+lw08QIENN+QCqfytzK
+         otMYTZKN80BTFipX1DlK8MJLXdKWHoFyff5wuqYi/BfpIfu8in+SWgnd0D7802ycOHai
+         9JW4zun7VfE9umzcHyb5S5FRa1EdWCp3B2XKsMTbOPAL5jTtuIQLQ/bRgr8KWOeXl3ZL
+         Xn6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=mime-version:content-language:accept-language:in-reply-to
+         :references:date:thread-index:thread-topic:subject:cc:to:from
          :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=1lNpz1BEClmqSUTSqH8Pw+a63kZtddb6696oNWiyEWc=;
-        b=0AloTAvig1x0KfbnQFL7KFthzWi8eiIf/BND3jI3KEfJmM7oXDToOB5HOOBMxrvaR2
-         LBSHYs95lkk00HwOX9cp3CS9tlMtWabFH7lm5augm9LFG5XA5g4H8NLLKbTHxC48k7/a
-         RUY/LFIaHwRAZKLGM1RnfHcSBhvMTFuiJU+474Mn78MITDZLCcpCAE8tLZwhv+cmoeih
-         mbIvnnQ2prhOJiu7o0T/UD7r6J97w3P28m4avkwQO7GQEp/r7aJf7QZmnSXK/F0T/Sax
-         ybsACK7sChMPdyc2ftMsX7lDLWp1Ds8dOGYrvk72pQFZqMTYIss5hng8Nq2c3NJ76yeS
-         v49g==
+         :list-post:precedence:mailing-list:message-id
+         :arc-authentication-results;
+        bh=C7hzLcEvfz35RknpjN9Q66iwoC70MLLdH7XnAwswk80=;
+        b=nVIu2JNDzLYY4fzKmYphvo9lCMRMOCKZ9ZqItFFsm6jYiDu62X+8moHxnNYwKCSyCd
+         IlUhW/Sc+YGVTJsjzaoLvEK/mAISPZXce91lpZWbtsH5dedjqD2ycLCaYlBVr+Jr00x4
+         +p2bHebnhMrDa/MSt37qe2RGk18xq39HmSmeha9bw/kIZHgn2E1t/nxkAQLOdpUAYeJC
+         6nK/bJsG1KBh64wFO0SjbrDKx7EXZI77ipCSrk23SYHi7KZBmM61m9FwAl1qbWx2GjAy
+         LgENVfEgQ/axQHHbXMpz91838W3Kl72bCsYpBx+YKAzhrNBq/Y+jQvoFLL4+GHKSsuIz
+         WfBg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11785-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11785-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       spf=pass (google.com: domain of kernel-hardening-return-11745-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11745-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11785-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11785-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       spf=pass (google.com: domain of kernel-hardening-return-11745-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11745-gregkh=linuxfoundation.org@lists.openwall.com
+Message-ID: <5a830241.4f91190a.f8a3d.6337SMTPIN_ADDED_BROKEN@mx.google.com>
+X-Google-Original-Message-ID: 688F43F4-36AB-4D98-8B82-34437CFD85BC
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Subject: Re: arm64 physmap (was Re: [kernel-hardening] [PATCH 4/6] Protectable
- Memory)
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
- Igor Stoppa <igor.stoppa@huawei.com>,
- Boris Lukashev <blukashev@sempervictus.com>,
- Christopher Lameter <cl@linux.com>, Matthew Wilcox <willy@infradead.org>,
- Jerome Glisse <jglisse@redhat.com>, Michal Hocko <mhocko@kernel.org>,
- Christoph Hellwig <hch@infradead.org>,
- linux-security-module <linux-security-module@vger.kernel.org>,
- Linux-MM <linux-mm@kvack.org>, kernel list <linux-kernel@vger.kernel.org>,
- Kernel Hardening <kernel-hardening@lists.openwall.com>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+From: Igor Stoppa <igor.stoppa@huawei.com>
+To: Laura Abbott <labbott@redhat.com>, Kees Cook <keescook@chromium.org>
+CC: Boris Lukashev <blukashev@sempervictus.com>, Christopher Lameter
+	<cl@linux.com>, Matthew Wilcox <willy@infradead.org>, Jann Horn
+	<jannh@google.com>, Jerome Glisse <jglisse@redhat.com>, Michal Hocko
+	<mhocko@kernel.org>, Christoph Hellwig <hch@infradead.org>,
+	linux-security-module <linux-security-module@vger.kernel.org>, Linux-MM
+	<linux-mm@kvack.org>, kernel list <linux-kernel@vger.kernel.org>, "Kernel
+ Hardening" <kernel-hardening@lists.openwall.com>
+Subject: RE: [kernel-hardening] [PATCH 4/6] Protectable Memory
+Thread-Topic: [kernel-hardening] [PATCH 4/6] Protectable Memory
+Thread-Index: AQHTlTz7ZMO94DOCbEGqT/RYX2EG5KODUt6AgAJA5wCAC9tDAIABgT+AgABIYID//+KyAIAAJz8A////CgCAATfTgIAM/VqAgAAUfgCAAQZ2bA==
+Date: Tue, 13 Feb 2018 15:20:03 +0000
 References: <20180124175631.22925-1-igor.stoppa@huawei.com>
+ <20180124175631.22925-5-igor.stoppa@huawei.com>
+ <CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
  <20180126053542.GA30189@bombadil.infradead.org>
  <alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
  <f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com>
@@ -53,77 +56,222 @@ References: <20180124175631.22925-1-igor.stoppa@huawei.com>
  <8818bfd4-dd9f-f279-0432-69b59531bd41@huawei.com>
  <CAFUG7CeUhFcvA82uZ2ZH1j_6PM=aBo4XmYDN85pf8G0gPU44dg@mail.gmail.com>
  <17e5b515-84c8-dca2-1695-cdf819834ea2@huawei.com>
- <CAGXu5j+LS1pgOOroi7Yxp2nh=DwtTnU3p-NZa6bQu_wkvvVkwg@mail.gmail.com>
- <414027d3-dd73-cf11-dc2a-e8c124591646@redhat.com>
- <CAGXu5j++igQD4tMh0J8nZ9jNji5mU16C7OygFJ5Td+Bq-KSMgw@mail.gmail.com>
- <CAG48ez1utN_vwHUwk=BU6zM4Wa_53TPu8rm9JuTtY-vGP0Shqw@mail.gmail.com>
- <f4226a44-92fd-8ead-b458-7551ba82f96d@redhat.com>
- <CAGXu5j+zOCLerneUt2b-tvyLLg7fEbr9B0YYow-4DH6oV-nnCw@mail.gmail.com>
- <2f23544a-bd24-1e71-967b-e8d1cf5a20a3@redhat.com>
- <CAKv+Gu8CNGFKLhX2XRuesn3n3k5P2bYS8qKWTTNXGFnr7SUVUA@mail.gmail.com>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <213effab-f0d0-cfc5-8feb-c72eed8ae0aa@redhat.com>
-Date: Wed, 14 Feb 2018 12:13:36 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ <CAGXu5j+LS1pgOOroi7Yxp2nh=DwtTnU3p-NZa6bQu_wkvvVkwg@mail.gmail.com>,<414027d3-dd73-cf11-dc2a-e8c124591646@redhat.com>
+In-Reply-To: <414027d3-dd73-cf11-dc2a-e8c124591646@redhat.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-Type: multipart/alternative;
+	boundary="_000_688F43F436AB4D988B8234437CFD85BC_"
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu8CNGFKLhX2XRuesn3n3k5P2bYS8qKWTTNXGFnr7SUVUA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592404410626838547?=
-X-GMAIL-MSGID: =?utf-8?q?1592408665120514792?=
+X-GMAIL-THRID: =?utf-8?q?1590497635371449856?=
+X-GMAIL-MSGID: =?utf-8?q?1592299600935005759?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/14/2018 11:28 AM, Ard Biesheuvel wrote:
-> On 14 February 2018 at 19:06, Laura Abbott <labbott@redhat.com> wrote:
->> On 02/13/2018 01:43 PM, Kees Cook wrote:
->>>
->>> On Tue, Feb 13, 2018 at 8:09 AM, Laura Abbott <labbott@redhat.com> wrote:
->>>>
->>>> No, arm64 doesn't fixup the aliases, mostly because arm64 uses larger
->>>> page sizes which can't be broken down at runtime. CONFIG_PAGE_POISONING
->>>> does use 4K pages which could be adjusted at runtime. So yes, you are
->>>> right we would have physmap exposure on arm64 as well.
->>>
->>>
->>> Errr, so that means even modules and kernel code are writable via the
->>> arm64 physmap? That seems extraordinarily bad. :(
->>>
->>> -Kees
->>>
->>
->> (adding linux-arm-kernel and changing the subject)
->>
->> Kernel code should be fine, if it isn't that is a bug that should be
->> fixed.
-> 
-> We take care to ensure that the linear alias of the core kernel's
-> .text and .rodata segments are mapped read-only. When we first moved
-> the kernel out of the linear region, we did not map it there at all
-> anymore, but that broke hibernation so we had to put something back.
-> 
->> Modules yes are not fully protected. The conclusion from past
->> experience has been that we cannot safely break down larger page sizes
->> at runtime like x86 does. We could theoretically
->> add support for fixing up the alias if PAGE_POISONING is enabled but
->> I don't know who would actually use that in production. Performance
->> is very poor at that point.
->>
-> 
-> As long as the linear alias of the module is mapped down to pages, we
-> should be able to tweak the permissions. I take it that PAGE_POISONING
-> does more than just that?
-> 
+--_000_688F43F436AB4D988B8234437CFD85BC_
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 
-Page poisoning does exactly that. The argument I was trying to make
-was that if nobody really uses page poisoning except for debugging
-it might not be worth it to fix up the alias. Thinking a bit more,
-this is a terrible argument for many reasons so yes I agree that
-we can just fix up the alias if PAGE_POISONING (or other features)
-are enabled.
+aGksDQphcG9sb2dpZXMgZm9yIChwcm9iYWJseSkgYnJlYWtpbmcgYW55IGVtYWlsIGV0aXF1ZXR0
+ZSwgYnV0IGknbSB0cmF2ZWxsaW5nIGFuZCBpIGhhdmUgYXZhaWxhYmxlIG9ubHkgdGhlIGNvcnBv
+cmF0ZSBtYWlsIGNsaWVudC4NCkknbGwgcmVwbHkgbW9yZSBleHRlbnNpdmVseSB0byBhbGwgdGhl
+IGNvbW1lbnRzIGkgZ28gbmV4dCB3ZWVrLCB3aGVuIGknbSBiYWNrIHRvIHRoZSBvZmZpY2UuDQoN
+CkluIHRoZSBtZWFud2hpbGUgaSB3b3VsZCBsaWtlIHRvIHBvaW50IG91dCB0aGF0IEkgaGFkIGFs
+cmVhZHkgYWRkcmVzc2VkIHRoaXMsIGluIHBhc3QgdGhyZWFkLCBidXQgZ290IG5vIHJlcGx5Lg0K
+DQpUbyByZWNhcDoNCi0xKSB2bWFsbG9jZWQgbWVtb3J5IGlzIGhhcmRlciB0byBhdHRhY2sgdGhh
+biBrbWFsbG9jZWQsIGJlY2F1c2UgaXQgcmVxdWlyZXMgdGhlIGF0dGFja2VyIHRvIGZpZ3VlcmUg
+b3V0IGFsc28gdGhlIHBoeXNpY2FsIGFkZHJlc3MuIEN1cnJlbnRseSBpdCdzIHN1ZmZpY2llbnQg
+dG8gaWRlbnRpZnkgdGhlIHJhbmRvbWl6ZWQgYmFzZSBhZGRyZXNzIGFuZCB0aGUgb2Zmc2V0IGlu
+IG1lbW9yeSBvZiB0aGUgdmljdGltLg0KSSBoYXZlIG5vdCBzZWVuIGNvbW1lbnRzIGFib3V0IHRo
+aXMgc3RhdGVtZW50IEkgbWFkZS4gSXMgaXQgaW5jb3JyZWN0Pw0KLTIpIHRoaXMgcGF0Y2hzZXQg
+aXMgYWJvdXQgcHJvdGVjdGluZyBzb21ldGhpbmcgdGhhdCByaWdodCBub3cgaXMgbm90IHByb3Rl
+Y3RlZCBhdCBhbGwuIFRoYXQgc2hvdWxkIGJlIHRoZSBzdGFydGluZyBwb2ludCBmb3IgY29tcGFy
+aXNvbi4gSWYgaXQgd2FzIHBvc3NpYmxlIHRvIGhhdmUgc2VwYXJhdGUgc2VjdGlvbiBsaWtlIGNv
+bnN0IG9yIF9yb19hZnRlciBpbml0LCB0aGUgc2l0dWF0aW9uIHdvdWxkIGJlIGRpZmZlcmVudCwg
+YnV0IGkgd2FzIHRvbGQgdGhhdCBpdCdzIG5vdCBwb3NzaWJsZS4gZnVydGhlcm1vcmUsIGl0IHdv
+dWxkIHJlcXVpcmUgcmVzZXJ2aW5nIGEgZml4ZWQgc2l6ZSAiem9uZSIsIGkgdGhpbmsuDQotMylX
+aGF0IGlzIHRoZSBhdHRhY2sgd2Ugd2FudCB0byBtYWtlIGhhcmRlciB0byBwZXJmb3JtPyBCZWNh
+dXNlIGV2ZW4gY29uc3QgZGF0YSBjYW4gYmUgYXR0YWNrZWQsIGlmIHdlIGFzc3VtZSB0aGF0IHRo
+ZSBhdHRhY2tlciBjYW4gYWx0ZXIgcGFnZSBtYXBwaW5ncy4gSW4gcmVhbGl0eSwgdGhlIG9ubHkg
+c2FmZSB3YXkgd291bGQgYmUgdG8gaGF2ZSBvbmUtd2F5IG9ubHkgcHJvdGVjdGlvbi4gQnV0IHdl
+IGRvIG5vdCBoYXZlIGl0LiBXaHkgYWx0ZXJhdGlvbnMgb2YgcGFnZSBwcm9wZXJ0aWVzIGFyZSBu
+b3QgY29uc2lkZXJlZCBhIHJpc2sgYW5kIHRoZSBwaHlzbWFwIGlzPw0KQW5kIGhvdyB3b3VsZCBp
+dCBiZSBlYXNpZXIgKGkgc3VwcG9zZSkgdG8gYXR0YWNrIHRoZSBsYXR0ZXI/DQpJJ20gYWxsIGZv
+ciBoYXJkZW5pbmcgd2hhdCBpcyBwb3NzaWJsZSwgYnV0IEkgZmVlbCBJIGRvIG5vdCBoYXZlIGZ1
+bGwgdW5kZXJzdGFuZGluZyBvZiBzb21lIG9mIHRoZSBhc3N1bXB0aW9ucyBiZWluZyBtYWRlIGhl
+cmUuDQpHZXR0aW5nIHNvbWUgYW5zd2VycyB0byBteSBxdWVzdGlvbnMgYWJvdmUgbWlnaHQgaGVs
+cCBtZSBzZWVpbmcgdGhlIHBvaW50IGJlaW5nIG1hZGUuDQoNCi0tDQp0aGFua3MsIGlnb3INCg0K
+DQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpJ
+Z29yIFN0b3BwYSBJZ29yIFN0b3BwYQ0KTToNCkU6IGlnb3Iuc3RvcHBhQGh1YXdlaS5jb208bWFp
+bHRvOmlnb3Iuc3RvcHBhQGh1YXdlaS5jb20+DQoyMDEyPHRlbDoyMDEyPsq10enK0i261bb70MG7
++dHQvr/L+Q0KMjAxMjx0ZWw6MjAxMj4gTGFib3JhdG9yaWVzLUhlbHNpbmtpIFJlc2VhcmNoIENl
+bnRlcg0KRnJvbTpMYXVyYSBBYmJvdHQNClRvOktlZXMgQ29vayxJZ29yIFN0b3BwYSwNCkNjOkJv
+cmlzIEx1a2FzaGV2LENocmlzdG9waGVyIExhbWV0ZXIsTWF0dGhldyBXaWxjb3gsSmFubiBIb3Ju
+LEplcm9tZSBHbGlzc2UsTWljaGFsIEhvY2tvLENocmlzdG9waCBIZWxsd2lnLGxpbnV4LXNlY3Vy
+aXR5LW1vZHVsZSxMaW51eC1NTSxrZXJuZWwgbGlzdCxLZXJuZWwgSGFyZGVuaW5nLA0KRGF0ZToy
+MDE4LTAyLTEzIDAwOjQwOjU0DQpTdWJqZWN0OlJlOiBba2VybmVsLWhhcmRlbmluZ10gW1BBVENI
+IDQvNl0gUHJvdGVjdGFibGUgTWVtb3J5DQoNCk9uIDAyLzEyLzIwMTggMDM6MjcgUE0sIEtlZXMg
+Q29vayB3cm90ZToNCj4gT24gU3VuLCBGZWIgNCwgMjAxOCBhdCA3OjA1IEFNLCBJZ29yIFN0b3Bw
+YSA8aWdvci5zdG9wcGFAaHVhd2VpLmNvbT4gd3JvdGU6DQo+PiBPbiAwNC8wMi8xOCAwMDoyOSwg
+Qm9yaXMgTHVrYXNoZXYgd3JvdGU6DQo+Pj4gT24gU2F0LCBGZWIgMywgMjAxOCBhdCAzOjMyIFBN
+LCBJZ29yIFN0b3BwYSA8aWdvci5zdG9wcGFAaHVhd2VpLmNvbT4gd3JvdGU6DQo+Pg0KPj4gWy4u
+Ll0NCj4+DQo+Pj4+IFdoYXQgeW91IGFyZSBzdWdnZXN0aW5nLCBpZiBJIGhhdmUgdW5kZXJzdG9v
+ZCBpdCBjb3JyZWN0bHksIGlzIHRoYXQsDQo+Pj4+IHdoZW4gdGhlIHBvb2wgaXMgcHJvdGVjdGVk
+LCB0aGUgYWRkcmVzc2VzIGFscmVhZHkgZ2l2ZW4gb3V0LCB3aWxsIGJlY29tZQ0KPj4+PiB0cmFw
+cyB0aGF0IGdldCByZXNvbHZlZCB0aHJvdWdoIGEgbG9va3VwIHRhYmxlIHRoYXQgaXMgYnVpbHQg
+YmFzZWQgb24NCj4+Pj4gdGhlIGNvbnRlbnQgb2YgZWFjaCBhbGxvY2F0aW9uLg0KPj4+Pg0KPj4+
+PiBUaGF0IHNlZW1zIHRvIGdlbmVyYXRlIGEgbG90IG9mIG92ZXJoZWFkLCBub3QgdG8gbWVudGlv
+biB0aGUgZmFjdCB0aGF0DQo+Pj4+IGl0IG1pZ2h0IG5vdCBwbGF5IHZlcnkgd2VsbCB3aXRoIHRo
+ZSBNTVUuDQo+Pj4NCj4+PiBUaGF0IGlzIGVmZmVjdGl2ZWx5IHdoYXQgaSdtIHN1Z2dlc3Rpbmcg
+LSBhcyBhIGZvcm0gb2YgcHJvdGVjdGlvbiBmb3INCj4+PiBjb25zdW1lcnMgYWdhaW5zdCBkaXJl
+Y3QgcmVhZHMgb2YgZGF0YSB3aGljaCBtYXkgaGF2ZSBiZWVuIGNvcnJ1cHRlZA0KPj4+IGJ5IHNv
+bWUgaXJyZWxldmFudCBtZWFucy4gSW4gdGhlIGNvbnRleHQgb2YgcG1hbGxvYywgaXQgd291bGQg
+cHJvYmFibHkNCj4+PiBiZSBhIHNlcGFyYXRlIHR5cGUgb2Ygcm8rdmVyaWZpZWQgcG9vbA0KPj4g
+b2ssIHRoYXQgc2VlbXMgbW9yZSBsaWtlIGFuIGV4dGVuc2lvbiB0aG91Z2guDQo+Pg0KPj4gQVRN
+IEkgYW0gaGF2aW5nIHByb2JsZW1zIGdhaW5pbmcgdHJhY3Rpb24gdG8gZ2V0IGV2ZW4gdGhlIGJh
+c2ljIG1lcmdlZCA6LSkNCj4+DQo+PiBJIHdvdWxkIGNvbnNpZGVyIHRoaXMgYXMgYSBwb3NzaWJp
+bGl0eSBmb3IgZnV0dXJlIHdvcmssIHVubGVzcyBpdCBpcw0KPj4gc2FpZCB0aGF0IGl0J3MgbmVj
+ZXNzYXJ5IGZvciBwbWFsbG9jIHRvIGJlIGFjY2VwdGVkIC4uLg0KPg0KPiBJIHdvdWxkIGFncmVl
+OiBsZXQncyBnZXQgYmFzaWMgZnVuY3Rpb25hbGl0eSBpbiBmaXJzdC4gQm90aA0KPiB2ZXJpZmlj
+YXRpb24gYW5kIHRoZSBwaHlzbWFwIHBhcnQgY2FuIGJlIGRvbmUgc2VwYXJhdGVseSwgSU1PLg0K
+DQpTa2lwcGluZyBvdmVyIHBoeXNtYXAgbGVhdmVzIGEgcHJldHR5IGJpZyBhcmVhIG9mIGV4cG9z
+dXJlIHRoYXQgY291bGQNCmJlIGRpZmZpY3VsdCB0byBzb2x2ZSBsYXRlci4gSSBhcHByZWNpYXRl
+IHRoaXMgbWlnaHQgYmxvY2sgYmFzaWMNCmZ1bmN0aW9uYWxpdHkgYnV0IEkgZG9uJ3QgdGhpbmsg
+d2Ugc2hvdWxkIGp1c3QgZ2xvc3Mgb3ZlciBpdCB3aXRob3V0DQphdCBsZWFzdCBzb21lIGlkZWEg
+b2Ygd2hhdCB3ZSB3b3VsZCBkby4NCg0KVGhhbmtzLA0KTGF1cmENCg==
 
-Thanks,
-Laura
+--_000_688F43F436AB4D988B8234437CFD85BC_
+Content-Type: text/html; charset="gb2312"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dgb2312">
+<meta name=3D"Generator" content=3D"Microsoft Exchange Server">
+<!-- converted from text --><style><!-- .EmailQuote { margin-left: 1pt; pad=
+ding-left: 4pt; border-left: #800000 2px solid; } --></style>
+</head>
+<body>
+<style type=3D"text/css">
+<!--
+-->
+</style>
+<div>
+<div>hi,<br>
+apologies for (probably) breaking any email etiquette, but i'm travelling a=
+nd i have available only the corporate mail client.<br>
+I'll reply more extensively to all the comments i go next week, when i'm ba=
+ck to the office.<br>
+<br>
+In the meanwhile i would like to point out that I had already addressed thi=
+s, in past thread, but got no reply.<br>
+<br>
+To recap:<br>
+-1) vmalloced memory is harder to attack than kmalloced, because it require=
+s the attacker to figuere out also the physical address. Currently it's suf=
+ficient to identify the randomized base address and the offset in memory of=
+ the victim.<br>
+I have not seen comments about this statement I made. Is it incorrect?<br>
+-2) this patchset is about protecting something that right now is not prote=
+cted at all. That should be the starting point for comparison. If it was po=
+ssible to have separate section like const or _ro_after init, the situation=
+ would be different, but i was told
+ that it's not possible. furthermore, it would require reserving a fixed si=
+ze &quot;zone&quot;, i think.<br>
+-3)What is the attack we want to make harder to perform? Because even const=
+ data can be attacked, if we assume that the attacker can alter page mappin=
+gs. In reality, the only safe way would be to have one-way only protection.=
+ But we do not have it. Why alterations
+ of page properties are not considered a risk and the physmap is?<br>
+And how would it be easier (i suppose) to attack the latter?<br>
+I'm all for hardening what is possible, but I feel I do not have full under=
+standing of some of the assumptions being made here.<br>
+Getting some answers to my questions above might help me seeing the point b=
+eing made.<br>
+<br>
+--<br>
+thanks, igor<br>
+<br>
+<br>
+<br>
+</div>
+<div></div>
+<div>--------------------------------------------------<br>
+Igor Stoppa Igor Stoppa<br>
+M:<br>
+E: <a href=3D"mailto:igor.stoppa@huawei.com">igor.stoppa@huawei.com</a><br>
+<a href=3D"tel:2012">2012</a>=CA=B5=D1=E9=CA=D2-=BA=D5=B6=FB=D0=C1=BB=F9=D1=
+=D0=BE=BF=CB=F9<br>
+<a href=3D"tel:2012">2012</a> Laboratories-Helsinki Research Center</div>
+<div name=3D"x_AnyOffice-Background-Image" style=3D"border-top:1px solid #B=
+5C4DF; padding:8px">
+<div style=3D"word-break:break-all"><b>From:</b>Laura Abbott</div>
+<div style=3D"word-break:break-all"><b>To:</b>Kees Cook,Igor Stoppa,</div>
+<div style=3D"word-break:break-all"><b>Cc:</b>Boris Lukashev,Christopher La=
+meter,Matthew Wilcox,Jann Horn,Jerome Glisse,Michal Hocko,Christoph Hellwig=
+,linux-security-module,Linux-MM,kernel list,Kernel Hardening,</div>
+<div style=3D"word-break:break-all"><b>Date:</b>2018-02-13 00:40:54</div>
+<div style=3D"word-break:break-all"><b>Subject:</b>Re: [kernel-hardening] [=
+PATCH 4/6] Protectable Memory</div>
+<div><br>
+</div>
+</div>
+</div>
+<font size=3D"2"><span style=3D"font-size:10pt;">
+<div class=3D"PlainText">On 02/12/2018 03:27 PM, Kees Cook wrote:<br>
+&gt; On Sun, Feb 4, 2018 at 7:05 AM, Igor Stoppa &lt;igor.stoppa@huawei.com=
+&gt; wrote:<br>
+&gt;&gt; On 04/02/18 00:29, Boris Lukashev wrote:<br>
+&gt;&gt;&gt; On Sat, Feb 3, 2018 at 3:32 PM, Igor Stoppa &lt;igor.stoppa@hu=
+awei.com&gt; wrote:<br>
+&gt;&gt;<br>
+&gt;&gt; [...]<br>
+&gt;&gt;<br>
+&gt;&gt;&gt;&gt; What you are suggesting, if I have understood it correctly=
+, is that,<br>
+&gt;&gt;&gt;&gt; when the pool is protected, the addresses already given ou=
+t, will become<br>
+&gt;&gt;&gt;&gt; traps that get resolved through a lookup table that is bui=
+lt based on<br>
+&gt;&gt;&gt;&gt; the content of each allocation.<br>
+&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt; That seems to generate a lot of overhead, not to mention t=
+he fact that<br>
+&gt;&gt;&gt;&gt; it might not play very well with the MMU.<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; That is effectively what i'm suggesting - as a form of protect=
+ion for<br>
+&gt;&gt;&gt; consumers against direct reads of data which may have been cor=
+rupted<br>
+&gt;&gt;&gt; by some irrelevant means. In the context of pmalloc, it would =
+probably<br>
+&gt;&gt;&gt; be a separate type of ro&#43;verified pool<br>
+&gt;&gt; ok, that seems more like an extension though.<br>
+&gt;&gt;<br>
+&gt;&gt; ATM I am having problems gaining traction to get even the basic me=
+rged :-)<br>
+&gt;&gt;<br>
+&gt;&gt; I would consider this as a possibility for future work, unless it =
+is<br>
+&gt;&gt; said that it's necessary for pmalloc to be accepted ...<br>
+&gt; <br>
+&gt; I would agree: let's get basic functionality in first. Both<br>
+&gt; verification and the physmap part can be done separately, IMO.<br>
+<br>
+Skipping over physmap leaves a pretty big area of exposure that could<br>
+be difficult to solve later. I appreciate this might block basic<br>
+functionality but I don't think we should just gloss over it without<br>
+at least some idea of what we would do.<br>
+<br>
+Thanks,<br>
+Laura<br>
+</div>
+</span></font>
+</body>
+</html>
+
+--_000_688F43F436AB4D988B8234437CFD85BC_--
