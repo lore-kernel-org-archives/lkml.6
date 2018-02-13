@@ -1,170 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965980AbeBMVzy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 16:55:54 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:42532 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965853AbeBMVzw (ORCPT
+        id S965957AbeBMWAA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 17:00:00 -0500
+Received: from g9t1613g.houston.hpe.com ([15.241.32.99]:5859 "EHLO
+        g9t1613g.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965865AbeBMV76 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 16:55:52 -0500
-X-Google-Smtp-Source: AH8x227cgO6g+VydfVhZRjF8dX72uDDy6/opfKYMm8cUuTX/b1qUDaYSObB2QvfYsd/kgPg4U4f86Q==
-Date: Tue, 13 Feb 2018 13:55:49 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Jerry Hoemann <jerry.hoemann@hpe.com>
-Cc: Marcus Folkesson <marcus.folkesson@gmail.com>, wim@linux-watchdog.org,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rwright@hpe.com, maurice.a.saldivar@hpe.com
-Subject: Re: [PATCH v2 06/11] watchdog/hpwdt: Modify to use watchdog core.
-Message-ID: <20180213215549.GA5241@roeck-us.net>
+        Tue, 13 Feb 2018 16:59:58 -0500
+Date: Tue, 13 Feb 2018 14:59:56 -0700
+From: Jerry Hoemann <jerry.hoemann@hpe.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rwright@hpe.com,
+        maurice.a.saldivar@hpe.com
+Subject: Re: [PATCH v2 03/11] watchdog/hpwdt: Update nmi_panic message.
+Message-ID: <20180213215956.GC22295@anatevka.americas.hpqcorp.net>
+Reply-To: Jerry.Hoemann@hpe.com
 References: <20180212052111.12010-1-jerry.hoemann@hpe.com>
- <20180212052111.12010-7-jerry.hoemann@hpe.com>
- <20180212090621.GA4513@gmail.com>
- <20180213213648.GB22295@anatevka.americas.hpqcorp.net>
+ <20180212052111.12010-4-jerry.hoemann@hpe.com>
+ <20180213174135.GA22401@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180213213648.GB22295@anatevka.americas.hpqcorp.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180213174135.GA22401@roeck-us.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 02:36:48PM -0700, Jerry Hoemann wrote:
+On Tue, Feb 13, 2018 at 09:41:35AM -0800, Guenter Roeck wrote:
+> On Sun, Feb 11, 2018 at 10:21:03PM -0700, Jerry Hoemann wrote:
+> > +	unsigned int mynmi = hpwdt_my_nmi();
+> > +	static char panic_msg[] =
+> > +		"00: An NMI occurred. Depending on your system the reason "
+> > +		"for the NMI is logged in any one of the following resources:\n"
+> > +		"1. Integrated Management Log (IML)\n"
+> > +		"2. OA Syslog\n"
+> > +		"3. OA Forward Progress Log\n"
+> > +		"4. iLO Event Log";
+> > +
+> > +	if ((ulReason == NMI_UNKNOWN) && !mynmi)
+> >  		return NMI_DONE;
+> >  
+> >  	if (allow_kdump)
+> >  		hpwdt_stop();
+> >  
+> > -	nmi_panic(regs, "An NMI occurred. Depending on your system the reason "
+> > -		"for the NMI is logged in any one of the following "
+> > -		"resources:\n"
+> > -		"1. Integrated Management Log (IML)\n"
+> > -		"2. OA Syslog\n"
+> > -		"3. OA Forward Progress Log\n"
+> > -		"4. iLO Event Log");
+> > +	panic_msg[0] = hexdigit((mynmi>>4)&0xf);
+> > +	panic_msg[1] = hexdigit(mynmi&0xf);
 > 
+> No need to reinvent the wheel.
 > 
-> Thanks for the review. Comments inline.
+> 	panic_msg[0] = hex_asc_hi(mynmi);
+> 	panic_msg[1] = hex_asc_lo(mynmi);
 > 
-> On Mon, Feb 12, 2018 at 10:06:21AM +0100, Marcus Folkesson wrote:
-> > Hi Jerry,
-> > 
-> > On Sun, Feb 11, 2018 at 10:21:06PM -0700, Jerry Hoemann wrote:
-> > > Follow Documentation/watchdog/convert_drivers_to_kernel_api.txt to
-> > > convert hpwdt from legacy watchdog driver to use the watchdog core.
-> > > 
-> > > Removed functions: hpwdt_open, hpwdt_release, hpwdt_write, hpwdt_ioctl
-> > > Removed data structures: hpwdt_fops, hpwdt_miscdev, watchdog_device
-> > > Modified functions: hpwdt_start, hpwdt_stop, hpwdt_ping, hpwdt_gettimeleft
-> > > Added functions: hpwdt_settimeout
-> > > Added structures: watchdog_device
-> > > 
-> > > Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
-> > 
-> > I think it would be better to use
-> >     dev_emerg()
-> >     dev_crit()
-> >     dev_alert()
-> >     dev_err()
-> >     dev_warn()
-> >     dev_notice()
-> > 
-> > instead of pr_* functions now when we have a device to use.
+> or even better
+> 	hex_byte_pack(panic_msg, mynmi);
 > 
-> In general, is there something bad with using pr_debug, etc.,?
+> There are matching _upper functions if you prefer A..F instead of a..f.
 > 
+> Guenter
 
-No, but it is desirable to use dev_ functions where possible.
+Will do. thanks
 
-> When converting the driver over, I had many more debug messages being
-> printed from locations where I didn't have a valid device handle and
-> those needed to be done w/ the pr_.* functions.  So, I just uniformally
-> used pr_.*.
-> 
-> 
-> > > -static int hpwdt_time_left(void)
-> > > +static unsigned int hpwdt_gettimeleft(struct watchdog_device *dev)
-> > >  {
-> > >  	return TICKS_TO_SECS(ioread16(hpwdt_timer_reg));
-> > >  }
-> > >  
-> > > +static int hpwdt_settimeout(struct watchdog_device *dev, unsigned int val)
-> > > +{
-> > > +	pr_debug("settimeout = %d\n", val);
-> > 
-> > dev_dbg()
-> 
-> I think you are proposing I do:
-> 
-> 	dev_dbg(dev->parent, "settimeout = %d\n", val);
-> 
-> This raises the issue that I didn't set parent and I believe I should have.
-> 
-Correct.
+-- 
 
-> 
-> > 
-> > 
-> > > +
-> > > +	soft_margin = dev->timeout = val;
-> > 
-> > No need to update soft_margin
-> 
-> I'd made the permission on the module parameters 0444 so that they
-> would show up in sysfs.  I updated this value so that I could see
-> current value of timeout in sysfs.  But, as Guenter points out in a
-> later review, these values are available in under CONFIG_WATCHDOG_SYSFS.
-> So, I'll remove.
-> 
-> 
-> > > +	pr_debug("nmi: ulReason=%d, mynmi=0x%0x\n", ulReason, mynmi);
-> > 
-> > dev_dbg()
-> 
-> See above.
-> 
-> > 
-> > >  	retval = hpwdt_init_nmi_decoding(dev);
-> > >  	if (retval != 0)
-> > >  		goto error_init_nmi_decoding;
-> > >  
-> > > -	retval = misc_register(&hpwdt_miscdev);
-> > > +	retval = watchdog_register_device(&hpwdt_dev);
-> > >  	if (retval < 0) {
-> > > -		dev_warn(&dev->dev,
-> > > -			"Unable to register miscdev on minor=%d (err=%d).\n",
-> > > -			WATCHDOG_MINOR, retval);
-> > > -		goto error_misc_register;
-> > > +		dev_warn(&dev->dev, "Unable to register hpe watchdog (err=%d).\n", retval);
-> > > +		goto error_wd_register;
-> > > +	}
-> > > +
-> > > +	watchdog_set_nowayout(&hpwdt_dev, nowayout);
-> > > +	if (watchdog_init_timeout(&hpwdt_dev, soft_margin, NULL)) {
-> > > +		dev_warn(&dev->dev, "Invalid soft_margin: %d. Using default\n", soft_margin);
-> > > +		soft_margin = DEFAULT_MARGIN;
-> > >  	}
-> > 
-> > In this case watchdog_init_timout() will:
-> > 1) Check if soft_margin is valid
-> > 2) if not, keep hpwdt_dev.timout intact (which is already set in
-> > declaration of hpwdt_dev)
-> > 
-> > So we could remove the condition and only keep
-> > watchdog_init_timeout(&hpwdt_dev, soft_margin, NULL);
-> > 
-> > 
-> > Also, we need to set an invalid initial value for soft_margin to make
-> > the logic for watchdog_init_timeout work. 
-> > 
-> > i.e
-> > - static unsigned int soft_margin = DEFAULT_MARGIN;	/* in seconds */
-> > + static unsigned int soft_margin;
-> 
-> 
-> I don't see the core printing a warning message if an invalid value
-> is specified for soft_margin when loading the module.
-> 
-> I don't mind the hpwdt module correcting an out of range parameter, but I
-> don't think it should do so siliently.
-> 
-
-The point here is that setting soft_margin to 0 and setting the
-timeout in the watchdog_device structure to DEFAULT_MARGIN
-means that it is not necessary to override it on error.
-If you want to be verbose, you can still log a warning message
-if the timeout provided by the module parameter is wrong.
-
-Anyway, this driver will presumably never support devicetree,
-so the watchdog core will never read the timeout from there,
-and this is not a showstopper.
-
-Guenter
+-----------------------------------------------------------------------------
+Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
+-----------------------------------------------------------------------------
