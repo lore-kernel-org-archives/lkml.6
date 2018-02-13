@@ -1,70 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965301AbeBMQ7y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 11:59:54 -0500
-Received: from gateway31.websitewelcome.com ([192.185.143.4]:14408 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S964794AbeBMQ7v (ORCPT
+        id S965341AbeBMRAA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:00:00 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38373 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965261AbeBMQ74 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:59:51 -0500
-Date: Tue, 13 Feb 2018 10:59:49 -0600
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] PCI/ASPM: Use 64-bit arithmetic instead of 32-bit
-Message-ID: <20180213165948.GA14035@embeddedor.com>
+        Tue, 13 Feb 2018 11:59:56 -0500
+Date: Tue, 13 Feb 2018 08:59:31 -0800
+From: tip-bot for Alexey Dobriyan <tipbot@zytor.com>
+Message-ID: <tip-1acdbf7ea8a80706561013346d281d282a3c00f9@git.kernel.org>
+Cc: mingo@kernel.org, peterz@infradead.org, adobriyan@gmail.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        bp@suse.de, torvalds@linux-foundation.org
+Reply-To: peterz@infradead.org, adobriyan@gmail.com, hpa@zytor.com,
+        mingo@kernel.org, torvalds@linux-foundation.org, bp@suse.de,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org
+In-Reply-To: <20180113185048.GA23111@avx2>
+References: <20180113185048.GA23111@avx2>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/asm] x86/asm: Clobber flags in clear_page()
+Git-Commit-ID: 1acdbf7ea8a80706561013346d281d282a3c00f9
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.4.238
-X-Source-L: No
-X-Exim-ID: 1eldvq-001IoH-B2
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.175.4.238]:35086
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 15
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add suffix ULL to constant 1000 in order to give the compiler complete
-information about the proper arithmetic to use. Notice that this
-constant is used in a context that expects an expression of type
-u64 (64 bits, unsigned).
+Commit-ID:  1acdbf7ea8a80706561013346d281d282a3c00f9
+Gitweb:     https://git.kernel.org/tip/1acdbf7ea8a80706561013346d281d282a3c00f9
+Author:     Alexey Dobriyan <adobriyan@gmail.com>
+AuthorDate: Sat, 13 Jan 2018 21:50:48 +0300
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 13 Feb 2018 17:36:49 +0100
 
-The expression threshold_us * 1000 is currently being evaluated
-using 32-bit arithmetic.
+x86/asm: Clobber flags in clear_page()
 
-Addresses-Coverity-ID: 1462501
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+All clear_page() implementations use XOR which resets flags.
+
+Judging by allyesconfig disassembly no code is affected.
+
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180113185048.GA23111@avx2
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/pci/pcie/aspm.c | 2 +-
+ arch/x86/include/asm/page_64.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-index 57feef2..684d326 100644
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -322,7 +322,7 @@ static u32 calc_l1ss_pwron(struct pci_dev *pdev, u32 scale, u32 val)
+diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
+index 4baa6bc..f8a85c6 100644
+--- a/arch/x86/include/asm/page_64.h
++++ b/arch/x86/include/asm/page_64.h
+@@ -47,7 +47,7 @@ static inline void clear_page(void *page)
+ 			   clear_page_erms, X86_FEATURE_ERMS,
+ 			   "=D" (page),
+ 			   "0" (page)
+-			   : "memory", "rax", "rcx");
++			   : "cc", "memory", "rax", "rcx");
+ }
  
- static void encode_l12_threshold(u32 threshold_us, u32 *scale, u32 *value)
- {
--	u64 threshold_ns = threshold_us * 1000;
-+	u64 threshold_ns = threshold_us * 1000ULL;
- 
- 	/* See PCIe r3.1, sec 7.33.3 and sec 6.18 */
- 	if (threshold_ns < 32) {
--- 
-2.7.4
+ void copy_page(void *to, void *from);
