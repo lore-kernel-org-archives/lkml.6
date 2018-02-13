@@ -1,93 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964812AbeBMM6s (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:58:48 -0500
-Received: from foss.arm.com ([217.140.101.70]:57150 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935077AbeBMM6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:58:46 -0500
-From: Will Deacon <will.deacon@arm.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH] fs: dcache: Avoid livelock between d_alloc_parallel and __d_add
-Date: Tue, 13 Feb 2018 12:58:51 +0000
-Message-Id: <1518526731-26546-1-git-send-email-will.deacon@arm.com>
-X-Mailer: git-send-email 2.1.4
+        id S964833AbeBMM7T (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:59:19 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:6766 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S935077AbeBMM7S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 07:59:18 -0500
+From: Patrice CHOTARD <patrice.chotard@st.com>
+To: Rob Herring <rob.herring@linaro.org>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 10/12] ARM: dts: STi: Add fake reg property for clocks
+Thread-Topic: [PATCH v2 10/12] ARM: dts: STi: Add fake reg property for clocks
+Thread-Index: AQHTpA/VYWz7ZbGWUUiNKMJpjfZgi6Og0dKAgAFqFIA=
+Date: Tue, 13 Feb 2018 12:58:52 +0000
+Message-ID: <ce036283-586b-0603-2c85-a502ed656e72@st.com>
+References: <1518446590-16800-1-git-send-email-patrice.chotard@st.com>
+ <1518446590-16800-11-git-send-email-patrice.chotard@st.com>
+ <CABGGisxgejFHj0xQq-aBQETt9CX3OzLc3ER_Y9nyrw7FeLdt6g@mail.gmail.com>
+In-Reply-To: <CABGGisxgejFHj0xQq-aBQETt9CX3OzLc3ER_Y9nyrw7FeLdt6g@mail.gmail.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.49]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8B25772FB022A346B0B37143D353A66F@st.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-13_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1DCxPdJ021279
 
-If d_alloc_parallel runs concurrently with __d_add, it is possible for
-d_alloc_parallel to continuously retry whilst i_dir_seq has been
-incremented to an odd value by __d_add:
+Hi Rob
 
-CPU0:
-__d_add
-	n = start_dir_add(dir);
-		cmpxchg(&dir->i_dir_seq, n, n + 1) == n
+On 02/12/2018 04:22 PM, Rob Herring wrote:
+> On Mon, Feb 12, 2018 at 8:43 AM,  <patrice.chotard@st.com> wrote:
+>> From: Patrice Chotard <patrice.chotard@st.com>
+>>
+>> For all clock's element inside SoC, add a fake reg property,
+>> this allows to fix the following warnings when compiling
+>> dtb with W=1 option :
+>>
+>> arch/arm/boot/dts/stih410-b2120.dtb: Warning (simple_bus_reg):
+>> Node /clocks/clk-m-a9-periphs missing or empty reg/ranges property
+>> arch/arm/boot/dts/stih410-b2120.dtb: Warning (simple_bus_reg):
+>> Node /clocks/clk-m-a9-ext2f-div2s missing or empty reg/ranges property
+>> arch/arm/boot/dts/stih410-b2120.dtb: Warning (simple_bus_reg):
+>> Node /clocks/clk-tmdsout-hdmi missing or empty reg/ranges property
+>>
+>> arch/arm/boot/dts/stih410-b2260.dtb: Warning (simple_bus_reg):
+>> Node /clocks/clk-m-a9-periphs missing or empty reg/ranges property
+>> arch/arm/boot/dts/stih410-b2260.dtb: Warning (simple_bus_reg):
+>> Node /clocks/clk-m-a9-ext2f-div2s missing or empty reg/ranges property
+>> arch/arm/boot/dts/stih410-b2260.dtb: Warning (simple_bus_reg):
+>> Node /clocks/clk-tmdsout-hdmi missing or empty reg/ranges property
+>>
+>> arch/arm/boot/dts/stih418-b2199.dtb: Warning (simple_bus_reg):
+>> Node /clocks/clk-m-a9-periphs missing or empty reg/ranges property
+>> arch/arm/boot/dts/stih418-b2199.dtb: Warning (simple_bus_reg):
+>> Node /clocks/clk-m-a9-ext2f-div2s missing or empty reg/ranges property
+>> arch/arm/boot/dts/stih418-b2199.dtb: Warning (simple_bus_reg):
+>> Node /clocks/clk-tmdsout-hdmi missing or empty reg/ranges property
+>>
+>> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+>> ---
+>>
+>> v2: _ add a fake reg property to node without reg property.
+>>
+>>   arch/arm/boot/dts/stih407-clock.dtsi | 9 ++++++---
+>>   arch/arm/boot/dts/stih410-clock.dtsi | 9 ++++++---
+>>   arch/arm/boot/dts/stih418-clock.dtsi | 9 ++++++---
+>>   3 files changed, 18 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/stih407-clock.dtsi b/arch/arm/boot/dts/stih407-clock.dtsi
+>> index b882dcf3a649..1bba47e06ebe 100644
+>> --- a/arch/arm/boot/dts/stih407-clock.dtsi
+>> +++ b/arch/arm/boot/dts/stih407-clock.dtsi
+>> @@ -24,9 +24,10 @@
+>>                  /*
+>>                   * ARM Peripheral clock for timers
+>>                   */
+>> -               arm_periph_clk: clk-m-a9-periphs {
+>> +               arm_periph_clk: clk-m-a9-periphs@0 {
+>>                          #clock-cells = <0>;
+>>                          compatible = "fixed-factor-clock";
+>> +                       reg = <0 0>;
+> 
+> Don't do this. The correct fix is change the location of these nodes
+> to be under whatever controls them.
+> 
+Ok i will put this node as a child of clockgen-a9@92b0000
 
-CPU1:
-d_alloc_parallel
-retry:
-	seq = smp_load_acquire(&parent->d_inode->i_dir_seq) & ~1;
-	hlist_bl_lock(b);
-		bit_spin_lock(0, (unsigned long *)b); // Always succeeds
+Thanks
 
-CPU0:
-	__d_lookup_done(dentry)
-		hlist_bl_lock
-			bit_spin_lock(0, (unsigned long *)b); // Never succeeds
+Patrice
 
-CPU1:
-	if (unlikely(parent->d_inode->i_dir_seq != seq)) {
-		hlist_bl_unlock(b);
-		goto retry;
-	}
-
-Since the simple bit_spin_lock used to implement hlist_bl_lock does not
-provide any fairness guarantees, then CPU1 can starve CPU0 of the lock
-and prevent it from reaching end_dir_add(dir), therefore CPU1 cannot
-exit its retry loop because the sequence number always has the bottom
-bit set.
-
-This patch resolves the livelock by not taking hlist_bl_lock in
-d_alloc_parallel if the sequence counter is odd, since any subsequent
-masked comparison with i_dir_seq will fail anyway.
-
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
----
- fs/dcache.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 7c38f39958bc..b243deec298c 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -2474,7 +2474,7 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
- 
- retry:
- 	rcu_read_lock();
--	seq = smp_load_acquire(&parent->d_inode->i_dir_seq) & ~1;
-+	seq = smp_load_acquire(&parent->d_inode->i_dir_seq);
- 	r_seq = read_seqbegin(&rename_lock);
- 	dentry = __d_lookup_rcu(parent, name, &d_seq);
- 	if (unlikely(dentry)) {
-@@ -2495,6 +2495,12 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
- 		rcu_read_unlock();
- 		goto retry;
- 	}
-+
-+	if (unlikely(seq & 1)) {
-+		rcu_read_unlock();
-+		goto retry;
-+	}
-+
- 	hlist_bl_lock(b);
- 	if (unlikely(parent->d_inode->i_dir_seq != seq)) {
- 		hlist_bl_unlock(b);
--- 
-2.1.4
+> Rob
+> 
