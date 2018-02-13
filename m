@@ -1,148 +1,102 @@
-Return-Path: <sudeep.holla@arm.com>
-X-Google-Smtp-Source: AH8x227oku2i0kDbTcahK1Zdz+9xtusMm7qbfAJko2wMU5zof1W18cz3XoFVjrn+jTxWKcioyLCk
-ARC-Seal: i=1; a=rsa-sha256; t=1518438527; cv=none;
+Return-Path: <gaku.inami.xh@renesas.com>
+X-Google-Smtp-Source: AH8x226+pw5zO+RmSWvTkRASnIN+C6L0y2WdVGuSnNLhSwWPS5h/GBGdRb7+5EXniU/BoI/G+ni3
+ARC-Seal: i=1; a=rsa-sha256; t=1518484876; cv=none;
         d=google.com; s=arc-20160816;
-        b=Gl+mlxqVFoMyqMm9UUwN8XZgWZAOwl31QDXy5Z0+dQCQ1DQ6fpIk1RuRP7GsZseBNV
-         TQSgy8lh/hP3bsq1esAcnI9M03HYDzoWjauAmMqVESFrsR55VOu2nG5VLRXpDnv2JZGt
-         zqvFjzoe9ui7ymd5sECiUEeKSuDXRXzNQfchIoOQpaUhL9HBiuY2z8v/pN/P4K1ryXCb
-         2DJKL7vFPAKAU1CedEG4CIIz7wkECj/6+Jrbw5Ngo5NwJcOgA235jkoru3MIg+3bwUYt
-         wk6d7TmkAcHUKcVGYNgHkJ+VYWFMEW8NzzN5DvlE+T3qWlLLXBFVsgryuUTHCv5RjIvd
-         MWpA==
+        b=aOLmlZFacIc5/m+dRPjd6FKaHQQcznymy0XKWm4w8gx1oJfW07PKuzHSiNnBTyJnDY
+         ahyoNjygFEkuoENr0aYLV0uDeDtFTRhXNFd0/3TLtAt4/W25s3vTr89dOQFdFr5/5oRM
+         Gv+bavfIedYVYLtFjx3JCogz8C4lIQS7K1kwjjmCOTTeBwWcAaW3VHfGr6XOV1IFi+Z+
+         giIq05pBhfw/ph1W05y2NOvoHmKc25p3n2Od8TInTBakqLkMkMgp4wgBptss3lLv/JjV
+         5CS6e7LMWk8ec46f24m9Yw+ojb/p/61vlLiPUVZn+0BEKP01bTb0Ljj15bUq6P2p0/aa
+         G9+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:organization:from:references:to:subject
-         :cc:arc-authentication-results;
-        bh=9sEkPeAdmVjf66wcGkCcxiM+RLSM6Qzg6z3/xcO1XPk=;
-        b=y8zuzedyf9fQboKPXDS30uabHFtAUQpDy+NC8tI1FlHLgvhfQq1EMtzh+/qJQmb6fB
-         7UQla4qcfjQL/Q0Hl/nIOUtlqicEoAv/n3+8ti+WJHx6Ah0Y3wpEG1PFP41+HJsAsIG3
-         CKT+02832AITVbV3G3hV5EzBkOIcYYyQjjNFl+o/yAsqL3eb2qZWVHJcRVZdFUL9PTl9
-         SBQyKHkJ4e3YJ2W2BZw+gbJhTABF/Vohd8R1zwX6j5qNVpMOgLYbtm63IrrJjdCY0DHm
-         JjSPLrgLg4XpCSj3A+awIhclhj7IIpKCNaY+CZvtfRMvHFsxpSPV/cZy7uyqLL7ELX9n
-         NI7A==
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=Rpuz9mbGLYZlHXC+/aUCC3JVvwQQamhoXrUn+MWJZKg=;
+        b=d2uGHRqsz+caNk/rgvLkYfnxRG5lMj5qaOOFLby6Sq1kkro56mw/gZCtpGhVo7a1fl
+         xWaOYhW71aEXCuftozWfm9vPCo7JfxbJSqLDkY2SoS7Kfgg0KF/oZw1PrbvOKbc06EmQ
+         8Sw+RlQUXuWV3XgaSaCPGUpumYosuIYHkggGHOdjHGAJi/OPBuJRKdx7ACLDiJ+3smrV
+         BdisTPJxfa2JPSTTrE0mCMwztkG7IpBezfjnA9Tt+I/rpl3vggr/JZgzH0bBvBlnSQ1E
+         zIniY59s5LpjUus/81Xz492Wmh/01riz6uHvsVP89qMyTRYlvmMAnpn/CDDT2p5pvXLJ
+         jZNA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
+       dkim=pass header.i=@renesasgroup.onmicrosoft.com header.s=selector1-renesas-com header.b=Plz704vj;
+       spf=pass (google.com: domain of gaku.inami.xh@renesas.com designates 210.160.252.174 as permitted sender) smtp.mailfrom=gaku.inami.xh@renesas.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
-Cc: Sudeep Holla <sudeep.holla@arm.com>, dietmar.eggemann@arm.com,
- juri.lelli@redhat.com, psodagud@codeaurora.org
-Subject: Re: [PATCH] Revert "base: arch_topology: fix section mismatch build
+       dkim=pass header.i=@renesasgroup.onmicrosoft.com header.s=selector1-renesas-com header.b=Plz704vj;
+       spf=pass (google.com: domain of gaku.inami.xh@renesas.com designates 210.160.252.174 as permitted sender) smtp.mailfrom=gaku.inami.xh@renesas.com
+X-IronPort-AV: E=Sophos;i="5.46,504,1511794800";
+   d="scan'208";a="270987530"
+From: Gaku Inami <gaku.inami.xh@renesas.com>
+To: Sudeep Holla <sudeep.holla@arm.com>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+	"juri.lelli@redhat.com" <juri.lelli@redhat.com>, "psodagud@codeaurora.org"
+	<psodagud@codeaurora.org>
+Subject: RE: [PATCH] Revert "base: arch_topology: fix section mismatch build
  warnings"
-To: Gaku Inami <gaku.inami.xh@renesas.com>, gregkh@linuxfoundation.org,
- linux-kernel@vger.kernel.org
+Thread-Topic: [PATCH] Revert "base: arch_topology: fix section mismatch build
+ warnings"
+Thread-Index: AQHTn+3tbNQXQbihz0K1Q0Oi80MtLqOguiuAgADW6oA=
+Date: Tue, 13 Feb 2018 01:21:07 +0000
+Message-ID: <HK2PR06MB1748717407BF7D42EDC173FEA2F60@HK2PR06MB1748.apcprd06.prod.outlook.com>
 References: <1517992328-3559-1-git-send-email-gaku.inami.xh@renesas.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <cd046554-4155-6ed9-8378-fb9ef9e6f9d2@arm.com>
-Date: Mon, 12 Feb 2018 12:28:41 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ <cd046554-4155-6ed9-8378-fb9ef9e6f9d2@arm.com>
+In-Reply-To: <cd046554-4155-6ed9-8378-fb9ef9e6f9d2@arm.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=gaku.inami.xh@renesas.com;
+x-originating-ip: [211.11.155.138]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HK2PR06MB1666;20:4XMx0a8m8mIHUrqJPiO6Vu1OPn+LowUbmAJh2yvxZVUH1b/57OHz0x7naCMMCYQ7WP21y376rLiVN+X9AfHItp98SoNlDgjugCYYVp1uo8vBGObOqArRwl9A+JYi1tVi8MNtgtG49bXJl3EAY/mjiSrVw8vqspJwnoViznLVTw8=
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: a99cfc94-b217-4548-6625-08d572800f08
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:HK2PR06MB1666;
+x-ms-traffictypediagnostic: HK2PR06MB1666:
+x-microsoft-antispam-prvs: <HK2PR06MB166675E9EC72897EC0B19112A2F60@HK2PR06MB1666.apcprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231101)(944501161)(93006095)(93001095)(6055026)(6041288)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:HK2PR06MB1666;BCL:0;PCL:0;RULEID:;SRVR:HK2PR06MB1666;
+x-forefront-prvs: 0582641F53
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(366004)(396003)(376002)(346002)(39860400002)(199004)(189003)(13464003)(53936002)(2950100002)(305945005)(7736002)(55016002)(9686003)(53546011)(6506007)(6246003)(316002)(6436002)(66066001)(2906002)(86362001)(2201001)(59450400001)(3846002)(25786009)(68736007)(4326008)(106356001)(74316002)(229853002)(6116002)(81156014)(8676002)(81166006)(54906003)(3660700001)(97736004)(7696005)(3280700002)(5660300001)(8936002)(33656002)(105586002)(99286004)(110136005)(2900100001)(478600001)(76176011)(102836004)(5250100002)(26005)(186003)(14454004)(2501003);DIR:OUT;SFP:1102;SCL:1;SRVR:HK2PR06MB1666;H:HK2PR06MB1748.apcprd06.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: iNF+UJX24hqWJysWhok4WqSUuIFxsfW4xwBEGcpbqK3ZGzlO3lVIg8dPLh6Smop6y0BscmnB3R9UXcRQp1nVdA==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <1517992328-3559-1-git-send-email-gaku.inami.xh@renesas.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a99cfc94-b217-4548-6625-08d572800f08
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2018 01:21:07.5444
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2PR06MB1666
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591730231008876964?=
-X-GMAIL-MSGID: =?utf-8?q?1592198197501700322?=
+X-GMAIL-MSGID: =?utf-8?q?1592246797162972607?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
-
-On 07/02/18 08:32, Gaku Inami wrote:
-> This reverts commit 452562abb5b7 ("base: arch_topology: fix section
-> mismatch build warnings"). It causes the notifier call hangs in some
-> use-cases.
-> 
-> In some cases with using maxcpus, some of cpus are booted first and
-> then the remaining cpus are booted. As an example, some users who want
-> to realize fast boot up often use the following procedure.
-> 
->   1) Define all CPUs on device tree (CA57x4 + CA53x4)
->   2) Add "maxcpus=4" in bootargs
->   3) Kernel boot up with CA57x4
->   4) After kernel boot up, CA53x4 is booted from user
-> 
-> When kernel init was finished, CPUFREQ_POLICY_NOTIFIER was not still
-> unregisterd. This means that "__init init_cpu_capacity_callback()"
-> will be called after kernel init sequence. To avoid this problem,
-> it needs to remove __init{,data} annotations by reverting this commit.
-> 
-> Also, this commit was needed to fix kernel compile issue below.
-> However, this issue was also fixed by another patch: commit 82d8ba717ccb
-> ("arch_topology: Fix section miss match warning due to
-> free_raw_capacity()") in v4.15 as well.
-> Whereas commit 452562abb5b7 added all the missing __init annotations,
-> commit 82d8ba717ccb removed it from free_raw_capacity().
-> 
-
-Ah I see commit 82d8ba717ccb made the commit 452562abb5b7 redundant
-by removing the __init. Both attempt to solve the same problem in
-different ways :)
-
-Can you please add the the tag, so that it gets picked up accordingly ?
-
-Fixes: 82d8ba717ccb ("arch_topology: Fix section miss match warning due
-to free_raw_capacity()")
-
-
-FWIW,
-
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-
-> WARNING: vmlinux.o(.text+0x548f24): Section mismatch in reference
-> from the function init_cpu_capacity_callback() to the variable
-> .init.text:$x
-> The function init_cpu_capacity_callback() references
-> the variable __init $x.
-> This is often because init_cpu_capacity_callback lacks a __init
-> annotation or the annotation of $x is wrong.
-> 
-> Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
-> ---
->  drivers/base/arch_topology.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-> index 4de87b0..8bfd498 100644
-> --- a/drivers/base/arch_topology.c
-> +++ b/drivers/base/arch_topology.c
-> @@ -175,11 +175,11 @@ bool __init topology_parse_cpu_capacity(struct device_node *cpu_node, int cpu)
->  }
->  
->  #ifdef CONFIG_CPU_FREQ
-> -static cpumask_var_t cpus_to_visit __initdata;
-> -static void __init parsing_done_workfn(struct work_struct *work);
-> -static __initdata DECLARE_WORK(parsing_done_work, parsing_done_workfn);
-> +static cpumask_var_t cpus_to_visit;
-> +static void parsing_done_workfn(struct work_struct *work);
-> +static DECLARE_WORK(parsing_done_work, parsing_done_workfn);
->  
-> -static int __init
-> +static int
->  init_cpu_capacity_callback(struct notifier_block *nb,
->  			   unsigned long val,
->  			   void *data)
-> @@ -215,7 +215,7 @@ init_cpu_capacity_callback(struct notifier_block *nb,
->  	return 0;
->  }
->  
-> -static struct notifier_block init_cpu_capacity_notifier __initdata = {
-> +static struct notifier_block init_cpu_capacity_notifier = {
->  	.notifier_call = init_cpu_capacity_callback,
->  };
->  
-> @@ -248,7 +248,7 @@ static int __init register_cpufreq_notifier(void)
->  }
->  core_initcall(register_cpufreq_notifier);
->  
-> -static void __init parsing_done_workfn(struct work_struct *work)
-> +static void parsing_done_workfn(struct work_struct *work)
->  {
->  	cpufreq_unregister_notifier(&init_cpu_capacity_notifier,
->  					 CPUFREQ_POLICY_NOTIFIER);
-> 
-
--- 
-Regards,
-Sudeep
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdWRlZXAgSG9sbGEgW21haWx0
+bzpzdWRlZXAuaG9sbGFAYXJtLmNvbV0NCj4gU2VudDogTW9uZGF5LCBGZWJydWFyeSAxMiwgMjAx
+OCA5OjI5IFBNDQo+IFRvOiBHYWt1IEluYW1pIDxnYWt1LmluYW1pLnhoQHJlbmVzYXMuY29tPjsg
+Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcN
+Cj4gQ2M6IFN1ZGVlcCBIb2xsYSA8c3VkZWVwLmhvbGxhQGFybS5jb20+OyBkaWV0bWFyLmVnZ2Vt
+YW5uQGFybS5jb207IGp1cmkubGVsbGlAcmVkaGF0LmNvbTsNCj4gcHNvZGFndWRAY29kZWF1cm9y
+YS5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSF0gUmV2ZXJ0ICJiYXNlOiBhcmNoX3RvcG9sb2d5
+OiBmaXggc2VjdGlvbiBtaXNtYXRjaCBidWlsZCB3YXJuaW5ncyINCg0KPHNuaXA+DQo+IA0KPiBB
+aCBJIHNlZSBjb21taXQgODJkOGJhNzE3Y2NiIG1hZGUgdGhlIGNvbW1pdCA0NTI1NjJhYmI1Yjcg
+cmVkdW5kYW50DQo+IGJ5IHJlbW92aW5nIHRoZSBfX2luaXQuIEJvdGggYXR0ZW1wdCB0byBzb2x2
+ZSB0aGUgc2FtZSBwcm9ibGVtIGluDQo+IGRpZmZlcmVudCB3YXlzIDopDQo+IA0KPiBDYW4geW91
+IHBsZWFzZSBhZGQgdGhlIHRoZSB0YWcsIHNvIHRoYXQgaXQgZ2V0cyBwaWNrZWQgdXAgYWNjb3Jk
+aW5nbHkgPw0KPiANCj4gRml4ZXM6IDgyZDhiYTcxN2NjYiAoImFyY2hfdG9wb2xvZ3k6IEZpeCBz
+ZWN0aW9uIG1pc3MgbWF0Y2ggd2FybmluZyBkdWUNCj4gdG8gZnJlZV9yYXdfY2FwYWNpdHkoKSIp
+DQo+IA0KPiANCj4gRldJVywNCj4gDQo+IEFja2VkLWJ5OiBTdWRlZXAgSG9sbGEgPHN1ZGVlcC5o
+b2xsYUBhcm0uY29tPg0KDQpUaGFua3MgZm9yIHlvdXIgcmV2aWV3IGFuZCBhY2suIEkgd2lsbCBz
+ZW5kIHYyIHBhdGNoIHNvb24uDQoNClJlZ2FyZHMsDQpJbmFtaQ0K
