@@ -1,289 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965382AbeBMRFd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:05:33 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:37372 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965393AbeBMRBh (ORCPT
+        id S965383AbeBMRHa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:07:30 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:34536 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965057AbeBMRH1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:01:37 -0500
-X-Google-Smtp-Source: AH8x226R+whF/MSRy4VYQ1ET0y0EYjPMiL+qDU6SfcoE6Iqkq+KJUYbbnHn2Dr0alDAoHvWaXk714w==
-From: srinivas.kandagatla@linaro.org
-To: andy.gross@linaro.org, broonie@kernel.org,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, plai@codeaurora.org, bgoswami@codeaurora.org,
-        perex@perex.cz, tiwai@suse.com, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
-        spatakok@qti.qualcomm.com,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v3 16/25] ASoC: qcom: q6afe: add SLIMBus port Support
-Date: Tue, 13 Feb 2018 16:58:28 +0000
-Message-Id: <20180213165837.1620-17-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
-References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
+        Tue, 13 Feb 2018 12:07:27 -0500
+X-Google-Smtp-Source: AH8x225ygooSvHNub/aoNWWGotb4TfWM6M/d4Fk3zpL2+QbbJL4uQPTxz32UP2B0b2PazaF1hL8PCg==
+Date: Tue, 13 Feb 2018 09:07:25 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Jerry Hoemann <jerry.hoemann@hpe.com>
+Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rwright@hpe.com,
+        maurice.a.saldivar@hpe.com
+Subject: Re: [PATCH v2 11/11] watchdog/hpwdt: Update driver version.
+Message-ID: <20180213170725.GA19405@roeck-us.net>
+References: <20180212052111.12010-1-jerry.hoemann@hpe.com>
+ <20180212052111.12010-12-jerry.hoemann@hpe.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180212052111.12010-12-jerry.hoemann@hpe.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On Sun, Feb 11, 2018 at 10:21:11PM -0700, Jerry Hoemann wrote:
+> Update driver version number to reflect changes.
+> 
+> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+> ---
+>  drivers/watchdog/hpwdt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
+> index bb0dcc8709b8..78168e2f9b4e 100644
+> --- a/drivers/watchdog/hpwdt.c
+> +++ b/drivers/watchdog/hpwdt.c
+> @@ -23,7 +23,7 @@
+>  
+>  #include <asm/nmi.h>
+>  
+> -#define HPWDT_VERSION			"1.4.0"
+> +#define HPWDT_VERSION			"2.0.0"
 
-This patch adds support to 6 SLIMBus AFE ports, which are used as
-backend dais.
+I would suggest to drop the version entirely. History and experience shows
+that it is not really useful.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- include/dt-bindings/sound/qcom,q6afe.h |  14 ++++
- sound/soc/qcom/qdsp6/q6afe.c           | 129 +++++++++++++++++++++++++++++++++
- sound/soc/qcom/qdsp6/q6afe.h           |  16 +++-
- 3 files changed, 158 insertions(+), 1 deletion(-)
+Guenter
 
-diff --git a/include/dt-bindings/sound/qcom,q6afe.h b/include/dt-bindings/sound/qcom,q6afe.h
-index b4d82cccdc86..e9004ee39f72 100644
---- a/include/dt-bindings/sound/qcom,q6afe.h
-+++ b/include/dt-bindings/sound/qcom,q6afe.h
-@@ -4,6 +4,20 @@
- 
- /* Audio Front End (AFE) Ports */
- #define AFE_PORT_HDMI_RX	8
-+#define SLIMBUS_0_RX    15
-+#define SLIMBUS_0_TX    16
-+#define SLIMBUS_1_RX    17
-+#define SLIMBUS_1_TX    18
-+#define SLIMBUS_2_RX    19
-+#define SLIMBUS_2_TX    20
-+#define SLIMBUS_3_RX    21
-+#define SLIMBUS_3_TX    22
-+#define SLIMBUS_4_RX    23
-+#define SLIMBUS_4_TX    24
-+#define SLIMBUS_5_RX    25
-+#define SLIMBUS_5_TX    26
-+#define SLIMBUS_6_RX    45
-+#define SLIMBUS_6_TX    46
- 
- #endif /* __DT_BINDINGS_Q6_AFE_H__ */
- 
-diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
-index 0a5af06bb50e..637390f5421e 100644
---- a/sound/soc/qcom/qdsp6/q6afe.c
-+++ b/sound/soc/qcom/qdsp6/q6afe.c
-@@ -25,9 +25,45 @@
- #define AFE_PARAM_ID_HDMI_CONFIG	0x00010210
- #define AFE_MODULE_AUDIO_DEV_INTERFACE	0x0001020C
- 
-+#define AFE_PARAM_ID_CDC_SLIMBUS_SLAVE_CFG 0x00010235
-+
-+#define AFE_PARAM_ID_SLIMBUS_CONFIG    0x00010212
-+
- /* Port IDs */
- #define AFE_API_VERSION_HDMI_CONFIG	0x1
- #define AFE_PORT_ID_MULTICHAN_HDMI_RX	0x100E
-+
-+#define AFE_API_VERSION_SLIMBUS_CONFIG 0x1
-+
-+/* SLIMbus Rx port on channel 0. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_0_RX      0x4000
-+/* SLIMbus Tx port on channel 0. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_0_TX      0x4001
-+/* SLIMbus Rx port on channel 1. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_1_RX      0x4002
-+/* SLIMbus Tx port on channel 1. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_1_TX      0x4003
-+/* SLIMbus Rx port on channel 2. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_2_RX      0x4004
-+/* SLIMbus Tx port on channel 2. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_2_TX      0x4005
-+/* SLIMbus Rx port on channel 3. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_3_RX      0x4006
-+/* SLIMbus Tx port on channel 3. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_3_TX      0x4007
-+/* SLIMbus Rx port on channel 4. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_4_RX      0x4008
-+/* SLIMbus Tx port on channel 4. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_4_TX      0x4009
-+/* SLIMbus Rx port on channel 5. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_5_RX      0x400a
-+/* SLIMbus Tx port on channel 5. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_5_TX      0x400b
-+/* SLIMbus Rx port on channel 6. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_6_RX      0x400c
-+/* SLIMbus Tx port on channel 6. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_6_TX      0x400d
-+
- #define TIMEOUT_MS 1000
- #define AFE_CMD_RESP_AVAIL	0
- #define AFE_CMD_RESP_NONE	1
-@@ -82,8 +118,53 @@ struct afe_param_id_hdmi_multi_chan_audio_cfg {
- 	u16 reserved;
- } __packed;
- 
-+struct afe_param_id_slimbus_cfg {
-+	u32                  sb_cfg_minor_version;
-+/* Minor version used for tracking the version of the SLIMBUS
-+ * configuration interface.
-+ * Supported values: #AFE_API_VERSION_SLIMBUS_CONFIG
-+ */
-+
-+	u16                  slimbus_dev_id;
-+/* SLIMbus hardware device ID, which is required to handle
-+ * multiple SLIMbus hardware blocks.
-+ * Supported values: - #AFE_SLIMBUS_DEVICE_1 - #AFE_SLIMBUS_DEVICE_2
-+ */
-+	u16                  bit_width;
-+/* Bit width of the sample.
-+ * Supported values: 16, 24
-+ */
-+	u16                  data_format;
-+/* Data format supported by the SLIMbus hardware. The default is
-+ * 0 (#AFE_SB_DATA_FORMAT_NOT_INDICATED), which indicates the
-+ * hardware does not perform any format conversions before the data
-+ * transfer.
-+ */
-+	u16                  num_channels;
-+/* Number of channels.
-+ * Supported values: 1 to #AFE_PORT_MAX_AUDIO_CHAN_CNT
-+ */
-+	u8  shared_ch_mapping[AFE_PORT_MAX_AUDIO_CHAN_CNT];
-+/* Mapping of shared channel IDs (128 to 255) to which the
-+ * master port is to be connected.
-+ * Shared_channel_mapping[i] represents the shared channel assigned
-+ * for audio channel i in multichannel audio data.
-+ */
-+	u32              sample_rate;
-+/* Sampling rate of the port.
-+ * Supported values:
-+ * - #AFE_PORT_SAMPLE_RATE_8K
-+ * - #AFE_PORT_SAMPLE_RATE_16K
-+ * - #AFE_PORT_SAMPLE_RATE_48K
-+ * - #AFE_PORT_SAMPLE_RATE_96K
-+ * - #AFE_PORT_SAMPLE_RATE_192K
-+ */
-+} __packed;
-+
-+
- union afe_port_config {
- 	struct afe_param_id_hdmi_multi_chan_audio_cfg hdmi_multi_ch;
-+	struct afe_param_id_slimbus_cfg           slim_cfg;
- } __packed;
- 
- struct q6afe_port {
-@@ -114,6 +195,20 @@ struct afe_port_map {
- static struct afe_port_map port_maps[AFE_PORT_MAX] = {
- 	[AFE_PORT_HDMI_RX] = { AFE_PORT_ID_MULTICHAN_HDMI_RX,
- 				AFE_PORT_HDMI_RX, 1, 1},
-+	[SLIMBUS_0_RX] = { AFE_PORT_ID_SLIMBUS_MULTI_CHAN_0_RX,
-+				SLIMBUS_0_RX, 1, 1},
-+	[SLIMBUS_1_RX] = { AFE_PORT_ID_SLIMBUS_MULTI_CHAN_1_RX,
-+				SLIMBUS_1_RX, 1, 1},
-+	[SLIMBUS_2_RX] = { AFE_PORT_ID_SLIMBUS_MULTI_CHAN_2_RX,
-+				SLIMBUS_2_RX, 1, 1},
-+	[SLIMBUS_3_RX] = { AFE_PORT_ID_SLIMBUS_MULTI_CHAN_3_RX,
-+				SLIMBUS_3_RX, 1, 1},
-+	[SLIMBUS_4_RX] = { AFE_PORT_ID_SLIMBUS_MULTI_CHAN_4_RX,
-+				SLIMBUS_4_RX, 1, 1},
-+	[SLIMBUS_5_RX] = { AFE_PORT_ID_SLIMBUS_MULTI_CHAN_5_RX,
-+				SLIMBUS_5_RX, 1, 1},
-+	[SLIMBUS_6_RX] = { AFE_PORT_ID_SLIMBUS_MULTI_CHAN_6_RX,
-+				SLIMBUS_6_RX, 1, 1},
- };
- 
- static struct q6afe_port *afe_find_port(struct q6afe *afe, int token)
-@@ -372,6 +467,31 @@ void *q6afe_get_dai_data(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(q6afe_get_dai_data);
- 
-+/**
-+ * q6afe_slim_port_prepare() - Prepare slim afe port.
-+ *
-+ * @port: Instance of afe port
-+ * @cfg: SLIM configuration for the afe port
-+ *
-+ */
-+void q6afe_slim_port_prepare(struct q6afe_port *port,
-+			     struct q6afe_slim_cfg *cfg)
-+{
-+	union afe_port_config *pcfg = &port->port_cfg;
-+
-+	pcfg->slim_cfg.sb_cfg_minor_version = AFE_API_VERSION_SLIMBUS_CONFIG;
-+	pcfg->slim_cfg.sample_rate = cfg->sample_rate;
-+	pcfg->slim_cfg.bit_width = cfg->bit_width;
-+	pcfg->slim_cfg.num_channels = cfg->num_channels;
-+	pcfg->slim_cfg.data_format = cfg->data_format;
-+	pcfg->slim_cfg.shared_ch_mapping[0] = cfg->ch_mapping[0];
-+	pcfg->slim_cfg.shared_ch_mapping[1] = cfg->ch_mapping[1];
-+	pcfg->slim_cfg.shared_ch_mapping[2] = cfg->ch_mapping[2];
-+	pcfg->slim_cfg.shared_ch_mapping[3] = cfg->ch_mapping[3];
-+
-+}
-+EXPORT_SYMBOL_GPL(q6afe_slim_port_prepare);
-+
- /**
-  * q6afe_hdmi_port_prepare() - Prepare hdmi afe port.
-  *
-@@ -433,6 +553,15 @@ struct q6afe_port *q6afe_port_get_from_id(struct device *dev, int id)
- 	case AFE_PORT_ID_MULTICHAN_HDMI_RX:
- 		cfg_type = AFE_PARAM_ID_HDMI_CONFIG;
- 		break;
-+	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_0_RX:
-+	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_1_RX:
-+	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_2_RX:
-+	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_3_RX:
-+	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_4_RX:
-+	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_5_RX:
-+	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_6_RX:
-+		cfg_type = AFE_PARAM_ID_SLIMBUS_CONFIG;
-+		break;
- 	default:
- 		dev_err(dev, "Invalid port id 0x%x\n", port_id);
- 		return ERR_PTR(-EINVAL);
-diff --git a/sound/soc/qcom/qdsp6/q6afe.h b/sound/soc/qcom/qdsp6/q6afe.h
-index 647ed2d15545..aeacf1f2c9a9 100644
---- a/sound/soc/qcom/qdsp6/q6afe.h
-+++ b/sound/soc/qcom/qdsp6/q6afe.h
-@@ -5,12 +5,15 @@
- 
- #include <dt-bindings/sound/qcom,q6afe.h>
- 
--#define AFE_PORT_MAX		9
-+#define AFE_PORT_MAX		48
- 
- #define MSM_AFE_PORT_TYPE_RX 0
- #define MSM_AFE_PORT_TYPE_TX 1
- #define AFE_MAX_PORTS AFE_PORT_MAX
- 
-+#define AFE_MAX_CHAN_COUNT	8
-+#define AFE_PORT_MAX_AUDIO_CHAN_CNT	0x8
-+
- struct q6afe_hdmi_cfg {
- 	u16                  datatype;
- 	u16                  channel_allocation;
-@@ -18,8 +21,17 @@ struct q6afe_hdmi_cfg {
- 	u16                  bit_width;
- };
- 
-+struct q6afe_slim_cfg {
-+	u32	sample_rate;
-+	u16	bit_width;
-+	u16	data_format;
-+	u16	num_channels;
-+	u8	ch_mapping[AFE_MAX_CHAN_COUNT];
-+};
-+
- struct q6afe_port_config {
- 	struct q6afe_hdmi_cfg hdmi;
-+	struct q6afe_slim_cfg slim;
- };
- 
- struct q6afe_port;
-@@ -36,5 +48,7 @@ void q6afe_port_put(struct q6afe_port *port);
- int q6afe_get_port_id(int index);
- void q6afe_hdmi_port_prepare(struct q6afe_port *port,
- 			    struct q6afe_hdmi_cfg *cfg);
-+void q6afe_slim_port_prepare(struct q6afe_port *port,
-+			  struct q6afe_slim_cfg *cfg);
- 
- #endif /* __Q6AFE_H__ */
--- 
-2.15.1
+>  #define SECS_TO_TICKS(secs)		((secs) * 1000 / 128)
+>  #define TICKS_TO_SECS(ticks)		((ticks) * 128 / 1000)
+>  #define HPWDT_MAX_TIMER			TICKS_TO_SECS(65535)
+> -- 
+> 2.13.6
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
