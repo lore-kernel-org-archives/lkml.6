@@ -1,110 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964831AbeBMNQh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:16:37 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:32974 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964775AbeBMNQg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:16:36 -0500
-Date: Tue, 13 Feb 2018 14:16:33 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Will Deacon <will.deacon@arm.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] fs: dcache: Avoid livelock between d_alloc_parallel and
- __d_add
-Message-ID: <20180213131633.GI25201@hirez.programming.kicks-ass.net>
-References: <1518526731-26546-1-git-send-email-will.deacon@arm.com>
+        id S964868AbeBMNRE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:17:04 -0500
+Received: from mout.gmx.net ([212.227.15.15]:37375 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964775AbeBMNRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 08:17:02 -0500
+Subject: Re: RFC: build config via DT names
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <63f25fea-f163-f9cc-b5b2-f6f291d7f8d2@gmx.de>
+ <d55f95cc-228b-e65f-b46c-2f314f4fa582@gmail.com>
+ <52140da5-0d49-c861-d752-8de9e4927380@gmail.com>
+From: "Enrico Weigelt, metux IT consult" <metux@gmx.de>
+Message-ID: <1b395f6c-5a07-6f44-3b16-7a06a273e291@gmx.de>
+Date: Tue, 13 Feb 2018 13:16:59 +0000
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518526731-26546-1-git-send-email-will.deacon@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <52140da5-0d49-c861-d752-8de9e4927380@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:vgK5anKX7EQpjv3sSEQWXJMc39glH7AmVNm/mzWq9ksuRa2SFK5
+ jdQD1+GX5u18Wsmc+i+bkt4lWrnxn285ah98KGjRd1vUQyeI/YmIYoifL0q3RqXYs124l6V
+ PB3C+483GtPc+wUcEI3uXRlZo06jP5mNuOSy/ptqHBD1OFU7sG2PQBSZac+2ga5tl2lklMO
+ 3Uvvc+AXOsG9eYcTMmwIA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:waFjGFyXhjM=:vvgeoMWQv0HN0tW5c13MdF
+ vrZHFT8Tm9xOtZ7Iiz0LX1jX9O6c6obEpJsscGmci6+U9RS9UNQ3+fO9P9M9Hn8JjeYMDjz1n
+ GR9a5ZfJm5HvHZQ0cPHGTLKUsP66BwQeY3T82tb/osg+XZK9ALTqW9PCEtbWhy0YHQrgHuXAY
+ RYOzHwl5qas+drHwrrT+oFlN32phl1qO1IvY0/UX+Q+s4tg3JjDV9y+K+TtwnqDUNZ2dYkStI
+ SVPSto1o9UAGo1aUWyLw0uTof0J8YgEGpSCY2As+yWIAhmlmM42Y/aicx9fuVZITeiYt9rtmO
+ ctlkAnpgpN3C+iGyFv1M6jbQ0xYyghBrFy3HJ9DdaCzWjvDIOkq7WyhP7VF4hOADdZN6C2kG3
+ ptsmZnxCvQOqWUO/U7rzhRrJ7SQQ0u85+QLlIZtVpWYoypSYRyVeNniYG8QVaHpMwExRlj6NG
+ SiD1M3QN6SGUIR8CHLfsbjhBfEuwgH0Kg4O9c4xEjwujz7DoVCUdKiDSCqY1eggedRofrA28f
+ jmkRdQWQRr/LZSqxPREJNYDtA1kjdwzVcw9qojptJ/zkG4SUyYUSEXbpc9iYhXMe6WO2+vZt5
+ GBf5BT91tNU6GQfU4vT+dWc8YWbN6pfvOLguypXl5pYfzja2+va62xYJEjq7FniIVM1y1vsaL
+ 7K6Yi8+JiCcj9nIIz8b6p68k8jiGBaY7gzJ47MO3TC9679vw3AkHH5SdAk+vjRtOTBeyYEbFQ
+ A1WUm/7D8IYxLdW2iH5Yjz3MUqu1JdU+bWgka/ln8IWvuGQGNBjgD/j9D1+BdNcDJ8o5Gq6wy
+ iqq49LMIgDwWbeJNF+9hnQYJ5x5IGzt5gYk9FmnlChHOgul6Ao=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 12:58:51PM +0000, Will Deacon wrote:
-> If d_alloc_parallel runs concurrently with __d_add, it is possible for
-> d_alloc_parallel to continuously retry whilst i_dir_seq has been
-> incremented to an odd value by __d_add:
-> 
-> CPU0:
-> __d_add
-> 	n = start_dir_add(dir);
-> 		cmpxchg(&dir->i_dir_seq, n, n + 1) == n
-> 
-> CPU1:
-> d_alloc_parallel
-> retry:
-> 	seq = smp_load_acquire(&parent->d_inode->i_dir_seq) & ~1;
-> 	hlist_bl_lock(b);
-> 		bit_spin_lock(0, (unsigned long *)b); // Always succeeds
-> 
-> CPU0:
-> 	__d_lookup_done(dentry)
-> 		hlist_bl_lock
-> 			bit_spin_lock(0, (unsigned long *)b); // Never succeeds
-> 
-> CPU1:
-> 	if (unlikely(parent->d_inode->i_dir_seq != seq)) {
-> 		hlist_bl_unlock(b);
-> 		goto retry;
-> 	}
-> 
-> Since the simple bit_spin_lock used to implement hlist_bl_lock does not
+On 12.02.2018 23:24, Frank Rowand wrote:
 
-And cannot, a single bit is just not enough state.
-
-> provide any fairness guarantees, then CPU1 can starve CPU0 of the lock
-> and prevent it from reaching end_dir_add(dir), therefore CPU1 cannot
-> exit its retry loop because the sequence number always has the bottom
-> bit set.
+> There is a tool to aid this process: scripts/dtc/dt_to_config.  It is not
+> a 100% solution, but it is very helpful.
 > 
-> This patch resolves the livelock by not taking hlist_bl_lock in
-> d_alloc_parallel if the sequence counter is odd, since any subsequent
-> masked comparison with i_dir_seq will fail anyway.
-> 
+> The problem is difficult enough that this tool led to a conference talk.
+> The slides are at https://elinux.org/images/5/50/Dt_debugging_part_2.pdf
+> which is linked to from
+> https://elinux.org/Device_Tree_presentations_papers_articles#linux_kernel_configuration
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+I believe my approach can make this much simpler, at least for most
+drivers: the maintainers would explicitly add proper config flags,
+instead of letting the tool guess it.
 
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Will Deacon <will.deacon@arm.com>
-> ---
->  fs/dcache.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index 7c38f39958bc..b243deec298c 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -2474,7 +2474,7 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
->  
->  retry:
->  	rcu_read_lock();
-> -	seq = smp_load_acquire(&parent->d_inode->i_dir_seq) & ~1;
-> +	seq = smp_load_acquire(&parent->d_inode->i_dir_seq);
->  	r_seq = read_seqbegin(&rename_lock);
->  	dentry = __d_lookup_rcu(parent, name, &d_seq);
->  	if (unlikely(dentry)) {
-> @@ -2495,6 +2495,12 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
->  		rcu_read_unlock();
->  		goto retry;
->  	}
-> +
-> +	if (unlikely(seq & 1)) {
-> +		rcu_read_unlock();
-> +		goto retry;
-> +	}
-> +
->  	hlist_bl_lock(b);
->  	if (unlikely(parent->d_inode->i_dir_seq != seq)) {
+Of course, it would take some amount of work to do that for all drivers,
+but we could do that step by step.
 
-Also, should that not read:
 
-	if (unlikely(READ_ONCE(parent->d_inode->i_dir_seq) != seq)) {
-
-I mean, load-tearing can only result in additional failure, but still.
-
->  		hlist_bl_unlock(b);
+--mtx
