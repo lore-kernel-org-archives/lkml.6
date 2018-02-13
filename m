@@ -1,116 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965238AbeBMRVn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:21:43 -0500
-Received: from esa6.dell-outbound.iphmx.com ([68.232.149.229]:31297 "EHLO
-        esa6.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S964849AbeBMRVl (ORCPT
+        id S965239AbeBMRYt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:24:49 -0500
+Received: from gateway36.websitewelcome.com ([192.185.193.12]:30057 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934279AbeBMRYs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:21:41 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2HmAQA+HoNahz+a6ERdGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYQogQAoCpwlggKBF4d/j3sDXAqFOwKCaFgUAQIBAQEBAQECAQI?=
- =?us-ascii?q?QAQEBCgsJCCgvgjgigkoBAQEEJxM/DAQCAQgRBAEBHwkHISUJCAIEAQ0FCIoVA?=
- =?us-ascii?q?xWyIDqHPQ2BMoIRAQEBAQEBAQMBAQEBAQEBAQEBAR2FAYIVhm2Ca4I+hXUFo3k?=
- =?us-ascii?q?1CZB6hQGUTY5KiU6BPDZVgR5wgxiCZSWBbXgBjSSBFwEBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2HmAQA+HoNahz+a6ERdGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
- =?us-ascii?q?ogQAoCpwlggKBF4d/j3sDXAqFOwKCaFgUAQIBAQEBAQECAQIQAQEBCgsJCCgvg?=
- =?us-ascii?q?jgigkoBAQEEJxM/DAQCAQgRBAEBHwkHISUJCAIEAQ0FCIoVAxWyIDqHPQ2BMoI?=
- =?us-ascii?q?RAQEBAQEBAQMBAQEBAQEBAQEBAR2FAYIVhm2Ca4I+hXUFo3k1CZB6hQGUTY5Ki?=
- =?us-ascii?q?U6BPDZVgR5wgxiCZSWBbXgBjSSBFwEBAQ?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.198
-X-IronPort-AV: E=Sophos;i="5.46,508,1511848800";
-   d="scan'208";a="1050286760"
-X-DLP: DLP_GlobalPCIDSS
-To: <mika.westerberg@linux.intel.com>, <linux-kernel@vger.kernel.org>
-CC: <andreas.noever@gmail.com>, <michael.jamet@intel.com>,
-        <yehezkel.bernat@intel.com>, <bhelgaas@google.com>,
-        <radion.mirchevsky@intel.com>
-Subject: RE: [PATCH 06/18] thunderbolt: Wait a bit longer for ICM to
- authenticate the active NVM
-Thread-Topic: [PATCH 06/18] thunderbolt: Wait a bit longer for ICM to
- authenticate the active NVM
-Thread-Index: AQHTpOw/wyHt0G7LQECtw3Pv104jiaOik+dg
-Date: Tue, 13 Feb 2018 17:21:33 +0000
-Message-ID: <a4e11e8dcec643d7bce1d8b1f9fc2c89@ausx13mpc120.AMER.DELL.COM>
-References: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
- <20180213170018.9780-7-mika.westerberg@linux.intel.com>
-In-Reply-To: <20180213170018.9780-7-mika.westerberg@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="us-ascii"
+        Tue, 13 Feb 2018 12:24:48 -0500
+Date: Tue, 13 Feb 2018 11:24:47 -0600
+Message-ID: <20180213112447.Horde.gzaHZ_lO1wrYVuxHFhkn6nu@gator4166.hostgator.com>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/microcode/intel: Use 64-bit arithmetic instead of
+ 32-bit
+References: <20180213164404.GA11664@embeddedor.com>
+ <alpine.DEB.2.21.1802131747290.1130@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1802131747290.1130@nanos.tec.linutronix.de>
+User-Agent: Horde Application Framework 5
+Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
+Content-Disposition: inline
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 108.167.133.22
+X-Source-L: Yes
+X-Exim-ID: 1eleJz-001hr9-J3
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: gator4166.hostgator.com [108.167.133.22]:12264
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 1
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1DHLlYJ029330
 
-> -----Original Message-----
-> From: Mika Westerberg [mailto:mika.westerberg@linux.intel.com]
-> Sent: Tuesday, February 13, 2018 11:00 AM
-> To: linux-kernel@vger.kernel.org
-> Cc: Andreas Noever <andreas.noever@gmail.com>; Michael Jamet
-> <michael.jamet@intel.com>; Yehezkel Bernat <yehezkel.bernat@intel.com>; Bjorn
-> Helgaas <bhelgaas@google.com>; Limonciello, Mario
-> <Mario_Limonciello@Dell.com>; Radion Mirchevsky
-> <radion.mirchevsky@intel.com>; Mika Westerberg
-> <mika.westerberg@linux.intel.com>
-> Subject: [PATCH 06/18] thunderbolt: Wait a bit longer for ICM to authenticate the
-> active NVM
-> 
-> Sometimes during cold boot ICM has not yet authenticated the active NVM
-> image leading to timeout and failing the driver probe. Allow ICM to take
-> some more time and increase the timeout to 3 seconds before we give up.
-> 
-> While there fix icm_firmware_init() to return the real error code
-> without overwriting it with -ENODEV.
-> 
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
->  drivers/thunderbolt/icm.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
-> index 1183321586c5..611d28e8e5f2 100644
-> --- a/drivers/thunderbolt/icm.c
-> +++ b/drivers/thunderbolt/icm.c
-> @@ -736,14 +736,14 @@ static bool icm_ar_is_supported(struct tb *tb)
->  static int icm_ar_get_mode(struct tb *tb)
->  {
->  	struct tb_nhi *nhi = tb->nhi;
-> -	int retries = 5;
-> +	int retries = 60;
->  	u32 val;
-> 
->  	do {
->  		val = ioread32(nhi->iobase + REG_FW_STS);
->  		if (val & REG_FW_STS_NVM_AUTH_DONE)
->  			break;
-> -		msleep(30);
-> +		msleep(50);
->  	} while (--retries);
-> 
->  	if (!retries) {
-> @@ -1063,6 +1063,9 @@ static int icm_firmware_init(struct tb *tb)
->  			break;
-> 
->  		default:
-> +			if (ret < 0)
-> +				return ret;
-> +
->  			tb_err(tb, "ICM firmware is in wrong mode: %u\n", ret);
->  			return -ENODEV;
->  		}
-> --
-> 2.15.1
+Hi Thomas,
 
-Mika,
+Quoting Thomas Gleixner <tglx@linutronix.de>:
 
-Some of your patches in this series already have the stable tag, but I think 
-especially this one is probably a good candidate to add to @stable.
+> On Tue, 13 Feb 2018, Gustavo A. R. Silva wrote:
+>
+>> Add suffix ULL to constant 1024 in order to give the compiler complete
+>> information about the proper arithmetic to use. Notice that this
+>> constant is used in a context that expects an expression of type
+>> u64 (64 bits, unsigned).
+>>
+>> The expression c->x86_cache_size * 1024 is currently being evaluated
+>> using 32-bit arithmetic.
+>>
+>> Addresses-Coverity-ID: 1464429
+>> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+>> ---
+>>  arch/x86/kernel/cpu/microcode/intel.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/kernel/cpu/microcode/intel.c  
+>> b/arch/x86/kernel/cpu/microcode/intel.c
+>> index f7c55b0..e5edb92 100644
+>> --- a/arch/x86/kernel/cpu/microcode/intel.c
+>> +++ b/arch/x86/kernel/cpu/microcode/intel.c
+>> @@ -982,7 +982,7 @@ static struct microcode_ops microcode_intel_ops = {
+>>
+>>  static int __init calc_llc_size_per_core(struct cpuinfo_x86 *c)
+>>  {
+>> -	u64 llc_size = c->x86_cache_size * 1024;
+>> +	u64 llc_size = c->x86_cache_size * 1024ULL;
+>
+> x86_cache_size is 'int', so you really want to cast c->x86_cache_size to
+> (u64) for correctness sake.
+>
+> Aside of that the patch is really purely cosmetic at the moment because the
+> largest LLC sizes are still below the 3 digit MB range which fits into
+> 32bit quite well. You'd need to have a CPU with >= 2G LLC to create a
+> problem.
+>
+> But looking at c->x86_cache_size again. It's int because it's set to -1
+> initially which is then changed if CPUid or general CPU info gives real
+> information about the cache size. The only place where that matters is the
+> /proc/cpuinfo output:
+>
+> 	if (c->x86_cache_size >= 0)
+> 		seq_printf(m, "cache size\t: %d KB\n", c->x86_cache_size);
+>
+> which is silly, because that really can be done with:
+>
+> 	if (c->x86_cache_size)
+>
+> as there is no point in printing 'cache size 0KB', which means
+> x86_cache_size can be made unsigned int, which makes sense because cache
+> size < 0 does not at all.
+>
+> So instead of doing this purely mechanical cosmetic change to make a static
+> checker shut up, I'd like to see a proper cleanup of that thing.
+>
+
+Yeah, actually I was curious about why x86_cache_size is signed  
+instead of unsigned. You've made it clear now.
+
+I will change it to be of type unsigned int and make the proper  
+changes to the rest of code in which x86_cache_size is being used.
+
+Also, I'm curious about the types of the rest of the related variables:
+
+         /* Cache QoS architectural values: */
+         int                     x86_cache_max_rmid;     /* max index */
+         int                     x86_cache_occ_scale;    /* scale to bytes */
+         int                     x86_power;
+
+
+Maybe they need some cleanup too.
+
+Thanks for the feedback.
+--
+Gustavo
