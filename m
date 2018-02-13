@@ -1,75 +1,91 @@
-Return-Path: <tfiga@chromium.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1518507901; cv=none;
+Return-Path: <robin.murphy@arm.com>
+X-Google-Smtp-Source: AH8x2256sYJctjDN/JHmLRplKAjrRc4rSvNekPBpPpPDMqQKFS4JHpxFoSCHuR3c4hlPAWUdbbKJ
+ARC-Seal: i=1; a=rsa-sha256; t=1518523243; cv=none;
         d=google.com; s=arc-20160816;
-        b=cAAsKnQ3Hj5rsS9clAdgYKwUFJosTVGbRv0OPyij8DgwosLV0QHtOTU1uvfygl6UPs
-         /q0HzoEDfDAcCkedHzX9PCQreraYY+Ez7ee4rEby67+9yr4olkxhIMskH1hlX0+zeJZN
-         R1qZ2mvh8OjYForb/Oh5EzfVOfqa/lmfq8OOKAkyrM7UV7xrvgVkJVvAgboEgLM/cwGB
-         2U2AC9ae7vSY/UFpLcKNWONG4VXD3XeNkFhxaLGru8TqE8TNnneQ6sIYWIQiDVz0c7em
-         ePwHjGtOqsDiCMFpx56xSWKPGD5uxm1KczsEVzbPLzJa7UkQuLBWdz+e77MJUSJRdDi0
-         WiZQ==
+        b=bw4Ys7N+fmEuv+5FsjIjp0/RcEznzfA17nK1lVCiw/sljpAa5wM9FmdJQGhZ/BSgxU
+         6H2s82890KKCxqbHZ15FOY24yUHgWIk5IOE7nSRStvhYK+fi/Sh0yEtrl+YOD+7NK0KF
+         Bg+y/N8giXw+6UsiU680QS7XhvLCvdHByUWqkT2dFWdwA8A++13Z5NttxPA/NNhr3GOe
+         wIwIlj8g/ePJgO3mISlohgUeMXPRn3tMu4f2y6HWAc7HlwEkMZ0r2665RCynU0oCR7XP
+         gcrbpmIcuuRaM3vtIXURIfNwNTPMsplsBV+Ya+E9FjABPwDW9pQB6Xf7luwLbS443Tj/
+         cdPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=V/E/6sa7xHuVnBUWHmdPakaMz6/8XRAwZ2yPyqE5G8w=;
-        b=WTLBJRSS5UHDXNwZi8MCKxt0o0X8uKsHG8Mo9RtFzxq+dsA5MIi1e8yJ8H6FpBVDsT
-         YiNRBFdJ8QHxT3BZKox2wIXJf9MHE6o24rOK6nXfUdRWhnfXyyIVxM2FD1zGpvlvMOQU
-         bhwnWUCsTThJm1akjliqdJy3P7HHHn8evIZ+psTRziVuWT4tBX6ZJW0ZXzaEeewNxyzz
-         XUW1wM/niGnJzYmqQaI0nG8qoUu6R8+s+f621wexGK8L6DvTJCfyXmUL2aCzmeKOmTst
-         wuc9yMbu9SDjHiBcHIwccDZHzCCG+4kc/M/zB5jIibaXewwZVSI7NVHbtO+69Ncd4kcg
-         wY6g==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=+shyu4J3O5+EYfg8elsLr+pCwQ3CWTxEckDJ4+oL5y8=;
+        b=UUBrDVX/Pic0g8QK6+yhaRTttKjcGyYhyzycMYm5ySp91/h40vuogpZ1DULQAUbaoU
+         e/5RLJzClAbHVt7RMIlk2AhEwSJDfD/Efa1KVxHOXk7eDIIXQ6OXFJtF2PfftZxE2qBy
+         UvqB6Vh/2T7dY3BQB/rYlhxIx4lguZ2d8zSdxegfPcHKtm97I3zl0iT2MBeA61orsbfD
+         M02cP12NLktZGG2HLKvWAT76hgUdpBJK9T9nm6ihbAxTjCniv+WH1KfiVFNYM01XwRTi
+         jOJrYGzyw668d189p8H3eZ43F0gzHUXtetyFdvCYAoaoONZuYfLG/evaopsfOhXuz6z3
+         CPIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=m+/AvhWB;
-       spf=pass (google.com: domain of tfiga@chromium.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=tfiga@chromium.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of robin.murphy@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=robin.murphy@arm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=m+/AvhWB;
-       spf=pass (google.com: domain of tfiga@chromium.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=tfiga@chromium.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AH8x225WqjAHGs929v35cWJiYdnpGtMoZnYA83OiV18/EtDh4+QXqHKPgCLSDVvq9kcLPeMTIhwtsQ==
+       spf=pass (google.com: domain of robin.murphy@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=robin.murphy@arm.com
+Subject: Re: [PATCH v7 1/6] base: power: runtime: Export
+ pm_runtime_get/put_suppliers
+To: Tomasz Figa <tfiga@chromium.org>,
+ Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+ Joerg Roedel <joro@8bytes.org>, joro@8bytes.org,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>, Will Deacon <will.deacon@arm.com>,
+ Rob Clark <robdclark@gmail.com>,
+ "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+ Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>,
+ freedreno@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+ Greg KH <gregkh@linuxfoundation.org>, sboyd@codeaurora.org,
+ linux-arm-msm@vger.kernel.org
+References: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1517999482-17317-2-git-send-email-vivek.gautam@codeaurora.org>
+ <CAAFQd5BmroRf-C8dQkvTKHWK1psGnNi1t7g-q=Xce6KjrGTsdw@mail.gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <65d707c0-76cc-d59e-ff18-1fdd89306900@arm.com>
+Date: Tue, 13 Feb 2018 12:00:37 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1517999482-17317-2-git-send-email-vivek.gautam@codeaurora.org>
-References: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org> <1517999482-17317-2-git-send-email-vivek.gautam@codeaurora.org>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Tue, 13 Feb 2018 16:44:37 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5BmroRf-C8dQkvTKHWK1psGnNi1t7g-q=Xce6KjrGTsdw@mail.gmail.com>
-Message-ID: <CAAFQd5BmroRf-C8dQkvTKHWK1psGnNi1t7g-q=Xce6KjrGTsdw@mail.gmail.com>
-Subject: Re: [PATCH v7 1/6] base: power: runtime: Export pm_runtime_get/put_suppliers
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg Roedel <joro@8bytes.org>," <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Rob Clark <robdclark@gmail.com>,
-	"list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	dri-devel <dri-devel@lists.freedesktop.org>, freedreno@lists.freedesktop.org,
-	David Airlie <airlied@linux.ie>, Greg KH <gregkh@linuxfoundation.org>, sboyd@codeaurora.org,
-	linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAAFQd5BmroRf-C8dQkvTKHWK1psGnNi1t7g-q=Xce6KjrGTsdw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591737849838824813?=
-X-GMAIL-MSGID: =?utf-8?q?1592270940828000329?=
+X-GMAIL-MSGID: =?utf-8?q?1592287028581938466?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Vivek,
+On 13/02/18 07:44, Tomasz Figa wrote:
+> Hi Vivek,
+> 
+> On Wed, Feb 7, 2018 at 7:31 PM, Vivek Gautam
+> <vivek.gautam@codeaurora.org> wrote:
+>> The device link allows the pm framework to tie the supplier and
+>> consumer. So, whenever the consumer is powered-on the supplier
+>> is powered-on first.
+>>
+>> There are however cases in which the consumer wants to power-on
+>> the supplier, but not itself.
+>> E.g., A Graphics or multimedia driver wants to power-on the SMMU
+>> to unmap a buffer and finish the TLB operations without powering
+>> on itself.
+> 
+> This sounds strange to me. If the SMMU is powered down, wouldn't the
+> TLB lose its contents as well (and so no flushing needed)?
 
-On Wed, Feb 7, 2018 at 7:31 PM, Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
-> The device link allows the pm framework to tie the supplier and
-> consumer. So, whenever the consumer is powered-on the supplier
-> is powered-on first.
->
-> There are however cases in which the consumer wants to power-on
-> the supplier, but not itself.
-> E.g., A Graphics or multimedia driver wants to power-on the SMMU
-> to unmap a buffer and finish the TLB operations without powering
-> on itself.
+Depends on implementation details - if runtime PM is actually 
+implemented via external clock gating (in the absence of fine-grained 
+power domains), then "suspended" TLBs might both retain state and not 
+receive invalidation requests, which is really the worst case.
 
-This sounds strange to me. If the SMMU is powered down, wouldn't the
-TLB lose its contents as well (and so no flushing needed)?
+> Other than that, what kind of hardware operations would be needed
+> besides just updating the page tables from the CPU?
 
-Other than that, what kind of hardware operations would be needed
-besides just updating the page tables from the CPU?
+Domain attach/detach also require updating SMMU hardware state (and 
+possibly TLB maintenance), but don't logically require the master device 
+itself to be active at the time.
 
-Best regards,
-Tomasz
+Robin.
