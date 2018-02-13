@@ -1,80 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935199AbeBMMQR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:16:17 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37074 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934827AbeBMMQN (ORCPT
+        id S935206AbeBMMQe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:16:34 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59827 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934944AbeBMMQc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:16:13 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Wu Fengguang <fengguang.wu@intel.com>
-Cc: Fengguang Wu <fengguang.wu@intel.com>, Mark Brown <broonie@kernel.org>,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
-        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mark Brown <broonie@kernel.org>, kbuild-all@01.org,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: uniphier: aiodma_rb_get_rp() can be static" to the asoc tree
-In-Reply-To: <20180212175310.GA13659@lkp-wsm-ep1>
-Message-Id: <E1elZVD-0005XS-NF@debutante>
-Date: Tue, 13 Feb 2018 12:16:03 +0000
+        Tue, 13 Feb 2018 07:16:32 -0500
+Date: Tue, 13 Feb 2018 04:06:05 -0800
+From: tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-e0c75323e9f7002d84abbf68650277a6d971b3c0@git.kernel.org>
+Cc: hpa@zytor.com, kan.liang@intel.com, jolsa@kernel.org,
+        yao.jin@linux.intel.com, peterz@infradead.org, wangnan0@huawei.com,
+        mingo@kernel.org, acme@redhat.com, linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, tglx@linutronix.de, namhyung@kernel.org
+Reply-To: ak@linux.intel.com, linux-kernel@vger.kernel.org,
+        namhyung@kernel.org, tglx@linutronix.de, peterz@infradead.org,
+        mingo@kernel.org, wangnan0@huawei.com, acme@redhat.com,
+        jolsa@kernel.org, yao.jin@linux.intel.com, hpa@zytor.com,
+        kan.liang@intel.com
+In-Reply-To: <1516310792-208685-6-git-send-email-kan.liang@intel.com>
+References: <1516310792-208685-6-git-send-email-kan.liang@intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf mmap: Add new return value logic for
+ perf_mmap__read_init()
+Git-Commit-ID: e0c75323e9f7002d84abbf68650277a6d971b3c0
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Commit-ID:  e0c75323e9f7002d84abbf68650277a6d971b3c0
+Gitweb:     https://git.kernel.org/tip/e0c75323e9f7002d84abbf68650277a6d971b3c0
+Author:     Kan Liang <kan.liang@intel.com>
+AuthorDate: Thu, 18 Jan 2018 13:26:20 -0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 6 Feb 2018 10:11:49 -0300
 
-   ASoC: uniphier: aiodma_rb_get_rp() can be static
+perf mmap: Add new return value logic for perf_mmap__read_init()
 
-has been applied to the asoc tree at
+Improve the readability by using meaningful enum (-EAGAIN, -EINVAL and
+0) to replace the three returning states (0, -1 and 1).
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From d732d89b154af23946180bf785b7b0ec42275b49 Mon Sep 17 00:00:00 2001
-From: Wu Fengguang <fengguang.wu@intel.com>
-Date: Tue, 13 Feb 2018 01:53:10 +0800
-Subject: [PATCH] ASoC: uniphier: aiodma_rb_get_rp() can be static
-
-Fixes: f37fe2f9987b ("ASoC: uniphier: add support for UniPhier AIO common driver")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Suggested-by: Wang Nan <wangnan0@huawei.com>
+Signed-off-by: Kan Liang <kan.liang@intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/r/1516310792-208685-6-git-send-email-kan.liang@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- sound/soc/uniphier/aio-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/mmap.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/uniphier/aio-core.c b/sound/soc/uniphier/aio-core.c
-index 7e9451ca24af..1e5f053d9f6b 100644
---- a/sound/soc/uniphier/aio-core.c
-+++ b/sound/soc/uniphier/aio-core.c
-@@ -904,7 +904,7 @@ void aiodma_ch_set_enable(struct uniphier_aio_sub *sub, int enable)
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index c19a4e6..38fa69d 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -282,7 +282,7 @@ int perf_mmap__read_init(struct perf_mmap *md, bool overwrite,
+ 	*endp = overwrite ? old : head;
+ 
+ 	if (*startp == *endp)
+-		return 0;
++		return -EAGAIN;
+ 
+ 	size = *endp - *startp;
+ 	if (size > (unsigned long)(md->mask) + 1) {
+@@ -291,7 +291,7 @@ int perf_mmap__read_init(struct perf_mmap *md, bool overwrite,
+ 
+ 			md->prev = head;
+ 			perf_mmap__consume(md, overwrite);
+-			return 0;
++			return -EAGAIN;
+ 		}
+ 
+ 		/*
+@@ -299,10 +299,10 @@ int perf_mmap__read_init(struct perf_mmap *md, bool overwrite,
+ 		 * most of data from it.
+ 		 */
+ 		if (overwrite_rb_find_range(data, md->mask, head, startp, endp))
+-			return -1;
++			return -EINVAL;
  	}
+ 
+-	return 1;
++	return 0;
  }
  
--u64 aiodma_rb_get_rp(struct uniphier_aio_sub *sub)
-+static u64 aiodma_rb_get_rp(struct uniphier_aio_sub *sub)
- {
- 	struct regmap *r = sub->aio->chip->regmap;
- 	u32 pos_u, pos_l;
--- 
-2.16.1
+ int perf_mmap__push(struct perf_mmap *md, bool overwrite,
+@@ -316,8 +316,8 @@ int perf_mmap__push(struct perf_mmap *md, bool overwrite,
+ 	int rc = 0;
+ 
+ 	rc = perf_mmap__read_init(md, overwrite, &start, &end);
+-	if (rc < 1)
+-		return rc;
++	if (rc < 0)
++		return (rc == -EAGAIN) ? 0 : -1;
+ 
+ 	size = end - start;
+ 
