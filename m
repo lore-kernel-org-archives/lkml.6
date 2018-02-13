@@ -1,92 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965243AbeBMPQL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 10:16:11 -0500
-Received: from mail-qk0-f173.google.com ([209.85.220.173]:37971 "EHLO
-        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965079AbeBMPQJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 10:16:09 -0500
-X-Google-Smtp-Source: AH8x225z/yXm5W8e3rJVAme6uT6DOe+uXCuRUU8P8j3qD6LGI5CMS9ctiNwUgpJ48CXxoDnZ4FQwKtUnkYDL3+VmwPM=
+        id S965251AbeBMPRG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 10:17:06 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32926 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965079AbeBMPRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 10:17:04 -0500
+Subject: Re: [patch] kvm: suppress KVM_SET_GSI_ROUTING allocation failure
+To: Christian Borntraeger <borntraeger@de.ibm.com>,
+        David Rientjes <rientjes@google.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <alpine.DEB.2.10.1802081334120.133173@chino.kir.corp.google.com>
+ <47a55220-0006-6486-5a9d-1d1142efcc47@de.ibm.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <f9754c98-9b8d-97b6-54cf-6d5e55143100@redhat.com>
+Date: Tue, 13 Feb 2018 16:17:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20180213162038-mutt-send-email-mst@kernel.org>
-References: <20180207013525.1634-1-marcandre.lureau@redhat.com>
- <20180207013525.1634-4-marcandre.lureau@redhat.com> <20180212053104-mutt-send-email-mst@kernel.org>
- <CAMxuvawozzWQ98WkduM=nWQJMMmagSQuHPZMhOYbGZEG5a2aaQ@mail.gmail.com>
- <20180212160849-mutt-send-email-mst@kernel.org> <CAMxuvayUh=N3Lc6+ut8Ct5scVyS5dVRP_qDmpX7pCYf60hnQRA@mail.gmail.com>
- <20180213162038-mutt-send-email-mst@kernel.org>
-From: Marc-Andre Lureau <mlureau@redhat.com>
-Date: Tue, 13 Feb 2018 16:16:08 +0100
-Message-ID: <CAMxuvaxq9boTcJ2uDOJsYyo3=_WYtn1==kuq3QbPygBfVc+8Zw@mail.gmail.com>
-Subject: Re: [PATCH v13 3/4] fw_cfg: write vmcoreinfo details
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergio Lopez Pascual <slp@redhat.com>, Baoquan He <bhe@redhat.com>,
-        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <47a55220-0006-6486-5a9d-1d1142efcc47@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On 13/02/2018 16:14, Christian Borntraeger wrote:
+> On 02/08/2018 10:35 PM, David Rientjes wrote:
+>> The KVM_SET_GSI_ROUTING ioctl does a vmalloc() of
+>> sizeof(struct kvm_irq_routing_entry) multiplied by a user-supplied value.
+>> This can be up to 4096 entries on architectures such as arm64 and s390
+>> (and the upper bound may be increased on s390 eventually).
+>>
+>> This can produce a vmalloc allocation failure warning:
+>>
+> [...]
+>>  kvm_vm_ioctl+0x910/0x15e0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4153
+> 
+>                                                                        ^^^^^
+> 
+>> @@ -3063,7 +3063,8 @@ static long kvm_vm_ioctl(struct file *filp,
+> 
+>       ^^^^^
+> 
+> 
+> Are you sure that you got the right vmalloc?
 
-On Tue, Feb 13, 2018 at 3:27 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> On Tue, Feb 13, 2018 at 03:14:03PM +0100, Marc-Andre Lureau wrote:
->> Hi
->>
->> On Mon, Feb 12, 2018 at 10:00 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
->> > On Mon, Feb 12, 2018 at 11:04:49AM +0100, Marc-Andre Lureau wrote:
->> >> >> +}
->> >> >> +
->> >> >> +/* qemu fw_cfg device is sync today, but spec says it may become async */
->> >> >> +static void fw_cfg_wait_for_control(struct fw_cfg_dma *d)
->> >> >> +{
->> >> >> +     do {
->> >> >> +             u32 ctrl = be32_to_cpu(READ_ONCE(d->control));
->> >> >> +
->> >> >> +             if ((ctrl & ~FW_CFG_DMA_CTL_ERROR) == 0)
->> >> >> +                     return;
->> >> >> +
->> >> >> +             usleep_range(50, 100);
->> >> >> +     } while (true);
->> >> >
->> >> > And you need an smp rmb here.
->> >
->> > I'd just do rmb() in fact.
->> >
->> >> Could you explain? thanks
->> >
->> > See Documentation/memory-barriers.txt
->> > You know that control is valid, but following read of
->> > the structure could be reordered. So you need that barrier there.
->> > Same for write: wmb.
->>
->> Is this ok?
->> @@ -103,10 +104,14 @@ static ssize_t fw_cfg_dma_transfer(void
->> *address, u32 length, u32 control)
->>         dma = virt_to_phys(d);
->>
->>         iowrite32be((u64)dma >> 32, fw_cfg_reg_dma);
->> +       /* force memory to sync before notifying device via MMIO */
->> +       wmb();
->>         iowrite32be(dma, fw_cfg_reg_dma + 4);
->>
->>         fw_cfg_wait_for_control(d);
->>
->> +       /* do not reorder the read to d->control */
->> +       rmb();
->>         if (be32_to_cpu(READ_ONCE(d->control)) & FW_CFG_DMA_CTL_ERROR) {
->>                 ret = -EIO;
->>         }
->
-> I think you need an rmb after the read of d->control.
->
+Nice catch!  But well, it's the only one in the whole file. :)
 
+That seems very much like an old patch then.  I'm unqueuing it.
 
-There are two reads of d->control, one in fw_cfg_wait_for_control() to
-wait for completion, and the other one here to handle error. Do you
-mean that for clarity rmb() should be moved at the end of
-fw_cfg_wait_for_control() instead?
-
-thanks
+Paolo
