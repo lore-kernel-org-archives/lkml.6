@@ -1,56 +1,56 @@
 Return-Path: <green.hu@gmail.com>
-X-Cyrus-Session-Id: sloti22d1t05-3695236-1518513106-2-5632640012431977837
+X-Cyrus-Session-Id: sloti22d1t05-3695236-1518513102-2-6298668005702048543
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FROM 0.001, RCVD_IN_DNSWL_NONE -0.0001,
   RCVD_IN_MSPIKE_H3 -0.01, RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.85.160.67', Host='mail-pl0-f67.google.com', Country='US',
+  LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='74.125.83.68', Host='mail-pg0-f68.google.com', Country='US',
   FromHeader='com', MailFrom='com'
 X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: green.hu@gmail.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518513105; b=W3whqYneIkcvMtnfQKixYFOYe6Z7ZQDxrtux83n95GPt5sm
-    d2UywtvMqFx7zxGTKOJgNIFlt2BxXNOzfSg/3BzEJoD19G7v8bMxix4Sr21z+A7a
-    9AWxWjiWb9qqdZuwSzE4y0eEthynH8l6smf4ayxi6p8o1b9YsZFiNKcwfLIz+yuO
-    TRA5kw9nYB6CeoBAR5S/KG0mHRtjSXJqvuAdvT6qYxkwHX+8l+JtPCeixZMRXyAe
-    P6EBIAsHDhWljKyyZcFcp0RMNaLZHnGf2nqzBJzq4svipSxDjxraFeXaibDsSl/5
-    3kZJ8aE4zukSajuMvmhCVS68G1kj7s3W12jsyFA==
+    t=1518513100; b=XGl5ErWUcwDmPQDqiKkRHiB/b7qunM7/anbfziBttd0blNg
+    WMPvQXavJ41l+RLI6fgZ2rzYv4OMkmSnajnxK7nG48m4dN43CSTMwMHw7TcT0Q5D
+    Su5hJsMc9oXJU3N/gq1p92aCx87Rlnm1szgmXCaXLGsZw3MeHllQfymEB/7KqQSG
+    SkQx8MUm+nQ27sNXPDki/fiSEWGzPBqd72i4Y6JzxmwhoETAQUsVStVXNh4aLx1Z
+    hRSVJqFS9PW9ZjVUByu4wofAFgRL/WodHbyyiHeIe6GsjaU/4javlvEft+MJC3IQ
+    X81SqzoHmjDHFi4CxnOKBJSmzkMwpu6nTBmU0iw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:in-reply-to:references; s=arctest; t=
-    1518513105; bh=V4ju4qttJVl/mfPSGMn3ShXyu3Y27BJhSX+6Gpyv09Q=; b=R
-    JAY3I9eSXHI6DUfGCYI+PJUF+0epdu6nFAVLiEHqOP4iCIpUgf5femjTWoXUuMI4
-    3eveWDbAiTTB/wc3EN7ljFq9BEO7QbJbFW1lXICxj0DZ/O8GbI5QAWxtk3oqKYb3
-    6jAxKArQqSp17IDXRU9eYDWN5XJyUk5h+JOVu01JwwafSyfkQ3jHPd+RNSDI5Ujf
-    D9e1bpJpfTxuhr6XYqLFicZUGYaNB9Ez/VOg+gKL3tqNDEJNPBLwilNe73e1D3oQ
-    UCBg90MKQkZ8YlN1lAFc7a/o84HSxbxDHKrp5i5HuAAxKJjMhzJJM2mxf9IB+nI1
-    qp01DX2BXuElXDH+saFzg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=L6piIS+O x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    1518513100; bh=yqsrmK9likLmXFgn8BtGHGWZjQItrANzJLXNjliRsx8=; b=i
+    7sQEw8kvFl96D7WWa2OjVkQPftqUKGR0xOEOK8XGkOND1EiJ6erRi+HLVmIs2HlD
+    txkEB831sK+Ns6W9n7pXF0j4mX+9B2KYr14NRI+VteGvzD88W7xxTIdO97W7q6+t
+    D2eymA//RZEKp+L+JvUgKlJ0PH0FfQwBpHEgtPDGvyOlOLXWolY+xy+cEcOrHVo7
+    3D1qsZ+vYfaRvX2WhCrTZ1dzRu4kr7K8x2wzUPu0fg662RjXrboOL8KHlFEi1PfH
+    fOaWqTRNkNsDIOeIPMVq2J21Dril8xy27DUoFBuLWyI78+IeU8g13AWJPfGqhVMx
+    NRrmuOUpTMTmBFPfyjIAQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=tXSqXkm4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.85.160.67 (mail-pl0-f67.google.com);
-    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f67.google.com;
+    iprev=pass policy.iprev=74.125.83.68 (mail-pg0-f68.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pg0-f68.google.com;
     x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=mSFl+c7I;
-    x-ptr=pass x-ptr-helo=mail-pl0-f67.google.com x-ptr-lookup=mail-pl0-f67.google.com;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=EI321t+J;
+    x-ptr=pass x-ptr-helo=mail-pg0-f68.google.com x-ptr-lookup=mail-pg0-f68.google.com;
     x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=L6piIS+O x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=tXSqXkm4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.85.160.67 (mail-pl0-f67.google.com);
-    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f67.google.com;
+    iprev=pass policy.iprev=74.125.83.68 (mail-pg0-f68.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pg0-f68.google.com;
     x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=mSFl+c7I;
-    x-ptr=pass x-ptr-helo=mail-pl0-f67.google.com x-ptr-lookup=mail-pl0-f67.google.com;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=EI321t+J;
+    x-ptr=pass x-ptr-helo=mail-pg0-f68.google.com x-ptr-lookup=mail-pg0-f68.google.com;
     x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Google-Smtp-Source: AH8x224DDgc4wm8ixhU3lS65RJYI3DeJStq/Xj7GoMDC4QjsVUwwuy/TEM4a8eZesHoIDvowZ3kuZw==
+X-Google-Smtp-Source: AH8x224NBMKJhL5MzNBsz7iu1WBovYA1T2VcrTJq19QjpJOCBTOSmjsIQRbHpjtMONmFfyD9jn+rOA==
 From: Greentime Hu <green.hu@gmail.com>
 X-Google-Original-From: Greentime Hu <greentime@andestech.com>
 To: greentime@andestech.com,
@@ -81,9 +81,9 @@ To: greentime@andestech.com,
 	shorne@gmail.com
 Cc: green.hu@gmail.com,
 	Vincent Chen <vincentc@andestech.com>
-Subject: [PATCH v7 13/37] nds32: Process management
-Date: Tue, 13 Feb 2018 17:09:17 +0800
-Message-Id: <04436a48ed9ec3c221740478cd9a620e50100d7a.1518505384.git.greentime@andestech.com>
+Subject: [PATCH v7 12/37] nds32: Cache and TLB routines
+Date: Tue, 13 Feb 2018 17:09:16 +0800
+Message-Id: <dbcf066a14efe856e40549e6ebb29e7c7e8419a9.1518505384.git.greentime@andestech.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <cover.1518505384.git.greentime@andestech.com>
 References: <cover.1518505384.git.greentime@andestech.com>
@@ -93,445 +93,1333 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch includes copy_thread(), start_thread() implementation and cpu_context
-structure definition. nds32 uses $r25 to get current task_struct.
+This patch contains cache and TLB maintenance functions.
 
 Signed-off-by: Vincent Chen <vincentc@andestech.com>
 Signed-off-by: Greentime Hu <greentime@andestech.com>
 Acked-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/nds32/include/asm/current.h     |  12 ++
- arch/nds32/include/asm/processor.h   | 103 +++++++++++++++++
- arch/nds32/include/asm/thread_info.h |  76 +++++++++++++
- arch/nds32/kernel/process.c          | 208 +++++++++++++++++++++++++++++++++++
- 4 files changed, 399 insertions(+)
- create mode 100644 arch/nds32/include/asm/current.h
- create mode 100644 arch/nds32/include/asm/processor.h
- create mode 100644 arch/nds32/include/asm/thread_info.h
- create mode 100644 arch/nds32/kernel/process.c
+ arch/nds32/include/asm/cache.h         |  12 +
+ arch/nds32/include/asm/cache_info.h    |  13 +
+ arch/nds32/include/asm/cacheflush.h    |  44 +++
+ arch/nds32/include/asm/mmu_context.h   |  68 +++++
+ arch/nds32/include/asm/proc-fns.h      |  44 +++
+ arch/nds32/include/asm/tlb.h           |  28 ++
+ arch/nds32/include/asm/tlbflush.h      |  47 +++
+ arch/nds32/include/uapi/asm/cachectl.h |  14 +
+ arch/nds32/kernel/cacheinfo.c          |  49 +++
+ arch/nds32/mm/cacheflush.c             | 322 ++++++++++++++++++++
+ arch/nds32/mm/proc.c                   | 533 +++++++++++++++++++++++++++++++++
+ arch/nds32/mm/tlb.c                    |  50 ++++
+ 12 files changed, 1224 insertions(+)
+ create mode 100644 arch/nds32/include/asm/cache.h
+ create mode 100644 arch/nds32/include/asm/cache_info.h
+ create mode 100644 arch/nds32/include/asm/cacheflush.h
+ create mode 100644 arch/nds32/include/asm/mmu_context.h
+ create mode 100644 arch/nds32/include/asm/proc-fns.h
+ create mode 100644 arch/nds32/include/asm/tlb.h
+ create mode 100644 arch/nds32/include/asm/tlbflush.h
+ create mode 100644 arch/nds32/include/uapi/asm/cachectl.h
+ create mode 100644 arch/nds32/kernel/cacheinfo.c
+ create mode 100644 arch/nds32/mm/cacheflush.c
+ create mode 100644 arch/nds32/mm/proc.c
+ create mode 100644 arch/nds32/mm/tlb.c
 
-diff --git a/arch/nds32/include/asm/current.h b/arch/nds32/include/asm/current.h
+diff --git a/arch/nds32/include/asm/cache.h b/arch/nds32/include/asm/cache.h
 new file mode 100644
-index 000000000000..b4dcd22b7bcb
+index 000000000000..347db4881c5f
 --- /dev/null
-+++ b/arch/nds32/include/asm/current.h
++++ b/arch/nds32/include/asm/cache.h
 @@ -0,0 +1,12 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (C) 2005-2017 Andes Technology Corporation
 +
-+#ifndef _ASM_NDS32_CURRENT_H
-+#define _ASM_NDS32_CURRENT_H
++#ifndef __NDS32_CACHE_H__
++#define __NDS32_CACHE_H__
 +
-+#ifndef __ASSEMBLY__
-+register struct task_struct *current asm("$r25");
-+#endif /* __ASSEMBLY__ */
-+#define tsk $r25
++#define L1_CACHE_BYTES	32
++#define L1_CACHE_SHIFT	5
 +
-+#endif /* _ASM_NDS32_CURRENT_H */
-diff --git a/arch/nds32/include/asm/processor.h b/arch/nds32/include/asm/processor.h
++#define ARCH_DMA_MINALIGN   L1_CACHE_BYTES
++
++#endif /* __NDS32_CACHE_H__ */
+diff --git a/arch/nds32/include/asm/cache_info.h b/arch/nds32/include/asm/cache_info.h
 new file mode 100644
-index 000000000000..9c83caf4269f
+index 000000000000..38ec458ba543
 --- /dev/null
-+++ b/arch/nds32/include/asm/processor.h
-@@ -0,0 +1,103 @@
++++ b/arch/nds32/include/asm/cache_info.h
+@@ -0,0 +1,13 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (C) 2005-2017 Andes Technology Corporation
 +
-+#ifndef __ASM_NDS32_PROCESSOR_H
-+#define __ASM_NDS32_PROCESSOR_H
-+
-+/*
-+ * Default implementation of macro that returns current
-+ * instruction pointer ("program counter").
-+ */
-+#define current_text_addr() ({ __label__ _l; _l: &&_l;})
-+
-+#ifdef __KERNEL__
-+
-+#include <asm/ptrace.h>
-+#include <asm/types.h>
-+#include <asm/sigcontext.h>
-+
-+#define KERNEL_STACK_SIZE	PAGE_SIZE
-+#define STACK_TOP	TASK_SIZE
-+#define STACK_TOP_MAX   TASK_SIZE
-+
-+struct cpu_context {
-+	unsigned long r6;
-+	unsigned long r7;
-+	unsigned long r8;
-+	unsigned long r9;
-+	unsigned long r10;
-+	unsigned long r11;
-+	unsigned long r12;
-+	unsigned long r13;
-+	unsigned long r14;
-+	unsigned long fp;
-+	unsigned long pc;
-+	unsigned long sp;
++struct cache_info {
++	unsigned char ways;
++	unsigned char line_size;
++	unsigned short sets;
++	unsigned short size;
++#if defined(CONFIG_CPU_CACHE_ALIASING)
++	unsigned short aliasing_num;
++	unsigned int aliasing_mask;
++#endif
 +};
-+
-+struct thread_struct {
-+	struct cpu_context cpu_context;	/* cpu context */
-+	/* fault info     */
-+	unsigned long address;
-+	unsigned long trap_no;
-+	unsigned long error_code;
-+};
-+
-+#define INIT_THREAD  {	}
-+
-+#ifdef __NDS32_EB__
-+#define PSW_DE	PSW_mskBE
-+#else
-+#define PSW_DE	0x0
-+#endif
-+
-+#ifdef CONFIG_WBNA
-+#define PSW_valWBNA	PSW_mskWBNA
-+#else
-+#define PSW_valWBNA	0x0
-+#endif
-+
-+#ifdef CONFIG_HWZOL
-+#define	PSW_valINIT (PSW_CPL_ANY | PSW_mskAEN | PSW_valWBNA | PSW_mskDT | PSW_mskIT | PSW_DE | PSW_mskGIE)
-+#else
-+#define	PSW_valINIT (PSW_CPL_ANY | PSW_valWBNA | PSW_mskDT | PSW_mskIT | PSW_DE | PSW_mskGIE)
-+#endif
-+
-+#define start_thread(regs,pc,stack)			\
-+({							\
-+	memzero(regs, sizeof(struct pt_regs));		\
-+	forget_syscall(regs);				\
-+	regs->ipsw = PSW_valINIT;			\
-+	regs->ir0 = (PSW_CPL_ANY | PSW_valWBNA | PSW_mskDT | PSW_mskIT | PSW_DE | PSW_SYSTEM | PSW_INTL_1);	\
-+	regs->ipc = pc;					\
-+	regs->sp = stack;				\
-+})
-+
-+/* Forward declaration, a strange C thing */
-+struct task_struct;
-+
-+/* Free all resources held by a thread. */
-+#define release_thread(thread) do { } while(0)
-+
-+/* Prepare to copy thread state - unlazy all lazy status */
-+#define prepare_to_copy(tsk)	do { } while (0)
-+
-+unsigned long get_wchan(struct task_struct *p);
-+
-+#define cpu_relax()			barrier()
-+
-+#define task_pt_regs(task) \
-+	((struct pt_regs *) (task_stack_page(task) + THREAD_SIZE \
-+		- 8) - 1)
-+
-+/*
-+ * Create a new kernel thread
-+ */
-+extern int kernel_thread(int (*fn) (void *), void *arg, unsigned long flags);
-+
-+#define KSTK_EIP(tsk)	instruction_pointer(task_pt_regs(tsk))
-+#define KSTK_ESP(tsk)	user_stack_pointer(task_pt_regs(tsk))
-+
-+#endif
-+
-+#endif /* __ASM_NDS32_PROCESSOR_H */
-diff --git a/arch/nds32/include/asm/thread_info.h b/arch/nds32/include/asm/thread_info.h
+diff --git a/arch/nds32/include/asm/cacheflush.h b/arch/nds32/include/asm/cacheflush.h
 new file mode 100644
-index 000000000000..bff741ff337b
+index 000000000000..7b9b20a381cb
 --- /dev/null
-+++ b/arch/nds32/include/asm/thread_info.h
-@@ -0,0 +1,76 @@
++++ b/arch/nds32/include/asm/cacheflush.h
+@@ -0,0 +1,44 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (C) 2005-2017 Andes Technology Corporation
 +
-+#ifndef __ASM_NDS32_THREAD_INFO_H
-+#define __ASM_NDS32_THREAD_INFO_H
++#ifndef __NDS32_CACHEFLUSH_H__
++#define __NDS32_CACHEFLUSH_H__
 +
-+#ifdef __KERNEL__
++#include <linux/mm.h>
 +
-+#define THREAD_SIZE_ORDER 	(1)
-+#define THREAD_SIZE		(PAGE_SIZE << THREAD_SIZE_ORDER)
++#define PG_dcache_dirty PG_arch_1
 +
-+#ifndef __ASSEMBLY__
++#ifdef CONFIG_CPU_CACHE_ALIASING
++void flush_cache_mm(struct mm_struct *mm);
++void flush_cache_dup_mm(struct mm_struct *mm);
++void flush_cache_range(struct vm_area_struct *vma,
++		       unsigned long start, unsigned long end);
++void flush_cache_page(struct vm_area_struct *vma,
++		      unsigned long addr, unsigned long pfn);
++void flush_cache_kmaps(void);
++void flush_cache_vmap(unsigned long start, unsigned long end);
++void flush_cache_vunmap(unsigned long start, unsigned long end);
 +
-+struct task_struct;
++#define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
++void flush_dcache_page(struct page *page);
++void copy_to_user_page(struct vm_area_struct *vma, struct page *page,
++		       unsigned long vaddr, void *dst, void *src, int len);
++void copy_from_user_page(struct vm_area_struct *vma, struct page *page,
++			 unsigned long vaddr, void *dst, void *src, int len);
 +
-+#include <asm/ptrace.h>
-+#include <asm/types.h>
++#define ARCH_HAS_FLUSH_ANON_PAGE
++void flush_anon_page(struct vm_area_struct *vma,
++		     struct page *page, unsigned long vaddr);
 +
-+typedef unsigned long mm_segment_t;
++#define ARCH_HAS_FLUSH_KERNEL_DCACHE_PAGE
++void flush_kernel_dcache_page(struct page *page);
++void flush_icache_range(unsigned long start, unsigned long end);
++void flush_icache_page(struct vm_area_struct *vma, struct page *page);
++#define flush_dcache_mmap_lock(mapping)   spin_lock_irq(&(mapping)->tree_lock)
++#define flush_dcache_mmap_unlock(mapping) spin_unlock_irq(&(mapping)->tree_lock)
 +
-+/*
-+ * low level task data that entry.S needs immediate access to.
-+ * __switch_to() assumes cpu_context follows immediately after cpu_domain.
-+ */
-+struct thread_info {
-+	unsigned long flags;	/* low level flags */
-+	__s32 preempt_count;	/* 0 => preemptable, <0 => bug */
-+	mm_segment_t addr_limit;	/* address limit */
-+};
-+#define INIT_THREAD_INFO(tsk)						\
-+{									\
-+	.preempt_count	= INIT_PREEMPT_COUNT,				\
-+	.addr_limit	= KERNEL_DS,					\
++#else
++#include <asm-generic/cacheflush.h>
++#endif
++
++#endif /* __NDS32_CACHEFLUSH_H__ */
+diff --git a/arch/nds32/include/asm/mmu_context.h b/arch/nds32/include/asm/mmu_context.h
+new file mode 100644
+index 000000000000..fd7d13cefccc
+--- /dev/null
++++ b/arch/nds32/include/asm/mmu_context.h
+@@ -0,0 +1,68 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#ifndef __ASM_NDS32_MMU_CONTEXT_H
++#define __ASM_NDS32_MMU_CONTEXT_H
++
++#include <linux/spinlock.h>
++#include <asm/tlbflush.h>
++#include <asm/proc-fns.h>
++#include <asm-generic/mm_hooks.h>
++
++static inline int
++init_new_context(struct task_struct *tsk, struct mm_struct *mm)
++{
++	mm->context.id = 0;
++	return 0;
 +}
-+#define thread_saved_pc(tsk) ((unsigned long)(tsk->thread.cpu_context.pc))
-+#define thread_saved_fp(tsk) ((unsigned long)(tsk->thread.cpu_context.fp))
++
++#define destroy_context(mm)	do { } while(0)
++
++#define CID_BITS	9
++extern spinlock_t cid_lock;
++extern unsigned int cpu_last_cid;
++
++static inline void __new_context(struct mm_struct *mm)
++{
++	unsigned int cid;
++	unsigned long flags;
++
++	spin_lock_irqsave(&cid_lock, flags);
++	cid = cpu_last_cid;
++	cpu_last_cid += 1 << TLB_MISC_offCID;
++	if (cpu_last_cid == 0)
++		cpu_last_cid = 1 << TLB_MISC_offCID << CID_BITS;
++
++	if ((cid & TLB_MISC_mskCID) == 0)
++		flush_tlb_all();
++	spin_unlock_irqrestore(&cid_lock, flags);
++
++	mm->context.id = cid;
++}
++
++static inline void check_context(struct mm_struct *mm)
++{
++	if (unlikely
++	    ((mm->context.id ^ cpu_last_cid) >> TLB_MISC_offCID >> CID_BITS))
++		__new_context(mm);
++}
++
++static inline void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk)
++{
++}
++
++static inline void switch_mm(struct mm_struct *prev, struct mm_struct *next,
++			     struct task_struct *tsk)
++{
++	unsigned int cpu = smp_processor_id();
++
++	if (!cpumask_test_and_set_cpu(cpu, mm_cpumask(next)) || prev != next) {
++		check_context(next);
++		cpu_switch_mm(next);
++	}
++}
++
++#define deactivate_mm(tsk,mm)	do { } while (0)
++#define activate_mm(prev,next)	switch_mm(prev, next, NULL)
++
 +#endif
+diff --git a/arch/nds32/include/asm/proc-fns.h b/arch/nds32/include/asm/proc-fns.h
+new file mode 100644
+index 000000000000..bedc4f59e064
+--- /dev/null
++++ b/arch/nds32/include/asm/proc-fns.h
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
 +
-+/*
-+ * thread information flags:
-+ *  TIF_SYSCALL_TRACE	- syscall trace active
-+ *  TIF_SIGPENDING	- signal pending
-+ *  TIF_NEED_RESCHED	- rescheduling necessary
-+ *  TIF_NOTIFY_RESUME	- callback before returning to user
-+ *  TIF_USEDFPU		- FPU was used by this task this quantum (SMP)
-+ *  TIF_POLLING_NRFLAG	- true if poll_idle() is polling TIF_NEED_RESCHED
-+ */
-+#define TIF_SIGPENDING		1
-+#define TIF_NEED_RESCHED	2
-+#define TIF_SINGLESTEP		3
-+#define TIF_NOTIFY_RESUME	4	/* callback before returning to user */
-+#define TIF_SYSCALL_TRACE	8
-+#define TIF_USEDFPU             16
-+#define TIF_POLLING_NRFLAG	17
-+#define TIF_MEMDIE		18
-+#define TIF_FREEZE		19
-+#define TIF_RESTORE_SIGMASK	20
++#ifndef __NDS32_PROCFNS_H__
++#define __NDS32_PROCFNS_H__
 +
-+#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
-+#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
-+#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
-+#define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
-+#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
-+#define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
-+#define _TIF_FREEZE		(1 << TIF_FREEZE)
-+#define _TIF_RESTORE_SIGMASK	(1 << TIF_RESTORE_SIGMASK)
++#ifdef __KERNEL__
++#include <asm/page.h>
 +
-+/*
-+ * Change these and you break ASM code in entry-common.S
-+ */
-+#define _TIF_WORK_MASK		0x000000ff
-+#define _TIF_WORK_SYSCALL_ENTRY (_TIF_SYSCALL_TRACE | _TIF_SINGLESTEP)
-+#define _TIF_WORK_SYSCALL_LEAVE (_TIF_SYSCALL_TRACE | _TIF_SINGLESTEP)
++struct mm_struct;
++struct vm_area_struct;
++extern void cpu_proc_init(void);
++extern void cpu_proc_fin(void);
++extern void cpu_do_idle(void);
++extern void cpu_reset(unsigned long reset);
++extern void cpu_switch_mm(struct mm_struct *mm);
++
++extern void cpu_dcache_inval_all(void);
++extern void cpu_dcache_wbinval_all(void);
++extern void cpu_dcache_inval_page(unsigned long page);
++extern void cpu_dcache_wb_page(unsigned long page);
++extern void cpu_dcache_wbinval_page(unsigned long page);
++extern void cpu_dcache_inval_range(unsigned long start, unsigned long end);
++extern void cpu_dcache_wb_range(unsigned long start, unsigned long end);
++extern void cpu_dcache_wbinval_range(unsigned long start, unsigned long end);
++
++extern void cpu_icache_inval_all(void);
++extern void cpu_icache_inval_page(unsigned long page);
++extern void cpu_icache_inval_range(unsigned long start, unsigned long end);
++
++extern void cpu_cache_wbinval_page(unsigned long page, int flushi);
++extern void cpu_cache_wbinval_range(unsigned long start,
++				    unsigned long end, int flushi);
++extern void cpu_cache_wbinval_range_check(struct vm_area_struct *vma,
++					  unsigned long start,
++					  unsigned long end, bool flushi,
++					  bool wbd);
++
++extern void cpu_dma_wb_range(unsigned long start, unsigned long end);
++extern void cpu_dma_inval_range(unsigned long start, unsigned long end);
++extern void cpu_dma_wbinval_range(unsigned long start, unsigned long end);
 +
 +#endif /* __KERNEL__ */
-+#endif /* __ASM_NDS32_THREAD_INFO_H */
-diff --git a/arch/nds32/kernel/process.c b/arch/nds32/kernel/process.c
++#endif /* __NDS32_PROCFNS_H__ */
+diff --git a/arch/nds32/include/asm/tlb.h b/arch/nds32/include/asm/tlb.h
 new file mode 100644
-index 000000000000..65fda986e55f
+index 000000000000..b35ae5eae3ab
 --- /dev/null
-+++ b/arch/nds32/kernel/process.c
-@@ -0,0 +1,208 @@
++++ b/arch/nds32/include/asm/tlb.h
+@@ -0,0 +1,28 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (C) 2005-2017 Andes Technology Corporation
 +
++#ifndef __ASMNDS32_TLB_H
++#define __ASMNDS32_TLB_H
++
++#define tlb_start_vma(tlb,vma)						\
++	do {								\
++		if (!tlb->fullmm)					\
++			flush_cache_range(vma, vma->vm_start, vma->vm_end); \
++	} while (0)
++
++#define tlb_end_vma(tlb,vma)				\
++	do { 						\
++		if(!tlb->fullmm)			\
++			flush_tlb_range(vma, vma->vm_start, vma->vm_end); \
++	} while (0)
++
++#define __tlb_remove_tlb_entry(tlb, pte, addr) do { } while (0)
++
++#define tlb_flush(tlb)	flush_tlb_mm((tlb)->mm)
++
++#include <asm-generic/tlb.h>
++
++#define __pte_free_tlb(tlb, pte, addr)	pte_free((tlb)->mm, pte)
++#define __pmd_free_tlb(tlb, pmd, addr)	pmd_free((tln)->mm, pmd)
++
++#endif
+diff --git a/arch/nds32/include/asm/tlbflush.h b/arch/nds32/include/asm/tlbflush.h
+new file mode 100644
+index 000000000000..9b411f401903
+--- /dev/null
++++ b/arch/nds32/include/asm/tlbflush.h
+@@ -0,0 +1,47 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#ifndef _ASMNDS32_TLBFLUSH_H
++#define _ASMNDS32_TLBFLUSH_H
++
++#include <linux/spinlock.h>
++#include <linux/mm.h>
++#include <nds32_intrinsic.h>
++
++static inline void local_flush_tlb_all(void)
++{
++	__nds32__tlbop_flua();
++	__nds32__isb();
++}
++
++static inline void local_flush_tlb_mm(struct mm_struct *mm)
++{
++	__nds32__tlbop_flua();
++	__nds32__isb();
++}
++
++static inline void local_flush_tlb_kernel_range(unsigned long start,
++						unsigned long end)
++{
++	while (start < end) {
++		__nds32__tlbop_inv(start);
++		__nds32__isb();
++		start += PAGE_SIZE;
++	}
++}
++
++void local_flush_tlb_range(struct vm_area_struct *vma,
++			   unsigned long start, unsigned long end);
++void local_flush_tlb_page(struct vm_area_struct *vma, unsigned long addr);
++
++#define flush_tlb_all		local_flush_tlb_all
++#define flush_tlb_mm		local_flush_tlb_mm
++#define flush_tlb_range		local_flush_tlb_range
++#define flush_tlb_page		local_flush_tlb_page
++#define flush_tlb_kernel_range	local_flush_tlb_kernel_range
++
++void update_mmu_cache(struct vm_area_struct *vma,
++		      unsigned long address, pte_t * pte);
++void tlb_migrate_finish(struct mm_struct *mm);
++
++#endif
+diff --git a/arch/nds32/include/uapi/asm/cachectl.h b/arch/nds32/include/uapi/asm/cachectl.h
+new file mode 100644
+index 000000000000..4cdca9b23974
+--- /dev/null
++++ b/arch/nds32/include/uapi/asm/cachectl.h
+@@ -0,0 +1,14 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 1994, 1995, 1996 by Ralf Baechle
++// Copyright (C) 2005-2017 Andes Technology Corporation
++#ifndef	_ASM_CACHECTL
++#define	_ASM_CACHECTL
++
++/*
++ * Options for cacheflush system call
++ */
++#define	ICACHE	0		/* flush instruction cache        */
++#define	DCACHE	1		/* writeback and flush data cache */
++#define	BCACHE	2		/* flush instruction cache + writeback and flush data cache */
++
++#endif /* _ASM_CACHECTL */
+diff --git a/arch/nds32/kernel/cacheinfo.c b/arch/nds32/kernel/cacheinfo.c
+new file mode 100644
+index 000000000000..0a7bc696dd55
+--- /dev/null
++++ b/arch/nds32/kernel/cacheinfo.c
+@@ -0,0 +1,49 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#include <linux/bitops.h>
++#include <linux/cacheinfo.h>
++#include <linux/cpu.h>
++
++static void ci_leaf_init(struct cacheinfo *this_leaf,
++			 enum cache_type type, unsigned int level)
++{
++	char cache_type = (type & CACHE_TYPE_INST ? ICACHE : DCACHE);
++
++	this_leaf->level = level;
++	this_leaf->type = type;
++	this_leaf->coherency_line_size = CACHE_LINE_SIZE(cache_type);
++	this_leaf->number_of_sets = CACHE_SET(cache_type);;
++	this_leaf->ways_of_associativity = CACHE_WAY(cache_type);
++	this_leaf->size = this_leaf->number_of_sets *
++	    this_leaf->coherency_line_size * this_leaf->ways_of_associativity;
++#if defined(CONFIG_CPU_DCACHE_WRITETHROUGH)
++	this_leaf->attributes = CACHE_WRITE_THROUGH;
++#else
++	this_leaf->attributes = CACHE_WRITE_BACK;
++#endif
++}
++
++int init_cache_level(unsigned int cpu)
++{
++	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
++
++	/* Only 1 level and I/D cache seperate. */
++	this_cpu_ci->num_levels = 1;
++	this_cpu_ci->num_leaves = 2;
++	return 0;
++}
++
++int populate_cache_leaves(unsigned int cpu)
++{
++	unsigned int level, idx;
++	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
++	struct cacheinfo *this_leaf = this_cpu_ci->info_list;
++
++	for (idx = 0, level = 1; level <= this_cpu_ci->num_levels &&
++	     idx < this_cpu_ci->num_leaves; idx++, level++) {
++		ci_leaf_init(this_leaf++, CACHE_TYPE_DATA, level);
++		ci_leaf_init(this_leaf++, CACHE_TYPE_INST, level);
++	}
++	return 0;
++}
+diff --git a/arch/nds32/mm/cacheflush.c b/arch/nds32/mm/cacheflush.c
+new file mode 100644
+index 000000000000..6eb786a399a2
+--- /dev/null
++++ b/arch/nds32/mm/cacheflush.c
+@@ -0,0 +1,322 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#include <linux/mm.h>
 +#include <linux/sched.h>
-+#include <linux/sched/debug.h>
-+#include <linux/sched/task_stack.h>
-+#include <linux/delay.h>
-+#include <linux/kallsyms.h>
-+#include <linux/uaccess.h>
-+#include <asm/elf.h>
++#include <linux/fs.h>
++#include <linux/pagemap.h>
++#include <linux/module.h>
++#include <asm/cacheflush.h>
 +#include <asm/proc-fns.h>
-+#include <linux/ptrace.h>
-+#include <linux/reboot.h>
++#include <asm/shmparam.h>
++#include <asm/cache_info.h>
 +
-+extern void setup_mm_for_reboot(char mode);
-+#ifdef CONFIG_PROC_FS
-+struct proc_dir_entry *proc_dir_cpu;
-+EXPORT_SYMBOL(proc_dir_cpu);
-+#endif
++extern struct cache_info L1_cache_info[2];
 +
-+extern inline void arch_reset(char mode)
++#ifndef CONFIG_CPU_CACHE_ALIASING
++void update_mmu_cache(struct vm_area_struct *vma, unsigned long addr,
++		      pte_t * pte)
 +{
-+	if (mode == 's') {
-+		/* Use cpu handler, jump to 0 */
-+		cpu_reset(0);
++	struct page *page;
++	unsigned long pfn = pte_pfn(*pte);
++	unsigned long flags;
++
++	if (!pfn_valid(pfn))
++		return;
++
++	if (vma->vm_mm == current->active_mm) {
++		local_irq_save(flags);
++		__nds32__mtsr_dsb(addr, NDS32_SR_TLB_VPN);
++		__nds32__tlbop_rwr(*pte);
++		__nds32__isb();
++		local_irq_restore(flags);
++	}
++	page = pfn_to_page(pfn);
++
++	if ((test_and_clear_bit(PG_dcache_dirty, &page->flags)) ||
++	    (vma->vm_flags & VM_EXEC)) {
++
++		if (!PageHighMem(page)) {
++			cpu_cache_wbinval_page((unsigned long)
++					       page_address(page),
++					       vma->vm_flags & VM_EXEC);
++		} else {
++			unsigned long kaddr = (unsigned long)kmap_atomic(page);
++			cpu_cache_wbinval_page(kaddr, vma->vm_flags & VM_EXEC);
++			kunmap_atomic((void *)kaddr);
++		}
++	}
++}
++#else
++extern pte_t va_present(struct mm_struct *mm, unsigned long addr);
++
++static inline unsigned long aliasing(unsigned long addr, unsigned long page)
++{
++	return ((addr & PAGE_MASK) ^ page) & (SHMLBA - 1);
++}
++
++static inline unsigned long kremap0(unsigned long uaddr, unsigned long pa)
++{
++	unsigned long kaddr, pte;
++
++#define BASE_ADDR0 0xffffc000
++	kaddr = BASE_ADDR0 | (uaddr & L1_cache_info[DCACHE].aliasing_mask);
++	pte = (pa | PAGE_KERNEL);
++	__nds32__mtsr_dsb(kaddr, NDS32_SR_TLB_VPN);
++	__nds32__tlbop_rwlk(pte);
++	__nds32__isb();
++	return kaddr;
++}
++
++static inline void kunmap01(unsigned long kaddr)
++{
++	__nds32__tlbop_unlk(kaddr);
++	__nds32__tlbop_inv(kaddr);
++	__nds32__isb();
++}
++
++static inline unsigned long kremap1(unsigned long uaddr, unsigned long pa)
++{
++	unsigned long kaddr, pte;
++
++#define BASE_ADDR1 0xffff8000
++	kaddr = BASE_ADDR1 | (uaddr & L1_cache_info[DCACHE].aliasing_mask);
++	pte = (pa | PAGE_KERNEL);
++	__nds32__mtsr_dsb(kaddr, NDS32_SR_TLB_VPN);
++	__nds32__tlbop_rwlk(pte);
++	__nds32__isb();
++	return kaddr;
++}
++
++void flush_cache_mm(struct mm_struct *mm)
++{
++	unsigned long flags;
++
++	local_irq_save(flags);
++	cpu_dcache_wbinval_all();
++	cpu_icache_inval_all();
++	local_irq_restore(flags);
++}
++
++void flush_cache_dup_mm(struct mm_struct *mm)
++{
++}
++
++void flush_cache_range(struct vm_area_struct *vma,
++		       unsigned long start, unsigned long end)
++{
++	unsigned long flags;
++
++	if ((end - start) > 8 * PAGE_SIZE) {
++		cpu_dcache_wbinval_all();
++		if (vma->vm_flags & VM_EXEC)
++			cpu_icache_inval_all();
++		return;
++	}
++	local_irq_save(flags);
++	while (start < end) {
++		if (va_present(vma->vm_mm, start))
++			cpu_cache_wbinval_page(start, vma->vm_flags & VM_EXEC);
++		start += PAGE_SIZE;
++	}
++	local_irq_restore(flags);
++	return;
++}
++
++void flush_cache_page(struct vm_area_struct *vma,
++		      unsigned long addr, unsigned long pfn)
++{
++	unsigned long vto, flags;
++
++	local_irq_save(flags);
++	vto = kremap0(addr, pfn << PAGE_SHIFT);
++	cpu_cache_wbinval_page(vto, vma->vm_flags & VM_EXEC);
++	kunmap01(vto);
++	local_irq_restore(flags);
++}
++
++void flush_cache_vmap(unsigned long start, unsigned long end)
++{
++	cpu_dcache_wbinval_all();
++	cpu_icache_inval_all();
++}
++
++void flush_cache_vunmap(unsigned long start, unsigned long end)
++{
++	cpu_dcache_wbinval_all();
++	cpu_icache_inval_all();
++}
++
++void copy_user_highpage(struct page *to, struct page *from,
++			unsigned long vaddr, struct vm_area_struct *vma)
++{
++	unsigned long vto, vfrom, flags, kto, kfrom, pfrom, pto;
++	kto = ((unsigned long)page_address(to) & PAGE_MASK);
++	kfrom = ((unsigned long)page_address(from) & PAGE_MASK);
++	pto = page_to_phys(to);
++	pfrom = page_to_phys(from);
++
++	if (aliasing(vaddr, (unsigned long)kfrom))
++		cpu_dcache_wb_page((unsigned long)kfrom);
++	if (aliasing(vaddr, (unsigned long)kto))
++		cpu_dcache_inval_page((unsigned long)kto);
++	local_irq_save(flags);
++	vto = kremap0(vaddr, pto);
++	vfrom = kremap1(vaddr, pfrom);
++	copy_page((void *)vto, (void *)vfrom);
++	kunmap01(vfrom);
++	kunmap01(vto);
++	local_irq_restore(flags);
++}
++
++EXPORT_SYMBOL(copy_user_highpage);
++
++void clear_user_highpage(struct page *page, unsigned long vaddr)
++{
++	unsigned long vto, flags, kto;
++
++	kto = ((unsigned long)page_address(page) & PAGE_MASK);
++
++	local_irq_save(flags);
++	if (aliasing(kto, vaddr) && kto != 0) {
++		cpu_dcache_inval_page(kto);
++		cpu_icache_inval_page(kto);
++	}
++	vto = kremap0(vaddr, page_to_phys(page));
++	clear_page((void *)vto);
++	kunmap01(vto);
++	local_irq_restore(flags);
++}
++
++EXPORT_SYMBOL(clear_user_highpage);
++
++void flush_dcache_page(struct page *page)
++{
++	struct address_space *mapping;
++
++	mapping = page_mapping(page);
++	if (mapping && !mapping_mapped(mapping))
++		set_bit(PG_dcache_dirty, &page->flags);
++	else {
++		int i, pc;
++		unsigned long vto, kaddr, flags;
++		kaddr = (unsigned long)page_address(page);
++		cpu_dcache_wbinval_page(kaddr);
++		pc = CACHE_SET(DCACHE) * CACHE_LINE_SIZE(DCACHE) / PAGE_SIZE;
++		local_irq_save(flags);
++		for (i = 0; i < pc; i++) {
++			vto =
++			    kremap0(kaddr + i * PAGE_SIZE, page_to_phys(page));
++			cpu_dcache_wbinval_page(vto);
++			kunmap01(vto);
++		}
++		local_irq_restore(flags);
 +	}
 +}
 +
-+void (*pm_power_off) (void);
-+EXPORT_SYMBOL(pm_power_off);
-+
-+static char reboot_mode_nds32 = 'h';
-+
-+int __init reboot_setup(char *str)
++void copy_to_user_page(struct vm_area_struct *vma, struct page *page,
++		       unsigned long vaddr, void *dst, void *src, int len)
 +{
-+	reboot_mode_nds32 = str[0];
-+	return 1;
++	unsigned long line_size, start, end, vto, flags;
++
++	local_irq_save(flags);
++	vto = kremap0(vaddr, page_to_phys(page));
++	dst = (void *)(vto | (vaddr & (PAGE_SIZE - 1)));
++	memcpy(dst, src, len);
++	if (vma->vm_flags & VM_EXEC) {
++		line_size = L1_cache_info[DCACHE].line_size;
++		start = (unsigned long)dst & ~(line_size - 1);
++		end =
++		    ((unsigned long)dst + len + line_size - 1) & ~(line_size -
++								   1);
++		cpu_cache_wbinval_range(start, end, 1);
++	}
++	kunmap01(vto);
++	local_irq_restore(flags);
 +}
 +
-+static int cpub_pwroff(void)
++void copy_from_user_page(struct vm_area_struct *vma, struct page *page,
++			 unsigned long vaddr, void *dst, void *src, int len)
 +{
++	unsigned long vto, flags;
++
++	local_irq_save(flags);
++	vto = kremap0(vaddr, page_to_phys(page));
++	src = (void *)(vto | (vaddr & (PAGE_SIZE - 1)));
++	memcpy(dst, src, len);
++	kunmap01(vto);
++	local_irq_restore(flags);
++}
++
++void flush_anon_page(struct vm_area_struct *vma,
++		     struct page *page, unsigned long vaddr)
++{
++	unsigned long flags;
++	if (!PageAnon(page))
++		return;
++
++	if (vma->vm_mm != current->active_mm)
++		return;
++
++	local_irq_save(flags);
++	if (vma->vm_flags & VM_EXEC)
++		cpu_icache_inval_page(vaddr & PAGE_MASK);
++	cpu_dcache_wbinval_page((unsigned long)page_address(page));
++	local_irq_restore(flags);
++}
++
++void flush_kernel_dcache_page(struct page *page)
++{
++	unsigned long flags;
++	local_irq_save(flags);
++	cpu_dcache_wbinval_page((unsigned long)page_address(page));
++	local_irq_restore(flags);
++}
++
++void flush_icache_range(unsigned long start, unsigned long end)
++{
++	unsigned long line_size, flags;
++	line_size = L1_cache_info[DCACHE].line_size;
++	start = start & ~(line_size - 1);
++	end = (end + line_size - 1) & ~(line_size - 1);
++	local_irq_save(flags);
++	cpu_cache_wbinval_range(start, end, 1);
++	local_irq_restore(flags);
++}
++
++void flush_icache_page(struct vm_area_struct *vma, struct page *page)
++{
++	unsigned long flags;
++	local_irq_save(flags);
++	cpu_cache_wbinval_page((unsigned long)page_address(page),
++			       vma->vm_flags & VM_EXEC);
++	local_irq_restore(flags);
++}
++
++void update_mmu_cache(struct vm_area_struct *vma, unsigned long addr,
++		      pte_t * pte)
++{
++	struct page *page;
++	unsigned long flags;
++	unsigned long pfn = pte_pfn(*pte);
++
++	if (!pfn_valid(pfn))
++		return;
++
++	if (vma->vm_mm == current->active_mm) {
++		local_irq_save(flags);
++		__nds32__mtsr_dsb(addr, NDS32_SR_TLB_VPN);
++		__nds32__tlbop_rwr(*pte);
++		__nds32__isb();
++		local_irq_restore(flags);
++	}
++
++	page = pfn_to_page(pfn);
++	if (test_and_clear_bit(PG_dcache_dirty, &page->flags) ||
++	    (vma->vm_flags & VM_EXEC)) {
++		local_irq_save(flags);
++		cpu_dcache_wbinval_page((unsigned long)page_address(page));
++		local_irq_restore(flags);
++	}
++}
++#endif
+diff --git a/arch/nds32/mm/proc.c b/arch/nds32/mm/proc.c
+new file mode 100644
+index 000000000000..ba80992d13a2
+--- /dev/null
++++ b/arch/nds32/mm/proc.c
+@@ -0,0 +1,533 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#include <linux/module.h>
++#include <linux/sched.h>
++#include <linux/mm.h>
++#include <asm/nds32.h>
++#include <asm/pgtable.h>
++#include <asm/tlbflush.h>
++#include <asm/cacheflush.h>
++#include <asm/l2_cache.h>
++#include <nds32_intrinsic.h>
++
++#include <asm/cache_info.h>
++extern struct cache_info L1_cache_info[2];
++
++int va_kernel_present(unsigned long addr)
++{
++	pmd_t *pmd;
++	pte_t *ptep, pte;
++
++	pmd = pmd_offset(pgd_offset_k(addr), addr);
++	if (!pmd_none(*pmd)) {
++		ptep = pte_offset_map(pmd, addr);
++		pte = *ptep;
++		if (pte_present(pte))
++			return pte;
++	}
 +	return 0;
 +}
 +
-+__setup("reboot=", reboot_setup);
-+
-+void machine_halt(void)
++pte_t va_present(struct mm_struct * mm, unsigned long addr)
 +{
-+	cpub_pwroff();
++	pgd_t *pgd;
++	pud_t *pud;
++	pmd_t *pmd;
++	pte_t *ptep, pte;
++
++	pgd = pgd_offset(mm, addr);
++	if (!pgd_none(*pgd)) {
++		pud = pud_offset(pgd, addr);
++		if (!pud_none(*pud)) {
++			pmd = pmd_offset(pud, addr);
++			if (!pmd_none(*pmd)) {
++				ptep = pte_offset_map(pmd, addr);
++				pte = *ptep;
++				if (pte_present(pte))
++					return pte;
++			}
++		}
++	}
++	return 0;
++
 +}
 +
-+EXPORT_SYMBOL(machine_halt);
-+
-+void machine_power_off(void)
++int va_readable(struct pt_regs *regs, unsigned long addr)
 +{
-+	if (pm_power_off)
-+		pm_power_off();
-+}
++	struct mm_struct *mm = current->mm;
++	pte_t pte;
++	int ret = 0;
 +
-+EXPORT_SYMBOL(machine_power_off);
-+
-+void machine_restart(char *cmd)
-+{
-+	/*
-+	 * Clean and disable cache, and turn off interrupts
-+	 */
-+	cpu_proc_fin();
-+
-+	/*
-+	 * Tell the mm system that we are going to reboot -
-+	 * we may need it to insert some 1:1 mappings so that
-+	 * soft boot works.
-+	 */
-+	setup_mm_for_reboot(reboot_mode_nds32);
-+
-+	/* Execute kernel restart handler call chain */
-+	do_kernel_restart(cmd);
-+
-+	/*
-+	 * Now call the architecture specific reboot code.
-+	 */
-+	arch_reset(reboot_mode_nds32);
-+
-+	/*
-+	 * Whoops - the architecture was unable to reboot.
-+	 * Tell the user!
-+	 */
-+	mdelay(1000);
-+	pr_info("Reboot failed -- System halted\n");
-+	while (1) ;
-+}
-+
-+EXPORT_SYMBOL(machine_restart);
-+
-+void show_regs(struct pt_regs *regs)
-+{
-+	printk("PC is at %pS\n", (void *)instruction_pointer(regs));
-+	printk("LP is at %pS\n", (void *)regs->lp);
-+	pr_info("pc : [<%08lx>]    lp : [<%08lx>]    %s\n"
-+		"sp : %08lx  fp : %08lx  gp : %08lx\n",
-+		instruction_pointer(regs),
-+		regs->lp, print_tainted(), regs->sp, regs->fp, regs->gp);
-+	pr_info("r25: %08lx  r24: %08lx\n", regs->uregs[25], regs->uregs[24]);
-+
-+	pr_info("r23: %08lx  r22: %08lx  r21: %08lx  r20: %08lx\n",
-+		regs->uregs[23], regs->uregs[22],
-+		regs->uregs[21], regs->uregs[20]);
-+	pr_info("r19: %08lx  r18: %08lx  r17: %08lx  r16: %08lx\n",
-+		regs->uregs[19], regs->uregs[18],
-+		regs->uregs[17], regs->uregs[16]);
-+	pr_info("r15: %08lx  r14: %08lx  r13: %08lx  r12: %08lx\n",
-+		regs->uregs[15], regs->uregs[14],
-+		regs->uregs[13], regs->uregs[12]);
-+	pr_info("r11: %08lx  r10: %08lx  r9 : %08lx  r8 : %08lx\n",
-+		regs->uregs[11], regs->uregs[10],
-+		regs->uregs[9], regs->uregs[8]);
-+	pr_info("r7 : %08lx  r6 : %08lx  r5 : %08lx  r4 : %08lx\n",
-+		regs->uregs[7], regs->uregs[6], regs->uregs[5], regs->uregs[4]);
-+	pr_info("r3 : %08lx  r2 : %08lx  r1 : %08lx  r0 : %08lx\n",
-+		regs->uregs[3], regs->uregs[2], regs->uregs[1], regs->uregs[0]);
-+	pr_info("  IRQs o%s  Segment %s\n",
-+		interrupts_enabled(regs) ? "n" : "ff",
-+		segment_eq(get_fs(), get_ds())? "kernel" : "user");
-+}
-+
-+EXPORT_SYMBOL(show_regs);
-+
-+void flush_thread(void)
-+{
-+}
-+
-+DEFINE_PER_CPU(struct task_struct *, __entry_task);
-+
-+asmlinkage void ret_from_fork(void) __asm__("ret_from_fork");
-+int copy_thread(unsigned long clone_flags, unsigned long stack_start,
-+	    unsigned long stk_sz, struct task_struct *p)
-+{
-+	struct pt_regs *childregs = task_pt_regs(p);
-+
-+	memset(&p->thread.cpu_context, 0, sizeof(struct cpu_context));
-+
-+	if (unlikely(p->flags & PF_KTHREAD)) {
-+		memset(childregs, 0, sizeof(struct pt_regs));
-+		/* kernel thread fn */
-+		p->thread.cpu_context.r6 = stack_start;
-+		/* kernel thread argument */
-+		p->thread.cpu_context.r7 = stk_sz;
++	if (user_mode(regs)) {
++		/* user mode */
++		pte = va_present(mm, addr);
++		if (!pte && pte_read(pte))
++			ret = 1;
 +	} else {
-+		*childregs = *current_pt_regs();
-+		if (stack_start)
-+			childregs->sp = stack_start;
-+		/* child get zero as ret. */
-+		childregs->uregs[0] = 0;
-+		childregs->osp = 0;
-+		if (clone_flags & CLONE_SETTLS)
-+			childregs->uregs[25] = childregs->uregs[3];
++		/* superuser mode is always readable, so we can only
++		 * check it is present or not*/
++		return (! !va_kernel_present(addr));
 +	}
-+	/* cpu context switching  */
-+	p->thread.cpu_context.pc = (unsigned long)ret_from_fork;
-+	p->thread.cpu_context.sp = (unsigned long)childregs;
++	return ret;
++}
 +
-+#ifdef CONFIG_HWZOL
-+	childregs->lb = 0;
-+	childregs->le = 0;
-+	childregs->lc = 0;
-+#endif
++int va_writable(struct pt_regs *regs, unsigned long addr)
++{
++	struct mm_struct *mm = current->mm;
++	pte_t pte;
++	int ret = 0;
 +
-+	return 0;
++	if (user_mode(regs)) {
++		/* user mode */
++		pte = va_present(mm, addr);
++		if (!pte && pte_write(pte))
++			ret = 1;
++	} else {
++		/* superuser mode */
++		pte = va_kernel_present(addr);
++		if (!pte && pte_kernel_write(pte))
++			ret = 1;
++	}
++	return ret;
 +}
 +
 +/*
-+ * fill in the fpe structure for a core dump...
++ * All
 + */
-+int dump_fpu(struct pt_regs *regs, elf_fpregset_t * fpu)
++void cpu_icache_inval_all(void)
 +{
-+	int fpvalid = 0;
-+	return fpvalid;
++	unsigned long end, line_size;
++
++	line_size = L1_cache_info[ICACHE].line_size;
++	end =
++	    line_size * L1_cache_info[ICACHE].ways * L1_cache_info[ICACHE].sets;
++
++	do {
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1I_IX_INVAL"::"r" (end));
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1I_IX_INVAL"::"r" (end));
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1I_IX_INVAL"::"r" (end));
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1I_IX_INVAL"::"r" (end));
++	} while (end > 0);
++	__nds32__isb();
 +}
 +
-+EXPORT_SYMBOL(dump_fpu);
-+
-+unsigned long get_wchan(struct task_struct *p)
++void cpu_dcache_inval_all(void)
 +{
-+	unsigned long fp, lr;
-+	unsigned long stack_start, stack_end;
-+	int count = 0;
++	__nds32__cctl_l1d_invalall();
++}
 +
-+	if (!p || p == current || p->state == TASK_RUNNING)
-+		return 0;
++#ifdef CONFIG_CACHE_L2
++void dcache_wb_all_level(void)
++{
++	unsigned long flags, cmd;
++	local_irq_save(flags);
++	__nds32__cctl_l1d_wball_alvl();
++	/* Section 1: Ensure the section 2 & 3 program code execution after */
++	__nds32__cctlidx_read(NDS32_CCTL_L1D_IX_RWD,0);
 +
-+	if (IS_ENABLED(CONFIG_FRAME_POINTER)) {
-+		stack_start = (unsigned long)end_of_stack(p);
-+		stack_end = (unsigned long)task_stack_page(p) + THREAD_SIZE;
++	/* Section 2: Confirm the writeback all level is done in CPU and L2C */
++	cmd = CCTL_CMD_L2_SYNC;
++	L2_CMD_RDY();
++	L2C_W_REG(L2_CCTL_CMD_OFF, cmd);
++	L2_CMD_RDY();
 +
-+		fp = thread_saved_fp(p);
-+		do {
-+			if (fp < stack_start || fp > stack_end)
-+				return 0;
-+			lr = ((unsigned long *)fp)[0];
-+			if (!in_sched_functions(lr))
-+				return lr;
-+			fp = *(unsigned long *)(fp + 4);
-+		} while (count++ < 16);
++	/* Section 3: Writeback whole L2 cache */
++	cmd = CCTL_ALL_CMD | CCTL_CMD_L2_IX_WB;
++	L2_CMD_RDY();
++	L2C_W_REG(L2_CCTL_CMD_OFF, cmd);
++	L2_CMD_RDY();
++	__nds32__msync_all();
++	local_irq_restore(flags);
++}
++EXPORT_SYMBOL(dcache_wb_all_level);
++#endif
++
++void cpu_dcache_wb_all(void)
++{
++	__nds32__cctl_l1d_wball_one_lvl();
++	__nds32__cctlidx_read(NDS32_CCTL_L1D_IX_RWD,0);
++}
++
++void cpu_dcache_wbinval_all(void)
++{
++#ifndef CONFIG_CPU_DCACHE_WRITETHROUGH
++	unsigned long flags;
++	local_irq_save(flags);
++#endif
++	cpu_dcache_wb_all();
++	cpu_dcache_inval_all();
++#ifndef CONFIG_CPU_DCACHE_WRITETHROUGH
++	local_irq_restore(flags);
++#endif
++}
++
++/*
++ * Page
++ */
++void cpu_icache_inval_page(unsigned long start)
++{
++	unsigned long line_size, end;
++
++	line_size = L1_cache_info[ICACHE].line_size;
++	end = start + PAGE_SIZE;
++
++	do {
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1I_VA_INVAL"::"r" (end));
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1I_VA_INVAL"::"r" (end));
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1I_VA_INVAL"::"r" (end));
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1I_VA_INVAL"::"r" (end));
++	} while (end != start);
++	__nds32__isb();
++}
++
++void cpu_dcache_inval_page(unsigned long start)
++{
++	unsigned long line_size, end;
++
++	line_size = L1_cache_info[DCACHE].line_size;
++	end = start + PAGE_SIZE;
++
++	do {
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_INVAL"::"r" (end));
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_INVAL"::"r" (end));
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_INVAL"::"r" (end));
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_INVAL"::"r" (end));
++	} while (end != start);
++}
++
++void cpu_dcache_wb_page(unsigned long start)
++{
++#ifndef CONFIG_CPU_DCACHE_WRITETHROUGH
++	unsigned long line_size, end;
++
++	line_size = L1_cache_info[DCACHE].line_size;
++	end = start + PAGE_SIZE;
++
++	do {
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_WB"::"r" (end));
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_WB"::"r" (end));
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_WB"::"r" (end));
++		end -= line_size;
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_WB"::"r" (end));
++	} while (end != start);
++	__nds32__cctlidx_read(NDS32_CCTL_L1D_IX_RWD,0);
++#endif
++}
++
++void cpu_dcache_wbinval_page(unsigned long start)
++{
++	unsigned long line_size, end;
++
++	line_size = L1_cache_info[DCACHE].line_size;
++	end = start + PAGE_SIZE;
++
++	do {
++		end -= line_size;
++#ifndef CONFIG_CPU_DCACHE_WRITETHROUGH
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_WB"::"r" (end));
++#endif
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_INVAL"::"r" (end));
++		end -= line_size;
++#ifndef CONFIG_CPU_DCACHE_WRITETHROUGH
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_WB"::"r" (end));
++#endif
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_INVAL"::"r" (end));
++		end -= line_size;
++#ifndef CONFIG_CPU_DCACHE_WRITETHROUGH
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_WB"::"r" (end));
++#endif
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_INVAL"::"r" (end));
++		end -= line_size;
++#ifndef CONFIG_CPU_DCACHE_WRITETHROUGH
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_WB"::"r" (end));
++#endif
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_INVAL"::"r" (end));
++	} while (end != start);
++	__nds32__cctlidx_read(NDS32_CCTL_L1D_IX_RWD,0);
++}
++
++void cpu_cache_wbinval_page(unsigned long page, int flushi)
++{
++	cpu_dcache_wbinval_page(page);
++	if (flushi)
++		cpu_icache_inval_page(page);
++}
++
++/*
++ * Range
++ */
++void cpu_icache_inval_range(unsigned long start, unsigned long end)
++{
++	unsigned long line_size;
++
++	line_size = L1_cache_info[ICACHE].line_size;
++
++	while (end > start) {
++		__asm__ volatile ("\n\tcctl %0, L1I_VA_INVAL"::"r" (start));
++		start += line_size;
 +	}
-+	return 0;
++	__nds32__isb();
 +}
 +
-+EXPORT_SYMBOL(get_wchan);
++void cpu_dcache_inval_range(unsigned long start, unsigned long end)
++{
++	unsigned long line_size;
++
++	line_size = L1_cache_info[DCACHE].line_size;
++
++	while (end > start) {
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_INVAL"::"r" (start));
++		start += line_size;
++	}
++}
++
++void cpu_dcache_wb_range(unsigned long start, unsigned long end)
++{
++#ifndef CONFIG_CPU_DCACHE_WRITETHROUGH
++	unsigned long line_size;
++
++	line_size = L1_cache_info[DCACHE].line_size;
++
++	while (end > start) {
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_WB"::"r" (start));
++		start += line_size;
++	}
++	__nds32__cctlidx_read(NDS32_CCTL_L1D_IX_RWD,0);
++#endif
++}
++
++void cpu_dcache_wbinval_range(unsigned long start, unsigned long end)
++{
++	unsigned long line_size;
++
++	line_size = L1_cache_info[DCACHE].line_size;
++
++	while (end > start) {
++#ifndef CONFIG_CPU_DCACHE_WRITETHROUGH
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_WB"::"r" (start));
++#endif
++		__asm__ volatile ("\n\tcctl %0, L1D_VA_INVAL"::"r" (start));
++		start += line_size;
++	}
++	__nds32__cctlidx_read(NDS32_CCTL_L1D_IX_RWD,0);
++}
++
++void cpu_cache_wbinval_range(unsigned long start, unsigned long end, int flushi)
++{
++	unsigned long line_size, align_start, align_end;
++
++	line_size = L1_cache_info[DCACHE].line_size;
++	align_start = start & ~(line_size - 1);
++	align_end = (end + line_size - 1) & ~(line_size - 1);
++	cpu_dcache_wbinval_range(align_start, align_end);
++
++	if (flushi) {
++		line_size = L1_cache_info[ICACHE].line_size;
++		align_start = start & ~(line_size - 1);
++		align_end = (end + line_size - 1) & ~(line_size - 1);
++		cpu_icache_inval_range(align_start, align_end);
++	}
++}
++
++void cpu_cache_wbinval_range_check(struct vm_area_struct *vma,
++				   unsigned long start, unsigned long end,
++				   bool flushi, bool wbd)
++{
++	unsigned long line_size, t_start, t_end;
++
++	if (!flushi && !wbd)
++		return;
++	line_size = L1_cache_info[DCACHE].line_size;
++	start = start & ~(line_size - 1);
++	end = (end + line_size - 1) & ~(line_size - 1);
++
++	if ((end - start) > (8 * PAGE_SIZE)) {
++		if (wbd)
++			cpu_dcache_wbinval_all();
++		if (flushi)
++			cpu_icache_inval_all();
++		return;
++	}
++
++	t_start = (start + PAGE_SIZE) & PAGE_MASK;
++	t_end = ((end - 1) & PAGE_MASK);
++
++	if ((start & PAGE_MASK) == t_end) {
++		if (va_present(vma->vm_mm, start)) {
++			if (wbd)
++				cpu_dcache_wbinval_range(start, end);
++			if (flushi)
++				cpu_icache_inval_range(start, end);
++		}
++		return;
++	}
++
++	if (va_present(vma->vm_mm, start)) {
++		if (wbd)
++			cpu_dcache_wbinval_range(start, t_start);
++		if (flushi)
++			cpu_icache_inval_range(start, t_start);
++	}
++
++	if (va_present(vma->vm_mm, end - 1)) {
++		if (wbd)
++			cpu_dcache_wbinval_range(t_end, end);
++		if (flushi)
++			cpu_icache_inval_range(t_end, end);
++	}
++
++	while (t_start < t_end) {
++		if (va_present(vma->vm_mm, t_start)) {
++			if (wbd)
++				cpu_dcache_wbinval_page(t_start);
++			if (flushi)
++				cpu_icache_inval_page(t_start);
++		}
++		t_start += PAGE_SIZE;
++	}
++}
++
++#ifdef CONFIG_CACHE_L2
++static inline void cpu_l2cache_op(unsigned long start, unsigned long end, unsigned long op)
++{
++	if (atl2c_base) {
++		unsigned long p_start = __pa(start);
++		unsigned long p_end = __pa(end);
++		unsigned long cmd;
++		unsigned long line_size;
++		/* TODO Can Use PAGE Mode to optimize if range large than PAGE_SIZE */
++		line_size = L2_CACHE_LINE_SIZE();
++		p_start = p_start & (~(line_size - 1));
++		p_end = (p_end + line_size - 1) & (~(line_size - 1));
++		cmd =
++		    (p_start & ~(line_size - 1)) | op |
++		    CCTL_SINGLE_CMD;
++		do {
++			L2_CMD_RDY();
++			L2C_W_REG(L2_CCTL_CMD_OFF, cmd);
++			cmd += line_size;
++			p_start += line_size;
++		} while (p_end > p_start);
++		cmd = CCTL_CMD_L2_SYNC;
++		L2_CMD_RDY();
++		L2C_W_REG(L2_CCTL_CMD_OFF, cmd);
++		L2_CMD_RDY();
++	}
++}
++#else
++#define cpu_l2cache_op(start,end,op) do { } while (0)
++#endif
++/*
++ * DMA
++ */
++void cpu_dma_wb_range(unsigned long start, unsigned long end)
++{
++	unsigned long line_size;
++	unsigned long flags;
++	line_size = L1_cache_info[DCACHE].line_size;
++	start = start & (~(line_size - 1));
++	end = (end + line_size - 1) & (~(line_size - 1));
++	if (unlikely(start == end))
++		return;
++
++	local_irq_save(flags);
++	cpu_dcache_wb_range(start, end);
++	cpu_l2cache_op(start, end, CCTL_CMD_L2_PA_WB);
++	__nds32__msync_all();
++	local_irq_restore(flags);
++}
++
++void cpu_dma_inval_range(unsigned long start, unsigned long end)
++{
++	unsigned long line_size;
++	unsigned long old_start = start;
++	unsigned long old_end = end;
++	unsigned long flags;
++	line_size = L1_cache_info[DCACHE].line_size;
++	start = start & (~(line_size - 1));
++	end = (end + line_size - 1) & (~(line_size - 1));
++	if (unlikely(start == end))
++		return;
++	local_irq_save(flags);
++	if (start != old_start) {
++		cpu_dcache_wbinval_range(start, start + line_size);
++		cpu_l2cache_op(start, start + line_size, CCTL_CMD_L2_PA_WBINVAL);
++	}
++	if (end != old_end) {
++		cpu_dcache_wbinval_range(end - line_size, end);
++		cpu_l2cache_op(end - line_size, end, CCTL_CMD_L2_PA_WBINVAL);
++	}
++	cpu_dcache_inval_range(start, end);
++	cpu_l2cache_op(start, end, CCTL_CMD_L2_PA_INVAL);
++	__nds32__msync_all();
++	local_irq_restore(flags);
++
++}
++
++void cpu_dma_wbinval_range(unsigned long start, unsigned long end)
++{
++	unsigned long line_size;
++	unsigned long flags;
++	line_size = L1_cache_info[DCACHE].line_size;
++	start = start & (~(line_size - 1));
++	end = (end + line_size - 1) & (~(line_size - 1));
++	if (unlikely(start == end))
++		return;
++
++	local_irq_save(flags);
++	cpu_dcache_wbinval_range(start, end);
++	cpu_l2cache_op(start, end, CCTL_CMD_L2_PA_WBINVAL);
++	__nds32__msync_all();
++	local_irq_restore(flags);
++}
++
++void cpu_proc_init(void)
++{
++}
++
++void cpu_proc_fin(void)
++{
++}
++
++void cpu_do_idle(void)
++{
++	__nds32__standby_no_wake_grant();
++}
++
++void cpu_reset(unsigned long reset)
++{
++	u32 tmp;
++	GIE_DISABLE();
++	tmp = __nds32__mfsr(NDS32_SR_CACHE_CTL);
++	tmp &= ~(CACHE_CTL_mskIC_EN | CACHE_CTL_mskDC_EN);
++	__nds32__mtsr_isb(tmp, NDS32_SR_CACHE_CTL);
++	cpu_dcache_wbinval_all();
++	cpu_icache_inval_all();
++
++	__asm__ __volatile__("jr.toff %0\n\t"::"r"(reset));
++}
++
++void cpu_switch_mm(struct mm_struct *mm)
++{
++	unsigned long cid;
++	cid = __nds32__mfsr(NDS32_SR_TLB_MISC);
++	cid = (cid & ~TLB_MISC_mskCID) | mm->context.id;
++	__nds32__mtsr_dsb(cid, NDS32_SR_TLB_MISC);
++	__nds32__mtsr_isb(__pa(mm->pgd), NDS32_SR_L1_PPTB);
++}
+diff --git a/arch/nds32/mm/tlb.c b/arch/nds32/mm/tlb.c
+new file mode 100644
+index 000000000000..dd41f5e0712f
+--- /dev/null
++++ b/arch/nds32/mm/tlb.c
+@@ -0,0 +1,50 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#include <linux/spinlock_types.h>
++#include <linux/mm.h>
++#include <linux/sched.h>
++#include <asm/nds32.h>
++#include <nds32_intrinsic.h>
++
++unsigned int cpu_last_cid = { TLB_MISC_mskCID + (2 << TLB_MISC_offCID) };
++
++DEFINE_SPINLOCK(cid_lock);
++
++void local_flush_tlb_range(struct vm_area_struct *vma,
++			   unsigned long start, unsigned long end)
++{
++	unsigned long flags, ocid, ncid;
++
++	if ((end - start) > 0x400000) {
++		__nds32__tlbop_flua();
++		__nds32__isb();
++		return;
++	}
++
++	spin_lock_irqsave(&cid_lock, flags);
++	ocid = __nds32__mfsr(NDS32_SR_TLB_MISC);
++	ncid = (ocid & ~TLB_MISC_mskCID) | vma->vm_mm->context.id;
++	__nds32__mtsr_dsb(ncid, NDS32_SR_TLB_MISC);
++	while (start < end) {
++		__nds32__tlbop_inv(start);
++		__nds32__isb();
++		start += PAGE_SIZE;
++	}
++	__nds32__mtsr_dsb(ocid, NDS32_SR_TLB_MISC);
++	spin_unlock_irqrestore(&cid_lock, flags);
++}
++
++void local_flush_tlb_page(struct vm_area_struct *vma, unsigned long addr)
++{
++	unsigned long flags, ocid, ncid;
++
++	spin_lock_irqsave(&cid_lock, flags);
++	ocid = __nds32__mfsr(NDS32_SR_TLB_MISC);
++	ncid = (ocid & ~TLB_MISC_mskCID) | vma->vm_mm->context.id;
++	__nds32__mtsr_dsb(ncid, NDS32_SR_TLB_MISC);
++	__nds32__tlbop_inv(addr);
++	__nds32__isb();
++	__nds32__mtsr_dsb(ocid, NDS32_SR_TLB_MISC);
++	spin_unlock_irqrestore(&cid_lock, flags);
++}
 -- 
 2.16.1
