@@ -1,119 +1,114 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3264212-1518626232-2-4403896414663813601
+X-Cyrus-Session-Id: sloti22d1t05-3813382-1518515761-2-13785130760184361498
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518626231; b=lFoatGKNzXoA740Qi0tcVoH2kkBs1pOgcn32/pEIG7ex+j2
-    DRd4SWwD7r7uI11ek0sdRYgvEvxdS9SEhdRIfO+aogWgSzC2lq6uACCq3OaPZg6X
-    Nqw6lTiU0TBHYZfiZvzW3UZXHYy0DocOAvG0MiUKfby1/c7e+qBh0U8CtGRJSdbB
-    1Bf2jF8yekovUcn+LW+h5yKhRj7sm8cvEVS9UoPTvclsEYBj37eCZjYvEMVE46c6
-    9iwmd6AfPGSUp+pADtkHqJXmjYRwGNmaLIUwJXRQhb4wdJfccwtQUr2CLDdUHH8c
-    grLdLH92iioui2hTviOA/5dacqFFXB9HWfOSNsQ==
+    t=1518515760; b=R9pWdPtd9hq33/XthcCg5Ubrhs6Tis2tGgaqp2UF/pYReHd
+    kVXnxSFC0a35KXWhAoYiwT2PriudHVsQLcMSkvsJWwDVdLK4+KhEPdYmPErr1XIw
+    SzhRPjV1Y/I4Vdnn1qZ7P/jzMLkXE5ZGluqBSxzaxTqCqvpeZiPfZdLplanu2Brx
+    vF/CCj1Q8FEcdFoWNae7TbQSmhp73LdAPhDPEMc/ASfeplPdUPX7U27ZynuFSFag
+    P4yCvGQJFxS1DmhqRr885uguQ6nUbz42rhgHoq6CpQRyg94/ZijVVaIvjSDlx9Qm
+    K61tWWq7HADIVWhxJwH2cFp87Qhpb0CbxSlan6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1518626231; bh=OWwmtnQncPckM/4+r0KSxcxOYogRMxwi11WFDr
-    n3oM4=; b=FUlsinDg3JcLd1jnfHumhaM2GcbDcsFyYr9N8BQ9mA3OrWPxgfYkqD
-    pKIjW8Y8P1tWfESA2YGdo14+l0W0IR0CdJWotO3OiIKP/YRI/O69BdfGNedOPnZe
-    68SrNAE5K5l6+6RbRPwL92hhwZenOoRBqHc+QV+BPG+DdkpOxMEnHKRfl45adV1U
-    NivLrtyHTcJxjJwUczlOyxNyz3cIdKHxTJ/T2J6zMede+G8dnSs2hX/ugyAnfvbH
-    CsIU1kyUvRxa1YzEOcOnt6vDDgcEu4LuFalKqK2hsaX2i5f7PLwhF57eVa1otLXC
-    TQh0Tl95KuVrzOkFQlGawsrVHoMS6K6w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1518515760;
+    bh=QxndUKjCmI5H3kgMr8KurgMuK5T1w4GACfQedF6AvIc=; b=CooioqRLM5YY
+    8Eon6dAu/o+YVD8sXS69a7iZdyvJIiVH9xMxAhzh8LPR5Q0Ky1i/nbns68XPvo42
+    ZirqJYsNeo564FFooiYzdO85jkL4yWeL241P+YoLoJXT1MVOZesugFySPD0hy7Gz
+    bdo6434Dg0q3Rl7M+V2sKXp8W3Q7dQSuXsOCZd8z8bJ54pliE0pftcBrGzeYVMlA
+    rLVUxWg7aDUDV+57iYO2I9zoSkPVJYW1orR4GnD5oZpcbvQjZWOE2JKjzSAj+LgX
+    eUvv/IoG5h1OaiEvdJmHNhX9I5b3/F+vL6AFZc08DVqeu5ElofKc6HnI80Yp+VmS
+    qcfuo+jXSg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
+    x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
+    x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032563AbeBNQhJ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Feb 2018 11:37:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42614 "EHLO mail.kernel.org"
+        id S934418AbeBMJos (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Feb 2018 04:44:48 -0500
+Received: from mga03.intel.com ([134.134.136.65]:27116 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032526AbeBNQhI (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:37:08 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 850A921726
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-X-Google-Smtp-Source: AH8x227/ajtsrT24P7m0i29IzDKYly9JgkTtBpuhuQ6CnoepJ/eH9OpVuNyt5l5hJ6FsJo0fFZi38NwvxURE7d70u9s=
-MIME-Version: 1.0
-In-Reply-To: <1518513893-4719-12-git-send-email-hao.wu@intel.com>
-References: <1518513893-4719-1-git-send-email-hao.wu@intel.com> <1518513893-4719-12-git-send-email-hao.wu@intel.com>
-From: Alan Tull <atull@kernel.org>
-Date: Wed, 14 Feb 2018 10:36:26 -0600
-X-Gmail-Original-Message-ID: <CANk1AXTDC2YROkdFyhnnAn28nwrv7UHt5_saFGDn4-8VRqS7Sw@mail.gmail.com>
-Message-ID: <CANk1AXTDC2YROkdFyhnnAn28nwrv7UHt5_saFGDn4-8VRqS7Sw@mail.gmail.com>
-Subject: Re: [PATCH v4 11/24] fpga: dfl: fme: add header sub feature support
-To: Wu Hao <hao.wu@intel.com>
-Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, "Kang, Luwei" <luwei.kang@intel.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
-        Tim Whisonant <tim.whisonant@intel.com>,
-        Enno Luebbers <enno.luebbers@intel.com>,
-        Shiva Rao <shiva.rao@intel.com>,
-        Christopher Rauer <christopher.rauer@intel.com>,
-        Xiao Guangrong <guangrong.xiao@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S934468AbeBMJfT (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Tue, 13 Feb 2018 04:35:19 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,507,1511856000";
+   d="scan'208";a="26889487"
+From: Wu Hao <hao.wu@intel.com>
+To: atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: linux-api@vger.kernel.org, luwei.kang@intel.com,
+        yi.z.zhang@intel.com, hao.wu@intel.com
+Subject: [PATCH v4 02/24] fpga: mgr: add region_id to fpga_image_info
+Date: Tue, 13 Feb 2018 17:24:31 +0800
+Message-Id: <1518513893-4719-3-git-send-email-hao.wu@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518513893-4719-1-git-send-email-hao.wu@intel.com>
+References: <1518513893-4719-1-git-send-email-hao.wu@intel.com>
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 13, 2018 at 3:24 AM, Wu Hao <hao.wu@intel.com> wrote:
+This patch adds region_id to fpga_image_info data structure, it
+allows driver to pass region id information to fpga-mgr via
+fpga_image_info for fpga reconfiguration function.
 
-Hi Hao,
-
-Looks good.
-
-> From: Kang Luwei <luwei.kang@intel.com>
->
-> The Header Register set is always present for FPGA Management Engine (FME),
-> this patch implements init and uinit function for header sub feature and
-> introduce several read-only sysfs interfaces for the capability and status.
->
-> Sysfs interfaces:
-> * /sys/class/fpga_region/<regionX>/<dfl-fme.x>/ports_num
->   Read-only. Number of ports implemented
->
-> * /sys/class/fpga_region/<regionX>/<dfl-fme.x>/bitstream_id
->   Read-only. Blue Bitstream (static FPGA region) identifier number. It contains
->   the detailed version and other information of this static FPGA region.
->
-> * /sys/class/fpga_region/<regionX>/<dfl-fme.x>/bitstream_metadata
->   Read-only. Blue Bitstream (static FPGA region) meta data. It contains the
->   synthesis date, seed and other information of this static FPGA region.
->
-> Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
-> Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
-> Signed-off-by: Shiva Rao <shiva.rao@intel.com>
-> Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
-> Signed-off-by: Kang Luwei <luwei.kang@intel.com>
-> Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
-> Signed-off-by: Wu Hao <hao.wu@intel.com>
+Signed-off-by: Wu Hao <hao.wu@intel.com>
+Acked-by: Moritz Fischer <mdf@kernel.org>
 Acked-by: Alan Tull <atull@kernel.org>
+---
+v3: add one line comment for region_id
+v4: add Acked-by from Moritz and Alan.
+---
+ include/linux/fpga/fpga-mgr.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks,
-Alan
+diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
+index 1ad4822..6e98b66 100644
+--- a/include/linux/fpga/fpga-mgr.h
++++ b/include/linux/fpga/fpga-mgr.h
+@@ -88,6 +88,7 @@ enum fpga_mgr_states {
+  * @sgt: scatter/gather table containing FPGA image
+  * @buf: contiguous buffer containing FPGA image
+  * @count: size of buf
++ * @region_id: id of target region
+  * @dev: device that owns this
+  * @overlay: Device Tree overlay
+  */
+@@ -100,6 +101,7 @@ struct fpga_image_info {
+ 	struct sg_table *sgt;
+ 	const char *buf;
+ 	size_t count;
++	int region_id;
+ 	struct device *dev;
+ #ifdef CONFIG_OF
+ 	struct device_node *overlay;
+-- 
+2.7.4
+
