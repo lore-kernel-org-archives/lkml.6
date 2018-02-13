@@ -1,137 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935301AbeBMNcO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:32:14 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:53793 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935222AbeBMNcN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:32:13 -0500
-Date: Tue, 13 Feb 2018 14:32:01 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Philipp Rossak <embed3d@gmail.com>
-Cc: wens@csie.org, a.zummo@towertech.it,
-        alexandre.belloni@free-electrons.com, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, linux-rtc@vger.kernel.org
-Subject: Re: [linux-sunxi] [PATCH v2] rtc: ac100: Fix ac100 determine rate bug
-Message-ID: <20180213133201.kwq4aatpts7nerc2@flea.lan>
-References: <20180213121414.7000-1-embed3d@gmail.com>
+        id S935352AbeBMNcc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:32:32 -0500
+Received: from mail-ve1eur01on0052.outbound.protection.outlook.com ([104.47.1.52]:35760
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935174AbeBMNcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 08:32:31 -0500
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Stefan Agner <stefan@agner.ch>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+CC: "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] MAINTAINERS: add Freescale pin controllers
+Thread-Topic: [PATCH v2] MAINTAINERS: add Freescale pin controllers
+Thread-Index: AQHTpBMKNXeeThGruUuuMxSmHqfPqaOiVVdQ
+Date: Tue, 13 Feb 2018 13:32:26 +0000
+Message-ID: <AM3PR04MB306CC7D8349BD66C47BDD0180F60@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <20180212150549.8622-1-stefan@agner.ch>
+In-Reply-To: <20180212150549.8622-1-stefan@agner.ch>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com;
+x-originating-ip: [185.114.77.231]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM3PR04MB0822;7:HSiBc8pscqHvOZ3Z0mbtRLv9HNmv8IpOkyxkCkNDeOhXmLe83CPSSCwbB859ZoJ9AVhQCl4zC3s15+BHJKmltvlzrP+R0n9JJnZNDBjcgfx4cKJSD3ih/ncjT6PvC4UX8Um2DbQol8SF0FF+z6eX6fF1LkwtEzhagXqbVPtUwe424VL/BNyVFxbL4s94OjTK6AfWSbLsTSbpSp4XJwHNVgRnUTMY5Cl+VfNOpgX9lDR+R+DSukcKBgFlSHZY43SI
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(39380400002)(39860400002)(376002)(346002)(396003)(13464003)(189003)(199004)(229853002)(54906003)(81166006)(25786009)(6506007)(53546011)(2906002)(55016002)(3846002)(102836004)(99286004)(2950100002)(6116002)(478600001)(8936002)(76176011)(106356001)(8676002)(186003)(81156014)(26005)(316002)(110136005)(33656002)(4326008)(3660700001)(5660300001)(105586002)(66066001)(2201001)(6436002)(97736004)(575784001)(53936002)(86362001)(74316002)(6246003)(5250100002)(9686003)(14454004)(7736002)(2501003)(305945005)(2900100001)(7696005)(68736007)(3280700002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB0822;H:AM3PR04MB306.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 0b082ba5-b931-4b0c-946e-08d572e63945
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:AM3PR04MB0822;
+x-ms-traffictypediagnostic: AM3PR04MB0822:
+x-microsoft-antispam-prvs: <AM3PR04MB0822C175EC23164B0BABB6B680F60@AM3PR04MB0822.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158)(258649278758335)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231101)(2400082)(944501161)(6055026)(6041288)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:AM3PR04MB0822;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB0822;
+x-forefront-prvs: 0582641F53
+x-microsoft-antispam-message-info: UzzFt6biUHuuaHPkg7PW0qLld0X8KLBLy8d75Nyemn5GsODafMUYqQzQAV4EiLPD2aReahmgzOy4x1qgKTIPNw==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2wq7o7ftvpg2t3d5"
-Content-Disposition: inline
-In-Reply-To: <20180213121414.7000-1-embed3d@gmail.com>
-User-Agent: NeoMutt/20171215
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b082ba5-b931-4b0c-946e-08d572e63945
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2018 13:32:27.0449
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB0822
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1DDWjD4031038
 
+Hi Stefan,
 
---2wq7o7ftvpg2t3d5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> -----Original Message-----
+> From: Stefan Agner [mailto:stefan@agner.ch]
+> Sent: Monday, February 12, 2018 11:06 PM
+> To: linus.walleij@linaro.org; A.s. Dong <aisheng.dong@nxp.com>; Fabio
+> Estevam <fabio.estevam@nxp.com>; shawnguo@kernel.org;
+> kernel@pengutronix.de
+> Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+> Stefan Agner <stefan@agner.ch>
+> Subject: [PATCH v2] MAINTAINERS: add Freescale pin controllers
+> 
+> Add Dong Aisheng, Fabio Estevam, Shawn Guo and myself as maintainer and
+> the Pengutronix kernel team as reviewer.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
 
-On Tue, Feb 13, 2018 at 01:14:14PM +0100, Philipp Rossak wrote:
-> This patch fixes a bug, that prevents the Allwinner A83T and the A80
-> from a successful boot. You can find the shortend trace below:
+Thanks for sending this.
+Besides Joe's comments, I'm fine with it.
+So:
+Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Since when is it there?
+Regards
+Dong Aisheng
 
-> Unable to handle kernel NULL pointer dereference at virtual address
-> 00000000
-> pgd =3D (ptrval)
-> [00000000] *pgd=3D00000000
-> Internal error: Oops: 5 [#1] SMP ARM
-> Modules linked in:
-> CPU: 0 PID: 49 Comm: kworker/0:1 Not tainted 4.15.0-10190-gb89e32ccd1be #2
-> Hardware name: Allwinner sun8i Family
-> Workqueue: events deferred_probe_work_func
-> PC is at clk_hw_get_rate+0x0/0x34
-> LR is at ac100_clkout_determine_rate+0x48/0x19c
->=20
-> [ ... ]
->=20
-> (clk_hw_get_rate) from (ac100_clkout_determine_rate+0x48/0x19c)
-> (ac100_clkout_determine_rate) from  (clk_core_set_rate_nolock+0x3c/0x1a0)
-> (clk_core_set_rate_nolock) from (clk_set_rate+0x30/0x88)
-> (clk_set_rate) from (of_clk_set_defaults+0x200/0x364)
-> (of_clk_set_defaults) from (platform_drv_probe+0x18/0xb0)
->=20
-> To fix that bug, we first check if the return of the
-> clk_hw_get_parent_by_index is non zero. If it is zero we skip that
-> clock parent.
->=20
-> The BUG report could be found here: https://lkml.org/lkml/2018/2/10/198
->=20
-> Fixes: 04940631b8d2 ("rtc: ac100: Add clk output support")
-
-Should it be sent to stable?
-
-> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
 > ---
->=20
-> Changes in v2:
-> 	* add tag Fixes: ... to commit message
-> 	* add comment to if statement why we are doing this check
->=20
->  drivers/rtc/rtc-ac100.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
-> index 8ff9dc3fe5bf..ba73201d8cc1 100644
-> --- a/drivers/rtc/rtc-ac100.c
-> +++ b/drivers/rtc/rtc-ac100.c
-> @@ -183,7 +183,17 @@ static int ac100_clkout_determine_rate(struct clk_hw=
- *hw,
-> =20
->  	for (i =3D 0; i < num_parents; i++) {
->  		struct clk_hw *parent =3D clk_hw_get_parent_by_index(hw, i);
-> -		unsigned long tmp, prate =3D clk_hw_get_rate(parent);
-> +		unsigned long tmp, prate;
+>  MAINTAINERS | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 82ad0eabce4f..df60ca7c3355 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10768,6 +10768,17 @@ L:	linux-gpio@vger.kernel.org
+>  S:	Supported
+>  F:	drivers/pinctrl/pinctrl-at91-pio4.*
+> 
+> +PIN CONTROLLER - FREESCALE
+> +M:	Dong Aisheng <aisheng.dong@nxp.com>
+> +M:	Fabio Estevam <festevam@gmail.com>
+> +M:	Shawn Guo <shawnguo@kernel.org>
+> +M:	Stefan Agner <stefan@agner.ch>
+> +R:	Pengutronix Kernel Team <kernel@pengutronix.de>
+> +L:	linux-gpio@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/pinctrl/freescale/*
+> +F:	Documentation/devicetree/bindings/pinctrl/fsl,*
 > +
-> +		/*
-> +		 * We purposefully left open the possibility to use the clock
-> +		 * from the codec side but it is not implemented right now.
-> +		 * Thus we need to check if the parent exists.
-> +		 */
-> +		if (!parent)
-> +			continue;
-> +
-> +		prate =3D clk_hw_get_rate(parent);
-
-clk_hw_get_num_parents should return the exact number of parents,
-which is going to be 1 if you only have one parent, like all DTS seems
-to have.
-
-If not, then it should be explained in the comment and / or fixed
-properly.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
-
---2wq7o7ftvpg2t3d5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqC6NAACgkQ0rTAlCFN
-r3RoSBAAk4nxd4PISUCAekki9exnTstZGIPl4RX3Jf5v/01wUTtXhzzABiXQcu8d
-im3SJUjnWDAy7DsEHso/jJAjSOsdylc3ZGvj8NfN9QUogC0aZ/PjrZg3xz5hEfnM
-8sbklyElVvRR6iDHU+C8LQGpTDHviDPHaHkzHHOKQFUCXYucjYxyhaEL50Ih1XmQ
-/0BiAmo6cIvIB9oZg7LXNp9aYUlIqMzIE7YELiBCYqwVU6tXe4CKkzjMTTmhoPyf
-r/jMocvzAmtBIH1gKjrD88iCFxDK8bU9qyP/tUXCuEMOWC5pMUlNkU4E47cRYOgh
-UHPLJUyc3VGwr59HHE3sK1e3UIyokA60hvgZtT06o3+50pRUgAukf86vw9KCKSjU
-FXGL3VWGgAeN+rJmahu1dRlEKYjyO48Ppqtl3/sCuZa3uG3Cun4myhVtYF3f9lD9
-7IjDV7zglXPRy4V0WxSkqtFAa6jh7GVs8e6Dns3C4zFQI2x/JR9bmM5X9OYgsEcl
-HbxoFyaqABYdb3p9vS5uOJKTSH4KjhbGiCmvmFuppkMqosF9O0JGEozUXKMZwIEP
-uK8XVAteNWF4lq5HkKR62Kelx0cSinV65WYPvMFii0Rk5RXMiLtZ46KAk3n9zUS2
-jWGNt7vw2MZLlni+lpv6uJFlPb2qfCC6KqXVcSD0gTyAHmvWcVY=
-=rPDX
------END PGP SIGNATURE-----
-
---2wq7o7ftvpg2t3d5--
+>  PIN CONTROLLER - INTEL
+>  M:	Mika Westerberg <mika.westerberg@linux.intel.com>
+>  M:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> --
+> 2.16.1
