@@ -1,178 +1,228 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934829AbeBMLdq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 06:33:46 -0500
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:44247 "EHLO
-        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934410AbeBMLdk (ORCPT
+        id S934849AbeBMLee (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 06:34:34 -0500
+Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:52765 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934078AbeBMLeb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 06:33:40 -0500
-X-Google-Smtp-Source: AH8x225emc0EOl9fOUj6y2gnXRmx4/XCJ4RH2XL4GinMyCviudJctrM7XxXvA6xzDIKDo1v+9/cOkg==
-Date: Tue, 13 Feb 2018 12:33:24 +0100
-From: Ulf Magnusson <ulfalizer@gmail.com>
-To: Sander Eikelenboom <linux@eikelenboom.it>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Woody Suwalski <terraluna977@gmail.com>, srivasta@debian.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 4.16-rc1: regression bisected, Debian kernel package tool
- make-kpkg stalls indefinitely during kernel build due to commit "kconfig:
- remove check_stdin()"
-Message-ID: <20180213113324.gm6sv37g72gs3qrc@huvuddator>
-References: <b7f71558-0e57-cacb-280c-a9d3baa030b2@eikelenboom.it>
- <9d122a3c-b1fe-a9f8-17db-c38f42fdc4b1@gmail.com>
- <CAK7LNAQRZ6F92s5QotKHoapAG+9BqxaUqmGSeKJRYOuu5izauQ@mail.gmail.com>
- <27f3817b-0c92-5f92-e079-078a8b92eab4@eikelenboom.it>
+        Tue, 13 Feb 2018 06:34:31 -0500
+Subject: Re: [PATCH v2 04/15] MIPS: memblock: Discard bootmem initialization
+To: Serge Semin <fancer.lancer@gmail.com>, <ralf@linux-mips.org>,
+        <miodrag.dinic@mips.com>, <jhogan@kernel.org>, <goran.ferenc@mips.com>,
+        <david.daney@cavium.com>, <paul.gortmaker@windriver.com>,
+        <paul.burton@mips.com>, <alex.belits@cavium.com>,
+        <Steven.Hill@cavium.com>
+CC: <alexander.sverdlin@nokia.com>, <kumba@gentoo.org>,
+        <marcin.nowakowski@mips.com>, <James.hogan@mips.com>,
+        <Peter.Wotton@mips.com>, <Sergey.Semin@t-platforms.ru>,
+        <linux-mips@linux-mips.org>, <linux-kernel@vger.kernel.org>
+References: <20180117222312.14763-1-fancer.lancer@gmail.com>
+ <20180202035458.30456-1-fancer.lancer@gmail.com>
+ <20180202035458.30456-5-fancer.lancer@gmail.com>
+From: Matt Redfearn <matt.redfearn@mips.com>
+Message-ID: <8b96992e-1cac-7744-292b-b5b247b4eb52@mips.com>
+Date: Tue, 13 Feb 2018 11:28:23 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <27f3817b-0c92-5f92-e079-078a8b92eab4@eikelenboom.it>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180202035458.30456-5-fancer.lancer@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.150.130.83]
+X-BESS-ID: 1518521577-637137-26797-167879-13
+X-BESS-VER: 2018.1-r1801291959
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.189977
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 11:00:49AM +0100, Sander Eikelenboom wrote:
-> On 13/02/18 05:09, Masahiro Yamada wrote:
-> > 2018-02-13 12:00 GMT+09:00 Woody Suwalski <terraluna977@gmail.com>:
-> >> Sander Eikelenboom wrote:
-> >>>
-> >>> L.S.,
-> >>>
-> >>> The Debian kernel-package tool make-kpkg for easy building of upstream
-> >>> kernels on Debian fails with linux 4.16-rc1.
-> >>>
-> >>> The tool (perl script) while invoked with:
-> >>>      make-kpkg --initrd --append_to_version -20180212 kernel_image
-> >>>
-> >>> On a git tree with a .config from the previous kernel release, so new
-> >>> KConfig questions have to be asked on new or changed options.
-> >>>
-> >>> The script stalls indefinitely while it seems to be excuting:
-> >>>      exec make kpkg_version=13.018+nmu1 -f
-> >>> /usr/share/kernel-package/ruleset/minimal.mk debian
-> >>> APPEND_TO_VERSION=-t440s-20180212  INITRD=YES
-> >>>
-> >>> After using ctrl-c to break out it, i get:
-> >>>     ^CFailed to create a ./debian directory: No such file or directory at
-> >>> /usr/bin/make-kpkg line 970.
-> >>>
-> >>> Bisection turned up as culprit:
-> >>>      commit d2a04648a5dbc3d1d043b35257364f0197d4d868
-> >>>      kconfig: remove check_stdin()
-> >>>           Except silentoldconfig, valid_stdin is 1, so check_stdin() is
-> >>> no-op.
-> >>>           oldconfig and silentoldconfig work almost in the same way except
-> >>> that
-> >>>      the latter generates additional files under include/.  Both ask users
-> >>>      for input for new symbols.
-> >>>           I do not know why only silentoldconfig requires stdio be tty.
-> >>>             $ rm -f .config; touch .config
-> >>>        $ yes "" | make oldconfig > stdout
-> >>>        $ rm -f .config; touch .config
-> >>>        $ yes "" | make silentoldconfig > stdout
-> >>>        make[1]: *** [silentoldconfig] Error 1
-> >>>        make: *** [silentoldconfig] Error 2
-> >>>        $ tail -n 4 stdout
-> >>>        Console input/output is redirected. Run 'make oldconfig' to update
-> >>> configuration.
-> >>>             scripts/kconfig/Makefile:40: recipe for target
-> >>> 'silentoldconfig' failed
-> >>>        Makefile:507: recipe for target 'silentoldconfig' failed
-> >>>           Redirection is useful, for example, for testing where we want to
-> >>> give
-> >>>      particular key inputs from a test file, then check the result.
-> >>>           Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> >>>      Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
-> >>>
-> >>> Reverting this specific commit makes make-kpkg work again as usual.
-> >>>
-> >>> Version of the kernel-package used:
-> >>> ii  kernel-package
-> >>> 13.018+nmu1
-> >>>
-> >>>
-> >>> I also cc'ed the Debian developer who maintains the kernel-package
-> >>> package: Manoj Srivastava
-> >>>
-> >>> --
-> >>> Sander
-> >>>
-> >> I have noticed today the same - the kernel-build blockage was in (as I
-> >> recall)
-> >> srcipts/kconfig/conf -s --silentoldconfig Kbuild
-> >>
-> >> I have bypassed it by regenerating the .config "by hand"...
-> > 
-> > 
-> > silentoldconfig asks you values for new symbols.
-> > So, you must answer questions to proceed.
+Hi Serge,
+
+
+On 02/02/18 03:54, Serge Semin wrote:
+> Since memblock is going to be used for the early memory allocation
+> lets discard the bootmem node setup and all the related free-space
+> search code. Low/high PFN extremums should be still calculated
+> since they are needed on the paging_init stage. Since the current
+> code is already doing memblock regions initialization the only thing
+> left is to set the upper allocation limit to be up to the max low
+> memory PFN, so the memblock API can be fully used from now.
+
+Please could we move this patch to later in the series, perhaps before 
+the patches to remove bootmem initialisation from Loongson3 / IP27? This 
+would vastly improve the bisectability of the series.
+
+Either that, or less ideally, perhaps merge this patch with "MIPS: 
+memblock: Add reserved memory regions to memblock" since those 2 
+combined should be a more atomic change so more bisectable, if slightly 
+harder to review.
+
 > 
-> I know, but it stalls before asking the questions.
->  
-> > 
-> > How does 'make-kpkg' handle silentoldconfig?
-> > 
-> > Re-direct stdio, then make it forcibly fail?
+> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+> ---
+>   arch/mips/kernel/setup.c | 86 +++++++-----------------------------------------
+>   1 file changed, 11 insertions(+), 75 deletions(-)
 > 
-> I don't know, it is a bunch of perl and shell scripts that gets invoked, not the most easy to comprehend if you are not familiar with them. I'm just a user of the tool.
+> diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+> index a015cee353be..b5fcacf71b3f 100644
+> --- a/arch/mips/kernel/setup.c
+> +++ b/arch/mips/kernel/setup.c
+> @@ -367,29 +367,15 @@ static void __init bootmem_init(void)
+>   
+>   #else  /* !CONFIG_SGI_IP27 */
+>   
+> -static unsigned long __init bootmap_bytes(unsigned long pages)
+> -{
+> -	unsigned long bytes = DIV_ROUND_UP(pages, 8);
+> -
+> -	return ALIGN(bytes, sizeof(long));
+> -}
+> -
+>   static void __init bootmem_init(void)
+>   {
+> -	unsigned long reserved_end;
+> -	unsigned long mapstart = ~0UL;
+> -	unsigned long bootmap_size;
+> -	bool bootmap_valid = false;
+>   	int i;
+>   
+>   	/*
+> -	 * Sanity check any INITRD first. We don't take it into account
+> -	 * for bootmem setup initially, rely on the end-of-kernel-code
+> -	 * as our memory range starting point. Once bootmem is inited we
+> +	 * Sanity check any INITRD first. Once memblock is inited we
+>   	 * will reserve the area used for the initrd.
+>   	 */
+>   	init_initrd();
+> -	reserved_end = (unsigned long) PFN_UP(__pa_symbol(&_end));
+>   
+>   	/*
+>   	 * max_low_pfn is not a number of pages. The number of pages
+> @@ -428,16 +414,6 @@ static void __init bootmem_init(void)
+>   			max_low_pfn = end;
+>   		if (start < min_low_pfn)
+>   			min_low_pfn = start;
+> -		if (end <= reserved_end)
+> -			continue;
+> -#ifdef CONFIG_BLK_DEV_INITRD
+> -		/* Skip zones before initrd and initrd itself */
+> -		if (initrd_end && end <= (unsigned long)PFN_UP(__pa(initrd_end)))
+> -			continue;
+> -#endif
+> -		if (start >= mapstart)
+> -			continue;
+> -		mapstart = max(reserved_end, start);
+>   	}
+>   
+>   	if (min_low_pfn >= max_low_pfn)
+> @@ -463,53 +439,19 @@ static void __init bootmem_init(void)
+>   #endif
+>   		max_low_pfn = PFN_DOWN(HIGHMEM_START);
+>   	}
+> -
+> -#ifdef CONFIG_BLK_DEV_INITRD
+> -	/*
+> -	 * mapstart should be after initrd_end
+> -	 */
+> -	if (initrd_end)
+> -		mapstart = max(mapstart, (unsigned long)PFN_UP(__pa(initrd_end)));
+> +#ifdef CONFIG_HIGHMEM
+> +	pr_info("PFNs: low min %lu, low max %lu, high start %lu, high end %lu,"
+> +		"max %lu\n",
+> +		min_low_pfn, max_low_pfn, highstart_pfn, highend_pfn, max_pfn);
+> +#else
+> +	pr_info("PFNs: low min %lu, low max %lu, max %lu\n",
+> +		min_low_pfn, max_low_pfn, max_pfn);
+
+I think this debug info should be pr_debug (or removed from the final 
+version).
+
+
+>   #endif
+>   
+>   	/*
+> -	 * check that mapstart doesn't overlap with any of
+> -	 * memory regions that have been reserved through eg. DTB
+> -	 */
+> -	bootmap_size = bootmap_bytes(max_low_pfn - min_low_pfn);
+> -
+> -	bootmap_valid = memory_region_available(PFN_PHYS(mapstart),
+> -						bootmap_size);
+> -	for (i = 0; i < boot_mem_map.nr_map && !bootmap_valid; i++) {
+> -		unsigned long mapstart_addr;
+> -
+> -		switch (boot_mem_map.map[i].type) {
+> -		case BOOT_MEM_RESERVED:
+> -			mapstart_addr = PFN_ALIGN(boot_mem_map.map[i].addr +
+> -						boot_mem_map.map[i].size);
+> -			if (PHYS_PFN(mapstart_addr) < mapstart)
+> -				break;
+> -
+> -			bootmap_valid = memory_region_available(mapstart_addr,
+> -								bootmap_size);
+> -			if (bootmap_valid)
+> -				mapstart = PHYS_PFN(mapstart_addr);
+> -			break;
+> -		default:
+> -			break;
+> -		}
+> -	}
+> -
+> -	if (!bootmap_valid)
+> -		panic("No memory area to place a bootmap bitmap");
+> -
+> -	/*
+> -	 * Initialize the boot-time allocator with low memory only.
+> +	 * Initialize the boot-time allocator with low/high memory, but
+> +	 * set the allocation limit to low memory only
+>   	 */
+> -	if (bootmap_size != init_bootmem_node(NODE_DATA(0), mapstart,
+> -					 min_low_pfn, max_low_pfn))
+> -		panic("Unexpected memory size required for bootmap");
+> -
+>   	for (i = 0; i < boot_mem_map.nr_map; i++) {
+>   		unsigned long start, end;
+>   
+> @@ -535,6 +477,7 @@ static void __init bootmem_init(void)
+>   
+>   		memblock_add_node(PFN_PHYS(start), PFN_PHYS(end - start), 0);
+>   	}
+> +	memblock_set_current_limit(PFN_PHYS(max_low_pfn));
+>   
+>   	/*
+>   	 * Register fully available low RAM pages with the bootmem allocator.
+> @@ -570,8 +513,6 @@ static void __init bootmem_init(void)
+>   		 */
+>   		if (start >= max_low_pfn)
+>   			continue;
+> -		if (start < reserved_end)
+> -			start = reserved_end;
+>   		if (end > max_low_pfn)
+>   			end = max_low_pfn;
+>   
+> @@ -587,11 +528,6 @@ static void __init bootmem_init(void)
+>   		memory_present(0, start, end);
+>   	}
+>   
+> -	/*
+> -	 * Reserve the bootmap memory.
+> -	 */
+> -	reserve_bootmem(PFN_PHYS(mapstart), bootmap_size, BOOTMEM_DEFAULT);
+> -
+>   #ifdef CONFIG_RELOCATABLE
+>   	/*
+>   	 * The kernel reserves all memory below its _end symbol as bootmem,
 > 
-> So i would have to defer that question to the Debian package maintainer, hopefully he will chime in.
-> 
-> --
-> Sander
-> 
-> > 
-> > 
-> > 
-> 
 
-Hello,
-
-What the commit does is to make silentoldconfig not immediately exit(1)
-when both of the following apply:
-
-    1. stdin is from something that's not a terminal
-
-    2. New symbols are prompted for
-
-All the outputs (.config and the include/generated/ and include/config/
-trees) are generated after the point where silentoldconfig would
-previously exit(1), afaics, so the effects of the commit can be
-summarized as follows:
-
-    * If no new symbols appear (that would be prompted for), the
-      behavior is exactly the same as before.
-      
-      (check_stdin() never seems to get called unless a value would
-      actually be prompted for, which makes sense.)
-
-    * If new symbols appear and stdin is a tty, the behavior is also
-      exactly the same as before.
-
-And finally, the only case where the behavior differs:
-
-    * If new symbols appear and stdin is not a tty, the
-      new behavior is to prompt (to expect e.g. "n"/"m"/"y" from
-      wherever stdin is coming from).
-
-      The old behavior was to exit(1) without generating any output
-      files.
-
-Hopefully that clarifies it.
-
-The intent of the commit was just to clean up the code a bit, since
-there doesn't seem to be a good reason to bail just because stdin
-happens to not be a tty (plus it's inconsistent with the way oldconfig
-works, which never bailed).
-
-silentoldconfig is something of an internal implementation detail at
-this point by the way. It's basically oldconfig + generate the
-configuration stuff in include/generated/ and include/config/ that
-actually gets used during the build. Normally it's called automatically
-as needed when building the kernel.
-
-See https://www.spinics.net/lists/kernel/msg2720574.html for some more
-details re. silentoldconfig.
-
-Cheers,
-Ulf
+Thanks,
+Matt
