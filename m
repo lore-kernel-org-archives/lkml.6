@@ -1,68 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932970AbeBMAR5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 19:17:57 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:34386 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932877AbeBMARz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 19:17:55 -0500
-X-Google-Smtp-Source: AH8x2246CP6eBGX4H+x3bKpC8b5JcV+2jLpaAcAB2FPabfji6fynVxqKQ2rlu5RMmfwVnb1vhKw4Nw==
-Subject: Re: [PATCH] arm64: Make L1_CACHE_SHIFT configurable
-To: Timur Tabi <timur@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc: tchalamarla@cavium.com, rrichter@cavium.com, opendmb@gmail.com,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1518479125-14428-1-git-send-email-f.fainelli@gmail.com>
- <ca6c47f9-86df-bcdb-bbe1-eac9db68ec33@codeaurora.org>
- <ffc090d5-62c9-e608-32e2-8d13d01234e6@gmail.com>
- <f5d6d768-d354-56b5-ce0c-4f46d4e6d642@codeaurora.org>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <126b2cc2-a61e-b30d-1ff9-ea30af7abf57@gmail.com>
-Date: Mon, 12 Feb 2018 16:17:44 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932895AbeBMAWN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 19:22:13 -0500
+Received: from osg.samsung.com ([64.30.133.232]:54089 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932743AbeBMAWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 19:22:11 -0500
+Date: Mon, 12 Feb 2018 22:21:57 -0200
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+To: Junio C Hamano <gitster@pobox.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Git Mailing List <git@vger.kernel.org>
+Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
+Message-ID: <20180212222157.0a3bd472@vento.lan>
+In-Reply-To: <xmqqzi4drczv.fsf@gitster-ct.c.googlers.com>
+References: <20180213080036.3bf3a908@canb.auug.org.au>
+        <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
+        <CA+55aFzxsNxgKD1uGZQCiib+=+wCMSa0=B+Ye3Zi-u6kpz8Vrg@mail.gmail.com>
+        <xmqqfu65sx20.fsf@gitster-ct.c.googlers.com>
+        <CA+55aFwTp8gg70sHXqOgR01Liv5c8nnfUP0yTdwpkh-rg+2EMA@mail.gmail.com>
+        <xmqqzi4drczv.fsf@gitster-ct.c.googlers.com>
+Organization: Samsung
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <f5d6d768-d354-56b5-ce0c-4f46d4e6d642@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/12/2018 04:10 PM, Timur Tabi wrote:
-> On 02/12/2018 05:57 PM, Florian Fainelli wrote:
->> That is debatable, is there a good publicly available table of what the
->> typical L1 cache line size is on ARMv8 platforms?
+Em Mon, 12 Feb 2018 15:42:44 -0800
+Junio C Hamano <gitster@pobox.com> escreveu:
+
+> Linus Torvalds <torvalds@linux-foundation.org> writes:
 > 
-> I don't have that, but I was under the impression that we moved from 6
-> to 7 because more and more ARMv8 platforms have 128-byte caches, so that
-> is the "new normal".
+> > And some maintainers end up using multiple repositories as branches
+> > (the old _original_ git model). Again, you can just use "git fetch +
+> > git reset", of course, but that's a bit unsafe. In contrast, doing
+> > "git pull --ff-only" is a safe convenient operation that does both the
+> > fetch and the update to whatever state.
+> >
+> > But you do need that "--ff-only" to avoid the merge.  
 > 
+> OK.  I guess it is legit (and semi-sensible) for downstream
+> contributors to "git pull --ff-only $upstream $release_tag_X" to
+> bring their long-running topic currently based on release X-1 up to
+> date with respect to release X.  It probably makes more sense than
+> rebasing on top of release X, even though it makes a lot less sense
+> than merging their topics into release X.
+> 
+> As you said, pull of a tag that forbids fast-forward by default is
+> rather old development (I am kind of surprised that it was so old,
+> in v1.7.9), so it may be a bit difficult to transition.
+> 
+> There is 
+> 
+> 	[pull]
+>                 ff = only
+> 
+> but pull.ff is quite global, and not good for intermediate level
+> maintainers who pull to integrate work of their downstream (for
+> which they do want the current "do not ff, record the tag in a merge
+> commit" behaviour) and also pull to catch up from their upstream
+> (which they want "ff-when-able").  They need to control between
+> ff=only and ff=when-able, depending on whom they are pulling from.
 
-That does not seem to be the data that I am collecting from ARM's
-website and some quick googling:
+Yes, that's my pain. I don't want ff only when pulling from others,
+only when pulling from upstream tree.
 
-The following cores appear to have a 64bytes L1D cache line size: A55,
-A73 (fixed), A35, A32, A53, A57 (fixed), A72 (fixed) even the Falkor
-seems to be that way according to [1].
+> 
+> We may want per-remote equivalent for it, i.e. e.g.
+> 
+> 	[pull]
+> 		ff=false ;# good default for collecting contributions
+> 
+> 	[remote "torvalds"] 
+> 		pullFF = only ;# good default for catching up
+> 
+> or something like that, perhaps?
 
-APM Mustang also seems to be 64b L1D according to [2].
 
-[1]: https://en.wikichip.org/wiki/qualcomm/microarchitectures/falkor
-[2]: http://www.7-cpu.com/cpu/X-Gene.html
+Yeah, something like that works. Please notice, however, that what I
+usually do is:
 
-And then we seem to covering what the ARM64 mainline kernel knows about
-non-ARM implementations: ThunderX and ThunderX2 (formerly Broadcom
-Vulcan). There is possibly the Qualcomm Kryo is different, but wikipedia
-seems to suggest it is a derivative of existing Cortex-A CPUs which have
-a 64b cache line size.
+	$ git remote update torvalds
+	$ git merge <tag>
+	  (or git pull . <tag>)
 
-Let's see what Catalin and Will think about what the default should be.
+So, for the above to work, it should store somehow the remote from
+where a tag came from.
 
-Thanks!
--- 
-Florian
+
+
+
+The reason is that I keep locally a cache with several tree clones
+(in bare mode) s that I bother enough to cache (linus, -stable, -next),
+as pulling from BR is time consuming, and I want to do it only once
+and use the same "cache" for all my git clones.
+
+I have a few git workdirs for my upstream work, but, as a patch
+developer, I also have "independent"[1] git repositories.
+
+[1] Due to disk constraints, the clones actually use --shared. So,
+the common objects are actually stored inside a single tree.
+
+Thanks,
+Mauro
