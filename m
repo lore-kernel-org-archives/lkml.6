@@ -1,79 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965878AbeBMVRs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 16:17:48 -0500
-Received: from mout.web.de ([212.227.15.4]:50115 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965795AbeBMVRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 16:17:46 -0500
-To: linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] PM / devfreq: exynos-ppmu: Delete an error message for a
- failed memory allocation in exynos_ppmu_probe()
-Message-ID: <e4d3a870-f420-5a06-1665-59152c1924a3@users.sourceforge.net>
-Date: Tue, 13 Feb 2018 22:17:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S965915AbeBMV1e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 16:27:34 -0500
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:38551 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965776AbeBMV1c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 16:27:32 -0500
+X-Google-Smtp-Source: AH8x225J6wFXT/kRtSuTPE796jEOPDgJcr9osM+BRPXBauvD9gZbGzWHN0oitO8MfxSBSE9vweGc0jxjq5VcQUQXpYI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:kmS5l1vBdn9hJpFav17A+zL5/wXTvAUz95pIWbvO1aXYaRa+JcL
- bEd386Z4R37GfB6GZGSaOWF19OibAeLRFfruq4IOCy3Lr/2U76o75M+DxDNyaU5JhLNW7JY
- 5fViMI64QdbMSj4qc33fOvDmegt3xRaTHpU+thSSM7yKODLtRRTr193TTEqq42LY4M/OKL0
- 3tty4YA5C2kTt31HRGZTw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:sTshyhJhPq4=:HAXU6RUlnZweW8vXAKImlW
- ffwTeQpXGDRTgRowb0CT68HvzxUgI/RY1DMuLQDwaWpeQ8ti2SgAvoewgAGCKbM9pPDljkfhZ
- eCdpactHzEnJU7rU+P6NZprmVdCSFIuAg1mA2zKiKnuUeRWipqk+LL4YzpitHhlqeXCCdhFbj
- YGE5GmOg1yE6fkd83W7YGEY83iwv5ieXFKFEMtvSXpGiG986W+HqP8aWsgthaqXAPhWurnlPr
- 48nRySoZzZol3tXTTC1UPf8IvUMs7A4t8EzdHrtBmj+N9KSZJ4ddgNImYJ6yQn9mAo1W2qmjY
- SedNOzcuz8iPw7q6ru4KkxY3MGDCwoukB3K7n7k72IwNOvAGPRxqqlOqbahdUDFOJQrCdm9FC
- 9A35GgQ1RDp8XMle9VQJduMFW/HXh/uxgNTv2rMN1HR2RlzcvvmcM9FoYoe+LdqlvGgRjPXrO
- t0BeqmqasL1p8hODMaFZB3WwL9FD09AsDJi2TqEV/okxDxxHsKpiImpsUQcj6NUWh+pSKhFWh
- zoAxXa7ZMl2InjUBcj+VWLQRLwsg/40oANzr2+eHHq8Pcwb19ppcBGfrEAnAsXDOjNXdqlFt9
- DL13JFXTMEzaGvxlK851luZGR+QZwLFOoxkIB+IaedQuQ4zSOaj8FVhG0lcJlcWjSdAwzf5d3
- mbeLHG17bYCXyNo58UXfrTj6lWba69Vu4Q2H7/uyCvNBAdlqeCuOHrDBIASzvnweo1ZtJvcxM
- 7msbRLOqu6itQ/h0ALBo6xyT/I4LzC0A0YpsP9uPSkD6Tl7cQw8S3CJW6PpRMjal5776KdkMQ
- n6OzDbAXEpxLrefy+9nKNdEkKyqLiOzacIhXhL2xHWnHBvlkVw=
+In-Reply-To: <20180213103213.GP3443@dhcp22.suse.cz>
+References: <20180212133731.GE3443@dhcp22.suse.cz> <87r2ppvaeq.fsf@concordia.ellerman.id.au>
+ <CAGXu5j+DnkUv9pZn93wxA6_2s+c3Ap_Q34OR0weY7Y9MJ1aP9Q@mail.gmail.com>
+ <87d1192nzc.fsf@concordia.ellerman.id.au> <20180213103213.GP3443@dhcp22.suse.cz>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 13 Feb 2018 13:27:30 -0800
+X-Google-Sender-Auth: H0S3bEBL2f11cYrQON3ApxpU9EA
+Message-ID: <CAGXu5jJZROQMxzxu+Dp3mVMktSg-oTB6pqk7fUyM_6_2oa9c_A@mail.gmail.com>
+Subject: Re: samples/seccomp/ broken when cross compiling s390, ppc allyesconfig
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Will Drewry <wad@chromium.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Feb 2018 22:10:42 +0100
+On Tue, Feb 13, 2018 at 2:32 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> On Tue 13-02-18 21:16:55, Michael Ellerman wrote:
+>> Kees Cook <keescook@chromium.org> writes:
+>>
+>> > On Mon, Feb 12, 2018 at 7:25 PM, Michael Ellerman <mpe@ellerman.id.au> wrote:
+>> >> Michal Hocko <mhocko@kernel.org> writes:
+>> >>> Hi,
+>> >>> my build test machinery chokes on samples/seccomp when cross compiling
+>> >>> s390 and ppc64 allyesconfig. This has been the case for quite some
+>> >>> time already but I never found time to look at the problem and report
+>> >>> it. It seems this is not new issue and similar thing happend for
+>> >>> MIPS e9107f88c985 ("samples/seccomp/Makefile: do not build tests if
+>> >>> cross-compiling for MIPS").
+>> >>>
+>> >>> The build logs are attached.
+>> >>>
+>> >>> What is the best way around this? Should we simply skip compilation on
+>> >>> cross compile or is actually anybody relying on that? Or should I simply
+>> >>> disable it for s390 and ppc?
+>> >>
+>> >> The whole thing seems very confused. It's not building for the target,
+>> >> it's building for the host, ie. the Makefile sets hostprogs-m and
+>> >> HOSTCFLAGS etc.
+>> >>
+>> >> So it can't possibly work with cross compiling as it's currently
+>> >> written.
+>> >>
+>> >> Either the Makefile needs some serious work to properly support cross
+>> >> compiling or it should just be disabled when cross compiling.
+>> >
+>> > Hrm, yeah, the goal was to entirely disable cross compiling, but I
+>> > guess we didn't hit it with a hard enough hammer. :)
+>>
+>> Do you know why it is written that way? Why doesn't it just try to cross
+>> compile like normal code?
+>
+> No idea, sorry. All I know about this code is that it breaks my build
+> testing.
 
-Omit an extra message for a memory allocation failure in this function.
+IIRC, one of the problems is with build ordering problems: the kernel
+headers used by the samples aren't available when cross compiling.
 
-This issue was detected by using the Coccinelle software.
+I'm happy to kill it entirely with Michal's patch, though. Feel free
+to carry in your tree!
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/devfreq/event/exynos-ppmu.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Acked-by: Kees Cook <keescook@chromium.org>
 
-diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-index d96e3dc71cf8..72ac9113500d 100644
---- a/drivers/devfreq/event/exynos-ppmu.c
-+++ b/drivers/devfreq/event/exynos-ppmu.c
-@@ -627,11 +627,9 @@ static int exynos_ppmu_probe(struct platform_device *pdev)
- 
- 	size = sizeof(struct devfreq_event_dev *) * info->num_events;
- 	info->edev = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
--	if (!info->edev) {
--		dev_err(&pdev->dev,
--			"failed to allocate memory devfreq-event devices\n");
-+	if (!info->edev)
- 		return -ENOMEM;
--	}
-+
- 	edev = info->edev;
- 	platform_set_drvdata(pdev, info);
- 
+-Kees
+
 -- 
-2.16.1
+Kees Cook
+Pixel Security
