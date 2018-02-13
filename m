@@ -1,106 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934878AbeBMLl2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 06:41:28 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:58465 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934086AbeBMLl0 (ORCPT
+        id S934901AbeBMLmQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 06:42:16 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36508 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934078AbeBMLmP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 06:41:26 -0500
-Date: Tue, 13 Feb 2018 03:29:46 -0800
-From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
-Message-ID: <tip-59d13cd6789e8feb4615bb999d46bbd439a9a396@git.kernel.org>
-Cc: brgerst@gmail.com, tglx@linutronix.de, bp@alien8.de,
-        torvalds@linux-foundation.org, jpoimboe@redhat.com, luto@kernel.org,
-        arjan@linux.intel.com, fengguang.wu@intel.com, peterz@infradead.org,
-        mingo@kernel.org, hpa@zytor.com, dvlasenk@redhat.com,
-        linux-kernel@vger.kernel.org
-Reply-To: linux-kernel@vger.kernel.org, dvlasenk@redhat.com, hpa@zytor.com,
-        mingo@kernel.org, peterz@infradead.org, fengguang.wu@intel.com,
-        arjan@linux.intel.com, luto@kernel.org, torvalds@linux-foundation.org,
-        jpoimboe@redhat.com, bp@alien8.de, tglx@linutronix.de,
-        brgerst@gmail.com
-In-Reply-To: <bace77a60d5af9b45eddb8f8fb9c776c8de657ef.1518130694.git.jpoimboe@redhat.com>
-References: <bace77a60d5af9b45eddb8f8fb9c776c8de657ef.1518130694.git.jpoimboe@redhat.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] objtool: Fix segfault in ignore_unreachable_insn()
-Git-Commit-ID: 59d13cd6789e8feb4615bb999d46bbd439a9a396
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 13 Feb 2018 06:42:15 -0500
+Date: Tue, 13 Feb 2018 11:42:10 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: Re: linux-next: lots of merges in the sound-asoc tree
+Message-ID: <20180213114210.GA5988@sirena.org.uk>
+References: <20180213093857.2fe78090@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
 Content-Disposition: inline
+In-Reply-To: <20180213093857.2fe78090@canb.auug.org.au>
+X-Cookie: Blend until smooth.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  59d13cd6789e8feb4615bb999d46bbd439a9a396
-Gitweb:     https://git.kernel.org/tip/59d13cd6789e8feb4615bb999d46bbd439a9a396
-Author:     Josh Poimboeuf <jpoimboe@redhat.com>
-AuthorDate: Thu, 8 Feb 2018 17:09:25 -0600
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 11:46:59 +0100
 
-objtool: Fix segfault in ignore_unreachable_insn()
+--PEIAKu/WMn1b1Hv9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Peter Zijlstra's patch for converting WARN() to use UD2 triggered a
-bunch of false "unreachable instruction" warnings, which then triggered
-a seg fault in ignore_unreachable_insn().
+On Tue, Feb 13, 2018 at 09:38:57AM +1100, Stephen Rothwell wrote:
 
-The seg fault happened when it tried to dereference a NULL 'insn->func'
-pointer.  Thanks to static_cpu_has(), some functions can jump to a
-non-function area in the .altinstr_aux section.  That breaks
-ignore_unreachable_insn()'s assumption that it's always inside the
-original function.
+> I know that you usually like to keep one topic branch per soc and then
+> merge them all, but currently your tree seems to only contain a couple
+> logical changes (platform to component and codec to component), so
+> surely that could have been done in (maybe) 2 topic branches and saved
+> large number of very small branches (often a single commit) and a large
+> number of merges.
 
-Make sure ignore_unreachable_insn() only follows jumps within the
-current function.
+If you look at the changes that are per branch (one series is on a
+single branch due to dependencies and a lower change rate) they're often
+relatively large and likely to conflict with further development that
+gets done.  This also lets me drop anything that causes problems much
+more easily.
 
-Reported-by: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kbuild test robot <fengguang.wu@intel.com>
-Link: http://lkml.kernel.org/r/bace77a60d5af9b45eddb8f8fb9c776c8de657ef.1518130694.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- tools/objtool/check.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+--PEIAKu/WMn1b1Hv9
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 2e458eb..c7fb5c2 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1935,13 +1935,19 @@ static bool ignore_unreachable_insn(struct instruction *insn)
- 		if (is_kasan_insn(insn) || is_ubsan_insn(insn))
- 			return true;
- 
--		if (insn->type == INSN_JUMP_UNCONDITIONAL && insn->jump_dest) {
--			insn = insn->jump_dest;
--			continue;
-+		if (insn->type == INSN_JUMP_UNCONDITIONAL) {
-+			if (insn->jump_dest &&
-+			    insn->jump_dest->func == insn->func) {
-+				insn = insn->jump_dest;
-+				continue;
-+			}
-+
-+			break;
- 		}
- 
- 		if (insn->offset + insn->len >= insn->func->offset + insn->func->len)
- 			break;
-+
- 		insn = list_next_entry(insn, list);
- 	}
- 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqCzxEACgkQJNaLcl1U
+h9DcmAf/fGU128bubp5fQpFD3wfSSnTt923yZJM+bCEUewOLSD/7jOHiN3w5WkLw
+x0dzWTk0yRzS7CVZhQ7/5UKJII3AfYidIn+FAxbB7/tUz+Oyv49pXgkr6bpbl3+s
+3h+9aI55XfeXF2Q+jMde7gqhRldPXni1YX6gmbO57X+rTIo34ArTvHg6fN+cLjgS
+iVBnpv8bsEdAJeoHL6FYzigWS5oRdiMefKla7MNGcOxSeWs/9DJNeohEx9i7A5dU
+ziWjTKg5OBrgiANMoFc8CmYUvEBQ7I+4Kf6hR5Os5O/ctCvim6xf3Nnhm9l9cyxk
+XBS9vnC07R4lee/I2NVy9HtLPNJzfQ==
+=p2vJ
+-----END PGP SIGNATURE-----
+
+--PEIAKu/WMn1b1Hv9--
