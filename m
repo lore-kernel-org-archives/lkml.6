@@ -1,58 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934771AbeBMLb7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 06:31:59 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46622 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933926AbeBMLb5 (ORCPT
+        id S934894AbeBMLcM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 06:32:12 -0500
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:34272 "EHLO
+        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933926AbeBMLcK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 06:31:57 -0500
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH] scripts: kernel_doc: fixup reporting of function identifiers
-Date: Tue, 13 Feb 2018 13:31:46 +0200
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18021311-0040-0000-0000-0000040F3961
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021311-0041-0000-0000-00002612FBB2
-Message-Id: <1518521506-6770-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-13_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802130139
+        Tue, 13 Feb 2018 06:32:10 -0500
+X-Google-Smtp-Source: AH8x226X/0ARtf93TVlrioZdQC162wHX586uOSdS1sx9oumDnXkp3vfKgYhZUX/QSIu0WItPbZG1bq2kx5s8G5KjNSc=
+MIME-Version: 1.0
+In-Reply-To: <cover.1512741134.git.dongsu@kinvolk.io>
+References: <cover.1512741134.git.dongsu@kinvolk.io>
+From: Miklos Szeredi <mszeredi@redhat.com>
+Date: Tue, 13 Feb 2018 12:32:09 +0100
+Message-ID: <CAOssrKey+oxahrXHO5d6Lu1ZD=r1t-b0i4iZM_Ke9ToqTckjkQ@mail.gmail.com>
+Subject: Re: [PATCH v5 00/11] FUSE mounts from non-init user namespaces
+To: Dongsu Park <dongsu@kinvolk.io>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        containers@lists.linux-foundation.org, Alban Crequy <alban@kinvolk.io>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Sargun Dhillon <sargun@sargun.me>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When function description includes brackets after the function name as
-suggested by Documentation/doc-guide/kernel-doc, the kernel-doc script
-omits the function name from "Scanning doc for" report.
-Extending match for identifier name with optional brackets fixes this
-issue.
+On Fri, Dec 22, 2017 at 3:32 PM, Dongsu Park <dongsu@kinvolk.io> wrote:
 
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
----
- scripts/kernel-doc | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Patches 1-2 deal with an additional flag of lookup_bdev() to check for
+> additional inode permission.
 
-diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-index fee8952037b1..a6a9a8ef116c 100755
---- a/scripts/kernel-doc
-+++ b/scripts/kernel-doc
-@@ -1873,7 +1873,7 @@ sub process_file($) {
- 	    }
- 	    elsif (/$doc_decl/o) {
- 		$identifier = $1;
--		if (/\s*([\w\s]+?)\s*-/) {
-+		if (/\s*([\w\s]+?)(\(\))?\s*-/) {
- 		    $identifier = $1;
- 		}
- 
--- 
-2.7.4
+fuse_blk is less suitable for unprivileged mounting than plain fuse.
+fusermount doesn't allow mounting fuse_blk unprivileged, so there's
+little data about that usecase (IIRC ntfs3g guys did that, or at least
+tried to do it, but I don't remember the details).
+
+As such, I think we should leave it out of the initial version.  Which
+means you can drop patches 1-2 from this series.  Unless there's a
+strong use case for this.  In which case we should look hard at the
+differences between fuse_blk and fuse and how that affects
+unprivileged operation.   There are a few assumptions about fuse_blk
+filesystem being more "well behaved", I think.
+
+Thanks,
+Miklos
