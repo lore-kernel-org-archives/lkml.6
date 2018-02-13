@@ -1,31 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934665AbeBMLkp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 06:40:45 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:44521 "EHLO
+        id S934811AbeBMLlK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 06:41:10 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:60577 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934086AbeBMLkn (ORCPT
+        with ESMTP id S934086AbeBMLlI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 06:40:43 -0500
-Date: Tue, 13 Feb 2018 03:30:15 -0800
-From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
-Message-ID: <tip-30dde5167c432f8e32d3d13fe73a241578a4f259@git.kernel.org>
-Cc: mingo@kernel.org, bp@alien8.de, linux-kernel@vger.kernel.org,
-        jpoimboe@redhat.com, peterz@infradead.org, brgerst@gmail.com,
-        dvlasenk@redhat.com, torvalds@linux-foundation.org, tglx@linutronix.de,
-        hpa@zytor.com, fengguang.wu@intel.com, arjan@linux.intel.com,
-        luto@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, bp@alien8.de, mingo@kernel.org,
-        luto@kernel.org, arjan@linux.intel.com, fengguang.wu@intel.com,
-        hpa@zytor.com, tglx@linutronix.de, dvlasenk@redhat.com,
-        torvalds@linux-foundation.org, jpoimboe@redhat.com,
-        peterz@infradead.org, brgerst@gmail.com
-In-Reply-To: <0e483379275a42626ba8898117f918e1bf661e40.1518130694.git.jpoimboe@redhat.com>
-References: <0e483379275a42626ba8898117f918e1bf661e40.1518130694.git.jpoimboe@redhat.com>
+        Tue, 13 Feb 2018 06:41:08 -0500
+Date: Tue, 13 Feb 2018 03:30:42 -0800
+From: tip-bot for Peter Zijlstra <tipbot@zytor.com>
+Message-ID: <tip-0eb55de80e26f87cc26eab139c097eb5a6f2b159@git.kernel.org>
+Cc: brgerst@gmail.com, peterz@infradead.org, torvalds@linux-foundation.org,
+        jpoimboe@redhat.com, luto@kernel.org, hpa@zytor.com, bp@alien8.de,
+        tglx@linutronix.de, mingo@kernel.org, arjan@linux.intel.com,
+        dvlasenk@redhat.com, linux-kernel@vger.kernel.org
+Reply-To: brgerst@gmail.com, peterz@infradead.org,
+        torvalds@linux-foundation.org, hpa@zytor.com, luto@kernel.org,
+        jpoimboe@redhat.com, tglx@linutronix.de, bp@alien8.de,
+        linux-kernel@vger.kernel.org, dvlasenk@redhat.com,
+        arjan@linux.intel.com, mingo@kernel.org
+In-Reply-To: <20180208194406.GD25181@hirez.programming.kicks-ass.net>
+References: <20180208194406.GD25181@hirez.programming.kicks-ass.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/debug, objtool: Annotate WARN()-related UD2 as
- reachable
-Git-Commit-ID: 30dde5167c432f8e32d3d13fe73a241578a4f259
+Subject: [tip:x86/pti] x86/debug: Use UD2 for WARN()
+Git-Commit-ID: 0eb55de80e26f87cc26eab139c097eb5a6f2b159
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,54 +36,94 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  30dde5167c432f8e32d3d13fe73a241578a4f259
-Gitweb:     https://git.kernel.org/tip/30dde5167c432f8e32d3d13fe73a241578a4f259
-Author:     Josh Poimboeuf <jpoimboe@redhat.com>
-AuthorDate: Thu, 8 Feb 2018 17:09:26 -0600
+Commit-ID:  0eb55de80e26f87cc26eab139c097eb5a6f2b159
+Gitweb:     https://git.kernel.org/tip/0eb55de80e26f87cc26eab139c097eb5a6f2b159
+Author:     Peter Zijlstra <peterz@infradead.org>
+AuthorDate: Fri, 9 Feb 2018 13:16:59 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 13 Feb 2018 11:47:00 +0100
 
-x86/debug, objtool: Annotate WARN()-related UD2 as reachable
+x86/debug: Use UD2 for WARN()
 
-By default, objtool assumes that a UD2 is a dead end.  This is mainly
-because GCC 7+ sometimes inserts a UD2 when it detects a divide-by-zero
-condition.
+Since the Intel SDM added an ModR/M byte to UD0 and binutils followed
+that specification, we now cannot disassemble our kernel anymore.
 
-Now that WARN() is moving back to UD2, annotate the code after it as
-reachable so objtool can follow the code flow.
+This now means Intel and AMD disagree on the encoding of UD0. And instead
+of playing games with additional bytes that are valid ModR/M and single
+byte instructions (0xd6 for instance), simply use UD2 for both WARN() and
+BUG().
 
-Reported-by: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Requested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
 Cc: Brian Gerst <brgerst@gmail.com>
 Cc: Denys Vlasenko <dvlasenk@redhat.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kbuild test robot <fengguang.wu@intel.com>
-Link: http://lkml.kernel.org/r/0e483379275a42626ba8898117f918e1bf661e40.1518130694.git.jpoimboe@redhat.com
+Link: http://lkml.kernel.org/r/20180208194406.GD25181@hirez.programming.kicks-ass.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/include/asm/bug.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/bug.h | 15 ++++++---------
+ arch/x86/kernel/traps.c    |  2 +-
+ 2 files changed, 7 insertions(+), 10 deletions(-)
 
 diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-index 34d99af4..71e6f4bf 100644
+index 71e6f4bf..6804d66 100644
 --- a/arch/x86/include/asm/bug.h
 +++ b/arch/x86/include/asm/bug.h
-@@ -77,7 +77,11 @@ do {								\
- 	unreachable();						\
+@@ -5,23 +5,20 @@
+ #include <linux/stringify.h>
+ 
+ /*
+- * Since some emulators terminate on UD2, we cannot use it for WARN.
+- * Since various instruction decoders disagree on the length of UD1,
+- * we cannot use it either. So use UD0 for WARN.
++ * Despite that some emulators terminate on UD2, we use it for WARN().
+  *
+- * (binutils knows about "ud1" but {en,de}codes it as 2 bytes, whereas
+- *  our kernel decoder thinks it takes a ModRM byte, which seems consistent
+- *  with various things like the Intel SDM instruction encoding rules)
++ * Since various instruction decoders/specs disagree on the encoding of
++ * UD0/UD1.
+  */
+ 
+-#define ASM_UD0		".byte 0x0f, 0xff"
++#define ASM_UD0		".byte 0x0f, 0xff" /* + ModRM (for Intel) */
+ #define ASM_UD1		".byte 0x0f, 0xb9" /* + ModRM */
+ #define ASM_UD2		".byte 0x0f, 0x0b"
+ 
+ #define INSN_UD0	0xff0f
+ #define INSN_UD2	0x0b0f
+ 
+-#define LEN_UD0		2
++#define LEN_UD2		2
+ 
+ #ifdef CONFIG_GENERIC_BUG
+ 
+@@ -79,7 +76,7 @@ do {								\
+ 
+ #define __WARN_FLAGS(flags)					\
+ do {								\
+-	_BUG_FLAGS(ASM_UD0, BUGFLAG_WARNING|(flags));		\
++	_BUG_FLAGS(ASM_UD2, BUGFLAG_WARNING|(flags));		\
+ 	annotate_reachable();					\
  } while (0)
  
--#define __WARN_FLAGS(flags)	_BUG_FLAGS(ASM_UD0, BUGFLAG_WARNING|(flags))
-+#define __WARN_FLAGS(flags)					\
-+do {								\
-+	_BUG_FLAGS(ASM_UD0, BUGFLAG_WARNING|(flags));		\
-+	annotate_reachable();					\
-+} while (0)
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 446c9ef..3d9b230 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -181,7 +181,7 @@ int fixup_bug(struct pt_regs *regs, int trapnr)
+ 		break;
  
- #include <asm-generic/bug.h>
+ 	case BUG_TRAP_TYPE_WARN:
+-		regs->ip += LEN_UD0;
++		regs->ip += LEN_UD2;
+ 		return 1;
+ 	}
  
