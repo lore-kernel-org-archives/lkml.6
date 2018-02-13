@@ -1,138 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933562AbeBMPcU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 10:32:20 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:47841 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751235AbeBMPcS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 10:32:18 -0500
-Date: Tue, 13 Feb 2018 07:31:50 -0800
-From: tip-bot for Andy Lutomirski <tipbot@zytor.com>
-Message-ID: <tip-116fef6408599dd6ff6996235c50aa692e9b5631@git.kernel.org>
-Cc: hpa@zytor.com, torvalds@linux-foundation.org, peterz@infradead.org,
-        luto@kernel.org, ard.biesheuvel@linaro.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, bp@alien8.de
-Reply-To: linux-kernel@vger.kernel.org, bp@alien8.de, mingo@kernel.org,
-        torvalds@linux-foundation.org, peterz@infradead.org, hpa@zytor.com,
-        tglx@linutronix.de, ard.biesheuvel@linaro.org, luto@kernel.org
-In-Reply-To: <ba158a93f3250e6fca752cff2cfb1fcdd9f2b50c.1517414050.git.luto@kernel.org>
-References: <ba158a93f3250e6fca752cff2cfb1fcdd9f2b50c.1517414050.git.luto@kernel.org>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/dump_pagetables: Add the EFI pagetable to the
- debugfs 'page_tables' directory
-Git-Commit-ID: 116fef6408599dd6ff6996235c50aa692e9b5631
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S933710AbeBMPdU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 10:33:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39478 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933451AbeBMPdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 10:33:17 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8525A217C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AH8x226tHzKV+omAV9Sec3WBDF167+c0S1uMDPb9zHiC/5uTEMmf7vWI91H5mDNhoRQ22VqWWLk4KPt7oiQKgfpBJf0=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20171214165352.27902-1-malat@debian.org>
+References: <20171214165352.27902-1-malat@debian.org>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Tue, 13 Feb 2018 09:32:55 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLyv5io+iXWnzmUhZ1r=PBnA=MdZet8idJDmL8XphxThA@mail.gmail.com>
+Message-ID: <CAL_JsqLyv5io+iXWnzmUhZ1r=PBnA=MdZet8idJDmL8XphxThA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: Remove leading 0x and 0s from bindings notation
+To: Mathieu Malaterre <malat@debian.org>,
+        ARM-SoC Maintainers <arm@kernel.org>
+Cc: Wei Xu <xuwei5@hisilicon.com>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Kees Cook <keescook@chromium.org>, Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  116fef6408599dd6ff6996235c50aa692e9b5631
-Gitweb:     https://git.kernel.org/tip/116fef6408599dd6ff6996235c50aa692e9b5631
-Author:     Andy Lutomirski <luto@kernel.org>
-AuthorDate: Wed, 31 Jan 2018 07:56:22 -0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 16:00:45 +0100
+On Thu, Dec 14, 2017 at 10:53 AM, Mathieu Malaterre <malat@debian.org> wrote:
+> Improve the DTS files by removing all the leading "0x" and zeros to fix the
+> following dtc warnings:
+>
+> Warning (unit_address_format): Node /XXX unit name should not have leading "0x"
+>
+> and
+>
+> Warning (unit_address_format): Node /XXX unit name should not have leading 0s
+>
+> Converted using the following command:
+>
+> find . -type f \( -iname *.dts -o -iname *.dtsi \) -exec sed -E -i -e "s/@0x([0-9a-fA-F\.]+)\s?\{/@\L\1 \{/g" -e "s/@0+([0-9a-fA-F\.]+)\s?\{/@\L\1 \{/g" {} +
+>
+> For simplicity, two sed expressions were used to solve each warnings separately.
+>
+> To make the regex expression more robust a few other issues were resolved,
+> namely setting unit-address to lower case, and adding a whitespace before the
+> the opening curly brace:
+>
+> https://elinux.org/Device_Tree_Linux#Linux_conventions
+>
+> This is a follow up to commit 4c9847b7375a ("dt-bindings: Remove leading 0x from bindings notation")
+>
+> Reported-by: David Daney <ddaney@caviumnetworks.com>
+> Suggested-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+>  arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts | 2 +-
+>  arch/arm64/boot/dts/mediatek/mt8173.dtsi       | 2 +-
+>  arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi   | 6 +++---
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi          | 6 +++---
+>  4 files changed, 8 insertions(+), 8 deletions(-)
 
-x86/mm/dump_pagetables: Add the EFI pagetable to the debugfs 'page_tables' directory
+Arnd, Olof, Looks like this got missed. Can you pick up for 4.16.
 
-EFI is complicated enough that being able to view its pagetables is
-quite helpful.  Rather than requiring users to fish it out of dmesg
-on an appropriately configured kernel, let users view it in debugfs
-as well.
+There's some arm32 ones too, but most of them need to be respun to
+mention upper to lower case fixes.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/ba158a93f3250e6fca752cff2cfb1fcdd9f2b50c.1517414050.git.luto@kernel.org
-[ Fixed trivial whitespace damage and fixed missing export. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/debug_pagetables.c | 32 ++++++++++++++++++++++++++++++++
- arch/x86/platform/efi/efi_64.c |  4 +++-
- 2 files changed, 35 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/debug_pagetables.c b/arch/x86/mm/debug_pagetables.c
-index 421f266..51a6f92 100644
---- a/arch/x86/mm/debug_pagetables.c
-+++ b/arch/x86/mm/debug_pagetables.c
-@@ -72,6 +72,31 @@ static const struct file_operations ptdump_curusr_fops = {
- };
- #endif
- 
-+#if defined(CONFIG_EFI) && defined(CONFIG_X86_64)
-+extern pgd_t *efi_pgd;
-+static struct dentry *pe_efi;
-+
-+static int ptdump_show_efi(struct seq_file *m, void *v)
-+{
-+	if (efi_pgd)
-+		ptdump_walk_pgd_level_debugfs(m, efi_pgd, false);
-+	return 0;
-+}
-+
-+static int ptdump_open_efi(struct inode *inode, struct file *filp)
-+{
-+	return single_open(filp, ptdump_show_efi, NULL);
-+}
-+
-+static const struct file_operations ptdump_efi_fops = {
-+	.owner		= THIS_MODULE,
-+	.open		= ptdump_open_efi,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+#endif
-+
- static struct dentry *dir, *pe_knl, *pe_curknl;
- 
- static int __init pt_dump_debug_init(void)
-@@ -96,6 +121,13 @@ static int __init pt_dump_debug_init(void)
- 	if (!pe_curusr)
- 		goto err;
- #endif
-+
-+#if defined(CONFIG_EFI) && defined(CONFIG_X86_64)
-+	pe_efi = debugfs_create_file("efi", 0400, dir, NULL, &ptdump_efi_fops);
-+	if (!pe_efi)
-+		goto err;
-+#endif
-+
- 	return 0;
- err:
- 	debugfs_remove_recursive(dir);
-diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
-index c310a82..780460a 100644
---- a/arch/x86/platform/efi/efi_64.c
-+++ b/arch/x86/platform/efi/efi_64.c
-@@ -27,6 +27,7 @@
- #include <linux/ioport.h>
- #include <linux/mc146818rtc.h>
- #include <linux/efi.h>
-+#include <linux/export.h>
- #include <linux/uaccess.h>
- #include <linux/io.h>
- #include <linux/reboot.h>
-@@ -190,7 +191,8 @@ void __init efi_call_phys_epilog(pgd_t *save_pgd)
- 	early_code_mapping_set_exec(0);
- }
- 
--static pgd_t *efi_pgd;
-+pgd_t *efi_pgd;
-+EXPORT_SYMBOL_GPL(efi_pgd);
- 
- /*
-  * We need our own copy of the higher levels of the page tables
+Rob
