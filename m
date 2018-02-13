@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965882AbeBMUdM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 15:33:12 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:41680 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965846AbeBMUdE (ORCPT
+        id S965894AbeBMUdh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 15:33:37 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40195 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965854AbeBMUdH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 15:33:04 -0500
-X-Google-Smtp-Source: AH8x226GybWKiXUS8yHWJPW6Ev2IAjhNfzYcGiNJJMZfXtCOED2B4R2qm31a1KmAbEniSGuvQPwFhw==
+        Tue, 13 Feb 2018 15:33:07 -0500
+X-Google-Smtp-Source: AH8x225JPFyjrvaTz7KYG9ZYMacRxuW6fT0H+pYjiDcfcUCtTliaKVVWKdaQuitNxUdVSBEgGXoMmg==
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 To: peterz@infradead.org
 Cc: lizefan@huawei.com, mingo@redhat.com, rostedt@goodmis.org,
@@ -15,9 +15,9 @@ Cc: lizefan@huawei.com, mingo@redhat.com, rostedt@goodmis.org,
         tommaso.cucinotta@santannapisa.it, juri.lelli@redhat.com,
         luca.abeni@santannapisa.it, cgroups@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V3 08/10] cgroup: Constrain the addition of CPUs to a new CPUset
-Date: Tue, 13 Feb 2018 13:32:45 -0700
-Message-Id: <1518553967-20656-9-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH V3 10/10] sched/deadline: Prevent CPU hotplug operation if DL task on CPU
+Date: Tue, 13 Feb 2018 13:32:47 -0700
+Message-Id: <1518553967-20656-11-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518553967-20656-1-git-send-email-mathieu.poirier@linaro.org>
 References: <1518553967-20656-1-git-send-email-mathieu.poirier@linaro.org>
@@ -25,80 +25,172 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Care must be taken when CPUs are added to a new CPUset.  If an ancestor
-of that set has its sched_load_balance flag switch off then the CPUs in
-the new CPUset will be added to a new root domain.  If the ancestor also
-had DL tasks those will end up covering more than one root domain,
-breaking at the same time the DL integrity model.
+When a DL task is assigned a CPU the "utilisation" (this_bw) and the
+"active utilisation" (running_bw) fields of rq->dl are incremented
+accordingly.  If the CPU is hotplugged out the DL task is transferred
+to another CPU but the task's contribution to this_bw and running_bw
+isn't substracted from the outgoing CPU's rq nor added to the newly
+appointed CPU.
 
-This patch prevents adding CPUs to a new CPUset if one of its ancestor
-had its sched_load_balance flag off and had DL tasks assigned to it.
+In this example (where a kernel has been instrumented to output the
+relevant information) we have a 4 CPU system with one 6:10 DL task that
+has been assigned to CPU 2:
+
+	root@dragon:/home/linaro/# cat /proc/rq_debug
+
+	dl_rq[0]:
+	  .online			: yes
+	  .dl_nr_running		: 0
+	  .running_bw			: 0
+	  .this_bw			: 0
+	  .rd->span			: 0-3
+	  .dl_nr_migratory		: 0
+	  .rd->dl_bw->bw		: 3984588
+	  .rd->dl_bw->total_bw		: 629145
+
+	dl_rq[1]:
+	  .online			: yes
+	  .dl_nr_running		: 0
+	  .running_bw			: 0
+	  .this_bw			: 0
+	  .rd->span:			: 0-3
+	  .dl_nr_migratory		: 0
+	  .rd->dl_bw->bw		: 3984588	<-- RD capacity for 4 CPUs
+	  .rd->dl_bw->total_bw		: 629145
+
+	dl_rq[2]:
+	  .online			: yes
+	  .dl_nr_running		: 1		<-- One task running
+	  .running_bw			: 629145	<-- Normal behavior
+	  .this_bw			: 629145	<-- Normal behavior
+	  .rd->span			: 0-3
+	  .dl_nr_migratory		: 1
+	  .rd->dl_bw->bw		: 3984588
+	  .rd->dl_bw->total_bw		: 629145
+
+	dl_rq[3]:
+	  .online			: yes
+	  .dl_nr_running		: 0
+	  .running_bw			: 0
+	  .this_bw			: 0
+	  .rd->span			: 0-3
+	  .dl_nr_migratory		: 0
+	  .rd->dl_bw->bw		: 3984588
+	  .rd->dl_bw->total_bw		: 629145
+
+At this point we hotplug out CPU2 and list the status again:
+
+root@dragon:/home/linaro/# echo  0 > /sys/devices/system/cpu/cpu2/online
+root@dragon:/home/linaro/# cat /proc/rq_debug
+
+	dl_rq[0]:
+	  .online			: yes
+	  .dl_nr_running		: 1		<-- DL task was moved here
+	  .running_bw			: 0		<-- Contribution not added
+	  .this_bw			: 0		<-- Contribution not added
+	  .rd->span			: 0-1,3
+	  .dl_nr_migratory		: 1
+	  .rd->dl_bw->bw		: 2988441	<-- RD capacity updated
+	  .rd->dl_bw->total_bw		: 629145
+
+	dl_rq[1]:
+	  .online			: yes
+	  .dl_nr_running		: 0
+	  .running_bw			: 0
+	  .this_bw			: 0
+	  .rd->span			: 0-1,3
+	  .dl_nr_migratory		: 0
+	  .rd->dl_bw->bw		: 2988441
+	  .rd->dl_bw->total_bw		: 629145
+
+	dl_rq[2]:
+	  .online			: no		<-- runqueue no longer online
+	  .dl_nr_running		: 0		<-- DL task was moved
+	  .running_bw			: 629145	<-- Contribution not substracted
+	  .this_bw			: 629145	<-- Contribution not substracted
+	  .rd->span			: 2
+	  .dl_nr_migratory		: 0
+	  .rd->dl_bw->bw		: 996147
+	  .rd->dl_bw->total_bw		: 0
+
+	dl_rq[3]:
+	  .online			: yes
+	  .dl_nr_running		: 0
+	  .running_bw			: 0
+	  .this_bw			: 0
+	  .rd->span			: 0-1,3
+	  .dl_nr_migratory		: 0
+	  .rd->dl_bw->bw		: 2988441
+	  .rd->dl_bw->total_bw: 629145
+
+Upon rebooting the system a splat is also produced:
+
+[  578.184789] ------------[ cut here ]------------
+[  578.184813] dl_rq->running_bw > old
+[  578.184838] WARNING: CPU: 0 PID: 4076 at /home/mpoirier/work/linaro/deadline/kernel/kernel/sched/deadline.c:98 dequeue_task_dl+0x128/0x168
+[  578.191693] Modules linked in:
+[  578.191705] CPU: 0 PID: 4076 Comm: burn Not tainted 4.15.0-00009-gf597fc1e5764-dirty #259
+[  578.191708] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
+[  578.191713] pstate: 60000085 (nZCv daIf -PAN -UAO)
+[  578.191718] pc : dequeue_task_dl+0x128/0x168
+[  578.191722] lr : dequeue_task_dl+0x128/0x168
+[  578.191724] sp : ffff8000383ebbf0
+[  578.191727] x29: ffff8000383ebbf0 x28: ffff800038288000
+[  578.191733] x27: 0000000000000009 x26: ffff800038890000
+[  578.191739] x25: ffff800038994e60 x24: ffff800038994e00
+[  578.191744] x23: 0000000000000000 x22: 0000000000000000
+[  578.191749] x21: 000000000000000e x20: ffff800038288000
+[  578.191755] x19: ffff80003d950aa8 x18: 0000000000000010
+[  578.191761] x17: 0000000000000001 x16: 0000000000002710
+[  578.191766] x15: 0000000000000006 x14: ffff0000892ed37f
+[  578.191772] x13: ffff0000092ed38d x12: 0000000000000000
+[  578.191778] x11: ffff8000383eb840 x10: 0000000005f5e0ff
+[  578.191784] x9 : 0000000000000034 x8 : 625f676e696e6e75
+[  578.191794] x7 : 723e2d71725f6c64 x6 : 000000000000016c
+[  578.191800] x5 : 0000000000000000 x4 : 0000000000000000
+[  578.191806] x3 : ffffffffffffffff x2 : 000080003480f000
+[  578.191812] x1 : ffff800038288000 x0 : 0000000000000017
+[  578.191818] Call trace:
+[  578.191824]  dequeue_task_dl+0x128/0x168
+[  578.191830]  sched_move_task+0xa8/0x150
+[  578.191837]  sched_autogroup_exit_task+0x20/0x30
+[  578.191843]  do_exit+0x2c4/0x9f8
+[  578.191847]  do_group_exit+0x3c/0xa0
+[  578.191853]  get_signal+0x2a4/0x568
+[  578.191860]  do_signal+0x70/0x210
+[  578.191866]  do_notify_resume+0xe0/0x138
+[  578.191870]  work_pending+0x8/0x10
+[  578.191874] ---[ end trace 345388d10dc698fe ]---
+
+As a stop-gap measure before the real solution is available this patch
+prevents users from carrying out a CPU hotplug operation if a DL task is
+running (or suspended) on said CPU.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- kernel/cgroup/cpuset.c | 42 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
+ kernel/sched/deadline.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 4f5e8bac5337..4c1b71608c23 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -481,6 +481,43 @@ static bool cpuset_has_dl_tasks(struct cpuset *cs)
-  * Assumes RCU read lock and cpuset_mutex are held.
-  */
- static int
-+validate_change_cpus(struct cpuset *cur, struct cpuset *trial)
-+{
-+	int ret = 0;
-+
-+	/*
-+	 * CPUs are being added to a CPUset.  If any parent of @trial has its
-+	 * sched_load_balance flag switched off this operation will create a
-+	 * new root domain spanning trial->cpus_allowed. At the same time
-+	 * if any parent of @trial has a DL task, that task will end up
-+	 * spanning more than one root domain and break the deadline integrity
-+	 * model.
-+	 */
-+	if (cpumask_weight(cur->cpus_allowed) <
-+	    cpumask_weight(trial->cpus_allowed)) {
-+		struct cpuset *parent;
-+
-+		parent = parent_cs(trial);
-+		/* Go up until we reach the top_cpuset */
-+		while (parent) {
-+			if (cpuset_has_dl_tasks(parent) &&
-+			    !is_sched_load_balance(parent)) {
-+				ret = -EBUSY;
-+				goto out;
-+			}
-+
-+			parent = parent_cs(parent);
-+		}
-+	}
-+
-+out:
-+	return ret;
-+}
-+
-+/*
-+ * Assumes RCU read lock and cpuset_mutex are held.
-+ */
-+static int
- validate_change_load_balance(struct cpuset *cur, struct cpuset *trial)
- {
- 	bool populated = false, dl_tasks = false;
-@@ -553,8 +590,11 @@ validate_dl_change(struct cpuset *cur, struct cpuset *trial)
- 	/* Check if the sched_load_balance flag has been changed */
- 	ret = validate_change_load_balance(cur, trial);
- 	if (ret)
--		return ret;
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 8eb508cf1990..c46aaa7c3569 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2741,11 +2741,16 @@ bool dl_cpu_busy(unsigned int cpu)
+ 	int cpus;
+ 
+ 	rcu_read_lock_sched();
++	overflow = !!(cpu_rq(cpu)->dl.this_bw);
++	if (overflow)
 +		goto out;
- 
-+	ret = validate_change_cpus(cur, trial);
 +
+ 	dl_b = dl_bw_of(cpu);
+ 	raw_spin_lock_irqsave(&dl_b->lock, flags);
+ 	cpus = dl_bw_cpus(cpu);
+ 	overflow = __dl_overflow(dl_b, cpus, 0, 0);
+ 	raw_spin_unlock_irqrestore(&dl_b->lock, flags);
 +out:
- 	return ret;
+ 	rcu_read_unlock_sched();
+ 	return overflow;
  }
- 
 -- 
 2.7.4
