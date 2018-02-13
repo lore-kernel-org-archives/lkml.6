@@ -1,103 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754215AbeBMTKN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 14:10:13 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:37006 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753260AbeBMTKK (ORCPT
+        id S1754252AbeBMTMX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 14:12:23 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:39219 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753798AbeBMTMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 14:10:10 -0500
-X-Google-Smtp-Source: AH8x2258SXHCEliAAjjnoUM43AJwK9m/q+jgQh2VwEQlH0lGdjSUdAFaoWkMM7WV3mR+RdnhYmYHCQ==
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Chris Lew <clew@codeaurora.org>,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        Srini Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] rpmsg: glink: Use spinlock in tx path
-Date: Tue, 13 Feb 2018 11:04:04 -0800
-Message-Id: <20180213190404.25026-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.15.0
+        Tue, 13 Feb 2018 14:12:21 -0500
+X-Google-Smtp-Source: AH8x227SVxARujG10k9/5Onoy8Q2AgqN/EQdroIIzlXdY1J9H4o+TS1VHclYPdnS9eTcq9uyOuAhZQaCdrxsSV41bHE=
+MIME-Version: 1.0
+In-Reply-To: <CAKKbWA6Otc1ZO_yHpfhxPjbgvvn-QXcXG9sy5=3FZDY8d_20rw@mail.gmail.com>
+References: <20180205235757.246758-1-brendanhiggins@google.com>
+ <20180205235757.246758-3-brendanhiggins@google.com> <CAK8P3a0SJTAkv7_QtDW1sDWFDYHw8tFWZqO6EMwpZ_5KPbhq3Q@mail.gmail.com>
+ <CAKKbWA6Otc1ZO_yHpfhxPjbgvvn-QXcXG9sy5=3FZDY8d_20rw@mail.gmail.com>
+From: Brendan Higgins <brendanhiggins@google.com>
+Date: Tue, 13 Feb 2018 11:12:19 -0800
+Message-ID: <CAFd5g44iHgSoPfko6hgMjz=QMm6ZUScUWbnho1w0bL_brTCjrA@mail.gmail.com>
+Subject: Re: [PATCH v9 2/3] arm: dts: add Nuvoton NPCM750 device tree
+To: Avi Fishman <avifishman70@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch the tx_lock to a spinlock we allow clients to use rpmsg_trysend()
-from atomic context.
+On Tue, Feb 13, 2018 at 1:29 AM, Avi Fishman <avifishman70@gmail.com> wrote:
+> On Tue, Feb 13, 2018 at 10:30 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Tue, Feb 6, 2018 at 12:57 AM, Brendan Higgins
+>> <brendanhiggins@google.com> wrote:
+>>> Add a common device tree for all Nuvoton NPCM750 BMCs and a board
+>>> specific device tree for the NPCM750 (Poleg) evaluation board.
+>>>
+>>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+>>> Reviewed-by: Tomer Maimon <tmaimon77@gmail.com>
+>>> Reviewed-by: Avi Fishman <avifishman70@gmail.com>
+>>> Reviewed-by: Joel Stanley <joel@jms.id.au>
+>>> Reviewed-by: Rob Herring <robh@kernel.org>
+>>> Tested-by: Tomer Maimon <tmaimon77@gmail.com>
+>>> Tested-by: Avi Fishman <avifishman70@gmail.com>
+>> ...
+>>> +               enable-method = "nuvoton,npcm7xx-smp";
+>>
+>> I see this has already been reviewed quite a bit, but I'm curious
+>> about the 'npcm7xx'
+>> part here. Shouldn't that be a real chip name rather than a wildcard?
+>>
+>>        Arnd
+>
+> There is a family of npcm7xx, some with SMP and some without.
+> For those who has it, it is common for all to use the same
+> "nuvoton,npcm7xx-smp".
 
-In order to allow clients to sleep while waiting for space in the FIFO
-we release the lock temporarily around the delay; which should be
-replaced by sending a READ_NOTIF and waiting for the remote to signal
-us that space has been made available.
+I think Arnd is right. In this case it should be "nuvoton,npcm750-smp". We can
+use CPU_METHOD_OF_DECLARE to alias to as many compatible properties as needed.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/rpmsg/qcom_glink_native.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+Although everything in the 7xx family currently is either single core or has the
+same SMP behavior, you could paint yourself into a corner if you were to make
+one SMP device in the 7xx family which behaves differently from all other
+devices and then need to come up with new compatible string names just for that.
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index e0f31ed096a5..6e950e9afa82 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -113,7 +113,7 @@ struct qcom_glink {
- 	spinlock_t rx_lock;
- 	struct list_head rx_queue;
- 
--	struct mutex tx_lock;
-+	spinlock_t tx_lock;
- 
- 	spinlock_t idr_lock;
- 	struct idr lcids;
-@@ -288,15 +288,14 @@ static int qcom_glink_tx(struct qcom_glink *glink,
- 			 const void *data, size_t dlen, bool wait)
- {
- 	unsigned int tlen = hlen + dlen;
-+	unsigned long flags;
- 	int ret;
- 
- 	/* Reject packets that are too big */
- 	if (tlen >= glink->tx_pipe->length)
- 		return -EINVAL;
- 
--	ret = mutex_lock_interruptible(&glink->tx_lock);
--	if (ret)
--		return ret;
-+	spin_lock_irqsave(&glink->tx_lock, flags);
- 
- 	while (qcom_glink_tx_avail(glink) < tlen) {
- 		if (!wait) {
-@@ -304,7 +303,12 @@ static int qcom_glink_tx(struct qcom_glink *glink,
- 			goto out;
- 		}
- 
-+		/* Wait without holding the tx_lock */
-+		spin_unlock_irqrestore(&glink->tx_lock, flags);
-+
- 		usleep_range(10000, 15000);
-+
-+		spin_lock_irqsave(&glink->tx_lock, flags);
- 	}
- 
- 	qcom_glink_tx_write(glink, hdr, hlen, data, dlen);
-@@ -313,7 +317,7 @@ static int qcom_glink_tx(struct qcom_glink *glink,
- 	mbox_client_txdone(glink->mbox_chan, 0);
- 
- out:
--	mutex_unlock(&glink->tx_lock);
-+	spin_unlock_irqrestore(&glink->tx_lock, flags);
- 
- 	return ret;
- }
-@@ -1567,7 +1571,7 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 	glink->features = features;
- 	glink->intentless = intentless;
- 
--	mutex_init(&glink->tx_lock);
-+	spin_lock_init(&glink->tx_lock);
- 	spin_lock_init(&glink->rx_lock);
- 	INIT_LIST_HEAD(&glink->rx_queue);
- 	INIT_WORK(&glink->rx_work, qcom_glink_work);
--- 
-2.15.0
+>
+> Avi
