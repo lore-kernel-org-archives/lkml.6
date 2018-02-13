@@ -1,220 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965219AbeBMQ7B (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 11:59:01 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5233 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934677AbeBMQ4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:56:52 -0500
-From: John Garry <john.garry@huawei.com>
-To: <mika.westerberg@linux.intel.com>, <rafael@kernel.org>,
-        <lorenzo.pieralisi@arm.com>, <rjw@rjwysocki.net>,
-        <hanjun.guo@linaro.org>, <robh+dt@kernel.org>, <bhelgaas@google.com>,
-        <arnd@arndb.de>, <mark.rutland@arm.com>, <olof@lixom.net>,
-        <dann.frazier@canonical.com>, <andy.shevchenko@gmail.com>,
-        <robh@kernel.org>
-CC: <joe@perches.com>, <benh@kernel.crashing.org>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linuxarm@huawei.com>, <minyard@acm.org>,
-        <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <rdunlap@infradead.org>
-Subject: [PATCH v13 5/9] OF: Add missing I/O range exception for indirect-IO devices
-Date: Wed, 14 Feb 2018 01:45:29 +0800
-Message-ID: <1518543933-22456-6-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
-References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
+        id S965329AbeBMQ7b (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 11:59:31 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49811 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964939AbeBMQ72 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 11:59:28 -0500
+Date: Tue, 13 Feb 2018 08:59:04 -0800
+From: tip-bot for Dou Liyang <tipbot@zytor.com>
+Message-ID: <tip-ccf5355d05cd891522267f04b2723002e7f061de@git.kernel.org>
+Cc: mingo@kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
+        douly.fnst@cn.fujitsu.com, hpa@zytor.com
+Reply-To: hpa@zytor.com, tglx@linutronix.de, douly.fnst@cn.fujitsu.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, mingo@kernel.org
+In-Reply-To: <20180117073748.23905-1-douly.fnst@cn.fujitsu.com>
+References: <20180117073748.23905-1-douly.fnst@cn.fujitsu.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/apic] x86/apic: Simplify init_bsp_APIC() usage
+Git-Commit-ID: ccf5355d05cd891522267f04b2723002e7f061de
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhichang Yuan <yuanzhichang@hisilicon.com>
+Commit-ID:  ccf5355d05cd891522267f04b2723002e7f061de
+Gitweb:     https://git.kernel.org/tip/ccf5355d05cd891522267f04b2723002e7f061de
+Author:     Dou Liyang <douly.fnst@cn.fujitsu.com>
+AuthorDate: Wed, 17 Jan 2018 15:37:48 +0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 13 Feb 2018 17:30:38 +0100
 
-There are some special ISA/LPC devices that work on a specific I/O range
-where it is not correct to specify a 'ranges' property in DTS parent node
-as cpu addresses translated from DTS node are only for memory space on
-some architectures, such as Arm64. Without the parent 'ranges' property,
-current of_translate_address() return an error.
-Here we add special handlings for this case.
-During the OF address translation, some checkings will be perfromed to
-identify whether the device node is registered as indirect-IO. If yes,
-the I/O translation will be done in a different way from that one of PCI
-MMIO. In this way, the I/O 'reg' property of the special ISA/LPC devices
-will be parsed correctly.
+x86/apic: Simplify init_bsp_APIC() usage
 
-Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
-Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>    #earlier draft
-Acked-by: Rob Herring <robh@kernel.org>
+Since CONFIG_X86_64 selects CONFIG_X86_LOCAL_APIC, the following
+condition:
+
+  #if defined(CONFIG_X86_64) || defined(CONFIG_X86_LOCAL_APIC)
+
+is equivalent to:
+
+  #if defined(CONFIG_X86_LOCAL_APIC)
+
+... and we can eliminate that #ifdef by providing an empty
+init_bsp_APIC() stub in the !CONFIG_X86_LOCAL_APIC case.
+
+Also add some comments to explain why we call init_bsp_APIC().
+
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: mroos@linux.ee
+Cc: ville.syrjala@linux.intel.com
+Link: http://lkml.kernel.org/r/20180117073748.23905-1-douly.fnst@cn.fujitsu.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/of/address.c | 92 +++++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 76 insertions(+), 16 deletions(-)
+ arch/x86/include/asm/apic.h | 1 +
+ arch/x86/kernel/irqinit.c   | 9 +++++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/of/address.c b/drivers/of/address.c
-index cdf047b..2db8b56 100644
---- a/drivers/of/address.c
-+++ b/drivers/of/address.c
-@@ -5,6 +5,7 @@
- #include <linux/fwnode.h>
- #include <linux/io.h>
- #include <linux/ioport.h>
-+#include <linux/logic_pio.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
- #include <linux/pci.h>
-@@ -562,9 +563,14 @@ static int of_translate_one(struct device_node *parent, struct of_bus *bus,
-  * that translation is impossible (that is we are not dealing with a value
-  * that can be mapped to a cpu physical address). This is not really specified
-  * that way, but this is traditionally the way IBM at least do things
-+ *
-+ * Whenever the translation fails, the *host pointer will be set to the
-+ * device that had registered logical PIO mapping, and the return code is
-+ * relative to that node.
-  */
- static u64 __of_translate_address(struct device_node *dev,
--				  const __be32 *in_addr, const char *rprop)
-+				  const __be32 *in_addr, const char *rprop,
-+				  struct device_node **host)
- {
- 	struct device_node *parent = NULL;
- 	struct of_bus *bus, *pbus;
-@@ -577,6 +583,7 @@ static u64 __of_translate_address(struct device_node *dev,
- 	/* Increase refcount at current level */
- 	of_node_get(dev);
+diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
+index 9872277..6e1990d 100644
+--- a/arch/x86/include/asm/apic.h
++++ b/arch/x86/include/asm/apic.h
+@@ -183,6 +183,7 @@ static inline void disable_local_APIC(void) { }
+ # define setup_boot_APIC_clock x86_init_noop
+ # define setup_secondary_APIC_clock x86_init_noop
+ static inline void lapic_update_tsc_freq(void) { }
++static inline void init_bsp_APIC(void) { }
+ static inline void apic_intr_mode_init(void) { }
+ static inline void lapic_assign_system_vectors(void) { }
+ static inline void lapic_assign_legacy_vector(unsigned int i, bool r) { }
+diff --git a/arch/x86/kernel/irqinit.c b/arch/x86/kernel/irqinit.c
+index a539410..772196c 100644
+--- a/arch/x86/kernel/irqinit.c
++++ b/arch/x86/kernel/irqinit.c
+@@ -61,9 +61,14 @@ void __init init_ISA_irqs(void)
+ 	struct irq_chip *chip = legacy_pic->chip;
+ 	int i;
  
-+	*host = NULL;
- 	/* Get parent & match bus type */
- 	parent = of_get_parent(dev);
- 	if (parent == NULL)
-@@ -597,6 +604,8 @@ static u64 __of_translate_address(struct device_node *dev,
+-#if defined(CONFIG_X86_64) || defined(CONFIG_X86_LOCAL_APIC)
++	/*
++	 * Try to set up the through-local-APIC virtual wire mode earlier.
++	 *
++	 * On some 32-bit UP machines, whose APIC has been disabled by BIOS
++	 * and then got re-enabled by "lapic", it hangs at boot time without this.
++	 */
+ 	init_bsp_APIC();
+-#endif
++
+ 	legacy_pic->init(0);
  
- 	/* Translate */
- 	for (;;) {
-+		struct logic_pio_hwaddr *iorange;
-+
- 		/* Switch to parent bus */
- 		of_node_put(dev);
- 		dev = parent;
-@@ -609,6 +618,19 @@ static u64 __of_translate_address(struct device_node *dev,
- 			break;
- 		}
- 
-+		/*
-+		 * For indirectIO device which has no ranges property, get
-+		 * the address from reg directly.
-+		 */
-+		iorange = find_io_range_by_fwnode(&dev->fwnode);
-+		if (iorange && (iorange->flags != PIO_CPU_MMIO)) {
-+			result = of_read_number(addr + 1, na - 1);
-+			pr_debug("indirectIO matched(%s) 0x%llx\n",
-+					of_node_full_name(dev), result);
-+			*host = of_node_get(dev);
-+			break;
-+		}
-+
- 		/* Get new parent bus and counts */
- 		pbus = of_match_bus(parent);
- 		pbus->count_cells(dev, &pna, &pns);
-@@ -640,13 +662,32 @@ static u64 __of_translate_address(struct device_node *dev,
- 
- u64 of_translate_address(struct device_node *dev, const __be32 *in_addr)
- {
--	return __of_translate_address(dev, in_addr, "ranges");
-+	struct device_node *host;
-+	u64 ret;
-+
-+	ret = __of_translate_address(dev, in_addr, "ranges", &host);
-+	if (host) {
-+		of_node_put(host);
-+		return OF_BAD_ADDR;
-+	}
-+
-+	return ret;
- }
- EXPORT_SYMBOL(of_translate_address);
- 
- u64 of_translate_dma_address(struct device_node *dev, const __be32 *in_addr)
- {
--	return __of_translate_address(dev, in_addr, "dma-ranges");
-+	struct device_node *host;
-+	u64 ret;
-+
-+	ret = __of_translate_address(dev, in_addr, "dma-ranges", &host);
-+
-+	if (host) {
-+		of_node_put(host);
-+		return OF_BAD_ADDR;
-+	}
-+
-+	return ret;
- }
- EXPORT_SYMBOL(of_translate_dma_address);
- 
-@@ -688,29 +729,48 @@ const __be32 *of_get_address(struct device_node *dev, int index, u64 *size,
- }
- EXPORT_SYMBOL(of_get_address);
- 
-+static u64 of_translate_ioport(struct device_node *dev, const __be32 *in_addr,
-+			u64 size)
-+{
-+	u64 taddr;
-+	unsigned long port;
-+	struct device_node *host;
-+
-+	taddr = __of_translate_address(dev, in_addr, "ranges", &host);
-+	if (host) {
-+		/* host specific port access */
-+		port = logic_pio_trans_hwaddr(&host->fwnode, taddr, size);
-+		of_node_put(host);
-+	} else {
-+		/* memory mapped I/O range */
-+		port = pci_address_to_pio(taddr);
-+	}
-+
-+	if (port == (unsigned long)-1)
-+		return OF_BAD_ADDR;
-+
-+	return port;
-+}
-+
- static int __of_address_to_resource(struct device_node *dev,
- 		const __be32 *addrp, u64 size, unsigned int flags,
- 		const char *name, struct resource *r)
- {
- 	u64 taddr;
- 
--	if ((flags & (IORESOURCE_IO | IORESOURCE_MEM)) == 0)
-+	if (flags & IORESOURCE_MEM)
-+		taddr = of_translate_address(dev, addrp);
-+	else if (flags & IORESOURCE_IO)
-+		taddr = of_translate_ioport(dev, addrp, size);
-+	else
- 		return -EINVAL;
--	taddr = of_translate_address(dev, addrp);
-+
- 	if (taddr == OF_BAD_ADDR)
- 		return -EINVAL;
- 	memset(r, 0, sizeof(struct resource));
--	if (flags & IORESOURCE_IO) {
--		unsigned long port;
--		port = pci_address_to_pio(taddr);
--		if (port == (unsigned long)-1)
--			return -EINVAL;
--		r->start = port;
--		r->end = port + size - 1;
--	} else {
--		r->start = taddr;
--		r->end = taddr + size - 1;
--	}
-+
-+	r->start = taddr;
-+	r->end = taddr + size - 1;
- 	r->flags = flags;
- 	r->name = name ? name : dev->full_name;
- 
--- 
-1.9.1
+ 	for (i = 0; i < nr_legacy_irqs(); i++)
