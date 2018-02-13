@@ -1,138 +1,187 @@
-Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AH8x224Od/j6hUrL6+bBnvOWJTsanqGyCD5aE4qDiOvLXnDlgxBcKpmXCO2y1xEaERhhw607POZj
-ARC-Seal: i=1; a=rsa-sha256; t=1518513245; cv=none;
-        d=google.com; s=arc-20160816;
-        b=emfCkp/gdcjtm17fubBpemhwufajmjVGqcUN6VBQ1hu2T0xDqfV418zrhyQloS4XeD
-         tDwVC7rI+7iAaoxtuC8dMFszFGPauET7OTqqiCXhyT+Yd+9WgLUk3Mm+WcLJRICGESHv
-         9YccSpYcmIXHdWudJNs0mQnHpz6ilzYwfsF1Wtg4aP4OLY2svbTZzvASLaM0ihMUiVvi
-         vwwu/xVQZAVqzBGEHBlfli4NgJvGEdSfb+n0cgReZzDibOi2MzQDYEjLdmH37PioU+6f
-         d5NXxGfQ/w+uzhbSBOA4EGnIlRNK6qY2zax4UWbxywD0FqzzTmi4Q9VucyA8lRn/k+pU
-         nDfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=precedence:content-disposition:content-transfer-encoding
-         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
-         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
-         :arc-authentication-results;
-        bh=y5mbxZOYQQ4AVEZvDUFI0Uga/HGVLkXVYf5c87V96KM=;
-        b=kL4hJES7662iZEXkkuXOvE/dLepKW5PiVgQWp8o+eS4ekKYciCGNatRYBOncpi6Xjn
-         W3bxQOowI4VXNCvJdpweeVywhVllrcPajsrLtSTVkW0Y0DDBwqbMcbPU/ilBpBh6EgtB
-         HBe1/U+3rU4mM78nexEl1CPcExeU2WBMh+7UQsL+YkoClS4IAeb/iyOjq7RBVTFiMrrz
-         /897T+ibzi+byLY+CgMDOx90oPq9i98nBUEXo3AeJO2v+5j+xnwIsLEOCwwJalVLpoGM
-         xwZGUfhm4C5TPWPZQQmBJz37DUTmkaqt+CKttawzC610upL9yGQwf4hm6C6bVJ6dE8oM
-         TBfA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Tue, 13 Feb 2018 00:57:55 -0800
-Sender: tip tree robot <tipbot@zytor.com>
-From: tip-bot for David Woodhouse <tipbot@zytor.com>
-Message-ID: <tip-d37fc6d360a404b208547ba112e7dabb6533c7fc@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, dwmw2@infradead.org,
-        gregkh@linuxfoundation.org, hpa@zytor.com, luto@kernel.org,
-        peterz@infradead.org, dave.hansen@linux.intel.com, dwmw@amazon.co.uk,
-        bp@alien8.de, jpoimboe@redhat.com, arjan.van.de.ven@intel.com,
-        dan.j.williams@intel.com, mingo@kernel.org,
-        torvalds@linux-foundation.org, arjan@linux.intel.com,
-        tglx@linutronix.de
-Reply-To: hpa@zytor.com, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, dwmw2@infradead.org, luto@kernel.org,
-        dwmw@amazon.co.uk, bp@alien8.de, dave.hansen@linux.intel.com,
-        peterz@infradead.org, torvalds@linux-foundation.org,
-        tglx@linutronix.de, arjan@linux.intel.com, arjan.van.de.ven@intel.com,
-        dan.j.williams@intel.com, mingo@kernel.org, jpoimboe@redhat.com
-In-Reply-To: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
-References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/speculation: Correct Speculation Control
- microcode blacklist again
-Git-Commit-ID: d37fc6d360a404b208547ba112e7dabb6533c7fc
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3695236-1518510532-2-4070974465737653759
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518510532; b=dc2F23KjKyGXJ09VgN0wgg6wbRbGBsxkGg+3nCbBNMN1W36
+    lyVLgnTDJr0Ws+i7YJKjeyFDVOu8KkrNeiL5KLOZ0mg7jWp/TsyWNRyAsgT7PWhs
+    Rfa6KxvF7SeeygEjIXfOMNKmqVKUaeVMbYnx+tr3QcbII1rQ6aPbtKs2xt33sk09
+    uCkCHzpnTr+APpweUaPpfgkzLK6ng9d4b4BDtqhOOc4wQAmOYsg0mBhyIgY4bU7v
+    /FFB44zLCVm0tK7nLfIXysk64h1afZGGA3iab88uccZ+7EZEN2t/6B/avmEsXf91
+    2HVtg37ISSegyuSSxd7ubdC0lYHhz/mh4owj86A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:sender:list-id; s=arctest; t=
+    1518510532; bh=A2qGbYaNiYDyTN1nQQ35l44XVh9F4s/k53PPmJZmUps=; b=L
+    tnFyLFi0SPzkG2fZaSBXw2/oQcYtv7FbefQ1YpgLID39p7dqX53Bs0rbK4zTSUB7
+    3p3g9QyHrwXCK46wqysqebn4NkBoPrq5OLo3DtWPrCzmtfDbL9FhVp8ts5W6MoBO
+    i28sslTC0tIWekIJ3OOs7y70ND26dyN+uAQcaSfevBHT3FE0rmmmVX2X0uV3VwaT
+    zpHmWTFZbBl86eoNi5OpOOdof4NXEgd/hV2m7Er+BkYWxf7puag2f0DIBSRGU5JN
+    B9jkKrG6XyC+x7JnpGF78Tq2mFXOikDUadOMMrANSDiZtTOv+pWS9GFScrsnVOH+
+    6cgkLtgpNz7nrDBU7rpeg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933692AbeBMI2g (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Feb 2018 03:28:36 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48720 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933584AbeBMI2V (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 13 Feb 2018 03:28:21 -0500
+From: Amelie Delaunay <amelie.delaunay@st.com>
+To: John Youn <johnyoun@synopsys.com>, Felipe Balbi <balbi@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+CC: Gevorg Sahakyan <gevorg.sahakyan@synopsys.com>,
+        Minas Harutyunyan <minas.harutyunyan@synopsys.com>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH] usb: dwc2: add support for host mode external vbus supply
+Date: Tue, 13 Feb 2018 09:28:12 +0100
+Message-ID: <1518510492-10159-1-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-13_04:,,
+ signatures=0
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592276544846443221?=
-X-GMAIL-MSGID: =?utf-8?q?1592276544846443221?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  d37fc6d360a404b208547ba112e7dabb6533c7fc
-Gitweb:     https://git.kernel.org/tip/d37fc6d360a404b208547ba112e7dabb6533c7fc
-Author:     David Woodhouse <dwmw@amazon.co.uk>
-AuthorDate: Mon, 12 Feb 2018 15:27:34 +0000
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 08:58:59 +0100
+This patch adds a way to enable an external vbus supply in host mode,
+when dwc2 drvvbus signal is not used.
 
-x86/speculation: Correct Speculation Control microcode blacklist again
+This patch is very similar to the one done in U-Boot dwc2 driver [1]. It
+also adds dynamic vbus supply management depending on the role and state
+of the core.
 
-Arjan points out that the Intel document only clears the 0xc2 microcode
-on *some* parts with CPUID 506E3 (INTEL_FAM6_SKYLAKE_DESKTOP stepping 3).
-For the Skylake H/S platform it's OK but for Skylake E3 which has the
-same CPUID it isn't (yet) cleared.
+[1] https://lists.denx.de/pipermail/u-boot/2017-March/283434.html
 
-So removing it from the blacklist was premature. Put it back for now.
-
-Also, Arjan assures me that the 0x84 microcode for Kaby Lake which was
-featured in one of the early revisions of the Intel document was never
-released to the public, and won't be until/unless it is also validated
-as safe. So those can change to 0x80 which is what all *other* versions
-of the doc have identified.
-
-Once the retrospective testing of existing public microcodes is done, we
-should be back into a mode where new microcodes are only released in
-batches and we shouldn't even need to update the blacklist for those
-anyway, so this tweaking of the list isn't expected to be a thing which
-keeps happening.
-
-Requested-by: Arjan van de Ven <arjan.van.de.ven@intel.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: arjan.van.de.ven@intel.com
-Cc: dave.hansen@intel.com
-Cc: kvm@vger.kernel.org
-Cc: pbonzini@redhat.com
-Link: http://lkml.kernel.org/r/1518449255-2182-1-git-send-email-dwmw@amazon.co.uk
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
 ---
- arch/x86/kernel/cpu/intel.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/usb/dwc2/core.h |  2 ++
+ drivers/usb/dwc2/hcd.c  | 26 ++++++++++++++++++++++++++
+ 2 files changed, 28 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index f73b814..ef796f1 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -116,13 +116,14 @@ struct sku_microcode {
- 	u32 microcode;
- };
- static const struct sku_microcode spectre_bad_microcodes[] = {
--	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0B,	0x84 },
--	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0A,	0x84 },
--	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x09,	0x84 },
--	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x0A,	0x84 },
--	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x84 },
-+	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0B,	0x80 },
-+	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x0A,	0x80 },
-+	{ INTEL_FAM6_KABYLAKE_DESKTOP,	0x09,	0x80 },
-+	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x0A,	0x80 },
-+	{ INTEL_FAM6_KABYLAKE_MOBILE,	0x09,	0x80 },
- 	{ INTEL_FAM6_SKYLAKE_X,		0x03,	0x0100013e },
- 	{ INTEL_FAM6_SKYLAKE_X,		0x04,	0x0200003c },
-+	{ INTEL_FAM6_SKYLAKE_DESKTOP,	0x03,	0xc2 },
- 	{ INTEL_FAM6_BROADWELL_CORE,	0x04,	0x28 },
- 	{ INTEL_FAM6_BROADWELL_GT3E,	0x01,	0x1b },
- 	{ INTEL_FAM6_BROADWELL_XEON_D,	0x02,	0x14 },
+diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
+index cd77af3..8ebc85c 100644
+--- a/drivers/usb/dwc2/core.h
++++ b/drivers/usb/dwc2/core.h
+@@ -786,6 +786,7 @@ struct dwc2_hregs_backup {
+  * @plat:               The platform specific configuration data. This can be
+  *                      removed once all SoCs support usb transceiver.
+  * @supplies:           Definition of USB power supplies
++ * @vbus_supply:        Regulator supplying vbus.
+  * @phyif:              PHY interface width
+  * @lock:		Spinlock that protects all the driver data structures
+  * @priv:		Stores a pointer to the struct usb_hcd
+@@ -922,6 +923,7 @@ struct dwc2_hsotg {
+ 	struct usb_phy *uphy;
+ 	struct dwc2_hsotg_plat *plat;
+ 	struct regulator_bulk_data supplies[DWC2_NUM_SUPPLIES];
++	struct regulator *vbus_supply;
+ 	u32 phyif;
+ 
+ 	spinlock_t lock;
+diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
+index a5d72fc..2cf2fd0 100644
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -365,6 +365,23 @@ static void dwc2_gusbcfg_init(struct dwc2_hsotg *hsotg)
+ 	dwc2_writel(usbcfg, hsotg->regs + GUSBCFG);
+ }
+ 
++static int dwc2_vbus_supply_init(struct dwc2_hsotg *hsotg)
++{
++	hsotg->vbus_supply = devm_regulator_get_optional(hsotg->dev, "vbus");
++	if (IS_ERR(hsotg->vbus_supply))
++		return 0;
++
++	return regulator_enable(hsotg->vbus_supply);
++}
++
++static int dwc2_vbus_supply_exit(struct dwc2_hsotg *hsotg)
++{
++	if (hsotg->vbus_supply)
++		return regulator_disable(hsotg->vbus_supply);
++
++	return 0;
++}
++
+ /**
+  * dwc2_enable_host_interrupts() - Enables the Host mode interrupts
+  *
+@@ -3257,6 +3274,7 @@ static void dwc2_conn_id_status_change(struct work_struct *work)
+ 
+ 	/* B-Device connector (Device Mode) */
+ 	if (gotgctl & GOTGCTL_CONID_B) {
++		dwc2_vbus_supply_exit(hsotg);
+ 		/* Wait for switch to device mode */
+ 		dev_dbg(hsotg->dev, "connId B\n");
+ 		if (hsotg->bus_suspended) {
+@@ -4363,6 +4381,9 @@ static int _dwc2_hcd_start(struct usb_hcd *hcd)
+ 	}
+ 
+ 	spin_unlock_irqrestore(&hsotg->lock, flags);
++
++	dwc2_vbus_supply_init(hsotg);
++
+ 	return 0;
+ }
+ 
+@@ -4390,6 +4411,8 @@ static void _dwc2_hcd_stop(struct usb_hcd *hcd)
+ 	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
+ 	spin_unlock_irqrestore(&hsotg->lock, flags);
+ 
++	dwc2_vbus_supply_exit(hsotg);
++
+ 	usleep_range(1000, 3000);
+ }
+ 
+@@ -4426,6 +4449,7 @@ static int _dwc2_hcd_suspend(struct usb_hcd *hcd)
+ 		hprt0 |= HPRT0_SUSP;
+ 		hprt0 &= ~HPRT0_PWR;
+ 		dwc2_writel(hprt0, hsotg->regs + HPRT0);
++		dwc2_vbus_supply_exit(hsotg);
+ 	}
+ 
+ 	/* Enter hibernation */
+@@ -4506,6 +4530,8 @@ static int _dwc2_hcd_resume(struct usb_hcd *hcd)
+ 		spin_unlock_irqrestore(&hsotg->lock, flags);
+ 		dwc2_port_resume(hsotg);
+ 	} else {
++		dwc2_vbus_supply_init(hsotg);
++
+ 		/* Wait for controller to correctly update D+/D- level */
+ 		usleep_range(3000, 5000);
+ 
+-- 
+2.7.4
+
