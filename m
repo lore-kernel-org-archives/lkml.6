@@ -1,679 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965618AbeBMSsM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 13:48:12 -0500
-Received: from complete.lackof.org ([198.49.126.79]:38086 "EHLO
-        complete.lackof.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965421AbeBMSsD (ORCPT
+        id S965636AbeBMSsf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 13:48:35 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:43050 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965477AbeBMSs3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 13:48:03 -0500
-Date: Tue, 13 Feb 2018 11:41:23 -0700
-From: dann frazier <dann.frazier@canonical.com>
-To: John Garry <john.garry@huawei.com>
-Cc: mika.westerberg@linux.intel.com, rafael@kernel.org,
-        lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, robh+dt@kernel.org,
-        bhelgaas@google.com, arnd@arndb.de, mark.rutland@arm.com,
-        olof@lixom.net, hanjun.guo@linaro.org, benh@kernel.crashing.org,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linuxarm@huawei.com, linux-pci@vger.kernel.org, minyard@acm.org,
-        devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-        rdunlap@infradead.org, Zhichang Yuan <yuanzhichang@hisilicon.com>,
-        Zou Rongrong <zourongrong@huawei.com>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>
-Subject: Re: [PATCH v12 6/9] LPC: Support the LPC host on Hip06/Hip07 with DT
- bindings
-Message-ID: <20180213184123.GA11446@xps13.dannf>
-References: <1516725385-24535-1-git-send-email-john.garry@huawei.com>
- <1516725385-24535-7-git-send-email-john.garry@huawei.com>
+        Tue, 13 Feb 2018 13:48:29 -0500
+X-Google-Smtp-Source: AH8x225hr/UiLOaA7gJXXFewDhwGyloLdzTeKrYIAb9NVyAoxeWH6fLGCZAmhBnSYCbeMmcpWL9IukR6omBdFrThB+0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1516725385-24535-7-git-send-email-john.garry@huawei.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CAM_iQpVyf_=UFW5Oay9a15GD8QaXbgbPse333SWAivE=dd+TXQ@mail.gmail.com>
+References: <001a1141c71c1c6df8055cc55e50@google.com> <CAM_iQpVyf_=UFW5Oay9a15GD8QaXbgbPse333SWAivE=dd+TXQ@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 13 Feb 2018 19:48:08 +0100
+Message-ID: <CACT4Y+aHxNXtdL=Ar_oxU8ifbX_WqaJrr+CS2h2sT00hU=bVqQ@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in sit_tunnel_xmit
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: syzbot
+        <bot+1aa412fe58f4059538c0204a0f096524e6dce60b@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 24, 2018 at 12:36:22AM +0800, John Garry wrote:
-> From: Zhichang Yuan <yuanzhichang@hisilicon.com>
-> 
-> The low-pin-count(LPC) interface of Hip06/Hip07 accesses the peripherals in
-> I/O port addresses. This patch implements the LPC host controller driver
-> which perform the I/O operations on the underlying hardware.
-> We don't want to touch those existing peripherals' driver, such as ipmi-bt.
-> So this driver applies the indirect-IO introduced in the previous patch
-> after registering an indirect-IO node to the indirect-IO devices list which
-> will be searched in the I/O accessors to retrieve the host-local I/O port.
-> 
-> The driver config is set as a bool instead of a trisate. The reason
-> here is that, by the very nature of the driver providing a logical
-> PIO range, it does not make sense to have this driver as a loadable
-> module. Another more specific reason is that the Huawei D03 board
-> which includes hip06 SoC requires the LPC bus for UART console, so
-> should be built in.
-> 
-> Signed-off-by: Zou Rongrong <zourongrong@huawei.com>
-> Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
-> Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
-> Acked-by: Rob Herring <robh@kernel.org> #dts part
-> ---
->  .../arm/hisilicon/hisilicon-low-pin-count.txt      |  33 ++
->  drivers/bus/Kconfig                                |   8 +
->  drivers/bus/Makefile                               |   1 +
->  drivers/bus/hisi_lpc.c                             | 526 +++++++++++++++++++++
->  4 files changed, 568 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hisilicon-low-pin-count.txt
->  create mode 100644 drivers/bus/hisi_lpc.c
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/hisilicon/hisilicon-low-pin-count.txt b/Documentation/devicetree/bindings/arm/hisilicon/hisilicon-low-pin-count.txt
-> new file mode 100644
-> index 0000000..213181f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/hisilicon/hisilicon-low-pin-count.txt
-> @@ -0,0 +1,33 @@
-> +Hisilicon Hip06 low-pin-count device
-> +  Hisilicon Hip06 SoCs implement a Low Pin Count (LPC) controller, which
-> +  provides I/O access to some legacy ISA devices.
-> +  Hip06 is based on arm64 architecture where there is no I/O space. So, the
-> +  I/O ports here are not cpu addresses, and there is no 'ranges' property in
-> +  LPC device node.
-> +
-> +Required properties:
-> +- compatible:  value should be as follows:
-> +	(a) "hisilicon,hip06-lpc"
-> +	(b) "hisilicon,hip07-lpc"
-> +- #address-cells: must be 2 which stick to the ISA/EISA binding doc.
-> +- #size-cells: must be 1 which stick to the ISA/EISA binding doc.
-> +- reg: base memory range where the LPC register set is mapped.
-> +
-> +Note:
-> +  The node name before '@' must be "isa" to represent the binding stick to the
-> +  ISA/EISA binding specification.
-> +
-> +Example:
-> +
-> +isa@a01b0000 {
-> +	compatible = "hisilicon,hip06-lpc";
-> +	#address-cells = <2>;
-> +	#size-cells = <1>;
-> +	reg = <0x0 0xa01b0000 0x0 0x1000>;
-> +
-> +	ipmi0: bt@e4 {
-> +		compatible = "ipmi-bt";
-> +		device_type = "ipmi";
-> +		reg = <0x01 0xe4 0x04>;
-> +	};
-> +};
-> diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
-> index 57e011d..91debe4 100644
-> --- a/drivers/bus/Kconfig
-> +++ b/drivers/bus/Kconfig
-> @@ -65,6 +65,14 @@ config BRCMSTB_GISB_ARB
->  	  arbiter. This driver provides timeout and target abort error handling
->  	  and internal bus master decoding.
->  
-> +config HISILICON_LPC
-> +	bool "Support for ISA I/O space on Hisilicon hip06/7"
-> +	depends on (ARM64 && (ARCH_HISI || COMPILE_TEST))
-> +	select INDIRECT_PIO
-> +	help
-> +	  Driver needed for some legacy ISA devices attached to Low-Pin-Count
-> +	  on Hisilicon hip06/7 SoC.
-> +
->  config IMX_WEIM
->  	bool "Freescale EIM DRIVER"
->  	depends on ARCH_MXC
-> diff --git a/drivers/bus/Makefile b/drivers/bus/Makefile
-> index 9bcd0bf..abc7a42 100644
-> --- a/drivers/bus/Makefile
-> +++ b/drivers/bus/Makefile
-> @@ -8,6 +8,7 @@ obj-$(CONFIG_ARM_CCI)		+= arm-cci.o
->  obj-$(CONFIG_ARM_CCN)		+= arm-ccn.o
->  
->  obj-$(CONFIG_BRCMSTB_GISB_ARB)	+= brcmstb_gisb.o
-> +obj-$(CONFIG_HISILICON_LPC)	+= hisi_lpc.o
->  obj-$(CONFIG_IMX_WEIM)		+= imx-weim.o
->  obj-$(CONFIG_MIPS_CDMM)		+= mips_cdmm.o
->  obj-$(CONFIG_MVEBU_MBUS) 	+= mvebu-mbus.o
-> diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
-> new file mode 100644
-> index 0000000..4ce089a
-> --- /dev/null
-> +++ b/drivers/bus/hisi_lpc.c
-> @@ -0,0 +1,526 @@
-> +/*
-> + * Copyright (C) 2017 Hisilicon Limited, All Rights Reserved.
-> + * Author: Zhichang Yuan <yuanzhichang@hisilicon.com>
-> + * Author: Zou Rongrong <zourongrong@huawei.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/console.h>
-> +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/logic_pio.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/pci.h>
-> +#include <linux/slab.h>
-> +
-> +#define LPC_MIN_BUS_RANGE	0x0
-> +
-> +/*
-> + * The default maximal IO size for Hip06/Hip07 LPC bus.
-> + * Defining the I/O range size as 0x4000 here should be sufficient for
-> + * all peripherals under the bus.
-> + */
-> +#define LPC_BUS_IO_SIZE		0x4000
-> +
-> +/*
-> + * Setting this bit means each IO operation will target to a
-> + * different port address:
-> + * 0 means repeatedly IO operations will stick on the same port,
-> + * such as BT;
-> + */
-> +#define FG_INCRADDR_LPC		0x02
-> +
-> +struct lpc_cycle_para {
-> +	unsigned int opflags;
-> +	unsigned int csize; /* the data length of each operation */
-> +};
-> +
-> +struct hisilpc_dev {
-> +	spinlock_t cycle_lock;
-> +	void __iomem  *membase;
-> +	struct logic_pio_hwaddr *io_host;
-> +};
-> +
-> +/* The maximum continuous cycles per burst */
-> +#define LPC_MAX_BURST	16
-> +/* The IO cycle counts supported is four per operation at maximum */
-> +#define LPC_MAX_DULEN	4
-> +#if LPC_MAX_DULEN > LPC_MAX_BURST
-> +#error "LPC.. MAX_DULEN must be not bigger than MAX_OPCNT!"
-> +#endif
-> +
-> +#if LPC_MAX_BURST % LPC_MAX_DULEN
-> +#error "LPC.. LPC_MAX_BURST must be multiple of LPC_MAX_DULEN!"
-> +#endif
-> +
-> +#define LPC_REG_START		0x00 /* start a new LPC cycle */
-> +#define LPC_REG_OP_STATUS	0x04 /* the current LPC status */
-> +#define LPC_REG_IRQ_ST		0x08 /* interrupt enable&status */
-> +#define LPC_REG_OP_LEN		0x10 /* how many LPC cycles each start */
-> +#define LPC_REG_CMD		0x14 /* command for the required LPC cycle */
-> +#define LPC_REG_ADDR		0x20 /* LPC target address */
-> +#define LPC_REG_WDATA		0x24 /* data to be written */
-> +#define LPC_REG_RDATA		0x28 /* data coming from peer */
-> +
-> +
-> +/* The command register fields */
-> +#define LPC_CMD_SAMEADDR	0x08
-> +#define LPC_CMD_TYPE_IO		0x00
-> +#define LPC_CMD_WRITE		0x01
-> +#define LPC_CMD_READ		0x00
-> +/* the bit attribute is W1C. 1 represents OK. */
-> +#define LPC_STAT_BYIRQ		0x02
-> +
-> +#define LPC_STATUS_IDLE		0x01
-> +#define LPC_OP_FINISHED		0x02
-> +
-> +#define LPC_START_WORK		0x01
-> +
-> +/* The minimal nanosecond interval for each query on LPC cycle status. */
-> +#define LPC_NSEC_PERWAIT	100
-> +/*
-> + * The maximum waiting time is about 128us.
-> + * It is specific for stream I/O, such as ins.
-> + * The fastest IO cycle time is about 390ns, but the worst case will wait
-> + * for extra 256 lpc clocks, so (256 + 13) * 30ns = 8 us. The maximum
-> + * burst cycles is 16. So, the maximum waiting time is about 128us under
-> + * worst case.
-> + * choose 1300 as the maximum.
-> + */
-> +#define LPC_MAX_WAITCNT		1300
-> +/* About 10us. This is specific for single IO operation, such as inb. */
-> +#define LPC_PEROP_WAITCNT	100
-> +
-> +static inline int wait_lpc_idle(unsigned char *mbase,
-> +				unsigned int waitcnt) {
-> +	u32 opstatus;
-> +
-> +	while (waitcnt--) {
-> +		ndelay(LPC_NSEC_PERWAIT);
-> +		opstatus = readl(mbase + LPC_REG_OP_STATUS);
-> +		if (opstatus & LPC_STATUS_IDLE)
-> +			return (opstatus & LPC_OP_FINISHED) ? 0 : (-EIO);
-> +	}
-> +	return -ETIME;
-> +}
-> +
-> +/*
-> + * hisilpc_target_in - trigger a series of lpc cycles to read required data
-> + *		       from target peripheral.
-> + * @lpcdev: pointer to hisi lpc device
-> + * @para: some parameters used to control the lpc I/O operations
-> + * @ptaddr: the lpc I/O target port address
-> + * @buf: where the read back data is stored
-> + * @opcnt: how many I/O operations required in this calling
-> + *
-> + * Only one byte data is read each I/O operation.
-> + *
-> + * Returns 0 on success, non-zero on fail.
-> + */
-> +static int
-> +hisilpc_target_in(struct hisilpc_dev *lpcdev, struct lpc_cycle_para *para,
-> +		  unsigned long ptaddr, unsigned char *buf,
-> +		  unsigned long opcnt)
-> +{
-> +	unsigned long cnt_per_trans;
-> +	unsigned int cmd_word;
-> +	unsigned int waitcnt;
-> +	int ret;
-> +
-> +	if (!buf || !opcnt || !para || !para->csize || !lpcdev)
-> +		return -EINVAL;
-> +
-> +	cmd_word = LPC_CMD_TYPE_IO | LPC_CMD_READ;
-> +	waitcnt = LPC_PEROP_WAITCNT;
-> +	if (!(para->opflags & FG_INCRADDR_LPC)) {
-> +		cmd_word |= LPC_CMD_SAMEADDR;
-> +		waitcnt = LPC_MAX_WAITCNT;
-> +	}
-> +
-> +	ret = 0;
-> +	cnt_per_trans = (para->csize == 1) ? opcnt : para->csize;
-> +	for (; opcnt && !ret; cnt_per_trans = para->csize) {
-> +		unsigned long flags;
-> +
-> +		/* whole operation must be atomic */
-> +		spin_lock_irqsave(&lpcdev->cycle_lock, flags);
-> +
-> +		writel_relaxed(cnt_per_trans, lpcdev->membase + LPC_REG_OP_LEN);
-> +
-> +		writel_relaxed(cmd_word, lpcdev->membase + LPC_REG_CMD);
-> +
-> +		writel_relaxed(ptaddr, lpcdev->membase + LPC_REG_ADDR);
-> +
-> +		writel(LPC_START_WORK, lpcdev->membase + LPC_REG_START);
-> +
-> +		/* whether the operation is finished */
-> +		ret = wait_lpc_idle(lpcdev->membase, waitcnt);
-> +		if (!ret) {
-> +			opcnt -= cnt_per_trans;
+On Mon, Oct 30, 2017 at 7:41 PM, Cong Wang <xiyou.wangcong@gmail.com> wrote:
+> On Mon, Oct 30, 2017 at 8:34 AM, syzbot
+> <bot+1aa412fe58f4059538c0204a0f096524e6dce60b@syzkaller.appspotmail.com>
+> wrote:
+>> Hello,
+>>
+>> syzkaller hit the following crash on
+>> 4dc12ffeaeac939097a3f55c881d3dc3523dff0c
+>> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
+>> compiler: gcc (GCC) 7.1.1 20170620
+>> .config is attached
+>> Raw console output is attached.
+>>
+>> skbuff: bad partial csum: csum=53081/14726 len=2273
+>> ==================================================================
+>> BUG: KASAN: use-after-free in ipv6_get_dsfield include/net/dsfield.h:23
+>> [inline]
+>> BUG: KASAN: use-after-free in ipip6_tunnel_xmit net/ipv6/sit.c:968 [inline]
+>> BUG: KASAN: use-after-free in sit_tunnel_xmit+0x2a41/0x3130
+>> net/ipv6/sit.c:1016
+>> Read of size 2 at addr ffff8801c64afd00 by task syz-executor3/16942
+>>
+>> CPU: 0 PID: 16942 Comm: syz-executor3 Not tainted 4.14.0-rc5+ #97
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>> Google 01/01/2011
+>> Call Trace:
+>>  __dump_stack lib/dump_stack.c:16 [inline]
+>>  dump_stack+0x194/0x257 lib/dump_stack.c:52
+>>  print_address_description+0x73/0x250 mm/kasan/report.c:252
+>>  kasan_report_error mm/kasan/report.c:351 [inline]
+>>  kasan_report+0x25b/0x340 mm/kasan/report.c:409
+>>  __asan_report_load2_noabort+0x14/0x20 mm/kasan/report.c:428
+>>  ipv6_get_dsfield include/net/dsfield.h:23 [inline]
+>>  ipip6_tunnel_xmit net/ipv6/sit.c:968 [inline]
+>>  sit_tunnel_xmit+0x2a41/0x3130 net/ipv6/sit.c:1016
+>>  __netdev_start_xmit include/linux/netdevice.h:4022 [inline]
+>>  netdev_start_xmit include/linux/netdevice.h:4031 [inline]
+>>  xmit_one net/core/dev.c:3008 [inline]
+>>  dev_hard_start_xmit+0x248/0xac0 net/core/dev.c:3024
+>>  __dev_queue_xmit+0x17d2/0x2070 net/core/dev.c:3505
+>>  dev_queue_xmit+0x17/0x20 net/core/dev.c:3538
+>>  neigh_direct_output+0x15/0x20 net/core/neighbour.c:1390
+>>  neigh_output include/net/neighbour.h:481 [inline]
+>>  ip6_finish_output2+0xad1/0x22a0 net/ipv6/ip6_output.c:120
+>>  ip6_fragment+0x25ae/0x3420 net/ipv6/ip6_output.c:723
+>>  ip6_finish_output+0x319/0x920 net/ipv6/ip6_output.c:144
+>>  NF_HOOK_COND include/linux/netfilter.h:238 [inline]
+>>  ip6_output+0x1f4/0x850 net/ipv6/ip6_output.c:163
+>>  dst_output include/net/dst.h:459 [inline]
+>>  ip6_local_out+0x95/0x160 net/ipv6/output_core.c:176
+>>  ip6_send_skb+0xa1/0x330 net/ipv6/ip6_output.c:1658
+>>  ip6_push_pending_frames+0xb3/0xe0 net/ipv6/ip6_output.c:1678
+>>  rawv6_push_pending_frames net/ipv6/raw.c:616 [inline]
+>>  rawv6_sendmsg+0x2eb9/0x3e40 net/ipv6/raw.c:935
+>>  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
+>>  sock_sendmsg_nosec net/socket.c:633 [inline]
+>>  sock_sendmsg+0xca/0x110 net/socket.c:643
+>>  SYSC_sendto+0x352/0x5a0 net/socket.c:1750
+>>  SyS_sendto+0x40/0x50 net/socket.c:1718
+>>  entry_SYSCALL_64_fastpath+0x1f/0xbe
+>> RIP: 0033:0x452869
+>> RSP: 002b:00007fe3c12e5be8 EFLAGS: 00000212 ORIG_RAX: 000000000000002c
+>> RAX: ffffffffffffffda RBX: 00000000007580d8 RCX: 0000000000452869
+>> RDX: 00000000000007f1 RSI: 000000002013b7ff RDI: 0000000000000014
+>> RBP: 0000000000000161 R08: 00000000204e8fe4 R09: 000000000000001c
+>> R10: 0000000001000000 R11: 0000000000000212 R12: 00000000006f01b8
+>> R13: 00000000ffffffff R14: 00007fe3c12e66d4 R15: 0000000000000017
+>>
+>> Allocated by task 16924:
+>>  save_stack_trace+0x16/0x20 arch/x86/kernel/stacktrace.c:59
+>>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+>>  set_track mm/kasan/kasan.c:459 [inline]
+>>  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
+>>  __do_kmalloc_node mm/slab.c:3689 [inline]
+>>  __kmalloc_node_track_caller+0x47/0x70 mm/slab.c:3703
+>>  __kmalloc_reserve.isra.40+0x41/0xd0 net/core/skbuff.c:138
+>>  __alloc_skb+0x13b/0x780 net/core/skbuff.c:206
+>>  alloc_skb include/linux/skbuff.h:985 [inline]
+>>  sock_wmalloc+0x140/0x1d0 net/core/sock.c:1932
+>>  __ip6_append_data.isra.43+0x2681/0x3340 net/ipv6/ip6_output.c:1397
+>>  ip6_append_data+0x189/0x290 net/ipv6/ip6_output.c:1552
+>>  rawv6_sendmsg+0x1dd9/0x3e40 net/ipv6/raw.c:928
+>>  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
+>>  sock_sendmsg_nosec net/socket.c:633 [inline]
+>>  sock_sendmsg+0xca/0x110 net/socket.c:643
+>>  SYSC_sendto+0x352/0x5a0 net/socket.c:1750
+>>  SyS_sendto+0x40/0x50 net/socket.c:1718
+>>  entry_SYSCALL_64_fastpath+0x1f/0xbe
+>>
+>> Freed by task 16942:
+>>  save_stack_trace+0x16/0x20 arch/x86/kernel/stacktrace.c:59
+>>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+>>  set_track mm/kasan/kasan.c:459 [inline]
+>>  kasan_slab_free+0x71/0xc0 mm/kasan/kasan.c:524
+>>  __cache_free mm/slab.c:3503 [inline]
+>>  kfree+0xca/0x250 mm/slab.c:3820
+>>  skb_free_head+0x74/0xb0 net/core/skbuff.c:554
+>>  pskb_expand_head+0x36b/0x1210 net/core/skbuff.c:1494
+>>  __pskb_pull_tail+0x14a/0x17c0 net/core/skbuff.c:1877
+>>  pskb_may_pull include/linux/skbuff.h:2102 [inline]
+>>  _decode_session6+0x8a4/0x1100 net/ipv6/xfrm6_policy.c:148
+>
+> Looks like we should indicate error by returning some int
+> for afinfo->decode_session().
 
-Do we need to check for an underflow here?
 
-> +			for (cnt_per_trans--; cnt_per_trans--; buf++)
-> +				*buf = readb_relaxed(lpcdev->membase +
-> +					LPC_REG_RDATA);
-> +			*buf = readb(lpcdev->membase + LPC_REG_RDATA);
-> +		}
-> +
-> +		spin_unlock_irqrestore(&lpcdev->cycle_lock, flags);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +/*
-> + * hisilpc_target_out - trigger a series of lpc cycles to write required
-> + *			data to target peripheral.
-> + * @lpcdev: pointer to hisi lpc device
-> + * @para: some parameters used to control the lpc I/O operations
-> + * @ptaddr: the lpc I/O target port address
-> + * @buf: where the data to be written is stored
-> + * @opcnt: how many I/O operations required
-> + *
-> + * Only one byte data is read each I/O operation.
+Cong, do you want to do something with this bug? Otherwise I want to
+close this as part of old bug bankruptcy.
 
-s/read/written/ ?
 
-> + * Returns 0 on success, non-zero on fail.
-> + *
-> + */
-> +static int
-> +hisilpc_target_out(struct hisilpc_dev *lpcdev, struct lpc_cycle_para *para,
-> +		   unsigned long ptaddr, const unsigned char *buf,
-> +		   unsigned long opcnt)
-> +{
-> +	unsigned long cnt_per_trans;
-> +	unsigned int cmd_word;
-> +	unsigned int waitcnt;
-> +	int ret;
-> +
-> +	if (!buf || !opcnt || !para || !lpcdev)
-> +		return -EINVAL;
-> +
-> +	/* default is increasing address */
-> +	cmd_word = LPC_CMD_TYPE_IO | LPC_CMD_WRITE;
-> +	waitcnt = LPC_PEROP_WAITCNT;
-> +	if (!(para->opflags & FG_INCRADDR_LPC)) {
-> +		cmd_word |= LPC_CMD_SAMEADDR;
-> +		waitcnt = LPC_MAX_WAITCNT;
-> +	}
-> +
-> +	ret = 0;
-> +	cnt_per_trans = (para->csize == 1) ? opcnt : para->csize;
-> +	for (; opcnt && !ret; cnt_per_trans = para->csize) {
-> +		unsigned long flags;
-> +
-> +		spin_lock_irqsave(&lpcdev->cycle_lock, flags);
-> +
-> +		writel_relaxed(cnt_per_trans, lpcdev->membase + LPC_REG_OP_LEN);
-> +		writel_relaxed(cmd_word, lpcdev->membase + LPC_REG_CMD);
-> +		writel_relaxed(ptaddr, lpcdev->membase + LPC_REG_ADDR);
-> +
-> +		opcnt -= cnt_per_trans;
-
-Underflow check needed?
-
- -dann
-
-> +		for (; cnt_per_trans--; buf++)
-> +			writeb_relaxed(*buf, lpcdev->membase + LPC_REG_WDATA);
-> +
-> +		writel(LPC_START_WORK, lpcdev->membase + LPC_REG_START);
-> +
-> +		/* whether the operation is finished */
-> +		ret = wait_lpc_idle(lpcdev->membase, waitcnt);
-> +
-> +		spin_unlock_irqrestore(&lpcdev->cycle_lock, flags);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static inline unsigned long
-> +hisi_lpc_pio_to_addr(struct hisilpc_dev *lpcdev, unsigned long pio)
-> +{
-> +	return pio - lpcdev->io_host->io_start +
-> +		lpcdev->io_host->hw_start;
-> +}
-> +
-> +
-> +/**
-> + * hisilpc_comm_in - read/input the data from the I/O peripheral
-> + *		     through LPC.
-> + * @devobj: pointer to the device information relevant to LPC controller.
-> + * @pio: the target I/O port address.
-> + * @dlen: the data length required to read from the target I/O port.
-> + *
-> + * when succeed, the data read back is stored in buffer pointed by inbuf.
-> + * For inb, return the data read from I/O or -1 when error occur.
-> + */
-> +static u32 hisilpc_comm_in(void *devobj, unsigned long pio, size_t dlen)
-> +{
-> +	int ret = 0;
-> +	unsigned char rd_data = 0;
-> +	unsigned long ptaddr;
-> +	struct lpc_cycle_para iopara;
-> +	struct hisilpc_dev *lpcdev = devobj;
-> +
-> +	if (!lpcdev || !dlen || dlen > LPC_MAX_DULEN)
-> +		return -1;
-> +
-> +	ptaddr = hisi_lpc_pio_to_addr(lpcdev, pio);
-> +
-> +	iopara.opflags = FG_INCRADDR_LPC;
-> +	iopara.csize = dlen;
-> +
-> +	ret = hisilpc_target_in(lpcdev, &iopara, ptaddr, &rd_data, dlen);
-> +	if (ret)
-> +		return -1;
-> +
-> +	return le32_to_cpu((u32)rd_data);
-> +}
-> +
-> +/**
-> + * hisilpc_comm_out - output the data whose maximum length is four bytes
-> +		      to the I/O peripheral through the LPC host.
-> + * @devobj: pointer to the device information relevant to LPC controller.
-> + * @pio: the target I/O port address.
-> + * @outval: a value to be outputted from caller, maximum is four bytes.
-> + * @dlen: the data length required writing to the target I/O port.
-> + *
-> + * This function is corresponding to out(b,w,l) only
-> + *
-> + */
-> +static void hisilpc_comm_out(void *devobj, unsigned long pio,
-> +			     u32 outval, size_t dlen)
-> +{
-> +	unsigned long ptaddr;
-> +	struct hisilpc_dev *lpcdev = devobj;
-> +	struct lpc_cycle_para iopara;
-> +	const unsigned char *newbuf;
-> +
-> +	if (!lpcdev || !dlen || dlen > LPC_MAX_DULEN)
-> +		return;
-> +
-> +	outval = cpu_to_le32(outval);
-> +
-> +	newbuf = (const unsigned char *)&outval;
-> +	ptaddr = hisi_lpc_pio_to_addr(lpcdev, pio);
-> +
-> +	iopara.opflags = FG_INCRADDR_LPC;
-> +	iopara.csize = dlen;
-> +
-> +	hisilpc_target_out(lpcdev, &iopara, ptaddr, newbuf, dlen);
-> +}
-> +
-> +/*
-> + * hisilpc_comm_ins - read/input the data in buffer to the I/O
-> + *		peripheral through LPC, it corresponds to ins(b,w,l)
-> + * @devobj: pointer to the device information relevant to LPC controller.
-> + * @pio: the target I/O port address.
-> + * @inbuf: a buffer where read/input data bytes are stored.
-> + * @dlen: the data length required writing to the target I/O port.
-> + * @count: how many data units whose length is dlen will be read.
-> + *
-> + * when succeed, the data read back is stored in buffer pointed by inbuf.
-> + * Returns 0 on success, -errno otherwise
-> + *
-> + */
-> +static u32
-> +hisilpc_comm_ins(void *devobj, unsigned long pio, void *inbuf,
-> +		 size_t dlen, unsigned int count)
-> +{
-> +	struct hisilpc_dev *lpcdev = devobj;
-> +	struct lpc_cycle_para iopara;
-> +	unsigned char *newbuf;
-> +	unsigned int loopcnt, cntleft;
-> +	unsigned long ptaddr;
-> +
-> +	if (!lpcdev || !inbuf || !count || !dlen || dlen > LPC_MAX_DULEN ||
-> +			count % dlen)
-> +		return -EINVAL;
-> +
-> +	iopara.opflags = 0;
-> +	if (dlen > 1)
-> +		iopara.opflags |= FG_INCRADDR_LPC;
-> +	iopara.csize = dlen;
-> +
-> +	ptaddr = hisi_lpc_pio_to_addr(lpcdev, pio);
-> +	newbuf = inbuf;
-> +	/*
-> +	 * ensure data stream whose length is multiple of dlen to be processed
-> +	 * each IO input
-> +	 */
-> +	cntleft = count * dlen;
-> +	do {
-> +		int ret;
-> +
-> +		loopcnt = min_t(unsigned int, LPC_MAX_BURST, cntleft);
-> +		ret = hisilpc_target_in(lpcdev, &iopara, ptaddr,
-> +					newbuf, loopcnt);
-> +		if (ret)
-> +			return ret;
-> +		newbuf += loopcnt;
-> +		cntleft -= loopcnt;
-> +	} while (cntleft);
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * hisilpc_comm_outs - write/output the data in buffer to the I/O
-> + *		peripheral through LPC, it corresponds to outs(b,w,l)
-> + * @devobj: pointer to the device information relevant to LPC controller.
-> + * @pio: the target I/O port address.
-> + * @outbuf: a buffer where write/output data bytes are stored.
-> + * @dlen: the data length required writing to the target I/O port .
-> + * @count: how many data units whose length is dlen will be written.
-> + *
-> + */
-> +static void
-> +hisilpc_comm_outs(void *devobj, unsigned long pio, const void *outbuf,
-> +		  size_t dlen, unsigned int count)
-> +{
-> +	struct hisilpc_dev *lpcdev = devobj;
-> +	struct lpc_cycle_para iopara;
-> +	const unsigned char *newbuf;
-> +	unsigned int loopcnt, cntleft;
-> +	unsigned long ptaddr;
-> +
-> +	if (!lpcdev || !outbuf || !count || !dlen || dlen > LPC_MAX_DULEN ||
-> +			count % dlen)
-> +		return;
-> +
-> +	iopara.opflags = 0;
-> +	if (dlen > 1)
-> +		iopara.opflags |= FG_INCRADDR_LPC;
-> +	iopara.csize = dlen;
-> +
-> +	ptaddr = hisi_lpc_pio_to_addr(lpcdev, pio);
-> +	newbuf = outbuf;
-> +	/*
-> +	 * ensure data stream whose length is multiple of dlen to be processed
-> +	 * each IO input
-> +	 */
-> +	cntleft = count * dlen;
-> +	do {
-> +		loopcnt = min_t(unsigned int, LPC_MAX_BURST, cntleft);
-> +		if (hisilpc_target_out(lpcdev, &iopara, ptaddr, newbuf,
-> +						loopcnt))
-> +			break;
-> +		newbuf += loopcnt;
-> +		cntleft -= loopcnt;
-> +	} while (cntleft);
-> +}
-> +
-> +static struct hostio_ops hisi_lpc_ops = {
-> +	.pfin = hisilpc_comm_in,
-> +	.pfout = hisilpc_comm_out,
-> +	.pfins = hisilpc_comm_ins,
-> +	.pfouts = hisilpc_comm_outs,
-> +};
-> +
-> +/**
-> + * hisilpc_probe - the probe callback function for hisi lpc device,
-> + *		   will finish all the initialization.
-> + * @pdev: the platform device corresponding to hisi lpc
-> + *
-> + * Returns 0 on success, non-zero on fail.
-> + */
-> +static int hisilpc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct resource *res;
-> +	struct hisilpc_dev *lpcdev;
-> +	int ret = 0;
-> +
-> +	lpcdev = devm_kzalloc(dev, sizeof(struct hisilpc_dev), GFP_KERNEL);
-> +	if (!lpcdev)
-> +		return -ENOMEM;
-> +
-> +	spin_lock_init(&lpcdev->cycle_lock);
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res)
-> +		return -ENODEV;
-> +
-> +	lpcdev->membase = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(lpcdev->membase)) {
-> +		dev_err(dev, "remap failed\n");
-> +		return PTR_ERR(lpcdev->membase);
-> +	}
-> +
-> +	/* register the LPC host PIO resources */
-> +	{
-> +		struct logic_pio_hwaddr *range;
-> +
-> +		range = devm_kzalloc(dev, sizeof(*range), GFP_KERNEL);
-> +		if (!range)
-> +			return -ENOMEM;
-> +		range->fwnode = dev->fwnode;
-> +		range->flags = PIO_INDIRECT;
-> +		range->size = LPC_BUS_IO_SIZE;
-> +		range->hw_start = LPC_MIN_BUS_RANGE;
-> +
-> +		ret = logic_pio_register_range(range);
-> +		if (ret) {
-> +			kfree(range);
-> +			dev_err(dev, "register IO range failed (%d)!\n", ret);
-> +			return -ret;
-> +		}
-> +		lpcdev->io_host = range;
-> +
-> +		/*
-> +		 * It is time to start the children scanning:
-> +		 * For ACPI children, the corresponding devices had been
-> +		 * created during the ACPI enumeration.
-> +		 * The OF scanning must be performed after initialization of
-> +		 * 'lpcdev' to avoid some children which complete the scanning
-> +		 * trigger the MMIO accesses which will probably cause a panic.
-> +		 */
-> +		ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
-> +		if (ret) {
-> +			/*
-> +			 * When LPC probing is not completely successful, set
-> +			 * 'devpara' as NULL. This will make all the LPC I/O
-> +			 * return failure directly without any hardware
-> +			 * operations. It will prevent some peripherals which
-> +			 * had not finished the initialization to manipulate
-> +			 * I/O for safety.
-> +			 */
-> +			lpcdev->io_host->devpara = NULL;
-> +			dev_err(dev, "populate children failed(%d)\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +	lpcdev->io_host->devpara = lpcdev;
-> +	lpcdev->io_host->ops = &hisi_lpc_ops;
-> +
-> +	dev_info(dev, "registered range[%pa - sz:%pa]\n",
-> +		 &lpcdev->io_host->io_start,
-> +		 &lpcdev->io_host->size);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id hisilpc_of_match[] = {
-> +	{ .compatible = "hisilicon,hip06-lpc", },
-> +	{ .compatible = "hisilicon,hip07-lpc", },
-> +	{},
-> +};
-> +
-> +static struct platform_driver hisilpc_driver = {
-> +	.driver = {
-> +		.name           = "hisi_lpc",
-> +		.of_match_table = hisilpc_of_match,
-> +	},
-> +	.probe = hisilpc_probe,
-> +};
-> +
-> +builtin_platform_driver(hisilpc_driver);
+>>  __xfrm_decode_session+0x63/0x100 net/xfrm/xfrm_policy.c:2343
+>>  xfrm_decode_session_reverse include/net/xfrm.h:1181 [inline]
+>>  icmpv6_route_lookup+0x343/0x640 net/ipv6/icmp.c:372
+>>  icmp6_send+0x1569/0x25b0 net/ipv6/icmp.c:551
+>>  icmpv6_send+0x142/0x280 net/ipv6/ip6_icmp.c:42
+>>  ip6_link_failure+0x94/0x580 net/ipv6/route.c:1997
+>>  dst_link_failure include/net/dst.h:442 [inline]
+>>  ipip6_tunnel_xmit net/ipv6/sit.c:940 [inline]
+>>  sit_tunnel_xmit+0x244f/0x3130 net/ipv6/sit.c:1016
+>>  __netdev_start_xmit include/linux/netdevice.h:4022 [inline]
+>>  netdev_start_xmit include/linux/netdevice.h:4031 [inline]
+>>  xmit_one net/core/dev.c:3008 [inline]
+>>  dev_hard_start_xmit+0x248/0xac0 net/core/dev.c:3024
+>>  __dev_queue_xmit+0x17d2/0x2070 net/core/dev.c:3505
+>>  dev_queue_xmit+0x17/0x20 net/core/dev.c:3538
+>>  neigh_direct_output+0x15/0x20 net/core/neighbour.c:1390
+>>  neigh_output include/net/neighbour.h:481 [inline]
+>>  ip6_finish_output2+0xad1/0x22a0 net/ipv6/ip6_output.c:120
+>>  ip6_fragment+0x25ae/0x3420 net/ipv6/ip6_output.c:723
+>>  ip6_finish_output+0x319/0x920 net/ipv6/ip6_output.c:144
+>>  NF_HOOK_COND include/linux/netfilter.h:238 [inline]
+>>  ip6_output+0x1f4/0x850 net/ipv6/ip6_output.c:163
+>>  dst_output include/net/dst.h:459 [inline]
+>>  ip6_local_out+0x95/0x160 net/ipv6/output_core.c:176
+>>  ip6_send_skb+0xa1/0x330 net/ipv6/ip6_output.c:1658
+>>  ip6_push_pending_frames+0xb3/0xe0 net/ipv6/ip6_output.c:1678
+>>  rawv6_push_pending_frames net/ipv6/raw.c:616 [inline]
+>>  rawv6_sendmsg+0x2eb9/0x3e40 net/ipv6/raw.c:935
+>>  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
+>>  sock_sendmsg_nosec net/socket.c:633 [inline]
+>>  sock_sendmsg+0xca/0x110 net/socket.c:643
+>>  SYSC_sendto+0x352/0x5a0 net/socket.c:1750
+>>  SyS_sendto+0x40/0x50 net/socket.c:1718
+>>  entry_SYSCALL_64_fastpath+0x1f/0xbe
+>>
+>> The buggy address belongs to the object at ffff8801c64afc80
+>>  which belongs to the cache kmalloc-512 of size 512
+>> The buggy address is located 128 bytes inside of
+>>  512-byte region [ffff8801c64afc80, ffff8801c64afe80)
+>> The buggy address belongs to the page:
+>> page:ffffea0007192bc0 count:1 mapcount:0 mapping:ffff8801c64af000 index:0x0
+>> flags: 0x200000000000100(slab)
+>> raw: 0200000000000100 ffff8801c64af000 0000000000000000 0000000100000006
+>> raw: ffffea00072d04e0 ffffea0007083fe0 ffff8801dac00940 0000000000000000
+>> page dumped because: kasan: bad access detected
+>>
+>> Memory state around the buggy address:
+>>  ffff8801c64afc00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>>  ffff8801c64afc80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>>>
+>>> ffff8801c64afd00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>>
+>>                    ^
+>>  ffff8801c64afd80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>>  ffff8801c64afe00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>> ==================================================================
+>>
+>>
+>> ---
+>> This bug is generated by a dumb bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for details.
+>> Direct all questions to syzkaller@googlegroups.com.
+>>
+>> syzbot will keep track of this bug report.
+>> Once a fix for this bug is committed, please reply to this email with:
+>> #syz fix: exact-commit-title
+>> To mark this as a duplicate of another syzbot report, please reply with:
+>> #syz dup: exact-subject-of-another-report
+>> If it's a one-off invalid bug report, please reply with:
+>> #syz invalid
+>> Note: if the crash happens again, it will cause creation of a new bug
+>> report.
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/CAM_iQpVyf_%3DUFW5Oay9a15GD8QaXbgbPse333SWAivE%3Ddd%2BTXQ%40mail.gmail.com.
+> For more options, visit https://groups.google.com/d/optout.
