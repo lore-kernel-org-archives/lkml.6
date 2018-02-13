@@ -1,100 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935424AbeBMOde (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 09:33:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53946 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964950AbeBMOdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 09:33:32 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6918E21723
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
-Subject: Re: [f2fs-dev] [PATCH] f2fs: handle quota for orphan inodes
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20180210022841.5707-1-jaegeuk@kernel.org>
-From: Chao Yu <chao@kernel.org>
-Message-ID: <e48fd2e5-fab6-57c5-5fff-2e44f5a817b0@kernel.org>
-Date: Tue, 13 Feb 2018 22:33:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180210022841.5707-1-jaegeuk@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S935406AbeBMOgA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 09:36:00 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:45160 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933651AbeBMOf7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 09:35:59 -0500
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Brian Norris <briannorris@chromium.org>, groeck@chromium.org,
+        devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Chris Zhong <zyw@rock-chips.com>,
+        kernel@collabora.com
+Subject: [PATCH v2 1/3] Documentation: bindings: add dt documentation for cdn DP controller
+Date: Tue, 13 Feb 2018 15:35:47 +0100
+Message-Id: <20180213143549.15197-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/2/10 10:28, Jaegeuk Kim wrote:
-> This is to fix missing dquot_initialize for orphan inodes.
+From: Chris Zhong <zyw@rock-chips.com>
 
-IMO, we don't need to call dquot_initialize as we have call the function
-in evict(), right?
+This patch adds a binding that describes the cdn DP controller for
+rk3399.
 
-Thanks,
+Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+Changes since v1:
+- Add the cdn-dp bindings as requested by Heiko
+  - The bindingis were sent already and acked by Rob but for some reason
+    never landed. So as these series are related I incorporated this
+    patch again [1].
 
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/checkpoint.c | 28 ++++++++++++++++------------
->  1 file changed, 16 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index 8b0945ba284d..e3bf753a47be 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -569,13 +569,8 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
->  	struct node_info ni;
->  	int err = acquire_orphan_inode(sbi);
->  
-> -	if (err) {
-> -		set_sbi_flag(sbi, SBI_NEED_FSCK);
-> -		f2fs_msg(sbi->sb, KERN_WARNING,
-> -				"%s: orphan failed (ino=%x), run fsck to fix.",
-> -				__func__, ino);
-> -		return err;
-> -	}
-> +	if (err)
-> +		goto err_out;
->  
->  	__add_ino_entry(sbi, ino, 0, ORPHAN_INO);
->  
-> @@ -589,6 +584,11 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
->  		return PTR_ERR(inode);
->  	}
->  
-> +	err = dquot_initialize(inode);
-> +	if (err)
-> +		goto err_out;
-> +
-> +	dquot_initialize(inode);
->  	clear_nlink(inode);
->  
->  	/* truncate all the data during iput */
-> @@ -598,14 +598,18 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
->  
->  	/* ENOMEM was fully retried in f2fs_evict_inode. */
->  	if (ni.blk_addr != NULL_ADDR) {
-> -		set_sbi_flag(sbi, SBI_NEED_FSCK);
-> -		f2fs_msg(sbi->sb, KERN_WARNING,
-> -			"%s: orphan failed (ino=%x) by kernel, retry mount.",
-> -				__func__, ino);
-> -		return -EIO;
-> +		err = -EIO;
-> +		goto err_out;
->  	}
->  	__remove_ino_entry(sbi, ino, ORPHAN_INO);
->  	return 0;
-> +
-> +err_out:
-> +	set_sbi_flag(sbi, SBI_NEED_FSCK);
-> +	f2fs_msg(sbi->sb, KERN_WARNING,
-> +			"%s: orphan failed (ino=%x), run fsck to fix.",
-> +			__func__, ino);
-> +	return err;
->  }
->  
->  int recover_orphan_inodes(struct f2fs_sb_info *sbi)
-> 
+[1] https://patchwork.kernel.org/patch/9278077/
+
+ .../bindings/display/rockchip/cdn-dp-rockchip.txt  | 74 ++++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/rockchip/cdn-dp-rockchip.txt
+
+diff --git a/Documentation/devicetree/bindings/display/rockchip/cdn-dp-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/cdn-dp-rockchip.txt
+new file mode 100644
+index 000000000000..d34a56e4f47e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/rockchip/cdn-dp-rockchip.txt
+@@ -0,0 +1,74 @@
++Rockchip RK3399 specific extensions to the cdn Display Port
++================================
++
++Required properties:
++- compatible: must be "rockchip,rk3399-cdn-dp"
++
++- reg: physical base address of the controller and length
++
++- clocks: from common clock binding: handle to dp clock.
++
++- clock-names: from common clock binding:
++	       Required elements: "core-clk" "pclk" "spdif" "grf"
++
++- resets : a list of phandle + reset specifier pairs
++- reset-names : string reset name, must be:
++		"spdif"
++- power-domains : power-domain property defined with a phandle
++		  to respective power domain.
++- assigned-clocks: main clock, should be <&cru SCLK_DP_CORE>
++- assigned-clock-rates : the DP core clk frequency, shall be: 100000000
++
++- rockchip,grf: this soc should set GRF regs, so need get grf here.
++
++- ports: contain a port nodes with endpoint definitions as defined in
++	 Documentation/devicetree/bindings/media/video-interfaces.txt.
++	 contained 2 endpoints, connecting to the output of vop.
++
++- phys: from general PHY binding: the phandle for the PHY device.
++
++- extcon: extcon specifier for the Power Delivery
++
++- #sound-dai-cells = it must be 1 if your system is using 2 DAIs: I2S, SPDIF
++
++-------------------------------------------------------------------------------
++
++Example:
++	cdn_dp: dp@fec00000 {
++		compatible = "rockchip,rk3399-cdn-dp";
++		reg = <0x0 0xfec00000 0x0 0x100000>;
++		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru SCLK_DP_CORE>, <&cru PCLK_DP_CTRL>,
++			 <&cru SCLK_SPDIF_REC_DPTX>, <&cru PCLK_VIO_GRF>;
++		clock-names = "core-clk", "pclk", "spdif", "grf";
++		assigned-clocks = <&cru SCLK_DP_CORE>;
++		assigned-clock-rates = <100000000>;
++		power-domains = <&power RK3399_PD_HDCP>;
++		phys = <&tcphy0_dp>, <&tcphy1_dp>;
++		resets = <&cru SRST_DPTX_SPDIF_REC>;
++		reset-names = "spdif";
++		extcon = <&fusb0>, <&fusb1>;
++		rockchip,grf = <&grf>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		#sound-dai-cells = <1>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			dp_in: port {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				dp_in_vopb: endpoint@0 {
++					reg = <0>;
++					remote-endpoint = <&vopb_out_dp>;
++				};
++
++				dp_in_vopl: endpoint@1 {
++					reg = <1>;
++					remote-endpoint = <&vopl_out_dp>;
++				};
++			};
++		};
++	};
+-- 
+2.15.1
