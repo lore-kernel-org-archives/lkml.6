@@ -1,221 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935260AbeBMOXs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 09:23:48 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:43926 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933555AbeBMOXr (ORCPT
+        id S965061AbeBMOY0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 09:24:26 -0500
+Received: from 9pmail.ess.barracuda.com ([64.235.154.210]:46150 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964950AbeBMOYX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 09:23:47 -0500
-Subject: Re: [PATCH v3 5/5] drm: adv7511: Add support for
- i2c_new_secondary_device
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Bhumika Goyal <bhumirks@gmail.com>, Inki Dae <inki.dae@samsung.com>
-References: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
- <1518473273-6333-6-git-send-email-kbingham@kernel.org>
- <3664373.zGkbJUDGbo@avalon>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <9db9aec6-5ab3-4a67-d705-19d91667d5dc@ideasonboard.com>
-Date: Tue, 13 Feb 2018 14:23:41 +0000
+        Tue, 13 Feb 2018 09:24:23 -0500
+Subject: Re: [PATCH v2 14/15] MIPS: memblock: Discard bootmem from SGI IP27
+ code
+To: Serge Semin <fancer.lancer@gmail.com>, <ralf@linux-mips.org>,
+        <miodrag.dinic@mips.com>, <jhogan@kernel.org>, <goran.ferenc@mips.com>,
+        <david.daney@cavium.com>, <paul.gortmaker@windriver.com>,
+        <paul.burton@mips.com>, <alex.belits@cavium.com>,
+        <Steven.Hill@cavium.com>
+CC: <alexander.sverdlin@nokia.com>, <kumba@gentoo.org>,
+        <marcin.nowakowski@mips.com>, <James.hogan@mips.com>,
+        <Peter.Wotton@mips.com>, <Sergey.Semin@t-platforms.ru>,
+        <linux-mips@linux-mips.org>, <linux-kernel@vger.kernel.org>
+References: <20180117222312.14763-1-fancer.lancer@gmail.com>
+ <20180202035458.30456-1-fancer.lancer@gmail.com>
+ <20180202035458.30456-15-fancer.lancer@gmail.com>
+From: Matt Redfearn <matt.redfearn@mips.com>
+Message-ID: <4de8dba6-64bb-599f-c67e-e6fb97db87de@mips.com>
+Date: Tue, 13 Feb 2018 14:17:21 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <3664373.zGkbJUDGbo@avalon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180202035458.30456-15-fancer.lancer@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.150.130.83]
+X-BESS-ID: 1518531768-321458-10267-39691-6
+X-BESS-VER: 2018.1-r1801291959
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.189978
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+Hi Serge,
 
-Thanks for the review,
+On 02/02/18 03:54, Serge Semin wrote:
+> SGI IP27 got its own code to set the early memory allocator up since it's
+> NUMA-based system. So in order to be compatible with NO_BOOTMEM config
+> we need to discard the bootmem allocator initialization and insert the
+> memblock reservation method. Although in my opinion the code isn't
+> working anyway since I couldn't find a place where prom_meminit() called
+> and kernel memory isn't reserved. It must have been untested since the
+> time the arch/mips/mips-boards/generic code was in the kernel.
 
-On 13/02/18 12:23, Laurent Pinchart wrote:
-> Hi Kieran,
-> 
-> Thank you for the patch.
-> 
-> On Tuesday, 13 February 2018 00:07:53 EET Kieran Bingham wrote:
->> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->>
->> The ADV7511 has four 256-byte maps that can be accessed via the main I²C
->> ports. Each map has it own I²C address and acts as a standard slave
->> device on the I²C bus.
->>
->> Allow a device tree node to override the default addresses so that
->> address conflicts with other devices on the same bus may be resolved at
->> the board description level.
->>
->> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->> ---
->> v2:
->>  - Update missing edid-i2c address setting
->>  - Split out DT bindings
->>  - Rename and move the I2C default addresses to their own section
->>
->>  drivers/gpu/drm/bridge/adv7511/adv7511.h     |  6 ++++
->>  drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 42 ++++++++++++++++--------
->>  2 files changed, 33 insertions(+), 15 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511.h
->> b/drivers/gpu/drm/bridge/adv7511/adv7511.h index d034b2cb5eee..04e6759ee45b
->> 100644
->> --- a/drivers/gpu/drm/bridge/adv7511/adv7511.h
->> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511.h
->> @@ -93,6 +93,11 @@
->>  #define ADV7511_REG_CHIP_ID_HIGH		0xf5
->>  #define ADV7511_REG_CHIP_ID_LOW			0xf6
->>
->> +/* Hardware defined default addresses for i2c register maps */
-> 
-> s/i2c/I2C/ ? That's really because I had to find something :-)
+I don't have access to an IP27, but the change looks sensible to me.
 
-The I²C comes from JMH's original patch, but is much harder to grep for, so
-normalising to I2C throughout.
-
+Reviewed-by: Matt Redfearn <matt.redfearn@mips.com>
 
 > 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com
-Collected, Thanks,
---
-Kieran
-
+> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+> ---
+>   arch/mips/sgi-ip27/ip27-memory.c | 9 ++-------
+>   1 file changed, 2 insertions(+), 7 deletions(-)
 > 
->> +#define ADV7511_CEC_I2C_ADDR_DEFAULT		0x3c
->> +#define ADV7511_EDID_I2C_ADDR_DEFAULT		0x3f
->> +#define ADV7511_PACKET_I2C_ADDR_DEFAULT		0x38
->> +
->>  #define ADV7511_CSC_ENABLE			BIT(7)
->>  #define ADV7511_CSC_UPDATE_MODE			BIT(5)
->>
->> @@ -322,6 +327,7 @@ struct adv7511 {
->>  	struct i2c_client *i2c_main;
->>  	struct i2c_client *i2c_edid;
->>  	struct i2c_client *i2c_cec;
->> +	struct i2c_client *i2c_packet;
->>
->>  	struct regmap *regmap;
->>  	struct regmap *regmap_cec;
->> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
->> b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c index
->> efa29db5fc2b..5e61b928c9c0 100644
->> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
->> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
->> @@ -586,7 +586,7 @@ static int adv7511_get_modes(struct adv7511 *adv7511,
->>  	/* Reading the EDID only works if the device is powered */
->>  	if (!adv7511->powered) {
->>  		unsigned int edid_i2c_addr =
->> -					(adv7511->i2c_main->addr << 1) + 4;
->> +					(adv7511->i2c_edid->addr << 1);
->>
->>  		__adv7511_power_on(adv7511);
->>
->> @@ -969,10 +969,10 @@ static int adv7511_init_cec_regmap(struct adv7511
->> *adv) {
->>  	int ret;
->>
->> -	adv->i2c_cec = i2c_new_dummy(adv->i2c_main->adapter,
->> -				     adv->i2c_main->addr - 1);
->> +	adv->i2c_cec = i2c_new_secondary_device(adv->i2c_main, "cec",
->> +					ADV7511_CEC_I2C_ADDR_DEFAULT);
->>  	if (!adv->i2c_cec)
->> -		return -ENOMEM;
->> +		return -EINVAL;
->>  	i2c_set_clientdata(adv->i2c_cec, adv);
->>
->>  	adv->regmap_cec = devm_regmap_init_i2c(adv->i2c_cec,
->> @@ -1082,8 +1082,6 @@ static int adv7511_probe(struct i2c_client *i2c, const
->> struct i2c_device_id *id) struct adv7511_link_config link_config;
->>  	struct adv7511 *adv7511;
->>  	struct device *dev = &i2c->dev;
->> -	unsigned int main_i2c_addr = i2c->addr << 1;
->> -	unsigned int edid_i2c_addr = main_i2c_addr + 4;
->>  	unsigned int val;
->>  	int ret;
->>
->> @@ -1153,24 +1151,35 @@ static int adv7511_probe(struct i2c_client *i2c,
->> const struct i2c_device_id *id) if (ret)
->>  		goto uninit_regulators;
->>
->> -	regmap_write(adv7511->regmap, ADV7511_REG_EDID_I2C_ADDR, edid_i2c_addr);
->> -	regmap_write(adv7511->regmap, ADV7511_REG_PACKET_I2C_ADDR,
->> -		     main_i2c_addr - 0xa);
->> -	regmap_write(adv7511->regmap, ADV7511_REG_CEC_I2C_ADDR,
->> -		     main_i2c_addr - 2);
->> -
->>  	adv7511_packet_disable(adv7511, 0xffff);
->>
->> -	adv7511->i2c_edid = i2c_new_dummy(i2c->adapter, edid_i2c_addr >> 1);
->> +	adv7511->i2c_edid = i2c_new_secondary_device(i2c, "edid",
->> +					ADV7511_EDID_I2C_ADDR_DEFAULT);
->>  	if (!adv7511->i2c_edid) {
->> -		ret = -ENOMEM;
->> +		ret = -EINVAL;
->>  		goto uninit_regulators;
->>  	}
->>
->> +	regmap_write(adv7511->regmap, ADV7511_REG_EDID_I2C_ADDR,
->> +		     adv7511->i2c_edid->addr << 1);
->> +
->>  	ret = adv7511_init_cec_regmap(adv7511);
->>  	if (ret)
->>  		goto err_i2c_unregister_edid;
->>
->> +	regmap_write(adv7511->regmap, ADV7511_REG_CEC_I2C_ADDR,
->> +		     adv7511->i2c_cec->addr << 1);
->> +
->> +	adv7511->i2c_packet = i2c_new_secondary_device(i2c, "packet",
->> +					ADV7511_PACKET_I2C_ADDR_DEFAULT);
->> +	if (!adv7511->i2c_packet) {
->> +		ret = -EINVAL;
->> +		goto err_unregister_cec;
->> +	}
->> +
->> +	regmap_write(adv7511->regmap, ADV7511_REG_PACKET_I2C_ADDR,
->> +		     adv7511->i2c_packet->addr << 1);
->> +
->>  	INIT_WORK(&adv7511->hpd_work, adv7511_hpd_work);
->>
->>  	if (i2c->irq) {
->> @@ -1181,7 +1190,7 @@ static int adv7511_probe(struct i2c_client *i2c, const
->> struct i2c_device_id *id) IRQF_ONESHOT, dev_name(dev),
->>  						adv7511);
->>  		if (ret)
->> -			goto err_unregister_cec;
->> +			goto err_unregister_packet;
->>  	}
->>
->>  	adv7511_power_off(adv7511);
->> @@ -1203,6 +1212,8 @@ static int adv7511_probe(struct i2c_client *i2c, const
->> struct i2c_device_id *id) adv7511_audio_init(dev, adv7511);
->>  	return 0;
->>
->> +err_unregister_packet:
->> +	i2c_unregister_device(adv7511->i2c_packet);
->>  err_unregister_cec:
->>  	i2c_unregister_device(adv7511->i2c_cec);
->>  	if (adv7511->cec_clk)
->> @@ -1234,6 +1245,7 @@ static int adv7511_remove(struct i2c_client *i2c)
->>  	cec_unregister_adapter(adv7511->cec_adap);
->>
->>  	i2c_unregister_device(adv7511->i2c_edid);
->> +	i2c_unregister_device(adv7511->i2c_packet);
->>
->>  	return 0;
->>  }
+> diff --git a/arch/mips/sgi-ip27/ip27-memory.c b/arch/mips/sgi-ip27/ip27-memory.c
+> index 59133d0abc83..c480ee3eca96 100644
+> --- a/arch/mips/sgi-ip27/ip27-memory.c
+> +++ b/arch/mips/sgi-ip27/ip27-memory.c
+> @@ -389,7 +389,6 @@ static void __init node_mem_init(cnodeid_t node)
+>   {
+>   	unsigned long slot_firstpfn = slot_getbasepfn(node, 0);
+>   	unsigned long slot_freepfn = node_getfirstfree(node);
+> -	unsigned long bootmap_size;
+>   	unsigned long start_pfn, end_pfn;
+>   
+>   	get_pfn_range_for_nid(node, &start_pfn, &end_pfn);
+> @@ -400,7 +399,6 @@ static void __init node_mem_init(cnodeid_t node)
+>   	__node_data[node] = __va(slot_freepfn << PAGE_SHIFT);
+>   	memset(__node_data[node], 0, PAGE_SIZE);
+>   
+> -	NODE_DATA(node)->bdata = &bootmem_node_data[node];
+>   	NODE_DATA(node)->node_start_pfn = start_pfn;
+>   	NODE_DATA(node)->node_spanned_pages = end_pfn - start_pfn;
+>   
+> @@ -409,12 +407,9 @@ static void __init node_mem_init(cnodeid_t node)
+>   	slot_freepfn += PFN_UP(sizeof(struct pglist_data) +
+>   			       sizeof(struct hub_data));
+>   
+> -	bootmap_size = init_bootmem_node(NODE_DATA(node), slot_freepfn,
+> -					start_pfn, end_pfn);
+>   	free_bootmem_with_active_regions(node, end_pfn);
+> -	reserve_bootmem_node(NODE_DATA(node), slot_firstpfn << PAGE_SHIFT,
+> -		((slot_freepfn - slot_firstpfn) << PAGE_SHIFT) + bootmap_size,
+> -		BOOTMEM_DEFAULT);
+> +	memblock_reserve(slot_firstpfn << PAGE_SHIFT,
+> +		((slot_freepfn - slot_firstpfn) << PAGE_SHIFT));
+
+How about PFN_PHYS()? In fact, that could be used throughout the series 
+to tidy up some of the shifting by PAGE_SIZE.
+
+Thanks,
+Matt
+
+>   	sparse_memory_present_with_active_regions(node);
+>   }
+>   
 > 
