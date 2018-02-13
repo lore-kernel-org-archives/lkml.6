@@ -1,56 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935494AbeBMOjA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 09:39:00 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:50668 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935246AbeBMOi6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 09:38:58 -0500
-Date: Tue, 13 Feb 2018 15:39:02 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Tvrtko Ursulin <tursulin@ursulin.net>
-cc: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: smpboot: do_boot_cpu failed(-1) to wakeup CPU#0
-In-Reply-To: <f4069994-6065-af69-0ab5-0587efe26636@ursulin.net>
-Message-ID: <alpine.DEB.2.21.1802131533160.1130@nanos.tec.linutronix.de>
-References: <1696e2c6-8d0a-e954-1205-439d70a81f77@ursulin.net> <f4069994-6065-af69-0ab5-0587efe26636@ursulin.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S935457AbeBMOki (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 09:40:38 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59532 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935298AbeBMOkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 09:40:37 -0500
+Subject: Re: [patch] kvm: suppress KVM_SET_GSI_ROUTING allocation failure
+To: David Rientjes <rientjes@google.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <alpine.DEB.2.10.1802081334120.133173@chino.kir.corp.google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <706b878f-3375-cf2b-c194-d348cb6d510b@redhat.com>
+Date: Tue, 13 Feb 2018 15:40:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <alpine.DEB.2.10.1802081334120.133173@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Feb 2018, Tvrtko Ursulin wrote:
-> On 07/02/18 12:48, Tvrtko Ursulin wrote:
-> > We are seeing failures to online the CPU0 on Apollo Lake in the form of:
-> > 
-> >   <6>[  126.508783] smpboot: CPU 0 is now offline
-> >   <6>[  127.520746] smpboot: Booting Node 0 Processor 0 APIC 0x0
-> >   <3>[  137.521036] smpboot: do_boot_cpu failed(-1) to wakeup CPU#0
-> > 
-> > I unfortunately cannot say with which kernel version this started since
-> > we added a test which does this only recently. I also have no local
-> > access to this machine. (It is part of a test farm for i915 driver
-> > development testing.) But we recently added a test which off-lines, and
-> > on-lines back, CPUs and started seeing this. Small reproducer looks like
-> > this (without boilerplate):
->
-> Any hints on how to debug this? Could it be firwmare? Try some boot options or
-> something?
+On 08/02/2018 22:35, David Rientjes wrote:
+> The KVM_SET_GSI_ROUTING ioctl does a vmalloc() of
+> sizeof(struct kvm_irq_routing_entry) multiplied by a user-supplied value.
+> This can be up to 4096 entries on architectures such as arm64 and s390
+> (and the upper bound may be increased on s390 eventually).
+> 
+> This can produce a vmalloc allocation failure warning:
+> 
+> vmalloc: allocation failure: 0 bytes, mode:0x24000c2(GFP_KERNEL|__GFP_HIGHMEM)
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:15 [inline]
+>  dump_stack+0xf6/0x184 lib/dump_stack.c:51
+>  warn_alloc+0x208/0x230 mm/page_alloc.c:2930
+>  __vmalloc_node_range_memcg+0x510/0x670 mm/vmalloc.c:1711
+>  __vmalloc_node_memcg mm/vmalloc.c:1751 [inline]
+>  __vmalloc_node_memcg_flags mm/vmalloc.c:1788 [inline]
+>  vmalloc+0x69/0x70 mm/vmalloc.c:1803
+>  kvm_vm_ioctl+0x910/0x15e0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4153
+>  vfs_ioctl fs/ioctl.c:44 [inline]
+>  do_vfs_ioctl+0x842/0xee0 fs/ioctl.c:611
+>  SYSC_ioctl fs/ioctl.c:626 [inline]
+>  SyS_ioctl+0x94/0xc0 fs/ioctl.c:617
+>  entry_SYSCALL_64_fastpath+0x12/0x17
+> 
+> If the vmalloc address space is fully depleted, the ioctl can gracefully
+> fail.  Add __GFP_NOWARN to the allocation to suppress the warning.
+> 
+> Signed-off-by: David Rientjes <rientjes@google.com>
 
-There are issues with CPU0 hotplug on commodity hardware. I have systems
-where it does not work, but TBH I never bothered to investigate it. Some
-years ago we had issues with suspend/resume when it was not running on
-CPU0.  These were related to firmware assumptions about CPU0. So I wouldn't
-be too surprised if there are general issues with unplugging CPU0.
+Queued, thanks.
 
-CPU0 unplug is really only relevant for systems which support physical
-hotplug, so testing it on commodity hardware does not have much
-value. Testing in VMs for increasing the test coverage works well enough.
+Paolo
 
-Thanks,
-
-	tglx
+> ---
+>  virt/kvm/kvm_main.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 001085b611ad..d0352dd45b95 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -3063,7 +3063,8 @@ static long kvm_vm_ioctl(struct file *filp,
+>  			goto out;
+>  		if (routing.nr) {
+>  			r = -ENOMEM;
+> -			entries = vmalloc(routing.nr * sizeof(*entries));
+> +			entries = __vmalloc(routing.nr * sizeof(*entries),
+> +					GFP_KERNEL | __GFP_NOWARN, PAGE_KERNEL);
+>  			if (!entries)
+>  				goto out;
+>  			r = -EFAULT;
+> 
