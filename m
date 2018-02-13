@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3807972-1518514715-2-12841608940625521588
+X-Cyrus-Session-Id: sloti22d1t05-3807972-1518514663-2-12182625771437548549
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518514714; b=aU/4ZYYN2TEvv02E/1nwGmd3ng9vKX0iF06Ex2zUuz2Kf1L
-    Bz3twAN5clcDdP6o8aYlKu2E1ohBVMD328gcG6FLZsswW9oo1E2NL/Ig0k6X7BeO
-    i5vtl3nxy9kY6pE91jfwwcA8hgtvlX2ljhKv6HHoWqfGXl2qaiXlvDA7Ipu/3edw
-    UA4P55LiIeb1TC4DxHcY1k/Y4zEogY2sLoykd+wRySwAW/THWpFnPQosn9hSqOsU
-    cPY1nBiTuIhydH8f7YcO4gck7qrfdJKYeene9BhP9tnJgd03jtvnt6itmr931J9P
-    eIh4I9WKk4StRmlT1Ksx6YL3XLr6Y38IZbrgq4w==
+    t=1518514661; b=j5AC6pMqHpo+ZURC/faFeKs9KUXvYBxccuYR+cuNgFxR53p
+    I2fjv2rA2yGsX7Z9avP97/GaCjHW2egwSl+xz61YbaMhNf6u6KCb07CohqKbsvWb
+    7LA1nLAlnqzJTV7zyJ1+t0vmkK7/7rszWtmHgSlm4/Cob8sBGXHmRp1s7gr6CqZy
+    RCaRkXR2u+cvr12nRffRXaDCKmjAHA9O3S6e+U3tClq3APRwQ+PXPeJIZ5DDRf8d
+    RCEpJzKC/D5SjIWz96jIKAPHtr6PPFeZV44OQom0IOnOUKbhr/zFITooatvj+Xod
+    li9F132+aPY/Swe/aB/hSrBYZEteZ0slPTfmc/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1518514714;
-    bh=/KqXROZwfncsDSQj04hWOqt1mbPy+mq2JnJa2M8gUe8=; b=h+ptFYFQKDtV
-    Ej3OMqpvcyEYC1P0+W4qMgAass8PNwVkc8jC/mB7Brbf9SFFSE1X1Y1WUNpibjEv
-    DPkNha8iJmMh+y0RyOyDtNzpA8jc8ftOfQEZ7IFNcqub/l9twngutpAlrbtu+Z4P
-    Bb6oTQEfaV+IAQvRGEWPnfBle2u6rVwOsC37q9x0/M89KrCpSAbC7uMRY0WbjThV
-    7tkw0HiOFHVAPXeYKCtZzdUBGpJwbTuNVJqKXYPIJLD+iB1aYYPvMCm2cookBIqt
-    S8vwuGRng2x5HzbB7DNhPGOm0dqzpIhiuZjFBLytkIOd1kKthq/oEbG7w0VejaQ0
-    KdT6cN2Z1A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=arctest; t=1518514661;
+    bh=TW9FVHXVZbM+fnCI9aLuC3rfn1K5st8RzKFi+NioN34=; b=hfHJj1tt+Eco
+    WCBxLe+iRDkjtZr1fFZDfTspL8fwMP8aRgwrXy/0zmtfNG1aib3Q78JYiEfOxAgp
+    /iChtMK262MKDzVuiHNW3pMM3Dyr72SyMqlsDTs7d+I2Prqz1PsdUdEMaav3RAFg
+    TrW1oNiBKT1eGlL6OPpNKKFRc8mAppwf/iNE4/FN+A+a+Y4JHy1HRWRTmOLrwyah
+    Xhb7pZj42QjDb3aWf6NFpnUCVp3eYWb2/1JJLgRoDyOvyDjaHSBNjy+cDIRDlNma
+    xc+6BftsrBOM9YVCyNeEMD+kVE10W5EhurNgZoGJI+044tHQls8Ll3z6mwnv5W3x
+    atdNGfz1Cg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
@@ -47,30 +47,30 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934834AbeBMJgI (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Feb 2018 04:36:08 -0500
+        id S933494AbeBMJhT (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Feb 2018 04:37:19 -0500
 Received: from mga03.intel.com ([134.134.136.65]:27146 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934829AbeBMJgG (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:36:06 -0500
+        id S933937AbeBMJgJ (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Tue, 13 Feb 2018 04:36:09 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,507,1511856000";
-   d="scan'208";a="26889658"
+   d="scan'208";a="26889667"
 From: Wu Hao <hao.wu@intel.com>
 To: atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc: linux-api@vger.kernel.org, luwei.kang@intel.com,
         yi.z.zhang@intel.com, hao.wu@intel.com,
+        Xiao Guangrong <guangrong.xiao@linux.intel.com>,
         Tim Whisonant <tim.whisonant@intel.com>,
         Enno Luebbers <enno.luebbers@intel.com>,
         Shiva Rao <shiva.rao@intel.com>,
-        Christopher Rauer <christopher.rauer@intel.com>,
-        Xiao Guangrong <guangrong.xiao@linux.intel.com>
-Subject: [PATCH v4 22/24] fpga: dfl: afu: add FPGA_GET_API_VERSION/CHECK_EXTENSION ioctls support
-Date: Tue, 13 Feb 2018 17:24:51 +0800
-Message-Id: <1518513893-4719-23-git-send-email-hao.wu@intel.com>
+        Christopher Rauer <christopher.rauer@intel.com>
+Subject: [PATCH v4 23/24] fpga: dfl: afu: add user afu sub feature support
+Date: Tue, 13 Feb 2018 17:24:52 +0800
+Message-Id: <1518513893-4719-24-git-send-email-hao.wu@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518513893-4719-1-git-send-email-hao.wu@intel.com>
 References: <1518513893-4719-1-git-send-email-hao.wu@intel.com>
@@ -80,10 +80,27 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-FPGA_GET_API_VERSION and FPGA_CHECK_EXTENSION ioctls are common ones which
-need to be supported by all feature devices drivers including FME and AFU.
-This patch implements above 2 ioctls in FPGA Accelerated Function Unit
-(AFU) driver.
+From: Xiao Guangrong <guangrong.xiao@linux.intel.com>
+
+User Accelerated Function Unit sub feature exposes the MMIO region of
+the AFU. After valid green bitstream (GBS) is programmed and port is
+enabled, then this MMIO region could be accessed.
+
+This patch adds support to enumerate the AFU MMIO region and expose it
+to userspace via mmap file operation. Below interfaces are exposed to user:
+
+Sysfs interface:
+* /sys/class/fpga_region/<regionX>/<dfl-port.x>/afu_id
+  Read-only. Indicate which green bitstream is programmed to this AFU.
+
+Ioctl interfaces:
+* FPGA_PORT_GET_INFO
+  Provide info to userspace on the number of supported region.
+  Only UAFU region is supported now.
+
+* FPGA_PORT_GET_REGION_INFO
+  Provide region information, including access permission, region size,
+  offset from the start of device fd.
 
 Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
 Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
@@ -91,46 +108,646 @@ Signed-off-by: Shiva Rao <shiva.rao@intel.com>
 Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
 Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
 Signed-off-by: Wu Hao <hao.wu@intel.com>
-Acked-by: Alan Tull <atull@kernel.org>
-Acked-by: Moritz Fischer <mdf@kernel.org>
 ---
-v2: rebased
-v3: rebased as driver renamed to fpga-dfl-afu
-    fix one checkpatch issue
-v4: add Acked-by from Alan and Moritz.
+v2: moved the code to drivers/fpga folder as suggested by Alan Tull.
+    add sysfs documentation.
+    switched to GPLv2 license.
+v3: rename driver to fpga-dfl-afu
+    fix coding style and checkpatch issue.
+    only allow afu_id to be read when port isn't in reset.
+v4: rebase and add more comments in code.
+    fix SPDX license issue.
 ---
- drivers/fpga/dfl-afu-main.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ Documentation/ABI/testing/sysfs-platform-dfl-port |   9 +
+ drivers/fpga/Makefile                             |   2 +-
+ drivers/fpga/dfl-afu-main.c                       | 211 +++++++++++++++++++++-
+ drivers/fpga/dfl-afu-region.c                     | 165 +++++++++++++++++
+ drivers/fpga/dfl-afu.h                            |  71 ++++++++
+ include/uapi/linux/fpga-dfl.h                     |  47 +++++
+ 6 files changed, 501 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/fpga/dfl-afu-region.c
+ create mode 100644 drivers/fpga/dfl-afu.h
 
+diff --git a/Documentation/ABI/testing/sysfs-platform-dfl-port b/Documentation/ABI/testing/sysfs-platform-dfl-port
+index 79e8332..10bda5a 100644
+--- a/Documentation/ABI/testing/sysfs-platform-dfl-port
++++ b/Documentation/ABI/testing/sysfs-platform-dfl-port
+@@ -5,3 +5,12 @@ Contact:	Wu Hao <hao.wu@intel.com>
+ Description:	Read-only. It returns id of this port. One DFL FPGA device
+ 		may have more than one port. Userspace could use this id to
+ 		distinguish different ports under same FPGA device.
++
++What:		/sys/bus/platform/devices/dfl-port.0/afu_id
++Date:		Februray 2018
++KernelVersion:  4.16
++Contact:	Wu Hao <hao.wu@intel.com>
++Description:	Read-only. User can program different green bitstreams (GBS) to
++		FPGA Accelerator Function Unit (AFU) for different functions.
++		It returns uuid which could be used to identify which GBS is
++		programmed in this AFU.
+diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+index 5c9607b..041e3cd1 100644
+--- a/drivers/fpga/Makefile
++++ b/drivers/fpga/Makefile
+@@ -37,7 +37,7 @@ obj-$(CONFIG_FPGA_DFL_FME_REGION)	+= dfl-fme-region.o
+ obj-$(CONFIG_FPGA_DFL_AFU)		+= dfl-afu.o
+ 
+ dfl-fme-objs := dfl-fme-main.o dfl-fme-pr.o
+-dfl-afu-objs := dfl-afu-main.o
++dfl-afu-objs := dfl-afu-main.o dfl-afu-region.o
+ 
+ # Drivers for FPGAs which implement DFL
+ obj-$(CONFIG_FPGA_DFL_PCI)		+= dfl-pci.o
 diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
-index b2f8798..bead242 100644
+index bead242..9c0e4a8 100644
 --- a/drivers/fpga/dfl-afu-main.c
 +++ b/drivers/fpga/dfl-afu-main.c
-@@ -121,6 +121,13 @@ static int afu_release(struct inode *inode, struct file *filp)
+@@ -16,9 +16,10 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/uaccess.h>
+ #include <linux/fpga-dfl.h>
+ 
+-#include "dfl.h"
++#include "dfl-afu.h"
+ 
+ static ssize_t
+ id_show(struct device *dev, struct device_attribute *attr, char *buf)
+@@ -78,12 +79,74 @@ static const struct feature_ops port_hdr_ops = {
+ 	.ioctl = port_hdr_ioctl,
+ };
+ 
++static ssize_t
++afu_id_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct feature_platform_data *pdata = dev_get_platdata(dev);
++	void __iomem *base;
++	u64 guidl, guidh;
++
++	base = get_feature_ioaddr_by_id(dev, PORT_FEATURE_ID_AFU);
++
++	mutex_lock(&pdata->lock);
++	if (pdata->disable_count) {
++		mutex_unlock(&pdata->lock);
++		return -EBUSY;
++	}
++
++	guidl = readq(base + GUID_L);
++	guidh = readq(base + GUID_H);
++	mutex_unlock(&pdata->lock);
++
++	return scnprintf(buf, PAGE_SIZE, "%016llx%016llx\n", guidh, guidl);
++}
++static DEVICE_ATTR_RO(afu_id);
++
++static const struct attribute *port_uafu_attrs[] = {
++	&dev_attr_afu_id.attr,
++	NULL
++};
++
++static int port_uafu_init(struct platform_device *pdev, struct feature *feature)
++{
++	struct resource *res = &pdev->resource[feature->resource_index];
++	u32 flags = FPGA_REGION_READ | FPGA_REGION_WRITE | FPGA_REGION_MMAP;
++	int ret;
++
++	dev_dbg(&pdev->dev, "PORT AFU Init.\n");
++
++	ret = afu_region_add(dev_get_platdata(&pdev->dev),
++			     FPGA_PORT_INDEX_UAFU, resource_size(res),
++			     res->start, flags);
++	if (ret)
++		return ret;
++
++	return sysfs_create_files(&pdev->dev.kobj, port_uafu_attrs);
++}
++
++static void port_uafu_uinit(struct platform_device *pdev,
++			    struct feature *feature)
++{
++	dev_dbg(&pdev->dev, "PORT AFU UInit.\n");
++
++	sysfs_remove_files(&pdev->dev.kobj, port_uafu_attrs);
++}
++
++static const struct feature_ops port_uafu_ops = {
++	.init = port_uafu_init,
++	.uinit = port_uafu_uinit,
++};
++
+ static struct feature_driver port_feature_drvs[] = {
+ 	{
+ 		.id = PORT_FEATURE_ID_HEADER,
+ 		.ops = &port_hdr_ops,
+ 	},
+ 	{
++		.id = PORT_FEATURE_ID_AFU,
++		.ops = &port_uafu_ops,
++	},
++	{
+ 		.ops = NULL,
+ 	}
+ };
+@@ -128,6 +191,64 @@ static long afu_ioctl_check_extension(struct feature_platform_data *pdata,
  	return 0;
  }
  
-+static long afu_ioctl_check_extension(struct feature_platform_data *pdata,
-+				      unsigned long arg)
++static long
++afu_ioctl_get_info(struct feature_platform_data *pdata, void __user *arg)
 +{
-+	/* No extension support for now */
++	struct fpga_port_info info;
++	struct fpga_afu *afu;
++	unsigned long minsz;
++
++	minsz = offsetofend(struct fpga_port_info, num_umsgs);
++
++	if (copy_from_user(&info, arg, minsz))
++		return -EFAULT;
++
++	if (info.argsz < minsz)
++		return -EINVAL;
++
++	mutex_lock(&pdata->lock);
++	afu = fpga_pdata_get_private(pdata);
++	info.flags = 0;
++	info.num_regions = afu->num_regions;
++	info.num_umsgs = afu->num_umsgs;
++	mutex_unlock(&pdata->lock);
++
++	if (copy_to_user(arg, &info, sizeof(info)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long
++afu_ioctl_get_region_info(struct feature_platform_data *pdata, void __user *arg)
++{
++	struct fpga_port_region_info rinfo;
++	struct fpga_afu_region region;
++	unsigned long minsz;
++	long ret;
++
++	minsz = offsetofend(struct fpga_port_region_info, offset);
++
++	if (copy_from_user(&rinfo, arg, minsz))
++		return -EFAULT;
++
++	if (rinfo.argsz < minsz || rinfo.padding)
++		return -EINVAL;
++
++	ret = afu_get_region_by_index(pdata, rinfo.index, &region);
++	if (ret)
++		return ret;
++
++	rinfo.flags = region.flags;
++	rinfo.size = region.size;
++	rinfo.offset = region.offset;
++
++	if (copy_to_user(arg, &rinfo, sizeof(rinfo)))
++		return -EFAULT;
++
 +	return 0;
 +}
 +
  static long afu_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
  {
  	struct platform_device *pdev = filp->private_data;
-@@ -131,6 +138,10 @@ static long afu_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	dev_dbg(&pdev->dev, "%s cmd 0x%x\n", __func__, cmd);
- 
- 	switch (cmd) {
-+	case FPGA_GET_API_VERSION:
-+		return FPGA_API_VERSION;
-+	case FPGA_CHECK_EXTENSION:
-+		return afu_ioctl_check_extension(pdata, arg);
+@@ -142,6 +263,10 @@ static long afu_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return FPGA_API_VERSION;
+ 	case FPGA_CHECK_EXTENSION:
+ 		return afu_ioctl_check_extension(pdata, arg);
++	case FPGA_PORT_GET_INFO:
++		return afu_ioctl_get_info(pdata, (void __user *)arg);
++	case FPGA_PORT_GET_REGION_INFO:
++		return afu_ioctl_get_region_info(pdata, (void __user *)arg);
  	default:
  		/*
  		 * Let sub-feature's ioctl function to handle the cmd
+@@ -162,27 +287,106 @@ static long afu_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	return -EINVAL;
+ }
+ 
++static int afu_mmap(struct file *filp, struct vm_area_struct *vma)
++{
++	struct fpga_afu_region region;
++	struct platform_device *pdev = filp->private_data;
++	struct feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
++	u64 size = vma->vm_end - vma->vm_start;
++	u64 offset;
++	int ret;
++
++	if (!(vma->vm_flags & VM_SHARED))
++		return -EINVAL;
++
++	offset = vma->vm_pgoff << PAGE_SHIFT;
++	ret = afu_get_region_by_offset(pdata, offset, size, &region);
++	if (ret)
++		return ret;
++
++	if (!(region.flags & FPGA_REGION_MMAP))
++		return -EINVAL;
++
++	if ((vma->vm_flags & VM_READ) && !(region.flags & FPGA_REGION_READ))
++		return -EPERM;
++
++	if ((vma->vm_flags & VM_WRITE) && !(region.flags & FPGA_REGION_WRITE))
++		return -EPERM;
++
++	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
++
++	return remap_pfn_range(vma, vma->vm_start,
++			(region.phys + (offset - region.offset)) >> PAGE_SHIFT,
++			size, vma->vm_page_prot);
++}
++
+ static const struct file_operations afu_fops = {
+ 	.owner = THIS_MODULE,
+ 	.open = afu_open,
+ 	.release = afu_release,
+ 	.unlocked_ioctl = afu_ioctl,
++	.mmap = afu_mmap,
+ };
+ 
++static int afu_dev_init(struct platform_device *pdev)
++{
++	struct fpga_afu *afu;
++	struct feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
++
++	afu = devm_kzalloc(&pdev->dev, sizeof(*afu), GFP_KERNEL);
++	if (!afu)
++		return -ENOMEM;
++
++	afu->pdata = pdata;
++
++	mutex_lock(&pdata->lock);
++	fpga_pdata_set_private(pdata, afu);
++	afu_region_init(pdata);
++	mutex_unlock(&pdata->lock);
++	return 0;
++}
++
++static int afu_dev_destroy(struct platform_device *pdev)
++{
++	struct feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
++	struct fpga_afu *afu;
++
++	mutex_lock(&pdata->lock);
++	afu = fpga_pdata_get_private(pdata);
++	afu_region_destroy(pdata);
++	fpga_pdata_set_private(pdata, NULL);
++	mutex_unlock(&pdata->lock);
++
++	devm_kfree(&pdev->dev, afu);
++
++	return 0;
++}
++
+ static int afu_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+ 
+ 	dev_dbg(&pdev->dev, "%s\n", __func__);
+ 
++	ret = afu_dev_init(pdev);
++	if (ret)
++		goto exit;
++
+ 	ret = fpga_dev_feature_init(pdev, port_feature_drvs);
+ 	if (ret)
+-		return ret;
++		goto dev_destroy;
+ 
+ 	ret = fpga_register_dev_ops(pdev, &afu_fops, THIS_MODULE);
+-	if (ret)
++	if (ret) {
+ 		fpga_dev_feature_uinit(pdev);
++		goto dev_destroy;
++	}
++
++	return 0;
+ 
++dev_destroy:
++	afu_dev_destroy(pdev);
++exit:
+ 	return ret;
+ }
+ 
+@@ -192,6 +396,7 @@ static int afu_remove(struct platform_device *pdev)
+ 
+ 	fpga_dev_feature_uinit(pdev);
+ 	fpga_unregister_dev_ops(pdev);
++	afu_dev_destroy(pdev);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/fpga/dfl-afu-region.c b/drivers/fpga/dfl-afu-region.c
+new file mode 100644
+index 0000000..e3a467b
+--- /dev/null
++++ b/drivers/fpga/dfl-afu-region.c
+@@ -0,0 +1,165 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Driver for FPGA Accelerated Function Unit (AFU) Region Management
++ *
++ * Copyright (C) 2017 Intel Corporation, Inc.
++ *
++ * Authors:
++ *   Wu Hao <hao.wu@intel.com>
++ *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
++ */
++#include "dfl-afu.h"
++
++/**
++ * afu_region_init - init function for afu region support
++ * @pdata: afu platform device's pdata.
++ */
++void afu_region_init(struct feature_platform_data *pdata)
++{
++	struct fpga_afu *afu = fpga_pdata_get_private(pdata);
++
++	INIT_LIST_HEAD(&afu->regions);
++}
++
++#define for_each_region(region, afu)	\
++	list_for_each_entry((region), &(afu)->regions, node)
++
++static struct fpga_afu_region *get_region_by_index(struct fpga_afu *afu,
++						   u32 region_index)
++{
++	struct fpga_afu_region *region;
++
++	for_each_region(region, afu)
++		if (region->index == region_index)
++			return region;
++
++	return NULL;
++}
++
++/**
++ * afu_region_add - add a region to given feature dev.
++ *
++ * @region_index: region index.
++ * @region_size: region size.
++ * @phys: region's physical address of this region.
++ * @flags: region flags (access permission).
++ *
++ * Return: 0 on success, negative error code otherwise.
++ */
++int afu_region_add(struct feature_platform_data *pdata, u32 region_index,
++		   u64 region_size, u64 phys, u32 flags)
++{
++	struct fpga_afu_region *region;
++	struct fpga_afu *afu;
++	int ret = 0;
++
++	region = devm_kzalloc(&pdata->dev->dev, sizeof(*region), GFP_KERNEL);
++	if (!region)
++		return -ENOMEM;
++
++	region->index = region_index;
++	region->size = region_size;
++	region->phys = phys;
++	region->flags = flags;
++
++	mutex_lock(&pdata->lock);
++
++	afu = fpga_pdata_get_private(pdata);
++
++	/* check if @index already exists */
++	if (get_region_by_index(afu, region_index)) {
++		mutex_unlock(&pdata->lock);
++		ret = -EEXIST;
++		goto exit;
++	}
++
++	region_size = PAGE_ALIGN(region_size);
++	region->offset = afu->region_cur_offset;
++	list_add(&region->node, &afu->regions);
++
++	afu->region_cur_offset += region_size;
++	afu->num_regions++;
++	mutex_unlock(&pdata->lock);
++
++	return 0;
++
++exit:
++	devm_kfree(&pdata->dev->dev, region);
++	return ret;
++}
++
++/**
++ * afu_region_destroy - destroy all regions under given feature dev.
++ * @pdata: afu platform device's pdata.
++ */
++void afu_region_destroy(struct feature_platform_data *pdata)
++{
++	struct fpga_afu_region *tmp, *region;
++	struct fpga_afu *afu = fpga_pdata_get_private(pdata);
++
++	list_for_each_entry_safe(region, tmp, &afu->regions, node)
++		devm_kfree(&pdata->dev->dev, region);
++}
++
++/**
++ * afu_get_region_by_index - find an afu region by index.
++ * @pdata: afu platform device's pdata.
++ * @region_index: region index.
++ * @pregion: ptr to region for result.
++ *
++ * Return: 0 on success, negative error code otherwise.
++ */
++int afu_get_region_by_index(struct feature_platform_data *pdata,
++			    u32 region_index, struct fpga_afu_region *pregion)
++{
++	struct fpga_afu_region *region;
++	struct fpga_afu *afu;
++	int ret = 0;
++
++	mutex_lock(&pdata->lock);
++	afu = fpga_pdata_get_private(pdata);
++	region = get_region_by_index(afu, region_index);
++	if (!region) {
++		ret = -EINVAL;
++		goto exit;
++	}
++	*pregion = *region;
++exit:
++	mutex_unlock(&pdata->lock);
++	return ret;
++}
++
++/**
++ * afu_get_region_by_offset - find an afu region by offset and size
++ *
++ * @pdata: afu platform device's pdata.
++ * @offset: region offset from start of the device fd.
++ * @size: region size.
++ * @pregion: ptr to region for result.
++ *
++ * Find the region which fully contains the region described by input
++ * parameters (offset and size) from the feature dev's region link list.
++ *
++ * Return: 0 on success, negative error code otherwise.
++ */
++int afu_get_region_by_offset(struct feature_platform_data *pdata,
++			     u64 offset, u64 size,
++			     struct fpga_afu_region *pregion)
++{
++	struct fpga_afu_region *region;
++	struct fpga_afu *afu;
++	int ret = 0;
++
++	mutex_lock(&pdata->lock);
++	afu = fpga_pdata_get_private(pdata);
++	for_each_region(region, afu)
++		if (region->offset <= offset &&
++		    region->offset + region->size >= offset + size) {
++			*pregion = *region;
++			goto exit;
++		}
++	ret = -EINVAL;
++exit:
++	mutex_unlock(&pdata->lock);
++	return ret;
++}
+diff --git a/drivers/fpga/dfl-afu.h b/drivers/fpga/dfl-afu.h
+new file mode 100644
+index 0000000..af690cc
+--- /dev/null
++++ b/drivers/fpga/dfl-afu.h
+@@ -0,0 +1,71 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Header file for FPGA Accelerated Function Unit (AFU) Driver
++ *
++ * Copyright (C) 2017 Intel Corporation, Inc.
++ *
++ * Authors:
++ *     Wu Hao <hao.wu@intel.com>
++ *     Xiao Guangrong <guangrong.xiao@linux.intel.com>
++ *     Joseph Grecco <joe.grecco@intel.com>
++ *     Enno Luebbers <enno.luebbers@intel.com>
++ *     Tim Whisonant <tim.whisonant@intel.com>
++ *     Ananda Ravuri <ananda.ravuri@intel.com>
++ *     Henry Mitchel <henry.mitchel@intel.com>
++ */
++
++#ifndef __DFL_AFU_H
++#define __DFL_AFU_H
++
++#include <linux/mm.h>
++
++#include "dfl.h"
++
++/**
++ * struct fpga_afu_region - afu region data structure
++ *
++ * @index: region index.
++ * @flags: region flags (access permission).
++ * @size: region size.
++ * @offset: region offset from start of the device fd.
++ * @phys: region's physical address.
++ * @node: node to add to afu feature dev's region list.
++ */
++struct fpga_afu_region {
++	u32 index;
++	u32 flags;
++	u64 size;
++	u64 offset;
++	u64 phys;
++	struct list_head node;
++};
++
++/**
++ * struct fpga_afu - afu device data structure
++ *
++ * @region_cur_offset: current region offset from start to the device fd.
++ * @num_regions: num of regions.
++ * @regions: the region link list of this afu feature device.
++ * @num_umsgs: num of umsgs.
++ * @pdata: afu platform device's pdata.
++ */
++struct fpga_afu {
++	u64 region_cur_offset;
++	int num_regions;
++	u8 num_umsgs;
++	struct list_head regions;
++
++	struct feature_platform_data *pdata;
++};
++
++void afu_region_init(struct feature_platform_data *pdata);
++int afu_region_add(struct feature_platform_data *pdata, u32 region_index,
++		   u64 region_size, u64 phys, u32 flags);
++void afu_region_destroy(struct feature_platform_data *pdata);
++int afu_get_region_by_index(struct feature_platform_data *pdata,
++			    u32 region_index, struct fpga_afu_region *pregion);
++int afu_get_region_by_offset(struct feature_platform_data *pdata,
++			     u64 offset, u64 size,
++			     struct fpga_afu_region *pregion);
++
++#endif
+diff --git a/include/uapi/linux/fpga-dfl.h b/include/uapi/linux/fpga-dfl.h
+index 727bec2..df41828 100644
+--- a/include/uapi/linux/fpga-dfl.h
++++ b/include/uapi/linux/fpga-dfl.h
+@@ -65,6 +65,53 @@
+ 
+ #define FPGA_PORT_RESET		_IO(FPGA_MAGIC, PORT_BASE + 0)
+ 
++/**
++ * FPGA_PORT_GET_INFO - _IOR(FPGA_MAGIC, PORT_BASE + 1, struct fpga_port_info)
++ *
++ * Retrieve information about the fpga port.
++ * Driver fills the info in provided struct fpga_port_info.
++ * Return: 0 on success, -errno on failure.
++ */
++struct fpga_port_info {
++	/* Input */
++	__u32 argsz;		/* Structure length */
++	/* Output */
++	__u32 flags;		/* Zero for now */
++	__u32 num_regions;	/* The number of supported regions */
++	__u32 num_umsgs;	/* The number of allocated umsgs */
++};
++
++#define FPGA_PORT_GET_INFO	_IO(FPGA_MAGIC, PORT_BASE + 1)
++
++/**
++ * FPGA_PORT_GET_REGION_INFO - _IOWR(FPGA_MAGIC, PORT_BASE + 2,
++ *						struct fpga_port_region_info)
++ *
++ * Retrieve information about a device region.
++ * Caller provides struct fpga_port_region_info with index value set.
++ * Driver returns the region info in other fields.
++ * Return: 0 on success, -errno on failure.
++ */
++struct fpga_port_region_info {
++	/* input */
++	__u32 argsz;		/* Structure length */
++	/* Output */
++	__u32 flags;		/* Access permission */
++#define FPGA_REGION_READ	(1 << 0)	/* Region is readable */
++#define FPGA_REGION_WRITE	(1 << 1)	/* Region is writable */
++#define FPGA_REGION_MMAP	(1 << 2)	/* Can be mmaped to userspace */
++	/* Input */
++	__u32 index;		/* Region index */
++#define FPGA_PORT_INDEX_UAFU	0		/* User AFU */
++#define FPGA_PORT_INDEX_STP	1		/* Signal Tap */
++	__u32 padding;
++	/* Output */
++	__u64 size;		/* Region size (bytes) */
++	__u64 offset;		/* Region offset from start of device fd */
++};
++
++#define FPGA_PORT_GET_REGION_INFO	_IO(FPGA_MAGIC, PORT_BASE + 2)
++
+ /* IOCTLs for FME file descriptor */
+ 
+ /**
 -- 
 2.7.4
 
