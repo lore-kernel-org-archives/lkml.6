@@ -1,182 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965456AbeBMRtT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:49:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965426AbeBMRtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:49:13 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCC4F217CC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v4 5/5] drm: adv7511: Add support for i2c_new_secondary_device
-Date: Tue, 13 Feb 2018 17:48:57 +0000
-Message-Id: <1518544137-2742-6-git-send-email-kbingham@kernel.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
-References: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
+        id S965485AbeBMRtd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:49:33 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:55324 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965278AbeBMRtb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 12:49:31 -0500
+X-Google-Smtp-Source: AH8x224uwmfYKIhPL1w62DPoooCVfkFSjDr8FMGuewW4IXzskxtlD90/qVk+h6PYUEmrxGJfGmZJBw==
+Message-ID: <1518544167.3715.180.camel@gmail.com>
+Subject: Re: lost connection to test machine (4)
+From: Eric Dumazet <eric.dumazet@gmail.com>
+To: Dennis Zhou <dennisszhou@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com>,
+        Alexei Starovoitov <ast@kernel.org>, netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com
+Date: Tue, 13 Feb 2018 09:49:27 -0800
+In-Reply-To: <20180213173438.GA60641@localhost.uwnet.wisc.edu>
+References: <001a113f8734783e94056505f8fd@google.com>
+         <CACT4Y+ZBHw7VZBFOeqLmrpmzgn4owW88qvP5v=xnr9966hbM_Q@mail.gmail.com>
+         <00c45ca8-305d-1818-e974-a9903c8494b8@iogearbox.net>
+         <20180212170325.GW695913@devbig577.frc2.facebook.com>
+         <20180212200548.GG695913@devbig577.frc2.facebook.com>
+         <1518528926.3715.173.camel@gmail.com>
+         <20180213173438.GA60641@localhost.uwnet.wisc.edu>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Tue, 2018-02-13 at 11:34 -0600, Dennis Zhou wrote:
+> Hi Eric,
+> 
+> On Tue, Feb 13, 2018 at 05:35:26AM -0800, Eric Dumazet wrote:
+> > 
+> > Also I would consider using this fix as I had warnings of cpus being
+> > stuck there for more than 50 ms :
+> > 
+> > 
+> > diff --git a/mm/percpu-vm.c b/mm/percpu-vm.c
+> > index 9158e5a81391ced4e268e3d5dd9879c2bc7280ce..6309b01ceb357be01e857e5f899429403836f41f 100644
+> > --- a/mm/percpu-vm.c
+> > +++ b/mm/percpu-vm.c
+> > @@ -92,6 +92,7 @@ static int pcpu_alloc_pages(struct pcpu_chunk *chunk,
+> >  			*pagep = alloc_pages_node(cpu_to_node(cpu), gfp, 0);
+> >  			if (!*pagep)
+> >  				goto err;
+> > +			cond_resched();
+> >  		}
+> >  	}
+> >  	return 0;
+> > 
+> > 
+> 
+> This function gets called from pcpu_populate_chunk while holding the
+> pcpu_alloc_mutex and is called from two scenarios. First, when an
+> allocation occurs to a place without backing pages, and second when the
+> workqueue item is scheduled to replenish the number of empty pages. So,
+> I don't think this is a good idea.
+> 
 
-The ADV7511 has four 256-byte maps that can be accessed via the main I2C
-ports. Each map has it own I2C address and acts as a standard slave
-device on the I2C bus.
+That _is_ a good idea, we do this already in vmalloc(), and vmalloc()
+can absolutely be called while some mutex(es) are held.
 
-Allow a device tree node to override the default addresses so that
-address conflicts with other devices on the same bus may be resolved at
-the board description level.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v2:
- - Update missing edid-i2c address setting
- - Split out DT bindings
- - Rename and move the I2C default addresses to their own section
+> My understanding is if we're seeing warnings here, that means we're
+> struggling to find backing pages. I believe adding __GFP_NORETRY on the
+> workqueue path as Tejun mentioned above would help with warnings as
+> well, but not if they are caused by the allocation path.
+> 
 
-v3:
- - No change
+That is a separate concern.
 
-v4:
- - Change registration order of packet/cec to fix error path and
-   simplify code change.
- - Collect Laurent's RB tag
-
- drivers/gpu/drm/bridge/adv7511/adv7511.h     |  6 ++++
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 42 ++++++++++++++++++----------
- 2 files changed, 33 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511.h b/drivers/gpu/drm/bridge/adv7511/adv7511.h
-index d034b2cb5eee..73d8ccb97742 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511.h
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511.h
-@@ -93,6 +93,11 @@
- #define ADV7511_REG_CHIP_ID_HIGH		0xf5
- #define ADV7511_REG_CHIP_ID_LOW			0xf6
- 
-+/* Hardware defined default addresses for I2C register maps */
-+#define ADV7511_CEC_I2C_ADDR_DEFAULT		0x3c
-+#define ADV7511_EDID_I2C_ADDR_DEFAULT		0x3f
-+#define ADV7511_PACKET_I2C_ADDR_DEFAULT		0x38
-+
- #define ADV7511_CSC_ENABLE			BIT(7)
- #define ADV7511_CSC_UPDATE_MODE			BIT(5)
- 
-@@ -321,6 +326,7 @@ enum adv7511_type {
- struct adv7511 {
- 	struct i2c_client *i2c_main;
- 	struct i2c_client *i2c_edid;
-+	struct i2c_client *i2c_packet;
- 	struct i2c_client *i2c_cec;
- 
- 	struct regmap *regmap;
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-index efa29db5fc2b..802bc433f54a 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -586,7 +586,7 @@ static int adv7511_get_modes(struct adv7511 *adv7511,
- 	/* Reading the EDID only works if the device is powered */
- 	if (!adv7511->powered) {
- 		unsigned int edid_i2c_addr =
--					(adv7511->i2c_main->addr << 1) + 4;
-+					(adv7511->i2c_edid->addr << 1);
- 
- 		__adv7511_power_on(adv7511);
- 
-@@ -969,10 +969,10 @@ static int adv7511_init_cec_regmap(struct adv7511 *adv)
- {
- 	int ret;
- 
--	adv->i2c_cec = i2c_new_dummy(adv->i2c_main->adapter,
--				     adv->i2c_main->addr - 1);
-+	adv->i2c_cec = i2c_new_secondary_device(adv->i2c_main, "cec",
-+					ADV7511_CEC_I2C_ADDR_DEFAULT);
- 	if (!adv->i2c_cec)
--		return -ENOMEM;
-+		return -EINVAL;
- 	i2c_set_clientdata(adv->i2c_cec, adv);
- 
- 	adv->regmap_cec = devm_regmap_init_i2c(adv->i2c_cec,
-@@ -1082,8 +1082,6 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
- 	struct adv7511_link_config link_config;
- 	struct adv7511 *adv7511;
- 	struct device *dev = &i2c->dev;
--	unsigned int main_i2c_addr = i2c->addr << 1;
--	unsigned int edid_i2c_addr = main_i2c_addr + 4;
- 	unsigned int val;
- 	int ret;
- 
-@@ -1153,23 +1151,34 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
- 	if (ret)
- 		goto uninit_regulators;
- 
--	regmap_write(adv7511->regmap, ADV7511_REG_EDID_I2C_ADDR, edid_i2c_addr);
--	regmap_write(adv7511->regmap, ADV7511_REG_PACKET_I2C_ADDR,
--		     main_i2c_addr - 0xa);
--	regmap_write(adv7511->regmap, ADV7511_REG_CEC_I2C_ADDR,
--		     main_i2c_addr - 2);
--
- 	adv7511_packet_disable(adv7511, 0xffff);
- 
--	adv7511->i2c_edid = i2c_new_dummy(i2c->adapter, edid_i2c_addr >> 1);
-+	adv7511->i2c_edid = i2c_new_secondary_device(i2c, "edid",
-+					ADV7511_EDID_I2C_ADDR_DEFAULT);
- 	if (!adv7511->i2c_edid) {
--		ret = -ENOMEM;
-+		ret = -EINVAL;
- 		goto uninit_regulators;
- 	}
- 
-+	regmap_write(adv7511->regmap, ADV7511_REG_EDID_I2C_ADDR,
-+		     adv7511->i2c_edid->addr << 1);
-+
-+	adv7511->i2c_packet = i2c_new_secondary_device(i2c, "packet",
-+					ADV7511_PACKET_I2C_ADDR_DEFAULT);
-+	if (!adv7511->i2c_packet) {
-+		ret = -EINVAL;
-+		goto err_i2c_unregister_edid;
-+	}
-+
-+	regmap_write(adv7511->regmap, ADV7511_REG_PACKET_I2C_ADDR,
-+		     adv7511->i2c_packet->addr << 1);
-+
- 	ret = adv7511_init_cec_regmap(adv7511);
- 	if (ret)
--		goto err_i2c_unregister_edid;
-+		goto err_i2c_unregister_packet;
-+
-+	regmap_write(adv7511->regmap, ADV7511_REG_CEC_I2C_ADDR,
-+		     adv7511->i2c_cec->addr << 1);
- 
- 	INIT_WORK(&adv7511->hpd_work, adv7511_hpd_work);
- 
-@@ -1207,6 +1216,8 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
- 	i2c_unregister_device(adv7511->i2c_cec);
- 	if (adv7511->cec_clk)
- 		clk_disable_unprepare(adv7511->cec_clk);
-+err_i2c_unregister_packet:
-+	i2c_unregister_device(adv7511->i2c_packet);
- err_i2c_unregister_edid:
- 	i2c_unregister_device(adv7511->i2c_edid);
- uninit_regulators:
-@@ -1233,6 +1244,7 @@ static int adv7511_remove(struct i2c_client *i2c)
- 
- 	cec_unregister_adapter(adv7511->cec_adap);
- 
-+	i2c_unregister_device(adv7511->i2c_packet);
- 	i2c_unregister_device(adv7511->i2c_edid);
- 
- 	return 0;
--- 
-2.7.4
+My patch simply avoids latency spikes when huge percpu allocations are
+happening, on systems with say 1024 cpus.
