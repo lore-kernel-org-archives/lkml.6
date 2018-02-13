@@ -1,287 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965469AbeBMSVd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 13:21:33 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41231 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965158AbeBMSVc (ORCPT
+        id S965445AbeBMSXH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 13:23:07 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:40356 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965158AbeBMSXE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 13:21:32 -0500
-Date: Tue, 13 Feb 2018 10:09:57 -0800
-From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
-Message-ID: <tip-adf9ca9c69a2ad8a82953119c57d5c6586c7d48d@git.kernel.org>
-Cc: kirill.shutemov@linux.intel.com, torvalds@linux-foundation.org,
-        tglx@linutronix.de, avagin@virtuozzo.com, hpa@zytor.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, bp@suse.de,
-        gorcunov@openvz.org, willy@infradead.org, luto@amacapital.net,
-        peterz@infradead.org
-Reply-To: kirill.shutemov@linux.intel.com, torvalds@linux-foundation.org,
-        avagin@virtuozzo.com, tglx@linutronix.de, hpa@zytor.com,
-        mingo@kernel.org, luto@amacapital.net, willy@infradead.org,
-        gorcunov@openvz.org, linux-kernel@vger.kernel.org, bp@suse.de,
-        peterz@infradead.org
-In-Reply-To: <20180209142228.21231-5-kirill.shutemov@linux.intel.com>
-References: <20180209142228.21231-5-kirill.shutemov@linux.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/boot] x86/boot/compressed/64: Handle 5-level paging boot
- if kernel is above 4G
-Git-Commit-ID: adf9ca9c69a2ad8a82953119c57d5c6586c7d48d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 13 Feb 2018 13:23:04 -0500
+Date: Tue, 13 Feb 2018 10:22:03 -0800
+From: Dave Watson <davejwatson@fb.com>
+To: Junaid Shahid <junaids@google.com>
+CC: Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        <linux-crypto@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Hannes Frederic Sowa <hannes@stressinduktion.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Sabrina Dubroca <sd@queasysnail.net>, <linux-kernel@vger.kernel.org>,
+        Stephan Mueller <smueller@chronox.de>,
+        Ilya Lesokhin <ilyal@mellanox.com>
+Subject: Re: [PATCH 14/14] x86/crypto: aesni: Update aesni-intel_glue to use
+ scatter/gather
+Message-ID: <20180213182203.GA2122@davejwatson-mba.local>
+References: <cover.1518211765.git.davejwatson@fb.com>
+ <20180212195128.GA61087@davejwatson-mba.local>
+ <dc69bdfa-6dc2-da54-9d9a-b171aeb3212b@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <dc69bdfa-6dc2-da54-9d9a-b171aeb3212b@google.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
+X-Originating-IP: [2620:10d:c090:200::4:5f28]
+X-ClientProxiedBy: SN6PR0102CA0020.prod.exchangelabs.com (52.132.112.161) To
+ CY4PR15MB1752.namprd15.prod.outlook.com (10.174.53.142)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a6aa36b5-4e32-4d33-ebf7-08d5730eb484
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:CY4PR15MB1752;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR15MB1752;3:0BUiCFHJf14nJA2TWGBCEIa7k5p6c4bJLdptUbyMHNv+LA1mz65qkkW7f3D48ks02pQNPdh+dGJnbFVUW6XRuVgrHKgfILylReZhQt8fLuVEifOSy6WKL4KfQcPE3b21cnIxJJJsVsObdz8yNM31TuIZt2l16uFo+XzCHuZlOfofmNONq/L1HrjpDBKHByGEvC0HU64fC+L7SSJyZgg3A1rB2WtWnu+3c3VJr3RZf2eT+XtrZBI9RkQwKgFyPNUY;25:mnycZsyX5kgK17QorWxZHdWt6bT9/qAo55SKt4Xn2GpIyP0Y3ilPnKJXPiM63xRli59Wqlc/c0NNtmyOq3j19cvnn35QKRaNk7p/NTD2MHJF54bYN5/qUcLj3tas5RSQy2TJs3HNkYYkQLK88tM/MKpEGAQ/npfo43YO5/9qhkDe/LyTzkPwsgvCTxBf2AkURpU4TRIGGDgU9BNY3/nbiLXSKW8mFRYogcxGpHQgXGCH+57fIDjqWlby50495yPWMVC1gTDut+0ZiM+xc01mNcPlDfAKN2VD8fy5uunXHsw3l+dt5PjNMlpfPi2QyWT4ePr5hchrUxWwyvB9s3ZK2g==;31:dawwfjnOxWmrglar6O/dKZ67X6uvdzdU7JQrbWDB8NY8kKgGubakOxqEsKkHpQTN0z8aXv+erMN2EjcNl/quZOYunbd83wEGA9e2OimjzvV5tEJ313jfF8VoMKwV5T473EBv02zO2KqzIUCxny7xRC3rcznouRt6xv0exV42+c/7Xdv2WBKe79U6+UfNrsXMWaguel+0LO3NWVKojVjDaUgrCL7YWm2PYcyG3DRP0eU=
+X-MS-TrafficTypeDiagnostic: CY4PR15MB1752:
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR15MB1752;20:EV3WxOtbm8wYgjz8V6C2tCRsbUBiMnlteZHJsApa5m7DIDDEckLsvMhAT+y6by7B1PbGB9GIEJIatKO5NhEpZ7kaCu7sMmC7JLl9CY+v9g8BvgHPn2wG8UC4hg9tIXtHi5pQHk5RT//Uw9JIfH9Lk5VAwHqQAGMnf9tf4fP7OS7paCXMmo6W773skOPdZi2adGwJfVnadjfgGEC4woC2LlXqBOhk8Y+FTx57hlTHgJBlUmCqjKB14a5838jRB9PXpTiYdoR+W4YKNls7VfC0swmqEtqF1zuavoUuMckwV1LQbh7rwbfF50f/57QS4Jqr+k3QHheQ37flX3GosRHfd1upskqp5q10d1Fly/eLtE9QfuOHX3q+PxH7iUIKo17d2AFBvoAzTdCJaa6MNRnS0nOvS8sUDV5ApI2NSkAJfQOdsq/uKdxzhJaZOqSLV8JSlZuWEpa2kpuWQjMqw5R6RDUSmBSrV0wLwA1lms2YELd9LZzuAUNgV8nrLvPPzaTv;4:/yZdvb2BqnSfS15h4y/rjnvVguzdEeRRaVbtnIvIUH/bjJVLJNXqxRxSmF9n4fIQWVJvovx6uS3AORYTy1p3ig0JWLREGPqn6cjW5CYzFZl/+1/fLvUgJM+JePKG6d9c4w65gwkdOZc+nFpw2/FPJ0nQB8+bD9ZKTBmXBnQ1KUxjFIR+i8F+fs7a7djq+nBpzLAazahCoKLVEQAqWzX7VBm6MYltBpJ/Quet9RA+VoRa6r4SUUoYdd5LRkoN/fAIUEywx1OICI3CtyqFv/JQzmgJ4C/ws6GTSLeGkhEVHBAn+kjS9CyYTL3KqnbATZFM
+X-Microsoft-Antispam-PRVS: <CY4PR15MB17523FD631B0657F8B595512DDF60@CY4PR15MB1752.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(266576461109395);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3231101)(11241501184)(944501161)(3002001)(10201501046)(93006095)(93001095)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:CY4PR15MB1752;BCL:0;PCL:0;RULEID:;SRVR:CY4PR15MB1752;
+X-Forefront-PRVS: 0582641F53
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(366004)(396003)(39860400002)(39380400002)(346002)(376002)(189003)(199004)(6916009)(2950100002)(8676002)(6666003)(68736007)(1076002)(47776003)(4326008)(6116002)(478600001)(5660300001)(33656002)(106356001)(23726003)(98436002)(25786009)(2906002)(7736002)(105586002)(52396003)(16586007)(54906003)(33896004)(229853002)(386003)(53546011)(76176011)(58126008)(53936002)(305945005)(76506005)(9686003)(6496006)(6246003)(59450400001)(83506002)(52116002)(86362001)(81166006)(81156014)(97736004)(7416002)(16526019)(186003)(6486002)(8936002)(316002)(50466002)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR15MB1752;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR15MB1752;23:yr4QUY2Uhl8ELCfwCY1xLxXngcDSjScg2XvIkQVWE?=
+ =?us-ascii?Q?Tsu2qxFFH9DBx8za6kg5oMpF2DjLx9oKc22TrTx9Ag1WvHz/AyUyhrodbkGw?=
+ =?us-ascii?Q?qFrv+rERNw6WGphRv9a8a9QHggFOvih0GjDR0Zmj4qV5257EXYHscVK/v1R9?=
+ =?us-ascii?Q?7Gf2VOYXcLHrz2jFi5TzXjZfBuLnJ6iZK2GpLIcz00HCVjHeIvTu+4p8frMK?=
+ =?us-ascii?Q?Uu1+azayXqGZVee2+FczN6Mmaw52/tw4AZJ6GAZhiOh5e4QDXzAAKj+NCCtU?=
+ =?us-ascii?Q?g51VZk58M14hBm6ASG/Dz5aRCeHzDjed3rxcU47UBJJ0Q8C44NK9l/YPSbAg?=
+ =?us-ascii?Q?YbPNDhcdmBpHvGEimGx4w4KIvno+L84m3shrI320XUMQkDxnvv8n5zohYEIK?=
+ =?us-ascii?Q?1fcvJERfqFDTlUX1fiG9Vdm1yBH6uL99asJYzyePO4pqqtl2ptBcyEGCNBu7?=
+ =?us-ascii?Q?QnLl3zmw9HhNzKOq5hQImi2hHGDzJ+Bj4NF5nx1Hn2rEzWBWIvMWEBvFfXuw?=
+ =?us-ascii?Q?J65Wxm2XnHpJ8tdkOP3fIc2XxV7+lC9UFjRdYy542/QBrC/sxfJEDP9Y7qju?=
+ =?us-ascii?Q?jaRh+9zxtUtXgWGwcJjVw6gh1mpUrf3u1eHwEs7PVXPNPThI5UYx+KG1YhFh?=
+ =?us-ascii?Q?4AeDGIUx9Rvzm9AOiV4hx+0C5jpCabW7t25ktnc8NhFSkP9mWz3D7bdRauKq?=
+ =?us-ascii?Q?Gg44BbLCsyGBQKyR1tncPD0s0cDvi0jeLl/Qx9DPWdw0LI+2tgr8uIa4qlRe?=
+ =?us-ascii?Q?kNDagmjWI4+HPuwNixUpCQUhwUjXsh7YPXXDvTvsPtXBZeX4b4WZiX89n7lw?=
+ =?us-ascii?Q?A9StLIySRe9209z3emSXRPHJrnZ69BQh5D3OQWlgvUb7Zixc8hjXFKx30y5i?=
+ =?us-ascii?Q?vky9KaI0XSbOG3xi5wG9ccFth8vWo5pSvweFB313Euh2X8ZmcQmXgXE9aKtP?=
+ =?us-ascii?Q?p8GVxEuctIdYonysLoKy43jitx5QhtFADDy9umLfcxomGDxwhud97Ebw1uQ5?=
+ =?us-ascii?Q?AYcLdk6kQoYA5K7vxasILugTtd0Unuep0dEjbPo4zmL5UolaR52XhzRrvcp7?=
+ =?us-ascii?Q?s7TIaBHBL5ZYbCyL/Igtg09z/sSw/n4AglaHp8To5bn2rSaGTTwnAUqwnE8i?=
+ =?us-ascii?Q?KXxqhhJKAQUrsyKgWRh488SH3tMzB5G/h8MNtnys64iI7iWACL21sO12J9Av?=
+ =?us-ascii?Q?/0hFWYSCe4R9UWHQhLwHpxQj9Z7WFQTcdbsh25OpC5VjQuVLEgjZMQofMUuG?=
+ =?us-ascii?Q?IkZHZCjJQ4oD947wyU9+PuVNTPgvijSh6O3A7cNM0m2dqGHTGCd9Tz9pWfx5?=
+ =?us-ascii?Q?CUjgqXRBaXmTelItjMxI2ZqmBUF8gA1DCTBA4IT8Da7?=
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR15MB1752;6:9j6gs1316bSPgh7+AIFw82dBOn+hUxcZbWFN/9Qndj/Q0gqHUcrmEIUqH9Hjdv26ptNYpiHzq3AowGup3CD0RzaW8/8nfK8JFlzZv1oajYXVV/hjbV1bIp8Dl0gSagEapFwgiZ1RFJhxSHyjLhljyzEMOug9xPIn+FAGXGkiWWi360TVfzNIp0wGUYzhYE0WJh10GvKOzbHtWmAh9roqkPgTA0aYjJnrtWydLZ7j3QLgLS2tUfScngAhyg0inRVN7wulD5wccq/e4T3zawmpNjZIRIL+Pv3p5ZCERsfrAl2aKpHB/14cNx+K3+Kp2TZebpqxBPMix5rX+m74pnCwqdyc5z450rtM53m7ZTG/jqs=;5:B7bylqTHGfIwEdi2nH5F8FvkjfsUwm/VItMXDeqKRai8mRKh/w8qAwV+4Ni6NqMufYzcGENih/T+8cjcLUAhFY9EclLqkBrLzKbmQBE5F+IefXysxzdMJU9Vi9/UfdXXXZ/i0MZiNi3dohp0tJ7cZUlQ0yi9IyedYVj6HowTkz4=;24:j/YoOky4Q5KuuVVB0Zq9umonEh7vx6fgHCURMdPpZp0nzcUUY/FHS3PpUIlc9CWa5jFBevscAL5imj47Bc37R08zhBe03dlqrKOMAV3Te40=;7:eNPYRKzo4xBV0MCl9L/3CVYJZZXT+KJrum8Ibx3t46fqKNVPwz7tJUuuKV3//CIsu+phsuDHgzzvpCehnQPMu/vvGTRUoCyuZSAq3oCfQ/cLvheiVYVDsY2IisVZkF2fe7Rz+qQyMgE7QQ5MMdv1eESk3fTQyBWyAs9lP8gzWWfZpO8XjAGFpOSwuvACFnw0wIzrzKsLMqVrh07KSZbzxhDKeeIdGu1ftpGomJAuwmpnw0O8x3uduotsilO7AE9k
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR15MB1752;20:Xl4GkcxC9cVd194o0ZRzJDrgsMokP+prNoT3TY5DqbC7gX5XJIkSPtLN7c/Onlk6qNmw20FG9cpXA3N2IxFPzxA1xdmDYGTLP8OQ69Pp8l1gP85LkG7mLGolREb7U2xmUnAzZTmiF3i4NyzmKdbdTiWZXR0M3gDrYgRmiGw/76E=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2018 18:22:13.5952 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6aa36b5-4e32-4d33-ebf7-08d5730eb484
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1752
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-13_10:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  adf9ca9c69a2ad8a82953119c57d5c6586c7d48d
-Gitweb:     https://git.kernel.org/tip/adf9ca9c69a2ad8a82953119c57d5c6586c7d48d
-Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate: Fri, 9 Feb 2018 17:22:28 +0300
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 19:04:43 +0100
+On 02/12/18 03:12 PM, Junaid Shahid wrote:
+> Hi Dave,
+> 
+> 
+> On 02/12/2018 11:51 AM, Dave Watson wrote:
+> 
+> > +static int gcmaes_encrypt_sg(struct aead_request *req, unsigned int assoclen,
+> > +			u8 *hash_subkey, u8 *iv, void *aes_ctx)
+> >  
+> > +static int gcmaes_decrypt_sg(struct aead_request *req, unsigned int assoclen,
+> > +			u8 *hash_subkey, u8 *iv, void *aes_ctx)
+> 
+> These two functions are almost identical. Wouldn't it be better to combine them into a single encrypt/decrypt function, similar to what you have done for the assembly macros?
+> 
+> > +	if (((struct crypto_aes_ctx *)aes_ctx)->key_length != AES_KEYSIZE_128 ||
+> > +		aesni_gcm_enc_tfm == aesni_gcm_enc) {
+> 
+> Shouldn't we also include a check for the buffer length being less than AVX_GEN2_OPTSIZE? AVX will not be used in that case either.
 
-x86/boot/compressed/64: Handle 5-level paging boot if kernel is above 4G
+Yes, these both sound reasonable.  I will send a V2.
 
-This patch addresses a shortcoming in current boot process on machines
-that supports 5-level paging.
-
-If a bootloader enables 64-bit mode with 4-level paging, we might need to
-switch over to 5-level paging. The switching requires the disabling
-paging. It works fine if kernel itself is loaded below 4G.
-
-But if the bootloader put the kernel above 4G (not sure if anybody does
-this), we would lose control as soon as paging is disabled, because the
-code becomes unreachable to the CPU.
-
-This patch implements a trampoline in lower memory to handle this
-situation.
-
-We only need the memory for a very short time, until the main kernel
-image sets up own page tables.
-
-We go through the trampoline even if we don't have to: if we're already
-in 5-level paging mode or if we don't need to switch to it. This way the
-trampoline gets tested on every boot.
-
-Reported-by: Andrei Vagin <avagin@virtuozzo.com>
-Tested-by: Andrei Vagin <avagin@virtuozzo.com>
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Cyrill Gorcunov <gorcunov@openvz.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180209142228.21231-5-kirill.shutemov@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/boot/compressed/head_64.S | 127 ++++++++++++++++++++++++++-----------
- 1 file changed, 89 insertions(+), 38 deletions(-)
-
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index af9ffbd..99a0e79 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -307,13 +307,34 @@ ENTRY(startup_64)
- 
- 	/*
- 	 * At this point we are in long mode with 4-level paging enabled,
--	 * but we want to enable 5-level paging.
-+	 * but we might want to enable 5-level paging or vice versa.
- 	 *
--	 * The problem is that we cannot do it directly. Setting LA57 in
--	 * long mode would trigger #GP. So we need to switch off long mode
--	 * first.
-+	 * The problem is that we cannot do it directly. Setting or clearing
-+	 * CR4.LA57 in long mode would trigger #GP. So we need to switch off
-+	 * long mode and paging first.
-+	 *
-+	 * We also need a trampoline in lower memory to switch over from
-+	 * 4- to 5-level paging for cases when the bootloader puts the kernel
-+	 * above 4G, but didn't enable 5-level paging for us.
-+	 *
-+	 * The same trampoline can be used to switch from 5- to 4-level paging
-+	 * mode, like when starting 4-level paging kernel via kexec() when
-+	 * original kernel worked in 5-level paging mode.
-+	 *
-+	 * For the trampoline, we need the top page table to reside in lower
-+	 * memory as we don't have a way to load 64-bit values into CR3 in
-+	 * 32-bit mode.
-+	 *
-+	 * We go though the trampoline even if we don't have to: if we're
-+	 * already in a desired paging mode. This way the trampoline code gets
-+	 * tested on every boot.
- 	 */
- 
-+	/* Make sure we have GDT with 32-bit code segment */
-+	leaq	gdt(%rip), %rax
-+	movq	%rax, gdt64+2(%rip)
-+	lgdt	gdt64(%rip)
-+
- 	/*
- 	 * paging_prepare() sets up the trampoline and checks if we need to
- 	 * enable 5-level paging.
-@@ -331,30 +352,20 @@ ENTRY(startup_64)
- 	/* Save the trampoline address in RCX */
- 	movq	%rax, %rcx
- 
--	/* Check if we need to enable 5-level paging */
--	cmpq	$0, %rdx
--	jz	lvl5
--
--	/* Clear additional page table */
--	leaq	lvl5_pgtable(%rbx), %rdi
--	xorq	%rax, %rax
--	movq	$(PAGE_SIZE/8), %rcx
--	rep	stosq
--
- 	/*
--	 * Setup current CR3 as the first and only entry in a new top level
--	 * page table.
-+	 * Load the address of trampoline_return() into RDI.
-+	 * It will be used by the trampoline to return to the main code.
- 	 */
--	movq	%cr3, %rdi
--	leaq	0x7 (%rdi), %rax
--	movq	%rax, lvl5_pgtable(%rbx)
-+	leaq	trampoline_return(%rip), %rdi
- 
- 	/* Switch to compatibility mode (CS.L = 0 CS.D = 1) via far return */
- 	pushq	$__KERNEL32_CS
--	leaq	compatible_mode(%rip), %rax
-+	leaq	TRAMPOLINE_32BIT_CODE_OFFSET(%rax), %rax
- 	pushq	%rax
- 	lretq
--lvl5:
-+trampoline_return:
-+	/* Restore the stack, the 32-bit trampoline uses its own stack */
-+	leaq	boot_stack_end(%rbx), %rsp
- 
- 	/*
- 	 * cleanup_trampoline() would restore trampoline memory.
-@@ -503,45 +514,82 @@ relocated:
- 	jmp	*%rax
- 
- 	.code32
-+/*
-+ * This is the 32-bit trampoline that will be copied over to low memory.
-+ *
-+ * RDI contains the return address (might be above 4G).
-+ * ECX contains the base address of the trampoline memory.
-+ * Non zero RDX on return means we need to enable 5-level paging.
-+ */
- ENTRY(trampoline_32bit_src)
--compatible_mode:
- 	/* Set up data and stack segments */
- 	movl	$__KERNEL_DS, %eax
- 	movl	%eax, %ds
- 	movl	%eax, %ss
- 
-+	/* Setup new stack */
-+	leal	TRAMPOLINE_32BIT_STACK_END(%ecx), %esp
-+
- 	/* Disable paging */
- 	movl	%cr0, %eax
- 	btrl	$X86_CR0_PG_BIT, %eax
- 	movl	%eax, %cr0
- 
--	/* Point CR3 to 5-level paging */
--	leal	lvl5_pgtable(%ebx), %eax
--	movl	%eax, %cr3
-+	/* Check what paging mode we want to be in after the trampoline */
-+	cmpl	$0, %edx
-+	jz	1f
- 
--	/* Enable PAE and LA57 mode */
-+	/* We want 5-level paging: don't touch CR3 if it already points to 5-level page tables */
- 	movl	%cr4, %eax
--	orl	$(X86_CR4_PAE | X86_CR4_LA57), %eax
-+	testl	$X86_CR4_LA57, %eax
-+	jnz	3f
-+	jmp	2f
-+1:
-+	/* We want 4-level paging: don't touch CR3 if it already points to 4-level page tables */
-+	movl	%cr4, %eax
-+	testl	$X86_CR4_LA57, %eax
-+	jz	3f
-+2:
-+	/* Point CR3 to the trampoline's new top level page table */
-+	leal	TRAMPOLINE_32BIT_PGTABLE_OFFSET(%ecx), %eax
-+	movl	%eax, %cr3
-+3:
-+	/* Enable PAE and LA57 (if required) paging modes */
-+	movl	$X86_CR4_PAE, %eax
-+	cmpl	$0, %edx
-+	jz	1f
-+	orl	$X86_CR4_LA57, %eax
-+1:
- 	movl	%eax, %cr4
- 
--	/* Calculate address we are running at */
--	call	1f
--1:	popl	%edi
--	subl	$1b, %edi
-+	/* Calculate address of paging_enabled() once we are executing in the trampoline */
-+	leal	paging_enabled - trampoline_32bit_src + TRAMPOLINE_32BIT_CODE_OFFSET(%ecx), %eax
- 
--	/* Prepare stack for far return to Long Mode */
-+	/* Prepare the stack for far return to Long Mode */
- 	pushl	$__KERNEL_CS
--	leal	lvl5(%edi), %eax
--	push	%eax
-+	pushl	%eax
- 
--	/* Enable paging back */
-+	/* Enable paging again */
- 	movl	$(X86_CR0_PG | X86_CR0_PE), %eax
- 	movl	%eax, %cr0
- 
- 	lret
- 
-+	.code64
-+paging_enabled:
-+	/* Return from the trampoline */
-+	jmp	*%rdi
-+
-+	/*
-+         * The trampoline code has a size limit.
-+         * Make sure we fail to compile if the trampoline code grows
-+         * beyond TRAMPOLINE_32BIT_CODE_SIZE bytes.
-+	 */
-+	.org	trampoline_32bit_src + TRAMPOLINE_32BIT_CODE_SIZE
-+
-+	.code32
- no_longmode:
--	/* This isn't an x86-64 CPU so hang */
-+	/* This isn't an x86-64 CPU, so hang intentionally, we cannot continue */
- 1:
- 	hlt
- 	jmp     1b
-@@ -549,6 +597,11 @@ no_longmode:
- #include "../../kernel/verify_cpu.S"
- 
- 	.data
-+gdt64:
-+	.word	gdt_end - gdt
-+	.long	0
-+	.word	0
-+	.quad   0
- gdt:
- 	.word	gdt_end - gdt
- 	.long	gdt
-@@ -602,8 +655,6 @@ trampoline_save:
- 	.balign 4096
- pgtable:
- 	.fill BOOT_PGT_SIZE, 1, 0
--lvl5_pgtable:
--	.fill PAGE_SIZE, 1, 0
- 
- 	.global pgtable_trampoline
- pgtable_trampoline:
+Thanks!
