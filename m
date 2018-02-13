@@ -1,56 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935399AbeBMOcG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 09:32:06 -0500
-Received: from one.firstfloor.org ([193.170.194.197]:47362 "EHLO
-        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935289AbeBMOcE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 09:32:04 -0500
-Date: Tue, 13 Feb 2018 06:32:02 -0800
-From: Andi Kleen <andi@firstfloor.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Andi Kleen <andi@firstfloor.org>, tglx@linutronix.de, x86@kernel.org,
-        linux-kernel@vger.kernel.org, bp@alien8.de, jpoimboe@redhat.com,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH 2/2] x86/retpoline: Fix return buffer filling
-Message-ID: <20180213143202.7logf7thlozro6op@two.firstfloor.org>
-References: <20180213000422.16916-1-andi@firstfloor.org>
- <20180213000422.16916-2-andi@firstfloor.org>
- <1518530301.12890.66.camel@infradead.org>
+        id S935409AbeBMOdZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 09:33:25 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58642 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933612AbeBMOdX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 09:33:23 -0500
+Date: Tue, 13 Feb 2018 14:33:19 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Channa <ckadabi@codeaurora.org>
+Cc: Matt Sealey <neko@bakuhatsu.net>, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-arm@lists.infradead.org,
+        linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
+        Stephen Boyd <sboyd@codeaurora.org>, kyan@codeaurora.org,
+        linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: Documentation for qcom,llcc
+Message-ID: <20180213143318.be2dmmmoiafkehqk@lakrids.cambridge.arm.com>
+References: <1516924513-20183-1-git-send-email-ckadabi@codeaurora.org>
+ <1516924513-20183-2-git-send-email-ckadabi@codeaurora.org>
+ <CAHCPf3vt-ZCXgTfCZ-LSW3TSXAk5KBz3wCu-LuTOBdCB+sgGgw@mail.gmail.com>
+ <0ce690ab886d4896506ba916d2d39554@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1518530301.12890.66.camel@infradead.org>
+In-Reply-To: <0ce690ab886d4896506ba916d2d39554@codeaurora.org>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> However... that was supposed to be a 'clear RSB' operation, with 32
-> CALLs in sequence. And Boris changed it to 16 by calling __fill_rsb()
-> instead of __clear_rsb():
+On Thu, Feb 08, 2018 at 04:24:16PM -0800, Channa wrote:
+> On 2018-02-08 08:52, Matt Sealey wrote:
+> > On 25 January 2018 at 17:55, Channagoud Kadabi <ckadabi@codeaurora.org>
+> > wrote:
+> > > Documentation for last level cache controller device tree bindings,
+> > > client bindings usage examples.
+> > 
+> > [snippety snip]
+> > 
+> > > +- llcc-bank-off:
+> > > +       Usage: required
+> > > +       Value Type: <u32 array>
+> > > +       Definition: Offsets of llcc banks from llcc base address
+> > > starting from
+> > > +                   LLCC bank0.
+> > > +
+> > > +- llcc-broadcast-off:
+> > > +       Usage: required
+> > > +       Value Type: <u32>
+> > > +       Definition: Offset of broadcast register from LLCC bank0
+> > > address.
 
-True. That's even worse.
+> > And if you need to describe register offsets... why aren't you able to
+> > use the reg property?
 > 
-> -       asm volatile (ANNOTATE_NOSPEC_ALTERNATIVE
-> -                     ALTERNATIVE("jmp 910f",
-> -                                 __stringify(__FILL_RETURN_BUFFER(%0, RSB_CLEAR_LOOPS, %1)),
-> -                                 X86_FEATURE_RETPOLINE)
-> -                     "910:"
-> -                     : "=r" (loops), ASM_CALL_CONSTRAINT
-> -                     : : "memory" );
-> +       alternative_input("",
-> +                         "call __fill_rsb",
-> +                         X86_FEATURE_RETPOLINE,
-> +                         ASM_NO_INPUT_CLOBBER(_ASM_BX, "memory"));
+> Reg property did not suit well for my need, so I choose to maintain offsets
+> instead.
 > 
-> I think we do need to revert that patch. And perhaps stop accepting any
-> more similar bikeshedding.
+> The registers in the HW block are organized as
+>                 (offset1)    (offset2)     (offset3)     (offset4)
+> Base(Block0) -- Block1 -- Block 2 -- Block 3 -- Broadcast_Block
+> 
+> Each block has identical register mapping. You can think of it as 4
+> instances of identical HW.
 
-Yes revertion would be the right way.
+We have similar in other devices (e.g. GICv3 has multiple instances of
+the same register block).
 
-I already regret the time I wasted trying to fix it.
+If there's nothing between those blocks, using a reg entry sounds
+prefectly reasonable. You can list the broadcast block first, then the
+others, or use reg-names.
 
--Andi
+Thanks,
+Mark.
