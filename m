@@ -1,139 +1,123 @@
-Return-Path: <vivek.gautam@codeaurora.org>
-X-Google-Smtp-Source: AH8x227CBWJBc//qIxqqUEVXNPGHYDDR5WM2XcCoMLEkkb+md0vn5qfq8+0HHHlX6hl2uqeCbNvU
-ARC-Seal: i=1; a=rsa-sha256; t=1517999541; cv=none;
+Return-Path: <tfiga@chromium.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1518513062; cv=none;
         d=google.com; s=arc-20160816;
-        b=llaC3sh8emrh/yQi9F1ZlA2ZtHW7Q8yxdheTNBE4yVPZV+MhM2q2rQ1MbmPSZzEik4
-         zg0iCPdPa0tnjcePFIKHvNfgAoZkm/m7Lb06lWtPQpqWcZwvpGJr9nvgr1HlC0KNiNz5
-         7UXlhAfpAQCrkRHKn3OoHp4DX6FQ/kw0b9ly24ncZ6qukcW1GaOcVD2rG/8MSFJu2Ylg
-         YxudTxcy7+taNedClp2njopwzaG7cHb25TJi0UxRfhgQ6kHkjIvnOdlElN87m3OqtpgV
-         YvSFNZ2Cqtnri9R7nRwb5gkqwtSVCWtFpIWdebEHhDGyFY1+tj/cGZ6bedYJ/XASlMQx
-         4klw==
+        b=LwthKP2jCIofT0KJnYoQEXtbSWJr1mrHZeQOTfmDnNL4p32p9ron1xpKZ1zu1wqSI1
+         8uibjo73lEdN8APgoGadwKIvPhoHYbW2e58slDcCEeI5N7dc+0swzviKF9qGeqUMcoRH
+         L8RbAVcdBFmgUDZX9nhWNUANZTgJEVif6qXig1j2Fd9tozaqTaMB41IyejpsHc6+kRTv
+         gl+VeJJBQ9CxL6eA09gqQnYGRfCxYnbjOrgFQkKVCaf6jn2G/Nec9eKqQGyZfHmps4JE
+         nN4xrzjwCn/4BxsspuinLKVB92zzI6gkoSkgunXcASBRfm5mQBWXXd0nHx/tKiaeyurd
+         chGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=GAYsFhRKtS+DGntjqcrp92XcwgwAeQopfzdTga6yJpY=;
-        b=mIOfGlC1tAar/6JcyRHLlJqE7BbbMoBn05eHqCnOtaQu1k5IZZ0h8O8HXE7YHw0qZN
-         48DcuTqL3SyqTWpoXJRPQCsM1nPhkTPk8I6k2spu7FLZzcoFt8bbRfb/xU6jGTwmXQXB
-         uJQdkfOWJmJpiHj5QWX77HL+3HQ8QgrCHViCOlHEM3XqecYUDk9EuTrV8jGe6Orpw8qH
-         57rl9CIItsoPKMMJXbdMYBTgd2VrUQQDiduvQdvKXn2TPI33sN4zKyb7rz1/VGA8ZTdF
-         jqUI745wn8IX4gwMh/NCMPXcB9g5dOuRy/BqahJF79nDBOfAFrnz61Jc9qyRH3KVXp66
-         b4Pw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=zgDOrQ0vdnEEpzJQTdiI/AsXJqEeC0L6DTsretGGndQ=;
+        b=jUo7+nSMNc0e7CoxffpSjCC+u8nKb7CZL/JSl5oNtNOB+4k6Dvmzr9i2vvDaZxMu7/
+         sr482jUCE2qTy1c/cyj3aHzDbKPwpJvfr1dqSIp1KWEGzIlVjItVuB5emI76Er6saAQ5
+         jVpRO4zGnj8VNaIuURcpROQ0WiSa7FS5yr094PceZDIonsdsckuVWYJcrfEBjFY6tpXH
+         cHByAAUugIu85+zzfXg5GzozYGbi34QXyIR0uNoZpkJrvUZEMcxoaSGS4PihmxNQbytJ
+         IpTdgxqAj33YAHgdn0c1Dtg4kifU4mgMfkirqtLoNxjdnHtw2b0ujvG4u/vwRsR6wtUE
+         2Jtw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=kQwbTNNP;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=HthXyIdz;
-       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
+       dkim=pass header.i=@chromium.org header.s=google header.b=M07evCr4;
+       spf=pass (google.com: domain of tfiga@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=tfiga@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=kQwbTNNP;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=HthXyIdz;
-       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 057B260790
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-To: joro@8bytes.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	rjw@rjwysocki.net,
-	robin.murphy@arm.com,
-	will.deacon@arm.com,
-	robdclark@gmail.com,
-	iommu@lists.linux-foundation.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org
-Cc: alex.williamson@redhat.com,
-	gregkh@linuxfoundation.org,
-	airlied@linux.ie,
-	sboyd@codeaurora.org,
-	sricharan@codeaurora.org,
-	m.szyprowski@samsung.com,
-	architt@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	vivek.gautam@codeaurora.org
-Subject: [PATCH v7 6/6] drm/msm: iommu: Replace runtime calls with runtime suppliers
-Date: Wed,  7 Feb 2018 16:01:22 +0530
-Message-Id: <1517999482-17317-7-git-send-email-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org>
-References: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org>
+       dkim=pass header.i=@chromium.org header.s=google header.b=M07evCr4;
+       spf=pass (google.com: domain of tfiga@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=tfiga@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AH8x224u+WhW41IzZD4rTdXlZ0hDUQCeZJldmbsS4S8ioZvaxhXZbgg2izGib15foBIOS1nNICKKvA==
+MIME-Version: 1.0
+In-Reply-To: <1517999482-17317-7-git-send-email-vivek.gautam@codeaurora.org>
+References: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org> <1517999482-17317-7-git-send-email-vivek.gautam@codeaurora.org>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Tue, 13 Feb 2018 18:10:38 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5AjopiX6fDgD+mO+-+d0yj-swEnVCNvccWRBSMO+XVJkA@mail.gmail.com>
+Message-ID: <CAAFQd5AjopiX6fDgD+mO+-+d0yj-swEnVCNvccWRBSMO+XVJkA@mail.gmail.com>
+Subject: Re: [PATCH v7 6/6] drm/msm: iommu: Replace runtime calls with runtime suppliers
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg Roedel <joro@8bytes.org>," <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Rob Clark <robdclark@gmail.com>,
+	"list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	dri-devel <dri-devel@lists.freedesktop.org>, freedreno@lists.freedesktop.org,
+	David Airlie <airlied@linux.ie>, Greg KH <gregkh@linuxfoundation.org>, sboyd@codeaurora.org,
+	linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591737886832187485?=
-X-GMAIL-MSGID: =?utf-8?q?1591737886832187485?=
+X-GMAIL-MSGID: =?utf-8?q?1592276352955730082?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-While handling the concerned iommu, there should not be a
-need to power control the drm devices from iommu interface.
-If these drm devices need to be powered around this time,
-the respective drivers should take care of this.
+Hi Vivek,
 
-Replace the pm_runtime_get/put_sync(<drm_device>) with
-pm_runtime_get/put_suppliers(<drm_device>) calls, to power-up
-the connected iommu through the device link interface.
-In case the device link is not setup these get/put_suppliers()
-calls will be a no-op, and the iommu driver should take care of
-powering on its devices accordingly.
+Thanks for the patch. Please see my comments inline.
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
----
- drivers/gpu/drm/msm/msm_iommu.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+On Wed, Feb 7, 2018 at 7:31 PM, Vivek Gautam
+<vivek.gautam@codeaurora.org> wrote:
+> While handling the concerned iommu, there should not be a
+> need to power control the drm devices from iommu interface.
+> If these drm devices need to be powered around this time,
+> the respective drivers should take care of this.
+>
+> Replace the pm_runtime_get/put_sync(<drm_device>) with
+> pm_runtime_get/put_suppliers(<drm_device>) calls, to power-up
+> the connected iommu through the device link interface.
+> In case the device link is not setup these get/put_suppliers()
+> calls will be a no-op, and the iommu driver should take care of
+> powering on its devices accordingly.
+>
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> ---
+>  drivers/gpu/drm/msm/msm_iommu.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
+> index b23d33622f37..1ab629bbee69 100644
+> --- a/drivers/gpu/drm/msm/msm_iommu.c
+> +++ b/drivers/gpu/drm/msm/msm_iommu.c
+> @@ -40,9 +40,9 @@ static int msm_iommu_attach(struct msm_mmu *mmu, const char * const *names,
+>         struct msm_iommu *iommu = to_msm_iommu(mmu);
+>         int ret;
+>
+> -       pm_runtime_get_sync(mmu->dev);
+> +       pm_runtime_get_suppliers(mmu->dev);
+>         ret = iommu_attach_device(iommu->domain, mmu->dev);
+> -       pm_runtime_put_sync(mmu->dev);
+> +       pm_runtime_put_suppliers(mmu->dev);
 
-diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
-index b23d33622f37..1ab629bbee69 100644
---- a/drivers/gpu/drm/msm/msm_iommu.c
-+++ b/drivers/gpu/drm/msm/msm_iommu.c
-@@ -40,9 +40,9 @@ static int msm_iommu_attach(struct msm_mmu *mmu, const char * const *names,
- 	struct msm_iommu *iommu = to_msm_iommu(mmu);
- 	int ret;
- 
--	pm_runtime_get_sync(mmu->dev);
-+	pm_runtime_get_suppliers(mmu->dev);
- 	ret = iommu_attach_device(iommu->domain, mmu->dev);
--	pm_runtime_put_sync(mmu->dev);
-+	pm_runtime_put_suppliers(mmu->dev);
- 
- 	return ret;
- }
-@@ -52,9 +52,9 @@ static void msm_iommu_detach(struct msm_mmu *mmu, const char * const *names,
- {
- 	struct msm_iommu *iommu = to_msm_iommu(mmu);
- 
--	pm_runtime_get_sync(mmu->dev);
-+	pm_runtime_get_suppliers(mmu->dev);
- 	iommu_detach_device(iommu->domain, mmu->dev);
--	pm_runtime_put_sync(mmu->dev);
-+	pm_runtime_put_suppliers(mmu->dev);
- }
- 
- static int msm_iommu_map(struct msm_mmu *mmu, uint64_t iova,
-@@ -63,9 +63,9 @@ static int msm_iommu_map(struct msm_mmu *mmu, uint64_t iova,
- 	struct msm_iommu *iommu = to_msm_iommu(mmu);
- 	size_t ret;
- 
--//	pm_runtime_get_sync(mmu->dev);
-+	pm_runtime_get_suppliers(mmu->dev);
- 	ret = iommu_map_sg(iommu->domain, iova, sgt->sgl, sgt->nents, prot);
--//	pm_runtime_put_sync(mmu->dev);
-+	pm_runtime_put_suppliers(mmu->dev);
- 	WARN_ON(ret < 0);
- 
- 	return (ret == len) ? 0 : -EINVAL;
-@@ -76,9 +76,9 @@ static int msm_iommu_unmap(struct msm_mmu *mmu, uint64_t iova,
- {
- 	struct msm_iommu *iommu = to_msm_iommu(mmu);
- 
--	pm_runtime_get_sync(mmu->dev);
-+	pm_runtime_get_suppliers(mmu->dev);
- 	iommu_unmap(iommu->domain, iova, len);
--	pm_runtime_put_sync(mmu->dev);
-+	pm_runtime_put_suppliers(mmu->dev);
- 
- 	return 0;
- }
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+For me, it looks like a wrong place to handle runtime PM of IOMMU
+here. iommu_attach_device() calls into IOMMU driver's attach_device()
+callback and that's where necessary runtime PM gets should happen, if
+any. In other words, driver A (MSM DRM driver) shouldn't be dealing
+with power state of device controlled by driver B (ARM SMMU).
+
+This is also important for the reasons I stated in my comments to
+"[PATCH v7 1/6] base: power: runtime: Export
+pm_runtime_get/put_suppliers". Quoting for everyone's convenience:
+
+>> There are however cases in which the consumer wants to power-on
+>> the supplier, but not itself.
+>> E.g., A Graphics or multimedia driver wants to power-on the SMMU
+>> to unmap a buffer and finish the TLB operations without powering
+>> on itself.
+>
+>This sounds strange to me. If the SMMU is powered down, wouldn't the
+>TLB lose its contents as well (and so no flushing needed)?
+>
+>Other than that, what kind of hardware operations would be needed
+>besides just updating the page tables from the CPU?
+>
+
+In other words, the SMMU driver can deal with hardware state based on
+return value of pm_runtime_get_sync() or pm_runtime_get_if_in_use()
+and decide whether some operations are necessary or not, e.g.
+- a state restore is necessary if the domain was powered off, but we
+are bringing the master on,
+- a flush may not be required when (un)mapping with the domain powered off,
+- etc.
+
+Best regards,
+Tomasz
