@@ -1,66 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933704AbeBMIE4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 03:04:56 -0500
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:33678 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933606AbeBMIEy (ORCPT
+        id S933660AbeBMIIV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 03:08:21 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39491 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933539AbeBMIIT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 03:04:54 -0500
-X-Google-Smtp-Source: AH8x2263qAY+Euhfu3bjL51Dr7QrfSCMm7mBzWnHmv4viMzKfSuerBWKHMYTZn/j1qsq0Ou+6KVYlA==
-Date: Tue, 13 Feb 2018 09:04:50 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        karahmed@amazon.de, sironi@amazon.de, kvm@vger.kernel.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com, bp@alien8.de,
-        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
-        arjan.van.de.ven@intel.com, dave.hansen@intel.com
-Subject: Re: [PATCH] x86/speculation: Clean up various Spectre related details
-Message-ID: <20180213080450.7zll3nmn3iuxwg7y@gmail.com>
-References: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
- <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
- <20180211185057.rest4bf2ydx7slrk@gmail.com>
- <1518377119.6606.2.camel@infradead.org>
- <20180211194305.zg7tq3x3cxjuphyo@gmail.com>
- <1518449413.6606.99.camel@infradead.org>
+        Tue, 13 Feb 2018 03:08:19 -0500
+X-Google-Smtp-Source: AH8x224o74uE8XTRPgfIxatYhdBgKjNiPBQsrzUZygRIyWOJUww/CkM9cUmCxGKxScNL4+M59wxWAA==
+Date: Tue, 13 Feb 2018 11:08:16 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Andrei Vagin <avagin@virtuozzo.com>
+Cc: tip-bot for Jacob Shin <tipbot@zytor.com>,
+        kirill.shutemov@linux.intel.com, linux-tip-commits@vger.kernel.org,
+        tglx@linutronix.de, willy@infradead.org, gorcunov@openvz.org,
+        bp@suse.de, peterz@infradead.org, torvalds@linux-foundation.org,
+        mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        luto@amacapital.net
+Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Handle 5-level paging
+ boot if kernel is above 4G
+Message-ID: <20180213080816.vwh64jiz23frjiot@node.shutemov.name>
+References: <tip-b4b56015ed1c98cbc9469e35ebbc4373a2844030@git.kernel.org>
+ <20180213065155.GA14087@outlook.office365.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1518449413.6606.99.camel@infradead.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180213065155.GA14087@outlook.office365.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* David Woodhouse <dwmw2@infradead.org> wrote:
-
-> On Sun, 2018-02-11 at 20:43 +0100, Ingo Molnar wrote:
-> > > And should these say 'Spectre v2' not just 'Spectre'?
-> > 
-> > Yeah, you are probably right, but I didn't want to make the messages too specific 
-> > - do we really know that this is the end of Spectre-style speculation holes?
+On Mon, Feb 12, 2018 at 10:51:56PM -0800, Andrei Vagin wrote:
+> Hi Kirill,
 > 
-> Well... if a new problem is also remedied by use if IBRS/IBPB and
-> retpoline, I think we can happily call it a subclass of "Spectre v2".
-> 
-> And if it *isn't* addressed by those same things, then it's clearly
-> something different. Either way, these messages should be 'v2', no?
+> Something is wrong in this patch.
 
-Ok, fair enough - I've changed it to v2 as you suggest:
+Was it bisected to exactly this patch? Is the previous one fine?
 
--		pr_info("Filling RSB on context switch\n");
-+		pr_info("Spectre v2 mitigation: Filling RSB on context switch\n");
--		pr_info("Enabling Indirect Branch Prediction Barrier\n");
-+		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
+> We regularly run CRIU tests on linux-next, and yesterday I found that a
+> kernel didn't boot. We run this tests in Travis-CI, and we don't have
+> access to kernel logs. I tried to reproduce the problem localy, but I
+> failed.
 
-> On the whole though, there are plenty of better things to be worrying
-> about :)
+Do you know anything about host kernel which handles kexec?
 
-Sure - nevertheless I fixed these while they were still hot ;-)
-
-Thanks,
-
-	Ingo
+-- 
+ Kirill A. Shutemov
