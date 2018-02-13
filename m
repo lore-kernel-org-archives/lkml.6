@@ -1,54 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934895AbeBMQgl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 11:36:41 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:51029 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934210AbeBMQgk (ORCPT
+        id S965342AbeBMQhH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 11:37:07 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:53658 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934963AbeBMQhB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:36:40 -0500
-Date: Tue, 13 Feb 2018 17:36:34 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-cc: David Miller <davem@davemloft.net>, edumazet@google.com,
-        torvalds@linux-foundation.org, efault@gmx.de, peterz@infradead.org,
-        dima@arista.com, frederic@kernel.org, linux-kernel@vger.kernel.org,
-        0x7f454c46@gmail.com, akpm@linux-foundation.org, fweisbec@gmail.com,
-        hannes@stressinduktion.org, mingo@kernel.org,
-        alexander.levin@verizon.com, pabeni@redhat.com,
-        paulmck@linux.vnet.ibm.com, rrendec@arista.com, riel@redhat.com,
-        sgruszka@redhat.com, wanpeng.li@hotmail.com
-Subject: Re: [RFC 1/2] softirq: Defer net rx/tx processing to ksoftirqd
- context
-In-Reply-To: <20180206165649.cze4iy4k36rcigbe@breakpoint.cc>
-Message-ID: <alpine.DEB.2.21.1802131735460.1130@nanos.tec.linutronix.de>
-References: <CA+55aFzk0Lh1kQRRvOQKrjMfkcuQem0aV5D9cCUmmtfw7ZamkQ@mail.gmail.com> <alpine.DEB.2.20.1801172258540.2326@nanos> <CANn89iJmA-21uL+pPBiV6zsrR7nY6RJ6bamDCgPctMoNWpa4Hw@mail.gmail.com> <20180117.172447.1568697383040902713.davem@davemloft.net>
- <20180206165649.cze4iy4k36rcigbe@breakpoint.cc>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 13 Feb 2018 11:37:01 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        kvm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] vfio: platform: Fix reset module leak in error path
+Date: Tue, 13 Feb 2018 17:36:54 +0100
+Message-Id: <1518539815-13774-2-git-send-email-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518539815-13774-1-git-send-email-geert+renesas@glider.be>
+References: <1518539815-13774-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 6 Feb 2018, Sebastian Andrzej Siewior wrote:
+If the IOMMU group setup fails, the reset module is not released.
 
-> On 2018-01-17 17:24:47 [-0500], David Miller wrote:
-> > From: Eric Dumazet <edumazet@google.com>
-> > Date: Wed, 17 Jan 2018 14:02:43 -0800
-> > > There is also the netif_rx_ni() stuff.
-> > > 
-> > > Can't remember right now why it is not using
-> > > local_bh_{diable,enable}() pair instead
-> > > of preempt_disable() ... if (local_softirq_pending()) do_softirq();
-> > 
-> > Hmmm, that code predates the initial GIT repository build.
-> > 
-> > I do remember we had some back and forth with that stuff.
-> 
-> So I did a little research and tried to replace preempt_disable() with
-> local_bh_disable() [0] a while ago.
-> 
-> [0] https://lkml.kernel.org/r/20170616172400.10809-1-bigeasy@linutronix.de
+Fixes: b5add544d677d363 ("vfio, platform: make reset driver a requirement by default")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/vfio/platform/vfio_platform_common.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-Maybe you should just try again with a slightly better changelog :)
+diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
+index 35469af87f88678e..b60bb5326668498c 100644
+--- a/drivers/vfio/platform/vfio_platform_common.c
++++ b/drivers/vfio/platform/vfio_platform_common.c
+@@ -680,18 +680,23 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
+ 	group = vfio_iommu_group_get(dev);
+ 	if (!group) {
+ 		pr_err("VFIO: No IOMMU group for device %s\n", vdev->name);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto put_reset;
+ 	}
+ 
+ 	ret = vfio_add_group_dev(dev, &vfio_platform_ops, vdev);
+-	if (ret) {
+-		vfio_iommu_group_put(group, dev);
+-		return ret;
+-	}
++	if (ret)
++		goto put_iommu;
+ 
+ 	mutex_init(&vdev->igate);
+ 
+ 	return 0;
++
++put_iommu:
++	vfio_iommu_group_put(group, dev);
++put_reset:
++	vfio_platform_put_reset(vdev);
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(vfio_platform_probe_common);
+ 
+-- 
+2.7.4
