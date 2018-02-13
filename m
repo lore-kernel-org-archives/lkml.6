@@ -1,71 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934743AbeBMJot (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 04:44:49 -0500
-Received: from mail.microcatalog.org.uk ([217.6.246.34]:44455 "EHLO
-        root.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933805AbeBMJog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:44:36 -0500
-From: Daniel Schultz <d.schultz@phytec.de>
-To: heiko@sntech.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] ARM: dts: rockchip: phycore: Remove 1.8 GHz operation point
-Date: Tue, 13 Feb 2018 10:44:32 +0100
-Message-Id: <1518515074-22526-1-git-send-email-d.schultz@phytec.de>
-X-Mailer: git-send-email 2.7.4
-X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 13.02.2018 10:44:34,
-        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 13.02.2018 10:44:34,
-        Serialize complete at 13.02.2018 10:44:34
-X-TNEFEvaluated: 1
+        id S934862AbeBMJ6K (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 04:58:10 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49826 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934683AbeBMJ6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 04:58:06 -0500
+Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
+ CPUs
+To: David Woodhouse <dwmw2@infradead.org>, tglx@linutronix.de,
+        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, arjan.van.de.ven@intel.com,
+        dave.hansen@intel.com
+References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
+ <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
+ <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
+ <1518509708.12890.33.camel@infradead.org>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com>
+Date: Tue, 13 Feb 2018 10:58:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <1518509708.12890.33.camel@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rockchip recommends to run the CPU cores only with operations points of
-1.6 GHz or lower.
+On 13/02/2018 09:15, David Woodhouse wrote:
+>>>  
+>>> -		if (!data)
+>>> +		if (!data && !spectre_v2_ibrs_all())
+>>>  			break;
+>> This should check the value of IBRS_ALL in the VM, not in the host.
+> No, it's host we want. If IBRS_ALL is set in the host, we set the
+> actual hardware MSR once at boot time and never touch it again. The
+> SPEC_CTRL MSR we expose to guests is purely a no-op fiction.
+> 
+> If spectre_v2_ibrs_all() is true then KVM should *never* actually pass
+> through or touch the real MSR.
 
-Removed the cpu0 node with too high operation points and use the default
-values instead.
+That would be nice but unfortunately it's not possible. :(
 
-Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
----
- arch/arm/boot/dts/rk3288-phycore-som.dtsi | 20 --------------------
- 1 file changed, 20 deletions(-)
+The VM might actually not have IBRS_ALL, as usual the reason is
+migration compatibility.  In that case, that no-op fiction would be very
+slow because the VM will actually do a lot of SPEC_CTRL writes.
 
-diff --git a/arch/arm/boot/dts/rk3288-phycore-som.dtsi b/arch/arm/boot/dts/rk3288-phycore-som.dtsi
-index 99cfae8..5eae477 100644
---- a/arch/arm/boot/dts/rk3288-phycore-som.dtsi
-+++ b/arch/arm/boot/dts/rk3288-phycore-som.dtsi
-@@ -110,26 +110,6 @@
- 	};
- };
- 
--&cpu0 {
--	cpu0-supply = <&vdd_cpu>;
--	operating-points = <
--		/* KHz    uV */
--		1800000	1400000
--		1608000	1350000
--		1512000 1300000
--		1416000 1200000
--		1200000 1100000
--		1008000 1050000
--		 816000 1000000
--		 696000  950000
--		 600000  900000
--		 408000  900000
--		 312000  900000
--		 216000  900000
--		 126000  900000
--	>;
--};
--
- &emmc {
- 	status = "okay";
- 	bus-width = <8>;
--- 
-2.7.4
+So the right logic is:
+
+- if the VM has IBRS_ALL, pass through the MSR when it is zero and
+intercept writes when it is one (no writes should happen)
+
+- if the VM doesn't have IBRS_ALL, do as we are doing now, independent
+of what the host spectre_v2_ibrs_all() setting is.
+
+Paolo
