@@ -1,843 +1,679 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965600AbeBMSsC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 13:48:02 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:49637 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965421AbeBMSr7 (ORCPT
+        id S965618AbeBMSsM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 13:48:12 -0500
+Received: from complete.lackof.org ([198.49.126.79]:38086 "EHLO
+        complete.lackof.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965421AbeBMSsD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 13:47:59 -0500
-Date: Tue, 13 Feb 2018 10:47:30 -0800
-From: tip-bot for Jia Zhang <tipbot@zytor.com>
-Message-ID: <tip-93cce6eeafb7c90b9175ffe01913cffff4930fc4@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org,
-        qianyue.zj@alibaba-inc.com, hpa@zytor.com, tglx@linutronix.de,
-        torvalds@linux-foundation.org, peterz@infradead.org
-Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
-        qianyue.zj@alibaba-inc.com, hpa@zytor.com, tglx@linutronix.de,
-        torvalds@linux-foundation.org, peterz@infradead.org
-In-Reply-To: <1514771530-70829-1-git-send-email-qianyue.zj@alibaba-inc.com>
-References: <1514771530-70829-1-git-send-email-qianyue.zj@alibaba-inc.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/cpu: Rename cpu_data.x86_mask to
- cpu_data.x86_stepping
-Git-Commit-ID: 93cce6eeafb7c90b9175ffe01913cffff4930fc4
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 13 Feb 2018 13:48:03 -0500
+Date: Tue, 13 Feb 2018 11:41:23 -0700
+From: dann frazier <dann.frazier@canonical.com>
+To: John Garry <john.garry@huawei.com>
+Cc: mika.westerberg@linux.intel.com, rafael@kernel.org,
+        lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, robh+dt@kernel.org,
+        bhelgaas@google.com, arnd@arndb.de, mark.rutland@arm.com,
+        olof@lixom.net, hanjun.guo@linaro.org, benh@kernel.crashing.org,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linuxarm@huawei.com, linux-pci@vger.kernel.org, minyard@acm.org,
+        devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+        rdunlap@infradead.org, Zhichang Yuan <yuanzhichang@hisilicon.com>,
+        Zou Rongrong <zourongrong@huawei.com>,
+        Gabriele Paoloni <gabriele.paoloni@huawei.com>
+Subject: Re: [PATCH v12 6/9] LPC: Support the LPC host on Hip06/Hip07 with DT
+ bindings
+Message-ID: <20180213184123.GA11446@xps13.dannf>
+References: <1516725385-24535-1-git-send-email-john.garry@huawei.com>
+ <1516725385-24535-7-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <1516725385-24535-7-git-send-email-john.garry@huawei.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  93cce6eeafb7c90b9175ffe01913cffff4930fc4
-Gitweb:     https://git.kernel.org/tip/93cce6eeafb7c90b9175ffe01913cffff4930fc4
-Author:     Jia Zhang <qianyue.zj@alibaba-inc.com>
-AuthorDate: Mon, 1 Jan 2018 09:52:10 +0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 19:23:43 +0100
+On Wed, Jan 24, 2018 at 12:36:22AM +0800, John Garry wrote:
+> From: Zhichang Yuan <yuanzhichang@hisilicon.com>
+> 
+> The low-pin-count(LPC) interface of Hip06/Hip07 accesses the peripherals in
+> I/O port addresses. This patch implements the LPC host controller driver
+> which perform the I/O operations on the underlying hardware.
+> We don't want to touch those existing peripherals' driver, such as ipmi-bt.
+> So this driver applies the indirect-IO introduced in the previous patch
+> after registering an indirect-IO node to the indirect-IO devices list which
+> will be searched in the I/O accessors to retrieve the host-local I/O port.
+> 
+> The driver config is set as a bool instead of a trisate. The reason
+> here is that, by the very nature of the driver providing a logical
+> PIO range, it does not make sense to have this driver as a loadable
+> module. Another more specific reason is that the Huawei D03 board
+> which includes hip06 SoC requires the LPC bus for UART console, so
+> should be built in.
+> 
+> Signed-off-by: Zou Rongrong <zourongrong@huawei.com>
+> Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
+> Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
+> Acked-by: Rob Herring <robh@kernel.org> #dts part
+> ---
+>  .../arm/hisilicon/hisilicon-low-pin-count.txt      |  33 ++
+>  drivers/bus/Kconfig                                |   8 +
+>  drivers/bus/Makefile                               |   1 +
+>  drivers/bus/hisi_lpc.c                             | 526 +++++++++++++++++++++
+>  4 files changed, 568 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hisilicon-low-pin-count.txt
+>  create mode 100644 drivers/bus/hisi_lpc.c
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/hisilicon/hisilicon-low-pin-count.txt b/Documentation/devicetree/bindings/arm/hisilicon/hisilicon-low-pin-count.txt
+> new file mode 100644
+> index 0000000..213181f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/hisilicon/hisilicon-low-pin-count.txt
+> @@ -0,0 +1,33 @@
+> +Hisilicon Hip06 low-pin-count device
+> +  Hisilicon Hip06 SoCs implement a Low Pin Count (LPC) controller, which
+> +  provides I/O access to some legacy ISA devices.
+> +  Hip06 is based on arm64 architecture where there is no I/O space. So, the
+> +  I/O ports here are not cpu addresses, and there is no 'ranges' property in
+> +  LPC device node.
+> +
+> +Required properties:
+> +- compatible:  value should be as follows:
+> +	(a) "hisilicon,hip06-lpc"
+> +	(b) "hisilicon,hip07-lpc"
+> +- #address-cells: must be 2 which stick to the ISA/EISA binding doc.
+> +- #size-cells: must be 1 which stick to the ISA/EISA binding doc.
+> +- reg: base memory range where the LPC register set is mapped.
+> +
+> +Note:
+> +  The node name before '@' must be "isa" to represent the binding stick to the
+> +  ISA/EISA binding specification.
+> +
+> +Example:
+> +
+> +isa@a01b0000 {
+> +	compatible = "hisilicon,hip06-lpc";
+> +	#address-cells = <2>;
+> +	#size-cells = <1>;
+> +	reg = <0x0 0xa01b0000 0x0 0x1000>;
+> +
+> +	ipmi0: bt@e4 {
+> +		compatible = "ipmi-bt";
+> +		device_type = "ipmi";
+> +		reg = <0x01 0xe4 0x04>;
+> +	};
+> +};
+> diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
+> index 57e011d..91debe4 100644
+> --- a/drivers/bus/Kconfig
+> +++ b/drivers/bus/Kconfig
+> @@ -65,6 +65,14 @@ config BRCMSTB_GISB_ARB
+>  	  arbiter. This driver provides timeout and target abort error handling
+>  	  and internal bus master decoding.
+>  
+> +config HISILICON_LPC
+> +	bool "Support for ISA I/O space on Hisilicon hip06/7"
+> +	depends on (ARM64 && (ARCH_HISI || COMPILE_TEST))
+> +	select INDIRECT_PIO
+> +	help
+> +	  Driver needed for some legacy ISA devices attached to Low-Pin-Count
+> +	  on Hisilicon hip06/7 SoC.
+> +
+>  config IMX_WEIM
+>  	bool "Freescale EIM DRIVER"
+>  	depends on ARCH_MXC
+> diff --git a/drivers/bus/Makefile b/drivers/bus/Makefile
+> index 9bcd0bf..abc7a42 100644
+> --- a/drivers/bus/Makefile
+> +++ b/drivers/bus/Makefile
+> @@ -8,6 +8,7 @@ obj-$(CONFIG_ARM_CCI)		+= arm-cci.o
+>  obj-$(CONFIG_ARM_CCN)		+= arm-ccn.o
+>  
+>  obj-$(CONFIG_BRCMSTB_GISB_ARB)	+= brcmstb_gisb.o
+> +obj-$(CONFIG_HISILICON_LPC)	+= hisi_lpc.o
+>  obj-$(CONFIG_IMX_WEIM)		+= imx-weim.o
+>  obj-$(CONFIG_MIPS_CDMM)		+= mips_cdmm.o
+>  obj-$(CONFIG_MVEBU_MBUS) 	+= mvebu-mbus.o
+> diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
+> new file mode 100644
+> index 0000000..4ce089a
+> --- /dev/null
+> +++ b/drivers/bus/hisi_lpc.c
+> @@ -0,0 +1,526 @@
+> +/*
+> + * Copyright (C) 2017 Hisilicon Limited, All Rights Reserved.
+> + * Author: Zhichang Yuan <yuanzhichang@hisilicon.com>
+> + * Author: Zou Rongrong <zourongrong@huawei.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/console.h>
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/logic_pio.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/pci.h>
+> +#include <linux/slab.h>
+> +
+> +#define LPC_MIN_BUS_RANGE	0x0
+> +
+> +/*
+> + * The default maximal IO size for Hip06/Hip07 LPC bus.
+> + * Defining the I/O range size as 0x4000 here should be sufficient for
+> + * all peripherals under the bus.
+> + */
+> +#define LPC_BUS_IO_SIZE		0x4000
+> +
+> +/*
+> + * Setting this bit means each IO operation will target to a
+> + * different port address:
+> + * 0 means repeatedly IO operations will stick on the same port,
+> + * such as BT;
+> + */
+> +#define FG_INCRADDR_LPC		0x02
+> +
+> +struct lpc_cycle_para {
+> +	unsigned int opflags;
+> +	unsigned int csize; /* the data length of each operation */
+> +};
+> +
+> +struct hisilpc_dev {
+> +	spinlock_t cycle_lock;
+> +	void __iomem  *membase;
+> +	struct logic_pio_hwaddr *io_host;
+> +};
+> +
+> +/* The maximum continuous cycles per burst */
+> +#define LPC_MAX_BURST	16
+> +/* The IO cycle counts supported is four per operation at maximum */
+> +#define LPC_MAX_DULEN	4
+> +#if LPC_MAX_DULEN > LPC_MAX_BURST
+> +#error "LPC.. MAX_DULEN must be not bigger than MAX_OPCNT!"
+> +#endif
+> +
+> +#if LPC_MAX_BURST % LPC_MAX_DULEN
+> +#error "LPC.. LPC_MAX_BURST must be multiple of LPC_MAX_DULEN!"
+> +#endif
+> +
+> +#define LPC_REG_START		0x00 /* start a new LPC cycle */
+> +#define LPC_REG_OP_STATUS	0x04 /* the current LPC status */
+> +#define LPC_REG_IRQ_ST		0x08 /* interrupt enable&status */
+> +#define LPC_REG_OP_LEN		0x10 /* how many LPC cycles each start */
+> +#define LPC_REG_CMD		0x14 /* command for the required LPC cycle */
+> +#define LPC_REG_ADDR		0x20 /* LPC target address */
+> +#define LPC_REG_WDATA		0x24 /* data to be written */
+> +#define LPC_REG_RDATA		0x28 /* data coming from peer */
+> +
+> +
+> +/* The command register fields */
+> +#define LPC_CMD_SAMEADDR	0x08
+> +#define LPC_CMD_TYPE_IO		0x00
+> +#define LPC_CMD_WRITE		0x01
+> +#define LPC_CMD_READ		0x00
+> +/* the bit attribute is W1C. 1 represents OK. */
+> +#define LPC_STAT_BYIRQ		0x02
+> +
+> +#define LPC_STATUS_IDLE		0x01
+> +#define LPC_OP_FINISHED		0x02
+> +
+> +#define LPC_START_WORK		0x01
+> +
+> +/* The minimal nanosecond interval for each query on LPC cycle status. */
+> +#define LPC_NSEC_PERWAIT	100
+> +/*
+> + * The maximum waiting time is about 128us.
+> + * It is specific for stream I/O, such as ins.
+> + * The fastest IO cycle time is about 390ns, but the worst case will wait
+> + * for extra 256 lpc clocks, so (256 + 13) * 30ns = 8 us. The maximum
+> + * burst cycles is 16. So, the maximum waiting time is about 128us under
+> + * worst case.
+> + * choose 1300 as the maximum.
+> + */
+> +#define LPC_MAX_WAITCNT		1300
+> +/* About 10us. This is specific for single IO operation, such as inb. */
+> +#define LPC_PEROP_WAITCNT	100
+> +
+> +static inline int wait_lpc_idle(unsigned char *mbase,
+> +				unsigned int waitcnt) {
+> +	u32 opstatus;
+> +
+> +	while (waitcnt--) {
+> +		ndelay(LPC_NSEC_PERWAIT);
+> +		opstatus = readl(mbase + LPC_REG_OP_STATUS);
+> +		if (opstatus & LPC_STATUS_IDLE)
+> +			return (opstatus & LPC_OP_FINISHED) ? 0 : (-EIO);
+> +	}
+> +	return -ETIME;
+> +}
+> +
+> +/*
+> + * hisilpc_target_in - trigger a series of lpc cycles to read required data
+> + *		       from target peripheral.
+> + * @lpcdev: pointer to hisi lpc device
+> + * @para: some parameters used to control the lpc I/O operations
+> + * @ptaddr: the lpc I/O target port address
+> + * @buf: where the read back data is stored
+> + * @opcnt: how many I/O operations required in this calling
+> + *
+> + * Only one byte data is read each I/O operation.
+> + *
+> + * Returns 0 on success, non-zero on fail.
+> + */
+> +static int
+> +hisilpc_target_in(struct hisilpc_dev *lpcdev, struct lpc_cycle_para *para,
+> +		  unsigned long ptaddr, unsigned char *buf,
+> +		  unsigned long opcnt)
+> +{
+> +	unsigned long cnt_per_trans;
+> +	unsigned int cmd_word;
+> +	unsigned int waitcnt;
+> +	int ret;
+> +
+> +	if (!buf || !opcnt || !para || !para->csize || !lpcdev)
+> +		return -EINVAL;
+> +
+> +	cmd_word = LPC_CMD_TYPE_IO | LPC_CMD_READ;
+> +	waitcnt = LPC_PEROP_WAITCNT;
+> +	if (!(para->opflags & FG_INCRADDR_LPC)) {
+> +		cmd_word |= LPC_CMD_SAMEADDR;
+> +		waitcnt = LPC_MAX_WAITCNT;
+> +	}
+> +
+> +	ret = 0;
+> +	cnt_per_trans = (para->csize == 1) ? opcnt : para->csize;
+> +	for (; opcnt && !ret; cnt_per_trans = para->csize) {
+> +		unsigned long flags;
+> +
+> +		/* whole operation must be atomic */
+> +		spin_lock_irqsave(&lpcdev->cycle_lock, flags);
+> +
+> +		writel_relaxed(cnt_per_trans, lpcdev->membase + LPC_REG_OP_LEN);
+> +
+> +		writel_relaxed(cmd_word, lpcdev->membase + LPC_REG_CMD);
+> +
+> +		writel_relaxed(ptaddr, lpcdev->membase + LPC_REG_ADDR);
+> +
+> +		writel(LPC_START_WORK, lpcdev->membase + LPC_REG_START);
+> +
+> +		/* whether the operation is finished */
+> +		ret = wait_lpc_idle(lpcdev->membase, waitcnt);
+> +		if (!ret) {
+> +			opcnt -= cnt_per_trans;
 
-x86/cpu: Rename cpu_data.x86_mask to cpu_data.x86_stepping
+Do we need to check for an underflow here?
 
-x86_mask is a confusing name which is hard to associate with the
-processor's stepping.
+> +			for (cnt_per_trans--; cnt_per_trans--; buf++)
+> +				*buf = readb_relaxed(lpcdev->membase +
+> +					LPC_REG_RDATA);
+> +			*buf = readb(lpcdev->membase + LPC_REG_RDATA);
+> +		}
+> +
+> +		spin_unlock_irqrestore(&lpcdev->cycle_lock, flags);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +/*
+> + * hisilpc_target_out - trigger a series of lpc cycles to write required
+> + *			data to target peripheral.
+> + * @lpcdev: pointer to hisi lpc device
+> + * @para: some parameters used to control the lpc I/O operations
+> + * @ptaddr: the lpc I/O target port address
+> + * @buf: where the data to be written is stored
+> + * @opcnt: how many I/O operations required
+> + *
+> + * Only one byte data is read each I/O operation.
 
-Additionally, correct an indent issue in lib/cpu.c.
+s/read/written/ ?
 
-Signed-off-by: Jia Zhang <qianyue.zj@alibaba-inc.com>
-[ Updated it to more recent kernels. ]
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: tony.luck@intel.com
-Link: http://lkml.kernel.org/r/1514771530-70829-1-git-send-email-qianyue.zj@alibaba-inc.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/events/intel/core.c          |  2 +-
- arch/x86/events/intel/lbr.c           |  2 +-
- arch/x86/events/intel/p6.c            |  2 +-
- arch/x86/include/asm/acpi.h           |  2 +-
- arch/x86/include/asm/processor.h      |  2 +-
- arch/x86/kernel/amd_nb.c              |  2 +-
- arch/x86/kernel/apic/apic.c           |  6 +++---
- arch/x86/kernel/asm-offsets_32.c      |  2 +-
- arch/x86/kernel/cpu/amd.c             | 28 ++++++++++++++--------------
- arch/x86/kernel/cpu/centaur.c         |  4 ++--
- arch/x86/kernel/cpu/common.c          |  8 ++++----
- arch/x86/kernel/cpu/cyrix.c           |  2 +-
- arch/x86/kernel/cpu/intel.c           | 18 +++++++++---------
- arch/x86/kernel/cpu/intel_rdt.c       |  2 +-
- arch/x86/kernel/cpu/microcode/intel.c |  4 ++--
- arch/x86/kernel/cpu/mtrr/generic.c    |  2 +-
- arch/x86/kernel/cpu/mtrr/main.c       |  4 ++--
- arch/x86/kernel/cpu/proc.c            |  4 ++--
- arch/x86/kernel/head_32.S             |  4 ++--
- arch/x86/kernel/mpparse.c             |  2 +-
- arch/x86/lib/cpu.c                    |  2 +-
- drivers/char/hw_random/via-rng.c      |  2 +-
- drivers/cpufreq/acpi-cpufreq.c        |  2 +-
- drivers/cpufreq/longhaul.c            |  6 +++---
- drivers/cpufreq/p4-clockmod.c         |  2 +-
- drivers/cpufreq/powernow-k7.c         |  2 +-
- drivers/cpufreq/speedstep-centrino.c  |  4 ++--
- drivers/cpufreq/speedstep-lib.c       |  6 +++---
- drivers/crypto/padlock-aes.c          |  2 +-
- drivers/edac/amd64_edac.c             |  2 +-
- drivers/hwmon/coretemp.c              |  6 +++---
- drivers/hwmon/hwmon-vid.c             |  2 +-
- drivers/hwmon/k10temp.c               |  2 +-
- drivers/hwmon/k8temp.c                |  2 +-
- drivers/video/fbdev/geode/video_gx.c  |  2 +-
- 35 files changed, 73 insertions(+), 73 deletions(-)
+> + * Returns 0 on success, non-zero on fail.
+> + *
+> + */
+> +static int
+> +hisilpc_target_out(struct hisilpc_dev *lpcdev, struct lpc_cycle_para *para,
+> +		   unsigned long ptaddr, const unsigned char *buf,
+> +		   unsigned long opcnt)
+> +{
+> +	unsigned long cnt_per_trans;
+> +	unsigned int cmd_word;
+> +	unsigned int waitcnt;
+> +	int ret;
+> +
+> +	if (!buf || !opcnt || !para || !lpcdev)
+> +		return -EINVAL;
+> +
+> +	/* default is increasing address */
+> +	cmd_word = LPC_CMD_TYPE_IO | LPC_CMD_WRITE;
+> +	waitcnt = LPC_PEROP_WAITCNT;
+> +	if (!(para->opflags & FG_INCRADDR_LPC)) {
+> +		cmd_word |= LPC_CMD_SAMEADDR;
+> +		waitcnt = LPC_MAX_WAITCNT;
+> +	}
+> +
+> +	ret = 0;
+> +	cnt_per_trans = (para->csize == 1) ? opcnt : para->csize;
+> +	for (; opcnt && !ret; cnt_per_trans = para->csize) {
+> +		unsigned long flags;
+> +
+> +		spin_lock_irqsave(&lpcdev->cycle_lock, flags);
+> +
+> +		writel_relaxed(cnt_per_trans, lpcdev->membase + LPC_REG_OP_LEN);
+> +		writel_relaxed(cmd_word, lpcdev->membase + LPC_REG_CMD);
+> +		writel_relaxed(ptaddr, lpcdev->membase + LPC_REG_ADDR);
+> +
+> +		opcnt -= cnt_per_trans;
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 731153a..56457cb 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3559,7 +3559,7 @@ static int intel_snb_pebs_broken(int cpu)
- 		break;
- 
- 	case INTEL_FAM6_SANDYBRIDGE_X:
--		switch (cpu_data(cpu).x86_mask) {
-+		switch (cpu_data(cpu).x86_stepping) {
- 		case 6: rev = 0x618; break;
- 		case 7: rev = 0x70c; break;
- 		}
-diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
-index ae64d0b..cf372b9 100644
---- a/arch/x86/events/intel/lbr.c
-+++ b/arch/x86/events/intel/lbr.c
-@@ -1186,7 +1186,7 @@ void __init intel_pmu_lbr_init_atom(void)
- 	 * on PMU interrupt
- 	 */
- 	if (boot_cpu_data.x86_model == 28
--	    && boot_cpu_data.x86_mask < 10) {
-+	    && boot_cpu_data.x86_stepping < 10) {
- 		pr_cont("LBR disabled due to erratum");
- 		return;
- 	}
-diff --git a/arch/x86/events/intel/p6.c b/arch/x86/events/intel/p6.c
-index a5604c3..408879b 100644
---- a/arch/x86/events/intel/p6.c
-+++ b/arch/x86/events/intel/p6.c
-@@ -234,7 +234,7 @@ static __initconst const struct x86_pmu p6_pmu = {
- 
- static __init void p6_pmu_rdpmc_quirk(void)
- {
--	if (boot_cpu_data.x86_mask < 9) {
-+	if (boot_cpu_data.x86_stepping < 9) {
- 		/*
- 		 * PPro erratum 26; fixed in stepping 9 and above.
- 		 */
-diff --git a/arch/x86/include/asm/acpi.h b/arch/x86/include/asm/acpi.h
-index 8d0ec9d..f077401 100644
---- a/arch/x86/include/asm/acpi.h
-+++ b/arch/x86/include/asm/acpi.h
-@@ -94,7 +94,7 @@ static inline unsigned int acpi_processor_cstate_check(unsigned int max_cstate)
- 	if (boot_cpu_data.x86 == 0x0F &&
- 	    boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
- 	    boot_cpu_data.x86_model <= 0x05 &&
--	    boot_cpu_data.x86_mask < 0x0A)
-+	    boot_cpu_data.x86_stepping < 0x0A)
- 		return 1;
- 	else if (boot_cpu_has(X86_BUG_AMD_APIC_C1E))
- 		return 1;
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 99799fb..b7c8583 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -91,7 +91,7 @@ struct cpuinfo_x86 {
- 	__u8			x86;		/* CPU family */
- 	__u8			x86_vendor;	/* CPU vendor */
- 	__u8			x86_model;
--	__u8			x86_mask;
-+	__u8			x86_stepping;
- #ifdef CONFIG_X86_64
- 	/* Number of 4K pages in DTLB/ITLB combined(in pages): */
- 	int			x86_tlbsize;
-diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
-index 6db28f1..c88e0b1 100644
---- a/arch/x86/kernel/amd_nb.c
-+++ b/arch/x86/kernel/amd_nb.c
-@@ -235,7 +235,7 @@ int amd_cache_northbridges(void)
- 	if (boot_cpu_data.x86 == 0x10 &&
- 	    boot_cpu_data.x86_model >= 0x8 &&
- 	    (boot_cpu_data.x86_model > 0x9 ||
--	     boot_cpu_data.x86_mask >= 0x1))
-+	     boot_cpu_data.x86_stepping >= 0x1))
- 		amd_northbridges.flags |= AMD_NB_L3_INDEX_DISABLE;
- 
- 	if (boot_cpu_data.x86 == 0x15)
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 25ddf02..b203af0 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -546,7 +546,7 @@ static DEFINE_PER_CPU(struct clock_event_device, lapic_events);
- 
- static u32 hsx_deadline_rev(void)
- {
--	switch (boot_cpu_data.x86_mask) {
-+	switch (boot_cpu_data.x86_stepping) {
- 	case 0x02: return 0x3a; /* EP */
- 	case 0x04: return 0x0f; /* EX */
- 	}
-@@ -556,7 +556,7 @@ static u32 hsx_deadline_rev(void)
- 
- static u32 bdx_deadline_rev(void)
- {
--	switch (boot_cpu_data.x86_mask) {
-+	switch (boot_cpu_data.x86_stepping) {
- 	case 0x02: return 0x00000011;
- 	case 0x03: return 0x0700000e;
- 	case 0x04: return 0x0f00000c;
-@@ -568,7 +568,7 @@ static u32 bdx_deadline_rev(void)
- 
- static u32 skx_deadline_rev(void)
- {
--	switch (boot_cpu_data.x86_mask) {
-+	switch (boot_cpu_data.x86_stepping) {
- 	case 0x03: return 0x01000136;
- 	case 0x04: return 0x02000014;
- 	}
-diff --git a/arch/x86/kernel/asm-offsets_32.c b/arch/x86/kernel/asm-offsets_32.c
-index fa1261e..f91ba53 100644
---- a/arch/x86/kernel/asm-offsets_32.c
-+++ b/arch/x86/kernel/asm-offsets_32.c
-@@ -18,7 +18,7 @@ void foo(void)
- 	OFFSET(CPUINFO_x86, cpuinfo_x86, x86);
- 	OFFSET(CPUINFO_x86_vendor, cpuinfo_x86, x86_vendor);
- 	OFFSET(CPUINFO_x86_model, cpuinfo_x86, x86_model);
--	OFFSET(CPUINFO_x86_mask, cpuinfo_x86, x86_mask);
-+	OFFSET(CPUINFO_x86_stepping, cpuinfo_x86, x86_stepping);
- 	OFFSET(CPUINFO_cpuid_level, cpuinfo_x86, cpuid_level);
- 	OFFSET(CPUINFO_x86_capability, cpuinfo_x86, x86_capability);
- 	OFFSET(CPUINFO_x86_vendor_id, cpuinfo_x86, x86_vendor_id);
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index ea831c8..e7d5a78 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -119,7 +119,7 @@ static void init_amd_k6(struct cpuinfo_x86 *c)
- 		return;
- 	}
- 
--	if (c->x86_model == 6 && c->x86_mask == 1) {
-+	if (c->x86_model == 6 && c->x86_stepping == 1) {
- 		const int K6_BUG_LOOP = 1000000;
- 		int n;
- 		void (*f_vide)(void);
-@@ -149,7 +149,7 @@ static void init_amd_k6(struct cpuinfo_x86 *c)
- 
- 	/* K6 with old style WHCR */
- 	if (c->x86_model < 8 ||
--	   (c->x86_model == 8 && c->x86_mask < 8)) {
-+	   (c->x86_model == 8 && c->x86_stepping < 8)) {
- 		/* We can only write allocate on the low 508Mb */
- 		if (mbytes > 508)
- 			mbytes = 508;
-@@ -168,7 +168,7 @@ static void init_amd_k6(struct cpuinfo_x86 *c)
- 		return;
- 	}
- 
--	if ((c->x86_model == 8 && c->x86_mask > 7) ||
-+	if ((c->x86_model == 8 && c->x86_stepping > 7) ||
- 	     c->x86_model == 9 || c->x86_model == 13) {
- 		/* The more serious chips .. */
- 
-@@ -221,7 +221,7 @@ static void init_amd_k7(struct cpuinfo_x86 *c)
- 	 * are more robust with CLK_CTL set to 200xxxxx instead of 600xxxxx
- 	 * As per AMD technical note 27212 0.2
- 	 */
--	if ((c->x86_model == 8 && c->x86_mask >= 1) || (c->x86_model > 8)) {
-+	if ((c->x86_model == 8 && c->x86_stepping >= 1) || (c->x86_model > 8)) {
- 		rdmsr(MSR_K7_CLK_CTL, l, h);
- 		if ((l & 0xfff00000) != 0x20000000) {
- 			pr_info("CPU: CLK_CTL MSR was %x. Reprogramming to %x\n",
-@@ -241,12 +241,12 @@ static void init_amd_k7(struct cpuinfo_x86 *c)
- 	 * but they are not certified as MP capable.
- 	 */
- 	/* Athlon 660/661 is valid. */
--	if ((c->x86_model == 6) && ((c->x86_mask == 0) ||
--	    (c->x86_mask == 1)))
-+	if ((c->x86_model == 6) && ((c->x86_stepping == 0) ||
-+	    (c->x86_stepping == 1)))
- 		return;
- 
- 	/* Duron 670 is valid */
--	if ((c->x86_model == 7) && (c->x86_mask == 0))
-+	if ((c->x86_model == 7) && (c->x86_stepping == 0))
- 		return;
- 
- 	/*
-@@ -256,8 +256,8 @@ static void init_amd_k7(struct cpuinfo_x86 *c)
- 	 * See http://www.heise.de/newsticker/data/jow-18.10.01-000 for
- 	 * more.
- 	 */
--	if (((c->x86_model == 6) && (c->x86_mask >= 2)) ||
--	    ((c->x86_model == 7) && (c->x86_mask >= 1)) ||
-+	if (((c->x86_model == 6) && (c->x86_stepping >= 2)) ||
-+	    ((c->x86_model == 7) && (c->x86_stepping >= 1)) ||
- 	     (c->x86_model > 7))
- 		if (cpu_has(c, X86_FEATURE_MP))
- 			return;
-@@ -583,7 +583,7 @@ static void early_init_amd(struct cpuinfo_x86 *c)
- 	/*  Set MTRR capability flag if appropriate */
- 	if (c->x86 == 5)
- 		if (c->x86_model == 13 || c->x86_model == 9 ||
--		    (c->x86_model == 8 && c->x86_mask >= 8))
-+		    (c->x86_model == 8 && c->x86_stepping >= 8))
- 			set_cpu_cap(c, X86_FEATURE_K6_MTRR);
- #endif
- #if defined(CONFIG_X86_LOCAL_APIC) && defined(CONFIG_PCI)
-@@ -769,7 +769,7 @@ static void init_amd_zn(struct cpuinfo_x86 *c)
- 	 * Fix erratum 1076: CPB feature bit not being set in CPUID. It affects
- 	 * all up to and including B1.
- 	 */
--	if (c->x86_model <= 1 && c->x86_mask <= 1)
-+	if (c->x86_model <= 1 && c->x86_stepping <= 1)
- 		set_cpu_cap(c, X86_FEATURE_CPB);
- }
- 
-@@ -880,11 +880,11 @@ static unsigned int amd_size_cache(struct cpuinfo_x86 *c, unsigned int size)
- 	/* AMD errata T13 (order #21922) */
- 	if ((c->x86 == 6)) {
- 		/* Duron Rev A0 */
--		if (c->x86_model == 3 && c->x86_mask == 0)
-+		if (c->x86_model == 3 && c->x86_stepping == 0)
- 			size = 64;
- 		/* Tbird rev A1/A2 */
- 		if (c->x86_model == 4 &&
--			(c->x86_mask == 0 || c->x86_mask == 1))
-+			(c->x86_stepping == 0 || c->x86_stepping == 1))
- 			size = 256;
- 	}
- 	return size;
-@@ -1021,7 +1021,7 @@ static bool cpu_has_amd_erratum(struct cpuinfo_x86 *cpu, const int *erratum)
- 	}
- 
- 	/* OSVW unavailable or ID unknown, match family-model-stepping range */
--	ms = (cpu->x86_model << 4) | cpu->x86_mask;
-+	ms = (cpu->x86_model << 4) | cpu->x86_stepping;
- 	while ((range = *erratum++))
- 		if ((cpu->x86 == AMD_MODEL_RANGE_FAMILY(range)) &&
- 		    (ms >= AMD_MODEL_RANGE_START(range)) &&
-diff --git a/arch/x86/kernel/cpu/centaur.c b/arch/x86/kernel/cpu/centaur.c
-index 68bc6d9..595be77 100644
---- a/arch/x86/kernel/cpu/centaur.c
-+++ b/arch/x86/kernel/cpu/centaur.c
-@@ -136,7 +136,7 @@ static void init_centaur(struct cpuinfo_x86 *c)
- 			clear_cpu_cap(c, X86_FEATURE_TSC);
- 			break;
- 		case 8:
--			switch (c->x86_mask) {
-+			switch (c->x86_stepping) {
- 			default:
- 			name = "2";
- 				break;
-@@ -211,7 +211,7 @@ centaur_size_cache(struct cpuinfo_x86 *c, unsigned int size)
- 	 *  - Note, it seems this may only be in engineering samples.
- 	 */
- 	if ((c->x86 == 6) && (c->x86_model == 9) &&
--				(c->x86_mask == 1) && (size == 65))
-+				(c->x86_stepping == 1) && (size == 65))
- 		size -= 1;
- 	return size;
- }
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index d63f4b57..a7d8df6 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -731,7 +731,7 @@ void cpu_detect(struct cpuinfo_x86 *c)
- 		cpuid(0x00000001, &tfms, &misc, &junk, &cap0);
- 		c->x86		= x86_family(tfms);
- 		c->x86_model	= x86_model(tfms);
--		c->x86_mask	= x86_stepping(tfms);
-+		c->x86_stepping	= x86_stepping(tfms);
- 
- 		if (cap0 & (1<<19)) {
- 			c->x86_clflush_size = ((misc >> 8) & 0xff) * 8;
-@@ -1186,7 +1186,7 @@ static void identify_cpu(struct cpuinfo_x86 *c)
- 	c->loops_per_jiffy = loops_per_jiffy;
- 	c->x86_cache_size = -1;
- 	c->x86_vendor = X86_VENDOR_UNKNOWN;
--	c->x86_model = c->x86_mask = 0;	/* So far unknown... */
-+	c->x86_model = c->x86_stepping = 0;	/* So far unknown... */
- 	c->x86_vendor_id[0] = '\0'; /* Unset */
- 	c->x86_model_id[0] = '\0';  /* Unset */
- 	c->x86_max_cores = 1;
-@@ -1378,8 +1378,8 @@ void print_cpu_info(struct cpuinfo_x86 *c)
- 
- 	pr_cont(" (family: 0x%x, model: 0x%x", c->x86, c->x86_model);
- 
--	if (c->x86_mask || c->cpuid_level >= 0)
--		pr_cont(", stepping: 0x%x)\n", c->x86_mask);
-+	if (c->x86_stepping || c->cpuid_level >= 0)
-+		pr_cont(", stepping: 0x%x)\n", c->x86_stepping);
- 	else
- 		pr_cont(")\n");
- }
-diff --git a/arch/x86/kernel/cpu/cyrix.c b/arch/x86/kernel/cpu/cyrix.c
-index 6b4bb33..8949b7a 100644
---- a/arch/x86/kernel/cpu/cyrix.c
-+++ b/arch/x86/kernel/cpu/cyrix.c
-@@ -215,7 +215,7 @@ static void init_cyrix(struct cpuinfo_x86 *c)
- 
- 	/* common case step number/rev -- exceptions handled below */
- 	c->x86_model = (dir1 >> 4) + 1;
--	c->x86_mask = dir1 & 0xf;
-+	c->x86_stepping = dir1 & 0xf;
- 
- 	/* Now cook; the original recipe is by Channing Corn, from Cyrix.
- 	 * We do the same thing for each generation: we work out
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index ef796f1..d19e903 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -146,7 +146,7 @@ static bool bad_spectre_microcode(struct cpuinfo_x86 *c)
- 
- 	for (i = 0; i < ARRAY_SIZE(spectre_bad_microcodes); i++) {
- 		if (c->x86_model == spectre_bad_microcodes[i].model &&
--		    c->x86_mask == spectre_bad_microcodes[i].stepping)
-+		    c->x86_stepping == spectre_bad_microcodes[i].stepping)
- 			return (c->microcode <= spectre_bad_microcodes[i].microcode);
- 	}
- 	return false;
-@@ -193,7 +193,7 @@ static void early_init_intel(struct cpuinfo_x86 *c)
- 	 * need the microcode to have already been loaded... so if it is
- 	 * not, recommend a BIOS update and disable large pages.
- 	 */
--	if (c->x86 == 6 && c->x86_model == 0x1c && c->x86_mask <= 2 &&
-+	if (c->x86 == 6 && c->x86_model == 0x1c && c->x86_stepping <= 2 &&
- 	    c->microcode < 0x20e) {
- 		pr_warn("Atom PSE erratum detected, BIOS microcode update recommended\n");
- 		clear_cpu_cap(c, X86_FEATURE_PSE);
-@@ -209,7 +209,7 @@ static void early_init_intel(struct cpuinfo_x86 *c)
- 
- 	/* CPUID workaround for 0F33/0F34 CPU */
- 	if (c->x86 == 0xF && c->x86_model == 0x3
--	    && (c->x86_mask == 0x3 || c->x86_mask == 0x4))
-+	    && (c->x86_stepping == 0x3 || c->x86_stepping == 0x4))
- 		c->x86_phys_bits = 36;
- 
- 	/*
-@@ -307,7 +307,7 @@ int ppro_with_ram_bug(void)
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL &&
- 	    boot_cpu_data.x86 == 6 &&
- 	    boot_cpu_data.x86_model == 1 &&
--	    boot_cpu_data.x86_mask < 8) {
-+	    boot_cpu_data.x86_stepping < 8) {
- 		pr_info("Pentium Pro with Errata#50 detected. Taking evasive action.\n");
- 		return 1;
- 	}
-@@ -324,7 +324,7 @@ static void intel_smp_check(struct cpuinfo_x86 *c)
- 	 * Mask B, Pentium, but not Pentium MMX
- 	 */
- 	if (c->x86 == 5 &&
--	    c->x86_mask >= 1 && c->x86_mask <= 4 &&
-+	    c->x86_stepping >= 1 && c->x86_stepping <= 4 &&
- 	    c->x86_model <= 3) {
- 		/*
- 		 * Remember we have B step Pentia with bugs
-@@ -367,7 +367,7 @@ static void intel_workarounds(struct cpuinfo_x86 *c)
- 	 * SEP CPUID bug: Pentium Pro reports SEP but doesn't have it until
- 	 * model 3 mask 3
- 	 */
--	if ((c->x86<<8 | c->x86_model<<4 | c->x86_mask) < 0x633)
-+	if ((c->x86<<8 | c->x86_model<<4 | c->x86_stepping) < 0x633)
- 		clear_cpu_cap(c, X86_FEATURE_SEP);
- 
- 	/*
-@@ -385,7 +385,7 @@ static void intel_workarounds(struct cpuinfo_x86 *c)
- 	 * P4 Xeon erratum 037 workaround.
- 	 * Hardware prefetcher may cause stale data to be loaded into the cache.
- 	 */
--	if ((c->x86 == 15) && (c->x86_model == 1) && (c->x86_mask == 1)) {
-+	if ((c->x86 == 15) && (c->x86_model == 1) && (c->x86_stepping == 1)) {
- 		if (msr_set_bit(MSR_IA32_MISC_ENABLE,
- 				MSR_IA32_MISC_ENABLE_PREFETCH_DISABLE_BIT) > 0) {
- 			pr_info("CPU: C0 stepping P4 Xeon detected.\n");
-@@ -400,7 +400,7 @@ static void intel_workarounds(struct cpuinfo_x86 *c)
- 	 * Specification Update").
- 	 */
- 	if (boot_cpu_has(X86_FEATURE_APIC) && (c->x86<<8 | c->x86_model<<4) == 0x520 &&
--	    (c->x86_mask < 0x6 || c->x86_mask == 0xb))
-+	    (c->x86_stepping < 0x6 || c->x86_stepping == 0xb))
- 		set_cpu_bug(c, X86_BUG_11AP);
- 
- 
-@@ -647,7 +647,7 @@ static void init_intel(struct cpuinfo_x86 *c)
- 		case 6:
- 			if (l2 == 128)
- 				p = "Celeron (Mendocino)";
--			else if (c->x86_mask == 0 || c->x86_mask == 5)
-+			else if (c->x86_stepping == 0 || c->x86_stepping == 5)
- 				p = "Celeron-A";
- 			break;
- 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
-index 9944237..18dd8f2 100644
---- a/arch/x86/kernel/cpu/intel_rdt.c
-+++ b/arch/x86/kernel/cpu/intel_rdt.c
-@@ -771,7 +771,7 @@ static __init void rdt_quirks(void)
- 			cache_alloc_hsw_probe();
- 		break;
- 	case INTEL_FAM6_SKYLAKE_X:
--		if (boot_cpu_data.x86_mask <= 4)
-+		if (boot_cpu_data.x86_stepping <= 4)
- 			set_rdt_options("!cmt,!mbmtotal,!mbmlocal,!l3cat");
- 	}
- }
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index f7c55b0..b94279b 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -921,7 +921,7 @@ static bool is_blacklisted(unsigned int cpu)
- 	 */
- 	if (c->x86 == 6 &&
- 	    c->x86_model == INTEL_FAM6_BROADWELL_X &&
--	    c->x86_mask == 0x01 &&
-+	    c->x86_stepping == 0x01 &&
- 	    llc_size_per_core > 2621440 &&
- 	    c->microcode < 0x0b000021) {
- 		pr_err_once("Erratum BDF90: late loading with revision < 0x0b000021 (0x%x) disabled.\n", c->microcode);
-@@ -944,7 +944,7 @@ static enum ucode_state request_microcode_fw(int cpu, struct device *device,
- 		return UCODE_NFOUND;
- 
- 	sprintf(name, "intel-ucode/%02x-%02x-%02x",
--		c->x86, c->x86_model, c->x86_mask);
-+		c->x86, c->x86_model, c->x86_stepping);
- 
- 	if (request_firmware_direct(&firmware, name, device)) {
- 		pr_debug("data file %s load failed\n", name);
-diff --git a/arch/x86/kernel/cpu/mtrr/generic.c b/arch/x86/kernel/cpu/mtrr/generic.c
-index fdc5521..e12ee86 100644
---- a/arch/x86/kernel/cpu/mtrr/generic.c
-+++ b/arch/x86/kernel/cpu/mtrr/generic.c
-@@ -859,7 +859,7 @@ int generic_validate_add_page(unsigned long base, unsigned long size,
- 	 */
- 	if (is_cpu(INTEL) && boot_cpu_data.x86 == 6 &&
- 	    boot_cpu_data.x86_model == 1 &&
--	    boot_cpu_data.x86_mask <= 7) {
-+	    boot_cpu_data.x86_stepping <= 7) {
- 		if (base & ((1 << (22 - PAGE_SHIFT)) - 1)) {
- 			pr_warn("mtrr: base(0x%lx000) is not 4 MiB aligned\n", base);
- 			return -EINVAL;
-diff --git a/arch/x86/kernel/cpu/mtrr/main.c b/arch/x86/kernel/cpu/mtrr/main.c
-index 40d5a8a..7468de4 100644
---- a/arch/x86/kernel/cpu/mtrr/main.c
-+++ b/arch/x86/kernel/cpu/mtrr/main.c
-@@ -711,8 +711,8 @@ void __init mtrr_bp_init(void)
- 			if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL &&
- 			    boot_cpu_data.x86 == 0xF &&
- 			    boot_cpu_data.x86_model == 0x3 &&
--			    (boot_cpu_data.x86_mask == 0x3 ||
--			     boot_cpu_data.x86_mask == 0x4))
-+			    (boot_cpu_data.x86_stepping == 0x3 ||
-+			     boot_cpu_data.x86_stepping == 0x4))
- 				phys_addr = 36;
- 
- 			size_or_mask = SIZE_OR_MASK_BITS(phys_addr);
-diff --git a/arch/x86/kernel/cpu/proc.c b/arch/x86/kernel/cpu/proc.c
-index e7eceda..ee4cc38 100644
---- a/arch/x86/kernel/cpu/proc.c
-+++ b/arch/x86/kernel/cpu/proc.c
-@@ -72,8 +72,8 @@ static int show_cpuinfo(struct seq_file *m, void *v)
- 		   c->x86_model,
- 		   c->x86_model_id[0] ? c->x86_model_id : "unknown");
- 
--	if (c->x86_mask || c->cpuid_level >= 0)
--		seq_printf(m, "stepping\t: %d\n", c->x86_mask);
-+	if (c->x86_stepping || c->cpuid_level >= 0)
-+		seq_printf(m, "stepping\t: %d\n", c->x86_stepping);
- 	else
- 		seq_puts(m, "stepping\t: unknown\n");
- 	if (c->microcode)
-diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
-index c290209..b59e4fb 100644
---- a/arch/x86/kernel/head_32.S
-+++ b/arch/x86/kernel/head_32.S
-@@ -37,7 +37,7 @@
- #define X86		new_cpu_data+CPUINFO_x86
- #define X86_VENDOR	new_cpu_data+CPUINFO_x86_vendor
- #define X86_MODEL	new_cpu_data+CPUINFO_x86_model
--#define X86_MASK	new_cpu_data+CPUINFO_x86_mask
-+#define X86_STEPPING	new_cpu_data+CPUINFO_x86_stepping
- #define X86_HARD_MATH	new_cpu_data+CPUINFO_hard_math
- #define X86_CPUID	new_cpu_data+CPUINFO_cpuid_level
- #define X86_CAPABILITY	new_cpu_data+CPUINFO_x86_capability
-@@ -332,7 +332,7 @@ ENTRY(startup_32_smp)
- 	shrb $4,%al
- 	movb %al,X86_MODEL
- 	andb $0x0f,%cl		# mask mask revision
--	movb %cl,X86_MASK
-+	movb %cl,X86_STEPPING
- 	movl %edx,X86_CAPABILITY
- 
- .Lis486:
-diff --git a/arch/x86/kernel/mpparse.c b/arch/x86/kernel/mpparse.c
-index 3a4b128..bc6bc66 100644
---- a/arch/x86/kernel/mpparse.c
-+++ b/arch/x86/kernel/mpparse.c
-@@ -407,7 +407,7 @@ static inline void __init construct_default_ISA_mptable(int mpc_default_type)
- 	processor.apicver = mpc_default_type > 4 ? 0x10 : 0x01;
- 	processor.cpuflag = CPU_ENABLED;
- 	processor.cpufeature = (boot_cpu_data.x86 << 8) |
--	    (boot_cpu_data.x86_model << 4) | boot_cpu_data.x86_mask;
-+	    (boot_cpu_data.x86_model << 4) | boot_cpu_data.x86_stepping;
- 	processor.featureflag = boot_cpu_data.x86_capability[CPUID_1_EDX];
- 	processor.reserved[0] = 0;
- 	processor.reserved[1] = 0;
-diff --git a/arch/x86/lib/cpu.c b/arch/x86/lib/cpu.c
-index d6f848d..2dd1fe13 100644
---- a/arch/x86/lib/cpu.c
-+++ b/arch/x86/lib/cpu.c
-@@ -18,7 +18,7 @@ unsigned int x86_model(unsigned int sig)
- {
- 	unsigned int fam, model;
- 
--	 fam = x86_family(sig);
-+	fam = x86_family(sig);
- 
- 	model = (sig >> 4) & 0xf;
- 
-diff --git a/drivers/char/hw_random/via-rng.c b/drivers/char/hw_random/via-rng.c
-index d1f5bb5..6e9df55 100644
---- a/drivers/char/hw_random/via-rng.c
-+++ b/drivers/char/hw_random/via-rng.c
-@@ -162,7 +162,7 @@ static int via_rng_init(struct hwrng *rng)
- 	/* Enable secondary noise source on CPUs where it is present. */
- 
- 	/* Nehemiah stepping 8 and higher */
--	if ((c->x86_model == 9) && (c->x86_mask > 7))
-+	if ((c->x86_model == 9) && (c->x86_stepping > 7))
- 		lo |= VIA_NOISESRC2;
- 
- 	/* Esther */
-diff --git a/drivers/cpufreq/acpi-cpufreq.c b/drivers/cpufreq/acpi-cpufreq.c
-index 3a2ca0f..d0c34df 100644
---- a/drivers/cpufreq/acpi-cpufreq.c
-+++ b/drivers/cpufreq/acpi-cpufreq.c
-@@ -629,7 +629,7 @@ static int acpi_cpufreq_blacklist(struct cpuinfo_x86 *c)
- 	if (c->x86_vendor == X86_VENDOR_INTEL) {
- 		if ((c->x86 == 15) &&
- 		    (c->x86_model == 6) &&
--		    (c->x86_mask == 8)) {
-+		    (c->x86_stepping == 8)) {
- 			pr_info("Intel(R) Xeon(R) 7100 Errata AL30, processors may lock up on frequency changes: disabling acpi-cpufreq\n");
- 			return -ENODEV;
- 		    }
-diff --git a/drivers/cpufreq/longhaul.c b/drivers/cpufreq/longhaul.c
-index c46a12d..d5e27bc 100644
---- a/drivers/cpufreq/longhaul.c
-+++ b/drivers/cpufreq/longhaul.c
-@@ -775,7 +775,7 @@ static int longhaul_cpu_init(struct cpufreq_policy *policy)
- 		break;
- 
- 	case 7:
--		switch (c->x86_mask) {
-+		switch (c->x86_stepping) {
- 		case 0:
- 			longhaul_version = TYPE_LONGHAUL_V1;
- 			cpu_model = CPU_SAMUEL2;
-@@ -787,7 +787,7 @@ static int longhaul_cpu_init(struct cpufreq_policy *policy)
- 			break;
- 		case 1 ... 15:
- 			longhaul_version = TYPE_LONGHAUL_V2;
--			if (c->x86_mask < 8) {
-+			if (c->x86_stepping < 8) {
- 				cpu_model = CPU_SAMUEL2;
- 				cpuname = "C3 'Samuel 2' [C5B]";
- 			} else {
-@@ -814,7 +814,7 @@ static int longhaul_cpu_init(struct cpufreq_policy *policy)
- 		numscales = 32;
- 		memcpy(mults, nehemiah_mults, sizeof(nehemiah_mults));
- 		memcpy(eblcr, nehemiah_eblcr, sizeof(nehemiah_eblcr));
--		switch (c->x86_mask) {
-+		switch (c->x86_stepping) {
- 		case 0 ... 1:
- 			cpu_model = CPU_NEHEMIAH;
- 			cpuname = "C3 'Nehemiah A' [C5XLOE]";
-diff --git a/drivers/cpufreq/p4-clockmod.c b/drivers/cpufreq/p4-clockmod.c
-index fd77812..a25741b 100644
---- a/drivers/cpufreq/p4-clockmod.c
-+++ b/drivers/cpufreq/p4-clockmod.c
-@@ -168,7 +168,7 @@ static int cpufreq_p4_cpu_init(struct cpufreq_policy *policy)
- #endif
- 
- 	/* Errata workaround */
--	cpuid = (c->x86 << 8) | (c->x86_model << 4) | c->x86_mask;
-+	cpuid = (c->x86 << 8) | (c->x86_model << 4) | c->x86_stepping;
- 	switch (cpuid) {
- 	case 0x0f07:
- 	case 0x0f0a:
-diff --git a/drivers/cpufreq/powernow-k7.c b/drivers/cpufreq/powernow-k7.c
-index 80ac313..302e9ce 100644
---- a/drivers/cpufreq/powernow-k7.c
-+++ b/drivers/cpufreq/powernow-k7.c
-@@ -131,7 +131,7 @@ static int check_powernow(void)
- 		return 0;
- 	}
- 
--	if ((c->x86_model == 6) && (c->x86_mask == 0)) {
-+	if ((c->x86_model == 6) && (c->x86_stepping == 0)) {
- 		pr_info("K7 660[A0] core detected, enabling errata workarounds\n");
- 		have_a0 = 1;
- 	}
-diff --git a/drivers/cpufreq/speedstep-centrino.c b/drivers/cpufreq/speedstep-centrino.c
-index 41bc539..4fa5adf 100644
---- a/drivers/cpufreq/speedstep-centrino.c
-+++ b/drivers/cpufreq/speedstep-centrino.c
-@@ -37,7 +37,7 @@ struct cpu_id
- {
- 	__u8	x86;            /* CPU family */
- 	__u8	x86_model;	/* model */
--	__u8	x86_mask;	/* stepping */
-+	__u8	x86_stepping;	/* stepping */
- };
- 
- enum {
-@@ -277,7 +277,7 @@ static int centrino_verify_cpu_id(const struct cpuinfo_x86 *c,
- {
- 	if ((c->x86 == x->x86) &&
- 	    (c->x86_model == x->x86_model) &&
--	    (c->x86_mask == x->x86_mask))
-+	    (c->x86_stepping == x->x86_stepping))
- 		return 1;
- 	return 0;
- }
-diff --git a/drivers/cpufreq/speedstep-lib.c b/drivers/cpufreq/speedstep-lib.c
-index 8085ec9..e3a9962 100644
---- a/drivers/cpufreq/speedstep-lib.c
-+++ b/drivers/cpufreq/speedstep-lib.c
-@@ -272,9 +272,9 @@ unsigned int speedstep_detect_processor(void)
- 		ebx = cpuid_ebx(0x00000001);
- 		ebx &= 0x000000FF;
- 
--		pr_debug("ebx value is %x, x86_mask is %x\n", ebx, c->x86_mask);
-+		pr_debug("ebx value is %x, x86_stepping is %x\n", ebx, c->x86_stepping);
- 
--		switch (c->x86_mask) {
-+		switch (c->x86_stepping) {
- 		case 4:
- 			/*
- 			 * B-stepping [M-P4-M]
-@@ -361,7 +361,7 @@ unsigned int speedstep_detect_processor(void)
- 				msr_lo, msr_hi);
- 		if ((msr_hi & (1<<18)) &&
- 		    (relaxed_check ? 1 : (msr_hi & (3<<24)))) {
--			if (c->x86_mask == 0x01) {
-+			if (c->x86_stepping == 0x01) {
- 				pr_debug("early PIII version\n");
- 				return SPEEDSTEP_CPU_PIII_C_EARLY;
- 			} else
-diff --git a/drivers/crypto/padlock-aes.c b/drivers/crypto/padlock-aes.c
-index 4b6642a..1c6cbda 100644
---- a/drivers/crypto/padlock-aes.c
-+++ b/drivers/crypto/padlock-aes.c
-@@ -512,7 +512,7 @@ static int __init padlock_init(void)
- 
- 	printk(KERN_NOTICE PFX "Using VIA PadLock ACE for AES algorithm.\n");
- 
--	if (c->x86 == 6 && c->x86_model == 15 && c->x86_mask == 2) {
-+	if (c->x86 == 6 && c->x86_model == 15 && c->x86_stepping == 2) {
- 		ecb_fetch_blocks = MAX_ECB_FETCH_BLOCKS;
- 		cbc_fetch_blocks = MAX_CBC_FETCH_BLOCKS;
- 		printk(KERN_NOTICE PFX "VIA Nano stepping 2 detected: enabling workaround.\n");
-diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-index 8b16ec5..329cb96 100644
---- a/drivers/edac/amd64_edac.c
-+++ b/drivers/edac/amd64_edac.c
-@@ -3147,7 +3147,7 @@ static struct amd64_family_type *per_family_init(struct amd64_pvt *pvt)
- 	struct amd64_family_type *fam_type = NULL;
- 
- 	pvt->ext_model  = boot_cpu_data.x86_model >> 4;
--	pvt->stepping	= boot_cpu_data.x86_mask;
-+	pvt->stepping	= boot_cpu_data.x86_stepping;
- 	pvt->model	= boot_cpu_data.x86_model;
- 	pvt->fam	= boot_cpu_data.x86;
- 
-diff --git a/drivers/hwmon/coretemp.c b/drivers/hwmon/coretemp.c
-index c13a4fd..a42744c 100644
---- a/drivers/hwmon/coretemp.c
-+++ b/drivers/hwmon/coretemp.c
-@@ -268,13 +268,13 @@ static int adjust_tjmax(struct cpuinfo_x86 *c, u32 id, struct device *dev)
- 	for (i = 0; i < ARRAY_SIZE(tjmax_model_table); i++) {
- 		const struct tjmax_model *tm = &tjmax_model_table[i];
- 		if (c->x86_model == tm->model &&
--		    (tm->mask == ANY || c->x86_mask == tm->mask))
-+		    (tm->mask == ANY || c->x86_stepping == tm->mask))
- 			return tm->tjmax;
- 	}
- 
- 	/* Early chips have no MSR for TjMax */
- 
--	if (c->x86_model == 0xf && c->x86_mask < 4)
-+	if (c->x86_model == 0xf && c->x86_stepping < 4)
- 		usemsr_ee = 0;
- 
- 	if (c->x86_model > 0xe && usemsr_ee) {
-@@ -425,7 +425,7 @@ static int chk_ucode_version(unsigned int cpu)
- 	 * Readings might stop update when processor visited too deep sleep,
- 	 * fixed for stepping D0 (6EC).
- 	 */
--	if (c->x86_model == 0xe && c->x86_mask < 0xc && c->microcode < 0x39) {
-+	if (c->x86_model == 0xe && c->x86_stepping < 0xc && c->microcode < 0x39) {
- 		pr_err("Errata AE18 not fixed, update BIOS or microcode of the CPU!\n");
- 		return -ENODEV;
- 	}
-diff --git a/drivers/hwmon/hwmon-vid.c b/drivers/hwmon/hwmon-vid.c
-index ef91b8a..84e9128 100644
---- a/drivers/hwmon/hwmon-vid.c
-+++ b/drivers/hwmon/hwmon-vid.c
-@@ -293,7 +293,7 @@ u8 vid_which_vrm(void)
- 	if (c->x86 < 6)		/* Any CPU with family lower than 6 */
- 		return 0;	/* doesn't have VID */
- 
--	vrm_ret = find_vrm(c->x86, c->x86_model, c->x86_mask, c->x86_vendor);
-+	vrm_ret = find_vrm(c->x86, c->x86_model, c->x86_stepping, c->x86_vendor);
- 	if (vrm_ret == 134)
- 		vrm_ret = get_via_model_d_vrm();
- 	if (vrm_ret == 0)
-diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
-index 0721e17..b960015 100644
---- a/drivers/hwmon/k10temp.c
-+++ b/drivers/hwmon/k10temp.c
-@@ -226,7 +226,7 @@ static bool has_erratum_319(struct pci_dev *pdev)
- 	 * and AM3 formats, but that's the best we can do.
- 	 */
- 	return boot_cpu_data.x86_model < 4 ||
--	       (boot_cpu_data.x86_model == 4 && boot_cpu_data.x86_mask <= 2);
-+	       (boot_cpu_data.x86_model == 4 && boot_cpu_data.x86_stepping <= 2);
- }
- 
- static int k10temp_probe(struct pci_dev *pdev,
-diff --git a/drivers/hwmon/k8temp.c b/drivers/hwmon/k8temp.c
-index 5a632bc..e59f911 100644
---- a/drivers/hwmon/k8temp.c
-+++ b/drivers/hwmon/k8temp.c
-@@ -187,7 +187,7 @@ static int k8temp_probe(struct pci_dev *pdev,
- 		return -ENOMEM;
- 
- 	model = boot_cpu_data.x86_model;
--	stepping = boot_cpu_data.x86_mask;
-+	stepping = boot_cpu_data.x86_stepping;
- 
- 	/* feature available since SH-C0, exclude older revisions */
- 	if ((model == 4 && stepping == 0) ||
-diff --git a/drivers/video/fbdev/geode/video_gx.c b/drivers/video/fbdev/geode/video_gx.c
-index 6082f65..67773e8 100644
---- a/drivers/video/fbdev/geode/video_gx.c
-+++ b/drivers/video/fbdev/geode/video_gx.c
-@@ -127,7 +127,7 @@ void gx_set_dclk_frequency(struct fb_info *info)
- 	int timeout = 1000;
- 
- 	/* Rev. 1 Geode GXs use a 14 MHz reference clock instead of 48 MHz. */
--	if (cpu_data(0).x86_mask == 1) {
-+	if (cpu_data(0).x86_stepping == 1) {
- 		pll_table = gx_pll_table_14MHz;
- 		pll_table_len = ARRAY_SIZE(gx_pll_table_14MHz);
- 	} else {
+Underflow check needed?
+
+ -dann
+
+> +		for (; cnt_per_trans--; buf++)
+> +			writeb_relaxed(*buf, lpcdev->membase + LPC_REG_WDATA);
+> +
+> +		writel(LPC_START_WORK, lpcdev->membase + LPC_REG_START);
+> +
+> +		/* whether the operation is finished */
+> +		ret = wait_lpc_idle(lpcdev->membase, waitcnt);
+> +
+> +		spin_unlock_irqrestore(&lpcdev->cycle_lock, flags);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static inline unsigned long
+> +hisi_lpc_pio_to_addr(struct hisilpc_dev *lpcdev, unsigned long pio)
+> +{
+> +	return pio - lpcdev->io_host->io_start +
+> +		lpcdev->io_host->hw_start;
+> +}
+> +
+> +
+> +/**
+> + * hisilpc_comm_in - read/input the data from the I/O peripheral
+> + *		     through LPC.
+> + * @devobj: pointer to the device information relevant to LPC controller.
+> + * @pio: the target I/O port address.
+> + * @dlen: the data length required to read from the target I/O port.
+> + *
+> + * when succeed, the data read back is stored in buffer pointed by inbuf.
+> + * For inb, return the data read from I/O or -1 when error occur.
+> + */
+> +static u32 hisilpc_comm_in(void *devobj, unsigned long pio, size_t dlen)
+> +{
+> +	int ret = 0;
+> +	unsigned char rd_data = 0;
+> +	unsigned long ptaddr;
+> +	struct lpc_cycle_para iopara;
+> +	struct hisilpc_dev *lpcdev = devobj;
+> +
+> +	if (!lpcdev || !dlen || dlen > LPC_MAX_DULEN)
+> +		return -1;
+> +
+> +	ptaddr = hisi_lpc_pio_to_addr(lpcdev, pio);
+> +
+> +	iopara.opflags = FG_INCRADDR_LPC;
+> +	iopara.csize = dlen;
+> +
+> +	ret = hisilpc_target_in(lpcdev, &iopara, ptaddr, &rd_data, dlen);
+> +	if (ret)
+> +		return -1;
+> +
+> +	return le32_to_cpu((u32)rd_data);
+> +}
+> +
+> +/**
+> + * hisilpc_comm_out - output the data whose maximum length is four bytes
+> +		      to the I/O peripheral through the LPC host.
+> + * @devobj: pointer to the device information relevant to LPC controller.
+> + * @pio: the target I/O port address.
+> + * @outval: a value to be outputted from caller, maximum is four bytes.
+> + * @dlen: the data length required writing to the target I/O port.
+> + *
+> + * This function is corresponding to out(b,w,l) only
+> + *
+> + */
+> +static void hisilpc_comm_out(void *devobj, unsigned long pio,
+> +			     u32 outval, size_t dlen)
+> +{
+> +	unsigned long ptaddr;
+> +	struct hisilpc_dev *lpcdev = devobj;
+> +	struct lpc_cycle_para iopara;
+> +	const unsigned char *newbuf;
+> +
+> +	if (!lpcdev || !dlen || dlen > LPC_MAX_DULEN)
+> +		return;
+> +
+> +	outval = cpu_to_le32(outval);
+> +
+> +	newbuf = (const unsigned char *)&outval;
+> +	ptaddr = hisi_lpc_pio_to_addr(lpcdev, pio);
+> +
+> +	iopara.opflags = FG_INCRADDR_LPC;
+> +	iopara.csize = dlen;
+> +
+> +	hisilpc_target_out(lpcdev, &iopara, ptaddr, newbuf, dlen);
+> +}
+> +
+> +/*
+> + * hisilpc_comm_ins - read/input the data in buffer to the I/O
+> + *		peripheral through LPC, it corresponds to ins(b,w,l)
+> + * @devobj: pointer to the device information relevant to LPC controller.
+> + * @pio: the target I/O port address.
+> + * @inbuf: a buffer where read/input data bytes are stored.
+> + * @dlen: the data length required writing to the target I/O port.
+> + * @count: how many data units whose length is dlen will be read.
+> + *
+> + * when succeed, the data read back is stored in buffer pointed by inbuf.
+> + * Returns 0 on success, -errno otherwise
+> + *
+> + */
+> +static u32
+> +hisilpc_comm_ins(void *devobj, unsigned long pio, void *inbuf,
+> +		 size_t dlen, unsigned int count)
+> +{
+> +	struct hisilpc_dev *lpcdev = devobj;
+> +	struct lpc_cycle_para iopara;
+> +	unsigned char *newbuf;
+> +	unsigned int loopcnt, cntleft;
+> +	unsigned long ptaddr;
+> +
+> +	if (!lpcdev || !inbuf || !count || !dlen || dlen > LPC_MAX_DULEN ||
+> +			count % dlen)
+> +		return -EINVAL;
+> +
+> +	iopara.opflags = 0;
+> +	if (dlen > 1)
+> +		iopara.opflags |= FG_INCRADDR_LPC;
+> +	iopara.csize = dlen;
+> +
+> +	ptaddr = hisi_lpc_pio_to_addr(lpcdev, pio);
+> +	newbuf = inbuf;
+> +	/*
+> +	 * ensure data stream whose length is multiple of dlen to be processed
+> +	 * each IO input
+> +	 */
+> +	cntleft = count * dlen;
+> +	do {
+> +		int ret;
+> +
+> +		loopcnt = min_t(unsigned int, LPC_MAX_BURST, cntleft);
+> +		ret = hisilpc_target_in(lpcdev, &iopara, ptaddr,
+> +					newbuf, loopcnt);
+> +		if (ret)
+> +			return ret;
+> +		newbuf += loopcnt;
+> +		cntleft -= loopcnt;
+> +	} while (cntleft);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * hisilpc_comm_outs - write/output the data in buffer to the I/O
+> + *		peripheral through LPC, it corresponds to outs(b,w,l)
+> + * @devobj: pointer to the device information relevant to LPC controller.
+> + * @pio: the target I/O port address.
+> + * @outbuf: a buffer where write/output data bytes are stored.
+> + * @dlen: the data length required writing to the target I/O port .
+> + * @count: how many data units whose length is dlen will be written.
+> + *
+> + */
+> +static void
+> +hisilpc_comm_outs(void *devobj, unsigned long pio, const void *outbuf,
+> +		  size_t dlen, unsigned int count)
+> +{
+> +	struct hisilpc_dev *lpcdev = devobj;
+> +	struct lpc_cycle_para iopara;
+> +	const unsigned char *newbuf;
+> +	unsigned int loopcnt, cntleft;
+> +	unsigned long ptaddr;
+> +
+> +	if (!lpcdev || !outbuf || !count || !dlen || dlen > LPC_MAX_DULEN ||
+> +			count % dlen)
+> +		return;
+> +
+> +	iopara.opflags = 0;
+> +	if (dlen > 1)
+> +		iopara.opflags |= FG_INCRADDR_LPC;
+> +	iopara.csize = dlen;
+> +
+> +	ptaddr = hisi_lpc_pio_to_addr(lpcdev, pio);
+> +	newbuf = outbuf;
+> +	/*
+> +	 * ensure data stream whose length is multiple of dlen to be processed
+> +	 * each IO input
+> +	 */
+> +	cntleft = count * dlen;
+> +	do {
+> +		loopcnt = min_t(unsigned int, LPC_MAX_BURST, cntleft);
+> +		if (hisilpc_target_out(lpcdev, &iopara, ptaddr, newbuf,
+> +						loopcnt))
+> +			break;
+> +		newbuf += loopcnt;
+> +		cntleft -= loopcnt;
+> +	} while (cntleft);
+> +}
+> +
+> +static struct hostio_ops hisi_lpc_ops = {
+> +	.pfin = hisilpc_comm_in,
+> +	.pfout = hisilpc_comm_out,
+> +	.pfins = hisilpc_comm_ins,
+> +	.pfouts = hisilpc_comm_outs,
+> +};
+> +
+> +/**
+> + * hisilpc_probe - the probe callback function for hisi lpc device,
+> + *		   will finish all the initialization.
+> + * @pdev: the platform device corresponding to hisi lpc
+> + *
+> + * Returns 0 on success, non-zero on fail.
+> + */
+> +static int hisilpc_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct resource *res;
+> +	struct hisilpc_dev *lpcdev;
+> +	int ret = 0;
+> +
+> +	lpcdev = devm_kzalloc(dev, sizeof(struct hisilpc_dev), GFP_KERNEL);
+> +	if (!lpcdev)
+> +		return -ENOMEM;
+> +
+> +	spin_lock_init(&lpcdev->cycle_lock);
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!res)
+> +		return -ENODEV;
+> +
+> +	lpcdev->membase = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(lpcdev->membase)) {
+> +		dev_err(dev, "remap failed\n");
+> +		return PTR_ERR(lpcdev->membase);
+> +	}
+> +
+> +	/* register the LPC host PIO resources */
+> +	{
+> +		struct logic_pio_hwaddr *range;
+> +
+> +		range = devm_kzalloc(dev, sizeof(*range), GFP_KERNEL);
+> +		if (!range)
+> +			return -ENOMEM;
+> +		range->fwnode = dev->fwnode;
+> +		range->flags = PIO_INDIRECT;
+> +		range->size = LPC_BUS_IO_SIZE;
+> +		range->hw_start = LPC_MIN_BUS_RANGE;
+> +
+> +		ret = logic_pio_register_range(range);
+> +		if (ret) {
+> +			kfree(range);
+> +			dev_err(dev, "register IO range failed (%d)!\n", ret);
+> +			return -ret;
+> +		}
+> +		lpcdev->io_host = range;
+> +
+> +		/*
+> +		 * It is time to start the children scanning:
+> +		 * For ACPI children, the corresponding devices had been
+> +		 * created during the ACPI enumeration.
+> +		 * The OF scanning must be performed after initialization of
+> +		 * 'lpcdev' to avoid some children which complete the scanning
+> +		 * trigger the MMIO accesses which will probably cause a panic.
+> +		 */
+> +		ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+> +		if (ret) {
+> +			/*
+> +			 * When LPC probing is not completely successful, set
+> +			 * 'devpara' as NULL. This will make all the LPC I/O
+> +			 * return failure directly without any hardware
+> +			 * operations. It will prevent some peripherals which
+> +			 * had not finished the initialization to manipulate
+> +			 * I/O for safety.
+> +			 */
+> +			lpcdev->io_host->devpara = NULL;
+> +			dev_err(dev, "populate children failed(%d)\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +	lpcdev->io_host->devpara = lpcdev;
+> +	lpcdev->io_host->ops = &hisi_lpc_ops;
+> +
+> +	dev_info(dev, "registered range[%pa - sz:%pa]\n",
+> +		 &lpcdev->io_host->io_start,
+> +		 &lpcdev->io_host->size);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct of_device_id hisilpc_of_match[] = {
+> +	{ .compatible = "hisilicon,hip06-lpc", },
+> +	{ .compatible = "hisilicon,hip07-lpc", },
+> +	{},
+> +};
+> +
+> +static struct platform_driver hisilpc_driver = {
+> +	.driver = {
+> +		.name           = "hisi_lpc",
+> +		.of_match_table = hisilpc_of_match,
+> +	},
+> +	.probe = hisilpc_probe,
+> +};
+> +
+> +builtin_platform_driver(hisilpc_driver);
