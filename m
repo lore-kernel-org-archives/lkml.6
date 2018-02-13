@@ -1,59 +1,74 @@
-Return-Path: <kernel-hardening-return-11746-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x225gzwQ8KycUqn0mnF+KLdsOZSghwE6ZPSzYv0BwQeEKFqRlpRAhLurxUbl/Lwz5rJPCvmDN
-ARC-Seal: i=1; a=rsa-sha256; t=1518535350; cv=none;
+Return-Path: <kernel-hardening-return-11747-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x2244ksCa/YgLCxRJYpEo6q7j1AMj9frAR+P76KWyeDQ2TuXtS4cnVWVLdsLW4WmwfNVVbIE0
+ARC-Seal: i=1; a=rsa-sha256; t=1518535592; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZeHysAiy3qHyEL0RncOYRl+abpZeymqwSC7/h63097p2Kw4K0sGuSKqo7cSfLJ8lRy
-         8yL94r7ricg+QgCkNuB4VKeYsaOMeCzKmMpHzpCWJ96NN6pSIh0wGAE1gxBAW00O3Wuq
-         bcDIsWUzCP1KACw+HdKolGWX022KJ1CEQqd0B303fpyc1mnQ6RgCZXrvD9mTrB18EI5m
-         cDOmFXoVI37k2E0Mi3o5SDnZQOs9ZgPqt6ChakqIHigrChWe+K7azko4lz1Jvs/5QIHM
-         T6sgxMo6wIRkZBjsdzpC+djkyf7GC5T1wEGnAJXfm0nCSdRNlF/vCfI2Auqaa4gda6XD
-         rm4Q==
+        b=YgiD81R0LQDMprxBKAegNgCw+z8+FlDEOtjyfLq27sUxweu2vvRlQdx2HNZJaFDpwX
+         oQ5TTTy+59W7yAQS1X1Rgj9KUZ1dQ1vsC5uN4HY2BnGdta+6PSvWmH/b3mMKJTfrwWJV
+         0+p/uaV97CwpWccI4SwKvEJoNWEOeD6CmwU2svbGwe5/OxcTqC0YnorXL7n04BO1Wf75
+         T6P5hYKAd36KDjVHsGrOEL5o1vq16f6Bs6U+BaXJA8ZtYl6vYTUn19jM5SYcV6QDmY9o
+         L60Uea6Kq6Mn6DCwOYGEFydHc+Jl2EE765eq9pzMuJLPZoaOMO0jEu64Z+lNVQpVzKjl
+         nh8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=zyNxdWKQYX2YIafBRZFAsWIelL250qcxoqbuL583R8Q=;
-        b=iw7IOcpJbOtqNxzwTz3fDyTHKkZ5vgr74nVDJYl6AM7Po3ao83bfO/zM6Bm2RyMsZh
-         +q6XT5rF4N1BqboOO+ME0OWOsZAvzfvfzkzpWBdF5+3kIM865kaihUGCwCm35o1n69d7
-         qyz2n0bDURIrQnjt3Cepck7X+MwRdMlq1xIK/FO962DkP1SHBOHLelN9aCH/GUtf3Ey/
-         O4LBW/F2bVXuoIzHPOVGkeQbluqjO2RwLk2Cghsm3R7EJPMoBDKWQsIwJ85EBPXIDciW
-         1LXi+EjGhRwdOQkV6p7DpE5kASs9iNVt5CpkbYtmHexLySIhl0RwRI5XKDZ2cCcOt+/7
-         ACTg==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=PwIznnRjvwdsoryDXaE25hSzTWnOY5L48Lx7rDC2rsA=;
+        b=D9lCNXk3Y/K75KZa57nkxsG1kLKOP5tFbPQHHuYQqLuF/Rbqc71pDpjJbPr50O/FX3
+         eMu/WMmS63oK8KdSPUXFk/30mteTRvHXo7jvV+qiVFVcTCKwidt7TteIRp9v0HDARHld
+         QcFdvuw8Hzn6shuhK7f1LUALkvozNIr+tGxN0GyAeqnbizyWAiYXToRIQMmaymYDvhmo
+         XxN4wS89xn3DjzTPGhLTVFpitV+F2MuKDA4G9fZoPk6Yvo0oOWfZpyiJQJowoBQM1rzd
+         FgLHFxvEoUPv9/ifkIh4hssMZqU/2zbxU2fyZE0fx3P4+5SfOuMw3Sh8uvnaNYZiBRcw
+         F4lA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=k5Qn0OBz;
-       spf=pass (google.com: domain of kernel-hardening-return-11746-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11746-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Z0QecsmK;
+       dkim=pass header.i=@chromium.org header.s=google header.b=nbgZ5NpE;
+       spf=pass (google.com: domain of kernel-hardening-return-11747-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11747-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=k5Qn0OBz;
-       spf=pass (google.com: domain of kernel-hardening-return-11746-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11746-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Z0QecsmK;
+       dkim=pass header.i=@chromium.org header.s=google header.b=nbgZ5NpE;
+       spf=pass (google.com: domain of kernel-hardening-return-11747-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11747-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Tue, 13 Feb 2018 06:56:32 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: valdis.kletnieks@vt.edu
-Cc: Kees Cook <keescook@chromium.org>, kernel-hardening@lists.openwall.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] GCC release 8 support for gcc-plugins
-Message-ID: <20180213145632.GA7937@infradead.org>
-References: <123377.1517765678@turing-police.cc.vt.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <123377.1517765678@turing-police.cc.vt.edu>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Sender: keescook@google.com
+In-Reply-To: <20180213145632.GA7937@infradead.org>
+References: <123377.1517765678@turing-police.cc.vt.edu> <20180213145632.GA7937@infradead.org>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 13 Feb 2018 07:26:09 -0800
+X-Google-Sender-Auth: CMdkVosAtI_SvCFwKFo1wom8o7w
+Message-ID: <CAGXu5jLtb46yFK1TRE3WBPp6grQQGbCbqGCTYJJ7dok3Kws8pg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] GCC release 8 support for gcc-plugins
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+	Kernel Hardening <kernel-hardening@lists.openwall.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591490625322246882?=
-X-GMAIL-MSGID: =?utf-8?q?1592299724038148559?=
+X-GMAIL-MSGID: =?utf-8?q?1592299977153653556?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Feb 04, 2018 at 12:34:38PM -0500, valdis.kletnieks@vt.edu wrote:
-> For reasons totally beyond my understanding, gcc 8 changed the
-> order of two structure member, which leads to an error:
+On Tue, Feb 13, 2018 at 6:56 AM, Christoph Hellwig <hch@infradead.org> wrote:
+> On Sun, Feb 04, 2018 at 12:34:38PM -0500, valdis.kletnieks@vt.edu wrote:
+>> For reasons totally beyond my understanding, gcc 8 changed the
+>> order of two structure member, which leads to an error:
+>
+> I'm a little late on this, but isn't the whole point of C99 initializers
+> that field order should not matter at all?
 
-I'm a little late on this, but isn't the whole point of C99 initializers
-that field order should not matter at all?
+For C99, this is true. The plugins are built differently and follow
+C++ conventions, which, for reasons I cannot understand, are ordered.
+:( Regardless, the fix actually results in fewer lines of code, so
+this is fine.
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
