@@ -1,56 +1,56 @@
 Return-Path: <green.hu@gmail.com>
-X-Cyrus-Session-Id: sloti22d1t05-3695236-1518513096-2-16984468409019213416
+X-Cyrus-Session-Id: sloti22d1t05-3695236-1518513091-2-18329449943900388505
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FROM 0.001, RCVD_IN_DNSWL_NONE -0.0001,
   RCVD_IN_MSPIKE_H3 -0.01, RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.85.160.65', Host='mail-pl0-f65.google.com', Country='US',
+  LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='74.125.83.66', Host='mail-pg0-f66.google.com', Country='US',
   FromHeader='com', MailFrom='com'
 X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: green.hu@gmail.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518513095; b=l06/MQeF3uMd/88ddkK2gvqnkbOuGYodJOIDkrvOZwB/1NX
-    dusV5IJ7tIOz8bzYbrU3CyMmXXXIVmA0u3FF1cyjS7cb20pO6BoQkxljlzMuFXpu
-    Jfog0oo72TJ05PxkaNczTe9R0ww5ef6jKfE1y/AhNrsGu5nNYTBghqlJxVgtuMiH
-    cGMH3TdK65z16i3/1lyfmnIGViXwCM59jN5N8oXx6F9Gt2KK5Ii9l0lpkH3yr2xI
-    h/TPijQ1nP+zK9ENUdMmCcJ2XGApt0fOiRBhcsGl2dT32WAcFq+JUdNe8G9yCNwD
-    qcARJvKLnb2jWkK0v+md9ZmU+pBu+T6p/fcTWSg==
+    t=1518513090; b=m3G+6zXITmBMKqLYqxY0JEFBK/8wPo1NSiH0k1P3vXGBD8O
+    s+XcfS5e9Utk1xjt0fR9Lv9RSOwSPFyUCCbUrXze+dPuUAYo+6KcVXdMfm/1PVFm
+    EEqIBD2/okcGmqCtd+0myH+yi9MAEyWZ+NipjwcdMv0D6A3qgi5MyZl6AwkeOMUD
+    fhoOz21qcMR21u2rDtVS9yi1ExPSkqAmbiRHeF+cEBxvltOIrxa5DzmPneMcMvOw
+    okVd9Y+GfNtq7jJAMJvKQSp9y3orxONkziapTXd/+ftFdVSY+IL+UMEeObKrxofA
+    Ebnw3RPJeuH/4+R8jDczg8AmReYxko2Lgw9XQJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:in-reply-to:references; s=arctest; t=
-    1518513095; bh=EPMhWkADhRwisib4QpOcra/UU+EXWcu16m6FwbzlcbA=; b=k
-    sEjJHoWW+lbkJJSr5G1JAflwJpjpheK1Cq8giQGbfvLdhqgOO8O+KOnXNgQTQt8q
-    J7cp/TYUfQh4/ZtIagIkkHyLOgn/8PynHggmpMwQuSYRCJbDuIDw1VJTRdXGfpp8
-    q0zNRIAydhVkws89tx6sQeN4DU0HJapT6JTlHQ/vG4z5EhE7CPrjGIlBS5qwioLX
-    GKnlJ7JZltNb1+5njkmnqQ3Y4WznPQn7RAYwVyJuk6Ocmeorf9wRIBw2LCr04LPi
-    WizGRADcbPgMCUfIIdcUpN8Qr/Q9ZYtN514LuBjIsqhsOvmj1PCFBHJql1eQZDWG
-    UtKGzyyg5zgEH+I0yuSqg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=fol+fftF x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    1518513090; bh=V9hInJyYwTN03/NtnqvYoSPwFOkhXf1zK0tki5dH4GE=; b=i
+    Zm4Dk5Qjx4qY2o0ZtnXHGLW95XtJdKc5vlJ91eVayzItr6WgMzFvYgHnMy+VDZ2a
+    1oEs43M1XcAV6CaLFJ1hWsZ89M4Jiv/pwLCwa+L2/YUnFrH8gc+e4OrFnsP0hmnq
+    /NMb59tWuUn87oHVNVPbnhck5FJZIuVSMwFfT8dOiaUamIJ0HmVKKPEi8bN+butC
+    kS19YBlKn5HhJOvdA4JnQDPtghp+cemiSuuQyoWWMRy5DzQ8Em+uDRE1s6pgWVM9
+    t9rKF5YtUJKeVDQ14xbItctR95/fv/0r/Of8eEWYgSIeMvrgQ/ng/K4u+s5Y4qM6
+    iQKMMig2BNKwA2PF0OA0A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=cw62fE// x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.85.160.65 (mail-pl0-f65.google.com);
-    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f65.google.com;
+    iprev=pass policy.iprev=74.125.83.66 (mail-pg0-f66.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pg0-f66.google.com;
     x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MW9rtTzt;
-    x-ptr=pass x-ptr-helo=mail-pl0-f65.google.com x-ptr-lookup=mail-pl0-f65.google.com;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=rAyCCUBd;
+    x-ptr=pass x-ptr-helo=mail-pg0-f66.google.com x-ptr-lookup=mail-pg0-f66.google.com;
     x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=fol+fftF x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=cw62fE// x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.85.160.65 (mail-pl0-f65.google.com);
-    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f65.google.com;
+    iprev=pass policy.iprev=74.125.83.66 (mail-pg0-f66.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pg0-f66.google.com;
     x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MW9rtTzt;
-    x-ptr=pass x-ptr-helo=mail-pl0-f65.google.com x-ptr-lookup=mail-pl0-f65.google.com;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=rAyCCUBd;
+    x-ptr=pass x-ptr-helo=mail-pg0-f66.google.com x-ptr-lookup=mail-pg0-f66.google.com;
     x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Google-Smtp-Source: AH8x2271527wHCXW3B/jYB1NWXtiixoP7afJ3bLK4clvc2d91tan04zpmmNuCTeJ9k2Qol1YnJ8PcA==
+X-Google-Smtp-Source: AH8x225oYPoKtCDLJ9pOu4knAwUDh+AfDGIF5CLUj3/xGHnHrwmA8rKhD8Qz14q5NZlTGeMQN8eBDw==
 From: Greentime Hu <green.hu@gmail.com>
 X-Google-Original-From: Greentime Hu <greentime@andestech.com>
 To: greentime@andestech.com,
@@ -81,9 +81,9 @@ To: greentime@andestech.com,
 	shorne@gmail.com
 Cc: green.hu@gmail.com,
 	Vincent Chen <vincentc@andestech.com>
-Subject: [PATCH v7 11/37] nds32: MMU fault handling and page table management
-Date: Tue, 13 Feb 2018 17:09:15 +0800
-Message-Id: <a419d2de8b14394310edcd2561bfe6d4bd6d2561.1518505384.git.greentime@andestech.com>
+Subject: [PATCH v7 10/37] nds32: MMU initialization
+Date: Tue, 13 Feb 2018 17:09:14 +0800
+Message-Id: <01d8873d47a7979c94cf732ebf72d6d09da5bfee.1518505384.git.greentime@andestech.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <cover.1518505384.git.greentime@andestech.com>
 References: <cover.1518505384.git.greentime@andestech.com>
@@ -93,581 +93,483 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch includes page fault handler, mmap and fixup implementations.
+This patch includes memory initializations and highmem supporting.
 
 Signed-off-by: Vincent Chen <vincentc@andestech.com>
 Signed-off-by: Greentime Hu <greentime@andestech.com>
 Acked-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/nds32/lib/copy_page.S |  37 ++++
- arch/nds32/mm/extable.c    |  16 ++
- arch/nds32/mm/fault.c      | 410 +++++++++++++++++++++++++++++++++++++++++++++
- arch/nds32/mm/mmap.c       |  73 ++++++++
- 4 files changed, 536 insertions(+)
- create mode 100644 arch/nds32/lib/copy_page.S
- create mode 100644 arch/nds32/mm/extable.c
- create mode 100644 arch/nds32/mm/fault.c
- create mode 100644 arch/nds32/mm/mmap.c
+ arch/nds32/mm/highmem.c  |  79 ++++++++++++++
+ arch/nds32/mm/init.c     | 277 +++++++++++++++++++++++++++++++++++++++++++++++
+ arch/nds32/mm/mm-nds32.c |  90 +++++++++++++++
+ 3 files changed, 446 insertions(+)
+ create mode 100644 arch/nds32/mm/highmem.c
+ create mode 100644 arch/nds32/mm/init.c
+ create mode 100644 arch/nds32/mm/mm-nds32.c
 
-diff --git a/arch/nds32/lib/copy_page.S b/arch/nds32/lib/copy_page.S
+diff --git a/arch/nds32/mm/highmem.c b/arch/nds32/mm/highmem.c
 new file mode 100644
-index 000000000000..4a2ff85f17ee
+index 000000000000..e17cb8a69315
 --- /dev/null
-+++ b/arch/nds32/lib/copy_page.S
-@@ -0,0 +1,37 @@
++++ b/arch/nds32/mm/highmem.c
+@@ -0,0 +1,79 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (C) 2005-2017 Andes Technology Corporation
 +
-+#include <linux/linkage.h>
-+#include <asm/page.h>
-+
-+	.text
-+ENTRY(copy_page)
-+	pushm	$r2, $r10
-+	movi	$r2, PAGE_SIZE >> 5
-+.Lcopy_loop:
-+	lmw.bim	$r3, [$r1], $r10
-+	smw.bim	$r3, [$r0], $r10
-+	subi45	$r2, #1
-+	bnez38	$r2, .Lcopy_loop
-+	popm	$r2, $r10
-+	ret
-+ENDPROC(copy_page)
-+
-+ENTRY(clear_page)
-+	pushm	$r1, $r9
-+	movi	$r1, PAGE_SIZE >> 5
-+	movi55	$r2, #0
-+	movi55	$r3, #0
-+	movi55	$r4, #0
-+	movi55	$r5, #0
-+	movi55	$r6, #0
-+	movi55	$r7, #0
-+	movi55	$r8, #0
-+	movi55	$r9, #0
-+.Lclear_loop:
-+	smw.bim	$r2, [$r0], $r9
-+	subi45	$r1, #1
-+	bnez38	$r1, .Lclear_loop
-+	popm	$r1, $r9
-+        ret
-+ENDPROC(clear_page)
-diff --git a/arch/nds32/mm/extable.c b/arch/nds32/mm/extable.c
-new file mode 100644
-index 000000000000..db7f0a7c8966
---- /dev/null
-+++ b/arch/nds32/mm/extable.c
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2005-2017 Andes Technology Corporation
-+
-+#include <linux/extable.h>
-+#include <linux/uaccess.h>
-+
-+int fixup_exception(struct pt_regs *regs)
-+{
-+	const struct exception_table_entry *fixup;
-+
-+	fixup = search_exception_tables(instruction_pointer(regs));
-+	if (fixup)
-+		regs->ipc = fixup->fixup;
-+
-+	return fixup != NULL;
-+}
-diff --git a/arch/nds32/mm/fault.c b/arch/nds32/mm/fault.c
-new file mode 100644
-index 000000000000..3a246fb8098c
---- /dev/null
-+++ b/arch/nds32/mm/fault.c
-@@ -0,0 +1,410 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2005-2017 Andes Technology Corporation
-+
-+#include <linux/extable.h>
-+#include <linux/module.h>
-+#include <linux/signal.h>
-+#include <linux/ptrace.h>
-+#include <linux/mm.h>
-+#include <linux/init.h>
-+#include <linux/hardirq.h>
-+#include <linux/uaccess.h>
-+
-+#include <asm/pgtable.h>
++#include <linux/export.h>
++#include <linux/highmem.h>
++#include <linux/sched.h>
++#include <linux/smp.h>
++#include <linux/interrupt.h>
++#include <linux/bootmem.h>
++#include <asm/fixmap.h>
 +#include <asm/tlbflush.h>
 +
-+extern void die(const char *str, struct pt_regs *regs, long err);
++void *kmap(struct page *page)
++{
++	unsigned long vaddr;
++	might_sleep();
++	if (!PageHighMem(page))
++		return page_address(page);
++	vaddr = (unsigned long)kmap_high(page);
++	return (void *)vaddr;
++}
++
++EXPORT_SYMBOL(kmap);
++
++void kunmap(struct page *page)
++{
++	BUG_ON(in_interrupt());
++	if (!PageHighMem(page))
++		return;
++	kunmap_high(page);
++}
++
++EXPORT_SYMBOL(kunmap);
++
++void *kmap_atomic(struct page *page)
++{
++	unsigned int idx;
++	unsigned long vaddr, pte;
++	int type;
++	pte_t *ptep;
++
++	preempt_disable();
++	pagefault_disable();
++	if (!PageHighMem(page))
++		return page_address(page);
++
++	type = kmap_atomic_idx_push();
++
++	idx = type + KM_TYPE_NR * smp_processor_id();
++	vaddr = __fix_to_virt(FIX_KMAP_BEGIN + idx);
++	pte = (page_to_pfn(page) << PAGE_SHIFT) | (PAGE_KERNEL);
++	ptep = pte_offset_kernel(pmd_off_k(vaddr), vaddr);
++	set_pte(ptep, pte);
++
++	__nds32__tlbop_inv(vaddr);
++	__nds32__mtsr_dsb(vaddr, NDS32_SR_TLB_VPN);
++	__nds32__tlbop_rwr(pte);
++	__nds32__isb();
++	return (void *)vaddr;
++}
++
++EXPORT_SYMBOL(kmap_atomic);
++
++void __kunmap_atomic(void *kvaddr)
++{
++	if (kvaddr >= (void *)FIXADDR_START) {
++		unsigned long vaddr = (unsigned long)kvaddr;
++		pte_t *ptep;
++		kmap_atomic_idx_pop();
++		__nds32__tlbop_inv(vaddr);
++		__nds32__isb();
++		ptep = pte_offset_kernel(pmd_off_k(vaddr), vaddr);
++		set_pte(ptep, 0);
++	}
++	pagefault_enable();
++	preempt_enable();
++}
++
++EXPORT_SYMBOL(__kunmap_atomic);
+diff --git a/arch/nds32/mm/init.c b/arch/nds32/mm/init.c
+new file mode 100644
+index 000000000000..93ee0160720b
+--- /dev/null
++++ b/arch/nds32/mm/init.c
+@@ -0,0 +1,277 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 1995-2005 Russell King
++// Copyright (C) 2012 ARM Ltd.
++// Copyright (C) 2013-2017 Andes Technology Corporation
++
++#include <linux/kernel.h>
++#include <linux/errno.h>
++#include <linux/swap.h>
++#include <linux/init.h>
++#include <linux/bootmem.h>
++#include <linux/mman.h>
++#include <linux/nodemask.h>
++#include <linux/initrd.h>
++#include <linux/highmem.h>
++#include <linux/memblock.h>
++
++#include <asm/sections.h>
++#include <asm/setup.h>
++#include <asm/tlb.h>
++#include <asm/page.h>
++
++DEFINE_PER_CPU(struct mmu_gather, mmu_gathers);
++DEFINE_SPINLOCK(anon_alias_lock);
++extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
++extern unsigned long phys_initrd_start;
++extern unsigned long phys_initrd_size;
 +
 +/*
-+ * This is useful to dump out the page tables associated with
-+ * 'addr' in mm 'mm'.
++ * empty_zero_page is a special page that is used for
++ * zero-initialized data and COW.
 + */
-+void show_pte(struct mm_struct *mm, unsigned long addr)
++struct page *empty_zero_page;
++
++static void __init zone_sizes_init(void)
 +{
-+	pgd_t *pgd;
-+	if (!mm)
-+		mm = &init_mm;
++	unsigned long zones_size[MAX_NR_ZONES];
 +
-+	pr_alert("pgd = %p\n", mm->pgd);
-+	pgd = pgd_offset(mm, addr);
-+	pr_alert("[%08lx] *pgd=%08lx", addr, pgd_val(*pgd));
++	/* Clear the zone sizes */
++	memset(zones_size, 0, sizeof(zones_size));
 +
-+	do {
-+		pmd_t *pmd;
++	zones_size[ZONE_NORMAL] = max_low_pfn;
++#ifdef CONFIG_HIGHMEM
++	zones_size[ZONE_HIGHMEM] = max_pfn;
++#endif
++	free_area_init(zones_size);
 +
-+		if (pgd_none(*pgd))
-+			break;
++}
 +
-+		if (pgd_bad(*pgd)) {
-+			pr_alert("(bad)");
-+			break;
++/*
++ * Map all physical memory under high_memory into kernel's address space.
++ *
++ * This is explicitly coded for two-level page tables, so if you need
++ * something else then this needs to change.
++ */
++static void __init map_ram(void)
++{
++	unsigned long v, p, e;
++	pgd_t *pge;
++	pud_t *pue;
++	pmd_t *pme;
++	pte_t *pte;
++	/* These mark extents of read-only kernel pages...
++	 * ...from vmlinux.lds.S
++	 */
++
++	p = (u32) memblock_start_of_DRAM() & PAGE_MASK;
++	e = min((u32) memblock_end_of_DRAM(), (u32) __pa(high_memory));
++
++	v = (u32) __va(p);
++	pge = pgd_offset_k(v);
++
++	while (p < e) {
++		int j;
++		pue = pud_offset(pge, v);
++		pme = pmd_offset(pue, v);
++
++		if ((u32) pue != (u32) pge || (u32) pme != (u32) pge) {
++			panic("%s: Kernel hardcoded for "
++			      "two-level page tables", __func__);
 +		}
 +
-+		pmd = pmd_offset(pgd, addr);
-+#if PTRS_PER_PMD != 1
-+		pr_alert(", *pmd=%08lx", pmd_val(*pmd));
++		/* Alloc one page for holding PTE's... */
++		pte = (pte_t *) __va(memblock_alloc(PAGE_SIZE, PAGE_SIZE));
++		memset(pte, 0, PAGE_SIZE);
++		set_pmd(pme, __pmd(__pa(pte) + _PAGE_KERNEL_TABLE));
++
++		/* Fill the newly allocated page with PTE'S */
++		for (j = 0; p < e && j < PTRS_PER_PTE;
++		     v += PAGE_SIZE, p += PAGE_SIZE, j++, pte++) {
++			/* Create mapping between p and v. */
++			/* TODO: more fine grant for page access permission */
++			set_pte(pte, __pte(p + pgprot_val(PAGE_KERNEL)));
++		}
++
++		pge++;
++	}
++}
++static pmd_t *fixmap_pmd_p;
++static void __init fixedrange_init(void)
++{
++	unsigned long vaddr;
++	pgd_t *pgd;
++	pud_t *pud;
++	pmd_t *pmd;
++#ifdef CONFIG_HIGHMEM
++	pte_t *pte;
++#endif /* CONFIG_HIGHMEM */
++
++	/*
++	 * Fixed mappings:
++	 */
++	vaddr = __fix_to_virt(__end_of_fixed_addresses - 1);
++	pgd = swapper_pg_dir + pgd_index(vaddr);
++	pud = pud_offset(pgd, vaddr);
++	pmd = pmd_offset(pud, vaddr);
++	fixmap_pmd_p = (pmd_t *) __va(memblock_alloc(PAGE_SIZE, PAGE_SIZE));
++	memset(fixmap_pmd_p, 0, PAGE_SIZE);
++	set_pmd(pmd, __pmd(__pa(fixmap_pmd_p) + _PAGE_KERNEL_TABLE));
++
++#ifdef CONFIG_HIGHMEM
++	/*
++	 * Permanent kmaps:
++	 */
++	vaddr = PKMAP_BASE;
++
++	pgd = swapper_pg_dir + pgd_index(vaddr);
++	pud = pud_offset(pgd, vaddr);
++	pmd = pmd_offset(pud, vaddr);
++	pte = (pte_t *) __va(memblock_alloc(PAGE_SIZE, PAGE_SIZE));
++	memset(pte, 0, PAGE_SIZE);
++	set_pmd(pmd, __pmd(__pa(pte) + _PAGE_KERNEL_TABLE));
++	pkmap_page_table = pte;
++#endif /* CONFIG_HIGHMEM */
++}
++
++/*
++ * paging_init() sets up the page tables, initialises the zone memory
++ * maps, and sets up the zero page, bad page and bad page tables.
++ */
++void __init paging_init(void)
++{
++	int i;
++	void *zero_page;
++
++	pr_info("Setting up paging and PTEs.\n");
++	/* clear out the init_mm.pgd that will contain the kernel's mappings */
++	for (i = 0; i < PTRS_PER_PGD; i++)
++		swapper_pg_dir[i] = __pgd(1);
++
++	map_ram();
++
++	fixedrange_init();
++
++	/* allocate space for empty_zero_page */
++	zero_page = __va(memblock_alloc(PAGE_SIZE, PAGE_SIZE));
++	memset(zero_page, 0, PAGE_SIZE);
++	zone_sizes_init();
++
++	empty_zero_page = virt_to_page(zero_page);
++	flush_dcache_page(empty_zero_page);
++}
++
++static inline void __init free_highmem(void)
++{
++#ifdef CONFIG_HIGHMEM
++	unsigned long pfn;
++	for (pfn = PFN_UP(__pa(high_memory)); pfn < max_pfn; pfn++) {
++		phys_addr_t paddr = (phys_addr_t) pfn << PAGE_SHIFT;
++		if (!memblock_is_reserved(paddr))
++			free_highmem_page(pfn_to_page(pfn));
++	}
++#endif
++}
++
++static void __init set_max_mapnr_init(void)
++{
++	max_mapnr = max_pfn;
++}
++
++/*
++ * mem_init() marks the free areas in the mem_map and tells us how much
++ * memory is free.  This is done after various parts of the system have
++ * claimed their memory after the kernel image.
++ */
++void __init mem_init(void)
++{
++	phys_addr_t memory_start = memblock_start_of_DRAM();
++	BUG_ON(!mem_map);
++	set_max_mapnr_init();
++
++	free_highmem();
++
++	/* this will put all low memory onto the freelists */
++	free_all_bootmem();
++	mem_init_print_info(NULL);
++
++	pr_info("virtual kernel memory layout:\n"
++		"    fixmap  : 0x%08lx - 0x%08lx   (%4ld kB)\n"
++#ifdef CONFIG_HIGHMEM
++		"    pkmap   : 0x%08lx - 0x%08lx   (%4ld kB)\n"
++#endif
++		"    consist : 0x%08lx - 0x%08lx   (%4ld MB)\n"
++		"    vmalloc : 0x%08lx - 0x%08lx   (%4ld MB)\n"
++		"    lowmem  : 0x%08lx - 0x%08lx   (%4ld MB)\n"
++		"      .init : 0x%08lx - 0x%08lx   (%4ld kB)\n"
++		"      .data : 0x%08lx - 0x%08lx   (%4ld kB)\n"
++		"      .text : 0x%08lx - 0x%08lx   (%4ld kB)\n",
++		FIXADDR_START, FIXADDR_TOP, (FIXADDR_TOP - FIXADDR_START) >> 10,
++#ifdef CONFIG_HIGHMEM
++		PKMAP_BASE, PKMAP_BASE + LAST_PKMAP * PAGE_SIZE,
++		(LAST_PKMAP * PAGE_SIZE) >> 10,
++#endif
++		CONSISTENT_BASE, CONSISTENT_END,
++		((CONSISTENT_END) - (CONSISTENT_BASE)) >> 20, VMALLOC_START,
++		(unsigned long)VMALLOC_END, (VMALLOC_END - VMALLOC_START) >> 20,
++		(unsigned long)__va(memory_start), (unsigned long)high_memory,
++		((unsigned long)high_memory -
++		 (unsigned long)__va(memory_start)) >> 20,
++		(unsigned long)&__init_begin, (unsigned long)&__init_end,
++		((unsigned long)&__init_end -
++		 (unsigned long)&__init_begin) >> 10, (unsigned long)&_etext,
++		(unsigned long)&_edata,
++		((unsigned long)&_edata - (unsigned long)&_etext) >> 10,
++		(unsigned long)&_text, (unsigned long)&_etext,
++		((unsigned long)&_etext - (unsigned long)&_text) >> 10);
++
++	/*
++	 * Check boundaries twice: Some fundamental inconsistencies can
++	 * be detected at build time already.
++	 */
++#ifdef CONFIG_HIGHMEM
++	BUILD_BUG_ON(PKMAP_BASE + LAST_PKMAP * PAGE_SIZE > FIXADDR_START);
++	BUILD_BUG_ON((CONSISTENT_END) > PKMAP_BASE);
++#endif
++	BUILD_BUG_ON(VMALLOC_END > CONSISTENT_BASE);
++	BUILD_BUG_ON(VMALLOC_START >= VMALLOC_END);
++
++#ifdef CONFIG_HIGHMEM
++	BUG_ON(PKMAP_BASE + LAST_PKMAP * PAGE_SIZE > FIXADDR_START);
++	BUG_ON(CONSISTENT_END > PKMAP_BASE);
++#endif
++	BUG_ON(VMALLOC_END > CONSISTENT_BASE);
++	BUG_ON(VMALLOC_START >= VMALLOC_END);
++	BUG_ON((unsigned long)high_memory > VMALLOC_START);
++
++	return;
++}
++
++void free_initmem(void)
++{
++	free_initmem_default(-1);
++}
++
++#ifdef CONFIG_BLK_DEV_INITRD
++void free_initrd_mem(unsigned long start, unsigned long end)
++{
++	free_reserved_area((void *)start, (void *)end, -1, "initrd");
++}
 +#endif
 +
-+		if (pmd_none(*pmd))
-+			break;
-+
-+		if (pmd_bad(*pmd)) {
-+			pr_alert("(bad)");
-+			break;
-+		}
-+
-+		if (IS_ENABLED(CONFIG_HIGHMEM))
-+		{
-+			pte_t *pte;
-+			/* We must not map this if we have highmem enabled */
-+			pte = pte_offset_map(pmd, addr);
-+			pr_alert(", *pte=%08lx", pte_val(*pte));
-+			pte_unmap(pte);
-+		}
-+	} while (0);
-+
-+	pr_alert("\n");
-+}
-+
-+void do_page_fault(unsigned long entry, unsigned long addr,
-+		   unsigned int error_code, struct pt_regs *regs)
++void __set_fixmap(enum fixed_addresses idx,
++			       phys_addr_t phys, pgprot_t flags)
 +{
-+	struct task_struct *tsk;
-+	struct mm_struct *mm;
-+	struct vm_area_struct *vma;
-+	siginfo_t info;
-+	int fault;
-+	unsigned int mask = VM_READ | VM_WRITE | VM_EXEC;
-+	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
++	unsigned long addr = __fix_to_virt(idx);
++	pte_t *pte;
 +
-+	error_code = error_code & (ITYPE_mskINST | ITYPE_mskETYPE);
-+	tsk = current;
-+	mm = tsk->mm;
-+	info.si_code = SEGV_MAPERR;
-+	/*
-+	 * We fault-in kernel-space virtual memory on-demand. The
-+	 * 'reference' page table is init_mm.pgd.
-+	 *
-+	 * NOTE! We MUST NOT take any locks for this case. We may
-+	 * be in an interrupt or a critical region, and should
-+	 * only copy the information from the master page table,
-+	 * nothing more.
-+	 */
-+	if (addr >= TASK_SIZE) {
-+		if (user_mode(regs))
-+			goto bad_area_nosemaphore;
++	BUG_ON(idx <= FIX_HOLE || idx >= __end_of_fixed_addresses);
 +
-+		if (addr >= TASK_SIZE && addr < VMALLOC_END
-+		    && (entry == ENTRY_PTE_NOT_PRESENT))
-+			goto vmalloc_fault;
-+		else
-+			goto no_context;
-+	}
++	pte = (pte_t *)&fixmap_pmd_p[pte_index(addr)];;
 +
-+	/* Send a signal to the task for handling the unalignment access. */
-+	if (entry == ENTRY_GENERAL_EXCPETION
-+	    && error_code == ETYPE_ALIGNMENT_CHECK) {
-+		if (user_mode(regs))
-+			goto bad_area_nosemaphore;
-+		else
-+			goto no_context;
-+	}
-+
-+	/*
-+	 * If we're in an interrupt or have no user
-+	 * context, we must not take the fault..
-+	 */
-+	if (unlikely(faulthandler_disabled() || !mm))
-+		goto no_context;
-+
-+	/*
-+	 * As per x86, we may deadlock here. However, since the kernel only
-+	 * validly references user space from well defined areas of the code,
-+	 * we can bug out early if this is from code which shouldn't.
-+	 */
-+	if (unlikely(!down_read_trylock(&mm->mmap_sem))) {
-+		if (!user_mode(regs) &&
-+		    !search_exception_tables(instruction_pointer(regs)))
-+			goto no_context;
-+retry:
-+		down_read(&mm->mmap_sem);
++	if (pgprot_val(flags)) {
++		set_pte(pte, pfn_pte(phys >> PAGE_SHIFT, flags));
 +	} else {
-+		/*
-+		 * The above down_read_trylock() might have succeeded in which
-+		 * case, we'll have missed the might_sleep() from down_read().
-+		 */
-+		might_sleep();
-+		if (IS_ENABLED(CONFIG_DEBUG_VM)) {
-+			if (!user_mode(regs) &&
-+			    !search_exception_tables(instruction_pointer(regs)))
-+				goto no_context;
-+		}
-+	}
-+
-+	vma = find_vma(mm, addr);
-+
-+	if (unlikely(!vma))
-+		goto bad_area;
-+
-+	if (vma->vm_start <= addr)
-+		goto good_area;
-+
-+	if (unlikely(!(vma->vm_flags & VM_GROWSDOWN)))
-+		goto bad_area;
-+
-+	if (unlikely(expand_stack(vma, addr)))
-+		goto bad_area;
-+
-+	/*
-+	 * Ok, we have a good vm_area for this memory access, so
-+	 * we can handle it..
-+	 */
-+
-+good_area:
-+	info.si_code = SEGV_ACCERR;
-+
-+	/* first do some preliminary protection checks */
-+	if (entry == ENTRY_PTE_NOT_PRESENT) {
-+		if (error_code & ITYPE_mskINST)
-+			mask = VM_EXEC;
-+		else {
-+			mask = VM_READ | VM_WRITE;
-+			if (vma->vm_flags & VM_WRITE)
-+				flags |= FAULT_FLAG_WRITE;
-+		}
-+	} else if (entry == ENTRY_TLB_MISC) {
-+		switch (error_code & ITYPE_mskETYPE) {
-+		case RD_PROT:
-+			mask = VM_READ;
-+			break;
-+		case WRT_PROT:
-+			mask = VM_WRITE;
-+			flags |= FAULT_FLAG_WRITE;
-+			break;
-+		case NOEXEC:
-+			mask = VM_EXEC;
-+			break;
-+		case PAGE_MODIFY:
-+			mask = VM_WRITE;
-+			flags |= FAULT_FLAG_WRITE;
-+			break;
-+		case ACC_BIT:
-+			BUG();
-+		default:
-+			break;
-+		}
-+
-+	}
-+	if (!(vma->vm_flags & mask))
-+		goto bad_area;
-+
-+	/*
-+	 * If for any reason at all we couldn't handle the fault,
-+	 * make sure we exit gracefully rather than endlessly redo
-+	 * the fault.
-+	 */
-+
-+	fault = handle_mm_fault(vma, addr, flags);
-+
-+	/*
-+	 * If we need to retry but a fatal signal is pending, handle the
-+	 * signal first. We do not need to release the mmap_sem because it
-+	 * would already be released in __lock_page_or_retry in mm/filemap.c.
-+	 */
-+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		if (!user_mode(regs))
-+			goto no_context;
-+		return;
-+	}
-+
-+	if (unlikely(fault & VM_FAULT_ERROR)) {
-+		if (fault & VM_FAULT_OOM)
-+			goto out_of_memory;
-+		else if (fault & VM_FAULT_SIGBUS)
-+			goto do_sigbus;
-+		else
-+			goto bad_area;
-+	}
-+
-+	/*
-+	 * Major/minor page fault accounting is only done on the initial
-+	 * attempt. If we go through a retry, it is extremely likely that the
-+	 * page will be found in page cache at that point.
-+	 */
-+	if (flags & FAULT_FLAG_ALLOW_RETRY) {
-+		if (fault & VM_FAULT_MAJOR)
-+			tsk->maj_flt++;
-+		else
-+			tsk->min_flt++;
-+		if (fault & VM_FAULT_RETRY) {
-+			flags &= ~FAULT_FLAG_ALLOW_RETRY;
-+			flags |= FAULT_FLAG_TRIED;
-+
-+			/* No need to up_read(&mm->mmap_sem) as we would
-+			 * have already released it in __lock_page_or_retry
-+			 * in mm/filemap.c.
-+			 */
-+			goto retry;
-+		}
-+	}
-+
-+	up_read(&mm->mmap_sem);
-+	return;
-+
-+	/*
-+	 * Something tried to access memory that isn't in our memory map..
-+	 * Fix it, but check if it's kernel or user first..
-+	 */
-+bad_area:
-+	up_read(&mm->mmap_sem);
-+
-+bad_area_nosemaphore:
-+
-+	/* User mode accesses just cause a SIGSEGV */
-+
-+	if (user_mode(regs)) {
-+		tsk->thread.address = addr;
-+		tsk->thread.error_code = error_code;
-+		tsk->thread.trap_no = entry;
-+		info.si_signo = SIGSEGV;
-+		info.si_errno = 0;
-+		/* info.si_code has been set above */
-+		info.si_addr = (void *)addr;
-+		force_sig_info(SIGSEGV, &info, tsk);
-+		return;
-+	}
-+
-+no_context:
-+
-+	/* Are we prepared to handle this kernel fault?
-+	 *
-+	 * (The kernel has valid exception-points in the source
-+	 *  when it acesses user-memory. When it fails in one
-+	 *  of those points, we find it in a table and do a jump
-+	 *  to some fixup code that loads an appropriate error
-+	 *  code)
-+	 */
-+
-+	{
-+		const struct exception_table_entry *entry;
-+
-+		if ((entry =
-+		     search_exception_tables(instruction_pointer(regs))) !=
-+		    NULL) {
-+			/* Adjust the instruction pointer in the stackframe */
-+			instruction_pointer(regs) = entry->fixup;
-+			return;
-+		}
-+	}
-+
-+	/*
-+	 * Oops. The kernel tried to access some bad page. We'll have to
-+	 * terminate things with extreme prejudice.
-+	 */
-+
-+	bust_spinlocks(1);
-+	pr_alert("Unable to handle kernel %s at virtual address %08lx\n",
-+		 (addr < PAGE_SIZE) ? "NULL pointer dereference" :
-+		 "paging request", addr);
-+
-+	show_pte(mm, addr);
-+	die("Oops", regs, error_code);
-+	bust_spinlocks(0);
-+	do_exit(SIGKILL);
-+
-+	return;
-+
-+	/*
-+	 * We ran out of memory, or some other thing happened to us that made
-+	 * us unable to handle the page fault gracefully.
-+	 */
-+
-+out_of_memory:
-+	up_read(&mm->mmap_sem);
-+	if (!user_mode(regs))
-+		goto no_context;
-+	pagefault_out_of_memory();
-+	return;
-+
-+do_sigbus:
-+	up_read(&mm->mmap_sem);
-+
-+	/* Kernel mode? Handle exceptions or die */
-+	if (!user_mode(regs))
-+		goto no_context;
-+
-+	/*
-+	 * Send a sigbus
-+	 */
-+	tsk->thread.address = addr;
-+	tsk->thread.error_code = error_code;
-+	tsk->thread.trap_no = entry;
-+	info.si_signo = SIGBUS;
-+	info.si_errno = 0;
-+	info.si_code = BUS_ADRERR;
-+	info.si_addr = (void *)addr;
-+	force_sig_info(SIGBUS, &info, tsk);
-+
-+	return;
-+
-+vmalloc_fault:
-+	{
-+		/*
-+		 * Synchronize this task's top level page-table
-+		 * with the 'reference' page table.
-+		 *
-+		 * Use current_pgd instead of tsk->active_mm->pgd
-+		 * since the latter might be unavailable if this
-+		 * code is executed in a misfortunately run irq
-+		 * (like inside schedule() between switch_mm and
-+		 *  switch_to...).
-+		 */
-+
-+		unsigned int index = pgd_index(addr);
-+		pgd_t *pgd, *pgd_k;
-+		pud_t *pud, *pud_k;
-+		pmd_t *pmd, *pmd_k;
-+		pte_t *pte_k;
-+
-+		pgd = (pgd_t *) __va(__nds32__mfsr(NDS32_SR_L1_PPTB)) + index;
-+		pgd_k = init_mm.pgd + index;
-+
-+		if (!pgd_present(*pgd_k))
-+			goto no_context;
-+
-+		pud = pud_offset(pgd, addr);
-+		pud_k = pud_offset(pgd_k, addr);
-+		if (!pud_present(*pud_k))
-+			goto no_context;
-+
-+		pmd = pmd_offset(pud, addr);
-+		pmd_k = pmd_offset(pud_k, addr);
-+		if (!pmd_present(*pmd_k))
-+			goto no_context;
-+
-+		if (!pmd_present(*pmd))
-+			set_pmd(pmd, *pmd_k);
-+		else
-+			BUG_ON(pmd_page(*pmd) != pmd_page(*pmd_k));
-+
-+		/*
-+		 * Since the vmalloc area is global, we don't
-+		 * need to copy individual PTE's, it is enough to
-+		 * copy the pgd pointer into the pte page of the
-+		 * root task. If that is there, we'll find our pte if
-+		 * it exists.
-+		 */
-+
-+		/* Make sure the actual PTE exists as well to
-+		 * catch kernel vmalloc-area accesses to non-mapped
-+		 * addres. If we don't do this, this will just
-+		 * silently loop forever.
-+		 */
-+
-+		pte_k = pte_offset_kernel(pmd_k, addr);
-+		if (!pte_present(*pte_k))
-+			goto no_context;
-+
-+		return;
++		pte_clear(&init_mm, addr, pte);
++		flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
 +	}
 +}
-diff --git a/arch/nds32/mm/mmap.c b/arch/nds32/mm/mmap.c
+diff --git a/arch/nds32/mm/mm-nds32.c b/arch/nds32/mm/mm-nds32.c
 new file mode 100644
-index 000000000000..c206b31ce07a
+index 000000000000..3b43798d754f
 --- /dev/null
-+++ b/arch/nds32/mm/mmap.c
-@@ -0,0 +1,73 @@
++++ b/arch/nds32/mm/mm-nds32.c
+@@ -0,0 +1,90 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (C) 2005-2017 Andes Technology Corporation
 +
-+#include <linux/sched.h>
-+#include <linux/mman.h>
-+#include <linux/shm.h>
++#include <linux/init_task.h>
++#include <asm/pgalloc.h>
 +
-+#define COLOUR_ALIGN(addr,pgoff)		\
-+	((((addr)+SHMLBA-1)&~(SHMLBA-1)) +	\
-+	 (((pgoff)<<PAGE_SHIFT) & (SHMLBA-1)))
++#define FIRST_KERNEL_PGD_NR	(USER_PTRS_PER_PGD)
 +
 +/*
-+ * We need to ensure that shared mappings are correctly aligned to
-+ * avoid aliasing issues with VIPT caches.  We need to ensure that
-+ * a specific page of an object is always mapped at a multiple of
-+ * SHMLBA bytes.
-+ *
-+ * We unconditionally provide this function for all cases, however
-+ * in the VIVT case, we optimise out the alignment rules.
++ * need to get a page for level 1
 + */
-+unsigned long
-+arch_get_unmapped_area(struct file *filp, unsigned long addr,
-+		       unsigned long len, unsigned long pgoff,
-+		       unsigned long flags)
++
++pgd_t *pgd_alloc(struct mm_struct *mm)
 +{
-+	struct mm_struct *mm = current->mm;
-+	struct vm_area_struct *vma;
-+	int do_align = 0;
-+	struct vm_unmapped_area_info info;
-+	int aliasing = 0;
-+	if(IS_ENABLED(CONFIG_CPU_CACHE_ALIASING))
-+		aliasing = 1;
++	pgd_t *new_pgd, *init_pgd;
++	int i;
 +
-+	/*
-+	 * We only need to do colour alignment if either the I or D
-+	 * caches alias.
-+	 */
-+	if (aliasing)
-+		do_align = filp || (flags & MAP_SHARED);
++	new_pgd = (pgd_t *) __get_free_pages(GFP_KERNEL, 0);
++	if (!new_pgd)
++		return NULL;
++	for (i = 0; i < PTRS_PER_PGD; i++) {
++		(*new_pgd) = 1;
++		new_pgd++;
++	}
++	new_pgd -= PTRS_PER_PGD;
 +
-+	/*
-+	 * We enforce the MAP_FIXED case.
-+	 */
-+	if (flags & MAP_FIXED) {
-+		if (aliasing && flags & MAP_SHARED &&
-+		    (addr - (pgoff << PAGE_SHIFT)) & (SHMLBA - 1))
-+			return -EINVAL;
-+		return addr;
++	init_pgd = pgd_offset_k(0);
++
++	memcpy(new_pgd + FIRST_KERNEL_PGD_NR, init_pgd + FIRST_KERNEL_PGD_NR,
++	       (PTRS_PER_PGD - FIRST_KERNEL_PGD_NR) * sizeof(pgd_t));
++
++	cpu_dcache_wb_range((unsigned long)new_pgd,
++			    (unsigned long)new_pgd +
++			    PTRS_PER_PGD * sizeof(pgd_t));
++	inc_zone_page_state(virt_to_page((unsigned long *)new_pgd),
++			    NR_PAGETABLE);
++
++	return new_pgd;
++}
++
++void pgd_free(struct mm_struct *mm, pgd_t * pgd)
++{
++	pmd_t *pmd;
++	struct page *pte;
++
++	if (!pgd)
++		return;
++
++	pmd = (pmd_t *) pgd;
++	if (pmd_none(*pmd))
++		goto free;
++	if (pmd_bad(*pmd)) {
++		pmd_ERROR(*pmd);
++		pmd_clear(pmd);
++		goto free;
 +	}
 +
-+	if (len > TASK_SIZE)
-+		return -ENOMEM;
++	pte = pmd_page(*pmd);
++	pmd_clear(pmd);
++	dec_zone_page_state(virt_to_page((unsigned long *)pgd), NR_PAGETABLE);
++	pte_free(mm, pte);
++	mm_dec_nr_ptes(mm);
++	pmd_free(mm, pmd);
++free:
++	free_pages((unsigned long)pgd, 0);
++}
 +
-+	if (addr) {
-+		if (do_align)
-+			addr = COLOUR_ALIGN(addr, pgoff);
-+		else
-+			addr = PAGE_ALIGN(addr);
++/*
++ * In order to soft-boot, we need to insert a 1:1 mapping in place of
++ * the user-mode pages.  This will then ensure that we have predictable
++ * results when turning the mmu off
++ */
++void setup_mm_for_reboot(char mode)
++{
++	unsigned long pmdval;
++	pgd_t *pgd;
++	pmd_t *pmd;
++	int i;
 +
-+		vma = find_vma(mm, addr);
-+		if (TASK_SIZE - len >= addr &&
-+		    (!vma || addr + len <= vma->vm_start))
-+			return addr;
++	if (current->mm && current->mm->pgd)
++		pgd = current->mm->pgd;
++	else
++		pgd = init_mm.pgd;
++
++	for (i = 0; i < USER_PTRS_PER_PGD; i++) {
++		pmdval = (i << PGDIR_SHIFT);
++		pmd = pmd_offset(pgd + i, i << PGDIR_SHIFT);
++		set_pmd(pmd, __pmd(pmdval));
 +	}
-+
-+	info.flags = 0;
-+	info.length = len;
-+	info.low_limit = mm->mmap_base;
-+	info.high_limit = TASK_SIZE;
-+	info.align_mask = do_align ? (PAGE_MASK & (SHMLBA - 1)) : 0;
-+	info.align_offset = pgoff << PAGE_SHIFT;
-+	return vm_unmapped_area(&info);
 +}
 -- 
 2.16.1
