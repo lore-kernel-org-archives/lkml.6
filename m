@@ -1,111 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932895AbeBMAWN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 19:22:13 -0500
-Received: from osg.samsung.com ([64.30.133.232]:54089 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932743AbeBMAWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 19:22:11 -0500
-Date: Mon, 12 Feb 2018 22:21:57 -0200
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-To: Junio C Hamano <gitster@pobox.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Git Mailing List <git@vger.kernel.org>
-Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
-Message-ID: <20180212222157.0a3bd472@vento.lan>
-In-Reply-To: <xmqqzi4drczv.fsf@gitster-ct.c.googlers.com>
-References: <20180213080036.3bf3a908@canb.auug.org.au>
-        <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
-        <CA+55aFzxsNxgKD1uGZQCiib+=+wCMSa0=B+Ye3Zi-u6kpz8Vrg@mail.gmail.com>
-        <xmqqfu65sx20.fsf@gitster-ct.c.googlers.com>
-        <CA+55aFwTp8gg70sHXqOgR01Liv5c8nnfUP0yTdwpkh-rg+2EMA@mail.gmail.com>
-        <xmqqzi4drczv.fsf@gitster-ct.c.googlers.com>
-Organization: Samsung
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S932976AbeBMAYa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 19:24:30 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:55655 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932743AbeBMAY2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 19:24:28 -0500
+X-Google-Smtp-Source: AH8x225+nmKgJwGJUY3hQTgw64Szxs6BP14wPGiDFMj3aTFvWCReknTxkMiClCM4vpiem7hrcHD8XA==
+Date: Mon, 12 Feb 2018 16:24:25 -0800 (PST)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: Jonathan Corbet <corbet@lwn.net>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org
+Subject: [patch 1/2] mm, page_alloc: extend kernelcore and movablecore for
+ percent
+Message-ID: <alpine.DEB.2.10.1802121622470.179479@chino.kir.corp.google.com>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, 12 Feb 2018 15:42:44 -0800
-Junio C Hamano <gitster@pobox.com> escreveu:
+Both kernelcore= and movablecore= can be used to define the amount of
+ZONE_NORMAL and ZONE_MOVABLE on a system, respectively.  This requires
+the system memory capacity to be known when specifying the command line,
+however.
 
-> Linus Torvalds <torvalds@linux-foundation.org> writes:
-> 
-> > And some maintainers end up using multiple repositories as branches
-> > (the old _original_ git model). Again, you can just use "git fetch +
-> > git reset", of course, but that's a bit unsafe. In contrast, doing
-> > "git pull --ff-only" is a safe convenient operation that does both the
-> > fetch and the update to whatever state.
-> >
-> > But you do need that "--ff-only" to avoid the merge.  
-> 
-> OK.  I guess it is legit (and semi-sensible) for downstream
-> contributors to "git pull --ff-only $upstream $release_tag_X" to
-> bring their long-running topic currently based on release X-1 up to
-> date with respect to release X.  It probably makes more sense than
-> rebasing on top of release X, even though it makes a lot less sense
-> than merging their topics into release X.
-> 
-> As you said, pull of a tag that forbids fast-forward by default is
-> rather old development (I am kind of surprised that it was so old,
-> in v1.7.9), so it may be a bit difficult to transition.
-> 
-> There is 
-> 
-> 	[pull]
->                 ff = only
-> 
-> but pull.ff is quite global, and not good for intermediate level
-> maintainers who pull to integrate work of their downstream (for
-> which they do want the current "do not ff, record the tag in a merge
-> commit" behaviour) and also pull to catch up from their upstream
-> (which they want "ff-when-able").  They need to control between
-> ff=only and ff=when-able, depending on whom they are pulling from.
+This introduces the ability to define both kernelcore= and movablecore=
+as a percentage of total system memory.  This is convenient for systems
+software that wants to define the amount of ZONE_MOVABLE, for example, as
+a proportion of a system's memory rather than a hardcoded byte value.
 
-Yes, that's my pain. I don't want ff only when pulling from others,
-only when pulling from upstream tree.
+To define the percentage, the final character of the parameter should be
+a '%'.
 
-> 
-> We may want per-remote equivalent for it, i.e. e.g.
-> 
-> 	[pull]
-> 		ff=false ;# good default for collecting contributions
-> 
-> 	[remote "torvalds"] 
-> 		pullFF = only ;# good default for catching up
-> 
-> or something like that, perhaps?
+Signed-off-by: David Rientjes <rientjes@google.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt | 44 ++++++++++++-------------
+ mm/page_alloc.c                                 | 43 +++++++++++++++++++-----
+ 2 files changed, 57 insertions(+), 30 deletions(-)
 
-
-Yeah, something like that works. Please notice, however, that what I
-usually do is:
-
-	$ git remote update torvalds
-	$ git merge <tag>
-	  (or git pull . <tag>)
-
-So, for the above to work, it should store somehow the remote from
-where a tag came from.
-
-
-
-
-The reason is that I keep locally a cache with several tree clones
-(in bare mode) s that I bother enough to cache (linus, -stable, -next),
-as pulling from BR is time consuming, and I want to do it only once
-and use the same "cache" for all my git clones.
-
-I have a few git workdirs for my upstream work, but, as a patch
-developer, I also have "independent"[1] git repositories.
-
-[1] Due to disk constraints, the clones actually use --shared. So,
-the common objects are actually stored inside a single tree.
-
-Thanks,
-Mauro
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1825,30 +1825,30 @@
+ 	keepinitrd	[HW,ARM]
+ 
+ 	kernelcore=	[KNL,X86,IA-64,PPC]
+-			Format: nn[KMGTPE] | "mirror"
+-			This parameter
+-			specifies the amount of memory usable by the kernel
+-			for non-movable allocations.  The requested amount is
+-			spread evenly throughout all nodes in the system. The
+-			remaining memory in each node is used for Movable
+-			pages. In the event, a node is too small to have both
+-			kernelcore and Movable pages, kernelcore pages will
+-			take priority and other nodes will have a larger number
+-			of Movable pages.  The Movable zone is used for the
+-			allocation of pages that may be reclaimed or moved
+-			by the page migration subsystem.  This means that
+-			HugeTLB pages may not be allocated from this zone.
+-			Note that allocations like PTEs-from-HighMem still
+-			use the HighMem zone if it exists, and the Normal
+-			zone if it does not.
+-
+-			Instead of specifying the amount of memory (nn[KMGTPE]),
+-			you can specify "mirror" option. In case "mirror"
++			Format: nn[KMGTPE] | nn% | "mirror"
++			This parameter specifies the amount of memory usable by
++			the kernel for non-movable allocations.  The requested
++			amount is spread evenly throughout all nodes in the
++			system as ZONE_NORMAL.  The remaining memory is used for
++			movable memory in its own zone, ZONE_MOVABLE.  In the
++			event, a node is too small to have both ZONE_NORMAL and
++			ZONE_MOVABLE, kernelcore memory will take priority and
++			other nodes will have a larger ZONE_MOVABLE.
++
++			ZONE_MOVABLE is used for the allocation of pages that
++			may be reclaimed or moved by the page migration
++			subsystem.  This means that HugeTLB pages may not be
++			allocated from this zone.  Note that allocations like
++			PTEs-from-HighMem still use the HighMem zone if it
++			exists, and the Normal zone if it does not.
++
++			It is possible to specify the exact amount of memory in
++			the form of "nn[KMGTPE]", a percentage of total system
++			memory in the form of "nn%", or "mirror".  If "mirror"
+ 			option is specified, mirrored (reliable) memory is used
+ 			for non-movable allocations and remaining memory is used
+-			for Movable pages. nn[KMGTPE] and "mirror" are exclusive,
+-			so you can NOT specify nn[KMGTPE] and "mirror" at the same
+-			time.
++			for Movable pages.  "nn[KMGTPE]", "nn%", and "mirror"
++			are exclusive, so you cannot specify multiple forms.
+ 
+ 	kgdbdbgp=	[KGDB,HW] kgdb over EHCI usb debug port.
+ 			Format: <Controller#>[,poll interval]
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -272,7 +272,9 @@ static unsigned long __meminitdata dma_reserve;
+ static unsigned long __meminitdata arch_zone_lowest_possible_pfn[MAX_NR_ZONES];
+ static unsigned long __meminitdata arch_zone_highest_possible_pfn[MAX_NR_ZONES];
+ static unsigned long __initdata required_kernelcore;
++static unsigned long required_kernelcore_percent __initdata;
+ static unsigned long __initdata required_movablecore;
++static unsigned long required_movablecore_percent __initdata;
+ static unsigned long __meminitdata zone_movable_pfn[MAX_NUMNODES];
+ static bool mirrored_kernelcore;
+ 
+@@ -6477,7 +6479,18 @@ static void __init find_zone_movable_pfns_for_nodes(void)
+ 	}
+ 
+ 	/*
+-	 * If movablecore=nn[KMG] was specified, calculate what size of
++	 * If kernelcore=nn% or movablecore=nn% was specified, calculate the
++	 * amount of necessary memory.
++	 */
++	if (required_kernelcore_percent)
++		required_kernelcore = (totalpages * 100 * required_kernelcore_percent) /
++				       10000UL;
++	if (required_movablecore_percent)
++		required_movablecore = (totalpages * 100 * required_movablecore_percent) /
++					10000UL;
++
++	/*
++	 * If movablecore= was specified, calculate what size of
+ 	 * kernelcore that corresponds so that memory usable for
+ 	 * any allocation type is evenly spread. If both kernelcore
+ 	 * and movablecore are specified, then the value of kernelcore
+@@ -6717,18 +6730,30 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
+ 	zero_resv_unavail();
+ }
+ 
+-static int __init cmdline_parse_core(char *p, unsigned long *core)
++static int __init cmdline_parse_core(char *p, unsigned long *core,
++				     unsigned long *percent)
+ {
+ 	unsigned long long coremem;
++	char *endptr;
++
+ 	if (!p)
+ 		return -EINVAL;
+ 
+-	coremem = memparse(p, &p);
+-	*core = coremem >> PAGE_SHIFT;
++	/* Value may be a percentage of total memory, otherwise bytes */
++	coremem = simple_strtoull(p, &endptr, 0);
++	if (*endptr == '%') {
++		/* Paranoid check for percent values greater than 100 */
++		WARN_ON(coremem > 100);
+ 
+-	/* Paranoid check that UL is enough for the coremem value */
+-	WARN_ON((coremem >> PAGE_SHIFT) > ULONG_MAX);
++		*percent = coremem;
++	} else {
++		coremem = memparse(p, &p);
++		/* Paranoid check that UL is enough for the coremem value */
++		WARN_ON((coremem >> PAGE_SHIFT) > ULONG_MAX);
+ 
++		*core = coremem >> PAGE_SHIFT;
++		*percent = 0UL;
++	}
+ 	return 0;
+ }
+ 
+@@ -6744,7 +6769,8 @@ static int __init cmdline_parse_kernelcore(char *p)
+ 		return 0;
+ 	}
+ 
+-	return cmdline_parse_core(p, &required_kernelcore);
++	return cmdline_parse_core(p, &required_kernelcore,
++				  &required_kernelcore_percent);
+ }
+ 
+ /*
+@@ -6753,7 +6779,8 @@ static int __init cmdline_parse_kernelcore(char *p)
+  */
+ static int __init cmdline_parse_movablecore(char *p)
+ {
+-	return cmdline_parse_core(p, &required_movablecore);
++	return cmdline_parse_core(p, &required_movablecore,
++				  &required_movablecore_percent);
+ }
+ 
+ early_param("kernelcore", cmdline_parse_kernelcore);
