@@ -1,218 +1,156 @@
-Return-Path: <jonathanh@nvidia.com>
-X-Google-Smtp-Source: AH8x225ORe5zOKDhPCq8HIs6IHf3ewI1UbHSvzhw1jowdEO/eUjQ83Dk+J+2lSnDK71qfl6N2OHk
-ARC-Seal: i=1; a=rsa-sha256; t=1518530095; cv=none;
+Return-Path: <tipbot@zytor.com>
+X-Google-Smtp-Source: AH8x227NsnTG7AN8p2XWbgR+B3QAYAqcxwjaTw3fs62G7Q3fNbmIQ7cJyAMeF1cdP1sRq/XqB/12
+ARC-Seal: i=1; a=rsa-sha256; t=1518513274; cv=none;
         d=google.com; s=arc-20160816;
-        b=T+odgv6lY5W82S8QKPG8/cOm3Z4H4nhpM2oXwBB/uzKVAlXZz1unwIbWHLsTLCZm+p
-         HsCgYQiCAgRekDBPYbHCwRmIf94AUsZwAnydnz2ufR35SJ0tZ4TPkwPP19KaAYMDklRg
-         TPGEGZ7TKQxaUxNouMxOV1KfK+Hd5teC7PG0ycPkEmG7CuKoijHGNY8BggkgY17NeOkA
-         fAMuP2ZlSIUFmyVi6Tcy/tVQlISyAyLwctEDHuHEllExbmepbqqR85YLww37SYW5DgXz
-         dHakCMlUI4+VMayMbI8JpZeVtGIQCjMfk/YLiJ+lCmDiBIQCAPuXlYENxHuNCrc0zQu7
-         g7/A==
+        b=YIRBncofKPpfwbgKyAJOpCHiaroSocRH2qS2C2ogxbeRIY5R25eMzcL29X+0o20kJL
+         kyqrnb/ipeMXDeZ1KQQhAFR74iAuhoDrQQsz7otPIwr7ZY3HKGXOgLYymE+Jx/ttKGj7
+         mGnWBgDcUri459PqnMNWsSUY+X5MIRGTEqxxWzzbZbczpqZFY/29iV0J83dZ9aTv63Jy
+         F0LxC6fyEGsXm/d1OWjGpRbF0comYV1bthM8LJ36xJaQK1hYvS/r3DWI+v9uUF+1ixiN
+         hjZcwLUvipDtQiyHy8o46KmsJM4lqx6/u5P+ME0qRC5NKHeb4sX1jRZHC/WGGrjkSds2
+         iieg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=precedence:content-disposition:content-transfer-encoding
+         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
+         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=20lIa7AeRjoHmio+4PnJjUwtzW6J8pC+Vtz+jmjHx5c=;
-        b=KFuxqQX4S+dQNR2iH8UMz5tBG1lsm3W4Xo0LGMR8HefDLlXFbNCW2UcXrUti3sdBtE
-         DNZUcivcgxTY8UvivRSTsUfafo5/V4SfabTQQbUchR5Yys0vmf/THlwb6W6drSAvIs9R
-         xeYEr1d7v4uY6o229wvZx1+a0bDXFCl2gJD1hQ75EgTnd4AwO7doHFUrALmRIlikRTmP
-         /imOLSVVjNzoLlh94wCWVxUD0RGArsVR3Al+wgbtpTVFulj6wKJndgqtvyQK6gd6UbCp
-         RkWnmSx8U4PV04I8PGlSTfmQvsvHQ5tZju4C4DPLnatAGEdwsIvLpNafMmZ3FCwOa1fv
-         kcxg==
+        bh=PPRp5aiwEPTmr7+9TfZMoIrTYGLKLtTOutqqYnXLRoI=;
+        b=AZ27F2u0XC14eNUEQJwLooqN33CPWTIW/E+xTdoisYdxK108WnX0PwFhqExQNcgoj/
+         vaB2gKeOWmijJ4jJ2Tix26XBUEbZm/ym+auzaFOt89LAit/eLayoLgOyW2jonHgEGTn2
+         j6m+3vvORHKWPnkf2oI87zg/KXpZ8qLMQ7Gn+OsdXKUd4HHCwJkgBp4YaWzReyknySmO
+         9PLPgqzSSKJxpwtiZaLYGNbFV8vDwG4flioAhtDbBYZG2MpO3f1IeEFbaLHFd3j9CZlu
+         vQadpmXskPPinX42gPNuhb5pEuRXP9qkPDNoXM4BLVBHXx40NDdeGKpRUUjpf2PJ6o9j
+         ESxA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jonathanh@nvidia.com designates 216.228.121.65 as permitted sender) smtp.mailfrom=jonathanh@nvidia.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jonathanh@nvidia.com designates 216.228.121.65 as permitted sender) smtp.mailfrom=jonathanh@nvidia.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
-X-PGP-Universal: processed;
-	by hqpgpgate101.nvidia.com on Tue, 13 Feb 2018 05:54:54 -0800
-Subject: Re: [PATCH v6 4/4] soc/tegra: pmc: Use the new reset APIs to manage
- reset controllers
-To: Philipp Zabel <p.zabel@pengutronix.de>, <linux-kernel@vger.kernel.org>
-CC: Vivek Gautam <vivek.gautam@codeaurora.org>, Felipe Balbi
-	<balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Thierry
- Reding" <treding@nvidia.com>, <linux-tegra@vger.kernel.org>,
-	<linux-usb@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20170619143408.15668-1-p.zabel@pengutronix.de>
- <20170619143408.15668-5-p.zabel@pengutronix.de>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <90ef269d-cb8f-414f-ad56-faa933ad2e8a@nvidia.com>
-Date: Tue, 13 Feb 2018 13:54:49 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Date: Tue, 13 Feb 2018 00:58:21 -0800
+Sender: tip tree robot <tipbot@zytor.com>
+From: tip-bot for David Woodhouse <tipbot@zytor.com>
+Message-ID: <tip-f208820a321f9b23d77d7eed89945d862d62a3ed@git.kernel.org>
+Cc: mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        dwmw2@infradead.org, dan.j.williams@intel.com,
+        gregkh@linuxfoundation.org, luto@kernel.org, dwmw@amazon.co.uk,
+        jpoimboe@redhat.com, torvalds@linux-foundation.org,
+        dave.hansen@linux.intel.com, bp@alien8.de, peterz@infradead.org,
+        tglx@linutronix.de, arjan@linux.intel.com
+Reply-To: torvalds@linux-foundation.org, dave.hansen@linux.intel.com,
+        bp@alien8.de, tglx@linutronix.de, peterz@infradead.org,
+        arjan@linux.intel.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        dwmw2@infradead.org, hpa@zytor.com, gregkh@linuxfoundation.org,
+        dan.j.williams@intel.com, dwmw@amazon.co.uk, luto@kernel.org,
+        jpoimboe@redhat.com
+In-Reply-To: <1518305967-31356-3-git-send-email-dwmw@amazon.co.uk>
+References: <1518305967-31356-3-git-send-email-dwmw@amazon.co.uk>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] Revert "x86/speculation: Simplify
+ indirect_branch_prediction_barrier()"
+Git-Commit-ID: f208820a321f9b23d77d7eed89945d862d62a3ed
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20170619143408.15668-5-p.zabel@pengutronix.de>
-X-Originating-IP: [10.21.132.129]
-X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To UKMAIL101.nvidia.com
- (10.26.138.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1568095321375522325?=
-X-GMAIL-MSGID: =?utf-8?q?1592294213184604030?=
+X-GMAIL-THRID: =?utf-8?q?1592160265203742206?=
+X-GMAIL-MSGID: =?utf-8?q?1592276574714010482?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Commit-ID:  f208820a321f9b23d77d7eed89945d862d62a3ed
+Gitweb:     https://git.kernel.org/tip/f208820a321f9b23d77d7eed89945d862d62a3ed
+Author:     David Woodhouse <dwmw@amazon.co.uk>
+AuthorDate: Sat, 10 Feb 2018 23:39:23 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 13 Feb 2018 08:59:00 +0100
 
+Revert "x86/speculation: Simplify indirect_branch_prediction_barrier()"
 
-On 19/06/17 15:34, Philipp Zabel wrote:
-> From: Vivek Gautam <vivek.gautam@codeaurora.org>
-> 
-> Make use of of_reset_control_array_get_exclusive() to manage
-> an array of reset controllers available with the device.
-> 
-> Cc: Jon Hunter <jonathanh@nvidia.com>
-> Cc: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> [p.zabel@pengutronix.de: switch to hidden reset control array]
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> ---
-> Changes since v5: updated commit message, added missing SoB
-> ---
->  drivers/soc/tegra/pmc.c | 82 ++++++++++++-------------------------------------
->  1 file changed, 20 insertions(+), 62 deletions(-)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index e233dd5dcab3d..749b218147a19 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -124,8 +124,7 @@ struct tegra_powergate {
->  	unsigned int id;
->  	struct clk **clks;
->  	unsigned int num_clks;
-> -	struct reset_control **resets;
-> -	unsigned int num_resets;
-> +	struct reset_control *reset;
->  };
->  
->  struct tegra_io_pad_soc {
-> @@ -348,32 +347,14 @@ static int tegra_powergate_enable_clocks(struct tegra_powergate *pg)
->  	return err;
->  }
->  
-> -static int tegra_powergate_reset_assert(struct tegra_powergate *pg)
-> +static inline int tegra_powergate_reset_assert(struct tegra_powergate *pg)
->  {
-> -	unsigned int i;
-> -	int err;
-> -
-> -	for (i = 0; i < pg->num_resets; i++) {
-> -		err = reset_control_assert(pg->resets[i]);
-> -		if (err)
-> -			return err;
-> -	}
-> -
-> -	return 0;
-> +	return reset_control_assert(pg->reset);
->  }
->  
-> -static int tegra_powergate_reset_deassert(struct tegra_powergate *pg)
-> +static inline int tegra_powergate_reset_deassert(struct tegra_powergate *pg)
->  {
-> -	unsigned int i;
-> -	int err;
-> -
-> -	for (i = 0; i < pg->num_resets; i++) {
-> -		err = reset_control_deassert(pg->resets[i]);
-> -		if (err)
-> -			return err;
-> -	}
-> -
-> -	return 0;
-> +	return reset_control_deassert(pg->reset);
->  }
->  
->  static int tegra_powergate_power_up(struct tegra_powergate *pg,
-> @@ -566,8 +547,7 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
->  	pg.id = id;
->  	pg.clks = &clk;
->  	pg.num_clks = 1;
-> -	pg.resets = &rst;
-> -	pg.num_resets = 1;
-> +	pg.reset = IS_ERR(rst) ? NULL : rst;
->  
->  	err = tegra_powergate_power_up(&pg, false);
->  	if (err)
-> @@ -755,45 +735,26 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
->  static int tegra_powergate_of_get_resets(struct tegra_powergate *pg,
->  					 struct device_node *np, bool off)
->  {
-> -	struct reset_control *rst;
-> -	unsigned int i, count;
->  	int err;
->  
-> -	count = of_count_phandle_with_args(np, "resets", "#reset-cells");
-> -	if (count == 0)
-> -		return -ENODEV;
-> -
-> -	pg->resets = kcalloc(count, sizeof(rst), GFP_KERNEL);
-> -	if (!pg->resets)
-> -		return -ENOMEM;
-> -
-> -	for (i = 0; i < count; i++) {
-> -		pg->resets[i] = of_reset_control_get_by_index(np, i);
-> -		if (IS_ERR(pg->resets[i])) {
-> -			err = PTR_ERR(pg->resets[i]);
-> -			goto error;
-> -		}
-> -
-> -		if (off)
-> -			err = reset_control_assert(pg->resets[i]);
-> -		else
-> -			err = reset_control_deassert(pg->resets[i]);
-> -
-> -		if (err) {
-> -			reset_control_put(pg->resets[i]);
-> -			goto error;
-> -		}
-> +	pg->reset = of_reset_control_array_get_exclusive(np);
-> +	if (IS_ERR(pg->reset)) {
-> +		pr_err("failed to get device resets\n");
-> +		return PTR_ERR(pg->reset);
->  	}
->  
-> -	pg->num_resets = count;
-> +	if (off)
-> +		err = reset_control_assert(pg->reset);
-> +	else
-> +		err = reset_control_deassert(pg->reset);
->  
-> -	return 0;
-> +	if (err)
-> +		goto put_reset;
->  
-> -error:
-> -	while (i--)
-> -		reset_control_put(pg->resets[i]);
-> +	return 0;
->  
-> -	kfree(pg->resets);
-> +put_reset:
-> +	reset_control_put(pg->reset);
->  
->  	return err;
->  }
-> @@ -885,10 +846,7 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
->  	pm_genpd_remove(&pg->genpd);
->  
->  remove_resets:
-> -	while (pg->num_resets--)
-> -		reset_control_put(pg->resets[pg->num_resets]);
-> -
-> -	kfree(pg->resets);
-> +	reset_control_put(pg->reset);
->  
->  remove_clks:
->  	while (pg->num_clks--)
-> 
+This reverts commit 64e16720ea0879f8ab4547e3b9758936d483909b.
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+We cannot call C functions like that, without marking all the
+call-clobbered registers as, well, clobbered. We might have got away
+with it for now because the __ibp_barrier() function was *fairly*
+unlikely to actually use any other registers. But no. Just no.
 
-Cheers
-Jon
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: arjan.van.de.ven@intel.com
+Cc: dave.hansen@intel.com
+Cc: jmattson@google.com
+Cc: karahmed@amazon.de
+Cc: kvm@vger.kernel.org
+Cc: pbonzini@redhat.com
+Cc: rkrcmar@redhat.com
+Cc: sironi@amazon.de
+Link: http://lkml.kernel.org/r/1518305967-31356-3-git-send-email-dwmw@amazon.co.uk
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/nospec-branch.h | 13 +++++++++----
+ arch/x86/include/asm/processor.h     |  3 ---
+ arch/x86/kernel/cpu/bugs.c           |  6 ------
+ 3 files changed, 9 insertions(+), 13 deletions(-)
 
--- 
-nvpublic
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 4d57894..300cc15 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -164,10 +164,15 @@ static inline void vmexit_fill_RSB(void)
+ 
+ static inline void indirect_branch_prediction_barrier(void)
+ {
+-	alternative_input("",
+-			  "call __ibp_barrier",
+-			  X86_FEATURE_USE_IBPB,
+-			  ASM_NO_INPUT_CLOBBER("eax", "ecx", "edx", "memory"));
++	asm volatile(ALTERNATIVE("",
++				 "movl %[msr], %%ecx\n\t"
++				 "movl %[val], %%eax\n\t"
++				 "movl $0, %%edx\n\t"
++				 "wrmsr",
++				 X86_FEATURE_USE_IBPB)
++		     : : [msr] "i" (MSR_IA32_PRED_CMD),
++			 [val] "i" (PRED_CMD_IBPB)
++		     : "eax", "ecx", "edx", "memory");
+ }
+ 
+ #endif /* __ASSEMBLY__ */
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 513f960..99799fb 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -969,7 +969,4 @@ bool xen_set_default_idle(void);
+ 
+ void stop_this_cpu(void *dummy);
+ void df_debug(struct pt_regs *regs, long error_code);
+-
+-void __ibp_barrier(void);
+-
+ #endif /* _ASM_X86_PROCESSOR_H */
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 71949bf..61152aa 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -337,9 +337,3 @@ ssize_t cpu_show_spectre_v2(struct device *dev,
+ 		       spectre_v2_module_string());
+ }
+ #endif
+-
+-void __ibp_barrier(void)
+-{
+-	__wrmsr(MSR_IA32_PRED_CMD, PRED_CMD_IBPB, 0);
+-}
+-EXPORT_SYMBOL_GPL(__ibp_barrier);
