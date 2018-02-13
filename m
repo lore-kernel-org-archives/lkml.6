@@ -1,109 +1,371 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965445AbeBMSXH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 13:23:07 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:40356 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965158AbeBMSXE (ORCPT
+        id S965501AbeBMSXj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 13:23:39 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:46440 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965388AbeBMSXh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 13:23:04 -0500
-Date: Tue, 13 Feb 2018 10:22:03 -0800
-From: Dave Watson <davejwatson@fb.com>
-To: Junaid Shahid <junaids@google.com>
-CC: Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        <linux-crypto@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sabrina Dubroca <sd@queasysnail.net>, <linux-kernel@vger.kernel.org>,
-        Stephan Mueller <smueller@chronox.de>,
-        Ilya Lesokhin <ilyal@mellanox.com>
-Subject: Re: [PATCH 14/14] x86/crypto: aesni: Update aesni-intel_glue to use
- scatter/gather
-Message-ID: <20180213182203.GA2122@davejwatson-mba.local>
-References: <cover.1518211765.git.davejwatson@fb.com>
- <20180212195128.GA61087@davejwatson-mba.local>
- <dc69bdfa-6dc2-da54-9d9a-b171aeb3212b@google.com>
+        Tue, 13 Feb 2018 13:23:37 -0500
+X-Google-Smtp-Source: AH8x2247m0J8HSW3R6o9MvkdJG+M6Ok1Epr/YZLrimvirjvzFuegDzoh9bSrkDQQZhDAYhYcycIl94q+CpCxuvWW2GQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <dc69bdfa-6dc2-da54-9d9a-b171aeb3212b@google.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
-X-Originating-IP: [2620:10d:c090:200::4:5f28]
-X-ClientProxiedBy: SN6PR0102CA0020.prod.exchangelabs.com (52.132.112.161) To
- CY4PR15MB1752.namprd15.prod.outlook.com (10.174.53.142)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a6aa36b5-4e32-4d33-ebf7-08d5730eb484
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:CY4PR15MB1752;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR15MB1752;3:0BUiCFHJf14nJA2TWGBCEIa7k5p6c4bJLdptUbyMHNv+LA1mz65qkkW7f3D48ks02pQNPdh+dGJnbFVUW6XRuVgrHKgfILylReZhQt8fLuVEifOSy6WKL4KfQcPE3b21cnIxJJJsVsObdz8yNM31TuIZt2l16uFo+XzCHuZlOfofmNONq/L1HrjpDBKHByGEvC0HU64fC+L7SSJyZgg3A1rB2WtWnu+3c3VJr3RZf2eT+XtrZBI9RkQwKgFyPNUY;25:mnycZsyX5kgK17QorWxZHdWt6bT9/qAo55SKt4Xn2GpIyP0Y3ilPnKJXPiM63xRli59Wqlc/c0NNtmyOq3j19cvnn35QKRaNk7p/NTD2MHJF54bYN5/qUcLj3tas5RSQy2TJs3HNkYYkQLK88tM/MKpEGAQ/npfo43YO5/9qhkDe/LyTzkPwsgvCTxBf2AkURpU4TRIGGDgU9BNY3/nbiLXSKW8mFRYogcxGpHQgXGCH+57fIDjqWlby50495yPWMVC1gTDut+0ZiM+xc01mNcPlDfAKN2VD8fy5uunXHsw3l+dt5PjNMlpfPi2QyWT4ePr5hchrUxWwyvB9s3ZK2g==;31:dawwfjnOxWmrglar6O/dKZ67X6uvdzdU7JQrbWDB8NY8kKgGubakOxqEsKkHpQTN0z8aXv+erMN2EjcNl/quZOYunbd83wEGA9e2OimjzvV5tEJ313jfF8VoMKwV5T473EBv02zO2KqzIUCxny7xRC3rcznouRt6xv0exV42+c/7Xdv2WBKe79U6+UfNrsXMWaguel+0LO3NWVKojVjDaUgrCL7YWm2PYcyG3DRP0eU=
-X-MS-TrafficTypeDiagnostic: CY4PR15MB1752:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR15MB1752;20:EV3WxOtbm8wYgjz8V6C2tCRsbUBiMnlteZHJsApa5m7DIDDEckLsvMhAT+y6by7B1PbGB9GIEJIatKO5NhEpZ7kaCu7sMmC7JLl9CY+v9g8BvgHPn2wG8UC4hg9tIXtHi5pQHk5RT//Uw9JIfH9Lk5VAwHqQAGMnf9tf4fP7OS7paCXMmo6W773skOPdZi2adGwJfVnadjfgGEC4woC2LlXqBOhk8Y+FTx57hlTHgJBlUmCqjKB14a5838jRB9PXpTiYdoR+W4YKNls7VfC0swmqEtqF1zuavoUuMckwV1LQbh7rwbfF50f/57QS4Jqr+k3QHheQ37flX3GosRHfd1upskqp5q10d1Fly/eLtE9QfuOHX3q+PxH7iUIKo17d2AFBvoAzTdCJaa6MNRnS0nOvS8sUDV5ApI2NSkAJfQOdsq/uKdxzhJaZOqSLV8JSlZuWEpa2kpuWQjMqw5R6RDUSmBSrV0wLwA1lms2YELd9LZzuAUNgV8nrLvPPzaTv;4:/yZdvb2BqnSfS15h4y/rjnvVguzdEeRRaVbtnIvIUH/bjJVLJNXqxRxSmF9n4fIQWVJvovx6uS3AORYTy1p3ig0JWLREGPqn6cjW5CYzFZl/+1/fLvUgJM+JePKG6d9c4w65gwkdOZc+nFpw2/FPJ0nQB8+bD9ZKTBmXBnQ1KUxjFIR+i8F+fs7a7djq+nBpzLAazahCoKLVEQAqWzX7VBm6MYltBpJ/Quet9RA+VoRa6r4SUUoYdd5LRkoN/fAIUEywx1OICI3CtyqFv/JQzmgJ4C/ws6GTSLeGkhEVHBAn+kjS9CyYTL3KqnbATZFM
-X-Microsoft-Antispam-PRVS: <CY4PR15MB17523FD631B0657F8B595512DDF60@CY4PR15MB1752.namprd15.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(266576461109395);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3231101)(11241501184)(944501161)(3002001)(10201501046)(93006095)(93001095)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:CY4PR15MB1752;BCL:0;PCL:0;RULEID:;SRVR:CY4PR15MB1752;
-X-Forefront-PRVS: 0582641F53
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(366004)(396003)(39860400002)(39380400002)(346002)(376002)(189003)(199004)(6916009)(2950100002)(8676002)(6666003)(68736007)(1076002)(47776003)(4326008)(6116002)(478600001)(5660300001)(33656002)(106356001)(23726003)(98436002)(25786009)(2906002)(7736002)(105586002)(52396003)(16586007)(54906003)(33896004)(229853002)(386003)(53546011)(76176011)(58126008)(53936002)(305945005)(76506005)(9686003)(6496006)(6246003)(59450400001)(83506002)(52116002)(86362001)(81166006)(81156014)(97736004)(7416002)(16526019)(186003)(6486002)(8936002)(316002)(50466002)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR15MB1752;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR15MB1752;23:yr4QUY2Uhl8ELCfwCY1xLxXngcDSjScg2XvIkQVWE?=
- =?us-ascii?Q?Tsu2qxFFH9DBx8za6kg5oMpF2DjLx9oKc22TrTx9Ag1WvHz/AyUyhrodbkGw?=
- =?us-ascii?Q?qFrv+rERNw6WGphRv9a8a9QHggFOvih0GjDR0Zmj4qV5257EXYHscVK/v1R9?=
- =?us-ascii?Q?7Gf2VOYXcLHrz2jFi5TzXjZfBuLnJ6iZK2GpLIcz00HCVjHeIvTu+4p8frMK?=
- =?us-ascii?Q?Uu1+azayXqGZVee2+FczN6Mmaw52/tw4AZJ6GAZhiOh5e4QDXzAAKj+NCCtU?=
- =?us-ascii?Q?g51VZk58M14hBm6ASG/Dz5aRCeHzDjed3rxcU47UBJJ0Q8C44NK9l/YPSbAg?=
- =?us-ascii?Q?YbPNDhcdmBpHvGEimGx4w4KIvno+L84m3shrI320XUMQkDxnvv8n5zohYEIK?=
- =?us-ascii?Q?1fcvJERfqFDTlUX1fiG9Vdm1yBH6uL99asJYzyePO4pqqtl2ptBcyEGCNBu7?=
- =?us-ascii?Q?QnLl3zmw9HhNzKOq5hQImi2hHGDzJ+Bj4NF5nx1Hn2rEzWBWIvMWEBvFfXuw?=
- =?us-ascii?Q?J65Wxm2XnHpJ8tdkOP3fIc2XxV7+lC9UFjRdYy542/QBrC/sxfJEDP9Y7qju?=
- =?us-ascii?Q?jaRh+9zxtUtXgWGwcJjVw6gh1mpUrf3u1eHwEs7PVXPNPThI5UYx+KG1YhFh?=
- =?us-ascii?Q?4AeDGIUx9Rvzm9AOiV4hx+0C5jpCabW7t25ktnc8NhFSkP9mWz3D7bdRauKq?=
- =?us-ascii?Q?Gg44BbLCsyGBQKyR1tncPD0s0cDvi0jeLl/Qx9DPWdw0LI+2tgr8uIa4qlRe?=
- =?us-ascii?Q?kNDagmjWI4+HPuwNixUpCQUhwUjXsh7YPXXDvTvsPtXBZeX4b4WZiX89n7lw?=
- =?us-ascii?Q?A9StLIySRe9209z3emSXRPHJrnZ69BQh5D3OQWlgvUb7Zixc8hjXFKx30y5i?=
- =?us-ascii?Q?vky9KaI0XSbOG3xi5wG9ccFth8vWo5pSvweFB313Euh2X8ZmcQmXgXE9aKtP?=
- =?us-ascii?Q?p8GVxEuctIdYonysLoKy43jitx5QhtFADDy9umLfcxomGDxwhud97Ebw1uQ5?=
- =?us-ascii?Q?AYcLdk6kQoYA5K7vxasILugTtd0Unuep0dEjbPo4zmL5UolaR52XhzRrvcp7?=
- =?us-ascii?Q?s7TIaBHBL5ZYbCyL/Igtg09z/sSw/n4AglaHp8To5bn2rSaGTTwnAUqwnE8i?=
- =?us-ascii?Q?KXxqhhJKAQUrsyKgWRh488SH3tMzB5G/h8MNtnys64iI7iWACL21sO12J9Av?=
- =?us-ascii?Q?/0hFWYSCe4R9UWHQhLwHpxQj9Z7WFQTcdbsh25OpC5VjQuVLEgjZMQofMUuG?=
- =?us-ascii?Q?IkZHZCjJQ4oD947wyU9+PuVNTPgvijSh6O3A7cNM0m2dqGHTGCd9Tz9pWfx5?=
- =?us-ascii?Q?CUjgqXRBaXmTelItjMxI2ZqmBUF8gA1DCTBA4IT8Da7?=
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR15MB1752;6:9j6gs1316bSPgh7+AIFw82dBOn+hUxcZbWFN/9Qndj/Q0gqHUcrmEIUqH9Hjdv26ptNYpiHzq3AowGup3CD0RzaW8/8nfK8JFlzZv1oajYXVV/hjbV1bIp8Dl0gSagEapFwgiZ1RFJhxSHyjLhljyzEMOug9xPIn+FAGXGkiWWi360TVfzNIp0wGUYzhYE0WJh10GvKOzbHtWmAh9roqkPgTA0aYjJnrtWydLZ7j3QLgLS2tUfScngAhyg0inRVN7wulD5wccq/e4T3zawmpNjZIRIL+Pv3p5ZCERsfrAl2aKpHB/14cNx+K3+Kp2TZebpqxBPMix5rX+m74pnCwqdyc5z450rtM53m7ZTG/jqs=;5:B7bylqTHGfIwEdi2nH5F8FvkjfsUwm/VItMXDeqKRai8mRKh/w8qAwV+4Ni6NqMufYzcGENih/T+8cjcLUAhFY9EclLqkBrLzKbmQBE5F+IefXysxzdMJU9Vi9/UfdXXXZ/i0MZiNi3dohp0tJ7cZUlQ0yi9IyedYVj6HowTkz4=;24:j/YoOky4Q5KuuVVB0Zq9umonEh7vx6fgHCURMdPpZp0nzcUUY/FHS3PpUIlc9CWa5jFBevscAL5imj47Bc37R08zhBe03dlqrKOMAV3Te40=;7:eNPYRKzo4xBV0MCl9L/3CVYJZZXT+KJrum8Ibx3t46fqKNVPwz7tJUuuKV3//CIsu+phsuDHgzzvpCehnQPMu/vvGTRUoCyuZSAq3oCfQ/cLvheiVYVDsY2IisVZkF2fe7Rz+qQyMgE7QQ5MMdv1eESk3fTQyBWyAs9lP8gzWWfZpO8XjAGFpOSwuvACFnw0wIzrzKsLMqVrh07KSZbzxhDKeeIdGu1ftpGomJAuwmpnw0O8x3uduotsilO7AE9k
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR15MB1752;20:Xl4GkcxC9cVd194o0ZRzJDrgsMokP+prNoT3TY5DqbC7gX5XJIkSPtLN7c/Onlk6qNmw20FG9cpXA3N2IxFPzxA1xdmDYGTLP8OQ69Pp8l1gP85LkG7mLGolREb7U2xmUnAzZTmiF3i4NyzmKdbdTiWZXR0M3gDrYgRmiGw/76E=
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2018 18:22:13.5952 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6aa36b5-4e32-4d33-ebf7-08d5730eb484
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1752
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-13_10:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <CALyZvKyQFp0CfwFfBosM=OK5DJgb71bhMAkhLU2Wdv0asTSVZw@mail.gmail.com>
+References: <CALyZvKyQFp0CfwFfBosM=OK5DJgb71bhMAkhLU2Wdv0asTSVZw@mail.gmail.com>
+From: Jason Vas Dias <jason.vas.dias@gmail.com>
+Date: Tue, 13 Feb 2018 18:23:35 +0000
+Message-ID: <CALyZvKy7HVvjhJ5VTKKicvkq98GbJhGfCiMXOHNYseiOGu1T=A@mail.gmail.com>
+Subject: Re: perf Intel x86_64 : BUG: BRANCH_INSTRUCTIONS / BRANCH_MISSES
+ cannot be combined with CACHE_REFERENCES / CACHE_MISSES .
+To: linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="f4030435b440d0823705651c1703"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/12/18 03:12 PM, Junaid Shahid wrote:
-> Hi Dave,
-> 
-> 
-> On 02/12/2018 11:51 AM, Dave Watson wrote:
-> 
-> > +static int gcmaes_encrypt_sg(struct aead_request *req, unsigned int assoclen,
-> > +			u8 *hash_subkey, u8 *iv, void *aes_ctx)
-> >  
-> > +static int gcmaes_decrypt_sg(struct aead_request *req, unsigned int assoclen,
-> > +			u8 *hash_subkey, u8 *iv, void *aes_ctx)
-> 
-> These two functions are almost identical. Wouldn't it be better to combine them into a single encrypt/decrypt function, similar to what you have done for the assembly macros?
-> 
-> > +	if (((struct crypto_aes_ctx *)aes_ctx)->key_length != AES_KEYSIZE_128 ||
-> > +		aesni_gcm_enc_tfm == aesni_gcm_enc) {
-> 
-> Shouldn't we also include a check for the buffer length being less than AVX_GEN2_OPTSIZE? AVX will not be used in that case either.
+--f4030435b440d0823705651c1703
+Content-Type: text/plain; charset="UTF-8"
 
-Yes, these both sound reasonable.  I will send a V2.
+On 13/02/2018, Jason Vas Dias <jason.vas.dias@gmail.com> wrote:
+> Good day -
+>
+> I'd much appreciate some advice as to why, on my Intel x86_64
+> ( DisplayFamily_DisplayModel : 06_3CH ), running either Linux 4.12.10,
+> or Linux 3.10.0, any attempt to count all of :
+>      PERF_COUNT_HW_BRANCH_INSTRUCTIONS
+>           (or raw config 0xC4) , and
+>      PERF_COUNT_HW_BRANCH_MISSES
+>           (or raw config 0xC5), and
+>      combined with
+>      PERF_COUNT_HW_CACHE_REFERENCES
+>          (or raw config 0x4F2E ), and
+>      PERF_COUNT_HW_CACHE_MISSES
+>          (or raw config 0x412E) ,
+> results in ALL COUNTERS BEING 0 in a read of the Group FD or
+> mmap sample area.
+>
+> This is demonstrated by the example program, which will
+> use perf_event_open() to create a Group Leader FD  for the first event,
+> and associate all other events with that Event Group , so that it
+> will read all events on the group FD .
+>
+> The perf_event_open() calls and the ioctl(event_fd, PERF_EVENT_IOC_ID, &id)
+> calls all return successfully , but if I combine ANY of
+> ( PERF_COUNT_HW_BRANCH_INSTRUCTIONS,
+>   PERF_COUNT_HW_BRANCH_MISSES
+> ) with any of
+> ( PERF_COUNT_HW_CACHE_REFERENCES,
+>   PERF_COUNT_HW_CACHE_MISSES
+> ) in the Event Group, ALL events have '0' event->value.
+>
+> Demo :
+> 1. Compile program to use kernel mapped Generic Events:
+>   $ gcc -std=gnu11 -o perf_bug perf_bug.c
+>   Running program shows all counters have 0 values, since both
+>   CACHE & BRANCH hits+misses are being requested:
+>
+>   $ ./perf_bug
+>   EVENT: Branch Instructions : 0
+>   EVENT: Branch Misses : 0
+>   EVENT: Instructions : 0
+>   EVENT: CPU Cycles : 0
+>   EVENT: Ref. CPU Cycles : 0
+>   EVENT: Bus Cycles : 0
+>   EVENT: Cache References : 0
+>   EVENT: Cache Misses : 0
+>
+>   NOT registering interest in EITHER the BRANCH counters
+>   OR the CACHE counters fixes the problem:
+>
+>   Compile without registering for BRANCH_INSTRUCTIONS
+>   or BRANCH_MISSES:
+>   $ gcc -std=gnu11 -DNO_BUG_NO_BRANCH  -o perf_bug perf_bug.c
+>   $ ./perf_bug
+>   EVENT: Instructions : 914
+>   EVENT: CPU Cycles : 4110
+>   EVENT: Ref. CPU Cycles : 4437
+>   EVENT: Bus Cycles : 152
+>   EVENT: Cache References : 1
+>   EVENT: Cache Misses : 1
+>
+>   Compile without registering for CACHE_REFERENCES or CACHE_MISSES:
+>   $ gcc -std=gnu11 -DNO_BUG_NO_CACHE  -o perf_bug perf_bug.c
+>   $ ./perf_bug
+> EVENT: Branch Instructions : 106
+> EVENT: Branch Misses : 6
+> EVENT: Instructions : 914
+> EVENT: CPU Cycles : 4132
+> EVENT: Ref. CPU Cycles : 8526
+> EVENT: Bus Cycles : 295
+>
+> The same thing happens if I do not use Generic Events, but rather
+> "dynamic raw PMU" events, by putting the hex values from
+> /sys/bus/event_source/devices/cpu/events/? into the perf_event_attr
+> config, OR'ed with (1<<63), and using the PERF_TYPE_RAW perf_event_attr
+> type value :
+>
+> $ gcc -DUSE_RAW_PMU -o perf_bug perf_bug.c
+> $ ./perf_bug
+> EVENT: Branch Instructions : 0
+> EVENT: Branch Misses : 0
+> EVENT: Instructions : 0
+> EVENT: CPU Cycles : 0
+> EVENT: Ref. CPU Cycles : 0
+> EVENT: Bus Cycles : 0
+> EVENT: Cache References : 0
+> EVENT: Cache Misses : 0
+>
+>
+> $ gcc -DUSE_RAW_PMU -DNO_BUG_NO_BRANCH -o perf_bug perf_bug.c
+> $ ./perf_bug
+> EVENT: Instructions : 914
+> EVENT: CPU Cycles : 4102
+> EVENT: Ref. CPU Cycles : 4959
+> EVENT: Bus Cycles : 171
+> EVENT: Cache References : 2
+> EVENT: Cache Misses : 2
+>
+> $ gcc -DUSE_RAW_PMU -DNO_BUG_NO_CACHE -o perf_bug perf_bug.c
+> $ ./perf_bug
+> EVENT: Branch Instructions : 106
+> EVENT: Branch Misses : 6
+> EVENT: Instructions : 914
+> EVENT: CPU Cycles : 4108
+> EVENT: Ref. CPU Cycles : 10817
+> EVENT: Bus Cycles : 373
+>
+>
+> The perf tool itself seems to have the same issue:
+>
+> With CACHE & BRANCH counters does not work :
+> $ perf stat -e '{r0c4,r0c5,r0c0,r03c,r0300,r013c,r04F2E,r0412E}:SIu' sleep
+> 1
+>
+>  Performance counter stats for 'sleep 1':
+>
+>      <not counted>      r0c4
+>                (0.00%)
+>      <not counted>      r0c5
+>                (0.00%)
+>      <not counted>      r0c0
+>                (0.00%)
+>      <not counted>      r03c
+>                (0.00%)
+>      <not counted>      r0300
+>                (0.00%)
+>      <not counted>      r013c
+>                (0.00%)
+>      <not counted>      r04F2E
+>                (0.00%)
+>    <not supported>     r0412E
+>
+>        1.001652932 seconds time elapsed
+>
+>    Some events weren't counted. Try disabling the NMI watchdog:
+> 	echo 0 > /proc/sys/kernel/nmi_watchdog
+> 	perf stat ...
+> 	echo 1 > /proc/sys/kernel/nmi_watchdog
+>
+> Disabling the NMI watchdog makes no difference .
+>
+> It is very strange that perf thinks 'r0412E' is not supported :
+>    $ cat /sys/bus/event_source/devices/cpu/cache_misses
+>    event=0x2e,umask=0x41
+>
+> The kernel should not be advertizing an unsupported event
+> in a  /sys/bus/event_source/devices/cpu/events/ file, should it ?
+>
+> So perf stat has the same problem - without either Cache or Branch
+> counters seems to work fine:
+>
+> without cache:
+> $ perf stat -e '{r0c4,r0c5,r0c0,r03c,r0300,r013c}:SIu' sleep 1
+>
+>  Performance counter stats for 'sleep 1':
+>
+>              37740      r0c4
+>               3557      r0c5
+>             188552      r0c0
+>             311684      r03c
+>             360963      r0300
+>              12461      r013c
+>
+>        1.001508109 seconds time elapsed
+>
+> without branch:
+> $ perf stat -e '{r0c0,r03c,r0300,r013c,r04F2E,r0412E}:SIu' sleep 1
+>
+>  Performance counter stats for 'sleep 1':
+>
+>             188554      r0c0
+>             320242      r03c
+>             452748      r0300
+>              15633      r013c
+>               4145      r04F2E
+>               3022      r0412E
+>
+>        1.001810421 seconds time elapsed
+>
+> proving again that perf's claim that 'r0412E' is not supported is bogus.
+> The Intel SDM's table 19-1 Architectural events, which ALL Intel CPUs
+> are meant to support, does include  'Event: 2EH | Umask: 4FH : LLC
+> Reference '  and  'Event: 2EH | Umask: 41H : LLC Miss' , as well as :
+> 'Event : C4H | Umask: 00H : Branch Instructions Retired' and
+> 'Event : C5H | Umask: 00H : Branch Misses Retired' .
+> So why can't perf count them all in the same group?
+>
+> Please , can anyone enlighten me as to what is going on here ?
+>
+> Why can't I count all of
+>    ( BRANCH_INSTRUCTIONS , BRANCH_MISSES ,
+>      CACHE_REFERENCES, CACHE_MISSES
+>   )
+> in the same Perf Event Group ?
+>
+> Thanks in advance for any replies,
+> Best Regards,
+> Jason
+>
 
-Thanks!
+Actually, it appears that ONLY the combination of
+'BRANCH_MISSES' and 'CACHE_MISSES' makes
+all sampled counter values 0 ; if either counter is
+not requested, all other counters have non-zero values.
+ I've updated the program to reflect this .
+
+And nmi_watchdog=1 DOES make a difference  :
+if  nmi_watchdog is > 0 , then ANY combination
+of {BRANCH,CACHE}_{REFS,MISSES} makes ALL
+sampled counter values be 0, but if nmi_watchdog is 0,
+then only the combination of BRANCH_MISSES and
+CACHE_MISSES makes all sampled values be 0 .
+
+This is a really nasty bug and makes the Linux PERF facility
+rather unusable ; because of this bug, Linux PERF provides
+no way of measuring cache and branch prediction performance
+at the same time for the same instruction sequence.
+
+Can anyone suggest a valid reason for this ?
+Or any workarounds ?
+
+If no-one suggests a workaround or valid reason
+I guess I should raise this as a serious bug .
+
+Thanks & Regards,
+Jason
+
+--f4030435b440d0823705651c1703
+Content-Type: text/x-csrc; charset="US-ASCII"; name="perf_bug.c"
+Content-Disposition: attachment; filename="perf_bug.c"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: file0
+
+LyogRGVtb25zdHJhdGlvbiBvZiBMaW51eCBQRVJGIGJ1ZzoKICogIExpbnV4IGlzIHVuYWJsZSB0
+byBjb3VudCBCUkFOQ0hfSU5TVFJVQ1RJT05TIG9yIEJSQU5DSF9NSVNTRVMgCiAqICBhdCB0aGUg
+c2FtZSB0aW1lIGFzIENBQ0hFX1JFRkVSRU5DRVMgb3IgQ0FDSEVfTUlTU0VTLgogKi8KCiNpbmNs
+dWRlIDxzeXMvdHlwZXMuaD4KI2luY2x1ZGUgPHN0ZGludC5oPgojaW5jbHVkZSA8c3RkYm9vbC5o
+PgojaW5jbHVkZSA8dW5pc3RkLmg+CiNpbmNsdWRlIDxzeXMvc3lzY2FsbC5oPgojaW5jbHVkZSA8
+c3lzL2lvY3RsLmg+CiNpbmNsdWRlIDxlcnJuby5oPgojaW5jbHVkZSA8c3RyaW5nLmg+CiNpbmNs
+dWRlIDxzdGRpby5oPgojaW5jbHVkZSA8bGludXgvcGVyZl9ldmVudC5oPgoKc3RhdGljIGludApw
+ZXJmX2V2ZW50X29wZW4KKCBzdHJ1Y3QgcGVyZl9ldmVudF9hdHRyICpod19ldmVudCwgcGlkX3Qg
+cGlkLCBpbnQgY3B1LCBpbnQgZ3JvdXBfZmQsIHVuc2lnbmVkIGxvbmcgZmxhZ3MgKQp7IGludCBy
+ZXQ7ICAKICByZXQgPSAoaW50KSBzeXNjYWxsKF9fTlJfcGVyZl9ldmVudF9vcGVuLCBod19ldmVu
+dCwgcGlkLCBjcHUsIGdyb3VwX2ZkLCBmbGFncyk7CiAgcmV0dXJuIHJldDsKfQoKaW50IG1haW4o
+IGludCBhcmdjLCBjb25zdCBjaGFyICpjb25zdCogYXJndikKeyBzdHJ1Y3QgcGVyZl9ldmVudF9h
+dHRyIHBlYSA9IHswfTsKICBzdHJ1Y3QgZXZjZmcKICB7IHVpbnQ2NF90IHBlcmZfdHlwZTsKICAg
+IHVpbnQ2NF90IHBlcmZfY2ZnOwogICAgY29uc3QgY2hhciAqbmFtZTsKICAgIGludCBmZDsKICAg
+IHVpbnQ2NF90IGlkOwogIH0gcGUgW10gPSB7CiNpZm5kZWYgVVNFX1JBV19QTVUKICAvLyBzbyB3
+ZSBjYW4gdGVzdCB1c2luZyBHZW5lcmljIEtlcm5lbCBFdmVudCBtYXBwaW5nOgojaWZuZGVmIE5P
+X0JVR19OT19CUkFOQ0gKI2lmbmRlZiBOT19CVUdfTk9fQlJBTkNIX0lOU1QgICAgCiAgICB7IFBF
+UkZfVFlQRV9IQVJEV0FSRSAKICAgICwgUEVSRl9DT1VOVF9IV19CUkFOQ0hfSU5TVFJVQ1RJT05T
+CiAgICAsICJCcmFuY2ggSW5zdHJ1Y3Rpb25zIgogICAgLCAtMSwgMAogICAgfQojZW5kaWYKI2lm
+bmRlZiBOT19CVUdfTk9fQlJBTkNIX01JU1MgICAgCiAgLCB7IFBFUkZfVFlQRV9IQVJEV0FSRSAK
+ICAgICwgUEVSRl9DT1VOVF9IV19CUkFOQ0hfTUlTU0VTCiAgICAsICJCcmFuY2ggTWlzc2VzIgog
+ICAgLCAtMSwgMAogICAgfQojZW5kaWYgICAgCiAgLAojZW5kaWYgICAgCiAgICB7IFBFUkZfVFlQ
+RV9IQVJEV0FSRSAKICAgICwgUEVSRl9DT1VOVF9IV19JTlNUUlVDVElPTlMKICAgICwgIkluc3Ry
+dWN0aW9ucyIKICAgICwgLTEsIDAKICAgIH0gICAgCiAgLCB7IFBFUkZfVFlQRV9IQVJEV0FSRSAK
+ICAgICwgUEVSRl9DT1VOVF9IV19DUFVfQ1lDTEVTCiAgICAsICJDUFUgQ3ljbGVzIgogICAgLCAt
+MSwgMAogICAgfQogICwgeyBQRVJGX1RZUEVfSEFSRFdBUkUgCiAgICAsIFBFUkZfQ09VTlRfSFdf
+UkVGX0NQVV9DWUNMRVMKICAgICwgIlJlZi4gQ1BVIEN5Y2xlcyIKICAgICwgLTEsIDAKICAgIH0g
+CiAgLCB7IFBFUkZfVFlQRV9IQVJEV0FSRSAKICAgICwgUEVSRl9DT1VOVF9IV19CVVNfQ1lDTEVT
+CiAgICAsICJCdXMgQ3ljbGVzIiAgICAgIAogICAgLCAtMSwgMCAgICAgIAogICAgfQojaWZuZGVm
+IE5PX0JVR19OT19DQUNIRQojaWZuZGVmIE5PX0JVR19OT19DQUNIRV9SRUYgICAgCiAgLCB7IFBF
+UkZfVFlQRV9IQVJEV0FSRSAKICAgICwgUEVSRl9DT1VOVF9IV19DQUNIRV9SRUZFUkVOQ0VTCiAg
+ICAsICJDYWNoZSBSZWZlcmVuY2VzIiAgICAgICAgICAgIAogICAgLCAtMSwgMAogICAgfQojZW5k
+aWYgICAgCiNpZm5kZWYgTk9fQlVHX05PX0NBQ0hFX01JU1MKICAsIHsgUEVSRl9UWVBFX0hBUkRX
+QVJFIAogICAgLCBQRVJGX0NPVU5UX0hXX0NBQ0hFX01JU1NFUwogICAgLCAiQ2FjaGUgTWlzc2Vz
+IiAgICAgICAgICAgICAgICAgIAogICAgLCAtMSwgMCAgICAgIAogICAgfQojZW5kaWYgICAKI2Vu
+ZGlmICAgIAojZWxzZQogIC8vIG9yIHRlc3QgdXNpbmcgcmF3IFBNVSBjb2RlcyAtIHRoZXNlIGNv
+bWUgZnJvbSB0aGUgSW50ZWwgU0RNLCBDaGFwdGVyIDE5LCBUYWJsZSAxOS0xLAogIC8vIGFuZCBJ
+J3ZlIGNoZWNrZWQgdGhleSBhcmUgaWRlbnRpY2FsIHRvIHRoZSB2YWx1ZXMgaW4KICAvLyAvc3lz
+L2J1cy9ldmVudF9zb3VyY2UvZGV2aWNlcy9jcHUvZXZlbnRzL3sKI2lmbmRlZiBOT19CVUdfTk9f
+QlJBTkNICiNpZm5kZWYgTk9fQlVHX05PX0JSQU5DSF9JTlNUICAgICAgICAKICAgIHsgUEVSRl9U
+WVBFX1JBVyAKICAgICwgKDFVTDw8NjNVKSB8IDB4QzQgICAvLyBicmFuY2hfaW5zdHJ1Y3Rpb25z
+CiAgICAsICJCcmFuY2ggSW5zdHJ1Y3Rpb25zIgogICAgLCAtMSwgMCAgICAgIAogICAgfQojZW5k
+aWYKI2lmbmRlZiBOT19CVUdfTk9fQlJBTkNIX01JU1MgICAgICAgCiAgLCB7IFBFUkZfVFlQRV9S
+QVcgCiAgICAsICgxVUw8PDYzVSkgfCAweEM1ICAgLy8gYnJhbmNoX21pc3NlcwogICAgLCAiQnJh
+bmNoIE1pc3NlcyIgICAgICAKICAgICwgLTEsIDAgICAgICAKICAgIH0KI2VuZGlmCiAgLAojZW5k
+aWYKICAgIHsgUEVSRl9UWVBFX1JBVyAKICAgICwgKDFVTDw8NjNVKSB8IDB4QzAgICAvLyBpbnN0
+cnVjdGlvbnMKICAgICwgIkluc3RydWN0aW9ucyIKICAgICwgLTEsIDAgICAgICAKICAgIH0gICAg
+CiAgLCB7IFBFUkZfVFlQRV9SQVcgCiAgICAsICgxVUw8PDYzVSkgfCAweDNDICAgLy8gY3B1IGN5
+Y2xlcwogICAgLCAiQ1BVIEN5Y2xlcyIgICAgICAKICAgICwgLTEsIDAgICAgICAKICAgIH0KICAs
+IHsgUEVSRl9UWVBFX1JBVyAKICAgICwgKDFVTDw8NjNVKSB8IDB4MDMwMCAgLy8gcmVmIGNwdSBj
+eWNsZXMKICAgICwgIlJlZi4gQ1BVIEN5Y2xlcyIgICAgICAgICAgICAKICAgICwgLTEsIDAgICAg
+ICAgICAgIAogICAgfQogICwgeyBQRVJGX1RZUEVfUkFXIAogICAgLCAoMVVMPDw2M1UpIHwgMHgw
+MTNDICAvLyBidXMgY3ljbGVzCiAgICAsICJCdXMgQ3ljbGVzIiAgICAgICAgICAgIAogICAgLCAt
+MSwgMCAgICAgIAogICAgfQojaWZuZGVmIE5PX0JVR19OT19DQUNIRQojaWZuZGVmIE5PX0JVR19O
+T19DQUNIRV9SRUYgICAgICAgIAogICwgeyBQRVJGX1RZUEVfUkFXIAogICAgLCAoMVVMPDw2M1Up
+IHwgMHgwNEYyRSAgLy8gY2FjaGUgcmVmZXJlbmNlcwogICAgLCAiQ2FjaGUgUmVmZXJlbmNlcyIg
+CiAgICAsIC0xLCAwICAgICAgICAgICAKICAgIH0KI2VuZGlmCiNpZm5kZWYgTk9fQlVHX05PX0NB
+Q0hFX01JU1MgICAgICAgICAgICAKICAsIHsgUEVSRl9UWVBFX1JBVyAKICAgICwgKDFVTDw8NjNV
+KSB8IDB4MDQxMkUgIC8vIGNhY2hlIG1pc3NlcwogICAgLCAiQ2FjaGUgTWlzc2VzIiAgICAgICAK
+ICAgICwgLTEsIDAgICAgICAKICAgIH0KI2VuZGlmICAgIAojZW5kaWYKI2VuZGlmCiAgfTsKI2Rl
+ZmluZSBOX0VWIChzaXplb2YocGUpL3NpemVvZihzdHJ1Y3QgZXZjZmcpKQogIGludCBmZD0tMTsK
+ICBpbnQgbl9ldj0wOwogIHBpZF90IHBpZD1nZXRwaWQoKTsKICBmb3IoOyBuX2V2IDwgTl9FVjsg
+bl9ldiArPSAxKQogIHsgbWVtc2V0KCZwZWEsICdcMCcsIHNpemVvZihwZWEpKTsKICAgIHBlYS5z
+aXplICAgPSBQRVJGX0FUVFJfU0laRV9WRVI1OwogICAgcGVhLnR5cGUgICA9IHBlW25fZXZdLnBl
+cmZfdHlwZTsKICAgIHBlYS5jb25maWcgPSBwZVtuX2V2XS5wZXJmX2NmZzsKICAgIHBlYS5yZWFk
+X2Zvcm1hdCA9IFBFUkZfRk9STUFUX0dST1VQICB8IFBFUkZfRk9STUFUX0lEIHwKICAgICAgICAg
+ICAgICAgICAgICAgIFBFUkZfRk9STUFUX1RPVEFMX1RJTUVfRU5BQkxFRCAgfAogICAgICAgICAg
+ICAgICAgICAgICAgUEVSRl9GT1JNQVRfVE9UQUxfVElNRV9SVU5OSU5HICA7CiAgICBwZWEuZGlz
+YWJsZWQ9MTsKICAgIHBlYS5leGNsdWRlX2tlcm5lbCA9IDE7CiAgICBwZWEuZXhjbHVkZV9pZGxl
+ID0gMTsKICAgIHBlYS5leGNsdWRlX2h2ID0gMTsKICAgIAogICAgaWYoKHBlW25fZXZdLmZkID0K
+ICAgICAgICBwZXJmX2V2ZW50X29wZW4gKCAmcGVhLCBwaWQsIC0xLCBmZCwgMCkKICAgICAgICkg
+PT0gLTEKICAgICApCiAgICB7IGZwcmludGYoc3RkZXJyLCJwZXJmX2V2ZW50X29wZW4gZmFpbGVk
+IDogJWQgOiAnJXMnLlxuIiwgZXJybm8sIHN0cmVycm9yKGVycm5vKSk7CiAgICAgIHJldHVybiAx
+OwogICAgfQogCiAgICBpZiggZmQgPT0gLTEpCiAgICAgIGZkID0gcGVbbl9ldl0uZmQ7IC8vIHRo
+aXMgaXMgdGhlIEdyb3VwIExlYWRlciBGRAogICAgCiAgICBpZiggMCAhPSBpb2N0bCggcGVbbl9l
+dl0uZmQsIFBFUkZfRVZFTlRfSU9DX0lELCAmcGVbbl9ldl0uaWQpKQogICAgeyBmcHJpbnRmKHN0
+ZGVyciwiaW9jdGwoZmQsIFBFUkZfRVZFTlRfSU9DX0lEKSBmYWlsZWQgZm9yICMlZCA6ICVkIDog
+JyVzJy5cbiIsIG5fZXYsIGVycm5vLCBzdHJlcnJvcihlcnJubykpOwogICAgICByZXR1cm4gMTsK
+ICAgIH0gICAgCiAgfQogIAogIGlmKCAwICE9IGlvY3RsKCBmZCwgUEVSRl9FVkVOVF9JT0NfUkVT
+RVQsIFBFUkZfSU9DX0ZMQUdfR1JPVVApKQogIHsgZnByaW50ZihzdGRlcnIsImlvY3RsKGZkLCBQ
+RVJGX0VWRU5UX0lPQ19SRVNFVCkgZmFpbGVkIDogJWQgOiAnJXMnLlxuIiwgZXJybm8sIHN0cmVy
+cm9yKGVycm5vKSk7CiAgICByZXR1cm4gMTsKICB9CiAgCiAgLy8gZG8gc29tZXRoaW5nIHRvIG1l
+YXN1cmUgLSBsZXQncyB0cnkgMTAwIGxvbmcgZGl2aXNpb25zOgogIHVpbnQ2NF90IGFfbnVtID0g
+MHgwMTAyMDMwNDA1MDYwNzA4OwogIHVpbnQ2NF90IGJfbnVtID0gfmFfbnVtOwogIGludCBjbnQ9
+MTAwOwogIGlmKCAwICE9IGlvY3RsKCBmZCwgUEVSRl9FVkVOVF9JT0NfRU5BQkxFLCBQRVJGX0lP
+Q19GTEFHX0dST1VQKSkKICB7IGZwcmludGYoc3RkZXJyLCJpb2N0bChmZCwgUEVSRl9FVkVOVF9J
+T0NfSUQpIGZhaWxlZCA6ICVkIDogJyVzJy5cbiIsIGVycm5vLCBzdHJlcnJvcihlcnJubykpOwog
+ICAgcmV0dXJuIDE7CiAgfQogIAogIGRvCiAgeyBhX251bT0oYl9udW0gLz0gYV9udW0pOwogIH0g
+d2hpbGUoLS1jbnQpOwogIAogIGlmKCAwICE9IGlvY3RsKCBmZCwgUEVSRl9FVkVOVF9JT0NfRElT
+QUJMRSwgUEVSRl9JT0NfRkxBR19HUk9VUCkpCiAgeyBmcHJpbnRmKHN0ZGVyciwiaW9jdGwoZmQs
+IFBFUkZfRVZFTlRfSU9DX0lEKSBmYWlsZWQgOiAlZCA6ICclcycuXG4iLCBlcnJubywgc3RyZXJy
+b3IoZXJybm8pKTsKICAgIHJldHVybiAxOwogIH0gIAoKICBzdHJ1Y3QKICB7IHVpbnQ2NF90IG5y
+LCB0aW1lX2VuYWJsZWQsIHRpbWVfcnVubmluZzsKICAgIHN0cnVjdCBldmVudAogICAgeyB1aW50
+NjRfdCB2YWx1ZSxpZDsKICAgIH0gZXZbTl9FVl07CiAgfSBldmVudHM7CgogIGlmKCByZWFkKGZk
+LCAmZXZlbnRzLCBzaXplb2YoZXZlbnRzKSkgIT0gc2l6ZW9mKGV2ZW50cykpCiAgeyBmcHJpbnRm
+KHN0ZGVyciwicmVhZCBvZiBldmVudCBncm91cCBsZWFkZXIgRkQgZmFpbGVkIDogJWQgOiAnJXMn
+LlxuIiwgZXJybm8sIHN0cmVycm9yKGVycm5vKSk7CiAgICByZXR1cm4gMTsKICB9CgogIGlmKCBl
+dmVudHMubnIgIT0gTl9FViApCiAgeyBmcHJpbnRmKHN0ZGVyciwidW5leHBlY3RlZCBudW1iZXIg
+b2YgZXZlbnRzIHJlYWQ6ICVsdVxuIiwgZXZlbnRzLm5yKTsKICAgIHJldHVybiAxOwogIH0KICBz
+dHJ1Y3QgZXZlbnQgKmV2ID0gJmV2ZW50cy5ldlswXTsKICBib29sIG5vbl96ZXJvX2V2ZW50PWZh
+bHNlOwogIGRvCiAgeyBib29sIGZvdW5kPTA7CiAgICBmb3Iobl9ldj0wOyBuX2V2IDwgTl9FVjsg
+bl9ldiArPSAxKQogICAgeyBpZiggcGVbbl9ldl0uaWQgPT0gZXYtPmlkICkKICAgICAgeyBmb3Vu
+ZCA9IHRydWU7CiAgICAgICAgYnJlYWs7CiAgICAgIH0KICAgIH0KICAgIGlmKCAhIGZvdW5kICkK
+ICAgIHsgZnByaW50ZihzdGRlcnIsIktlcm5lbCByZXR1cm5lZCB1bmtub3duIGV2ZW50IElEOiAl
+bHUiLCBldi0+aWQpOwogICAgICByZXR1cm4gMTsKICAgIH0KICAgIHByaW50ZigiRVZFTlQ6ICVz
+IDogJWx1XG4iLCBwZVtuX2V2XS5uYW1lLCBldi0+dmFsdWUpOwogICAgaWYgKCFub25femVyb19l
+dmVudCkgCiAgICAgIG5vbl96ZXJvX2V2ZW50ID0gZXYtPnZhbHVlICE9IDA7CiAgICArK2V2Owog
+IH0gd2hpbGUoIC0tZXZlbnRzLm5yICk7CiAgcmV0dXJuIChub25femVyb19ldmVudCA/IDAgOiAx
+KTsKfQo=
+--f4030435b440d0823705651c1703--
