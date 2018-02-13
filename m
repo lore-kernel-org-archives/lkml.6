@@ -1,79 +1,101 @@
 Return-Path: <elfring@users.sourceforge.net>
-X-Google-Smtp-Source: AH8x224DDp+aJyfy5kev1jzyU2zKeRR5LCGrQ0ktRUKs7rrIq05T/hrOo2AJJTdyyD2uylTj5Xun
-ARC-Seal: i=1; a=rsa-sha256; t=1518553421; cv=none;
+X-Google-Smtp-Source: AH8x227by+QPwf9YpCGei1Vs/DfBhsefQXqVXvRtSqrJLjz0F3bhtCBzSFAN1Bu7/crFUH/o5qE6
+ARC-Seal: i=1; a=rsa-sha256; t=1518553518; cv=none;
         d=google.com; s=arc-20160816;
-        b=lbC3J0nMJYMxbWIqtua0areyrd2YXwByFQ6dnEfOEGG8jllUfQlgZ98Fg0HKX7Flie
-         zFDCZwo2F9enlwcpbOzHEoE3OELlzOFXGlHlWWr7ML+24iIoJZ6SZlZ2PcDikP2kOvlE
-         z/GmFtfBtIo2JDqILEn/vlgsLdxa9WyC6tPU2mJbSLZjDAcOnNF3SKVnqpOK2eL5keUf
-         TOq1yjBvjgA5Zsdg4PmIp1LIeofHqdxz8REcANYrYvdhKUQXPzq3kKOV/fLyfQwqM+T/
-         KPyxFowb7i/5H5k4ug/M7hk+SftWqvvuvrhzPQHJO5/or/LA2BoMZ9IxhL1ASh0OxkI+
-         G7IA==
+        b=VNDasi6wM9zlkgDhpy4qn+Rj8Uh4WxdO/B0gBloomCMVCRVx8uX7mzPTUdYY+jWhck
+         s1k/sL1OZzU23wP9KaPIi8Ta9F7iFvBgkxQ+ZclRPW77OfiGbCwUSvPxNEZR8kTtZYyO
+         wuGWNWGOfiE/0WxwWgEBH0pi0O2dbL+5xjOry5bQr7gBYd8wtDDrqrjG/dIOuEXigh3l
+         BbsGd7N3cd6WkfRhrh8O30QwnnURF87G5GxEV6Szw27DBpMUJweyoq6Fmkr6VkwFpKYm
+         3QW1zvdPoP9UfRsNdm3VMKzT/HSZSEz9Jv4Al0Y4Mwcri3wt9BZtF0G3heqrSetssA+X
+         +YKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:mime-version:user-agent
-         :date:message-id:subject:from:cc:to:arc-authentication-results;
-        bh=DsKSJj01qErV8gNCBgKJ1R0pgCVSToiG2WTOrIN6dpA=;
-        b=PBZSQcR7bLaK0xdCW0O9ERc24bd1TG02EQydTCUAep5pN6OSqxRAUdsgo0DJ3FGYgv
-         9ptzqfOYxsirE1TC8Py5iTdaWXktE6aSUZOtENywTtVzH1BgyiQNQwVF8cVNw503529c
-         mw2DAyLZiIbSWj6L+SzjHIcjDv1KlJKLz3DaJvpC8ahWdsJH/VM0K2DXceKGU7LkOA5R
-         +oZSYVOFXdlWk/LuXZPLnpW6RPoFRiG3ZClDEI6nz5FMHL/HYIe71vipp4G6PSM4IfBn
-         GLL1O1Q5rLoLG6dxVqCYozyRxOZp43ZdMhp2bwaDMuxuxj4XZg3KDEeGN4VQFIYwqVg7
-         q1Ww==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:references:cc:to:from:subject
+         :arc-authentication-results;
+        bh=2g3nE/HKNfsGjpLj7RocvhJ7g/O+KwMeWM++yJxN8U4=;
+        b=MapjWj9+/L2/v9GFT6Mwz+6lJHLDwZUCCQTrM1dkzs0DxslwZHbRWmMl4Ac6V9Zg8S
+         CzTUMYaRG9uBBgUC3stTtdCKf2Cg/qyjI/EmrSanHhhvI7O3ghBZ60uetcNimDsFUEcf
+         n/ZiXEsfTAtsST+rtjSqsZqd+OhiLDUofqrdSpgj/k/kC/a7nC+d5RShYsMJkqWbqYqT
+         uR+nTB51SRedC4rcwJrYMnM61NvcxNtgUoCTL2/xI09YPCS2RIGNWt5PR96XuHll7qsE
+         iKFC830zOcYY9iHr28isld64SCQ39oHaSFQa28OooAxGFgHAA97/YPukIRu23NZVe+ys
+         7NGQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of elfring@users.sourceforge.net designates 212.227.15.4 as permitted sender) smtp.mailfrom=elfring@users.sourceforge.net;
+       spf=pass (google.com: domain of elfring@users.sourceforge.net designates 212.227.15.14 as permitted sender) smtp.mailfrom=elfring@users.sourceforge.net;
        dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=sourceforge.net
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of elfring@users.sourceforge.net designates 212.227.15.4 as permitted sender) smtp.mailfrom=elfring@users.sourceforge.net;
+       spf=pass (google.com: domain of elfring@users.sourceforge.net designates 212.227.15.14 as permitted sender) smtp.mailfrom=elfring@users.sourceforge.net;
        dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=sourceforge.net
+Subject: [PATCH 1/2] dma/ppc4xx: Delete an error message for a failed memory
+ allocation in two functions
+From: SF Markus Elfring <elfring@users.sourceforge.net>
 To: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  Rob Herring <robh@kernel.org>, Vinod Koul <vinod.koul@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/2] DMA-PPC4xx: Adjustments for three function
- implementations
-Message-ID: <4d9b3ca7-e1bd-42f9-5933-550146812f1e@users.sourceforge.net>
-Date: Tue, 13 Feb 2018 21:23:32 +0100
+References: <4d9b3ca7-e1bd-42f9-5933-550146812f1e@users.sourceforge.net>
+Message-ID: <ce6646e3-dfb5-2496-2a3a-d41de4802de6@users.sourceforge.net>
+Date: Tue, 13 Feb 2018 21:25:13 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <4d9b3ca7-e1bd-42f9-5933-550146812f1e@users.sourceforge.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:N0Y1XUIieratTtjfLrxke1Y7dazh1DU08d2LGcqJ0yKTS8CxYwB
- P2jPZ01PQIND53J1G3N8Ij3WlEXf5+CTEVpQU4WQyuAOQlE+WqS3Z891YeJZP4uOmkk+YlF
- /iMc96DdgyPVfvw7N6yMEeAgBVTKNQLaP+Ryn/49Su7+g4MJAiGmBtqGSNKnDF3/5ID0/8S
- 0tviDAJBm/Z+JXsIp0aew==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:2zj2uPmZdo8=:HnlYgpf1bzX8iVNIMbqAbU
- 1iOhqyWo/RAXUpgiNUBZRoH5psiTLR/SH+d6jN6R5axMRJ2bwivbbkUzLDjKqQgCpuh4hlnw4
- KgVfE09Gdy2V/KDl2zpb7XbZb6Tg0VevOexL07JCS9BCYf7rRLM+l1RKA95Bgt+H9KLfuZIQp
- Qj6P9k4V91b2Rm8A05fwCIJqDMyzi6gjlxxJgUjIest76YiPEVRbzr43A8uEOYtvBZCPbdoau
- zFVxEe4aFdqH5Zcqyw3qFQCQBfRgRhpAd7OvuZ8EjJB/08aiQwSnqgGjlxl/nMhWFdNynx5Ow
- jG+ZhIBPAiJ3WIBudKtgm+GO6zZi1NheB2lE+lrNBvCok10ZGunVFM11I8gYq1H0wR7boYaNU
- olBOkFAeszF5dK9EmgKVrnHMMsCyPuPVBQ2CQo8PGfE/dsfrm5PD0XToRQ9Sjs5S87youvdEx
- JfXZNvyPvQoeQVRiKLJMGWInuy6xFpLBAcDPPefU4j8aUs7wuiqUJxo2V35BKkblV4GDgCtSL
- hu6W4ToLWsS35d0kZJLa1fC8uWGXKR/669fD/nRugFu574atE1r1AfCnUpAo9eVyMwkdrMDPq
- SY8m+jwMIR1Rjg+FDS5H0zDT42ahuwaKkVC9ThSf65HRW9N/B3U+bge1T0Vgnn4ZL+KOUfUD4
- FK6uAm26tJVRg7BQel9AkwNgrTH5OOAwXIj3pj/g35giXpjSMFL/02J+vlSv4UYefCeBA6O8g
- M5Q1sr6b/nxQATzii7VF4yWqc42xoGmb3wZketMr4chzrI0tHRC0J2VUFUIuF/sl1z6asWoU0
- cDwZ43B9iumrE6EKXF78Fm4rKWMULDjYjP1/hN/8UcqF21pbCs=
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K0:Zmg/8+I2K5Jt9JM81WYjUHfzEjvuI6duxqBjtUp05y9PYHTfJS/
+ qgEHgF33ZliSHKGv3NXLd18Ae7AvlltQcgzfOqpTgDmzhHx++z5V73sy+74sh2af97Mw+VI
+ bPt8fS5vwvyvTReTNnxhQOL1zUKqkdlgeT73pN6LOS7xNjXlGKBhKqulI6PiV9LVd3tMZqF
+ dCHaRVlR8g9DTGZpkhpkw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:59g5f+wz5us=:sWHm9m82qWv/smSa29vq8W
+ T8kGuiCV4PTH8bBY4G6soo8Rydl0quud4SvbjdSoMuYAcYgbwGoIs2uMxoiUHnRXnKDfaToBs
+ zh4du/EVvxmnAxmNKrrbYVwHglIft4U9VY0TOg+SQuDDX6XkfS1aBA2+O3tPWCTrH/vm/j7Jo
+ RICEddZ7lnB6L7H63U/KZnf3GCeGHzgw3Yv8ODrCMknH5td09BDk6ZrlNlc8MdTKLkZ9UPSkd
+ g3xtNvgzWrRomdJ3xyHBZPwMnGJjtJl/SVfsEgYDgGPPw3TCKLn4QbwmJB+ooorTzMD9ytbYQ
+ ynQbT1+KSpwqndebfnzEk86LFD8ZgnE11rLD0Jz3FJBHGmVauQRDDBaD85EeRy1s21EBU/fKH
+ JC6kuwlK6upbwoUdhb+OWlpall+oXNt/fbc7YB6EDc2WoaAWPFcm4Z0MjfYK4Owfej4laHcF7
+ eosPksmoZMlqAO6ugTUmGGvH72b01AUQ+BXu93+8NEiDBf6HP+9OfDrru/qfxFP8aqLSrnP93
+ DafM37NLCtDUajKHdue29qUizDtfmOdcPzaC0K9CxRU7j3kAuCaJSTo/ERBJwdzvtcgpqCHKf
+ AHokxyHeCzaQGUVGtxIiGtYpNscJhCFkcFmH/nawA3dXUES7N07PsUduoqnPFWcjqf16hYX5e
+ 2nQGOW1okUbb75DkcLAlwa/O/h0Qy3jGYd/b5oVENIozSilXiz9P9sjII/Jxif9Ac7DZW9ilo
+ yU4eB+wUnaMldJLmbNLmY70PZ3hcVwOfAD9TdFekbDViYkbM7aKhDs5o6nwXoy9+QCxJgErOw
+ jaGYSAWks3aQVq36F4RbcdXemAl69vbUeTHmM1aAqsslq3e2U0=
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592318672190098989?=
-X-GMAIL-MSGID: =?utf-8?q?1592318672190098989?=
+X-GMAIL-THRID: =?utf-8?q?1592318774436342324?=
+X-GMAIL-MSGID: =?utf-8?q?1592318774436342324?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Feb 2018 21:16:42 +0100
+Date: Tue, 13 Feb 2018 20:42:40 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in these functions.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation in two functions
-  Improve a size determination in ppc440spe_adma_alloc_chan_resources()
+This issue was detected by using the Coccinelle software.
 
- drivers/dma/ppc4xx/adma.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/dma/ppc4xx/adma.c | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/drivers/dma/ppc4xx/adma.c b/drivers/dma/ppc4xx/adma.c
+index 4cf0d4d0cecf..f4033367d59b 100644
+--- a/drivers/dma/ppc4xx/adma.c
++++ b/drivers/dma/ppc4xx/adma.c
+@@ -4183,7 +4183,6 @@ static int ppc440spe_adma_probe(struct platform_device *ofdev)
+ 		INIT_LIST_HEAD(&ref->node);
+ 		list_add_tail(&ref->node, &ppc440spe_adma_chan_list);
+ 	} else {
+-		dev_err(&ofdev->dev, "failed to allocate channel reference!\n");
+ 		ret = -ENOMEM;
+ 		goto err_ref_alloc;
+ 	}
+@@ -4468,7 +4467,6 @@ static int ppc440spe_configure_raid_devices(void)
+ 	ppc440spe_dma_fifo_buf = kmalloc((DMA0_FIFO_SIZE + DMA1_FIFO_SIZE) << 1,
+ 					 GFP_KERNEL);
+ 	if (!ppc440spe_dma_fifo_buf) {
+-		pr_err("%s: DMA FIFO buffer allocation failed.\n", __func__);
+ 		iounmap(i2o_reg);
+ 		dcr_unmap(i2o_dcr_host, dcr_len);
+ 		return -ENOMEM;
 -- 
 2.16.1
