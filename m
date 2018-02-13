@@ -1,72 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965341AbeBMRAA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:00:00 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38373 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965261AbeBMQ74 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:59:56 -0500
-Date: Tue, 13 Feb 2018 08:59:31 -0800
-From: tip-bot for Alexey Dobriyan <tipbot@zytor.com>
-Message-ID: <tip-1acdbf7ea8a80706561013346d281d282a3c00f9@git.kernel.org>
-Cc: mingo@kernel.org, peterz@infradead.org, adobriyan@gmail.com,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        bp@suse.de, torvalds@linux-foundation.org
-Reply-To: peterz@infradead.org, adobriyan@gmail.com, hpa@zytor.com,
-        mingo@kernel.org, torvalds@linux-foundation.org, bp@suse.de,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org
-In-Reply-To: <20180113185048.GA23111@avx2>
-References: <20180113185048.GA23111@avx2>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/asm] x86/asm: Clobber flags in clear_page()
-Git-Commit-ID: 1acdbf7ea8a80706561013346d281d282a3c00f9
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        id S965324AbeBMRAc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:00:32 -0500
+Received: from mga06.intel.com ([134.134.136.31]:54580 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964869AbeBMRAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 12:00:23 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,508,1511856000";
+   d="scan'208";a="18120013"
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <yehezkel.bernat@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
+        Radion Mirchevsky <radion.mirchevsky@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH 03/18] thunderbolt: Handle connecting device in place of host properly
+Date: Tue, 13 Feb 2018 20:00:03 +0300
+Message-Id: <20180213170018.9780-4-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
+References: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1acdbf7ea8a80706561013346d281d282a3c00f9
-Gitweb:     https://git.kernel.org/tip/1acdbf7ea8a80706561013346d281d282a3c00f9
-Author:     Alexey Dobriyan <adobriyan@gmail.com>
-AuthorDate: Sat, 13 Jan 2018 21:50:48 +0300
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 17:36:49 +0100
+If the system is suspended and user disconnects cable to another host
+and connects it to a Thunderbolt device instead we get a warning from
+driver core about adding duplicate sysfs attribute and adding the new
+device fails.
 
-x86/asm: Clobber flags in clear_page()
+Handle this properly so that we first remove the existing XDomain
+connection before adding new devices.
 
-All clear_page() implementations use XOR which resets flags.
-
-Judging by allyesconfig disassembly no code is affected.
-
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180113185048.GA23111@avx2
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: d1ff70241a27 ("thunderbolt: Add support for XDomain discovery protocol")
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: stable@vger.kernel.org
 ---
- arch/x86/include/asm/page_64.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/thunderbolt/icm.c | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
-index 4baa6bc..f8a85c6 100644
---- a/arch/x86/include/asm/page_64.h
-+++ b/arch/x86/include/asm/page_64.h
-@@ -47,7 +47,7 @@ static inline void clear_page(void *page)
- 			   clear_page_erms, X86_FEATURE_ERMS,
- 			   "=D" (page),
- 			   "0" (page)
--			   : "memory", "rax", "rcx");
-+			   : "cc", "memory", "rax", "rcx");
+diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
+index ab02d13f40b7..182226023acb 100644
+--- a/drivers/thunderbolt/icm.c
++++ b/drivers/thunderbolt/icm.c
+@@ -383,6 +383,15 @@ static void remove_switch(struct tb_switch *sw)
+ 	tb_switch_remove(sw);
  }
  
- void copy_page(void *to, void *from);
++static void remove_xdomain(struct tb_xdomain *xd)
++{
++	struct tb_switch *sw;
++
++	sw = tb_to_switch(xd->dev.parent);
++	tb_port_at(xd->route, sw)->xdomain = NULL;
++	tb_xdomain_remove(xd);
++}
++
+ static void
+ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ {
+@@ -391,6 +400,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 	struct tb_switch *sw, *parent_sw;
+ 	struct icm *icm = tb_priv(tb);
+ 	bool authorized = false;
++	struct tb_xdomain *xd;
+ 	u8 link, depth;
+ 	u64 route;
+ 	int ret;
+@@ -467,6 +477,13 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 		tb_switch_put(sw);
+ 	}
+ 
++	/* Remove existing XDomain connection if found */
++	xd = tb_xdomain_find_by_link_depth(tb, link, depth);
++	if (xd) {
++		remove_xdomain(xd);
++		tb_xdomain_put(xd);
++	}
++
+ 	parent_sw = tb_switch_find_by_link_depth(tb, link, depth - 1);
+ 	if (!parent_sw) {
+ 		tb_err(tb, "failed to find parent switch for %u.%u\n",
+@@ -529,15 +546,6 @@ icm_fr_device_disconnected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 	tb_switch_put(sw);
+ }
+ 
+-static void remove_xdomain(struct tb_xdomain *xd)
+-{
+-	struct tb_switch *sw;
+-
+-	sw = tb_to_switch(xd->dev.parent);
+-	tb_port_at(xd->route, sw)->xdomain = NULL;
+-	tb_xdomain_remove(xd);
+-}
+-
+ static void
+ icm_fr_xdomain_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ {
+-- 
+2.15.1
