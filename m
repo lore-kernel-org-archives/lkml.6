@@ -1,52 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934458AbeBMKz6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 05:55:58 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45248 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934011AbeBMKz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 05:55:56 -0500
-Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
- CPUs
-To: David Woodhouse <dwmw2@infradead.org>, tglx@linutronix.de,
-        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, arjan.van.de.ven@intel.com,
-        dave.hansen@intel.com
-References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
- <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
- <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
- <1518509708.12890.33.camel@infradead.org>
- <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com>
- <1518517262.12890.43.camel@infradead.org>
- <1518518198.12890.48.camel@infradead.org>
- <02bd3fdd-1b73-6cab-fb09-38ba933396bd@redhat.com>
- <1518519234.12890.58.camel@infradead.org>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <b55a1e8a-a70f-b007-e4d7-6864d7bdd683@redhat.com>
-Date: Tue, 13 Feb 2018 11:55:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S934353AbeBMK52 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 05:57:28 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:53521 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934011AbeBMK50 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 05:57:26 -0500
+X-Google-Smtp-Source: AH8x224zteHTFxnZ5ZwI5IHOITSSmmDYW5P708TnAtM0aaDFMjkL9AcblZ/7Ccmsqw6hG66jxEGfw2n9BioqInFKDbQ=
 MIME-Version: 1.0
-In-Reply-To: <1518519234.12890.58.camel@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180212135237.GA3011@pjb1027-Latitude-E5410>
+References: <20180212135237.GA3011@pjb1027-Latitude-E5410>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Tue, 13 Feb 2018 10:57:25 +0000
+Message-ID: <CAKv+Gu93OdaWyMcm3nqV38-RmoYoCceQ4f4DfT65t9amRm_gFA@mail.gmail.com>
+Subject: Re: [PATCH] crypto: arm/aes-cipher - move S-box to .rodata section
+To: Jinbum Park <jinb.park7@gmail.com>
+Cc: "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
+        <linux-crypto@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/02/2018 11:53, David Woodhouse wrote:
->> You have my vote. :)  Really, IBRS_ALL makes no sense and it would be
->> nice to know _why_ Intel is pushing something that makes no sense.
-> No, IBRS_ALL *does* make sense. It's not a complete fix, but it's as
-> much of a fix as they should shoe-horn into the generation of CPUs
-> which are currently going to the fabs.
-> 
-> With IBRS_ALL they presumably add tags to the predictions with the VMX
-> mode and ring, to give complete protection against predictions being
-> used in a more privileged mode. 
+On 12 February 2018 at 13:52, Jinbum Park <jinb.park7@gmail.com> wrote:
+> Move the AES inverse S-box to the .rodata section
+> where it is safe from abuse by speculation.
+>
+> Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
 
-Yeah, but I still don't get why they need an MSR to turn those tags on.
-Is it basically a chicken bit in the wrong direction?
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Paolo
+> ---
+>  arch/arm/crypto/aes-cipher-core.S | 19 ++++++++++---------
+>  1 file changed, 10 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/arm/crypto/aes-cipher-core.S b/arch/arm/crypto/aes-cipher-core.S
+> index 54b3840..184d6c2 100644
+> --- a/arch/arm/crypto/aes-cipher-core.S
+> +++ b/arch/arm/crypto/aes-cipher-core.S
+> @@ -174,6 +174,16 @@
+>         .ltorg
+>         .endm
+>
+> +ENTRY(__aes_arm_encrypt)
+> +       do_crypt        fround, crypto_ft_tab, crypto_ft_tab + 1, 2
+> +ENDPROC(__aes_arm_encrypt)
+> +
+> +       .align          5
+> +ENTRY(__aes_arm_decrypt)
+> +       do_crypt        iround, crypto_it_tab, __aes_arm_inverse_sbox, 0
+> +ENDPROC(__aes_arm_decrypt)
+> +
+> +       .section        ".rodata", "a"
+>         .align          L1_CACHE_SHIFT
+>         .type           __aes_arm_inverse_sbox, %object
+>  __aes_arm_inverse_sbox:
+> @@ -210,12 +220,3 @@ __aes_arm_inverse_sbox:
+>         .byte           0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26
+>         .byte           0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d
+>         .size           __aes_arm_inverse_sbox, . - __aes_arm_inverse_sbox
+> -
+> -ENTRY(__aes_arm_encrypt)
+> -       do_crypt        fround, crypto_ft_tab, crypto_ft_tab + 1, 2
+> -ENDPROC(__aes_arm_encrypt)
+> -
+> -       .align          5
+> -ENTRY(__aes_arm_decrypt)
+> -       do_crypt        iround, crypto_it_tab, __aes_arm_inverse_sbox, 0
+> -ENDPROC(__aes_arm_decrypt)
+> --
+> 1.9.1
+>
