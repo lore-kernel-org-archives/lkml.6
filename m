@@ -1,129 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966037AbeBMWgO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 17:36:14 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:38945 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965942AbeBMWgM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 17:36:12 -0500
-X-Google-Smtp-Source: AH8x2248WP8M967zhLcV0e5CRp0xS4SKDborrNqWVByMg5cG/jO084zKGwvAMHjlobyxiNuTOLuDSg==
-From: Guenter Roeck <linux@roeck-us.net>
-To: Tyler Hicks <tyhicks@canonical.com>
-Cc: ecryptfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>, Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH] ecryptfs: Restore support for both encrypted and unencrypted file names
-Date: Tue, 13 Feb 2018 14:36:08 -0800
-Message-Id: <1518561368-8324-1-git-send-email-linux@roeck-us.net>
-X-Mailer: git-send-email 2.7.4
+        id S966050AbeBMWh1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 17:37:27 -0500
+Received: from mout.gmx.net ([212.227.15.18]:34461 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965942AbeBMWhZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 17:37:25 -0500
+From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: linux-doc@vger.kernel.org
+Cc: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
+Subject: [PATCH] admin-guide: Fix list formatting in tained-kernels.html
+Date: Tue, 13 Feb 2018 23:36:51 +0100
+Message-Id: <20180213223653.6437-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.15.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K0:FxrAYuww9MA7CDGZhLGzII/0AG8S1vXcrOlvOdLys4demTPPGCe
+ unchiam8Rtt1/O8UqiYm3ZYNO7JVWUeGF8r/+3N85YH9Pcp5vNvTB0wf4nlzCkQaqR+yToY
+ z3qXvfyoI4dPFKgFw8ng1cr2K+p8+j8k/j8w6yl5LswhfWJl58vcYrBzBTpvJ56jEFI5/4n
+ vgHp2mNM7lS7sT3GYvEPQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ilQDhF7YN5M=:Tn2XjE5CGUqIrfCVUzwujv
+ Vf5jHBugdi0oO6P7zjh9B3DMtYKvQUMn4xvbdb8ui4Jw/2t+dcn5EA9gvvMtfrIKXzrotZZvq
+ sS/w4EM8ZPlcRlIF7F6ADnsHonIKsBo/AhXqeg4zso8KXZxZAnkPmoDHZGsrVg7T7WJ2JVH20
+ cvLnAGW/5/PhauC9G0WQvsDjdT46ohN+FT6vksVAhojnOgLaLDRIu3zjTVg0d/KxZE9/RMwbV
+ 5XqPHqCydOXpSc7GZrwp3FAuQw2tzQmKVxv/UEPAQRY6/67yt/hc/oLRUvkNEy0uaQEUIH64L
+ kTYQ1xiJXBPka/HQObo5l8ZYiPUAd8VixelwDHCvfZrMRbwf8Kw8IK1BQJ1KYSjDkjtmAW2lu
+ 57xfRBMmIZ6qE1eFB1iWDxF324G64meLjH7jjUvk+7J+mckG2YWC+AvEifXzdkkv8PeyVRo+I
+ 4nQ+zKcr4gnkvjrSGEPKAcHK4fvtpWFBSIK59kQhwj9hoHdTu88a8W8As+OWtYmhY26O/9rw/
+ 3mHGqU+nOAG5P8awYYVh33s6pyQrs3l419zVTA+uHasc9u1Os7T8/b49Fgom+zxrEXmeUWOv/
+ MkygLB+C5/jNZUBGqEyozws1BaCgU1gFJ/vkfHp1nt3OHn7959IxiMUNuSJHgXOZStrPi3i95
+ mYdOC+cMQe113M5aQklyvFTPtn3zq9RWl9wDRDXcSB2sqre6weEskBNlI9kPpaZphqeSWKlyY
+ b2GFIjjjNXHa2bYbosvu+9RA08TG5xKL7sQh7+MFk62/kfEhyrxMKxBX/B0aGLfPLdo4MXAE0
+ bVvX7gvddcdmenwXKknJP2CeseFNCVQs+ufhaHvdGe/oodaGTg1ro1dtlbFQ0AkssTP6FVB
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 88ae4ab9802e ("ecryptfs_lookup(): try either only encrypted or
-plaintext name") was supposed to fix a situation where two files with
-the same name and same inode could be created in ecryptfs. One of those
-files had an encrypted file name, the other file name was unencrypted.
+Without this patch, the points 1-9 in the list are rendered as an HTML
+blockquote containing a list, causing them to be indented further than
+the rest of the list.
 
-After commit 88ae4ab9802e, having a mix of encrypted and unencrypted file
-names is no longer supposed to be possible. However, that is not the case.
-The only difference is that it is now even easier to create a situation
-where two files with the same name coexist (one encrypted and the other
-not encrypted). In practice, this looks like the following (files
-created with v4.14.12).
+While at it, also fix the quotation marks around G and P.
 
-ecryptfs mounted with file name encryption enabled:
-
-$ ls -li
-total 48
-5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
-5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
-5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
-5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
-$ grep . *
-myfile:encrypted
-myfile:encrypted
-myfile2:encrypted
-myfile2:encrypted
-
-$ ls -li
-total 48
-5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36
-ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVun.BU8Zu5-njbcIPoApxk7-E--
-5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02
-ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVunt0fda7t9YCtJ70cm911yZ---
-5252817 -rw-rw-r-- 1 groeck groeck 12 Jan 20 12:52 myfile
-5252827 -rw-rw-r-- 1 groeck groeck 12 Jan 20 15:37 myfile2
-
-$ grep . *
-ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVun.BU8Zu5-njbcIPoApxk7-E--:encrypted
-ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVunt0fda7t9YCtJ70cm911yZ---:encrypted
-myfile:unencrypted
-myfile2:unencrypted
-
-Creating a file with file name encryption disabled and remounting with
-file name encryption enabled results in the following.
-
-$ ls -li
-ls: cannot access 'myfile3': No such file or directory
-total 48
-5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
-5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
-5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
-5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
-      ? -????????? ? ?      ?       ?            ? myfile3
-
-Prior to commit 88ae4ab9802e, the file system had to be mounted with
-encrypted file names first to create a file, then the same had to be
-repeated after mounting with unencrypted file names. Now the duplicate
-files can be created both ways (unencrypted _or_ encrypted first).
-
-The only real difference is that it is no longer possible to have a
-_working_ combination of encrypted and unencrypted file names. In other
-words, commit 88ae4ab9802e results in reduced functionality with no
-benefit whatsoever.
-
-Restore ability to have a mix of unencrypted and encrypted files.
-This effectively reverts commit 88ae4ab9802e, but the code is now
-better readable since it avoids a number of goto statements.
-
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 ---
- fs/ecryptfs/inode.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ Documentation/admin-guide/tainted-kernels.rst | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-index 847904aa63a9..14a5c096ead6 100644
---- a/fs/ecryptfs/inode.c
-+++ b/fs/ecryptfs/inode.c
-@@ -392,11 +392,11 @@ static struct dentry *ecryptfs_lookup(struct inode *ecryptfs_dir_inode,
- 	int rc = 0;
+diff --git a/Documentation/admin-guide/tainted-kernels.rst b/Documentation/admin-guide/tainted-kernels.rst
+index 1df03b5cb02f..28a869c509a0 100644
+--- a/Documentation/admin-guide/tainted-kernels.rst
++++ b/Documentation/admin-guide/tainted-kernels.rst
+@@ -6,34 +6,34 @@ counter. This indicates that the kernel has been tainted by some
+ mechanism.  The string is followed by a series of position-sensitive
+ characters, each representing a particular tainted value.
  
- 	lower_dir_dentry = ecryptfs_dentry_to_lower(ecryptfs_dentry->d_parent);
--
-+	lower_dentry = lookup_one_len_unlocked(name, lower_dir_dentry, len);
- 	mount_crypt_stat = &ecryptfs_superblock_to_private(
- 				ecryptfs_dentry->d_sb)->mount_crypt_stat;
--	if (mount_crypt_stat
--	    && (mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES)) {
-+	if (IS_ERR(lower_dentry) &&
-+	    (mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES)) {
- 		rc = ecryptfs_encrypt_and_encode_filename(
- 			&encrypted_and_encoded_name, &len,
- 			mount_crypt_stat, name, len);
-@@ -405,10 +405,10 @@ static struct dentry *ecryptfs_lookup(struct inode *ecryptfs_dir_inode,
- 			       "filename; rc = [%d]\n", __func__, rc);
- 			return ERR_PTR(rc);
- 		}
--		name = encrypted_and_encoded_name;
-+		lower_dentry = lookup_one_len_unlocked(
-+			encrypted_and_encoded_name, lower_dir_dentry, len);
- 	}
+-  1) 'G' if all modules loaded have a GPL or compatible license, 'P' if
++ 1)  ``G`` if all modules loaded have a GPL or compatible license, ``P`` if
+      any proprietary module has been loaded.  Modules without a
+      MODULE_LICENSE or with a MODULE_LICENSE that is not recognised by
+      insmod as GPL compatible are assumed to be proprietary.
  
--	lower_dentry = lookup_one_len_unlocked(name, lower_dir_dentry, len);
- 	if (IS_ERR(lower_dentry)) {
- 		ecryptfs_printk(KERN_DEBUG, "%s: lookup_one_len() returned "
- 				"[%ld] on lower_dentry = [%s]\n", __func__,
+-  2) ``F`` if any module was force loaded by ``insmod -f``, ``' '`` if all
++ 2)  ``F`` if any module was force loaded by ``insmod -f``, ``' '`` if all
+      modules were loaded normally.
+ 
+-  3) ``S`` if the oops occurred on an SMP kernel running on hardware that
++ 3)  ``S`` if the oops occurred on an SMP kernel running on hardware that
+      hasn't been certified as safe to run multiprocessor.
+      Currently this occurs only on various Athlons that are not
+      SMP capable.
+ 
+-  4) ``R`` if a module was force unloaded by ``rmmod -f``, ``' '`` if all
++ 4)  ``R`` if a module was force unloaded by ``rmmod -f``, ``' '`` if all
+      modules were unloaded normally.
+ 
+-  5) ``M`` if any processor has reported a Machine Check Exception,
++ 5)  ``M`` if any processor has reported a Machine Check Exception,
+      ``' '`` if no Machine Check Exceptions have occurred.
+ 
+-  6) ``B`` if a page-release function has found a bad page reference or
++ 6)  ``B`` if a page-release function has found a bad page reference or
+      some unexpected page flags.
+ 
+-  7) ``U`` if a user or user application specifically requested that the
++ 7)  ``U`` if a user or user application specifically requested that the
+      Tainted flag be set, ``' '`` otherwise.
+ 
+-  8) ``D`` if the kernel has died recently, i.e. there was an OOPS or BUG.
++ 8)  ``D`` if the kernel has died recently, i.e. there was an OOPS or BUG.
+ 
+-  9) ``A`` if the ACPI table has been overridden.
++ 9)  ``A`` if the ACPI table has been overridden.
+ 
+  10) ``W`` if a warning has previously been issued by the kernel.
+      (Though some warnings may set more specific taint flags.)
 -- 
-2.7.4
+2.15.1
