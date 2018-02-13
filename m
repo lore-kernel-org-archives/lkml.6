@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934653AbeBMJwO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 04:52:14 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:48886 "EHLO
+        id S934799AbeBMJwr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 04:52:47 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:57790 "EHLO
         relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934299AbeBMJqs (ORCPT
+        with ESMTP id S934402AbeBMJqm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:46:48 -0500
+        Tue, 13 Feb 2018 04:46:42 -0500
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
         robh+dt@kernel.org, mark.rutland@arm.com
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/15] ARM64: dts: Add R-Car Salvator-x M3-N support
-Date: Tue, 13 Feb 2018 10:45:52 +0100
-Message-Id: <1518515162-23663-6-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH 03/15] soc: renesas: Add R-Car M3-N support
+Date: Tue, 13 Feb 2018 10:45:50 +0100
+Message-Id: <1518515162-23663-4-git-send-email-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
@@ -23,586 +23,239 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add initial support for R-Car M3-N Salvator-x and r8a77965 SoC in
-device tree with cpg-mssr, reset and clock nodes.
-
-Add place-holder device nodes for all nodes referred by
-"salvator-common.dtsi"
+Add support for R-Car M3-N (r8a77965) power areas and reset.
+M3-N power areas are identical to M3-W ones, so just copy and rename
+them.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/arm64/Kconfig.platforms                       |   6 +
- arch/arm64/boot/dts/renesas/Makefile               |   1 +
- .../arm64/boot/dts/renesas/r8a77965-salvator-x.dts |  30 ++
- arch/arm64/boot/dts/renesas/r8a77965.dtsi          | 495 +++++++++++++++++++++
- 4 files changed, 532 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77965.dtsi
+ .../bindings/power/renesas,rcar-sysc.txt           |  1 +
+ .../devicetree/bindings/reset/renesas,rst.txt      |  1 +
+ drivers/soc/renesas/Kconfig                        |  9 ++++--
+ drivers/soc/renesas/Makefile                       |  1 +
+ drivers/soc/renesas/r8a77965-sysc.c                | 37 ++++++++++++++++++++++
+ drivers/soc/renesas/rcar-rst.c                     |  1 +
+ drivers/soc/renesas/rcar-sysc.c                    |  3 ++
+ drivers/soc/renesas/rcar-sysc.h                    |  1 +
+ drivers/soc/renesas/renesas-soc.c                  |  8 +++++
+ include/dt-bindings/power/r8a77965-sysc.h          | 31 ++++++++++++++++++
+ 10 files changed, 91 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/soc/renesas/r8a77965-sysc.c
+ create mode 100644 include/dt-bindings/power/r8a77965-sysc.h
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index fbedbd8..dbb4bd2 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -190,6 +190,12 @@ config ARCH_R8A7796
- 	help
- 	  This enables support for the Renesas R-Car M3-W SoC.
- 
-+config ARCH_R8A77965
-+	bool "Renesas R-Car M3-N SoC Platform"
-+	depends on ARCH_RENESAS
-+	help
-+	  This enables support for the Renesas R-Car M3-N SoC.
+diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+index 8690f10..b9c9e28 100644
+--- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
++++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+@@ -17,6 +17,7 @@ Required properties:
+       - "renesas,r8a7794-sysc" (R-Car E2)
+       - "renesas,r8a7795-sysc" (R-Car H3)
+       - "renesas,r8a7796-sysc" (R-Car M3-W)
++      - "renesas,r8a77965-sysc" (R-Car M3-N)
+       - "renesas,r8a77970-sysc" (R-Car V3M)
+       - "renesas,r8a77995-sysc" (R-Car D3)
+   - reg: Address start and address range for the device.
+diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+index a8014f3..64051d0 100644
+--- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
++++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+@@ -26,6 +26,7 @@ Required properties:
+ 		  - "renesas,r8a7794-rst" (R-Car E2)
+ 		  - "renesas,r8a7795-rst" (R-Car H3)
+ 		  - "renesas,r8a7796-rst" (R-Car M3-W)
++		  - "renesas,r8a77965-rst" (R-Car M3-N)
+ 		  - "renesas,r8a77970-rst" (R-Car V3M)
+ 		  - "renesas,r8a77995-rst" (R-Car D3)
+   - reg: Address start and address range for the device.
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 09550b1..def33f7 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -3,8 +3,8 @@ config SOC_RENESAS
+ 	default y if ARCH_RENESAS
+ 	select SOC_BUS
+ 	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
+-			   ARCH_R8A7795 || ARCH_R8A7796 || ARCH_R8A77970 || \
+-			   ARCH_R8A77995
++			   ARCH_R8A7795 || ARCH_R8A7796 || ARCH_R8A77965 || \
++			   ARCH_R8A77970 || ARCH_R8A77995
+ 	select SYSC_R8A7743 if ARCH_R8A7743
+ 	select SYSC_R8A7745 if ARCH_R8A7745
+ 	select SYSC_R8A7779 if ARCH_R8A7779
+@@ -14,6 +14,7 @@ config SOC_RENESAS
+ 	select SYSC_R8A7794 if ARCH_R8A7794
+ 	select SYSC_R8A7795 if ARCH_R8A7795
+ 	select SYSC_R8A7796 if ARCH_R8A7796
++	select SYSC_R8A77965 if ARCH_R8A77965
+ 	select SYSC_R8A77970 if ARCH_R8A77970
+ 	select SYSC_R8A77995 if ARCH_R8A77995
+
+@@ -56,6 +57,10 @@ config SYSC_R8A7796
+ 	bool "R-Car M3-W System Controller support" if COMPILE_TEST
+ 	select SYSC_RCAR
+
++config SYSC_R8A77965
++	bool "R-Car M3-N System Controller support" if COMPILE_TEST
++	select SYSC_RCAR
 +
- config ARCH_R8A77970
- 	bool "Renesas R-Car V3M SoC Platform"
- 	depends on ARCH_RENESAS
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 2186d01..3680ecd 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -7,5 +7,6 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-h3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
-+dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb
- dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
- dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+ config SYSC_R8A77970
+ 	bool "R-Car V3M System Controller support" if COMPILE_TEST
+ 	select SYSC_RCAR
+diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+index 845d62a..9f360b8 100644
+--- a/drivers/soc/renesas/Makefile
++++ b/drivers/soc/renesas/Makefile
+@@ -12,6 +12,7 @@ obj-$(CONFIG_SYSC_R8A7792)	+= r8a7792-sysc.o
+ obj-$(CONFIG_SYSC_R8A7794)	+= r8a7794-sysc.o
+ obj-$(CONFIG_SYSC_R8A7795)	+= r8a7795-sysc.o
+ obj-$(CONFIG_SYSC_R8A7796)	+= r8a7796-sysc.o
++obj-$(CONFIG_SYSC_R8A77965)	+= r8a77965-sysc.o
+ obj-$(CONFIG_SYSC_R8A77970)	+= r8a77970-sysc.o
+ obj-$(CONFIG_SYSC_R8A77995)	+= r8a77995-sysc.o
+
+diff --git a/drivers/soc/renesas/r8a77965-sysc.c b/drivers/soc/renesas/r8a77965-sysc.c
 new file mode 100644
-index 0000000..5cb6e03
+index 0000000..f3e17f3
 --- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.
++++ b/drivers/soc/renesas/r8a77965-sysc.c
+@@ -0,0 +1,37 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Device Tree Source for the Salvator-X board
-+ *
++ * Renesas R-Car M3-N System Controller
 + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
++ *
++ * Based on Renesas R-Car M3-W System Controller
++ * Copyright (C) 2016 Glider bvba
 + */
 +
-+/dts-v1/;
-+#include "r8a77965.dtsi"
-+#include "salvator-x.dtsi"
++#include <linux/bug.h>
++#include <linux/kernel.h>
 +
-+/ {
-+	model = "Renesas Salvator-X board based on r8a77965";
-+	compatible = "renesas,salvator-x", "renesas,r8a77965";
-+
-+	aliases {
-+		serial0 = &scif2;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x78000000>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-new file mode 100644
-index 0000000..2d99522
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -0,0 +1,495 @@
-+// SPDX-License-Identifier: GPL-2.
-+/*
-+ * Device Tree Source for the r8a77965 SoC
-+ *
-+ * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
-+ *
-+ * Based on r8a7796.dtsi
-+ * Copyright (C) 2016 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/clock/r8a77965-cpg-mssr.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
 +#include <dt-bindings/power/r8a77965-sysc.h>
 +
-+#define CPG_AUDIO_CLK_I		R8A77965_CLK_S0D4
-+
-+/ {
-+	compatible = "renesas,r8a77965";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		a57_0: cpu@0 {
-+			compatible = "arm,cortex-a57", "arm,armv8";
-+			reg = <0x0>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A77965_PD_CA57_CPU0>;
-+			next-level-cache = <&L2_CA57>;
-+			enable-method = "psci";
-+		};
-+
-+		a57_1: cpu@1 {
-+			compatible = "arm,cortex-a57","arm,armv8";
-+			reg = <0x1>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A77965_PD_CA57_CPU1>;
-+			next-level-cache = <&L2_CA57>;
-+			enable-method = "psci";
-+		};
-+
-+		L2_CA57: cache-controller-0 {
-+			compatible = "cache";
-+			reg = <0>;
-+			power-domains = <&sysc R8A77965_PD_CA57_SCU>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
-+	};
-+
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	extalr_clk: extalr {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External SCIF clock - to be overridden by boards that provide it */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External USB clocks - can be overridden by the board */
-+	usb3s0_clk: usb3s0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gic: interrupt-controller@f1010000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x0 0xf1010000 0 0x1000>,
-+			      <0x0 0xf1020000 0 0x20000>,
-+			      <0x0 0xf1040000 0 0x20000>,
-+			      <0x0 0xf1060000 0 0x20000>;
-+			interrupts = <GIC_PPI 9
-+					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 408>;
-+		};
-+
-+		timer {
-+			compatible = "arm,armv8-timer";
-+			interrupts = <GIC_PPI 13
-+					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 14
-+					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 11
-+					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 10
-+					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+		};
-+
-+		pfc: pin-controller@e6060000 {
-+			compatible = "renesas,pfc-r8a77965";
-+			reg = <0 0xe6060000 0 0x50c>;
-+		};
-+
-+		pmu_a57 {
-+			compatible = "arm,cortex-a57-pmu";
-+			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-affinity = <&a57_0>,
-+					     <&a57_1>;
-+		};
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a77965-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>, <&extalr_clk>;
-+			clock-names = "extal", "extalr";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a77965-rst";
-+			reg = <0 0xe6160000 0 0x0200>;
-+		};
-+
-+		prr: chipid@fff00044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xfff00044 0 4>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a77965-sysc";
-+			reg = <0 0xe6180000 0 0x0400>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		gpio0: gpio@e6050000 {
-+			/* placeholder */
-+		};
-+
-+		gpio1: gpio@e6051000 {
-+			/* placeholder */
-+		};
-+
-+		gpio2: gpio@e6052000 {
-+			/* placeholder */
-+		};
-+
-+		gpio3: gpio@e6053000 {
-+			/* placeholder */
-+		};
-+
-+		gpio4: gpio@e6054000 {
-+			/* placeholder */
-+		};
-+
-+		gpio5: gpio@e6055000 {
-+			/* placeholder */
-+		};
-+
-+		gpio6: gpio@e6055400 {
-+			/* placeholder */
-+		};
-+
-+		gpio7: gpio@e6055800 {
-+			/* placeholder */
-+		};
-+
-+		intc_ex: interrupt-controller@e61c0000 {
-+			/* placeholder */
-+		};
-+
-+		dmac0: dma-controller@e6700000 {
-+			/* placeholder */
-+		};
-+
-+		dmac1: dma-controller@e7300000 {
-+			/* placeholder */
-+		};
-+
-+		dmac2: dma-controller@e7310000 {
-+			/* placeholder */
-+		};
-+
-+		scif0: serial@e6e60000 {
-+			/* placeholder */
-+		};
-+
-+		scif1: serial@e6e68000 {
-+			/* placeholder */
-+		};
-+
-+		scif2: serial@e6e88000 {
-+			/* placeholder */
-+		};
-+
-+		scif3: serial@e6c50000 {
-+			/* placeholder */
-+		};
-+
-+		scif4: serial@e6c40000 {
-+			/* placeholder */
-+		};
-+
-+		scif5: serial@e6f30000 {
-+			/* placeholder */
-+		};
-+
-+		avb: ethernet@e6800000 {
-+			/* placeholder */
-+		};
-+
-+		csi20: csi2@fea80000 {
-+			/* placeholder */
-+		};
-+
-+		csi40: csi2@feaa0000 {
-+			/* placeholder */
-+		};
-+
-+		vin0: video@e6ef0000 {
-+			/* placeholder */
-+		};
-+
-+		vin1: video@e6ef1000 {
-+			/* placeholder */
-+		};
-+
-+		vin2: video@e6ef2000 {
-+			/* placeholder */
-+		};
-+
-+		vin3: video@e6ef3000 {
-+			/* placeholder */
-+		};
-+
-+		vin4: video@e6ef4000 {
-+			/* placeholder */
-+		};
-+
-+		vin5: video@e6ef5000 {
-+			/* placeholder */
-+		};
-+
-+		vin6: video@e6ef6000 {
-+			/* placeholder */
-+		};
-+
-+		vin7: video@e6ef7000 {
-+			/* placeholder */
-+		};
-+
-+		ohci0: usb@ee080000 {
-+			/* placeholder */
-+		};
-+
-+		ehci0: usb@ee080100 {
-+			/* placeholder */
-+		};
-+
-+		usb2_phy0: usb-phy@ee080200 {
-+			/* placeholder */
-+		};
-+
-+		ohci1: usb@ee0a0000 {
-+			/* placeholder */
-+		};
-+
-+		ehci1: usb@ee0a0100 {
-+			/* placeholder */
-+		};
-+
-+		i2c0: i2c@e6500000 {
-+			/* placeholder */
-+		};
-+
-+		i2c1: i2c@e6508000 {
-+			/* placeholder */
-+		};
-+
-+		i2c2: i2c@e6510000 {
-+			/* placeholder */
-+		};
-+
-+		i2c3: i2c@e66d0000 {
-+			/* placeholder */
-+		};
-+
-+		i2c4: i2c@e66d8000 {
-+			/* placeholder */
-+		};
-+
-+		i2c5: i2c@e66e0000 {
-+			/* placeholder */
-+		};
-+
-+		i2c6: i2c@e66e8000 {
-+			/* placeholder */
-+		};
-+
-+		i2c_dvfs: i2c@e60b0000 {
-+			/* placeholder */
-+		};
-+
-+		pwm0: pwm@e6e30000 {
-+			/* placeholder */
-+		};
-+
-+		pwm1: pwm@e6e31000 {
-+			/* placeholder */
-+		};
-+
-+		pwm2: pwm@e6e32000 {
-+			/* placeholder */
-+		};
-+
-+		pwm3: pwm@e6e33000 {
-+			/* placeholder */
-+		};
-+
-+		pwm4: pwm@e6e34000 {
-+			/* placeholder */
-+		};
-+
-+		pwm5: pwm@e6e35000 {
-+			/* placeholder */
-+		};
-+
-+		pwm6: pwm@e6e36000 {
-+			/* placeholder */
-+		};
-+
-+		du: display@feb00000 {
-+			/* placeholder */
-+
-+			ports {
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					du_out_hdmi0: endpoint {
-+					};
-+				};
-+				port@2 {
-+					reg = <2>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
-+		};
-+
-+		hsusb: usb@e6590000 {
-+			/* placeholder */
-+		};
-+
-+		pciec0: pcie@fe000000 {
-+			/* placeholder */
-+		};
-+
-+		pciec1: pcie@ee800000 {
-+			/* placeholder */
-+		};
-+
-+		rcar_sound: sound@ec500000 {
-+			/* placeholder */
-+
-+			rcar_sound,dvc {
-+				dvc0: dvc-0 {
-+				};
-+				dvc1: dvc-1 {
-+				};
-+			};
-+
-+			rcar_sound,src {
-+				src0: src-0 {
-+				};
-+				src1: src-1 {
-+				};
-+			};
-+
-+			rcar_sound,ssi {
-+				ssi0: ssi-0 {
-+				};
-+				ssi1: ssi-1 {
-+				};
-+			};
-+		};
-+
-+		usb2_phy1: usb-phy@ee0a0200 {
-+			/* placeholder */
-+		};
-+
-+		sdhi0: sd@ee100000 {
-+			/* placeholder */
-+		};
-+
-+		sdhi1: sd@ee120000 {
-+			/* placeholder */
-+		};
-+
-+		sdhi2: sd@ee140000 {
-+			/* placeholder */
-+		};
-+
-+		sdhi3: sd@ee160000 {
-+			/* placeholder */
-+		};
-+
-+		usb3_phy0: usb-phy@e65ee000 {
-+			/* placeholder */
-+		};
-+
-+		usb3_peri0: usb@ee020000 {
-+			/* placeholder */
-+		};
-+
-+		xhci0: usb@ee000000 {
-+			/* placeholder */
-+		};
-+
-+		wdt0: watchdog@e6020000 {
-+			/* placeholder */
-+		};
-+	};
++#include "rcar-sysc.h"
++
++static const struct rcar_sysc_area r8a77965_areas[] __initconst = {
++	{ "always-on",	    0, 0, R8A77965_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
++	{ "ca57-scu",	0x1c0, 0, R8A77965_PD_CA57_SCU,	R8A77965_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca57-cpu0",	 0x80, 0, R8A77965_PD_CA57_CPU0, R8A77965_PD_CA57_SCU,
++	  PD_CPU_NOCR },
++	{ "ca57-cpu1",	 0x80, 1, R8A77965_PD_CA57_CPU1, R8A77965_PD_CA57_SCU,
++	  PD_CPU_NOCR },
++	{ "cr7",	0x240, 0, R8A77965_PD_CR7,	R8A77965_PD_ALWAYS_ON },
++	{ "a3vc",	0x380, 0, R8A77965_PD_A3VC,	R8A77965_PD_ALWAYS_ON },
++	{ "a2vc0",	0x3c0, 0, R8A77965_PD_A2VC0,	R8A77965_PD_A3VC },
++	{ "a2vc1",	0x3c0, 1, R8A77965_PD_A2VC1,	R8A77965_PD_A3VC },
++	{ "3dg-a",	0x100, 0, R8A77965_PD_3DG_A,	R8A77965_PD_ALWAYS_ON },
++	{ "3dg-b",	0x100, 1, R8A77965_PD_3DG_B,	R8A77965_PD_3DG_A },
++	{ "a3ir",	0x180, 0, R8A77965_PD_A3IR,	R8A77965_PD_ALWAYS_ON },
 +};
--- 
++
++const struct rcar_sysc_info r8a77965_sysc_info __initconst = {
++	.areas = r8a77965_areas,
++	.num_areas = ARRAY_SIZE(r8a77965_areas),
++};
+diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
+index 3316b02..9a84009 100644
+--- a/drivers/soc/renesas/rcar-rst.c
++++ b/drivers/soc/renesas/rcar-rst.c
+@@ -41,6 +41,7 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
+ 	/* R-Car Gen3 is handled like R-Car Gen2 */
+ 	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen2 },
++	{ .compatible = "renesas,r8a77965-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen2 },
+ 	{ /* sentinel */ }
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 636872b..d87f83a 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -284,6 +284,9 @@ static const struct of_device_id rcar_sysc_matches[] __initconst = {
+ #ifdef CONFIG_SYSC_R8A7796
+ 	{ .compatible = "renesas,r8a7796-sysc", .data = &r8a7796_sysc_info },
+ #endif
++#ifdef CONFIG_SYSC_R8A77965
++	{ .compatible = "renesas,r8a77965-sysc", .data = &r8a77965_sysc_info },
++#endif
+ #ifdef CONFIG_SYSC_R8A77970
+ 	{ .compatible = "renesas,r8a77970-sysc", .data = &r8a77970_sysc_info },
+ #endif
+diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
+index 9d9daf9..c892105 100644
+--- a/drivers/soc/renesas/rcar-sysc.h
++++ b/drivers/soc/renesas/rcar-sysc.h
+@@ -58,6 +58,7 @@ extern const struct rcar_sysc_info r8a7792_sysc_info;
+ extern const struct rcar_sysc_info r8a7794_sysc_info;
+ extern const struct rcar_sysc_info r8a7795_sysc_info;
+ extern const struct rcar_sysc_info r8a7796_sysc_info;
++extern const struct rcar_sysc_info r8a77965_sysc_info;
+ extern const struct rcar_sysc_info r8a77970_sysc_info;
+ extern const struct rcar_sysc_info r8a77995_sysc_info;
+
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index 926b7fd..b9e4660 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -144,6 +144,11 @@ static const struct renesas_soc soc_rcar_m3_w __initconst __maybe_unused = {
+ 	.id	= 0x52,
+ };
+
++static const struct renesas_soc soc_rcar_m3_n __initconst __maybe_unused = {
++	.family	= &fam_rcar_gen3,
++	.id	= 0x55,
++};
++
+ static const struct renesas_soc soc_rcar_v3m __initconst __maybe_unused = {
+ 	.family	= &fam_rcar_gen3,
+ 	.id	= 0x54,
+@@ -209,6 +214,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
+ #ifdef CONFIG_ARCH_R8A7796
+ 	{ .compatible = "renesas,r8a7796",	.data = &soc_rcar_m3_w },
+ #endif
++#ifdef CONFIG_ARCH_R8A77965
++	{ .compatible = "renesas,r8a77965",	.data = &soc_rcar_m3_n },
++#endif
+ #ifdef CONFIG_ARCH_R8A77970
+ 	{ .compatible = "renesas,r8a77970",	.data = &soc_rcar_v3m },
+ #endif
+diff --git a/include/dt-bindings/power/r8a77965-sysc.h b/include/dt-bindings/power/r8a77965-sysc.h
+new file mode 100644
+index 0000000..1c41f62
+--- /dev/null
++++ b/include/dt-bindings/power/r8a77965-sysc.h
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
++ * Copyright (C) 2016 Glider bvba
++ */
++
++#ifndef __DT_BINDINGS_POWER_R8A77965_SYSC_H__
++#define __DT_BINDINGS_POWER_R8A77965_SYSC_H__
++
++/*
++ * These power domain indices match the numbers of the interrupt bits
++ * representing the power areas in the various Interrupt Registers
++ * (e.g. SYSCISR, Interrupt Status Register)
++ */
++
++#define R8A77965_PD_CA57_CPU0		 0
++#define R8A77965_PD_CA57_CPU1		 1
++#define R8A77965_PD_A3VP		 9
++#define R8A77965_PD_CA57_SCU		12
++#define R8A77965_PD_CR7			13
++#define R8A77965_PD_A3VC		14
++#define R8A77965_PD_3DG_A		17
++#define R8A77965_PD_3DG_B		18
++#define R8A77965_PD_A3IR		24
++#define R8A77965_PD_A2VC0		25
++#define R8A77965_PD_A2VC1		26
++
++/* Always-on power area */
++#define R8A77965_PD_ALWAYS_ON		32
++
++#endif /* __DT_BINDINGS_POWER_R8A77965_SYSC_H__ */
+--
 2.7.4
