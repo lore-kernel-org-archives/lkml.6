@@ -1,50 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965785AbeBMUs1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 15:48:27 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:37173 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965676AbeBMUsZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 15:48:25 -0500
-Date: Tue, 13 Feb 2018 21:48:14 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: James Hogan <jhogan@kernel.org>
-Cc: Miodrag Dinic <miodrag.dinic@mips.com>,
-        Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtc: goldfish: Add missing MODULE_LICENSE
-Message-ID: <20180213204814.GE30929@piout.net>
-References: <20180116144521.392-1-jhogan@kernel.org>
+        id S965846AbeBMUyO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 15:54:14 -0500
+Received: from mga04.intel.com ([192.55.52.120]:11806 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965676AbeBMUyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 15:54:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,509,1511856000";
+   d="scan'208";a="34431828"
+From: "Brown, Aaron F" <aaron.f.brown@intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
+CC: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH] igb: Fix a test with HWTSTAMP_TX_ON
+Thread-Topic: [PATCH] igb: Fix a test with HWTSTAMP_TX_ON
+Thread-Index: AQHTn4OHcDeCrzjbZEOHna/FuAZEK6Oi2msw
+Date: Tue, 13 Feb 2018 20:54:10 +0000
+Message-ID: <309B89C4C689E141A5FF6A0C5FB2118B8C7E574C@ORSMSX103.amr.corp.intel.com>
+References: <20180206194759.26991-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20180206194759.26991-1-christophe.jaillet@wanadoo.fr>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180116144521.392-1-jhogan@kernel.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1DKsIbw022881
 
-On 16/01/2018 at 14:45:21 +0000, James Hogan wrote:
-> Fix the following warning in MIPS allmodconfig by adding a
-> MODULE_LICENSE() at the end of rtc-goldfish.c, based on the file header
-> comment which says GNU General Public License version 2:
+> From: netdev-owner@vger.kernel.org [mailto:netdev-
+> owner@vger.kernel.org] On Behalf Of Christophe JAILLET
+> Sent: Tuesday, February 6, 2018 11:48 AM
+> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>
+> Cc: intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org; linux-
+> kernel@vger.kernel.org; kernel-janitors@vger.kernel.org; Christophe
+> JAILLET <christophe.jaillet@wanadoo.fr>
+> Subject: [PATCH] igb: Fix a test with HWTSTAMP_TX_ON
 > 
-> WARNING: modpost: missing MODULE_LICENSE() in drivers/rtc/rtc-goldfish.o
+> 'HWTSTAMP_TX_ON' should be handled as a value, not as a bit mask.
+> The modified code should behave the same, because HWTSTAMP_TX_ON is
+> 1
+> and no other possible values of 'tx_type' would match the test.
+> However, this is more future-proof, should other values be allowed one day.
 > 
-> Fixes: f22d9cdcb5eb ("rtc: goldfish: Add RTC driver for Android emulator")
-> Signed-off-by: James Hogan <jhogan@kernel.org>
-> Cc: Miodrag Dinic <miodrag.dinic@mips.com>
-> Cc: Alessandro Zummo <a.zummo@towertech.it>
-> Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> Cc: linux-rtc@vger.kernel.org
+> See 'struct hwtstamp_config' in 'include/uapi/linux/net_tstamp.h'
+> 
+> This fixes a warning reported by smatch:
+>    igb_xmit_frame_ring() warn: bit shifter 'HWTSTAMP_TX_ON' used for
+> logical '&'
+> 
+> Fixes: 26bd4e2db06be ("igb: protect TX timestamping from API misuse")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/rtc/rtc-goldfish.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/net/ethernet/intel/igb/igb_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-Applied, thanks.
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
