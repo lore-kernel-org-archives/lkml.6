@@ -1,60 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965211AbeBMPAX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 10:00:23 -0500
-Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:39337 "EHLO
-        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965128AbeBMPAV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 10:00:21 -0500
-Date: Tue, 13 Feb 2018 15:00:20 +0000
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/6] sched/numa: Delay retrying placement for automatic
- NUMA balance after wake_affine
-Message-ID: <20180213150020.xds3htkutdk4sdwx@techsingularity.net>
-References: <20180213133730.24064-1-mgorman@techsingularity.net>
- <20180213133730.24064-7-mgorman@techsingularity.net>
- <20180213140137.GN25201@hirez.programming.kicks-ass.net>
- <20180213141812.ikin7n2owi5uor3b@techsingularity.net>
- <20180213144326.GO25201@hirez.programming.kicks-ass.net>
+        id S965156AbeBMPDN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 10:03:13 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60444 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965037AbeBMPDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 10:03:12 -0500
+Subject: Re: [patch] kvm: suppress KVM_SET_GSI_ROUTING allocation failure
+To: Michal Hocko <mhocko@kernel.org>, David Rientjes <rientjes@google.com>
+Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <alpine.DEB.2.10.1802081334120.133173@chino.kir.corp.google.com>
+ <20180213144836.GU3443@dhcp22.suse.cz>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <a68ddd16-dc7a-4ea7-ac33-ceff6d9276b8@redhat.com>
+Date: Tue, 13 Feb 2018 16:03:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20180213144326.GO25201@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180213144836.GU3443@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 03:43:26PM +0100, Peter Zijlstra wrote:
-> > 
-> > Well, it was deliberate. While it's possible to be on the same memory
-> > node and not sharing cache, the scheduler typically is more concerned with
-> > the LLC than NUMA per-se. If they share LLC, then I also assume that they
-> > share memory locality.
+On 13/02/2018 15:48, Michal Hocko wrote:
+> On Thu 08-02-18 13:35:08, David Rientjes wrote:
+>> The KVM_SET_GSI_ROUTING ioctl does a vmalloc() of
+>> sizeof(struct kvm_irq_routing_entry) multiplied by a user-supplied value.
+>> This can be up to 4096 entries on architectures such as arm64 and s390
+>> (and the upper bound may be increased on s390 eventually).
+>>
+>> This can produce a vmalloc allocation failure warning:
+>>
+>> vmalloc: allocation failure: 0 bytes, mode:0x24000c2(GFP_KERNEL|__GFP_HIGHMEM)
 > 
-> True, but the remaining code only has effect for numa balance, which is
-> concerned with nodes. So I don't see the point of using something
-> potentially smaller.
+> I am not arguing about the kvm change but do we actaully want to warn
+> for 0 sized allocations? This just doesn't make much sense to me.
+> In other words don't we want this?
 > 
-> Suppose someone did hardware where a node has 2 cache clusters, then
-> we'd still set a wake_affine back-off for numa-balance, even though it
-> remains on the same node.
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 673942094328..c5d832510c54 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -1748,7 +1748,9 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+>  	unsigned long real_size = size;
+>  
+>  	size = PAGE_ALIGN(size);
+> -	if (!size || (size >> PAGE_SHIFT) > totalram_pages)
+> +	if (!size)
+> +		return NULL;
+> +	if ((size >> PAGE_SHIFT) > totalram_pages)
+>  		goto fail;
+>  
+>  	area = __get_vm_area_node(size, align, VM_ALLOC | VM_UNINITIALIZED |
 > 
-> How would that be useful?
 
-Fair point, it could be unexpected from a NUMA balancing perspective and
-sub-numa clustering does exist so it's a potential issue. I'm happy to
-change it to cpu_to_node. I can resend the series if you prefer but feel
-free to change it in-place if you're picking it up. I do not expect any
-change on the machines I tested with as for all of them LLC was equivalent
-to checking the node ID.
+There have been quite a few reports of this from syzkaller and generally
+we've fixed them.  It does seem like a recipe for NULL-pointer
+dereferences when the size is user-controlled (as in this case).
 
--- 
-Mel Gorman
-SUSE Labs
+But here I'm actually not sure that the "allocation failure: 0 bytes"
+can happen, since we have a check above for "if (routing.nr)", and there
+is a check also so that the maximum allocation here is a meager 128 KiB.
+ So I'm wondering if this patch is obsolete actually after commit
+f8c1b85b2523.  David?
+
+Thanks,
+
+Paolo
+
+Paolo
