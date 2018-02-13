@@ -1,88 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965403AbeBMSAz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 13:00:55 -0500
-Received: from mga07.intel.com ([134.134.136.100]:51148 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965158AbeBMSAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 13:00:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,508,1511856000";
-   d="scan'208";a="30466453"
-Message-ID: <1518544852.2708.1.camel@linux.intel.com>
-Subject: Re: intel_pmc_core does not initialize intel 8th gen PMC
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        kitestramuort <kitestramuort@autistici.org>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Date: Tue, 13 Feb 2018 10:00:52 -0800
-In-Reply-To: <CAHp75VdquuTLRgSbzKTBvyLmeFkGyDmP+U=GdOxLhBsU=w6Log@mail.gmail.com>
-References: <1518426556.26505.2.camel@autistici.org>
-         <CAHp75VdquuTLRgSbzKTBvyLmeFkGyDmP+U=GdOxLhBsU=w6Log@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-2.fc25) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S965353AbeBMSDH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 13:03:07 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:46170 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965158AbeBMSDG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 13:03:06 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9F0AF60A26
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rananta@codeaurora.org
+Subject: Re: [PATCH] perf: Add support for creating offline events
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, psodagud@codeaurora.org,
+        tsoni@codeaurora.org
+References: <1518217620-28458-1-git-send-email-rananta@codeaurora.org>
+ <20180212094357.GD5821@krava>
+ <53408020-8638-4947-90f6-87dbc4c2c4e5@codeaurora.org>
+ <20180212210442.GA32093@krava> <20180212212101.GA15817@krava>
+ <6aab2b36-0fe6-7a3d-2106-d4c93ec95a8a@codeaurora.org>
+ <20180213160826.GA9121@krava>
+From: Raghavendra Rao Ananta <rananta@codeaurora.org>
+Message-ID: <3745120e-8884-c958-54b4-d1a86253dd0d@codeaurora.org>
+Date: Tue, 13 Feb 2018 10:03:04 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
+MIME-Version: 1.0
+In-Reply-To: <20180213160826.GA9121@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-13 at 18:21 +0200, Andy Shevchenko wrote:
-> +Cc: Authors and correct ML
-> 
-> On Mon, Feb 12, 2018 at 11:09 AM, kitestramuort
-> <kitestramuort@autistici.org> wrote:
-> > don't know if this is intended. In 4.15.2 i have:
-> 
-> AFAIU the driver now binds to the hardcoded value of a PA of the
-> device. So, you still have driver enabled.
-> 
-> Srinivas, is my understanding correct?
-Yes. This doesn't bind to PCI device. But the driver is still doing
-what it is supposed to do.
-You should still see
-/sys/kernel/debug/pmc_core/* as before.
 
-Thanks,
-Srinivas
 
+On 02/13/2018 08:08 AM, Jiri Olsa wrote:
+> On Mon, Feb 12, 2018 at 02:22:30PM -0800, Raghavendra Rao Ananta wrote:
+>>
+>>
+>> On 02/12/2018 01:21 PM, Jiri Olsa wrote:
+>>> On Mon, Feb 12, 2018 at 10:04:42PM +0100, Jiri Olsa wrote:
+>>>> On Mon, Feb 12, 2018 at 09:42:05AM -0800, Raghavendra Rao Ananta wrote:
+>>>>> Hi Jiri,
+>>>>>
+>>>>> Thank you for the response.
+>>>>>
+>>>>> Does perf tool has its own check to see if the CPU was offline during the
+>>>>> lifetime of an event? If so, it might ignore these type of events.
+>>>>
+>>>> nope, we don't check on that
+>>>>
+>>>>>
+>>>>> Initially, I tested the same using perf tool and found similar results.
+>>>>> Then I debugged further and found that the perf core was actually sending
+>>>>> data to the userspace (copy_to_user()) and the corresponding count for the
+>>>>> data. Hence, I tested this further by writing my own userspace application,
+>>>>> and I was able to read the count through this,
+>>>>> even when the CPU was made offline and back online.
+>>>>>
+>>>>> Do you think we also have to modify the perf tool accordingly?
+>>>>
+>>>> hum, I wonder what's wrong.. will check
+>>>
+>>> I think the user space needs to enable the event once the
+>>> cpu gets online.. which we dont do and your app does..?
+>>>
+>>> maybe we could add perf_event_attr::enable_on_online ;-)
+>>>
+>>> I'll check what we can do in user space, I guess we can
+>>> monitor the cpu state and enable event accordingly
+>>>
+>>> jirka
+>>>
+>> Yes, probably that's the reason.
+>>
+>> In order for an event to get scheduled-in, it expects the event to be at
+>> least in PERF_EVENT_STATE_INACTIVE state. If you notice, in my patch,
+>> when the cpu wakes up, we are initializing the state of the event
+>> (perf_event__state_init()) and then trying to schedule-in. Since the event
+>> was created with a disabled state, it seems that the same this is followed
+>> and the state gets initialized to PERF_EVENT_STATE_OFF. Unfortunately,
+>> events in this state could not be scheduled.
+>>
+>> One way for things to get working is, instead of calling
+>> perf_event__state_init() before the event is scheduled-in (when the cpu
+>> wakes up), we can do something like:
+>> perf_event_set_state(event, PERF_EVENT_STATE_INACTIVE);
 > 
-> > dmesg:
-> > intel_pmc_core 0000:00:1f.2: enabling device (0000 -> 0002)
-> > 
-> > lspci:
-> > 00:1f.2 Memory controller: Intel Corporation Sunrise Point-LP PMC
-> > (rev
-> > 21)
-> >         Subsystem: Intel Corporation Sunrise Point-LP PMC
-> >         Control: I/O- Mem+ BusMaster- SpecCycle- MemWINV- VGASnoop-
-> > ParErr- Stepping- SERR- FastB2B- DisINTx-
-> >         Status: Cap- 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast
-> > >TAbort-
-> > <TAbort- <MAbort- >SERR- <PERR- INTx-
-> >         Region 0: Memory at dff00000 (32-bit, non-prefetchable)
-> > [size=16K]
-> >         Kernel driver in use: intel_pmc_core
-> > in 4.16.0-rc1 this becomes
-> > dmesg:
-> > intel_pmc_core:  initialized
-> > 
-> > lspci:
-> > 00:1f.2 Memory controller: Intel Corporation Sunrise Point-LP PMC
-> > (rev
-> > 21)
-> >         Subsystem: Intel Corporation Sunrise Point-LP PMC
-> >         Control: I/O- Mem- BusMaster- SpecCycle- MemWINV- VGASnoop-
-> > ParErr- Stepping- SERR- FastB2B- DisINTx-
-> >         Status: Cap- 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast
-> > >TAbort-
-> > <TAbort- <MAbort- >SERR- <PERR- INTx-
-> >         Region 0: Memory at dff00000 (32-bit, non-prefetchable)
-> > [disabled] [size=16K]
-> 
-> 
-> 
+> could you add check in ioctl call that set the inactive state
+> on the dormant event.. that would start it once the cpu is
+> online.. as requested
+
+I am a little confused. When you say "check", do you mean a new ioctl 
+command?
+
+So the flow (from the user-space perspective) would go something like this?
+
+1. // CPU offline
+
+2. perf_event_open(); // event started as disabled --> added to dormant 
+list in the kernel
+
+3. ioctl(SET_INACTIVE); // change the state of the event to inactive
+
+4. // CPU woken up!
+
+5. // schedule the (inactive) event by traversing the dormant list
+
+Is this what you were trying to mention, or am I missing something?
+
+Raghavendra
+-- 
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
