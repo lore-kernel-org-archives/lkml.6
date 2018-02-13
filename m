@@ -1,211 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934486AbeBMKEi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 05:04:38 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:58865 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933964AbeBMKE3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 05:04:29 -0500
-Date: Tue, 13 Feb 2018 02:04:20 -0800
-From: tip-bot for Yang Shi <tipbot@zytor.com>
-Message-ID: <tip-36c4ead6f6dfbbe777d3d7e9cc8702530b71a94f@git.kernel.org>
-Cc: hpa@zytor.com, yang.shi@linux.alibaba.com, mingo@kernel.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        yang.shi@linux.alibaba.com, hpa@zytor.com
-In-Reply-To: <1517872708-24207-3-git-send-email-yang.shi@linux.alibaba.com>
-References: <1517872708-24207-3-git-send-email-yang.shi@linux.alibaba.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:core/debugobjects] debugobjects: Add global free list and the
- counter
-Git-Commit-ID: 36c4ead6f6dfbbe777d3d7e9cc8702530b71a94f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S934700AbeBMKEu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 05:04:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55764 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933964AbeBMKEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 05:04:43 -0500
+Date: Tue, 13 Feb 2018 11:04:40 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        mm-commits@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linux-Next <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Mark Brown <broonie@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [RFC PATCH] elf: enforce MAP_FIXED on overlaying elf segments (was:
+ Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE)
+Message-ID: <20180213100440.GM3443@dhcp22.suse.cz>
+References: <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
+ <20180129132235.GE21609@dhcp22.suse.cz>
+ <87k1w081e7.fsf@concordia.ellerman.id.au>
+ <20180130094205.GS21609@dhcp22.suse.cz>
+ <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com>
+ <20180131131937.GA6740@dhcp22.suse.cz>
+ <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com>
+ <20180201131007.GJ21609@dhcp22.suse.cz>
+ <20180201134026.GK21609@dhcp22.suse.cz>
+ <CAGXu5j+fo0Z_ax2O10A-3D3puLhnX+o5M4Lp3TBsnE=NtFCjpw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAGXu5j+fo0Z_ax2O10A-3D3puLhnX+o5M4Lp3TBsnE=NtFCjpw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  36c4ead6f6dfbbe777d3d7e9cc8702530b71a94f
-Gitweb:     https://git.kernel.org/tip/36c4ead6f6dfbbe777d3d7e9cc8702530b71a94f
-Author:     Yang Shi <yang.shi@linux.alibaba.com>
-AuthorDate: Tue, 6 Feb 2018 07:18:26 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 13 Feb 2018 10:58:58 +0100
+On Fri 02-02-18 07:55:14, Kees Cook wrote:
+> On Fri, Feb 2, 2018 at 12:40 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> > On Thu 01-02-18 14:10:07, Michal Hocko wrote:
+> > Thanks a lot to Michael Matz for his background. He has pointed me to
+> > the following two segments from your binary[1]
+> >   LOAD           0x0000000000000000 0x0000000010000000 0x0000000010000000
+> >                  0x0000000000013a8c 0x0000000000013a8c  R E    10000
+> >   LOAD           0x000000000001fd40 0x000000001002fd40 0x000000001002fd40
+> >                  0x00000000000002c0 0x00000000000005e8  RW     10000
+> >   LOAD           0x0000000000020328 0x0000000010030328 0x0000000010030328
+> >                  0x0000000000000384 0x00000000000094a0  RW     10000
+> >
+> > That binary has two RW LOAD segments, the first crosses a page border
+> > into the second
+> > 0x1002fd40 (LOAD2-vaddr) + 0x5e8 (LOAD2-memlen) == 0x10030328 (LOAD3-vaddr)
+> >
+> > He says
+> > : This is actually an artifact of RELRO machinism.  The first RW mapping
+> > : will be remapped as RO after relocations are applied (to increase
+> > : security).
+> > : Well, to be honest, normal relro binaries also don't have more than
+> > : two LOAD segments, so whatever RHEL did to their compilation options,
+> > : it's something in addition to just relro (which can be detected by
+> > : having a GNU_RELRO program header)
+> > : But it definitely has something to do with relro, it's just not the
+> > : whole story yet.
+> >
+> > I am still trying to wrap my head around all this, but it smells rather
+> > dubious to map different segments over the same page. Is this something
+> > that might happen widely and therefore MAP_FIXED_NOREPLACE is a no-go
+> > when loading ELF segments? Or is this a special case we can detect?
+> 
+> Eww. FWIW, I would expect that to be rare and detectable.
 
-debugobjects: Add global free list and the counter
+OK, so Anshuman has confirmed [1] that the patch below fixes the issue
+for him. I am sending this as an RFC because this is not really my area
+and load_elf_binary is obscure as hell. The changelog could see much
+more clear wording than I am able to provide. Any help would be highly
+appreciated.
 
-free_object() adds objects to the pool list and schedules work when the
-pool list is larger than the pool size.  The worker handles the actual
-kfree() of the object by iterating the pool list until the pool size is
-below the maximum pool size again.
+[1] http://lkml.kernel.org/r/b0a751c4-9552-87b4-c768-3e1b02c18b5c@linux.vnet.ibm.com
 
-To iterate the pool list, pool_lock has to be held and the objects which
-should be freed() need to be put into temporary storage so pool_lock can be
-dropped for the actual kmem_cache_free() invocation. That's a pointless and
-expensive exercise if there is a large number of objects to free.
+>From 97e7355a6dc31a73005fa806566a57eb5c38032b Mon Sep 17 00:00:00 2001
+From: Michal Hocko <mhocko@suse.com>
+Date: Tue, 13 Feb 2018 10:50:53 +0100
+Subject: [PATCH] elf: enforce MAP_FIXED on overlaying elf segments
 
-In such a case its better to evaulate the fill level of the pool in
-free_objects() and queue the object to free either in the pool list or if
-it's full on a separate global free list.
+Anshuman has reported that some ELF binaries in his environment fail to
+start with
+ [   23.423642] 9148 (sed): Uhuuh, elf segment at 0000000010030000 requested but the memory is mapped already
+ [   23.423706] requested [10030000, 10040000] mapped [10030000, 10040000] 100073 anon
 
-The worker can then do the following simpler operation:
+The reason is that the above binary has overlapping elf segments:
+  LOAD           0x0000000000000000 0x0000000010000000 0x0000000010000000
+                 0x0000000000013a8c 0x0000000000013a8c  R E    10000
+  LOAD           0x000000000001fd40 0x000000001002fd40 0x000000001002fd40
+                 0x00000000000002c0 0x00000000000005e8  RW     10000
+  LOAD           0x0000000000020328 0x0000000010030328 0x0000000010030328
+                 0x0000000000000384 0x00000000000094a0  RW     10000
 
-  - Move objects back from the global free list to the pool list if the
-    pool list is not longer full.
+That binary has two RW LOAD segments, the first crosses a page border
+into the second
 
-  - Remove the remaining objects in a single list move operation from the
-    global free list and do the kmem_cache_free() operation lockless from
-    the temporary list head.
+0x1002fd40 (LOAD2-vaddr) + 0x5e8 (LOAD2-memlen) == 0x10030328 (LOAD3-vaddr)
 
-In fill_pool() the global free list is checked as well to avoid real
-allocations from the kmem cache.
+Handle this situation by enforcing MAP_FIXED when we establish a
+temporary brk VMA to handle overlapping segments. All other mappings
+will still use MAP_FIXED_NOREPLACE.
 
-Add the necessary list head and a counter for the number of objects on the
-global free list and export that counter via sysfs:
-
-max_chain     :79
-max_loops     :8147
-warnings      :0
-fixups        :0
-pool_free     :1697
-pool_min_free :346
-pool_used     :15356
-pool_max_used :23933
-on_free_list  :39
-objs_allocated:32617
-objs_freed    :16588
-
-Nothing queues objects on the global free list yet. This happens in a
-follow up change.
-
-[ tglx: Simplified implementation and massaged changelog ]
-
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: longman@redhat.com
-Link: https://lkml.kernel.org/r/1517872708-24207-3-git-send-email-yang.shi@linux.alibaba.com
-
+Fixes: fs, elf: drop MAP_FIXED usage from elf_map
+Reported-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
 ---
- lib/debugobjects.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 57 insertions(+), 1 deletion(-)
+ fs/binfmt_elf.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index f6d57a1..e31273b 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -42,11 +42,14 @@ static struct debug_obj		obj_static_pool[ODEBUG_POOL_SIZE] __initdata;
- static DEFINE_RAW_SPINLOCK(pool_lock);
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 2f492dfcabde..4679d1d945f9 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -895,7 +895,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	   the correct location in memory. */
+ 	for(i = 0, elf_ppnt = elf_phdata;
+ 	    i < loc->elf_ex.e_phnum; i++, elf_ppnt++) {
+-		int elf_prot = 0, elf_flags;
++		int elf_prot = 0, elf_flags, elf_fixed = MAP_FIXED_NOREPLACE;
+ 		unsigned long k, vaddr;
+ 		unsigned long total_size = 0;
  
- static HLIST_HEAD(obj_pool);
-+static HLIST_HEAD(obj_to_free);
- 
- static int			obj_pool_min_free = ODEBUG_POOL_SIZE;
- static int			obj_pool_free = ODEBUG_POOL_SIZE;
- static int			obj_pool_used;
- static int			obj_pool_max_used;
-+/* The number of objs on the global free list */
-+static int			obj_nr_tofree;
- static struct kmem_cache	*obj_cache;
- 
- static int			debug_objects_maxchain __read_mostly;
-@@ -97,12 +100,32 @@ static const char *obj_states[ODEBUG_STATE_MAX] = {
- static void fill_pool(void)
- {
- 	gfp_t gfp = GFP_ATOMIC | __GFP_NORETRY | __GFP_NOWARN;
--	struct debug_obj *new;
-+	struct debug_obj *new, *obj;
- 	unsigned long flags;
- 
- 	if (likely(obj_pool_free >= debug_objects_pool_min_level))
- 		return;
- 
-+	/*
-+	 * Reuse objs from the global free list; they will be reinitialized
-+	 * when allocating.
-+	 */
-+	while (obj_nr_tofree && (obj_pool_free < obj_pool_min_free)) {
-+		raw_spin_lock_irqsave(&pool_lock, flags);
-+		/*
-+		 * Recheck with the lock held as the worker thread might have
-+		 * won the race and freed the global free list already.
-+		 */
-+		if (obj_nr_tofree) {
-+			obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
-+			hlist_del(&obj->node);
-+			obj_nr_tofree--;
-+			hlist_add_head(&obj->node, &obj_pool);
-+			obj_pool_free++;
-+		}
-+		raw_spin_unlock_irqrestore(&pool_lock, flags);
-+	}
+@@ -927,6 +927,13 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 					 */
+ 				}
+ 			}
 +
- 	if (unlikely(!obj_cache))
- 		return;
++			/*
++			 * Some binaries have overlapping elf segments and then
++			 * we have to forcefully map over an existing mapping
++			 * e.g. over this newly established brk mapping.
++			 */
++			elf_fixed = MAP_FIXED;
+ 		}
  
-@@ -186,11 +209,38 @@ alloc_object(void *addr, struct debug_bucket *b, struct debug_obj_descr *descr)
- static void free_obj_work(struct work_struct *work)
- {
- 	struct debug_obj *objs[ODEBUG_FREE_BATCH];
-+	struct hlist_node *tmp;
-+	struct debug_obj *obj;
- 	unsigned long flags;
- 	int i;
-+	HLIST_HEAD(tofree);
+ 		if (elf_ppnt->p_flags & PF_R)
+@@ -944,7 +951,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 		 * the ET_DYN load_addr calculations, proceed normally.
+ 		 */
+ 		if (loc->elf_ex.e_type == ET_EXEC || load_addr_set) {
+-			elf_flags |= MAP_FIXED_NOREPLACE;
++			elf_flags |= elf_fixed;
+ 		} else if (loc->elf_ex.e_type == ET_DYN) {
+ 			/*
+ 			 * This logic is run once for the first LOAD Program
+@@ -980,7 +987,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 				load_bias = ELF_ET_DYN_BASE;
+ 				if (current->flags & PF_RANDOMIZE)
+ 					load_bias += arch_mmap_rnd();
+-				elf_flags |= MAP_FIXED_NOREPLACE;
++				elf_flags |= elf_fixed;
+ 			} else
+ 				load_bias = 0;
  
- 	if (!raw_spin_trylock_irqsave(&pool_lock, flags))
- 		return;
-+
-+	/*
-+	 * The objs on the pool list might be allocated before the work is
-+	 * run, so recheck if pool list it full or not, if not fill pool
-+	 * list from the global free list
-+	 */
-+	while (obj_nr_tofree && obj_pool_free < debug_objects_pool_size) {
-+		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
-+		hlist_del(&obj->node);
-+		hlist_add_head(&obj->node, &obj_pool);
-+		obj_pool_free++;
-+		obj_nr_tofree--;
-+	}
-+
-+	/*
-+	 * Pool list is already full and there are still objs on the free
-+	 * list. Move remaining free objs to a temporary list to free the
-+	 * memory outside the pool_lock held region.
-+	 */
-+	if (obj_nr_tofree) {
-+		hlist_move_list(&obj_to_free, &tofree);
-+		obj_nr_tofree = 0;
-+	}
-+
- 	while (obj_pool_free >= debug_objects_pool_size + ODEBUG_FREE_BATCH) {
- 		for (i = 0; i < ODEBUG_FREE_BATCH; i++) {
- 			objs[i] = hlist_entry(obj_pool.first,
-@@ -211,6 +261,11 @@ static void free_obj_work(struct work_struct *work)
- 			return;
- 	}
- 	raw_spin_unlock_irqrestore(&pool_lock, flags);
-+
-+	hlist_for_each_entry_safe(obj, tmp, &tofree, node) {
-+		hlist_del(&obj->node);
-+		kmem_cache_free(obj_cache, obj);
-+	}
- }
- 
- /*
-@@ -793,6 +848,7 @@ static int debug_stats_show(struct seq_file *m, void *v)
- 	seq_printf(m, "pool_min_free :%d\n", obj_pool_min_free);
- 	seq_printf(m, "pool_used     :%d\n", obj_pool_used);
- 	seq_printf(m, "pool_max_used :%d\n", obj_pool_max_used);
-+	seq_printf(m, "on_free_list  :%d\n", obj_nr_tofree);
- 	seq_printf(m, "objs_allocated:%d\n", debug_objects_allocated);
- 	seq_printf(m, "objs_freed    :%d\n", debug_objects_freed);
- 	return 0;
+-- 
+2.15.1
+
+-- 
+Michal Hocko
+SUSE Labs
