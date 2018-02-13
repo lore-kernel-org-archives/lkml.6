@@ -1,100 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934507AbeBMQLL convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 11:11:11 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:58377 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933698AbeBMQLK (ORCPT
+        id S934670AbeBMQMX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 11:12:23 -0500
+Received: from mail-io0-f173.google.com ([209.85.223.173]:32875 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934056AbeBMQMW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:11:10 -0500
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Gregory Clement <gregory.clement@free-electrons.com>,
-        Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: armada: netgear-rn*: fix rtc node name
-References: <20180210064130.6422-1-alexandre.belloni@bootlin.com>
-Date: Tue, 13 Feb 2018 17:11:08 +0100
-In-Reply-To: <20180210064130.6422-1-alexandre.belloni@bootlin.com> (Alexandre
-        Belloni's message of "Sat, 10 Feb 2018 07:41:30 +0100")
-Message-ID: <87h8qkq38j.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Tue, 13 Feb 2018 11:12:22 -0500
+X-Google-Smtp-Source: AH8x224vdfr3V7MwuQ+C7zlZpxj/RfzfCarHPdcsM42XvdKpMDATosJ34ZLusFrUbwFBRdRIjFZE8Q==
+Subject: Re: [PATCH v3] blk: optimization for classic polling
+To: Nitesh Shetty <nj.shetty@samsung.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: axboe@kernel.dk, linux-nvme@lists.infradead.org, joshi.k@samsung.com
+References: <3578876466-3733-1-git-send-email-nj.shetty@samsung.com>
+ <CGME20180213154752epcas1p35e3c13d150d2108a06342781ec5e64d7@epcas1p3.samsung.com>
+ <1518536892-2051-1-git-send-email-nj.shetty@samsung.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <f797a075-4ef2-410f-4eda-fa70d426d58f@kernel.dk>
+Date: Tue, 13 Feb 2018 09:12:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:58.0) Gecko/20100101
+ Thunderbird/58.0
 MIME-Version: 1.0
+In-Reply-To: <1518536892-2051-1-git-send-email-nj.shetty@samsung.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
- 
- On sam., févr. 10 2018, Alexandre Belloni <alexandre.belloni@bootlin.com> wrote:
+On 2/13/18 8:48 AM, Nitesh Shetty wrote:
+> This removes the dependency on interrupts to wake up task. Set task
+> state as TASK_RUNNING, if need_resched() returns true,
+> while polling for IO completion.
+> Earlier, polling task used to sleep, relying on interrupt to wake it up.
+> This made some IO take very long when interrupt-coalescing is enabled in
+> NVMe.
 
-> The node name should be generic and must not contain the part number.
->
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-
-Applied on mvebu/dt
-
-Thanks,
-
-Gregory
-
-> ---
->  arch/arm/boot/dts/armada-370-netgear-rn102.dts | 2 +-
->  arch/arm/boot/dts/armada-370-netgear-rn104.dts | 2 +-
->  arch/arm/boot/dts/armada-xp-netgear-rn2120.dts | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/armada-370-netgear-rn102.dts b/arch/arm/boot/dts/armada-370-netgear-rn102.dts
-> index b1a96e95e921..d2225bd4a76f 100644
-> --- a/arch/arm/boot/dts/armada-370-netgear-rn102.dts
-> +++ b/arch/arm/boot/dts/armada-370-netgear-rn102.dts
-> @@ -103,7 +103,7 @@
->  
->  				status = "okay";
->  
-> -				isl12057: isl12057@68 {
-> +				isl12057: rtc@68 {
->  					compatible = "isil,isl12057";
->  					reg = <0x68>;
->  					wakeup-source;
-> diff --git a/arch/arm/boot/dts/armada-370-netgear-rn104.dts b/arch/arm/boot/dts/armada-370-netgear-rn104.dts
-> index d67e7aa42b54..b73cae836bc1 100644
-> --- a/arch/arm/boot/dts/armada-370-netgear-rn104.dts
-> +++ b/arch/arm/boot/dts/armada-370-netgear-rn104.dts
-> @@ -105,7 +105,7 @@
->  
->  				status = "okay";
->  
-> -				isl12057: isl12057@68 {
-> +				isl12057: rtc@68 {
->  					compatible = "isil,isl12057";
->  					reg = <0x68>;
->  					wakeup-source;
-> diff --git a/arch/arm/boot/dts/armada-xp-netgear-rn2120.dts b/arch/arm/boot/dts/armada-xp-netgear-rn2120.dts
-> index 40c6fe21e720..e66fe80cf279 100644
-> --- a/arch/arm/boot/dts/armada-xp-netgear-rn2120.dts
-> +++ b/arch/arm/boot/dts/armada-xp-netgear-rn2120.dts
-> @@ -115,7 +115,7 @@
->  					reg = <0x4c>;
->  				};
->  
-> -				isl12057: isl12057@68 {
-> +				isl12057: rtc@68 {
->  					compatible = "isil,isl12057";
->  					reg = <0x68>;
->  					wakeup-source;
-> -- 
-> 2.16.1
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Thanks, applied.
 
 -- 
-Gregory Clement, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Jens Axboe
