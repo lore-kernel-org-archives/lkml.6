@@ -1,106 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965324AbeBMRAc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:00:32 -0500
-Received: from mga06.intel.com ([134.134.136.31]:54580 "EHLO mga06.intel.com"
+        id S965402AbeBMRAq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:00:46 -0500
+Received: from mout.web.de ([212.227.15.14]:34781 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964869AbeBMRAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:00:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,508,1511856000";
-   d="scan'208";a="18120013"
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <yehezkel.bernat@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
-        Radion Mirchevsky <radion.mirchevsky@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 03/18] thunderbolt: Handle connecting device in place of host properly
-Date: Tue, 13 Feb 2018 20:00:03 +0300
-Message-Id: <20180213170018.9780-4-mika.westerberg@linux.intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
-References: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
+        id S965372AbeBMRAb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 12:00:31 -0500
+To: linux-efi@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] efi/apple-properties: Delete an error message for a failed
+ memory allocation in unmarshal_devices()
+Message-ID: <145f8fac-9297-b362-d89f-886632e2507f@users.sourceforge.net>
+Date: Tue, 13 Feb 2018 18:00:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:zyhSeTm/Ia7asL82uFEJ99fFpVw1jgO2vUzTjkJ9YzFfmN6HFMP
+ 1EszfOPamqNBER/ZtOqhGa1Jwnx/V4k8NYrFNiVEX6lzYziZIi1FGVAfKSHwQ28Sh2Y8NTF
+ 6PvZ8t2dZFcfzlnaQfVIheTSkUU++aifmIjso9ifP5mW83jcuKwlqnqleDypNPyE3KmENFA
+ m//GPBBx+YGwUB+4Q1q3g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ms2XmHeCpZ0=:tswU/2ZIrOL24N8JgneTSu
+ L72sWkFySYylAI3fMfsItq/AJWpmkVK11VCe13iLlkZ3tMV5mXyNENKFgMhht+Z7asoGOER4U
+ kYqhWupnqMQC5FYpLVqZHhgBKIq/CYCocLVeCm408UnqWFxfkg7efRUvIvwrw6pTZDjkKPO72
+ nUJ2E01dc3B4uaUNh6WRV4HCSX0oCjOZJ908M6dabmIn9cdGKaZsIwmCEmmM6ECOf3dUYeT/6
+ UTeTBYXY99fdmqVqx5C3HgytG+TUUW4VNMWrQ/xqJ6Vcsenv7M2wTLlO9sBRF8W2mwCe6+qt2
+ X6LFzXiEZHmP04h9HyFkQpaxvd+detMMlg7efew39JVY9unZcVYU8a2gJucanZhu5sX1WZy0O
+ ET1lAaJrS/XrNXIMXg3uH8M4k6021QujCASrIzBZIF7jYiy0mb3/zNwW72JBzkYaBLkvEbc/4
+ ky4eUhjhso8CHPa8gS94fk5EZhGD36QbMoeOSUFXaFnXmceDHd+Y/oht6x1PfZS57muemOEqV
+ 2RoBeFTfurOSBcVPk7MGa7/IGqzdWk+gSSAd1SFZCvwb9FuFS3FTE8NruLBcQtZ2ngPB75wgm
+ 5u6ajq1EqE5P4kFSj2zE6ers7auxy5nHsRzAdH2cYlViQ0TymJgDzFg4AvcboiaRpXwUIv+06
+ Y/0nlgfi/2XtA5KxERsSP4SUZV61Ny+sYofAoFij7hj1Akf2L2Gadw25Fc4/FgL3TFR2PT2qd
+ xc07nymehaeP+SJxr248hBVpVEEKRZGc1Mdcut0Z6nrEPSVQ/WUo6lkP+ymqoRvkOTR2sBTlL
+ KfwasYyLEhcbBNbXen5gec3nPkdomLv9OMHsD9gh8uoniVjWsw=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the system is suspended and user disconnects cable to another host
-and connects it to a Thunderbolt device instead we get a warning from
-driver core about adding duplicate sysfs attribute and adding the new
-device fails.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Feb 2018 17:52:10 +0100
 
-Handle this properly so that we first remove the existing XDomain
-connection before adding new devices.
+Omit an extra message for a memory allocation failure in this function.
 
-Fixes: d1ff70241a27 ("thunderbolt: Add support for XDomain discovery protocol")
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: stable@vger.kernel.org
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/thunderbolt/icm.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+ drivers/firmware/efi/apple-properties.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
-index ab02d13f40b7..182226023acb 100644
---- a/drivers/thunderbolt/icm.c
-+++ b/drivers/thunderbolt/icm.c
-@@ -383,6 +383,15 @@ static void remove_switch(struct tb_switch *sw)
- 	tb_switch_remove(sw);
- }
+diff --git a/drivers/firmware/efi/apple-properties.c b/drivers/firmware/efi/apple-properties.c
+index 9f6bcf173b0e..f5f3159df4d5 100644
+--- a/drivers/firmware/efi/apple-properties.c
++++ b/drivers/firmware/efi/apple-properties.c
+@@ -158,10 +158,8 @@ static int __init unmarshal_devices(struct properties_header *properties)
  
-+static void remove_xdomain(struct tb_xdomain *xd)
-+{
-+	struct tb_switch *sw;
-+
-+	sw = tb_to_switch(xd->dev.parent);
-+	tb_port_at(xd->route, sw)->xdomain = NULL;
-+	tb_xdomain_remove(xd);
-+}
-+
- static void
- icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
- {
-@@ -391,6 +400,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
- 	struct tb_switch *sw, *parent_sw;
- 	struct icm *icm = tb_priv(tb);
- 	bool authorized = false;
-+	struct tb_xdomain *xd;
- 	u8 link, depth;
- 	u64 route;
- 	int ret;
-@@ -467,6 +477,13 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
- 		tb_switch_put(sw);
- 	}
+ 		entry = kcalloc(dev_header->prop_count + 1, sizeof(*entry),
+ 				GFP_KERNEL);
+-		if (!entry) {
+-			dev_err(dev, "cannot allocate properties\n");
++		if (!entry)
+ 			goto skip_device;
+-		}
  
-+	/* Remove existing XDomain connection if found */
-+	xd = tb_xdomain_find_by_link_depth(tb, link, depth);
-+	if (xd) {
-+		remove_xdomain(xd);
-+		tb_xdomain_put(xd);
-+	}
-+
- 	parent_sw = tb_switch_find_by_link_depth(tb, link, depth - 1);
- 	if (!parent_sw) {
- 		tb_err(tb, "failed to find parent switch for %u.%u\n",
-@@ -529,15 +546,6 @@ icm_fr_device_disconnected(struct tb *tb, const struct icm_pkg_header *hdr)
- 	tb_switch_put(sw);
- }
- 
--static void remove_xdomain(struct tb_xdomain *xd)
--{
--	struct tb_switch *sw;
--
--	sw = tb_to_switch(xd->dev.parent);
--	tb_port_at(xd->route, sw)->xdomain = NULL;
--	tb_xdomain_remove(xd);
--}
--
- static void
- icm_fr_xdomain_connected(struct tb *tb, const struct icm_pkg_header *hdr)
- {
+ 		unmarshal_key_value_pairs(dev_header, dev, ptr, entry);
+ 		if (!entry[0].name)
 -- 
-2.15.1
+2.16.1
