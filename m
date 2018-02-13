@@ -1,116 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966130AbeBMXjt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 18:39:49 -0500
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:33370 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966040AbeBMXjq (ORCPT
+        id S966170AbeBMXla (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 18:41:30 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35290 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966064AbeBMXl0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 18:39:46 -0500
-X-Google-Smtp-Source: AH8x227Z64exO88OKiJg36A8NilFoh+jQELYn9bvRum2OTuRk0T9zdv6vy++OEllV2u7ivxmdye9ag==
-Date: Tue, 13 Feb 2018 17:39:45 -0600
-From: Rob Herring <robh@kernel.org>
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: linus.walleij@linaro.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, broonie@kernel.org,
-        andy.shevchenko@gmail.com
-Subject: Re: [PATCH 1/2] dt-bindings: gpio: Add Spreadtrum EIC controller
- documentation
-Message-ID: <20180213233945.55mfqpydfxmimak2@rob-hp-laptop>
-References: <e89b91042abbbcf04cb39a3350af000cc411eee1.1518076643.git.baolin.wang@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e89b91042abbbcf04cb39a3350af000cc411eee1.1518076643.git.baolin.wang@linaro.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Tue, 13 Feb 2018 18:41:26 -0500
+Date: Tue, 13 Feb 2018 15:41:23 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Hugh Dickins <hughd@google.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Minchan Kim <minchan@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>, Shaohua Li <shli@fb.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>, Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>, Rik van Riel <riel@redhat.com>,
+        Jan Kara <jack@suse.cz>, Dave Jiang <dave.jiang@intel.com>,
+        Aaron Lu <aaron.lu@intel.com>
+Subject: Re: [PATCH -mm -v5 RESEND] mm, swap: Fix race between swapoff and
+ some swap operations
+Message-Id: <20180213154123.9f4ef9e406ea8365ca46d9c5@linux-foundation.org>
+In-Reply-To: <20180213014220.2464-1-ying.huang@intel.com>
+References: <20180213014220.2464-1-ying.huang@intel.com>
+X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.23; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2018 at 04:01:42PM +0800, Baolin Wang wrote:
-> This patch adds the device tree bindings for the Spreadtrum EIC
-> controller. The EIC can be recognized as one special type of GPIO,
-> which can only be used as input.
+On Tue, 13 Feb 2018 09:42:20 +0800 "Huang, Ying" <ying.huang@intel.com> wrote:
+
+> From: Huang Ying <ying.huang@intel.com>
 > 
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> ---
->  .../devicetree/bindings/gpio/gpio-eic-sprd.txt     |   51 ++++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
-> new file mode 100644
-> index 0000000..34f194f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
-> @@ -0,0 +1,51 @@
-> +Spreadtrum EIC controller bindings
+> When the swapin is performed, after getting the swap entry information
+> from the page table, system will swap in the swap entry, without any
+> lock held to prevent the swap device from being swapoff.  This may
+> cause the race like below,
+
+Sigh.  In terms of putting all the work into the swapoff path and
+avoiding overheads in the hot paths, I guess this is about as good as
+it will get.
+
+It's a very low-priority fix so I'd prefer to keep the patch in -mm
+until Hugh has had an opportunity to think about it.
+
+> ...
+>  
+> +/*
+> + * Check whether swap entry is valid in the swap device.  If so,
+> + * return pointer to swap_info_struct, and keep the swap entry valid
+> + * via preventing the swap device from being swapoff, until
+> + * put_swap_device() is called.  Otherwise return NULL.
+> + */
+> +struct swap_info_struct *get_swap_device(swp_entry_t entry)
+> +{
+> +	struct swap_info_struct *si;
+> +	unsigned long type, offset;
 > +
-> +The EIC is the abbreviation of external interrupt controller, which
-> +is only can be used as input mode. The EIC controller includes 4
-> +sub-modules: EIC-Debounce, EIC-Latch, EIC-Async, EIC-Sync.
+> +	if (!entry.val)
+> +		goto out;
+> +	type = swp_type(entry);
+> +	if (type >= nr_swapfiles)
+> +		goto bad_nofile;
+> +	si = swap_info[type];
 > +
-> +The EIC-debounce sub-module provides up to 8 source input signal
-> +connection. A debounce machanism is used to capture input signal's
-> +stable status (ms grade) and a single-trigger mechanism is introduced
-> +into this sub-module to enhance the input event detection reliability.
-> +In addition, this sub-module's clock can be shut-off automatically to
-> +reduce power dissipation. The debounce range is from 1ms to 4s with
-> +the step of 1ms. If the input signal is shorter than 1ms, it will be
-> +omitted as this sub-module.
+> +	preempt_disable();
+
+This preempt_disable() is later than I'd expect.  If a well-timed race
+occurs, `si' could now be pointing at a defunct entry.  If that
+well-timed race include a swapoff AND a swapon, `si' could be pointing
+at the info for a new device?
+
+> +	if (!(si->flags & SWP_VALID))
+> +		goto unlock_out;
+> +	offset = swp_offset(entry);
+> +	if (offset >= si->max)
+> +		goto unlock_out;
 > +
-> +The EIC-latch sub-module is used to latch some special input signal
-> +and send interrupts to MCU core, and it can provide up to 8 latch
-> +source input signal connection.
-> +
-> +The EIC-async sub-module uses 32k clock to capture short signal (us
-> +grade) to generate interrupt to MCU by level or edge trigger.
-> +
-> +The EIC-sync is similar with GPIO's input function.
-> +
-> +Required properties:
-> +- compatible: Should be one of the following:
-> +  "sprd,sc9860-eic-debounce",
-> +  "sprd,sc9860-eic-latch",
-> +  "sprd,sc9860-eic-async",
-> +  "sprd,sc9860-eic-sync",
-> +  "sprd,sc27xx-eic-debounce".
-> +- reg: Define the base and range of the I/O address space containing
-> +  the GPIO controller registers.
-> +- gpio-controller: Marks the device node as a GPIO controller.
-
-Why a gpio controller? Do you read the input pin state?
-
-> +- #gpio-cells: Should be <2>. The first cell is the gpio number and
-> +  the second cell is used to specify optional parameters.
-> +- interrupt-controller: Marks the device node as an interrupt controller.
-> +- #interrupt-cells: Should be <2>. Specifies the number of cells needed
-> +  to encode interrupt source.
-> +- interrupts: Should be the port interrupt shared by all the gpios.
-> +
-> +Example:
-> +	eic_debounce: eic@40210000 {
-
-interrupt-controller@...
-
-Or (if this remains a gpio controller)
-
-gpio@...
-
-> +		compatible = "sprd,sc9860-eic-debounce";
-> +		reg = <0 0x40210000 0 0x80>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
-
-The example doesn't seem to match your description of the block or 
-blocks. You talk about a bunch of sub modules and then there's just this 
-one node?
-
-> +	};
-> -- 
-> 1.7.9.5
-> 
+> +	return si;
+> +bad_nofile:
+> +	pr_err("%s: %s%08lx\n", __func__, Bad_file, entry.val);
+> +out:
+> +	return NULL;
+> +unlock_out:
+> +	preempt_enable();
+> +	return NULL;
+> +}
