@@ -1,112 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933061AbeBMAtx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 19:49:53 -0500
-Received: from mga07.intel.com ([134.134.136.100]:7122 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932736AbeBMAtw (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 19:49:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,504,1511856000";
-   d="scan'208";a="17179126"
-From: Jin Yao <yao.jin@linux.intel.com>
-To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH] perf report: Fix a memory corrupton issue when enabling --branch-history
-Date: Tue, 13 Feb 2018 16:44:28 +0800
-Message-Id: <1518511468-32737-1-git-send-email-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S933069AbeBMAwE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 19:52:04 -0500
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:41464 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932838AbeBMAwB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Feb 2018 19:52:01 -0500
+X-Google-Smtp-Source: AH8x224AmWUGaid4WwhFsXq/UvtV2WbpPwIk2NwB06Ulnvi5IPavq3Wm6b5za7NeLMfyyQAR6GP2hBFOyzjC2iqhC2U=
+MIME-Version: 1.0
+In-Reply-To: <20180212062832.2791-3-rnayak@codeaurora.org>
+References: <20180212062832.2791-1-rnayak@codeaurora.org> <20180212062832.2791-3-rnayak@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 12 Feb 2018 16:51:58 -0800
+X-Google-Sender-Auth: aWJPhT3ul3lviqKReEbIiK2wm4o
+Message-ID: <CAD=FV=UQ4YD7M8pqReBwE2etUbhuewye0akp0P9SuTnjwLgL4w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] arm64: dts: sdm845: Add minimal dts files for
+ sdm845 SoC/MTP
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, evgreen@chromium.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Following command lines will cause perf crash.
+Hi,
 
-perf record -j call -g -a <application>
-perf report --branch-history
+On Sun, Feb 11, 2018 at 10:28 PM, Rajendra Nayak <rnayak@codeaurora.org> wrote:
+> Add a skeletal sdm845 SoC dtsi and MTP board dts/dtsi files
+>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile       |   1 +
+>  arch/arm64/boot/dts/qcom/sdm845-mtp.dts |  13 ++
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi    | 275 ++++++++++++++++++++++++++++++++
+>  3 files changed, 289 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+>  create mode 100644 arch/arm64/boot/dts/qcom/sdm845.dtsi
+>
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index 55ec5ee7f7e8..9319e74b8906 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -6,3 +6,4 @@ dtb-$(CONFIG_ARCH_QCOM) += msm8916-mtp.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += msm8992-bullhead-rev-101.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += msm8994-angler-rev-101.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += msm8996-mtp.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)        += sdm845-mtp.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+> new file mode 100644
+> index 000000000000..617c7bb25fb1
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+> @@ -0,0 +1,13 @@
+> +// SPDX-License-Identifier: GPL-2.0
 
-*** Error in `perf': double free or corruption (!prev): 0x00000000104aa040 ***
-======= Backtrace: =========
-/lib/x86_64-linux-gnu/libc.so.6(+0x77725)[0x7f6b37254725]
-/lib/x86_64-linux-gnu/libc.so.6(+0x7ff4a)[0x7f6b3725cf4a]
-/lib/x86_64-linux-gnu/libc.so.6(cfree+0x4c)[0x7f6b37260abc]
-perf[0x51b914]
-perf(hist_entry_iter__add+0x1e5)[0x51f305]
-perf[0x43cf01]
-perf[0x4fa3bf]
-perf[0x4fa923]
-perf[0x4fd396]
-perf[0x4f9614]
-perf(perf_session__process_events+0x89e)[0x4fc38e]
-perf(cmd_report+0x15d2)[0x43f202]
-perf[0x4a059f]
-perf(main+0x631)[0x427b71]
-/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0)[0x7f6b371fd830]
-perf(_start+0x29)[0x427d89]
+It would, of course, be up to Qualcomm.  ...but might I suggest instead:
 
-The memory corruption happens at:
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 
-iter_add_next_cumulative_entry()
-{
-        ...
-        for (i = 0; i < iter->curr; i++) {
-        ...
-}
+The device tree files really don't have any special secret sauce in
+them and IIRC allowing them to have a more permissive MIT license _or_
+a GPL allowed people to run other operating systems on these boards.
+This kind of thing is better to fix now so we don't have to go and get
+everyone's permission later on.
 
-Whatever in iter_next_cumulative_entry() or in iter_add_next_cumulative_entry(),
-they all don't check if iter->curr exceeds the array 'he_cache[]'.
+In the past we went through this with Rockchip SoCs in commit
+b1772506206f ("ARM: dts: rockchip: relicense rk3288.dtsi under
+GPLv2/X11").
 
-If there are too many nodes in callchain, it's possible that iter->curr >
-iter->max_stack, then memory corruption occurs.
 
-This patch will reallocate array 'he_cache[]' in iter_next_cumulative_entry()
-if necessary (the case of too many nodes in callchain).
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/util/hist.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+IMHO add an extra line to this comment with a description to avoid the
+bike shedding of how we're supposed to do 1-line comments in device
+tree files.  AKA:
 
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index b614095..71f07d2 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -926,11 +926,32 @@ iter_next_cumulative_entry(struct hist_entry_iter *iter,
- 			   struct addr_location *al)
- {
- 	struct callchain_cursor_node *node;
-+	struct hist_entry **tmp;
-+	int i;
- 
- 	node = callchain_cursor_current(&callchain_cursor);
- 	if (node == NULL)
- 		return 0;
- 
-+	/*
-+	 * If there are too many nodes in callchain,
-+	 * increase the size of he_cache[].
-+	 */
-+	if (iter->curr == iter->max_stack) {
-+		i = 2 * iter->max_stack + 1;
-+		tmp = realloc(iter->priv, sizeof(struct hist_entry *) * i);
-+		if (tmp == NULL) {
-+			/*
-+			 * No need to free iter->priv here. It will be
-+			 * freed in iter_finish_cumulative_entry.
-+			 */
-+			return 0;
-+		}
-+
-+		iter->priv = tmp;
-+		iter->max_stack = i;
-+	}
-+
- 	return fill_callchain_info(al, node, iter->hide_unresolved);
- }
- 
--- 
-2.7.4
+/*
+ * SDM845 MTP board device tree source
+ *
+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+ */
+
+
+> +
+> +/dts-v1/;
+> +
+> +#include "sdm845.dtsi"
+> +
+> +/ {
+> +       model = "Qualcomm Technologies, Inc. SDM845 MTP";
+> +       compatible = "qcom,sdm845-mtp";
+
+For me checkpatch complains about this.  It looks like the file
+"Documentation/devicetree/bindings/arm/qcom.txt" needs to be updated
+with "sdm845".  I don't think that will make checkpatch be quiet
+(since  that file doesn't have a full list of every board), but it
+still should be the correct thing to do.
+
+
+> +};
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> new file mode 100644
+> index 000000000000..55a7e0b454e1
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -0,0 +1,275 @@
+> +// SPDX-License-Identifier: GPL-2.0
+
+As per above, suggest dual licensed?
+
+
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+
+As per above, suggest adding an extra line to avoid the bikeshed.
+
+SDM845 SoC device tree source
+
+
+Besides those things, everything looks good as far as I can see.  I'm
+not an expert on every one of the devices used in this file, but
+reading through bindings docs and looking at other users of them, it
+looks sane enough.  Thus, with the above nits fixed you can feel free
+to add my Reviewed-by.
+
+
+-Doug
