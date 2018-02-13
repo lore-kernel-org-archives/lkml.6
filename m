@@ -1,98 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964980AbeBMNmd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:42:33 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:54393 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964792AbeBMNmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:42:31 -0500
-Date: Tue, 13 Feb 2018 14:42:26 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Daniel Schultz <d.schultz@phytec.de>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, f.fainelli@gmail.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] net: phy: dp83867: Add binding for the CLK_OUT pin
- muxing option
-Message-ID: <20180213134226.GA31407@lunn.ch>
-References: <1518514952-22392-1-git-send-email-d.schultz@phytec.de>
+        id S964922AbeBMNpJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:45:09 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53888 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964792AbeBMNpI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 08:45:08 -0500
+X-Google-Smtp-Source: AH8x224P15OqBpe2wKl54F3QFzEOqUS7lgIXPKiCxZmTZc2WJx4UfiBuJAsnKiQdwfLVM1msoJ9aAw==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518514952-22392-1-git-send-email-d.schultz@phytec.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180213133201.kwq4aatpts7nerc2@flea.lan>
+References: <20180213121414.7000-1-embed3d@gmail.com> <20180213133201.kwq4aatpts7nerc2@flea.lan>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 13 Feb 2018 21:44:44 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64tOCeD38gGR_fboC6PJCCD8L-EPu196MGrGgHLenkQXw@mail.gmail.com>
+Message-ID: <CAGb2v64tOCeD38gGR_fboC6PJCCD8L-EPu196MGrGgHLenkQXw@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2] rtc: ac100: Fix ac100 determine rate bug
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Philipp Rossak <embed3d@gmail.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>, linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 10:42:31AM +0100, Daniel Schultz wrote:
-> From: Wadim Egorov <w.egorov@phytec.de>
-> 
-> The DP83867 has a muxing option for the CLK_OUT pin. It is possible
-> to set CLK_OUT for different channels.
-> Create a binding to select a specific clock for CLK_OUT pin.
-> 
-> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
-> Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
-> ---
->  drivers/net/phy/dp83867.c            | 14 ++++++++++++++
->  include/dt-bindings/net/ti-dp83867.h | 14 ++++++++++++++
->  2 files changed, 28 insertions(+)
-> 
-> diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
-> index c1ab976..ffb97c2 100644
-> --- a/drivers/net/phy/dp83867.c
-> +++ b/drivers/net/phy/dp83867.c
-> @@ -75,6 +75,8 @@
->  
->  #define DP83867_IO_MUX_CFG_IO_IMPEDANCE_MAX	0x0
->  #define DP83867_IO_MUX_CFG_IO_IMPEDANCE_MIN	0x1f
-> +#define DP83867_IO_MUX_CFG_CLK_O_SEL_MASK	(0x1f << 8)
-> +#define DP83867_IO_MUX_CFG_CLK_O_SEL_SHIFT	8
->  
->  /* CFG4 bits */
->  #define DP83867_CFG4_PORT_MIRROR_EN              BIT(0)
-> @@ -92,6 +94,7 @@ struct dp83867_private {
->  	int io_impedance;
->  	int port_mirroring;
->  	bool rxctrl_strap_quirk;
-> +	int clk_output_sel;
->  };
->  
->  static int dp83867_ack_interrupt(struct phy_device *phydev)
-> @@ -160,6 +163,11 @@ static int dp83867_of_init(struct phy_device *phydev)
->  	dp83867->io_impedance = -EINVAL;
->  
->  	/* Optional configuration */
-> +	if (of_property_read_u32(of_node, "ti,clk-output-sel",
-> +				 &dp83867->clk_output_sel))
-> +		/* Keep the default value if ti,clk-output-sel is not set */
-> +		dp83867->clk_output_sel = DP83867_CLK_O_SEL_REF_CLK;
-> +
+On Tue, Feb 13, 2018 at 9:32 PM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> On Tue, Feb 13, 2018 at 01:14:14PM +0100, Philipp Rossak wrote:
+>> This patch fixes a bug, that prevents the Allwinner A83T and the A80
+>> from a successful boot. You can find the shortend trace below:
+>
+> Since when is it there?
+>
+>> Unable to handle kernel NULL pointer dereference at virtual address
+>> 00000000
+>> pgd = (ptrval)
+>> [00000000] *pgd=00000000
+>> Internal error: Oops: 5 [#1] SMP ARM
+>> Modules linked in:
+>> CPU: 0 PID: 49 Comm: kworker/0:1 Not tainted 4.15.0-10190-gb89e32ccd1be #2
+>> Hardware name: Allwinner sun8i Family
+>> Workqueue: events deferred_probe_work_func
+>> PC is at clk_hw_get_rate+0x0/0x34
+>> LR is at ac100_clkout_determine_rate+0x48/0x19c
+>>
+>> [ ... ]
+>>
+>> (clk_hw_get_rate) from (ac100_clkout_determine_rate+0x48/0x19c)
+>> (ac100_clkout_determine_rate) from  (clk_core_set_rate_nolock+0x3c/0x1a0)
+>> (clk_core_set_rate_nolock) from (clk_set_rate+0x30/0x88)
+>> (clk_set_rate) from (of_clk_set_defaults+0x200/0x364)
+>> (of_clk_set_defaults) from (platform_drv_probe+0x18/0xb0)
+>>
+>> To fix that bug, we first check if the return of the
+>> clk_hw_get_parent_by_index is non zero. If it is zero we skip that
+>> clock parent.
+>>
+>> The BUG report could be found here: https://lkml.org/lkml/2018/2/10/198
+>>
+>> Fixes: 04940631b8d2 ("rtc: ac100: Add clk output support")
+>
+> Should it be sent to stable?
+>
+>> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
+>> ---
+>>
+>> Changes in v2:
+>>       * add tag Fixes: ... to commit message
+>>       * add comment to if statement why we are doing this check
+>>
+>>  drivers/rtc/rtc-ac100.c | 12 +++++++++++-
+>>  1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
+>> index 8ff9dc3fe5bf..ba73201d8cc1 100644
+>> --- a/drivers/rtc/rtc-ac100.c
+>> +++ b/drivers/rtc/rtc-ac100.c
+>> @@ -183,7 +183,17 @@ static int ac100_clkout_determine_rate(struct clk_hw *hw,
+>>
+>>       for (i = 0; i < num_parents; i++) {
+>>               struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
+>> -             unsigned long tmp, prate = clk_hw_get_rate(parent);
+>> +             unsigned long tmp, prate;
+>> +
+>> +             /*
+>> +              * We purposefully left open the possibility to use the clock
+>> +              * from the codec side but it is not implemented right now.
+>> +              * Thus we need to check if the parent exists.
+>> +              */
+>> +             if (!parent)
+>> +                     continue;
+>> +
+>> +             prate = clk_hw_get_rate(parent);
+>
+> clk_hw_get_num_parents should return the exact number of parents,
+> which is going to be 1 if you only have one parent, like all DTS seems
+> to have.
+>
+> If not, then it should be explained in the comment and / or fixed
+> properly.
 
-Hi Daniel
+The clock has two parents. One is a fixed clock internally registered
+by the driver. This is actually an external crystal, and we should
+probably add a device node and the works for it. The other parent
+is a clock from the codec side, which we properly declare and
+reference in the device tree. This clock, though defined, is not
+implemented in any driver (because we don't have any ATM).
 
-Normally you don't put registers values into device tree. But in this
-case, i don't see a better alternative.
+This second missing clock is what's causing issues here. The clk core
+looks for the parent by name, can't find one that is registered, and
+returns NULL.
 
-Please add a range check. Values > 01101 are reserved.
+I guess the comment above is still not clear enough?
 
->  	if (of_property_read_bool(of_node, "ti,max-output-impedance"))
->  		dp83867->io_impedance = DP83867_IO_MUX_CFG_IO_IMPEDANCE_MAX;
->  	else if (of_property_read_bool(of_node, "ti,min-output-impedance"))
-> @@ -295,6 +303,12 @@ static int dp83867_config_init(struct phy_device *phydev)
->  	if (dp83867->port_mirroring != DP83867_PORT_MIRROING_KEEP)
->  		dp83867_config_port_mirroring(phydev);
->  
-> +	/* Clock output selection */
-> +	val = phy_read_mmd(phydev, DP83867_DEVADDR, DP83867_IO_MUX_CFG);
-> +	val &= ~DP83867_IO_MUX_CFG_CLK_O_SEL_MASK;
+ChenYu
 
-This could be a problem. If i'm reading the datasheet correctly,
-clearing this bit will override the strapping. A hardware engineer
-might of included a resistor to disable the clock output, saving some
-power. And here you unconditionally turn it back on again. Since
-ti,clk-output-sel is optional, i would prefer that you don't touch
-this register if the property is not present.
-
-     Andrew
+> Maxime
+>
+> --
+> Maxime Ripard, Bootlin (formerly Free Electrons)
+> Embedded Linux and Kernel engineering
+> http://bootlin.com
