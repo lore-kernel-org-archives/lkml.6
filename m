@@ -1,56 +1,56 @@
 Return-Path: <green.hu@gmail.com>
-X-Cyrus-Session-Id: sloti22d1t05-3695236-1518513110-2-604837628382336132
+X-Cyrus-Session-Id: sloti22d1t05-3695236-1518513106-2-5632640012431977837
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FROM 0.001, RCVD_IN_DNSWL_NONE -0.0001,
   RCVD_IN_MSPIKE_H3 -0.01, RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001,
-  LANGUAGES daensv, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='74.125.83.67', Host='mail-pg0-f67.google.com', Country='US',
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.85.160.67', Host='mail-pl0-f67.google.com', Country='US',
   FromHeader='com', MailFrom='com'
 X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: green.hu@gmail.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518513109; b=Itg+Jp4vmQagOu+hvoGJB8N6tRpbwhIstkFIazN1z2yzvcK
-    cp/XF8+kpbSXNnwqGPxLYj6dON2bSdOgqz98VIpdFTrT4+C3cPrM18sgVUEBgGN6
-    DbplcweL/F2BA+nzVyUq/3861zyM200IveVnc/xgpX4WbpT1pvf+bMC2FEqt3oRm
-    JS/hZj8uk4RsNNFfmaaC4RfH4RNw9gWz6W7ZwmEN7sPMT8KdwevrcDBCGQmlSRhN
-    5hF1ScLL/mHliGXelHyaSMQUqEqLpaw9VKRF5N3BaO9gSGKSxj3G7BDVNvsOeJZE
-    XKZlO3JMzCw5whhUl0mdov/Ueks8oVQTiN25xbA==
+    t=1518513105; b=W3whqYneIkcvMtnfQKixYFOYe6Z7ZQDxrtux83n95GPt5sm
+    d2UywtvMqFx7zxGTKOJgNIFlt2BxXNOzfSg/3BzEJoD19G7v8bMxix4Sr21z+A7a
+    9AWxWjiWb9qqdZuwSzE4y0eEthynH8l6smf4ayxi6p8o1b9YsZFiNKcwfLIz+yuO
+    TRA5kw9nYB6CeoBAR5S/KG0mHRtjSXJqvuAdvT6qYxkwHX+8l+JtPCeixZMRXyAe
+    P6EBIAsHDhWljKyyZcFcp0RMNaLZHnGf2nqzBJzq4svipSxDjxraFeXaibDsSl/5
+    3kZJ8aE4zukSajuMvmhCVS68G1kj7s3W12jsyFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:in-reply-to:references; s=arctest; t=
-    1518513109; bh=sjR19UQyJ2ZTYpZJotf8QSWLtZFpuOScFEDhDaH78JU=; b=O
-    ifUclEbIYTjb9pCF9LII82igdpGrnXVV9v5d3Od1pqpHliJItF8to99NQDEcNDb5
-    QDPa38Rbr+mm+T9u5ononvRYfl+/xdRNdIUR8rR/S0e36pOHMDdqGSAtsmEJ75vQ
-    GDn4I4pYHDV9NX8g2L2bKkRJNq2TFMIEnLkRT/Gqx8S6XjlSNQj0bWUsF7M4/eN1
-    Kocad3hoLWt42apk8ia/Aady1ZuHmux1svzZhpzlLpTMeEM4M5XU6AU+bQmtCxp7
-    g3OIxQpSQkQ0m/itHtyEr7kT45Ep9QFjUpMed8flYcJSMNvFLaE8E+SjcgGO9Xxb
-    danWjN68Gsh+XS4Yz3oZg==
+    1518513105; bh=V4ju4qttJVl/mfPSGMn3ShXyu3Y27BJhSX+6Gpyv09Q=; b=R
+    JAY3I9eSXHI6DUfGCYI+PJUF+0epdu6nFAVLiEHqOP4iCIpUgf5femjTWoXUuMI4
+    3eveWDbAiTTB/wc3EN7ljFq9BEO7QbJbFW1lXICxj0DZ/O8GbI5QAWxtk3oqKYb3
+    6jAxKArQqSp17IDXRU9eYDWN5XJyUk5h+JOVu01JwwafSyfkQ3jHPd+RNSDI5Ujf
+    D9e1bpJpfTxuhr6XYqLFicZUGYaNB9Ez/VOg+gKL3tqNDEJNPBLwilNe73e1D3oQ
+    UCBg90MKQkZ8YlN1lAFc7a/o84HSxbxDHKrp5i5HuAAxKJjMhzJJM2mxf9IB+nI1
+    qp01DX2BXuElXDH+saFzg==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=aEF+/ORr x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=L6piIS+O x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=74.125.83.67 (mail-pg0-f67.google.com);
-    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pg0-f67.google.com;
+    iprev=pass policy.iprev=209.85.160.67 (mail-pl0-f67.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f67.google.com;
     x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Zr8hLr+E;
-    x-ptr=pass x-ptr-helo=mail-pg0-f67.google.com x-ptr-lookup=mail-pg0-f67.google.com;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=mSFl+c7I;
+    x-ptr=pass x-ptr-helo=mail-pl0-f67.google.com x-ptr-lookup=mail-pl0-f67.google.com;
     x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=aEF+/ORr x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=L6piIS+O x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=74.125.83.67 (mail-pg0-f67.google.com);
-    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pg0-f67.google.com;
+    iprev=pass policy.iprev=209.85.160.67 (mail-pl0-f67.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f67.google.com;
     x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Zr8hLr+E;
-    x-ptr=pass x-ptr-helo=mail-pg0-f67.google.com x-ptr-lookup=mail-pg0-f67.google.com;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=mSFl+c7I;
+    x-ptr=pass x-ptr-helo=mail-pl0-f67.google.com x-ptr-lookup=mail-pl0-f67.google.com;
     x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Google-Smtp-Source: AH8x224jJwgNszKg1Go8Hpxs3erV7z6rPWooHQ9Zz9Vq8Pz0HMrFHT2eGiToovSrdKr5IJ7zzkx7bg==
+X-Google-Smtp-Source: AH8x224DDgc4wm8ixhU3lS65RJYI3DeJStq/Xj7GoMDC4QjsVUwwuy/TEM4a8eZesHoIDvowZ3kuZw==
 From: Greentime Hu <green.hu@gmail.com>
 X-Google-Original-From: Greentime Hu <greentime@andestech.com>
 To: greentime@andestech.com,
@@ -81,9 +81,9 @@ To: greentime@andestech.com,
 	shorne@gmail.com
 Cc: green.hu@gmail.com,
 	Vincent Chen <vincentc@andestech.com>
-Subject: [PATCH v7 14/37] nds32: IRQ handling
-Date: Tue, 13 Feb 2018 17:09:18 +0800
-Message-Id: <ffdd80d006a15f572efdad859f332241b5ce2f73.1518505384.git.greentime@andestech.com>
+Subject: [PATCH v7 13/37] nds32: Process management
+Date: Tue, 13 Feb 2018 17:09:17 +0800
+Message-Id: <04436a48ed9ec3c221740478cd9a620e50100d7a.1518505384.git.greentime@andestech.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <cover.1518505384.git.greentime@andestech.com>
 References: <cover.1518505384.git.greentime@andestech.com>
@@ -93,74 +93,445 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch includes irq related functions and irqchip_init().
+This patch includes copy_thread(), start_thread() implementation and cpu_context
+structure definition. nds32 uses $r25 to get current task_struct.
 
 Signed-off-by: Vincent Chen <vincentc@andestech.com>
 Signed-off-by: Greentime Hu <greentime@andestech.com>
 Acked-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/nds32/include/asm/irqflags.h | 36 ++++++++++++++++++++++++++++++++++++
- arch/nds32/kernel/irq.c           |  9 +++++++++
- 2 files changed, 45 insertions(+)
- create mode 100644 arch/nds32/include/asm/irqflags.h
- create mode 100644 arch/nds32/kernel/irq.c
+ arch/nds32/include/asm/current.h     |  12 ++
+ arch/nds32/include/asm/processor.h   | 103 +++++++++++++++++
+ arch/nds32/include/asm/thread_info.h |  76 +++++++++++++
+ arch/nds32/kernel/process.c          | 208 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 399 insertions(+)
+ create mode 100644 arch/nds32/include/asm/current.h
+ create mode 100644 arch/nds32/include/asm/processor.h
+ create mode 100644 arch/nds32/include/asm/thread_info.h
+ create mode 100644 arch/nds32/kernel/process.c
 
-diff --git a/arch/nds32/include/asm/irqflags.h b/arch/nds32/include/asm/irqflags.h
+diff --git a/arch/nds32/include/asm/current.h b/arch/nds32/include/asm/current.h
 new file mode 100644
-index 000000000000..2bfd00f8bc48
+index 000000000000..b4dcd22b7bcb
 --- /dev/null
-+++ b/arch/nds32/include/asm/irqflags.h
-@@ -0,0 +1,36 @@
++++ b/arch/nds32/include/asm/current.h
+@@ -0,0 +1,12 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (C) 2005-2017 Andes Technology Corporation
 +
-+#include <asm/nds32.h>
-+#include <nds32_intrinsic.h>
++#ifndef _ASM_NDS32_CURRENT_H
++#define _ASM_NDS32_CURRENT_H
 +
-+#define arch_local_irq_disable()	\
-+	GIE_DISABLE();
++#ifndef __ASSEMBLY__
++register struct task_struct *current asm("$r25");
++#endif /* __ASSEMBLY__ */
++#define tsk $r25
 +
-+#define arch_local_irq_enable()	\
-+	GIE_ENABLE();
-+static inline unsigned long arch_local_irq_save(void)
-+{
-+	unsigned long flags;
-+	flags = __nds32__mfsr(NDS32_SR_PSW) & PSW_mskGIE;
-+	GIE_DISABLE();
-+	return flags;
-+}
-+
-+static inline unsigned long arch_local_save_flags(void)
-+{
-+	unsigned long flags;
-+	flags = __nds32__mfsr(NDS32_SR_PSW) & PSW_mskGIE;
-+	return flags;
-+}
-+
-+static inline void arch_local_irq_restore(unsigned long flags)
-+{
-+	if(flags)
-+		GIE_ENABLE();
-+}
-+
-+static inline int arch_irqs_disabled_flags(unsigned long flags)
-+{
-+	return !flags;
-+}
-diff --git a/arch/nds32/kernel/irq.c b/arch/nds32/kernel/irq.c
++#endif /* _ASM_NDS32_CURRENT_H */
+diff --git a/arch/nds32/include/asm/processor.h b/arch/nds32/include/asm/processor.h
 new file mode 100644
-index 000000000000..6ff5a672be27
+index 000000000000..9c83caf4269f
 --- /dev/null
-+++ b/arch/nds32/kernel/irq.c
-@@ -0,0 +1,9 @@
++++ b/arch/nds32/include/asm/processor.h
+@@ -0,0 +1,103 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (C) 2005-2017 Andes Technology Corporation
 +
-+#include <linux/irqchip.h>
++#ifndef __ASM_NDS32_PROCESSOR_H
++#define __ASM_NDS32_PROCESSOR_H
 +
-+void __init init_IRQ(void)
-+{
-+	irqchip_init();
++/*
++ * Default implementation of macro that returns current
++ * instruction pointer ("program counter").
++ */
++#define current_text_addr() ({ __label__ _l; _l: &&_l;})
++
++#ifdef __KERNEL__
++
++#include <asm/ptrace.h>
++#include <asm/types.h>
++#include <asm/sigcontext.h>
++
++#define KERNEL_STACK_SIZE	PAGE_SIZE
++#define STACK_TOP	TASK_SIZE
++#define STACK_TOP_MAX   TASK_SIZE
++
++struct cpu_context {
++	unsigned long r6;
++	unsigned long r7;
++	unsigned long r8;
++	unsigned long r9;
++	unsigned long r10;
++	unsigned long r11;
++	unsigned long r12;
++	unsigned long r13;
++	unsigned long r14;
++	unsigned long fp;
++	unsigned long pc;
++	unsigned long sp;
++};
++
++struct thread_struct {
++	struct cpu_context cpu_context;	/* cpu context */
++	/* fault info     */
++	unsigned long address;
++	unsigned long trap_no;
++	unsigned long error_code;
++};
++
++#define INIT_THREAD  {	}
++
++#ifdef __NDS32_EB__
++#define PSW_DE	PSW_mskBE
++#else
++#define PSW_DE	0x0
++#endif
++
++#ifdef CONFIG_WBNA
++#define PSW_valWBNA	PSW_mskWBNA
++#else
++#define PSW_valWBNA	0x0
++#endif
++
++#ifdef CONFIG_HWZOL
++#define	PSW_valINIT (PSW_CPL_ANY | PSW_mskAEN | PSW_valWBNA | PSW_mskDT | PSW_mskIT | PSW_DE | PSW_mskGIE)
++#else
++#define	PSW_valINIT (PSW_CPL_ANY | PSW_valWBNA | PSW_mskDT | PSW_mskIT | PSW_DE | PSW_mskGIE)
++#endif
++
++#define start_thread(regs,pc,stack)			\
++({							\
++	memzero(regs, sizeof(struct pt_regs));		\
++	forget_syscall(regs);				\
++	regs->ipsw = PSW_valINIT;			\
++	regs->ir0 = (PSW_CPL_ANY | PSW_valWBNA | PSW_mskDT | PSW_mskIT | PSW_DE | PSW_SYSTEM | PSW_INTL_1);	\
++	regs->ipc = pc;					\
++	regs->sp = stack;				\
++})
++
++/* Forward declaration, a strange C thing */
++struct task_struct;
++
++/* Free all resources held by a thread. */
++#define release_thread(thread) do { } while(0)
++
++/* Prepare to copy thread state - unlazy all lazy status */
++#define prepare_to_copy(tsk)	do { } while (0)
++
++unsigned long get_wchan(struct task_struct *p);
++
++#define cpu_relax()			barrier()
++
++#define task_pt_regs(task) \
++	((struct pt_regs *) (task_stack_page(task) + THREAD_SIZE \
++		- 8) - 1)
++
++/*
++ * Create a new kernel thread
++ */
++extern int kernel_thread(int (*fn) (void *), void *arg, unsigned long flags);
++
++#define KSTK_EIP(tsk)	instruction_pointer(task_pt_regs(tsk))
++#define KSTK_ESP(tsk)	user_stack_pointer(task_pt_regs(tsk))
++
++#endif
++
++#endif /* __ASM_NDS32_PROCESSOR_H */
+diff --git a/arch/nds32/include/asm/thread_info.h b/arch/nds32/include/asm/thread_info.h
+new file mode 100644
+index 000000000000..bff741ff337b
+--- /dev/null
++++ b/arch/nds32/include/asm/thread_info.h
+@@ -0,0 +1,76 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#ifndef __ASM_NDS32_THREAD_INFO_H
++#define __ASM_NDS32_THREAD_INFO_H
++
++#ifdef __KERNEL__
++
++#define THREAD_SIZE_ORDER 	(1)
++#define THREAD_SIZE		(PAGE_SIZE << THREAD_SIZE_ORDER)
++
++#ifndef __ASSEMBLY__
++
++struct task_struct;
++
++#include <asm/ptrace.h>
++#include <asm/types.h>
++
++typedef unsigned long mm_segment_t;
++
++/*
++ * low level task data that entry.S needs immediate access to.
++ * __switch_to() assumes cpu_context follows immediately after cpu_domain.
++ */
++struct thread_info {
++	unsigned long flags;	/* low level flags */
++	__s32 preempt_count;	/* 0 => preemptable, <0 => bug */
++	mm_segment_t addr_limit;	/* address limit */
++};
++#define INIT_THREAD_INFO(tsk)						\
++{									\
++	.preempt_count	= INIT_PREEMPT_COUNT,				\
++	.addr_limit	= KERNEL_DS,					\
 +}
++#define thread_saved_pc(tsk) ((unsigned long)(tsk->thread.cpu_context.pc))
++#define thread_saved_fp(tsk) ((unsigned long)(tsk->thread.cpu_context.fp))
++#endif
++
++/*
++ * thread information flags:
++ *  TIF_SYSCALL_TRACE	- syscall trace active
++ *  TIF_SIGPENDING	- signal pending
++ *  TIF_NEED_RESCHED	- rescheduling necessary
++ *  TIF_NOTIFY_RESUME	- callback before returning to user
++ *  TIF_USEDFPU		- FPU was used by this task this quantum (SMP)
++ *  TIF_POLLING_NRFLAG	- true if poll_idle() is polling TIF_NEED_RESCHED
++ */
++#define TIF_SIGPENDING		1
++#define TIF_NEED_RESCHED	2
++#define TIF_SINGLESTEP		3
++#define TIF_NOTIFY_RESUME	4	/* callback before returning to user */
++#define TIF_SYSCALL_TRACE	8
++#define TIF_USEDFPU             16
++#define TIF_POLLING_NRFLAG	17
++#define TIF_MEMDIE		18
++#define TIF_FREEZE		19
++#define TIF_RESTORE_SIGMASK	20
++
++#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
++#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
++#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
++#define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
++#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
++#define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
++#define _TIF_FREEZE		(1 << TIF_FREEZE)
++#define _TIF_RESTORE_SIGMASK	(1 << TIF_RESTORE_SIGMASK)
++
++/*
++ * Change these and you break ASM code in entry-common.S
++ */
++#define _TIF_WORK_MASK		0x000000ff
++#define _TIF_WORK_SYSCALL_ENTRY (_TIF_SYSCALL_TRACE | _TIF_SINGLESTEP)
++#define _TIF_WORK_SYSCALL_LEAVE (_TIF_SYSCALL_TRACE | _TIF_SINGLESTEP)
++
++#endif /* __KERNEL__ */
++#endif /* __ASM_NDS32_THREAD_INFO_H */
+diff --git a/arch/nds32/kernel/process.c b/arch/nds32/kernel/process.c
+new file mode 100644
+index 000000000000..65fda986e55f
+--- /dev/null
++++ b/arch/nds32/kernel/process.c
+@@ -0,0 +1,208 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2005-2017 Andes Technology Corporation
++
++#include <linux/sched.h>
++#include <linux/sched/debug.h>
++#include <linux/sched/task_stack.h>
++#include <linux/delay.h>
++#include <linux/kallsyms.h>
++#include <linux/uaccess.h>
++#include <asm/elf.h>
++#include <asm/proc-fns.h>
++#include <linux/ptrace.h>
++#include <linux/reboot.h>
++
++extern void setup_mm_for_reboot(char mode);
++#ifdef CONFIG_PROC_FS
++struct proc_dir_entry *proc_dir_cpu;
++EXPORT_SYMBOL(proc_dir_cpu);
++#endif
++
++extern inline void arch_reset(char mode)
++{
++	if (mode == 's') {
++		/* Use cpu handler, jump to 0 */
++		cpu_reset(0);
++	}
++}
++
++void (*pm_power_off) (void);
++EXPORT_SYMBOL(pm_power_off);
++
++static char reboot_mode_nds32 = 'h';
++
++int __init reboot_setup(char *str)
++{
++	reboot_mode_nds32 = str[0];
++	return 1;
++}
++
++static int cpub_pwroff(void)
++{
++	return 0;
++}
++
++__setup("reboot=", reboot_setup);
++
++void machine_halt(void)
++{
++	cpub_pwroff();
++}
++
++EXPORT_SYMBOL(machine_halt);
++
++void machine_power_off(void)
++{
++	if (pm_power_off)
++		pm_power_off();
++}
++
++EXPORT_SYMBOL(machine_power_off);
++
++void machine_restart(char *cmd)
++{
++	/*
++	 * Clean and disable cache, and turn off interrupts
++	 */
++	cpu_proc_fin();
++
++	/*
++	 * Tell the mm system that we are going to reboot -
++	 * we may need it to insert some 1:1 mappings so that
++	 * soft boot works.
++	 */
++	setup_mm_for_reboot(reboot_mode_nds32);
++
++	/* Execute kernel restart handler call chain */
++	do_kernel_restart(cmd);
++
++	/*
++	 * Now call the architecture specific reboot code.
++	 */
++	arch_reset(reboot_mode_nds32);
++
++	/*
++	 * Whoops - the architecture was unable to reboot.
++	 * Tell the user!
++	 */
++	mdelay(1000);
++	pr_info("Reboot failed -- System halted\n");
++	while (1) ;
++}
++
++EXPORT_SYMBOL(machine_restart);
++
++void show_regs(struct pt_regs *regs)
++{
++	printk("PC is at %pS\n", (void *)instruction_pointer(regs));
++	printk("LP is at %pS\n", (void *)regs->lp);
++	pr_info("pc : [<%08lx>]    lp : [<%08lx>]    %s\n"
++		"sp : %08lx  fp : %08lx  gp : %08lx\n",
++		instruction_pointer(regs),
++		regs->lp, print_tainted(), regs->sp, regs->fp, regs->gp);
++	pr_info("r25: %08lx  r24: %08lx\n", regs->uregs[25], regs->uregs[24]);
++
++	pr_info("r23: %08lx  r22: %08lx  r21: %08lx  r20: %08lx\n",
++		regs->uregs[23], regs->uregs[22],
++		regs->uregs[21], regs->uregs[20]);
++	pr_info("r19: %08lx  r18: %08lx  r17: %08lx  r16: %08lx\n",
++		regs->uregs[19], regs->uregs[18],
++		regs->uregs[17], regs->uregs[16]);
++	pr_info("r15: %08lx  r14: %08lx  r13: %08lx  r12: %08lx\n",
++		regs->uregs[15], regs->uregs[14],
++		regs->uregs[13], regs->uregs[12]);
++	pr_info("r11: %08lx  r10: %08lx  r9 : %08lx  r8 : %08lx\n",
++		regs->uregs[11], regs->uregs[10],
++		regs->uregs[9], regs->uregs[8]);
++	pr_info("r7 : %08lx  r6 : %08lx  r5 : %08lx  r4 : %08lx\n",
++		regs->uregs[7], regs->uregs[6], regs->uregs[5], regs->uregs[4]);
++	pr_info("r3 : %08lx  r2 : %08lx  r1 : %08lx  r0 : %08lx\n",
++		regs->uregs[3], regs->uregs[2], regs->uregs[1], regs->uregs[0]);
++	pr_info("  IRQs o%s  Segment %s\n",
++		interrupts_enabled(regs) ? "n" : "ff",
++		segment_eq(get_fs(), get_ds())? "kernel" : "user");
++}
++
++EXPORT_SYMBOL(show_regs);
++
++void flush_thread(void)
++{
++}
++
++DEFINE_PER_CPU(struct task_struct *, __entry_task);
++
++asmlinkage void ret_from_fork(void) __asm__("ret_from_fork");
++int copy_thread(unsigned long clone_flags, unsigned long stack_start,
++	    unsigned long stk_sz, struct task_struct *p)
++{
++	struct pt_regs *childregs = task_pt_regs(p);
++
++	memset(&p->thread.cpu_context, 0, sizeof(struct cpu_context));
++
++	if (unlikely(p->flags & PF_KTHREAD)) {
++		memset(childregs, 0, sizeof(struct pt_regs));
++		/* kernel thread fn */
++		p->thread.cpu_context.r6 = stack_start;
++		/* kernel thread argument */
++		p->thread.cpu_context.r7 = stk_sz;
++	} else {
++		*childregs = *current_pt_regs();
++		if (stack_start)
++			childregs->sp = stack_start;
++		/* child get zero as ret. */
++		childregs->uregs[0] = 0;
++		childregs->osp = 0;
++		if (clone_flags & CLONE_SETTLS)
++			childregs->uregs[25] = childregs->uregs[3];
++	}
++	/* cpu context switching  */
++	p->thread.cpu_context.pc = (unsigned long)ret_from_fork;
++	p->thread.cpu_context.sp = (unsigned long)childregs;
++
++#ifdef CONFIG_HWZOL
++	childregs->lb = 0;
++	childregs->le = 0;
++	childregs->lc = 0;
++#endif
++
++	return 0;
++}
++
++/*
++ * fill in the fpe structure for a core dump...
++ */
++int dump_fpu(struct pt_regs *regs, elf_fpregset_t * fpu)
++{
++	int fpvalid = 0;
++	return fpvalid;
++}
++
++EXPORT_SYMBOL(dump_fpu);
++
++unsigned long get_wchan(struct task_struct *p)
++{
++	unsigned long fp, lr;
++	unsigned long stack_start, stack_end;
++	int count = 0;
++
++	if (!p || p == current || p->state == TASK_RUNNING)
++		return 0;
++
++	if (IS_ENABLED(CONFIG_FRAME_POINTER)) {
++		stack_start = (unsigned long)end_of_stack(p);
++		stack_end = (unsigned long)task_stack_page(p) + THREAD_SIZE;
++
++		fp = thread_saved_fp(p);
++		do {
++			if (fp < stack_start || fp > stack_end)
++				return 0;
++			lr = ((unsigned long *)fp)[0];
++			if (!in_sched_functions(lr))
++				return lr;
++			fp = *(unsigned long *)(fp + 4);
++		} while (count++ < 16);
++	}
++	return 0;
++}
++
++EXPORT_SYMBOL(get_wchan);
 -- 
 2.16.1
