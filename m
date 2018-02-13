@@ -1,28 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935170AbeBMMQJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:16:09 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:32993 "EHLO
+        id S935216AbeBMMQ4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:16:56 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59299 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934898AbeBMMQH (ORCPT
+        with ESMTP id S935049AbeBMMQJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:16:07 -0500
-Date: Tue, 13 Feb 2018 04:05:40 -0800
-From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-701b3ef37c0a4a5168bc07cfd48b35727b5a922c@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, namhyung@kernel.org, mingo@kernel.org,
-        jolsa@kernel.org, ak@linux.intel.com, wangnan0@huawei.com,
-        kan.liang@intel.com, peterz@infradead.org, acme@redhat.com,
-        yao.jin@linux.intel.com, tglx@linutronix.de, hpa@zytor.com
-Reply-To: tglx@linutronix.de, hpa@zytor.com, peterz@infradead.org,
-        yao.jin@linux.intel.com, acme@redhat.com, wangnan0@huawei.com,
-        kan.liang@intel.com, namhyung@kernel.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, ak@linux.intel.com, jolsa@kernel.org
-In-Reply-To: <1516310792-208685-5-git-send-email-kan.liang@intel.com>
-References: <1516310792-208685-5-git-send-email-kan.liang@intel.com>
+        Tue, 13 Feb 2018 07:16:09 -0500
+Date: Tue, 13 Feb 2018 04:15:44 -0800
+From: tip-bot for Leo Yan <tipbot@zytor.com>
+Message-ID: <tip-43d1b29b27c76e7454cd6c85bec4d0e9cbb039f3@git.kernel.org>
+Cc: viresh.kumar@linaro.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, daniel.lezcano@linaro.org,
+        vincent.guittot@linaro.org, markivx@codeaurora.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, hpa@zytor.com,
+        leo.yan@linaro.org, rafael.j.wysocki@intel.com, mingo@kernel.org
+Reply-To: viresh.kumar@linaro.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, vincent.guittot@linaro.org,
+        daniel.lezcano@linaro.org, hpa@zytor.com, leo.yan@linaro.org,
+        markivx@codeaurora.org, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, mingo@kernel.org, rafael.j.wysocki@intel.com
+In-Reply-To: <1518097702-9665-1-git-send-email-leo.yan@linaro.org>
+References: <1518097702-9665-1-git-send-email-leo.yan@linaro.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf mmap: Introduce perf_mmap__read_init()
-Git-Commit-ID: 701b3ef37c0a4a5168bc07cfd48b35727b5a922c
+Subject: [tip:sched/urgent] sched/cpufreq: Remove unused
+ SUGOV_KTHREAD_PRIORITY macro
+Git-Commit-ID: 43d1b29b27c76e7454cd6c85bec4d0e9cbb039f3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,112 +38,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  701b3ef37c0a4a5168bc07cfd48b35727b5a922c
-Gitweb:     https://git.kernel.org/tip/701b3ef37c0a4a5168bc07cfd48b35727b5a922c
-Author:     Kan Liang <kan.liang@intel.com>
-AuthorDate: Thu, 18 Jan 2018 13:26:19 -0800
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 6 Feb 2018 10:11:49 -0300
+Commit-ID:  43d1b29b27c76e7454cd6c85bec4d0e9cbb039f3
+Gitweb:     https://git.kernel.org/tip/43d1b29b27c76e7454cd6c85bec4d0e9cbb039f3
+Author:     Leo Yan <leo.yan@linaro.org>
+AuthorDate: Thu, 8 Feb 2018 21:48:22 +0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 13 Feb 2018 13:04:03 +0100
 
-perf mmap: Introduce perf_mmap__read_init()
+sched/cpufreq: Remove unused SUGOV_KTHREAD_PRIORITY macro
 
-The new function perf_mmap__read_init() is factored out from
-perf_mmap__push().
+Since schedutil kernel thread directly set priority to 0, the macro
+SUGOV_KTHREAD_PRIORITY is not used.  So remove it.
 
-It is to calculate the 'start' and 'end' of the available data in
-ringbuffer.
-
-No functional change.
-
-Signed-off-by: Kan Liang <kan.liang@intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/1516310792-208685-5-git-send-email-kan.liang@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Rafael J . Wysocki <rafael.j.wysocki@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vikram Mulukutla <markivx@codeaurora.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Link: http://lkml.kernel.org/r/1518097702-9665-1-git-send-email-leo.yan@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/perf/util/mmap.c | 37 +++++++++++++++++++++++++++----------
- tools/perf/util/mmap.h |  2 ++
- 2 files changed, 29 insertions(+), 10 deletions(-)
+ kernel/sched/cpufreq_schedutil.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index fbbbe87..c19a4e6 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -267,24 +267,24 @@ static int overwrite_rb_find_range(void *buf, int mask, u64 head, u64 *start, u6
- 	return -1;
- }
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index dd062a1..7936f54 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -19,8 +19,6 @@
  
--int perf_mmap__push(struct perf_mmap *md, bool overwrite,
--		    void *to, int push(void *to, void *buf, size_t size))
-+/*
-+ * Report the start and end of the available data in ringbuffer
-+ */
-+int perf_mmap__read_init(struct perf_mmap *md, bool overwrite,
-+			 u64 *startp, u64 *endp)
- {
- 	u64 head = perf_mmap__read_head(md);
- 	u64 old = md->prev;
--	u64 end, start;
- 	unsigned char *data = md->base + page_size;
- 	unsigned long size;
--	void *buf;
--	int rc = 0;
+ #include "sched.h"
  
--	start = overwrite ? head : old;
--	end = overwrite ? old : head;
-+	*startp = overwrite ? head : old;
-+	*endp = overwrite ? old : head;
- 
--	if (start == end)
-+	if (*startp == *endp)
- 		return 0;
- 
--	size = end - start;
-+	size = *endp - *startp;
- 	if (size > (unsigned long)(md->mask) + 1) {
- 		if (!overwrite) {
- 			WARN_ONCE(1, "failed to keep up with mmap data. (warn only once)\n");
-@@ -298,10 +298,27 @@ int perf_mmap__push(struct perf_mmap *md, bool overwrite,
- 		 * Backward ring buffer is full. We still have a chance to read
- 		 * most of data from it.
- 		 */
--		if (overwrite_rb_find_range(data, md->mask, head, &start, &end))
-+		if (overwrite_rb_find_range(data, md->mask, head, startp, endp))
- 			return -1;
- 	}
- 
-+	return 1;
-+}
-+
-+int perf_mmap__push(struct perf_mmap *md, bool overwrite,
-+		    void *to, int push(void *to, void *buf, size_t size))
-+{
-+	u64 head = perf_mmap__read_head(md);
-+	u64 end, start;
-+	unsigned char *data = md->base + page_size;
-+	unsigned long size;
-+	void *buf;
-+	int rc = 0;
-+
-+	rc = perf_mmap__read_init(md, overwrite, &start, &end);
-+	if (rc < 1)
-+		return rc;
-+
- 	size = end - start;
- 
- 	if ((start & md->mask) + size != (end & md->mask)) {
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index e43d7b5..9ab2b48 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -94,4 +94,6 @@ int perf_mmap__push(struct perf_mmap *md, bool backward,
- 
- size_t perf_mmap__mmap_len(struct perf_mmap *map);
- 
-+int perf_mmap__read_init(struct perf_mmap *md, bool overwrite,
-+			 u64 *startp, u64 *endp);
- #endif /*__PERF_MMAP_H */
+-#define SUGOV_KTHREAD_PRIORITY	50
+-
+ struct sugov_tunables {
+ 	struct gov_attr_set attr_set;
+ 	unsigned int rate_limit_us;
