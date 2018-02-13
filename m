@@ -1,61 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965018AbeBMQ5W (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 11:57:22 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5235 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934950AbeBMQ4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:56:52 -0500
-From: John Garry <john.garry@huawei.com>
-To: <mika.westerberg@linux.intel.com>, <rafael@kernel.org>,
-        <lorenzo.pieralisi@arm.com>, <rjw@rjwysocki.net>,
-        <hanjun.guo@linaro.org>, <robh+dt@kernel.org>, <bhelgaas@google.com>,
-        <arnd@arndb.de>, <mark.rutland@arm.com>, <olof@lixom.net>,
-        <dann.frazier@canonical.com>, <andy.shevchenko@gmail.com>,
-        <robh@kernel.org>
-CC: <joe@perches.com>, <benh@kernel.crashing.org>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linuxarm@huawei.com>, <minyard@acm.org>,
-        <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <rdunlap@infradead.org>
-Subject: [PATCH v13 9/9] MAINTAINERS: Add maintainer for HiSilicon LPC driver
-Date: Wed, 14 Feb 2018 01:45:33 +0800
-Message-ID: <1518543933-22456-10-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
-References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
+        id S965106AbeBMQ6G (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 11:58:06 -0500
+Received: from mail-io0-f170.google.com ([209.85.223.170]:40901 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934514AbeBMQ6C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 11:58:02 -0500
+X-Google-Smtp-Source: AH8x225Oh12Np4117yEV3oP97f57mo5brnkXz3+2Ums+503dkQUgQ5c+f18GLE9z4mFDCZXNCPmf8nrV8JJvmEO6P6A=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Reply-To: whiteheadm@acm.org
+In-Reply-To: <20180213165159.GR695913@devbig577.frc2.facebook.com>
+References: <CAP8WD_bdbmAp=bYAXp--36SME5Cgn42ovz+YpjEt94fzaVt4Ew@mail.gmail.com>
+ <20180213165159.GR695913@devbig577.frc2.facebook.com>
+From: tedheadster <tedheadster@gmail.com>
+Date: Tue, 13 Feb 2018 11:57:41 -0500
+Message-ID: <CAP8WD_Z+yYXiRUZt4eMo2+zOSPFhsw=XiqJQUqVZFGGnGoWdPg@mail.gmail.com>
+Subject: Re: x86/stack protector: X86_32_LAZY_GS=n hangs kernel on old processors
+To: Tejun Heo <tj@kernel.org>
+Cc: jeremy@xensource.com, rusty@rustcorp.com.au, mingo@elte.hu,
+        Kees Cook <keescook@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added maintainer for drivers/bus/hisi_lpc.c
+> On Tue, Feb 13, 2018 at 11:40:17AM -0500, tedheadster wrote:
+>>   in your patch "x86: make lazy %gs optional on x86_32" were you able
+>> to test it on really old processors? In 4.16.0-rc1, X86_32_LAZY_GS got
+>> toggled from 'y' to 'n' in my default config because of changes to the
+>> stack protector code. It hangs my ancient i486 test machine right
+>> after 'Booting the kernel'.
+>
+> I didn't have access to an i486 at the time or ever since, so it
+> wasn't tested there.  If this is specific to i486, flagging it so in
+> the config probably isn't the end of the world at this point.
 
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Tejun,
+  I will be able to test this on other 32bit hardware at the end of
+the week. Hopefully I'll be able to identify which processors it does
+not work on (i486/i586/i686).
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fc538a9..9a2fe10 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6386,6 +6386,13 @@ W:	http://www.hisilicon.com
- S:	Maintained
- F:	drivers/net/ethernet/hisilicon/hns3/
- 
-+HISILICON LPC BUS DRIVER
-+M:	john.garry@huawei.com
-+W:	http://www.hisilicon.com
-+S:	Maintained
-+F:	drivers/bus/hisi_lpc.c
-+F:	Documentation/devicetree/bindings/arm/hisilicon/hisilicon-low-pin-count.txt
-+
- HISILICON NETWORK SUBSYSTEM DRIVER
- M:	Yisen Zhuang <yisen.zhuang@huawei.com>
- M:	Salil Mehta <salil.mehta@huawei.com>
--- 
-1.9.1
+- Matthew
