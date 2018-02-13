@@ -1,127 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965930AbeBMVwk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 16:52:40 -0500
-Received: from mga05.intel.com ([192.55.52.43]:35319 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965843AbeBMVwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 16:52:39 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,509,1511856000";
-   d="scan'208";a="19763202"
-Date: Tue, 13 Feb 2018 14:52:29 -0700
-From: Keith Busch <keith.busch@intel.com>
-To: Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc: axboe@fb.com, hch@lst.de, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESENT] nvme-pci: suspend queues based on online_queues
-Message-ID: <20180213215229.GF20962@localhost.localdomain>
-References: <1518440713-1031-1-git-send-email-jianchao.w.wang@oracle.com>
+        id S965980AbeBMVzy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 16:55:54 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:42532 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965853AbeBMVzw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 16:55:52 -0500
+X-Google-Smtp-Source: AH8x227cgO6g+VydfVhZRjF8dX72uDDy6/opfKYMm8cUuTX/b1qUDaYSObB2QvfYsd/kgPg4U4f86Q==
+Date: Tue, 13 Feb 2018 13:55:49 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Jerry Hoemann <jerry.hoemann@hpe.com>
+Cc: Marcus Folkesson <marcus.folkesson@gmail.com>, wim@linux-watchdog.org,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rwright@hpe.com, maurice.a.saldivar@hpe.com
+Subject: Re: [PATCH v2 06/11] watchdog/hpwdt: Modify to use watchdog core.
+Message-ID: <20180213215549.GA5241@roeck-us.net>
+References: <20180212052111.12010-1-jerry.hoemann@hpe.com>
+ <20180212052111.12010-7-jerry.hoemann@hpe.com>
+ <20180212090621.GA4513@gmail.com>
+ <20180213213648.GB22295@anatevka.americas.hpqcorp.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1518440713-1031-1-git-send-email-jianchao.w.wang@oracle.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180213213648.GB22295@anatevka.americas.hpqcorp.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 09:05:13PM +0800, Jianchao Wang wrote:
-> @@ -1315,9 +1315,6 @@ static int nvme_suspend_queue(struct nvme_queue *nvmeq)
->  	nvmeq->cq_vector = -1;
->  	spin_unlock_irq(&nvmeq->q_lock);
->  
-> -	if (!nvmeq->qid && nvmeq->dev->ctrl.admin_q)
-> -		blk_mq_quiesce_queue(nvmeq->dev->ctrl.admin_q);
-> -
+On Tue, Feb 13, 2018 at 02:36:48PM -0700, Jerry Hoemann wrote:
+> 
+> 
+> Thanks for the review. Comments inline.
+> 
+> On Mon, Feb 12, 2018 at 10:06:21AM +0100, Marcus Folkesson wrote:
+> > Hi Jerry,
+> > 
+> > On Sun, Feb 11, 2018 at 10:21:06PM -0700, Jerry Hoemann wrote:
+> > > Follow Documentation/watchdog/convert_drivers_to_kernel_api.txt to
+> > > convert hpwdt from legacy watchdog driver to use the watchdog core.
+> > > 
+> > > Removed functions: hpwdt_open, hpwdt_release, hpwdt_write, hpwdt_ioctl
+> > > Removed data structures: hpwdt_fops, hpwdt_miscdev, watchdog_device
+> > > Modified functions: hpwdt_start, hpwdt_stop, hpwdt_ping, hpwdt_gettimeleft
+> > > Added functions: hpwdt_settimeout
+> > > Added structures: watchdog_device
+> > > 
+> > > Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+> > 
+> > I think it would be better to use
+> >     dev_emerg()
+> >     dev_crit()
+> >     dev_alert()
+> >     dev_err()
+> >     dev_warn()
+> >     dev_notice()
+> > 
+> > instead of pr_* functions now when we have a device to use.
+> 
+> In general, is there something bad with using pr_debug, etc.,?
+> 
 
-This doesn't look related to this patch.
+No, but it is desirable to use dev_ functions where possible.
 
->  	pci_free_irq(to_pci_dev(nvmeq->dev->dev), vector, nvmeq);
->  
->  	return 0;
-> @@ -1461,13 +1458,14 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
->  	nvme_init_queue(nvmeq, qid);
->  	result = queue_request_irq(nvmeq);
->  	if (result < 0)
-> -		goto release_sq;
-> +		goto offline;
->  
->  	return result;
->  
-> - release_sq:
-> +offline:
-> +	dev->online_queues--;
->  	adapter_delete_sq(dev, qid);
+> When converting the driver over, I had many more debug messages being
+> printed from locations where I didn't have a valid device handle and
+> those needed to be done w/ the pr_.* functions.  So, I just uniformally
+> used pr_.*.
+> 
+> 
+> > > -static int hpwdt_time_left(void)
+> > > +static unsigned int hpwdt_gettimeleft(struct watchdog_device *dev)
+> > >  {
+> > >  	return TICKS_TO_SECS(ioread16(hpwdt_timer_reg));
+> > >  }
+> > >  
+> > > +static int hpwdt_settimeout(struct watchdog_device *dev, unsigned int val)
+> > > +{
+> > > +	pr_debug("settimeout = %d\n", val);
+> > 
+> > dev_dbg()
+> 
+> I think you are proposing I do:
+> 
+> 	dev_dbg(dev->parent, "settimeout = %d\n", val);
+> 
+> This raises the issue that I didn't set parent and I believe I should have.
+> 
+Correct.
 
-In addition to the above, set nvmeq->cq_vector to -1.
+> 
+> > 
+> > 
+> > > +
+> > > +	soft_margin = dev->timeout = val;
+> > 
+> > No need to update soft_margin
+> 
+> I'd made the permission on the module parameters 0444 so that they
+> would show up in sysfs.  I updated this value so that I could see
+> current value of timeout in sysfs.  But, as Guenter points out in a
+> later review, these values are available in under CONFIG_WATCHDOG_SYSFS.
+> So, I'll remove.
+> 
+> 
+> > > +	pr_debug("nmi: ulReason=%d, mynmi=0x%0x\n", ulReason, mynmi);
+> > 
+> > dev_dbg()
+> 
+> See above.
+> 
+> > 
+> > >  	retval = hpwdt_init_nmi_decoding(dev);
+> > >  	if (retval != 0)
+> > >  		goto error_init_nmi_decoding;
+> > >  
+> > > -	retval = misc_register(&hpwdt_miscdev);
+> > > +	retval = watchdog_register_device(&hpwdt_dev);
+> > >  	if (retval < 0) {
+> > > -		dev_warn(&dev->dev,
+> > > -			"Unable to register miscdev on minor=%d (err=%d).\n",
+> > > -			WATCHDOG_MINOR, retval);
+> > > -		goto error_misc_register;
+> > > +		dev_warn(&dev->dev, "Unable to register hpe watchdog (err=%d).\n", retval);
+> > > +		goto error_wd_register;
+> > > +	}
+> > > +
+> > > +	watchdog_set_nowayout(&hpwdt_dev, nowayout);
+> > > +	if (watchdog_init_timeout(&hpwdt_dev, soft_margin, NULL)) {
+> > > +		dev_warn(&dev->dev, "Invalid soft_margin: %d. Using default\n", soft_margin);
+> > > +		soft_margin = DEFAULT_MARGIN;
+> > >  	}
+> > 
+> > In this case watchdog_init_timout() will:
+> > 1) Check if soft_margin is valid
+> > 2) if not, keep hpwdt_dev.timout intact (which is already set in
+> > declaration of hpwdt_dev)
+> > 
+> > So we could remove the condition and only keep
+> > watchdog_init_timeout(&hpwdt_dev, soft_margin, NULL);
+> > 
+> > 
+> > Also, we need to set an invalid initial value for soft_margin to make
+> > the logic for watchdog_init_timeout work. 
+> > 
+> > i.e
+> > - static unsigned int soft_margin = DEFAULT_MARGIN;	/* in seconds */
+> > + static unsigned int soft_margin;
+> 
+> 
+> I don't see the core printing a warning message if an invalid value
+> is specified for soft_margin when loading the module.
+> 
+> I don't mind the hpwdt module correcting an out of range parameter, but I
+> don't think it should do so siliently.
+> 
 
-Everything else that follows doesn't appear to be necessary.
+The point here is that setting soft_margin to 0 and setting the
+timeout in the watchdog_device structure to DEFAULT_MARGIN
+means that it is not necessary to override it on error.
+If you want to be verbose, you can still log a warning message
+if the timeout provided by the module parameter is wrong.
 
-> @@ -2167,6 +2167,7 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
->  	int i;
->  	bool dead = true;
->  	struct pci_dev *pdev = to_pci_dev(dev->dev);
-> +	int onlines;
->  
->  	mutex_lock(&dev->shutdown_lock);
->  	if (pci_is_enabled(pdev)) {
-> @@ -2175,8 +2176,11 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
->  		if (dev->ctrl.state == NVME_CTRL_LIVE ||
->  		    dev->ctrl.state == NVME_CTRL_RESETTING)
->  			nvme_start_freeze(&dev->ctrl);
-> -		dead = !!((csts & NVME_CSTS_CFS) || !(csts & NVME_CSTS_RDY) ||
-> -			pdev->error_state  != pci_channel_io_normal);
-> +
-> +		dead = !!((csts & NVME_CSTS_CFS) ||
-> +				!(csts & NVME_CSTS_RDY) ||
-> +				(pdev->error_state  != pci_channel_io_normal) ||
-> +				(dev->online_queues == 0));
->  	}
->  
->  	/*
-> @@ -2200,9 +2204,14 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
->  		nvme_disable_io_queues(dev);
->  		nvme_disable_admin_queue(dev, shutdown);
->  	}
-> -	for (i = dev->ctrl.queue_count - 1; i >= 0; i--)
-> +
-> +	onlines = dev->online_queues;
-> +	for (i = onlines - 1; i >= 0; i--)
->  		nvme_suspend_queue(&dev->queues[i]);
->  
-> +	if (dev->ctrl.admin_q)
-> +		blk_mq_quiesce_queue(dev->ctrl.admin_q);
-> +
->  	nvme_pci_disable(dev);
->  
->  	blk_mq_tagset_busy_iter(&dev->tagset, nvme_cancel_request, &dev->ctrl);
-> @@ -2341,16 +2350,18 @@ static void nvme_reset_work(struct work_struct *work)
->  	if (result)
->  		goto out;
->  
-> -	/*
-> -	 * Keep the controller around but remove all namespaces if we don't have
-> -	 * any working I/O queue.
-> -	 */
-> -	if (dev->online_queues < 2) {
-> +
-> +	/* In case of online_queues is zero, it has gone to out */
-> +	if (dev->online_queues == 1) {
-> +		/*
-> +		 * Keep the controller around but remove all namespaces if we
-> +		 * don't have any working I/O queue.
-> +		 */
->  		dev_warn(dev->ctrl.device, "IO queues not created\n");
->  		nvme_kill_queues(&dev->ctrl);
->  		nvme_remove_namespaces(&dev->ctrl);
->  		new_state = NVME_CTRL_ADMIN_ONLY;
-> -	} else {
-> +	} else if (dev->online_queues > 1) {
->  		nvme_start_queues(&dev->ctrl);
->  		nvme_wait_freeze(&dev->ctrl);
->  		/* hit this only when allocate tagset fails */
-> -- 
+Anyway, this driver will presumably never support devicetree,
+so the watchdog core will never read the timeout from there,
+and this is not a showstopper.
+
+Guenter
