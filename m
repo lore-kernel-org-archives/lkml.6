@@ -1,119 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933821AbeBMIxP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 03:53:15 -0500
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:37633 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933741AbeBMIxN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 03:53:13 -0500
-X-Google-Smtp-Source: AH8x226sWhWDqHhZ5kuyRYPP/nlp7Su0TqYUltmiHMkH62AC+N5wh6TRabDPbglqSa6cGq7rP6fRSA==
-Date: Tue, 13 Feb 2018 09:53:08 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>, Ingo Molnar <mingo@redhat.com>,
-        x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 0/5] x86: Enumerate TME and PCONFIG, add MKTME_KEY_PROG
- helper
-Message-ID: <20180213085308.vaq6d2cqu7qhxy33@gmail.com>
-References: <20180209140754.17062-1-kirill.shutemov@linux.intel.com>
- <20180211190241.nzulvhhzkb74t72o@gmail.com>
- <20180212074809.7hk6m7y2yzf5r252@node.shutemov.name>
+        id S933830AbeBMI7c (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 03:59:32 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45851 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933740AbeBMI7b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 03:59:31 -0500
+Date: Tue, 13 Feb 2018 09:59:28 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Will Drewry <wad@chromium.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: samples/seccomp/ broken when cross compiling s390, ppc
+ allyesconfig
+Message-ID: <20180213085928.GK3443@dhcp22.suse.cz>
+References: <20180212133731.GE3443@dhcp22.suse.cz>
+ <87r2ppvaeq.fsf@concordia.ellerman.id.au>
+ <CAGXu5j+DnkUv9pZn93wxA6_2s+c3Ap_Q34OR0weY7Y9MJ1aP9Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180212074809.7hk6m7y2yzf5r252@node.shutemov.name>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAGXu5j+DnkUv9pZn93wxA6_2s+c3Ap_Q34OR0weY7Y9MJ1aP9Q@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon 12-02-18 21:54:39, Kees Cook wrote:
+> On Mon, Feb 12, 2018 at 7:25 PM, Michael Ellerman <mpe@ellerman.id.au> wrote:
+> > Michal Hocko <mhocko@kernel.org> writes:
+> >> Hi,
+> >> my build test machinery chokes on samples/seccomp when cross compiling
+> >> s390 and ppc64 allyesconfig. This has been the case for quite some
+> >> time already but I never found time to look at the problem and report
+> >> it. It seems this is not new issue and similar thing happend for
+> >> MIPS e9107f88c985 ("samples/seccomp/Makefile: do not build tests if
+> >> cross-compiling for MIPS").
+> >>
+> >> The build logs are attached.
+> >>
+> >> What is the best way around this? Should we simply skip compilation on
+> >> cross compile or is actually anybody relying on that? Or should I simply
+> >> disable it for s390 and ppc?
+> >
+> > The whole thing seems very confused. It's not building for the target,
+> > it's building for the host, ie. the Makefile sets hostprogs-m and
+> > HOSTCFLAGS etc.
+> >
+> > So it can't possibly work with cross compiling as it's currently
+> > written.
+> >
+> > Either the Makefile needs some serious work to properly support cross
+> > compiling or it should just be disabled when cross compiling.
+> 
+> Hrm, yeah, the goal was to entirely disable cross compiling, but I
+> guess we didn't hit it with a hard enough hammer. :)
 
-* Kirill A. Shutemov <kirill@shutemov.name> wrote:
+Hammer like this?
 
-> On Sun, Feb 11, 2018 at 08:02:41PM +0100, Ingo Molnar wrote:
-> > 
-> > * Kirill A. Shutemov <kirill.shutemov@linux.intel.com> wrote:
-> > 
-> > > Multikey Total Memory Encryption (MKTME)[1] is a technology that allows
-> > > transparent memory encryption in upcoming Intel platforms.
-> > >
-> > > MKTME is built on top of TME. TME allows encryption of the entirety of
-> > > system memory using a single key. MKTME allows to have multiple encryption
-> > > domains, each having own key -- different memory pages can be encrypted
-> > > with different keys.
-> > > 
-> > > The patchset does some ground work for MKTME enabling:
-> > >   - Adds two new cpufeatures: TME and PCONFIG;
-> > >   - Detects if BIOS enabled TME and MKTME;
-> > >   - Enumerates what PCONFIG targets are supported;
-> > >   - Provides helper to program encryption keys into CPU;
-> > > 
-> > > As part of TME enumeration we check out how many bits from physical address
-> > > are claimed for encryption key ID. This may be critical as we or guest VM
-> > > must not use these bits for physical address.
-> > 
-> > So how will the 'full' patchset look like, roughly - is there a tree or diffstat 
-> > we could take a look at perhaps?
-> 
-> I don't have anything to show beyond this yet. I'll post as soon I have it
-> ready.
-> 
-> This patchset includes only things that are close to hardware and unlikely
-> to change substantially by the next steps.
-
-Ok.
-
-> > I'm also wondering how 'TME' compares to AMD's SME (Secure Memory Encryption) and 
-> > SEV features. SME required a number of low level boot code changes - I'm wondering 
-> > how much commonality there can be achieved with Intel's TME so that we don't end 
-> > up with two sets of interfaces.
-> 
-> Unlike AMD SME, Intel TME doesn't really requires enabling on kernel side.
-> 
-> It's job of BIOS to get it enabled and by time kernel has control all
-> memory it has access too is encrypted with the single TME key. BIOS
-> exclude some of its memory for encryption to work properly.
-> 
-> What requires enabling is MKTME. As with TME, it gets enabled by BIOS: it
-> reserves a number of upper bits from physical address to indicate KeyID.
-> 
-> This means we don't need to change anything during early boot. MKTME is
-> targeted to userspace memory: typically to protect one VM from another.
-> 
-> Of course we can choose to use MKTME for kernel hardening and it may
-> require changes during early boot, that's not part of my initial enabling
-> plan.
-> 
-> Key design points of Intel MKTME:
-> 
->  - Initial HW implementation would support upto 63 keys (plus one default
->    TME key). But the number of keys may be as low as 3, depending to SKU
->    and BIOS settings
-> 
->  - To access encrypted memory you need to use mapping with proper KeyID
->    int the page table entry. KeyID is encoded in upper bits of PFN in page
->    table entry.
-> 
->    This means we cannot use direct map to access encrypted memory from
->    kernel side. My idea is to re-use kmap() interface to get proper
->    temporary mapping on kernel side.
-> 
->  - CPU does not enforce coherency between mappings of the same physical
->    page with different KeyIDs or encryption keys. We wound need to take
->    care about flushing cache on allocation of encrypted page and on
->    returning it back to free pool.
->
->  - For managing keys, there's MKTME_KEY_PROGRAM leaf of the new PCONFIG
->    (platform configuration) instruction. It allows load and clear keys
->    associated with a KeyID. You can also ask CPU to generate a key for
->    you or disable memory encryption when a KeyID is used.
-> 
-> If you have any questions I would be glad to answer.
-
-Ok, this sounds pretty flexible at first glance - thanks for the summary!
-
-	Ingo
+diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
+index 0e349b80686e..ba942e3ead89 100644
+--- a/samples/seccomp/Makefile
++++ b/samples/seccomp/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
++ifndef CROSS_COMPILE
+ hostprogs-$(CONFIG_SAMPLE_SECCOMP) := bpf-fancy dropper bpf-direct
+ 
+ HOSTCFLAGS_bpf-fancy.o += -I$(objtree)/usr/include
+@@ -16,7 +17,6 @@ HOSTCFLAGS_bpf-direct.o += -idirafter $(objtree)/include
+ bpf-direct-objs := bpf-direct.o
+ 
+ # Try to match the kernel target.
+-ifndef CROSS_COMPILE
+ ifndef CONFIG_64BIT
+ 
+ # s390 has -m31 flag to build 31 bit binaries
+@@ -35,12 +35,4 @@ HOSTLOADLIBES_bpf-fancy += $(MFLAG)
+ HOSTLOADLIBES_dropper += $(MFLAG)
+ endif
+ always := $(hostprogs-m)
+-else
+-# MIPS system calls are defined based on the -mabi that is passed
+-# to the toolchain which may or may not be a valid option
+-# for the host toolchain. So disable tests if target architecture
+-# is MIPS but the host isn't.
+-ifndef CONFIG_MIPS
+-always := $(hostprogs-m)
+-endif
+ endif
+-- 
+Michal Hocko
+SUSE Labs
