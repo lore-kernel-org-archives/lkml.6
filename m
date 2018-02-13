@@ -1,84 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965282AbeBMRKS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:10:18 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35527 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965422AbeBMRBV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:01:21 -0500
-X-Google-Smtp-Source: AH8x227w6TQA4ECT0wo2lFCtAHZwigoXzi4HPuUzk9FEnQ32MAH/iIR5dXSipDjmADYpTJT5KqPmNQ==
-From: srinivas.kandagatla@linaro.org
-To: andy.gross@linaro.org, broonie@kernel.org,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, plai@codeaurora.org, bgoswami@codeaurora.org,
-        perex@perex.cz, tiwai@suse.com, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
-        spatakok@qti.qualcomm.com,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v3 04/25] dt-bindings: sound: qcom: Add bindings for q6afe
-Date: Tue, 13 Feb 2018 16:58:16 +0000
-Message-Id: <20180213165837.1620-5-srinivas.kandagatla@linaro.org>
+        id S965368AbeBMRA2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:00:28 -0500
+Received: from mga05.intel.com ([192.55.52.43]:19193 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964837AbeBMRAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 12:00:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,508,1511856000";
+   d="scan'208";a="34378287"
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <yehezkel.bernat@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
+        Radion Mirchevsky <radion.mirchevsky@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH 00/18] thunderbolt: Add support for Intel Titan Ridge
+Date: Tue, 13 Feb 2018 20:00:00 +0300
+Message-Id: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
-References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Hi,
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- .../devicetree/bindings/sound/qcom,q6afe.txt       | 38 ++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6afe.txt
+This series adds support for Intel Titan Ridge Thunderbolt controller.
+Titan Ridge is the next generation Thunderbolt 3 controller and successor
+of Alpine Ridge.
 
-diff --git a/Documentation/devicetree/bindings/sound/qcom,q6afe.txt b/Documentation/devicetree/bindings/sound/qcom,q6afe.txt
-new file mode 100644
-index 000000000000..4b389124275c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qcom,q6afe.txt
-@@ -0,0 +1,38 @@
-+Qualcomm Audio Front End (Q6AFE) binding
-+
-+AFE is one of the APR audio service on Q6DSP
-+Please refer to qcom,apr.txt for details of the coommon apr service bindings
-+used by the apr service device.
-+
-+- but must contain the following property:
-+
-+- compatible:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "qcom,afe-v<MAJOR-NUMBER>.<MINOR-NUMBER>".
-+		    example "qcom,afe-v2.0"
-+
-+- qcom,apr-svc-id
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: Must be 4 for Audio Front End Service.
-+
-+- qcom,apr-svc-name
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: Must be "AFE"
-+
-+- #sound-dai-cells
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: Must be 1
-+
-+
-+= EXAMPLE
-+
-+q6afe {
-+	compatible = "qcom,q6afe";
-+	qcom,apr-svc-name = "AFE";
-+	qcom,apr-svc-id = <APR_SVC_AFE>;
-+	#sound-dai-cells = <1>;
-+};
+In addition to fixes and Titan Ridge support this series adds following:
+
+  - USB only security level (SL4).
+
+  - A new attribute for devices telling whether they were connected
+    automatically during boot.
+
+  - Preboot ACL allows userspace to specify a list of devices (based on
+    device unique_id) that the firmware automatically connects during boot.
+
+Bjorn, I've Cc'd you the series as well because I would like to get your
+blessing for patch [2/18] as it uses functions from PCI subsystem.
+
+Thanks!
+
+Mika Westerberg (13):
+  thunderbolt: Resume control channel after hibernation image is created
+  thunderbolt: Serialize PCIe tunnel creation with PCI rescan
+  thunderbolt: Handle connecting device in place of host properly
+  thunderbolt: Do not overwrite error code when domain adding fails
+  thunderbolt: Wait a bit longer for root switch config space
+  thunderbolt: Wait a bit longer for ICM to authenticate the active NVM
+  thunderbolt: Handle rejected Thunderbolt devices
+  thunderbolt: Factor common ICM add and update operations out
+  thunderbolt: Add tb_switch_get()
+  thunderbolt: Add constant for approval timeout
+  thunderbolt: Move driver ready handling to struct icm
+  thunderbolt: Add support for preboot ACL
+  thunderbolt: Introduce USB only (SL4) security level
+
+Radion Mirchevsky (4):
+  thunderbolt: Correct function name in kernel-doc comment
+  thunderbolt: Add tb_switch_find_by_route()
+  thunderbolt: Add tb_xdomain_find_by_route()
+  thunderbolt: Add support for Intel Titan Ridge
+
+Yehezkel Bernat (1):
+  thunderbolt: Add 'boot' attribute for devices
+
+ Documentation/ABI/testing/sysfs-bus-thunderbolt |  33 ++
+ drivers/thunderbolt/dma_port.c                  |  28 +-
+ drivers/thunderbolt/domain.c                    | 129 +++-
+ drivers/thunderbolt/icm.c                       | 757 +++++++++++++++++++++---
+ drivers/thunderbolt/nhi.c                       |   5 +-
+ drivers/thunderbolt/nhi.h                       |   5 +
+ drivers/thunderbolt/switch.c                    |  61 +-
+ drivers/thunderbolt/tb.h                        |  14 +
+ drivers/thunderbolt/tb_msgs.h                   | 180 +++++-
+ drivers/thunderbolt/xdomain.c                   |  40 +-
+ include/linux/thunderbolt.h                     |  19 +
+ 11 files changed, 1172 insertions(+), 99 deletions(-)
+
 -- 
 2.15.1
