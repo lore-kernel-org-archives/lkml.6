@@ -1,81 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965485AbeBMRtd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:49:33 -0500
-Received: from mail-it0-f66.google.com ([209.85.214.66]:55324 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965278AbeBMRtb (ORCPT
+        id S965499AbeBMRt4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:49:56 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:46816 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965260AbeBMRtw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:49:31 -0500
-X-Google-Smtp-Source: AH8x224uwmfYKIhPL1w62DPoooCVfkFSjDr8FMGuewW4IXzskxtlD90/qVk+h6PYUEmrxGJfGmZJBw==
-Message-ID: <1518544167.3715.180.camel@gmail.com>
-Subject: Re: lost connection to test machine (4)
-From: Eric Dumazet <eric.dumazet@gmail.com>
-To: Dennis Zhou <dennisszhou@gmail.com>
-Cc: Tejun Heo <tj@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com>,
-        Alexei Starovoitov <ast@kernel.org>, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com
-Date: Tue, 13 Feb 2018 09:49:27 -0800
-In-Reply-To: <20180213173438.GA60641@localhost.uwnet.wisc.edu>
-References: <001a113f8734783e94056505f8fd@google.com>
-         <CACT4Y+ZBHw7VZBFOeqLmrpmzgn4owW88qvP5v=xnr9966hbM_Q@mail.gmail.com>
-         <00c45ca8-305d-1818-e974-a9903c8494b8@iogearbox.net>
-         <20180212170325.GW695913@devbig577.frc2.facebook.com>
-         <20180212200548.GG695913@devbig577.frc2.facebook.com>
-         <1518528926.3715.173.camel@gmail.com>
-         <20180213173438.GA60641@localhost.uwnet.wisc.edu>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 13 Feb 2018 12:49:52 -0500
+X-Google-Smtp-Source: AH8x225kKxHbY4exEkEqQkahEQbM909J4HBWr8f4NYg+BeXvx7mK1t1O3t9T0tg7yQgcqhfIt6G2BA==
+Date: Tue, 13 Feb 2018 09:49:50 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Jerry Hoemann <jerry.hoemann@hpe.com>
+Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rwright@hpe.com,
+        maurice.a.saldivar@hpe.com
+Subject: Re: [PATCH v2 05/11] watchdog/hpwdt: Update Module info.
+Message-ID: <20180213174950.GC22401@roeck-us.net>
+References: <20180212052111.12010-1-jerry.hoemann@hpe.com>
+ <20180212052111.12010-6-jerry.hoemann@hpe.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180212052111.12010-6-jerry.hoemann@hpe.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-13 at 11:34 -0600, Dennis Zhou wrote:
-> Hi Eric,
-> 
-> On Tue, Feb 13, 2018 at 05:35:26AM -0800, Eric Dumazet wrote:
-> > 
-> > Also I would consider using this fix as I had warnings of cpus being
-> > stuck there for more than 50 ms :
-> > 
-> > 
-> > diff --git a/mm/percpu-vm.c b/mm/percpu-vm.c
-> > index 9158e5a81391ced4e268e3d5dd9879c2bc7280ce..6309b01ceb357be01e857e5f899429403836f41f 100644
-> > --- a/mm/percpu-vm.c
-> > +++ b/mm/percpu-vm.c
-> > @@ -92,6 +92,7 @@ static int pcpu_alloc_pages(struct pcpu_chunk *chunk,
-> >  			*pagep = alloc_pages_node(cpu_to_node(cpu), gfp, 0);
-> >  			if (!*pagep)
-> >  				goto err;
-> > +			cond_resched();
-> >  		}
-> >  	}
-> >  	return 0;
-> > 
-> > 
-> 
-> This function gets called from pcpu_populate_chunk while holding the
-> pcpu_alloc_mutex and is called from two scenarios. First, when an
-> allocation occurs to a place without backing pages, and second when the
-> workqueue item is scheduled to replenish the number of empty pages. So,
-> I don't think this is a good idea.
+On Sun, Feb 11, 2018 at 10:21:05PM -0700, Jerry Hoemann wrote:
+> Update Module Author and permission on parameters so that the
+> parameters show up in sysfs.
 > 
 
-That _is_ a good idea, we do this already in vmalloc(), and vmalloc()
-can absolutely be called while some mutex(es) are held.
+Does it really add value to see the module parameters in sysfs ?
+You would get both in standardized form by enabling WATCHDOG_SYSFS.
 
-
-> My understanding is if we're seeing warnings here, that means we're
-> struggling to find backing pages. I believe adding __GFP_NORETRY on the
-> workqueue path as Tejun mentioned above would help with warnings as
-> well, but not if they are caused by the allocation path.
+> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+> ---
+>  drivers/watchdog/hpwdt.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-
-That is a separate concern.
-
-My patch simply avoids latency spikes when huge percpu allocations are
-happening, on systems with say 1024 cpus.
+> diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
+> index ee9a92220ece..dead59f9ca80 100644
+> --- a/drivers/watchdog/hpwdt.c
+> +++ b/drivers/watchdog/hpwdt.c
+> @@ -432,20 +432,20 @@ static struct pci_driver hpwdt_driver = {
+>  	.remove		= hpwdt_exit,
+>  };
+>  
+> -MODULE_AUTHOR("Tom Mingarelli");
+> -MODULE_DESCRIPTION("hp watchdog driver");
+> +MODULE_AUTHOR("Jerry Hoemann");
+> +MODULE_DESCRIPTION("hpe watchdog driver");
+>  MODULE_LICENSE("GPL");
+>  MODULE_VERSION(HPWDT_VERSION);
+>  
+> -module_param(soft_margin, int, 0);
+> +module_param(soft_margin, int, 0444);
+>  MODULE_PARM_DESC(soft_margin, "Watchdog timeout in seconds");
+>  
+> -module_param(nowayout, bool, 0);
+> +module_param(nowayout, bool, 0444);
+>  MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+>  		__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
+>  
+>  #ifdef CONFIG_HPWDT_NMI_DECODING	/* { */
+> -module_param(allow_kdump, int, 0);
+> +module_param(allow_kdump, int, 0444);
+>  MODULE_PARM_DESC(allow_kdump, "Start a kernel dump after NMI occurs");
+>  #endif					/* } */
+>  
+> -- 
+> 2.13.6
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
