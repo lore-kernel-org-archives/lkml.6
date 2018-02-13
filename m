@@ -1,63 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935008AbeBMQhD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 11:37:03 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:41722 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934958AbeBMQhB (ORCPT
+        id S934969AbeBMQoI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 11:44:08 -0500
+Received: from gateway22.websitewelcome.com ([192.185.46.131]:36670 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934779AbeBMQoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:37:01 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        kvm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] vfio: platform: Improve reset support
-Date: Tue, 13 Feb 2018 17:36:53 +0100
-Message-Id: <1518539815-13774-1-git-send-email-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.7.4
+        Tue, 13 Feb 2018 11:44:07 -0500
+Date: Tue, 13 Feb 2018 10:44:04 -0600
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] x86/microcode/intel: Use 64-bit arithmetic instead of 32-bit
+Message-ID: <20180213164404.GA11664@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.4.238
+X-Source-L: No
+X-Exim-ID: 1eldgb-0013xh-UM
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.175.4.238]:35024
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Hi all,
+Add suffix ULL to constant 1024 in order to give the compiler complete
+information about the proper arithmetic to use. Notice that this
+constant is used in a context that expects an expression of type
+u64 (64 bits, unsigned).
 
-This patch series improves reset support for vfio-platform:
-  - The first patch fixes a bug I ran into while working on this.
-  - The second patch implements generic DT reset support, for devices
-    that are connected to an SoC-internal reset controller and can be
-    reset in a generic way.  This avoids having to write/change a
-    vfio-specific reset driver for each and every device to be
-    passed-through to a guest.
+The expression c->x86_cache_size * 1024 is currently being evaluated
+using 32-bit arithmetic.
 
-This has been tested using the R-Car Gen3 GPIO Pass-Through Prototype
-posted last week: the GPIO module is reset before QEMU opens the vfio
-device, and reset again after QEMU has released it, as can be witnessed
-by the LEDs on the Salvator-XS board.
+Addresses-Coverity-ID: 1464429
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+---
+ arch/x86/kernel/cpu/microcode/intel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for your comments!
-
-Geert Uytterhoeven (2):
-  vfio: platform: Fix reset module leak in error path
-  vfio: platform: Add generic DT reset support
-
- drivers/vfio/platform/vfio_platform_common.c  | 38 ++++++++++++++++++++++-----
- drivers/vfio/platform/vfio_platform_private.h |  1 +
- 2 files changed, 32 insertions(+), 7 deletions(-)
-
+diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+index f7c55b0..e5edb92 100644
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -982,7 +982,7 @@ static struct microcode_ops microcode_intel_ops = {
+ 
+ static int __init calc_llc_size_per_core(struct cpuinfo_x86 *c)
+ {
+-	u64 llc_size = c->x86_cache_size * 1024;
++	u64 llc_size = c->x86_cache_size * 1024ULL;
+ 
+ 	do_div(llc_size, c->x86_max_cores);
+ 
 -- 
 2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
