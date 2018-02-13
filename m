@@ -1,223 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966052AbeBMW5e (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 17:57:34 -0500
-Received: from complete.lackof.org ([198.49.126.79]:41500 "EHLO
-        complete.lackof.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965942AbeBMW5c (ORCPT
+        id S966077AbeBMW5y (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 17:57:54 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:34952 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965942AbeBMW5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 17:57:32 -0500
-Date: Tue, 13 Feb 2018 15:57:21 -0700
-From: dann frazier <dann.frazier@canonical.com>
-To: John Garry <john.garry@huawei.com>
-Cc: mika.westerberg@linux.intel.com, rafael@kernel.org,
-        lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, hanjun.guo@linaro.org,
-        robh+dt@kernel.org, bhelgaas@google.com, arnd@arndb.de,
-        mark.rutland@arm.com, olof@lixom.net, andy.shevchenko@gmail.com,
-        robh@kernel.org, joe@perches.com, benh@kernel.crashing.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linuxarm@huawei.com, minyard@acm.org,
-        devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-        rdunlap@infradead.org
-Subject: Re: [PATCH v13 4/9] PCI: Apply the new generic I/O management on PCI
- IO hosts
-Message-ID: <20180213225721.GA22219@xps13.dannf>
-References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
- <1518543933-22456-5-git-send-email-john.garry@huawei.com>
+        Tue, 13 Feb 2018 17:57:53 -0500
+X-Google-Smtp-Source: AH8x226hxXEs9qAGTGp9FZiNb4gJo4ZbgBIrfE47VZCaYYmPrHsgfE4+4b/WP9C2e7qPQslktXsCtApw/3QEckqI36Y=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518543933-22456-5-git-send-email-john.garry@huawei.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180213094016.Horde.CGfpaa2rdOUHbXlCDH3u5ra@gator4166.hostgator.com>
+References: <20180213094016.Horde.CGfpaa2rdOUHbXlCDH3u5ra@gator4166.hostgator.com>
+From: Ben Skeggs <bskeggs@redhat.com>
+Date: Wed, 14 Feb 2018 08:57:51 +1000
+Message-ID: <CABDvA=kds=GtcXXe4BY-NzuYa0mt-vc2MQPGmNS-HGmxSBNLxA@mail.gmail.com>
+Subject: Re: [drm-nouveau-mmu] question about potential NULL pointer dereference
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 01:45:28AM +0800, John Garry wrote:
-> From: Zhichang Yuan <yuanzhichang@hisilicon.com>
-> 
-> After introducing the new generic I/O space management in logic pio, the
-> original PCI MMIO relevant helpers need to be updated based on the new
-> interfaces.
-> This patch adapts the corresponding code to match the changes introduced
-> by logic pio.
-> 
-> Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
-> Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>        #earlier draft
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+On Wed, Feb 14, 2018 at 1:40 AM, Gustavo A. R. Silva
+<garsilva@embeddedor.com> wrote:
+>
+> Hi all,
+>
+> While doing some static analysis I ran into the following piece of code at
+> drivers/gpu/drm/nouveau/nvkm/subdev/mmu/vmm.c:957:
+>
+>  957#define node(root, dir) ((root)->head.dir == &vmm->list) ? NULL :
+> \
+>  958        list_entry((root)->head.dir, struct nvkm_vma, head)
+>  959
+>  960void
+>  961nvkm_vmm_unmap_region(struct nvkm_vmm *vmm, struct nvkm_vma *vma)
+>  962{
+>  963        struct nvkm_vma *next;
+>  964
+>  965        nvkm_memory_tags_put(vma->memory, vmm->mmu->subdev.device,
+> &vma->tags);
+>  966        nvkm_memory_unref(&vma->memory);
+>  967
+>  968        if (vma->part) {
+>  969                struct nvkm_vma *prev = node(vma, prev);
+>  970                if (!prev->memory) {
+>  971                        prev->size += vma->size;
+>  972                        rb_erase(&vma->tree, &vmm->root);
+>  973                        list_del(&vma->head);
+>  974                        kfree(vma);
+>  975                        vma = prev;
+>  976                }
+>  977        }
+>  978
+>  979        next = node(vma, next);
+>  980        if (next && next->part) {
+>  981                if (!next->memory) {
+>  982                        vma->size += next->size;
+>  983                        rb_erase(&next->tree, &vmm->root);
+>  984                        list_del(&next->head);
+>  985                        kfree(next);
+>  986                }
+>  987        }
+>  988}
+>
+> The issue here is that in case _node_ returns NULL, _prev_ is not being null
+> checked, hence there is a potential null pointer dereference at line 970.
+>
+> Notice that _next_ is being null checked at line 980, so I wonder if _prev_
+> should be checked the same as _next_.
+>
+> The fact that both _next_ and next->part are null checked, makes me wonder
+> if in case _prev_ actually needs to be checked, there is another pointer
+> contained into _prev_ to be validated as well? I'm sorry, this is not clear
+> to me at this moment.
+It's not checked because it can't happen.  If vma->part is set, there
+will be a previous node that it was split from.
 
-I saw that Bjorn Acked this back in v6, but it seems like the code in
-pci.c was reworked a bit for v7 onwards and I didn't see a follow-up
-review (apologies if I just missed it). In which case, maybe his Ack
-should have the "#earlier draft" tag as well?
+Ben.
 
-> ---
->  drivers/pci/pci.c        | 95 +++++++++---------------------------------------
->  include/asm-generic/io.h |  2 +-
->  2 files changed, 18 insertions(+), 79 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 07290a3..8aa5c54 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -22,6 +22,7 @@
->  #include <linux/spinlock.h>
->  #include <linux/string.h>
->  #include <linux/log2.h>
-> +#include <linux/logic_pio.h>
->  #include <linux/pci-aspm.h>
->  #include <linux/pm_wakeup.h>
->  #include <linux/interrupt.h>
-> @@ -3440,17 +3441,6 @@ int pci_request_regions_exclusive(struct pci_dev *pdev, const char *res_name)
->  }
->  EXPORT_SYMBOL(pci_request_regions_exclusive);
->  
-> -#ifdef PCI_IOBASE
-> -struct io_range {
-> -	struct list_head list;
-> -	phys_addr_t start;
-> -	resource_size_t size;
-> -};
-> -
-> -static LIST_HEAD(io_range_list);
-> -static DEFINE_SPINLOCK(io_range_lock);
-> -#endif
-> -
->  /*
->   * Record the PCI IO range (expressed as CPU physical address + size).
->   * Return a negative value if an error has occured, zero otherwise
-> @@ -3458,51 +3448,28 @@ struct io_range {
->  int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
->  			resource_size_t	size)
->  {
-> -	int err = 0;
-> -
-> +	int ret = 0;
->  #ifdef PCI_IOBASE
-> -	struct io_range *range;
-> -	resource_size_t allocated_size = 0;
-> -
-> -	/* check if the range hasn't been previously recorded */
-> -	spin_lock(&io_range_lock);
-> -	list_for_each_entry(range, &io_range_list, list) {
-> -		if (addr >= range->start && addr + size <= range->start + size) {
-> -			/* range already registered, bail out */
-> -			goto end_register;
-> -		}
-> -		allocated_size += range->size;
-> -	}
-> +	struct logic_pio_hwaddr *range;
->  
-> -	/* range not registed yet, check for available space */
-> -	if (allocated_size + size - 1 > IO_SPACE_LIMIT) {
-> -		/* if it's too big check if 64K space can be reserved */
-> -		if (allocated_size + SZ_64K - 1 > IO_SPACE_LIMIT) {
-> -			err = -E2BIG;
-> -			goto end_register;
-> -		}
-> -
-> -		size = SZ_64K;
-> -		pr_warn("Requested IO range too big, new size set to 64K\n");
-> -	}
-> +	if (!size || addr + size < addr)
-> +		return -EINVAL;
->  
-> -	/* add the range to the list */
->  	range = kzalloc(sizeof(*range), GFP_ATOMIC);
-> -	if (!range) {
-> -		err = -ENOMEM;
-> -		goto end_register;
-> -	}
-> +	if (!range)
-> +		return -ENOMEM;
->  
-> -	range->start = addr;
-> +	range->fwnode = fwnode;
->  	range->size = size;
-> +	range->hw_start = addr;
-> +	range->flags = PIO_CPU_MMIO;
->  
-> -	list_add_tail(&range->list, &io_range_list);
-> -
-> -end_register:
-> -	spin_unlock(&io_range_lock);
-> +	ret = logic_pio_register_range(range);
-> +	if (ret)
-> +		kfree(range);
->  #endif
->  
-> -	return err;
-> +	return ret;
->  }
->  
->  phys_addr_t pci_pio_to_address(unsigned long pio)
-> @@ -3510,21 +3477,10 @@ phys_addr_t pci_pio_to_address(unsigned long pio)
->  	phys_addr_t address = (phys_addr_t)OF_BAD_ADDR;
->  
->  #ifdef PCI_IOBASE
-> -	struct io_range *range;
-> -	resource_size_t allocated_size = 0;
-> -
-> -	if (pio > IO_SPACE_LIMIT)
-> +	if (pio >= MMIO_UPPER_LIMIT)
->  		return address;
->  
-> -	spin_lock(&io_range_lock);
-> -	list_for_each_entry(range, &io_range_list, list) {
-> -		if (pio >= allocated_size && pio < allocated_size + range->size) {
-> -			address = range->start + pio - allocated_size;
-> -			break;
-> -		}
-> -		allocated_size += range->size;
-> -	}
-> -	spin_unlock(&io_range_lock);
-> +	address = logic_pio_to_hwaddr(pio);
->  #endif
->  
->  	return address;
-> @@ -3533,25 +3489,8 @@ phys_addr_t pci_pio_to_address(unsigned long pio)
->  unsigned long __weak pci_address_to_pio(phys_addr_t address)
->  {
->  #ifdef PCI_IOBASE
-> -	struct io_range *res;
-> -	resource_size_t offset = 0;
-> -	unsigned long addr = -1;
-> -
-> -	spin_lock(&io_range_lock);
-> -	list_for_each_entry(res, &io_range_list, list) {
-> -		if (address >= res->start && address < res->start + res->size) {
-> -			addr = address - res->start + offset;
-> -			break;
-> -		}
-> -		offset += res->size;
-> -	}
-> -	spin_unlock(&io_range_lock);
-> -
-> -	return addr;
-> +	return logic_pio_trans_cpuaddr(address);
->  #else
-> -	if (address > IO_SPACE_LIMIT)
-> -		return (unsigned long)-1;
-> -
-
-Why is this check now safe to drop in the !PCI_IOBASE case?
-
-  -dann
-
->  	return (unsigned long) address;
->  #endif
->  }
-> diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
-> index b7996a79..5a59931 100644
-> --- a/include/asm-generic/io.h
-> +++ b/include/asm-generic/io.h
-> @@ -901,7 +901,7 @@ static inline void iounmap(void __iomem *addr)
->  #define ioport_map ioport_map
->  static inline void __iomem *ioport_map(unsigned long port, unsigned int nr)
->  {
-> -	return PCI_IOBASE + (port & IO_SPACE_LIMIT);
-> +	return PCI_IOBASE + (port & MMIO_UPPER_LIMIT);
->  }
->  #endif
->  
+>
+> I appreciate your feedback
+> Thank you
+> --
+> Gustavo
+>
+>
+>
+>
+>
+>
