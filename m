@@ -1,28 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935100AbeBMM3Y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:29:24 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59204 "EHLO
+        id S935180AbeBMM3a (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:29:30 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59270 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935045AbeBMM3X (ORCPT
+        with ESMTP id S935045AbeBMM30 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:29:23 -0500
+        Tue, 13 Feb 2018 07:29:26 -0500
 From: Mark Brown <broonie@kernel.org>
 To: Charles Keepax <ckeepax@opensource.cirrus.com>
 Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
         david.rhodes@cirrus.com, linux-kernel@vger.kernel.org,
         patches@opensource.cirrus.com, linux-kernel@vger.kernel.org
-Subject: Applied "regmap: Use helper function for register offset" to the regmap tree
-In-Reply-To: <20180212181547.2415-4-ckeepax@opensource.cirrus.com>
-Message-Id: <E1elZi0-0007ME-8M@debutante>
-Date: Tue, 13 Feb 2018 12:29:16 +0000
+Subject: Applied "regmap: Correct comparison in regmap_cached" to the regmap tree
+In-Reply-To: <20180212181547.2415-1-ckeepax@opensource.cirrus.com>
+Message-Id: <E1elZi6-0007O4-F1@debutante>
+Date: Tue, 13 Feb 2018 12:29:22 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regmap: Use helper function for register offset
+   regmap: Correct comparison in regmap_cached
 
 has been applied to the regmap tree at
 
@@ -47,14 +47,16 @@ to this mail.
 Thanks,
 Mark
 
->From 45abcc556721a6d18e4af82e20e164044f0a3e36 Mon Sep 17 00:00:00 2001
+>From 71df179363a5a733a8932e9afb869760d7559383 Mon Sep 17 00:00:00 2001
 From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Mon, 12 Feb 2018 18:15:47 +0000
-Subject: [PATCH] regmap: Use helper function for register offset
+Date: Mon, 12 Feb 2018 18:15:44 +0000
+Subject: [PATCH] regmap: Correct comparison in regmap_cached
 
-As a helper function exists for calculating register offsets lets use
-that rather than open coding with the reg_stride.
+The cache pointer points to the actual memory used by the cache, as the
+comparison here is looking for the type of the cache it should check
+against cache_type.
 
+Fixes: 1ea975cf1ef5 ("regmap: Add a function to check if a regmap register is cached")
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
@@ -62,17 +64,17 @@ Signed-off-by: Mark Brown <broonie@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 4037b3782bd3..f075c05859b0 100644
+index ee302ccdfbc8..7519b039c162 100644
 --- a/drivers/base/regmap/regmap.c
 +++ b/drivers/base/regmap/regmap.c
-@@ -1993,7 +1993,7 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
- 				return -EINVAL;
- 			}
+@@ -99,7 +99,7 @@ bool regmap_cached(struct regmap *map, unsigned int reg)
+ 	int ret;
+ 	unsigned int val;
  
--			ret = regmap_write(map, reg + (i * map->reg_stride),
-+			ret = regmap_write(map, reg + regmap_get_offset(map, i),
- 					   ival);
- 			if (ret)
- 				return ret;
+-	if (map->cache == REGCACHE_NONE)
++	if (map->cache_type == REGCACHE_NONE)
+ 		return false;
+ 
+ 	if (!map->cache_ops)
 -- 
 2.16.1
