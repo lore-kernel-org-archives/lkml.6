@@ -1,82 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965507AbeBMSFc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 13:05:32 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:40915 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965340AbeBMSFa (ORCPT
+        id S965404AbeBMSHO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 13:07:14 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38637 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965168AbeBMSHM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 13:05:30 -0500
-X-Google-Smtp-Source: AH8x2257d4Vhe//SR7/pBdFscmUrAsq0UC1q/vra+MXmbRoCQt6AlsWqcebINHMWeOhrnAnuJ3GneQ==
-Date: Tue, 13 Feb 2018 19:05:26 +0100
+        Tue, 13 Feb 2018 13:07:12 -0500
+X-Google-Smtp-Source: AH8x225ZL6xpD6caNWFD0WQaHDlgxBYxIRdTPcXLTZKgVH7fEvGxGi1hPohay0G9ve4DDKIHe5765g==
+Date: Tue, 13 Feb 2018 19:07:08 +0100
 From: Ingo Molnar <mingo@kernel.org>
-To: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: Andrei Vagin <avagin@virtuozzo.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        tip-bot for Jacob Shin <tipbot@zytor.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-tip-commits@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, willy@infradead.org,
-        Cyrill Gorcunov <gorcunov@openvz.org>, Borislav Petkov <bp@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Handle 5-level paging
- boot if kernel is above 4G
-Message-ID: <20180213180526.k2mt5epixfheyynh@gmail.com>
-References: <tip-b4b56015ed1c98cbc9469e35ebbc4373a2844030@git.kernel.org>
- <20180213065155.GA14087@outlook.office365.com>
- <20180213080816.vwh64jiz23frjiot@node.shutemov.name>
- <20180213084121.GA19906@outlook.office365.com>
- <20180213090249.vnjwitt657jabnlt@node.shutemov.name>
- <20180213165337.GA20735@outlook.office365.com>
- <20180213171742.ssblqj37l5daxc4s@gmail.com>
- <CAJwJo6YrYps2mOwEQxvwR4pxiSKrb4U_F4qdzKxwN-EOf9WKRw@mail.gmail.com>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: matt@codeblueprint.co.uk, ard.biesheuvel@linaro.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86: efi: Replace GFP_ATOMIC with GFP_KERNEL in
+ efi_query_variable_store
+Message-ID: <20180213180707.einsznaoghtctkqn@gmail.com>
+References: <1516847386-5291-1-git-send-email-baijiaju1990@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJwJo6YrYps2mOwEQxvwR4pxiSKrb4U_F4qdzKxwN-EOf9WKRw@mail.gmail.com>
+In-Reply-To: <1516847386-5291-1-git-send-email-baijiaju1990@gmail.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Dmitry Safonov <0x7f454c46@gmail.com> wrote:
+* Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
 
-> 2018-02-13 17:17 GMT+00:00 Ingo Molnar <mingo@kernel.org>:
-> >
-> > * Andrei Vagin <avagin@virtuozzo.com> wrote:
-> >
-> >> On Tue, Feb 13, 2018 at 12:02:49PM +0300, Kirill A. Shutemov wrote:
-> >> > On Tue, Feb 13, 2018 at 12:41:22AM -0800, Andrei Vagin wrote:
-> >> > > On Tue, Feb 13, 2018 at 11:08:16AM +0300, Kirill A. Shutemov wrote:
-> >> > > > On Mon, Feb 12, 2018 at 10:51:56PM -0800, Andrei Vagin wrote:
-> >> > > > > Hi Kirill,
-> >> > > > >
-> >> > > > > Something is wrong in this patch.
-> >> >
-> >> > Could you please check if this makes a difference?
-> >>
-> >> The kernel booted with this patch. Thanks!
-> >> https://travis-ci.org/avagin/linux/jobs/341030882
-> >
-> > Fantastic, thanks for the help!
-> >
-> > I've amended the commit to keep the series bisectable, and added these two tags:
-> >
-> >  Debugged-by: "Kirill A. Shutemov" <kirill@shutemov.name>
-> >  Tested-by: "Kirill A. Shutemov" <kirill@shutemov.name>
-> >
-> > To credit your debugging/testing help.
+> The function kzalloc here is not called in atomic context.
+> If nonblocking in efi_query_variable_store is true, 
+> namely it is in atomic context, efi_query_variable_store will return before
+> this kzalloc is called.
+> Thus GFP_ATOMIC is not necessary, and it can be replaced with GFP_KERNEL.
 > 
-> I believe you wanted
-> Reported-by: Andrei Vagin <avagin@virtuozzo.com>
-> Tested-by: Andrei Vagin <avagin@virtuozzo.com>
+> This is found by a static analysis tool named DCNS written by myself.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  arch/x86/platform/efi/quirks.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
+> index 8a99a2e..b6dcb52 100644
+> --- a/arch/x86/platform/efi/quirks.c
+> +++ b/arch/x86/platform/efi/quirks.c
+> @@ -177,7 +177,7 @@ efi_status_t efi_query_variable_store(u32 attributes, unsigned long size,
+>  		 * that by attempting to use more space than is available.
+>  		 */
+>  		unsigned long dummy_size = remaining_size + 1024;
+> -		void *dummy = kzalloc(dummy_size, GFP_ATOMIC);
+> +		void *dummy = kzalloc(dummy_size, GFP_KERNEL);
 
-Yes, of course - copy & paste error. Fixed it now.
+Looks good to me!
+
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 
 Thanks,
 
