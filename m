@@ -1,77 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933530AbeBMHXk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 02:23:40 -0500
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:40568 "EHLO 1wt.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933426AbeBMHXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 02:23:39 -0500
-Date: Tue, 13 Feb 2018 08:23:28 +0100
-From: Willy Tarreau <w@1wt.eu>
-To: Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Dan <dan.carpenter@oracle.com>, Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2] auxdisplay: use correct string length
-Message-ID: <20180213072328.GA1636@1wt.eu>
-References: <1516095490-83827-1-git-send-email-wangxiongfeng2@huawei.com>
- <CANiq72=AeytaT5KBtujTBUkfbNTFFxMPAeToqzmZJOr790R6yw@mail.gmail.com>
- <a1034df8-246d-e979-e2ee-2974ae31dde7@huawei.com>
+        id S933564AbeBMHXy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 02:23:54 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:36276 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933426AbeBMHXw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 02:23:52 -0500
+Date: Tue, 13 Feb 2018 10:23:02 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>, Hans Verkuil <hverkuil@xs4all.nl>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Bhumika Goyal <bhumirks@gmail.com>, Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 5/5] drm: adv7511: Add support for
+ i2c_new_secondary_device
+Message-ID: <20180213072302.wlrqf5zgr7q26rsr@mwanda>
+References: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
+ <1518459117-16733-6-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a1034df8-246d-e979-e2ee-2974ae31dde7@huawei.com>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+In-Reply-To: <1518459117-16733-6-git-send-email-kbingham@kernel.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8803 signatures=668668
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=903
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802130092
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 09:19:21AM +0800, Xiongfeng Wang wrote:
-> >> diff --git a/drivers/auxdisplay/panel.c b/drivers/auxdisplay/panel.c
-> >> index ea7869c..d288900 100644
-> >> --- a/drivers/auxdisplay/panel.c
-> >> +++ b/drivers/auxdisplay/panel.c
-> >> @@ -1506,10 +1506,10 @@ static struct logical_input *panel_bind_key(const char *name, const char *press,
-> >>         key->rise_time = 1;
-> >>         key->fall_time = 1;
-> >>
-> >> -       strncpy(key->u.kbd.press_str, press, sizeof(key->u.kbd.press_str));
-> >> -       strncpy(key->u.kbd.repeat_str, repeat, sizeof(key->u.kbd.repeat_str));
-> >> +       strncpy(key->u.kbd.press_str, press, sizeof(key->u.kbd.press_str) - 1);
-> >> +       strncpy(key->u.kbd.repeat_str, repeat, sizeof(key->u.kbd.repeat_str) - 1);
-> >>         strncpy(key->u.kbd.release_str, release,
-> >> -               sizeof(key->u.kbd.release_str));
-> >> +               sizeof(key->u.kbd.release_str) - 1);
-> > 
-> > Are you sure about this patch? `kbd` says "strings can be non null-terminated".
-> > 
-> > Willy, maybe those should just be memcpy()s? (unless the remaining
-> > bytes, if any, must be 0).
-> Sorry, my apologies. I think I made a mistake. I meant to use strlcpy(), but this
-> also decrease the destination storage size by one.
-> I think, if the strings can be non null-terminated,  we can just use memcpy().
+On Mon, Feb 12, 2018 at 06:11:57PM +0000, Kieran Bingham wrote:
+> +	adv7511->i2c_packet = i2c_new_secondary_device(i2c, "packet",
+> +					ADV7511_PACKET_I2C_ADDR_DEFAULT);
+> +	if (!adv7511->i2c_packet) {
+> +		ret = -EINVAL;
+> +		goto err_unregister_cec;
+> +	}
+> +
+> +	regmap_write(adv7511->regmap, ADV7511_REG_PACKET_I2C_ADDR,
+> +		     adv7511->i2c_packet->addr << 1);
+> +
+>  	INIT_WORK(&adv7511->hpd_work, adv7511_hpd_work);
+>  
+>  	if (i2c->irq) {
+> @@ -1181,7 +1190,7 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
+>  						IRQF_ONESHOT, dev_name(dev),
+>  						adv7511);
+>  		if (ret)
+> -			goto err_unregister_cec;
+> +			goto err_unregister_packet;
+>  	}
+>  
+>  	adv7511_power_off(adv7511);
 
-Well, memcpy() needs as much data in as out. strncpy() does exactly what was
-apparently needed there : take at most X chars from a given string, and write
-exactly X on the output, possibly padding with zeroes. We sure can stop using
-strncpy() and reimplement it, but that becomes ridiculous. One day gcc will
-tell us that an "if" statement misses an "else" which is probably an error
-and we'll have to put "else dummy();" everywhere in the code to calm it.
+There is another goto which needs to be updated if adv7511_cec_init()
+fails.
 
-> This may suppress the gcc warning.
+> @@ -1203,6 +1212,8 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
+>  	adv7511_audio_init(dev, adv7511);
+>  	return 0;
+>  
+> +err_unregister_packet:
+> +	i2c_unregister_device(adv7511->i2c_packet);
+>  err_unregister_cec:
+>  	i2c_unregister_device(adv7511->i2c_cec);
+>  	if (adv7511->cec_clk)
 
-In fact there are two big problems with gcc warnings :
-  - writing -Wno-something-unknown triggers an error on versions where
-    "something-unknown" isn't known, making it difficult to permanently
-    disable warnings (though in the kernel we handle this pretty fine)
 
-  - warnings and diagnostics are conflated. Some warnings should only be
-    provided when the developer explicitly asks for suspicious stuff
-    (-Wsecurity, -Wsuspicious, etc) that would *not* be part of -Wall
-    since -Wall is usually used to report real warnings.
-
-My preferred one today is the one by which gcc reads your *comments* to
-figure whether you forgot a break in a case statement...
-
-Regards,
-Willy
+regards,
+dan carpenter
