@@ -1,96 +1,156 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-684122-1518802981-2-17949778006687286225
+X-Cyrus-Session-Id: sloti22d1t05-2780611-1518483709-2-1711687976253596367
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES ensv, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='UTF-8'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518802981; b=fd1phW3lp9hRlothc59VwHjlcZOawKtVG4xxJrOUoOQCaXa
-    us7BikR8/G2qcgG0pKsuo4RckpVqo4X1vtCNko3QuJhNGRfN1EviVT1RKNC4gXuR
-    gCd72rag6dQfq+Rbtsvo/R0tV55R6XiDwSQD5N6FtAJgcdPVcH6HxKsigxZ9+8nv
-    25xawJSroKttZ0BQJJAqmRMqZ2jNjs9Yo+VO8OzHHq7QIB86S7UckyCtTz52x/QQ
-    FMYjYB5vSJXwuxFYg9hCVUOnRagV/2aV7nI+OuC0QIorF1USF5ap+GkiMudtkW1G
-    RgO/uq2SaPdsAoR58F1uikWD72E3Mdws0IkfpdQ==
+    t=1518483709; b=T6KAg7d4ksmAuPnKcsmwbtgU/Z3quirvCKiVXD82NiSSHmE
+    3GbQjR85nLZrhQuzxuDsewZTDsicwnr11d0upQv73O74b3zusjEg2PzXNGkbovxR
+    oryCuJMnNC+rF9zajNuOv9c36TWd3PhPkZgGVDHxIiM9qv1eRp3+b8kP9al67Mya
+    OSri5QDk8iz7XbNC/m+C1xFNgdk1/0NtRNGwpPSdLO7sl7PnSDPjLdignHS83OP5
+    +CsuLMF+eFjj15BJ8C08B98z5gKBk9RkaRK+XkiDGLnqVUO4P0UiSMIgToouja2p
+    bc09BCRkYn/R6oCaVxuCC92Y7ZPwGXD+KGT+8RA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1518802981; bh=s9ETC304pYBEJFWED6otLPzzvrq8uxwTDdn2GA
-    sfJW0=; b=eA2HUVHy9XgaY8sJzTbrtP7qVvKqen2dLIwEaviaU5h//r1fL7SJH7
-    kqbQNcoRuN+XK4szFlrK6IKgfyU4sWAgcajT7+Mhtchf+5xTBf+aDQ03/Q89OQBL
-    9uM7byWssU3z1uCYray4lqsNtxVUQ5SZ1zGb8xqbJXgQnFw928F6Eot/LfnqRajf
-    HldauM8nfSWWjYR+IyIPmDntDoYZQUw5VW62P7wdbFbOVSAOAtFs69nIx6hK5MPe
-    Dzu9Mj1+w+Wko1N2bh33XfDL3kZqh5fIQ+fwFJpohybP8zuyyI9VIVpoxY7jfl8G
-    AdJs4Qdt3QnoYuGnRHks7snLJEo2B15g==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=f0Fqjk9E x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1518483709; bh=gqiuCiqA35idjXgm6Iermo2hB/
+    UhTpxV+C0NYrG1yRE=; b=oSSDKR3nZq7p53DDkB+rryZrGdZhiACqmndjEvjtd7
+    qy4XuSPUYtd6mPNUTVE+FUdUZ5x1qfoN4YkPVr3XFz/ZCghteTpHBNW769430G4t
+    ywjn9b5ykgD4FjT0Uc7ZhVwznc6220yLM+ypJYG45Z581LxtPRCJn82yRDJ9eyfI
+    XZBQcH8WuRUNgzOnDkdsqaEXHIZzx78tz/TteLNojFE221vcPIQoZzrPFSHR9Q+P
+    afBEoa2qOL1qwsA/prk7FPzqoLnWPlGfVMVQfDnnM5IeKxi4pRj/FB7gJYFJAAzS
+    kYqxrsKWW4QLtQ0E3KwfrlcIkfJJh2F+rDQ8i7OLVqYA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=kaA51MCu x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=jq8BgZKL;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DkG9She8;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=f0Fqjk9E x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=kaA51MCu x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=jq8BgZKL;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DkG9She8;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758870AbeBPRmq (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Feb 2018 12:42:46 -0500
-Received: from mail-it0-f46.google.com ([209.85.214.46]:54602 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756035AbeBPRmn (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Feb 2018 12:42:43 -0500
-X-Google-Smtp-Source: AH8x227Rikc6d7sQQE4gsEgIqvaj63CTUd3GYYKNKOfGUGNq20+lCkvH0nV5rhgGTvmIjMBaGTA427tI+m7MhEcfVW8=
-MIME-Version: 1.0
-In-Reply-To: <20180216152608.1626885-1-arnd@arndb.de>
-References: <20180216152608.1626885-1-arnd@arndb.de>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 16 Feb 2018 09:42:42 -0800
-X-Google-Sender-Auth: n8249BJqoAima_NRZOxNXfZBJNc
-Message-ID: <CA+55aFxRo=X3_fb5JC55JjWt8KOWAdaMaBt5k5VPZhosT25WpQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: hide a #warning for COMPILE_TEST
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>, Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, Jan Kara <jack@suse.cz>,
-        Ingo Molnar <mingo@kernel.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Matthew Wilcox <willy@linux.intel.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Hugh Dickins <hughd@google.com>, Tobin C Harding <me@tobin.cc>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S932957AbeBMBBo (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 12 Feb 2018 20:01:44 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:42270 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932736AbeBMBBn (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 12 Feb 2018 20:01:43 -0500
+X-Google-Smtp-Source: AH8x225kcXT0XjaTXBHN7NkcX4Fj4tSOrMoKKtEM1u/l48CLPBvYEfXOGDDXq5U5y3FTfN8vUzcXOg==
+From: Joel Fernandes <joelaf@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: Joel Fernandes <joelaf@google.com>, Todd Kjos <tkjos@google.com>,
+        Arve Hjonnevag <arve@android.com>,
+        Greg Hackmann <ghackmann@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org
+Subject: [PATCH] staging: ashmem: Fix lockdep issue during llseek
+Date: Mon, 12 Feb 2018 17:01:25 -0800
+Message-Id: <20180213010125.174811-1-joelaf@google.com>
+X-Mailer: git-send-email 2.16.0.rc1.238.g530d649a79-goog
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 16, 2018 at 7:25 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> The warning is reasonable by itself, but gets in the way of
-> randconfig build testing, so I'm hiding it whenever CONFIG_COMPILE_TEST
-> is set.
+ashmem_mutex create a chain of dependencies like so:
 
-Ack, looks sane, so I just applied it directly to my tree instead of
-waiting for this to get back to me from Andrew ;)
+(1)
+mmap syscall ->
+  mmap_sem ->  (acquired)
+  ashmem_mmap
+  ashmem_mutex (try to acquire)
+  (block)
 
-                 Linus
+(2)
+llseek syscall ->
+  ashmem_llseek ->
+  ashmem_mutex ->  (acquired)
+  inode_lock ->
+  inode->i_rwsem (try to acquire)
+  (block)
+
+(3)
+getdents ->
+  iterate_dir ->
+  inode_lock ->
+  inode->i_rwsem   (acquired)
+  copy_to_user ->
+  mmap_sem         (try to acquire)
+
+There is a lock ordering created between mmap_sem and inode->i_rwsem
+causing a lockdep splat [2] during a syzcaller test, this patch fixes
+the issue by unlocking the mutex earlier. Functionally that's Ok since
+we don't need to protect vfs_llseek.
+
+[1] https://patchwork.kernel.org/patch/10185031/
+[2] https://lkml.org/lkml/2018/1/10/48
+
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Arve Hjonnevag <arve@android.com>
+Cc: Greg Hackmann <ghackmann@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org
+Reported-by: syzbot+8ec30bb7bf1a981a2012@syzkaller.appspotmail.com
+Signed-off-by: Joel Fernandes <joelaf@google.com>
+---
+ drivers/staging/android/ashmem.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
+index 372ce9913e6d..6921f86b4aa1 100644
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -334,24 +334,23 @@ static loff_t ashmem_llseek(struct file *file, loff_t offset, int origin)
+ 	mutex_lock(&ashmem_mutex);
+ 
+ 	if (asma->size == 0) {
+-		ret = -EINVAL;
+-		goto out;
++		mutex_unlock(&ashmem_mutex);
++		return -EINVAL;
+ 	}
+ 
+ 	if (!asma->file) {
+-		ret = -EBADF;
+-		goto out;
++		mutex_unlock(&ashmem_mutex);
++		return -EBADF;
+ 	}
+ 
++	mutex_unlock(&ashmem_mutex);
++
+ 	ret = vfs_llseek(asma->file, offset, origin);
+ 	if (ret < 0)
+-		goto out;
++		return ret;
+ 
+ 	/** Copy f_pos from backing file, since f_ops->llseek() sets it */
+ 	file->f_pos = asma->file->f_pos;
+-
+-out:
+-	mutex_unlock(&ashmem_mutex);
+ 	return ret;
+ }
+ 
+-- 
+2.16.0.rc1.238.g530d649a79-goog
