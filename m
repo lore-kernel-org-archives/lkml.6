@@ -1,298 +1,209 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966193AbeBMXtf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 18:49:35 -0500
+        id S966172AbeBMXte (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 18:49:34 -0500
 Received: from mga17.intel.com ([192.55.52.151]:53392 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966102AbeBMXtc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S966064AbeBMXtc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 13 Feb 2018 18:49:32 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,509,1511856000";
-   d="scan'208";a="29822293"
+   d="scan'208";a="29822289"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com
 Cc: gavin.hindman@intel.com, vikas.shivappa@linux.intel.com,
         dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>
-Subject: [RFC PATCH V2 01/22] x86/intel_rdt: Documentation for Cache Pseudo-Locking
-Date: Tue, 13 Feb 2018 07:46:45 -0800
-Message-Id: <9416db57e47e2040a7108ba269f5432d0c91f1f7.1518443616.git.reinette.chatre@intel.com>
+        Reinette Chatre <reinette.chatre@intel.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [RFC PATCH V2 00/22]  Intel(R) Resource Director Technology Cache Pseudo-Locking enabling
+Date: Tue, 13 Feb 2018 07:46:44 -0800
+Message-Id: <cover.1518443616.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1518443616.git.reinette.chatre@intel.com>
-References: <cover.1518443616.git.reinette.chatre@intel.com>
-MIME-Version: 1.0
-In-Reply-To: <cover.1518443616.git.reinette.chatre@intel.com>
-References: <cover.1518443616.git.reinette.chatre@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add description of Cache Pseudo-Locking feature, its interface,
-as well as an example of its usage.
+Adding MM maintainers to v2 to share the new MM change (patch 21/22) that
+enables large contiguous regions that was created to support large Cache
+Pseudo-Locked regions (patch 22/22). This week MM team received another
+proposal to support large contiguous allocations ("[RFC PATCH 0/3]
+Interface for higher order contiguous allocations" at
+http://lkml.kernel.org/r/20180212222056.9735-1-mike.kravetz@oracle.com).
+I have not yet tested with this new proposal but it does seem appropriate
+and I should be able to rework patch 22 from this series on top of that if
+it is accepted instead of what I have in patch 21 of this series.
 
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
- Documentation/x86/intel_rdt_ui.txt | 229 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 228 insertions(+), 1 deletion(-)
+Changes since v1:
+- Enable allocation of contiguous regions larger than what SLAB allocators
+  can support. This removes the 4MB Cache Pseudo-Locking limitation
+  documented in v1 submission.
+  This depends on "mm: drop hotplug lock from lru_add_drain_all",
+  now in v4.16-rc1 as 9852a7212324fd25f896932f4f4607ce47b0a22f.
+- Convert to debugfs_file_get() and -put() from the now obsolete
+  debugfs_use_file_start() and debugfs_use_file_finish() calls.
+- Rebase on top of, and take into account, recent L2 CDP enabling.
+- Simplify tracing output to print cache hits and miss counts on same line.
 
-diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/intel_rdt_ui.txt
-index 756fd76b78a6..bb3d6fe0a3e4 100644
---- a/Documentation/x86/intel_rdt_ui.txt
-+++ b/Documentation/x86/intel_rdt_ui.txt
-@@ -27,7 +27,10 @@ mount options are:
- L2 and L3 CDP are controlled seperately.
- 
- RDT features are orthogonal. A particular system may support only
--monitoring, only control, or both monitoring and control.
-+monitoring, only control, or both monitoring and control. Cache
-+pseudo-locking is a unique way of using cache control to "pin" or
-+"lock" data in the cache. Details can be found in
-+"Cache Pseudo-Locking".
- 
- The mount succeeds if either of allocation or monitoring is present, but
- only those files and directories supported by the system will be created.
-@@ -329,6 +332,149 @@ L3CODE:0=fffff;1=fffff;2=fffff;3=fffff
- L3DATA:0=fffff;1=fffff;2=3c0;3=fffff
- L3CODE:0=fffff;1=fffff;2=fffff;3=fffff
- 
-+Cache Pseudo-Locking
-+--------------------
-+CAT enables a user to specify the amount of cache space into which an
-+application can fill. Cache pseudo-locking builds on the fact that a
-+CPU can still read and write data pre-allocated outside its current
-+allocated area on a cache hit. With cache pseudo-locking, data can be
-+preloaded into a reserved portion of cache that no application can
-+fill, and from that point on will only serve cache hits. The cache
-+pseudo-locked memory is made accessible to user space where an
-+application can map it into its virtual address space and thus have
-+a region of memory with reduced average read latency.
-+
-+Cache pseudo-locking increases the probability that data will remain
-+in the cache via carefully configuring the CAT feature and controlling
-+application behavior. There is no guarantee that data is placed in
-+cache. Instructions like INVD, WBINVD, CLFLUSH, etc. can still evict
-+“locked” data from cache. Power management C-states may shrink or
-+power off cache. It is thus recommended to limit the processor maximum
-+C-state, for example, by setting the processor.max_cstate kernel parameter.
-+
-+It is required that an application using a pseudo-locked region runs
-+with affinity to the cores (or a subset of the cores) associated
-+with the cache on which the pseudo-locked region resides. This is
-+enforced by the implementation.
-+
-+Pseudo-locking is accomplished in two stages:
-+1) During the first stage the system administrator allocates a portion
-+   of cache that should be dedicated to pseudo-locking. At this time an
-+   equivalent portion of memory is allocated, loaded into allocated
-+   cache portion, and exposed as a character device.
-+2) During the second stage a user-space application maps (mmap()) the
-+   pseudo-locked memory into its address space.
-+
-+Cache Pseudo-Locking Interface
-+------------------------------
-+Platforms supporting cache pseudo-locking will expose a new
-+"/sys/fs/restrl/pseudo_lock" directory after successful mount of the
-+resctrl filesystem. Initially this directory will contain a single file,
-+"avail" that contains the schemata, one line per resource, of cache region
-+available for pseudo-locking.
-+
-+A pseudo-locked region is created by creating a new directory within
-+/sys/fs/resctrl/pseudo_lock. On success two new files will appear in
-+the directory:
-+
-+"schemata":
-+	Shows the schemata representing the pseudo-locked cache region.
-+	User writes schemata of requested locked area to file.
-+	Only one id of single resource accepted - can only lock from
-+	single cache instance. Writing of schemata to this file will
-+	return success on successful pseudo-locked region setup.
-+"size":
-+	After successful pseudo-locked region setup this read-only file
-+	will contain the size in bytes of pseudo-locked region.
-+
-+Cache Pseudo-Locking Debugging Interface
-+---------------------------------------
-+The pseudo-locking debugging interface is enabled with
-+CONFIG_INTEL_RDT_DEBUGFS and can be found in
-+/sys/kernel/debug/resctrl/pseudo_lock.
-+
-+There is no explicit way for the kernel to test if a provided memory
-+location is present in the cache. The pseudo-locking debugging interface uses
-+the tracing infrastructure to provide two ways to measure cache residency of
-+the pseudo-locked region:
-+1) Memory access latency using the pseudo_lock_mem_latency tracepoint. Data
-+   from these measurements are best visualized using a hist trigger (see
-+   example below). In this test the pseudo-locked region is traversed at
-+   a stride of 32 bytes while hardware prefetchers, preemption, and interrupts
-+   are disabled. This also provides a substitute visualization of cache
-+   hits and misses.
-+2) Cache hit and miss measurements using model specific precision counters if
-+   available. Depending on the levels of cache on the system the following
-+   tracepoints are available: pseudo_lock_l2_hits, pseudo_lock_l2_miss,
-+   pseudo_lock_l3_miss, and pseudo_lock_l3_hits. WARNING: triggering this
-+   measurement uses from two (for just L2 measurements) to four (for L2 and L3
-+   measurements) precision counters on the system, if any other
-+   measurements are in progress the counters and their corresponding event
-+   registers will be clobbered.
-+
-+When a pseudo-locked region is created a new debugfs directory is created for
-+it in debugfs as /sys/kernel/debug/resctrl/pseudo_lock/<newdir>. A single
-+write-only file, measure_trigger, is present in this directory. The
-+measurement on the pseudo-locked region depends on the number, 1 or 2,
-+written to this debugfs file. Since the measurements are recorded with the
-+tracing infrastructure the relevant tracepoints need to be enabled before the
-+measurement is triggered.
-+
-+Example of latency debugging interface:
-+In this example a pseudo-locked region named "newlock" was created. Here is
-+how we can measure the latency in cycles of reading from this region:
-+# :> /sys/kernel/debug/tracing/trace
-+# echo 'hist:keys=latency' > /sys/kernel/debug/tracing/events/pseudo_lock/pseudo_lock_mem_latency/trigger
-+# echo 1 > /sys/kernel/debug/tracing/events/pseudo_lock/pseudo_lock_mem_latency/enable
-+# echo 1 > /sys/kernel/debug/resctrl/pseudo_lock/newlock/measure_trigger
-+# echo 0 > /sys/kernel/debug/tracing/events/pseudo_lock/pseudo_lock_mem_latency/enable
-+# cat /sys/kernel/debug/tracing/events/pseudo_lock/pseudo_lock_mem_latency/hist
-+
-+# event histogram
-+#
-+# trigger info: hist:keys=latency:vals=hitcount:sort=hitcount:size=2048 [active]
-+#
-+
-+{ latency:        456 } hitcount:          1
-+{ latency:         50 } hitcount:         83
-+{ latency:         36 } hitcount:         96
-+{ latency:         44 } hitcount:        174
-+{ latency:         48 } hitcount:        195
-+{ latency:         46 } hitcount:        262
-+{ latency:         42 } hitcount:        693
-+{ latency:         40 } hitcount:       3204
-+{ latency:         38 } hitcount:       3484
-+
-+Totals:
-+    Hits: 8192
-+    Entries: 9
-+    Dropped: 0
-+
-+Example of cache hits/misses debugging:
-+In this example a pseudo-locked region named "newlock" was created on the L2
-+cache of a platform. Here is how we can obtain details of the cache hits
-+and misses using the platform's precision counters.
-+
-+# :> /sys/kernel/debug/tracing/trace
-+# echo 1 > /sys/kernel/debug/tracing/events/pseudo_lock/pseudo_lock_l2_hits/enable
-+# echo 1 > /sys/kernel/debug/tracing/events/pseudo_lock/pseudo_lock_l2_miss/enable
-+# echo 2 > /sys/kernel/debug/resctrl/pseudo_lock/newlock/measure_trigger
-+# echo 0 > /sys/kernel/debug/tracing/events/pseudo_lock/pseudo_lock_l2_hits/enable
-+# echo 0 > /sys/kernel/debug/tracing/events/pseudo_lock/pseudo_lock_l2_miss/enable
-+# cat /sys/kernel/debug/tracing/trace
-+
-+# tracer: nop
-+#
-+#                              _-----=> irqs-off
-+#                             / _----=> need-resched
-+#                            | / _---=> hardirq/softirq
-+#                            || / _--=> preempt-depth
-+#                            ||| /     delay
-+#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
-+#              | |       |   ||||       |         |
-+ pseudo_lock_mea-1039  [002] ....  1598.825180: pseudo_lock_l2_hits: L2 hits=4097
-+ pseudo_lock_mea-1039  [002] ....  1598.825184: pseudo_lock_l2_miss: L2 miss=2
-+
- Examples for RDT allocation usage:
- 
- Example 1
-@@ -443,6 +589,87 @@ siblings and only the real time threads are scheduled on the cores 4-7.
- 
- # echo F0 > p0/cpus
- 
-+Example of Cache Pseudo-Locking
-+-------------------------------
-+Lock portion of L2 cache from cache id 1 using CBM 0x3. Pseudo-locked
-+region is exposed at /dev/pseudo_lock/newlock that can be provided to
-+application for argument to mmap().
-+
-+# cd /sys/fs/resctrl/pseudo_lock
-+# cat avail
-+L2:0=ff;1=ff
-+# mkdir newlock
-+# cd newlock
-+# cat schemata
-+# L2:uninitialized
-+# echo ‘L2:1=3’ > schemata
-+# ls -l /dev/pseudo_lock/newlock
-+crw------- 1 root root 244, 0 Mar 30 03:00 /dev/pseudo_lock/newlock
-+
-+/*
-+ * Example code to access one page of pseudo-locked cache region
-+ * from user space.
-+ */
-+#define _GNU_SOURCE
-+#include <fcntl.h>
-+#include <sched.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <sys/mman.h>
-+
-+/*
-+ * It is required that the application runs with affinity to only
-+ * cores associated with the pseudo-locked region. Here the cpu
-+ * is hardcoded for convenience of example.
-+ */
-+static int cpuid = 2;
-+
-+int main(int argc, char *argv[])
-+{
-+	cpu_set_t cpuset;
-+	long page_size;
-+	void *mapping;
-+	int dev_fd;
-+	int ret;
-+
-+	page_size = sysconf(_SC_PAGESIZE);
-+
-+	CPU_ZERO(&cpuset);
-+	CPU_SET(cpuid, &cpuset);
-+	ret = sched_setaffinity(0, sizeof(cpuset), &cpuset);
-+	if (ret < 0) {
-+		perror("sched_setaffinity");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	dev_fd = open("/dev/pseudo_lock/newlock", O_RDWR);
-+	if (dev_fd < 0) {
-+		perror("open");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	mapping = mmap(0, page_size, PROT_READ | PROT_WRITE, MAP_SHARED,
-+		       dev_fd, 0);
-+	if (mapping == MAP_FAILED) {
-+		perror("mmap");
-+		close(dev_fd);
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	/* Application interacts with pseudo-locked memory @mapping */
-+
-+	ret = munmap(mapping, page_size);
-+	if (ret < 0) {
-+		perror("munmap");
-+		close(dev_fd);
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	close(dev_fd);
-+	exit(EXIT_SUCCESS);
-+}
-+
- 4) Locking between applications
- 
- Certain operations on the resctrl filesystem, composed of read/writes
+This version is based on x86/cache of tip.git when the HEAD was
+(based on v4.15-rc8):
+
+commit 31516de306c0c9235156cdc7acb976ea21f1f646
+Author: Fenghua Yu <fenghua.yu@intel.com>
+Date:   Wed Dec 20 14:57:24 2017 -0800
+
+    x86/intel_rdt: Add command line parameter to control L2_CDP
+
+Cc: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+
+No changes below. It is verbatim from first submission (except for
+diffstat at the end that reflects v2).
+
+Dear Maintainers,
+
+Cache Allocation Technology (CAT), part of Intel(R) Resource Director
+Technology (Intel(R) RDT), enables a user to specify the amount of cache
+space into which an application can fill. Cache pseudo-locking builds on
+the fact that a CPU can still read and write data pre-allocated outside
+its current allocated area on cache hit. With cache pseudo-locking data
+can be preloaded into a reserved portion of cache that no application can
+fill, and from that point on will only serve cache hits. The cache
+pseudo-locked memory is made accessible to user space where an application
+can map it into its virtual address space and thus have a region of
+memory with reduced average read latency.
+
+The cache pseudo-locking approach relies on generation-specific behavior
+of processors. It may provide benefits on certain processor generations,
+but is not guaranteed to be supported in the future. It is not a guarantee
+that data will remain in the cache. It is not a guarantee that data will
+remain in certain levels or certain regions of the cache. Rather, cache
+pseudo-locking increases the probability that data will remain in a certain
+level of the cache via carefully configuring the CAT feature and carefully
+controlling application behavior.
+
+Known limitations:
+Instructions like INVD, WBINVD, CLFLUSH, etc. can still evict pseudo-locked
+memory from the cache. Power management C-states may still shrink or power
+off cache causing eviction of cache pseudo-locked memory. We utilize
+PM QoS to prevent entering deeper C-states on cores associated with cache
+pseudo-locked regions at the time they (the pseudo-locked regions) are
+created.
+
+Known software limitation:
+Cache pseudo-locked regions are currently limited to 4MB, even on
+platforms that support larger cache sizes. Work is in progress to
+support larger regions.
+
+Graphs visualizing the benefits of cache pseudo-locking on an Intel(R)
+NUC NUC6CAYS (it has an Intel(R) Celeron(R) Processor J3455) with the
+default 2GB DDR3L-1600 memory are available. In these tests the patches
+from this series were applied on the x86/cache branch of tip.git at the
+time the HEAD was:
+
+commit 87943db7dfb0c5ee5aa74a9ac06346fadd9695c8 (tip/x86/cache)
+Author: Reinette Chatre <reinette.chatre@intel.com>
+Date:   Fri Oct 20 02:16:59 2017 -0700
+    x86/intel_rdt: Fix potential deadlock during resctrl mount
+
+DISCLAIMER: Tests document performance of components on a particular test,
+in specific systems. Differences in hardware, software, or configuration
+will affect actual performance. Performance varies depending on system
+configuration.
+
+- https://github.com/rchatre/data/blob/master/cache_pseudo_locking/rfc_v1/perfcount.png
+Above shows the few L2 cache misses possible with cache pseudo-locking
+on the Intel(R) NUC with default configuration. Each test, which is
+repeated 100 times, pseudo-locks schemata shown and then measure from
+the kernel via precision counters the number of cache misses when
+accessing the memory afterwards. This test is run on an idle system as
+well as a system with significant noise (using stress-ng) from a
+neighboring core associated with the same cache. This plot shows us that:
+(1) the number of cache misses remain consistent irrespective of the size
+of region being pseudo-locked, and (2) the number of cache misses for a
+pseudo-locked region remains low when traversing memory regions ranging
+in size from 256KB (4096 cache lines) to 896KB (14336 cache lines).
+
+- https://github.com/rchatre/data/blob/master/cache_pseudo_locking/rfc_v1/userspace_malloc_with_load.png
+Above shows the read latency experienced by an application running with
+default CAT CLOS after it allocated 256KB memory with malloc() (and using
+mlockall()). In this example the application reads randomly (to not trigger
+hardware prefetcher) from its entire allocated region at 2 second intervals
+while there is a noisy neighbor present. Each individual access is 32 bytes
+in size and the latency of each access is measured using the rdtsc
+instruction. In this visualization we can observe two groupings of data,
+the group with lower latency indicating cache hits, and the group with
+higher latency indicating cache misses. We can see a significant portion
+of memory reads experience larger latencies.
+
+- https://github.com/rchatre/data/blob/master/cache_pseudo_locking/rfc_v1/userspace_psl_with_load.png
+Above plots a similar test as the previous, but instead of the application
+reading from a 256KB malloc() region it reads from a 256KB pseudo-locked
+region that was mmap()'ed into its address space. When comparing these
+latencies to that of regular malloc() latencies we do see a significant
+improvement in latencies experienced.
+
+https://github.com/rchatre/data/blob/master/cache_pseudo_locking/rfc_v1/userspace_malloc_and_cat_with_load_clos0_fixed.png
+Applications that are sensitive to latencies may use existing CAT
+technology to isolate the sensitive application. In this plot we show an
+application running with a dedicated CAT CLOS double the size (512KB) of
+the memory being tested (256KB). A dedicated CLOS with CBM 0x0f is created and
+the default CLOS changed to CBM 0xf0. We see in this plot that even though
+the application runs within a dedicated portion of cache it still
+experiences significant latency accessing its memory (when compared to
+pseudo-locking).
+
+Your feedback about this proposal for enabling of Cache Pseudo-Locking
+will be greatly appreciated.
+
+Regards,
+
+Reinette
+
+Reinette Chatre (22):
+  x86/intel_rdt: Documentation for Cache Pseudo-Locking
+  x86/intel_rdt: Make useful functions available internally
+  x86/intel_rdt: Introduce hooks to create pseudo-locking files
+  x86/intel_rdt: Introduce test to determine if closid is in use
+  x86/intel_rdt: Print more accurate pseudo-locking availability
+  x86/intel_rdt: Create pseudo-locked regions
+  x86/intel_rdt: Connect pseudo-locking directory to operations
+  x86/intel_rdt: Introduce pseudo-locking resctrl files
+  x86/intel_rdt: Discover supported platforms via prefetch disable bits
+  x86/intel_rdt: Disable pseudo-locking if CDP enabled
+  x86/intel_rdt: Associate pseudo-locked regions with its domain
+  x86/intel_rdt: Support CBM checking from value and character buffer
+  x86/intel_rdt: Support schemata write - pseudo-locking core
+  x86/intel_rdt: Enable testing for pseudo-locked region
+  x86/intel_rdt: Prevent new allocations from pseudo-locked regions
+  x86/intel_rdt: Create debugfs files for pseudo-locking testing
+  x86/intel_rdt: Create character device exposing pseudo-locked region
+  x86/intel_rdt: More precise L2 hit/miss measurements
+  x86/intel_rdt: Support L3 cache performance event of Broadwell
+  x86/intel_rdt: Limit C-states dynamically when pseudo-locking active
+  mm/hugetlb: Enable large allocations through gigantic page API
+  x86/intel_rdt: Support contiguous memory of all sizes
+
+ Documentation/x86/intel_rdt_ui.txt                |  229 ++-
+ arch/x86/Kconfig                                  |   11 +
+ arch/x86/kernel/cpu/Makefile                      |    4 +-
+ arch/x86/kernel/cpu/intel_rdt.h                   |   24 +
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c       |   44 +-
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c       | 1894 +++++++++++++++++++++
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h |   52 +
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c          |   46 +-
+ include/linux/hugetlb.h                           |    2 +
+ mm/hugetlb.c                                      |   10 +-
+ 10 files changed, 2290 insertions(+), 26 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+ create mode 100644 arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h
+
 -- 
 2.13.6
