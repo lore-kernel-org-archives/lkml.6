@@ -1,67 +1,73 @@
-Return-Path: <pasha.tatashin@oracle.com>
-X-Google-Smtp-Source: AH8x227/hQ5BvGDDvSVB4h7Jxg2dR+c1Lu+PoMnt55CiZP4G7W1UecYlsME77ofm8LP0xWKW36lh
-ARC-Seal: i=1; a=rsa-sha256; t=1518702156; cv=none;
+Return-Path: <akpm@linux-foundation.org>
+X-Google-Smtp-Source: AH8x225ZD6huZZP8TNjJAW7d5edb23wU1lPPO3tYUmf9XYW5Kp4MsN9AfxvjZJT8y2WtOLCxf5No
+ARC-Seal: i=1; a=rsa-sha256; t=1518558843; cv=none;
         d=google.com; s=arc-20160816;
-        b=OVXRm4oxrAbGn6PN9zORW7AUuTQyDZOavPppsry0C7nH8pbOkICMTd7iW3WsEXF35v
-         9gyEBCQ6M+Hlja1BJNtdwmL/HUkly3OWEAt4qNhAVR9qth1rYhcdoyI9t8raMlMeKpcW
-         faDOlbnOTJZ3BgZPulW5xrWzntKwFow+8xCDSzmiGw18BtyE07OuSGW9huh4jZs83fHB
-         wh+uep5rL9SXnW8x1w+bZjIqbauAbjawY84wUo2a8NcyfajRCW8sCdcvfJLCM3HbubSx
-         O3hSxJHAg3y2eHddUGIfBrIdcvgZIQO4qyUGnDP8/QgZfEBo1kPFde6u2EAB+ro+2bp9
-         KcDg==
+        b=w1Hsdkz3J+26aeizDsxEIlIoDV77Qze/SUAFKCymh/dDPgvzKWk26MQB659xwr51Mm
+         QyfOY2kdYQJH+dZvcU4yCc3fOExjIjA+dPxWkQRKsex5cwj+yOauiFmeQQ9a++MDK1I3
+         DxD3Vu+KhwQwV1rGfAtpyulgLBsOcOtg9qJ9mEt9Q3IyvCVDGmPhM8FZHkUmLEV8/R9Z
+         Q8V/rSVzYG7VcbjiI2gdWZH4H86OX3WS9+ATS5gMGN65RDiDIzSi8+SuOkkjltmFTgfx
+         cQDexh5w393xN9Q5uNpQCuu11LV7ECqAxPmdhjCWfrfh6+vrcaUF+Ei6JdzLLHOZrEXl
+         gt4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=vTvBN0IpWli3taCo3LKQosgbqkgIlL5euWByujagAqE=;
-        b=v7g32zHagrO82WvSLN3bCzFYHicCe4V2TMGIh3Wb5TWz8XU2QHU0BX2WA1S84JGH9O
-         gJgSN/dMgBL0GVtcBt2A/PiOpN05A/B03Wi1fILfV/Or07TxQ40TwIYxPQpi1gBmtmf0
-         qDSSG8EMtVUjitjog5Rd506Z/aRXFRo6QYLxeIOXEFKNr9ZJ7wncyQ2x7hDnn9RHK+z/
-         tvCQsvRQd1z3x2DzQDkBTRcyL5HPG8QWR8xwEM8RV1lt81BCqgQWiWTpYSAcQl2xqVxL
-         rSDO21EG/XmcY8kcpCx0+LooR/kYl02zE/Cc23VY/ogsMPF8oat2PoJZliB1/s368I6e
-         3owg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=Fqr6+fyxW+V1r0Hwa3xQD8S4zPkfUY4IvTkiA5C1tO0=;
+        b=Ppx4lsNAgOBqpdtaMOnH770HItJQOVpoL59YmM5pT3WsfKClzBhtDoXwPBC6BXZtJI
+         1AiMqEM+0ipE9HwBdDZ5IrWCAWuFy1Il4zFfmKcjy3V0g0JA+qovRTlb4HnATxVYuSiU
+         lXAv7zG3XGlxZtNvtpaZl21ONPzfAhCKbi7lDyUIg/6lFGwU6RVJHQS8IyaAluUaCEDv
+         nCogaqS6YTsuimitcXYVmzAwiUi+7Cj5O85PIqVCCguImW2kNgkyYxc4zjyX2XzI5j9P
+         WqKbti8b2e5k3aBnLmXJ/E0ydxZfOJcnp8XPD+v0DDWY+sVepos+z6YInM+x3RvCoMcS
+         i3nw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=e4k4sdiO;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+       spf=softfail (google.com: domain of transitioning akpm@linux-foundation.org does not designate 104.133.9.92 as permitted sender) smtp.mailfrom=akpm@linux-foundation.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=e4k4sdiO;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-MIME-Version: 1.0
-In-Reply-To: <20180215115316.GD7275@dhcp22.suse.cz>
+       spf=softfail (google.com: domain of transitioning akpm@linux-foundation.org does not designate 104.133.9.92 as permitted sender) smtp.mailfrom=akpm@linux-foundation.org
+Date: Tue, 13 Feb 2018 13:53:59 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+ mgorman@techsingularity.net, mhocko@suse.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, vbabka@suse.cz,
+ bharata@linux.vnet.ibm.com, tglx@linutronix.de, mingo@redhat.com,
+ hpa@zytor.com, x86@kernel.org, dan.j.williams@intel.com,
+ kirill.shutemov@linux.intel.com, bhe@redhat.com
+Subject: Re: [PATCH v3 0/4] optimize memory hotplug
+Message-Id: <20180213135359.705680d373a482b650f38b50@linux-foundation.org>
+In-Reply-To: <20180213193159.14606-1-pasha.tatashin@oracle.com>
 References: <20180213193159.14606-1-pasha.tatashin@oracle.com>
- <20180213193159.14606-4-pasha.tatashin@oracle.com> <20180215115316.GD7275@dhcp22.suse.cz>
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-Date: Thu, 15 Feb 2018 08:41:50 -0500
-X-Gmail-Original-Message-ID: <CAOAebxtS8nHtz+FC034FsTDWrDNtKPcxR-9Z=CkgR4yr2=5YEQ@mail.gmail.com>
-Message-ID: <CAOAebxtS8nHtz+FC034FsTDWrDNtKPcxR-9Z=CkgR4yr2=5YEQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] mm: uninitialized struct page poisoning sanity checking
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Steve Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Bharata B Rao <bharata@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, dan.j.williams@intel.com,
-        kirill.shutemov@linux.intel.com, bhe@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8805 signatures=668671
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=684
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802150171
+X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.23; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592315446423253504?=
-X-GMAIL-MSGID: =?utf-8?q?1592474632451588892?=
+X-GMAIL-THRID: =?utf-8?q?1592315446760578462?=
+X-GMAIL-MSGID: =?utf-8?q?1592324357272688035?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-> Acked-by: Michal Hocko <mhocko@suse.com>
+On Tue, 13 Feb 2018 14:31:55 -0500 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
 
-Thank you, I will do the changes that you requested.
+> This patchset:
+> - Improves hotplug performance by eliminating a number of
+> struct page traverses during memory hotplug.
+> 
+> - Fixes some issues with hotplugging, where boundaries
+> were not properly checked. And on x86 block size was not properly aligned
+> with end of memory
+> 
+> - Also, potentially improves boot performance by eliminating condition from
+>   __init_single_page().
+> 
+> - Adds robustness by verifying that that struct pages are correctly
+>   poisoned when flags are accessed.
 
-Pavel
+I'm now attempting to get a 100% review rate on MM patches, which is
+why I started adding my Reviewed-by: when I do that thing.
+
+I'm not familiar enough with this code to add my own Reviewed-by:, and
+we'll need to figure out what to do in such cases.  I shall be sending
+out periodic review-status summaries.
+
+If you're able to identify a suitable reviewer for this work and to
+offer them beer, that would help.  Let's see what happens as the weeks
+unfold.
