@@ -1,143 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933728AbeBMH6o (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 02:58:44 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:43538 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933617AbeBMH6k (ORCPT
+        id S933736AbeBMH7u (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 02:59:50 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50199 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933550AbeBMH7s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 02:58:40 -0500
-Date: Tue, 13 Feb 2018 08:58:28 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Philipp Rossak <embed3d@gmail.com>
-Cc: mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        wens@csie.org, linux@armlinux.org.uk, sean@mess.org,
-        p.zabel@pengutronix.de, andi.shyti@samsung.com,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v5 0/6] IR support for A83T
-Message-ID: <20180213075828.zkm2p67dsr7f6bde@flea.lan>
-References: <20180130174656.10657-1-embed3d@gmail.com>
- <a1ce4422-33d7-1214-6527-0d299e97fe8b@gmail.com>
+        Tue, 13 Feb 2018 02:59:48 -0500
+X-Google-Smtp-Source: AH8x225vmFepf9R/TG/oojHOomF14bzLcuSRXjOSfqprJz1eu3jMSNtlVgIWqdNL0WpfSlpyEBAfYQ==
+Date: Tue, 13 Feb 2018 08:59:43 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>, tglx@linutronix.de,
+        karahmed@amazon.de, sironi@amazon.de, x86@kernel.org,
+        kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
+        jmattson@google.com, rkrcmar@redhat.com, arjan.van.de.ven@intel.com,
+        dave.hansen@intel.com
+Subject: Re: [PATCH v2 0/6] Spectre v2 updates
+Message-ID: <20180213075943.55em5k6ofg3bfebi@gmail.com>
+References: <1518305967-31356-1-git-send-email-dwmw@amazon.co.uk>
+ <ef5f1242-c050-3259-8c48-b3797f8c248f@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ohxi67qpvujdeuay"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a1ce4422-33d7-1214-6527-0d299e97fe8b@gmail.com>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ef5f1242-c050-3259-8c48-b3797f8c248f@redhat.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ohxi67qpvujdeuay
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+* Paolo Bonzini <pbonzini@redhat.com> wrote:
 
-Hi Philipp,
+> On 11/02/2018 00:39, David Woodhouse wrote:
+> > Using retpoline ensures the kernel is safe because it doesn't contain
+> > any indirect branches, but firmware still can — and we make calls into
+> > firmware at runtime. Where the IBRS microcode support is available, use
+> > that before calling into firmware.
+> > 
+> > While doing that, I noticed that we were calling C functions without
+> > telling the compiler about the call-clobbered registers. Stop that.
+> > 
+> > This also contains the always_inline fix for the performance problem
+> > introduced by retpoline in KVM code, and fixes some other issues with
+> > the per-vCPU KVM handling for the SPEC_CTRL MSR.
+> > 
+> > Finally, update the microcode blacklist to reflect the latest
+> > information from Intel.
+> > 
+> > v2: Drop IBRS_ALL patch for the time being
+> >     Add KVM MSR fixes (karahmed)
+> >     Update microcode blacklist
+> > 
+> > 
+> > 
+> > David Woodhouse (4):
+> >   x86/speculation: Update Speculation Control microcode blacklist
+> >   Revert "x86/speculation: Simplify
+> >     indirect_branch_prediction_barrier()"
+> >   KVM: x86: Reduce retpoline performance impact in
+> >     slot_handle_level_range()
+> >   x86/speculation: Use IBRS if available before calling into firmware
+> > 
+> > KarimAllah Ahmed (2):
+> >   X86/nVMX: Properly set spec_ctrl and pred_cmd before merging MSRs
+> >   KVM/nVMX: Set the CPU_BASED_USE_MSR_BITMAPS if we have a valid L02 MSR
+> >     bitmap
+> > 
+> >  arch/x86/include/asm/apm.h           |  6 ++++++
+> >  arch/x86/include/asm/cpufeatures.h   |  1 +
+> >  arch/x86/include/asm/efi.h           | 17 +++++++++++++++--
+> >  arch/x86/include/asm/nospec-branch.h | 32 ++++++++++++++++++++++++++++----
+> >  arch/x86/include/asm/processor.h     |  3 ---
+> >  arch/x86/kernel/cpu/bugs.c           | 18 +++++++++++-------
+> >  arch/x86/kernel/cpu/intel.c          |  4 ----
+> >  arch/x86/kvm/mmu.c                   | 10 +++++-----
+> >  arch/x86/kvm/vmx.c                   |  7 ++++---
+> >  drivers/watchdog/hpwdt.c             |  3 +++
+> >  10 files changed, 73 insertions(+), 28 deletions(-)
+> > 
+> 
+> Acked-by: Paolo Bonzini <pbonzini@redhat.com>
 
-On Mon, Feb 12, 2018 at 12:00:02PM +0100, Philipp Rossak wrote:
-> On 30.01.2018 18:46, Philipp Rossak wrote:
-> > This patch series adds support for the sunxi A83T ir module and enhances
-> > the sunxi-ir driver. Right now the base clock frequency for the ir driv=
-er
-> > is a hard coded define and is set to 8 MHz.
-> > This works for the most common ir receivers. On the Sinovoip Bananapi M3
-> > the ir receiver needs, a 3 MHz base clock frequency to work without
-> > problems with this driver.
-> >=20
-> > This patch series adds support for an optinal property that makes it ab=
-le
-> > to override the default base clock frequency and enables the ir interfa=
-ce
-> > on the a83t and the Bananapi M3.
-> >=20
-> > changes since v4:
-> > * rename cir pin from cir_pins to r_cir_pin
-> > * drop unit-adress from r_cir_pin
-> > * add a83t compatible to the cir node
-> > * move muxing options to dtsi
-> > * rename cir label and reorder it in the bananpim3.dts file
-> >=20
-> > changes since v3:
-> > * collecting all acks & reviewd by
-> > * fixed typos
-> >=20
-> > changes since v2:
-> > * reorder cir pin (alphabetical)
-> > * fix typo in documentation
-> >=20
-> > changes since v1:
-> > * fix typos, reword Documentation
-> > * initialize 'b_clk_freq' to 'SUNXI_IR_BASE_CLK' & remove if statement
-> > * change dev_info() to dev_dbg()
-> > * change naming to cir* in dts/dtsi
-> > * Added acked Ackedi-by to related patch
-> > * use whole memory block instead of registers needed + fix for h3/h5
-> >=20
-> > changes since rfc:
-> > * The property is now optinal. If the property is not available in
-> >    the dtb the driver uses the default base clock frequency.
-> > * the driver prints out the the selected base clock frequency.
-> > * changed devicetree property from base-clk-frequency to clock-frequency
-> >=20
-> > Regards,
-> > Philipp
-> >=20
-> > Philipp Rossak (6):
-> >    media: rc: update sunxi-ir driver to get base clock frequency from
-> >      devicetree
-> >    media: dt: bindings: Update binding documentation for sunxi IR
-> >      controller
-> >    arm: dts: sun8i: a83t: Add the cir pin for the A83T
-> >    arm: dts: sun8i: a83t: Add support for the cir interface
-> >    arm: dts: sun8i: a83t: bananapi-m3: Enable IR controller
-> >    arm: dts: sun8i: h3-h5: ir register size should be the whole memory
-> >      block
-> >=20
-> >   Documentation/devicetree/bindings/media/sunxi-ir.txt |  3 +++
-> >   arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts         |  5 +++++
-> >   arch/arm/boot/dts/sun8i-a83t.dtsi                    | 18 +++++++++++=
-+++++++
-> >   arch/arm/boot/dts/sunxi-h3-h5.dtsi                   |  2 +-
-> >   drivers/media/rc/sunxi-cir.c                         | 19 +++++++++++=
---------
-> >   5 files changed, 38 insertions(+), 9 deletions(-)
-> >=20
->=20
-> RC1 is now out, thus I would like to ask you to have a look at this patch
-> series again. Some patches still miss an acked-by. It would be nice if we
-> could schedule this for v4.17.
+Thanks - I've added your Ack to the three KVM patches.
 
-Just resend it, this will send pretty much the same signal :)
+Thanks,
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
-
---ohxi67qpvujdeuay
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqCmqMACgkQ0rTAlCFN
-r3R62A/9H1I/KC/YWrb3UIHd/cjK9FZ54h/zg99M4hRS6wfle52lNL1ugh7pFqFN
-oNZh2ry7abSBJKM4XvmcTjmOOSF0MfMVL6ipCUHmU0hVn1mrsc9wMGwi8z19SM56
-EYoSr204adKf5TpMZBOdWvAqJKARucfH1Rhswh2HEaAyf48/h4Pw5g/iI74uq4MD
-K/dAbu2kshrVunHWKpmECe7A4CxC+i96TUJg+8x8dsQ0TYdN1C7wSq+lElf83eMD
-dWOQZVDrYoKyrg4IqoUb51V+moecbrrGJzt7gk2sP3esukVG2FohgzIHhNOrZKU4
-6qQoC5VsRQcQvufK303HCFiMbUSys4iBYkKW57yQkNGlTRvrrKrCj37Cal0xPi1v
-XMKwDqBqk4XcmrKuupDlvxdQkTgDoQz7ec0fT5vM11mpQSt0u1vrMMrsupGNK5bg
-1lIGTBKK3MNckpdnAO2T9NrATyjGic7ZopZaEbx03ykbQZTS++/xySiY3BHqpjGp
-nJvpKgrbA1N/+3T4tyT9ze2mVy2Et1pBICp+JQCEgkhFXrJMbXq6AhXFxdlr0Vcj
-pI/ngiR5cJRgpDDnZGSB4JzF3N8J7m6/FIKloRESkwbFIRkVyWRKAH0Wn+skEDrJ
-DVvi4j6+42DHF0xjB5pGCO2Lh7F7eh3J8RPZ+02RbQVY4DyYye4=
-=aABV
------END PGP SIGNATURE-----
-
---ohxi67qpvujdeuay--
+	Ingo
