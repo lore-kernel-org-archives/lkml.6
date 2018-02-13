@@ -1,28 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935151AbeBMMUC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:20:02 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51419 "EHLO
+        id S935072AbeBMMUz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:20:55 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:60427 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934827AbeBMMUA (ORCPT
+        with ESMTP id S934827AbeBMMUy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:20:00 -0500
-Date: Tue, 13 Feb 2018 04:09:36 -0800
+        Tue, 13 Feb 2018 07:20:54 -0500
+Date: Tue, 13 Feb 2018 04:10:28 -0800
 From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-6a669091c0d93cc1ac4a0de7af722d1359bfe98f@git.kernel.org>
-Cc: acme@redhat.com, jolsa@kernel.org, hpa@zytor.com, ak@linux.intel.com,
-        tglx@linutronix.de, namhyung@kernel.org, wangnan0@huawei.com,
-        kan.liang@intel.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, yao.jin@linux.intel.com, mingo@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, yao.jin@linux.intel.com,
-        peterz@infradead.org, wangnan0@huawei.com, kan.liang@intel.com,
-        namhyung@kernel.org, mingo@kernel.org, hpa@zytor.com, jolsa@kernel.org,
-        acme@redhat.com, ak@linux.intel.com, tglx@linutronix.de
-In-Reply-To: <1516310792-208685-14-git-send-email-kan.liang@intel.com>
-References: <1516310792-208685-14-git-send-email-kan.liang@intel.com>
+Message-ID: <tip-c14dec366b440fe46f35f99215434f3f9277e19b@git.kernel.org>
+Cc: peterz@infradead.org, hpa@zytor.com, jolsa@kernel.org,
+        yao.jin@linux.intel.com, acme@redhat.com, tglx@linutronix.de,
+        kan.liang@intel.com, wangnan0@huawei.com, ak@linux.intel.com,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org
+Reply-To: hpa@zytor.com, jolsa@kernel.org, peterz@infradead.org,
+        kan.liang@intel.com, acme@redhat.com, tglx@linutronix.de,
+        yao.jin@linux.intel.com, ak@linux.intel.com, wangnan0@huawei.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org
+In-Reply-To: <1516310792-208685-16-git-send-email-kan.liang@intel.com>
+References: <1516310792-208685-16-git-send-email-kan.liang@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf top: Add overwrite fall back
-Git-Commit-ID: 6a669091c0d93cc1ac4a0de7af722d1359bfe98f
+Subject: [tip:perf/urgent] perf top: Remove lost events checking
+Git-Commit-ID: c14dec366b440fe46f35f99215434f3f9277e19b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,20 +35,20 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6a669091c0d93cc1ac4a0de7af722d1359bfe98f
-Gitweb:     https://git.kernel.org/tip/6a669091c0d93cc1ac4a0de7af722d1359bfe98f
+Commit-ID:  c14dec366b440fe46f35f99215434f3f9277e19b
+Gitweb:     https://git.kernel.org/tip/c14dec366b440fe46f35f99215434f3f9277e19b
 Author:     Kan Liang <kan.liang@intel.com>
-AuthorDate: Thu, 18 Jan 2018 13:26:28 -0800
+AuthorDate: Thu, 18 Jan 2018 13:26:30 -0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 6 Feb 2018 10:11:51 -0300
 
-perf top: Add overwrite fall back
+perf top: Remove lost events checking
 
-Switch to non-overwrite mode if kernel doesnot support overwrite
-ringbuffer.
+There would be some records lost in overwrite mode because of pausing
+the ringbuffer. It has little impact for the accuracy of the snapshot
+and could be tolerated by 'perf top'.
 
-It's only effect when overwrite mode is supported.  No change to current
-behavior.
+Remove the lost events checking.
 
 Signed-off-by: Kan Liang <kan.liang@intel.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
@@ -57,64 +57,35 @@ Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/1516310792-208685-14-git-send-email-kan.liang@intel.com
-[ Use perf_missing_features.write_backward instead of the non merged is_write_backward_fail() ]
+Link: http://lkml.kernel.org/r/1516310792-208685-16-git-send-email-kan.liang@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-top.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ tools/perf/builtin-top.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 1778379..ee4bba1 100644
+index 7def861..5965306 100644
 --- a/tools/perf/builtin-top.c
 +++ b/tools/perf/builtin-top.c
-@@ -943,6 +943,27 @@ static int perf_top__overwrite_check(struct perf_top *top)
- 	return 0;
- }
+@@ -283,8 +283,9 @@ static void perf_top__print_sym_table(struct perf_top *top)
  
-+static int perf_top_overwrite_fallback(struct perf_top *top,
-+				       struct perf_evsel *evsel)
-+{
-+	struct record_opts *opts = &top->record_opts;
-+	struct perf_evlist *evlist = top->evlist;
-+	struct perf_evsel *counter;
-+
-+	if (!opts->overwrite)
-+		return 0;
-+
-+	/* only fall back when first event fails */
-+	if (evsel != perf_evlist__first(evlist))
-+		return 0;
-+
-+	evlist__for_each_entry(evlist, counter)
-+		counter->attr.write_backward = false;
-+	opts->overwrite = false;
-+	ui__warning("fall back to non-overwrite mode\n");
-+	return 1;
-+}
-+
- static int perf_top__start_counters(struct perf_top *top)
- {
- 	char msg[BUFSIZ];
-@@ -967,6 +988,21 @@ static int perf_top__start_counters(struct perf_top *top)
- try_again:
- 		if (perf_evsel__open(counter, top->evlist->cpus,
- 				     top->evlist->threads) < 0) {
-+
-+			/*
-+			 * Specially handle overwrite fall back.
-+			 * Because perf top is the only tool which has
-+			 * overwrite mode by default, support
-+			 * both overwrite and non-overwrite mode, and
-+			 * require consistent mode for all events.
-+			 *
-+			 * May move it to generic code with more tools
-+			 * have similar attribute.
-+			 */
-+			if (perf_missing_features.write_backward &&
-+			    perf_top_overwrite_fallback(top, counter))
-+				goto try_again;
-+
- 			if (perf_evsel__fallback(counter, errno, msg, sizeof(msg))) {
- 				if (verbose > 0)
- 					ui__warning("%s\n", msg);
+ 	printf("%-*.*s\n", win_width, win_width, graph_dotted_line);
+ 
+-	if (hists->stats.nr_lost_warned !=
+-	    hists->stats.nr_events[PERF_RECORD_LOST]) {
++	if (!top->record_opts.overwrite &&
++	    (hists->stats.nr_lost_warned !=
++	    hists->stats.nr_events[PERF_RECORD_LOST])) {
+ 		hists->stats.nr_lost_warned =
+ 			      hists->stats.nr_events[PERF_RECORD_LOST];
+ 		color_fprintf(stdout, PERF_COLOR_RED,
+@@ -611,7 +612,8 @@ static void *display_thread_tui(void *arg)
+ 
+ 	perf_evlist__tui_browse_hists(top->evlist, help, &hbt,
+ 				      top->min_percent,
+-				      &top->session->header.env, true);
++				      &top->session->header.env,
++				      !top->record_opts.overwrite);
+ 
+ 	done = 1;
+ 	return NULL;
