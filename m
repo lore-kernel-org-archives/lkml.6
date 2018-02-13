@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965081AbeBMNjL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:39:11 -0500
-Received: from outbound-smtp16.blacknight.com ([46.22.139.233]:46934 "EHLO
-        outbound-smtp16.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S964935AbeBMNhc (ORCPT
+        id S965068AbeBMNjK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:39:10 -0500
+Received: from outbound-smtp25.blacknight.com ([81.17.249.193]:40073 "EHLO
+        outbound-smtp25.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S964920AbeBMNhc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 13 Feb 2018 08:37:32 -0500
 From: Mel Gorman <mgorman@techsingularity.net>
@@ -14,9 +14,9 @@ Cc: Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
         Giovanni Gherdovich <ggherdovich@suse.cz>,
         LKML <linux-kernel@vger.kernel.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 5/6] sched/fair: Consider SD_NUMA when selecting the most idle group to schedule on
-Date: Tue, 13 Feb 2018 13:37:29 +0000
-Message-Id: <20180213133730.24064-6-mgorman@techsingularity.net>
+Subject: [PATCH 6/6] sched/numa: Delay retrying placement for automatic NUMA balance after wake_affine
+Date: Tue, 13 Feb 2018 13:37:30 +0000
+Message-Id: <20180213133730.24064-7-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180213133730.24064-1-mgorman@techsingularity.net>
 References: <20180213133730.24064-1-mgorman@techsingularity.net>
@@ -24,141 +24,231 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-find_idlest_group() compares a local group with each other group to select
-the one that is most idle. When comparing groups in different NUMA domains,
-a very slight imbalance is enough to select a remote NUMA node even if the
-runnable load on both groups is 0 or close to 0. This ignores the cost of
-remote accesses entirely and is a problem when selecting the CPU for a
-newly forked task to run on.  This is problematic when a forking server
-is almost guaranteed to run on a remote node incurring numerous remote
-accesses and potentially causing automatic NUMA balancing to try migrate
-the task back or migrate the data to another node. Similar weirdness is
-observed if a basic shell command pipes output to another as each process
-in the pipeline is likely to start on different nodes and then get adjusted
-later by wake_affine.
+If wake_affine pulls a task to another node for any reason and the node is
+no longer preferred then temporarily stop automatic NUMA balancing pulling
+the task back. Otherwise, tasks with a strong waker/wakee relationship
+may constantly fight automatic NUMA balancing over where a task should
+be placed.
 
-This patch adds imbalance to remote domains when considering whether to
-select CPUs from remote domains. If the local domain is selected, imbalance
-will still be used to try select a CPU from a lower scheduler domain's group
-instead of stacking tasks on the same CPU.
+Once again netperf is interesting here. The performance barely changes
+but automatic NUMA balancing is interesting.
 
-A variety of workloads and machines were tested and as expected, there is no
-difference on UMA. The difference on NUMA can be dramatic. This is a comparison
-of elapsed times running the git regression test suite. It's fork-intensive with
-short-lived processes
+Hmean     send-64         354.67 (   0.00%)      352.15 (  -0.71%)
+Hmean     send-128        702.91 (   0.00%)      693.84 (  -1.29%)
+Hmean     send-256       1350.07 (   0.00%)     1344.19 (  -0.44%)
+Hmean     send-1024      5124.38 (   0.00%)     4941.24 (  -3.57%)
+Hmean     send-2048      9687.44 (   0.00%)     9624.45 (  -0.65%)
+Hmean     send-3312     14577.64 (   0.00%)    14514.35 (  -0.43%)
+Hmean     send-4096     16393.62 (   0.00%)    16488.30 (   0.58%)
+Hmean     send-8192     26877.26 (   0.00%)    26431.63 (  -1.66%)
+Hmean     send-16384    38683.43 (   0.00%)    38264.91 (  -1.08%)
+Hmean     recv-64         354.67 (   0.00%)      352.15 (  -0.71%)
+Hmean     recv-128        702.91 (   0.00%)      693.84 (  -1.29%)
+Hmean     recv-256       1350.07 (   0.00%)     1344.19 (  -0.44%)
+Hmean     recv-1024      5124.38 (   0.00%)     4941.24 (  -3.57%)
+Hmean     recv-2048      9687.43 (   0.00%)     9624.45 (  -0.65%)
+Hmean     recv-3312     14577.59 (   0.00%)    14514.35 (  -0.43%)
+Hmean     recv-4096     16393.55 (   0.00%)    16488.20 (   0.58%)
+Hmean     recv-8192     26876.96 (   0.00%)    26431.29 (  -1.66%)
+Hmean     recv-16384    38682.41 (   0.00%)    38263.94 (  -1.08%)
 
-                                 4.15.0                 4.15.0
-                           noexit-v1r23           sdnuma-v1r23
-Elapsed min          1706.06 (   0.00%)     1435.94 (  15.83%)
-Elapsed mean         1709.53 (   0.00%)     1436.98 (  15.94%)
-Elapsed stddev          2.16 (   0.00%)        1.01 (  53.38%)
-Elapsed coeffvar        0.13 (   0.00%)        0.07 (  44.54%)
-Elapsed max          1711.59 (   0.00%)     1438.01 (  15.98%)
+NUMA alloc hit                 1465986     1423090
+NUMA alloc miss                      0           0
+NUMA interleave hit                  0           0
+NUMA alloc local               1465897     1423003
+NUMA base PTE updates             1473        1420
+NUMA huge PMD updates                0           0
+NUMA page range updates           1473        1420
+NUMA hint faults                  1383        1312
+NUMA hint local faults             451         124
+NUMA hint local percent             32           9
+
+There is a slight degrading in performance but there are slightly fewer
+NUMA faults. There is a large drop in the percentage of local faults but
+the bulk of migrations for netperf are in small shared libraries so it's
+reflecting the fact that automatic NUMA balancing has backed off. This is
+a case where despite wake_affine and automatic NUMA balancing fighting
+for placement that there is a marginal benefit to rescheduling to local
+data quickly. However, it should be noted that wake_affine and automatic
+NUMA balancing fighting each other constantly is undesirable.
+
+However, the benefit in other cases is large. This is the result for NAS
+with the D class sizing on a 4-socket machine
+
+nas-mpi
+                          4.15.0                 4.15.0
+                    sdnuma-v1r23       delayretry-v1r23
+Time cg.D      557.00 (   0.00%)      431.82 (  22.47%)
+Time ep.D       77.83 (   0.00%)       79.01 (  -1.52%)
+Time is.D       26.46 (   0.00%)       26.64 (  -0.68%)
+Time lu.D      727.14 (   0.00%)      597.94 (  17.77%)
+Time mg.D      191.35 (   0.00%)      146.85 (  23.26%)
 
               4.15.0      4.15.0
-        noexit-v1r23 sdnuma-v1r23
-User         5434.12     5188.41
-System       4878.77     3467.09
-Elapsed     10259.06     8624.21
+        sdnuma-v1r23delayretry-v1r23
+User        75665.20    70413.30
+System      20321.59     8861.67
+Elapsed       766.13      634.92
 
-That shows a considerable reduction in elapsed times. It's important to
-note that automatic NUMA balancing does not affect this load as processes
-are too short-lived.
+Minor Faults                  16528502     7127941
+Major Faults                      4553        5068
+NUMA alloc local               6963197     6749135
+NUMA base PTE updates        366409093   107491434
+NUMA huge PMD updates           687556      198880
+NUMA page range updates      718437765   209317994
+NUMA hint faults              13643410     4601187
+NUMA hint local faults         9212593     3063996
+NUMA hint local percent             67          66
 
-There is also a noticable impact on hackbench such as this example using
-processes and pipes
+Note the massive reduction in system CPU usage even though the percentage
+of local faults is barely affected. There is a massive reduction in the
+number of PTE updates showing that automatic NUMA balancing has backed off.
+A critical observation is also that there is a massive reduction in minor
+faults which is due to far fewer NUMA hinting faults being trapped.
 
-hackbench-process-pipes
-                              4.15.0                 4.15.0
-                        noexit-v1r23           sdnuma-v1r23
-Amean     1        1.0973 (   0.00%)      0.9393 (  14.40%)
-Amean     4        1.3427 (   0.00%)      1.3730 (  -2.26%)
-Amean     7        1.4233 (   0.00%)      1.6670 ( -17.12%)
-Amean     12       3.0250 (   0.00%)      3.3013 (  -9.13%)
-Amean     21       9.0860 (   0.00%)      9.5343 (  -4.93%)
-Amean     30      14.6547 (   0.00%)     13.2433 (   9.63%)
-Amean     48      22.5447 (   0.00%)     20.4303 (   9.38%)
-Amean     79      29.2010 (   0.00%)     26.7853 (   8.27%)
-Amean     110     36.7443 (   0.00%)     35.8453 (   2.45%)
-Amean     141     45.8533 (   0.00%)     42.6223 (   7.05%)
-Amean     172     55.1317 (   0.00%)     50.6473 (   8.13%)
-Amean     203     64.4420 (   0.00%)     58.3957 (   9.38%)
-Amean     234     73.2293 (   0.00%)     67.1047 (   8.36%)
-Amean     265     80.5220 (   0.00%)     75.7330 (   5.95%)
-Amean     296     88.7567 (   0.00%)     82.1533 (   7.44%)
+There were questions on NAS OMP and how it behaved related to threads
+being bound to CPUs. First, there are more gains than losses with this
+patch applied and a reduction in system CPU usage.
 
-It's not a universal win as there are occasions when spreading wide and
-quickly is a benefit but it's more of a win than it is a loss. For other
-workloads, there is little difference but netperf is interesting. Without
-the patch, the server and client starts on different nodes but quickly get
-migrated due to wake_affine. Hence, the difference is overall performance
-is marginal but detectable
+nas-omp
+                      4.16.0-rc1             4.16.0-rc1
+                     sdnuma-v2r1        delayretry-v2r1
+Time bt.D      436.71 (   0.00%)      430.05 (   1.53%)
+Time cg.D      201.02 (   0.00%)      180.87 (  10.02%)
+Time ep.D       32.84 (   0.00%)       32.68 (   0.49%)
+Time is.D        9.63 (   0.00%)        9.64 (  -0.10%)
+Time lu.D      331.20 (   0.00%)      304.80 (   7.97%)
+Time mg.D       54.87 (   0.00%)       52.72 (   3.92%)
+Time sp.D     1108.78 (   0.00%)      917.10 (  17.29%)
+Time ua.D      378.81 (   0.00%)      398.83 (  -5.28%)
 
-                                     4.15.0                 4.15.0
-                               noexit-v1r23           sdnuma-v1r23
-Hmean     send-64         349.09 (   0.00%)      354.67 (   1.60%)
-Hmean     send-128        699.16 (   0.00%)      702.91 (   0.54%)
-Hmean     send-256       1316.34 (   0.00%)     1350.07 (   2.56%)
-Hmean     send-1024      5063.99 (   0.00%)     5124.38 (   1.19%)
-Hmean     send-2048      9705.19 (   0.00%)     9687.44 (  -0.18%)
-Hmean     send-3312     14359.48 (   0.00%)    14577.64 (   1.52%)
-Hmean     send-4096     16324.20 (   0.00%)    16393.62 (   0.43%)
-Hmean     send-8192     26112.61 (   0.00%)    26877.26 (   2.93%)
-Hmean     send-16384    37208.44 (   0.00%)    38683.43 (   3.96%)
-Hmean     recv-64         349.09 (   0.00%)      354.67 (   1.60%)
-Hmean     recv-128        699.16 (   0.00%)      702.91 (   0.54%)
-Hmean     recv-256       1316.34 (   0.00%)     1350.07 (   2.56%)
-Hmean     recv-1024      5063.99 (   0.00%)     5124.38 (   1.19%)
-Hmean     recv-2048      9705.16 (   0.00%)     9687.43 (  -0.18%)
-Hmean     recv-3312     14359.42 (   0.00%)    14577.59 (   1.52%)
-Hmean     recv-4096     16323.98 (   0.00%)    16393.55 (   0.43%)
-Hmean     recv-8192     26111.85 (   0.00%)    26876.96 (   2.93%)
-Hmean     recv-16384    37206.99 (   0.00%)    38682.41 (   3.97%)
+          4.16.0-rc1  4.16.0-rc1
+         sdnuma-v2r1delayretry-v2r1
+User       305633.08   296751.91
+System        451.75      357.80
+Elapsed      2595.73     2368.13
 
-However, what is very interesting is how automatic NUMA balancing behaves.
-Each netperf instance runs long enough for balancing to activate.
+However, it does not close the gap between binding and being unbound. There
+is negligible difference between the performance of the baseline and a
+patched kernel when threads are bound so it is not presented here.
 
-NUMA base PTE updates             4620        1473
-NUMA huge PMD updates                0           0
-NUMA page range updates           4620        1473
-NUMA hint faults                  4301        1383
-NUMA hint local faults            1309         451
-NUMA hint local percent             30          32
-NUMA pages migrated               1335         491
-AutoNUMA cost                      21%          6%
+                      4.16.0-rc1             4.16.0-rc1
+                 delayretry-bind     delayretry-unbound
+Time bt.D      385.02 (   0.00%)      430.05 ( -11.70%)
+Time cg.D      144.02 (   0.00%)      180.87 ( -25.59%)
+Time ep.D       32.85 (   0.00%)       32.68 (   0.52%)
+Time is.D       10.52 (   0.00%)        9.64 (   8.37%)
+Time lu.D      285.31 (   0.00%)      304.80 (  -6.83%)
+Time mg.D       43.21 (   0.00%)       52.72 ( -22.01%)
+Time sp.D      820.24 (   0.00%)      917.10 ( -11.81%)
+Time ua.D      337.09 (   0.00%)      398.83 ( -18.32%)
 
-There is an unfortunate number of remote faults although tracing indicated
-that the vast majority are in shared libraries. However, the tendency to
-start tasks on the same node if there is capacity means that there were
-far fewer PTE updates and faults incurred overall.
+          4.16.0-rc1  4.16.0-rc1
+        delayretry-binddelayretry-unbound
+User       277731.25   296751.91
+System        261.29      357.80
+Elapsed      2100.55     2368.13
+
+Unfortunately, while performance is improved by the patch, there is still
+quite a long way to go before it's equivalent to hard binding.
+
+Other workloads like hackbench, tbench, dbench and schbench are barely
+affected. dbench shows a mix of gains and losses depending on the machine
+although in general, the results are more stable.
 
 Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 ---
- kernel/sched/fair.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ kernel/sched/fair.c | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 56 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e5bbcbefd01b..b1efd7570c88 100644
+index b1efd7570c88..b8778924cef5 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5911,6 +5911,18 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
- 	if (!idlest)
- 		return NULL;
+@@ -1869,6 +1869,7 @@ static int task_numa_migrate(struct task_struct *p)
+ static void numa_migrate_preferred(struct task_struct *p)
+ {
+ 	unsigned long interval = HZ;
++	unsigned long numa_migrate_retry;
  
-+	/*
-+	 * When comparing groups across NUMA domains, it's possible for the
-+	 * local domain to be very lightly loaded relative to the remote
-+	 * domains but "imbalance" skews the comparison making remote CPUs
-+	 * look much more favourable. When considering cross-domain, add
-+	 * imbalance to the runnable load on the remote node and consider
-+	 * staying local.
-+	 */
-+	if ((sd->flags & SD_NUMA) &&
-+	    min_runnable_load + imbalance >= this_runnable_load)
-+		return NULL;
+ 	/* This task has no NUMA fault statistics yet */
+ 	if (unlikely(p->numa_preferred_nid == -1 || !p->numa_faults))
+@@ -1876,7 +1877,18 @@ static void numa_migrate_preferred(struct task_struct *p)
+ 
+ 	/* Periodically retry migrating the task to the preferred node */
+ 	interval = min(interval, msecs_to_jiffies(p->numa_scan_period) / 16);
+-	p->numa_migrate_retry = jiffies + interval;
++	numa_migrate_retry = jiffies + interval;
 +
- 	if (min_runnable_load > (this_runnable_load + imbalance))
- 		return NULL;
++	/*
++	 * Check that the new retry threshold is after the current one. If
++	 * the retry is in the future, it implies that wake_affine has
++	 * temporarily asked NUMA balancing to backoff from placement.
++	 */
++	if (numa_migrate_retry > p->numa_migrate_retry)
++		return;
++
++	/* Safe to try placing the task on the preferred node */
++	p->numa_migrate_retry = numa_migrate_retry;
  
+ 	/* Success if task is already running on preferred CPU */
+ 	if (task_node(p) == p->numa_preferred_nid)
+@@ -5759,6 +5771,48 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
+ 	return this_eff_load < prev_eff_load ? this_cpu : nr_cpumask_bits;
+ }
+ 
++#ifdef CONFIG_NUMA_BALANCING
++static void
++update_wa_numa_placement(struct task_struct *p, int prev_cpu, int target)
++{
++	unsigned long interval;
++
++	if (!static_branch_likely(&sched_numa_balancing))
++		return;
++
++	/* If balancing has no preference then continue gathering data */
++	if (p->numa_preferred_nid == -1)
++		return;
++
++	/*
++	 * If the wakeup is not affecting locality then it is neutral from
++	 * the perspective of NUMA balacing so continue gathering data.
++	 */
++	if (cpus_share_cache(prev_cpu, target))
++		return;
++
++	/*
++	 * Temporarily prevent NUMA balancing trying to place waker/wakee after
++	 * wakee has been moved by wake_affine. This will potentially allow
++	 * related tasks to converge and update their data placement. The
++	 * 4 * numa_scan_period is to allow the two-pass filter to migrate
++	 * hot data to the wakers node.
++	 */
++	interval = max(sysctl_numa_balancing_scan_delay,
++			 p->numa_scan_period << 2);
++	p->numa_migrate_retry = jiffies + msecs_to_jiffies(interval);
++
++	interval = max(sysctl_numa_balancing_scan_delay,
++			 current->numa_scan_period << 2);
++	current->numa_migrate_retry = jiffies + msecs_to_jiffies(interval);
++}
++#else
++static void
++update_wa_numa_placement(struct task_struct *p, int prev_cpu, int target)
++{
++}
++#endif
++
+ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
+ 		       int this_cpu, int prev_cpu, int sync)
+ {
+@@ -5774,6 +5828,7 @@ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
+ 	if (target == nr_cpumask_bits)
+ 		return prev_cpu;
+ 
++	update_wa_numa_placement(p, prev_cpu, target);
+ 	schedstat_inc(sd->ttwu_move_affine);
+ 	schedstat_inc(p->se.statistics.nr_wakeups_affine);
+ 	return target;
 -- 
 2.15.1
