@@ -1,136 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965414AbeBMSTt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 13:19:49 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:43686 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965217AbeBMSTr (ORCPT
+        id S965453AbeBMSUq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 13:20:46 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:47045 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965286AbeBMSUo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 13:19:47 -0500
-X-Google-Smtp-Source: AH8x226LEWyTjRGZhZn6+sVzMrHkVvDMTfbafp6CI6BP6NpVB+cBOPAXzXGz1QUx8ptn120sgmGjhG8YhYWDoEv2ruQ=
+        Tue, 13 Feb 2018 13:20:44 -0500
+X-Google-Smtp-Source: AH8x226ZsNbsqALQKHNwgMVYBXS+KC5+UBv7HA8GteqbNeBoYTUuv+sRrGoN0yAsvJQzCHTTFXXZ3Q==
+Date: Tue, 13 Feb 2018 10:20:42 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Jerry Hoemann <jerry.hoemann@hpe.com>
+Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rwright@hpe.com,
+        maurice.a.saldivar@hpe.com
+Subject: Re: [PATCH v2 10/11] watchdog/hpwdt: remove allow_kdump module
+ parameter.
+Message-ID: <20180213182042.GA26558@roeck-us.net>
+References: <20180212052111.12010-1-jerry.hoemann@hpe.com>
+ <20180212052111.12010-11-jerry.hoemann@hpe.com>
 MIME-Version: 1.0
-In-Reply-To: <20180213170018.9780-17-mika.westerberg@linux.intel.com>
-References: <20180213170018.9780-1-mika.westerberg@linux.intel.com> <20180213170018.9780-17-mika.westerberg@linux.intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Feb 2018 20:19:45 +0200
-Message-ID: <CAHp75VePM_zL-zyZSO+3BN1O3KhWpeKKsKg_V2XKFD4+yfpVrA@mail.gmail.com>
-Subject: Re: [PATCH 16/18] thunderbolt: Add support for preboot ACL
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <yehezkel.bernat@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Radion Mirchevsky <radion.mirchevsky@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180212052111.12010-11-jerry.hoemann@hpe.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 7:00 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> Preboot ACL is a mechanism that allows connecting Thunderbolt devices
-> boot time in more secure way than the legacy Thunderbolt boot support.
-> As with the legacy boot option, this also needs to be enabled from the
-> BIOS before booting is allowed. Difference to the legacy mode is that
-> the userspace software explicitly adds device UUIDs by sending a special
-> message to the ICM firmware. Only the devices listed in the boot ACL are
-> connected automatically during the boot. This works in both "user" and
-> "secure" security levels.
->
-> We implement this in Linux by exposing a new sysfs attribute (boot_acl)
-> below each Thunderbolt domain. The userspace software can then update
-> the full list as needed.
+On Sun, Feb 11, 2018 at 10:21:10PM -0700, Jerry Hoemann wrote:
+> The intent of this parameter is unclear and it sets up a
+> race between the reset of the system by ASR and crashdump.
+> 
+> The length of time between receipt of the pretimeout NMI
+> and the ASR reset of the system is fixed by hardware.
+> 
+> Turning the parameter off doesn't necessairly prevent a crash dump.
+> Also, having the ASR reset occur while the system is crash dumping
+> doesn't imply that the dump was hung given the short duration
+> between the NMI and the reset.
+> 
+> This parameter is not a substitute for having a architected watchdog
+> crashdump hang detection paridigm.
+> 
+> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+> ---
+>  drivers/watchdog/hpwdt.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
+> index e9e54fe20804..bb0dcc8709b8 100644
+> --- a/drivers/watchdog/hpwdt.c
+> +++ b/drivers/watchdog/hpwdt.c
+> @@ -33,7 +33,6 @@
+>  static unsigned int soft_margin = DEFAULT_MARGIN;	/* in seconds */
+>  static bool nowayout = WATCHDOG_NOWAYOUT;
+>  #ifdef CONFIG_HPWDT_NMI_DECODING
+> -static unsigned int allow_kdump = 1;
 
-> +       if (mutex_lock_interruptible(&tb->lock)) {
-> +               ret = -ERESTARTSYS;
-> +               goto out;
-> +       }
+At the end of hpwdt_init_nmi_decoding(), there used to be a log message
+showing the value of allow_kdump. Maybe that was removed in another patch,
+but it really belongs to this patch, or am I missing something ?
 
-> +       ret = tb->cm_ops->get_boot_acl(tb, uuids, tb->nboot_acl);
-> +       mutex_unlock(&tb->lock);
-> +
-> +       if (ret)
-> +               goto out;
+Guenter
 
-Can we use more traditional pattern, i.e.
-mutex_lock();
-ret = ...;
-if (ret) {
- ...
- mutex_unlock();
- goto ...;
-}
-mutex_unlock();
-
-?
-
-> +       for (ret = 0, i = 0; i < tb->nboot_acl; i++) {
-
-Wouldn't be slightly better to check for overflow beforehand
-
-i < min(PAGE_SIZE / (UUID_STRING_LEN + 1), tb->nboot_acl)
-
-and then simple
-
-ret = sprintf(buf + ret, "%pUb", &uuids[i]);
-
-?
-
-> +               if (!uuid_is_null(&uuids[i]))
-> +                       ret += snprintf(buf + ret, PAGE_SIZE - ret, "%pUb",
-> +                                       &uuids[i]);
-> +
-> +               ret += snprintf(buf + ret, PAGE_SIZE - ret, "%s",
-> +                              i < tb->nboot_acl - 1 ? "," : "\n");
-> +       }
-
-
-> +static ssize_t boot_acl_store(struct device *dev, struct device_attribute *attr,
-> +                             const char *buf, size_t count)
-> +{
-
-> +       int i = 0;
-
-> +       uuid_str = strim(str);
-
-> +       while ((s = strsep(&uuid_str, ",")) != NULL && i < tb->nboot_acl) {
-
-for (i = 0; (s = strsep(&uuid_str, ",")) != NULL && i < tb->nboot_acl; i++) {
-  size_t len = strlen(s);
-
-  if (!len)
-    continue;
-...
-}
-
-?
-
-Btw, nboot_acl can be 0, right? Perhaps check it first? (Or in other
-words: which one is anticipated to be more frequent: nboot_acl = 0, or
-string w/o any ',' in it?)
-
-> +               size_t len = strlen(s);
-> +
-> +               if (len) {
-
-
-> +                       if (len != UUID_STRING_LEN) {
-> +                               ret = -EINVAL;
-> +                               goto err_free_acl;
-> +                       }
-
-uuid_parse() does this check. No need to duplicate.
-
-> +                       ret = uuid_parse(s, &acl[i]);
-> +                       if (ret)
-> +                               goto err_free_acl;
-> +               }
-> +
-> +               i++;
-> +       }
-
--- 
-With Best Regards,
-Andy Shevchenko
+>  static bool pretimeout = 1;
+>  #else
+>  static bool pretimeout;
+> @@ -149,8 +148,7 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
+>  	if (iLO5 && (ulReason == NMI_UNKNOWN) && !mynmi)
+>  		return NMI_DONE;
+>  
+> -	if (allow_kdump)
+> -		hpwdt_stop(&hpwdt_dev);
+> +	hpwdt_stop(&hpwdt_dev);
+>  
+>  	panic_msg[0] = hexdigit((mynmi>>4)&0xf);
+>  	panic_msg[1] = hexdigit(mynmi&0xf);
+> @@ -351,9 +349,6 @@ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+>  		__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
+>  
+>  #ifdef CONFIG_HPWDT_NMI_DECODING	/* { */
+> -module_param(allow_kdump, int, 0444);
+> -MODULE_PARM_DESC(allow_kdump, "Start a kernel dump after NMI occurs");
+> -
+>  module_param(pretimeout, bool, 0444);
+>  MODULE_PARM_DESC(pretimeout, "Watchdog pretimeout enabled");
+>  #endif					/* } */
+> -- 
+> 2.13.6
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
