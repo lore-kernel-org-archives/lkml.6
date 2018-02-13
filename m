@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965240AbeBMO4m (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 09:56:42 -0500
-Received: from mail-by2nam03on0042.outbound.protection.outlook.com ([104.47.42.42]:63712
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        id S965226AbeBMO4k (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 09:56:40 -0500
+Received: from mail-bl2nam02on0074.outbound.protection.outlook.com ([104.47.38.74]:10368
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965121AbeBMOzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 09:55:44 -0500
+        id S965124AbeBMOzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 09:55:45 -0500
 Authentication-Results: spf=fail (sender IP is 192.88.168.50)
  smtp.mailfrom=nxp.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=fail action=none header.from=nxp.com;
@@ -16,68 +16,67 @@ CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
         <shawnguo@kernel.org>, <Anson.Huang@nxp.com>, <ping.bai@nxp.com>,
         Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH RESEND V3 4/9] clk: imx: add pfdv2 support
-Date: Tue, 13 Feb 2018 21:28:09 +0800
-Message-ID: <1518528494-25723-5-git-send-email-aisheng.dong@nxp.com>
+Subject: [PATCH RESEND V3 5/9] clk: imx: add composite clk support
+Date: Tue, 13 Feb 2018 21:28:10 +0800
+Message-ID: <1518528494-25723-6-git-send-email-aisheng.dong@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
 References: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
 X-EOPAttributedMessage: 0
-X-Matching-Connectors: 131630073428278599;(91ab9b29-cfa4-454e-5278-08d120cd25b8);()
-X-Forefront-Antispam-Report: CIP:192.88.168.50;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(39860400002)(346002)(396003)(39380400002)(2980300002)(1110001)(1109001)(339900001)(199004)(189003)(54534003)(47776003)(59450400001)(50226002)(81156014)(86362001)(8676002)(81166006)(8936002)(2351001)(2906002)(336011)(68736007)(54906003)(450100002)(316002)(498600001)(106466001)(966005)(305945005)(6666003)(26005)(76176011)(77096007)(2950100002)(6916009)(85426001)(51416003)(26826003)(36756003)(48376002)(53936002)(50466002)(104016004)(105606002)(16586007)(5660300001)(6306002)(356003)(97736004)(4326008)(2004002)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR03MB470;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;PTR:InfoDomainNonexistent;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BN1BFFO11FD029;1:OkJvbeyyJ+IkhBy4yJCyXRDlWIQGAJBnZKpHw7cnFOOUY0dtwgS2zZhXYL/5IBAqMqwTbqq9w9AS0uf3wcGrw08L9ShdgKttOpQzBQVBYbfOykK3Upy+Om3k1L7JajTz
+X-Matching-Connectors: 131630073428804067;(91ab9b29-cfa4-454e-5278-08d120cd25b8);()
+X-Forefront-Antispam-Report: CIP:192.88.168.50;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(39380400002)(396003)(2980300002)(1109001)(1110001)(339900001)(199004)(189003)(54534003)(336011)(450100002)(77096007)(26005)(4326008)(86362001)(48376002)(85426001)(97736004)(105606002)(498600001)(50466002)(26826003)(51416003)(53936002)(2906002)(966005)(16586007)(6306002)(2351001)(316002)(356003)(54906003)(68736007)(106466001)(305945005)(47776003)(6666003)(2950100002)(81156014)(81166006)(50226002)(8676002)(6916009)(104016004)(5660300001)(76176011)(36756003)(8936002)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:BL2PR03MB466;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;PTR:InfoDomainNonexistent;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD047;1:8y0s6gjG7ta222FKQaB048fy5Cisb5WgHhP7Ih1SnJKvHC5lNVLkmCZeUwEgagM2EmjByFYSGwRGjo5piL6m5PTZFkSA2ADiZNjPjeVQQFbajbEwpB/coVPevAm36yBL
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b131c699-364d-408f-1be7-08d572f1dae8
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603307);SRVR:BLUPR03MB470;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB470;3:GQSvFhuoYzIuvXWs21lGQGliseyy3vyHeDIZBkxAc6rrM2Dnfqm+l+iMIqZ1VuVLOUSWvMHt0lAi2cqZnBF4cpUFyUxdjczmn+vlYNlHYUXkxv+RCCUFt2PaVNj7d59c3hZSTiZ/BEStwQxN5cDvt+5X+esXh5HLPJxk3rx0X69uqPbq6fTLflJ+6zeEdrvQWkGCGe7byxvbKUNSK85ypN+PNOgqqfTcwuSk33IGsq8MiXddJzeG5jqPgGyQmDIwbg2oOGrkfRJmjCOJ7SgyHQsDmPSwp0XjO+o7n/G6TQqavC993iSlN86uZiLlAurHwF/wV0Fc7pZ22iHRMt9eHEIcQWM/vsOjVJpOb+vciDc=;25:IT9GSqPA1Of9Vmiyd84ZxlCCU80jUZ60XsdLKa3JHEUxUcb31FquFuzM1kMoTix8FQaFzbBlmkJ/G5VpxkJTG4JBtB/HVs8XCrvJ1WJ9k1FDfzegBrp/sKQwARnBIhR/otA1plr8ibMVrXy0Ax4QFW8i/ZWqeX4FUjt3MHxgnjqWbimqfZU7lRBiSjERy5jvwOOSSZ/CC/VHRv6TmN3uAbezykJOciPc8kya/tUlDxr9ZfqhRxGR9M7l9GBPQCD+MSWeTkcQoURlpqTy+LmlPbWRz3TDpivnQx9llt085C8ngjlQgo1YbNkzlyMQLcXbbFeDujLL1S1XbIeA1UdHTA==
-X-MS-TrafficTypeDiagnostic: BLUPR03MB470:
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB470;31:I9AugkqcjQH7PC/RljJ5fraqjT40JV3GL5DLVvo2I0ELU6Os5BVFb01J+d1ArpzsjoFk3Hxq+kE6PNcJjUeNCwMCRL7KFJbEy7HMQh6OuFk8RRIY5Pk9cZByABaWagGJQRDe8/W4Mded5DpOAY0OY7nN2wEXX9f7WA7ML7ZChfKulKstdgOF3v3U5C9orX+J13LxxZUbWB7GSgFP+AIafHksrPmrX+0ur0ZpdA5Kyf8=;4:4sZbQDqIvrB3RT3bQFf+/nXE+tDf6ufHxo9DAhRwWzr+12Pn9+Zeb3LHMFqp9kSwd566+tgbf5egJNQOuB10J1R2RLhXQifglqxowy12HpgMIIS+aWp4qWJyzc4GTwGmq5KrSBzDtCB2HwUtwUAE6/VYxv686Qm1UBkeEE2SMUqSah5Et7Wm8eRrzWkKCFmMlDXd5XF/WfVE7VUFETeSge8SUA95RCYfbnUqosUDJROb9hXQBQNd3Eb0tkqgzE8Qgr9xg7eJSBk6dCOmaWiaCU7jav+jdmmqtT2SHIE6AyAFsMHPQpPltVfHD9g/cWlAC7lOSAuQbLXmYCGRGfbzYOvbxDYjRX4We/Jf+iJyJ21/Ui+zlimACE76jUIK5BHD
-X-Microsoft-Antispam-PRVS: <BLUPR03MB470ADAB1AFC241821F688B180F60@BLUPR03MB470.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 787ccafe-6e40-41f5-15b0-08d572f1dadd
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603307);SRVR:BL2PR03MB466;
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB466;3:osipvBYFSUoZ80jfMNi7BCH/bj0f8I6j8h8XEERMmzEYar8/qQGbVAN2CcoSJEMrHeEtz+6X4mgSd4ixHKRqyg4H8h+CCf0SNPSi9IlCzNVHdN1LqCc/yGuhqWr9VSt0Uyc+OjUpdxoAx9hEgR0ZrQxrHMniNtTg73Hl82pCDkZYri2zISPxbwMkPiY4y0pff7MtCLG6sTLf6Ek2J2WZEcLaOm0F3IOYwOBYAE7fnOAQ+dkF49ryFuqvsfpB0mEL4BVQiVBfs2lo6fAtoHwOYaU1+IJjYHrYWkskHgcOQxxid+UBOXxQ26ntbxGzrC7ueuw/GM6mxSEv/UCDnZMpmwkol1SdfofH5rwx7j34qKY=;25:281z9znZtC1Q5+HSlyjFGeqaS4r6/7Kvf075ViV99tMZXxAaUwbjIA/8ZtY4IZ/Yj8H6GBZfgkKxyDNZhSJRmMO3YPrFifaoRWCAjWO6DS/dkJ2yyaMuUctplGJ7oARfuhBnoUqQiclDulKi56rtYP8ClpFpfRH3mmzHhU3A9RXdus5suIBL9iA/ZpLoqjqh3QQev20XMy0Bqsls/xjOR0gEl4Yg9xKrL9BoUZtMLYTVhJbyiqMDvfiiw9FPti1ZnFT6+huv7aKKdMEsER/O95TvwiaK+F+GqGHChPftZGvVwZik/gpGzkYVsULbel7U5igmLCUMLBceqwlbedXrTw==
+X-MS-TrafficTypeDiagnostic: BL2PR03MB466:
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB466;31:WRHejS72bRSXOFlr8XrOibGLGd99GgVL4CTY5KjQwgIQXx5XZi7r/uufCA4RWnAxzKIe1Nnwtumd6FtObjCR4Tj6KRSjigcfcdA0jjGXYZU1Vwfwvi++Qh+IFEZzVUufyQsDWz9rp2ss2PeWFHX8dTzvrm5cvw2fvcwn/Nuk60lQlAnlKeWvLPI4lIIw9lDNs4rdh6kjcZK7A8/AdT6bKAUnkh2YF8i+hCmmL1wXaig=;4:l+o+fL0veIl4Bimxre0w0DNgsI9PEEzaj3vpiANgoG33MCT0xyWBOyNnHL0PGYEnKlnh2KJS8VheUiokQKvYK6ERfZslS7v0rYq5TLvRaxr9HfDcVoqPIYxKMBJSIuJz0N+D7h0D4FiP8S3Rx9xBJl5z6x3v56BKX6uCGYvzYKMhV+Ixi1m186AGV8aRKJcDzYDtFLGMQCz21En69cNnDsps8oYIeOqaUyqK079eOlYt1T6mBtby/OWyFJ/6v7HCEP9N73yLVg4wmoZWpIcsF3U04rfbKYHYR6qeBC8ZL2Lthz1bP7MXI1oE+3YkHQX68yau05Mi5N4B5z5r1F4SNuPsDP/oo72+gC0lPPMJNEksO0vZapwPvGAeBJzuUoE9
+X-Microsoft-Antispam-PRVS: <BL2PR03MB46673C5B024467FB01BE3D380F60@BL2PR03MB466.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(250305191791016)(22074186197030)(185117386973197);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231101)(2400082)(944501161)(93006095)(93001095)(6055026)(6096035)(20161123565025)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123563025)(20161123556025)(20161123561025)(20161123559100)(201708071742011);SRVR:BLUPR03MB470;BCL:0;PCL:0;RULEID:(400006);SRVR:BLUPR03MB470;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231101)(944501161)(93006095)(93001095)(6055026)(6096035)(20161123565025)(20161123556025)(20161123563025)(20161123561025)(20161123559100)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(201708071742011);SRVR:BL2PR03MB466;BCL:0;PCL:0;RULEID:(400006);SRVR:BL2PR03MB466;
 X-Forefront-PRVS: 0582641F53
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR03MB470;23:0Oge/g0crhcXN9/dXN7fYry/IXCRVpCkU5nV28p2k5?=
- =?us-ascii?Q?9bU29HscOUuLNXRVgwmetB52YEwdvI6TF9n9+tVXohzsaHzl8QLzN+oGix18?=
- =?us-ascii?Q?U+YoYGp8BuDfTM7+GcHOsTyzpgqOYRf7/Y5iOaHdjLNFoeKT3cGuYVJXHEJ6?=
- =?us-ascii?Q?FVXJeJDFsKXOxe1x+EwXM/rMCL0j13iVffs9QpJGPqhGZ57MkVAUXJS1J8Ei?=
- =?us-ascii?Q?HUKUz7T1KWA+w00niWaZdHsExIk1/FJrpeNBcC8Z7ZoOo3OcEQHc+GZRZ8ID?=
- =?us-ascii?Q?j69jfl0JBNJwmtjxZNrWWDcFkSz+MwvDnS0oX/aX8C9D0EiJifupZjTRFzIt?=
- =?us-ascii?Q?We+Pa9aGbQdCtYodhvIj03utrFQdHr8KwvP2PutRG+j7LmQpY3t4CCsWeHaY?=
- =?us-ascii?Q?oz0ZmHobweYaspOPLoYYcYopcQhM8BUwxg369a/sJdlaSSmYAHYR6ZxRNAo0?=
- =?us-ascii?Q?Hd/BXpzaldrffZT/xW+ZoNmAqg+SwBRsa2hZYz5tosMbK39VaOaPnaNaAfJs?=
- =?us-ascii?Q?3ZYCz2vpKn60oRXfjoULaDuImNAM8c8vJeJ49eoXuJmeXPkOjjx8z9ZPA93w?=
- =?us-ascii?Q?enSllVHgUUNr8Qp0tmvWpLt4XU/ntW8O5tVBgPgT31GwBSd8bNI0zApoh07k?=
- =?us-ascii?Q?4vunoN8DwJtXq+mplSP+47KzDkyQdsH1zXu+p6Oh+PQPN2qFxmavmHiD0KLu?=
- =?us-ascii?Q?T5VekeH7IO/kZne2TB0g2ZLTCK280091AXXZCEC3rOswGwBUtS3HdTp42Upb?=
- =?us-ascii?Q?VbWmLiAbV8GX04jYf2XSCH59OniN0Qib+1JSf3WHMqfkyhUPwnUe22j/qebz?=
- =?us-ascii?Q?tery2Chy4VPWGHhLlQDqKtjotwN9lfs29M7F27n9eT62prOiRp41qyFiHCqt?=
- =?us-ascii?Q?W/IG+Zc84S9+NogWcb3/+W0/cmNeIVVjSWlV6YSCOTMwR5O/sU8BhfGMZH0V?=
- =?us-ascii?Q?n1IVDVVBLA4MHQZ2iSAGX2ETCaJZnWBni9YExEVF89qCPzEXSvAAroyS+bdK?=
- =?us-ascii?Q?ctqIbCIt0v4QDaGRk8CSBJC/xzRzocdN9urrrzVum0l3aENrWEVj2/+IqCey?=
- =?us-ascii?Q?JmsphIywhZSip1OEXhYCVkmvHd2Z0RYH+WbxbJEUzIiaBOEd3E9mN0ot12sU?=
- =?us-ascii?Q?Pb32d0FZ+By59WleKzsTV0X+PHCyPI1u10qtZkDewXcU1o0wWiNKUnCP8EUN?=
- =?us-ascii?Q?XMPjVL9qXC8u5vk0qJh5vuoy2D91MudR6i3Z3PHuERPJrd3sI8CkqwEh7wzR?=
- =?us-ascii?Q?18ykoOfoOV6oIfcaw=3D?=
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB470;6:eexdB4S/YcuDdtieDdebXx0uwkQU/Y7M/wCJDQTeAm4hkLDRGAztAAKQf2eYZ8NTZrqQYwZAosPiL0edr8u/YNfpePK8EHzCAj4m9jNTnhOzXsc5pMGbrkA777rBwz7NqlFtEKgiI34C3pH90l3p3//Cf3Ao45tPq5CtzFVswtQFGr7GiJgBWULpo1tfelRN0fEDpjy8C4kdQMSShNNgkNCU+vM6fST8TL4nfrZ76laCoPn2EbbB3WTPnwR7MInlg2g8cU/UaEPRz+D3ZmpntvvfNgRi4ROvU/6/Q6FC5gH5ULkpJyedyWVO4W2Y/wwUxQj39xdqCd40AidL7UrpohI6QhyNsj7MVsj/pg+zKJY=;5:VqV3NMbAZskzsRqRlCVHs6OBO7wfqpdqLdA1jerITAEcQRfujSPA5w9t1xoCj2FYNWBDVPdsS4ta0Ilm0hLxF15A3XL+rVhJigJwJjS7oOWfyJ9m14bfRxFOLaZKMrmovIORdQw1PE2wpZ0NFWoDv3ssgF3glrDriSZEPqaPT7k=;24:ESMXcTPCm48sQltSCQFnTeSaWxvoG9AMz8Dyl3p5M4Z/IJUxunAn0q0ZjLT8z/e7LJF9V7a6u/bCQGdD/xE1foqfuSWFmg+n8d5Q/W5FWUQ=;7:ZxzkPkBstTttt3OJkPic+Q3+ox7IyMNpXCedrSptgtkOOnyd1q7mly7qia5opngUuU7hNqxBuvKSOPtpCUMAtajhFnwuQHrX0KrtZXh/U3GWeV4Lf0chTbfTgK98sn6wBoMC+sAHRkr4tRBjW1UI/PLRHBa6bQo409hTvZKupH/xBJkwJU4gPIEdctD64Dm1RkI2IhZlSQBRap2jNlKhJSTem2EwJa4Kko48lIAXWcrdTy1aWlR/LTe5XFw1yRVA
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL2PR03MB466;23:wOzOMEQgS2hanMOgsxMmNfqP+XTiPxpZkFecxe4WMg?=
+ =?us-ascii?Q?oUlyFym7kt/H7nyfW15g0vj7VKPHSEs0SPd5lr4u9yRKK+DIlqIhuixXzExT?=
+ =?us-ascii?Q?sxOyEFDDTJbDCxPQFLsxE85YxAw2AhOTbMRCExLh9mBn4PqlTZtcQmru+1hO?=
+ =?us-ascii?Q?I3DEF1Q0O3ZpVZewEKW+tG3zLPOPLrPaOe31eG2a3eSmQa9qpt/rK6vBvl9U?=
+ =?us-ascii?Q?BwsAqR4hRc41YONuW0FrFtznGiQIct4dsHYaK69pJ+a5i149sq8+9VBkc9ZA?=
+ =?us-ascii?Q?w5QZ1s1UgtC+d42WZOMmTacr35B3WKuc69Wtmu07wH4wsIHdNFzo48Hsv+Yn?=
+ =?us-ascii?Q?nUP/+AXUb4VCZ6x76jfTt6Tx4IZxHGdnhyyGvddVaYNhodA91PHcdLPH9LKP?=
+ =?us-ascii?Q?u0rQSS6a8LPzxA5Fcl2mLK9rAQnTw/gQsKhVpfsgGQfKQPE89QEqC589JNq/?=
+ =?us-ascii?Q?q4+/zYMQSd8Y8KhShvHbZ2UJDe5dZqOPidcUplq7Y1A5rRWGFe7U5RIybTFy?=
+ =?us-ascii?Q?lhlfS1dwuCmlXMBVrDnR5zvPFspdyi3aVmrram+5A5nUjOXBPpfzPSDfQb0y?=
+ =?us-ascii?Q?akn5BD4ThMCC8m45OnVBxIv7YXiwkSUmBRbDOZr46FC+5M29iM7N8fTG8rBg?=
+ =?us-ascii?Q?9PACPOWG+mlVU3q48wkmcO7HoMo38lFfaXs2bTJCC9vqu1hSkX2Yi0nYpKHz?=
+ =?us-ascii?Q?IqhMJCpBbsMk1DLz9SWwO8S2EFxw9NWFT2YrlnwF/mdaWJyvjLNYzZQPfjDM?=
+ =?us-ascii?Q?yKDT7FT4wF/UqS4zlVEYGHM9zCzPS3zkCvMwACr+u39gj1qhS+XTpCRiqByE?=
+ =?us-ascii?Q?mjWEiWzut/C0x8wtOA92KUmNIOWpppJ/icr3G+3aSlaptQFjz2iTvqU7L0LH?=
+ =?us-ascii?Q?Ccl8FV8F9Ih/RDtxpb1TfY4bHPTWwItpkKYpZmbK/NUBtxU2Am8COWjpGJ/G?=
+ =?us-ascii?Q?FdswKuR8LPkc/hGpFRgqnQ1ug2ZMn6MZkNrnaLdhZfvEGTgvJ+eti9i+VfrT?=
+ =?us-ascii?Q?xxN8Ys2sNaayx3gMhwAiLc3R6GmrP/AuwO36JnS2/Vk2IBEuM0QrocoLOhpC?=
+ =?us-ascii?Q?WwpadoQvlsDHRue/yXGdyNE97HZHpzsknbU4oZ0+5qSy8uZVWRNn5iOVWdfV?=
+ =?us-ascii?Q?9/1ThP4fRYAziK5ewkqU1MGvJqCTg/oDyKRYOQi+vxNJihC436+ZmWNIeb5N?=
+ =?us-ascii?Q?FDrSJj3iC3XZH3r1MR+Vv5OFEu23lYU7mB?=
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB466;6:vwc6d/DslHwNwaJdeB6dHZBa6X+tyDFJrrSL8MJymZd5teOqmq+vbGCKFpBgE2T/RgmwNFa+8Il8gPfJyIaCN20p7wkPv38esAIBjZBHwgpJWtEAtOgESqevfYSzTwKWqCDVcxEdU9XZnyNPyGitWtCcv/RDaxpPfvBbZiMnrsu135RCQBNNgS8j3cAfgcboOZT8hIj3jojypOa9kMtpZev9F1ZKSeQ4X9c887rm/AB+EZCS/bMxbOm2KEjNBRFJjZAJyaM+m1imxCqGh03xIurYd0jAJkVJaFqMlg4aqlo4XTPBo9bA3RhWxfU9fBwF0GX6gZgQ/PiGOmdPeL85X6kWVCVdWsBdkALhYCdsFDo=;5:ylZ/GiMPZok7fneGXQ0HI7uc6McEHStii89+OiR2YelAiiWCzlQw2605yEwSKNxhyAvgKDeLN7K+DAr5SkeE89bEr9mzy/Aiz3+3Y1x5/rwCX/1cgc7myafyometCnN0uekvS7zHLIkSqYp4ahok/7AupqEhkxA37sPqX8D9W3E=;24:SUGMCBwwGfVnl9HWaVwAicnkYSC8bFA1LV7VxbZxuM5y3eoApLn8z6sJXrX6mk513mYjet2+ULyDEGfmbW+m2kbP9heL/drX+vwH3/I6H8I=;7:07boq57VtFxxz0P0aqTSwuHaTyOVvQi8QFj+uZm/YIH09kBQsiXW17bm5X583CJ9ST2CzXLOlOM5pspwb5JvMXKlHauCWFhV8jUGfwdWrRSRZ8G1MYVhvvR7ODYKeIvwcI8o0jHJTHs2Al5fLG1ycWKNic1+zxF0r7BxkgFI2MPm/OeEwcHWlrCUHQVew7ZA0oT7E2n+d7RwD1+y/xAYmS0pe1yjM6TpIt4wIpx3UKSkG6dRgpe7K85N3LBdpr2o
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2018 14:55:42.6250
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2018 14:55:42.5372
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b131c699-364d-408f-1be7-08d572f1dae8
+X-MS-Exchange-CrossTenant-Network-Message-Id: 787ccafe-6e40-41f5-15b0-08d572f1dadd
 X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[192.88.168.50];Helo=[tx30smr01.am.freescale.net]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR03MB470
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR03MB466
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pfdv2 is designed for PLL Fractional Divide (PFD) observed in System
-Clock Generation (SCG) module in IMX ULP SoC series. e.g. i.MX7ULP.
+The imx composite clk is designed for Peripheral Clock Control (PCC)
+module observed in IMX ULP SoC series. e.g. i.MX7ULP.
 
-NOTE pfdv2 can only be operated when clk is gated.
+NOTE pcc can only be operated when clk is gated.
 
 Cc: Stephen Boyd <sboyd@codeaurora.org>
 Cc: Michael Turquette <mturquette@baylibre.com>
@@ -91,47 +90,40 @@ ChangeLog:
 v2->v3:
  * no changes
 v1->v2:
- * change to readl_poll_timeout
- * add pfd lock to protect share reg access between rate and enable/disable
-   operations and multiple pfd instances.
+ * remove an unneeded blank line change
  * use clk_hw_register
 ---
- drivers/clk/imx/Makefile    |   3 +-
- drivers/clk/imx/clk-pfdv2.c | 207 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h       |   3 +
- 3 files changed, 212 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-pfdv2.c
+ drivers/clk/imx/Makefile        |  1 +
+ drivers/clk/imx/clk-composite.c | 90 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h           |  6 +++
+ 3 files changed, 97 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-composite.c
 
 diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 2f00b03..9c04ae4 100644
+index 9c04ae4..eab606c 100644
 --- a/drivers/clk/imx/Makefile
 +++ b/drivers/clk/imx/Makefile
-@@ -12,7 +12,8 @@ obj-y += \
- 	clk-pllv2.o \
- 	clk-pllv3.o \
- 	clk-pllv4.o \
--	clk-pfd.o
-+	clk-pfd.o \
-+	clk-pfdv2.o
- 
- obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
- obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
-diff --git a/drivers/clk/imx/clk-pfdv2.c b/drivers/clk/imx/clk-pfdv2.c
+@@ -4,6 +4,7 @@ obj-y += \
+ 	clk.o \
+ 	clk-busy.o \
+ 	clk-cpu.o \
++	clk-composite.o \
+ 	clk-fixup-div.o \
+ 	clk-fixup-mux.o \
+ 	clk-gate-exclusive.o \
+diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
 new file mode 100644
-index 0000000..5421bdf
+index 0000000..78b891e
 --- /dev/null
-+++ b/drivers/clk/imx/clk-pfdv2.c
-@@ -0,0 +1,207 @@
++++ b/drivers/clk/imx/clk-composite.c
+@@ -0,0 +1,90 @@
 +/*
 + * Copyright (C) 2016 Freescale Semiconductor, Inc.
 + * Copyright 2017 NXP
 + *
-+ * Author: Dong Aisheng <aisheng.dong@nxp.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation; either version 2
-+ * of the License, or (at your option) any later version.
++ * The code contained herein is licensed under the GNU General Public
++ * License. You may obtain a copy of the GNU General Public License
++ * Version 2 or later at the following locations:
 + *
 + * http://www.opensource.org/licenses/gpl-license.html
 + * http://www.gnu.org/copyleft/gpl.html
@@ -139,209 +131,98 @@ index 0000000..5421bdf
 +
 +#include <linux/clk-provider.h>
 +#include <linux/err.h>
-+#include <linux/iopoll.h>
 +#include <linux/slab.h>
 +
-+/**
-+ * struct clk_pfdv2 - IMX PFD clock
-+ * @clk_hw:	clock source
-+ * @reg:	PFD register address
-+ * @gate_bit:	Gate bit offset
-+ * @vld_bit:	Valid bit offset
-+ * @frac_off:	PLL Fractional Divider offset
-+ */
++#define PCG_PCS_SHIFT	24
++#define PCG_PCS_MASK	0x7
++#define PCG_CGC_SHIFT	30
++#define PCG_FRAC_SHIFT	3
++#define PCG_FRAC_WIDTH	1
++#define PCG_FRAC_MASK	BIT(3)
++#define PCG_PCD_SHIFT	0
++#define PCG_PCD_WIDTH	3
++#define PCG_PCD_MASK	0x7
 +
-+struct clk_pfdv2 {
-+	struct clk_hw	hw;
-+	void __iomem	*reg;
-+	u8		gate_bit;
-+	u8		vld_bit;
-+	u8		frac_off;
-+};
-+
-+#define to_clk_pfdv2(_hw) container_of(_hw, struct clk_pfdv2, hw)
-+
-+#define CLK_PFDV2_FRAC_MASK 0x3f
-+
-+#define LOCK_TIMEOUT_US		USEC_PER_MSEC
-+
-+static DEFINE_SPINLOCK(pfd_lock);
-+
-+static int clk_pfdv2_wait(struct clk_pfdv2 *pfd)
++struct clk_hw *imx_clk_composite(const char *name,
++			      const char * const *parent_names,
++			      int num_parents, bool mux_present,
++			      bool rate_present, bool gate_present,
++			      void __iomem *reg)
 +{
-+	u32 val;
++	struct clk_hw *mux_hw = NULL, *fd_hw = NULL, *gate_hw = NULL;
++	struct clk_fractional_divider *fd = NULL;
++	struct clk_gate *gate = NULL;
++	struct clk_mux *mux = NULL;
++	struct clk_hw *hw;
 +
-+	return readl_poll_timeout(pfd->reg, val, val & pfd->vld_bit,
-+				  0, LOCK_TIMEOUT_US);
-+}
-+
-+static int clk_pfdv2_enable(struct clk_hw *hw)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&pfd_lock, flags);
-+	val = readl_relaxed(pfd->reg);
-+	val &= ~pfd->gate_bit;
-+	writel_relaxed(val, pfd->reg);
-+	spin_unlock_irqrestore(&pfd_lock, flags);
-+
-+	return clk_pfdv2_wait(pfd);
-+}
-+
-+static void clk_pfdv2_disable(struct clk_hw *hw)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&pfd_lock, flags);
-+	val = readl_relaxed(pfd->reg);
-+	val |= pfd->gate_bit;
-+	writel_relaxed(val, pfd->reg);
-+	spin_unlock_irqrestore(&pfd_lock, flags);
-+}
-+
-+static unsigned long clk_pfdv2_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	u64 tmp = parent_rate;
-+	u8 frac;
-+
-+	frac = (readl_relaxed(pfd->reg) >> pfd->frac_off)
-+		& CLK_PFDV2_FRAC_MASK;
-+
-+	if (!frac) {
-+		pr_debug("clk_pfdv2: %s invalid pfd frac value 0\n",
-+			 clk_hw_get_name(hw));
-+		return 0;
++	if (mux_present) {
++		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++		if (!mux)
++			return ERR_PTR(-ENOMEM);
++		mux_hw = &mux->hw;
++		mux->reg = reg;
++		mux->shift = PCG_PCS_SHIFT;
++		mux->mask = PCG_PCS_MASK;
 +	}
 +
-+	tmp *= 18;
-+	do_div(tmp, frac);
++	if (rate_present) {
++		fd = kzalloc(sizeof(*fd), GFP_KERNEL);
++		if (!fd) {
++			kfree(mux);
++			return ERR_PTR(-ENOMEM);
++		}
++		fd_hw = &fd->hw;
++		fd->reg = reg;
++		fd->mshift = PCG_FRAC_SHIFT;
++		fd->mwidth = PCG_FRAC_WIDTH;
++		fd->mmask  = PCG_FRAC_MASK;
++		fd->nshift = PCG_PCD_SHIFT;
++		fd->nwidth = PCG_PCD_WIDTH;
++		fd->nmask = PCG_PCD_MASK;
++		fd->flags = CLK_FRAC_DIVIDER_ZERO_BASED;
++	}
 +
-+	return tmp;
-+}
++	if (gate_present) {
++		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++		if (!gate) {
++			kfree(mux);
++			kfree(fd);
++			return ERR_PTR(-ENOMEM);
++		}
++		gate_hw = &gate->hw;
++		gate->reg = reg;
++		gate->bit_idx = PCG_CGC_SHIFT;
++	}
 +
-+static long clk_pfdv2_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *prate)
-+{
-+	u64 tmp = *prate;
-+	u8 frac;
-+
-+	tmp = tmp * 18 + rate / 2;
-+	do_div(tmp, rate);
-+	frac = tmp;
-+
-+	if (frac < 12)
-+		frac = 12;
-+	else if (frac > 35)
-+		frac = 35;
-+
-+	tmp = *prate;
-+	tmp *= 18;
-+	do_div(tmp, frac);
-+
-+	return tmp;
-+}
-+
-+static int clk_pfdv2_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+
-+	if (readl_relaxed(pfd->reg) & pfd->gate_bit)
-+		return 0;
-+
-+	return 1;
-+}
-+
-+static int clk_pfdv2_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	unsigned long flags;
-+	u64 tmp = parent_rate;
-+	u32 val;
-+	u8 frac;
-+
-+	tmp = tmp * 18 + rate / 2;
-+	do_div(tmp, rate);
-+	frac = tmp;
-+	if (frac < 12)
-+		frac = 12;
-+	else if (frac > 35)
-+		frac = 35;
-+
-+	spin_lock_irqsave(&pfd_lock, flags);
-+	val = readl_relaxed(pfd->reg);
-+	val &= ~(CLK_PFDV2_FRAC_MASK << pfd->frac_off);
-+	val |= frac << pfd->frac_off;
-+	writel_relaxed(val, pfd->reg);
-+	spin_unlock_irqrestore(&pfd_lock, flags);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops clk_pfdv2_ops = {
-+	.enable		= clk_pfdv2_enable,
-+	.disable	= clk_pfdv2_disable,
-+	.recalc_rate	= clk_pfdv2_recalc_rate,
-+	.round_rate	= clk_pfdv2_round_rate,
-+	.set_rate	= clk_pfdv2_set_rate,
-+	.is_enabled     = clk_pfdv2_is_enabled,
-+};
-+
-+struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
-+			     void __iomem *reg, u8 idx)
-+{
-+	struct clk_init_data init;
-+	struct clk_pfdv2 *pfd;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	WARN_ON(idx > 3);
-+
-+	pfd = kzalloc(sizeof(*pfd), GFP_KERNEL);
-+	if (!pfd)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pfd->reg = reg;
-+	pfd->gate_bit = 1 << ((idx + 1) * 8 - 1);
-+	pfd->vld_bit = pfd->gate_bit - 1;
-+	pfd->frac_off = idx * 8;
-+
-+	init.name = name;
-+	init.ops = &clk_pfdv2_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+	init.flags = CLK_SET_RATE_GATE;
-+
-+	pfd->hw.init = &init;
-+
-+	hw = &pfd->hw;
-+	ret = clk_hw_register(NULL, hw);
-+	if (ret) {
-+		kfree(pfd);
-+		hw = ERR_PTR(ret);
++	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
++				       mux_hw, &clk_mux_ops, fd_hw,
++				       &clk_fractional_divider_ops, gate_hw,
++				       &clk_gate_ops, CLK_SET_RATE_GATE |
++				       CLK_SET_PARENT_GATE);
++	if (IS_ERR(hw)) {
++		kfree(mux);
++		kfree(fd);
++		kfree(gate);
 +	}
 +
 +	return hw;
 +}
 diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 52f7c9d..ccd7181 100644
+index ccd7181..fed7660 100644
 --- a/drivers/clk/imx/clk.h
 +++ b/drivers/clk/imx/clk.h
-@@ -60,6 +60,9 @@ struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
- struct clk *imx_clk_pfd(const char *name, const char *parent_name,
- 		void __iomem *reg, u8 idx);
+@@ -71,6 +71,12 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+ 			     const char **parent_names, int num_parents);
  
-+struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
-+			     void __iomem *reg, u8 idx);
++struct clk_hw *imx_clk_composite(const char *name,
++				 const char * const *parent_names,
++				 int num_parents, bool mux_present,
++				 bool rate_present, bool gate_present,
++				 void __iomem *reg);
 +
- struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
- 				 void __iomem *reg, u8 shift, u8 width,
- 				 void __iomem *busy_reg, u8 busy_shift);
+ struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
+ 				  void __iomem *reg, u8 shift, u8 width,
+ 				  void (*fixup)(u32 *val));
 -- 
 2.7.4
