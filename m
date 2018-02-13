@@ -1,95 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935343AbeBMNW6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:22:58 -0500
-Received: from foss.arm.com ([217.140.101.70]:57562 "EHLO foss.arm.com"
+        id S935291AbeBMN1l (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:27:41 -0500
+Received: from mga03.intel.com ([134.134.136.65]:36196 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935118AbeBMNW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:22:57 -0500
-From: Will Deacon <will.deacon@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: peterz@infradead.org, mingo@redhat.com,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 1/2] locking/qspinlock: Ensure node is initialised before updating prev->next
-Date: Tue, 13 Feb 2018 13:22:56 +0000
-Message-Id: <1518528177-19169-2-git-send-email-will.deacon@arm.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1518528177-19169-1-git-send-email-will.deacon@arm.com>
-References: <1518528177-19169-1-git-send-email-will.deacon@arm.com>
+        id S935174AbeBMN1k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 08:27:40 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,507,1511856000";
+   d="scan'208";a="18074511"
+Date: Tue, 13 Feb 2018 15:27:26 +0200
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Thinkpad X1 Carbon 3rd - Reducing the compressed framebuffer size
+Message-ID: <20180213132726.GD5453@intel.com>
+References: <20180206152143.vea6si7ncjj7sxyq@pali>
+ <20180213085030.kiksdi2a7ksae5wz@pali>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180213085030.kiksdi2a7ksae5wz@pali>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a locker ends up queuing on the qspinlock locking slowpath, we
-initialise the relevant mcs node and publish it indirectly by updating
-the tail portion of the lock word using xchg_tail. If we find that there
-was a pre-existing locker in the queue, we subsequently update their
-->next field to point at our node so that we are notified when it's our
-turn to take the lock.
+On Tue, Feb 13, 2018 at 09:50:30AM +0100, Pali Rohár wrote:
+> On Tuesday 06 February 2018 16:21:43 Pali Rohár wrote:
+> > Hi! I'm periodically getting following message in dmesg on Lenovo
+> > Thinkpad X1 Carbon 3rd generation:
+> > 
+> > [drm] Reducing the compressed framebuffer size. This may lead to less power savings than a non-reduced-size. Try to increase stolen memory size if available in BIOS.
+> > 
+> > In BIOS I already set GPU size to 512M, but this did not help. Also
+> > update to last BIOS version did not help.
+> > 
+> > So why this message is periodically print in dmesg? And what can I do
+> > with this problem?
+> > 
+> > And why cannot Linux kernel allocate itself more memory for GPU (if BIOS
+> > can/could do that)? Is not 512MB for GPU enough?
+> 
+> And here is output from lspci, which clearly says that 512MB is already
+> set for GPU:
 
-This can be roughly illustrated as follows:
+The PCI BAR size has nothing to do with the size of the stolen memory.
+The BAR just provides a window into the global GTT address space of the
+GPU. Stolen memory is a contiguous chunk of physical memory carved out
+by the BIOS. The BIOS may or may not provide a knob to change the size
+of the stolen memory.
 
-  /* Initialise the fields in node and encode a pointer to node in tail */
-  tail = initialise_node(node);
+> 
+> $ lspci -v -s 00:02.0
+> 00:02.0 VGA compatible controller: Intel Corporation HD Graphics 5500 (rev 09) (prog-if 00 [VGA controller])
+>         Subsystem: Lenovo HD Graphics 5500
+>         Flags: bus master, fast devsel, latency 0, IRQ 46
+>         Memory at e0000000 (64-bit, non-prefetchable) [size=16M]
+>         Memory at c0000000 (64-bit, prefetchable) [size=512M]
+>         I/O ports at 3000 [size=64]
+>         [virtual] Expansion ROM at 000c0000 [disabled] [size=128K]
+>         Capabilities: [90] MSI: Enable+ Count=1/1 Maskable- 64bit-
+>         Capabilities: [d0] Power Management version 2
+>         Capabilities: [a4] PCI Advanced Features
+>         Kernel driver in use: i915
+>         Kernel modules: i915
+> 
+> -- 
+> Pali Rohár
+> pali.rohar@gmail.com
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-  /*
-   * Exchange tail into the lockword using an atomic read-modify-write
-   * operation with release semantics
-   */
-  old = xchg_tail(lock, tail);
-
-  /* If there was a pre-existing waiter ... */
-  if (old & _Q_TAIL_MASK) {
-	prev = decode_tail(old);
-	smp_read_barrier_depends();
-
-	/* ... then update their ->next field to point to node.
-	WRITE_ONCE(prev->next, node);
-  }
-
-The conditional update of prev->next therefore relies on the address
-dependency from the result of xchg_tail ensuring order against the
-prior initialisation of node. However, since the release semantics of
-the xchg_tail operation apply only to the write portion of the RmW,
-then this ordering is not guaranteed and it is possible for the CPU
-to return old before the writes to node have been published, consequently
-allowing us to point prev->next to an uninitialised node.
-
-This patch fixes the problem by making the update of prev->next a RELEASE
-operation, which also removes the reliance on dependency ordering.
-
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
----
- kernel/locking/qspinlock.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-index 38ece035039e..348c8cec1042 100644
---- a/kernel/locking/qspinlock.c
-+++ b/kernel/locking/qspinlock.c
-@@ -408,14 +408,15 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
- 	 */
- 	if (old & _Q_TAIL_MASK) {
- 		prev = decode_tail(old);
-+
- 		/*
--		 * The above xchg_tail() is also a load of @lock which
--		 * generates, through decode_tail(), a pointer.  The address
--		 * dependency matches the RELEASE of xchg_tail() such that
--		 * the subsequent access to @prev happens after.
-+		 * We must ensure that the stores to @node are observed before
-+		 * the write to prev->next. The address dependency from
-+		 * xchg_tail is not sufficient to ensure this because the read
-+		 * component of xchg_tail is unordered with respect to the
-+		 * initialisation of @node.
- 		 */
--
--		WRITE_ONCE(prev->next, node);
-+		smp_store_release(&prev->next, node);
- 
- 		pv_wait_node(node, prev);
- 		arch_mcs_spin_lock_contended(&node->locked);
 -- 
-2.1.4
+Ville Syrjälä
+Intel OTC
