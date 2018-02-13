@@ -1,65 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934739AbeBMQVG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 11:21:06 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60322 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933927AbeBMQVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:21:04 -0500
-Subject: Re: [RFC PATCH 1/2] KVM: x86: Add a framework for supporting
- MSR-based features
-To: Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <20180208225833.22074.25995.stgit@tlendack-t1.amdoffice.net>
- <20180208225846.22074.70944.stgit@tlendack-t1.amdoffice.net>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <45f3c26d-9580-7336-6c74-a0c1cd1e8963@redhat.com>
-Date: Tue, 13 Feb 2018 17:21:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S934785AbeBMQVW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 11:21:22 -0500
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:43800 "EHLO
+        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934754AbeBMQVV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 11:21:21 -0500
+X-Google-Smtp-Source: AH8x225Z/Jdr/z5TONeTPe8cv6mllOYz0vmNtdTWYTXqhyRAJnWVK52UG0H0z6qFT9yaGPQ4LokM7iGfgoWwHk90EV8=
 MIME-Version: 1.0
-In-Reply-To: <20180208225846.22074.70944.stgit@tlendack-t1.amdoffice.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1518426556.26505.2.camel@autistici.org>
+References: <1518426556.26505.2.camel@autistici.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Feb 2018 18:21:19 +0200
+Message-ID: <CAHp75VdquuTLRgSbzKTBvyLmeFkGyDmP+U=GdOxLhBsU=w6Log@mail.gmail.com>
+Subject: Re: intel_pmc_core does not initialize intel 8th gen PMC
+To: kitestramuort <kitestramuort@autistici.org>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2018 23:58, Tom Lendacky wrote:
-> Provide a new KVM capability that allows bits within MSRs to be recognized
-> as features.  Two new ioctls are added to the VM ioctl routine to retrieve
-> the list of these MSRs and their values. The MSR features can optionally
-> be exposed based on a CPU and/or a CPU feature.
++Cc: Authors and correct ML
 
-Yes, pretty much.  Just two changes:
+On Mon, Feb 12, 2018 at 11:09 AM, kitestramuort
+<kitestramuort@autistici.org> wrote:
+> don't know if this is intended. In 4.15.2 i have:
 
-> +struct kvm_msr_based_features {
-> +	u32 msr;			/* MSR to query */
-> +	u64 mask;			/* MSR mask */
-> +	const struct x86_cpu_id *match;	/* Match criteria */
-> +	u64 value;			/* MSR value */
+AFAIU the driver now binds to the hardcoded value of a PA of the
+device. So, you still have driver enabled.
 
-1) These two should be replaced by a kvm_x86_ops callback, because
-computing the value is sometimes a bit more complicated than just rdmsr
-(for example, MSRs for VMX capabilities depend on the kvm_intel.ko
-module parameters).
+Srinivas, is my understanding correct?
+
+> dmesg:
+> intel_pmc_core 0000:00:1f.2: enabling device (0000 -> 0002)
+>
+> lspci:
+> 00:1f.2 Memory controller: Intel Corporation Sunrise Point-LP PMC (rev
+> 21)
+>         Subsystem: Intel Corporation Sunrise Point-LP PMC
+>         Control: I/O- Mem+ BusMaster- SpecCycle- MemWINV- VGASnoop-
+> ParErr- Stepping- SERR- FastB2B- DisINTx-
+>         Status: Cap- 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
+> <TAbort- <MAbort- >SERR- <PERR- INTx-
+>         Region 0: Memory at dff00000 (32-bit, non-prefetchable)
+> [size=16K]
+>         Kernel driver in use: intel_pmc_core
+
+> in 4.16.0-rc1 this becomes
+> dmesg:
+> intel_pmc_core:  initialized
+>
+> lspci:
+> 00:1f.2 Memory controller: Intel Corporation Sunrise Point-LP PMC (rev
+> 21)
+>         Subsystem: Intel Corporation Sunrise Point-LP PMC
+>         Control: I/O- Mem- BusMaster- SpecCycle- MemWINV- VGASnoop-
+> ParErr- Stepping- SERR- FastB2B- DisINTx-
+>         Status: Cap- 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
+> <TAbort- <MAbort- >SERR- <PERR- INTx-
+>         Region 0: Memory at dff00000 (32-bit, non-prefetchable)
+> [disabled] [size=16K]
 
 
-> +	case KVM_CAP_GET_MSR_FEATURES:
 
-This should be KVM_GET_MSR.
-
-> +		r = msr_io(NULL, argp, do_get_msr_features, 1);
-> +		break;
-
-
-Bonus points for writing documentation :) and for moving the MSR
-handling code to arch/x86/kvm/msr.{c,h}.
-
-Thanks,
-
-Paolo
+-- 
+With Best Regards,
+Andy Shevchenko
