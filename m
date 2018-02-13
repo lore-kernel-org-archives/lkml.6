@@ -1,23 +1,23 @@
 Return-Path: <vadimp@mellanox.com>
-X-Google-Smtp-Source: AH8x227Bd9jKUoXFQC8UWKR9dv0DLvdxKyKC9jpl7InsWTuUgAkQ2yNzWdM1pjPcIqptcvH272gM
-ARC-Seal: i=1; a=rsa-sha256; t=1518552797; cv=none;
+X-Google-Smtp-Source: AH8x225cnhZke5VTFmvmMzdGDRjlaO+oKQB3yOK2M0V6/IoZZf4mgPxsmzv3uygCWjMRIkO2QzH4
+ARC-Seal: i=1; a=rsa-sha256; t=1518552796; cv=none;
         d=google.com; s=arc-20160816;
-        b=bl8xX+3dwZi6C0n0ZtRSXZQfDKS27ijKgFayd0qwBEFMjANsPMnBeFpYp9AH7+lDIe
-         w3sjpnaA522RbHE0YJiW05dXrVE2s4DZu7Iy754drsEI4j1h69NabQyhqjdwR6LVwjXH
-         uA+zVqHYa+A1HgdkzIFpThgxDTLErv7FKUwQdhHStkxmHU0NA9nlV7gJrpiQ2vbfNf6l
-         NBvDesyZuIjmwEJy76mAqtbQ1s0N/9OLwFkukVPOvaTgc3Mk/emU2VnbDmw2GWSTiBrf
-         IHzyqg626+O9x74LTr2mQ38MWG2SArzvWZglat54lxZjHCMhmTg7Ax7zAagFfBsPmCsN
-         hpsA==
+        b=dxBtWRUowH8geXkCVIOA3LnC0aL9V3vKUCv0cszLY9JB7f2/OZjnK+I3kShA7Psn6t
+         tOVsBnejYa8pNsGEKSDHPT28XCXaN8dbSpFK1hLUgy1xM/s4BfdJ62JOYuQLbmqiGR9F
+         bJEspwhS2CmTAAg3XLbSqM2/bN/DNEhAHQNjQ+KyyCLHj1kA6xrrMsRVbnULDCgWMWK9
+         QoHi+vdTdok2gR5XCpFVlKMUQRsRxcKEn4t24wTJDhmvwmGShxBqlTXzDTekITD14T9t
+         MjrgZWpYdFowMfSTmITNfEK+ttvd8VgPLYsX+MCAxDDYRnHPSCYw/qO/IPboQNLk/Ki1
+         M3RA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=YNmecZYXQBLnBRZmD0WO7alVZU7iHfrb4+JtuZx88jQ=;
-        b=ozOtGOxA4y/Psoz+4TtU23OdlcbmtQ+ibQv5w/2B1ydIalXFFef8GdQBUP+RpHuI+D
-         sQG1Ko+1rjYGaGRooEvE0fzLnrj2p66zpGHeXbYYi3nfWb9FpJZfZYRJZyhNT6oG2Zo+
-         W/OxrURVzY2iA6GUsuxYVJY1iVyTB7MfrJbXqlTeFkgHEZjqv+jfg27e2W/y0a/wlGys
-         GbZ8skZ7U4/c4r3lEC0QqfUO/TOE9+fyKCLaYaCkRHEFdsbHrWUmy2/GkuHNTFafslu5
-         283nt74acTRSXmZNnZFXkF4CyI+zBtUjxifF3lJUTqtziSC8EL4uQCuh+O5dcj/YmEHY
-         wGZA==
+        bh=3lILEdOyDcuwCjUj5fnmv0VUfx2dmdIeRRww4t05//8=;
+        b=WIBYoVN5HL6hok+N43O3jF65DwnGCSCFjlXsoUqNzbadgA/LQmtP4fvueS8Q4qM6Ml
+         kT2YqLJ8xBDF9ABwzsPtKSgDuijpAhXWvb0Vet6GPYU8e7GlGUVLF4XiwRcB4gH3RME7
+         KqhNmJAbEAuTb+Gwv32o3f38sJ7QpulX91QmvgIiH1Q5BjDosZIcHaCAiTH58Bl+dMPO
+         FQtP+goY1xTrJolYukprQFsvHXtLZsD5faP0UMH6mF13/qhkOsYSufn2H9cQDwZ4LXvR
+         8UKJrz48TPfUMTsqdKSAaTif15e8wEJ+yki5o4eoNScQlo6BmwbTUlqiZ75n9vqIM6mY
+         O+8g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of vadimp@mellanox.com designates 193.47.165.129 as permitted sender) smtp.mailfrom=vadimp@mellanox.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
@@ -30,48 +30,134 @@ To: dvhart@infradead.org, andy.shevchenko@gmail.com,
 Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
         jiri@resnulli.us, michaelsh@mellanox.com,
         Vadim Pasternak <vadimp@mellanox.com>
-Subject: [PATCH v1 1/4] platform/x86: mlx-platform: Use define for the channel numbers
-Date: Tue, 13 Feb 2018 22:09:33 +0000
-Message-Id: <1518559776-188942-2-git-send-email-vadimp@mellanox.com>
+Subject: [PATCH v1 2/4] platform/x86: mlx-platform: Add differed bus functionality
+Date: Tue, 13 Feb 2018 22:09:34 +0000
+Message-Id: <1518559776-188942-3-git-send-email-vadimp@mellanox.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1518559776-188942-1-git-send-email-vadimp@mellanox.com>
 References: <1518559776-188942-1-git-send-email-vadimp@mellanox.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592318017435554507?=
-X-GMAIL-MSGID: =?utf-8?q?1592318017435554507?=
+X-GMAIL-THRID: =?utf-8?q?1592318017732489878?=
+X-GMAIL-MSGID: =?utf-8?q?1592318017732489878?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add define for the channels number for mux device, instead of using
-hardcoded value inside the code in order to improve code readability.
+Add deferred bus functionality in order to enforce probing flow execution
+order. Driver mlx-platform activates platform driver i2c-mux-reg, which
+creates busses infrastructure, after that it activates mlxreg-hotplug
+driver, which uses these busses, for connecting devices. The possible
+miss-ordering can happened, for example in case the probing routine of
+mlxreg-hotplug is already started execution, while i2c-mux-reg probing
+routine is not completed yet. In such situation the first one could
+attempt to connect device to adapter number, which is not created yet.
+And as a result this connection will fail. In order to ensure the order of
+probing execution on mlxreg-hotplug probe routine will be deferred until
+all the busses is not created by  probe routine of i2c-mux-reg.
+In order to ensure the flow order, mlx-platform driver passes the highest
+bus number to the mlxreg-hotplug platform data, which in their turn could
+wait in the deferred state, until all the necessary buses topology is not
+exist.
 
 Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
 ---
- drivers/platform/x86/mlx-platform.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/platform/mellanox/mlxreg-hotplug.c |  7 +++++++
+ drivers/platform/x86/mlx-platform.c        | 10 ++++++++++
+ include/linux/platform_data/mlxreg.h       |  2 ++
+ 3 files changed, 19 insertions(+)
 
+diff --git a/drivers/platform/mellanox/mlxreg-hotplug.c b/drivers/platform/mellanox/mlxreg-hotplug.c
+index 313cf8a..fe4910b 100644
+--- a/drivers/platform/mellanox/mlxreg-hotplug.c
++++ b/drivers/platform/mellanox/mlxreg-hotplug.c
+@@ -550,6 +550,7 @@ static int mlxreg_hotplug_probe(struct platform_device *pdev)
+ {
+ 	struct mlxreg_core_hotplug_platform_data *pdata;
+ 	struct mlxreg_hotplug_priv_data *priv;
++	struct i2c_adapter *deferred_adap;
+ 	int err;
+ 
+ 	pdata = dev_get_platdata(&pdev->dev);
+@@ -558,6 +559,12 @@ static int mlxreg_hotplug_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
++	/* Defer probing if the necessary adapter is not configured yet. */
++	deferred_adap = i2c_get_adapter(pdata->deferred_nr);
++	if (!deferred_adap)
++		return -EPROBE_DEFER;
++	i2c_put_adapter(deferred_adap);
++
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
 diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
-index 454e14f..71b452a 100644
+index 71b452a..67f3c6d 100644
 --- a/drivers/platform/x86/mlx-platform.c
 +++ b/drivers/platform/x86/mlx-platform.c
-@@ -85,6 +85,9 @@
- #define MLXPLAT_CPLD_FAN_MASK		GENMASK(3, 0)
- #define MLXPLAT_CPLD_FAN_NG_MASK	GENMASK(5, 0)
+@@ -697,6 +697,8 @@ static int __init mlxplat_dmi_default_matched(const struct dmi_system_id *dmi)
+ 				ARRAY_SIZE(mlxplat_default_channels[i]);
+ 	}
+ 	mlxplat_hotplug = &mlxplat_mlxcpld_default_data;
++	mlxplat_hotplug->deferred_nr =
++		mlxplat_default_channels[i - 1][MLXPLAT_CPLD_GRP_CHNL_NUM - 1];
  
-+/* Number of channels in group */
-+#define MLXPLAT_CPLD_GRP_CHNL_NUM		8
-+
- /* Start channel numbers */
- #define MLXPLAT_CPLD_CH1			2
- #define MLXPLAT_CPLD_CH2			10
-@@ -124,7 +127,7 @@ static const struct resource mlxplat_lpc_resources[] = {
+ 	return 1;
+ };
+@@ -711,6 +713,8 @@ static int __init mlxplat_dmi_msn21xx_matched(const struct dmi_system_id *dmi)
+ 				ARRAY_SIZE(mlxplat_msn21xx_channels);
+ 	}
+ 	mlxplat_hotplug = &mlxplat_mlxcpld_msn21xx_data;
++	mlxplat_hotplug->deferred_nr =
++		mlxplat_msn21xx_channels[MLXPLAT_CPLD_GRP_CHNL_NUM - 1];
+ 
+ 	return 1;
+ };
+@@ -725,6 +729,8 @@ static int __init mlxplat_dmi_msn274x_matched(const struct dmi_system_id *dmi)
+ 				ARRAY_SIZE(mlxplat_msn21xx_channels);
+ 	}
+ 	mlxplat_hotplug = &mlxplat_mlxcpld_msn274x_data;
++	mlxplat_hotplug->deferred_nr =
++		mlxplat_msn21xx_channels[MLXPLAT_CPLD_GRP_CHNL_NUM - 1];
+ 
+ 	return 1;
+ };
+@@ -739,6 +745,8 @@ static int __init mlxplat_dmi_msn201x_matched(const struct dmi_system_id *dmi)
+ 				ARRAY_SIZE(mlxplat_msn21xx_channels);
+ 	}
+ 	mlxplat_hotplug = &mlxplat_mlxcpld_msn201x_data;
++	mlxplat_hotplug->deferred_nr =
++		mlxplat_default_channels[i - 1][MLXPLAT_CPLD_GRP_CHNL_NUM - 1];
+ 
+ 	return 1;
+ };
+@@ -753,6 +761,8 @@ static int __init mlxplat_dmi_qmb7xx_matched(const struct dmi_system_id *dmi)
+ 				ARRAY_SIZE(mlxplat_msn21xx_channels);
+ 	}
+ 	mlxplat_hotplug = &mlxplat_mlxcpld_default_ng_data;
++	mlxplat_hotplug->deferred_nr =
++		mlxplat_msn21xx_channels[MLXPLAT_CPLD_GRP_CHNL_NUM - 1];
+ 
+ 	return 1;
+ };
+diff --git a/include/linux/platform_data/mlxreg.h b/include/linux/platform_data/mlxreg.h
+index fcdc707..2629109 100644
+--- a/include/linux/platform_data/mlxreg.h
++++ b/include/linux/platform_data/mlxreg.h
+@@ -129,6 +129,7 @@ struct mlxreg_core_platform_data {
+  * @mask: top aggregation interrupt common mask;
+  * @cell_low: location of low aggregation interrupt register;
+  * @mask_low: low aggregation interrupt common mask;
++ * @deferred_nr: I2C adapter number must be exist prior probing execution;
+  */
+ struct mlxreg_core_hotplug_platform_data {
+ 	struct mlxreg_core_item *items;
+@@ -139,6 +140,7 @@ struct mlxreg_core_hotplug_platform_data {
+ 	u32 mask;
+ 	u32 cell_low;
+ 	u32 mask_low;
++	int deferred_nr;
  };
  
- /* Platform default channels */
--static const int mlxplat_default_channels[][8] = {
-+static const int mlxplat_default_channels[][MLXPLAT_CPLD_GRP_CHNL_NUM] = {
- 	{
- 		MLXPLAT_CPLD_CH1, MLXPLAT_CPLD_CH1 + 1, MLXPLAT_CPLD_CH1 + 2,
- 		MLXPLAT_CPLD_CH1 + 3, MLXPLAT_CPLD_CH1 + 4, MLXPLAT_CPLD_CH1 +
+ #endif /* __LINUX_PLATFORM_DATA_MLXREG_H */
 -- 
 2.1.4
