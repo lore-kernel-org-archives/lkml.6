@@ -1,58 +1,215 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965321AbeBMRLU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:11:20 -0500
-Received: from mail-wr0-f181.google.com ([209.85.128.181]:41540 "EHLO
-        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964863AbeBMRLQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:11:16 -0500
-X-Google-Smtp-Source: AH8x224wD5XgiqgTDwPJzVvHKWj+bnrlPQBRRfXwi5hdBAShsC7YHfdnA5bdCe2QtwTYfeypXv8N4w==
-Date: Tue, 13 Feb 2018 20:11:12 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] kstrtox: make kstrtobool_from_user() very strict
-Message-ID: <20180213171112.GA28598@avx2>
-References: <20180210211110.GA24324@avx2>
- <CAHp75VcQf-8RUP+bjej5dGJ+s2-hW9=51NVkvhYE6mUO3dY1Cg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcQf-8RUP+bjej5dGJ+s2-hW9=51NVkvhYE6mUO3dY1Cg@mail.gmail.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+        id S934759AbeBMRLu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:11:50 -0500
+Received: from mga14.intel.com ([192.55.52.115]:40390 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965208AbeBMRA1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 12:00:27 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,508,1511856000";
+   d="scan'208";a="26976086"
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <yehezkel.bernat@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
+        Radion Mirchevsky <radion.mirchevsky@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH 15/18] thunderbolt: Add 'boot' attribute for devices
+Date: Tue, 13 Feb 2018 20:00:15 +0300
+Message-Id: <20180213170018.9780-16-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
+References: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 06:02:27PM +0200, Andy Shevchenko wrote:
-> On Sat, Feb 10, 2018 at 11:11 PM, Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> > Once upon a time module parameter parsing code accepted
-> > 0, 1, y, n, Y and N for boolean values. Gratituous but contained
-> > to module code and thus tolerable.
-> >
-> > Commit ef951599074ba4fad2d0efa0a977129b41e6d203
-> > ("lib: move strtobool() to kstrtobool()") promoted that ugly wart
-> > to kstrtobool() and, more importantly, kstrtobool_from_user().
-> >
-> > Later set of accepted values was expanded to "on" and "of".
-> > Now there are 6+8=14(!) valid strings for a boolean.
-> >
-> > This patch reduces set of accepted values to "0" and "1"
-> > (with optional newline) in spirit with other kstrto*() functions.
-> >
-> > I'm starting with kstrtobool_from_user() as it is explicitly designed
-> > to be used for interacting with userspace. Currently there are 9 users
-> > all debug code, so there is hope.
-> >
-> > Please send before 4.16 so no real users start to depend on verbose behaviour.
-> >
-> 
-> NACK.
-> You basically are breaking ABI here. I don't see a zillion patches
-> which adds a tons of duplicate code to the corresponding users.
+From: Yehezkel Bernat <yehezkel.bernat@intel.com>
 
-Please do "find . -type f -name '*.[ch]' | xargs grep kstrtobool_from_user -w'
-before talking about zillion of patches.
+In various cases, Thunderbolt device can be connected by ICM on boot
+without waiting for approval from user. Most cases are related to
+OEM-specific BIOS configurations. This information is interesting for
+user-space as if the device isn't in SW ACL, it may create a friction in
+the user experience where the device is automatically authorized if it's
+connected on boot but requires an explicit user action if connected
+after OS is up. User-space can use this information to suggest adding
+the device to SW ACL for auto-authorization on later connections.
+
+Signed-off-by: Yehezkel Bernat <yehezkel.bernat@intel.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ Documentation/ABI/testing/sysfs-bus-thunderbolt |  7 +++++++
+ drivers/thunderbolt/icm.c                       | 12 ++++++++----
+ drivers/thunderbolt/switch.c                    | 14 ++++++++++++++
+ drivers/thunderbolt/tb.h                        |  2 ++
+ drivers/thunderbolt/tb_msgs.h                   |  1 +
+ 5 files changed, 32 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-bus-thunderbolt b/Documentation/ABI/testing/sysfs-bus-thunderbolt
+index 93798c02e28b..1f145b727d76 100644
+--- a/Documentation/ABI/testing/sysfs-bus-thunderbolt
++++ b/Documentation/ABI/testing/sysfs-bus-thunderbolt
+@@ -38,6 +38,13 @@ Description:	This attribute is used to authorize Thunderbolt devices
+ 		   the device did not contain a key at all, and
+ 		   EKEYREJECTED if the challenge response did not match.
+ 
++What: /sys/bus/thunderbolt/devices/.../boot
++Date:		Jun 2018
++KernelVersion:	4.17
++Contact:	thunderbolt-software@lists.01.org
++Description:	This attribute contains 1 if Thunderbolt device was already
++		authorized on boot and 0 otherwise.
++
+ What: /sys/bus/thunderbolt/devices/.../key
+ Date:		Sep 2017
+ KernelVersion:	4.13
+diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
+index c7cb5cd36f68..1d6bbfc558f4 100644
+--- a/drivers/thunderbolt/icm.c
++++ b/drivers/thunderbolt/icm.c
+@@ -402,7 +402,7 @@ static int icm_fr_disconnect_xdomain_paths(struct tb *tb, struct tb_xdomain *xd)
+ static void add_switch(struct tb_switch *parent_sw, u64 route,
+ 		       const uuid_t *uuid, u8 connection_id, u8 connection_key,
+ 		       u8 link, u8 depth, enum tb_security_level security_level,
+-		       bool authorized)
++		       bool authorized, bool boot)
+ {
+ 	struct tb_switch *sw;
+ 
+@@ -417,6 +417,7 @@ static void add_switch(struct tb_switch *parent_sw, u64 route,
+ 	sw->depth = depth;
+ 	sw->authorized = authorized;
+ 	sw->security_level = security_level;
++	sw->boot = boot;
+ 
+ 	/* Link the two switches now */
+ 	tb_port_at(route, parent_sw)->remote = tb_upstream_port(sw);
+@@ -431,7 +432,7 @@ static void add_switch(struct tb_switch *parent_sw, u64 route,
+ 
+ static void update_switch(struct tb_switch *parent_sw, struct tb_switch *sw,
+ 			  u64 route, u8 connection_id, u8 connection_key,
+-			  u8 link, u8 depth)
++			  u8 link, u8 depth, bool boot)
+ {
+ 	/* Disconnect from parent */
+ 	tb_port_at(tb_route(sw), parent_sw)->remote = NULL;
+@@ -445,6 +446,7 @@ static void update_switch(struct tb_switch *parent_sw, struct tb_switch *sw,
+ 	sw->connection_key = connection_key;
+ 	sw->link = link;
+ 	sw->depth = depth;
++	sw->boot = boot;
+ 
+ 	/* This switch still exists */
+ 	sw->is_unplugged = false;
+@@ -504,6 +506,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 	bool authorized = false;
+ 	struct tb_xdomain *xd;
+ 	u8 link, depth;
++	bool boot;
+ 	u64 route;
+ 	int ret;
+ 
+@@ -513,6 +516,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 	authorized = pkg->link_info & ICM_LINK_INFO_APPROVED;
+ 	security_level = (pkg->hdr.flags & ICM_FLAGS_SLEVEL_MASK) >>
+ 			 ICM_FLAGS_SLEVEL_SHIFT;
++	boot = pkg->link_info & ICM_LINK_INFO_BOOT;
+ 
+ 	if (pkg->link_info & ICM_LINK_INFO_REJECTED) {
+ 		tb_info(tb, "switch at %u.%u was rejected by ICM firmware\n",
+@@ -546,7 +550,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 		if (sw->depth == depth && sw_phy_port == phy_port &&
+ 		    !!sw->authorized == authorized) {
+ 			update_switch(parent_sw, sw, route, pkg->connection_id,
+-				      pkg->connection_key, link, depth);
++				      pkg->connection_key, link, depth, boot);
+ 			tb_switch_put(sw);
+ 			return;
+ 		}
+@@ -595,7 +599,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 
+ 	add_switch(parent_sw, route, &pkg->ep_uuid, pkg->connection_id,
+ 		   pkg->connection_key, link, depth, security_level,
+-		   authorized);
++		   authorized, boot);
+ 
+ 	tb_switch_put(parent_sw);
+ }
+diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+index 4e2b2097bbfc..e9e30aaab2a3 100644
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -775,6 +775,15 @@ static ssize_t authorized_store(struct device *dev,
+ }
+ static DEVICE_ATTR_RW(authorized);
+ 
++static ssize_t boot_show(struct device *dev, struct device_attribute *attr,
++			 char *buf)
++{
++	struct tb_switch *sw = tb_to_switch(dev);
++
++	return sprintf(buf, "%u\n", sw->boot);
++}
++static DEVICE_ATTR_RO(boot);
++
+ static ssize_t device_show(struct device *dev, struct device_attribute *attr,
+ 			   char *buf)
+ {
+@@ -951,6 +960,7 @@ static DEVICE_ATTR_RO(unique_id);
+ 
+ static struct attribute *switch_attrs[] = {
+ 	&dev_attr_authorized.attr,
++	&dev_attr_boot.attr,
+ 	&dev_attr_device.attr,
+ 	&dev_attr_device_name.attr,
+ 	&dev_attr_key.attr,
+@@ -979,6 +989,10 @@ static umode_t switch_attr_is_visible(struct kobject *kobj,
+ 		if (sw->dma_port)
+ 			return attr->mode;
+ 		return 0;
++	} else if (attr == &dev_attr_boot.attr) {
++		if (tb_route(sw))
++			return attr->mode;
++		return 0;
+ 	}
+ 
+ 	return sw->safe_mode ? 0 : attr->mode;
+diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
+index 2cd6085a6e10..9c9cef875ca8 100644
+--- a/drivers/thunderbolt/tb.h
++++ b/drivers/thunderbolt/tb.h
+@@ -66,6 +66,7 @@ struct tb_switch_nvm {
+  * @nvm: Pointer to the NVM if the switch has one (%NULL otherwise)
+  * @no_nvm_upgrade: Prevent NVM upgrade of this switch
+  * @safe_mode: The switch is in safe-mode
++ * @boot: Whether the switch was already authorized on boot or not
+  * @authorized: Whether the switch is authorized by user or policy
+  * @work: Work used to automatically authorize a switch
+  * @security_level: Switch supported security level
+@@ -99,6 +100,7 @@ struct tb_switch {
+ 	struct tb_switch_nvm *nvm;
+ 	bool no_nvm_upgrade;
+ 	bool safe_mode;
++	bool boot;
+ 	unsigned int authorized;
+ 	struct work_struct work;
+ 	enum tb_security_level security_level;
+diff --git a/drivers/thunderbolt/tb_msgs.h b/drivers/thunderbolt/tb_msgs.h
+index 931db2a7c7b3..9f52f842257a 100644
+--- a/drivers/thunderbolt/tb_msgs.h
++++ b/drivers/thunderbolt/tb_msgs.h
+@@ -179,6 +179,7 @@ struct icm_fr_event_device_connected {
+ #define ICM_LINK_INFO_DEPTH_MASK	GENMASK(7, 4)
+ #define ICM_LINK_INFO_APPROVED		BIT(8)
+ #define ICM_LINK_INFO_REJECTED		BIT(9)
++#define ICM_LINK_INFO_BOOT		BIT(10)
+ 
+ struct icm_fr_pkg_approve_device {
+ 	struct icm_pkg_header hdr;
+-- 
+2.15.1
