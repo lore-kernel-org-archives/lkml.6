@@ -1,79 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965462AbeBMSc0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 13:32:26 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:44187 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965365AbeBMScY (ORCPT
+        id S965505AbeBMScd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 13:32:33 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:44365 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965365AbeBMSc2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 13:32:24 -0500
-X-Google-Smtp-Source: AH8x226zhW+YXjZZl+04LG3EwjAybSmZB94NvorxvqvV4FPzZ1m017Wavi2EmfLW6kO/05m6cyZg9oHChqoTITR0Yf0=
+        Tue, 13 Feb 2018 13:32:28 -0500
+X-Google-Smtp-Source: AH8x225lYy5oSoD4f8bl/aNFhnKA/SvgXzwUEFT84/aUjvL3xVJXkdpbOvJErYBcIlKlxcq/fA2l/Q==
+Date: Tue, 13 Feb 2018 21:32:24 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: kirill.shutemov@linux.intel.com
+Cc: linux-tip-commits@vger.kernel.org, bp@suse.de, luto@amacapital.net,
+        peterz@infradead.org, mingo@kernel.org, hpa@zytor.com,
+        willy@infradead.org, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, tglx@linutronix.de
+Subject: Re: [tip:x86/boot] x86/boot/compressed/64: Prepare trampoline memory
+Message-ID: <20180213183224.GC17395@uranus.lan>
+References: <20180209142228.21231-4-kirill.shutemov@linux.intel.com>
+ <tip-b91993a87aff6dafd60a9c8ce80ebc425161a815@git.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1518531288-2017-1-git-send-email-cosmin.samoila@nxp.com>
-References: <1518531288-2017-1-git-send-email-cosmin.samoila@nxp.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Feb 2018 20:32:23 +0200
-Message-ID: <CAHp75VeTeZztEXQTpFM4Wa-zmtH3qOz21Mn=30YmAMEG4PROxA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] Add support for AK4458 DAC
-To: Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
-Cc: Mark Brown <broonie@kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        devicetree <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Mihai Serban <mihai.serban@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>, shegjiu.wang@nxp.com,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tip-b91993a87aff6dafd60a9c8ce80ebc425161a815@git.kernel.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 4:14 PM, Cosmin-Gabriel Samoila
-<cosmin.samoila@nxp.com> wrote:
-> We support Normal Mode, TDM Mode and PM.
->
+On Sun, Feb 11, 2018 at 04:19:38AM -0800, tip-bot for Kirill A. Shutemov wrote:
+...
+> diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+> index d598d65..af9ffbd 100644
+> --- a/arch/x86/boot/compressed/head_64.S
+> +++ b/arch/x86/boot/compressed/head_64.S
+...
+> @@ -586,3 +604,7 @@ pgtable:
+>  	.fill BOOT_PGT_SIZE, 1, 0
+>  lvl5_pgtable:
+>  	.fill PAGE_SIZE, 1, 0
+> +
+> +	.global pgtable_trampoline
+> +pgtable_trampoline:
+> +	.fill 4096, 1, 0
 
-Read the comments Mark and me gave against another [1] submission.
-
-[1]: https://www.spinics.net/lists/alsa-devel/msg73471.html
-
-> Changes since V1:
-> - support only i2c
-> - i2c probe / remove/suspend/ resume moved into shared code
-> - change enum array to separate variables
-> - aggregate Volume control for Left and Right Channel
-> - remove mux from DAPM
-> - remove unused functions
-> - remove unused controls
-> - remove unused macros
-> - use snd_soc_update_bits instead of soc_read + soc_write
-> - use GPIOD
-> - use SPDX identifier
-> - use dac@10 instgitead of ak4458@10
-> - use explicit power_on/off functions
-> - add __maybe_unused attribute
-> - use probe_new for i2c_probe
->
-> Cosmin-Gabriel Samoila (2):
->   ASoC: codecs: Add support for AK4458 DAC driver
->   ASoC: ak4458: Add bindings for AK4458 DAC
->
->  Documentation/devicetree/bindings/sound/ak4458.txt |  23 +
->  sound/soc/codecs/Kconfig                           |   6 +
->  sound/soc/codecs/Makefile                          |   2 +
->  sound/soc/codecs/ak4458.c                          | 684 +++++++++++++++++++++
->  sound/soc/codecs/ak4458.h                          |  75 +++
->  5 files changed, 790 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/ak4458.txt
->  create mode 100644 sound/soc/codecs/ak4458.c
->  create mode 100644 sound/soc/codecs/ak4458.h
->
-> --
-> 2.7.4
->
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Btw, Kirill, while you're at this code: 4096 might be changed to PAGE_SIZE I think.
+(of course on top of the series, when you have a spare minute, just for polishing)
