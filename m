@@ -1,110 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934693AbeBMKAZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 05:00:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55363 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933416AbeBMKAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 05:00:19 -0500
-Date: Tue, 13 Feb 2018 11:00:16 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
-Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
-Message-ID: <20180213100016.GL3443@dhcp22.suse.cz>
-References: <15da8c87-e6db-13aa-01c8-a913656bfdb6@linux.vnet.ibm.com>
- <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
- <20180129132235.GE21609@dhcp22.suse.cz>
- <87k1w081e7.fsf@concordia.ellerman.id.au>
- <20180130094205.GS21609@dhcp22.suse.cz>
- <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com>
- <20180131131937.GA6740@dhcp22.suse.cz>
- <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com>
- <20180201134829.GL21609@dhcp22.suse.cz>
- <b0a751c4-9552-87b4-c768-3e1b02c18b5c@linux.vnet.ibm.com>
+        id S934397AbeBMKAz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 05:00:55 -0500
+Received: from server.eikelenboom.it ([91.121.65.215]:45724 "EHLO
+        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933416AbeBMKAx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 05:00:53 -0500
+Subject: Re: Linux 4.16-rc1: regression bisected, Debian kernel package tool
+ make-kpkg stalls indefinitely during kernel build due to commit "kconfig:
+ remove check_stdin()"
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Woody Suwalski <terraluna977@gmail.com>
+Cc: Ulf Magnusson <ulfalizer@gmail.com>, srivasta@debian.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <b7f71558-0e57-cacb-280c-a9d3baa030b2@eikelenboom.it>
+ <9d122a3c-b1fe-a9f8-17db-c38f42fdc4b1@gmail.com>
+ <CAK7LNAQRZ6F92s5QotKHoapAG+9BqxaUqmGSeKJRYOuu5izauQ@mail.gmail.com>
+From: Sander Eikelenboom <linux@eikelenboom.it>
+Message-ID: <27f3817b-0c92-5f92-e079-078a8b92eab4@eikelenboom.it>
+Date: Tue, 13 Feb 2018 11:00:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b0a751c4-9552-87b4-c768-3e1b02c18b5c@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAK7LNAQRZ6F92s5QotKHoapAG+9BqxaUqmGSeKJRYOuu5izauQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 13-02-18 12:19:18, Anshuman Khandual wrote:
-> On 02/01/2018 07:18 PM, Michal Hocko wrote:
-> > On Thu 01-02-18 08:43:34, Anshuman Khandual wrote:
-> > [...]
-> >> $dmesg | grep elf_brk
-> >> [    9.571192] elf_brk 10030328 elf_bss 10030000
-> >>
-> >> static int load_elf_binary(struct linux_binprm *bprm)
-> >> ---------------------
-> >>
-> >> 	if (unlikely (elf_brk > elf_bss)) {
-> >> 			unsigned long nbyte;
-> >> 	            
-> >> 			/* There was a PT_LOAD segment with p_memsz > p_filesz
-> >> 			   before this one. Map anonymous pages, if needed,
-> >> 			   and clear the area.  */
-> >> 			retval = set_brk(elf_bss + load_bias,
-> >> 					 elf_brk + load_bias,
-> >> 					 bss_prot);
-> >>
-> >>
-> >> ---------------------
-> > 
-> > Just a blind shot... Does the following make any difference?
-> > ---
-> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> > index 021fe78998ea..04b24d00c911 100644
-> > --- a/fs/binfmt_elf.c
-> > +++ b/fs/binfmt_elf.c
-> > @@ -895,7 +895,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
-> >  	   the correct location in memory. */
-> >  	for(i = 0, elf_ppnt = elf_phdata;
-> >  	    i < loc->elf_ex.e_phnum; i++, elf_ppnt++) {
-> > -		int elf_prot = 0, elf_flags;
-> > +		int elf_prot = 0, elf_flags, elf_fixed = MAP_FIXED_NOREPLACE;
-> >  		unsigned long k, vaddr;
-> >  		unsigned long total_size = 0;
-> >  
-> > @@ -927,6 +927,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
-> >  					 */
-> >  				}
-> >  			}
-> > +			elf_fixed = MAP_FIXED;
-> >  		}
-> >  
-> >  		if (elf_ppnt->p_flags & PF_R)
-> > @@ -944,7 +945,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
-> >  		 * the ET_DYN load_addr calculations, proceed normally.
-> >  		 */
-> >  		if (loc->elf_ex.e_type == ET_EXEC || load_addr_set) {
-> > -			elf_flags |= MAP_FIXED_NOREPLACE;
-> > +			elf_flags |= elf_fixed;
-> >  		} else if (loc->elf_ex.e_type == ET_DYN) {
-> >  			/*
-> >  			 * This logic is run once for the first LOAD Program
-> > @@ -980,7 +981,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
-> >  				load_bias = ELF_ET_DYN_BASE;
-> >  				if (current->flags & PF_RANDOMIZE)
-> >  					load_bias += arch_mmap_rnd();
-> > -				elf_flags |= MAP_FIXED_NOREPLACE;
-> > +				elf_flags |= elf_fixed;
-> >  			} else
-> >  				load_bias = 0;
-> >  
-> > 
+On 13/02/18 05:09, Masahiro Yamada wrote:
+> 2018-02-13 12:00 GMT+09:00 Woody Suwalski <terraluna977@gmail.com>:
+>> Sander Eikelenboom wrote:
+>>>
+>>> L.S.,
+>>>
+>>> The Debian kernel-package tool make-kpkg for easy building of upstream
+>>> kernels on Debian fails with linux 4.16-rc1.
+>>>
+>>> The tool (perl script) while invoked with:
+>>>      make-kpkg --initrd --append_to_version -20180212 kernel_image
+>>>
+>>> On a git tree with a .config from the previous kernel release, so new
+>>> KConfig questions have to be asked on new or changed options.
+>>>
+>>> The script stalls indefinitely while it seems to be excuting:
+>>>      exec make kpkg_version=13.018+nmu1 -f
+>>> /usr/share/kernel-package/ruleset/minimal.mk debian
+>>> APPEND_TO_VERSION=-t440s-20180212  INITRD=YES
+>>>
+>>> After using ctrl-c to break out it, i get:
+>>>     ^CFailed to create a ./debian directory: No such file or directory at
+>>> /usr/bin/make-kpkg line 970.
+>>>
+>>> Bisection turned up as culprit:
+>>>      commit d2a04648a5dbc3d1d043b35257364f0197d4d868
+>>>      kconfig: remove check_stdin()
+>>>           Except silentoldconfig, valid_stdin is 1, so check_stdin() is
+>>> no-op.
+>>>           oldconfig and silentoldconfig work almost in the same way except
+>>> that
+>>>      the latter generates additional files under include/.  Both ask users
+>>>      for input for new symbols.
+>>>           I do not know why only silentoldconfig requires stdio be tty.
+>>>             $ rm -f .config; touch .config
+>>>        $ yes "" | make oldconfig > stdout
+>>>        $ rm -f .config; touch .config
+>>>        $ yes "" | make silentoldconfig > stdout
+>>>        make[1]: *** [silentoldconfig] Error 1
+>>>        make: *** [silentoldconfig] Error 2
+>>>        $ tail -n 4 stdout
+>>>        Console input/output is redirected. Run 'make oldconfig' to update
+>>> configuration.
+>>>             scripts/kconfig/Makefile:40: recipe for target
+>>> 'silentoldconfig' failed
+>>>        Makefile:507: recipe for target 'silentoldconfig' failed
+>>>           Redirection is useful, for example, for testing where we want to
+>>> give
+>>>      particular key inputs from a test file, then check the result.
+>>>           Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>>      Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
+>>>
+>>> Reverting this specific commit makes make-kpkg work again as usual.
+>>>
+>>> Version of the kernel-package used:
+>>> ii  kernel-package
+>>> 13.018+nmu1
+>>>
+>>>
+>>> I also cc'ed the Debian developer who maintains the kernel-package
+>>> package: Manoj Srivastava
+>>>
+>>> --
+>>> Sander
+>>>
+>> I have noticed today the same - the kernel-build blockage was in (as I
+>> recall)
+>> srcipts/kconfig/conf -s --silentoldconfig Kbuild
+>>
+>> I have bypassed it by regenerating the .config "by hand"...
 > 
-> Yeah, it does solve the problem on mmotm-2018-01-25-16-20.
+> 
+> silentoldconfig asks you values for new symbols.
+> So, you must answer questions to proceed.
 
-Thanks a lot for testing! I will post an RFC patch shortly.
+I know, but it stalls before asking the questions.
+ 
+> 
+> How does 'make-kpkg' handle silentoldconfig?
+> 
+> Re-direct stdio, then make it forcibly fail?
 
--- 
-Michal Hocko
-SUSE Labs
+I don't know, it is a bunch of perl and shell scripts that gets invoked, not the most easy to comprehend if you are not familiar with them. I'm just a user of the tool.
+
+So i would have to defer that question to the Debian package maintainer, hopefully he will chime in.
+
+--
+Sander
+
+> 
+> 
+> 
