@@ -1,62 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933925AbeBMKLM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 05:11:12 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51074 "EHLO mx1.redhat.com"
+        id S934098AbeBMKLW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 05:11:22 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51276 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751132AbeBMKLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 05:11:08 -0500
+        id S933865AbeBMKLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 05:11:17 -0500
 From: Baoquan He <bhe@redhat.com>
 To: linux-kernel@vger.kernel.org, ebiederm@xmission.com
 Cc: mingo@kernel.org, tglx@linutronix.de, x86@kernel.org,
         douly.fnst@cn.fujitsu.com, joro@8bytes.org, uobergfe@redhat.com,
         prarit@redhat.com, Baoquan He <bhe@redhat.com>
-Subject: [PATCH v4 1/5] x86/apic: Split out restore_boot_irq_mode from disable_IO_APIC
-Date: Tue, 13 Feb 2018 18:10:47 +0800
-Message-Id: <20180213101051.13630-2-bhe@redhat.com>
+Subject: [PATCH v4 3/5] x86/apic: Remove useless disable_IO_APIC
+Date: Tue, 13 Feb 2018 18:10:49 +0800
+Message-Id: <20180213101051.13630-4-bhe@redhat.com>
 In-Reply-To: <20180213101051.13630-1-bhe@redhat.com>
 References: <20180213101051.13630-1-bhe@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a preparation patch. Split out the code which restores boot
-irq mode from disable_IO_APIC() and wrap into a new function
-restore_boot_irq_mode(). No functional change.
+No one uses it anymore.
 
 Signed-off-by: Baoquan He <bhe@redhat.com>
 ---
- arch/x86/include/asm/io_apic.h | 1 +
- arch/x86/kernel/apic/io_apic.c | 5 +++++
- 2 files changed, 6 insertions(+)
+ arch/x86/include/asm/io_apic.h     |  1 -
+ arch/x86/kernel/apic/io_apic.c     | 13 -------------
+ arch/x86/kernel/machine_kexec_32.c |  5 ++---
+ arch/x86/kernel/machine_kexec_64.c |  5 ++---
+ 4 files changed, 4 insertions(+), 20 deletions(-)
 
 diff --git a/arch/x86/include/asm/io_apic.h b/arch/x86/include/asm/io_apic.h
-index a8834dd546cd..558d1a6a13ad 100644
+index 0fa95bfacb39..5e389145d808 100644
 --- a/arch/x86/include/asm/io_apic.h
 +++ b/arch/x86/include/asm/io_apic.h
-@@ -193,6 +193,7 @@ static inline unsigned int io_apic_read(unsigned int apic, unsigned int reg)
+@@ -192,7 +192,6 @@ static inline unsigned int io_apic_read(unsigned int apic, unsigned int reg)
+ 
  extern void setup_IO_APIC(void);
  extern void enable_IO_APIC(void);
- extern void disable_IO_APIC(void);
-+extern void restore_boot_irq_mode(void);
+-extern void disable_IO_APIC(void);
+ extern void clear_IO_APIC(void);
+ extern void restore_boot_irq_mode(void);
  extern int IO_APIC_get_PCI_irq_vector(int bus, int devfn, int pin);
- extern void print_IO_APICs(void);
- #else  /* !CONFIG_X86_IO_APIC */
 diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
-index 8ad2e410974f..7b73b6b9b4b6 100644
+index 2d7cd2db77f5..9d86b10c2121 100644
 --- a/arch/x86/kernel/apic/io_apic.c
 +++ b/arch/x86/kernel/apic/io_apic.c
-@@ -1448,6 +1448,11 @@ void disable_IO_APIC(void)
- 	 */
- 	clear_IO_APIC();
+@@ -1438,19 +1438,6 @@ void native_disable_io_apic(void)
+ 		disconnect_bsp_APIC(ioapic_i8259.pin != -1);
+ }
  
-+	restore_boot_irq_mode();
-+}
-+
-+void restore_boot_irq_mode(void)
-+{
+-/*
+- * Not an __init, needed by the reboot code
+- */
+-void disable_IO_APIC(void)
+-{
+-	/*
+-	 * Clear the IO-APIC before rebooting:
+-	 */
+-	clear_IO_APIC();
+-
+-	restore_boot_irq_mode();
+-}
+-
+ void restore_boot_irq_mode(void)
+ {
  	if (!nr_legacy_irqs())
- 		return;
- 
+diff --git a/arch/x86/kernel/machine_kexec_32.c b/arch/x86/kernel/machine_kexec_32.c
+index 4cd79d88a4ac..60cdec6628b0 100644
+--- a/arch/x86/kernel/machine_kexec_32.c
++++ b/arch/x86/kernel/machine_kexec_32.c
+@@ -195,9 +195,8 @@ void machine_kexec(struct kimage *image)
+ 		/*
+ 		 * We need to put APICs in legacy mode so that we can
+ 		 * get timer interrupts in second kernel. kexec/kdump
+-		 * paths already have calls to disable_IO_APIC() in
+-		 * one form or other. kexec jump path also need
+-		 * one.
++		 * paths already have calls to restore_boot_irq_mode()
++		 * in one form or other. kexec jump path also need one.
+ 		 */
+ 		clear_IO_APIC();
+ 		restore_boot_irq_mode();
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index 2ab14b9c1a89..5ffbc55ea80f 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -293,9 +293,8 @@ void machine_kexec(struct kimage *image)
+ 		/*
+ 		 * We need to put APICs in legacy mode so that we can
+ 		 * get timer interrupts in second kernel. kexec/kdump
+-		 * paths already have calls to disable_IO_APIC() in
+-		 * one form or other. kexec jump path also need
+-		 * one.
++		 * paths already have calls to restore_boot_irq_mode()
++		 * in one form or other. kexec jump path also need one.
+ 		 */
+ 		clear_IO_APIC();
+ 		restore_boot_irq_mode();
 -- 
 2.13.6
