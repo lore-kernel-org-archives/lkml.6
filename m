@@ -1,108 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935172AbeBMMSQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:18:16 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41613 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934947AbeBMMSO (ORCPT
+        id S935214AbeBMMSi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:18:38 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:42130 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934918AbeBMMSf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:18:14 -0500
-Date: Tue, 13 Feb 2018 04:07:52 -0800
-From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-fe00d73152ed18080ea895bc84c495d3bca71019@git.kernel.org>
-Cc: kan.liang@intel.com, peterz@infradead.org, tglx@linutronix.de,
-        jolsa@kernel.org, ak@linux.intel.com, yao.jin@linux.intel.com,
-        mingo@kernel.org, wangnan0@huawei.com, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, hpa@zytor.com, acme@redhat.com
-Reply-To: linux-kernel@vger.kernel.org, wangnan0@huawei.com,
-        namhyung@kernel.org, hpa@zytor.com, acme@redhat.com,
-        peterz@infradead.org, jolsa@kernel.org, tglx@linutronix.de,
-        kan.liang@intel.com, yao.jin@linux.intel.com, ak@linux.intel.com,
-        mingo@kernel.org
-In-Reply-To: <1516310792-208685-10-git-send-email-kan.liang@intel.com>
-References: <1516310792-208685-10-git-send-email-kan.liang@intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf test: Update mmap read functions for
- backward-ring-buffer test
-Git-Commit-ID: fe00d73152ed18080ea895bc84c495d3bca71019
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 13 Feb 2018 07:18:35 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH v3 4/5] media: adv7604: Add support for i2c_new_secondary_device
+Date: Tue, 13 Feb 2018 14:19:06 +0200
+Message-ID: <12162268.j7DyVD3ArW@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1518473273-6333-5-git-send-email-kbingham@kernel.org>
+References: <1518473273-6333-1-git-send-email-kbingham@kernel.org> <1518473273-6333-5-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1DCIhEe005395
 
-Commit-ID:  fe00d73152ed18080ea895bc84c495d3bca71019
-Gitweb:     https://git.kernel.org/tip/fe00d73152ed18080ea895bc84c495d3bca71019
-Author:     Kan Liang <kan.liang@intel.com>
-AuthorDate: Thu, 18 Jan 2018 13:26:24 -0800
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 6 Feb 2018 10:11:50 -0300
+Hi Kieran,
 
-perf test: Update mmap read functions for backward-ring-buffer test
+Thank you for the patch.
 
-Use the new perf_mmap__read_* interfaces for overwrite ringbuffer test.
+On Tuesday, 13 February 2018 00:07:52 EET Kieran Bingham wrote:
+> From: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+> 
+> The ADV7604 has thirteen 256-byte maps that can be accessed via the main
+> I²C ports. Each map has it own I²C address and acts as a standard slave
+> device on the I²C bus.
+> 
+> Allow a device tree node to override the default addresses so that
+> address conflicts with other devices on the same bus may be resolved at
+> the board description level.
+> 
+> Signed-off-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+> [Kieran: Re-adapted for mainline]
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> ---
+> Based upon the original posting :
+>   https://lkml.org/lkml/2014/10/22/469
+> 
+> v2:
+>  - Split out DT bindings from driver updates
+>  - Return -EINVAL on error paths from adv76xx_dummy_client()
+> 
+>  drivers/media/i2c/adv7604.c | 62 ++++++++++++++++++++++++++----------------
+>  1 file changed, 40 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
+> index 1544920ec52d..872e124793f8 100644
+> --- a/drivers/media/i2c/adv7604.c
+> +++ b/drivers/media/i2c/adv7604.c
+> @@ -2734,6 +2734,27 @@ static const struct v4l2_ctrl_config
+> adv76xx_ctrl_free_run_color = {
+> 
+>  /* --------------------------------------------------------------------- */
+> 
+> +struct adv76xx_register {
 
-Commiter notes:
+adv76xx_register seems to imply that this describes a particular register, 
+while the structure describes a registers map. How about adv76xx_register_map, 
+adv76xx_register_bank or adv76xx_register_page ?
 
-Testing:
+> +	const char *name;
+> +	u8 default_addr;
+> +};
+> +
+> +static const struct adv76xx_register adv76xx_secondary_names[] = {
 
-  [root@seventh ~]# perf test -v backward
-  48: Read backward ring buffer                             :
-  --- start ---
-  test child forked, pid 8309
-  Using CPUID GenuineIntel-6-9E
-  mmap size 1052672B
-  mmap size 8192B
-  Finished reading overwrite ring buffer: rewind
-  test child finished with 0
-  ---- end ----
-  Read backward ring buffer: Ok
-  [root@seventh ~]#
+The table doesn't contain secondary names only as there's an entry for the 
+main map. How about calling it adv76xx_default_addresses or something along 
+the same line ?
 
-Signed-off-by: Kan Liang <kan.liang@intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/1516310792-208685-10-git-send-email-kan.liang@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/tests/backward-ring-buffer.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+> +	[ADV76XX_PAGE_IO] = { "main", 0x4c },
+> +	[ADV7604_PAGE_AVLINK] = { "avlink", 0x42 },
+> +	[ADV76XX_PAGE_CEC] = { "cec", 0x40 },
+> +	[ADV76XX_PAGE_INFOFRAME] = { "infoframe", 0x3e },
+> +	[ADV7604_PAGE_ESDP] = { "esdp", 0x38 },
+> +	[ADV7604_PAGE_DPP] = { "dpp", 0x3c },
+> +	[ADV76XX_PAGE_AFE] = { "afe", 0x26 },
+> +	[ADV76XX_PAGE_REP] = { "rep", 0x32 },
+> +	[ADV76XX_PAGE_EDID] = { "edid", 0x36 },
+> +	[ADV76XX_PAGE_HDMI] = { "hdmi", 0x34 },
+> +	[ADV76XX_PAGE_TEST] = { "test", 0x30 },
+> +	[ADV76XX_PAGE_CP] = { "cp", 0x22 },
+> +	[ADV7604_PAGE_VDP] = { "vdp", 0x24 },
+> +};
+> +
+>  static int adv76xx_core_init(struct v4l2_subdev *sd)
+>  {
+>  	struct adv76xx_state *state = to_state(sd);
+> @@ -2834,13 +2855,26 @@ static void adv76xx_unregister_clients(struct
+> adv76xx_state *state) }
+> 
+>  static struct i2c_client *adv76xx_dummy_client(struct v4l2_subdev *sd,
+> -							u8 addr, u8 io_reg)
+> +					       unsigned int i)
 
-diff --git a/tools/perf/tests/backward-ring-buffer.c b/tools/perf/tests/backward-ring-buffer.c
-index 4035d43..e0b1b41 100644
---- a/tools/perf/tests/backward-ring-buffer.c
-+++ b/tools/perf/tests/backward-ring-buffer.c
-@@ -31,10 +31,12 @@ static int count_samples(struct perf_evlist *evlist, int *sample_count,
- 	int i;
- 
- 	for (i = 0; i < evlist->nr_mmaps; i++) {
-+		struct perf_mmap *map = &evlist->overwrite_mmap[i];
- 		union perf_event *event;
-+		u64 start, end;
- 
--		perf_mmap__read_catchup(&evlist->overwrite_mmap[i]);
--		while ((event = perf_mmap__read_backward(&evlist->overwrite_mmap[i])) != NULL) {
-+		perf_mmap__read_init(map, true, &start, &end);
-+		while ((event = perf_mmap__read_event(map, true, &start, end)) != NULL) {
- 			const u32 type = event->header.type;
- 
- 			switch (type) {
-@@ -49,6 +51,7 @@ static int count_samples(struct perf_evlist *evlist, int *sample_count,
- 				return TEST_FAIL;
- 			}
- 		}
-+		perf_mmap__read_done(map);
- 	}
- 	return TEST_OK;
- }
+Maybe unsigned int page ?
+
+With these fixed,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+>  {
+>  	struct i2c_client *client = v4l2_get_subdevdata(sd);
+> +	struct adv76xx_state *state = to_state(sd);
+> +	struct adv76xx_platform_data *pdata = &state->pdata;
+> +	unsigned int io_reg = 0xf2 + i;
+> +	struct i2c_client *new_client;
+> +
+> +	if (pdata && pdata->i2c_addresses[i])
+> +		new_client = i2c_new_dummy(client->adapter,
+> +					   pdata->i2c_addresses[i]);
+> +	else
+> +		new_client = i2c_new_secondary_device(client,
+> +				adv76xx_secondary_names[i].name,
+> +				adv76xx_secondary_names[i].default_addr);
+> 
+> -	if (addr)
+> -		io_write(sd, io_reg, addr << 1);
+> -	return i2c_new_dummy(client->adapter, io_read(sd, io_reg) >> 1);
+> +	if (new_client)
+> +		io_write(sd, io_reg, new_client->addr << 1);
+> +
+> +	return new_client;
+>  }
+> 
+>  static const struct adv76xx_reg_seq adv7604_recommended_settings_afe[] = {
+> @@ -3115,20 +3149,6 @@ static int adv76xx_parse_dt(struct adv76xx_state
+> *state) /* Disable the interrupt for now as no DT-based board uses it. */
+> state->pdata.int1_config = ADV76XX_INT1_CONFIG_DISABLED;
+> 
+> -	/* Use the default I2C addresses. */
+> -	state->pdata.i2c_addresses[ADV7604_PAGE_AVLINK] = 0x42;
+> -	state->pdata.i2c_addresses[ADV76XX_PAGE_CEC] = 0x40;
+> -	state->pdata.i2c_addresses[ADV76XX_PAGE_INFOFRAME] = 0x3e;
+> -	state->pdata.i2c_addresses[ADV7604_PAGE_ESDP] = 0x38;
+> -	state->pdata.i2c_addresses[ADV7604_PAGE_DPP] = 0x3c;
+> -	state->pdata.i2c_addresses[ADV76XX_PAGE_AFE] = 0x26;
+> -	state->pdata.i2c_addresses[ADV76XX_PAGE_REP] = 0x32;
+> -	state->pdata.i2c_addresses[ADV76XX_PAGE_EDID] = 0x36;
+> -	state->pdata.i2c_addresses[ADV76XX_PAGE_HDMI] = 0x34;
+> -	state->pdata.i2c_addresses[ADV76XX_PAGE_TEST] = 0x30;
+> -	state->pdata.i2c_addresses[ADV76XX_PAGE_CP] = 0x22;
+> -	state->pdata.i2c_addresses[ADV7604_PAGE_VDP] = 0x24;
+> -
+>  	/* Hardcode the remaining platform data fields. */
+>  	state->pdata.disable_pwrdnb = 0;
+>  	state->pdata.disable_cable_det_rst = 0;
+> @@ -3478,11 +3498,9 @@ static int adv76xx_probe(struct i2c_client *client,
+>  		if (!(BIT(i) & state->info->page_mask))
+>  			continue;
+> 
+> -		state->i2c_clients[i] =
+> -			adv76xx_dummy_client(sd, state->pdata.i2c_addresses[i],
+> -					     0xf2 + i);
+> +		state->i2c_clients[i] = adv76xx_dummy_client(sd, i);
+>  		if (!state->i2c_clients[i]) {
+> -			err = -ENOMEM;
+> +			err = -EINVAL;
+>  			v4l2_err(sd, "failed to create i2c client %u\n", i);
+>  			goto err_i2c;
+>  		}
+
+-- 
+Regards,
+
+Laurent Pinchart
