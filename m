@@ -1,65 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964868AbeBMNRE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:17:04 -0500
-Received: from mout.gmx.net ([212.227.15.15]:37375 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964775AbeBMNRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:17:02 -0500
-Subject: Re: RFC: build config via DT names
-To: Frank Rowand <frowand.list@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <63f25fea-f163-f9cc-b5b2-f6f291d7f8d2@gmx.de>
- <d55f95cc-228b-e65f-b46c-2f314f4fa582@gmail.com>
- <52140da5-0d49-c861-d752-8de9e4927380@gmail.com>
-From: "Enrico Weigelt, metux IT consult" <metux@gmx.de>
-Message-ID: <1b395f6c-5a07-6f44-3b16-7a06a273e291@gmx.de>
-Date: Tue, 13 Feb 2018 13:16:59 +0000
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        id S935272AbeBMNRl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:17:41 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55072 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935175AbeBMNRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 08:17:40 -0500
+From: Jeff Moyer <jmoyer@redhat.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>,
+        "Zwisler\, Ross" <ross.zwisler@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm@lists.01.org
+Subject: Re: [PATCH v2] libnvdimm: re-enable deep flush for pmem devices
+References: <151847194459.58291.11339638808076622981.stgit@djiang5-desk3.ch.intel.com>
+        <x49inb1n7kb.fsf@segfault.boston.devel.redhat.com>
+        <CAPcyv4gt88pEivOyEGdYbTx9H2LV7+mQQ9H1ESWhzM+gpbtW0g@mail.gmail.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+X-PCLoadLetter: What the f**k does that mean?
+Date: Tue, 13 Feb 2018 08:17:38 -0500
+In-Reply-To: <CAPcyv4gt88pEivOyEGdYbTx9H2LV7+mQQ9H1ESWhzM+gpbtW0g@mail.gmail.com>
+        (Dan Williams's message of "Mon, 12 Feb 2018 15:05:10 -0800")
+Message-ID: <x49bmgtqb9p.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <52140da5-0d49-c861-d752-8de9e4927380@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:vgK5anKX7EQpjv3sSEQWXJMc39glH7AmVNm/mzWq9ksuRa2SFK5
- jdQD1+GX5u18Wsmc+i+bkt4lWrnxn285ah98KGjRd1vUQyeI/YmIYoifL0q3RqXYs124l6V
- PB3C+483GtPc+wUcEI3uXRlZo06jP5mNuOSy/ptqHBD1OFU7sG2PQBSZac+2ga5tl2lklMO
- 3Uvvc+AXOsG9eYcTMmwIA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:waFjGFyXhjM=:vvgeoMWQv0HN0tW5c13MdF
- vrZHFT8Tm9xOtZ7Iiz0LX1jX9O6c6obEpJsscGmci6+U9RS9UNQ3+fO9P9M9Hn8JjeYMDjz1n
- GR9a5ZfJm5HvHZQ0cPHGTLKUsP66BwQeY3T82tb/osg+XZK9ALTqW9PCEtbWhy0YHQrgHuXAY
- RYOzHwl5qas+drHwrrT+oFlN32phl1qO1IvY0/UX+Q+s4tg3JjDV9y+K+TtwnqDUNZ2dYkStI
- SVPSto1o9UAGo1aUWyLw0uTof0J8YgEGpSCY2As+yWIAhmlmM42Y/aicx9fuVZITeiYt9rtmO
- ctlkAnpgpN3C+iGyFv1M6jbQ0xYyghBrFy3HJ9DdaCzWjvDIOkq7WyhP7VF4hOADdZN6C2kG3
- ptsmZnxCvQOqWUO/U7rzhRrJ7SQQ0u85+QLlIZtVpWYoypSYRyVeNniYG8QVaHpMwExRlj6NG
- SiD1M3QN6SGUIR8CHLfsbjhBfEuwgH0Kg4O9c4xEjwujz7DoVCUdKiDSCqY1eggedRofrA28f
- jmkRdQWQRr/LZSqxPREJNYDtA1kjdwzVcw9qojptJ/zkG4SUyYUSEXbpc9iYhXMe6WO2+vZt5
- GBf5BT91tNU6GQfU4vT+dWc8YWbN6pfvOLguypXl5pYfzja2+va62xYJEjq7FniIVM1y1vsaL
- 7K6Yi8+JiCcj9nIIz8b6p68k8jiGBaY7gzJ47MO3TC9679vw3AkHH5SdAk+vjRtOTBeyYEbFQ
- A1WUm/7D8IYxLdW2iH5Yjz3MUqu1JdU+bWgka/ln8IWvuGQGNBjgD/j9D1+BdNcDJ8o5Gq6wy
- iqq49LMIgDwWbeJNF+9hnQYJ5x5IGzt5gYk9FmnlChHOgul6Ao=
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.02.2018 23:24, Frank Rowand wrote:
+Dan Williams <dan.j.williams@intel.com> writes:
 
-> There is a tool to aid this process: scripts/dtc/dt_to_config.  It is not
-> a 100% solution, but it is very helpful.
-> 
-> The problem is difficult enough that this tool led to a conference talk.
-> The slides are at https://elinux.org/images/5/50/Dt_debugging_part_2.pdf
-> which is linked to from
-> https://elinux.org/Device_Tree_presentations_papers_articles#linux_kernel_configuration
+> On Mon, Feb 12, 2018 at 2:53 PM, Jeff Moyer <jmoyer@redhat.com> wrote:
+>> Dave Jiang <dave.jiang@intel.com> writes:
+>>
+>>> Re-enable deep flush so that users always have a way to be sure that a write
+>>> does make it all the way out to the NVDIMM. The PMEM driver writes always
+>>> make it "all the way to the NVDIMM", and it relies on the ADR mechanism to
+>>> flush the write buffers on power failure. Deep flush is there to explicitly
+>>> flush those write buffers to protect against (rare) ADR failure.
+>>> This change prevents a regression in deep flush behavior so that applications
+>>> can continue to depend on fsync() as a mechanism to trigger deep flush in the
+>>> filesystem-dax case.
+>>
+>> That's still very confusing text.  Specifically, the part where you say
+>> that pmem driver writes always make it to the DIMM.  I think the
+>> changelog could start with "Deep flush is there to explicitly flush
+>> write buffers...."  Anyway, the fix looks right to me.
+>
+> I ended up changing the commit message to this, let me know if it reads better:
 
-I believe my approach can make this much simpler, at least for most
-drivers: the maintainers would explicitly add proper config flags,
-instead of letting the tool guess it.
+Thanks.  It's still unclear to me what the text, "The PMEM driver writes
+always arrive at the NVDIMM" means.  However, it's good enough.
 
-Of course, it would take some amount of work to do that for all drivers,
-but we could do that step by step.
+Thanks!
+Jeff
 
-
---mtx
+>
+>     libnvdimm: re-enable deep flush for pmem devices via fsync()
+>
+>     Re-enable deep flush so that users always have a way to be sure that a
+>     write makes it all the way out to media. The PMEM driver writes always
+>     arrive at the NVDIMM, and it relies on the ADR (Asynchronous DRAM
+>     Refresh) mechanism to flush the write buffers on power failure. Deep
+>     flush is there to explicitly flush those write buffers to protect
+>     against (rare) ADR failure.  This change prevents a regression in deep
+>     flush behavior so that applications can continue to depend on fsync() as
+>     a mechanism to trigger deep flush in the filesystem-DAX case.
+>
+>     Fixes: 06e8ccdab15f4 ("acpi: nfit: Add support for detect platform
+> CPU cache...")
+>     Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+>     Signed-off-by: Dan Williams <dan.j.williams@intel.com>
