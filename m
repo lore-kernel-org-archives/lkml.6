@@ -1,226 +1,891 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3813382-1518514461-2-11589884921189668893
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Attached: signature.asc
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518514460; b=a4CahB8AVSzy7HN1j6b9uPU83Eo4j/LDJVHVffKwdfkXSXM
-    8GPSGb3TpcsfukHGcOAxzXEeX7RoKW2XAPIfVibzJ/fORFXsqMHU2A5kkCTtyhjS
-    0AMuVEvZaQL9Ua+rVbx3C2dRT214rqzk3vZCgZzcURRrjFnls1v0A/4YFSrrGjr+
-    pIwJaKnuKrd5ziBD5O1G1tNKy+5RqaXowgt61D+ApknOBcYKdaGLA10GYkLZT3Kz
-    JSRIovbi9uYpIiZOyidjZ0FVjP+k/RoS8L0I4JGcL9FsgxtXMGvGqKUkaJ19ramj
-    kV+HzTirZ4KsfXnjg78GSUv5mEUxcDX9JYm6vOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :mime-version:content-type:sender:list-id; s=arctest; t=
-    1518514460; bh=uJvAYx90HdevXumqy5hmb+p90wVcIUVmj/ggzEgGakU=; b=S
-    JZD6X4it16kLM2B1c0nMZAL/EAD18QwMyhkcow72nbtFc/xpaY9DMiJ5TlqNWBM6
-    SzUbOGuf1tZK4DrGh9qkauuVyvBsTdgOi5N6YsCiOuCqRaaEIRJcPcyEFgZnmuFd
-    5xIAeAS0mJc5BdOe3gg/ZpaFI1GtP/GhuiaZ9U52aU2e8fBmpvW1Jac5doBRDvao
-    7gHmtLtmVpUpqIl0QplrzI6Sk0F/DtDZNeJN9QCWtHRCNsNOSGyFGwNN8ji+YfbH
-    8/qwWfZrki6vbPKLyOAByX/ZewGAc5AUBFbaMeYcSallVUrRHEGhAdMy79neSNcP
-    PoIOKGA/54oOV0bN9LmCQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934322AbeBMJdC (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Feb 2018 04:33:02 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54840 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933936AbeBMJc7 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 13 Feb 2018 04:32:59 -0500
-Date: Tue, 13 Feb 2018 10:32:57 +0100
+Date: Tue, 13 Feb 2018 10:33:05 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 4.14.19
-Message-ID: <20180213093257.GA29345@kroah.com>
+Subject: Re: Linux 4.14.19
+Message-ID: <20180213093305.GB29345@kroah.com>
+References: <20180213093257.GA29345@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180213093257.GA29345@kroah.com>
 User-Agent: Mutt/1.9.3 (2018-01-21)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
-X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
---J2SCkAp4GZ/dPZZf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-I'm announcing the release of the 4.14.19 kernel.
-
-All users of the 4.14 kernel series must upgrade.
-
-The updated 4.14.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
-x-4.14.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
-mmary
-
-thanks,
-
-greg k-h
-
-------------
-
- .gitignore                                          |   49 +++++++++++----=
------
- Makefile                                            |    2=20
- arch/arc/boot/.gitignore                            |    1=20
- arch/arm/boot/.gitignore                            |    1=20
- arch/arm/kernel/traps.c                             |    1=20
- arch/arm64/boot/dts/.gitignore                      |    1=20
- arch/m32r/kernel/traps.c                            |    1=20
- arch/metag/boot/.gitignore                          |    1=20
- arch/microblaze/boot/.gitignore                     |    1=20
- arch/mips/boot/.gitignore                           |    1=20
- arch/nios2/boot/.gitignore                          |    1=20
- arch/powerpc/boot/.gitignore                        |    1=20
- arch/unicore32/kernel/traps.c                       |    1=20
- arch/x86/kernel/alternative.c                       |   14 ++---
- arch/xtensa/boot/.gitignore                         |    1=20
- crypto/tcrypt.c                                     |    6 +-
- drivers/media/platform/mtk-vcodec/mtk_vcodec_util.c |    3 +
- drivers/media/platform/soc_camera/soc_scale_crop.c  |    4 +
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c |   18 +++----
- drivers/net/ethernet/realtek/r8169.c                |    4 -
- drivers/net/ethernet/rocker/rocker_main.c           |   18 +++----
- drivers/net/usb/qmi_wwan.c                          |    1=20
- drivers/of/unittest-data/.gitignore                 |    2=20
- drivers/scsi/storvsc_drv.c                          |    4 +
- drivers/vhost/net.c                                 |    1=20
- kernel/exit.c                                       |    9 +++
- mm/memcontrol.c                                     |   14 +++++
- net/core/sock.c                                     |    5 --
- net/core/sock_reuseport.c                           |   35 ++++++++------
- net/ipv4/igmp.c                                     |    4 +
- net/ipv4/inet_connection_sock.c                     |    1=20
- net/ipv4/tcp.c                                      |    6 ++
- net/ipv4/tcp_bbr.c                                  |    6 +-
- net/ipv6/addrconf.c                                 |   30 ++++++++++--
- net/ipv6/af_inet6.c                                 |   11 ++--
- net/ipv6/ip6mr.c                                    |    1=20
- net/ipv6/ndisc.c                                    |    5 ++
- scripts/package/Makefile                            |    4 -
- 38 files changed, 170 insertions(+), 99 deletions(-)
-
-Andrew Morton (1):
-      kernel/exit.c: export abort() to modules
-
-Chunhao Lin (1):
-      r8169: fix RTL8168EP take too long to complete driver initialization.
-
-Dan Carpenter (1):
-      scsi: storvsc: missing error code in storvsc_probe()
-
-David Ahern (1):
-      net: ipv6: send unsolicited NA after DAD
-
-Eric Dumazet (2):
-      net: igmp: add a missing rcu locking section
-      soreuseport: fix mem leak in reuseport_add_sock()
-
-Greg Kroah-Hartman (2):
-      Revert "x86/alternative: Print unadorned pointers"
-      Linux 4.14.19
-
-Jason Wang (1):
-      vhost_net: stop device during reset owner
-
-Jesse Chan (2):
-      media: mtk-vcodec: add missing MODULE_LICENSE/DESCRIPTION
-      media: soc_camera: soc_scale_crop: add missing MODULE_DESCRIPTION/AUT=
-HOR/LICENSE
-
-Jiri Pirko (1):
-      rocker: fix possible null pointer dereference in rocker_router_fib_ev=
-ent_work
-
-Junxiao Bi (1):
-      qlcnic: fix deadlock bug
-
-Kristian Evensen (1):
-      qmi_wwan: Add support for Quectel EP06
-
-Li RongQing (1):
-      tcp: release sk_frag.page in tcp_disconnect
-
-Martin KaFai Lau (1):
-      ipv6: Fix SO_REUSEPORT UDP socket with implicit sk_ipv6only
-
-Masahiro Yamada (3):
-      .gitignore: sort normal pattern rules alphabetically
-      .gitignore: move *.dtb and *.dtb.S patterns to the top-level .gitigno=
-re
-      kbuild: rpm-pkg: keep spec file until make mrproper
-
-Neal Cardwell (1):
-      tcp_bbr: fix pacing_gain to always be unity when using lt_bw
-
-Nikolay Aleksandrov (1):
-      ip6mr: fix stale iterator
-
-Robert Baronescu (1):
-      crypto: tcrypt - fix S/G table for test_aead_speed()
-
-Roman Gushchin (1):
-      Revert "defer call to mem_cgroup_sk_alloc()"
-
-Sudip Mukherjee (1):
-      arch: define weak abort()
-
-
---J2SCkAp4GZ/dPZZf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlqCsMUACgkQONu9yGCS
-aT69YQ/5AeUKeZuu05eQSo+3RSXc97O0otw+YcIGe4aphj1xglgGOiUOOyBRiPvm
-ETREpD9ovK7sqCClqKlmQcI2zGt9+EWTnlapPZ4+/QOW4VQlKgj7bOx8/ZA+AxGx
-zHKJhdoHFgxuNWBjyEsmFazizIVVgLfv43ac9jNPjOz8x2DRcIswJIaoA9Ydzo1r
-LSbA+UG7uI47ZtTbmOMJRW4EgDcjkRlJW5tQrxO+h7l8NHHyz1iL8marwdOSUsj0
-PvBONmWD7idpehPOzCYJ8/4EHw9FkVFs7lvV0xyg7vfFjfxNUVwj6iU+GjMsiYFQ
-et13Fc1mzUZ0dcEYdl0fJec5LHknl8AkQA2MtvQNoobZWRPqw088j4K5pcoIl0ur
-S03yDQfctMcd1GEMMVabgC59nYyzAS7N2PgeCwHLXRDy2AgWR1dIYDV9UgCMlB3S
-V//TTeFlPAJLC+kgYOD/VoeGQdqqd1TMjWRKYaedmNnKzs48TrswtmRsXLzPGcfv
-innmBmCFiJ6GANr5cKOc6NFOr+oKJxwQ0H1FVly2RUvqZVtXHXd0gvwK/xLNzLoS
-LNVVZ4E0/qPPWwIf5vp9qw8xft6eCyodqE3kSW6sAsxVMTxMHFYHlJaBQgBulWcK
-MhDGEY5sXIl5QqmBjbzx+TAYcKcsL2Ymwl8PEHonS0BOUkmHyQY=
-=jrmL
------END PGP SIGNATURE-----
-
---J2SCkAp4GZ/dPZZf--
+diff --git a/.gitignore b/.gitignore
+index 0c39aa20b6ba..f6050b88e95b 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -7,38 +7,40 @@
+ # command after changing this file, to see if there are
+ # any tracked files which get ignored after the change.
+ #
+-# Normal rules
++# Normal rules (sorted alphabetically)
+ #
+ .*
++*.a
++*.bin
++*.bz2
++*.c.[012]*.*
++*.dtb
++*.dtb.S
++*.dwo
++*.elf
++*.gcno
++*.gz
++*.i
++*.ko
++*.ll
++*.lst
++*.lz4
++*.lzma
++*.lzo
++*.mod.c
+ *.o
+ *.o.*
+-*.a
++*.order
++*.patch
+ *.s
+-*.ko
+ *.so
+ *.so.dbg
+-*.mod.c
+-*.i
+-*.lst
++*.su
+ *.symtypes
+-*.order
+-*.elf
+-*.bin
+ *.tar
+-*.gz
+-*.bz2
+-*.lzma
+ *.xz
+-*.lz4
+-*.lzo
+-*.patch
+-*.gcno
+-*.ll
+-modules.builtin
+ Module.symvers
+-*.dwo
+-*.su
+-*.c.[012]*.*
++modules.builtin
+ 
+ #
+ # Top-level generic files
+@@ -53,6 +55,11 @@ Module.symvers
+ /System.map
+ /Module.markers
+ 
++#
++# RPM spec file (make rpm-pkg)
++#
++/*.spec
++
+ #
+ # Debian directory (make deb-pkg)
+ #
+diff --git a/Makefile b/Makefile
+index a69e5da9ed86..76a0b13623f4 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 14
+-SUBLEVEL = 18
++SUBLEVEL = 19
+ EXTRAVERSION =
+ NAME = Petit Gorille
+ 
+diff --git a/arch/arc/boot/.gitignore b/arch/arc/boot/.gitignore
+index 5246969a20c5..c4c5fd529c25 100644
+--- a/arch/arc/boot/.gitignore
++++ b/arch/arc/boot/.gitignore
+@@ -1,2 +1 @@
+-*.dtb*
+ uImage
+diff --git a/arch/arm/boot/.gitignore b/arch/arm/boot/.gitignore
+index 3c79f85975aa..ce1c5ff746e7 100644
+--- a/arch/arm/boot/.gitignore
++++ b/arch/arm/boot/.gitignore
+@@ -3,4 +3,3 @@ zImage
+ xipImage
+ bootpImage
+ uImage
+-*.dtb
+diff --git a/arch/arm/kernel/traps.c b/arch/arm/kernel/traps.c
+index 0fcd82f01388..b8dc3b516f93 100644
+--- a/arch/arm/kernel/traps.c
++++ b/arch/arm/kernel/traps.c
+@@ -790,7 +790,6 @@ void abort(void)
+ 	/* if that doesn't kill us, halt */
+ 	panic("Oops failed to kill thread");
+ }
+-EXPORT_SYMBOL(abort);
+ 
+ void __init trap_init(void)
+ {
+diff --git a/arch/arm64/boot/dts/.gitignore b/arch/arm64/boot/dts/.gitignore
+deleted file mode 100644
+index b60ed208c779..000000000000
+--- a/arch/arm64/boot/dts/.gitignore
++++ /dev/null
+@@ -1 +0,0 @@
+-*.dtb
+diff --git a/arch/m32r/kernel/traps.c b/arch/m32r/kernel/traps.c
+index cb79fba79d43..b88a8dd14933 100644
+--- a/arch/m32r/kernel/traps.c
++++ b/arch/m32r/kernel/traps.c
+@@ -122,7 +122,6 @@ void abort(void)
+ 	/* if that doesn't kill us, halt */
+ 	panic("Oops failed to kill thread");
+ }
+-EXPORT_SYMBOL(abort);
+ 
+ void __init trap_init(void)
+ {
+diff --git a/arch/metag/boot/.gitignore b/arch/metag/boot/.gitignore
+index 2d6c0c160884..6c662ddb909a 100644
+--- a/arch/metag/boot/.gitignore
++++ b/arch/metag/boot/.gitignore
+@@ -1,4 +1,3 @@
+ vmlinux*
+ uImage*
+ ramdisk.*
+-*.dtb*
+diff --git a/arch/microblaze/boot/.gitignore b/arch/microblaze/boot/.gitignore
+index bf0459186027..679502d64a97 100644
+--- a/arch/microblaze/boot/.gitignore
++++ b/arch/microblaze/boot/.gitignore
+@@ -1,3 +1,2 @@
+-*.dtb
+ linux.bin*
+ simpleImage.*
+diff --git a/arch/mips/boot/.gitignore b/arch/mips/boot/.gitignore
+index d3962cd5ce0c..a73d6e2c4f64 100644
+--- a/arch/mips/boot/.gitignore
++++ b/arch/mips/boot/.gitignore
+@@ -5,4 +5,3 @@ zImage
+ zImage.tmp
+ calc_vmlinuz_load_addr
+ uImage
+-*.dtb
+diff --git a/arch/nios2/boot/.gitignore b/arch/nios2/boot/.gitignore
+index 109279ca5a4d..64386a8dedd8 100644
+--- a/arch/nios2/boot/.gitignore
++++ b/arch/nios2/boot/.gitignore
+@@ -1,2 +1 @@
+-*.dtb
+ vmImage
+diff --git a/arch/powerpc/boot/.gitignore b/arch/powerpc/boot/.gitignore
+index 84774ccba1c2..f92d0530ceb1 100644
+--- a/arch/powerpc/boot/.gitignore
++++ b/arch/powerpc/boot/.gitignore
+@@ -18,7 +18,6 @@ otheros.bld
+ uImage
+ cuImage.*
+ dtbImage.*
+-*.dtb
+ treeImage.*
+ vmlinux.strip
+ zImage
+diff --git a/arch/unicore32/kernel/traps.c b/arch/unicore32/kernel/traps.c
+index 5f25b39f04d4..c4ac6043ebb0 100644
+--- a/arch/unicore32/kernel/traps.c
++++ b/arch/unicore32/kernel/traps.c
+@@ -298,7 +298,6 @@ void abort(void)
+ 	/* if that doesn't kill us, halt */
+ 	panic("Oops failed to kill thread");
+ }
+-EXPORT_SYMBOL(abort);
+ 
+ void __init trap_init(void)
+ {
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 21be0193d9dc..b034826a0b3b 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -287,7 +287,7 @@ recompute_jump(struct alt_instr *a, u8 *orig_insn, u8 *repl_insn, u8 *insnbuf)
+ 	tgt_rip  = next_rip + o_dspl;
+ 	n_dspl = tgt_rip - orig_insn;
+ 
+-	DPRINTK("target RIP: %px, new_displ: 0x%x", tgt_rip, n_dspl);
++	DPRINTK("target RIP: %p, new_displ: 0x%x", tgt_rip, n_dspl);
+ 
+ 	if (tgt_rip - orig_insn >= 0) {
+ 		if (n_dspl - 2 <= 127)
+@@ -344,7 +344,7 @@ static void __init_or_module noinline optimize_nops(struct alt_instr *a, u8 *ins
+ 	add_nops(instr + (a->instrlen - a->padlen), a->padlen);
+ 	local_irq_restore(flags);
+ 
+-	DUMP_BYTES(instr, a->instrlen, "%px: [%d:%d) optimized NOPs: ",
++	DUMP_BYTES(instr, a->instrlen, "%p: [%d:%d) optimized NOPs: ",
+ 		   instr, a->instrlen - a->padlen, a->padlen);
+ }
+ 
+@@ -365,7 +365,7 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
+ 	u8 *instr, *replacement;
+ 	u8 insnbuf[MAX_PATCH_LEN];
+ 
+-	DPRINTK("alt table %px, -> %px", start, end);
++	DPRINTK("alt table %p -> %p", start, end);
+ 	/*
+ 	 * The scan order should be from start to end. A later scanned
+ 	 * alternative code can overwrite previously scanned alternative code.
+@@ -389,14 +389,14 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
+ 			continue;
+ 		}
+ 
+-		DPRINTK("feat: %d*32+%d, old: (%px len: %d), repl: (%px, len: %d), pad: %d",
++		DPRINTK("feat: %d*32+%d, old: (%p, len: %d), repl: (%p, len: %d), pad: %d",
+ 			a->cpuid >> 5,
+ 			a->cpuid & 0x1f,
+ 			instr, a->instrlen,
+ 			replacement, a->replacementlen, a->padlen);
+ 
+-		DUMP_BYTES(instr, a->instrlen, "%px: old_insn: ", instr);
+-		DUMP_BYTES(replacement, a->replacementlen, "%px: rpl_insn: ", replacement);
++		DUMP_BYTES(instr, a->instrlen, "%p: old_insn: ", instr);
++		DUMP_BYTES(replacement, a->replacementlen, "%p: rpl_insn: ", replacement);
+ 
+ 		memcpy(insnbuf, replacement, a->replacementlen);
+ 		insnbuf_sz = a->replacementlen;
+@@ -422,7 +422,7 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
+ 				 a->instrlen - a->replacementlen);
+ 			insnbuf_sz += a->instrlen - a->replacementlen;
+ 		}
+-		DUMP_BYTES(insnbuf, insnbuf_sz, "%px: final_insn: ", instr);
++		DUMP_BYTES(insnbuf, insnbuf_sz, "%p: final_insn: ", instr);
+ 
+ 		text_poke_early(instr, insnbuf, insnbuf_sz);
+ 	}
+diff --git a/arch/xtensa/boot/.gitignore b/arch/xtensa/boot/.gitignore
+index be7655998b26..38177c7ebcab 100644
+--- a/arch/xtensa/boot/.gitignore
++++ b/arch/xtensa/boot/.gitignore
+@@ -1,3 +1,2 @@
+ uImage
+ zImage.redboot
+-*.dtb
+diff --git a/crypto/tcrypt.c b/crypto/tcrypt.c
+index f5f58a6eee5d..e339960dcac7 100644
+--- a/crypto/tcrypt.c
++++ b/crypto/tcrypt.c
+@@ -221,11 +221,13 @@ static void sg_init_aead(struct scatterlist *sg, char *xbuf[XBUFSIZE],
+ 	}
+ 
+ 	sg_init_table(sg, np + 1);
+-	np--;
++	if (rem)
++		np--;
+ 	for (k = 0; k < np; k++)
+ 		sg_set_buf(&sg[k + 1], xbuf[k], PAGE_SIZE);
+ 
+-	sg_set_buf(&sg[k + 1], xbuf[k], rem);
++	if (rem)
++		sg_set_buf(&sg[k + 1], xbuf[k], rem);
+ }
+ 
+ static void test_aead_speed(const char *algo, int enc, unsigned int secs,
+diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_util.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_util.c
+index 46768c056193..0c28d0b995cc 100644
+--- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_util.c
++++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_util.c
+@@ -115,3 +115,6 @@ struct mtk_vcodec_ctx *mtk_vcodec_get_curr_ctx(struct mtk_vcodec_dev *dev)
+ 	return ctx;
+ }
+ EXPORT_SYMBOL(mtk_vcodec_get_curr_ctx);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Mediatek video codec driver");
+diff --git a/drivers/media/platform/soc_camera/soc_scale_crop.c b/drivers/media/platform/soc_camera/soc_scale_crop.c
+index 0116097c0c0f..092c73f24589 100644
+--- a/drivers/media/platform/soc_camera/soc_scale_crop.c
++++ b/drivers/media/platform/soc_camera/soc_scale_crop.c
+@@ -419,3 +419,7 @@ void soc_camera_calc_client_output(struct soc_camera_device *icd,
+ 	mf->height = soc_camera_shift_scale(rect->height, shift, scale_v);
+ }
+ EXPORT_SYMBOL(soc_camera_calc_client_output);
++
++MODULE_DESCRIPTION("soc-camera scaling-cropping functions");
++MODULE_AUTHOR("Guennadi Liakhovetski <kernel@pengutronix.de>");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
+index f7080d0ab874..46b0372dd032 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
+@@ -3891,7 +3891,7 @@ static void qlcnic_83xx_flush_mbx_queue(struct qlcnic_adapter *adapter)
+ 	struct list_head *head = &mbx->cmd_q;
+ 	struct qlcnic_cmd_args *cmd = NULL;
+ 
+-	spin_lock(&mbx->queue_lock);
++	spin_lock_bh(&mbx->queue_lock);
+ 
+ 	while (!list_empty(head)) {
+ 		cmd = list_entry(head->next, struct qlcnic_cmd_args, list);
+@@ -3902,7 +3902,7 @@ static void qlcnic_83xx_flush_mbx_queue(struct qlcnic_adapter *adapter)
+ 		qlcnic_83xx_notify_cmd_completion(adapter, cmd);
+ 	}
+ 
+-	spin_unlock(&mbx->queue_lock);
++	spin_unlock_bh(&mbx->queue_lock);
+ }
+ 
+ static int qlcnic_83xx_check_mbx_status(struct qlcnic_adapter *adapter)
+@@ -3938,12 +3938,12 @@ static void qlcnic_83xx_dequeue_mbx_cmd(struct qlcnic_adapter *adapter,
+ {
+ 	struct qlcnic_mailbox *mbx = adapter->ahw->mailbox;
+ 
+-	spin_lock(&mbx->queue_lock);
++	spin_lock_bh(&mbx->queue_lock);
+ 
+ 	list_del(&cmd->list);
+ 	mbx->num_cmds--;
+ 
+-	spin_unlock(&mbx->queue_lock);
++	spin_unlock_bh(&mbx->queue_lock);
+ 
+ 	qlcnic_83xx_notify_cmd_completion(adapter, cmd);
+ }
+@@ -4008,7 +4008,7 @@ static int qlcnic_83xx_enqueue_mbx_cmd(struct qlcnic_adapter *adapter,
+ 		init_completion(&cmd->completion);
+ 		cmd->rsp_opcode = QLC_83XX_MBX_RESPONSE_UNKNOWN;
+ 
+-		spin_lock(&mbx->queue_lock);
++		spin_lock_bh(&mbx->queue_lock);
+ 
+ 		list_add_tail(&cmd->list, &mbx->cmd_q);
+ 		mbx->num_cmds++;
+@@ -4016,7 +4016,7 @@ static int qlcnic_83xx_enqueue_mbx_cmd(struct qlcnic_adapter *adapter,
+ 		*timeout = cmd->total_cmds * QLC_83XX_MBX_TIMEOUT;
+ 		queue_work(mbx->work_q, &mbx->work);
+ 
+-		spin_unlock(&mbx->queue_lock);
++		spin_unlock_bh(&mbx->queue_lock);
+ 
+ 		return 0;
+ 	}
+@@ -4112,15 +4112,15 @@ static void qlcnic_83xx_mailbox_worker(struct work_struct *work)
+ 		mbx->rsp_status = QLC_83XX_MBX_RESPONSE_WAIT;
+ 		spin_unlock_irqrestore(&mbx->aen_lock, flags);
+ 
+-		spin_lock(&mbx->queue_lock);
++		spin_lock_bh(&mbx->queue_lock);
+ 
+ 		if (list_empty(head)) {
+-			spin_unlock(&mbx->queue_lock);
++			spin_unlock_bh(&mbx->queue_lock);
+ 			return;
+ 		}
+ 		cmd = list_entry(head->next, struct qlcnic_cmd_args, list);
+ 
+-		spin_unlock(&mbx->queue_lock);
++		spin_unlock_bh(&mbx->queue_lock);
+ 
+ 		mbx_ops->encode_cmd(adapter, cmd);
+ 		mbx_ops->nofity_fw(adapter, QLC_83XX_MBX_REQUEST);
+diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
+index 958ff931e790..619a1b7281a0 100644
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -1388,7 +1388,7 @@ DECLARE_RTL_COND(rtl_ocp_tx_cond)
+ {
+ 	void __iomem *ioaddr = tp->mmio_addr;
+ 
+-	return RTL_R8(IBISR0) & 0x02;
++	return RTL_R8(IBISR0) & 0x20;
+ }
+ 
+ static void rtl8168ep_stop_cmac(struct rtl8169_private *tp)
+@@ -1396,7 +1396,7 @@ static void rtl8168ep_stop_cmac(struct rtl8169_private *tp)
+ 	void __iomem *ioaddr = tp->mmio_addr;
+ 
+ 	RTL_W8(IBCR2, RTL_R8(IBCR2) & ~0x01);
+-	rtl_msleep_loop_wait_low(tp, &rtl_ocp_tx_cond, 50, 2000);
++	rtl_msleep_loop_wait_high(tp, &rtl_ocp_tx_cond, 50, 2000);
+ 	RTL_W8(IBISR0, RTL_R8(IBISR0) | 0x20);
+ 	RTL_W8(IBCR0, RTL_R8(IBCR0) & ~0x01);
+ }
+diff --git a/drivers/net/ethernet/rocker/rocker_main.c b/drivers/net/ethernet/rocker/rocker_main.c
+index fc8f8bdf6579..056cb6093630 100644
+--- a/drivers/net/ethernet/rocker/rocker_main.c
++++ b/drivers/net/ethernet/rocker/rocker_main.c
+@@ -2902,6 +2902,12 @@ static int rocker_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		goto err_alloc_ordered_workqueue;
+ 	}
+ 
++	err = rocker_probe_ports(rocker);
++	if (err) {
++		dev_err(&pdev->dev, "failed to probe ports\n");
++		goto err_probe_ports;
++	}
++
+ 	/* Only FIBs pointing to our own netdevs are programmed into
+ 	 * the device, so no need to pass a callback.
+ 	 */
+@@ -2918,22 +2924,16 @@ static int rocker_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	rocker->hw.id = rocker_read64(rocker, SWITCH_ID);
+ 
+-	err = rocker_probe_ports(rocker);
+-	if (err) {
+-		dev_err(&pdev->dev, "failed to probe ports\n");
+-		goto err_probe_ports;
+-	}
+-
+ 	dev_info(&pdev->dev, "Rocker switch with id %*phN\n",
+ 		 (int)sizeof(rocker->hw.id), &rocker->hw.id);
+ 
+ 	return 0;
+ 
+-err_probe_ports:
+-	unregister_switchdev_notifier(&rocker_switchdev_notifier);
+ err_register_switchdev_notifier:
+ 	unregister_fib_notifier(&rocker->fib_nb);
+ err_register_fib_notifier:
++	rocker_remove_ports(rocker);
++err_probe_ports:
+ 	destroy_workqueue(rocker->rocker_owq);
+ err_alloc_ordered_workqueue:
+ 	free_irq(rocker_msix_vector(rocker, ROCKER_MSIX_VEC_EVENT), rocker);
+@@ -2961,9 +2961,9 @@ static void rocker_remove(struct pci_dev *pdev)
+ {
+ 	struct rocker *rocker = pci_get_drvdata(pdev);
+ 
+-	rocker_remove_ports(rocker);
+ 	unregister_switchdev_notifier(&rocker_switchdev_notifier);
+ 	unregister_fib_notifier(&rocker->fib_nb);
++	rocker_remove_ports(rocker);
+ 	rocker_write32(rocker, CONTROL, ROCKER_CONTROL_RESET);
+ 	destroy_workqueue(rocker->rocker_owq);
+ 	free_irq(rocker_msix_vector(rocker, ROCKER_MSIX_VEC_EVENT), rocker);
+diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
+index 2092febfcb42..8d9f02b7a71f 100644
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -1243,6 +1243,7 @@ static const struct usb_device_id products[] = {
+ 	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0125, 4)},	/* Quectel EC25, EC20 R2.0  Mini PCIe */
+ 	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0121, 4)},	/* Quectel EC21 Mini PCIe */
+ 	{QMI_FIXED_INTF(0x2c7c, 0x0296, 4)},	/* Quectel BG96 */
++	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0306, 4)},	/* Quectel EP06 Mini PCIe */
+ 
+ 	/* 4. Gobi 1000 devices */
+ 	{QMI_GOBI1K_DEVICE(0x05c6, 0x9212)},	/* Acer Gobi Modem Device */
+diff --git a/drivers/of/unittest-data/.gitignore b/drivers/of/unittest-data/.gitignore
+deleted file mode 100644
+index 4b3cf8b16de2..000000000000
+--- a/drivers/of/unittest-data/.gitignore
++++ /dev/null
+@@ -1,2 +0,0 @@
+-testcases.dtb
+-testcases.dtb.S
+diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
+index 5e7200f05873..c17ccb913fde 100644
+--- a/drivers/scsi/storvsc_drv.c
++++ b/drivers/scsi/storvsc_drv.c
+@@ -1826,8 +1826,10 @@ static int storvsc_probe(struct hv_device *device,
+ 		fc_host_node_name(host) = stor_device->node_name;
+ 		fc_host_port_name(host) = stor_device->port_name;
+ 		stor_device->rport = fc_remote_port_add(host, 0, &ids);
+-		if (!stor_device->rport)
++		if (!stor_device->rport) {
++			ret = -ENOMEM;
+ 			goto err_out3;
++		}
+ 	}
+ #endif
+ 	return 0;
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index bd15309ac5f1..082891dffd9d 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -1212,6 +1212,7 @@ static long vhost_net_reset_owner(struct vhost_net *n)
+ 	}
+ 	vhost_net_stop(n, &tx_sock, &rx_sock);
+ 	vhost_net_flush(n);
++	vhost_dev_stop(&n->dev);
+ 	vhost_dev_reset_owner(&n->dev, umem);
+ 	vhost_net_vq_reset(n);
+ done:
+diff --git a/kernel/exit.c b/kernel/exit.c
+index f6cad39f35df..e3a08761eb40 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -1755,3 +1755,12 @@ COMPAT_SYSCALL_DEFINE5(waitid,
+ 	return -EFAULT;
+ }
+ #endif
++
++__weak void abort(void)
++{
++	BUG();
++
++	/* if that doesn't kill us, halt */
++	panic("Oops failed to kill thread");
++}
++EXPORT_SYMBOL(abort);
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 53f7c919b916..66e7efabf0a1 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -5828,6 +5828,20 @@ void mem_cgroup_sk_alloc(struct sock *sk)
+ 	if (!mem_cgroup_sockets_enabled)
+ 		return;
+ 
++	/*
++	 * Socket cloning can throw us here with sk_memcg already
++	 * filled. It won't however, necessarily happen from
++	 * process context. So the test for root memcg given
++	 * the current task's memcg won't help us in this case.
++	 *
++	 * Respecting the original socket's memcg is a better
++	 * decision in this case.
++	 */
++	if (sk->sk_memcg) {
++		css_get(&sk->sk_memcg->css);
++		return;
++	}
++
+ 	rcu_read_lock();
+ 	memcg = mem_cgroup_from_task(current);
+ 	if (memcg == root_mem_cgroup)
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 415f441c63b9..beb1e299fed3 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1677,16 +1677,13 @@ struct sock *sk_clone_lock(const struct sock *sk, const gfp_t priority)
+ 		newsk->sk_dst_pending_confirm = 0;
+ 		newsk->sk_wmem_queued	= 0;
+ 		newsk->sk_forward_alloc = 0;
+-
+-		/* sk->sk_memcg will be populated at accept() time */
+-		newsk->sk_memcg = NULL;
+-
+ 		atomic_set(&newsk->sk_drops, 0);
+ 		newsk->sk_send_head	= NULL;
+ 		newsk->sk_userlocks	= sk->sk_userlocks & ~SOCK_BINDPORT_LOCK;
+ 		atomic_set(&newsk->sk_zckey, 0);
+ 
+ 		sock_reset_flag(newsk, SOCK_DONE);
++		mem_cgroup_sk_alloc(newsk);
+ 		cgroup_sk_alloc(&newsk->sk_cgrp_data);
+ 
+ 		rcu_read_lock();
+diff --git a/net/core/sock_reuseport.c b/net/core/sock_reuseport.c
+index 5eeb1d20cc38..676092d7bd81 100644
+--- a/net/core/sock_reuseport.c
++++ b/net/core/sock_reuseport.c
+@@ -94,6 +94,16 @@ static struct sock_reuseport *reuseport_grow(struct sock_reuseport *reuse)
+ 	return more_reuse;
+ }
+ 
++static void reuseport_free_rcu(struct rcu_head *head)
++{
++	struct sock_reuseport *reuse;
++
++	reuse = container_of(head, struct sock_reuseport, rcu);
++	if (reuse->prog)
++		bpf_prog_destroy(reuse->prog);
++	kfree(reuse);
++}
++
+ /**
+  *  reuseport_add_sock - Add a socket to the reuseport group of another.
+  *  @sk:  New socket to add to the group.
+@@ -102,7 +112,7 @@ static struct sock_reuseport *reuseport_grow(struct sock_reuseport *reuse)
+  */
+ int reuseport_add_sock(struct sock *sk, struct sock *sk2)
+ {
+-	struct sock_reuseport *reuse;
++	struct sock_reuseport *old_reuse, *reuse;
+ 
+ 	if (!rcu_access_pointer(sk2->sk_reuseport_cb)) {
+ 		int err = reuseport_alloc(sk2);
+@@ -113,10 +123,13 @@ int reuseport_add_sock(struct sock *sk, struct sock *sk2)
+ 
+ 	spin_lock_bh(&reuseport_lock);
+ 	reuse = rcu_dereference_protected(sk2->sk_reuseport_cb,
+-					  lockdep_is_held(&reuseport_lock)),
+-	WARN_ONCE(rcu_dereference_protected(sk->sk_reuseport_cb,
+-					    lockdep_is_held(&reuseport_lock)),
+-		  "socket already in reuseport group");
++					  lockdep_is_held(&reuseport_lock));
++	old_reuse = rcu_dereference_protected(sk->sk_reuseport_cb,
++					     lockdep_is_held(&reuseport_lock));
++	if (old_reuse && old_reuse->num_socks != 1) {
++		spin_unlock_bh(&reuseport_lock);
++		return -EBUSY;
++	}
+ 
+ 	if (reuse->num_socks == reuse->max_socks) {
+ 		reuse = reuseport_grow(reuse);
+@@ -134,19 +147,11 @@ int reuseport_add_sock(struct sock *sk, struct sock *sk2)
+ 
+ 	spin_unlock_bh(&reuseport_lock);
+ 
++	if (old_reuse)
++		call_rcu(&old_reuse->rcu, reuseport_free_rcu);
+ 	return 0;
+ }
+ 
+-static void reuseport_free_rcu(struct rcu_head *head)
+-{
+-	struct sock_reuseport *reuse;
+-
+-	reuse = container_of(head, struct sock_reuseport, rcu);
+-	if (reuse->prog)
+-		bpf_prog_destroy(reuse->prog);
+-	kfree(reuse);
+-}
+-
+ void reuseport_detach_sock(struct sock *sk)
+ {
+ 	struct sock_reuseport *reuse;
+diff --git a/net/ipv4/igmp.c b/net/ipv4/igmp.c
+index 013fed55b610..fbeb35ad804b 100644
+--- a/net/ipv4/igmp.c
++++ b/net/ipv4/igmp.c
+@@ -386,7 +386,11 @@ static struct sk_buff *igmpv3_newpack(struct net_device *dev, unsigned int mtu)
+ 	pip->frag_off = htons(IP_DF);
+ 	pip->ttl      = 1;
+ 	pip->daddr    = fl4.daddr;
++
++	rcu_read_lock();
+ 	pip->saddr    = igmpv3_get_srcaddr(dev, &fl4);
++	rcu_read_unlock();
++
+ 	pip->protocol = IPPROTO_IGMP;
+ 	pip->tot_len  = 0;	/* filled in later */
+ 	ip_select_ident(net, skb, NULL);
+diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
+index b47a59cb3573..0cc08c512202 100644
+--- a/net/ipv4/inet_connection_sock.c
++++ b/net/ipv4/inet_connection_sock.c
+@@ -475,7 +475,6 @@ struct sock *inet_csk_accept(struct sock *sk, int flags, int *err, bool kern)
+ 		}
+ 		spin_unlock_bh(&queue->fastopenq.lock);
+ 	}
+-	mem_cgroup_sk_alloc(newsk);
+ out:
+ 	release_sock(sk);
+ 	if (req)
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 2a65d806b562..fe11128d7df4 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2379,6 +2379,12 @@ int tcp_disconnect(struct sock *sk, int flags)
+ 
+ 	WARN_ON(inet->inet_num && !icsk->icsk_bind_hash);
+ 
++	if (sk->sk_frag.page) {
++		put_page(sk->sk_frag.page);
++		sk->sk_frag.page = NULL;
++		sk->sk_frag.offset = 0;
++	}
++
+ 	sk->sk_error_report(sk);
+ 	return err;
+ }
+diff --git a/net/ipv4/tcp_bbr.c b/net/ipv4/tcp_bbr.c
+index 8322f26e770e..25c5a0b60cfc 100644
+--- a/net/ipv4/tcp_bbr.c
++++ b/net/ipv4/tcp_bbr.c
+@@ -481,7 +481,8 @@ static void bbr_advance_cycle_phase(struct sock *sk)
+ 
+ 	bbr->cycle_idx = (bbr->cycle_idx + 1) & (CYCLE_LEN - 1);
+ 	bbr->cycle_mstamp = tp->delivered_mstamp;
+-	bbr->pacing_gain = bbr_pacing_gain[bbr->cycle_idx];
++	bbr->pacing_gain = bbr->lt_use_bw ? BBR_UNIT :
++					    bbr_pacing_gain[bbr->cycle_idx];
+ }
+ 
+ /* Gain cycling: cycle pacing gain to converge to fair share of available bw. */
+@@ -490,8 +491,7 @@ static void bbr_update_cycle_phase(struct sock *sk,
+ {
+ 	struct bbr *bbr = inet_csk_ca(sk);
+ 
+-	if ((bbr->mode == BBR_PROBE_BW) && !bbr->lt_use_bw &&
+-	    bbr_is_next_cycle_phase(sk, rs))
++	if (bbr->mode == BBR_PROBE_BW && bbr_is_next_cycle_phase(sk, rs))
+ 		bbr_advance_cycle_phase(sk);
+ }
+ 
+diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
+index c5318f5f6a14..6a76e41e6d51 100644
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -184,7 +184,8 @@ static struct rt6_info *addrconf_get_prefix_route(const struct in6_addr *pfx,
+ 
+ static void addrconf_dad_start(struct inet6_ifaddr *ifp);
+ static void addrconf_dad_work(struct work_struct *w);
+-static void addrconf_dad_completed(struct inet6_ifaddr *ifp, bool bump_id);
++static void addrconf_dad_completed(struct inet6_ifaddr *ifp, bool bump_id,
++				   bool send_na);
+ static void addrconf_dad_run(struct inet6_dev *idev);
+ static void addrconf_rs_timer(unsigned long data);
+ static void __ipv6_ifa_notify(int event, struct inet6_ifaddr *ifa);
+@@ -3825,12 +3826,17 @@ static void addrconf_dad_begin(struct inet6_ifaddr *ifp)
+ 	     idev->cnf.accept_dad < 1) ||
+ 	    !(ifp->flags&IFA_F_TENTATIVE) ||
+ 	    ifp->flags & IFA_F_NODAD) {
++		bool send_na = false;
++
++		if (ifp->flags & IFA_F_TENTATIVE &&
++		    !(ifp->flags & IFA_F_OPTIMISTIC))
++			send_na = true;
+ 		bump_id = ifp->flags & IFA_F_TENTATIVE;
+ 		ifp->flags &= ~(IFA_F_TENTATIVE|IFA_F_OPTIMISTIC|IFA_F_DADFAILED);
+ 		spin_unlock(&ifp->lock);
+ 		read_unlock_bh(&idev->lock);
+ 
+-		addrconf_dad_completed(ifp, bump_id);
++		addrconf_dad_completed(ifp, bump_id, send_na);
+ 		return;
+ 	}
+ 
+@@ -3959,16 +3965,21 @@ static void addrconf_dad_work(struct work_struct *w)
+ 	}
+ 
+ 	if (ifp->dad_probes == 0) {
++		bool send_na = false;
++
+ 		/*
+ 		 * DAD was successful
+ 		 */
+ 
++		if (ifp->flags & IFA_F_TENTATIVE &&
++		    !(ifp->flags & IFA_F_OPTIMISTIC))
++			send_na = true;
+ 		bump_id = ifp->flags & IFA_F_TENTATIVE;
+ 		ifp->flags &= ~(IFA_F_TENTATIVE|IFA_F_OPTIMISTIC|IFA_F_DADFAILED);
+ 		spin_unlock(&ifp->lock);
+ 		write_unlock_bh(&idev->lock);
+ 
+-		addrconf_dad_completed(ifp, bump_id);
++		addrconf_dad_completed(ifp, bump_id, send_na);
+ 
+ 		goto out;
+ 	}
+@@ -4006,7 +4017,8 @@ static bool ipv6_lonely_lladdr(struct inet6_ifaddr *ifp)
+ 	return true;
+ }
+ 
+-static void addrconf_dad_completed(struct inet6_ifaddr *ifp, bool bump_id)
++static void addrconf_dad_completed(struct inet6_ifaddr *ifp, bool bump_id,
++				   bool send_na)
+ {
+ 	struct net_device *dev = ifp->idev->dev;
+ 	struct in6_addr lladdr;
+@@ -4038,6 +4050,16 @@ static void addrconf_dad_completed(struct inet6_ifaddr *ifp, bool bump_id)
+ 	if (send_mld)
+ 		ipv6_mc_dad_complete(ifp->idev);
+ 
++	/* send unsolicited NA if enabled */
++	if (send_na &&
++	    (ifp->idev->cnf.ndisc_notify ||
++	     dev_net(dev)->ipv6.devconf_all->ndisc_notify)) {
++		ndisc_send_na(dev, &in6addr_linklocal_allnodes, &ifp->addr,
++			      /*router=*/ !!ifp->idev->cnf.forwarding,
++			      /*solicited=*/ false, /*override=*/ true,
++			      /*inc_opt=*/ true);
++	}
++
+ 	if (send_rs) {
+ 		/*
+ 		 *	If a host as already performed a random delay
+diff --git a/net/ipv6/af_inet6.c b/net/ipv6/af_inet6.c
+index bcbd5f3bf8bd..9ccbf74deb99 100644
+--- a/net/ipv6/af_inet6.c
++++ b/net/ipv6/af_inet6.c
+@@ -284,6 +284,7 @@ int inet6_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
+ 	struct net *net = sock_net(sk);
+ 	__be32 v4addr = 0;
+ 	unsigned short snum;
++	bool saved_ipv6only;
+ 	int addr_type = 0;
+ 	int err = 0;
+ 
+@@ -389,19 +390,21 @@ int inet6_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
+ 	if (!(addr_type & IPV6_ADDR_MULTICAST))
+ 		np->saddr = addr->sin6_addr;
+ 
++	saved_ipv6only = sk->sk_ipv6only;
++	if (addr_type != IPV6_ADDR_ANY && addr_type != IPV6_ADDR_MAPPED)
++		sk->sk_ipv6only = 1;
++
+ 	/* Make sure we are allowed to bind here. */
+ 	if ((snum || !inet->bind_address_no_port) &&
+ 	    sk->sk_prot->get_port(sk, snum)) {
++		sk->sk_ipv6only = saved_ipv6only;
+ 		inet_reset_saddr(sk);
+ 		err = -EADDRINUSE;
+ 		goto out;
+ 	}
+ 
+-	if (addr_type != IPV6_ADDR_ANY) {
++	if (addr_type != IPV6_ADDR_ANY)
+ 		sk->sk_userlocks |= SOCK_BINDADDR_LOCK;
+-		if (addr_type != IPV6_ADDR_MAPPED)
+-			sk->sk_ipv6only = 1;
+-	}
+ 	if (snum)
+ 		sk->sk_userlocks |= SOCK_BINDPORT_LOCK;
+ 	inet->inet_sport = htons(inet->inet_num);
+diff --git a/net/ipv6/ip6mr.c b/net/ipv6/ip6mr.c
+index f5500f5444e9..e1060f28410d 100644
+--- a/net/ipv6/ip6mr.c
++++ b/net/ipv6/ip6mr.c
+@@ -496,6 +496,7 @@ static void *ipmr_mfc_seq_start(struct seq_file *seq, loff_t *pos)
+ 		return ERR_PTR(-ENOENT);
+ 
+ 	it->mrt = mrt;
++	it->cache = NULL;
+ 	return *pos ? ipmr_mfc_seq_idx(net, seq->private, *pos - 1)
+ 		: SEQ_START_TOKEN;
+ }
+diff --git a/net/ipv6/ndisc.c b/net/ipv6/ndisc.c
+index 266a530414d7..2a937c8d19e9 100644
+--- a/net/ipv6/ndisc.c
++++ b/net/ipv6/ndisc.c
+@@ -558,6 +558,11 @@ static void ndisc_send_unsol_na(struct net_device *dev)
+ 
+ 	read_lock_bh(&idev->lock);
+ 	list_for_each_entry(ifa, &idev->addr_list, if_list) {
++		/* skip tentative addresses until dad completes */
++		if (ifa->flags & IFA_F_TENTATIVE &&
++		    !(ifa->flags & IFA_F_OPTIMISTIC))
++			continue;
++
+ 		ndisc_send_na(dev, &in6addr_linklocal_allnodes, &ifa->addr,
+ 			      /*router=*/ !!idev->cnf.forwarding,
+ 			      /*solicited=*/ false, /*override=*/ true,
+diff --git a/scripts/package/Makefile b/scripts/package/Makefile
+index 34de8b953ecf..348af5b20618 100644
+--- a/scripts/package/Makefile
++++ b/scripts/package/Makefile
+@@ -50,7 +50,6 @@ rpm-pkg rpm: FORCE
+ 	$(CONFIG_SHELL) $(MKSPEC) >$(objtree)/kernel.spec
+ 	$(call cmd,src_tar,$(KERNELPATH),kernel.spec)
+ 	+rpmbuild $(RPMOPTS) --target $(UTS_MACHINE) -ta $(KERNELPATH).tar.gz
+-	rm $(KERNELPATH).tar.gz kernel.spec
+ 
+ # binrpm-pkg
+ # ---------------------------------------------------------------------------
+@@ -59,7 +58,8 @@ binrpm-pkg: FORCE
+ 	$(CONFIG_SHELL) $(MKSPEC) prebuilt > $(objtree)/binkernel.spec
+ 	+rpmbuild $(RPMOPTS) --define "_builddir $(objtree)" --target \
+ 		$(UTS_MACHINE) -bb $(objtree)/binkernel.spec
+-	rm binkernel.spec
++
++clean-files += $(objtree)/*.spec
+ 
+ # Deb target
+ # ---------------------------------------------------------------------------
