@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965135AbeBMOHD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 09:07:03 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37446 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965028AbeBMOGX (ORCPT
+        id S965175AbeBMOHJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 09:07:09 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38056 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965006AbeBMOGU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 09:06:23 -0500
-X-Google-Smtp-Source: AH8x224OWZKNwIv9bXh1N1vCJSSHr1tlZ3O4IqvE5ytNmihUPxs+2EDwkgCI+tQFcCuSEMb0Gw4WPQ==
+        Tue, 13 Feb 2018 09:06:20 -0500
+X-Google-Smtp-Source: AH8x227lHuDYVjOW7IZFu7TC9BWaGhsVTVunGNyaaFakSuDE/S4saIDpJyIDYrXw+sjm4yuWYFrYWQ==
 From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <jg@lightnvm.io>
 X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
 To: mb@lightnvm.io
@@ -15,9 +15,9 @@ Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvme@lists.infradead.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH 5/8] lightnvm: implement get log report chunk helpers
-Date: Tue, 13 Feb 2018 15:06:05 +0100
-Message-Id: <1518530768-20956-6-git-send-email-javier@cnexlabs.com>
+Subject: [PATCH 2/8] lightnvm: show generic geometry in sysfs
+Date: Tue, 13 Feb 2018 15:06:02 +0100
+Message-Id: <1518530768-20956-3-git-send-email-javier@cnexlabs.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518530768-20956-1-git-send-email-javier@cnexlabs.com>
 References: <1518530768-20956-1-git-send-email-javier@cnexlabs.com>
@@ -30,222 +30,276 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Javier González <javier@javigon.com>
 
-The 2.0 spec provides a report chunk log page that can be retrieved
-using the stangard nvme get log page. This replaces the dedicated
-get/put bad block table in 1.2.
-
-This patch implements the helper functions to allow targets retrieve the
-chunk metadata using get log page
+Apart from showing the geometry returned by the different identify
+commands, provide the generic geometry too, as this is the geometry that
+targets will use to describe the device.
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 ---
- drivers/lightnvm/core.c      | 28 +++++++++++++++++++++++++
- drivers/nvme/host/lightnvm.c | 50 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/lightnvm.h     | 32 ++++++++++++++++++++++++++++
- 3 files changed, 110 insertions(+)
+ drivers/nvme/host/lightnvm.c | 146 ++++++++++++++++++++++++++++---------------
+ 1 file changed, 97 insertions(+), 49 deletions(-)
 
-diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-index 80492fa6ee76..6857a888544a 100644
---- a/drivers/lightnvm/core.c
-+++ b/drivers/lightnvm/core.c
-@@ -43,6 +43,8 @@ struct nvm_ch_map {
- struct nvm_dev_map {
- 	struct nvm_ch_map *chnls;
- 	int nr_chnls;
-+	int bch;
-+	int blun;
- };
- 
- static struct nvm_target *nvm_find_target(struct nvm_dev *dev, const char *name)
-@@ -171,6 +173,9 @@ static struct nvm_tgt_dev *nvm_create_tgt_dev(struct nvm_dev *dev,
- 	if (!dev_map->chnls)
- 		goto err_chnls;
- 
-+	dev_map->bch = bch;
-+	dev_map->blun = blun;
-+
- 	luns = kcalloc(nr_luns, sizeof(struct ppa_addr), GFP_KERNEL);
- 	if (!luns)
- 		goto err_luns;
-@@ -561,6 +566,19 @@ static void nvm_unregister_map(struct nvm_dev *dev)
- 	kfree(rmap);
- }
- 
-+static unsigned long nvm_log_off_tgt_to_dev(struct nvm_tgt_dev *tgt_dev)
-+{
-+	struct nvm_dev_map *dev_map = tgt_dev->map;
-+	struct nvm_geo *geo = &tgt_dev->geo;
-+	int lun_off;
-+	unsigned long off;
-+
-+	lun_off = dev_map->blun + dev_map->bch * geo->num_lun;
-+	off = lun_off * geo->c.num_chk * sizeof(struct nvm_chunk_log_page);
-+
-+	return off;
-+}
-+
- static void nvm_map_to_dev(struct nvm_tgt_dev *tgt_dev, struct ppa_addr *p)
- {
- 	struct nvm_dev_map *dev_map = tgt_dev->map;
-@@ -720,6 +738,16 @@ static void nvm_free_rqd_ppalist(struct nvm_tgt_dev *tgt_dev,
- 	nvm_dev_dma_free(tgt_dev->parent, rqd->ppa_list, rqd->dma_ppa_list);
- }
- 
-+int nvm_get_chunk_log_page(struct nvm_tgt_dev *tgt_dev,
-+			   struct nvm_chunk_log_page *log,
-+			   unsigned long off, unsigned long len)
-+{
-+	struct nvm_dev *dev = tgt_dev->parent;
-+
-+	off += nvm_log_off_tgt_to_dev(tgt_dev);
-+
-+	return dev->ops->get_chunk_log_page(tgt_dev->parent, log, off, len);
-+}
- 
- int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *tgt_dev, struct ppa_addr *ppas,
- 		       int nr_ppas, int type)
 diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index 7bc75182c723..355d9b0cf084 100644
+index 97739e668602..7bc75182c723 100644
 --- a/drivers/nvme/host/lightnvm.c
 +++ b/drivers/nvme/host/lightnvm.c
-@@ -35,6 +35,10 @@ enum nvme_nvm_admin_opcode {
- 	nvme_nvm_admin_set_bb_tbl	= 0xf1,
- };
+@@ -944,8 +944,27 @@ static ssize_t nvm_dev_attr_show(struct device *dev,
+ 		return scnprintf(page, PAGE_SIZE, "%u.%u\n",
+ 						dev_geo->major_ver_id,
+ 						dev_geo->minor_ver_id);
+-	} else if (strcmp(attr->name, "capabilities") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.cap);
++	} else if (strcmp(attr->name, "clba") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.clba);
++	} else if (strcmp(attr->name, "csecs") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.csecs);
++	} else if (strcmp(attr->name, "sos") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.sos);
++	} else if (strcmp(attr->name, "ws_min") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.ws_min);
++	} else if (strcmp(attr->name, "ws_opt") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.ws_opt);
++	} else if (strcmp(attr->name, "maxoc") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.maxoc);
++	} else if (strcmp(attr->name, "maxocpu") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.maxocpu);
++	} else if (strcmp(attr->name, "mw_cunits") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.mw_cunits);
++	} else if (strcmp(attr->name, "media_capabilities") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.mccap);
++	} else if (strcmp(attr->name, "max_phys_secs") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n",
++				ndev->ops->max_phys_sect);
+ 	} else if (strcmp(attr->name, "read_typ") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.trdt);
+ 	} else if (strcmp(attr->name, "read_max") == 0) {
+@@ -984,19 +1003,8 @@ static ssize_t nvm_dev_attr_show_12(struct device *dev,
  
-+enum nvme_nvm_log_page {
-+	NVME_NVM_LOG_REPORT_CHUNK	= 0xCA,
-+};
-+
- struct nvme_nvm_ph_rw {
- 	__u8			opcode;
- 	__u8			flags;
-@@ -553,6 +557,50 @@ static int nvme_nvm_set_bb_tbl(struct nvm_dev *nvmdev, struct ppa_addr *ppas,
- 	return ret;
+ 	attr = &dattr->attr;
+ 
+-	if (strcmp(attr->name, "vendor_opcode") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.vmnt);
+-	} else if (strcmp(attr->name, "device_mode") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.dom);
+-	/* kept for compatibility */
+-	} else if (strcmp(attr->name, "media_manager") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%s\n", "gennvm");
+-	} else if (strcmp(attr->name, "ppa_format") == 0) {
++	if (strcmp(attr->name, "ppa_format") == 0) {
+ 		return nvm_dev_attr_show_ppaf((void *)&dev_geo->c.addrf, page);
+-	} else if (strcmp(attr->name, "media_type") == 0) {	/* u8 */
+-		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.mtype);
+-	} else if (strcmp(attr->name, "flash_media_type") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.fmtype);
+ 	} else if (strcmp(attr->name, "num_channels") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->num_ch);
+ 	} else if (strcmp(attr->name, "num_luns") == 0) {
+@@ -1011,8 +1019,6 @@ static ssize_t nvm_dev_attr_show_12(struct device *dev,
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.fpg_sz);
+ 	} else if (strcmp(attr->name, "hw_sector_size") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.csecs);
+-	} else if (strcmp(attr->name, "oob_sector_size") == 0) {/* u32 */
+-		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.sos);
+ 	} else if (strcmp(attr->name, "prog_typ") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.tprt);
+ 	} else if (strcmp(attr->name, "prog_max") == 0) {
+@@ -1021,13 +1027,21 @@ static ssize_t nvm_dev_attr_show_12(struct device *dev,
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.tbet);
+ 	} else if (strcmp(attr->name, "erase_max") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.tbem);
++	} else if (strcmp(attr->name, "vendor_opcode") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.vmnt);
++	} else if (strcmp(attr->name, "device_mode") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.dom);
++	/* kept for compatibility */
++	} else if (strcmp(attr->name, "media_manager") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%s\n", "gennvm");
++	} else if (strcmp(attr->name, "capabilities") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.cap);
++	} else if (strcmp(attr->name, "media_type") == 0) {	/* u8 */
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.mtype);
++	} else if (strcmp(attr->name, "flash_media_type") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.fmtype);
+ 	} else if (strcmp(attr->name, "multiplane_modes") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "0x%08x\n", dev_geo->c.mpos);
+-	} else if (strcmp(attr->name, "media_capabilities") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "0x%08x\n", dev_geo->c.mccap);
+-	} else if (strcmp(attr->name, "max_phys_secs") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n",
+-				ndev->ops->max_phys_sect);
+ 	} else {
+ 		return scnprintf(page, PAGE_SIZE,
+ 			"Unhandled attr(%s) in `nvm_dev_attr_show_12`\n",
+@@ -1035,6 +1049,17 @@ static ssize_t nvm_dev_attr_show_12(struct device *dev,
+ 	}
  }
  
-+static int nvme_nvm_get_chunk_log_page(struct nvm_dev *nvmdev,
-+				       struct nvm_chunk_log_page *log,
-+				       unsigned long off,
-+				       unsigned long total_len)
++static ssize_t nvm_dev_attr_show_lbaf(struct nvm_addr_format *lbaf,
++					 char *page)
 +{
-+	struct nvme_ns *ns = nvmdev->q->queuedata;
-+	struct nvme_command c = { };
-+	unsigned long offset = off, left = total_len;
-+	unsigned long len, len_dwords;
-+	void *buf = log;
-+	int ret;
-+
-+	/* The offset needs to be dword-aligned */
-+	if (offset & 0x3)
-+		return -EINVAL;
-+
-+	do {
-+		/* Send 256KB at a time */
-+		len = (1 << 18) > left ? left : (1 << 18);
-+		len_dwords = (len >> 2) - 1;
-+
-+		c.get_log_page.opcode = nvme_admin_get_log_page;
-+		c.get_log_page.nsid = cpu_to_le32(ns->head->ns_id);
-+		c.get_log_page.lid = NVME_NVM_LOG_REPORT_CHUNK;
-+		c.get_log_page.lpol = cpu_to_le32(offset & 0xffffffff);
-+		c.get_log_page.lpou = cpu_to_le32(offset >> 32);
-+		c.get_log_page.numdl = cpu_to_le16(len_dwords & 0xffff);
-+		c.get_log_page.numdu = cpu_to_le16(len_dwords >> 16);
-+
-+		ret = nvme_submit_sync_cmd(ns->ctrl->admin_q, &c, buf, len);
-+		if (ret) {
-+			dev_err(ns->ctrl->device,
-+				"get chunk log page failed (%d)\n", ret);
-+			break;
-+		}
-+
-+		buf += len;
-+		offset += len;
-+		left -= len;
-+	} while (left);
-+
-+	return ret;
++	return scnprintf(page, PAGE_SIZE,
++		"0x%02x%02x%02x%02x%02x%02x%02x%02x\n",
++				lbaf->ch_offset, lbaf->ch_len,
++				lbaf->lun_offset, lbaf->lun_len,
++				lbaf->chk_offset, lbaf->chk_len,
++				lbaf->sec_offset, lbaf->sec_len);
 +}
 +
- static inline void nvme_nvm_rqtocmd(struct nvm_rq *rqd, struct nvme_ns *ns,
- 				    struct nvme_nvm_command *c)
+ static ssize_t nvm_dev_attr_show_20(struct device *dev,
+ 		struct device_attribute *dattr, char *page)
  {
-@@ -684,6 +732,8 @@ static struct nvm_dev_ops nvme_nvm_dev_ops = {
- 	.get_bb_tbl		= nvme_nvm_get_bb_tbl,
- 	.set_bb_tbl		= nvme_nvm_set_bb_tbl,
+@@ -1048,20 +1073,14 @@ static ssize_t nvm_dev_attr_show_20(struct device *dev,
  
-+	.get_chunk_log_page	= nvme_nvm_get_chunk_log_page,
+ 	attr = &dattr->attr;
+ 
+-	if (strcmp(attr->name, "groups") == 0) {
++	if (strcmp(attr->name, "lba_format") == 0) {
++		return nvm_dev_attr_show_lbaf((void *)&dev_geo->c.addrf, page);
++	} else if (strcmp(attr->name, "groups") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->num_ch);
+ 	} else if (strcmp(attr->name, "punits") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->num_lun);
+ 	} else if (strcmp(attr->name, "chunks") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.num_chk);
+-	} else if (strcmp(attr->name, "clba") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.clba);
+-	} else if (strcmp(attr->name, "ws_min") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.ws_min);
+-	} else if (strcmp(attr->name, "ws_opt") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.ws_opt);
+-	} else if (strcmp(attr->name, "mw_cunits") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.mw_cunits);
+ 	} else if (strcmp(attr->name, "write_typ") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.tprt);
+ 	} else if (strcmp(attr->name, "write_max") == 0) {
+@@ -1086,7 +1105,19 @@ static ssize_t nvm_dev_attr_show_20(struct device *dev,
+ 
+ /* general attributes */
+ static NVM_DEV_ATTR_RO(version);
+-static NVM_DEV_ATTR_RO(capabilities);
 +
- 	.submit_io		= nvme_nvm_submit_io,
- 	.submit_io_sync		= nvme_nvm_submit_io_sync,
- 
-diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
-index 1148b3f22b27..eb2900a18160 100644
---- a/include/linux/lightnvm.h
-+++ b/include/linux/lightnvm.h
-@@ -73,10 +73,13 @@ struct nvm_rq;
- struct nvm_id;
- struct nvm_dev;
- struct nvm_tgt_dev;
-+struct nvm_chunk_log_page;
- 
- typedef int (nvm_id_fn)(struct nvm_dev *);
- typedef int (nvm_op_bb_tbl_fn)(struct nvm_dev *, struct ppa_addr, u8 *);
- typedef int (nvm_op_set_bb_fn)(struct nvm_dev *, struct ppa_addr *, int, int);
-+typedef int (nvm_get_chunk_lp_fn)(struct nvm_dev *, struct nvm_chunk_log_page *,
-+				  unsigned long, unsigned long);
- typedef int (nvm_submit_io_fn)(struct nvm_dev *, struct nvm_rq *);
- typedef int (nvm_submit_io_sync_fn)(struct nvm_dev *, struct nvm_rq *);
- typedef void *(nvm_create_dma_pool_fn)(struct nvm_dev *, char *);
-@@ -90,6 +93,8 @@ struct nvm_dev_ops {
- 	nvm_op_bb_tbl_fn	*get_bb_tbl;
- 	nvm_op_set_bb_fn	*set_bb_tbl;
- 
-+	nvm_get_chunk_lp_fn	*get_chunk_log_page;
++static NVM_DEV_ATTR_RO(ws_min);
++static NVM_DEV_ATTR_RO(ws_opt);
++static NVM_DEV_ATTR_RO(mw_cunits);
++static NVM_DEV_ATTR_RO(maxoc);
++static NVM_DEV_ATTR_RO(maxocpu);
 +
- 	nvm_submit_io_fn	*submit_io;
- 	nvm_submit_io_sync_fn	*submit_io_sync;
++static NVM_DEV_ATTR_RO(media_capabilities);
++static NVM_DEV_ATTR_RO(max_phys_secs);
++
++static NVM_DEV_ATTR_RO(clba);
++static NVM_DEV_ATTR_RO(csecs);
++static NVM_DEV_ATTR_RO(sos);
  
-@@ -286,6 +291,30 @@ struct nvm_dev_geo {
- 	struct nvm_common_geo c;
+ static NVM_DEV_ATTR_RO(read_typ);
+ static NVM_DEV_ATTR_RO(read_max);
+@@ -1105,42 +1136,53 @@ static NVM_DEV_ATTR_12_RO(num_blocks);
+ static NVM_DEV_ATTR_12_RO(num_pages);
+ static NVM_DEV_ATTR_12_RO(page_size);
+ static NVM_DEV_ATTR_12_RO(hw_sector_size);
+-static NVM_DEV_ATTR_12_RO(oob_sector_size);
+ static NVM_DEV_ATTR_12_RO(prog_typ);
+ static NVM_DEV_ATTR_12_RO(prog_max);
+ static NVM_DEV_ATTR_12_RO(erase_typ);
+ static NVM_DEV_ATTR_12_RO(erase_max);
+ static NVM_DEV_ATTR_12_RO(multiplane_modes);
+-static NVM_DEV_ATTR_12_RO(media_capabilities);
+-static NVM_DEV_ATTR_12_RO(max_phys_secs);
++static NVM_DEV_ATTR_12_RO(capabilities);
+ 
+ static struct attribute *nvm_dev_attrs_12[] = {
+ 	&dev_attr_version.attr,
+-	&dev_attr_capabilities.attr,
+-
+-	&dev_attr_vendor_opcode.attr,
+-	&dev_attr_device_mode.attr,
+-	&dev_attr_media_manager.attr,
+ 	&dev_attr_ppa_format.attr,
+-	&dev_attr_media_type.attr,
+-	&dev_attr_flash_media_type.attr,
++
+ 	&dev_attr_num_channels.attr,
+ 	&dev_attr_num_luns.attr,
+ 	&dev_attr_num_planes.attr,
+ 	&dev_attr_num_blocks.attr,
+ 	&dev_attr_num_pages.attr,
+ 	&dev_attr_page_size.attr,
++
+ 	&dev_attr_hw_sector_size.attr,
+-	&dev_attr_oob_sector_size.attr,
++
++	&dev_attr_clba.attr,
++	&dev_attr_csecs.attr,
++	&dev_attr_sos.attr,
++
++	&dev_attr_ws_min.attr,
++	&dev_attr_ws_opt.attr,
++	&dev_attr_maxoc.attr,
++	&dev_attr_maxocpu.attr,
++	&dev_attr_mw_cunits.attr,
++
++	&dev_attr_media_capabilities.attr,
++	&dev_attr_max_phys_secs.attr,
++
+ 	&dev_attr_read_typ.attr,
+ 	&dev_attr_read_max.attr,
+ 	&dev_attr_prog_typ.attr,
+ 	&dev_attr_prog_max.attr,
+ 	&dev_attr_erase_typ.attr,
+ 	&dev_attr_erase_max.attr,
++
++	&dev_attr_vendor_opcode.attr,
++	&dev_attr_device_mode.attr,
++	&dev_attr_media_manager.attr,
++	&dev_attr_capabilities.attr,
++	&dev_attr_media_type.attr,
++	&dev_attr_flash_media_type.attr,
+ 	&dev_attr_multiplane_modes.attr,
+-	&dev_attr_media_capabilities.attr,
+-	&dev_attr_max_phys_secs.attr,
+ 
+ 	NULL,
  };
+@@ -1152,12 +1194,9 @@ static const struct attribute_group nvm_dev_attr_group_12 = {
  
-+enum {
-+	/* Chunk states */
-+	NVM_CHK_ST_FREE =	1 << 0,
-+	NVM_CHK_ST_CLOSED =	1 << 1,
-+	NVM_CHK_ST_OPEN =	1 << 2,
-+	NVM_CHK_ST_OFFLINE =	1 << 3,
-+	NVM_CHK_ST_HOST_USE =	1 << 7,
-+
-+	/* Chunk types */
-+	NVM_CHK_TP_W_SEQ =	1 << 0,
-+	NVM_CHK_TP_W_RAN =	1 << 2,
-+	NVM_CHK_TP_SZ_SPEC =	1 << 4,
-+};
-+
-+struct nvm_chunk_log_page {
-+	__u8	state;
-+	__u8	type;
-+	__u8	wear_index;
-+	__u8	rsvd[5];
-+	__u64	slba;
-+	__u64	cnlb;
-+	__u64	wp;
-+};
-+
- struct nvm_target {
- 	struct list_head list;
- 	struct nvm_tgt_dev *dev;
-@@ -505,6 +534,9 @@ extern struct nvm_dev *nvm_alloc_dev(int);
- extern int nvm_register(struct nvm_dev *);
- extern void nvm_unregister(struct nvm_dev *);
+ /* 2.0 values */
+ static NVM_DEV_ATTR_20_RO(groups);
++static NVM_DEV_ATTR_20_RO(lba_format);
+ static NVM_DEV_ATTR_20_RO(punits);
+ static NVM_DEV_ATTR_20_RO(chunks);
+-static NVM_DEV_ATTR_20_RO(clba);
+-static NVM_DEV_ATTR_20_RO(ws_min);
+-static NVM_DEV_ATTR_20_RO(ws_opt);
+-static NVM_DEV_ATTR_20_RO(mw_cunits);
+ static NVM_DEV_ATTR_20_RO(write_typ);
+ static NVM_DEV_ATTR_20_RO(write_max);
+ static NVM_DEV_ATTR_20_RO(reset_typ);
+@@ -1165,16 +1204,25 @@ static NVM_DEV_ATTR_20_RO(reset_max);
  
-+extern int nvm_get_chunk_log_page(struct nvm_tgt_dev *,
-+				  struct nvm_chunk_log_page *,
-+				  unsigned long, unsigned long);
- extern int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *, struct ppa_addr *,
- 			      int, int);
- extern int nvm_max_phys_sects(struct nvm_tgt_dev *);
+ static struct attribute *nvm_dev_attrs_20[] = {
+ 	&dev_attr_version.attr,
+-	&dev_attr_capabilities.attr,
++	&dev_attr_lba_format.attr,
+ 
+ 	&dev_attr_groups.attr,
+ 	&dev_attr_punits.attr,
+ 	&dev_attr_chunks.attr,
++
+ 	&dev_attr_clba.attr,
++	&dev_attr_csecs.attr,
++	&dev_attr_sos.attr,
++
+ 	&dev_attr_ws_min.attr,
+ 	&dev_attr_ws_opt.attr,
++	&dev_attr_maxoc.attr,
++	&dev_attr_maxocpu.attr,
+ 	&dev_attr_mw_cunits.attr,
+ 
++	&dev_attr_media_capabilities.attr,
++	&dev_attr_max_phys_secs.attr,
++
+ 	&dev_attr_read_typ.attr,
+ 	&dev_attr_read_max.attr,
+ 	&dev_attr_write_typ.attr,
 -- 
 2.7.4
