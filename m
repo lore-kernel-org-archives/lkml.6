@@ -1,80 +1,117 @@
-Return-Path: <nick.lowe@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518528849; cv=none;
-        d=google.com; s=arc-20160816;
-        b=M0JBC9kzRxWb1OT1ql3uhZvFkuHuZBsJkaXDHgqU7uAJetUm0cJtIQSy6ItsuZfTDT
-         NqKUqp0m8DLqMsaJNlKeDem1uNgahliAA5h3rhQq9gM4sAAx9RURavulqhCf/+2NiXmx
-         41emfZyVxpEr4EGQbNorCuHX/HwX/Buaxv9YsASKxBzSj9tS01gQCWFsKiVkLxygl5BA
-         OZjUNavqNumdS05YAc7/9WbNvcVUpO1ueKszs80rbCU1V5ZJy6CubshVjrh+zbsxvumu
-         B6I7tfh4QnYw502G3IiL4kXgaKlM4IdHzkbQhYF/70RtzqV2oNcSsZP8Z9Qs1WKXe5Ye
-         R+FQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=/4NDhV+Pl2QCAvz0f9BOgUlvG4SWq1wTVS+rO7yvkmA=;
-        b=wnNcxahn5i5LC50D51INqjPuC9ZCt82V9ytON7mRonwEM94/vFm+NbS/pr4eAA+smF
-         MTjcIaDW39ac6vOWWmgMbvQabmwXyk8agVUk2SrsszJmfK++hh9sixl9oHlSUxypj464
-         bsa25o/7M84V0w/PLimU8YFHGxX+cfoA6behASYkboz+knJknYZynl8PuOOJYDlo7vNC
-         AdsQR9hYaMVEtAsu26alFgDqBGAUELWSNvns5R711a1Pmk66Ub7RKMdP0MDqyYM+tMQ3
-         T4FrAabu5v8cJFZF5VD6rKRYLqlo9b+JfsBpWZ04dti6ZQGzKFbvLvko3Jvi372Iel+q
-         ZwWA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=BQZDcZnQ;
-       spf=pass (google.com: domain of nick.lowe@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=nick.lowe@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=BQZDcZnQ;
-       spf=pass (google.com: domain of nick.lowe@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=nick.lowe@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x225qT5yNUjjZHsLfnu7QGUnZhXL4CpoLcZnye+83d1Kk75cPIw/GYDL3ooFTezLgCtibyFDuqUKtU4wMPg7NFNw=
-MIME-Version: 1.0
-In-Reply-To: <20180209133934.259299920@linuxfoundation.org>
-References: <20180209133931.211869118@linuxfoundation.org> <20180209133934.259299920@linuxfoundation.org>
-From: Nick Lowe <nick.lowe@gmail.com>
-Date: Tue, 13 Feb 2018 13:34:07 +0000
-Message-ID: <CADSoG1tjU2G9FUNOFod4ZsYSw7gOSsza_JWUv5H6pAkbftWywA@mail.gmail.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-195013-1518534009-2-13211581572695350828
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518534009; b=PDPvS05JXx3fXzGxjFwU96XS+VE9heI/dDOVpP8Sprxv/P3
+    skeSj+qINz+jg4C+YCZo1AO1mTZvTefyqWJ+NEMgtdsOLQI7lrX2gPaFR4ur963q
+    RdphWxeHEsfaUZX1wgmOUC+2+3tPhRdqoA0X/gefsF4MqYCGz6+nvM07sJoeZLV+
+    J3kSLxXN55Vr8soWuEDiutray23cYRUFJVZffTi8AURwvMhm9yT+mnMoO3X5agg9
+    HHcq3Td3x3jBm85/mYU5RQoxZMdg2cdGKFoLN7jcK5/1Z+mHRvc9RHXIv7BUCPE/
+    JkaU7bje74/x81Zwcx1qyINdrxRixJ1AGmTVh0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1518534009; bh=uqOqDPT107L8Ke48yVrauwRF3M
+    4VNBVIrTlaaHaU0Mg=; b=pQYFeD0pf+gpsD8jufcB3C7vfzWf6xog/8mRKkMehu
+    jaez2CVFvP/UVdjAUda91N9wuDnOeSi/JygDg5tRZcLmo+d0iuZLMrbAHHcoLsoh
+    KmP+O/B0mXUfxHKVesM4YMElTriSAvlMtqnWmuIQT/uwBR8wdzAbk7f6I/o+8nNE
+    4ckljjRCjmkn8ldRXTdl1vusHwlzYhF4y8M0TDSOG81/Lwe3SqmmjQwwhhCoWSxf
+    LSVCWymlHvg3eUS4WHq5O70S3uCSXQLggelLgTDsh3Di5SCdhZ9ZoQou8RNcL3aF
+    B/uxKDNdP1Em/+FuvKOorFl3LKuPVc2Q6lfUSB4wnXiw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S965048AbeBMPAG (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Feb 2018 10:00:06 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45758 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965029AbeBMPAG (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 13 Feb 2018 10:00:06 -0500
+Date: Tue, 13 Feb 2018 16:00:07 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Nick Lowe <nick.lowe@gmail.com>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        gnomes@lxorguk.ukuu.org.uk, ak@linux.intel.com,
+        ashok.raj@intel.com, karahmed@amazon.de, arjan@linux.intel.com,
+        torvalds@linux-foundation.org, peterz@infradead.org,
+        Borislav Petkov <bp@alien8.de>, pbonzini@redhat.com,
+        tim.c.chen@linux.intel.com
 Subject: Re: [PATCH 4.9 43/92] x86/pti: Do not enable PTI on CPUs which are
  not vulnerable to Meltdown
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	David Woodhouse <dwmw@amazon.co.uk>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@suse.de>,
-	Dave Hansen <dave.hansen@intel.com>, gnomes@lxorguk.ukuu.org.uk, ak@linux.intel.com,
-	ashok.raj@intel.com, karahmed@amazon.de, arjan@linux.intel.com,
-	torvalds@linux-foundation.org, peterz@infradead.org,
-	Borislav Petkov <bp@alien8.de>, pbonzini@redhat.com, tim.c.chen@linux.intel.com,
-	gregkh@linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20180213150007.GJ26982@kroah.com>
+References: <20180209133931.211869118@linuxfoundation.org>
+ <20180209133934.259299920@linuxfoundation.org>
+ <CADSoG1tjU2G9FUNOFod4ZsYSw7gOSsza_JWUv5H6pAkbftWywA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADSoG1tjU2G9FUNOFod4ZsYSw7gOSsza_JWUv5H6pAkbftWywA@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591931030693871871?=
-X-GMAIL-MSGID: =?utf-8?q?1592292906339822596?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+On Tue, Feb 13, 2018 at 01:34:07PM +0000, Nick Lowe wrote:
+> Hi,
+> 
+> This does not seem to have subsumed the AMD specific code in
+> 
+> x86/pti: Do not enable PTI on CPUs which are not vulnerable to Meltdown
+> Commit a8799fd14d9f7f385a5a5c86cde247caf4bb0320
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/commit/?h=v4.9.81&id=a8799fd14d9f7f385a5a5c86cde247caf4bb0320
+> 
+> x86/kaiser: Check boottime cmdline params
+> Commit 8018307a45a90ab2eecfd03d48b7efb31707df37
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/commit/arch/x86/mm/kaiser.c?h=v4.9.75&id=8018307a45a90ab2eecfd03d48b7efb31707df37
+> 
+> Here, we can see:
+> 
+> +skip:
+> + if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
+> + goto disable;
+> 
+> Refer to 4.9.81's kaiser.c
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/tree/arch/x86/mm/kaiser.c?h=v4.9.81
+> 
+> Also 4.4.115's kaiser.c
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/tree/arch/x86/mm/kaiser.c?h=v4.4.115
 
-This does not seem to have subsumed the AMD specific code in
+So, any hints on what you think should be the correct fix here?
 
-x86/pti: Do not enable PTI on CPUs which are not vulnerable to Meltdown
-Commit a8799fd14d9f7f385a5a5c86cde247caf4bb0320
+thanks,
 
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/commit/?h=v4.9.81&id=a8799fd14d9f7f385a5a5c86cde247caf4bb0320
-
-x86/kaiser: Check boottime cmdline params
-Commit 8018307a45a90ab2eecfd03d48b7efb31707df37
-
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/commit/arch/x86/mm/kaiser.c?h=v4.9.75&id=8018307a45a90ab2eecfd03d48b7efb31707df37
-
-Here, we can see:
-
-+skip:
-+ if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+ goto disable;
-
-Refer to 4.9.81's kaiser.c
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/tree/arch/x86/mm/kaiser.c?h=v4.9.81
-
-Also 4.4.115's kaiser.c
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/tree/arch/x86/mm/kaiser.c?h=v4.4.115
-
-Cheers,
-
-Nick
+greg k-h
