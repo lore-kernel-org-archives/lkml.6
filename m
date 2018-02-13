@@ -1,113 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965924AbeBMVsV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 16:48:21 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:42839 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965843AbeBMVsU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 16:48:20 -0500
-X-Google-Smtp-Source: AH8x2277lPakFMCXx9tWxLhqGaGMiPPe1MdndcQwH5uHuLMwZgfyXXjELHAqoQ4tmNQ24vi6fPWpaQ==
-Date: Tue, 13 Feb 2018 13:48:18 -0800 (PST)
-X-Google-Original-Date: Tue, 13 Feb 2018 13:40:29 PST (-0800)
-Subject: Re: [PATCH] lib: Rename compiler intrinsic selects to GENERIC_LIB_*
-In-Reply-To: <1518182572-23376-1-git-send-email-matt.redfearn@mips.com>
-CC: antonynpavlov@gmail.com, linux-mips@linux-mips.org, jhogan@kernel.org,
-        ralf@linux-mips.org, linux-kernel@vger.kernel.org,
-        matt.redfearn@mips.com
-From: Palmer Dabbelt <palmer@sifive.com>
-To: matt.redfearn@mips.com
-Message-ID: <mhng-a034032e-b23a-4c52-8965-1e9d6e133f43@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S965930AbeBMVwk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 16:52:40 -0500
+Received: from mga05.intel.com ([192.55.52.43]:35319 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965843AbeBMVwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 16:52:39 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,509,1511856000";
+   d="scan'208";a="19763202"
+Date: Tue, 13 Feb 2018 14:52:29 -0700
+From: Keith Busch <keith.busch@intel.com>
+To: Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc: axboe@fb.com, hch@lst.de, sagi@grimberg.me,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESENT] nvme-pci: suspend queues based on online_queues
+Message-ID: <20180213215229.GF20962@localhost.localdomain>
+References: <1518440713-1031-1-git-send-email-jianchao.w.wang@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518440713-1031-1-git-send-email-jianchao.w.wang@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 09 Feb 2018 05:22:52 PST (-0800), matt.redfearn@mips.com wrote:
-> When these are included into arch Kconfig files, maintaining
-> alphabetical ordering of the selects means these get split up. To allow
-> for keeping things tidier and alphabetical, rename the selects to
-> GENERIC_LIB_*
->
-> Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+On Mon, Feb 12, 2018 at 09:05:13PM +0800, Jianchao Wang wrote:
+> @@ -1315,9 +1315,6 @@ static int nvme_suspend_queue(struct nvme_queue *nvmeq)
+>  	nvmeq->cq_vector = -1;
+>  	spin_unlock_irq(&nvmeq->q_lock);
+>  
+> -	if (!nvmeq->qid && nvmeq->dev->ctrl.admin_q)
+> -		blk_mq_quiesce_queue(nvmeq->dev->ctrl.admin_q);
+> -
 
-Thanks!  Do you want me to take this in my tree?
+This doesn't look related to this patch.
 
-Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+>  	pci_free_irq(to_pci_dev(nvmeq->dev->dev), vector, nvmeq);
+>  
+>  	return 0;
+> @@ -1461,13 +1458,14 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
+>  	nvme_init_queue(nvmeq, qid);
+>  	result = queue_request_irq(nvmeq);
+>  	if (result < 0)
+> -		goto release_sq;
+> +		goto offline;
+>  
+>  	return result;
+>  
+> - release_sq:
+> +offline:
+> +	dev->online_queues--;
+>  	adapter_delete_sq(dev, qid);
 
-> ---
->  arch/riscv/Kconfig |  6 +++---
->  lib/Kconfig        | 12 ++++++------
->  lib/Makefile       | 12 ++++++------
->  3 files changed, 15 insertions(+), 15 deletions(-)
->
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 2c6adf12713a..5f1e2188d029 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -99,9 +99,9 @@ config ARCH_RV32I
->  	bool "RV32I"
->  	select CPU_SUPPORTS_32BIT_KERNEL
->  	select 32BIT
-> -	select GENERIC_ASHLDI3
-> -	select GENERIC_ASHRDI3
-> -	select GENERIC_LSHRDI3
-> +	select GENERIC_LIB_ASHLDI3
-> +	select GENERIC_LIB_ASHRDI3
-> +	select GENERIC_LIB_LSHRDI3
->
->  config ARCH_RV64I
->  	bool "RV64I"
-> diff --git a/lib/Kconfig b/lib/Kconfig
-> index c5e84fbcb30b..946d0890aad6 100644
-> --- a/lib/Kconfig
-> +++ b/lib/Kconfig
-> @@ -584,20 +584,20 @@ config STRING_SELFTEST
->
->  endmenu
->
-> -config GENERIC_ASHLDI3
-> +config GENERIC_LIB_ASHLDI3
->  	bool
->
-> -config GENERIC_ASHRDI3
-> +config GENERIC_LIB_ASHRDI3
->  	bool
->
-> -config GENERIC_LSHRDI3
-> +config GENERIC_LIB_LSHRDI3
->  	bool
->
-> -config GENERIC_MULDI3
-> +config GENERIC_LIB_MULDI3
->  	bool
->
-> -config GENERIC_CMPDI2
-> +config GENERIC_LIB_CMPDI2
->  	bool
->
-> -config GENERIC_UCMPDI2
-> +config GENERIC_LIB_UCMPDI2
->  	bool
-> diff --git a/lib/Makefile b/lib/Makefile
-> index d11c48ec8ffd..7e1ef77e86a3 100644
-> --- a/lib/Makefile
-> +++ b/lib/Makefile
-> @@ -252,9 +252,9 @@ obj-$(CONFIG_SBITMAP) += sbitmap.o
->  obj-$(CONFIG_PARMAN) += parman.o
->
->  # GCC library routines
-> -obj-$(CONFIG_GENERIC_ASHLDI3) += ashldi3.o
-> -obj-$(CONFIG_GENERIC_ASHRDI3) += ashrdi3.o
-> -obj-$(CONFIG_GENERIC_LSHRDI3) += lshrdi3.o
-> -obj-$(CONFIG_GENERIC_MULDI3) += muldi3.o
-> -obj-$(CONFIG_GENERIC_CMPDI2) += cmpdi2.o
-> -obj-$(CONFIG_GENERIC_UCMPDI2) += ucmpdi2.o
-> +obj-$(CONFIG_GENERIC_LIB_ASHLDI3) += ashldi3.o
-> +obj-$(CONFIG_GENERIC_LIB_ASHRDI3) += ashrdi3.o
-> +obj-$(CONFIG_GENERIC_LIB_LSHRDI3) += lshrdi3.o
-> +obj-$(CONFIG_GENERIC_LIB_MULDI3) += muldi3.o
-> +obj-$(CONFIG_GENERIC_LIB_CMPDI2) += cmpdi2.o
-> +obj-$(CONFIG_GENERIC_LIB_UCMPDI2) += ucmpdi2.o
+In addition to the above, set nvmeq->cq_vector to -1.
+
+Everything else that follows doesn't appear to be necessary.
+
+> @@ -2167,6 +2167,7 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
+>  	int i;
+>  	bool dead = true;
+>  	struct pci_dev *pdev = to_pci_dev(dev->dev);
+> +	int onlines;
+>  
+>  	mutex_lock(&dev->shutdown_lock);
+>  	if (pci_is_enabled(pdev)) {
+> @@ -2175,8 +2176,11 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
+>  		if (dev->ctrl.state == NVME_CTRL_LIVE ||
+>  		    dev->ctrl.state == NVME_CTRL_RESETTING)
+>  			nvme_start_freeze(&dev->ctrl);
+> -		dead = !!((csts & NVME_CSTS_CFS) || !(csts & NVME_CSTS_RDY) ||
+> -			pdev->error_state  != pci_channel_io_normal);
+> +
+> +		dead = !!((csts & NVME_CSTS_CFS) ||
+> +				!(csts & NVME_CSTS_RDY) ||
+> +				(pdev->error_state  != pci_channel_io_normal) ||
+> +				(dev->online_queues == 0));
+>  	}
+>  
+>  	/*
+> @@ -2200,9 +2204,14 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
+>  		nvme_disable_io_queues(dev);
+>  		nvme_disable_admin_queue(dev, shutdown);
+>  	}
+> -	for (i = dev->ctrl.queue_count - 1; i >= 0; i--)
+> +
+> +	onlines = dev->online_queues;
+> +	for (i = onlines - 1; i >= 0; i--)
+>  		nvme_suspend_queue(&dev->queues[i]);
+>  
+> +	if (dev->ctrl.admin_q)
+> +		blk_mq_quiesce_queue(dev->ctrl.admin_q);
+> +
+>  	nvme_pci_disable(dev);
+>  
+>  	blk_mq_tagset_busy_iter(&dev->tagset, nvme_cancel_request, &dev->ctrl);
+> @@ -2341,16 +2350,18 @@ static void nvme_reset_work(struct work_struct *work)
+>  	if (result)
+>  		goto out;
+>  
+> -	/*
+> -	 * Keep the controller around but remove all namespaces if we don't have
+> -	 * any working I/O queue.
+> -	 */
+> -	if (dev->online_queues < 2) {
+> +
+> +	/* In case of online_queues is zero, it has gone to out */
+> +	if (dev->online_queues == 1) {
+> +		/*
+> +		 * Keep the controller around but remove all namespaces if we
+> +		 * don't have any working I/O queue.
+> +		 */
+>  		dev_warn(dev->ctrl.device, "IO queues not created\n");
+>  		nvme_kill_queues(&dev->ctrl);
+>  		nvme_remove_namespaces(&dev->ctrl);
+>  		new_state = NVME_CTRL_ADMIN_ONLY;
+> -	} else {
+> +	} else if (dev->online_queues > 1) {
+>  		nvme_start_queues(&dev->ctrl);
+>  		nvme_wait_freeze(&dev->ctrl);
+>  		/* hit this only when allocate tagset fails */
+> -- 
