@@ -1,54 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965760AbeBMUSO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 15:18:14 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:39274 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965648AbeBMUSM (ORCPT
+        id S965737AbeBMUb6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 15:31:58 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:36901 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965611AbeBMUb5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 15:18:12 -0500
-X-Google-Smtp-Source: AH8x226pEfL35hH9rzlRD4t57y9nAkIpU7IoC9/OR/Id0O9pDuEvLiKSlDO9xjdImu0jqKbZOJcfGQ==
-Subject: Re: [PATCH v10 0/3] arm: npcm: add basic support for Nuvoton BMCs
-To: Brendan Higgins <brendanhiggins@google.com>, robh+dt@kernel.org,
-        linux@armlinux.org.uk, mark.rutland@arm.com, tmaimon77@gmail.com,
-        avifishman70@gmail.com, julien.thierry@arm.com, pombredanne@nexb.com,
-        arnd@arndb.de
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org
-References: <20180213200959.160157-1-brendanhiggins@google.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <b33b48ba-35ef-d98e-fa52-f70ed0953dcc@gmail.com>
-Date: Tue, 13 Feb 2018 12:18:05 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 13 Feb 2018 15:31:57 -0500
+Date: Tue, 13 Feb 2018 21:31:45 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: a.zummo@towertech.it, rostedt@goodmis.org, mingo@redhat.com,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
+        broonie@kernel.org
+Subject: Re: [PATCH v3] rtc: Add tracepoints for RTC system
+Message-ID: <20180213203145.GB30929@piout.net>
+References: <f819febcf2104918bfda1eadba021f9cc08ed866.1513221837.git.baolin.wang@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180213200959.160157-1-brendanhiggins@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f819febcf2104918bfda1eadba021f9cc08ed866.1513221837.git.baolin.wang@linaro.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/13/2018 12:09 PM, Brendan Higgins wrote:
-> Addressed comments from:
->  - Joel: https://www.spinics.net/lists/arm-kernel/msg634074.html
->  - Arnd: https://www.spinics.net/lists/arm-kernel/msg634091.html
+On 14/12/2017 at 13:31:43 +0800, Baolin Wang wrote:
+> It will be more helpful to add some tracepoints to track RTC actions when
+> debugging RTC driver. Below sample is that we set/read the RTC time, then
+> set 2 alarms, so we can see the trace logs:
 > 
-> Summary of changes since previous update:
->  - Replaced "nuvoton,npcm7xx-smp" compatibility string with
->    "nuvoton,npcm750-smp".
->  - Fixed some whitespace issues.
->  - Added EVB DTS to Makefile.
+> set/read RTC time:
+> kworker/0:1-67 [000] 21.814245: rtc_set_time: UTC (1510301580) (0)
+> kworker/0:1-67 [000] 21.814312: rtc_read_time: UTC (1510301580) (0)
 > 
-> All changes tested on Nuvoton NPCM750 EVB.
+> set the first alarm timer:
+> kworker/0:1-67 [000] 21.829238: rtc_timer_enqueue: RTC timer:(ffffffc15eb49bc8) expires:1510301700000000000 period:0
+> kworker/0:1-67 [000] 22.018279: rtc_set_alarm: UTC (1510301700) (0)
 > 
+> set the second alarm timer:
+> kworker/0:1-67 [000] 22.230284: rtc_timer_enqueue: RTC timer:(ffffff80088e6430) expires:1510301820000000000 period:0
+> 
+> the first alarm timer was expired:
+> kworker/0:1-67 [000] 145.155584: rtc_timer_dequeue: RTC timer:(ffffffc15eb49bc8) expires:1510301700000000000 period:0
+> kworker/0:1-67 [000] 145.155593: rtc_timer_fired: RTC timer:(ffffffc15eb49bc8) expires:1510301700000000000 period:0
+> kworker/0:1-67 [000] 145.172504: rtc_set_alarm: UTC (1510301820) (0)
+> 
+> the second alarm timer was expired:
+> kworker/0:1-67 [000] 269.102353: rtc_timer_dequeue: RTC timer:(ffffff80088e6430) expires:1510301820000000000 period:0
+> kworker/0:1-67 [000] 269.102360: rtc_timer_fired: RTC timer:(ffffff80088e6430) expires:1510301820000000000 period:0
+> 
+> disable alarm irq:
+> kworker/0:1-67 [000] 269.102469: rtc_alarm_irq_enable: disable RTC alarm IRQ (0)
+> 
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> ---
+> Changes since v2:
+>  - Only keep time64_t in the buffer.
+> 
+> Changes since v1:
+>  - Use unconditional tracepoints with tracing the failures.
+>  - Simplify the rtc_timer_class.
+> ---
+>  drivers/rtc/interface.c    |   30 +++++++
+>  include/trace/events/rtc.h |  206 ++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 236 insertions(+)
+>  create mode 100644 include/trace/events/rtc.h
+> 
+Applied, thanks.
 
-Thanks for keeping me CC, FWIW: Reviewed-by: Florian Fainelli
-<f.fainelli@gmail.com>
-
-FWIW, I don't have a vested interest in BMCs in general, just happened
-to do a drive by review of your SMP code, no need to CC me on future
-submissions (e.g: boards, drivers etc.). Cheers
 -- 
-Florian
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
