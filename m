@@ -1,277 +1,237 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966277AbeBMXts (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 18:49:48 -0500
-Received: from mga17.intel.com ([192.55.52.151]:53398 "EHLO mga17.intel.com"
+        id S966263AbeBMXtq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 18:49:46 -0500
+Received: from mga17.intel.com ([192.55.52.151]:53399 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966232AbeBMXtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 18:49:39 -0500
+        id S966234AbeBMXtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 18:49:40 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,509,1511856000";
-   d="scan'208";a="29822355"
+   d="scan'208";a="29822364"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com
 Cc: gavin.hindman@intel.com, vikas.shivappa@linux.intel.com,
         dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [RFC PATCH V2 18/22] x86/intel_rdt: More precise L2 hit/miss measurements
-Date: Tue, 13 Feb 2018 07:47:02 -0800
-Message-Id: <06a6e32eb4c903e9912727b9ecf6f4b9aded7038.1518443616.git.reinette.chatre@intel.com>
+Subject: [RFC PATCH V2 20/22] x86/intel_rdt: Limit C-states dynamically when pseudo-locking active
+Date: Tue, 13 Feb 2018 07:47:04 -0800
+Message-Id: <0ac56339a2966691b61cd7f5cdc0fb738c920ec3.1518443616.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1518443616.git.reinette.chatre@intel.com>
 References: <cover.1518443616.git.reinette.chatre@intel.com>
+MIME-Version: 1.0
 In-Reply-To: <cover.1518443616.git.reinette.chatre@intel.com>
 References: <cover.1518443616.git.reinette.chatre@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Intel Goldmont processors supports non-architectural precise events that
-can be used to give us more insight into the success of L2 cache
-pseudo-locking on these platforms.
+Deeper C-states impact cache content through shrinking of the cache or
+flushing entire cache to memory before reducing power to the cache.
+Deeper C-states will thus negatively impact the pseudo-locked regions.
 
-Introduce a new measurement trigger that will enable two precise events,
-MEM_LOAD_UOPS_RETIRED.L2_HIT and MEM_LOAD_UOPS_RETIRED.L2_MISS, while
-accessing pseudo-locked data. A new tracepoint, pseudo_lock_l2, is
-created to make these results visible to the user.
+To avoid impacting pseudo-locked regions we limit C-states on
+pseudo-locked region creation so that cores associated with the
+pseudo-locked region are prevented from entering deeper C-states.
+This is accomplished by requesting a CPU latency target which will
+prevent the core from entering C6 across all supported platforms.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c       | 146 ++++++++++++++++++++--
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h |  15 +++
- 2 files changed, 148 insertions(+), 13 deletions(-)
+ Documentation/x86/intel_rdt_ui.txt          |  4 +-
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 89 ++++++++++++++++++++++++++++-
+ 2 files changed, 88 insertions(+), 5 deletions(-)
 
+diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/intel_rdt_ui.txt
+index bb3d6fe0a3e4..755d16ae7db6 100644
+--- a/Documentation/x86/intel_rdt_ui.txt
++++ b/Documentation/x86/intel_rdt_ui.txt
+@@ -349,8 +349,8 @@ in the cache via carefully configuring the CAT feature and controlling
+ application behavior. There is no guarantee that data is placed in
+ cache. Instructions like INVD, WBINVD, CLFLUSH, etc. can still evict
+ “locked” data from cache. Power management C-states may shrink or
+-power off cache. It is thus recommended to limit the processor maximum
+-C-state, for example, by setting the processor.max_cstate kernel parameter.
++power off cache. Deeper C-states will automatically be restricted on
++pseudo-locked region creation.
+ 
+ It is required that an application using a pseudo-locked region runs
+ with affinity to the cores (or a subset of the cores) associated
 diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index b4923aa4314c..34b2de387c3a 100644
+index 7511c2089d07..90f040166fcd 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -36,6 +36,7 @@
- #include "intel_rdt.h"
- 
+@@ -27,6 +27,7 @@
+ #include <linux/kref.h>
+ #include <linux/kthread.h>
+ #include <linux/mman.h>
++#include <linux/pm_qos.h>
+ #include <linux/seq_file.h>
+ #include <linux/stat.h>
+ #include <linux/slab.h>
+@@ -120,6 +121,7 @@ static struct dentry *debugfs_pseudo;
+  * @kmem:		the kernel memory associated with pseudo-locked region
+  * @debugfs_dir:	pointer to this region's directory in the debugfs
+  *			filesystem
++ * @pm_reqs:		Power management QoS requests related to this region
+  */
+ struct pseudo_lock_region {
+ 	struct kernfs_node	*kn;
+@@ -138,6 +140,17 @@ struct pseudo_lock_region {
  #ifdef CONFIG_INTEL_RDT_DEBUGFS
-+#include <asm/perf_event.h>
- #define CREATE_TRACE_POINTS
- #include "intel_rdt_pseudo_lock_event.h"
+ 	struct dentry		*debugfs_dir;
  #endif
-@@ -338,7 +339,7 @@ bool cbm_pseudo_locked(unsigned long cbm, struct rdt_domain *d)
++	struct list_head	pm_reqs;
++};
++
++/**
++ * pseudo_lock_pm_req - A power management QoS request list entry
++ * @list:	Entry within the @pm_reqs list for a pseudo-locked region
++ * @req:	PM QoS request
++ */
++struct pseudo_lock_pm_req {
++	struct list_head list;
++	struct dev_pm_qos_request req;
+ };
+ 
+ /*
+@@ -208,6 +221,66 @@ static void pseudo_lock_minor_release(unsigned int minor)
+ 	__set_bit(minor, &pseudo_lock_minor_avail);
  }
  
- #ifdef CONFIG_INTEL_RDT_DEBUGFS
--static int measure_cycles_fn(void *_plr)
-+static int measure_cycles_hist_fn(void *_plr)
- {
- 	struct pseudo_lock_region *plr = _plr;
- 	unsigned long flags;
-@@ -387,11 +388,115 @@ static int measure_cycles_fn(void *_plr)
- 	return 0;
- }
- 
--static int pseudo_measure_cycles(struct pseudo_lock_region *plr)
-+static int measure_cycles_perf_fn(void *_plr)
++static void pseudo_lock_cstates_relax(struct pseudo_lock_region *plr)
 +{
-+	struct pseudo_lock_region *plr = _plr;
-+	unsigned long long l2_hits, l2_miss;
-+	u64 l2_hit_bits, l2_miss_bits;
-+	unsigned long flags;
-+	u64 i;
-+#ifdef CONFIG_KASAN
-+	/*
-+	 * The registers used for local register variables are also used
-+	 * when KASAN is active. When KASAN is active we use regular variables
-+	 * at the cost of including cache access latency to these variables
-+	 * in the measurements.
-+	 */
-+	unsigned int line_size;
-+	unsigned int size;
-+	void *mem_r;
-+#else
-+	register unsigned int line_size asm("esi");
-+	register unsigned int size asm("edi");
-+#ifdef CONFIG_X86_64
-+	register void *mem_r asm("rbx");
-+#else
-+	register void *mem_r asm("ebx");
-+#endif /* CONFIG_X86_64 */
-+#endif /* CONFIG_KASAN */
++	struct pseudo_lock_pm_req *pm_req, *next;
 +
-+	/*
-+	 * Non-architectural event for the Goldmont Microarchitecture
-+	 * from Intel x86 Architecture Software Developer Manual (SDM):
-+	 * MEM_LOAD_UOPS_RETIRED D1H (event number)
-+	 * Umask values:
-+	 *     L1_HIT   01H
-+	 *     L2_HIT   02H
-+	 *     L1_MISS  08H
-+	 *     L2_MISS  10H
-+	 */
-+
-+	/*
-+	 * Start by setting flags for IA32_PERFEVTSELx:
-+	 *     OS  (Operating system mode)  0x2
-+	 *     INT (APIC interrupt enable)  0x10
-+	 *     EN  (Enable counter)         0x40
-+	 *
-+	 * Then add the Umask value and event number to select performance
-+	 * event.
-+	 */
-+
-+	switch (boot_cpu_data.x86_model) {
-+	case INTEL_FAM6_ATOM_GOLDMONT:
-+	case INTEL_FAM6_ATOM_GEMINI_LAKE:
-+		l2_hit_bits = (0x52ULL << 16) | (0x2 << 8) | 0xd1;
-+		l2_miss_bits = (0x52ULL << 16) | (0x10 << 8) | 0xd1;
-+		break;
-+	default:
-+		goto out;
++	list_for_each_entry_safe(pm_req, next, &plr->pm_reqs, list) {
++		dev_pm_qos_remove_request(&pm_req->req);
++		list_del(&pm_req->list);
++		kfree(pm_req);
 +	}
-+
-+	preempt_disable();
-+	local_irq_save(flags);
-+	/*
-+	 * Call wrmsr direcly to avoid the local register variables from
-+	 * being overwritten due to reordering of their assignment with
-+	 * the wrmsr calls.
-+	 */
-+	__wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
-+	/* Disable events and reset counters */
-+	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0, 0x0);
-+	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 1, 0x0);
-+	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_PERFCTR0, 0x0);
-+	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_PERFCTR0 + 1, 0x0);
-+	/* Set and enable the L2 counters */
-+	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0, l2_hit_bits);
-+	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 1, l2_miss_bits);
-+	mem_r = plr->kmem;
-+	size = plr->size;
-+	line_size = plr->line_size;
-+	for (i = 0; i < size; i += line_size) {
-+		asm volatile("mov (%0,%1,1), %%eax\n\t"
-+			     :
-+			     : "r" (mem_r), "r" (i)
-+			     : "%eax", "memory");
-+	}
-+	/*
-+	 * Call wrmsr directly (no tracing) to not influence
-+	 * the cache access counters as they are disabled.
-+	 */
-+	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0,
-+			      l2_hit_bits & ~(0x40ULL << 16));
-+	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 1,
-+			      l2_miss_bits & ~(0x40ULL << 16));
-+	l2_hits = native_read_pmc(0);
-+	l2_miss = native_read_pmc(1);
-+	wrmsr(MSR_MISC_FEATURE_CONTROL, 0x0, 0x0);
-+	local_irq_restore(flags);
-+	preempt_enable();
-+	trace_pseudo_lock_l2(l2_hits, l2_miss);
-+
-+out:
-+	thread_done = 1;
-+	wake_up_interruptible(&wq);
-+	return 0;
 +}
 +
-+static int pseudo_measure_cycles(struct pseudo_lock_region *plr, int sel)
- {
- 	struct task_struct *thread;
- 	unsigned int cpu;
--	int ret;
-+	int ret = -1;
- 
- 	cpus_read_lock();
- 	mutex_lock(&rdt_pseudo_lock_mutex);
-@@ -408,9 +513,19 @@ static int pseudo_measure_cycles(struct pseudo_lock_region *plr)
- 		goto out;
- 	}
- 
--	thread = kthread_create_on_node(measure_cycles_fn, plr,
--					cpu_to_node(cpu),
--					"pseudo_lock_measure/%u", cpu);
-+	if (sel == 1)
-+		thread = kthread_create_on_node(measure_cycles_hist_fn, plr,
-+						cpu_to_node(cpu),
-+						"pseudo_lock_measure/%u",
-+						cpu);
-+	else if (sel == 2)
-+		thread = kthread_create_on_node(measure_cycles_perf_fn, plr,
-+						cpu_to_node(cpu),
-+						"pseudo_lock_measure/%u",
-+						cpu);
-+	else
-+		goto out;
-+
- 	if (IS_ERR(thread)) {
- 		ret = PTR_ERR(thread);
- 		goto out;
-@@ -438,21 +553,23 @@ static ssize_t pseudo_measure_trigger(struct file *file,
- 	size_t buf_size;
- 	char buf[32];
- 	int ret;
--	bool bv;
-+	int sel;
- 
- 	buf_size = min(count, (sizeof(buf) - 1));
- 	if (copy_from_user(buf, user_buf, buf_size))
- 		return -EFAULT;
- 
- 	buf[buf_size] = '\0';
--	ret = strtobool(buf, &bv);
-+	ret = kstrtoint(buf, 10, &sel);
- 	if (ret == 0) {
-+		if (sel != 1 && sel != 2)
-+			return -EINVAL;
- 		ret = debugfs_file_get(file->f_path.dentry);
--		if (ret == 0 && bv) {
--			ret = pseudo_measure_cycles(plr);
--			if (ret == 0)
--				ret = count;
--		}
-+		if (unlikely(ret))
-+			return ret;
-+		ret = pseudo_measure_cycles(plr, sel);
-+		if (ret == 0)
-+			ret = count;
- 		debugfs_file_put(file->f_path.dentry);
- 	}
- 
-@@ -1249,6 +1366,9 @@ int rdt_pseudo_lock_rmdir(struct kernfs_node *kn)
-  * hardware prefetch disable bits are included here as they are documented
-  * in the SDM.
-  *
-+ * When adding a platform here also add support for its cache events to
-+ * measure_cycles_perf_fn()
++/**
++ * pseudo_lock_cstates_constrain - Restrict cores from entering C6
 + *
-  * RETURNS
-  * If platform is supported, the bits to disable hardware prefetchers, 0
-  * if platform is not supported.
-diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h
-index cd74d1a0f592..45f6d1e35378 100644
---- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h
-+++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h
-@@ -14,6 +14,21 @@ TRACE_EVENT(pseudo_lock_mem_latency,
- 	    TP_printk("latency=%u", __entry->latency)
- 	   );
- 
-+TRACE_EVENT(pseudo_lock_l2,
-+	    TP_PROTO(u64 l2_hits, u64 l2_miss),
-+	    TP_ARGS(l2_hits, l2_miss),
-+	    TP_STRUCT__entry(
-+			     __field(u64, l2_hits)
-+			     __field(u64, l2_miss)
-+	    ),
-+	    TP_fast_assign(
-+			   __entry->l2_hits = l2_hits;
-+			   __entry->l2_miss = l2_miss;
-+	    ),
-+	    TP_printk("hits=%llu miss=%llu",
-+		      __entry->l2_hits, __entry->l2_miss)
-+	   );
++ * To prevent the cache from being affected by power management we have to
++ * avoid entering C6. We accomplish this by requesting a latency
++ * requirement lower than lowest C6 exit latency of all supported
++ * platforms as found in the cpuidle state tables in the intel_idle driver.
++ * At this time it is possible to do so with a single latency requirement
++ * for all supported platforms.
++ *
++ * Since we do support Goldmont, which is affected by X86_BUG_MONITOR, we
++ * need to consider the ACPI latencies while keeping in mind that C2 may be
++ * set to map to deeper sleep states. In this case the latency requirement
++ * needs to prevent entering C2 also.
++ */
++static int pseudo_lock_cstates_constrain(struct pseudo_lock_region *plr)
++{
++	struct pseudo_lock_pm_req *pm_req;
++	int cpu;
++	int ret;
 +
- #endif /* _TRACE_PSEUDO_LOCK_H */
++	for_each_cpu(cpu, &plr->d->cpu_mask) {
++		pm_req = kzalloc(sizeof(*pm_req), GFP_KERNEL);
++		if (!pm_req) {
++			rdt_last_cmd_puts("fail allocating mem for PM QoS\n");
++			ret = -ENOMEM;
++			goto out_err;
++		}
++		ret = dev_pm_qos_add_request(get_cpu_device(cpu),
++					     &pm_req->req,
++					     DEV_PM_QOS_RESUME_LATENCY,
++					     30);
++		if (ret < 0) {
++			rdt_last_cmd_printf("fail to add latency req cpu%d\n",
++					    cpu);
++			kfree(pm_req);
++			ret = -1;
++			goto out_err;
++		}
++		list_add(&pm_req->list, &plr->pm_reqs);
++	}
++
++	return 0;
++
++out_err:
++	pseudo_lock_cstates_relax(plr);
++	return ret;
++}
++
+ static void __pseudo_lock_region_release(struct pseudo_lock_region *plr)
+ {
+ 	bool is_new_plr = (plr == new_plr);
+@@ -218,6 +291,7 @@ static void __pseudo_lock_region_release(struct pseudo_lock_region *plr)
  
- #undef TRACE_INCLUDE_PATH
+ 	if (plr->locked) {
+ 		plr->d->plr = NULL;
++		pseudo_lock_cstates_relax(plr);
+ 		device_destroy(pseudo_lock_class,
+ 			       MKDEV(pseudo_lock_major, plr->minor));
+ 		pseudo_lock_minor_release(plr->minor);
+@@ -1077,6 +1151,12 @@ static int pseudo_lock_doit(struct pseudo_lock_region *plr,
+ 		goto out_clos_def;
+ 	}
+ 
++	ret = pseudo_lock_cstates_constrain(plr);
++	if (ret < 0) {
++		ret = -EINVAL;
++		goto out_clos_def;
++	}
++
+ 	plr->closid = closid;
+ 
+ 	thread_done = 0;
+@@ -1092,7 +1172,7 @@ static int pseudo_lock_doit(struct pseudo_lock_region *plr,
+ 		 * error path since that will result in a CBM of all
+ 		 * zeroes which is an illegal MSR write.
+ 		 */
+-		goto out_clos_def;
++		goto out_cstates;
+ 	}
+ 
+ 	kthread_bind(thread, plr->cpu);
+@@ -1101,7 +1181,7 @@ static int pseudo_lock_doit(struct pseudo_lock_region *plr,
+ 	ret = wait_event_interruptible(wq, thread_done == 1);
+ 	if (ret < 0) {
+ 		rdt_last_cmd_puts("locking thread interrupted\n");
+-		goto out_clos_def;
++		goto out_cstates;
+ 	}
+ 
+ 	/*
+@@ -1118,7 +1198,7 @@ static int pseudo_lock_doit(struct pseudo_lock_region *plr,
+ 	ret = pseudo_lock_minor_get(&new_minor);
+ 	if (ret < 0) {
+ 		rdt_last_cmd_puts("unable to obtain a new minor number\n");
+-		goto out_clos_def;
++		goto out_cstates;
+ 	}
+ 
+ 	plr->locked = true;
+@@ -1163,6 +1243,8 @@ static int pseudo_lock_doit(struct pseudo_lock_region *plr,
+ 
+ out_minor:
+ 	pseudo_lock_minor_release(new_minor);
++out_cstates:
++	pseudo_lock_cstates_relax(plr);
+ out_clos_def:
+ 	pseudo_lock_clos_set(plr, 0, d->ctrl_val[0] | plr->cbm);
+ out_closid:
+@@ -1355,6 +1437,7 @@ int rdt_pseudo_lock_mkdir(const char *name, umode_t mode)
+ 	}
+ #endif
+ 
++	INIT_LIST_HEAD(&plr->pm_reqs);
+ 	kref_init(&plr->refcount);
+ 	kernfs_activate(kn);
+ 	new_plr = plr;
 -- 
 2.13.6
