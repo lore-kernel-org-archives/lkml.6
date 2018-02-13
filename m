@@ -1,86 +1,79 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x224IzXvFvA2L6Cr/1jpJVoqkK07sqeNK+UTE5QktaK2fVsveK62TsivLstLhci96hEykmVAN
-ARC-Seal: i=1; a=rsa-sha256; t=1518557042; cv=none;
+Return-Path: <elfring@users.sourceforge.net>
+X-Google-Smtp-Source: AH8x224DDp+aJyfy5kev1jzyU2zKeRR5LCGrQ0ktRUKs7rrIq05T/hrOo2AJJTdyyD2uylTj5Xun
+ARC-Seal: i=1; a=rsa-sha256; t=1518553421; cv=none;
         d=google.com; s=arc-20160816;
-        b=IDoxH2qNiBaDGTQUBGIe4ZiDtE7s6ykpRymReppVytb3CB3YE7lEdDQDjtX/zEzHMz
-         GV6wRkoLu9tQLqqGbryjK6zXG6EUEvym2DaxLPUSYY+4+L5oXwQ7nUw5MvCi+G3eOg6L
-         /OKBor221nZiKLc4/SR4UzIS4ky4Ih9Lr6AEjLl5RJk9yYBxkNsObTIH41HBPqGe+0qB
-         PTDQJAP9wOKWbtRgqa5UQ4th38+uB2qDfpsFrub9BPWpnZ/2D1Gf6E7X7Ml7kgVv+MzW
-         Ooi0aeH1KyCXJgy2dTCpQ5i15bdtgOS8+i0fvner1XOorfWLhpMaVfGKaMbW7+FO6nnS
-         Y5+g==
+        b=lbC3J0nMJYMxbWIqtua0areyrd2YXwByFQ6dnEfOEGG8jllUfQlgZ98Fg0HKX7Flie
+         zFDCZwo2F9enlwcpbOzHEoE3OELlzOFXGlHlWWr7ML+24iIoJZ6SZlZ2PcDikP2kOvlE
+         z/GmFtfBtIo2JDqILEn/vlgsLdxa9WyC6tPU2mJbSLZjDAcOnNF3SKVnqpOK2eL5keUf
+         TOq1yjBvjgA5Zsdg4PmIp1LIeofHqdxz8REcANYrYvdhKUQXPzq3kKOV/fLyfQwqM+T/
+         KPyxFowb7i/5H5k4ug/M7hk+SftWqvvuvrhzPQHJO5/or/LA2BoMZ9IxhL1ASh0OxkI+
+         G7IA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding
-         :content-language:in-reply-to:mime-version:user-agent:date
-         :message-id:from:references:cc:to:subject:arc-authentication-results;
-        bh=eWZ4ITf0TmR0N/vVosZXM6Vf6rCEfWwRpjKPW6t6W8A=;
-        b=iXURybJYSFTyYGzZ+A7tDAF0+D6EP87M8XSAL+oNe0glp6DBxGWdpu578R5lIy34R6
-         cGXt55WrQENSNCxgZtW2ePUsq5qRcA5Wd4Zot4TEZQ6dLU2e3ErON4xQe4yYrlI6MXlB
-         OKinBlNTQ+vgvzZS6Oiuzo5FVEICdFM5/N5eY9UKgpHT1+PnbXu+vB/b1jxe6ti3IGVa
-         k6um2IGARyVZvp0fs+dRRZ0AHRxQp+WfnBDoBh+nneBDfkLKbblphhUutxoqFLWXFP7N
-         vzBiqd/rYz0uG0QHxS/x/oO6rM919fs0Xspcxs9CDMz074PJlE9HO5RWAJO20tOK2AT2
-         WSyQ==
+        h=content-transfer-encoding:content-language:mime-version:user-agent
+         :date:message-id:subject:from:cc:to:arc-authentication-results;
+        bh=DsKSJj01qErV8gNCBgKJ1R0pgCVSToiG2WTOrIN6dpA=;
+        b=PBZSQcR7bLaK0xdCW0O9ERc24bd1TG02EQydTCUAep5pN6OSqxRAUdsgo0DJ3FGYgv
+         9ptzqfOYxsirE1TC8Py5iTdaWXktE6aSUZOtENywTtVzH1BgyiQNQwVF8cVNw503529c
+         mw2DAyLZiIbSWj6L+SzjHIcjDv1KlJKLz3DaJvpC8ahWdsJH/VM0K2DXceKGU7LkOA5R
+         +oZSYVOFXdlWk/LuXZPLnpW6RPoFRiG3ZClDEI6nz5FMHL/HYIe71vipp4G6PSM4IfBn
+         GLL1O1Q5rLoLG6dxVqCYozyRxOZp43ZdMhp2bwaDMuxuxj4XZg3KDEeGN4VQFIYwqVg7
+         q1Ww==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+       spf=pass (google.com: domain of elfring@users.sourceforge.net designates 212.227.15.4 as permitted sender) smtp.mailfrom=elfring@users.sourceforge.net;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=sourceforge.net
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965790AbeBMVYC (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Tue, 13 Feb 2018 16:24:02 -0500
-Received: from osg.samsung.com ([64.30.133.232]:57761 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965749AbeBMVYB (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Tue, 13 Feb 2018 16:24:01 -0500
-Subject: Re: [PATCH] selftests: memfd: add config fragment for fuse
-To: =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>,
-        linux-kselftest@vger.kernel.org
-Cc: Anders Roxell <anders.roxell@linaro.org>,
-        Shuah Khan <shuah@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuahkh@osg.samsung.com>
-References: <1517955648-11186-1-git-send-email-daniel.diaz@linaro.org>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Message-ID: <14ff3440-ebaf-5d1d-66a3-d6213ca4cb95@osg.samsung.com>
-Date: Tue, 13 Feb 2018 14:23:36 -0700
+       spf=pass (google.com: domain of elfring@users.sourceforge.net designates 212.227.15.4 as permitted sender) smtp.mailfrom=elfring@users.sourceforge.net;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=sourceforge.net
+To: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Vinod Koul <vinod.koul@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] DMA-PPC4xx: Adjustments for three function
+ implementations
+Message-ID: <4d9b3ca7-e1bd-42f9-5933-550146812f1e@users.sourceforge.net>
+Date: Tue, 13 Feb 2018 21:23:32 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1517955648-11186-1-git-send-email-daniel.diaz@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:N0Y1XUIieratTtjfLrxke1Y7dazh1DU08d2LGcqJ0yKTS8CxYwB
+ P2jPZ01PQIND53J1G3N8Ij3WlEXf5+CTEVpQU4WQyuAOQlE+WqS3Z891YeJZP4uOmkk+YlF
+ /iMc96DdgyPVfvw7N6yMEeAgBVTKNQLaP+Ryn/49Su7+g4MJAiGmBtqGSNKnDF3/5ID0/8S
+ 0tviDAJBm/Z+JXsIp0aew==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:2zj2uPmZdo8=:HnlYgpf1bzX8iVNIMbqAbU
+ 1iOhqyWo/RAXUpgiNUBZRoH5psiTLR/SH+d6jN6R5axMRJ2bwivbbkUzLDjKqQgCpuh4hlnw4
+ KgVfE09Gdy2V/KDl2zpb7XbZb6Tg0VevOexL07JCS9BCYf7rRLM+l1RKA95Bgt+H9KLfuZIQp
+ Qj6P9k4V91b2Rm8A05fwCIJqDMyzi6gjlxxJgUjIest76YiPEVRbzr43A8uEOYtvBZCPbdoau
+ zFVxEe4aFdqH5Zcqyw3qFQCQBfRgRhpAd7OvuZ8EjJB/08aiQwSnqgGjlxl/nMhWFdNynx5Ow
+ jG+ZhIBPAiJ3WIBudKtgm+GO6zZi1NheB2lE+lrNBvCok10ZGunVFM11I8gYq1H0wR7boYaNU
+ olBOkFAeszF5dK9EmgKVrnHMMsCyPuPVBQ2CQo8PGfE/dsfrm5PD0XToRQ9Sjs5S87youvdEx
+ JfXZNvyPvQoeQVRiKLJMGWInuy6xFpLBAcDPPefU4j8aUs7wuiqUJxo2V35BKkblV4GDgCtSL
+ hu6W4ToLWsS35d0kZJLa1fC8uWGXKR/669fD/nRugFu574atE1r1AfCnUpAo9eVyMwkdrMDPq
+ SY8m+jwMIR1Rjg+FDS5H0zDT42ahuwaKkVC9ThSf65HRW9N/B3U+bge1T0Vgnn4ZL+KOUfUD4
+ FK6uAm26tJVRg7BQel9AkwNgrTH5OOAwXIj3pj/g35giXpjSMFL/02J+vlSv4UYefCeBA6O8g
+ M5Q1sr6b/nxQATzii7VF4yWqc42xoGmb3wZketMr4chzrI0tHRC0J2VUFUIuF/sl1z6asWoU0
+ cDwZ43B9iumrE6EKXF78Fm4rKWMULDjYjP1/hN/8UcqF21pbCs=
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591691916709223124?=
-X-GMAIL-MSGID: =?utf-8?q?1592322469997828622?=
+X-GMAIL-THRID: =?utf-8?q?1592318672190098989?=
+X-GMAIL-MSGID: =?utf-8?q?1592318672190098989?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/06/2018 03:20 PM, Daniel Díaz wrote:
-> From: Anders Roxell <anders.roxell@linaro.org>
-> 
-> The memfd test requires to insert the fuse module (CONFIG_FUSE_FS).
-> 
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
-> ---
->  tools/testing/selftests/memfd/config | 1 +
->  1 file changed, 1 insertion(+)
->  create mode 100644 tools/testing/selftests/memfd/config
-> 
-> diff --git a/tools/testing/selftests/memfd/config b/tools/testing/selftests/memfd/config
-> new file mode 100644
-> index 0000000..835c7f4
-> --- /dev/null
-> +++ b/tools/testing/selftests/memfd/config
-> @@ -0,0 +1 @@
-> +CONFIG_FUSE_FS=m
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Feb 2018 21:16:42 +0100
 
+Two update suggestions were taken into account
+from static source code analysis.
 
-Thanks for the patch. Applied to linux-kselftest fixes for 4.16-rc3
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in two functions
+  Improve a size determination in ppc440spe_adma_alloc_chan_resources()
 
-thanks,
--- Shuah
+ drivers/dma/ppc4xx/adma.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+-- 
+2.16.1
