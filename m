@@ -1,81 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934805AbeBMQWC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 11:22:02 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:41295 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934472AbeBMQWA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:22:00 -0500
-Subject: Re: RFC: build config via DT names
-To: Rob Herring <robh@kernel.org>, Frank Rowand <frowand.list@gmail.com>
-Cc: "Enrico Weigelt, metux IT consult" <metux@gmx.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <63f25fea-f163-f9cc-b5b2-f6f291d7f8d2@gmx.de>
- <d55f95cc-228b-e65f-b46c-2f314f4fa582@gmail.com>
- <CAL_JsqJXJA+Z7b6SoUx=MVK_C=vcMRAibapriOi+Wss6L1ahsw@mail.gmail.com>
-From: Enrico Weigelt <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <fcaefa19-defc-f09d-fa55-06384e2a545d@metux.net>
-Date: Tue, 13 Feb 2018 16:21:52 +0000
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        id S934860AbeBMQWb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 11:22:31 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60352 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934472AbeBMQW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 11:22:29 -0500
+Subject: Re: [RFC PATCH 2/2] KVM: SVM: Add MSR feature support for serializing
+ LFENCE
+To: Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <20180208225833.22074.25995.stgit@tlendack-t1.amdoffice.net>
+ <20180208225856.22074.98252.stgit@tlendack-t1.amdoffice.net>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <584e51cc-1a79-4e5d-45ef-1850bb6c155e@redhat.com>
+Date: Tue, 13 Feb 2018 17:22:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJXJA+Z7b6SoUx=MVK_C=vcMRAibapriOi+Wss6L1ahsw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180208225856.22074.98252.stgit@tlendack-t1.amdoffice.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:7H28iPK7soWdQhNvhkmnk10i/9yb3RARvpfwmFOAFVHdmgmiB8w
- dRngvNYPDgydsqlXZ09YCLHistEO9/kuxiSWVYcARdjXpGAMeGGZhnr/vgnT7bs9vY3AIFd
- yWL6v9NbSldKRcUgiZ5SGNUcmThSq6tKQqXOvded4B2erID7GqtH/ik1RBPpwQb1SxKSlJk
- VNPHZArVIM3gWY4ut+a0A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:fADO9O2LA1U=:VzPqGobCNVCm+aPSL7cynS
- XRDDbB31c3ZqhR9iI4W/YtifkrnTopQAbG5XGYXxUFg2fWmuDYuGA3QmItZQsssz5IShAhnac
- gPRk2NP19XwWeCGvL1OyvsVH28nnMVCIE049M4BVl41HBmVZvkH/65loWqZLmpTS+SlW8mpNM
- KCgx0aD7lWw0nWnCC0Duw4a+M0jC1EgAhSAXcioiZd4XwfK/2ZmMHUG62I2nxW6suFf7y48Ip
- Zn/u/L3jJpfjGfY7tu68bqlJFFXVxQFmwkSAk4Kp8uwdR81ZCYUi+rWZTHqdUX6RotR8lGnRN
- TdehQ0BWaIxILDmwIUEnYbFCbXjNsNW/8qjwAdfxBdm9Mpr8NUlzWKDHoFIIeyVPPYRrB8ZfX
- d/30fRj4qSYhlsBFdp4ytRRuhTyVGh/09pU1JGWPp1O0ybPODzh0jqOxUPOD7MT2aKVLhN1Ie
- H4XHTuPc/GxuGPq/KcxqJ/x+kSSIb3qjliZsFtgRIlfTb0NTI2jjwGcnSje0gJq6k2mI5lDUi
- EA79ITDE3PkpFDSQ2p+qTlbXEZuJUFaayHjg0AqCsW8DJSHBq1J5c9OcNUxkF7KydJF5humNA
- BIp1qvAgtP6l+kpjtC4ezzekFsLXbD9jsiSbRfdJIU4ggug7tm23V7LPvj2fS4lpSz7W+Jl7n
- VvAsZBJDbso2CJkVNSlrZXXL6mHj/YW9dxCeNVbykI4dNZ3xi6Rbs6YjuLKSmZvGgxUcECBMU
- KAVIEw8WDOyJbzrQK16K6F4ZmB062sCGivCY7li7SRMJasFY86Hd/YQv8xs=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.02.2018 15:19, Rob Herring wrote:
+On 08/02/2018 23:58, Tom Lendacky wrote:
+> Create an entry in the new MSR as a feature framework to allow a guest to
+> recognize LFENCE as a serializing instruction on AMD processors.  The MSR
+> can only be set by the host, any write by the guest will be ignored.  A
+> read by the guest will return the value as set by the host.  In this way,
+> the support to expose the feature to the guest is controlled by the
+> hypervisor.
+> 
+> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+> ---
+>  arch/x86/kvm/svm.c |   16 ++++++++++++++++
+>  arch/x86/kvm/x86.c |    6 ++++++
+>  2 files changed, 22 insertions(+)
+> 
+> @@ -4047,6 +4052,17 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
+>  	case MSR_VM_IGNNE:
+>  		vcpu_unimpl(vcpu, "unimplemented wrmsr: 0x%x data 0x%llx\n", ecx, data);
+>  		break;
+> +	case MSR_F10H_DECFG:
+> +		/* Only the host can set this MSR, silently ignore */
+> +		if (!msr->host_initiated)
+> +			break;
 
-> Doubling the number of driver config options is not going to fly. 
+Just one thing I'm wondering, should we #GP if the guest attempts to
+clear MSR_F10H_DECFG_LFENCE_SERIALIZE?
 
-These options would be in their own submenu (which could be disabled
-completely) and use their own prefix. IMHO, even if they grow into big
-numbers, the impact should be minimal.
+Thanks,
 
-> How would you handle multiple compatible strings per driver? 
+Paolo
 
-Multiple entries in the submenu, each selecting the same driver.
-
-> We have all the data, so we should be able to generate this which
-> dt_to_config tries to do. 
-
-I guess there're lots of corner cases that would need special magic.
-
-> I think part of the problem is dt_to_config
-> works at the source level for everything. Really we need a more robust
-> way to map source files to config options and extracting match tables
-> from drivers. Perhaps doing the latter with coccinelle which can match
-> struct types, using the object files instead, or using module aliases
-> (though that doesn't work for built-in drivers).
-
-Configure by already compiled binaries ?
-
-
---mtx
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+> +
+> +		/* Check the supported bits */
+> +		if (!kvm_valid_msr_feature(MSR_F10H_DECFG, data))
+> +			return 1;
+> +
+> +		svm->msr_decfg = data;
+> +		break;
+>  	case MSR_IA32_APICBASE:
+>  		if (kvm_vcpu_apicv_active(vcpu))
+>  			avic_update_vapic_bar(to_svm(vcpu), data);
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 4251c34..21ec73b 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -1060,7 +1060,13 @@ struct kvm_msr_based_features {
+>  	u64 value;			/* MSR value */
+>  };
+>  
+> +static const struct x86_cpu_id msr_decfg_match[] = {
+> +	{ X86_VENDOR_AMD, X86_FAMILY_ANY, X86_MODEL_ANY, X86_FEATURE_LFENCE_RDTSC },
+> +	{}
+> +};
+> +
+>  static struct kvm_msr_based_features msr_based_features[] = {
+> +	{ MSR_F10H_DECFG, MSR_F10H_DECFG_LFENCE_SERIALIZE, msr_decfg_match },
+>  	{}
+>  };
+>  
+> 
