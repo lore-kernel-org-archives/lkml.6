@@ -1,125 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965154AbeBMP0t (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 10:26:49 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:58203 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965072AbeBMP0r (ORCPT
+        id S965179AbeBMP1w (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 10:27:52 -0500
+Received: from mail-io0-f178.google.com ([209.85.223.178]:35162 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964869AbeBMP1u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 10:26:47 -0500
-Date: Tue, 13 Feb 2018 07:25:28 -0800
-From: tip-bot for Will Deacon <tipbot@zytor.com>
-Message-ID: <tip-2963962dc910e57becfa0bb3df013b1d5c23179a@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, hpa@zytor.com, torvalds@linux-foundation.org,
-        dan.j.williams@intel.com, will.deacon@arm.com
-Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
-        peterz@infradead.org, hpa@zytor.com, torvalds@linux-foundation.org,
-        will.deacon@arm.com, dan.j.williams@intel.com
-In-Reply-To: <1517840166-15399-1-git-send-email-will.deacon@arm.com>
-References: <1517840166-15399-1-git-send-email-will.deacon@arm.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] nospec: Move array_index_nospec() parameter checking
- into separate macro
-Git-Commit-ID: 2963962dc910e57becfa0bb3df013b1d5c23179a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 13 Feb 2018 10:27:50 -0500
+X-Google-Smtp-Source: AH8x224ZhQDymLxfm5fYS5SWJIB+6jJGhTVvLC9ucbyLi+EIBUAI4/b+Dj6PtWwE7pGgfGY/tI8HQbzt3rFFjRlGDAM=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Reply-To: whiteheadm@acm.org
+From: tedheadster <tedheadster@gmail.com>
+Date: Tue, 13 Feb 2018 10:27:29 -0500
+Message-ID: <CAP8WD_Yr8bt+uz7JBixf+xELB-_3Y8J8tsaQWpEg8nvFtGFraw@mail.gmail.com>
+Subject: Re: move stack-protector availability out of Kconfig
+To: Kees Cook <keescook@chromium.org>
+Cc: akpm@linux-foundation.org, yamada.masahiro@socionext.com,
+        Arnd Bergmann <arnd@arndb.de>, josh@joshtriplett.org,
+        npiggin@gmail.com, Laura Abbott <labbott@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2963962dc910e57becfa0bb3df013b1d5c23179a
-Gitweb:     https://git.kernel.org/tip/2963962dc910e57becfa0bb3df013b1d5c23179a
-Author:     Will Deacon <will.deacon@arm.com>
-AuthorDate: Mon, 5 Feb 2018 14:16:06 +0000
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 14:22:44 +0100
+Kees,
+  I have a question about this patch. When I configure a kernel for
+ARCH=i386 it sets these Kconfig variables this way:
 
-nospec: Move array_index_nospec() parameter checking into separate macro
+HAVE_CC_STACKPROTECTOR=y
+CC_STACKPROTECTOR_AUTO=y
 
-For architectures providing their own implementation of
-array_index_mask_nospec() in asm/barrier.h, attempting to use WARN_ONCE() to
-complain about out-of-range parameters using WARN_ON() results in a mess
-of mutually-dependent include files.
+CC_STACKPROTECTOR_NONE=n
+CC_STACKPROTECTOR_REGULAR=n
+CC_STACKPROTECTOR_STRONG=n
 
-Rather than unpick the dependencies, simply have the core code in nospec.h
-perform the checking for us.
+It seems to me that at least _one_ of the last _three_ variables
+should be set to 'y' with the defaults that are being set, probably
+CC_STACKPOINTER_NONE=y. All of them being 'n' doesn't make sense to
+me.
 
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1517840166-15399-1-git-send-email-will.deacon@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- include/linux/nospec.h | 36 +++++++++++++++++++++---------------
- 1 file changed, 21 insertions(+), 15 deletions(-)
+As a side note, these defaults set X86_32_LAZY_GS=n (depends on X86_32
+[=y] && CC_STACKPROTECTOR_NONE [=n]) which causes the x86_32 kernels
+to hang. I'll discuss  that in a different email thread, but just
+wanted to say how I came upon this.
 
-diff --git a/include/linux/nospec.h b/include/linux/nospec.h
-index b99bced..fbc98e2 100644
---- a/include/linux/nospec.h
-+++ b/include/linux/nospec.h
-@@ -20,20 +20,6 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
- 						    unsigned long size)
- {
- 	/*
--	 * Warn developers about inappropriate array_index_nospec() usage.
--	 *
--	 * Even if the CPU speculates past the WARN_ONCE branch, the
--	 * sign bit of @index is taken into account when generating the
--	 * mask.
--	 *
--	 * This warning is compiled out when the compiler can infer that
--	 * @index and @size are less than LONG_MAX.
--	 */
--	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,
--			"array_index_nospec() limited to range of [0, LONG_MAX]\n"))
--		return 0;
--
--	/*
- 	 * Always calculate and emit the mask even if the compiler
- 	 * thinks the mask is not needed. The compiler does not take
- 	 * into account the value of @index under speculation.
-@@ -44,6 +30,26 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
- #endif
- 
- /*
-+ * Warn developers about inappropriate array_index_nospec() usage.
-+ *
-+ * Even if the CPU speculates past the WARN_ONCE branch, the
-+ * sign bit of @index is taken into account when generating the
-+ * mask.
-+ *
-+ * This warning is compiled out when the compiler can infer that
-+ * @index and @size are less than LONG_MAX.
-+ */
-+#define array_index_mask_nospec_check(index, size)				\
-+({										\
-+	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,			\
-+	    "array_index_nospec() limited to range of [0, LONG_MAX]\n"))	\
-+		_mask = 0;							\
-+	else									\
-+		_mask = array_index_mask_nospec(index, size);			\
-+	_mask;									\
-+})
-+
-+/*
-  * array_index_nospec - sanitize an array index after a bounds check
-  *
-  * For a code sequence like:
-@@ -61,7 +67,7 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
- ({									\
- 	typeof(index) _i = (index);					\
- 	typeof(size) _s = (size);					\
--	unsigned long _mask = array_index_mask_nospec(_i, _s);		\
-+	unsigned long _mask = array_index_mask_nospec_check(_i, _s);	\
- 									\
- 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
- 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
+- Matthew Whitehead
