@@ -1,83 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933497AbeBMFDm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 00:03:42 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:58268 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751504AbeBMFDk (ORCPT
+        id S1752262AbeBMFmQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 00:42:16 -0500
+Received: from exmail.andestech.com ([59.124.169.137]:7431 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751235AbeBMFmP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 00:03:40 -0500
-Date: Tue, 13 Feb 2018 16:03:44 +1100 (AEDT)
-From: Finn Thain <fthain@telegraphics.com.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-cc: "David S. Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        Linux/m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net v4 09/13] net/mac8390: Convert to nubus_driver
-In-Reply-To: <CAMuHMdUoiVhA5BxVpxJ81VxZ5Y_n1DBugqPxhABE5Z8eL1Bd3w@mail.gmail.com>
-Message-ID: <alpine.LNX.2.21.1802131416310.8@nippy.intranet>
-References: <cover.1518397634.git.fthain@telegraphics.com.au> <219b4da3972b28307c599f7d340e613303de7ed7.1518397634.git.fthain@telegraphics.com.au> <CAMuHMdUoiVhA5BxVpxJ81VxZ5Y_n1DBugqPxhABE5Z8eL1Bd3w@mail.gmail.com>
+        Tue, 13 Feb 2018 00:42:15 -0500
+From: Alan Kao <alankao@andestech.com>
+To: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        "Steven Rostedt" <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
+        <patches@groups.riscv.org>, <linux-kernel@vger.kernel.org>,
+        <greentime@andestech.com>
+CC: Alan Kao <alankao@andestech.com>
+Subject: [PATCH v4 0/6] Add dynamic ftrace support for RISC-V platforms
+Date: Tue, 13 Feb 2018 13:13:15 +0800
+Message-ID: <1518498801-677-1-git-send-email-alankao@andestech.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-Originating-IP: [10.0.1.85]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com w1D5Ft9P046186
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Feb 2018, Geert Uytterhoeven wrote:
+This patch set includes the building blocks of dynamic ftrace features
+for RISC-V machines.
 
-> On Mon, Feb 12, 2018 at 4:08 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
-> > This resolves an old bug that constrained this driver to no more than
-> > one card.
-> >
-> > Tested-by: Stan Johnson <userm57@yahoo.com>
-> > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-> 
-> > --- a/drivers/net/ethernet/8390/mac8390.c
-> > +++ b/drivers/net/ethernet/8390/mac8390.c
-> 
-> > @@ -390,86 +389,86 @@ static bool __init mac8390_init(struct net_device *dev,
-> >         return true;
-> >  }
-> >
-> > -struct net_device * __init mac8390_probe(int unit)
-> > +static int mac8390_device_probe(struct nubus_board *board)
-> >  {
-> >         struct net_device *dev;
-> > -       struct nubus_rsrc *ndev = NULL;
-> >         int err = -ENODEV;
-> > -       static unsigned int slots;
-> > -
-> > -       enum mac8390_type cardtype;
-> > -
-> > -       /* probably should check for Nubus instead */
-> > +       struct nubus_rsrc *fres;
-> > +       enum mac8390_type cardtype = MAC8390_NONE;
-> >
-> >         if (!MACH_IS_MAC)
-> > -               return ERR_PTR(-ENODEV);
-> > +               return -ENODEV;
-> 
-> I think this check can be removed completely,
+Changes in v4:
+ - Organize code structure according to changes in v3
+ - Rebase onto the riscv-linux-4.15 branch at github's 
+   riscv/riscv-linux repo.  Note that this set is based on the previous
+   ftrace patch, which provided basic support.
 
-I agree.
+Changes in v3:
+ - Replace the nops at the tracer call sites into "call ftrace_stub"
+   instructions for better understanding (1/6, 2/6 and 5/6)
 
-> as the nubus_board will exist on suitable Macs only.
-> 
+Changes in v2:
+ - Fix the return value as writing to kernel text goes wrong (2/6)
+ - Replace manual comparisons by calling memcmp (2/6)
+ - Simplify the conditional assignment in the Makefile (1/6)
 
-And considering the out-of-tree Nubus PowerMac port, this check just makes 
-the driver less portable.
+Alan Kao (6):
+  riscv/ftrace: Add RECORD_MCOUNT support
+  riscv/ftrace: Add dynamic function tracer support
+  riscv/ftrace: Add dynamic function graph tracer support
+  riscv/ftrace: Add ARCH_SUPPORTS_FTRACE_OPS support
+  riscv/ftrace: Add DYNAMIC_FTRACE_WITH_REGS support
+  riscv/ftrace: Add HAVE_FUNCTION_GRAPH_RET_ADDR_PTR support
 
-I'll resubmit these patches with the changes you have suggested (here and 
-elsewhere). Thanks for your review.
-
-BTW, would you be willing to review the rest of this series sometime? I 
-ask because David has voiced concerns about code quality, and your 
-"reviewed-by" tag speaks volumes.
+ arch/riscv/Kconfig              |   3 +
+ arch/riscv/Makefile             |   3 +
+ arch/riscv/include/asm/ftrace.h |  56 ++++++++++
+ arch/riscv/kernel/Makefile      |   5 +-
+ arch/riscv/kernel/ftrace.c      | 175 ++++++++++++++++++++++++++++-
+ arch/riscv/kernel/mcount-dyn.S  | 239 ++++++++++++++++++++++++++++++++++++++++
+ arch/riscv/kernel/mcount.S      |  22 ++--
+ arch/riscv/kernel/stacktrace.c  |   6 +
+ scripts/recordmcount.pl         |   5 +
+ 9 files changed, 501 insertions(+), 13 deletions(-)
+ create mode 100644 arch/riscv/kernel/mcount-dyn.S
 
 -- 
-
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+2.15.1
