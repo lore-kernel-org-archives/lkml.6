@@ -1,52 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933248AbeBMB0d (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Feb 2018 20:26:33 -0500
-Received: from casper.infradead.org ([85.118.1.10]:56410 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933047AbeBMB0b (ORCPT
+        id S933250AbeBMBhc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Feb 2018 20:37:32 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:34621 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933161AbeBMBha (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Feb 2018 20:26:31 -0500
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] integrity/security: fix digsig.c build error with header file
-Message-ID: <b3b7eebb-0e9f-f175-94a8-379c5ddcaa86@infradead.org>
-Date: Mon, 12 Feb 2018 17:26:20 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 12 Feb 2018 20:37:30 -0500
+X-Google-Smtp-Source: AH8x226+cQTfTgwEB1CZiX31vgopbZLhLnvxIif0dqYh3uqe6ZDvI90nsUumEoeCjruCfK8hcPq8Wg==
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc: Rajendra Nayak <rnayak@codeaurora.org>,
+        Govind Singh <govinds@qti.qualcomm.com>,
+        Shon Parate <sparate@qti.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] arm64: dts: msm8996: Add rmtfs sharedmem node
+Date: Mon, 12 Feb 2018 17:37:24 -0800
+Message-Id: <20180213013724.3177-2-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.15.0
+In-Reply-To: <20180213013724.3177-1-bjorn.andersson@linaro.org>
+References: <20180213013724.3177-1-bjorn.andersson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+A 2MB shared memory region is used on MSM8996 for exchanging sector data
+in rmtfs. Add this chunk of reserved memory now that we have the
+rmtfs-mem compatible to describe it and its memory protection
+properties.
 
-security/integrity/digsig.c has build errors on some $ARCH due to a
-missing header file, so add it.
-
-  security/integrity/digsig.c:146:2: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
-
-Reported-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org
-Link: http://kisskb.ellerman.id.au/kisskb/head/13396/
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- security/integrity/digsig.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- lnx-416-rc1.orig/security/integrity/digsig.c
-+++ lnx-416-rc1/security/integrity/digsig.c
-@@ -18,6 +18,7 @@
- #include <linux/cred.h>
- #include <linux/key-type.h>
- #include <linux/digsig.h>
-+#include <linux/vmalloc.h>
- #include <crypto/public_key.h>
- #include <keys/system_keyring.h>
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 4b2afcc4fdf4..d04babb5f526 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -75,6 +75,17 @@
+ 			reg = <0x0 0x86200000 0x0 0x2600000>;
+ 			no-map;
+ 		};
++
++		rmtfs@86700000 {
++			compatible = "qcom,rmtfs-mem";
++
++			size = <0x0 0x200000>;
++			alloc-ranges = <0x0 0xa0000000 0x0 0x2000000>;
++			no-map;
++
++			qcom,client-id = <1>;
++			qcom,vmid = <15>;
++		};
+ 	};
  
+ 	cpus {
+-- 
+2.15.0
