@@ -1,75 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935272AbeBMNRl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:17:41 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55072 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935175AbeBMNRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:17:40 -0500
-From: Jeff Moyer <jmoyer@redhat.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>,
-        "Zwisler\, Ross" <ross.zwisler@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm@lists.01.org
-Subject: Re: [PATCH v2] libnvdimm: re-enable deep flush for pmem devices
-References: <151847194459.58291.11339638808076622981.stgit@djiang5-desk3.ch.intel.com>
-        <x49inb1n7kb.fsf@segfault.boston.devel.redhat.com>
-        <CAPcyv4gt88pEivOyEGdYbTx9H2LV7+mQQ9H1ESWhzM+gpbtW0g@mail.gmail.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-X-PCLoadLetter: What the f**k does that mean?
-Date: Tue, 13 Feb 2018 08:17:38 -0500
-In-Reply-To: <CAPcyv4gt88pEivOyEGdYbTx9H2LV7+mQQ9H1ESWhzM+gpbtW0g@mail.gmail.com>
-        (Dan Williams's message of "Mon, 12 Feb 2018 15:05:10 -0800")
-Message-ID: <x49bmgtqb9p.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.3 (gnu/linux)
+        id S964880AbeBMNSY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:18:24 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:43101 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935196AbeBMNSW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 08:18:22 -0500
+X-Google-Smtp-Source: AH8x227N/JU6nZYk7/48kpPbGI3DYfJIVXWXbJvj9Q1UBrWfH9Qq2JsBLb42IcGFocDiKCwkp5q2gZVXt2lhK/VFFZI=
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <ac3d34002d7690f6ca5928b57b7fc4d707104b04.1512041070.git.dongsu@kinvolk.io>
+References: <cover.1512741134.git.dongsu@kinvolk.io> <ac3d34002d7690f6ca5928b57b7fc4d707104b04.1512041070.git.dongsu@kinvolk.io>
+From: Miklos Szeredi <mszeredi@redhat.com>
+Date: Tue, 13 Feb 2018 14:18:21 +0100
+Message-ID: <CAOssrKcZeAHsRz7P_dxh==QAKnp7HeSTh4vWY2tgbWa1ZD918g@mail.gmail.com>
+Subject: Re: [PATCH 03/11] fs: Allow superblock owner to change ownership of inodes
+To: Dongsu Park <dongsu@kinvolk.io>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        containers@lists.linux-foundation.org, Alban Crequy <alban@kinvolk.io>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Williams <dan.j.williams@intel.com> writes:
-
-> On Mon, Feb 12, 2018 at 2:53 PM, Jeff Moyer <jmoyer@redhat.com> wrote:
->> Dave Jiang <dave.jiang@intel.com> writes:
->>
->>> Re-enable deep flush so that users always have a way to be sure that a write
->>> does make it all the way out to the NVDIMM. The PMEM driver writes always
->>> make it "all the way to the NVDIMM", and it relies on the ADR mechanism to
->>> flush the write buffers on power failure. Deep flush is there to explicitly
->>> flush those write buffers to protect against (rare) ADR failure.
->>> This change prevents a regression in deep flush behavior so that applications
->>> can continue to depend on fsync() as a mechanism to trigger deep flush in the
->>> filesystem-dax case.
->>
->> That's still very confusing text.  Specifically, the part where you say
->> that pmem driver writes always make it to the DIMM.  I think the
->> changelog could start with "Deep flush is there to explicitly flush
->> write buffers...."  Anyway, the fix looks right to me.
+On Fri, Dec 22, 2017 at 3:32 PM, Dongsu Park <dongsu@kinvolk.io> wrote:
+> From: Eric W. Biederman <ebiederm@xmission.com>
 >
-> I ended up changing the commit message to this, let me know if it reads better:
-
-Thanks.  It's still unclear to me what the text, "The PMEM driver writes
-always arrive at the NVDIMM" means.  However, it's good enough.
-
-Thanks!
-Jeff
-
+> Allow users with CAP_SYS_CHOWN over the superblock of a filesystem to
+> chown files.  Ordinarily the capable_wrt_inode_uidgid check is
+> sufficient to allow access to files but when the underlying filesystem
+> has uids or gids that don't map to the current user namespace it is
+> not enough, so the chown permission checks need to be extended to
+> allow this case.
 >
->     libnvdimm: re-enable deep flush for pmem devices via fsync()
->
->     Re-enable deep flush so that users always have a way to be sure that a
->     write makes it all the way out to media. The PMEM driver writes always
->     arrive at the NVDIMM, and it relies on the ADR (Asynchronous DRAM
->     Refresh) mechanism to flush the write buffers on power failure. Deep
->     flush is there to explicitly flush those write buffers to protect
->     against (rare) ADR failure.  This change prevents a regression in deep
->     flush behavior so that applications can continue to depend on fsync() as
->     a mechanism to trigger deep flush in the filesystem-DAX case.
->
->     Fixes: 06e8ccdab15f4 ("acpi: nfit: Add support for detect platform
-> CPU cache...")
->     Signed-off-by: Dave Jiang <dave.jiang@intel.com>
->     Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> Calling chown on filesystem nodes whose uid or gid don't map is
+> necessary if those nodes are going to be modified as writing back
+> inodes which contain uids or gids that don't map is likely to cause
+> filesystem corruption of the uid or gid fields.
+
+How can the filesystem be corrupted if chown is denied?
+
+It is not clear to me what the purpose of this patch is or what the
+exact usecase this is fixing.
+
+Thanks,
+Miklos
