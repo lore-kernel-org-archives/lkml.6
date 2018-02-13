@@ -1,111 +1,61 @@
-Return-Path: <aishpant@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518847148; cv=none;
+Return-Path: <vadimp@mellanox.com>
+X-Google-Smtp-Source: AH8x224RsCCzXv3iUoYIiZKzWzgGqCQvZHFYAaXmhBenKerDWFwjVS7E3Hjipvt+J68kc7SUpfDZ
+ARC-Seal: i=1; a=rsa-sha256; t=1518552791; cv=none;
         d=google.com; s=arc-20160816;
-        b=hEbKwzHoU+0eae37namzjg22mlEbL9JJuWn1eRtfPtOixKjQ/3AxamcV8zxrUafLAt
-         Vw1+zMvg9T+Oruie/jzo3dSdpeFMxkzAxhQ7UfBPkPjKKUoZC17D/XnKkjZqAzas3pRU
-         nh/OPqopc0Mijoo04MYh0bwQEl+5Tx51qApCMlSlDW+CsrQDx+Dcs94kDC9ZU9pRMil+
-         bofIVWrEqz6H6wlLvqy0VMoFgTfV+85rT4UORjlwlA+IPBHuayijWf/34t6V9ILIdXBl
-         F7VJXjwvClrFbtt+xUrcCjOB9w6JROqVv5o3UGiyzxrOYKGeK0bRJHyqGt+4ghmII6si
-         Swiw==
+        b=aEPMSLNMgs8vvnlZALnZONSUmh5Nqo1RCy85JIlmAnPPBlVVrI+IAgYxyRWAYJpmp9
+         +I5qLiAtT6N9Bpxu+Z0iUx+RAy2zlLlSHx1RwguYihxlEVnw0v/p094hkURXcsgRIIxt
+         O0TUZtMOpfd8n1TeXxuLyXinYN8oGe3LpI04RJGzOF2bnCON5y4ZgaTX50DFUMnOAcrO
+         nwvjlXHeAZ7IMtzbp9tMlivc6ZD3mHebpzG3JReis5trAnOxJBkv4TmNJIvGLB4f2ZVD
+         uaJn9EEK7XAEN7rYznVJtiX0E6+fJi4wCPbdSOm5C6+sqbzZqKdZCsQdIFVbxcjE+5nG
+         8+Ng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:dkim-signature:arc-authentication-results;
-        bh=B3rhD00wkhRFntxAgJaiTxOBqnemgbbzgjtcofqzOP8=;
-        b=a/AgZbjh9TLChm+hTZ6aTG96b34EsBWPb1y+aChgArLLN+rVB8XaBeW+uNu/kZzaG+
-         jB4Tsmxxh8F3c6AKWH9pJ9HEyw4n3G3HF5/XnoAJbzpwM/KrfX9Flu6SynZ50yJ6aaRe
-         JgtEeBox6iTaj1ImgGmeVNoIzfWhf1A7bWpgvFD/MWIt+uht5fUKR6No/GXmoZG/DYpc
-         nS12DSW5Rf/j3D6eil7EurVDJM+uXF0XPd3qpAW+SJ0dYkreMT0eGgIFyb7Q0e7WN54J
-         y1LVHnHw6Kuqx2Dt+0+O10Yo50y3CdPHOQfmpcUZxrpNN+6u+PhZdGNGx6ovcGFpHqo0
-         ATeg==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=CeHLlrz5jUKowXc+cBazRtPPkrhxSQvN8Ca4aaXk2Jw=;
+        b=dwbFjhiGkADXpFkfTFKk5RCVkYLwde11Ldw1DXi18WjQ3GQNAMK8AxJKYxmr+VSTh9
+         5DNZxnIkzmuLfFeKB1lvB1D3WcZYLy8yi+I98kIOWrBouE1a7JT+oRewFbZcG+myRArQ
+         RIybh8SE3sbVTE67FW4Kq5kThmBnLm0qrDWA1PzKJXOnctqLusbdCIJE6CxNgk86tRD3
+         B2NSIKKobRDuI3UlUOB3aRi3W2hA8WlO5J6kvloDy+UJg9ST0SWwZAlMZ9Z1Xh9NQdoG
+         i4fsjtvUTWRZkOdIbwT9pbMaltSDwDLy1weJey3vR1TmAU0/gx43Jeyz4uQsPnstWopJ
+         r8ag==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=mhOuT/8j;
-       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of vadimp@mellanox.com designates 193.47.165.129 as permitted sender) smtp.mailfrom=vadimp@mellanox.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=mhOuT/8j;
-       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x227piZ6Tf0Z7isCBp9JPW3ni9zuZrVfQceolTk3oUa18739+wlvQSseVcDXIlgvVD7dpXt9fNg==
-Date: Sat, 17 Feb 2018 11:29:03 +0530
-From: Aishwarya Pant <aishpant@gmail.com>
-To: "Ed L. Cashin" <ed.cashin@acm.org>, linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Greg KH <gregkh@linuxfoundation.org>
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Subject: [PATCH v2] aoe: document sysfs interface
-Message-ID: <20180217055903.GA8350@mordor.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.3 (2018-01-21)
+       spf=pass (google.com: domain of vadimp@mellanox.com designates 193.47.165.129 as permitted sender) smtp.mailfrom=vadimp@mellanox.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
+From: Vadim Pasternak <vadimp@mellanox.com>
+To: dvhart@infradead.org, andy.shevchenko@gmail.com,
+        gregkh@linuxfoundation.org
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jiri@resnulli.us, michaelsh@mellanox.com,
+        Vadim Pasternak <vadimp@mellanox.com>
+Subject: [PATCH v1 0/4] platform/x86: mlx-platform: Add bus differed and auto detection functionalities
+Date: Tue, 13 Feb 2018 22:09:32 +0000
+Message-Id: <1518559776-188942-1-git-send-email-vadimp@mellanox.com>
+X-Mailer: git-send-email 2.1.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592626668016122554?=
-X-GMAIL-MSGID: =?utf-8?q?1592626668016122554?=
+X-GMAIL-THRID: =?utf-8?q?1592318011865134700?=
+X-GMAIL-MSGID: =?utf-8?q?1592318011865134700?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Documentation has been compiled from git commit logs and descriptions in
-Documentation/aoe/aoe.txt. This should be useful for scripting and
-tracking changes in the ABI.
+This patchset:
+- Adds define for the channels number for mux device.
+- Adds differed bus functionality.
+- Changes input for device create routine in mlxreg-hotplug driver.
+- Adds physical bus number auto detection.
 
-Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
----
-Changes in v2:
-- interface -> interfaces in description of netif
+Vadim Pasternak (4):
+  platform/x86: mlx-platform: Use define for the channel numbers
+  platform/x86: mlx-platform: Add differed bus functionality
+  platform/mellanox: mlxreg-hotplug: Change input for device create
+    routine
+  platform/x86: mlx-platform: Add physical bus number auto detection
 
- Documentation/ABI/testing/sysfs-block-aoe | 44 +++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-block-aoe
+ drivers/platform/mellanox/mlxreg-hotplug.c | 31 +++++++++-----
+ drivers/platform/x86/mlx-platform.c        | 68 ++++++++++++++++++++++++++++--
+ include/linux/platform_data/mlxreg.h       |  4 ++
+ 3 files changed, 90 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-block-aoe b/Documentation/ABI/testing/sysfs-block-aoe
-new file mode 100644
-index 000000000000..6f0795f7f10c
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-block-aoe
-@@ -0,0 +1,44 @@
-+What:		/sys/block/etherd*/mac
-+Date:		Apr, 2005
-+KernelVersion:	v2.6.12
-+Contact:	Ed L. Cashin <ed.cashin@acm.org>
-+Description:
-+		(RO) The ethernet address of the remote Ata over Ethernet (AoE)
-+		device.
-+
-+What:		/sys/block/etherd*/netif
-+Date:		Apr, 2005
-+KernelVersion:	v2.6.12
-+Contact:	Ed L. Cashin <ed.cashin@acm.org>
-+Description:
-+		(RO) The name of the network interfaces on the localhost through
-+		which we are communicating with the remote AoE device.
-+
-+What:		/sys/block/etherd*/state
-+Date:		Apr, 2005
-+KernelVersion:	v2.6.12
-+Contact:	Ed L. Cashin <ed.cashin@acm.org>
-+Description:
-+		(RO) Device status. The state attribute is "up" when the device
-+		is ready for I/O and "down" if detected but unusable. The
-+		"down,closewait" state shows that the device is still open and
-+		cannot come up again until it has been closed.  The "up,kickme"
-+		state means that the driver wants to send more commands to the
-+		target but found out there were already the max number of
-+		commands waiting for a response. It will retry again after being
-+		kicked by the periodic timer handler routine.
-+
-+What:		/sys/block/etherd*/firmware-version
-+Date:		Apr, 2005
-+KernelVersion:	v2.6.12
-+Contact:	Ed L. Cashin <ed.cashin@acm.org>
-+Description:
-+		(RO) Version of the firmware in the target.
-+
-+What:		/sys/block/etherd*/payload
-+Date:		Dec, 2012
-+KernelVersion:	v3.10
-+Contact:	Ed L. Cashin <ed.cashin@acm.org>
-+Description:
-+		(RO) The amount of user data transferred (in bytes) inside each AoE
-+		command on the network, network headers excluded.
 -- 
-2.16.1
+2.1.4
