@@ -1,161 +1,155 @@
-Return-Path: <chiu@endlessm.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518576261; cv=none;
-        d=google.com; s=arc-20160816;
-        b=gzJZ4PqpaX9TWvxfVZZLtC+OVCBhx9+qGx8i01y/xoRyjz6NQ8ZCGyF+fU/XZU2QQJ
-         yzILJC7Gxk8utrIPve6QIpyOIPDgR4UlXB43hkOfF4gpRVAp+yhV0eB/nXi2J+BvPBQB
-         AN9CxtJXuLFAf0ltvH4BfgOFZmsH/RyUqonHfYao3J+WKgBRYow7GGtD01PiDz2Jy5Pe
-         euMHcQ5xZNjIklC05D0QSIo/j1LNKZynm8Wl5Spm6K6Gf3s6RqGNVlMs9N9Btqg9ugMe
-         ZbfRZVvsC3ZZaC0FL0PyGO3aAOr1L3NzJDy03IclCiRDyLfDN3uJfh52Aw/wkvuNeCz9
-         i3zg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=lOWuaPoR6H61RYtLafoF6iR8zDDbBVDya5YdpIjHtpE=;
-        b=WevqDzWjJwkn2rgZ8zIyXgBl9K1m5JSeiyim/kus5agxOjmg1bf/GBWbl54SDB5pur
-         7ylT9t6U3qEkSPcNA7BVJdVYolMn9r4Z7fcv+E7czhNlEIdocsbUeTpG+h3fYlZOj8eW
-         /E8vG2HLsxnG21Ok0KYXsxVUgaWjlIN3Lq3ldN8Z1p0TmNaXaxj3apOK03zy0BmDwOUA
-         mooAgQ5L1DMe538iN15+3rEvQVUlnuZxOc5d2oKkrVCJ3gIcncwrcwJRkFvFA19P4wfs
-         QIJ482KsRwU6c7S9hBXaE68/o+Ud1HbzID/FkdBkoXRDoonRo0KCK+IkhS+4veE4xENb
-         EnZA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@endlessm-com.20150623.gappssmtp.com header.s=20150623 header.b=t2KITfTm;
-       spf=pass (google.com: domain of chiu@endlessm.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=chiu@endlessm.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@endlessm-com.20150623.gappssmtp.com header.s=20150623 header.b=t2KITfTm;
-       spf=pass (google.com: domain of chiu@endlessm.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=chiu@endlessm.com
-X-Google-Smtp-Source: AH8x227kOhlVJghFmK1HkzIlnL9/XbE0GARf4P/LxjKbuonV4F91ZdXMliim3mJBFHYO6414AX9G/8xrtHDHW8Eq+n0=
-MIME-Version: 1.0
-In-Reply-To: <afea7262-4b56-55be-803c-8f89d3b3b567@acm.org>
-References: <CAB4CAwfino0JaeeZV1byp3aoaRrOGL1=BYgkruvxYMr6=c=5PQ@mail.gmail.com>
- <3b812894-46a0-3c87-1b9f-468fc63ea5bd@acm.org> <CAB4CAwdTa=A78hr4ZrHNpCwJBo3-kmdK8nq1ZS_k0VanPm0dMw@mail.gmail.com>
- <afea7262-4b56-55be-803c-8f89d3b3b567@acm.org>
-From: Chris Chiu <chiu@endlessm.com>
-Date: Wed, 14 Feb 2018 10:44:20 +0800
-Message-ID: <CAB4CAwfeBXzA156hsR0u6bmxXq8NutSq+4iW5fbhrXRx0qSm7Q@mail.gmail.com>
-Subject: Re: ipmi_si fails to get BMC ID
-To: Corey Minyard <minyard@acm.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, gregkh@linuxfoundation.org,
-	openipmi-developer@lists.sourceforge.net,
-	Linux Kernel <linux-kernel@vger.kernel.org>, Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-570328-1518544342-2-4342894839156114723
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518544341; b=FGZHIrfhoOMU6LhUUMNdUBynJK58wvXKK465lLDw0wNzXOI
+    gtHoQkbPH6wF3QoFBv68LK8fQCr5ZCQX67X+KtzTxSfYQWKunMHL7ulplgLaEmfD
+    4e40i6yMJwfHBEJI1ji4UtJaVQ2Y4csgnYMOEaOVMnfOxj5zSB1DEFM6SZ+XlNmQ
+    8oCdy+g/MH5ayPVtUtcTtqx51luof+MdZ4F5ZlhAYeAE+U+VBTnUS7XvcdfE/Zr3
+    8B+ql7HckscwR1b1sBN5JkuoDYL5E6FBtMAJg40uR29fcNqCO0CqwTpXb8LIaf8O
+    o8z7sfekpAx8nUaUiJBTuD8I4fsGXcN+FhDcHmA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1518544341; bh=EQEZ/PMfbcyFUifg8HmwjVXigX
+    aVwiZNS9uWgnl6jVk=; b=Jr+JnphsVZGUdvO30upwxaqPyoEMXIbs5SLseZSL4U
+    tCz2EmhBac3Q+2sYE9lWi16fguBT6GBFzMt/J3gf/Du0ritmwa8BuopMDxa3s/Om
+    l97WJD3EFWw6c1lv9JzS/bqSpWQVptu9K2UZxriOpiUqKoBpOHhVnjEMEEsGrKyc
+    r0bJ2A43iMbnSI6A42/7PwA6QtSHjX25uu703SOzBdIKsD5gPkawb5Thecg7KR5c
+    l3zWtVEhameGUeWFJz9bIJd/Ozi3fVsOlBOXA7jI8HvpxHR2hetyadWDJqHZiSKb
+    Ol6tau3TNHvbj8nu/FxErmb8AcJC+v8F66r63Xzq+w7A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=stgolabs.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=stgolabs.net header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=stgolabs.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=stgolabs.net header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S965290AbeBMRwE (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 13 Feb 2018 12:52:04 -0500
+Received: from smtp2.provo.novell.com ([137.65.250.81]:54567 "EHLO
+        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965350AbeBMRvE (ORCPT
+        <rfc822;groupwise-linux-api@vger.kernel.org:0:0>);
+        Tue, 13 Feb 2018 12:51:04 -0500
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: akpm@linux-foundation.org
+Cc: mhocko@kernel.org, mtk.manpages@gmail.com, keescook@chromium.org,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>
+Subject: [PATCH -next 0/3] sysvipc: introduce STAT_ALL commands
+Date: Tue, 13 Feb 2018 09:41:33 -0800
+Message-Id: <20180213174136.6346-1-dave@stgolabs.net>
+X-Mailer: git-send-email 2.13.6
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591800098576670064?=
-X-GMAIL-MSGID: =?utf-8?q?1592342621836525346?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 9, 2018 at 9:34 PM, Corey Minyard <minyard@acm.org> wrote:
-> On 02/08/2018 09:09 PM, Chris Chiu wrote:
->>
->> On Thu, Feb 8, 2018 at 11:53 PM, Corey Minyard <minyard@acm.org> wrote:
->>>
->>> On 02/07/2018 09:01 PM, Chris Chiu wrote:
->>>>
->>>> Hi,
->>>>       We are working with a new desktop Acer Veriton Z4640G and get
->>>> stumbled on failing to enter S3 suspend with kernel version 4.14 even
->>>> the latest 4.15+. Here's the kernel log
->>>> https://gist.github.com/mschiu77/76888f1fd4eb56aa8959d76759a912bb.
->>>
->>>
->>> This is a little strange, nobody had reported this before.  Can you
->>> reproduce this
->>> at will, or was it a one-time thing?
->>
->> It can be reproduced on each reboot.
->>>
->>> Does the IPMI driver always take this long to issue that error, even if
->>> you
->>> are not
->>> entering sleep state?
->>>
->> Yep, it will always print "ipmi_si 0000:02:00.3: There appears to be
->> no BMC at this
->> location" few minutes after boot.
->>
->>> And it started with 4.14, and didn't occur before then, right?
->>>
->> I haven't try pre-4.14 kernel. Will do that and update here.
->
->
-> Ah.  It's probably still worth trying, but I doubt it will make any
-> difference.
->
-> Are you sure there is actually an IPMI BMC installed in this system?  It
-> might
-> be a plug-in card that is not installed, but the interface still appears on
-> the
-> PCI bus.  So there is enough hardware to go part-way through the motions
-> of being an IPMI interface, but not enough to actually work.
->
-> If there is a BMC there, do you know the register layout?  The IPMI spec has
-> an algorithm to go through to discover some of the parameters, and the
-> driver follows it, but IMHO it's not really very good.  I'll need to know
-> the
-> size of the registers, and the spacing between the registers.
->
-> -corey
->
->
+Hi,
 
-Sorry for late response because it's close to Chinese New Year.
-I can get the IPMI working with the driver here on Windows.
-https://www.drivermax.com/Realtek-Virtual-IPMI-Realtek-PCI-VEN-10EC-DEV-816C-1_0_0718_2013-2013-07-18-509795-driver.htm
-Then you will see the device (hightlighted) on the control panel as follows
-https://pasteboard.co/H7xm3fJ.png
+The following patches adds the discussed[1] new command for shm
+as well as for sems and msq as they are subject to the same discrepancies
+for ipc object permission checks between the syscall and via procfs.
+These new commands are justified in that (1) we are stuck with this
+semantics as changing syscall and procfs can break userland; and (2) some
+users can benefit from performance (for large amounts of shm segments,
+for example) from not having to parse the procfs interface.
 
-I don't know how to get the register layout you need. I can only take a
-picture of the content of the PCI resources.
-https://pasteboard.co/H7xnhz0.png
+Once (if) merged, I will submit the necesary manpage updates. But I'm
+thinking something like:
 
-The contents of BAR1, BAR3, BAR5 are all 0xff. Can you point me out
-where the useful information might be and I can try to dump FYI.
+diff --git a/man2/shmctl.2 b/man2/shmctl.2
+index 7bb503999941..bb00bbe21a57 100644
+--- a/man2/shmctl.2
++++ b/man2/shmctl.2
+@@ -41,6 +41,7 @@
+ .\" 2005-04-25, mtk -- noted aberrant Linux behavior w.r.t. new
+ .\"	attaches to a segment that has already been marked for deletion.
+ .\" 2005-08-02, mtk: Added IPC_INFO, SHM_INFO, SHM_STAT descriptions.
++.\" 2018-02-13, dbueso: Added SHM_STAT_ALL description.
+ .\"
+ .TH SHMCTL 2 2017-09-15 "Linux" "Linux Programmer's Manual"
+ .SH NAME
+@@ -242,6 +243,18 @@ However, the
+ argument is not a segment identifier, but instead an index into
+ the kernel's internal array that maintains information about
+ all shared memory segments on the system.
++.TP
++.BR SHM_STAT_ALL " (Linux-specific)"
++Return a
++.I shmid_ds
++structure as for
++.BR SHM_STAT .
++However, the
++.I shm_perm.mode
++is not checked for read access for
++.IR shmid ,
++resembing the behaviour of
++/proc/sysvipc/shm.
+ .PP
+ The caller can prevent or allow swapping of a shared
+ memory segment with the following \fIcmd\fP values:
+@@ -287,7 +300,7 @@ operation returns the index of the highest used entry in the
+ kernel's internal array recording information about all
+ shared memory segments.
+ (This information can be used with repeated
+-.B SHM_STAT
++.B SHM_STAT/SHM_STAT_ALL
+ operations to obtain information about all shared memory segments
+ on the system.)
+ A successful
+@@ -328,7 +341,7 @@ isn't accessible.
+ \fIshmid\fP is not a valid identifier, or \fIcmd\fP
+ is not a valid command.
+ Or: for a
+-.B SHM_STAT
++.B SHM_STAT/SHM_STAT_ALL
+ operation, the index value specified in
+ .I shmid
+ referred to an array slot that is currently unused.
 
-Chris
 
->>> There's a bug in the PCI utils database, I submitted a report a while
->>> ago.
->>> This is
->>> a KCS, not a SMIC interface.
->>>
->>> It looks like the driver is trying to detect that there is a device out
->>> there and
->>> there is something that kind of works, but doesn't work completely. The
->>> interface
->>> specific code was all split out into separate files in 4.14.  It is
->>> possible
->>> the
->>> detection code got messed up in the process.  Nothing jumps out looking
->>> at
->>> the code differences, and I know it works on some PCI machines.
->>>
->>> Assuming this is reproducible, can you send the the output of a pre-4.14
->>> kernel?  If that doesn't make it obvious I may have to have access to the
->>> machine itself.
->>>
->>> -corey
->>>
->>>
->> It's an All-in-One machine so I think it would be difficult for
->> shipment. I'll see what
->> I can do. Thanks for help.
->>
->> Chris
->>
->>>>       As you see, it is due to "ipmi_probe+0x430/0x430 [ipmi_si]". After
->>>> the message "ipmi_si 0000:02:00.3: There appears to be no BMC at this
->>>> location" shows up, then it can really go to suspend w/o problem.
->>>> Although it took around 3 mins. The IPMI device is probed from PCI and
->>>> here's the output of lspci
->>>> https://gist.github.com/mschiu77/33f0372be41670d8a69c97e64f833087. The
->>>> IPMI device is "02:00.3 IPMI SMIC interface [0c07]". We get stuck here
->>>> because we don't really know why it took so long in try_get_dev_id() /
->>>> ipmi_si_intf.c. Any suggestion about this to help us moving forward?
->>>> Thanks
->>>>
->>>>
->>>> Chris
->>>
->>>
->>>
->
+Thanks!
+
+[1] https://lkml.org/lkml/2017/12/19/220
+
+Davidlohr Bueso (3):
+  ipc/shm: introduce shmctl(SHM_STAT_ALL)
+  ipc/sem: introduce shmctl(SEM_STAT_ALL)
+  ipc/msg: introduce shmctl(MSG_STAT_ALL)
+
+ include/uapi/linux/msg.h |  1 +
+ include/uapi/linux/sem.h |  1 +
+ include/uapi/linux/shm.h |  5 +++--
+ ipc/msg.c                | 17 ++++++++++++-----
+ ipc/sem.c                | 17 ++++++++++++-----
+ ipc/shm.c                | 23 ++++++++++++++++++-----
+ security/selinux/hooks.c |  3 +++
+ 7 files changed, 50 insertions(+), 17 deletions(-)
+
+-- 
+2.13.6
+
