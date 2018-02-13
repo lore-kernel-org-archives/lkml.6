@@ -1,117 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965062AbeBMNiu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:38:50 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33391 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964804AbeBMNip (ORCPT
+        id S965095AbeBMNjM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:39:12 -0500
+Received: from outbound-smtp20.blacknight.com ([46.22.139.247]:47519 "EHLO
+        outbound-smtp20.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S964822AbeBMNhc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:38:45 -0500
-X-Google-Smtp-Source: AH8x224rvWJQQStXZtIdnxLpshnudS6092TULJEB/Cf1P6HnoEm0dA1ZdzBF9S8tkoJ7y/sZZHPHow==
-Date: Tue, 13 Feb 2018 14:38:42 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Thinkpad X1 Carbon 3rd - Reducing the compressed framebuffer size
-Message-ID: <20180213133842.i5z5jj3sllorsy2w@pali>
-References: <20180206152143.vea6si7ncjj7sxyq@pali>
- <20180213085030.kiksdi2a7ksae5wz@pali>
- <20180213132726.GD5453@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180213132726.GD5453@intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 13 Feb 2018 08:37:32 -0500
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: [PATCH 3/6] sched/fair: Do not migrate on wake_affine_weight if weights are equal
+Date: Tue, 13 Feb 2018 13:37:27 +0000
+Message-Id: <20180213133730.24064-4-mgorman@techsingularity.net>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180213133730.24064-1-mgorman@techsingularity.net>
+References: <20180213133730.24064-1-mgorman@techsingularity.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 13 February 2018 15:27:26 Ville Syrjälä wrote:
-> On Tue, Feb 13, 2018 at 09:50:30AM +0100, Pali Rohár wrote:
-> > On Tuesday 06 February 2018 16:21:43 Pali Rohár wrote:
-> > > Hi! I'm periodically getting following message in dmesg on Lenovo
-> > > Thinkpad X1 Carbon 3rd generation:
-> > > 
-> > > [drm] Reducing the compressed framebuffer size. This may lead to less power savings than a non-reduced-size. Try to increase stolen memory size if available in BIOS.
-> > > 
-> > > In BIOS I already set GPU size to 512M, but this did not help. Also
-> > > update to last BIOS version did not help.
-> > > 
-> > > So why this message is periodically print in dmesg? And what can I do
-> > > with this problem?
-> > > 
-> > > And why cannot Linux kernel allocate itself more memory for GPU (if BIOS
-> > > can/could do that)? Is not 512MB for GPU enough?
-> > 
-> > And here is output from lspci, which clearly says that 512MB is already
-> > set for GPU:
-> 
-> The PCI BAR size has nothing to do with the size of the stolen memory.
-> The BAR just provides a window into the global GTT address space of the
-> GPU. Stolen memory is a contiguous chunk of physical memory carved out
-> by the BIOS.
+wake_affine_weight() will consider migrating a task to, or near, the current
+CPU if there is a load imbalance. If the CPUs share LLC then either CPU
+is valid as a search-for-idle-sibling target and equally appropriate for
+stacking two tasks on one CPU if an idle sibling is unavailable. If they do
+not share cache then a cross-node migration potentially impacts locality
+so while they are equal from a CPU capacity point of view, they are not
+equal in terms of memory locality. In either case, it's more appropriate
+to migrate only if there is a difference in their effective load.
 
-Ok, how could I detect how much memory was stolen?
+This patch modifies wake_affine_weight to only consider migrating a task
+if there is a load imbalance for normal wakeups but will allow potential
+stacking if the loads are equal and it's a sync wakeup.
 
-In dmesg I see following lines:
+For the most part, the different in performance is marginal. For example,
+on a 4-socket server running netperf UDP_STREAM on localhost the differences
+are as follows
 
-[    0.000000] e820: BIOS-provided physical RAM map:
-[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x0000000000057fff] usable
-[    0.000000] BIOS-e820: [mem 0x0000000000058000-0x0000000000058fff] reserved
-[    0.000000] BIOS-e820: [mem 0x0000000000059000-0x000000000008bfff] usable
-[    0.000000] BIOS-e820: [mem 0x000000000008c000-0x000000000009ffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000000e0000-0x00000000000fffff] reserved
-[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000ab908fff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000ab909000-0x00000000abb08fff] type 20
-[    0.000000] BIOS-e820: [mem 0x00000000abb09000-0x00000000acbfefff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000acbff000-0x00000000acd7efff] ACPI NVS
-[    0.000000] BIOS-e820: [mem 0x00000000acd7f000-0x00000000acdfefff] ACPI data
-[    0.000000] BIOS-e820: [mem 0x00000000acdff000-0x00000000acdfffff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000f80f8000-0x00000000f80f8fff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
-[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000024dffffff] usable
+                                     4.15.0                 4.15.0
+                                      16rc0          noequal-v1r23
+Hmean     send-64         355.47 (   0.00%)      349.50 (  -1.68%)
+Hmean     send-128        697.98 (   0.00%)      693.35 (  -0.66%)
+Hmean     send-256       1328.02 (   0.00%)     1318.77 (  -0.70%)
+Hmean     send-1024      5051.83 (   0.00%)     5051.11 (  -0.01%)
+Hmean     send-2048      9637.02 (   0.00%)     9601.34 (  -0.37%)
+Hmean     send-3312     14355.37 (   0.00%)    14414.51 (   0.41%)
+Hmean     send-4096     16464.97 (   0.00%)    16301.37 (  -0.99%)
+Hmean     send-8192     26722.42 (   0.00%)    26428.95 (  -1.10%)
+Hmean     send-16384    38137.81 (   0.00%)    38046.11 (  -0.24%)
+Hmean     recv-64         355.47 (   0.00%)      349.50 (  -1.68%)
+Hmean     recv-128        697.98 (   0.00%)      693.35 (  -0.66%)
+Hmean     recv-256       1328.02 (   0.00%)     1318.77 (  -0.70%)
+Hmean     recv-1024      5051.83 (   0.00%)     5051.11 (  -0.01%)
+Hmean     recv-2048      9636.95 (   0.00%)     9601.30 (  -0.37%)
+Hmean     recv-3312     14355.32 (   0.00%)    14414.48 (   0.41%)
+Hmean     recv-4096     16464.74 (   0.00%)    16301.16 (  -0.99%)
+Hmean     recv-8192     26721.63 (   0.00%)    26428.17 (  -1.10%)
+Hmean     recv-16384    38136.00 (   0.00%)    38044.88 (  -0.24%)
+Stddev    send-64           7.30 (   0.00%)        4.75 (  34.96%)
+Stddev    send-128         15.15 (   0.00%)       22.38 ( -47.66%)
+Stddev    send-256         13.99 (   0.00%)       19.14 ( -36.81%)
+Stddev    send-1024       105.73 (   0.00%)       67.38 (  36.27%)
+Stddev    send-2048       294.57 (   0.00%)      223.88 (  24.00%)
+Stddev    send-3312       302.28 (   0.00%)      271.74 (  10.10%)
+Stddev    send-4096       195.92 (   0.00%)      121.10 (  38.19%)
+Stddev    send-8192       399.71 (   0.00%)      563.77 ( -41.04%)
+Stddev    send-16384     1163.47 (   0.00%)     1103.68 (   5.14%)
+Stddev    recv-64           7.30 (   0.00%)        4.75 (  34.96%)
+Stddev    recv-128         15.15 (   0.00%)       22.38 ( -47.66%)
+Stddev    recv-256         13.99 (   0.00%)       19.14 ( -36.81%)
+Stddev    recv-1024       105.73 (   0.00%)       67.38 (  36.27%)
+Stddev    recv-2048       294.59 (   0.00%)      223.89 (  24.00%)
+Stddev    recv-3312       302.24 (   0.00%)      271.75 (  10.09%)
+Stddev    recv-4096       196.03 (   0.00%)      121.14 (  38.20%)
+Stddev    recv-8192       399.86 (   0.00%)      563.65 ( -40.96%)
+Stddev    recv-16384     1163.79 (   0.00%)     1103.86 (   5.15%)
 
-[    0.000000] Reserving Intel graphics memory at 0x00000000ae000000-0x00000000afffffff
+The difference in overall performance is marginal but note that most
+measurements are less variable. There were similar observations for other
+netperf comparisons. hackbench with sockets or threads with processes or
+threads showed minor difference with some reduction of migration. tbench
+showed only marginal differences that were within the noise. dbench,
+regardless of filesystem, showed minor differences all of which are
+within noise. Multiple machines, both UMA and NUMA were tested without
+any regressions showing up.
 
-[    0.000000] Memory: 7972840K/8282704K available (6196K kernel code, 1159K rwdata, 2848K rodata, 1408K init, 688K bss, 309864K reserved, 0K cma-reserved)
+The biggest risk with a patch like this is affecting wakeup latencies.
+However, the schbench load from Facebook which is very sensitive to wakeup
+latency showed a mixed result with mostly improvements in wakeup latency
 
-> The BIOS may or may not provide a knob to change the size
-> of the stolen memory.
+                                     4.15.0                 4.15.0
+                                      16rc0          noequal-v1r23
+Lat 50.00th-qrtle-1        38.00 (   0.00%)       38.00 (   0.00%)
+Lat 75.00th-qrtle-1        49.00 (   0.00%)       41.00 (  16.33%)
+Lat 90.00th-qrtle-1        52.00 (   0.00%)       50.00 (   3.85%)
+Lat 95.00th-qrtle-1        54.00 (   0.00%)       51.00 (   5.56%)
+Lat 99.00th-qrtle-1        63.00 (   0.00%)       60.00 (   4.76%)
+Lat 99.50th-qrtle-1        66.00 (   0.00%)       61.00 (   7.58%)
+Lat 99.90th-qrtle-1        78.00 (   0.00%)       65.00 (  16.67%)
+Lat 50.00th-qrtle-2        38.00 (   0.00%)       38.00 (   0.00%)
+Lat 75.00th-qrtle-2        42.00 (   0.00%)       43.00 (  -2.38%)
+Lat 90.00th-qrtle-2        46.00 (   0.00%)       48.00 (  -4.35%)
+Lat 95.00th-qrtle-2        49.00 (   0.00%)       50.00 (  -2.04%)
+Lat 99.00th-qrtle-2        55.00 (   0.00%)       57.00 (  -3.64%)
+Lat 99.50th-qrtle-2        58.00 (   0.00%)       60.00 (  -3.45%)
+Lat 99.90th-qrtle-2        65.00 (   0.00%)       68.00 (  -4.62%)
+Lat 50.00th-qrtle-4        41.00 (   0.00%)       41.00 (   0.00%)
+Lat 75.00th-qrtle-4        45.00 (   0.00%)       46.00 (  -2.22%)
+Lat 90.00th-qrtle-4        50.00 (   0.00%)       50.00 (   0.00%)
+Lat 95.00th-qrtle-4        54.00 (   0.00%)       53.00 (   1.85%)
+Lat 99.00th-qrtle-4        61.00 (   0.00%)       61.00 (   0.00%)
+Lat 99.50th-qrtle-4        65.00 (   0.00%)       64.00 (   1.54%)
+Lat 99.90th-qrtle-4        76.00 (   0.00%)       82.00 (  -7.89%)
+Lat 50.00th-qrtle-8        48.00 (   0.00%)       46.00 (   4.17%)
+Lat 75.00th-qrtle-8        55.00 (   0.00%)       54.00 (   1.82%)
+Lat 90.00th-qrtle-8        60.00 (   0.00%)       59.00 (   1.67%)
+Lat 95.00th-qrtle-8        63.00 (   0.00%)       63.00 (   0.00%)
+Lat 99.00th-qrtle-8        71.00 (   0.00%)       69.00 (   2.82%)
+Lat 99.50th-qrtle-8        74.00 (   0.00%)       73.00 (   1.35%)
+Lat 99.90th-qrtle-8        98.00 (   0.00%)       90.00 (   8.16%)
+Lat 50.00th-qrtle-16       56.00 (   0.00%)       55.00 (   1.79%)
+Lat 75.00th-qrtle-16       68.00 (   0.00%)       67.00 (   1.47%)
+Lat 90.00th-qrtle-16       77.00 (   0.00%)       78.00 (  -1.30%)
+Lat 95.00th-qrtle-16       82.00 (   0.00%)       84.00 (  -2.44%)
+Lat 99.00th-qrtle-16       90.00 (   0.00%)       93.00 (  -3.33%)
+Lat 99.50th-qrtle-16       93.00 (   0.00%)       97.00 (  -4.30%)
+Lat 99.90th-qrtle-16      110.00 (   0.00%)      110.00 (   0.00%)
+Lat 50.00th-qrtle-32       68.00 (   0.00%)       62.00 (   8.82%)
+Lat 75.00th-qrtle-32       90.00 (   0.00%)       83.00 (   7.78%)
+Lat 90.00th-qrtle-32      110.00 (   0.00%)      100.00 (   9.09%)
+Lat 95.00th-qrtle-32      122.00 (   0.00%)      111.00 (   9.02%)
+Lat 99.00th-qrtle-32      145.00 (   0.00%)      133.00 (   8.28%)
+Lat 99.50th-qrtle-32      154.00 (   0.00%)      143.00 (   7.14%)
+Lat 99.90th-qrtle-32     2316.00 (   0.00%)      515.00 (  77.76%)
+Lat 50.00th-qrtle-35       69.00 (   0.00%)       72.00 (  -4.35%)
+Lat 75.00th-qrtle-35       92.00 (   0.00%)       95.00 (  -3.26%)
+Lat 90.00th-qrtle-35      111.00 (   0.00%)      114.00 (  -2.70%)
+Lat 95.00th-qrtle-35      122.00 (   0.00%)      124.00 (  -1.64%)
+Lat 99.00th-qrtle-35      142.00 (   0.00%)      144.00 (  -1.41%)
+Lat 99.50th-qrtle-35      150.00 (   0.00%)      154.00 (  -2.67%)
+Lat 99.90th-qrtle-35     6104.00 (   0.00%)     5640.00 (   7.60%)
 
-In BIOS Setup screen I have option to choose GPU memory and I set it to
-max 512MB. So this is not the right option...
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ kernel/sched/fair.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-And why cannot kernel use some continuous check of RAM itself?
-
-> > 
-> > $ lspci -v -s 00:02.0
-> > 00:02.0 VGA compatible controller: Intel Corporation HD Graphics 5500 (rev 09) (prog-if 00 [VGA controller])
-> >         Subsystem: Lenovo HD Graphics 5500
-> >         Flags: bus master, fast devsel, latency 0, IRQ 46
-> >         Memory at e0000000 (64-bit, non-prefetchable) [size=16M]
-> >         Memory at c0000000 (64-bit, prefetchable) [size=512M]
-> >         I/O ports at 3000 [size=64]
-> >         [virtual] Expansion ROM at 000c0000 [disabled] [size=128K]
-> >         Capabilities: [90] MSI: Enable+ Count=1/1 Maskable- 64bit-
-> >         Capabilities: [d0] Power Management version 2
-> >         Capabilities: [a4] PCI Advanced Features
-> >         Kernel driver in use: i915
-> >         Kernel modules: i915
-> > 
-> > -- 
-> > Pali Rohár
-> > pali.rohar@gmail.com
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index c1091cb023c4..28c8d9c91955 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5747,7 +5747,16 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
+ 		prev_eff_load *= 100 + (sd->imbalance_pct - 100) / 2;
+ 	prev_eff_load *= capacity_of(this_cpu);
+ 
+-	return this_eff_load <= prev_eff_load ? this_cpu : nr_cpumask_bits;
++	/*
++	 * If sync, adjust the weight of prev_eff_load such that if
++	 * prev_eff == this_eff that select_idle_sibling will consider
++	 * stacking the wakee on top of the waker if no other CPU is
++	 * idle.
++	 */
++	if (sync)
++		prev_eff_load += 1;
++
++	return this_eff_load < prev_eff_load ? this_cpu : nr_cpumask_bits;
+ }
+ 
+ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
 -- 
-Pali Rohár
-pali.rohar@gmail.com
+2.15.1
