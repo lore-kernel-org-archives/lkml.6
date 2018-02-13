@@ -1,156 +1,97 @@
-Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AH8x227NsnTG7AN8p2XWbgR+B3QAYAqcxwjaTw3fs62G7Q3fNbmIQ7cJyAMeF1cdP1sRq/XqB/12
-ARC-Seal: i=1; a=rsa-sha256; t=1518513274; cv=none;
+Return-Path: <peterz@infradead.org>
+X-Google-Smtp-Source: AH8x226zcSFB0x7+rd0DMWY7KIcB6QwJ0t8CFKmTGsfy1HVo3xvTtRrgVDaQ+HPd3uaZHMQ02Wa3
+ARC-Seal: i=1; a=rsa-sha256; t=1518514915; cv=none;
         d=google.com; s=arc-20160816;
-        b=YIRBncofKPpfwbgKyAJOpCHiaroSocRH2qS2C2ogxbeRIY5R25eMzcL29X+0o20kJL
-         kyqrnb/ipeMXDeZ1KQQhAFR74iAuhoDrQQsz7otPIwr7ZY3HKGXOgLYymE+Jx/ttKGj7
-         mGnWBgDcUri459PqnMNWsSUY+X5MIRGTEqxxWzzbZbczpqZFY/29iV0J83dZ9aTv63Jy
-         F0LxC6fyEGsXm/d1OWjGpRbF0comYV1bthM8LJ36xJaQK1hYvS/r3DWI+v9uUF+1ixiN
-         hjZcwLUvipDtQiyHy8o46KmsJM4lqx6/u5P+ME0qRC5NKHeb4sX1jRZHC/WGGrjkSds2
-         iieg==
+        b=JV820T6x9eBoNMX8zIuwut7sxUhTvpq3yXEPKivhixKRYhxeMwXI6otZNy8yLBLXHQ
+         83eZwnCh0+I8aImC2vNR/K1MH485qynokrlYptCKqlurBwNij2Gvw8dChPLBpRteBNcB
+         TymVHLnXAlXB4VxC4UJtP5SZdeAWYu2ARS9LRThJn+9b2CMEyNuYTyAADJ2ZlcQEZHOB
+         Z3dxm35nLoVJxBWEf/9sBaadU/TMjI6W0Q0nBnNKy8jfkTZoOUMcDQNUarwK1+t0WtXC
+         90TG8Cb+46HU1vvIIbBDHkxbMwYVDovOBXCmvMoUK22XUPSLGacRB7sFgjtVtxNl53co
+         4QkA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=precedence:content-disposition:content-transfer-encoding
-         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
-         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=PPRp5aiwEPTmr7+9TfZMoIrTYGLKLtTOutqqYnXLRoI=;
-        b=AZ27F2u0XC14eNUEQJwLooqN33CPWTIW/E+xTdoisYdxK108WnX0PwFhqExQNcgoj/
-         vaB2gKeOWmijJ4jJ2Tix26XBUEbZm/ym+auzaFOt89LAit/eLayoLgOyW2jonHgEGTn2
-         j6m+3vvORHKWPnkf2oI87zg/KXpZ8qLMQ7Gn+OsdXKUd4HHCwJkgBp4YaWzReyknySmO
-         9PLPgqzSSKJxpwtiZaLYGNbFV8vDwG4flioAhtDbBYZG2MpO3f1IeEFbaLHFd3j9CZlu
-         vQadpmXskPPinX42gPNuhb5pEuRXP9qkPDNoXM4BLVBHXx40NDdeGKpRUUjpf2PJ6o9j
-         ESxA==
+        bh=HAk7Syye/VxG3AJGBuDqaUUMo3+TAibTd/6EfVAprxo=;
+        b=fXokdhvkV7pG0pLIlu6fwJIxnQoEN7R6zdqQH1PwbdKKkkSblPuCWJcSHtvYBRaKkN
+         H7h2aIxR0r58PFV28CWPHXHdCiwHF/B9MFDVtLTDsQziC8DJQBBbzdvXhaVwqquANxNg
+         iYqk3qy4YVMOkpgdIq4vMP835pFzmKJpxr3tNS+8r7ywy2ZDZPIZBWR/agkpCGKdYJBq
+         8y6+vYqf/8QK/IazHKEaGcyWB7dpiu1eyoB5C0E5xfWIUffAZSyrzIhRh5w1tD+CAghA
+         bjo/bbp9nsmjbn7uMxGtE8qhYA8QNg/UiRU6F+Zrum/5QNBLA8l7bZ5LpJkbA9arcgJk
+         orvw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=cUsG/kry;
+       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 205.233.59.134 as permitted sender) smtp.mailfrom=peterz@infradead.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Tue, 13 Feb 2018 00:58:21 -0800
-Sender: tip tree robot <tipbot@zytor.com>
-From: tip-bot for David Woodhouse <tipbot@zytor.com>
-Message-ID: <tip-f208820a321f9b23d77d7eed89945d862d62a3ed@git.kernel.org>
-Cc: mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        dwmw2@infradead.org, dan.j.williams@intel.com,
-        gregkh@linuxfoundation.org, luto@kernel.org, dwmw@amazon.co.uk,
-        jpoimboe@redhat.com, torvalds@linux-foundation.org,
-        dave.hansen@linux.intel.com, bp@alien8.de, peterz@infradead.org,
-        tglx@linutronix.de, arjan@linux.intel.com
-Reply-To: torvalds@linux-foundation.org, dave.hansen@linux.intel.com,
-        bp@alien8.de, tglx@linutronix.de, peterz@infradead.org,
-        arjan@linux.intel.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        dwmw2@infradead.org, hpa@zytor.com, gregkh@linuxfoundation.org,
-        dan.j.williams@intel.com, dwmw@amazon.co.uk, luto@kernel.org,
-        jpoimboe@redhat.com
-In-Reply-To: <1518305967-31356-3-git-send-email-dwmw@amazon.co.uk>
-References: <1518305967-31356-3-git-send-email-dwmw@amazon.co.uk>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] Revert "x86/speculation: Simplify
+       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=cUsG/kry;
+       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 205.233.59.134 as permitted sender) smtp.mailfrom=peterz@infradead.org
+Date: Tue, 13 Feb 2018 10:41:32 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: torvalds@linux-foundation.org, dave.hansen@linux.intel.com,
+	bp@alien8.de, tglx@linutronix.de, arjan@linux.intel.com,
+	mingo@kernel.org, linux-kernel@vger.kernel.org, dwmw2@infradead.org,
+	hpa@zytor.com, gregkh@linuxfoundation.org, dan.j.williams@intel.com,
+	dwmw@amazon.co.uk, luto@kernel.org, jpoimboe@redhat.com
+Cc: linux-tip-commits@vger.kernel.org,
+	Joe Konno <joe.konno@linux.intel.com>
+Subject: Re: [tip:x86/pti] Revert "x86/speculation: Simplify
  indirect_branch_prediction_barrier()"
-Git-Commit-ID: f208820a321f9b23d77d7eed89945d862d62a3ed
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+Message-ID: <20180213094132.GF25201@hirez.programming.kicks-ass.net>
+References: <1518305967-31356-3-git-send-email-dwmw@amazon.co.uk>
+ <tip-f208820a321f9b23d77d7eed89945d862d62a3ed@git.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <tip-f208820a321f9b23d77d7eed89945d862d62a3ed@git.kernel.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592160265203742206?=
-X-GMAIL-MSGID: =?utf-8?q?1592276574714010482?=
+X-GMAIL-MSGID: =?utf-8?q?1592278296701340198?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  f208820a321f9b23d77d7eed89945d862d62a3ed
-Gitweb:     https://git.kernel.org/tip/f208820a321f9b23d77d7eed89945d862d62a3ed
-Author:     David Woodhouse <dwmw@amazon.co.uk>
-AuthorDate: Sat, 10 Feb 2018 23:39:23 +0000
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 08:59:00 +0100
 
-Revert "x86/speculation: Simplify indirect_branch_prediction_barrier()"
+On Tue, Feb 13, 2018 at 12:58:21AM -0800, tip-bot for David Woodhouse wrote:
 
-This reverts commit 64e16720ea0879f8ab4547e3b9758936d483909b.
+> --- a/arch/x86/include/asm/nospec-branch.h
+> +++ b/arch/x86/include/asm/nospec-branch.h
+> @@ -164,10 +164,15 @@ static inline void vmexit_fill_RSB(void)
+>  
+>  static inline void indirect_branch_prediction_barrier(void)
+>  {
+> +	asm volatile(ALTERNATIVE("",
+> +				 "movl %[msr], %%ecx\n\t"
+> +				 "movl %[val], %%eax\n\t"
+> +				 "movl $0, %%edx\n\t"
+> +				 "wrmsr",
+> +				 X86_FEATURE_USE_IBPB)
+> +		     : : [msr] "i" (MSR_IA32_PRED_CMD),
+> +			 [val] "i" (PRED_CMD_IBPB)
+> +		     : "eax", "ecx", "edx", "memory");
+>  }
 
-We cannot call C functions like that, without marking all the
-call-clobbered registers as, well, clobbered. We might have got away
-with it for now because the __ibp_barrier() function was *fairly*
-unlikely to actually use any other registers. But no. Just no.
+Joe Konno pointed out that we now need the below line too, because we're
+using MSR_IA32_PRED_CMD in this header.
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: arjan.van.de.ven@intel.com
-Cc: dave.hansen@intel.com
-Cc: jmattson@google.com
-Cc: karahmed@amazon.de
-Cc: kvm@vger.kernel.org
-Cc: pbonzini@redhat.com
-Cc: rkrcmar@redhat.com
-Cc: sironi@amazon.de
-Link: http://lkml.kernel.org/r/1518305967-31356-3-git-send-email-dwmw@amazon.co.uk
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+With the existing code that's not a problem per-se, but my objtool
+retpoline annotation things did do stumble over this.
+
+Do we want to fold it into the objtool annotation patch or have it
+separate?
+
 ---
- arch/x86/include/asm/nospec-branch.h | 13 +++++++++----
- arch/x86/include/asm/processor.h     |  3 ---
- arch/x86/kernel/cpu/bugs.c           |  6 ------
- 3 files changed, 9 insertions(+), 13 deletions(-)
+ arch/x86/include/asm/nospec-branch.h | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 4d57894..300cc15 100644
+index 300cc159b4a0..76b058533e47 100644
 --- a/arch/x86/include/asm/nospec-branch.h
 +++ b/arch/x86/include/asm/nospec-branch.h
-@@ -164,10 +164,15 @@ static inline void vmexit_fill_RSB(void)
+@@ -6,6 +6,7 @@
+ #include <asm/alternative.h>
+ #include <asm/alternative-asm.h>
+ #include <asm/cpufeatures.h>
++#include <asm/msr-index.h>
  
- static inline void indirect_branch_prediction_barrier(void)
- {
--	alternative_input("",
--			  "call __ibp_barrier",
--			  X86_FEATURE_USE_IBPB,
--			  ASM_NO_INPUT_CLOBBER("eax", "ecx", "edx", "memory"));
-+	asm volatile(ALTERNATIVE("",
-+				 "movl %[msr], %%ecx\n\t"
-+				 "movl %[val], %%eax\n\t"
-+				 "movl $0, %%edx\n\t"
-+				 "wrmsr",
-+				 X86_FEATURE_USE_IBPB)
-+		     : : [msr] "i" (MSR_IA32_PRED_CMD),
-+			 [val] "i" (PRED_CMD_IBPB)
-+		     : "eax", "ecx", "edx", "memory");
- }
+ #ifdef __ASSEMBLY__
  
- #endif /* __ASSEMBLY__ */
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 513f960..99799fb 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -969,7 +969,4 @@ bool xen_set_default_idle(void);
- 
- void stop_this_cpu(void *dummy);
- void df_debug(struct pt_regs *regs, long error_code);
--
--void __ibp_barrier(void);
--
- #endif /* _ASM_X86_PROCESSOR_H */
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 71949bf..61152aa 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -337,9 +337,3 @@ ssize_t cpu_show_spectre_v2(struct device *dev,
- 		       spectre_v2_module_string());
- }
- #endif
--
--void __ibp_barrier(void)
--{
--	__wrmsr(MSR_IA32_PRED_CMD, PRED_CMD_IBPB, 0);
--}
--EXPORT_SYMBOL_GPL(__ibp_barrier);
