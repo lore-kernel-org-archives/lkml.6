@@ -1,31 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935216AbeBMMQ4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 07:16:56 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:59299 "EHLO
+        id S935226AbeBMMRF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 07:17:05 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:46025 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935049AbeBMMQJ (ORCPT
+        with ESMTP id S934945AbeBMMRB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:16:09 -0500
-Date: Tue, 13 Feb 2018 04:15:44 -0800
-From: tip-bot for Leo Yan <tipbot@zytor.com>
-Message-ID: <tip-43d1b29b27c76e7454cd6c85bec4d0e9cbb039f3@git.kernel.org>
-Cc: viresh.kumar@linaro.org, tglx@linutronix.de,
-        torvalds@linux-foundation.org, daniel.lezcano@linaro.org,
-        vincent.guittot@linaro.org, markivx@codeaurora.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org, hpa@zytor.com,
-        leo.yan@linaro.org, rafael.j.wysocki@intel.com, mingo@kernel.org
-Reply-To: viresh.kumar@linaro.org, tglx@linutronix.de,
-        torvalds@linux-foundation.org, vincent.guittot@linaro.org,
-        daniel.lezcano@linaro.org, hpa@zytor.com, leo.yan@linaro.org,
-        markivx@codeaurora.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, mingo@kernel.org, rafael.j.wysocki@intel.com
-In-Reply-To: <1518097702-9665-1-git-send-email-leo.yan@linaro.org>
-References: <1518097702-9665-1-git-send-email-leo.yan@linaro.org>
+        Tue, 13 Feb 2018 07:17:01 -0500
+Date: Tue, 13 Feb 2018 04:06:34 -0800
+From: tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-a41cf9d483fbf0a97e8b131b6a006f558fdd502d@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        yao.jin@linux.intel.com, tglx@linutronix.de, mingo@kernel.org,
+        acme@redhat.com, hpa@zytor.com, wangnan0@huawei.com, jolsa@kernel.org,
+        peterz@infradead.org, kan.liang@intel.com, namhyung@kernel.org
+Reply-To: mingo@kernel.org, tglx@linutronix.de, yao.jin@linux.intel.com,
+        linux-kernel@vger.kernel.org, ak@linux.intel.com, wangnan0@huawei.com,
+        hpa@zytor.com, acme@redhat.com, peterz@infradead.org, jolsa@kernel.org,
+        kan.liang@intel.com, namhyung@kernel.org
+In-Reply-To: <1516310792-208685-7-git-send-email-kan.liang@intel.com>
+References: <1516310792-208685-7-git-send-email-kan.liang@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/urgent] sched/cpufreq: Remove unused
- SUGOV_KTHREAD_PRIORITY macro
-Git-Commit-ID: 43d1b29b27c76e7454cd6c85bec4d0e9cbb039f3
+Subject: [tip:perf/urgent] perf mmap: Discard 'prev' in perf_mmap__read()
+Git-Commit-ID: a41cf9d483fbf0a97e8b131b6a006f558fdd502d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,43 +35,117 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  43d1b29b27c76e7454cd6c85bec4d0e9cbb039f3
-Gitweb:     https://git.kernel.org/tip/43d1b29b27c76e7454cd6c85bec4d0e9cbb039f3
-Author:     Leo Yan <leo.yan@linaro.org>
-AuthorDate: Thu, 8 Feb 2018 21:48:22 +0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 13 Feb 2018 13:04:03 +0100
+Commit-ID:  a41cf9d483fbf0a97e8b131b6a006f558fdd502d
+Gitweb:     https://git.kernel.org/tip/a41cf9d483fbf0a97e8b131b6a006f558fdd502d
+Author:     Kan Liang <kan.liang@intel.com>
+AuthorDate: Thu, 18 Jan 2018 13:26:21 -0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 6 Feb 2018 10:11:50 -0300
 
-sched/cpufreq: Remove unused SUGOV_KTHREAD_PRIORITY macro
+perf mmap: Discard 'prev' in perf_mmap__read()
 
-Since schedutil kernel thread directly set priority to 0, the macro
-SUGOV_KTHREAD_PRIORITY is not used.  So remove it.
+The 'start' and 'prev' variables are duplicates in perf_mmap__read().
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Use 'map->prev' to replace 'start' in perf_mmap__read_*().
+
+Suggested-by: Wang Nan <wangnan0@huawei.com>
+Signed-off-by: Kan Liang <kan.liang@intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rafael J . Wysocki <rafael.j.wysocki@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vikram Mulukutla <markivx@codeaurora.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Link: http://lkml.kernel.org/r/1518097702-9665-1-git-send-email-leo.yan@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/r/1516310792-208685-7-git-send-email-kan.liang@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- kernel/sched/cpufreq_schedutil.c | 2 --
- 1 file changed, 2 deletions(-)
+ tools/perf/util/mmap.c | 28 ++++++++++------------------
+ 1 file changed, 10 insertions(+), 18 deletions(-)
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index dd062a1..7936f54 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -19,8 +19,6 @@
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index 38fa69d..125bfda 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -22,29 +22,27 @@ size_t perf_mmap__mmap_len(struct perf_mmap *map)
  
- #include "sched.h"
+ /* When check_messup is true, 'end' must points to a good entry */
+ static union perf_event *perf_mmap__read(struct perf_mmap *map,
+-					 u64 start, u64 end, u64 *prev)
++					 u64 *startp, u64 end)
+ {
+ 	unsigned char *data = map->base + page_size;
+ 	union perf_event *event = NULL;
+-	int diff = end - start;
++	int diff = end - *startp;
  
--#define SUGOV_KTHREAD_PRIORITY	50
+ 	if (diff >= (int)sizeof(event->header)) {
+ 		size_t size;
+ 
+-		event = (union perf_event *)&data[start & map->mask];
++		event = (union perf_event *)&data[*startp & map->mask];
+ 		size = event->header.size;
+ 
+-		if (size < sizeof(event->header) || diff < (int)size) {
+-			event = NULL;
+-			goto broken_event;
+-		}
++		if (size < sizeof(event->header) || diff < (int)size)
++			return NULL;
+ 
+ 		/*
+ 		 * Event straddles the mmap boundary -- header should always
+ 		 * be inside due to u64 alignment of output.
+ 		 */
+-		if ((start & map->mask) + size != ((start + size) & map->mask)) {
+-			unsigned int offset = start;
++		if ((*startp & map->mask) + size != ((*startp + size) & map->mask)) {
++			unsigned int offset = *startp;
+ 			unsigned int len = min(sizeof(*event), size), cpy;
+ 			void *dst = map->event_copy;
+ 
+@@ -59,20 +57,15 @@ static union perf_event *perf_mmap__read(struct perf_mmap *map,
+ 			event = (union perf_event *)map->event_copy;
+ 		}
+ 
+-		start += size;
++		*startp += size;
+ 	}
+ 
+-broken_event:
+-	if (prev)
+-		*prev = start;
 -
- struct sugov_tunables {
- 	struct gov_attr_set attr_set;
- 	unsigned int rate_limit_us;
+ 	return event;
+ }
+ 
+ union perf_event *perf_mmap__read_forward(struct perf_mmap *map)
+ {
+ 	u64 head;
+-	u64 old = map->prev;
+ 
+ 	/*
+ 	 * Check if event was unmapped due to a POLLHUP/POLLERR.
+@@ -82,13 +75,12 @@ union perf_event *perf_mmap__read_forward(struct perf_mmap *map)
+ 
+ 	head = perf_mmap__read_head(map);
+ 
+-	return perf_mmap__read(map, old, head, &map->prev);
++	return perf_mmap__read(map, &map->prev, head);
+ }
+ 
+ union perf_event *perf_mmap__read_backward(struct perf_mmap *map)
+ {
+ 	u64 head, end;
+-	u64 start = map->prev;
+ 
+ 	/*
+ 	 * Check if event was unmapped due to a POLLHUP/POLLERR.
+@@ -118,7 +110,7 @@ union perf_event *perf_mmap__read_backward(struct perf_mmap *map)
+ 	else
+ 		end = head + map->mask + 1;
+ 
+-	return perf_mmap__read(map, start, end, &map->prev);
++	return perf_mmap__read(map, &map->prev, end);
+ }
+ 
+ void perf_mmap__read_catchup(struct perf_mmap *map)
