@@ -1,126 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964922AbeBMNpJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:45:09 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53888 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964792AbeBMNpI (ORCPT
+        id S964956AbeBMNpj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:45:39 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:38950 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964792AbeBMNpi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:45:08 -0500
-X-Google-Smtp-Source: AH8x224P15OqBpe2wKl54F3QFzEOqUS7lgIXPKiCxZmTZc2WJx4UfiBuJAsnKiQdwfLVM1msoJ9aAw==
+        Tue, 13 Feb 2018 08:45:38 -0500
+Date: Tue, 13 Feb 2018 14:45:33 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Will Deacon <will.deacon@arm.com>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com
+Subject: Re: [PATCH 0/2] A couple of qspinlock fixes
+Message-ID: <20180213134533.GK25201@hirez.programming.kicks-ass.net>
+References: <1518528177-19169-1-git-send-email-will.deacon@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180213133201.kwq4aatpts7nerc2@flea.lan>
-References: <20180213121414.7000-1-embed3d@gmail.com> <20180213133201.kwq4aatpts7nerc2@flea.lan>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 13 Feb 2018 21:44:44 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64tOCeD38gGR_fboC6PJCCD8L-EPu196MGrGgHLenkQXw@mail.gmail.com>
-Message-ID: <CAGb2v64tOCeD38gGR_fboC6PJCCD8L-EPu196MGrGgHLenkQXw@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v2] rtc: ac100: Fix ac100 determine rate bug
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Philipp Rossak <embed3d@gmail.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>, linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518528177-19169-1-git-send-email-will.deacon@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 9:32 PM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Tue, Feb 13, 2018 at 01:14:14PM +0100, Philipp Rossak wrote:
->> This patch fixes a bug, that prevents the Allwinner A83T and the A80
->> from a successful boot. You can find the shortend trace below:
->
-> Since when is it there?
->
->> Unable to handle kernel NULL pointer dereference at virtual address
->> 00000000
->> pgd = (ptrval)
->> [00000000] *pgd=00000000
->> Internal error: Oops: 5 [#1] SMP ARM
->> Modules linked in:
->> CPU: 0 PID: 49 Comm: kworker/0:1 Not tainted 4.15.0-10190-gb89e32ccd1be #2
->> Hardware name: Allwinner sun8i Family
->> Workqueue: events deferred_probe_work_func
->> PC is at clk_hw_get_rate+0x0/0x34
->> LR is at ac100_clkout_determine_rate+0x48/0x19c
->>
->> [ ... ]
->>
->> (clk_hw_get_rate) from (ac100_clkout_determine_rate+0x48/0x19c)
->> (ac100_clkout_determine_rate) from  (clk_core_set_rate_nolock+0x3c/0x1a0)
->> (clk_core_set_rate_nolock) from (clk_set_rate+0x30/0x88)
->> (clk_set_rate) from (of_clk_set_defaults+0x200/0x364)
->> (of_clk_set_defaults) from (platform_drv_probe+0x18/0xb0)
->>
->> To fix that bug, we first check if the return of the
->> clk_hw_get_parent_by_index is non zero. If it is zero we skip that
->> clock parent.
->>
->> The BUG report could be found here: https://lkml.org/lkml/2018/2/10/198
->>
->> Fixes: 04940631b8d2 ("rtc: ac100: Add clk output support")
->
-> Should it be sent to stable?
->
->> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
->> ---
->>
->> Changes in v2:
->>       * add tag Fixes: ... to commit message
->>       * add comment to if statement why we are doing this check
->>
->>  drivers/rtc/rtc-ac100.c | 12 +++++++++++-
->>  1 file changed, 11 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
->> index 8ff9dc3fe5bf..ba73201d8cc1 100644
->> --- a/drivers/rtc/rtc-ac100.c
->> +++ b/drivers/rtc/rtc-ac100.c
->> @@ -183,7 +183,17 @@ static int ac100_clkout_determine_rate(struct clk_hw *hw,
->>
->>       for (i = 0; i < num_parents; i++) {
->>               struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
->> -             unsigned long tmp, prate = clk_hw_get_rate(parent);
->> +             unsigned long tmp, prate;
->> +
->> +             /*
->> +              * We purposefully left open the possibility to use the clock
->> +              * from the codec side but it is not implemented right now.
->> +              * Thus we need to check if the parent exists.
->> +              */
->> +             if (!parent)
->> +                     continue;
->> +
->> +             prate = clk_hw_get_rate(parent);
->
-> clk_hw_get_num_parents should return the exact number of parents,
-> which is going to be 1 if you only have one parent, like all DTS seems
-> to have.
->
-> If not, then it should be explained in the comment and / or fixed
-> properly.
+On Tue, Feb 13, 2018 at 01:22:55PM +0000, Will Deacon wrote:
+> Hi all,
+> 
+> Here are a couple of fixes for qspinlock issues I've found by code
+> inspection whilst investigating the possibility of enabling this for
+> arm64. The first patch fixes a problem with unusual hardware re-ordering
+> whilst the second fixes a problem with unusual compiler re-ordering.
 
-The clock has two parents. One is a fixed clock internally registered
-by the driver. This is actually an external crystal, and we should
-probably add a device node and the works for it. The other parent
-is a clock from the codec side, which we properly declare and
-reference in the device tree. This clock, though defined, is not
-implemented in any driver (because we don't have any ATM).
+Thanks Will!
 
-This second missing clock is what's causing issues here. The clk core
-looks for the parent by name, can't find one that is registered, and
-returns NULL.
-
-I guess the comment above is still not clear enough?
-
-ChenYu
-
-> Maxime
->
-> --
-> Maxime Ripard, Bootlin (formerly Free Electrons)
-> Embedded Linux and Kernel engineering
-> http://bootlin.com
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
