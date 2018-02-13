@@ -1,79 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965499AbeBMRt4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 12:49:56 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:46816 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965260AbeBMRtw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:49:52 -0500
-X-Google-Smtp-Source: AH8x225kKxHbY4exEkEqQkahEQbM909J4HBWr8f4NYg+BeXvx7mK1t1O3t9T0tg7yQgcqhfIt6G2BA==
-Date: Tue, 13 Feb 2018 09:49:50 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Jerry Hoemann <jerry.hoemann@hpe.com>
-Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rwright@hpe.com,
-        maurice.a.saldivar@hpe.com
-Subject: Re: [PATCH v2 05/11] watchdog/hpwdt: Update Module info.
-Message-ID: <20180213174950.GC22401@roeck-us.net>
-References: <20180212052111.12010-1-jerry.hoemann@hpe.com>
- <20180212052111.12010-6-jerry.hoemann@hpe.com>
+        id S965512AbeBMRuS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 12:50:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42350 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965333AbeBMRtL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 12:49:11 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6389217C7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
+From: Kieran Bingham <kbingham@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v4 4/5] media: adv7604: Add support for i2c_new_secondary_device
+Date: Tue, 13 Feb 2018 17:48:56 +0000
+Message-Id: <1518544137-2742-5-git-send-email-kbingham@kernel.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
+References: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180212052111.12010-6-jerry.hoemann@hpe.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 10:21:05PM -0700, Jerry Hoemann wrote:
-> Update Module Author and permission on parameters so that the
-> parameters show up in sysfs.
-> 
+From: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
 
-Does it really add value to see the module parameters in sysfs ?
-You would get both in standardized form by enabling WATCHDOG_SYSFS.
+The ADV7604 has thirteen 256-byte maps that can be accessed via the main
+I2C ports. Each map has it own I2C address and acts as a standard slave
+device on the I2C bus.
 
-> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
-> ---
->  drivers/watchdog/hpwdt.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
-> index ee9a92220ece..dead59f9ca80 100644
-> --- a/drivers/watchdog/hpwdt.c
-> +++ b/drivers/watchdog/hpwdt.c
-> @@ -432,20 +432,20 @@ static struct pci_driver hpwdt_driver = {
->  	.remove		= hpwdt_exit,
->  };
->  
-> -MODULE_AUTHOR("Tom Mingarelli");
-> -MODULE_DESCRIPTION("hp watchdog driver");
-> +MODULE_AUTHOR("Jerry Hoemann");
-> +MODULE_DESCRIPTION("hpe watchdog driver");
->  MODULE_LICENSE("GPL");
->  MODULE_VERSION(HPWDT_VERSION);
->  
-> -module_param(soft_margin, int, 0);
-> +module_param(soft_margin, int, 0444);
->  MODULE_PARM_DESC(soft_margin, "Watchdog timeout in seconds");
->  
-> -module_param(nowayout, bool, 0);
-> +module_param(nowayout, bool, 0444);
->  MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
->  		__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
->  
->  #ifdef CONFIG_HPWDT_NMI_DECODING	/* { */
-> -module_param(allow_kdump, int, 0);
-> +module_param(allow_kdump, int, 0444);
->  MODULE_PARM_DESC(allow_kdump, "Start a kernel dump after NMI occurs");
->  #endif					/* } */
->  
-> -- 
-> 2.13.6
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Allow a device tree node to override the default addresses so that
+address conflicts with other devices on the same bus may be resolved at
+the board description level.
+
+Signed-off-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+[Kieran: Re-adapted for mainline]
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+Based upon the original posting :
+  https://lkml.org/lkml/2014/10/22/469
+
+v2:
+ - Split out DT bindings from driver updates
+ - Return -EINVAL on error paths from adv76xx_dummy_client()
+
+v3:
+ - No change
+
+v4:
+ - s/struct adv76xx_register/struct adv76xx_register_map/
+ - s/adv76xx_secondary_names/adv76xx_default_addresses/
+ - Normalise I2C usage (s/I²C/I2C/)
+
+ drivers/media/i2c/adv7604.c | 62 +++++++++++++++++++++++++++++----------------
+ 1 file changed, 40 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
+index 1544920ec52d..d52c624a2970 100644
+--- a/drivers/media/i2c/adv7604.c
++++ b/drivers/media/i2c/adv7604.c
+@@ -2734,6 +2734,27 @@ static const struct v4l2_ctrl_config adv76xx_ctrl_free_run_color = {
+ 
+ /* ----------------------------------------------------------------------- */
+ 
++struct adv76xx_register_map {
++	const char *name;
++	u8 default_addr;
++};
++
++static const struct adv76xx_register_map adv76xx_default_addresses[] = {
++	[ADV76XX_PAGE_IO] = { "main", 0x4c },
++	[ADV7604_PAGE_AVLINK] = { "avlink", 0x42 },
++	[ADV76XX_PAGE_CEC] = { "cec", 0x40 },
++	[ADV76XX_PAGE_INFOFRAME] = { "infoframe", 0x3e },
++	[ADV7604_PAGE_ESDP] = { "esdp", 0x38 },
++	[ADV7604_PAGE_DPP] = { "dpp", 0x3c },
++	[ADV76XX_PAGE_AFE] = { "afe", 0x26 },
++	[ADV76XX_PAGE_REP] = { "rep", 0x32 },
++	[ADV76XX_PAGE_EDID] = { "edid", 0x36 },
++	[ADV76XX_PAGE_HDMI] = { "hdmi", 0x34 },
++	[ADV76XX_PAGE_TEST] = { "test", 0x30 },
++	[ADV76XX_PAGE_CP] = { "cp", 0x22 },
++	[ADV7604_PAGE_VDP] = { "vdp", 0x24 },
++};
++
+ static int adv76xx_core_init(struct v4l2_subdev *sd)
+ {
+ 	struct adv76xx_state *state = to_state(sd);
+@@ -2834,13 +2855,26 @@ static void adv76xx_unregister_clients(struct adv76xx_state *state)
+ }
+ 
+ static struct i2c_client *adv76xx_dummy_client(struct v4l2_subdev *sd,
+-							u8 addr, u8 io_reg)
++					       unsigned int page)
+ {
+ 	struct i2c_client *client = v4l2_get_subdevdata(sd);
++	struct adv76xx_state *state = to_state(sd);
++	struct adv76xx_platform_data *pdata = &state->pdata;
++	unsigned int io_reg = 0xf2 + page;
++	struct i2c_client *new_client;
++
++	if (pdata && pdata->i2c_addresses[page])
++		new_client = i2c_new_dummy(client->adapter,
++					   pdata->i2c_addresses[page]);
++	else
++		new_client = i2c_new_secondary_device(client,
++				adv76xx_default_addresses[page].name,
++				adv76xx_default_addresses[page].default_addr);
+ 
+-	if (addr)
+-		io_write(sd, io_reg, addr << 1);
+-	return i2c_new_dummy(client->adapter, io_read(sd, io_reg) >> 1);
++	if (new_client)
++		io_write(sd, io_reg, new_client->addr << 1);
++
++	return new_client;
+ }
+ 
+ static const struct adv76xx_reg_seq adv7604_recommended_settings_afe[] = {
+@@ -3115,20 +3149,6 @@ static int adv76xx_parse_dt(struct adv76xx_state *state)
+ 	/* Disable the interrupt for now as no DT-based board uses it. */
+ 	state->pdata.int1_config = ADV76XX_INT1_CONFIG_DISABLED;
+ 
+-	/* Use the default I2C addresses. */
+-	state->pdata.i2c_addresses[ADV7604_PAGE_AVLINK] = 0x42;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_CEC] = 0x40;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_INFOFRAME] = 0x3e;
+-	state->pdata.i2c_addresses[ADV7604_PAGE_ESDP] = 0x38;
+-	state->pdata.i2c_addresses[ADV7604_PAGE_DPP] = 0x3c;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_AFE] = 0x26;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_REP] = 0x32;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_EDID] = 0x36;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_HDMI] = 0x34;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_TEST] = 0x30;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_CP] = 0x22;
+-	state->pdata.i2c_addresses[ADV7604_PAGE_VDP] = 0x24;
+-
+ 	/* Hardcode the remaining platform data fields. */
+ 	state->pdata.disable_pwrdnb = 0;
+ 	state->pdata.disable_cable_det_rst = 0;
+@@ -3478,11 +3498,9 @@ static int adv76xx_probe(struct i2c_client *client,
+ 		if (!(BIT(i) & state->info->page_mask))
+ 			continue;
+ 
+-		state->i2c_clients[i] =
+-			adv76xx_dummy_client(sd, state->pdata.i2c_addresses[i],
+-					     0xf2 + i);
++		state->i2c_clients[i] = adv76xx_dummy_client(sd, i);
+ 		if (!state->i2c_clients[i]) {
+-			err = -ENOMEM;
++			err = -EINVAL;
+ 			v4l2_err(sd, "failed to create i2c client %u\n", i);
+ 			goto err_i2c;
+ 		}
+-- 
+2.7.4
