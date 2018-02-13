@@ -1,69 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964995AbeBMPSj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 10:18:39 -0500
-Received: from mailout.micron.com ([137.201.242.129]:35800 "EHLO
-        mailout.micron.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964851AbeBMPSh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 10:18:37 -0500
-From: "Bean Huo (beanhuo)" <beanhuo@micron.com>
-To: Bart Van Assche <bart.vanassche@wdc.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Subject: Re: UFS writing request failure handling
-Thread-Topic: UFS writing request failure handling
-Thread-Index: AdOk3edWZeWxY6ylQK2qYqplxbjt0g==
-Date: Tue, 13 Feb 2018 15:18:32 +0000
-Message-ID: <6adc73db15b84425805a6adc09c2bfcf@SIWEX5A.sing.micron.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.160.29.124]
-X-TM-AS-Product-Ver: SMEX-12.0.0.1782-8.200.1013-23660.005
-X-TM-AS-Result: No--17.397200-0.000000-31
-X-TM-AS-MatchedID: 150567-700107-702020-706564-704496-704173-709584-705861-7
-        00782-707163-139010-851106-700075-187067-702187-701298-848362-705969-860493
-        -106580-707064-700019-700648-708060-703283-106230-706891-703264-700398-7117
-        12-700556-700173-712032-700756-113666-703731-702638-148004-148046-148133-14
-        8980-20043-42000-42003-29961
-X-TM-AS-User-Approved-Sender: Yes
-X-TM-AS-User-Blocked-Sender: No
-x-mt-checkinternalsenderrule: True
-Content-Type: text/plain; charset="utf-8"
+        id S965043AbeBMPTb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 10:19:31 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33016 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965000AbeBMPTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 10:19:30 -0500
+Date: Tue, 13 Feb 2018 17:19:28 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Marc-Andre Lureau <mlureau@redhat.com>
+Cc: =?iso-8859-1?Q?Marc-Andr=E9?= Lureau
+        <marcandre.lureau@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sergio Lopez Pascual <slp@redhat.com>, Baoquan He <bhe@redhat.com>,
+        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
+Subject: Re: [PATCH v13 3/4] fw_cfg: write vmcoreinfo details
+Message-ID: <20180213171647-mutt-send-email-mst@kernel.org>
+References: <20180207013525.1634-1-marcandre.lureau@redhat.com>
+ <20180207013525.1634-4-marcandre.lureau@redhat.com>
+ <20180212053104-mutt-send-email-mst@kernel.org>
+ <CAMxuvawozzWQ98WkduM=nWQJMMmagSQuHPZMhOYbGZEG5a2aaQ@mail.gmail.com>
+ <20180212160849-mutt-send-email-mst@kernel.org>
+ <CAMxuvayUh=N3Lc6+ut8Ct5scVyS5dVRP_qDmpX7pCYf60hnQRA@mail.gmail.com>
+ <20180213162038-mutt-send-email-mst@kernel.org>
+ <CAMxuvaxq9boTcJ2uDOJsYyo3=_WYtn1==kuq3QbPygBfVc+8Zw@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMxuvaxq9boTcJ2uDOJsYyo3=_WYtn1==kuq3QbPygBfVc+8Zw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1DFIjEo006170
 
-Hi Bart
-Thanks for your answer.
-I looked at SCSI core source codes these days, UFS also follows SCSI core error handling.
-There is already re-issue behavior, and assign 5 retries for each UFS request if there is error.
+On Tue, Feb 13, 2018 at 04:16:08PM +0100, Marc-Andre Lureau wrote:
+> Hi
+> 
+> On Tue, Feb 13, 2018 at 3:27 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> > On Tue, Feb 13, 2018 at 03:14:03PM +0100, Marc-Andre Lureau wrote:
+> >> Hi
+> >>
+> >> On Mon, Feb 12, 2018 at 10:00 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> >> > On Mon, Feb 12, 2018 at 11:04:49AM +0100, Marc-Andre Lureau wrote:
+> >> >> >> +}
+> >> >> >> +
+> >> >> >> +/* qemu fw_cfg device is sync today, but spec says it may become async */
+> >> >> >> +static void fw_cfg_wait_for_control(struct fw_cfg_dma *d)
+> >> >> >> +{
+> >> >> >> +     do {
+> >> >> >> +             u32 ctrl = be32_to_cpu(READ_ONCE(d->control));
+> >> >> >> +
+> >> >> >> +             if ((ctrl & ~FW_CFG_DMA_CTL_ERROR) == 0)
+> >> >> >> +                     return;
+> >> >> >> +
+> >> >> >> +             usleep_range(50, 100);
+> >> >> >> +     } while (true);
+> >> >> >
+> >> >> > And you need an smp rmb here.
+> >> >
+> >> > I'd just do rmb() in fact.
+> >> >
+> >> >> Could you explain? thanks
+> >> >
+> >> > See Documentation/memory-barriers.txt
+> >> > You know that control is valid, but following read of
+> >> > the structure could be reordered. So you need that barrier there.
+> >> > Same for write: wmb.
+> >>
+> >> Is this ok?
+> >> @@ -103,10 +104,14 @@ static ssize_t fw_cfg_dma_transfer(void
+> >> *address, u32 length, u32 control)
+> >>         dma = virt_to_phys(d);
+> >>
+> >>         iowrite32be((u64)dma >> 32, fw_cfg_reg_dma);
+> >> +       /* force memory to sync before notifying device via MMIO */
+> >> +       wmb();
+> >>         iowrite32be(dma, fw_cfg_reg_dma + 4);
+> >>
+> >>         fw_cfg_wait_for_control(d);
+> >>
+> >> +       /* do not reorder the read to d->control */
+> >> +       rmb();
+> >>         if (be32_to_cpu(READ_ONCE(d->control)) & FW_CFG_DMA_CTL_ERROR) {
+> >>                 ret = -EIO;
+> >>         }
+> >
+> > I think you need an rmb after the read of d->control.
+> >
+> 
+> 
+> There are two reads of d->control, one in fw_cfg_wait_for_control() to
+> wait for completion, and the other one here to handle error. Do you
+> mean that for clarity rmb() should be moved at the end of
+> fw_cfg_wait_for_control() instead?
+> 
+> thanks
 
->
->On 02/12/18 04:21, Bean Huo (beanhuo) wrote
->> I am looking at UFS error handling, but I didn't notice re-issues
->> requests with UTP error to the host controller. According UFS host
->> spec, "host software either completes the request that had the error
->> and requests still outstanding with error to higher level software, or
->> re-issues these requests to the host controller". For the latest Linux
->> UFS driver, it belongs to former one? If I am wrong, please correct
->> me.
->
->Hello Bean,
->
->I'm afraid that reissuing a failed write forever could cause an infinite loop that
->makes e.g. user space processes unkillable or that could cause an orderly
->system shutdown to hang. I'm not sure that we want such behavior.
->
->If you want to learn more about how the SCSI core handles failed writes,
->please have a look at scsi_decide_disposition(). A possible approach to
->modify the error handling behavior is to stack a dm driver on top of the SCSI
->core that implements the desired behavior.
->
->Bart.
+
+IMHO that's a reasonable way to do it, yes.
+OTOH is looking at DMA data the only way to detect DMA is complete?
+Isn't there an IO register for that?
