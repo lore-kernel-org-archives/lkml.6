@@ -1,122 +1,130 @@
-Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AH8x227/KeGv+mqUryX9JPnBV8XnKAgJGWdgk1AAukb3/LTtxdgFuiAZP4r/UhjtaeaeUB7SgAM3
-ARC-Seal: i=1; a=rsa-sha256; t=1518402184; cv=none;
-        d=google.com; s=arc-20160816;
-        b=m9A1BNYvMrj8jylf99fvIxxwK8iindRd50Hv3vGUAS1Cy5wlJIMiWE3dE9TITPlZx8
-         Qmxr8E+emgl+pHYOvS+pe/aqwLudW/LCzbqC3qp5vUZJAZqdSTIbe6xMNoMfB9gZl92D
-         4jn7IUeHN0czEyhmVkno7JwoHZMeGDdaEz0SSQRhGCxgiFqPAtNeqjOzgEg8v1uzfI/n
-         NjFuNiabQDKrTTyM3z/z+whsCzw0kbQ4qbASJFNpBWbcc0Vef9k3Q4Yg4XcR1nQaGcyq
-         92qhV83/j6kDSmf3V6bV5M5IQYpzNV7MKZM8MwmuVtPBF1ithHArTSychWoooOmw1T/I
-         5gxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=precedence:content-disposition:content-transfer-encoding
-         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
-         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
-         :arc-authentication-results;
-        bh=STmFPGpeWrYW9bt656jpayBxR2fBVtm1kElcVTy2Gio=;
-        b=SCAm/qFVZ8wg8KyGyR4PQ5YpDpDakp11sThN50xori8yzftQ5LOICLA3yDNeG3Qq9G
-         EpXo4ZQNdjGRhh7j4RLFze+mBPddAnK7YWA99+n1oF2JgpZXn7YK+7IXMwtym/HWwHpD
-         al3Exdj9Ju24Tx/fLSUYEL+PLjq390YbY/nVcqA7Z0gUJvYpcUtrHxDfs9WrQ/JE33wN
-         i1zUiuEUI71SO1hamWsJJJhdUteQEGV+Y9gh49Kr7ZfeaBaraLthcUKoLbuHbjJRgFx2
-         Y196I6NCEglsVfvH7KLuLOEFGhkknn2ql9yQ06om1BqytTAfgkLZW8k/p1W/QsgEDQMT
-         CcQg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Sun, 11 Feb 2018 04:10:21 -0800
-Sender: tip tree robot <tipbot@zytor.com>
-From: tip-bot for KarimAllah Ahmed <tipbot@zytor.com>
-Message-ID: <tip-fb5b90b795c76e9c10c520fcdb7fe0d7b8334833@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, karahmed@amazon.de, dwmw@amazon.co.uk,
-        dave.hansen@linux.intel.com, torvalds@linux-foundation.org,
-        arjan@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-        pbonzini@redhat.com, dan.j.williams@intel.com, mingo@kernel.org,
-        hpa@zytor.com, jmattson@google.com, rkrcmar@redhat.com,
-        dwmw2@infradead.org, gregkh@linuxfoundation.org, luto@kernel.org,
-        jpoimboe@redhat.com, peterz@infradead.org
-Reply-To: peterz@infradead.org, luto@kernel.org, jpoimboe@redhat.com,
-        gregkh@linuxfoundation.org, rkrcmar@redhat.com, jmattson@google.com,
-        dwmw2@infradead.org, mingo@kernel.org, hpa@zytor.com,
-        pbonzini@redhat.com, dan.j.williams@intel.com, bp@alien8.de,
-        torvalds@linux-foundation.org, arjan@linux.intel.com,
-        tglx@linutronix.de, dave.hansen@linux.intel.com, dwmw@amazon.co.uk,
-        karahmed@amazon.de, linux-kernel@vger.kernel.org
-In-Reply-To: <1518305967-31356-5-git-send-email-dwmw@amazon.co.uk>
-References: <1518305967-31356-5-git-send-email-dwmw@amazon.co.uk>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] X86/nVMX: Properly set spec_ctrl and pred_cmd before
- merging MSRs
-Git-Commit-ID: fb5b90b795c76e9c10c520fcdb7fe0d7b8334833
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Return-Path: <green.hu@gmail.com>
+X-Cyrus-Session-Id: sloti22d1t05-3695236-1518513243-2-16806668055243770346
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FROM 0.001, RCVD_IN_DNSWL_NONE -0.0001,
+  RCVD_IN_MSPIKE_H3 -0.01, RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.85.160.66', Host='mail-pl0-f66.google.com', Country='US',
+  FromHeader='com', MailFrom='com'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: green.hu@gmail.com
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518513242; b=m1ek51NbLEKF3KL4vGSbqhd4MPVmRrtYbVC0ySx8oqcyRQs
+    Wgwh/e0X1ANw7AYKvN+WvBOkYmn8mMQCtAGxBUHgMROcUde1AHYpdPyqWHEwGnS6
+    3EsPl0T0JIOiN3N96grQkF0xY1djHF9eWivnpJf3iWFyPpY9Qwywb2UTUqfMa9KR
+    uZzo8C/GOu0ByNk3bkEJ6TRRnuFNbUOw4dGSqD+MJ5UOuWpzkIKSaCq/7L61KAko
+    xiPIZPFifk/FbQhmwK8m95SGSJ010/Qq+kd/EB70DjiiDxnpS7UX5GbflQwcPiwL
+    mwtD2KuZO5PCb7ULM0f3P6LIQnsvYVIZTaF4kPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id; s=
+    arctest; t=1518513242; bh=oPibUifhk+3mqFA129iZtOfeuI/+kkgohuLOwF
+    OjYmE=; b=nO8p3lfM82sqaGGVAYJUcOFh56YX6azfC+Nzda/63VY9IC6/VfMuLW
+    nMsA4fF58s2ZErC93clwvSyUZ5dkMnbS9o9cPxtpgqegGl9tj1/Mo+n6wLtn9AsI
+    NaTD9nx6uNHnMT/X1bbU/LKY65Fj5cgVD2Aq90nWu8gUEPwIkmqW9pB2kA/uacdd
+    YZoUxRcm6AA2qhtllqaQYueKWMtJ4BU/x7NzGCkAkJo0gJg59jf4PB0S5XQMHVWR
+    CFtwWBGiQ9GPOtkdn2tVrfil+MgtaL8TN2NIL6tOuxFqwe/7+0UUH2ug1AP10DlU
+    x5h7BlpRnCd3tqAcezYpyJclWqh2Pu6w==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=f5csiQjP x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.160.66 (mail-pl0-f66.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f66.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=JrR8BntM;
+    x-ptr=pass x-ptr-helo=mail-pl0-f66.google.com x-ptr-lookup=mail-pl0-f66.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=f5csiQjP x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.160.66 (mail-pl0-f66.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f66.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=JrR8BntM;
+    x-ptr=pass x-ptr-helo=mail-pl0-f66.google.com x-ptr-lookup=mail-pl0-f66.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Google-Smtp-Source: AH8x226Nus8oFDRD1W3q814/5sBbdquiIvkwEgV5RCIK6OBChjC/VWYBFw78x6+n9YpWtz6TIfksbA==
+From: Greentime Hu <green.hu@gmail.com>
+X-Google-Original-From: Greentime Hu <greentime@andestech.com>
+To: greentime@andestech.com,
+	linux-kernel@vger.kernel.org,
+	arnd@arndb.de,
+	linux-arch@vger.kernel.org,
+	tglx@linutronix.de,
+	jason@lakedaemon.net,
+	marc.zyngier@arm.com,
+	robh+dt@kernel.org,
+	netdev@vger.kernel.org,
+	deanbo422@gmail.com,
+	devicetree@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	dhowells@redhat.com,
+	will.deacon@arm.com,
+	daniel.lezcano@linaro.org,
+	linux-serial@vger.kernel.org,
+	geert.uytterhoeven@gmail.com,
+	linus.walleij@linaro.org,
+	mark.rutland@arm.com,
+	greg@kroah.com,
+	ren_guo@c-sky.com,
+	rdunlap@infradead.org,
+	davem@davemloft.net,
+	jonas@southpole.se,
+	stefan.kristiansson@saunalahti.fi,
+	shorne@gmail.com
+Cc: green.hu@gmail.com
+Subject: [PATCH v7 0/3] clocksource/drivers/atcpit100: Add andestech atcpit100 timer
+Date: Tue, 13 Feb 2018 17:13:16 +0800
+Message-Id: <cover.1518505425.git.greentime@andestech.com>
+X-Mailer: git-send-email 2.16.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592160088873236897?=
-X-GMAIL-MSGID: =?utf-8?q?1592160088873236897?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  fb5b90b795c76e9c10c520fcdb7fe0d7b8334833
-Gitweb:     https://git.kernel.org/tip/fb5b90b795c76e9c10c520fcdb7fe0d7b8334833
-Author:     KarimAllah Ahmed <karahmed@amazon.de>
-AuthorDate: Sat, 10 Feb 2018 23:39:25 +0000
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sun, 11 Feb 2018 11:24:16 +0100
+Hi, all:
 
-X86/nVMX: Properly set spec_ctrl and pred_cmd before merging MSRs
+ATCPIT100 is often used on the Andes architecture,
+This timer provide 4 PIT channels. Each PIT channel is a
+multi-function timer, can be configured as 32,16,8 bit timers
+or PWM as well.
 
-These two variables should check whether SPEC_CTRL and PRED_CMD are
-supposed to be passed through to L2 guests or not. While
-msr_write_intercepted_l01 would return 'true' if it is not passed through.
+For system timer it will set channel 1 32-bit timer0 as clock
+source and count downwards until underflow and restart again.
 
-So just invert the result of msr_write_intercepted_l01 to implement the
-correct semantics.
+It also set channel 0 32-bit timer0 as clock event and count
+downwards until condition match. It will generate an interrupt
+for handling periodically.
 
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: arjan.van.de.ven@intel.com
-Cc: dave.hansen@intel.com
-Cc: kvm@vger.kernel.org
-Cc: sironi@amazon.de
-Fixes: 086e7d4118cc ("KVM: VMX: Allow direct access to MSR_IA32_SPEC_CTRL")
-Link: http://lkml.kernel.org/r/1518305967-31356-5-git-send-email-dwmw@amazon.co.uk
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/kvm/vmx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes in v7:
+ - Fix atcpit100_clkevt_next_event(), before set reload register,
+   clock source timer shall disable. And re-enable it after the setting.
+   Without this modification, the test case 'clock_nanosleep02' of ltp_20170929
+   will fail.
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index bee4c49..599179b 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -10219,8 +10219,8 @@ static inline bool nested_vmx_merge_msr_bitmap(struct kvm_vcpu *vcpu,
- 	 *    updated to reflect this when L1 (or its L2s) actually write to
- 	 *    the MSR.
- 	 */
--	bool pred_cmd = msr_write_intercepted_l01(vcpu, MSR_IA32_PRED_CMD);
--	bool spec_ctrl = msr_write_intercepted_l01(vcpu, MSR_IA32_SPEC_CTRL);
-+	bool pred_cmd = !msr_write_intercepted_l01(vcpu, MSR_IA32_PRED_CMD);
-+	bool spec_ctrl = !msr_write_intercepted_l01(vcpu, MSR_IA32_SPEC_CTRL);
- 
- 	if (!nested_cpu_has_virt_x2apic_mode(vmcs12) &&
- 	    !pred_cmd && !spec_ctrl)
+Changes in v6:
+ - To select TIMER_OF in drivers/clocksource/Kconfig instead of arch/nds32/Kconfig
+ - Refine Kconfig
+ - Update license format to SPDX-License-Identifier
+
+
+Rick Chen (3):
+  clocksource/drivers/atcpit100: Add andestech atcpit100 timer
+  clocksource/drivers/atcpit100: VDSO support
+  dt-bindings: timer: Add andestech atcpit100 timer binding doc
+
+ .../bindings/timer/andestech,atcpit100-timer.txt   |  33 +++
+ drivers/clocksource/Kconfig                        |   9 +
+ drivers/clocksource/Makefile                       |   1 +
+ drivers/clocksource/timer-atcpit100.c              | 266 +++++++++++++++++++++
+ 4 files changed, 309 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/andestech,atcpit100-timer.txt
+ create mode 100644 drivers/clocksource/timer-atcpit100.c
+
+-- 
+2.16.1
