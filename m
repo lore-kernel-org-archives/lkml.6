@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965226AbeBMO4k (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 09:56:40 -0500
-Received: from mail-bl2nam02on0074.outbound.protection.outlook.com ([104.47.38.74]:10368
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        id S965195AbeBMO4e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 09:56:34 -0500
+Received: from mail-sn1nam01on0047.outbound.protection.outlook.com ([104.47.32.47]:56362
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965124AbeBMOzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S965125AbeBMOzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 13 Feb 2018 09:55:45 -0500
 Authentication-Results: spf=fail (sender IP is 192.88.168.50)
  smtp.mailfrom=nxp.com; vger.kernel.org; dkim=none (message not signed)
@@ -16,67 +16,83 @@ CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
         <shawnguo@kernel.org>, <Anson.Huang@nxp.com>, <ping.bai@nxp.com>,
         Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH RESEND V3 5/9] clk: imx: add composite clk support
-Date: Tue, 13 Feb 2018 21:28:10 +0800
-Message-ID: <1518528494-25723-6-git-send-email-aisheng.dong@nxp.com>
+Subject: [PATCH RESEND V3 9/9] clk: imx: add imx7ulp clk driver
+Date: Tue, 13 Feb 2018 21:28:14 +0800
+Message-ID: <1518528494-25723-10-git-send-email-aisheng.dong@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
 References: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
 X-EOPAttributedMessage: 0
-X-Matching-Connectors: 131630073428804067;(91ab9b29-cfa4-454e-5278-08d120cd25b8);()
-X-Forefront-Antispam-Report: CIP:192.88.168.50;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(39380400002)(396003)(2980300002)(1109001)(1110001)(339900001)(199004)(189003)(54534003)(336011)(450100002)(77096007)(26005)(4326008)(86362001)(48376002)(85426001)(97736004)(105606002)(498600001)(50466002)(26826003)(51416003)(53936002)(2906002)(966005)(16586007)(6306002)(2351001)(316002)(356003)(54906003)(68736007)(106466001)(305945005)(47776003)(6666003)(2950100002)(81156014)(81166006)(50226002)(8676002)(6916009)(104016004)(5660300001)(76176011)(36756003)(8936002)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:BL2PR03MB466;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;PTR:InfoDomainNonexistent;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD047;1:8y0s6gjG7ta222FKQaB048fy5Cisb5WgHhP7Ih1SnJKvHC5lNVLkmCZeUwEgagM2EmjByFYSGwRGjo5piL6m5PTZFkSA2ADiZNjPjeVQQFbajbEwpB/coVPevAm36yBL
+X-Matching-Connectors: 131630073428877387;(91ab9b29-cfa4-454e-5278-08d120cd25b8);()
+X-Forefront-Antispam-Report: CIP:192.88.168.50;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39380400002)(39860400002)(376002)(396003)(2980300002)(1110001)(1109001)(339900001)(199004)(189003)(54534003)(36756003)(316002)(6306002)(8676002)(2906002)(50466002)(450100002)(81156014)(81166006)(498600001)(106466001)(68736007)(50226002)(4326008)(48376002)(97736004)(8936002)(356003)(47776003)(59450400001)(85426001)(336011)(51416003)(104016004)(105606002)(53936002)(16586007)(6666003)(26826003)(6916009)(2950100002)(26005)(76176011)(5660300001)(86362001)(305945005)(966005)(77096007)(54906003)(2351001)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:BL2PR03MB465;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;PTR:InfoDomainNonexistent;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11FD025;1:pyNnKpFafKUov9lM9VDVXMYEJLbEBEQUEEgohv1XZbCUUym0DWM8CzUSyc8I8j4dv5XqkguPNVhnde1Ad5gwtMcQC91FfV2s1YjJtsw9id7eEE05bRs12TpWQ8CGhYNF
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 787ccafe-6e40-41f5-15b0-08d572f1dadd
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603307);SRVR:BL2PR03MB466;
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB466;3:osipvBYFSUoZ80jfMNi7BCH/bj0f8I6j8h8XEERMmzEYar8/qQGbVAN2CcoSJEMrHeEtz+6X4mgSd4ixHKRqyg4H8h+CCf0SNPSi9IlCzNVHdN1LqCc/yGuhqWr9VSt0Uyc+OjUpdxoAx9hEgR0ZrQxrHMniNtTg73Hl82pCDkZYri2zISPxbwMkPiY4y0pff7MtCLG6sTLf6Ek2J2WZEcLaOm0F3IOYwOBYAE7fnOAQ+dkF49ryFuqvsfpB0mEL4BVQiVBfs2lo6fAtoHwOYaU1+IJjYHrYWkskHgcOQxxid+UBOXxQ26ntbxGzrC7ueuw/GM6mxSEv/UCDnZMpmwkol1SdfofH5rwx7j34qKY=;25:281z9znZtC1Q5+HSlyjFGeqaS4r6/7Kvf075ViV99tMZXxAaUwbjIA/8ZtY4IZ/Yj8H6GBZfgkKxyDNZhSJRmMO3YPrFifaoRWCAjWO6DS/dkJ2yyaMuUctplGJ7oARfuhBnoUqQiclDulKi56rtYP8ClpFpfRH3mmzHhU3A9RXdus5suIBL9iA/ZpLoqjqh3QQev20XMy0Bqsls/xjOR0gEl4Yg9xKrL9BoUZtMLYTVhJbyiqMDvfiiw9FPti1ZnFT6+huv7aKKdMEsER/O95TvwiaK+F+GqGHChPftZGvVwZik/gpGzkYVsULbel7U5igmLCUMLBceqwlbedXrTw==
-X-MS-TrafficTypeDiagnostic: BL2PR03MB466:
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB466;31:WRHejS72bRSXOFlr8XrOibGLGd99GgVL4CTY5KjQwgIQXx5XZi7r/uufCA4RWnAxzKIe1Nnwtumd6FtObjCR4Tj6KRSjigcfcdA0jjGXYZU1Vwfwvi++Qh+IFEZzVUufyQsDWz9rp2ss2PeWFHX8dTzvrm5cvw2fvcwn/Nuk60lQlAnlKeWvLPI4lIIw9lDNs4rdh6kjcZK7A8/AdT6bKAUnkh2YF8i+hCmmL1wXaig=;4:l+o+fL0veIl4Bimxre0w0DNgsI9PEEzaj3vpiANgoG33MCT0xyWBOyNnHL0PGYEnKlnh2KJS8VheUiokQKvYK6ERfZslS7v0rYq5TLvRaxr9HfDcVoqPIYxKMBJSIuJz0N+D7h0D4FiP8S3Rx9xBJl5z6x3v56BKX6uCGYvzYKMhV+Ixi1m186AGV8aRKJcDzYDtFLGMQCz21En69cNnDsps8oYIeOqaUyqK079eOlYt1T6mBtby/OWyFJ/6v7HCEP9N73yLVg4wmoZWpIcsF3U04rfbKYHYR6qeBC8ZL2Lthz1bP7MXI1oE+3YkHQX68yau05Mi5N4B5z5r1F4SNuPsDP/oo72+gC0lPPMJNEksO0vZapwPvGAeBJzuUoE9
-X-Microsoft-Antispam-PRVS: <BL2PR03MB46673C5B024467FB01BE3D380F60@BL2PR03MB466.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: d8900d85-8d9d-4d64-d281-08d572f1dadb
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603307);SRVR:BL2PR03MB465;
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB465;3:xCmoSRb6NjunpAqY5QwQahs7eQMPdI50CktgYIUx3XKmcKfxQ6gYj8i5a9lkS+c5bUC+1dtpYWvjnHgMdupznQJNwvtMvrQ16H1vhwUZXynNpiQxn0jDQs2Ly9mMY3C3Ezh6IrH0hhCYgYINB6ZibVeuVTiKUauAvg1LY0R6Nb1SL2RPkHcu48J4PGhuK+UQ9aFCUvI5j31gIv75LesjowbZx1e9EQcixSuh++T1fouzr+PkiNu4ZPyeVkSFoLR/gX9xuqsKKOSF6eH+l2a6k270vTYkn0sgCNFgq9ZVrJ6RVpwZhTXE3ivkmqJ3jX6DRM2Yx7C98EFf60/rnuONSrlpUhLApWu+DQIYrVfD0ZI=;25:QyA47Lum5FuZdizLbW/jFvJ7ZCcnzIG1sssZEydPelqoSZlu3ME45wBHQrcalmxDgGZ8hON8Vj0Y0OdsAHc9AtC2G7S5ipXaDUpjHdeEFq3e2p2+D5/nwoddEezxArfPoKqKC3bKuyt43gihMwpA4xof6fP5g5K6IxiaLoeHr/63dXNcbpjtS/xXzi+skAcpMunkiZmGyQOdRC9CH3RC2qYjVVpcsJnhhKHsoyFfYyuGCP0vLNy8cRG5Pm/wQzaQwlRAZ234Gro/7dcrX3Vv0IpZpUgoA+sl2/55L7LcO2EtzqhEQnvCjS6SGp8Zlbeh9wb3TWSrEP7koVuNyXuDWw==
+X-MS-TrafficTypeDiagnostic: BL2PR03MB465:
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB465;31:kEydYJZZL2Lf0duYObzi+gFb1acTSXvJnii/siewJ7pVm0BOZ+ja3erZKeJB9RlnfztETsVH9MYZ3+3f1xxBAHLWYWwpjz/iOjKWzn4+pkjYm7vsQ0IVOIr/aqh7vapMjhnFovULgkFY3HpuFcT9beUjee+4VOZLQ/fc0o7Hi4Pu/S+oi86pOa8p+v2ZCcX7uRusQfAs2BmjMmvOBjrswQshy2ZjOTK0v1QEaViLHEs=;4:OuBx/NivZLXYs9n5ANcWQKV6m3Nxui4Cvqo1oKyG0cUI8iWQgHoXmqHhQt+5F+/QbY5jR17dgfBigBGeJeAG/VSE//UNMJsiljUDrK1gFgCdXjgmwVzVMjsNGoXf36hEmiCE+Rls+//WBbxPr4bCp8Xn3d8M1zaNTLfv72pW22/EHoozTCNcpgJ6f2UBgEQX5F5wEH2oNwDGDHWuvBSdag9q0KXi6dCLHoaDCedHfiwOAgR5I50Z8KaFL2BYHkJ9Kp1rCGzgzq2ZNwVrMNbHp6g1arDP2EFszu+nSctGEjsNdVfIs+zeoOuvqzq/Kg98yrHZEc8widqnWLIou5Mbl5Rp+ssPO9EQ036xys4Fr0Abnn6/5G+ZLbt4pGUwc2sK
+X-Microsoft-Antispam-PRVS: <BL2PR03MB465C8008E7DFF5292A0373280F60@BL2PR03MB465.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(250305191791016)(22074186197030)(185117386973197);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231101)(944501161)(93006095)(93001095)(6055026)(6096035)(20161123565025)(20161123556025)(20161123563025)(20161123561025)(20161123559100)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(201708071742011);SRVR:BL2PR03MB466;BCL:0;PCL:0;RULEID:(400006);SRVR:BL2PR03MB466;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231101)(944501161)(3002001)(10201501046)(6055026)(6096035)(20161123561025)(20161123565025)(20161123556025)(20161123559100)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123563025)(201708071742011);SRVR:BL2PR03MB465;BCL:0;PCL:0;RULEID:(400006);SRVR:BL2PR03MB465;
 X-Forefront-PRVS: 0582641F53
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL2PR03MB466;23:wOzOMEQgS2hanMOgsxMmNfqP+XTiPxpZkFecxe4WMg?=
- =?us-ascii?Q?oUlyFym7kt/H7nyfW15g0vj7VKPHSEs0SPd5lr4u9yRKK+DIlqIhuixXzExT?=
- =?us-ascii?Q?sxOyEFDDTJbDCxPQFLsxE85YxAw2AhOTbMRCExLh9mBn4PqlTZtcQmru+1hO?=
- =?us-ascii?Q?I3DEF1Q0O3ZpVZewEKW+tG3zLPOPLrPaOe31eG2a3eSmQa9qpt/rK6vBvl9U?=
- =?us-ascii?Q?BwsAqR4hRc41YONuW0FrFtznGiQIct4dsHYaK69pJ+a5i149sq8+9VBkc9ZA?=
- =?us-ascii?Q?w5QZ1s1UgtC+d42WZOMmTacr35B3WKuc69Wtmu07wH4wsIHdNFzo48Hsv+Yn?=
- =?us-ascii?Q?nUP/+AXUb4VCZ6x76jfTt6Tx4IZxHGdnhyyGvddVaYNhodA91PHcdLPH9LKP?=
- =?us-ascii?Q?u0rQSS6a8LPzxA5Fcl2mLK9rAQnTw/gQsKhVpfsgGQfKQPE89QEqC589JNq/?=
- =?us-ascii?Q?q4+/zYMQSd8Y8KhShvHbZ2UJDe5dZqOPidcUplq7Y1A5rRWGFe7U5RIybTFy?=
- =?us-ascii?Q?lhlfS1dwuCmlXMBVrDnR5zvPFspdyi3aVmrram+5A5nUjOXBPpfzPSDfQb0y?=
- =?us-ascii?Q?akn5BD4ThMCC8m45OnVBxIv7YXiwkSUmBRbDOZr46FC+5M29iM7N8fTG8rBg?=
- =?us-ascii?Q?9PACPOWG+mlVU3q48wkmcO7HoMo38lFfaXs2bTJCC9vqu1hSkX2Yi0nYpKHz?=
- =?us-ascii?Q?IqhMJCpBbsMk1DLz9SWwO8S2EFxw9NWFT2YrlnwF/mdaWJyvjLNYzZQPfjDM?=
- =?us-ascii?Q?yKDT7FT4wF/UqS4zlVEYGHM9zCzPS3zkCvMwACr+u39gj1qhS+XTpCRiqByE?=
- =?us-ascii?Q?mjWEiWzut/C0x8wtOA92KUmNIOWpppJ/icr3G+3aSlaptQFjz2iTvqU7L0LH?=
- =?us-ascii?Q?Ccl8FV8F9Ih/RDtxpb1TfY4bHPTWwItpkKYpZmbK/NUBtxU2Am8COWjpGJ/G?=
- =?us-ascii?Q?FdswKuR8LPkc/hGpFRgqnQ1ug2ZMn6MZkNrnaLdhZfvEGTgvJ+eti9i+VfrT?=
- =?us-ascii?Q?xxN8Ys2sNaayx3gMhwAiLc3R6GmrP/AuwO36JnS2/Vk2IBEuM0QrocoLOhpC?=
- =?us-ascii?Q?WwpadoQvlsDHRue/yXGdyNE97HZHpzsknbU4oZ0+5qSy8uZVWRNn5iOVWdfV?=
- =?us-ascii?Q?9/1ThP4fRYAziK5ewkqU1MGvJqCTg/oDyKRYOQi+vxNJihC436+ZmWNIeb5N?=
- =?us-ascii?Q?FDrSJj3iC3XZH3r1MR+Vv5OFEu23lYU7mB?=
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB466;6:vwc6d/DslHwNwaJdeB6dHZBa6X+tyDFJrrSL8MJymZd5teOqmq+vbGCKFpBgE2T/RgmwNFa+8Il8gPfJyIaCN20p7wkPv38esAIBjZBHwgpJWtEAtOgESqevfYSzTwKWqCDVcxEdU9XZnyNPyGitWtCcv/RDaxpPfvBbZiMnrsu135RCQBNNgS8j3cAfgcboOZT8hIj3jojypOa9kMtpZev9F1ZKSeQ4X9c887rm/AB+EZCS/bMxbOm2KEjNBRFJjZAJyaM+m1imxCqGh03xIurYd0jAJkVJaFqMlg4aqlo4XTPBo9bA3RhWxfU9fBwF0GX6gZgQ/PiGOmdPeL85X6kWVCVdWsBdkALhYCdsFDo=;5:ylZ/GiMPZok7fneGXQ0HI7uc6McEHStii89+OiR2YelAiiWCzlQw2605yEwSKNxhyAvgKDeLN7K+DAr5SkeE89bEr9mzy/Aiz3+3Y1x5/rwCX/1cgc7myafyometCnN0uekvS7zHLIkSqYp4ahok/7AupqEhkxA37sPqX8D9W3E=;24:SUGMCBwwGfVnl9HWaVwAicnkYSC8bFA1LV7VxbZxuM5y3eoApLn8z6sJXrX6mk513mYjet2+ULyDEGfmbW+m2kbP9heL/drX+vwH3/I6H8I=;7:07boq57VtFxxz0P0aqTSwuHaTyOVvQi8QFj+uZm/YIH09kBQsiXW17bm5X583CJ9ST2CzXLOlOM5pspwb5JvMXKlHauCWFhV8jUGfwdWrRSRZ8G1MYVhvvR7ODYKeIvwcI8o0jHJTHs2Al5fLG1ycWKNic1+zxF0r7BxkgFI2MPm/OeEwcHWlrCUHQVew7ZA0oT7E2n+d7RwD1+y/xAYmS0pe1yjM6TpIt4wIpx3UKSkG6dRgpe7K85N3LBdpr2o
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL2PR03MB465;23:nqRrbDtxsfr/V9zZ+gGzFE93fBOCdoys84LvRAWDfJ?=
+ =?us-ascii?Q?25i/RzCdra3sGk9vW1GakzfNbMmAiapkQWPzf2k/cDurDmY8G5L7jtXQJWlJ?=
+ =?us-ascii?Q?RaesDSzQH9iK6ssfRAvbF6qiJNcCwQ6XrUxyxYRjlg6za4iQRlCrRlwG5Le/?=
+ =?us-ascii?Q?0MueZhBRb9Qnh2OPhMd/w4MHJg53VmN4n6Gmg8C6hzHgNnGwuvBtWzP1VJeW?=
+ =?us-ascii?Q?mSfpKyzV672EOdYnmwIfBoyDPEIF3DyixFAe7GxuPEMzjYQGtjQGvuh7aYh5?=
+ =?us-ascii?Q?TM8+quhCvYYLxBSwd1luGkQrqJDdIT8HxGPgjqCEb6mtJ4A3eMExbMnA3Zgr?=
+ =?us-ascii?Q?Yru5I8YYcjav1JNBPeRySmHtGSzPpp+PKUTjmcBnSde2RDvpKf5QDIK+0dV6?=
+ =?us-ascii?Q?iFJjX1yNnfxdPt4jd7svyxMlUezlxLLLn+3IjF/l7qUAyzBnIzkbcuuPdh2G?=
+ =?us-ascii?Q?z/RWm2z7Ta93v+kV5JWTga++GLj5LRFZhDwZre5igfGciOt4wuLvFPkZyv7c?=
+ =?us-ascii?Q?vaBgYuKhv3FVx/apN8cZI+aKoPPTnfE3UhREkpT+zsxWPcA3ZIEH4wBURsuf?=
+ =?us-ascii?Q?+Hh+9OHHc7riAhuUPizSLK6tibaiRPQa9j2rnSgMq763fJt+KMKhlvNHceZ7?=
+ =?us-ascii?Q?IMcDkQw6J0Em67ireu+3hw9EiM8bWShfV1mInbMNRzsyLxIVcr/f0iAextOb?=
+ =?us-ascii?Q?RmIU4kgwzlZC3bM39xDI4rB2sibnSQsjzzrLoiW+ndCbqOAn+nmNvkijee1o?=
+ =?us-ascii?Q?9b4T5Q2/9zOFgt5CagJsKDrlpUhMR6bWI6MZlJoIjUhZG7BEiq0DgWgyQAWR?=
+ =?us-ascii?Q?dO57F7twErUOnr64ih8RQvSkUL/5+EOv7Ct9zXU6xkzQu0BE8aEmv+QE5VKV?=
+ =?us-ascii?Q?kb0WKfoMW+9qCs/Jpo5Aax4KlpagMt87Tn84oeoufgA4pvaEa4ofRj8lttI/?=
+ =?us-ascii?Q?ZpySf+sVY717qYLrNHWFxVdLfuuLZjS/jad8owKAtUrx8zxd9jMhvrwob7Xz?=
+ =?us-ascii?Q?FTonJgA3eXdWENeCmgocHqLv4m4nUNkFgw6uLlGcN4Cy+7xGStZCBrJIX9CP?=
+ =?us-ascii?Q?e8TtrzxA/xEyouOi4AglP9+usfEcjwSGEm8yAG59WBccoCsXg/KSqg2wApQf?=
+ =?us-ascii?Q?Ja5SuUSvuRNyJ+kT6ZYq41RG3lzXBFXQbkB0w8RbJoQy9nbXa5NZiX2NcTAV?=
+ =?us-ascii?Q?n4wJWA+sdzMm4DcuruHbYOpx0dKUb9VSIMrFtA8vNoLHftf+Osc3+JOQ=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB465;6:/aQV+osc7jK545+4CSUIdFVkAXbVUTHlPoiKObgDyGcuNZ+93OD1fpkOoOU72vuXSWrX81bncY133d6OY4WhIubDKWddc5XAhbxPjmP8iB+mg8V7i2YubmS7jNx485xbkQ+PfOTRq40mA1sR9O3+QsxVRlZXOta6UZlX0kYmEIUPple7gyZvKJXmomZC0QwQPsgBzQ/7T6WoPgbPF8pYWRct455jbqL7piog69uiLkkEChOorxkcsIAKfk5sA1afLSj4M1MIfSAjXO6CoBBPyN7plfI1a48DjXmOu/HFDTHHVHUvlbClvm059OKeMwYlkXMz9i+2URAlPwLfSgVpmdMiecdU9OCfgNMcwiT6AI0=;5:EbOWxaYVdpBiy0EQmQkJud5oW1WzCB+7d4ID829fZJB/4zofwZ1ew9ZuYbV8Pn+8269HmOj3oivqNoaVGaVuoiTFOzQ6ZMjRv0dXbWW3mJUbqCyKcp4DWdNliIsZ0YkThXQ8EW7QNFICGLpQYt4SJ4Ai088LkSXk9CB+hfRSQ78=;24:N7prWV9uFJYliMOONTk9rWVR5dumZUW7U2bsikFPKI1c5iUBdEo8TshqO+ftxApFcFulqYfz/no7NH+2M9RpJU3bSFOz8P0ZZIpXKGxNJew=;7:ot+5a+TSIjGMf7LTgo8ytYQYtE8wfV+5kho6G/LGX8+RGLakce8ULfn1yvOfw+IqSjozjby5xlvRt69Of46c4dibuRYXG0g6/TtsPzGwsKtIIFRSwBWpQiVFYlFiJOW8V1NzIYeGl1isk/RuGuaCBZuP0l9YZ2Px1tlSAj+XvOwj9+xniuBTzZ2E91Bs467UTzNK4g2lP5RD/ElK9sLeBMza/S5FTnsVOmqv18O+a1eqohc2onnakHlLj2tHEN7/
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2018 14:55:42.5372
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2018 14:55:42.5601
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 787ccafe-6e40-41f5-15b0-08d572f1dadd
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8900d85-8d9d-4d64-d281-08d572f1dadb
 X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[192.88.168.50];Helo=[tx30smr01.am.freescale.net]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR03MB466
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR03MB465
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The imx composite clk is designed for Peripheral Clock Control (PCC)
-module observed in IMX ULP SoC series. e.g. i.MX7ULP.
+i.MX7ULP Clock functions are under joint control of the System
+Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
+modules, and Core Mode Controller (CMC)1 blocks
 
-NOTE pcc can only be operated when clk is gated.
+The clocking scheme provides clear separation between M4 domain
+and A7 domain. Except for a few clock sources shared between two
+domains, such as the System Oscillator clock, the Slow IRC (SIRC),
+and and the Fast IRC clock (FIRCLK), clock sources and clock
+management are separated and contained within each domain.
+
+M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
+A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+
+This driver only adds clock support in A7 domain.
+
+Note that most clocks required to be operated when gated, e.g. pll,
+pfd, pcc. And more special cases that scs/ddr/nic mux selecting
+different clock source requires that clock to be enabled first,
+then we need set CLK_OPS_PARENT_ENABLE flag for them properly.
 
 Cc: Stephen Boyd <sboyd@codeaurora.org>
 Cc: Michael Turquette <mturquette@baylibre.com>
@@ -90,36 +106,37 @@ ChangeLog:
 v2->v3:
  * no changes
 v1->v2:
- * remove an unneeded blank line change
- * use clk_hw_register
+ * use of_clk_add_hw_provider instead
+ * split the clocks register process into two parts: early part for possible
+   timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part for
+   the left normal peripheral clocks registered by a platform driver.
 ---
- drivers/clk/imx/Makefile        |  1 +
- drivers/clk/imx/clk-composite.c | 90 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h           |  6 +++
- 3 files changed, 97 insertions(+)
- create mode 100644 drivers/clk/imx/clk-composite.c
+ drivers/clk/imx/Makefile      |   1 +
+ drivers/clk/imx/clk-imx7ulp.c | 232 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 233 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-imx7ulp.c
 
 diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 9c04ae4..eab606c 100644
+index eab606c..f5ff925 100644
 --- a/drivers/clk/imx/Makefile
 +++ b/drivers/clk/imx/Makefile
-@@ -4,6 +4,7 @@ obj-y += \
- 	clk.o \
- 	clk-busy.o \
- 	clk-cpu.o \
-+	clk-composite.o \
- 	clk-fixup-div.o \
- 	clk-fixup-mux.o \
- 	clk-gate-exclusive.o \
-diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
+@@ -28,4 +28,5 @@ obj-$(CONFIG_SOC_IMX6SL) += clk-imx6sl.o
+ obj-$(CONFIG_SOC_IMX6SX) += clk-imx6sx.o
+ obj-$(CONFIG_SOC_IMX6UL) += clk-imx6ul.o
+ obj-$(CONFIG_SOC_IMX7D)  += clk-imx7d.o
++obj-$(CONFIG_SOC_IMX7ULP) += clk-imx7ulp.o
+ obj-$(CONFIG_SOC_VF610)  += clk-vf610.o
+diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
 new file mode 100644
-index 0000000..78b891e
+index 0000000..1245efc
 --- /dev/null
-+++ b/drivers/clk/imx/clk-composite.c
-@@ -0,0 +1,90 @@
++++ b/drivers/clk/imx/clk-imx7ulp.c
+@@ -0,0 +1,232 @@
 +/*
 + * Copyright (C) 2016 Freescale Semiconductor, Inc.
 + * Copyright 2017 NXP
++ *
++ * Author: Dong Aisheng <aisheng.dong@nxp.com>
 + *
 + * The code contained herein is licensed under the GNU General Public
 + * License. You may obtain a copy of the GNU General Public License
@@ -129,100 +146,223 @@ index 0000000..78b891e
 + * http://www.gnu.org/copyleft/gpl.html
 + */
 +
-+#include <linux/clk-provider.h>
++#include <dt-bindings/clock/imx7ulp-clock.h>
++#include <linux/clk.h>
 +#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
 +#include <linux/slab.h>
 +
-+#define PCG_PCS_SHIFT	24
-+#define PCG_PCS_MASK	0x7
-+#define PCG_CGC_SHIFT	30
-+#define PCG_FRAC_SHIFT	3
-+#define PCG_FRAC_WIDTH	1
-+#define PCG_FRAC_MASK	BIT(3)
-+#define PCG_PCD_SHIFT	0
-+#define PCG_PCD_WIDTH	3
-+#define PCG_PCD_MASK	0x7
++#include "clk.h"
 +
-+struct clk_hw *imx_clk_composite(const char *name,
-+			      const char * const *parent_names,
-+			      int num_parents, bool mux_present,
-+			      bool rate_present, bool gate_present,
-+			      void __iomem *reg)
++static const char * const pll_pre_sels[]	= { "sosc", "firc", };
++static const char * const spll_pfd_sels[]	= { "spll_pfd0", "spll_pfd1", "spll_pfd2", "spll_pfd3", };
++static const char * const spll_sels[]		= { "spll", "spll_pfd_sel", };
++static const char * const apll_pfd_sels[]	= { "apll_pfd0", "apll_pfd1", "apll_pfd2", "apll_pfd3", };
++static const char * const apll_sels[]		= { "apll", "apll_pfd_sel", };
++static const char * const scs_sels[]		= { "dummy", "sosc", "sirc", "firc", "dummy", "apll_sel", "spll_sel", "upll", };
++static const char * const ddr_sels[]		= { "apll_pfd_sel", "upll", };
++static const char * const nic_sels[]		= { "firc", "ddr_clk", };
++static const char * const periph_plat_sels[]	= { "dummy", "nic1_bus_clk", "nic1_clk", "ddr_clk", "apll_pfd2", "apll_pfd1", "apll_pfd0", "upll", };
++static const char * const periph_bus_sels[]	= { "dummy", "sosc_bus_clk", "mpll", "firc_bus_clk", "rosc", "nic1_bus_clk", "nic1_clk", "spll_bus_clk", };
++
++static struct clk_hw_onecell_data *clk_data;
++
++static void __init imx7ulp_clocks_early_init(struct device_node *scg_node)
 +{
-+	struct clk_hw *mux_hw = NULL, *fd_hw = NULL, *gate_hw = NULL;
-+	struct clk_fractional_divider *fd = NULL;
-+	struct clk_gate *gate = NULL;
-+	struct clk_mux *mux = NULL;
-+	struct clk_hw *hw;
++	struct device_node *np = scg_node;
++	void __iomem *base;
++	struct clk_hw **clks;
 +
-+	if (mux_present) {
-+		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+		if (!mux)
-+			return ERR_PTR(-ENOMEM);
-+		mux_hw = &mux->hw;
-+		mux->reg = reg;
-+		mux->shift = PCG_PCS_SHIFT;
-+		mux->mask = PCG_PCS_MASK;
-+	}
++	clk_data = kzalloc(sizeof(*clk_data) +
++			   sizeof(*clk_data->hws) * IMX7ULP_CLK_END,
++			   GFP_KERNEL);
++	if (!clk_data)
++		return;
 +
-+	if (rate_present) {
-+		fd = kzalloc(sizeof(*fd), GFP_KERNEL);
-+		if (!fd) {
-+			kfree(mux);
-+			return ERR_PTR(-ENOMEM);
-+		}
-+		fd_hw = &fd->hw;
-+		fd->reg = reg;
-+		fd->mshift = PCG_FRAC_SHIFT;
-+		fd->mwidth = PCG_FRAC_WIDTH;
-+		fd->mmask  = PCG_FRAC_MASK;
-+		fd->nshift = PCG_PCD_SHIFT;
-+		fd->nwidth = PCG_PCD_WIDTH;
-+		fd->nmask = PCG_PCD_MASK;
-+		fd->flags = CLK_FRAC_DIVIDER_ZERO_BASED;
-+	}
++	clk_data->num = IMX7ULP_CLK_END;
++	clks = clk_data->hws;
 +
-+	if (gate_present) {
-+		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+		if (!gate) {
-+			kfree(mux);
-+			kfree(fd);
-+			return ERR_PTR(-ENOMEM);
-+		}
-+		gate_hw = &gate->hw;
-+		gate->reg = reg;
-+		gate->bit_idx = PCG_CGC_SHIFT;
-+	}
++	clks[IMX7ULP_CLK_DUMMY]		= imx_clk_hw_fixed("dummy", 0);
 +
-+	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-+				       mux_hw, &clk_mux_ops, fd_hw,
-+				       &clk_fractional_divider_ops, gate_hw,
-+				       &clk_gate_ops, CLK_SET_RATE_GATE |
-+				       CLK_SET_PARENT_GATE);
-+	if (IS_ERR(hw)) {
-+		kfree(mux);
-+		kfree(fd);
-+		kfree(gate);
-+	}
++	clks[IMX7ULP_CLK_ROSC]		= imx_obtain_fixed_clk_hw(np, "rosc");
++	clks[IMX7ULP_CLK_SOSC]		= imx_obtain_fixed_clk_hw(np, "sosc");
++	clks[IMX7ULP_CLK_SIRC]		= imx_obtain_fixed_clk_hw(np, "sirc");
++	clks[IMX7ULP_CLK_FIRC]		= imx_obtain_fixed_clk_hw(np, "firc");
++	clks[IMX7ULP_CLK_MIPI_PLL]	= imx_obtain_fixed_clk_hw(np, "mpll");
++	clks[IMX7ULP_CLK_UPLL]		= imx_obtain_fixed_clk_hw(np, "upll");
 +
-+	return hw;
++	/* SCG1 */
++	base = of_iomap(np, 0);
++	WARN_ON(!base);
++
++	/* NOTE: xPLL config can't be changed when xPLL is enabled */
++	clks[IMX7ULP_CLK_APLL_PRE_SEL]	= imx_clk_hw_mux_flags("apll_pre_sel", base + 0x508, 0, 1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
++	clks[IMX7ULP_CLK_SPLL_PRE_SEL]	= imx_clk_hw_mux_flags("spll_pre_sel", base + 0x608, 0, 1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
++
++	/*							   name		    parent_name	   reg			shift	width	flags */
++	clks[IMX7ULP_CLK_APLL_PRE_DIV]	= imx_clk_hw_divider_flags("apll_pre_div", "apll_pre_sel", base + 0x508,	8,	3,	CLK_SET_RATE_GATE);
++	clks[IMX7ULP_CLK_SPLL_PRE_DIV]	= imx_clk_hw_divider_flags("spll_pre_div", "spll_pre_sel", base + 0x608,	8,	3,	CLK_SET_RATE_GATE);
++
++	/*						name	 parent_name	 base */
++	clks[IMX7ULP_CLK_APLL]		= imx_clk_pllv4("apll",  "apll_pre_div", base + 0x500);
++	clks[IMX7ULP_CLK_SPLL]		= imx_clk_pllv4("spll",  "spll_pre_div", base + 0x600);
++
++	/* APLL PFDs */
++	clks[IMX7ULP_CLK_APLL_PFD0]	= imx_clk_pfdv2("apll_pfd0", "apll", base + 0x50c, 0);
++	clks[IMX7ULP_CLK_APLL_PFD1]	= imx_clk_pfdv2("apll_pfd1", "apll", base + 0x50c, 1);
++	clks[IMX7ULP_CLK_APLL_PFD2]	= imx_clk_pfdv2("apll_pfd2", "apll", base + 0x50c, 2);
++	clks[IMX7ULP_CLK_APLL_PFD3]	= imx_clk_pfdv2("apll_pfd3", "apll", base + 0x50c, 3);
++
++	/* SPLL PFDs */
++	clks[IMX7ULP_CLK_SPLL_PFD0]	= imx_clk_pfdv2("spll_pfd0", "spll", base + 0x60C, 0);
++	clks[IMX7ULP_CLK_SPLL_PFD1]	= imx_clk_pfdv2("spll_pfd1", "spll", base + 0x60C, 1);
++	clks[IMX7ULP_CLK_SPLL_PFD2]	= imx_clk_pfdv2("spll_pfd2", "spll", base + 0x60C, 2);
++	clks[IMX7ULP_CLK_SPLL_PFD3]	= imx_clk_pfdv2("spll_pfd3", "spll", base + 0x60C, 3);
++
++	/* PLL Mux */
++	clks[IMX7ULP_CLK_APLL_PFD_SEL]	= imx_clk_hw_mux_flags("apll_pfd_sel", base + 0x508, 14, 2, apll_pfd_sels, ARRAY_SIZE(apll_pfd_sels), CLK_SET_RATE_PARENT | CLK_SET_PARENT_GATE);
++	clks[IMX7ULP_CLK_SPLL_PFD_SEL]	= imx_clk_hw_mux_flags("spll_pfd_sel", base + 0x608, 14, 2, spll_pfd_sels, ARRAY_SIZE(spll_pfd_sels), CLK_SET_RATE_PARENT | CLK_SET_PARENT_GATE);
++	clks[IMX7ULP_CLK_APLL_SEL]	= imx_clk_hw_mux_flags("apll_sel", base + 0x508, 1, 1, apll_sels, ARRAY_SIZE(apll_sels), CLK_SET_RATE_PARENT | CLK_SET_PARENT_GATE);
++	clks[IMX7ULP_CLK_SPLL_SEL]	= imx_clk_hw_mux_flags("spll_sel", base + 0x608, 1, 1, spll_sels, ARRAY_SIZE(spll_sels), CLK_SET_RATE_PARENT | CLK_SET_PARENT_GATE);
++
++	clks[IMX7ULP_CLK_SPLL_BUS_CLK]	= clk_hw_register_divider(NULL, "spll_bus_clk", "spll_sel", CLK_SET_RATE_GATE, base + 0x604, 8, 3, CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ZERO_GATE, &imx_ccm_lock);
++
++	/* scs/ddr/nic select different clock source requires that clock to be enabled first */
++	clks[IMX7ULP_CLK_SYS_SEL]	= imx_clk_hw_mux2("scs_sel", base + 0x14, 24, 4, scs_sels, ARRAY_SIZE(scs_sels));
++	clks[IMX7ULP_CLK_NIC_SEL]	= imx_clk_hw_mux2("nic_sel", base + 0x40, 28, 1, nic_sels, ARRAY_SIZE(nic_sels));
++	clks[IMX7ULP_CLK_DDR_SEL]	= imx_clk_hw_mux_flags("ddr_sel", base + 0x30, 24, 1, ddr_sels, ARRAY_SIZE(ddr_sels), CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE);
++
++	clks[IMX7ULP_CLK_CORE_DIV]	= imx_clk_hw_divider_flags("divcore",	"scs_sel",  base + 0x14, 16, 4, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
++
++	clks[IMX7ULP_CLK_DDR_DIV]	= clk_hw_register_divider(NULL, "ddr_clk", "ddr_sel", CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, base + 0x30, 0, 3,
++								  CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ZERO_GATE, &imx_ccm_lock);
++
++	clks[IMX7ULP_CLK_NIC0_DIV]	= imx_clk_hw_divider_flags("nic0_clk",		"nic_sel",  base + 0x40, 24, 4, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
++	clks[IMX7ULP_CLK_NIC1_DIV]	= imx_clk_hw_divider_flags("nic1_clk",		"nic0_clk", base + 0x40, 16, 4, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
++	clks[IMX7ULP_CLK_NIC1_BUS_DIV]	= imx_clk_hw_divider_flags("nic1_bus_clk",	"nic1_clk", base + 0x40, 4,  4, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
++
++	clks[IMX7ULP_CLK_SOSC_BUS_CLK]	= clk_hw_register_divider(NULL, "sosc_bus_clk", "sosc", 0, base + 0x104, 8, 3,
++								  CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ZERO_GATE, &imx_ccm_lock);
++	clks[IMX7ULP_CLK_FIRC_BUS_CLK]	= clk_hw_register_divider(NULL, "firc_bus_clk", "firc", 0, base + 0x304, 8, 3,
++								  CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ZERO_GATE, &imx_ccm_lock);
++
++	/* PCC2 */
++	base = of_iomap(np, 1);
++	WARN_ON(!base);
++
++	clks[IMX7ULP_CLK_LPTPM4]	= imx_clk_composite("lptpm4",  periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x94);
++	clks[IMX7ULP_CLK_LPTPM5]	= imx_clk_composite("lptpm5",  periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x98);
++	clks[IMX7ULP_CLK_LPIT1]		= imx_clk_composite("lpit1",   periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x9c);
++
++	/* PCC3 */
++	base = of_iomap(np, 2);
++	WARN_ON(!base);
++
++	clks[IMX7ULP_CLK_LPTPM6]	= imx_clk_composite("lptpm6",  periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x84);
++	clks[IMX7ULP_CLK_LPTPM7]	= imx_clk_composite("lptpm7",  periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x88);
++
++	clks[IMX7ULP_CLK_MMDC]		= clk_hw_register_gate(NULL, "mmdc", "nic1_clk", CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
++							       base + 0xac, 30, 0, &imx_ccm_lock);
++
++	imx_check_clk_hws(clks, clk_data->num);
++
++	of_clk_add_hw_provider(scg_node, of_clk_hw_onecell_get, clk_data);
 +}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index ccd7181..fed7660 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -71,6 +71,12 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
- 			     const char **parent_names, int num_parents);
- 
-+struct clk_hw *imx_clk_composite(const char *name,
-+				 const char * const *parent_names,
-+				 int num_parents, bool mux_present,
-+				 bool rate_present, bool gate_present,
-+				 void __iomem *reg);
++CLK_OF_DECLARE_DRIVER(imx7ulp, "fsl,imx7ulp-clock", imx7ulp_clocks_early_init);
 +
- struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
- 				  void __iomem *reg, u8 shift, u8 width,
- 				  void (*fixup)(u32 *val));
++static const struct of_device_id imx7ulp_clk_dt_ids[] = {
++	{ .compatible = "fsl,imx7ulp-clock" },
++	{ /* sentinel */ }
++};
++
++static int imx7ulp_clk_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct clk_hw **clks = clk_data->hws;
++	struct resource *res;
++	void __iomem *base;
++
++	/* PCC2 */
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "scg1");
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	clks[IMX7ULP_CLK_GPU_DIV]	= imx_clk_hw_divider("gpu_clk", "nic0_clk", base + 0x40, 20, 4);
++
++	/* PCC2 */
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pcc2");
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	clks[IMX7ULP_CLK_DMA1]		= imx_clk_hw_gate("dma1", "nic1_clk", base + 0x20, 30);
++	clks[IMX7ULP_CLK_RGPIO2P1]	= imx_clk_hw_gate("rgpio2p1", "nic1_bus_clk", base + 0x3c, 30);
++	clks[IMX7ULP_CLK_DMA_MUX1]	= imx_clk_hw_gate("dma_mux1", "nic1_bus_clk", base + 0x84, 30);
++	clks[IMX7ULP_CLK_SNVS]		= imx_clk_hw_gate("snvs", "nic1_bus_clk", base + 0x8c, 30);
++	clks[IMX7ULP_CLK_CAAM]		= imx_clk_hw_gate("caam", "nic1_clk", base + 0x90, 30);
++	clks[IMX7ULP_CLK_LPSPI2]	= imx_clk_composite("lpspi2",  periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xa4);
++	clks[IMX7ULP_CLK_LPSPI3]	= imx_clk_composite("lpspi3",  periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xa8);
++	clks[IMX7ULP_CLK_LPI2C4]	= imx_clk_composite("lpi2c4",  periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xac);
++	clks[IMX7ULP_CLK_LPI2C5]	= imx_clk_composite("lpi2c5",  periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xb0);
++	clks[IMX7ULP_CLK_LPUART4]	= imx_clk_composite("lpuart4", periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xb4);
++	clks[IMX7ULP_CLK_LPUART5]	= imx_clk_composite("lpuart5", periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xb8);
++	clks[IMX7ULP_CLK_FLEXIO1]	= imx_clk_composite("flexio1", periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xc4);
++	clks[IMX7ULP_CLK_USB0]		= imx_clk_composite("usb0",    periph_plat_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xcc);
++	clks[IMX7ULP_CLK_USB1]		= imx_clk_composite("usb1",    periph_plat_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xd0);
++	clks[IMX7ULP_CLK_USB_PHY]	= imx_clk_hw_gate("usb_phy", "nic1_bus_clk", base + 0xD4, 30);
++	clks[IMX7ULP_CLK_USDHC0]	= imx_clk_composite("usdhc0",  periph_plat_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xdc);
++	clks[IMX7ULP_CLK_USDHC1]	= imx_clk_composite("usdhc1",  periph_plat_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xe0);
++	clks[IMX7ULP_CLK_WDG1]		= imx_clk_composite("wdg1",    periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, true,  true, base + 0xf4);
++	clks[IMX7ULP_CLK_WDG2]		= imx_clk_composite("sdg2",    periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, true,  true, base + 0x10c);
++
++	/* PCC3 */
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pcc3");
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	clks[IMX7ULP_CLK_LPI2C6]	= imx_clk_composite("lpi2c6",  periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x90);
++	clks[IMX7ULP_CLK_LPI2C7]	= imx_clk_composite("lpi2c7",  periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x94);
++	clks[IMX7ULP_CLK_LPUART6]	= imx_clk_composite("lpuart6", periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x98);
++	clks[IMX7ULP_CLK_LPUART7]	= imx_clk_composite("lpuart7", periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x9c);
++	clks[IMX7ULP_CLK_DSI]		= imx_clk_composite("dsi",     periph_bus_sels, ARRAY_SIZE(periph_bus_sels), true, true,  true, base + 0xa4);
++	clks[IMX7ULP_CLK_LCDIF]		= imx_clk_composite("lcdif",   periph_plat_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xa8);
++
++	clks[IMX7ULP_CLK_VIU]		= imx_clk_hw_gate("viu",   "nic1_clk",	   base + 0xa0, 30);
++	clks[IMX7ULP_CLK_PCTLC]		= imx_clk_hw_gate("pctlc", "nic1_bus_clk", base + 0xb8, 30);
++	clks[IMX7ULP_CLK_PCTLD]		= imx_clk_hw_gate("pctld", "nic1_bus_clk", base + 0xbc, 30);
++	clks[IMX7ULP_CLK_PCTLE]		= imx_clk_hw_gate("pctle", "nic1_bus_clk", base + 0xc0, 30);
++	clks[IMX7ULP_CLK_PCTLF]		= imx_clk_hw_gate("pctlf", "nic1_bus_clk", base + 0xc4, 30);
++
++	clks[IMX7ULP_CLK_GPU3D]		= imx_clk_composite("gpu3d",   periph_plat_sels, ARRAY_SIZE(periph_plat_sels), true, false, true, base + 0x140);
++	clks[IMX7ULP_CLK_GPU2D]		= imx_clk_composite("gpu2d",   periph_plat_sels, ARRAY_SIZE(periph_plat_sels), true, false, true, base + 0x144);
++
++	imx_check_clk_hws(clks, clk_data->num);
++
++	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
++
++	pr_debug("i.MX7ULP clock tree init done.\n");
++
++	return 0;
++}
++
++static struct platform_driver imx7ulp_clk_driver = {
++	.driver = {
++		.name = "imx7ulp-clock",
++		.of_match_table = imx7ulp_clk_dt_ids,
++	},
++	.probe = imx7ulp_clk_probe,
++};
++
++static int __init imx7ulp_clk_init(void)
++{
++	return platform_driver_register(&imx7ulp_clk_driver);
++}
++core_initcall(imx7ulp_clk_init);
 -- 
 2.7.4
