@@ -1,64 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965105AbeBMNjT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 08:39:19 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57448 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S964822AbeBMNjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:39:15 -0500
-From: Jiri Olsa <jolsa@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH] perf tests: Use arch__compare_symbol_names to compare symbols
-Date: Tue, 13 Feb 2018 14:39:12 +0100
-Message-Id: <20180213133912.2869-1-jolsa@kernel.org>
+        id S965081AbeBMNjL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 08:39:11 -0500
+Received: from outbound-smtp16.blacknight.com ([46.22.139.233]:46934 "EHLO
+        outbound-smtp16.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S964935AbeBMNhc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 08:37:32 -0500
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: [PATCH 5/6] sched/fair: Consider SD_NUMA when selecting the most idle group to schedule on
+Date: Tue, 13 Feb 2018 13:37:29 +0000
+Message-Id: <20180213133730.24064-6-mgorman@techsingularity.net>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180213133730.24064-1-mgorman@techsingularity.net>
+References: <20180213133730.24064-1-mgorman@techsingularity.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The symbol search called by machine__find_kernel_symbol_by_name
-is using internally arch__compare_symbol_names function to compare
-2 symbol names, because different archs have different ways of
-comparing symbols. Mostly for skipping '.' prefixes and similar.
+find_idlest_group() compares a local group with each other group to select
+the one that is most idle. When comparing groups in different NUMA domains,
+a very slight imbalance is enough to select a remote NUMA node even if the
+runnable load on both groups is 0 or close to 0. This ignores the cost of
+remote accesses entirely and is a problem when selecting the CPU for a
+newly forked task to run on.  This is problematic when a forking server
+is almost guaranteed to run on a remote node incurring numerous remote
+accesses and potentially causing automatic NUMA balancing to try migrate
+the task back or migrate the data to another node. Similar weirdness is
+observed if a basic shell command pipes output to another as each process
+in the pipeline is likely to start on different nodes and then get adjusted
+later by wake_affine.
 
-In test 1 when we try to find matching symbols in kallsyms and
-vmlinux, by address and by symbol name. When either is found
-we compare the pair symbol names  by simple strcmp, which is not
-good enough for reasons explained in previous paragraph.
+This patch adds imbalance to remote domains when considering whether to
+select CPUs from remote domains. If the local domain is selected, imbalance
+will still be used to try select a CPU from a lower scheduler domain's group
+instead of stacking tasks on the same CPU.
 
-On powerpc this can cause lockup, because even thought we found
-the pair, the compared names are different and don't match
-simple strcmp. Following code path is executed, that leads
-to lockup:
+A variety of workloads and machines were tested and as expected, there is no
+difference on UMA. The difference on NUMA can be dramatic. This is a comparison
+of elapsed times running the git regression test suite. It's fork-intensive with
+short-lived processes
 
-   - we find the pair in kallsyms by sym->start
-next_pair:
-   - we compare the names and it fails
-   - we find the pair by sym->name
-   - the pair addresses match so we call goto next_pair
-     because we assume the names match in this case
+                                 4.15.0                 4.15.0
+                           noexit-v1r23           sdnuma-v1r23
+Elapsed min          1706.06 (   0.00%)     1435.94 (  15.83%)
+Elapsed mean         1709.53 (   0.00%)     1436.98 (  15.94%)
+Elapsed stddev          2.16 (   0.00%)        1.01 (  53.38%)
+Elapsed coeffvar        0.13 (   0.00%)        0.07 (  44.54%)
+Elapsed max          1711.59 (   0.00%)     1438.01 (  15.98%)
 
-Link: http://lkml.kernel.org/n/tip-7m91et46nmwdnsr4dkkiw00j@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+              4.15.0      4.15.0
+        noexit-v1r23 sdnuma-v1r23
+User         5434.12     5188.41
+System       4878.77     3467.09
+Elapsed     10259.06     8624.21
+
+That shows a considerable reduction in elapsed times. It's important to
+note that automatic NUMA balancing does not affect this load as processes
+are too short-lived.
+
+There is also a noticable impact on hackbench such as this example using
+processes and pipes
+
+hackbench-process-pipes
+                              4.15.0                 4.15.0
+                        noexit-v1r23           sdnuma-v1r23
+Amean     1        1.0973 (   0.00%)      0.9393 (  14.40%)
+Amean     4        1.3427 (   0.00%)      1.3730 (  -2.26%)
+Amean     7        1.4233 (   0.00%)      1.6670 ( -17.12%)
+Amean     12       3.0250 (   0.00%)      3.3013 (  -9.13%)
+Amean     21       9.0860 (   0.00%)      9.5343 (  -4.93%)
+Amean     30      14.6547 (   0.00%)     13.2433 (   9.63%)
+Amean     48      22.5447 (   0.00%)     20.4303 (   9.38%)
+Amean     79      29.2010 (   0.00%)     26.7853 (   8.27%)
+Amean     110     36.7443 (   0.00%)     35.8453 (   2.45%)
+Amean     141     45.8533 (   0.00%)     42.6223 (   7.05%)
+Amean     172     55.1317 (   0.00%)     50.6473 (   8.13%)
+Amean     203     64.4420 (   0.00%)     58.3957 (   9.38%)
+Amean     234     73.2293 (   0.00%)     67.1047 (   8.36%)
+Amean     265     80.5220 (   0.00%)     75.7330 (   5.95%)
+Amean     296     88.7567 (   0.00%)     82.1533 (   7.44%)
+
+It's not a universal win as there are occasions when spreading wide and
+quickly is a benefit but it's more of a win than it is a loss. For other
+workloads, there is little difference but netperf is interesting. Without
+the patch, the server and client starts on different nodes but quickly get
+migrated due to wake_affine. Hence, the difference is overall performance
+is marginal but detectable
+
+                                     4.15.0                 4.15.0
+                               noexit-v1r23           sdnuma-v1r23
+Hmean     send-64         349.09 (   0.00%)      354.67 (   1.60%)
+Hmean     send-128        699.16 (   0.00%)      702.91 (   0.54%)
+Hmean     send-256       1316.34 (   0.00%)     1350.07 (   2.56%)
+Hmean     send-1024      5063.99 (   0.00%)     5124.38 (   1.19%)
+Hmean     send-2048      9705.19 (   0.00%)     9687.44 (  -0.18%)
+Hmean     send-3312     14359.48 (   0.00%)    14577.64 (   1.52%)
+Hmean     send-4096     16324.20 (   0.00%)    16393.62 (   0.43%)
+Hmean     send-8192     26112.61 (   0.00%)    26877.26 (   2.93%)
+Hmean     send-16384    37208.44 (   0.00%)    38683.43 (   3.96%)
+Hmean     recv-64         349.09 (   0.00%)      354.67 (   1.60%)
+Hmean     recv-128        699.16 (   0.00%)      702.91 (   0.54%)
+Hmean     recv-256       1316.34 (   0.00%)     1350.07 (   2.56%)
+Hmean     recv-1024      5063.99 (   0.00%)     5124.38 (   1.19%)
+Hmean     recv-2048      9705.16 (   0.00%)     9687.43 (  -0.18%)
+Hmean     recv-3312     14359.42 (   0.00%)    14577.59 (   1.52%)
+Hmean     recv-4096     16323.98 (   0.00%)    16393.55 (   0.43%)
+Hmean     recv-8192     26111.85 (   0.00%)    26876.96 (   2.93%)
+Hmean     recv-16384    37206.99 (   0.00%)    38682.41 (   3.97%)
+
+However, what is very interesting is how automatic NUMA balancing behaves.
+Each netperf instance runs long enough for balancing to activate.
+
+NUMA base PTE updates             4620        1473
+NUMA huge PMD updates                0           0
+NUMA page range updates           4620        1473
+NUMA hint faults                  4301        1383
+NUMA hint local faults            1309         451
+NUMA hint local percent             30          32
+NUMA pages migrated               1335         491
+AutoNUMA cost                      21%          6%
+
+There is an unfortunate number of remote faults although tracing indicated
+that the vast majority are in shared libraries. However, the tendency to
+start tasks on the same node if there is capacity means that there were
+far fewer PTE updates and faults incurred overall.
+
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 ---
- tools/perf/tests/vmlinux-kallsyms.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/fair.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/tools/perf/tests/vmlinux-kallsyms.c b/tools/perf/tests/vmlinux-kallsyms.c
-index 58349297f9fb..1e5adb65632a 100644
---- a/tools/perf/tests/vmlinux-kallsyms.c
-+++ b/tools/perf/tests/vmlinux-kallsyms.c
-@@ -125,7 +125,7 @@ int test__vmlinux_matches_kallsyms(struct test *test __maybe_unused, int subtest
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index e5bbcbefd01b..b1efd7570c88 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5911,6 +5911,18 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
+ 	if (!idlest)
+ 		return NULL;
  
- 		if (pair && UM(pair->start) == mem_start) {
- next_pair:
--			if (strcmp(sym->name, pair->name) == 0) {
-+			if (arch__compare_symbol_names(sym->name, pair->name) == 0) {
- 				/*
- 				 * kallsyms don't have the symbol end, so we
- 				 * set that by using the next symbol start - 1,
++	/*
++	 * When comparing groups across NUMA domains, it's possible for the
++	 * local domain to be very lightly loaded relative to the remote
++	 * domains but "imbalance" skews the comparison making remote CPUs
++	 * look much more favourable. When considering cross-domain, add
++	 * imbalance to the runnable load on the remote node and consider
++	 * staying local.
++	 */
++	if ((sd->flags & SD_NUMA) &&
++	    min_runnable_load + imbalance >= this_runnable_load)
++		return NULL;
++
+ 	if (min_runnable_load > (this_runnable_load + imbalance))
+ 		return NULL;
+ 
 -- 
-2.13.6
+2.15.1
