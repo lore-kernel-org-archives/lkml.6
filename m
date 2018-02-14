@@ -1,63 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163031AbeBNTaM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 14:30:12 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:33628 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162976AbeBNT3a (ORCPT
+        id S1163028AbeBNTea (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 14:34:30 -0500
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:36476 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162964AbeBNTe1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 14:29:30 -0500
-X-Google-Smtp-Source: AH8x225/qbDdx3fhdpEE18AC20wK5NKMtRcTvZ53JkGuXs9pae/+D1qad5vU+AIG31XDKW7wZrWEDwp07lGA3kLPbJg=
+        Wed, 14 Feb 2018 14:34:27 -0500
+X-Google-Smtp-Source: AH8x224xsX7KOP+v9Ke7PcRWxzZw62oxjGVlLqsb8IbZWV/mJyO81qkxmtUrnb+Hb3WmKGLcPVJC/w==
+Date: Wed, 14 Feb 2018 11:34:19 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Lina Iyer <ilina@codeaurora.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        sboyd@codeaurora.org, rnayak@codeaurora.org, msivasub@codeaurora.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] dt-bindings: introduce Command DB for QCOM SoCs
+Message-ID: <20180214193419.GE93895@bjorns-mbp-2.lan>
+References: <20180208195154.3580-1-ilina@codeaurora.org>
+ <20180208195154.3580-3-ilina@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1518340729-12463-1-git-send-email-aaron.ma@canonical.com>
-References: <1518340729-12463-1-git-send-email-aaron.ma@canonical.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 14 Feb 2018 21:29:29 +0200
-Message-ID: <CAHp75VenHdg3-1ZXsJEMLO5zcspwqJeGObq1E75muLgvF6jyHw@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: ideapad-laptop: Increase timeout to wait
- for EC answer
-To: Aaron Ma <aaron.ma@canonical.com>
-Cc: Ike Panhc <ike.pan@canonical.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180208195154.3580-3-ilina@codeaurora.org>
+User-Agent: Mutt/1.8.0 (2017-02-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 11:18 AM, Aaron Ma <aaron.ma@canonical.com> wrote:
-> Lenovo E41-20 needs more time than 100ms to read VPC,
-> the funtion keys always failed responding.
-> Increase timeout to get the value from VPC, then
-> the funtion keys like mic mute key work well.
->
+On Thu 08 Feb 11:51 PST 2018, Lina Iyer wrote:
 
-Pushed to my review and testing queue, thanks!
-
-> Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+> From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+> 
+> Command DB provides information on shared resources like clocks,
+> regulators etc., probed at boot by the remote subsytem and made
+> available in shared memory.
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 > ---
->  drivers/platform/x86/ideapad-laptop.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
-> index 5b6f18b18801..535199c9e6bc 100644
-> --- a/drivers/platform/x86/ideapad-laptop.c
-> +++ b/drivers/platform/x86/ideapad-laptop.c
-> @@ -113,7 +113,7 @@ MODULE_PARM_DESC(no_bt_rfkill, "No rfkill for bluetooth.");
->  /*
->   * ACPI Helpers
->   */
-> -#define IDEAPAD_EC_TIMEOUT (100) /* in ms */
-> +#define IDEAPAD_EC_TIMEOUT (200) /* in ms */
->
->  static int read_method_int(acpi_handle handle, const char *method, int *val)
->  {
-> --
-> 2.14.3
->
+>  .../devicetree/bindings/arm/msm/cmd-db.txt         | 38 ++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/msm/cmd-db.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/msm/cmd-db.txt b/Documentation/devicetree/bindings/arm/msm/cmd-db.txt
+> new file mode 100644
+> index 000000000000..e21666e40ebf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/msm/cmd-db.txt
+> @@ -0,0 +1,38 @@
+> +Command DB
+> +---------
+> +
+> +Command DB is a database that provides a mapping between resource key and the
+> +resource address for a system resource managed by a remote processor. The data
+> +is stored in a shared memory region and is loaded by the remote processor.
+> +
+> +Some of the Qualcomm Technologies Inc SoC's have hardware accelerators for
+> +controlling shared resources. Depending on the board configuration the shared
+> +resource properties may change. These properties are dynamically probed by the
+> +remote processor and made available in the shared memory.
+> +
+> +The devicetree representation of the command DB driver should be:
+> +
+> +PROPERTIES:
+> +- compatible:
+> +	Usage: required
+> +	Value type: <string>
+> +	Definition: Should be "qcom,cmd-db"
+> +
+> +- memory-region:
+> +	Usage: required
+> +	Value type: <phandle>
+> +	Definition: The phandle to the reserved memory region.
+> +
+> +Example:
+> +
+> +	reserved-memory {
+> +		[...]
+> +		cmd_db_mem: qcom,cmd-db@c3f000c {
+> +			reg = <0x0 0xc3f000c 0x0 0x8>;
 
+I was hoping that we can describe the actual memory here, as I got the
+impression that it will also be a chunk of memory carved out from System
+RAM.
 
+If not it would seem unlikely that there's a 8 byte carveout in the
+middle of DDR, what else is here?
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +		};
+> +	};
+> +
+> +	qcom,cmd-db@c3f000c {
+> +		compatible = "qcom,cmd-db";
+
+Add "qcom,cmd-db" to "reserved_mem_matches" in drivers/of/platform.c,
+use of_reserved_mem_lookup(pdev->dev.of_node) to get the reserved_mem
+and you can just put the compatible directly on the reserved-memory
+node.
+
+That way you don't need this separate node that doesn't really represent
+anything.
+
+> +		memory-region = <&cmd_db_mem>;
+> +	};
+
+Regards,
+Bjorn
