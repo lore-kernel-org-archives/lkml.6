@@ -1,75 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162958AbeBNT3M (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 14:29:12 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:34290 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162824AbeBNT3J (ORCPT
+        id S1162992AbeBNT3c (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 14:29:32 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:36190 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162960AbeBNT32 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 14:29:09 -0500
-X-Google-Smtp-Source: AH8x226N8iLgL3qtWHiTaIC0X88R+LJvokO4Rpy9AcPs3uMkpsyluusyrkOjsW8hpkrRflmJXb2MkULBPWniZSYM0zA=
+        Wed, 14 Feb 2018 14:29:28 -0500
+Date: Wed, 14 Feb 2018 20:29:24 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+Cc: boris.brezillon@free-electrons.com, richard@nod.at,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, cyrille.pitchen@wedev4u.fr,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next v4] mtd: nand: toshiba: Retrieve ECC requirements
+ from extended ID
+Message-ID: <20180214202924.200caace@bbrezillon>
+In-Reply-To: <20180214201541.7c939976@bbrezillon>
+References: <1518622506-16606-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
+        <20180214201541.7c939976@bbrezillon>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180212195047.23671-1-srinivas.pandruvada@linux.intel.com>
-References: <20180212195047.23671-1-srinivas.pandruvada@linux.intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 14 Feb 2018 21:29:08 +0200
-Message-ID: <CAHp75VdUnw0NjcNDKzFp-hZWho4A8RV=9Xthz-foZ6wTaT+Ftg@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: intel_turbo_max_3: Remove restriction for
- HWP platforms
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arjan@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 9:50 PM, Srinivas Pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
-> On systems supporting HWP (Hardware P-States) mode, we expected to
-> enumerate core priority via ACPI-CPPC tables. Unfortunately deployment of
-> TURBO 3.0 didn't use this method to show core priority. So users are not
-> able to utilize this feature in HWP mode.
->
-> So remove the loading restriction of this driver for HWP enabled systems.
-> Even if there are some systems, which are providing the core priority via
-> ACPI CPPC, this shouldn't cause any conflict as the source of priority
-> definition is same.
->
+On Wed, 14 Feb 2018 20:15:41 +0100
+Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 
-Pushed to my review and testing queue, thanks!
+> -linux-mmc
+> +linux-mtd
+> 
+> On Thu, 15 Feb 2018 00:35:06 +0900
+> KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp> wrote:
+> 
+> > This patch enables support to read the ECC strength and size from the
+> > NAND flash using Toshiba Memory SLC NAND extended-ID. This patch is
+> > based on the information of the 6th ID byte of the Toshiba Memory SLC
+> > NAND.  
+> 
+> This version looks good to me.
+> 
 
-P.S. Should it go to stable?
+Applied.
 
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> Reported-and-tested-and-reviewed-by: Arjan van de Ven <arjan@linux.intel.com>
-> ---
->  drivers/platform/x86/intel_turbo_max_3.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/platform/x86/intel_turbo_max_3.c b/drivers/platform/x86/intel_turbo_max_3.c
-> index d4ea01805879..a6d5aa0c3c47 100644
-> --- a/drivers/platform/x86/intel_turbo_max_3.c
-> +++ b/drivers/platform/x86/intel_turbo_max_3.c
-> @@ -138,9 +138,6 @@ static int __init itmt_legacy_init(void)
->         if (!id)
->                 return -ENODEV;
->
-> -       if (boot_cpu_has(X86_FEATURE_HWP))
-> -               return -ENODEV;
-> -
->         ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
->                                 "platform/x86/turbo_max_3:online",
->                                 itmt_legacy_cpu_online, NULL);
-> --
-> 2.13.6
->
+Thanks,
+
+Boris
+
+> > 
+> > Signed-off-by: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+> > ---
+> >  drivers/mtd/nand/nand_toshiba.c | 26 ++++++++++++++++++++++++++
+> >  1 file changed, 26 insertions(+)
+> > 
+> > diff --git a/drivers/mtd/nand/nand_toshiba.c b/drivers/mtd/nand/nand_toshiba.c
+> > index 57df857..ab43f02 100644
+> > --- a/drivers/mtd/nand/nand_toshiba.c
+> > +++ b/drivers/mtd/nand/nand_toshiba.c
+> > @@ -35,6 +35,32 @@ static void toshiba_nand_decode_id(struct nand_chip *chip)
+> >  	    (chip->id.data[5] & 0x7) == 0x6 /* 24nm */ &&
+> >  	    !(chip->id.data[4] & 0x80) /* !BENAND */)
+> >  		mtd->oobsize = 32 * mtd->writesize >> 9;
+> > +
+> > +	/*
+> > +	 * Extract ECC requirements from 6th id byte.
+> > +	 * For Toshiba SLC, ecc requrements are as follows:
+> > +	 *  - 43nm: 1 bit ECC for each 512Byte is required.
+> > +	 *  - 32nm: 4 bit ECC for each 512Byte is required.
+> > +	 *  - 24nm: 8 bit ECC for each 512Byte is required.
+> > +	 */
+> > +	if (chip->id.len >= 6 && nand_is_slc(chip)) {
+> > +		chip->ecc_step_ds = 512;
+> > +		switch (chip->id.data[5] & 0x7) {
+> > +		case 0x4:
+> > +			chip->ecc_strength_ds = 1;
+> > +			break;
+> > +		case 0x5:
+> > +			chip->ecc_strength_ds = 4;
+> > +			break;
+> > +		case 0x6:
+> > +			chip->ecc_strength_ds = 8;
+> > +			break;
+> > +		default:
+> > +			WARN(1, "Could not get ECC info");
+> > +			chip->ecc_step_ds = 0;
+> > +			break;
+> > +		}
+> > +	}
+> >  }
+> >  
+> >  static int toshiba_nand_init(struct nand_chip *chip)  
+> 
+> 
+> 
 
 
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
