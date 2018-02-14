@@ -1,57 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967185AbeBNKaI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 05:30:08 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:40283 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967052AbeBNKaH (ORCPT
+        id S967212AbeBNKat (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 05:30:49 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:35539 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754564AbeBNKas (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 05:30:07 -0500
-X-Google-Smtp-Source: AH8x226R3fhtyu+OjC1jj2Aquie7feyGe8Mi2Iy2XIGtC1LPtOqwbuYSxMlxWJNuAxkEhxj+8hfvcQ==
-Date: Wed, 14 Feb 2018 16:00:02 +0530
-From: gaurav jindal <gauravjindal1104@gmail.com>
-To: peterz@infradead.org, mingo@redhat.com
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH]sched: completion: use bool in try_wait_for_completion
-Message-ID: <20180214103002.GA15068@gmail.com>
+        Wed, 14 Feb 2018 05:30:48 -0500
+From: Colin King <colin.king@canonical.com>
+To: Hannes Reinecke <hare@suse.de>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][scsi-next] scsi: myrs: Fix spelling mistake: "Cashe"-> "Cache"
+Date: Wed, 14 Feb 2018 10:30:43 +0000
+Message-Id: <20180214103043.3112-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use bool in place of int in the function try_wait_for_completion.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Gaurav Jindal<gauravjindal1104@gmail.com>
+Trivial fix to spelling mistake in info message text.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/scsi/myrs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sched/completion.c b/kernel/sched/completion.c
-index 0926aef..3e15e8d 100644
---- a/kernel/sched/completion.c
-+++ b/kernel/sched/completion.c
-@@ -283,7 +283,7 @@ int __sched wait_for_completion_killable(struct completion *x)
- bool try_wait_for_completion(struct completion *x)
- {
-        unsigned long flags;
--       int ret = 1;
-+       bool ret = true;
-
-        /*
-         * Since x->done will need to be locked only
-@@ -292,11 +292,11 @@ bool try_wait_for_completion(struct completion *x)
-         * return early in the blocking case.
-         */
-        if (!READ_ONCE(x->done))
--               return 0;
-+               return false;
-
-        spin_lock_irqsave(&x->wait.lock, flags);
-        if (!x->done)
--               ret = 0;
-+               ret = false;
-        else if (x->done != UINT_MAX)
-                x->done--;
-        spin_unlock_irqrestore(&x->wait.lock, flags);
+diff --git a/drivers/scsi/myrs.c b/drivers/scsi/myrs.c
+index 3b87c6942a8e..16498e1b0dd4 100644
+--- a/drivers/scsi/myrs.c
++++ b/drivers/scsi/myrs.c
+@@ -1571,7 +1571,7 @@ static ssize_t myrs_store_flush_cache(struct device *dev,
+ 		return count;
+ 	}
+ 	shost_printk(KERN_INFO, shost,
+-		     "Cashe Flush failed, status 0x%02x\n", status);
++		     "Cache Flush failed, status 0x%02x\n", status);
+ 	return -EIO;
+ }
+ static DEVICE_ATTR(flush_cache, S_IWUSR, NULL, myrs_store_flush_cache);
+-- 
+2.15.1
