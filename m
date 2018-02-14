@@ -1,148 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031186AbeBNPJi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 10:09:38 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:33306 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030911AbeBNPJf (ORCPT
+        id S1031194AbeBNPMV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 10:12:21 -0500
+Received: from mail-pl0-f51.google.com ([209.85.160.51]:42319 "EHLO
+        mail-pl0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031126AbeBNPMS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:09:35 -0500
-X-Google-Smtp-Source: AH8x225lEMDApoyZDvQKkOgAaEyD3AoCqRVYgsNFtNiK+MXf8673f4oM+mMDu77yIFh/0eGKRE5k5ZE8XRzqNv6El5Y=
+        Wed, 14 Feb 2018 10:12:18 -0500
+X-Google-Smtp-Source: AH8x225xmN5w9vX52jbr6peV9c4Mcpg6PhVJOJKhefRVvbqslPVX8ymseqIy2sHnRMDkJu+FXWKidPmwsn1y3aR/QeU=
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+a8Vpp=NtZcnn+Jeo6oeqSgLLaGbV=JTED+kem0dY7c6g@mail.gmail.com>
-References: <001a1144003cbc029e05620eb525@google.com> <CACT4Y+a8Vpp=NtZcnn+Jeo6oeqSgLLaGbV=JTED+kem0dY7c6g@mail.gmail.com>
+In-Reply-To: <20180112183046.GA26098@oracle.com>
+References: <001a1141a524c513ca05628d8ad4@google.com> <20180112183046.GA26098@oracle.com>
 From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 14 Feb 2018 16:09:14 +0100
-Message-ID: <CACT4Y+ZFiys-nBgzHfgsuxH6v7evHRMc9nLBQyYhCe+qXkmmDw@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in do_softirq
-To: syzbot <syzbot+6a74dabfc3393d3e527f@syzkaller.appspotmail.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>, netdev <netdev@vger.kernel.org>
-Cc: =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        syzkaller-bugs@googlegroups.com, Thomas Gleixner <tglx@linutronix.de>
+Date: Wed, 14 Feb 2018 16:11:57 +0100
+Message-ID: <CACT4Y+aB0dZShujVMJFV6grb_7AYOMca13a1J2AkWsT7R0cgrQ@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in rds_tcp_tune
+To: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Cc: syzbot <syzbot+bbd8e9a06452cc48059b@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, rds-devel@oss.oracle.com,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 5, 2018 at 11:14 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Fri, Jan 5, 2018 at 11:10 PM, syzbot
-> <syzbot+6a74dabfc3393d3e527f@syzkaller.appspotmail.com> wrote:
->> Hello,
->>
->> syzkaller hit the following crash on
->> 8a4816cad00bf14642f0ed6043b32d29a05006ce
->> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
->> compiler: gcc (GCC) 7.1.1 20170620
->> .config is attached
->> Raw console output is attached.
->> Unfortunately, I don't have any reproducer for this bug yet.
->>
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+6a74dabfc3393d3e527f@syzkaller.appspotmail.com
->> It will help syzbot understand when the bug is fixed. See footer for
->> details.
->> If you forward the report, please keep this part and the footer.
+On Fri, Jan 12, 2018 at 7:30 PM, Sowmini Varadhan
+<sowmini.varadhan@oracle.com> wrote:
+> On (01/11/18 21:29), syzbot wrote:
+>> ==================================================================
+>> BUG: KASAN: use-after-free in rds_tcp_tune+0x491/0x520 net/rds/tcp.c:397
+>> Read of size 4 at addr ffff8801cd5f6c58 by task kworker/u4:4/4954
 >
-> Looks like a hang in xfrm, so +xfrm maintainers.
+> Just had an offline discussion with santosh around this, here's a summary
+> of that discussion for the archives:
+>
+> Looks like an rds_connect_worker workq got scheduled after the
+> netns was deleted. This could happen if an an rds_connection got
+> added between lines 528 and 529 of
+>
+>   506 static void rds_tcp_kill_sock(struct net *net)
+>   :
+>   /* code to pull out all the rds_connections that should be destroyed */
+>   :
+>   528         spin_unlock_irq(&rds_tcp_conn_lock);
+>   529         list_for_each_entry_safe(tc, _tc, &tmp_list, t_tcp_node)
+>   530                 rds_conn_destroy(tc->t_cpath->cp_conn);
+>
+> Such an rds_connection would miss out the rds_conn_destroy()
+> loop (that cancels all pending work) and (if it was scheduled
+> after netns deletion) could trigger the use-after-free.
+>
+> Evaluating various fixes for this (including using _bh instead of _irq
+> as suggested by santosh), I'll get back with a patch soon.
 
 
-#syz dup: INFO: rcu detected stall in __xfrm_decode_session
+Hi Sowmini,
 
-
->> Can not set IPV6_FL_F_REFLECT if flowlabel_consistency sysctl is enable
->> INFO: rcu_sched detected stalls on CPUs/tasks:
->>         (detected by 0, t=125007 jiffies, g=66299, c=66298, q=40)
->> All QSes seen, last rcu_sched kthread activity 125014
->> (4294991138-4294866124), jiffies_till_next_fqs=3, root ->qsmask 0x0
->> syz-executor5   R  running task    22056 22277   3688 0x00000008
->> Call Trace:
->>  <IRQ>
->>  sched_show_task+0x4a3/0x5e0 kernel/sched/core.c:5198
->>  print_other_cpu_stall+0x996/0x1090 kernel/rcu/tree.c:1564
->>  check_cpu_stall.isra.61+0x6e6/0x15b0 kernel/rcu/tree.c:1682
->>  __rcu_pending kernel/rcu/tree.c:3440 [inline]
->>  rcu_pending kernel/rcu/tree.c:3502 [inline]
->>  rcu_check_callbacks+0x256/0xd00 kernel/rcu/tree.c:2842
->>  update_process_times+0x30/0x60 kernel/time/timer.c:1630
->>  tick_sched_handle+0x85/0x160 kernel/time/tick-sched.c:162
->>  tick_sched_timer+0x42/0x120 kernel/time/tick-sched.c:1166
->>  __run_hrtimer kernel/time/hrtimer.c:1211 [inline]
->>  __hrtimer_run_queues+0x358/0xe20 kernel/time/hrtimer.c:1275
->>  hrtimer_interrupt+0x1c2/0x5e0 kernel/time/hrtimer.c:1309
->>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
->>  smp_apic_timer_interrupt+0x14a/0x700 arch/x86/kernel/apic/apic.c:1050
->>  apic_timer_interrupt+0xa9/0xb0 arch/x86/entry/entry_64.S:904
->> RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x50
->> RSP: 0018:ffff8801db206738 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff11
->> RAX: ffffed003a2965e3 RBX: ffff8801d14b2e40 RCX: ffffffff84c25899
->> RDX: 0000000000000100 RSI: ffff8801c5f47f29 RDI: 00000000000079c8
->> RBP: ffff8801db2067c8 R08: ffffed0038bea003 R09: ffffed0038bea003
->> R10: 000000000000000b R11: ffffed0038bea002 R12: ffff8801c5f40580
->> R13: ffff8801db206aa0 R14: 00000000000079d0 R15: dffffc0000000000
->>  __xfrm_decode_session+0x68/0x110 net/xfrm/xfrm_policy.c:2358
->>  __xfrm_policy_check+0x18c/0x2350 net/xfrm/xfrm_policy.c:2393
->>  __xfrm_policy_check2 include/net/xfrm.h:1170 [inline]
->>  xfrm_policy_check include/net/xfrm.h:1175 [inline]
->>  xfrm6_policy_check include/net/xfrm.h:1185 [inline]
->>  rawv6_rcv+0x8f6/0x1200 net/ipv6/raw.c:424
->>  ipv6_raw_deliver net/ipv6/raw.c:224 [inline]
->>  raw6_local_deliver+0x819/0xa80 net/ipv6/raw.c:240
->>  ip6_input_finish+0x3c7/0x17a0 net/ipv6/ip6_input.c:246
->>  NF_HOOK include/linux/netfilter.h:250 [inline]
->>  ip6_input+0xe9/0x560 net/ipv6/ip6_input.c:327
->>  dst_input include/net/dst.h:449 [inline]
->>  ip6_rcv_finish+0x1a9/0x7a0 net/ipv6/ip6_input.c:71
->>  NF_HOOK include/linux/netfilter.h:250 [inline]
->>  ipv6_rcv+0xf37/0x1fa0 net/ipv6/ip6_input.c:208
->>  __netif_receive_skb_core+0x1a41/0x3460 net/core/dev.c:4499
->>  __netif_receive_skb+0x2c/0x1b0 net/core/dev.c:4564
->>  process_backlog+0x203/0x740 net/core/dev.c:5244
->>  napi_poll net/core/dev.c:5642 [inline]
->>  net_rx_action+0x792/0x1910 net/core/dev.c:5708
->>  __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
->>  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1115
->>  </IRQ>
->>  do_softirq.part.21+0x14d/0x190 kernel/softirq.c:329
->>  do_softirq kernel/softirq.c:177 [inline]
->>  __local_bh_enable_ip+0x1ee/0x230 kernel/softirq.c:182
->>  local_bh_enable include/linux/bottom_half.h:32 [inline]
->>  rcu_read_unlock_bh include/linux/rcupdate.h:727 [inline]
->>  ip6_finish_output2+0xba0/0x23a0 net/ipv6/ip6_output.c:121
->>  ip6_fragment+0x25f2/0x3470 net/ipv6/ip6_output.c:739
->>  ip6_finish_output+0x6bb/0xaf0 net/ipv6/ip6_output.c:152
->>  NF_HOOK_COND include/linux/netfilter.h:239 [inline]
->>  ip6_output+0x1eb/0x840 net/ipv6/ip6_output.c:171
->>  dst_output include/net/dst.h:443 [inline]
->>  ip6_local_out+0x95/0x160 net/ipv6/output_core.c:176
->>  ip6_send_skb+0xa1/0x330 net/ipv6/ip6_output.c:1674
->>  ip6_push_pending_frames+0xb3/0xe0 net/ipv6/ip6_output.c:1694
->>  rawv6_push_pending_frames net/ipv6/raw.c:616 [inline]
->>  rawv6_sendmsg+0x2ee9/0x3e70 net/ipv6/raw.c:935
->>  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:764
->>  sock_sendmsg_nosec net/socket.c:628 [inline]
->>  sock_sendmsg+0xca/0x110 net/socket.c:638
->>  SYSC_sendto+0x361/0x5c0 net/socket.c:1719
->>  SyS_sendto+0x40/0x50 net/socket.c:1687
->>  entry_SYSCALL_64_fastpath+0x23/0x9a
->> RIP: 0033:0x452ac9
->> RSP: 002b:00007f042a550c58 EFLAGS: 00000212 ORIG_RAX: 000000000000002c
->> RAX: ffffffffffffffda RBX: 000000000071bea0 RCX: 0000000000452ac9
->> RDX: 0000000000000000 RSI: 0000000020aa7000 RDI: 0000000000000013
->> RBP: 00000000000004b6 R08: 00000000201e0000 R09: 000000000000001c
->> R10: 0000000000000000 R11: 0000000000000212 R12: 00000000006f51b0
->> R13: 00000000ffffffff R14: 00007f042a5516d4 R15: 0000000000000000
->> rcu_sched kthread starved for 126236 jiffies! g66299 c66298 f0x2
->> RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=0
->> rcu_sched       R  running task    23456     8      2 0x80000000
->> Call Trace:
->>  context_switch kernel/sched/core.c:2799 [inline]
->>  __schedule+0x8eb/0x2060 kernel/sched/core.c:3375
->>  schedule+0xf5/0x430 kernel/sched/core.c:3434
->>  schedule_timeout+0x118/0x230 kernel/time/timer.c:1795
->>  rcu_gp_kthread+0x9e5/0x1930 kernel/rcu/tree.c:2314
->>  kthread+0x33c/0x400 kernel/kthread.c:238
->>  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:515
+Was this ever fixed? What's the fix? This still hangs as open. Please
+provide "syz fix" tag.
