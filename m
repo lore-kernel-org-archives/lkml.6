@@ -1,67 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966774AbeBNDsZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 22:48:25 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42102 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966671AbeBNDsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 22:48:24 -0500
-Subject: Re: [PATCH RFC 0/2] Packed ring for vhost
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com, tiwei.bie@intel.com
-References: <1518575829-1431-1-git-send-email-jasowang@redhat.com>
- <20180214044634-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <97e20ab7-a73c-e911-f5ae-38359f68d4f4@redhat.com>
-Date: Wed, 14 Feb 2018 11:48:08 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S966793AbeBNDtL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 22:49:11 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:40484 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966671AbeBNDtK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 22:49:10 -0500
+X-Google-Smtp-Source: AH8x224FhcBGJZ0Cbz/Ot3/lFsZM/fNhAQytDMT1v5dqq134pMZ7QS+hKKv4eaff/xvDyGVR6qJQ1SBcCndfLFv7Wac=
 MIME-Version: 1.0
-In-Reply-To: <20180214044634-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <CAAfSe-v_i=EnrvKWKmWsi4wSx=EiHK_0Q7KfouaQ8o5iYo+yrA@mail.gmail.com>
+References: <6fff71482ed7bb63afa46c024638c0a72810ce29.1517913264.git.baolin.wang@linaro.org>
+ <CAAfSe-uQqVPB5B0OYij-bx6Q7AnGnONNqYtwWkU_b2rSJfCpfw@mail.gmail.com>
+ <CAMz4kuK9GAR8Ao7RbN5+QUo2-v-bDXaCbtGrzE7Qx_TY=xfTng@mail.gmail.com> <CAAfSe-v_i=EnrvKWKmWsi4wSx=EiHK_0Q7KfouaQ8o5iYo+yrA@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Wed, 14 Feb 2018 11:49:09 +0800
+Message-ID: <CAMz4kuK4gofFoWm8=UE72spqz5OUtkj82=aDC7c=0RwhuXi_Eg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: Enable SPRD_TIMER
+To: Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        =?UTF-8?B?T3Jzb24gWmhhaSAo57+f5LqsKQ==?=
+        <orson.zhai@spreadtrum.com>,
+        nianfu.bai@spreadtrum.com, Geng Ren <geng.ren@spreadtrum.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Chunyan,
 
-
-On 2018年02月14日 10:47, Michael S. Tsirkin wrote:
-> On Wed, Feb 14, 2018 at 10:37:07AM +0800, Jason Wang wrote:
->> Hi all:
+On 11 February 2018 at 19:41, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+> Hi Baolin,
+>
+> On 7 February 2018 at 11:12, Baolin Wang <baolin.wang@linaro.org> wrote:
+>> On 7 February 2018 at 10:31, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+>>> Hi Baolin,
+>>>
+>>> On 6 February 2018 at 18:36, Baolin Wang <baolin.wang@linaro.org> wrote:
+>>>> Enable Spreadtrum timer driver for Spreadtrum plaform, which will be used
+>>>> as tick broadcast device.
+>>>>
+>>>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>>>> ---
+>>>>  arch/arm64/Kconfig.platforms |    1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+>>>> index fbedbd8..3e0bbb0 100644
+>>>> --- a/arch/arm64/Kconfig.platforms
+>>>> +++ b/arch/arm64/Kconfig.platforms
+>>>> @@ -224,6 +224,7 @@ config ARCH_TEGRA
+>>>>
+>>>>  config ARCH_SPRD
+>>>>         bool "Spreadtrum SoC platform"
+>>>> +       select SPRD_TIMER
+>>>
+>>> Do we have to select SPRD_TIMER here? SC9836, SC9860 have been working
+>>> with a minimum system without SPRD TIMER.
 >>
->> This RFC implement a subset of packed ring which was described at
->> https://github.com/oasis-tcs/virtio-docs/blob/master/virtio-v1.1-packed-wd07.pdf
->> . The code were tested with pmd implement by Jens at
->> http://dpdk.org/ml/archives/dev/2018-January/089417.html. Minor
->> change was needed for pmd codes to kick virtqueue since it assumes a
->> busy polling backend.
->>
->> Test were done between localhost and guest. Testpmd (rxonly) in guest
->> reports 2.4Mpps. Testpmd (txonly) repots about 2.1Mpps.
-> How does this compare with the split ring design?
+>> Yes, we need register this timer as the tick broadcast device,
+>> otherwise we will use one hrtimer to be registered the broadcast
+>> device, which will affect the No-Hz of CPU attaching the
+>> broadcast-hrtimer.
+>
+> Again, Spreadtrum's two boards - SC9836/SC9860 - can run into console
+> without SPRD_TIMER, we can also debug some kernel origianl feature or
+> some basic drivers on these two boards, such as CoreSight, clock
+> driver, etc.
 
-No obvious difference (+-5%). I believe we reach the bottleneck of vhost.
+Ii think you misunderstood my meaning, I did not say it can not work
+without the SPRD TIMER. Let me try to explain it again, it we did not
+select the Spreadtrum timer, we will use one hrtimer to be the tick
+broadcast device, so in this situation, the cpu attaching the
+broadcast-hrtimer can not be entered into No-Hz to save power to avoid
+dead-lock issue. But if we register one timer as the tick broadcast
+device, then all cpus can be entered No-Hz to save power. So that's
+why we need select the SPRD_TIMER.
 
 >
->> It's not a complete implemention, here's what were missed:
->>
->> - Device Area
->> - Driver Area
->> - Descriptor indirection
->> - Zerocopy may not be functional
->> - Migration path is not tested
->> - Vhost devices except for net
->> - vIOMMU can not work (mainly because the metadata prefetch is not
->>    implemented).
->> - See FIXME/TODO in the codes for more details
->> - No batching or other optimizations were implemented
-> ioeventfd for PIO/mmio/s390.
->
+> In my opinion we should keep the kernel as simple as possible, the
+> above information can go to the 'help' graph of SPRD_TIMER in its
+> Kconfig.
 
-Probably, but this is not the stuffs of packed ring I think.
+That's one optimization, not the issue of making the kernel more
+complicated. OK, I will add some kerneldoc to explain that.
 
-Thanks
+-- 
+Baolin.wang
+Best Regards
