@@ -1,153 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162624AbeBNTFl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 14:05:41 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:35359 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162470AbeBNTFk (ORCPT
+        id S1162639AbeBNTGB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 14:06:01 -0500
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:55572 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162470AbeBNTF7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 14:05:40 -0500
-Date: Wed, 14 Feb 2018 20:05:37 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Han Xu <han.xu@nxp.com>
-Cc: Stefan Agner <stefan@agner.ch>,
-        "boris.brezillon@free-electrons.com"
-        <boris.brezillon@free-electrons.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "cyrille.pitchen@wedev4u.fr" <cyrille.pitchen@wedev4u.fr>,
-        "max.oss.09@gmail.com" <max.oss.09@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mtd: nand: gpmi: add support for specific ECC
- strength
-Message-ID: <20180214200537.2c043a21@bbrezillon>
-In-Reply-To: <2f28681f-c261-31f7-9f93-602f50109343@nxp.com>
-References: <20180206174021.5947-1-stefan@agner.ch>
-        <20180206174021.5947-2-stefan@agner.ch>
-        <2f28681f-c261-31f7-9f93-602f50109343@nxp.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 14 Feb 2018 14:05:59 -0500
+X-Google-Smtp-Source: AH8x225WjGCqDphPee8F/4HKjdrRV8u62X2+hd/ZD4IaH0LqnS6jHQKpzbJJLC6xWf+nO7SUj/cjlg==
+Message-ID: <1518635157.4749.50.camel@profitbricks.com>
+Subject: Re: Read-protected UEFI variables
+From: Benjamin Drung <benjamin.drung@profitbricks.com>
+To: =?ISO-8859-1?Q?M=F4she?= van der Sterre <me@moshe.nl>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-efi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Wed, 14 Feb 2018 20:05:57 +0100
+In-Reply-To: <e04b687f-30cd-c200-d08f-36b7dcc582a6@moshe.nl>
+References: <1518612748.4749.29.camel@profitbricks.com>
+         <CAKv+Gu_V7BCihPhZf=pKrkBZwFWeEoupamXvYSqdS+k93Gme=g@mail.gmail.com>
+         <1518614486.4749.33.camel@profitbricks.com>
+         <e04b687f-30cd-c200-d08f-36b7dcc582a6@moshe.nl>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Feb 2018 16:28:36 +0000
-Han Xu <han.xu@nxp.com> wrote:
-
-> On 02/06/2018 11:40 AM, Stefan Agner wrote:
-> > Add support for specified ECC strength/size using device tree
-> > properties nand-ecc-strength/nand-ecc-step-size.
-> >
-> > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > ---
-> >   .../devicetree/bindings/mtd/gpmi-nand.txt          |  5 ++++
-> >   drivers/mtd/nand/gpmi-nand/gpmi-nand.c             | 29 ++++++++++++++--------
-> >   2 files changed, 24 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/mtd/gpmi-nand.txt b/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
-> > index eb2d9919d063..ea6e9b735160 100644
-> > --- a/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
-> > +++ b/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
-> > @@ -46,6 +46,11 @@ Optional properties:
-> >                          partitions written from Linux with this feature
-> >                          turned on may not be accessible by the BootROM
-> >                          code.
-> > +  - nand-ecc-strength: integer representing the number of bits to correct
-> > +                       per ECC step. Needs to be a multiple of 2.
-> > +  - nand-ecc-step-size: integer representing the number of data bytes
-> > +                       that are covered by a single ECC step. The driver
-> > +                       supports 512 and 1024.
-> >   
-> >   The device tree may optionally contain sub-nodes describing partitions of the
-> >   address space. See partition.txt for more detail.
-> > diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> > index 50f8d4a1b983..8cb378358e11 100644
-> > --- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> > +++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> > @@ -198,17 +198,15 @@ static inline bool gpmi_check_ecc(struct gpmi_nand_data *this)
-> >    *
-> >    * We may have available oob space in this case.
-> >    */
-> > -static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
-> > +static int set_geometry_by_ecc_info(struct gpmi_nand_data *this,
-> > +			unsigned int ecc_strength, unsigned int ecc_step)
-> >   {
-> >   	struct bch_geometry *geo = &this->bch_geometry;
-> >   	struct nand_chip *chip = &this->nand;
-> >   	struct mtd_info *mtd = nand_to_mtd(chip);
-> >   	unsigned int block_mark_bit_offset;
-> >   
-> > -	if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
-> > -		return -EINVAL;
-> > -
-> > -	switch (chip->ecc_step_ds) {
-> > +	switch (ecc_step) {
-> >   	case SZ_512:
-> >   		geo->gf_len = 13;
-> >   		break;
-> > @@ -221,8 +219,8 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
-> >   			chip->ecc_strength_ds, chip->ecc_step_ds);
-> >   		return -EINVAL;
-> >   	}
-> > -	geo->ecc_chunk_size = chip->ecc_step_ds;
-> > -	geo->ecc_strength = round_up(chip->ecc_strength_ds, 2);
-> > +	geo->ecc_chunk_size = ecc_step;
-> > +	geo->ecc_strength = round_up(ecc_strength, 2);
-> >   	if (!gpmi_check_ecc(this))
-> >   		return -EINVAL;
-> >   
-> > @@ -230,7 +228,7 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
-> >   	if (geo->ecc_chunk_size < mtd->oobsize) {
-> >   		dev_err(this->dev,
-> >   			"unsupported nand chip. ecc size: %d, oob size : %d\n",
-> > -			chip->ecc_step_ds, mtd->oobsize);
-> > +			ecc_step, mtd->oobsize);
-> >   		return -EINVAL;
-> >   	}
-> >   
-> > @@ -423,9 +421,20 @@ static int legacy_set_geometry(struct gpmi_nand_data *this)
-> >   
-> >   int common_nfc_set_geometry(struct gpmi_nand_data *this)
-> >   {
-> > +	struct nand_chip *chip = &this->nand;
-> > +
-> > +	if (chip->ecc.strength > 0 && chip->ecc.size > 0)
-> > +		return set_geometry_by_ecc_info(this, chip->ecc.strength,
-> > +						chip->ecc.size);
-> > +  
+Am Mittwoch, den 14.02.2018, 19:18 +0100 schrieb Môshe van der Sterre:
+> On 02/14/2018 02:21 PM, Benjamin Drung wrote:
+> > If the UEFI is as secure as storing an unencrypted file on a hard
+> > drive, I am satisfied. Or do you have a better idea where to store
+> > the
+> > SSH keys for a diskless system that boots via network?
 > 
-> I was wondering how to keep, let's say u-boot, and kernel ecc setting 
-> aligned, if users can specify the strength and step_ds in DT? Did u-boot 
-> enable to get these parameters from DT?
+> I assume it would be best to use TPM for this (if your systems have
+> TPM chips), it is designed for use-cases like this. Searching for
+> "tpm ssh keys" gives a decent amount of results. Mostly targeted at
+> user keys instead of server keys, so this might need some tinkering
+> to get working.
 
-Both u-boot and Linux have to support using strength/step information
-passed through the DT before you can start patching dts files. Anyway,
-users will have to change their DT (add the nand-ecc-strength/step-size
-properties) to use this feature, so they should quickly notice that
-something is going wrong and update their bootloader or drop those
-nand-ecc-xxx props.
-
-> >   	if ((of_property_read_bool(this->dev->of_node, "fsl,use-minimum-ecc"))
-> > -				|| legacy_set_geometry(this))
-> > -		return set_geometry_by_ecc_info(this);
-> > +				|| legacy_set_geometry(this)) {
-> > +		if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
-> > +			return -EINVAL;
-> > +
-> > +		return set_geometry_by_ecc_info(this, chip->ecc_strength_ds,
-> > +						chip->ecc_step_ds);
-> > +	}
-> >   
-> >   	return 0;
-> >   }  
-
-
+I check our systems. They just have TPM headers, but no TPM chips
+according to the user manual. The directory /sys/class/tpm/ is either
+empty or not existing. Adding TPM chips to all servers is no too
+expensive (to much man power required). So sadly, this is no option for
+us.
 
 -- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Benjamin Drung
+System Developer
+Debian & Ubuntu Developer
+
+ProfitBricks GmbH
+Greifswalder Str. 207
+D - 10405 Berlin
+
+Email: benjamin.drung@profitbricks.com
+URL: https://www.profitbricks.de
+
+Sitz der Gesellschaft: Berlin
+Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
+Geschäftsführer: Achim Weiss, Matthias Steinberg
