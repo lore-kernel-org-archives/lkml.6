@@ -1,65 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966216AbeBNACJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 19:02:09 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:49233 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966132AbeBNAB4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 19:01:56 -0500
-Subject: Re: plan9 semantics on Linux - mount namespaces
-To: Aleksa Sarai <asarai@suse.de>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>
-References: <0f058286-a432-379b-f559-f2fe713807ab@metux.net>
- <5633d335-3926-d98f-d6d7-948b1e2a0b2c@metux.net>
- <20180213222751.p3fyg7whg6jqlzz5@gordon>
-From: Enrico Weigelt <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <39b08c53-3449-3164-c1b1-44ac587dd4ea@metux.net>
-Date: Wed, 14 Feb 2018 00:01:49 +0000
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        id S966241AbeBNAPI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 19:15:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34438 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966179AbeBNAPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 19:15:06 -0500
+Date: Tue, 13 Feb 2018 17:15:02 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Cornelia Huck <cohuck@redhat.com>
+Cc: kwankhede@nvidia.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, cordius.wu@huawei.com,
+        eskultet@redhat.com
+Subject: Re: [PATCH RFC] vfio/mdev: delay uevent after initialization
+ complete
+Message-ID: <20180213171502.167da0e9@w520.home>
+In-Reply-To: <20180213140901.44d55aa4.cohuck@redhat.com>
+References: <20180209102716.32253-1-cohuck@redhat.com>
+        <20180212142057.66e2b15c@w520.home>
+        <20180213140901.44d55aa4.cohuck@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180213222751.p3fyg7whg6jqlzz5@gordon>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:ejRdENjoNjV5Bi+ASOpGNs+AM3RTD/MJnVzN4Ej/4c+FP/RvwDP
- xWUeaylGOFEQScLwOeL2rwfm7SK79TOZDGcxnp5qt7jLz3ltMzE+dpD8BH9OitdOlM14gos
- 0708rc0dGkyM6o13+Wja5J3zgiDWgDui5oLd6UMRw0HtQzMIsuqGvDk1AH0hrEYu5owIJ2J
- MdYNyZ8vHKYE+Csy/cvBQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:YcZIdXVRwWM=:fLC28Eh0gX7HbStlghAvP9
- xmjnRssFCjHRallj2XidddxR7kH7zlEy181F0JsnFe7Do0YuD3rMW4ip2aRqWFbsHLSLubeOE
- o9pBkqWK0JJm16PPyY8cDdVdvsMfXocSHzqC7vhrDLZRjQRFCzW/FKY4u6JaiFpHNI96POjIK
- PC3Pcu1muvUKeE6R/bdTmIyLTDHkBP7q7e+/RktvndlEFjAXgi8QAFiXmTUevOTwFJm7yOmJZ
- MygajSdiaQlH6mH+DEFLFlhVuN6QCTEvFwswu8Oc+Xe7cn3ynINUKLZ9pb3slhDSRfHI0WtjF
- 3B/Prwph4UF9yzcY9Rl0rymdkJ6Vio0vLDarQd196WwAygaIXJCZU1lOR6Nir0VTAsOTo+YKx
- XzaLeu1MXCnBQAOWDNwMhO3P83PKpxi/sWgwL3cYlC93i+yF99H+yaTUUMCrCyp3ED4HuPN5J
- yDBewix52URHmiIMx2TsELKD+cEA1+9D1w1m2gK2o0KrneEdgTkQACiCSRxtXAuvdPpmlgyEV
- ksO0RA5XPiCEq0EboZ2w4q4Tm6k6vALGTMVwRo18dr0R/Tbr9dalfs0ftGiXaoFHghyQuDftL
- ds4+2YVrxz1KRUmlsBJO1vnf7LSBIjlxRMXkcKtiqmpn/KeqJgu+8tocIV1XxFMUZVQxLpDvw
- 2v/O2ck5WcciLPWzAYzJ/6biQADSuAOFBIjfcnQLr2p2MMeRyO8giwGNb/BjtbNwFGflb1dej
- US7KjfynfCmnf25KwVp8uW86n5fZ19sVsDA7NUdMgmqMh2v6slFaFcsAU3g=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.02.2018 22:27, Aleksa Sarai wrote:
+On Tue, 13 Feb 2018 14:09:01 +0100
+Cornelia Huck <cohuck@redhat.com> wrote:
 
-> You can do this by creating a new user namespace (CLONE_NEWUSER), which
-> then gives you the required permissions to create other namespaces
-> (CLONE_NEWNS). This is how "rootless containers" or unprivileged
-> containers operate.
+> On Mon, 12 Feb 2018 14:20:57 -0700
+> Alex Williamson <alex.williamson@redhat.com> wrote:
+> 
+> > On Fri,  9 Feb 2018 11:27:16 +0100
+> > Cornelia Huck <cohuck@redhat.com> wrote:
+> >   
+> > > The registration code first registers the mdev device, and then
+> > > proceeds to populate sysfs. An userspace application that listens
+> > > for the ADD uevent is therefore likely to look for sysfs entries
+> > > that have not yet been created.
+> > > 
+> > > The canonical way to fix this is to use attribute groups that are
+> > > registered by the driver core before it sends the ADD uevent; I
+> > > unfortunately did not find a way to make this work in this case,
+> > > though.
+> > > 
+> > > An alternative approach is to suppress uevents before we register
+> > > with the core and generate the ADD uevent ourselves after the
+> > > sysfs infrastructure is in place.
+> > > 
+> > > Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+> > > ---
+> > > 
+> > > This feels like a band-aid, but I can't figure out how to handle creating
+> > > attribute groups when there's a callback in the parent involved.
+> > > 
+> > > This should address the issue with libvirt's processing of mdevs raised in
+> > > https://www.redhat.com/archives/libvir-list/2018-February/msg00023.html
+> > > - although libvirt will still need to deal with older kernels, of course.
+> > > 
+> > > Best to consider this an untested patch :)    
+> > 
+> > I agree, this feels like a band-aide.  If every device in the kernel
+> > needs to suppress udev events until until some key component is added,
+> > that suggests that either udev is broken in general or not being used
+> > as intended.    
+> 
+> I think udev is working exactly as designed - it's more a problem of
+> when the kernel is sending what kind of notification to userspace, and
+> the particular issue here is how the code sending the event (driver
+> core) and the code assembling part of the user interface (mdev)
+> interact.
+> 
+> > Zongyong submitted a different proposal to fix this
+> > here[1].  That proposal seems a bit more sound and has precedence
+> > elsewhere in the kernel.  What do you think of that approach?  We
+> > don't need both afaict.  Thanks,
+> > 
+> > Alex
+> > 
+> > [1]https://patchwork.kernel.org/patch/10196197/  
+> 
+> Zongyong's patch is sending an additional CHANGE uevent, and I agree
+> that doing both does not make sense. However, I think the CHANGE uevent
+> is not quite suitable in this case, and delaying the ADD uevent is
+> better.
+> 
+> [Warning, the following may be a bit rambling.]
+> 
+> The Linux driver model works under the assumption that any device is
+> represented as an in-kernel object that exposes information and knobs
+> through sysfs. As long as the device exists, userspace can poke at the
+> sysfs entries and retrieve information or configure things.
+> 
+> The idea of the 'ADD' uevent is basically to let userspace know that
+> there is now a new device with its related sysfs entries, and it may
+> look at it and configure it. IOW, if I (as a userspace application) get
+> the ADD uevent, I expect to be able to look at the device's sysfs
+> entries and find all the files/directories that are usually there,
+> without having to wait.
+> 
+> This expectation is broken if a device is first registered with the
+> driver core (generating the ADD uevent) and the driver adds sysfs
+> attributes later. To fix this, the driver core added a way to specify
+> default attribute groups for the device, which are registered by the
+> driver core itself before it generates the ADD uevent. Unfortunately, I
+> did not see a way to do this here (which does not mean there isn't).
+> The alternative was to prevent the driver core from sending the ADD
+> uevent and do it from the mdev code when it was ready.
+> 
+> The 'CHANGE' uevent, on the other hand, tells userspace that something
+> has changed for the device (that already existed). I (as a userspace
+> application) would expect to see it if, for example, the information
+> exposed via sysfs has changed, or maybe even if new, optional, entries
+> have appeared and I might want to rescan. With Zongyong's patch,
+> userspace gets the CHANGE uevent for something that was already
+> expected to be there, and is now _really_ there. It does give userspace
+> an indication that it can now work with the device (which certainly
+> improves things), but I would prefer to get rid of the too-early uevent
+> completely so that userspace does not get notified at all before the
+> device is completely present in sysfs.
+> 
+> So, in short, my patch does 'don't tell userspace until we're really
+> done', and Zongyong's patch does 'tell userspace again when we're
+> really done'.
 
-hmm, unshare -U doesn't work for me (even as root). But docker works,
-so user namespaces should be working. Any idea what could be wrong ?
+This all sounds reasonable, but don't we have this synchronization
+problem _everywhere_?  I apologize for referencing this bug because it's
+not public (https://bugzilla.redhat.com/show_bug.cgi?id=1376907) but
+the gist of it is that soft-unplugging PCI devices using the remove
+entry in sysfs and re-adding with rescan sysfs entry results in libvirt
+seeing the ADD uevent before the PCI config attribute is created and it
+balks on the device.  So at the PCI core we have this same issue and
+developers are saying that there's no guarantee that sysfs entries
+won't be added and removed at any time in the lifecycle of the device
+and it's not the kernel's responsibility to provide that
+synchronization.  So what are we to do?  If this issue exists in a far
+more predominant device subsystem than mdev, do we need to reset
+developer expectations about what sort of synchronization, if any, the
+kernel is intending to provide?  Should we agree and document some best
+practices around ordering of (or suppressing of) uevents so that we can
+consistently cleanup subsystems, or define that such ordering is
+officially not guaranteed?  Thanks,
 
-
---mtx
-
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+Alex
