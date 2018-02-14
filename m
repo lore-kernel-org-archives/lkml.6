@@ -1,109 +1,271 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032168AbeBNXaH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 18:30:07 -0500
-Received: from mail-wr0-f175.google.com ([209.85.128.175]:45072 "EHLO
-        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032135AbeBNXaC (ORCPT
+        id S1032228AbeBNXaf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 18:30:35 -0500
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:2969 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032062AbeBNX3k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 18:30:02 -0500
-X-Google-Smtp-Source: AH8x227R6hF6mjO/NHoeFX7Il0ETEAHnijVcDPG/FgoLRu/+NjdbzxI5K7maBeTFGKzOhhpA8wivLw==
-Date: Thu, 15 Feb 2018 00:29:57 +0100
-From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: Jiri Kosina <jikos@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH 1/3] HID: add driver for Valve Steam Controller
-Message-ID: <20180214232957.GB3741@casa>
-References: <20180213120308.23879-1-rodrigorivascosta@gmail.com>
- <CAO-hwJKmrapd-VtbRgsM_zr6mHDvG8eyvdmo=56W_kmURjvX4g@mail.gmail.com>
+        Wed, 14 Feb 2018 18:29:40 -0500
+X-IronPort-AV: E=Sophos;i="5.46,514,1511827200";
+   d="scan'208";a="666939364"
+From: David Woodhouse <dwmw@amazon.co.uk>
+To: tglx@linutronix.de, karahmed@amazon.de, x86@kernel.org,
+        kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
+        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
+        arjan.van.de.ven@intel.com, dave.hansen@intel.com, mingo@kernel.org
+Subject: [PATCH v2 3/4] Revert "x86/retpoline: Simplify vmexit_fill_RSB()"
+Date: Wed, 14 Feb 2018 23:29:17 +0000
+Message-Id: <1518650958-550-4-git-send-email-dwmw@amazon.co.uk>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518650958-550-1-git-send-email-dwmw@amazon.co.uk>
+References: <1518650958-550-1-git-send-email-dwmw@amazon.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAO-hwJKmrapd-VtbRgsM_zr6mHDvG8eyvdmo=56W_kmURjvX4g@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 03:45:14PM +0100, Benjamin Tissoires wrote:
-> I think I had a look at this a while ago, and didn't want to interfere
-> with SteamOS regarding this. I think your patch should be fine in that
-> regard, but have you tried SteamOS on a kernel patched with your
-> series? Does it behave properly or will it break?
+This reverts commit 1dde7415e99933bb7293d6b2843752cbdb43ec11. By putting
+the RSB filling out of line and calling it, we waste one RSB slot for
+returning from the function itself, which means one fewer actual function
+call we can make if we're doing the Skylake abomination of call-depth
+counting.
 
-Well, SteamOS is just a modified Debian with the Steam Client running in
-Big Picture mode (fullscreen). I tried the Steam Client with this driver
-and it works just fine: 
-- The first thing the Steam Client (SC) does is to disable the virtual
-  keyboard and mouse, so not creating those input devices make no
-  difference.
-- Input events are sent both to the libusb (or whatever SC uses) and
-  this driver.
-- The only source of conflict would be in sending commands to the
-  controller. But currently the only command sent is the get_serial, and
-  that seems to do no harm.
+It also changed the number of RSB stuffings we do on vmexit from 32,
+which was correct, to 16. Let's just stop with the bikeshedding; it
+didn't actually *fix* anything anyway.
 
-> > +
-> > +       hid_info(hdev, "Steam Controller connected");
-> > +
-> > +       input = input_allocate_device();
-> 
-> Don't you need one input node per wireless gamepad too?
-> 
-No, the wired and wireless methods are two different USB devices.
-The wireless adaptor is a small usb device that creates 4 HID interfaces
-for the 4 to-be-connected controllers. When the 'connected' event
-arrives on one of those interfaces we will create one input device.
-Another controller connected will use a different interface so another
-unrelated input device will be created.
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+---
+ arch/x86/entry/entry_32.S             |  3 +-
+ arch/x86/entry/entry_64.S             |  3 +-
+ arch/x86/include/asm/asm-prototypes.h |  3 --
+ arch/x86/include/asm/nospec-branch.h  | 70 +++++++++++++++++++++++++++++++----
+ arch/x86/lib/Makefile                 |  1 -
+ arch/x86/lib/retpoline.S              | 56 ----------------------------
+ 6 files changed, 65 insertions(+), 71 deletions(-)
 
-The wired adaptor is the controller connected directly to USB: it
-creates one HID inteface and one input device directly.
-
-Anyway, one steam_device will contain 0 or 1 input_device.
-
-> > +       input->name = "Steam Controller";
-> 
-> In case of the wireless controllers, you might want to personalize this a bit.
-
-Do you mean e.g. "Wireless Steam Controller"? Would be wise to add the serial
-number here (from PATCH 2/3?)? Or is the 'uniq' enough for that?
-
-> > +       input_set_abs_params(input, ABS_Z, 0, 255, 0, 0);
-> > +       input_set_abs_params(input, ABS_RZ, 0, 255, 0, 0);
-> > +       input_set_abs_params(input, ABS_X, -32767, 32767, 0, 0);
-> > +       input_set_abs_params(input, ABS_Y, -32767, 32767, 0, 0);
-> 
-> You are also probably missing the resolution bits. We need to
-> accurately report the physical dimensions to the user space (thanks to
-> the resolution)
-> 
-> > +       input_set_abs_params(input, ABS_RX, -32767, 32767, 0, 0);
-> > +       input_set_abs_params(input, ABS_RY, -32767, 32767, 0, 0);
-> 
-> What do RX/RY correspond to?
-
-This gamepad has 1 joystick and 2 touchpads (lpad and rpad).
-I'm mapping the joystick/lpad to ABS_X/ABS_Y and the rpad to
-ABS_RX/ABS_RY.
-
-About the resolution, I looked around other drivers and many have 0 as
-resolution... is it necessary only in the pads or the joystick too?
-And what are the units of that value?
-For reference, the pads are round and exactly 40 mm in diameter.
-
-Why the lpad and the joystick are mapped to the same axes? Well, because
-the device returns them at the same offset. We could make them
-apart by using bits 10.3 (lpad_touch) and 10.7 (lpad_and_joy) but I
-don't think it is worth it... you use the joystick and the lpad with the
-same thumb!
-
-> Anyway. Thanks for the driver, there are a few bits to fix, nothing
-> scary though.
-
-Great, I'll correct all those issues and resubmit the patches in a few
-days. It is my very first driver and I'm still a bit slow...
-
-Thank you for your attention!
-Rodrigo.
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 2a35b1e..60c4c34 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -252,8 +252,7 @@ ENTRY(__switch_to_asm)
+ 	 * exist, overwrite the RSB with entries which capture
+ 	 * speculative execution to prevent attack.
+ 	 */
+-	/* Clobbers %ebx */
+-	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
++	FILL_RETURN_BUFFER %ebx, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
+ #endif
+ 
+ 	/* restore callee-saved registers */
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 1c5420420..1d83563 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -364,8 +364,7 @@ ENTRY(__switch_to_asm)
+ 	 * exist, overwrite the RSB with entries which capture
+ 	 * speculative execution to prevent attack.
+ 	 */
+-	/* Clobbers %rbx */
+-	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
++	FILL_RETURN_BUFFER %r12, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
+ #endif
+ 
+ 	/* restore callee-saved registers */
+diff --git a/arch/x86/include/asm/asm-prototypes.h b/arch/x86/include/asm/asm-prototypes.h
+index 4d11161..1908214 100644
+--- a/arch/x86/include/asm/asm-prototypes.h
++++ b/arch/x86/include/asm/asm-prototypes.h
+@@ -38,7 +38,4 @@ INDIRECT_THUNK(dx)
+ INDIRECT_THUNK(si)
+ INDIRECT_THUNK(di)
+ INDIRECT_THUNK(bp)
+-asmlinkage void __fill_rsb(void);
+-asmlinkage void __clear_rsb(void);
+-
+ #endif /* CONFIG_RETPOLINE */
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 34cbce3..94749fb 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -8,6 +8,50 @@
+ #include <asm/cpufeatures.h>
+ #include <asm/msr-index.h>
+ 
++/*
++ * Fill the CPU return stack buffer.
++ *
++ * Each entry in the RSB, if used for a speculative 'ret', contains an
++ * infinite 'pause; lfence; jmp' loop to capture speculative execution.
++ *
++ * This is required in various cases for retpoline and IBRS-based
++ * mitigations for the Spectre variant 2 vulnerability. Sometimes to
++ * eliminate potentially bogus entries from the RSB, and sometimes
++ * purely to ensure that it doesn't get empty, which on some CPUs would
++ * allow predictions from other (unwanted!) sources to be used.
++ *
++ * We define a CPP macro such that it can be used from both .S files and
++ * inline assembly. It's possible to do a .macro and then include that
++ * from C via asm(".include <asm/nospec-branch.h>") but let's not go there.
++ */
++
++#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
++#define RSB_FILL_LOOPS		16	/* To avoid underflow */
++
++/*
++ * Google experimented with loop-unrolling and this turned out to be
++ * the optimal version — two calls, each with their own speculation
++ * trap should their return address end up getting used, in a loop.
++ */
++#define __FILL_RETURN_BUFFER(reg, nr, sp)	\
++	mov	$(nr/2), reg;			\
++771:						\
++	call	772f;				\
++773:	/* speculation trap */			\
++	pause;					\
++	lfence;					\
++	jmp	773b;				\
++772:						\
++	call	774f;				\
++775:	/* speculation trap */			\
++	pause;					\
++	lfence;					\
++	jmp	775b;				\
++774:						\
++	dec	reg;				\
++	jnz	771b;				\
++	add	$(BITS_PER_LONG/8) * nr, sp;
++
+ #ifdef __ASSEMBLY__
+ 
+ /*
+@@ -78,10 +122,17 @@
+ #endif
+ .endm
+ 
+-/* This clobbers the BX register */
+-.macro FILL_RETURN_BUFFER nr:req ftr:req
++ /*
++  * A simpler FILL_RETURN_BUFFER macro. Don't make people use the CPP
++  * monstrosity above, manually.
++  */
++.macro FILL_RETURN_BUFFER reg:req nr:req ftr:req
+ #ifdef CONFIG_RETPOLINE
+-	ALTERNATIVE "", "call __clear_rsb", \ftr
++	ANNOTATE_NOSPEC_ALTERNATIVE
++	ALTERNATIVE "jmp .Lskip_rsb_\@",				\
++		__stringify(__FILL_RETURN_BUFFER(\reg,\nr,%_ASM_SP))	\
++		\ftr
++.Lskip_rsb_\@:
+ #endif
+ .endm
+ 
+@@ -163,10 +214,15 @@ extern char __indirect_thunk_end[];
+ static inline void vmexit_fill_RSB(void)
+ {
+ #ifdef CONFIG_RETPOLINE
+-	alternative_input("",
+-			  "call __fill_rsb",
+-			  X86_FEATURE_RETPOLINE,
+-			  ASM_NO_INPUT_CLOBBER(_ASM_BX, "memory"));
++	unsigned long loops;
++
++	asm volatile (ANNOTATE_NOSPEC_ALTERNATIVE
++		      ALTERNATIVE("jmp 910f",
++				  __stringify(__FILL_RETURN_BUFFER(%0, RSB_CLEAR_LOOPS, %1)),
++				  X86_FEATURE_RETPOLINE)
++		      "910:"
++		      : "=r" (loops), ASM_CALL_CONSTRAINT
++		      : : "memory" );
+ #endif
+ }
+ 
+diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
+index 69a4739..f23934b 100644
+--- a/arch/x86/lib/Makefile
++++ b/arch/x86/lib/Makefile
+@@ -27,7 +27,6 @@ lib-$(CONFIG_RWSEM_XCHGADD_ALGORITHM) += rwsem.o
+ lib-$(CONFIG_INSTRUCTION_DECODER) += insn.o inat.o insn-eval.o
+ lib-$(CONFIG_RANDOMIZE_BASE) += kaslr.o
+ lib-$(CONFIG_RETPOLINE) += retpoline.o
+-OBJECT_FILES_NON_STANDARD_retpoline.o :=y
+ 
+ obj-y += msr.o msr-reg.o msr-reg-export.o hweight.o
+ 
+diff --git a/arch/x86/lib/retpoline.S b/arch/x86/lib/retpoline.S
+index 480edc3..c909961 100644
+--- a/arch/x86/lib/retpoline.S
++++ b/arch/x86/lib/retpoline.S
+@@ -7,7 +7,6 @@
+ #include <asm/alternative-asm.h>
+ #include <asm/export.h>
+ #include <asm/nospec-branch.h>
+-#include <asm/bitsperlong.h>
+ 
+ .macro THUNK reg
+ 	.section .text.__x86.indirect_thunk
+@@ -47,58 +46,3 @@ GENERATE_THUNK(r13)
+ GENERATE_THUNK(r14)
+ GENERATE_THUNK(r15)
+ #endif
+-
+-/*
+- * Fill the CPU return stack buffer.
+- *
+- * Each entry in the RSB, if used for a speculative 'ret', contains an
+- * infinite 'pause; lfence; jmp' loop to capture speculative execution.
+- *
+- * This is required in various cases for retpoline and IBRS-based
+- * mitigations for the Spectre variant 2 vulnerability. Sometimes to
+- * eliminate potentially bogus entries from the RSB, and sometimes
+- * purely to ensure that it doesn't get empty, which on some CPUs would
+- * allow predictions from other (unwanted!) sources to be used.
+- *
+- * Google experimented with loop-unrolling and this turned out to be
+- * the optimal version - two calls, each with their own speculation
+- * trap should their return address end up getting used, in a loop.
+- */
+-.macro STUFF_RSB nr:req sp:req
+-	mov	$(\nr / 2), %_ASM_BX
+-	.align 16
+-771:
+-	call	772f
+-773:						/* speculation trap */
+-	pause
+-	lfence
+-	jmp	773b
+-	.align 16
+-772:
+-	call	774f
+-775:						/* speculation trap */
+-	pause
+-	lfence
+-	jmp	775b
+-	.align 16
+-774:
+-	dec	%_ASM_BX
+-	jnz	771b
+-	add	$((BITS_PER_LONG/8) * \nr), \sp
+-.endm
+-
+-#define RSB_FILL_LOOPS		16	/* To avoid underflow */
+-
+-ENTRY(__fill_rsb)
+-	STUFF_RSB RSB_FILL_LOOPS, %_ASM_SP
+-	ret
+-END(__fill_rsb)
+-EXPORT_SYMBOL_GPL(__fill_rsb)
+-
+-#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
+-
+-ENTRY(__clear_rsb)
+-	STUFF_RSB RSB_CLEAR_LOOPS, %_ASM_SP
+-	ret
+-END(__clear_rsb)
+-EXPORT_SYMBOL_GPL(__clear_rsb)
+-- 
+2.7.4
