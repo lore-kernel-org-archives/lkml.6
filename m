@@ -1,169 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031759AbeBNWUo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 17:20:44 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:33454 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031527AbeBNWUm (ORCPT
+        id S1031899AbeBNW2F (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 17:28:05 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38331 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031527AbeBNW2C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 17:20:42 -0500
-X-Google-Smtp-Source: AH8x225YcN6ZzKYXc5XLkcjNM7mHc3DxHmLc8QfW7f2QLrh4J7j6xVvIjaAhFoQMWXHyUBtO/T8jAw==
-Subject: Re: [PATCH v2] tools/memory-model: Make compat with herd7 7.47 ("-"
- -> "_")
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org,
-        stern@rowland.harvard.edu, parri.andrea@gmail.com, will.deacon@arm.com,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Akira Yokosawa <akiyks@gmail.com>
-References: <20180209141832.GA17505@linux.vnet.ibm.com>
- <df87e89b-7fbe-37a7-42cb-62df74591df4@gmail.com>
- <a788e08d-eccb-0aec-6aa5-944e5321e5c6@gmail.com>
- <20180210010703.GE3617@linux.vnet.ibm.com>
-From: Akira Yokosawa <akiyks@gmail.com>
-Message-ID: <0ad5ff99-32e9-df65-70d3-ba4e9ec0f6c9@gmail.com>
-Date: Thu, 15 Feb 2018 07:20:35 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 14 Feb 2018 17:28:02 -0500
+X-Google-Smtp-Source: AH8x225SOlVUUIVl4+wqeBaOhrEmY5UQ4wlnEUEYB4L263dOHu7Y100S3iCw6NY+uNwEXD0YHySZOw==
+Date: Wed, 14 Feb 2018 23:27:57 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH] x86/entry/64: Fix CR3 restore order in paranoid_exit()
+Message-ID: <20180214222757.zda2xvytzb7jjfyy@gmail.com>
+References: <2b8ce3a31bcdfffa434269f4abf5d46816b75773.1518575248.git.jpoimboe@redhat.com>
+ <9f6d258e-8191-9b57-4839-aa7c84e4c829@intel.com>
+ <20180214073910.boevmg65upbk3vqb@gmail.com>
+ <20180214161148.c4uxsmbwycsbcfh4@treble>
 MIME-Version: 1.0
-In-Reply-To: <20180210010703.GE3617@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180214161148.c4uxsmbwycsbcfh4@treble>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/02/09 17:07:03 -0800, Paul E. McKenney wrote:
-> On Sat, Feb 10, 2018 at 08:46:25AM +0900, Akira Yokosawa wrote:
->> >From 7c1f497a9a51e8db1a94c8a7ef0b74b235aaab88 Mon Sep 17 00:00:00 2001
->> From: Akira Yokosawa <akiyks@gmail.com>
->> Date: Fri, 9 Feb 2018 04:51:05 -0800
->> Subject: [PATCH v2] tools/memory-model: Make compat with herd7 7.47 ("-" -> "_")
->>
->> As of herd7 7.47, these '-'s are not permitted and end up in
->> errors such as:
->>
->>     File "./linux-kernel.def", line 44, characters 29-30:
->>     unexpected '-' (in macros)
->>
->> Partial revert of commit 2d5fba7782d6 ("linux-kernel*: Make RCU
->> identifiers match ASPLOS paper") in the repository at
->> https://github.com/aparri/memory-model can restore the compatibility
->> with herd7 7.47.
->>
->> Reported-by: Patrick Bellasi <patrick.bellasi@arm.com>
->> Suggested-by: Andrea Parri <parri.andrea@gmail.com>
->> Signed-off-by: Akira Yokosawa <akiyks@gmail.com>
->> ---
->> Paul,
->>
->> FWIW, this is a squashed version relative to patch 07/10 in the RFC series.
+
+* Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+
+> Dave was right, my patch was obviously bogus.  I couldn't figure out a
+> real reproducer, so I made an artificial one (see below) and can confirm
+> that your patch fixes it.
 > 
-> Thank you, Akira!
+> I would resubmit the patch, but now you're the author, so I'm not sure
+> how that works with the SOB.
+
+I'd just have made you the author of the oneliner fix, in fair payment for writing 
+the changelog! ;-)
+
+For anything larger and more complex we can do:
+
+  Signed-off-by: Ingo Molnar <mingo@kernel.org>
+  Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+  Signed-off-by: Ingo Molnar <mingo@kernel.org>
+
+Which is technically an unusual but still correct 'SoB chain' describing the 
+true route of the patch.
+
+See for example these scheduler commits:
+
+  8c0944cee7af: sched/deadline: Rename __dl_clear() to __dl_sub()
+  07f06cb3b5f6: sched: Start stopper early
+  7675104990ed: sched: Implement lockless wake-queues
+
+In particular 7675104990ed is a good example:
+
+  Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+  [tweaks, adjustments, comments, etc.]
+  Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+  Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+  Acked-by: Thomas Gleixner <tglx@linutronix.de>
+  Signed-off-by: Ingo Molnar <mingo@kernel.org>
+
+With his developer hat on PeterZ sent out a first implementation which Davidlohr 
+fixed, tested and signed off on - which PeterZ then applied with his maintainer 
+hat on, which Thomas acked and I committed to the scheduler git tree.
+
+It would require two commits (one of which could easily be a bisection-breaker) to 
+express this in any other way.
+
+But such chains are pretty rare and very much the exception: usually either the 
+original author takes care of everything, or the secondary author makes so many 
+changes that the secondary author becomes the primary author and the original 
+author is credited via a copyright notice and/or a tag like:
+
+  Originally-From: Ingo Molnar <mingo@kernel.org>
+
+> Feel free to add my
 > 
-> I am going to hold off on this for a bit to see if we can instead get
-> a new release of herd7, but if we can't. this might well be a very good
-> way to go.
+>   Reported-and-tested-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
-So, herdtools7.7.48 is now available by "opam update; opam upgrade".
-Maybe mentioning the required version of herdtools7 in README would help.
+Thanks and added!
 
-One glitch I'm aware of is one of the output of klitmus7 fails to
-compile on kernels prior to 4.14, because of smp_mb__after_spinlock()
-used in Z6.0+pooncelock+poonceLock+pombonce.litmus.
+BTW:
 
-And there is a question I want to ask.
+> --- a/arch/x86/entry/entry_64.S
+> +++ b/arch/x86/entry/entry_64.S
+> @@ -325,6 +325,8 @@ syscall_return_via_sysret:
+>  	 */
+>  	SWITCH_TO_USER_CR3_STACK scratch_reg=%rdi
+>  
+> +	int3
+> +
+>  	popq	%rdi
+>  	popq	%rsp
+>  	USERGS_SYSRET64
+> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+> index 3d9b2308e7fa..74fabcdf6c36 100644
+> --- a/arch/x86/kernel/traps.c
+> +++ b/arch/x86/kernel/traps.c
+> @@ -605,6 +605,8 @@ dotraplinkage void notrace do_int3(struct pt_regs *regs, long error_code)
+>  		goto exit;
+>  #endif
+>  
+> +	goto exit;
 
-Z6.0+pooncelock+pooncelock+pombonce.litmus, which doesn't have
-smp_mb__after_spinlock(), has a comment of:
+That's a very clever way to test such races!
 
-(*
- * Result: Never
- *
- * This example demonstrates that a pair of accesses made by different
- * processes each while holding a given lock will not necessarily be
- * seen as ordered by a third process not holding that lock.
- *)
+Thanks,
 
-The result was changed from "Sometimes" to "Never" in response to
-Alan's feedback the other day, but the following comment indicates
-the result should be "Sometimes". And the current model gives the
-result of "Sometimes".
-
-As I have no idea of the pending patches, I'd like to know once
-the pending patches are applied, would 
-Z6.0+pooncelock+pooncelock+pombonce.litmus and
-Z6.0+pooncelock+poonceLock+pombonce.litmus become identical?
-
-    Thanks, Akira
-
-> 
-> 							Thanx, Paul
-[...]
-d_lock*)  ||
->> +		'rcu_unlock (*rcu_read_unlock*) ||
->> +		'sync_rcu (*synchronize_rcu*) ||
->>  		'before_atomic (*smp_mb__before_atomic*) ||
->>  		'after_atomic (*smp_mb__after_atomic*) ||
->>  		'after_spinlock (*smp_mb__after_spinlock*)
->> @@ -35,8 +35,8 @@ instructions F[Barriers]
->>
->>  (* Compute matching pairs of nested Rcu-lock and Rcu-unlock *)
->>  let matched = let rec
->> -	    unmatched-locks = Rcu-lock \ domain(matched)
->> -	and unmatched-unlocks = Rcu-unlock \ range(matched)
->> +	    unmatched-locks = Rcu_lock \ domain(matched)
->> +	and unmatched-unlocks = Rcu_unlock \ range(matched)
->>  	and unmatched = unmatched-locks | unmatched-unlocks
->>  	and unmatched-po = [unmatched] ; po ; [unmatched]
->>  	and unmatched-locks-to-unlocks =
->> @@ -46,8 +46,8 @@ let matched = let rec
->>  	in matched
->>
->>  (* Validate nesting *)
->> -flag ~empty Rcu-lock \ domain(matched) as unbalanced-rcu-locking
->> -flag ~empty Rcu-unlock \ range(matched) as unbalanced-rcu-locking
->> +flag ~empty Rcu_lock \ domain(matched) as unbalanced-rcu-locking
->> +flag ~empty Rcu_unlock \ range(matched) as unbalanced-rcu-locking
->>
->>  (* Outermost level of nesting only *)
->>  let crit = matched \ (po^-1 ; matched ; po^-1)
->> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
->> index babe2b3..d0085d5 100644
->> --- a/tools/memory-model/linux-kernel.cat
->> +++ b/tools/memory-model/linux-kernel.cat
->> @@ -32,7 +32,7 @@ let mb = ([M] ; fencerel(Mb) ; [M]) |
->>  	([M] ; fencerel(Before_atomic) ; [RMW] ; po? ; [M]) |
->>  	([M] ; po? ; [RMW] ; fencerel(After_atomic) ; [M]) |
->>  	([M] ; po? ; [LKW] ; fencerel(After_spinlock) ; [M])
->> -let gp = po ; [Sync-rcu] ; po?
->> +let gp = po ; [Sync_rcu] ; po?
->>
->>  let strong-fence = mb | gp
->>
->> diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
->> index a397387..fc08371 100644
->> --- a/tools/memory-model/linux-kernel.def
->> +++ b/tools/memory-model/linux-kernel.def
->> @@ -41,10 +41,10 @@ spin_unlock(X) { __unlock(X) ; }
->>  spin_trylock(X) __trylock(X)
->>
->>  // RCU
->> -rcu_read_lock() { __fence{rcu-lock}; }
->> -rcu_read_unlock() { __fence{rcu-unlock};}
->> -synchronize_rcu() { __fence{sync-rcu}; }
->> -synchronize_rcu_expedited() { __fence{sync-rcu}; }
->> +rcu_read_lock() { __fence{rcu_lock}; }
->> +rcu_read_unlock() { __fence{rcu_unlock};}
->> +synchronize_rcu() { __fence{sync_rcu}; }
->> +synchronize_rcu_expedited() { __fence{sync_rcu}; }
->>
->>  // Atomic
->>  atomic_read(X) READ_ONCE(*X)
->> -- 
->> 2.7.4
->>
->>
-> 
+	Ingo
