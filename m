@@ -1,138 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033353AbeBNRMG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 12:12:06 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58914 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1032907AbeBNRME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 12:12:04 -0500
-Date: Wed, 14 Feb 2018 19:12:03 +0200
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Marc-Andre Lureau <mlureau@redhat.com>
-Cc: =?iso-8859-1?Q?Marc-Andr=E9?= Lureau
-        <marcandre.lureau@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Baoquan He <bhe@redhat.com>, Sergio Lopez Pascual <slp@redhat.com>,
-        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
-Subject: Re: [PATCH v14 9/9] RFC: fw_cfg: do DMA read operation
-Message-ID: <20180214190943-mutt-send-email-mst@kernel.org>
-References: <20180214141850.4017-1-marcandre.lureau@redhat.com>
- <20180214141850.4017-10-marcandre.lureau@redhat.com>
- <20180214182714-mutt-send-email-mst@kernel.org>
- <CAMxuvaw8iUidXhFMO5gnUS56H+SncOzF71yaQpHNW4JnsYM3vQ@mail.gmail.com>
- <20180214185818-mutt-send-email-mst@kernel.org>
- <CAMxuvaxC-JynbreyVet2KHNqWnuwqUyPyt-m3qjazW32c3e8Bg@mail.gmail.com>
+        id S1033375AbeBNROq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 12:14:46 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:38993 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033330AbeBNROo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 12:14:44 -0500
+X-Google-Smtp-Source: AH8x226+oqUyi2F6hUqPYCGj8AF9KCOl5ATIw8NlKFw3baq2Bu06zypxjRbaLGkar9zHx3vXwy6IAFqUEurYaq+qd58=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMxuvaxC-JynbreyVet2KHNqWnuwqUyPyt-m3qjazW32c3e8Bg@mail.gmail.com>
+In-Reply-To: <491a26b8-7abb-0d36-0a2e-e1c7bfcde79d@oracle.com>
+References: <089e08231920353a4805618b365c@google.com> <d91da249-5a0f-7a1f-cfd5-68f10f0a2fc1@oracle.com>
+ <CACT4Y+bd6Tyq672JC3GNSHPX2CEHacVKkcbKOAgpi8o-=T8DRg@mail.gmail.com> <491a26b8-7abb-0d36-0a2e-e1c7bfcde79d@oracle.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 14 Feb 2018 18:14:23 +0100
+Message-ID: <CACT4Y+YxrNiP==ty-KBjkDewnuS378GmG314-=ytWskZXQx3zw@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in rds_find_bound
+To: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Cc: syzbot <syzbot+93a5839deb355537440f@syzkaller.appspotmail.com>,
+        linux-rdma@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        rds-devel@oss.oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 06:08:48PM +0100, Marc-Andre Lureau wrote:
-> Hi
-> 
-> On Wed, Feb 14, 2018 at 5:59 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> > On Wed, Feb 14, 2018 at 05:52:10PM +0100, Marc-Andre Lureau wrote:
-> >> >> @@ -282,8 +320,9 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
-> >> >>  #endif
-> >> >>
-> >> >>       /* verify fw_cfg device signature */
-> >> >> -     fw_cfg_read_blob(FW_CFG_SIGNATURE, sig, 0, FW_CFG_SIG_SIZE);
-> >> >> -     if (memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
-> >> >> +     if (fw_cfg_read_blob(FW_CFG_SIGNATURE, sig,
-> >> >> +                             0, FW_CFG_SIG_SIZE, false) < 0 ||
-> >> >> +             memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
-> >> >>               fw_cfg_io_cleanup();
-> >> >>               return -ENODEV;
-> >> >>       }
-> >> >
-> >> > Rather than add dead code, how about a promise not to
-> >> > fail if dma is disabled? Patch will be smaller then.
-> >>
-> >> Even with dma disabled, you could have a locking bug which was
-> >> silently ignored before and is now taken into account.
-> >
-> > I see. I'd start with a patch reporting errors to users then.
-> > That would be a bugfix and can be merged for this version.
-> 
-> silently is the wrong word for it, there is already a WARN().
+On Wed, Feb 14, 2018 at 5:53 PM, Santosh Shilimkar
+<santosh.shilimkar@oracle.com> wrote:
+>>> On 12/30/17 1:17 AM, syzbot wrote:
+>>>>
+>>>>
+>>>> Hello,
+>>>>
+>>>> syzkaller hit the following crash on
+>>>> fba961ab29e5ffb055592442808bb0f7962e05da
+>>>> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
+>>>> compiler: gcc (GCC) 7.1.1 20170620
+>>>> .config is attached
+>>>> Raw console output is attached.
+>>>> Unfortunately, I don't have any reproducer for this bug yet.
+>>>>
+>>>>
+>>>> IMPORTANT: if you fix the bug, please add the following tag to the
+>>>> commit:
+>>>> Reported-by: syzbot+93a5839deb355537440f@syzkaller.appspotmail.com
+>>>
+>>>
+>>>
+>>> Posted a fix[1] for above issue. Didn't test it but looks straight
+>>> forward.
+>>
+>>
+>>
+>> Hi Santosh,
+>>
+>> What is that fix? You forgot to provide any link/reference. I also
+>> don't see any patches from you at around that date...
+>>
+> Fix [1] was later not added since there was a still a race. Wanted to
+> see if the issue re-appears after recent netns fix [2].
 
-it's not visible to userspace though.
 
-> However,
-> the memcmp was done on uninitialzed sig[] (which likely resulted in
-> returning -ENODEV in the function)
-
-Oh, we have an access to an uninitialized memory too. Fun!
-
-> Now it can check if the function failed to read before doing the memcmp.
-> 
-> Hope that clarifies it.
-
-I think I get it. I'd make it a bugfix patch as patch 7 in the series.
-(patch 1-6 are applied in my tree, will merge in this window if they do not blow up).
-
-> >
-> >> >
-> >> >> @@ -466,8 +505,8 @@ static ssize_t fw_cfg_sysfs_read_raw(struct file *filp, struct kobject *kobj,
-> >> >>       if (count > entry->size - pos)
-> >> >>               count = entry->size - pos;
-> >> >>
-> >> >> -     fw_cfg_read_blob(entry->select, buf, pos, count);
-> >> >> -     return count;
-> >> >> +     /* do not use DMA, virt_to_phys(buf) might not be ok */
-> >> >> +     return fw_cfg_read_blob(entry->select, buf, pos, count, false);
-> >> >>  }
-> >> >>
-> >> >>  static struct bin_attribute fw_cfg_sysfs_attr_raw = {
-> >> >> @@ -632,7 +671,12 @@ static int fw_cfg_register_dir_entries(void)
-> >> >>       struct fw_cfg_file *dir;
-> >> >>       size_t dir_size;
-> >> >>
-> >> >> -     fw_cfg_read_blob(FW_CFG_FILE_DIR, &files.count, 0, sizeof(files.count));
-> >> >> +     ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, &files.count,
-> >> >> +                     0, sizeof(files.count), false);
-> >> >> +     if (ret < 0) {
-> >> >> +             return ret;
-> >> >> +     }
-> >> >> +
-> >> >>       count = be32_to_cpu(files.count);
-> >> >>       dir_size = count * sizeof(struct fw_cfg_file);
-> >> >>
-> >> >> @@ -640,7 +684,11 @@ static int fw_cfg_register_dir_entries(void)
-> >> >>       if (!dir)
-> >> >>               return -ENOMEM;
-> >> >>
-> >> >> -     fw_cfg_read_blob(FW_CFG_FILE_DIR, dir, sizeof(files.count), dir_size);
-> >> >> +     ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, dir,
-> >> >> +                     sizeof(files.count), dir_size, false);
-> >> >> +     if (ret < 0) {
-> >> >> +             goto end;
-> >> >> +     }
-> >> >>
-> >> >>       for (i = 0; i < count; i++) {
-> >> >>               ret = fw_cfg_register_file(&dir[i]);
-> >> >> @@ -648,6 +696,7 @@ static int fw_cfg_register_dir_entries(void)
-> >> >>                       break;
-> >> >>       }
-> >> >>
-> >> >> +end:
-> >> >>       kfree(dir);
-> >> >>       return ret;
-> >> >>  }
-> >> >> @@ -688,7 +737,10 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
-> >> >>               goto err_probe;
-> >> >>
-> >> >>       /* get revision number, add matching top-level attribute */
-> >> >> -     fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
-> >> >> +     err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev), false);
-> >> >> +     if (err < 0) {
-> >> >> +             goto err_probe;
-> >> >> +     }
-> >> >>       fw_cfg_rev = le32_to_cpu(rev);
-> >> >>       err = sysfs_create_file(fw_cfg_top_ko, &fw_cfg_rev_attr.attr);
-> >> >>       if (err)
-> >> >> --
-> >> >> 2.16.1.73.g5832b7e9f2
+We will not see if the bug re-appears or not until this bug is closed.
+Please see this recent discussion about another rds bug:
+https://groups.google.com/d/msg/syzkaller-bugs/3XjmOzr5jRU/g7pXIsY1BgAJ
+In the current state syzbot will never report bugs in these functions again.
