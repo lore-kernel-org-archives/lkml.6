@@ -1,54 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162478AbeBNS7I (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 13:59:08 -0500
-Received: from mail-pl0-f44.google.com ([209.85.160.44]:40611 "EHLO
-        mail-pl0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162460AbeBNS7E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 13:59:04 -0500
-X-Google-Smtp-Source: AH8x225NQZ3oVrxOSjjkbvR9K9IXdqme/PTI1L+xPod+zi83DPXvzpQXaidQQGlnndfg/QGHRMHceQSAsznogeWeyf4=
+        id S1162494AbeBNS7b (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 13:59:31 -0500
+Received: from muru.com ([72.249.23.125]:57142 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1162425AbeBNS73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 13:59:29 -0500
+Date: Wed, 14 Feb 2018 10:59:24 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Keerthy <j-keerthy@ti.com>
+Cc: Suman Anna <s-anna@ti.com>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "aaro.koskinen@iki.fi" <aaro.koskinen@iki.fi>,
+        "Claudiu.Beznea@microchip.com" <Claudiu.Beznea@microchip.com>,
+        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "ladis@linux-mips.org" <ladis@linux-mips.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "sebastian.reichel@collabora.co.uk"
+        <sebastian.reichel@collabora.co.uk>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "Kristo, Tero" <t-kristo@ti.com>,
+        "Strashko, Grygorii" <grygorii.strashko@ti.com>
+Subject: Re: [PATCH v7 3/9] arm: omap: Move dmtimer.h out of plat-omap
+Message-ID: <20180214185924.GR6364@atomide.com>
+References: <1515478987-5786-1-git-send-email-j-keerthy@ti.com>
+ <1515478987-5786-4-git-send-email-j-keerthy@ti.com>
+ <1c9f5c72-f589-d7c7-399f-ef55ecb828a0@ti.com>
+ <37f28584-20c2-51c1-e476-75ef81f03af6@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20180214184931.GA1718@ziepe.ca>
-References: <001a1141a524c513ca05628d8ad4@google.com> <20180112183046.GA26098@oracle.com>
- <CACT4Y+aB0dZShujVMJFV6grb_7AYOMca13a1J2AkWsT7R0cgrQ@mail.gmail.com>
- <20180214152109.GF11528@oracle.com> <CACT4Y+bKpi8he1ygwAxgm4F_RJ=BRPBPdMaVAK64SbvCVGt7ww@mail.gmail.com>
- <20180214153555.GG11528@oracle.com> <20180214184931.GA1718@ziepe.ca>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 14 Feb 2018 19:58:43 +0100
-Message-ID: <CACT4Y+b2F+4+MV4rWpMFJtps0fhfKdo3chETUTDSvWXtR2qxpg@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in rds_tcp_tune
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-        syzbot <syzbot+bbd8e9a06452cc48059b@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>, rds-devel@oss.oracle.com,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <37f28584-20c2-51c1-e476-75ef81f03af6@ti.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 7:49 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> On Wed, Feb 14, 2018 at 10:35:55AM -0500, Sowmini Varadhan wrote:
->> On (02/14/18 16:28), Dmitry Vyukov wrote:
->> > syzbot is probably not seeing this problem. However if you don't add
->> > the Reported-by tag to commit, nor provide syz fix tag, it will
->> > consider it as "open". One consequence of this is that it is still on
->> > our radars. Another consequence is that syzbot will never report bugs
->> > in rds_tcp_tune ever again as it thinks that it's the same known bug,
->> > so no point in bothering anybody.
->>
->> understood, I think I saw this in the original syzbot mail as well,
->> but I was hesitant to actually add the tag because the fix was
->> based on code-inspection only, and I would have felt more comfortable
->> about asserting the Reported-by if I'd done a clear-cut before/after
->> verification.
->
-> I think the point is you have to clear it from syzbot to get it to
-> even test your patches, even if you are not totally sure your patch
-> fixes it?
+* Keerthy <j-keerthy@ti.com> [180214 04:51]:
+> On Tuesday 13 February 2018 07:36 AM, Suman Anna wrote:
+> > These headers are actually not needed in the first-place since we no
+> > longer create any non-DT timer devices. I have submitted a series to
+> > cleanup the presence of this header file, as part of a larger hwmod data
+> > cleanup series.
+> 
+> I will rebase my series on top of your clean up series. Thanks for clean
+> ups.
 
-Sorry, I failed to parse this sentence. Can you please rephrase it?
+I've now pushed Suman's series into omap-for-v4.17/soc and
+merged it into my for-next. So please rebase your updated
+patches against omap-for-v4.17/soc.
+
+Thanks,
+
+Tony
