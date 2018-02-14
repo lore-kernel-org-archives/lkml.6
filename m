@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030472AbeBNOKr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 09:10:47 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36001 "EHLO
+        id S1030516AbeBNOLN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 09:11:13 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:45703 "EHLO
         mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030397AbeBNOKc (ORCPT
+        with ESMTP id S1030308AbeBNOKa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 09:10:32 -0500
-X-Google-Smtp-Source: AH8x225nwscDEGYxokX37bgCWJIPwGzcqPStxgBqUoeH4LWw2kEhhdCgvh/vPiRMPH3LkTKwQl0Mmg==
+        Wed, 14 Feb 2018 09:10:30 -0500
+X-Google-Smtp-Source: AH8x226JKuV4u83zWvCyAQxT3HnRkceXzM24YkbCz119RZ+LDnW5toLi0lS3xR4zKJs5ITgI2QGl6g==
 From: Philipp Rossak <embed3d@gmail.com>
 To: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
         maxime.ripard@free-electrons.com, wens@csie.org
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: [PATCH v2 2/2] arm: dts: sun6i: a31s: fix: bpi-m2: add missing regulators
-Date: Wed, 14 Feb 2018 15:10:25 +0100
-Message-Id: <20180214141025.22171-3-embed3d@gmail.com>
+Subject: [PATCH v2 1/2] arm: dts: sun6i: a31s: bpi-m2: improve pmic properties
+Date: Wed, 14 Feb 2018 15:10:24 +0100
+Message-Id: <20180214141025.22171-2-embed3d@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180214141025.22171-1-embed3d@gmail.com>
 References: <20180214141025.22171-1-embed3d@gmail.com>
@@ -23,142 +23,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes a bootproblem with the Bananapi M2 board. Since there
-are some regulators missing we add them right now. Those values come
-from the schematic, below you can find a small overview:
-
-* reg_aldo1:  3,3V, powers the wifi
-* reg_aldo2:  2,5V, powers the IO of the RTL8211E
-* reg_aldo3:  3,3V, powers the audio
-
-* reg_dldo1:  3,0V, powers the RTL8211E
-* reg_dldo2:  2,8V, powers the analog part of the csi
-* reg_dldo3:  3,3V, powers misc
-* reg_eldo1:  1,8V, powers the csi
-* reg_ldo_io1:1,8V, powers the gpio
-
-* reg_dc5ldo: needs to be always on
-
-This patch updates also the vmmc-supply properties on the mmc0 and mmc2
-node to use the allready existent regulators.
-We can now remove the sunxi-common-regulators.dtsi include since we
-don't need it anymore.
+The eldoin is supplied from the dcdc1 regulator. The N_VBUSEN pin is
+connected to an external power regulator (SY6280AAC).
+With this commit we update the pmic binding properties to support
+those features.
 
 Fixes: 7daa21370075 ("ARM: dts: sunxi: Add regulators for Sinovoip
 BPI-M2")
 
 Signed-off-by: Philipp Rossak <embed3d@gmail.com>
 ---
- arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts | 61 ++++++++++++++++++++++--
- 1 file changed, 58 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts b/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
-index fb34f32502cf..b2758dd8ce43 100644
+index 51e6f1d21c32..fb34f32502cf 100644
 --- a/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
 +++ b/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
-@@ -42,7 +42,6 @@
- 
- /dts-v1/;
- #include "sun6i-a31s.dtsi"
--#include "sunxi-common-regulators.dtsi"
- #include <dt-bindings/gpio/gpio.h>
- 
- / {
-@@ -99,6 +98,7 @@
- 	pinctrl-0 = <&gmac_pins_rgmii_a>, <&gmac_phy_reset_pin_bpi_m2>;
- 	phy = <&phy1>;
- 	phy-mode = "rgmii";
-+	phy-supply = <&reg_dldo1>;
- 	snps,reset-gpio = <&pio 0 21 GPIO_ACTIVE_HIGH>; /* PA21 */
- 	snps,reset-active-low;
- 	snps,reset-delays-us = <0 10000 30000>;
-@@ -118,7 +118,7 @@
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin_bpi_m2>;
--	vmmc-supply = <&reg_vcc3v0>;
-+	vmmc-supply = <&reg_dcdc1>;
- 	bus-width = <4>;
- 	cd-gpios = <&pio 0 4 GPIO_ACTIVE_HIGH>; /* PA4 */
- 	cd-inverted;
-@@ -132,7 +132,7 @@
- &mmc2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc2_pins_a>;
--	vmmc-supply = <&reg_vcc3v0>;
-+	vmmc-supply = <&reg_aldo1>;
- 	mmc-pwrseq = <&mmc2_pwrseq>;
- 	bus-width = <4>;
- 	non-removable;
-@@ -195,7 +195,28 @@
- 
- #include "axp22x.dtsi"
- 
-+&reg_aldo1 {
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-wifi";
-+};
-+
-+&reg_aldo2 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <2500000>;
-+	regulator-max-microvolt = <2500000>;
-+	regulator-name = "vcc-gmac";
-+};
-+
-+&reg_aldo3 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <3000000>;
-+	regulator-max-microvolt = <3000000>;
-+	regulator-name = "avcc";
-+};
-+
- &reg_dc5ldo {
-+	regulator-always-on;
- 	regulator-min-microvolt = <700000>;
- 	regulator-max-microvolt = <1320000>;
- 	regulator-name = "vdd-cpus";
-@@ -235,6 +256,40 @@
- 	regulator-name = "vcc-dram";
+@@ -163,6 +163,8 @@
+ 		reg = <0x68>;
+ 		interrupt-parent = <&nmi_intc>;
+ 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		eldoin-supply = <&reg_dcdc1>;
++		x-powers,drive-vbus-en;
+ 	};
  };
  
-+&reg_dldo1 {
-+	regulator-min-microvolt = <3000000>;
-+	regulator-max-microvolt = <3000000>;
-+	regulator-name = "vcc-mac";
-+};
-+
-+&reg_dldo2 {
-+	regulator-min-microvolt = <2800000>;
-+	regulator-max-microvolt = <2800000>;
-+	regulator-name = "avdd-csi";
-+};
-+
-+&reg_dldo3 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-pb";
-+};
-+
-+&reg_eldo1 {
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <1800000>;
-+	regulator-name = "vdd-csi";
-+	status = "okay";
-+};
-+
-+&reg_ldo_io1 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <1800000>;
-+	regulator-name = "vcc-pm-cpus";
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
 -- 
 2.11.0
