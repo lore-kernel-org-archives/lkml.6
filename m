@@ -1,104 +1,83 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3343915-1518627896-2-5996147384583280337
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518627895; b=jC6LhaxHO00jtaGEFpS0GgU5mMOfvqH1WPL4hLs7ENh2bIo
-    mxjafg7Nr3i7ryNDEmjFUfWkmxmDvFYV44BBWVZXS4tsrNU9IslwH4HFpJ2ltu9A
-    r7dgM8ZJf5zZ54lrfbyelf0Og9Lfzt1RZCkrqW8nuTxDyEto4nvbfC/vnszorb9n
-    zuAEpLm28/zRtzb/tc4PsTf/2r9tdJvpP6zFe25h9dwHcOzuAbxwnJDX6fIG8Ha5
-    8nLpiQM02GcnSUXaeH3nJo0YDsHAfXMydw3Z/mWzEXxJdqeUn2ZS4X9JLns0sspb
-    uyfrMMGx9OKVvMK7PZcZtOGL9mexvAMAJSXK9vw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1518627895;
-    bh=BL0ncKgwa0GLlS5IOqhMNBSzT5AMwd0WsZ/2iUfauE4=; b=PNclwdUkknzJ
-    t9Lbxw/LYLNgb528zdg4IdAmB5p6C+CDh+u/+84v0I89av5dqRaN07xyi2CCCqhT
-    o89GbQXf00GyELzJHtNqOzuly0cE/t0jnPPY7vVaFtzWqpMDNEEmiYLnhRv9H/5X
-    PG1vz6TZudZ0n0Rq06nLYTfR7kMzZSnH7cNCpVV+uZfkbJqK2fJX2WW2QyWREpQu
-    dVxk/QN3yY1ec4e1CqHsG9XJDTz49YfAJiZ396+WG8WLtAgpBxhCT+SYm4NlUCs+
-    h7PULcOxqGFq0A2Zz4hQURds7CrUIt5oNpoKDaEWGxmsJXgOQJvsGXaLxTJJ8iCr
-    9FcdHOiXoQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=metanate.com header.i=@metanate.com header.b=NFP1tcnw x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=stronger;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=metanate.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=metanate.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=metanate.com header.i=@metanate.com header.b=NFP1tcnw x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=stronger;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=metanate.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=metanate.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033294AbeBNREu (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Feb 2018 12:04:50 -0500
-Received: from dougal.metanate.com ([90.155.101.14]:62429 "EHLO metanate.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1032907AbeBNREt (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Wed, 14 Feb 2018 12:04:49 -0500
-From: John Keeping <john@metanate.com>
-To: Felipe Balbi <balbi@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Opasiak <k.opasiak@samsung.com>,
-        John Keeping <john@metanate.com>
-Subject: [PATCH v2] usb: gadget: f_uac2: fix bFirstInterface in composite gadget
-Date: Wed, 14 Feb 2018 17:04:33 +0000
-Message-Id: <20180214170433.26425-1-john@metanate.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180112184332.28138-1-john@metanate.com>
-References: <20180112184332.28138-1-john@metanate.com>
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Return-Path: <g.schenk@eckelmann.de>
+X-Google-Smtp-Source: AH8x226XmOQoRAU4JfTwkV4o9IlNmLG0pYJhJ2I0St7tvJU2UJwaY0dF15fUGlEh2Llmi+JBjPus
+ARC-Seal: i=1; a=rsa-sha256; t=1518618316; cv=none;
+        d=google.com; s=arc-20160816;
+        b=By1nsnLcBa3JwHC6NUGAs+aUFKYn6lFLayF7YBJbl/dFT5fWAZLzq5XJcWkL6VMB7W
+         EKoEdtB+LRivhkpFqv5urRWD3VZZvIv8DaYrO+XiGismnTQdkBPgeWdvqPjkXvFSPGOa
+         Jhpada9Sws0K7f83AeAAqPv6vBZz1cUn6iF51k25D0Zm/esmAJOVRgk0JrMqo0Q3bRHb
+         ariSATd1D7A6n3V+/DG9apmjAmXW10Pz4gch9jKMSi4Dq7KTj4rwS773cZb7UWqvvGe3
+         bjR9OWOjmgiWkuPSy0r5Pl07PAlawyY4czR7xW0Fk+Hez6zg6Apk4mzt7UdSXYxp+jPV
+         au4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:arc-authentication-results;
+        bh=gPc3L+/cP7jh3uICD60UuFB2fPThhFzornpKwq7hhOY=;
+        b=y5z2810APhLiGBmWth0lYuJi16u8nPw+XH5wTw0iRhckEt3EYc4YwGNaSwcNrCgIUe
+         7MV5Xpcjp7J5+582dr9bUCpvuTF6/YGZpq+ijjcTYC2BOwwuml3sVtwGWtG5ArgSlCO7
+         5eTaPOItLBPbKh6aj2NfUYpso2OrZ7rX50esD1pVMFzyvf0brKpBLTBhCVl9GPrBmNVJ
+         4EANa+inCgabSr9RSzukyTLa/2TUZQBkoQdhvleAUeKvqlUQ+24AIuSqcuLe6VtAhbAY
+         /THZtZE0XuxpWOz930lodwvxh25fUWbKjF7GcOb6wvFeKCp8d2fdr2VI0xDd22twpofl
+         Pjrg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of g.schenk@eckelmann.de designates 217.19.183.72 as permitted sender) smtp.mailfrom=g.schenk@eckelmann.de
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of g.schenk@eckelmann.de designates 217.19.183.72 as permitted sender) smtp.mailfrom=g.schenk@eckelmann.de
+From: Gavin Schenk <g.schenk@eckelmann.de>
+To: <linux-kernel@vger.kernel.org>, <gregkh@linuxfoundation.org>
+CC: <kernel@pengutronix.de>, <dcb314@hotmail.com>, Gavin Schenk
+	<g.schenk@eckelmann.de>
+Subject: [PATCH] siox: fix possible buffer overflow in device_add_store
+Date: Wed, 14 Feb 2018 15:25:02 +0100
+Message-ID: <20180214142502.20787-1-g.schenk@eckelmann.de>
+X-Mailer: git-send-email 2.15.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Originating-IP: [2a00:1f08:4007:1c00:e163:b718:85a4:9a90]
+X-ClientProxiedBy: EX-SRV1.eckelmann.group (2a00:1f08:4007:e035:172:18:35:4)
+ To EX-SRV1.eckelmann.group (2a00:1f08:4007:e035:172:18:35:4)
+Content-Transfer-Encoding: quoted-printable
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592386720059475890?=
+X-GMAIL-MSGID: =?utf-8?q?1592386720059475890?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-If there are multiple functions associated with a configuration, then
-the UAC2 interfaces may not start at zero.  Set the correct first
-interface number in the association descriptor so that the audio
-interfaces are enumerated correctly in this case.
+Width 20 given in format string is larger than destination
+buffer 'type[20]', use %19s to prevent overflowing it.
 
-Signed-off-by: John Keeping <john@metanate.com>
-Reviewed-by: Krzysztof Opasiak <k.opasiak@samsung.com>
+Fixes: bbecb07fa0af ("siox: new driver framework for eckelmann SIOX")
+Cc: stable <stable@vger.kernel.org>
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Gavin Schenk <g.schenk@eckelmann.de>
+Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
-v2:
-- Add Krzysztof's reviewed-by
+ drivers/siox/siox-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/usb/gadget/function/f_uac2.c | 2 ++
- 1 file changed, 2 insertions(+)
+diff --git a/drivers/siox/siox-core.c b/drivers/siox/siox-core.c
+index fdfcdea25867..16590dfaafa4 100644
+--- a/drivers/siox/siox-core.c
++++ b/drivers/siox/siox-core.c
+@@ -594,7 +594,7 @@ static ssize_t device_add_store(struct device *dev,
+ 	size_t inbytes =3D 0, outbytes =3D 0;
+ 	u8 statustype =3D 0;
+=20
+-	ret =3D sscanf(buf, "%20s %zu %zu %hhu", type, &inbytes,
++	ret =3D sscanf(buf, "%19s %zu %zu %hhu", type, &inbytes,
+ 		     &outbytes, &statustype);
+ 	if (ret !=3D 3 && ret !=3D 4)
+ 		return -EINVAL;
+--=20
+2.15.1
 
-diff --git a/drivers/usb/gadget/function/f_uac2.c b/drivers/usb/gadget/function/f_uac2.c
-index 11fe788b4308..d2dc1f00180b 100644
---- a/drivers/usb/gadget/function/f_uac2.c
-+++ b/drivers/usb/gadget/function/f_uac2.c
-@@ -524,6 +524,8 @@ afunc_bind(struct usb_configuration *cfg, struct usb_function *fn)
- 		dev_err(dev, "%s:%d Error!\n", __func__, __LINE__);
- 		return ret;
- 	}
-+	iad_desc.bFirstInterface = ret;
-+
- 	std_ac_if_desc.bInterfaceNumber = ret;
- 	uac2->ac_intf = ret;
- 	uac2->ac_alt = 0;
--- 
-2.16.1
 
+--=20
+Eckelmann AG
+Vorstand: Dipl.-Ing. Peter Frankenbach (Sprecher) Dipl.-Wi.-Ing. Philipp Ec=
+kelmann
+Dr.-Ing. Marco M=C3=BCnchhof Dr.-Ing. Frank Uhlemann
+Vorsitzender des Aufsichtsrats: Hubertus G. Krossa
+Stv. Vorsitzender des Aufsichtsrats: Dr.-Ing. Gerd Eckelmann
+Sitz der Gesellschaft: Berliner Str. 161, 65205 Wiesbaden, Amtsgericht Wies=
+baden HRB 12636
+http://www.eckelmann.de
