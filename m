@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967289AbeBNKx6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 05:53:58 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:52834 "EHLO
+        id S967296AbeBNKyq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 05:54:46 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:42128 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967114AbeBNKx4 (ORCPT
+        with ESMTP id S967114AbeBNKyp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 05:53:56 -0500
+        Wed, 14 Feb 2018 05:54:45 -0500
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 To: Tony Lindgren <tony@atomide.com>
 Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
@@ -14,11 +14,11 @@ Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
         linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
         Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] PM / wakeirq: Fix unbalanced irq enable for wakeirq
-Date: Wed, 14 Feb 2018 11:52:07 +0100
-Message-ID: <1980232.muaKaqCUGd@aspire.rjw.lan>
-In-Reply-To: <20180209161126.18580-1-tony@atomide.com>
-References: <20180209161126.18580-1-tony@atomide.com>
+Subject: Re: [PATCH] PM / wakeirq: Add wakeup name to dedicated wake irqs
+Date: Wed, 14 Feb 2018 11:52:56 +0100
+Message-ID: <2003557.9eaylDJto6@aspire.rjw.lan>
+In-Reply-To: <20180209161456.18951-1-tony@atomide.com>
+References: <20180209161456.18951-1-tony@atomide.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -26,68 +26,90 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, February 9, 2018 5:11:26 PM CET Tony Lindgren wrote:
-> If a device is runtime PM suspended when we enter suspend and has
-> a dedicated wake irq, we can get the following warning:
+On Friday, February 9, 2018 5:14:56 PM CET Tony Lindgren wrote:
+> This makes it easy to grep :wakeup /proc/interrupts.
 > 
-> WARNING: CPU: 0 PID: 108 at kernel/irq/manage.c:526 enable_irq+0x40/0x94
-> [  102.087860] Unbalanced enable for IRQ 147
-> ...
-> (enable_irq) from [<c06117a8>] (dev_pm_arm_wake_irq+0x4c/0x60)
-> (dev_pm_arm_wake_irq) from [<c0618360>]
->  (device_wakeup_arm_wake_irqs+0x58/0x9c)
-> (device_wakeup_arm_wake_irqs) from [<c0615948>]
-> (dpm_suspend_noirq+0x10/0x48)
-> (dpm_suspend_noirq) from [<c01ac7ac>]
-> (suspend_devices_and_enter+0x30c/0xf14)
-> (suspend_devices_and_enter) from [<c01adf20>]
-> (enter_state+0xad4/0xbd8)
-> (enter_state) from [<c01ad3ec>] (pm_suspend+0x38/0x98)
-> (pm_suspend) from [<c01ab3e8>] (state_store+0x68/0xc8)
-> 
-> This is because the dedicated wake irq for the device may have been
-> already enabled earlier by dev_pm_enable_wake_irq_check(). Fix the
-> issue by checking for runtime PM suspended status.
-> 
-> This issue can be easily reproduced by setting serial console log level
-> to zero, letting the serial console idle, and suspend the system from
-> an ssh terminal. On resume, dmesg will have the warning above.
-> 
-> The reason why I have not ran into this issue earlier has been that I
-> typically run my PM test cases from on a serial console instead over ssh.
-> 
-> Fixes: c84345597558 ("PM / wakeirq: Enable dedicated wakeirq for suspend")
 > Cc: Brian Norris <briannorris@chromium.org>
 > Cc: Grygorii Strashko <grygorii.strashko@ti.com>
 > Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Suggested-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 > Signed-off-by: Tony Lindgren <tony@atomide.com>
 > ---
->  drivers/base/power/wakeirq.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  drivers/base/power/power.h   |  1 +
+>  drivers/base/power/wakeirq.c | 18 +++++++++++++++---
+>  2 files changed, 16 insertions(+), 3 deletions(-)
 > 
+> diff --git a/drivers/base/power/power.h b/drivers/base/power/power.h
+> --- a/drivers/base/power/power.h
+> +++ b/drivers/base/power/power.h
+> @@ -31,6 +31,7 @@ struct wake_irq {
+>  	struct device *dev;
+>  	unsigned int status;
+>  	int irq;
+> +	char *name;
+>  };
+>  
+>  extern void dev_pm_arm_wake_irq(struct wake_irq *wirq);
 > diff --git a/drivers/base/power/wakeirq.c b/drivers/base/power/wakeirq.c
 > --- a/drivers/base/power/wakeirq.c
 > +++ b/drivers/base/power/wakeirq.c
-> @@ -321,7 +321,8 @@ void dev_pm_arm_wake_irq(struct wake_irq *wirq)
->  		return;
->  
->  	if (device_may_wakeup(wirq->dev)) {
-> -		if (wirq->status & WAKE_IRQ_DEDICATED_ALLOCATED)
-> +		if (wirq->status & WAKE_IRQ_DEDICATED_ALLOCATED &&
-> +		    !pm_runtime_status_suspended(wirq->dev))
->  			enable_irq(wirq->irq);
->  
->  		enable_irq_wake(wirq->irq);
-> @@ -343,7 +344,8 @@ void dev_pm_disarm_wake_irq(struct wake_irq *wirq)
->  	if (device_may_wakeup(wirq->dev)) {
->  		disable_irq_wake(wirq->irq);
->  
-> -		if (wirq->status & WAKE_IRQ_DEDICATED_ALLOCATED)
-> +		if (wirq->status & WAKE_IRQ_DEDICATED_ALLOCATED &&
-> +		    !pm_runtime_status_suspended(wirq->dev))
->  			disable_irq_nosync(wirq->irq);
+> @@ -112,6 +112,7 @@ void dev_pm_clear_wake_irq(struct device *dev)
+>  		free_irq(wirq->irq, wirq);
+>  		wirq->status &= ~WAKE_IRQ_DEDICATED_MASK;
 >  	}
+> +	kfree(wirq->name);
+>  	kfree(wirq);
 >  }
+>  EXPORT_SYMBOL_GPL(dev_pm_clear_wake_irq);
+> @@ -175,7 +176,8 @@ static irqreturn_t handle_threaded_wake_irq(int irq, void *_wirq)
+>  int dev_pm_set_dedicated_wake_irq(struct device *dev, int irq)
+>  {
+>  	struct wake_irq *wirq;
+> -	int err;
+> +	int err, namelen;
+> +	const char *postfix = ":wakeup";
+>  
+>  	if (irq < 0)
+>  		return -EINVAL;
+> @@ -184,6 +186,14 @@ int dev_pm_set_dedicated_wake_irq(struct device *dev, int irq)
+>  	if (!wirq)
+>  		return -ENOMEM;
+>  
+> +	namelen = strlen(dev_name(dev)) + strlen(postfix) + 1;
+> +	wirq->name = kzalloc(namelen, GFP_KERNEL);
+> +	if (!wirq->name) {
+> +		err = -ENOMEM;
+> +		goto err_free;
+> +	}
+> +
+> +	snprintf(wirq->name, namelen, "%s%s", dev_name(dev), postfix);
+>  	wirq->dev = dev;
+>  	wirq->irq = irq;
+>  	irq_set_status_flags(irq, IRQ_NOAUTOEN);
+> @@ -196,9 +206,9 @@ int dev_pm_set_dedicated_wake_irq(struct device *dev, int irq)
+>  	 * so we use a threaded irq.
+>  	 */
+>  	err = request_threaded_irq(irq, NULL, handle_threaded_wake_irq,
+> -				   IRQF_ONESHOT, dev_name(dev), wirq);
+> +				   IRQF_ONESHOT, wirq->name, wirq);
+>  	if (err)
+> -		goto err_free;
+> +		goto err_free_name;
+>  
+>  	err = dev_pm_attach_wake_irq(dev, irq, wirq);
+>  	if (err)
+> @@ -210,6 +220,8 @@ int dev_pm_set_dedicated_wake_irq(struct device *dev, int irq)
+>  
+>  err_free_irq:
+>  	free_irq(irq, wirq);
+> +err_free_name:
+> +	kfree(wirq->name);
+>  err_free:
+>  	kfree(wirq);
+>  
 > 
 
-Applied, thanks!
+I'll queue this up for 4.17 if there are no objections.
+
+Thanks,
+Rafael
