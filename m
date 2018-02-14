@@ -1,110 +1,67 @@
-Return-Path: <jeffy.chen@rock-chips.com>
-X-Google-Smtp-Source: AH8x226r77aGalOftbuNbCFtvfj64lWYZWEoGWc3CavmJgehgnOGiGr0mRqXwb1EDHjZKufy5fP5
-ARC-Seal: i=1; a=rsa-sha256; t=1519380277; cv=none;
+Return-Path: <heiko@sntech.de>
+X-Google-Smtp-Source: AH8x225NZdK3VCtklk4MLNKWipBwZQebWZtC8JZBbntlwOckJCYf+ruwSKS7NA/vxmdOOcDWlHvU
+ARC-Seal: i=1; a=rsa-sha256; t=1518615591; cv=none;
         d=google.com; s=arc-20160816;
-        b=XftQtq1pa5LhVquGKCsL6Usgsf3egLZBwLd2kIlKbBN7JEsZd+CY5MdpOCSTt1dmFT
-         Dd91YoBJBTje69tbS/CiHepsCxB0coPX0MHPgTvCFX9ORhuE9ABG8lD0okLSMJFhqsV7
-         +m7F7BkqOOYq3+JhlprPaYC/Br+xW3mkLWhzJCXbWLfOM/iw4UjTvwsvrENPEDwfy86t
-         TsNjTISTquFB1Ye34jMXKn2DlKgFFpxDuxNFWf5+E1sE1CFnN8MsiW+xwB5CnLbhA3Dm
-         YWkQbQxMkzXDv1qgnntgfdkTOjtQ6ZCQsFVlaT/+hmbVXSDzu4ACortWKrv+6Gi+VR3h
-         FZqA==
+        b=yct2rOqXI3qZ466cmsnzT95zHa5nEYkSn8D1MY+ia1fA2dIH8QRmBRN6w3Ox/+mzSv
+         v2Xcui0WzOfkzKVvOmjhKH9HEmyIqpTp0ZdD9Y4qImU+HirKzzS79ois5kE0pxwXsM7F
+         FaTlx8UhYg4fe30GoCNFg7oLzrgC8M4vGSXnuJY7dvzy9WrCQODGMDH8H1kzpdTwCMpU
+         ZshrpxCybH8Kjcp3Tvp13W0NRpIxuHWvU2YXJLsgn428WfrXd68mm7aQx3fR17TBUGw+
+         qsquyqre81piA5EbraIk/SGxjARG2wCF7W8Om9zES49i0fGaEwWQRDhDDkO2O6wwBauO
+         uzlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:in-reply-to:references:subject:cc:to
-         :mime-version:user-agent:from:date:message-id
-         :arc-authentication-results;
-        bh=O1EoxaH7rXWiv4AlIopTsm7Fu9b8UeQ9jQrXZV/J664=;
-        b=NuDzWmJcRuoFqSObv1ZL3xZeU7F/VnL78ODzsTVH1JuvqjO1iEDuYUgDIL8/1n04fo
-         YJbyXlsxImJzrAwl6mDp0oBsKM0+niX+uxVTI5dV+DHjIjd5Ip76XYtsO3EU3RyFlAIJ
-         dLnSR96ACrmL7RtHQmDkcZq6RNqRH7hltPhuENL7skDBf6gRDgcTuyNDFEzDjM/TeZDf
-         FSJxcOK73tOjj+htyZlshDJPecgyTEV2EHzy5bQksEQnnOfGL6MrSrQzA22lZeYliREs
-         LQq24FWX/kc26SL1BsauynZ4BHVg/z22C7ss1C8XIMHvggwtVxmhUsjkYw9DXk5rJjxG
-         DJvA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=a75ojVT6Nj8Te8ll1s0AVTqbWkR4m39H6uC69W6vC+c=;
+        b=SKAtcuM4+TH/pph7K5nL98hi/tgRWDfaHYIcKt10LH4Eqzw50490+Sm9+LBP75UdbT
+         HduM3tGbYGviL9HofX2mFQJ9Oxx4ISEMgiWLmItbFdPEAqYoEmvQpaGtp8srA3xaqJOf
+         J+KfX0fhkhwP2HX+IsoS/dzMlaQB1qnHHsIcjIlVzcM/SC5z049BfzCu8M8bcIdxBlHM
+         P4E153qMYngib/NfXVxbEa/vabcTWVGgNCJx/iONoVg58YdJ/GaRbaSA8TpB0f8cWnYd
+         Hk2QWYRB2U8Hy2g3X2yLXdHLX8qKnXZh7xK1Y3RDND3W9MQtSuPD7i5Lj35BgFZeFIi3
+         mTQQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.27 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+       spf=pass (google.com: best guess record for domain of heiko@sntech.de designates 95.129.55.99 as permitted sender) smtp.mailfrom=heiko@sntech.de
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.27 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: briannorris@chromium.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <586a62f527d2c866a7f31826d9fa5d69>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Message-ID: <5A8FE726.6080903@rock-chips.com>
-Date: Fri, 23 Feb 2018 18:04:22 +0800
-From: JeffyChen <jeffy.chen@rock-chips.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
+       spf=pass (google.com: best guess record for domain of heiko@sntech.de designates 95.129.55.99 as permitted sender) smtp.mailfrom=heiko@sntech.de
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: linux-kernel@vger.kernel.org, briannorris@google.com, dtor@google.com, dianders@google.com, Arnd Bergmann <arnd@arndb.de>, Joseph Lo <josephl@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Emil Renner Berthing <kernel@esmil.dk>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Brian Norris <briannorris@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, Philippe Ombredanne <pombredanne@nexb.com>, linux-rockchip@lists.infradead.org, Kate Stewart <kstewart@linuxfoundation.org>, linux-input@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Matthias Kaehlcke <mka@chromium.org>, devicetree@vger.kernel.org, stephen lu <lumotuwe@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>, linux-arm-kernel@lists.infradead.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 0/3] gpio-keys: Add support for specifying wakeup event action
+Date: Wed, 14 Feb 2018 14:39:35 +0100
+Message-ID: <1541427.8RRpDbxO4f@diego>
+In-Reply-To: <20180210110907.5504-1-jeffy.chen@rock-chips.com>
+References: <20180210110907.5504-1-jeffy.chen@rock-chips.com>
 MIME-Version: 1.0
-To: Brian Norris <briannorris@chromium.org>
-CC: linux-kernel@vger.kernel.org, briannorris@google.com,
- dtor@google.com, dianders@google.com,
- Enric Balletbo i Serra <enric.balletbo@collabora.com>,
- Thomas Gleixner <tglx@linutronix.de>, Joseph Lo <josephl@nvidia.com>,
- stephen lu <lumotuwe@gmail.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Kate Stewart <kstewart@linuxfoundation.org>,
- linux-input@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Philippe Ombredanne <pombredanne@nexb.com>,
- Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: Re: [PATCH v2 1/3] Input: gpio-keys - add support for wakeup event
- action
-References: <20180210110907.5504-1-jeffy.chen@rock-chips.com> <20180210110907.5504-2-jeffy.chen@rock-chips.com> <20180212221309.GA66974@ban.mtv.corp.google.com>
-In-Reply-To: <20180212221309.GA66974@ban.mtv.corp.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592012049405115473?=
-X-GMAIL-MSGID: =?utf-8?q?1593185694479082207?=
+X-GMAIL-THRID: =?utf-8?q?1592012039137400382?=
+X-GMAIL-MSGID: =?utf-8?q?1592383862163767717?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Brian,
+Hi Jeffy,
 
-Thanks for your reply.
+Am Samstag, 10. Februar 2018, 12:09:04 CET schrieb Jeffy Chen:
+> On chromebook kevin, we are using gpio-keys for pen insert event. But
+> we only want it to wakeup the system when ejecting the pen.
+> 
+> So we may need to change the interrupt trigger type during suspending.
+> 
+> Changes in v2:
+> Specify wakeup event action instead of irq trigger type as Brian
+> suggested.
+> 
+> Jeffy Chen (3):
+>   Input: gpio-keys - add support for wakeup event action
+>   Input: gpio-keys - allow setting wakeup event action in DT
+>   arm64: dts: rockchip: Avoid wakeup when inserting the pen
 
-On 02/13/2018 06:13 AM, Brian Norris wrote:
->> >
->> >  	if (bdata->gpiod) {
->> >+		int active_low = gpiod_is_active_low(bdata->gpiod);
->> >+
->> >  		if (button->debounce_interval) {
->> >  			error = gpiod_set_debounce(bdata->gpiod,
->> >  					button->debounce_interval * 1000);
->> >@@ -568,6 +572,16 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
->> >  		isr = gpio_keys_gpio_isr;
->> >  		irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING;
->> >
->> >+		switch (button->wakeup_event_action) {
->> >+		case EV_ACT_ASSERTED:
->> >+			bdata->wakeup_trigger_type = active_low ?
->> >+				IRQF_TRIGGER_FALLING : IRQF_TRIGGER_RISING;
->> >+			break;
->> >+		case EV_ACT_DEASSERTED:
->> >+			bdata->wakeup_trigger_type = active_low ?
->> >+				IRQF_TRIGGER_RISING : IRQF_TRIGGER_FALLING;
->> >+			break;
-> What about EV_ACT_ANY? And default case? I think for ANY, we're OK
-> letting suspend/resume not reconfigure the trigger type, but maybe a
-> comment here to note that?
-right, will add comment in the next version.
->
->> >+		}
->> >  	} else {
-> What about the 'else' case? Shouldn't we try to handle that?
-i think the else case is for irq key, which would generate down and up 
-events in one irq, so it would use the same trigger type for all these 3 
-cases.
+The recipient-selection for the mail thread seems to be a bit off and
+I only got the cover-letter and patch 3/3.
+Therefore I won't really see if and when the Input-changes get
+accepted. So please ping me once that has happened so I can pick up
+the rockchip dts change for it.
 
-i'll add comment in the next version too.
->
-> Brian
->
+
+Thanks
+Heiko
