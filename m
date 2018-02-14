@@ -1,706 +1,93 @@
-Return-Path: <green.hu@gmail.com>
-X-Cyrus-Session-Id: sloti22d1t05-3695236-1518513186-2-15167013542899650900
+Return-Path: <arndbergmann@gmail.com>
+X-Cyrus-Session-Id: sloti22d1t05-3016048-1518618865-2-8838193257220009621
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FROM 0.001, RCVD_IN_DNSWL_NONE -0.0001,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_NONE -0.0001,
   RCVD_IN_MSPIKE_H3 -0.01, RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001,
   LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.85.160.68', Host='mail-pl0-f68.google.com', Country='US',
-  FromHeader='com', MailFrom='com'
-X-Spam-charsets: 
+X-Spam-source: IP='209.85.220.194', Host='mail-qk0-f194.google.com', Country='US',
+  FromHeader='de', MailFrom='com'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: green.hu@gmail.com
+X-Mail-from: arndbergmann@gmail.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518513185; b=UkhvNCyFLbF72ddX0UvroXvV59x+JGZKa7tjgj5ePjrhcal
-    TsTx7w66R58IinmaVIKfelyAufnsM/2NGqwR5Yn0tjLCSEml0i48E5o+F7oj9TLi
-    ify2eZLoSOVsvCG2iM8eG+3F9a0LYxBs7N3yp/OYycK+i5xZkamm55y+Vj0d0nLw
-    VmK8qhMDwMQz+deySeGPnRlToEg0TJd2EnwOavOSwiPAIYWpCsnCEznJV8TmOn2D
-    bdjPzDAvrnsRqCTHQhmSJr/4EporCZGkm7/meHI3iNWAY/yHSEuyOuV5kDVti7gs
-    TwP72O1GT06W7hA/V3UDo3zzoudNyAkpDVtaNDw==
+    t=1518618865; b=fpuzG3v+KI2si8liIC4tgbNfDMqYMlsDNANvUJ0mm0h6jsQ
+    uQSA2bWZWDUbnn/vEaA0WZmlpsNnLXDFAPvnZpojQy3Z4EIXz7jsTUKk7irT6mZL
+    ZJfhhjisyfJF2eCDbRhPByphRbAC1JgBZm0CyC611yW+kz6S/hL8Gp62Ziuggn22
+    JP5vuru2ptVd4VVJJUELZqXU7HIC+q6eQVt7+NAdFiSnd9blMNoapH3X+oW/W0hg
+    NRGM/3Tw2BnCJYij7BrkN8AxSaIjNHkvQI+RUECXovDEUe/SiX86P9KrLRjmy0z8
+    MoEohb0vWoqbSW2nJhDZ1QxdR3R4RhpN1oDoOag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:in-reply-to:references; s=arctest; t=
-    1518513185; bh=utqS4sClQw2bSh+ELopF7Iq/VLZTcQaj4WzFKc8WS+Q=; b=h
-    ARKPZxBNh1MNIuifkj/HpxRdn2kF0LOsChmC8mwmAp+nOd+fomPOP/n8y3jSE6UJ
-    vJJYcpXmIl7kGbdDSxdOR3SsYdaICcucyomg89WNwZC4vIOrLpTL4IoWzXZTXFqT
-    J7Er3qf45SN/Od8b+kFDkogoG4oMTKBlLpAXjusy38Yx3j0DGVVTsQ1JxkQnn1YQ
-    n8QIyNhdFwPWlYt0AR+qFOKDe7pT4susnFiyGqX7ylBGy/Ny0nY6xR4EngH7Rszf
-    9ziX+GJ3OLxyUl26+uzRM0u0tywmJfTmmMfCmYKmK+WXFsEfXwdrh33XKqPKzEGg
-    uyTgxcVkKoFM2Ja9r+fuw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=VYEJoJr3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.85.160.68 (mail-pl0-f68.google.com);
-    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f68.google.com;
-    x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=PLv4p9rk;
-    x-ptr=pass x-ptr-helo=mail-pl0-f68.google.com x-ptr-lookup=mail-pl0-f68.google.com;
-    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    messagingengine.com; h=mime-version:sender:in-reply-to
+    :references:from:date:message-id:subject:to:cc:content-type; s=
+    arctest; t=1518618865; bh=Jx1YVMCsPN4g7GO6D4r3qPngyRrr9BQGwUMpQY
+    qrcic=; b=ETT8IHwfi8xi069shDFnmh347xa3xu2jqfFZDJjLqMe4Nk1Fl2cwRx
+    2lifNqInbnmPJEf6+38gCIiDYLE/EhMW/U1HAHUHSvfVY3dOWYP4Mqs70y07mewd
+    C5dPNWembJTIqqmB+E18JIALcW6CSmocejqSZ3Y0v1pr6oy7BX9WA7KTFIwN2Rg6
+    jjIAQ/hDCb+gpokAE8ExK1v7SksQHTE9uxmIwTWdqKvZ+XfieXN3YXFgotsaN1/v
+    uq3pKrFM/NaouecayrKBMCZ8sMdRFuGrCK3K8HUjzfeT3DmFxKz9lXij2/64r6PR
+    NNHh//txOupM0h8XT9ayOjWBqLWLbgkg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=inrk2+df x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.85.220.194 (mail-qk0-f194.google.com);
+    spf=pass smtp.mailfrom=arndbergmann@gmail.com smtp.helo=mail-qk0-f194.google.com;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=WNwmBato;
+    x-ptr=pass x-ptr-helo=mail-qk0-f194.google.com x-ptr-lookup=mail-qk0-f194.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=VYEJoJr3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.85.160.68 (mail-pl0-f68.google.com);
-    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pl0-f68.google.com;
-    x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=PLv4p9rk;
-    x-ptr=pass x-ptr-helo=mail-pl0-f68.google.com x-ptr-lookup=mail-pl0-f68.google.com;
-    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=inrk2+df x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.85.220.194 (mail-qk0-f194.google.com);
+    spf=pass smtp.mailfrom=arndbergmann@gmail.com smtp.helo=mail-qk0-f194.google.com;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=WNwmBato;
+    x-ptr=pass x-ptr-helo=mail-qk0-f194.google.com x-ptr-lookup=mail-qk0-f194.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Google-Smtp-Source: AH8x224oPdf3R1FGot5gG68NE4+4ya5xBo0TAxpN+mbHF0XLIY3tKzZ2qckfUdLP8ImdURfxLb4vLw==
-From: Greentime Hu <green.hu@gmail.com>
-X-Google-Original-From: Greentime Hu <greentime@andestech.com>
-To: greentime@andestech.com,
-	linux-kernel@vger.kernel.org,
-	arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	tglx@linutronix.de,
-	jason@lakedaemon.net,
-	marc.zyngier@arm.com,
-	robh+dt@kernel.org,
-	netdev@vger.kernel.org,
-	deanbo422@gmail.com,
-	devicetree@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	dhowells@redhat.com,
-	will.deacon@arm.com,
-	daniel.lezcano@linaro.org,
-	linux-serial@vger.kernel.org,
-	geert.uytterhoeven@gmail.com,
-	linus.walleij@linaro.org,
-	mark.rutland@arm.com,
-	greg@kroah.com,
-	ren_guo@c-sky.com,
-	rdunlap@infradead.org,
-	davem@davemloft.net,
-	jonas@southpole.se,
-	stefan.kristiansson@saunalahti.fi,
-	shorne@gmail.com
-Cc: green.hu@gmail.com,
+X-Google-Smtp-Source: AH8x226w/gFrmAErK01G0J0uG4Of240ndKch3MVuEwuiMigVDNQHQR792dwHA+2b/J5741hG10N95c0jGJwtY74yNic=
+MIME-Version: 1.0
+Sender: arndbergmann@gmail.com
+In-Reply-To: <5c26fda7b2ae143a0b14b18b66f5ddbc069b0a28.1518505384.git.greentime@andestech.com>
+References: <cover.1518505384.git.greentime@andestech.com> <5c26fda7b2ae143a0b14b18b66f5ddbc069b0a28.1518505384.git.greentime@andestech.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 14 Feb 2018 15:34:22 +0100
+X-Google-Sender-Auth: bn6Roz06unNEOp84kBd9KATXoHY
+Message-ID: <CAK8P3a0C+ib=xb9pbeb33y+DynNKs2HNM4EUrMBsZo+X+ymgMQ@mail.gmail.com>
+Subject: Re: [PATCH v7 30/37] nds32: Build infrastructure
+To: Greentime Hu <green.hu@gmail.com>
+Cc: Greentime <greentime@andestech.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	Networking <netdev@vger.kernel.org>, Vincent Chen <deanbo422@gmail.com>,
+	DTML <devicetree@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	David Howells <dhowells@redhat.com>, Will Deacon <will.deacon@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, linux-serial@vger.kernel.org,
+	Geert Uytterhoeven <geert.uytterhoeven@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>, Greg KH <greg@kroah.com>, Guo Ren <ren_guo@c-sky.com>,
+	Randy Dunlap <rdunlap@infradead.org>, David Miller <davem@davemloft.net>,
+	Jonas Bonn <jonas@southpole.se>,
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>,
 	Vincent Chen <vincentc@andestech.com>
-Subject: [PATCH v7 30/37] nds32: Build infrastructure
-Date: Tue, 13 Feb 2018 17:09:34 +0800
-Message-Id: <5c26fda7b2ae143a0b14b18b66f5ddbc069b0a28.1518505384.git.greentime@andestech.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <cover.1518505384.git.greentime@andestech.com>
-References: <cover.1518505384.git.greentime@andestech.com>
-In-Reply-To: <cover.1518505384.git.greentime@andestech.com>
-References: <cover.1518505384.git.greentime@andestech.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch adds Makefile, Kconfig and vmlinux.lds.S files required for building
-an nds32 kernel.
+On Tue, Feb 13, 2018 at 10:09 AM, Greentime Hu <green.hu@gmail.com> wrote:
+> This patch adds Makefile, Kconfig and vmlinux.lds.S files required for building
+> an nds32 kernel.
+>
+> Signed-off-by: Vincent Chen <vincentc@andestech.com>
+> Signed-off-by: Greentime Hu <greentime@andestech.com>
 
-Signed-off-by: Vincent Chen <vincentc@andestech.com>
-Signed-off-by: Greentime Hu <greentime@andestech.com>
----
- arch/nds32/Kconfig                 | 103 ++++++++++++++++++++++
- arch/nds32/Kconfig.cpu             | 174 +++++++++++++++++++++++++++++++++++++
- arch/nds32/Makefile                |  66 ++++++++++++++
- arch/nds32/boot/Makefile           |  15 ++++
- arch/nds32/include/asm/Kbuild      |  55 ++++++++++++
- arch/nds32/include/uapi/asm/Kbuild |  29 +++++++
- arch/nds32/kernel/Makefile         |  23 +++++
- arch/nds32/kernel/vmlinux.lds.S    |  57 ++++++++++++
- arch/nds32/mm/Makefile             |   7 ++
- 9 files changed, 529 insertions(+)
- create mode 100644 arch/nds32/Kconfig
- create mode 100644 arch/nds32/Kconfig.cpu
- create mode 100644 arch/nds32/Makefile
- create mode 100644 arch/nds32/boot/Makefile
- create mode 100644 arch/nds32/include/asm/Kbuild
- create mode 100644 arch/nds32/include/uapi/asm/Kbuild
- create mode 100644 arch/nds32/kernel/Makefile
- create mode 100644 arch/nds32/kernel/vmlinux.lds.S
- create mode 100644 arch/nds32/mm/Makefile
+With the latest changes
 
-diff --git a/arch/nds32/Kconfig b/arch/nds32/Kconfig
-new file mode 100644
-index 000000000000..249f38d3388f
---- /dev/null
-+++ b/arch/nds32/Kconfig
-@@ -0,0 +1,103 @@
-+#
-+# For a description of the syntax of this configuration file,
-+# see Documentation/kbuild/kconfig-language.txt.
-+#
-+
-+config NDS32
-+        def_bool y
-+	select ARCH_WANT_FRAME_POINTERS if FTRACE
-+	select CLKSRC_MMIO
-+	select CLONE_BACKWARDS
-+	select COMMON_CLK
-+	select GENERIC_ATOMIC64
-+	select GENERIC_CPU_DEVICES
-+	select GENERIC_CLOCKEVENTS
-+	select GENERIC_IRQ_CHIP
-+	select GENERIC_IRQ_SHOW
-+	select GENERIC_STRNCPY_FROM_USER
-+	select GENERIC_STRNLEN_USER
-+	select GENERIC_TIME_VSYSCALL
-+	select HANDLE_DOMAIN_IRQ
-+	select HAVE_ARCH_TRACEHOOK
-+	select HAVE_DEBUG_KMEMLEAK
-+	select HAVE_MEMBLOCK
-+	select HAVE_REGS_AND_STACK_ACCESS_API
-+	select IRQ_DOMAIN
-+	select LOCKDEP_SUPPORT
-+	select MODULES_USE_ELF_RELA
-+	select OF
-+	select OF_EARLY_FLATTREE
-+	select NO_BOOTMEM
-+	select NO_IOPORT_MAP
-+	select RTC_LIB
-+	select THREAD_INFO_IN_TASK
-+	help
-+	  Andes(nds32) Linux support.
-+
-+config GENERIC_CALIBRATE_DELAY
-+	def_bool y
-+
-+config GENERIC_CSUM
-+        def_bool y
-+
-+config GENERIC_HWEIGHT
-+        def_bool y
-+
-+config GENERIC_LOCKBREAK
-+        def_bool y
-+	depends on PREEMPT
-+
-+config RWSEM_GENERIC_SPINLOCK
-+	def_bool y
-+
-+config TRACE_IRQFLAGS_SUPPORT
-+	def_bool y
-+
-+config STACKTRACE_SUPPORT
-+        def_bool y
-+
-+config FIX_EARLYCON_MEM
-+	def_bool y
-+
-+config PGTABLE_LEVELS
-+	default 2
-+
-+source "init/Kconfig"
-+
-+menu "System Type"
-+source "arch/nds32/Kconfig.cpu"
-+config NR_CPUS
-+	int
-+	default 1
-+
-+config MMU
-+        def_bool y
-+
-+config NDS32_BUILTIN_DTB
-+        string "Builtin DTB"
-+        default ""
-+	help
-+	  User can use it to specify the dts of the SoC
-+endmenu
-+
-+menu "Kernel Features"
-+source "kernel/Kconfig.preempt"
-+source "mm/Kconfig"
-+source "kernel/Kconfig.hz"
-+endmenu
-+
-+menu "Executable file formats"
-+source "fs/Kconfig.binfmt"
-+endmenu
-+
-+source "net/Kconfig"
-+source "drivers/Kconfig"
-+source "fs/Kconfig"
-+
-+menu "Kernel hacking"
-+source "lib/Kconfig.debug"
-+endmenu
-+
-+source "security/Kconfig"
-+source "crypto/Kconfig"
-+source "lib/Kconfig"
-diff --git a/arch/nds32/Kconfig.cpu b/arch/nds32/Kconfig.cpu
-new file mode 100644
-index 000000000000..ba44cc539da9
---- /dev/null
-+++ b/arch/nds32/Kconfig.cpu
-@@ -0,0 +1,174 @@
-+comment "Processor Features"
-+
-+config CPU_BIG_ENDIAN
-+	bool "Big endian"
-+
-+config CPU_LITTLE_ENDIAN
-+        def_bool !CPU_BIG_ENDIAN
-+
-+config HWZOL
-+	bool "hardware zero overhead loop support"
-+	depends on CPU_D10 || CPU_D15
-+	default n
-+	help
-+	  A set of Zero-Overhead Loop mechanism is provided to reduce the
-+	  instruction fetch and execution overhead of loop-control instructions.
-+	  It will save 3 registers($LB, $LC, $LE) for context saving if say Y.
-+	  You don't need to save these registers if you can make sure your user
-+	  program doesn't use these registers.
-+
-+	  If unsure, say N.
-+
-+config CPU_CACHE_ALIASING
-+	bool "Aliasing cache"
-+	depends on CPU_N10 || CPU_D10 || CPU_N13 || CPU_V3
-+	default y
-+	help
-+	  If this CPU is using VIPT data cache and its cache way size is larger
-+	  than page size, say Y. If it is using PIPT data cache, say N.
-+
-+	  If unsure, say Y.
-+
-+choice
-+	prompt "minimum CPU type"
-+	default CPU_V3
-+	help
-+	  The data cache of N15/D15 is implemented as PIPT and it will not cause
-+	  the cache aliasing issue. The rest cpus(N13, N10 and D10) are
-+	  implemented as VIPT data cache. It may cause the cache aliasing issue
-+	  if its cache way size is larger than page size. You can specify the
-+	  CPU type direcly or choose CPU_V3 if unsure.
-+
-+          A kernel built for N10 is able to run on N15, D15, N13, N10 or D10.
-+          A kernel built for N15 is able to run on N15 or D15.
-+          A kernel built for D10 is able to run on D10 or D15.
-+          A kernel built for D15 is able to run on D15.
-+          A kernel built for N13 is able to run on N15, N13 or D15.
-+
-+config CPU_N15
-+	bool "AndesCore N15"
-+config CPU_N13
-+	bool "AndesCore N13"
-+	select CPU_CACHE_ALIASING if ANDES_PAGE_SIZE_4KB
-+config CPU_N10
-+	bool "AndesCore N10"
-+	select CPU_CACHE_ALIASING
-+config CPU_D15
-+	bool "AndesCore D15"
-+config CPU_D10
-+	bool "AndesCore D10"
-+	select CPU_CACHE_ALIASING
-+config CPU_V3
-+	bool "AndesCore v3 compatible"
-+	select CPU_CACHE_ALIASING
-+endchoice
-+choice
-+	prompt "Paging -- page size "
-+	default ANDES_PAGE_SIZE_4KB
-+config  ANDES_PAGE_SIZE_4KB
-+	bool "use 4KB page size"
-+config  ANDES_PAGE_SIZE_8KB
-+	bool "use 8KB page size"
-+endchoice
-+
-+config CPU_ICACHE_DISABLE
-+	bool "Disable I-Cache"
-+	help
-+	  Say Y here to disable the processor instruction cache. Unless
-+	  you have a reason not to or are unsure, say N.
-+
-+config CPU_DCACHE_DISABLE
-+	bool "Disable D-Cache"
-+	help
-+	  Say Y here to disable the processor data cache. Unless
-+	  you have a reason not to or are unsure, say N.
-+
-+config CPU_DCACHE_WRITETHROUGH
-+	bool "Force write through D-cache"
-+	depends on !CPU_DCACHE_DISABLE
-+	help
-+	  Say Y here to use the data cache in writethrough mode. Unless you
-+	  specifically require this or are unsure, say N.
-+
-+config WBNA
-+	bool "WBNA"
-+	default n
-+	help
-+	  Say Y here to enable write-back memory with no-write-allocation policy.
-+
-+config ALIGNMENT_TRAP
-+	bool "Kernel support unaligned access handling by sw"
-+	depends on PROC_FS
-+	default n
-+	help
-+	  Andes processors cannot load/store information which is not
-+	  naturally aligned on the bus, i.e., a 4 byte load must start at an
-+	  address divisible by 4. On 32-bit Andes processors, these non-aligned
-+	  load/store instructions will be emulated in software if you say Y
-+	  here, which has a severe performance impact. With an IP-only
-+	  configuration it is safe to say N, otherwise say Y.
-+
-+config HW_SUPPORT_UNALIGNMENT_ACCESS
-+	bool "Kernel support unaligned access handling by hw"
-+	depends on !ALIGNMENT_TRAP
-+	default n
-+	help
-+	  Andes processors load/store world/half-word instructions can access
-+	  unaligned memory locations without generating the Data Alignment
-+	  Check exceptions. With an IP-only configuration it is safe to say N,
-+	  otherwise say Y.
-+
-+config HIGHMEM
-+	bool "High Memory Support"
-+	depends on MMU && !CPU_CACHE_ALIASING
-+	help
-+	  The address space of Andes processors is only 4 Gigabytes large
-+	  and it has to accommodate user address space, kernel address
-+	  space as well as some memory mapped IO. That means that, if you
-+	  have a large amount of physical memory and/or IO, not all of the
-+	  memory can be "permanently mapped" by the kernel. The physical
-+	  memory that is not permanently mapped is called "high memory".
-+
-+	  Depending on the selected kernel/user memory split, minimum
-+	  vmalloc space and actual amount of RAM, you may not need this
-+	  option which should result in a slightly faster kernel.
-+
-+	  If unsure, say N.
-+
-+config CACHE_L2
-+	bool "Support L2 cache"
-+        default y
-+	help
-+	  Say Y here to enable L2 cache if your SoC are integrated with L2CC.
-+	  If unsure, say N.
-+
-+menu "Memory configuration"
-+
-+choice
-+	prompt "Memory split"
-+	depends on MMU
-+	default VMSPLIT_3G_OPT
-+	help
-+	  Select the desired split between kernel and user memory.
-+
-+	  If you are not absolutely sure what you are doing, leave this
-+	  option alone!
-+
-+	config VMSPLIT_3G
-+		bool "3G/1G user/kernel split"
-+	config VMSPLIT_3G_OPT
-+		bool "3G/1G user/kernel split (for full 1G low memory)"
-+	config VMSPLIT_2G
-+		bool "2G/2G user/kernel split"
-+	config VMSPLIT_1G
-+		bool "1G/3G user/kernel split"
-+endchoice
-+
-+config PAGE_OFFSET
-+	hex
-+	default 0x40000000 if VMSPLIT_1G
-+	default 0x80000000 if VMSPLIT_2G
-+	default 0xB0000000 if VMSPLIT_3G_OPT
-+	default 0xC0000000
-+
-+endmenu
-diff --git a/arch/nds32/Makefile b/arch/nds32/Makefile
-new file mode 100644
-index 000000000000..54b4de9d48b6
---- /dev/null
-+++ b/arch/nds32/Makefile
-@@ -0,0 +1,66 @@
-+LDFLAGS_vmlinux	:= --no-undefined -X
-+OBJCOPYFLAGS	:= -O binary -R .note -R .note.gnu.build-id -R .comment -S
-+
-+KBUILD_DEFCONFIG := defconfig
-+
-+comma = ,
-+
-+KBUILD_CFLAGS	+=-mno-sched-prolog-epilog -mcmodel=large
-+
-+KBUILD_CFLAGS	+=$(arch-y) $(tune-y)
-+KBUILD_AFLAGS	+=$(arch-y) $(tune-y)
-+
-+#Default value
-+head-y		 := arch/nds32/kernel/head.o
-+textaddr-y	 := $(CONFIG_PAGE_OFFSET)+0xc000
-+
-+TEXTADDR := $(textaddr-y)
-+
-+export	TEXTADDR
-+
-+
-+# If we have a machine-specific directory, then include it in the build.
-+core-y				+= arch/nds32/kernel/ arch/nds32/mm/
-+libs-y				+= arch/nds32/lib/
-+LIBGCC_PATH     		:= \
-+  $(shell $(CC) $(KBUILD_CFLAGS) $(KCFLAGS) -print-libgcc-file-name)
-+libs-y				+= $(LIBGCC_PATH)
-+
-+ifneq '$(CONFIG_NDS32_BUILTIN_DTB)' '""'
-+BUILTIN_DTB := y
-+else
-+BUILTIN_DTB := n
-+endif
-+
-+ifdef CONFIG_CPU_LITTLE_ENDIAN
-+KBUILD_CFLAGS   += -EL
-+else
-+KBUILD_CFLAGS   += -EB
-+endif
-+
-+boot := arch/nds32/boot
-+core-$(BUILTIN_DTB) += $(boot)/dts/
-+
-+.PHONY: FORCE
-+
-+Image: vmlinux
-+	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
-+
-+
-+PHONY += vdso_install
-+vdso_install:
-+	$(Q)$(MAKE) $(build)=arch/nds32/kernel/vdso $@
-+
-+prepare: vdso_prepare
-+vdso_prepare: prepare0
-+	$(Q)$(MAKE) $(build)=arch/nds32/kernel/vdso include/generated/vdso-offsets.h
-+
-+CLEAN_FILES += include/asm-nds32/constants.h*
-+
-+# We use MRPROPER_FILES and CLEAN_FILES now
-+archclean:
-+	$(Q)$(MAKE) $(clean)=$(boot)
-+
-+define archhelp
-+  echo  '  Image         - kernel image (arch/$(ARCH)/boot/Image)'
-+endef
-diff --git a/arch/nds32/boot/Makefile b/arch/nds32/boot/Makefile
-new file mode 100644
-index 000000000000..3f9b86f68d8f
---- /dev/null
-+++ b/arch/nds32/boot/Makefile
-@@ -0,0 +1,15 @@
-+targets := Image Image.gz
-+
-+$(obj)/Image: vmlinux FORCE
-+	$(call if_changed,objcopy)
-+
-+$(obj)/Image.gz: $(obj)/Image FORCE
-+	$(call if_changed,gzip)
-+
-+install: $(obj)/Image
-+	$(CONFIG_SHELL) $(srctree)/$(src)/install.sh $(KERNELRELEASE) \
-+	$(obj)/Image System.map "$(INSTALL_PATH)"
-+
-+zinstall: $(obj)/Image.gz
-+	$(CONFIG_SHELL) $(srctree)/$(src)/install.sh $(KERNELRELEASE) \
-+	$(obj)/Image.gz System.map "$(INSTALL_PATH)"
-diff --git a/arch/nds32/include/asm/Kbuild b/arch/nds32/include/asm/Kbuild
-new file mode 100644
-index 000000000000..06bdf8167f5a
---- /dev/null
-+++ b/arch/nds32/include/asm/Kbuild
-@@ -0,0 +1,55 @@
-+generic-y += asm-offsets.h
-+generic-y += atomic.h
-+generic-y += bitops.h
-+generic-y += bitsperlong.h
-+generic-y += bpf_perf_event.h
-+generic-y += bug.h
-+generic-y += bugs.h
-+generic-y += checksum.h
-+generic-y += clkdev.h
-+generic-y += cmpxchg.h
-+generic-y += cmpxchg-local.h
-+generic-y += cputime.h
-+generic-y += device.h
-+generic-y += div64.h
-+generic-y += dma.h
-+generic-y += emergency-restart.h
-+generic-y += errno.h
-+generic-y += exec.h
-+generic-y += fb.h
-+generic-y += fcntl.h
-+generic-y += ftrace.h
-+generic-y += gpio.h
-+generic-y += hardirq.h
-+generic-y += hw_irq.h
-+generic-y += ioctl.h
-+generic-y += ioctls.h
-+generic-y += irq.h
-+generic-y += irq_regs.h
-+generic-y += irq_work.h
-+generic-y += kdebug.h
-+generic-y += kmap_types.h
-+generic-y += kprobes.h
-+generic-y += kvm_para.h
-+generic-y += limits.h
-+generic-y += local.h
-+generic-y += mm-arch-hooks.h
-+generic-y += mman.h
-+generic-y += parport.h
-+generic-y += pci.h
-+generic-y += percpu.h
-+generic-y += preempt.h
-+generic-y += sections.h
-+generic-y += segment.h
-+generic-y += serial.h
-+generic-y += shmbuf.h
-+generic-y += sizes.h
-+generic-y += stat.h
-+generic-y += switch_to.h
-+generic-y += timex.h
-+generic-y += topology.h
-+generic-y += trace_clock.h
-+generic-y += unaligned.h
-+generic-y += user.h
-+generic-y += vga.h
-+generic-y += word-at-a-time.h
-diff --git a/arch/nds32/include/uapi/asm/Kbuild b/arch/nds32/include/uapi/asm/Kbuild
-new file mode 100644
-index 000000000000..40be972faf9e
---- /dev/null
-+++ b/arch/nds32/include/uapi/asm/Kbuild
-@@ -0,0 +1,29 @@
-+# UAPI Header export list
-+include include/uapi/asm-generic/Kbuild.asm
-+
-+generic-y += bpf_perf_event.h
-+generic-y += errno.h
-+generic-y += ioctl.h
-+generic-y += ioctls.h
-+generic-y += ipcbuf.h
-+generic-y += shmbuf.h
-+generic-y += bitsperlong.h
-+generic-y += fcntl.h
-+generic-y += stat.h
-+generic-y += mman.h
-+generic-y += msgbuf.h
-+generic-y += poll.h
-+generic-y += posix_types.h
-+generic-y += resource.h
-+generic-y += sembuf.h
-+generic-y += setup.h
-+generic-y += siginfo.h
-+generic-y += signal.h
-+generic-y += socket.h
-+generic-y += sockios.h
-+generic-y += swab.h
-+generic-y += statfs.h
-+generic-y += termbits.h
-+generic-y += termios.h
-+generic-y += types.h
-+generic-y += ucontext.h
-diff --git a/arch/nds32/kernel/Makefile b/arch/nds32/kernel/Makefile
-new file mode 100644
-index 000000000000..42792743e8b9
---- /dev/null
-+++ b/arch/nds32/kernel/Makefile
-@@ -0,0 +1,23 @@
-+#
-+# Makefile for the linux kernel.
-+#
-+
-+CPPFLAGS_vmlinux.lds	:= -DTEXTADDR=$(TEXTADDR)
-+AFLAGS_head.o		:= -DTEXTADDR=$(TEXTADDR)
-+
-+# Object file lists.
-+
-+obj-y			:= ex-entry.o ex-exit.o ex-scall.o irq.o \
-+			process.o ptrace.o setup.o signal.o \
-+			sys_nds32.o time.o traps.o cacheinfo.o \
-+			dma.o syscall_table.o vdso.o
-+
-+obj-$(CONFIG_MODULES)		+= nds32_ksyms.o module.o
-+obj-$(CONFIG_STACKTRACE)	+= stacktrace.o
-+obj-$(CONFIG_OF)		+= devtree.o
-+obj-$(CONFIG_CACHE_L2)		+= atl2c.o
-+
-+extra-y := head.o vmlinux.lds
-+
-+
-+obj-y				+= vdso/
-diff --git a/arch/nds32/kernel/vmlinux.lds.S b/arch/nds32/kernel/vmlinux.lds.S
-new file mode 100644
-index 000000000000..288313b886ef
---- /dev/null
-+++ b/arch/nds32/kernel/vmlinux.lds.S
-@@ -0,0 +1,57 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2005-2017 Andes Technology Corporation
-+
-+#include <asm/page.h>
-+#include <asm/thread_info.h>
-+#include <asm/cache.h>
-+#include <asm/memory.h>
-+
-+#define LOAD_OFFSET	(PAGE_OFFSET - PHYS_OFFSET)
-+#include <asm-generic/vmlinux.lds.h>
-+
-+OUTPUT_ARCH(nds32)
-+ENTRY(_stext_lma)
-+jiffies = jiffies_64;
-+
-+SECTIONS
-+{
-+	_stext_lma = TEXTADDR - LOAD_OFFSET;
-+	. = TEXTADDR;
-+	__init_begin = .;
-+	HEAD_TEXT_SECTION
-+	INIT_TEXT_SECTION(PAGE_SIZE)
-+	INIT_DATA_SECTION(16)
-+	PERCPU_SECTION(L1_CACHE_BYTES)
-+	__init_end = .;
-+
-+	. = ALIGN(PAGE_SIZE);
-+	_stext = .;
-+	/* Real text segment */
-+	.text : AT(ADDR(.text) - LOAD_OFFSET) {
-+		_text = .;		/* Text and read-only data	*/
-+		TEXT_TEXT
-+		SCHED_TEXT
-+		CPUIDLE_TEXT
-+		LOCK_TEXT
-+		KPROBES_TEXT
-+		IRQENTRY_TEXT
-+		*(.fixup)
-+	}
-+
-+	_etext = .;			/* End of text and rodata section */
-+
-+	_sdata = .;
-+	RO_DATA_SECTION(PAGE_SIZE)
-+	RW_DATA_SECTION(L1_CACHE_BYTES, PAGE_SIZE, THREAD_SIZE)
-+	_edata  =  .;
-+
-+	EXCEPTION_TABLE(16)
-+	NOTES
-+	BSS_SECTION(4, 4, 4)
-+	_end = .;
-+
-+	STABS_DEBUG
-+	DWARF_DEBUG
-+
-+	DISCARDS
-+}
-diff --git a/arch/nds32/mm/Makefile b/arch/nds32/mm/Makefile
-new file mode 100644
-index 000000000000..6b6855852223
---- /dev/null
-+++ b/arch/nds32/mm/Makefile
-@@ -0,0 +1,7 @@
-+obj-y				:= extable.o tlb.o \
-+				   fault.o init.o ioremap.o mmap.o \
-+                                   mm-nds32.o cacheflush.o proc.o
-+
-+obj-$(CONFIG_ALIGNMENT_TRAP)	+= alignment.o
-+obj-$(CONFIG_HIGHMEM)           += highmem.o
-+CFLAGS_proc-n13.o		+= -fomit-frame-pointer
--- 
-2.16.1
+Acked-by: Arnd Bergmann <arnd@arndb.de>
