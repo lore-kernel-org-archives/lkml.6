@@ -1,9 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3650906-1519154789-2-12134105715597369976
+X-Cyrus-Session-Id: sloti22d1t05-2399110-1518598820-2-11179678515606439252
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
   T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
@@ -14,73 +15,75 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519154788; b=p598Z5OCoQiD5a/lLzkZescYvSTUkxN9EaaNHCMbxp3UViu
-    k4zMgN7wvV9zkL8k3MdvCARDbkTQqnSIjEt89lGvCM0AQE6XRNhjd6w/7Lga793k
-    I+rlLBn2G/W0+SNHf6WNOsOLD3Rqzo+8FFGkzqq6xLi2TShxxm/cW1F+tm2HnqY4
-    ryXFPxBlfQIRs2nCfATjl6sKUXWxOR1nKU+aywJ0rgvY606jUTCZbcPfETIqtYXt
-    KM0MiuCsqG19skdP4hmdm9uveAiQbhpxFpi5XhLkc82o1nqaNuqRlulB2cI7Ggoe
-    8pq1IOkDaDM1o1WJtgKgBGOES1ABqdi7m15I4vQ==
+    t=1518598819; b=BO/IcYkXS7LhYD0uZAXfEuc9o6nuF0xsHUX1lyxyXMFiq7X
+    8xbj5uP2JZ+sGA1sXczNPsr53Tnna8JcBPZaxsd8hzR7xx00+uC52xiK1fsTzBT3
+    ZDf+8/RIa7S9aD0SRV3OYxSG62rVBZ8NbsW/5/C5PgBGQgMhsP+mvRpHpWuevqpq
+    Qj1xaYFIwc4AtxqOb03nDdfl05SCWCmUILi2R1A4qd6F87OLJsyv09f8BRC8F9Gy
+    Zl10T0fwKzbA9J8/XkG1AVVzmGvacpnK/O9DusJlq9lsjQ+cF4k5/0qSBk5I2Par
+    AbD4AYZp10B12LYlRZ0EF+lJcT2uHRBpbsemgZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=mime-version:in-reply-to:references:from
     :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1519154788; bh=zgMVRSBGtSUOnZk96/U+GsSECo++cljYb2GnKa
-    fdCLo=; b=Af7+KRH4DLDuLDIcr9rpsDYan76JHnQgPR0W6i/Qc48O0oEGwiBkqM
-    WGILwxQOLRX0eXaG1vbVxg1ezeuZzJDN8UGtOzd+JEqI/zd/ppjOXb64BVIhr7f+
-    CAhqsOBJUVz9oGb4OiYJ/j4gLKFuHvpNj6jNgWBViEnlOiSvJDNeQ1UOrNeq0Imj
-    GvZiDi6ZZQuBbcsHCHVbIRjQ42pNGQNcw0RDP+h4jAJeTpq4LA/b1qjmtjuKAM36
-    Ti2K0MR86rP8ii/n7DkJGhzgnZLRjUC2ylBDsA2M5Ai5/eagQ67yiocdiZ113BHP
-    nzhenlTRwy68nOtoMZwm9wDTyzLDGlQw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=vUKJ7ERu x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
+    arctest; t=1518598819; bh=kaz461HWyMCRqmMsg16/7NtoYG5FI4J8XyXnJP
+    wJTAA=; b=orrNqFHw339xdf2ewsOKeYuYQLe2eHsldOE6zTqHIFxMHR8tMc0hhJ
+    c/+ZrWYjSNwVDzU2/EBBAEa+ehG+Ep7cn+TFaUx52LgBwRG50fZF5hxV1db5RA83
+    6b9m6vJYA/mgaMWf/giTrOJCInwQBb7aXv8xhGoDUAz0MriXgYpCMN6RrFf9UfE6
+    psYx1gaZmTMHr2T/9xz9fd2x+BSYWESGjeSv17As9De6q9G9Gnfe1yVnDA4QQDKX
+    herHgivEF3JB8+er9MoyRbSg0RFqxQpbtE1VWfE0RU8BEex5FW7KYU8gJjQdr8dg
+    Cq3d6Yn9JUX7lniCVL45QUME/bjYgg7A==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=fF6tnX5v x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=g4DP0jWz;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BNLFsqWC;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=vUKJ7ERu x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=fF6tnX5v x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=g4DP0jWz;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BNLFsqWC;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751925AbeBTT01 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 20 Feb 2018 14:26:27 -0500
-Received: from mail-wr0-f169.google.com ([209.85.128.169]:38756 "EHLO
-        mail-wr0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751785AbeBTT01 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 20 Feb 2018 14:26:27 -0500
-X-Google-Smtp-Source: AH8x225VTAtcjrn7OzF9DssTqVIx3bAFNSuvhjf0FU00T23t93VSUofKM3hwTleJIh6jzIwp2fKPGuB/DHZYpWCazbE=
+        id S1754676AbeBNJAS (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 14 Feb 2018 04:00:18 -0500
+Received: from mail-yw0-f179.google.com ([209.85.161.179]:47054 "EHLO
+        mail-yw0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754570AbeBNJAR (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 14 Feb 2018 04:00:17 -0500
+X-Google-Smtp-Source: AH8x226P0oRyZxngvpB/QW9lap1tBdsuYa1w9nV0ik+2dWsWBsbBLORzhmT9eU8lzTcq2GC3/PpXLRhGH7jZrEEo/+8=
 MIME-Version: 1.0
-In-Reply-To: <20180220124354.6awua447q55lfduf@quack2.suse.cz>
-References: <CALvZod5H4eL=YtZ3zkGG3p8gD+3=qnC3siUw1zpKL+128KufAA@mail.gmail.com>
+In-Reply-To: <CALvZod7FTNzoGfGnaorqjk4KEsxJFdz1pApHi04P1cF10ejxpQ@mail.gmail.com>
+References: <20171030124358.GF23278@quack2.suse.cz> <76a4d544-833a-5f42-a898-115640b6783b@alibaba-inc.com>
+ <20171031101238.GD8989@quack2.suse.cz> <20171109135444.znaksm4fucmpuylf@dhcp22.suse.cz>
+ <10924085-6275-125f-d56b-547d734b6f4e@alibaba-inc.com> <20171114093909.dbhlm26qnrrb2ww4@dhcp22.suse.cz>
+ <afa2dc80-16a3-d3d1-5090-9430eaafc841@alibaba-inc.com> <20171115093131.GA17359@quack2.suse.cz>
+ <CALvZod6HJO73GUfLemuAXJfr4vZ8xMOmVQpFO3vJRog-s2T-OQ@mail.gmail.com>
+ <CAOQ4uxg-mTgQfTv-qO6EVwfttyOy+oFyAHyFDKTQsDOkQPyyfA@mail.gmail.com>
+ <20180124103454.ibuqt3njaqbjnrfr@quack2.suse.cz> <CAOQ4uxhDpBBUrr0JWRBaNQTTaUeJ4=gnM0iij2KivaGgp1ggtg@mail.gmail.com>
+ <CALvZod4PyqfaqgEswegF5uOjNwVwbY1C4ptJB0Ouvgchv2aVFg@mail.gmail.com>
+ <CAOQ4uxhyZNghjQU5atNv5xtgdHzA75UayphCyQDzxjM8GDTv3Q@mail.gmail.com>
+ <CALvZod5H4eL=YtZ3zkGG3p8gD+3=qnC3siUw1zpKL+128KufAA@mail.gmail.com>
  <CAOQ4uxgJqn0CJaf=LMH-iv2g1MJZwPM97K6iCtzrcY3eoN6KjA@mail.gmail.com>
  <CAOQ4uxjgKUFJ_uhyrQdcTs1FzcN6JrR_JpPc9QBrGJEU+cf65w@mail.gmail.com>
  <CALvZod45r7oW=HWH7KJyvFhJWB=6+Si54JK7E0Mx_2gLTZd1Pg@mail.gmail.com>
- <CAOQ4uxghwNg9Ni23EQA-971-qAaTNceSZS2MSvK06uEjoXG_yg@mail.gmail.com>
- <CALvZod7FTNzoGfGnaorqjk4KEsxJFdz1pApHi04P1cF10ejxpQ@mail.gmail.com>
- <CALvZod4SNwWHYZQsphB90cY-wc8WSLurKsA2kNxfVKV-upwy9A@mail.gmail.com>
- <CAOQ4uxifddquri4BNqBSKv6O_b13=C08kKYinTo9+m56z1n+aQ@mail.gmail.com>
- <20180219135027.fd6doess7satenxk@quack2.suse.cz> <CAOQ4uxjkfTTJ7nxrtj8ZsKcsWfBz=J0RPv3N=u3JaskRgG9aWw@mail.gmail.com>
- <20180220124354.6awua447q55lfduf@quack2.suse.cz>
-From: Shakeel Butt <shakeelb@google.com>
-Date: Tue, 20 Feb 2018 11:20:15 -0800
-Message-ID: <CALvZod6c-hUJ0b0Hr4wE9dy32Wz0Y=2UuwEMLNG3hYQ9srYEAA@mail.gmail.com>
+ <CAOQ4uxghwNg9Ni23EQA-971-qAaTNceSZS2MSvK06uEjoXG_yg@mail.gmail.com> <CALvZod7FTNzoGfGnaorqjk4KEsxJFdz1pApHi04P1cF10ejxpQ@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 14 Feb 2018 11:00:15 +0200
+Message-ID: <CAOQ4uxhRW=AN5UUHiWYaQp=Nw29ys_1Ak6ADCAvCLTUOqaYn6g@mail.gmail.com>
 Subject: Re: [PATCH v2] fs: fsnotify: account fsnotify metadata to kmemcg
-To: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-        Yang Shi <yang.s@alibaba-inc.com>,
+To: Shakeel Butt <shakeelb@google.com>
+Cc: Jan Kara <jack@suse.cz>, Yang Shi <yang.s@alibaba-inc.com>,
         Michal Hocko <mhocko@kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
+        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
@@ -88,78 +91,59 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 20, 2018 at 4:43 AM, Jan Kara <jack@suse.cz> wrote:
-> On Mon 19-02-18 21:07:28, Amir Goldstein wrote:
->> On Mon, Feb 19, 2018 at 3:50 PM, Jan Kara <jack@suse.cz> wrote:
->> [...]
->> > For fanotify without FAN_UNLIMITED_QUEUE the situation is similar as for
->> > inotify - IMO low practical impact, apps should generally handle queue
->> > overflow so I don't see a need for any opt in (more accurate memcg charging
->> > takes precedense over possibly broken apps).
->> >
->> > For fanotify with FAN_UNLIMITED_QUEUE the situation is somewhat different -
->> > firstly there is a practical impact (memory consumption is not limited by
->> > anything else) and secondly there are higher chances of the application
->> > breaking (no queue overflow expected) and also that this breakage won't be
->> > completely harmless (e.g., the application participates in securing the
->> > system). I've been thinking about this "conflict of interests" for some
->> > time and currently I think that the best handling of this is that by
->> > default events for FAN_UNLIMITED_QUEUE groups will get allocated with
->> > GFP_NOFAIL - such groups can be created only by global CAP_SYS_ADMIN anyway
->> > so it is reasonably safe against misuse (and since the allocations are
->> > small it is in fact equivalent to current status quo, just more explicit).
->> > That way application won't see unexpected queue overflow. The process
->> > generating event may be looping in the allocator but that is the case
->> > currently as well. Also the memcg with the consumer of events will have
->> > higher chances of triggering oom-kill if events consume too much memory but
->> > I don't see how this is not a good thing by default - and if such reaction
->> > is not desirable, there's memcg's oom_control to tune the OOM behavior
->> > which has capabilities far beyond of what we could invent for fanotify...
->> >
->> > What do you think Amir?
->> >
+On Wed, Feb 14, 2018 at 12:20 AM, Shakeel Butt <shakeelb@google.com> wrote:
+> On Tue, Feb 13, 2018 at 1:54 PM, Amir Goldstein <amir73il@gmail.com> wrote:
+>> On Tue, Feb 13, 2018 at 11:10 PM, Shakeel Butt <shakeelb@google.com> wrote:
+[...]
+>>>> The question is, do we need the user to also explicitly opt-in for
+>>>> Q_OVERFLOW on ENOMEM with FAN_Q_ERR mark mask?
+>>>> Should these 2 new APIs be coupled or independent?
+>>>>
+>>>
+>>> Are there any error which are not related to queue overflows? I see
+>>> the mention of ENODEV and EOVERFLOW in the discussion. If there are
+>>> such errors and might be interesting to the listener then we should
+>>> have 2 independent APIs.
+>>>
 >>
->> If I followed all your reasoning correctly, you propose to change behavior to
->> always account events to group memcg and never fail event allocation,
->> without any change of API and without opting-in for new behavior?
->> I think it makes sense. I can't point at any expected breakage,
->> so overall, this would be a good change.
+>> These are indeed 2 different use cases.
+>> A Q_OVERFLOW event is only expected one of ENOMEM or
+>> EOVERFLOW in event->fd, but other events (like open of special device
+>> file) can have ENODEV in event->fd.
 >>
->> I just feel sorry about passing an opportunity to improve functionality.
->> The fact that fanotify does not have a way for defining the events queue
->> size is a deficiency IMO, one which I had to work around in the past.
->> I find that assigning group to memgc and configure memcg to desired
->> memory limit and getting Q_OVERFLOW on failure to allocate event
->> is going to be a proper way of addressing this deficiency.
+>> But I am not convinced that those require 2 independent APIs.
+>> Specifying FAN_Q_ERR means that the user expects to reads errors
+>> from event->fd.
+>>
 >
-> So if you don't pass FAN_Q_UNLIMITED, you will get queue with a fixed size
-> and will get Q_OVERFLOW if that is exceeded. So is your concern that you'd
-> like some other fixed limit? Larger one or smaller one and for what
-> reason?
->
->> But if you don't think we should bind these 2 things together,
->> I'll let Shakeel decide if he want to pursue the Q_OVERFLOW change
->> or not.
->
-> So if there is still some uncovered use case for finer tuning of event
-> queue length than setting or not setting FAN_Q_UNLIMITED (+ possibly
-> putting the task to memcg to limit memory usage), we can talk about how to
-> address that but at this point I don't see a strong reason to bind this to
-> whether / how events are accounted to memcg...
->
-> And we still need to make sure we properly do ENOMEM -> Q_OVERFLOW
-> translation and use GFP_NOFAIL for FAN_Q_UNLIMITED groups before merging
-> Shakeel's memcg accounting patches. But Shakeel does not have to be the one
-> implementing that (although if you want to, you are welcome Shakeel :) -
-> otherwise I hope I'll get to it reasonably soon).
+> Can you please explain what you mean by 2 independent APIs? I thought
+> "no independent APIs" means FAN_Q_ERR can only be used with
+> FAN_Q_OVERFLOW and without FAN_Q_OVERFLOW, FAN_Q_ERR is ignored. Is
+> that right or I misunderstood?
 >
 
-Thanks Jan & Amir for the help and explanation. I think, Jan, you can
-implement the "ENOMEM -> Q_OVERFLOW" and GFP_NOFAIL changes better
-than me. I will send out my patches with minor changes based on
-feedback but I will let Andrew know to keep my patches in mm tree and
-not send for upstream merge. Once Jan has added his patches, I will
-Andrew know to go forward with my patches.
+What I initially meant to say was, we actually consider several
+behavior changes:
+1. Charge event allocations to memcg of listener
+2. Queue a Q_OVERFLOW event on ENOMEM of event allocation
+3. Report the error to user on metadata->fd (instead of FAN_NOFD)
+4. Allow non Q_OVERFLOW event to have negative metadata->fd.
 
-thanks,
-Shakeel
+#3 is applicable both to Q_OVERFLOW event and other events that
+can't provide and open file descriptor for some reason (i.e. ENODEV).
+
+#1 and #2 could be independent, but they both make sense together.
+When enabling #1 user increases the chance of ENOMEM and therefore
+#2 is desired. So if we are going to let distro/admin/programmer to
+opt-in for what we believe to be a "change of behavior for the best", then
+we could consider that opting-in  for #1 will also imply opting-in for #2
+and #3 (as the means to report Q_OVERFLOW due to ENOMEM).
+
+I guess we will need to allow user to opt-in to #4 and #3 by FAN_Q_ERR
+mask flag to cover the ENODEV case independently from opting-in to
+charging memcg.
+
+How was I doing in the balance of adding clarity vs. adding confusion?
+
+Thanks,
+Amir.
