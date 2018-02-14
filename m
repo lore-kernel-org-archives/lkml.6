@@ -1,56 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031410AbeBNPbO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 10:31:14 -0500
-Received: from mail.visioncatalog.com ([217.6.246.34]:46566 "EHLO
-        root.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031247AbeBNPbN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:31:13 -0500
-Subject: Re: [PATCH 1/3] ARM: dts: rockchip: phycore: Remove 1.8 GHz operation
- point
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Wadim Egorov <w.egorov@phytec.de>
-References: <1518515074-22526-1-git-send-email-d.schultz@phytec.de>
- <7871181.EPqc8gR4GV@diego>
-From: Daniel Schultz <d.schultz@phytec.de>
-Message-ID: <a8de3d85-c4e6-eed6-d2e3-6d9b7318a9c2@phytec.de>
-Date: Wed, 14 Feb 2018 16:32:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1031429AbeBNPdK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 10:33:10 -0500
+Received: from mail-it0-f53.google.com ([209.85.214.53]:55310 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031303AbeBNPdJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 10:33:09 -0500
+X-Google-Smtp-Source: AH8x227oasTl9r/cUQ9StjTk+duznIHEDzW5eFZBq1xzN4rHrKyU95Mz1T72Vtl6lWeKiXyUt0ke1A==
+Date: Wed, 14 Feb 2018 08:33:06 -0700
+From: Tycho Andersen <tycho@tycho.ws>
+To: Kees Cook <keescook@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>, Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+Subject: Re: [RFC 2/3] seccomp: hoist out filter resolving logic
+Message-ID: <20180214153306.m3wlmz6zwjqsav36@smitten>
+References: <20180204104946.25559-1-tycho@tycho.ws>
+ <20180204104946.25559-3-tycho@tycho.ws>
+ <CAGXu5jJLCcmB6MCeOgMntUgrnPycbmM8MBt_CVGXtsrQ+mtf=Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <7871181.EPqc8gR4GV@diego>
-X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 14.02.2018 16:31:10,
-        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 14.02.2018 16:31:11
-X-TNEFEvaluated: 1
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jJLCcmB6MCeOgMntUgrnPycbmM8MBt_CVGXtsrQ+mtf=Q@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 13, 2018 at 01:29:23PM -0800, Kees Cook wrote:
+> On Sun, Feb 4, 2018 at 2:49 AM, Tycho Andersen <tycho@tycho.ws> wrote:
+> > Hoist out the nth filter resolving logic that ptrace uses into a new
+> > function. We'll use this in the next patch to implement the new
+> > PTRACE_SECCOMP_GET_FILTER_FLAGS command. This is based on an older patch
+> > that I had sent a while ago; it significantly revamps the get_nth_filter
+> > logic based on previous suggestions from Oleg.
+> 
+> Is this the same as f06eae831f0c1fc5b982ea200daf552810e1dd55 ? Quick
+> compare says yes? Either way, please rebase to v4.16-rc1 (or -rc2 in
+> the future). :)
 
-On 02/14/2018 09:07 AM, Heiko Stübner wrote:
-> Am Dienstag, 13. Februar 2018, 10:44:32 CET schrieb Daniel Schultz:
->> Rockchip recommends to run the CPU cores only with operations points of
->> 1.6 GHz or lower.
->>
->> Removed the cpu0 node with too high operation points and use the default
->> values instead.
->>
->> Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
-> applied all 3 for 4.17
->
-Thanks! I think I should have mentioned this earlier, but can you please add
-     ARM: dts: rockchip: phycore: Remove 1.8 GHz operation point
-to the stable tree v4.14?
+Yep, there was no tagged tree with that when I did these; I'll do that
+for the next version.
 
--- 
-Mit freundlichen Grüßen,
-With best regards,
-   Daniel Schultz
+Cheers,
+
+Tycho
