@@ -1,188 +1,222 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1144387-1518688011-2-1570604609053070662
+X-Cyrus-Session-Id: sloti22d1t05-3837409-1518642008-5-14732828559367961367
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, T_TVD_MIME_EPI 0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='utf-8'
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Attached: signature.asc
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518688011; b=iB/v4/7jcN8Wbx1g7YDwzpEDnYjgxp47Z6ld9Z03pZUm7BT
-    rUGXZ6hHSyQ9AYWTxtw/f1xpiDhqBHko3DHS7r767/z3ramoQYmrAsq7qqxhFh6T
-    oXKx1YiPU2cPVsN+JyG9J2YVVMKKlq902ptAnCyC3W4QLyN9vGp0TRqq6cEEHOSU
-    /+JURdNUATn+k9a7Ns2rqDnjfvYiB6K8enpTqVCCKi8KvvBgkhlLLJScVKllak3U
-    2e9BmBWJBWhp+v5GR6HsGMgzBOh48r+6YB3rWV93USwbYLyTaqXVnqoggQS8oOsa
-    zKkbMPgvygx+qoktAp2ziPfMrtAkWIyyMAZOI7Q==
+    t=1518642007; b=T6NjZJmjNDiToiBkUngQF1f9Q9Zatxw5SLbEf+EiP70p7Ma
+    k1eYWR4DKNUd3HMSy4QJOi3Bpy4qM/vn3bm5dSf94dSHwKoSkrsvEJ5f+wfNFApw
+    DcQ2JwnsnVHACm/Qv6yleXmHRbthXGNorM74bLqNJhJdZVC7y85pM6HfGBqtNsZl
+    7vOVtSmfJ4NLeqUU6jM0hWmPUA9fLo/hIB1Y+J3qU1NKB2c9uTF2YgTPo6ObBvkn
+    v9kCykYaE5fMXMatQra37wIyh9FWq3MHzgtz209Q9y9tIj/8/4duAXAb6oPCwLPB
+    MUKPtq7TFdjfzix2WWr2KunllkzinVvyMcfMphg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1518688011; bh=Dn9SJt
-    bSnaZsLnAr/VYmz11B/TVnv8H8TyLBs0i8UWQ=; b=QZ1WuTs5P22niX6gc9MaHt
-    kRR1k2EAZZRXhZwxCTkZ7CS/sDDybqC/kshPTSl2cBNlpS3j9zDC8zQnHC3rn6C0
-    39E3gwhEEtAWMq+2BtCQpxEhhOHRBfkCjjYYze/Ar3wUlQ/VUks+DarqZgFW0yZF
-    IurDr0+fUD17Pjdox4YQqtmHZ+W+N/5cpWy9l8d4lFGl0uCUQoFHnoiWeaJDxzy6
-    eWxKYd7wWOCV10tNBYqn3j8VxWnR2cGbbu7uEc85sZiVv0hlnSY3Kigb+RNauIWk
-    D/I+NGZx0Q1l5mUhEN+bY8HZV9yVBeqkozzq4lkooH/M7CBXyObmFglvJC+CGk/g
-    ==
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1518642007; bh=4h1rZjYZf7YUyDG61GQJpqDdeU
+    QYi7G6/Ki3NasXN4Q=; b=vnSY/RETV40BWf5wdEPOYTdSDxPTR1tY5YyCQRWWSd
+    cKAZMBYfSzkXp+U4jo7WhrgY6tOZztFUDkcLv4TrLgNtEi7Q3QKwD4+3aGM74pO0
+    0dHL3VitPqxfE0mb8tMWgd5MCLVrI5PFCamY80rz1DwpcWLRDI30AJUtdqvymZlk
+    JknIKzKn4WwhPownIucrSjnGslqy8hD4vTBjvdRH4JTLXrWfTWMLO30902cCOh3s
+    EFy0Ed6e1FTc0EMk8EN0fgVdtMi7h96XAiwaNM4HnYxrathTC0DMa1l7NB650rrM
+    Km/uE//NmlFg1xX3nugj1HyUTbTsk6MFjLsrcpRaFL3A==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=bI+Fs9iq;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=bI+Fs9iq;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755186AbeBOJqs (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 04:46:48 -0500
-Received: from mga18.intel.com ([134.134.136.126]:49890 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755165AbeBOJqq (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Thu, 15 Feb 2018 04:46:46 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,516,1511856000";
-   d="scan'208";a="175389028"
-From: "Wu, Hao" <hao.wu@intel.com>
-To: Alan Tull <atull@kernel.org>
-CC: Moritz Fischer <mdf@kernel.org>,
-        "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "Kang, Luwei" <luwei.kang@intel.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
-        "Whisonant, Tim" <tim.whisonant@intel.com>,
-        "Luebbers, Enno" <enno.luebbers@intel.com>,
-        "Rao, Shiva" <shiva.rao@intel.com>,
-        "Rauer, Christopher" <christopher.rauer@intel.com>,
+        id S1031072AbeBNVAF (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 14 Feb 2018 16:00:05 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:40341 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030459AbeBNVAD (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 14 Feb 2018 16:00:03 -0500
+X-Google-Smtp-Source: AH8x2253UwSNEdXzQurUqXSjKwKbuFf8/L/E+cosBpnkX8zFhPeULLKaTqtPpF3r44+0vM1EY1gYdQ==
+Date: Wed, 14 Feb 2018 12:55:06 -0800
+From: Moritz Fischer <mdf@kernel.org>
+To: Wu Hao <hao.wu@intel.com>
+Cc: atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        luwei.kang@intel.com, yi.z.zhang@intel.com,
+        Tim Whisonant <tim.whisonant@intel.com>,
+        Enno Luebbers <enno.luebbers@intel.com>,
+        Shiva Rao <shiva.rao@intel.com>,
+        Christopher Rauer <christopher.rauer@intel.com>,
         Xiao Guangrong <guangrong.xiao@linux.intel.com>
-Subject: RE: [PATCH v4 06/24] fpga: dfl: adds fpga_cdev_find_port
-Thread-Topic: [PATCH v4 06/24] fpga: dfl: adds fpga_cdev_find_port
-Thread-Index: AQHTpK4BoH9bcmg6A0K9/8el40XWhKOjkTCAgAGobxA=
-Date: Thu, 15 Feb 2018 09:46:42 +0000
-Message-ID: <BE8371DA886269458E0220A16DC1F8277E154E4F@SHSMSX104.ccr.corp.intel.com>
+Subject: Re: [PATCH v4 06/24] fpga: dfl: adds fpga_cdev_find_port
+Message-ID: <20180214205506.GA25618@tyrael.ni.corp.natinst.com>
 References: <1518513893-4719-1-git-send-email-hao.wu@intel.com>
  <1518513893-4719-7-git-send-email-hao.wu@intel.com>
- <CANk1AXQgeeQm_ncn+17nrjr+YTCKvpc=PVZEsaZVOjRb3aHTQQ@mail.gmail.com>
-In-Reply-To: <CANk1AXQgeeQm_ncn+17nrjr+YTCKvpc=PVZEsaZVOjRb3aHTQQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZWFjNzNlNjktZTg2OC00ZGFmLWI4YjEtNTBjMDQ0NDU4ZmE1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJHUHV0dGdSK2RhZHNxQjRwMWJwQ09iS2VZQjloMkFUc0VsXC9tZmFjeVdmUUppcHRCeXNYYXAza1wva1wveXpJcDFXIn0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
+Content-Disposition: inline
+In-Reply-To: <1518513893-4719-7-git-send-email-hao.wu@intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-PiBPbiBUdWUsIEZlYiAxMywgMjAxOCBhdCAzOjI0IEFNLCBXdSBIYW8gPGhhby53dUBpbnRlbC5j
-b20+IHdyb3RlOg0KPiANCj4gSGkgSGFvLA0KPiANCj4gPiBGb3IgZmVhdHVyZSBkZXZpY2VzLCB3
-ZSBuZWVkIGEgbWV0aG9kIHRvIGZpbmQgdGhlIHBvcnQgZGVkaWNhdGVkDQo+ID4gdG8gdGhlIGRl
-dmljZS4gVGhpcyBwYXRjaCBhZGRzIGEgZnVuY3Rpb24gZnBnYV9jZGV2X2ZpbmRfcG9ydA0KPiA+
-IGZvciB0aGlzIHB1cnBvc2UuIGUuZyBGUEdBIE1hbmFnZW1lbnQgRW5naW5lIChGTUUpIFBhcnRp
-YWwNCj4gPiBSZWNvbmZpZ3VyYXRpb24gc3ViIGZlYXR1cmUsIGl0IHVzZXMgdGhpcyBmdW5jdGlv
-biB0byBmaW5kDQo+ID4gZGVkaWNhdGVkIHBvcnQgb24gdGhlIGRldmljZSBmb3IgUFIgZnVuY3Rp
-b24gaW1wbGVtZW50YXRpb24uDQo+IA0KPiBPSywgdGhhdCBpcyB2ZXJ5IGNsZWFyIG5vdywgdGhh
-bmtzISAgQWNrIHdpdGggdGhlIG1pbm9yIGRvYyBjaGFuZ2VzIGJlbG93Lg0KPiANCj4gPg0KPiA+
-IFNpZ25lZC1vZmYtYnk6IFRpbSBXaGlzb25hbnQgPHRpbS53aGlzb25hbnRAaW50ZWwuY29tPg0K
-PiA+IFNpZ25lZC1vZmYtYnk6IEVubm8gTHVlYmJlcnMgPGVubm8ubHVlYmJlcnNAaW50ZWwuY29t
-Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IFNoaXZhIFJhbyA8c2hpdmEucmFvQGludGVsLmNvbT4NCj4g
-PiBTaWduZWQtb2ZmLWJ5OiBDaHJpc3RvcGhlciBSYXVlciA8Y2hyaXN0b3BoZXIucmF1ZXJAaW50
-ZWwuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFhpYW8gR3Vhbmdyb25nIDxndWFuZ3JvbmcueGlh
-b0BsaW51eC5pbnRlbC5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogV3UgSGFvIDxoYW8ud3VAaW50
-ZWwuY29tPg0KPiBBY2tlZC1ieTogQWxhbiBUdWxsIDxhdHVsbEBrZXJuZWwub3JnPg0KPiANCj4g
-PiAtLS0NCj4gPiB2Mzogcy9mcGdhX2Zvcl9lYWNoX3BvcnQvZnBnYV9jZGV2X2ZpbmRfcG9ydC8N
-Cj4gPiAgICAgbW92ZSBmcGdhX2NkZXZfZmluZF9wb3J0IHRvIGZwZ2EtZGZsIG1vZHVsZS4NCj4g
-PiB2NDogaW1wcm92ZSBkZXNjcmlwdGlvbiBpbiBjb21taXQgbWVzc2FnZS4NCj4gPiAgICAgYWRk
-IGNvbW1lbnRzIHRvIHJlbWluZCB1c2VyIHRvIHB1dF9kZXZpY2UgYWZ0ZXIgdXNlIHRoaXMgZnVu
-Y3Rpb24uDQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvZnBnYS9kZmwuYyB8IDM0ICsrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysNCj4gPiAgZHJpdmVycy9mcGdhL2RmbC5oIHwgMjAgKysr
-KysrKysrKysrKysrKysrKysNCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCA1NCBpbnNlcnRpb25zKCsp
-DQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9mcGdhL2RmbC5jIGIvZHJpdmVycy9mcGdh
-L2RmbC5jDQo+ID4gaW5kZXggZGNmZTVhYi4uMzhkYzgxOSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2
-ZXJzL2ZwZ2EvZGZsLmMNCj4gPiArKysgYi9kcml2ZXJzL2ZwZ2EvZGZsLmMNCj4gPiBAQCAtNzgz
-LDYgKzc4Myw0MCBAQCB2b2lkIGZwZ2FfcmVtb3ZlX2ZlYXR1cmVfZGV2cyhzdHJ1Y3QgZnBnYV9j
-ZGV2DQo+ICpjZGV2KQ0KPiA+ICB9DQo+ID4gIEVYUE9SVF9TWU1CT0xfR1BMKGZwZ2FfcmVtb3Zl
-X2ZlYXR1cmVfZGV2cyk7DQo+ID4NCj4gPiArLyoqDQo+ID4gKyAqIF9fZnBnYV9jZGV2X2ZpbmRf
-cG9ydCAtIGZpbmQgYSBwb3J0IHVuZGVyIGdpdmVuIGNvbnRhaW5lciBkZXZpY2UNCj4gPiArICoN
-Cj4gPiArICogQGNkZXY6IGNvbnRhaW5lciBkZXZpY2UNCj4gPiArICogQGRhdGE6IGRhdGEgcGFz
-c2VkIHRvIG1hdGNoIGZ1bmN0aW9uDQo+ID4gKyAqIEBtYXRjaDogbWF0Y2ggZnVuY3Rpb24gdXNl
-ZCB0byBmaW5kIHNwZWNpZmljIHBvcnQgZnJvbSB0aGUgcG9ydCBkZXZpY2UgbGlzdA0KPiA+ICsg
-Kg0KPiA+ICsgKiBGaW5kIGEgcG9ydCBkZXZpY2UgdW5kZXIgY29udGFpbmVyIGRldmljZS4gVGhp
-cyBmdW5jdGlvbiBuZWVkcyB0byBiZQ0KPiA+ICsgKiBpbnZva2VkIHdpdGggbG9jayBoZWxkLg0K
-PiA+ICsgKg0KPiA+ICsgKiBUaGlzIGZ1bmN0aW9uIHJldHVybnMgTlVMTCBpZiB0aGUgZGV2aWNl
-IGRvZXNuJ3QgbWF0Y2ggYW5kIG5vbi16ZXJvIGlmIGl0DQo+ID4gKyAqIGRvZXMuDQo+IA0KPiBH
-b29kIGJ1dCB0aGlzIHdvdWxkIGJlIG1vcmUgYnJpZWYgYW5kIG1vcmUgc3BlY2lmaWMgYW5kIG1v
-cmUgaW4gbGluZQ0KPiB3aXRoIHJlY29tbWVuZGVkIGZvcm1hdCBpbiBEb2N1bWVudGF0aW9uL2tl
-cm5lbC1kb2MtbmFuby1IT1dUTy50eHQ6DQo+IA0KPiAgKiBSZXR1cm46IHBvaW50ZXIgdG8gcG9y
-dCdzIHBsYXRmb3JtIGRldmljZSBpZiBzdWNjZXNzZnVsLCBOVUxMIG90aGVyd2lzZS4NCj4gDQo+
-ID4gSWYgdGhpcyBmdW5jdGlvbiByZXR1cm5zIG5vbi16ZXJvIGFuZCBhIHJlZmVyZW5jZSB0byB0
-aGUgcGxhdGZvcm0NCj4gPiArICogZGV2aWNlIG9mIHBvcnQgY2FuIGJlIG9idGFpbmVkLg0KPiAN
-Cj4gVGhpcyBpZi4udGhlbiB0eXBlIHNlbnRlbmNlIGlzIG5vdCBjb21wbGV0ZSAobWlzc2luZyB0
-aGUgJ3RoZW4nIHBhcnQpLg0KPiBJIHNlZSB3aGVyZSB5b3UgbWlnaHQgaGF2ZSBnb3R0ZW4gaW5z
-cGlyYXRpb24gZm9yIGl0IGZyb20gY29yZS5jLg0KPiBQcm9iYWJseSB5b3UgY291bGQganVzdCBk
-ZWxldGUgdGhlIHNlbnRlbmNlIGFuZCBhbGwgd291bGQgYmUgY2xlYXIuDQoNClRoYW5rcyBmb3Ig
-dGhlIHJldmlldyBhbmQgdGhlIHN1Z2dlc3Rpb24gb24gdGhpcywgd2lsbCB1cGRhdGUgdGhlDQpj
-b21tZW50cyB0byBmaXggaXQuDQoNCkhhbw0KDQo+IA0KPiA+ICsgKg0KPiA+ICsgKiBOT1RFOiB5
-b3Ugd2lsbCBuZWVkIHRvIGRyb3AgdGhlIGRldmljZSByZWZlcmVuY2Ugd2l0aCBwdXRfZGV2aWNl
-KCkgYWZ0ZXINCj4gdXNlLg0KPiA+ICsgKi8NCj4gDQo+IEdvb2QNCj4gDQo+IFRoYW5rcywNCj4g
-QWxhbg0KPiANCj4gPiArc3RydWN0IHBsYXRmb3JtX2RldmljZSAqDQo+ID4gK19fZnBnYV9jZGV2
-X2ZpbmRfcG9ydChzdHJ1Y3QgZnBnYV9jZGV2ICpjZGV2LCB2b2lkICpkYXRhLA0KPiA+ICsgICAg
-ICAgICAgICAgICAgICAgICBpbnQgKCptYXRjaCkoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqLCB2
-b2lkICopKQ0KPiA+ICt7DQo+ID4gKyAgICAgICBzdHJ1Y3QgZmVhdHVyZV9wbGF0Zm9ybV9kYXRh
-ICpwZGF0YTsNCj4gPiArICAgICAgIHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBvcnRfZGV2Ow0K
-PiA+ICsNCj4gPiArICAgICAgIGxpc3RfZm9yX2VhY2hfZW50cnkocGRhdGEsICZjZGV2LT5wb3J0
-X2Rldl9saXN0LCBub2RlKSB7DQo+ID4gKyAgICAgICAgICAgICAgIHBvcnRfZGV2ID0gcGRhdGEt
-PmRldjsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgIGlmIChtYXRjaChwb3J0X2RldiwgZGF0
-YSkgJiYgZ2V0X2RldmljZSgmcG9ydF9kZXYtPmRldikpDQo+ID4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgcmV0dXJuIHBvcnRfZGV2Ow0KPiA+ICsgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAg
-IHJldHVybiBOVUxMOw0KPiA+ICt9DQo+ID4gK0VYUE9SVF9TWU1CT0xfR1BMKF9fZnBnYV9jZGV2
-X2ZpbmRfcG9ydCk7DQo+ID4gKw0KPiA+ICBpbnQgZnBnYV9wb3J0X2lkKHN0cnVjdCBwbGF0Zm9y
-bV9kZXZpY2UgKnBkZXYpDQo+ID4gIHsNCj4gPiAgICAgICAgIHZvaWQgX19pb21lbSAqYmFzZSA9
-IGdldF9mZWF0dXJlX2lvYWRkcl9ieV9pZCgmcGRldi0+ZGV2LA0KPiA+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2ZwZ2EvZGZsLmggYi9kcml2ZXJzL2ZwZ2EvZGZsLmgNCj4gPiBpbmRleCA5YjE5Mzk5
-Li5kNmVjZGExIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvZnBnYS9kZmwuaA0KPiA+ICsrKyBi
-L2RyaXZlcnMvZnBnYS9kZmwuaA0KPiA+IEBAIC0zNTYsNCArMzU2LDI0IEBAIHN0cnVjdCBmcGdh
-X2NkZXYgew0KPiA+ICBzdHJ1Y3QgZnBnYV9jZGV2ICpmcGdhX2VudW1lcmF0ZV9mZWF0dXJlX2Rl
-dnMoc3RydWN0IGZwZ2FfZW51bV9pbmZvDQo+ICppbmZvKTsNCj4gPiAgdm9pZCBmcGdhX3JlbW92
-ZV9mZWF0dXJlX2RldnMoc3RydWN0IGZwZ2FfY2RldiAqY2Rldik7DQo+ID4NCj4gPiArLyoNCj4g
-PiArICogbmVlZCB0byBkcm9wIHRoZSBkZXZpY2UgcmVmZXJlbmNlIHdpdGggcHV0X2RldmljZSgp
-IGFmdGVyIHVzZSBwb3J0DQo+IHBsYXRmb3JtDQo+ID4gKyAqIGRldmljZSByZXR1cm5lZCBieSBf
-X2ZwZ2FfY2Rldl9maW5kX3BvcnQgYW5kIGZwZ2FfY2Rldl9maW5kX3BvcnQNCj4gZnVuY3Rpb25z
-Lg0KPiA+ICsgKi8NCj4gPiArc3RydWN0IHBsYXRmb3JtX2RldmljZSAqDQo+ID4gK19fZnBnYV9j
-ZGV2X2ZpbmRfcG9ydChzdHJ1Y3QgZnBnYV9jZGV2ICpjZGV2LCB2b2lkICpkYXRhLA0KPiA+ICsg
-ICAgICAgICAgICAgICAgICAgICBpbnQgKCptYXRjaCkoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
-LCB2b2lkICopKTsNCj4gPiArDQo+ID4gK3N0YXRpYyBpbmxpbmUgc3RydWN0IHBsYXRmb3JtX2Rl
-dmljZSAqDQo+ID4gK2ZwZ2FfY2Rldl9maW5kX3BvcnQoc3RydWN0IGZwZ2FfY2RldiAqY2Rldiwg
-dm9pZCAqZGF0YSwNCj4gPiArICAgICAgICAgICAgICAgICAgIGludCAoKm1hdGNoKShzdHJ1Y3Qg
-cGxhdGZvcm1fZGV2aWNlICosIHZvaWQgKikpDQo+ID4gK3sNCj4gPiArICAgICAgIHN0cnVjdCBw
-bGF0Zm9ybV9kZXZpY2UgKnBkZXY7DQo+ID4gKw0KPiA+ICsgICAgICAgbXV0ZXhfbG9jaygmY2Rl
-di0+bG9jayk7DQo+ID4gKyAgICAgICBwZGV2ID0gX19mcGdhX2NkZXZfZmluZF9wb3J0KGNkZXYs
-IGRhdGEsIG1hdGNoKTsNCj4gPiArICAgICAgIG11dGV4X3VubG9jaygmY2Rldi0+bG9jayk7DQo+
-ID4gKw0KPiA+ICsgICAgICAgcmV0dXJuIHBkZXY7DQo+ID4gK30NCj4gPiAgI2VuZGlmIC8qIF9f
-RlBHQV9ERkxfSCAqLw0KPiA+IC0tDQo+ID4gMi43LjQNCj4gPg0K
+
+--Q68bSM7Ycu6FN28Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Hao,
+
+On Tue, Feb 13, 2018 at 05:24:35PM +0800, Wu Hao wrote:
+> For feature devices, we need a method to find the port dedicated
+> to the device. This patch adds a function fpga_cdev_find_port
+> for this purpose. e.g FPGA Management Engine (FME) Partial
+> Reconfiguration sub feature, it uses this function to find
+> dedicated port on the device for PR function implementation.
+>=20
+> Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
+> Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
+> Signed-off-by: Shiva Rao <shiva.rao@intel.com>
+> Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
+> Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
+> Signed-off-by: Wu Hao <hao.wu@intel.com>
+Acked-by: Moritz Fischer <mdf@kernel.org>
+> ---
+> v3: s/fpga_for_each_port/fpga_cdev_find_port/
+>     move fpga_cdev_find_port to fpga-dfl module.
+> v4: improve description in commit message.
+>     add comments to remind user to put_device after use this function.
+> ---
+>  drivers/fpga/dfl.c | 34 ++++++++++++++++++++++++++++++++++
+>  drivers/fpga/dfl.h | 20 ++++++++++++++++++++
+>  2 files changed, 54 insertions(+)
+>=20
+> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
+> index dcfe5ab..38dc819 100644
+> --- a/drivers/fpga/dfl.c
+> +++ b/drivers/fpga/dfl.c
+> @@ -783,6 +783,40 @@ void fpga_remove_feature_devs(struct fpga_cdev *cdev)
+>  }
+>  EXPORT_SYMBOL_GPL(fpga_remove_feature_devs);
+> =20
+> +/**
+> + * __fpga_cdev_find_port - find a port under given container device
+> + *
+> + * @cdev: container device
+> + * @data: data passed to match function
+> + * @match: match function used to find specific port from the port devic=
+e list
+> + *
+> + * Find a port device under container device. This function needs to be
+> + * invoked with lock held.
+> + *
+> + * This function returns NULL if the device doesn't match and non-zero i=
+f it
+> + * does. If this function returns non-zero and a reference to the platfo=
+rm
+> + * device of port can be obtained.
+> + *
+> + * NOTE: you will need to drop the device reference with put_device() af=
+ter use.
+> + */
+> +struct platform_device *
+> +__fpga_cdev_find_port(struct fpga_cdev *cdev, void *data,
+> +		      int (*match)(struct platform_device *, void *))
+> +{
+> +	struct feature_platform_data *pdata;
+> +	struct platform_device *port_dev;
+> +
+> +	list_for_each_entry(pdata, &cdev->port_dev_list, node) {
+> +		port_dev =3D pdata->dev;
+> +
+> +		if (match(port_dev, data) && get_device(&port_dev->dev))
+> +			return port_dev;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +EXPORT_SYMBOL_GPL(__fpga_cdev_find_port);
+> +
+>  int fpga_port_id(struct platform_device *pdev)
+>  {
+>  	void __iomem *base =3D get_feature_ioaddr_by_id(&pdev->dev,
+> diff --git a/drivers/fpga/dfl.h b/drivers/fpga/dfl.h
+> index 9b19399..d6ecda1 100644
+> --- a/drivers/fpga/dfl.h
+> +++ b/drivers/fpga/dfl.h
+> @@ -356,4 +356,24 @@ struct fpga_cdev {
+>  struct fpga_cdev *fpga_enumerate_feature_devs(struct fpga_enum_info *inf=
+o);
+>  void fpga_remove_feature_devs(struct fpga_cdev *cdev);
+> =20
+> +/*
+> + * need to drop the device reference with put_device() after use port pl=
+atform
+> + * device returned by __fpga_cdev_find_port and fpga_cdev_find_port func=
+tions.
+> + */
+> +struct platform_device *
+> +__fpga_cdev_find_port(struct fpga_cdev *cdev, void *data,
+> +		      int (*match)(struct platform_device *, void *));
+> +
+> +static inline struct platform_device *
+> +fpga_cdev_find_port(struct fpga_cdev *cdev, void *data,
+> +		    int (*match)(struct platform_device *, void *))
+> +{
+> +	struct platform_device *pdev;
+> +
+> +	mutex_lock(&cdev->lock);
+> +	pdev =3D __fpga_cdev_find_port(cdev, data, match);
+> +	mutex_unlock(&cdev->lock);
+> +
+> +	return pdev;
+> +}
+>  #endif /* __FPGA_DFL_H */
+> --=20
+> 2.7.4
+>=20
+
+Thanks,
+Moritz
+
+--Q68bSM7Ycu6FN28Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEowQ4eJSlIZpNWnl2UVwKRFcJcNgFAlqEoicACgkQUVwKRFcJ
+cNi8lgf8DVZG8kd5D9+MQo+c1/Mgzgok7FgT261n9yUNqlxXBoaOv2pfrasDizK0
+LirxHxRVQwNihPtxEy5qU0SNlMB1zg1ab1I+pFrNEexnNi6uNFlb98r9D62DfZjC
+RZOAU8JjrhFt/9pOFmEXbNtu5bWnrh8k0QpEOnrXoywksf6x3pptC7i/iBjsJYY/
+JHrdPxhR0h5dU/fVAI97wwi7Fh47VkK5v0QETuuwLU3vsgIsepyACMzlBVJ272XW
+75evaFyLufgeVcJQBFrpHI6lxcOBOmETv/gtxU6zdT4b05z5U52FtvCJ8dv9TavD
+Nmo58GqObWu7noL1Mpsg7g4KiHPDDg==
+=BgP7
+-----END PGP SIGNATURE-----
+
+--Q68bSM7Ycu6FN28Q--
