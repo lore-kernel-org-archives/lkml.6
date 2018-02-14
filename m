@@ -1,64 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162639AbeBNTGB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 14:06:01 -0500
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:55572 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162470AbeBNTF7 (ORCPT
+        id S1162669AbeBNTGc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 14:06:32 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:50222 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162470AbeBNTGb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 14:05:59 -0500
-X-Google-Smtp-Source: AH8x225WjGCqDphPee8F/4HKjdrRV8u62X2+hd/ZD4IaH0LqnS6jHQKpzbJJLC6xWf+nO7SUj/cjlg==
-Message-ID: <1518635157.4749.50.camel@profitbricks.com>
-Subject: Re: Read-protected UEFI variables
-From: Benjamin Drung <benjamin.drung@profitbricks.com>
-To: =?ISO-8859-1?Q?M=F4she?= van der Sterre <me@moshe.nl>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-efi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Wed, 14 Feb 2018 20:05:57 +0100
-In-Reply-To: <e04b687f-30cd-c200-d08f-36b7dcc582a6@moshe.nl>
-References: <1518612748.4749.29.camel@profitbricks.com>
-         <CAKv+Gu_V7BCihPhZf=pKrkBZwFWeEoupamXvYSqdS+k93Gme=g@mail.gmail.com>
-         <1518614486.4749.33.camel@profitbricks.com>
-         <e04b687f-30cd-c200-d08f-36b7dcc582a6@moshe.nl>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 14 Feb 2018 14:06:31 -0500
+Date: Wed, 14 Feb 2018 20:06:29 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Brian Gerst <brgerst@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, Andi Kleen <ak@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Williams, Dan J" <dan.j.williams@intel.com>
+Subject: Re: [RFC PATCH 3/4] x86/entry/64: move switch_to_thread_stack to
+ interrupt helper function
+Message-ID: <20180214190629.GA21426@isilmar-4.linta.de>
+References: <20180214182113.27247-1-linux@dominikbrodowski.net>
+ <20180214182113.27247-4-linux@dominikbrodowski.net>
+ <CAMzpN2iVuN-KkJMikdA0m+zsv66gTpLQS-b7eww6HfogCx1jZg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMzpN2iVuN-KkJMikdA0m+zsv66gTpLQS-b7eww6HfogCx1jZg@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, den 14.02.2018, 19:18 +0100 schrieb Môshe van der Sterre:
-> On 02/14/2018 02:21 PM, Benjamin Drung wrote:
-> > If the UEFI is as secure as storing an unencrypted file on a hard
-> > drive, I am satisfied. Or do you have a better idea where to store
-> > the
-> > SSH keys for a diskless system that boots via network?
+On Wed, Feb 14, 2018 at 01:57:15PM -0500, Brian Gerst wrote:
+> On Wed, Feb 14, 2018 at 1:21 PM, Dominik Brodowski
+> <linux@dominikbrodowski.net> wrote:
+> > We can also move the SWAPGS and the switch_to_thread_stack to the
+> > interrupt helper function. As we do not want call depths of two,
+> > convert switch_to_thread_stack to a macro. However, as entry_64_compat.S
+> > expects switch_to_thread_stack to be a function, provide a wrapper for
+> > that, which leads to some code duplication if CONFIG_IA32_EMULATION is
+> > enabled. Therefore, the size reduction differs slightly:
+> >
+> > With CONFIG_IA32_EMULATION enabled (-0.13k):
+> >    text    data     bss     dec     hex filename
+> >   16897       0       0   16897    4201 entry_64.o-orig
+> >   16767       0       0   16767    417f entry_64.o
+> >
+> > With CONFIG_IA32_EMULATION disabled (-0.27k):
+> >    text    data     bss     dec     hex filename
+> >   16897       0       0   16897    4201 entry_64.o-orig
+> >   16622       0       0   16622    40ee entry_64.o
+> >
+> > Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+> > ---
+> >  arch/x86/entry/entry_64.S | 65 ++++++++++++++++++++++++++---------------------
+> >  1 file changed, 36 insertions(+), 29 deletions(-)
+> >
+> > diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+> > index 3046b12a1acb..b60a3b692ca9 100644
+> > --- a/arch/x86/entry/entry_64.S
+> > +++ b/arch/x86/entry/entry_64.S
+> > @@ -536,6 +536,31 @@ END(irq_entries_start)
+> >         decl    PER_CPU_VAR(irq_count)
+> >  .endm
+> >
+> > +/*
+> > + * Switch to the thread stack.  This is called with the IRET frame and
+> > + * orig_ax on the stack.  (That is, RDI..R12 are not on the stack and
+> > + * space has not been allocated for them.)
+> > + */
+> > +.macro DO_SWITCH_TO_THREAD_STACK
+> > +       pushq   %rdi
+> > +       /* Need to switch before accessing the thread stack. */
+> > +       SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
+> > +       movq    %rsp, %rdi
+> > +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+> > +       UNWIND_HINT sp_offset=16 sp_reg=ORC_REG_DI
+> > +
+> > +       pushq   7*8(%rdi)               /* regs->ss */
+> > +       pushq   6*8(%rdi)               /* regs->rsp */
+> > +       pushq   5*8(%rdi)               /* regs->eflags */
+> > +       pushq   4*8(%rdi)               /* regs->cs */
+> > +       pushq   3*8(%rdi)               /* regs->ip */
+> > +       pushq   2*8(%rdi)               /* regs->orig_ax */
+> > +       pushq   8(%rdi)                 /* return address */
+> > +       UNWIND_HINT_FUNC
+> > +
+> > +       movq    (%rdi), %rdi
+> > +.endm
+> > +
+> >  /*
+> >   * Interrupt entry/exit.
+> >   *
+> > @@ -543,10 +568,17 @@ END(irq_entries_start)
+> >   *
+> >   * Entry runs with interrupts off.
+> >   */
+> > +/* 8(%rsp): ~(interrupt number) */
+> >  ENTRY(interrupt_helper)
+> >         UNWIND_HINT_FUNC
+> >         cld
+> >
+> > +       testb   $3, CS-ORIG_RAX+8(%rsp)
+> > +       jz      1f
+> > +       SWAPGS
+> > +       DO_SWITCH_TO_THREAD_STACK
+> > +1:
+> > +
+> >         PUSH_AND_CLEAR_REGS save_ret=1
+> >         ENCODE_FRAME_POINTER 8
+> >
+> > @@ -579,12 +611,6 @@ END(interrupt_helper)
+> >         .macro interrupt func
+> >         cld
+> >
+> > -       testb   $3, CS-ORIG_RAX(%rsp)
+> > -       jz      1f
+> > -       SWAPGS
+> > -       call    switch_to_thread_stack
+> > -1:
+> > -
+> >         call    interrupt_helper
+> >
+> >         call    \func   /* rdi points to pt_regs */
+> > @@ -853,33 +879,14 @@ apicinterrupt IRQ_WORK_VECTOR                     irq_work_interrupt              smp_irq_work_interrupt
+> >   */
+> >  #define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw) + (TSS_ist + ((x) - 1) * 8)
+> >
+> > -/*
+> > - * Switch to the thread stack.  This is called with the IRET frame and
+> > - * orig_ax on the stack.  (That is, RDI..R12 are not on the stack and
+> > - * space has not been allocated for them.)
+> > - */
+> > +#if defined(CONFIG_IA32_EMULATION)
+> > +/* entry_64_compat.S::entry_INT80_compat expects this to be an ASM function */
+> >  ENTRY(switch_to_thread_stack)
+> >         UNWIND_HINT_FUNC
+> > -
+> > -       pushq   %rdi
+> > -       /* Need to switch before accessing the thread stack. */
+> > -       SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
+> > -       movq    %rsp, %rdi
+> > -       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+> > -       UNWIND_HINT sp_offset=16 sp_reg=ORC_REG_DI
+> > -
+> > -       pushq   7*8(%rdi)               /* regs->ss */
+> > -       pushq   6*8(%rdi)               /* regs->rsp */
+> > -       pushq   5*8(%rdi)               /* regs->eflags */
+> > -       pushq   4*8(%rdi)               /* regs->cs */
+> > -       pushq   3*8(%rdi)               /* regs->ip */
+> > -       pushq   2*8(%rdi)               /* regs->orig_ax */
+> > -       pushq   8(%rdi)                 /* return address */
+> > -       UNWIND_HINT_FUNC
+> > -
+> > -       movq    (%rdi), %rdi
+> > +       DO_SWITCH_TO_THREAD_STACK
+> >         ret
+> >  END(switch_to_thread_stack)
+> > +#endif
+> >
+> >  .macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1
+> >  ENTRY(\sym)
+> > --
+> > 2.16.1
+> >
 > 
-> I assume it would be best to use TPM for this (if your systems have
-> TPM chips), it is designed for use-cases like this. Searching for
-> "tpm ssh keys" gives a decent amount of results. Mostly targeted at
-> user keys instead of server keys, so this might need some tinkering
-> to get working.
+> Move the macro to calling.h, and inline it into the compat entry.
 
-I check our systems. They just have TPM headers, but no TPM chips
-according to the user manual. The directory /sys/class/tpm/ is either
-empty or not existing. Adding TPM chips to all servers is no too
-expensive (to much man power required). So sadly, this is no option for
-us.
+That certainly sounds possible, but makes the macro more complex: Inlining
+means that the offsets need to be reduced by -8. But we need the current
+offset for the call from interrupt_helper. So such a change might make the
+code less readable.
 
--- 
-Benjamin Drung
-System Developer
-Debian & Ubuntu Developer
-
-ProfitBricks GmbH
-Greifswalder Str. 207
-D - 10405 Berlin
-
-Email: benjamin.drung@profitbricks.com
-URL: https://www.profitbricks.de
-
-Sitz der Gesellschaft: Berlin
-Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
-Geschäftsführer: Achim Weiss, Matthias Steinberg
+Thanks,
+	Dominik
