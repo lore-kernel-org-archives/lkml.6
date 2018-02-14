@@ -1,42 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032099AbeBNQEh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 11:04:37 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44516 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032073AbeBNQEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:04:34 -0500
-Subject: Re: [PATCH v1] irqdomain: Re-use DEFINE_SHOW_ATTRIBUTE() macro
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-References: <20180214154735.55233-1-andriy.shevchenko@linux.intel.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <73440b22-0460-cfb2-1ba2-f9a29040e0e4@arm.com>
-Date: Wed, 14 Feb 2018 16:04:26 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180214154735.55233-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1032140AbeBNQHR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 11:07:17 -0500
+Received: from mail.visioncatalog.com ([217.6.246.34]:46611 "EHLO
+        root.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032056AbeBNQHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 11:07:15 -0500
+From: Daniel Schultz <d.schultz@phytec.de>
+To: robh+dt@kernel.org, mark.rutland@arm.com, andrew@lunn.ch,
+        f.fainelli@gmail.com, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: w.egorov@phytec.de
+Subject: [PATCH v3 2/2] net: phy: dp83867: Add documentation for CLK_OUT pin muxing
+Date: Wed, 14 Feb 2018 17:07:12 +0100
+Message-Id: <1518624432-15110-2-git-send-email-d.schultz@phytec.de>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518624432-15110-1-git-send-email-d.schultz@phytec.de>
+References: <1518624432-15110-1-git-send-email-d.schultz@phytec.de>
+X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 14.02.2018 17:07:12,
+        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 14.02.2018 17:07:12,
+        Serialize complete at 14.02.2018 17:07:12
+X-TNEFEvaluated: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/02/18 15:47, Andy Shevchenko wrote:
-> ...instead of open coding file operations followed by custom ->open()
-> callbacks per each attribute.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Wadim Egorov <w.egorov@phytec.de>
 
-Too late... ;-)
+Add documentation of ti,clk-output-sel which can be used to select
+a specific clock for CLK_OUT.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/kernel/irq/irqdomain.c?id=c5baa1be8f559d5f33c412d00cc1c86762a8bbbf
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+---
+Changes:
+	v2:
+	  -
+	v3:
+	  Fixed indentation.
 
-Thanks,
+ Documentation/devicetree/bindings/net/ti,dp83867.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-	M.
+diff --git a/Documentation/devicetree/bindings/net/ti,dp83867.txt b/Documentation/devicetree/bindings/net/ti,dp83867.txt
+index 02c4353..9ef9338 100644
+--- a/Documentation/devicetree/bindings/net/ti,dp83867.txt
++++ b/Documentation/devicetree/bindings/net/ti,dp83867.txt
+@@ -25,6 +25,8 @@ Optional property:
+ 				    software needs to take when this pin is
+ 				    strapped in these modes. See data manual
+ 				    for details.
++	- ti,clk-output-sel - Muxing option for CLK_OUT pin - see dt-bindings/net/ti-dp83867.h
++				    for applicable values.
+ 
+ Note: ti,min-output-impedance and ti,max-output-impedance are mutually
+       exclusive. When both properties are present ti,max-output-impedance
 -- 
-Jazz is not dead. It just smells funny...
+2.7.4
