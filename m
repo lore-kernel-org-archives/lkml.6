@@ -1,120 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754334AbeBNF6F (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 00:58:05 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45885 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752707AbeBNF6D (ORCPT
+        id S1754371AbeBNGZ2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 01:25:28 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:7234 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752487AbeBNGZ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 00:58:03 -0500
-X-Google-Smtp-Source: AH8x224sFrfm24t2EunvabR3A5w5P9fG/3AbkrUKNBzNZsr8bBiQm4Iy4CRmPKlH+M8qT4MXPBSfJA==
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: [PATCHv3 1/2] zsmalloc: introduce zs_huge_object() function
-Date: Wed, 14 Feb 2018 14:57:47 +0900
-Message-Id: <20180214055747.8420-1-sergey.senozhatsky@gmail.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180210082321.17798-1-sergey.senozhatsky@gmail.com>
-References: <20180210082321.17798-1-sergey.senozhatsky@gmail.com>
+        Wed, 14 Feb 2018 01:25:27 -0500
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="37044446"
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC: <tglx@linutronix.de>, <mingo@kernel.org>, <ebiederm@xmission.com>,
+        <bhe@redhat.com>, Dou Liyang <douly.fnst@cn.fujitsu.com>
+Subject: [PATCH] x86/apic: Move pending intr check code into it's own function
+Date: Wed, 14 Feb 2018 14:24:49 +0800
+Message-ID: <20180214062449.20965-1-douly.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.14.3
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: 9504948AE921.AFDAC
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not every object can be share its zspage with other objects, e.g.
-when the object is as big as zspage or nearly as big a zspage.
-For such objects zsmalloc has a so called huge class - every object
-which belongs to huge class consumes the entire zspage (which
-consists of a physical page). On x86_64, PAGE_SHIFT 12 box, the
-first non-huge class size is 3264, so starting down from size 3264,
-objects can share page(-s) and thus minimize memory wastage.
+the pending interrupt check code is mixed with the local APIC setup code,
+that looks messy.
 
-ZRAM, however, has its own statically defined watermark for huge
-objects - "3 * PAGE_SIZE / 4 = 3072", and forcibly stores every
-object larger than this watermark (3072) as a PAGE_SIZE object,
-in other words, to a huge class, while zsmalloc can keep some of
-those objects in non-huge classes. This results in increased
-memory consumption.
+Extract the related code, move it into a new function named
+apic_pending_intr_clear().
 
-zsmalloc knows better if the object is huge or not. Introduce
-zs_huge_object() function which tells if the given object can be
-stored in one of non-huge classes or not. This will let us to drop
-ZRAM's huge object watermark and fully rely on zsmalloc when we
-decide if the object is huge.
-
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
 ---
- include/linux/zsmalloc.h |  2 ++
- mm/zsmalloc.c            | 26 ++++++++++++++++++++++++++
- 2 files changed, 28 insertions(+)
+ arch/x86/kernel/apic/apic.c | 98 ++++++++++++++++++++++++---------------------
+ 1 file changed, 52 insertions(+), 46 deletions(-)
 
-diff --git a/include/linux/zsmalloc.h b/include/linux/zsmalloc.h
-index 57a8e98f2708..9a1baf673cc1 100644
---- a/include/linux/zsmalloc.h
-+++ b/include/linux/zsmalloc.h
-@@ -47,6 +47,8 @@ void zs_destroy_pool(struct zs_pool *pool);
- unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t flags);
- void zs_free(struct zs_pool *pool, unsigned long obj);
- 
-+bool zs_huge_object(size_t sz);
-+
- void *zs_map_object(struct zs_pool *pool, unsigned long handle,
- 			enum zs_mapmode mm);
- void zs_unmap_object(struct zs_pool *pool, unsigned long handle);
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index c3013505c305..e43fc6ebb8e1 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -192,6 +192,7 @@ static struct vfsmount *zsmalloc_mnt;
-  * (see: fix_fullness_group())
-  */
- static const int fullness_threshold_frac = 4;
-+static size_t zs_huge_class_size;
- 
- struct size_class {
- 	spinlock_t lock;
-@@ -1417,6 +1418,28 @@ void zs_unmap_object(struct zs_pool *pool, unsigned long handle)
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 3fc259b4dd2d..6f59ac2238ab 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1408,6 +1408,56 @@ static void lapic_setup_esr(void)
+ 			oldvalue, value);
  }
- EXPORT_SYMBOL_GPL(zs_unmap_object);
  
-+/**
-+ * zs_huge_object() - Test if a compressed object's size is too big for normal
-+ *                    zspool classes and it should be stored in a huge class.
-+ * @sz: Size of the compressed object (in bytes).
-+ *
-+ * The function checks if the object's size falls into huge_class
-+ * area. We must take handle size into account and test the actual
-+ * size we are going to use, because zs_malloc() unconditionally
-+ * adds %ZS_HANDLE_SIZE before it performs &size_class lookup.
-+ *
-+ * Context: Any context.
-+ *
-+ * Return:
-+ * * true  - The object is too big, it will be stored in the huge class.
-+ * * false - The object will be stored in a normal zspool class.
-+ */
-+bool zs_huge_object(size_t sz)
++static void apic_pending_intr_clear(void)
 +{
-+	return sz + ZS_HANDLE_SIZE >= zs_huge_class_size;
-+}
-+EXPORT_SYMBOL_GPL(zs_huge_object);
++	long long max_loops = cpu_khz ? cpu_khz : 1000000;
++	unsigned long long tsc = 0, ntsc;
++	unsigned int value, queued;
++	int i, j, acked = 0;
 +
- static unsigned long obj_malloc(struct size_class *class,
- 				struct zspage *zspage, unsigned long handle)
++	if (boot_cpu_has(X86_FEATURE_TSC))
++		tsc = rdtsc();
++	/*
++	 * After a crash, we no longer service the interrupts and a pending
++	 * interrupt from previous kernel might still have ISR bit set.
++	 *
++	 * Most probably by now CPU has serviced that pending interrupt and
++	 * it might not have done the ack_APIC_irq() because it thought,
++	 * interrupt came from i8259 as ExtInt. LAPIC did not get EOI so it
++	 * does not clear the ISR bit and cpu thinks it has already serivced
++	 * the interrupt. Hence a vector might get locked. It was noticed
++	 * for timer irq (vector 0x31). Issue an extra EOI to clear ISR.
++	 */
++	do {
++		queued = 0;
++		for (i = APIC_ISR_NR - 1; i >= 0; i--)
++			queued |= apic_read(APIC_IRR + i*0x10);
++
++		for (i = APIC_ISR_NR - 1; i >= 0; i--) {
++			value = apic_read(APIC_ISR + i*0x10);
++			for (j = 31; j >= 0; j--) {
++				if (value & (1<<j)) {
++					ack_APIC_irq();
++					acked++;
++				}
++			}
++		}
++		if (acked > 256) {
++			printk(KERN_ERR "LAPIC pending interrupts after %d EOI\n",
++			       acked);
++			break;
++		}
++		if (queued) {
++			if (boot_cpu_has(X86_FEATURE_TSC) && cpu_khz) {
++				ntsc = rdtsc();
++				max_loops = (cpu_khz << 10) - (ntsc - tsc);
++			} else
++				max_loops--;
++		}
++	} while (queued && max_loops > 0);
++	WARN_ON(max_loops <= 0);
++}
++
+ /**
+  * setup_local_APIC - setup the local APIC
+  *
+@@ -1417,13 +1467,7 @@ static void lapic_setup_esr(void)
+ void setup_local_APIC(void)
  {
-@@ -2404,6 +2427,9 @@ struct zs_pool *zs_create_pool(const char *name)
- 			INIT_LIST_HEAD(&class->fullness_list[fullness]);
+ 	int cpu = smp_processor_id();
+-	unsigned int value, queued;
+-	int i, j, acked = 0;
+-	unsigned long long tsc = 0, ntsc;
+-	long long max_loops = cpu_khz ? cpu_khz : 1000000;
+-
+-	if (boot_cpu_has(X86_FEATURE_TSC))
+-		tsc = rdtsc();
++	unsigned int value;
  
- 		prev_class = class;
-+		if (pages_per_zspage == 1 && objs_per_zspage == 1
-+				&& !zs_huge_class_size)
-+			zs_huge_class_size = size;
- 	}
+ 	if (disable_apic) {
+ 		disable_ioapic_support();
+@@ -1475,45 +1519,7 @@ void setup_local_APIC(void)
+ 	value &= ~APIC_TPRI_MASK;
+ 	apic_write(APIC_TASKPRI, value);
  
- 	/* debug only, don't abort if it fails */
+-	/*
+-	 * After a crash, we no longer service the interrupts and a pending
+-	 * interrupt from previous kernel might still have ISR bit set.
+-	 *
+-	 * Most probably by now CPU has serviced that pending interrupt and
+-	 * it might not have done the ack_APIC_irq() because it thought,
+-	 * interrupt came from i8259 as ExtInt. LAPIC did not get EOI so it
+-	 * does not clear the ISR bit and cpu thinks it has already serivced
+-	 * the interrupt. Hence a vector might get locked. It was noticed
+-	 * for timer irq (vector 0x31). Issue an extra EOI to clear ISR.
+-	 */
+-	do {
+-		queued = 0;
+-		for (i = APIC_ISR_NR - 1; i >= 0; i--)
+-			queued |= apic_read(APIC_IRR + i*0x10);
+-
+-		for (i = APIC_ISR_NR - 1; i >= 0; i--) {
+-			value = apic_read(APIC_ISR + i*0x10);
+-			for (j = 31; j >= 0; j--) {
+-				if (value & (1<<j)) {
+-					ack_APIC_irq();
+-					acked++;
+-				}
+-			}
+-		}
+-		if (acked > 256) {
+-			printk(KERN_ERR "LAPIC pending interrupts after %d EOI\n",
+-			       acked);
+-			break;
+-		}
+-		if (queued) {
+-			if (boot_cpu_has(X86_FEATURE_TSC) && cpu_khz) {
+-				ntsc = rdtsc();
+-				max_loops = (cpu_khz << 10) - (ntsc - tsc);
+-			} else
+-				max_loops--;
+-		}
+-	} while (queued && max_loops > 0);
+-	WARN_ON(max_loops <= 0);
++	apic_pending_intr_clear();
+ 
+ 	/*
+ 	 * Now that we are all set up, enable the APIC
 -- 
-2.16.1
+2.14.3
