@@ -1,147 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031216AbeBNPTk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 10:19:40 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51196 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030839AbeBNPTh (ORCPT
+        id S1031235AbeBNPVd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 10:21:33 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:50304 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031168AbeBNPVa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:19:37 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Peng Donglin <dolinux.peng@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        andy.shevchenko@gmail.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: use DEFINE_SHOW_ATTRIBUTE() to decrease code duplication" to the asoc tree
-In-Reply-To: <1518619687-31442-1-git-send-email-dolinux.peng@gmail.com>
-Message-Id: <E1elyqE-0002KT-59@debutante>
-Date: Wed, 14 Feb 2018 15:19:26 +0000
+        Wed, 14 Feb 2018 10:21:30 -0500
+Date: Wed, 14 Feb 2018 10:21:09 -0500
+From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: syzbot <syzbot+bbd8e9a06452cc48059b@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, rds-devel@oss.oracle.com,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in rds_tcp_tune
+Message-ID: <20180214152109.GF11528@oracle.com>
+References: <001a1141a524c513ca05628d8ad4@google.com>
+ <20180112183046.GA26098@oracle.com>
+ <CACT4Y+aB0dZShujVMJFV6grb_7AYOMca13a1J2AkWsT7R0cgrQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+aB0dZShujVMJFV6grb_7AYOMca13a1J2AkWsT7R0cgrQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8804 signatures=668670
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=444
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802140180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On (02/14/18 16:11), Dmitry Vyukov wrote:
+> 
+> Hi Sowmini,
+> 
+> Was this ever fixed? What's the fix? This still hangs as open. Please
+> provide "syz fix" tag.
 
-   ASoC: use DEFINE_SHOW_ATTRIBUTE() to decrease code duplication
+Are you still seeing this problem?
 
-has been applied to the asoc tree at
+I had expected that the changes around rds_destroy_pending - see commit
+ebeeb1ad9b8a - would have taken care of this (note that ebeeb1ad9b8a
+refactors/updates 3db6e0d172c9) but those fixes were done by inspection
+only. In other words, I was never able to reproduce this, so we may
+still have missed some race condition.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 658829d5f40f764d708e544dd85061ef3c3110fd Mon Sep 17 00:00:00 2001
-From: Peng Donglin <dolinux.peng@gmail.com>
-Date: Wed, 14 Feb 2018 22:48:07 +0800
-Subject: [PATCH] ASoC: use DEFINE_SHOW_ATTRIBUTE() to decrease code
- duplication
-
-There is some duplicate code in soc-core.c, and the kernel provides
-DEFINE_SHOW_ATTRIBUTE() helper macro to decrease it in seq_file.h.
-
-Signed-off-by: Peng Donglin <dolinux.peng@gmail.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/soc-core.c | 45 ++++++---------------------------------------
- 1 file changed, 6 insertions(+), 39 deletions(-)
-
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index b928c59ea775..a2c9aa473324 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -349,7 +349,7 @@ static void soc_init_codec_debugfs(struct snd_soc_component *component)
- 			"ASoC: Failed to create codec register debugfs file\n");
- }
- 
--static int codec_list_seq_show(struct seq_file *m, void *v)
-+static int codec_list_show(struct seq_file *m, void *v)
- {
- 	struct snd_soc_codec *codec;
- 
-@@ -362,20 +362,9 @@ static int codec_list_seq_show(struct seq_file *m, void *v)
- 
- 	return 0;
- }
-+DEFINE_SHOW_ATTRIBUTE(codec_list);
- 
--static int codec_list_seq_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, codec_list_seq_show, NULL);
--}
--
--static const struct file_operations codec_list_fops = {
--	.open = codec_list_seq_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--};
--
--static int dai_list_seq_show(struct seq_file *m, void *v)
-+static int dai_list_show(struct seq_file *m, void *v)
- {
- 	struct snd_soc_component *component;
- 	struct snd_soc_dai *dai;
-@@ -390,20 +379,9 @@ static int dai_list_seq_show(struct seq_file *m, void *v)
- 
- 	return 0;
- }
-+DEFINE_SHOW_ATTRIBUTE(dai_list);
- 
--static int dai_list_seq_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, dai_list_seq_show, NULL);
--}
--
--static const struct file_operations dai_list_fops = {
--	.open = dai_list_seq_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--};
--
--static int platform_list_seq_show(struct seq_file *m, void *v)
-+static int platform_list_show(struct seq_file *m, void *v)
- {
- 	struct snd_soc_platform *platform;
- 
-@@ -416,18 +394,7 @@ static int platform_list_seq_show(struct seq_file *m, void *v)
- 
- 	return 0;
- }
--
--static int platform_list_seq_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, platform_list_seq_show, NULL);
--}
--
--static const struct file_operations platform_list_fops = {
--	.open = platform_list_seq_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(platform_list);
- 
- static void soc_init_card_debugfs(struct snd_soc_card *card)
- {
--- 
-2.16.1
+--Sowmini
