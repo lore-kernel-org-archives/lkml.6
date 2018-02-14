@@ -1,50 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967415AbeBNLjL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 06:39:11 -0500
-Received: from mail-qk0-f180.google.com ([209.85.220.180]:35723 "EHLO
-        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967342AbeBNLjK (ORCPT
+        id S967479AbeBNLjT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 06:39:19 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:52423 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967342AbeBNLjR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 06:39:10 -0500
-X-Google-Smtp-Source: AH8x227o0NkcFttdRbVc29QPNTBIj8O6cMLJtDWi3Agzjb9LSfoo6FPyWIMf+aXYN298boVe7J3sl/lyYeiQQk4uX88=
+        Wed, 14 Feb 2018 06:39:17 -0500
+Date: Wed, 14 Feb 2018 12:39:09 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+cc: "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/microcode/intel: Use 64-bit arithmetic instead of
+ 32-bit
+In-Reply-To: <20180213231847.36f87c0b@alans-desktop>
+Message-ID: <alpine.DEB.2.21.1802141235570.1292@nanos.tec.linutronix.de>
+References: <20180213164404.GA11664@embeddedor.com> <alpine.DEB.2.21.1802131747290.1130@nanos.tec.linutronix.de> <20180213231847.36f87c0b@alans-desktop>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180214062449.20965-1-douly.fnst@cn.fujitsu.com>
-References: <20180214062449.20965-1-douly.fnst@cn.fujitsu.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 14 Feb 2018 13:39:09 +0200
-Message-ID: <CAHp75Vemc056wdhNvxw03OXcdzB5LE1Pu7Y84rf8ks6K0U5q5A@mail.gmail.com>
-Subject: Re: [PATCH] x86/apic: Move pending intr check code into it's own function
-To: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, ebiederm@xmission.com,
-        Baoquan He <bhe@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 8:24 AM, Dou Liyang <douly.fnst@cn.fujitsu.com> wrote:
+On Tue, 13 Feb 2018, Alan Cox wrote:
+> > 	if (c->x86_cache_size >= 0)
+> > 		seq_printf(m, "cache size\t: %d KB\n", c->x86_cache_size);
+> > 
+> > which is silly, because that really can be done with:
+> > 
+> > 	if (c->x86_cache_size)
+> > 
+> > as there is no point in printing 'cache size 0KB', which means
+> > x86_cache_size can be made unsigned int, which makes sense because cache
+> > size < 0 does not at all.
+> 
+> Currently 0MB means "I know you have no cache" (early slot 1 celeron),
+> while not printing it means 'I have no clue'
 
-Yes, I see you just moved the old code, but it might make sense to
-update later the following.
+Cute. I hope the 3 slot1 celeron users will not go wild if their
+/proc/cpuinfo now claims to have no clue about caches.
 
-> +                       for (j = 31; j >= 0; j--) {
-> +                               if (value & (1<<j)) {
+Thanks,
 
-for_each_set_bit()
-
-> +                                       ack_APIC_irq();
-> +                                       acked++;
-> +                               }
-> +                       }
-
-> +                       printk(KERN_ERR "LAPIC pending interrupts after %d EOI\n",
-> +                              acked);
-
-pr_err()
-
--- 
-With Best Regards,
-Andy Shevchenko
+	tglx
