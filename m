@@ -1,121 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030559AbeBNUml (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 15:42:41 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:38475 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934933AbeBNUmi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 15:42:38 -0500
+        id S935427AbeBNUmj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 15:42:39 -0500
+Received: from mout.web.de ([212.227.15.14]:33135 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932096AbeBNUmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 15:42:37 -0500
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] crypto: bfin_crc: Delete an error message for a failed memory
+ allocation in bfin_crypto_crc_probe()
+Message-ID: <1601995f-79fd-8365-5dd3-4438a3515c28@users.sourceforge.net>
 Date: Wed, 14 Feb 2018 21:42:26 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc: Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
-Subject: Re: [PATCH] rtc: gemini/ftrtc010: disable clk on error paths in
- ftrtc010_rtc_probe()
-Message-ID: <20180214204226.GE8219@piout.net>
-References: <1517607957-5664-1-git-send-email-khoroshilov@ispras.ru>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1517607957-5664-1-git-send-email-khoroshilov@ispras.ru>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:JGbZ+Uw0/DP+vg7B39YPuPEEqCIHddZX8yAPjyJxFzF6by15Y2P
+ xwzoUGvpWOKVU34PrScSTc6u7eVG4aG+w3Lhz1jSr0lOPROWJAqExi6aHdNwMqNIm+yBLub
+ pnaKmQW6ixXrrPMWRWQeml9LCklCX+OP6JUUS6jaVPYEXg7B3luAIeW27+a8q+05eiMpMIp
+ doFlZ1JseASNE3mCjN9gQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:eYFTa0TV+e0=:0as+uoTIpc0NUJULbJIjbT
+ C1iGKbZV1iz17oDJfPAABDUNhf5MRZ08xojHyYyqptLbPu9eHnK6gXm5vzx3kGCTkEg7yFokw
+ /AAcpul+RC2PSmutRpQkk+K0dTWDH6i+mjZqSj98t77tnMbW/m1Is3M55YaYDryRz6sAShkEm
+ GTnX8U8gAlkdwtDQrwK7Rx4wnAZnJYJD6Bjg0FMPZjyBA+T+6TabUtP9p7CYdqKEMCC5WLTVk
+ 5fRCk2yF8dCNNkpNDPvDgJVcdUy79sTyoxjhLXrOn8xh8G5EF2NeN55vxVUEQTIN/VQpjz/K5
+ jbjZ8xUk2gXPJdgXADrAFtA24d79WmaPnPQdJvMOP+8uO7unAuq7IEdaIWatiqjmARCwHWyzS
+ DZIZpdCOCHaLG16EqSLy9on3qeqGfTUIkvLAKuNtiUG3X5V+zPGUCq6/bQyRdwAoyQ/fG7VMv
+ JqgYzAqQWRMfXAHnOhiX+jZoc0GgmI7ji9tjEXJi8LiSHEjieTWHbicbnQraxEi7UPqFSJ/bE
+ FSv6HdKeZNSa6lBE4A11z3f8rs7OoVFniBjIR1IrdPzAL/WvkEXIXgoe0h2NnPs3bO1WlHMWr
+ DX6zddluGAscIK7rCrg5XvEcBusKcuurvqIoq+YWzdwB3ANnPSSm0zxIzL935tuaLPCTlFsev
+ +idBVL+vTgXFSxORPupNCOK/rtt/g55hUHyp5D0K9Ol0uyxzj9t0OF/aEhRK0TCbpl0GurzPF
+ Su9CtUqWaFW+LgdHLTpzBDxRAg1cuzZV866DiCGsouujTDJk8TlWkJFVoS21b5liHK/kbINFu
+ ftdH50hjsztn/pQg9+5zwrmRAG8Pa3Yyrzfq7rSWWhn3T24oE4=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexey,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 21:34:54 +0100
 
-On 03/02/2018 at 00:45:57 +0300, Alexey Khoroshilov wrote:
-> ftrtc010_rtc_probe() leaves clks enabled in case of errors.
-> The patch adds proper disabling code.
-> 
-> Found by Linux Driver Verification project (linuxtesting.org).
-> 
-> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-> ---
->  drivers/rtc/rtc-ftrtc010.c | 37 ++++++++++++++++++++++++++++---------
->  1 file changed, 28 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-ftrtc010.c b/drivers/rtc/rtc-ftrtc010.c
-> index af8d6beae20c..67a0aadf488c 100644
-> --- a/drivers/rtc/rtc-ftrtc010.c
-> +++ b/drivers/rtc/rtc-ftrtc010.c
-> @@ -147,33 +147,52 @@ static int ftrtc010_rtc_probe(struct platform_device *pdev)
->  		ret = clk_prepare_enable(rtc->extclk);
->  		if (ret) {
->  			dev_err(dev, "failed to enable EXTCLK\n");
-> -			return ret;
-> +			goto err_pclk;
->  		}
->  	}
->  
->  	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-> -	if (!res)
-> -		return -ENODEV;
-> +	if (!res) {
-> +		ret = -ENODEV;
-> +		goto err_extclk;
-> +	}
->  
->  	rtc->rtc_irq = res->start;
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (!res)
-> -		return -ENODEV;
-> +	if (!res) {
-> +		ret = -ENODEV;
-> +		goto err_extclk;
-> +	}
->  
->  	rtc->rtc_base = devm_ioremap(dev, res->start,
->  				     resource_size(res));
-> -	if (!rtc->rtc_base)
-> -		return -ENOMEM;
-> +	if (!rtc->rtc_base) {
-> +		ret = -ENOMEM;
-> +		goto err_extclk;
-> +	}
->  
->  	ret = devm_request_irq(dev, rtc->rtc_irq, ftrtc010_rtc_interrupt,
->  			       IRQF_SHARED, pdev->name, dev);
->  	if (unlikely(ret))
-> -		return ret;
-> +		goto err_extclk;
-> 
+Omit an extra message for a memory allocation failure in this function.
 
-To simplify the error handling, it is probably simpler to move the
-clk_prepare_enable here.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/bfin_crc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/crypto/bfin_crc.c b/drivers/crypto/bfin_crc.c
+index a118b9bed669..7a1d6ed6d0b7 100644
+--- a/drivers/crypto/bfin_crc.c
++++ b/drivers/crypto/bfin_crc.c
+@@ -575,10 +575,8 @@ static int bfin_crypto_crc_probe(struct platform_device *pdev)
+ 	int ret;
  
->  	rtc->rtc_dev = rtc_device_register(pdev->name, dev,
->  					   &ftrtc010_rtc_ops, THIS_MODULE);
-> -	return PTR_ERR_OR_ZERO(rtc->rtc_dev);
-> +	if (IS_ERR(rtc->rtc_dev)) {
-> +		ret = PTR_ERR(rtc->rtc_dev);
-> +		goto err_extclk;
-> +	}
-> +
-> +	return 0;
-> +
-> +err_extclk:
-> +	if (!IS_ERR(rtc->extclk))
-> +		clk_disable_unprepare(rtc->extclk);
-> +err_pclk:
-> +	if (!IS_ERR(rtc->pclk))
-> +		clk_disable_unprepare(rtc->pclk);
-> +	return ret;
->  }
->  
->  static int ftrtc010_rtc_remove(struct platform_device *pdev)
-> -- 
-> 2.7.4
-> 
-
+ 	crc = devm_kzalloc(dev, sizeof(*crc), GFP_KERNEL);
+-	if (!crc) {
+-		dev_err(&pdev->dev, "fail to malloc bfin_crypto_crc\n");
++	if (!crc)
+ 		return -ENOMEM;
+-	}
+ 
+ 	crc->dev = dev;
+ 
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.16.1
