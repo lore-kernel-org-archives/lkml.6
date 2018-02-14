@@ -1,57 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967005AbeBNJxW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 04:53:22 -0500
-Received: from mail-it0-f42.google.com ([209.85.214.42]:40305 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966980AbeBNJxP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 04:53:15 -0500
-X-Google-Smtp-Source: AH8x2254drjZ9c/8/bmpdmOrvyvGCUSU++BxetNYzRS5Mbcut7NYJOTwDIpRXy3nQuVryA/iFV/GRCiLuIm5//UYtrw=
-MIME-Version: 1.0
-In-Reply-To: <20180205125029.21570-9-kishon@ti.com>
-References: <20180205125029.21570-1-kishon@ti.com> <20180205125029.21570-9-kishon@ti.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 14 Feb 2018 10:53:14 +0100
-Message-ID: <CAPDyKFrhpry40TCjmQ_-WO-EWa2BCL0eNXLZB_UobGaYbsBiHA@mail.gmail.com>
-Subject: Re: [PATCH v2 08/16] mmc: sdhci-omap: Add support to override f_max
- and iodelay from pdata
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        id S966999AbeBNJzT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 04:55:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46234 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966940AbeBNJzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 04:55:17 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 859E5217A0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
+From: Kieran Bingham <kbingham@kernel.org>
+To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
+        (AARCH64 ARCHITECTURE)),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 1/5] arm64: dts: renesas: r8a77995: add FCPV nodes
+Date: Wed, 14 Feb 2018 09:55:04 +0000
+Message-Id: <1518602108-1724-2-git-send-email-kbingham@kernel.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518602108-1724-1-git-send-email-kbingham@kernel.org>
+References: <1518602108-1724-1-git-send-email-kbingham@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 February 2018 at 13:50, Kishon Vijay Abraham I <kishon@ti.com> wrote:
-> DRA74x EVM Rev H EVM comes with revision 2.0 silicon. However, earlier
-> versions of EVM can come with either revision 1.1 or revision 1.0 of
-> silicon.
->
-> The device-tree file is written to support rev 2.0 of silicon.
-> pdata-quirks are used to then override the settings needed for
-> PG 1.1 silicon.
->
-> PG 1.1 silicon has limitations w.r.t frequencies at which MMC1/2/3
-> can operate as well as different IOdelay numbers.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-I fail to understand the need for platform data. Why can't DT be used
-for the older revisions as well?
+The FCPVB handles the interface between the VSPB and memory, while the
+FCPVD handles the interface between the VSPD and memory.
 
->
-> Add support in sdhci-omap driver to get platform data if available
-> (added using pdata quirks) and override the data (max-frequency and
-> iodelay data) obtained from device tree.
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-[...]
-
-Kind regards
-Uffe
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index cd3c6a30fc47..196a917afea6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -691,6 +691,33 @@
+ 			#phy-cells = <0>;
+ 			status = "disabled";
+ 		};
++
++		fcpvb0: fcp@fe96f000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfe96f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 607>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 607>;
++			iommus = <&ipmmu_vp0 5>;
++		};
++
++		fcpvd0: fcp@fea27000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea27000 0 0x200>;
++			clocks = <&cpg CPG_MOD 603>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 603>;
++			iommus = <&ipmmu_vi0 8>;
++		};
++
++		fcpvd1: fcp@fea2f000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea2f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 602>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 602>;
++			iommus = <&ipmmu_vi0 9>;
++		};
+ 	};
+ 
+ 	timer {
+-- 
+2.7.4
