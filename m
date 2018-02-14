@@ -1,75 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033233AbeBNRBk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 12:01:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46721 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032907AbeBNRBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 12:01:39 -0500
-Date: Wed, 14 Feb 2018 18:01:33 +0100
-From: Borislav Petkov <bp@suse.de>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Jason Baron <jbaron@akamai.com>
-Subject: Re: [PATCH 1/3] jump_label: Warn on failed jump_label patch
-Message-ID: <20180214170133.GA19502@pd.tnic>
-References: <cover.1518626149.git.jpoimboe@redhat.com>
- <b8f1b55f17c346fba39d3f59a01251185e09e151.1518626149.git.jpoimboe@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b8f1b55f17c346fba39d3f59a01251185e09e151.1518626149.git.jpoimboe@redhat.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1033247AbeBNRCP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 12:02:15 -0500
+Received: from smtprelay0220.hostedemail.com ([216.40.44.220]:38725 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1032907AbeBNRCN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 12:02:13 -0500
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:541:599:800:960:965:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2197:2199:2393:2553:2559:2562:2691:2693:2828:2919:3138:3139:3140:3141:3142:3352:3622:3653:3865:3867:3870:3872:3874:4321:4390:5007:9040:10004:10400:10848:11232:11658:11914:12043:12296:12438:12555:12740:12760:12895:13069:13072:13311:13357:13439:14093:14097:14181:14659:14721:14777:21080:21221:21324:21433:21451:21611:21627:30003:30022:30029:30054:30064:30070:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: step54_6a44a895bc556
+X-Filterd-Recvd-Size: 2728
+Message-ID: <1518627728.3678.2.camel@perches.com>
+Subject: Re: KASAN: use-after-free Read in rds_tcp_tune
+From: Joe Perches <joe@perches.com>
+To: Dmitry Vyukov <dvyukov@google.com>,
+        Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Cc: syzbot <syzbot+bbd8e9a06452cc48059b@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, rds-devel@oss.oracle.com,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        syzkaller-bugs@googlegroups.com
+Date: Wed, 14 Feb 2018 09:02:08 -0800
+In-Reply-To: <CACT4Y+ZZjE9fsnsQ-uab3RMt_Zpe98nKF1Pcj31ZGepYsi1UGA@mail.gmail.com>
+References: <001a1141a524c513ca05628d8ad4@google.com>
+         <20180112183046.GA26098@oracle.com>
+         <CACT4Y+aB0dZShujVMJFV6grb_7AYOMca13a1J2AkWsT7R0cgrQ@mail.gmail.com>
+         <20180214152109.GF11528@oracle.com>
+         <CACT4Y+bKpi8he1ygwAxgm4F_RJ=BRPBPdMaVAK64SbvCVGt7ww@mail.gmail.com>
+         <20180214153555.GG11528@oracle.com>
+         <CACT4Y+ZZjE9fsnsQ-uab3RMt_Zpe98nKF1Pcj31ZGepYsi1UGA@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 10:40:41AM -0600, Josh Poimboeuf wrote:
-> When the jump label code encounters an address which isn't recognized by
-> kernel_text_address(), it just silently fails.
+On Wed, 2018-02-14 at 16:55 +0100, Dmitry Vyukov wrote:
+> On Wed, Feb 14, 2018 at 4:35 PM, Sowmini Varadhan <sowmini.varadhan@oracle.com> wrote:
+> > btw, checkpatch.pl complains about the syzbot*@syzkaller.appspotmail.com
+> > addresses as "Unrecognized email address", we should fix that
+> > error from checkpatch at some point.
 > 
-> This can be dangerous because jump labels are used in a variety of
-> places, and are generally expected to work.  Convert the silent failure
-> to a warning.
-> 
-> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> ---
->  kernel/jump_label.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-> index b4517095db6a..c71fb7cdfc41 100644
-> --- a/kernel/jump_label.c
-> +++ b/kernel/jump_label.c
-> @@ -370,8 +370,12 @@ static void __jump_label_update(struct static_key *key,
->  		 * kernel_text_address() verifies we are not in core kernel
->  		 * init code, see jump_label_invalidate_module_init().
->  		 */
-> -		if (entry->code && kernel_text_address(entry->code))
-> -			arch_jump_label_transform(entry, jump_label_type(entry));
-> +		if (entry->code) {
-> +			if (kernel_text_address(entry->code))
-> +				arch_jump_label_transform(entry, jump_label_type(entry));
-> +			else
-> +				WARN_ONCE(1, "can't patch jump_label at %pS", (void *)entry->code);
-> +		}
->  	}
->  }
->  
-> -- 
-> 2.14.3
+> Interesting. Looking at checkpatch.pl I think it wants all addresses
+> to be in <>, i.e.
+> Reported-by: <syzbot+bbd8e9a06452cc48059b@syzkaller.appspotmail.com>
+> There probably was some reason to enforce this, so I think I will
+> change the syzbot email template to include <>.
+> Thanks!
 
-Good idea.
+Not really.
 
-Reviewed-by: Borislav Petkov <bp@suse.de>
+It's the somewhat unusual + in the address
+that perl needs quoted before a substitution.
 
--- 
-Regards/Gruss,
-    Boris.
+I believe this fixes it in checkpatch.
+---
+ scripts/checkpatch.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 3d4040322ae1..2b8397da39d3 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -1075,7 +1075,7 @@ sub parse_email {
+ 	} elsif ($formatted_email =~ /(\S+\@\S+)(.*)$/) {
+ 		$address = $1;
+ 		$comment = $2 if defined $2;
+-		$formatted_email =~ s/$address.*$//;
++		$formatted_email =~ s/\Q$address\E.*$//;
+ 		$name = $formatted_email;
+ 		$name = trim($name);
+ 		$name =~ s/^\"|\"$//g;
