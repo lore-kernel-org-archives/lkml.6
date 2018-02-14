@@ -1,39 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031923AbeBNQIU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 11:08:20 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:52903 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031287AbeBNQIT (ORCPT
+        id S1032069AbeBNQLH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 11:11:07 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:41531 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030349AbeBNQLG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:08:19 -0500
-Date: Wed, 14 Feb 2018 17:08:22 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Marc Zyngier <marc.zyngier@arm.com>
-cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] irqdomain: Re-use DEFINE_SHOW_ATTRIBUTE() macro
-In-Reply-To: <73440b22-0460-cfb2-1ba2-f9a29040e0e4@arm.com>
-Message-ID: <alpine.DEB.2.21.1802141707070.1519@nanos.tec.linutronix.de>
-References: <20180214154735.55233-1-andriy.shevchenko@linux.intel.com> <73440b22-0460-cfb2-1ba2-f9a29040e0e4@arm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 14 Feb 2018 11:11:06 -0500
+From: Colin King <colin.king@canonical.com>
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: uniphier: remove redundant check of blk_id
+Date: Wed, 14 Feb 2018 16:10:36 +0000
+Message-Id: <20180214161036.32446-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Feb 2018, Marc Zyngier wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On 14/02/18 15:47, Andy Shevchenko wrote:
-> > ...instead of open coding file operations followed by custom ->open()
-> > callbacks per each attribute.
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Too late... ;-)
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/kernel/irq/irqdomain.c?id=c5baa1be8f559d5f33c412d00cc1c86762a8bbbf
+The check of blk_id == AUD_CLK_IO is redundant as it also being performed
+in the following switch statement with the same return of -ENOTSUPP. Fix
+this by removing the redundant comparison.
 
-You're slighly off. The patch is against the CONFIG_GENERIC_IRQ_DEBUGFS
-infrastructure and that's still there :)
+Detected by CoverityScan, CID#1465227 ("Logically dead code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/uniphier/aio-cpu.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/sound/soc/uniphier/aio-cpu.c b/sound/soc/uniphier/aio-cpu.c
+index 55f3248a31fd..7cf2316c69a2 100644
+--- a/sound/soc/uniphier/aio-cpu.c
++++ b/sound/soc/uniphier/aio-cpu.c
+@@ -134,9 +134,6 @@ static int uniphier_aio_set_sysclk(struct snd_soc_dai *dai, int clk_id,
+ 	bool pll_auto = false;
+ 	int pll_id, div_id;
+ 
+-	if (clk_id == AUD_CLK_IO)
+-		return -ENOTSUPP;
+-
+ 	switch (clk_id) {
+ 	case AUD_CLK_IO:
+ 		return -ENOTSUPP;
+-- 
+2.15.1
