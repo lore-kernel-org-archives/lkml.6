@@ -1,83 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162159AbeBNSbj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 13:31:39 -0500
-Received: from mga05.intel.com ([192.55.52.43]:56498 "EHLO mga05.intel.com"
+        id S1162176AbeBNSbp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 13:31:45 -0500
+Received: from mout.web.de ([212.227.15.3]:52905 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161897AbeBNSbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 13:31:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,513,1511856000";
-   d="scan'208";a="34704868"
-Subject: Re: [RFC PATCH V2 00/22] Intel(R) Resource Director Technology Cache
- Pseudo-Locking enabling
-To: Mike Kravetz <mike.kravetz@oracle.com>, tglx@linutronix.de,
-        fenghua.yu@intel.com, tony.luck@intel.com
-Cc: gavin.hindman@intel.com, vikas.shivappa@linux.intel.com,
-        dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>
-References: <cover.1518443616.git.reinette.chatre@intel.com>
- <e0d59d83-14a1-6059-6f0b-da47b3b7de31@oracle.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <29d1be82-9fc8-ecde-a5ee-4eafc92e39f1@intel.com>
-Date: Wed, 14 Feb 2018 10:31:36 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1161897AbeBNSbl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 13:31:41 -0500
+Subject: [PATCH 1/2] crypto: caam: Delete an error message for a failed memory
+ allocation in seven functions
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-crypto@vger.kernel.org, Aymen Sghaier <aymen.sghaier@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <9a9a602d-93da-457d-c37d-2acbb4b7b5d5@users.sourceforge.net>
+Message-ID: <594d974d-577d-353d-9e99-4f98ad911cb4@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 19:31:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <e0d59d83-14a1-6059-6f0b-da47b3b7de31@oracle.com>
+In-Reply-To: <9a9a602d-93da-457d-c37d-2acbb4b7b5d5@users.sourceforge.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K0:dFWMIqEE0ohNuUu3rY90i2LKmJWoJ+RRuWlfjlStxpJIaX4ARLR
+ jQJFCHiql0NRODyOKhgnTAfmH8KXq9L5SzFi18Qy4TKcu5szliFXex4nNOV2MlWsHy3+vXq
+ 9fF4BB6zRF03YXxTJa8sVGODa48d+Vk4silSfM0jSpHfemmhnRUsdsgRo0Ska2l+DDhaeVZ
+ Q8KxFc8W4Tjg1r2xutEng==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:dIlmzbicFFg=:Wy0of5ejUimcV3YKN4BDg8
+ 7zWhWlTJ/bOSKgrwM54WGaphvtlBKw2fFj//gVzb6Gsk5l/jCU2m4ZHmyz2/Mt43PAZfHx01d
+ U2a1kz5xJmWmlAzRaGqAcWssXTZwr9Au7Sc+/VQ3gF95R8FCGCX/rx6h36piH49Lo/MkSQ779
+ nIJ5oHIgGbaepoQ8cq8e2hpJ+8WS+eNRGxF6lS4R4nMTEK40sqa4gt4ExZkWyF2WVEvG3X3k1
+ fNxR6EMXZ6iGTaD8EaiWb24VAidFKgZWcdSFiGN/hU8Jfq2ME0lECK0QuSTlVAIdv25Vcr2in
+ 1fvD8V30rdQIxRrMWGza4Ix9GHkZq9XeJuwCj+QLu+8rmGOUlRtnN5ugg9JJqsI1kctIMSudl
+ eqJ6/wWWKbe3xKBtD1EML0lN+6lRBmOIE5wRYVO4n0o2u78PpS7z7izZ1sEkbhreQy27n4tuk
+ ipem72BFhL1kdX919HdL5d1IR4+kIhkMqbQeD3XFi3PenwXFzhiQnePAUegSE7rSpGFBZ58rX
+ FXsTwTGwVRJORFD9omarPuD9M6rwe4unug9CfPZi8ze2ej5OMSNmG7uc9gklTZNH6kcm1g7Ad
+ 6hxGv5mnyy4t/IxEKjiH4WiGUPIfDCyz6LMz230h7YGSwCmFLM/26U5ZD5xun558KcUXlPAmP
+ 2iolcv64oBThUYPOTH/m/COjmjRKrbynY/J7oBuh4wzhwNT4QfLedFBWSmEsToGEMqM7FQooN
+ xqG8U4vb981PCKnd4mm0UV0wdTIwr77bATZC3EJ+PzuL+A45NV8bpE+dKb1rPbCgXsIqPwvtZ
+ lOjFG0LSeV8JVV2lFATozt/tYzYn1iBoSAolA3LGOAHdJlXjMs=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mike,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 18:22:38 +0100
 
-On 2/14/2018 10:12 AM, Mike Kravetz wrote:
-> On 02/13/2018 07:46 AM, Reinette Chatre wrote:
->> Adding MM maintainers to v2 to share the new MM change (patch 21/22) that
->> enables large contiguous regions that was created to support large Cache
->> Pseudo-Locked regions (patch 22/22). This week MM team received another
->> proposal to support large contiguous allocations ("[RFC PATCH 0/3]
->> Interface for higher order contiguous allocations" at
->> http://lkml.kernel.org/r/20180212222056.9735-1-mike.kravetz@oracle.com).
->> I have not yet tested with this new proposal but it does seem appropriate
->> and I should be able to rework patch 22 from this series on top of that if
->> it is accepted instead of what I have in patch 21 of this series.
->>
-> 
-> Well, I certainly would prefer the adoption and use of a more general
-> purpose interface rather than exposing alloc_gigantic_page().
-> 
-> Both the interface I suggested and alloc_gigantic_page end up calling
-> alloc_contig_range().  I have not looked at your entire patch series, but
-> do be aware that in its present form alloc_contig_range will run into
-> issues if called by two threads simultaneously for the same page range.
-> Calling alloc_gigantic_page without some form of synchronization will
-> expose this issue.  Currently this is handled by hugetlb_lock for all
-> users of alloc_gigantic_page.  If you simply expose alloc_gigantic_page
-> without any type of synchronization, you may run into issues.  The first
-> patch in my RFC "mm: make start_isolate_page_range() fail if already
-> isolated" should handle this situation IF we decide to expose
-> alloc_gigantic_page (which I do not suggest).
+Omit an extra message for a memory allocation failure in these functions.
 
-My work depends on the ability to create large contiguous regions,
-creating these large regions is not the goal in itself. Certainly I
-would want to use the most appropriate mechanism and I would gladly
-modify my work to do so.
+This issue was detected by using the Coccinelle software.
 
-I do not insist on using alloc_gigantic_page(). Now that I am aware of
-your RFC I started the process to convert to the new
-find_alloc_contig_pages(). I did not do so earlier because it was not
-available when I prepared this work for submission. I plan to respond to
-your RFC when my testing is complete but please give me a few days to do
-so. Could you please also cc me if you do send out any new versions?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/caam/caamalg.c  |  6 +-----
+ drivers/crypto/caam/caamhash.c | 12 +++---------
+ drivers/crypto/caam/key_gen.c  |  4 +---
+ 3 files changed, 5 insertions(+), 17 deletions(-)
 
-Thank you very much!
-
-Reinette
+diff --git a/drivers/crypto/caam/caamalg.c b/drivers/crypto/caam/caamalg.c
+index 2188235be02d..d1f25a90552a 100644
+--- a/drivers/crypto/caam/caamalg.c
++++ b/drivers/crypto/caam/caamalg.c
+@@ -1561,7 +1561,6 @@ static struct ablkcipher_edesc *ablkcipher_edesc_alloc(struct ablkcipher_request
+ 	edesc = kzalloc(sizeof(*edesc) + desc_bytes + sec4_sg_bytes,
+ 			GFP_DMA | flags);
+ 	if (!edesc) {
+-		dev_err(jrdev, "could not allocate extended descriptor\n");
+ 		caam_unmap(jrdev, req->src, req->dst, src_nents, dst_nents,
+ 			   iv_dma, ivsize, 0, 0);
+ 		return ERR_PTR(-ENOMEM);
+@@ -1770,7 +1769,6 @@ static struct ablkcipher_edesc *ablkcipher_giv_edesc_alloc(
+ 	edesc = kzalloc(sizeof(*edesc) + desc_bytes + sec4_sg_bytes,
+ 			GFP_DMA | flags);
+ 	if (!edesc) {
+-		dev_err(jrdev, "could not allocate extended descriptor\n");
+ 		caam_unmap(jrdev, req->src, req->dst, src_nents, dst_nents,
+ 			   iv_dma, ivsize, 0, 0);
+ 		return ERR_PTR(-ENOMEM);
+@@ -3372,10 +3370,8 @@ static struct caam_crypto_alg *caam_alg_alloc(struct caam_alg_template
+ 	struct crypto_alg *alg;
+ 
+ 	t_alg = kzalloc(sizeof(*t_alg), GFP_KERNEL);
+-	if (!t_alg) {
+-		pr_err("failed to allocate t_alg\n");
++	if (!t_alg)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	alg = &t_alg->crypto_alg;
+ 
+diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhash.c
+index 0beb28196e20..dc269eba08ad 100644
+--- a/drivers/crypto/caam/caamhash.c
++++ b/drivers/crypto/caam/caamhash.c
+@@ -362,10 +362,8 @@ static int hash_digest_key(struct caam_hash_ctx *ctx, const u8 *key_in,
+ 	int ret;
+ 
+ 	desc = kmalloc(CAAM_CMD_SZ * 8 + CAAM_PTR_SZ * 2, GFP_KERNEL | GFP_DMA);
+-	if (!desc) {
+-		dev_err(jrdev, "unable to allocate key input memory\n");
++	if (!desc)
+ 		return -ENOMEM;
+-	}
+ 
+ 	init_job_desc(desc, 0);
+ 
+@@ -689,10 +687,8 @@ static struct ahash_edesc *ahash_edesc_alloc(struct caam_hash_ctx *ctx,
+ 	unsigned int sg_size = sg_num * sizeof(struct sec4_sg_entry);
+ 
+ 	edesc = kzalloc(sizeof(*edesc) + sg_size, GFP_DMA | flags);
+-	if (!edesc) {
+-		dev_err(ctx->jrdev, "could not allocate extended descriptor\n");
++	if (!edesc)
+ 		return NULL;
+-	}
+ 
+ 	init_job_desc_shared(edesc->hw_desc, sh_desc_dma, desc_len(sh_desc),
+ 			     HDR_SHARE_DEFER | HDR_REVERSE);
+@@ -1818,10 +1814,8 @@ caam_hash_alloc(struct caam_hash_template *template,
+ 	struct crypto_alg *alg;
+ 
+ 	t_alg = kzalloc(sizeof(*t_alg), GFP_KERNEL);
+-	if (!t_alg) {
+-		pr_err("failed to allocate t_alg\n");
++	if (!t_alg)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	t_alg->ahash_alg = template->template_ahash;
+ 	halg = &t_alg->ahash_alg;
+diff --git a/drivers/crypto/caam/key_gen.c b/drivers/crypto/caam/key_gen.c
+index 312b5f042f31..dd077ac8c41e 100644
+--- a/drivers/crypto/caam/key_gen.c
++++ b/drivers/crypto/caam/key_gen.c
+@@ -66,10 +66,8 @@ int gen_split_key(struct device *jrdev, u8 *key_out,
+ 		return -EINVAL;
+ 
+ 	desc = kmalloc(CAAM_CMD_SZ * 6 + CAAM_PTR_SZ * 2, GFP_KERNEL | GFP_DMA);
+-	if (!desc) {
+-		dev_err(jrdev, "unable to allocate key input memory\n");
++	if (!desc)
+ 		return ret;
+-	}
+ 
+ 	dma_addr_in = dma_map_single(jrdev, (void *)key_in, keylen,
+ 				     DMA_TO_DEVICE);
+-- 
+2.16.1
