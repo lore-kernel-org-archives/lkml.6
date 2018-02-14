@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030452AbeBNNrj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 08:47:39 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:44877 "EHLO
+        id S1030493AbeBNNsD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 08:48:03 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:37143 "EHLO
         mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030393AbeBNNnv (ORCPT
+        with ESMTP id S1030301AbeBNNnt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 08:43:51 -0500
-X-Google-Smtp-Source: AH8x2251L/CypzSl7mO3hCQ0gAqRsHF2NdET8v6qjiZisiu28WHMIc82PXk3dFnoFIlNFQOzupYvyw==
+        Wed, 14 Feb 2018 08:43:49 -0500
+X-Google-Smtp-Source: AH8x225YdeTXcfobMSy4Y3WROwJy5m0fM0n1wNOXHUM0OOp3dt7Wvy6P0L/79o7TvJpP1QJbfQ94rg==
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/8] clk: call the clock init() callback before any other ops callback
-Date: Wed, 14 Feb 2018 14:43:37 +0100
-Message-Id: <20180214134340.17242-6-jbrunet@baylibre.com>
+Subject: [PATCH v2 3/8] clk: fix determine rate error with pass-through clock
+Date: Wed, 14 Feb 2018 14:43:35 +0100
+Message-Id: <20180214134340.17242-4-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180214134340.17242-1-jbrunet@baylibre.com>
 References: <20180214134340.17242-1-jbrunet@baylibre.com>
@@ -23,65 +23,45 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some clocks may need to initialize things, whatever it is, before
-being able to properly operate. Move the .init() call before any
-other callback, such recalc_rate() or get_phase(), so the clock
-is properly setup before being used.
+If we try to determine the rate of a pass-through clock (a clock which
+does not implement .round_rate() nor .determine_rate()),
+clk_core_round_rate_nolock() will directly forward the call to the
+parent clock. In the particular case where the pass-through actually
+does not have a parent, clk_core_round_rate_nolock() will directly
+return 0 with the requested rate still set to the initial request
+structure. This is interpreted as if the rate could be exactly achieved
+while it actually cannot be adjusted.
 
+This become a real problem when this particular pass-through clock is
+the parent of a mux with the flag CLK_SET_RATE_PARENT set. The
+pass-through clock will always report an exact match, get picked and
+finally error when the rate is actually getting set.
+
+This is fixed by setting the rate inside the req to 0 when core is NULL
+in clk_core_round_rate_nolock() (same as in __clk_determine_rate() when
+hw is NULL)
+
+Fixes: 0f6cc2b8e94d ("clk: rework calls to round and determine rate callbacks")
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
-
-Stephen, Mike,
-
-This change is addressing a problem I have with clock driver I'm working
-on. This driver needs the .init() callback to run first is order to answer
-correctly .get_phase(). It does not address an existing issue, not one
-that I'm aware of at least. This is why I did not put a Fixes tag.
-
-In any case, it makes sense to run init before running anything else.
-
- drivers/clk/clk.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/clk/clk.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index cca05ea2c058..9d56be6ead39 100644
+index 0f686a9dac3e..a4b4e4d6df5e 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -2929,6 +2929,17 @@ static int __clk_core_init(struct clk_core *core)
- 		core->orphan = true;
- 	}
+@@ -1125,8 +1125,10 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
+ {
+ 	lockdep_assert_held(&prepare_lock);
  
-+	/*
-+	 * optional platform-specific magic
-+	 *
-+	 * The .init callback is not used by any of the basic clock types, but
-+	 * exists for weird hardware that must perform initialization magic.
-+	 * Please consider other ways of solving initialization problems before
-+	 * using this callback, as its use is discouraged.
-+	 */
-+	if (core->ops->init)
-+		core->ops->init(core->hw);
-+
- 	/*
- 	 * Set clk's accuracy.  The preferred method is to use
- 	 * .recalc_accuracy. For simple clocks and lazy developers the default
-@@ -3006,17 +3017,6 @@ static int __clk_core_init(struct clk_core *core)
- 		}
- 	}
+-	if (!core)
++	if (!core) {
++		req->rate = 0;
+ 		return 0;
++	}
  
--	/*
--	 * optional platform-specific magic
--	 *
--	 * The .init callback is not used by any of the basic clock types, but
--	 * exists for weird hardware that must perform initialization magic.
--	 * Please consider other ways of solving initialization problems before
--	 * using this callback, as its use is discouraged.
--	 */
--	if (core->ops->init)
--		core->ops->init(core->hw);
--
- 	kref_init(&core->ref);
- out:
- 	clk_pm_runtime_put(core);
+ 	clk_core_init_rate_req(core, req);
+ 
 -- 
 2.14.3
