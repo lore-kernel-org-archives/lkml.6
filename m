@@ -1,115 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032935AbeBNQt5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 11:49:57 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55960 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1032861AbeBNQt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:49:56 -0500
-From: Steve Grubb <sgrubb@redhat.com>
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Paul Moore <paul@paul-moore.com>, Kees Cook <keescook@chromium.org>
-Subject: Re: [RFC PATCH ghak21 0/4] audit: address ANOM_LINK excess records
-Date: Wed, 14 Feb 2018 11:49:54 -0500
-Message-ID: <2183890.x51U8tdCGl@x2>
-Organization: Red Hat
-In-Reply-To: <cover.1518603831.git.rgb@redhat.com>
-References: <cover.1518603831.git.rgb@redhat.com>
+        id S1032949AbeBNQuQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 11:50:16 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:60081 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032744AbeBNQuO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 11:50:14 -0500
+Subject: Re: [PATCH 1/2] mmc: bcm2835: reset host on timeout
+To: =?UTF-8?Q?Michal_Such=c3=a1nek?= <msuchanek@suse.de>,
+        Phil Elwell <phil@raspberrypi.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, Eric Anholt <eric@anholt.net>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Julia Lawall <Julia.Lawall@lip6.fr>, linux-mmc@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
+ <1fbf0d77-cb53-f0fa-b810-e9954138d907@i2se.com>
+ <20180214163649.3a0c9476@kitsune.suse.cz>
+ <20180214165827.386b9bb1@kitsune.suse.cz>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <ecf8dd61-ab16-b298-d197-ea93ecf5982b@i2se.com>
+Date: Wed, 14 Feb 2018 17:49:31 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180214165827.386b9bb1@kitsune.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
+X-Provags-ID: V03:K0:1SNnkUfpNy8gwEkul6piSPrwR/y/AhX/jwLNNnDhzXqGDbSKZPP
+ BJckO18oQwNr5vRoybcgdQCcLz0xtUHawvZdIiCPjfW6MtpIYVWktvX/skRPLCqUeWJnx9R
+ oTX/KnOMfoBG9TTCQjkpGKpQMGqUr5bSXImUhuo82/kOXCFXdk/pcPJRYEyzfpHs2XZg3/c
+ QoQ8zKJbj6WcZbdxytH6A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:iCL04rxiy80=:0cKaYax9pSqcoOHFCFtjNh
+ KKJbDTlGumCuTnAl50A+MEAvuPOTP2R47QDPORRwom3s3wf5rgef7ReD09OsD/x2L9rvzHEdg
+ IoYZlxR87KY6jDz+fwIvBsal77hx+YaF7qgv2hfMxJc1wP4w55PduIoZv4BM9h0D+b0T6DbS8
+ kFg1k5BWejGGWUPFF1z4cuHD5FXbRvZxp5h0BkQfztlmAYwNoqN46ao863AN3+j5RaBD1or2U
+ 5GxCNAh3THGcVkTM/WD1OyViFYFd3MQK5lQ+ZnCphOpxsvZluFLJxh63h09wOWg14xHZpPJj1
+ Jd3IRUTIHp39pNa1n52eL5NSviPQgCUZyA/fc5z8pFjYwkAmtYXVpYZPNiNUl1rDTJkevHvXF
+ 0hoIWgkhj3zLoBoxpubpJC0TCv/aEzONQH+yH1/fzxS8SHlcSXbeU/5jzxlXeEKI+JKun6+np
+ 7Fs4qqtzNM4Gm47nzliX+cirOLv71uL7SLEOhWaM1dqNHH7sTZ9qcBCLgboyhy2jMNqOOGW8b
+ ysGPAW5QoYyr6oMFap+R0u9boAuXt2UZFJeint0zdH+tML6B/fHVrnwQSkViU7KMHjzqv2uC/
+ bZZoVt4dbBDI1kt7mu1K4bx5x7L5ZMHwwoOsnqQTd/TfAtvXGELALMJc6dmXA13IvRFomXV4I
+ nE2s5E4msTzX0Y3gK8p9JQL3Hkun7Ylovzy/pEEBooL75htfGi8okndVRC7QXGIvD0kB2nd9Y
+ t7NMZnH++jVm7993qz7fB42syZ2BaARqT7IUd2ZXvgNAH8FxqtmNUwqLPCo=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, February 14, 2018 11:18:20 AM EST Richard Guy Briggs wrote:
-> Audit link denied events were being unexpectedly produced in a disjoint
-> way when audit was disabled, and when they were expected, there were
-> duplicate PATH records.  This patchset addresses both issues for
-> symlinks and hardlinks.
-> 
-> This was introduced with
-> 	commit b24a30a7305418ff138ff51776fc555ec57c011a
-> 	("audit: fix event coverage of AUDIT_ANOM_LINK")
-> 	commit a51d9eaa41866ab6b4b6ecad7b621f8b66ece0dc
-> 	("fs: add link restriction audit reporting")
-> 
-> Here are the resulting events:
+Hi Michal,
 
-Have these been tested with ausearch-test?
+[add Phil]
 
-> symlink:
-> type=PROCTITLE msg=audit(02/14/2018 04:40:21.635:238) : proctitle=cat
-> my-passwd type=PATH msg=audit(02/14/2018 04:40:21.635:238) : item=1
-> name=/tmp/my-passwd inode=17618 dev=00:27 mode=link,777 ouid=rgb ogid=rgb
-> rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=NORMAL
-> cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 type=PATH msg=audit(02/14/2018
-> 04:40:21.635:238) : item=0 name=/tmp inode=13446 dev=00:27
-> mode=dir,sticky,777 ouid=root ogid=root rdev=00:00
-> obj=system_u:object_r:tmp_t:s0 nametype=PARENT cap_fp=none cap_fi=none
-> cap_fe=0 cap_fver=0 type=CWD msg=audit(02/14/2018 04:40:21.635:238) :
-> cwd=/tmp
-> type=SYSCALL msg=audit(02/14/2018 04:40:21.635:238) : arch=x86_64
-> syscall=openat success=no exit=EACCES(Permission denied) a0=0xffffff9c
-> a1=0x7ffc6c1acdda a2=O_RDONLY a3=0x0 items=2 ppid=549 pid=606 auid=root
-> uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root
-> fsgid=root tty=ttyS0 ses=1 comm= cat exe=/usr/bin/cat
-> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=(null)
-> type=ANOM_LINK msg=audit(02/14/2018 04:40:21.635:238) : op=follow_link
-> ppid=549 pid=606 auid=root uid=root gid=root euid=root suid=root
-> fsuid=root egid=roo t sgid=root fsgid=root tty=ttyS0 ses=1 comm=cat
-> exe=/usr/bin/cat
-> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 res=no
+Am 14.02.2018 um 17:13 schrieb Michal Suchánek:
+> On Wed, 14 Feb 2018 16:36:49 +0100
+> Michal Suchánek <msuchanek@suse.de> wrote:
+>
+>> On Wed, 14 Feb 2018 15:58:31 +0100
+>> Stefan Wahren <stefan.wahren@i2se.com> wrote:
+>>
+>>> Hi Michal,
+>>>
+>>> Am 14.02.2018 um 15:38 schrieb Michal Suchanek:  
+>>>> The bcm2835 mmc host tends to lock up for unknown reason so reset
+>>>> it on timeout. The upper mmc block layer tries retransimitting
+>>>> with single blocks which tends to work out after a long wait.
+>>>>
+>>>> This is better than giving up and leaving the machine broken for
+>>>> no obvious reason.    
+>>> could you please provide more information about this issue (affected
+>>> hardware, kernel config, version, dmesg, reproducible scenario)?
+>>>   
+> It tends to reproduce when upgrading a few packages with zypper and
+> otherwise at random during system operation. It seems that for my card
+> it worsens with age to some degree so perhaps it depends on the
+> fragmentation of the internal card flash.
+>
+> Attaching dmesg and kernel config.
 
-This record duplicates the SYSCALL event except for the op field. I would 
-suggest that is the only field needed.
+do you noticed this issue before 4.15-rc4?
 
-> ----
-> hardlink:
-> type=PROCTITLE msg=audit(02/14/2018 04:40:25.373:239) : proctitle=ln test
-> test-ln type=PATH msg=audit(02/14/2018 04:40:25.373:239) : item=1
-> name=/tmp inode=13446 dev=00:27 mode=dir,sticky,777 ouid=root ogid=root
-> rdev=00:00 obj=system_u:object_r:tmp_t:s0 nametype=PARENT cap_fp=none
-> cap_fi=none cap_fe=0 cap_fver=0 type=PATH msg=audit(02/14/2018
-> 04:40:25.373:239) : item=0 name=test inode=17619 dev=00:27 mode=file,700
-> ouid=root ogid=root rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0
-> nametype=NORMAL cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 type=CWD
-> msg=audit(02/14/2018 04:40:25.373:239) : cwd=/tmp
-> type=SYSCALL msg=audit(02/14/2018 04:40:25.373:239) : arch=x86_64
-> syscall=linkat success=no exit=EPERM(Operation not permitted)
-> a0=0xffffff9c a1=0x7fffe6c3f628 a2=0xffffff9c a3=0x7fffe6c3f62d items=2
-> ppid=578 pid=607 auid=rgb uid=rgb gid=rgb euid=rgb suid=rgb fsuid=rgb
-> egid=rgb sgid=rgb fsgid=rgb tty=pts0 ses=3 comm=ln exe=/usr/bin/ln
-> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=(null)
-> type=ANOM_LINK msg=audit(02/14/2018 04:40:25.373:239) : op=linkat ppid=578
-> pid=607 auid=rgb uid=rgb gid=rgb euid=rgb suid=rgb fsuid=rgb egid=rgb
-> sgid=rgb fsgid=rgb tty=pts0 ses=3 comm=ln exe=/usr/bin/ln
-> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 res=no
-> 
-> The remaining problem is how to address this when syscall logging is
-> disabled since it needs a parent path record and/or a CWD record to
-> complete it.  It could also use a proctitle record too.  In fact, it
-> looks like we need a way to have multiple auxiliary records to support
-> an arbitrary record.  Comments please.
+Could you please test with 4.15 final again?
 
-Perhaps this can only be emitted correctly with SYSCALL auditing enabled. 
-Otherwise, the event should stand completely on its own without syscall and 
-path records. The information from them can be added, but it risks hitting 
-the record size limit.
+What kind of SD card (name) triggers the issue?
 
--Steve
+Thanks Stefan
 
-> See: https://github.com/linux-audit/audit-kernel/issues/21
-> See also: https://github.com/linux-audit/audit-kernel/issues/51
-> 
-> Richard Guy Briggs (4):
->   audit: make ANOM_LINK obey audit_enabled and audit_dummy_context
->   audit: link denied should not directly generate PATH record
->   audit: add refused symlink to audit_names
->   audit: add parent of refused symlink to audit_names
-> 
->  fs/namei.c     | 10 ++++++++++
->  kernel/audit.c | 13 ++-----------
->  2 files changed, 12 insertions(+), 11 deletions(-)
+>
+> Thanks
+>
+> Michal
