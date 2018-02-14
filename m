@@ -1,87 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754353AbeBNIhF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 03:37:05 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53314 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750947AbeBNIhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 03:37:03 -0500
-Subject: Re: [PATCH 1/2] vfio: platform: Fix reset module leak in error path
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <1518539815-13774-1-git-send-email-geert+renesas@glider.be>
- <1518539815-13774-2-git-send-email-geert+renesas@glider.be>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        kvm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <2fe86be6-a3e2-9bd6-1d72-63cf0fe3a731@redhat.com>
-Date: Wed, 14 Feb 2018 09:36:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S1754590AbeBNIiH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 03:38:07 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:54293 "EHLO
+        terminus.zytor.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751427AbeBNIiF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 03:38:05 -0500
+Date: Wed, 14 Feb 2018 00:37:24 -0800
+From: "tip-bot for Gustavo A. R. Silva" <tipbot@zytor.com>
+Message-ID: <tip-0bfa9f1c5d3d290461f554520b8f24316ec971e0@git.kernel.org>
+Cc: hpa@zytor.com, tglx@linutronix.de, garsilva@embeddedor.com,
+        linux-kernel@vger.kernel.org, bp@alien8.de,
+        torvalds@linux-foundation.org, mingo@kernel.org, peterz@infradead.org
+Reply-To: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        bp@alien8.de, garsilva@embeddedor.com, hpa@zytor.com,
+        tglx@linutronix.de, peterz@infradead.org, mingo@kernel.org
+In-Reply-To: <20180213192208.GA26414@embeddedor.com>
+References: <20180213192208.GA26414@embeddedor.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/cpu: Change type of x86_cache_size variable to
+ unsigned int
+Git-Commit-ID: 0bfa9f1c5d3d290461f554520b8f24316ec971e0
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <1518539815-13774-2-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Commit-ID:  0bfa9f1c5d3d290461f554520b8f24316ec971e0
+Gitweb:     https://git.kernel.org/tip/0bfa9f1c5d3d290461f554520b8f24316ec971e0
+Author:     Gustavo A. R. Silva <garsilva@embeddedor.com>
+AuthorDate: Tue, 13 Feb 2018 13:22:08 -0600
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 14 Feb 2018 09:14:44 +0100
 
-On 13/02/18 17:36, Geert Uytterhoeven wrote:
-> If the IOMMU group setup fails, the reset module is not released.
-> 
-> Fixes: b5add544d677d363 ("vfio, platform: make reset driver a requirement by default")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/vfio/platform/vfio_platform_common.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
-> index 35469af87f88678e..b60bb5326668498c 100644
-> --- a/drivers/vfio/platform/vfio_platform_common.c
-> +++ b/drivers/vfio/platform/vfio_platform_common.c
-> @@ -680,18 +680,23 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
+x86/cpu: Change type of x86_cache_size variable to unsigned int
 
-Thanks for fixing this.
+Currently, x86_cache_size is of type int, which makes no sense as we
+will never have a valid cache size equal or less than 0. So instead of
+initializing this variable to -1, it can perfectly be initialized to 0
+and use it as an unsigned variable instead.
 
-If I am not wrong we also leak the reset_module if
-vfio_platform_get_reset() fails to find the reset function (of_reset ==
-NULL), in which case we should do the module_put() in
-vfio_platform_get_reset().
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Addresses-Coverity-ID: 1464429
+Link: http://lkml.kernel.org/r/20180213192208.GA26414@embeddedor.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/processor.h      | 2 +-
+ arch/x86/kernel/cpu/common.c          | 2 +-
+ arch/x86/kernel/cpu/microcode/intel.c | 2 +-
+ arch/x86/kernel/cpu/proc.c            | 4 ++--
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-Thanks
-
-Eric
->  	group = vfio_iommu_group_get(dev);
->  	if (!group) {
->  		pr_err("VFIO: No IOMMU group for device %s\n", vdev->name);
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto put_reset;
->  	}
->  
->  	ret = vfio_add_group_dev(dev, &vfio_platform_ops, vdev);
-> -	if (ret) {
-> -		vfio_iommu_group_put(group, dev);
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		goto put_iommu;
->  
->  	mutex_init(&vdev->igate);
->  
->  	return 0;
-> +
-> +put_iommu:
-> +	vfio_iommu_group_put(group, dev);
-> +put_reset:
-> +	vfio_platform_put_reset(vdev);
-> +	return ret;
->  }
->  EXPORT_SYMBOL_GPL(vfio_platform_probe_common);
->  
-> 
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index b7c8583..44c2c4e 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -109,7 +109,7 @@ struct cpuinfo_x86 {
+ 	char			x86_vendor_id[16];
+ 	char			x86_model_id[64];
+ 	/* in KB - valid for CPUS which support this call: */
+-	int			x86_cache_size;
++	unsigned int		x86_cache_size;
+ 	int			x86_cache_alignment;	/* In bytes */
+ 	/* Cache QoS architectural values: */
+ 	int			x86_cache_max_rmid;	/* max index */
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index a7d8df6..824aee0 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1184,7 +1184,7 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 	int i;
+ 
+ 	c->loops_per_jiffy = loops_per_jiffy;
+-	c->x86_cache_size = -1;
++	c->x86_cache_size = 0;
+ 	c->x86_vendor = X86_VENDOR_UNKNOWN;
+ 	c->x86_model = c->x86_stepping = 0;	/* So far unknown... */
+ 	c->x86_vendor_id[0] = '\0'; /* Unset */
+diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+index b94279b..a15db2b 100644
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -982,7 +982,7 @@ static struct microcode_ops microcode_intel_ops = {
+ 
+ static int __init calc_llc_size_per_core(struct cpuinfo_x86 *c)
+ {
+-	u64 llc_size = c->x86_cache_size * 1024;
++	u64 llc_size = c->x86_cache_size * 1024ULL;
+ 
+ 	do_div(llc_size, c->x86_max_cores);
+ 
+diff --git a/arch/x86/kernel/cpu/proc.c b/arch/x86/kernel/cpu/proc.c
+index ee4cc38..2c8522a 100644
+--- a/arch/x86/kernel/cpu/proc.c
++++ b/arch/x86/kernel/cpu/proc.c
+@@ -91,8 +91,8 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+ 	}
+ 
+ 	/* Cache size */
+-	if (c->x86_cache_size >= 0)
+-		seq_printf(m, "cache size\t: %d KB\n", c->x86_cache_size);
++	if (c->x86_cache_size)
++		seq_printf(m, "cache size\t: %u KB\n", c->x86_cache_size);
+ 
+ 	show_cpuinfo_core(m, c, cpu);
+ 	show_cpuinfo_misc(m, c);
