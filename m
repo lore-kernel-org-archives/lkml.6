@@ -1,77 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031749AbeBNPrj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 10:47:39 -0500
-Received: from mga02.intel.com ([134.134.136.20]:23559 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031625AbeBNPri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:47:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,513,1511856000";
-   d="scan'208";a="17853102"
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] irqdomain: Re-use DEFINE_SHOW_ATTRIBUTE() macro
-Date: Wed, 14 Feb 2018 17:47:35 +0200
-Message-Id: <20180214154735.55233-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.15.1
+        id S1031765AbeBNPrr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 10:47:47 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:41263 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031625AbeBNPrn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 10:47:43 -0500
+X-Google-Smtp-Source: AH8x225DJW6RWUKnUawpEuRoeXfPDmKx2jwsLwHPUnevYfKk/gr2Yp7IFEOgozCJhSVziJHLr1UejA==
+From: Jagan Teki <jagannadh.teki@gmail.com>
+X-Google-Original-From: Jagan Teki <jagan@amarulasolutions.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH] ARM: dts: rockchip: Add eMMC node for rk3288-vyasa
+Date: Wed, 14 Feb 2018 21:17:31 +0530
+Message-Id: <1518623251-21562-1-git-send-email-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-...instead of open coding file operations followed by custom ->open()
-callbacks per each attribute.
+RK3288 Vyasa has eMMC, add dts node to support it.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- kernel/irq/irqdomain.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
+ arch/arm/boot/dts/rk3288-vyasa.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index e6a9c36470ee..82b8b18ee1eb 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -1726,25 +1726,14 @@ static int irq_domain_debug_show(struct seq_file *m, void *p)
- 	irq_domain_debug_show_one(m, d, 0);
- 	return 0;
- }
--
--static int irq_domain_debug_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, irq_domain_debug_show, inode->i_private);
--}
--
--static const struct file_operations dfs_domain_ops = {
--	.open		= irq_domain_debug_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(irq_domain_debug);
+diff --git a/arch/arm/boot/dts/rk3288-vyasa.dts b/arch/arm/boot/dts/rk3288-vyasa.dts
+index 9842a00..14c896bf 100644
+--- a/arch/arm/boot/dts/rk3288-vyasa.dts
++++ b/arch/arm/boot/dts/rk3288-vyasa.dts
+@@ -155,6 +155,17 @@
+ 	cpu0-supply = <&vdd_cpu>;
+ };
  
- static void debugfs_add_domain_dir(struct irq_domain *d)
- {
- 	if (!d->name || !domain_dir || d->debugfs_file)
- 		return;
- 	d->debugfs_file = debugfs_create_file(d->name, 0444, domain_dir, d,
--					      &dfs_domain_ops);
-+					      &irq_domain_debug_fops);
- }
- 
- static void debugfs_remove_domain_dir(struct irq_domain *d)
-@@ -1760,7 +1749,8 @@ void __init irq_domain_debugfs_init(struct dentry *root)
- 	if (!domain_dir)
- 		return;
- 
--	debugfs_create_file("default", 0444, domain_dir, NULL, &dfs_domain_ops);
-+	debugfs_create_file("default", 0444, domain_dir, NULL,
-+			    &irq_domain_debug_fops);
- 	mutex_lock(&irq_domain_mutex);
- 	list_for_each_entry(d, &irq_domain_list, link)
- 		debugfs_add_domain_dir(d);
++&emmc {
++	bus-width = <8>;
++	cap-mmc-highspeed;
++	disable-wp;
++	non-removable;
++	pinctrl-names = "default";
++	pinctrl-0 = <&emmc_clk &emmc_cmd &emmc_pwr &emmc_bus8>;
++	vmmc-supply = <&vcc_io>;
++	status = "okay";
++};
++
+ &gmac {
+ 	assigned-clocks = <&cru SCLK_MAC>;
+ 	assigned-clock-parents = <&ext_gmac>;
 -- 
-2.15.1
+2.7.4
