@@ -1,154 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031520AbeBNVgW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 16:36:22 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:53415 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030501AbeBNVgV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 16:36:21 -0500
+        id S1031546AbeBNVgg convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 16:36:36 -0500
+Received: from mga14.intel.com ([192.55.52.115]:58793 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030501AbeBNVgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 16:36:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,514,1511856000";
+   d="scan'208";a="17700445"
+From: "Keller, Jacob E" <jacob.e.keller@intel.com>
+To: "Michael, Alice" <alice.michael@intel.com>,
+        Guenter Roeck <linux@roeck-us.net>, James Hogan <jhogan@kernel.org>
+CC: Ralf Baechle <ralf@linux-mips.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
+        Shannon Nelson <shannon.nelson@oracle.com>
+Subject: RE: [RFC PATCH] MIPS: Provide cmpxchg64 for 32-bit builds
+Thread-Topic: [RFC PATCH] MIPS: Provide cmpxchg64 for 32-bit builds
+Thread-Index: AQHTpFslw+crNM24eUSynxqRPTqrYKOh97eAgAJsOTCAAArEUA==
+Date: Wed, 14 Feb 2018 21:36:33 +0000
+Message-ID: <02874ECE860811409154E81DA85FBB5882CDAA1C@ORSMSX115.amr.corp.intel.com>
+References: <1518475021-3337-1-git-send-email-linux@roeck-us.net>
+ <20180212234201.GB4290@saruman> <20180212235655.GC5199@roeck-us.net>
+ <CD14C679C9B9B1409B02829D9B523C297C4D61@ORSMSX101.amr.corp.intel.com>
+In-Reply-To: <CD14C679C9B9B1409B02829D9B523C297C4D61@ORSMSX101.amr.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYTVjMjhjNTYtNmM5Yi00OTY2LTk5ODAtNTUwN2U5OWE4Y2QxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IjBOeFJXTHdRV0ZcLzVsN0NXNkhEQkZ3dnVqU2F1VW9IcVM1ZmJLb0ZROU40PSJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Wed, 14 Feb 2018 22:36:19 +0100
-From: Stefan Agner <stefan@agner.ch>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Han Xu <han.xu@nxp.com>, boris.brezillon@free-electrons.com,
-        marek.vasut@gmail.com, richard@nod.at, dwmw2@infradead.org,
-        cyrille.pitchen@wedev4u.fr, max.oss.09@gmail.com,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mtd: nand: gpmi: add support for specific ECC
- strength
-In-Reply-To: <20180214200537.2c043a21@bbrezillon>
-References: <20180206174021.5947-1-stefan@agner.ch>
- <20180206174021.5947-2-stefan@agner.ch>
- <2f28681f-c261-31f7-9f93-602f50109343@nxp.com>
- <20180214200537.2c043a21@bbrezillon>
-Message-ID: <27a3becf329c1aa8ce8b3cc99f5a4de7@agner.ch>
-User-Agent: Roundcube Webmail/1.3.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.02.2018 20:05, Boris Brezillon wrote:
-> On Wed, 14 Feb 2018 16:28:36 +0000
-> Han Xu <han.xu@nxp.com> wrote:
+> -----Original Message-----
+> From: Michael, Alice
+> Sent: Wednesday, February 14, 2018 1:03 PM
+> To: Guenter Roeck <linux@roeck-us.net>; James Hogan <jhogan@kernel.org>;
+> Keller, Jacob E <jacob.e.keller@intel.com>
+> Cc: Ralf Baechle <ralf@linux-mips.org>; linux-mips@linux-mips.org; linux-
+> kernel@vger.kernel.org; Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; Shannon
+> Nelson <shannon.nelson@oracle.com>
+> Subject: RE: [RFC PATCH] MIPS: Provide cmpxchg64 for 32-bit builds
 > 
->> On 02/06/2018 11:40 AM, Stefan Agner wrote:
->> > Add support for specified ECC strength/size using device tree
->> > properties nand-ecc-strength/nand-ecc-step-size.
->> >
->> > Signed-off-by: Stefan Agner <stefan@agner.ch>
->> > ---
->> >   .../devicetree/bindings/mtd/gpmi-nand.txt          |  5 ++++
->> >   drivers/mtd/nand/gpmi-nand/gpmi-nand.c             | 29 ++++++++++++++--------
->> >   2 files changed, 24 insertions(+), 10 deletions(-)
->> >
->> > diff --git a/Documentation/devicetree/bindings/mtd/gpmi-nand.txt b/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
->> > index eb2d9919d063..ea6e9b735160 100644
->> > --- a/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
->> > +++ b/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
->> > @@ -46,6 +46,11 @@ Optional properties:
->> >                          partitions written from Linux with this feature
->> >                          turned on may not be accessible by the BootROM
->> >                          code.
->> > +  - nand-ecc-strength: integer representing the number of bits to correct
->> > +                       per ECC step. Needs to be a multiple of 2.
->> > +  - nand-ecc-step-size: integer representing the number of data bytes
->> > +                       that are covered by a single ECC step. The driver
->> > +                       supports 512 and 1024.
->> >
->> >   The device tree may optionally contain sub-nodes describing partitions of the
->> >   address space. See partition.txt for more detail.
->> > diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
->> > index 50f8d4a1b983..8cb378358e11 100644
->> > --- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
->> > +++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
->> > @@ -198,17 +198,15 @@ static inline bool gpmi_check_ecc(struct gpmi_nand_data *this)
->> >    *
->> >    * We may have available oob space in this case.
->> >    */
->> > -static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
->> > +static int set_geometry_by_ecc_info(struct gpmi_nand_data *this,
->> > +			unsigned int ecc_strength, unsigned int ecc_step)
->> >   {
->> >   	struct bch_geometry *geo = &this->bch_geometry;
->> >   	struct nand_chip *chip = &this->nand;
->> >   	struct mtd_info *mtd = nand_to_mtd(chip);
->> >   	unsigned int block_mark_bit_offset;
->> >
->> > -	if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
->> > -		return -EINVAL;
->> > -
->> > -	switch (chip->ecc_step_ds) {
->> > +	switch (ecc_step) {
->> >   	case SZ_512:
->> >   		geo->gf_len = 13;
->> >   		break;
->> > @@ -221,8 +219,8 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
->> >   			chip->ecc_strength_ds, chip->ecc_step_ds);
->> >   		return -EINVAL;
->> >   	}
->> > -	geo->ecc_chunk_size = chip->ecc_step_ds;
->> > -	geo->ecc_strength = round_up(chip->ecc_strength_ds, 2);
->> > +	geo->ecc_chunk_size = ecc_step;
->> > +	geo->ecc_strength = round_up(ecc_strength, 2);
->> >   	if (!gpmi_check_ecc(this))
->> >   		return -EINVAL;
->> >
->> > @@ -230,7 +228,7 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
->> >   	if (geo->ecc_chunk_size < mtd->oobsize) {
->> >   		dev_err(this->dev,
->> >   			"unsupported nand chip. ecc size: %d, oob size : %d\n",
->> > -			chip->ecc_step_ds, mtd->oobsize);
->> > +			ecc_step, mtd->oobsize);
->> >   		return -EINVAL;
->> >   	}
->> >
->> > @@ -423,9 +421,20 @@ static int legacy_set_geometry(struct gpmi_nand_data *this)
->> >
->> >   int common_nfc_set_geometry(struct gpmi_nand_data *this)
->> >   {
->> > +	struct nand_chip *chip = &this->nand;
->> > +
->> > +	if (chip->ecc.strength > 0 && chip->ecc.size > 0)
->> > +		return set_geometry_by_ecc_info(this, chip->ecc.strength,
->> > +						chip->ecc.size);
->> > +
->>
->> I was wondering how to keep, let's say u-boot, and kernel ecc setting
->> aligned, if users can specify the strength and step_ds in DT? Did u-boot
->> enable to get these parameters from DT?
+> As has previously been said, we're going to be removing the need for cmpxchg64.
+> But it takes a little bit of time and work to do so.  I'm adding the dev that is taking
+> care of the work back onto this email thread as well so he can see any concerns with
+> it.
 > 
-> Both u-boot and Linux have to support using strength/step information
-> passed through the DT before you can start patching dts files. Anyway,
-> users will have to change their DT (add the nand-ecc-strength/step-size
-> properties) to use this feature, so they should quickly notice that
-> something is going wrong and update their bootloader or drop those
-> nand-ecc-xxx props.
+> Alice
 > 
+> -----Original Message-----
+> From: Guenter Roeck [mailto:groeck7@gmail.com] On Behalf Of Guenter Roeck
+> Sent: Monday, February 12, 2018 3:57 PM
+> To: James Hogan <jhogan@kernel.org>
+> Cc: Ralf Baechle <ralf@linux-mips.org>; linux-mips@linux-mips.org; linux-
+> kernel@vger.kernel.org; Michael, Alice <alice.michael@intel.com>; Kirsher, Jeffrey T
+> <jeffrey.t.kirsher@intel.com>; Shannon Nelson <shannon.nelson@oracle.com>
+> Subject: Re: [RFC PATCH] MIPS: Provide cmpxchg64 for 32-bit builds
+> 
+> On Mon, Feb 12, 2018 at 11:42:02PM +0000, James Hogan wrote:
+> > Hi Guenter,
+> >
+> > On Mon, Feb 12, 2018 at 02:37:01PM -0800, Guenter Roeck wrote:
+> > > Since commit 60f481b970386 ("i40e: change flags to use 64 bits"),
+> > > the i40e driver uses cmpxchg64(). This causes mips:allmodconfig
+> > > builds to fail with
+> > >
+> > > drivers/net/ethernet/intel/i40e/i40e_ethtool.c:
+> > > 	In function 'i40e_set_priv_flags':
+> > > drivers/net/ethernet/intel/i40e/i40e_ethtool.c:4443:2: error:
+> > > 	implicit declaration of function 'cmpxchg64'
+> > >
+> > > Implement a poor-mans-version of cmpxchg64() to fix the problem for
+> > > 32-bit mips builds. The code is derived from sparc32, but only uses
+> > > a single spinlock.
+> >
+> > Will this be implemened for all 32-bit architectures which are
+> > currently missing cmpxchg64()?
+> >
+> No idea.
+> 
+> > If so, any particular reason not to do it in generic code?
+> >
+> Again, no idea. When the problem was previously seen on sparc32, it was
+> implemented there.
+> 
+> > If not then I think that driver should be fixed to either depend on
+> > some appropriate Kconfig symbol or to not use this API since it
+> > clearly isn't portable at the moment.
+> >
+> Good point.
+> 
+> > See also Shannon's comment about that specific driver:
+> > https://lkml.kernel.org/r/e7c934d7-e5f4-ee1b-0647-c31a98d9e944@oracle.
+> > com
+> >
+> 
+> Well, this was an RFC only. Feel free to ignore it.
+> 
+> FWIW, this is the second time that the call was introduced in the i40 driver.
+> After the first time the code was rewritten to avoid the problem, but now it came
+> back. Someone must really like it ;-). For my part, I may just blacklist the offending
+> driver in my builds; that is less than perfect, but much easier than having to deal with
+> the same problem over and over again. Guess I'll wait for a while and do just that if
+> the problem isn't fixed in a later RC.
+> 
+> Guenter
 
-Yes, the MTD stack has support for those properties also in U-Boot.
+Hi,
 
-But currently the GPMI NAND driver (mxs_nand) in U-Boot has no DT
-support.
+I've been working on re-writing some of the code so that the need for a compare-and-exchange in the i40e_set_priv_flags() is not necessary. This mostly involved moving many flags out into an atomic bitops field instead, it should be posted to IWL soon.
 
-But I do have a preliminary patch set for this. Will send it out soon.
-
---
-Stefan
-
-
->> >   	if ((of_property_read_bool(this->dev->of_node, "fsl,use-minimum-ecc"))
->> > -				|| legacy_set_geometry(this))
->> > -		return set_geometry_by_ecc_info(this);
->> > +				|| legacy_set_geometry(this)) {
->> > +		if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
->> > +			return -EINVAL;
->> > +
->> > +		return set_geometry_by_ecc_info(this, chip->ecc_strength_ds,
->> > +						chip->ecc_step_ds);
->> > +	}
->> >
->> >   	return 0;
->> >   }
+Thanks,
+Jake
