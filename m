@@ -1,85 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967197AbeBNKXQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 05:23:16 -0500
-Received: from www.zeus03.de ([194.117.254.33]:54212 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967071AbeBNKXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 05:23:14 -0500
-Date: Wed, 14 Feb 2018 11:23:11 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, Linux-sh list <linux-sh@vger.kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rob Herring <robh@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Rich Felker <dalias@libc.org>, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and
- cleanups
-Message-ID: <20180214102311.w7hfbnpfkecnjlkb@katana>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
- <20180207191152.kvqrugblst2cko3c@ninjato>
- <CAPDyKFoxp7p0atQTV=PoQ7Bwt0fOs2aEq1KJHPtrq+zA3eFYgw@mail.gmail.com>
+        id S967209AbeBNKXt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 05:23:49 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42070 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S967123AbeBNKXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 05:23:47 -0500
+Subject: Re: VMs freezing when host is running 4.14
+To: Josh Poimboeuf <jpoimboe@redhat.com>,
+        Marc Haber <mh+linux-kernel@zugschlus.de>
+Cc: =?UTF-8?B?546L6YeR5rWm?= <jinpuwang@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "KVM-ML (kvm@vger.kernel.org)" <kvm@vger.kernel.org>, x86@kernel.org
+References: <20171121161821.b6k3hdl3wgia5f5q@torres.zugschlus.de>
+ <20171122093945.5afa2di2g7qhf4eb@torres.zugschlus.de>
+ <CAD9gYJK7TOnfp+fnAyisYRQf--_TQv8J7h+kWH6KL98xNUH0bA@mail.gmail.com>
+ <20171201144358.7yffztjhylfxxytn@torres.zugschlus.de>
+ <20180108091025.2sup55jlpzbouo3d@torres.zugschlus.de>
+ <20180211133941.gayg52r3bqbtptvm@torres.zugschlus.de>
+ <20180214020445.ebu4fhnmogqehunb@treble>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <62aa6b81-5456-07dc-cf64-e46747d3a70d@redhat.com>
+Date: Wed, 14 Feb 2018 11:23:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="chnywmmjtoeycwvc"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFoxp7p0atQTV=PoQ7Bwt0fOs2aEq1KJHPtrq+zA3eFYgw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180214020445.ebu4fhnmogqehunb@treble>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 14/02/2018 03:04, Josh Poimboeuf wrote:
+> On Sun, Feb 11, 2018 at 02:39:41PM +0100, Marc Haber wrote:
+>> Hi,
+>>
+>> after in total nine weeks of bisecting, broken filesystems, service
+>> outages (thankfully on unportant systems), 4.15 seems to have fixed the
+>> issue. After going to 4.15, the crashes never happened again.
+>>
+>> They have, however, happened with each and every 4.14 release I tried,
+>> which I stopped doing with 4.14.15 on Jan 28.
+>>
+>> This means, for me, that the issue is fixed and that I have just wasted
+>> nine weeks of time.
+>>
+>> For you, this means that you have a crippling, data-eating issue in the
+>> current long-term releae kernel. I do sincerely hope that I never have
+>> to lay my eye on any 4.14 kernel and hope that no major distribution
+>> will release with this version.
+> 
+> I saw something similar today, also in kvm_async_pf_task_wait().  I had
+> -tip in the guest (based on 4.16.0-rc1) and Fedora
+> 4.14.16-300.fc27.x86_64 on the host.
 
---chnywmmjtoeycwvc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Josh/Marc,
 
+this is fixed by
 
-> You need to check again. :-)
+    commit 2a266f23550be997d783f27e704b9b40c4010292
+    Author: Haozhong Zhang <haozhong.zhang@intel.com>
+    Date:   Wed Jan 10 21:44:42 2018 +0800
 
-Seems like it. Sorry for the noise.
+    KVM MMU: check pending exception before injecting APF
+    
+    For example, when two APF's for page ready happen after one exit and
+    the first one becomes pending, the second one will result in #DF.
+    Instead, just handle the second page fault synchronously.
+    
+    Reported-by: Ross Zwisler <zwisler@gmail.com>
+    Message-ID: <CAOxpaSUBf8QoOZQ1p4KfUp0jq76OKfGY4Uxs-Gg8ngReD99xww@mail.gmail.com>
+    Reported-by: Alec Blayne <ab@tevsa.net>
+    Signed-off-by: Haozhong Zhang <haozhong.zhang@intel.com>
+    Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 
-> I am eager to apply those patches you already have reviewed (to
-> patch14), as those mostly seemed rather trivial and should be nice
-> cleanups.
->=20
-> Do you mind me going ahead, then you can continue and review/test the res=
-t?
+and it will be in 4.14.20.  Unfortunately I only heard about this issue
+last week.
 
-Yes, we can work incremently from there. I'll send patches if I discover
-something unexpected.
+Thanks,
 
-
---chnywmmjtoeycwvc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqEDgsACgkQFA3kzBSg
-KbaVOxAAnEIyy0lswAOLrIpsQ+2pdHoH9MoOE+lfqFoXg28YvNHF6YfWKA47gWoD
-lmklgXxahFD/Dz07hngX21PF0kujg01iUC78nBNdXeN+pm1NIdipUahohuDQgRGj
-Pac163PpS4CPjPLA7yRLz44pXg4LQsIratlR1O1Nnw8mRRFY7aRr42+r/1kBKdYY
-LRehZe+7FoFgYAws224BNPOzvOX5n8Hg194c5rLRPif3EV21XQlc9tygG8A4bW6g
-m86jriqDUEYeE1RCgqiRlyxDZqyLFqLzsAHXWrDLoDpFMgmnLAX7Uihi37N38mw7
-SGjmZOHQnD5vtblop+rINnt5eZn3oevvgmQogwB0HasjjtwjOxUlARyNPicxrir8
-SVt5A/fA+ix52owdXN+SH+D0T5biGJEO3vd6zWOxOiKLmmRp0vrBsGNHUyh/Mxeo
-q+1kQ2OnsSxkZmyg4cYXYh2cHe3fYQb5DCj4oomraVLSzb+txk0dXc/RGwRArGQB
-0W8sMIVWj1f46mQs/XYJkbyqQEe1CJQU+O6TNsS4We3vXyMQdBUSH6ow35ShcUlF
-84I5u/K/q4ALhaRbVsKfs0jg4M7HOvUnflLJJlzhZAiOD59yXlUWI2Ttmxls/VsS
-BIEIhEZ4bai8g9q4s1lr6AP4xcigtQJXytLhJIG+rrrUckuXrM8=
-=AECR
------END PGP SIGNATURE-----
-
---chnywmmjtoeycwvc--
+Paolo
