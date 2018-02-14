@@ -1,141 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162722AbeBNTKk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 14:10:40 -0500
-Received: from mga04.intel.com ([192.55.52.120]:10112 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162683AbeBNTKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 14:10:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,513,1511856000";
-   d="scan'208";a="30779932"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, me@tobin.cc,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 8/8] docs: kernel-doc: Don't mangle literal code blocks in comments
-In-Reply-To: <20180214184009.12657-9-corbet@lwn.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180214184009.12657-1-corbet@lwn.net> <20180214184009.12657-9-corbet@lwn.net>
-Date: Wed, 14 Feb 2018 21:10:31 +0200
-Message-ID: <87606zjsk8.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1162741AbeBNTLI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 14:11:08 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:35568 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162681AbeBNTLG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 14:11:06 -0500
+X-Google-Smtp-Source: AH8x226ErFMwaUBbQFn5P3Ejlu+oKe5CxLYZ2sWP7TxeaBOJak/aH5nucjx78mWI1rXkC576ltZywA==
+Message-ID: <1518635464.3674.2.camel@redhat.com>
+Subject: Re: [Nouveau] 4.16-rc1: UBSAN warning in
+ nouveau/nvkm/subdev/therm/base.c + oops in nvkm_therm_clkgate_fini
+From: Lyude Paul <lyude@redhat.com>
+To: Pierre Moreau <pmoreau@pmoreau.org>,
+        Ilia Mirkin <imirkin@alum.mit.edu>
+Cc: Meelis Roos <mroos@linux.ee>, nouveau <nouveau@lists.freedesktop.org>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel list <linux-kernel@vger.kernel.org>
+Date: Wed, 14 Feb 2018 14:11:04 -0500
+In-Reply-To: <20180214174125.b5bdowaadck3vf5n@pmoreau.org>
+References: <alpine.LRH.2.21.1802132200260.24929@math.ut.ee>
+         <alpine.LRH.2.21.1802141628110.25362@math.ut.ee>
+         <CAKb7Uvj3MKGzNNcrc=-JA5GN4jt9+TU7ZjWDZpccmYJLDo76WQ@mail.gmail.com>
+         <CAKb7UvhRt=25J5aOUZusdE51hh1JVc45aQ8OhCVeOJwzYvLOJw@mail.gmail.com>
+         <20180214174125.b5bdowaadck3vf5n@pmoreau.org>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Feb 2018, Jonathan Corbet <corbet@lwn.net> wrote:
-> It can be useful to put code snippets into kerneldoc comments; that can be
-> done with the "::" operator at the end of a line like this::
->
->    if (desperate)
->        run_in_circles();
->
-> The ".. code-block::" directive can also be used to this end.  kernel-doc
-> currently fails to understand these literal blocks and applies its normal
-> markup to them, which is then treated as literal by sphinx.  The result is
-> unsightly markup instead of a useful code snippet.
->
-> Apply a hack to the output code to recognize literal blocks and avoid
-> performing any special markup on them.  It's ugly, but that means it fits
-> in well with the rest of the script.
+Actually this was brought up to me already, there's a fix on the mailing list
+for this I reviewed a little while ago from nvidia that we should pull in:
 
-With emphasis on part (d) of the reviewer's statement of oversight,
+https://patchwork.freedesktop.org/patch/203205/
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+Would you guys mind confirming that this patch fixes your issues?
 
->
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-> ---
->  scripts/kernel-doc | 69 ++++++++++++++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 64 insertions(+), 5 deletions(-)
->
-> diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-> index fb8fbdb25036..cbe864e72a2f 100755
-> --- a/scripts/kernel-doc
-> +++ b/scripts/kernel-doc
-> @@ -748,14 +748,73 @@ sub output_blockhead_rst(%) {
->      }
->  }
->  
-> -sub output_highlight_rst {
-> -    my $contents = join "\n",@_;
-> -    my $line;
-> -
-> +#
-> +# Apply the RST highlights to a sub-block of text.
-> +#   
-> +sub highlight_block($) {
-> +    # The dohighlight kludge requires the text be called $contents
-> +    my $contents = shift;
->      eval $dohighlight;
->      die $@ if $@;
-> +    return $contents;
-> +}
->  
-> -    foreach $line (split "\n", $contents) {
-> +#
-> +# Regexes used only here.
-> +#
-> +my $sphinx_literal = '^[^.].*::$';
-> +my $sphinx_cblock = '^\.\.\ +code-block::';
-> +
-> +sub output_highlight_rst {
-> +    my $input = join "\n",@_;
-> +    my $output = "";
-> +    my $line;
-> +    my $in_literal = 0;
-> +    my $litprefix;
-> +    my $block = "";
-> +
-> +    foreach $line (split "\n",$input) {
-> +	#
-> +	# If we're in a literal block, see if we should drop out
-> +	# of it.  Otherwise pass the line straight through unmunged.
-> +	#
-> +	if ($in_literal) {
-> +	    if (! ($line =~ /^\s*$/)) {
-> +		#
-> +		# If this is the first non-blank line in a literal
-> +		# block we need to figure out what the proper indent is.
-> +		#
-> +		if ($litprefix eq "") {
-> +		    $line =~ /^(\s*)/;
-> +		    $litprefix = '^' . $1;
-> +		    $output .= $line . "\n";
-> +		} elsif (! ($line =~ /$litprefix/)) {
-> +		    $in_literal = 0;
-> +		} else {
-> +		    $output .= $line . "\n";
-> +		}
-> +	    } else {
-> +		$output .= $line . "\n";
-> +	    }
-> +	}
-> +	#
-> +	# Not in a literal block (or just dropped out)
-> +	#
-> +	if (! $in_literal) {
-> +	    $block .= $line . "\n";
-> +	    if (($line =~ /$sphinx_literal/) || ($line =~ /$sphinx_cblock/)) {
-> +		$in_literal = 1;
-> +		$litprefix = "";
-> +		$output .= highlight_block($block);
-> +		$block = ""
-> +	    }
-> +	}
-> +    }
-> +
-> +    if ($block) {
-> +	$output .= highlight_block($block);
-> +    }
-> +    foreach $line (split "\n", $output) {
->  	print $lineprefix . $line . "\n";
->      }
->  }
-
+On Wed, 2018-02-14 at 18:41 +0100, Pierre Moreau wrote:
+> On 2018-02-14 — 09:36, Ilia Mirkin wrote:
+> > On Wed, Feb 14, 2018 at 9:35 AM, Ilia Mirkin <imirkin@alum.mit.edu> wrote:
+> > > On Wed, Feb 14, 2018 at 9:29 AM, Meelis Roos <mroos@linux.ee> wrote:
+> > > > > This is 4.16-rc1+todays git on a lowly P4 with NV5, worked fine in
+> > > > > 4.15:
+> > > > 
+> > > > NV5 in another PC (secondary card in x86-64) made the systrem crash on
+> > > > boot, in nvkm_therm_clkgate_fini.
+> > > 
+> > > Mind booting with nouveau.debug=trace? That should hopefully tell us
+> > > more exactly which thing is dying. If you have a cross-compile/distcc
+> > > setup handy, a bisect may be even more useful.
+> > 
+> > Erm, sorry, nevermind. You even said it -- nvkm_therm_clkgate_fini is
+> > somehow mis-hooked up for NV5 now. A bisect result would still make
+> > the culprit a lot more obvious.
+> 
+> CC’ing Lyude Paul as she hooked up the clockgating support.
+> 
+> Looking at the code, only NV40+ do have a therm engine. Therefore, shouldn’t
+> nvkm_therm_clkgate_enable(), nvkm_therm_clkgate_fini() and
+> nvkm_therm_clkgate_oneinit() all check for therm being not NULL, on top of
+> their check for the clkgate_* hooks being there? Or instead, maybe have the
+> check in nvkm_device_init() nvkm_device_init()?
+> 
+> Pierre
 -- 
-Jani Nikula, Intel Open Source Technology Center
+Cheers,
+	Lyude Paul
