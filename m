@@ -1,62 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032276AbeBNQPG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 11:15:06 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5652 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1032249AbeBNQPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:15:03 -0500
-Subject: Re: [PATCH v13 1/9] LIB: Introduce a generic PIO mapping method
-To: dann frazier <dann.frazier@canonical.com>
-References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
- <1518543933-22456-2-git-send-email-john.garry@huawei.com>
- <20180213230551.GA24986@xps13.dannf>
-CC: <mika.westerberg@linux.intel.com>, <rafael@kernel.org>,
-        <lorenzo.pieralisi@arm.com>, <rjw@rjwysocki.net>,
-        <hanjun.guo@linaro.org>, <robh+dt@kernel.org>, <bhelgaas@google.com>,
-        <arnd@arndb.de>, <mark.rutland@arm.com>, <olof@lixom.net>,
-        <andy.shevchenko@gmail.com>, <robh@kernel.org>, <joe@perches.com>,
-        <benh@kernel.crashing.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <linuxarm@huawei.com>, <minyard@acm.org>, <devicetree@vger.kernel.org>,
-        <linux-arch@vger.kernel.org>, <rdunlap@infradead.org>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <b16db30e-67d3-0469-d8c7-029665702378@huawei.com>
-Date: Wed, 14 Feb 2018 16:13:57 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1032289AbeBNQPg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 11:15:36 -0500
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:36760 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032206AbeBNQPd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 11:15:33 -0500
+X-Google-Smtp-Source: AH8x224npdf/tBuJ9Bm7clGgutXN7r6DNa8hZ7y8qHV/wr0G0Q3WOO7cJ9vuM8FvyGKH4XHyn3sWZw==
+Subject: Re: [PATCH] PCI: qcom: use regulator bluk api for apq8064 supplies
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: stanimir.varbanov@linaro.org, svarbanov@mm-sol.com,
+        linux-pci@vger.kernel.org, bhelgaas@google.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180214122315.2069-1-srinivas.kandagatla@linaro.org>
+ <20180214153545.GA93895@bjorns-mbp-2.lan>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <3b256b44-d3fe-9022-ed3b-b671ba5cadd1@linaro.org>
+Date: Wed, 14 Feb 2018 16:14:59 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180213230551.GA24986@xps13.dannf>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <20180214153545.GA93895@bjorns-mbp-2.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/02/2018 23:05, dann frazier wrote:
->>  	bool
->> >
->> > +config INDIRECT_PIO
->> > +	bool "Access I/O in non-MMIO mode"
->> > +	depends on ARM64
->> > +	help
->> > +	  On some platforms where no separate I/O space exists, there are I/O
->> > +	  hosts which can not be accessed in MMIO mode. Using the logical PIO
->> > +	  mechanism, the host-local I/O resource can be mapped into system
->> > +	  logic PIO space shared with MMIO hosts, such as PCI/PCIE, then the
->> > +	  system can access the I/O devices with the mapped logic PIO through
->> > +	  I/O accessors.
->> > +	  This way has a relatively little I/O performance cost. Please make
-> grammar nit - s/a relatively/relatively/
->
 
-Fine, thanks
 
-John
+On 14/02/18 15:35, Bjorn Andersson wrote:
+>> +	res->supplies[1].supply = "vdda_phy";
+>> +	res->supplies[1].supply = "vdda_refclk";
+> 2
+> 
+>> +	ret = devm_regulator_bulk_get(dev, QCOM_PCIE_2_1_0_MAX_SUPPLY,
+> Use ARRAY_SIZE(res->supplies) instead.
+Thanks, Will fix it and send a new one.
 
->   -dann
->
->> > +	  sure your devices really need this configure item enabled.
->> > +
+--srini
+> 
+>> +				      res->supplies);
+>> +	if (ret)
+>> +		return ret;
+>>   
+> Other than that, this looks good.
