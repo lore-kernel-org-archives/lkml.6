@@ -1,81 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031205AbeBNPQW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 10:16:22 -0500
-Received: from lilium.sigma-star.at ([109.75.188.150]:53330 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030922AbeBNPQV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:16:21 -0500
-From: Richard Weinberger <richard@sigma-star.at>
-To: Enrico Weigelt <lkml@metux.net>
-Cc: Aleksa Sarai <asarai@suse.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: plan9 semantics on Linux - mount namespaces
-Date: Wed, 14 Feb 2018 16:17:35 +0100
-Message-ID: <60748622.exvCVAzLTp@blindfold>
-In-Reply-To: <4f620eb7-c00c-487b-2e06-8cc4c97af38c@metux.net>
-References: <0f058286-a432-379b-f559-f2fe713807ab@metux.net> <2050418.Dl5pXkWGsk@blindfold> <4f620eb7-c00c-487b-2e06-8cc4c97af38c@metux.net>
+        id S1031191AbeBNPTf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 10:19:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56102 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030839AbeBNPTe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 10:19:34 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9F062178D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 14 Feb 2018 10:19:30 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: changbin.du@intel.com
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tracing/power: Polish the tracepoints cpu_idle and
+ cpu_frequency
+Message-ID: <20180214101930.7599c67b@gandalf.local.home>
+In-Reply-To: <1518576038-16198-1-git-send-email-changbin.du@intel.com>
+References: <1518576038-16198-1-git-send-email-changbin.du@intel.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enrico,
+[ Resending due to typo in LKML address ]
 
-Am Mittwoch, 14. Februar 2018, 16:02:18 CET schrieb Enrico Weigelt:
-> stat64("/etc/busybox.conf", {st_mode=S_IFREG|0644, st_size=198, ...}) = 0
+On Wed, 14 Feb 2018 10:40:38 +0800
+changbin.du@intel.com wrote:
 
-busybox...
+> From: Changbin Du <changbin.du@intel.com>
+> 
+> The type of state is signed int, convert it to unsigned int looks weird.
+> (-1 become 4294967295)
+>    932.123 power:cpu_idle:state=1 cpu_id=0)
+>    932.125 power:cpu_idle:state=4294967295 cpu_id=0)
+>    932.132 power:cpu_idle:state=1 cpu_id=0)
+>    932.133 power:cpu_idle:state=4294967295 cpu_id=0)
+> 
+> Similarly for cpu_frequency as "state=%lu cpu_id=%lu". User need to read
+> the code to understand what 'state' means.
+> 
+> No functional change in this patch.
+> 
+> Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-> brk(NULL)                               = 0x58000
-> brk(0x79000)                            = 0x79000
-> open("/etc/busybox.conf", O_RDONLY|O_LARGEFILE) = 3
-> fstat64(3, {st_mode=S_IFREG|0644, st_size=198, ...}) = 0
-> read(3, "[SUID]\n#lines starting with # ar"..., 1024) = 198
-> read(3, "", 1024)                       = 0
-> close(3)                                = 0
-> getgid32()                              = 1
-> setgid32(1)                             = 0
-> setuid32(1)                             = 0
-> geteuid32()                             = 1
-> getegid32()                             = 1
-> unshare(CLONE_NEWUTS|CLONE_NEWUSER)     = 0
-> open("/proc/self/setgroups", O_WRONLY|O_LARGEFILE) = 3
-> write(3, "deny", 4)                     = 4
-> close(3)                                = 0
-> open("/proc/self/uid_map", O_WRONLY|O_LARGEFILE) = 3
-> write(3, "1 0 1", 5)                    = -1 EPERM (Operation not permitted)
 
-This mapping looks broken.
-Please report to busybox folks.
+>From the tracing perspective:
 
->From taking a *very* quick look into busybox source, I suspect this should fix 
-it:
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-diff --git a/util-linux/unshare.c b/util-linux/unshare.c
-index 875e3f86e304..3f59cf4d27c2 100644
---- a/util-linux/unshare.c
-+++ b/util-linux/unshare.c
-@@ -350,9 +350,9 @@ int unshare_main(int argc UNUSED_PARAM, char **argv)
- 		 * in that user namespace.
- 		 */
- 		xopen_xwrite_close(PATH_PROC_SETGROUPS, "deny");
--		sprintf(uidmap_buf, "%u 0 1", (unsigned)reuid);
-+		sprintf(uidmap_buf, "0 %u 1", (unsigned)reuid);
- 		xopen_xwrite_close(PATH_PROC_UIDMAP, uidmap_buf);
--		sprintf(uidmap_buf, "%u 0 1", (unsigned)regid);
-+		sprintf(uidmap_buf, "0 %u 1", (unsigned)regid);
- 		xopen_xwrite_close(PATH_PROC_GIDMAP, uidmap_buf);
- 	} else
- 	if (setgrp_str) {
+-- Steve
 
-Thanks,
-//richard
-
--- 
-sigma star gmbh - Eduard-Bodem-Gasse 6 - 6020 Innsbruck - Austria
-ATU66964118 - FN 374287y
+> Signed-off-by: Changbin Du <changbin.du@intel.com>
+> 
+> ---
+> v2:
+>   o rename title.
+>   o define tracepoint with DEFINE_EVENT_PRINT().
+> ---
+>  Documentation/trace/events-power.txt |  4 ++--
+>  include/trace/events/power.h         | 17 ++++++++++-------
+>  2 files changed, 12 insertions(+), 9 deletions(-)
+> 
+> diff --git a/Documentation/trace/events-power.txt b/Documentation/trace/events-power.txt
+> index 21d514c..9485039 100644
+> --- a/Documentation/trace/events-power.txt
+> +++ b/Documentation/trace/events-power.txt
+> @@ -23,8 +23,8 @@ Cf. include/trace/events/power.h for the events definitions.
+>  A 'cpu' event class gathers the CPU-related events: cpuidle and
+>  cpufreq.
+>  
+> -cpu_idle		"state=%lu cpu_id=%lu"
+> -cpu_frequency		"state=%lu cpu_id=%lu"
+> +cpu_idle		"state=%ld cpu_id=%lu"
+> +cpu_frequency		"frequency=%lu cpu_id=%lu"
+>  
+>  A suspend event is used to indicate the system going in and out of the
+>  suspend mode:
+> diff --git a/include/trace/events/power.h b/include/trace/events/power.h
+> index 908977d..f1b82de 100644
+> --- a/include/trace/events/power.h
+> +++ b/include/trace/events/power.h
+> @@ -14,12 +14,12 @@
+>  
+>  DECLARE_EVENT_CLASS(cpu,
+>  
+> -	TP_PROTO(unsigned int state, unsigned int cpu_id),
+> +	TP_PROTO(int state, unsigned int cpu_id),
+>  
+>  	TP_ARGS(state, cpu_id),
+>  
+>  	TP_STRUCT__entry(
+> -		__field(	u32,		state		)
+> +		__field(	s32,		state		)
+>  		__field(	u32,		cpu_id		)
+>  	),
+>  
+> @@ -28,13 +28,13 @@ DECLARE_EVENT_CLASS(cpu,
+>  		__entry->cpu_id = cpu_id;
+>  	),
+>  
+> -	TP_printk("state=%lu cpu_id=%lu", (unsigned long)__entry->state,
+> +	TP_printk("state=%ld cpu_id=%lu", (long)__entry->state,
+>  		  (unsigned long)__entry->cpu_id)
+>  );
+>  
+>  DEFINE_EVENT(cpu, cpu_idle,
+>  
+> -	TP_PROTO(unsigned int state, unsigned int cpu_id),
+> +	TP_PROTO(int state, unsigned int cpu_id),
+>  
+>  	TP_ARGS(state, cpu_id)
+>  );
+> @@ -141,11 +141,14 @@ TRACE_EVENT(pstate_sample,
+>  		{ PM_EVENT_RESTORE, "restore" }, \
+>  		{ PM_EVENT_RECOVER, "recover" })
+>  
+> -DEFINE_EVENT(cpu, cpu_frequency,
+> +DEFINE_EVENT_PRINT(cpu, cpu_frequency,
+>  
+> -	TP_PROTO(unsigned int frequency, unsigned int cpu_id),
+> +	TP_PROTO(int state, unsigned int cpu_id),
+>  
+> -	TP_ARGS(frequency, cpu_id)
+> +	TP_ARGS(state, cpu_id),
+> +
+> +	TP_printk("frequency=%lu cpu_id=%lu",  (unsigned long)__entry->state,
+> +		  (unsigned long)__entry->cpu_id)
+>  );
+>  
+>  TRACE_EVENT(device_pm_callback_start,
