@@ -1,65 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032046AbeBNXRK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 18:17:10 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:41226 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031971AbeBNXRI (ORCPT
+        id S1032073AbeBNXSB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 18:18:01 -0500
+Received: from mxf98a.netcup.net ([46.38.249.138]:40456 "EHLO
+        mxf98a.netcup.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031971AbeBNXR7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 18:17:08 -0500
-X-Google-Smtp-Source: AH8x224lHuKj//U3+TOQcGkIaE/ZLy+hSSKdlBA+tn8o39yJZkUIaLrcEiMxOwI4B3sCxdIAN6Nf0Q==
-Date: Thu, 15 Feb 2018 00:17:04 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Jerry Hoemann <jerry.hoemann@hpe.com>
-Cc: Borislav Petkov <bp@alien8.de>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Dave Hansen <dave@sr71.net>,
-        hpa@zytor.com, tglx@linutronix.de, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, dwmw@amazon.co.uk,
-        linux-tip-commits@vger.kernel.org,
-        Arjan van de Ven <arjan@infradead.org>, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH] watchdog: hpwdt: Remove spinlock acquire and BIOS calls
- from NMI context
-Message-ID: <20180214231704.xv2iwqsfvljoybul@gmail.com>
-References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
- <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
- <20180212102211.cdrrqqd4hdw7xu5y@gmail.com>
- <a85c28b8-1255-3264-bb4a-89e85e3c6009@sr71.net>
- <20180212165835.GO25181@hirez.programming.kicks-ass.net>
- <20180213075540.3lkikkpgjoe6ocjk@gmail.com>
- <5c3ba123-abbe-f153-7b75-a89d31d25c72@linux.intel.com>
- <20180214093159.mdzfupne547bi5qx@gmail.com>
- <20180214094404.GA18349@pd.tnic>
- <20180214181342.GA27600@anatevka.americas.hpqcorp.net>
+        Wed, 14 Feb 2018 18:17:59 -0500
+Authentication-Results: mxf98a;
+        spf=pass (sender IP is 77.7.22.39) smtp.mailfrom=rabel@robertabel.eu smtp.helo=[192.168.178.21]
+Subject: Re: [PATCH 1/3] auxdisplay: charlcd: fix hex literal ranges for
+ graphics command
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20180209235012.4993-1-rabel@robertabel.eu>
+ <20180209235012.4993-2-rabel@robertabel.eu>
+ <CANiq72ka314rCgPHP4WVt5Rjidz8Rz0s2UtoVX6Bc0gWi=MLSw@mail.gmail.com>
+ <20180210092003.GA20377@1wt.eu>
+ <CANiq72m6bFYywFa30HhtiAxPP0sK+bWgsxwUhT+b-Sjh0baBCA@mail.gmail.com>
+ <CAHp75VfQUNVB9qoxcM5DSWz7Peu40oqtVO6dQse8ASRQa5ufEg@mail.gmail.com>
+From: Robert Abel <rabel@robertabel.eu>
+Message-ID: <db968c03-f471-0ab5-2dba-74a567d2f6d1@robertabel.eu>
+Date: Thu, 15 Feb 2018 00:17:55 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180214181342.GA27600@anatevka.americas.hpqcorp.net>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAHp75VfQUNVB9qoxcM5DSWz7Peu40oqtVO6dQse8ASRQa5ufEg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <20180214231758.5400.16872@mxf98a.netcup.net>
+X-PPP-Vhost: robertabel.eu
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Jerry Hoemann <jerry.hoemann@hpe.com> wrote:
-
+On 13 Feb 2018 14:36, Andy Shevchenko wrote:
+> I understand that we have a huge and hopefully nice library in the
+> kernel, but the question still the same, what prevents a developer or
+> maintainer to look at it from time to time?
 > 
-> Ingo,
-> 
-> I have a patch set under review that brings hpwdt into compliance
-> with the watchdog core.
-> 
-> One of the changes removes the callback into firmware in hpwdt_pretimeout
-> and its associated spinlock.
-> 
-> https://lkml.org/lkml/2018/2/12/30
+> For, I dare to say, ages we have hex_to_bin() and hex2bin().
+> Can we use it?
 
- drivers/watchdog/hpwdt.c | 490 +----------------------------------------------
- 1 file changed, 8 insertions(+), 482 deletions(-)
+hex_to_bin look fine to me, although personally I'm not a big fan of its
+use of tolower.
 
-Very nice, and this should solve all the NMI handling complications!
+The current parser implementation is much more lenient than hex2bin,
+however. hex2bin won't parse strings containing illegal characters
+(which are currently skipped) or hexadecimal strings with an odd number
+of digits (which are currently allowed and the final digit will be ignored).
 
-> I will add you to the CC list of the next version of the set.
+I noticed the only part of the code that does make use of library
+functions, parsing x and y coordinates using kstrtoul, is broken.
+Apparently it used to use simple_strtoul, which worked and then got
+replaced. So apparently looking over the kernel lib from time to time
+can also do some harm ;)
+Patch incoming :)
 
-Thanks!
+Regards,
 
-	Ingo
+Robert
