@@ -1,28 +1,28 @@
 Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AH8x225xTGaCOjmab9pg2Dpq0CwC5H9OvvxyypuA8E5FVY14VH1+jCHBLdtlTnKVHB2KVPSLQ+TP
-ARC-Seal: i=1; a=rsa-sha256; t=1518568920; cv=none;
+X-Google-Smtp-Source: AH8x226ovfV5kXoWqwpSc9WAip/hmoqMCnG1mvK5lJ1BPVyK/rX5ht4S+uAqM8l4/VesHJPeQ4xE
+ARC-Seal: i=1; a=rsa-sha256; t=1518568919; cv=none;
         d=google.com; s=arc-20160816;
-        b=SremRr8Cj6WZo0COFRHcKZRyhRqGVHaJkRaJIkS2vC0Pb7QZucnbvVDuIi+TXuLBM5
-         v5EF0kcv2rr6a9niLqKGMePBF2THRBu+3N41PjLhT+cWn8DZGQpGt/9H8qi+f5PFdUFd
-         gIwDIjqh2/JcoF3fPrU4CeUTzdKZKXD82LoTspzVh/KIUm+u9WtY9On/8sFXrtTOH5kg
-         UPHIqom5LaMJNw2++8KhhwrMDtMeCMoIBOoKuCinqmFe6+sSDquWvux0UTdXQyjzbJMe
-         Qjb/fGRgSK7V9vsxn8xtTrCLsBwkDMrp9PV6p3XkVzeOz5wRCHZjC3Kc8Pq4VFe34i0S
-         3Wjw==
+        b=TOJSkBFx0zg05ICqsCUzIc0HedgC4Tzmmny2lORLw8xhPCtsm8j/PQcTh8aQmVTccu
+         h9fRgBr2voi/7C0vY5Ur4Doc5iR+Om4hGKYlfhHFbJiziqlNp1C7siRboKKCNe3ZlbRm
+         mABAGEEcoRDBVT9zzrwN7ceNlIU8TDiyGtGBrPPfT5CSNR/hqJhrPDcI6n49+Ug9YXe9
+         TZg7G2DSi+AoYi0Fntg/SBNsTu2nO1GxPICSxkRn4kZCDldtYDSaLTo1sidMfvgLNTH5
+         eMIAqG8pJytH5kGh7DpvXa32htSSLtbgomzxO3Ko8kdNl0+abnO1fRQMrCWavOHUqMGu
+         axHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dmarc-filter:arc-authentication-results;
-        bh=zioWp/u/I7BHpOYbRnpUVBuZGBDICm+06k7DkTRrUyQ=;
-        b=PbHwg7xUpLGtCTpT0jauFfw2Wwkc7hOwqySM/npBQds+d7bn3WBsizqCA6uop5DtrP
-         LTtch+RBn6vq0QT3c0R0MlgMJcu06SmtTSoMJboXNv8Na67JA202WFkwWlWfm2ofxRjC
-         yIOW2SmpWNFcG68UDwrAqd1eACkkWraul4VAZH8URsS7qpiDG9JYdqiJBG9xefg5gw3r
-         EdBBRux913TqoMYJ5oKEJqkIVOCmg2i1ybgNqRcLssHYkluVcu40T8y3SlUx3lpkIC3o
-         nFqORSS22zcnc9ByjwC8Nt1//rGliWm1UMIJekmvf/ysmaj5+ipF0XsF3U/GjR4g7jBf
-         JNAA==
+        bh=FzJPY7Rs0tXogbffVGzuc1BTBpDdEUco86vHRvCahus=;
+        b=jzLQar65XzcTq/q7E96f+1TGozt9ObT2rRj32WDeDpPXPI5vrxjNHFGigbAjfa1TF2
+         o+pG3QybsmrTHh9nSDZq6sBlcC+xuoBFZcWTvomBdINIYw/EOSEo+y+FsXvo+El6KtQu
+         quIEu4NzCgVAg4C5FTzpIUZ22QemgKL9BhpBnjtDYoSj0ZpPM73uFXyhq4rSf73G0t2e
+         MuNTYXtX68Px6SfrAutqwFtfbQy0C3fEVm/yIVVE1XNAA/SDDQwzu5z4ownWydJ06dQZ
+         eIGMWvmG7DVsY3TDzOVnDv3Emg+xiVcjv5G296Y1hJzCYWWL4HxsE/uEN47XMIoaohJj
+         U0tQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79CEC217D3
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79C7F217CA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
@@ -50,75 +50,60 @@ Cc: akpm@linux-foundation.org,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	"Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v2 04/11] firmware: simplify CONFIG_FW_LOADER_USER_HELPER_FALLBACK further
-Date: Tue, 13 Feb 2018 16:41:41 -0800
-Message-Id: <20180214004148.14452-5-mcgrof@kernel.org>
+Subject: [PATCH v2 03/11] firmware: enable to split firmware_class into separate target files
+Date: Tue, 13 Feb 2018 16:41:40 -0800
+Message-Id: <20180214004148.14452-4-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.13.2
 In-Reply-To: <20180214004148.14452-1-mcgrof@kernel.org>
 References: <20180214004148.14452-1-mcgrof@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592334924218946526?=
-X-GMAIL-MSGID: =?utf-8?q?1592334924218946526?=
+X-GMAIL-THRID: =?utf-8?q?1592334923625330486?=
+X-GMAIL-MSGID: =?utf-8?q?1592334923625330486?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-All CONFIG_FW_LOADER_USER_HELPER_FALLBACK really is, is just a bool,
-initailized at build time. Define it as such. This simplifies the
-logic even further, removing now all explicit #ifdefs around the code.
+The firmware loader code has grown quite a bit over the years.
+The practice of stuffing everything we need into one file makes
+the code hard to follow.
+
+In order to split the firmware loader code into different components
+we must pick a module name and a first object target file. We must
+keep the firmware_class name to remain compatible with scripts which
+have been relying on the sysfs loader path for years, so the old module
+name stays. We can however rename the C file without affecting the
+module name.
+
+The firmware_class used to represent the idea that the code was a simple
+sysfs firmware loader, provided by the struct class firmware_class.
+The sysfs firmware loader used to be the default, today its only the
+fallback mechanism.
+
+This only renames the target code then to make emphasis of what the code
+does these days. With this change new features can also use a new object
+files.
 
 Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- drivers/base/firmware_loader.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+ drivers/base/Makefile                                | 1 +
+ drivers/base/{firmware_class.c => firmware_loader.c} | 0
+ 2 files changed, 1 insertion(+)
+ rename drivers/base/{firmware_class.c => firmware_loader.c} (100%)
 
-diff --git a/drivers/base/firmware_loader.c b/drivers/base/firmware_loader.c
-index 7dd36ace6152..59dba794ce1a 100644
---- a/drivers/base/firmware_loader.c
-+++ b/drivers/base/firmware_loader.c
-@@ -266,6 +266,22 @@ static inline bool fw_state_is_aborted(struct fw_priv *fw_priv)
- 
- #ifdef CONFIG_FW_LOADER_USER_HELPER
- 
-+/**
-+ * struct firmware_fallback_config - firmware fallback configuratioon settings
-+ *
-+ * Helps describe and fine tune the fallback mechanism.
-+ *
-+ * @force_sysfs_fallback: force the sysfs fallback mechanism to be used
-+ * 	as if one had enabled CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y.
-+ */
-+struct firmware_fallback_config {
-+	bool force_sysfs_fallback;
-+};
-+
-+static const struct firmware_fallback_config fw_fallback_config = {
-+	.force_sysfs_fallback = IS_ENABLED(CONFIG_FW_LOADER_USER_HELPER_FALLBACK),
-+};
-+
- static inline bool fw_sysfs_done(struct fw_priv *fw_priv)
- {
- 	return __fw_state_check(fw_priv, FW_STATUS_DONE);
-@@ -1151,19 +1167,14 @@ static int fw_load_from_user_helper(struct firmware *firmware,
- 	return ret;
- }
- 
--#ifdef CONFIG_FW_LOADER_USER_HELPER_FALLBACK
--static bool fw_force_sysfs_fallback(unsigned int opt_flags)
--{
--	return true;
--}
--#else
- static bool fw_force_sysfs_fallback(unsigned int opt_flags)
- {
-+	if (fw_fallback_config.force_sysfs_fallback)
-+		return true;
- 	if (!(opt_flags & FW_OPT_USERHELPER))
- 		return false;
- 	return true;
- }
--#endif
- 
- static bool fw_run_sysfs_fallback(unsigned int opt_flags)
- {
+diff --git a/drivers/base/Makefile b/drivers/base/Makefile
+index e32a52490051..f261143fafbf 100644
+--- a/drivers/base/Makefile
++++ b/drivers/base/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_HAS_DMA)	+= dma-mapping.o
+ obj-$(CONFIG_HAVE_GENERIC_DMA_COHERENT) += dma-coherent.o
+ obj-$(CONFIG_ISA_BUS_API)	+= isa.o
+ obj-$(CONFIG_FW_LOADER)	+= firmware_class.o
++firmware_class-objs := firmware_loader.o
+ obj-$(CONFIG_NUMA)	+= node.o
+ obj-$(CONFIG_MEMORY_HOTPLUG_SPARSE) += memory.o
+ ifeq ($(CONFIG_SYSFS),y)
+diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_loader.c
+similarity index 100%
+rename from drivers/base/firmware_class.c
+rename to drivers/base/firmware_loader.c
 -- 
 2.16.1
