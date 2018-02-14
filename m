@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031092AbeBNOrO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 09:47:14 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53719 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031055AbeBNOrJ (ORCPT
+        id S1030951AbeBNOrZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 09:47:25 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33610 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031097AbeBNOrP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 09:47:09 -0500
-X-Google-Smtp-Source: AH8x2278vkuHELH1cVHUSxPz4bN1RzS1Jb3JeRHjnCNH4UIIgZYXTisvwgmRgp5TnDG6xommqLpi3Q==
+        Wed, 14 Feb 2018 09:47:15 -0500
+X-Google-Smtp-Source: AH8x224cGXNflwQem/ozKIekWUKjOG5WT36C1wYMx09tPMTN9GMBxN5aL8g12is/0NWmm3xJvK67cQ==
 From: srinivas.kandagatla@linaro.org
 To: vinod.koul@intel.com, andy.gross@linaro.org, dmaengine@vger.kernel.org
 Cc: robh+dt@kernel.org, mark.rutland@arm.com, david.brown@linaro.org,
@@ -16,9 +16,9 @@ Cc: robh+dt@kernel.org, mark.rutland@arm.com, david.brown@linaro.org,
         linux-soc@vger.kernel.org, yanhe@quicinc.com, ramkri@qti.qualcomm.com,
         sdharia@quicinc.com,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2 1/5] dmaengine: qcom: bam_dma: make bam clk optional
-Date: Wed, 14 Feb 2018 14:44:55 +0000
-Message-Id: <20180214144459.29813-2-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 5/5] dmaengine: qcom: bam_dma: disable runtime pm on remote controlled
+Date: Wed, 14 Feb 2018 14:44:59 +0000
+Message-Id: <20180214144459.29813-6-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180214144459.29813-1-srinivas.kandagatla@linaro.org>
 References: <20180214144459.29813-1-srinivas.kandagatla@linaro.org>
@@ -28,40 +28,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-When BAM is remotely controlled it does not sound correct to control
-its clk on Linux side. Make it optional, so that its not mandatory
-for remote controlled BAM instances.
+Remotely controlled BAM instance should not do any power management from
+CPU side, as cpu can not reliably say if the BAM is busy or not.
+
+Disable it for such instances.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/dma/qcom/bam_dma.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/dma/qcom/bam_dma.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
-index d076940e0c69..ae4c7b6930b8 100644
+index 88ec515ad125..6e4fe398f0c8 100644
 --- a/drivers/dma/qcom/bam_dma.c
 +++ b/drivers/dma/qcom/bam_dma.c
-@@ -1233,13 +1233,14 @@ static int bam_dma_probe(struct platform_device *pdev)
- 						"qcom,controlled-remotely");
+@@ -1330,6 +1330,11 @@ static int bam_dma_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_unregister_dma;
  
- 	bdev->bamclk = devm_clk_get(bdev->dev, "bam_clk");
--	if (IS_ERR(bdev->bamclk))
--		return PTR_ERR(bdev->bamclk);
--
--	ret = clk_prepare_enable(bdev->bamclk);
--	if (ret) {
--		dev_err(bdev->dev, "failed to prepare/enable clock\n");
--		return ret;
-+	if (IS_ERR(bdev->bamclk)) {
-+		bdev->bamclk = NULL;
-+	} else {
-+		ret = clk_prepare_enable(bdev->bamclk);
-+		if (ret) {
-+			dev_err(bdev->dev, "failed to prepare/enable clock\n");
-+			return ret;
-+		}
- 	}
++	if (bdev->controlled_remotely) {
++		pm_runtime_disable(&pdev->dev);
++		return 0;
++	}
++
+ 	pm_runtime_irq_safe(&pdev->dev);
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, BAM_DMA_AUTOSUSPEND_DELAY);
+ 	pm_runtime_use_autosuspend(&pdev->dev);
+@@ -1413,7 +1418,8 @@ static int __maybe_unused bam_dma_suspend(struct device *dev)
+ {
+ 	struct bam_device *bdev = dev_get_drvdata(dev);
  
- 	ret = bam_init(bdev);
+-	pm_runtime_force_suspend(dev);
++	if (!bdev->controlled_remotely)
++		pm_runtime_force_suspend(dev);
+ 
+ 	clk_unprepare(bdev->bamclk);
+ 
+@@ -1429,7 +1435,8 @@ static int __maybe_unused bam_dma_resume(struct device *dev)
+ 	if (ret)
+ 		return ret;
+ 
+-	pm_runtime_force_resume(dev);
++	if (!bdev->controlled_remotely)
++		pm_runtime_force_resume(dev);
+ 
+ 	return 0;
+ }
 -- 
 2.15.1
