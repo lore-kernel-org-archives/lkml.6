@@ -1,111 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967837AbeBNNVb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 08:21:31 -0500
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:52739 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967798AbeBNNV3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 08:21:29 -0500
-X-Google-Smtp-Source: AH8x2274CdlfImh5D5rIGBz9jCHZI4QpQdU7fi7AZWxMd0XQ9azirx4hffv5wHPcBkcRJaoWsv4+6A==
-Message-ID: <1518614486.4749.33.camel@profitbricks.com>
-Subject: Re: Read-protected UEFI variables
-From: Benjamin Drung <benjamin.drung@profitbricks.com>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Matthew Garrett <matthew.garrett@nebula.com>,
-        Jeremy Kerr <jk@ozlabs.org>, Matt Fleming <matt@codeblueprint.co.uk>,
-        linux-efi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Wed, 14 Feb 2018 14:21:26 +0100
-In-Reply-To: <CAKv+Gu_V7BCihPhZf=pKrkBZwFWeEoupamXvYSqdS+k93Gme=g@mail.gmail.com>
-References: <1518612748.4749.29.camel@profitbricks.com>
-         <CAKv+Gu_V7BCihPhZf=pKrkBZwFWeEoupamXvYSqdS+k93Gme=g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1030324AbeBNNgN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 08:36:13 -0500
+Received: from ozlabs.org ([103.22.144.67]:48569 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030202AbeBNNgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 08:36:10 -0500
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: aik@ozlabs.ru, andrew.donnellan@au1.ibm.com,
+        aneesh.kumar@linux.vnet.ibm.com, bsingharora@gmail.com,
+        colin.king@canonical.com, fbarrat@linux.vnet.ibm.com,
+        harish@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        linux@roeck-us.net, linuxppc-dev@lists.ozlabs.org,
+        maddy@linux.vnet.ibm.com, nfont@linux.vnet.ibm.com, npiggin@gmail.com,
+        sam.bobroff@au1.ibm.com
+Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.16-2 tag
+Date: Thu, 15 Feb 2018 00:36:02 +1100
+Message-ID: <878tbvr8vx.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, den 14.02.2018, 13:09 +0000 schrieb Ard Biesheuvel:
-> On 14 February 2018 at 12:52, Benjamin Drung
-> <benjamin.drung@profitbricks.com> wrote:
-> > Hi,
-> > 
-> > I am exploring the possibility to store SSH and other keys in UEFI
-> > variables for systems that do not have persistent storage. These
-> > systems boot via network and need individual SSH keys which ideally
-> > should not be distributed via network.
-> > 
-> > The plan is to write a small daemon that starts at boot and gets
-> > the
-> > SSH keys from EFI variables to individualize the system with SSH
-> > keys.
-> > I plan to release the code as free software. Simple proof-of-
-> > concept
-> > code:
-> > 
-> > mount -t efivarfs none /sys/firmware/efi/efivars
-> > for key in ssh_host_dsa_key ssh_host_ecdsa_key ssh_host_rsa_key; do
-> >   dd ibs=1 skip=4 if=/sys/firmware/efi/efivars/${key}-89df11f4-
-> > 38e6-473e-ab43-b4406b76fba9 of=/etc/ssh/$key
-> > done
-> > 
-> > I am not the first person having the idea to use UEFI variables to
-> > store keys:
-> > https://www.usenix.org/conference/srecon17asia/program/presentation
-> > /korgachin
-> > 
-> > There is one problem: The keys should be readable only by root.
-> > When
-> > mounting efivarfs, all variables have the permission 644 which
-> > makes
-> > them readable by all users. I have different ideas how to solve it:
-> > 
-> > 1) Hard-code a list of GUIDs that should be only readable by root
-> > in
-> > the kernel module. These modules would also be not set to
-> > immutable.
-> > 
-> > 2) Instead of hard-coding GUIDs, add a kernel module parameter to
-> > specify the GUIDs. Maybe have a default list in the kernel module.
-> > 
-> > 3) Add a mount option to specify the protected GUIDs.
-> > 
-> > Feedback is welcome.
-> > 
-> 
-> I'd consider a patch that makes the permissions a mount option for
-> efivarfs, applying to all variables. The reason is that these
-> variables shouldn't have been world readable in the first place, and
-> I
-> am reluctant to make this overly complex.
+--=-=-=
+Content-Type: text/plain
 
-Having some variables (like the BootXXXX and BootOrder variables) world
-readable is useful. This allows normal users to run 'efibootmgr' to
-display the boot options.
+Hi Linus,
 
-> On the other hand, you should realize that UEFI was never designed to
-> keep secrets, and so whether it is a good idea to put secrets in UEFI
-> variables to begin with is dubious IMHO.
+Please pull some powerpc fixes for 4.16:
 
-If the UEFI is as secure as storing an unencrypted file on a hard
-drive, I am satisfied. Or do you have a better idea where to store the
-SSH keys for a diskless system that boots via network?
+The following changes since commit 581e400ff935d34d95811258586128bf11baef15:
 
--- 
-Benjamin Drung
-System Developer
-Debian & Ubuntu Developer
+  Merge tag 'modules-for-v4.16' of git://git.kernel.org/pub/scm/linux/kernel/git/jeyu/linux (2018-02-07 14:29:34 -0800)
 
-ProfitBricks GmbH
-Greifswalder Str. 207
-D - 10405 Berlin
+are available in the git repository at:
 
-Email: benjamin.drung@profitbricks.com
-URL: https://www.profitbricks.de
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.16-2
 
-Sitz der Gesellschaft: Berlin
-Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
-Geschäftsführer: Achim Weiss, Matthias Steinberg
+for you to fetch changes up to ecdf06e1ea5376bba03c155751f6869d3dfaa210:
+
+  selftests/powerpc: Fix to use ucontext_t instead of struct ucontext (2018-02-13 22:44:18 +1100)
+
+----------------------------------------------------------------
+powerpc fixes for 4.16 #2
+
+A larger batch of fixes than we'd like. Roughly 1/3 fixes for new code, 1/3
+fixes for stable and 1/3 minor things.
+
+There's four commits fixing bugs when using 16GB huge pages on hash, caused by
+some of the preparatory changes for pkeys.
+
+Two fixes for bugs in the enhanced IRQ soft masking for local_t, one of which
+broke KVM in some circumstances.
+
+Four fixes for Power9. The most bizarre being a bug where futexes stopped
+working because a NULL pointer dereference didn't trap during early boot (it
+aliased the kernel mapping). A fix for memory hotplug when using the Radix MMU,
+and a fix for live migration of guests using the Radix MMU.
+
+Two fixes for hotplug on pseries machines. One where we weren't correctly
+updating NUMA info when CPUs are added and removed. And the other fixes
+crashes/hangs seen when doing memory hot remove during boot, which is apparently
+a thing people do.
+
+Finally a handful of build fixes for obscure configs and other minor fixes.
+
+Thanks to:
+  Alexey Kardashevskiy, Aneesh Kumar K.V, Balbir Singh, Colin Ian King, Daniel
+  Henrique Barboza, Florian Weimer, Guenter Roeck, Harish, Laurent Vivier,
+  Madhavan Srinivasan, Mauricio Faria de Oliveira, Nathan Fontenot, Nicholas
+  Piggin, Sam Bobroff.
+
+----------------------------------------------------------------
+Alexey Kardashevskiy (1):
+      powerpc/mm: Flush radix process translations when setting MMU type
+
+Aneesh Kumar K.V (4):
+      powerpc/mm: Fix crashes with 16G huge pages
+      powerpc/mm/hash64: Allocate larger PMD table if hugetlb config is enabled
+      powerpc/mm/hash64: Store the slot information at the right offset for hugetlb
+      powerpc/mm/hash64: Zero PGD pages on allocation
+
+Balbir Singh (1):
+      powerpc/mm/radix: Split linear mapping on hot-unplug
+
+Colin Ian King (1):
+      ocxl: fix signed comparison with less than zero
+
+Guenter Roeck (2):
+      powerpc/pseries: Fix build break for SPLPAR=n and CPU hotplug
+      powerpc/kdump: Fix powernv build break when KEXEC_CORE=n
+
+Harish (1):
+      selftests/powerpc: Fix to use ucontext_t instead of struct ucontext
+
+Madhavan Srinivasan (1):
+      powerpc/64s: Fix MASKABLE_RELON_EXCEPTION_HV_OOL macro
+
+Nathan Fontenot (1):
+      powerpc/numa: Invalidate numa_cpu_lookup_table on cpu remove
+
+Nicholas Piggin (3):
+      powerpc/64s: Fix may_hard_irq_enable() for PMI soft masking
+      powerpc/64s/radix: Boot-time NULL pointer protection using a guard-PID
+      powerpc/vas: Don't set uses_vas for kernel windows
+
+Sam Bobroff (1):
+      powerpc/pseries: Enable RAS hotplug events later
+
+ arch/powerpc/include/asm/book3s/32/pgtable.h       |   1 +
+ arch/powerpc/include/asm/book3s/64/hash-4k.h       |   3 +-
+ arch/powerpc/include/asm/book3s/64/hash-64k.h      |  16 ++-
+ arch/powerpc/include/asm/book3s/64/hash.h          |  13 ++-
+ arch/powerpc/include/asm/book3s/64/pgalloc.h       |  16 ++-
+ arch/powerpc/include/asm/book3s/64/pgtable.h       |   4 +-
+ arch/powerpc/include/asm/exception-64s.h           |   2 +-
+ arch/powerpc/include/asm/hw_irq.h                  |  12 ++-
+ arch/powerpc/include/asm/kexec.h                   |   6 ++
+ arch/powerpc/include/asm/nohash/32/pgtable.h       |   1 +
+ arch/powerpc/include/asm/nohash/64/pgtable.h       |   1 +
+ arch/powerpc/include/asm/topology.h                |  10 ++
+ arch/powerpc/kernel/exceptions-64e.S               |   2 +
+ arch/powerpc/kernel/exceptions-64s.S               |   6 +-
+ arch/powerpc/mm/hash64_4k.c                        |   4 +-
+ arch/powerpc/mm/hash64_64k.c                       |   8 +-
+ arch/powerpc/mm/hash_utils_64.c                    |   1 +
+ arch/powerpc/mm/hugetlbpage-hash64.c               |  10 +-
+ arch/powerpc/mm/init-common.c                      |   4 +-
+ arch/powerpc/mm/numa.c                             |   5 -
+ arch/powerpc/mm/pgtable-radix.c                    | 117 +++++++++++++++++----
+ arch/powerpc/mm/pgtable_64.c                       |   4 +
+ arch/powerpc/mm/tlb_hash64.c                       |   9 +-
+ arch/powerpc/platforms/powernv/vas-window.c        |  16 +--
+ arch/powerpc/platforms/pseries/hotplug-cpu.c       |   4 +-
+ arch/powerpc/platforms/pseries/ras.c               |  31 ++++--
+ drivers/misc/ocxl/file.c                           |   2 +-
+ .../powerpc/alignment/alignment_handler.c          |   2 +-	# tools/testing/selftests/
+ 28 files changed, 231 insertions(+), 79 deletions(-)
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJahDtCAAoJEFHr6jzI4aWAYTIP/0+n4WDZpQxKCOqQVabuR44Q
+R6DhKbqH5zy95wgW/QMeiP6oPmQyG0O+uq7VZ+cVbXWjNocI8+sqHmPHuouXLed+
+VeXYSu+fMpTwdiT+dr5I6eH/eSQFsK+VrNJAY1DU0mCNhm0rUQiF3DFOnODnroR0
+uC7aCTTqHMDQCTHM0TkPwSvS9O1WzOvHhNGic+8eMCM2RqXGVEUbMu5c78/02JKm
+ReKNAyIssDkrGoEkBb8PItjrixc0SX0VC1Kbw1Hx844AAvIXxbpZUsWn+6Munidk
+wHsLXUgeToWyoR+J4aiXMnlzpPOAPYxIfPoTKBgFu7HkyMYw2M6QdZYfMt9R3v4r
++9AZGRe1ZHdgzzd3s8dZMmGka+mM+T/4iZosrW/nl2KbY3cyU7MSNyIy9mwmONOZ
+uN9Wo3KyrgXgT+cQ4PQ108LcOkvIJikEA4TkOIngkXfCfX2Ep6DiRNBpjQND+tsT
+TFRLW6KhcLTPzNXjjdI2peIfuns5JL1j5XTQ2eRDXLNbi5lglYFRDyvWfxznCKIW
+fLS3yTb7hmQvLy75iv1BkJkrrqSsRfHDYJ9WlFiJ89dy4v2NdrVREBR/3Ab8NZfm
+tLn5YgHnsi/6P9+b31QL6k2QNrfPiCMlsP93B7IKIVKSurbZsJgGBnOJICkA3I44
+JXi9ynfakDGUxRby8aZD
+=6IPG
+-----END PGP SIGNATURE-----
+--=-=-=--
