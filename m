@@ -1,12 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030904AbeBNOjI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 09:39:08 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34498 "EHLO mx2.suse.de"
+        id S1030883AbeBNOjG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 09:39:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34490 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030786AbeBNOjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1030381AbeBNOjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Feb 2018 09:39:05 -0500
-X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 From: Michal Suchanek <msuchanek@suse.de>
 To: Ulf Hansson <ulf.hansson@linaro.org>,
         Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
@@ -18,45 +17,46 @@ To: Ulf Hansson <ulf.hansson@linaro.org>,
         Julia Lawall <Julia.Lawall@lip6.fr>, linux-mmc@vger.kernel.org,
         linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] mmc: bcm2835: print some informational messages during reset
-Date: Wed, 14 Feb 2018 15:38:58 +0100
-Message-Id: <57ff1e429a7fc12300a3cca0c5e9a637beed0d3a.1518619058.git.msuchanek@suse.de>
+Subject: [PATCH 1/2] mmc: bcm2835: reset host on timeout
+Date: Wed, 14 Feb 2018 15:38:57 +0100
+Message-Id: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.13.6
-In-Reply-To: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
-References: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
-In-Reply-To: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
-References: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The previous patch does reset during hardware error so make the reset
-progress more visible.
+The bcm2835 mmc host tends to lock up for unknown reason so reset it on
+timeout. The upper mmc block layer tries retransimitting with single
+blocks which tends to work out after a long wait.
+
+This is better than giving up and leaving the machine broken for no
+obvious reason.
 
 Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 ---
- drivers/mmc/host/bcm2835.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/mmc/host/bcm2835.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
-index ce05fe72f865..4dde8b2b62a9 100644
+index 229dc18f0581..ce05fe72f865 100644
 --- a/drivers/mmc/host/bcm2835.c
 +++ b/drivers/mmc/host/bcm2835.c
-@@ -283,10 +283,14 @@ static void bcm2835_reset_internal(struct bcm2835_host *host)
- static void bcm2835_reset(struct mmc_host *mmc)
- {
- 	struct bcm2835_host *host = mmc_priv(mmc);
-+	struct device *dev = &host->pdev->dev;
+@@ -286,6 +286,7 @@ static void bcm2835_reset(struct mmc_host *mmc)
  
--	if (host->dma_chan)
-+	if (host->dma_chan) {
-+		dev_info(dev, "tearing down dma");
+ 	if (host->dma_chan)
  		dmaengine_terminate_sync(host->dma_chan);
-+	}
- 	host->dma_chan = NULL;
-+	dev_info(dev, "resetting");
++	host->dma_chan = NULL;
  	bcm2835_reset_internal(host);
  }
  
+@@ -837,6 +838,8 @@ static void bcm2835_timeout(struct work_struct *work)
+ 		dev_err(dev, "timeout waiting for hardware interrupt.\n");
+ 		bcm2835_dumpregs(host);
+ 
++		bcm2835_reset(host->mmc);
++
+ 		if (host->data) {
+ 			host->data->error = -ETIMEDOUT;
+ 			bcm2835_finish_data(host);
 -- 
 2.13.6
