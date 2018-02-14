@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967767AbeBNM3p (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 07:29:45 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37519 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967747AbeBNM3c (ORCPT
+        id S967825AbeBNMa7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 07:30:59 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:56220 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967739AbeBNM31 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 07:29:32 -0500
-X-Google-Smtp-Source: AH8x226PAO+mm6tIUYgdlSRCik/Bbi3LZDez+41ED7bMkVl88EbweXlZWQkkLzTxfneQjiRGsGZWfA==
+        Wed, 14 Feb 2018 07:29:27 -0500
+X-Google-Smtp-Source: AH8x224f23Gr4bbZtduuBQuaGBWtT8FNLje+uukfexFkSHn164j96RajikycpjX+E+8ebJakilwTUA==
 From: Corentin Labbe <clabbe@baylibre.com>
 To: David1.Zhou@amd.com, airlied@linux.ie, alexander.deucher@amd.com,
         christian.koenig@amd.com
 Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH v2 13/13] drm/amd/powerplay: remove unused headers
-Date: Wed, 14 Feb 2018 12:28:51 +0000
-Message-Id: <1518611331-13144-14-git-send-email-clabbe@baylibre.com>
+Subject: [PATCH v2 08/13] drm/amd/include: remove unused asic_reg/uvd headers
+Date: Wed, 14 Feb 2018 12:28:46 +0000
+Message-Id: <1518611331-13144-9-git-send-email-clabbe@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518611331-13144-1-git-send-email-clabbe@baylibre.com>
 References: <1518611331-13144-1-git-send-email-clabbe@baylibre.com>
@@ -28,20 +28,23 @@ Lets just remove them.
 
 Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 ---
- .../gpu/drm/amd/powerplay/inc/polaris10_ppsmc.h    | 412 ---------------------
- drivers/gpu/drm/amd/powerplay/inc/pp_feature.h     |  67 ----
- 2 files changed, 479 deletions(-)
- delete mode 100644 drivers/gpu/drm/amd/powerplay/inc/polaris10_ppsmc.h
- delete mode 100644 drivers/gpu/drm/amd/powerplay/inc/pp_feature.h
+ .../drm/amd/include/asic_reg/uvd/uvd_4_0_sh_mask.h |  795 -------------
+ .../drm/amd/include/asic_reg/uvd/uvd_5_0_enum.h    | 1211 --------------------
+ .../drm/amd/include/asic_reg/uvd/uvd_6_0_enum.h    | 1081 -----------------
+ 3 files changed, 3087 deletions(-)
+ delete mode 100644 drivers/gpu/drm/amd/include/asic_reg/uvd/uvd_4_0_sh_mask.h
+ delete mode 100644 drivers/gpu/drm/amd/include/asic_reg/uvd/uvd_5_0_enum.h
+ delete mode 100644 drivers/gpu/drm/amd/include/asic_reg/uvd/uvd_6_0_enum.h
 
-diff --git a/drivers/gpu/drm/amd/powerplay/inc/polaris10_ppsmc.h b/drivers/gpu/drm/amd/powerplay/inc/polaris10_ppsmc.h
+diff --git a/drivers/gpu/drm/amd/include/asic_reg/uvd/uvd_4_0_sh_mask.h b/drivers/gpu/drm/amd/include/asic_reg/uvd/uvd_4_0_sh_mask.h
 deleted file mode 100644
-index b8f4b73c322e..000000000000
---- a/drivers/gpu/drm/amd/powerplay/inc/polaris10_ppsmc.h
+index 8ee3149df5b7..000000000000
+--- a/drivers/gpu/drm/amd/include/asic_reg/uvd/uvd_4_0_sh_mask.h
 +++ /dev/null
-@@ -1,412 +0,0 @@
+@@ -1,795 +0,0 @@
 -/*
-- * Copyright 2015 Advanced Micro Devices, Inc.
+- *
+- * Copyright (C) 2016 Advanced Micro Devices, Inc.
 - *
 - * Permission is hereby granted, free of charge, to any person obtaining a
 - * copy of this software and associated documentation files (the "Software"),
@@ -50,416 +53,800 @@ index b8f4b73c322e..000000000000
 - * and/or sell copies of the Software, and to permit persons to whom the
 - * Software is furnished to do so, subject to the following conditions:
 - *
-- * The above copyright notice and this permission notice shall be included in
-- * all copies or substantial portions of the Software.
+- * The above copyright notice and this permission notice shall be included
+- * in all copies or substantial portions of the Software.
 - *
-- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 - * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-- * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
-- * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- * OTHER DEALINGS IN THE SOFTWARE.
-- *
+- * THE COPYRIGHT HOLDER(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+- * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 - */
 -
--#ifndef POLARIS10_PP_SMC_H
--#define POLARIS10_PP_SMC_H
+-#ifndef UVD_4_0_SH_MASK_H
+-#define UVD_4_0_SH_MASK_H
 -
--
--#pragma pack(push, 1)
--
--#define PPSMC_MSG_SetGBDroopSettings          ((uint16_t) 0x305)
--
--#define PPSMC_SWSTATE_FLAG_DC                           0x01
--#define PPSMC_SWSTATE_FLAG_UVD                          0x02
--#define PPSMC_SWSTATE_FLAG_VCE                          0x04
--
--#define PPSMC_THERMAL_PROTECT_TYPE_INTERNAL             0x00
--#define PPSMC_THERMAL_PROTECT_TYPE_EXTERNAL             0x01
--#define PPSMC_THERMAL_PROTECT_TYPE_NONE                 0xff
--
--#define PPSMC_SYSTEMFLAG_GPIO_DC                        0x01
--#define PPSMC_SYSTEMFLAG_STEPVDDC                       0x02
--#define PPSMC_SYSTEMFLAG_GDDR5                          0x04
--
--#define PPSMC_SYSTEMFLAG_DISABLE_BABYSTEP               0x08
--
--#define PPSMC_SYSTEMFLAG_REGULATOR_HOT                  0x10
--#define PPSMC_SYSTEMFLAG_REGULATOR_HOT_ANALOG           0x20
--
--#define PPSMC_EXTRAFLAGS_AC2DC_ACTION_MASK              0x07
--#define PPSMC_EXTRAFLAGS_AC2DC_DONT_WAIT_FOR_VBLANK     0x08
--
--#define PPSMC_EXTRAFLAGS_AC2DC_ACTION_GOTODPMLOWSTATE   0x00
--#define PPSMC_EXTRAFLAGS_AC2DC_ACTION_GOTOINITIALSTATE  0x01
--
--
--#define PPSMC_DPM2FLAGS_TDPCLMP                         0x01
--#define PPSMC_DPM2FLAGS_PWRSHFT                         0x02
--#define PPSMC_DPM2FLAGS_OCP                             0x04
--
--
--#define PPSMC_DISPLAY_WATERMARK_LOW                     0
--#define PPSMC_DISPLAY_WATERMARK_HIGH                    1
--
--
--#define PPSMC_STATEFLAG_AUTO_PULSE_SKIP    0x01
--#define PPSMC_STATEFLAG_POWERBOOST         0x02
--#define PPSMC_STATEFLAG_PSKIP_ON_TDP_FAULT 0x04
--#define PPSMC_STATEFLAG_POWERSHIFT         0x08
--#define PPSMC_STATEFLAG_SLOW_READ_MARGIN   0x10
--#define PPSMC_STATEFLAG_DEEPSLEEP_THROTTLE 0x20
--#define PPSMC_STATEFLAG_DEEPSLEEP_BYPASS   0x40
--
--
--#define FDO_MODE_HARDWARE 0
--#define FDO_MODE_PIECE_WISE_LINEAR 1
--
--enum FAN_CONTROL {
--	FAN_CONTROL_FUZZY,
--	FAN_CONTROL_TABLE
--};
--
--
--#define PPSMC_Result_OK             ((uint16_t)0x01)
--#define PPSMC_Result_NoMore         ((uint16_t)0x02)
--
--#define PPSMC_Result_NotNow         ((uint16_t)0x03)
--#define PPSMC_Result_Failed         ((uint16_t)0xFF)
--#define PPSMC_Result_UnknownCmd     ((uint16_t)0xFE)
--#define PPSMC_Result_UnknownVT      ((uint16_t)0xFD)
--
--typedef uint16_t PPSMC_Result;
--
--#define PPSMC_isERROR(x) ((uint16_t)0x80 & (x))
--
--
--#define PPSMC_MSG_Halt                      ((uint16_t)0x10)
--#define PPSMC_MSG_Resume                    ((uint16_t)0x11)
--#define PPSMC_MSG_EnableDPMLevel            ((uint16_t)0x12)
--#define PPSMC_MSG_ZeroLevelsDisabled        ((uint16_t)0x13)
--#define PPSMC_MSG_OneLevelsDisabled         ((uint16_t)0x14)
--#define PPSMC_MSG_TwoLevelsDisabled         ((uint16_t)0x15)
--#define PPSMC_MSG_EnableThermalInterrupt    ((uint16_t)0x16)
--#define PPSMC_MSG_RunningOnAC               ((uint16_t)0x17)
--#define PPSMC_MSG_LevelUp                   ((uint16_t)0x18)
--#define PPSMC_MSG_LevelDown                 ((uint16_t)0x19)
--#define PPSMC_MSG_ResetDPMCounters          ((uint16_t)0x1a)
--#define PPSMC_MSG_SwitchToSwState           ((uint16_t)0x20)
--#define PPSMC_MSG_SwitchToSwStateLast       ((uint16_t)0x3f)
--#define PPSMC_MSG_SwitchToInitialState      ((uint16_t)0x40)
--#define PPSMC_MSG_NoForcedLevel             ((uint16_t)0x41)
--#define PPSMC_MSG_ForceHigh                 ((uint16_t)0x42)
--#define PPSMC_MSG_ForceMediumOrHigh         ((uint16_t)0x43)
--#define PPSMC_MSG_SwitchToMinimumPower      ((uint16_t)0x51)
--#define PPSMC_MSG_ResumeFromMinimumPower    ((uint16_t)0x52)
--#define PPSMC_MSG_EnableCac                 ((uint16_t)0x53)
--#define PPSMC_MSG_DisableCac                ((uint16_t)0x54)
--#define PPSMC_DPMStateHistoryStart          ((uint16_t)0x55)
--#define PPSMC_DPMStateHistoryStop           ((uint16_t)0x56)
--#define PPSMC_CACHistoryStart               ((uint16_t)0x57)
--#define PPSMC_CACHistoryStop                ((uint16_t)0x58)
--#define PPSMC_TDPClampingActive             ((uint16_t)0x59)
--#define PPSMC_TDPClampingInactive           ((uint16_t)0x5A)
--#define PPSMC_StartFanControl               ((uint16_t)0x5B)
--#define PPSMC_StopFanControl                ((uint16_t)0x5C)
--#define PPSMC_NoDisplay                     ((uint16_t)0x5D)
--#define PPSMC_HasDisplay                    ((uint16_t)0x5E)
--#define PPSMC_MSG_UVDPowerOFF               ((uint16_t)0x60)
--#define PPSMC_MSG_UVDPowerON                ((uint16_t)0x61)
--#define PPSMC_MSG_EnableULV                 ((uint16_t)0x62)
--#define PPSMC_MSG_DisableULV                ((uint16_t)0x63)
--#define PPSMC_MSG_EnterULV                  ((uint16_t)0x64)
--#define PPSMC_MSG_ExitULV                   ((uint16_t)0x65)
--#define PPSMC_PowerShiftActive              ((uint16_t)0x6A)
--#define PPSMC_PowerShiftInactive            ((uint16_t)0x6B)
--#define PPSMC_OCPActive                     ((uint16_t)0x6C)
--#define PPSMC_OCPInactive                   ((uint16_t)0x6D)
--#define PPSMC_CACLongTermAvgEnable          ((uint16_t)0x6E)
--#define PPSMC_CACLongTermAvgDisable         ((uint16_t)0x6F)
--#define PPSMC_MSG_InferredStateSweep_Start  ((uint16_t)0x70)
--#define PPSMC_MSG_InferredStateSweep_Stop   ((uint16_t)0x71)
--#define PPSMC_MSG_SwitchToLowestInfState    ((uint16_t)0x72)
--#define PPSMC_MSG_SwitchToNonInfState       ((uint16_t)0x73)
--#define PPSMC_MSG_AllStateSweep_Start       ((uint16_t)0x74)
--#define PPSMC_MSG_AllStateSweep_Stop        ((uint16_t)0x75)
--#define PPSMC_MSG_SwitchNextLowerInfState   ((uint16_t)0x76)
--#define PPSMC_MSG_SwitchNextHigherInfState  ((uint16_t)0x77)
--#define PPSMC_MSG_MclkRetrainingTest        ((uint16_t)0x78)
--#define PPSMC_MSG_ForceTDPClamping          ((uint16_t)0x79)
--#define PPSMC_MSG_CollectCAC_PowerCorreln   ((uint16_t)0x7A)
--#define PPSMC_MSG_CollectCAC_WeightCalib    ((uint16_t)0x7B)
--#define PPSMC_MSG_CollectCAC_SQonly         ((uint16_t)0x7C)
--#define PPSMC_MSG_CollectCAC_TemperaturePwr ((uint16_t)0x7D)
--
--#define PPSMC_MSG_ExtremitiesTest_Start     ((uint16_t)0x7E)
--#define PPSMC_MSG_ExtremitiesTest_Stop      ((uint16_t)0x7F)
--#define PPSMC_FlushDataCache                ((uint16_t)0x80)
--#define PPSMC_FlushInstrCache               ((uint16_t)0x81)
--
--#define PPSMC_MSG_SetEnabledLevels          ((uint16_t)0x82)
--#define PPSMC_MSG_SetForcedLevels           ((uint16_t)0x83)
--
--#define PPSMC_MSG_ResetToDefaults           ((uint16_t)0x84)
--
--#define PPSMC_MSG_SetForcedLevelsAndJump      ((uint16_t)0x85)
--#define PPSMC_MSG_SetCACHistoryMode           ((uint16_t)0x86)
--#define PPSMC_MSG_EnableDTE                   ((uint16_t)0x87)
--#define PPSMC_MSG_DisableDTE                  ((uint16_t)0x88)
--
--#define PPSMC_MSG_SmcSpaceSetAddress          ((uint16_t)0x89)
--#define PPSM_MSG_SmcSpaceWriteDWordInc        ((uint16_t)0x8A)
--#define PPSM_MSG_SmcSpaceWriteWordInc         ((uint16_t)0x8B)
--#define PPSM_MSG_SmcSpaceWriteByteInc         ((uint16_t)0x8C)
--
--#define PPSMC_MSG_BREAK                       ((uint16_t)0xF8)
--
--#define PPSMC_MSG_Test                        ((uint16_t) 0x100)
--#define PPSMC_MSG_DPM_Voltage_Pwrmgt          ((uint16_t) 0x101)
--#define PPSMC_MSG_DPM_Config                  ((uint16_t) 0x102)
--#define PPSMC_MSG_PM_Controller_Start         ((uint16_t) 0x103)
--#define PPSMC_MSG_DPM_ForceState              ((uint16_t) 0x104)
--#define PPSMC_MSG_PG_PowerDownSIMD            ((uint16_t) 0x105)
--#define PPSMC_MSG_PG_PowerUpSIMD              ((uint16_t) 0x106)
--#define PPSMC_MSG_PM_Controller_Stop          ((uint16_t) 0x107)
--#define PPSMC_MSG_PG_SIMD_Config              ((uint16_t) 0x108)
--#define PPSMC_MSG_Voltage_Cntl_Enable         ((uint16_t) 0x109)
--#define PPSMC_MSG_Thermal_Cntl_Enable         ((uint16_t) 0x10a)
--#define PPSMC_MSG_Reset_Service               ((uint16_t) 0x10b)
--#define PPSMC_MSG_VCEPowerOFF                 ((uint16_t) 0x10e)
--#define PPSMC_MSG_VCEPowerON                  ((uint16_t) 0x10f)
--#define PPSMC_MSG_DPM_Disable_VCE_HS          ((uint16_t) 0x110)
--#define PPSMC_MSG_DPM_Enable_VCE_HS           ((uint16_t) 0x111)
--#define PPSMC_MSG_DPM_N_LevelsDisabled        ((uint16_t) 0x112)
--#define PPSMC_MSG_DCEPowerOFF                 ((uint16_t) 0x113)
--#define PPSMC_MSG_DCEPowerON                  ((uint16_t) 0x114)
--#define PPSMC_MSG_PCIE_DDIPowerDown           ((uint16_t) 0x117)
--#define PPSMC_MSG_PCIE_DDIPowerUp             ((uint16_t) 0x118)
--#define PPSMC_MSG_PCIE_CascadePLLPowerDown    ((uint16_t) 0x119)
--#define PPSMC_MSG_PCIE_CascadePLLPowerUp      ((uint16_t) 0x11a)
--#define PPSMC_MSG_SYSPLLPowerOff              ((uint16_t) 0x11b)
--#define PPSMC_MSG_SYSPLLPowerOn               ((uint16_t) 0x11c)
--#define PPSMC_MSG_DCE_RemoveVoltageAdjustment ((uint16_t) 0x11d)
--#define PPSMC_MSG_DCE_AllowVoltageAdjustment  ((uint16_t) 0x11e)
--#define PPSMC_MSG_DISPLAYPHYStatusNotify      ((uint16_t) 0x11f)
--#define PPSMC_MSG_EnableBAPM                  ((uint16_t) 0x120)
--#define PPSMC_MSG_DisableBAPM                 ((uint16_t) 0x121)
--#define PPSMC_MSG_Spmi_Enable                 ((uint16_t) 0x122)
--#define PPSMC_MSG_Spmi_Timer                  ((uint16_t) 0x123)
--#define PPSMC_MSG_LCLK_DPM_Config             ((uint16_t) 0x124)
--#define PPSMC_MSG_VddNB_Request               ((uint16_t) 0x125)
--#define PPSMC_MSG_PCIE_DDIPhyPowerDown        ((uint32_t) 0x126)
--#define PPSMC_MSG_PCIE_DDIPhyPowerUp          ((uint32_t) 0x127)
--#define PPSMC_MSG_MCLKDPM_Config              ((uint16_t) 0x128)
--
--#define PPSMC_MSG_UVDDPM_Config               ((uint16_t) 0x129)
--#define PPSMC_MSG_VCEDPM_Config               ((uint16_t) 0x12A)
--#define PPSMC_MSG_ACPDPM_Config               ((uint16_t) 0x12B)
--#define PPSMC_MSG_SAMUDPM_Config              ((uint16_t) 0x12C)
--#define PPSMC_MSG_UVDDPM_SetEnabledMask       ((uint16_t) 0x12D)
--#define PPSMC_MSG_VCEDPM_SetEnabledMask       ((uint16_t) 0x12E)
--#define PPSMC_MSG_ACPDPM_SetEnabledMask       ((uint16_t) 0x12F)
--#define PPSMC_MSG_SAMUDPM_SetEnabledMask      ((uint16_t) 0x130)
--#define PPSMC_MSG_MCLKDPM_ForceState          ((uint16_t) 0x131)
--#define PPSMC_MSG_MCLKDPM_NoForcedLevel       ((uint16_t) 0x132)
--#define PPSMC_MSG_Thermal_Cntl_Disable        ((uint16_t) 0x133)
--#define PPSMC_MSG_SetTDPLimit                 ((uint16_t) 0x134)
--#define PPSMC_MSG_Voltage_Cntl_Disable        ((uint16_t) 0x135)
--#define PPSMC_MSG_PCIeDPM_Enable              ((uint16_t) 0x136)
--#define PPSMC_MSG_ACPPowerOFF                 ((uint16_t) 0x137)
--#define PPSMC_MSG_ACPPowerON                  ((uint16_t) 0x138)
--#define PPSMC_MSG_SAMPowerOFF                 ((uint16_t) 0x139)
--#define PPSMC_MSG_SAMPowerON                  ((uint16_t) 0x13a)
--#define PPSMC_MSG_SDMAPowerOFF                ((uint16_t) 0x13b)
--#define PPSMC_MSG_SDMAPowerON                 ((uint16_t) 0x13c)
--#define PPSMC_MSG_PCIeDPM_Disable             ((uint16_t) 0x13d)
--#define PPSMC_MSG_IOMMUPowerOFF               ((uint16_t) 0x13e)
--#define PPSMC_MSG_IOMMUPowerON                ((uint16_t) 0x13f)
--#define PPSMC_MSG_NBDPM_Enable                ((uint16_t) 0x140)
--#define PPSMC_MSG_NBDPM_Disable               ((uint16_t) 0x141)
--#define PPSMC_MSG_NBDPM_ForceNominal          ((uint16_t) 0x142)
--#define PPSMC_MSG_NBDPM_ForcePerformance      ((uint16_t) 0x143)
--#define PPSMC_MSG_NBDPM_UnForce               ((uint16_t) 0x144)
--#define PPSMC_MSG_SCLKDPM_SetEnabledMask      ((uint16_t) 0x145)
--#define PPSMC_MSG_MCLKDPM_SetEnabledMask      ((uint16_t) 0x146)
--#define PPSMC_MSG_PCIeDPM_ForceLevel          ((uint16_t) 0x147)
--#define PPSMC_MSG_PCIeDPM_UnForceLevel        ((uint16_t) 0x148)
--#define PPSMC_MSG_EnableACDCGPIOInterrupt     ((uint16_t) 0x149)
--#define PPSMC_MSG_EnableVRHotGPIOInterrupt    ((uint16_t) 0x14a)
--#define PPSMC_MSG_SwitchToAC                  ((uint16_t) 0x14b)
--#define PPSMC_MSG_XDMAPowerOFF                ((uint16_t) 0x14c)
--#define PPSMC_MSG_XDMAPowerON                 ((uint16_t) 0x14d)
--
--#define PPSMC_MSG_DPM_Enable                  ((uint16_t) 0x14e)
--#define PPSMC_MSG_DPM_Disable                 ((uint16_t) 0x14f)
--#define PPSMC_MSG_MCLKDPM_Enable              ((uint16_t) 0x150)
--#define PPSMC_MSG_MCLKDPM_Disable             ((uint16_t) 0x151)
--#define PPSMC_MSG_LCLKDPM_Enable              ((uint16_t) 0x152)
--#define PPSMC_MSG_LCLKDPM_Disable             ((uint16_t) 0x153)
--#define PPSMC_MSG_UVDDPM_Enable               ((uint16_t) 0x154)
--#define PPSMC_MSG_UVDDPM_Disable              ((uint16_t) 0x155)
--#define PPSMC_MSG_SAMUDPM_Enable              ((uint16_t) 0x156)
--#define PPSMC_MSG_SAMUDPM_Disable             ((uint16_t) 0x157)
--#define PPSMC_MSG_ACPDPM_Enable               ((uint16_t) 0x158)
--#define PPSMC_MSG_ACPDPM_Disable              ((uint16_t) 0x159)
--#define PPSMC_MSG_VCEDPM_Enable               ((uint16_t) 0x15a)
--#define PPSMC_MSG_VCEDPM_Disable              ((uint16_t) 0x15b)
--#define PPSMC_MSG_LCLKDPM_SetEnabledMask      ((uint16_t) 0x15c)
--#define PPSMC_MSG_DPM_FPS_Mode                ((uint16_t) 0x15d)
--#define PPSMC_MSG_DPM_Activity_Mode           ((uint16_t) 0x15e)
--#define PPSMC_MSG_VddC_Request                ((uint16_t) 0x15f)
--#define PPSMC_MSG_MCLKDPM_GetEnabledMask      ((uint16_t) 0x160)
--#define PPSMC_MSG_LCLKDPM_GetEnabledMask      ((uint16_t) 0x161)
--#define PPSMC_MSG_SCLKDPM_GetEnabledMask      ((uint16_t) 0x162)
--#define PPSMC_MSG_UVDDPM_GetEnabledMask       ((uint16_t) 0x163)
--#define PPSMC_MSG_SAMUDPM_GetEnabledMask      ((uint16_t) 0x164)
--#define PPSMC_MSG_ACPDPM_GetEnabledMask       ((uint16_t) 0x165)
--#define PPSMC_MSG_VCEDPM_GetEnabledMask       ((uint16_t) 0x166)
--#define PPSMC_MSG_PCIeDPM_SetEnabledMask      ((uint16_t) 0x167)
--#define PPSMC_MSG_PCIeDPM_GetEnabledMask      ((uint16_t) 0x168)
--#define PPSMC_MSG_TDCLimitEnable              ((uint16_t) 0x169)
--#define PPSMC_MSG_TDCLimitDisable             ((uint16_t) 0x16a)
--#define PPSMC_MSG_DPM_AutoRotate_Mode         ((uint16_t) 0x16b)
--#define PPSMC_MSG_DISPCLK_FROM_FCH            ((uint16_t) 0x16c)
--#define PPSMC_MSG_DISPCLK_FROM_DFS            ((uint16_t) 0x16d)
--#define PPSMC_MSG_DPREFCLK_FROM_FCH           ((uint16_t) 0x16e)
--#define PPSMC_MSG_DPREFCLK_FROM_DFS           ((uint16_t) 0x16f)
--#define PPSMC_MSG_PmStatusLogStart            ((uint16_t) 0x170)
--#define PPSMC_MSG_PmStatusLogSample           ((uint16_t) 0x171)
--#define PPSMC_MSG_SCLK_AutoDPM_ON             ((uint16_t) 0x172)
--#define PPSMC_MSG_MCLK_AutoDPM_ON             ((uint16_t) 0x173)
--#define PPSMC_MSG_LCLK_AutoDPM_ON             ((uint16_t) 0x174)
--#define PPSMC_MSG_UVD_AutoDPM_ON              ((uint16_t) 0x175)
--#define PPSMC_MSG_SAMU_AutoDPM_ON             ((uint16_t) 0x176)
--#define PPSMC_MSG_ACP_AutoDPM_ON              ((uint16_t) 0x177)
--#define PPSMC_MSG_VCE_AutoDPM_ON              ((uint16_t) 0x178)
--#define PPSMC_MSG_PCIe_AutoDPM_ON             ((uint16_t) 0x179)
--#define PPSMC_MSG_MASTER_AutoDPM_ON           ((uint16_t) 0x17a)
--#define PPSMC_MSG_MASTER_AutoDPM_OFF          ((uint16_t) 0x17b)
--#define PPSMC_MSG_DYNAMICDISPPHYPOWER         ((uint16_t) 0x17c)
--#define PPSMC_MSG_CAC_COLLECTION_ON           ((uint16_t) 0x17d)
--#define PPSMC_MSG_CAC_COLLECTION_OFF          ((uint16_t) 0x17e)
--#define PPSMC_MSG_CAC_CORRELATION_ON          ((uint16_t) 0x17f)
--#define PPSMC_MSG_CAC_CORRELATION_OFF         ((uint16_t) 0x180)
--#define PPSMC_MSG_PM_STATUS_TO_DRAM_ON        ((uint16_t) 0x181)
--#define PPSMC_MSG_PM_STATUS_TO_DRAM_OFF       ((uint16_t) 0x182)
--#define PPSMC_MSG_ALLOW_LOWSCLK_INTERRUPT     ((uint16_t) 0x184)
--#define PPSMC_MSG_PkgPwrLimitEnable           ((uint16_t) 0x185)
--#define PPSMC_MSG_PkgPwrLimitDisable          ((uint16_t) 0x186)
--#define PPSMC_MSG_PkgPwrSetLimit              ((uint16_t) 0x187)
--#define PPSMC_MSG_OverDriveSetTargetTdp       ((uint16_t) 0x188)
--#define PPSMC_MSG_SCLKDPM_FreezeLevel         ((uint16_t) 0x189)
--#define PPSMC_MSG_SCLKDPM_UnfreezeLevel       ((uint16_t) 0x18A)
--#define PPSMC_MSG_MCLKDPM_FreezeLevel         ((uint16_t) 0x18B)
--#define PPSMC_MSG_MCLKDPM_UnfreezeLevel       ((uint16_t) 0x18C)
--#define PPSMC_MSG_START_DRAM_LOGGING          ((uint16_t) 0x18D)
--#define PPSMC_MSG_STOP_DRAM_LOGGING           ((uint16_t) 0x18E)
--#define PPSMC_MSG_MASTER_DeepSleep_ON         ((uint16_t) 0x18F)
--#define PPSMC_MSG_MASTER_DeepSleep_OFF        ((uint16_t) 0x190)
--#define PPSMC_MSG_Remove_DC_Clamp             ((uint16_t) 0x191)
--#define PPSMC_MSG_DisableACDCGPIOInterrupt    ((uint16_t) 0x192)
--#define PPSMC_MSG_OverrideVoltageControl_SetVddc       ((uint16_t) 0x193)
--#define PPSMC_MSG_OverrideVoltageControl_SetVddci      ((uint16_t) 0x194)
--#define PPSMC_MSG_SetVidOffset_1              ((uint16_t) 0x195)
--#define PPSMC_MSG_SetVidOffset_2              ((uint16_t) 0x207)
--#define PPSMC_MSG_GetVidOffset_1              ((uint16_t) 0x196)
--#define PPSMC_MSG_GetVidOffset_2              ((uint16_t) 0x208)
--#define PPSMC_MSG_THERMAL_OVERDRIVE_Enable    ((uint16_t) 0x197)
--#define PPSMC_MSG_THERMAL_OVERDRIVE_Disable   ((uint16_t) 0x198)
--#define PPSMC_MSG_SetTjMax                    ((uint16_t) 0x199)
--#define PPSMC_MSG_SetFanPwmMax                ((uint16_t) 0x19A)
--#define PPSMC_MSG_WaitForMclkSwitchFinish     ((uint16_t) 0x19B)
--#define PPSMC_MSG_ENABLE_THERMAL_DPM          ((uint16_t) 0x19C)
--#define PPSMC_MSG_DISABLE_THERMAL_DPM         ((uint16_t) 0x19D)
--
--#define PPSMC_MSG_API_GetSclkFrequency        ((uint16_t) 0x200)
--#define PPSMC_MSG_API_GetMclkFrequency        ((uint16_t) 0x201)
--#define PPSMC_MSG_API_GetSclkBusy             ((uint16_t) 0x202)
--#define PPSMC_MSG_API_GetMclkBusy             ((uint16_t) 0x203)
--#define PPSMC_MSG_API_GetAsicPower            ((uint16_t) 0x204)
--#define PPSMC_MSG_SetFanRpmMax                ((uint16_t) 0x205)
--#define PPSMC_MSG_SetFanSclkTarget            ((uint16_t) 0x206)
--#define PPSMC_MSG_SetFanMinPwm                ((uint16_t) 0x209)
--#define PPSMC_MSG_SetFanTemperatureTarget     ((uint16_t) 0x20A)
--
--#define PPSMC_MSG_BACO_StartMonitor           ((uint16_t) 0x240)
--#define PPSMC_MSG_BACO_Cancel                 ((uint16_t) 0x241)
--#define PPSMC_MSG_EnableVddGfx                ((uint16_t) 0x242)
--#define PPSMC_MSG_DisableVddGfx               ((uint16_t) 0x243)
--#define PPSMC_MSG_UcodeAddressLow             ((uint16_t) 0x244)
--#define PPSMC_MSG_UcodeAddressHigh            ((uint16_t) 0x245)
--#define PPSMC_MSG_UcodeLoadStatus             ((uint16_t) 0x246)
--
--#define PPSMC_MSG_DRV_DRAM_ADDR_HI            ((uint16_t) 0x250)
--#define PPSMC_MSG_DRV_DRAM_ADDR_LO            ((uint16_t) 0x251)
--#define PPSMC_MSG_SMU_DRAM_ADDR_HI            ((uint16_t) 0x252)
--#define PPSMC_MSG_SMU_DRAM_ADDR_LO            ((uint16_t) 0x253)
--#define PPSMC_MSG_LoadUcodes                  ((uint16_t) 0x254)
--#define PPSMC_MSG_PowerStateNotify            ((uint16_t) 0x255)
--#define PPSMC_MSG_COND_EXEC_DRAM_ADDR_HI      ((uint16_t) 0x256)
--#define PPSMC_MSG_COND_EXEC_DRAM_ADDR_LO      ((uint16_t) 0x257)
--#define PPSMC_MSG_VBIOS_DRAM_ADDR_HI          ((uint16_t) 0x258)
--#define PPSMC_MSG_VBIOS_DRAM_ADDR_LO          ((uint16_t) 0x259)
--#define PPSMC_MSG_LoadVBios                   ((uint16_t) 0x25A)
--#define PPSMC_MSG_GetUcodeVersion             ((uint16_t) 0x25B)
--#define DMCUSMC_MSG_PSREntry                  ((uint16_t) 0x25C)
--#define DMCUSMC_MSG_PSRExit                   ((uint16_t) 0x25D)
--#define PPSMC_MSG_EnableClockGatingFeature    ((uint16_t) 0x260)
--#define PPSMC_MSG_DisableClockGatingFeature   ((uint16_t) 0x261)
--#define PPSMC_MSG_IsDeviceRunning             ((uint16_t) 0x262)
--#define PPSMC_MSG_LoadMetaData                ((uint16_t) 0x263)
--#define PPSMC_MSG_TMON_AutoCaliberate_Enable  ((uint16_t) 0x264)
--#define PPSMC_MSG_TMON_AutoCaliberate_Disable ((uint16_t) 0x265)
--#define PPSMC_MSG_GetTelemetry1Slope          ((uint16_t) 0x266)
--#define PPSMC_MSG_GetTelemetry1Offset         ((uint16_t) 0x267)
--#define PPSMC_MSG_GetTelemetry2Slope          ((uint16_t) 0x268)
--#define PPSMC_MSG_GetTelemetry2Offset         ((uint16_t) 0x269)
--#define PPSMC_MSG_EnableAvfs                  ((uint16_t) 0x26A)
--#define PPSMC_MSG_DisableAvfs                 ((uint16_t) 0x26B)
--
--#define PPSMC_MSG_PerformBtc                  ((uint16_t) 0x26C)
--#define PPSMC_MSG_VftTableIsValid             ((uint16_t) 0x275)
--#define PPSMC_MSG_UseNewGPIOScheme            ((uint16_t) 0x277)
--#define PPSMC_MSG_GetEnabledPsm               ((uint16_t) 0x400)
--#define PPSMC_MSG_AgmStartPsm                 ((uint16_t) 0x401)
--#define PPSMC_MSG_AgmReadPsm                  ((uint16_t) 0x402)
--#define PPSMC_MSG_AgmResetPsm                 ((uint16_t) 0x403)
--#define PPSMC_MSG_ReadVftCell                 ((uint16_t) 0x404)
--
--#define PPSMC_MSG_GFX_CU_PG_ENABLE            ((uint16_t) 0x280)
--#define PPSMC_MSG_GFX_CU_PG_DISABLE           ((uint16_t) 0x281)
--#define PPSMC_MSG_GetCurrPkgPwr               ((uint16_t) 0x282)
--
--#define PPSMC_MSG_SetGpuPllDfsForSclk         ((uint16_t) 0x300)
--#define PPSMC_MSG_Didt_Block_Function		  ((uint16_t) 0x301)
--
--#define PPSMC_MSG_SetVBITimeout               ((uint16_t) 0x306)
--
--#define PPSMC_MSG_SecureSRBMWrite             ((uint16_t) 0x600)
--#define PPSMC_MSG_SecureSRBMRead              ((uint16_t) 0x601)
--#define PPSMC_MSG_SetAddress                  ((uint16_t) 0x800)
--#define PPSMC_MSG_GetData                     ((uint16_t) 0x801)
--#define PPSMC_MSG_SetData                     ((uint16_t) 0x802)
--
--typedef uint16_t PPSMC_Msg;
--
--#define PPSMC_EVENT_STATUS_THERMAL          0x00000001
--#define PPSMC_EVENT_STATUS_REGULATORHOT     0x00000002
--#define PPSMC_EVENT_STATUS_DC               0x00000004
--
--#pragma pack(pop)
+-#define UVD_CGC_CTRL2__DYN_OCLK_RAMP_EN_MASK 0x00000001L
+-#define UVD_CGC_CTRL2__DYN_OCLK_RAMP_EN__SHIFT 0x00000000
+-#define UVD_CGC_CTRL2__DYN_RCLK_RAMP_EN_MASK 0x00000002L
+-#define UVD_CGC_CTRL2__DYN_RCLK_RAMP_EN__SHIFT 0x00000001
+-#define UVD_CGC_CTRL2__GATER_DIV_ID_MASK 0x0000001cL
+-#define UVD_CGC_CTRL2__GATER_DIV_ID__SHIFT 0x00000002
+-#define UVD_CGC_CTRL__CLK_GATE_DLY_TIMER_MASK 0x0000003cL
+-#define UVD_CGC_CTRL__CLK_GATE_DLY_TIMER__SHIFT 0x00000002
+-#define UVD_CGC_CTRL__CLK_OFF_DELAY_MASK 0x000007c0L
+-#define UVD_CGC_CTRL__CLK_OFF_DELAY__SHIFT 0x00000006
+-#define UVD_CGC_CTRL__DYN_CLOCK_MODE_MASK 0x00000001L
+-#define UVD_CGC_CTRL__DYN_CLOCK_MODE__SHIFT 0x00000000
+-#define UVD_CGC_CTRL__IDCT_MODE_MASK 0x00800000L
+-#define UVD_CGC_CTRL__IDCT_MODE__SHIFT 0x00000017
+-#define UVD_CGC_CTRL__LBSI_MODE_MASK 0x04000000L
+-#define UVD_CGC_CTRL__LBSI_MODE__SHIFT 0x0000001a
+-#define UVD_CGC_CTRL__LMI_MC_MODE_MASK 0x00200000L
+-#define UVD_CGC_CTRL__LMI_MC_MODE__SHIFT 0x00000015
+-#define UVD_CGC_CTRL__LMI_UMC_MODE_MASK 0x00400000L
+-#define UVD_CGC_CTRL__LMI_UMC_MODE__SHIFT 0x00000016
+-#define UVD_CGC_CTRL__LRBBM_MODE_MASK 0x08000000L
+-#define UVD_CGC_CTRL__LRBBM_MODE__SHIFT 0x0000001b
+-#define UVD_CGC_CTRL__MPC_MODE_MASK 0x02000000L
+-#define UVD_CGC_CTRL__MPC_MODE__SHIFT 0x00000019
+-#define UVD_CGC_CTRL__MPEG2_MODE_MASK 0x00040000L
+-#define UVD_CGC_CTRL__MPEG2_MODE__SHIFT 0x00000012
+-#define UVD_CGC_CTRL__MPRD_MODE_MASK 0x01000000L
+-#define UVD_CGC_CTRL__MPRD_MODE__SHIFT 0x00000018
+-#define UVD_CGC_CTRL__RBC_MODE_MASK 0x00100000L
+-#define UVD_CGC_CTRL__RBC_MODE__SHIFT 0x00000014
+-#define UVD_CGC_CTRL__REGS_MODE_MASK 0x00080000L
+-#define UVD_CGC_CTRL__REGS_MODE__SHIFT 0x00000013
+-#define UVD_CGC_CTRL__SCPU_MODE_MASK 0x40000000L
+-#define UVD_CGC_CTRL__SCPU_MODE__SHIFT 0x0000001e
+-#define UVD_CGC_CTRL__SYS_MODE_MASK 0x00010000L
+-#define UVD_CGC_CTRL__SYS_MODE__SHIFT 0x00000010
+-#define UVD_CGC_CTRL__UDEC_CM_MODE_MASK 0x00001000L
+-#define UVD_CGC_CTRL__UDEC_CM_MODE__SHIFT 0x0000000c
+-#define UVD_CGC_CTRL__UDEC_DB_MODE_MASK 0x00004000L
+-#define UVD_CGC_CTRL__UDEC_DB_MODE__SHIFT 0x0000000e
+-#define UVD_CGC_CTRL__UDEC_IT_MODE_MASK 0x00002000L
+-#define UVD_CGC_CTRL__UDEC_IT_MODE__SHIFT 0x0000000d
+-#define UVD_CGC_CTRL__UDEC_MODE_MASK 0x00020000L
+-#define UVD_CGC_CTRL__UDEC_MODE__SHIFT 0x00000011
+-#define UVD_CGC_CTRL__UDEC_MP_MODE_MASK 0x00008000L
+-#define UVD_CGC_CTRL__UDEC_MP_MODE__SHIFT 0x0000000f
+-#define UVD_CGC_CTRL__UDEC_RE_MODE_MASK 0x00000800L
+-#define UVD_CGC_CTRL__UDEC_RE_MODE__SHIFT 0x0000000b
+-#define UVD_CGC_CTRL__VCPU_MODE_MASK 0x20000000L
+-#define UVD_CGC_CTRL__VCPU_MODE__SHIFT 0x0000001d
+-#define UVD_CGC_CTRL__WCB_MODE_MASK 0x10000000L
+-#define UVD_CGC_CTRL__WCB_MODE__SHIFT 0x0000001c
+-#define UVD_CGC_GATE__IDCT_MASK 0x00000080L
+-#define UVD_CGC_GATE__IDCT__SHIFT 0x00000007
+-#define UVD_CGC_GATE__LBSI_MASK 0x00000400L
+-#define UVD_CGC_GATE__LBSI__SHIFT 0x0000000a
+-#define UVD_CGC_GATE__LMI_MC_MASK 0x00000020L
+-#define UVD_CGC_GATE__LMI_MC__SHIFT 0x00000005
+-#define UVD_CGC_GATE__LMI_UMC_MASK 0x00000040L
+-#define UVD_CGC_GATE__LMI_UMC__SHIFT 0x00000006
+-#define UVD_CGC_GATE__LRBBM_MASK 0x00000800L
+-#define UVD_CGC_GATE__LRBBM__SHIFT 0x0000000b
+-#define UVD_CGC_GATE__MPC_MASK 0x00000200L
+-#define UVD_CGC_GATE__MPC__SHIFT 0x00000009
+-#define UVD_CGC_GATE__MPEG2_MASK 0x00000004L
+-#define UVD_CGC_GATE__MPEG2__SHIFT 0x00000002
+-#define UVD_CGC_GATE__MPRD_MASK 0x00000100L
+-#define UVD_CGC_GATE__MPRD__SHIFT 0x00000008
+-#define UVD_CGC_GATE__RBC_MASK 0x00000010L
+-#define UVD_CGC_GATE__RBC__SHIFT 0x00000004
+-#define UVD_CGC_GATE__REGS_MASK 0x00000008L
+-#define UVD_CGC_GATE__REGS__SHIFT 0x00000003
+-#define UVD_CGC_GATE__SCPU_MASK 0x00080000L
+-#define UVD_CGC_GATE__SCPU__SHIFT 0x00000013
+-#define UVD_CGC_GATE__SYS_MASK 0x00000001L
+-#define UVD_CGC_GATE__SYS__SHIFT 0x00000000
+-#define UVD_CGC_GATE__UDEC_CM_MASK 0x00002000L
+-#define UVD_CGC_GATE__UDEC_CM__SHIFT 0x0000000d
+-#define UVD_CGC_GATE__UDEC_DB_MASK 0x00008000L
+-#define UVD_CGC_GATE__UDEC_DB__SHIFT 0x0000000f
+-#define UVD_CGC_GATE__UDEC_IT_MASK 0x00004000L
+-#define UVD_CGC_GATE__UDEC_IT__SHIFT 0x0000000e
+-#define UVD_CGC_GATE__UDEC_MASK 0x00000002L
+-#define UVD_CGC_GATE__UDEC_MP_MASK 0x00010000L
+-#define UVD_CGC_GATE__UDEC_MP__SHIFT 0x00000010
+-#define UVD_CGC_GATE__UDEC_RE_MASK 0x00001000L
+-#define UVD_CGC_GATE__UDEC_RE__SHIFT 0x0000000c
+-#define UVD_CGC_GATE__UDEC__SHIFT 0x00000001
+-#define UVD_CGC_GATE__VCPU_MASK 0x00040000L
+-#define UVD_CGC_GATE__VCPU__SHIFT 0x00000012
+-#define UVD_CGC_GATE__WCB_MASK 0x00020000L
+-#define UVD_CGC_GATE__WCB__SHIFT 0x00000011
+-#define UVD_CGC_MEM_CTRL__LCM_LS_EN_MASK 0x00002000L
+-#define UVD_CGC_MEM_CTRL__LCM_LS_EN__SHIFT 0x0000000d
+-#define UVD_CGC_MEM_CTRL__LMI_MC_LS_EN_MASK 0x00000001L
+-#define UVD_CGC_MEM_CTRL__LMI_MC_LS_EN__SHIFT 0x00000000
+-#define UVD_CGC_MEM_CTRL__LS_CLEAR_DELAY_MASK 0x00f00000L
+-#define UVD_CGC_MEM_CTRL__LS_CLEAR_DELAY__SHIFT 0x00000014
+-#define UVD_CGC_MEM_CTRL__LS_SET_DELAY_MASK 0x000f0000L
+-#define UVD_CGC_MEM_CTRL__LS_SET_DELAY__SHIFT 0x00000010
+-#define UVD_CGC_MEM_CTRL__MIF_LS_EN_MASK 0x00001000L
+-#define UVD_CGC_MEM_CTRL__MIF_LS_EN__SHIFT 0x0000000c
+-#define UVD_CGC_MEM_CTRL__MPC_LS_EN_MASK 0x00000002L
+-#define UVD_CGC_MEM_CTRL__MPC_LS_EN__SHIFT 0x00000001
+-#define UVD_CGC_MEM_CTRL__MPRD_LS_EN_MASK 0x00000004L
+-#define UVD_CGC_MEM_CTRL__MPRD_LS_EN__SHIFT 0x00000002
+-#define UVD_CGC_MEM_CTRL__SCPU_LS_EN_MASK 0x00000800L
+-#define UVD_CGC_MEM_CTRL__SCPU_LS_EN__SHIFT 0x0000000b
+-#define UVD_CGC_MEM_CTRL__SYS_LS_EN_MASK 0x00000200L
+-#define UVD_CGC_MEM_CTRL__SYS_LS_EN__SHIFT 0x00000009
+-#define UVD_CGC_MEM_CTRL__UDEC_CM_LS_EN_MASK 0x00000020L
+-#define UVD_CGC_MEM_CTRL__UDEC_CM_LS_EN__SHIFT 0x00000005
+-#define UVD_CGC_MEM_CTRL__UDEC_DB_LS_EN_MASK 0x00000080L
+-#define UVD_CGC_MEM_CTRL__UDEC_DB_LS_EN__SHIFT 0x00000007
+-#define UVD_CGC_MEM_CTRL__UDEC_IT_LS_EN_MASK 0x00000040L
+-#define UVD_CGC_MEM_CTRL__UDEC_IT_LS_EN__SHIFT 0x00000006
+-#define UVD_CGC_MEM_CTRL__UDEC_MP_LS_EN_MASK 0x00000100L
+-#define UVD_CGC_MEM_CTRL__UDEC_MP_LS_EN__SHIFT 0x00000008
+-#define UVD_CGC_MEM_CTRL__UDEC_RE_LS_EN_MASK 0x00000010L
+-#define UVD_CGC_MEM_CTRL__UDEC_RE_LS_EN__SHIFT 0x00000004
+-#define UVD_CGC_MEM_CTRL__VCPU_LS_EN_MASK 0x00000400L
+-#define UVD_CGC_MEM_CTRL__VCPU_LS_EN__SHIFT 0x0000000a
+-#define UVD_CGC_MEM_CTRL__WCB_LS_EN_MASK 0x00000008L
+-#define UVD_CGC_MEM_CTRL__WCB_LS_EN__SHIFT 0x00000003
+-#define UVD_CGC_STATUS__IDCT_SCLK_MASK 0x00004000L
+-#define UVD_CGC_STATUS__IDCT_SCLK__SHIFT 0x0000000e
+-#define UVD_CGC_STATUS__IDCT_VCLK_MASK 0x00008000L
+-#define UVD_CGC_STATUS__IDCT_VCLK__SHIFT 0x0000000f
+-#define UVD_CGC_STATUS__LBSI_SCLK_MASK 0x00200000L
+-#define UVD_CGC_STATUS__LBSI_SCLK__SHIFT 0x00000015
+-#define UVD_CGC_STATUS__LBSI_VCLK_MASK 0x00400000L
+-#define UVD_CGC_STATUS__LBSI_VCLK__SHIFT 0x00000016
+-#define UVD_CGC_STATUS__LMI_MC_SCLK_MASK 0x00001000L
+-#define UVD_CGC_STATUS__LMI_MC_SCLK__SHIFT 0x0000000c
+-#define UVD_CGC_STATUS__LMI_UMC_SCLK_MASK 0x00002000L
+-#define UVD_CGC_STATUS__LMI_UMC_SCLK__SHIFT 0x0000000d
+-#define UVD_CGC_STATUS__LRBBM_SCLK_MASK 0x00800000L
+-#define UVD_CGC_STATUS__LRBBM_SCLK__SHIFT 0x00000017
+-#define UVD_CGC_STATUS__MPC_DCLK_MASK 0x00100000L
+-#define UVD_CGC_STATUS__MPC_DCLK__SHIFT 0x00000014
+-#define UVD_CGC_STATUS__MPC_SCLK_MASK 0x00080000L
+-#define UVD_CGC_STATUS__MPC_SCLK__SHIFT 0x00000013
+-#define UVD_CGC_STATUS__MPEG2_DCLK_MASK 0x00000080L
+-#define UVD_CGC_STATUS__MPEG2_DCLK__SHIFT 0x00000007
+-#define UVD_CGC_STATUS__MPEG2_SCLK_MASK 0x00000040L
+-#define UVD_CGC_STATUS__MPEG2_SCLK__SHIFT 0x00000006
+-#define UVD_CGC_STATUS__MPEG2_VCLK_MASK 0x00000100L
+-#define UVD_CGC_STATUS__MPEG2_VCLK__SHIFT 0x00000008
+-#define UVD_CGC_STATUS__MPRD_DCLK_MASK 0x00020000L
+-#define UVD_CGC_STATUS__MPRD_DCLK__SHIFT 0x00000011
+-#define UVD_CGC_STATUS__MPRD_SCLK_MASK 0x00010000L
+-#define UVD_CGC_STATUS__MPRD_SCLK__SHIFT 0x00000010
+-#define UVD_CGC_STATUS__MPRD_VCLK_MASK 0x00040000L
+-#define UVD_CGC_STATUS__MPRD_VCLK__SHIFT 0x00000012
+-#define UVD_CGC_STATUS__RBC_SCLK_MASK 0x00000800L
+-#define UVD_CGC_STATUS__RBC_SCLK__SHIFT 0x0000000b
+-#define UVD_CGC_STATUS__REGS_SCLK_MASK 0x00000200L
+-#define UVD_CGC_STATUS__REGS_SCLK__SHIFT 0x00000009
+-#define UVD_CGC_STATUS__REGS_VCLK_MASK 0x00000400L
+-#define UVD_CGC_STATUS__REGS_VCLK__SHIFT 0x0000000a
+-#define UVD_CGC_STATUS__SCPU_SCLK_MASK 0x08000000L
+-#define UVD_CGC_STATUS__SCPU_SCLK__SHIFT 0x0000001b
+-#define UVD_CGC_STATUS__SCPU_VCLK_MASK 0x10000000L
+-#define UVD_CGC_STATUS__SCPU_VCLK__SHIFT 0x0000001c
+-#define UVD_CGC_STATUS__SYS_DCLK_MASK 0x00000002L
+-#define UVD_CGC_STATUS__SYS_DCLK__SHIFT 0x00000001
+-#define UVD_CGC_STATUS__SYS_SCLK_MASK 0x00000001L
+-#define UVD_CGC_STATUS__SYS_SCLK__SHIFT 0x00000000
+-#define UVD_CGC_STATUS__SYS_VCLK_MASK 0x00000004L
+-#define UVD_CGC_STATUS__SYS_VCLK__SHIFT 0x00000002
+-#define UVD_CGC_STATUS__UDEC_DCLK_MASK 0x00000010L
+-#define UVD_CGC_STATUS__UDEC_DCLK__SHIFT 0x00000004
+-#define UVD_CGC_STATUS__UDEC_SCLK_MASK 0x00000008L
+-#define UVD_CGC_STATUS__UDEC_SCLK__SHIFT 0x00000003
+-#define UVD_CGC_STATUS__UDEC_VCLK_MASK 0x00000020L
+-#define UVD_CGC_STATUS__UDEC_VCLK__SHIFT 0x00000005
+-#define UVD_CGC_STATUS__VCPU_SCLK_MASK 0x02000000L
+-#define UVD_CGC_STATUS__VCPU_SCLK__SHIFT 0x00000019
+-#define UVD_CGC_STATUS__VCPU_VCLK_MASK 0x04000000L
+-#define UVD_CGC_STATUS__VCPU_VCLK__SHIFT 0x0000001a
+-#define UVD_CGC_STATUS__WCB_SCLK_MASK 0x01000000L
+-#define UVD_CGC_STATUS__WCB_SCLK__SHIFT 0x00000018
+-#define UVD_CGC_UDEC_STATUS__CM_DCLK_MASK 0x00000010L
+-#define UVD_CGC_UDEC_STATUS__CM_DCLK__SHIFT 0x00000004
+-#define UVD_CGC_UDEC_STATUS__CM_SCLK_MASK 0x00000008L
+-#define UVD_CGC_UDEC_STATUS__CM_SCLK__SHIFT 0x00000003
+-#define UVD_CGC_UDEC_STATUS__CM_VCLK_MASK 0x00000020L
+-#define UVD_CGC_UDEC_STATUS__CM_VCLK__SHIFT 0x00000005
+-#define UVD_CGC_UDEC_STATUS__DB_DCLK_MASK 0x00000400L
+-#define UVD_CGC_UDEC_STATUS__DB_DCLK__SHIFT 0x0000000a
+-#define UVD_CGC_UDEC_STATUS__DB_SCLK_MASK 0x00000200L
+-#define UVD_CGC_UDEC_STATUS__DB_SCLK__SHIFT 0x00000009
+-#define UVD_CGC_UDEC_STATUS__DB_VCLK_MASK 0x00000800L
+-#define UVD_CGC_UDEC_STATUS__DB_VCLK__SHIFT 0x0000000b
+-#define UVD_CGC_UDEC_STATUS__IT_DCLK_MASK 0x00000080L
+-#define UVD_CGC_UDEC_STATUS__IT_DCLK__SHIFT 0x00000007
+-#define UVD_CGC_UDEC_STATUS__IT_SCLK_MASK 0x00000040L
+-#define UVD_CGC_UDEC_STATUS__IT_SCLK__SHIFT 0x00000006
+-#define UVD_CGC_UDEC_STATUS__IT_VCLK_MASK 0x00000100L
+-#define UVD_CGC_UDEC_STATUS__IT_VCLK__SHIFT 0x00000008
+-#define UVD_CGC_UDEC_STATUS__MP_DCLK_MASK 0x00002000L
+-#define UVD_CGC_UDEC_STATUS__MP_DCLK__SHIFT 0x0000000d
+-#define UVD_CGC_UDEC_STATUS__MP_SCLK_MASK 0x00001000L
+-#define UVD_CGC_UDEC_STATUS__MP_SCLK__SHIFT 0x0000000c
+-#define UVD_CGC_UDEC_STATUS__MP_VCLK_MASK 0x00004000L
+-#define UVD_CGC_UDEC_STATUS__MP_VCLK__SHIFT 0x0000000e
+-#define UVD_CGC_UDEC_STATUS__RE_DCLK_MASK 0x00000002L
+-#define UVD_CGC_UDEC_STATUS__RE_DCLK__SHIFT 0x00000001
+-#define UVD_CGC_UDEC_STATUS__RE_SCLK_MASK 0x00000001L
+-#define UVD_CGC_UDEC_STATUS__RE_SCLK__SHIFT 0x00000000
+-#define UVD_CGC_UDEC_STATUS__RE_VCLK_MASK 0x00000004L
+-#define UVD_CGC_UDEC_STATUS__RE_VCLK__SHIFT 0x00000002
+-#define UVD_CONTEXT_ID__CONTEXT_ID_MASK 0xffffffffL
+-#define UVD_CONTEXT_ID__CONTEXT_ID__SHIFT 0x00000000
+-#define UVD_CTX_DATA__DATA_MASK 0xffffffffL
+-#define UVD_CTX_DATA__DATA__SHIFT 0x00000000
+-#define UVD_CTX_INDEX__INDEX_MASK 0x000001ffL
+-#define UVD_CTX_INDEX__INDEX__SHIFT 0x00000000
+-#define UVD_ENGINE_CNTL__ENGINE_START_MASK 0x00000001L
+-#define UVD_ENGINE_CNTL__ENGINE_START_MODE_MASK 0x00000002L
+-#define UVD_ENGINE_CNTL__ENGINE_START_MODE__SHIFT 0x00000001
+-#define UVD_ENGINE_CNTL__ENGINE_START__SHIFT 0x00000000
+-#define UVD_GPCOM_VCPU_CMD__CMD_MASK 0x7ffffffeL
+-#define UVD_GPCOM_VCPU_CMD__CMD_SEND_MASK 0x00000001L
+-#define UVD_GPCOM_VCPU_CMD__CMD_SEND__SHIFT 0x00000000
+-#define UVD_GPCOM_VCPU_CMD__CMD__SHIFT 0x00000001
+-#define UVD_GPCOM_VCPU_CMD__CMD_SOURCE_MASK 0x80000000L
+-#define UVD_GPCOM_VCPU_CMD__CMD_SOURCE__SHIFT 0x0000001f
+-#define UVD_GPCOM_VCPU_DATA0__DATA0_MASK 0xffffffffL
+-#define UVD_GPCOM_VCPU_DATA0__DATA0__SHIFT 0x00000000
+-#define UVD_GPCOM_VCPU_DATA1__DATA1_MASK 0xffffffffL
+-#define UVD_GPCOM_VCPU_DATA1__DATA1__SHIFT 0x00000000
+-#define UVD_LMI_ADDR_EXT2__SCPU_ADDR_EXT_MASK 0x0000000fL
+-#define UVD_LMI_ADDR_EXT2__SCPU_ADDR_EXT__SHIFT 0x00000000
+-#define UVD_LMI_ADDR_EXT2__SCPU_NC0_ADDR_EXT_MASK 0x00000f00L
+-#define UVD_LMI_ADDR_EXT2__SCPU_NC0_ADDR_EXT__SHIFT 0x00000008
+-#define UVD_LMI_ADDR_EXT2__SCPU_NC1_ADDR_EXT_MASK 0x0000f000L
+-#define UVD_LMI_ADDR_EXT2__SCPU_NC1_ADDR_EXT__SHIFT 0x0000000c
+-#define UVD_LMI_ADDR_EXT2__SCPU_VM_ADDR_EXT_MASK 0x000000f0L
+-#define UVD_LMI_ADDR_EXT2__SCPU_VM_ADDR_EXT__SHIFT 0x00000004
+-#define UVD_LMI_ADDR_EXT__CM_ADDR_EXT_MASK 0x000000f0L
+-#define UVD_LMI_ADDR_EXT__CM_ADDR_EXT__SHIFT 0x00000004
+-#define UVD_LMI_ADDR_EXT__IT_ADDR_EXT_MASK 0x00000f00L
+-#define UVD_LMI_ADDR_EXT__IT_ADDR_EXT__SHIFT 0x00000008
+-#define UVD_LMI_ADDR_EXT__MP_ADDR_EXT_MASK 0x00f00000L
+-#define UVD_LMI_ADDR_EXT__MP_ADDR_EXT__SHIFT 0x00000014
+-#define UVD_LMI_ADDR_EXT__RE_ADDR_EXT_MASK 0x000f0000L
+-#define UVD_LMI_ADDR_EXT__RE_ADDR_EXT__SHIFT 0x00000010
+-#define UVD_LMI_ADDR_EXT__VCPU_ADDR_EXT_MASK 0x0000000fL
+-#define UVD_LMI_ADDR_EXT__VCPU_ADDR_EXT__SHIFT 0x00000000
+-#define UVD_LMI_ADDR_EXT__VCPU_NC0_ADDR_EXT_MASK 0x0f000000L
+-#define UVD_LMI_ADDR_EXT__VCPU_NC0_ADDR_EXT__SHIFT 0x00000018
+-#define UVD_LMI_ADDR_EXT__VCPU_NC1_ADDR_EXT_MASK 0xf0000000L
+-#define UVD_LMI_ADDR_EXT__VCPU_NC1_ADDR_EXT__SHIFT 0x0000001c
+-#define UVD_LMI_ADDR_EXT__VCPU_VM_ADDR_EXT_MASK 0x0000f000L
+-#define UVD_LMI_ADDR_EXT__VCPU_VM_ADDR_EXT__SHIFT 0x0000000c
+-#define UVD_LMI_CACHE_CTRL__CM_EN_MASK 0x00000004L
+-#define UVD_LMI_CACHE_CTRL__CM_EN__SHIFT 0x00000002
+-#define UVD_LMI_CACHE_CTRL__CM_FLUSH_MASK 0x00000008L
+-#define UVD_LMI_CACHE_CTRL__CM_FLUSH__SHIFT 0x00000003
+-#define UVD_LMI_CACHE_CTRL__IT_EN_MASK 0x00000001L
+-#define UVD_LMI_CACHE_CTRL__IT_EN__SHIFT 0x00000000
+-#define UVD_LMI_CACHE_CTRL__IT_FLUSH_MASK 0x00000002L
+-#define UVD_LMI_CACHE_CTRL__IT_FLUSH__SHIFT 0x00000001
+-#define UVD_LMI_CACHE_CTRL__VCPU_EN_MASK 0x00000010L
+-#define UVD_LMI_CACHE_CTRL__VCPU_EN__SHIFT 0x00000004
+-#define UVD_LMI_CACHE_CTRL__VCPU_FLUSH_MASK 0x00000020L
+-#define UVD_LMI_CACHE_CTRL__VCPU_FLUSH__SHIFT 0x00000005
+-#define UVD_LMI_CTRL2__ASSERT_UMC_URGENT_MASK 0x00000004L
+-#define UVD_LMI_CTRL2__ASSERT_UMC_URGENT__SHIFT 0x00000002
+-#define UVD_LMI_CTRL2__DRCITF_BUBBLE_FIX_DIS_MASK 0x00000080L
+-#define UVD_LMI_CTRL2__DRCITF_BUBBLE_FIX_DIS__SHIFT 0x00000007
+-#define UVD_LMI_CTRL2__MASK_UMC_URGENT_MASK 0x00000008L
+-#define UVD_LMI_CTRL2__MASK_UMC_URGENT__SHIFT 0x00000003
+-#define UVD_LMI_CTRL2__MCIF_WR_WATERMARK_MASK 0x00000070L
+-#define UVD_LMI_CTRL2__MCIF_WR_WATERMARK__SHIFT 0x00000004
+-#define UVD_LMI_CTRL2__MC_READ_ID_SEL_MASK 0x00000600L
+-#define UVD_LMI_CTRL2__MC_READ_ID_SEL__SHIFT 0x00000009
+-#define UVD_LMI_CTRL2__MC_WRITE_ID_SEL_MASK 0x00001800L
+-#define UVD_LMI_CTRL2__MC_WRITE_ID_SEL__SHIFT 0x0000000b
+-#define UVD_LMI_CTRL2__SPH_DIS_MASK 0x00000001L
+-#define UVD_LMI_CTRL2__SPH_DIS__SHIFT 0x00000000
+-#define UVD_LMI_CTRL2__SPU_EXTRA_CID_EN_MASK 0x00008000L
+-#define UVD_LMI_CTRL2__SPU_EXTRA_CID_EN__SHIFT 0x0000000f
+-#define UVD_LMI_CTRL2__STALL_ARB_MASK 0x00000002L
+-#define UVD_LMI_CTRL2__STALL_ARB__SHIFT 0x00000001
+-#define UVD_LMI_CTRL2__STALL_ARB_UMC_MASK 0x00000100L
+-#define UVD_LMI_CTRL2__STALL_ARB_UMC__SHIFT 0x00000008
+-#define UVD_LMI_CTRL2__VCPU_NC0_EXT_EN_MASK 0x00002000L
+-#define UVD_LMI_CTRL2__VCPU_NC0_EXT_EN__SHIFT 0x0000000d
+-#define UVD_LMI_CTRL2__VCPU_NC1_EXT_EN_MASK 0x00004000L
+-#define UVD_LMI_CTRL2__VCPU_NC1_EXT_EN__SHIFT 0x0000000e
+-#define UVD_LMI_CTRL__ASSERT_MC_URGENT_MASK 0x00000800L
+-#define UVD_LMI_CTRL__ASSERT_MC_URGENT__SHIFT 0x0000000b
+-#define UVD_LMI_CTRL__CM_DATA_COHERENCY_EN_MASK 0x00400000L
+-#define UVD_LMI_CTRL__CM_DATA_COHERENCY_EN__SHIFT 0x00000016
+-#define UVD_LMI_CTRL__CRC_RESET_MASK 0x00004000L
+-#define UVD_LMI_CTRL__CRC_RESET__SHIFT 0x0000000e
+-#define UVD_LMI_CTRL__CRC_SEL_MASK 0x000f8000L
+-#define UVD_LMI_CTRL__CRC_SEL__SHIFT 0x0000000f
+-#define UVD_LMI_CTRL__DATA_COHERENCY_EN_MASK 0x00002000L
+-#define UVD_LMI_CTRL__DATA_COHERENCY_EN__SHIFT 0x0000000d
+-#define UVD_LMI_CTRL__DB_DB_DATA_COHERENCY_EN_MASK 0x00800000L
+-#define UVD_LMI_CTRL__DB_DB_DATA_COHERENCY_EN__SHIFT 0x00000017
+-#define UVD_LMI_CTRL__DB_IT_DATA_COHERENCY_EN_MASK 0x01000000L
+-#define UVD_LMI_CTRL__DB_IT_DATA_COHERENCY_EN__SHIFT 0x00000018
+-#define UVD_LMI_CTRL__DISABLE_ON_FWV_FAIL_MASK 0x00100000L
+-#define UVD_LMI_CTRL__DISABLE_ON_FWV_FAIL__SHIFT 0x00000014
+-#define UVD_LMI_CTRL__IT_IT_DATA_COHERENCY_EN_MASK 0x02000000L
+-#define UVD_LMI_CTRL__IT_IT_DATA_COHERENCY_EN__SHIFT 0x00000019
+-#define UVD_LMI_CTRL__MASK_MC_URGENT_MASK 0x00001000L
+-#define UVD_LMI_CTRL__MASK_MC_URGENT__SHIFT 0x0000000c
+-#define UVD_LMI_CTRL__MIF_MIF_DATA_COHERENCY_EN_MASK 0x04000000L
+-#define UVD_LMI_CTRL__MIF_MIF_DATA_COHERENCY_EN__SHIFT 0x0000001a
+-#define UVD_LMI_CTRL__REQ_MODE_MASK 0x00000200L
+-#define UVD_LMI_CTRL__REQ_MODE__SHIFT 0x00000009
+-#define UVD_LMI_CTRL__RFU_MASK 0xf8000000L
+-#define UVD_LMI_CTRL__RFU_MASK 0xfc000000L
+-#define UVD_LMI_CTRL__RFU__SHIFT 0x0000001a
+-#define UVD_LMI_CTRL__RFU__SHIFT 0x0000001b
+-#define UVD_LMI_CTRL__VCPU_DATA_COHERENCY_EN_MASK 0x00200000L
+-#define UVD_LMI_CTRL__VCPU_DATA_COHERENCY_EN__SHIFT 0x00000015
+-#define UVD_LMI_CTRL__WRITE_CLEAN_TIMER_EN_MASK 0x00000100L
+-#define UVD_LMI_CTRL__WRITE_CLEAN_TIMER_EN__SHIFT 0x00000008
+-#define UVD_LMI_CTRL__WRITE_CLEAN_TIMER_MASK 0x000000ffL
+-#define UVD_LMI_CTRL__WRITE_CLEAN_TIMER__SHIFT 0x00000000
+-#define UVD_LMI_EXT40_ADDR__ADDR_MASK 0x000000ffL
+-#define UVD_LMI_EXT40_ADDR__ADDR__SHIFT 0x00000000
+-#define UVD_LMI_EXT40_ADDR__INDEX_MASK 0x001f0000L
+-#define UVD_LMI_EXT40_ADDR__INDEX__SHIFT 0x00000010
+-#define UVD_LMI_EXT40_ADDR__WRITE_ADDR_MASK 0x80000000L
+-#define UVD_LMI_EXT40_ADDR__WRITE_ADDR__SHIFT 0x0000001f
+-#define UVD_LMI_STATUS__ADP_MC_READ_CLEAN_MASK 0x00001000L
+-#define UVD_LMI_STATUS__ADP_MC_READ_CLEAN__SHIFT 0x0000000c
+-#define UVD_LMI_STATUS__ADP_UMC_READ_CLEAN_MASK 0x00002000L
+-#define UVD_LMI_STATUS__ADP_UMC_READ_CLEAN__SHIFT 0x0000000d
+-#define UVD_LMI_STATUS__PENDING_UVD_MC_WRITE_MASK 0x00000080L
+-#define UVD_LMI_STATUS__PENDING_UVD_MC_WRITE__SHIFT 0x00000007
+-#define UVD_LMI_STATUS__READ_CLEAN_MASK 0x00000001L
+-#define UVD_LMI_STATUS__READ_CLEAN_RAW_MASK 0x00000100L
+-#define UVD_LMI_STATUS__READ_CLEAN_RAW__SHIFT 0x00000008
+-#define UVD_LMI_STATUS__READ_CLEAN__SHIFT 0x00000000
+-#define UVD_LMI_STATUS__UMC_AVP_IDLE_MASK 0x00000800L
+-#define UVD_LMI_STATUS__UMC_AVP_IDLE__SHIFT 0x0000000b
+-#define UVD_LMI_STATUS__UMC_READ_CLEAN_MASK 0x00000010L
+-#define UVD_LMI_STATUS__UMC_READ_CLEAN_RAW_MASK 0x00000200L
+-#define UVD_LMI_STATUS__UMC_READ_CLEAN_RAW__SHIFT 0x00000009
+-#define UVD_LMI_STATUS__UMC_READ_CLEAN__SHIFT 0x00000004
+-#define UVD_LMI_STATUS__UMC_UVD_IDLE_MASK 0x00000400L
+-#define UVD_LMI_STATUS__UMC_UVD_IDLE__SHIFT 0x0000000a
+-#define UVD_LMI_STATUS__UMC_WRITE_CLEAN_MASK 0x00000020L
+-#define UVD_LMI_STATUS__UMC_WRITE_CLEAN_RAW_MASK 0x00000040L
+-#define UVD_LMI_STATUS__UMC_WRITE_CLEAN_RAW__SHIFT 0x00000006
+-#define UVD_LMI_STATUS__UMC_WRITE_CLEAN__SHIFT 0x00000005
+-#define UVD_LMI_STATUS__VCPU_LMI_WRITE_CLEAN_MASK 0x00000008L
+-#define UVD_LMI_STATUS__VCPU_LMI_WRITE_CLEAN__SHIFT 0x00000003
+-#define UVD_LMI_STATUS__WRITE_CLEAN_MASK 0x00000002L
+-#define UVD_LMI_STATUS__WRITE_CLEAN_RAW_MASK 0x00000004L
+-#define UVD_LMI_STATUS__WRITE_CLEAN_RAW__SHIFT 0x00000002
+-#define UVD_LMI_STATUS__WRITE_CLEAN__SHIFT 0x00000001
+-#define UVD_LMI_SWAP_CNTL2__SCPU_R_MC_SWAP_MASK 0x00000003L
+-#define UVD_LMI_SWAP_CNTL2__SCPU_R_MC_SWAP__SHIFT 0x00000000
+-#define UVD_LMI_SWAP_CNTL2__SCPU_W_MC_SWAP_MASK 0x0000000cL
+-#define UVD_LMI_SWAP_CNTL2__SCPU_W_MC_SWAP__SHIFT 0x00000002
+-#define UVD_LMI_SWAP_CNTL__CM_MC_SWAP_MASK 0x00000c00L
+-#define UVD_LMI_SWAP_CNTL__CM_MC_SWAP__SHIFT 0x0000000a
+-#define UVD_LMI_SWAP_CNTL__CSM_MC_SWAP_MASK 0x000c0000L
+-#define UVD_LMI_SWAP_CNTL__CSM_MC_SWAP__SHIFT 0x00000012
+-#define UVD_LMI_SWAP_CNTL__DB_R_MC_SWAP_MASK 0x0000c000L
+-#define UVD_LMI_SWAP_CNTL__DB_R_MC_SWAP__SHIFT 0x0000000e
+-#define UVD_LMI_SWAP_CNTL__DB_W_MC_SWAP_MASK 0x00030000L
+-#define UVD_LMI_SWAP_CNTL__DBW_MC_SWAP_MASK 0x03000000L
+-#define UVD_LMI_SWAP_CNTL__DB_W_MC_SWAP__SHIFT 0x00000010
+-#define UVD_LMI_SWAP_CNTL__DBW_MC_SWAP__SHIFT 0x00000018
+-#define UVD_LMI_SWAP_CNTL__IB_MC_SWAP_MASK 0x0000000cL
+-#define UVD_LMI_SWAP_CNTL__IB_MC_SWAP__SHIFT 0x00000002
+-#define UVD_LMI_SWAP_CNTL__IT_MC_SWAP_MASK 0x00003000L
+-#define UVD_LMI_SWAP_CNTL__IT_MC_SWAP__SHIFT 0x0000000c
+-#define UVD_LMI_SWAP_CNTL__MP_MC_SWAP_MASK 0xc0000000L
+-#define UVD_LMI_SWAP_CNTL__MP_MC_SWAP__SHIFT 0x0000001e
+-#define UVD_LMI_SWAP_CNTL__MP_REF16_MC_SWAP_MASK 0x00c00000L
+-#define UVD_LMI_SWAP_CNTL__MP_REF16_MC_SWAP__SHIFT 0x00000016
+-#define UVD_LMI_SWAP_CNTL__RB_MC_SWAP_MASK 0x00000003L
+-#define UVD_LMI_SWAP_CNTL__RB_MC_SWAP__SHIFT 0x00000000
+-#define UVD_LMI_SWAP_CNTL__RB_RPTR_MC_SWAP_MASK 0x00000030L
+-#define UVD_LMI_SWAP_CNTL__RB_RPTR_MC_SWAP__SHIFT 0x00000004
+-#define UVD_LMI_SWAP_CNTL__RB_WR_MC_SWAP_MASK 0x0c000000L
+-#define UVD_LMI_SWAP_CNTL__RB_WR_MC_SWAP__SHIFT 0x0000001a
+-#define UVD_LMI_SWAP_CNTL__RE_MC_SWAP_MASK 0x30000000L
+-#define UVD_LMI_SWAP_CNTL__RE_MC_SWAP__SHIFT 0x0000001c
+-#define UVD_LMI_SWAP_CNTL__VCPU_R_MC_SWAP_MASK 0x000000c0L
+-#define UVD_LMI_SWAP_CNTL__VCPU_R_MC_SWAP__SHIFT 0x00000006
+-#define UVD_LMI_SWAP_CNTL__VCPU_W_MC_SWAP_MASK 0x00000300L
+-#define UVD_LMI_SWAP_CNTL__VCPU_W_MC_SWAP__SHIFT 0x00000008
+-#define UVD_MASTINT_EN__INT_OVERRUN_MASK 0x007ffff0L
+-#define UVD_MASTINT_EN__INT_OVERRUN__SHIFT 0x00000004
+-#define UVD_MASTINT_EN__OVERRUN_RST_MASK 0x00000001L
+-#define UVD_MASTINT_EN__OVERRUN_RST__SHIFT 0x00000000
+-#define UVD_MASTINT_EN__SYS_EN_MASK 0x00000004L
+-#define UVD_MASTINT_EN__SYS_EN__SHIFT 0x00000002
+-#define UVD_MASTINT_EN__VCPU_EN_MASK 0x00000002L
+-#define UVD_MASTINT_EN__VCPU_EN__SHIFT 0x00000001
+-#define UVD_MIF_CURR_ADDR_CONFIG__BANK_INTERLEAVE_SIZE_MASK 0x00000700L
+-#define UVD_MIF_CURR_ADDR_CONFIG__BANK_INTERLEAVE_SIZE__SHIFT 0x00000008
+-#define UVD_MIF_CURR_ADDR_CONFIG__MULTI_GPU_TILE_SIZE_MASK 0x03000000L
+-#define UVD_MIF_CURR_ADDR_CONFIG__MULTI_GPU_TILE_SIZE__SHIFT 0x00000018
+-#define UVD_MIF_CURR_ADDR_CONFIG__NUM_GPUS_MASK 0x00700000L
+-#define UVD_MIF_CURR_ADDR_CONFIG__NUM_GPUS__SHIFT 0x00000014
+-#define UVD_MIF_CURR_ADDR_CONFIG__NUM_LOWER_PIPES_MASK 0x40000000L
+-#define UVD_MIF_CURR_ADDR_CONFIG__NUM_LOWER_PIPES__SHIFT 0x0000001e
+-#define UVD_MIF_CURR_ADDR_CONFIG__NUM_PIPES_MASK 0x00000007L
+-#define UVD_MIF_CURR_ADDR_CONFIG__NUM_PIPES__SHIFT 0x00000000
+-#define UVD_MIF_CURR_ADDR_CONFIG__NUM_SHADER_ENGINES_MASK 0x00003000L
+-#define UVD_MIF_CURR_ADDR_CONFIG__NUM_SHADER_ENGINES__SHIFT 0x0000000c
+-#define UVD_MIF_CURR_ADDR_CONFIG__PIPE_INTERLEAVE_SIZE_MASK 0x00000070L
+-#define UVD_MIF_CURR_ADDR_CONFIG__PIPE_INTERLEAVE_SIZE__SHIFT 0x00000004
+-#define UVD_MIF_CURR_ADDR_CONFIG__ROW_SIZE_MASK 0x30000000L
+-#define UVD_MIF_CURR_ADDR_CONFIG__ROW_SIZE__SHIFT 0x0000001c
+-#define UVD_MIF_CURR_ADDR_CONFIG__SHADER_ENGINE_TILE_SIZE_MASK 0x00070000L
+-#define UVD_MIF_CURR_ADDR_CONFIG__SHADER_ENGINE_TILE_SIZE__SHIFT 0x00000010
+-#define UVD_MIF_RECON1_ADDR_CONFIG__BANK_INTERLEAVE_SIZE_MASK 0x00000700L
+-#define UVD_MIF_RECON1_ADDR_CONFIG__BANK_INTERLEAVE_SIZE__SHIFT 0x00000008
+-#define UVD_MIF_RECON1_ADDR_CONFIG__MULTI_GPU_TILE_SIZE_MASK 0x03000000L
+-#define UVD_MIF_RECON1_ADDR_CONFIG__MULTI_GPU_TILE_SIZE__SHIFT 0x00000018
+-#define UVD_MIF_RECON1_ADDR_CONFIG__NUM_GPUS_MASK 0x00700000L
+-#define UVD_MIF_RECON1_ADDR_CONFIG__NUM_GPUS__SHIFT 0x00000014
+-#define UVD_MIF_RECON1_ADDR_CONFIG__NUM_LOWER_PIPES_MASK 0x40000000L
+-#define UVD_MIF_RECON1_ADDR_CONFIG__NUM_LOWER_PIPES__SHIFT 0x0000001e
+-#define UVD_MIF_RECON1_ADDR_CONFIG__NUM_PIPES_MASK 0x00000007L
+-#define UVD_MIF_RECON1_ADDR_CONFIG__NUM_PIPES__SHIFT 0x00000000
+-#define UVD_MIF_RECON1_ADDR_CONFIG__NUM_SHADER_ENGINES_MASK 0x00003000L
+-#define UVD_MIF_RECON1_ADDR_CONFIG__NUM_SHADER_ENGINES__SHIFT 0x0000000c
+-#define UVD_MIF_RECON1_ADDR_CONFIG__PIPE_INTERLEAVE_SIZE_MASK 0x00000070L
+-#define UVD_MIF_RECON1_ADDR_CONFIG__PIPE_INTERLEAVE_SIZE__SHIFT 0x00000004
+-#define UVD_MIF_RECON1_ADDR_CONFIG__ROW_SIZE_MASK 0x30000000L
+-#define UVD_MIF_RECON1_ADDR_CONFIG__ROW_SIZE__SHIFT 0x0000001c
+-#define UVD_MIF_RECON1_ADDR_CONFIG__SHADER_ENGINE_TILE_SIZE_MASK 0x00070000L
+-#define UVD_MIF_RECON1_ADDR_CONFIG__SHADER_ENGINE_TILE_SIZE__SHIFT 0x00000010
+-#define UVD_MIF_REF_ADDR_CONFIG__BANK_INTERLEAVE_SIZE_MASK 0x00000700L
+-#define UVD_MIF_REF_ADDR_CONFIG__BANK_INTERLEAVE_SIZE__SHIFT 0x00000008
+-#define UVD_MIF_REF_ADDR_CONFIG__MULTI_GPU_TILE_SIZE_MASK 0x03000000L
+-#define UVD_MIF_REF_ADDR_CONFIG__MULTI_GPU_TILE_SIZE__SHIFT 0x00000018
+-#define UVD_MIF_REF_ADDR_CONFIG__NUM_GPUS_MASK 0x00700000L
+-#define UVD_MIF_REF_ADDR_CONFIG__NUM_GPUS__SHIFT 0x00000014
+-#define UVD_MIF_REF_ADDR_CONFIG__NUM_LOWER_PIPES_MASK 0x40000000L
+-#define UVD_MIF_REF_ADDR_CONFIG__NUM_LOWER_PIPES__SHIFT 0x0000001e
+-#define UVD_MIF_REF_ADDR_CONFIG__NUM_PIPES_MASK 0x00000007L
+-#define UVD_MIF_REF_ADDR_CONFIG__NUM_PIPES__SHIFT 0x00000000
+-#define UVD_MIF_REF_ADDR_CONFIG__NUM_SHADER_ENGINES_MASK 0x00003000L
+-#define UVD_MIF_REF_ADDR_CONFIG__NUM_SHADER_ENGINES__SHIFT 0x0000000c
+-#define UVD_MIF_REF_ADDR_CONFIG__PIPE_INTERLEAVE_SIZE_MASK 0x00000070L
+-#define UVD_MIF_REF_ADDR_CONFIG__PIPE_INTERLEAVE_SIZE__SHIFT 0x00000004
+-#define UVD_MIF_REF_ADDR_CONFIG__ROW_SIZE_MASK 0x30000000L
+-#define UVD_MIF_REF_ADDR_CONFIG__ROW_SIZE__SHIFT 0x0000001c
+-#define UVD_MIF_REF_ADDR_CONFIG__SHADER_ENGINE_TILE_SIZE_MASK 0x00070000L
+-#define UVD_MIF_REF_ADDR_CONFIG__SHADER_ENGINE_TILE_SIZE__SHIFT 0x00000010
+-#define UVD_MPC_CNTL__AVE_WEIGHT_MASK 0x00030000L
+-#define UVD_MPC_CNTL__AVE_WEIGHT__SHIFT 0x00000010
+-#define UVD_MPC_CNTL__DBG_MUX_MASK 0x00000700L
+-#define UVD_MPC_CNTL__DBG_MUX__SHIFT 0x00000008
+-#define UVD_MPC_CNTL__PERF_RST_MASK 0x00000040L
+-#define UVD_MPC_CNTL__PERF_RST__SHIFT 0x00000006
+-#define UVD_MPC_CNTL__REPLACEMENT_MODE_MASK 0x00000038L
+-#define UVD_MPC_CNTL__REPLACEMENT_MODE__SHIFT 0x00000003
+-#define UVD_MPC_CNTL__URGENT_EN_MASK 0x00040000L
+-#define UVD_MPC_CNTL__URGENT_EN__SHIFT 0x00000012
+-#define UVD_MPC_SET_ALU__FUNCT_MASK 0x00000007L
+-#define UVD_MPC_SET_ALU__FUNCT__SHIFT 0x00000000
+-#define UVD_MPC_SET_ALU__OPERAND_MASK 0x00000ff0L
+-#define UVD_MPC_SET_ALU__OPERAND__SHIFT 0x00000004
+-#define UVD_MPC_SET_MUXA0__VARA_0_MASK 0x0000003fL
+-#define UVD_MPC_SET_MUXA0__VARA_0__SHIFT 0x00000000
+-#define UVD_MPC_SET_MUXA0__VARA_1_MASK 0x00000fc0L
+-#define UVD_MPC_SET_MUXA0__VARA_1__SHIFT 0x00000006
+-#define UVD_MPC_SET_MUXA0__VARA_2_MASK 0x0003f000L
+-#define UVD_MPC_SET_MUXA0__VARA_2__SHIFT 0x0000000c
+-#define UVD_MPC_SET_MUXA0__VARA_3_MASK 0x00fc0000L
+-#define UVD_MPC_SET_MUXA0__VARA_3__SHIFT 0x00000012
+-#define UVD_MPC_SET_MUXA0__VARA_4_MASK 0x3f000000L
+-#define UVD_MPC_SET_MUXA0__VARA_4__SHIFT 0x00000018
+-#define UVD_MPC_SET_MUXA1__VARA_5_MASK 0x0000003fL
+-#define UVD_MPC_SET_MUXA1__VARA_5__SHIFT 0x00000000
+-#define UVD_MPC_SET_MUXA1__VARA_6_MASK 0x00000fc0L
+-#define UVD_MPC_SET_MUXA1__VARA_6__SHIFT 0x00000006
+-#define UVD_MPC_SET_MUXA1__VARA_7_MASK 0x0003f000L
+-#define UVD_MPC_SET_MUXA1__VARA_7__SHIFT 0x0000000c
+-#define UVD_MPC_SET_MUXB0__VARB_0_MASK 0x0000003fL
+-#define UVD_MPC_SET_MUXB0__VARB_0__SHIFT 0x00000000
+-#define UVD_MPC_SET_MUXB0__VARB_1_MASK 0x00000fc0L
+-#define UVD_MPC_SET_MUXB0__VARB_1__SHIFT 0x00000006
+-#define UVD_MPC_SET_MUXB0__VARB_2_MASK 0x0003f000L
+-#define UVD_MPC_SET_MUXB0__VARB_2__SHIFT 0x0000000c
+-#define UVD_MPC_SET_MUXB0__VARB_3_MASK 0x00fc0000L
+-#define UVD_MPC_SET_MUXB0__VARB_3__SHIFT 0x00000012
+-#define UVD_MPC_SET_MUXB0__VARB_4_MASK 0x3f000000L
+-#define UVD_MPC_SET_MUXB0__VARB_4__SHIFT 0x00000018
+-#define UVD_MPC_SET_MUXB1__VARB_5_MASK 0x0000003fL
+-#define UVD_MPC_SET_MUXB1__VARB_5__SHIFT 0x00000000
+-#define UVD_MPC_SET_MUXB1__VARB_6_MASK 0x00000fc0L
+-#define UVD_MPC_SET_MUXB1__VARB_6__SHIFT 0x00000006
+-#define UVD_MPC_SET_MUXB1__VARB_7_MASK 0x0003f000L
+-#define UVD_MPC_SET_MUXB1__VARB_7__SHIFT 0x0000000c
+-#define UVD_MPC_SET_MUX__SET_0_MASK 0x00000007L
+-#define UVD_MPC_SET_MUX__SET_0__SHIFT 0x00000000
+-#define UVD_MPC_SET_MUX__SET_1_MASK 0x00000038L
+-#define UVD_MPC_SET_MUX__SET_1__SHIFT 0x00000003
+-#define UVD_MPC_SET_MUX__SET_2_MASK 0x000001c0L
+-#define UVD_MPC_SET_MUX__SET_2__SHIFT 0x00000006
+-#define UVD_MP_SWAP_CNTL__MP_REF0_MC_SWAP_MASK 0x00000003L
+-#define UVD_MP_SWAP_CNTL__MP_REF0_MC_SWAP__SHIFT 0x00000000
+-#define UVD_MP_SWAP_CNTL__MP_REF10_MC_SWAP_MASK 0x00300000L
+-#define UVD_MP_SWAP_CNTL__MP_REF10_MC_SWAP__SHIFT 0x00000014
+-#define UVD_MP_SWAP_CNTL__MP_REF11_MC_SWAP_MASK 0x00c00000L
+-#define UVD_MP_SWAP_CNTL__MP_REF11_MC_SWAP__SHIFT 0x00000016
+-#define UVD_MP_SWAP_CNTL__MP_REF12_MC_SWAP_MASK 0x03000000L
+-#define UVD_MP_SWAP_CNTL__MP_REF12_MC_SWAP__SHIFT 0x00000018
+-#define UVD_MP_SWAP_CNTL__MP_REF13_MC_SWAP_MASK 0x0c000000L
+-#define UVD_MP_SWAP_CNTL__MP_REF13_MC_SWAP__SHIFT 0x0000001a
+-#define UVD_MP_SWAP_CNTL__MP_REF14_MC_SWAP_MASK 0x30000000L
+-#define UVD_MP_SWAP_CNTL__MP_REF14_MC_SWAP__SHIFT 0x0000001c
+-#define UVD_MP_SWAP_CNTL__MP_REF15_MC_SWAP_MASK 0xc0000000L
+-#define UVD_MP_SWAP_CNTL__MP_REF15_MC_SWAP__SHIFT 0x0000001e
+-#define UVD_MP_SWAP_CNTL__MP_REF1_MC_SWAP_MASK 0x0000000cL
+-#define UVD_MP_SWAP_CNTL__MP_REF1_MC_SWAP__SHIFT 0x00000002
+-#define UVD_MP_SWAP_CNTL__MP_REF2_MC_SWAP_MASK 0x00000030L
+-#define UVD_MP_SWAP_CNTL__MP_REF2_MC_SWAP__SHIFT 0x00000004
+-#define UVD_MP_SWAP_CNTL__MP_REF3_MC_SWAP_MASK 0x000000c0L
+-#define UVD_MP_SWAP_CNTL__MP_REF3_MC_SWAP__SHIFT 0x00000006
+-#define UVD_MP_SWAP_CNTL__MP_REF4_MC_SWAP_MASK 0x00000300L
+-#define UVD_MP_SWAP_CNTL__MP_REF4_MC_SWAP__SHIFT 0x00000008
+-#define UVD_MP_SWAP_CNTL__MP_REF5_MC_SWAP_MASK 0x00000c00L
+-#define UVD_MP_SWAP_CNTL__MP_REF5_MC_SWAP__SHIFT 0x0000000a
+-#define UVD_MP_SWAP_CNTL__MP_REF6_MC_SWAP_MASK 0x00003000L
+-#define UVD_MP_SWAP_CNTL__MP_REF6_MC_SWAP__SHIFT 0x0000000c
+-#define UVD_MP_SWAP_CNTL__MP_REF7_MC_SWAP_MASK 0x0000c000L
+-#define UVD_MP_SWAP_CNTL__MP_REF7_MC_SWAP__SHIFT 0x0000000e
+-#define UVD_MP_SWAP_CNTL__MP_REF8_MC_SWAP_MASK 0x00030000L
+-#define UVD_MP_SWAP_CNTL__MP_REF8_MC_SWAP__SHIFT 0x00000010
+-#define UVD_MP_SWAP_CNTL__MP_REF9_MC_SWAP_MASK 0x000c0000L
+-#define UVD_MP_SWAP_CNTL__MP_REF9_MC_SWAP__SHIFT 0x00000012
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_FSM_ADDR_MASK 0x000000ffL
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_FSM_ADDR__SHIFT 0x00000000
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_P1_SELECT_MASK 0x00000400L
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_P1_SELECT__SHIFT 0x0000000a
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_P2_SELECT_MASK 0x00000800L
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_P2_SELECT__SHIFT 0x0000000b
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_POWER_DOWN_MASK 0x00000100L
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_POWER_DOWN__SHIFT 0x00000008
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_POWER_UP_MASK 0x00000200L
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_POWER_UP__SHIFT 0x00000009
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_READ_MASK 0x00002000L
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_READ__SHIFT 0x0000000d
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_REG_ADDR_MASK 0xf0000000L
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_REG_ADDR__SHIFT 0x0000001c
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_WRITE_MASK 0x00001000L
+-#define UVD_PGFSM_CONFIG__UVD_PGFSM_WRITE__SHIFT 0x0000000c
+-#define UVD_PGFSM_READ_TILE1__UVD_PGFSM_READ_TILE1_VALUE_MASK 0x00ffffffL
+-#define UVD_PGFSM_READ_TILE1__UVD_PGFSM_READ_TILE1_VALUE__SHIFT 0x00000000
+-#define UVD_PGFSM_READ_TILE2__UVD_PGFSM_READ_TILE2_VALUE_MASK 0x00ffffffL
+-#define UVD_PGFSM_READ_TILE2__UVD_PGFSM_READ_TILE2_VALUE__SHIFT 0x00000000
+-#define UVD_POWER_STATUS__UVD_POWER_STATUS_MASK 0x00000001L
+-#define UVD_POWER_STATUS__UVD_POWER_STATUS__SHIFT 0x00000000
+-#define UVD_RBC_IB_BASE__IB_BASE_MASK 0xffffffc0L
+-#define UVD_RBC_IB_BASE__IB_BASE__SHIFT 0x00000006
+-#define UVD_RBC_IB_SIZE__IB_SIZE_MASK 0x007ffff0L
+-#define UVD_RBC_IB_SIZE__IB_SIZE__SHIFT 0x00000004
+-#define UVD_RBC_RB_BASE__RB_BASE_MASK 0xffffffc0L
+-#define UVD_RBC_RB_BASE__RB_BASE__SHIFT 0x00000006
+-#define UVD_RBC_RB_CNTL__RB_BLKSZ_MASK 0x00001f00L
+-#define UVD_RBC_RB_CNTL__RB_BLKSZ__SHIFT 0x00000008
+-#define UVD_RBC_RB_CNTL__RB_BUFSZ_MASK 0x0000001fL
+-#define UVD_RBC_RB_CNTL__RB_BUFSZ__SHIFT 0x00000000
+-#define UVD_RBC_RB_CNTL__RB_NO_FETCH_MASK 0x00010000L
+-#define UVD_RBC_RB_CNTL__RB_NO_FETCH__SHIFT 0x00000010
+-#define UVD_RBC_RB_CNTL__RB_NO_UPDATE_MASK 0x01000000L
+-#define UVD_RBC_RB_CNTL__RB_NO_UPDATE__SHIFT 0x00000018
+-#define UVD_RBC_RB_CNTL__RB_RPTR_WR_EN_MASK 0x10000000L
+-#define UVD_RBC_RB_CNTL__RB_RPTR_WR_EN__SHIFT 0x0000001c
+-#define UVD_RBC_RB_CNTL__RB_WPTR_POLL_EN_MASK 0x00100000L
+-#define UVD_RBC_RB_CNTL__RB_WPTR_POLL_EN__SHIFT 0x00000014
+-#define UVD_RBC_RB_RPTR_ADDR__RB_RPTR_ADDR_MASK 0xffffffffL
+-#define UVD_RBC_RB_RPTR_ADDR__RB_RPTR_ADDR__SHIFT 0x00000000
+-#define UVD_RBC_RB_RPTR__RB_RPTR_MASK 0x007ffff0L
+-#define UVD_RBC_RB_RPTR__RB_RPTR__SHIFT 0x00000004
+-#define UVD_RBC_RB_WPTR__RB_WPTR_MASK 0x007ffff0L
+-#define UVD_RBC_RB_WPTR__RB_WPTR__SHIFT 0x00000004
+-#define UVD_SEMA_ADDR_HIGH__ADDR_42_23_MASK 0x000fffffL
+-#define UVD_SEMA_ADDR_HIGH__ADDR_42_23__SHIFT 0x00000000
+-#define UVD_SEMA_ADDR_LOW__ADDR_22_3_MASK 0x000fffffL
+-#define UVD_SEMA_ADDR_LOW__ADDR_22_3__SHIFT 0x00000000
+-#define UVD_SEMA_CMD__MODE_MASK 0x00000040L
+-#define UVD_SEMA_CMD__MODE__SHIFT 0x00000006
+-#define UVD_SEMA_CMD__REQ_CMD_MASK 0x0000000fL
+-#define UVD_SEMA_CMD__REQ_CMD__SHIFT 0x00000000
+-#define UVD_SEMA_CMD__VMID_EN_MASK 0x00000080L
+-#define UVD_SEMA_CMD__VMID_EN__SHIFT 0x00000007
+-#define UVD_SEMA_CMD__VMID_MASK 0x00000f00L
+-#define UVD_SEMA_CMD__VMID__SHIFT 0x00000008
+-#define UVD_SEMA_CMD__WR_PHASE_MASK 0x00000030L
+-#define UVD_SEMA_CMD__WR_PHASE__SHIFT 0x00000004
+-#define UVD_SEMA_CNTL__ADVANCED_MODE_DIS_MASK 0x00000002L
+-#define UVD_SEMA_CNTL__ADVANCED_MODE_DIS__SHIFT 0x00000001
+-#define UVD_SEMA_CNTL__SEMAPHORE_EN_MASK 0x00000001L
+-#define UVD_SEMA_CNTL__SEMAPHORE_EN__SHIFT 0x00000000
+-#define UVD_SEMA_SIGNAL_INCOMPLETE_TIMEOUT_CNTL__RESEND_TIMER_MASK 0x07000000L
+-#define UVD_SEMA_SIGNAL_INCOMPLETE_TIMEOUT_CNTL__RESEND_TIMER__SHIFT 0x00000018
+-#define UVD_SEMA_SIGNAL_INCOMPLETE_TIMEOUT_CNTL__SIGNAL_INCOMPLETE_COUNT_MASK 0x001ffffeL
+-#define UVD_SEMA_SIGNAL_INCOMPLETE_TIMEOUT_CNTL__SIGNAL_INCOMPLETE_COUNT__SHIFT 0x00000001
+-#define UVD_SEMA_SIGNAL_INCOMPLETE_TIMEOUT_CNTL__SIGNAL_INCOMPLETE_EN_MASK 0x00000001L
+-#define UVD_SEMA_SIGNAL_INCOMPLETE_TIMEOUT_CNTL__SIGNAL_INCOMPLETE_EN__SHIFT 0x00000000
+-#define UVD_SEMA_TIMEOUT_STATUS__SEMAPHORE_SIGNAL_INCOMPLETE_TIMEOUT_STAT_MASK 0x00000004L
+-#define UVD_SEMA_TIMEOUT_STATUS__SEMAPHORE_SIGNAL_INCOMPLETE_TIMEOUT_STAT__SHIFT 0x00000002
+-#define UVD_SEMA_TIMEOUT_STATUS__SEMAPHORE_TIMEOUT_CLEAR_MASK 0x00000008L
+-#define UVD_SEMA_TIMEOUT_STATUS__SEMAPHORE_TIMEOUT_CLEAR__SHIFT 0x00000003
+-#define UVD_SEMA_TIMEOUT_STATUS__SEMAPHORE_WAIT_FAULT_TIMEOUT_STAT_MASK 0x00000002L
+-#define UVD_SEMA_TIMEOUT_STATUS__SEMAPHORE_WAIT_FAULT_TIMEOUT_STAT__SHIFT 0x00000001
+-#define UVD_SEMA_TIMEOUT_STATUS__SEMAPHORE_WAIT_INCOMPLETE_TIMEOUT_STAT_MASK 0x00000001L
+-#define UVD_SEMA_TIMEOUT_STATUS__SEMAPHORE_WAIT_INCOMPLETE_TIMEOUT_STAT__SHIFT 0x00000000
+-#define UVD_SEMA_WAIT_FAULT_TIMEOUT_CNTL__RESEND_TIMER_MASK 0x07000000L
+-#define UVD_SEMA_WAIT_FAULT_TIMEOUT_CNTL__RESEND_TIMER__SHIFT 0x00000018
+-#define UVD_SEMA_WAIT_FAULT_TIMEOUT_CNTL__WAIT_FAULT_COUNT_MASK 0x001ffffeL
+-#define UVD_SEMA_WAIT_FAULT_TIMEOUT_CNTL__WAIT_FAULT_COUNT__SHIFT 0x00000001
+-#define UVD_SEMA_WAIT_FAULT_TIMEOUT_CNTL__WAIT_FAULT_EN_MASK 0x00000001L
+-#define UVD_SEMA_WAIT_FAULT_TIMEOUT_CNTL__WAIT_FAULT_EN__SHIFT 0x00000000
+-#define UVD_SEMA_WAIT_INCOMPLETE_TIMEOUT_CNTL__RESEND_TIMER_MASK 0x07000000L
+-#define UVD_SEMA_WAIT_INCOMPLETE_TIMEOUT_CNTL__RESEND_TIMER__SHIFT 0x00000018
+-#define UVD_SEMA_WAIT_INCOMPLETE_TIMEOUT_CNTL__WAIT_INCOMPLETE_COUNT_MASK 0x001ffffeL
+-#define UVD_SEMA_WAIT_INCOMPLETE_TIMEOUT_CNTL__WAIT_INCOMPLETE_COUNT__SHIFT 0x00000001
+-#define UVD_SEMA_WAIT_INCOMPLETE_TIMEOUT_CNTL__WAIT_INCOMPLETE_EN_MASK 0x00000001L
+-#define UVD_SEMA_WAIT_INCOMPLETE_TIMEOUT_CNTL__WAIT_INCOMPLETE_EN__SHIFT 0x00000000
+-#define UVD_SOFT_RESET__CSM_SOFT_RESET_MASK 0x00000020L
+-#define UVD_SOFT_RESET__CSM_SOFT_RESET__SHIFT 0x00000005
+-#define UVD_SOFT_RESET__CXW_SOFT_RESET_MASK 0x00000040L
+-#define UVD_SOFT_RESET__CXW_SOFT_RESET__SHIFT 0x00000006
+-#define UVD_SOFT_RESET__FWV_SOFT_RESET_MASK 0x00000200L
+-#define UVD_SOFT_RESET__FWV_SOFT_RESET__SHIFT 0x00000009
+-#define UVD_SOFT_RESET__IDCT_SOFT_RESET_MASK 0x00001000L
+-#define UVD_SOFT_RESET__IDCT_SOFT_RESET__SHIFT 0x0000000c
+-#define UVD_SOFT_RESET__IH_SOFT_RESET_MASK 0x00000400L
+-#define UVD_SOFT_RESET__IH_SOFT_RESET__SHIFT 0x0000000a
+-#define UVD_SOFT_RESET__LBSI_SOFT_RESET_MASK 0x00000002L
+-#define UVD_SOFT_RESET__LBSI_SOFT_RESET__SHIFT 0x00000001
+-#define UVD_SOFT_RESET__LCM_SOFT_RESET_MASK 0x00010000L
+-#define UVD_SOFT_RESET__LCM_SOFT_RESET__SHIFT 0x00000010
+-#define UVD_SOFT_RESET__LMI_SOFT_RESET_MASK 0x00000004L
+-#define UVD_SOFT_RESET__LMI_SOFT_RESET__SHIFT 0x00000002
+-#define UVD_SOFT_RESET__LMI_UMC_SOFT_RESET_MASK 0x00002000L
+-#define UVD_SOFT_RESET__LMI_UMC_SOFT_RESET__SHIFT 0x0000000d
+-#define UVD_SOFT_RESET__MIF_SOFT_RESET_MASK 0x00008000L
+-#define UVD_SOFT_RESET__MIF_SOFT_RESET__SHIFT 0x0000000f
+-#define UVD_SOFT_RESET__MPC_SOFT_RESET_MASK 0x00000100L
+-#define UVD_SOFT_RESET__MPC_SOFT_RESET__SHIFT 0x00000008
+-#define UVD_SOFT_RESET__MPRD_SOFT_RESET_MASK 0x00000800L
+-#define UVD_SOFT_RESET__MPRD_SOFT_RESET__SHIFT 0x0000000b
+-#define UVD_SOFT_RESET__RBC_SOFT_RESET_MASK 0x00000001L
+-#define UVD_SOFT_RESET__RBC_SOFT_RESET__SHIFT 0x00000000
+-#define UVD_SOFT_RESET__SPH_SOFT_RESET_MASK 0x00004000L
+-#define UVD_SOFT_RESET__SPH_SOFT_RESET__SHIFT 0x0000000e
+-#define UVD_SOFT_RESET__TAP_SOFT_RESET_MASK 0x00000080L
+-#define UVD_SOFT_RESET__TAP_SOFT_RESET__SHIFT 0x00000007
+-#define UVD_SOFT_RESET__UDEC_SOFT_RESET_MASK 0x00000010L
+-#define UVD_SOFT_RESET__UDEC_SOFT_RESET__SHIFT 0x00000004
+-#define UVD_SOFT_RESET__VCPU_SOFT_RESET_MASK 0x00000008L
+-#define UVD_SOFT_RESET__VCPU_SOFT_RESET__SHIFT 0x00000003
+-#define UVD_STATUS__RBC_BUSY_MASK 0x00000001L
+-#define UVD_STATUS__RBC_BUSY__SHIFT 0x00000000
+-#define UVD_STATUS__VCPU_REPORT_MASK 0x000000feL
+-#define UVD_STATUS__VCPU_REPORT__SHIFT 0x00000001
+-#define UVD_UDEC_ADDR_CONFIG__BANK_INTERLEAVE_SIZE_MASK 0x00000700L
+-#define UVD_UDEC_ADDR_CONFIG__BANK_INTERLEAVE_SIZE__SHIFT 0x00000008
+-#define UVD_UDEC_ADDR_CONFIG__MULTI_GPU_TILE_SIZE_MASK 0x03000000L
+-#define UVD_UDEC_ADDR_CONFIG__MULTI_GPU_TILE_SIZE__SHIFT 0x00000018
+-#define UVD_UDEC_ADDR_CONFIG__NUM_GPUS_MASK 0x00700000L
+-#define UVD_UDEC_ADDR_CONFIG__NUM_GPUS__SHIFT 0x00000014
+-#define UVD_UDEC_ADDR_CONFIG__NUM_LOWER_PIPES_MASK 0x40000000L
+-#define UVD_UDEC_ADDR_CONFIG__NUM_LOWER_PIPES__SHIFT 0x0000001e
+-#define UVD_UDEC_ADDR_CONFIG__NUM_PIPES_MASK 0x00000007L
+-#define UVD_UDEC_ADDR_CONFIG__NUM_PIPES__SHIFT 0x00000000
+-#define UVD_UDEC_ADDR_CONFIG__NUM_SHADER_ENGINES_MASK 0x00003000L
+-#define UVD_UDEC_ADDR_CONFIG__NUM_SHADER_ENGINES__SHIFT 0x0000000c
+-#define UVD_UDEC_ADDR_CONFIG__PIPE_INTERLEAVE_SIZE_MASK 0x00000070L
+-#define UVD_UDEC_ADDR_CONFIG__PIPE_INTERLEAVE_SIZE__SHIFT 0x00000004
+-#define UVD_UDEC_ADDR_CONFIG__ROW_SIZE_MASK 0x30000000L
+-#define UVD_UDEC_ADDR_CONFIG__ROW_SIZE__SHIFT 0x0000001c
+-#define UVD_UDEC_ADDR_CONFIG__SHADER_ENGINE_TILE_SIZE_MASK 0x00070000L
+-#define UVD_UDEC_ADDR_CONFIG__SHADER_ENGINE_TILE_SIZE__SHIFT 0x00000010
+-#define UVD_UDEC_DB_ADDR_CONFIG__BANK_INTERLEAVE_SIZE_MASK 0x00000700L
+-#define UVD_UDEC_DB_ADDR_CONFIG__BANK_INTERLEAVE_SIZE__SHIFT 0x00000008
+-#define UVD_UDEC_DB_ADDR_CONFIG__MULTI_GPU_TILE_SIZE_MASK 0x03000000L
+-#define UVD_UDEC_DB_ADDR_CONFIG__MULTI_GPU_TILE_SIZE__SHIFT 0x00000018
+-#define UVD_UDEC_DB_ADDR_CONFIG__NUM_GPUS_MASK 0x00700000L
+-#define UVD_UDEC_DB_ADDR_CONFIG__NUM_GPUS__SHIFT 0x00000014
+-#define UVD_UDEC_DB_ADDR_CONFIG__NUM_LOWER_PIPES_MASK 0x40000000L
+-#define UVD_UDEC_DB_ADDR_CONFIG__NUM_LOWER_PIPES__SHIFT 0x0000001e
+-#define UVD_UDEC_DB_ADDR_CONFIG__NUM_PIPES_MASK 0x00000007L
+-#define UVD_UDEC_DB_ADDR_CONFIG__NUM_PIPES__SHIFT 0x00000000
+-#define UVD_UDEC_DB_ADDR_CONFIG__NUM_SHADER_ENGINES_MASK 0x00003000L
+-#define UVD_UDEC_DB_ADDR_CONFIG__NUM_SHADER_ENGINES__SHIFT 0x0000000c
+-#define UVD_UDEC_DB_ADDR_CONFIG__PIPE_INTERLEAVE_SIZE_MASK 0x00000070L
+-#define UVD_UDEC_DB_ADDR_CONFIG__PIPE_INTERLEAVE_SIZE__SHIFT 0x00000004
+-#define UVD_UDEC_DB_ADDR_CONFIG__ROW_SIZE_MASK 0x30000000L
+-#define UVD_UDEC_DB_ADDR_CONFIG__ROW_SIZE__SHIFT 0x0000001c
+-#define UVD_UDEC_DB_ADDR_CONFIG__SHADER_ENGINE_TILE_SIZE_MASK 0x00070000L
+-#define UVD_UDEC_DB_ADDR_CONFIG__SHADER_ENGINE_TILE_SIZE__SHIFT 0x00000010
+-#define UVD_UDEC_DBW_ADDR_CONFIG__BANK_INTERLEAVE_SIZE_MASK 0x00000700L
+-#define UVD_UDEC_DBW_ADDR_CONFIG__BANK_INTERLEAVE_SIZE__SHIFT 0x00000008
+-#define UVD_UDEC_DBW_ADDR_CONFIG__MULTI_GPU_TILE_SIZE_MASK 0x03000000L
+-#define UVD_UDEC_DBW_ADDR_CONFIG__MULTI_GPU_TILE_SIZE__SHIFT 0x00000018
+-#define UVD_UDEC_DBW_ADDR_CONFIG__NUM_GPUS_MASK 0x00700000L
+-#define UVD_UDEC_DBW_ADDR_CONFIG__NUM_GPUS__SHIFT 0x00000014
+-#define UVD_UDEC_DBW_ADDR_CONFIG__NUM_LOWER_PIPES_MASK 0x40000000L
+-#define UVD_UDEC_DBW_ADDR_CONFIG__NUM_LOWER_PIPES__SHIFT 0x0000001e
+-#define UVD_UDEC_DBW_ADDR_CONFIG__NUM_PIPES_MASK 0x00000007L
+-#define UVD_UDEC_DBW_ADDR_CONFIG__NUM_PIPES__SHIFT 0x00000000
+-#define UVD_UDEC_DBW_ADDR_CONFIG__NUM_SHADER_ENGINES_MASK 0x00003000L
+-#define UVD_UDEC_DBW_ADDR_CONFIG__NUM_SHADER_ENGINES__SHIFT 0x0000000c
+-#define UVD_UDEC_DBW_ADDR_CONFIG__PIPE_INTERLEAVE_SIZE_MASK 0x00000070L
+-#define UVD_UDEC_DBW_ADDR_CONFIG__PIPE_INTERLEAVE_SIZE__SHIFT 0x00000004
+-#define UVD_UDEC_DBW_ADDR_CONFIG__ROW_SIZE_MASK 0x30000000L
+-#define UVD_UDEC_DBW_ADDR_CONFIG__ROW_SIZE__SHIFT 0x0000001c
+-#define UVD_UDEC_DBW_ADDR_CONFIG__SHADER_ENGINE_TILE_SIZE_MASK 0x00070000L
+-#define UVD_UDEC_DBW_ADDR_CONFIG__SHADER_ENGINE_TILE_SIZE__SHIFT 0x00000010
+-#define UVD_VCPU_CACHE_OFFSET0__CACHE_OFFSET0_MASK 0x01ffffffL
+-#define UVD_VCPU_CACHE_OFFSET0__CACHE_OFFSET0__SHIFT 0x00000000
+-#define UVD_VCPU_CACHE_OFFSET1__CACHE_OFFSET1_MASK 0x01ffffffL
+-#define UVD_VCPU_CACHE_OFFSET1__CACHE_OFFSET1__SHIFT 0x00000000
+-#define UVD_VCPU_CACHE_OFFSET2__CACHE_OFFSET2_MASK 0x01ffffffL
+-#define UVD_VCPU_CACHE_OFFSET2__CACHE_OFFSET2__SHIFT 0x00000000
+-#define UVD_VCPU_CACHE_SIZE0__CACHE_SIZE0_MASK 0x001fffffL
+-#define UVD_VCPU_CACHE_SIZE0__CACHE_SIZE0__SHIFT 0x00000000
+-#define UVD_VCPU_CACHE_SIZE1__CACHE_SIZE1_MASK 0x001fffffL
+-#define UVD_VCPU_CACHE_SIZE1__CACHE_SIZE1__SHIFT 0x00000000
+-#define UVD_VCPU_CACHE_SIZE2__CACHE_SIZE2_MASK 0x001fffffL
+-#define UVD_VCPU_CACHE_SIZE2__CACHE_SIZE2__SHIFT 0x00000000
+-#define UVD_VCPU_CNTL__ABORT_REQ_MASK 0x00000100L
+-#define UVD_VCPU_CNTL__ABORT_REQ__SHIFT 0x00000008
+-#define UVD_VCPU_CNTL__AXI_MAX_BRST_SIZE_IS_4_MASK 0x00000010L
+-#define UVD_VCPU_CNTL__AXI_MAX_BRST_SIZE_IS_4__SHIFT 0x00000004
+-#define UVD_VCPU_CNTL__CABAC_MB_ACC_MASK 0x10000000L
+-#define UVD_VCPU_CNTL__CABAC_MB_ACC__SHIFT 0x0000001c
+-#define UVD_VCPU_CNTL__CLK_ACTIVE_MASK 0x00020000L
+-#define UVD_VCPU_CNTL__CLK_ACTIVE__SHIFT 0x00000011
+-#define UVD_VCPU_CNTL__CLK_EN_MASK 0x00000200L
+-#define UVD_VCPU_CNTL__CLK_EN__SHIFT 0x00000009
+-#define UVD_VCPU_CNTL__DBG_MUX_MASK 0x0000e000L
+-#define UVD_VCPU_CNTL__DBG_MUX__SHIFT 0x0000000d
+-#define UVD_VCPU_CNTL__ECPU_AM32_EN_MASK 0x20000000L
+-#define UVD_VCPU_CNTL__ECPU_AM32_EN__SHIFT 0x0000001d
+-#define UVD_VCPU_CNTL__IRQ_ERR_MASK 0x0000000fL
+-#define UVD_VCPU_CNTL__IRQ_ERR__SHIFT 0x00000000
+-#define UVD_VCPU_CNTL__JTAG_EN_MASK 0x00010000L
+-#define UVD_VCPU_CNTL__JTAG_EN__SHIFT 0x00000010
+-#define UVD_VCPU_CNTL__PMB_ED_ENABLE_MASK 0x00000020L
+-#define UVD_VCPU_CNTL__PMB_ED_ENABLE__SHIFT 0x00000005
+-#define UVD_VCPU_CNTL__PMB_SOFT_RESET_MASK 0x00000040L
+-#define UVD_VCPU_CNTL__PMB_SOFT_RESET__SHIFT 0x00000006
+-#define UVD_VCPU_CNTL__PRB_TIMEOUT_VAL_MASK 0x0ff00000L
+-#define UVD_VCPU_CNTL__PRB_TIMEOUT_VAL__SHIFT 0x00000014
+-#define UVD_VCPU_CNTL__RBBM_SOFT_RESET_MASK 0x00000080L
+-#define UVD_VCPU_CNTL__RBBM_SOFT_RESET__SHIFT 0x00000007
+-#define UVD_VCPU_CNTL__TIMEOUT_DIS_MASK 0x00040000L
+-#define UVD_VCPU_CNTL__TIMEOUT_DIS__SHIFT 0x00000012
+-#define UVD_VCPU_CNTL__TRCE_EN_MASK 0x00000400L
+-#define UVD_VCPU_CNTL__TRCE_EN__SHIFT 0x0000000a
+-#define UVD_VCPU_CNTL__TRCE_MUX_MASK 0x00001800L
+-#define UVD_VCPU_CNTL__TRCE_MUX__SHIFT 0x0000000b
+-#define UVD_VCPU_CNTL__WMV9_EN_MASK 0x40000000L
+-#define UVD_VCPU_CNTL__WMV9_EN__SHIFT 0x0000001e
 -
 -#endif
--
-diff --git a/drivers/gpu/drm/amd/powerplay/inc/pp_feature.h b/drivers/gpu/drm/amd/powerplay/inc/pp_feature.h
+diff --git a/drivers/gpu/drm/amd/include/asic_reg/uvd/uvd_5_0_enum.h b/drivers/gpu/drm/amd/include/asic_reg/uvd/uvd_5_0_enum.h
 deleted file mode 100644
-index 0faf6a25c18b..000000000000
---- a/drivers/gpu/drm/amd/powerplay/inc/pp_feature.h
+index 981086f8ee4e..000000000000
+--- a/drivers/gpu/drm/amd/include/asic_reg/uvd/uvd_5_0_enum.h
 +++ /dev/null
-@@ -1,67 +0,0 @@
+@@ -1,1211 +0,0 @@
 -/*
-- * Copyright 2015 Advanced Micro Devices, Inc.
+- * UVD_5_0 Register documentation
+- *
+- * Copyright (C) 2014  Advanced Micro Devices, Inc.
 - *
 - * Permission is hereby granted, free of charge, to any person obtaining a
 - * copy of this software and associated documentation files (the "Software"),
@@ -468,62 +855,2291 @@ index 0faf6a25c18b..000000000000
 - * and/or sell copies of the Software, and to permit persons to whom the
 - * Software is furnished to do so, subject to the following conditions:
 - *
-- * The above copyright notice and this permission notice shall be included in
-- * all copies or substantial portions of the Software.
+- * The above copyright notice and this permission notice shall be included
+- * in all copies or substantial portions of the Software.
 - *
-- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 - * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-- * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
-- * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- * OTHER DEALINGS IN THE SOFTWARE.
+- * THE COPYRIGHT HOLDER(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+- * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+- */
+-
+-#ifndef UVD_5_0_ENUM_H
+-#define UVD_5_0_ENUM_H
+-
+-typedef enum UVDFirmwareCommand {
+-	UVDFC_FENCE                                      = 0x0,
+-	UVDFC_TRAP                                       = 0x1,
+-	UVDFC_DECODED_ADDR                               = 0x2,
+-	UVDFC_MBLOCK_ADDR                                = 0x3,
+-	UVDFC_ITBUF_ADDR                                 = 0x4,
+-	UVDFC_DISPLAY_ADDR                               = 0x5,
+-	UVDFC_EOD                                        = 0x6,
+-	UVDFC_DISPLAY_PITCH                              = 0x7,
+-	UVDFC_DISPLAY_TILING                             = 0x8,
+-	UVDFC_BITSTREAM_ADDR                             = 0x9,
+-	UVDFC_BITSTREAM_SIZE                             = 0xa,
+-} UVDFirmwareCommand;
+-typedef enum SurfaceEndian {
+-	ENDIAN_NONE                                      = 0x0,
+-	ENDIAN_8IN16                                     = 0x1,
+-	ENDIAN_8IN32                                     = 0x2,
+-	ENDIAN_8IN64                                     = 0x3,
+-} SurfaceEndian;
+-typedef enum ArrayMode {
+-	ARRAY_LINEAR_GENERAL                             = 0x0,
+-	ARRAY_LINEAR_ALIGNED                             = 0x1,
+-	ARRAY_1D_TILED_THIN1                             = 0x2,
+-	ARRAY_1D_TILED_THICK                             = 0x3,
+-	ARRAY_2D_TILED_THIN1                             = 0x4,
+-	ARRAY_PRT_TILED_THIN1                            = 0x5,
+-	ARRAY_PRT_2D_TILED_THIN1                         = 0x6,
+-	ARRAY_2D_TILED_THICK                             = 0x7,
+-	ARRAY_2D_TILED_XTHICK                            = 0x8,
+-	ARRAY_PRT_TILED_THICK                            = 0x9,
+-	ARRAY_PRT_2D_TILED_THICK                         = 0xa,
+-	ARRAY_PRT_3D_TILED_THIN1                         = 0xb,
+-	ARRAY_3D_TILED_THIN1                             = 0xc,
+-	ARRAY_3D_TILED_THICK                             = 0xd,
+-	ARRAY_3D_TILED_XTHICK                            = 0xe,
+-	ARRAY_PRT_3D_TILED_THICK                         = 0xf,
+-} ArrayMode;
+-typedef enum PipeTiling {
+-	CONFIG_1_PIPE                                    = 0x0,
+-	CONFIG_2_PIPE                                    = 0x1,
+-	CONFIG_4_PIPE                                    = 0x2,
+-	CONFIG_8_PIPE                                    = 0x3,
+-} PipeTiling;
+-typedef enum BankTiling {
+-	CONFIG_4_BANK                                    = 0x0,
+-	CONFIG_8_BANK                                    = 0x1,
+-} BankTiling;
+-typedef enum GroupInterleave {
+-	CONFIG_256B_GROUP                                = 0x0,
+-	CONFIG_512B_GROUP                                = 0x1,
+-} GroupInterleave;
+-typedef enum RowTiling {
+-	CONFIG_1KB_ROW                                   = 0x0,
+-	CONFIG_2KB_ROW                                   = 0x1,
+-	CONFIG_4KB_ROW                                   = 0x2,
+-	CONFIG_8KB_ROW                                   = 0x3,
+-	CONFIG_1KB_ROW_OPT                               = 0x4,
+-	CONFIG_2KB_ROW_OPT                               = 0x5,
+-	CONFIG_4KB_ROW_OPT                               = 0x6,
+-	CONFIG_8KB_ROW_OPT                               = 0x7,
+-} RowTiling;
+-typedef enum BankSwapBytes {
+-	CONFIG_128B_SWAPS                                = 0x0,
+-	CONFIG_256B_SWAPS                                = 0x1,
+-	CONFIG_512B_SWAPS                                = 0x2,
+-	CONFIG_1KB_SWAPS                                 = 0x3,
+-} BankSwapBytes;
+-typedef enum SampleSplitBytes {
+-	CONFIG_1KB_SPLIT                                 = 0x0,
+-	CONFIG_2KB_SPLIT                                 = 0x1,
+-	CONFIG_4KB_SPLIT                                 = 0x2,
+-	CONFIG_8KB_SPLIT                                 = 0x3,
+-} SampleSplitBytes;
+-typedef enum NumPipes {
+-	ADDR_CONFIG_1_PIPE                               = 0x0,
+-	ADDR_CONFIG_2_PIPE                               = 0x1,
+-	ADDR_CONFIG_4_PIPE                               = 0x2,
+-	ADDR_CONFIG_8_PIPE                               = 0x3,
+-} NumPipes;
+-typedef enum PipeInterleaveSize {
+-	ADDR_CONFIG_PIPE_INTERLEAVE_256B                 = 0x0,
+-	ADDR_CONFIG_PIPE_INTERLEAVE_512B                 = 0x1,
+-} PipeInterleaveSize;
+-typedef enum BankInterleaveSize {
+-	ADDR_CONFIG_BANK_INTERLEAVE_1                    = 0x0,
+-	ADDR_CONFIG_BANK_INTERLEAVE_2                    = 0x1,
+-	ADDR_CONFIG_BANK_INTERLEAVE_4                    = 0x2,
+-	ADDR_CONFIG_BANK_INTERLEAVE_8                    = 0x3,
+-} BankInterleaveSize;
+-typedef enum NumShaderEngines {
+-	ADDR_CONFIG_1_SHADER_ENGINE                      = 0x0,
+-	ADDR_CONFIG_2_SHADER_ENGINE                      = 0x1,
+-} NumShaderEngines;
+-typedef enum ShaderEngineTileSize {
+-	ADDR_CONFIG_SE_TILE_16                           = 0x0,
+-	ADDR_CONFIG_SE_TILE_32                           = 0x1,
+-} ShaderEngineTileSize;
+-typedef enum NumGPUs {
+-	ADDR_CONFIG_1_GPU                                = 0x0,
+-	ADDR_CONFIG_2_GPU                                = 0x1,
+-	ADDR_CONFIG_4_GPU                                = 0x2,
+-} NumGPUs;
+-typedef enum MultiGPUTileSize {
+-	ADDR_CONFIG_GPU_TILE_16                          = 0x0,
+-	ADDR_CONFIG_GPU_TILE_32                          = 0x1,
+-	ADDR_CONFIG_GPU_TILE_64                          = 0x2,
+-	ADDR_CONFIG_GPU_TILE_128                         = 0x3,
+-} MultiGPUTileSize;
+-typedef enum RowSize {
+-	ADDR_CONFIG_1KB_ROW                              = 0x0,
+-	ADDR_CONFIG_2KB_ROW                              = 0x1,
+-	ADDR_CONFIG_4KB_ROW                              = 0x2,
+-} RowSize;
+-typedef enum NumLowerPipes {
+-	ADDR_CONFIG_1_LOWER_PIPES                        = 0x0,
+-	ADDR_CONFIG_2_LOWER_PIPES                        = 0x1,
+-} NumLowerPipes;
+-typedef enum DebugBlockId {
+-	DBG_CLIENT_BLKID_RESERVED                        = 0x0,
+-	DBG_CLIENT_BLKID_dbg                             = 0x1,
+-	DBG_CLIENT_BLKID_scf2                            = 0x2,
+-	DBG_CLIENT_BLKID_mcd5                            = 0x3,
+-	DBG_CLIENT_BLKID_vmc                             = 0x4,
+-	DBG_CLIENT_BLKID_sx30                            = 0x5,
+-	DBG_CLIENT_BLKID_mcd2                            = 0x6,
+-	DBG_CLIENT_BLKID_bci1                            = 0x7,
+-	DBG_CLIENT_BLKID_xdma_dbg_client_wrapper         = 0x8,
+-	DBG_CLIENT_BLKID_mcc0                            = 0x9,
+-	DBG_CLIENT_BLKID_uvdf_0                          = 0xa,
+-	DBG_CLIENT_BLKID_uvdf_1                          = 0xb,
+-	DBG_CLIENT_BLKID_uvdf_2                          = 0xc,
+-	DBG_CLIENT_BLKID_uvdi_0                          = 0xd,
+-	DBG_CLIENT_BLKID_bci0                            = 0xe,
+-	DBG_CLIENT_BLKID_vcec0_0                         = 0xf,
+-	DBG_CLIENT_BLKID_cb100                           = 0x10,
+-	DBG_CLIENT_BLKID_cb001                           = 0x11,
+-	DBG_CLIENT_BLKID_mcd4                            = 0x12,
+-	DBG_CLIENT_BLKID_tmonw00                         = 0x13,
+-	DBG_CLIENT_BLKID_cb101                           = 0x14,
+-	DBG_CLIENT_BLKID_sx10                            = 0x15,
+-	DBG_CLIENT_BLKID_cb301                           = 0x16,
+-	DBG_CLIENT_BLKID_tmonw01                         = 0x17,
+-	DBG_CLIENT_BLKID_vcea0_0                         = 0x18,
+-	DBG_CLIENT_BLKID_vcea0_1                         = 0x19,
+-	DBG_CLIENT_BLKID_vcea0_2                         = 0x1a,
+-	DBG_CLIENT_BLKID_vcea0_3                         = 0x1b,
+-	DBG_CLIENT_BLKID_scf1                            = 0x1c,
+-	DBG_CLIENT_BLKID_sx20                            = 0x1d,
+-	DBG_CLIENT_BLKID_spim1                           = 0x1e,
+-	DBG_CLIENT_BLKID_pa10                            = 0x1f,
+-	DBG_CLIENT_BLKID_pa00                            = 0x20,
+-	DBG_CLIENT_BLKID_gmcon                           = 0x21,
+-	DBG_CLIENT_BLKID_mcb                             = 0x22,
+-	DBG_CLIENT_BLKID_vgt0                            = 0x23,
+-	DBG_CLIENT_BLKID_pc0                             = 0x24,
+-	DBG_CLIENT_BLKID_bci2                            = 0x25,
+-	DBG_CLIENT_BLKID_uvdb_0                          = 0x26,
+-	DBG_CLIENT_BLKID_spim3                           = 0x27,
+-	DBG_CLIENT_BLKID_cpc_0                           = 0x28,
+-	DBG_CLIENT_BLKID_cpc_1                           = 0x29,
+-	DBG_CLIENT_BLKID_uvdm_0                          = 0x2a,
+-	DBG_CLIENT_BLKID_uvdm_1                          = 0x2b,
+-	DBG_CLIENT_BLKID_uvdm_2                          = 0x2c,
+-	DBG_CLIENT_BLKID_uvdm_3                          = 0x2d,
+-	DBG_CLIENT_BLKID_cb000                           = 0x2e,
+-	DBG_CLIENT_BLKID_spim0                           = 0x2f,
+-	DBG_CLIENT_BLKID_mcc2                            = 0x30,
+-	DBG_CLIENT_BLKID_ds0                             = 0x31,
+-	DBG_CLIENT_BLKID_srbm                            = 0x32,
+-	DBG_CLIENT_BLKID_ih                              = 0x33,
+-	DBG_CLIENT_BLKID_sem                             = 0x34,
+-	DBG_CLIENT_BLKID_sdma_0                          = 0x35,
+-	DBG_CLIENT_BLKID_sdma_1                          = 0x36,
+-	DBG_CLIENT_BLKID_hdp                             = 0x37,
+-	DBG_CLIENT_BLKID_acp_0                           = 0x38,
+-	DBG_CLIENT_BLKID_acp_1                           = 0x39,
+-	DBG_CLIENT_BLKID_cb200                           = 0x3a,
+-	DBG_CLIENT_BLKID_scf3                            = 0x3b,
+-	DBG_CLIENT_BLKID_vceb1_0                         = 0x3c,
+-	DBG_CLIENT_BLKID_vcea1_0                         = 0x3d,
+-	DBG_CLIENT_BLKID_vcea1_1                         = 0x3e,
+-	DBG_CLIENT_BLKID_vcea1_2                         = 0x3f,
+-	DBG_CLIENT_BLKID_vcea1_3                         = 0x40,
+-	DBG_CLIENT_BLKID_bci3                            = 0x41,
+-	DBG_CLIENT_BLKID_mcd0                            = 0x42,
+-	DBG_CLIENT_BLKID_pa11                            = 0x43,
+-	DBG_CLIENT_BLKID_pa01                            = 0x44,
+-	DBG_CLIENT_BLKID_cb201                           = 0x45,
+-	DBG_CLIENT_BLKID_spim2                           = 0x46,
+-	DBG_CLIENT_BLKID_vgt2                            = 0x47,
+-	DBG_CLIENT_BLKID_pc2                             = 0x48,
+-	DBG_CLIENT_BLKID_smu_0                           = 0x49,
+-	DBG_CLIENT_BLKID_smu_1                           = 0x4a,
+-	DBG_CLIENT_BLKID_smu_2                           = 0x4b,
+-	DBG_CLIENT_BLKID_cb1                             = 0x4c,
+-	DBG_CLIENT_BLKID_ia0                             = 0x4d,
+-	DBG_CLIENT_BLKID_wd                              = 0x4e,
+-	DBG_CLIENT_BLKID_ia1                             = 0x4f,
+-	DBG_CLIENT_BLKID_vcec1_0                         = 0x50,
+-	DBG_CLIENT_BLKID_scf0                            = 0x51,
+-	DBG_CLIENT_BLKID_vgt1                            = 0x52,
+-	DBG_CLIENT_BLKID_pc1                             = 0x53,
+-	DBG_CLIENT_BLKID_cb0                             = 0x54,
+-	DBG_CLIENT_BLKID_gdc_one_0                       = 0x55,
+-	DBG_CLIENT_BLKID_gdc_one_1                       = 0x56,
+-	DBG_CLIENT_BLKID_gdc_one_2                       = 0x57,
+-	DBG_CLIENT_BLKID_gdc_one_3                       = 0x58,
+-	DBG_CLIENT_BLKID_gdc_one_4                       = 0x59,
+-	DBG_CLIENT_BLKID_gdc_one_5                       = 0x5a,
+-	DBG_CLIENT_BLKID_gdc_one_6                       = 0x5b,
+-	DBG_CLIENT_BLKID_gdc_one_7                       = 0x5c,
+-	DBG_CLIENT_BLKID_gdc_one_8                       = 0x5d,
+-	DBG_CLIENT_BLKID_gdc_one_9                       = 0x5e,
+-	DBG_CLIENT_BLKID_gdc_one_10                      = 0x5f,
+-	DBG_CLIENT_BLKID_gdc_one_11                      = 0x60,
+-	DBG_CLIENT_BLKID_gdc_one_12                      = 0x61,
+-	DBG_CLIENT_BLKID_gdc_one_13                      = 0x62,
+-	DBG_CLIENT_BLKID_gdc_one_14                      = 0x63,
+-	DBG_CLIENT_BLKID_gdc_one_15                      = 0x64,
+-	DBG_CLIENT_BLKID_gdc_one_16                      = 0x65,
+-	DBG_CLIENT_BLKID_gdc_one_17                      = 0x66,
+-	DBG_CLIENT_BLKID_gdc_one_18                      = 0x67,
+-	DBG_CLIENT_BLKID_gdc_one_19                      = 0x68,
+-	DBG_CLIENT_BLKID_gdc_one_20                      = 0x69,
+-	DBG_CLIENT_BLKID_gdc_one_21                      = 0x6a,
+-	DBG_CLIENT_BLKID_gdc_one_22                      = 0x6b,
+-	DBG_CLIENT_BLKID_gdc_one_23                      = 0x6c,
+-	DBG_CLIENT_BLKID_gdc_one_24                      = 0x6d,
+-	DBG_CLIENT_BLKID_gdc_one_25                      = 0x6e,
+-	DBG_CLIENT_BLKID_gdc_one_26                      = 0x6f,
+-	DBG_CLIENT_BLKID_gdc_one_27                      = 0x70,
+-	DBG_CLIENT_BLKID_gdc_one_28                      = 0x71,
+-	DBG_CLIENT_BLKID_gdc_one_29                      = 0x72,
+-	DBG_CLIENT_BLKID_gdc_one_30                      = 0x73,
+-	DBG_CLIENT_BLKID_gdc_one_31                      = 0x74,
+-	DBG_CLIENT_BLKID_gdc_one_32                      = 0x75,
+-	DBG_CLIENT_BLKID_gdc_one_33                      = 0x76,
+-	DBG_CLIENT_BLKID_gdc_one_34                      = 0x77,
+-	DBG_CLIENT_BLKID_gdc_one_35                      = 0x78,
+-	DBG_CLIENT_BLKID_vceb0_0                         = 0x79,
+-	DBG_CLIENT_BLKID_vgt3                            = 0x7a,
+-	DBG_CLIENT_BLKID_pc3                             = 0x7b,
+-	DBG_CLIENT_BLKID_mcd3                            = 0x7c,
+-	DBG_CLIENT_BLKID_uvdu_0                          = 0x7d,
+-	DBG_CLIENT_BLKID_uvdu_1                          = 0x7e,
+-	DBG_CLIENT_BLKID_uvdu_2                          = 0x7f,
+-	DBG_CLIENT_BLKID_uvdu_3                          = 0x80,
+-	DBG_CLIENT_BLKID_uvdu_4                          = 0x81,
+-	DBG_CLIENT_BLKID_uvdu_5                          = 0x82,
+-	DBG_CLIENT_BLKID_uvdu_6                          = 0x83,
+-	DBG_CLIENT_BLKID_cb300                           = 0x84,
+-	DBG_CLIENT_BLKID_mcd1                            = 0x85,
+-	DBG_CLIENT_BLKID_sx00                            = 0x86,
+-	DBG_CLIENT_BLKID_uvdc_0                          = 0x87,
+-	DBG_CLIENT_BLKID_uvdc_1                          = 0x88,
+-	DBG_CLIENT_BLKID_mcc3                            = 0x89,
+-	DBG_CLIENT_BLKID_cpg_0                           = 0x8a,
+-	DBG_CLIENT_BLKID_cpg_1                           = 0x8b,
+-	DBG_CLIENT_BLKID_gck                             = 0x8c,
+-	DBG_CLIENT_BLKID_mcc1                            = 0x8d,
+-	DBG_CLIENT_BLKID_cpf_0                           = 0x8e,
+-	DBG_CLIENT_BLKID_cpf_1                           = 0x8f,
+-	DBG_CLIENT_BLKID_rlc                             = 0x90,
+-	DBG_CLIENT_BLKID_grbm                            = 0x91,
+-	DBG_CLIENT_BLKID_sammsp                          = 0x92,
+-	DBG_CLIENT_BLKID_dci_pg                          = 0x93,
+-	DBG_CLIENT_BLKID_dci_0                           = 0x94,
+-	DBG_CLIENT_BLKID_dccg0_0                         = 0x95,
+-	DBG_CLIENT_BLKID_dccg0_1                         = 0x96,
+-	DBG_CLIENT_BLKID_dcfe01_0                        = 0x97,
+-	DBG_CLIENT_BLKID_dcfe02_0                        = 0x98,
+-	DBG_CLIENT_BLKID_dcfe03_0                        = 0x99,
+-	DBG_CLIENT_BLKID_dcfe04_0                        = 0x9a,
+-	DBG_CLIENT_BLKID_dcfe05_0                        = 0x9b,
+-	DBG_CLIENT_BLKID_dcfe06_0                        = 0x9c,
+-	DBG_CLIENT_BLKID_RESERVED_LAST                   = 0x9d,
+-} DebugBlockId;
+-typedef enum DebugBlockId_OLD {
+-	DBG_BLOCK_ID_RESERVED                            = 0x0,
+-	DBG_BLOCK_ID_DBG                                 = 0x1,
+-	DBG_BLOCK_ID_VMC                                 = 0x2,
+-	DBG_BLOCK_ID_PDMA                                = 0x3,
+-	DBG_BLOCK_ID_CG                                  = 0x4,
+-	DBG_BLOCK_ID_SRBM                                = 0x5,
+-	DBG_BLOCK_ID_GRBM                                = 0x6,
+-	DBG_BLOCK_ID_RLC                                 = 0x7,
+-	DBG_BLOCK_ID_CSC                                 = 0x8,
+-	DBG_BLOCK_ID_SEM                                 = 0x9,
+-	DBG_BLOCK_ID_IH                                  = 0xa,
+-	DBG_BLOCK_ID_SC                                  = 0xb,
+-	DBG_BLOCK_ID_SQ                                  = 0xc,
+-	DBG_BLOCK_ID_AVP                                 = 0xd,
+-	DBG_BLOCK_ID_GMCON                               = 0xe,
+-	DBG_BLOCK_ID_SMU                                 = 0xf,
+-	DBG_BLOCK_ID_DMA0                                = 0x10,
+-	DBG_BLOCK_ID_DMA1                                = 0x11,
+-	DBG_BLOCK_ID_SPIM                                = 0x12,
+-	DBG_BLOCK_ID_GDS                                 = 0x13,
+-	DBG_BLOCK_ID_SPIS                                = 0x14,
+-	DBG_BLOCK_ID_UNUSED0                             = 0x15,
+-	DBG_BLOCK_ID_PA0                                 = 0x16,
+-	DBG_BLOCK_ID_PA1                                 = 0x17,
+-	DBG_BLOCK_ID_CP0                                 = 0x18,
+-	DBG_BLOCK_ID_CP1                                 = 0x19,
+-	DBG_BLOCK_ID_CP2                                 = 0x1a,
+-	DBG_BLOCK_ID_UNUSED1                             = 0x1b,
+-	DBG_BLOCK_ID_UVDU                                = 0x1c,
+-	DBG_BLOCK_ID_UVDM                                = 0x1d,
+-	DBG_BLOCK_ID_VCE                                 = 0x1e,
+-	DBG_BLOCK_ID_UNUSED2                             = 0x1f,
+-	DBG_BLOCK_ID_VGT0                                = 0x20,
+-	DBG_BLOCK_ID_VGT1                                = 0x21,
+-	DBG_BLOCK_ID_IA                                  = 0x22,
+-	DBG_BLOCK_ID_UNUSED3                             = 0x23,
+-	DBG_BLOCK_ID_SCT0                                = 0x24,
+-	DBG_BLOCK_ID_SCT1                                = 0x25,
+-	DBG_BLOCK_ID_SPM0                                = 0x26,
+-	DBG_BLOCK_ID_SPM1                                = 0x27,
+-	DBG_BLOCK_ID_TCAA                                = 0x28,
+-	DBG_BLOCK_ID_TCAB                                = 0x29,
+-	DBG_BLOCK_ID_TCCA                                = 0x2a,
+-	DBG_BLOCK_ID_TCCB                                = 0x2b,
+-	DBG_BLOCK_ID_MCC0                                = 0x2c,
+-	DBG_BLOCK_ID_MCC1                                = 0x2d,
+-	DBG_BLOCK_ID_MCC2                                = 0x2e,
+-	DBG_BLOCK_ID_MCC3                                = 0x2f,
+-	DBG_BLOCK_ID_SX0                                 = 0x30,
+-	DBG_BLOCK_ID_SX1                                 = 0x31,
+-	DBG_BLOCK_ID_SX2                                 = 0x32,
+-	DBG_BLOCK_ID_SX3                                 = 0x33,
+-	DBG_BLOCK_ID_UNUSED4                             = 0x34,
+-	DBG_BLOCK_ID_UNUSED5                             = 0x35,
+-	DBG_BLOCK_ID_UNUSED6                             = 0x36,
+-	DBG_BLOCK_ID_UNUSED7                             = 0x37,
+-	DBG_BLOCK_ID_PC0                                 = 0x38,
+-	DBG_BLOCK_ID_PC1                                 = 0x39,
+-	DBG_BLOCK_ID_UNUSED8                             = 0x3a,
+-	DBG_BLOCK_ID_UNUSED9                             = 0x3b,
+-	DBG_BLOCK_ID_UNUSED10                            = 0x3c,
+-	DBG_BLOCK_ID_UNUSED11                            = 0x3d,
+-	DBG_BLOCK_ID_MCB                                 = 0x3e,
+-	DBG_BLOCK_ID_UNUSED12                            = 0x3f,
+-	DBG_BLOCK_ID_SCB0                                = 0x40,
+-	DBG_BLOCK_ID_SCB1                                = 0x41,
+-	DBG_BLOCK_ID_UNUSED13                            = 0x42,
+-	DBG_BLOCK_ID_UNUSED14                            = 0x43,
+-	DBG_BLOCK_ID_SCF0                                = 0x44,
+-	DBG_BLOCK_ID_SCF1                                = 0x45,
+-	DBG_BLOCK_ID_UNUSED15                            = 0x46,
+-	DBG_BLOCK_ID_UNUSED16                            = 0x47,
+-	DBG_BLOCK_ID_BCI0                                = 0x48,
+-	DBG_BLOCK_ID_BCI1                                = 0x49,
+-	DBG_BLOCK_ID_BCI2                                = 0x4a,
+-	DBG_BLOCK_ID_BCI3                                = 0x4b,
+-	DBG_BLOCK_ID_UNUSED17                            = 0x4c,
+-	DBG_BLOCK_ID_UNUSED18                            = 0x4d,
+-	DBG_BLOCK_ID_UNUSED19                            = 0x4e,
+-	DBG_BLOCK_ID_UNUSED20                            = 0x4f,
+-	DBG_BLOCK_ID_CB00                                = 0x50,
+-	DBG_BLOCK_ID_CB01                                = 0x51,
+-	DBG_BLOCK_ID_CB02                                = 0x52,
+-	DBG_BLOCK_ID_CB03                                = 0x53,
+-	DBG_BLOCK_ID_CB04                                = 0x54,
+-	DBG_BLOCK_ID_UNUSED21                            = 0x55,
+-	DBG_BLOCK_ID_UNUSED22                            = 0x56,
+-	DBG_BLOCK_ID_UNUSED23                            = 0x57,
+-	DBG_BLOCK_ID_CB10                                = 0x58,
+-	DBG_BLOCK_ID_CB11                                = 0x59,
+-	DBG_BLOCK_ID_CB12                                = 0x5a,
+-	DBG_BLOCK_ID_CB13                                = 0x5b,
+-	DBG_BLOCK_ID_CB14                                = 0x5c,
+-	DBG_BLOCK_ID_UNUSED24                            = 0x5d,
+-	DBG_BLOCK_ID_UNUSED25                            = 0x5e,
+-	DBG_BLOCK_ID_UNUSED26                            = 0x5f,
+-	DBG_BLOCK_ID_TCP0                                = 0x60,
+-	DBG_BLOCK_ID_TCP1                                = 0x61,
+-	DBG_BLOCK_ID_TCP2                                = 0x62,
+-	DBG_BLOCK_ID_TCP3                                = 0x63,
+-	DBG_BLOCK_ID_TCP4                                = 0x64,
+-	DBG_BLOCK_ID_TCP5                                = 0x65,
+-	DBG_BLOCK_ID_TCP6                                = 0x66,
+-	DBG_BLOCK_ID_TCP7                                = 0x67,
+-	DBG_BLOCK_ID_TCP8                                = 0x68,
+-	DBG_BLOCK_ID_TCP9                                = 0x69,
+-	DBG_BLOCK_ID_TCP10                               = 0x6a,
+-	DBG_BLOCK_ID_TCP11                               = 0x6b,
+-	DBG_BLOCK_ID_TCP12                               = 0x6c,
+-	DBG_BLOCK_ID_TCP13                               = 0x6d,
+-	DBG_BLOCK_ID_TCP14                               = 0x6e,
+-	DBG_BLOCK_ID_TCP15                               = 0x6f,
+-	DBG_BLOCK_ID_TCP16                               = 0x70,
+-	DBG_BLOCK_ID_TCP17                               = 0x71,
+-	DBG_BLOCK_ID_TCP18                               = 0x72,
+-	DBG_BLOCK_ID_TCP19                               = 0x73,
+-	DBG_BLOCK_ID_TCP20                               = 0x74,
+-	DBG_BLOCK_ID_TCP21                               = 0x75,
+-	DBG_BLOCK_ID_TCP22                               = 0x76,
+-	DBG_BLOCK_ID_TCP23                               = 0x77,
+-	DBG_BLOCK_ID_TCP_RESERVED0                       = 0x78,
+-	DBG_BLOCK_ID_TCP_RESERVED1                       = 0x79,
+-	DBG_BLOCK_ID_TCP_RESERVED2                       = 0x7a,
+-	DBG_BLOCK_ID_TCP_RESERVED3                       = 0x7b,
+-	DBG_BLOCK_ID_TCP_RESERVED4                       = 0x7c,
+-	DBG_BLOCK_ID_TCP_RESERVED5                       = 0x7d,
+-	DBG_BLOCK_ID_TCP_RESERVED6                       = 0x7e,
+-	DBG_BLOCK_ID_TCP_RESERVED7                       = 0x7f,
+-	DBG_BLOCK_ID_DB00                                = 0x80,
+-	DBG_BLOCK_ID_DB01                                = 0x81,
+-	DBG_BLOCK_ID_DB02                                = 0x82,
+-	DBG_BLOCK_ID_DB03                                = 0x83,
+-	DBG_BLOCK_ID_DB04                                = 0x84,
+-	DBG_BLOCK_ID_UNUSED27                            = 0x85,
+-	DBG_BLOCK_ID_UNUSED28                            = 0x86,
+-	DBG_BLOCK_ID_UNUSED29                            = 0x87,
+-	DBG_BLOCK_ID_DB10                                = 0x88,
+-	DBG_BLOCK_ID_DB11                                = 0x89,
+-	DBG_BLOCK_ID_DB12                                = 0x8a,
+-	DBG_BLOCK_ID_DB13                                = 0x8b,
+-	DBG_BLOCK_ID_DB14                                = 0x8c,
+-	DBG_BLOCK_ID_UNUSED30                            = 0x8d,
+-	DBG_BLOCK_ID_UNUSED31                            = 0x8e,
+-	DBG_BLOCK_ID_UNUSED32                            = 0x8f,
+-	DBG_BLOCK_ID_TCC0                                = 0x90,
+-	DBG_BLOCK_ID_TCC1                                = 0x91,
+-	DBG_BLOCK_ID_TCC2                                = 0x92,
+-	DBG_BLOCK_ID_TCC3                                = 0x93,
+-	DBG_BLOCK_ID_TCC4                                = 0x94,
+-	DBG_BLOCK_ID_TCC5                                = 0x95,
+-	DBG_BLOCK_ID_TCC6                                = 0x96,
+-	DBG_BLOCK_ID_TCC7                                = 0x97,
+-	DBG_BLOCK_ID_SPS00                               = 0x98,
+-	DBG_BLOCK_ID_SPS01                               = 0x99,
+-	DBG_BLOCK_ID_SPS02                               = 0x9a,
+-	DBG_BLOCK_ID_SPS10                               = 0x9b,
+-	DBG_BLOCK_ID_SPS11                               = 0x9c,
+-	DBG_BLOCK_ID_SPS12                               = 0x9d,
+-	DBG_BLOCK_ID_UNUSED33                            = 0x9e,
+-	DBG_BLOCK_ID_UNUSED34                            = 0x9f,
+-	DBG_BLOCK_ID_TA00                                = 0xa0,
+-	DBG_BLOCK_ID_TA01                                = 0xa1,
+-	DBG_BLOCK_ID_TA02                                = 0xa2,
+-	DBG_BLOCK_ID_TA03                                = 0xa3,
+-	DBG_BLOCK_ID_TA04                                = 0xa4,
+-	DBG_BLOCK_ID_TA05                                = 0xa5,
+-	DBG_BLOCK_ID_TA06                                = 0xa6,
+-	DBG_BLOCK_ID_TA07                                = 0xa7,
+-	DBG_BLOCK_ID_TA08                                = 0xa8,
+-	DBG_BLOCK_ID_TA09                                = 0xa9,
+-	DBG_BLOCK_ID_TA0A                                = 0xaa,
+-	DBG_BLOCK_ID_TA0B                                = 0xab,
+-	DBG_BLOCK_ID_UNUSED35                            = 0xac,
+-	DBG_BLOCK_ID_UNUSED36                            = 0xad,
+-	DBG_BLOCK_ID_UNUSED37                            = 0xae,
+-	DBG_BLOCK_ID_UNUSED38                            = 0xaf,
+-	DBG_BLOCK_ID_TA10                                = 0xb0,
+-	DBG_BLOCK_ID_TA11                                = 0xb1,
+-	DBG_BLOCK_ID_TA12                                = 0xb2,
+-	DBG_BLOCK_ID_TA13                                = 0xb3,
+-	DBG_BLOCK_ID_TA14                                = 0xb4,
+-	DBG_BLOCK_ID_TA15                                = 0xb5,
+-	DBG_BLOCK_ID_TA16                                = 0xb6,
+-	DBG_BLOCK_ID_TA17                                = 0xb7,
+-	DBG_BLOCK_ID_TA18                                = 0xb8,
+-	DBG_BLOCK_ID_TA19                                = 0xb9,
+-	DBG_BLOCK_ID_TA1A                                = 0xba,
+-	DBG_BLOCK_ID_TA1B                                = 0xbb,
+-	DBG_BLOCK_ID_UNUSED39                            = 0xbc,
+-	DBG_BLOCK_ID_UNUSED40                            = 0xbd,
+-	DBG_BLOCK_ID_UNUSED41                            = 0xbe,
+-	DBG_BLOCK_ID_UNUSED42                            = 0xbf,
+-	DBG_BLOCK_ID_TD00                                = 0xc0,
+-	DBG_BLOCK_ID_TD01                                = 0xc1,
+-	DBG_BLOCK_ID_TD02                                = 0xc2,
+-	DBG_BLOCK_ID_TD03                                = 0xc3,
+-	DBG_BLOCK_ID_TD04                                = 0xc4,
+-	DBG_BLOCK_ID_TD05                                = 0xc5,
+-	DBG_BLOCK_ID_TD06                                = 0xc6,
+-	DBG_BLOCK_ID_TD07                                = 0xc7,
+-	DBG_BLOCK_ID_TD08                                = 0xc8,
+-	DBG_BLOCK_ID_TD09                                = 0xc9,
+-	DBG_BLOCK_ID_TD0A                                = 0xca,
+-	DBG_BLOCK_ID_TD0B                                = 0xcb,
+-	DBG_BLOCK_ID_UNUSED43                            = 0xcc,
+-	DBG_BLOCK_ID_UNUSED44                            = 0xcd,
+-	DBG_BLOCK_ID_UNUSED45                            = 0xce,
+-	DBG_BLOCK_ID_UNUSED46                            = 0xcf,
+-	DBG_BLOCK_ID_TD10                                = 0xd0,
+-	DBG_BLOCK_ID_TD11                                = 0xd1,
+-	DBG_BLOCK_ID_TD12                                = 0xd2,
+-	DBG_BLOCK_ID_TD13                                = 0xd3,
+-	DBG_BLOCK_ID_TD14                                = 0xd4,
+-	DBG_BLOCK_ID_TD15                                = 0xd5,
+-	DBG_BLOCK_ID_TD16                                = 0xd6,
+-	DBG_BLOCK_ID_TD17                                = 0xd7,
+-	DBG_BLOCK_ID_TD18                                = 0xd8,
+-	DBG_BLOCK_ID_TD19                                = 0xd9,
+-	DBG_BLOCK_ID_TD1A                                = 0xda,
+-	DBG_BLOCK_ID_TD1B                                = 0xdb,
+-	DBG_BLOCK_ID_UNUSED47                            = 0xdc,
+-	DBG_BLOCK_ID_UNUSED48                            = 0xdd,
+-	DBG_BLOCK_ID_UNUSED49                            = 0xde,
+-	DBG_BLOCK_ID_UNUSED50                            = 0xdf,
+-	DBG_BLOCK_ID_MCD0                                = 0xe0,
+-	DBG_BLOCK_ID_MCD1                                = 0xe1,
+-	DBG_BLOCK_ID_MCD2                                = 0xe2,
+-	DBG_BLOCK_ID_MCD3                                = 0xe3,
+-	DBG_BLOCK_ID_MCD4                                = 0xe4,
+-	DBG_BLOCK_ID_MCD5                                = 0xe5,
+-	DBG_BLOCK_ID_UNUSED51                            = 0xe6,
+-	DBG_BLOCK_ID_UNUSED52                            = 0xe7,
+-} DebugBlockId_OLD;
+-typedef enum DebugBlockId_BY2 {
+-	DBG_BLOCK_ID_RESERVED_BY2                        = 0x0,
+-	DBG_BLOCK_ID_VMC_BY2                             = 0x1,
+-	DBG_BLOCK_ID_CG_BY2                              = 0x2,
+-	DBG_BLOCK_ID_GRBM_BY2                            = 0x3,
+-	DBG_BLOCK_ID_CSC_BY2                             = 0x4,
+-	DBG_BLOCK_ID_IH_BY2                              = 0x5,
+-	DBG_BLOCK_ID_SQ_BY2                              = 0x6,
+-	DBG_BLOCK_ID_GMCON_BY2                           = 0x7,
+-	DBG_BLOCK_ID_DMA0_BY2                            = 0x8,
+-	DBG_BLOCK_ID_SPIM_BY2                            = 0x9,
+-	DBG_BLOCK_ID_SPIS_BY2                            = 0xa,
+-	DBG_BLOCK_ID_PA0_BY2                             = 0xb,
+-	DBG_BLOCK_ID_CP0_BY2                             = 0xc,
+-	DBG_BLOCK_ID_CP2_BY2                             = 0xd,
+-	DBG_BLOCK_ID_UVDU_BY2                            = 0xe,
+-	DBG_BLOCK_ID_VCE_BY2                             = 0xf,
+-	DBG_BLOCK_ID_VGT0_BY2                            = 0x10,
+-	DBG_BLOCK_ID_IA_BY2                              = 0x11,
+-	DBG_BLOCK_ID_SCT0_BY2                            = 0x12,
+-	DBG_BLOCK_ID_SPM0_BY2                            = 0x13,
+-	DBG_BLOCK_ID_TCAA_BY2                            = 0x14,
+-	DBG_BLOCK_ID_TCCA_BY2                            = 0x15,
+-	DBG_BLOCK_ID_MCC0_BY2                            = 0x16,
+-	DBG_BLOCK_ID_MCC2_BY2                            = 0x17,
+-	DBG_BLOCK_ID_SX0_BY2                             = 0x18,
+-	DBG_BLOCK_ID_SX2_BY2                             = 0x19,
+-	DBG_BLOCK_ID_UNUSED4_BY2                         = 0x1a,
+-	DBG_BLOCK_ID_UNUSED6_BY2                         = 0x1b,
+-	DBG_BLOCK_ID_PC0_BY2                             = 0x1c,
+-	DBG_BLOCK_ID_UNUSED8_BY2                         = 0x1d,
+-	DBG_BLOCK_ID_UNUSED10_BY2                        = 0x1e,
+-	DBG_BLOCK_ID_MCB_BY2                             = 0x1f,
+-	DBG_BLOCK_ID_SCB0_BY2                            = 0x20,
+-	DBG_BLOCK_ID_UNUSED13_BY2                        = 0x21,
+-	DBG_BLOCK_ID_SCF0_BY2                            = 0x22,
+-	DBG_BLOCK_ID_UNUSED15_BY2                        = 0x23,
+-	DBG_BLOCK_ID_BCI0_BY2                            = 0x24,
+-	DBG_BLOCK_ID_BCI2_BY2                            = 0x25,
+-	DBG_BLOCK_ID_UNUSED17_BY2                        = 0x26,
+-	DBG_BLOCK_ID_UNUSED19_BY2                        = 0x27,
+-	DBG_BLOCK_ID_CB00_BY2                            = 0x28,
+-	DBG_BLOCK_ID_CB02_BY2                            = 0x29,
+-	DBG_BLOCK_ID_CB04_BY2                            = 0x2a,
+-	DBG_BLOCK_ID_UNUSED22_BY2                        = 0x2b,
+-	DBG_BLOCK_ID_CB10_BY2                            = 0x2c,
+-	DBG_BLOCK_ID_CB12_BY2                            = 0x2d,
+-	DBG_BLOCK_ID_CB14_BY2                            = 0x2e,
+-	DBG_BLOCK_ID_UNUSED25_BY2                        = 0x2f,
+-	DBG_BLOCK_ID_TCP0_BY2                            = 0x30,
+-	DBG_BLOCK_ID_TCP2_BY2                            = 0x31,
+-	DBG_BLOCK_ID_TCP4_BY2                            = 0x32,
+-	DBG_BLOCK_ID_TCP6_BY2                            = 0x33,
+-	DBG_BLOCK_ID_TCP8_BY2                            = 0x34,
+-	DBG_BLOCK_ID_TCP10_BY2                           = 0x35,
+-	DBG_BLOCK_ID_TCP12_BY2                           = 0x36,
+-	DBG_BLOCK_ID_TCP14_BY2                           = 0x37,
+-	DBG_BLOCK_ID_TCP16_BY2                           = 0x38,
+-	DBG_BLOCK_ID_TCP18_BY2                           = 0x39,
+-	DBG_BLOCK_ID_TCP20_BY2                           = 0x3a,
+-	DBG_BLOCK_ID_TCP22_BY2                           = 0x3b,
+-	DBG_BLOCK_ID_TCP_RESERVED0_BY2                   = 0x3c,
+-	DBG_BLOCK_ID_TCP_RESERVED2_BY2                   = 0x3d,
+-	DBG_BLOCK_ID_TCP_RESERVED4_BY2                   = 0x3e,
+-	DBG_BLOCK_ID_TCP_RESERVED6_BY2                   = 0x3f,
+-	DBG_BLOCK_ID_DB00_BY2                            = 0x40,
+-	DBG_BLOCK_ID_DB02_BY2                            = 0x41,
+-	DBG_BLOCK_ID_DB04_BY2                            = 0x42,
+-	DBG_BLOCK_ID_UNUSED28_BY2                        = 0x43,
+-	DBG_BLOCK_ID_DB10_BY2                            = 0x44,
+-	DBG_BLOCK_ID_DB12_BY2                            = 0x45,
+-	DBG_BLOCK_ID_DB14_BY2                            = 0x46,
+-	DBG_BLOCK_ID_UNUSED31_BY2                        = 0x47,
+-	DBG_BLOCK_ID_TCC0_BY2                            = 0x48,
+-	DBG_BLOCK_ID_TCC2_BY2                            = 0x49,
+-	DBG_BLOCK_ID_TCC4_BY2                            = 0x4a,
+-	DBG_BLOCK_ID_TCC6_BY2                            = 0x4b,
+-	DBG_BLOCK_ID_SPS00_BY2                           = 0x4c,
+-	DBG_BLOCK_ID_SPS02_BY2                           = 0x4d,
+-	DBG_BLOCK_ID_SPS11_BY2                           = 0x4e,
+-	DBG_BLOCK_ID_UNUSED33_BY2                        = 0x4f,
+-	DBG_BLOCK_ID_TA00_BY2                            = 0x50,
+-	DBG_BLOCK_ID_TA02_BY2                            = 0x51,
+-	DBG_BLOCK_ID_TA04_BY2                            = 0x52,
+-	DBG_BLOCK_ID_TA06_BY2                            = 0x53,
+-	DBG_BLOCK_ID_TA08_BY2                            = 0x54,
+-	DBG_BLOCK_ID_TA0A_BY2                            = 0x55,
+-	DBG_BLOCK_ID_UNUSED35_BY2                        = 0x56,
+-	DBG_BLOCK_ID_UNUSED37_BY2                        = 0x57,
+-	DBG_BLOCK_ID_TA10_BY2                            = 0x58,
+-	DBG_BLOCK_ID_TA12_BY2                            = 0x59,
+-	DBG_BLOCK_ID_TA14_BY2                            = 0x5a,
+-	DBG_BLOCK_ID_TA16_BY2                            = 0x5b,
+-	DBG_BLOCK_ID_TA18_BY2                            = 0x5c,
+-	DBG_BLOCK_ID_TA1A_BY2                            = 0x5d,
+-	DBG_BLOCK_ID_UNUSED39_BY2                        = 0x5e,
+-	DBG_BLOCK_ID_UNUSED41_BY2                        = 0x5f,
+-	DBG_BLOCK_ID_TD00_BY2                            = 0x60,
+-	DBG_BLOCK_ID_TD02_BY2                            = 0x61,
+-	DBG_BLOCK_ID_TD04_BY2                            = 0x62,
+-	DBG_BLOCK_ID_TD06_BY2                            = 0x63,
+-	DBG_BLOCK_ID_TD08_BY2                            = 0x64,
+-	DBG_BLOCK_ID_TD0A_BY2                            = 0x65,
+-	DBG_BLOCK_ID_UNUSED43_BY2                        = 0x66,
+-	DBG_BLOCK_ID_UNUSED45_BY2                        = 0x67,
+-	DBG_BLOCK_ID_TD10_BY2                            = 0x68,
+-	DBG_BLOCK_ID_TD12_BY2                            = 0x69,
+-	DBG_BLOCK_ID_TD14_BY2                            = 0x6a,
+-	DBG_BLOCK_ID_TD16_BY2                            = 0x6b,
+-	DBG_BLOCK_ID_TD18_BY2                            = 0x6c,
+-	DBG_BLOCK_ID_TD1A_BY2                            = 0x6d,
+-	DBG_BLOCK_ID_UNUSED47_BY2                        = 0x6e,
+-	DBG_BLOCK_ID_UNUSED49_BY2                        = 0x6f,
+-	DBG_BLOCK_ID_MCD0_BY2                            = 0x70,
+-	DBG_BLOCK_ID_MCD2_BY2                            = 0x71,
+-	DBG_BLOCK_ID_MCD4_BY2                            = 0x72,
+-	DBG_BLOCK_ID_UNUSED51_BY2                        = 0x73,
+-} DebugBlockId_BY2;
+-typedef enum DebugBlockId_BY4 {
+-	DBG_BLOCK_ID_RESERVED_BY4                        = 0x0,
+-	DBG_BLOCK_ID_CG_BY4                              = 0x1,
+-	DBG_BLOCK_ID_CSC_BY4                             = 0x2,
+-	DBG_BLOCK_ID_SQ_BY4                              = 0x3,
+-	DBG_BLOCK_ID_DMA0_BY4                            = 0x4,
+-	DBG_BLOCK_ID_SPIS_BY4                            = 0x5,
+-	DBG_BLOCK_ID_CP0_BY4                             = 0x6,
+-	DBG_BLOCK_ID_UVDU_BY4                            = 0x7,
+-	DBG_BLOCK_ID_VGT0_BY4                            = 0x8,
+-	DBG_BLOCK_ID_SCT0_BY4                            = 0x9,
+-	DBG_BLOCK_ID_TCAA_BY4                            = 0xa,
+-	DBG_BLOCK_ID_MCC0_BY4                            = 0xb,
+-	DBG_BLOCK_ID_SX0_BY4                             = 0xc,
+-	DBG_BLOCK_ID_UNUSED4_BY4                         = 0xd,
+-	DBG_BLOCK_ID_PC0_BY4                             = 0xe,
+-	DBG_BLOCK_ID_UNUSED10_BY4                        = 0xf,
+-	DBG_BLOCK_ID_SCB0_BY4                            = 0x10,
+-	DBG_BLOCK_ID_SCF0_BY4                            = 0x11,
+-	DBG_BLOCK_ID_BCI0_BY4                            = 0x12,
+-	DBG_BLOCK_ID_UNUSED17_BY4                        = 0x13,
+-	DBG_BLOCK_ID_CB00_BY4                            = 0x14,
+-	DBG_BLOCK_ID_CB04_BY4                            = 0x15,
+-	DBG_BLOCK_ID_CB10_BY4                            = 0x16,
+-	DBG_BLOCK_ID_CB14_BY4                            = 0x17,
+-	DBG_BLOCK_ID_TCP0_BY4                            = 0x18,
+-	DBG_BLOCK_ID_TCP4_BY4                            = 0x19,
+-	DBG_BLOCK_ID_TCP8_BY4                            = 0x1a,
+-	DBG_BLOCK_ID_TCP12_BY4                           = 0x1b,
+-	DBG_BLOCK_ID_TCP16_BY4                           = 0x1c,
+-	DBG_BLOCK_ID_TCP20_BY4                           = 0x1d,
+-	DBG_BLOCK_ID_TCP_RESERVED0_BY4                   = 0x1e,
+-	DBG_BLOCK_ID_TCP_RESERVED4_BY4                   = 0x1f,
+-	DBG_BLOCK_ID_DB_BY4                              = 0x20,
+-	DBG_BLOCK_ID_DB04_BY4                            = 0x21,
+-	DBG_BLOCK_ID_DB10_BY4                            = 0x22,
+-	DBG_BLOCK_ID_DB14_BY4                            = 0x23,
+-	DBG_BLOCK_ID_TCC0_BY4                            = 0x24,
+-	DBG_BLOCK_ID_TCC4_BY4                            = 0x25,
+-	DBG_BLOCK_ID_SPS00_BY4                           = 0x26,
+-	DBG_BLOCK_ID_SPS11_BY4                           = 0x27,
+-	DBG_BLOCK_ID_TA00_BY4                            = 0x28,
+-	DBG_BLOCK_ID_TA04_BY4                            = 0x29,
+-	DBG_BLOCK_ID_TA08_BY4                            = 0x2a,
+-	DBG_BLOCK_ID_UNUSED35_BY4                        = 0x2b,
+-	DBG_BLOCK_ID_TA10_BY4                            = 0x2c,
+-	DBG_BLOCK_ID_TA14_BY4                            = 0x2d,
+-	DBG_BLOCK_ID_TA18_BY4                            = 0x2e,
+-	DBG_BLOCK_ID_UNUSED39_BY4                        = 0x2f,
+-	DBG_BLOCK_ID_TD00_BY4                            = 0x30,
+-	DBG_BLOCK_ID_TD04_BY4                            = 0x31,
+-	DBG_BLOCK_ID_TD08_BY4                            = 0x32,
+-	DBG_BLOCK_ID_UNUSED43_BY4                        = 0x33,
+-	DBG_BLOCK_ID_TD10_BY4                            = 0x34,
+-	DBG_BLOCK_ID_TD14_BY4                            = 0x35,
+-	DBG_BLOCK_ID_TD18_BY4                            = 0x36,
+-	DBG_BLOCK_ID_UNUSED47_BY4                        = 0x37,
+-	DBG_BLOCK_ID_MCD0_BY4                            = 0x38,
+-	DBG_BLOCK_ID_MCD4_BY4                            = 0x39,
+-} DebugBlockId_BY4;
+-typedef enum DebugBlockId_BY8 {
+-	DBG_BLOCK_ID_RESERVED_BY8                        = 0x0,
+-	DBG_BLOCK_ID_CSC_BY8                             = 0x1,
+-	DBG_BLOCK_ID_DMA0_BY8                            = 0x2,
+-	DBG_BLOCK_ID_CP0_BY8                             = 0x3,
+-	DBG_BLOCK_ID_VGT0_BY8                            = 0x4,
+-	DBG_BLOCK_ID_TCAA_BY8                            = 0x5,
+-	DBG_BLOCK_ID_SX0_BY8                             = 0x6,
+-	DBG_BLOCK_ID_PC0_BY8                             = 0x7,
+-	DBG_BLOCK_ID_SCB0_BY8                            = 0x8,
+-	DBG_BLOCK_ID_BCI0_BY8                            = 0x9,
+-	DBG_BLOCK_ID_CB00_BY8                            = 0xa,
+-	DBG_BLOCK_ID_CB10_BY8                            = 0xb,
+-	DBG_BLOCK_ID_TCP0_BY8                            = 0xc,
+-	DBG_BLOCK_ID_TCP8_BY8                            = 0xd,
+-	DBG_BLOCK_ID_TCP16_BY8                           = 0xe,
+-	DBG_BLOCK_ID_TCP_RESERVED0_BY8                   = 0xf,
+-	DBG_BLOCK_ID_DB00_BY8                            = 0x10,
+-	DBG_BLOCK_ID_DB10_BY8                            = 0x11,
+-	DBG_BLOCK_ID_TCC0_BY8                            = 0x12,
+-	DBG_BLOCK_ID_SPS00_BY8                           = 0x13,
+-	DBG_BLOCK_ID_TA00_BY8                            = 0x14,
+-	DBG_BLOCK_ID_TA08_BY8                            = 0x15,
+-	DBG_BLOCK_ID_TA10_BY8                            = 0x16,
+-	DBG_BLOCK_ID_TA18_BY8                            = 0x17,
+-	DBG_BLOCK_ID_TD00_BY8                            = 0x18,
+-	DBG_BLOCK_ID_TD08_BY8                            = 0x19,
+-	DBG_BLOCK_ID_TD10_BY8                            = 0x1a,
+-	DBG_BLOCK_ID_TD18_BY8                            = 0x1b,
+-	DBG_BLOCK_ID_MCD0_BY8                            = 0x1c,
+-} DebugBlockId_BY8;
+-typedef enum DebugBlockId_BY16 {
+-	DBG_BLOCK_ID_RESERVED_BY16                       = 0x0,
+-	DBG_BLOCK_ID_DMA0_BY16                           = 0x1,
+-	DBG_BLOCK_ID_VGT0_BY16                           = 0x2,
+-	DBG_BLOCK_ID_SX0_BY16                            = 0x3,
+-	DBG_BLOCK_ID_SCB0_BY16                           = 0x4,
+-	DBG_BLOCK_ID_CB00_BY16                           = 0x5,
+-	DBG_BLOCK_ID_TCP0_BY16                           = 0x6,
+-	DBG_BLOCK_ID_TCP16_BY16                          = 0x7,
+-	DBG_BLOCK_ID_DB00_BY16                           = 0x8,
+-	DBG_BLOCK_ID_TCC0_BY16                           = 0x9,
+-	DBG_BLOCK_ID_TA00_BY16                           = 0xa,
+-	DBG_BLOCK_ID_TA10_BY16                           = 0xb,
+-	DBG_BLOCK_ID_TD00_BY16                           = 0xc,
+-	DBG_BLOCK_ID_TD10_BY16                           = 0xd,
+-	DBG_BLOCK_ID_MCD0_BY16                           = 0xe,
+-} DebugBlockId_BY16;
+-typedef enum ColorTransform {
+-	DCC_CT_AUTO                                      = 0x0,
+-	DCC_CT_NONE                                      = 0x1,
+-	ABGR_TO_A_BG_G_RB                                = 0x2,
+-	BGRA_TO_BG_G_RB_A                                = 0x3,
+-} ColorTransform;
+-typedef enum CompareRef {
+-	REF_NEVER                                        = 0x0,
+-	REF_LESS                                         = 0x1,
+-	REF_EQUAL                                        = 0x2,
+-	REF_LEQUAL                                       = 0x3,
+-	REF_GREATER                                      = 0x4,
+-	REF_NOTEQUAL                                     = 0x5,
+-	REF_GEQUAL                                       = 0x6,
+-	REF_ALWAYS                                       = 0x7,
+-} CompareRef;
+-typedef enum ReadSize {
+-	READ_256_BITS                                    = 0x0,
+-	READ_512_BITS                                    = 0x1,
+-} ReadSize;
+-typedef enum DepthFormat {
+-	DEPTH_INVALID                                    = 0x0,
+-	DEPTH_16                                         = 0x1,
+-	DEPTH_X8_24                                      = 0x2,
+-	DEPTH_8_24                                       = 0x3,
+-	DEPTH_X8_24_FLOAT                                = 0x4,
+-	DEPTH_8_24_FLOAT                                 = 0x5,
+-	DEPTH_32_FLOAT                                   = 0x6,
+-	DEPTH_X24_8_32_FLOAT                             = 0x7,
+-} DepthFormat;
+-typedef enum ZFormat {
+-	Z_INVALID                                        = 0x0,
+-	Z_16                                             = 0x1,
+-	Z_24                                             = 0x2,
+-	Z_32_FLOAT                                       = 0x3,
+-} ZFormat;
+-typedef enum StencilFormat {
+-	STENCIL_INVALID                                  = 0x0,
+-	STENCIL_8                                        = 0x1,
+-} StencilFormat;
+-typedef enum CmaskMode {
+-	CMASK_CLEAR_NONE                                 = 0x0,
+-	CMASK_CLEAR_ONE                                  = 0x1,
+-	CMASK_CLEAR_ALL                                  = 0x2,
+-	CMASK_ANY_EXPANDED                               = 0x3,
+-	CMASK_ALPHA0_FRAG1                               = 0x4,
+-	CMASK_ALPHA0_FRAG2                               = 0x5,
+-	CMASK_ALPHA0_FRAG4                               = 0x6,
+-	CMASK_ALPHA0_FRAGS                               = 0x7,
+-	CMASK_ALPHA1_FRAG1                               = 0x8,
+-	CMASK_ALPHA1_FRAG2                               = 0x9,
+-	CMASK_ALPHA1_FRAG4                               = 0xa,
+-	CMASK_ALPHA1_FRAGS                               = 0xb,
+-	CMASK_ALPHAX_FRAG1                               = 0xc,
+-	CMASK_ALPHAX_FRAG2                               = 0xd,
+-	CMASK_ALPHAX_FRAG4                               = 0xe,
+-	CMASK_ALPHAX_FRAGS                               = 0xf,
+-} CmaskMode;
+-typedef enum QuadExportFormat {
+-	EXPORT_UNUSED                                    = 0x0,
+-	EXPORT_32_R                                      = 0x1,
+-	EXPORT_32_GR                                     = 0x2,
+-	EXPORT_32_AR                                     = 0x3,
+-	EXPORT_FP16_ABGR                                 = 0x4,
+-	EXPORT_UNSIGNED16_ABGR                           = 0x5,
+-	EXPORT_SIGNED16_ABGR                             = 0x6,
+-	EXPORT_32_ABGR                                   = 0x7,
+-} QuadExportFormat;
+-typedef enum QuadExportFormatOld {
+-	EXPORT_4P_32BPC_ABGR                             = 0x0,
+-	EXPORT_4P_16BPC_ABGR                             = 0x1,
+-	EXPORT_4P_32BPC_GR                               = 0x2,
+-	EXPORT_4P_32BPC_AR                               = 0x3,
+-	EXPORT_2P_32BPC_ABGR                             = 0x4,
+-	EXPORT_8P_32BPC_R                                = 0x5,
+-} QuadExportFormatOld;
+-typedef enum ColorFormat {
+-	COLOR_INVALID                                    = 0x0,
+-	COLOR_8                                          = 0x1,
+-	COLOR_16                                         = 0x2,
+-	COLOR_8_8                                        = 0x3,
+-	COLOR_32                                         = 0x4,
+-	COLOR_16_16                                      = 0x5,
+-	COLOR_10_11_11                                   = 0x6,
+-	COLOR_11_11_10                                   = 0x7,
+-	COLOR_10_10_10_2                                 = 0x8,
+-	COLOR_2_10_10_10                                 = 0x9,
+-	COLOR_8_8_8_8                                    = 0xa,
+-	COLOR_32_32                                      = 0xb,
+-	COLOR_16_16_16_16                                = 0xc,
+-	COLOR_RESERVED_13                                = 0xd,
+-	COLOR_32_32_32_32                                = 0xe,
+-	COLOR_RESERVED_15                                = 0xf,
+-	COLOR_5_6_5                                      = 0x10,
+-	COLOR_1_5_5_5                                    = 0x11,
+-	COLOR_5_5_5_1                                    = 0x12,
+-	COLOR_4_4_4_4                                    = 0x13,
+-	COLOR_8_24                                       = 0x14,
+-	COLOR_24_8                                       = 0x15,
+-	COLOR_X24_8_32_FLOAT                             = 0x16,
+-	COLOR_RESERVED_23                                = 0x17,
+-} ColorFormat;
+-typedef enum SurfaceFormat {
+-	FMT_INVALID                                      = 0x0,
+-	FMT_8                                            = 0x1,
+-	FMT_16                                           = 0x2,
+-	FMT_8_8                                          = 0x3,
+-	FMT_32                                           = 0x4,
+-	FMT_16_16                                        = 0x5,
+-	FMT_10_11_11                                     = 0x6,
+-	FMT_11_11_10                                     = 0x7,
+-	FMT_10_10_10_2                                   = 0x8,
+-	FMT_2_10_10_10                                   = 0x9,
+-	FMT_8_8_8_8                                      = 0xa,
+-	FMT_32_32                                        = 0xb,
+-	FMT_16_16_16_16                                  = 0xc,
+-	FMT_32_32_32                                     = 0xd,
+-	FMT_32_32_32_32                                  = 0xe,
+-	FMT_RESERVED_4                                   = 0xf,
+-	FMT_5_6_5                                        = 0x10,
+-	FMT_1_5_5_5                                      = 0x11,
+-	FMT_5_5_5_1                                      = 0x12,
+-	FMT_4_4_4_4                                      = 0x13,
+-	FMT_8_24                                         = 0x14,
+-	FMT_24_8                                         = 0x15,
+-	FMT_X24_8_32_FLOAT                               = 0x16,
+-	FMT_RESERVED_33                                  = 0x17,
+-	FMT_11_11_10_FLOAT                               = 0x18,
+-	FMT_16_FLOAT                                     = 0x19,
+-	FMT_32_FLOAT                                     = 0x1a,
+-	FMT_16_16_FLOAT                                  = 0x1b,
+-	FMT_8_24_FLOAT                                   = 0x1c,
+-	FMT_24_8_FLOAT                                   = 0x1d,
+-	FMT_32_32_FLOAT                                  = 0x1e,
+-	FMT_10_11_11_FLOAT                               = 0x1f,
+-	FMT_16_16_16_16_FLOAT                            = 0x20,
+-	FMT_3_3_2                                        = 0x21,
+-	FMT_6_5_5                                        = 0x22,
+-	FMT_32_32_32_32_FLOAT                            = 0x23,
+-	FMT_RESERVED_36                                  = 0x24,
+-	FMT_1                                            = 0x25,
+-	FMT_1_REVERSED                                   = 0x26,
+-	FMT_GB_GR                                        = 0x27,
+-	FMT_BG_RG                                        = 0x28,
+-	FMT_32_AS_8                                      = 0x29,
+-	FMT_32_AS_8_8                                    = 0x2a,
+-	FMT_5_9_9_9_SHAREDEXP                            = 0x2b,
+-	FMT_8_8_8                                        = 0x2c,
+-	FMT_16_16_16                                     = 0x2d,
+-	FMT_16_16_16_FLOAT                               = 0x2e,
+-	FMT_4_4                                          = 0x2f,
+-	FMT_32_32_32_FLOAT                               = 0x30,
+-	FMT_BC1                                          = 0x31,
+-	FMT_BC2                                          = 0x32,
+-	FMT_BC3                                          = 0x33,
+-	FMT_BC4                                          = 0x34,
+-	FMT_BC5                                          = 0x35,
+-	FMT_BC6                                          = 0x36,
+-	FMT_BC7                                          = 0x37,
+-	FMT_32_AS_32_32_32_32                            = 0x38,
+-	FMT_APC3                                         = 0x39,
+-	FMT_APC4                                         = 0x3a,
+-	FMT_APC5                                         = 0x3b,
+-	FMT_APC6                                         = 0x3c,
+-	FMT_APC7                                         = 0x3d,
+-	FMT_CTX1                                         = 0x3e,
+-	FMT_RESERVED_63                                  = 0x3f,
+-} SurfaceFormat;
+-typedef enum BUF_DATA_FORMAT {
+-	BUF_DATA_FORMAT_INVALID                          = 0x0,
+-	BUF_DATA_FORMAT_8                                = 0x1,
+-	BUF_DATA_FORMAT_16                               = 0x2,
+-	BUF_DATA_FORMAT_8_8                              = 0x3,
+-	BUF_DATA_FORMAT_32                               = 0x4,
+-	BUF_DATA_FORMAT_16_16                            = 0x5,
+-	BUF_DATA_FORMAT_10_11_11                         = 0x6,
+-	BUF_DATA_FORMAT_11_11_10                         = 0x7,
+-	BUF_DATA_FORMAT_10_10_10_2                       = 0x8,
+-	BUF_DATA_FORMAT_2_10_10_10                       = 0x9,
+-	BUF_DATA_FORMAT_8_8_8_8                          = 0xa,
+-	BUF_DATA_FORMAT_32_32                            = 0xb,
+-	BUF_DATA_FORMAT_16_16_16_16                      = 0xc,
+-	BUF_DATA_FORMAT_32_32_32                         = 0xd,
+-	BUF_DATA_FORMAT_32_32_32_32                      = 0xe,
+-	BUF_DATA_FORMAT_RESERVED_15                      = 0xf,
+-} BUF_DATA_FORMAT;
+-typedef enum IMG_DATA_FORMAT {
+-	IMG_DATA_FORMAT_INVALID                          = 0x0,
+-	IMG_DATA_FORMAT_8                                = 0x1,
+-	IMG_DATA_FORMAT_16                               = 0x2,
+-	IMG_DATA_FORMAT_8_8                              = 0x3,
+-	IMG_DATA_FORMAT_32                               = 0x4,
+-	IMG_DATA_FORMAT_16_16                            = 0x5,
+-	IMG_DATA_FORMAT_10_11_11                         = 0x6,
+-	IMG_DATA_FORMAT_11_11_10                         = 0x7,
+-	IMG_DATA_FORMAT_10_10_10_2                       = 0x8,
+-	IMG_DATA_FORMAT_2_10_10_10                       = 0x9,
+-	IMG_DATA_FORMAT_8_8_8_8                          = 0xa,
+-	IMG_DATA_FORMAT_32_32                            = 0xb,
+-	IMG_DATA_FORMAT_16_16_16_16                      = 0xc,
+-	IMG_DATA_FORMAT_32_32_32                         = 0xd,
+-	IMG_DATA_FORMAT_32_32_32_32                      = 0xe,
+-	IMG_DATA_FORMAT_RESERVED_15                      = 0xf,
+-	IMG_DATA_FORMAT_5_6_5                            = 0x10,
+-	IMG_DATA_FORMAT_1_5_5_5                          = 0x11,
+-	IMG_DATA_FORMAT_5_5_5_1                          = 0x12,
+-	IMG_DATA_FORMAT_4_4_4_4                          = 0x13,
+-	IMG_DATA_FORMAT_8_24                             = 0x14,
+-	IMG_DATA_FORMAT_24_8                             = 0x15,
+-	IMG_DATA_FORMAT_X24_8_32                         = 0x16,
+-	IMG_DATA_FORMAT_RESERVED_23                      = 0x17,
+-	IMG_DATA_FORMAT_RESERVED_24                      = 0x18,
+-	IMG_DATA_FORMAT_RESERVED_25                      = 0x19,
+-	IMG_DATA_FORMAT_RESERVED_26                      = 0x1a,
+-	IMG_DATA_FORMAT_RESERVED_27                      = 0x1b,
+-	IMG_DATA_FORMAT_RESERVED_28                      = 0x1c,
+-	IMG_DATA_FORMAT_RESERVED_29                      = 0x1d,
+-	IMG_DATA_FORMAT_RESERVED_30                      = 0x1e,
+-	IMG_DATA_FORMAT_RESERVED_31                      = 0x1f,
+-	IMG_DATA_FORMAT_GB_GR                            = 0x20,
+-	IMG_DATA_FORMAT_BG_RG                            = 0x21,
+-	IMG_DATA_FORMAT_5_9_9_9                          = 0x22,
+-	IMG_DATA_FORMAT_BC1                              = 0x23,
+-	IMG_DATA_FORMAT_BC2                              = 0x24,
+-	IMG_DATA_FORMAT_BC3                              = 0x25,
+-	IMG_DATA_FORMAT_BC4                              = 0x26,
+-	IMG_DATA_FORMAT_BC5                              = 0x27,
+-	IMG_DATA_FORMAT_BC6                              = 0x28,
+-	IMG_DATA_FORMAT_BC7                              = 0x29,
+-	IMG_DATA_FORMAT_RESERVED_42                      = 0x2a,
+-	IMG_DATA_FORMAT_RESERVED_43                      = 0x2b,
+-	IMG_DATA_FORMAT_FMASK8_S2_F1                     = 0x2c,
+-	IMG_DATA_FORMAT_FMASK8_S4_F1                     = 0x2d,
+-	IMG_DATA_FORMAT_FMASK8_S8_F1                     = 0x2e,
+-	IMG_DATA_FORMAT_FMASK8_S2_F2                     = 0x2f,
+-	IMG_DATA_FORMAT_FMASK8_S4_F2                     = 0x30,
+-	IMG_DATA_FORMAT_FMASK8_S4_F4                     = 0x31,
+-	IMG_DATA_FORMAT_FMASK16_S16_F1                   = 0x32,
+-	IMG_DATA_FORMAT_FMASK16_S8_F2                    = 0x33,
+-	IMG_DATA_FORMAT_FMASK32_S16_F2                   = 0x34,
+-	IMG_DATA_FORMAT_FMASK32_S8_F4                    = 0x35,
+-	IMG_DATA_FORMAT_FMASK32_S8_F8                    = 0x36,
+-	IMG_DATA_FORMAT_FMASK64_S16_F4                   = 0x37,
+-	IMG_DATA_FORMAT_FMASK64_S16_F8                   = 0x38,
+-	IMG_DATA_FORMAT_4_4                              = 0x39,
+-	IMG_DATA_FORMAT_6_5_5                            = 0x3a,
+-	IMG_DATA_FORMAT_1                                = 0x3b,
+-	IMG_DATA_FORMAT_1_REVERSED                       = 0x3c,
+-	IMG_DATA_FORMAT_32_AS_8                          = 0x3d,
+-	IMG_DATA_FORMAT_32_AS_8_8                        = 0x3e,
+-	IMG_DATA_FORMAT_32_AS_32_32_32_32                = 0x3f,
+-} IMG_DATA_FORMAT;
+-typedef enum BUF_NUM_FORMAT {
+-	BUF_NUM_FORMAT_UNORM                             = 0x0,
+-	BUF_NUM_FORMAT_SNORM                             = 0x1,
+-	BUF_NUM_FORMAT_USCALED                           = 0x2,
+-	BUF_NUM_FORMAT_SSCALED                           = 0x3,
+-	BUF_NUM_FORMAT_UINT                              = 0x4,
+-	BUF_NUM_FORMAT_SINT                              = 0x5,
+-	BUF_NUM_FORMAT_RESERVED_6                        = 0x6,
+-	BUF_NUM_FORMAT_FLOAT                             = 0x7,
+-} BUF_NUM_FORMAT;
+-typedef enum IMG_NUM_FORMAT {
+-	IMG_NUM_FORMAT_UNORM                             = 0x0,
+-	IMG_NUM_FORMAT_SNORM                             = 0x1,
+-	IMG_NUM_FORMAT_USCALED                           = 0x2,
+-	IMG_NUM_FORMAT_SSCALED                           = 0x3,
+-	IMG_NUM_FORMAT_UINT                              = 0x4,
+-	IMG_NUM_FORMAT_SINT                              = 0x5,
+-	IMG_NUM_FORMAT_RESERVED_6                        = 0x6,
+-	IMG_NUM_FORMAT_FLOAT                             = 0x7,
+-	IMG_NUM_FORMAT_RESERVED_8                        = 0x8,
+-	IMG_NUM_FORMAT_SRGB                              = 0x9,
+-	IMG_NUM_FORMAT_RESERVED_10                       = 0xa,
+-	IMG_NUM_FORMAT_RESERVED_11                       = 0xb,
+-	IMG_NUM_FORMAT_RESERVED_12                       = 0xc,
+-	IMG_NUM_FORMAT_RESERVED_13                       = 0xd,
+-	IMG_NUM_FORMAT_RESERVED_14                       = 0xe,
+-	IMG_NUM_FORMAT_RESERVED_15                       = 0xf,
+-} IMG_NUM_FORMAT;
+-typedef enum TileType {
+-	ARRAY_COLOR_TILE                                 = 0x0,
+-	ARRAY_DEPTH_TILE                                 = 0x1,
+-} TileType;
+-typedef enum NonDispTilingOrder {
+-	ADDR_SURF_MICRO_TILING_DISPLAY                   = 0x0,
+-	ADDR_SURF_MICRO_TILING_NON_DISPLAY               = 0x1,
+-} NonDispTilingOrder;
+-typedef enum MicroTileMode {
+-	ADDR_SURF_DISPLAY_MICRO_TILING                   = 0x0,
+-	ADDR_SURF_THIN_MICRO_TILING                      = 0x1,
+-	ADDR_SURF_DEPTH_MICRO_TILING                     = 0x2,
+-	ADDR_SURF_ROTATED_MICRO_TILING                   = 0x3,
+-	ADDR_SURF_THICK_MICRO_TILING                     = 0x4,
+-} MicroTileMode;
+-typedef enum TileSplit {
+-	ADDR_SURF_TILE_SPLIT_64B                         = 0x0,
+-	ADDR_SURF_TILE_SPLIT_128B                        = 0x1,
+-	ADDR_SURF_TILE_SPLIT_256B                        = 0x2,
+-	ADDR_SURF_TILE_SPLIT_512B                        = 0x3,
+-	ADDR_SURF_TILE_SPLIT_1KB                         = 0x4,
+-	ADDR_SURF_TILE_SPLIT_2KB                         = 0x5,
+-	ADDR_SURF_TILE_SPLIT_4KB                         = 0x6,
+-} TileSplit;
+-typedef enum SampleSplit {
+-	ADDR_SURF_SAMPLE_SPLIT_1                         = 0x0,
+-	ADDR_SURF_SAMPLE_SPLIT_2                         = 0x1,
+-	ADDR_SURF_SAMPLE_SPLIT_4                         = 0x2,
+-	ADDR_SURF_SAMPLE_SPLIT_8                         = 0x3,
+-} SampleSplit;
+-typedef enum PipeConfig {
+-	ADDR_SURF_P2                                     = 0x0,
+-	ADDR_SURF_P2_RESERVED0                           = 0x1,
+-	ADDR_SURF_P2_RESERVED1                           = 0x2,
+-	ADDR_SURF_P2_RESERVED2                           = 0x3,
+-	ADDR_SURF_P4_8x16                                = 0x4,
+-	ADDR_SURF_P4_16x16                               = 0x5,
+-	ADDR_SURF_P4_16x32                               = 0x6,
+-	ADDR_SURF_P4_32x32                               = 0x7,
+-	ADDR_SURF_P8_16x16_8x16                          = 0x8,
+-	ADDR_SURF_P8_16x32_8x16                          = 0x9,
+-	ADDR_SURF_P8_32x32_8x16                          = 0xa,
+-	ADDR_SURF_P8_16x32_16x16                         = 0xb,
+-	ADDR_SURF_P8_32x32_16x16                         = 0xc,
+-	ADDR_SURF_P8_32x32_16x32                         = 0xd,
+-	ADDR_SURF_P8_32x64_32x32                         = 0xe,
+-	ADDR_SURF_P8_RESERVED0                           = 0xf,
+-	ADDR_SURF_P16_32x32_8x16                         = 0x10,
+-	ADDR_SURF_P16_32x32_16x16                        = 0x11,
+-} PipeConfig;
+-typedef enum NumBanks {
+-	ADDR_SURF_2_BANK                                 = 0x0,
+-	ADDR_SURF_4_BANK                                 = 0x1,
+-	ADDR_SURF_8_BANK                                 = 0x2,
+-	ADDR_SURF_16_BANK                                = 0x3,
+-} NumBanks;
+-typedef enum BankWidth {
+-	ADDR_SURF_BANK_WIDTH_1                           = 0x0,
+-	ADDR_SURF_BANK_WIDTH_2                           = 0x1,
+-	ADDR_SURF_BANK_WIDTH_4                           = 0x2,
+-	ADDR_SURF_BANK_WIDTH_8                           = 0x3,
+-} BankWidth;
+-typedef enum BankHeight {
+-	ADDR_SURF_BANK_HEIGHT_1                          = 0x0,
+-	ADDR_SURF_BANK_HEIGHT_2                          = 0x1,
+-	ADDR_SURF_BANK_HEIGHT_4                          = 0x2,
+-	ADDR_SURF_BANK_HEIGHT_8                          = 0x3,
+-} BankHeight;
+-typedef enum BankWidthHeight {
+-	ADDR_SURF_BANK_WH_1                              = 0x0,
+-	ADDR_SURF_BANK_WH_2                              = 0x1,
+-	ADDR_SURF_BANK_WH_4                              = 0x2,
+-	ADDR_SURF_BANK_WH_8                              = 0x3,
+-} BankWidthHeight;
+-typedef enum MacroTileAspect {
+-	ADDR_SURF_MACRO_ASPECT_1                         = 0x0,
+-	ADDR_SURF_MACRO_ASPECT_2                         = 0x1,
+-	ADDR_SURF_MACRO_ASPECT_4                         = 0x2,
+-	ADDR_SURF_MACRO_ASPECT_8                         = 0x3,
+-} MacroTileAspect;
+-typedef enum GATCL1RequestType {
+-	GATCL1_TYPE_NORMAL                               = 0x0,
+-	GATCL1_TYPE_SHOOTDOWN                            = 0x1,
+-	GATCL1_TYPE_BYPASS                               = 0x2,
+-} GATCL1RequestType;
+-typedef enum TCC_CACHE_POLICIES {
+-	TCC_CACHE_POLICY_LRU                             = 0x0,
+-	TCC_CACHE_POLICY_STREAM                          = 0x1,
+-} TCC_CACHE_POLICIES;
+-typedef enum MTYPE {
+-	MTYPE_NC_NV                                      = 0x0,
+-	MTYPE_NC                                         = 0x1,
+-	MTYPE_CC                                         = 0x2,
+-	MTYPE_UC                                         = 0x3,
+-} MTYPE;
+-typedef enum PERFMON_COUNTER_MODE {
+-	PERFMON_COUNTER_MODE_ACCUM                       = 0x0,
+-	PERFMON_COUNTER_MODE_ACTIVE_CYCLES               = 0x1,
+-	PERFMON_COUNTER_MODE_MAX                         = 0x2,
+-	PERFMON_COUNTER_MODE_DIRTY                       = 0x3,
+-	PERFMON_COUNTER_MODE_SAMPLE                      = 0x4,
+-	PERFMON_COUNTER_MODE_CYCLES_SINCE_FIRST_EVENT    = 0x5,
+-	PERFMON_COUNTER_MODE_CYCLES_SINCE_LAST_EVENT     = 0x6,
+-	PERFMON_COUNTER_MODE_CYCLES_GE_HI                = 0x7,
+-	PERFMON_COUNTER_MODE_CYCLES_EQ_HI                = 0x8,
+-	PERFMON_COUNTER_MODE_INACTIVE_CYCLES             = 0x9,
+-	PERFMON_COUNTER_MODE_RESERVED                    = 0xf,
+-} PERFMON_COUNTER_MODE;
+-typedef enum PERFMON_SPM_MODE {
+-	PERFMON_SPM_MODE_OFF                             = 0x0,
+-	PERFMON_SPM_MODE_16BIT_CLAMP                     = 0x1,
+-	PERFMON_SPM_MODE_16BIT_NO_CLAMP                  = 0x2,
+-	PERFMON_SPM_MODE_32BIT_CLAMP                     = 0x3,
+-	PERFMON_SPM_MODE_32BIT_NO_CLAMP                  = 0x4,
+-	PERFMON_SPM_MODE_RESERVED_5                      = 0x5,
+-	PERFMON_SPM_MODE_RESERVED_6                      = 0x6,
+-	PERFMON_SPM_MODE_RESERVED_7                      = 0x7,
+-	PERFMON_SPM_MODE_TEST_MODE_0                     = 0x8,
+-	PERFMON_SPM_MODE_TEST_MODE_1                     = 0x9,
+-	PERFMON_SPM_MODE_TEST_MODE_2                     = 0xa,
+-} PERFMON_SPM_MODE;
+-typedef enum SurfaceTiling {
+-	ARRAY_LINEAR                                     = 0x0,
+-	ARRAY_TILED                                      = 0x1,
+-} SurfaceTiling;
+-typedef enum SurfaceArray {
+-	ARRAY_1D                                         = 0x0,
+-	ARRAY_2D                                         = 0x1,
+-	ARRAY_3D                                         = 0x2,
+-	ARRAY_3D_SLICE                                   = 0x3,
+-} SurfaceArray;
+-typedef enum ColorArray {
+-	ARRAY_2D_ALT_COLOR                               = 0x0,
+-	ARRAY_2D_COLOR                                   = 0x1,
+-	ARRAY_3D_SLICE_COLOR                             = 0x3,
+-} ColorArray;
+-typedef enum DepthArray {
+-	ARRAY_2D_ALT_DEPTH                               = 0x0,
+-	ARRAY_2D_DEPTH                                   = 0x1,
+-} DepthArray;
+-typedef enum ENUM_NUM_SIMD_PER_CU {
+-	NUM_SIMD_PER_CU                                  = 0x4,
+-} ENUM_NUM_SIMD_PER_CU;
+-typedef enum MEM_PWR_FORCE_CTRL {
+-	NO_FORCE_REQUEST                                 = 0x0,
+-	FORCE_LIGHT_SLEEP_REQUEST                        = 0x1,
+-	FORCE_DEEP_SLEEP_REQUEST                         = 0x2,
+-	FORCE_SHUT_DOWN_REQUEST                          = 0x3,
+-} MEM_PWR_FORCE_CTRL;
+-typedef enum MEM_PWR_FORCE_CTRL2 {
+-	NO_FORCE_REQ                                     = 0x0,
+-	FORCE_LIGHT_SLEEP_REQ                            = 0x1,
+-} MEM_PWR_FORCE_CTRL2;
+-typedef enum MEM_PWR_DIS_CTRL {
+-	ENABLE_MEM_PWR_CTRL                              = 0x0,
+-	DISABLE_MEM_PWR_CTRL                             = 0x1,
+-} MEM_PWR_DIS_CTRL;
+-typedef enum MEM_PWR_SEL_CTRL {
+-	DYNAMIC_SHUT_DOWN_ENABLE                         = 0x0,
+-	DYNAMIC_DEEP_SLEEP_ENABLE                        = 0x1,
+-	DYNAMIC_LIGHT_SLEEP_ENABLE                       = 0x2,
+-} MEM_PWR_SEL_CTRL;
+-typedef enum MEM_PWR_SEL_CTRL2 {
+-	DYNAMIC_DEEP_SLEEP_EN                            = 0x0,
+-	DYNAMIC_LIGHT_SLEEP_EN                           = 0x1,
+-} MEM_PWR_SEL_CTRL2;
+-
+-#endif /* UVD_5_0_ENUM_H */
+diff --git a/drivers/gpu/drm/amd/include/asic_reg/uvd/uvd_6_0_enum.h b/drivers/gpu/drm/amd/include/asic_reg/uvd/uvd_6_0_enum.h
+deleted file mode 100644
+index ecf47ba55c2d..000000000000
+--- a/drivers/gpu/drm/amd/include/asic_reg/uvd/uvd_6_0_enum.h
++++ /dev/null
+@@ -1,1081 +0,0 @@
+-/*
+- * UVD_6_0 Register documentation
 - *
+- * Copyright (C) 2014  Advanced Micro Devices, Inc.
+- *
+- * Permission is hereby granted, free of charge, to any person obtaining a
+- * copy of this software and associated documentation files (the "Software"),
+- * to deal in the Software without restriction, including without limitation
+- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+- * and/or sell copies of the Software, and to permit persons to whom the
+- * Software is furnished to do so, subject to the following conditions:
+- *
+- * The above copyright notice and this permission notice shall be included
+- * in all copies or substantial portions of the Software.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+- * THE COPYRIGHT HOLDER(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+- * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 - */
 -
--#ifndef _PP_FEATURE_H_
--#define _PP_FEATURE_H_
+-#ifndef UVD_6_0_ENUM_H
+-#define UVD_6_0_ENUM_H
 -
--/**
-- * PowerPlay feature ids.
-- */
--enum pp_feature {
--	PP_Feature_PowerPlay = 0,
--	PP_Feature_User2DPerformance,
--	PP_Feature_User3DPerformance,
--	PP_Feature_VariBright,
--	PP_Feature_VariBrightOnPowerXpress,
--	PP_Feature_ReducedRefreshRate,
--	PP_Feature_GFXClockGating,
--	PP_Feature_OverdriveTest,
--	PP_Feature_OverDrive,
--	PP_Feature_PowerBudgetWaiver,
--	PP_Feature_PowerControl,
--	PP_Feature_PowerControl_2,
--	PP_Feature_MultiUVDState,
--	PP_Feature_Force3DClock,
--	PP_Feature_BACO,
--	PP_Feature_PowerDown,
--	PP_Feature_DynamicUVDState,
--	PP_Feature_VCEDPM,
--	PP_Feature_PPM,
--	PP_Feature_ACP_POWERGATING,
--	PP_Feature_FFC,
--	PP_Feature_FPS,
--	PP_Feature_ViPG,
--	PP_Feature_Max
--};
+-typedef enum UVDFirmwareCommand {
+-	UVDFC_FENCE                                      = 0x0,
+-	UVDFC_TRAP                                       = 0x1,
+-	UVDFC_DECODED_ADDR                               = 0x2,
+-	UVDFC_MBLOCK_ADDR                                = 0x3,
+-	UVDFC_ITBUF_ADDR                                 = 0x4,
+-	UVDFC_DISPLAY_ADDR                               = 0x5,
+-	UVDFC_EOD                                        = 0x6,
+-	UVDFC_DISPLAY_PITCH                              = 0x7,
+-	UVDFC_DISPLAY_TILING                             = 0x8,
+-	UVDFC_BITSTREAM_ADDR                             = 0x9,
+-	UVDFC_BITSTREAM_SIZE                             = 0xa,
+-} UVDFirmwareCommand;
+-typedef enum DebugBlockId {
+-	DBG_BLOCK_ID_RESERVED                            = 0x0,
+-	DBG_BLOCK_ID_DBG                                 = 0x1,
+-	DBG_BLOCK_ID_VMC                                 = 0x2,
+-	DBG_BLOCK_ID_PDMA                                = 0x3,
+-	DBG_BLOCK_ID_CG                                  = 0x4,
+-	DBG_BLOCK_ID_SRBM                                = 0x5,
+-	DBG_BLOCK_ID_GRBM                                = 0x6,
+-	DBG_BLOCK_ID_RLC                                 = 0x7,
+-	DBG_BLOCK_ID_CSC                                 = 0x8,
+-	DBG_BLOCK_ID_SEM                                 = 0x9,
+-	DBG_BLOCK_ID_IH                                  = 0xa,
+-	DBG_BLOCK_ID_SC                                  = 0xb,
+-	DBG_BLOCK_ID_SQ                                  = 0xc,
+-	DBG_BLOCK_ID_UVDU                                = 0xd,
+-	DBG_BLOCK_ID_SQA                                 = 0xe,
+-	DBG_BLOCK_ID_SDMA0                               = 0xf,
+-	DBG_BLOCK_ID_SDMA1                               = 0x10,
+-	DBG_BLOCK_ID_SPIM                                = 0x11,
+-	DBG_BLOCK_ID_GDS                                 = 0x12,
+-	DBG_BLOCK_ID_VC0                                 = 0x13,
+-	DBG_BLOCK_ID_VC1                                 = 0x14,
+-	DBG_BLOCK_ID_PA0                                 = 0x15,
+-	DBG_BLOCK_ID_PA1                                 = 0x16,
+-	DBG_BLOCK_ID_CP0                                 = 0x17,
+-	DBG_BLOCK_ID_CP1                                 = 0x18,
+-	DBG_BLOCK_ID_CP2                                 = 0x19,
+-	DBG_BLOCK_ID_XBR                                 = 0x1a,
+-	DBG_BLOCK_ID_UVDM                                = 0x1b,
+-	DBG_BLOCK_ID_VGT0                                = 0x1c,
+-	DBG_BLOCK_ID_VGT1                                = 0x1d,
+-	DBG_BLOCK_ID_IA                                  = 0x1e,
+-	DBG_BLOCK_ID_SXM0                                = 0x1f,
+-	DBG_BLOCK_ID_SXM1                                = 0x20,
+-	DBG_BLOCK_ID_SCT0                                = 0x21,
+-	DBG_BLOCK_ID_SCT1                                = 0x22,
+-	DBG_BLOCK_ID_SPM0                                = 0x23,
+-	DBG_BLOCK_ID_SPM1                                = 0x24,
+-	DBG_BLOCK_ID_UNUSED0                             = 0x25,
+-	DBG_BLOCK_ID_UNUSED1                             = 0x26,
+-	DBG_BLOCK_ID_TCAA                                = 0x27,
+-	DBG_BLOCK_ID_TCAB                                = 0x28,
+-	DBG_BLOCK_ID_TCCA                                = 0x29,
+-	DBG_BLOCK_ID_TCCB                                = 0x2a,
+-	DBG_BLOCK_ID_MCC0                                = 0x2b,
+-	DBG_BLOCK_ID_MCC1                                = 0x2c,
+-	DBG_BLOCK_ID_MCC2                                = 0x2d,
+-	DBG_BLOCK_ID_MCC3                                = 0x2e,
+-	DBG_BLOCK_ID_SXS0                                = 0x2f,
+-	DBG_BLOCK_ID_SXS1                                = 0x30,
+-	DBG_BLOCK_ID_SXS2                                = 0x31,
+-	DBG_BLOCK_ID_SXS3                                = 0x32,
+-	DBG_BLOCK_ID_SXS4                                = 0x33,
+-	DBG_BLOCK_ID_SXS5                                = 0x34,
+-	DBG_BLOCK_ID_SXS6                                = 0x35,
+-	DBG_BLOCK_ID_SXS7                                = 0x36,
+-	DBG_BLOCK_ID_SXS8                                = 0x37,
+-	DBG_BLOCK_ID_SXS9                                = 0x38,
+-	DBG_BLOCK_ID_BCI0                                = 0x39,
+-	DBG_BLOCK_ID_BCI1                                = 0x3a,
+-	DBG_BLOCK_ID_BCI2                                = 0x3b,
+-	DBG_BLOCK_ID_BCI3                                = 0x3c,
+-	DBG_BLOCK_ID_MCB                                 = 0x3d,
+-	DBG_BLOCK_ID_UNUSED6                             = 0x3e,
+-	DBG_BLOCK_ID_SQA00                               = 0x3f,
+-	DBG_BLOCK_ID_SQA01                               = 0x40,
+-	DBG_BLOCK_ID_SQA02                               = 0x41,
+-	DBG_BLOCK_ID_SQA10                               = 0x42,
+-	DBG_BLOCK_ID_SQA11                               = 0x43,
+-	DBG_BLOCK_ID_SQA12                               = 0x44,
+-	DBG_BLOCK_ID_UNUSED7                             = 0x45,
+-	DBG_BLOCK_ID_UNUSED8                             = 0x46,
+-	DBG_BLOCK_ID_SQB00                               = 0x47,
+-	DBG_BLOCK_ID_SQB01                               = 0x48,
+-	DBG_BLOCK_ID_SQB10                               = 0x49,
+-	DBG_BLOCK_ID_SQB11                               = 0x4a,
+-	DBG_BLOCK_ID_SQ00                                = 0x4b,
+-	DBG_BLOCK_ID_SQ01                                = 0x4c,
+-	DBG_BLOCK_ID_SQ10                                = 0x4d,
+-	DBG_BLOCK_ID_SQ11                                = 0x4e,
+-	DBG_BLOCK_ID_CB00                                = 0x4f,
+-	DBG_BLOCK_ID_CB01                                = 0x50,
+-	DBG_BLOCK_ID_CB02                                = 0x51,
+-	DBG_BLOCK_ID_CB03                                = 0x52,
+-	DBG_BLOCK_ID_CB04                                = 0x53,
+-	DBG_BLOCK_ID_UNUSED9                             = 0x54,
+-	DBG_BLOCK_ID_UNUSED10                            = 0x55,
+-	DBG_BLOCK_ID_UNUSED11                            = 0x56,
+-	DBG_BLOCK_ID_CB10                                = 0x57,
+-	DBG_BLOCK_ID_CB11                                = 0x58,
+-	DBG_BLOCK_ID_CB12                                = 0x59,
+-	DBG_BLOCK_ID_CB13                                = 0x5a,
+-	DBG_BLOCK_ID_CB14                                = 0x5b,
+-	DBG_BLOCK_ID_UNUSED12                            = 0x5c,
+-	DBG_BLOCK_ID_UNUSED13                            = 0x5d,
+-	DBG_BLOCK_ID_UNUSED14                            = 0x5e,
+-	DBG_BLOCK_ID_TCP0                                = 0x5f,
+-	DBG_BLOCK_ID_TCP1                                = 0x60,
+-	DBG_BLOCK_ID_TCP2                                = 0x61,
+-	DBG_BLOCK_ID_TCP3                                = 0x62,
+-	DBG_BLOCK_ID_TCP4                                = 0x63,
+-	DBG_BLOCK_ID_TCP5                                = 0x64,
+-	DBG_BLOCK_ID_TCP6                                = 0x65,
+-	DBG_BLOCK_ID_TCP7                                = 0x66,
+-	DBG_BLOCK_ID_TCP8                                = 0x67,
+-	DBG_BLOCK_ID_TCP9                                = 0x68,
+-	DBG_BLOCK_ID_TCP10                               = 0x69,
+-	DBG_BLOCK_ID_TCP11                               = 0x6a,
+-	DBG_BLOCK_ID_TCP12                               = 0x6b,
+-	DBG_BLOCK_ID_TCP13                               = 0x6c,
+-	DBG_BLOCK_ID_TCP14                               = 0x6d,
+-	DBG_BLOCK_ID_TCP15                               = 0x6e,
+-	DBG_BLOCK_ID_TCP16                               = 0x6f,
+-	DBG_BLOCK_ID_TCP17                               = 0x70,
+-	DBG_BLOCK_ID_TCP18                               = 0x71,
+-	DBG_BLOCK_ID_TCP19                               = 0x72,
+-	DBG_BLOCK_ID_TCP20                               = 0x73,
+-	DBG_BLOCK_ID_TCP21                               = 0x74,
+-	DBG_BLOCK_ID_TCP22                               = 0x75,
+-	DBG_BLOCK_ID_TCP23                               = 0x76,
+-	DBG_BLOCK_ID_TCP_RESERVED0                       = 0x77,
+-	DBG_BLOCK_ID_TCP_RESERVED1                       = 0x78,
+-	DBG_BLOCK_ID_TCP_RESERVED2                       = 0x79,
+-	DBG_BLOCK_ID_TCP_RESERVED3                       = 0x7a,
+-	DBG_BLOCK_ID_TCP_RESERVED4                       = 0x7b,
+-	DBG_BLOCK_ID_TCP_RESERVED5                       = 0x7c,
+-	DBG_BLOCK_ID_TCP_RESERVED6                       = 0x7d,
+-	DBG_BLOCK_ID_TCP_RESERVED7                       = 0x7e,
+-	DBG_BLOCK_ID_DB00                                = 0x7f,
+-	DBG_BLOCK_ID_DB01                                = 0x80,
+-	DBG_BLOCK_ID_DB02                                = 0x81,
+-	DBG_BLOCK_ID_DB03                                = 0x82,
+-	DBG_BLOCK_ID_DB04                                = 0x83,
+-	DBG_BLOCK_ID_UNUSED15                            = 0x84,
+-	DBG_BLOCK_ID_UNUSED16                            = 0x85,
+-	DBG_BLOCK_ID_UNUSED17                            = 0x86,
+-	DBG_BLOCK_ID_DB10                                = 0x87,
+-	DBG_BLOCK_ID_DB11                                = 0x88,
+-	DBG_BLOCK_ID_DB12                                = 0x89,
+-	DBG_BLOCK_ID_DB13                                = 0x8a,
+-	DBG_BLOCK_ID_DB14                                = 0x8b,
+-	DBG_BLOCK_ID_UNUSED18                            = 0x8c,
+-	DBG_BLOCK_ID_UNUSED19                            = 0x8d,
+-	DBG_BLOCK_ID_UNUSED20                            = 0x8e,
+-	DBG_BLOCK_ID_TCC0                                = 0x8f,
+-	DBG_BLOCK_ID_TCC1                                = 0x90,
+-	DBG_BLOCK_ID_TCC2                                = 0x91,
+-	DBG_BLOCK_ID_TCC3                                = 0x92,
+-	DBG_BLOCK_ID_TCC4                                = 0x93,
+-	DBG_BLOCK_ID_TCC5                                = 0x94,
+-	DBG_BLOCK_ID_TCC6                                = 0x95,
+-	DBG_BLOCK_ID_TCC7                                = 0x96,
+-	DBG_BLOCK_ID_SPS00                               = 0x97,
+-	DBG_BLOCK_ID_SPS01                               = 0x98,
+-	DBG_BLOCK_ID_SPS02                               = 0x99,
+-	DBG_BLOCK_ID_SPS10                               = 0x9a,
+-	DBG_BLOCK_ID_SPS11                               = 0x9b,
+-	DBG_BLOCK_ID_SPS12                               = 0x9c,
+-	DBG_BLOCK_ID_UNUSED21                            = 0x9d,
+-	DBG_BLOCK_ID_UNUSED22                            = 0x9e,
+-	DBG_BLOCK_ID_TA00                                = 0x9f,
+-	DBG_BLOCK_ID_TA01                                = 0xa0,
+-	DBG_BLOCK_ID_TA02                                = 0xa1,
+-	DBG_BLOCK_ID_TA03                                = 0xa2,
+-	DBG_BLOCK_ID_TA04                                = 0xa3,
+-	DBG_BLOCK_ID_TA05                                = 0xa4,
+-	DBG_BLOCK_ID_TA06                                = 0xa5,
+-	DBG_BLOCK_ID_TA07                                = 0xa6,
+-	DBG_BLOCK_ID_TA08                                = 0xa7,
+-	DBG_BLOCK_ID_TA09                                = 0xa8,
+-	DBG_BLOCK_ID_TA0A                                = 0xa9,
+-	DBG_BLOCK_ID_TA0B                                = 0xaa,
+-	DBG_BLOCK_ID_UNUSED23                            = 0xab,
+-	DBG_BLOCK_ID_UNUSED24                            = 0xac,
+-	DBG_BLOCK_ID_UNUSED25                            = 0xad,
+-	DBG_BLOCK_ID_UNUSED26                            = 0xae,
+-	DBG_BLOCK_ID_TA10                                = 0xaf,
+-	DBG_BLOCK_ID_TA11                                = 0xb0,
+-	DBG_BLOCK_ID_TA12                                = 0xb1,
+-	DBG_BLOCK_ID_TA13                                = 0xb2,
+-	DBG_BLOCK_ID_TA14                                = 0xb3,
+-	DBG_BLOCK_ID_TA15                                = 0xb4,
+-	DBG_BLOCK_ID_TA16                                = 0xb5,
+-	DBG_BLOCK_ID_TA17                                = 0xb6,
+-	DBG_BLOCK_ID_TA18                                = 0xb7,
+-	DBG_BLOCK_ID_TA19                                = 0xb8,
+-	DBG_BLOCK_ID_TA1A                                = 0xb9,
+-	DBG_BLOCK_ID_TA1B                                = 0xba,
+-	DBG_BLOCK_ID_UNUSED27                            = 0xbb,
+-	DBG_BLOCK_ID_UNUSED28                            = 0xbc,
+-	DBG_BLOCK_ID_UNUSED29                            = 0xbd,
+-	DBG_BLOCK_ID_UNUSED30                            = 0xbe,
+-	DBG_BLOCK_ID_TD00                                = 0xbf,
+-	DBG_BLOCK_ID_TD01                                = 0xc0,
+-	DBG_BLOCK_ID_TD02                                = 0xc1,
+-	DBG_BLOCK_ID_TD03                                = 0xc2,
+-	DBG_BLOCK_ID_TD04                                = 0xc3,
+-	DBG_BLOCK_ID_TD05                                = 0xc4,
+-	DBG_BLOCK_ID_TD06                                = 0xc5,
+-	DBG_BLOCK_ID_TD07                                = 0xc6,
+-	DBG_BLOCK_ID_TD08                                = 0xc7,
+-	DBG_BLOCK_ID_TD09                                = 0xc8,
+-	DBG_BLOCK_ID_TD0A                                = 0xc9,
+-	DBG_BLOCK_ID_TD0B                                = 0xca,
+-	DBG_BLOCK_ID_UNUSED31                            = 0xcb,
+-	DBG_BLOCK_ID_UNUSED32                            = 0xcc,
+-	DBG_BLOCK_ID_UNUSED33                            = 0xcd,
+-	DBG_BLOCK_ID_UNUSED34                            = 0xce,
+-	DBG_BLOCK_ID_TD10                                = 0xcf,
+-	DBG_BLOCK_ID_TD11                                = 0xd0,
+-	DBG_BLOCK_ID_TD12                                = 0xd1,
+-	DBG_BLOCK_ID_TD13                                = 0xd2,
+-	DBG_BLOCK_ID_TD14                                = 0xd3,
+-	DBG_BLOCK_ID_TD15                                = 0xd4,
+-	DBG_BLOCK_ID_TD16                                = 0xd5,
+-	DBG_BLOCK_ID_TD17                                = 0xd6,
+-	DBG_BLOCK_ID_TD18                                = 0xd7,
+-	DBG_BLOCK_ID_TD19                                = 0xd8,
+-	DBG_BLOCK_ID_TD1A                                = 0xd9,
+-	DBG_BLOCK_ID_TD1B                                = 0xda,
+-	DBG_BLOCK_ID_UNUSED35                            = 0xdb,
+-	DBG_BLOCK_ID_UNUSED36                            = 0xdc,
+-	DBG_BLOCK_ID_UNUSED37                            = 0xdd,
+-	DBG_BLOCK_ID_UNUSED38                            = 0xde,
+-	DBG_BLOCK_ID_LDS00                               = 0xdf,
+-	DBG_BLOCK_ID_LDS01                               = 0xe0,
+-	DBG_BLOCK_ID_LDS02                               = 0xe1,
+-	DBG_BLOCK_ID_LDS03                               = 0xe2,
+-	DBG_BLOCK_ID_LDS04                               = 0xe3,
+-	DBG_BLOCK_ID_LDS05                               = 0xe4,
+-	DBG_BLOCK_ID_LDS06                               = 0xe5,
+-	DBG_BLOCK_ID_LDS07                               = 0xe6,
+-	DBG_BLOCK_ID_LDS08                               = 0xe7,
+-	DBG_BLOCK_ID_LDS09                               = 0xe8,
+-	DBG_BLOCK_ID_LDS0A                               = 0xe9,
+-	DBG_BLOCK_ID_LDS0B                               = 0xea,
+-	DBG_BLOCK_ID_UNUSED39                            = 0xeb,
+-	DBG_BLOCK_ID_UNUSED40                            = 0xec,
+-	DBG_BLOCK_ID_UNUSED41                            = 0xed,
+-	DBG_BLOCK_ID_UNUSED42                            = 0xee,
+-	DBG_BLOCK_ID_LDS10                               = 0xef,
+-	DBG_BLOCK_ID_LDS11                               = 0xf0,
+-	DBG_BLOCK_ID_LDS12                               = 0xf1,
+-	DBG_BLOCK_ID_LDS13                               = 0xf2,
+-	DBG_BLOCK_ID_LDS14                               = 0xf3,
+-	DBG_BLOCK_ID_LDS15                               = 0xf4,
+-	DBG_BLOCK_ID_LDS16                               = 0xf5,
+-	DBG_BLOCK_ID_LDS17                               = 0xf6,
+-	DBG_BLOCK_ID_LDS18                               = 0xf7,
+-	DBG_BLOCK_ID_LDS19                               = 0xf8,
+-	DBG_BLOCK_ID_LDS1A                               = 0xf9,
+-	DBG_BLOCK_ID_LDS1B                               = 0xfa,
+-	DBG_BLOCK_ID_UNUSED43                            = 0xfb,
+-	DBG_BLOCK_ID_UNUSED44                            = 0xfc,
+-	DBG_BLOCK_ID_UNUSED45                            = 0xfd,
+-	DBG_BLOCK_ID_UNUSED46                            = 0xfe,
+-} DebugBlockId;
+-typedef enum DebugBlockId_BY2 {
+-	DBG_BLOCK_ID_RESERVED_BY2                        = 0x0,
+-	DBG_BLOCK_ID_VMC_BY2                             = 0x1,
+-	DBG_BLOCK_ID_UNUSED0_BY2                         = 0x2,
+-	DBG_BLOCK_ID_GRBM_BY2                            = 0x3,
+-	DBG_BLOCK_ID_CSC_BY2                             = 0x4,
+-	DBG_BLOCK_ID_IH_BY2                              = 0x5,
+-	DBG_BLOCK_ID_SQ_BY2                              = 0x6,
+-	DBG_BLOCK_ID_UVD_BY2                             = 0x7,
+-	DBG_BLOCK_ID_SDMA0_BY2                           = 0x8,
+-	DBG_BLOCK_ID_SPIM_BY2                            = 0x9,
+-	DBG_BLOCK_ID_VC0_BY2                             = 0xa,
+-	DBG_BLOCK_ID_PA_BY2                              = 0xb,
+-	DBG_BLOCK_ID_CP0_BY2                             = 0xc,
+-	DBG_BLOCK_ID_CP2_BY2                             = 0xd,
+-	DBG_BLOCK_ID_PC0_BY2                             = 0xe,
+-	DBG_BLOCK_ID_BCI0_BY2                            = 0xf,
+-	DBG_BLOCK_ID_SXM0_BY2                            = 0x10,
+-	DBG_BLOCK_ID_SCT0_BY2                            = 0x11,
+-	DBG_BLOCK_ID_SPM0_BY2                            = 0x12,
+-	DBG_BLOCK_ID_BCI2_BY2                            = 0x13,
+-	DBG_BLOCK_ID_TCA_BY2                             = 0x14,
+-	DBG_BLOCK_ID_TCCA_BY2                            = 0x15,
+-	DBG_BLOCK_ID_MCC_BY2                             = 0x16,
+-	DBG_BLOCK_ID_MCC2_BY2                            = 0x17,
+-	DBG_BLOCK_ID_MCD_BY2                             = 0x18,
+-	DBG_BLOCK_ID_MCD2_BY2                            = 0x19,
+-	DBG_BLOCK_ID_MCD4_BY2                            = 0x1a,
+-	DBG_BLOCK_ID_MCB_BY2                             = 0x1b,
+-	DBG_BLOCK_ID_SQA_BY2                             = 0x1c,
+-	DBG_BLOCK_ID_SQA02_BY2                           = 0x1d,
+-	DBG_BLOCK_ID_SQA11_BY2                           = 0x1e,
+-	DBG_BLOCK_ID_UNUSED8_BY2                         = 0x1f,
+-	DBG_BLOCK_ID_SQB_BY2                             = 0x20,
+-	DBG_BLOCK_ID_SQB10_BY2                           = 0x21,
+-	DBG_BLOCK_ID_UNUSED10_BY2                        = 0x22,
+-	DBG_BLOCK_ID_UNUSED12_BY2                        = 0x23,
+-	DBG_BLOCK_ID_CB_BY2                              = 0x24,
+-	DBG_BLOCK_ID_CB02_BY2                            = 0x25,
+-	DBG_BLOCK_ID_CB10_BY2                            = 0x26,
+-	DBG_BLOCK_ID_CB12_BY2                            = 0x27,
+-	DBG_BLOCK_ID_SXS_BY2                             = 0x28,
+-	DBG_BLOCK_ID_SXS2_BY2                            = 0x29,
+-	DBG_BLOCK_ID_SXS4_BY2                            = 0x2a,
+-	DBG_BLOCK_ID_SXS6_BY2                            = 0x2b,
+-	DBG_BLOCK_ID_DB_BY2                              = 0x2c,
+-	DBG_BLOCK_ID_DB02_BY2                            = 0x2d,
+-	DBG_BLOCK_ID_DB10_BY2                            = 0x2e,
+-	DBG_BLOCK_ID_DB12_BY2                            = 0x2f,
+-	DBG_BLOCK_ID_TCP_BY2                             = 0x30,
+-	DBG_BLOCK_ID_TCP2_BY2                            = 0x31,
+-	DBG_BLOCK_ID_TCP4_BY2                            = 0x32,
+-	DBG_BLOCK_ID_TCP6_BY2                            = 0x33,
+-	DBG_BLOCK_ID_TCP8_BY2                            = 0x34,
+-	DBG_BLOCK_ID_TCP10_BY2                           = 0x35,
+-	DBG_BLOCK_ID_TCP12_BY2                           = 0x36,
+-	DBG_BLOCK_ID_TCP14_BY2                           = 0x37,
+-	DBG_BLOCK_ID_TCP16_BY2                           = 0x38,
+-	DBG_BLOCK_ID_TCP18_BY2                           = 0x39,
+-	DBG_BLOCK_ID_TCP20_BY2                           = 0x3a,
+-	DBG_BLOCK_ID_TCP22_BY2                           = 0x3b,
+-	DBG_BLOCK_ID_TCP_RESERVED0_BY2                   = 0x3c,
+-	DBG_BLOCK_ID_TCP_RESERVED2_BY2                   = 0x3d,
+-	DBG_BLOCK_ID_TCP_RESERVED4_BY2                   = 0x3e,
+-	DBG_BLOCK_ID_TCP_RESERVED6_BY2                   = 0x3f,
+-	DBG_BLOCK_ID_TCC_BY2                             = 0x40,
+-	DBG_BLOCK_ID_TCC2_BY2                            = 0x41,
+-	DBG_BLOCK_ID_TCC4_BY2                            = 0x42,
+-	DBG_BLOCK_ID_TCC6_BY2                            = 0x43,
+-	DBG_BLOCK_ID_SPS_BY2                             = 0x44,
+-	DBG_BLOCK_ID_SPS02_BY2                           = 0x45,
+-	DBG_BLOCK_ID_SPS11_BY2                           = 0x46,
+-	DBG_BLOCK_ID_UNUSED14_BY2                        = 0x47,
+-	DBG_BLOCK_ID_TA_BY2                              = 0x48,
+-	DBG_BLOCK_ID_TA02_BY2                            = 0x49,
+-	DBG_BLOCK_ID_TA04_BY2                            = 0x4a,
+-	DBG_BLOCK_ID_TA06_BY2                            = 0x4b,
+-	DBG_BLOCK_ID_TA08_BY2                            = 0x4c,
+-	DBG_BLOCK_ID_TA0A_BY2                            = 0x4d,
+-	DBG_BLOCK_ID_UNUSED20_BY2                        = 0x4e,
+-	DBG_BLOCK_ID_UNUSED22_BY2                        = 0x4f,
+-	DBG_BLOCK_ID_TA10_BY2                            = 0x50,
+-	DBG_BLOCK_ID_TA12_BY2                            = 0x51,
+-	DBG_BLOCK_ID_TA14_BY2                            = 0x52,
+-	DBG_BLOCK_ID_TA16_BY2                            = 0x53,
+-	DBG_BLOCK_ID_TA18_BY2                            = 0x54,
+-	DBG_BLOCK_ID_TA1A_BY2                            = 0x55,
+-	DBG_BLOCK_ID_UNUSED24_BY2                        = 0x56,
+-	DBG_BLOCK_ID_UNUSED26_BY2                        = 0x57,
+-	DBG_BLOCK_ID_TD_BY2                              = 0x58,
+-	DBG_BLOCK_ID_TD02_BY2                            = 0x59,
+-	DBG_BLOCK_ID_TD04_BY2                            = 0x5a,
+-	DBG_BLOCK_ID_TD06_BY2                            = 0x5b,
+-	DBG_BLOCK_ID_TD08_BY2                            = 0x5c,
+-	DBG_BLOCK_ID_TD0A_BY2                            = 0x5d,
+-	DBG_BLOCK_ID_UNUSED28_BY2                        = 0x5e,
+-	DBG_BLOCK_ID_UNUSED30_BY2                        = 0x5f,
+-	DBG_BLOCK_ID_TD10_BY2                            = 0x60,
+-	DBG_BLOCK_ID_TD12_BY2                            = 0x61,
+-	DBG_BLOCK_ID_TD14_BY2                            = 0x62,
+-	DBG_BLOCK_ID_TD16_BY2                            = 0x63,
+-	DBG_BLOCK_ID_TD18_BY2                            = 0x64,
+-	DBG_BLOCK_ID_TD1A_BY2                            = 0x65,
+-	DBG_BLOCK_ID_UNUSED32_BY2                        = 0x66,
+-	DBG_BLOCK_ID_UNUSED34_BY2                        = 0x67,
+-	DBG_BLOCK_ID_LDS_BY2                             = 0x68,
+-	DBG_BLOCK_ID_LDS02_BY2                           = 0x69,
+-	DBG_BLOCK_ID_LDS04_BY2                           = 0x6a,
+-	DBG_BLOCK_ID_LDS06_BY2                           = 0x6b,
+-	DBG_BLOCK_ID_LDS08_BY2                           = 0x6c,
+-	DBG_BLOCK_ID_LDS0A_BY2                           = 0x6d,
+-	DBG_BLOCK_ID_UNUSED36_BY2                        = 0x6e,
+-	DBG_BLOCK_ID_UNUSED38_BY2                        = 0x6f,
+-	DBG_BLOCK_ID_LDS10_BY2                           = 0x70,
+-	DBG_BLOCK_ID_LDS12_BY2                           = 0x71,
+-	DBG_BLOCK_ID_LDS14_BY2                           = 0x72,
+-	DBG_BLOCK_ID_LDS16_BY2                           = 0x73,
+-	DBG_BLOCK_ID_LDS18_BY2                           = 0x74,
+-	DBG_BLOCK_ID_LDS1A_BY2                           = 0x75,
+-	DBG_BLOCK_ID_UNUSED40_BY2                        = 0x76,
+-	DBG_BLOCK_ID_UNUSED42_BY2                        = 0x77,
+-} DebugBlockId_BY2;
+-typedef enum DebugBlockId_BY4 {
+-	DBG_BLOCK_ID_RESERVED_BY4                        = 0x0,
+-	DBG_BLOCK_ID_UNUSED0_BY4                         = 0x1,
+-	DBG_BLOCK_ID_CSC_BY4                             = 0x2,
+-	DBG_BLOCK_ID_SQ_BY4                              = 0x3,
+-	DBG_BLOCK_ID_SDMA0_BY4                           = 0x4,
+-	DBG_BLOCK_ID_VC0_BY4                             = 0x5,
+-	DBG_BLOCK_ID_CP0_BY4                             = 0x6,
+-	DBG_BLOCK_ID_UNUSED1_BY4                         = 0x7,
+-	DBG_BLOCK_ID_SXM0_BY4                            = 0x8,
+-	DBG_BLOCK_ID_SPM0_BY4                            = 0x9,
+-	DBG_BLOCK_ID_TCAA_BY4                            = 0xa,
+-	DBG_BLOCK_ID_MCC_BY4                             = 0xb,
+-	DBG_BLOCK_ID_MCD_BY4                             = 0xc,
+-	DBG_BLOCK_ID_MCD4_BY4                            = 0xd,
+-	DBG_BLOCK_ID_SQA_BY4                             = 0xe,
+-	DBG_BLOCK_ID_SQA11_BY4                           = 0xf,
+-	DBG_BLOCK_ID_SQB_BY4                             = 0x10,
+-	DBG_BLOCK_ID_UNUSED10_BY4                        = 0x11,
+-	DBG_BLOCK_ID_CB_BY4                              = 0x12,
+-	DBG_BLOCK_ID_CB10_BY4                            = 0x13,
+-	DBG_BLOCK_ID_SXS_BY4                             = 0x14,
+-	DBG_BLOCK_ID_SXS4_BY4                            = 0x15,
+-	DBG_BLOCK_ID_DB_BY4                              = 0x16,
+-	DBG_BLOCK_ID_DB10_BY4                            = 0x17,
+-	DBG_BLOCK_ID_TCP_BY4                             = 0x18,
+-	DBG_BLOCK_ID_TCP4_BY4                            = 0x19,
+-	DBG_BLOCK_ID_TCP8_BY4                            = 0x1a,
+-	DBG_BLOCK_ID_TCP12_BY4                           = 0x1b,
+-	DBG_BLOCK_ID_TCP16_BY4                           = 0x1c,
+-	DBG_BLOCK_ID_TCP20_BY4                           = 0x1d,
+-	DBG_BLOCK_ID_TCP_RESERVED0_BY4                   = 0x1e,
+-	DBG_BLOCK_ID_TCP_RESERVED4_BY4                   = 0x1f,
+-	DBG_BLOCK_ID_TCC_BY4                             = 0x20,
+-	DBG_BLOCK_ID_TCC4_BY4                            = 0x21,
+-	DBG_BLOCK_ID_SPS_BY4                             = 0x22,
+-	DBG_BLOCK_ID_SPS11_BY4                           = 0x23,
+-	DBG_BLOCK_ID_TA_BY4                              = 0x24,
+-	DBG_BLOCK_ID_TA04_BY4                            = 0x25,
+-	DBG_BLOCK_ID_TA08_BY4                            = 0x26,
+-	DBG_BLOCK_ID_UNUSED20_BY4                        = 0x27,
+-	DBG_BLOCK_ID_TA10_BY4                            = 0x28,
+-	DBG_BLOCK_ID_TA14_BY4                            = 0x29,
+-	DBG_BLOCK_ID_TA18_BY4                            = 0x2a,
+-	DBG_BLOCK_ID_UNUSED24_BY4                        = 0x2b,
+-	DBG_BLOCK_ID_TD_BY4                              = 0x2c,
+-	DBG_BLOCK_ID_TD04_BY4                            = 0x2d,
+-	DBG_BLOCK_ID_TD08_BY4                            = 0x2e,
+-	DBG_BLOCK_ID_UNUSED28_BY4                        = 0x2f,
+-	DBG_BLOCK_ID_TD10_BY4                            = 0x30,
+-	DBG_BLOCK_ID_TD14_BY4                            = 0x31,
+-	DBG_BLOCK_ID_TD18_BY4                            = 0x32,
+-	DBG_BLOCK_ID_UNUSED32_BY4                        = 0x33,
+-	DBG_BLOCK_ID_LDS_BY4                             = 0x34,
+-	DBG_BLOCK_ID_LDS04_BY4                           = 0x35,
+-	DBG_BLOCK_ID_LDS08_BY4                           = 0x36,
+-	DBG_BLOCK_ID_UNUSED36_BY4                        = 0x37,
+-	DBG_BLOCK_ID_LDS10_BY4                           = 0x38,
+-	DBG_BLOCK_ID_LDS14_BY4                           = 0x39,
+-	DBG_BLOCK_ID_LDS18_BY4                           = 0x3a,
+-	DBG_BLOCK_ID_UNUSED40_BY4                        = 0x3b,
+-} DebugBlockId_BY4;
+-typedef enum DebugBlockId_BY8 {
+-	DBG_BLOCK_ID_RESERVED_BY8                        = 0x0,
+-	DBG_BLOCK_ID_CSC_BY8                             = 0x1,
+-	DBG_BLOCK_ID_SDMA0_BY8                           = 0x2,
+-	DBG_BLOCK_ID_CP0_BY8                             = 0x3,
+-	DBG_BLOCK_ID_SXM0_BY8                            = 0x4,
+-	DBG_BLOCK_ID_TCA_BY8                             = 0x5,
+-	DBG_BLOCK_ID_MCD_BY8                             = 0x6,
+-	DBG_BLOCK_ID_SQA_BY8                             = 0x7,
+-	DBG_BLOCK_ID_SQB_BY8                             = 0x8,
+-	DBG_BLOCK_ID_CB_BY8                              = 0x9,
+-	DBG_BLOCK_ID_SXS_BY8                             = 0xa,
+-	DBG_BLOCK_ID_DB_BY8                              = 0xb,
+-	DBG_BLOCK_ID_TCP_BY8                             = 0xc,
+-	DBG_BLOCK_ID_TCP8_BY8                            = 0xd,
+-	DBG_BLOCK_ID_TCP16_BY8                           = 0xe,
+-	DBG_BLOCK_ID_TCP_RESERVED0_BY8                   = 0xf,
+-	DBG_BLOCK_ID_TCC_BY8                             = 0x10,
+-	DBG_BLOCK_ID_SPS_BY8                             = 0x11,
+-	DBG_BLOCK_ID_TA_BY8                              = 0x12,
+-	DBG_BLOCK_ID_TA08_BY8                            = 0x13,
+-	DBG_BLOCK_ID_TA10_BY8                            = 0x14,
+-	DBG_BLOCK_ID_TA18_BY8                            = 0x15,
+-	DBG_BLOCK_ID_TD_BY8                              = 0x16,
+-	DBG_BLOCK_ID_TD08_BY8                            = 0x17,
+-	DBG_BLOCK_ID_TD10_BY8                            = 0x18,
+-	DBG_BLOCK_ID_TD18_BY8                            = 0x19,
+-	DBG_BLOCK_ID_LDS_BY8                             = 0x1a,
+-	DBG_BLOCK_ID_LDS08_BY8                           = 0x1b,
+-	DBG_BLOCK_ID_LDS10_BY8                           = 0x1c,
+-	DBG_BLOCK_ID_LDS18_BY8                           = 0x1d,
+-} DebugBlockId_BY8;
+-typedef enum DebugBlockId_BY16 {
+-	DBG_BLOCK_ID_RESERVED_BY16                       = 0x0,
+-	DBG_BLOCK_ID_SDMA0_BY16                          = 0x1,
+-	DBG_BLOCK_ID_SXM_BY16                            = 0x2,
+-	DBG_BLOCK_ID_MCD_BY16                            = 0x3,
+-	DBG_BLOCK_ID_SQB_BY16                            = 0x4,
+-	DBG_BLOCK_ID_SXS_BY16                            = 0x5,
+-	DBG_BLOCK_ID_TCP_BY16                            = 0x6,
+-	DBG_BLOCK_ID_TCP16_BY16                          = 0x7,
+-	DBG_BLOCK_ID_TCC_BY16                            = 0x8,
+-	DBG_BLOCK_ID_TA_BY16                             = 0x9,
+-	DBG_BLOCK_ID_TA10_BY16                           = 0xa,
+-	DBG_BLOCK_ID_TD_BY16                             = 0xb,
+-	DBG_BLOCK_ID_TD10_BY16                           = 0xc,
+-	DBG_BLOCK_ID_LDS_BY16                            = 0xd,
+-	DBG_BLOCK_ID_LDS10_BY16                          = 0xe,
+-} DebugBlockId_BY16;
+-typedef enum SurfaceEndian {
+-	ENDIAN_NONE                                      = 0x0,
+-	ENDIAN_8IN16                                     = 0x1,
+-	ENDIAN_8IN32                                     = 0x2,
+-	ENDIAN_8IN64                                     = 0x3,
+-} SurfaceEndian;
+-typedef enum ArrayMode {
+-	ARRAY_LINEAR_GENERAL                             = 0x0,
+-	ARRAY_LINEAR_ALIGNED                             = 0x1,
+-	ARRAY_1D_TILED_THIN1                             = 0x2,
+-	ARRAY_1D_TILED_THICK                             = 0x3,
+-	ARRAY_2D_TILED_THIN1                             = 0x4,
+-	ARRAY_PRT_TILED_THIN1                            = 0x5,
+-	ARRAY_PRT_2D_TILED_THIN1                         = 0x6,
+-	ARRAY_2D_TILED_THICK                             = 0x7,
+-	ARRAY_2D_TILED_XTHICK                            = 0x8,
+-	ARRAY_PRT_TILED_THICK                            = 0x9,
+-	ARRAY_PRT_2D_TILED_THICK                         = 0xa,
+-	ARRAY_PRT_3D_TILED_THIN1                         = 0xb,
+-	ARRAY_3D_TILED_THIN1                             = 0xc,
+-	ARRAY_3D_TILED_THICK                             = 0xd,
+-	ARRAY_3D_TILED_XTHICK                            = 0xe,
+-	ARRAY_PRT_3D_TILED_THICK                         = 0xf,
+-} ArrayMode;
+-typedef enum PipeTiling {
+-	CONFIG_1_PIPE                                    = 0x0,
+-	CONFIG_2_PIPE                                    = 0x1,
+-	CONFIG_4_PIPE                                    = 0x2,
+-	CONFIG_8_PIPE                                    = 0x3,
+-} PipeTiling;
+-typedef enum BankTiling {
+-	CONFIG_4_BANK                                    = 0x0,
+-	CONFIG_8_BANK                                    = 0x1,
+-} BankTiling;
+-typedef enum GroupInterleave {
+-	CONFIG_256B_GROUP                                = 0x0,
+-	CONFIG_512B_GROUP                                = 0x1,
+-} GroupInterleave;
+-typedef enum RowTiling {
+-	CONFIG_1KB_ROW                                   = 0x0,
+-	CONFIG_2KB_ROW                                   = 0x1,
+-	CONFIG_4KB_ROW                                   = 0x2,
+-	CONFIG_8KB_ROW                                   = 0x3,
+-	CONFIG_1KB_ROW_OPT                               = 0x4,
+-	CONFIG_2KB_ROW_OPT                               = 0x5,
+-	CONFIG_4KB_ROW_OPT                               = 0x6,
+-	CONFIG_8KB_ROW_OPT                               = 0x7,
+-} RowTiling;
+-typedef enum BankSwapBytes {
+-	CONFIG_128B_SWAPS                                = 0x0,
+-	CONFIG_256B_SWAPS                                = 0x1,
+-	CONFIG_512B_SWAPS                                = 0x2,
+-	CONFIG_1KB_SWAPS                                 = 0x3,
+-} BankSwapBytes;
+-typedef enum SampleSplitBytes {
+-	CONFIG_1KB_SPLIT                                 = 0x0,
+-	CONFIG_2KB_SPLIT                                 = 0x1,
+-	CONFIG_4KB_SPLIT                                 = 0x2,
+-	CONFIG_8KB_SPLIT                                 = 0x3,
+-} SampleSplitBytes;
+-typedef enum NumPipes {
+-	ADDR_CONFIG_1_PIPE                               = 0x0,
+-	ADDR_CONFIG_2_PIPE                               = 0x1,
+-	ADDR_CONFIG_4_PIPE                               = 0x2,
+-	ADDR_CONFIG_8_PIPE                               = 0x3,
+-} NumPipes;
+-typedef enum PipeInterleaveSize {
+-	ADDR_CONFIG_PIPE_INTERLEAVE_256B                 = 0x0,
+-	ADDR_CONFIG_PIPE_INTERLEAVE_512B                 = 0x1,
+-} PipeInterleaveSize;
+-typedef enum BankInterleaveSize {
+-	ADDR_CONFIG_BANK_INTERLEAVE_1                    = 0x0,
+-	ADDR_CONFIG_BANK_INTERLEAVE_2                    = 0x1,
+-	ADDR_CONFIG_BANK_INTERLEAVE_4                    = 0x2,
+-	ADDR_CONFIG_BANK_INTERLEAVE_8                    = 0x3,
+-} BankInterleaveSize;
+-typedef enum NumShaderEngines {
+-	ADDR_CONFIG_1_SHADER_ENGINE                      = 0x0,
+-	ADDR_CONFIG_2_SHADER_ENGINE                      = 0x1,
+-} NumShaderEngines;
+-typedef enum ShaderEngineTileSize {
+-	ADDR_CONFIG_SE_TILE_16                           = 0x0,
+-	ADDR_CONFIG_SE_TILE_32                           = 0x1,
+-} ShaderEngineTileSize;
+-typedef enum NumGPUs {
+-	ADDR_CONFIG_1_GPU                                = 0x0,
+-	ADDR_CONFIG_2_GPU                                = 0x1,
+-	ADDR_CONFIG_4_GPU                                = 0x2,
+-} NumGPUs;
+-typedef enum MultiGPUTileSize {
+-	ADDR_CONFIG_GPU_TILE_16                          = 0x0,
+-	ADDR_CONFIG_GPU_TILE_32                          = 0x1,
+-	ADDR_CONFIG_GPU_TILE_64                          = 0x2,
+-	ADDR_CONFIG_GPU_TILE_128                         = 0x3,
+-} MultiGPUTileSize;
+-typedef enum RowSize {
+-	ADDR_CONFIG_1KB_ROW                              = 0x0,
+-	ADDR_CONFIG_2KB_ROW                              = 0x1,
+-	ADDR_CONFIG_4KB_ROW                              = 0x2,
+-} RowSize;
+-typedef enum NumLowerPipes {
+-	ADDR_CONFIG_1_LOWER_PIPES                        = 0x0,
+-	ADDR_CONFIG_2_LOWER_PIPES                        = 0x1,
+-} NumLowerPipes;
+-typedef enum ColorTransform {
+-	DCC_CT_AUTO                                      = 0x0,
+-	DCC_CT_NONE                                      = 0x1,
+-	ABGR_TO_A_BG_G_RB                                = 0x2,
+-	BGRA_TO_BG_G_RB_A                                = 0x3,
+-} ColorTransform;
+-typedef enum CompareRef {
+-	REF_NEVER                                        = 0x0,
+-	REF_LESS                                         = 0x1,
+-	REF_EQUAL                                        = 0x2,
+-	REF_LEQUAL                                       = 0x3,
+-	REF_GREATER                                      = 0x4,
+-	REF_NOTEQUAL                                     = 0x5,
+-	REF_GEQUAL                                       = 0x6,
+-	REF_ALWAYS                                       = 0x7,
+-} CompareRef;
+-typedef enum ReadSize {
+-	READ_256_BITS                                    = 0x0,
+-	READ_512_BITS                                    = 0x1,
+-} ReadSize;
+-typedef enum DepthFormat {
+-	DEPTH_INVALID                                    = 0x0,
+-	DEPTH_16                                         = 0x1,
+-	DEPTH_X8_24                                      = 0x2,
+-	DEPTH_8_24                                       = 0x3,
+-	DEPTH_X8_24_FLOAT                                = 0x4,
+-	DEPTH_8_24_FLOAT                                 = 0x5,
+-	DEPTH_32_FLOAT                                   = 0x6,
+-	DEPTH_X24_8_32_FLOAT                             = 0x7,
+-} DepthFormat;
+-typedef enum ZFormat {
+-	Z_INVALID                                        = 0x0,
+-	Z_16                                             = 0x1,
+-	Z_24                                             = 0x2,
+-	Z_32_FLOAT                                       = 0x3,
+-} ZFormat;
+-typedef enum StencilFormat {
+-	STENCIL_INVALID                                  = 0x0,
+-	STENCIL_8                                        = 0x1,
+-} StencilFormat;
+-typedef enum CmaskMode {
+-	CMASK_CLEAR_NONE                                 = 0x0,
+-	CMASK_CLEAR_ONE                                  = 0x1,
+-	CMASK_CLEAR_ALL                                  = 0x2,
+-	CMASK_ANY_EXPANDED                               = 0x3,
+-	CMASK_ALPHA0_FRAG1                               = 0x4,
+-	CMASK_ALPHA0_FRAG2                               = 0x5,
+-	CMASK_ALPHA0_FRAG4                               = 0x6,
+-	CMASK_ALPHA0_FRAGS                               = 0x7,
+-	CMASK_ALPHA1_FRAG1                               = 0x8,
+-	CMASK_ALPHA1_FRAG2                               = 0x9,
+-	CMASK_ALPHA1_FRAG4                               = 0xa,
+-	CMASK_ALPHA1_FRAGS                               = 0xb,
+-	CMASK_ALPHAX_FRAG1                               = 0xc,
+-	CMASK_ALPHAX_FRAG2                               = 0xd,
+-	CMASK_ALPHAX_FRAG4                               = 0xe,
+-	CMASK_ALPHAX_FRAGS                               = 0xf,
+-} CmaskMode;
+-typedef enum QuadExportFormat {
+-	EXPORT_UNUSED                                    = 0x0,
+-	EXPORT_32_R                                      = 0x1,
+-	EXPORT_32_GR                                     = 0x2,
+-	EXPORT_32_AR                                     = 0x3,
+-	EXPORT_FP16_ABGR                                 = 0x4,
+-	EXPORT_UNSIGNED16_ABGR                           = 0x5,
+-	EXPORT_SIGNED16_ABGR                             = 0x6,
+-	EXPORT_32_ABGR                                   = 0x7,
+-} QuadExportFormat;
+-typedef enum QuadExportFormatOld {
+-	EXPORT_4P_32BPC_ABGR                             = 0x0,
+-	EXPORT_4P_16BPC_ABGR                             = 0x1,
+-	EXPORT_4P_32BPC_GR                               = 0x2,
+-	EXPORT_4P_32BPC_AR                               = 0x3,
+-	EXPORT_2P_32BPC_ABGR                             = 0x4,
+-	EXPORT_8P_32BPC_R                                = 0x5,
+-} QuadExportFormatOld;
+-typedef enum ColorFormat {
+-	COLOR_INVALID                                    = 0x0,
+-	COLOR_8                                          = 0x1,
+-	COLOR_16                                         = 0x2,
+-	COLOR_8_8                                        = 0x3,
+-	COLOR_32                                         = 0x4,
+-	COLOR_16_16                                      = 0x5,
+-	COLOR_10_11_11                                   = 0x6,
+-	COLOR_11_11_10                                   = 0x7,
+-	COLOR_10_10_10_2                                 = 0x8,
+-	COLOR_2_10_10_10                                 = 0x9,
+-	COLOR_8_8_8_8                                    = 0xa,
+-	COLOR_32_32                                      = 0xb,
+-	COLOR_16_16_16_16                                = 0xc,
+-	COLOR_RESERVED_13                                = 0xd,
+-	COLOR_32_32_32_32                                = 0xe,
+-	COLOR_RESERVED_15                                = 0xf,
+-	COLOR_5_6_5                                      = 0x10,
+-	COLOR_1_5_5_5                                    = 0x11,
+-	COLOR_5_5_5_1                                    = 0x12,
+-	COLOR_4_4_4_4                                    = 0x13,
+-	COLOR_8_24                                       = 0x14,
+-	COLOR_24_8                                       = 0x15,
+-	COLOR_X24_8_32_FLOAT                             = 0x16,
+-	COLOR_RESERVED_23                                = 0x17,
+-} ColorFormat;
+-typedef enum SurfaceFormat {
+-	FMT_INVALID                                      = 0x0,
+-	FMT_8                                            = 0x1,
+-	FMT_16                                           = 0x2,
+-	FMT_8_8                                          = 0x3,
+-	FMT_32                                           = 0x4,
+-	FMT_16_16                                        = 0x5,
+-	FMT_10_11_11                                     = 0x6,
+-	FMT_11_11_10                                     = 0x7,
+-	FMT_10_10_10_2                                   = 0x8,
+-	FMT_2_10_10_10                                   = 0x9,
+-	FMT_8_8_8_8                                      = 0xa,
+-	FMT_32_32                                        = 0xb,
+-	FMT_16_16_16_16                                  = 0xc,
+-	FMT_32_32_32                                     = 0xd,
+-	FMT_32_32_32_32                                  = 0xe,
+-	FMT_RESERVED_4                                   = 0xf,
+-	FMT_5_6_5                                        = 0x10,
+-	FMT_1_5_5_5                                      = 0x11,
+-	FMT_5_5_5_1                                      = 0x12,
+-	FMT_4_4_4_4                                      = 0x13,
+-	FMT_8_24                                         = 0x14,
+-	FMT_24_8                                         = 0x15,
+-	FMT_X24_8_32_FLOAT                               = 0x16,
+-	FMT_RESERVED_33                                  = 0x17,
+-	FMT_11_11_10_FLOAT                               = 0x18,
+-	FMT_16_FLOAT                                     = 0x19,
+-	FMT_32_FLOAT                                     = 0x1a,
+-	FMT_16_16_FLOAT                                  = 0x1b,
+-	FMT_8_24_FLOAT                                   = 0x1c,
+-	FMT_24_8_FLOAT                                   = 0x1d,
+-	FMT_32_32_FLOAT                                  = 0x1e,
+-	FMT_10_11_11_FLOAT                               = 0x1f,
+-	FMT_16_16_16_16_FLOAT                            = 0x20,
+-	FMT_3_3_2                                        = 0x21,
+-	FMT_6_5_5                                        = 0x22,
+-	FMT_32_32_32_32_FLOAT                            = 0x23,
+-	FMT_RESERVED_36                                  = 0x24,
+-	FMT_1                                            = 0x25,
+-	FMT_1_REVERSED                                   = 0x26,
+-	FMT_GB_GR                                        = 0x27,
+-	FMT_BG_RG                                        = 0x28,
+-	FMT_32_AS_8                                      = 0x29,
+-	FMT_32_AS_8_8                                    = 0x2a,
+-	FMT_5_9_9_9_SHAREDEXP                            = 0x2b,
+-	FMT_8_8_8                                        = 0x2c,
+-	FMT_16_16_16                                     = 0x2d,
+-	FMT_16_16_16_FLOAT                               = 0x2e,
+-	FMT_4_4                                          = 0x2f,
+-	FMT_32_32_32_FLOAT                               = 0x30,
+-	FMT_BC1                                          = 0x31,
+-	FMT_BC2                                          = 0x32,
+-	FMT_BC3                                          = 0x33,
+-	FMT_BC4                                          = 0x34,
+-	FMT_BC5                                          = 0x35,
+-	FMT_BC6                                          = 0x36,
+-	FMT_BC7                                          = 0x37,
+-	FMT_32_AS_32_32_32_32                            = 0x38,
+-	FMT_APC3                                         = 0x39,
+-	FMT_APC4                                         = 0x3a,
+-	FMT_APC5                                         = 0x3b,
+-	FMT_APC6                                         = 0x3c,
+-	FMT_APC7                                         = 0x3d,
+-	FMT_CTX1                                         = 0x3e,
+-	FMT_RESERVED_63                                  = 0x3f,
+-} SurfaceFormat;
+-typedef enum BUF_DATA_FORMAT {
+-	BUF_DATA_FORMAT_INVALID                          = 0x0,
+-	BUF_DATA_FORMAT_8                                = 0x1,
+-	BUF_DATA_FORMAT_16                               = 0x2,
+-	BUF_DATA_FORMAT_8_8                              = 0x3,
+-	BUF_DATA_FORMAT_32                               = 0x4,
+-	BUF_DATA_FORMAT_16_16                            = 0x5,
+-	BUF_DATA_FORMAT_10_11_11                         = 0x6,
+-	BUF_DATA_FORMAT_11_11_10                         = 0x7,
+-	BUF_DATA_FORMAT_10_10_10_2                       = 0x8,
+-	BUF_DATA_FORMAT_2_10_10_10                       = 0x9,
+-	BUF_DATA_FORMAT_8_8_8_8                          = 0xa,
+-	BUF_DATA_FORMAT_32_32                            = 0xb,
+-	BUF_DATA_FORMAT_16_16_16_16                      = 0xc,
+-	BUF_DATA_FORMAT_32_32_32                         = 0xd,
+-	BUF_DATA_FORMAT_32_32_32_32                      = 0xe,
+-	BUF_DATA_FORMAT_RESERVED_15                      = 0xf,
+-} BUF_DATA_FORMAT;
+-typedef enum IMG_DATA_FORMAT {
+-	IMG_DATA_FORMAT_INVALID                          = 0x0,
+-	IMG_DATA_FORMAT_8                                = 0x1,
+-	IMG_DATA_FORMAT_16                               = 0x2,
+-	IMG_DATA_FORMAT_8_8                              = 0x3,
+-	IMG_DATA_FORMAT_32                               = 0x4,
+-	IMG_DATA_FORMAT_16_16                            = 0x5,
+-	IMG_DATA_FORMAT_10_11_11                         = 0x6,
+-	IMG_DATA_FORMAT_11_11_10                         = 0x7,
+-	IMG_DATA_FORMAT_10_10_10_2                       = 0x8,
+-	IMG_DATA_FORMAT_2_10_10_10                       = 0x9,
+-	IMG_DATA_FORMAT_8_8_8_8                          = 0xa,
+-	IMG_DATA_FORMAT_32_32                            = 0xb,
+-	IMG_DATA_FORMAT_16_16_16_16                      = 0xc,
+-	IMG_DATA_FORMAT_32_32_32                         = 0xd,
+-	IMG_DATA_FORMAT_32_32_32_32                      = 0xe,
+-	IMG_DATA_FORMAT_RESERVED_15                      = 0xf,
+-	IMG_DATA_FORMAT_5_6_5                            = 0x10,
+-	IMG_DATA_FORMAT_1_5_5_5                          = 0x11,
+-	IMG_DATA_FORMAT_5_5_5_1                          = 0x12,
+-	IMG_DATA_FORMAT_4_4_4_4                          = 0x13,
+-	IMG_DATA_FORMAT_8_24                             = 0x14,
+-	IMG_DATA_FORMAT_24_8                             = 0x15,
+-	IMG_DATA_FORMAT_X24_8_32                         = 0x16,
+-	IMG_DATA_FORMAT_RESERVED_23                      = 0x17,
+-	IMG_DATA_FORMAT_RESERVED_24                      = 0x18,
+-	IMG_DATA_FORMAT_RESERVED_25                      = 0x19,
+-	IMG_DATA_FORMAT_RESERVED_26                      = 0x1a,
+-	IMG_DATA_FORMAT_RESERVED_27                      = 0x1b,
+-	IMG_DATA_FORMAT_RESERVED_28                      = 0x1c,
+-	IMG_DATA_FORMAT_RESERVED_29                      = 0x1d,
+-	IMG_DATA_FORMAT_RESERVED_30                      = 0x1e,
+-	IMG_DATA_FORMAT_RESERVED_31                      = 0x1f,
+-	IMG_DATA_FORMAT_GB_GR                            = 0x20,
+-	IMG_DATA_FORMAT_BG_RG                            = 0x21,
+-	IMG_DATA_FORMAT_5_9_9_9                          = 0x22,
+-	IMG_DATA_FORMAT_BC1                              = 0x23,
+-	IMG_DATA_FORMAT_BC2                              = 0x24,
+-	IMG_DATA_FORMAT_BC3                              = 0x25,
+-	IMG_DATA_FORMAT_BC4                              = 0x26,
+-	IMG_DATA_FORMAT_BC5                              = 0x27,
+-	IMG_DATA_FORMAT_BC6                              = 0x28,
+-	IMG_DATA_FORMAT_BC7                              = 0x29,
+-	IMG_DATA_FORMAT_RESERVED_42                      = 0x2a,
+-	IMG_DATA_FORMAT_RESERVED_43                      = 0x2b,
+-	IMG_DATA_FORMAT_FMASK8_S2_F1                     = 0x2c,
+-	IMG_DATA_FORMAT_FMASK8_S4_F1                     = 0x2d,
+-	IMG_DATA_FORMAT_FMASK8_S8_F1                     = 0x2e,
+-	IMG_DATA_FORMAT_FMASK8_S2_F2                     = 0x2f,
+-	IMG_DATA_FORMAT_FMASK8_S4_F2                     = 0x30,
+-	IMG_DATA_FORMAT_FMASK8_S4_F4                     = 0x31,
+-	IMG_DATA_FORMAT_FMASK16_S16_F1                   = 0x32,
+-	IMG_DATA_FORMAT_FMASK16_S8_F2                    = 0x33,
+-	IMG_DATA_FORMAT_FMASK32_S16_F2                   = 0x34,
+-	IMG_DATA_FORMAT_FMASK32_S8_F4                    = 0x35,
+-	IMG_DATA_FORMAT_FMASK32_S8_F8                    = 0x36,
+-	IMG_DATA_FORMAT_FMASK64_S16_F4                   = 0x37,
+-	IMG_DATA_FORMAT_FMASK64_S16_F8                   = 0x38,
+-	IMG_DATA_FORMAT_4_4                              = 0x39,
+-	IMG_DATA_FORMAT_6_5_5                            = 0x3a,
+-	IMG_DATA_FORMAT_1                                = 0x3b,
+-	IMG_DATA_FORMAT_1_REVERSED                       = 0x3c,
+-	IMG_DATA_FORMAT_32_AS_8                          = 0x3d,
+-	IMG_DATA_FORMAT_32_AS_8_8                        = 0x3e,
+-	IMG_DATA_FORMAT_32_AS_32_32_32_32                = 0x3f,
+-} IMG_DATA_FORMAT;
+-typedef enum BUF_NUM_FORMAT {
+-	BUF_NUM_FORMAT_UNORM                             = 0x0,
+-	BUF_NUM_FORMAT_SNORM                             = 0x1,
+-	BUF_NUM_FORMAT_USCALED                           = 0x2,
+-	BUF_NUM_FORMAT_SSCALED                           = 0x3,
+-	BUF_NUM_FORMAT_UINT                              = 0x4,
+-	BUF_NUM_FORMAT_SINT                              = 0x5,
+-	BUF_NUM_FORMAT_RESERVED_6                        = 0x6,
+-	BUF_NUM_FORMAT_FLOAT                             = 0x7,
+-} BUF_NUM_FORMAT;
+-typedef enum IMG_NUM_FORMAT {
+-	IMG_NUM_FORMAT_UNORM                             = 0x0,
+-	IMG_NUM_FORMAT_SNORM                             = 0x1,
+-	IMG_NUM_FORMAT_USCALED                           = 0x2,
+-	IMG_NUM_FORMAT_SSCALED                           = 0x3,
+-	IMG_NUM_FORMAT_UINT                              = 0x4,
+-	IMG_NUM_FORMAT_SINT                              = 0x5,
+-	IMG_NUM_FORMAT_RESERVED_6                        = 0x6,
+-	IMG_NUM_FORMAT_FLOAT                             = 0x7,
+-	IMG_NUM_FORMAT_RESERVED_8                        = 0x8,
+-	IMG_NUM_FORMAT_SRGB                              = 0x9,
+-	IMG_NUM_FORMAT_RESERVED_10                       = 0xa,
+-	IMG_NUM_FORMAT_RESERVED_11                       = 0xb,
+-	IMG_NUM_FORMAT_RESERVED_12                       = 0xc,
+-	IMG_NUM_FORMAT_RESERVED_13                       = 0xd,
+-	IMG_NUM_FORMAT_RESERVED_14                       = 0xe,
+-	IMG_NUM_FORMAT_RESERVED_15                       = 0xf,
+-} IMG_NUM_FORMAT;
+-typedef enum TileType {
+-	ARRAY_COLOR_TILE                                 = 0x0,
+-	ARRAY_DEPTH_TILE                                 = 0x1,
+-} TileType;
+-typedef enum NonDispTilingOrder {
+-	ADDR_SURF_MICRO_TILING_DISPLAY                   = 0x0,
+-	ADDR_SURF_MICRO_TILING_NON_DISPLAY               = 0x1,
+-} NonDispTilingOrder;
+-typedef enum MicroTileMode {
+-	ADDR_SURF_DISPLAY_MICRO_TILING                   = 0x0,
+-	ADDR_SURF_THIN_MICRO_TILING                      = 0x1,
+-	ADDR_SURF_DEPTH_MICRO_TILING                     = 0x2,
+-	ADDR_SURF_ROTATED_MICRO_TILING                   = 0x3,
+-	ADDR_SURF_THICK_MICRO_TILING                     = 0x4,
+-} MicroTileMode;
+-typedef enum TileSplit {
+-	ADDR_SURF_TILE_SPLIT_64B                         = 0x0,
+-	ADDR_SURF_TILE_SPLIT_128B                        = 0x1,
+-	ADDR_SURF_TILE_SPLIT_256B                        = 0x2,
+-	ADDR_SURF_TILE_SPLIT_512B                        = 0x3,
+-	ADDR_SURF_TILE_SPLIT_1KB                         = 0x4,
+-	ADDR_SURF_TILE_SPLIT_2KB                         = 0x5,
+-	ADDR_SURF_TILE_SPLIT_4KB                         = 0x6,
+-} TileSplit;
+-typedef enum SampleSplit {
+-	ADDR_SURF_SAMPLE_SPLIT_1                         = 0x0,
+-	ADDR_SURF_SAMPLE_SPLIT_2                         = 0x1,
+-	ADDR_SURF_SAMPLE_SPLIT_4                         = 0x2,
+-	ADDR_SURF_SAMPLE_SPLIT_8                         = 0x3,
+-} SampleSplit;
+-typedef enum PipeConfig {
+-	ADDR_SURF_P2                                     = 0x0,
+-	ADDR_SURF_P2_RESERVED0                           = 0x1,
+-	ADDR_SURF_P2_RESERVED1                           = 0x2,
+-	ADDR_SURF_P2_RESERVED2                           = 0x3,
+-	ADDR_SURF_P4_8x16                                = 0x4,
+-	ADDR_SURF_P4_16x16                               = 0x5,
+-	ADDR_SURF_P4_16x32                               = 0x6,
+-	ADDR_SURF_P4_32x32                               = 0x7,
+-	ADDR_SURF_P8_16x16_8x16                          = 0x8,
+-	ADDR_SURF_P8_16x32_8x16                          = 0x9,
+-	ADDR_SURF_P8_32x32_8x16                          = 0xa,
+-	ADDR_SURF_P8_16x32_16x16                         = 0xb,
+-	ADDR_SURF_P8_32x32_16x16                         = 0xc,
+-	ADDR_SURF_P8_32x32_16x32                         = 0xd,
+-	ADDR_SURF_P8_32x64_32x32                         = 0xe,
+-	ADDR_SURF_P8_RESERVED0                           = 0xf,
+-	ADDR_SURF_P16_32x32_8x16                         = 0x10,
+-	ADDR_SURF_P16_32x32_16x16                        = 0x11,
+-} PipeConfig;
+-typedef enum NumBanks {
+-	ADDR_SURF_2_BANK                                 = 0x0,
+-	ADDR_SURF_4_BANK                                 = 0x1,
+-	ADDR_SURF_8_BANK                                 = 0x2,
+-	ADDR_SURF_16_BANK                                = 0x3,
+-} NumBanks;
+-typedef enum BankWidth {
+-	ADDR_SURF_BANK_WIDTH_1                           = 0x0,
+-	ADDR_SURF_BANK_WIDTH_2                           = 0x1,
+-	ADDR_SURF_BANK_WIDTH_4                           = 0x2,
+-	ADDR_SURF_BANK_WIDTH_8                           = 0x3,
+-} BankWidth;
+-typedef enum BankHeight {
+-	ADDR_SURF_BANK_HEIGHT_1                          = 0x0,
+-	ADDR_SURF_BANK_HEIGHT_2                          = 0x1,
+-	ADDR_SURF_BANK_HEIGHT_4                          = 0x2,
+-	ADDR_SURF_BANK_HEIGHT_8                          = 0x3,
+-} BankHeight;
+-typedef enum BankWidthHeight {
+-	ADDR_SURF_BANK_WH_1                              = 0x0,
+-	ADDR_SURF_BANK_WH_2                              = 0x1,
+-	ADDR_SURF_BANK_WH_4                              = 0x2,
+-	ADDR_SURF_BANK_WH_8                              = 0x3,
+-} BankWidthHeight;
+-typedef enum MacroTileAspect {
+-	ADDR_SURF_MACRO_ASPECT_1                         = 0x0,
+-	ADDR_SURF_MACRO_ASPECT_2                         = 0x1,
+-	ADDR_SURF_MACRO_ASPECT_4                         = 0x2,
+-	ADDR_SURF_MACRO_ASPECT_8                         = 0x3,
+-} MacroTileAspect;
+-typedef enum GATCL1RequestType {
+-	GATCL1_TYPE_NORMAL                               = 0x0,
+-	GATCL1_TYPE_SHOOTDOWN                            = 0x1,
+-	GATCL1_TYPE_BYPASS                               = 0x2,
+-} GATCL1RequestType;
+-typedef enum TCC_CACHE_POLICIES {
+-	TCC_CACHE_POLICY_LRU                             = 0x0,
+-	TCC_CACHE_POLICY_STREAM                          = 0x1,
+-} TCC_CACHE_POLICIES;
+-typedef enum MTYPE {
+-	MTYPE_NC_NV                                      = 0x0,
+-	MTYPE_NC                                         = 0x1,
+-	MTYPE_CC                                         = 0x2,
+-	MTYPE_UC                                         = 0x3,
+-} MTYPE;
+-typedef enum PERFMON_COUNTER_MODE {
+-	PERFMON_COUNTER_MODE_ACCUM                       = 0x0,
+-	PERFMON_COUNTER_MODE_ACTIVE_CYCLES               = 0x1,
+-	PERFMON_COUNTER_MODE_MAX                         = 0x2,
+-	PERFMON_COUNTER_MODE_DIRTY                       = 0x3,
+-	PERFMON_COUNTER_MODE_SAMPLE                      = 0x4,
+-	PERFMON_COUNTER_MODE_CYCLES_SINCE_FIRST_EVENT    = 0x5,
+-	PERFMON_COUNTER_MODE_CYCLES_SINCE_LAST_EVENT     = 0x6,
+-	PERFMON_COUNTER_MODE_CYCLES_GE_HI                = 0x7,
+-	PERFMON_COUNTER_MODE_CYCLES_EQ_HI                = 0x8,
+-	PERFMON_COUNTER_MODE_INACTIVE_CYCLES             = 0x9,
+-	PERFMON_COUNTER_MODE_RESERVED                    = 0xf,
+-} PERFMON_COUNTER_MODE;
+-typedef enum PERFMON_SPM_MODE {
+-	PERFMON_SPM_MODE_OFF                             = 0x0,
+-	PERFMON_SPM_MODE_16BIT_CLAMP                     = 0x1,
+-	PERFMON_SPM_MODE_16BIT_NO_CLAMP                  = 0x2,
+-	PERFMON_SPM_MODE_32BIT_CLAMP                     = 0x3,
+-	PERFMON_SPM_MODE_32BIT_NO_CLAMP                  = 0x4,
+-	PERFMON_SPM_MODE_RESERVED_5                      = 0x5,
+-	PERFMON_SPM_MODE_RESERVED_6                      = 0x6,
+-	PERFMON_SPM_MODE_RESERVED_7                      = 0x7,
+-	PERFMON_SPM_MODE_TEST_MODE_0                     = 0x8,
+-	PERFMON_SPM_MODE_TEST_MODE_1                     = 0x9,
+-	PERFMON_SPM_MODE_TEST_MODE_2                     = 0xa,
+-} PERFMON_SPM_MODE;
+-typedef enum SurfaceTiling {
+-	ARRAY_LINEAR                                     = 0x0,
+-	ARRAY_TILED                                      = 0x1,
+-} SurfaceTiling;
+-typedef enum SurfaceArray {
+-	ARRAY_1D                                         = 0x0,
+-	ARRAY_2D                                         = 0x1,
+-	ARRAY_3D                                         = 0x2,
+-	ARRAY_3D_SLICE                                   = 0x3,
+-} SurfaceArray;
+-typedef enum ColorArray {
+-	ARRAY_2D_ALT_COLOR                               = 0x0,
+-	ARRAY_2D_COLOR                                   = 0x1,
+-	ARRAY_3D_SLICE_COLOR                             = 0x3,
+-} ColorArray;
+-typedef enum DepthArray {
+-	ARRAY_2D_ALT_DEPTH                               = 0x0,
+-	ARRAY_2D_DEPTH                                   = 0x1,
+-} DepthArray;
+-typedef enum ENUM_NUM_SIMD_PER_CU {
+-	NUM_SIMD_PER_CU                                  = 0x4,
+-} ENUM_NUM_SIMD_PER_CU;
+-typedef enum MEM_PWR_FORCE_CTRL {
+-	NO_FORCE_REQUEST                                 = 0x0,
+-	FORCE_LIGHT_SLEEP_REQUEST                        = 0x1,
+-	FORCE_DEEP_SLEEP_REQUEST                         = 0x2,
+-	FORCE_SHUT_DOWN_REQUEST                          = 0x3,
+-} MEM_PWR_FORCE_CTRL;
+-typedef enum MEM_PWR_FORCE_CTRL2 {
+-	NO_FORCE_REQ                                     = 0x0,
+-	FORCE_LIGHT_SLEEP_REQ                            = 0x1,
+-} MEM_PWR_FORCE_CTRL2;
+-typedef enum MEM_PWR_DIS_CTRL {
+-	ENABLE_MEM_PWR_CTRL                              = 0x0,
+-	DISABLE_MEM_PWR_CTRL                             = 0x1,
+-} MEM_PWR_DIS_CTRL;
+-typedef enum MEM_PWR_SEL_CTRL {
+-	DYNAMIC_SHUT_DOWN_ENABLE                         = 0x0,
+-	DYNAMIC_DEEP_SLEEP_ENABLE                        = 0x1,
+-	DYNAMIC_LIGHT_SLEEP_ENABLE                       = 0x2,
+-} MEM_PWR_SEL_CTRL;
+-typedef enum MEM_PWR_SEL_CTRL2 {
+-	DYNAMIC_DEEP_SLEEP_EN                            = 0x0,
+-	DYNAMIC_LIGHT_SLEEP_EN                           = 0x1,
+-} MEM_PWR_SEL_CTRL2;
 -
--/**
-- * Struct for PowerPlay feature info.
-- */
--struct pp_feature_info {
--	bool supported;               /* feature supported by PowerPlay */
--	bool enabled;                 /* feature enabled in PowerPlay */
--	bool enabled_default;        /* default enable status of the feature */
--	uint32_t version;             /* feature version */
--};
--
--#endif /* _PP_FEATURE_H_ */
+-#endif /* UVD_6_0_ENUM_H */
 -- 
 2.13.6
