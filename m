@@ -1,175 +1,241 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032997AbeBNQvm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 11:51:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44940 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032793AbeBNQvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:51:40 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5F922177D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Wed, 14 Feb 2018 16:51:35 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/8] MIPS: mscc: Add initial support for Microsemi
- MIPS SoCs
-Message-ID: <20180214165135.GC3986@saruman>
-References: <20180116101240.5393-1-alexandre.belloni@free-electrons.com>
- <20180116101240.5393-5-alexandre.belloni@free-electrons.com>
+        id S1032977AbeBNQwM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 11:52:12 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:35125 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032744AbeBNQwL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 11:52:11 -0500
+X-Google-Smtp-Source: AH8x2259s+8fb8tf6ENvXrZhGQ5skhNFIqRGtWT3R4bgbgbmUfNSyAm1SRCpH8P/xPO6KOQ/yS6MnqkRqQCOrBmPv30=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="TiqCXmo5T1hvSQQg"
-Content-Disposition: inline
-In-Reply-To: <20180116101240.5393-5-alexandre.belloni@free-electrons.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180214182714-mutt-send-email-mst@kernel.org>
+References: <20180214141850.4017-1-marcandre.lureau@redhat.com>
+ <20180214141850.4017-10-marcandre.lureau@redhat.com> <20180214182714-mutt-send-email-mst@kernel.org>
+From: Marc-Andre Lureau <mlureau@redhat.com>
+Date: Wed, 14 Feb 2018 17:52:10 +0100
+Message-ID: <CAMxuvaw8iUidXhFMO5gnUS56H+SncOzF71yaQpHNW4JnsYM3vQ@mail.gmail.com>
+Subject: Re: [PATCH v14 9/9] RFC: fw_cfg: do DMA read operation
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Baoquan He <bhe@redhat.com>, Sergio Lopez Pascual <slp@redhat.com>,
+        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi
 
---TiqCXmo5T1hvSQQg
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Feb 14, 2018 at 5:48 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> On Wed, Feb 14, 2018 at 03:18:50PM +0100, Marc-André Lureau wrote:
+>> Modify fw_cfg_read_blob() to use DMA if the device supports it.
+>> Return errors, because the operation may fail.
+>>
+>> So far, only one call in fw_cfg_register_dir_entries() is using
+>> kmalloc'ed buf and is thus clearly eligible to DMA read.
+>>
+>> Initially, I didn't implement DMA read to speed up boot time, but as a
+>> first step before introducing DMA write (since read operations were
+>> already presents). Even more, I didn't realize fw-cfg entries were
+>> being read by the kernel during boot by default. But actally fw-cfg
+>> entries are being populated during module probe. I knew DMA improved a
+>> lot bios boot time (the main reason the DMA interface was added
+>> afaik). Let see the time it would take to read the whole ACPI
+>> tables (128kb allocated)
+>>
+>>  # time cat /sys/firmware/qemu_fw_cfg/by_name/etc/acpi/tables/raw
+>>   - with DMA: sys 0m0.003s
+>>   - without DMA (-global fw_cfg.dma_enabled=off): sys 0m7.674s
+>>
+>> FW_CFG_FILE_DIR (0x19) is the only "file" that is read during kernel
+>> boot to populate sysfs qemu_fw_cfg directory, and it is quite
+>> small (1-2kb). Since it does not expose itself, in order to measure
+>> the time it takes to read such small file, I took a comparable sized
+>> file of 2048 bytes and exposed it (-fw_cfg test,file=file with a
+>> modified read_raw enabling DMA)
+>>
+>>  # perf stat -r 100 cat /sys/firmware/qemu_fw_cfg/by_name/test/raw >/dev/null
+>>   - with DMA:
+>>           0.636037      task-clock (msec)         #    0.141 CPUs utilized            ( +-  1.19% )
+>>   - without DMA:
+>>           6.430128      task-clock (msec)         #    0.622 CPUs utilized            ( +-  0.22% )
+>>
+>> That's a few msec saved during boot by enabling DMA read (the gain
+>> would be more substantial if other & bigger fw-cfg entries are read by
+>> others from sysfs, unfortunately, it's not clear if we can always
+>> enable DMA there)
+>>
+>> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+>> ---
+>>  drivers/firmware/qemu_fw_cfg.c | 80 ++++++++++++++++++++++++++++++++++--------
+>>  1 file changed, 66 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+>> index 69939e2529f2..ba9b907a4399 100644
+>> --- a/drivers/firmware/qemu_fw_cfg.c
+>> +++ b/drivers/firmware/qemu_fw_cfg.c
+>> @@ -124,12 +124,46 @@ static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
+>>       return ret;
+>>  }
+>>
+>> +/* with acpi & dev locks taken */
+>> +static ssize_t fw_cfg_read_blob_dma(u16 key,
+>> +                             void *buf, loff_t pos, size_t count)
+>> +{
+>> +     ssize_t ret;
+>> +
+>> +     if (pos == 0) {
+>> +             ret = fw_cfg_dma_transfer(buf, count, key << 16
+>> +                                     | FW_CFG_DMA_CTL_SELECT
+>> +                                     | FW_CFG_DMA_CTL_READ);
+>> +     } else {
+>> +             iowrite16(fw_cfg_sel_endianness(key), fw_cfg_reg_ctrl);
+>> +             ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
+>> +             if (ret < 0)
+>> +                     return ret;
+>> +             ret = fw_cfg_dma_transfer(buf, count,
+>> +                                     FW_CFG_DMA_CTL_READ);
+>> +     }
+>> +
+>> +     return ret;
+>> +}
+>> +
+>> +/* with acpi & dev locks taken */
+>> +static void fw_cfg_read_blob_io(u16 key,
+>> +                             void *buf, loff_t pos, size_t count)
+>> +{
+>> +     iowrite16(fw_cfg_sel_endianness(key), fw_cfg_reg_ctrl);
+>> +     while (pos-- > 0)
+>> +             ioread8(fw_cfg_reg_data);
+>> +     ioread8_rep(fw_cfg_reg_data, buf, count);
+>> +}
+>> +
+>>  /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
+>> -static inline void fw_cfg_read_blob(u16 key,
+>> -                                 void *buf, loff_t pos, size_t count)
+>> +static ssize_t fw_cfg_read_blob(u16 key,
+>> +                             void *buf, loff_t pos, size_t count,
+>> +                             bool dma)
+>>  {
+>>       u32 glk = -1U;
+>>       acpi_status status;
+>> +     ssize_t ret = count;
+>>
+>>       /* If we have ACPI, ensure mutual exclusion against any potential
+>>        * device access by the firmware, e.g. via AML methods:
+>> @@ -139,17 +173,21 @@ static inline void fw_cfg_read_blob(u16 key,
+>>               /* Should never get here */
+>>               WARN(1, "fw_cfg_read_blob: Failed to lock ACPI!\n");
+>>               memset(buf, 0, count);
+>> -             return;
+>> +             return -EINVAL;
+>>       }
+>>
+>>       mutex_lock(&fw_cfg_dev_lock);
+>> -     iowrite16(fw_cfg_sel_endianness(key), fw_cfg_reg_ctrl);
+>> -     while (pos-- > 0)
+>> -             ioread8(fw_cfg_reg_data);
+>> -     ioread8_rep(fw_cfg_reg_data, buf, count);
+>> +     if (dma && fw_cfg_dma_enabled()) {
+>> +             ret = fw_cfg_read_blob_dma(key, buf, pos, count);
+>> +     } else {
+>> +             fw_cfg_read_blob_io(key, buf, pos, count);
+>
+> I'd set ret = count here.
 
-On Tue, Jan 16, 2018 at 11:12:36AM +0100, Alexandre Belloni wrote:
-> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-> index 350a990fc719..a9db028a0338 100644
-> --- a/arch/mips/Kconfig
-> +++ b/arch/mips/Kconfig
-> @@ -527,6 +527,30 @@ config MIPS_MALTA
->  	  This enables support for the MIPS Technologies Malta evaluation
->  	  board.
-> =20
-> +config MSCC_OCELOT
-> +	bool "Microsemi Ocelot architecture"
-> +	select BOOT_RAW
-> +	select CEVT_R4K
-> +	select CSRC_R4K
-> +	select IRQ_MIPS_CPU
-> +	select DMA_NONCOHERENT
-> +	select SYS_HAS_CPU_MIPS32_R2
-> +	select SYS_SUPPORTS_32BIT_KERNEL
-> +	select SYS_SUPPORTS_BIG_ENDIAN
-> +	select SYS_SUPPORTS_LITTLE_ENDIAN
-> +	select SYS_HAS_EARLY_PRINTK
-> +	select USE_GENERIC_EARLY_PRINTK_8250
-> +	select MSCC_OCELOT_IRQ
-> +	select PINCTRL
-> +	select GPIOLIB
-> +	select COMMON_CLK
-> +	select USE_OF
-> +	select BUILTIN_DTB
-> +	select LIBFDT
+Ok, why not.
 
-Please sort alphanumerically.
+>
+>> +     }
+>> +
+>>       mutex_unlock(&fw_cfg_dev_lock);
+>>
+>>       acpi_release_global_lock(glk);
+>> +
+>> +     return ret;
+>>  }
+>>
+>>  #ifdef CONFIG_CRASH_CORE
+>> @@ -282,8 +320,9 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
+>>  #endif
+>>
+>>       /* verify fw_cfg device signature */
+>> -     fw_cfg_read_blob(FW_CFG_SIGNATURE, sig, 0, FW_CFG_SIG_SIZE);
+>> -     if (memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
+>> +     if (fw_cfg_read_blob(FW_CFG_SIGNATURE, sig,
+>> +                             0, FW_CFG_SIG_SIZE, false) < 0 ||
+>> +             memcmp(sig, "QEMU", FW_CFG_SIG_SIZE) != 0) {
+>>               fw_cfg_io_cleanup();
+>>               return -ENODEV;
+>>       }
+>
+> Rather than add dead code, how about a promise not to
+> fail if dma is disabled? Patch will be smaller then.
 
-> +	help
-> +	  This enables support for the Microsemi Ocelot architecture.
-> +	  It builds a generic DT-based kernel image.
-> +
->  config MACH_PIC32
->  	bool "Microchip PIC32 Family"
->  	help
+Even with dma disabled, you could have a locking bug which was
+silently ignored before and is now taken into account.
 
-=2E..
-
-> diff --git a/arch/mips/mscc/Platform b/arch/mips/mscc/Platform
-> new file mode 100644
-> index 000000000000..9ae874c8f136
-> --- /dev/null
-> +++ b/arch/mips/mscc/Platform
-> @@ -0,0 +1,12 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +#
-> +# Microsemi MIPS SoC support
-> +#
-> +# License: Dual MIT/GPL
-> +# Copyright (c) 2017 Microsemi Corporation
-> +
-> +#
-> +# Microsemi Ocelot board(s)
-> +#
-> +platform-$(CONFIG_MSCC_OCELOT) +=3D mscc/
-
-Please use tabs to align
-
-> +load-$(CONFIG_MSCC_OCELOT)	 +=3D 0x80100000
-
-Please drop the space after the tab.
-
-> diff --git a/arch/mips/mscc/setup.c b/arch/mips/mscc/setup.c
-> new file mode 100644
-> index 000000000000..77803edd7bfd
-> --- /dev/null
-> +++ b/arch/mips/mscc/setup.c
-> @@ -0,0 +1,106 @@
-
-=2E..
-
-> +
-> +#include <asm/time.h>
-> +#include <asm/idle.h>
-> +#include <asm/prom.h>
-> +#include <asm/reboot.h>
-
-Please sort these includes alphanumerically if possible.
-
-> +
-> +static void __init ocelot_earlyprintk_init(void)
-> +{
-> +	void __iomem *uart_base;
-> +
-> +	uart_base =3D ioremap_nocache(0x70100000, 0x0f);
-
-Maybe these hex literals (the address at least) can use #defines.
-
-0xf is an odd size when the 2 below indicates 32-bit registers.
-
-
-> +	setup_8250_early_printk_port((unsigned long)uart_base, 2, 50000);
-> +}
-
-=2E..
-
-> +extern void (*late_time_init)(void);
-
-This is already declared in linux/init.h which you include, so I think
-you can drop it.
-
-> +void __init device_tree_init(void)
-> +{
-> +	if (!initial_boot_params)
-> +		return;
-
-I think flatten_and_copy_device_tree() already checks this (with a
-warning), so this could be dropped.
-
-Cheers
-James
-
---TiqCXmo5T1hvSQQg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqEaRYACgkQbAtpk944
-dnoUmRAAmSAfy9w+IUOo/+i9DvxR2NNyykOd/IMT+Gu60Mv9MTWo0YsgFNfAYvMT
-LSov9zXoF4z7cC0BmWU8OJ5ai7NjtO0fQyKuLswUlWWVL8Nh3ez9TjwX2VgrJ6+6
-4bvHpoJwDx48P9TyVPpk36hm7WpDGpoCFsxDkNe7PT5FkKLWlVh0io/oFCRCmEdC
-c7dihRSXx/wGTSqvPGMzoC3FQQ6xJrQ9SsvpBBf34zcx3w9ibFeC3uwwg3D5YIeJ
-mSLvD53vdkfgmRaBaDH6k2c40kSHDQQOrXTa1d4tobUvOwebiCF5xLsn+pW6UL+J
-bBFOPaoxOw0do42ph8gbHQ2Zr3PxldQpkU3TclMODWFFYNsAm4gCbJZEscf9z0kT
-IpeQQakRGaTeHpD2Rf3zs10PK7ARFKJV06ZfB4Ca4yuck/AJXVViVyITGkz8TgjF
-sDbnSe443g46EQu7xegrRykx1iRhcAQc+Kdwb1ynFQzTQrZQy+9M24RffFGgyYyo
-ddCWjr8nogQCVpXhX3vsVJHZQ9uh+7aFlqOLokIovHhmkRizbDcG9mANTzyPFKAC
-xmsIa6ijLi+cgWILwEhiN317p/pEepPDgqRltas7MDstHJK+PzRTr4rRtF30RyfB
-pibSrIBEbhde8EqN5W0pTfsTx/FGmLeq0s1G+7vZc9v8Gw4mh7I=
-=a6Jb
------END PGP SIGNATURE-----
-
---TiqCXmo5T1hvSQQg--
+>
+>> @@ -466,8 +505,8 @@ static ssize_t fw_cfg_sysfs_read_raw(struct file *filp, struct kobject *kobj,
+>>       if (count > entry->size - pos)
+>>               count = entry->size - pos;
+>>
+>> -     fw_cfg_read_blob(entry->select, buf, pos, count);
+>> -     return count;
+>> +     /* do not use DMA, virt_to_phys(buf) might not be ok */
+>> +     return fw_cfg_read_blob(entry->select, buf, pos, count, false);
+>>  }
+>>
+>>  static struct bin_attribute fw_cfg_sysfs_attr_raw = {
+>> @@ -632,7 +671,12 @@ static int fw_cfg_register_dir_entries(void)
+>>       struct fw_cfg_file *dir;
+>>       size_t dir_size;
+>>
+>> -     fw_cfg_read_blob(FW_CFG_FILE_DIR, &files.count, 0, sizeof(files.count));
+>> +     ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, &files.count,
+>> +                     0, sizeof(files.count), false);
+>> +     if (ret < 0) {
+>> +             return ret;
+>> +     }
+>> +
+>>       count = be32_to_cpu(files.count);
+>>       dir_size = count * sizeof(struct fw_cfg_file);
+>>
+>> @@ -640,7 +684,11 @@ static int fw_cfg_register_dir_entries(void)
+>>       if (!dir)
+>>               return -ENOMEM;
+>>
+>> -     fw_cfg_read_blob(FW_CFG_FILE_DIR, dir, sizeof(files.count), dir_size);
+>> +     ret = fw_cfg_read_blob(FW_CFG_FILE_DIR, dir,
+>> +                     sizeof(files.count), dir_size, false);
+>> +     if (ret < 0) {
+>> +             goto end;
+>> +     }
+>>
+>>       for (i = 0; i < count; i++) {
+>>               ret = fw_cfg_register_file(&dir[i]);
+>> @@ -648,6 +696,7 @@ static int fw_cfg_register_dir_entries(void)
+>>                       break;
+>>       }
+>>
+>> +end:
+>>       kfree(dir);
+>>       return ret;
+>>  }
+>> @@ -688,7 +737,10 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
+>>               goto err_probe;
+>>
+>>       /* get revision number, add matching top-level attribute */
+>> -     fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
+>> +     err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev), false);
+>> +     if (err < 0) {
+>> +             goto err_probe;
+>> +     }
+>>       fw_cfg_rev = le32_to_cpu(rev);
+>>       err = sysfs_create_file(fw_cfg_top_ko, &fw_cfg_rev_attr.attr);
+>>       if (err)
+>> --
+>> 2.16.1.73.g5832b7e9f2
