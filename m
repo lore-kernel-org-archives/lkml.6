@@ -1,48 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754663AbeBNInL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 03:43:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49889 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754578AbeBNInK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 03:43:10 -0500
-Date: Wed, 14 Feb 2018 09:43:08 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: syzbot <syzbot+1a240cdb1f4cc88819df@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, dhowells@redhat.com, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mingo@kernel.org,
-        rppt@linux.vnet.ibm.com, syzkaller-bugs@googlegroups.com,
-        vbabka@suse.cz, viro@zeniv.linux.org.uk,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org
-Subject: Re: WARNING in kvmalloc_node
-Message-ID: <20180214084308.GX3443@dhcp22.suse.cz>
-References: <001a1144c4ca5dc9d6056520c7b7@google.com>
- <20180214025533.GA28811@bombadil.infradead.org>
+        id S1754632AbeBNIsS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 03:48:18 -0500
+Received: from mail-qt0-f170.google.com ([209.85.216.170]:41565 "EHLO
+        mail-qt0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751536AbeBNIsR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 03:48:17 -0500
+X-Google-Smtp-Source: AH8x224aSTqoMnP5CIKnAeIqrBykRgeFOXqcjsXUX7qD3e5FwdD4vfem94AHBEKmfeUtetIJCrCnYysm/PJ/jZRb7+0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180214025533.GA28811@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180212114937.GA12976@sirena.org.uk>
+References: <CAErzpmuxmrJszRz5_SZXPMkdU2UWNHChrnKjnHuCWZYrs4hgTA@mail.gmail.com>
+ <20180212114937.GA12976@sirena.org.uk>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Wed, 14 Feb 2018 00:47:56 -0800
+Message-ID: <CAErzpmtjeOvBUxAPsmtW+EOM7pBrwtAe5XSx_ujEWM8wt7_YOA@mail.gmail.com>
+Subject: Re: [PATCH v3] ASoC: use DEFINE_SHOW_ATTRIBUTE() to decrease code duplication
+To: Mark Brown <broonie@kernel.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 13-02-18 18:55:33, Matthew Wilcox wrote:
-> On Tue, Feb 13, 2018 at 03:59:01PM -0800, syzbot wrote:
-[...]
-> >  kvmalloc include/linux/mm.h:541 [inline]
-> >  kvmalloc_array include/linux/mm.h:557 [inline]
-> >  __ptr_ring_init_queue_alloc include/linux/ptr_ring.h:474 [inline]
-> >  ptr_ring_init include/linux/ptr_ring.h:492 [inline]
-> >  __cpu_map_entry_alloc kernel/bpf/cpumap.c:359 [inline]
-> >  cpu_map_update_elem+0x3c3/0x8e0 kernel/bpf/cpumap.c:490
-> >  map_update_elem kernel/bpf/syscall.c:698 [inline]
-> 
-> Blame the BPF people, not the MM people ;-)
-
-Yes. kvmalloc (the vmalloc part) doesn't support GFP_ATOMIC semantic.
--- 
-Michal Hocko
-SUSE Labs
+On Mon, Feb 12, 2018 at 3:49 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Fri, Feb 09, 2018 at 11:10:55PM +0800, Donglin Peng wrote:
+>
+>> --- a/sound/soc/soc-core.c
+>> +++ b/sound/soc/soc-core.c
+>> @@ -349,7 +349,7 @@ static void soc_init_codec_debugfs(struct
+>> snd_soc_component *component)
+>>              "ASoC: Failed to create codec register debugfs file\n");
+>
+> Your patch has been corrupted somewhere (probably in your mail client) -
+> there's word wrapping here.
+Sorry, I will check it.
