@@ -1,216 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031448AbeBNPdj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 10:33:39 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:35419 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031333AbeBNPdh (ORCPT
+        id S1031463AbeBNPdq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 10:33:46 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53209 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031333AbeBNPdm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:33:37 -0500
-X-Google-Smtp-Source: AH8x227lQBDC6SuKcLWvGfbnLWzEqCoi5jcaZthu6KVJpA9z7mSHzIh0P5RD2R5gmUPQegoB6wIVlezfewAnZiU0iiA=
+        Wed, 14 Feb 2018 10:33:42 -0500
+X-Google-Smtp-Source: AH8x224CO3LgbTUFBrNLFl6+ChXWYKtrp5L5nav7Cek2MguMlYkzvfgtI3JFzRfLMLCGRl3VtalqW83Z1jvoTEB53Dw=
 MIME-Version: 1.0
-In-Reply-To: <001a114031f4798f2d05652c8335@google.com>
-References: <001a114031f4798f2d05652c8335@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 14 Feb 2018 16:33:15 +0100
-Message-ID: <CACT4Y+ZKba_uuE28uVy_cw0f8fvebe36titj8UCBOeDt4G3U=Q@mail.gmail.com>
-Subject: Re: INFO: task hung in linkwatch_event
-To: syzbot <syzbot+a3926c3116d237751fd8@syzkaller.appspotmail.com>
-Cc: Christian Brauner <christian.brauner@ubuntu.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Miller <davem@davemloft.net>, David Ahern <dsahern@gmail.com>,
-        Florian Westphal <fw@strlen.de>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jiri Benc <jbenc@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-        Xin Long <lucien.xin@gmail.com>, mschiffer@universe-factory.net,
-        netdev <netdev@vger.kernel.org>, syzkaller-bugs@googlegroups.com,
-        Vladislav Yasevich <vyasevich@gmail.com>
+In-Reply-To: <20180214112721.GT12979@localhost.localdomain>
+References: <1518553967-20656-1-git-send-email-mathieu.poirier@linaro.org>
+ <1518553967-20656-5-git-send-email-mathieu.poirier@linaro.org>
+ <20180214103639.GR12979@localhost.localdomain> <20180214104935.GS12979@localhost.localdomain>
+ <20180214112721.GT12979@localhost.localdomain>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Wed, 14 Feb 2018 08:33:40 -0700
+Message-ID: <CANLsYkwPo-uHOWwLZDdvhykx1EU2O--uphJ9KbZYAnD--nFoVg@mail.gmail.com>
+Subject: Re: [PATCH V3 04/10] sched/core: Prevent race condition between
+ cpuset and __sched_setscheduler()
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Li Zefan <lizefan@huawei.com>,
+        Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+        "luca.abeni" <luca.abeni@santannapisa.it>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 2:59 PM, syzbot
-<syzbot+a3926c3116d237751fd8@syzkaller.appspotmail.com> wrote:
-> Hello,
+On 14 February 2018 at 04:27, Juri Lelli <juri.lelli@redhat.com> wrote:
+> On 14/02/18 11:49, Juri Lelli wrote:
+>> On 14/02/18 11:36, Juri Lelli wrote:
+>> > Hi Mathieu,
+>> >
+>> > On 13/02/18 13:32, Mathieu Poirier wrote:
+>> > > No synchronisation mechanism exist between the cpuset subsystem and calls
+>> > > to function __sched_setscheduler().  As such it is possible that new root
+>> > > domains are created on the cpuset side while a deadline acceptance test
+>> > > is carried out in __sched_setscheduler(), leading to a potential oversell
+>> > > of CPU bandwidth.
+>> > >
+>> > > By making available the cpuset_mutex to the core scheduler it is possible
+>> > > to prevent situations such as the one described above from happening.
+>> > >
+>> > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>> > > ---
+>> >
+>> > [...]
+>> >
+>> > > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> > > index f727c3d0064c..0d8badcf1f0f 100644
+>> > > --- a/kernel/sched/core.c
+>> > > +++ b/kernel/sched/core.c
+>> > > @@ -4176,6 +4176,13 @@ static int __sched_setscheduler(struct task_struct *p,
+>> > >   }
+>> > >
+>> > >   /*
+>> > > +  * Make sure we don't race with the cpuset subsystem where root
+>> > > +  * domains can be rebuilt or modified while operations like DL
+>> > > +  * admission checks are carried out.
+>> > > +  */
+>> > > + cpuset_lock();
+>> > > +
+>> > > + /*
+>> >
+>> > Mmm, I'm afraid we can't do this. __sched_setscheduler might be called
+>> > from interrupt contex by normalize_rt_tasks().
+>>
+>> Maybe conditionally grabbing it if pi is true could do? I guess we don't
+>> care much about domains when sysrq.
 >
-> syzbot hit the following crash on upstream commit
-> a2e5790d841658485d642196dbb0927303d6c22f (Wed Feb 7 06:15:42 2018 +0000)
-> Merge branch 'akpm' (patches from Andrew)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
-> Raw console output is attached.
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached.
+> Ops.. just got this. :/
 
-Another hang on rtnl lock:
 
-#syz dup: INFO: task hung in netdev_run_todo
+Arrghhh... Back to the drawing board.
 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+a3926c3116d237751fd8@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
 >
-> INFO: task kworker/1:3:1828 blocked for more than 120 seconds.
->       Not tainted 4.15.0+ #301
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> kworker/1:3     D19968  1828      2 0x80000000
-> Workqueue: events linkwatch_event
-> Call Trace:
->  context_switch kernel/sched/core.c:2857 [inline]
->  __schedule+0x8e2/0x2040 kernel/sched/core.c:3435
->  schedule+0xf5/0x430 kernel/sched/core.c:3494
->  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3552
->  __mutex_lock_common kernel/locking/mutex.c:833 [inline]
->  __mutex_lock+0xaad/0x1a80 kernel/locking/mutex.c:893
->  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:908
->  rtnl_lock+0x17/0x20 net/core/rtnetlink.c:74
->  linkwatch_event+0x57/0xc0 net/core/link_watch.c:236
->  process_one_work+0xbbf/0x1af0 kernel/workqueue.c:2113
->  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
->  kthread+0x33c/0x400 kernel/kthread.c:238
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:429
+> --->8---
+> [    0.020203] ======================================================
+> [    0.020946] WARNING: possible circular locking dependency detected
+> [    0.021000] 4.16.0-rc1+ #64 Not tainted
+> [    0.021000] ------------------------------------------------------
+> [    0.021000] swapper/0/1 is trying to acquire lock:
+> [    0.021000]  (cpu_hotplug_lock.rw_sem){.+.+}, at: [<000000007164d41d>] smpboot_register_percpu_thread_cpumask+0x2d/0x100
+> [    0.021000]
+> [    0.021000] but task is already holding lock:
+> [    0.021000]  (cpuset_mutex){+.+.}, at: [<000000008529a52c>] __sched_setscheduler+0xb5/0x8b0
+> [    0.021000]
+> [    0.021000] which lock already depends on the new lock.
+> [    0.021000]
+> [    0.021000]
+> [    0.021000] the existing dependency chain (in reverse order) is:
+> [    0.021000]
+> [    0.021000] -> #2 (cpuset_mutex){+.+.}:
+> [    0.021000]        __sched_setscheduler+0xb5/0x8b0
+> [    0.021000]        _sched_setscheduler+0x6c/0x80
+> [    0.021000]        __kthread_create_on_node+0x10e/0x170
+> [    0.021000]        kthread_create_on_node+0x37/0x40
+> [    0.021000]        kthread_create_on_cpu+0x27/0x90
+> [    0.021000]        __smpboot_create_thread.part.3+0x64/0xe0
+> [    0.021000]        smpboot_register_percpu_thread_cpumask+0x91/0x100
+> [    0.021000]        spawn_ksoftirqd+0x37/0x40
+> [    0.021000]        do_one_initcall+0x3b/0x160
+> [    0.021000]        kernel_init_freeable+0x118/0x258
+> [    0.021000]        kernel_init+0xa/0x100
+> [    0.021000]        ret_from_fork+0x3a/0x50
+> [    0.021000]
+> [    0.021000] -> #1 (smpboot_threads_lock){+.+.}:
+> [    0.021000]        smpboot_register_percpu_thread_cpumask+0x3b/0x100
+> [    0.021000]        spawn_ksoftirqd+0x37/0x40
+> [    0.021000]        do_one_initcall+0x3b/0x160
+> [    0.021000]        kernel_init_freeable+0x118/0x258
+> [    0.021000]        kernel_init+0xa/0x100
+> [    0.021000]        ret_from_fork+0x3a/0x50
+> [    0.021000]
+> [    0.021000] -> #0 (cpu_hotplug_lock.rw_sem){.+.+}:
+> [    0.021000]        cpus_read_lock+0x3e/0x80
+> [    0.021000]        smpboot_register_percpu_thread_cpumask+0x2d/0x100
+> [    0.021000]        lockup_detector_init+0x3e/0x74
+> [    0.021000]        kernel_init_freeable+0x146/0x258
+> [    0.021000]        kernel_init+0xa/0x100
+> [    0.021000]        ret_from_fork+0x3a/0x50
+> [    0.021000]
+> [    0.021000] other info that might help us debug this:
+> [    0.021000]
+> [    0.021000] Chain exists of:
+> [    0.021000]   cpu_hotplug_lock.rw_sem --> smpboot_threads_lock --> cpuset_mutex
+> [    0.021000]
+> [    0.021000]  Possible unsafe locking scenario:
+> [    0.021000]
+> [    0.021000]        CPU0                    CPU1
+> [    0.021000]        ----                    ----
+> [    0.021000]   lock(cpuset_mutex);
+> [    0.021000]                                lock(smpboot_threads_lock);
+> [    0.021000]                                lock(cpuset_mutex);
+> [    0.021000]   lock(cpu_hotplug_lock.rw_sem);
+> [    0.021000]
+> [    0.021000]  *** DEADLOCK ***
+> [    0.021000]
+> [    0.021000] 1 lock held by swapper/0/1:
+> [    0.021000]  #0:  (cpuset_mutex){+.+.}, at: [<000000008529a52c>] __sched_setscheduler+0xb5/0x8b0
+> [    0.021000]
+> [    0.021000] stack backtrace:
+> [    0.021000] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.16.0-rc1+ #64
+> [    0.021000] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-2.fc27 04/01/2014
+> [    0.021000] Call Trace:
+> [    0.021000]  dump_stack+0x85/0xc5
+> [    0.021000]  print_circular_bug.isra.38+0x1ce/0x1db
+> [    0.021000]  __lock_acquire+0x1278/0x1320
+> [    0.021000]  ? sched_clock_local+0x12/0x80
+> [    0.021000]  ? lock_acquire+0x9f/0x1f0
+> [    0.021000]  lock_acquire+0x9f/0x1f0
+> [    0.021000]  ? smpboot_register_percpu_thread_cpumask+0x2d/0x100
+> [    0.021000]  cpus_read_lock+0x3e/0x80
+> [    0.021000]  ? smpboot_register_percpu_thread_cpumask+0x2d/0x100
+> [    0.021000]  smpboot_register_percpu_thread_cpumask+0x2d/0x100
+> [    0.021000]  ? set_debug_rodata+0x11/0x11
+> [    0.021000]  lockup_detector_init+0x3e/0x74
+> [    0.021000]  kernel_init_freeable+0x146/0x258
+> [    0.021000]  ? rest_init+0xd0/0xd0
+> [    0.021000]  kernel_init+0xa/0x100
+> [    0.021000]  ret_from_fork+0x3a/0x50
 >
-> Showing all locks held in the system:
-> 3 locks held by kworker/1:1/23:
->  #0:  ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at: [<000000003027d709>]
-> process_one_work+0xaaf/0x1af0 kernel/workqueue.c:2084
->  #1:  ((addr_chk_work).work){+.+.}, at: [<00000000f19350a7>]
-> process_one_work+0xb01/0x1af0 kernel/workqueue.c:2088
->  #2:  (rtnl_mutex){+.+.}, at: [<0000000055e4e532>] rtnl_lock+0x17/0x20
-> net/core/rtnetlink.c:74
-> 2 locks held by khungtaskd/760:
->  #0:  (rcu_read_lock){....}, at: [<000000007d511abd>]
-> check_hung_uninterruptible_tasks kernel/hung_task.c:175 [inline]
->  #0:  (rcu_read_lock){....}, at: [<000000007d511abd>] watchdog+0x1c5/0xd60
-> kernel/hung_task.c:249
->  #1:  (tasklist_lock){.+.+}, at: [<0000000078b2aec7>]
-> debug_show_all_locks+0xd3/0x3d0 kernel/locking/lockdep.c:4470
-> 3 locks held by kworker/1:3/1828:
->  #0:  ((wq_completion)"events"){+.+.}, at: [<000000003027d709>]
-> process_one_work+0xaaf/0x1af0 kernel/workqueue.c:2084
->  #1:  ((linkwatch_work).work){+.+.}, at: [<00000000f19350a7>]
-> process_one_work+0xb01/0x1af0 kernel/workqueue.c:2088
->  #2:  (rtnl_mutex){+.+.}, at: [<0000000055e4e532>] rtnl_lock+0x17/0x20
-> net/core/rtnetlink.c:74
-> 1 lock held by rsyslogd/3879:
->  #0:  (&f->f_pos_lock){+.+.}, at: [<000000001e0f1a09>]
-> __fdget_pos+0x12b/0x190 fs/file.c:765
-> 2 locks held by getty/4002:
->  #0:  (&tty->ldisc_sem){++++}, at: [<000000004b23cd0c>]
-> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<000000007b8990ce>]
-> n_tty_read+0x2ef/0x1a00 drivers/tty/n_tty.c:2131
-> 2 locks held by getty/4003:
->  #0:  (&tty->ldisc_sem){++++}, at: [<000000004b23cd0c>]
-> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<000000007b8990ce>]
-> n_tty_read+0x2ef/0x1a00 drivers/tty/n_tty.c:2131
-> 2 locks held by getty/4004:
->  #0:  (&tty->ldisc_sem){++++}, at: [<000000004b23cd0c>]
-> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<000000007b8990ce>]
-> n_tty_read+0x2ef/0x1a00 drivers/tty/n_tty.c:2131
-> 2 locks held by getty/4005:
->  #0:  (&tty->ldisc_sem){++++}, at: [<000000004b23cd0c>]
-> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<000000007b8990ce>]
-> n_tty_read+0x2ef/0x1a00 drivers/tty/n_tty.c:2131
-> 2 locks held by getty/4006:
->  #0:  (&tty->ldisc_sem){++++}, at: [<000000004b23cd0c>]
-> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<000000007b8990ce>]
-> n_tty_read+0x2ef/0x1a00 drivers/tty/n_tty.c:2131
-> 2 locks held by getty/4007:
->  #0:  (&tty->ldisc_sem){++++}, at: [<000000004b23cd0c>]
-> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<000000007b8990ce>]
-> n_tty_read+0x2ef/0x1a00 drivers/tty/n_tty.c:2131
-> 2 locks held by getty/22206:
->  #0:  (&tty->ldisc_sem){++++}, at: [<000000004b23cd0c>]
-> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<000000007b8990ce>]
-> n_tty_read+0x2ef/0x1a00 drivers/tty/n_tty.c:2131
-> 1 lock held by syz-executor0/953:
->  #0:  (sk_lock-AF_INET6){+.+.}, at: [<00000000918a22c0>] lock_sock
-> include/net/sock.h:1463 [inline]
->  #0:  (sk_lock-AF_INET6){+.+.}, at: [<00000000918a22c0>]
-> ipv6_getsockopt+0x1c5/0x2e0 net/ipv6/ipv6_sockglue.c:1370
-> 1 lock held by syz-executor0/964:
->  #0:  (sk_lock-AF_INET6){+.+.}, at: [<00000000918a22c0>] lock_sock
-> include/net/sock.h:1463 [inline]
->  #0:  (sk_lock-AF_INET6){+.+.}, at: [<00000000918a22c0>]
-> ipv6_getsockopt+0x1c5/0x2e0 net/ipv6/ipv6_sockglue.c:1370
-> 1 lock held by syz-executor0/970:
->  #0:  (rtnl_mutex){+.+.}, at: [<0000000055e4e532>] rtnl_lock+0x17/0x20
-> net/core/rtnetlink.c:74
-> 1 lock held by syz-executor1/977:
->  #0:  (rtnl_mutex){+.+.}, at: [<0000000055e4e532>] rtnl_lock+0x17/0x20
-> net/core/rtnetlink.c:74
-> 1 lock held by syz-executor1/987:
->  #0:  (rtnl_mutex){+.+.}, at: [<0000000055e4e532>] rtnl_lock+0x17/0x20
-> net/core/rtnetlink.c:74
-> 1 lock held by syz-executor1/1007:
->  #0:  (rtnl_mutex){+.+.}, at: [<0000000055e4e532>] rtnl_lock+0x17/0x20
-> net/core/rtnetlink.c:74
-> 1 lock held by syz-executor1/1008:
->  #0:  (rtnl_mutex){+.+.}, at: [<0000000055e4e532>] rtnl_lock+0x17/0x20
-> net/core/rtnetlink.c:74
-> 1 lock held by syz-executor3/986:
->  #0:  (rtnl_mutex){+.+.}, at: [<0000000055e4e532>] rtnl_lock+0x17/0x20
-> net/core/rtnetlink.c:74
-> 1 lock held by syz-executor3/1009:
->  #0:  (rtnl_mutex){+.+.}, at: [<0000000055e4e532>] rtnl_lock+0x17/0x20
-> net/core/rtnetlink.c:74
->
-> =============================================
->
-> NMI backtrace for cpu 1
-> CPU: 1 PID: 760 Comm: khungtaskd Not tainted 4.15.0+ #301
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  nmi_cpu_backtrace+0x1d2/0x210 lib/nmi_backtrace.c:103
->  nmi_trigger_cpumask_backtrace+0x122/0x180 lib/nmi_backtrace.c:62
->  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
->  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
->  check_hung_task kernel/hung_task.c:132 [inline]
->  check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
->  watchdog+0x90c/0xd60 kernel/hung_task.c:249
->  kthread+0x33c/0x400 kernel/kthread.c:238
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:429
-> Sending NMI from CPU 1 to CPUs 0:
-> NMI backtrace for cpu 0 skipped: idling at native_safe_halt+0x6/0x10
-> arch/x86/include/asm/irqflags.h:54
->
->
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/001a114031f4798f2d05652c8335%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
