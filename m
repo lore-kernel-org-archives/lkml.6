@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967166AbeBNKSc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 05:18:32 -0500
-Received: from mout.web.de ([212.227.17.11]:60789 "EHLO mout.web.de"
+        id S967163AbeBNKT5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 05:19:57 -0500
+Received: from mout.web.de ([217.72.192.78]:46845 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966996AbeBNKSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 05:18:30 -0500
-Subject: [PATCH 1/4] crypto: ux500: Delete an error message for a failed
- memory allocation in ux500_cryp_probe()
+        id S966996AbeBNKTz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 05:19:55 -0500
+Subject: [PATCH 2/4] crypto: ux500: Adjust two condition checks in
+ ux500_cryp_probe()
 From: SF Markus Elfring <elfring@users.sourceforge.net>
 To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
         Geliang Tang <geliangtang@gmail.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 References: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
-Message-ID: <e099a8a5-e7dd-5170-f46e-83c3609e8137@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 11:18:18 +0100
+Message-ID: <d79ef7ab-cf49-6b32-01d8-e4aa77424e39@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 11:19:40 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
@@ -23,50 +23,70 @@ In-Reply-To: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:LDXS1NtnTxY8mnaiLlRglRBchtlo8OsKagRQIe3hBR+lv98707w
- 8EUDdTGeYBPsbuVwCnojYElsJNY0fSGa1WR2BsP6eIJoOFwr1WZ/4iW/PTRMtI4zcPD4/jE
- L0pDPdeIns32EFBFFjGeyRAu/sFfdekOs695wNcRaE1CD8mtA6g3chHnzivBg+VI1q8CiIi
- BmvbhD3lamNpwh6sgzcEg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:FkiKZpn3nYc=:boS+DzKv4fJJ1gPzzttXY1
- SjlS8oxg54xSPbXWpljJP6gvs/MfTLPUBiw7QJw4i3K2X8tpEHyPgwS/eTtj8zliupPWFYKyM
- yAzdTdyMUqa4Zg5aPnT0eo8iDa9Lej1qa0BkAiqdbdgtm8D+BJdrdvtLzOd8cGFk/W8RUFVob
- Am02UBIX/c4mPx8iDtG2JVG+entOgO3EJ8olNy+JjlkmHEYfsyIonCdWGssqauT+k1160joJV
- 4j96B/hWVJOP9dUlL0Ty7WfDSggZjsw6IA1x3De+hd+xE/zEOJTtlppNaFvsm/F8+YlsrcebK
- 7G6FDJzk5DSK8kJSKEyhSz3xly2cAyOqVVEeOCSlhPkfDaiIZYttE0KJvSb8SVXMaEAzJARJU
- AiZUwUchGmahUpEbjz8t078z9TlRUBm0+cEca0n5Dj/5x1bHUjsWOiY+dSA/52lX9kjhzavql
- cfAS1Zx0SHCkWQX9H8j6dOKWPEPG4+w0H6sypKtTLp4620xCA3zXOEvJqtjvXvmh6aojmu/Ob
- NOj5w2EDRMldNQ/Frg+X8EhOeO2XqQahS3LNE1Gm6Aob5gV/jp/z4yM8HPmi1A6vodydXDV8F
- lIS8MuZLa5OvG4corBffJGlXx5DQ2UgU/f03Nz5DyIi0LQKzOQyECYCgQRoLB6tzGHYtP8Prl
- F5OiST48sSTMJOXoPxy7rhFImmVmHEbZwzIuYhxQ583FC8ABYKEtZohlbvBoPOPK48Qg8wmdA
- osxaEuHurZ5FMjrkxmIT4dlRNAgB6P3Tr0cbtJUR1stuFls3/jkPRcRPZ4Xt2br3tMd0zX+3K
- BY8YAPWCrn5C1qIbTs3SNpJkoR6DKDbep/2skwOGEZT45fICBo=
+X-Provags-ID: V03:K0:X1i36V9/ySxeNqGrbAhUyvLOYcEFoFEcQxx9Pm2sZj1PIt11vqN
+ Ef34y8z7bYiKMlRu88XZ+BS4gfdxbK4y38nvWI0n1Ina+X8+I8xU8gz7b6dKS7B7QB36pDl
+ c+/VK74epHU29TrIUDr6NowPFWX/4/ngFpCC5gzswXJi7L1gnD1m0Wj+aKWW5BKU7zQwcdM
+ Pnu5jT80vpKkXX1pne2Kw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:gbo1eNjzl7w=:qHl0Os8J54/BLXigrOMyWu
+ ypqPRMeWnJGl6MB3Pwwb4s0ino/tBMTGgseri3FG62ZZcXsRTljggAr+wiiPh0p37sBQhnx4n
+ +ZEb9fMOtW7nTSlpaDG92YvUrxpYHUm771YS+vctfkIIVYRG+6UKy+Z+4NdRbcZL4be8z2mqS
+ MwOu+z5r7olV44Riq1zZscJCJODNTqvFStpHp/cAsZvUD7z52zunxy9ULo/+vgSAsCJ0quUDU
+ 2puXo9bALuS/QqJ01VFSCfJNwRlHVfMqtQVM+T8Drs9gaZ6na1wKfDKfm1MIevMyAbaTtAh7Q
+ SWHiNrlSn5XdopWHZruWzc1LyDHmVvJxvg16BY7INrRuQUDj8IxSqc950IJqfN7iQNBHsQCI2
+ XTTrps8KxRHeWeFPDApj+GAM8IAZMChGcoicRv3Hjh8JP6wT8MrdTIEpnPTuGYigqz2qpyWjW
+ W9d2RsBiOGSufA0PqrdD6TJ7wzie2dJS4e+Hi9ZOSMwh604TdJ26jQZUsus+OgrvaKFb6ShYR
+ scCww5BwTE3133BwohTiQH1T0SQPTfbpMtTA7BefQdSg0jHEByNPh2IzU3lkQnaYhLoR3FUC1
+ iwChCpaLuvrNcRZGc0kegrqtZ3FWaoQc72zzKKuR2tjss6s1cAJAjRP4e5FFnPnVMx9WQW5ed
+ c1QCXe9bl7HBib9ehVRxj2V/EYGYafW/ThUKJ0kvblTD/6j3XDyC1JKqcOk8ia+yUXoxnsmy+
+ GEySWivISbcLqzgw+4l5wztSTjBZTw/lF2y509USU5e3DF9x6iIkTLadthb2OwBJ3Agsqa50E
+ rIVPV+HH+LlbnjYay/wS/aO0JeW5RFY6B+6QhVpCTvNrwiDzAY=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 10:12:38 +0100
+Date: Wed, 14 Feb 2018 10:38:44 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+The local variable "cryp_error" was used only for two condition checks.
 
-This issue was detected by using the Coccinelle software.
+* Check the return values from these function calls directly instead.
+
+* Delete this variable which became unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/crypto/ux500/cryp/cryp_core.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/crypto/ux500/cryp/cryp_core.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/crypto/ux500/cryp/cryp_core.c b/drivers/crypto/ux500/cryp/cryp_core.c
-index 765f53e548ab..50bfc7b4c641 100644
+index 50bfc7b4c641..07cc92f88933 100644
 --- a/drivers/crypto/ux500/cryp/cryp_core.c
 +++ b/drivers/crypto/ux500/cryp/cryp_core.c
-@@ -1416,7 +1416,6 @@ static int ux500_cryp_probe(struct platform_device *pdev)
- 	dev_dbg(dev, "[%s]", __func__);
- 	device_data = devm_kzalloc(dev, sizeof(*device_data), GFP_ATOMIC);
- 	if (!device_data) {
--		dev_err(dev, "[%s]: kzalloc() failed!", __func__);
- 		ret = -ENOMEM;
- 		goto out;
+@@ -1404,7 +1404,6 @@ static void cryp_algs_unregister_all(void)
+ static int ux500_cryp_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+-	int cryp_error = 0;
+ 	struct resource *res = NULL;
+ 	struct resource *res_irq = NULL;
+ 	struct cryp_device_data *device_data;
+@@ -1478,15 +1477,13 @@ static int ux500_cryp_probe(struct platform_device *pdev)
+ 		goto out_clk_unprepare;
  	}
+ 
+-	cryp_error = cryp_check(device_data);
+-	if (cryp_error != 0) {
++	if (cryp_check(device_data)) {
+ 		dev_err(dev, "[%s]: cryp_init() failed!", __func__);
+ 		ret = -EINVAL;
+ 		goto out_power;
+ 	}
+ 
+-	cryp_error = cryp_configure_protection(device_data, &prot);
+-	if (cryp_error != 0) {
++	if (cryp_configure_protection(device_data, &prot)) {
+ 		dev_err(dev, "[%s]: cryp_configure_protection() failed!",
+ 			__func__);
+ 		ret = -EINVAL;
 -- 
 2.16.1
