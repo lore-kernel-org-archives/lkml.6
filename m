@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031461AbeBNUJ4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 15:09:56 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:36805 "EHLO mail.siol.net"
+        id S1031672AbeBNUMA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 15:12:00 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:36850 "EHLO mail.siol.net"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1031390AbeBNUJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 15:09:48 -0500
+        id S1031394AbeBNUJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 15:09:52 -0500
 From: Jernej Skrabec <jernej.skrabec@siol.net>
 To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
         robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
@@ -15,11 +15,10 @@ To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
 Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, p.zabel@pengutronix.de,
-        hjc@rock-chips.com, heiko@sntech.de
-Subject: [PATCH v5 05/12] drm/bridge/synopsys: dw-hdmi: don't clobber drvdata
-Date: Wed, 14 Feb 2018 21:08:59 +0100
-Message-Id: <20180214200906.31509-6-jernej.skrabec@siol.net>
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v5 07/12] drm/sun4i: Add has_channel_0 TCON quirk
+Date: Wed, 14 Feb 2018 21:09:01 +0100
+Message-Id: <20180214200906.31509-8-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180214200906.31509-1-jernej.skrabec@siol.net>
 References: <20180214200906.31509-1-jernej.skrabec@siol.net>
@@ -27,291 +26,165 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dw_hdmi shouldn't set drvdata since some drivers might need to store
-it's own data there. Rework dw_hdmi in a way to return struct dw_hdmi
-instead to store it in drvdata. This way drivers are responsible to
-store and pass structure when needed.
+Some TCONs on newer SoCs doesn't support channel 0, since they are meant
+to be used only with TV or HDMI encoder.
 
-Idea was taken from the following commit:
-8242ecbd597d ("drm/bridge/synopsys: stop clobbering drvdata")
+Prepare support for them with adding has_channel_0 quirk.
 
-Cc: p.zabel@pengutronix.de
-Cc: narmstrong@baylibre.com
-Cc: Laurent.pinchart@ideasonboard.com
-Cc: hjc@rock-chips.com
-Cc: heiko@sntech.de
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c   | 31 ++++++++++++-----------------
- drivers/gpu/drm/imx/dw_hdmi-imx.c           | 13 +++++++++---
- drivers/gpu/drm/meson/meson_dw_hdmi.c       | 14 +++++++++----
- drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c      | 12 +++++++++--
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 13 +++++++++---
- include/drm/bridge/dw_hdmi.h                | 13 ++++++------
- 6 files changed, 60 insertions(+), 36 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 41 +++++++++++++++++++++++++++-----------
+ drivers/gpu/drm/sun4i/sun4i_tcon.h |  1 +
+ 2 files changed, 30 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 7d80f4b56683..f9802399cc0d 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -2543,8 +2543,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 	if (hdmi->i2c)
- 		dw_hdmi_i2c_init(hdmi);
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 3c15cf24b503..32d9a5eb9e25 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -84,6 +84,7 @@ static void sun4i_tcon_channel_set_status(struct sun4i_tcon *tcon, int channel,
  
--	platform_set_drvdata(pdev, hdmi);
--
- 	return hdmi;
+ 	switch (channel) {
+ 	case 0:
++		WARN_ON(!tcon->quirks->has_channel_0);
+ 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
+ 				   SUN4I_TCON0_CTL_TCON_ENABLE,
+ 				   enabled ? SUN4I_TCON0_CTL_TCON_ENABLE : 0);
+@@ -276,6 +277,8 @@ static void sun4i_tcon0_mode_set_lvds(struct sun4i_tcon *tcon,
+ 	u8 clk_delay;
+ 	u32 reg, val = 0;
  
- err_iahb:
-@@ -2594,25 +2592,23 @@ static void __dw_hdmi_remove(struct dw_hdmi *hdmi)
- /* -----------------------------------------------------------------------------
-  * Probe/remove API, used from platforms based on the DRM bridge API.
-  */
--int dw_hdmi_probe(struct platform_device *pdev,
--		  const struct dw_hdmi_plat_data *plat_data)
-+struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
-+			      const struct dw_hdmi_plat_data *plat_data)
- {
- 	struct dw_hdmi *hdmi;
++	WARN_ON(!tcon->quirks->has_channel_0);
++
+ 	tcon->dclk_min_div = 7;
+ 	tcon->dclk_max_div = 7;
+ 	sun4i_tcon0_mode_set_common(tcon, mode);
+@@ -344,6 +347,8 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
+ 	u8 clk_delay;
+ 	u32 val = 0;
  
- 	hdmi = __dw_hdmi_probe(pdev, plat_data);
- 	if (IS_ERR(hdmi))
--		return PTR_ERR(hdmi);
-+		return hdmi;
++	WARN_ON(!tcon->quirks->has_channel_0);
++
+ 	tcon->dclk_min_div = 6;
+ 	tcon->dclk_max_div = 127;
+ 	sun4i_tcon0_mode_set_common(tcon, mode);
+@@ -570,10 +575,12 @@ static int sun4i_tcon_init_clocks(struct device *dev,
+ 	}
+ 	clk_prepare_enable(tcon->clk);
  
- 	drm_bridge_add(&hdmi->bridge);
- 
--	return 0;
-+	return hdmi;
- }
- EXPORT_SYMBOL_GPL(dw_hdmi_probe);
- 
--void dw_hdmi_remove(struct platform_device *pdev)
-+void dw_hdmi_remove(struct dw_hdmi *hdmi)
- {
--	struct dw_hdmi *hdmi = platform_get_drvdata(pdev);
--
- 	drm_bridge_remove(&hdmi->bridge);
- 
- 	__dw_hdmi_remove(hdmi);
-@@ -2622,31 +2618,30 @@ EXPORT_SYMBOL_GPL(dw_hdmi_remove);
- /* -----------------------------------------------------------------------------
-  * Bind/unbind API, used from platforms based on the component framework.
-  */
--int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
--		 const struct dw_hdmi_plat_data *plat_data)
-+struct dw_hdmi *dw_hdmi_bind(struct platform_device *pdev,
-+			     struct drm_encoder *encoder,
-+			     const struct dw_hdmi_plat_data *plat_data)
- {
- 	struct dw_hdmi *hdmi;
- 	int ret;
- 
- 	hdmi = __dw_hdmi_probe(pdev, plat_data);
- 	if (IS_ERR(hdmi))
--		return PTR_ERR(hdmi);
-+		return hdmi;
- 
- 	ret = drm_bridge_attach(encoder, &hdmi->bridge, NULL);
- 	if (ret) {
--		dw_hdmi_remove(pdev);
-+		dw_hdmi_remove(hdmi);
- 		DRM_ERROR("Failed to initialize bridge with drm\n");
--		return ret;
-+		return ERR_PTR(ret);
+-	tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
+-	if (IS_ERR(tcon->sclk0)) {
+-		dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
+-		return PTR_ERR(tcon->sclk0);
++	if (tcon->quirks->has_channel_0) {
++		tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
++		if (IS_ERR(tcon->sclk0)) {
++			dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
++			return PTR_ERR(tcon->sclk0);
++		}
  	}
  
--	return 0;
-+	return hdmi;
- }
- EXPORT_SYMBOL_GPL(dw_hdmi_bind);
+ 	if (tcon->quirks->has_channel_1) {
+@@ -930,10 +937,12 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+ 		goto err_free_clocks;
+ 	}
  
--void dw_hdmi_unbind(struct device *dev)
-+void dw_hdmi_unbind(struct dw_hdmi *hdmi)
- {
--	struct dw_hdmi *hdmi = dev_get_drvdata(dev);
--
- 	__dw_hdmi_remove(hdmi);
- }
- EXPORT_SYMBOL_GPL(dw_hdmi_unbind);
-diff --git a/drivers/gpu/drm/imx/dw_hdmi-imx.c b/drivers/gpu/drm/imx/dw_hdmi-imx.c
-index b62763aa8706..fe6becdcc29e 100644
---- a/drivers/gpu/drm/imx/dw_hdmi-imx.c
-+++ b/drivers/gpu/drm/imx/dw_hdmi-imx.c
-@@ -25,6 +25,7 @@
- struct imx_hdmi {
- 	struct device *dev;
- 	struct drm_encoder encoder;
-+	struct dw_hdmi *hdmi;
- 	struct regmap *regmap;
- };
+-	ret = sun4i_dclk_create(dev, tcon);
+-	if (ret) {
+-		dev_err(dev, "Couldn't create our TCON dot clock\n");
+-		goto err_free_clocks;
++	if (tcon->quirks->has_channel_0) {
++		ret = sun4i_dclk_create(dev, tcon);
++		if (ret) {
++			dev_err(dev, "Couldn't create our TCON dot clock\n");
++			goto err_free_clocks;
++		}
+ 	}
  
-@@ -239,14 +240,18 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
- 	drm_encoder_init(drm, encoder, &dw_hdmi_imx_encoder_funcs,
- 			 DRM_MODE_ENCODER_TMDS, NULL);
- 
--	ret = dw_hdmi_bind(pdev, encoder, plat_data);
-+	platform_set_drvdata(pdev, hdmi);
-+
-+	hdmi->hdmi = dw_hdmi_bind(pdev, encoder, plat_data);
- 
- 	/*
- 	 * If dw_hdmi_bind() fails we'll never call dw_hdmi_unbind(),
- 	 * which would have called the encoder cleanup.  Do it manually.
- 	 */
--	if (ret)
-+	if (IS_ERR(hdmi->hdmi)) {
-+		ret = PTR_ERR(hdmi->hdmi);
- 		drm_encoder_cleanup(encoder);
-+	}
- 
- 	return ret;
- }
-@@ -254,7 +259,9 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
- static void dw_hdmi_imx_unbind(struct device *dev, struct device *master,
- 			       void *data)
- {
--	return dw_hdmi_unbind(dev);
-+	struct imx_hdmi *hdmi = dev_get_drvdata(dev);
-+
-+	dw_hdmi_unbind(hdmi->hdmi);
- }
- 
- static const struct component_ops dw_hdmi_imx_ops = {
-diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-index e8c3ef8a94ce..d49af17310c9 100644
---- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
-+++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-@@ -140,6 +140,7 @@ struct meson_dw_hdmi {
- 	struct clk *venci_clk;
- 	struct regulator *hdmi_supply;
- 	u32 irq_stat;
-+	struct dw_hdmi *hdmi;
- };
- #define encoder_to_meson_dw_hdmi(x) \
- 	container_of(x, struct meson_dw_hdmi, encoder)
-@@ -878,9 +879,12 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
- 	dw_plat_data->input_bus_format = MEDIA_BUS_FMT_YUV8_1X24;
- 	dw_plat_data->input_bus_encoding = V4L2_YCBCR_ENC_709;
- 
--	ret = dw_hdmi_bind(pdev, encoder, &meson_dw_hdmi->dw_plat_data);
--	if (ret)
--		return ret;
-+	platform_set_drvdata(pdev, meson_dw_hdmi);
-+
-+	meson_dw_hdmi->hdmi = dw_hdmi_bind(pdev, encoder,
-+					   &meson_dw_hdmi->dw_plat_data);
-+	if (IS_ERR(meson_dw_hdmi->hdmi))
-+		return PTR_ERR(meson_dw_hdmi->hdmi);
- 
- 	DRM_DEBUG_DRIVER("HDMI controller initialized\n");
- 
-@@ -890,7 +894,9 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
- static void meson_dw_hdmi_unbind(struct device *dev, struct device *master,
- 				   void *data)
- {
--	dw_hdmi_unbind(dev);
-+	struct meson_dw_hdmi *meson_dw_hdmi = dev_get_drvdata(dev);
-+
-+	dw_hdmi_unbind(meson_dw_hdmi->hdmi);
- }
- 
- static const struct component_ops meson_dw_hdmi_ops = {
-diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-index dc85b53d58ef..3bebc6821e9c 100644
---- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-@@ -68,12 +68,20 @@ static const struct dw_hdmi_plat_data rcar_dw_hdmi_plat_data = {
- 
- static int rcar_dw_hdmi_probe(struct platform_device *pdev)
- {
--	return dw_hdmi_probe(pdev, &rcar_dw_hdmi_plat_data);
-+	struct dw_hdmi *hdmi;
-+
-+	hdmi = dw_hdmi_probe(pdev, &rcar_dw_hdmi_plat_data);
-+	if (IS_ERR(hdmi))
-+		return PTR_ERR(hdmi);
-+
-+	platform_set_drvdata(pdev, hdmi);
- }
- 
- static int rcar_dw_hdmi_remove(struct platform_device *pdev)
- {
--	dw_hdmi_remove(pdev);
-+	struct dw_hdmi *hdmi = platform_get_drvdata(dev);
-+
-+	dw_hdmi_remove(hdmi);
- 
+ 	ret = sun4i_tcon_init_irq(dev, tcon);
+@@ -991,7 +1000,8 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
  	return 0;
+ 
+ err_free_dotclock:
+-	sun4i_dclk_free(tcon);
++	if (tcon->quirks->has_channel_0)
++		sun4i_dclk_free(tcon);
+ err_free_clocks:
+ 	sun4i_tcon_free_clocks(tcon);
+ err_assert_reset:
+@@ -1005,7 +1015,8 @@ static void sun4i_tcon_unbind(struct device *dev, struct device *master,
+ 	struct sun4i_tcon *tcon = dev_get_drvdata(dev);
+ 
+ 	list_del(&tcon->list);
+-	sun4i_dclk_free(tcon);
++	if (tcon->quirks->has_channel_0)
++		sun4i_dclk_free(tcon);
+ 	sun4i_tcon_free_clocks(tcon);
  }
-diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-index 1eb02a82fd91..3574b0ae2ad1 100644
---- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-@@ -48,6 +48,7 @@ struct rockchip_hdmi {
- 	const struct rockchip_hdmi_chip_data *chip_data;
- 	struct clk *vpll_clk;
- 	struct clk *grf_clk;
-+	struct dw_hdmi *hdmi;
+ 
+@@ -1102,16 +1113,19 @@ static int sun6i_tcon_set_mux(struct sun4i_tcon *tcon,
+ }
+ 
+ static const struct sun4i_tcon_quirks sun4i_a10_quirks = {
++	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	.set_mux		= sun4i_a10_tcon_set_mux,
  };
  
- #define to_rockchip_hdmi(x)	container_of(x, struct rockchip_hdmi, x)
-@@ -377,14 +378,18 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
- 	drm_encoder_init(drm, encoder, &dw_hdmi_rockchip_encoder_funcs,
- 			 DRM_MODE_ENCODER_TMDS, NULL);
- 
--	ret = dw_hdmi_bind(pdev, encoder, plat_data);
-+	platform_set_drvdata(pdev, hdmi);
-+
-+	hdmi->hdmi = dw_hdmi_bind(pdev, encoder, plat_data);
- 
- 	/*
- 	 * If dw_hdmi_bind() fails we'll never call dw_hdmi_unbind(),
- 	 * which would have called the encoder cleanup.  Do it manually.
- 	 */
--	if (ret)
-+	if (IS_ERR(hdmi->hdmi)) {
-+		ret = PTR_ERR(hdmi->hdmi);
- 		drm_encoder_cleanup(encoder);
-+	}
- 
- 	return ret;
- }
-@@ -392,7 +397,9 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
- static void dw_hdmi_rockchip_unbind(struct device *dev, struct device *master,
- 				    void *data)
- {
--	return dw_hdmi_unbind(dev);
-+	struct rockchip_hdmi *hdmi = dev_get_drvdata(dev);
-+
-+	dw_hdmi_unbind(hdmi->hdmi);
- }
- 
- static const struct component_ops dw_hdmi_rockchip_ops = {
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index f3f3f0e1b2d3..dd2a8cf7d20b 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -143,12 +143,13 @@ struct dw_hdmi_plat_data {
- 			     unsigned long mpixelclock);
+ static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
++	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	.set_mux		= sun5i_a13_tcon_set_mux,
  };
  
--int dw_hdmi_probe(struct platform_device *pdev,
--		  const struct dw_hdmi_plat_data *plat_data);
--void dw_hdmi_remove(struct platform_device *pdev);
--void dw_hdmi_unbind(struct device *dev);
--int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
--		 const struct dw_hdmi_plat_data *plat_data);
-+struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
-+			      const struct dw_hdmi_plat_data *plat_data);
-+void dw_hdmi_remove(struct dw_hdmi *hdmi);
-+void dw_hdmi_unbind(struct dw_hdmi *hdmi);
-+struct dw_hdmi *dw_hdmi_bind(struct platform_device *pdev,
-+			     struct drm_encoder *encoder,
-+			     const struct dw_hdmi_plat_data *plat_data);
+ static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
++	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	.has_lvds_alt		= true,
+ 	.needs_de_be_mux	= true,
+@@ -1119,26 +1133,29 @@ static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
+ };
  
- void dw_hdmi_setup_rx_sense(struct device *dev, bool hpd, bool rx_sense);
+ static const struct sun4i_tcon_quirks sun6i_a31s_quirks = {
++	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	.needs_de_be_mux	= true,
+ };
  
+ static const struct sun4i_tcon_quirks sun7i_a20_quirks = {
++	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	/* Same display pipeline structure as A10 */
+ 	.set_mux		= sun4i_a10_tcon_set_mux,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
++	.has_channel_0		= true,
+ 	.has_lvds_alt		= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_a83t_lcd_quirks = {
+-	/* nothing is supported */
++	.has_channel_0		= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
+-	/* nothing is supported */
++	.has_channel_0		= true,
+ };
+ 
+ /* sun4i_drv uses this list to check if a device node is a TCON */
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index b761c7b823c5..78d55e7cd2b3 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -172,6 +172,7 @@
+ struct sun4i_tcon;
+ 
+ struct sun4i_tcon_quirks {
++	bool	has_channel_0;	/* a83t does not have channel 0 on second TCON */
+ 	bool	has_channel_1;	/* a33 does not have channel 1 */
+ 	bool	has_lvds_alt;	/* Does the LVDS clock have a parent other than the TCON clock? */
+ 	bool	needs_de_be_mux; /* sun6i needs mux to select backend */
 -- 
 2.16.1
