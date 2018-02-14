@@ -1,65 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966915AbeBNJgr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 04:36:47 -0500
-Received: from mail-io0-f178.google.com ([209.85.223.178]:42184 "EHLO
-        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966693AbeBNJgo (ORCPT
+        id S966926AbeBNJip (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 04:38:45 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58222 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966693AbeBNJin (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 04:36:44 -0500
-X-Google-Smtp-Source: AH8x226N6VSrwsnKO/w6dMFOMFsIADi+AoRyJ9aAzIel8EjvZDqGRpbpPqp5qGtDO5D9AUg+pR29Vwb9AbBmMzZT1Zo=
+        Wed, 14 Feb 2018 04:38:43 -0500
+Date: Wed, 14 Feb 2018 10:38:35 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>, Dave Hansen <dave@sr71.net>,
+        hpa@zytor.com, tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, dwmw@amazon.co.uk,
+        linux-tip-commits@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        Arjan van de Ven <arjan@infradead.org>
+Subject: Re: [PATCH] watchdog: hpwdt: Remove spinlock acquire and BIOS calls
+ from NMI context
+Message-ID: <20180214093835.GW25181@hirez.programming.kicks-ass.net>
+References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
+ <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
+ <20180212102211.cdrrqqd4hdw7xu5y@gmail.com>
+ <a85c28b8-1255-3264-bb4a-89e85e3c6009@sr71.net>
+ <20180212165835.GO25181@hirez.programming.kicks-ass.net>
+ <20180213075540.3lkikkpgjoe6ocjk@gmail.com>
+ <5c3ba123-abbe-f153-7b75-a89d31d25c72@linux.intel.com>
+ <20180214093159.mdzfupne547bi5qx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180207191152.kvqrugblst2cko3c@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com> <20180207191152.kvqrugblst2cko3c@ninjato>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 14 Feb 2018 10:36:42 +0100
-Message-ID: <CAPDyKFoxp7p0atQTV=PoQ7Bwt0fOs2aEq1KJHPtrq+zA3eFYgw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and cleanups
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, Linux-sh list <linux-sh@vger.kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rob Herring <robh@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Rich Felker <dalias@libc.org>, Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180214093159.mdzfupne547bi5qx@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7 February 2018 at 20:11, Wolfram Sang <wsa@the-dreams.de> wrote:
->
->> I picked patch5 and patch6, as those seemed trivial. Unless there is a
->> rc9, let's aim for 4.17 for the rest.
->
-> I can't find the branch where you picked these patches? I wanted to use
-> it to apply the rest of the patches. They don't seem to fit on v4.15
-> or current linus/master. Can you share this branch?
+On Wed, Feb 14, 2018 at 10:31:59AM +0100, Ingo Molnar wrote:
+> Because in this particular case it does not appear to be so: the reason for the 
+> BIOS/firmware call appears to be to determine how we nmi_panic() after receiving 
+> an NMI that no other NMI handler handled: with a passive-aggressive "I don't know" 
+> panic message or with a slightly more informative panic message.
 
-You need to check again. :-)
+However much I like just ripping all that out, I think the ROM call
+actually does that logging, or that is how I read things.
 
-Patches up and to patch6 is already in Linus' tree v.16rc1, those I
-carried for quite a while on my next branch before sending them in the
-PR to Linus.
+If you look at the original Changelog for that driver:
 
->
-> I will do reviewing now "visually". But please wait until I tested them
-> before applying.
-
-I am eager to apply those patches you already have reviewed (to
-patch14), as those mostly seemed rather trivial and should be nice
-cleanups.
-
-Do you mind me going ahead, then you can continue and review/test the rest?
-
-Kind regards
-Uffe
+    Hp is providing a Hardware WatchDog Timer driver that will only work with the
+    specific HW Timer located in the HP ProLiant iLO 2 ASIC. The iLO 2 HW Timer
+    will generate a Non-maskable Interrupt (NMI) 9 seconds before physically
+    resetting the server, by removing power, so that the event can be logged to
+    the HP Integrated Management Log (IML), a Non-Volatile Random Access Memory
+    (NVRAM). The logging of the event is performed using the HP ProLiant ROM via
+    an Industry Standard access known as a BIOS Service Directory Entry.
