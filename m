@@ -1,138 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966740AbeBNDWW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 22:22:22 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:15396 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S966723AbeBNDWU (ORCPT
+        id S966731AbeBND1A (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 22:27:00 -0500
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:33478 "EHLO
+        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966631AbeBND06 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 22:22:20 -0500
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="37041819"
-Subject: Re: [PATCH v3 2/5] x86/apic: Fix restoring boot irq mode in reboot
- and kexec/kdump
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-CC: Baoquan He <bhe@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <mingo@kernel.org>, <tglx@linutronix.de>, <x86@kernel.org>,
-        <joro@8bytes.org>, <uobergfe@redhat.com>, <prarit@redhat.com>
-References: <20180209121008.28980-1-bhe@redhat.com>
- <20180209121008.28980-3-bhe@redhat.com> <87r2pq9a60.fsf@xmission.com>
- <bb1a2eb2-335a-b789-4274-6b62dd5ef2ef@cn.fujitsu.com>
- <87vaf03i06.fsf@xmission.com>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <62686ee8-4d67-753d-3442-5456a2ba7076@cn.fujitsu.com>
-Date: Wed, 14 Feb 2018 11:22:14 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Tue, 13 Feb 2018 22:26:58 -0500
+X-Google-Smtp-Source: AH8x224EVtHQoJA+qOGrHaeqhCGgyStpEXRa35EGBSZ04mvIC2w0q4u5mDfxq+gh3Pkswu4fmgiZFD4D2FEuhE4ehro=
 MIME-Version: 1.0
-In-Reply-To: <87vaf03i06.fsf@xmission.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 5AA2E48AE762.ACCEE
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+In-Reply-To: <324a8c3a-35f1-ad4b-1ff5-9ba742778470@redhat.com>
+References: <1517813878-22248-1-git-send-email-wanpengli@tencent.com> <324a8c3a-35f1-ad4b-1ff5-9ba742778470@redhat.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Wed, 14 Feb 2018 11:26:57 +0800
+Message-ID: <CANRm+CzUJg7ZozjBmZV1mQNNDtkL479k+LsQ81++i7GPUbEh2w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] KVM: X86: Add per-VM no-HLT-exiting capability
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1E3R4N1012529
 
-Hi Eric,
-
-At 02/14/2018 01:40 AM, Eric W. Biederman wrote:
-> Dou Liyang <douly.fnst@cn.fujitsu.com> writes:
-> 
->> Hi Baoquan,
+2018-02-14 0:02 GMT+08:00 Paolo Bonzini <pbonzini@redhat.com>:
+> On 05/02/2018 07:57, Wanpeng Li wrote:
+>> From: Wanpeng Li <wanpengli@tencent.com>
 >>
->> At 02/12/2018 11:08 AM, Eric W. Biederman wrote:
->>> Baoquan He <bhe@redhat.com> writes:
->>>
->>>> This is a regression fix.
->>>>
->>>> Before, to fix erratum AVR31, commit 522e66464467 ("x86/apic: Disable
->>>> I/O APIC before shutdown of the local APIC") moved lapic_shutdown()
->>>> calling after disable_IO_APIC(). This introdued a regression. The
->>>> root cause is that disable_IO_APIC() not only clears IO_APIC, also
->>>> restore boot irq mode by setting LAPIC/APIC/IMCR, lapic_shutdown()
->>>> after disable_IO_APIC() will disable LAPIC and ruin the possible
->>>> virtual wire mode setting which the code has been trying to do all
->>>> along.
->>>>
->>>> The consequence is, in KVM guest kernel always prints warning as below
->>>> during kexec/kdump kernel boots up. That happened in setup_local_APIC()
->>>> since 'do { xxx } while (queued && max_loops > 0)' loop does not function
+>> If host CPUs are dedicated to a VM, we can avoid VM exits on HLT.
+>> This patch adds the per-VM non-HLT-exiting capability.
 >>
->> I am not sure another thing here
+>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>> ---
+>> v1 -> v2:
+>>  * vmx_clear_hlt() around INIT handling
+>>  * vmx_clear_hlt() upon SMI and implement auto halt restart
+>
+> Hi Wanpeng,
+>
+> sorry I could not answer before.
+>
+> We do not need to implement AutoHalt.  It's a messy functionality and
+> the way it works is much simpler: on RSM the microcode reads AutoHALT's
+> bit 0 and... decrements RIP if it is 1.  All you need to do however is
+> clear the activity state.  Guests should expect anyway that "CLI;HLT"
+> can be interrupted by an NMI and follow it with a JMP.
+
+Thanks for pointing out.
+
+>
+> Second, I would prefer to implement at the same time MWAIT and PAUSE
+> passthrough, as in https://www.spinics.net/lists/kvm/msg159517.html:
+
+Understand.
+
+>
+>> The three capabilities are more or less all doing the same thing.
+>> Perhaps it would make some sense to only leave PAUSE spin loops in
+>> guest, but not HLT/MWAIT; but apart from that I think users would
+>> probably enable all of them.  So I think we should put in the
+>> documentation that blindly passing the KVM_CHECK_EXTENSION result to
+>> KVM_ENABLE_CAP is a valid thing to do when vCPUs are associated to
+>> dedicated physical CPUs.
 >>
->> AFAIK, according to the order of SMP machine shutdown, other CPUs will
->> be stopped firstly, then the last CPU disable its local apic.
->>
->>   --machine_shutdown
->>     |----......
->>     |----stop_other_cpus()
->>     |----local_shutdown()
->>
->> So, the pending interrupts exist only in BSP and only be ACKed by
->> BSP. is it right?(I validated this by print the value of APIC_IRR/ISR of
->> all CPUs, found only BSP had the non-zero value).
-> 
-> We don't know.  In the kexec on panic case we try and shutdown the other
-> cpus but we have a timeout because we might fail.
-> 
-> Further you have to be careful with the concept of boot cpu.  In the
-> normal kexec case shutdown on the boot cpu and leave it running.  In the
-> kexec on panic case we shutdown on an arbitrary cpu.
-> 
->> If it is right, We will do not need check the pending interrupt for each
->> cpus.
-> 
-> It is also cheap if there are no pending interrupts as there is nothing
-> to do.
-> 
+>> Let's get rid of KVM_CAP_X86_GUEST_MWAIT altogether and
+>> add a new capability.  But let's use just one.
+>
+> Thanks again for your work, and sorry for slightly contradicting Radim's
+> review.  I've rebased and applied patch 2.
 
-Yes, It's cheap.
+No problem. You and Radim's review is always appreciated and helpful.
 
-But, the local APICs in APs were disabled at that time, not sure if
-writing to the end-of-interrupt (EOI) register could cause the local
-APIC to clear the ISR successfully.
-
-If the ISR was not cleared, doing that check is useless.
-
-I can't produce any cases that the lapics in APs have pending
-interrupts. do you have some suggestions?
-
->> BTW, the pending interrupt check code is mixed with the local
->> APIC setup code, that looks messy. How about extracting the code which
->> related to the crash interrupt check, put it into a new function and
->> only invoked it when the CPU is BSP?
-> 
-> Moving it into it's own function makes sense.  Let's not taint the
-> concept with ``crash''.  We don't know that the only way this will
-> ever happen is from kexec on panic.   We only know it was easy to
-> trigger the condition from kexec on panic.
-> 
-
-Yes, I see.
-
-> There are a lot of cases I can think of that interrupts might fire while
-> interrupts are disabled because the kernel is booting.  A normal kexec
-> is also possible.
-> 
-> Throw in MSI interrupts and transitioning from one state to another in
-> non-legacy apic mode and we might be more likely to get some irqs in
-> a pending state.
-> 
-> Your patch makes me nervous as it is not just code motion but a much
-> more substantial change.
-> 
-> 
-> As much as I agree that we need to fix the regression in the apic
-> shutdown code that is causing problems.  What we really need to do
-> is to completely remove the apic shutdown code from the kexec on panic
-> code path.  Over the long term that will provide us with a much more
-
-Wow, indeed, and it is related to many hypervisors on x86, For me, still
-need more investigations and tests.
-
-Thanks,
-	dou
+Regards,
+Wanpeng Li
