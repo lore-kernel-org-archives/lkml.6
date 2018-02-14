@@ -1,157 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030223AbeBNN1t (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 08:27:49 -0500
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:20013 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967713AbeBNN1s (ORCPT
+        id S1030338AbeBNN3V (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 08:29:21 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35362 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030316AbeBNN3S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 08:27:48 -0500
-Subject: Re: [PATCH 1/2] drm/tilcdc: Delete an error message for a failed
- memory allocation in seven functions
-To: SF Markus Elfring <elfring@users.sourceforge.net>,
-        <dri-devel@lists.freedesktop.org>, David Airlie <airlied@linux.ie>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
-CC: LKML <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <a7c7cebb-f4c9-04b7-5507-e41f8ebfb5f9@users.sourceforge.net>
- <8391221b-45f4-7ad2-ad21-3681a945f034@users.sourceforge.net>
-From: Jyri Sarha <jsarha@ti.com>
-Message-ID: <8c7dbd4e-6c11-9a28-aaf0-1aaf7bf7d947@ti.com>
-Date: Wed, 14 Feb 2018 15:27:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <8391221b-45f4-7ad2-ad21-3681a945f034@users.sourceforge.net>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Wed, 14 Feb 2018 08:29:18 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>,
+        broonie@kernel.org, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org,
+        b.zolnierkie@samsung.com, sbkim73@samsung.com, jcsing.lee@samsung.com,
+        lgirdwood@gmail.com, krzk@kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, m.szyprowski@samsung.com,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1 access" to the asoc tree
+In-Reply-To: <20180212161538.22669-4-s.nawrocki@samsung.com>
+Message-Id: <E1elx7c-0006xU-JW@debutante>
+Date: Wed, 14 Feb 2018 13:29:16 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/02/18 23:23, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 6 Feb 2018 21:51:15 +0100
-> 
-> Omit an extra message for a memory allocation failure in these functions.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The patch
+
+   ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1 access
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-picked for the tilcdc next pull request.
+Mark
 
-Best regards,
-Jyri
+>From 48279c53fd1d09dc0d1b6ebb9f21732c507cea0b Mon Sep 17 00:00:00 2001
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Mon, 12 Feb 2018 17:15:34 +0100
+Subject: [PATCH] ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1
+ access
 
-> ---
->  drivers/gpu/drm/tilcdc/tilcdc_crtc.c   | 4 +---
->  drivers/gpu/drm/tilcdc/tilcdc_drv.c    | 4 +---
->  drivers/gpu/drm/tilcdc/tilcdc_panel.c  | 9 ++-------
->  drivers/gpu/drm/tilcdc/tilcdc_tfp410.c | 8 ++------
->  4 files changed, 6 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_crtc.c b/drivers/gpu/drm/tilcdc/tilcdc_crtc.c
-> index 8bf6bb93dc79..1b278a22c8b7 100644
-> --- a/drivers/gpu/drm/tilcdc/tilcdc_crtc.c
-> +++ b/drivers/gpu/drm/tilcdc/tilcdc_crtc.c
-> @@ -994,10 +994,8 @@ int tilcdc_crtc_create(struct drm_device *dev)
->  	int ret;
->  
->  	tilcdc_crtc = devm_kzalloc(dev->dev, sizeof(*tilcdc_crtc), GFP_KERNEL);
-> -	if (!tilcdc_crtc) {
-> -		dev_err(dev->dev, "allocation failed\n");
-> +	if (!tilcdc_crtc)
->  		return -ENOMEM;
-> -	}
->  
->  	init_completion(&tilcdc_crtc->palette_loaded);
->  	tilcdc_crtc->palette_base = dmam_alloc_coherent(dev->dev,
-> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> index 1afde61f1247..b8a5e4ed22e6 100644
-> --- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> +++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> @@ -233,10 +233,8 @@ static int tilcdc_init(struct drm_driver *ddrv, struct device *dev)
->  	int ret;
->  
->  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> -	if (!priv) {
-> -		dev_err(dev, "failed to allocate private data\n");
-> +	if (!priv)
->  		return -ENOMEM;
-> -	}
->  
->  	ddev = drm_dev_alloc(ddrv, dev);
->  	if (IS_ERR(ddev))
-> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_panel.c b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-> index 8eebb5f826a6..0b6aa95aec89 100644
-> --- a/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-> +++ b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-> @@ -101,10 +101,8 @@ static struct drm_encoder *panel_encoder_create(struct drm_device *dev,
->  
->  	panel_encoder = devm_kzalloc(dev->dev, sizeof(*panel_encoder),
->  				     GFP_KERNEL);
-> -	if (!panel_encoder) {
-> -		dev_err(dev->dev, "allocation failed\n");
-> +	if (!panel_encoder)
->  		return NULL;
-> -	}
->  
->  	panel_encoder->mod = mod;
->  
-> @@ -210,10 +208,8 @@ static struct drm_connector *panel_connector_create(struct drm_device *dev,
->  
->  	panel_connector = devm_kzalloc(dev->dev, sizeof(*panel_connector),
->  				       GFP_KERNEL);
-> -	if (!panel_connector) {
-> -		dev_err(dev->dev, "allocation failed\n");
-> +	if (!panel_connector)
->  		return NULL;
-> -	}
->  
->  	panel_connector->encoder = encoder;
->  	panel_connector->mod = mod;
-> @@ -294,7 +290,6 @@ static struct tilcdc_panel_info *of_get_panel_info(struct device_node *np)
->  
->  	info = kzalloc(sizeof(*info), GFP_KERNEL);
->  	if (!info) {
-> -		pr_err("%s: allocation failed\n", __func__);
->  		of_node_put(info_np);
->  		return NULL;
->  	}
-> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
-> index 7e3643462a08..c45cabb38db0 100644
-> --- a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
-> +++ b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
-> @@ -111,10 +111,8 @@ static struct drm_encoder *tfp410_encoder_create(struct drm_device *dev,
->  
->  	tfp410_encoder = devm_kzalloc(dev->dev, sizeof(*tfp410_encoder),
->  				      GFP_KERNEL);
-> -	if (!tfp410_encoder) {
-> -		dev_err(dev->dev, "allocation failed\n");
-> +	if (!tfp410_encoder)
->  		return NULL;
-> -	}
->  
->  	tfp410_encoder->dpms = DRM_MODE_DPMS_OFF;
->  	tfp410_encoder->mod = mod;
-> @@ -224,10 +222,8 @@ static struct drm_connector *tfp410_connector_create(struct drm_device *dev,
->  
->  	tfp410_connector = devm_kzalloc(dev->dev, sizeof(*tfp410_connector),
->  					GFP_KERNEL);
-> -	if (!tfp410_connector) {
-> -		dev_err(dev->dev, "allocation failed\n");
-> +	if (!tfp410_connector)
->  		return NULL;
-> -	}
->  
->  	tfp410_connector->encoder = encoder;
->  	tfp410_connector->mod = mod;
-> 
+It seems both PCLK_I2S1 and SCLK_I2S1 clocks need to be enabled before
+I2S1 control registers can be accessed on exynos5433. If SCLK clock
+is disabled an exception is triggered. To fix this parent clock of
+the RCLK_SRC clock is assigned to pri_dai->op_clk so required gate
+clock is handled by the runtime PM ops.
 
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/samsung/i2s.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 5088d12faeda..7b57ad11ca15 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -1404,9 +1404,14 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(&pdev->dev);
+ 
+ 	ret = i2s_register_clock_provider(pdev);
+-	if (!ret)
+-		return 0;
++	if (ret < 0)
++		goto err_disable_pm;
++
++	pri_dai->op_clk = clk_get_parent(pri_dai->clk_table[CLK_I2S_RCLK_SRC]);
++
++	return 0;
+ 
++err_disable_pm:
+ 	pm_runtime_disable(&pdev->dev);
+ err_disable_clk:
+ 	clk_disable_unprepare(pri_dai->clk);
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.16.1
