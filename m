@@ -1,120 +1,127 @@
-Return-Path: <joe@perches.com>
-X-Cyrus-Session-Id: sloti22d1t05-381307-1518537778-2-16837313801125542242
+Return-Path: <green.hu@gmail.com>
+X-Cyrus-Session-Id: sloti22d1t05-1904769-1518587736-2-15115465364848617015
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_NONE -0.0001,
-  RCVD_IN_MSPIKE_H2 -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='216.40.44.37', Host='smtprelay0037.hostedemail.com', Country='CA',
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FROM 0.001, RCVD_IN_DNSWL_NONE -0.0001,
+  RCVD_IN_MSPIKE_H3 -0.01, RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.85.213.50', Host='mail-vk0-f50.google.com', Country='US',
   FromHeader='com', MailFrom='com'
-X-Spam-charsets: plain='ISO-8859-1'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: joe@perches.com
+X-Mail-from: green.hu@gmail.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518537777; b=Xz5GY/8QglKIA10p6Xg84s3xqRuQ4h56LB6XG/xm10c65/L
-    5gLN3pUgjDpPkujWbrwF6cTbQEngcEI0kNbhnD02uStZRqvQZuDhPzvjbVla0Myx
-    bKXJBQkZdINbIq64LRxIeUIrYaZWTLF3G0Qv3WbGj8lbvYJF6LabPMN5nGk8yl5b
-    3oPANgq7G7H5cjhb2nRgNPJhDjnLGJunIxw9Uelbbh2uZAq5vBR+G8P/yms9fIdG
-    U86B9U7THlU4+EK9JsLhL2jH/Fd1pfpm9JTDVKw4j91H6W4qzTdQSqdYqHwmy85W
-    q48Szhru1T6VM0Vg2B1ymh2QOKYVWSNnmRf/stA==
+    t=1518587736; b=Tn4esW/kvDxqOdUGd+h/X7e46eZuiFqOqUZQB9V1f88QzSm
+    G6vo67NHAT4Cr59735fb2rS9f2qidaqSUBJ697Dcz+X8RLlkiteNH9VUOa66ACQy
+    3/JUDc9jnUYoXIv9Cleyetl2v/0dKgVmPyDwNTEt7PAQ99PQzKsnHkXHtbjIKjXx
+    vtgCmzC5p4/KRfKi8/g79REhVRqCrhD/kst5MSI5ZxQK35QfDgvIenfCqNq9KaN6
+    7nhDPq1xnfrPCcFRKExX/RmdDuOD/YUVYi9+HbB1vlt8mRdJ+el1E2uXo19K0oam
+    kMd8zC90SX6qL61bb/lwrfEyvaJvUi1QCCAA30Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:date
-    :in-reply-to:references:content-type:mime-version
-    :content-transfer-encoding; s=arctest; t=1518537777; bh=eOWsiCs1
-    Lo96dJ3eQeK5WKiHdbMx1xyYcBZb/P3f1CM=; b=oM+TP1eJnmKtTaZEvJ69x3jy
-    rTcmz23BGtJale7fw3QNIFOvZjfiQO1CUlKlozy4a38fdqSu0Pg1pD7gAiwJF6I1
-    tJ7sh+427t1RtejD/A1jPRvtJ74CjeC20Wu4iYaNh9xRc194wuyMo8kafly3yi6z
-    wPU3xO5bWCIBtXX7H/3PkNWwjSZL6c2MHvV9Ao8SBRUOZc+xRDSsqJB/VzuyP0sO
-    Amy1rJxVEFIQwkvUrsk+AgfeqTznCjNAaym17Ihq8+VhQoqHu60+vGmzGep+QpCD
-    W4+1EPHw2kU/TF/x781sUyr6AAk0GMgdZ7aD/XHDym/IW8+FUMB9xDW6IbQgLw==
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type; s=arctest; t=
+    1518587736; bh=y3MFew7uE0xjDnRxrMGAszV1eh6CXDBXXBg84oye90A=; b=V
+    sCS8ZzitJYVxsygp9lqFWII78DnyEN3/m+XHBg8DIjY/U2BeroBq4Oou2uSgM9HU
+    7s/MuNU5Fxz17vJxfh6kUhrupf8/envs6t5HhGaPt4F87g9qNuVKn5XaEMSjeEPe
+    vxrlXId0OkqMEo8v0Ty9Oxe7/atV00xavu1H65XNA/Lg0fI3GqwrSwoEEeml2r1O
+    KoUoerbfqKhja+PJpN/XFeTPpq6FPURdk06y8eQ71wsUadC/QSx3yQ8CjkucK8xm
+    EEzk/2SLnQ2iwSEUjQQkQRMcaLHCJO1q70nu+oCUGZzPZtTE+K3ekJpUO3tvtUf2
+    DPDFNfsetaqxtabZPDXAA==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,d=none) header.from=perches.com;
-    iprev=pass policy.iprev=216.40.44.37 (smtprelay0037.hostedemail.com);
-    spf=none smtp.mailfrom=joe@perches.com smtp.helo=smtprelay.hostedemail.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=rSlEJD6u x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.213.50 (mail-vk0-f50.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-vk0-f50.google.com;
     x-aligned-from=pass;
-    x-ptr=fail x-ptr-helo=smtprelay.hostedemail.com x-ptr-lookup=smtprelay0037.hostedemail.com;
-    x-return-mx=pass smtp.domain=perches.com smtp.result=pass smtp_is_org_domain=yes header.domain=perches.com header.result=pass header_is_org_domain=yes;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=plz8fjUl;
+    x-ptr=pass x-ptr-helo=mail-vk0-f50.google.com x-ptr-lookup=mail-vk0-f50.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,d=none) header.from=perches.com;
-    iprev=pass policy.iprev=216.40.44.37 (smtprelay0037.hostedemail.com);
-    spf=none smtp.mailfrom=joe@perches.com smtp.helo=smtprelay.hostedemail.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=rSlEJD6u x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.213.50 (mail-vk0-f50.google.com);
+    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-vk0-f50.google.com;
     x-aligned-from=pass;
-    x-ptr=fail x-ptr-helo=smtprelay.hostedemail.com x-ptr-lookup=smtprelay0037.hostedemail.com;
-    x-return-mx=pass smtp.domain=perches.com smtp.result=pass smtp_is_org_domain=yes header.domain=perches.com header.result=pass header_is_org_domain=yes;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=plz8fjUl;
+    x-ptr=pass x-ptr-helo=mail-vk0-f50.google.com x-ptr-lookup=mail-vk0-f50.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Remote-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:541:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1381:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2525:2560:2563:2682:2685:2828:2859:2892:2904:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3870:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6119:6737:6738:7514:7809:9025:10004:10400:10848:11232:11657:11658:11914:12043:12048:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:14799:21080:21451:21611:21627:30054:30075:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: class05_701e48d835a51
-X-Filterd-Recvd-Size: 2408
-Message-ID: <1518537768.22190.42.camel@perches.com>
+X-Google-Smtp-Source: AH8x2272ZT0eVeMGJfUyvmSBiNlxzFnrk+5zZ7g1aLVKMBkXD8LDaJt0M8NEGj4zBxA7EXfit5gxTICZhMgsrnkxT6U=
+MIME-Version: 1.0
+In-Reply-To: <1518537768.22190.42.camel@perches.com>
+References: <cover.1518505384.git.greentime@andestech.com> <f7758221d49fd24fdff7c900aa5951a6c1c6a3cd.1518505384.git.greentime@andestech.com>
+ <1518537768.22190.42.camel@perches.com>
+From: Greentime Hu <green.hu@gmail.com>
+Date: Wed, 14 Feb 2018 13:54:53 +0800
+Message-ID: <CAEbi=3cYCAoqrw0JTQkEdnBNSpZUxZA+ZUSmrQd70S+xSro6Yw@mail.gmail.com>
 Subject: Re: [PATCH v7 31/37] MAINTAINERS: Add nds32
-From: Joe Perches <joe@perches.com>
-To: Greentime Hu <green.hu@gmail.com>, greentime@andestech.com,
- linux-kernel@vger.kernel.org, arnd@arndb.de, linux-arch@vger.kernel.org,
- tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
- robh+dt@kernel.org,  netdev@vger.kernel.org, deanbo422@gmail.com,
- devicetree@vger.kernel.org,  viro@zeniv.linux.org.uk, dhowells@redhat.com,
- will.deacon@arm.com,  daniel.lezcano@linaro.org,
- linux-serial@vger.kernel.org,  geert.uytterhoeven@gmail.com,
- linus.walleij@linaro.org, mark.rutland@arm.com,  greg@kroah.com,
- ren_guo@c-sky.com, rdunlap@infradead.org, davem@davemloft.net,
- jonas@southpole.se, stefan.kristiansson@saunalahti.fi, shorne@gmail.com
-Date: Tue, 13 Feb 2018 08:02:48 -0800
-In-Reply-To: <f7758221d49fd24fdff7c900aa5951a6c1c6a3cd.1518505384.git.greentime@andestech.com>
-References: <cover.1518505384.git.greentime@andestech.com>
-	 <f7758221d49fd24fdff7c900aa5951a6c1c6a3cd.1518505384.git.greentime@andestech.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+To: Joe Perches <joe@perches.com>
+Cc: Greentime <greentime@andestech.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-arch <linux-arch@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, netdev <netdev@vger.kernel.org>,
+	Vincent Chen <deanbo422@gmail.com>, DTML <devicetree@vger.kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>,
+	Will Deacon <will.deacon@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-serial@vger.kernel.org,
+	Geert Uytterhoeven <geert.uytterhoeven@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>, Greg KH <greg@kroah.com>, Guo Ren <ren_guo@c-sky.com>,
+	Randy Dunlap <rdunlap@infradead.org>, David Miller <davem@davemloft.net>,
+	Jonas Bonn <jonas@southpole.se>,
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 2018-02-13 at 17:09 +0800, Greentime Hu wrote:
-> Add a maintainer information for the nds32(Andes) architecture.
-[]
-> diff --git a/MAINTAINERS b/MAINTAINERS
-[]
-> @@ -868,6 +868,17 @@ X:	drivers/iio/*/adjd*
->  F:	drivers/staging/iio/*/ad*
->  F:	drivers/staging/iio/trigger/iio-trig-bfin-timer.c
->  
-> +ANDES ARCHITECTURE
-> +M:	Greentime Hu <green.hu@gmail.com>
-> +M:	Vincent Chen <deanbo422@gmail.com>
-> +T:	git https://github.com/andestech/linux.git
-> +S:	Supported
-> +F:	arch/nds32
+2018-02-14 0:02 GMT+08:00 Joe Perches <joe@perches.com>:
+> On Tue, 2018-02-13 at 17:09 +0800, Greentime Hu wrote:
+>> Add a maintainer information for the nds32(Andes) architecture.
+> []
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+> []
+>> @@ -868,6 +868,17 @@ X:       drivers/iio/*/adjd*
+>>  F:   drivers/staging/iio/*/ad*
+>>  F:   drivers/staging/iio/trigger/iio-trig-bfin-timer.c
+>>
+>> +ANDES ARCHITECTURE
+>> +M:   Greentime Hu <green.hu@gmail.com>
+>> +M:   Vincent Chen <deanbo422@gmail.com>
+>> +T:   git https://github.com/andestech/linux.git
+>> +S:   Supported
+>> +F:   arch/nds32
+>
+> This should have a trailing /
+>
+> F:      arch/nds32/
 
-This should have a trailing /
+Thank you Joe.
+I will add this trailing /
+>
+>> +F:   Documentation/devicetree/bindings/interrupt-controller/andestech,ativic32.txt
+>> +F:   Documentation/devicetree/bindings/nds32
 
-F:	arch/nds32/
+And here
 
-> +F:	Documentation/devicetree/bindings/interrupt-controller/andestech,ativic32.txt
-> +F:	Documentation/devicetree/bindings/nds32
-> +K:	nds32
+>> +K:   nds32
+>
+> Perhaps this should be
+>
+> K:      \bnds32
+>
+> as there are some existing uses of nds32 in the current tree.
+>
+> or maybe case insensitive like
+>
+> K:      (?i:\bnds32)
+> or
+> K:      (?:\bnds32|\bNDS32)
+>
 
-Perhaps this should be
-
-K:	\bnds32
-
-as there are some existing uses of nds32 in the current tree.
-
-or maybe case insensitive like
-
-K:	(?i:\bnds32)
-or
-K:	(?:\bnds32|\bNDS32)
-
-> +N:	nds32
-> +
->  ANDROID CONFIG FRAGMENTS
->  M:	Rob Herring <robh@kernel.org>
->  S:	Supported
+I think it might be better to keep it "nds32" becaue some intrinsic
+functions are defined with __nds32__xxx.
