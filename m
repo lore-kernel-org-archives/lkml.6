@@ -1,306 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966872AbeBNEvT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 23:51:19 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:42726 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966813AbeBNEvR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 23:51:17 -0500
-Subject: Re: [PATCH v7 3/9] arm: omap: Move dmtimer.h out of plat-omap
-To: Suman Anna <s-anna@ti.com>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "tony@atomide.com" <tony@atomide.com>,
-        "aaro.koskinen@iki.fi" <aaro.koskinen@iki.fi>
-CC: "Claudiu.Beznea@microchip.com" <Claudiu.Beznea@microchip.com>,
-        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "ladis@linux-mips.org" <ladis@linux-mips.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "sebastian.reichel@collabora.co.uk"
-        <sebastian.reichel@collabora.co.uk>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "Kristo, Tero" <t-kristo@ti.com>,
-        "Strashko, Grygorii" <grygorii.strashko@ti.com>
-References: <1515478987-5786-1-git-send-email-j-keerthy@ti.com>
- <1515478987-5786-4-git-send-email-j-keerthy@ti.com>
- <1c9f5c72-f589-d7c7-399f-ef55ecb828a0@ti.com>
-From: Keerthy <j-keerthy@ti.com>
-Message-ID: <37f28584-20c2-51c1-e476-75ef81f03af6@ti.com>
-Date: Wed, 14 Feb 2018 10:20:33 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S966876AbeBNEyu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 23:54:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36530 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966813AbeBNEyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 23:54:50 -0500
+Date: Wed, 14 Feb 2018 15:54:42 +1100
+From: Aleksa Sarai <asarai@suse.de>
+To: Enrico Weigelt <lkml@metux.net>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>
+Subject: Re: plan9 semantics on Linux - mount namespaces
+Message-ID: <20180214045442.jyv6zpbwz5glzi4z@gordon>
+References: <0f058286-a432-379b-f559-f2fe713807ab@metux.net>
+ <5633d335-3926-d98f-d6d7-948b1e2a0b2c@metux.net>
+ <20180213222751.p3fyg7whg6jqlzz5@gordon>
+ <39b08c53-3449-3164-c1b1-44ac587dd4ea@metux.net>
 MIME-Version: 1.0
-In-Reply-To: <1c9f5c72-f589-d7c7-399f-ef55ecb828a0@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mk7kxfbcygvibxyh"
+Content-Disposition: inline
+In-Reply-To: <39b08c53-3449-3164-c1b1-44ac587dd4ea@metux.net>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--mk7kxfbcygvibxyh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tuesday 13 February 2018 07:36 AM, Suman Anna wrote:
-> Hi Keerthy,
-> 
-> On 01/09/2018 12:23 AM, J, KEERTHY wrote:
->> The header file is currently under plat-omap directory
->> under arch/omap. Move this out to an accessible place.
->>
->> No Code changes done to the header file.
->>
->> Signed-off-by: Keerthy <j-keerthy@ti.com>
->> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
->> Tested-by: Ladislav Michl <ladis@linux-mips.org>
->> ---
->>   arch/arm/mach-omap1/pm.c                                           | 2 +-
->>   arch/arm/mach-omap1/timer.c                                        | 2 +-
->>   arch/arm/mach-omap2/omap_hwmod_2420_data.c                         | 2 +-
->>   arch/arm/mach-omap2/omap_hwmod_2430_data.c                         | 2 +-
->>   arch/arm/mach-omap2/omap_hwmod_2xxx_ipblock_data.c                 | 2 +-
->>   arch/arm/mach-omap2/omap_hwmod_3xxx_data.c                         | 2 +-
->>   arch/arm/mach-omap2/omap_hwmod_44xx_data.c                         | 2 +-
->>   arch/arm/mach-omap2/omap_hwmod_54xx_data.c                         | 2 +-
->>   arch/arm/mach-omap2/omap_hwmod_7xx_data.c                          | 2 +-
->>   arch/arm/mach-omap2/omap_hwmod_81xx_data.c                         | 2 +-
->>   arch/arm/mach-omap2/pdata-quirks.c                                 | 2 +-
->>   arch/arm/mach-omap2/timer.c                                        | 2 +-
->>   arch/arm/plat-omap/dmtimer.c                                       | 2 +-
->>   {arch/arm/plat-omap/include/plat => include/clocksource}/dmtimer.h | 0
->>   14 files changed, 13 insertions(+), 13 deletions(-)
->>   rename {arch/arm/plat-omap/include/plat => include/clocksource}/dmtimer.h (100%)
->>
->> diff --git a/arch/arm/mach-omap1/pm.c b/arch/arm/mach-omap1/pm.c
->> index f1135bf..a07d47cf 100644
->> --- a/arch/arm/mach-omap1/pm.c
->> +++ b/arch/arm/mach-omap1/pm.c
->> @@ -55,7 +55,7 @@
->>   #include <mach/tc.h>
->>   #include <mach/mux.h>
->>   #include <linux/omap-dma.h>
->> -#include <plat/dmtimer.h>
->> +#include <clocksource/dmtimer.h>
->>
->>   #include <mach/irqs.h>
->>
->> diff --git a/arch/arm/mach-omap1/timer.c b/arch/arm/mach-omap1/timer.c
->> index 8fb1ec6..7c057ab 100644
->> --- a/arch/arm/mach-omap1/timer.c
->> +++ b/arch/arm/mach-omap1/timer.c
->> @@ -27,7 +27,7 @@
->>   #include <linux/platform_device.h>
->>   #include <linux/platform_data/dmtimer-omap.h>
->>
->> -#include <plat/dmtimer.h>
->> +#include <clocksource/dmtimer.h>
->>
->>   #include "soc.h"
->>
->> diff --git a/arch/arm/mach-omap2/omap_hwmod_2420_data.c 
->> b/arch/arm/mach-omap2/omap_hwmod_2420_data.c
->> index 0afb014..0a8b95f 100644
->> --- a/arch/arm/mach-omap2/omap_hwmod_2420_data.c
->> +++ b/arch/arm/mach-omap2/omap_hwmod_2420_data.c
->> @@ -16,7 +16,7 @@
->>   #include <linux/i2c-omap.h>
->>   #include <linux/platform_data/spi-omap2-mcspi.h>
->>   #include <linux/omap-dma.h>
->> -#include <plat/dmtimer.h>
->> +#include <clocksource/dmtimer.h>
->>
->>   #include "omap_hwmod.h"
->>   #include "l3_2xxx.h"
->> diff --git a/arch/arm/mach-omap2/omap_hwmod_2430_data.c 
->> b/arch/arm/mach-omap2/omap_hwmod_2430_data.c
->> index 013b26b..16e3d8c 100644
->> --- a/arch/arm/mach-omap2/omap_hwmod_2430_data.c
->> +++ b/arch/arm/mach-omap2/omap_hwmod_2430_data.c
->> @@ -18,7 +18,7 @@
->>   #include <linux/platform_data/hsmmc-omap.h>
->>   #include <linux/platform_data/spi-omap2-mcspi.h>
->>   #include <linux/omap-dma.h>
->> -#include <plat/dmtimer.h>
->> +#include <clocksource/dmtimer.h>
-> 
-> These headers are actually not needed in the first-place since we no
-> longer create any non-DT timer devices. I have submitted a series to
-> cleanup the presence of this header file, as part of a larger hwmod data
-> cleanup series.
+On 2018-02-14, Enrico Weigelt <lkml@metux.net> wrote:
+> On 13.02.2018 22:27, Aleksa Sarai wrote:
+>=20
+> > You can do this by creating a new user namespace (CLONE_NEWUSER), which
+> > then gives you the required permissions to create other namespaces
+> > (CLONE_NEWNS). This is how "rootless containers" or unprivileged
+> > containers operate.
+>=20
+> hmm, unshare -U doesn't work for me (even as root). But docker works,
+> so user namespaces should be working. Any idea what could be wrong ?
 
-I will rebase my series on top of your clean up series. Thanks for clean
-ups.
+It depends how old your kernel is and what distro you use. Arch Linux
+disables user namespaces entirely, Debian requires that you set a sysctl
+to enable unprivileged user namespaces, and RHEL requires you to set
+both a sysctl and a kernel boot-flag. Also check how old your kernel is
+(unprivileged user namespace support was added in 3.8).
 
-> 
->>
->>   #include "omap_hwmod.h"
->>   #include "l3_2xxx.h"
->> diff --git a/arch/arm/mach-omap2/omap_hwmod_2xxx_ipblock_data.c 
->> b/arch/arm/mach-omap2/omap_hwmod_2xxx_ipblock_data.c
->> index 4b094cb..8a65f70 100644
->> --- a/arch/arm/mach-omap2/omap_hwmod_2xxx_ipblock_data.c
->> +++ b/arch/arm/mach-omap2/omap_hwmod_2xxx_ipblock_data.c
->> @@ -11,7 +11,7 @@
->>
->>   #include <linux/platform_data/gpio-omap.h>
->>   #include <linux/omap-dma.h>
->> -#include <plat/dmtimer.h>
->> +#include <clocksource/dmtimer.h>
->>   #include <linux/platform_data/spi-omap2-mcspi.h>
->>
->>   #include "omap_hwmod.h"
->> diff --git a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c 
->> b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
->> index 1a2f224..b030137 100644
->> --- a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
->> +++ b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
->> @@ -25,7 +25,7 @@
->>   #include "l4_3xxx.h"
->>   #include <linux/platform_data/asoc-ti-mcbsp.h>
->>   #include <linux/platform_data/spi-omap2-mcspi.h>
->> -#include <plat/dmtimer.h>
->> +#include <clocksource/dmtimer.h>
->>
->>   #include "soc.h"
->>   #include "omap_hwmod.h"
->> diff --git a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c 
->> b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
->> index a1901c2..51c7d62 100644
->> --- a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
->> +++ b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
->> @@ -30,7 +30,7 @@
->>
->>   #include <linux/platform_data/spi-omap2-mcspi.h>
->>   #include <linux/platform_data/asoc-ti-mcbsp.h>
->> -#include <plat/dmtimer.h>
->> +#include <clocksource/dmtimer.h>
->>
->>   #include "omap_hwmod.h"
->>   #include "omap_hwmod_common_data.h"
->> diff --git a/arch/arm/mach-omap2/omap_hwmod_54xx_data.c 
->> b/arch/arm/mach-omap2/omap_hwmod_54xx_data.c
->> index 988e7ea..530334e 100644
->> --- a/arch/arm/mach-omap2/omap_hwmod_54xx_data.c
->> +++ b/arch/arm/mach-omap2/omap_hwmod_54xx_data.c
->> @@ -26,7 +26,7 @@
->>   #include <linux/omap-dma.h>
->>   #include <linux/platform_data/spi-omap2-mcspi.h>
->>   #include <linux/platform_data/asoc-ti-mcbsp.h>
->> -#include <plat/dmtimer.h>
->> +#include <clocksource/dmtimer.h>
->>
->>   #include "omap_hwmod.h"
->>   #include "omap_hwmod_common_data.h"
->> diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c 
->> b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
->> index 4c2a05b..2452649 100644
->> --- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
->> +++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
->> @@ -26,7 +26,7 @@
->>   #include <linux/omap-dma.h>
->>   #include <linux/platform_data/spi-omap2-mcspi.h>
->>   #include <linux/platform_data/asoc-ti-mcbsp.h>
->> -#include <plat/dmtimer.h>
->> +#include <clocksource/dmtimer.h>
->>
->>   #include "omap_hwmod.h"
->>   #include "omap_hwmod_common_data.h"
->> diff --git a/arch/arm/mach-omap2/omap_hwmod_81xx_data.c 
->> b/arch/arm/mach-omap2/omap_hwmod_81xx_data.c
->> index 84f1182..94f3bb1 100644
->> --- a/arch/arm/mach-omap2/omap_hwmod_81xx_data.c
->> +++ b/arch/arm/mach-omap2/omap_hwmod_81xx_data.c
->> @@ -18,7 +18,7 @@
->>   #include <linux/platform_data/gpio-omap.h>
->>   #include <linux/platform_data/hsmmc-omap.h>
->>   #include <linux/platform_data/spi-omap2-mcspi.h>
->> -#include <plat/dmtimer.h>
->> +#include <clocksource/dmtimer.h>
->>
->>   #include "omap_hwmod_common_data.h"
->>   #include "cm81xx.h"
->> diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
->> index 6b433fc..ad9df86 100644
->> --- a/arch/arm/mach-omap2/pdata-quirks.c
->> +++ b/arch/arm/mach-omap2/pdata-quirks.c
->> @@ -27,7 +27,7 @@
->>   #include <linux/platform_data/pwm_omap_dmtimer.h>
->>   #include <linux/platform_data/media/ir-rx51.h>
->>   #include <linux/platform_data/asoc-ti-mcbsp.h>
->> -#include <plat/dmtimer.h>
->> +#include <clocksource/dmtimer.h>
->>
->>   #include "common.h"
->>   #include "common-board-devices.h"
->> diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
->> index ece09c9..31c1b01 100644
->> --- a/arch/arm/mach-omap2/timer.c
->> +++ b/arch/arm/mach-omap2/timer.c
->> @@ -26,6 +26,7 @@
->>    * License. See the file "COPYING" in the main directory of this archive
->>    * for more details.
->>    */
->> +#include <clocksource/dmtimer.h>
->>   #include <linux/init.h>
->>   #include <linux/time.h>
->>   #include <linux/interrupt.h>
->> @@ -49,7 +50,6 @@
->>   #include "omap_hwmod.h"
->>   #include "omap_device.h"
->>   #include <plat/counter-32k.h>
->> -#include <plat/dmtimer.h>
->>   #include "omap-pm.h"
->>
->>   #include "soc.h"
->> diff --git a/arch/arm/plat-omap/dmtimer.c b/arch/arm/plat-omap/dmtimer.c
->> index 72565fc..afe1dc9 100644
->> --- a/arch/arm/plat-omap/dmtimer.c
->> +++ b/arch/arm/plat-omap/dmtimer.c
->> @@ -47,7 +47,7 @@
->>   #include <linux/platform_device.h>
->>   #include <linux/platform_data/dmtimer-omap.h>
->>
->> -#include <plat/dmtimer.h>
->> +#include <clocksource/dmtimer.h>
->>
->>   static u32 omap_reserved_systimers;
->>   static LIST_HEAD(omap_timer_list);
->> diff --git a/arch/arm/plat-omap/include/plat/dmtimer.h 
->> b/include/clocksource/dmtimer.h
->> similarity index 100%
->> rename from arch/arm/plat-omap/include/plat/dmtimer.h
->> rename to include/clocksource/dmtimer.h
-> 
-> Can you fix up the file name and the header guard to appropriate names
-> as per the include/clocksource folder convention.
-> 
-> arch/arm/plat-omap/include/plat/dmtimer.h => include/clocksource/dmtimer.h
-> and
-> __ASM_ARCH_DMTIMER_H => __CLOCKSOURCE_DMTIMER_H
+Also Docker doesn't use user namespaces by default (you need to manually
+enable it with --userns-remap, check the docs for more details). You
+probably also want to be using "unshare -r" in your testing (as "unshare
+-U" will leave you without mapped users).
 
-Sure.
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-> 
-> I still see this file as OMAP-specific, so should this be renamed to
-> dmtimer-omap.h instead of a generic dmtimer.h name?
+--mk7kxfbcygvibxyh
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I will go with ti-dmtimer.c.
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> regards
-> Suman
-> 
->> -- 
->> 1.9.1
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at http://vger.kernel.org/majordomo-info.html
->>
-> 
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlqDwQ8ACgkQnhiqJn3b
+jbQCsw//XLK86wSs95l94TQCrztf8nUpjflSLgZKt+p+IdwOhvf4GaQoFA68cIV5
+QPARksiYj1WGXacwL8Ajw+ZtCUzVQcHV5iAh1wu/Ep5KjEjJGegFDiwW0MmMp4w9
+qkxUwak8T5ZVu0K8CBrl/LAuCJE62udau+Z1Xu2kN8MMrN6DT3M3M9QFRXSs/Lrz
+1P0OTRvuK4ifNKePF7j0aZ3Ts7HUvgEgRGQ7gI5Lpr8Zwe9vNeq+Rl3pHkERt9sR
+bbPA84xClI1JSxOTVhrNvTYoQuq6Hg5106vLSlJaGOxRRzLKF+60hLK6LgJuQuY/
+PJ9ky7Iu6CrBYueHegdwly6m2H7AHwP9uNtIJ9gpfmLtuF4xI14L/rhjbS+SGikM
+0ESDe3NcS4gnN9PyWv8ieynzsne6jdVZ7S4tYYC+V0CFKZxeJhYx7AxPbHtSaqDV
+tCKEnxrN6Oyk8R9KPCGNPhkvoOc4Gx8suQOlto9wThZWs0XjvjaR7WstJ7183aSd
+2zNk8OgNh7AM9keQUMGPncMmpqNnB13CabzBm4sVfhXkuuPO4/XDbR7an0F23esl
+2wzq2xNrbwE3BcfxmvgsU3wOq1XBfxILJB4hfZzAomycVhbXfb45UoQhjXSC3Xzm
+sj3ZHFkFCLE/+1gUkGtITcWJb77h82dDLAeTR8LIrfki3iNaaAQ=
+=9bBi
+-----END PGP SIGNATURE-----
+
+--mk7kxfbcygvibxyh--
