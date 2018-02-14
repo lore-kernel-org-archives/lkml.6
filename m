@@ -1,164 +1,224 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935365AbeBNUj7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 15:39:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59676 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934991AbeBNUj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 15:39:58 -0500
-From: NeilBrown <neilb@suse.com>
-To: Milan Broz <gmazyland@gmail.com>, Mike Snitzer <snitzer@redhat.com>,
-        device-mapper development <dm-devel@redhat.com>
-Date: Thu, 15 Feb 2018 07:39:50 +1100
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: DM Regression in 4.16-rc1 - read() returns data when it shouldn't
-In-Reply-To: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
-References: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
-Message-ID: <871shnqp9l.fsf@notabene.neil.brown.name>
+        id S935351AbeBNUlr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 15:41:47 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41678 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932096AbeBNUlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 15:41:46 -0500
+Date: Wed, 14 Feb 2018 22:41:41 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: =?iso-8859-1?Q?Marc-Andr=E9?= Lureau <marcandre.lureau@redhat.com>
+Cc: linux-kernel@vger.kernel.org, bhe@redhat.com, slp@redhat.com,
+        somlo@cmu.edu, xiaolong.ye@intel.com
+Subject: Re: [PATCH v14 2/9] fw_cfg: add a public uapi header
+Message-ID: <20180214223631-mutt-send-email-mst@kernel.org>
+References: <20180214141850.4017-1-marcandre.lureau@redhat.com>
+ <20180214141850.4017-3-marcandre.lureau@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180214141850.4017-3-marcandre.lureau@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Wed, Feb 14, 2018 at 03:18:43PM +0100, Marc-André Lureau wrote:
+> Create a common header file for well-known values and structures to be
+> shared by the Linux kernel with qemu or other projects.
+> 
+> Suggested-by: Michael S. Tsirkin <mst@redhat.com>
+> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+> 
+> ---
+> 
+> The related qemu patch making use of it, to be submitted:
+> https://github.com/elmarco/qemu/commit/4884fc9e9c4c4467a371e5a40f3181239e1b70f5
+> ---
+>  MAINTAINERS                    |   1 +
+>  drivers/firmware/qemu_fw_cfg.c |  22 +--------
+>  include/uapi/linux/fw_cfg.h    | 102 +++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 105 insertions(+), 20 deletions(-)
+>  create mode 100644 include/uapi/linux/fw_cfg.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3bdc260e36b7..a66b65f62811 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11352,6 +11352,7 @@ M:	"Michael S. Tsirkin" <mst@redhat.com>
+>  L:	qemu-devel@nongnu.org
+>  S:	Maintained
+>  F:	drivers/firmware/qemu_fw_cfg.c
+> +F:	include/uapi/linux/fw_cfg.h
+>  
+>  QIB DRIVER
+>  M:	Dennis Dalessandro <dennis.dalessandro@intel.com>
+> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+> index a41b572eeeb1..90f467232777 100644
+> --- a/drivers/firmware/qemu_fw_cfg.c
+> +++ b/drivers/firmware/qemu_fw_cfg.c
+> @@ -32,30 +32,12 @@
+>  #include <linux/slab.h>
+>  #include <linux/io.h>
+>  #include <linux/ioport.h>
+> +#include <linux/fw_cfg.h>
+>  
+>  MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
+>  MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
+>  MODULE_LICENSE("GPL");
+>  
+> -/* selector key values for "well-known" fw_cfg entries */
+> -#define FW_CFG_SIGNATURE  0x00
+> -#define FW_CFG_ID         0x01
+> -#define FW_CFG_FILE_DIR   0x19
+> -
+> -/* size in bytes of fw_cfg signature */
+> -#define FW_CFG_SIG_SIZE 4
+> -
+> -/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
+> -#define FW_CFG_MAX_FILE_PATH 56
+> -
+> -/* fw_cfg file directory entry type */
+> -struct fw_cfg_file {
+> -	u32 size;
+> -	u16 select;
+> -	u16 reserved;
+> -	char name[FW_CFG_MAX_FILE_PATH];
+> -};
+> -
+>  /* fw_cfg device i/o register addresses */
+>  static bool fw_cfg_is_mmio;
+>  static phys_addr_t fw_cfg_p_base;
+> @@ -597,7 +579,7 @@ MODULE_DEVICE_TABLE(of, fw_cfg_sysfs_mmio_match);
+>  
+>  #ifdef CONFIG_ACPI
+>  static const struct acpi_device_id fw_cfg_sysfs_acpi_match[] = {
+> -	{ "QEMU0002", },
+> +	{ FW_CFG_ACPI_DEVICE_ID, },
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(acpi, fw_cfg_sysfs_acpi_match);
+> diff --git a/include/uapi/linux/fw_cfg.h b/include/uapi/linux/fw_cfg.h
+> new file mode 100644
+> index 000000000000..5b8136ce46ee
+> --- /dev/null
+> +++ b/include/uapi/linux/fw_cfg.h
+> @@ -0,0 +1,102 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +#ifndef _LINUX_FW_CFG_H
+> +#define _LINUX_FW_CFG_H
+> +
+> +#include <linux/types.h>
+> +
+> +#define FW_CFG_ACPI_DEVICE_ID	"QEMU0002"
+> +
+> +/* selector key values for "well-known" fw_cfg entries */
+> +#define FW_CFG_SIGNATURE	0x00
+> +#define FW_CFG_ID		0x01
+> +#define FW_CFG_UUID		0x02
+> +#define FW_CFG_RAM_SIZE		0x03
+> +#define FW_CFG_NOGRAPHIC	0x04
+> +#define FW_CFG_NB_CPUS		0x05
+> +#define FW_CFG_MACHINE_ID	0x06
+> +#define FW_CFG_KERNEL_ADDR	0x07
+> +#define FW_CFG_KERNEL_SIZE	0x08
+> +#define FW_CFG_KERNEL_CMDLINE	0x09
+> +#define FW_CFG_INITRD_ADDR	0x0a
+> +#define FW_CFG_INITRD_SIZE	0x0b
+> +#define FW_CFG_BOOT_DEVICE	0x0c
+> +#define FW_CFG_NUMA		0x0d
+> +#define FW_CFG_BOOT_MENU	0x0e
+> +#define FW_CFG_MAX_CPUS		0x0f
+> +#define FW_CFG_KERNEL_ENTRY	0x10
+> +#define FW_CFG_KERNEL_DATA	0x11
+> +#define FW_CFG_INITRD_DATA	0x12
+> +#define FW_CFG_CMDLINE_ADDR	0x13
+> +#define FW_CFG_CMDLINE_SIZE	0x14
+> +#define FW_CFG_CMDLINE_DATA	0x15
+> +#define FW_CFG_SETUP_ADDR	0x16
+> +#define FW_CFG_SETUP_SIZE	0x17
+> +#define FW_CFG_SETUP_DATA	0x18
+> +#define FW_CFG_FILE_DIR		0x19
+> +
+> +#define FW_CFG_FILE_FIRST	0x20
+> +#define FW_CFG_FILE_SLOTS_MIN	0x10
+> +
+> +#define FW_CFG_WRITE_CHANNEL	0x4000
+> +#define FW_CFG_ARCH_LOCAL	0x8000
+> +#define FW_CFG_ENTRY_MASK	(~(FW_CFG_WRITE_CHANNEL | FW_CFG_ARCH_LOCAL))
+> +
+> +#define FW_CFG_INVALID		0xffff
+> +
+> +/* width in bytes of fw_cfg control register */
+> +#define FW_CFG_CTL_SIZE		0x02
+> +
+> +/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
+> +#define FW_CFG_MAX_FILE_PATH	56
+> +
+> +/* size in bytes of fw_cfg signature */
+> +#define FW_CFG_SIG_SIZE 4
+> +
+> +/* FW_CFG_ID bits */
+> +#define FW_CFG_VERSION		0x01
+> +#define FW_CFG_VERSION_DMA	0x02
+> +
+> +/* fw_cfg file directory entry type */
+> +struct fw_cfg_file {
+> +	__be32 size;			/* file size */
+> +	__be16 select;			/* write this to 0x510 to read it */
+> +	__u16 reserved;
+> +	char name[FW_CFG_MAX_FILE_PATH];
+> +};
+> +
+> +struct fw_cfg_files {
+> +	__be32 count; /* number of entries */
+> +	struct fw_cfg_file f[];
+> +};
 
-On Wed, Feb 14 2018, Milan Broz wrote:
+This struct wasn't there in the original file.
+Is the source of these structures QEMU or Linux?
+If Linux, then pls split this
+1. move code out to a header
+2. add more structs
 
-> Hi,
->
-> the commit (found by bisect)
->
->   commit 18a25da84354c6bb655320de6072c00eda6eb602
->   Author: NeilBrown <neilb@suse.com>
->   Date:   Wed Sep 6 09:43:28 2017 +1000
->
->     dm: ensure bio submission follows a depth-first tree walk
->
-> cause serious regression while reading from DM device.
->
-> The reproducer is below, basically it tries to simulate failure we see in=
- cryptsetup
-> regression test: we have DM device with error and zero target and try to =
-read
-> "passphrase" from it (it is test for 64 bit offset error path):
->
-> Test device:
-> # dmsetup table test
-> 0 10000000 error=20
-> 10000000 1000000 zero=20
->
-> We try to run this operation:
->   lseek64(fd, 5119999988, SEEK_CUR); // this should seek to error target =
-sector
->   read(fd, buf, 13); // this should fail, if we seek to error part of the=
- device
->
-> While on 4.15 the read properly fails:
->   Seek returned 5119999988.
->   Read returned -1.
->
-> for 4.16 it actually succeeds returning some random data
-> (perhaps kernel memory, so this bug is even more dangerous):
->   Seek returned 5119999988.
->   Read returned 13.
->
-> Full reproducer below:
->
-> #define _GNU_SOURCE
-> #define _LARGEFILE64_SOURCE
-> #include <stdio.h>
-> #include <stddef.h>
-> #include <stdint.h>
-> #include <stdlib.h>
-> #include <unistd.h>
-> #include <fcntl.h>
-> #include <inttypes.h>
->
-> int main (int argc, char *argv[])
-> {
->         char buf[13];
->         int fd;
->         //uint64_t offset64 =3D 5119999999;
->         uint64_t offset64 =3D   5119999988;
->         off64_t r;
->         ssize_t bytes;
->
->         system("echo -e \'0 10000000 error\'\\\\n\'10000000 1000000 zero\=
-' | dmsetup create test");
->
->         fd =3D open("/dev/mapper/test", O_RDONLY);
->         if (fd =3D=3D -1) {
->                 printf("open fail\n");
->                 return 1;
->         }
->
->         r =3D lseek64(fd, offset64, SEEK_CUR);
->         printf("Seek returned %" PRIu64 ".\n", r);
->         if (r < 0) {
->                 printf("seek fail\n");
->                 close(fd);
->                 return 2;
->         }
->
->         bytes =3D read(fd, buf, 13);
->         printf("Read returned %d.\n", (int)bytes);
->
->         close(fd);
->         return 0;
-> }
->
->
-> Please let me know if you need more info to reproduce it.
+> +
+> +/* FW_CFG_DMA_CONTROL bits */
+> +#define FW_CFG_DMA_CTL_ERROR	0x01
+> +#define FW_CFG_DMA_CTL_READ	0x02
+> +#define FW_CFG_DMA_CTL_SKIP	0x04
+> +#define FW_CFG_DMA_CTL_SELECT	0x08
+> +#define FW_CFG_DMA_CTL_WRITE	0x10
+> +
+> +#define FW_CFG_DMA_SIGNATURE    0x51454d5520434647ULL /* "QEMU CFG" */
+> +
+> +/* Control as first field allows for different structures selected by this
+> + * field, which might be useful in the future
+> + */
+> +struct fw_cfg_dma_access {
+> +	__be32 control;
+> +	__be32 length;
+> +	__be64 address;
+> +};
 
-Thanks for the detailed report.  I haven't tried to reproduce, but the
-code looks very weird.
-The patch I posted "Date: Wed, 06 Sep 2017 09:43:28 +1000" had:
-      +				struct bio *b =3D bio_clone_bioset(bio, GFP_NOIO,
-      +								 md->queue->bio_split);
-      +				bio_advance(b, (bio_sectors(b) - ci.sector_count) << 9);
-      +				bio_chain(b, bio);
-      +				generic_make_request(b);
-      +				break;
+Maybe this should be part of the dma patch.
 
-The code in Linux has:
+> +
+> +#define FW_CFG_VMCOREINFO_FILENAME "etc/vmcoreinfo"
+> +
+> +#define FW_CFG_VMCOREINFO_FORMAT_NONE 0x0
+> +#define FW_CFG_VMCOREINFO_FORMAT_ELF 0x1
+> +
+> +struct fw_cfg_vmcoreinfo {
+> +	__le16 host_format;
+> +	__le16 guest_format;
+> +	__le32 size;
+> +	__le64 paddr;
+> +};
 
-				struct bio *b =3D bio_clone_bioset(bio, GFP_NOIO,
-								 md->queue->bio_split);
-				ci.io->orig_bio =3D b;
-				bio_advance(bio, (bio_sectors(bio) - ci.sector_count) << 9);
-				bio_chain(b, bio);
-				ret =3D generic_make_request(bio);
-				break;
+Maybe this should be part of the vmcore patch.
 
-So the wrong bio is sent to generic_make_request().
-Mike: do you remember how that change happened?  I think there were
-discussions following the patch, but I cannot find anything about making
-that change.
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlqEnpYACgkQOeye3VZi
-gbkk4Q/+PQFcz83OjQXScwwnDYyQxKIVkfZzIc0MsnSuGgBiMcT0Gv0x+3h0qQxR
-JchmINLbYYCuAr3dLV/1mbac0hMyKtTpNJ3JUG8lQwXHaLw/4lPt19mPGnu49Ap6
-6NkYdqPaxJl0pXJGMbZEWoDm2QwqZBJHUw/3iVswHkypBXl47mY7RQxDtYilCpRc
-AovLSmYvrkNPteyt7qrdXUVNQkRhD6Muj2SL5xJxv1XJpnS5o4LIZ0CsxOn4EMvh
-wv5u7fMxlEue/aLzgB89x7fSMTiZiei8ye1u14ql82PeQ3qxDNbpc/vnTGhLVjuv
-Uqb8irg5eVUadL/mxvE+PgB2xbk/KWmZG/szlPYgPGcX5solfcASpmyaag2Jyrsj
-jmlq1NizBDr0tMjDkufILs/VPsoCUbb1mXRPR540vB6EvkFcm8994wIYa+8w3lFD
-J/ZOKeMG9srfFG2hrwnUen0iND6eWa2pibsym9cAkW4qwwGkzOsybHCF1lHCS9n6
-ZtczeL7WzkfFZjpUIqLjpTCkz3iC5eIpiFiC0bHdddFmw57Qi+AkW8kVUuRBIaEC
-t3EBU1nxUGPTEATH+mhpnfgd78TNdnMGRAfqWdngQzYiAVh0CIMdCG3SmqMwaiLW
-wNbf11FFSCUAMZ7v73dih0kWPgYALi9ZbBg7CTR2jbgbIzh/PRc=
-=4fbz
------END PGP SIGNATURE-----
---=-=-=--
+> +
+> +#endif
+> -- 
+> 2.16.1.73.g5832b7e9f2
