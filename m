@@ -1,128 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031546AbeBNVgg convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 16:36:36 -0500
-Received: from mga14.intel.com ([192.55.52.115]:58793 "EHLO mga14.intel.com"
+        id S1031591AbeBNVi2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 16:38:28 -0500
+Received: from mout.web.de ([212.227.15.4]:48633 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030501AbeBNVgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 16:36:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,514,1511856000";
-   d="scan'208";a="17700445"
-From: "Keller, Jacob E" <jacob.e.keller@intel.com>
-To: "Michael, Alice" <alice.michael@intel.com>,
-        Guenter Roeck <linux@roeck-us.net>, James Hogan <jhogan@kernel.org>
-CC: Ralf Baechle <ralf@linux-mips.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
-        Shannon Nelson <shannon.nelson@oracle.com>
-Subject: RE: [RFC PATCH] MIPS: Provide cmpxchg64 for 32-bit builds
-Thread-Topic: [RFC PATCH] MIPS: Provide cmpxchg64 for 32-bit builds
-Thread-Index: AQHTpFslw+crNM24eUSynxqRPTqrYKOh97eAgAJsOTCAAArEUA==
-Date: Wed, 14 Feb 2018 21:36:33 +0000
-Message-ID: <02874ECE860811409154E81DA85FBB5882CDAA1C@ORSMSX115.amr.corp.intel.com>
-References: <1518475021-3337-1-git-send-email-linux@roeck-us.net>
- <20180212234201.GB4290@saruman> <20180212235655.GC5199@roeck-us.net>
- <CD14C679C9B9B1409B02829D9B523C297C4D61@ORSMSX101.amr.corp.intel.com>
-In-Reply-To: <CD14C679C9B9B1409B02829D9B523C297C4D61@ORSMSX101.amr.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYTVjMjhjNTYtNmM5Yi00OTY2LTk5ODAtNTUwN2U5OWE4Y2QxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IjBOeFJXTHdRV0ZcLzVsN0NXNkhEQkZ3dnVqU2F1VW9IcVM1ZmJLb0ZROU40PSJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1031427AbeBNViY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 16:38:24 -0500
+To: linux-crypto@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Rob Rice <rob.rice@broadcom.com>, Steve Lin <steven.lin1@broadcom.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] crypto/bcm: Adjustments for do_shash()
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Message-ID: <68946b12-83d6-ab74-fd54-71b23cf9b7ef@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 22:38:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:9PLhKeW/NpGEMnTmZlmA+u3eCmNMMFhEucajtKCPmZn01t/QeBW
+ KV7hCxwH5MgKZmr0DU7eo1JSAAjK3c+HhbCNO03ZzR2clxWyncjuaFjt8VJFt6telfNgPDa
+ WZo94kCdy1GfdhOLzCXlI9YHwI/CptOrNkWxnTDG0lgQu9zjHSm7TdlLs2Trp7sXXPdJRVP
+ w7tnzL5DlXwQJdy/JTMIQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:PmZ06akmnqI=:wu4kmPal7jAC5laxYaJzhK
+ u4ZDN8MNO0a01812KY5M+PN5Zx8NrRAAxZXtFOY6HTmqDL11V/H5OuhzxRtN7Onj5TaQffkKK
+ JnL/zXw8ckH6vjtValqXIEnHo6LgE+Mi+wzY/Bh6fmEH9Q5q6zKHjRTdoRt72XDJtfe1Sni+4
+ u2vQPF6Yh00neC4IIaHAXn6FVlQD45Atvt5keYpmNYX2y4eSxuD6uqgf/SXzT/jiMDXU+iH+x
+ ltYDj9ZV0TCPp4Y0ob7r3rK1GnYhP/bMSrNOpEfIc9II3A8yvYLezngm2BiA+EfvSRK1YIKQe
+ 2rvcWC9OGNEsp9IxBNq5bpSgUAg9md7aUqoJM+qHVye1y6zQrSduqjg968jtehkmZ0u7mrwf1
+ pPvqo5Nj5lpYt/C5qwFBYsaTrqjDoORn6l/5JoK+XCQfE2VvF1DLYsgdiGe94Czn3NGvv2dl3
+ k4rfpTeQ+1Xqr2tQhrfSaKzJUfRiDDxRDBHYO1a/5E/o52JhR1EasFakvxz/PmzhGm3lGwtq6
+ Kn/jl1VvAUsovP4q2IhVC/df8GS3FueNfncqzCfEhKBeYnx1uqi6bOs4ZF7Bl/RyUD/ZtIDWD
+ 2DaVxQzV2u++l8c+j0gQfzp3DB/7TY5Tec66U6e44yjPz1v2kFktixfKXEAaGQY+9CpnbJgBn
+ 1Z0qgf+04VMv31x3EekT/L5Qirl6XX+crIciToCJsQiU/ADs17Et7+uwcopns2lAb+1aEQYHj
+ J0O7Cc5LcB71ig9cX3F9eHZ6UYEGVsylmoQuQTKuZ2M0PgKDoG5E2Y02BlJcddoovhe/mAWuD
+ Ag7vN5WlFCtzBEszIjndcvOI42uFCtLYoV3t/awgQcz3OchhlA=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Michael, Alice
-> Sent: Wednesday, February 14, 2018 1:03 PM
-> To: Guenter Roeck <linux@roeck-us.net>; James Hogan <jhogan@kernel.org>;
-> Keller, Jacob E <jacob.e.keller@intel.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>; linux-mips@linux-mips.org; linux-
-> kernel@vger.kernel.org; Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; Shannon
-> Nelson <shannon.nelson@oracle.com>
-> Subject: RE: [RFC PATCH] MIPS: Provide cmpxchg64 for 32-bit builds
-> 
-> As has previously been said, we're going to be removing the need for cmpxchg64.
-> But it takes a little bit of time and work to do so.  I'm adding the dev that is taking
-> care of the work back onto this email thread as well so he can see any concerns with
-> it.
-> 
-> Alice
-> 
-> -----Original Message-----
-> From: Guenter Roeck [mailto:groeck7@gmail.com] On Behalf Of Guenter Roeck
-> Sent: Monday, February 12, 2018 3:57 PM
-> To: James Hogan <jhogan@kernel.org>
-> Cc: Ralf Baechle <ralf@linux-mips.org>; linux-mips@linux-mips.org; linux-
-> kernel@vger.kernel.org; Michael, Alice <alice.michael@intel.com>; Kirsher, Jeffrey T
-> <jeffrey.t.kirsher@intel.com>; Shannon Nelson <shannon.nelson@oracle.com>
-> Subject: Re: [RFC PATCH] MIPS: Provide cmpxchg64 for 32-bit builds
-> 
-> On Mon, Feb 12, 2018 at 11:42:02PM +0000, James Hogan wrote:
-> > Hi Guenter,
-> >
-> > On Mon, Feb 12, 2018 at 02:37:01PM -0800, Guenter Roeck wrote:
-> > > Since commit 60f481b970386 ("i40e: change flags to use 64 bits"),
-> > > the i40e driver uses cmpxchg64(). This causes mips:allmodconfig
-> > > builds to fail with
-> > >
-> > > drivers/net/ethernet/intel/i40e/i40e_ethtool.c:
-> > > 	In function 'i40e_set_priv_flags':
-> > > drivers/net/ethernet/intel/i40e/i40e_ethtool.c:4443:2: error:
-> > > 	implicit declaration of function 'cmpxchg64'
-> > >
-> > > Implement a poor-mans-version of cmpxchg64() to fix the problem for
-> > > 32-bit mips builds. The code is derived from sparc32, but only uses
-> > > a single spinlock.
-> >
-> > Will this be implemened for all 32-bit architectures which are
-> > currently missing cmpxchg64()?
-> >
-> No idea.
-> 
-> > If so, any particular reason not to do it in generic code?
-> >
-> Again, no idea. When the problem was previously seen on sparc32, it was
-> implemented there.
-> 
-> > If not then I think that driver should be fixed to either depend on
-> > some appropriate Kconfig symbol or to not use this API since it
-> > clearly isn't portable at the moment.
-> >
-> Good point.
-> 
-> > See also Shannon's comment about that specific driver:
-> > https://lkml.kernel.org/r/e7c934d7-e5f4-ee1b-0647-c31a98d9e944@oracle.
-> > com
-> >
-> 
-> Well, this was an RFC only. Feel free to ignore it.
-> 
-> FWIW, this is the second time that the call was introduced in the i40 driver.
-> After the first time the code was rewritten to avoid the problem, but now it came
-> back. Someone must really like it ;-). For my part, I may just blacklist the offending
-> driver in my builds; that is less than perfect, but much easier than having to deal with
-> the same problem over and over again. Guess I'll wait for a while and do just that if
-> the problem isn't fixed in a later RC.
-> 
-> Guenter
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 22:30:07 +0100
 
-Hi,
+Two update suggestions were taken into account
+from static source code analysis.
 
-I've been working on re-writing some of the code so that the need for a compare-and-exchange in the i40e_set_priv_flags() is not necessary. This mostly involved moving many flags out into an atomic bitops field instead, it should be posted to IWL soon.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  One function call less after error detection
 
-Thanks,
-Jake
+ drivers/crypto/bcm/util.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+-- 
+2.16.1
