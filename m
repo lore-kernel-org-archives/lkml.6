@@ -1,78 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031594AbeBNPib (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 10:38:31 -0500
-Received: from mo1500.tsb.2iij.net ([210.149.48.172]:44208 "EHLO
-        mo.tsb.2iij.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934301AbeBNPi3 (ORCPT
+        id S1031605AbeBNPi5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 10:38:57 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:27120 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934301AbeBNPiz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:38:29 -0500
-X-MXL-Hash: 5a8457d569c62f4e-5fa86ef81529849928ccf1c42f1abd8e0ddab7ef
+        Wed, 14 Feb 2018 10:38:55 -0500
+Subject: Re: [PATCH v3 0/9] irqchip: stm32: add stm32h7 support
+To: Ludovic Barre <ludovic.Barre@st.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>
+CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+References: <1509987819-29599-1-git-send-email-ludovic.Barre@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <37eef294-12ef-e3a3-df93-10c0ed8b1a57@st.com>
+Date: Wed, 14 Feb 2018 16:38:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1509987819-29599-1-git-send-email-ludovic.Barre@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-From: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
-To: boris.brezillon@free-electrons.com, richard@nod.at,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, cyrille.pitchen@wedev4u.fr,
-        linux-mmc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
-Subject: [PATCH -next v4] mtd: nand: toshiba: Retrieve ECC requirements from extended ID
-Date: Thu, 15 Feb 2018 00:35:06 +0900
-Message-Id: <1518622506-16606-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
-X-Mailer: git-send-email 2.7.4
-X-MAIL-FROM: <yoshitake.kobayashi@toshiba.co.jp>
-X-SOURCE-IP: [172.27.153.190]
-X-Spam: exempt
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-14_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables support to read the ECC strength and size from the
-NAND flash using Toshiba Memory SLC NAND extended-ID. This patch is
-based on the information of the 6th ID byte of the Toshiba Memory SLC
-NAND.
+Hi
 
-Signed-off-by: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
----
- drivers/mtd/nand/nand_toshiba.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+On 11/06/2017 06:03 PM, Ludovic Barre wrote:
+> From: Ludovic Barre <ludovic.barre@st.com>
+> 
+> This series adds:
+> -Management of multi-bank of external interrupts
+> stm32h7 has up to 96 inputs (3 banks of  32 inputs).
+> -Fix initial value after cold/hot boot (wakeup issue).
+> 
+> Changes v3:
+> -remove chip.name and handler, already done by
+> irq_alloc_domain_generic_chips
+> -add Rob ack in dt-bindings commit
+> 
+> Changes v2:
+> -Remove irq_mask and adds const on struct stm32_exti_bank
+> -Add wrapper functions pending and ack
+> -Replace BITS_PER_LONG by IRQS_PER_BANK
+> -Fill commit message on
+> "ARM: dts: stm32: add support of exti on stm32h743"
+> -Add system config bank for stm32h7
+> 
+> Ludovic Barre (9):
+>    irqchip: stm32: select GENERIC_IRQ_CHIP
+>    irqchip: stm32: add multi-bank management
+>    dt-bindings: interrupt-controllers: add compatible string for stm32h7
+>    irqchip: stm32: add stm32h7 support
+>    irqchip: stm32: fix initial values
+>    irqchip: stm32: move the wakeup on interrupt mask
+>    ARM: dts: stm32: add exti support for stm32h743
+>    ARM: dts: stm32: add system config bank node for stm32h743
+>    ARM: dts: stm32: add support of exti on stm32h743 pinctrl
 
-diff --git a/drivers/mtd/nand/nand_toshiba.c b/drivers/mtd/nand/nand_toshiba.c
-index 57df857..ab43f02 100644
---- a/drivers/mtd/nand/nand_toshiba.c
-+++ b/drivers/mtd/nand/nand_toshiba.c
-@@ -35,6 +35,32 @@ static void toshiba_nand_decode_id(struct nand_chip *chip)
- 	    (chip->id.data[5] & 0x7) == 0x6 /* 24nm */ &&
- 	    !(chip->id.data[4] & 0x80) /* !BENAND */)
- 		mtd->oobsize = 32 * mtd->writesize >> 9;
-+
-+	/*
-+	 * Extract ECC requirements from 6th id byte.
-+	 * For Toshiba SLC, ecc requrements are as follows:
-+	 *  - 43nm: 1 bit ECC for each 512Byte is required.
-+	 *  - 32nm: 4 bit ECC for each 512Byte is required.
-+	 *  - 24nm: 8 bit ECC for each 512Byte is required.
-+	 */
-+	if (chip->id.len >= 6 && nand_is_slc(chip)) {
-+		chip->ecc_step_ds = 512;
-+		switch (chip->id.data[5] & 0x7) {
-+		case 0x4:
-+			chip->ecc_strength_ds = 1;
-+			break;
-+		case 0x5:
-+			chip->ecc_strength_ds = 4;
-+			break;
-+		case 0x6:
-+			chip->ecc_strength_ds = 8;
-+			break;
-+		default:
-+			WARN(1, "Could not get ECC info");
-+			chip->ecc_step_ds = 0;
-+			break;
-+		}
-+	}
- }
- 
- static int toshiba_nand_init(struct nand_chip *chip)
--- 
-2.7.4
+patches 7/8/9 (DT part) applied on stm32-next.
+
+Thanks
+Alex
+
+> 
+>   .../interrupt-controller/st,stm32-exti.txt         |   4 +-
+>   arch/arm/boot/dts/stm32h743-pinctrl.dtsi           |  24 +++
+>   arch/arm/boot/dts/stm32h743.dtsi                   |  13 ++
+>   drivers/irqchip/Kconfig                            |   1 +
+>   drivers/irqchip/irq-stm32-exti.c                   | 206 ++++++++++++++++-----
+>   5 files changed, 198 insertions(+), 50 deletions(-)
+> 
