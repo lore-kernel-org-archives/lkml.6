@@ -1,95 +1,88 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x226MjMFSJuCmOv2r0/P0mYbgmha8pT1j+ZC89ki8hJQ2tsQ1+GtYRC4MzLTi6ngF6Vm8LjUH
-ARC-Seal: i=1; a=rsa-sha256; t=1518573837; cv=none;
+X-Google-Smtp-Source: AH8x225bF5fSrCOBU+TVcCcs27RP4R+8SH+FBFy6ek6brdg4RlkO4k8eoDFW6f5+P/A93c1CCLK1
+ARC-Seal: i=1; a=rsa-sha256; t=1518619777; cv=none;
         d=google.com; s=arc-20160816;
-        b=avsRHbDDeZSpgzf4NGrlChV8s1+1xdpuhWBrMMpjVH+Z5+7mbfHPPh511nOSMDeF5a
-         /u6Qvm9chszvo7lIX4yE6FmK+fXShl3/Ahbflz5SMLU456IBWrPklP7Mpyl+wd4ekcsL
-         xIiKdxoqXps6/PYOupnsSZMT1jx9sI+PDTZRsPrBIHpUudJf2bu0Lo35aKzH2adI/YA2
-         b3+sPiI5fVu3RKPM0Ffqe0en2H/r1QlPfG0vnST9ZQ16b4o8HI6kTdTiCEe7v70z2GxX
-         3cY8sELtffyNGjqx46kHGI+BcjAc036mtg+3A/0uhmoC27MJm1YLxv6KeYJxU3VIVfN+
-         SiRw==
+        b=s6bA5U8Ha7tU0H+0ISj9zvZ6hQs+Eh8UI/+SbluBBAE8xgZPZr2VJOa5zF/G3JxIVX
+         mtgiJlMuEXnzAhhA4bSf9Ilylj+TM90mOrO5LHcRQgqVetir1eEhRsBhNl1XQkesosJZ
+         C5kzId3lMr/qQr5bvhExHgOT3yMHUaxpvTDKxzYemkRS2JotfxLUuLc5yQuYZPN8f6IP
+         tb0WreMCFANESuNXF9R0cw3iS3L8LXoqo3d2GQULsvthiM1sQUDhpAR3LxE/qIpa9r3l
+         v0Mg2UNyvh+P/YCBfmGU2zKb2hU+hRl81i75cd5ehnpQTG43ag7RhfIzU2CXz6YV6/Lw
+         mmBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:user-agent:in-reply-to
-         :content-transfer-encoding:content-disposition:mime-version
-         :references:message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=qpwoWtZ5ki5QY0eTvhdbFFGh1EX8R15fEmYHQOBkPGk=;
-        b=OjYbm3iTCShjQWnADHOUpVioTtXIVXcNJsc4XEwCaqa6FxjeV0HyFlnOCsGf3mEIC1
-         RODyA9QtbyRLb8E2QxbnH+3U3YbeJC+gsP2/nS+RYHXRN+MFub5Fx65HmSMNn1dWfDZa
-         Dw6bN8XXVIn4es52gsvKSnhwO7PFH1ygrcex0a0Aueju6j/GaMSfr2xN/Sr6fVZDxARM
-         FUms27LRtQ/NhD2U0GSco70yl6YYsq4L47NuCDQfI031pPMpJ2AFIICF0ZxofQLmGYlE
-         RvKCCJSa39QkbmTdvjSNvIA2vK93cHsWqm+cLY1RDWeEFXyAdf2sL15UBMCU4OjiDJZY
-         aA8g==
+        h=list-id:precedence:sender:content-transfer-encoding:cc:to:subject
+         :message-id:date:from:references:in-reply-to:mime-version
+         :dkim-signature:arc-authentication-results;
+        bh=io6qbakiOvIKDRZn3hOGpBCm0uVbv5tQLieCERgDpho=;
+        b=iaSO0f1aTnZAhRg2EumefVLBMVcF0j2yw7zCB6VE3xIoKJ5mE4Mw0J1j4ZgnQCnL9R
+         vrRhAIn+tA4cq+emPLlyDHmthMVttBAA0QSEZ8BOo94fKeMK0Q+FRIkn1YMdpYUbgRwW
+         b/k2q0hjUufa3WKVJSJ3tsLUQYpcczeL1VA4RtT27My6c4DbPrNBm+nsbnwfo6tO5Ko9
+         b1098ptqq1tzeW5faU8qEFaIST0ZF5BCuP/M5kAQzVkEa/AyouonOJ4VzabyyG2Px2DC
+         MikSXysNUY4n3S7qbiA0JPZ8ig4fyDtX9bxK1n/sp2fzVJKUHmx0sJ3LqrnsZXPbHGXx
+         VVPw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@infradead.org header.s=bombadil.20170209 header.b=jzBDwjAl;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=XIe4ozHe;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@infradead.org header.s=bombadil.20170209 header.b=jzBDwjAl;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=XIe4ozHe;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966424AbeBNCD5 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Tue, 13 Feb 2018 21:03:57 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37918 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966401AbeBNCD4 (ORCPT
+        id S1030918AbeBNOtX (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Wed, 14 Feb 2018 09:49:23 -0500
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:33891 "EHLO
+        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030749AbeBNOtV (ORCPT
         <rfc822;linux-kselftest@vger.kernel.org>);
-        Tue, 13 Feb 2018 21:03:56 -0500
-Date: Tue, 13 Feb 2018 18:03:52 -0800
-From: Darren Hart <dvhart@infradead.org>
-To: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: Daniel =?iso-8859-1?Q?D=EDaz?= <daniel.diaz@linaro.org>,
+        Wed, 14 Feb 2018 09:49:21 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180214020352.GB5786@fury>
+References: <1518024271-12467-1-git-send-email-daniel.diaz@linaro.org>
+ <dbf5a78f-4178-2210-9a6c-bf71de7b939d@osg.samsung.com> <20180214013347.GA5786@fury>
+ <6d498007-de71-2071-646c-05eeb81b2b08@osg.samsung.com> <20180214020352.GB5786@fury>
+From: =?UTF-8?Q?Daniel_D=C3=ADaz_Rodr=C3=ADguez?=
+        <daniel.diaz@linaro.org>
+Date: Wed, 14 Feb 2018 08:49:18 -0600
+Message-ID: <CAEUSe781sJsz=4rMBa+np7x=snO7r-ByV_AiaTtmcfUZk06j=g@mail.gmail.com>
+Subject: Re: [PATCH] selftests/futex: Fix line continuation in Makefile
+To: Darren Hart <dvhart@infradead.org>
+Cc: Shuah Khan <shuahkh@osg.samsung.com>,
         linux-kselftest@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Shuah Khan <shuah@kernel.org>,
         "open list:FUTEX SUBSYSTEM" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] selftests/futex: Fix line continuation in Makefile
-Message-ID: <20180214020352.GB5786@fury>
-References: <1518024271-12467-1-git-send-email-daniel.diaz@linaro.org>
- <dbf5a78f-4178-2210-9a6c-bf71de7b939d@osg.samsung.com>
- <20180214013347.GA5786@fury>
- <6d498007-de71-2071-646c-05eeb81b2b08@osg.samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6d498007-de71-2071-646c-05eeb81b2b08@osg.samsung.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591763894080699218?=
-X-GMAIL-MSGID: =?utf-8?q?1592340080263507453?=
+X-GMAIL-MSGID: =?utf-8?q?1592388251355737129?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 13, 2018 at 06:45:54PM -0700, Shuah Khan wrote:
-> On 02/13/2018 06:33 PM, Darren Hart wrote:
-> > On Tue, Feb 13, 2018 at 02:26:46PM -0700, Shuah Khan wrote:
-> >> On 02/07/2018 10:24 AM, Daniel Díaz wrote:
-> >>> The Makefile lacks a couple of line continuation backslashes
-> >>> in an `if' clause, which produces an error while make'ing:
-> >>>
-> >>>   $ make
-> >>>   make[1]: Entering directory `/[...]/linux/tools/testing/selftests/futex'
-> >>>   /bin/sh: -c: line 5: syntax error: unexpected end of file
-> >>>   make[1]: *** [all] Error 1
-> >>>   make[1]: Leaving directory `/[...]/linux/tools/testing/selftests/futex'
-> >>>   make: *** [all] Error 2
-> >>>
-> > 
-> > What is the failure scenario here? Is this shell specific? What does /bin/sh
-> > point to for you?
-> 
-> My understanding is that this problem is seen with make versions prior to 4.x.
-> This specific problem is seen with make version 3.81
-> 
-> I will let Daniel Díaz share details on his environment.
+Hello!
 
-OK, thanks Shuah. I think this would be important to capture in the commit
-message.
 
--- 
-Darren Hart
-VMware Open Source Technology Center
+On 13 February 2018 at 20:03, Darren Hart <dvhart@infradead.org> wrote:
+> On Tue, Feb 13, 2018 at 06:45:54PM -0700, Shuah Khan wrote:
+[...]
+>> My understanding is that this problem is seen with make versions prior t=
+o 4.x.
+>> This specific problem is seen with make version 3.81
+>> I will let Daniel D=C3=ADaz share details on his environment.
+>
+> OK, thanks Shuah. I think this would be important to capture in the commi=
+t
+> message.
+
+That's correct -- fails with GNU Make 3.80, 3.81; works with GNU Make
+3.82 and the 4.x series. Shuah, if you'd like me to resubmit let me
+know.
+
+Thanks and greetings!
+
+Daniel D=C3=ADaz
+daniel.diaz@linaro.org
