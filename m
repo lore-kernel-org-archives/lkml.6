@@ -1,63 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031194AbeBNPMV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 10:12:21 -0500
-Received: from mail-pl0-f51.google.com ([209.85.160.51]:42319 "EHLO
-        mail-pl0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031126AbeBNPMS (ORCPT
+        id S1031205AbeBNPQW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 10:16:22 -0500
+Received: from lilium.sigma-star.at ([109.75.188.150]:53330 "EHLO
+        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030922AbeBNPQV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:12:18 -0500
-X-Google-Smtp-Source: AH8x225xmN5w9vX52jbr6peV9c4Mcpg6PhVJOJKhefRVvbqslPVX8ymseqIy2sHnRMDkJu+FXWKidPmwsn1y3aR/QeU=
+        Wed, 14 Feb 2018 10:16:21 -0500
+From: Richard Weinberger <richard@sigma-star.at>
+To: Enrico Weigelt <lkml@metux.net>
+Cc: Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: plan9 semantics on Linux - mount namespaces
+Date: Wed, 14 Feb 2018 16:17:35 +0100
+Message-ID: <60748622.exvCVAzLTp@blindfold>
+In-Reply-To: <4f620eb7-c00c-487b-2e06-8cc4c97af38c@metux.net>
+References: <0f058286-a432-379b-f559-f2fe713807ab@metux.net> <2050418.Dl5pXkWGsk@blindfold> <4f620eb7-c00c-487b-2e06-8cc4c97af38c@metux.net>
 MIME-Version: 1.0
-In-Reply-To: <20180112183046.GA26098@oracle.com>
-References: <001a1141a524c513ca05628d8ad4@google.com> <20180112183046.GA26098@oracle.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 14 Feb 2018 16:11:57 +0100
-Message-ID: <CACT4Y+aB0dZShujVMJFV6grb_7AYOMca13a1J2AkWsT7R0cgrQ@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in rds_tcp_tune
-To: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Cc: syzbot <syzbot+bbd8e9a06452cc48059b@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>, rds-devel@oss.oracle.com,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 12, 2018 at 7:30 PM, Sowmini Varadhan
-<sowmini.varadhan@oracle.com> wrote:
-> On (01/11/18 21:29), syzbot wrote:
->> ==================================================================
->> BUG: KASAN: use-after-free in rds_tcp_tune+0x491/0x520 net/rds/tcp.c:397
->> Read of size 4 at addr ffff8801cd5f6c58 by task kworker/u4:4/4954
->
-> Just had an offline discussion with santosh around this, here's a summary
-> of that discussion for the archives:
->
-> Looks like an rds_connect_worker workq got scheduled after the
-> netns was deleted. This could happen if an an rds_connection got
-> added between lines 528 and 529 of
->
->   506 static void rds_tcp_kill_sock(struct net *net)
->   :
->   /* code to pull out all the rds_connections that should be destroyed */
->   :
->   528         spin_unlock_irq(&rds_tcp_conn_lock);
->   529         list_for_each_entry_safe(tc, _tc, &tmp_list, t_tcp_node)
->   530                 rds_conn_destroy(tc->t_cpath->cp_conn);
->
-> Such an rds_connection would miss out the rds_conn_destroy()
-> loop (that cancels all pending work) and (if it was scheduled
-> after netns deletion) could trigger the use-after-free.
->
-> Evaluating various fixes for this (including using _bh instead of _irq
-> as suggested by santosh), I'll get back with a patch soon.
+Enrico,
 
+Am Mittwoch, 14. Februar 2018, 16:02:18 CET schrieb Enrico Weigelt:
+> stat64("/etc/busybox.conf", {st_mode=S_IFREG|0644, st_size=198, ...}) = 0
 
-Hi Sowmini,
+busybox...
 
-Was this ever fixed? What's the fix? This still hangs as open. Please
-provide "syz fix" tag.
+> brk(NULL)                               = 0x58000
+> brk(0x79000)                            = 0x79000
+> open("/etc/busybox.conf", O_RDONLY|O_LARGEFILE) = 3
+> fstat64(3, {st_mode=S_IFREG|0644, st_size=198, ...}) = 0
+> read(3, "[SUID]\n#lines starting with # ar"..., 1024) = 198
+> read(3, "", 1024)                       = 0
+> close(3)                                = 0
+> getgid32()                              = 1
+> setgid32(1)                             = 0
+> setuid32(1)                             = 0
+> geteuid32()                             = 1
+> getegid32()                             = 1
+> unshare(CLONE_NEWUTS|CLONE_NEWUSER)     = 0
+> open("/proc/self/setgroups", O_WRONLY|O_LARGEFILE) = 3
+> write(3, "deny", 4)                     = 4
+> close(3)                                = 0
+> open("/proc/self/uid_map", O_WRONLY|O_LARGEFILE) = 3
+> write(3, "1 0 1", 5)                    = -1 EPERM (Operation not permitted)
+
+This mapping looks broken.
+Please report to busybox folks.
+
+>From taking a *very* quick look into busybox source, I suspect this should fix 
+it:
+
+diff --git a/util-linux/unshare.c b/util-linux/unshare.c
+index 875e3f86e304..3f59cf4d27c2 100644
+--- a/util-linux/unshare.c
++++ b/util-linux/unshare.c
+@@ -350,9 +350,9 @@ int unshare_main(int argc UNUSED_PARAM, char **argv)
+ 		 * in that user namespace.
+ 		 */
+ 		xopen_xwrite_close(PATH_PROC_SETGROUPS, "deny");
+-		sprintf(uidmap_buf, "%u 0 1", (unsigned)reuid);
++		sprintf(uidmap_buf, "0 %u 1", (unsigned)reuid);
+ 		xopen_xwrite_close(PATH_PROC_UIDMAP, uidmap_buf);
+-		sprintf(uidmap_buf, "%u 0 1", (unsigned)regid);
++		sprintf(uidmap_buf, "0 %u 1", (unsigned)regid);
+ 		xopen_xwrite_close(PATH_PROC_GIDMAP, uidmap_buf);
+ 	} else
+ 	if (setgrp_str) {
+
+Thanks,
+//richard
+
+-- 
+sigma star gmbh - Eduard-Bodem-Gasse 6 - 6020 Innsbruck - Austria
+ATU66964118 - FN 374287y
