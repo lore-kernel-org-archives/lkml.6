@@ -1,62 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030883AbeBNOjG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 09:39:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34490 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030381AbeBNOjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 09:39:05 -0500
-From: Michal Suchanek <msuchanek@suse.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Michal Suchanek <msuchanek@suse.de>, Gerd Hoffmann <kraxel@redhat.com>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Julia Lawall <Julia.Lawall@lip6.fr>, linux-mmc@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] mmc: bcm2835: reset host on timeout
-Date: Wed, 14 Feb 2018 15:38:57 +0100
-Message-Id: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
-X-Mailer: git-send-email 2.13.6
+        id S1030877AbeBNOj7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 09:39:59 -0500
+Received: from mail-qk0-f169.google.com ([209.85.220.169]:35060 "EHLO
+        mail-qk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030759AbeBNOj6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 09:39:58 -0500
+X-Google-Smtp-Source: AH8x227KXdvY6BEuMBRvSY76ac9Xz8nxx+HOAbtuyOE9fdGdEO7xzMforWdndCnmL/NXZyNvxhq3q+gBPcVJZCzhQME=
+MIME-Version: 1.0
+In-Reply-To: <20180212114937.GA12976@sirena.org.uk>
+References: <CAErzpmuxmrJszRz5_SZXPMkdU2UWNHChrnKjnHuCWZYrs4hgTA@mail.gmail.com>
+ <20180212114937.GA12976@sirena.org.uk>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Wed, 14 Feb 2018 22:39:36 +0800
+Message-ID: <CAErzpmt+HhGkVoN199iPDmQx-1z3iS3waxYQ=oxvn14Bm0R5gg@mail.gmail.com>
+Subject: Re: [PATCH v3] ASoC: use DEFINE_SHOW_ATTRIBUTE() to decrease code duplication
+To: Mark Brown <broonie@kernel.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The bcm2835 mmc host tends to lock up for unknown reason so reset it on
-timeout. The upper mmc block layer tries retransimitting with single
-blocks which tends to work out after a long wait.
+On Mon, Feb 12, 2018 at 7:49 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Fri, Feb 09, 2018 at 11:10:55PM +0800, Donglin Peng wrote:
+>
+>> --- a/sound/soc/soc-core.c
+>> +++ b/sound/soc/soc-core.c
+>> @@ -349,7 +349,7 @@ static void soc_init_codec_debugfs(struct
+>> snd_soc_component *component)
+>>              "ASoC: Failed to create codec register debugfs file\n");
+>
+> Your patch has been corrupted somewhere (probably in your mail client) -
+> there's word wrapping here.
+Hi Mark, do you know the way to disable gmail word wrap in plain text mode?
+I find that gmail will force to wrap word at 70 characters in plain text mode.
 
-This is better than giving up and leaving the machine broken for no
-obvious reason.
-
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
----
- drivers/mmc/host/bcm2835.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
-index 229dc18f0581..ce05fe72f865 100644
---- a/drivers/mmc/host/bcm2835.c
-+++ b/drivers/mmc/host/bcm2835.c
-@@ -286,6 +286,7 @@ static void bcm2835_reset(struct mmc_host *mmc)
- 
- 	if (host->dma_chan)
- 		dmaengine_terminate_sync(host->dma_chan);
-+	host->dma_chan = NULL;
- 	bcm2835_reset_internal(host);
- }
- 
-@@ -837,6 +838,8 @@ static void bcm2835_timeout(struct work_struct *work)
- 		dev_err(dev, "timeout waiting for hardware interrupt.\n");
- 		bcm2835_dumpregs(host);
- 
-+		bcm2835_reset(host->mmc);
-+
- 		if (host->data) {
- 			host->data->error = -ETIMEDOUT;
- 			bcm2835_finish_data(host);
--- 
-2.13.6
+There is a connection error when I use git send-email to send the patch
+because I am using VPN.
