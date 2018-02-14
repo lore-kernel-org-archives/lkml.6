@@ -1,121 +1,353 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161880AbeBNSZs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 13:25:48 -0500
-Received: from mail.vandersterre-it.nl ([82.94.165.241]:36417 "EHLO
-        merne.coecu.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161763AbeBNSZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 13:25:46 -0500
-Subject: Re: Read-protected UEFI variables
-To: Benjamin Drung <benjamin.drung@profitbricks.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-efi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1518612748.4749.29.camel@profitbricks.com>
- <CAKv+Gu_V7BCihPhZf=pKrkBZwFWeEoupamXvYSqdS+k93Gme=g@mail.gmail.com>
- <1518614486.4749.33.camel@profitbricks.com>
-From: =?UTF-8?Q?M=c3=b4she_van_der_Sterre?= <me@moshe.nl>
-Message-ID: <e04b687f-30cd-c200-d08f-36b7dcc582a6@moshe.nl>
-Date: Wed, 14 Feb 2018 19:18:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
-MIME-Version: 1.0
-In-Reply-To: <1518614486.4749.33.camel@profitbricks.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms020603080208060802080503"
-X-milter-spamd: ham (-1.0/5.0 ALL_TRUSTED)
+        id S1162030AbeBNS0E (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 13:26:04 -0500
+Received: from mga07.intel.com ([134.134.136.100]:35885 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161964AbeBNSZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 13:25:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,513,1511856000";
+   d="scan'208";a="17661098"
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>, Borislav Petkov <bp@suse.de>,
+        Andi Kleen <ak@linux.intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH 8/9] x86/mm: Replace compile-time checks for 5-level with runtime-time
+Date: Wed, 14 Feb 2018 21:25:41 +0300
+Message-Id: <20180214182542.69302-9-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180214182542.69302-1-kirill.shutemov@linux.intel.com>
+References: <20180214182542.69302-1-kirill.shutemov@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a cryptographically signed message in MIME format.
+This patch converts the of CONFIG_X86_5LEVEL check to runtime checks for
+p4d folding.
 
---------------ms020603080208060802080503
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+---
+ arch/x86/include/asm/pgtable_64.h | 23 ++++++++++-------------
+ arch/x86/mm/dump_pagetables.c     |  4 +---
+ arch/x86/mm/fault.c               |  4 ++--
+ arch/x86/mm/ident_map.c           |  2 +-
+ arch/x86/mm/init_64.c             | 30 ++++++++++++++++++------------
+ arch/x86/mm/kasan_init_64.c       | 12 ++++++------
+ arch/x86/mm/kaslr.c               |  6 +++---
+ arch/x86/mm/tlb.c                 |  2 +-
+ arch/x86/platform/efi/efi_64.c    |  2 +-
+ arch/x86/power/hibernate_64.c     |  6 +++---
+ 10 files changed, 46 insertions(+), 45 deletions(-)
 
-On 02/14/2018 02:21 PM, Benjamin Drung wrote:
-> If the UEFI is as secure as storing an unencrypted file on a hard
-> drive, I am satisfied. Or do you have a better idea where to store the
-> SSH keys for a diskless system that boots via network?
-I assume it would be best to use TPM for this (if your systems have TPM c=
-hips), it is designed for use-cases like this. Searching for "tpm ssh key=
-s" gives a decent amount of results. Mostly targeted at user keys instead=
- of server keys, so this might need some tinkering to get working.
-
-
---------------ms020603080208060802080503
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-CeUwggSvMIIDl6ADAgECAhEA4CPLFRKDU4mtYW56VGdrITANBgkqhkiG9w0BAQsFADBvMQsw
-CQYDVQQGEwJTRTEUMBIGA1UEChMLQWRkVHJ1c3QgQUIxJjAkBgNVBAsTHUFkZFRydXN0IEV4
-dGVybmFsIFRUUCBOZXR3b3JrMSIwIAYDVQQDExlBZGRUcnVzdCBFeHRlcm5hbCBDQSBSb290
-MB4XDTE0MTIyMjAwMDAwMFoXDTIwMDUzMDEwNDgzOFowgZsxCzAJBgNVBAYTAkdCMRswGQYD
-VQQIExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNP
-TU9ETyBDQSBMaW1pdGVkMUEwPwYDVQQDEzhDT01PRE8gU0hBLTI1NiBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
-AQoCggEBAImxDdp6UxlOcFIdvFamBia3uEngludRq/HwWhNJFaO0jBtgvHpRQqd5jKQi3xdh
-TpHVdiMKFNNKAn+2HQmAbqUEPdm6uxb+oYepLkNSQxZ8rzJQyKZPWukI2M+TJZx7iOgwZOak
-+FaA/SokFDMXmaxE5WmLo0YGS8Iz1OlAnwawsayTQLm1CJM6nCpToxDbPSBhPFUDjtlOdiUC
-ISn6o3xxdk/u4V+B6ftUgNvDezVSt4TeIj0sMC0xf1m9UjewM2ktQ+v61qXxl3dnUYzZ7ifr
-vKUHOHaMpKk4/9+M9QOsSb7K93OZOg8yq5yVOhM9DkY6V3RhUL7GQD/L5OKfoiECAwEAAaOC
-ARcwggETMB8GA1UdIwQYMBaAFK29mHo0tCb3+sQmVO8DveAky1QaMB0GA1UdDgQWBBSSYWuC
-4aKgqk/sZ/HCo/e0gADB7DAOBgNVHQ8BAf8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADAd
-BgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwEQYDVR0gBAowCDAGBgRVHSAAMEQGA1Ud
-HwQ9MDswOaA3oDWGM2h0dHA6Ly9jcmwudXNlcnRydXN0LmNvbS9BZGRUcnVzdEV4dGVybmFs
-Q0FSb290LmNybDA1BggrBgEFBQcBAQQpMCcwJQYIKwYBBQUHMAGGGWh0dHA6Ly9vY3NwLnVz
-ZXJ0cnVzdC5jb20wDQYJKoZIhvcNAQELBQADggEBABsqbqxVwTqriMXY7c1V86prYSvACRAj
-mQ/FZmpvsfW0tXdeDwJhAN99Bf4Ss6SAgAD8+x1banICCkG8BbrBWNUmwurVTYT7/oKYz1gb
-4yJjnFL4uwU2q31Ypd6rO2Pl2tVz7+zg+3vio//wQiOcyraNTT7kSxgDsqgt1Ni7QkuQaYUQ
-26Y3NOh74AEQpZzKOsefT4g0bopl0BqKu6ncyso20fT8wmQpNa/WsadxEdIDQ7GPPprsnjJT
-9HaSyoY0B7ksyuYcStiZDcGG4pCS+1pCaiMhEOllx/XVu37qjIUgAmLq0ToHLFnFmTPyOInl
-tukWeh95FPZKEBom+nyK+5swggUuMIIEFqADAgECAhEAlrATjs9A/Az9TS8fovkULDANBgkq
-hkiG9w0BAQsFADCBmzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3Rl
-cjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxQTA/BgNV
-BAMTOENPTU9ETyBTSEEtMjU2IENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVt
-YWlsIENBMB4XDTE3MDMxNDAwMDAwMFoXDTE4MDMxNDIzNTk1OVowHDEaMBgGCSqGSIb3DQEJ
-ARYLbWVAbW9zaGUubmwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCkqvJ6x+YV
-vlVCmt41h0ZoHPErvZAaNIvAMMsd74w1qUmiwDo8LRK0ourIZs1JksBvt6KBzvBjjbtTXt/y
-097E/3+geIFJ8FkvqPOchs4fMtwlCsr2r99x5bCxKYEZvYFC2dy7jNm3wcp1qLSyJIxqZwEf
-GDqqeSXjgCRNANoxMcVNpf4BgGt6Bf20oNnq8Jgue2uz4Y4gotqCSNdgtDoZN7l2+tQzn4xX
-ch7ppGPmWT2LTP3Qx2zB2duqTSyf/mduc+56RDWE8zWIOS4QkbyAQt0n3zuT/UEmUhEk6Qbv
-EAQdcq7FzQgtWJzv+niTu+JmiYxLbFWAHVvvCYgewJVtAgMBAAGjggHpMIIB5TAfBgNVHSME
-GDAWgBSSYWuC4aKgqk/sZ/HCo/e0gADB7DAdBgNVHQ4EFgQUxtthepY3D/53wnBlbE+xiXTC
-O2kwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUHAwQG
-CysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBdBgNV
-HR8EVjBUMFKgUKBOhkxodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9TSEEyNTZDbGll
-bnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGQBggrBgEFBQcBAQSBgzCB
-gDBYBggrBgEFBQcwAoZMaHR0cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPU0hBMjU2Q2xp
-ZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAkBggrBgEFBQcwAYYYaHR0
-cDovL29jc3AuY29tb2RvY2EuY29tMBYGA1UdEQQPMA2BC21lQG1vc2hlLm5sMA0GCSqGSIb3
-DQEBCwUAA4IBAQBD7vkX5hB3pbDh7qVOX3ZWaOQDQ00Qz5DdTstbyqD3bboiaGbRMYsiqq1x
-ztJU9gKqOIm+h7AsoVyz+Ci158bK1v0S2BzK78EUFeCyvJXPzc7DHsXzdN8SIYyhI4RQpje8
-AqzxQy2T4B5OUlsb2qlAGJq3FYhj0chW+lkv7xTLteXcHAo/GV/pgwcx36ehvWcYa/fnfFgf
-63syLrW1pYYUF87dOpcy37V+c6iZFHlvi+qTCImF1drVLz3d5kjEjuSNXVk1Ug32Xmg8lqen
-imiLiyn3MG1mumVgWQqTYV2b1r8el3xuhdNNwSPtWJcHGE+B0bBLEpxEv3Pjz6ETsfQWMYIE
-RDCCBEACAQEwgbEwgZsxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1hbmNoZXN0
-ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMUEwPwYD
-VQQDEzhDT01PRE8gU0hBLTI1NiBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBF
-bWFpbCBDQQIRAJawE47PQPwM/U0vH6L5FCwwDQYJYIZIAWUDBAIBBQCgggJjMBgGCSqGSIb3
-DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE4MDIxNDE4MTg1OFowLwYJKoZI
-hvcNAQkEMSIEIDyR4fEKrHBC/o+MnhBb8NT1rOf/rv1kxGcxnghCpfbiMGwGCSqGSIb3DQEJ
-DzFfMF0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0D
-AgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgcIGCSsGAQQB
-gjcQBDGBtDCBsTCBmzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3Rl
-cjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxQTA/BgNV
-BAMTOENPTU9ETyBTSEEtMjU2IENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVt
-YWlsIENBAhEAlrATjs9A/Az9TS8fovkULDCBxAYLKoZIhvcNAQkQAgsxgbSggbEwgZsxCzAJ
-BgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZv
-cmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMUEwPwYDVQQDEzhDT01PRE8gU0hBLTI1
-NiBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAJawE47PQPwM
-/U0vH6L5FCwwDQYJKoZIhvcNAQEBBQAEggEAU7E+uHm3hkbl2mehsBsI2d03E/QIlXI72lJm
-R2SDmjPi9eqhnc3Ba0Kvipz5eoakxRI2ITd0iPb4/mSGZlBUDS1M7Jhli23RGo3ZW+vFrINY
-3OJ+/snnmpPZbfdiPNQxdFpmu2XQD6mqnoHZqsoXJzCgRnQyiizAQU40SiYo2kvfpqYMwuL2
-tnrmpPxqFvW6vH0Y9FCOyG8yqFm/kw12dDpHJPuOEHERSoB8CudW36BT2zOLFHIW4W6cP8WT
-IBGBmpzeY0h45ErK6r8nAWtCl5OXWw1m7goH/i+GnBuEI+U3tYsSP93JZo7juqXpiwmUroBB
-GE5EhA2Bk5MKPg20tQAAAAAAAA==
---------------ms020603080208060802080503--
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index 81462e9a34f6..81dda8d1d0bd 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -217,29 +217,26 @@ static inline pgd_t pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
+ 
+ static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
+ {
+-#if defined(CONFIG_PAGE_TABLE_ISOLATION) && !defined(CONFIG_X86_5LEVEL)
+-	p4dp->pgd = pti_set_user_pgd(&p4dp->pgd, p4d.pgd);
+-#else
+-	*p4dp = p4d;
+-#endif
++	pgd_t pgd;
++
++	if (pgtable_l5_enabled || !IS_ENABLED(CONFIG_PAGE_TABLE_ISOLATION)) {
++		*p4dp = p4d;
++		return;
++	}
++
++	pgd = native_make_pgd(p4d_val(p4d));
++	pgd = pti_set_user_pgd((pgd_t *)p4dp, pgd);
++	*p4dp = native_make_p4d(pgd_val(pgd));
+ }
+ 
+ static inline void native_p4d_clear(p4d_t *p4d)
+ {
+-#ifdef CONFIG_X86_5LEVEL
+ 	native_set_p4d(p4d, native_make_p4d(0));
+-#else
+-	native_set_p4d(p4d, (p4d_t) { .pgd = native_make_pgd(0)});
+-#endif
+ }
+ 
+ static inline void native_set_pgd(pgd_t *pgdp, pgd_t pgd)
+ {
+-#ifdef CONFIG_PAGE_TABLE_ISOLATION
+ 	*pgdp = pti_set_user_pgd(pgdp, pgd);
+-#else
+-	*pgdp = pgd;
+-#endif
+ }
+ 
+ static inline void native_pgd_clear(pgd_t *pgd)
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index a32f0621d664..f25f02fcd62d 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -348,9 +348,7 @@ static inline bool kasan_page_table(struct seq_file *m, struct pg_state *st,
+ 				void *pt)
+ {
+ 	if (__pa(pt) == __pa(kasan_zero_pmd) ||
+-#ifdef CONFIG_X86_5LEVEL
+-	    __pa(pt) == __pa(kasan_zero_p4d) ||
+-#endif
++	    (pgtable_l5_enabled && __pa(pt) == __pa(kasan_zero_p4d)) ||
+ 	    __pa(pt) == __pa(kasan_zero_pud)) {
+ 		pgprotval_t prot = pte_flags(kasan_zero_pte[0]);
+ 		note_page(m, st, __pgprot(prot), 5);
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 800de815519c..321b78060e93 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -439,7 +439,7 @@ static noinline int vmalloc_fault(unsigned long address)
+ 	if (pgd_none(*pgd_ref))
+ 		return -1;
+ 
+-	if (CONFIG_PGTABLE_LEVELS > 4) {
++	if (pgtable_l5_enabled) {
+ 		if (pgd_none(*pgd)) {
+ 			set_pgd(pgd, *pgd_ref);
+ 			arch_flush_lazy_mmu_mode();
+@@ -454,7 +454,7 @@ static noinline int vmalloc_fault(unsigned long address)
+ 	if (p4d_none(*p4d_ref))
+ 		return -1;
+ 
+-	if (p4d_none(*p4d) && CONFIG_PGTABLE_LEVELS == 4) {
++	if (p4d_none(*p4d) && !pgtable_l5_enabled) {
+ 		set_p4d(p4d, *p4d_ref);
+ 		arch_flush_lazy_mmu_mode();
+ 	} else {
+diff --git a/arch/x86/mm/ident_map.c b/arch/x86/mm/ident_map.c
+index ab33a32df2a8..9aa22be8331e 100644
+--- a/arch/x86/mm/ident_map.c
++++ b/arch/x86/mm/ident_map.c
+@@ -120,7 +120,7 @@ int kernel_ident_mapping_init(struct x86_mapping_info *info, pgd_t *pgd_page,
+ 		result = ident_p4d_init(info, p4d, addr, next);
+ 		if (result)
+ 			return result;
+-		if (IS_ENABLED(CONFIG_X86_5LEVEL)) {
++		if (pgtable_l5_enabled) {
+ 			set_pgd(pgd, __pgd(__pa(p4d) | info->kernpg_flag));
+ 		} else {
+ 			/*
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index c90cfb18405f..9bbc51ae54a6 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -88,12 +88,7 @@ static int __init nonx32_setup(char *str)
+ }
+ __setup("noexec32=", nonx32_setup);
+ 
+-/*
+- * When memory was added make sure all the processes MM have
+- * suitable PGD entries in the local PGD level page.
+- */
+-#ifdef CONFIG_X86_5LEVEL
+-void sync_global_pgds(unsigned long start, unsigned long end)
++static void sync_global_pgds_l5(unsigned long start, unsigned long end)
+ {
+ 	unsigned long addr;
+ 
+@@ -129,8 +124,8 @@ void sync_global_pgds(unsigned long start, unsigned long end)
+ 		spin_unlock(&pgd_lock);
+ 	}
+ }
+-#else
+-void sync_global_pgds(unsigned long start, unsigned long end)
++
++static void sync_global_pgds_l4(unsigned long start, unsigned long end)
+ {
+ 	unsigned long addr;
+ 
+@@ -173,7 +168,18 @@ void sync_global_pgds(unsigned long start, unsigned long end)
+ 		spin_unlock(&pgd_lock);
+ 	}
+ }
+-#endif
++
++/*
++ * When memory was added make sure all the processes MM have
++ * suitable PGD entries in the local PGD level page.
++ */
++void sync_global_pgds(unsigned long start, unsigned long end)
++{
++	if (pgtable_l5_enabled)
++		sync_global_pgds_l5(start, end);
++	else
++		sync_global_pgds_l4(start, end);
++}
+ 
+ /*
+  * NOTE: This function is marked __ref because it calls __init function
+@@ -632,7 +638,7 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
+ 	unsigned long vaddr = (unsigned long)__va(paddr);
+ 	int i = p4d_index(vaddr);
+ 
+-	if (!IS_ENABLED(CONFIG_X86_5LEVEL))
++	if (!pgtable_l5_enabled)
+ 		return phys_pud_init((pud_t *) p4d_page, paddr, paddr_end, page_size_mask);
+ 
+ 	for (; i < PTRS_PER_P4D; i++, paddr = paddr_next) {
+@@ -712,7 +718,7 @@ kernel_physical_mapping_init(unsigned long paddr_start,
+ 					   page_size_mask);
+ 
+ 		spin_lock(&init_mm.page_table_lock);
+-		if (IS_ENABLED(CONFIG_X86_5LEVEL))
++		if (pgtable_l5_enabled)
+ 			pgd_populate(&init_mm, pgd, p4d);
+ 		else
+ 			p4d_populate(&init_mm, p4d_offset(pgd, vaddr), (pud_t *) p4d);
+@@ -1093,7 +1099,7 @@ remove_p4d_table(p4d_t *p4d_start, unsigned long addr, unsigned long end,
+ 		 * 5-level case we should free them. This code will have to change
+ 		 * to adapt for boot-time switching between 4 and 5 level page tables.
+ 		 */
+-		if (CONFIG_PGTABLE_LEVELS == 5)
++		if (pgtable_l5_enabled)
+ 			free_pud_table(pud_base, p4d, altmap);
+ 	}
+ 
+diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
+index 12ec90f62457..0df0dd13a71d 100644
+--- a/arch/x86/mm/kasan_init_64.c
++++ b/arch/x86/mm/kasan_init_64.c
+@@ -176,10 +176,10 @@ static void __init clear_pgds(unsigned long start,
+ 		 * With folded p4d, pgd_clear() is nop, use p4d_clear()
+ 		 * instead.
+ 		 */
+-		if (CONFIG_PGTABLE_LEVELS < 5)
+-			p4d_clear(p4d_offset(pgd, start));
+-		else
++		if (pgtable_l5_enabled)
+ 			pgd_clear(pgd);
++		else
++			p4d_clear(p4d_offset(pgd, start));
+ 	}
+ 
+ 	pgd = pgd_offset_k(start);
+@@ -191,7 +191,7 @@ static inline p4d_t *early_p4d_offset(pgd_t *pgd, unsigned long addr)
+ {
+ 	unsigned long p4d;
+ 
+-	if (!IS_ENABLED(CONFIG_X86_5LEVEL))
++	if (!pgtable_l5_enabled)
+ 		return (p4d_t *)pgd;
+ 
+ 	p4d = __pa_nodebug(pgd_val(*pgd)) & PTE_PFN_MASK;
+@@ -272,7 +272,7 @@ void __init kasan_early_init(void)
+ 	for (i = 0; i < PTRS_PER_PUD; i++)
+ 		kasan_zero_pud[i] = __pud(pud_val);
+ 
+-	for (i = 0; IS_ENABLED(CONFIG_X86_5LEVEL) && i < PTRS_PER_P4D; i++)
++	for (i = 0; pgtable_l5_enabled && i < PTRS_PER_P4D; i++)
+ 		kasan_zero_p4d[i] = __p4d(p4d_val);
+ 
+ 	kasan_map_early_shadow(early_top_pgt);
+@@ -303,7 +303,7 @@ void __init kasan_init(void)
+ 	 * bunch of things like kernel code, modules, EFI mapping, etc.
+ 	 * We need to take extra steps to not overwrite them.
+ 	 */
+-	if (IS_ENABLED(CONFIG_X86_5LEVEL)) {
++	if (pgtable_l5_enabled) {
+ 		void *ptr;
+ 
+ 		ptr = (void *)pgd_page_vaddr(*pgd_offset_k(KASAN_SHADOW_END));
+diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+index 641169d38184..615cc03ced84 100644
+--- a/arch/x86/mm/kaslr.c
++++ b/arch/x86/mm/kaslr.c
+@@ -124,7 +124,7 @@ void __init kernel_randomize_memory(void)
+ 		 */
+ 		entropy = remain_entropy / (ARRAY_SIZE(kaslr_regions) - i);
+ 		prandom_bytes_state(&rand_state, &rand, sizeof(rand));
+-		if (IS_ENABLED(CONFIG_X86_5LEVEL))
++		if (pgtable_l5_enabled)
+ 			entropy = (rand % (entropy + 1)) & P4D_MASK;
+ 		else
+ 			entropy = (rand % (entropy + 1)) & PUD_MASK;
+@@ -136,7 +136,7 @@ void __init kernel_randomize_memory(void)
+ 		 * randomization alignment.
+ 		 */
+ 		vaddr += get_padding(&kaslr_regions[i]);
+-		if (IS_ENABLED(CONFIG_X86_5LEVEL))
++		if (pgtable_l5_enabled)
+ 			vaddr = round_up(vaddr + 1, P4D_SIZE);
+ 		else
+ 			vaddr = round_up(vaddr + 1, PUD_SIZE);
+@@ -212,7 +212,7 @@ void __meminit init_trampoline(void)
+ 		return;
+ 	}
+ 
+-	if (IS_ENABLED(CONFIG_X86_5LEVEL))
++	if (pgtable_l5_enabled)
+ 		init_trampoline_p4d();
+ 	else
+ 		init_trampoline_pud();
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index c7deb66c2a24..e055d1a06699 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -157,7 +157,7 @@ static void sync_current_stack_to_mm(struct mm_struct *mm)
+ 	unsigned long sp = current_stack_pointer;
+ 	pgd_t *pgd = pgd_offset(mm, sp);
+ 
+-	if (CONFIG_PGTABLE_LEVELS > 4) {
++	if (pgtable_l5_enabled) {
+ 		if (unlikely(pgd_none(*pgd))) {
+ 			pgd_t *pgd_ref = pgd_offset_k(sp);
+ 
+diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
+index d52aaa7dc088..4845871a2006 100644
+--- a/arch/x86/platform/efi/efi_64.c
++++ b/arch/x86/platform/efi/efi_64.c
+@@ -227,7 +227,7 @@ int __init efi_alloc_page_tables(void)
+ 
+ 	pud = pud_alloc(&init_mm, p4d, EFI_VA_END);
+ 	if (!pud) {
+-		if (CONFIG_PGTABLE_LEVELS > 4)
++		if (pgtable_l5_enabled)
+ 			free_page((unsigned long) pgd_page_vaddr(*pgd));
+ 		free_page((unsigned long)efi_pgd);
+ 		return -ENOMEM;
+diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
+index 0ef5e5204968..74a532989308 100644
+--- a/arch/x86/power/hibernate_64.c
++++ b/arch/x86/power/hibernate_64.c
+@@ -50,7 +50,7 @@ static int set_up_temporary_text_mapping(pgd_t *pgd)
+ {
+ 	pmd_t *pmd;
+ 	pud_t *pud;
+-	p4d_t *p4d;
++	p4d_t *p4d = NULL;
+ 
+ 	/*
+ 	 * The new mapping only has to cover the page containing the image
+@@ -66,7 +66,7 @@ static int set_up_temporary_text_mapping(pgd_t *pgd)
+ 	 * tables used by the image kernel.
+ 	 */
+ 
+-	if (IS_ENABLED(CONFIG_X86_5LEVEL)) {
++	if (pgtable_l5_enabled) {
+ 		p4d = (p4d_t *)get_safe_page(GFP_ATOMIC);
+ 		if (!p4d)
+ 			return -ENOMEM;
+@@ -84,7 +84,7 @@ static int set_up_temporary_text_mapping(pgd_t *pgd)
+ 		__pmd((jump_address_phys & PMD_MASK) | __PAGE_KERNEL_LARGE_EXEC));
+ 	set_pud(pud + pud_index(restore_jump_address),
+ 		__pud(__pa(pmd) | _KERNPG_TABLE));
+-	if (IS_ENABLED(CONFIG_X86_5LEVEL)) {
++	if (p4d) {
+ 		set_p4d(p4d + p4d_index(restore_jump_address), __p4d(__pa(pud) | _KERNPG_TABLE));
+ 		set_pgd(pgd + pgd_index(restore_jump_address), __pgd(__pa(p4d) | _KERNPG_TABLE));
+ 	} else {
+-- 
+2.15.1
