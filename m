@@ -1,77 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754750AbeBNSrO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 13:47:14 -0500
-Received: from mail-qk0-f178.google.com ([209.85.220.178]:44511 "EHLO
-        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162168AbeBNSrL (ORCPT
+        id S1162317AbeBNStl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 13:49:41 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:40926 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162271AbeBNSti (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 13:47:11 -0500
-X-Google-Smtp-Source: AH8x226aZMcrPaNpz++fkQkwDhtoVoMgZ50hy2cv/Vs67Ec1BLO7OioU7pz+0YoFpkaXZcwYrzzw2A==
-Date: Wed, 14 Feb 2018 10:47:05 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: vinod.koul@intel.com, andy.gross@linaro.org, dmaengine@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, david.brown@linaro.org,
-        dan.j.williams@intel.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, yanhe@quicinc.com, ramkri@qti.qualcomm.com,
-        sdharia@quicinc.com
-Subject: Re: [PATCH v2 1/5] dmaengine: qcom: bam_dma: make bam clk optional
-Message-ID: <20180214184705.GC93895@bjorns-mbp-2.lan>
-References: <20180214144459.29813-1-srinivas.kandagatla@linaro.org>
- <20180214144459.29813-2-srinivas.kandagatla@linaro.org>
- <20180214154144.GB93895@bjorns-mbp-2.lan>
- <69c7a7e4-1a1f-e0e6-d5e9-c39ff666df64@linaro.org>
+        Wed, 14 Feb 2018 13:49:38 -0500
+X-Google-Smtp-Source: AH8x225piEWVy26gEZ5GCcsPST6iM9mr1UGDSBglaNqqsD9m3iFTgJcAFfhJqbZcEt3iuFY4kbxzZQ==
+Date: Wed, 14 Feb 2018 11:49:31 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+bbd8e9a06452cc48059b@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, rds-devel@oss.oracle.com,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in rds_tcp_tune
+Message-ID: <20180214184931.GA1718@ziepe.ca>
+References: <001a1141a524c513ca05628d8ad4@google.com>
+ <20180112183046.GA26098@oracle.com>
+ <CACT4Y+aB0dZShujVMJFV6grb_7AYOMca13a1J2AkWsT7R0cgrQ@mail.gmail.com>
+ <20180214152109.GF11528@oracle.com>
+ <CACT4Y+bKpi8he1ygwAxgm4F_RJ=BRPBPdMaVAK64SbvCVGt7ww@mail.gmail.com>
+ <20180214153555.GG11528@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <69c7a7e4-1a1f-e0e6-d5e9-c39ff666df64@linaro.org>
-User-Agent: Mutt/1.8.0 (2017-02-23)
+In-Reply-To: <20180214153555.GG11528@oracle.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 14 Feb 10:19 PST 2018, Srinivas Kandagatla wrote:
+On Wed, Feb 14, 2018 at 10:35:55AM -0500, Sowmini Varadhan wrote:
+> On (02/14/18 16:28), Dmitry Vyukov wrote:
+> > syzbot is probably not seeing this problem. However if you don't add
+> > the Reported-by tag to commit, nor provide syz fix tag, it will
+> > consider it as "open". One consequence of this is that it is still on
+> > our radars. Another consequence is that syzbot will never report bugs
+> > in rds_tcp_tune ever again as it thinks that it's the same known bug,
+> > so no point in bothering anybody.
+> 
+> understood, I think I saw this in the original syzbot mail as well,
+> but I was hesitant to actually add the tag because the fix was
+> based on code-inspection only, and I would have felt more comfortable
+> about asserting the Reported-by if I'd done a clear-cut before/after
+> verification.
 
-> Thanks for the Review,
-> 
-> On 14/02/18 15:41, Bjorn Andersson wrote:
-> > >   	bdev->bamclk = devm_clk_get(bdev->dev, "bam_clk");
-> > > -	if (IS_ERR(bdev->bamclk))
-> > > -		return PTR_ERR(bdev->bamclk);
-> > > -
-> > > -	ret = clk_prepare_enable(bdev->bamclk);
-> > > -	if (ret) {
-> > > -		dev_err(bdev->dev, "failed to prepare/enable clock\n");
-> > > -		return ret;
-> > > +	if (IS_ERR(bdev->bamclk)) {
-> > In the case of !bdev->controlled_remotely I think this should still be
-> > an error.
-> > 
-> Yep makes sense,
-> 
-> You mean something like this?
-> 
-> ------------------------->cut<------------------------
->         bdev->bamclk = devm_clk_get(bdev->dev, "bam_clk");
->         if (IS_ERR(bdev->bamclk)) {
->                 if (!bdev->controlled_remotely);
->                         return PTR_ERR(bdev->bamclk);
-> 
->                 bdev->bamclk = NULL;
->         }
-> 
->         ret = clk_prepare_enable(bdev->bamclk);
->         if (ret) {
->                 dev_err(bdev->dev, "failed to prepare/enable clock\n");
->                 return ret;
->         }
-> 
-> ------------------------->cut<------------------------
-> 
+I think the point is you have to clear it from syzbot to get it to
+even test your patches, even if you are not totally sure your patch
+fixes it?
 
-Yes
-
-Regards,
-Bjorn
+Jason
