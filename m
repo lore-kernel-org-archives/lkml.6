@@ -1,75 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030777AbeBNOU1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 09:20:27 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49310 "EHLO mx1.redhat.com"
+        id S1030790AbeBNOUr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 09:20:47 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49258 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1030435AbeBNOU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 09:20:26 -0500
-Date: Wed, 14 Feb 2018 15:20:20 +0100
-From: Jesper Dangaard Brouer <brouer@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mst@redhat.com,
-        Michal Hocko <mhocko@kernel.org>, Matthew Wilcox <willy@infradead.org>,
-        akpm@linux-foundation.org, dhowells@redhat.com, hannes@cmpxchg.org,
-        brouer@redhat.com
-Subject: Re: [PATCH net] bpf: cpumap: use GFP_KERNEL instead of GFP_ATOMIC
- in __cpu_map_entry_alloc()
-Message-ID: <20180214152020.70985ce3@redhat.com>
-In-Reply-To: <1518617854-4486-1-git-send-email-jasowang@redhat.com>
-References: <1518617854-4486-1-git-send-email-jasowang@redhat.com>
+        id S1030671AbeBNOTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 09:19:12 -0500
+From: =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: bhe@redhat.com, slp@redhat.com, mst@redhat.com, somlo@cmu.edu,
+        xiaolong.ye@intel.com,
+        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
+Subject: [PATCH v14 6/9] fw_cfg: fix sparse warnings around FW_CFG_FILE_DIR read
+Date: Wed, 14 Feb 2018 15:18:47 +0100
+Message-Id: <20180214141850.4017-7-marcandre.lureau@redhat.com>
+In-Reply-To: <20180214141850.4017-1-marcandre.lureau@redhat.com>
+References: <20180214141850.4017-1-marcandre.lureau@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Feb 2018 22:17:34 +0800
-Jason Wang <jasowang@redhat.com> wrote:
+Use struct fw_cfg_files to read the directory size, fixing the sparse
+warnings:
 
-> There're several implications after commit 0bf7800f1799 ("ptr_ring:
-> try vmalloc() when kmalloc() fails") with the using of vmalloc() since
-> can't allow GFP_ATOMIC but mandate GFP_KERNEL. This will lead a WARN
-> since cpumap try to call with GFP_ATOMIC. Fortunately, entry
-> allocation of cpumap can only be done through syscall path which means
-> GFP_ATOMIC is not necessary, so fixing this by replacing GFP_ATOMIC
-> with GFP_KERNEL.
-> 
-> Reported-by: syzbot+1a240cdb1f4cc88819df@syzkaller.appspotmail.com
-> Fixes: 0bf7800f1799 ("ptr_ring: try vmalloc() when kmalloc() fails")
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Jesper Dangaard Brouer <brouer@redhat.com>
-> Cc: akpm@linux-foundation.org
-> Cc: dhowells@redhat.com
-> Cc: hannes@cmpxchg.org
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  kernel/bpf/cpumap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+drivers/firmware/qemu_fw_cfg.c:485:17: warning: cast to restricted __be32
 
-Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
+Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+---
+ drivers/firmware/qemu_fw_cfg.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-
-> diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
-> index fbfdada6..a4bb0b3 100644
-> --- a/kernel/bpf/cpumap.c
-> +++ b/kernel/bpf/cpumap.c
-> @@ -334,7 +334,7 @@ static int cpu_map_kthread_run(void *data)
->  static struct bpf_cpu_map_entry *__cpu_map_entry_alloc(u32 qsize, u32 cpu,
->  						       int map_id)
->  {
-> -	gfp_t gfp = GFP_ATOMIC|__GFP_NOWARN;
-> +	gfp_t gfp = GFP_KERNEL | __GFP_NOWARN;
->  	struct bpf_cpu_map_entry *rcpu;
->  	int numa, err;
->  
-
+diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+index 4c4813409447..c4c726841ba7 100644
+--- a/drivers/firmware/qemu_fw_cfg.c
++++ b/drivers/firmware/qemu_fw_cfg.c
+@@ -478,18 +478,19 @@ static int fw_cfg_register_dir_entries(void)
+ {
+ 	int ret = 0;
+ 	u32 count, i;
++	struct fw_cfg_files files;
+ 	struct fw_cfg_file *dir;
+ 	size_t dir_size;
+ 
+-	fw_cfg_read_blob(FW_CFG_FILE_DIR, &count, 0, sizeof(count));
+-	count = be32_to_cpu(count);
++	fw_cfg_read_blob(FW_CFG_FILE_DIR, &files.count, 0, sizeof(files.count));
++	count = be32_to_cpu(files.count);
+ 	dir_size = count * sizeof(struct fw_cfg_file);
+ 
+ 	dir = kmalloc(dir_size, GFP_KERNEL);
+ 	if (!dir)
+ 		return -ENOMEM;
+ 
+-	fw_cfg_read_blob(FW_CFG_FILE_DIR, dir, sizeof(count), dir_size);
++	fw_cfg_read_blob(FW_CFG_FILE_DIR, dir, sizeof(files.count), dir_size);
+ 
+ 	for (i = 0; i < count; i++) {
+ 		ret = fw_cfg_register_file(&dir[i]);
 -- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
+2.16.1.73.g5832b7e9f2
