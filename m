@@ -1,132 +1,85 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3785732-1518770962-2-15035688713832007568
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: to='UTF-8', plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518770961; b=F1iH+TsIBlfn6CkTXMb1zVyLVQ+mYfpfdz/8iAHRnMXcp6S
-    Ldec9azY7uQ4jEBNWaeTwkwFrkidJSmE7KzWIoWQtV77UM9Ax8vxzepsWGCzGp05
-    UwrZS2NA6eWbL3wz0Y8ftsJ+QjevYO+6M0AAU2kfBg5kHCsvMT+Lcq2sU7bwFfUu
-    sIbLOIuSIbexVz/8zeVTNJ473TesoqOX49ljrWLkNPkmTAO6JD4oN76AUSyzuGDA
-    zfgjOFVzeUcVXnEbCOT2RbUon5d6/ZCxH58FRjeT9h6eUyD9j2yNa6GLVkxNFIuM
-    Vl0hBuPhTH/JC4JytpHOzx3dHc8JeaDJZrgxGOw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1518770961; bh=c
-    O+BwVeNJHcC6YfqFmdHVhjcflzH/8au9uOACG8bans=; b=Ni/scmKcvM3+K4DD2
-    BA6gxJf2fEDy9hWMvgJoOfU4GcRrUyHLOcWuC0zzTHkr+6QaM17FhPeXZNIL0IQ5
-    z/IAJlI76SC3BuwykGvaGDv49bTMlb9/kef0BL9hORGOpAxFLFcB2N+QGAHZhXWH
-    w9IlqjOBTqQTWKtKmqt69MVGelgF9DVgZ4Xl/RyPN+qDIzBhVOqYhb47ZhgawE8p
-    bvXI0cv/JDclZhdg+YYzlqpPFZTFYcwKdKu7sdUZ/W29Nw3GtWfup4s1rLd5BOEv
-    MgTt6Y+HMec4h424dmwPwuzEFLRoDOOABsG/vE0OGj2/uUcc4C/Qno5oa8rapFd0
-    LMCWg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=android.com header.i=@android.com header.b=sYZv9qQh x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=android.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ciiXiBpR;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=android.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=android.com header.i=@android.com header.b=sYZv9qQh x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=android.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ciiXiBpR;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=android.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AH8x225gzVcgXS/rxBCNWIr+pJZ14VHXI+JOu+mKKpI3kbQpu0kvG5kBW3zFfNIs4o6nq8t8X8A+X9GJ3wpAHM0iVoc=
+Return-Path: <garsilva@embeddedor.com>
+X-Google-Smtp-Source: AH8x2276n6JFhF3GVbCP7w+FixSd21dp8vMJ8w+BHW+UrdFbGL4XNQH43icxq5HQ4wePptL8zU+G
+ARC-Seal: i=1; a=rsa-sha256; t=1518629433; cv=none;
+        d=google.com; s=arc-20160816;
+        b=XzL6aoovhKBwK2OY1lERsyXYOTPg0JeXNFSisY67rENBEKT+VaNKStPouhznRHin9q
+         r9roP89FErZ6CPpmp/tHZHw8/aqenIevt/jCnq5AhCm4dYk4E+84NT7v/vnVZ5IRBwsP
+         HSkGnV06QptiMygH7/1hIj5vp6lQthX3sZonNQh+SvhRP+EQTjRI/RzgJFzKVnvJDLn1
+         ZHwCUlhualYZiD+2AEnE2OA2oLJuC4gm46C448ZkjUIZNj/Kk6ENbuz/T3u1pNRLdHaV
+         eg43g0ZfvsGcHN9yp4Soc8HJKTi/flHiHeIqKuBpSgId0X8GaJtfXvhtS0sSu+2Lgh2h
+         Q6pQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:arc-authentication-results;
+        bh=8uZ3OnaLriKEZ7AOKljYfMr+WcZu+RDYaht4l2KHeg0=;
+        b=Hv1W/feDkRhZzK9cMIrPwWWpfFZ67b/izKu3B8qGjXdTpYFu98DX2ylF5VBlSgL0lX
+         3CRaOIPIxeVciNuMTBUNxfbzaEXYeJYotV1qWde6+mz6yVAG7hwtq+k5sgIWhmfugmX0
+         rv5750Zit+sWQyaQ0hqLOcqcItpa/OLdw36JT6F/ICqQgrKu7P/yV4OlzcCH5mkCGP7v
+         KrOjnhT41YnlM+PespW26s3+9Z8EFgoA6eC0/B/br2pkH0CJZsVntfFkjPFu1aFxBrwE
+         81mZib+dTQ1U2rbIXJHYyo/aMLjwZwPB3Np82FM+AjrBaNpYEuxqiBhJO8VybaUdVAbU
+         8s/g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of garsilva@embeddedor.com designates 192.185.143.4 as permitted sender) smtp.mailfrom=garsilva@embeddedor.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of garsilva@embeddedor.com designates 192.185.143.4 as permitted sender) smtp.mailfrom=garsilva@embeddedor.com
+Date: Wed, 14 Feb 2018 11:30:29 -0600
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] ipmi: kcs_bmc: mark expected switch fall-through in
+ kcs_bmc_handle_data
+Message-ID: <20180214173029.GA15661@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <20180216084715.14969-1-maco@android.com>
-References: <20180216084715.14969-1-maco@android.com>
-From: Martijn Coenen <maco@android.com>
-Date: Fri, 16 Feb 2018 09:49:12 +0100
-Message-ID: <CAB0TPYEV0OOcntsh920c-4oiQxw41+znvJ0=por7Z6TTg_Engw@mail.gmail.com>
-Subject: Re: [PATCH] ANDROID: binder: synchronize_rcu() when using POLLFREE.
-To: Greg KH <gregkh@linuxfoundation.org>, John Stultz <john.stultz@linaro.org>,
- Todd Kjos <tkjos@google.com>,
- =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
- Eric Biggers <ebiggers@google.com>, LKML <linux-kernel@vger.kernel.org>,
- Martijn Coenen <maco@google.com>, Martijn Coenen <maco@android.com>,
- Dmitry Vyukov <dvyukov@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - linuxfoundation.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.4.238
+X-Source-L: No
+X-Exim-ID: 1em0t5-001MIe-5V
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.175.4.238]:47000
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592398376863502226?=
+X-GMAIL-MSGID: =?utf-8?q?1592398376863502226?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Greg,
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-This is for 4.14 LTS and 4.16.
+Addresses-Coverity-ID: 1465255 ("Missing break in switch")
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+---
+This code was compiled with GCC 7.3.0
 
-Thanks,
-Martijn
+ drivers/char/ipmi/kcs_bmc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Fri, Feb 16, 2018 at 9:47 AM, Martijn Coenen <maco@android.com> wrote:
-> To prevent races with ep_remove_waitqueue() removing the
-> waitqueue at the same time.
->
-> Reported-by: syzbot+a2a3c4909716e271487e@syzkaller.appspotmail.com
-> Signed-off-by: Martijn Coenen <maco@android.com>
-> ---
->  drivers/android/binder.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> index 15e3d3c2260d..359220f87e1d 100644
-> --- a/drivers/android/binder.c
-> +++ b/drivers/android/binder.c
-> @@ -4376,6 +4376,15 @@ static int binder_thread_release(struct binder_proc *proc,
->
->         binder_inner_proc_unlock(thread->proc);
->
-> +       /*
-> +        * This is needed to avoid races between wake_up_poll() above and
-> +        * and ep_remove_waitqueue() called for other reasons (eg the epoll file
-> +        * descriptor being closed); ep_remove_waitqueue() holds an RCU read
-> +        * lock, so we can be sure it's done after calling synchronize_rcu().
-> +        */
-> +       if (thread->looper & BINDER_LOOPER_STATE_POLL)
-> +               synchronize_rcu();
-> +
->         if (send_reply)
->                 binder_send_failed_reply(send_reply, BR_DEAD_REPLY);
->         binder_release_work(proc, &thread->todo);
-> --
-> 2.16.1.291.g4437f3f132-goog
->
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/drivers/char/ipmi/kcs_bmc.c b/drivers/char/ipmi/kcs_bmc.c
+index 3a3498a..6476bfb 100644
+--- a/drivers/char/ipmi/kcs_bmc.c
++++ b/drivers/char/ipmi/kcs_bmc.c
+@@ -95,6 +95,7 @@ static void kcs_bmc_handle_data(struct kcs_bmc *kcs_bmc)
+ 	switch (kcs_bmc->phase) {
+ 	case KCS_PHASE_WRITE_START:
+ 		kcs_bmc->phase = KCS_PHASE_WRITE_DATA;
++		/* fall through */
+ 
+ 	case KCS_PHASE_WRITE_DATA:
+ 		if (kcs_bmc->data_in_idx < KCS_MSG_BUFSIZ) {
+-- 
+2.7.4
