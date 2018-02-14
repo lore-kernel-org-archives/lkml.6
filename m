@@ -1,72 +1,76 @@
-Return-Path: <kernel-hardening-return-11793-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x225H+9BwGa1/Xyh30uNvaQVtcVI2m16XiszKidxTqjAM6h4Uq/XB4Z8X6x2B0LJvIvUcZLdP
-ARC-Seal: i=1; a=rsa-sha256; t=1518643679; cv=none;
+Return-Path: <kernel-hardening-return-11779-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x226A+NKXquA5Y+HODZPlQYL9oB0wDaF12TDa7AqsEm3wYYECrpc+rC/m9Be9r4zKndBImpq9
+ARC-Seal: i=1; a=rsa-sha256; t=1518639187; cv=none;
         d=google.com; s=arc-20160816;
-        b=z0prufT7T3sregKZzieUvh78Uvuco7wNAAKNwV97qBYPLcwhKLw8HKu4/K99T3trqk
-         Qy6doKOOg8qBeFMPQJzYRM71/36r46OehtPvjcMX05fV0/magueepahpzVp5PbenWdYt
-         VAP+WN+ijHGZi6UwQ7jfbw0/nutNuFT66fgdqYmuT20IBOPVkJBoUUCLrlWhhAdV/MRd
-         MejJZ/cd2Zo2elaxZ5NDEaZQlhDoUEmm/2SGPzbY538Oc4TJplZgOyddveYzdiWhfW8O
-         LVzDwVYMIwYXLP2GVvkRx83l+VGqGLIMpN+UQ20SgP/fslRvTQ59UNKuZjtxiqTnT21m
-         5wsQ==
+        b=ftcogZXue5wmbo5ItcjRRbJBRDZawcrCkmmlDdUMV5k4kS5nMI65bVGtHi3xoTRlW0
+         AM3rx8kvSbNfbjkHftBNNfrPA7so6JlnMoGY98YGdpH65XML1h2aySSZ+xzHuoRuSXli
+         Rx/7edZh1HFuLf3pjZ20OqUOw+DgZ1lQYWMkv1ctXieGWfZY2uKu8R6ViRzI8B1D7ZQ9
+         seh7wQQLSjggwJCdeIWvI0agXwNllEuP/DROINHfDUshn2zYe3rNJLaa1KU69QKc367W
+         qNSXLcJMgwvJB8i6TMbeDbPHp99S1jvHvcSF71L7B3jpztRgppYF0zZDM87NQpxBUotj
+         yTVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
+         :list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=tQZePtnh3huMlLJIprX3Kj1mR/gZJR4UIIhyUseRxFU=;
-        b=FHx52k9ChH4S8OO7DlTcM5j/uwlk49kkPZHG/DnUYCoS8IRftO32zsC++V4n44E4mG
-         VsHu89lWW7qA5EIsZ5puRVj2LYPv6X3g1YFHgFwrwfwJbDmZS6cpc57gsxSOFk/Bcfjd
-         2ERcxDPdGD1tZzEc+RBmCt3SQ+Sg/M2GySccN3k+K09EmfOkpyNnNTs2QCHEtQI/0ebt
-         94AG+eiNdWDxIXRPpV23Rdo3OoZDXgllY9Bv//lAnpUkSf85fQIQRnt/Woa8HAll68eZ
-         nAKSQE85qklwFV3us3FEWfSgxvO8eCiC4p1YcTqTB+kiTLkvPRgMPyaEP9g94pOIEji9
-         OqVg==
+        bh=WthBHKenLHBX182ogxZHxPTpCq6cnWX6LosdoqkvTKs=;
+        b=fYbTf9AVCreAD4Ve2yj7A8HWc3FqIU0qXevs9DzdPL40MliguKvE/ZQdptvqLZkwG+
+         bHoyDWka030t6QES7brCu7D7Mztc6ag2V3Iy+VxHHVrvSmBzErZsA0L+EzzOyDScjSXl
+         XugclzA75SatBfL819GeFxTOHRuTygt+SW2lOBMdJOjrEtpePTnjPVq1xNIYJSTDaaQL
+         cEb55mhkHI7U9N8sTNEy8rOJ5Z+282a9PTWgMJIl3WDXoZQe47+UVMIFmggKnn/VSntr
+         VGYrSgwc7kRC0pPy88c08t8WiG/37DGMls9DKCwoB5YkLg0IlHU4Kf8gBQcSqj9w07UO
+         PC8Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11793-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11793-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=KUK+5n40;
+       spf=pass (google.com: domain of kernel-hardening-return-11779-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11779-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11793-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11793-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=KUK+5n40;
+       spf=pass (google.com: domain of kernel-hardening-return-11779-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11779-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1537:1566:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3868:3871:4321:4605:5007:7903:10004:10400:10848:11232:11658:11914:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21611:21627:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: town38_601e810328109
-X-Filterd-Recvd-Size: 1448
-Message-ID: <1518643659.3678.34.camel@perches.com>
-Subject: Re: [PATCH v2 2/8] mm: Add kvmalloc_ab_c and kvzalloc_struct
-From: Joe Perches <joe@perches.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox
- <mawilcox@microsoft.com>, linux-mm@kvack.org, Kees Cook
- <keescook@chromium.org>,  linux-kernel@vger.kernel.org,
- kernel-hardening@lists.openwall.com
-Date: Wed, 14 Feb 2018 13:27:39 -0800
-In-Reply-To: <1518643449.3678.33.camel@perches.com>
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>,
+	linux-mm@kvack.org,
+	Kees Cook <keescook@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	Joe Perches <joe@perches.com>
+Subject: [PATCH v2 3/8] Convert virtio_console to kvzalloc_struct
+Date: Wed, 14 Feb 2018 12:11:49 -0800
+Message-Id: <20180214201154.10186-4-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180214201154.10186-1-willy@infradead.org>
 References: <20180214201154.10186-1-willy@infradead.org>
-	 <20180214201154.10186-3-willy@infradead.org>
-	 <1518641152.3678.28.camel@perches.com>
-	 <20180214211203.GF20627@bombadil.infradead.org>
-	 <1518643449.3678.33.camel@perches.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592408583578566616?=
-X-GMAIL-MSGID: =?utf-8?q?1592413314664736924?=
+X-GMAIL-THRID: =?utf-8?q?1592408604560950999?=
+X-GMAIL-MSGID: =?utf-8?q?1592408604560950999?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 2018-02-14 at 13:24 -0800, Joe Perches wrote:
-> Look at your patch 4
-> 
-> -       dev_dax = kzalloc(sizeof(*dev_dax) + sizeof(*res) * count, GFP_KERNEL);
-> +       dev_dax = kvzalloc_struct(dev_dax, res, count, GFP_KERNEL);
-> 
-> Here what is being allocated is exactly a struct
-> and an array.
-> 
-> And this doesn't compile either.
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-apologies,  my mistake.
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ drivers/char/virtio_console.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 468f06134012..e0816cc2c6bd 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -433,8 +433,7 @@ static struct port_buffer *alloc_buf(struct virtqueue *vq, size_t buf_size,
+ 	 * Allocate buffer and the sg list. The sg list array is allocated
+ 	 * directly after the port_buffer struct.
+ 	 */
+-	buf = kmalloc(sizeof(*buf) + sizeof(struct scatterlist) * pages,
+-		      GFP_KERNEL);
++	buf = kvzalloc_struct(buf, sg, pages, GFP_KERNEL);
+ 	if (!buf)
+ 		goto fail;
+ 
+-- 
+2.15.1
