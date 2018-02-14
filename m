@@ -1,69 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161256AbeBNReJ (ORCPT <rfc822;w@1wt.eu>);
+        id S1161267AbeBNRe1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 12:34:27 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36814 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1161215AbeBNReJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Feb 2018 12:34:09 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:55795 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161026AbeBNReI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 12:34:08 -0500
-Date: Wed, 14 Feb 2018 18:34:03 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: David Miller <davem@davemloft.net>
-Cc: hau@realtek.com, netdev@vger.kernel.org, nic_swsd@realtek.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH net-next] r8169: add module param for control of
- ASPM disable.
-Message-ID: <20180214173403.GI12307@lunn.ch>
-References: <1518598965-3593-1-git-send-email-hau@realtek.com>
- <20180214134040.GB22014@lunn.ch>
- <20180214.122202.330947258009140771.davem@davemloft.net>
+Date: Wed, 14 Feb 2018 11:34:07 -0600
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Jason Baron <jbaron@akamai.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@suse.de>,
+        Juergen Gross <jgross@suse.com>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH 1/3] jump_label: Warn on failed jump_label patch
+Message-ID: <20180214173407.guhytdurv4pmhzvk@treble>
+References: <cover.1518626149.git.jpoimboe@redhat.com>
+ <b8f1b55f17c346fba39d3f59a01251185e09e151.1518626149.git.jpoimboe@redhat.com>
+ <20180214120112.43821b5e@gandalf.local.home>
+ <a4ad6f69-8836-779b-f7e7-0e303885c7f5@akamai.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180214.122202.330947258009140771.davem@davemloft.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <a4ad6f69-8836-779b-f7e7-0e303885c7f5@akamai.com>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 12:22:02PM -0500, David Miller wrote:
-> From: Andrew Lunn <andrew@lunn.ch>
-> Date: Wed, 14 Feb 2018 14:40:40 +0100
+On Wed, Feb 14, 2018 at 12:18:20PM -0500, Jason Baron wrote:
 > 
-> > linux/drivers$ grep -ir aspm * | grep MODULE_
-> > gpu/drm/amd/amdgpu/amdgpu_drv.c:MODULE_PARM_DESC(aspm, "ASPM support (1 = enable, 0 = disable, -1 = auto)");
-> > gpu/drm/radeon/radeon_drv.c:MODULE_PARM_DESC(aspm, "ASPM support (1 = enable, 0 = disable, -1 = auto)");
-> > infiniband/hw/hfi1/pcie.c:MODULE_PARM_DESC(aspm, "PCIe ASPM: 0: disable, 1: enable, 2: dynamic");
-> > net/wireless/realtek/rtlwifi/rtl8192ee/sw.c:MODULE_PARM_DESC(aspm, "Set to 1 to enable ASPM (default 1)\n");
-> > net/wireless/realtek/rtlwifi/rtl8188ee/sw.c:MODULE_PARM_DESC(aspm, "Set to 1 to enable ASPM (default 1)\n");
-> > net/wireless/realtek/rtlwifi/rtl8821ae/sw.c:MODULE_PARM_DESC(aspm, "Set to 1 to enable ASPM (default 1)\n");
-> > net/wireless/realtek/rtlwifi/rtl8192se/sw.c:MODULE_PARM_DESC(aspm, "Set to 1 to enable ASPM (default 1)\n");
-> > net/wireless/realtek/rtlwifi/rtl8192ce/sw.c:MODULE_PARM_DESC(aspm, "Set to 1 to enable ASPM (default 1)\n");
-> > net/wireless/realtek/rtlwifi/rtl8723be/sw.c:MODULE_PARM_DESC(aspm, "Set to 1 to enable ASPM (default 1)\n");
-> > net/wireless/realtek/rtlwifi/rtl8192de/sw.c:MODULE_PARM_DESC(aspm, "Set to 1 to enable ASPM (default 1)\n");
-> > net/wireless/realtek/rtlwifi/rtl8723ae/sw.c:MODULE_PARM_DESC(aspm, "Set to 1 to enable ASPM (default 1)\n");
-> > staging/rts5208/rtsx.c:MODULE_PARM_DESC(aspm_l0s_l1_en, "enable device aspm");
-> > staging/rtlwifi/rtl8822be/sw.c:MODULE_PARM_DESC(aspm, "Set to 1 to enable ASPM (default 1)\n");
-> > 
-> > This patch seems to have the exact opposite of everybody else already
-> > does.
-> > 
-> > Maybe you can follow the AMD example, and default to -1, since you are
-> > proposing to mostly have it enabled, but disabled in one case?
 > 
-> This is just another good reminder of why module parameters are a
-> terrible user experience for just about anything device configuration
-> related.
+> On 02/14/2018 12:01 PM, Steven Rostedt wrote:
+> > On Wed, 14 Feb 2018 10:40:41 -0600
+> > Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> > 
+> >> When the jump label code encounters an address which isn't recognized by
+> >> kernel_text_address(), it just silently fails.
+> >>
+> >> This can be dangerous because jump labels are used in a variety of
+> >> places, and are generally expected to work.  Convert the silent failure
+> >> to a warning.
+> > 
+> > I made ftrace function tracing work on init code, can we do the same
+> > with tracepoints (aka jump labels)?
+> > 
+> 
+> jump labels do work on init code, except they don't work on it after it
+> has been freed :)
+> 
+> It uses 'kernel_text_address()', which will return true for init code if
+> system_state < SYSTEM_RUNNING. See: core_kernel_text().
+> 
+> So I'm guessing that the warnings here are coming from init code that
+> has already been freed. Are we sure that these warnings are coming from
+> init code that hasn't already been freed?
 
-Agreed.
+Ah, I see.  I missed that 'system_state < SYSTEM_RUNNING' check.  It was
+nicely hidden. :-)
 
-I took a look at see if there was some other way to do this. Maybe the
-pcie core had a callback or something. Nope.
+So I guess patches 2 & 3 can be dropped, as those tracepoints can still
+be used during boot.
 
-> For users, this leads to misery.
+And in patch 1 the warning conditions need to be tweaked a bit to
+exclude the __init case.
 
-At least in this case, the misery is mostly limited to realtek
-users. Nearly everybody else seems to get it right and not need such a
-hack.
-
-	Andrew
+-- 
+Josh
