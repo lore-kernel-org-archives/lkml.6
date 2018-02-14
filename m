@@ -1,167 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032559AbeBNQ2o (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 11:28:44 -0500
-Received: from mail-eopbgr00048.outbound.protection.outlook.com ([40.107.0.48]:48960
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1032444AbeBNQ2l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:28:41 -0500
-From: Han Xu <han.xu@nxp.com>
-To: Stefan Agner <stefan@agner.ch>,
-        "boris.brezillon@free-electrons.com"
-        <boris.brezillon@free-electrons.com>
-CC: "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "cyrille.pitchen@wedev4u.fr" <cyrille.pitchen@wedev4u.fr>,
-        "max.oss.09@gmail.com" <max.oss.09@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mtd: nand: gpmi: add support for specific ECC
- strength
-Thread-Topic: [PATCH 2/2] mtd: nand: gpmi: add support for specific ECC
- strength
-Thread-Index: AQHTn3GUbk+2oAMyxkafCnu56MqD3aOkIwSA
-Date: Wed, 14 Feb 2018 16:28:36 +0000
-Message-ID: <2f28681f-c261-31f7-9f93-602f50109343@nxp.com>
-References: <20180206174021.5947-1-stefan@agner.ch>
- <20180206174021.5947-2-stefan@agner.ch>
-In-Reply-To: <20180206174021.5947-2-stefan@agner.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=han.xu@nxp.com; 
-x-originating-ip: [192.88.168.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0401MB2383;7:nb2ZHqhdLyT0kB3rl94jncLkV0so7gqJ1ddRTSDmOGjDhFOM9plNeAcH37SwX3X9mu/IYXPUG92hHOFsxUEOJlAhrNPvnrLptgPo05g5TcM2avTshwxIhwIJyxbKCO5jR1Pii1IVDx4abaodD7w0ImRvBkkuz6k5j7vaAWKORWs34tDLSYtBlqQOuY1uPcLdRAb6QDVcoSlyHUpnyfhdpjHeWx5A7DqMpTIKo/9HcCEI+zvkgu7CCZohoXwF4iBx
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 478ccdcf-bc2b-45f0-9323-08d573c80016
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:VI1PR0401MB2383;
-x-ms-traffictypediagnostic: VI1PR0401MB2383:
-x-microsoft-antispam-prvs: <VI1PR0401MB2383C888418349307AE8BEB197F50@VI1PR0401MB2383.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231101)(2400082)(944501161)(3002001)(6055026)(6041288)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:VI1PR0401MB2383;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0401MB2383;
-x-forefront-prvs: 0583A86C08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39860400002)(376002)(346002)(39380400002)(199004)(189003)(2906002)(5660300001)(25786009)(26005)(39060400002)(6116002)(3280700002)(53546011)(3846002)(102836004)(106356001)(6506007)(2900100001)(7736002)(8936002)(305945005)(31686004)(36756003)(2950100002)(6246003)(3660700001)(105586002)(81166006)(81156014)(31696002)(8676002)(478600001)(4326008)(76176011)(6512007)(229853002)(6486002)(14454004)(5250100002)(2501003)(53936002)(66066001)(86362001)(99286004)(316002)(6436002)(186003)(110136005)(97736004)(68736007)(54906003)(71600200001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0401MB2383;H:VI1PR0401MB2221.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: 1HRW8u3bnRQxp2Cq09l5pxFoQkxcTuu1TANgUbQX7pePuPOBFlgGx4EqIbs+jXy192uqOSl/OwUGvXSyixd+Bg==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EB1983446AB00C4F96B6F66C2101EBC9@eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 478ccdcf-bc2b-45f0-9323-08d573c80016
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2018 16:28:36.8832
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0401MB2383
+        id S1032574AbeBNQ3D (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 11:29:03 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54734 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032392AbeBNQ3B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 11:29:01 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Trent Piepho <tpiepho@impinj.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "Gustavo A . R . Silva" <garsilva@embeddedor.com>,
+        Mark Brown <broonie@kernel.org>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: bcm2835aux: Avoid 64-bit arithmetic in xfer len calc" to the spi tree
+In-Reply-To: <20180212193814.17644-1-tpiepho@impinj.com>
+Message-Id: <E1elzvF-0005oU-Pj@debutante>
+Date: Wed, 14 Feb 2018 16:28:41 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+
+The patch
+
+   spi: bcm2835aux: Avoid 64-bit arithmetic in xfer len calc
+
+has been applied to the spi tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From d704afffe65c8fab424963c1ba4ec4364c2d6a82 Mon Sep 17 00:00:00 2001
+From: Trent Piepho <tpiepho@impinj.com>
+Date: Mon, 12 Feb 2018 11:38:14 -0800
+Subject: [PATCH] spi: bcm2835aux: Avoid 64-bit arithmetic in xfer len calc
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1EGSsmv032570
 
+We want to check for xfers that are over 30 microseconds.  Rather than
+find how many µs a xfer will take, instead find how many bytes can be
+transferred in 30 µs.  The latter must be less than 32 bits (since our
+clock speed is limited to 32 bits), while the former involves 64 bit
+quantities and more arithmetic operations.
 
+Signed-off-by: Trent Piepho <tpiepho@impinj.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-bcm2835aux.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-On 02/06/2018 11:40 AM, Stefan Agner wrote:
-> Add support for specified ECC strength/size using device tree
-> properties nand-ecc-strength/nand-ecc-step-size.
->
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->   .../devicetree/bindings/mtd/gpmi-nand.txt          |  5 ++++
->   drivers/mtd/nand/gpmi-nand/gpmi-nand.c             | 29 ++++++++++++++--------
->   2 files changed, 24 insertions(+), 10 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/mtd/gpmi-nand.txt b/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
-> index eb2d9919d063..ea6e9b735160 100644
-> --- a/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
-> +++ b/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
-> @@ -46,6 +46,11 @@ Optional properties:
->                          partitions written from Linux with this feature
->                          turned on may not be accessible by the BootROM
->                          code.
-> +  - nand-ecc-strength: integer representing the number of bits to correct
-> +                       per ECC step. Needs to be a multiple of 2.
-> +  - nand-ecc-step-size: integer representing the number of data bytes
-> +                       that are covered by a single ECC step. The driver
-> +                       supports 512 and 1024.
->   
->   The device tree may optionally contain sub-nodes describing partitions of the
->   address space. See partition.txt for more detail.
-> diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> index 50f8d4a1b983..8cb378358e11 100644
-> --- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> +++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-> @@ -198,17 +198,15 @@ static inline bool gpmi_check_ecc(struct gpmi_nand_data *this)
->    *
->    * We may have available oob space in this case.
->    */
-> -static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
-> +static int set_geometry_by_ecc_info(struct gpmi_nand_data *this,
-> +			unsigned int ecc_strength, unsigned int ecc_step)
->   {
->   	struct bch_geometry *geo = &this->bch_geometry;
->   	struct nand_chip *chip = &this->nand;
->   	struct mtd_info *mtd = nand_to_mtd(chip);
->   	unsigned int block_mark_bit_offset;
->   
-> -	if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
-> -		return -EINVAL;
-> -
-> -	switch (chip->ecc_step_ds) {
-> +	switch (ecc_step) {
->   	case SZ_512:
->   		geo->gf_len = 13;
->   		break;
-> @@ -221,8 +219,8 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
->   			chip->ecc_strength_ds, chip->ecc_step_ds);
->   		return -EINVAL;
->   	}
-> -	geo->ecc_chunk_size = chip->ecc_step_ds;
-> -	geo->ecc_strength = round_up(chip->ecc_strength_ds, 2);
-> +	geo->ecc_chunk_size = ecc_step;
-> +	geo->ecc_strength = round_up(ecc_strength, 2);
->   	if (!gpmi_check_ecc(this))
->   		return -EINVAL;
->   
-> @@ -230,7 +228,7 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
->   	if (geo->ecc_chunk_size < mtd->oobsize) {
->   		dev_err(this->dev,
->   			"unsupported nand chip. ecc size: %d, oob size : %d\n",
-> -			chip->ecc_step_ds, mtd->oobsize);
-> +			ecc_step, mtd->oobsize);
->   		return -EINVAL;
->   	}
->   
-> @@ -423,9 +421,20 @@ static int legacy_set_geometry(struct gpmi_nand_data *this)
->   
->   int common_nfc_set_geometry(struct gpmi_nand_data *this)
->   {
-> +	struct nand_chip *chip = &this->nand;
-> +
-> +	if (chip->ecc.strength > 0 && chip->ecc.size > 0)
-> +		return set_geometry_by_ecc_info(this, chip->ecc.strength,
-> +						chip->ecc.size);
-> +
-
-I was wondering how to keep, let's say u-boot, and kernel ecc setting 
-aligned, if users can specify the strength and step_ds in DT? Did u-boot 
-enable to get these parameters from DT?
->   	if ((of_property_read_bool(this->dev->of_node, "fsl,use-minimum-ecc"))
-> -				|| legacy_set_geometry(this))
-> -		return set_geometry_by_ecc_info(this);
-> +				|| legacy_set_geometry(this)) {
-> +		if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
-> +			return -EINVAL;
-> +
-> +		return set_geometry_by_ecc_info(this, chip->ecc_strength_ds,
-> +						chip->ecc_step_ds);
-> +	}
->   
->   	return 0;
->   }
+diff --git a/drivers/spi/spi-bcm2835aux.c b/drivers/spi/spi-bcm2835aux.c
+index 7428091d3f5b..1431cb98fe40 100644
+--- a/drivers/spi/spi-bcm2835aux.c
++++ b/drivers/spi/spi-bcm2835aux.c
+@@ -321,7 +321,6 @@ static int bcm2835aux_spi_transfer_one(struct spi_master *master,
+ 	struct bcm2835aux_spi *bs = spi_master_get_devdata(master);
+ 	unsigned long spi_hz, clk_hz, speed;
+ 	unsigned long spi_used_hz;
+-	unsigned long long xfer_time_us;
+ 
+ 	/* calculate the registers to handle
+ 	 *
+@@ -358,20 +357,21 @@ static int bcm2835aux_spi_transfer_one(struct spi_master *master,
+ 	bs->rx_len = tfr->len;
+ 	bs->pending = 0;
+ 
+-	/* calculate the estimated time in us the transfer runs
+-	 * note that there are are 2 idle clocks after each
+-	 * chunk getting transferred - in our case the chunk size
+-	 * is 3 bytes, so we approximate this by 9 bits/byte
++	/* Calculate the estimated time in us the transfer runs.  Note that
++	 * there are are 2 idle clocks cycles after each chunk getting
++	 * transferred - in our case the chunk size is 3 bytes, so we
++	 * approximate this by 9 cycles/byte.  This is used to find the number
++	 * of Hz per byte per polling limit.  E.g., we can transfer 1 byte in
++	 * 30 µs per 300,000 Hz of bus clock.
+ 	 */
+-	xfer_time_us = tfr->len * 9 * 1000000;
+-	do_div(xfer_time_us, spi_used_hz);
+-
++#define HZ_PER_BYTE ((9 * 1000000) / BCM2835_AUX_SPI_POLLING_LIMIT_US)
+ 	/* run in polling mode for short transfers */
+-	if (xfer_time_us < BCM2835_AUX_SPI_POLLING_LIMIT_US)
++	if (tfr->len < spi_used_hz / HZ_PER_BYTE)
+ 		return bcm2835aux_spi_transfer_one_poll(master, spi, tfr);
+ 
+ 	/* run in interrupt mode for all others */
+ 	return bcm2835aux_spi_transfer_one_irq(master, spi, tfr);
++#undef HZ_PER_BYTE
+ }
+ 
+ static int bcm2835aux_spi_prepare_message(struct spi_master *master,
+-- 
+2.16.1
