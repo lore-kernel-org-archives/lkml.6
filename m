@@ -1,118 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032574AbeBNQ3D (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 11:29:03 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54734 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032392AbeBNQ3B (ORCPT
+        id S1032591AbeBNQaj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 11:30:39 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:43738 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032397AbeBNQah (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:29:01 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Trent Piepho <tpiepho@impinj.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Gustavo A . R . Silva" <garsilva@embeddedor.com>,
-        Mark Brown <broonie@kernel.org>, Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: bcm2835aux: Avoid 64-bit arithmetic in xfer len calc" to the spi tree
-In-Reply-To: <20180212193814.17644-1-tpiepho@impinj.com>
-Message-Id: <E1elzvF-0005oU-Pj@debutante>
-Date: Wed, 14 Feb 2018 16:28:41 +0000
+        Wed, 14 Feb 2018 11:30:37 -0500
+Message-ID: <1518625818.24026.2.camel@oracle.com>
+Subject: Re: [RFC PATCH] elf: enforce MAP_FIXED on overlaying elf segments
+ (was: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE)
+From: Khalid Aziz <khalid.aziz@oracle.com>
+To: Michal Hocko <mhocko@kernel.org>, Kees Cook <keescook@chromium.org>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        mm-commits@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linux-Next <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Mark Brown <broonie@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 14 Feb 2018 09:30:18 -0700
+In-Reply-To: <20180213100440.GM3443@dhcp22.suse.cz>
+References: <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
+         <20180129132235.GE21609@dhcp22.suse.cz>
+         <87k1w081e7.fsf@concordia.ellerman.id.au>
+         <20180130094205.GS21609@dhcp22.suse.cz>
+         <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com>
+         <20180131131937.GA6740@dhcp22.suse.cz>
+         <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com>
+         <20180201131007.GJ21609@dhcp22.suse.cz>
+         <20180201134026.GK21609@dhcp22.suse.cz>
+         <CAGXu5j+fo0Z_ax2O10A-3D3puLhnX+o5M4Lp3TBsnE=NtFCjpw@mail.gmail.com>
+         <20180213100440.GM3443@dhcp22.suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1ubuntu1 
+Mime-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8804 signatures=668670
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802140195
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-
-The patch
-
-   spi: bcm2835aux: Avoid 64-bit arithmetic in xfer len calc
-
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From d704afffe65c8fab424963c1ba4ec4364c2d6a82 Mon Sep 17 00:00:00 2001
-From: Trent Piepho <tpiepho@impinj.com>
-Date: Mon, 12 Feb 2018 11:38:14 -0800
-Subject: [PATCH] spi: bcm2835aux: Avoid 64-bit arithmetic in xfer len calc
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1EGUhaM000862
 
-We want to check for xfers that are over 30 microseconds.  Rather than
-find how many µs a xfer will take, instead find how many bytes can be
-transferred in 30 µs.  The latter must be less than 32 bits (since our
-clock speed is limited to 32 bits), while the former involves 64 bit
-quantities and more arithmetic operations.
+On Tue, 2018-02-13 at 11:04 +0100, Michal Hocko wrote:
+> 
+> From 97e7355a6dc31a73005fa806566a57eb5c38032b Mon Sep 17 00:00:00
+> 2001
+> From: Michal Hocko <mhocko@suse.com>
+> Date: Tue, 13 Feb 2018 10:50:53 +0100
+> Subject: [PATCH] elf: enforce MAP_FIXED on overlaying elf segments
+> 
+> Anshuman has reported that some ELF binaries in his environment fail
+> to
+> start with
+>  [   23.423642] 9148 (sed): Uhuuh, elf segment at 0000000010030000
+> requested but the memory is mapped already
+>  [   23.423706] requested [10030000, 10040000] mapped [10030000,
+> 10040000] 100073 anon
+> 
+> The reason is that the above binary has overlapping elf segments:
+>   LOAD           0x0000000000000000 0x0000000010000000
+> 0x0000000010000000
+>                  0x0000000000013a8c 0x0000000000013a8c  R E    10000
+>   LOAD           0x000000000001fd40 0x000000001002fd40
+> 0x000000001002fd40
+>                  0x00000000000002c0 0x00000000000005e8  RW     10000
+>   LOAD           0x0000000000020328 0x0000000010030328
+> 0x0000000010030328
+>                  0x0000000000000384 0x00000000000094a0  RW     10000
+> 
+> That binary has two RW LOAD segments, the first crosses a page border
+> into the second
+> 
+> 0x1002fd40 (LOAD2-vaddr) + 0x5e8 (LOAD2-memlen) == 0x10030328 (LOAD3-
+> vaddr)
+> 
+> Handle this situation by enforcing MAP_FIXED when we establish a
+> temporary brk VMA to handle overlapping segments. All other mappings
+> will still use MAP_FIXED_NOREPLACE.
+> 
+> Fixes: fs, elf: drop MAP_FIXED usage from elf_map
+> Reported-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+> 
 
-Signed-off-by: Trent Piepho <tpiepho@impinj.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-bcm2835aux.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+Looks reasonable to me.
 
-diff --git a/drivers/spi/spi-bcm2835aux.c b/drivers/spi/spi-bcm2835aux.c
-index 7428091d3f5b..1431cb98fe40 100644
---- a/drivers/spi/spi-bcm2835aux.c
-+++ b/drivers/spi/spi-bcm2835aux.c
-@@ -321,7 +321,6 @@ static int bcm2835aux_spi_transfer_one(struct spi_master *master,
- 	struct bcm2835aux_spi *bs = spi_master_get_devdata(master);
- 	unsigned long spi_hz, clk_hz, speed;
- 	unsigned long spi_used_hz;
--	unsigned long long xfer_time_us;
- 
- 	/* calculate the registers to handle
- 	 *
-@@ -358,20 +357,21 @@ static int bcm2835aux_spi_transfer_one(struct spi_master *master,
- 	bs->rx_len = tfr->len;
- 	bs->pending = 0;
- 
--	/* calculate the estimated time in us the transfer runs
--	 * note that there are are 2 idle clocks after each
--	 * chunk getting transferred - in our case the chunk size
--	 * is 3 bytes, so we approximate this by 9 bits/byte
-+	/* Calculate the estimated time in us the transfer runs.  Note that
-+	 * there are are 2 idle clocks cycles after each chunk getting
-+	 * transferred - in our case the chunk size is 3 bytes, so we
-+	 * approximate this by 9 cycles/byte.  This is used to find the number
-+	 * of Hz per byte per polling limit.  E.g., we can transfer 1 byte in
-+	 * 30 µs per 300,000 Hz of bus clock.
- 	 */
--	xfer_time_us = tfr->len * 9 * 1000000;
--	do_div(xfer_time_us, spi_used_hz);
--
-+#define HZ_PER_BYTE ((9 * 1000000) / BCM2835_AUX_SPI_POLLING_LIMIT_US)
- 	/* run in polling mode for short transfers */
--	if (xfer_time_us < BCM2835_AUX_SPI_POLLING_LIMIT_US)
-+	if (tfr->len < spi_used_hz / HZ_PER_BYTE)
- 		return bcm2835aux_spi_transfer_one_poll(master, spi, tfr);
- 
- 	/* run in interrupt mode for all others */
- 	return bcm2835aux_spi_transfer_one_irq(master, spi, tfr);
-+#undef HZ_PER_BYTE
- }
- 
- static int bcm2835aux_spi_prepare_message(struct spi_master *master,
--- 
-2.16.1
+Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
