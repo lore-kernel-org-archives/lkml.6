@@ -1,153 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754561AbeBNHf5 (ORCPT <rfc822;w@1wt.eu>);
+        id S1754576AbeBNHgA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 02:36:00 -0500
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:53219 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754562AbeBNHf5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Feb 2018 02:35:57 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52000 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754469AbeBNHfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 02:35:55 -0500
-Date: Wed, 14 Feb 2018 15:35:43 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Philipp Rudo <prudo@linux.vnet.ibm.com>
-Cc: kexec@lists.infradead.org, linux-s390@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: Re: [PATCH 00/17] Add kexec_file_load support to s390
-Message-ID: <20180214073543.GA12328@dhcp-128-65.nay.redhat.com>
-References: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
+X-Google-Smtp-Source: AH8x2256Js+HmG4umCCt5XmcYoEYDR2WpBtuy/uWaD5jjdCSXIv8MkzgGTZdK+P4kjuQFgo7HSopow==
+Date: Wed, 14 Feb 2018 08:35:53 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] x86/entry/64: Fix CR3 restore order in paranoid_exit()
+Message-ID: <20180214073553.qsdnpetdgd4mkjdx@gmail.com>
+References: <2b8ce3a31bcdfffa434269f4abf5d46816b75773.1518575248.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180212100754.55121-1-prudo@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <2b8ce3a31bcdfffa434269f4abf5d46816b75773.1518575248.git.jpoimboe@redhat.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
 
-I added AKASHI in cc, he posted arm64 kexec_file series previously.
-I would like to read both series especially the general part, but
-maybe at the end of this month because of a holiday..
+* Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 
->From the patch log the cleanup looks nice, but still need read the
-details.
+> I haven't actually seen any real-world bugs caused by this, so I'm not
+> sure how theoretical it is.  I just stumbled upon it in code review when
+> looking for another bug.
 
-On 02/12/18 at 11:07am, Philipp Rudo wrote:
-> Hi everybody
-> 
-> resending the series as there was no reaction, yet. Furthermore i was told
-> that Andrew and the x86 list should also be CCed, so welcome.
-> 
-> No changes made to the patches since first time i sent them. The patches
-> apply to the current master (v4.16-rc1).
-> 
-> Thanks
-> Philipp
-> 
-> ---
-> 
-> this series adds the kexec_file_load system call to s390. Before the system
-> call is added there are some preparations/clean ups to common
-> kexec_file_load. In detail this series contains:
-> 
-> Patch #1&2: Minor cleanups/fixes.
-> 
-> Patch #3-9: Clean up the purgatory load/relocation code. Especially remove
-> the mis-use of the purgatory_info->sechdrs->sh_offset field, currently
-> holding a pointer into either kexec_purgatory (ro) or purgatory_buf (rw)
-> depending on the section. With these patches the section address will be
-> calculated verbosely and sh_offset will contain the offset of the section
-> in the stripped purgatory binary (purgatory_buf).
-> 
-> Patch #10: Allows architectures to set the purgaory load address. This
-> patch is important for s390 as the kernel and purgatory have to be loaded
-> to fixed addresses. In current code this is impossible as the purgatory
-> load is opaque to the architecture.
-> 
-> Patch #11: Moves x86 purgatories sha implementation to common lib/
-> directory.
-> 
-> Patches #12-17 finally adds the kexec_file_load system call to s390.
-> 
-> Please note that I had to touch arch code for x86 and power a little. In
-> theory this should not change the behavior but I don't have a way to test
-> it. Cross-compiling with defconfig(*) works fine for both.
-> 
-> Thanks
-> Philipp
-> 
-> (*) On x86 with the orc unwinder turned off. objtool SEGFAULTs on s390...
-> 
-> Philipp Rudo (17):
->   kexec_file: Silence compile warnings
->   kexec_file: Remove checks in kexec_purgatory_load
->   kexec_file: Make purgatory_info->ehdr const
->   kexec_file: Search symbols in read-only kexec_purgatory
->   kexec_file: Use read-only sections in arch_kexec_apply_relocations*
->   kexec_file: Split up __kexec_load_puragory
->   kexec_file: Simplify kexec_purgatory_setup_sechdrs 1
->   kexec_file: Simplify kexec_purgatory_setup_sechdrs 2
->   kexec_file: Remove mis-use of sh_offset field
->   kexec_file: Allow archs to set purgatory load address
->   kexec_file: Move purgatories sha256 to common code
->   s390/kexec_file: Prepare setup.h for kexec_file_load
->   s390/kexec_file: Add purgatory
->   s390/kexec_file: Add kexec_file_load system call
->   s390/kexec_file: Add image loader
->   s390/kexec_file: Add crash support to image loader
->   s390/kexec_file: Add ELF loader
-> 
->  arch/powerpc/kernel/kexec_elf_64.c             |   9 +-
->  arch/s390/Kbuild                               |   1 +
->  arch/s390/Kconfig                              |   4 +
->  arch/s390/include/asm/kexec.h                  |  23 ++
->  arch/s390/include/asm/purgatory.h              |  17 ++
->  arch/s390/include/asm/setup.h                  |  40 ++-
->  arch/s390/kernel/Makefile                      |   1 +
->  arch/s390/kernel/asm-offsets.c                 |   5 +
->  arch/s390/kernel/compat_wrapper.c              |   1 +
->  arch/s390/kernel/kexec_elf.c                   | 149 ++++++++++
->  arch/s390/kernel/kexec_image.c                 |  78 +++++
->  arch/s390/kernel/machine_kexec_file.c          | 291 +++++++++++++++++++
->  arch/s390/kernel/syscalls/syscall.tbl          |   1 +
->  arch/s390/purgatory/Makefile                   |  37 +++
->  arch/s390/purgatory/head.S                     | 279 ++++++++++++++++++
->  arch/s390/purgatory/purgatory.c                |  42 +++
->  arch/x86/kernel/kexec-bzimage64.c              |   8 +-
->  arch/x86/kernel/machine_kexec_64.c             |  66 ++---
->  arch/x86/purgatory/Makefile                    |   3 +
->  arch/x86/purgatory/purgatory.c                 |   2 +-
->  include/linux/kexec.h                          |  38 +--
->  {arch/x86/purgatory => include/linux}/sha256.h |  10 +-
->  kernel/kexec_file.c                            | 375 ++++++++++++-------------
->  {arch/x86/purgatory => lib}/sha256.c           |   4 +-
->  24 files changed, 1200 insertions(+), 284 deletions(-)
->  create mode 100644 arch/s390/include/asm/purgatory.h
->  create mode 100644 arch/s390/kernel/kexec_elf.c
->  create mode 100644 arch/s390/kernel/kexec_image.c
->  create mode 100644 arch/s390/kernel/machine_kexec_file.c
->  create mode 100644 arch/s390/purgatory/Makefile
->  create mode 100644 arch/s390/purgatory/head.S
->  create mode 100644 arch/s390/purgatory/purgatory.c
->  rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
->  rename {arch/x86/purgatory => lib}/sha256.c (99%)
-> 
-> -- 
-> 2.13.5
-> 
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
+I believe it's a real bug, but the fix is wrong with irq tracing or lockdep 
+enabled as Dave points out.
 
-Thanks
-Dave
+I think the reason we haven't seen this bug yet is that "paranoid" entry points 
+are limited to:
+
+idtentry double_fault			do_double_fault			has_error_code=1 paranoid=2
+idtentry debug			do_debug		has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
+idtentry int3			do_int3			has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
+idtentry machine_check		do_mce			has_error_code=0	paranoid=1
+
+Only machine_check is one that will interrupt an IRQS-off critical section 
+asynchronously - and machine check events are rare.
+
+The other main asynchronous entries are NMI entries, which can be very high-freq 
+with perf profiling, but they are special: they don't use the 'idtentry' macro but 
+are open coded and restore user CR3 unconditionally so don't seem to have this 
+bug.
+
+Thanks,
+
+	Ingo
