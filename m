@@ -1,75 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030353AbeBNNeE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 08:34:04 -0500
-Received: from mout.web.de ([212.227.15.3]:52435 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030236AbeBNNeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 08:34:03 -0500
-Subject: [PATCH 1/2] crypto: sahara: Delete an error message for a failed
- memory allocation in sahara_probe()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <6a487cd1-c05c-3d5d-ec6b-a6a2ae376f05@users.sourceforge.net>
-Message-ID: <0d8aa357-223d-56e2-1cbb-8113290ea1cf@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 14:33:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <6a487cd1-c05c-3d5d-ec6b-a6a2ae376f05@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:XZH9LjwsdXQSmVS44hFA5MRUQG0NgqFSpqn188qTOSNv/jW/1rV
- jvqbD2xGohfkKf8scZEd0DQlgRjlK8JHkQLz3fqjkZCEq7NV31cPwWVAva+3O5XbdGumm4w
- ClRQ6iKB8xuYwFUO0KsTta5z/mNQMyzNnY1T99XCCo2idHeX6vWb7klNpBHyn6vxH5wz9uH
- M9BhA12reHPBkP827rPbg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:rzOYtdebYaA=:Sx6Xn1vtx1/XxxbD3lN90U
- Y0ODFaiwM3DFsAq7Ytk7MMrG2jDf8+kori2825iQ0lyb0jXEJFQemJCNLgq8+hGKOH/LPzHUJ
- tJn3keIrkTEIGpqLswH7ypBn1ksobxreRKkyXW3xuRik5lxXtZ37wtpgLwF7RqmIuS8l5vNdN
- FzIp7svEwVeIe+azLfDOyFtT+4GOJI3lTlMdlIDXehhdFv8xBmpeI96Gk5QzARPtTjYF8vSel
- xMQuXPSdfWq4iwzluCi0UrEuJmMu76Q2zQKZSja/6LmhvTY3rcxlxju63njMftVIhyVfXLg+W
- o0fwxZp0laWVT4MF2tveVP66whbdqYsNNeWF4aYZDUUEgOWbWts1CLTceT3lIKfLxfURBL0Pm
- Mg7N9mtm1XT/6NH2eNXQyIZMJjH9yl6n1r3yfcuv/oYexFYaThl/uVpv3qMcr6zh/N+som74L
- mbx/0mvVZLA7f55YTQPAgN6FwOEg5RFCCA74mJE+m8FjW1LTD5YbfXoa/VP1if5TFPUnZH+gu
- 8h9YVV4UxT8zS6P4PCDT9gr1iKGyHXzwKnlVdPzrKlcwdib6A44+WIHByiZIP/J4CtXy3Qc2G
- Btr+donK6XoM6qEiLsW90fW9UK1aaJPkGDA42NS6aiPFy6Ni0SROUM/LgPOyUIld20KHYmChY
- qhEz+OC7In3RtunExT/Nhkvnk6n2z72Zrqx5Vu79eO+m/4yQ+HdOfSP8qbMKxHXGnJ2dFTXq4
- //Iv6Qv4scYR4hflYIVu7WFXp5k9yUd2lCjJCnc/eWQ1JqukseYbIEJI7JRRlTPsXWl5/UWpT
- 0f8ef5yTNwuCnLYaAGTEzkxEyZJXNyWFeyDMSKXBcLDayXt6Mw=
+        id S1030259AbeBNN3B (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 08:29:01 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34790 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030225AbeBNN27 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 08:28:59 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>,
+        broonie@kernel.org, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org,
+        b.zolnierkie@samsung.com, sbkim73@samsung.com, jcsing.lee@samsung.com,
+        lgirdwood@gmail.com, krzk@kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, m.szyprowski@samsung.com,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: samsung: Add missing #sound-dai-cells property documentation" to the asoc tree
+In-Reply-To: <20180212161538.22669-8-s.nawrocki@samsung.com>
+Message-Id: <E1elx7J-0006lR-2g@debutante>
+Date: Wed, 14 Feb 2018 13:28:57 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 14:10:03 +0100
+The patch
 
-Omit an extra message for a memory allocation failure in this function.
+   ASoC: samsung: Add missing #sound-dai-cells property documentation
 
-This issue was detected by using the Coccinelle software.
+has been applied to the asoc tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 3f0c43e60d19e1c126ddad47c77a5e1036e52378 Mon Sep 17 00:00:00 2001
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Mon, 12 Feb 2018 17:15:38 +0100
+Subject: [PATCH] ASoC: samsung: Add missing #sound-dai-cells property
+ documentation
+
+The #sound-dai-cells property might be helpful in selecting primary
+or secondary CPU DAI and it's already present in i2s nodes for some
+exynos SoCs so let's add it to the DT binding documentation.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/crypto/sahara.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ Documentation/devicetree/bindings/sound/samsung-i2s.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/crypto/sahara.c b/drivers/crypto/sahara.c
-index 08e7bdcaa6e3..9f3cdda59139 100644
---- a/drivers/crypto/sahara.c
-+++ b/drivers/crypto/sahara.c
-@@ -1398,10 +1398,8 @@ static int sahara_probe(struct platform_device *pdev)
- 	int i;
+diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+index c1f508f18ac8..a88cb00fa096 100644
+--- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
++++ b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+@@ -60,6 +60,7 @@ Optional SoC Specific Properties:
+   sub system(used in secondary sound source).
+ - pinctrl-0: Should specify pin control groups used for this controller.
+ - pinctrl-names: Should contain only one value - "default".
++- #sound-dai-cells: should be 1.
  
- 	dev = devm_kzalloc(&pdev->dev, sizeof(struct sahara_dev), GFP_KERNEL);
--	if (dev == NULL) {
--		dev_err(&pdev->dev, "unable to alloc data struct.\n");
-+	if (!dev)
- 		return -ENOMEM;
--	}
  
- 	dev->device = &pdev->dev;
- 	platform_set_drvdata(pdev, dev);
+ Example:
+@@ -79,4 +80,5 @@ i2s0: i2s@3830000 {
+ 	samsung,idma-addr = <0x03000000>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2s0_bus>;
++	#sound-dai-cells = <1>;
+ };
 -- 
 2.16.1
