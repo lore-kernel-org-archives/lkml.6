@@ -1,209 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162196AbeBNSct (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 13:32:49 -0500
-Received: from mout.web.de ([212.227.15.4]:36395 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162181AbeBNScr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 13:32:47 -0500
-Subject: [PATCH 2/2] crypto: caam: Use common error handling code in four
- functions
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-crypto@vger.kernel.org, Aymen Sghaier <aymen.sghaier@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <9a9a602d-93da-457d-c37d-2acbb4b7b5d5@users.sourceforge.net>
-Message-ID: <3c2905a1-b3a4-be87-618e-8562d3a5d8b4@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 19:32:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1162053AbeBNSdF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 13:33:05 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:46755 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162022AbeBNSdD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 13:33:03 -0500
+Subject: Re: plan9 semantics on Linux - mount namespaces
+To: Richard Weinberger <richard@sigma-star.at>
+Cc: Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <0f058286-a432-379b-f559-f2fe713807ab@metux.net>
+ <4042675.OEy7g9C5ya@blindfold>
+ <794929ce-0ecb-4c93-d51e-e94fcf749cfa@metux.net>
+ <6753239.SmZu9LK57z@blindfold>
+From: Enrico Weigelt <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <54f88b0d-282d-db79-9db6-ff82a16aaa62@metux.net>
+Date: Wed, 14 Feb 2018 19:32:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <9a9a602d-93da-457d-c37d-2acbb4b7b5d5@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <6753239.SmZu9LK57z@blindfold>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:o8nSh23sQ+gl1Uw6uKdQo4vm389oajtuRWaa/MMARP4mzBlwels
- hc+JHRcG1o80Jl/Bucb+M53gH9r7lIv4jPM/CHcF6fpSdqhykDKASfSjUzSzbDKrLmjvddw
- Lr2Lz1XE4of4jUAx4dC62fNE/D6mD3IwcLsv4KcElxpdWNFa9uP71/bCO8jkK0fDPRd3v3x
- JfxTZ7kceGJ//HPLCmLZw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:SGBkP+NNq9Y=:jwkgJiFPRLVJl4dBvJxLxO
- FjSG725i7cEMl2Oyfb+iminxieNXjjHOKWpgG4OcuHScWAMbFKHPCk3nXlUTCrXw/DqJWBSSS
- F/q/omxBREJFcpxCXIeotCguLMFYRl49jnc36qqtCe0QJMBhqv9STg0VRJCuowofG655J86zP
- WBE6V+s6NAPP4eWAiwVkmi2g1ZNkpzYzXLI8ipiqt5Z36rpvFvRJQrG9NVUvSZuTGz4IB4VF4
- XkKFW74FN0w2n1+bJXVIgnb+jKOLUi0KQyDUDkaYS7VFkGlwB1kojBV2iN7nLTQFHppjVF9pd
- IOlYMZJjX2tA6antPFHabYVwTHX88qGMd7wb4Al8z9iaxZXAbFF9dzC6eAXd1YwMFJOJyuzoI
- Vu7UFWeBKvVmWvbaWiwE98FD5DWBRCjptxZy5jG8DKQMt33HsCzfwxJSmC7PKuRTw9vcIoxm+
- zCmdB6blZJt/7kRbWu/GITG6tLE4XqSNCfUE7nWb8wr/Ad5Cn64XZoQchkr6TUgkpjXHz+AJg
- qZIOtSZIijNkdrmpyjHq8bYz0/dkaKU5INNi9pRgJQkn+rxg7tZVKSdcTK/i8ismWgvQ7zdv0
- l8DczwISxcN5B0cJWNWVrYV3yYyIYdNo8SroOIdRXRNZBlwB3eusy1HIdPdl9Km4psKZkytk9
- Wccvay3yIUP7freP8ry57BWENms4I7nGZrqxDwgCIENNZrLhS8Yv/LzvuArJMlH3JvGWSptz+
- x7vR8SGbkXuAqyfL7YfgikMiKoN7xbgzMWCm914lKMVwIjFIJ4UtF8orohXHrCNNixCi2msQs
- p7li5TRL6khHZJv3Y8+EYs5PUxW56CrvSh6Y/IS92xGRFaVqac=
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:qmjxcrQBnbsqyl2ZLq4aRXKGJxm+zk6h8j/+1UW9f2kmm7TMQU5
+ oyDjsXsCZwIwFseeBOOX1cyHt7/s/jSTmb5cvhmYisrmKpuV9TRnDonXZsCARG8SVblnnKP
+ QDF7A3e4MgT+0t+DCTSW+DQWMAN8+3qnhXT5mdysVm8CnFZryXLs38Ph92vzLkhJ8n1e7bv
+ AchNqssGQC41jvgDagR7Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:nUdaJGFQ63Q=:P8F+eNVIwpu6Hj5xNBXyhH
+ maleQXO+B5ZD2i6vfEeFFyi/PffXymxD2rrJ8RZNKsm8BuJ70HD2HvKVP3l84efGPtoFuioQg
+ ZDOFAIVnhtD9hhOyfGvyN95L41QD5hrZiI5yiAq5cyE0NcAblrQdn4gurs3uoJGUee822VtOv
+ 4yuKfHvdYkq3LQhVH/c26Nu9yvyaezlfHBhaxbSnYgKSGUqirx6B6gw/BmrPh7TBJIQoVKkHm
+ voIlVKvV4AFf/TqvfUXZtvyqai3r2ltTI/h8JYagmAHdR7xLovjgSZFm0i+PWqVeGU5+zhRzm
+ Nr0wYm7i9kVvV/jToOUg0QMytgN8jyDGmNP2LrfSFKGuxDTQ5gxvh7hk4yXupWIEeN7ftl3me
+ HZ2IwUh267aYmMsnBsQdbrFtjBE9SxGZ02KgR3YaXroyb6h33ra+AmBMaxOpEKoM0FqRfMFFy
+ JdWct4e1ZYzUtSEBiSYKV+iL9rau/MUo8sYNHqxRmyyih9EtpQOJwzICWOqQadLIKU/FIEb9O
+ jJH8JLG/vXtvoZEAHt1oUlq3ciGOCYE4p39lKNlOGadZnegupcx9SoMhcVo+FK5IC4ujogwab
+ Pi7YMWz432xjOxW4h1tBLreT12sHrKToyow72Up74igBB7VTUk4cZ8SdWubJ4vdlaeIZG9X8N
+ tAS0MrSPSKNGoJqDBU6xbJTabRb8snLA7GITmdD8+GLtl9WCRc8gow228ipFgZd4Z86MXdgEa
+ /9rpGLHu/GrEQLFz9bXrwxW1hrYlBm3PA32/2/tQ8ECUYVx6zbuzVtEXAXVKazUZmv52ehlvQ
+ nEYBd6aphRy2nIuH8U7LKftYtSvHLycwi8MTZGFjbrD6/BWXEA+KYSAyxL/IWzpSalp04n6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 19:14:49 +0100
+On 14.02.2018 19:12, Richard Weinberger wrote:
 
-Add jump targets so that a bit of exception handling can be better reused
-at the end of these functions.
+> BTW: Your issue is fixed/known. Just checked.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/crypto/caam/caamalg.c  | 32 ++++++++++++++++----------------
- drivers/crypto/caam/caamhash.c | 23 ++++++++++-------------
- 2 files changed, 26 insertions(+), 29 deletions(-)
+aha, on 1.2.28 ... I'll have to upgrade.
 
-diff --git a/drivers/crypto/caam/caamalg.c b/drivers/crypto/caam/caamalg.c
-index d1f25a90552a..3d26c44040c7 100644
---- a/drivers/crypto/caam/caamalg.c
-+++ b/drivers/crypto/caam/caamalg.c
-@@ -1560,11 +1560,8 @@ static struct ablkcipher_edesc *ablkcipher_edesc_alloc(struct ablkcipher_request
- 	/* allocate space for base edesc and hw desc commands, link tables */
- 	edesc = kzalloc(sizeof(*edesc) + desc_bytes + sec4_sg_bytes,
- 			GFP_DMA | flags);
--	if (!edesc) {
--		caam_unmap(jrdev, req->src, req->dst, src_nents, dst_nents,
--			   iv_dma, ivsize, 0, 0);
--		return ERR_PTR(-ENOMEM);
--	}
-+	if (!edesc)
-+		goto unmap_caam;
- 
- 	edesc->src_nents = src_nents;
- 	edesc->dst_nents = dst_nents;
-@@ -1587,10 +1584,8 @@ static struct ablkcipher_edesc *ablkcipher_edesc_alloc(struct ablkcipher_request
- 					    sec4_sg_bytes, DMA_TO_DEVICE);
- 	if (dma_mapping_error(jrdev, edesc->sec4_sg_dma)) {
- 		dev_err(jrdev, "unable to map S/G table\n");
--		caam_unmap(jrdev, req->src, req->dst, src_nents, dst_nents,
--			   iv_dma, ivsize, 0, 0);
- 		kfree(edesc);
--		return ERR_PTR(-ENOMEM);
-+		goto unmap_caam;
- 	}
- 
- 	edesc->iv_dma = iv_dma;
-@@ -1603,6 +1598,11 @@ static struct ablkcipher_edesc *ablkcipher_edesc_alloc(struct ablkcipher_request
- 
- 	*iv_contig_out = in_contig;
- 	return edesc;
-+
-+unmap_caam:
-+	caam_unmap(jrdev, req->src, req->dst, src_nents, dst_nents,
-+		   iv_dma, ivsize, 0, 0);
-+	return ERR_PTR(-ENOMEM);
- }
- 
- static int ablkcipher_encrypt(struct ablkcipher_request *req)
-@@ -1768,11 +1768,8 @@ static struct ablkcipher_edesc *ablkcipher_giv_edesc_alloc(
- 	sec4_sg_bytes = sec4_sg_ents * sizeof(struct sec4_sg_entry);
- 	edesc = kzalloc(sizeof(*edesc) + desc_bytes + sec4_sg_bytes,
- 			GFP_DMA | flags);
--	if (!edesc) {
--		caam_unmap(jrdev, req->src, req->dst, src_nents, dst_nents,
--			   iv_dma, ivsize, 0, 0);
--		return ERR_PTR(-ENOMEM);
--	}
-+	if (!edesc)
-+		goto unmap_caam;
- 
- 	edesc->src_nents = src_nents;
- 	edesc->dst_nents = dst_nents;
-@@ -1795,10 +1792,8 @@ static struct ablkcipher_edesc *ablkcipher_giv_edesc_alloc(
- 					    sec4_sg_bytes, DMA_TO_DEVICE);
- 	if (dma_mapping_error(jrdev, edesc->sec4_sg_dma)) {
- 		dev_err(jrdev, "unable to map S/G table\n");
--		caam_unmap(jrdev, req->src, req->dst, src_nents, dst_nents,
--			   iv_dma, ivsize, 0, 0);
- 		kfree(edesc);
--		return ERR_PTR(-ENOMEM);
-+		goto unmap_caam;
- 	}
- 	edesc->iv_dma = iv_dma;
- 
-@@ -1811,6 +1806,11 @@ static struct ablkcipher_edesc *ablkcipher_giv_edesc_alloc(
- 
- 	*iv_contig_out = out_contig;
- 	return edesc;
-+
-+unmap_caam:
-+	caam_unmap(jrdev, req->src, req->dst, src_nents, dst_nents,
-+		   iv_dma, ivsize, 0, 0);
-+	return ERR_PTR(-ENOMEM);
- }
- 
- static int ablkcipher_givencrypt(struct skcipher_givcrypt_request *creq)
-diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhash.c
-index dc269eba08ad..b5e43a1f38f0 100644
---- a/drivers/crypto/caam/caamhash.c
-+++ b/drivers/crypto/caam/caamhash.c
-@@ -371,16 +371,16 @@ static int hash_digest_key(struct caam_hash_ctx *ctx, const u8 *key_in,
- 				 DMA_TO_DEVICE);
- 	if (dma_mapping_error(jrdev, src_dma)) {
- 		dev_err(jrdev, "unable to map key input memory\n");
--		kfree(desc);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto free_desc;
- 	}
- 	dst_dma = dma_map_single(jrdev, (void *)key_out, digestsize,
- 				 DMA_FROM_DEVICE);
- 	if (dma_mapping_error(jrdev, dst_dma)) {
- 		dev_err(jrdev, "unable to map key output memory\n");
- 		dma_unmap_single(jrdev, src_dma, *keylen, DMA_TO_DEVICE);
--		kfree(desc);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto free_desc;
- 	}
- 
- 	/* Job descriptor to perform unkeyed hash on key_in */
-@@ -419,7 +419,7 @@ static int hash_digest_key(struct caam_hash_ctx *ctx, const u8 *key_in,
- 	dma_unmap_single(jrdev, dst_dma, digestsize, DMA_FROM_DEVICE);
- 
- 	*keylen = digestsize;
--
-+free_desc:
- 	kfree(desc);
- 
- 	return ret;
-@@ -1070,11 +1070,8 @@ static int ahash_digest(struct ahash_request *req)
- 
- 	ret = ahash_edesc_add_src(ctx, edesc, req, mapped_nents, 0, 0,
- 				  req->nbytes);
--	if (ret) {
--		ahash_unmap(jrdev, edesc, req, digestsize);
--		kfree(edesc);
--		return ret;
--	}
-+	if (ret)
-+		goto unmap_hash;
- 
- 	desc = edesc->hw_desc;
- 
-@@ -1082,9 +1079,8 @@ static int ahash_digest(struct ahash_request *req)
- 						digestsize);
- 	if (dma_mapping_error(jrdev, edesc->dst_dma)) {
- 		dev_err(jrdev, "unable to map dst\n");
--		ahash_unmap(jrdev, edesc, req, digestsize);
--		kfree(edesc);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto unmap_hash;
- 	}
- 
- #ifdef DEBUG
-@@ -1096,6 +1092,7 @@ static int ahash_digest(struct ahash_request *req)
- 	if (!ret) {
- 		ret = -EINPROGRESS;
- 	} else {
-+unmap_hash:
- 		ahash_unmap(jrdev, edesc, req, digestsize);
- 		kfree(edesc);
- 	}
+
+--mtx
+
+
 -- 
-2.16.1
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
