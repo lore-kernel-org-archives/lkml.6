@@ -1,74 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967187AbeBNKWm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 05:22:42 -0500
-Received: from mout.web.de ([212.227.17.12]:33111 "EHLO mout.web.de"
+        id S967197AbeBNKXQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 05:23:16 -0500
+Received: from www.zeus03.de ([194.117.254.33]:54212 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966996AbeBNKWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 05:22:40 -0500
-Subject: [PATCH 4/4] crypto: ux500: Delete two unnecessary variable
- initialisations in ux500_cryp_probe()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Geliang Tang <geliangtang@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
-Message-ID: <b8fb9abe-2ac4-d720-b676-79083fc7e5e6@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 11:22:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S967071AbeBNKXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 05:23:14 -0500
+Date: Wed, 14 Feb 2018 11:23:11 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, Linux-sh list <linux-sh@vger.kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rob Herring <robh@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Rich Felker <dalias@libc.org>, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and
+ cleanups
+Message-ID: <20180214102311.w7hfbnpfkecnjlkb@katana>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
+ <20180207191152.kvqrugblst2cko3c@ninjato>
+ <CAPDyKFoxp7p0atQTV=PoQ7Bwt0fOs2aEq1KJHPtrq+zA3eFYgw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:I3dD7zDFNpbf2dUuifjIgP9nbJwfo6LkRD0qZgTbMLy6JQ60wz5
- akZUsd8DxNH0kpU6SQuzTUTRaijsW11q3Jm3X6L+Kfrbx/VoJbm3ZQB6nHHM8pkDJINxnxD
- p/DvPjmPNCEquefL/qmJJoa06Cu/UjffBjIl2oKqsJYXAPsHjb1GQFZGKZVkXzCMDpTk5MH
- h1oEsk+5eBpIZRQcFgTrg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:nvrNXJIE0Wg=:9pIBBK48zZcjW4KWx5aJXj
- wLAr/43u/Vf1PEYP7MptuCLkM1DxEz2I9ZcBf36U7cFR2Cqxnj2G+BhFV6WeWJSn5OfctLCMn
- 2+Q2ea9mViGe8UuglAyufWh5H3cTZlvLzQSGnvVcIdxWPykZylJTcmr2u5stW4cfzINKU4r+P
- DXd2J5UCOnhVBrNL6S0Kh9Npmq+X1/fPzcUnlsa3iukoOlGHWBKoHu/vVmJEvWQRAFHofj8RP
- nu3Fmq+7P8+5cfDMZGunr5UsC4S4HW9upOlSoGYiMS1+35Ag5D26aCpG+RNfJ4F7ogNZPTGpm
- wGMhtuKYmIMiVvrhBBXtjq/9bsRbYUGYVd7l+9uVwwy684L1apMLlSbfJFIG2Sq28GhjkayVm
- S0Ge1gWnAV42xeefJvnEFm/LuPagsg6t4JJ3PXd6ruCsc09YraiSXKB+XwN3aimkgaM4hUX36
- 7CBCKeYbo1Vx9Y/0owUWjKoa9D1D72t8CrXfb4zLZHJb7tQ2uMC3Y6d9GXBWat5ISWqHjt9H4
- AVKLH3l2LzaDLVYOOttXr+cQV1ffRJ8MwrBjvX/00a+2CsLgdW11qyZ5IOrWl5k0Lx7svpwhj
- On3gHgsXRbPHt86CcR7bEdZ8fUGXXNewbWpZMua5GuuYdqU6qxd8d+leJl9haschvd9iEH4jU
- uQG30hWA6JAi8vZK7nloH4gQqkLPXz9jSjBD/vM9+ukT8r/ZCYkIKNS2yGQ2VCRZ3Jv63VaYJ
- LRWRP4DlnwschnA7IjGYUU94RpEVTYGKpG2dXY1hCi5n2Fyel/wee72UE+GkJvnmJG1YUVkyR
- ZFcjHAwQd9qEuYL8bfl0fpRq3EA8BcJCaJsrlfK9Pd5sQ6tD7s=
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="chnywmmjtoeycwvc"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFoxp7p0atQTV=PoQ7Bwt0fOs2aEq1KJHPtrq+zA3eFYgw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 10:56:38 +0100
 
-Two local variables will eventually be set to appropriate pointers
-a bit later. Thus omit their explicit initialisation at the beginning.
+--chnywmmjtoeycwvc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/crypto/ux500/cryp/cryp_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/ux500/cryp/cryp_core.c b/drivers/crypto/ux500/cryp/cryp_core.c
-index 7c811d7eb274..cb31b59c9d53 100644
---- a/drivers/crypto/ux500/cryp/cryp_core.c
-+++ b/drivers/crypto/ux500/cryp/cryp_core.c
-@@ -1404,8 +1404,8 @@ static void cryp_algs_unregister_all(void)
- static int ux500_cryp_probe(struct platform_device *pdev)
- {
- 	int ret;
--	struct resource *res = NULL;
--	struct resource *res_irq = NULL;
-+	struct resource *res;
-+	struct resource *res_irq;
- 	struct cryp_device_data *device_data;
- 	struct cryp_protection_config prot = {
- 		.privilege_access = CRYP_STATE_ENABLE
--- 
-2.16.1
+> You need to check again. :-)
+
+Seems like it. Sorry for the noise.
+
+> I am eager to apply those patches you already have reviewed (to
+> patch14), as those mostly seemed rather trivial and should be nice
+> cleanups.
+>=20
+> Do you mind me going ahead, then you can continue and review/test the res=
+t?
+
+Yes, we can work incremently from there. I'll send patches if I discover
+something unexpected.
+
+
+--chnywmmjtoeycwvc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqEDgsACgkQFA3kzBSg
+KbaVOxAAnEIyy0lswAOLrIpsQ+2pdHoH9MoOE+lfqFoXg28YvNHF6YfWKA47gWoD
+lmklgXxahFD/Dz07hngX21PF0kujg01iUC78nBNdXeN+pm1NIdipUahohuDQgRGj
+Pac163PpS4CPjPLA7yRLz44pXg4LQsIratlR1O1Nnw8mRRFY7aRr42+r/1kBKdYY
+LRehZe+7FoFgYAws224BNPOzvOX5n8Hg194c5rLRPif3EV21XQlc9tygG8A4bW6g
+m86jriqDUEYeE1RCgqiRlyxDZqyLFqLzsAHXWrDLoDpFMgmnLAX7Uihi37N38mw7
+SGjmZOHQnD5vtblop+rINnt5eZn3oevvgmQogwB0HasjjtwjOxUlARyNPicxrir8
+SVt5A/fA+ix52owdXN+SH+D0T5biGJEO3vd6zWOxOiKLmmRp0vrBsGNHUyh/Mxeo
+q+1kQ2OnsSxkZmyg4cYXYh2cHe3fYQb5DCj4oomraVLSzb+txk0dXc/RGwRArGQB
+0W8sMIVWj1f46mQs/XYJkbyqQEe1CJQU+O6TNsS4We3vXyMQdBUSH6ow35ShcUlF
+84I5u/K/q4ALhaRbVsKfs0jg4M7HOvUnflLJJlzhZAiOD59yXlUWI2Ttmxls/VsS
+BIEIhEZ4bai8g9q4s1lr6AP4xcigtQJXytLhJIG+rrrUckuXrM8=
+=AECR
+-----END PGP SIGNATURE-----
+
+--chnywmmjtoeycwvc--
