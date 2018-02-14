@@ -1,177 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162669AbeBNTGc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 14:06:32 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:50222 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162470AbeBNTGb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 14:06:31 -0500
-Date: Wed, 14 Feb 2018 20:06:29 +0100
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Brian Gerst <brgerst@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Subject: Re: [RFC PATCH 3/4] x86/entry/64: move switch_to_thread_stack to
- interrupt helper function
-Message-ID: <20180214190629.GA21426@isilmar-4.linta.de>
-References: <20180214182113.27247-1-linux@dominikbrodowski.net>
- <20180214182113.27247-4-linux@dominikbrodowski.net>
- <CAMzpN2iVuN-KkJMikdA0m+zsv66gTpLQS-b7eww6HfogCx1jZg@mail.gmail.com>
+        id S1162722AbeBNTKk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 14:10:40 -0500
+Received: from mga04.intel.com ([192.55.52.120]:10112 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1162683AbeBNTKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 14:10:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,513,1511856000";
+   d="scan'208";a="30779932"
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, me@tobin.cc,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH 8/8] docs: kernel-doc: Don't mangle literal code blocks in comments
+In-Reply-To: <20180214184009.12657-9-corbet@lwn.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20180214184009.12657-1-corbet@lwn.net> <20180214184009.12657-9-corbet@lwn.net>
+Date: Wed, 14 Feb 2018 21:10:31 +0200
+Message-ID: <87606zjsk8.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMzpN2iVuN-KkJMikdA0m+zsv66gTpLQS-b7eww6HfogCx1jZg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 01:57:15PM -0500, Brian Gerst wrote:
-> On Wed, Feb 14, 2018 at 1:21 PM, Dominik Brodowski
-> <linux@dominikbrodowski.net> wrote:
-> > We can also move the SWAPGS and the switch_to_thread_stack to the
-> > interrupt helper function. As we do not want call depths of two,
-> > convert switch_to_thread_stack to a macro. However, as entry_64_compat.S
-> > expects switch_to_thread_stack to be a function, provide a wrapper for
-> > that, which leads to some code duplication if CONFIG_IA32_EMULATION is
-> > enabled. Therefore, the size reduction differs slightly:
-> >
-> > With CONFIG_IA32_EMULATION enabled (-0.13k):
-> >    text    data     bss     dec     hex filename
-> >   16897       0       0   16897    4201 entry_64.o-orig
-> >   16767       0       0   16767    417f entry_64.o
-> >
-> > With CONFIG_IA32_EMULATION disabled (-0.27k):
-> >    text    data     bss     dec     hex filename
-> >   16897       0       0   16897    4201 entry_64.o-orig
-> >   16622       0       0   16622    40ee entry_64.o
-> >
-> > Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-> > ---
-> >  arch/x86/entry/entry_64.S | 65 ++++++++++++++++++++++++++---------------------
-> >  1 file changed, 36 insertions(+), 29 deletions(-)
-> >
-> > diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-> > index 3046b12a1acb..b60a3b692ca9 100644
-> > --- a/arch/x86/entry/entry_64.S
-> > +++ b/arch/x86/entry/entry_64.S
-> > @@ -536,6 +536,31 @@ END(irq_entries_start)
-> >         decl    PER_CPU_VAR(irq_count)
-> >  .endm
-> >
-> > +/*
-> > + * Switch to the thread stack.  This is called with the IRET frame and
-> > + * orig_ax on the stack.  (That is, RDI..R12 are not on the stack and
-> > + * space has not been allocated for them.)
-> > + */
-> > +.macro DO_SWITCH_TO_THREAD_STACK
-> > +       pushq   %rdi
-> > +       /* Need to switch before accessing the thread stack. */
-> > +       SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
-> > +       movq    %rsp, %rdi
-> > +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
-> > +       UNWIND_HINT sp_offset=16 sp_reg=ORC_REG_DI
-> > +
-> > +       pushq   7*8(%rdi)               /* regs->ss */
-> > +       pushq   6*8(%rdi)               /* regs->rsp */
-> > +       pushq   5*8(%rdi)               /* regs->eflags */
-> > +       pushq   4*8(%rdi)               /* regs->cs */
-> > +       pushq   3*8(%rdi)               /* regs->ip */
-> > +       pushq   2*8(%rdi)               /* regs->orig_ax */
-> > +       pushq   8(%rdi)                 /* return address */
-> > +       UNWIND_HINT_FUNC
-> > +
-> > +       movq    (%rdi), %rdi
-> > +.endm
-> > +
-> >  /*
-> >   * Interrupt entry/exit.
-> >   *
-> > @@ -543,10 +568,17 @@ END(irq_entries_start)
-> >   *
-> >   * Entry runs with interrupts off.
-> >   */
-> > +/* 8(%rsp): ~(interrupt number) */
-> >  ENTRY(interrupt_helper)
-> >         UNWIND_HINT_FUNC
-> >         cld
-> >
-> > +       testb   $3, CS-ORIG_RAX+8(%rsp)
-> > +       jz      1f
-> > +       SWAPGS
-> > +       DO_SWITCH_TO_THREAD_STACK
-> > +1:
-> > +
-> >         PUSH_AND_CLEAR_REGS save_ret=1
-> >         ENCODE_FRAME_POINTER 8
-> >
-> > @@ -579,12 +611,6 @@ END(interrupt_helper)
-> >         .macro interrupt func
-> >         cld
-> >
-> > -       testb   $3, CS-ORIG_RAX(%rsp)
-> > -       jz      1f
-> > -       SWAPGS
-> > -       call    switch_to_thread_stack
-> > -1:
-> > -
-> >         call    interrupt_helper
-> >
-> >         call    \func   /* rdi points to pt_regs */
-> > @@ -853,33 +879,14 @@ apicinterrupt IRQ_WORK_VECTOR                     irq_work_interrupt              smp_irq_work_interrupt
-> >   */
-> >  #define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw) + (TSS_ist + ((x) - 1) * 8)
-> >
-> > -/*
-> > - * Switch to the thread stack.  This is called with the IRET frame and
-> > - * orig_ax on the stack.  (That is, RDI..R12 are not on the stack and
-> > - * space has not been allocated for them.)
-> > - */
-> > +#if defined(CONFIG_IA32_EMULATION)
-> > +/* entry_64_compat.S::entry_INT80_compat expects this to be an ASM function */
-> >  ENTRY(switch_to_thread_stack)
-> >         UNWIND_HINT_FUNC
-> > -
-> > -       pushq   %rdi
-> > -       /* Need to switch before accessing the thread stack. */
-> > -       SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
-> > -       movq    %rsp, %rdi
-> > -       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
-> > -       UNWIND_HINT sp_offset=16 sp_reg=ORC_REG_DI
-> > -
-> > -       pushq   7*8(%rdi)               /* regs->ss */
-> > -       pushq   6*8(%rdi)               /* regs->rsp */
-> > -       pushq   5*8(%rdi)               /* regs->eflags */
-> > -       pushq   4*8(%rdi)               /* regs->cs */
-> > -       pushq   3*8(%rdi)               /* regs->ip */
-> > -       pushq   2*8(%rdi)               /* regs->orig_ax */
-> > -       pushq   8(%rdi)                 /* return address */
-> > -       UNWIND_HINT_FUNC
-> > -
-> > -       movq    (%rdi), %rdi
-> > +       DO_SWITCH_TO_THREAD_STACK
-> >         ret
-> >  END(switch_to_thread_stack)
-> > +#endif
-> >
-> >  .macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1
-> >  ENTRY(\sym)
-> > --
-> > 2.16.1
-> >
-> 
-> Move the macro to calling.h, and inline it into the compat entry.
+On Wed, 14 Feb 2018, Jonathan Corbet <corbet@lwn.net> wrote:
+> It can be useful to put code snippets into kerneldoc comments; that can be
+> done with the "::" operator at the end of a line like this::
+>
+>    if (desperate)
+>        run_in_circles();
+>
+> The ".. code-block::" directive can also be used to this end.  kernel-doc
+> currently fails to understand these literal blocks and applies its normal
+> markup to them, which is then treated as literal by sphinx.  The result is
+> unsightly markup instead of a useful code snippet.
+>
+> Apply a hack to the output code to recognize literal blocks and avoid
+> performing any special markup on them.  It's ugly, but that means it fits
+> in well with the rest of the script.
 
-That certainly sounds possible, but makes the macro more complex: Inlining
-means that the offsets need to be reduced by -8. But we need the current
-offset for the call from interrupt_helper. So such a change might make the
-code less readable.
+With emphasis on part (d) of the reviewer's statement of oversight,
 
-Thanks,
-	Dominik
+Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+
+>
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+> ---
+>  scripts/kernel-doc | 69 ++++++++++++++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 64 insertions(+), 5 deletions(-)
+>
+> diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+> index fb8fbdb25036..cbe864e72a2f 100755
+> --- a/scripts/kernel-doc
+> +++ b/scripts/kernel-doc
+> @@ -748,14 +748,73 @@ sub output_blockhead_rst(%) {
+>      }
+>  }
+>  
+> -sub output_highlight_rst {
+> -    my $contents = join "\n",@_;
+> -    my $line;
+> -
+> +#
+> +# Apply the RST highlights to a sub-block of text.
+> +#   
+> +sub highlight_block($) {
+> +    # The dohighlight kludge requires the text be called $contents
+> +    my $contents = shift;
+>      eval $dohighlight;
+>      die $@ if $@;
+> +    return $contents;
+> +}
+>  
+> -    foreach $line (split "\n", $contents) {
+> +#
+> +# Regexes used only here.
+> +#
+> +my $sphinx_literal = '^[^.].*::$';
+> +my $sphinx_cblock = '^\.\.\ +code-block::';
+> +
+> +sub output_highlight_rst {
+> +    my $input = join "\n",@_;
+> +    my $output = "";
+> +    my $line;
+> +    my $in_literal = 0;
+> +    my $litprefix;
+> +    my $block = "";
+> +
+> +    foreach $line (split "\n",$input) {
+> +	#
+> +	# If we're in a literal block, see if we should drop out
+> +	# of it.  Otherwise pass the line straight through unmunged.
+> +	#
+> +	if ($in_literal) {
+> +	    if (! ($line =~ /^\s*$/)) {
+> +		#
+> +		# If this is the first non-blank line in a literal
+> +		# block we need to figure out what the proper indent is.
+> +		#
+> +		if ($litprefix eq "") {
+> +		    $line =~ /^(\s*)/;
+> +		    $litprefix = '^' . $1;
+> +		    $output .= $line . "\n";
+> +		} elsif (! ($line =~ /$litprefix/)) {
+> +		    $in_literal = 0;
+> +		} else {
+> +		    $output .= $line . "\n";
+> +		}
+> +	    } else {
+> +		$output .= $line . "\n";
+> +	    }
+> +	}
+> +	#
+> +	# Not in a literal block (or just dropped out)
+> +	#
+> +	if (! $in_literal) {
+> +	    $block .= $line . "\n";
+> +	    if (($line =~ /$sphinx_literal/) || ($line =~ /$sphinx_cblock/)) {
+> +		$in_literal = 1;
+> +		$litprefix = "";
+> +		$output .= highlight_block($block);
+> +		$block = ""
+> +	    }
+> +	}
+> +    }
+> +
+> +    if ($block) {
+> +	$output .= highlight_block($block);
+> +    }
+> +    foreach $line (split "\n", $output) {
+>  	print $lineprefix . $line . "\n";
+>      }
+>  }
+
+-- 
+Jani Nikula, Intel Open Source Technology Center
