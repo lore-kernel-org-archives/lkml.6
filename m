@@ -1,117 +1,271 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030547AbeBNNph (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 08:45:37 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:44881 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030411AbeBNNp0 (ORCPT
+        id S1030557AbeBNNqF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 08:46:05 -0500
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:40868 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030488AbeBNNoz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 08:45:26 -0500
-X-Google-Smtp-Source: AH8x225/KuZsNw/0B3sPZHoMoXH2dc3ijX1LXRhiKGq0HSG8Xax+VtYVKSaeuFV4cYdQkzbfssFz3DI3wF5s3XkwZ5A=
+        Wed, 14 Feb 2018 08:44:55 -0500
+X-IronPort-AV: E=Sophos;i="5.46,512,1511827200";
+   d="scan'208";a="708104510"
+From: David Woodhouse <dwmw@amazon.co.uk>
+To: tglx@linutronix.de, karahmed@amazon.de, x86@kernel.org,
+        kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
+        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
+        arjan.van.de.ven@intel.com, dave.hansen@intel.com, mingo@kernel.org
+Subject: [PATCH 3/4] Revert "x86/retpoline: Simplify vmexit_fill_RSB()"
+Date: Wed, 14 Feb 2018 13:44:33 +0000
+Message-Id: <1518615874-13806-4-git-send-email-dwmw@amazon.co.uk>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518615874-13806-1-git-send-email-dwmw@amazon.co.uk>
+References: <1518615874-13806-1-git-send-email-dwmw@amazon.co.uk>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+ab1RyHGJrD_KQQrh7bTbFTDx71RZ9H_QSNtAagtB1V8A@mail.gmail.com>
-References: <089e0825d42484310b055c75c3f6@google.com> <20171026175847.GH59538@devbig577.frc2.facebook.com>
- <CACT4Y+Y9cEkLwg54qXvDtgp2rbEcw-MUiLik8THtL3yWWH0-Ow@mail.gmail.com>
- <CAM_iQpU0XFuj_Qc_Usug5=ymRWGU0nhQyPso6O=VbhPKAMa91Q@mail.gmail.com> <CACT4Y+ab1RyHGJrD_KQQrh7bTbFTDx71RZ9H_QSNtAagtB1V8A@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 14 Feb 2018 14:45:05 +0100
-Message-ID: <CACT4Y+Z0hLxC1GeSSpWm1YzUZYuDOG7+d407RJ=ffZ=8d5_vbw@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in get_work_pool
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Tejun Heo <tj@kernel.org>,
-        syzbot
-        <bot+ea75c0ffcd353d32515f064aaebefc5279e6161e@syzkaller.appspotmail.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com,
-        David Miller <davem@davemloft.net>, Tom Herbert <tom@quantonium.net>,
-        Eric Dumazet <edumazet@google.com>, Eric Biggers <ebiggers@google.com>,
-        netdev <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 6, 2017 at 1:50 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Fri, Oct 27, 2017 at 11:18 PM, Cong Wang <xiyou.wangcong@gmail.com> wrote:
->> On Thu, Oct 26, 2017 at 11:00 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
->>> On Thu, Oct 26, 2017 at 7:58 PM, Tejun Heo <tj@kernel.org> wrote:
->>>> Hello,
->>>>
->>>> On Thu, Oct 26, 2017 at 09:35:44AM -0700, syzbot wrote:
->>>>> BUG: KASAN: use-after-free in __read_once_size
->>>>> include/linux/compiler.h:276 [inline]
->>>>> BUG: KASAN: use-after-free in atomic64_read
->>>>> arch/x86/include/asm/atomic64_64.h:21 [inline]
->>>>> BUG: KASAN: use-after-free in atomic_long_read
->>>>> include/asm-generic/atomic-long.h:44 [inline]
->>>>> BUG: KASAN: use-after-free in get_work_pool+0x1c2/0x1e0
->>>>> kernel/workqueue.c:709
->>>>> Read of size 8 at addr ffff8801cc58c378 by task syz-executor5/21326
->>>>>
->>>>> CPU: 1 PID: 21326 Comm: syz-executor5 Not tainted 4.13.0+ #43
->>>>> Hardware name: Google Google Compute Engine/Google Compute Engine,
->>>>> BIOS Google 01/01/2011
->>>>> Call Trace:
->>>>>  __dump_stack lib/dump_stack.c:16 [inline]
->>>>>  dump_stack+0x194/0x257 lib/dump_stack.c:52
->>>>>  print_address_description+0x73/0x250 mm/kasan/report.c:252
->>>>>  kasan_report_error mm/kasan/report.c:351 [inline]
->>>>>  kasan_report+0x24e/0x340 mm/kasan/report.c:409
->>>>>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:430
->>>>>  __read_once_size include/linux/compiler.h:276 [inline]
->>>>>  atomic64_read arch/x86/include/asm/atomic64_64.h:21 [inline]
->>>>>  atomic_long_read include/asm-generic/atomic-long.h:44 [inline]
->>>>>  get_work_pool+0x1c2/0x1e0 kernel/workqueue.c:709
->>>>>  __queue_work+0x235/0x1150 kernel/workqueue.c:1401
->>>>>  queue_work_on+0x16a/0x1c0 kernel/workqueue.c:1486
->>>>>  queue_work include/linux/workqueue.h:489 [inline]
->>>>>  strp_check_rcv+0x25/0x30 net/strparser/strparser.c:553
->>>>>  kcm_attach net/kcm/kcmsock.c:1439 [inline]
->>>>>  kcm_attach_ioctl net/kcm/kcmsock.c:1460 [inline]
->>>>>  kcm_ioctl+0x826/0x1610 net/kcm/kcmsock.c:1695
->>>>>  sock_do_ioctl+0x65/0xb0 net/socket.c:961
->>>>>  sock_ioctl+0x2c2/0x440 net/socket.c:1058
->>>>>  vfs_ioctl fs/ioctl.c:45 [inline]
->>>>>  do_vfs_ioctl+0x1b1/0x1530 fs/ioctl.c:685
->>>>>  SYSC_ioctl fs/ioctl.c:700 [inline]
->>>>>  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:691
->>>>>  entry_SYSCALL_64_fastpath+0x1f/0xbe
->>>>
->>>> Looks like kcm is trying to reuse a work item whose last workqueue has
->>>> been destroyed without re-initing it.  A work item needs to be
->>>> reinit'd.
->>>
->>> +kcm maintainers
->>
->> Can you try the fix below? There is no C reproducer so I can't verify it.
->
->
-> Hi Cong,
->
-> syzbot can now test proposed patches, see
-> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#communication-with-syzbot
-> for details. Please give it a try.
->
->> diff --git a/net/kcm/kcmsock.c b/net/kcm/kcmsock.c
->> index af4e76ac88ff..7816f44c576a 100644
->> --- a/net/kcm/kcmsock.c
->> +++ b/net/kcm/kcmsock.c
->> @@ -1433,11 +1433,12 @@ static int kcm_attach(struct socket *sock,
->> struct socket *csock,
->>         KCM_STATS_INCR(mux->stats.psock_attach);
->>         mux->psocks_cnt++;
->>         psock_now_avail(psock);
->> -       spin_unlock_bh(&mux->lock);
->>
->>         /* Schedule RX work in case there are already bytes queued */
->>         strp_check_rcv(&psock->strp);
->>
->> +       spin_unlock_bh(&mux->lock);
->> +
->>         return 0;
->>  }
+This reverts commit 1dde7415e99933bb7293d6b2843752cbdb43ec11. By putting
+the RSB filling out of line and calling it, we waste one RSB slot for
+returning from the function itself, which means one fewer actual function
+call we can make if we're doing the Skylake abomination of call-depth
+counting.
 
+It also changed the number of RSB stuffings we do on vmexit from 32,
+which was correct, to 16. Let's just stop with the bikeshedding; it
+didn't actually *fix* anything anyway.
 
-Hi Cong,
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+---
+ arch/x86/entry/entry_32.S             |  3 +-
+ arch/x86/entry/entry_64.S             |  3 +-
+ arch/x86/include/asm/asm-prototypes.h |  3 --
+ arch/x86/include/asm/nospec-branch.h  | 70 +++++++++++++++++++++++++++++++----
+ arch/x86/lib/Makefile                 |  1 -
+ arch/x86/lib/retpoline.S              | 56 ----------------------------
+ 6 files changed, 65 insertions(+), 71 deletions(-)
 
-Was this ever merged? Is it still necessary?
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 2a35b1e..60c4c34 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -252,8 +252,7 @@ ENTRY(__switch_to_asm)
+ 	 * exist, overwrite the RSB with entries which capture
+ 	 * speculative execution to prevent attack.
+ 	 */
+-	/* Clobbers %ebx */
+-	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
++	FILL_RETURN_BUFFER %ebx, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
+ #endif
+ 
+ 	/* restore callee-saved registers */
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 1c5420420..1d83563 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -364,8 +364,7 @@ ENTRY(__switch_to_asm)
+ 	 * exist, overwrite the RSB with entries which capture
+ 	 * speculative execution to prevent attack.
+ 	 */
+-	/* Clobbers %rbx */
+-	FILL_RETURN_BUFFER RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
++	FILL_RETURN_BUFFER %r12, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_CTXSW
+ #endif
+ 
+ 	/* restore callee-saved registers */
+diff --git a/arch/x86/include/asm/asm-prototypes.h b/arch/x86/include/asm/asm-prototypes.h
+index 4d11161..1908214 100644
+--- a/arch/x86/include/asm/asm-prototypes.h
++++ b/arch/x86/include/asm/asm-prototypes.h
+@@ -38,7 +38,4 @@ INDIRECT_THUNK(dx)
+ INDIRECT_THUNK(si)
+ INDIRECT_THUNK(di)
+ INDIRECT_THUNK(bp)
+-asmlinkage void __fill_rsb(void);
+-asmlinkage void __clear_rsb(void);
+-
+ #endif /* CONFIG_RETPOLINE */
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 34cbce3..94749fb 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -8,6 +8,50 @@
+ #include <asm/cpufeatures.h>
+ #include <asm/msr-index.h>
+ 
++/*
++ * Fill the CPU return stack buffer.
++ *
++ * Each entry in the RSB, if used for a speculative 'ret', contains an
++ * infinite 'pause; lfence; jmp' loop to capture speculative execution.
++ *
++ * This is required in various cases for retpoline and IBRS-based
++ * mitigations for the Spectre variant 2 vulnerability. Sometimes to
++ * eliminate potentially bogus entries from the RSB, and sometimes
++ * purely to ensure that it doesn't get empty, which on some CPUs would
++ * allow predictions from other (unwanted!) sources to be used.
++ *
++ * We define a CPP macro such that it can be used from both .S files and
++ * inline assembly. It's possible to do a .macro and then include that
++ * from C via asm(".include <asm/nospec-branch.h>") but let's not go there.
++ */
++
++#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
++#define RSB_FILL_LOOPS		16	/* To avoid underflow */
++
++/*
++ * Google experimented with loop-unrolling and this turned out to be
++ * the optimal version — two calls, each with their own speculation
++ * trap should their return address end up getting used, in a loop.
++ */
++#define __FILL_RETURN_BUFFER(reg, nr, sp)	\
++	mov	$(nr/2), reg;			\
++771:						\
++	call	772f;				\
++773:	/* speculation trap */			\
++	pause;					\
++	lfence;					\
++	jmp	773b;				\
++772:						\
++	call	774f;				\
++775:	/* speculation trap */			\
++	pause;					\
++	lfence;					\
++	jmp	775b;				\
++774:						\
++	dec	reg;				\
++	jnz	771b;				\
++	add	$(BITS_PER_LONG/8) * nr, sp;
++
+ #ifdef __ASSEMBLY__
+ 
+ /*
+@@ -78,10 +122,17 @@
+ #endif
+ .endm
+ 
+-/* This clobbers the BX register */
+-.macro FILL_RETURN_BUFFER nr:req ftr:req
++ /*
++  * A simpler FILL_RETURN_BUFFER macro. Don't make people use the CPP
++  * monstrosity above, manually.
++  */
++.macro FILL_RETURN_BUFFER reg:req nr:req ftr:req
+ #ifdef CONFIG_RETPOLINE
+-	ALTERNATIVE "", "call __clear_rsb", \ftr
++	ANNOTATE_NOSPEC_ALTERNATIVE
++	ALTERNATIVE "jmp .Lskip_rsb_\@",				\
++		__stringify(__FILL_RETURN_BUFFER(\reg,\nr,%_ASM_SP))	\
++		\ftr
++.Lskip_rsb_\@:
+ #endif
+ .endm
+ 
+@@ -163,10 +214,15 @@ extern char __indirect_thunk_end[];
+ static inline void vmexit_fill_RSB(void)
+ {
+ #ifdef CONFIG_RETPOLINE
+-	alternative_input("",
+-			  "call __fill_rsb",
+-			  X86_FEATURE_RETPOLINE,
+-			  ASM_NO_INPUT_CLOBBER(_ASM_BX, "memory"));
++	unsigned long loops;
++
++	asm volatile (ANNOTATE_NOSPEC_ALTERNATIVE
++		      ALTERNATIVE("jmp 910f",
++				  __stringify(__FILL_RETURN_BUFFER(%0, RSB_CLEAR_LOOPS, %1)),
++				  X86_FEATURE_RETPOLINE)
++		      "910:"
++		      : "=r" (loops), ASM_CALL_CONSTRAINT
++		      : : "memory" );
+ #endif
+ }
+ 
+diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
+index 69a4739..f23934b 100644
+--- a/arch/x86/lib/Makefile
++++ b/arch/x86/lib/Makefile
+@@ -27,7 +27,6 @@ lib-$(CONFIG_RWSEM_XCHGADD_ALGORITHM) += rwsem.o
+ lib-$(CONFIG_INSTRUCTION_DECODER) += insn.o inat.o insn-eval.o
+ lib-$(CONFIG_RANDOMIZE_BASE) += kaslr.o
+ lib-$(CONFIG_RETPOLINE) += retpoline.o
+-OBJECT_FILES_NON_STANDARD_retpoline.o :=y
+ 
+ obj-y += msr.o msr-reg.o msr-reg-export.o hweight.o
+ 
+diff --git a/arch/x86/lib/retpoline.S b/arch/x86/lib/retpoline.S
+index 480edc3..c909961 100644
+--- a/arch/x86/lib/retpoline.S
++++ b/arch/x86/lib/retpoline.S
+@@ -7,7 +7,6 @@
+ #include <asm/alternative-asm.h>
+ #include <asm/export.h>
+ #include <asm/nospec-branch.h>
+-#include <asm/bitsperlong.h>
+ 
+ .macro THUNK reg
+ 	.section .text.__x86.indirect_thunk
+@@ -47,58 +46,3 @@ GENERATE_THUNK(r13)
+ GENERATE_THUNK(r14)
+ GENERATE_THUNK(r15)
+ #endif
+-
+-/*
+- * Fill the CPU return stack buffer.
+- *
+- * Each entry in the RSB, if used for a speculative 'ret', contains an
+- * infinite 'pause; lfence; jmp' loop to capture speculative execution.
+- *
+- * This is required in various cases for retpoline and IBRS-based
+- * mitigations for the Spectre variant 2 vulnerability. Sometimes to
+- * eliminate potentially bogus entries from the RSB, and sometimes
+- * purely to ensure that it doesn't get empty, which on some CPUs would
+- * allow predictions from other (unwanted!) sources to be used.
+- *
+- * Google experimented with loop-unrolling and this turned out to be
+- * the optimal version - two calls, each with their own speculation
+- * trap should their return address end up getting used, in a loop.
+- */
+-.macro STUFF_RSB nr:req sp:req
+-	mov	$(\nr / 2), %_ASM_BX
+-	.align 16
+-771:
+-	call	772f
+-773:						/* speculation trap */
+-	pause
+-	lfence
+-	jmp	773b
+-	.align 16
+-772:
+-	call	774f
+-775:						/* speculation trap */
+-	pause
+-	lfence
+-	jmp	775b
+-	.align 16
+-774:
+-	dec	%_ASM_BX
+-	jnz	771b
+-	add	$((BITS_PER_LONG/8) * \nr), \sp
+-.endm
+-
+-#define RSB_FILL_LOOPS		16	/* To avoid underflow */
+-
+-ENTRY(__fill_rsb)
+-	STUFF_RSB RSB_FILL_LOOPS, %_ASM_SP
+-	ret
+-END(__fill_rsb)
+-EXPORT_SYMBOL_GPL(__fill_rsb)
+-
+-#define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
+-
+-ENTRY(__clear_rsb)
+-	STUFF_RSB RSB_CLEAR_LOOPS, %_ASM_SP
+-	ret
+-END(__clear_rsb)
+-EXPORT_SYMBOL_GPL(__clear_rsb)
+-- 
+2.7.4
