@@ -1,63 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967026AbeBNKCA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 05:02:00 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:60442 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966706AbeBNKB6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 05:01:58 -0500
-Date: Wed, 14 Feb 2018 11:01:53 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: geert@linux-m68k.org, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/15] Documentation: devicetree: R-Car M3-N SoC DT
- bindings
-Message-ID: <20180214100150.dv2fkffussrfqkme@verge.net.au>
-References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
- <1518515162-23663-2-git-send-email-jacopo+renesas@jmondi.org>
+        id S967044AbeBNKEF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 05:04:05 -0500
+Received: from mga05.intel.com ([192.55.52.43]:31094 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966929AbeBNKEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 05:04:02 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,511,1511856000";
+   d="scan'208";a="204018302"
+Date: Wed, 14 Feb 2018 12:03:58 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Mario.Limonciello@dell.com
+Cc: linux-kernel@vger.kernel.org, andreas.noever@gmail.com,
+        michael.jamet@intel.com, yehezkel.bernat@intel.com,
+        bhelgaas@google.com, radion.mirchevsky@intel.com
+Subject: Re: [PATCH 06/18] thunderbolt: Wait a bit longer for ICM to
+ authenticate the active NVM
+Message-ID: <20180214100358.GL27191@lahna.fi.intel.com>
+References: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
+ <20180213170018.9780-7-mika.westerberg@linux.intel.com>
+ <a4e11e8dcec643d7bce1d8b1f9fc2c89@ausx13mpc120.AMER.DELL.COM>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1518515162-23663-2-git-send-email-jacopo+renesas@jmondi.org>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <a4e11e8dcec643d7bce1d8b1f9fc2c89@ausx13mpc120.AMER.DELL.COM>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 10:45:48AM +0100, Jacopo Mondi wrote:
-> Add device tree bindings documentation for Renesas R-Car M3-N (r8a77965)
-> SoC.
+On Tue, Feb 13, 2018 at 05:21:33PM +0000, Mario.Limonciello@dell.com wrote:
+> > -----Original Message-----
+> > From: Mika Westerberg [mailto:mika.westerberg@linux.intel.com]
+> > Sent: Tuesday, February 13, 2018 11:00 AM
+> > To: linux-kernel@vger.kernel.org
+> > Cc: Andreas Noever <andreas.noever@gmail.com>; Michael Jamet
+> > <michael.jamet@intel.com>; Yehezkel Bernat <yehezkel.bernat@intel.com>; Bjorn
+> > Helgaas <bhelgaas@google.com>; Limonciello, Mario
+> > <Mario_Limonciello@Dell.com>; Radion Mirchevsky
+> > <radion.mirchevsky@intel.com>; Mika Westerberg
+> > <mika.westerberg@linux.intel.com>
+> > Subject: [PATCH 06/18] thunderbolt: Wait a bit longer for ICM to authenticate the
+> > active NVM
+> > 
+> > Sometimes during cold boot ICM has not yet authenticated the active NVM
+> > image leading to timeout and failing the driver probe. Allow ICM to take
+> > some more time and increase the timeout to 3 seconds before we give up.
+> > 
+> > While there fix icm_firmware_init() to return the real error code
+> > without overwriting it with -ENODEV.
+> > 
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > ---
+> >  drivers/thunderbolt/icm.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
+> > index 1183321586c5..611d28e8e5f2 100644
+> > --- a/drivers/thunderbolt/icm.c
+> > +++ b/drivers/thunderbolt/icm.c
+> > @@ -736,14 +736,14 @@ static bool icm_ar_is_supported(struct tb *tb)
+> >  static int icm_ar_get_mode(struct tb *tb)
+> >  {
+> >  	struct tb_nhi *nhi = tb->nhi;
+> > -	int retries = 5;
+> > +	int retries = 60;
+> >  	u32 val;
+> > 
+> >  	do {
+> >  		val = ioread32(nhi->iobase + REG_FW_STS);
+> >  		if (val & REG_FW_STS_NVM_AUTH_DONE)
+> >  			break;
+> > -		msleep(30);
+> > +		msleep(50);
+> >  	} while (--retries);
+> > 
+> >  	if (!retries) {
+> > @@ -1063,6 +1063,9 @@ static int icm_firmware_init(struct tb *tb)
+> >  			break;
+> > 
+> >  		default:
+> > +			if (ret < 0)
+> > +				return ret;
+> > +
+> >  			tb_err(tb, "ICM firmware is in wrong mode: %u\n", ret);
+> >  			return -ENODEV;
+> >  		}
+> > --
+> > 2.15.1
 > 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
-Thanks, this looks fine to me but I think the subject should be updated to
-
-dt-bindings: arm: document R8A77965 SoC bindings
-
-I'll let this sit for a few days to see if any other review is forthcoming.
-
-> ---
->  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
->  1 file changed, 2 insertions(+)
+> Mika,
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-> index 5c3af7e..7eb4830 100644
-> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
-> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-> @@ -39,6 +39,8 @@ SoCs:
->      compatible = "renesas,r8a7795"
->    - R-Car M3-W (R8A77960)
->      compatible = "renesas,r8a7796"
-> +  - R-Car M3-N (R8A77965)
-> +    compatible = "renesas,r8a77965"
->    - R-Car V3M (R8A77970)
->      compatible = "renesas,r8a77970"
->    - R-Car D3 (R8A77995)
-> -- 
-> 2.7.4
-> 
+> Some of your patches in this series already have the stable tag, but I think 
+> especially this one is probably a good candidate to add to @stable.
+
+You are right. I'll add stable tag for v2.
