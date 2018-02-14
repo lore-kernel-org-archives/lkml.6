@@ -1,39 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032026AbeBNXXa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 18:23:30 -0500
-Received: from ozlabs.org ([103.22.144.67]:40103 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031971AbeBNXX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 18:23:29 -0500
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Kees Cook <keescook@chromium.org>, Michal Hocko <mhocko@kernel.org>
-Cc: Will Drewry <wad@chromium.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: samples/seccomp/ broken when cross compiling s390, ppc allyesconfig
-In-Reply-To: <CAGXu5jJCN_Js9rvM4RMjxDCDd4tVzWDo-jdnFiZs1D9e3cunrw@mail.gmail.com>
-References: <20180212133731.GE3443@dhcp22.suse.cz> <87r2ppvaeq.fsf@concordia.ellerman.id.au> <CAGXu5j+DnkUv9pZn93wxA6_2s+c3Ap_Q34OR0weY7Y9MJ1aP9Q@mail.gmail.com> <87d1192nzc.fsf@concordia.ellerman.id.au> <20180213103213.GP3443@dhcp22.suse.cz> <CAGXu5jJZROQMxzxu+Dp3mVMktSg-oTB6pqk7fUyM_6_2oa9c_A@mail.gmail.com> <20180214092045.GZ3443@dhcp22.suse.cz> <CAGXu5jJCN_Js9rvM4RMjxDCDd4tVzWDo-jdnFiZs1D9e3cunrw@mail.gmail.com>
-Date: Thu, 15 Feb 2018 10:23:27 +1100
-Message-ID: <87zi4bp34g.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1032060AbeBNX3f (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 18:29:35 -0500
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:40192 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032006AbeBNX3d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 18:29:33 -0500
+X-IronPort-AV: E=Sophos;i="5.46,514,1511827200";
+   d="scan'208";a="719700854"
+From: David Woodhouse <dwmw@amazon.co.uk>
+To: tglx@linutronix.de, karahmed@amazon.de, x86@kernel.org,
+        kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
+        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
+        arjan.van.de.ven@intel.com, dave.hansen@intel.com, mingo@kernel.org
+Subject: [PATCH v2 0/4] Speculation control improvements
+Date: Wed, 14 Feb 2018 23:29:14 +0000
+Message-Id: <1518650958-550-1-git-send-email-dwmw@amazon.co.uk>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> writes:
-> On Wed, Feb 14, 2018 at 1:20 AM, Michal Hocko <mhocko@kernel.org> wrote:
-...
->>
->> OK, so let's try to nuke it. How should I route this patch?
->
-> I'm fine if goes in via ppc (especially if it can land for 4.16). If
-> Michael doesn't want it, I can send it through my seccomp tree via
-> James Morris.
+On CPUs which advertise IBRS_ALL, enable it and disable the retpoline
+as IBRS_ALL will be faster.
 
-It's not really my area, so I'd prefer if you take it, or we could
-always punt to akpm :)
+Also use IBRS whenever it's available before calling into firmware at
+runtime.
 
-cheers
+Revert another bikeshedding patch that was broken, and add support for
+retpoline builds with clang.
+
+---
+v2: Remember to export spectre_v2_enabled
+
+David Woodhouse (4):
+  x86/speculation: Use IBRS if available before calling into firmware
+  x86/speculation: Support "Enhanced IBRS" on future CPUs
+  Revert "x86/retpoline: Simplify vmexit_fill_RSB()"
+  x86/retpoline: Support retpoline build with Clang
+
+ arch/x86/Makefile                     |   5 +-
+ arch/x86/entry/entry_32.S             |   3 +-
+ arch/x86/entry/entry_64.S             |   3 +-
+ arch/x86/include/asm/apm.h            |   6 ++
+ arch/x86/include/asm/asm-prototypes.h |   3 -
+ arch/x86/include/asm/cpufeatures.h    |   1 +
+ arch/x86/include/asm/efi.h            |  17 ++++-
+ arch/x86/include/asm/nospec-branch.h  | 118 +++++++++++++++++++++++++++++-----
+ arch/x86/kernel/cpu/bugs.c            |  27 +++++++-
+ arch/x86/kvm/vmx.c                    |  31 +++++----
+ arch/x86/lib/Makefile                 |   1 -
+ arch/x86/lib/retpoline.S              |  56 ----------------
+ include/linux/compiler-clang.h        |   5 ++
+ include/linux/compiler-gcc.h          |   4 ++
+ include/linux/init.h                  |   8 +--
+ 15 files changed, 186 insertions(+), 102 deletions(-)
+
+-- 
+2.7.4
