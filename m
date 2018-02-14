@@ -1,95 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163105AbeBNTmn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 14:42:43 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38123 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162994AbeBNTmP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 14:42:15 -0500
-X-Google-Smtp-Source: AH8x2267J1Fqj9U9kHS9BfpA4oQnUaEopdOKSqVjlE+1NRjAmChGcFyuiO4EFgHJdVQ4cY2YZOplRA==
-From: Carlo Caione <carlo@caione.org>
-To: linux@endlessm.com, hdegoede@redhat.com, rjw@rjwysocki.net,
-        lenb@kernel.org, sre@kernel.org, wens@csie.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Cc: Carlo Caione <carlo@endlessm.com>
-Subject: [PATCH 2/2] power: supply: ACPI/AXP288: Add quirks for ECS EF20EA
-Date: Wed, 14 Feb 2018 19:42:01 +0000
-Message-Id: <20180214194201.24385-3-carlo@caione.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180214194201.24385-1-carlo@caione.org>
-References: <20180214194201.24385-1-carlo@caione.org>
+        id S1163073AbeBNTrl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 14:47:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56915 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1162873AbeBNTrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 14:47:39 -0500
+Date: Wed, 14 Feb 2018 20:47:33 +0100
+From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Michal Suchanek <msuchanek@suse.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Julia Lawall <Julia.Lawall@lip6.fr>, linux-mmc@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mmc: bcm2835: print some informational messages
+ during reset
+Message-ID: <20180214204733.7987d16c@naga.suse.cz>
+In-Reply-To: <F404E9C8-AE64-4B36-AD1B-911BD3C33946@gmail.com>
+References: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
+        <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
+        <57ff1e429a7fc12300a3cca0c5e9a637beed0d3a.1518619058.git.msuchanek@suse.de>
+        <F404E9C8-AE64-4B36-AD1B-911BD3C33946@gmail.com>
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Carlo Caione <carlo@endlessm.com>
+On Wed, 14 Feb 2018 08:50:16 -0800
+Florian Fainelli <f.fainelli@gmail.com> wrote:
 
-On the ECS EF20EA laptop we need to move away from the AXP288 FG driver
-and enable again the ACPI AC/battery drivers. Add the required quirks to
-do that. We rely only on the product name because all the other DMI
-entries are dummy or not filled in on this platform.
+> On February 14, 2018 6:38:58 AM PST, Michal Suchanek
+> <msuchanek@suse.de> wrote:
+> >The previous patch does reset during hardware error so make the reset
+> >progress more visible.  
+> 
+> Based on your previous email it looks like this can happen quite
+> frequently so we might be spamming the kernel log with such reset
+> messages. Turning this into a debug print would not be great either,
+> how about a custom sysfs attribute counting the number of times a
+> reset was done?
 
-Signed-off-by: Carlo Caione <carlo@endlessm.com>
----
- drivers/acpi/ac.c                        | 7 +++++++
- drivers/acpi/battery.c                   | 7 +++++++
- drivers/power/supply/axp288_fuel_gauge.c | 6 ++++++
- 3 files changed, 20 insertions(+)
+Since every such message happens when the system stalls for like half a
+minute I don't think there will be that many until somebody notices
+something is amiss. It might be also helpful in diagnosing if other
+cards lock up in different way - for me the DMA shutdown is short so I
+guess it's the mmc host that is locked up and the DMA engine is fine.
+It might look differently on different systems, though.
 
-diff --git a/drivers/acpi/ac.c b/drivers/acpi/ac.c
-index b9a4ca720309..39f778f954f5 100644
---- a/drivers/acpi/ac.c
-+++ b/drivers/acpi/ac.c
-@@ -332,6 +332,13 @@ static const struct dmi_system_id ac_dmi_table[] = {
- 		DMI_MATCH(DMI_PRODUCT_NAME, "32597CG"),
- 		},
- 	},
-+	{
-+	.callback = ac_not_use_pmic_quirk,
-+	.ident = "ECS EF20EA",
-+	.matches = {
-+		DMI_MATCH(DMI_PRODUCT_NAME, "EF20EA"),
-+		},
-+	},
- 	{},
- };
- 
-diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
-index 258d2e66f230..fe024f1a8ad5 100644
---- a/drivers/acpi/battery.c
-+++ b/drivers/acpi/battery.c
-@@ -1233,6 +1233,13 @@ static const struct dmi_system_id bat_dmi_table[] __initconst = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "UX410UAK"),
- 		},
- 	},
-+	{
-+		.callback = battery_not_use_pmic_quirk,
-+		.ident = "ECS EF20EA",
-+		.matches = {
-+			DMI_MATCH(DMI_PRODUCT_NAME, "EF20EA"),
-+		},
-+	},
- 	{},
- };
- 
-diff --git a/drivers/power/supply/axp288_fuel_gauge.c b/drivers/power/supply/axp288_fuel_gauge.c
-index 4cc6e038dfdd..903891a9bcf0 100644
---- a/drivers/power/supply/axp288_fuel_gauge.c
-+++ b/drivers/power/supply/axp288_fuel_gauge.c
-@@ -708,6 +708,12 @@ static const struct dmi_system_id axp288_fuel_gauge_blacklist[] = {
- 			DMI_MATCH(DMI_BOARD_VERSION, "V1.1"),
- 		},
- 	},
-+	{
-+		/* ECS EF20EA */
-+		.matches = {
-+			DMI_MATCH(DMI_PRODUCT_NAME, "EF20EA"),
-+		},
-+	},
- 	{}
- };
- 
--- 
-2.14.1
+I understand that adding messages it somewhat controversial so I added
+them in separate patch.
+
+Thanks
+
+Michal
