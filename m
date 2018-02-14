@@ -1,68 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162288AbeBNSqD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 13:46:03 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:44753 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162120AbeBNSqC (ORCPT
+        id S1754750AbeBNSrO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 13:47:14 -0500
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:44511 "EHLO
+        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162168AbeBNSrL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 13:46:02 -0500
-From: Colin King <colin.king@canonical.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] gpu: ipu-v3: make const arrays int_reg static, shrinks object size
-Date: Wed, 14 Feb 2018 18:45:59 +0000
-Message-Id: <20180214184559.8616-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Wed, 14 Feb 2018 13:47:11 -0500
+X-Google-Smtp-Source: AH8x226aZMcrPaNpz++fkQkwDhtoVoMgZ50hy2cv/Vs67Ec1BLO7OioU7pz+0YoFpkaXZcwYrzzw2A==
+Date: Wed, 14 Feb 2018 10:47:05 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: vinod.koul@intel.com, andy.gross@linaro.org, dmaengine@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, david.brown@linaro.org,
+        dan.j.williams@intel.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, yanhe@quicinc.com, ramkri@qti.qualcomm.com,
+        sdharia@quicinc.com
+Subject: Re: [PATCH v2 1/5] dmaengine: qcom: bam_dma: make bam clk optional
+Message-ID: <20180214184705.GC93895@bjorns-mbp-2.lan>
+References: <20180214144459.29813-1-srinivas.kandagatla@linaro.org>
+ <20180214144459.29813-2-srinivas.kandagatla@linaro.org>
+ <20180214154144.GB93895@bjorns-mbp-2.lan>
+ <69c7a7e4-1a1f-e0e6-d5e9-c39ff666df64@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <69c7a7e4-1a1f-e0e6-d5e9-c39ff666df64@linaro.org>
+User-Agent: Mutt/1.8.0 (2017-02-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed 14 Feb 10:19 PST 2018, Srinivas Kandagatla wrote:
 
-Don't populate the const read-only arrays int_reg on the stack but instead
-make them static. Makes the object code smaller by over 80 bytes:
+> Thanks for the Review,
+> 
+> On 14/02/18 15:41, Bjorn Andersson wrote:
+> > >   	bdev->bamclk = devm_clk_get(bdev->dev, "bam_clk");
+> > > -	if (IS_ERR(bdev->bamclk))
+> > > -		return PTR_ERR(bdev->bamclk);
+> > > -
+> > > -	ret = clk_prepare_enable(bdev->bamclk);
+> > > -	if (ret) {
+> > > -		dev_err(bdev->dev, "failed to prepare/enable clock\n");
+> > > -		return ret;
+> > > +	if (IS_ERR(bdev->bamclk)) {
+> > In the case of !bdev->controlled_remotely I think this should still be
+> > an error.
+> > 
+> Yep makes sense,
+> 
+> You mean something like this?
+> 
+> ------------------------->cut<------------------------
+>         bdev->bamclk = devm_clk_get(bdev->dev, "bam_clk");
+>         if (IS_ERR(bdev->bamclk)) {
+>                 if (!bdev->controlled_remotely);
+>                         return PTR_ERR(bdev->bamclk);
+> 
+>                 bdev->bamclk = NULL;
+>         }
+> 
+>         ret = clk_prepare_enable(bdev->bamclk);
+>         if (ret) {
+>                 dev_err(bdev->dev, "failed to prepare/enable clock\n");
+>                 return ret;
+>         }
+> 
+> ------------------------->cut<------------------------
+> 
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  28024	   8936	    192	  37152	   9120	drivers/gpu/ipu-v3/ipu-common.o
+Yes
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  27794	   9080	    192	  37066	   90ca	drivers/gpu/ipu-v3/ipu-common.o
-
-(gcc version 7.2.0 x86_64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/ipu-v3/ipu-common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/ipu-v3/ipu-common.c b/drivers/gpu/ipu-v3/ipu-common.c
-index 658fa2d3e40c..48685cddbad1 100644
---- a/drivers/gpu/ipu-v3/ipu-common.c
-+++ b/drivers/gpu/ipu-v3/ipu-common.c
-@@ -1089,7 +1089,7 @@ static void ipu_irq_handler(struct irq_desc *desc)
- {
- 	struct ipu_soc *ipu = irq_desc_get_handler_data(desc);
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
--	const int int_reg[] = { 0, 1, 2, 3, 10, 11, 12, 13, 14};
-+	static const int int_reg[] = { 0, 1, 2, 3, 10, 11, 12, 13, 14};
- 
- 	chained_irq_enter(chip, desc);
- 
-@@ -1102,7 +1102,7 @@ static void ipu_err_irq_handler(struct irq_desc *desc)
- {
- 	struct ipu_soc *ipu = irq_desc_get_handler_data(desc);
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
--	const int int_reg[] = { 4, 5, 8, 9};
-+	static const int int_reg[] = { 4, 5, 8, 9};
- 
- 	chained_irq_enter(chip, desc);
- 
--- 
-2.15.1
+Regards,
+Bjorn
