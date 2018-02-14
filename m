@@ -1,83 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030645AbeBNOEe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 09:04:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59835 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030450AbeBNOEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 09:04:33 -0500
-Date: Wed, 14 Feb 2018 15:04:30 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Kai Heng Feng <kai.heng.feng@canonical.com>,
-        Laura Abbott <labbott@redhat.com>, linux-mm@kvack.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch@vger.kernel.org, James.Bottomley@HansenPartnership.com,
-        davem@redhat.com
-Subject: Re: Regression after commit 19809c2da28a ("mm, vmalloc: use
- __GFP_HIGHMEM implicitly")
-Message-ID: <20180214140430.GB3443@dhcp22.suse.cz>
-References: <627DA40A-D0F6-41C1-BB5A-55830FBC9800@canonical.com>
- <20180208130649.GA15846@bombadil.infradead.org>
- <20180208232004.GA21027@bombadil.infradead.org>
- <20180211092652.GV21609@dhcp22.suse.cz>
- <20180211112808.GA4551@bombadil.infradead.org>
- <20180211120515.GB4551@bombadil.infradead.org>
- <20180211235107.GE4680@bombadil.infradead.org>
+        id S1030660AbeBNOFI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 09:05:08 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:41801 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030450AbeBNOFG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 09:05:06 -0500
+X-Google-Smtp-Source: AH8x226ztn8QuglBApiXl/W7bnNITJp7uUjLSn9EHjR/tLKbAoJ3h312Oc/AL77m4fG8BVy79EfbG84pFs0nRiO0rBQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180211235107.GE4680@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1518515162-23663-12-git-send-email-jacopo+renesas@jmondi.org>
+References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org> <1518515162-23663-12-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 14 Feb 2018 15:05:05 +0100
+X-Google-Sender-Auth: pjlkAy8zVZATDSNG9K2IUuB-cqI
+Message-ID: <CAMuHMdXW-7+6_iSPk3oUo-fWsMxqvSawuy2QZ3VTYhoeN8kB4w@mail.gmail.com>
+Subject: Re: [PATCH 11/15] gpio: rcar: Add R-Car M3-N compatible string
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 11-02-18 15:51:07, Matthew Wilcox wrote:
-> On Sun, Feb 11, 2018 at 04:05:15AM -0800, Matthew Wilcox wrote:
-> > On Sun, Feb 11, 2018 at 03:28:08AM -0800, Matthew Wilcox wrote:
-> > > Now, longer-term, perhaps we should do the following:
-> > > 
-> > > #ifdef CONFIG_ZONE_DMA32
-> > > #define OPT_ZONE_DMA32	ZONE_DMA32
-> > > #elif defined(CONFIG_64BIT)
-> > > #define OPT_ZONE_DMA	OPT_ZONE_DMA
-> > > #else
-> > > #define OPT_ZONE_DMA32 ZONE_NORMAL
-> > > #endif
-> > 
-> > For consistent / coherent memory, we have an allocation function.
-> > But we don't have an allocation function for streaming memory, which is
-> > what these drivers want.  They also flush the DMA memory and then access
-> > the memory through a different virtual mapping, which I'm not sure is
-> > going to work well on virtually-indexed caches like SPARC and PA-RISC
-> > (maybe not MIPS either?)
-> 
-> Perhaps I (and a number of other people ...) have misunderstood the
-> semantics of GFP_DMA32.  Perhaps GFP_DMA32 is not "allocate memory below
-> 4GB", perhaps it's "allocate memory which can be mapped below 4GB".
+On Tue, Feb 13, 2018 at 10:45 AM, Jacopo Mondi
+<jacopo+renesas@jmondi.org> wrote:
+> Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Well, GFP_DMA32 is clearly under-documented. But I _believe_ the
-intention was to really return a physical memory within 32b address
-range.
+> --- a/drivers/gpio/gpio-rcar.c
+> +++ b/drivers/gpio/gpio-rcar.c
+> @@ -360,6 +360,10 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+>                 /* Gen3 GPIO is identical to Gen2. */
+>                 .data = &gpio_rcar_info_gen2,
+>         }, {
+> +               .compatible = "renesas,gpio-r8a77965",
+> +               /* Gen3 GPIO is identical to Gen2. */
+> +               .data = &gpio_rcar_info_gen2,
+> +       }, {
 
-> Machines with an IOMMU can use ZONE_NORMAL.  Machines with no IOMMU can
-> choose to allocate memory with a physical address below 4GB.
+This part is not needed, as the driver already matches agains the generic
+"renesas,rcar-gen3-gpio".
 
-This would be something for the higher level allocator I think. The page
-allocator is largely unaware of IOMMU or any remapping and that is good
-IMHO.
+>                 .compatible = "renesas,rcar-gen1-gpio",
+>                 .data = &gpio_rcar_info_gen1,
+>         }, {
 
-> After all, it has 'DMA' right there in the name.
+With the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The name is misnomer following GFP_DMA which is arguably a better fit.
-GFP_MEM32 would be a better name.
+Gr{oetje,eeting}s,
 
-Btw. I believe the GFP_VMALLOC32 shows that our GFP_DM32 needs some
-love. The user shouldn't really care about lowmem zones layout.
-GFP_DMA32 should simply use the appropriate zone regardless the arch
-specific details.
+                        Geert
 
--- 
-Michal Hocko
-SUSE Labs
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
