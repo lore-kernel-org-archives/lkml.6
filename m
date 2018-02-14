@@ -1,177 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031166AbeBNPJO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 10:09:14 -0500
-Received: from mail-bl2nam02on0060.outbound.protection.outlook.com ([104.47.38.60]:46144
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1030723AbeBNPJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:09:12 -0500
-Subject: Re: [PATCH] x86/mm: Decouple dynamic __PHYSICAL_MASK from AMD SME
-To: "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Kai Huang <kai.huang@linux.intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org
-References: <20180208125524.88795-1-kirill.shutemov@linux.intel.com>
- <5199949d-6795-aa55-888c-7ba8abd406e2@amd.com>
- <20180214042121.tza3cpvrnpztjeme@node.shutemov.name>
- <37cf20a3-653b-1ad7-1e65-6bed935cf325@amd.com>
- <1518593420.13066.11.camel@linux.intel.com>
- <20180214090239.cjidydeflvgeww4d@node.shutemov.name>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Message-ID: <6f5f917e-cded-66ca-2549-f3d51dff1595@amd.com>
-Date: Wed, 14 Feb 2018 09:09:05 -0600
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1031186AbeBNPJi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 10:09:38 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:33306 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030911AbeBNPJf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 10:09:35 -0500
+X-Google-Smtp-Source: AH8x225lEMDApoyZDvQKkOgAaEyD3AoCqRVYgsNFtNiK+MXf8673f4oM+mMDu77yIFh/0eGKRE5k5ZE8XRzqNv6El5Y=
 MIME-Version: 1.0
-In-Reply-To: <20180214090239.cjidydeflvgeww4d@node.shutemov.name>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [165.204.78.1]
-X-ClientProxiedBy: BN6PR17CA0015.namprd17.prod.outlook.com
- (2603:10b6:404:65::25) To DM5PR12MB1146.namprd12.prod.outlook.com
- (2603:10b6:3:73::13)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: a67b9bab-1672-4845-5cc3-08d573bce6f2
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:DM5PR12MB1146;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1146;3:+LDupJ4FoDgLr95Xza8BXnZZeOvmR5grohusfFkgshQN9orkt36l5YHp8lV/3TpGP6aSbtj1+c0rAwc8izq8vLNuVRNvWSChHbfXOAXv4icATlQURspyS7jp1sBkhfXfqL0UtvidhyTqPqajUhUN8mvj02kL6wZd7b8FZDbgzmNkU6pA2uORY/xk5ai5TA+fWo550YgLhWik9Ow87+25mDMvuJ4h4a42rynvQ5rsc3K9uaOcsC+ZnlvznwhIFFmF;25:Ix+N6bXcxkU9iX3VHKoKzSN9hYK/rN4h9FIJUxVC1DW3xyRkXomtiT7SeQsn6X/g4w2TtZl8OA9RrH85VDtnHs9A0kI3Ny8TkpXMyrCu6hta9cLJpejCp0ukwGm6xZlg5LneXVqU12Mixj3ggRiaiXEhNUmY6uXS3rUXJNEOgdJzTFD0z4l5QeCfvIA71/m1X1IQMxna6FoSIjR9qT7NnA+mjLVfi/yK981xpfF7D5mKhpO/UFR+2d9zTQ2ZkEXWDRXUdVnce7iWhqzPLqrMm3XcH26uXbKXLc1MPEPT05k8Fc5/Pp0Zjy+TUHKx1/iPW8204iE+eBIZbnUVmxIkXg==;31:ZEWTSdSIzNG5VY7tPs385UGXr6AdOCn7LnFo41qGfbl7OpByaUqR5HrcL+dhIAKONCuNS66k6yuI3x8NNjyn+oqouw56FUKpvjz3JV9rHgBIBvwcgnXRoo2X8A/bLTYC/H0kPLYWRTBr+0equPbTjRKwYp2u4/nrWR4ACCNpeH90+Kh8idyLi7/vfYzKWTuOh+5nz68RR4RQ62fp0RSsNfY2ghJZFok5tyAY7M/05W8=
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1146:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1146;20:kIxntsEE54J5l0Ok3v5pI5OmdNT80vLd/34CRjsZHp4yX6hx+bXFWUOsdmFs1633hYNl8AKdW+hHhRIefN4WghDQp7T5MhdbA/c+ClKxxZ3YcHWjFEs8+fMm5D3clug7SmRTWBmhW4EU7gwepH4serkMPwrOrXRq0pAFyZYwm5w9K6DGygjKQ2WqPoKwvv0SKLqmyqOoMVmdA7hbMXPlSaRVYyEZmKIoRAV7l2riH/hbPIRJREW591qsQccOBadELocgjVf+mmafJ2GWWZfPNJwt5qQ7RnPiJyBujWPSII7gLJLcR5Fjus5HGMoFF/idgOixN/h5UvVqGVGuNZ+ImZM+/FOFq59HNyWyk+zdFwZ55IQUwLpLZmxa9keO70fk/j03mmqHaWGjVpiR2/B0l+St4tC0gZlIjtqNX5ygyRaxXCRzg+YEbHTE5rR4xW4Cl9RNfEgqaHTkwR7ET31npz9RoSlOoBV0BYQsYKuzi2pp/e8wwej+LTIPec/NHHku;4:OGWtnos9U/GnRBmif5H0AX4p4JAAKBiopS5ohg/Fobs/UaCKjtYlSG66V1Cr1Nl0P9aZTvb1W13zYfcC4QEsgHKHk3LTh8Qg2DoDObpvzfw3UA0LuYvsXNPkaDJ07WFip3+ffN6tEFQTzjWeES0smqjrEQDPck2IFvY1kAea6XZgVbfzcub/+ioFxIUULzOG1CZzaK5mrfq/+Qq+cFG3KlW0CD7V7/syXHwSZSnL+cHel85xJGjjB70ZXoIqAQ7XDnIkGytdv+B6/Or+plppKA==
-X-Microsoft-Antispam-PRVS: <DM5PR12MB11460F8AA2F2BF18745A40A9ECF50@DM5PR12MB1146.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3231101)(2400082)(944501161)(3002001)(10201501046)(93006095)(93001095)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR12MB1146;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1146;
-X-Forefront-PRVS: 0583A86C08
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(39860400002)(39380400002)(396003)(376002)(346002)(366004)(377424004)(189003)(199004)(7736002)(65956001)(47776003)(66066001)(65806001)(229853002)(52146003)(52116002)(23676004)(2486003)(86362001)(36756003)(2906002)(77096007)(26005)(230700001)(8676002)(8936002)(386003)(53546011)(3846002)(76176011)(16526019)(186003)(6116002)(6486002)(50466002)(6666003)(2950100002)(93886005)(16576012)(316002)(64126003)(54906003)(110136005)(53936002)(68736007)(6346003)(81156014)(58126008)(106356001)(3260700006)(105586002)(6246003)(31686004)(31696002)(97736004)(81166006)(305945005)(65826007)(5660300001)(72206003)(478600001)(4326008)(83506002)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1146;H:[10.236.65.116];FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjEyTUIxMTQ2OzIzOkdZMWx3U0hCeVFYMGt0MXZlbVZJWUtLWTdT?=
- =?utf-8?B?MkpCZHFnTFZ2R1RHeEp2MHJYd1ZiNEE1ZWY4emtzdkE0ZWV2c01EV3Y5ZCs3?=
- =?utf-8?B?b1JKcWZYMTFnL1Q2QU5GdTh0eG5rMEZocDhkcEpHVXJvdHpubFZRclNDRkww?=
- =?utf-8?B?VmZQZUk3U2JFdHI1SDNIZEZoQjZzYUJsdWdqZVdDaWxhZXl6VHJiOEJDeFpt?=
- =?utf-8?B?c0hUdVBxWkw0bmtxN3B4ZDVRQ1d4OXpPcWZZQWpzVVk5akQzRExOZUdxVXUw?=
- =?utf-8?B?LzhRVUVHZHo2amRZZHdYQmc3ZVpCeW5ONGR6VThxMU1hdThsNHpaZmc3bnl6?=
- =?utf-8?B?ckFhZDFERVN3OE5Qbms1Tndjelp1Y3hTOHpuTDJMVFFrOTFlNGJlWWJ3Q0Rn?=
- =?utf-8?B?TTFDOWJsYXJjbVVYNk4wajdXK3gweWNUL0pCQ3ZES0RSZEZjTnhDUStiWFgy?=
- =?utf-8?B?ZDQzcmYvcjltVm1aNW1jSm1IOC9qaGxwMlRuTDgydXFkZllmb0pmZXo1NTg1?=
- =?utf-8?B?YXpZSmM1cHNzNTZ0Rm5tQTF4NjFkWUJRR200ZU40YkEybzJqVDhXS013MVk1?=
- =?utf-8?B?Z2JEOHpzUEpuVlRzZWNxank1ZGVGWXhXZ3JXKzBiNzRyeWtnTGpoYk12dDQw?=
- =?utf-8?B?WUl1NDJ1LzQxTXlHUXI1K3NycVh6NkRlZFdBVmdVSlcrTWVUbEdUUUlHd1lm?=
- =?utf-8?B?clEwZDR3SzlLWC93WXJHQUtLVVdRbk9XYzl6QTBEQm1IVldOek9hRERJSTQ4?=
- =?utf-8?B?cFN1a1ZrWlMwS0FJbzlCRVRMeUNLejdCdlFzNWZmSis0Zk5teHU5QlBDU1Zv?=
- =?utf-8?B?QzRqd2xKeHQycHRSdHVqNnc1Y1A3Q2JBUFBPZGV3bXlVWmpwa3ROMUJacWxh?=
- =?utf-8?B?QUM5eGFucFJlR0RKNFlIekZYVEhBNXRTQnBDOWpGSndNa1BtYnRlUW5EakMx?=
- =?utf-8?B?UkgyVTBJb2RHT3RWd1VWaVBxRDRjanBkazdtdVlYYURFK2ZWRERBZTdkUGhi?=
- =?utf-8?B?bElqbTJ3UjVGSjNtVUMvdnplV2RKcDBHNEdBOEJBK1B4U3Q5VWhBSDVrYzlB?=
- =?utf-8?B?UHFTWkJsWFdNSEhRZnRjekdpaFR5MWlhb0F5R3JSQ2VoeTZocWNzQld1MkQ1?=
- =?utf-8?B?ZnJmUGg4TzdqbzhCcGRmYnhSY0pBUWFyelVTbm92WTBoMXA3YU5OSFhkR0M2?=
- =?utf-8?B?ZTN1SmNLak5jUWpQdmpUTktlQjFiZjNOYmVuYlJQaERSR01maG1sSm8zNmpn?=
- =?utf-8?B?YmQzUGdNeGRhUkR0RmNnTWlQYkFib3k4Mk5NN3RFc05GWExQeU0ybEtnb2F5?=
- =?utf-8?B?d3hFYlRUa1FTbElhbXdHNUJvSTl1UjVtRkJnNnRtQnRjYXRrKzdXQk9kcjdB?=
- =?utf-8?B?czVRS2pCcXlVTVFlQkUzUjJpN29Fck00SGYvMHlIVkhDNys2Si9GWEdITXRY?=
- =?utf-8?B?S1Avc2Q0YUNxNDQ5UFZIbEJpZ3UzazVheWRBZWIwZlBxWTRyYVNoaUJRVWdP?=
- =?utf-8?B?VDN6enh0N05MdFlEQUNzNjUvN0NEdktSblhISWQzT1YzN0duVC9mNmc2V2F5?=
- =?utf-8?B?aVUxRm5pQzlqVCtkQ3dYd0twL3RHRHV5VXMvVENONFhqMnJzTEo4REtnYXNQ?=
- =?utf-8?B?cUk2blIxMSs2K1ArbXdnMTBhK0Q5YkcyVmRqVFVhcEhMQlV5ZGtGR3BuckRR?=
- =?utf-8?B?YTd2YWJ0L0RiVlFGak1hRm0rMjMveG9LbXNwQUErcFliRG5EWlBuY1FUV2FV?=
- =?utf-8?B?UW1uSEJBV2h5RVIwSm45V0VIUDg1ZVhmMTN3NkdlV1FJbWdoWndNZTQ5RzBi?=
- =?utf-8?B?S0QzaHVIN0xRZHh3RmRhaTBPMDVpWldBNUZod3VFWGNPejhFZXJha01lRWFa?=
- =?utf-8?B?MVh4NW4yK0xPRDRPVC9VWm1IOWNjUHU1NUY4U1dxSXJMSGdXamZYbXZWek9E?=
- =?utf-8?B?Y0c0MWhMYzZtaFNxNGo0SmM5N3JTVXZaVFozNHdOSVZ6UC9WdmNBOVljMUth?=
- =?utf-8?B?UGdhM2tJZlhKZ3hZcGhkZTdtYzBLV2E2ZGdmQT09?=
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1146;6:BCdhYxxobxORbpMPeYGmcQ6dqx4Zh9bS560k1dhNHRdkYVRoUddKbBDuCT6ImxoMnZknSKm7nDveCtN535MaN26Ug6HwyOZRBqqF920uLGvILBLtHNXcPkPWoxNSgwtYEGON1SI+M+s17yJqI0Gf2eVMtO9m/1G1DQb/YckVuhFbJ0N72T+Dwmvtdlu8fdVAg25B14Es75xw1vRK+bWkYfQzoddvMcuJgMSInVbuLaCRtA6Aa5zi7RrpOFrImdLwaHg2RhkEgY9wb/ZcWvBGAx9Pj6GJYbBRa9VjEfIk9ZmbHHdJnyzLVXc9xoWVzkk2hIZcDmy69nFEK+zPTdwlaz/f3CaX55UU+FOyAPsWp2I=;5:A98rQAt8r0I2kpR0wY16V2G/pXa6rMor1GYJwly4OEsRkLl/IedcYWYFL3m0gGvvNpEu5s24sTVkm7PVTIZ9dIJKx7WxImSnuGNpZDfqGjdrfPzB5AvzcbbxZ2RBlisCShZTDGkGne5GKCC0qeIxbnJbFmis/no7Stmpv96q510=;24:Ke1PigwegLnrbTqvAwbr/6jHGSY+pxzeUStdPA+01j1jTh9rUNgh//jmFgq6YVt40FbvdGo5LtNAWVsROsLUuLd5Gooxm4l5DHwU/ytEYmA=;7:NIPPMERTh+gh5bRFNQBoLo5lncDoOit0N0OAsRDefAoiEriNhteA1I8XiSo7so7/xDAGrUn9jmHSw7/RPxbkPGwwKPHmwx8oxIQjzYKdjcssdOWWx+rdZFR6Q02AlvxmLJoxziFW6gcGQPegHeERQbYTTi+ha2zZnDvtDLl5kDgXm7SZIzqktyNiUolKFWFaKQWI8GFkbLeg86aJpArQ5gHFzDGVzRFzjyG1blJH80czC8y41mjkZksjtPD94WI1
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1146;20:1pdNMbQWLjreg2/q8oeATCUOnhNi+1WSt88IDNxhHucg4Pix30NII9EUEWCEB4uAQKqPqwbj4PCfxpZ0qFhKhq455PFTL/8os36PUuwz4fJKDIFnqIAJbwxL0QEK7RZepmcNSBmRserSdb5yaxzfD7TIdjynw6ceGJyW74uHtq2gKuLQ8w1PR1UVCv7RadZe6S7owT3kZDCjpqCcZG1Hhzp0U1tngvo9ILCM86Gh9zEVvyllmnSlUttHlxVMTpMd
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2018 15:09:09.9575 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a67b9bab-1672-4845-5cc3-08d573bce6f2
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1146
+In-Reply-To: <CACT4Y+a8Vpp=NtZcnn+Jeo6oeqSgLLaGbV=JTED+kem0dY7c6g@mail.gmail.com>
+References: <001a1144003cbc029e05620eb525@google.com> <CACT4Y+a8Vpp=NtZcnn+Jeo6oeqSgLLaGbV=JTED+kem0dY7c6g@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 14 Feb 2018 16:09:14 +0100
+Message-ID: <CACT4Y+ZFiys-nBgzHfgsuxH6v7evHRMc9nLBQyYhCe+qXkmmDw@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in do_softirq
+To: syzbot <syzbot+6a74dabfc3393d3e527f@syzkaller.appspotmail.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        David Miller <davem@davemloft.net>, netdev <netdev@vger.kernel.org>
+Cc: =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        syzkaller-bugs@googlegroups.com, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/14/2018 3:02 AM, Kirill A. Shutemov wrote:
-> On Wed, Feb 14, 2018 at 08:30:20PM +1300, Kai Huang wrote:
->> On Tue, 2018-02-13 at 22:57 -0600, Tom Lendacky wrote:
->>> On 2/13/2018 10:21 PM, Kirill A. Shutemov wrote:
->>>> On Tue, Feb 13, 2018 at 10:10:22PM -0600, Tom Lendacky wrote:
->>>>> On 2/8/2018 6:55 AM, Kirill A. Shutemov wrote:
->>>>>> AMD SME claims one bit from physical address to indicate
->>>>>> whether the
->>>>>> page is encrypted or not. To achieve that we clear out the bit
->>>>>> from
->>>>>> __PHYSICAL_MASK.
->>>>>
->>>>> I was actually working on a suggestion by Linus to use one of the
->>>>> software
->>>>> page table bits to indicate encryption and translate that to the
->>>>> hardware
->>>>> bit when writing the actual page table entry.  With that,
->>>>> __PHYSICAL_MASK
->>>>> would go back to its original definition.
->>>>
->>>> But you would need to mask it on reading of pfn from page table
->>>> entry,
->>>> right? I expect it to have more overhead than this one.
->>>
->>> When reading back an entry it would translate the hardware bit
->>> position
->>> back to the software bit position.  The suggestion for changing it
->>> was
->>> to make _PAGE_ENC a constant and not tied to the sme_me_mask.
-> 
-> But is it really constant? I thought it's enumerated at boot-time.
-> Can we step onto a problem for future AMD CPUs?
+On Fri, Jan 5, 2018 at 11:14 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Fri, Jan 5, 2018 at 11:10 PM, syzbot
+> <syzbot+6a74dabfc3393d3e527f@syzkaller.appspotmail.com> wrote:
+>> Hello,
+>>
+>> syzkaller hit the following crash on
+>> 8a4816cad00bf14642f0ed6043b32d29a05006ce
+>> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
+>> compiler: gcc (GCC) 7.1.1 20170620
+>> .config is attached
+>> Raw console output is attached.
+>> Unfortunately, I don't have any reproducer for this bug yet.
+>>
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+6a74dabfc3393d3e527f@syzkaller.appspotmail.com
+>> It will help syzbot understand when the bug is fixed. See footer for
+>> details.
+>> If you forward the report, please keep this part and the footer.
+>
+> Looks like a hang in xfrm, so +xfrm maintainers.
 
-_PAGE_ENC would be constant and it would be translated to the actual bit
-that was enumerated at boot-time when writing the page table entry and
-translated back to _PAGE_ENC when reading the page table entry.
 
-> 
-> In case of MKTME the bits we need to clear are not constant. Depends on
-> CPU and BIOS settings.
-> 
-> By making _PAGE_ENC constant we would effectively lower maximum physical
-> address space the kernel can handle, regardless if the system has SME
-> enabled. I can imagine some people wouldn't be happy about this.
+#syz dup: INFO: rcu detected stall in __xfrm_decode_session
 
-I don't see how this would lower the maximum physical address space the
-kernel could handle.  Bit 57 is part of the reserved page table flag
-bits and if SME is not enabled the hardware bits are never used.
 
-What I do see as a problem is a kernel built with support for SME, and
-therefore _PAGE_ENC is not zero, but SME has not been enabled by the BIOS
-or mem_encrypt=off is specified.  In this case you can never be certain
-that the translation from software bit to hardware bit and back is
-correct.  Take for example, pmd_bad(). Here, _KERNPG_TABLE would have a
-non-zero _PAGE_ENC or'd into it.  When written to a page table entry when
-SME is not enabled/active, the actual hardware encryption bit would not be
-set.  When reading back the value, since the hardware encryption bit is
-not set, the translation to set _PAGE_ENC bit won't be done and the
-comparison to _KERNPG_TABLE would fail.  Of course we could just eliminate
-_PAGE_ENC from the comparison...
-
-> 
-> And I think it would collide with 5-level paging.
-
-Does 5-level paging remove bit 57 from the reserved flags?
-
-> 
-> I would leave it as variable for now and look on this later once we would
-> have infrastructure to patch constants in kernel text.
-
-If the MK-TME support is going to use the same approach to include the
-mask/bits real time in _PAGE_ENC then maybe it would be best to get that
-in first and then look to see if something could be done along the lines
-of what Linus suggests or with the patchable constants.
-
-Thanks,
-Tom
-
-> 
+>> Can not set IPV6_FL_F_REFLECT if flowlabel_consistency sysctl is enable
+>> INFO: rcu_sched detected stalls on CPUs/tasks:
+>>         (detected by 0, t=125007 jiffies, g=66299, c=66298, q=40)
+>> All QSes seen, last rcu_sched kthread activity 125014
+>> (4294991138-4294866124), jiffies_till_next_fqs=3, root ->qsmask 0x0
+>> syz-executor5   R  running task    22056 22277   3688 0x00000008
+>> Call Trace:
+>>  <IRQ>
+>>  sched_show_task+0x4a3/0x5e0 kernel/sched/core.c:5198
+>>  print_other_cpu_stall+0x996/0x1090 kernel/rcu/tree.c:1564
+>>  check_cpu_stall.isra.61+0x6e6/0x15b0 kernel/rcu/tree.c:1682
+>>  __rcu_pending kernel/rcu/tree.c:3440 [inline]
+>>  rcu_pending kernel/rcu/tree.c:3502 [inline]
+>>  rcu_check_callbacks+0x256/0xd00 kernel/rcu/tree.c:2842
+>>  update_process_times+0x30/0x60 kernel/time/timer.c:1630
+>>  tick_sched_handle+0x85/0x160 kernel/time/tick-sched.c:162
+>>  tick_sched_timer+0x42/0x120 kernel/time/tick-sched.c:1166
+>>  __run_hrtimer kernel/time/hrtimer.c:1211 [inline]
+>>  __hrtimer_run_queues+0x358/0xe20 kernel/time/hrtimer.c:1275
+>>  hrtimer_interrupt+0x1c2/0x5e0 kernel/time/hrtimer.c:1309
+>>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+>>  smp_apic_timer_interrupt+0x14a/0x700 arch/x86/kernel/apic/apic.c:1050
+>>  apic_timer_interrupt+0xa9/0xb0 arch/x86/entry/entry_64.S:904
+>> RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x50
+>> RSP: 0018:ffff8801db206738 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff11
+>> RAX: ffffed003a2965e3 RBX: ffff8801d14b2e40 RCX: ffffffff84c25899
+>> RDX: 0000000000000100 RSI: ffff8801c5f47f29 RDI: 00000000000079c8
+>> RBP: ffff8801db2067c8 R08: ffffed0038bea003 R09: ffffed0038bea003
+>> R10: 000000000000000b R11: ffffed0038bea002 R12: ffff8801c5f40580
+>> R13: ffff8801db206aa0 R14: 00000000000079d0 R15: dffffc0000000000
+>>  __xfrm_decode_session+0x68/0x110 net/xfrm/xfrm_policy.c:2358
+>>  __xfrm_policy_check+0x18c/0x2350 net/xfrm/xfrm_policy.c:2393
+>>  __xfrm_policy_check2 include/net/xfrm.h:1170 [inline]
+>>  xfrm_policy_check include/net/xfrm.h:1175 [inline]
+>>  xfrm6_policy_check include/net/xfrm.h:1185 [inline]
+>>  rawv6_rcv+0x8f6/0x1200 net/ipv6/raw.c:424
+>>  ipv6_raw_deliver net/ipv6/raw.c:224 [inline]
+>>  raw6_local_deliver+0x819/0xa80 net/ipv6/raw.c:240
+>>  ip6_input_finish+0x3c7/0x17a0 net/ipv6/ip6_input.c:246
+>>  NF_HOOK include/linux/netfilter.h:250 [inline]
+>>  ip6_input+0xe9/0x560 net/ipv6/ip6_input.c:327
+>>  dst_input include/net/dst.h:449 [inline]
+>>  ip6_rcv_finish+0x1a9/0x7a0 net/ipv6/ip6_input.c:71
+>>  NF_HOOK include/linux/netfilter.h:250 [inline]
+>>  ipv6_rcv+0xf37/0x1fa0 net/ipv6/ip6_input.c:208
+>>  __netif_receive_skb_core+0x1a41/0x3460 net/core/dev.c:4499
+>>  __netif_receive_skb+0x2c/0x1b0 net/core/dev.c:4564
+>>  process_backlog+0x203/0x740 net/core/dev.c:5244
+>>  napi_poll net/core/dev.c:5642 [inline]
+>>  net_rx_action+0x792/0x1910 net/core/dev.c:5708
+>>  __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
+>>  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1115
+>>  </IRQ>
+>>  do_softirq.part.21+0x14d/0x190 kernel/softirq.c:329
+>>  do_softirq kernel/softirq.c:177 [inline]
+>>  __local_bh_enable_ip+0x1ee/0x230 kernel/softirq.c:182
+>>  local_bh_enable include/linux/bottom_half.h:32 [inline]
+>>  rcu_read_unlock_bh include/linux/rcupdate.h:727 [inline]
+>>  ip6_finish_output2+0xba0/0x23a0 net/ipv6/ip6_output.c:121
+>>  ip6_fragment+0x25f2/0x3470 net/ipv6/ip6_output.c:739
+>>  ip6_finish_output+0x6bb/0xaf0 net/ipv6/ip6_output.c:152
+>>  NF_HOOK_COND include/linux/netfilter.h:239 [inline]
+>>  ip6_output+0x1eb/0x840 net/ipv6/ip6_output.c:171
+>>  dst_output include/net/dst.h:443 [inline]
+>>  ip6_local_out+0x95/0x160 net/ipv6/output_core.c:176
+>>  ip6_send_skb+0xa1/0x330 net/ipv6/ip6_output.c:1674
+>>  ip6_push_pending_frames+0xb3/0xe0 net/ipv6/ip6_output.c:1694
+>>  rawv6_push_pending_frames net/ipv6/raw.c:616 [inline]
+>>  rawv6_sendmsg+0x2ee9/0x3e70 net/ipv6/raw.c:935
+>>  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:764
+>>  sock_sendmsg_nosec net/socket.c:628 [inline]
+>>  sock_sendmsg+0xca/0x110 net/socket.c:638
+>>  SYSC_sendto+0x361/0x5c0 net/socket.c:1719
+>>  SyS_sendto+0x40/0x50 net/socket.c:1687
+>>  entry_SYSCALL_64_fastpath+0x23/0x9a
+>> RIP: 0033:0x452ac9
+>> RSP: 002b:00007f042a550c58 EFLAGS: 00000212 ORIG_RAX: 000000000000002c
+>> RAX: ffffffffffffffda RBX: 000000000071bea0 RCX: 0000000000452ac9
+>> RDX: 0000000000000000 RSI: 0000000020aa7000 RDI: 0000000000000013
+>> RBP: 00000000000004b6 R08: 00000000201e0000 R09: 000000000000001c
+>> R10: 0000000000000000 R11: 0000000000000212 R12: 00000000006f51b0
+>> R13: 00000000ffffffff R14: 00007f042a5516d4 R15: 0000000000000000
+>> rcu_sched kthread starved for 126236 jiffies! g66299 c66298 f0x2
+>> RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=0
+>> rcu_sched       R  running task    23456     8      2 0x80000000
+>> Call Trace:
+>>  context_switch kernel/sched/core.c:2799 [inline]
+>>  __schedule+0x8eb/0x2060 kernel/sched/core.c:3375
+>>  schedule+0xf5/0x430 kernel/sched/core.c:3434
+>>  schedule_timeout+0x118/0x230 kernel/time/timer.c:1795
+>>  rcu_gp_kthread+0x9e5/0x1930 kernel/rcu/tree.c:2314
+>>  kthread+0x33c/0x400 kernel/kthread.c:238
+>>  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:515
