@@ -1,83 +1,321 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030437AbeBNNxU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 08:53:20 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:57997 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030418AbeBNNxS (ORCPT
+        id S1030476AbeBNNxc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 08:53:32 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:40994 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030418AbeBNNxX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 08:53:18 -0500
-Date: Wed, 14 Feb 2018 14:53:06 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 04/15] pinctrl: sh-pfc: Initial R-Car M3-N support
-Message-ID: <20180214135306.GA23932@w540>
-References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
- <1518515162-23663-5-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdUpEjnNa4kru7mUnvhTu2YoofoopuCvUp=AGdRJqfaNEw@mail.gmail.com>
+        Wed, 14 Feb 2018 08:53:23 -0500
+X-Google-Smtp-Source: AH8x226NE/T1Ofv6PqbFFT44rpU1nhMEdWUWiNkCXhbcX9+Px0YAHNcsGrDlThNI78oG6fCVfoSFxSb+qcNP/3YkCiA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUpEjnNa4kru7mUnvhTu2YoofoopuCvUp=AGdRJqfaNEw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1518543933-22456-8-git-send-email-john.garry@huawei.com>
+References: <1518543933-22456-1-git-send-email-john.garry@huawei.com> <1518543933-22456-8-git-send-email-john.garry@huawei.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 14 Feb 2018 15:53:21 +0200
+Message-ID: <CAHp75Ve7C4AJYK6AC=o-jzw6b2p8c8GBRd70Zjv+vYWbfytufg@mail.gmail.com>
+Subject: Re: [PATCH v13 7/9] ACPI: Translate the I/O range of non-MMIO devices
+ before scanning
+To: John Garry <john.garry@huawei.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Hanjun Guo <hanjun.guo@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
+        Dann Frazier <dann.frazier@canonical.com>,
+        Rob Herring <robh@kernel.org>, Joe Perches <joe@perches.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, Corey Minyard <minyard@acm.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
-   thanks for review
+On Tue, Feb 13, 2018 at 7:45 PM, John Garry <john.garry@huawei.com> wrote:
+> On some platforms (such as arm64-based hip06/hip07), access to legacy
+> ISA/LPC devices through access IO space is required, similar to x86
+> platforms. As the I/O for these devices are not memory mapped like
+> PCI/PCIE MMIO host bridges, they require special low-level device
+> operations through some host to generate IO accesses, i.e. a non-
+> transparent bridge.
+>
+> Through the logical PIO framework, hosts are able to register address
+> ranges in the logical PIO space for IO accesses. For hosts which require
+> a LLDD to generate the IO accesses, through the logical PIO framework
+> the host also registers accessors as a backend to generate the physical
+> bus transactions for IO space accesses (called indirect IO).
+>
+> When describing the indirect IO child device in APCI tables, the IO
+> resource is the host-specific address for the child (generally a
+> bus address).
+> An example is as follows:
+>   Device (LPC0) {
+>     Name (_HID, "HISI0191")  // HiSi LPC
+>     Name (_CRS, ResourceTemplate () {
+>       Memory32Fixed (ReadWrite, 0xa01b0000, 0x1000)
+>     })
+>   }
+>
+>   Device (LPC0.IPMI) {
+>     Name (_HID, "IPI0001")
+>     Name (LORS, ResourceTemplate() {
+>       QWordIO (
+>         ResourceConsumer,
+>         MinNotFixed,     // _MIF
+>         MaxNotFixed,     // _MAF
+>         PosDecode,
+>         EntireRange,
+>         0x0,             // _GRA
+>         0xe4,            // _MIN
+>         0x3fff,          // _MAX
+>         0x0,             // _TRA
+>         0x04,            // _LEN
+>         , ,
+>         BTIO
+>       )
+>     })
+>
+> Since the IO resource for the child is a host-specific address,
+> special translation are required to retrieve the logical PIO address
+> for that child.
+>
+> To overcome the problem of associating this logical PIO address
+> with the child device, a scan handler is added to scan the ACPI
+> namespace for known indirect IO hosts. This scan handler creates an
+> MFD per child with the translated logical PIO address as it's IO
+> resource, as a substitute for the normal platform device which ACPI
+> would create during device enumeration.
 
-On Wed, Feb 14, 2018 at 02:37:08PM +0100, Geert Uytterhoeven wrote:
-> Hi Jacopo,
->
-> On Tue, Feb 13, 2018 at 10:45 AM, Jacopo Mondi
-> <jacopo+renesas@jmondi.org> wrote:
-> > Add initial PFC support for R-Car M3-N (r8a77965) SoC.
-> > No groups or functions defined, just pin and registers enumeration.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->
-> Thanks for your patch!
->
-> Looks mostly OK to me.
-> You do want to compare with pfc-r8a7796.c: all differences not related to
-> SATA_DEVSL, FSCLK, DU_DOTCLKIN2/3, and PRESET are issues that were fixed
-> recently in pfc-r8a7796.c, and should apply to pfc-r8a77965.c, too.
->
+> +       unsigned long sys_port;
 
-I have used the M3-W tables with the exception of the pins/groups you
-mentioned, that are clearly marked as different in the datasheet. At
-least, this was my intention :)
+> +       sys_port = logic_pio_trans_hwaddr(&host->fwnode, res->start, len);
+> +       if (sys_port == -1UL)
 
-I used v4.15 M3-W PFC tables, should I look in v4.16-rc1 or in
-renesas-drivers for updates?
+Wouldn't it be better to compare with ULONG_MAX?
 
-> That leaves us with very few differences only, but it won't be trivial to have
-> a combined M3-W/N PFC driver, I'm afraid.
->
+> +               return -EFAULT;
 
-Takes a certain degree of grep-foo to clearly highlight differences
-between the two version. Do you have any script/tools you use to
-compare PFC tables a bit more easily?
 
-Thanks
-  j
+> +/*
 
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Shouldn't be a kernel-doc?
+
+> + * acpi_indirect_io_set_res - set the resources for a child device
+> + * (MFD) of an "indirect IO" host.
+
+In that case this would be one line w/o period at the end.
+
+> + * @child: the device node to be updated the I/O resource
+> + * @hostdev: the device node associated with the "indirect IO" host
+> + * @res: double pointer to be set to the address of translated resources
+> + * @num_res: pointer to variable to hold the number of translated resources
+> + *
+> + * Returns 0 when successful, and a negative value for failure.
+> + *
+> + * For a given "indirect IO" host, each child device will have associated
+> + * host-relevative address resource. This function will return the translated
+> + * logical PIO addresses for each child devices resources.
+> + */
+> +static int acpi_indirect_io_set_res(struct device *child,
+> +                                   struct device *hostdev,
+> +                                   const struct resource **res,
+> +                                   int *num_res)
+> +{
+> +       struct acpi_device *adev;
+> +       struct acpi_device *host;
+> +       struct resource_entry *rentry;
+> +       LIST_HEAD(resource_list);
+> +       struct resource *resources;
+> +       int count;
+> +       int i;
+> +       int ret = -EIO;
+> +
+> +       if (!child || !hostdev)
+> +               return -EINVAL;
+> +
+> +       host = to_acpi_device(hostdev);
+> +       adev = to_acpi_device(child);
+
+> +       count = acpi_dev_get_resources(adev, &resource_list, NULL, NULL);
+> +       if (count <= 0) {
+> +               dev_err(child, "failed to get resources\n");
+> +               return count ? count : -EIO;
+> +       }
+> +
+> +       resources = kcalloc(count, sizeof(*resources), GFP_KERNEL);
+> +       if (!resources) {
+> +               acpi_dev_free_resource_list(&resource_list);
+> +               return -ENOMEM;
+> +       }
+> +       count = 0;
+> +       list_for_each_entry(rentry, &resource_list, node)
+> +               resources[count++] = *rentry->res;
+> +
+> +       acpi_dev_free_resource_list(&resource_list);
+
+It has similarities with acpi_create_platform_device().
+I guess we can utilize existing code.
+
+> +       /* translate the I/O resources */
+> +       for (i = 0; i < count; i++) {
+> +               if (!(resources[i].flags & IORESOURCE_IO))
+> +                       continue;
+
+> +               ret = acpi_indirect_io_xlat_res(adev, host, &resources[i]);
+> +               if (ret) {
+> +                       kfree(resources);
+> +                       dev_err(child, "translate IO range failed(%d)\n", ret);
+> +                       return ret;
+> +               }
+> +       }
+> +       *res = resources;
+> +       *num_res = count;
+> +
+> +       return ret;
+
+Perhaps,
+
+   ret = ...
+   if (ret)
+    break;
+  }
+
+  if (ret) {
+                       kfree(resources);
+                       dev_err(child, "translate IO range failed(%d)\n", ret);
+                       return ret;
+  }
+
+  *res = resources;
+  *num_res = count;
+  return 0;
+
+?
+
+> +}
+> +
+> +/*
+> + * acpi_indirect_io_setup - scan handler for "indirect IO" host.
+> + * @adev: "indirect IO" host ACPI device pointer
+> + * Returns 0 when successful, and a negative value for failure.
+> + *
+> + * Setup an "indirect IO" host by scanning all child devices, and
+> + * create a per-device MFD with logical PIO translated IO resources.
+> + */
+> +static int acpi_indirect_io_setup(struct acpi_device *adev)
+> +{
+> +       struct platform_device *pdev;
+> +       struct mfd_cell *mfd_cells;
+> +       struct logic_pio_hwaddr *range;
+> +       struct acpi_device *child;
+> +       struct acpi_indirect_io_mfd_cell *acpi_indirect_io_mfd_cells;
+> +       int size, ret, count = 0, cell_num = 0;
+> +
+> +       range = kzalloc(sizeof(*range), GFP_KERNEL);
+> +       if (!range)
+> +               return -ENOMEM;
+> +       range->fwnode = &adev->fwnode;
+> +       range->flags = PIO_INDIRECT;
+> +       range->size = PIO_INDIRECT_SIZE;
+> +
+> +       ret = logic_pio_register_range(range);
+> +       if (ret)
+> +               goto free_range;
+> +
+> +       list_for_each_entry(child, &adev->children, node)
+> +               cell_num++;
+> +
+> +       /* allocate the mfd cell and companion acpi info, one per child */
+> +       size = sizeof(*mfd_cells) + sizeof(*acpi_indirect_io_mfd_cells);
+> +       mfd_cells = kcalloc(cell_num, size, GFP_KERNEL);
+> +       if (!mfd_cells) {
+> +               ret = -ENOMEM;
+> +               goto free_range;
+> +       }
+> +
+> +       acpi_indirect_io_mfd_cells = (struct acpi_indirect_io_mfd_cell *)
+> +                                       &mfd_cells[cell_num];
+> +       /* Only consider the children of the host */
+> +       list_for_each_entry(child, &adev->children, node) {
+> +               struct mfd_cell *mfd_cell = &mfd_cells[count];
+> +               struct acpi_indirect_io_mfd_cell *acpi_indirect_io_mfd_cell =
+> +                                       &acpi_indirect_io_mfd_cells[count];
+> +               const struct mfd_cell_acpi_match *acpi_match =
+> +                                       &acpi_indirect_io_mfd_cell->acpi_match;
+
+> +               char *name = &acpi_indirect_io_mfd_cell[count].name[0];
+> +               char *pnpid = &acpi_indirect_io_mfd_cell[count].pnpid[0];
+
+Plain x is equivalent to &x[0].
+
+> +               struct mfd_cell_acpi_match match = {
+> +                       .pnpid = pnpid,
+> +               };
+> +
+> +               snprintf(name, ACPI_INDIRECT_IO_NAME_LEN, "indirect-io-%s",
+> +                        acpi_device_hid(child));
+> +               snprintf(pnpid, ACPI_INDIRECT_IO_NAME_LEN, "%s",
+> +                        acpi_device_hid(child))
+
+> +               memcpy((void *)acpi_match, (void *)&match, sizeof(*acpi_match));
+
+Casting to void * is pointless. In both cases.
+
+> +               mfd_cell->name = name;
+> +               mfd_cell->acpi_match = acpi_match;
+> +
+> +               ret = acpi_indirect_io_set_res(&child->dev, &adev->dev,
+> +                                              &mfd_cell->resources,
+> +                                              &mfd_cell->num_resources);
+> +               if (ret) {
+> +                       dev_err(&child->dev, "set resource failed (%d)\n", ret);
+> +                       goto free_mfd_resources;
+> +               }
+> +               count++;
+> +       }
+> +
+> +       pdev = acpi_create_platform_device(adev, NULL);
+> +       if (IS_ERR_OR_NULL(pdev)) {
+> +               dev_err(&adev->dev, "create platform device for host failed\n");
+
+> +               ret = PTR_ERR(pdev);
+
+So, NULL case will return 0. Is it expected?
+
+> +               goto free_mfd_resources;
+> +       }
+> +       acpi_device_set_enumerated(adev);
+> +
+> +       ret = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE,
+> +                             mfd_cells, cell_num, NULL, 0, NULL);
+> +       if (ret) {
+> +               dev_err(&pdev->dev, "failed to add mfd cells (%d)\n", ret);
+> +               goto free_mfd_resources;
+> +       }
+> +
+> +       return ret;
+> +
+> +free_mfd_resources:
+> +       while (cell_num--)
+> +               kfree(mfd_cells[cell_num].resources);
+> +       kfree(mfd_cells);
+> +free_range:
+> +       kfree(range);
+> +
+> +       return ret;
+> +}
+
+One question, what a scope of use of this function? Is it ->probe() time?
+If it's so, can we use devm_* variants?
+
+-- 
+With Best Regards,
+Andy Shevchenko
