@@ -1,41 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754632AbeBNIsS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 03:48:18 -0500
-Received: from mail-qt0-f170.google.com ([209.85.216.170]:41565 "EHLO
-        mail-qt0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751536AbeBNIsR (ORCPT
+        id S934967AbeBNIzD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 03:55:03 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54885 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934695AbeBNIzB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 03:48:17 -0500
-X-Google-Smtp-Source: AH8x224aSTqoMnP5CIKnAeIqrBykRgeFOXqcjsXUX7qD3e5FwdD4vfem94AHBEKmfeUtetIJCrCnYysm/PJ/jZRb7+0=
-MIME-Version: 1.0
-In-Reply-To: <20180212114937.GA12976@sirena.org.uk>
-References: <CAErzpmuxmrJszRz5_SZXPMkdU2UWNHChrnKjnHuCWZYrs4hgTA@mail.gmail.com>
- <20180212114937.GA12976@sirena.org.uk>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Wed, 14 Feb 2018 00:47:56 -0800
-Message-ID: <CAErzpmtjeOvBUxAPsmtW+EOM7pBrwtAe5XSx_ujEWM8wt7_YOA@mail.gmail.com>
-Subject: Re: [PATCH v3] ASoC: use DEFINE_SHOW_ATTRIBUTE() to decrease code duplication
-To: Mark Brown <broonie@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 14 Feb 2018 03:55:01 -0500
+X-Google-Smtp-Source: AH8x227FffOWF5KlLkGT1VTlkHicUxDAILdgCAQKpFD7QZUevr+UAuSU3fzlCTBibm7whgqgWrdIvg==
+From: Corentin Labbe <clabbe@baylibre.com>
+To: catalin.marinas@arm.com, mark.rutland@arm.com,
+        maxime.ripard@free-electrons.com, robh+dt@kernel.org, wens@csie.org,
+        will.deacon@arm.com
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH] ARM64: dts: allwinner: sun50i-h5-orangepi-zero-plus2: rename mmc0_pins_a to mmc0_pins
+Date: Wed, 14 Feb 2018 08:54:47 +0000
+Message-Id: <1518598487-29201-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 3:49 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Fri, Feb 09, 2018 at 11:10:55PM +0800, Donglin Peng wrote:
->
->> --- a/sound/soc/soc-core.c
->> +++ b/sound/soc/soc-core.c
->> @@ -349,7 +349,7 @@ static void soc_init_codec_debugfs(struct
->> snd_soc_component *component)
->>              "ASoC: Failed to create codec register debugfs file\n");
->
-> Your patch has been corrupted somewhere (probably in your mail client) -
-> there's word wrapping here.
-Sorry, I will check it.
+mmc0_pins_a were renamed in arch/arm but not in arch/arm64 resulting in
+a build failure.
+
+Fixes: 813f2c8fa119 ("ARM: dts: sunxi: h3-h5: rename mmc0_pins_a and mmc1_pins_a")
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
+index feee125a4e9a..87c1a0dace5f 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
+@@ -82,7 +82,7 @@
+ 
+ &mmc1 {
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&mmc1_pins_a>;
++	pinctrl-0 = <&mmc1_pins>;
+ 	vmmc-supply = <&reg_vcc3v3>;
+ 	vqmmc-supply = <&reg_vcc3v3>;
+ 	mmc-pwrseq = <&wifi_pwrseq>;
+-- 
+2.13.6
