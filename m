@@ -1,99 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967279AbeBNKih (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 05:38:37 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:55459 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967236AbeBNKif (ORCPT
+        id S967281AbeBNKjZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 05:39:25 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55333 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967089AbeBNKjW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 05:38:35 -0500
-X-Google-Smtp-Source: AH8x225Jt3Shc2FpnphjbqGNOJQGBD2bTrkkURYPGXfeDEY7RWMnQNhOr8mQtvWwMoi/nuBX8PbCEz6+k46fzI+vwKY=
+        Wed, 14 Feb 2018 05:39:22 -0500
+X-Google-Smtp-Source: AH8x224EUs8nDqzgo3Eye0s2ry6tAFwrswDP3JOHsNUWj4/kRGfgEx4vtxSCRevYF9WCjxvH7ic/aQ==
+Date: Wed, 14 Feb 2018 11:39:18 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>, Dave Hansen <dave@sr71.net>,
+        hpa@zytor.com, tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, dwmw@amazon.co.uk,
+        linux-tip-commits@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        Arjan van de Ven <arjan@infradead.org>
+Subject: Re: [PATCH] watchdog: hpwdt: Remove spinlock acquire and BIOS calls
+ from NMI context
+Message-ID: <20180214103918.shra2d5vg5gczjy3@gmail.com>
+References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
+ <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
+ <20180212102211.cdrrqqd4hdw7xu5y@gmail.com>
+ <a85c28b8-1255-3264-bb4a-89e85e3c6009@sr71.net>
+ <20180212165835.GO25181@hirez.programming.kicks-ass.net>
+ <20180213075540.3lkikkpgjoe6ocjk@gmail.com>
+ <5c3ba123-abbe-f153-7b75-a89d31d25c72@linux.intel.com>
+ <20180214093159.mdzfupne547bi5qx@gmail.com>
+ <20180214093835.GW25181@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20180212131359.7741-1-jbrunet@baylibre.com>
-References: <20180212131359.7741-1-jbrunet@baylibre.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 14 Feb 2018 11:38:34 +0100
-Message-ID: <CAPDyKFp=rPwbXLPcD35dGGqNLwZBMgVd1jbFvzUG7tO6zfGNAg@mail.gmail.com>
-Subject: Re: [PATCH] Revert "mmc: meson-gx: include tx phase in the tuning process"
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180214093835.GW25181@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 February 2018 at 14:13, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> This reverts commit 0a44697627d17a66d7dc98f17aeca07ca79c5c20.
->
-> This commit was initially intended to fix problems with hs200 and hs400
-> on some boards, mainly the odroid-c2. The OC2 (Rev 0.2) I have performs
-> well in this modes, so I could not confirm these issues.
->
-> We've had several reports about the issues being still present on (some)
-> OC2, so apparently, this change does not do what it was supposed to do.
-> Maybe the eMMC signal quality is on the edge on the board. This may
-> explain the variability we see in term of stability, but this is just a
-> guess. Lowering the max_frequency to 100Mhz seems to do trick for those
-> affected by the issue
->
-> Worse, the commit created new issues (CRC errors and hangs) on other
-> boards, such as the kvim 1 and 2, the p200 or the libretech-cc.
->
-> According to amlogic, the Tx phase should not be tuned and left in its
-> default configuration, so it is best to just revert the commit.
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Thanks, applied for fixes and added a stable/fixes tag.
+* Peter Zijlstra <peterz@infradead.org> wrote:
 
-Kind regards
-Uffe
+> On Wed, Feb 14, 2018 at 10:31:59AM +0100, Ingo Molnar wrote:
+> > Because in this particular case it does not appear to be so: the reason for the 
+> > BIOS/firmware call appears to be to determine how we nmi_panic() after receiving 
+> > an NMI that no other NMI handler handled: with a passive-aggressive "I don't know" 
+> > panic message or with a slightly more informative panic message.
+> 
+> However much I like just ripping all that out, I think the ROM call
+> actually does that logging, or that is how I read things.
+> 
+> If you look at the original Changelog for that driver:
+> 
+>     Hp is providing a Hardware WatchDog Timer driver that will only work with the
+>     specific HW Timer located in the HP ProLiant iLO 2 ASIC. The iLO 2 HW Timer
+>     will generate a Non-maskable Interrupt (NMI) 9 seconds before physically
+>     resetting the server, by removing power, so that the event can be logged to
+>     the HP Integrated Management Log (IML), a Non-Volatile Random Access Memory
+>     (NVRAM). The logging of the event is performed using the HP ProLiant ROM via
+>     an Industry Standard access known as a BIOS Service Directory Entry.
 
-> ---
->  drivers/mmc/host/meson-gx-mmc.c | 19 +------------------
->  1 file changed, 1 insertion(+), 18 deletions(-)
->
-> diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
-> index 22438ebfe4e6..4f972b879fe6 100644
-> --- a/drivers/mmc/host/meson-gx-mmc.c
-> +++ b/drivers/mmc/host/meson-gx-mmc.c
-> @@ -717,22 +717,6 @@ static int meson_mmc_clk_phase_tuning(struct mmc_host *mmc, u32 opcode,
->  static int meson_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
->  {
->         struct meson_host *host = mmc_priv(mmc);
-> -       int ret;
-> -
-> -       /*
-> -        * If this is the initial tuning, try to get a sane Rx starting
-> -        * phase before doing the actual tuning.
-> -        */
-> -       if (!mmc->doing_retune) {
-> -               ret = meson_mmc_clk_phase_tuning(mmc, opcode, host->rx_clk);
-> -
-> -               if (ret)
-> -                       return ret;
-> -       }
-> -
-> -       ret = meson_mmc_clk_phase_tuning(mmc, opcode, host->tx_clk);
-> -       if (ret)
-> -               return ret;
->
->         return meson_mmc_clk_phase_tuning(mmc, opcode, host->rx_clk);
->  }
-> @@ -763,9 +747,8 @@ static void meson_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->                 if (!IS_ERR(mmc->supply.vmmc))
->                         mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, ios->vdd);
->
-> -               /* Reset phases */
-> +               /* Reset rx phase */
->                 clk_set_phase(host->rx_clk, 0);
-> -               clk_set_phase(host->tx_clk, 270);
->
->                 break;
->
-> --
-> 2.14.3
->
+Ok, that appears to be the case, too bad.
+
+But the good news: if this callback is executed only once per system lifetime then 
+we don't actually have to perform *any* modification on this driver, right? The 
+reason is that this callback will panic unconditionally after performing the BIOS 
+call. The control flow to the panic is unconditional:
+
+        spin_lock_irqsave(&rom_lock, rom_pl);
+        if (!die_nmi_called && !is_icru && !is_uefi)
+                asminline_call(&cmn_regs, cru_rom_addr);
+
+	...
+
+        if (!is_icru && !is_uefi) { 
+                if (cmn_regs.u1.ral == 0) {
+                        nmi_panic(regs, "An NMI occurred, but unable to determine source.\n");
+			...
+
+        nmi_panic(regs, "An NMI occurred. Depending on your system the reason "
+                "for the NMI is logged in any one of the following "
+                "resources:\n"
+                "1. Integrated Management Log (IML)\n"
+                "2. OA Syslog\n"
+                "3. OA Forward Progress Log\n"
+                "4. iLO Event Log");
+
+
+This callback does not get executed when we get perf NMIs, correct?
+
+	Ingo
