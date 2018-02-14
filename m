@@ -1,142 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030960AbeBNOoE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 09:44:04 -0500
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36999 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030945AbeBNOnw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 09:43:52 -0500
-X-Google-Smtp-Source: AH8x227o0pSI+Tt3ptVJvsjJzfBWaJfMi0PCMyCT24rIvCZ8peZNtmpX/brb0j4oX+CnjDj6n5havIvD4rxCHJw6Ryg=
+        id S1030967AbeBNOoX convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 09:44:23 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35040 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030839AbeBNOoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 09:44:19 -0500
+Date: Wed, 14 Feb 2018 15:44:16 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?B?Wm9sdMOhbiBCw7ZzesO2cm0=?= =?UTF-8?B?w6lueWk=?=
+        <zboszor@pr.hu>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] i2c: piix4: Use usleep_range()
+Message-ID: <20180214154416.5113038d@endymion>
+In-Reply-To: <20180212222241.GA32060@roeck-us.net>
+References: <1514652658-6228-1-git-send-email-linux@roeck-us.net>
+        <1514652658-6228-2-git-send-email-linux@roeck-us.net>
+        <20180212115336.4b828ab8@endymion>
+        <20180212222241.GA32060@roeck-us.net>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1750aeb3-b29a-e6e6-93f4-82cae69777ec@arm.com>
-References: <1518517879-2280-1-git-send-email-vincent.guittot@linaro.org>
- <1518517879-2280-4-git-send-email-vincent.guittot@linaro.org> <1750aeb3-b29a-e6e6-93f4-82cae69777ec@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 14 Feb 2018 15:43:30 +0100
-Message-ID: <CAKfTPtBt+3Que+h14SKnXH-TAxNH8XR7+qXCOE21ZdO8bcuUJA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] sched: update blocked load when newly idle
-To: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
-        Brendan Jackman <brendan.jackman@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14 February 2018 at 15:40, Valentin Schneider
-<valentin.schneider@arm.com> wrote:
-> On 02/13/2018 10:31 AM, Vincent Guittot wrote:
->> When NEWLY_IDLE load balance is not triggered, we might need to update the
->> blocked load anyway. We can kick an ilb so an idle CPU will take care of
->> updating blocked load or we can try to update them locally before entering
->> idle. In the latter case, we reuse part of the nohz_idle_balance.
->>
->> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->> ---
->>  kernel/sched/fair.c | 324 +++++++++++++++++++++++++++++++---------------------
->>  1 file changed, 193 insertions(+), 131 deletions(-)
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 9183fee..cb1ab5c 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->>
->> [...]
->>
->>  /*
->> + * idle_balance is called by schedule() if this_cpu is about to become
->> + * idle. Attempts to pull tasks from other CPUs.
->> + */
->> +static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
->> +{
->> +     unsigned long next_balance = jiffies + HZ;
->> +     int this_cpu = this_rq->cpu;
->> +     struct sched_domain *sd;
->> +     int pulled_task = 0;
->> +     u64 curr_cost = 0;
->> +
->> +     /*
->> +      * We must set idle_stamp _before_ calling idle_balance(), such that we
->> +      * measure the duration of idle_balance() as idle time.
->> +      */
->> +     this_rq->idle_stamp = rq_clock(this_rq);
->> +
->> +     /*
->> +      * Do not pull tasks towards !active CPUs...
->> +      */
->> +     if (!cpu_active(this_cpu))
->> +             return 0;
->> +
->> +     /*
->> +      * This is OK, because current is on_cpu, which avoids it being picked
->> +      * for load-balance and preemption/IRQs are still disabled avoiding
->> +      * further scheduler activity on it and we're being very careful to
->> +      * re-start the picking loop.
->> +      */
->> +     rq_unpin_lock(this_rq, rf);
->> +
->> +     if (this_rq->avg_idle < sysctl_sched_migration_cost ||
->> +         !this_rq->rd->overload) {
->> +#ifdef CONFIG_NO_HZ_COMMON
->> +             unsigned long has_blocked = READ_ONCE(nohz.has_blocked);
->> +             unsigned long next_blocked = READ_ONCE(nohz.next_blocked);
->> +#endif
->> +             rcu_read_lock();
->> +             sd = rcu_dereference_check_sched_domain(this_rq->sd);
->> +             if (sd)
->> +                     update_next_balance(sd, &next_balance);
->> +             rcu_read_unlock();
->> +
->> +#ifdef CONFIG_NO_HZ_COMMON
->> +             /*
->> +              * This CPU doesn't want to be disturbed by scheduler
->> +              * houskeeping
+On Mon, 12 Feb 2018 14:22:41 -0800, Guenter Roeck wrote:
+> On Mon, Feb 12, 2018 at 11:53:36AM +0100, Jean Delvare wrote:
+> > Were you able to test this on older hardware? Unfortunately, the
+> > specification errata of the original Intel PIIX4 is quite vague on the
+> > amount of time you must wait before checking the Host Busy bit:
+> > 
+> > "Note that there may be moderate latency before the transaction begins
+> > and the Host Busy bit gets set."
+> > 
+> > I guess we made it 1 ms at the time because it was the minimum we could
+> > sleep anyway.
+> > 
+> > One option if you really care about the performance of the i2c-piix4
+> > driver on recent hardware would be to lower the initial delay even more
+> > for ATI and AMD chipsets. The errata was for Intel chipsets originally,
+> > and while we know that at least some of the ServerWorks implementations
+> > suffered from the same problem (worse actually) I don't think that
+> > anybody ever bothered checking if it applied to more recent
+> > implementations by other vendors.
+> > 
+> > For reference, at 93.75 kHz (the default SMBus frequency or the SB800),
+> > an SMBus Quick transaction would be completed in 117 us, so I guess an
+> > initial delay of 150 or 200 us would be optimum. And an SMBus Read Byte
+> > transaction completes in 416 ms. I think this is the most popular SMBus
+> > transaction, so ensuring that it is as fast as possible would make
+> > sense.
+> > 
+> > And it might even work on older Intel chipsets, who knows. Plus I doubt
+> > anyone is still using them anyway, so you have my approval to lower the
+> > delays to whatever works for you.
+> > 
+> > As a comparison point, in the i2c-i801 driver we use:
+> > 
+> > 	usleep_range(250, 500);
+> > 
+> > for both the initial sleep and the waiting loop.
 >
-> Typo here (houskeeping)
->
->> +              */
->> +             if (!housekeeping_cpu(this_cpu, HK_FLAG_SCHED))
->> +                     goto out;
->> +
->> +             /* Will wake up very soon. No time for fdoing anything else*/
->
-> Typo here (fdoing)
->
->> +             if (this_rq->avg_idle < sysctl_sched_migration_cost)
->> +                     goto out;
->> +
->> +             /* Don't need to update blocked load of idle CPUs*/
->> +             if (!has_blocked || time_after_eq(jiffies, next_blocked))
->> +                     goto out;
->
-> My "stats update via NEWLY_IDLE" test case started misbehaving with this
-> version: we skip most NEWLY_IDLE stats updates. AFAICT this is the culprit.
->
-> I believe this time check should be time_before(jiffies, next_blocked)
-> (or time_before_eq depending on what you want to guarantee with the jiffy
-> interval stuff).
+> A further test on Ryzen shows that bit 0 of SMBHSTSTS is set immediately,
+> ie with
+> 	outb_p(inb(SMBHSTCNT) | 0x040, SMBHSTCNT);
+>         busy = inb_p(SMBHSTSTS) & 0x01;
+> busy is always true. None of the datasheets I was able to find (sb700,
+> sb800, bolton) suggests that an initial delay is needed.
 
-argh.. I have completely mess up the conditions when reordering them
+It it good that today's hardware is better than Intel's original
+hardware, but on the other hand, it makes little sense to start polling
+before the command has a chance of being completed. So I don't think
+that skipping the initial delay would help with performance.
 
-Thanks for spotting this
+> Another quick test with my Ryzen system, using usleep_range(100, 100),
+> shows the result of quick commands in the third loop iteration (ie
+> after 200 uS), and the result of a "read byte" operation in the 6th
+> loop iteration (ie after 500 uS). This is measured without initial delay.
 
->
->> +
->> +             raw_spin_unlock(&this_rq->lock);
->> +             /*
->> +              * This CPU is going to be idle and blocked load of idle CPUs
->> +              * need to be updated. Run the ilb locally as it is a good
->> +              * candidate for ilb instead of waking up another idle CPU.
->> +              * Kick an normal ilb if we failed to do the update.
->> +              */
->> +             if (!_nohz_idle_balance(this_rq, NOHZ_STATS_KICK, CPU_NEWLY_IDLE))
->> +                     kick_ilb(NOHZ_STATS_KICK);
->> +             raw_spin_lock(&this_rq->lock);
->> +#endif
->> +             goto out;
->> +     }
->> +
+Your numbers are in line with my theoretical estimates above.
+
+> Not sure what that means, if anything, for the driver. The biggest concern
+> is the "moderate latency" required by the Intel chips. Otherwise we could
+> just use the values from i2c-i801 for both initial and loop delay.
+
+I think I would not bother too much about that older hardware which
+probably nobody uses anymore (we are talking about late 90s
+motherboards here, I'm rather conservative and sentimental with my
+hardware and even me no longer have these.) It makes more sense to make
+the driver as efficient as possible for current hardware.
+
+>From your numbers above, an initial sleep of 200 us followed by 200 us
+in-loop delays would seem reasonable to me. With some upper margin to
+let the scheduler reduce the CPU awakening, as suggested by Joe
+somewhere else in this thread.
+
+If you want to push it one step further, you could estimate how long
+the transaction is expected to take (based on the SMBus clock frequency
+and the number of bytes in the transaction) and set the initial delay
+to match that. That would allow to shorten the cycle time in the
+polling loop (as you know you won't cycle at all in most cases) and
+limit the useless calls to usleep_range() and the polls which can't
+succeed.
+
+Whether you want to spend time on this is up to you, of course.
+
+-- 
+Jean Delvare
+SUSE L3 Support
