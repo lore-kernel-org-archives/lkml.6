@@ -1,78 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754651AbeBNIXu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 03:23:50 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:13586 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754556AbeBNIXr (ORCPT
+        id S1754671AbeBNIYO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 03:24:14 -0500
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:35321 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754556AbeBNIYM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 03:23:47 -0500
-Subject: Re: [PATCH v2 0/8] Add support for PWM input capture on STM32
-To: <lee.jones@linaro.org>, <thierry.reding@gmail.com>
-CC: <robh+dt@kernel.org>, <alexandre.torgue@st.com>,
-        <benjamin.gaignard@linaro.org>, <mark.rutland@arm.com>,
-        <linux@armlinux.org.uk>, <mcoquelin.stm32@gmail.com>,
-        <benjamin.gaignard@st.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pwm@vger.kernel.org>
-References: <1516979499-3665-1-git-send-email-fabrice.gasnier@st.com>
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <5ade7f05-f5cc-e272-842c-22effa78b716@st.com>
-Date: Wed, 14 Feb 2018 09:23:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 14 Feb 2018 03:24:12 -0500
+X-Google-Smtp-Source: AH8x227110W69L5ExixP1hCR+AtECk58EF2nNj6+Y9CtM+mMD6v9ySwLbFwY3DihOjBz4CRlCX0zhA==
+Date: Wed, 14 Feb 2018 11:24:09 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH -mm 3/3] proc: account "struct pde_opener"
+Message-ID: <20180214082409.GC17157@avx2>
+References: <20180214063033.GA15579@avx2>
+ <20180214081935.GA17157@avx2>
+ <20180214082306.GB17157@avx2>
 MIME-Version: 1.0
-In-Reply-To: <1516979499-3665-1-git-send-email-fabrice.gasnier@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-14_01:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180214082306.GB17157@avx2>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/26/2018 04:11 PM, Fabrice Gasnier wrote:
-> This series adds support for capture to stm32-pwm driver.
-> Capture is based on DMAs.
-> - First two patches are precursor patches
-> - Subsequent two patches add support for requesting DMAs to MFD core
-> - Next three patches add support for capture to stm32-pwm driver
-> - This has been tested on stm32429i-eval board.
-> 
-> ---
-> Changes in v2:
-> - Abstract DMA handling from child driver: move it to MFD core
-> - Rework pwm capture routines to adopt this change
-> - Comment on optional dma support, beautify DMAs probe
+The allocation is persistent in fact as any fool can open a file in
+/proc and sit on it.
 
-Hi all,
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-Gentle ping for v2 driver review since DT Bindings has been reviewed by
-Rob and the series by Benjamin.
+ fs/proc/inode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Many thanks in advance
-Regards
-Fabrice
-
-> 
-> Fabrice Gasnier (8):
->   pwm: stm32: fix, remove unused struct device
->   pwm: stm32: protect common prescaler for all channels
->   dt-bindings: mfd: stm32-timers: add support for dmas
->   mfd: stm32-timers: add support for dmas
->   pwm: stm32: add capture support
->   pwm: stm32: improve capture by tuning counter prescaler
->   pwm: stm32: use input prescaler to improve period capture
->   ARM: dts: stm32: Enable pwm3 input capture on stm32f429i-eval
-> 
->  .../devicetree/bindings/mfd/stm32-timers.txt       |  20 ++
->  arch/arm/boot/dts/stm32429i-eval.dts               |   3 +
->  drivers/mfd/stm32-timers.c                         | 215 +++++++++++++++-
->  drivers/pwm/pwm-stm32.c                            | 276 ++++++++++++++++++++-
->  include/linux/mfd/stm32-timers.h                   |  39 +++
->  5 files changed, 547 insertions(+), 6 deletions(-)
-> 
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -103,7 +103,7 @@ void __init proc_init_kmemcache(void)
+ 					     init_once);
+ 	pde_opener_cache =
+ 		kmem_cache_create("pde_opener", sizeof(struct pde_opener), 0,
+-				  SLAB_PANIC, NULL);
++				  SLAB_ACCOUNT|SLAB_PANIC, NULL);
+ }
+ 
+ static int proc_show_options(struct seq_file *seq, struct dentry *root)
