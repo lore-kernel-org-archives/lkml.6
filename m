@@ -1,75 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966811AbeBNEMO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 23:12:14 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:41541 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966705AbeBNEMM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 23:12:12 -0500
-Subject: Re: [PATCH v7 3/9] arm: omap: Move dmtimer.h out of plat-omap
-To: Tony Lindgren <tony@atomide.com>, Suman Anna <s-anna@ti.com>
-CC: "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "aaro.koskinen@iki.fi" <aaro.koskinen@iki.fi>,
-        "Claudiu.Beznea@microchip.com" <Claudiu.Beznea@microchip.com>,
-        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "ladis@linux-mips.org" <ladis@linux-mips.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "sebastian.reichel@collabora.co.uk"
-        <sebastian.reichel@collabora.co.uk>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "Kristo, Tero" <t-kristo@ti.com>,
-        "Strashko, Grygorii" <grygorii.strashko@ti.com>
-References: <1515478987-5786-1-git-send-email-j-keerthy@ti.com>
- <1515478987-5786-4-git-send-email-j-keerthy@ti.com>
- <1c9f5c72-f589-d7c7-399f-ef55ecb828a0@ti.com>
- <20180213150900.GD6364@atomide.com>
-From: Keerthy <j-keerthy@ti.com>
-Message-ID: <2f94e782-7925-e42d-d0e1-dbad92f69a83@ti.com>
-Date: Wed, 14 Feb 2018 09:41:23 +0530
+        id S966796AbeBNETz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 23:19:55 -0500
+Received: from mga18.intel.com ([134.134.136.126]:9959 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966705AbeBNETy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 23:19:54 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,510,1511856000";
+   d="scan'208";a="31241308"
+Subject: Re: [PATCH] x86/entry/64: Fix CR3 restore order in paranoid_exit()
+To: Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org
+References: <2b8ce3a31bcdfffa434269f4abf5d46816b75773.1518575248.git.jpoimboe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <9f6d258e-8191-9b57-4839-aa7c84e4c829@intel.com>
+Date: Tue, 13 Feb 2018 20:19:53 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180213150900.GD6364@atomide.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <2b8ce3a31bcdfffa434269f4abf5d46816b75773.1518575248.git.jpoimboe@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/13/2018 06:27 PM, Josh Poimboeuf wrote:
+> --- a/arch/x86/entry/entry_64.S
+> +++ b/arch/x86/entry/entry_64.S
+> @@ -1167,10 +1167,10 @@ ENTRY(paranoid_exit)
+>  	UNWIND_HINT_REGS
+>  	DISABLE_INTERRUPTS(CLBR_ANY)
+>  	TRACE_IRQS_OFF_DEBUG
+> +	RESTORE_CR3	scratch_reg=%r15 save_reg=%r14
+>  	testl	%ebx, %ebx			/* swapgs needed? */
+>  	jnz	.Lparanoid_exit_no_swapgs
+>  	TRACE_IRQS_IRETQ
+> -	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
+>  	SWAPGS_UNSAFE_STACK
+>  	jmp	.Lparanoid_exit_restore
+>  .Lparanoid_exit_no_swapgs:
 
-
-On Tuesday 13 February 2018 08:39 PM, Tony Lindgren wrote:
-> * Suman Anna <s-anna@ti.com> [180213 02:07]:
->> On 01/09/2018 12:23 AM, J, KEERTHY wrote:
->>> The header file is currently under plat-omap directory
->>> under arch/omap. Move this out to an accessible place.
->>> @@ -18,7 +18,7 @@
->>>   #include <linux/platform_data/hsmmc-omap.h>
->>>   #include <linux/platform_data/spi-omap2-mcspi.h>
->>>   #include <linux/omap-dma.h>
->>> -#include <plat/dmtimer.h>
->>> +#include <clocksource/dmtimer.h>
->>
->> These headers are actually not needed in the first-place since we no
->> longer create any non-DT timer devices. I have submitted a series to
->> cleanup the presence of this header file, as part of a larger hwmod data
->> cleanup series.
-> 
-> OK great. Keerthy, care to take a look? Seems like it
-> simplifies things a bit.
-
-Sure Tony. I will look into this.
-
-> 
-> Regards,
-> 
-> Tony
-> 
+TRACE_IRQS_* call non-entry functions that are not mapped by the user
+CR3.  How can this possibly work?  What am I missing?
