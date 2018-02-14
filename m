@@ -1,127 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032358AbeBNQRo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 11:17:44 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:50532 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032153AbeBNQRn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:17:43 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 71EA560385
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date: Wed, 14 Feb 2018 09:17:39 -0700
-From: Jordan Crouse <jcrouse@codeaurora.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFT PATCH] drm/msm: Trigger fence completion from GPU
-Message-ID: <20180214161739.GB25422@jcrouse-lnx.qualcomm.com>
-Mail-Followup-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20180214064658.15741-1-bjorn.andersson@linaro.org>
+        id S1032376AbeBNQRu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 11:17:50 -0500
+Received: from mout.web.de ([212.227.15.14]:38781 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032153AbeBNQRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 11:17:46 -0500
+To: linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Haren Myneni <haren@us.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+        Dan Streetman <ddstreet@ieee.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] crypto: nx-842: Delete an error message for a failed memory
+ allocation in nx842_pseries_init()
+Message-ID: <8261d041-ccd9-c0f8-4530-a4afb43ee7ab@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 17:17:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180214064658.15741-1-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:8Bvk4874i74Vk48Yl2qNJlTmngwsa8qGcevg2nGjvaElkU7Hoyw
+ ii2ABystiEFy+gR7w7xy4bJzxKGxvGwe6Mao2lWipQuoHo0i3DIWGm8R4UEC7+RhaSIJTT9
+ goaFnT+SPYjoXfzMygfp8x/4BsN+iJI3o57HRdV4u/sNAO6Ep9j4TXFlXw9AGFf89ahG18v
+ zC4mh1aBvnO5kEZGh54sQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:6+K2jp6U03s=:WytGq4pe4pQsjEeTKxDCNF
+ aww9LC0qPosL9wlgldLW3MEKe6nCdup8p8qjfiuyEk5uyPNFtL2+dGSYN9cqjDcBk8LcpVrHX
+ VTHEFuso9ctw8QtgDF03eQYqyGnpkRdN1nmSzA+yRi3wys9Sc5EyilgnaR5DHma/slQ0qxJJR
+ JlWgEzrV2ggpGZVVdzxwuizBPBelWVJVnTr07jbAy+BcFORxrz7r7MVbjAf2V0C6PcCG0II93
+ KWOCiDtjj7Ffn7oG08IFEpekzZ+Mvt9iTUbr/093gZ1JhxPnQ0lZOMygpk2FxmwesRl/zqMTt
+ 2+Tw/xkpa8TZCHB1FNW0uVoyzqOc4Ac2mlUSfbsKXQ2oschAflIxLraUmxgBR3c0AuHUJ7Yo/
+ mWr+y0H1+h0yi5mgu5PdZNSZaErHGemSPc/8iIshKtQKpuYWkEhp0YNksKfMtEEuTq9fBWfwe
+ ToJlAyU8MssUVB2RCg8EO8Ph0gvd9wmnoMUGSEd+KOKhxkXyH9IGhJmLaLKYVqFRoqh7/hn4K
+ fziFp/sWk2MmqTg3OAs+Hj9q865zrVs8NWpWt2xX89MAPeJdz0HXrYZcT3rkpNOsWr9u2cRN9
+ bk6I0oq9HgT75YVXGEcEXHbGshxDGGWI3/z8Lmz8oBg7X4FCSTfDAKnEPzKShw6rmXLPRM8Jq
+ zyu0eVDoTaK38Uy8GgnywBZNQmKVCm6WFH91u8b/7OLjE64pbfkemRsmYhqQI4Sir6P8E3BjU
+ e49RmAmOOO5+jr9AEmFq2daXwBA9OtBi50/gKEtkoA4R86HlE+R+Plpc8EpZ29laEY3uIh4bo
+ qzLrIk0Gr7BTxSYbnCpuUSwpR38NA2vLS6l4a88cxzSEQkwLak=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 10:46:58PM -0800, Bjorn Andersson wrote:
-> Interrupt commands causes the CP to trigger an interrupt as the command
-> is processed, regardless of the GPU being done processing previous
-> commands. This is seen by the interrupt being delivered before the
-> fence is written on 8974 and is likely the cause of the additional
-> CP_WAIT_FOR_IDLE workaround found for a306, which would cause the CP to
-> wait for the GPU to go idle before triggering the interrupt.
-> 
-> Instead we can set the (undocumented) BIT(31) of the CACHE_FLUSH_TS
-> which will cause a special CACHE_FLUSH_TS interrupt to be triggered from
-> the GPU as the write event is processed.
-> 
-> Add CACHE_FLUSH_TS to the IRQ masks of A3xx and A4xx and remove the
-> workaround for A306.
-> 
-> Suggested-by: Jordan Crouse <jcrouse@codeaurora.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 17:05:13 +0100
 
-LGTM. This should help your races.
+Omit an extra message for a memory allocation failure in this function.
 
-> ---
-> 
-> This is only tested on 8974.
-> 
->  drivers/gpu/drm/msm/adreno/a3xx_gpu.c   |  1 +
->  drivers/gpu/drm/msm/adreno/a4xx_gpu.c   |  1 +
->  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 18 ++----------------
->  3 files changed, 4 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
-> index 4baef2738178..a3a43be920d0 100644
-> --- a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
-> @@ -35,6 +35,7 @@
->  	 A3XX_INT0_CP_RB_INT |             \
->  	 A3XX_INT0_CP_REG_PROTECT_FAULT |  \
->  	 A3XX_INT0_CP_AHB_ERROR_HALT |     \
-> +	 A3XX_INT0_CACHE_FLUSH_TS |        \
->  	 A3XX_INT0_UCHE_OOB_ACCESS)
->  
->  extern bool hang_debug;
-> diff --git a/drivers/gpu/drm/msm/adreno/a4xx_gpu.c b/drivers/gpu/drm/msm/adreno/a4xx_gpu.c
-> index 8199a4b9f2fa..b44cd0d90621 100644
-> --- a/drivers/gpu/drm/msm/adreno/a4xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a4xx_gpu.c
-> @@ -27,6 +27,7 @@
->  	 A4XX_INT0_CP_RB_INT |             \
->  	 A4XX_INT0_CP_REG_PROTECT_FAULT |  \
->  	 A4XX_INT0_CP_AHB_ERROR_HALT |     \
-> +	 A4XX_INT0_CACHE_FLUSH_TS |        \
->  	 A4XX_INT0_UCHE_OOB_ACCESS)
->  
->  extern bool hang_debug;
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> index de63ff26a062..5806f9942514 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> @@ -293,26 +293,12 @@ void adreno_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit,
->  		OUT_RING(ring, 0x00000000);
->  	}
->  
-> +	/* BIT(31) of CACHE_FLUSH_TS triggers CACHE_FLUSH_TS IRQ from GPU */
->  	OUT_PKT3(ring, CP_EVENT_WRITE, 3);
-> -	OUT_RING(ring, CACHE_FLUSH_TS);
-> +	OUT_RING(ring, CACHE_FLUSH_TS | BIT(31));
->  	OUT_RING(ring, rbmemptr(ring, fence));
->  	OUT_RING(ring, submit->seqno);
->  
-> -	/* we could maybe be clever and only CP_COND_EXEC the interrupt: */
-> -	OUT_PKT3(ring, CP_INTERRUPT, 1);
-> -	OUT_RING(ring, 0x80000000);
-> -
-> -	/* Workaround for missing irq issue on 8x16/a306.  Unsure if the
-> -	 * root cause is a platform issue or some a306 quirk, but this
-> -	 * keeps things humming along:
-> -	 */
-> -	if (adreno_is_a306(adreno_gpu)) {
-> -		OUT_PKT3(ring, CP_WAIT_FOR_IDLE, 1);
-> -		OUT_RING(ring, 0x00000000);
-> -		OUT_PKT3(ring, CP_INTERRUPT, 1);
-> -		OUT_RING(ring, 0x80000000);
-> -	}
-> -
->  #if 0
->  	if (adreno_is_a3xx(adreno_gpu)) {
->  		/* Dummy set-constant to trigger context rollover */
-> -- 
-> 2.15.0
-> 
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/nx/nx-842-pseries.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/crypto/nx/nx-842-pseries.c b/drivers/crypto/nx/nx-842-pseries.c
+index bf52cd1d7fca..66869976cfa2 100644
+--- a/drivers/crypto/nx/nx-842-pseries.c
++++ b/drivers/crypto/nx/nx-842-pseries.c
+@@ -1105,10 +1105,9 @@ static int __init nx842_pseries_init(void)
+ 
+ 	RCU_INIT_POINTER(devdata, NULL);
+ 	new_devdata = kzalloc(sizeof(*new_devdata), GFP_KERNEL);
+-	if (!new_devdata) {
+-		pr_err("Could not allocate memory for device data\n");
++	if (!new_devdata)
+ 		return -ENOMEM;
+-	}
++
+ 	RCU_INIT_POINTER(devdata, new_devdata);
+ 
+ 	ret = vio_register_driver(&nx842_vio_driver);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.16.1
