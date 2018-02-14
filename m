@@ -1,68 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751493AbeBNFIu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 00:08:50 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:39259 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751148AbeBNFIs (ORCPT
+        id S1751620AbeBNFKH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 00:10:07 -0500
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:48813 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751008AbeBNFKF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 00:08:48 -0500
-X-Google-Smtp-Source: AH8x2255fLHwwWmvoxDCHD6ZTtAjEtqYrnE+DyeMjPzki3MxWGYpLOEfggJSy4munf9DTjDVJDvZZA==
-Date: Wed, 14 Feb 2018 14:08:43 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        m.mizuma@jp.fujitsu.com, akpm@linux-foundation.org, mhocko@suse.com,
-        catalin.marinas@arm.com, takahiro.akashi@linaro.org,
-        gi-oh.kim@profitbricks.com, heiko.carstens@de.ibm.com,
-        baiyaowei@cmss.chinamobile.com, richard.weiyang@gmail.com,
-        paul.burton@mips.com, miles.chen@mediatek.com, vbabka@suse.cz,
-        mgorman@suse.de, hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v3 1/1] mm: initialize pages on demand during boot
-Message-ID: <20180214050843.GA2811@jagdpanzerIV>
-References: <20180209192216.20509-1-pasha.tatashin@oracle.com>
- <20180209192216.20509-2-pasha.tatashin@oracle.com>
+        Wed, 14 Feb 2018 00:10:05 -0500
+Subject: Re: [PATCH v7 4/9] arm: OMAP: Move dmtimer driver out of plat-omap to
+ drivers under clocksource
+To: Suman Anna <s-anna@ti.com>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "tony@atomide.com" <tony@atomide.com>,
+        "aaro.koskinen@iki.fi" <aaro.koskinen@iki.fi>
+CC: "Claudiu.Beznea@microchip.com" <Claudiu.Beznea@microchip.com>,
+        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "ladis@linux-mips.org" <ladis@linux-mips.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "sebastian.reichel@collabora.co.uk"
+        <sebastian.reichel@collabora.co.uk>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "Kristo, Tero" <t-kristo@ti.com>,
+        "Strashko, Grygorii" <grygorii.strashko@ti.com>
+References: <1515478987-5786-1-git-send-email-j-keerthy@ti.com>
+ <1515478987-5786-5-git-send-email-j-keerthy@ti.com>
+ <ed5ed107-e17d-a568-3f21-17f710388ef2@ti.com>
+From: Keerthy <j-keerthy@ti.com>
+Message-ID: <fa65db82-3dfe-0af3-8d92-2be48f78c36b@ti.com>
+Date: Wed, 14 Feb 2018 10:39:19 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180209192216.20509-2-pasha.tatashin@oracle.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <ed5ed107-e17d-a568-3f21-17f710388ef2@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (02/09/18 14:22), Pavel Tatashin wrote:
-[..]
-> +/*
-> + * If this zone has deferred pages, try to grow it by initializing enough
-> + * deferred pages to satisfy the allocation specified by order, rounded up to
-> + * the nearest PAGES_PER_SECTION boundary.  So we're adding memory in increments
-> + * of SECTION_SIZE bytes by initializing struct pages in increments of
-> + * PAGES_PER_SECTION * sizeof(struct page) bytes.
-> + *
-> + * Return true when zone was grown by at least number of pages specified by
-> + * order. Otherwise return false.
-> + *
-> + * Note: We use noinline because this function is needed only during boot, and
-> + * it is called from a __ref function _deferred_grow_zone. This way we are
-> + * making sure that it is not inlined into permanent text section.
-> + */
-> +static noinline bool __init
-> +deferred_grow_zone(struct zone *zone, unsigned int order)
-> +{
-> +	int zid = zone_idx(zone);
-> +	int nid = zone->node;
 
-		^^^^^^^^^
 
-Should be CONFIG_NUMA dependent
+On Tuesday 13 February 2018 07:54 AM, Suman Anna wrote:
+> Hi Keerthy,
+> 
+> On 01/09/2018 12:23 AM, J, KEERTHY wrote:
+>> Move the dmtimer driver out of plat-omap to clocksource.
+>> So that non-omap devices also could use this.
+> 
+> What non-omap devices do you have in mind? I don't think this driver is
+> ready for that yet. It still has a lot of OMAP dependencies. So you
+> should defer this for later along with the rest of the cleanup and when
+> the driver is ready for that.
 
-struct zone {
-...
-#ifdef CONFIG_NUMA
-	int node;
-#endif
-...
+I mean non-omap TI devices. Not totally generic one.
 
-	-ss
+> 
+>>
+>> No Code changes done to the driver file only renamed to timer-dm.c.
+>> Also removed the config dependencies for OMAP_DM_TIMER.
+>>
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+>> Tested-by: Ladislav Michl <ladis@linux-mips.org>
+>> ---
+>>   arch/arm/plat-omap/Kconfig                                     | 6 ------
+>>   arch/arm/plat-omap/Makefile                                    | 1 -
+>>   drivers/clocksource/Kconfig                                    | 3 +++
+>>   drivers/clocksource/Makefile                                   | 1 +
+>>   arch/arm/plat-omap/dmtimer.c => drivers/clocksource/timer-dm.c | 0
+>>   5 files changed, 4 insertions(+), 7 deletions(-)
+>>   rename arch/arm/plat-omap/dmtimer.c => drivers/clocksource/timer-dm.c (100%)
+>>
+>> diff --git a/arch/arm/plat-omap/Kconfig b/arch/arm/plat-omap/Kconfig
+>> index 7276afe..afc1a1d 100644
+>> --- a/arch/arm/plat-omap/Kconfig
+>> +++ b/arch/arm/plat-omap/Kconfig
+>> @@ -106,12 +106,6 @@ config OMAP3_L2_AUX_SECURE_SERVICE_SET_ID
+>>           help
+>>             PPA routine service ID for setting L2 auxiliary control register.
+>>
+>> -config OMAP_DM_TIMER
+>> -       bool "Use dual-mode timer"
+>> -       depends on ARCH_OMAP16XX || ARCH_OMAP2PLUS
+>> -       help
+>> -        Select this option if you want to use OMAP Dual-Mode timers.
+>> -
+>>   config OMAP_SERIAL_WAKE
+>>           bool "Enable wake-up events for serial ports"
+>>           depends on ARCH_OMAP1 && OMAP_MUX
+>> diff --git a/arch/arm/plat-omap/Makefile b/arch/arm/plat-omap/Makefile
+>> index 47e1867..7215ada 100644
+>> --- a/arch/arm/plat-omap/Makefile
+>> +++ b/arch/arm/plat-omap/Makefile
+>> @@ -9,5 +9,4 @@ obj-y := sram.o dma.o counter_32k.o
+>>
+>>   # omap_device support (OMAP2+ only at the moment)
+>>
+>> -obj-$(CONFIG_OMAP_DM_TIMER) += dmtimer.o
+>>   obj-$(CONFIG_OMAP_DEBUG_LEDS) += debug-leds.o
+>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+>> index c729a88..3f799b2 100644
+>> --- a/drivers/clocksource/Kconfig
+>> +++ b/drivers/clocksource/Kconfig
+>> @@ -21,6 +21,9 @@ config CLKEVT_I8253
+>>   config I8253_LOCK
+>>           bool
+>>
+>> +config OMAP_DM_TIMER
+>> +       bool
+>> +
+>>   config CLKBLD_I8253
+>>           def_bool y if CLKSRC_I8253 || CLKEVT_I8253 || I8253_LOCK
+>>
+>> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+>> index 72711f1..27b5497 100644
+>> --- a/drivers/clocksource/Makefile
+>> +++ b/drivers/clocksource/Makefile
+>> @@ -16,6 +16,7 @@ obj-$(CONFIG_EM_TIMER_STI)    += em_sti.o
+>>   obj-$(CONFIG_CLKBLD_I8253)      += i8253.o
+>>   obj-$(CONFIG_CLKSRC_MMIO)       += mmio.o
+>>   obj-$(CONFIG_DIGICOLOR_TIMER)   += timer-digicolor.o
+>> +obj-$(CONFIG_OMAP_DM_TIMER)    += timer-dm.o
+>>   obj-$(CONFIG_DW_APB_TIMER)      += dw_apb_timer.o
+>>   obj-$(CONFIG_DW_APB_TIMER_OF)   += dw_apb_timer_of.o
+>>   obj-$(CONFIG_FTTMR010_TIMER)    += timer-fttmr010.o
+>> diff --git a/arch/arm/plat-omap/dmtimer.c b/drivers/clocksource/timer-dm.c
+>> similarity index 100%
+>> rename from arch/arm/plat-omap/dmtimer.c
+>> rename to drivers/clocksource/timer-dm.c
+> 
+> Similar comments as in patch 3 about the file name at the top, and the
+> question about adding omap to the file name.
+
+I will go with timer-ti-dm.c following timer-ti-32k.c
+Hope that is okay.
+
+> 
+> Also, I see that omap_dm_timer_get_fclk() is only defined for
+> !CONFIG_ARCH_OMAP1, but currently the function is declared in the header
+> file for both OMAP1 and OMAP2. You would want to inline that for OMAP1
+> in the header file (we currently get away with it because no one uses it).
+
+Sure.
+
+> 
+> regards
+> Suman
+> 
+>> -- 
+>> 1.9.1
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>>
+> 
