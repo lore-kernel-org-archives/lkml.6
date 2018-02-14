@@ -1,49 +1,46 @@
-Return-Path: <vivek.gautam@codeaurora.org>
-X-Google-Smtp-Source: AH8x227+KYc3cMjvzEFILrllUFkSqIDVik1eLnO+RkHDt4C2KWgDZF2Tqfv+6RL9ZBe6kF5VXLpl
-ARC-Seal: i=1; a=rsa-sha256; t=1518581827; cv=none;
+Return-Path: <tfiga@chromium.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1518586743; cv=none;
         d=google.com; s=arc-20160816;
-        b=sM+8L1AzhW4ZugEIDuT7vns0GD5TVFW9o3KkZ22tWkwg2CwaWCcuHar6xT6Wy89KvW
-         jIlzNNaPEoJM9N1I4pi1lMVlkZTGOstfxcusM47IVyJmF/5x8Vn3nhfvOAdMGrcrWsxn
-         4ZDB3ykmgONgwNf4zGL0clsA5KXnBACr8QcYvjDp8PVuWljEl7B+A+2UoH+e9tKRyBV8
-         pH69NUUqVEW+JGjgoO9L1SRGcwQP/eFiCLokqzjyjQyikb4C5vnNxZVFviwbQaVlX/or
-         lRVrnaCYwiJ3qgSpUbOmFzh2KGHg/kebZWgcc0tS664PSQ79B9C08YvIBu/elRgl5Mhr
-         W7kQ==
+        b=viudBhBpei1iltGOILqwQXHJwPqAwOTahf9yQXBaebSQ66Rc3mE3nofQpTx6jor32f
+         9CP6qpTOEkWpHQBkzkCgswRd1FMlYi0iPguWMrnBOeXGUMZcEscgkp3uP0XYRa3IkLop
+         +dPizM5ERpB/KLXaRm/LxZUngmdR+M1c9UsLkqfgGNM5ctUR7hp0KpOv2ykT/+84cCvk
+         PgS+yOjeKDvX2CxK9rY8X5IKFSiF/7PxAyNfhRIceFUKS06h85vRLQPrGlzYb96wK4V9
+         FU5LgwuE61+apNCICeU63i2oCPZHFDv+P3srHLZZu9mCh1/mP4nLOJrtyoGoptr25buU
+         6zkA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=OiwsRH+FBu0XJueJ6zSpcBZa3WXUPLeqxQRUnK8/hHw=;
-        b=lIUoRa95nJaPafBp5L4Ji/8ztv5vATuHGHqWU1J3tdTqczQ2xCIXB2hrkrA3RbDpWB
-         Ph2u56t+FC2b+IV6NvDj1WJtL+sAT1AxWJ/dodoSZ6lOmGsuX0Z4OqqHpnbUoFy3ru5A
-         V2J5KgJsNMi4SpBJvshcP+U8FK1+nAlwQ6TuNQL4mDyyvOwsXM9L0QHwElzZGmpZb1aO
-         7BmSKGXYfJLd/FBnY/G+WZnxXsR8Z+DvzFe94hrrXxCWQrG9cOimK0u8QdGp54s1NgBj
-         IgxZ2Pq+Lb8GB+APLaDfEdRVP9gHarb4LAoqVraQTU4b1ApGph0R35enP0uNexjzIu9h
-         vgyw==
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=uwzEcpPHs2dETBD1354bIKlF94t5KkbI+O2zEZI6sck=;
+        b=zlHZXLM+7oCJd+e237gQnd6I/vhLj5M7XewYVMT8Y2o8vfEtCh/s42x/LMoWt37+DU
+         Vjwef72OHI+lUIZCQPyq7HAk0dY2aGuigCmStv8QmxFd3nw0zL8LU0ssJ3OkvFeR9qnv
+         KfvdtXv2HdAjM7+3TQNqHJzTKsVF/AirUq08Bl4xNqx3xqvRlh1ixg+as5zgWOdsxKmd
+         MLQNGvywoYGDMaCF7mrGLdY4TwYA6DUR7T8zMtfWjPfb0T6zVfcuLOOKEoDkAQcz60oz
+         PezyKw/WZ28QwvSi/YZYzgrQnJ+A0q3S52AMkgvTiPbcw2PXRFX8oaAhThWIQJ524Hvm
+         wpxg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=TEkY0PG2;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=WK44fmPN;
-       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
+       dkim=pass header.i=@chromium.org header.s=google header.b=OMRUhdxa;
+       spf=pass (google.com: domain of tfiga@chromium.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=tfiga@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=TEkY0PG2;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=WK44fmPN;
-       spf=pass (google.com: domain of vivek.gautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=vivek.gautam@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DD9DD60F90
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+       dkim=pass header.i=@chromium.org header.s=google header.b=OMRUhdxa;
+       spf=pass (google.com: domain of tfiga@chromium.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=tfiga@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AH8x224G5g9+chUo978nKAtj/9gkWlsE8NNy96+yoXJM4ou5vcvi5Fu/SiBIhrSubofS0zyS78wXzA==
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5BZJ1G0RG32hYErNzPRvisBhhiSNCBsjbzfm0WzO=DnsQ@mail.gmail.com>
+In-Reply-To: <CAFp+6iHaycK=CcE1S15EeuMkaw8LnW0ebptU0hM6tUtWdeEOtA@mail.gmail.com>
 References: <1517999482-17317-1-git-send-email-vivek.gautam@codeaurora.org>
  <1517999482-17317-7-git-send-email-vivek.gautam@codeaurora.org>
  <CAAFQd5AjopiX6fDgD+mO+-+d0yj-swEnVCNvccWRBSMO+XVJkA@mail.gmail.com>
  <CAF6AEGs8qcRTvz6srSfc39ybZrPYMVg2w6qkaO2AdWL1GD4mQw@mail.gmail.com>
  <CAAFQd5BKRumpEfAKNF_RKS-ZZ8D671DfOz4vB2+w1SV3aG9NxQ@mail.gmail.com>
- <CAF6AEGuNZJKtwGZ5mLfqNND2jtU+HYM11UONfAtVTzoM0QVpdg@mail.gmail.com> <CAAFQd5BZJ1G0RG32hYErNzPRvisBhhiSNCBsjbzfm0WzO=DnsQ@mail.gmail.com>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Date: Wed, 14 Feb 2018 09:47:04 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iHaycK=CcE1S15EeuMkaw8LnW0ebptU0hM6tUtWdeEOtA@mail.gmail.com>
-Message-ID: <CAFp+6iHaycK=CcE1S15EeuMkaw8LnW0ebptU0hM6tUtWdeEOtA@mail.gmail.com>
+ <CAF6AEGuNZJKtwGZ5mLfqNND2jtU+HYM11UONfAtVTzoM0QVpdg@mail.gmail.com>
+ <CAAFQd5BZJ1G0RG32hYErNzPRvisBhhiSNCBsjbzfm0WzO=DnsQ@mail.gmail.com> <CAFp+6iHaycK=CcE1S15EeuMkaw8LnW0ebptU0hM6tUtWdeEOtA@mail.gmail.com>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Wed, 14 Feb 2018 14:38:39 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5Afj-Bj+3wHwmF2tT7y=46EsYEtO_mXfY6stXBgHutEUg@mail.gmail.com>
+Message-ID: <CAAFQd5Afj-Bj+3wHwmF2tT7y=46EsYEtO_mXfY6stXBgHutEUg@mail.gmail.com>
 Subject: Re: [PATCH v7 6/6] drm/msm: iommu: Replace runtime calls with runtime suppliers
-To: Tomasz Figa <tfiga@chromium.org>
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
 Cc: Rob Clark <robdclark@gmail.com>,
 	"list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg Roedel <joro@8bytes.org>," <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
@@ -57,128 +54,141 @@ Cc: Rob Clark <robdclark@gmail.com>,
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591737886832187485?=
-X-GMAIL-MSGID: =?utf-8?q?1592348457950778555?=
+X-GMAIL-MSGID: =?utf-8?q?1592353613432901143?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Tomasz,
-
-On Wed, Feb 14, 2018 at 8:31 AM, Tomasz Figa <tfiga@chromium.org> wrote:
-> On Wed, Feb 14, 2018 at 11:13 AM, Rob Clark <robdclark@gmail.com> wrote:
->> On Tue, Feb 13, 2018 at 8:59 PM, Tomasz Figa <tfiga@chromium.org> wrote:
->>> On Wed, Feb 14, 2018 at 3:03 AM, Rob Clark <robdclark@gmail.com> wrote:
->>>> On Tue, Feb 13, 2018 at 4:10 AM, Tomasz Figa <tfiga@chromium.org> wrote:
->>>>> Hi Vivek,
+On Wed, Feb 14, 2018 at 1:17 PM, Vivek Gautam
+<vivek.gautam@codeaurora.org> wrote:
+> Hi Tomasz,
+>
+> On Wed, Feb 14, 2018 at 8:31 AM, Tomasz Figa <tfiga@chromium.org> wrote:
+>> On Wed, Feb 14, 2018 at 11:13 AM, Rob Clark <robdclark@gmail.com> wrote:
+>>> On Tue, Feb 13, 2018 at 8:59 PM, Tomasz Figa <tfiga@chromium.org> wrote:
+>>>> On Wed, Feb 14, 2018 at 3:03 AM, Rob Clark <robdclark@gmail.com> wrote:
+>>>>> On Tue, Feb 13, 2018 at 4:10 AM, Tomasz Figa <tfiga@chromium.org> wrote:
+>>>>>> Hi Vivek,
+>>>>>>
+>>>>>> Thanks for the patch. Please see my comments inline.
+>>>>>>
+>>>>>> On Wed, Feb 7, 2018 at 7:31 PM, Vivek Gautam
+>>>>>> <vivek.gautam@codeaurora.org> wrote:
+>>>>>>> While handling the concerned iommu, there should not be a
+>>>>>>> need to power control the drm devices from iommu interface.
+>>>>>>> If these drm devices need to be powered around this time,
+>>>>>>> the respective drivers should take care of this.
+>>>>>>>
+>>>>>>> Replace the pm_runtime_get/put_sync(<drm_device>) with
+>>>>>>> pm_runtime_get/put_suppliers(<drm_device>) calls, to power-up
+>>>>>>> the connected iommu through the device link interface.
+>>>>>>> In case the device link is not setup these get/put_suppliers()
+>>>>>>> calls will be a no-op, and the iommu driver should take care of
+>>>>>>> powering on its devices accordingly.
+>>>>>>>
+>>>>>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>>>>>>> ---
+>>>>>>>  drivers/gpu/drm/msm/msm_iommu.c | 16 ++++++++--------
+>>>>>>>  1 file changed, 8 insertions(+), 8 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
+>>>>>>> index b23d33622f37..1ab629bbee69 100644
+>>>>>>> --- a/drivers/gpu/drm/msm/msm_iommu.c
+>>>>>>> +++ b/drivers/gpu/drm/msm/msm_iommu.c
+>>>>>>> @@ -40,9 +40,9 @@ static int msm_iommu_attach(struct msm_mmu *mmu, const char * const *names,
+>>>>>>>         struct msm_iommu *iommu = to_msm_iommu(mmu);
+>>>>>>>         int ret;
+>>>>>>>
+>>>>>>> -       pm_runtime_get_sync(mmu->dev);
+>>>>>>> +       pm_runtime_get_suppliers(mmu->dev);
+>>>>>>>         ret = iommu_attach_device(iommu->domain, mmu->dev);
+>>>>>>> -       pm_runtime_put_sync(mmu->dev);
+>>>>>>> +       pm_runtime_put_suppliers(mmu->dev);
+>>>>>>
+>>>>>> For me, it looks like a wrong place to handle runtime PM of IOMMU
+>>>>>> here. iommu_attach_device() calls into IOMMU driver's attach_device()
+>>>>>> callback and that's where necessary runtime PM gets should happen, if
+>>>>>> any. In other words, driver A (MSM DRM driver) shouldn't be dealing
+>>>>>> with power state of device controlled by driver B (ARM SMMU).
 >>>>>
->>>>> Thanks for the patch. Please see my comments inline.
->>>>>
->>>>> On Wed, Feb 7, 2018 at 7:31 PM, Vivek Gautam
->>>>> <vivek.gautam@codeaurora.org> wrote:
->>>>>> While handling the concerned iommu, there should not be a
->>>>>> need to power control the drm devices from iommu interface.
->>>>>> If these drm devices need to be powered around this time,
->>>>>> the respective drivers should take care of this.
->>>>>>
->>>>>> Replace the pm_runtime_get/put_sync(<drm_device>) with
->>>>>> pm_runtime_get/put_suppliers(<drm_device>) calls, to power-up
->>>>>> the connected iommu through the device link interface.
->>>>>> In case the device link is not setup these get/put_suppliers()
->>>>>> calls will be a no-op, and the iommu driver should take care of
->>>>>> powering on its devices accordingly.
->>>>>>
->>>>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->>>>>> ---
->>>>>>  drivers/gpu/drm/msm/msm_iommu.c | 16 ++++++++--------
->>>>>>  1 file changed, 8 insertions(+), 8 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
->>>>>> index b23d33622f37..1ab629bbee69 100644
->>>>>> --- a/drivers/gpu/drm/msm/msm_iommu.c
->>>>>> +++ b/drivers/gpu/drm/msm/msm_iommu.c
->>>>>> @@ -40,9 +40,9 @@ static int msm_iommu_attach(struct msm_mmu *mmu, const char * const *names,
->>>>>>         struct msm_iommu *iommu = to_msm_iommu(mmu);
->>>>>>         int ret;
->>>>>>
->>>>>> -       pm_runtime_get_sync(mmu->dev);
->>>>>> +       pm_runtime_get_suppliers(mmu->dev);
->>>>>>         ret = iommu_attach_device(iommu->domain, mmu->dev);
->>>>>> -       pm_runtime_put_sync(mmu->dev);
->>>>>> +       pm_runtime_put_suppliers(mmu->dev);
->>>>>
->>>>> For me, it looks like a wrong place to handle runtime PM of IOMMU
->>>>> here. iommu_attach_device() calls into IOMMU driver's attach_device()
->>>>> callback and that's where necessary runtime PM gets should happen, if
->>>>> any. In other words, driver A (MSM DRM driver) shouldn't be dealing
->>>>> with power state of device controlled by driver B (ARM SMMU).
+>>>>> Note that we end up having to do the same, because of iommu_unmap()
+>>>>> while DRM driver is powered off..  it might be cleaner if it was all
+>>>>> self contained in the iommu driver, but that would make it so other
+>>>>> drivers couldn't call iommu_unmap() from an irq handler, which is
+>>>>> apparently something that some of them want to do..
 >>>>
->>>> Note that we end up having to do the same, because of iommu_unmap()
->>>> while DRM driver is powered off..  it might be cleaner if it was all
->>>> self contained in the iommu driver, but that would make it so other
->>>> drivers couldn't call iommu_unmap() from an irq handler, which is
->>>> apparently something that some of them want to do..
+>>>> I'd assume that runtime PM status is already guaranteed to be active
+>>>> when the IRQ handler is running, by some other means (e.g.
+>>>> pm_runtime_get_sync() called earlier, when queuing some work to the
+>>>> hardware). Otherwise, I'm not sure how a powered down device could
+>>>> trigger an IRQ.
+>>>>
+>>>> So, if the master device power is already on, suppliers should be
+>>>> powered on as well, thanks to device links.
+>>>>
 >>>
->>> I'd assume that runtime PM status is already guaranteed to be active
->>> when the IRQ handler is running, by some other means (e.g.
->>> pm_runtime_get_sync() called earlier, when queuing some work to the
->>> hardware). Otherwise, I'm not sure how a powered down device could
->>> trigger an IRQ.
->>>
->>> So, if the master device power is already on, suppliers should be
->>> powered on as well, thanks to device links.
->>>
+>>> umm, that is kindof the inverse of the problem..  the problem is
+>>> things like gpu driver (and v4l2 drivers that import dma-buf's,
+>>> afaict).. they will potentially call iommu->unmap() when device is not
+>>> active (due to userspace or things beyond the control of the driver)..
+>>> so *they* would want iommu to do pm get/put calls.
 >>
->> umm, that is kindof the inverse of the problem..  the problem is
->> things like gpu driver (and v4l2 drivers that import dma-buf's,
->> afaict).. they will potentially call iommu->unmap() when device is not
->> active (due to userspace or things beyond the control of the driver)..
->> so *they* would want iommu to do pm get/put calls.
+>> Which is fine and which is actually already done by one of the patches
+>> in this series, not for map/unmap, but probe, add_device,
+>> remove_device. Having parts of the API doing it inside the callback
+>> and other parts outside sounds at least inconsistent.
+>>
+>>> But other drivers
+>>> trying to unmap from irq ctx would not.  Which is the contradictory
+>>> requirement that lead to the idea of iommu user powering up iommu for
+>>> unmap.
+>>
+>> Sorry, maybe I wasn't clear. My last message was supposed to show that
+>> it's not contradictory at all, because "other drivers trying to unmap
+>> from irq ctx" would already have called pm_runtime_get_*() earlier
+>> from a non-irq ctx, which would have also done the same on all the
+>> linked suppliers, including the IOMMU. The ultimate result would be
+>> that the map/unmap() of the IOMMU driver calling pm_runtime_get_sync()
+>> would do nothing besides incrementing the reference count.
 >
-> Which is fine and which is actually already done by one of the patches
-> in this series, not for map/unmap, but probe, add_device,
-> remove_device. Having parts of the API doing it inside the callback
-> and other parts outside sounds at least inconsistent.
->
->> But other drivers
->> trying to unmap from irq ctx would not.  Which is the contradictory
->> requirement that lead to the idea of iommu user powering up iommu for
->> unmap.
->
-> Sorry, maybe I wasn't clear. My last message was supposed to show that
-> it's not contradictory at all, because "other drivers trying to unmap
-> from irq ctx" would already have called pm_runtime_get_*() earlier
-> from a non-irq ctx, which would have also done the same on all the
-> linked suppliers, including the IOMMU. The ultimate result would be
-> that the map/unmap() of the IOMMU driver calling pm_runtime_get_sync()
-> would do nothing besides incrementing the reference count.
+> The entire point was to avoid the slowpath that pm_runtime_get/put_sync()
+> would add in map/unmap. It would not be correct to add a slowpath in irq_ctx
+> for taking care of non-irq_ctx and for the situations where master is already
+> powered-off.
 
-The entire point was to avoid the slowpath that pm_runtime_get/put_sync()
-would add in map/unmap. It would not be correct to add a slowpath in irq_ctx
-for taking care of non-irq_ctx and for the situations where master is already
-powered-off.
+Correct me if I'm wrong, but I believe that with what I'm proposing
+there wouldn't be any slow path.
+
+a) For IRQ context, the master is already powered on and so the SMMU
+is also powered on, through respective device link.
+pm_runtime_get_sync() would ultimately just increment the runtime PM
+usage count.
+
+b) For a case when the master is already powered off (which wouldn't
+be IRQ context, for the reason stated in a)), powering on the SMMU is
+unavoidable, if the SMMU hardware really needs to be accessed (i.e.
+some TLBs need to be invalidated, if their state is preserved despite
+master being powered down).
 
 >
 >>
->> There has already been some discussion about this on various earlier
->> permutations of this patchset.  I think we have exhausted all other
->> options.
->
-> I guess I should have read those. Let me do that now.
-Yea, i point to the thread in cover letter and [PATCH 1/6].
-Thanks.
+>>>
+>>> There has already been some discussion about this on various earlier
+>>> permutations of this patchset.  I think we have exhausted all other
+>>> options.
+>>
+>> I guess I should have read those. Let me do that now.
+> Yea, i point to the thread in cover letter and [PATCH 1/6].
+> Thanks.
 
-regards
-Vivek
+I read through all the links in the cover letter and I could see other
+attempts not working out indeed, but they were different from what I'm
+proposing.
 
->
-> Best regards,
-> Tomasz
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+There was also a point raised that __pm_runtime_resume() called from
+pm_runtime_get_sync() would grab dev->power_lock spinlock, which is
+true, except that if the device is already active, it would do it only
+for the time of checking device state, so I doubt it would really be a
+significant point of contention.
 
-
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Best regards,
+Tomasz
