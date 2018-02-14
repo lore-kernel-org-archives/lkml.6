@@ -1,71 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033341AbeBNRFr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 12:05:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46900 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032907AbeBNRFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 12:05:45 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A115121782
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Wed, 14 Feb 2018 17:05:41 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 8/8] MAINTAINERS: Add entry for Microsemi MIPS SoCs
-Message-ID: <20180214170540.GG3986@saruman>
-References: <20180116101240.5393-1-alexandre.belloni@free-electrons.com>
- <20180116101240.5393-9-alexandre.belloni@free-electrons.com>
+        id S1033361AbeBNRGL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 12:06:11 -0500
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:38037 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032907AbeBNRGJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 12:06:09 -0500
+X-Google-Smtp-Source: AH8x224Ep5ExHF70VziLFwt6ElqDqG2BW6cKr3kaX/UPrMYl3sYDMg9GoqYEaaI5hcSasiyH2ZWF3A==
+Date: Wed, 14 Feb 2018 09:06:04 -0800
+In-Reply-To: <1518624432-15110-2-git-send-email-d.schultz@phytec.de>
+References: <1518624432-15110-1-git-send-email-d.schultz@phytec.de> <1518624432-15110-2-git-send-email-d.schultz@phytec.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lQSB8Tqijvu1+4Ba"
-Content-Disposition: inline
-In-Reply-To: <20180116101240.5393-9-alexandre.belloni@free-electrons.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH v3 2/2] net: phy: dp83867: Add documentation for CLK_OUT pin muxing
+To: Daniel Schultz <d.schultz@phytec.de>, robh+dt@kernel.org,
+        mark.rutland@arm.com, andrew@lunn.ch, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+CC: w.egorov@phytec.de
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <6E67A8CE-27A7-44F8-A325-85A61AB393EE@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1EH6Fgx018342
 
+On February 14, 2018 8:07:12 AM PST, Daniel Schultz <d.schultz@phytec.de> wrote:
+>From: Wadim Egorov <w.egorov@phytec.de>
+>
+>Add documentation of ti,clk-output-sel which can be used to select
+>a specific clock for CLK_OUT.
+>
+>Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+>Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
 
---lQSB8Tqijvu1+4Ba
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 
-On Tue, Jan 16, 2018 at 11:12:40AM +0100, Alexandre Belloni wrote:
-> +MICROSEMI MIPS SOCS
-> +M:	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> +L:	linux-mips@linux-mips.org
-> +S:	Maintained
-> +F:	arch/mips/mscc/
-> +F:	arch/mips/boot/dts/mscc/
+Nit: usually the binding patch comes first and the implementation using it right after, not necessary to respin.
 
-You should probably include
-Documentation/devicetree/bindings/mips/mscc.txt here.
-
-Cheers
-James
-
---lQSB8Tqijvu1+4Ba
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqEbGQACgkQbAtpk944
-dnplGBAAsAsBN3T06vY4vf3HZhBKXwNcbG85Kn4W+P7lWxQLueZ8qQGJrZ4gzss/
-aQlAj1sF3ggZqcRBMzMaRRdcO9Nh0hwdlrdI1MI7+mQQBBVxeKmdJ+7DTfr2TRjj
-FzLYu9rgsoooFjgfQPBGw6pPllsSBY9CK9WPz6jFwi67uNoVSyP4mk5eRV1pMDfX
-k02p0oQ3snkxVB48HewLEjH80lIoQAmDUlN+X8/zU5kHb6lEhCo9kgBQ701uMFri
-xc7vJyCOwUvU7DQORxorKGf/ONQD1WybqGlsNb6vgkgZtmxNVennpdwBeGWeCsuy
-qC4ZFgSsOWsybqenAS6gytNb3IUBUSDqp4ts6Dq68porx/Zp6v4HZpSVCu/+FPKk
-UkElW0FonJoP8OGXC3PNHghzrBmdvvWTp2x6JphS8akS4gKG0fWL7CKwCVZB2Ew7
-o8SeTEqLx0lmtH9j0Ox7TASynBndP4gjuSY82GVO3hkeigFutgZgS/dmH8czTOPM
-pJhZQyC7HD+/p5N6C25QKq3QzuplLxOnOlvFkVxbNBqmzBd+BKLqbCwijweSBELA
-1n6upTa24OGpgJ+ubjvrpsQI4jcgI1jcKe4xrAyBYLx/mJdSMybS/7Ogi7QqNMoI
-S3AUWTBqHbw2PeyzKpBiRKo4kG/yvVBcTZb80e1ZyXqvhcPV9jM=
-=B4cz
------END PGP SIGNATURE-----
-
---lQSB8Tqijvu1+4Ba--
+-- 
+Florian
