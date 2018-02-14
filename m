@@ -1,57 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162090AbeBNS23 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 13:28:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42216 "EHLO mail.kernel.org"
+        id S1162136AbeBNS3H (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 13:29:07 -0500
+Received: from mga07.intel.com ([134.134.136.100]:35885 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161994AbeBNS20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 13:28:26 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A5E7217BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sstabellini@kernel.org
-From: Stefano Stabellini <sstabellini@kernel.org>
-To: boris.ostrovsky@oracle.com, jgross@suse.com
-Cc: sstabellini@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, Stefano Stabellini <stefano@aporeto.com>
-Subject: [PATCH v3 2/2] pvcalls-front: wait for other operations to return when release passive sockets
-Date: Wed, 14 Feb 2018 10:28:24 -0800
-Message-Id: <1518632904-20267-2-git-send-email-sstabellini@kernel.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1518632904-20267-1-git-send-email-sstabellini@kernel.org>
-References: <alpine.DEB.2.10.1802141023400.5392@sstabellini-ThinkPad-X260>
- <1518632904-20267-1-git-send-email-sstabellini@kernel.org>
+        id S1161885AbeBNSZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 13:25:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,513,1511856000";
+   d="scan'208";a="17661093"
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>, Borislav Petkov <bp@suse.de>,
+        Andi Kleen <ak@linux.intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH 4/9] x86/mm: Adjust vmalloc base and size at boot-time
+Date: Wed, 14 Feb 2018 21:25:37 +0300
+Message-Id: <20180214182542.69302-5-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180214182542.69302-1-kirill.shutemov@linux.intel.com>
+References: <20180214182542.69302-1-kirill.shutemov@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Passive sockets can have ongoing operations on them, specifically, we
-have two wait_event_interruptable calls in pvcalls_front_accept.
+vmalloc area has different placement and size depending on paging mode.
+Let's adjust it during early boot accodring to machine capability.
 
-Add two wake_up calls in pvcalls_front_release, then wait for the
-potential waiters to return and release the sock_mapping refcount.
-
-Signed-off-by: Stefano Stabellini <stefano@aporeto.com>
-Acked-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- drivers/xen/pvcalls-front.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/include/asm/pgtable_64_types.h | 16 ++++++++++------
+ arch/x86/kernel/head64.c                |  3 ++-
+ arch/x86/mm/kaslr.c                     |  3 ++-
+ 3 files changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
-index 18d1bac..ca5b773 100644
---- a/drivers/xen/pvcalls-front.c
-+++ b/drivers/xen/pvcalls-front.c
-@@ -1018,6 +1018,12 @@ int pvcalls_front_release(struct socket *sock)
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index 59d971c85de5..686329994ade 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -102,25 +102,29 @@ extern unsigned int ptrs_per_p4d;
+ #define LDT_PGD_ENTRY		(pgtable_l5_enabled ? LDT_PGD_ENTRY_L5 : LDT_PGD_ENTRY_L4)
+ #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
  
- 		pvcalls_front_free_map(bedata, map);
- 	} else {
-+		wake_up(&bedata->inflight_req);
-+		wake_up(&map->passive.inflight_accept_req);
++#define __VMALLOC_BASE_L4	0xffffc90000000000
++#define __VMALLOC_BASE_L5 	0xffa0000000000000
 +
-+		while (atomic_read(&map->refcount) > 1)
-+			cpu_relax();
++#define VMALLOC_SIZE_TB_L4	32UL
++#define VMALLOC_SIZE_TB_L5	12800UL
 +
- 		spin_lock(&bedata->socket_lock);
- 		list_del(&map->list);
- 		spin_unlock(&bedata->socket_lock);
+ #ifdef CONFIG_X86_5LEVEL
+-# define VMALLOC_SIZE_TB	_AC(12800, UL)
+-# define __VMALLOC_BASE		_AC(0xffa0000000000000, UL)
+ # define __VMEMMAP_BASE		_AC(0xffd4000000000000, UL)
+ #else
+-# define VMALLOC_SIZE_TB	_AC(32, UL)
+-# define __VMALLOC_BASE		_AC(0xffffc90000000000, UL)
+ # define __VMEMMAP_BASE		_AC(0xffffea0000000000, UL)
+ #endif
+ 
+ #ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
+ # define VMALLOC_START		vmalloc_base
++# define VMALLOC_SIZE_TB	(pgtable_l5_enabled ? VMALLOC_SIZE_TB_L5 : VMALLOC_SIZE_TB_L4)
+ # define VMEMMAP_START		vmemmap_base
+ #else
+-# define VMALLOC_START		__VMALLOC_BASE
++# define VMALLOC_START		__VMALLOC_BASE_L4
++# define VMALLOC_SIZE_TB	VMALLOC_SIZE_TB_L4
+ # define VMEMMAP_START		__VMEMMAP_BASE
+ #endif /* CONFIG_DYNAMIC_MEMORY_LAYOUT */
+ 
+-#define VMALLOC_END		(VMALLOC_START + _AC((VMALLOC_SIZE_TB << 40) - 1, UL))
++#define VMALLOC_END		(VMALLOC_START + (VMALLOC_SIZE_TB << 40) - 1)
+ 
+ #define MODULES_VADDR		(__START_KERNEL_map + KERNEL_IMAGE_SIZE)
+ /* The module sections ends with the start of the fixmap */
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 876d3bf2b23a..22bf2015254c 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -51,7 +51,7 @@ EXPORT_SYMBOL(ptrs_per_p4d);
+ #ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
+ unsigned long page_offset_base __ro_after_init = __PAGE_OFFSET_BASE_L4;
+ EXPORT_SYMBOL(page_offset_base);
+-unsigned long vmalloc_base __ro_after_init = __VMALLOC_BASE;
++unsigned long vmalloc_base __ro_after_init = __VMALLOC_BASE_L4;
+ EXPORT_SYMBOL(vmalloc_base);
+ unsigned long vmemmap_base __ro_after_init = __VMEMMAP_BASE;
+ EXPORT_SYMBOL(vmemmap_base);
+@@ -87,6 +87,7 @@ static void __head check_la57_support(unsigned long physaddr)
+ 	*fixup_int(&pgdir_shift, physaddr) = 48;
+ 	*fixup_int(&ptrs_per_p4d, physaddr) = 512;
+ 	*fixup_long(&page_offset_base, physaddr) = __PAGE_OFFSET_BASE_L5;
++	*fixup_long(&vmalloc_base, physaddr) = __VMALLOC_BASE_L5;
+ }
+ #else
+ static void __head check_la57_support(unsigned long physaddr) {}
+diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+index 7828a7ca3bba..641169d38184 100644
+--- a/arch/x86/mm/kaslr.c
++++ b/arch/x86/mm/kaslr.c
+@@ -50,7 +50,7 @@ static __initdata struct kaslr_memory_region {
+ 	unsigned long size_tb;
+ } kaslr_regions[] = {
+ 	{ &page_offset_base, 0 },
+-	{ &vmalloc_base, VMALLOC_SIZE_TB },
++	{ &vmalloc_base, 0 },
+ 	{ &vmemmap_base, 1 },
+ };
+ 
+@@ -94,6 +94,7 @@ void __init kernel_randomize_memory(void)
+ 		return;
+ 
+ 	kaslr_regions[0].size_tb = 1 << (__PHYSICAL_MASK_SHIFT - TB_SHIFT);
++	kaslr_regions[1].size_tb = VMALLOC_SIZE_TB;
+ 
+ 	/*
+ 	 * Update Physical memory mapping to available and
 -- 
-1.9.1
+2.15.1
