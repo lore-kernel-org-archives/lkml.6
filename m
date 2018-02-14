@@ -1,58 +1,201 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030485AbeBNNov (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 08:44:51 -0500
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:36893 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030252AbeBNNot (ORCPT
+        id S1030522AbeBNNo6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 08:44:58 -0500
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:1054 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030487AbeBNNoy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 08:44:49 -0500
+        Wed, 14 Feb 2018 08:44:54 -0500
 X-IronPort-AV: E=Sophos;i="5.46,512,1511827200";
-   d="scan'208";a="331983300"
+   d="scan'208";a="332036398"
 From: David Woodhouse <dwmw@amazon.co.uk>
 To: tglx@linutronix.de, karahmed@amazon.de, x86@kernel.org,
         kvm@vger.kernel.org, torvalds@linux-foundation.org,
         pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
         peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
         arjan.van.de.ven@intel.com, dave.hansen@intel.com, mingo@kernel.org
-Subject: [PATCH 0/4] Speculation control improvements
-Date: Wed, 14 Feb 2018 13:44:30 +0000
-Message-Id: <1518615874-13806-1-git-send-email-dwmw@amazon.co.uk>
+Subject: [PATCH 2/4] x86/speculation: Support "Enhanced IBRS" on future CPUs
+Date: Wed, 14 Feb 2018 13:44:32 +0000
+Message-Id: <1518615874-13806-3-git-send-email-dwmw@amazon.co.uk>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518615874-13806-1-git-send-email-dwmw@amazon.co.uk>
+References: <1518615874-13806-1-git-send-email-dwmw@amazon.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A revised version of the dropped IBRS-firmware patch which now just
-ignores the horrid hpwdt driver completely, and explicitly disables
-preemption while IBRS is set.
+The original IBRS hack in microcode is horribly slow. For the next
+generation of CPUs, as a stopgap until we get a proper fix, Intel
+promise an "Enhanced IBRS" which will be fast.
 
-Revised version of the IBRS_ALL patch with a typo fixed, revert another
-broken bikeshedding patch, and add support for retpoline builds with
-clang now that clang is fixed.
+The assumption is that predictions in the BTB/RSB will be tagged with
+the VMX mode and ring that they were learned in, and thus the CPU will
+avoid consuming unsafe predictions without a performance penalty.
 
-David Woodhouse (4):
-  x86/speculation: Use IBRS if available before calling into firmware
-  x86/speculation: Support "Enhanced IBRS" on future CPUs
-  Revert "x86/retpoline: Simplify vmexit_fill_RSB()"
-  x86/retpoline: Support retpoline build with Clang
+Intel's documentation says that it is still required to set the IBRS bit
+in the SPEC_CTRL MSR and ensure that it remains set.
 
- arch/x86/Makefile                     |   5 +-
- arch/x86/entry/entry_32.S             |   3 +-
- arch/x86/entry/entry_64.S             |   3 +-
- arch/x86/include/asm/apm.h            |   6 ++
- arch/x86/include/asm/asm-prototypes.h |   3 -
- arch/x86/include/asm/cpufeatures.h    |   1 +
- arch/x86/include/asm/efi.h            |  17 ++++-
- arch/x86/include/asm/nospec-branch.h  | 118 +++++++++++++++++++++++++++++-----
- arch/x86/kernel/cpu/bugs.c            |  26 +++++++-
- arch/x86/kvm/vmx.c                    |  31 +++++----
- arch/x86/lib/Makefile                 |   1 -
- arch/x86/lib/retpoline.S              |  56 ----------------
- include/linux/compiler-clang.h        |   5 ++
- include/linux/compiler-gcc.h          |   4 ++
- include/linux/init.h                  |   8 +--
- 15 files changed, 185 insertions(+), 102 deletions(-)
+Cope with this by trapping and emulating *all* access to SPEC_CTRL from
+KVM guests when the IBRS_ALL feature is present, so it can never be
+turned off. Guests who see IBRS_ALL should never do anything except
+turn it on at boot anyway. And if they didn't know about IBRS_ALL and
+they keep frobbing IBRS on every kernel entry/exit... well the vmexit
+for a no-op is probably going to be faster than they were expecting
+anyway, so they'll live.
 
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Acked-by: Arjan van de Ven <arjan.van.de.ven@intel.com>
+---
+ arch/x86/include/asm/nospec-branch.h |  9 ++++++++-
+ arch/x86/kernel/cpu/bugs.c           | 16 ++++++++++++++--
+ arch/x86/kvm/vmx.c                   | 31 +++++++++++++++++++------------
+ 3 files changed, 41 insertions(+), 15 deletions(-)
+
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 0995c6a..34cbce3 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -141,9 +141,16 @@ enum spectre_v2_mitigation {
+ 	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
+ 	SPECTRE_V2_RETPOLINE_GENERIC,
+ 	SPECTRE_V2_RETPOLINE_AMD,
+-	SPECTRE_V2_IBRS,
++	SPECTRE_V2_IBRS_ALL,
+ };
+ 
++extern enum spectre_v2_mitigation spectre_v2_enabled;
++
++static inline bool spectre_v2_ibrs_all(void)
++{
++	return spectre_v2_enabled == SPECTRE_V2_IBRS_ALL;
++}
++
+ extern char __indirect_thunk_start[];
+ extern char __indirect_thunk_end[];
+ 
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index bfca937..eefd900 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -88,12 +88,13 @@ static const char *spectre_v2_strings[] = {
+ 	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
+ 	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
+ 	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
++	[SPECTRE_V2_IBRS_ALL]			= "Mitigation: Enhanced IBRS",
+ };
+ 
+ #undef pr_fmt
+ #define pr_fmt(fmt)     "Spectre V2 : " fmt
+ 
+-static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
++enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
+ 
+ #ifdef RETPOLINE
+ static bool spectre_v2_bad_module;
+@@ -237,6 +238,16 @@ static void __init spectre_v2_select_mitigation(void)
+ 
+ 	case SPECTRE_V2_CMD_FORCE:
+ 	case SPECTRE_V2_CMD_AUTO:
++		if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES)) {
++			u64 ia32_cap = 0;
++
++			rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
++			if (ia32_cap & ARCH_CAP_IBRS_ALL) {
++				mode = SPECTRE_V2_IBRS_ALL;
++				wrmsrl(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS);
++				goto ibrs_all;
++			}
++		}
+ 		if (IS_ENABLED(CONFIG_RETPOLINE))
+ 			goto retpoline_auto;
+ 		break;
+@@ -274,6 +285,7 @@ static void __init spectre_v2_select_mitigation(void)
+ 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
+ 	}
+ 
++ ibrs_all:
+ 	spectre_v2_enabled = mode;
+ 	pr_info("%s\n", spectre_v2_strings[mode]);
+ 
+@@ -305,7 +317,7 @@ static void __init spectre_v2_select_mitigation(void)
+ 	 * Retpoline means the kernel is safe because it has no indirect
+ 	 * branches. But firmware isn't, so use IBRS to protect that.
+ 	 */
+-	if (boot_cpu_has(X86_FEATURE_IBRS)) {
++	if (mode != SPECTRE_V2_IBRS_ALL && boot_cpu_has(X86_FEATURE_IBRS)) {
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
+ 		pr_info("Enabling Restricted Speculation for firmware calls\n");
+ 	}
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 91e3539..62ad7e3 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -3419,13 +3419,14 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 
+ 		vmx->spec_ctrl = data;
+ 
+-		if (!data)
++		if (!data && !spectre_v2_ibrs_all())
+ 			break;
+ 
+ 		/*
+ 		 * For non-nested:
+ 		 * When it's written (to non-zero) for the first time, pass
+-		 * it through.
++		 * it through unless we have IBRS_ALL and it should just be
++		 * set for ever.
+ 		 *
+ 		 * For nested:
+ 		 * The handling of the MSR bitmap for L2 guests is done in
+@@ -9441,7 +9442,7 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 	 * is no need to worry about the conditional branch over the wrmsr
+ 	 * being speculatively taken.
+ 	 */
+-	if (vmx->spec_ctrl)
++	if (!spectre_v2_ibrs_all() && vmx->spec_ctrl)
+ 		wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
+ 
+ 	vmx->__launched = vmx->loaded_vmcs->launched;
+@@ -9563,11 +9564,12 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 	      );
+ 
+ 	/*
+-	 * We do not use IBRS in the kernel. If this vCPU has used the
+-	 * SPEC_CTRL MSR it may have left it on; save the value and
+-	 * turn it off. This is much more efficient than blindly adding
+-	 * it to the atomic save/restore list. Especially as the former
+-	 * (Saving guest MSRs on vmexit) doesn't even exist in KVM.
++	 * Without IBRS_ALL, we do not use IBRS in the kernel. If this
++	 * vCPU has used the SPEC_CTRL MSR it may have left it on;
++	 * save the value and turn it off. This is much more efficient
++	 * than blindly adding it to the atomic save/restore list.
++	 * Especially as the former (saving guest MSRs on vmexit)
++	 * doesn't even exist in KVM.
+ 	 *
+ 	 * For non-nested case:
+ 	 * If the L01 MSR bitmap does not intercept the MSR, then we need to
+@@ -9576,12 +9578,17 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 	 * For nested case:
+ 	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
+ 	 * save it.
++	 *
++	 * If IBRS_ALL is present then the whole thing is a no-op fiction
++	 * for guests and every access is trapped, so do nothing.
+ 	 */
+-	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
+-		rdmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
++	if (!spectre_v2_ibrs_all()) {
++		if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
++			rdmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
+ 
+-	if (vmx->spec_ctrl)
+-		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++		if (vmx->spec_ctrl)
++			wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++	}
+ 
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
 -- 
 2.7.4
