@@ -1,53 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033220AbeBNRBR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 12:01:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46094 "EHLO mail.kernel.org"
+        id S1033233AbeBNRBk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 12:01:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46721 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032907AbeBNRBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 12:01:16 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99E22177D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 14 Feb 2018 12:01:12 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
+        id S1032907AbeBNRBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 12:01:39 -0500
+Date: Wed, 14 Feb 2018 18:01:33 +0100
+From: Borislav Petkov <bp@suse.de>
 To: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Jason Baron <jbaron@akamai.com>,
-        Borislav Petkov <bp@suse.de>
+        Peter Zijlstra <peterz@infradead.org>, Jason Baron <jbaron@akamai.com>
 Subject: Re: [PATCH 1/3] jump_label: Warn on failed jump_label patch
-Message-ID: <20180214120112.43821b5e@gandalf.local.home>
-In-Reply-To: <b8f1b55f17c346fba39d3f59a01251185e09e151.1518626149.git.jpoimboe@redhat.com>
+Message-ID: <20180214170133.GA19502@pd.tnic>
 References: <cover.1518626149.git.jpoimboe@redhat.com>
-        <b8f1b55f17c346fba39d3f59a01251185e09e151.1518626149.git.jpoimboe@redhat.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+ <b8f1b55f17c346fba39d3f59a01251185e09e151.1518626149.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b8f1b55f17c346fba39d3f59a01251185e09e151.1518626149.git.jpoimboe@redhat.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Feb 2018 10:40:41 -0600
-Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-
+On Wed, Feb 14, 2018 at 10:40:41AM -0600, Josh Poimboeuf wrote:
 > When the jump label code encounters an address which isn't recognized by
 > kernel_text_address(), it just silently fails.
 > 
 > This can be dangerous because jump labels are used in a variety of
 > places, and are generally expected to work.  Convert the silent failure
 > to a warning.
-
-I made ftrace function tracing work on init code, can we do the same
-with tracepoints (aka jump labels)?
-
-But I have to say that this goes with my argument that there exists
-tracepoints in the kernel that nobody cares about ;-)
-
--- Steve
-
 > 
 > Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 > ---
@@ -73,3 +60,16 @@ tracepoints in the kernel that nobody cares about ;-)
 >  	}
 >  }
 >  
+> -- 
+> 2.14.3
+
+Good idea.
+
+Reviewed-by: Borislav Petkov <bp@suse.de>
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
