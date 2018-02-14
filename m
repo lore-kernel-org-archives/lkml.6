@@ -1,202 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032125AbeBNX3q (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 18:29:46 -0500
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:45443 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032006AbeBNX3h (ORCPT
+        id S1032168AbeBNXaH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 18:30:07 -0500
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:45072 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032135AbeBNXaC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 18:29:37 -0500
-X-IronPort-AV: E=Sophos;i="5.46,514,1511827200";
-   d="scan'208";a="722665521"
-From: David Woodhouse <dwmw@amazon.co.uk>
-To: tglx@linutronix.de, karahmed@amazon.de, x86@kernel.org,
-        kvm@vger.kernel.org, torvalds@linux-foundation.org,
-        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
-        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
-        arjan.van.de.ven@intel.com, dave.hansen@intel.com, mingo@kernel.org
-Subject: [PATCH v2 2/4] x86/speculation: Support "Enhanced IBRS" on future CPUs
-Date: Wed, 14 Feb 2018 23:29:16 +0000
-Message-Id: <1518650958-550-3-git-send-email-dwmw@amazon.co.uk>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518650958-550-1-git-send-email-dwmw@amazon.co.uk>
-References: <1518650958-550-1-git-send-email-dwmw@amazon.co.uk>
+        Wed, 14 Feb 2018 18:30:02 -0500
+X-Google-Smtp-Source: AH8x227R6hF6mjO/NHoeFX7Il0ETEAHnijVcDPG/FgoLRu/+NjdbzxI5K7maBeTFGKzOhhpA8wivLw==
+Date: Thu, 15 Feb 2018 00:29:57 +0100
+From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Jiri Kosina <jikos@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH 1/3] HID: add driver for Valve Steam Controller
+Message-ID: <20180214232957.GB3741@casa>
+References: <20180213120308.23879-1-rodrigorivascosta@gmail.com>
+ <CAO-hwJKmrapd-VtbRgsM_zr6mHDvG8eyvdmo=56W_kmURjvX4g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAO-hwJKmrapd-VtbRgsM_zr6mHDvG8eyvdmo=56W_kmURjvX4g@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The original IBRS hack in microcode is horribly slow. For the next
-generation of CPUs, as a stopgap until we get a proper fix, Intel
-promise an "Enhanced IBRS" which will be fast.
+On Wed, Feb 14, 2018 at 03:45:14PM +0100, Benjamin Tissoires wrote:
+> I think I had a look at this a while ago, and didn't want to interfere
+> with SteamOS regarding this. I think your patch should be fine in that
+> regard, but have you tried SteamOS on a kernel patched with your
+> series? Does it behave properly or will it break?
 
-The assumption is that predictions in the BTB/RSB will be tagged with
-the VMX mode and ring that they were learned in, and thus the CPU will
-avoid consuming unsafe predictions without a performance penalty.
+Well, SteamOS is just a modified Debian with the Steam Client running in
+Big Picture mode (fullscreen). I tried the Steam Client with this driver
+and it works just fine: 
+- The first thing the Steam Client (SC) does is to disable the virtual
+  keyboard and mouse, so not creating those input devices make no
+  difference.
+- Input events are sent both to the libusb (or whatever SC uses) and
+  this driver.
+- The only source of conflict would be in sending commands to the
+  controller. But currently the only command sent is the get_serial, and
+  that seems to do no harm.
 
-Intel's documentation says that it is still required to set the IBRS bit
-in the SPEC_CTRL MSR and ensure that it remains set.
+> > +
+> > +       hid_info(hdev, "Steam Controller connected");
+> > +
+> > +       input = input_allocate_device();
+> 
+> Don't you need one input node per wireless gamepad too?
+> 
+No, the wired and wireless methods are two different USB devices.
+The wireless adaptor is a small usb device that creates 4 HID interfaces
+for the 4 to-be-connected controllers. When the 'connected' event
+arrives on one of those interfaces we will create one input device.
+Another controller connected will use a different interface so another
+unrelated input device will be created.
 
-Cope with this by trapping and emulating *all* access to SPEC_CTRL from
-KVM guests when the IBRS_ALL feature is present, so it can never be
-turned off. Guests who see IBRS_ALL should never do anything except
-turn it on at boot anyway. And if they didn't know about IBRS_ALL and
-they keep frobbing IBRS on every kernel entry/exit... well the vmexit
-for a no-op is probably going to be faster than they were expecting
-anyway, so they'll live.
+The wired adaptor is the controller connected directly to USB: it
+creates one HID inteface and one input device directly.
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Acked-by: Arjan van de Ven <arjan.van.de.ven@intel.com>
----
- arch/x86/include/asm/nospec-branch.h |  9 ++++++++-
- arch/x86/kernel/cpu/bugs.c           | 17 +++++++++++++++--
- arch/x86/kvm/vmx.c                   | 31 +++++++++++++++++++------------
- 3 files changed, 42 insertions(+), 15 deletions(-)
+Anyway, one steam_device will contain 0 or 1 input_device.
 
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 0995c6a..34cbce3 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -141,9 +141,16 @@ enum spectre_v2_mitigation {
- 	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
- 	SPECTRE_V2_RETPOLINE_GENERIC,
- 	SPECTRE_V2_RETPOLINE_AMD,
--	SPECTRE_V2_IBRS,
-+	SPECTRE_V2_IBRS_ALL,
- };
- 
-+extern enum spectre_v2_mitigation spectre_v2_enabled;
-+
-+static inline bool spectre_v2_ibrs_all(void)
-+{
-+	return spectre_v2_enabled == SPECTRE_V2_IBRS_ALL;
-+}
-+
- extern char __indirect_thunk_start[];
- extern char __indirect_thunk_end[];
- 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index bfca937..505c467 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -88,12 +88,14 @@ static const char *spectre_v2_strings[] = {
- 	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
- 	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
- 	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
-+	[SPECTRE_V2_IBRS_ALL]			= "Mitigation: Enhanced IBRS",
- };
- 
- #undef pr_fmt
- #define pr_fmt(fmt)     "Spectre V2 : " fmt
- 
--static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
-+enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
-+EXPORT_SYMBOL_GPL(spectre_v2_enabled);
- 
- #ifdef RETPOLINE
- static bool spectre_v2_bad_module;
-@@ -237,6 +239,16 @@ static void __init spectre_v2_select_mitigation(void)
- 
- 	case SPECTRE_V2_CMD_FORCE:
- 	case SPECTRE_V2_CMD_AUTO:
-+		if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES)) {
-+			u64 ia32_cap = 0;
-+
-+			rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
-+			if (ia32_cap & ARCH_CAP_IBRS_ALL) {
-+				mode = SPECTRE_V2_IBRS_ALL;
-+				wrmsrl(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS);
-+				goto ibrs_all;
-+			}
-+		}
- 		if (IS_ENABLED(CONFIG_RETPOLINE))
- 			goto retpoline_auto;
- 		break;
-@@ -274,6 +286,7 @@ static void __init spectre_v2_select_mitigation(void)
- 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
- 	}
- 
-+ ibrs_all:
- 	spectre_v2_enabled = mode;
- 	pr_info("%s\n", spectre_v2_strings[mode]);
- 
-@@ -305,7 +318,7 @@ static void __init spectre_v2_select_mitigation(void)
- 	 * Retpoline means the kernel is safe because it has no indirect
- 	 * branches. But firmware isn't, so use IBRS to protect that.
- 	 */
--	if (boot_cpu_has(X86_FEATURE_IBRS)) {
-+	if (mode != SPECTRE_V2_IBRS_ALL && boot_cpu_has(X86_FEATURE_IBRS)) {
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
- 	}
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 91e3539..62ad7e3 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -3419,13 +3419,14 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 
- 		vmx->spec_ctrl = data;
- 
--		if (!data)
-+		if (!data && !spectre_v2_ibrs_all())
- 			break;
- 
- 		/*
- 		 * For non-nested:
- 		 * When it's written (to non-zero) for the first time, pass
--		 * it through.
-+		 * it through unless we have IBRS_ALL and it should just be
-+		 * set for ever.
- 		 *
- 		 * For nested:
- 		 * The handling of the MSR bitmap for L2 guests is done in
-@@ -9441,7 +9442,7 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 	 * is no need to worry about the conditional branch over the wrmsr
- 	 * being speculatively taken.
- 	 */
--	if (vmx->spec_ctrl)
-+	if (!spectre_v2_ibrs_all() && vmx->spec_ctrl)
- 		wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
- 
- 	vmx->__launched = vmx->loaded_vmcs->launched;
-@@ -9563,11 +9564,12 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 	      );
- 
- 	/*
--	 * We do not use IBRS in the kernel. If this vCPU has used the
--	 * SPEC_CTRL MSR it may have left it on; save the value and
--	 * turn it off. This is much more efficient than blindly adding
--	 * it to the atomic save/restore list. Especially as the former
--	 * (Saving guest MSRs on vmexit) doesn't even exist in KVM.
-+	 * Without IBRS_ALL, we do not use IBRS in the kernel. If this
-+	 * vCPU has used the SPEC_CTRL MSR it may have left it on;
-+	 * save the value and turn it off. This is much more efficient
-+	 * than blindly adding it to the atomic save/restore list.
-+	 * Especially as the former (saving guest MSRs on vmexit)
-+	 * doesn't even exist in KVM.
- 	 *
- 	 * For non-nested case:
- 	 * If the L01 MSR bitmap does not intercept the MSR, then we need to
-@@ -9576,12 +9578,17 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 	 * For nested case:
- 	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
- 	 * save it.
-+	 *
-+	 * If IBRS_ALL is present then the whole thing is a no-op fiction
-+	 * for guests and every access is trapped, so do nothing.
- 	 */
--	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
--		rdmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
-+	if (!spectre_v2_ibrs_all()) {
-+		if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
-+			rdmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
- 
--	if (vmx->spec_ctrl)
--		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-+		if (vmx->spec_ctrl)
-+			wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-+	}
- 
- 	/* Eliminate branch target predictions from guest mode */
- 	vmexit_fill_RSB();
--- 
-2.7.4
+> > +       input->name = "Steam Controller";
+> 
+> In case of the wireless controllers, you might want to personalize this a bit.
+
+Do you mean e.g. "Wireless Steam Controller"? Would be wise to add the serial
+number here (from PATCH 2/3?)? Or is the 'uniq' enough for that?
+
+> > +       input_set_abs_params(input, ABS_Z, 0, 255, 0, 0);
+> > +       input_set_abs_params(input, ABS_RZ, 0, 255, 0, 0);
+> > +       input_set_abs_params(input, ABS_X, -32767, 32767, 0, 0);
+> > +       input_set_abs_params(input, ABS_Y, -32767, 32767, 0, 0);
+> 
+> You are also probably missing the resolution bits. We need to
+> accurately report the physical dimensions to the user space (thanks to
+> the resolution)
+> 
+> > +       input_set_abs_params(input, ABS_RX, -32767, 32767, 0, 0);
+> > +       input_set_abs_params(input, ABS_RY, -32767, 32767, 0, 0);
+> 
+> What do RX/RY correspond to?
+
+This gamepad has 1 joystick and 2 touchpads (lpad and rpad).
+I'm mapping the joystick/lpad to ABS_X/ABS_Y and the rpad to
+ABS_RX/ABS_RY.
+
+About the resolution, I looked around other drivers and many have 0 as
+resolution... is it necessary only in the pads or the joystick too?
+And what are the units of that value?
+For reference, the pads are round and exactly 40 mm in diameter.
+
+Why the lpad and the joystick are mapped to the same axes? Well, because
+the device returns them at the same offset. We could make them
+apart by using bits 10.3 (lpad_touch) and 10.7 (lpad_and_joy) but I
+don't think it is worth it... you use the joystick and the lpad with the
+same thumb!
+
+> Anyway. Thanks for the driver, there are a few bits to fix, nothing
+> scary though.
+
+Great, I'll correct all those issues and resubmit the patches in a few
+days. It is my very first driver and I'm still a bit slow...
+
+Thank you for your attention!
+Rodrigo.
