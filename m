@@ -1,65 +1,72 @@
-Return-Path: <lukas@wunner.de>
-X-Google-Smtp-Source: AH8x227/Fa2DPB9Gb0AzxLc5ViTlseUv0wza1LzGensg7G5CPdnoQFT6xMznR2g5pSi42AYYwfTr
-ARC-Seal: i=1; a=rsa-sha256; t=1518286440; cv=none;
+Return-Path: <rjw@rjwysocki.net>
+X-Google-Smtp-Source: AH8x226/ScztjuR1fudJ0umEQuZK0floIy/b/imt1nuPdxavv1U3CJZU/xfYv3J57NrM46ujJI4K
+ARC-Seal: i=1; a=rsa-sha256; t=1518605726; cv=none;
         d=google.com; s=arc-20160816;
-        b=afyuZ/q0gPplhyjfq7qDu2+pK8HUSksrv9jIwJQrJZMNvXUTfardgGf8Yz4AyM5wE7
-         FX4pnPt3D4jD6Buc3zMQ/7+7O3n6tSpEhY704XDFzZP68RBsXjLKggVcKpoHKQEFYtY2
-         M4mFNMaCK111UZ/+Tke+W6A5eAYAJ/KHQeTVj5ADsFMVJhUaWwOQVhaHocbiDLhAP82A
-         uRWDvZKbc3F3qIr1+kt9xz7eUXBBX0HZWzYkRp0Kn9caN/806eboR3539DKCcfQDr3TB
-         nUdNLY4ubyfRKUVdIRZVHgnaczDsyMMYU1pBwrKLksuobYy1xQltQVYVMuM67zRf3VTS
-         4Fvg==
+        b=Qgiorzwc46VygFI1gHuFZlzIj+7VPeymh2faKJtXT15AsTKbuHORkxt5SCw+v65zi7
+         OlCK12lw6+ksMHye3Il1P1xeXWw4JNeADYG1jwRj1x2GZOAprrFtCQeIGB6HpUcvh2VP
+         /BKofsNnEgKKdaBYComctmJ8ZNNWPl4vgPWNzngT+pb+ReZVFv6g5b0RZyET1bc9pq5w
+         up/wU/a+aX2kLK7zI9ldVMZNkzxgUVMEFVA/kODDPjHfWbfCUCna5Vc9p5x/nWx7wToz
+         qET8sD7Jh+2uSii/BKIE3PBDamjx1mkCUtc0x9KhnG+63pFuD6sol0CggZoTnvvzlLbz
+         +67Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:date:from:message-id:arc-authentication-results;
-        bh=YFnn9ZxZKztxHUWnCTNpnOShqUC6ePgIt6p9JrNzY6s=;
-        b=g8Ikm7L8K93QA6+09iO+iPyzNV1muXRdE4QgjqrgnIGtmc8Sk0MT4X93kr5npSh56y
-         CPb1sc+Ls7GC9wWbeBT1eDbzuSmyQeRVgCyqx5mBeauO/xSkWx/H5m5HPfM2TT/8+rQy
-         JRESA1dIE47EH43KltXL/Jx5h4IFKgpPCfcLDe9qhdueQEq8VYvxErzIAVI3A/m5+fMz
-         ktqoUQrrK2ZyzpNIINAhYENXud8FtYCpLSRIAKhYRT+sGKAgsBastS/iOCIroP1GCy3e
-         4mcHoTXE+QfZq3OTinkxH1im6YDtL7vxkijZPqQHblksbbdXDKPSsKTeTHH/VN+XrpB5
-         uSYA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=oZ2c4Z1kadB3+dWzfsBmd7kRzgiFsZ3VY+kSrVb1MuY=;
+        b=Wh8xbtew1HOk+mB0x4k66OxgoMHKM3XJKXNsRTYkm+CCUZt4JtQmqyWgY5s+JTKe9q
+         lPImzhhNi4XNsZqk0/iwJyrMOq1UoednP3008c3y4D9Ln69SWFGycKs5fxxI2x8iCUP5
+         QpvhdvgmQ/HI8I7OMBEWjOh1ymqZuOC5oo0vANL6Ckzs7PYvKZHOL9xMHXKM+aoy2MpV
+         3+TxxAxScXEkFFC5l525o28qquh3cSQfq8O8BRTuNZJ6enwjRWawa0sQvjiegviNAM5q
+         KXXsiLMFI+0pxhmZBj42hTggUFXk74uL3pU9X1fxN36JhycNHwSV2ikxIVImKlTJogKb
+         Q38w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 83.223.95.204 is neither permitted nor denied by best guess record for domain of lukas@wunner.de) smtp.mailfrom=lukas@wunner.de
+       spf=pass (google.com: domain of rjw@rjwysocki.net designates 79.96.170.134 as permitted sender) smtp.mailfrom=rjw@rjwysocki.net
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 83.223.95.204 is neither permitted nor denied by best guess record for domain of lukas@wunner.de) smtp.mailfrom=lukas@wunner.de
-X-Mailbox-Line: From 68feef8bf476ab150e6481b54f1b6f5c401b8e10 Mon Sep 17 00:00:00 2001
-Message-Id: <68feef8bf476ab150e6481b54f1b6f5c401b8e10.1518286105.git.lukas@wunner.de>
-From: Lukas Wunner <lukas@wunner.de>
-Date: Sat, 10 Feb 2018 19:13:58 +0100
-Subject: [PATCH] PM / runtime: Update links_count also if !CONFIG_SRCU
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: linux-kernel@vger.kernel.org
+       spf=pass (google.com: domain of rjw@rjwysocki.net designates 79.96.170.134 as permitted sender) smtp.mailfrom=rjw@rjwysocki.net
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] PM / runtime: Update links_count also if !CONFIG_SRCU
+Date: Wed, 14 Feb 2018 11:53:37 +0100
+Message-ID: <28130344.VaHZHOhuzq@aspire.rjw.lan>
+In-Reply-To: <68feef8bf476ab150e6481b54f1b6f5c401b8e10.1518286105.git.lukas@wunner.de>
+References: <68feef8bf476ab150e6481b54f1b6f5c401b8e10.1518286105.git.lukas@wunner.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592038722413280584?=
-X-GMAIL-MSGID: =?utf-8?q?1592038722413280584?=
+X-GMAIL-MSGID: =?utf-8?q?1592373518206709737?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit baa8809f6097 ("PM / runtime: Optimize the use of device links")
-added an invocation of pm_runtime_drop_link() to __device_link_del().
-However there are two variants of that function, one for CONFIG_SRCU and
-another for !CONFIG_SRCU, and the commit only modified the former.
+On Saturday, February 10, 2018 7:13:58 PM CET Lukas Wunner wrote:
+> Commit baa8809f6097 ("PM / runtime: Optimize the use of device links")
+> added an invocation of pm_runtime_drop_link() to __device_link_del().
+> However there are two variants of that function, one for CONFIG_SRCU and
+> another for !CONFIG_SRCU, and the commit only modified the former.
+> 
+> Fixes: baa8809f6097 ("PM / runtime: Optimize the use of device links")
+> Cc: stable@vger.kernel.org # v4.10+
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> ---
+>  drivers/base/core.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index b2261f92f2f1..5847364f25d9 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -310,6 +310,9 @@ static void __device_link_del(struct device_link *link)
+>  	dev_info(link->consumer, "Dropping the link to %s\n",
+>  		 dev_name(link->supplier));
+>  
+> +	if (link->flags & DL_FLAG_PM_RUNTIME)
+> +		pm_runtime_drop_link(link->consumer);
+> +
+>  	list_del(&link->s_node);
+>  	list_del(&link->c_node);
+>  	device_link_free(link);
+> 
 
-Fixes: baa8809f6097 ("PM / runtime: Optimize the use of device links")
-Cc: stable@vger.kernel.org # v4.10+
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
----
- drivers/base/core.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index b2261f92f2f1..5847364f25d9 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -310,6 +310,9 @@ static void __device_link_del(struct device_link *link)
- 	dev_info(link->consumer, "Dropping the link to %s\n",
- 		 dev_name(link->supplier));
- 
-+	if (link->flags & DL_FLAG_PM_RUNTIME)
-+		pm_runtime_drop_link(link->consumer);
-+
- 	list_del(&link->s_node);
- 	list_del(&link->c_node);
- 	device_link_free(link);
--- 
-2.15.1
+Applied, thanks!
