@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162136AbeBNS3H (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 13:29:07 -0500
-Received: from mga07.intel.com ([134.134.136.100]:35885 "EHLO mga07.intel.com"
+        id S1162150AbeBNS3J (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 13:29:09 -0500
+Received: from mga04.intel.com ([192.55.52.120]:7466 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161885AbeBNSZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1161858AbeBNSZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Feb 2018 13:25:49 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,513,1511856000";
-   d="scan'208";a="17661093"
+   d="scan'208";a="30066765"
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
@@ -19,9 +19,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Andi Kleen <ak@linux.intel.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 4/9] x86/mm: Adjust vmalloc base and size at boot-time
-Date: Wed, 14 Feb 2018 21:25:37 +0300
-Message-Id: <20180214182542.69302-5-kirill.shutemov@linux.intel.com>
+Subject: [PATCH 3/9] x86/mm: Initialize page_offset_base at boot-time
+Date: Wed, 14 Feb 2018 21:25:36 +0300
+Message-Id: <20180214182542.69302-4-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180214182542.69302-1-kirill.shutemov@linux.intel.com>
 References: <20180214182542.69302-1-kirill.shutemov@linux.intel.com>
@@ -29,97 +29,142 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vmalloc area has different placement and size depending on paging mode.
-Let's adjust it during early boot accodring to machine capability.
+For 4- and 5-level paging we have different page_offset_base. Let's
+initialize it at boot-time accordingly to machine capability.
+
+We also have to split __PAGE_OFFSET_BASE into two constants -- for 4-
+and 5-level paging.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- arch/x86/include/asm/pgtable_64_types.h | 16 ++++++++++------
- arch/x86/kernel/head64.c                |  3 ++-
- arch/x86/mm/kaslr.c                     |  3 ++-
- 3 files changed, 14 insertions(+), 8 deletions(-)
+ arch/x86/include/asm/page_64_types.h |  9 +++------
+ arch/x86/kernel/head64.c             | 13 +++++++++----
+ arch/x86/kernel/head_64.S            |  2 +-
+ arch/x86/mm/kaslr.c                  |  8 ++++----
+ 4 files changed, 17 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 59d971c85de5..686329994ade 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -102,25 +102,29 @@ extern unsigned int ptrs_per_p4d;
- #define LDT_PGD_ENTRY		(pgtable_l5_enabled ? LDT_PGD_ENTRY_L5 : LDT_PGD_ENTRY_L4)
- #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
+diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/page_64_types.h
+index fa7dc7cd8c19..2c5a966dc222 100644
+--- a/arch/x86/include/asm/page_64_types.h
++++ b/arch/x86/include/asm/page_64_types.h
+@@ -37,16 +37,13 @@
+  * hypervisor to fit.  Choosing 16 slots here is arbitrary, but it's
+  * what Xen requires.
+  */
+-#ifdef CONFIG_X86_5LEVEL
+-#define __PAGE_OFFSET_BASE      _AC(0xff10000000000000, UL)
+-#else
+-#define __PAGE_OFFSET_BASE      _AC(0xffff880000000000, UL)
+-#endif
++#define __PAGE_OFFSET_BASE_L5	_AC(0xff10000000000000, UL)
++#define __PAGE_OFFSET_BASE_L4	_AC(0xffff880000000000, UL)
  
-+#define __VMALLOC_BASE_L4	0xffffc90000000000
-+#define __VMALLOC_BASE_L5 	0xffa0000000000000
-+
-+#define VMALLOC_SIZE_TB_L4	32UL
-+#define VMALLOC_SIZE_TB_L5	12800UL
-+
- #ifdef CONFIG_X86_5LEVEL
--# define VMALLOC_SIZE_TB	_AC(12800, UL)
--# define __VMALLOC_BASE		_AC(0xffa0000000000000, UL)
- # define __VMEMMAP_BASE		_AC(0xffd4000000000000, UL)
+ #ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
+ #define __PAGE_OFFSET           page_offset_base
  #else
--# define VMALLOC_SIZE_TB	_AC(32, UL)
--# define __VMALLOC_BASE		_AC(0xffffc90000000000, UL)
- # define __VMEMMAP_BASE		_AC(0xffffea0000000000, UL)
+-#define __PAGE_OFFSET           __PAGE_OFFSET_BASE
++#define __PAGE_OFFSET           __PAGE_OFFSET_BASE_L4
+ #endif /* CONFIG_DYNAMIC_MEMORY_LAYOUT */
+ 
+ #define __START_KERNEL_map	_AC(0xffffffff80000000, UL)
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 8a0a485524da..876d3bf2b23a 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -49,7 +49,7 @@ EXPORT_SYMBOL(ptrs_per_p4d);
  #endif
  
  #ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
- # define VMALLOC_START		vmalloc_base
-+# define VMALLOC_SIZE_TB	(pgtable_l5_enabled ? VMALLOC_SIZE_TB_L5 : VMALLOC_SIZE_TB_L4)
- # define VMEMMAP_START		vmemmap_base
- #else
--# define VMALLOC_START		__VMALLOC_BASE
-+# define VMALLOC_START		__VMALLOC_BASE_L4
-+# define VMALLOC_SIZE_TB	VMALLOC_SIZE_TB_L4
- # define VMEMMAP_START		__VMEMMAP_BASE
- #endif /* CONFIG_DYNAMIC_MEMORY_LAYOUT */
- 
--#define VMALLOC_END		(VMALLOC_START + _AC((VMALLOC_SIZE_TB << 40) - 1, UL))
-+#define VMALLOC_END		(VMALLOC_START + (VMALLOC_SIZE_TB << 40) - 1)
- 
- #define MODULES_VADDR		(__START_KERNEL_map + KERNEL_IMAGE_SIZE)
- /* The module sections ends with the start of the fixmap */
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 876d3bf2b23a..22bf2015254c 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -51,7 +51,7 @@ EXPORT_SYMBOL(ptrs_per_p4d);
- #ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
- unsigned long page_offset_base __ro_after_init = __PAGE_OFFSET_BASE_L4;
+-unsigned long page_offset_base __ro_after_init = __PAGE_OFFSET_BASE;
++unsigned long page_offset_base __ro_after_init = __PAGE_OFFSET_BASE_L4;
  EXPORT_SYMBOL(page_offset_base);
--unsigned long vmalloc_base __ro_after_init = __VMALLOC_BASE;
-+unsigned long vmalloc_base __ro_after_init = __VMALLOC_BASE_L4;
+ unsigned long vmalloc_base __ro_after_init = __VMALLOC_BASE;
  EXPORT_SYMBOL(vmalloc_base);
- unsigned long vmemmap_base __ro_after_init = __VMEMMAP_BASE;
- EXPORT_SYMBOL(vmemmap_base);
-@@ -87,6 +87,7 @@ static void __head check_la57_support(unsigned long physaddr)
+@@ -64,6 +64,11 @@ static void __head *fixup_pointer(void *ptr, unsigned long physaddr)
+ 	return ptr - (void *)_text + (void *)physaddr;
+ }
+ 
++static unsigned long __head *fixup_long(void *ptr, unsigned long physaddr)
++{
++	return fixup_pointer(ptr, physaddr);
++}
++
+ #ifdef CONFIG_X86_5LEVEL
+ static unsigned int __head *fixup_int(void *ptr, unsigned long physaddr)
+ {
+@@ -81,6 +86,7 @@ static void __head check_la57_support(unsigned long physaddr)
+ 	*fixup_int(&pgtable_l5_enabled, physaddr) = 1;
  	*fixup_int(&pgdir_shift, physaddr) = 48;
  	*fixup_int(&ptrs_per_p4d, physaddr) = 512;
- 	*fixup_long(&page_offset_base, physaddr) = __PAGE_OFFSET_BASE_L5;
-+	*fixup_long(&vmalloc_base, physaddr) = __VMALLOC_BASE_L5;
++	*fixup_long(&page_offset_base, physaddr) = __PAGE_OFFSET_BASE_L5;
  }
  #else
  static void __head check_la57_support(unsigned long physaddr) {}
+@@ -89,7 +95,7 @@ static void __head check_la57_support(unsigned long physaddr) {}
+ unsigned long __head __startup_64(unsigned long physaddr,
+ 				  struct boot_params *bp)
+ {
+-	unsigned long load_delta, *p;
++	unsigned long load_delta;
+ 	unsigned long pgtable_flags;
+ 	pgdval_t *pgd;
+ 	p4dval_t *p4d;
+@@ -196,8 +202,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
+ 	 * Fixup phys_base - remove the memory encryption mask to obtain
+ 	 * the true physical address.
+ 	 */
+-	p = fixup_pointer(&phys_base, physaddr);
+-	*p += load_delta - sme_get_me_mask();
++	*fixup_long(&phys_base, physaddr) += load_delta - sme_get_me_mask();
+ 
+ 	/* Encrypt the kernel and related (if SME is active) */
+ 	sme_encrypt_kernel(bp);
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 04a625f0fcda..d3f8b43d541a 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -41,7 +41,7 @@
+ #define pud_index(x)	(((x) >> PUD_SHIFT) & (PTRS_PER_PUD-1))
+ 
+ #if defined(CONFIG_XEN_PV) || defined(CONFIG_XEN_PVH)
+-PGD_PAGE_OFFSET = pgd_index(__PAGE_OFFSET_BASE)
++PGD_PAGE_OFFSET = pgd_index(__PAGE_OFFSET_BASE_L4)
+ PGD_START_KERNEL = pgd_index(__START_KERNEL_map)
+ #endif
+ L3_START_KERNEL = pud_index(__START_KERNEL_map)
 diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-index 7828a7ca3bba..641169d38184 100644
+index d079878c6cbc..7828a7ca3bba 100644
 --- a/arch/x86/mm/kaslr.c
 +++ b/arch/x86/mm/kaslr.c
-@@ -50,7 +50,7 @@ static __initdata struct kaslr_memory_region {
- 	unsigned long size_tb;
- } kaslr_regions[] = {
- 	{ &page_offset_base, 0 },
--	{ &vmalloc_base, VMALLOC_SIZE_TB },
-+	{ &vmalloc_base, 0 },
- 	{ &vmemmap_base, 1 },
- };
+@@ -34,13 +34,10 @@
+ #define TB_SHIFT 40
  
-@@ -94,6 +94,7 @@ void __init kernel_randomize_memory(void)
- 		return;
+ /*
+- * Virtual address start and end range for randomization.
+- *
+  * The end address could depend on more configuration options to make the
+  * highest amount of space for randomization available, but that's too hard
+  * to keep straight and caused issues already.
+  */
+-static const unsigned long vaddr_start = __PAGE_OFFSET_BASE;
+ static const unsigned long vaddr_end = CPU_ENTRY_AREA_BASE;
  
- 	kaslr_regions[0].size_tb = 1 << (__PHYSICAL_MASK_SHIFT - TB_SHIFT);
-+	kaslr_regions[1].size_tb = VMALLOC_SIZE_TB;
+ /*
+@@ -76,11 +73,14 @@ static inline bool kaslr_memory_enabled(void)
+ void __init kernel_randomize_memory(void)
+ {
+ 	size_t i;
+-	unsigned long vaddr = vaddr_start;
++	unsigned long vaddr_start, vaddr;
+ 	unsigned long rand, memory_tb;
+ 	struct rnd_state rand_state;
+ 	unsigned long remain_entropy;
  
++	vaddr_start = pgtable_l5_enabled ? __PAGE_OFFSET_BASE_L5 : __PAGE_OFFSET_BASE_L4;
++	vaddr = vaddr_start;
++
  	/*
- 	 * Update Physical memory mapping to available and
+ 	 * These BUILD_BUG_ON checks ensure the memory layout is consistent
+ 	 * with the vaddr_start/vaddr_end variables. These checks are very
 -- 
 2.15.1
