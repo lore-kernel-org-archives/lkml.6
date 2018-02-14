@@ -1,93 +1,260 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162727AbeBNTPo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 14:15:44 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:35702 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162439AbeBNTPn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 14:15:43 -0500
-Date: Wed, 14 Feb 2018 20:15:41 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
-Cc: boris.brezillon@free-electrons.com, richard@nod.at,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, cyrille.pitchen@wedev4u.fr,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next v4] mtd: nand: toshiba: Retrieve ECC requirements
- from extended ID
-Message-ID: <20180214201541.7c939976@bbrezillon>
-In-Reply-To: <1518622506-16606-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
-References: <1518622506-16606-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1162783AbeBNTRB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 14:17:01 -0500
+Received: from mail.blih.net ([212.83.177.182]:13994 "EHLO mail.blih.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1162753AbeBNTQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 14:16:57 -0500
+Date: Wed, 14 Feb 2018 20:16:54 +0100
+From: Emmanuel Vadot <manu@bidouilliste.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: devicetree <devicetree@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH] Revert
+ "ARM: dts: sunxi: Add regulators for Sinovoip BPI-M2"
+Message-Id: <20180214201654.cb8cb64bf50b958a53ebebbd@bidouilliste.com>
+In-Reply-To: <CAGb2v66BDbLgNVAp=D0QXH4WEMZpa+rCWYk+uLXexme2qgjeBg@mail.gmail.com>
+References: <20180203112353.13497-1-icenowy@aosc.io>
+        <20180205095558.2e713c24cdb7c3232943db52@bidouilliste.com>
+        <207CD143-6535-42C9-BEF3-9D2614336482@aosc.io>
+        <c59ee4bd3246172ec62705967bb8f751@megadrive.org>
+        <CAGb2v66BDbLgNVAp=D0QXH4WEMZpa+rCWYk+uLXexme2qgjeBg@mail.gmail.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; amd64-portbld-freebsd12.0)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1EJH76e009150
 
--linux-mmc
-+linux-mtd
+On Tue, 13 Feb 2018 18:36:24 +0800
+Chen-Yu Tsai <wens@csie.org> wrote:
 
-On Thu, 15 Feb 2018 00:35:06 +0900
-KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp> wrote:
-
-> This patch enables support to read the ECC strength and size from the
-> NAND flash using Toshiba Memory SLC NAND extended-ID. This patch is
-> based on the information of the 6th ID byte of the Toshiba Memory SLC
-> NAND.
-
-This version looks good to me.
-
+> On Sat, Feb 10, 2018 at 5:20 AM, Emmanuel Vadot <manu@bidouilliste.com> wrote:
+> > On 2018-02-05 10:05, Icenowy Zheng wrote:
+> >>
+> >> ? 2018?2?5? GMT+08:00 ??4:55:58, Emmanuel Vadot <manu@bidouilliste.com>
+> >> ??:
+> >>>
+> >>>
+> >>> Hello,
+> >>>
+> >>> On Sat,  3 Feb 2018 19:23:53 +0800
+> >>> Icenowy Zheng <icenowy@aosc.io> wrote:
+> >>>
+> >>>> This reverts commit 7daa213700758b5b08fc0daab09bb139dd334165.
+> >>>>
+> >>>> The original commit has several problems:
+> >>>>
+> >>>> - vdd-cpus and aldo3 (AVCC of the SoC) are not set to always-on,
+> >>>
+> >>> which
+> >>>>
+> >>>> leads to system hang when disabling unused regulators.
+> >>>
+> >>>
+> >>> Indeed I should have make those always-on.
+> >>>
+> >>>> - GMAC (which uses dldo1 and aldo2) and Wi-Fi (which uses aldo1) are
+> >>>
+> >>> not
+> >>>>
+> >>>> considered, and will fail to work after adding this commit.
+> >>>
+> >>>
+> >>> While I understand the problem with vdd-cpus and aldo3 I don't see why
+> >>> when you don't declare regulator the code should do something with it.
+> >>> DT is supposed to describe the hardware and the code should not use
+> >>> hardware not described right ?
+> >>> The gmac node doesn't declare any regulators and the mmc2 uses
+> >>> reg_vcc3v0 (haven't checked on the schematics yet if it is correct).
+> >>
+> >>
+> >> It's because the regulator support isn't present before
+> >> this commit. However these parts really need special
+> >> regulators. I don't have M2 schematics at hand, so you'd
+> >> check it by yourself.
+> >
+> >
+> >  Yes but why does the PMIC should disable regulators not defined in the DTS
+> > ? That the part I don't understand and want to know where it is
+> > described/documented.
 > 
-> Signed-off-by: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
-> ---
->  drivers/mtd/nand/nand_toshiba.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
+> They are defined. See axp22x.dtsi, which you included in your patch.
 > 
-> diff --git a/drivers/mtd/nand/nand_toshiba.c b/drivers/mtd/nand/nand_toshiba.c
-> index 57df857..ab43f02 100644
-> --- a/drivers/mtd/nand/nand_toshiba.c
-> +++ b/drivers/mtd/nand/nand_toshiba.c
-> @@ -35,6 +35,32 @@ static void toshiba_nand_decode_id(struct nand_chip *chip)
->  	    (chip->id.data[5] & 0x7) == 0x6 /* 24nm */ &&
->  	    !(chip->id.data[4] & 0x80) /* !BENAND */)
->  		mtd->oobsize = 32 * mtd->writesize >> 9;
-> +
-> +	/*
-> +	 * Extract ECC requirements from 6th id byte.
-> +	 * For Toshiba SLC, ecc requrements are as follows:
-> +	 *  - 43nm: 1 bit ECC for each 512Byte is required.
-> +	 *  - 32nm: 4 bit ECC for each 512Byte is required.
-> +	 *  - 24nm: 8 bit ECC for each 512Byte is required.
-> +	 */
-> +	if (chip->id.len >= 6 && nand_is_slc(chip)) {
-> +		chip->ecc_step_ds = 512;
-> +		switch (chip->id.data[5] & 0x7) {
-> +		case 0x4:
-> +			chip->ecc_strength_ds = 1;
-> +			break;
-> +		case 0x5:
-> +			chip->ecc_strength_ds = 4;
-> +			break;
-> +		case 0x6:
-> +			chip->ecc_strength_ds = 8;
-> +			break;
-> +		default:
-> +			WARN(1, "Could not get ECC info");
-> +			chip->ecc_step_ds = 0;
-> +			break;
-> +		}
-> +	}
->  }
->  
->  static int toshiba_nand_init(struct nand_chip *chip)
+> Now the system is free to do whatever it wants under the constraints
+> of the device tree. Since you do not reference the regulator, the
+> kernel is free to turn it off to save power.
 
+ Yeah I realized that now and feel stupid ...
+ Thanks for the clarification.
+
+> >
+> >> P.S. a proper device tree with AXP shouldn't use
+> >> reg_vcc3v0/3v3/1v8/etc. They're dummy
+> >> regulator nodes for
+> >> not implemented or not controllable regulators.
+> >>
+> >>>
+> >>>> This indicates that this patch should be not tested at all.
+> >>>
+> >>>
+> >>> This have indeed not been tested with linux.
+> >>> I think that this commit should not be reverted, I'll send a proper
+> >>> patch tonight or tomorow night max.
+> >>
+> >>
+> >> Please test patches sent to Linux on Linux :-)
+> >
+> >
+> >  If my patches adhere to the bindings I don't see why.
+> 
+> It adheres to the bindings, but does not accurately describe the
+> hardware constraints.
+
+ Is there a place where there is build of the linux kernel for
+sunxi/multi7 and initrd available for download so I can add that to my
+test bench ?
+
+ Cheers,
+
+> ChenYu
+> 
+> >
+> >
+> >>>
+> >>> P.S.: Also as I'm the original sender I think I should have been in CC
+> >>> no ?
+> >>
+> >>
+> >> get_maintainer.pl didn't mention you and I forgot... sorry.
+> >>
+> >>>
+> >>> Cheers,
+> >>>
+> >>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> >>>> ---
+> >>>>  arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts | 57
+> >>>
+> >>> ------------------------
+> >>>>
+> >>>>  1 file changed, 57 deletions(-)
+> >>>>
+> >>>> diff --git a/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
+> >>>
+> >>> b/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
+> >>>>
+> >>>> index 51e6f1d21c32..a565316eb340 100644
+> >>>> --- a/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
+> >>>> +++ b/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
+> >>>> @@ -86,10 +86,6 @@
+> >>>>         };
+> >>>>  };
+> >>>>
+> >>>> -&cpu0 {
+> >>>> -       cpu-supply = <&reg_dcdc3>;
+> >>>> -};
+> >>>> -
+> >>>>  &ehci0 {
+> >>>>         status = "okay";
+> >>>>  };
+> >>>> @@ -155,17 +151,6 @@
+> >>>>         status = "okay";
+> >>>>  };
+> >>>>
+> >>>> -&p2wi {
+> >>>> -       status = "okay";
+> >>>> -
+> >>>> -       axp22x: pmic@68 {
+> >>>> -               compatible = "x-powers,axp221";
+> >>>> -               reg = <0x68>;
+> >>>> -               interrupt-parent = <&nmi_intc>;
+> >>>> -               interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+> >>>> -       };
+> >>>> -};
+> >>>> -
+> >>>>  &pio {
+> >>>>         gmac_phy_reset_pin_bpi_m2: gmac_phy_reset_pin@0 {
+> >>>>                 pins = "PA21";
+> >>>> @@ -191,48 +176,6 @@
+> >>>>         };
+> >>>>  };
+> >>>>
+> >>>> -#include "axp22x.dtsi"
+> >>>> -
+> >>>> -&reg_dc5ldo {
+> >>>> -       regulator-min-microvolt = <700000>;
+> >>>> -       regulator-max-microvolt = <1320000>;
+> >>>> -       regulator-name = "vdd-cpus";
+> >>>> -};
+> >>>> -
+> >>>> -&reg_dcdc1 {
+> >>>> -       regulator-always-on;
+> >>>> -       regulator-min-microvolt = <3000000>;
+> >>>> -       regulator-max-microvolt = <3000000>;
+> >>>> -       regulator-name = "vdd-3v0";
+> >>>> -};
+> >>>> -
+> >>>> -&reg_dcdc2 {
+> >>>> -       regulator-min-microvolt = <700000>;
+> >>>> -       regulator-max-microvolt = <1320000>;
+> >>>> -       regulator-name = "vdd-gpu";
+> >>>> -};
+> >>>> -
+> >>>> -&reg_dcdc3 {
+> >>>> -       regulator-always-on;
+> >>>> -       regulator-min-microvolt = <700000>;
+> >>>> -       regulator-max-microvolt = <1320000>;
+> >>>> -       regulator-name = "vdd-cpu";
+> >>>> -};
+> >>>> -
+> >>>> -&reg_dcdc4 {
+> >>>> -       regulator-always-on;
+> >>>> -       regulator-min-microvolt = <700000>;
+> >>>> -       regulator-max-microvolt = <1320000>;
+> >>>> -       regulator-name = "vdd-sys-dll";
+> >>>> -};
+> >>>> -
+> >>>> -&reg_dcdc5 {
+> >>>> -       regulator-always-on;
+> >>>> -       regulator-min-microvolt = <1500000>;
+> >>>> -       regulator-max-microvolt = <1500000>;
+> >>>> -       regulator-name = "vcc-dram";
+> >>>> -};
+> >>>> -
+> >>>>  &uart0 {
+> >>>>         pinctrl-names = "default";
+> >>>>         pinctrl-0 = <&uart0_pins_a>;
+> >>>> --
+> >>>> 2.15.1
+> >>>>
+> >>>>
+> >>>> _______________________________________________
+> >>>> linux-arm-kernel mailing list
+> >>>> linux-arm-kernel@lists.infradead.org
+> >>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> >>
+> >>
+> >> _______________________________________________
+> >> linux-arm-kernel mailing list
+> >> linux-arm-kernel@lists.infradead.org
+> >> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> >
+> >
+> > --
+> > Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
 
 -- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
