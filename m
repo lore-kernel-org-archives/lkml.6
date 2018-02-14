@@ -1,236 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032193AbeBNXad (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 18:30:33 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:49200 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032063AbeBNX3k (ORCPT
+        id S1032138AbeBNXpM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 18:45:12 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:36162 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032019AbeBNXpK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 18:29:40 -0500
-X-IronPort-AV: E=Sophos;i="5.46,514,1511827200";
-   d="scan'208";a="594913242"
-From: David Woodhouse <dwmw@amazon.co.uk>
-To: tglx@linutronix.de, karahmed@amazon.de, x86@kernel.org,
-        kvm@vger.kernel.org, torvalds@linux-foundation.org,
-        pbonzini@redhat.com, linux-kernel@vger.kernel.org, bp@alien8.de,
-        peterz@infradead.org, jmattson@google.com, rkrcmar@redhat.com,
-        arjan.van.de.ven@intel.com, dave.hansen@intel.com, mingo@kernel.org
-Subject: [PATCH v2 1/4] x86/speculation: Use IBRS if available before calling into firmware
-Date: Wed, 14 Feb 2018 23:29:15 +0000
-Message-Id: <1518650958-550-2-git-send-email-dwmw@amazon.co.uk>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518650958-550-1-git-send-email-dwmw@amazon.co.uk>
-References: <1518650958-550-1-git-send-email-dwmw@amazon.co.uk>
+        Wed, 14 Feb 2018 18:45:10 -0500
+X-Google-Smtp-Source: AH8x227BuZTbwosYZkK7U3J3SNE/FG1zC9HuTolDrF96CMnjtGNqHXcP0G6YBQaNs763/W3eanv6yQ==
+Date: Wed, 14 Feb 2018 15:45:07 -0800
+From: Kees Cook <keescook@chromium.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Samuel Ortiz <sameo@linux.intel.com>
+Subject: [PATCH] NFC: llcp: Limit size of SDP URI
+Message-ID: <20180214234507.GA23681@beast>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Retpoline means the kernel is safe because it has no indirect branches.
-But firmware isn't, so use IBRS for firmware calls if it's available.
+The tlv_len is u8, so we need to limit the size of the SDP URI. Enforce
+this both in the NLA policy and in the code that performs the allocation
+and copy, to avoid writing past the end of the allocated buffer.
 
-Block preemption while IBRS is set, although in practice the call sites
-already had to be doing that.
-
-Ignore hpwdt.c for now. It's taking spinlocks and calling into firmware
-code, from an NMI handler. I don't want to touch that with a bargepole.
-
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Fixes: d9b8d8e19b073 ("NFC: llcp: Service Name Lookup netlink interface")
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- arch/x86/include/asm/apm.h           |  6 ++++++
- arch/x86/include/asm/cpufeatures.h   |  1 +
- arch/x86/include/asm/efi.h           | 17 ++++++++++++++--
- arch/x86/include/asm/nospec-branch.h | 39 +++++++++++++++++++++++++++---------
- arch/x86/kernel/cpu/bugs.c           | 12 ++++++++++-
- 5 files changed, 63 insertions(+), 12 deletions(-)
+No reply from linux-wireless, so sending to netdev directly now...
+---
+ net/nfc/llcp_commands.c | 4 ++++
+ net/nfc/netlink.c       | 3 ++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/apm.h b/arch/x86/include/asm/apm.h
-index 4d4015d..c356098 100644
---- a/arch/x86/include/asm/apm.h
-+++ b/arch/x86/include/asm/apm.h
-@@ -7,6 +7,8 @@
- #ifndef _ASM_X86_MACH_DEFAULT_APM_H
- #define _ASM_X86_MACH_DEFAULT_APM_H
+diff --git a/net/nfc/llcp_commands.c b/net/nfc/llcp_commands.c
+index 367d8c027101..2ceefa183cee 100644
+--- a/net/nfc/llcp_commands.c
++++ b/net/nfc/llcp_commands.c
+@@ -149,6 +149,10 @@ struct nfc_llcp_sdp_tlv *nfc_llcp_build_sdreq_tlv(u8 tid, char *uri,
  
-+#include <asm/nospec-branch.h>
+ 	pr_debug("uri: %s, len: %zu\n", uri, uri_len);
+ 
++	/* sdreq->tlv_len is u8, takes uri_len, + 3 for header, + 1 for NULL */
++	if (WARN_ON_ONCE(uri_len > U8_MAX - 4))
++		return NULL;
 +
- #ifdef APM_ZERO_SEGS
- #	define APM_DO_ZERO_SEGS \
- 		"pushl %%ds\n\t" \
-@@ -32,6 +34,7 @@ static inline void apm_bios_call_asm(u32 func, u32 ebx_in, u32 ecx_in,
- 	 * N.B. We do NOT need a cld after the BIOS call
- 	 * because we always save and restore the flags.
- 	 */
-+	firmware_restrict_branch_speculation_start();
- 	__asm__ __volatile__(APM_DO_ZERO_SEGS
- 		"pushl %%edi\n\t"
- 		"pushl %%ebp\n\t"
-@@ -44,6 +47,7 @@ static inline void apm_bios_call_asm(u32 func, u32 ebx_in, u32 ecx_in,
- 		  "=S" (*esi)
- 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
- 		: "memory", "cc");
-+	firmware_restrict_branch_speculation_end();
- }
+ 	sdreq = kzalloc(sizeof(struct nfc_llcp_sdp_tlv), GFP_KERNEL);
+ 	if (sdreq == NULL)
+ 		return NULL;
+diff --git a/net/nfc/netlink.c b/net/nfc/netlink.c
+index c0b83dc9d993..f018eafc2a0d 100644
+--- a/net/nfc/netlink.c
++++ b/net/nfc/netlink.c
+@@ -61,7 +61,8 @@ static const struct nla_policy nfc_genl_policy[NFC_ATTR_MAX + 1] = {
+ };
  
- static inline bool apm_bios_call_simple_asm(u32 func, u32 ebx_in,
-@@ -56,6 +60,7 @@ static inline bool apm_bios_call_simple_asm(u32 func, u32 ebx_in,
- 	 * N.B. We do NOT need a cld after the BIOS call
- 	 * because we always save and restore the flags.
- 	 */
-+	firmware_restrict_branch_speculation_start();
- 	__asm__ __volatile__(APM_DO_ZERO_SEGS
- 		"pushl %%edi\n\t"
- 		"pushl %%ebp\n\t"
-@@ -68,6 +73,7 @@ static inline bool apm_bios_call_simple_asm(u32 func, u32 ebx_in,
- 		  "=S" (si)
- 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
- 		: "memory", "cc");
-+	firmware_restrict_branch_speculation_end();
- 	return error;
- }
+ static const struct nla_policy nfc_sdp_genl_policy[NFC_SDP_ATTR_MAX + 1] = {
+-	[NFC_SDP_ATTR_URI] = { .type = NLA_STRING },
++	[NFC_SDP_ATTR_URI] = { .type = NLA_STRING,
++			       .len = U8_MAX - 4 },
+ 	[NFC_SDP_ATTR_SAP] = { .type = NLA_U8 },
+ };
  
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 73b5fff..66c1434 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -211,6 +211,7 @@
- #define X86_FEATURE_RSB_CTXSW		( 7*32+19) /* "" Fill RSB on context switches */
- 
- #define X86_FEATURE_USE_IBPB		( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
-+#define X86_FEATURE_USE_IBRS_FW		( 7*32+22) /* "" Use IBRS during runtime firmware calls */
- 
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
-diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-index 85f6ccb..a399c1e 100644
---- a/arch/x86/include/asm/efi.h
-+++ b/arch/x86/include/asm/efi.h
-@@ -6,6 +6,7 @@
- #include <asm/pgtable.h>
- #include <asm/processor-flags.h>
- #include <asm/tlb.h>
-+#include <asm/nospec-branch.h>
- 
- /*
-  * We map the EFI regions needed for runtime services non-contiguously,
-@@ -36,8 +37,18 @@
- 
- extern asmlinkage unsigned long efi_call_phys(void *, ...);
- 
--#define arch_efi_call_virt_setup()	kernel_fpu_begin()
--#define arch_efi_call_virt_teardown()	kernel_fpu_end()
-+#define arch_efi_call_virt_setup()					\
-+({									\
-+	kernel_fpu_begin();						\
-+	firmware_restrict_branch_speculation_start();			\
-+})
-+
-+#define arch_efi_call_virt_teardown()					\
-+({									\
-+	firmware_restrict_branch_speculation_end();			\
-+	kernel_fpu_end();						\
-+})
-+
- 
- /*
-  * Wrap all the virtual calls in a way that forces the parameters on the stack.
-@@ -73,6 +84,7 @@ struct efi_scratch {
- 	efi_sync_low_kernel_mappings();					\
- 	preempt_disable();						\
- 	__kernel_fpu_begin();						\
-+	firmware_restrict_branch_speculation_start();			\
- 									\
- 	if (efi_scratch.use_pgd) {					\
- 		efi_scratch.prev_cr3 = __read_cr3();			\
-@@ -91,6 +103,7 @@ struct efi_scratch {
- 		__flush_tlb_all();					\
- 	}								\
- 									\
-+	firmware_restrict_branch_speculation_end();			\
- 	__kernel_fpu_end();						\
- 	preempt_enable();						\
- })
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 76b0585..0995c6a 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -163,17 +163,38 @@ static inline void vmexit_fill_RSB(void)
- #endif
- }
- 
-+#define alternative_msr_write(_msr, _val, _feature)		\
-+	asm volatile(ALTERNATIVE("",				\
-+				 "movl %[msr], %%ecx\n\t"	\
-+				 "movl %[val], %%eax\n\t"	\
-+				 "movl $0, %%edx\n\t"		\
-+				 "wrmsr",			\
-+				 _feature)			\
-+		     : : [msr] "i" (_msr), [val] "i" (_val)	\
-+		     : "eax", "ecx", "edx", "memory")
-+
- static inline void indirect_branch_prediction_barrier(void)
- {
--	asm volatile(ALTERNATIVE("",
--				 "movl %[msr], %%ecx\n\t"
--				 "movl %[val], %%eax\n\t"
--				 "movl $0, %%edx\n\t"
--				 "wrmsr",
--				 X86_FEATURE_USE_IBPB)
--		     : : [msr] "i" (MSR_IA32_PRED_CMD),
--			 [val] "i" (PRED_CMD_IBPB)
--		     : "eax", "ecx", "edx", "memory");
-+	alternative_msr_write(MSR_IA32_PRED_CMD, PRED_CMD_IBPB,
-+			      X86_FEATURE_USE_IBPB);
-+}
-+
-+/*
-+ * With retpoline, we must use IBRS to restrict branch prediction
-+ * before calling into firmware.
-+ */
-+static inline void firmware_restrict_branch_speculation_start(void)
-+{
-+	preempt_disable();
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
-+			      X86_FEATURE_USE_IBRS_FW);
-+}
-+
-+static inline void firmware_restrict_branch_speculation_end(void)
-+{
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
-+			      X86_FEATURE_USE_IBRS_FW);
-+	preempt_enable();
- }
- 
- #endif /* __ASSEMBLY__ */
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index d71c8b5..bfca937 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -300,6 +300,15 @@ static void __init spectre_v2_select_mitigation(void)
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
- 		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
- 	}
-+
-+	/*
-+	 * Retpoline means the kernel is safe because it has no indirect
-+	 * branches. But firmware isn't, so use IBRS to protect that.
-+	 */
-+	if (boot_cpu_has(X86_FEATURE_IBRS)) {
-+		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
-+		pr_info("Enabling Restricted Speculation for firmware calls\n");
-+	}
- }
- 
- #undef pr_fmt
-@@ -326,8 +335,9 @@ ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr, c
- 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
- 		return sprintf(buf, "Not affected\n");
- 
--	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+	return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
-+		       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
- 		       spectre_v2_module_string());
- }
- #endif
 -- 
 2.7.4
+
+
+-- 
+Kees Cook
+Pixel Security
