@@ -1,168 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162429AbeBNS5S (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 13:57:18 -0500
-Received: from mail-io0-f193.google.com ([209.85.223.193]:33543 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162210AbeBNS5Q (ORCPT
+        id S1162478AbeBNS7I (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 13:59:08 -0500
+Received: from mail-pl0-f44.google.com ([209.85.160.44]:40611 "EHLO
+        mail-pl0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162460AbeBNS7E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 13:57:16 -0500
-X-Google-Smtp-Source: AH8x225W5espSy6X6GaVJw3anueuvNArtNDC7DE4ixU5O1HhSwMJ0mbJTg9pjVw4lGZrjqrIs2xzCv0ELnrjtiiOPtg=
+        Wed, 14 Feb 2018 13:59:04 -0500
+X-Google-Smtp-Source: AH8x225NQZ3oVrxOSjjkbvR9K9IXdqme/PTI1L+xPod+zi83DPXvzpQXaidQQGlnndfg/QGHRMHceQSAsznogeWeyf4=
 MIME-Version: 1.0
-In-Reply-To: <20180214182113.27247-4-linux@dominikbrodowski.net>
-References: <20180214182113.27247-1-linux@dominikbrodowski.net> <20180214182113.27247-4-linux@dominikbrodowski.net>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Wed, 14 Feb 2018 13:57:15 -0500
-Message-ID: <CAMzpN2iVuN-KkJMikdA0m+zsv66gTpLQS-b7eww6HfogCx1jZg@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/4] x86/entry/64: move switch_to_thread_stack to
- interrupt helper function
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
+In-Reply-To: <20180214184931.GA1718@ziepe.ca>
+References: <001a1141a524c513ca05628d8ad4@google.com> <20180112183046.GA26098@oracle.com>
+ <CACT4Y+aB0dZShujVMJFV6grb_7AYOMca13a1J2AkWsT7R0cgrQ@mail.gmail.com>
+ <20180214152109.GF11528@oracle.com> <CACT4Y+bKpi8he1ygwAxgm4F_RJ=BRPBPdMaVAK64SbvCVGt7ww@mail.gmail.com>
+ <20180214153555.GG11528@oracle.com> <20180214184931.GA1718@ziepe.ca>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 14 Feb 2018 19:58:43 +0100
+Message-ID: <CACT4Y+b2F+4+MV4rWpMFJtps0fhfKdo3chETUTDSvWXtR2qxpg@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in rds_tcp_tune
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        syzbot <syzbot+bbd8e9a06452cc48059b@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, rds-devel@oss.oracle.com,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 1:21 PM, Dominik Brodowski
-<linux@dominikbrodowski.net> wrote:
-> We can also move the SWAPGS and the switch_to_thread_stack to the
-> interrupt helper function. As we do not want call depths of two,
-> convert switch_to_thread_stack to a macro. However, as entry_64_compat.S
-> expects switch_to_thread_stack to be a function, provide a wrapper for
-> that, which leads to some code duplication if CONFIG_IA32_EMULATION is
-> enabled. Therefore, the size reduction differs slightly:
+On Wed, Feb 14, 2018 at 7:49 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> On Wed, Feb 14, 2018 at 10:35:55AM -0500, Sowmini Varadhan wrote:
+>> On (02/14/18 16:28), Dmitry Vyukov wrote:
+>> > syzbot is probably not seeing this problem. However if you don't add
+>> > the Reported-by tag to commit, nor provide syz fix tag, it will
+>> > consider it as "open". One consequence of this is that it is still on
+>> > our radars. Another consequence is that syzbot will never report bugs
+>> > in rds_tcp_tune ever again as it thinks that it's the same known bug,
+>> > so no point in bothering anybody.
+>>
+>> understood, I think I saw this in the original syzbot mail as well,
+>> but I was hesitant to actually add the tag because the fix was
+>> based on code-inspection only, and I would have felt more comfortable
+>> about asserting the Reported-by if I'd done a clear-cut before/after
+>> verification.
 >
-> With CONFIG_IA32_EMULATION enabled (-0.13k):
->    text    data     bss     dec     hex filename
->   16897       0       0   16897    4201 entry_64.o-orig
->   16767       0       0   16767    417f entry_64.o
->
-> With CONFIG_IA32_EMULATION disabled (-0.27k):
->    text    data     bss     dec     hex filename
->   16897       0       0   16897    4201 entry_64.o-orig
->   16622       0       0   16622    40ee entry_64.o
->
-> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-> ---
->  arch/x86/entry/entry_64.S | 65 ++++++++++++++++++++++++++---------------------
->  1 file changed, 36 insertions(+), 29 deletions(-)
->
-> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-> index 3046b12a1acb..b60a3b692ca9 100644
-> --- a/arch/x86/entry/entry_64.S
-> +++ b/arch/x86/entry/entry_64.S
-> @@ -536,6 +536,31 @@ END(irq_entries_start)
->         decl    PER_CPU_VAR(irq_count)
->  .endm
->
-> +/*
-> + * Switch to the thread stack.  This is called with the IRET frame and
-> + * orig_ax on the stack.  (That is, RDI..R12 are not on the stack and
-> + * space has not been allocated for them.)
-> + */
-> +.macro DO_SWITCH_TO_THREAD_STACK
-> +       pushq   %rdi
-> +       /* Need to switch before accessing the thread stack. */
-> +       SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
-> +       movq    %rsp, %rdi
-> +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
-> +       UNWIND_HINT sp_offset=16 sp_reg=ORC_REG_DI
-> +
-> +       pushq   7*8(%rdi)               /* regs->ss */
-> +       pushq   6*8(%rdi)               /* regs->rsp */
-> +       pushq   5*8(%rdi)               /* regs->eflags */
-> +       pushq   4*8(%rdi)               /* regs->cs */
-> +       pushq   3*8(%rdi)               /* regs->ip */
-> +       pushq   2*8(%rdi)               /* regs->orig_ax */
-> +       pushq   8(%rdi)                 /* return address */
-> +       UNWIND_HINT_FUNC
-> +
-> +       movq    (%rdi), %rdi
-> +.endm
-> +
->  /*
->   * Interrupt entry/exit.
->   *
-> @@ -543,10 +568,17 @@ END(irq_entries_start)
->   *
->   * Entry runs with interrupts off.
->   */
-> +/* 8(%rsp): ~(interrupt number) */
->  ENTRY(interrupt_helper)
->         UNWIND_HINT_FUNC
->         cld
->
-> +       testb   $3, CS-ORIG_RAX+8(%rsp)
-> +       jz      1f
-> +       SWAPGS
-> +       DO_SWITCH_TO_THREAD_STACK
-> +1:
-> +
->         PUSH_AND_CLEAR_REGS save_ret=1
->         ENCODE_FRAME_POINTER 8
->
-> @@ -579,12 +611,6 @@ END(interrupt_helper)
->         .macro interrupt func
->         cld
->
-> -       testb   $3, CS-ORIG_RAX(%rsp)
-> -       jz      1f
-> -       SWAPGS
-> -       call    switch_to_thread_stack
-> -1:
-> -
->         call    interrupt_helper
->
->         call    \func   /* rdi points to pt_regs */
-> @@ -853,33 +879,14 @@ apicinterrupt IRQ_WORK_VECTOR                     irq_work_interrupt              smp_irq_work_interrupt
->   */
->  #define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw) + (TSS_ist + ((x) - 1) * 8)
->
-> -/*
-> - * Switch to the thread stack.  This is called with the IRET frame and
-> - * orig_ax on the stack.  (That is, RDI..R12 are not on the stack and
-> - * space has not been allocated for them.)
-> - */
-> +#if defined(CONFIG_IA32_EMULATION)
-> +/* entry_64_compat.S::entry_INT80_compat expects this to be an ASM function */
->  ENTRY(switch_to_thread_stack)
->         UNWIND_HINT_FUNC
-> -
-> -       pushq   %rdi
-> -       /* Need to switch before accessing the thread stack. */
-> -       SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
-> -       movq    %rsp, %rdi
-> -       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
-> -       UNWIND_HINT sp_offset=16 sp_reg=ORC_REG_DI
-> -
-> -       pushq   7*8(%rdi)               /* regs->ss */
-> -       pushq   6*8(%rdi)               /* regs->rsp */
-> -       pushq   5*8(%rdi)               /* regs->eflags */
-> -       pushq   4*8(%rdi)               /* regs->cs */
-> -       pushq   3*8(%rdi)               /* regs->ip */
-> -       pushq   2*8(%rdi)               /* regs->orig_ax */
-> -       pushq   8(%rdi)                 /* return address */
-> -       UNWIND_HINT_FUNC
-> -
-> -       movq    (%rdi), %rdi
-> +       DO_SWITCH_TO_THREAD_STACK
->         ret
->  END(switch_to_thread_stack)
-> +#endif
->
->  .macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1
->  ENTRY(\sym)
-> --
-> 2.16.1
->
+> I think the point is you have to clear it from syzbot to get it to
+> even test your patches, even if you are not totally sure your patch
+> fixes it?
 
-Move the macro to calling.h, and inline it into the compat entry.
-
---
-Brian Gerst
+Sorry, I failed to parse this sentence. Can you please rephrase it?
