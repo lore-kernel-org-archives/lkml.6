@@ -1,297 +1,364 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031322AbeBNPaF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 10:30:05 -0500
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:37251 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031179AbeBNPaD (ORCPT
+        id S1031383AbeBNPa0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 10:30:26 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:36888 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031287AbeBNPaY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:30:03 -0500
-X-Google-Smtp-Source: AH8x225DG68k+lcbuwcPauNmur7iw+/emL2ypvulP8Tc1uOz2OBOVrK4CCD1y8H6pzYz1btyBAUNnQ==
-Date: Wed, 14 Feb 2018 08:29:58 -0700
-From: Tycho Andersen <tycho@tycho.ws>
-To: Kees Cook <keescook@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>, Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Tom Hromatka <tom.hromatka@oracle.com>,
-        Sargun Dhillon <sargun@sargun.me>, Paul Moore <pmoore@redhat.com>
-Subject: Re: [RFC 1/3] seccomp: add a return code to trap to userspace
-Message-ID: <20180214152958.cjgwh2k52zji2jxk@cisco>
-References: <20180204104946.25559-1-tycho@tycho.ws>
- <20180204104946.25559-2-tycho@tycho.ws>
- <CAGXu5jLAAKY19a9iC1PmXRyuwdn1Zxr2Cb318zdzkqgYt8vtdg@mail.gmail.com>
+        Wed, 14 Feb 2018 10:30:24 -0500
+X-Google-Smtp-Source: AH8x224zcQ0llcpYT8oV+5jgVPL+M2PRdokVQHGuqijdpT96NLkRNaxJucxkDrqWGoHnIrCs+BV79HXT2JmSDg51RFg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jLAAKY19a9iC1PmXRyuwdn1Zxr2Cb318zdzkqgYt8vtdg@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1518100057-23234-4-git-send-email-amelie.delaunay@st.com>
+References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com> <1518100057-23234-4-git-send-email-amelie.delaunay@st.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 14 Feb 2018 17:30:22 +0200
+Message-ID: <CAHp75VfuEd5fgjv40A27hOgj_Nd_LK2Yh=oBR-8qgPc+gSiiQw@mail.gmail.com>
+Subject: Re: [PATCH 3/6] gpio: Add GPIO support for the ST Multi-Function eXpander
+To: Amelie Delaunay <amelie.delaunay@st.com>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Kees,
+On Thu, Feb 8, 2018 at 4:27 PM, Amelie Delaunay <amelie.delaunay@st.com> wrote:
+> ST Multi-Function eXpander (MFX) can be used as GPIO expander.
+> It has 16 fast GPIOs and can have 8 extra alternate GPIOs
+> when other MFX features are not enabled.
 
-Thanks for taking a look!
+> +config GPIO_ST_MFX
+> +       bool "ST-MFX GPIOs"
+> +       depends on MFD_ST_MFX
+> +       depends on OF_GPIO
+> +       select GPIOLIB_IRQCHIP
+> +       help
+> +         GPIO driver for STMicroelectronics Multi-Function eXpander.
+> +
+> +         This provides GPIO interface supporting inputs and outputs.
 
-On Tue, Feb 13, 2018 at 01:09:20PM -0800, Kees Cook wrote:
-> On Sun, Feb 4, 2018 at 2:49 AM, Tycho Andersen <tycho@tycho.ws> wrote:
-> > This patch introduces a means for syscalls matched in seccomp to notify
-> > some other task that a particular filter has been triggered.
-> >
-> > The motivation for this is primarily for use with containers. For example,
-> > if a container does an init_module(), we obviously don't want to load this
-> > untrusted code, which may be compiled for the wrong version of the kernel
-> > anyway. Instead, we could parse the module image, figure out which module
-> > the container is trying to load and load it on the host.
-> >
-> > As another example, containers cannot mknod(), since this checks
-> > capable(CAP_SYS_ADMIN). However, harmless devices like /dev/null or
-> > /dev/zero should be ok for containers to mknod, but we'd like to avoid hard
-> > coding some whitelist in the kernel. Another example is mount(), which has
-> > many security restrictions for good reason, but configuration or runtime
-> > knowledge could potentially be used to relax these restrictions.
-> 
-> Related to the eBPF seccomp thread, can the logic for these things be
-> handled entirely by eBPF? My assumption is that you still need to stop
-> the process to do something (i.e. do a mknod, or a mount) before
-> letting it continue. Is there some "wait for notification" system in
-> eBPF?
+> +/*
+> + * STMicroelectronics Multi-Function eXpander (ST-MFX) - GPIO expander driver.
+> + *
+> + * Copyright (C) 2017, STMicroelectronics - All Rights Reserved
+> + * Author(s): Amelie Delaunay <amelie.delaunay@st.com> for STMicroelectronics.
 
-I replied in the other thread
-(https://patchwork.ozlabs.org/cover/872938/#1856642 for those
-following along at home), but no, at least not that I know of.
+> + * License terms: GPL V2.0.
+> + *
+> + * st-mfx-gpio is free software; you can redistribute it and/or modify it
+> + * under the terms of the GNU General Public License version 2 as published by
+> + * the Free Software Foundation.
+> + *
+> + * st-mfx-gpio is distributed in the hope that it will be useful, but
+> + * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+> + * details.
+> + *
+> + * You should have received a copy of the GNU General Public License along with
+> + * st-mfx-gpio. If not, see <http://www.gnu.org/licenses/>.
 
-> > The actual implementation of this is fairly small, although getting the
-> > synchronization right was/is slightly complex. Also worth noting that there
-> > is one race still present:
-> >
-> >   1. a task does a SECCOMP_RET_USER_NOTIF
-> >   2. the userspace handler reads this notification
-> >   3. the task dies
-> >   4. a new task with the same pid starts
-> >   5. this new task does a SECCOMP_RET_USER_NOTIF, gets the same cookie id
-> >      that the previous one did
-> >   6. the userspace handler writes a response
-> >
-> > There's no way to distinguish this case right now. Maybe we care, maybe we
-> > don't, but it's worth noting.
-> 
-> So, I'd like to avoid the cookie if possible (surprise). Why isn't it
-> possible to close the kernel-side of the fd to indicate that it lost
-> the pid it was attached to?
+Use SPDX instead.
 
-Because the fd is for a filter, not a task.
+> + */
 
-> Is this just that the reader has no idea
-> who is sending messages? So the risk is a fork/die loop within the
-> same process tree (i.e. attached to the same filter)? Hrmpf. I can't
-> think of a better way to handle the
-> one(fd)-to-many(task-with-that-filter-attached) situation...
+> +#include <linux/of_gpio.h>
 
-Yes, exactly. The cookie just adds uniqueness, and as Andy pointed out
-if we switch to u64, the race above basically ("u64 should be enough
-for anybody") goes away.
+> +/* MFX has a maximum of 24 gpios, with 8 gpios per bank, so 3 banks maximum */
+> +#define NR_MAX_GPIOS           24
+> +#define NR_GPIOS_PER_BANK      8
+> +#define NR_MAX_BANKS           (NR_MAX_GPIOS / NR_GPIOS_PER_BANK)
 
-> > Right now the interface is a simple structure copy across a file
-> > descriptor. We could potentially invent something fancier.
-> 
-> I wonder if this communication should be netlink, which gives a more
-> well-structured way to describe what's on the wire? The reason I ask
-> is because if we ever change the seccomp_data structure, we'll now
-> have two places where we need to deal with it (the first being within
-> the BPF itself). My initial idea was to prefix the communication with
-> a size field, then send the structure, and then I had nightmares, and
-> realized this was basically netlink reinvented.
+> +#define get_bank(offset)       ((u8)((offset) / NR_GPIOS_PER_BANK))
+> +#define get_mask(offset)       ((u8)BIT((offset) % NR_GPIOS_PER_BANK))
 
-I suggested netlink in LA, and everyone (especially Andy) groaned very
-loudly :). I'm happy to switch it to netlink if you like, although i
-think memcpy() of structs should be safe here, since the return value
-from read or write can indicate the size of things.
+I would rather keep it consistent, i.e.
+get_bank() [as is]
+get_mask -> get_shift() [w/o BIT() macro]
 
-> > Finally, it's worth noting that the classic seccomp TOCTOU of reading
-> > memory data from the task still applies here, but can be avoided with
-> > careful design of the userspace handler: if the userspace handler reads all
-> > of the task memory that is necessary before applying its security policy,
-> > the tracee's subsequent memory edits will not be read by the tracer.
-> 
-> Is this really true? Couldn't a multi-threaded process muck with
-> memory out from under both the manager and the stopped process?
+> +enum { REG_IRQ_SRC, REG_IRQ_EVT, REG_IRQ_TYPE, NR_CACHE_IRQ_REGS };
 
-Sure, but as long as the manager copies the relevant arguments out of
-the tracee's memory *before* evaluating whether it's safe to do the
-thing the tracee wants to do, it's ok. The assumption here is that the
-tracee can't corrupt the manager's memory (because if it could, lots
-of other things would already be broken).
+Please, do one item per line.
 
-> >  /*
-> >   * All BPF programs must return a 32-bit value.
-> > @@ -34,6 +35,7 @@
-> >  #define SECCOMP_RET_KILL        SECCOMP_RET_KILL_THREAD
-> >  #define SECCOMP_RET_TRAP        0x00030000U /* disallow and force a SIGSYS */
-> >  #define SECCOMP_RET_ERRNO       0x00050000U /* returns an errno */
-> > +#define SECCOMP_RET_USER_NOTIF   0x7fc00000U /* notifies userspace */
-> >  #define SECCOMP_RET_TRACE       0x7ff00000U /* pass to a tracer or disallow */
-> 
-> /me tries to come up with an ordering rationale here and fails.
-> 
-> An ERRNO filter would block a USER_NOTIF because it's unconditional.
-> TRACE could be either, USER_NOTIF could be either.
-> 
-> This means TRACE rules would be bumped by a USER_NOTIF... hmm.
+> +/*
+> + * This is MFX-specific flags, overloading Linux-specific of_gpio_flags,
+> + * needed in of_xlate callback.
 
-Yes, I didn't exactly know what to do here. ERRNO, TRAP, and KILL all
-seemed more important than USER_NOTIF, but TRACE didn't. I don't have
-a strong opinion about what to do here, because users can adjust their
-filters accordingly. Let me know what you prefer.
+> + * on MFX: - if GPIO is output:
 
-> > +#ifdef CONFIG_SECCOMP_USER_NOTIFICATION
-> 
-> I wonder if it's time to split up seccomp.c ... probably not, but I've
-> always been unhappy with the #ifdefs even for just regular _FILTER. ;)
+Split to two lines.
 
-A reasonable question. I'm happy to do that as a separate series
-before this one goes in if you want.
+> + *             * (0) means PUSH_PULL
+> + *             * OF_GPIO_SINGLE_ENDED (=2) means OPEN-DRAIN
+> + *        - if GPIO is input:
+> + *             * (0) means NO_PULL
+> + *             * OF_MFX_GPI_PUSH_PULL (=2) means PUSH_PULL
+> + *
+> + *             * OF_MFX_GPIO_PULL_UP programs pull up resistor on the GPIO,
+> + *               whatever its direction, without this flag, depending on
+> + *               GPIO type and direction, it programs either no pull or
+> + *               pull down resistor.
+> + */
+> +enum of_mfx_gpio_flags {
+> +       OF_MFX_GPI_PUSH_PULL = 0x2,
+> +       OF_MFX_GPIO_PULL_UP = 0x4,
 
-> > +static ssize_t seccomp_notify_write(struct file *file, const char __user *buf,
-> > +                                   size_t size, loff_t *ppos)
-> > +{
-> > +       struct seccomp_filter *filter = file->private_data;
-> > +       struct seccomp_notif_resp resp = {};
-> > +       struct seccomp_knotif *knotif = NULL;
-> > +       struct list_head *cur;
-> > +       ssize_t ret = -EINVAL;
-> > +
-> > +       /* No partial writes. */
-> > +       if (*ppos != 0)
-> > +               return -EINVAL;
-> > +
-> > +       size = min_t(size_t, size, sizeof(resp));
-> 
-> In this case, we can't use min_t, size _must_ be == sizeof(resp),
-> otherwise we're operating on what's in the stack (which is zeroed, but
-> still).
+These have misleading prefix. OF_ is reserved for general OF stuff.
 
-I'm not sure I follow. If the user passes in an old (smaller) struct
-seccomp_notif_resp, we don't want to copy more than they specified. If
-they pass in a bigger one, this will be sizeof(resp).
+> +};
+> +
+> +struct mfx_gpio {
+> +       struct gpio_chip gc;
+> +       struct mfx *mfx;
 
-> > +       if (copy_from_user(&resp, buf, size))
-> > +               return -EFAULT;
-> > +
-> > +       ret = mutex_lock_interruptible(&filter->notify_lock);
-> > +       if (ret < 0)
-> > +               return ret;
-> > +
-> > +       list_for_each(cur, &filter->notifications) {
-> > +               knotif = list_entry(cur, struct seccomp_knotif, list);
-> > +
-> > +               if (knotif->id == resp.id)
-> > +                       break;
-> 
-> So we're finding the matching id here. Now, I'm trying to think about
-> how this will look in real-world use: the pid will be _blocked_ while
-> this happening. And all the other pids that trip this filter will
-> _also_ be blocked, since they're all waiting for the reader to read
-> and respond. The risk is pid death while waiting, and having another
-> appear with the same pid, trigger the same filter, get blocked, and
-> then the reader replies for the old pid, and the new pid gets the
-> results?
+> +       struct device *dev;
 
-Yep, exactly.
+Don't you have it in gc above as a parent device?
 
-> Since this notification queue is already linear, can't we use ordering
-> to enforce this? i.e. only the pid at the head of the filter
-> notification queue is going to have anything happening to it. Or is
-> the idea to have multiple readers/writers of the fd?
+> +       struct mutex irq_lock; /* IRQ bus lock */
+> +       u32 flags[NR_MAX_GPIOS];
+> +       /* Caches of interrupt control registers for bus_lock */
+> +       u8 regs[NR_CACHE_IRQ_REGS][NR_MAX_BANKS];
+> +       u8 oldregs[NR_CACHE_IRQ_REGS][NR_MAX_BANKS];
+> +};
 
-I'm not really sure how we prevent multiple readers/writers of the fd.
-But even with a single writer, the case you described "could" happen
-(although again, with u64 cookies it shouldn't be a problem).
+> +static int mfx_gpio_direction_input(struct gpio_chip *gc,
+> +                                   unsigned int offset)
+> +{
+> +       struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
+> +       struct mfx *mfx = mfx_gpio->mfx;
+> +       u8 reg_type = MFX_REG_GPIO_TYPE + get_bank(offset);
+> +       u8 reg_pupd = MFX_REG_GPIO_PUPD + get_bank(offset);
+> +       u8 reg_dir = MFX_REG_GPIO_DIR + get_bank(offset);
+> +       u8 mask = get_mask(offset);
+> +       int ret;
+> +
+> +       /*
+> +        * In case of input direction, there is actually no way to apply some
+> +        * configuration in hardware, as it can be done with
+> +        * .set_config in case of output direction. That's why we apply
+> +        * here the MFX specific-flags.
+> +        */
+> +       if (mfx_gpio->flags[offset] & OF_MFX_GPI_PUSH_PULL)
+> +               ret = mfx_set_bits(mfx, reg_type, mask, mask);
+> +       else
+> +               ret = mfx_set_bits(mfx, reg_type, mask, 0);
 
-I'm not sure how ordering helps us though; the problem is really that
-one entry for a pid was deleted, and a whole new one was created. So
-ordering will look ok, but the response will go to the wrong pid.
+> +
 
-> > +       }
-> > +
-> > +       if (!knotif || knotif->id != resp.id) {
-> > +               ret = -EINVAL;
-> > +               goto out;
-> > +       }
-> > +
-> > +       ret = size;
-> > +       knotif->state = SECCOMP_NOTIFY_WRITE;
-> > +       knotif->error = resp.error;
-> > +       knotif->val = resp.val;
-> > +       complete(&knotif->ready);
-> > +out:
-> > +       mutex_unlock(&filter->notify_lock);
-> > +       return ret;
-> > +}
-> > +
-> > +static const struct file_operations seccomp_notify_ops = {
-> > +       .read = seccomp_notify_read,
-> > +       .write = seccomp_notify_write,
-> > +       /* TODO: poll */
-> 
-> What's needed for poll? I think you've got all the pieces you need
-> already, i.e. wait queue, notifications, etc.
+Redundant empty line.
 
-Nothing, I just didn't implement it. I will do so for v2.
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (mfx_gpio->flags[offset] & OF_MFX_GPIO_PULL_UP)
+> +               ret = mfx_set_bits(mfx, reg_pupd, mask, mask);
+> +       else
+> +               ret = mfx_set_bits(mfx, reg_pupd, mask, 0);
 
-> > +       .release = seccomp_notify_release,
-> > +};
-> > +
-> > +static struct file *init_listener(struct seccomp_filter *filter)
-> > +{
-> > +       struct file *ret;
-> > +
-> > +       mutex_lock(&filter->notify_lock);
-> > +       if (filter->has_listener) {
-> > +               mutex_unlock(&filter->notify_lock);
-> > +               return ERR_PTR(-EBUSY);
-> > +       }
-> > +
-> > +       ret = anon_inode_getfile("seccomp notify", &seccomp_notify_ops,
-> > +                                filter, O_RDWR);
-> > +       if (IS_ERR(ret)) {
-> > +               __put_seccomp_filter(filter);
-> > +       } else {
-> > +               /*
-> > +                * Intentionally don't put_seccomp_filter(). The file
-> > +                * has a reference to it now.
-> > +                */
-> > +               filter->has_listener = true;
-> > +       }
-> 
-> I spent some time staring at this, and I don't see it: where is the
-> get_() for this? The caller of init_listener() already does a put() on
-> the failure path. It seems like there is a get() missing near the
-> start of init_listener(), or I've entirely missed something.
+> +
 
-Ugh, yes. For the SECCOMP_FILTER_FLAG_GET_LISTENER case, you're right.
-Originally I only had the ptrace-based one, and that has a get() in
-get_nth_filter(), so the comment makes sense in that case.
+Ditto.
 
-I'll straighten this out for v2 and
+> +       if (ret)
+> +               return ret;
+> +
+> +       return mfx_set_bits(mfx, reg_dir, mask, 0);
+> +}
 
-> (Regardless, I think the usage counting need a comment somewhere,
-> maybe near the top of seccomp.c with the field?)
+> +static void mfx_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
+> +{
+> +       struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
+> +       struct mfx *mfx = mfx_gpio->mfx;
+> +       u16 i;
+> +
+> +       for (i = 0; i < gc->ngpio; i++) {
+> +               int gpio = i + gc->base;
+> +               const char *label = gpiochip_is_requested(gc, i);
+> +               int dir = mfx_gpio_get_direction(gc, i);
+> +               int val = mfx_gpio_get(gc, i);
+> +               u8 mask = get_mask(i);
+> +               u8 reg;
+> +               int type, pupd;
+> +               int irqsrc, irqevt, irqtype, irqpending;
 
-...add a comment.
+> +               if (!label)
+> +                       label = "Unrequested";
 
-> > +#define USER_NOTIF_MAGIC 116983961184613L
-> 
-> Is this just you mashing the numpad? :)
+I would rather put label = gpiochip_...(); immediately before this
+condition for better readability.
 
-Is there some better way to generate magic numbers? :)
+> +
+> +               seq_printf(s, " gpio-%-3d (%-20.20s) ", gpio, label);
+> +
 
-Cheers,
+> +               reg = MFX_REG_IRQ_GPI_PENDING + get_bank(i);
+> +               irqpending = mfx_reg_read(mfx, reg);
+> +               if (irqpending < 0)
+> +                       return;
+> +               irqpending = !!(irqpending & mask);
+> +
 
-Tycho
+> +               if (!dir) {
+
+Why not to use
+
+if (dir) {
+
+?
+
+> +                       seq_printf(s, "out %s ", val ? "high" : "low");
+> +                       if (type)
+> +                               seq_puts(s, "open drain ");
+> +                       else
+> +                               seq_puts(s, "push pull ");
+> +                       if (pupd && type)
+> +                               seq_puts(s, "with internal pull-up ");
+> +                       else
+> +                               seq_puts(s, "without internal pull-up ");
+> +               } else {
+> +                       seq_printf(s, "in %s ", val ? "high" : "low");
+> +                       if (type)
+> +                               seq_printf(s, "with internal pull-%s ",
+> +                                          pupd ? "up" : "down");
+> +                       else
+> +                               seq_printf(s, "%s ",
+> +                                          pupd ? "floating" : "analog");
+> +               }
+> +
+> +               if (irqsrc) {
+> +                       seq_printf(s, "IRQ generated on %s %s",
+> +                                  !irqevt ?
+> +                                  (!irqtype ? "Low level" : "High level") :
+> +                                  (!irqtype ? "Falling edge" : "Rising edge"),
+> +                                  irqpending ? "(pending)" : "");
+
+Why do you use negative conditions? Use positive ones.
+
+> +               }
+> +
+> +               seq_puts(s, "\n");
+> +       }
+> +}
+
+> +static void mfx_gpio_irq_toggle_trigger(struct gpio_chip *gc, int offset)
+> +{
+> +       struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
+> +       struct mfx *mfx = mfx_gpio->mfx;
+> +       u8 bank = get_bank(offset);
+> +       u8 mask = get_mask(offset);
+> +       int val = mfx_gpio_get(gc, offset);
+> +
+
+> +       if (val < 0) {
+> +               dev_err(mfx_gpio->dev, "can't get value of gpio%d: ret=%d\n",
+> +                       offset, val);
+
+Is it somehow useful on err level?
+
+> +               return;
+> +       }
+
+> +}
+
+> +static int mfx_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+> +{
+> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> +       struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
+> +       int bank = get_bank(d->hwirq);
+> +       int mask = get_mask(d->hwirq);
+> +
+
+> +       if ((type & IRQ_TYPE_LEVEL_LOW) || (type & IRQ_TYPE_LEVEL_HIGH))
+
+IRQ_TYPE_LEVEL_MASK?
+
+> +               mfx_gpio->regs[REG_IRQ_EVT][bank] &= ~mask;
+> +       else
+> +               mfx_gpio->regs[REG_IRQ_EVT][bank] |= mask;
+> +
+> +       if ((type & IRQ_TYPE_EDGE_RISING) || (type & IRQ_TYPE_LEVEL_HIGH))
+
+IRQ_TYPE_EDGE_BOTH ?
+
+> +               mfx_gpio->regs[REG_IRQ_TYPE][bank] |= mask;
+> +       else
+> +               mfx_gpio->regs[REG_IRQ_TYPE][bank] &= ~mask;
+> +
+
+> +}
+
+> +static void mfx_gpio_irq_lock(struct irq_data *d)
+
+Missed annotation that this acquires a lock.
+
+> +static void mfx_gpio_irq_sync_unlock(struct irq_data *d)
+
+Ditto for releasing lock.
+
+> +static irqreturn_t mfx_gpio_irq(int irq, void *dev)
+> +{
+> +       struct mfx_gpio *mfx_gpio = dev;
+> +       struct mfx *mfx = mfx_gpio->mfx;
+> +       int num_banks = mfx->num_gpio / 8;
+> +       u8 status[num_banks];
+
+> +       int ret;
+> +       u8 bank;
+
+Swap lines.
+
+> +
+> +       ret = mfx_block_read(mfx, MFX_REG_IRQ_GPI_PENDING, ARRAY_SIZE(status),
+> +                            status);
+> +       if (ret < 0) {
+
+> +               dev_err(mfx_gpio->dev, "can't get IRQ_GPI_PENDING: %d\n", ret);
+
+In IRQ context on err level? Hmm...
+
+> +               return IRQ_NONE;
+> +       }
+> +
+> +       for (bank = 0; bank < ARRAY_SIZE(status); bank++) {
+> +               u8 stat = status[bank];
+> +
+> +               if (!stat)
+> +                       continue;
+> +
+
+> +               while (stat) {
+> +                       int bit = __ffs(stat);
+
+for_each_set_bit() ?
+
+> +                       int offset = bank * NR_GPIOS_PER_BANK + bit;
+> +                       int gpio_irq = irq_find_mapping(mfx_gpio->gc.irq.domain,
+> +                                                       offset);
+> +                       int irq_trigger = irq_get_trigger_type(gpio_irq);
+> +
+> +                       handle_nested_irq(gpio_irq);
+> +                       stat &= ~(BIT(bit));
+> +
+> +                       if (irq_trigger & IRQ_TYPE_EDGE_BOTH)
+> +                               mfx_gpio_irq_toggle_trigger(&mfx_gpio->gc,
+> +                                                           offset);
+> +               }
+> +
+> +               mfx_reg_write(mfx, MFX_REG_IRQ_GPI_ACK + bank, status[bank]);
+> +       }
+> +
+> +       return IRQ_HANDLED;
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
