@@ -1,135 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031191AbeBNPTf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 10:19:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030839AbeBNPTe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:19:34 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9F062178D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 14 Feb 2018 10:19:30 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: changbin.du@intel.com
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tracing/power: Polish the tracepoints cpu_idle and
- cpu_frequency
-Message-ID: <20180214101930.7599c67b@gandalf.local.home>
-In-Reply-To: <1518576038-16198-1-git-send-email-changbin.du@intel.com>
-References: <1518576038-16198-1-git-send-email-changbin.du@intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+        id S1031216AbeBNPTk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 10:19:40 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51196 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030839AbeBNPTh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 10:19:37 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Peng Donglin <dolinux.peng@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        andy.shevchenko@gmail.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: use DEFINE_SHOW_ATTRIBUTE() to decrease code duplication" to the asoc tree
+In-Reply-To: <1518619687-31442-1-git-send-email-dolinux.peng@gmail.com>
+Message-Id: <E1elyqE-0002KT-59@debutante>
+Date: Wed, 14 Feb 2018 15:19:26 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Resending due to typo in LKML address ]
+The patch
 
-On Wed, 14 Feb 2018 10:40:38 +0800
-changbin.du@intel.com wrote:
+   ASoC: use DEFINE_SHOW_ATTRIBUTE() to decrease code duplication
 
-> From: Changbin Du <changbin.du@intel.com>
-> 
-> The type of state is signed int, convert it to unsigned int looks weird.
-> (-1 become 4294967295)
->    932.123 power:cpu_idle:state=1 cpu_id=0)
->    932.125 power:cpu_idle:state=4294967295 cpu_id=0)
->    932.132 power:cpu_idle:state=1 cpu_id=0)
->    932.133 power:cpu_idle:state=4294967295 cpu_id=0)
-> 
-> Similarly for cpu_frequency as "state=%lu cpu_id=%lu". User need to read
-> the code to understand what 'state' means.
-> 
-> No functional change in this patch.
-> 
-> Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+has been applied to the asoc tree at
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
->From the tracing perspective:
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
--- Steve
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-> Signed-off-by: Changbin Du <changbin.du@intel.com>
-> 
-> ---
-> v2:
->   o rename title.
->   o define tracepoint with DEFINE_EVENT_PRINT().
-> ---
->  Documentation/trace/events-power.txt |  4 ++--
->  include/trace/events/power.h         | 17 ++++++++++-------
->  2 files changed, 12 insertions(+), 9 deletions(-)
-> 
-> diff --git a/Documentation/trace/events-power.txt b/Documentation/trace/events-power.txt
-> index 21d514c..9485039 100644
-> --- a/Documentation/trace/events-power.txt
-> +++ b/Documentation/trace/events-power.txt
-> @@ -23,8 +23,8 @@ Cf. include/trace/events/power.h for the events definitions.
->  A 'cpu' event class gathers the CPU-related events: cpuidle and
->  cpufreq.
->  
-> -cpu_idle		"state=%lu cpu_id=%lu"
-> -cpu_frequency		"state=%lu cpu_id=%lu"
-> +cpu_idle		"state=%ld cpu_id=%lu"
-> +cpu_frequency		"frequency=%lu cpu_id=%lu"
->  
->  A suspend event is used to indicate the system going in and out of the
->  suspend mode:
-> diff --git a/include/trace/events/power.h b/include/trace/events/power.h
-> index 908977d..f1b82de 100644
-> --- a/include/trace/events/power.h
-> +++ b/include/trace/events/power.h
-> @@ -14,12 +14,12 @@
->  
->  DECLARE_EVENT_CLASS(cpu,
->  
-> -	TP_PROTO(unsigned int state, unsigned int cpu_id),
-> +	TP_PROTO(int state, unsigned int cpu_id),
->  
->  	TP_ARGS(state, cpu_id),
->  
->  	TP_STRUCT__entry(
-> -		__field(	u32,		state		)
-> +		__field(	s32,		state		)
->  		__field(	u32,		cpu_id		)
->  	),
->  
-> @@ -28,13 +28,13 @@ DECLARE_EVENT_CLASS(cpu,
->  		__entry->cpu_id = cpu_id;
->  	),
->  
-> -	TP_printk("state=%lu cpu_id=%lu", (unsigned long)__entry->state,
-> +	TP_printk("state=%ld cpu_id=%lu", (long)__entry->state,
->  		  (unsigned long)__entry->cpu_id)
->  );
->  
->  DEFINE_EVENT(cpu, cpu_idle,
->  
-> -	TP_PROTO(unsigned int state, unsigned int cpu_id),
-> +	TP_PROTO(int state, unsigned int cpu_id),
->  
->  	TP_ARGS(state, cpu_id)
->  );
-> @@ -141,11 +141,14 @@ TRACE_EVENT(pstate_sample,
->  		{ PM_EVENT_RESTORE, "restore" }, \
->  		{ PM_EVENT_RECOVER, "recover" })
->  
-> -DEFINE_EVENT(cpu, cpu_frequency,
-> +DEFINE_EVENT_PRINT(cpu, cpu_frequency,
->  
-> -	TP_PROTO(unsigned int frequency, unsigned int cpu_id),
-> +	TP_PROTO(int state, unsigned int cpu_id),
->  
-> -	TP_ARGS(frequency, cpu_id)
-> +	TP_ARGS(state, cpu_id),
-> +
-> +	TP_printk("frequency=%lu cpu_id=%lu",  (unsigned long)__entry->state,
-> +		  (unsigned long)__entry->cpu_id)
->  );
->  
->  TRACE_EVENT(device_pm_callback_start,
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 658829d5f40f764d708e544dd85061ef3c3110fd Mon Sep 17 00:00:00 2001
+From: Peng Donglin <dolinux.peng@gmail.com>
+Date: Wed, 14 Feb 2018 22:48:07 +0800
+Subject: [PATCH] ASoC: use DEFINE_SHOW_ATTRIBUTE() to decrease code
+ duplication
+
+There is some duplicate code in soc-core.c, and the kernel provides
+DEFINE_SHOW_ATTRIBUTE() helper macro to decrease it in seq_file.h.
+
+Signed-off-by: Peng Donglin <dolinux.peng@gmail.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/soc-core.c | 45 ++++++---------------------------------------
+ 1 file changed, 6 insertions(+), 39 deletions(-)
+
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index b928c59ea775..a2c9aa473324 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -349,7 +349,7 @@ static void soc_init_codec_debugfs(struct snd_soc_component *component)
+ 			"ASoC: Failed to create codec register debugfs file\n");
+ }
+ 
+-static int codec_list_seq_show(struct seq_file *m, void *v)
++static int codec_list_show(struct seq_file *m, void *v)
+ {
+ 	struct snd_soc_codec *codec;
+ 
+@@ -362,20 +362,9 @@ static int codec_list_seq_show(struct seq_file *m, void *v)
+ 
+ 	return 0;
+ }
++DEFINE_SHOW_ATTRIBUTE(codec_list);
+ 
+-static int codec_list_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, codec_list_seq_show, NULL);
+-}
+-
+-static const struct file_operations codec_list_fops = {
+-	.open = codec_list_seq_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
+-
+-static int dai_list_seq_show(struct seq_file *m, void *v)
++static int dai_list_show(struct seq_file *m, void *v)
+ {
+ 	struct snd_soc_component *component;
+ 	struct snd_soc_dai *dai;
+@@ -390,20 +379,9 @@ static int dai_list_seq_show(struct seq_file *m, void *v)
+ 
+ 	return 0;
+ }
++DEFINE_SHOW_ATTRIBUTE(dai_list);
+ 
+-static int dai_list_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, dai_list_seq_show, NULL);
+-}
+-
+-static const struct file_operations dai_list_fops = {
+-	.open = dai_list_seq_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
+-
+-static int platform_list_seq_show(struct seq_file *m, void *v)
++static int platform_list_show(struct seq_file *m, void *v)
+ {
+ 	struct snd_soc_platform *platform;
+ 
+@@ -416,18 +394,7 @@ static int platform_list_seq_show(struct seq_file *m, void *v)
+ 
+ 	return 0;
+ }
+-
+-static int platform_list_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, platform_list_seq_show, NULL);
+-}
+-
+-static const struct file_operations platform_list_fops = {
+-	.open = platform_list_seq_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(platform_list);
+ 
+ static void soc_init_card_debugfs(struct snd_soc_card *card)
+ {
+-- 
+2.16.1
