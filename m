@@ -1,119 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754590AbeBNIiH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 03:38:07 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:54293 "EHLO
-        terminus.zytor.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751427AbeBNIiF (ORCPT
+        id S1754660AbeBNIjZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 03:39:25 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:55629 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753260AbeBNIjX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 03:38:05 -0500
-Date: Wed, 14 Feb 2018 00:37:24 -0800
-From: "tip-bot for Gustavo A. R. Silva" <tipbot@zytor.com>
-Message-ID: <tip-0bfa9f1c5d3d290461f554520b8f24316ec971e0@git.kernel.org>
-Cc: hpa@zytor.com, tglx@linutronix.de, garsilva@embeddedor.com,
-        linux-kernel@vger.kernel.org, bp@alien8.de,
-        torvalds@linux-foundation.org, mingo@kernel.org, peterz@infradead.org
-Reply-To: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        bp@alien8.de, garsilva@embeddedor.com, hpa@zytor.com,
-        tglx@linutronix.de, peterz@infradead.org, mingo@kernel.org
-In-Reply-To: <20180213192208.GA26414@embeddedor.com>
-References: <20180213192208.GA26414@embeddedor.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/cpu: Change type of x86_cache_size variable to
- unsigned int
-Git-Commit-ID: 0bfa9f1c5d3d290461f554520b8f24316ec971e0
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 14 Feb 2018 03:39:23 -0500
+Subject: Re: [PATCH v2 2/4] arm64: dts: renesas: r8a77995: add VSP instances
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1518550237-16753-1-git-send-email-kbingham@kernel.org>
+ <1518550237-16753-3-git-send-email-kbingham@kernel.org>
+ <1667048.nVWrpUAVXQ@avalon>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <10851181-b3b1-bb07-82e9-487ae51711ba@ideasonboard.com>
+Date: Wed, 14 Feb 2018 08:39:19 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <1667048.nVWrpUAVXQ@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0bfa9f1c5d3d290461f554520b8f24316ec971e0
-Gitweb:     https://git.kernel.org/tip/0bfa9f1c5d3d290461f554520b8f24316ec971e0
-Author:     Gustavo A. R. Silva <garsilva@embeddedor.com>
-AuthorDate: Tue, 13 Feb 2018 13:22:08 -0600
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 14 Feb 2018 09:14:44 +0100
+Hi Laurent,
 
-x86/cpu: Change type of x86_cache_size variable to unsigned int
+Thanks for the review,
 
-Currently, x86_cache_size is of type int, which makes no sense as we
-will never have a valid cache size equal or less than 0. So instead of
-initializing this variable to -1, it can perfectly be initialized to 0
-and use it as an unsigned variable instead.
+On 13/02/18 22:03, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> On Tuesday, 13 February 2018 21:30:35 EET Kieran Bingham wrote:
+>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> The r8a77995 has a VSPBS to support image processing such as blending of
+>> two input images, and has two VSPDs to handle display pipelines with a
+>> DU.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> ---
+>> v2:
+>>  - Fix VSPD register map size
+>>  - Squash VSPBS and VSPD patches together
+>>
+>>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 30 ++++++++++++++++++++++++++++
+>>  1 file changed, 30 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> b/arch/arm64/boot/dts/renesas/r8a77995.dtsi index
+>> 196a917afea6..19bd8be9926a 100644
+>> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> @@ -692,6 +692,16 @@
+>>  			status = "disabled";
+>>  		};
+>>
+>> +		vspbs: vsp@fe960000 {
+>> +			compatible = "renesas,vsp2";
+>> +			reg = <0 0xfe960000 0 0x4000>;
+> 
+> The VSPBS also has OSD-CLUT support in its RPFs, so you need to extend the 
+> registers range too.
+> 
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Addresses-Coverity-ID: 1464429
-Link: http://lkml.kernel.org/r/20180213192208.GA26414@embeddedor.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/include/asm/processor.h      | 2 +-
- arch/x86/kernel/cpu/common.c          | 2 +-
- arch/x86/kernel/cpu/microcode/intel.c | 2 +-
- arch/x86/kernel/cpu/proc.c            | 4 ++--
- 4 files changed, 5 insertions(+), 5 deletions(-)
+Wait, but I already changed this ...
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index b7c8583..44c2c4e 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -109,7 +109,7 @@ struct cpuinfo_x86 {
- 	char			x86_vendor_id[16];
- 	char			x86_model_id[64];
- 	/* in KB - valid for CPUS which support this call: */
--	int			x86_cache_size;
-+	unsigned int		x86_cache_size;
- 	int			x86_cache_alignment;	/* In bytes */
- 	/* Cache QoS architectural values: */
- 	int			x86_cache_max_rmid;	/* max index */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index a7d8df6..824aee0 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1184,7 +1184,7 @@ static void identify_cpu(struct cpuinfo_x86 *c)
- 	int i;
- 
- 	c->loops_per_jiffy = loops_per_jiffy;
--	c->x86_cache_size = -1;
-+	c->x86_cache_size = 0;
- 	c->x86_vendor = X86_VENDOR_UNKNOWN;
- 	c->x86_model = c->x86_stepping = 0;	/* So far unknown... */
- 	c->x86_vendor_id[0] = '\0'; /* Unset */
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index b94279b..a15db2b 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -982,7 +982,7 @@ static struct microcode_ops microcode_intel_ops = {
- 
- static int __init calc_llc_size_per_core(struct cpuinfo_x86 *c)
- {
--	u64 llc_size = c->x86_cache_size * 1024;
-+	u64 llc_size = c->x86_cache_size * 1024ULL;
- 
- 	do_div(llc_size, c->x86_max_cores);
- 
-diff --git a/arch/x86/kernel/cpu/proc.c b/arch/x86/kernel/cpu/proc.c
-index ee4cc38..2c8522a 100644
---- a/arch/x86/kernel/cpu/proc.c
-+++ b/arch/x86/kernel/cpu/proc.c
-@@ -91,8 +91,8 @@ static int show_cpuinfo(struct seq_file *m, void *v)
- 	}
- 
- 	/* Cache size */
--	if (c->x86_cache_size >= 0)
--		seq_printf(m, "cache size\t: %d KB\n", c->x86_cache_size);
-+	if (c->x86_cache_size)
-+		seq_printf(m, "cache size\t: %u KB\n", c->x86_cache_size);
- 
- 	show_cpuinfo_core(m, c, cpu);
- 	show_cpuinfo_misc(m, c);
+</me checks tree>
+
+Yup - this change is already in my tree ... which means I must have made the
+change *after* calling git format-patch. Not helpful.
+
+Orz
+
+
+
+
+> Apart from that,
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+I'll collect the tag and repost, this time with the correctly updated version.
+
+(And I'll add in that missing vspd3 from the es1 tree too)
+
+
+>> +			interrupts = <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&cpg CPG_MOD 627>;
+>> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+>> +			resets = <&cpg 627>;
+>> +			renesas,fcp = <&fcpvb0>;
+>> +		};
+>> +
+>>  		fcpvb0: fcp@fe96f000 {
+>>  			compatible = "renesas,fcpv";
+>>  			reg = <0 0xfe96f000 0 0x200>;
+>> @@ -701,6 +711,16 @@
+>>  			iommus = <&ipmmu_vp0 5>;
+>>  		};
+>>
+>> +		vspd0: vsp@fea20000 {
+>> +			compatible = "renesas,vsp2";
+>> +			reg = <0 0xfea20000 0 0x8000>;
+>> +			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&cpg CPG_MOD 623>;
+>> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+>> +			resets = <&cpg 623>;
+>> +			renesas,fcp = <&fcpvd0>;
+>> +		};
+>> +
+>>  		fcpvd0: fcp@fea27000 {
+>>  			compatible = "renesas,fcpv";
+>>  			reg = <0 0xfea27000 0 0x200>;
+>> @@ -710,6 +730,16 @@
+>>  			iommus = <&ipmmu_vi0 8>;
+>>  		};
+>>
+>> +		vspd1: vsp@fea80000 {
+>> +			compatible = "renesas,vsp2";
+>> +			reg = <0 0xfea28000 0 0x8000>;
+>> +			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&cpg CPG_MOD 622>;
+>> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+>> +			resets = <&cpg 622>;
+>> +			renesas,fcp = <&fcpvd1>;
+>> +		};
+>> +
+>>  		fcpvd1: fcp@fea2f000 {
+>>  			compatible = "renesas,fcpv";
+>>  			reg = <0 0xfea2f000 0 0x200>;
+> 
