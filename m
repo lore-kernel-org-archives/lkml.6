@@ -1,72 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967180AbeBNKVD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 05:21:03 -0500
-Received: from mout.web.de ([212.227.17.12]:53903 "EHLO mout.web.de"
+        id S967157AbeBNKWJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 05:22:09 -0500
+Received: from mga04.intel.com ([192.55.52.120]:48306 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967064AbeBNKVB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 05:21:01 -0500
-Subject: [PATCH 3/4] crypto: ux500: Adjust an error message in
- ux500_cryp_probe()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Geliang Tang <geliangtang@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
-Message-ID: <93bfba75-2372-c20d-731e-d11dcb40dc3e@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 11:20:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S966996AbeBNKWI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 05:22:08 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,511,1511856000";
+   d="scan'208";a="34594307"
+Date: Wed, 14 Feb 2018 12:22:03 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <yehezkel.bernat@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        Radion Mirchevsky <radion.mirchevsky@intel.com>
+Subject: Re: [PATCH 16/18] thunderbolt: Add support for preboot ACL
+Message-ID: <20180214102203.GN27191@lahna.fi.intel.com>
+References: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
+ <20180213170018.9780-17-mika.westerberg@linux.intel.com>
+ <CAHp75VePM_zL-zyZSO+3BN1O3KhWpeKKsKg_V2XKFD4+yfpVrA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20dcb583-5455-b5b9-94df-db9d1e21931f@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:/xikcfVPRz1h+MyPkwdkhN1BcKlDehjoyY2MMLu8QLHoHgzimiq
- 6FW1LRcSUuawvyi8OFCM01rd4NhaoDIZRuza/N5cNI+ievRJMxFgoiKWN06IfXTjn+8mlsK
- 2xTxLpUwKE9aDrm1OBOBw1iXWJTVzc295AtcEjIBIUZU6FH9WtAatCkqAXPBTxfVXyXZoEf
- BNFA8ybySAt1J/h2+jtmg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:6DzjkaZ0Y4s=:hV1ub8WmRY9osEGSy87oPd
- LV1d1xJl53WNKglpDkIqe6Br9jn/Hyv7WnoXn73ACCYR+/FwsoXsUpPXPmOJ+2O4vp9t3ceOi
- ZLXVhwIgjcJkk38l6u0jnsFbZ22gp9ybYjnNFiXuqSflHA3cq3X8AIPgriN53cG63bOoRGWUs
- HU2FsvxzCwFsePKhOqWsJI4ZMTc1dlqm2osWNXVR6DbkuAKMaq0xU4y0g1PT3JKGWxaJr6fXF
- pASSmRGbTE8zaytAmwJMJkIFZarYG7fYuHcIAeyZaoKKkXNVDzvSHz8JL+OBOOUwIV7bIHKYt
- tZvM1Vl9W/63njhx3CB4oPE5i77IDMscjvaE6m7jszUsGhNt9zkTmeYuaxNPkC1V9OG7csQ3s
- SWj+/fLfK28Q0jQtYXkFASclEI06m7Ez6pd4NZ0ywK+KKZ3mWziQE1AES/L+3Jnd/FpditRd4
- YMPWRofHZYvm9yKpjxr9SCHxCIOgNOtOLbnODSKB4MFSVfnxyoAshm87K7pIUKJ0DQAB7/jUA
- sx8Uf7WDN3nkuZbss18tHq3OzUhdcY7bCugImkhO4FiT01h7mHtjTCf03073A9E8OT5g5cfEW
- mrh1zWSQW14atbFqURxJsZrLEXr+O1GYBetCA0JnZ5cFUFXImiWxKDpXKFVBIy6WxeaYJgx6k
- Q1IqcDuwtbk3OouVRH1h2XdQLk4lFgzxVbslraa1OoUcYd57Q6cYaroro9PhWdAeP568nri74
- KRrLSGSWVBr8OWiGqcYfhHZyjqjripWuDSi/EL1lgGWWsuWOsyy1YUX6f4BUJ3Wg2qOsrg5cN
- C0OMW0qeRdx/LiJD2Lp4vtcXzXtSCn6IPRFTQhjHJkAexg5D9I=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VePM_zL-zyZSO+3BN1O3KhWpeKKsKg_V2XKFD4+yfpVrA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 10:47:31 +0100
+On Tue, Feb 13, 2018 at 08:19:45PM +0200, Andy Shevchenko wrote:
+> On Tue, Feb 13, 2018 at 7:00 PM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> > Preboot ACL is a mechanism that allows connecting Thunderbolt devices
+> > boot time in more secure way than the legacy Thunderbolt boot support.
+> > As with the legacy boot option, this also needs to be enabled from the
+> > BIOS before booting is allowed. Difference to the legacy mode is that
+> > the userspace software explicitly adds device UUIDs by sending a special
+> > message to the ICM firmware. Only the devices listed in the boot ACL are
+> > connected automatically during the boot. This works in both "user" and
+> > "secure" security levels.
+> >
+> > We implement this in Linux by exposing a new sysfs attribute (boot_acl)
+> > below each Thunderbolt domain. The userspace software can then update
+> > the full list as needed.
+> 
+> > +       if (mutex_lock_interruptible(&tb->lock)) {
+> > +               ret = -ERESTARTSYS;
+> > +               goto out;
+> > +       }
+> 
+> > +       ret = tb->cm_ops->get_boot_acl(tb, uuids, tb->nboot_acl);
+> > +       mutex_unlock(&tb->lock);
+> > +
+> > +       if (ret)
+> > +               goto out;
+> 
+> Can we use more traditional pattern, i.e.
+> mutex_lock();
+> ret = ...;
+> if (ret) {
+>  ...
+>  mutex_unlock();
+>  goto ...;
+> }
+> mutex_unlock();
+> 
+> ?
 
-Replace the function name in this error message so that the same name
-is mentioned according to what was called before.
+OK.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/crypto/ux500/cryp/cryp_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > +       for (ret = 0, i = 0; i < tb->nboot_acl; i++) {
+> 
+> Wouldn't be slightly better to check for overflow beforehand
+> 
+> i < min(PAGE_SIZE / (UUID_STRING_LEN + 1), tb->nboot_acl)
+> 
+> and then simple
+> 
+> ret = sprintf(buf + ret, "%pUb", &uuids[i]);
+> 
+> ?
 
-diff --git a/drivers/crypto/ux500/cryp/cryp_core.c b/drivers/crypto/ux500/cryp/cryp_core.c
-index 07cc92f88933..7c811d7eb274 100644
---- a/drivers/crypto/ux500/cryp/cryp_core.c
-+++ b/drivers/crypto/ux500/cryp/cryp_core.c
-@@ -1478,7 +1478,7 @@ static int ux500_cryp_probe(struct platform_device *pdev)
- 	}
- 
- 	if (cryp_check(device_data)) {
--		dev_err(dev, "[%s]: cryp_init() failed!", __func__);
-+		dev_err(dev, "[%s]: cryp_check() failed!", __func__);
- 		ret = -EINVAL;
- 		goto out_power;
- 	}
--- 
-2.16.1
+Well, this follows the common pattern used with formatting sysfs
+attributes.
+
+> > +               if (!uuid_is_null(&uuids[i]))
+> > +                       ret += snprintf(buf + ret, PAGE_SIZE - ret, "%pUb",
+> > +                                       &uuids[i]);
+> > +
+> > +               ret += snprintf(buf + ret, PAGE_SIZE - ret, "%s",
+> > +                              i < tb->nboot_acl - 1 ? "," : "\n");
+> > +       }
+> 
+> 
+> > +static ssize_t boot_acl_store(struct device *dev, struct device_attribute *attr,
+> > +                             const char *buf, size_t count)
+> > +{
+> 
+> > +       int i = 0;
+> 
+> > +       uuid_str = strim(str);
+> 
+> > +       while ((s = strsep(&uuid_str, ",")) != NULL && i < tb->nboot_acl) {
+> 
+> for (i = 0; (s = strsep(&uuid_str, ",")) != NULL && i < tb->nboot_acl; i++) {
+>   size_t len = strlen(s);
+> 
+>   if (!len)
+>     continue;
+> ...
+> }
+> 
+> ?
+
+I think the way it is done in this patch is more readable than what you
+are proposing ;-)
+
+> Btw, nboot_acl can be 0, right? Perhaps check it first? (Or in other
+> words: which one is anticipated to be more frequent: nboot_acl = 0, or
+> string w/o any ',' in it?)
+
+If nboot_acl is 0 the sysfs attribute is not visible at all.
+
+> > +               size_t len = strlen(s);
+> > +
+> > +               if (len) {
+> 
+> 
+> > +                       if (len != UUID_STRING_LEN) {
+> > +                               ret = -EINVAL;
+> > +                               goto err_free_acl;
+> > +                       }
+> 
+> uuid_parse() does this check. No need to duplicate.
+
+It does not actually. Only thing it checks that the string is at least
+UUID_STRING_LEN. If the string is longer it just ignores the rest. We
+on the other side want to have strictly UUID_STRING_LEN strings.
+
+Thanks for the comments :)
