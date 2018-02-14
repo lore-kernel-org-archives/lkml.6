@@ -1,53 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966990AbeBNJ7P (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 04:59:15 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57012 "EHLO mx2.suse.de"
+        id S967031AbeBNKAZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 05:00:25 -0500
+Received: from h1.radempa.de ([176.9.142.194]:46520 "EHLO mail.cosmopool.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966706AbeBNJ7N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 04:59:13 -0500
-Date: Wed, 14 Feb 2018 10:59:11 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org
-Subject: Re: [patch 1/2] mm, page_alloc: extend kernelcore and movablecore
- for percent
-Message-ID: <20180214095911.GB28460@dhcp22.suse.cz>
-References: <alpine.DEB.2.10.1802121622470.179479@chino.kir.corp.google.com>
+        id S966706AbeBNKAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 05:00:20 -0500
+From: Harald Geyer <harald@ccbib.org>
+To: Mark Brown <broonie@kernel.org>
+cc: Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org,
+        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH,RESEND2] regulator: fixed, gpio: dt: regulator-name is required property
+In-reply-to: <20180213154530.GF5988@sirena.org.uk>
+References: <1518532988-10990-1-git-send-email-harald@ccbib.org> <20180213154530.GF5988@sirena.org.uk>
+Comments: In-reply-to Mark Brown <broonie@kernel.org>
+   message dated "Tue, 13 Feb 2018 15:45:30 +0000."
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.10.1802121622470.179479@chino.kir.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1295.1518602412.1@stardust.g4.wien.funkfeuer.at>
+Date: Wed, 14 Feb 2018 11:00:12 +0100
+Message-Id: <E1eltrI-0000Kv-W3@stardust.g4.wien.funkfeuer.at>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 12-02-18 16:24:25, David Rientjes wrote:
-> Both kernelcore= and movablecore= can be used to define the amount of
-> ZONE_NORMAL and ZONE_MOVABLE on a system, respectively.  This requires
-> the system memory capacity to be known when specifying the command line,
-> however.
+Mark Brown writes:
+> On Tue, Feb 13, 2018 at 02:43:08PM +0000, Harald Geyer wrote:
 > 
-> This introduces the ability to define both kernelcore= and movablecore=
-> as a percentage of total system memory.  This is convenient for systems
-> software that wants to define the amount of ZONE_MOVABLE, for example, as
-> a proportion of a system's memory rather than a hardcoded byte value.
+> > BTW, it took me a bit to figure out that by "content free ping" you are
+> > refering to the quoting of the patch. Maybe you can reword your canned
+> > response to make it easier to understand.
 > 
-> To define the percentage, the final character of the parameter should be
-> a '%'.
+> No, a content free ping is when you just send a reply saying something
+> to the effect of "hey, what's going on with this?".
 
-I do not have any objections regarding the extension. What I am more
-interested in is _why_ people are still using this command line
-parameter at all these days. Why would anybody want to introduce lowmem
-issues from 32b days. I can see the CMA/Hotplug usecases for
-ZONE_MOVABLE but those have their own ways to define zone movable. I was
-tempted to simply remove the kernelcore already. Could you be more
-specific what is your usecase which triggered a need of an easier
-scaling of the size?
--- 
-Michal Hocko
-SUSE Labs
+Well, I did quote the entire patch and gave a summary of the status
+as far as I know it. So I really don't understand why I got the
+"no content free pings" response ...
+
+> As I said in my
+> reply best case the answer is going to be "I have no idea, you need to
+> resend since I'll need the patch to do anything with it" and worst case
+> it just won't get seen at all if the thing really did get buried
+> somehow.
+
+So you are saying you don't want pings as followups to patches at all, if
+the patch is old enough that it probably got lost?
+
+I guess that would make sense too, but again it's not obvious to read
+the canned response that way.
