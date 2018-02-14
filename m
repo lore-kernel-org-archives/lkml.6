@@ -1,56 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967060AbeBNKJ4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 05:09:56 -0500
-Received: from mga07.intel.com ([134.134.136.100]:13294 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966963AbeBNKJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 05:09:55 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,511,1511856000";
-   d="scan'208";a="201041964"
-Date: Wed, 14 Feb 2018 12:09:50 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <yehezkel.bernat@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
-        Radion Mirchevsky <radion.mirchevsky@intel.com>
-Subject: Re: [PATCH 17/18] thunderbolt: Introduce USB only (SL4) security
- level
-Message-ID: <20180214100950.GM27191@lahna.fi.intel.com>
-References: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
- <20180213170018.9780-18-mika.westerberg@linux.intel.com>
- <5b787d94-af95-a249-69ba-54f1528be11e@infradead.org>
+        id S967086AbeBNKK1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 05:10:27 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41826 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966963AbeBNKKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 05:10:25 -0500
+Subject: Re: [patch] kvm: suppress KVM_SET_GSI_ROUTING allocation failure
+To: David Rientjes <rientjes@google.com>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <alpine.DEB.2.10.1802081334120.133173@chino.kir.corp.google.com>
+ <47a55220-0006-6486-5a9d-1d1142efcc47@de.ibm.com>
+ <f9754c98-9b8d-97b6-54cf-6d5e55143100@redhat.com>
+ <alpine.DEB.2.10.1802131702280.71590@chino.kir.corp.google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <179c1c39-2b3f-20f6-d4cb-0044aa49e570@redhat.com>
+Date: Wed, 14 Feb 2018 11:10:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5b787d94-af95-a249-69ba-54f1528be11e@infradead.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <alpine.DEB.2.10.1802131702280.71590@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 04:29:42PM -0800, Randy Dunlap wrote:
-> On 02/13/2018 09:00 AM, Mika Westerberg wrote:
-> > This new security level works so that it creates one PCIe tunnel to the
-> > connected Thunderbolt dock, removing PCIe links downstream of the dock.
-> > This leaves only the internal USB controller visible.
-> > 
-> > Display Port tunnels are created normally.
-> > 
-> > While there make sure security sysfs attribute returns "unknown" for any
-> > future security level.
-> > 
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+On 14/02/2018 02:03, David Rientjes wrote:
+> On Tue, 13 Feb 2018, Paolo Bonzini wrote:
 > 
-> Hi,
+>>>> The KVM_SET_GSI_ROUTING ioctl does a vmalloc() of
+>>>> sizeof(struct kvm_irq_routing_entry) multiplied by a user-supplied value.
+>>>> This can be up to 4096 entries on architectures such as arm64 and s390
+>>>> (and the upper bound may be increased on s390 eventually).
+>>>>
+>>>> This can produce a vmalloc allocation failure warning:
+>>>>
+>>> [...]
+>>>>  kvm_vm_ioctl+0x910/0x15e0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4153
+>>>
+>>>                                                                        ^^^^^
+>>>
+>>>> @@ -3063,7 +3063,8 @@ static long kvm_vm_ioctl(struct file *filp,
+>>>
+>>>       ^^^^^
+>>>
+>>>
+>>> Are you sure that you got the right vmalloc?
+>>
+>> Nice catch!  But well, it's the only one in the whole file. :)
+>>
+>> That seems very much like an old patch then.  I'm unqueuing it.
+>>
 > 
-> Also update Documentation/admin-guide/thunderbolt.rst ??
+> It's not a catch at all, the fact that I saw this warning with an older 
+> kernel for KVM_SET_GSI_ROUTING doesn't mean that I can't patch it with an 
+> upstream kernel.  Would you prefer I remove the stack trace completely?
 
-Good point. I'll do that in v2.
+The upstream kernel doesn't warn.  It checks "if (routing.nr)" before
+calling vmalloc.
+
+Paolo
