@@ -1,67 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967551AbeBNLrq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 06:47:46 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50934 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S967360AbeBNLrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 06:47:45 -0500
-Subject: Re: WARNING in kvmalloc_node
-To: Daniel Borkmann <daniel@iogearbox.net>,
-        Michal Hocko <mhocko@kernel.org>, Matthew Wilcox <willy@infradead.org>
-Cc: syzbot <syzbot+1a240cdb1f4cc88819df@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, dhowells@redhat.com, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mingo@kernel.org,
-        rppt@linux.vnet.ibm.com, syzkaller-bugs@googlegroups.com,
-        vbabka@suse.cz, viro@zeniv.linux.org.uk,
-        Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org,
-        brouer@redhat.com, "Michael S. Tsirkin" <mst@redhat.com>
-References: <001a1144c4ca5dc9d6056520c7b7@google.com>
- <20180214025533.GA28811@bombadil.infradead.org>
- <20180214084308.GX3443@dhcp22.suse.cz>
- <f3fda93e-b223-3c94-3213-43cad4346716@iogearbox.net>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <24351362-a099-3317-2b96-8cdc6835eb1e@redhat.com>
-Date: Wed, 14 Feb 2018 19:47:30 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S967564AbeBNLsI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 06:48:08 -0500
+Received: from a.mx.secunet.com ([62.96.220.36]:34836 "EHLO a.mx.secunet.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967355AbeBNLsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 06:48:05 -0500
+Date: Wed, 14 Feb 2018 12:48:02 +0100
+From: Steffen Klassert <steffen.klassert@secunet.com>
+To: Colin King <colin.king@canonical.com>
+CC: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        "Hideaki YOSHIFUJI" <yoshfuji@linux-ipv6.org>,
+        <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] esp4: remove redundant initialization of pointer esph
+Message-ID: <20180214114802.dc55jiwj4zwntewh@gauss3.secunet.de>
+References: <20180130145348.32202-1-colin.king@canonical.com>
+ <20180202073750.t5gcqfp7cv7vdxiu@gauss3.secunet.de>
 MIME-Version: 1.0
-In-Reply-To: <f3fda93e-b223-3c94-3213-43cad4346716@iogearbox.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180202073750.t5gcqfp7cv7vdxiu@gauss3.secunet.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: 93059895-F77A-4524-94CE-69E8F6C70BCA
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 02, 2018 at 08:37:50AM +0100, Steffen Klassert wrote:
+> On Tue, Jan 30, 2018 at 02:53:48PM +0000, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > Pointer esph is being assigned a value that is never read, esph is
+> > re-assigned and only read inside an if statement, hence the
+> > initialization is redundant and can be removed.
+> > 
+> > Cleans up clang warning:
+> > net/ipv4/esp4.c:657:21: warning: Value stored to 'esph' during
+> > its initialization is never read
+> > 
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> I've queued this for ipsec-next, will be applied
+> after the merge window.
 
-
-On 2018年02月14日 17:28, Daniel Borkmann wrote:
-> [ +Jason, +Jesper ]
->
-> On 02/14/2018 09:43 AM, Michal Hocko wrote:
->> On Tue 13-02-18 18:55:33, Matthew Wilcox wrote:
->>> On Tue, Feb 13, 2018 at 03:59:01PM -0800, syzbot wrote:
->> [...]
->>>>   kvmalloc include/linux/mm.h:541 [inline]
->>>>   kvmalloc_array include/linux/mm.h:557 [inline]
->>>>   __ptr_ring_init_queue_alloc include/linux/ptr_ring.h:474 [inline]
->>>>   ptr_ring_init include/linux/ptr_ring.h:492 [inline]
->>>>   __cpu_map_entry_alloc kernel/bpf/cpumap.c:359 [inline]
->>>>   cpu_map_update_elem+0x3c3/0x8e0 kernel/bpf/cpumap.c:490
->>>>   map_update_elem kernel/bpf/syscall.c:698 [inline]
->>> Blame the BPF people, not the MM people ;-)
-> Heh, not really. ;-)
->
->> Yes. kvmalloc (the vmalloc part) doesn't support GFP_ATOMIC semantic.
-> Agree, that doesn't work.
->
-> Bug was added in commit 0bf7800f1799 ("ptr_ring: try vmalloc() when kmalloc() fails").
->
-> Jason, please take a look at fixing this, thanks!
-
-It looks to me the only solution is to revert that commit.
-
-Will post a patch.
-
-Thanks
+Now applied to ipsec-next, thanks!
