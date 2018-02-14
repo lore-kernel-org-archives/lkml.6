@@ -1,83 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935280AbeBNUjm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 15:39:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59660 "EHLO mx2.suse.de"
+        id S935365AbeBNUj7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 15:39:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59676 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934991AbeBNUjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 15:39:41 -0500
-Date: Thu, 15 Feb 2018 07:39:33 +1100
-From: Aleksa Sarai <asarai@suse.de>
-To: Enrico Weigelt <lkml@metux.net>
-Cc: Richard Weinberger <richard@sigma-star.at>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: plan9 semantics on Linux - mount namespaces
-Message-ID: <20180214203933.55yraxue7hpup65x@gordon>
-References: <0f058286-a432-379b-f559-f2fe713807ab@metux.net>
- <2050418.Dl5pXkWGsk@blindfold>
- <4f620eb7-c00c-487b-2e06-8cc4c97af38c@metux.net>
- <60748622.exvCVAzLTp@blindfold>
- <e924b563-44c6-d678-a6cc-1181f4b820d5@metux.net>
+        id S934991AbeBNUj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 15:39:58 -0500
+From: NeilBrown <neilb@suse.com>
+To: Milan Broz <gmazyland@gmail.com>, Mike Snitzer <snitzer@redhat.com>,
+        device-mapper development <dm-devel@redhat.com>
+Date: Thu, 15 Feb 2018 07:39:50 +1100
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: DM Regression in 4.16-rc1 - read() returns data when it shouldn't
+In-Reply-To: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
+References: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
+Message-ID: <871shnqp9l.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="45q67fkve2bvqniy"
-Content-Disposition: inline
-In-Reply-To: <e924b563-44c6-d678-a6cc-1181f4b820d5@metux.net>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---45q67fkve2bvqniy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-=-=
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On 2018-02-14, Enrico Weigelt <lkml@metux.net> wrote:
-> But still I wonder whether user_ns really solves my problem, as I don't
-> want to create sandboxed users, but only private namespaces just like
-> on Plan9.
+On Wed, Feb 14 2018, Milan Broz wrote:
 
-On Linux you need to have CAP_SYS_ADMIN (in the user_ns that owns your
-current mnt_ns) in order to mount anything, and to create any namespaces
-(in your current user_ns). So, in order to use the functionality of
-mnt_ns (the ability to create mounts only a subset of processes can
-see) as an unprivileged user, you need to use user_ns.
+> Hi,
+>
+> the commit (found by bisect)
+>
+>   commit 18a25da84354c6bb655320de6072c00eda6eb602
+>   Author: NeilBrown <neilb@suse.com>
+>   Date:   Wed Sep 6 09:43:28 2017 +1000
+>
+>     dm: ensure bio submission follows a depth-first tree walk
+>
+> cause serious regression while reading from DM device.
+>
+> The reproducer is below, basically it tries to simulate failure we see in=
+ cryptsetup
+> regression test: we have DM device with error and zero target and try to =
+read
+> "passphrase" from it (it is test for 64 bit offset error path):
+>
+> Test device:
+> # dmsetup table test
+> 0 10000000 error=20
+> 10000000 1000000 zero=20
+>
+> We try to run this operation:
+>   lseek64(fd, 5119999988, SEEK_CUR); // this should seek to error target =
+sector
+>   read(fd, buf, 13); // this should fail, if we seek to error part of the=
+ device
+>
+> While on 4.15 the read properly fails:
+>   Seek returned 5119999988.
+>   Read returned -1.
+>
+> for 4.16 it actually succeeds returning some random data
+> (perhaps kernel memory, so this bug is even more dangerous):
+>   Seek returned 5119999988.
+>   Read returned 13.
+>
+> Full reproducer below:
+>
+> #define _GNU_SOURCE
+> #define _LARGEFILE64_SOURCE
+> #include <stdio.h>
+> #include <stddef.h>
+> #include <stdint.h>
+> #include <stdlib.h>
+> #include <unistd.h>
+> #include <fcntl.h>
+> #include <inttypes.h>
+>
+> int main (int argc, char *argv[])
+> {
+>         char buf[13];
+>         int fd;
+>         //uint64_t offset64 =3D 5119999999;
+>         uint64_t offset64 =3D   5119999988;
+>         off64_t r;
+>         ssize_t bytes;
+>
+>         system("echo -e \'0 10000000 error\'\\\\n\'10000000 1000000 zero\=
+' | dmsetup create test");
+>
+>         fd =3D open("/dev/mapper/test", O_RDONLY);
+>         if (fd =3D=3D -1) {
+>                 printf("open fail\n");
+>                 return 1;
+>         }
+>
+>         r =3D lseek64(fd, offset64, SEEK_CUR);
+>         printf("Seek returned %" PRIu64 ".\n", r);
+>         if (r < 0) {
+>                 printf("seek fail\n");
+>                 close(fd);
+>                 return 2;
+>         }
+>
+>         bytes =3D read(fd, buf, 13);
+>         printf("Read returned %d.\n", (int)bytes);
+>
+>         close(fd);
+>         return 0;
+> }
+>
+>
+> Please let me know if you need more info to reproduce it.
 
-(Note there is an additional restriction, namely that a mnt_ns that was
-set up in the non-root user_ns cannot mount any filesystems that do not
-have the FS_USERNS_MOUNT option set. This is also for security, as
-exposing the kernel filesystem parser to arbitrary data by unprivileged
-users wasn't deemed to be a safe thing to do. The unprivileged FUSE work
-that Richard linked to will likely be useful for pushing FS_USERNS_MOUNT
-into more filesystems -- like 9p.)
+Thanks for the detailed report.  I haven't tried to reproduce, but the
+code looks very weird.
+The patch I posted "Date: Wed, 06 Sep 2017 09:43:28 +1000" had:
+      +				struct bio *b =3D bio_clone_bioset(bio, GFP_NOIO,
+      +								 md->queue->bio_split);
+      +				bio_advance(b, (bio_sectors(b) - ci.sector_count) << 9);
+      +				bio_chain(b, bio);
+      +				generic_make_request(b);
+      +				break;
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+The code in Linux has:
 
---45q67fkve2bvqniy
+				struct bio *b =3D bio_clone_bioset(bio, GFP_NOIO,
+								 md->queue->bio_split);
+				ci.io->orig_bio =3D b;
+				bio_advance(bio, (bio_sectors(bio) - ci.sector_count) << 9);
+				bio_chain(b, bio);
+				ret =3D generic_make_request(bio);
+				break;
+
+So the wrong bio is sent to generic_make_request().
+Mike: do you remember how that change happened?  I think there were
+discussions following the patch, but I cannot find anything about making
+that change.
+
+Thanks,
+NeilBrown
+
+--=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlqEnoIACgkQnhiqJn3b
-jbRwxQ/7BE3wVUP9GsXPbxtByKmh4mlHGR1IkTlzxGs09+IVxiOF8mmfaGviElD5
-i6vWhYhv9JFzTvONadYoGFy/BhYiDW5QxYN9HUduHOA4aMpW7nrnq3HVbZQSumU1
-7tt1ULEXzm+LSJdFFk5o3VaK+twkmFYaa9F8C/pH1Ywy6k4Cq16eP9aj08Qt1ADW
-1ORXyVKPrr5j9o39EAZNu/qu6Xzv5WVa8LvAxshAUQDrhIxmQqqyYZ9nSAc9ecQt
-0MouBo8I3HzK3YQDTeQwKGTWIPFtLsnoL+p69CtiKuhSVTTjcN20xGDgohpCYQud
-7mMZt4GrHgSE0JV8gwgLhMKeHPmD7I0QTIoODJbXh5xL/Q1gt5cjZ4fOMk20DsO1
-mBSNlrYyH8WlLITwNpxi6XecNDb6CBwh3rOnMoC5ELl2v9zsSsPll//ENTJIqz5P
-U1dvn9hahHvSnDsz8A6cjtvPBYHB8gofaHKUxhFMrqn1vakP8uQEkvCLx/knnR4K
-JlmTlUxgx+JDm1lmx9ai+JHXjzjyI6f6LtKlvWOqPeIvCD5rWRbTZvkOOn7s8mLV
-sEdeOFkLrKNIGfvOaipY2SEMgsfzbc3yGXBrWbaydjDAMeFwiqWycdQlQ7NyRhX5
-TxU7WphcjR+4QBAhFL6xuAkjsXe1dkBHTeNAkUSQ7Vli+iuMo+Y=
-=j1bi
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlqEnpYACgkQOeye3VZi
+gbkk4Q/+PQFcz83OjQXScwwnDYyQxKIVkfZzIc0MsnSuGgBiMcT0Gv0x+3h0qQxR
+JchmINLbYYCuAr3dLV/1mbac0hMyKtTpNJ3JUG8lQwXHaLw/4lPt19mPGnu49Ap6
+6NkYdqPaxJl0pXJGMbZEWoDm2QwqZBJHUw/3iVswHkypBXl47mY7RQxDtYilCpRc
+AovLSmYvrkNPteyt7qrdXUVNQkRhD6Muj2SL5xJxv1XJpnS5o4LIZ0CsxOn4EMvh
+wv5u7fMxlEue/aLzgB89x7fSMTiZiei8ye1u14ql82PeQ3qxDNbpc/vnTGhLVjuv
+Uqb8irg5eVUadL/mxvE+PgB2xbk/KWmZG/szlPYgPGcX5solfcASpmyaag2Jyrsj
+jmlq1NizBDr0tMjDkufILs/VPsoCUbb1mXRPR540vB6EvkFcm8994wIYa+8w3lFD
+J/ZOKeMG9srfFG2hrwnUen0iND6eWa2pibsym9cAkW4qwwGkzOsybHCF1lHCS9n6
+ZtczeL7WzkfFZjpUIqLjpTCkz3iC5eIpiFiC0bHdddFmw57Qi+AkW8kVUuRBIaEC
+t3EBU1nxUGPTEATH+mhpnfgd78TNdnMGRAfqWdngQzYiAVh0CIMdCG3SmqMwaiLW
+wNbf11FFSCUAMZ7v73dih0kWPgYALi9ZbBg7CTR2jbgbIzh/PRc=
+=4fbz
 -----END PGP SIGNATURE-----
-
---45q67fkve2bvqniy--
+--=-=-=--
