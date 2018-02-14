@@ -1,135 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935398AbeBNUbJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 15:31:09 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:44821 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935361AbeBNUbF (ORCPT
+        id S935200AbeBNUdu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 15:33:50 -0500
+Received: from mail-io0-f181.google.com ([209.85.223.181]:35739 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752602AbeBNUds (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 15:31:05 -0500
-Date: Wed, 14 Feb 2018 21:30:16 +0100 (CET)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: =?UTF-8?Q?Michal_Such=C3=A1nek?= <msuchanek@suse.de>
-Cc: Eric Anholt <eric@anholt.net>, bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        Phil Elwell <phil@raspberrypi.org>, Gerd Hoffmann <kraxel@redhat.com>,
-        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        linux-arm-kernel@lists.infradead.org
-Message-ID: <431948292.48734.1518640216077@email.1und1.de>
-In-Reply-To: <20180214202454.6e7ebeaf@naga.suse.cz>
-References: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
- <1fbf0d77-cb53-f0fa-b810-e9954138d907@i2se.com>
- <20180214163649.3a0c9476@kitsune.suse.cz>
- <20180214165827.386b9bb1@kitsune.suse.cz>
- <ecf8dd61-ab16-b298-d197-ea93ecf5982b@i2se.com>
- <20180214202454.6e7ebeaf@naga.suse.cz>
-Subject: Re: [PATCH 1/2] mmc: bcm2835: reset host on timeout
+        Wed, 14 Feb 2018 15:33:48 -0500
+X-Google-Smtp-Source: AH8x224PskaGUwJ1pKvmtfGzmqekbKpMDZu13NGoakmnawMwrprchrySiYbHh66MR8iK4FZh1gwmXQ==
+Subject: Re: Read-protected UEFI variables
+To: Benjamin Drung <benjamin.drung@profitbricks.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Matthew Garrett <matthew.garrett@nebula.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Matt Fleming <matt@codeblueprint.co.uk>,
+        linux-efi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1518612748.4749.29.camel@profitbricks.com>
+ <CAKv+Gu_V7BCihPhZf=pKrkBZwFWeEoupamXvYSqdS+k93Gme=g@mail.gmail.com>
+ <1518614486.4749.33.camel@profitbricks.com>
+From: "Austin S. Hemmelgarn" <ahferroin7@gmail.com>
+Message-ID: <b189516a-61b9-bf81-3d28-9873f5530997@gmail.com>
+Date: Wed, 14 Feb 2018 15:33:40 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev21
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K0:oERPDb+/X5W65hsruIYLZlfyN1blF0rZ9N3xmnJynPp4fDslquT
- V3nmjodvaiP+IcCqO0w/OofEJ8bYS+wyqVA8Y4uf5AWsVVRnP3VGG7XI5n1K2miRz7cO6LI
- XOR2+c8EBcPx6xSLUqdF1JKa7xmpyDqbvuMcksnqy79TVn/n+rEBHZDy7p23ydZw4S9B4u/
- wX19K4MJkfpAGouTqaCHQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:8GvB+xatAaM=:SdMAT02yGPB3pccnE1I9ug
- 9jtPNL5c+PHDi7SZFEP89Jk6tuBYcTncakqPm5SD+O1Ob2Z8liUOypaJCazXB43WivqeuM3gf
- w/7uOKSVSdOEcimuTVw5fhoZf96TKEKMMbzcuBNeZIaHu6cUHhCWfa3WG20zBoZXdnX9o8ieU
- dZUdSWR3WNZZJrsvGGn6CDOPJlL/VOheKEeia5Z50+Um40166eP1fSBaVpbxbpc2PQQ2jhmWd
- 4zQraeZiuY1X89sD5vbA8mPSDNh6VVDV1CnYCA9V3w8aY/qgBHYyPBmmGYcROjEthXIanL3zY
- k2mogAcR9ByTaFvgcJJVU1lDHEwX4qU8iF+IV5WFvgMdEQDRkB9InqZo9qDM9/G41UZvqldzG
- V4vxkJgufiQ7bP4lvr7QzExlzs0zgoCX/gaMLcGGZO4SGprWhORRt1b4GBWI2O8myUMIUdRAo
- AKC5nhXQzyfcTRtJ3lL95q4HMkQ843lZNpD7+M/29nd2eazuQ9ohWcnuyMrNjpbVs3IvN3zLr
- BZPfPtxJ4BT7yJA8i2qprLwZ+fFPN39+hal2Z3tdOKUyHiHscnUcjeWsTtrnxmAi43li12RUt
- L3Y2g0RVOKNZjmb9uL6YD+OVbuAFGWpbdhJCxUJeMcoNSclfjZ7ArKi2PrkKf2Y6/UVCfqoTo
- 6njlqxnvbqFDW6nt24LlVT0lLZ77RM6VyOSC9vfcL4OWYbxVju/alMRzAly+ixPrat++Dc5oY
- Rs62gVCeAU1nI9QnbeSeFpe5pOZm7Tcl5thTHiQfQplvHMktMME/HPs2qZE=
+In-Reply-To: <1518614486.4749.33.camel@profitbricks.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+On 2018-02-14 08:21, Benjamin Drung wrote:
+> Am Mittwoch, den 14.02.2018, 13:09 +0000 schrieb Ard Biesheuvel:
+>> On 14 February 2018 at 12:52, Benjamin Drung
+>> <benjamin.drung@profitbricks.com> wrote:
+>>> Hi,
+>>>
+>>> I am exploring the possibility to store SSH and other keys in UEFI
+>>> variables for systems that do not have persistent storage. These
+>>> systems boot via network and need individual SSH keys which ideally
+>>> should not be distributed via network.
+>>>
+>>> The plan is to write a small daemon that starts at boot and gets
+>>> the
+>>> SSH keys from EFI variables to individualize the system with SSH
+>>> keys.
+>>> I plan to release the code as free software. Simple proof-of-
+>>> concept
+>>> code:
+>>>
+>>> mount -t efivarfs none /sys/firmware/efi/efivars
+>>> for key in ssh_host_dsa_key ssh_host_ecdsa_key ssh_host_rsa_key; do
+>>>    dd ibs=1 skip=4 if=/sys/firmware/efi/efivars/${key}-89df11f4-
+>>> 38e6-473e-ab43-b4406b76fba9 of=/etc/ssh/$key
+>>> done
+>>>
+>>> I am not the first person having the idea to use UEFI variables to
+>>> store keys:
+>>> https://www.usenix.org/conference/srecon17asia/program/presentation
+>>> /korgachin
+>>>
+>>> There is one problem: The keys should be readable only by root.
+>>> When
+>>> mounting efivarfs, all variables have the permission 644 which
+>>> makes
+>>> them readable by all users. I have different ideas how to solve it:
+>>>
+>>> 1) Hard-code a list of GUIDs that should be only readable by root
+>>> in
+>>> the kernel module. These modules would also be not set to
+>>> immutable.
+>>>
+>>> 2) Instead of hard-coding GUIDs, add a kernel module parameter to
+>>> specify the GUIDs. Maybe have a default list in the kernel module.
+>>>
+>>> 3) Add a mount option to specify the protected GUIDs.
+>>>
+>>> Feedback is welcome.
+>>>
+>>
+>> I'd consider a patch that makes the permissions a mount option for
+>> efivarfs, applying to all variables. The reason is that these
+>> variables shouldn't have been world readable in the first place, and
+>> I
+>> am reluctant to make this overly complex.
+> 
+> Having some variables (like the BootXXXX and BootOrder variables) world
+> readable is useful. This allows normal users to run 'efibootmgr' to
+> display the boot options.
+Some variables maybe (ISTR variables for things like the system 
+time-zone or the firmware locale settings, which _might_ be useful), but 
+I would say the boot variables are not on that list.  The only practical 
+application for a regular (non-root) user to read those variables is to 
+gather info for an attack on the system.  Anybody who legitimately needs 
+to access them (either for debugging the boot process, or changing the 
+boot options) should have administrative access to the system anyway, 
+and even then they will usually not need to read them.
 
-> Michal Suchánek <msuchanek@suse.de> hat am 14. Februar 2018 um 20:24 geschrieben:
+In fact, most of the UEFI variables fall into the same category, but 
+even more so, userspace has no legitimate reason to need to read them. 
+You can get an absolutely insane amount of info out of them on some 
+systems, most of which is a gold-mine for potential attackers.  For the 
+handful that may actually be useful to userspace, most would be needed 
+only during system startup, and thus could safely be made readable by 
+root only.
 > 
+>> On the other hand, you should realize that UEFI was never designed to
+>> keep secrets, and so whether it is a good idea to put secrets in UEFI
+>> variables to begin with is dubious IMHO.
 > 
-> On Wed, 14 Feb 2018 17:49:31 +0100
-> Stefan Wahren <stefan.wahren@i2se.com> wrote:
+> If the UEFI is as secure as storing an unencrypted file on a hard
+> drive, I am satisfied. Or do you have a better idea where to store the
+> SSH keys for a diskless system that boots via network?
 > 
-> > Hi Michal,
-> > 
-> > [add Phil]
-> > 
-> > Am 14.02.2018 um 17:13 schrieb Michal Suchánek:
-> > > On Wed, 14 Feb 2018 16:36:49 +0100
-> > > Michal Suchánek <msuchanek@suse.de> wrote:
-> > >  
-> > >> On Wed, 14 Feb 2018 15:58:31 +0100
-> > >> Stefan Wahren <stefan.wahren@i2se.com> wrote:
-> > >>  
-> > >>> Hi Michal,
-> > >>>
-> > >>> Am 14.02.2018 um 15:38 schrieb Michal Suchanek:    
-> > >>>> The bcm2835 mmc host tends to lock up for unknown reason so reset
-> > >>>> it on timeout. The upper mmc block layer tries retransimitting
-> > >>>> with single blocks which tends to work out after a long wait.
-> > >>>>
-> > >>>> This is better than giving up and leaving the machine broken for
-> > >>>> no obvious reason.      
-> > >>> could you please provide more information about this issue
-> > >>> (affected hardware, kernel config, version, dmesg, reproducible
-> > >>> scenario)? 
-> > > It tends to reproduce when upgrading a few packages with zypper and
-> > > otherwise at random during system operation. It seems that for my
-> > > card it worsens with age to some degree so perhaps it depends on the
-> > > fragmentation of the internal card flash.
-> > >
-> > > Attaching dmesg and kernel config.  
-> > 
-> > do you noticed this issue before 4.15-rc4?
-> 
-> I initially noticed it with 4.4 kernel with some backports to make it
-> bootable on RPi.
-
-this confuses me. Gerd and i ported this driver from downstream and finally it's got merged in 4.12. 
-
-So do you mean that you backported the mainline version to 4.4 or the downstream version of 4.4?
-
-On a quick look they seems identical, but they aren't.
-
-> > 
-> > Could you please test with 4.15 final again?
-> 
-> Right, I can apply the patches on something more recent.
-> 
-> > 
-> > What kind of SD card (name) triggers the issue?
-> 
-> Samsung EVO MB-MP16D
-
-Thanks
-
-> 
-> Also see https://elinux.org/RPi_SD_cards#Which_SD_card.3F
-
-I'm very sceptical about this list. The card above is listed as OK and NOK. The experienced issues doesn't need to be direct related to the card (unproperly umounted, bad driver, ...).
-
-Stefan
-
-> 
-> Thanks
-> 
-> Michal
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+There really isn't any other option unless you're willing to put a small 
+amount of flash storage in the system somehow (maybe a small USB flash 
+drive connected directly to a USB header inside the system?).  As far as 
+the security of UEFI variables, the same limitations as storing the data 
+on an unencrypted hard drive apply, with the addition that it's much 
+easier to get at them through stuff like Intel's AMT or IPMI than it is 
+to read data off of the hard drive.
