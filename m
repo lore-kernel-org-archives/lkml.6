@@ -1,207 +1,324 @@
-Return-Path: <rjw@rjwysocki.net>
-X-Google-Smtp-Source: AH8x227uKlkVMnDf3pvlTkKj+ija/vIDVLsD7hyfW2hpev5+tP/oZBjs5Q+aWTkVFpjH6EWdGgd9
-ARC-Seal: i=1; a=rsa-sha256; t=1518605845; cv=none;
-        d=google.com; s=arc-20160816;
-        b=KpBOD5fPGf+XQUOucZHLznwjTVI5pZL7p4dbuWh3x3ViSOX7cw52IAaaZkjSZqcHRU
-         8ZfzyINgVJQGWfsA9SFRkr/sJHpzs0GZfIlZjxLxLGpsOrKlj//RBeTVzvVPB3bsCz/0
-         UnrxHiFXA9Z3h4eR6uYC1VzZaXgcxfdQ/P3HMC6zA+r0On7re2WAZzj2jFI31B+YVF8b
-         YCVfyd54/2rXQAv11ZVDZrLJAWV5GacUnqYBTDJvVVgIiY+dHIIqvu2C4a2zX4EdkALw
-         dBnBqUB9WkuvfPtgRdlbYitwo1Wsz1eCMYkcZdX9zwmzi2u2w5IApDh7Ucqq1ek0czTl
-         /WXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=m9X4LkZpyjeiA23havuWRMI65PE3nKQYWhIGNCG3cnk=;
-        b=EesSnbienKzlsBP47oMLv9z5faUgaLqrgCyBYDSGW/hwamx6Jz5eGBcDxxNtQRmHhL
-         76V0Pd2GiItHyGj75JXR188NNsBls6MkYoXbdCMyXQNL42OUIKaQnLm9u9Vj1wZwo0eu
-         IvQYJ5kwDmEjWauUHkxEKJFtlOlgEBgpXKcU585vkuZIzCUTJAAPt2ZVbOdAdPfntuIS
-         rPkvjzwaJtHAOYoWkw193GG4i610cclA4lhlgrFnseE30rf8NbTZGVjahz1ORGHoM0S7
-         tNRoIAbUnCCiq/uhRBie3N+qtFwyUpAR9Rb8Q0bqZVQ6S6jxxDOQJZSVymdsFhqOeyZt
-         3/uw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of rjw@rjwysocki.net designates 79.96.170.134 as permitted sender) smtp.mailfrom=rjw@rjwysocki.net
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of rjw@rjwysocki.net designates 79.96.170.134 as permitted sender) smtp.mailfrom=rjw@rjwysocki.net
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Lukas Wunner <lukas@wunner.de>, linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pm@vger.kernel.org
-Subject: Re: [RFC PATCH] driver core: Count repeated addition of same device link
-Date: Wed, 14 Feb 2018 11:55:36 +0100
-Message-ID: <2231452.Jn9O5Q0yUW@aspire.rjw.lan>
-In-Reply-To: <074bc916af5497f37cac6af2ba89d40cc74990dd.1518286789.git.lukas@wunner.de>
-References: <074bc916af5497f37cac6af2ba89d40cc74990dd.1518286789.git.lukas@wunner.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2414448-1518600293-2-14832615113396200625
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES ro, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518600292; b=aK3M+j1/7/GuRpRQKwbst/zUCeYLeBMu7UTT+E6GkMfCmug
+    CXUqura1seA3SjTB4KHOp9M8NiPLoHeToBOYRWBh6yilIee4Z1WG/mKgFfQfjmny
+    zpafBz6iLWa3mTz0c0EtEIzH8tXa4LIdhkpyEz6j+y6jW3EAk6YbWNobsLV84A52
+    8wlUSVnRWlAXHhNrjWM9m9lNmvLTKf8Z24PGmlktQXN8vunFu4JcOvo+PhGhph8b
+    ZYArspuHsimMofKb1wCTrclmAdMUSFpuuAEuA3O0CkxX8cf77VZ4L/7tnHDPqJqV
+    3P8mK3Erl5eFkos5X3CnLH20viceHzX0KInYodA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1518600292; bh=QOMAa6MiVLvFFSvtNE+upIwQYT
+    OoKeyBg8zd6HMrGYA=; b=P7AtJQUeh//6m6ZQl+JIicXg/91peiyvrDE/rvKrWc
+    ZP7V/uLJDXYNNa6BSaVcDSTaFey3ZvkG586ZTGPSo9X7P9z80B8EDAaPECkTvzW3
+    Nr7niLzSEck8w7t9Wxh9w6DZElk9gE9xz4tZfzFLi9IYIzFQn+EWFnpn3mPsKjnU
+    MB65anwZwuql3BI4rmBEZkHwwE4ovapcSRCrTRucLClEyLX0N2M1vuFg4q6/6TBj
+    +EZH1G5SKFC2ENvxw+p15MoDqDuDIgC1ZvHSKTNZpaN/PuLZx0dbry/bxZPQMKyZ
+    NQASeliNsBZFE8Ax2xdMyavdKANApDvno9cnddVSYd/Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=OOzVRDOe x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=R2OloCzb;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=OOzVRDOe x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=R2OloCzb;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S966553AbeBNJYg (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 14 Feb 2018 04:24:36 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:34731 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966405AbeBNJYf (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 14 Feb 2018 04:24:35 -0500
+X-Google-Smtp-Source: AH8x224xjkpsAmqaLiHhgdebnYOt6kU0+5RcXCZ4wQTcXhalH3zEy7bI+ych+LUf+p8MEyJBcjE/Sg==
+From: ShuFanLee <leechu729@gmail.com>
+To: heikki.krogerus@linux.intel.com, linux@roeck-us.net
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        cy_huang@richtek.com, shufan_lee@richtek.com
+Subject: [PATCH] staging: typec: handle vendor defined part and modify drp toggling flow
+Date: Wed, 14 Feb 2018 17:24:04 +0800
+Message-Id: <1518600244-29949-1-git-send-email-leechu729@gmail.com>
+X-Mailer: git-send-email 1.9.1
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592039556368644819?=
-X-GMAIL-MSGID: =?utf-8?q?1592373642635956306?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Saturday, February 10, 2018 7:27:12 PM CET Lukas Wunner wrote:
-> If device_link_add() is invoked multiple times with the same supplier
-> and consumer combo, it will create the link on first addition and
-> return a pointer to the already existing link on all subsequent
-> additions.
-> 
-> The semantics for device_link_del() are quite different, it deletes
-> the link unconditionally, so multiple invocations are not allowed.
-> 
-> In other words, this snippet ...
-> 
->     struct device *dev1, *dev2;
->     struct device_link *link1, *link2;
-> 
->     link1 = device_link_add(dev1, dev2, 0);
->     link2 = device_link_add(dev1, dev2, 0);
-> 
->     device_link_del(link1);
->     device_link_del(link2);
-> 
-> ... causes the following crash:
-> 
->     WARNING: CPU: 4 PID: 2686 at drivers/base/power/runtime.c:1611 pm_runtime_drop_link+0x40/0x50
->     [...]
->     list_del corruption, 0000000039b800a4->prev is LIST_POISON2 (00000000ecf79852)
->     kernel BUG at lib/list_debug.c:50!
-> 
-> The issue isn't as arbitrary as it may seem:  Imagine a device link
-> which is added in both the supplier's and the consumer's ->probe hook.
-> The two drivers can't just call device_link_del() in their ->remove hook
-> without coordination.
-> 
-> Fix by counting multiple additions and dropping the device link only
-> when the last addition is unwound.
-> 
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
-> ---
-> This issue doesn't break any use cases of mine, it's just something that
-> I found surprising about the API and that might cause trouble for others.
-> Hence submitting as RFC.
-> 
->  drivers/base/core.c    | 25 +++++++++++++++++--------
->  include/linux/device.h |  2 ++
->  2 files changed, 19 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 5847364f25d9..b610816eb887 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -196,8 +196,10 @@ struct device_link *device_link_add(struct device *consumer,
->  	}
->  
->  	list_for_each_entry(link, &supplier->links.consumers, s_node)
-> -		if (link->consumer == consumer)
-> +		if (link->consumer == consumer) {
-> +			kref_get(&link->kref);
->  			goto out;
-> +		}
->  
->  	link = kzalloc(sizeof(*link), GFP_KERNEL);
->  	if (!link)
-> @@ -222,6 +224,7 @@ struct device_link *device_link_add(struct device *consumer,
->  	link->consumer = consumer;
->  	INIT_LIST_HEAD(&link->c_node);
->  	link->flags = flags;
-> +	kref_init(&link->kref);
->  
->  	/* Determine the initial link state. */
->  	if (flags & DL_FLAG_STATELESS) {
-> @@ -292,8 +295,10 @@ static void __device_link_free_srcu(struct rcu_head *rhead)
->  	device_link_free(container_of(rhead, struct device_link, rcu_head));
->  }
->  
-> -static void __device_link_del(struct device_link *link)
-> +static void __device_link_del(struct kref *kref)
->  {
-> +	struct device_link *link = container_of(kref, struct device_link, kref);
-> +
->  	dev_info(link->consumer, "Dropping the link to %s\n",
->  		 dev_name(link->supplier));
->  
-> @@ -305,8 +310,10 @@ static void __device_link_del(struct device_link *link)
->  	call_srcu(&device_links_srcu, &link->rcu_head, __device_link_free_srcu);
->  }
->  #else /* !CONFIG_SRCU */
-> -static void __device_link_del(struct device_link *link)
-> +static void __device_link_del(struct kref *kref)
->  {
-> +	struct device_link *link = container_of(kref, struct device_link, kref);
-> +
->  	dev_info(link->consumer, "Dropping the link to %s\n",
->  		 dev_name(link->supplier));
->  
-> @@ -324,13 +331,15 @@ static void __device_link_del(struct device_link *link)
->   * @link: Device link to delete.
->   *
->   * The caller must ensure proper synchronization of this function with runtime
-> - * PM.
-> + * PM.  If the link was added multiple times, it needs to be deleted as often.
-> + * Care is required for hotplugged devices:  Their links are purged on removal
-> + * and calling device_link_del() is then no longer allowed.
->   */
->  void device_link_del(struct device_link *link)
->  {
->  	device_links_write_lock();
->  	device_pm_lock();
-> -	__device_link_del(link);
-> +	kref_put(&link->kref, __device_link_del);
->  	device_pm_unlock();
->  	device_links_write_unlock();
->  }
-> @@ -444,7 +453,7 @@ static void __device_links_no_driver(struct device *dev)
->  			continue;
->  
->  		if (link->flags & DL_FLAG_AUTOREMOVE)
-> -			__device_link_del(link);
-> +			kref_put(&link->kref, __device_link_del);
->  		else if (link->status != DL_STATE_SUPPLIER_UNBIND)
->  			WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
->  	}
-> @@ -597,13 +606,13 @@ static void device_links_purge(struct device *dev)
->  
->  	list_for_each_entry_safe_reverse(link, ln, &dev->links.suppliers, c_node) {
->  		WARN_ON(link->status == DL_STATE_ACTIVE);
-> -		__device_link_del(link);
-> +		__device_link_del(&link->kref);
->  	}
->  
->  	list_for_each_entry_safe_reverse(link, ln, &dev->links.consumers, s_node) {
->  		WARN_ON(link->status != DL_STATE_DORMANT &&
->  			link->status != DL_STATE_NONE);
-> -		__device_link_del(link);
-> +		__device_link_del(&link->kref);
->  	}
->  
->  	device_links_write_unlock();
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index b093405ed525..abf952c82c6d 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -769,6 +769,7 @@ enum device_link_state {
->   * @status: The state of the link (with respect to the presence of drivers).
->   * @flags: Link flags.
->   * @rpm_active: Whether or not the consumer device is runtime-PM-active.
-> + * @kref: Count repeated addition of the same link.
->   * @rcu_head: An RCU head to use for deferred execution of SRCU callbacks.
->   */
->  struct device_link {
-> @@ -779,6 +780,7 @@ struct device_link {
->  	enum device_link_state status;
->  	u32 flags;
->  	bool rpm_active;
-> +	struct kref kref;
->  #ifdef CONFIG_SRCU
->  	struct rcu_head rcu_head;
->  #endif
-> 
+From: ShuFanLee <shufan_lee@richtek.com>
 
-I kind of agree with this even though it adds overhead I originally wanted to
-avoid.
+Handle vendor defined behavior in tcpci_init and tcpci_irq.
+More operations can be extended in tcpci_vendor_data if needed.
+According to TCPCI specification, 4.4.5.2 ROLE_CONTROL,
+TCPC shall not start DRP toggling until subsequently the TCPM
+writes to the COMMAND register to start DRP toggling.
+DRP toggling flow is chagned as following:
+  - Write DRP = 0 & Rd/Rd
+  - Write DRP = 1
+  - Set LOOK4CONNECTION command
 
-If Greg doesn't object to that, I'll tentatively queue it up for 4.17.
+Signed-off-by: ShuFanLee <shufan_lee@richtek.com>
+---
+ drivers/staging/typec/tcpci.c | 98 ++++++++++++++++++++++++++++++++++++-------
+ drivers/staging/typec/tcpci.h | 15 +++++++
+ 2 files changed, 97 insertions(+), 16 deletions(-)
 
-Thanks,
-Rafael
+diff --git a/drivers/staging/typec/tcpci.c b/drivers/staging/typec/tcpci.c
+index 9bd4412..b3a97b3 100644
+--- a/drivers/staging/typec/tcpci.c
++++ b/drivers/staging/typec/tcpci.c
+@@ -30,6 +30,7 @@ struct tcpci {
+ 	bool controls_vbus;
+ 
+ 	struct tcpc_dev tcpc;
++	struct tcpci_vendor_data *vdata;
+ };
+ 
+ static inline struct tcpci *tcpc_to_tcpci(struct tcpc_dev *tcpc)
+@@ -37,16 +38,29 @@ static inline struct tcpci *tcpc_to_tcpci(struct tcpc_dev *tcpc)
+ 	return container_of(tcpc, struct tcpci, tcpc);
+ }
+ 
+-static int tcpci_read16(struct tcpci *tcpci, unsigned int reg,
+-			u16 *val)
++int tcpci_read16(struct tcpci *tcpci, unsigned int reg, u16 *val)
+ {
+ 	return regmap_raw_read(tcpci->regmap, reg, val, sizeof(u16));
+ }
++EXPORT_SYMBOL_GPL(tcpci_read16);
+ 
+-static int tcpci_write16(struct tcpci *tcpci, unsigned int reg, u16 val)
++int tcpci_write16(struct tcpci *tcpci, unsigned int reg, u16 val)
+ {
+ 	return regmap_raw_write(tcpci->regmap, reg, &val, sizeof(u16));
+ }
++EXPORT_SYMBOL_GPL(tcpci_write16);
++
++int tcpci_read8(struct tcpci *tcpci, unsigned int reg, u8 *val)
++{
++	return regmap_raw_read(tcpci->regmap, reg, val, sizeof(u8));
++}
++EXPORT_SYMBOL_GPL(tcpci_read8);
++
++int tcpci_write8(struct tcpci *tcpci, unsigned int reg, u8 val)
++{
++	return regmap_raw_write(tcpci->regmap, reg, &val, sizeof(u8));
++}
++EXPORT_SYMBOL_GPL(tcpci_write8);
+ 
+ static int tcpci_set_cc(struct tcpc_dev *tcpc, enum typec_cc_status cc)
+ {
+@@ -98,8 +112,10 @@ static int tcpci_set_cc(struct tcpc_dev *tcpc, enum typec_cc_status cc)
+ static int tcpci_start_drp_toggling(struct tcpc_dev *tcpc,
+ 				    enum typec_cc_status cc)
+ {
++	int ret;
+ 	struct tcpci *tcpci = tcpc_to_tcpci(tcpc);
+-	unsigned int reg = TCPC_ROLE_CTRL_DRP;
++	unsigned int reg = (TCPC_ROLE_CTRL_CC_RD << TCPC_ROLE_CTRL_CC1_SHIFT) |
++			   (TCPC_ROLE_CTRL_CC_RD << TCPC_ROLE_CTRL_CC2_SHIFT);
+ 
+ 	switch (cc) {
+ 	default:
+@@ -116,8 +132,19 @@ static int tcpci_start_drp_toggling(struct tcpc_dev *tcpc,
+ 			TCPC_ROLE_CTRL_RP_VAL_SHIFT);
+ 		break;
+ 	}
+-
+-	return regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
++	ret = regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
++	if (ret < 0)
++		return ret;
++	usleep_range(500, 1000);
++	reg |= TCPC_ROLE_CTRL_DRP;
++	ret = regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
++	if (ret < 0)
++		return ret;
++	ret = regmap_write(tcpci->regmap, TCPC_COMMAND,
++			   TCPC_CMD_LOOK4CONNECTION);
++	if (ret < 0)
++		return ret;
++	return 0;
+ }
+ 
+ static enum typec_cc_status tcpci_to_typec_cc(unsigned int cc, bool sink)
+@@ -323,6 +350,15 @@ static int tcpci_init(struct tcpc_dev *tcpc)
+ 	if (time_after(jiffies, timeout))
+ 		return -ETIMEDOUT;
+ 
++	/* Handle vendor init */
++	if (tcpci->vdata) {
++		if (tcpci->vdata->init) {
++			ret = (*tcpci->vdata->init)(tcpci, tcpci->vdata);
++			if (ret < 0)
++				return ret;
++		}
++	}
++
+ 	/* Clear all events */
+ 	ret = tcpci_write16(tcpci, TCPC_ALERT, 0xffff);
+ 	if (ret < 0)
+@@ -351,6 +387,13 @@ static irqreturn_t tcpci_irq(int irq, void *dev_id)
+ 
+ 	tcpci_read16(tcpci, TCPC_ALERT, &status);
+ 
++	/* Handle vendor defined interrupt */
++	if (tcpci->vdata) {
++		if (tcpci->vdata->irq_handler)
++			(*tcpci->vdata->irq_handler)(tcpci, tcpci->vdata,
++						     &status);
++	}
++
+ 	/*
+ 	 * Clear alert status for everything except RX_STATUS, which shouldn't
+ 	 * be cleared until we have successfully retrieved message.
+@@ -417,7 +460,7 @@ static irqreturn_t tcpci_irq(int irq, void *dev_id)
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+ 
+-	.max_register = 0x7F, /* 0x80 .. 0xFF are vendor defined */
++	.max_register = 0xFF, /* 0x80 .. 0xFF are vendor defined */
+ };
+ 
+ static const struct tcpc_config tcpci_tcpc_config = {
+@@ -435,22 +478,22 @@ static int tcpci_parse_config(struct tcpci *tcpci)
+ 	return 0;
+ }
+ 
+-static int tcpci_probe(struct i2c_client *client,
+-		       const struct i2c_device_id *i2c_id)
++struct tcpci *tcpci_register_port(struct i2c_client *client,
++				  struct tcpci_vendor_data *vdata)
+ {
+ 	struct tcpci *tcpci;
+ 	int err;
+ 
+ 	tcpci = devm_kzalloc(&client->dev, sizeof(*tcpci), GFP_KERNEL);
+ 	if (!tcpci)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	tcpci->client = client;
+ 	tcpci->dev = &client->dev;
+-	i2c_set_clientdata(client, tcpci);
++	tcpci->vdata = vdata;
+ 	tcpci->regmap = devm_regmap_init_i2c(client, &tcpci_regmap_config);
+ 	if (IS_ERR(tcpci->regmap))
+-		return PTR_ERR(tcpci->regmap);
++		return ERR_CAST(tcpci->regmap);
+ 
+ 	tcpci->tcpc.init = tcpci_init;
+ 	tcpci->tcpc.get_vbus = tcpci_get_vbus;
+@@ -467,7 +510,7 @@ static int tcpci_probe(struct i2c_client *client,
+ 
+ 	err = tcpci_parse_config(tcpci);
+ 	if (err < 0)
+-		return err;
++		return ERR_PTR(err);
+ 
+ 	/* Disable chip interrupts */
+ 	tcpci_write16(tcpci, TCPC_ALERT_MASK, 0);
+@@ -477,17 +520,40 @@ static int tcpci_probe(struct i2c_client *client,
+ 					IRQF_ONESHOT | IRQF_TRIGGER_LOW,
+ 					dev_name(tcpci->dev), tcpci);
+ 	if (err < 0)
+-		return err;
++		return ERR_PTR(err);
+ 
+ 	tcpci->port = tcpm_register_port(tcpci->dev, &tcpci->tcpc);
+-	return PTR_ERR_OR_ZERO(tcpci->port);
++	if (PTR_ERR_OR_ZERO(tcpci->port))
++		return ERR_CAST(tcpci->port);
++
++	return tcpci;
++}
++EXPORT_SYMBOL_GPL(tcpci_register_port);
++
++void tcpci_unregister_port(struct tcpci *tcpci)
++{
++	tcpm_unregister_port(tcpci->port);
++}
++EXPORT_SYMBOL_GPL(tcpci_unregister_port);
++
++static int tcpci_probe(struct i2c_client *client,
++		       const struct i2c_device_id *i2c_id)
++{
++	struct tcpci *tcpci;
++
++	tcpci = tcpci_register_port(client, NULL);
++	if (PTR_ERR_OR_ZERO(tcpci))
++		return PTR_ERR(tcpci);
++
++	i2c_set_clientdata(client, tcpci);
++	return 0;
+ }
+ 
+ static int tcpci_remove(struct i2c_client *client)
+ {
+ 	struct tcpci *tcpci = i2c_get_clientdata(client);
+ 
+-	tcpm_unregister_port(tcpci->port);
++	tcpci_unregister_port(tcpci);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/staging/typec/tcpci.h b/drivers/staging/typec/tcpci.h
+index fdfb06c..b1fcb4a 100644
+--- a/drivers/staging/typec/tcpci.h
++++ b/drivers/staging/typec/tcpci.h
+@@ -59,6 +59,7 @@
+ #define TCPC_POWER_CTRL_VCONN_ENABLE	BIT(0)
+ 
+ #define TCPC_CC_STATUS			0x1d
++#define TCPC_CC_STATUS_DRPRST		BIT(5)
+ #define TCPC_CC_STATUS_TERM		BIT(4)
+ #define TCPC_CC_STATUS_CC2_SHIFT	2
+ #define TCPC_CC_STATUS_CC2_MASK		0x3
+@@ -121,4 +122,18 @@
+ #define TCPC_VBUS_VOLTAGE_ALARM_HI_CFG		0x76
+ #define TCPC_VBUS_VOLTAGE_ALARM_LO_CFG		0x78
+ 
++struct tcpci;
++struct tcpci_vendor_data {
++	int (*init)(struct tcpci *tcpci, struct tcpci_vendor_data *data);
++	int (*irq_handler)(struct tcpci *tcpci, struct tcpci_vendor_data *data,
++			   u16 *status);
++};
++
++int tcpci_read16(struct tcpci *tcpci, unsigned int reg, u16 *val);
++int tcpci_write16(struct tcpci *tcpci, unsigned int reg, u16 val);
++int tcpci_read8(struct tcpci *tcpci, unsigned int reg, u8 *val);
++int tcpci_write8(struct tcpci *tcpci, unsigned int reg, u8 val);
++struct tcpci *tcpci_register_port(struct i2c_client *client,
++				  struct tcpci_vendor_data *data);
++void tcpci_unregister_port(struct tcpci *tcpci);
+ #endif /* __LINUX_USB_TCPCI_H */
+-- 
+1.9.1
+
