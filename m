@@ -1,49 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966536AbeBNJA2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 04:00:28 -0500
-Received: from LGEAMRELO11.lge.com ([156.147.23.51]:58150 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754570AbeBNJA1 (ORCPT
+        id S966610AbeBNJCq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 04:02:46 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50647 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754400AbeBNJCm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 04:00:27 -0500
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: byungchul.park@lge.com
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-From: Byungchul Park <byungchul.park@lge.com>
-To: jiangshanlai@gmail.com, paulmck@linux.vnet.ibm.com,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com
-Cc: linux-kernel@vger.kernel.org, kernel-team@lge.com
-Subject: [PATCH] srcu: Fix incorrect condition in srcu_funnel_exp_start()
-Date: Wed, 14 Feb 2018 17:59:54 +0900
-Message-Id: <1518598794-26752-1-git-send-email-byungchul.park@lge.com>
-X-Mailer: git-send-email 1.9.1
+        Wed, 14 Feb 2018 04:02:42 -0500
+X-Google-Smtp-Source: AH8x227pJagaGZtl2rPpg9pk0qWPgqrVYkDnpjkvA9jSdz+Aip5SxzYb7s1p8CZhdr3uMaML//9vBQ==
+Date: Wed, 14 Feb 2018 12:02:39 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Kai Huang <kai.huang@linux.intel.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/mm: Decouple dynamic __PHYSICAL_MASK from AMD SME
+Message-ID: <20180214090239.cjidydeflvgeww4d@node.shutemov.name>
+References: <20180208125524.88795-1-kirill.shutemov@linux.intel.com>
+ <5199949d-6795-aa55-888c-7ba8abd406e2@amd.com>
+ <20180214042121.tza3cpvrnpztjeme@node.shutemov.name>
+ <37cf20a3-653b-1ad7-1e65-6bed935cf325@amd.com>
+ <1518593420.13066.11.camel@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518593420.13066.11.camel@linux.intel.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should've kept sp->srcu_gp_seq_needed_exp the furthest. But
-it probably fails because of the incorrect condition. Fix it.
+On Wed, Feb 14, 2018 at 08:30:20PM +1300, Kai Huang wrote:
+> On Tue, 2018-02-13 at 22:57 -0600, Tom Lendacky wrote:
+> > On 2/13/2018 10:21 PM, Kirill A. Shutemov wrote:
+> > > On Tue, Feb 13, 2018 at 10:10:22PM -0600, Tom Lendacky wrote:
+> > > > On 2/8/2018 6:55 AM, Kirill A. Shutemov wrote:
+> > > > > AMD SME claims one bit from physical address to indicate
+> > > > > whether the
+> > > > > page is encrypted or not. To achieve that we clear out the bit
+> > > > > from
+> > > > > __PHYSICAL_MASK.
+> > > > 
+> > > > I was actually working on a suggestion by Linus to use one of the
+> > > > software
+> > > > page table bits to indicate encryption and translate that to the
+> > > > hardware
+> > > > bit when writing the actual page table entry.  With that,
+> > > > __PHYSICAL_MASK
+> > > > would go back to its original definition.
+> > > 
+> > > But you would need to mask it on reading of pfn from page table
+> > > entry,
+> > > right? I expect it to have more overhead than this one.
+> > 
+> > When reading back an entry it would translate the hardware bit
+> > position
+> > back to the software bit position.  The suggestion for changing it
+> > was
+> > to make _PAGE_ENC a constant and not tied to the sme_me_mask.
 
-Signed-off-by: Byungchul Park <byungchul.park@lge.com>
----
- kernel/rcu/srcutree.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+But is it really constant? I thought it's enumerated at boot-time.
+Can we step onto a problem for future AMD CPUs?
 
-diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-index d5cea81..44bc0fa 100644
---- a/kernel/rcu/srcutree.c
-+++ b/kernel/rcu/srcutree.c
-@@ -626,7 +626,7 @@ static void srcu_funnel_exp_start(struct srcu_struct *sp, struct srcu_node *snp,
- 		spin_unlock_irqrestore_rcu_node(snp, flags);
- 	}
- 	spin_lock_irqsave_rcu_node(sp, flags);
--	if (!ULONG_CMP_LT(sp->srcu_gp_seq_needed_exp, s))
-+	if (ULONG_CMP_LT(sp->srcu_gp_seq_needed_exp, s))
- 		sp->srcu_gp_seq_needed_exp = s;
- 	spin_unlock_irqrestore_rcu_node(sp, flags);
- }
+In case of MKTME the bits we need to clear are not constant. Depends on
+CPU and BIOS settings.
+
+By making _PAGE_ENC constant we would effectively lower maximum physical
+address space the kernel can handle, regardless if the system has SME
+enabled. I can imagine some people wouldn't be happy about this.
+
+And I think it would collide with 5-level paging.
+
+I would leave it as variable for now and look on this later once we would
+have infrastructure to patch constants in kernel text.
+
 -- 
-1.9.1
+ Kirill A. Shutemov
