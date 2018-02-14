@@ -1,52 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966796AbeBNETz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 23:19:55 -0500
-Received: from mga18.intel.com ([134.134.136.126]:9959 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966705AbeBNETy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 23:19:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,510,1511856000";
-   d="scan'208";a="31241308"
-Subject: Re: [PATCH] x86/entry/64: Fix CR3 restore order in paranoid_exit()
-To: Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org
-References: <2b8ce3a31bcdfffa434269f4abf5d46816b75773.1518575248.git.jpoimboe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <9f6d258e-8191-9b57-4839-aa7c84e4c829@intel.com>
-Date: Tue, 13 Feb 2018 20:19:53 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S966823AbeBNEV0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 23:21:26 -0500
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:52852 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966705AbeBNEVY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 23:21:24 -0500
+X-Google-Smtp-Source: AH8x224W5UK5NEiiDWQ8M4NzxdB2LBACTD4GniI9fJa6fofyJKOul6iPjaMlQNDxnovVJOclxvoRkg==
+Date: Wed, 14 Feb 2018 07:21:21 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/mm: Decouple dynamic __PHYSICAL_MASK from AMD SME
+Message-ID: <20180214042121.tza3cpvrnpztjeme@node.shutemov.name>
+References: <20180208125524.88795-1-kirill.shutemov@linux.intel.com>
+ <5199949d-6795-aa55-888c-7ba8abd406e2@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <2b8ce3a31bcdfffa434269f4abf5d46816b75773.1518575248.git.jpoimboe@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5199949d-6795-aa55-888c-7ba8abd406e2@amd.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/13/2018 06:27 PM, Josh Poimboeuf wrote:
-> --- a/arch/x86/entry/entry_64.S
-> +++ b/arch/x86/entry/entry_64.S
-> @@ -1167,10 +1167,10 @@ ENTRY(paranoid_exit)
->  	UNWIND_HINT_REGS
->  	DISABLE_INTERRUPTS(CLBR_ANY)
->  	TRACE_IRQS_OFF_DEBUG
-> +	RESTORE_CR3	scratch_reg=%r15 save_reg=%r14
->  	testl	%ebx, %ebx			/* swapgs needed? */
->  	jnz	.Lparanoid_exit_no_swapgs
->  	TRACE_IRQS_IRETQ
-> -	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
->  	SWAPGS_UNSAFE_STACK
->  	jmp	.Lparanoid_exit_restore
->  .Lparanoid_exit_no_swapgs:
+On Tue, Feb 13, 2018 at 10:10:22PM -0600, Tom Lendacky wrote:
+> On 2/8/2018 6:55 AM, Kirill A. Shutemov wrote:
+> > AMD SME claims one bit from physical address to indicate whether the
+> > page is encrypted or not. To achieve that we clear out the bit from
+> > __PHYSICAL_MASK.
+> 
+> I was actually working on a suggestion by Linus to use one of the software
+> page table bits to indicate encryption and translate that to the hardware
+> bit when writing the actual page table entry.  With that, __PHYSICAL_MASK
+> would go back to its original definition.
 
-TRACE_IRQS_* call non-entry functions that are not mapped by the user
-CR3.  How can this possibly work?  What am I missing?
+But you would need to mask it on reading of pfn from page table entry,
+right? I expect it to have more overhead than this one.
+
+And software bits are valuable. Do we still have a spare one for this?
+
+-- 
+ Kirill A. Shutemov
