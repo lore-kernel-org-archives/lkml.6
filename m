@@ -1,99 +1,120 @@
-Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AH8x227d43svdfSxiLVSuo/YC57j7R7AJwl/mvcXPMJjVDUBbnKQzTYZvzp5AiGqQUSIIe+SPHmt
-ARC-Seal: i=1; a=rsa-sha256; t=1518597740; cv=none;
+Return-Path: <joe@perches.com>
+X-Google-Smtp-Source: AH8x227qlUIaYO1igk7/N3MjSqgrxUjJ+Chw2LhXOpcdk7wMDncGnMvlI+LizLvHi3JNyA+3E/FO
+ARC-Seal: i=1; a=rsa-sha256; t=1518592911; cv=none;
         d=google.com; s=arc-20160816;
-        b=RlYDZPA25ms+5sl2nDAhWz3Xu8bfcOG0aV92CMWZInT3bNajq69zQziEJ+mQuqx9AK
-         HZd+cNwn+hDL2SnhWQiegsr0ZAexxowK4EoTukZ27sQdiC8LeQr3/DjatcOtMPPYz+/+
-         7PtJkUTsjT5X/2fSsZaEKrBDgQzUH7/NMOSo4euxP2vif35X+rgnKDTDa+qqBKEdln++
-         AfopY0nRf7YeALn+FjIvkOHB1yDT62QKRio3wgrS1BqHmAlyJnXGwO6kZ9rhSduE3Cf0
-         tmmjORxsW3OrrFW7Y1TDp+2JgIbEA9lY/bPy25xFQ9gDDBmAAMv/Iq2ymuX7CeSMS0hV
-         oRGQ==
+        b=e9nZIxVVSUoKcN3sqG36cWigRxJsJyitaRWCepc1LUQOoHeAA4N+U5HeDAw8fnPWUN
+         WfzghLh2jmy/InKZ0CWFC3CVGuwGXzeHJ+wXovRuehoA9DBa+soEEZ4Ny81aN2cCHlMI
+         QwEaVW8nM51i7X4bSQVAGUI616zbn3ZoTxVpBVyJ1USsbJuc1bYIyyxS/JvmAaom2sPI
+         /yNGN7f/UCH2Cydtq1eC7gjNQXTxaP+9Agg2lJ3SaJ35YIHk+UmLbjDd+XRbV8WRi1tM
+         gzgNuPAqqwwxEeaW/MJuX0zAn7sKgWSW7D+AeZEJroOzRGT/egrYd8w5KFtta7TpUECY
+         FM+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=precedence:content-disposition:content-transfer-encoding
-         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
-         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
-         :arc-authentication-results;
-        bh=hGHGBFXgxFd4qC4QUkYF53InZ+eYCfSce10I5/blR8g=;
-        b=uPzER4+jcQhG403EN2yIUTpFT/QX1Xsvha2v7DrKeqAe5FqZJfv8ejk6K6vE4yziDh
-         SYzjKZc86/Ge+J01H5ipuMJm0fw86Gq10f/9hcw+f+s7hwwQjOEskQfuKKkNhXjvBAtx
-         ajG4hszth4hkyEq0oK3zZYHA1hO0hRY7h5K1DVqHllJQwhidZxxO13JAFRQ1m+d6GvLk
-         XUwQpLc/to3gHuXHM9VgLXSAY8cXNQI2Juv0AdWzrmNElfqLlki0ZhKbR02NTqmsq236
-         h5ajUmlVoPx76VsKwatVcnvZpK2jjECcyZ2IeDf2Hvl/C0VM3RDRxFsQDpAcs9SYWPu2
-         3eHQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:arc-authentication-results;
+        bh=gwGSpcOlJL7Rm9w2f1EXT3ibP/okpZzo5VDdSAb1FxQ=;
+        b=DVBQruYVIg2P04TNQGoWfow+DrsMGCdKghUtb2MetobzOCc4IqQXlOUkvb5UMDV30W
+         GUH2rzv4N2kXVaBWps7B0eN2kedAueArU+54T6W+FvJgyJ41urulIkflcdzHspon+VtE
+         dDFi23XEgHIy0pS621/c1WEToffWAAu3h/C3A7icMLk9GiDXmYkHERqq/vePkoxGO5vG
+         tXthcWJHlNqIOUZ/LM8mBnzeIQk2krl4kNlBrU+jOkdg7b8r6FeItTyNLNDpxcdwFpnf
+         sqc4gUd15sGq9EWTssd75Ek2gVeKt5GR7i6O5P6Iova/Yj8eeanjPLT+U1uEoiQSOV5t
+         m45A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+       spf=neutral (google.com: 216.40.44.3 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Wed, 14 Feb 2018 00:36:56 -0800
-Sender: tip tree robot <tipbot@zytor.com>
-From: tip-bot for Dan Carpenter <tipbot@zytor.com>
-Message-ID: <tip-b4764623932ff364df9a6bc8664ab7697c475339@git.kernel.org>
-Cc: torvalds@linux-foundation.org, mingo@kernel.org, peterz@infradead.org,
-        karahmed@amazon.de, bp@suse.de, hpa@zytor.com,
-        gregkh@linuxfoundation.org, luto@kernel.org, dan.carpenter@oracle.com,
-        tglx@linutronix.de, dwmw@amazon.co.uk, linux-kernel@vger.kernel.org
-Reply-To: peterz@infradead.org, bp@suse.de, karahmed@amazon.de, hpa@zytor.com,
-        mingo@kernel.org, torvalds@linux-foundation.org,
-        dan.carpenter@oracle.com, gregkh@linuxfoundation.org, luto@kernel.org,
-        linux-kernel@vger.kernel.org, dwmw@amazon.co.uk, tglx@linutronix.de
+       spf=neutral (google.com: 216.40.44.3 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::,RULES_HIT:41:69:355:379:541:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2898:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:4250:4321:5007:6119:9592:10004:10400:10848:11026:11232:11473:11657:11658:11914:12043:12438:12555:12740:12760:12895:13439:14181:14659:14721:21080:21212:21451:21611:21627:30054:30064:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: pump85_8449a23dc5b2d
+X-Filterd-Recvd-Size: 3578
+Message-ID: <1518592907.25974.2.camel@perches.com>
+Subject: Re: [PATCH] x86/spectre: fix an error message
+From: Joe Perches <joe@perches.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Ingo Molnar
+ <mingo@redhat.com>,  KarimAllah Ahmed <karahmed@amazon.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Thomas Gleixner
+ <tglx@linutronix.de>, David Woodhouse <dwmw@amazon.co.uk>, Borislav Petkov
+ <bp@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy
+ Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Date: Tue, 13 Feb 2018 23:21:47 -0800
 In-Reply-To: <20180214071416.GA26677@mwanda>
 References: <20180214071416.GA26677@mwanda>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/spectre: Fix an error message
-Git-Commit-ID: b4764623932ff364df9a6bc8664ab7697c475339
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592365143873210262?=
-X-GMAIL-MSGID: =?utf-8?q?1592365143873210262?=
+X-GMAIL-THRID: =?utf-8?q?1592359628754640421?=
+X-GMAIL-MSGID: =?utf-8?q?1592360080680928904?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  b4764623932ff364df9a6bc8664ab7697c475339
-Gitweb:     https://git.kernel.org/tip/b4764623932ff364df9a6bc8664ab7697c475339
-Author:     Dan Carpenter <dan.carpenter@oracle.com>
-AuthorDate: Wed, 14 Feb 2018 10:14:17 +0300
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 14 Feb 2018 08:23:07 +0100
+On Wed, 2018-02-14 at 10:14 +0300, Dan Carpenter wrote:
+> If i == ARRAY_SIZE(mitigation_options) then we accidentally print
+> garbage from one space beyond the end of the mitigation_options[] array.
+> 
+> Fixes: 9005c6834c0f ("x86/spectre: Simplify spectre_v2 command line parsing")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index debcdda88560..acee4ebec04f 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -174,7 +174,7 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
+>  		}
+>  
+>  		if (i >= ARRAY_SIZE(mitigation_options)) {
+> -			pr_err("unknown option (%s). Switching to AUTO select\n", mitigation_options[i].option);
+> +			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
+>  			return SPECTRE_V2_CMD_AUTO;
+>  		}
+>  	}
 
-x86/spectre: Fix an error message
+Should probably unindent this block too by
+removing the else after the return
 
-If i == ARRAY_SIZE(mitigation_options) then we accidentally print
-garbage from one space beyond the end of the mitigation_options[] array.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org
-Fixes: 9005c6834c0f ("x86/spectre: Simplify spectre_v2 command line parsing")
-Link: http://lkml.kernel.org/r/20180214071416.GA26677@mwanda
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/cpu/bugs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/cpu/bugs.c | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 4acf16a..d71c8b5 100644
+index 4acf16a76d1e..0af8245afb6c 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -174,7 +174,7 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
- 		}
+@@ -161,22 +161,21 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
  
- 		if (i >= ARRAY_SIZE(mitigation_options)) {
+ 	if (cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
+ 		return SPECTRE_V2_CMD_NONE;
+-	else {
+-		ret = cmdline_find_option(boot_command_line, "spectre_v2", arg, sizeof(arg));
+-		if (ret < 0)
+-			return SPECTRE_V2_CMD_AUTO;
+-
+-		for (i = 0; i < ARRAY_SIZE(mitigation_options); i++) {
+-			if (!match_option(arg, ret, mitigation_options[i].option))
+-				continue;
+-			cmd = mitigation_options[i].cmd;
+-			break;
+-		}
+ 
+-		if (i >= ARRAY_SIZE(mitigation_options)) {
 -			pr_err("unknown option (%s). Switching to AUTO select\n", mitigation_options[i].option);
-+			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
- 			return SPECTRE_V2_CMD_AUTO;
- 		}
+-			return SPECTRE_V2_CMD_AUTO;
+-		}
++	ret = cmdline_find_option(boot_command_line, "spectre_v2", arg, sizeof(arg));
++	if (ret < 0)
++		return SPECTRE_V2_CMD_AUTO;
++
++	for (i = 0; i < ARRAY_SIZE(mitigation_options); i++) {
++		if (!match_option(arg, ret, mitigation_options[i].option))
++			continue;
++		cmd = mitigation_options[i].cmd;
++		break;
++	}
++
++	if (i >= ARRAY_SIZE(mitigation_options)) {
++		pr_err("unknown option (%s). Switching to AUTO select\n", arg);
++		return SPECTRE_V2_CMD_AUTO;
  	}
+ 
+ 	if ((cmd == SPECTRE_V2_CMD_RETPOLINE ||
