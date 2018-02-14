@@ -1,49 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967323AbeBNLN3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 06:13:29 -0500
-Received: from gloria.sntech.de ([95.129.55.99]:41982 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967252AbeBNLN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 06:13:28 -0500
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Brian Norris <briannorris@chromium.org>, groeck@chromium.org,
-        devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Chris Zhong <zyw@rock-chips.com>,
-        kernel@collabora.com
-Subject: Re: [PATCH v2 3/3] arm64: dts: rockchip: enable DP for gru.
-Date: Wed, 14 Feb 2018 12:13:19 +0100
-Message-ID: <14329289.ZsZsSgLk6a@diego>
-In-Reply-To: <20180213143549.15197-3-enric.balletbo@collabora.com>
-References: <20180213143549.15197-1-enric.balletbo@collabora.com> <20180213143549.15197-3-enric.balletbo@collabora.com>
+        id S967353AbeBNLQB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 06:16:01 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:11663 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967252AbeBNLP6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 06:15:58 -0500
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 14 Feb 2018 03:15:58 -0800
+Date: Wed, 14 Feb 2018 13:15:46 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+CC: Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] memory: tegra: Squash tegra20-mc into common
+ tegra-mc driver
+Message-ID: <20180214111546.GR5850@tbergstrom-lnx.Nvidia.com>
+References: <cover.1518452709.git.digetx@gmail.com>
+ <148ce8c56ad764fc8133e0d97e43f9639cae15ff.1518452709.git.digetx@gmail.com>
+ <20180213103039.GA6764@ulmo>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180213103039.GA6764@ulmo>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.21.24.170]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To UKMAIL101.nvidia.com
+ (10.26.138.13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, 13. Februar 2018, 15:35:49 CET schrieb Enric Balletbo i Serra:
-> From: Chris Zhong <zyw@rock-chips.com>
+On Tue, Feb 13, 2018 at 11:30:39AM +0100, Thierry Reding wrote:
+> >  	}
 > 
-> Enable cdn_dp and create a cdn-dp-sound for the DP audio. Delete the
-> endpoints between dp and vopL for gru, since we want the DP only use
-> VOP big, which can support 4K mode.
-> 
-> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> It's odd that we don't have an MC clock on Tegra2. I wonder if perhaps
+> we just never implemented one, or it uses one which is always on by
+> default. Cc Peter to see if he knows.
 
+We do, it has DT ID TEGRA20_CLK_MC. However, it looks like the modeling is
+incorrect for Tegra20. Unlike on Tegra30 where the MC clock can be either
+half or the same as the EMC clock, it is always half the EMC clock on
+Tegra20. This happens to work because we likely never change the MC clock
+and the non-existing bit just reads as 0, which means half the MC clock.
 
-applied for 4.17 after dropping the vop-related hacks
-
-The devicetree should only describe the hardware and is generally not meant
-to do configuration-related things. Selecting the most suitable vops for any
-given combination of outputs should be in the realm of the driver and not
-hard-coded in the dt.
-
-
-Heiko
+Peter.
