@@ -1,79 +1,84 @@
-Return-Path: <jthumshirn@suse.de>
-X-Google-Smtp-Source: AH8x226c6EuNnjPlS3LkMSDok5hjmfs2RJW0rkbZwnRhXoyQuwLhqb7OK82CNBPjBCVfiHbyKYJ+
-ARC-Seal: i=1; a=rsa-sha256; t=1518597171; cv=none;
+Return-Path: <tursulin@ursulin.net>
+ARC-Seal: i=1; a=rsa-sha256; t=1518624687; cv=none;
         d=google.com; s=arc-20160816;
-        b=t9xYyCJ2kT08foBFHRsCOGLYYyxKfamj+23GIxKoGzfXwRdXYGZBt0C67hzISjyzpz
-         Xzcp1wBZpJ9duU8WTOYOvS4P9RcnsNGmiX69oOogWdyQEYjhUt8V2AcSEeDdtKLlUQo1
-         2ylb9S01Dukqo88Vs4sWPMfjTdtkkbeEvh4PYtJiI4euo6qse48GT1rovJVDvW/vRSb0
-         znYDu3WdGGuk7Y8APVjVyh8VzY6dHD2Doao+HdxpEc/TZFdMQ2Ek/jOLSNElg5YVCwou
-         AasrN0ubB9ZZPmwGqg6U4mXxisBfDmOgkeZ8lPowhLKKPjZx8++/h138KtX8LebzFUis
-         BP5Q==
+        b=JXBao0u5PMQSjXVS+9e/h8CjaZOxIiyD5aRxcZT5rq3aSlyfJcodPyThm0Hn2RVXvx
+         YADsXeqaHYYGLPln79rmOCOHagUcXmgxvTI1ZnWqbI+KcsctcFnYiy5Cxw8ssxgNOh5y
+         MQpTgYzbt7H6ECYbCmhZfnQL5pzdwfTPdIIGCfxWf9CWKNGSspD6XMFlDYxdFXHiOX7h
+         /d0B58cBytV0RwjLLsaTli+hdae2gJO4ugqPSpBSI+4aF7nUghTOx/TJpY6XMc8sDjUz
+         SVxli7vW3jYYioynrZV1zzyr/QWwy1MZHtMXpmVrbbEjsL+zt70NBpFHcmid3ld2ZQX4
+         CRKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :to:from:subject:message-id:arc-authentication-results;
-        bh=leEcykurPKH4vZrF3uIO3XlLnqRCnASPuU8dKA0xvdk=;
-        b=R2wd9Qp55mbcYci5yqYxNAvCj3nXQftDlFMtDcU+TSWkjeVSnEeCKzOwf+NsnPbf4b
-         nJ+DlByX6LCMTo08F3zU02VAYvBY0Gpz1IxTfWVVbxeDxycFXcDjL/oEg3RJmwCXgsfu
-         /SDGeaZ40J/XAQiFcwyYoRz9uz4J+kFmN+NzMooQiS52qozULvL68g8lmGurAbkVspfH
-         /uq7Bi9Yq301HYKPzD+0mjQ3p96CyyEUefewNjSj8RNGLm6Z8fa5lIvi+/SkBhkueLXn
-         9Rpc8TCofn2EF6mivqzGSNZ3OiSeXLAytqSQQbPvrJGvTM3V/nzeJJ0YZ5xoW8M+xhOL
-         eoTw==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=ppx6oKYKN0dR5JoKeYoq0pJbba0wADN8HcShhREXBgM=;
+        b=bpCqbKF3m5l3oREqR+S1yMNryTwLeC4fmTUv7MNv00SUoJL5gXipstZI8hpbjCKvqp
+         9YyODXTDSMfU2eRGTdzFPfDYYe5EExMIw4ecLickzcUZp1sZUgj0QIfawmqSFPRdP+/F
+         UcukKqmO7R0fh6/Yp3Q8YMm0L/crLkAL8SS2Z2ctCa6IGVSHM6MNy4RgJawIzX0wuek4
+         u0l3IpJfDLxmPZR+3flXYlifSYhvmzwzXgx/Wi3NoWDq92YxI0+WFRHZNuIi8exJmXdZ
+         vaUVtriEPDfq4bGRqcQhTKQv2esxBQcAd5RqBSkRYKlxmZC4X24NMEBWLpaQaTSjxTbC
+         bDVQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jthumshirn@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jthumshirn@suse.de
+       dkim=pass header.i=@ursulin-net.20150623.gappssmtp.com header.s=20150623 header.b=2TXgyjBP;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of tursulin@ursulin.net) smtp.mailfrom=tursulin@ursulin.net
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jthumshirn@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jthumshirn@suse.de
-Message-ID: <1518597168.24629.4.camel@suse.de>
-Subject: Re: [PATCH] lib/scatterlist: Add SG_CHAIN and SG_EMARK macros for
- LSB encodings
-From: Johannes Thumshirn <jthumshirn@suse.de>
-To: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+       dkim=pass header.i=@ursulin-net.20150623.gappssmtp.com header.s=20150623 header.b=2TXgyjBP;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of tursulin@ursulin.net) smtp.mailfrom=tursulin@ursulin.net
+X-Google-Smtp-Source: AH8x224aK6Zb1iKjAWSLsz3nMOEvVBdB2PrpjQUIto2P2mjXwCPHdxCg3bTeZamp05kWqT6Np3jZTQ==
+Subject: Re: [PATCH] lib/scatterlist: Add SG_CHAIN and SG_EMARK macros for LSB
+ encodings
+To: Johannes Thumshirn <jthumshirn@suse.de>,
+ Anshuman Khandual <khandual@linux.vnet.ibm.com>,
  linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
- bart.vanassche@wdc.com,  axboe@kernel.dk, chris@chris-wilson.co.uk,
+ bart.vanassche@wdc.com, axboe@kernel.dk, chris@chris-wilson.co.uk,
  tvrtko.ursulin@intel.com
-Date: Wed, 14 Feb 2018 09:32:48 +0100
-In-Reply-To: <20180214045804.9113-1-khandual@linux.vnet.ibm.com>
 References: <20180214045804.9113-1-khandual@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 
-Mime-Version: 1.0
+ <1518597168.24629.4.camel@suse.de>
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+Message-ID: <ebbfc01c-3f42-483e-a281-1b4572bc8ac2@ursulin.net>
+Date: Wed, 14 Feb 2018 16:11:25 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <1518597168.24629.4.camel@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592351049846277975?=
-X-GMAIL-MSGID: =?utf-8?q?1592364548180620804?=
+X-GMAIL-MSGID: =?utf-8?q?1592393400269466430?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 2018-02-14 at 10:28 +0530, Anshuman Khandual wrote:
-> This replaces scatterlist->page_link LSB encodings with SG_CHAIN and
-> SG_EMARK definitions without any functional change.
-> 
-> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-> ---
->  include/linux/scatterlist.h | 23 +++++++++++++----------
->  1 file changed, 13 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/scatterlist.h
-> b/include/linux/scatterlist.h
-> index 22b2131bcdcd..63d00bdb2fb3 100644
-> --- a/include/linux/scatterlist.h
-> +++ b/include/linux/scatterlist.h
-> @@ -65,16 +65,18 @@ struct sg_table {
->   */
->  
->  #define SG_MAGIC	0x87654321
-> +#define SG_CHAIN	0x01
-> +#define SG_EMARK	0x02
 
-SG_EMARK sounds strange, what about SG_END?
+On 14/02/18 08:32, Johannes Thumshirn wrote:
+> On Wed, 2018-02-14 at 10:28 +0530, Anshuman Khandual wrote:
+>> This replaces scatterlist->page_link LSB encodings with SG_CHAIN and
+>> SG_EMARK definitions without any functional change.
+>>
+>> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+>> ---
+>>   include/linux/scatterlist.h | 23 +++++++++++++----------
+>>   1 file changed, 13 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/include/linux/scatterlist.h
+>> b/include/linux/scatterlist.h
+>> index 22b2131bcdcd..63d00bdb2fb3 100644
+>> --- a/include/linux/scatterlist.h
+>> +++ b/include/linux/scatterlist.h
+>> @@ -65,16 +65,18 @@ struct sg_table {
+>>    */
+>>   
+>>   #define SG_MAGIC	0x87654321
+>> +#define SG_CHAIN	0x01
+>> +#define SG_EMARK	0x02
+> 
+> SG_EMARK sounds strange, what about SG_END?
 
--- 
-Johannes Thumshirn                                          Storage
-jthu
-mshirn@suse.de                                +49 911 74053 689
-SUSE
-LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane
-Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38
-9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
++1 on SG_END.
+
+Btw, just a cleanup for readability or you have further work in this area?
+
+Regards,
+
+Tvrtko
