@@ -1,90 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030259AbeBNN3B (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 08:29:01 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34790 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030225AbeBNN27 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 08:28:59 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>,
-        broonie@kernel.org, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org,
-        b.zolnierkie@samsung.com, sbkim73@samsung.com, jcsing.lee@samsung.com,
-        lgirdwood@gmail.com, krzk@kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, m.szyprowski@samsung.com,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: samsung: Add missing #sound-dai-cells property documentation" to the asoc tree
-In-Reply-To: <20180212161538.22669-8-s.nawrocki@samsung.com>
-Message-Id: <E1elx7J-0006lR-2g@debutante>
-Date: Wed, 14 Feb 2018 13:28:57 +0000
+        id S1030312AbeBNNco (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 08:32:44 -0500
+Received: from mga04.intel.com ([192.55.52.120]:55549 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030198AbeBNNcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 08:32:43 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,512,1511856000";
+   d="scan'208";a="18053995"
+Date: Wed, 14 Feb 2018 16:32:38 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        g@black.fi.intel.com
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>, Borislav Petkov <bp@suse.de>,
+        Andi Kleen <ak@linux.intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/9] x86/mm: Make LDT_BASE_ADDR dynamic
+Message-ID: <20180214133238.cliqsqp5rdggjzqy@black.fi.intel.com>
+References: <20180214111656.88514-1-kirill.shutemov@linux.intel.com>
+ <20180214111656.88514-6-kirill.shutemov@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180214111656.88514-6-kirill.shutemov@linux.intel.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Wed, Feb 14, 2018 at 11:16:52AM +0000, Kirill A. Shutemov wrote:
+> LDT_BASE_ADDR has different value in 4- and 5-level paging
+> configurations.
+> 
+> We need to make it dynamic in preparation for boot-time switching
+> between paging modes.
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-   ASoC: samsung: Add missing #sound-dai-cells property documentation
+I've just realized that the patch that I'm splitting has hunk that belong
+here.
 
-has been applied to the asoc tree at
+Could you fold it in?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Sorry for this.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 3f0c43e60d19e1c126ddad47c77a5e1036e52378 Mon Sep 17 00:00:00 2001
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Mon, 12 Feb 2018 17:15:38 +0100
-Subject: [PATCH] ASoC: samsung: Add missing #sound-dai-cells property
- documentation
-
-The #sound-dai-cells property might be helpful in selecting primary
-or secondary CPU DAI and it's already present in i2s nodes for some
-exynos SoCs so let's add it to the DT binding documentation.
-
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/sound/samsung-i2s.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-index c1f508f18ac8..a88cb00fa096 100644
---- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-+++ b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-@@ -60,6 +60,7 @@ Optional SoC Specific Properties:
-   sub system(used in secondary sound source).
- - pinctrl-0: Should specify pin control groups used for this controller.
- - pinctrl-names: Should contain only one value - "default".
-+- #sound-dai-cells: should be 1.
- 
- 
- Example:
-@@ -79,4 +80,5 @@ i2s0: i2s@3830000 {
- 	samsung,idma-addr = <0x03000000>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2s0_bus>;
-+	#sound-dai-cells = <1>;
- };
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index 9efee6f464ab..a32f0621d664 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -579,6 +579,9 @@ static int __init pt_dump_init(void)
+ 	address_markers[KASAN_SHADOW_START_NR].start_address = KASAN_SHADOW_START;
+ 	address_markers[KASAN_SHADOW_END_NR].start_address = KASAN_SHADOW_END;
+ #endif
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
++        address_markers[LDT_NR].start_address = LDT_BASE_ADDR;
++#endif
+ #endif
+ #ifdef CONFIG_X86_32
+ 	address_markers[VMALLOC_START_NR].start_address = VMALLOC_START;
 -- 
-2.16.1
+ Kirill A. Shutemov
