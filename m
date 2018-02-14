@@ -1,82 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754499AbeBNHDa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 02:03:30 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54320 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754470AbeBNHD2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 02:03:28 -0500
-From: Thomas Richter <tmricht@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.vnet.ibm.com>
-Subject: [PATCH] perf test: Fix test case inet_pton to accept inlines.
-Date: Wed, 14 Feb 2018 08:03:03 +0100
-X-Mailer: git-send-email 2.13.5
-X-TM-AS-GCONF: 00
-x-cbid: 18021407-0008-0000-0000-000004CC9383
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021407-0009-0000-0000-00001E6056E0
-Message-Id: <20180214070303.55757-1-tmricht@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-14_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802140082
+        id S1754542AbeBNHaY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 02:30:24 -0500
+Received: from mga18.intel.com ([134.134.136.126]:18211 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754489AbeBNHaX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 02:30:23 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,511,1511856000";
+   d="scan'208";a="174921668"
+Message-ID: <1518593420.13066.11.camel@linux.intel.com>
+Subject: Re: [PATCH] x86/mm: Decouple dynamic __PHYSICAL_MASK from AMD SME
+From: Kai Huang <kai.huang@linux.intel.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org
+Date: Wed, 14 Feb 2018 20:30:20 +1300
+In-Reply-To: <37cf20a3-653b-1ad7-1e65-6bed935cf325@amd.com>
+References: <20180208125524.88795-1-kirill.shutemov@linux.intel.com>
+         <5199949d-6795-aa55-888c-7ba8abd406e2@amd.com>
+         <20180214042121.tza3cpvrnpztjeme@node.shutemov.name>
+         <37cf20a3-653b-1ad7-1e65-6bed935cf325@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using Fedora 27 and latest Linux kernel the test case
-trace+probe_libc_inet_pton.sh fails again on s390.
-This time is the inlining of functions which does not match.
-After an update of the glibc (from 2.26-16 to 2.26-24)
-the output is different
+On Tue, 2018-02-13 at 22:57 -0600, Tom Lendacky wrote:
+> On 2/13/2018 10:21 PM, Kirill A. Shutemov wrote:
+> > On Tue, Feb 13, 2018 at 10:10:22PM -0600, Tom Lendacky wrote:
+> > > On 2/8/2018 6:55 AM, Kirill A. Shutemov wrote:
+> > > > AMD SME claims one bit from physical address to indicate
+> > > > whether the
+> > > > page is encrypted or not. To achieve that we clear out the bit
+> > > > from
+> > > > __PHYSICAL_MASK.
+> > > 
+> > > I was actually working on a suggestion by Linus to use one of the
+> > > software
+> > > page table bits to indicate encryption and translate that to the
+> > > hardware
+> > > bit when writing the actual page table entry.  With that,
+> > > __PHYSICAL_MASK
+> > > would go back to its original definition.
+> > 
+> > But you would need to mask it on reading of pfn from page table
+> > entry,
+> > right? I expect it to have more overhead than this one.
+> 
+> When reading back an entry it would translate the hardware bit
+> position
+> back to the software bit position.  The suggestion for changing it
+> was
+> to make _PAGE_ENC a constant and not tied to the sme_me_mask.
+> 
+> See https://marc.info/?l=linux-kernel&m=151017622615894&w=2
+> 
+> > 
+> > And software bits are valuable. Do we still have a spare one for
+> > this?
+> 
+> I was looking at possibly using bit 57 (_PAGE_BIT_SOFTW5).
 
-The expected output is:
-           __inet_pton (/usr/lib64/libc-2.26.so)
-           gaih_inet (inlined)
-           ....
+But MK-TME supports upto 15 bits (architectually) as keyID. How is this
+supposed to work with MK-TME?
 
-The actual output is:
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 0.061/0.061/0.061/0.000 ms
-     0.000 probe_libc:inet_pton:(3ffb2140448))
-           __inet_pton (inlined)
-           gaih_inet.constprop.7 (/usr/lib64/libc-2.26.so)
-           ...
-
-Fix this by being less strict on 'inlined' verses library
-name and accept both
-
-Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
----
- tools/perf/tests/shell/trace+probe_libc_inet_pton.sh | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh b/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
-index c446c894b297..8c4ab0b390c0 100755
---- a/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
-@@ -21,12 +21,12 @@ trace_libc_inet_pton_backtrace() {
- 	expected[3]=".*packets transmitted.*"
- 	expected[4]="rtt min.*"
- 	expected[5]="[0-9]+\.[0-9]+[[:space:]]+probe_libc:inet_pton:\([[:xdigit:]]+\)"
--	expected[6]=".*inet_pton[[:space:]]\($libc\)$"
-+	expected[6]=".*inet_pton[[:space:]]\($libc|inlined\)$"
- 	case "$(uname -m)" in
- 	s390x)
- 		eventattr='call-graph=dwarf'
--		expected[7]="gaih_inet[[:space:]]\(inlined\)$"
--		expected[8]="__GI_getaddrinfo[[:space:]]\(inlined\)$"
-+		expected[7]="gaih_inet.*[[:space:]]\($libc|inlined\)$"
-+		expected[8]="__GI_getaddrinfo[[:space:]]\($libc|inlined\)$"
- 		expected[9]="main[[:space:]]\(.*/bin/ping.*\)$"
- 		expected[10]="__libc_start_main[[:space:]]\($libc\)$"
- 		expected[11]="_start[[:space:]]\(.*/bin/ping.*\)$"
--- 
-2.14.3
+Thanks,
+-Kai
+> 
+> Thanks,
+> Tom
+> 
+> > 
