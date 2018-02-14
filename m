@@ -1,143 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751564AbeBNFVo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 00:21:44 -0500
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:56802 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751198AbeBNFVm (ORCPT
+        id S1751882AbeBNFdd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 00:33:33 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:52692 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751375AbeBNFdc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 00:21:42 -0500
-Subject: Re: [PATCH v7 5/9] dmtimer: Add timer ops to the platform data
- structure
-To: Suman Anna <s-anna@ti.com>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "tony@atomide.com" <tony@atomide.com>,
-        "aaro.koskinen@iki.fi" <aaro.koskinen@iki.fi>
-CC: "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "ladis@linux-mips.org" <ladis@linux-mips.org>,
-        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Kristo, Tero" <t-kristo@ti.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "sebastian.reichel@collabora.co.uk"
-        <sebastian.reichel@collabora.co.uk>,
-        "Strashko, Grygorii" <grygorii.strashko@ti.com>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "Claudiu.Beznea@microchip.com" <Claudiu.Beznea@microchip.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <1515478987-5786-1-git-send-email-j-keerthy@ti.com>
- <1515478987-5786-6-git-send-email-j-keerthy@ti.com>
- <c7edf8b6-6b27-692a-813f-13c86f988831@ti.com>
-From: Keerthy <j-keerthy@ti.com>
-Message-ID: <23a83979-e0d9-85b6-5a34-1c293362420e@ti.com>
-Date: Wed, 14 Feb 2018 10:51:01 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Wed, 14 Feb 2018 00:33:32 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R371e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0Sy7s58s_1518586406;
+Subject: Re: [PATCH 2/4 v6] lib: debugobjects: add global free list and the
+ counter
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: longman@redhat.com, linux-kernel@vger.kernel.org
+References: <1517872708-24207-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1517872708-24207-3-git-send-email-yang.shi@linux.alibaba.com>
+ <alpine.DEB.2.21.1802121718270.1158@nanos.tec.linutronix.de>
+ <73222ea2-3d8b-e84d-6042-3f92fcd9bc08@linux.alibaba.com>
+ <alpine.DEB.2.21.1802131100470.1130@nanos.tec.linutronix.de>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <b86f2dcb-a61e-a582-3538-5ecce34f9afb@linux.alibaba.com>
+Date: Tue, 13 Feb 2018 21:33:25 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <c7edf8b6-6b27-692a-813f-13c86f988831@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+In-Reply-To: <alpine.DEB.2.21.1802131100470.1130@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On Tuesday 13 February 2018 08:16 AM, Suman Anna wrote:
-> On 01/09/2018 12:23 AM, J, KEERTHY wrote:
->> Add timer ops to the platform data structure
->>
->> Signed-off-by: Keerthy <j-keerthy@ti.com>
->> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
->> Tested-by: Ladislav Michl <ladis@linux-mips.org>
->> ---
->>   include/linux/platform_data/dmtimer-omap.h | 38 ++++++++++++++++++++++++++++++
->>   1 file changed, 38 insertions(+)
->>
->> diff --git a/include/linux/platform_data/dmtimer-omap.h 
->> b/include/linux/platform_data/dmtimer-omap.h
->> index a19b78d..a3e1794 100644
->> --- a/include/linux/platform_data/dmtimer-omap.h
->> +++ b/include/linux/platform_data/dmtimer-omap.h
->> @@ -20,12 +20,50 @@
->>   #ifndef __PLATFORM_DATA_DMTIMER_OMAP_H__
->>   #define __PLATFORM_DATA_DMTIMER_OMAP_H__
->>
->> +struct omap_dm_timer_ops {
->> +       struct omap_dm_timer *(*request_by_node)(struct device_node *np);
->> +       struct omap_dm_timer *(*request_specific)(int timer_id);
->> +       struct omap_dm_timer *(*request)(void);
->> +
->> +       int     (*free)(struct omap_dm_timer *timer);
->> +
->> +       void    (*enable)(struct omap_dm_timer *timer);
->> +       void    (*disable)(struct omap_dm_timer *timer);
->> +
->> +       int     (*get_irq)(struct omap_dm_timer *timer);
->> +       int     (*set_int_enable)(struct omap_dm_timer *timer,
->> +                                 unsigned int value);
->> +       int     (*set_int_disable)(struct omap_dm_timer *timer, u32 mask);
->> +
->> +       struct clk *(*get_fclk)(struct omap_dm_timer *timer);
->> +
->> +       int     (*start)(struct omap_dm_timer *timer);
->> +       int     (*stop)(struct omap_dm_timer *timer);
->> +       int     (*set_source)(struct omap_dm_timer *timer, int source);
->> +
->> +       int     (*set_load)(struct omap_dm_timer *timer, int autoreload,
->> +                           unsigned int value);
->> +       int     (*set_match)(struct omap_dm_timer *timer, int enable,
->> +                            unsigned int match);
->> +       int     (*set_pwm)(struct omap_dm_timer *timer, int def_on,
->> +                          int toggle, int trigger);
->> +       int     (*set_prescaler)(struct omap_dm_timer *timer, int prescaler);
->> +
->> +       unsigned int (*read_counter)(struct omap_dm_timer *timer);
->> +       int     (*write_counter)(struct omap_dm_timer *timer,
->> +                                unsigned int value);
->> +       unsigned int (*read_status)(struct omap_dm_timer *timer);
->> +       int     (*write_status)(struct omap_dm_timer *timer,
->> +                               unsigned int value);
->> +};
->> +
->>   struct dmtimer_platform_data {
->>           /* set_timer_src - Only used for OMAP1 devices */
->>           int (*set_timer_src)(struct platform_device *pdev, int source);
-> Have you looked into collapsing this into the set_source() option above
-> for OMAP1? Looks like the only reason the pdev is needed is for
-> retrieving the pdev id, which is also stored in the omap_dm_timer structure?
+On 2/13/18 2:02 AM, Thomas Gleixner wrote:
+> On Mon, 12 Feb 2018, Yang Shi wrote:
+>> On 2/12/18 8:25 AM, Thomas Gleixner wrote:
+>>> On Tue, 6 Feb 2018, Yang Shi wrote:
+>>>> +	/*
+>>>> +	 * Reuse objs from the global free list, they will be reinitialized
+>>>> +	 * when allocating
+>>>> +	 */
+>>>> +	while (obj_nr_tofree > 0 && (obj_pool_free < obj_pool_min_free)) {
+>>>> +		raw_spin_lock_irqsave(&pool_lock, flags);
+>>>> +		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
+>>> This is racy vs. the worker thread. Assume obj_nr_tofree = 1:
+>>>
+>>> CPU0					CPU1
+>>> worker
+>>>      lock(&pool_lock);			while (obj_nr_tofree > 0 && ...) {
+>>>        obj = hlist_entry(obj_to_free);	  lock(&pool_lock);
+>>>        hlist_del(obj);			
+>>>        obj_nr_tofree--;
+>>>        ...
+>>>      unlock(&pool_lock);
+>>> 					  obj = hlist_entry(obj_to_free);
+>>> 					  hlist_del(obj); <------- NULL
+>>> pointer dereference
+>>>
+>>> Not what you want, right? The counter or the list head need to be rechecked
+>>> after the lock is acquired.
+>> Yes, you are right. Will fix the race in newer version.
+> I fixed up all the minor issues with this series and applied it to:
+>
+>     git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core/debugobjects
+>
+> Please double check the result.
 
-I would prefer not to touch the mach-omap1 part as part of this
-migration series. I will revisit this once the migration is done.
+Thanks a lot. It looks good.
 
-> 
->>           u32 timer_capability;
->>           u32 timer_errata;
->>           int (*get_context_loss_count)(struct device *);
->> +       struct omap_dm_timer_ops *timer_ops;
-> 
-> Any reason why this is not a const? We don't expect this to change right.
+Regards,
+Yang
 
-Yes this can be.
-
-> 
-> regards
-> Suman
-> 
->>   };
->>
->>   #endif /* __PLATFORM_DATA_DMTIMER_OMAP_H__ */
->> -- 
->> 1.9.1
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
-> 
+>
+> Thanks,
+>
+> 	tglx
