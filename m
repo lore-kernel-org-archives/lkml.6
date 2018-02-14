@@ -1,69 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033375AbeBNROq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 12:14:46 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38993 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033330AbeBNROo (ORCPT
+        id S1161014AbeBNROz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 12:14:55 -0500
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:43152 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033330AbeBNROt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 12:14:44 -0500
-X-Google-Smtp-Source: AH8x226+oqUyi2F6hUqPYCGj8AF9KCOl5ATIw8NlKFw3baq2Bu06zypxjRbaLGkar9zHx3vXwy6IAFqUEurYaq+qd58=
+        Wed, 14 Feb 2018 12:14:49 -0500
+X-Google-Smtp-Source: AH8x227ef7WW97F7G/vT9OAEKXZBbNHWn/tdUBbHEQOyVMFHJR5su1k4NW1joyrpNDBbT1TSdwQgSclp0WUo9vJKgRA=
 MIME-Version: 1.0
-In-Reply-To: <491a26b8-7abb-0d36-0a2e-e1c7bfcde79d@oracle.com>
-References: <089e08231920353a4805618b365c@google.com> <d91da249-5a0f-7a1f-cfd5-68f10f0a2fc1@oracle.com>
- <CACT4Y+bd6Tyq672JC3GNSHPX2CEHacVKkcbKOAgpi8o-=T8DRg@mail.gmail.com> <491a26b8-7abb-0d36-0a2e-e1c7bfcde79d@oracle.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 14 Feb 2018 18:14:23 +0100
-Message-ID: <CACT4Y+YxrNiP==ty-KBjkDewnuS378GmG314-=ytWskZXQx3zw@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in rds_find_bound
-To: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Cc: syzbot <syzbot+93a5839deb355537440f@syzkaller.appspotmail.com>,
-        linux-rdma@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
-        rds-devel@oss.oracle.com
+In-Reply-To: <20180214092045.GZ3443@dhcp22.suse.cz>
+References: <20180212133731.GE3443@dhcp22.suse.cz> <87r2ppvaeq.fsf@concordia.ellerman.id.au>
+ <CAGXu5j+DnkUv9pZn93wxA6_2s+c3Ap_Q34OR0weY7Y9MJ1aP9Q@mail.gmail.com>
+ <87d1192nzc.fsf@concordia.ellerman.id.au> <20180213103213.GP3443@dhcp22.suse.cz>
+ <CAGXu5jJZROQMxzxu+Dp3mVMktSg-oTB6pqk7fUyM_6_2oa9c_A@mail.gmail.com> <20180214092045.GZ3443@dhcp22.suse.cz>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 14 Feb 2018 09:14:47 -0800
+X-Google-Sender-Auth: luQHXGJik3T0VtekOFHURXTRl9Q
+Message-ID: <CAGXu5jJCN_Js9rvM4RMjxDCDd4tVzWDo-jdnFiZs1D9e3cunrw@mail.gmail.com>
+Subject: Re: samples/seccomp/ broken when cross compiling s390, ppc allyesconfig
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Will Drewry <wad@chromium.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1EHExpC021563
 
-On Wed, Feb 14, 2018 at 5:53 PM, Santosh Shilimkar
-<santosh.shilimkar@oracle.com> wrote:
->>> On 12/30/17 1:17 AM, syzbot wrote:
->>>>
->>>>
->>>> Hello,
->>>>
->>>> syzkaller hit the following crash on
->>>> fba961ab29e5ffb055592442808bb0f7962e05da
->>>> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
->>>> compiler: gcc (GCC) 7.1.1 20170620
->>>> .config is attached
->>>> Raw console output is attached.
->>>> Unfortunately, I don't have any reproducer for this bug yet.
->>>>
->>>>
->>>> IMPORTANT: if you fix the bug, please add the following tag to the
->>>> commit:
->>>> Reported-by: syzbot+93a5839deb355537440f@syzkaller.appspotmail.com
->>>
->>>
->>>
->>> Posted a fix[1] for above issue. Didn't test it but looks straight
->>> forward.
+On Wed, Feb 14, 2018 at 1:20 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> On Tue 13-02-18 13:27:30, Kees Cook wrote:
+>> On Tue, Feb 13, 2018 at 2:32 AM, Michal Hocko <mhocko@kernel.org> wrote:
+>> > On Tue 13-02-18 21:16:55, Michael Ellerman wrote:
+>> >> Kees Cook <keescook@chromium.org> writes:
+>> >>
+>> >> > On Mon, Feb 12, 2018 at 7:25 PM, Michael Ellerman <mpe@ellerman.id.au> wrote:
+>> >> >> Michal Hocko <mhocko@kernel.org> writes:
+>> >> >>> Hi,
+>> >> >>> my build test machinery chokes on samples/seccomp when cross compiling
+>> >> >>> s390 and ppc64 allyesconfig. This has been the case for quite some
+>> >> >>> time already but I never found time to look at the problem and report
+>> >> >>> it. It seems this is not new issue and similar thing happend for
+>> >> >>> MIPS e9107f88c985 ("samples/seccomp/Makefile: do not build tests if
+>> >> >>> cross-compiling for MIPS").
+>> >> >>>
+>> >> >>> The build logs are attached.
+>> >> >>>
+>> >> >>> What is the best way around this? Should we simply skip compilation on
+>> >> >>> cross compile or is actually anybody relying on that? Or should I simply
+>> >> >>> disable it for s390 and ppc?
+>> >> >>
+>> >> >> The whole thing seems very confused. It's not building for the target,
+>> >> >> it's building for the host, ie. the Makefile sets hostprogs-m and
+>> >> >> HOSTCFLAGS etc.
+>> >> >>
+>> >> >> So it can't possibly work with cross compiling as it's currently
+>> >> >> written.
+>> >> >>
+>> >> >> Either the Makefile needs some serious work to properly support cross
+>> >> >> compiling or it should just be disabled when cross compiling.
+>> >> >
+>> >> > Hrm, yeah, the goal was to entirely disable cross compiling, but I
+>> >> > guess we didn't hit it with a hard enough hammer. :)
+>> >>
+>> >> Do you know why it is written that way? Why doesn't it just try to cross
+>> >> compile like normal code?
+>> >
+>> > No idea, sorry. All I know about this code is that it breaks my build
+>> > testing.
 >>
+>> IIRC, one of the problems is with build ordering problems: the kernel
+>> headers used by the samples aren't available when cross compiling.
 >>
+>> I'm happy to kill it entirely with Michal's patch, though. Feel free
+>> to carry in your tree!
 >>
->> Hi Santosh,
->>
->> What is that fix? You forgot to provide any link/reference. I also
->> don't see any patches from you at around that date...
->>
-> Fix [1] was later not added since there was a still a race. Wanted to
-> see if the issue re-appears after recent netns fix [2].
+>> Acked-by: Kees Cook <keescook@chromium.org>
+>
+> OK, so let's try to nuke it. How should I route this patch?
+
+I'm fine if goes in via ppc (especially if it can land for 4.16). If
+Michael doesn't want it, I can send it through my seccomp tree via
+James Morris.
+
+-Kees
+
+>
+> From 8d8457e96296538508e478f598d1c8b3406a8626 Mon Sep 17 00:00:00 2001
+> From: Michal Hocko <mhocko@suse.com>
+> Date: Wed, 14 Feb 2018 10:15:12 +0100
+> Subject: [PATCH] samples/seccomp: do not compile when cross compiled
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
+>
+> samples/seccomp relies on the host setting which is not suitable for
+> crosscompilation and it actually fails when crosscompiling s390 and
+> powerpc all{yes,mod}config on x86_64 with
+>
+> samples/seccomp/bpf-helper.h:135:2: error: #error __BITS_PER_LONG value unusable.
+>  #error __BITS_PER_LONG value unusable.
+>   ^
+> In file included from samples/seccomp/bpf-fancy.c:13:0:
+> samples/seccomp/bpf-fancy.c: In function ‘main’:
+> samples/seccomp/bpf-fancy.c:38:11: error: ‘__NR_exit’ undeclared (first use in this function)
+>    SYSCALL(__NR_exit, ALLOW),
+>
+> and many others. I am doing these for compile testing and it's been
+> quite useful to catch issues. Crosscompiling sample code on the other
+> hand doesn't seem all that important so it seems like the easiest way to
+> simply disable samples/seccomp when crosscompiling.
+>
+> Fixing this properly is not that easy as Kees explains:
+> : IIRC, one of the problems is with build ordering problems: the kernel
+> : headers used by the samples aren't available when cross compiling.
+>
+> Acked-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  samples/seccomp/Makefile | 10 +---------
+>  1 file changed, 1 insertion(+), 9 deletions(-)
+>
+> diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
+> index 0e349b80686e..ba942e3ead89 100644
+> --- a/samples/seccomp/Makefile
+> +++ b/samples/seccomp/Makefile
+> @@ -1,4 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> +ifndef CROSS_COMPILE
+>  hostprogs-$(CONFIG_SAMPLE_SECCOMP) := bpf-fancy dropper bpf-direct
+>
+>  HOSTCFLAGS_bpf-fancy.o += -I$(objtree)/usr/include
+> @@ -16,7 +17,6 @@ HOSTCFLAGS_bpf-direct.o += -idirafter $(objtree)/include
+>  bpf-direct-objs := bpf-direct.o
+>
+>  # Try to match the kernel target.
+> -ifndef CROSS_COMPILE
+>  ifndef CONFIG_64BIT
+>
+>  # s390 has -m31 flag to build 31 bit binaries
+> @@ -35,12 +35,4 @@ HOSTLOADLIBES_bpf-fancy += $(MFLAG)
+>  HOSTLOADLIBES_dropper += $(MFLAG)
+>  endif
+>  always := $(hostprogs-m)
+> -else
+> -# MIPS system calls are defined based on the -mabi that is passed
+> -# to the toolchain which may or may not be a valid option
+> -# for the host toolchain. So disable tests if target architecture
+> -# is MIPS but the host isn't.
+> -ifndef CONFIG_MIPS
+> -always := $(hostprogs-m)
+> -endif
+>  endif
+> --
+> 2.15.1
+>
+> --
+> Michal Hocko
+> SUSE Labs
 
 
-We will not see if the bug re-appears or not until this bug is closed.
-Please see this recent discussion about another rds bug:
-https://groups.google.com/d/msg/syzkaller-bugs/3XjmOzr5jRU/g7pXIsY1BgAJ
-In the current state syzbot will never report bugs in these functions again.
+
+-- 
+Kees Cook
+Pixel Security
