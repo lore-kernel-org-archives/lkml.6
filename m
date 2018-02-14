@@ -1,34 +1,34 @@
-Return-Path: <kernel-hardening-return-11866-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x226TBJKXew66yrDJq1CBssjLZdKwX5VQbVq7T6OCwEXrIa0MQksJiZiuJV7QVlygeQoaRdH4
-ARC-Seal: i=1; a=rsa-sha256; t=1519251751; cv=none;
+Return-Path: <kernel-hardening-return-11765-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x224aXS5BGxCiOm1K0VR7o9zSUFyLD6Be0M0yo8/I46tuNc6q5PJqAyWArdMVHm2GoK1ViEbP
+ARC-Seal: i=1; a=rsa-sha256; t=1518636972; cv=none;
         d=google.com; s=arc-20160816;
-        b=G/0+dJDkji3hBu2mNiuW9beCLQYNp4z+tQku8dSIbD24UvILNAkM/ZcrLKKnnwAy8m
-         uf9o8L5oyTCgqfUz/21LwVW1PjrSSoiLvjCemWhU3LDkTEVKkJuV2qjhxB5T7mIUH3zt
-         cO8XaDbEBjIHQfPOGVUTafxlch5PlxvUlG0agDpMz64PNiF2/BxSMCEFTEBTTYUyD8qZ
-         yCmL6O4NzdSyXxxlqpww33e+X/qM5Bds42QLcsFGjyX3PBRdSHvpnsE/9osuJMNzTo2I
-         CpeRPHb3JDlmsDJfSy1gYGnERomMGPFCw7IaATfuX9DEIKaG3LaGOMDBtW88452MOTJH
-         PJnQ==
+        b=iw6LcgzfnmYNco9NrpHIHBdMp9M7V+bP0F3ySK7jR337w6a6s69b8L1LXo2FjU5avM
+         G+QhfzoDGp5NjjB/RgXd2sQlTrfigfyEjUt9YFOgKJWW9OP9JkNuiU3oOe6jK8WSZxyc
+         9GWPPz718llAOIJnjqveyx8p46bD4TEOd+JS9OKCQgk0cEYyQw7nqTsxJ/lX6ZAQ/9OZ
+         biRaPeM6bnYSLmQAOcfRYMrzapS3qifvjqOl2b9cy+IfcH34JTJfF+vaQnzqZwXRzgbS
+         7dNebT00scsS1C+vyxvTKhsnMgjBa6/b3CNzSvYWZt6DUY60Yi8VIsgErmvxgGa/fS/h
+         +Feg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
          :list-subscribe:list-unsubscribe:list-help:list-post:precedence
          :mailing-list:arc-authentication-results;
-        bh=dBGekIZz3Mzon9hgyko58nNR9/HABhsdF8kpFTKOGJ0=;
-        b=E2+MALjE7a+DhUHCBPED4frZeQ8jW1vDffZKKqx7KpU0ZTmCggivbIDvAdbjRWPaMz
-         Mtu96hj5/VP9It1GAMO8HAgZRrBwbLG09y6+O/MQjUtf0NZ0McN4MX8Yv4XsuG0jvxBD
-         HqEDPjYDFyGCZQQiej9wjvtIFxMZxog6RcqPj1yNShc+M/BXRa9fCriC2Q3k5LMnvM4y
-         4TFuEOT49FXBWzbhV0fB9faERbAOwnMRrRZIhye1PW/AdzeBPDxNF7p9545CntJIGnxB
-         Y99jmVT3zf8ntS0VganVEtOsAVdl5yFMlgteYFx1Q+JzCnqPn3YktW+Sy4xSFWGYMeVj
-         UwLA==
+        bh=LOq7+TRubxz5WD6WL46mDh+R6ScvsNem6FpQbvaIWcU=;
+        b=Dvb2lrzpQbvm9wg1bQgaKo13Gqy776A9qXT8hhUp51svvIIJistViJayZf2LR4nP7g
+         u0+/dQ69DnN5re6S4umyAQXmVaH81M2epvlbs9zaUM1RBjLPHUWl88uP9QE+6XZdnEg2
+         75RIIMvUnUA1G1MhIn+rHmADpRTcQOslcfyF3AR3TnqekEZYIXCWitkfgBpHxONVm3/J
+         VG9Je7V88aDsJFTrPmznqp7QPByJ9RZhlX9V/fIVAad9+uAElSRSugdJgHcqgHvmMtbM
+         V8eToI38rRm+bXRPicySE7MeYnl21itLeDd+A03UdGTD9osk6tJLdeygwfPE9NB+Dom6
+         j8uw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=OhPZO8V/;
-       dkim=pass header.i=@chromium.org header.s=google header.b=SASVIkTu;
-       spf=pass (google.com: domain of kernel-hardening-return-11866-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11866-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=O+1+VrJ8;
+       dkim=pass header.i=@chromium.org header.s=google header.b=VCkNTQEu;
+       spf=pass (google.com: domain of kernel-hardening-return-11765-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11765-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=OhPZO8V/;
-       dkim=pass header.i=@chromium.org header.s=google header.b=SASVIkTu;
-       spf=pass (google.com: domain of kernel-hardening-return-11866-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11866-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=O+1+VrJ8;
+       dkim=pass header.i=@chromium.org header.s=google header.b=VCkNTQEu;
+       spf=pass (google.com: domain of kernel-hardening-return-11765-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11765-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
@@ -37,8 +37,9 @@ List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
 MIME-Version: 1.0
 Sender: keescook@google.com
-In-Reply-To: <b67209f5-4aa7-ffc0-99e6-3ab05e281ce5@huawei.com>
+In-Reply-To: <CAGXu5j+RRiZtYfO-4Peh=FAHmUS4FThKHp-djoFgY80rebKTxQ@mail.gmail.com>
 References: <20180124175631.22925-1-igor.stoppa@huawei.com>
+ <20180124175631.22925-5-igor.stoppa@huawei.com> <CAG48ez0JRU8Nmn7jLBVoy6SMMrcj46R0_R30Lcyouc4R9igi-g@mail.gmail.com>
  <20180126053542.GA30189@bombadil.infradead.org> <alpine.DEB.2.20.1802021236510.31548@nuc-kabylake>
  <f2ddaed0-313e-8664-8a26-9d10b66ed0c5@huawei.com> <b75b5903-0177-8ad9-5c2b-fc63438fb5f2@huawei.com>
  <CAFUG7CfrCpcbwgf5ixMC5EZZgiVVVp1NXhDHK1UoJJcC08R2qQ@mail.gmail.com>
@@ -48,14 +49,13 @@ References: <20180124175631.22925-1-igor.stoppa@huawei.com>
  <CAG48ez1utN_vwHUwk=BU6zM4Wa_53TPu8rm9JuTtY-vGP0Shqw@mail.gmail.com>
  <f4226a44-92fd-8ead-b458-7551ba82f96d@redhat.com> <CAGXu5j+zOCLerneUt2b-tvyLLg7fEbr9B0YYow-4DH6oV-nnCw@mail.gmail.com>
  <2f23544a-bd24-1e71-967b-e8d1cf5a20a3@redhat.com> <CAGXu5j+RRiZtYfO-4Peh=FAHmUS4FThKHp-djoFgY80rebKTxQ@mail.gmail.com>
- <b67209f5-4aa7-ffc0-99e6-3ab05e281ce5@huawei.com>
 From: Kees Cook <keescook@chromium.org>
-Date: Wed, 21 Feb 2018 14:22:10 -0800
-X-Google-Sender-Auth: PzdZ4ezCTNnYGgm9squUKO51U9w
-Message-ID: <CAGXu5jKbuGcrdtVjEqp72e0+enzg26p1EGVPJ7goorbOnvcniA@mail.gmail.com>
+Date: Wed, 14 Feb 2018 11:35:54 -0800
+X-Google-Sender-Auth: ffGQw7x9JhgsWGsRpCVEXVixKxc
+Message-ID: <CAGXu5jJ2XRt3RqPPXp+CN5fhT93BpCCNUHk88aSQUWS_NJ5oxw@mail.gmail.com>
 Subject: Re: arm64 physmap (was Re: [kernel-hardening] [PATCH 4/6] Protectable Memory)
-To: Igor Stoppa <igor.stoppa@huawei.com>
-Cc: Laura Abbott <labbott@redhat.com>, Jann Horn <jannh@google.com>,
+To: Laura Abbott <labbott@redhat.com>
+Cc: Jann Horn <jannh@google.com>, Igor Stoppa <igor.stoppa@huawei.com>,
 	Boris Lukashev <blukashev@sempervictus.com>, Christopher Lameter <cl@linux.com>,
 	Matthew Wilcox <willy@infradead.org>, Jerome Glisse <jglisse@redhat.com>,
 	Michal Hocko <mhocko@kernel.org>, Christoph Hellwig <hch@infradead.org>,
@@ -66,53 +66,18 @@ Cc: Laura Abbott <labbott@redhat.com>, Jann Horn <jannh@google.com>,
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592404410626838547?=
-X-GMAIL-MSGID: =?utf-8?q?1593050924226526180?=
+X-GMAIL-MSGID: =?utf-8?q?1592406281649720845?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 20, 2018 at 8:28 AM, Igor Stoppa <igor.stoppa@huawei.com> wrote:
->
->
-> On 14/02/18 21:29, Kees Cook wrote:
->> On Wed, Feb 14, 2018 at 11:06 AM, Laura Abbott <labbott@redhat.com> wrote:
->
-> [...]
->
->>> Kernel code should be fine, if it isn't that is a bug that should be
->>> fixed. Modules yes are not fully protected. The conclusion from past
->>
->> I think that's a pretty serious problem: we can't have aliases with
->> mismatched permissions; this degrades a deterministic protection
->> (read-only) to a probabilistic protection (knowing where the alias of
->> a target is mapped). Having an attack be "needs some info leaks"
->> instead of "need execution control to change perms" is a much lower
->> bar, IMO.
->
-> Why "need execution control to change permission"?
-> Or, iow, what does it mean exactly?
-> ROP/JOP? Data-oriented control flow hijack?
+On Wed, Feb 14, 2018 at 11:29 AM, Kees Cook <keescook@chromium.org> wrote:
+> Why does using finer granularity on the physmap degrade performance? I
+> assume TLB pressure, but what is heavily using that area? (I must not
+> be understanding what physmap actually gets used for -- I thought it
+> was just a convenience to have a 1:1 virt/phys map for some lookups?)
 
-Right, I mean, if an attacker has already gained execute control, they
-can just call the needed functions to change memory permissions. But
-that isn't needed if there is a mismatch between physmap and virtmap:
-i.e. they can write to the physmap without needing to change perms
-first.
-
-> One can argue that this sort of R/W activity probably does require some
-> form of execution control, but AFAIK, the only way to to prevent it, is
-> to have CFI - btw, is there any standardization in that sense?
-
-I meant that I don't want a difference in protection between physmap
-and virtmap. I'd like to be able to reason the smae about the
-exposures in either.
-
-> So, from my (pessimistic?) perspective, the best that can be hoped for,
-> is to make it much harder to figure out where the data is located.
->
-> Virtual mapping has this side effect, compared to linear mapping.
-
-Right, this is good, for sure. No complaints there at all. It's why I
-think pmalloc and arm64 physmap perms are separate issues.
+Jann has sorted me out: it's that physmap isn't an _alias_ for the
+buddy allocator memory areas; it's used directly.
 
 -Kees
 
