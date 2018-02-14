@@ -1,247 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031697AbeBNPnD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 10:43:03 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5651 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1031611AbeBNPm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:42:59 -0500
-Subject: Re: [PATCH v13 4/9] PCI: Apply the new generic I/O management on PCI
- IO hosts
-To: dann frazier <dann.frazier@canonical.com>
-References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
- <1518543933-22456-5-git-send-email-john.garry@huawei.com>
- <20180213225721.GA22219@xps13.dannf>
-CC: <mika.westerberg@linux.intel.com>, <rafael@kernel.org>,
-        <lorenzo.pieralisi@arm.com>, <rjw@rjwysocki.net>,
-        <hanjun.guo@linaro.org>, <robh+dt@kernel.org>, <bhelgaas@google.com>,
-        <arnd@arndb.de>, <mark.rutland@arm.com>, <olof@lixom.net>,
-        <andy.shevchenko@gmail.com>, <robh@kernel.org>, <joe@perches.com>,
-        <benh@kernel.crashing.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <linuxarm@huawei.com>, <minyard@acm.org>, <devicetree@vger.kernel.org>,
-        <linux-arch@vger.kernel.org>, <rdunlap@infradead.org>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <ffaf1c82-3738-86fd-8bc9-f76299f99a79@huawei.com>
-Date: Wed, 14 Feb 2018 15:42:15 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180213225721.GA22219@xps13.dannf>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+        id S1031721AbeBNPnY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 10:43:24 -0500
+Received: from mga12.intel.com ([192.55.52.136]:19076 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031597AbeBNPnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 10:43:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,513,1511856000";
+   d="scan'208";a="204097007"
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/2] x86/platform/quark: Re-use DEFINE_SHOW_ATTRIBUTE() macro
+Date: Wed, 14 Feb 2018 17:43:17 +0200
+Message-Id: <20180214154317.52290-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180214154317.52290-1-andriy.shevchenko@linux.intel.com>
+References: <20180214154317.52290-1-andriy.shevchenko@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/02/2018 22:57, dann frazier wrote:
-> On Wed, Feb 14, 2018 at 01:45:28AM +0800, John Garry wrote:
->> From: Zhichang Yuan <yuanzhichang@hisilicon.com>
->>
->> After introducing the new generic I/O space management in logic pio, the
->> original PCI MMIO relevant helpers need to be updated based on the new
->> interfaces.
->> This patch adapts the corresponding code to match the changes introduced
->> by logic pio.
->>
->> Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
->> Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>        #earlier draft
->> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
->
-> I saw that Bjorn Acked this back in v6, but it seems like the code in
-> pci.c was reworked a bit for v7 onwards and I didn't see a follow-up
-> review (apologies if I just missed it). In which case, maybe his Ack
-> should have the "#earlier draft" tag as well?
->
+...instead of open coding file operations followed by custom ->open()
+callbacks per each attribute.
 
-Hi Dann,
+While here, replace permissions by explicit octal value.
 
-I see Bjorn acked again later on in the series, here:
-https://lkml.org/lkml/2017/5/26/612
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ arch/x86/platform/intel-quark/imr.c | 24 +++---------------------
+ 1 file changed, 3 insertions(+), 21 deletions(-)
 
->> ---
->>  drivers/pci/pci.c        | 95 +++++++++---------------------------------------
->>  include/asm-generic/io.h |  2 +-
->>  2 files changed, 18 insertions(+), 79 deletions(-)
->>
->> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->> index 07290a3..8aa5c54 100644
->> --- a/drivers/pci/pci.c
->> +++ b/drivers/pci/pci.c
->> @@ -22,6 +22,7 @@
->>  #include <linux/spinlock.h>
->>  #include <linux/string.h>
->>  #include <linux/log2.h>
->> +#include <linux/logic_pio.h>
->>  #include <linux/pci-aspm.h>
->>  #include <linux/pm_wakeup.h>
->>  #include <linux/interrupt.h>
->> @@ -3440,17 +3441,6 @@ int pci_request_regions_exclusive(struct pci_dev *pdev, const char *res_name)
->>  }
->>  EXPORT_SYMBOL(pci_request_regions_exclusive);
->>
->> -#ifdef PCI_IOBASE
->> -struct io_range {
->> -	struct list_head list;
->> -	phys_addr_t start;
->> -	resource_size_t size;
->> -};
->> -
->> -static LIST_HEAD(io_range_list);
->> -static DEFINE_SPINLOCK(io_range_lock);
->> -#endif
->> -
->>  /*
->>   * Record the PCI IO range (expressed as CPU physical address + size).
->>   * Return a negative value if an error has occured, zero otherwise
->> @@ -3458,51 +3448,28 @@ struct io_range {
->>  int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
->>  			resource_size_t	size)
->>  {
->> -	int err = 0;
->> -
->> +	int ret = 0;
->>  #ifdef PCI_IOBASE
->> -	struct io_range *range;
->> -	resource_size_t allocated_size = 0;
->> -
->> -	/* check if the range hasn't been previously recorded */
->> -	spin_lock(&io_range_lock);
->> -	list_for_each_entry(range, &io_range_list, list) {
->> -		if (addr >= range->start && addr + size <= range->start + size) {
->> -			/* range already registered, bail out */
->> -			goto end_register;
->> -		}
->> -		allocated_size += range->size;
->> -	}
->> +	struct logic_pio_hwaddr *range;
->>
->> -	/* range not registed yet, check for available space */
->> -	if (allocated_size + size - 1 > IO_SPACE_LIMIT) {
->> -		/* if it's too big check if 64K space can be reserved */
->> -		if (allocated_size + SZ_64K - 1 > IO_SPACE_LIMIT) {
->> -			err = -E2BIG;
->> -			goto end_register;
->> -		}
->> -
->> -		size = SZ_64K;
->> -		pr_warn("Requested IO range too big, new size set to 64K\n");
->> -	}
->> +	if (!size || addr + size < addr)
->> +		return -EINVAL;
->>
->> -	/* add the range to the list */
->>  	range = kzalloc(sizeof(*range), GFP_ATOMIC);
->> -	if (!range) {
->> -		err = -ENOMEM;
->> -		goto end_register;
->> -	}
->> +	if (!range)
->> +		return -ENOMEM;
->>
->> -	range->start = addr;
->> +	range->fwnode = fwnode;
->>  	range->size = size;
->> +	range->hw_start = addr;
->> +	range->flags = PIO_CPU_MMIO;
->>
->> -	list_add_tail(&range->list, &io_range_list);
->> -
->> -end_register:
->> -	spin_unlock(&io_range_lock);
->> +	ret = logic_pio_register_range(range);
->> +	if (ret)
->> +		kfree(range);
->>  #endif
->>
->> -	return err;
->> +	return ret;
->>  }
->>
->>  phys_addr_t pci_pio_to_address(unsigned long pio)
->> @@ -3510,21 +3477,10 @@ phys_addr_t pci_pio_to_address(unsigned long pio)
->>  	phys_addr_t address = (phys_addr_t)OF_BAD_ADDR;
->>
->>  #ifdef PCI_IOBASE
->> -	struct io_range *range;
->> -	resource_size_t allocated_size = 0;
->> -
->> -	if (pio > IO_SPACE_LIMIT)
->> +	if (pio >= MMIO_UPPER_LIMIT)
->>  		return address;
->>
->> -	spin_lock(&io_range_lock);
->> -	list_for_each_entry(range, &io_range_list, list) {
->> -		if (pio >= allocated_size && pio < allocated_size + range->size) {
->> -			address = range->start + pio - allocated_size;
->> -			break;
->> -		}
->> -		allocated_size += range->size;
->> -	}
->> -	spin_unlock(&io_range_lock);
->> +	address = logic_pio_to_hwaddr(pio);
->>  #endif
->>
->>  	return address;
->> @@ -3533,25 +3489,8 @@ phys_addr_t pci_pio_to_address(unsigned long pio)
->>  unsigned long __weak pci_address_to_pio(phys_addr_t address)
->>  {
->>  #ifdef PCI_IOBASE
->> -	struct io_range *res;
->> -	resource_size_t offset = 0;
->> -	unsigned long addr = -1;
->> -
->> -	spin_lock(&io_range_lock);
->> -	list_for_each_entry(res, &io_range_list, list) {
->> -		if (address >= res->start && address < res->start + res->size) {
->> -			addr = address - res->start + offset;
->> -			break;
->> -		}
->> -		offset += res->size;
->> -	}
->> -	spin_unlock(&io_range_lock);
->> -
->> -	return addr;
->> +	return logic_pio_trans_cpuaddr(address);
->>  #else
->> -	if (address > IO_SPACE_LIMIT)
->> -		return (unsigned long)-1;
->> -
->
-> Why is this check now safe to drop in the !PCI_IOBASE case?
-
-So I have been studying the (long) patchset history and I don't see the 
-reason for removing this check, and I think it can be reinstated.
-
-The address and pio are analogous here, and pio should not exceed the IO 
-space limit, so just a safety check.
-
->
->   -dann
->
->>  	return (unsigned long) address;
->>  #endif
->>  }
->> diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
->> index b7996a79..5a59931 100644
->> --- a/include/asm-generic/io.h
->> +++ b/include/asm-generic/io.h
->> @@ -901,7 +901,7 @@ static inline void iounmap(void __iomem *addr)
->>  #define ioport_map ioport_map
->>  static inline void __iomem *ioport_map(unsigned long port, unsigned int nr)
->>  {
-
-Thanks,
-John
-
->> -	return PCI_IOBASE + (port & IO_SPACE_LIMIT);
->> +	return PCI_IOBASE + (port & MMIO_UPPER_LIMIT);
->>  }
->>  #endif
->>
->
-> .
->
+diff --git a/arch/x86/platform/intel-quark/imr.c b/arch/x86/platform/intel-quark/imr.c
+index 17d6d2296e4d..49828c2707ac 100644
+--- a/arch/x86/platform/intel-quark/imr.c
++++ b/arch/x86/platform/intel-quark/imr.c
+@@ -224,25 +224,7 @@ static int imr_dbgfs_state_show(struct seq_file *s, void *unused)
+ 	mutex_unlock(&idev->lock);
+ 	return ret;
+ }
+-
+-/**
+- * imr_state_open - debugfs open callback.
+- *
+- * @inode:	pointer to struct inode.
+- * @file:	pointer to struct file.
+- * @return:	result of single open.
+- */
+-static int imr_state_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, imr_dbgfs_state_show, inode->i_private);
+-}
+-
+-static const struct file_operations imr_state_ops = {
+-	.open		= imr_state_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(imr_dbgfs_state);
+ 
+ /**
+  * imr_debugfs_register - register debugfs hooks.
+@@ -252,8 +234,8 @@ static const struct file_operations imr_state_ops = {
+  */
+ static int imr_debugfs_register(struct imr_device *idev)
+ {
+-	idev->file = debugfs_create_file("imr_state", S_IFREG | S_IRUGO, NULL,
+-					 idev, &imr_state_ops);
++	idev->file = debugfs_create_file("imr_state", 0444, NULL, idev,
++					 &imr_dbgfs_state_fops);
+ 	return PTR_ERR_OR_ZERO(idev->file);
+ }
+ 
+-- 
+2.15.1
