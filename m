@@ -1,130 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032982AbeBNQvk (ORCPT <rfc822;w@1wt.eu>);
+        id S1032997AbeBNQvm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 11:51:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44940 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032793AbeBNQvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Feb 2018 11:51:40 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45176 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032793AbeBNQvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:51:38 -0500
-Date: Wed, 14 Feb 2018 16:51:32 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Will Deacon <will.deacon@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mingo@kernel.org, peterz@infradead.org, mathieu.desnoyers@efficios.com
-Subject: Re: arm64/v4.16-rc1: KASAN: use-after-free Read in finish_task_switch
-Message-ID: <20180214165131.o25r3hhrtrjk3ejq@lakrids.cambridge.arm.com>
-References: <20180214120254.qq4w4s42ecxio7lu@lakrids.cambridge.arm.com>
- <20180214150739.GH2992@arm.com>
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5F922177D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Wed, 14 Feb 2018 16:51:35 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/8] MIPS: mscc: Add initial support for Microsemi
+ MIPS SoCs
+Message-ID: <20180214165135.GC3986@saruman>
+References: <20180116101240.5393-1-alexandre.belloni@free-electrons.com>
+ <20180116101240.5393-5-alexandre.belloni@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="TiqCXmo5T1hvSQQg"
 Content-Disposition: inline
-In-Reply-To: <20180214150739.GH2992@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180116101240.5393-5-alexandre.belloni@free-electrons.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 03:07:41PM +0000, Will Deacon wrote:
-> Hi Mark,
 
-Hi Will,
+--TiqCXmo5T1hvSQQg
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Cheers for the report. These things tend to be a pain to debug, but I've had
-> a go.
+On Tue, Jan 16, 2018 at 11:12:36AM +0100, Alexandre Belloni wrote:
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index 350a990fc719..a9db028a0338 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -527,6 +527,30 @@ config MIPS_MALTA
+>  	  This enables support for the MIPS Technologies Malta evaluation
+>  	  board.
+> =20
+> +config MSCC_OCELOT
+> +	bool "Microsemi Ocelot architecture"
+> +	select BOOT_RAW
+> +	select CEVT_R4K
+> +	select CSRC_R4K
+> +	select IRQ_MIPS_CPU
+> +	select DMA_NONCOHERENT
+> +	select SYS_HAS_CPU_MIPS32_R2
+> +	select SYS_SUPPORTS_32BIT_KERNEL
+> +	select SYS_SUPPORTS_BIG_ENDIAN
+> +	select SYS_SUPPORTS_LITTLE_ENDIAN
+> +	select SYS_HAS_EARLY_PRINTK
+> +	select USE_GENERIC_EARLY_PRINTK_8250
+> +	select MSCC_OCELOT_IRQ
+> +	select PINCTRL
+> +	select GPIOLIB
+> +	select COMMON_CLK
+> +	select USE_OF
+> +	select BUILTIN_DTB
+> +	select LIBFDT
 
-Thanks for taking a look!
+Please sort alphanumerically.
 
-> On Wed, Feb 14, 2018 at 12:02:54PM +0000, Mark Rutland wrote:
-> The interesting thing here is on the exit path:
-> 
-> > Freed by task 10882:
-> >  save_stack mm/kasan/kasan.c:447 [inline]
-> >  set_track mm/kasan/kasan.c:459 [inline]
-> >  __kasan_slab_free+0x114/0x220 mm/kasan/kasan.c:520
-> >  kasan_slab_free+0x10/0x18 mm/kasan/kasan.c:527
-> >  slab_free_hook mm/slub.c:1393 [inline]
-> >  slab_free_freelist_hook mm/slub.c:1414 [inline]
-> >  slab_free mm/slub.c:2968 [inline]
-> >  kmem_cache_free+0x88/0x270 mm/slub.c:2990
-> >  __mmdrop+0x164/0x248 kernel/fork.c:604
-> 
-> ^^ This should never run, because there's an mmgrab() about 8 lines above
-> the mmput() in exit_mm.
-> 
-> >  mmdrop+0x50/0x60 kernel/fork.c:615
-> >  __mmput kernel/fork.c:981 [inline]
-> >  mmput+0x270/0x338 kernel/fork.c:992
-> >  exit_mm kernel/exit.c:544 [inline]
-> 
-> Looking at exit_mm:
-> 
->         mmgrab(mm);
->         BUG_ON(mm != current->active_mm);
->         /* more a memory barrier than a real lock */
->         task_lock(current);
->         current->mm = NULL;
->         up_read(&mm->mmap_sem);
->         enter_lazy_tlb(mm, current);
->         task_unlock(current);
->         mm_update_next_owner(mm);
->         mmput(mm);
-> 
-> Then the comment already rings some alarm bells: our spin_lock (as used
-> by task_lock) has ACQUIRE semantics, so the mmgrab (which is unordered
-> due to being an atomic_inc) can be reordered with respect to the assignment
-> of NULL to current->mm.
-> 
-> If the exit()ing task had recently migrated from another CPU, then that
-> CPU could concurrently run context_switch() and take this path:
-> 
-> 	if (!prev->mm) {
-> 		prev->active_mm = NULL;
-> 		rq->prev_mm = oldmm;
-> 	}
+> +	help
+> +	  This enables support for the Microsemi Ocelot architecture.
+> +	  It builds a generic DT-based kernel image.
+> +
+>  config MACH_PIC32
+>  	bool "Microchip PIC32 Family"
+>  	help
 
-IIUC, on the prior context_switch, next->mm == NULL, so we set
-next->active_mm to prev->mm.
+=2E..
 
-Then, in this context_switch we set oldmm = prev->active_mm (where prev
-is next from the prior context switch).
+> diff --git a/arch/mips/mscc/Platform b/arch/mips/mscc/Platform
+> new file mode 100644
+> index 000000000000..9ae874c8f136
+> --- /dev/null
+> +++ b/arch/mips/mscc/Platform
+> @@ -0,0 +1,12 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +#
+> +# Microsemi MIPS SoC support
+> +#
+> +# License: Dual MIT/GPL
+> +# Copyright (c) 2017 Microsemi Corporation
+> +
+> +#
+> +# Microsemi Ocelot board(s)
+> +#
+> +platform-$(CONFIG_MSCC_OCELOT) +=3D mscc/
 
-... right?
+Please use tabs to align
 
-> which then means finish_task_switch will call mmdrop():
-> 
-> 	struct mm_struct *mm = rq->prev_mm;
-> 	[...]
-> 	if (mm) {
-> 		membarrier_mm_sync_core_before_usermode(mm);
-> 		mmdrop(mm);
-> 	}
+> +load-$(CONFIG_MSCC_OCELOT)	 +=3D 0x80100000
 
-... then here we use what was prev->active_mm in the most recent context
-switch.
+Please drop the space after the tab.
 
-So AFAICT, we're never concurrently accessing a task_struct::mm field
-here, only prev::{mm,active_mm} while prev is current...
+> diff --git a/arch/mips/mscc/setup.c b/arch/mips/mscc/setup.c
+> new file mode 100644
+> index 000000000000..77803edd7bfd
+> --- /dev/null
+> +++ b/arch/mips/mscc/setup.c
+> @@ -0,0 +1,106 @@
 
-[...]
+=2E..
 
-> diff --git a/kernel/exit.c b/kernel/exit.c
-> index 995453d9fb55..f91e8d56b03f 100644
-> --- a/kernel/exit.c
-> +++ b/kernel/exit.c
-> @@ -534,8 +534,9 @@ static void exit_mm(void)
->         }
->         mmgrab(mm);
->         BUG_ON(mm != current->active_mm);
-> -       /* more a memory barrier than a real lock */
->         task_lock(current);
-> +       /* Ensure we've grabbed the mm before setting current->mm to NULL */
-> +       smp_mb__after_spin_lock();
->         current->mm = NULL;
+> +
+> +#include <asm/time.h>
+> +#include <asm/idle.h>
+> +#include <asm/prom.h>
+> +#include <asm/reboot.h>
 
-... and thus I don't follow why we would need to order these with
-anything more than a compiler barrier (if we're preemptible here).
+Please sort these includes alphanumerically if possible.
 
-What have I completely misunderstood? ;)
+> +
+> +static void __init ocelot_earlyprintk_init(void)
+> +{
+> +	void __iomem *uart_base;
+> +
+> +	uart_base =3D ioremap_nocache(0x70100000, 0x0f);
 
-Thanks,
-Mark.
+Maybe these hex literals (the address at least) can use #defines.
+
+0xf is an odd size when the 2 below indicates 32-bit registers.
+
+
+> +	setup_8250_early_printk_port((unsigned long)uart_base, 2, 50000);
+> +}
+
+=2E..
+
+> +extern void (*late_time_init)(void);
+
+This is already declared in linux/init.h which you include, so I think
+you can drop it.
+
+> +void __init device_tree_init(void)
+> +{
+> +	if (!initial_boot_params)
+> +		return;
+
+I think flatten_and_copy_device_tree() already checks this (with a
+warning), so this could be dropped.
+
+Cheers
+James
+
+--TiqCXmo5T1hvSQQg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqEaRYACgkQbAtpk944
+dnoUmRAAmSAfy9w+IUOo/+i9DvxR2NNyykOd/IMT+Gu60Mv9MTWo0YsgFNfAYvMT
+LSov9zXoF4z7cC0BmWU8OJ5ai7NjtO0fQyKuLswUlWWVL8Nh3ez9TjwX2VgrJ6+6
+4bvHpoJwDx48P9TyVPpk36hm7WpDGpoCFsxDkNe7PT5FkKLWlVh0io/oFCRCmEdC
+c7dihRSXx/wGTSqvPGMzoC3FQQ6xJrQ9SsvpBBf34zcx3w9ibFeC3uwwg3D5YIeJ
+mSLvD53vdkfgmRaBaDH6k2c40kSHDQQOrXTa1d4tobUvOwebiCF5xLsn+pW6UL+J
+bBFOPaoxOw0do42ph8gbHQ2Zr3PxldQpkU3TclMODWFFYNsAm4gCbJZEscf9z0kT
+IpeQQakRGaTeHpD2Rf3zs10PK7ARFKJV06ZfB4Ca4yuck/AJXVViVyITGkz8TgjF
+sDbnSe443g46EQu7xegrRykx1iRhcAQc+Kdwb1ynFQzTQrZQy+9M24RffFGgyYyo
+ddCWjr8nogQCVpXhX3vsVJHZQ9uh+7aFlqOLokIovHhmkRizbDcG9mANTzyPFKAC
+xmsIa6ijLi+cgWILwEhiN317p/pEepPDgqRltas7MDstHJK+PzRTr4rRtF30RyfB
+pibSrIBEbhde8EqN5W0pTfsTx/FGmLeq0s1G+7vZc9v8Gw4mh7I=
+=a6Jb
+-----END PGP SIGNATURE-----
+
+--TiqCXmo5T1hvSQQg--
