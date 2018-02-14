@@ -1,94 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966793AbeBNDtL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 22:49:11 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:40484 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966671AbeBNDtK (ORCPT
+        id S966803AbeBNDuT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 22:50:19 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:41795 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966671AbeBNDuR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 22:49:10 -0500
-X-Google-Smtp-Source: AH8x224FhcBGJZ0Cbz/Ot3/lFsZM/fNhAQytDMT1v5dqq134pMZ7QS+hKKv4eaff/xvDyGVR6qJQ1SBcCndfLFv7Wac=
-MIME-Version: 1.0
-In-Reply-To: <CAAfSe-v_i=EnrvKWKmWsi4wSx=EiHK_0Q7KfouaQ8o5iYo+yrA@mail.gmail.com>
-References: <6fff71482ed7bb63afa46c024638c0a72810ce29.1517913264.git.baolin.wang@linaro.org>
- <CAAfSe-uQqVPB5B0OYij-bx6Q7AnGnONNqYtwWkU_b2rSJfCpfw@mail.gmail.com>
- <CAMz4kuK9GAR8Ao7RbN5+QUo2-v-bDXaCbtGrzE7Qx_TY=xfTng@mail.gmail.com> <CAAfSe-v_i=EnrvKWKmWsi4wSx=EiHK_0Q7KfouaQ8o5iYo+yrA@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Wed, 14 Feb 2018 11:49:09 +0800
-Message-ID: <CAMz4kuK4gofFoWm8=UE72spqz5OUtkj82=aDC7c=0RwhuXi_Eg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: Enable SPRD_TIMER
-To: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        =?UTF-8?B?T3Jzb24gWmhhaSAo57+f5LqsKQ==?=
-        <orson.zhai@spreadtrum.com>,
-        nianfu.bai@spreadtrum.com, Geng Ren <geng.ren@spreadtrum.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 13 Feb 2018 22:50:17 -0500
+X-Google-Smtp-Source: AH8x22600bXYOB0KvFlg6jXIPqS5XRav5BIX7LCWidhCDwuZajOJAm9Tu+21PRSZfZr3DRbi+N/eZw==
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Wei Xu <xuwei5@hisilicon.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+        Leo Yan <leo.yan@linaro.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Kaihua Zhong <zhongkaihua@huawei.com>,
+        Guodong Xu <guodong.xu@linaro.org>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>
+Subject: [PATCH RESEND v5 0/3] Add support for Hi3660 mailbox driver
+Date: Wed, 14 Feb 2018 11:49:48 +0800
+Message-Id: <1518580191-26451-1-git-send-email-leo.yan@linaro.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chunyan,
+Hi3660 mailbox controller is used to send message within multiple
+processors, MCU, HIFI, etc. This patch series is to implement an
+initial version for Hi3660 mailbox driver with "automatic
+acknowledge" mode.
 
-On 11 February 2018 at 19:41, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
-> Hi Baolin,
->
-> On 7 February 2018 at 11:12, Baolin Wang <baolin.wang@linaro.org> wrote:
->> On 7 February 2018 at 10:31, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
->>> Hi Baolin,
->>>
->>> On 6 February 2018 at 18:36, Baolin Wang <baolin.wang@linaro.org> wrote:
->>>> Enable Spreadtrum timer driver for Spreadtrum plaform, which will be used
->>>> as tick broadcast device.
->>>>
->>>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->>>> ---
->>>>  arch/arm64/Kconfig.platforms |    1 +
->>>>  1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
->>>> index fbedbd8..3e0bbb0 100644
->>>> --- a/arch/arm64/Kconfig.platforms
->>>> +++ b/arch/arm64/Kconfig.platforms
->>>> @@ -224,6 +224,7 @@ config ARCH_TEGRA
->>>>
->>>>  config ARCH_SPRD
->>>>         bool "Spreadtrum SoC platform"
->>>> +       select SPRD_TIMER
->>>
->>> Do we have to select SPRD_TIMER here? SC9836, SC9860 have been working
->>> with a minimum system without SPRD TIMER.
->>
->> Yes, we need register this timer as the tick broadcast device,
->> otherwise we will use one hrtimer to be registered the broadcast
->> device, which will affect the No-Hz of CPU attaching the
->> broadcast-hrtimer.
->
-> Again, Spreadtrum's two boards - SC9836/SC9860 - can run into console
-> without SPRD_TIMER, we can also debug some kernel origianl feature or
-> some basic drivers on these two boards, such as CoreSight, clock
-> driver, etc.
+The patch set have been verified with Hi3660 stub clock driver, so
+we can send message to MCU to execute CPU frequency scaling. This is
+tested on 96boards Hikey960.
 
-Ii think you misunderstood my meaning, I did not say it can not work
-without the SPRD TIMER. Let me try to explain it again, it we did not
-select the Spreadtrum timer, we will use one hrtimer to be the tick
-broadcast device, so in this situation, the cpu attaching the
-broadcast-hrtimer can not be entered into No-Hz to save power to avoid
-dead-lock issue. But if we register one timer as the tick broadcast
-device, then all cpus can be entered No-Hz to save power. So that's
-why we need select the SPRD_TIMER.
+Changes from v4:
+* According to Jassi suggestion, refactored mailbox driver and removed
+  "inline" for function declaration;
 
->
-> In my opinion we should keep the kernel as simple as possible, the
-> above information can go to the 'help' graph of SPRD_TIMER in its
-> Kconfig.
+Changes from v3:
+* According to Jassi suggestion, refined structure name to
+  "struct hi3660_chan_info";
+* According to Jassi suggestion, moved channel 'lock'+'acquire'
+  operations into .startup();
 
-That's one optimization, not the issue of making the kernel more
-complicated. OK, I will add some kerneldoc to explain that.
+Changes from v2:
+* According to Mark Rutland suggestions, removed sev()/wfe() from
+  driver, the system has no two masters sharing the same channel for
+  data transferring so we don't need these instructions;
+* Refined DT binding and doc according to Rob suggestions;
+* Refined driver according to Julien suggestions;
+
+Changes from v1:
+* Added cover letter to track the changelog;
+* Added document for DT binding;
+* Refactored and simplized mailbox driver with "automatic ack" mode;
+* Refined commit logs for patches;
+
+
+Kaihua Zhong (2):
+  mailbox: Add support for Hi3660 mailbox
+  dts: arm64: Add mailbox binding for hi3660
+
+Leo Yan (1):
+  dt-bindings: mailbox: Introduce Hi3660 controller binding
+
+ .../bindings/mailbox/hisilicon,hi3660-mailbox.txt  |  51 ++++
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi          |   8 +
+ drivers/mailbox/Kconfig                            |   8 +
+ drivers/mailbox/Makefile                           |   2 +
+ drivers/mailbox/hi3660-mailbox.c                   | 316 +++++++++++++++++++++
+ 5 files changed, 385 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/hisilicon,hi3660-mailbox.txt
+ create mode 100644 drivers/mailbox/hi3660-mailbox.c
 
 -- 
-Baolin.wang
-Best Regards
+1.9.1
