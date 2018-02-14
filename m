@@ -1,123 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966281AbeBNA3v (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 19:29:51 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:40146 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966240AbeBNA3t (ORCPT
+        id S966275AbeBNAcP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 19:32:15 -0500
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:46461 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966208AbeBNAcM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 19:29:49 -0500
-Subject: Re: [PATCH 17/18] thunderbolt: Introduce USB only (SL4) security
- level
-To: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Cc: Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <yehezkel.bernat@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
-        Radion Mirchevsky <radion.mirchevsky@intel.com>
-References: <20180213170018.9780-1-mika.westerberg@linux.intel.com>
- <20180213170018.9780-18-mika.westerberg@linux.intel.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <5b787d94-af95-a249-69ba-54f1528be11e@infradead.org>
-Date: Tue, 13 Feb 2018 16:29:42 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 13 Feb 2018 19:32:12 -0500
+X-Google-Smtp-Source: AH8x227YzXjH5mQ7KyLz0IJad/jguJYYjyzafMrFncvPAbNZP2FWYIpzXz91VjjazQpz7ntvQec8rh0clDVEhGet67U=
 MIME-Version: 1.0
-In-Reply-To: <20180213170018.9780-18-mika.westerberg@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180212062832.2791-4-rnayak@codeaurora.org>
+References: <20180212062832.2791-1-rnayak@codeaurora.org> <20180212062832.2791-4-rnayak@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 13 Feb 2018 16:32:09 -0800
+X-Google-Sender-Auth: Jba0kRhbNKl7lskTMhdOuHrVWwY
+Message-ID: <CAD=FV=UXrmpsK3k+8yZCqVi6S+c_3icPUViDST+shnrQW1A6EA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] arm64: dts: sdm845: Add serial console support
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, evgreen@chromium.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/13/2018 09:00 AM, Mika Westerberg wrote:
-> This new security level works so that it creates one PCIe tunnel to the
-> connected Thunderbolt dock, removing PCIe links downstream of the dock.
-> This leaves only the internal USB controller visible.
-> 
-> Display Port tunnels are created normally.
-> 
-> While there make sure security sysfs attribute returns "unknown" for any
-> future security level.
-> 
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-
 Hi,
 
-Also update Documentation/admin-guide/thunderbolt.rst ??
-
-
+On Sun, Feb 11, 2018 at 10:28 PM, Rajendra Nayak <rnayak@codeaurora.org> wrote:
+> Add the qup uart node and geni se instance needed to
+> support the serial console on the MTP.
+>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 > ---
->  Documentation/ABI/testing/sysfs-bus-thunderbolt | 3 +++
->  drivers/thunderbolt/domain.c                    | 7 ++++++-
->  include/linux/thunderbolt.h                     | 4 ++++
->  3 files changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-thunderbolt b/Documentation/ABI/testing/sysfs-bus-thunderbolt
-> index 4ed229789852..151584a1f950 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-thunderbolt
-> +++ b/Documentation/ABI/testing/sysfs-bus-thunderbolt
-> @@ -35,6 +35,9 @@ Description:	This attribute holds current Thunderbolt security level
->  			minimum. User needs to authorize each device.
->  		dponly: Automatically tunnel Display port (and USB). No
->  			PCIe tunnels are created.
-> +		usbonly: Automatically tunnel USB controller of the
-> +			 connected Thunderbolt dock (and Display Port). All
-> +			 PCIe links downstream of the dock are removed.
->  
->  What: /sys/bus/thunderbolt/devices/.../authorized
->  Date:		Sep 2017
-> diff --git a/drivers/thunderbolt/domain.c b/drivers/thunderbolt/domain.c
-> index cc68faedf42a..526972227dd4 100644
-> --- a/drivers/thunderbolt/domain.c
-> +++ b/drivers/thunderbolt/domain.c
-> @@ -117,6 +117,7 @@ static const char * const tb_security_names[] = {
->  	[TB_SECURITY_USER] = "user",
->  	[TB_SECURITY_SECURE] = "secure",
->  	[TB_SECURITY_DPONLY] = "dponly",
-> +	[TB_SECURITY_USBONLY] = "usbonly",
->  };
->  
->  static ssize_t boot_acl_show(struct device *dev, struct device_attribute *attr,
-> @@ -226,8 +227,12 @@ static ssize_t security_show(struct device *dev, struct device_attribute *attr,
->  			     char *buf)
->  {
->  	struct tb *tb = container_of(dev, struct tb, dev);
-> +	const char *name = "unknown";
->  
-> -	return sprintf(buf, "%s\n", tb_security_names[tb->security_level]);
-> +	if (tb->security_level < ARRAY_SIZE(tb_security_names))
-> +		name = tb_security_names[tb->security_level];
+>  arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 34 ++++++++++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi    | 39 +++++++++++++++++++++++++++++++++
+>  2 files changed, 73 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+> index 617c7bb25fb1..9eab2b815e0d 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+> @@ -10,4 +10,38 @@
+>  / {
+>         model = "Qualcomm Technologies, Inc. SDM845 MTP";
+>         compatible = "qcom,sdm845-mtp";
 > +
-> +	return sprintf(buf, "%s\n", name);
->  }
->  static DEVICE_ATTR_RO(security);
->  
-> diff --git a/include/linux/thunderbolt.h b/include/linux/thunderbolt.h
-> index 47251844d064..a3ed26082bc1 100644
-> --- a/include/linux/thunderbolt.h
-> +++ b/include/linux/thunderbolt.h
-> @@ -45,12 +45,16 @@ enum tb_cfg_pkg_type {
->   * @TB_SECURITY_USER: User approval required at minimum
->   * @TB_SECURITY_SECURE: One time saved key required at minimum
->   * @TB_SECURITY_DPONLY: Only tunnel Display port (and USB)
-> + * @TB_SECURITY_USBONLY: Only tunnel USB controller of the connected
-> + *			 Thunderbolt dock (and Display Port). All PCIe
-> + *			 links downstream of the dock are removed.
->   */
->  enum tb_security_level {
->  	TB_SECURITY_NONE,
->  	TB_SECURITY_USER,
->  	TB_SECURITY_SECURE,
->  	TB_SECURITY_DPONLY,
-> +	TB_SECURITY_USBONLY,
->  };
->  
->  /**
-> 
+> +       aliases {
+> +               serial0 = &qup_uart2;
+> +       };
+> +
+> +       chosen {
+> +               stdout-path = "serial0";
+> +       };
+> +};
+> +
+> +&soc {
+> +       geni-se@ac0000 {
+> +               serial@a84000 {
+> +                       status = "okay";
+> +               };
+> +       };
 
-thanks,
--- 
-~Randy
+If others at QC have already decided that they like the style above
+then it's OK with me, but I'd prefer instead (at the top level):
+
+&qup_uart2 {
+  status = "okay";
+};
+
+...then you don't need to replicate all the hierarchy.
+
+> +       pinctrl@3400000 {
+
+Similar here.  This could be:
+
+&qup_uart2_default {
+  pinconf {
+    ...
+  }
+};
+
+If you're upset about things being in a "random" order at the top
+level, you can still create commented sections in the "dts" file to
+organize things, but the above means that you don't end up tabbed in
+several levels of indentation for no reason.
+
+
+> +               qup-uart2-default {
+> +                       pinconf {
+> +                               pins = "gpio4", "gpio5";
+> +                               drive-strength = <2>;
+> +                               bias-disable;
+
+Possibly you'd want some sort of pull on the "receive" pin unless
+you're guaranteed that on this board that the other side will always
+be driving the pin.  As far as I can tell this UART goes to a debug
+connector.  If that debug connector is not populated this pin will be
+floating, no?
+
+
+> +                       };
+> +               };
+> +
+> +               qup-uart2-sleep {
+> +                       pinconf {
+> +                               pins = "gpio4", "gpio5";
+> +                               drive-strength = <2>;
+
+Does specifying the "drive-strength" in this case actually do anything
+useful?  If not can we leave it out?
+
+
+> +                               bias-disable;
+
+Feel free to ignore if I'm being ignorant, but I would have expected a
+"pull" of some sort to be turned on for the "transmit" pin when you're
+in sleep mode.  Otherwise the line will be left floating which could
+generate noise to the other side, no?  ...or is there some sort of
+external pull present on this board?
+
+Depending on the board you might also want a pull on the "receive" pin
+(assuming we wanted one in the "default" state--see above).  With my
+extremely limited EE understanding I have the impression that
+transitions on a line can still cause power draw even if software
+isn't paying attention to them, so it's best to prevent them by adding
+a pull.
+
+
+> +                       };
+> +               };
+> +       };
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index 55a7e0b454e1..8cf8df25b06d 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -4,6 +4,7 @@
+>   */
+>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/qcom,gcc-sdm845.h>
+>
+>  / {
+>         interrupt-parent = <&intc>;
+> @@ -193,6 +194,20 @@
+>                         #gpio-cells = <2>;
+>                         interrupt-controller;
+>                         #interrupt-cells = <2>;
+> +
+> +                       qup_uart2_default: qup-uart2-default {
+> +                               pinmux {
+> +                                       function = "qup9";
+> +                                       pins = "gpio4", "gpio5";
+> +                               };
+> +                       };
+> +
+> +                       qup_uart2_sleep: qup-uart2-sleep {
+> +                               pinmux {
+> +                                       function = "gpio";
+> +                                       pins = "gpio4", "gpio5";
+> +                               };
+> +                       };
+>                 };
+>
+>                 timer@17c90000 {
+> @@ -271,5 +286,29 @@
+>                         #interrupt-cells = <4>;
+>                         cell-index = <0>;
+>                 };
+> +
+> +               qup_1: geni-se@ac0000 {
+
+Color me confused.  So you're saying here that this is "qup_1".
+...but above you turn the pinmux for pins "GPIO4" and "GPIO5" to
+"qup9", right?  So UART2 is on "qup 1" and "qup 9"?
+
+...OK, so I stared at manuals a bunch more, and _maybe_ I get it.
+Maybe there are 3 "QUP v3 modules" each of which handles up to 8
+"QUP"s.  So QUP 9 is on "QUP module 1", is that right?  If everyone
+understands this already and it's just me that's confused then I guess
+you can just ignore this comment.  However, if you can think of any
+better alias than "qup_1" that makes this less confusing then that
+would make me extra happy.  Like maybe "qupv3_id_1" to match the
+manual?
