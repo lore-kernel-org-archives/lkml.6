@@ -1,96 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031569AbeBNPhy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 10:37:54 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:47915 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1031380AbeBNPhw (ORCPT
+        id S1031594AbeBNPib (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 10:38:31 -0500
+Received: from mo1500.tsb.2iij.net ([210.149.48.172]:44208 "EHLO
+        mo.tsb.2iij.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934301AbeBNPi3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:37:52 -0500
-Subject: Re: [PATCH 14/25] arm: stm32: dts: Remove leading 0x and 0s from
- bindings notation
-To: Mathieu Malaterre <malat@debian.org>, Rob Herring <robh+dt@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20171215124646.30591-1-malat@debian.org>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <9c2375af-b175-4ca4-3e93-ae844e255425@st.com>
-Date: Wed, 14 Feb 2018 16:37:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20171215124646.30591-1-malat@debian.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+        Wed, 14 Feb 2018 10:38:29 -0500
+X-MXL-Hash: 5a8457d569c62f4e-5fa86ef81529849928ccf1c42f1abd8e0ddab7ef
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-14_05:,,
- signatures=0
+From: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+To: boris.brezillon@free-electrons.com, richard@nod.at,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, cyrille.pitchen@wedev4u.fr,
+        linux-mmc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+Subject: [PATCH -next v4] mtd: nand: toshiba: Retrieve ECC requirements from extended ID
+Date: Thu, 15 Feb 2018 00:35:06 +0900
+Message-Id: <1518622506-16606-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
+X-Mailer: git-send-email 2.7.4
+X-MAIL-FROM: <yoshitake.kobayashi@toshiba.co.jp>
+X-SOURCE-IP: [172.27.153.190]
+X-Spam: exempt
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+This patch enables support to read the ECC strength and size from the
+NAND flash using Toshiba Memory SLC NAND extended-ID. This patch is
+based on the information of the 6th ID byte of the Toshiba Memory SLC
+NAND.
 
-On 12/15/2017 01:46 PM, Mathieu Malaterre wrote:
-> Improve the DTS files by removing all the leading "0x" and zeros to fix the
-> following dtc warnings:
-> 
-> Warning (unit_address_format): Node /XXX unit name should not have leading "0x"
-> 
-> and
-> 
-> Warning (unit_address_format): Node /XXX unit name should not have leading 0s
-> 
-> Converted using the following command:
-> 
-> find . -type f \( -iname *.dts -o -iname *.dtsi \) -exec sed -i -e "s/@\([0-9a-fA-FxX\.;:#]+\)\s*{/@\L\1 {/g" -e "s/@0x\(.*\) {/@\1 {/g" -e "s/@0+\(.*\) {/@\1 {/g" {} +^C
-> 
-> For simplicity, two sed expressions were used to solve each warnings separately.
-> 
-> To make the regex expression more robust a few other issues were resolved,
-> namely setting unit-address to lower case, and adding a whitespace before the
-> the opening curly brace:
-> 
-> https://elinux.org/Device_Tree_Linux#Linux_conventions
-> 
-> This will solve as a side effect warning:
-> 
-> Warning (simple_bus_reg): Node /XXX@<UPPER> simple-bus unit address format error, expected "<lower>"
-> 
-> This is a follow up to commit 4c9847b7375a ("dt-bindings: Remove leading 0x from bindings notation")
-> 
-> Reported-by: David Daney <ddaney@caviumnetworks.com>
-> Suggested-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+---
+ drivers/mtd/nand/nand_toshiba.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-Applied on stm32-next.
-
-thanks
-
-Alex
-
-
-> ---
->   arch/arm/boot/dts/stm32h743.dtsi | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/stm32h743.dtsi b/arch/arm/boot/dts/stm32h743.dtsi
-> index bbfcbaca0b36..a559d8b6a4a3 100644
-> --- a/arch/arm/boot/dts/stm32h743.dtsi
-> +++ b/arch/arm/boot/dts/stm32h743.dtsi
-> @@ -304,7 +304,7 @@
->   			};
->   		};
->   
-> -		vrefbuf: regulator@58003C00 {
-> +		vrefbuf: regulator@58003c00 {
->   			compatible = "st,stm32-vrefbuf";
->   			reg = <0x58003C00 0x8>;
->   			clocks = <&rcc VREF_CK>;
-> 
+diff --git a/drivers/mtd/nand/nand_toshiba.c b/drivers/mtd/nand/nand_toshiba.c
+index 57df857..ab43f02 100644
+--- a/drivers/mtd/nand/nand_toshiba.c
++++ b/drivers/mtd/nand/nand_toshiba.c
+@@ -35,6 +35,32 @@ static void toshiba_nand_decode_id(struct nand_chip *chip)
+ 	    (chip->id.data[5] & 0x7) == 0x6 /* 24nm */ &&
+ 	    !(chip->id.data[4] & 0x80) /* !BENAND */)
+ 		mtd->oobsize = 32 * mtd->writesize >> 9;
++
++	/*
++	 * Extract ECC requirements from 6th id byte.
++	 * For Toshiba SLC, ecc requrements are as follows:
++	 *  - 43nm: 1 bit ECC for each 512Byte is required.
++	 *  - 32nm: 4 bit ECC for each 512Byte is required.
++	 *  - 24nm: 8 bit ECC for each 512Byte is required.
++	 */
++	if (chip->id.len >= 6 && nand_is_slc(chip)) {
++		chip->ecc_step_ds = 512;
++		switch (chip->id.data[5] & 0x7) {
++		case 0x4:
++			chip->ecc_strength_ds = 1;
++			break;
++		case 0x5:
++			chip->ecc_strength_ds = 4;
++			break;
++		case 0x6:
++			chip->ecc_strength_ds = 8;
++			break;
++		default:
++			WARN(1, "Could not get ECC info");
++			chip->ecc_step_ds = 0;
++			break;
++		}
++	}
+ }
+ 
+ static int toshiba_nand_init(struct nand_chip *chip)
+-- 
+2.7.4
