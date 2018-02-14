@@ -1,123 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162759AbeBNTLe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 14:11:34 -0500
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:46166 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162665AbeBNTLb (ORCPT
+        id S1162727AbeBNTPo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 14:15:44 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:35702 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162439AbeBNTPn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 14:11:31 -0500
-X-Google-Smtp-Source: AH8x224zynYt1v7myroGArFomGLqArCk4jrEpGsgeYRnOGUq08rKZ0iSDK9doGxMaFVC2dbFX1UOdg==
-Date: Wed, 14 Feb 2018 11:11:25 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Rajendra Nayak <rnayak@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, evgreen@chromium.org
-Subject: Re: [PATCH v3 3/3] arm64: dts: sdm845: Add serial console support
-Message-ID: <20180214191125.GD93895@bjorns-mbp-2.lan>
-References: <20180212062832.2791-1-rnayak@codeaurora.org>
- <20180212062832.2791-4-rnayak@codeaurora.org>
- <CAD=FV=UXrmpsK3k+8yZCqVi6S+c_3icPUViDST+shnrQW1A6EA@mail.gmail.com>
+        Wed, 14 Feb 2018 14:15:43 -0500
+Date: Wed, 14 Feb 2018 20:15:41 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+Cc: boris.brezillon@free-electrons.com, richard@nod.at,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, cyrille.pitchen@wedev4u.fr,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next v4] mtd: nand: toshiba: Retrieve ECC requirements
+ from extended ID
+Message-ID: <20180214201541.7c939976@bbrezillon>
+In-Reply-To: <1518622506-16606-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
+References: <1518622506-16606-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=UXrmpsK3k+8yZCqVi6S+c_3icPUViDST+shnrQW1A6EA@mail.gmail.com>
-User-Agent: Mutt/1.8.0 (2017-02-23)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 13 Feb 16:32 PST 2018, Doug Anderson wrote:
-> On Sun, Feb 11, 2018 at 10:28 PM, Rajendra Nayak <rnayak@codeaurora.org> wrote:
-[..]
-> > +&soc {
-> > +       geni-se@ac0000 {
-> > +               serial@a84000 {
-> > +                       status = "okay";
-> > +               };
-> > +       };
-> 
-> If others at QC have already decided that they like the style above
-> then it's OK with me, but I'd prefer instead (at the top level):
-> 
-> &qup_uart2 {
->   status = "okay";
-> };
-> 
-> ...then you don't need to replicate all the hierarchy.
-> 
-> > +       pinctrl@3400000 {
-> 
-> Similar here.  This could be:
-> 
-> &qup_uart2_default {
->   pinconf {
->     ...
->   }
-> };
-> 
-> If you're upset about things being in a "random" order at the top
-> level, you can still create commented sections in the "dts" file to
-> organize things, but the above means that you don't end up tabbed in
-> several levels of indentation for no reason.
-> 
+-linux-mmc
++linux-mtd
 
-I prefer using the hierarchy to describe the relationship between
-sibling nodes, in favour of using comments and code review to keep
-things in order.
+On Thu, 15 Feb 2018 00:35:06 +0900
+KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp> wrote:
 
-This also mean that nodes that are not references by other parts of the
-tree does not need a label.
+> This patch enables support to read the ECC strength and size from the
+> NAND flash using Toshiba Memory SLC NAND extended-ID. This patch is
+> based on the information of the 6th ID byte of the Toshiba Memory SLC
+> NAND.
 
-That said, I've promised to write some patches to convert the prior
-platforms to this structure, so let's see how that turns out in
-practice - although it's still just an indication of what a fully
-described board would look like.
+This version looks good to me.
 
 > 
-> > +               qup-uart2-default {
-> > +                       pinconf {
-> > +                               pins = "gpio4", "gpio5";
-> > +                               drive-strength = <2>;
-> > +                               bias-disable;
+> Signed-off-by: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+> ---
+>  drivers/mtd/nand/nand_toshiba.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
 > 
-> Possibly you'd want some sort of pull on the "receive" pin unless
-> you're guaranteed that on this board that the other side will always
-> be driving the pin.  As far as I can tell this UART goes to a debug
-> connector.  If that debug connector is not populated this pin will be
-> floating, no?
-> 
+> diff --git a/drivers/mtd/nand/nand_toshiba.c b/drivers/mtd/nand/nand_toshiba.c
+> index 57df857..ab43f02 100644
+> --- a/drivers/mtd/nand/nand_toshiba.c
+> +++ b/drivers/mtd/nand/nand_toshiba.c
+> @@ -35,6 +35,32 @@ static void toshiba_nand_decode_id(struct nand_chip *chip)
+>  	    (chip->id.data[5] & 0x7) == 0x6 /* 24nm */ &&
+>  	    !(chip->id.data[4] & 0x80) /* !BENAND */)
+>  		mtd->oobsize = 32 * mtd->writesize >> 9;
+> +
+> +	/*
+> +	 * Extract ECC requirements from 6th id byte.
+> +	 * For Toshiba SLC, ecc requrements are as follows:
+> +	 *  - 43nm: 1 bit ECC for each 512Byte is required.
+> +	 *  - 32nm: 4 bit ECC for each 512Byte is required.
+> +	 *  - 24nm: 8 bit ECC for each 512Byte is required.
+> +	 */
+> +	if (chip->id.len >= 6 && nand_is_slc(chip)) {
+> +		chip->ecc_step_ds = 512;
+> +		switch (chip->id.data[5] & 0x7) {
+> +		case 0x4:
+> +			chip->ecc_strength_ds = 1;
+> +			break;
+> +		case 0x5:
+> +			chip->ecc_strength_ds = 4;
+> +			break;
+> +		case 0x6:
+> +			chip->ecc_strength_ds = 8;
+> +			break;
+> +		default:
+> +			WARN(1, "Could not get ECC info");
+> +			chip->ecc_step_ds = 0;
+> +			break;
+> +		}
+> +	}
+>  }
+>  
+>  static int toshiba_nand_init(struct nand_chip *chip)
 
-The rx pin is typically bias-pull-up and tx bias-disable, so I would
-expect the same.
 
-[..]
-> > +
-> > +               qup_1: geni-se@ac0000 {
-> 
-> Color me confused.  So you're saying here that this is "qup_1".
-> ...but above you turn the pinmux for pins "GPIO4" and "GPIO5" to
-> "qup9", right?  So UART2 is on "qup 1" and "qup 9"?
-> 
-> ...OK, so I stared at manuals a bunch more, and _maybe_ I get it.
-> Maybe there are 3 "QUP v3 modules" each of which handles up to 8
-> "QUP"s.  So QUP 9 is on "QUP module 1", is that right?  If everyone
-> understands this already and it's just me that's confused then I guess
-> you can just ignore this comment.  However, if you can think of any
-> better alias than "qup_1" that makes this less confusing then that
-> would make me extra happy.  Like maybe "qupv3_id_1" to match the
-> manual?
 
-This is indeed a source of confusion, in particular since there tend to
-be different numbering depending on what part of the puzzle you look at.
-But you're right that each QUP has a number of engines, each one being a
-UART/I2C/SPI controller.
-
-I don't see a reason for labeling this particular node though, aliases
-references individual engines, not the wrapper.
-
-Regards,
-Bjorn
+-- 
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
