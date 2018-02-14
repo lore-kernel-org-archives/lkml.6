@@ -1,110 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163028AbeBNTea (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 14:34:30 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:36476 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162964AbeBNTe1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 14:34:27 -0500
-X-Google-Smtp-Source: AH8x224xsX7KOP+v9Ke7PcRWxzZw62oxjGVlLqsb8IbZWV/mJyO81qkxmtUrnb+Hb3WmKGLcPVJC/w==
-Date: Wed, 14 Feb 2018 11:34:19 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        sboyd@codeaurora.org, rnayak@codeaurora.org, msivasub@codeaurora.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt-bindings: introduce Command DB for QCOM SoCs
-Message-ID: <20180214193419.GE93895@bjorns-mbp-2.lan>
-References: <20180208195154.3580-1-ilina@codeaurora.org>
- <20180208195154.3580-3-ilina@codeaurora.org>
+        id S1163057AbeBNTf5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 14:35:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56132 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1162917AbeBNTfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 14:35:54 -0500
+Date: Wed, 14 Feb 2018 20:35:47 +0100
+From: Borislav Petkov <bp@suse.de>
+To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH 1/3] x86/MCE/AMD: Redo function to get SMCA bank type
+Message-ID: <20180214193547.GB19502@pd.tnic>
+References: <20180201184813.82253-1-Yazen.Ghannam@amd.com>
+ <20180208150433.GD7964@pd.tnic>
+ <DM5PR12MB1916E752AF9164228359BC9EF8F50@DM5PR12MB1916.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180208195154.3580-3-ilina@codeaurora.org>
-User-Agent: Mutt/1.8.0 (2017-02-23)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DM5PR12MB1916E752AF9164228359BC9EF8F50@DM5PR12MB1916.namprd12.prod.outlook.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 08 Feb 11:51 PST 2018, Lina Iyer wrote:
+On Wed, Feb 14, 2018 at 04:38:34PM +0000, Ghannam, Yazen wrote:
+> I know that we're declaring smca_banks[] to have MAX_NR_BANKS items. But
+> shouldn't we directly check that an index is within the bounds of the array?
+> We'll have a bug if we check against MAX_NR_BANKS and the definition of
+> smca_banks[] changes.
 
-> From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-> 
-> Command DB provides information on shared resources like clocks,
-> regulators etc., probed at boot by the remote subsytem and made
-> available in shared memory.
-> 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> ---
->  .../devicetree/bindings/arm/msm/cmd-db.txt         | 38 ++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/msm/cmd-db.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/msm/cmd-db.txt b/Documentation/devicetree/bindings/arm/msm/cmd-db.txt
-> new file mode 100644
-> index 000000000000..e21666e40ebf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/msm/cmd-db.txt
-> @@ -0,0 +1,38 @@
-> +Command DB
-> +---------
-> +
-> +Command DB is a database that provides a mapping between resource key and the
-> +resource address for a system resource managed by a remote processor. The data
-> +is stored in a shared memory region and is loaded by the remote processor.
-> +
-> +Some of the Qualcomm Technologies Inc SoC's have hardware accelerators for
-> +controlling shared resources. Depending on the board configuration the shared
-> +resource properties may change. These properties are dynamically probed by the
-> +remote processor and made available in the shared memory.
-> +
-> +The devicetree representation of the command DB driver should be:
-> +
-> +PROPERTIES:
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: Should be "qcom,cmd-db"
-> +
-> +- memory-region:
-> +	Usage: required
-> +	Value type: <phandle>
-> +	Definition: The phandle to the reserved memory region.
-> +
-> +Example:
-> +
-> +	reserved-memory {
-> +		[...]
-> +		cmd_db_mem: qcom,cmd-db@c3f000c {
-> +			reg = <0x0 0xc3f000c 0x0 0x8>;
+Then we don't need MAX_NR_BANKS. We either keep them in sync or kill it.
 
-I was hoping that we can describe the actual memory here, as I got the
-impression that it will also be a chunk of memory carved out from System
-RAM.
+-- 
+Regards/Gruss,
+    Boris.
 
-If not it would seem unlikely that there's a 8 byte carveout in the
-middle of DDR, what else is here?
-
-> +		};
-> +	};
-> +
-> +	qcom,cmd-db@c3f000c {
-> +		compatible = "qcom,cmd-db";
-
-Add "qcom,cmd-db" to "reserved_mem_matches" in drivers/of/platform.c,
-use of_reserved_mem_lookup(pdev->dev.of_node) to get the reserved_mem
-and you can just put the compatible directly on the reserved-memory
-node.
-
-That way you don't need this separate node that doesn't really represent
-anything.
-
-> +		memory-region = <&cmd_db_mem>;
-> +	};
-
-Regards,
-Bjorn
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
