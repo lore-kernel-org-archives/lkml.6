@@ -1,91 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031439AbeBNVaH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 16:30:07 -0500
-Received: from gateway36.websitewelcome.com ([192.185.193.12]:30530 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1031127AbeBNVaF (ORCPT
+        id S1031498AbeBNVfr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 16:35:47 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:47089 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030501AbeBNVfp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 16:30:05 -0500
-Subject: Re: [PATCH] drm/amdkfd: Use ARRAY_SIZE macro in
- kfd_build_sysfs_node_entry
-To: Felix Kuehling <felix.kuehling@amd.com>,
-        Oded Gabbay <oded.gabbay@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20180119003955.GA28885@embeddedor.com>
- <1fea2528-11a5-0210-6350-e916ebfebbdf@amd.com>
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Message-ID: <422e897f-4b65-10f6-4184-36b78b6ea274@embeddedor.com>
-Date: Wed, 14 Feb 2018 15:30:03 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 14 Feb 2018 16:35:45 -0500
+X-Google-Smtp-Source: AH8x224hWp8gINOb2DkhdM5SAsR4kZZbnREpTcoQvOch/Idny6P7WItFb82jYtFyvnOJETq9/cQWViUDM0K4HFRY45w=
 MIME-Version: 1.0
-In-Reply-To: <1fea2528-11a5-0210-6350-e916ebfebbdf@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.4.238
-X-Source-L: No
-X-Exim-ID: 1em4cu-000SLd-Rz
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.66]) [189.175.4.238]:33818
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 15
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <1518614467-20613-2-git-send-email-cosmin.samoila@nxp.com>
+References: <1518614467-20613-1-git-send-email-cosmin.samoila@nxp.com> <1518614467-20613-2-git-send-email-cosmin.samoila@nxp.com>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Wed, 14 Feb 2018 22:35:04 +0100
+Message-ID: <CAOFm3uGJU+bVAkL-F9R6Xk05rSkNgt14YT7sXSZhdE2QkrH_Bg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] ASoC: codecs: Add support for AK4458 DAC driver
+To: Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
+Cc: Mark <broonie@kernel.org>, ALSA <alsa-devel@alsa-project.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>, mihai.serban@gmail.com,
+        linux-imx@nxp.com, shegjiu.wang@nxp.com, daniel.baluta@nxp.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Junichi Wakasugi <wakasugi.jb@om.asahi-kasei.co.jp>,
+        Mihai Serban <mihai.serban@nxp.com>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On Wed, Feb 14, 2018 at 2:21 PM, Cosmin-Gabriel Samoila
+<cosmin.samoila@nxp.com> wrote:
+> The AK4458 is a 32-bit 8ch Premium DAC that corresponds
+> to a 768kHz PCM input and an 11.2MHz DSD input at maximum.
+> It supports I2S, DSD and TDM modes with 24 or 32 bit MSB
+> or 16, 24, 32 LSB formats. Its datasheet is available here:
+> https://www.akm.com/akm/en/file/datasheet/AK4458VN.pdf
+>
+> Signed-off-by: Junichi Wakasugi <wakasugi.jb@om.asahi-kasei.co.jp>
+> Signed-off-by: Mihai Serban <mihai.serban@nxp.com>
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Signed-off-by: Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
+> ---
 
-I was just wondering about the status of this patch.
+> --- /dev/null
+> +++ b/sound/soc/codecs/ak4458.c
+> @@ -0,0 +1,659 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Audio driver for AK4458 DAC
+> + *
+> + * Copyright (C) 2016 Asahi Kasei Microdevices Corporation
+> + * Copyright 2018 NXP
 
-Thanks
---
-Gustavo
+Thanks for using the proper SPDX tag here.... yet see my comments below.
 
-On 01/19/2018 04:18 PM, Felix Kuehling wrote:
-> Looks good. This change is Reviewed-by: Felix Kuehling
-> <Felix.Kuehling@amd.com>
-> 
-> Regards,
->    Felix
-> 
-> 
-> On 2018-01-18 07:39 PM, Gustavo A. R. Silva wrote:
->> Use ARRAY_SIZE instead of dividing sizeof array with sizeof an element.
->>
->> This issue was detected with the help of Coccinelle.
->>
->> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
->> ---
->>   drivers/gpu/drm/amd/amdkfd/kfd_topology.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
->> index c6a7609..7783250 100644
->> --- a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
->> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
->> @@ -677,7 +677,7 @@ static int kfd_build_sysfs_node_entry(struct kfd_topology_device *dev,
->>   	}
->>   
->>   	/* All hardware blocks have the same number of attributes. */
->> -	num_attrs = sizeof(perf_attr_iommu)/sizeof(struct kfd_perf_attr);
->> +	num_attrs = ARRAY_SIZE(perf_attr_iommu);
->>   	list_for_each_entry(perf, &dev->perf_props, list) {
->>   		perf->attr_group = kzalloc(sizeof(struct kfd_perf_attr)
->>   			* num_attrs + sizeof(struct attribute_group),
-> 
+<snip>
+
+> +MODULE_AUTHOR("Junichi Wakasugi <wakasugi.jb@om.asahi-kasei.co.jp>");
+> +MODULE_AUTHOR("Mihai Serban <mihai.serban@nxp.com>");
+> +MODULE_DESCRIPTION("ASoC AK4458 DAC driver");
+> +MODULE_LICENSE("GPL");
+
+This means GPL-2.0+ per module.h and therefore does not match your
+GPL-2.0 SPDX tag above.
+Go one way or the other, but not both way please.
+
+> diff --git a/sound/soc/codecs/ak4458.h b/sound/soc/codecs/ak4458.h
+> new file mode 100644
+> index 0000000..16d9d22
+> --- /dev/null
+> +++ b/sound/soc/codecs/ak4458.h
+> @@ -0,0 +1,86 @@
+> +// SPDX-License-Identifier: GPL-2.0
+
+As weird as it sounds the style should be plain /*
+SPDX-License-Identifier: GPL-2.0 /* here per [1]
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
+
+-- 
+Cordially
+Philippe Ombredanne
