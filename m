@@ -1,19 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030734AbeBNOVQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 09:21:16 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36124 "EHLO mx1.redhat.com"
+        id S1030748AbeBNOVc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 09:21:32 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60706 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1030578AbeBNOS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 09:18:57 -0500
+        id S1030527AbeBNOSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 09:18:53 -0500
 From: =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: bhe@redhat.com, slp@redhat.com, mst@redhat.com, somlo@cmu.edu,
         xiaolong.ye@intel.com,
-        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
-Subject: [PATCH v14 3/9] fw_cfg: fix sparse warnings in fw_cfg_sel_endianness()
-Date: Wed, 14 Feb 2018 15:18:44 +0100
-Message-Id: <20180214141850.4017-4-marcandre.lureau@redhat.com>
+        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Young <dyoung@redhat.com>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Tony Luck <tony.luck@intel.com>, Vivek Goyal <vgoyal@redhat.com>
+Subject: [PATCH v14 1/9] crash: export paddr_vmcoreinfo_note()
+Date: Wed, 14 Feb 2018 15:18:42 +0100
+Message-Id: <20180214141850.4017-2-marcandre.lureau@redhat.com>
 In-Reply-To: <20180214141850.4017-1-marcandre.lureau@redhat.com>
 References: <20180214141850.4017-1-marcandre.lureau@redhat.com>
 MIME-Version: 1.0
@@ -23,33 +27,34 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function is used for both LE & BE target type, use __force casting.
+The following patch is going to use the symbol from the fw_cfg module,
+to call the function and write the note location details in the
+vmcoreinfo entry, so qemu can produce dumps with the vmcoreinfo note.
 
-Fixes:
-$ make C=1 CF=-D__CHECK_ENDIAN__ drivers/firmware/qemu_fw_cfg.o
-
-drivers/firmware/qemu_fw_cfg.c:55:33: warning: restricted __be16 degrades to integer
-drivers/firmware/qemu_fw_cfg.c:55:52: warning: restricted __le16 degrades to integer
-
+CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Baoquan He <bhe@redhat.com>
+CC: Dave Young <dyoung@redhat.com>
+CC: Dave Young <dyoung@redhat.com>
+CC: Hari Bathini <hbathini@linux.vnet.ibm.com>
+CC: Tony Luck <tony.luck@intel.com>
+CC: Vivek Goyal <vgoyal@redhat.com>
 Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+Acked-by: Gabriel Somlo <somlo@cmu.edu>
 ---
- drivers/firmware/qemu_fw_cfg.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/crash_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-index 90f467232777..85e693287d87 100644
---- a/drivers/firmware/qemu_fw_cfg.c
-+++ b/drivers/firmware/qemu_fw_cfg.c
-@@ -52,7 +52,9 @@ static DEFINE_MUTEX(fw_cfg_dev_lock);
- /* pick appropriate endianness for selector key */
- static inline u16 fw_cfg_sel_endianness(u16 key)
+diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+index 4f63597c824d..a93590cdd9e1 100644
+--- a/kernel/crash_core.c
++++ b/kernel/crash_core.c
+@@ -376,6 +376,7 @@ phys_addr_t __weak paddr_vmcoreinfo_note(void)
  {
--	return fw_cfg_is_mmio ? cpu_to_be16(key) : cpu_to_le16(key);
-+	return fw_cfg_is_mmio ?
-+		(u16 __force)cpu_to_be16(key) :
-+		(u16 __force)cpu_to_le16(key);
+ 	return __pa(vmcoreinfo_note);
  }
++EXPORT_SYMBOL(paddr_vmcoreinfo_note);
  
- /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
+ static int __init crash_save_vmcoreinfo_init(void)
+ {
 -- 
 2.16.1.73.g5832b7e9f2
