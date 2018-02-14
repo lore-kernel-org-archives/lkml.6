@@ -1,59 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030443AbeBNORn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 09:17:43 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58588 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1030288AbeBNORl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 09:17:41 -0500
-From: Jason Wang <jasowang@redhat.com>
-To: ast@kernel.org, daniel@iogearbox.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: mst@redhat.com, Jason Wang <jasowang@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>, Matthew Wilcox <willy@infradead.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>, akpm@linux-foundation.org,
-        dhowells@redhat.com, hannes@cmpxchg.org
-Subject: [PATCH net] bpf: cpumap: use GFP_KERNEL instead of GFP_ATOMIC in __cpu_map_entry_alloc()
-Date: Wed, 14 Feb 2018 22:17:34 +0800
-Message-Id: <1518617854-4486-1-git-send-email-jasowang@redhat.com>
+        id S1030511AbeBNOSN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 09:18:13 -0500
+Received: from lilium.sigma-star.at ([109.75.188.150]:51704 "EHLO
+        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030288AbeBNOSM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 09:18:12 -0500
+From: Richard Weinberger <richard@sigma-star.at>
+To: Enrico Weigelt <lkml@metux.net>
+Cc: Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: plan9 semantics on Linux - mount namespaces
+Date: Wed, 14 Feb 2018 15:19:24 +0100
+Message-ID: <2050418.Dl5pXkWGsk@blindfold>
+In-Reply-To: <a2a6f189-008e-38f2-afcb-b9393d8d440a@metux.net>
+References: <0f058286-a432-379b-f559-f2fe713807ab@metux.net> <2658681.ustYaP9yci@blindfold> <a2a6f189-008e-38f2-afcb-b9393d8d440a@metux.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There're several implications after commit 0bf7800f1799 ("ptr_ring:
-try vmalloc() when kmalloc() fails") with the using of vmalloc() since
-can't allow GFP_ATOMIC but mandate GFP_KERNEL. This will lead a WARN
-since cpumap try to call with GFP_ATOMIC. Fortunately, entry
-allocation of cpumap can only be done through syscall path which means
-GFP_ATOMIC is not necessary, so fixing this by replacing GFP_ATOMIC
-with GFP_KERNEL.
+Am Mittwoch, 14. Februar 2018, 15:03:55 CET schrieb Enrico Weigelt:
+> On 14.02.2018 13:53, Richard Weinberger wrote:
+> > It does what you ask it for. > Also see the --setgroups switch.> AFAICT
+> > --setgroups=deny is the new
+> default, then your command line should just> work. Maybe your unshare
+> tool is too old.
+> Also doesn't help:
+> 
+> daemon@alphabox:~ unshare -U -r --setgroups=deny
+> unshare: can't open '/proc/self/setgroups': Permission denied
 
-Reported-by: syzbot+1a240cdb1f4cc88819df@syzkaller.appspotmail.com
-Fixes: 0bf7800f1799 ("ptr_ring: try vmalloc() when kmalloc() fails")
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: akpm@linux-foundation.org
-Cc: dhowells@redhat.com
-Cc: hannes@cmpxchg.org
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- kernel/bpf/cpumap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
-index fbfdada6..a4bb0b3 100644
---- a/kernel/bpf/cpumap.c
-+++ b/kernel/bpf/cpumap.c
-@@ -334,7 +334,7 @@ static int cpu_map_kthread_run(void *data)
- static struct bpf_cpu_map_entry *__cpu_map_entry_alloc(u32 qsize, u32 cpu,
- 						       int map_id)
- {
--	gfp_t gfp = GFP_ATOMIC|__GFP_NOWARN;
-+	gfp_t gfp = GFP_KERNEL | __GFP_NOWARN;
- 	struct bpf_cpu_map_entry *rcpu;
- 	int numa, err;
+Works here(tm).
+Can you debug it? Maybe we miss something obvious.
  
+> >> What I'd like to achieve is that processes can manipulate their private
+> >> >> namespace at will and mount other filesystems (primarily 9p and
+> fuse).>>>> For that, I need to get rid of setuid (and per-file caps) for
+> these>> private namespaces.>
+> 
+> > This is exactly why we have the user namespace.
+> > In the user namespace you can create your own mount namespace and do
+> > (almost) whatever you want.
+> 
+> What's the exact relation between user and mnt namespace ?
+> Why do I need an own user ns for private mnt ns ? (except for the suid
+> bit, which I wanna get rid of anyways).
+
+mount related system calls are root-only. Therefore you need the user 
+namespace to become a root in your own little world. :)
+
+Thanks,
+//richard
+
 -- 
-2.7.4
+sigma star gmbh - Eduard-Bodem-Gasse 6 - 6020 Innsbruck - Austria
+ATU66964118 - FN 374287y
