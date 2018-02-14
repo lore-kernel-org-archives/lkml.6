@@ -1,40 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032226AbeBNQOS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 11:14:18 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:55684 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030349AbeBNQOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:14:17 -0500
-Date: Wed, 14 Feb 2018 17:14:12 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Daniel Schultz <d.schultz@phytec.de>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, f.fainelli@gmail.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, w.egorov@phytec.de
-Subject: Re: [PATCH v3 1/2] net: phy: dp83867: Add binding for the CLK_OUT
- pin muxing option
-Message-ID: <20180214161412.GG12307@lunn.ch>
-References: <1518624432-15110-1-git-send-email-d.schultz@phytec.de>
+        id S1032257AbeBNQOm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 11:14:42 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:50282 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031982AbeBNQOi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 11:14:38 -0500
+X-Google-Smtp-Source: AH8x225IUHyEOn/joOknlsjoWA91nvbP/HusI0/pNdDE4mQVzT6nlQtYpduzyZCe3kJkSoPIwdAxnA==
+Subject: Re: [PATCH v2] PCI: qcom: add missing supplies required for msm8996
+To: Stanimir Varbanov <svarbanov@mm-sol.com>, stanimir.varbanov@linaro.org,
+        linux-pci@vger.kernel.org, bhelgaas@google.com
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org
+References: <20180214120616.23428-1-srinivas.kandagatla@linaro.org>
+ <79820f4c-5166-852f-1bc5-8cef2ff81a00@mm-sol.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <d2b0f220-2982-dc86-ae9e-edf88e0b8e7d@linaro.org>
+Date: Wed, 14 Feb 2018 16:14:26 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518624432-15110-1-git-send-email-d.schultz@phytec.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <79820f4c-5166-852f-1bc5-8cef2ff81a00@mm-sol.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 05:07:11PM +0100, Daniel Schultz wrote:
-> From: Wadim Egorov <w.egorov@phytec.de>
-> 
-> The DP83867 has a muxing option for the CLK_OUT pin. It is possible
-> to set CLK_OUT for different channels.
-> Create a binding to select a specific clock for CLK_OUT pin.
-> 
-> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
-> Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-    Andrew
+On 14/02/18 16:00, Stanimir Varbanov wrote:
+>>   .../devicetree/bindings/pci/qcom,pcie.txt          |  4 ++++
+>>   drivers/pci/dwc/pcie-qcom.c                        | 24 ++++++++++++++++++++--
+>>   2 files changed, 26 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.txt b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
+>> index 3c9d321b3d3b..1fd703bd73e0 100644
+>> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.txt
+>> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
+>> @@ -189,6 +189,10 @@
+>>   	Value type: <phandle>
+>>   	Definition: A phandle to the analog power supply for IC which generates
+>>   		    reference clock
+>> +- vddpe-3v3-supply:
+> shouldn't it be vddpe_3v3-supply to be aligned with the other supplies?
+> 
+I noticed that, I had to do it intentionally
+As dt properties should follow - instead of _
+
+
+>> +	Usage: optional
+>> +	Value type: <phandle>
+>> +	Definition: A phandle to the PCIe endpoint power supply
+>>   
+>>   - phys:
+>>   	Usage: required for apq8084
+>> diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
+>> index 3e89909f8cb9..519a2ae416eb 100644
+>> --- a/drivers/pci/dwc/pcie-qcom.c
+>> +++ b/drivers/pci/dwc/pcie-qcom.c
+>> @@ -101,13 +101,14 @@ struct qcom_pcie_resources_1_0_0 {
+>>   	struct reset_control *core;
+>>   	struct regulator *vdda;
+>>   };
+>> -
+> please keep above blank line.
+Will fix it.
+> 
+>> +#define QCOM_PCIE_2_3_2_MAX_SUPPLY	2
+>>   struct qcom_pcie_resources_2_3_2 {
+>>   	struct clk *aux_clk;
+>>   	struct clk *master_clk;
+>>   	struct clk *slave_clk;
+>>   	struct clk *cfg_clk;
