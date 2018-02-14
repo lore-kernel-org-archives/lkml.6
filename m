@@ -1,94 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032345AbeBNQRA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 11:17:00 -0500
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:42158 "EHLO
-        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032130AbeBNQQz (ORCPT
+        id S1032358AbeBNQRo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 11:17:44 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:50532 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032153AbeBNQRn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:16:55 -0500
-X-Google-Smtp-Source: AH8x227HwCkDeF6VmItlBHoFLghiTydvWtpKK3yURIQ/xlUIEWxMZaL6tgpKJ7cQR5XFQ4xuoFgkQ0qH/oeqY0YYZDw=
+        Wed, 14 Feb 2018 11:17:43 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 71EA560385
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date: Wed, 14 Feb 2018 09:17:39 -0700
+From: Jordan Crouse <jcrouse@codeaurora.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFT PATCH] drm/msm: Trigger fence completion from GPU
+Message-ID: <20180214161739.GB25422@jcrouse-lnx.qualcomm.com>
+Mail-Followup-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20180214064658.15741-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <adfa2009-476b-8c25-c661-b0eeb48a6c43@huawei.com>
-References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
- <1518543933-22456-8-git-send-email-john.garry@huawei.com> <CAHp75Ve7C4AJYK6AC=o-jzw6b2p8c8GBRd70Zjv+vYWbfytufg@mail.gmail.com>
- <adfa2009-476b-8c25-c661-b0eeb48a6c43@huawei.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 14 Feb 2018 18:16:53 +0200
-Message-ID: <CAHp75VfOa5pN4MKT-aQmWBwPGWsOaQupyfrN-weWwfR3vMLtuA@mail.gmail.com>
-Subject: Re: [PATCH v13 7/9] ACPI: Translate the I/O range of non-MMIO devices
- before scanning
-To: John Garry <john.garry@huawei.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Hanjun Guo <hanjun.guo@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
-        Dann Frazier <dann.frazier@canonical.com>,
-        Rob Herring <robh@kernel.org>, Joe Perches <joe@perches.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, Corey Minyard <minyard@acm.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180214064658.15741-1-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 5:33 PM, John Garry <john.garry@huawei.com> wrote:
-> On 14/02/2018 13:53, Andy Shevchenko wrote:
->> On Tue, Feb 13, 2018 at 7:45 PM, John Garry <john.garry@huawei.com> wrote:
+On Tue, Feb 13, 2018 at 10:46:58PM -0800, Bjorn Andersson wrote:
+> Interrupt commands causes the CP to trigger an interrupt as the command
+> is processed, regardless of the GPU being done processing previous
+> commands. This is seen by the interrupt being delivered before the
+> fence is written on 8974 and is likely the cause of the additional
+> CP_WAIT_FOR_IDLE workaround found for a306, which would cause the CP to
+> wait for the GPU to go idle before triggering the interrupt.
+> 
+> Instead we can set the (undocumented) BIT(31) of the CACHE_FLUSH_TS
+> which will cause a special CACHE_FLUSH_TS interrupt to be triggered from
+> the GPU as the write event is processed.
+> 
+> Add CACHE_FLUSH_TS to the IRQ masks of A3xx and A4xx and remove the
+> workaround for A306.
+> 
+> Suggested-by: Jordan Crouse <jcrouse@codeaurora.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
->>> +       sys_port = logic_pio_trans_hwaddr(&host->fwnode, res->start,
->>> len);
->>> +       if (sys_port == -1UL)
+LGTM. This should help your races.
 
->> Wouldn't it be better to compare with ULONG_MAX?
-
-> Could do, being the same thing. Maybe people prefer -1UL as it saves having
-> to figure out what ULONG_MAX is :)
-
--1UL looks confusing.
-
-Another approach is to use ~0UL if that is preferable.
-
->>> +       list_for_each_entry(rentry, &resource_list, node)
->>> +               resources[count++] = *rentry->res;
-
->> It has similarities with acpi_create_platform_device().
->> I guess we can utilize existing code.
-
-> For sure, this particular segment is effectively same as part of
-> acpi_create_platform_device():
-
-Not the same, acpi_create_platform_device() does a bit more than
-copying the resources. If it indeed makes no hurt...
-
->         list_for_each_entry(rentry, &resource_list, node)
->             acpi_platform_fill_resource(adev, rentry->res,
->                             &resources[count++]);
-
-> So is your idea to refactor this common segment into a helper function?
-
-...I would go with helper.
-
->>> +               char *name = &acpi_indirect_io_mfd_cell[count].name[0];
->>> +               char *pnpid = &acpi_indirect_io_mfd_cell[count].pnpid[0];
->>
->>
->> Plain x is equivalent to &x[0].
-
-> Right, but I thought for arrays that we should use address of x rather than
-> x itself, no?
-
-x is addressed by it's beginning.
+> ---
+> 
+> This is only tested on 8974.
+> 
+>  drivers/gpu/drm/msm/adreno/a3xx_gpu.c   |  1 +
+>  drivers/gpu/drm/msm/adreno/a4xx_gpu.c   |  1 +
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 18 ++----------------
+>  3 files changed, 4 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
+> index 4baef2738178..a3a43be920d0 100644
+> --- a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
+> @@ -35,6 +35,7 @@
+>  	 A3XX_INT0_CP_RB_INT |             \
+>  	 A3XX_INT0_CP_REG_PROTECT_FAULT |  \
+>  	 A3XX_INT0_CP_AHB_ERROR_HALT |     \
+> +	 A3XX_INT0_CACHE_FLUSH_TS |        \
+>  	 A3XX_INT0_UCHE_OOB_ACCESS)
+>  
+>  extern bool hang_debug;
+> diff --git a/drivers/gpu/drm/msm/adreno/a4xx_gpu.c b/drivers/gpu/drm/msm/adreno/a4xx_gpu.c
+> index 8199a4b9f2fa..b44cd0d90621 100644
+> --- a/drivers/gpu/drm/msm/adreno/a4xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a4xx_gpu.c
+> @@ -27,6 +27,7 @@
+>  	 A4XX_INT0_CP_RB_INT |             \
+>  	 A4XX_INT0_CP_REG_PROTECT_FAULT |  \
+>  	 A4XX_INT0_CP_AHB_ERROR_HALT |     \
+> +	 A4XX_INT0_CACHE_FLUSH_TS |        \
+>  	 A4XX_INT0_UCHE_OOB_ACCESS)
+>  
+>  extern bool hang_debug;
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> index de63ff26a062..5806f9942514 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> @@ -293,26 +293,12 @@ void adreno_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit,
+>  		OUT_RING(ring, 0x00000000);
+>  	}
+>  
+> +	/* BIT(31) of CACHE_FLUSH_TS triggers CACHE_FLUSH_TS IRQ from GPU */
+>  	OUT_PKT3(ring, CP_EVENT_WRITE, 3);
+> -	OUT_RING(ring, CACHE_FLUSH_TS);
+> +	OUT_RING(ring, CACHE_FLUSH_TS | BIT(31));
+>  	OUT_RING(ring, rbmemptr(ring, fence));
+>  	OUT_RING(ring, submit->seqno);
+>  
+> -	/* we could maybe be clever and only CP_COND_EXEC the interrupt: */
+> -	OUT_PKT3(ring, CP_INTERRUPT, 1);
+> -	OUT_RING(ring, 0x80000000);
+> -
+> -	/* Workaround for missing irq issue on 8x16/a306.  Unsure if the
+> -	 * root cause is a platform issue or some a306 quirk, but this
+> -	 * keeps things humming along:
+> -	 */
+> -	if (adreno_is_a306(adreno_gpu)) {
+> -		OUT_PKT3(ring, CP_WAIT_FOR_IDLE, 1);
+> -		OUT_RING(ring, 0x00000000);
+> -		OUT_PKT3(ring, CP_INTERRUPT, 1);
+> -		OUT_RING(ring, 0x80000000);
+> -	}
+> -
+>  #if 0
+>  	if (adreno_is_a3xx(adreno_gpu)) {
+>  		/* Dummy set-constant to trigger context rollover */
+> -- 
+> 2.15.0
+> 
 
 -- 
-With Best Regards,
-Andy Shevchenko
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
