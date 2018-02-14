@@ -1,73 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935427AbeBNUmj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 15:42:39 -0500
-Received: from mout.web.de ([212.227.15.14]:33135 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932096AbeBNUmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 15:42:37 -0500
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] crypto: bfin_crc: Delete an error message for a failed memory
- allocation in bfin_crypto_crc_probe()
-Message-ID: <1601995f-79fd-8365-5dd3-4438a3515c28@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 21:42:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1030792AbeBNUqi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 15:46:38 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:46292 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030206AbeBNUqg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 15:46:36 -0500
+X-Google-Smtp-Source: AH8x22496AyuwS8gMrmOi5JVmc6An+oW/TYePpwoYr/OpMd/i+LBQ/8MrSA7mQ8PoRUPn11WnZnRK0Ext+GVJH01/w0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:JGbZ+Uw0/DP+vg7B39YPuPEEqCIHddZX8yAPjyJxFzF6by15Y2P
- xwzoUGvpWOKVU34PrScSTc6u7eVG4aG+w3Lhz1jSr0lOPROWJAqExi6aHdNwMqNIm+yBLub
- pnaKmQW6ixXrrPMWRWQeml9LCklCX+OP6JUUS6jaVPYEXg7B3luAIeW27+a8q+05eiMpMIp
- doFlZ1JseASNE3mCjN9gQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:eYFTa0TV+e0=:0as+uoTIpc0NUJULbJIjbT
- C1iGKbZV1iz17oDJfPAABDUNhf5MRZ08xojHyYyqptLbPu9eHnK6gXm5vzx3kGCTkEg7yFokw
- /AAcpul+RC2PSmutRpQkk+K0dTWDH6i+mjZqSj98t77tnMbW/m1Is3M55YaYDryRz6sAShkEm
- GTnX8U8gAlkdwtDQrwK7Rx4wnAZnJYJD6Bjg0FMPZjyBA+T+6TabUtP9p7CYdqKEMCC5WLTVk
- 5fRCk2yF8dCNNkpNDPvDgJVcdUy79sTyoxjhLXrOn8xh8G5EF2NeN55vxVUEQTIN/VQpjz/K5
- jbjZ8xUk2gXPJdgXADrAFtA24d79WmaPnPQdJvMOP+8uO7unAuq7IEdaIWatiqjmARCwHWyzS
- DZIZpdCOCHaLG16EqSLy9on3qeqGfTUIkvLAKuNtiUG3X5V+zPGUCq6/bQyRdwAoyQ/fG7VMv
- JqgYzAqQWRMfXAHnOhiX+jZoc0GgmI7ji9tjEXJi8LiSHEjieTWHbicbnQraxEi7UPqFSJ/bE
- FSv6HdKeZNSa6lBE4A11z3f8rs7OoVFniBjIR1IrdPzAL/WvkEXIXgoe0h2NnPs3bO1WlHMWr
- DX6zddluGAscIK7rCrg5XvEcBusKcuurvqIoq+YWzdwB3ANnPSSm0zxIzL935tuaLPCTlFsev
- +idBVL+vTgXFSxORPupNCOK/rtt/g55hUHyp5D0K9Ol0uyxzj9t0OF/aEhRK0TCbpl0GurzPF
- Su9CtUqWaFW+LgdHLTpzBDxRAg1cuzZV866DiCGsouujTDJk8TlWkJFVoS21b5liHK/kbINFu
- ftdH50hjsztn/pQg9+5zwrmRAG8Pa3Yyrzfq7rSWWhn3T24oE4=
+In-Reply-To: <20180131202506.GI9418@n2100.armlinux.org.uk>
+References: <20180129234900.11121-1-anders.roxell@linaro.org>
+ <20180131201911.19253-1-anders.roxell@linaro.org> <20180131202506.GI9418@n2100.armlinux.org.uk>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Wed, 14 Feb 2018 21:46:35 +0100
+Message-ID: <CADYN=9L2-yaOvxp8j23O9Sp15mgFZrPUsEZBOWi=UngYyXNJpQ@mail.gmail.com>
+Subject: Re: [PATCHv2] arch/arm/Kconfig: default ARM_MODULE_PLTS to 'y'
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 21:34:54 +0100
+On 31 January 2018 at 21:25, Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
+> On Wed, Jan 31, 2018 at 09:19:11PM +0100, Anders Roxell wrote:
+>> While testing multi_v7_defconfig with LOCKDEP enabled, the kernel
+>> fails to load simple modules, as reported by kselftest:
+>>
+>> [   34.107620] test_printf: section 4 reloc 2 sym 'memset': relocation
+>> 28 out of range (0xbf046044 -> 0xc109f720)
+>> selftests: printf.sh [FAIL]
+>>
+>> The problem that is seen when LOCKDEP is enabled without
+>> ARM_MODULE_PLTS, is that LOCKDEP eats so much memory that the top of the
+>> kernel gets out of reach from the bottom of the module area.
+>
+> As I've said three times already (and clearly the message still hasn't
+> sunk in), it does _not_ follow that "enable lockdep" means "lots more
+> memory used".  We could say the same thing about several other kernel
+> options as well.  Please remove this from your commit message.
 
-Omit an extra message for a memory allocation failure in this function.
+Sorry, I meant to show this as an example in v2, but forgot to update this part
+of the change log.
 
-This issue was detected by using the Coccinelle software.
+>
+> <exasperation at seemingly being ignored on this point>
+>
+> Maybe you'd like to send your configuration file so we can see how much
+> is enabled in your kernel.  At that point I'll make a decision, but
+> until then, I'm not going to say that even what I suggested is an
+> acceptable way forward.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/crypto/bfin_crc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Here's the config file[1] that is using.
 
-diff --git a/drivers/crypto/bfin_crc.c b/drivers/crypto/bfin_crc.c
-index a118b9bed669..7a1d6ed6d0b7 100644
---- a/drivers/crypto/bfin_crc.c
-+++ b/drivers/crypto/bfin_crc.c
-@@ -575,10 +575,8 @@ static int bfin_crypto_crc_probe(struct platform_device *pdev)
- 	int ret;
- 
- 	crc = devm_kzalloc(dev, sizeof(*crc), GFP_KERNEL);
--	if (!crc) {
--		dev_err(&pdev->dev, "fail to malloc bfin_crypto_crc\n");
-+	if (!crc)
- 		return -ENOMEM;
--	}
- 
- 	crc->dev = dev;
- 
--- 
-2.16.1
+I'm obviously ignorant here, but whats the disadvantages of enabling
+this option by default?
+My understanding is that the module size gets slightly larger by enabling
+this option but nothing else?
+
+Obviously, if the default is changed to yes, the last part of this option's help
+message also need to change. To something like:
+"Say n if you know that you wont get out of memory errors while loading modules"
+
+Cheers,
+Anders
+[1] http://snapshots.linaro.org/openembedded/lkft/morty/am57xx-evm/rpb/linux-mainline/622/config
+
+>
+>>
+>> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+>> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+>> ---
+>>  arch/arm/Kconfig | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+>> index 51c8df561077..8014c8c322df 100644
+>> --- a/arch/arm/Kconfig
+>> +++ b/arch/arm/Kconfig
+>> @@ -1702,6 +1702,7 @@ config ARCH_WANT_GENERAL_HUGETLB
+>>  config ARM_MODULE_PLTS
+>>       bool "Use PLTs to allow module memory to spill over into vmalloc area"
+>>       depends on MODULES
+>> +     default y
+>>       help
+>>         Allocate PLTs when loading modules so that jumps and calls whose
+>>         targets are too far away for their relative offsets to be encoded
+>> --
+>> 2.11.0
+>>
+>
+> --
+> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+> According to speedtest.net: 8.21Mbps down 510kbps up
