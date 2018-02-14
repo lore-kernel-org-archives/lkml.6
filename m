@@ -1,77 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033247AbeBNRCP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 12:02:15 -0500
-Received: from smtprelay0220.hostedemail.com ([216.40.44.220]:38725 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1032907AbeBNRCN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 12:02:13 -0500
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:541:599:800:960:965:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2197:2199:2393:2553:2559:2562:2691:2693:2828:2919:3138:3139:3140:3141:3142:3352:3622:3653:3865:3867:3870:3872:3874:4321:4390:5007:9040:10004:10400:10848:11232:11658:11914:12043:12296:12438:12555:12740:12760:12895:13069:13072:13311:13357:13439:14093:14097:14181:14659:14721:14777:21080:21221:21324:21433:21451:21611:21627:30003:30022:30029:30054:30064:30070:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: step54_6a44a895bc556
-X-Filterd-Recvd-Size: 2728
-Message-ID: <1518627728.3678.2.camel@perches.com>
-Subject: Re: KASAN: use-after-free Read in rds_tcp_tune
-From: Joe Perches <joe@perches.com>
-To: Dmitry Vyukov <dvyukov@google.com>,
-        Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Cc: syzbot <syzbot+bbd8e9a06452cc48059b@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>, rds-devel@oss.oracle.com,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        syzkaller-bugs@googlegroups.com
-Date: Wed, 14 Feb 2018 09:02:08 -0800
-In-Reply-To: <CACT4Y+ZZjE9fsnsQ-uab3RMt_Zpe98nKF1Pcj31ZGepYsi1UGA@mail.gmail.com>
-References: <001a1141a524c513ca05628d8ad4@google.com>
-         <20180112183046.GA26098@oracle.com>
-         <CACT4Y+aB0dZShujVMJFV6grb_7AYOMca13a1J2AkWsT7R0cgrQ@mail.gmail.com>
-         <20180214152109.GF11528@oracle.com>
-         <CACT4Y+bKpi8he1ygwAxgm4F_RJ=BRPBPdMaVAK64SbvCVGt7ww@mail.gmail.com>
-         <20180214153555.GG11528@oracle.com>
-         <CACT4Y+ZZjE9fsnsQ-uab3RMt_Zpe98nKF1Pcj31ZGepYsi1UGA@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1033271AbeBNRDt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 12:03:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46514 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032907AbeBNRDs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 12:03:48 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA3DD2177D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Wed, 14 Feb 2018 17:03:43 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 7/8] MIPS: defconfigs: add a defconfig for Microsemi
+ SoCs
+Message-ID: <20180214170342.GF3986@saruman>
+References: <20180116101240.5393-1-alexandre.belloni@free-electrons.com>
+ <20180116101240.5393-8-alexandre.belloni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="FoLtEtfbNGMjfgrs"
+Content-Disposition: inline
+In-Reply-To: <20180116101240.5393-8-alexandre.belloni@free-electrons.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-02-14 at 16:55 +0100, Dmitry Vyukov wrote:
-> On Wed, Feb 14, 2018 at 4:35 PM, Sowmini Varadhan <sowmini.varadhan@oracle.com> wrote:
-> > btw, checkpatch.pl complains about the syzbot*@syzkaller.appspotmail.com
-> > addresses as "Unrecognized email address", we should fix that
-> > error from checkpatch at some point.
-> 
-> Interesting. Looking at checkpatch.pl I think it wants all addresses
-> to be in <>, i.e.
-> Reported-by: <syzbot+bbd8e9a06452cc48059b@syzkaller.appspotmail.com>
-> There probably was some reason to enforce this, so I think I will
-> change the syzbot email template to include <>.
-> Thanks!
 
-Not really.
+--FoLtEtfbNGMjfgrs
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-It's the somewhat unusual + in the address
-that perl needs quoted before a substitution.
+On Tue, Jan 16, 2018 at 11:12:39AM +0100, Alexandre Belloni wrote:
+> +# CONFIG_EARLY_PRINTK is not set
 
-I believe this fixes it in checkpatch.
----
- scripts/checkpatch.pl | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Only Loongson1b/1c explicitly disable early printk. Do you disable it
+for a particular reason?
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 3d4040322ae1..2b8397da39d3 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -1075,7 +1075,7 @@ sub parse_email {
- 	} elsif ($formatted_email =~ /(\S+\@\S+)(.*)$/) {
- 		$address = $1;
- 		$comment = $2 if defined $2;
--		$formatted_email =~ s/$address.*$//;
-+		$formatted_email =~ s/\Q$address\E.*$//;
- 		$name = $formatted_email;
- 		$name = trim($name);
- 		$name =~ s/^\"|\"$//g;
+Cheers
+James
+
+--FoLtEtfbNGMjfgrs
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqEa+4ACgkQbAtpk944
+dnqKiA/+JK10L4NAhXabJQzC3QCp0V/6S/flEnfzjFfGzkDAIDUQYNTAgW8z5SoH
+j+SnhK9IRrCricogV/QqKkvHiTGhPh4VaVB7hnvuCC5+RKNnbGlf2YPBbtqKt1O+
+30wV9Xgdg3JxUsglfeF+4ssKzjCJ52ymUIvCaJfNRihj8OLxJGKNH4MqA2nP/a/1
+2a6Z0dtLxaeMEsZMciIBVVK/vOjHVmj54DB7ts/NJswTClPxpZYZi6h68suWUYoi
+tqoYO+ylwamih9O72JS+kJTtpRtq2jLY7g+rN3AXtNZzqxG6vN+Bffflihw9HudW
+xcYP+KDtUVXwLILuz/VUYPNPvJQq1VVJ9EzMPIOvFlPGKM+Jzoqnm3ucVZHpBqq4
+I9XJvAgFZqYypB+40iWWc7qULgLd4BvHTnpyTEqSOtxjnCzkXAqaNZ1EJXzl8Z1K
+A/O7v6gVTuFTZi+R1T7xz+RPiUSpHp80GQOMGX/3Umja18QpriQYcVszqDU8ZD++
+2jF3jOYJw+gXRMLjDOAkm39T6crVB6jK8xZuTUu1kWhd7l2/TwHFG5aQrfLdDMaK
+cTA+G4QnUbzwj/ac3DNRT2Vr/Weqem9O9hcIXEdoig4cddKGj2f/FBQS171qnBa5
+2u5oFnHOab2G58NGQpFSbayZX7lnIfthbM+oBOCahA/v88qWyOg=
+=OoOS
+-----END PGP SIGNATURE-----
+
+--FoLtEtfbNGMjfgrs--
