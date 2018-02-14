@@ -1,60 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161552AbeBNRxW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 12:53:22 -0500
-Received: from mail-pl0-f45.google.com ([209.85.160.45]:36086 "EHLO
-        mail-pl0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161402AbeBNRxU (ORCPT
+        id S1161553AbeBNRzx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 12:55:53 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33553 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161300AbeBNRzw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 12:53:20 -0500
-X-Google-Smtp-Source: AH8x224TaJbXG0pyeyIeWzgfUKXW6YXNyTIyBuKMpJgqacneFFIlndwDXp54kwjWsMw62xKCFFfcTI+R87gyZKg2nsI=
+        Wed, 14 Feb 2018 12:55:52 -0500
+X-Google-Smtp-Source: AH8x226uWsPjYOmcpGpt4gpjIbjouGfWIrMx+ALwEsouGZB8/g+HmCpOO2iRukkk0lZ9+4JlzdCpkA==
+Date: Wed, 14 Feb 2018 20:55:48 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Borislav Petkov <bp@suse.de>, Andi Kleen <ak@linux.intel.com>,
+        Linux-MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 8/9] x86/mm: Make __VIRTUAL_MASK_SHIFT dynamic
+Message-ID: <20180214175548.6uxpm3bspmgqi7hs@node.shutemov.name>
+References: <20180214111656.88514-1-kirill.shutemov@linux.intel.com>
+ <20180214111656.88514-9-kirill.shutemov@linux.intel.com>
+ <CALCETrVafx9kZwsJrihUxKszio9rJCPZJHnWSh3QC992o=zxnA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <52478830-f0b5-e400-8101-b329ba35bcef@oracle.com>
-References: <089e08231920353a4805618b365c@google.com> <d91da249-5a0f-7a1f-cfd5-68f10f0a2fc1@oracle.com>
- <CACT4Y+bd6Tyq672JC3GNSHPX2CEHacVKkcbKOAgpi8o-=T8DRg@mail.gmail.com>
- <491a26b8-7abb-0d36-0a2e-e1c7bfcde79d@oracle.com> <CACT4Y+YxrNiP==ty-KBjkDewnuS378GmG314-=ytWskZXQx3zw@mail.gmail.com>
- <52478830-f0b5-e400-8101-b329ba35bcef@oracle.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 14 Feb 2018 18:52:58 +0100
-Message-ID: <CACT4Y+aWVFEvVMihw2MBiMgYKMzup4O78c_HrByhRyF8-zfzpw@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in rds_find_bound
-To: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Cc: syzbot <syzbot+93a5839deb355537440f@syzkaller.appspotmail.com>,
-        linux-rdma@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
-        rds-devel@oss.oracle.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrVafx9kZwsJrihUxKszio9rJCPZJHnWSh3QC992o=zxnA@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 6:35 PM, Santosh Shilimkar
-<santosh.shilimkar@oracle.com> wrote:
->>>> Hi Santosh,
->>>>
->>>> What is that fix? You forgot to provide any link/reference. I also
->>>> don't see any patches from you at around that date...
->>>>
->>> Fix [1] was later not added since there was a still a race. Wanted to
->>> see if the issue re-appears after recent netns fix [2].
->>
->>
->>
->> We will not see if the bug re-appears or not until this bug is closed.
->> Please see this recent discussion about another rds bug:
->> https://groups.google.com/d/msg/syzkaller-bugs/3XjmOzr5jRU/g7pXIsY1BgAJ
->> In the current state syzbot will never report bugs in these functions
->> again.
->>
-> OK. Can you close that one then in that case ?
+On Wed, Feb 14, 2018 at 05:22:58PM +0000, Andy Lutomirski wrote:
+> On Wed, Feb 14, 2018 at 11:16 AM, Kirill A. Shutemov
+> <kirill.shutemov@linux.intel.com> wrote:
+> > For boot-time switching between paging modes, we need to be able to
+> > adjust virtual mask shifts.
+> >
+> > The change doesn't affect the kernel image size much:
+> >
+> >    text    data     bss     dec     hex filename
+> > 8628892 4734340 1368064 14731296         e0c820 vmlinux.before
+> > 8628966 4734340 1368064 14731370         e0c86a vmlinux.after
+> >
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > ---
+> >  arch/x86/entry/entry_64.S            | 12 ++++++++++++
+> >  arch/x86/include/asm/page_64_types.h |  2 +-
+> >  arch/x86/mm/dump_pagetables.c        | 12 ++++++++++--
+> >  arch/x86/mm/kaslr.c                  |  4 +++-
+> >  4 files changed, 26 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+> > index cd216c9431e1..1608b13a0b36 100644
+> > --- a/arch/x86/entry/entry_64.S
+> > +++ b/arch/x86/entry/entry_64.S
+> > @@ -260,8 +260,20 @@ GLOBAL(entry_SYSCALL_64_after_hwframe)
+> >          * Change top bits to match most significant bit (47th or 56th bit
+> >          * depending on paging mode) in the address.
+> >          */
+> > +#ifdef CONFIG_X86_5LEVEL
+> > +       testl   $1, pgtable_l5_enabled(%rip)
+> > +       jz      1f
+> > +       shl     $(64 - 57), %rcx
+> > +       sar     $(64 - 57), %rcx
+> > +       jmp     2f
+> > +1:
+> > +       shl     $(64 - 48), %rcx
+> > +       sar     $(64 - 48), %rcx
+> > +2:
+> > +#else
+> >         shl     $(64 - (__VIRTUAL_MASK_SHIFT+1)), %rcx
+> >         sar     $(64 - (__VIRTUAL_MASK_SHIFT+1)), %rcx
+> > +#endif
+> 
+> Eww.
+> 
+> Can't this be ALTERNATIVE "shl ... sar ...", "shl ... sar ...",
+> X86_FEATURE_5LEVEL or similar?
 
-Anybody can do this:
+Optimization comes in a separate patch:
 
-#syz fix: rds: tcp: use rds_destroy_pending() to synchronize
-netns/module teardown and rds connection/workq management
+https://git.kernel.org/pub/scm/linux/kernel/git/kas/linux.git/commit/?h=la57/boot-switching/wip&id=015fa3576a7f2b8bd271096bb3a12b06cdc845af
 
-syzbot provides full self-service, see first email and in particular this:
-https://github.com/google/syzkaller/blob/master/docs/syzbot.md#communication-with-syzbot
-
-Thanks
+-- 
+ Kirill A. Shutemov
