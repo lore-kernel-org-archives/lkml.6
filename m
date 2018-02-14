@@ -1,115 +1,98 @@
-Return-Path: <Valentin.Vidic@carnet.hr>
-X-Google-Smtp-Source: AH8x226l+WUeK03Te/zjBv0Qzo8/3dwHiFsWOgK78BRK0JWlyAc+Z4VVAPs6zxrAtHCN+EVaHR3A
-ARC-Seal: i=1; a=rsa-sha256; t=1519135023; cv=none;
-        d=google.com; s=arc-20160816;
-        b=PI3KNEr4G8diR3VkLPBjTDgh8T4FAFsOcVvNLpv5hNT+pL6nWO6zURlJyJ19+zaMyl
-         FEQQgIN6zwKSrytlQFn1V1oXIqim+BVS2910sjwrVh2zqUvESeh6RZ+uBdB8OzyucORF
-         P99zbdMGA23hXa3x+gYYY33U+UfsU1aoKJaxsb4vuK0ueW58cxAomHuiAUPyjSCLJwqi
-         0HNt5f1D0Zc9Yhse0fcWteGrpiA0KfjR0nAd9U5wN56WInVXzKBw7ux1rntz+mxEmtZc
-         AV2eEhOEnQvLl+NfDXPQxAzjhh/u7kCbAYTD3ojZF2QfoB93NtAC4TbsURyCmhyEwKip
-         VTFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:message-id:date:cc:to:from:arc-authentication-results;
-        bh=iOZEbiDD+tYPG5At4Ix7oBlRtK++jPRxiAo5ZM4+Mgw=;
-        b=lnm1PMUpD8pXYfIMVcu8o2QzgUXgDFIxN6qqurGgMs8hbFt02uMEoY2ExeLvLQc3YG
-         pYEBdL8YwSeAP9f6/86sXtgimzWBVJSHs+RWslIYKvI24nbDejcTsWrLqKRhimwzlWBA
-         1hwd4/43SfrhuLhJn4U8or+3WIPSXHPcivZ0KwXjQJgXoeaioo8vgY5aU7glciLlMVzP
-         YGBDM7ts76ka3W3pHcBjCjPR6gOZIId4S+IB/TBxcmfdPyf07Vcpc0ALa1Z5ToCQ7SZV
-         g8lDTKnrWofccD36+Tr/ZtJXcwBPg65ng/1VFaKjy8tvLKUBUW1b/j8RZIPWIypzCIg9
-         4GTg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of valentin.vidic@carnet.hr designates 2001:b68:ff:2::6 as permitted sender) smtp.mailfrom=Valentin.Vidic@carnet.hr
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of valentin.vidic@carnet.hr designates 2001:b68:ff:2::6 as permitted sender) smtp.mailfrom=Valentin.Vidic@carnet.hr
-From: Valentin Vidic <Valentin.Vidic@CARNet.hr>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>,
-	Marcus Wolf <linux@Wolf-Entwicklungen.de>,
-	=?UTF-8?q?Luca=20S=C3=B6the?= <luca@acul.me>,
-	Marcin Ciupak <marcin.s.ciupak@gmail.com>,
-	Michael Panzlaff <michael.panzlaff@fau.de>,
-	Derek Robson <robsonde@gmail.com>,
-	devel@driverdev.osuosl.org,
+Return-Path: <keescook@chromium.org>
+X-Cyrus-Session-Id: sloti22d1t05-3714631-1518638814-2-2293520577833816097
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_NONE -0.0001, RCVD_IN_MSPIKE_H3 -0.01,
+  RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='74.125.83.67', Host='mail-pg0-f67.google.com', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: keescook@chromium.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518638813; b=OOUsZzILNe5bkItCMV5KgZZXcy5I0qh7afUKcVkiKIVjR3G
+    TDLyY8drKqcOcCUUGMvjupyGvSwNgVxy77/2W7bNbnmPViAnDKsSYEJ+skos3wDV
+    HDZHfyxuiWB97oZaOwqFAmzr7s85LrNy2Bh9xLqn/d1qjpA+5TfPtgEOV62YHgNE
+    ZwYTw5P7bH71UpvQf/JoT0aTk7bCHZYvL5Vj/9tVFe4OAAj9vdAtm1ETYcrVWXRi
+    lU6oc96VjAy/T6NGShbRH3uTW4iIHvALBMlJW2T624AYJjCeOY28h0D89BzU6dpj
+    FxM9QqqQuGV6Ar7hOGCnR1goVoK7zZNbopav/4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id; s=
+    arctest; t=1518638813; bh=pR0D0laQGpT3d53jI/Ktw6fld7NeIOTauuLW3U
+    YC4q0=; b=wzSJ598YVtauhTnV33cEnfJ1UqP8rfvsh+poAVXpNEiGTRb9VXuySC
+    CNelAgOcwd4BEakLDjJDgZup0ojVQg5Wh27lTe21+n6gBXCyzRgvstwElxRitOiV
+    U5GU4CX5GPZaCEUEtEcMjeNJprXr/s8RKt8AyhFiGSptsxzUiCvYToZCuTk2UvUi
+    xp9m126U1Dq7uKJwRkTtfV3O5o+AaFZSfe7nTjTElv66k8BgdeKq0jnu2Pi/CqWk
+    HQ5IVXTcc32sIlmIj1om0jjzHIG8E94eDgjm+jMssny685qxWzcceajeHAYau6Iy
+    GaXVn7D7KwuxrjkT5Xw2wvHEuzIpuJiQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=METhqomj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=74.125.83.67 (mail-pg0-f67.google.com);
+    spf=pass smtp.mailfrom=keescook@chromium.org smtp.helo=mail-pg0-f67.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=H0Ov6yjo;
+    x-ptr=pass x-ptr-helo=mail-pg0-f67.google.com x-ptr-lookup=mail-pg0-f67.google.com;
+    x-return-mx=pass smtp.domain=chromium.org smtp.result=pass smtp_is_org_domain=yes header.domain=chromium.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=METhqomj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=74.125.83.67 (mail-pg0-f67.google.com);
+    spf=pass smtp.mailfrom=keescook@chromium.org smtp.helo=mail-pg0-f67.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=H0Ov6yjo;
+    x-ptr=pass x-ptr-helo=mail-pg0-f67.google.com x-ptr-lookup=mail-pg0-f67.google.com;
+    x-return-mx=pass smtp.domain=chromium.org smtp.result=pass smtp_is_org_domain=yes header.domain=chromium.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Google-Smtp-Source: AH8x224gE3mPAmbyUYCiblNb0OwLH2y2ywtwlMcQVKbv4w2722l0p8P9qOFD4d1JblBx4auTjnUBug==
+From: Kees Cook <keescook@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Ben Hutchings <ben@decadent.org.uk>,
+	Willy Tarreau <w@1wt.eu>,
+	Hugh Dickins <hughd@google.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Rik van Riel <riel@redhat.com>,
+	Laura Abbott <labbott@redhat.com>,
+	Greg KH <greg@kroah.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	linux-mm@kvack.org,
+	linux-arch@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Valentin Vidic <Valentin.Vidic@CARNet.hr>
-Date: Tue, 20 Feb 2018 14:56:45 +0100
-Message-Id: <20180220135645.20985-1-Valentin.Vidic@CARNet.hr>
-X-Mailer: git-send-email 2.16.1
-X-SA-Exim-Connect-IP: 161.53.12.131
-Subject: [PATCH] staging: pi433: fix CamelCase for txStartCondition
-X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
+	kernel-hardening@lists.openwall.com
+Subject: [RESEND][PATCH 0/3] exec: Pin stack limit during exec
+Date: Wed, 14 Feb 2018 12:06:33 -0800
+Message-Id: <1518638796-20819-1-git-send-email-keescook@chromium.org>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592928526833154329?=
-X-GMAIL-MSGID: =?utf-8?q?1592928526833154329?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fixes checkpatch warning:
+Attempts to solve problems with the stack limit changing during exec
+continue to be frustrated[1][2]. In addition to the specific issues around
+the Stack Clash family of flaws, Andy Lutomirski pointed out[3] other
+places during exec where the stack limit is used and is assumed to be
+unchanging. Given the many places it gets used and the fact that it can be
+manipulated/raced via setrlimit() and prlimit(), I think the only way to
+handle this is to move away from the "current" view of the stack limit and
+instead attach it to the bprm, and plumb this down into the functions that
+need to know the stack limits. This series implements the approach.
 
-  CHECK: Avoid CamelCase: <txStartCondition>
+Neither I nor 0-day have found issues with this series, so I'd like to
+get it into -mm for further testing.
 
-Signed-off-by: Valentin Vidic <Valentin.Vidic@CARNet.hr>
----
- drivers/staging/pi433/pi433_if.h  | 2 +-
- drivers/staging/pi433/rf69.c      | 4 ++--
- drivers/staging/pi433/rf69.h      | 2 +-
- drivers/staging/pi433/rf69_enum.h | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+Thanks!
 
-diff --git a/drivers/staging/pi433/pi433_if.h b/drivers/staging/pi433/pi433_if.h
-index c4e4ea086a24..69847f978a69 100644
---- a/drivers/staging/pi433/pi433_if.h
-+++ b/drivers/staging/pi433/pi433_if.h
-@@ -69,7 +69,7 @@ struct pi433_tx_cfg {
- 
- 	enum paRamp		pa_ramp;
- 
--	enum txStartCondition	tx_start_condition;
-+	enum tx_start_condition	tx_start_condition;
- 
- 	__u16			repetitions;
- 
-diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
-index 42c2e1c6b386..722d95a3777f 100644
---- a/drivers/staging/pi433/rf69.c
-+++ b/drivers/staging/pi433/rf69.c
-@@ -714,9 +714,9 @@ int rf69_set_broadcast_address(struct spi_device *spi, u8 broadcastAddress)
- 	return rf69_write_reg(spi, REG_BROADCASTADRS, broadcastAddress);
- }
- 
--int rf69_set_tx_start_condition(struct spi_device *spi, enum txStartCondition txStartCondition)
-+int rf69_set_tx_start_condition(struct spi_device *spi, enum tx_start_condition tx_start_condition)
- {
--	switch (txStartCondition) {
-+	switch (tx_start_condition) {
- 	case fifo_level:
- 		return rf69_clear_bit(spi, REG_FIFO_THRESH, MASK_FIFO_THRESH_TXSTART);
- 	case fifo_not_empty:
-diff --git a/drivers/staging/pi433/rf69.h b/drivers/staging/pi433/rf69.h
-index 2c0d130f7a03..147d89390745 100644
---- a/drivers/staging/pi433/rf69.h
-+++ b/drivers/staging/pi433/rf69.h
-@@ -57,7 +57,7 @@ int rf69_set_adressFiltering(struct spi_device *spi, enum addressFiltering addre
- int rf69_set_payload_length(struct spi_device *spi, u8 payload_length);
- int rf69_set_node_address(struct spi_device *spi, u8 nodeAddress);
- int rf69_set_broadcast_address(struct spi_device *spi, u8 broadcastAddress);
--int rf69_set_tx_start_condition(struct spi_device *spi, enum txStartCondition txStartCondition);
-+int rf69_set_tx_start_condition(struct spi_device *spi, enum tx_start_condition tx_start_condition);
- int rf69_set_fifo_threshold(struct spi_device *spi, u8 threshold);
- int rf69_set_dagc(struct spi_device *spi, enum dagc dagc);
- 
-diff --git a/drivers/staging/pi433/rf69_enum.h b/drivers/staging/pi433/rf69_enum.h
-index 5629af716e4f..196c95dfe327 100644
---- a/drivers/staging/pi433/rf69_enum.h
-+++ b/drivers/staging/pi433/rf69_enum.h
-@@ -123,7 +123,7 @@ enum packetFormat {
- 	packetLengthVar
- };
- 
--enum txStartCondition {
-+enum tx_start_condition {
- 	fifo_level,
- 	fifo_not_empty
- };
--- 
-2.16.1
+-Kees
+
+[1] 04e35f4495dd ("exec: avoid RLIMIT_STACK races with prlimit()")
+[2] 779f4e1c6c7c ("Revert "exec: avoid RLIMIT_STACK races with prlimit()"")
+[3] to security@kernel.org, "Subject: existing rlimit races?"
