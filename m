@@ -1,74 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967726AbeBNMw1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 07:52:27 -0500
-Received: from lilium.sigma-star.at ([109.75.188.150]:49884 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967589AbeBNMw0 (ORCPT
+        id S967760AbeBNMwg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 07:52:36 -0500
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:36174 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967589AbeBNMwa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 07:52:26 -0500
-From: Richard Weinberger <richard@sigma-star.at>
-To: Enrico Weigelt <lkml@metux.net>, Aleksa Sarai <asarai@suse.de>
-Cc: Linux Containers <containers@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: plan9 semantics on Linux - mount namespaces
-Date: Wed, 14 Feb 2018 13:53:40 +0100
-Message-ID: <2658681.ustYaP9yci@blindfold>
-In-Reply-To: <4864d279-9a3f-eaf4-c297-ea34be604e41@metux.net>
-References: <0f058286-a432-379b-f559-f2fe713807ab@metux.net> <CAFLxGvzxLP_UTQbwEY99bQfyftWzZHwaOP+WrzJ8099EKtbVLg@mail.gmail.com> <4864d279-9a3f-eaf4-c297-ea34be604e41@metux.net>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Wed, 14 Feb 2018 07:52:30 -0500
+X-Google-Smtp-Source: AH8x2274W/6lonjS0Nn4y+gehVCJc7MEl5WJo4YZeo0UHOwo+VZqhSKZIME9S2Jzttc8Ovl/eATM1g==
+Message-ID: <1518612748.4749.29.camel@profitbricks.com>
+Subject: Read-protected UEFI variables
+From: Benjamin Drung <benjamin.drung@profitbricks.com>
+To: Matthew Garrett <matthew.garrett@nebula.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Matt Fleming <matt@codeblueprint.co.uk>,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 14 Feb 2018 13:52:28 +0100
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enrico,
+Hi,
 
-Am Mittwoch, 14. Februar 2018, 13:38:48 CET schrieb Enrico Weigelt:
-> On 14.02.2018 12:30, Richard Weinberger wrote:
-> > On Wed, Feb 14, 2018 at 12:27 PM, Enrico Weigelt <lkml@metux.net> wrote:
-> >> On 14.02.2018 11:24, Aleksa Sarai wrote:
-> >>> What distribution are you using and which release?
-> >> 
-> >> On a self-compiled system.
-> >> 
-> >> Forgot to enable namespaces in the kernel. Now it seems to work
-> >> as root, but not as an unprivileged user:
-> >> 
-> >> 
-> >> daemon@alphabox:~ unshare -r -U
-> >> unshare: can't open '/proc/self/setgroups': Permission denied
-> >> daemon@alphabox:~ unshare -f -r -U
-> >> unshare: can't open '/proc/self/setgroups': Permission denied
-> > 
-> > Please read http://man7.org/linux/man-pages/man7/user_namespaces.7.html
-> > setgroups is a corner case and needs special care.
-> 
-> I'm still confused. Does the unshare program do something wrong here ?
+I am exploring the possibility to store SSH and other keys in UEFI
+variables for systems that do not have persistent storage. These
+systems boot via network and need individual SSH keys which ideally
+should not be distributed via network.
 
-It does what you ask it for.
-Also see the --setgroups switch.
-AFAICT --setgroups=deny is the new default, then your command line should just 
-work. Maybe your unshare tool is too old.
+The plan is to write a small daemon that starts at boot and gets the
+SSH keys from EFI variables to individualize the system with SSH keys. 
+I plan to release the code as free software. Simple proof-of-concept
+code:
 
-> Anyways, I doubt that user namespaces help solving my problem.
-> 
-> What I'd like to achieve is that processes can manipulate their private
-> namespace at will and mount other filesystems (primarily 9p and fuse).
-> 
-> For that, I need to get rid of setuid (and per-file caps) for these
-> private namespaces.
+mount -t efivarfs none /sys/firmware/efi/efivars
+for key in ssh_host_dsa_key ssh_host_ecdsa_key ssh_host_rsa_key; do
+  dd ibs=1 skip=4 if=/sys/firmware/efi/efivars/${key}-89df11f4-38e6-473e-ab43-b4406b76fba9 of=/etc/ssh/$key
+done
 
-This is exactly why we have the user namespace.
-In the user namespace you can create your own mount namespace and do (almost) 
-whatever you want.
-Please note that you cannot mount any kind of filesystem.
-For FUSE, see https://lwn.net/Articles/684774/
+I am not the first person having the idea to use UEFI variables to
+store keys:
+https://www.usenix.org/conference/srecon17asia/program/presentation/korgachin
 
-Thanks,
-//richard
+There is one problem: The keys should be readable only by root. When
+mounting efivarfs, all variables have the permission 644 which makes
+them readable by all users. I have different ideas how to solve it:
+
+1) Hard-code a list of GUIDs that should be only readable by root in
+the kernel module. These modules would also be not set to immutable.
+
+2) Instead of hard-coding GUIDs, add a kernel module parameter to
+specify the GUIDs. Maybe have a default list in the kernel module.
+
+3) Add a mount option to specify the protected GUIDs.
+
+Feedback is welcome.
 
 -- 
-sigma star gmbh - Eduard-Bodem-Gasse 6 - 6020 Innsbruck - Austria
-ATU66964118 - FN 374287y
+Benjamin Drung
+System Developer
+Debian & Ubuntu Developer
+
+ProfitBricks GmbH
+Greifswalder Str. 207
+D - 10405 Berlin
+
+Email: benjamin.drung@profitbricks.com
+URL: https://www.profitbricks.de
+
+Sitz der Gesellschaft: Berlin
+Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
+Geschäftsführer: Achim Weiss, Matthias Steinberg
