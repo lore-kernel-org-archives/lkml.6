@@ -1,163 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030324AbeBNNgN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 08:36:13 -0500
-Received: from ozlabs.org ([103.22.144.67]:48569 "EHLO ozlabs.org"
+        id S1030315AbeBNNe7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 08:34:59 -0500
+Received: from mout.web.de ([212.227.15.14]:41033 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030202AbeBNNgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 08:36:10 -0500
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: aik@ozlabs.ru, andrew.donnellan@au1.ibm.com,
-        aneesh.kumar@linux.vnet.ibm.com, bsingharora@gmail.com,
-        colin.king@canonical.com, fbarrat@linux.vnet.ibm.com,
-        harish@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        linux@roeck-us.net, linuxppc-dev@lists.ozlabs.org,
-        maddy@linux.vnet.ibm.com, nfont@linux.vnet.ibm.com, npiggin@gmail.com,
-        sam.bobroff@au1.ibm.com
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.16-2 tag
-Date: Thu, 15 Feb 2018 00:36:02 +1100
-Message-ID: <878tbvr8vx.fsf@concordia.ellerman.id.au>
+        id S1030198AbeBNNe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 08:34:58 -0500
+Subject: [PATCH 2/2] crypto: sahara: Improve a size determination in
+ sahara_probe()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <6a487cd1-c05c-3d5d-ec6b-a6a2ae376f05@users.sourceforge.net>
+Message-ID: <1ef7c25b-ff37-6a49-b4ac-02a01b0a10dd@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 14:34:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <6a487cd1-c05c-3d5d-ec6b-a6a2ae376f05@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:tXEc9886D22VcOreV6POJhndeFyUtm2WHCSyrO51XN0yMWR4V3C
+ mwW/9ZcSeZN05JJgQiJpf3SNu2zWpTMr4oua82g2KI7waSqejg+cJ5L1KjjOaS2R2SZQROs
+ 8uqVBmjjgj2zXpn/qvlbn1GMkP2tTWa8TTqjXlA7vUbfQ4dV070I05F+8UuyzOCxwARjAW9
+ NtdiJA07hTlQtRq0e8Nng==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:JssY2n5Z42Q=:Eu3iSCwH1m0wpI29PSmONQ
+ f4PmMoxUzgrg9Bxcd7sJvGd4XXMGKGj7vMh+jB271CiGG1HWSttRtH3m/lhSGpd4Zceuqe2dp
+ +WL4XCDGVpEzeGj4U/qSqH3J1f/EGZ8v9LjCy/7Zds/wyyOtvAY7Nxfjszz1NdhCFhiSixjAf
+ 2V5NEvOTDkmlG8iybM39FvOgJr8s/IlFnoBUlZ4CM0dgGPrlMH6wvwHg8PebZdS2MH1x2DmVT
+ dBCVp3FkAbk5Yotyl3AKeHtptlpL1+tz/egVfON3suQ6/yJuEB4bufIbhTrrq+rE+J37e3yuE
+ k74/96R9i+1ZvT18vj/wnFkeZwnFA4IDNbzjfiqmZd8KVqvVpYeFAmFmx7l3qgvVgipY+k7IH
+ YAnh1BMAZebXbMJK6TB+OIX1MsIZSv1sxK4N5LZdPovq0j9Cd7c4IyGTWDFGmoonmGz3IF8AH
+ 3IUc4IbOOlkXiehvQ37fKkTmJk1mzmLKgmO+9H1LBLgcaVa0yg1Xp/RNi1hWQVjAMD23xvN4o
+ T3hLfOZ87AchIdPEy7FpDfO/FAZ5SVqgW2Dd9Pv2EdaoKw17AY30vdB/dCNVOyvJYb3ma2M8R
+ 6You5LLJemDRt+thogYzQYfINnETEhT3uzOvKiTiB8bPGtwByUy7R7SrFn+lC4Xy/Z55bgqG0
+ M9E6gf2KOyFLcZFyd4xpUDKKcfsQ9jyYVUWg6PhJVpJW9XOjkKFaIeUCyLxnJDYTo7IS/BSGF
+ iamAkdEAFEnaulnmY7JrQI9zBZMlmCYyeiNd0FMkFl+cOGZ075FILi/xPuw2MXfrmcpQtmPy0
+ aMfIhgxdmuhzz5vbj5MdV2q3uiorvVwNeZ1Y2Ses/SvUVahthI=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Feb 2018 14:14:05 +0100
 
-Hi Linus,
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Please pull some powerpc fixes for 4.16:
+This issue was detected by using the Coccinelle software.
 
-The following changes since commit 581e400ff935d34d95811258586128bf11baef15:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/sahara.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  Merge tag 'modules-for-v4.16' of git://git.kernel.org/pub/scm/linux/kernel/git/jeyu/linux (2018-02-07 14:29:34 -0800)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.16-2
-
-for you to fetch changes up to ecdf06e1ea5376bba03c155751f6869d3dfaa210:
-
-  selftests/powerpc: Fix to use ucontext_t instead of struct ucontext (2018-02-13 22:44:18 +1100)
-
-----------------------------------------------------------------
-powerpc fixes for 4.16 #2
-
-A larger batch of fixes than we'd like. Roughly 1/3 fixes for new code, 1/3
-fixes for stable and 1/3 minor things.
-
-There's four commits fixing bugs when using 16GB huge pages on hash, caused by
-some of the preparatory changes for pkeys.
-
-Two fixes for bugs in the enhanced IRQ soft masking for local_t, one of which
-broke KVM in some circumstances.
-
-Four fixes for Power9. The most bizarre being a bug where futexes stopped
-working because a NULL pointer dereference didn't trap during early boot (it
-aliased the kernel mapping). A fix for memory hotplug when using the Radix MMU,
-and a fix for live migration of guests using the Radix MMU.
-
-Two fixes for hotplug on pseries machines. One where we weren't correctly
-updating NUMA info when CPUs are added and removed. And the other fixes
-crashes/hangs seen when doing memory hot remove during boot, which is apparently
-a thing people do.
-
-Finally a handful of build fixes for obscure configs and other minor fixes.
-
-Thanks to:
-  Alexey Kardashevskiy, Aneesh Kumar K.V, Balbir Singh, Colin Ian King, Daniel
-  Henrique Barboza, Florian Weimer, Guenter Roeck, Harish, Laurent Vivier,
-  Madhavan Srinivasan, Mauricio Faria de Oliveira, Nathan Fontenot, Nicholas
-  Piggin, Sam Bobroff.
-
-----------------------------------------------------------------
-Alexey Kardashevskiy (1):
-      powerpc/mm: Flush radix process translations when setting MMU type
-
-Aneesh Kumar K.V (4):
-      powerpc/mm: Fix crashes with 16G huge pages
-      powerpc/mm/hash64: Allocate larger PMD table if hugetlb config is enabled
-      powerpc/mm/hash64: Store the slot information at the right offset for hugetlb
-      powerpc/mm/hash64: Zero PGD pages on allocation
-
-Balbir Singh (1):
-      powerpc/mm/radix: Split linear mapping on hot-unplug
-
-Colin Ian King (1):
-      ocxl: fix signed comparison with less than zero
-
-Guenter Roeck (2):
-      powerpc/pseries: Fix build break for SPLPAR=n and CPU hotplug
-      powerpc/kdump: Fix powernv build break when KEXEC_CORE=n
-
-Harish (1):
-      selftests/powerpc: Fix to use ucontext_t instead of struct ucontext
-
-Madhavan Srinivasan (1):
-      powerpc/64s: Fix MASKABLE_RELON_EXCEPTION_HV_OOL macro
-
-Nathan Fontenot (1):
-      powerpc/numa: Invalidate numa_cpu_lookup_table on cpu remove
-
-Nicholas Piggin (3):
-      powerpc/64s: Fix may_hard_irq_enable() for PMI soft masking
-      powerpc/64s/radix: Boot-time NULL pointer protection using a guard-PID
-      powerpc/vas: Don't set uses_vas for kernel windows
-
-Sam Bobroff (1):
-      powerpc/pseries: Enable RAS hotplug events later
-
- arch/powerpc/include/asm/book3s/32/pgtable.h       |   1 +
- arch/powerpc/include/asm/book3s/64/hash-4k.h       |   3 +-
- arch/powerpc/include/asm/book3s/64/hash-64k.h      |  16 ++-
- arch/powerpc/include/asm/book3s/64/hash.h          |  13 ++-
- arch/powerpc/include/asm/book3s/64/pgalloc.h       |  16 ++-
- arch/powerpc/include/asm/book3s/64/pgtable.h       |   4 +-
- arch/powerpc/include/asm/exception-64s.h           |   2 +-
- arch/powerpc/include/asm/hw_irq.h                  |  12 ++-
- arch/powerpc/include/asm/kexec.h                   |   6 ++
- arch/powerpc/include/asm/nohash/32/pgtable.h       |   1 +
- arch/powerpc/include/asm/nohash/64/pgtable.h       |   1 +
- arch/powerpc/include/asm/topology.h                |  10 ++
- arch/powerpc/kernel/exceptions-64e.S               |   2 +
- arch/powerpc/kernel/exceptions-64s.S               |   6 +-
- arch/powerpc/mm/hash64_4k.c                        |   4 +-
- arch/powerpc/mm/hash64_64k.c                       |   8 +-
- arch/powerpc/mm/hash_utils_64.c                    |   1 +
- arch/powerpc/mm/hugetlbpage-hash64.c               |  10 +-
- arch/powerpc/mm/init-common.c                      |   4 +-
- arch/powerpc/mm/numa.c                             |   5 -
- arch/powerpc/mm/pgtable-radix.c                    | 117 +++++++++++++++++----
- arch/powerpc/mm/pgtable_64.c                       |   4 +
- arch/powerpc/mm/tlb_hash64.c                       |   9 +-
- arch/powerpc/platforms/powernv/vas-window.c        |  16 +--
- arch/powerpc/platforms/pseries/hotplug-cpu.c       |   4 +-
- arch/powerpc/platforms/pseries/ras.c               |  31 ++++--
- drivers/misc/ocxl/file.c                           |   2 +-
- .../powerpc/alignment/alignment_handler.c          |   2 +-	# tools/testing/selftests/
- 28 files changed, 231 insertions(+), 79 deletions(-)
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJahDtCAAoJEFHr6jzI4aWAYTIP/0+n4WDZpQxKCOqQVabuR44Q
-R6DhKbqH5zy95wgW/QMeiP6oPmQyG0O+uq7VZ+cVbXWjNocI8+sqHmPHuouXLed+
-VeXYSu+fMpTwdiT+dr5I6eH/eSQFsK+VrNJAY1DU0mCNhm0rUQiF3DFOnODnroR0
-uC7aCTTqHMDQCTHM0TkPwSvS9O1WzOvHhNGic+8eMCM2RqXGVEUbMu5c78/02JKm
-ReKNAyIssDkrGoEkBb8PItjrixc0SX0VC1Kbw1Hx844AAvIXxbpZUsWn+6Munidk
-wHsLXUgeToWyoR+J4aiXMnlzpPOAPYxIfPoTKBgFu7HkyMYw2M6QdZYfMt9R3v4r
-+9AZGRe1ZHdgzzd3s8dZMmGka+mM+T/4iZosrW/nl2KbY3cyU7MSNyIy9mwmONOZ
-uN9Wo3KyrgXgT+cQ4PQ108LcOkvIJikEA4TkOIngkXfCfX2Ep6DiRNBpjQND+tsT
-TFRLW6KhcLTPzNXjjdI2peIfuns5JL1j5XTQ2eRDXLNbi5lglYFRDyvWfxznCKIW
-fLS3yTb7hmQvLy75iv1BkJkrrqSsRfHDYJ9WlFiJ89dy4v2NdrVREBR/3Ab8NZfm
-tLn5YgHnsi/6P9+b31QL6k2QNrfPiCMlsP93B7IKIVKSurbZsJgGBnOJICkA3I44
-JXi9ynfakDGUxRby8aZD
-=6IPG
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/crypto/sahara.c b/drivers/crypto/sahara.c
+index 9f3cdda59139..0f2245e1af2b 100644
+--- a/drivers/crypto/sahara.c
++++ b/drivers/crypto/sahara.c
+@@ -1397,7 +1397,7 @@ static int sahara_probe(struct platform_device *pdev)
+ 	int err;
+ 	int i;
+ 
+-	dev = devm_kzalloc(&pdev->dev, sizeof(struct sahara_dev), GFP_KERNEL);
++	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
+ 	if (!dev)
+ 		return -ENOMEM;
+ 
+-- 
+2.16.1
