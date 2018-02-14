@@ -1,31 +1,31 @@
-Return-Path: <kernel-hardening-return-11782-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x2250MPs0Y/sbqq6v2R4xBnefCKx6PBvkQGdbV1h8sSuC0ujlb64fH7uyC6dQI5NM4G6xGgJm
-ARC-Seal: i=1; a=rsa-sha256; t=1518639197; cv=none;
+Return-Path: <kernel-hardening-return-11780-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x2258FI+oWgkApK8+2YxcUCU/A79PaBW2747c57Ft/s4vNt444EeSMm4V0CHdH0Akglx/s4nk
+ARC-Seal: i=1; a=rsa-sha256; t=1518639174; cv=none;
         d=google.com; s=arc-20160816;
-        b=hJyDt2n8x+E012fIwh84a3osZSwoyCCT29gpOM/yGtVB33xJJVS6mZulZyrQRSZE+u
-         VGW7xcPCTjA/6xutNLEwn6kaQnSSKnf4a4lgFz6pKAkXWg344rVePmP55Bq6KN0741nP
-         YaxJJ/XrCfhiBOBqb0zWS9mFEluu8e2okbt4KS8vC4eOxiR5nUKQ41EKbWQhplwcjQ0u
-         PvMkrpmLqYZlpZbXy0iYxh53LLGbVZ9SyiZbe42PjGkPFW0INpBxw06xOgAl3VeCgRyl
-         20iyb5JVKxkrQ1HGgT4vd1BhC27RFjWb0ELCQFNL0+LwMJON2EwUcG3pFgfjiKBPq8Ud
-         sgMw==
+        b=qjwIpl8DlSplLx9adHGXx71vEf2RIR2N/G+nIKEqIRD+1TVTUuWOAdX9+q5Y2b0l79
+         zhBBT3oULvJJn5Zul3iLByb/joU6ndrpWX7DV2Udq2FNnJdH/PSr7gzjbVe69GAtVXOS
+         Guk3FcGVbri92rhr34mED0zpeWF/zamtiNrHpMh4g2PDBJq7+UwlVzJ4kYWdMlbnN7mj
+         /SrKt33JlzPmuz55vBIvGmLYdeT8y3orHXB56M8tHYTxApEMlDx9ZDfPtIpa7cMbTOJs
+         UBqSUHA5jHaBXt8LxbB9A4Rqt7yabpAmEqJt2wHc5DZ0x2GI5tKw4tptdX4D7EzphkJK
+         gmJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
          :list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=p41W8TPKQfQSTAck/C3d5bTWDT6YCXIa+sGEUSNRcpA=;
-        b=iRgsogtWTbEKLN31U696NxG5hR/WS1v6Ji5E+/UF9+lnyMV/juPyAxIdG8UbeKoKzS
-         iFao7XEwPwMLskEUDmqUIeTkEtNrAxiDFX+nJCSvv1gqAJdJfBMqtRLq0ZiZGsxMP68G
-         DIqK2NVMhnO+4WCbowrxsyS7KGyQtWM/0oaAT0D3kc50q+guM8uqoLSlkBX8DSmiJR2n
-         ifG4okKWwHSGGAwsSqnh87eQqIHUAADhKU1v+QBJxAx+kLllTSh9+ZlUrYvhuxd9do7/
-         Njya9JP0dfPu6L8WqZ5QtUMpVJv58m03Z3TRu0Jvb6MscVqXcMwJsXOYcXcxmAfuqlvH
-         c/IA==
+        bh=BaAze7teYSI65z39a63N2W2mofnTWFTM3LnOeS1JLDw=;
+        b=Su1yIDPCAQ3KnIstM5d6s9+pk5d/KE+h2GG4nrSGuDBh+dC8F9YNSJBVUraJYTYvfY
+         Hd+xmhzpuyri/BrkW9DOa/x/OATVfP0BnH0BrJbWE/A+xTAaguVoFK7rmh3Q7OzOkLtA
+         zGfl2a+0t+cbxOselyutIHh0nTW69p2bK6QGYwCYod4OlOznIhMqK3nGCYFbOv5qI6M7
+         2FsSXKipRjrhU6VYoWObunsbBRc0fCmf2BAD0c3A8DL66maNOT2Wm0jN7URJ4MrKsGDD
+         wCf1ACnBpvirfhX4BZJ9qBf6QFLPQaxmO+GrbMtGuYszQ+dIUs0xKJNAYM1wJWhNyJ0n
+         gemQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=BwI/B++7;
-       spf=pass (google.com: domain of kernel-hardening-return-11782-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11782-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=YPL3Xa1O;
+       spf=pass (google.com: domain of kernel-hardening-return-11780-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11780-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=BwI/B++7;
-       spf=pass (google.com: domain of kernel-hardening-return-11782-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11782-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=YPL3Xa1O;
+       spf=pass (google.com: domain of kernel-hardening-return-11780-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11780-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
@@ -39,15 +39,15 @@ Cc: Matthew Wilcox <mawilcox@microsoft.com>,
 	linux-kernel@vger.kernel.org,
 	kernel-hardening@lists.openwall.com,
 	Joe Perches <joe@perches.com>
-Subject: [PATCH v2 6/8] Convert v4l2 event to kvzalloc_struct
-Date: Wed, 14 Feb 2018 12:11:52 -0800
-Message-Id: <20180214201154.10186-7-willy@infradead.org>
+Subject: [PATCH v2 4/8] Convert dax device to kvzalloc_struct
+Date: Wed, 14 Feb 2018 12:11:50 -0800
+Message-Id: <20180214201154.10186-5-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180214201154.10186-1-willy@infradead.org>
 References: <20180214201154.10186-1-willy@infradead.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592408614546555727?=
-X-GMAIL-MSGID: =?utf-8?q?1592408614546555727?=
+X-GMAIL-THRID: =?utf-8?q?1592408591122150535?=
+X-GMAIL-MSGID: =?utf-8?q?1592408591122150535?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,22 +55,21 @@ From: Matthew Wilcox <mawilcox@microsoft.com>
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- drivers/media/v4l2-core/v4l2-event.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/dax/device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-event.c b/drivers/media/v4l2-core/v4l2-event.c
-index 968c2eb08b5a..20afb01301e8 100644
---- a/drivers/media/v4l2-core/v4l2-event.c
-+++ b/drivers/media/v4l2-core/v4l2-event.c
-@@ -215,8 +215,7 @@ int v4l2_event_subscribe(struct v4l2_fh *fh,
- 	if (elems < 1)
- 		elems = 1;
+diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+index 2137dbc29877..5821cde340f6 100644
+--- a/drivers/dax/device.c
++++ b/drivers/dax/device.c
+@@ -586,7 +586,7 @@ struct dev_dax *devm_create_dev_dax(struct dax_region *dax_region,
+ 	if (!count)
+ 		return ERR_PTR(-EINVAL);
  
--	sev = kvzalloc(sizeof(*sev) + sizeof(struct v4l2_kevent) * elems,
--		       GFP_KERNEL);
-+	sev = kvzalloc_struct(sev, events, elems, GFP_KERNEL);
- 	if (!sev)
- 		return -ENOMEM;
- 	for (i = 0; i < elems; i++)
+-	dev_dax = kzalloc(sizeof(*dev_dax) + sizeof(*res) * count, GFP_KERNEL);
++	dev_dax = kvzalloc_struct(dev_dax, res, count, GFP_KERNEL);
+ 	if (!dev_dax)
+ 		return ERR_PTR(-ENOMEM);
+ 
 -- 
 2.15.1
