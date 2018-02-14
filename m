@@ -1,71 +1,127 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225MZmq6UUSKwN3bn9q9UVUoqQqvY53Ifi0qg2DDV4cCsBwyRSRmz1LOIJb0pyu8xfCTHLuM
-ARC-Seal: i=1; a=rsa-sha256; t=1519217658; cv=none;
+Return-Path: <mcgrof@kernel.org>
+X-Google-Smtp-Source: AH8x2240y9UprGFJcVSve5Ua5a2t2fQA0Gqp6QDR5hzEUox0hObTuHG5TMNtM57PmowDB9x/ESPT
+ARC-Seal: i=1; a=rsa-sha256; t=1518568916; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ayy0rNT4S/oP/Kcn4bPB+xOqWR1eXaRXWTI1CbXP4h5vCJ3Opxj6BagON2jXGQNtsn
-         rHIMy23fNL1DSsw+lE6MEoNw0FcKnOilo+SPVi7xrSfodHGZ78DOs0ksiHJMUazaehRX
-         F+c9srBmzf2Ftf3oTCpf58Iizzyueb/f0sg3IF67veXKYKQytl6VIutICb0D3FXszTFc
-         iaC+vR5dpGynasshnxdrPOcvn1Kv8SrhA4nlQoKqytLLNJhxrhaFp/RpAbGHKutn6TPs
-         ppbtHq9SgxGWqbpz5UoJIunMYT+WP7dpbNkNqsZYOAScyVXukh20mY4COlMmoEkTEHTR
-         ICuw==
+        b=qgGkD2sY1uCb9BP1QP4i6GRwm49sRdj590tmZRtuc7RBTlcruc9eoGY4giOG3QAQQt
+         Fo0wsf9AIXGahUMq+jrAryPSZon45vRQtC0UIc/6QF2jnc5mp0Io4jieLHloVvdOJxq5
+         QuwVrbR6b2FFG+vVzJn3drxZwfROhF3yROTCJtvUW+xLY6RkDqLjt3Q61Vt3fkbP/pXe
+         SyIMpnDxqCsprUfSxRXuM0Do8vYTbSiZEeB4+5Ld3r+dVM+wfWacc8B+iIV7rwUAgzxj
+         SJv1oMQcMyX3F6+5ByzkdrbcSkgC1+G8rE7prjXXcSfMD6mZsDHz6R2rkj6/Wh6cG/rE
+         jecQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=fqJAVt8xUbQ57zGQm/Uox/3XKBBrxRhCwFAbyzeyAj4=;
-        b=CkTZGcBFhIOOJN3Q2ClRSek6ESo3ZFuKw2oOQFJglLpDFtaA/ADaiFj3nD0CyUQ64W
-         lOmgfYBdSb8UOah+/vegZDp+FOzPWDeXh6El5JcVXl9QFq//Cj7OFamiPvORMuu1tzm4
-         8vSFLbE5wqYEWeCUFdKSNNgZWA+VGfGSI0nH75kxl1c9neUrXqcutakMm/k3SCM3c+xS
-         92R/XqyK1YokfSzYnPA88Vji6gxPiHey+7RAtyDcEzdQVOJHbHr6Ag3/4oE3A4TVpkAw
-         YLhkUjbVW46nHq8VfR6fVyWoKfZk7YstaWfkYe/qy8JIQhPTixYmCcBoMspccb0Cn55I
-         Q6tw==
+        h=message-id:date:subject:cc:to:from:dmarc-filter
+         :arc-authentication-results;
+        bh=kSMC93UtCh7RFgVADTW8/LqFRMK8ZHIC9DnSU+SIon0=;
+        b=SAWQd6bBZ60ZQu0S18vp3opfXx+B1EWKo3Ehou2Zlu24qfsE05NjAEpCq0GAPqfiS9
+         lZpyLi81lNghAEBSfNydgYJHZJWBG5dDuveU6a/WYjPop10oJSYI5DptOymuq5KoMeh9
+         2MqKLyIxYD0Ztuxyo1VMT2xL/vw58EmpTdIb7BhqP58C3B4nqTlr9KoHxxLelU+QAraT
+         +mN4q4AlsjW+Tbq2FAXdpcjTR8NuFGyg5l+FIzEKJjC+Dr9QOAeKxi1SSnmAlOJu9JV7
+         Ix3uweiHBCNQ3Z9JfharN1XJExgFQpCRDdyCiUXv3UOY7mQRR0S1bIZ38bSOvLHb+BY9
+         h7Hw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+       spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Steffen Weber <steffen.weber@gmail.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.9 01/77] scsi: smartpqi: allow static build ("built-in")
-Date: Wed, 21 Feb 2018 13:48:10 +0100
-Message-Id: <20180221124432.230219713@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180221124432.172390020@linuxfoundation.org>
-References: <20180221124432.172390020@linuxfoundation.org>
-User-Agent: quilt/0.65
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+       spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BDA521782
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	keescook@chromium.org,
+	shuah@kernel.org,
+	mfuzzey@parkeon.com,
+	zohar@linux.vnet.ibm.com,
+	dhowells@redhat.com,
+	pali.rohar@gmail.com,
+	tiwai@suse.de,
+	arend.vanspriel@broadcom.com,
+	zajec5@gmail.com,
+	nbroeking@me.com,
+	markivx@codeaurora.org,
+	stephen.boyd@linaro.org,
+	broonie@kernel.org,
+	dmitry.torokhov@gmail.com,
+	dwmw2@infradead.org,
+	torvalds@linux-foundation.org,
+	Abhay_Salunke@dell.com,
+	bjorn.andersson@linaro.org,
+	jewalt@lgsinnovations.com,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH v2 00/11] firmware: cleanup for v4.17
+Date: Tue, 13 Feb 2018 16:41:37 -0800
+Message-Id: <20180214004148.14452-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.13.2
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593015175879199840?=
-X-GMAIL-MSGID: =?utf-8?q?1593015175879199840?=
+X-GMAIL-THRID: =?utf-8?q?1592334920498977895?=
+X-GMAIL-MSGID: =?utf-8?q?1592334920498977895?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Greg,
 
-------------------
+Now that v4.16-rc1 is out...
 
-From: Steffen Weber <steffen.weber@gmail.com>
+This is the pending cleanup I have for v4.17. Its based on my last
+iteration of cleanup patches I had submitted for v4.16. You took in
+most patches except a few patches which added some selftests bash
+helpers like kconfig_has() as it was observed perhaps we could share
+this. We poked Shuah Khan to see what she thought and her recommendation
+was to keep these things within the firmware helpers alone, given
+sharing a helper script would currently just add more complexity [0].
 
-commit dc2db1dc5fb9ab3a43b305c2720fee5278dbee2a upstream.
+The biggest advantage of the missing patches was that we'd be able to
+test at run time all firmware kernel configs usign only one kernel
+build.
 
-If CONFIG_SCSI_SMARTPQI=y then don't build this driver as a module.
+In this series I also decided to switch from debugfs to proc sys for
+the knobs to help dynamically modify the firmware behaviour, this proved
+less code and easier to maintain.
 
-Signed-off-by: Steffen Weber <steffen.weber@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I also went ahead and finally shifted all fallback code onto its own
+file, a goal I've been aiming for a while now.
 
----
- drivers/scsi/smartpqi/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+0-day has given me its blessings on these builds.
 
---- a/drivers/scsi/smartpqi/Makefile
-+++ b/drivers/scsi/smartpqi/Makefile
-@@ -1,3 +1,3 @@
- ccflags-y += -I.
--obj-m		+= smartpqi.o
-+obj-$(CONFIG_SCSI_SMARTPQI) += smartpqi.o
- smartpqi-objs := smartpqi_init.o smartpqi_sis.o smartpqi_sas_transport.o
+Questions, feedback, rants all equally welcomed.
+
+[0] https://lkml.kernel.org/r/938069cf-4478-2e46-f195-386830ce1a97@kernel.org
+
+Luis R. Rodriguez (11):
+  test_firmware: enable custom fallback testing on limited kernel
+    configs
+  test_firmware: replace syfs fallback check with kconfig_has helper
+  firmware: enable to split firmware_class into separate target files
+  firmware: simplify CONFIG_FW_LOADER_USER_HELPER_FALLBACK further
+  firmware: use helpers for setting up a temporary cache timeout
+  firmware: move loading timeout under struct firmware_fallback_config
+  firmware: split firmware fallback functionality into its own file
+  firmware: enable run time change of forcing fallback loader
+  firmware: enable to force disable the fallback mechanism at run time
+  test_firmware: add a library for shared helpers
+  test_firmware: test three firmware kernel configs using a proc knob
+
+ drivers/base/Makefile                              |   2 +
+ drivers/base/firmware_fallback.c                   | 720 +++++++++++++++++++
+ drivers/base/firmware_fallback.h                   |  44 ++
+ .../base/{firmware_class.c => firmware_loader.c}   | 765 +--------------------
+ drivers/base/firmware_loader.h                     | 115 ++++
+ kernel/sysctl.c                                    |  11 +
+ tools/testing/selftests/firmware/Makefile          |   2 +-
+ tools/testing/selftests/firmware/config            |   4 +
+ tools/testing/selftests/firmware/fw_fallback.sh    |  39 +-
+ tools/testing/selftests/firmware/fw_filesystem.sh  |  61 +-
+ tools/testing/selftests/firmware/fw_lib.sh         | 173 +++++
+ tools/testing/selftests/firmware/fw_run_tests.sh   |  67 ++
+ 12 files changed, 1166 insertions(+), 837 deletions(-)
+ create mode 100644 drivers/base/firmware_fallback.c
+ create mode 100644 drivers/base/firmware_fallback.h
+ rename drivers/base/{firmware_class.c => firmware_loader.c} (61%)
+ create mode 100644 drivers/base/firmware_loader.h
+ create mode 100755 tools/testing/selftests/firmware/fw_lib.sh
+ create mode 100755 tools/testing/selftests/firmware/fw_run_tests.sh
+
+-- 
+2.16.1
