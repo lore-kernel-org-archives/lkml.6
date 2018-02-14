@@ -1,86 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031035AbeBNPAw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 10:00:52 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:63078 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030382AbeBNPAu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:00:50 -0500
-Subject: Re: [PATCH v2] reset: add support for non-DT systems
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        David Lechner <david@lechnology.com>
-References: <20180213183946.1662-1-brgl@bgdev.pl>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <65b864b2-e8dc-cf69-5c8e-f94b7f4fd640@ti.com>
-Date: Wed, 14 Feb 2018 20:29:48 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1031161AbeBNPBA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 10:01:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54094 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030382AbeBNPA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 10:00:57 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1177F2172D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 14 Feb 2018 10:00:54 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Byungchul Park <byungchul.park@lge.com>
+Cc: jiangshanlai@gmail.com, paulmck@linux.vnet.ibm.com,
+        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com
+Subject: Re: [PATCH] srcu: Remove dead code in srcu_gp_end()
+Message-ID: <20180214100054.45f525fe@gandalf.local.home>
+In-Reply-To: <1518599124-29153-1-git-send-email-byungchul.park@lge.com>
+References: <1518599124-29153-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180213183946.1662-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday 14 February 2018 12:09 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> The reset framework only supports device-tree. There are some platforms
-> however, which need to use it even in legacy, board-file based mode.
-> 
-> An example of such architecture is the DaVinci family of SoCs which
-> supports both device tree and legacy boot modes and we don't want to
-> introduce any regressions.
-> 
-> We're currently working on converting the platform from its hand-crafted
-> clock API to using the common clock framework. Part of the overhaul will
-> be representing the chip's power sleep controller's reset lines using
-> the reset framework.
-> 
-> This changeset extends the core reset code with a new field in the
-> reset controller struct which contains an array of lookup entries. Each
-> entry contains the device name and an additional, optional identifier
-> string.
-> 
-> Drivers can register a set of reset lines using this lookup table and
-> concerned devices can access them using the regular reset_control API.
-> 
-> This new function is only called as a fallback in case the of_node
-> field is NULL and doesn't change anything for current users.
-> 
-> Tested with a dummy reset driver with several lookup entries.
-> 
-> An example lookup table can look like this:
-> 
-> static const struct reset_lookup foobar_reset_lookup[] = {
-> 	[FOO_RESET] = { .dev = "foo", .id = "foo_id" },
-> 	[BAR_RESET] = { .dev = "bar", .id = NULL },
-> 	{ }
-> };
-> 
-> where FOO_RESET and BAR_RESET will correspond with the id parameters
-> of reset callbacks.
-> 
-> Cc: Sekhar Nori <nsekhar@ti.com>
-> Cc: Kevin Hilman <khilman@baylibre.com>
-> Cc: David Lechner <david@lechnology.com>
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Wed, 14 Feb 2018 18:05:24 +0900
+Byungchul Park <byungchul.park@lge.com> wrote:
 
-This should really help get rid of the private
-davinci_clk_reset_assert() API. Thanks for getting this done.
+> Of course, compilers will optimize out a dead code. Anyway, remove
+> any dead code for better readibility.
+> 
+> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+> ---
+>  kernel/rcu/srcutree.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+> index 44bc0fa..829453b 100644
+> --- a/kernel/rcu/srcutree.c
+> +++ b/kernel/rcu/srcutree.c
+> @@ -531,7 +531,6 @@ static void srcu_gp_end(struct srcu_struct *sp)
+>  	unsigned long flags;
+>  	unsigned long gpseq;
+>  	int idx;
+> -	int idxnext;
 
-I noticed that the array based API still remains DT only. Its not a
-concern for DaVinci so it can probably be supported when its really needed.
+Interesting. According to git history, idxnext was never actually used.
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-Thanks,
-Sekhar
+-- Steve
+
+>  	unsigned long mask;
+>  	struct srcu_data *sdp;
+>  	struct srcu_node *snp;
+> @@ -555,7 +554,6 @@ static void srcu_gp_end(struct srcu_struct *sp)
+>  
+>  	/* Initiate callback invocation as needed. */
+>  	idx = rcu_seq_ctr(gpseq) % ARRAY_SIZE(snp->srcu_have_cbs);
+> -	idxnext = (idx + 1) % ARRAY_SIZE(snp->srcu_have_cbs);
+>  	rcu_for_each_node_breadth_first(sp, snp) {
+>  		spin_lock_irq_rcu_node(snp);
+>  		cbs = false;
