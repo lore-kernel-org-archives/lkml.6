@@ -1,59 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032087AbeBNXTt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 18:19:49 -0500
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:56328 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031971AbeBNXTs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 18:19:48 -0500
-From: Junichi Nomura <j-nomura@ce.jp.nec.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-CC: Tejun Heo <tj@kernel.org>, Andi Kleen <andi@firstfloor.org>,
-        Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [TEST for] fs: global sync to not clear error status of
- individual inodes
-Thread-Topic: [TEST for] fs: global sync to not clear error status of
- individual inodes
-Thread-Index: AQHTpeeGNVexUNocjkKnaB1YrF5uQKOj8SSA
-Date: Wed, 14 Feb 2018 23:18:59 +0000
-Message-ID: <b96fe0fc-3128-a5f1-67f6-e33a328c5637@ce.jp.nec.com>
-References: <20180214225947.GB1686@wotan.suse.de>
-In-Reply-To: <20180214225947.GB1686@wotan.suse.de>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.34.125.85]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <358B3C127BCD2A448C28CB4E63D4FFF6@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        id S1032026AbeBNXXa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 18:23:30 -0500
+Received: from ozlabs.org ([103.22.144.67]:40103 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031971AbeBNXX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 18:23:29 -0500
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Kees Cook <keescook@chromium.org>, Michal Hocko <mhocko@kernel.org>
+Cc: Will Drewry <wad@chromium.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: samples/seccomp/ broken when cross compiling s390, ppc allyesconfig
+In-Reply-To: <CAGXu5jJCN_Js9rvM4RMjxDCDd4tVzWDo-jdnFiZs1D9e3cunrw@mail.gmail.com>
+References: <20180212133731.GE3443@dhcp22.suse.cz> <87r2ppvaeq.fsf@concordia.ellerman.id.au> <CAGXu5j+DnkUv9pZn93wxA6_2s+c3Ap_Q34OR0weY7Y9MJ1aP9Q@mail.gmail.com> <87d1192nzc.fsf@concordia.ellerman.id.au> <20180213103213.GP3443@dhcp22.suse.cz> <CAGXu5jJZROQMxzxu+Dp3mVMktSg-oTB6pqk7fUyM_6_2oa9c_A@mail.gmail.com> <20180214092045.GZ3443@dhcp22.suse.cz> <CAGXu5jJCN_Js9rvM4RMjxDCDd4tVzWDo-jdnFiZs1D9e3cunrw@mail.gmail.com>
+Date: Thu, 15 Feb 2018 10:23:27 +1100
+Message-ID: <87zi4bp34g.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Luis,
+Kees Cook <keescook@chromium.org> writes:
+> On Wed, Feb 14, 2018 at 1:20 AM, Michal Hocko <mhocko@kernel.org> wrote:
+...
+>>
+>> OK, so let's try to nuke it. How should I route this patch?
+>
+> I'm fine if goes in via ppc (especially if it can land for 4.16). If
+> Michael doesn't want it, I can send it through my seccomp tree via
+> James Morris.
 
-On 02/15/18 07:59, Luis R. Rodriguez wrote:
-> curious if you ever got to adapt a test case for xfstests for your patch
-> "fs: global sync to not clear error status of individual inodes", which
-> got merged as of v4.4 as:
-> 
-> aa750fd71c242dba02ee2034e15fbd7d0cdb2461 mm/filemap.c: make global sync not clear error status of individual inodes
-> 
-> You said you'd work on it, so curious if you ever got to it.
-> 
-> [0] https://patchwork.kernel.org/patch/7183351/
+It's not really my area, so I'd prefer if you take it, or we could
+always punt to akpm :)
 
-I had adapted the test for xfstests and posted at the time but it
-didn't go further. I guess recent kernel changes in this area also
-added related test cases to xfstests.
-
-  xfstests: test data-writeback error detection with fsync
-  https://patchwork.kernel.org/patch/7194041/
-
--- 
-Jun'ichi Nomura, NEC Corporation / NEC Solution Innovators, Ltd.
+cheers
