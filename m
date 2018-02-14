@@ -1,64 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162053AbeBNSdF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 13:33:05 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:46755 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162022AbeBNSdD (ORCPT
+        id S1162170AbeBNSgI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 13:36:08 -0500
+Received: from mail-io0-f193.google.com ([209.85.223.193]:41560 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162106AbeBNSgH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 13:33:03 -0500
-Subject: Re: plan9 semantics on Linux - mount namespaces
-To: Richard Weinberger <richard@sigma-star.at>
-Cc: Aleksa Sarai <asarai@suse.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <0f058286-a432-379b-f559-f2fe713807ab@metux.net>
- <4042675.OEy7g9C5ya@blindfold>
- <794929ce-0ecb-4c93-d51e-e94fcf749cfa@metux.net>
- <6753239.SmZu9LK57z@blindfold>
-From: Enrico Weigelt <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <54f88b0d-282d-db79-9db6-ff82a16aaa62@metux.net>
-Date: Wed, 14 Feb 2018 19:32:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Wed, 14 Feb 2018 13:36:07 -0500
+X-Google-Smtp-Source: AH8x226m6aJJT6TMJUCxOq2sywrQcyiMKl4jAswm9PIYVuqEZojeTVm5xgGUhOOZKOCTSkF5LE07qVmjJz1pJWsAduI=
 MIME-Version: 1.0
-In-Reply-To: <6753239.SmZu9LK57z@blindfold>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:qmjxcrQBnbsqyl2ZLq4aRXKGJxm+zk6h8j/+1UW9f2kmm7TMQU5
- oyDjsXsCZwIwFseeBOOX1cyHt7/s/jSTmb5cvhmYisrmKpuV9TRnDonXZsCARG8SVblnnKP
- QDF7A3e4MgT+0t+DCTSW+DQWMAN8+3qnhXT5mdysVm8CnFZryXLs38Ph92vzLkhJ8n1e7bv
- AchNqssGQC41jvgDagR7Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:nUdaJGFQ63Q=:P8F+eNVIwpu6Hj5xNBXyhH
- maleQXO+B5ZD2i6vfEeFFyi/PffXymxD2rrJ8RZNKsm8BuJ70HD2HvKVP3l84efGPtoFuioQg
- ZDOFAIVnhtD9hhOyfGvyN95L41QD5hrZiI5yiAq5cyE0NcAblrQdn4gurs3uoJGUee822VtOv
- 4yuKfHvdYkq3LQhVH/c26Nu9yvyaezlfHBhaxbSnYgKSGUqirx6B6gw/BmrPh7TBJIQoVKkHm
- voIlVKvV4AFf/TqvfUXZtvyqai3r2ltTI/h8JYagmAHdR7xLovjgSZFm0i+PWqVeGU5+zhRzm
- Nr0wYm7i9kVvV/jToOUg0QMytgN8jyDGmNP2LrfSFKGuxDTQ5gxvh7hk4yXupWIEeN7ftl3me
- HZ2IwUh267aYmMsnBsQdbrFtjBE9SxGZ02KgR3YaXroyb6h33ra+AmBMaxOpEKoM0FqRfMFFy
- JdWct4e1ZYzUtSEBiSYKV+iL9rau/MUo8sYNHqxRmyyih9EtpQOJwzICWOqQadLIKU/FIEb9O
- jJH8JLG/vXtvoZEAHt1oUlq3ciGOCYE4p39lKNlOGadZnegupcx9SoMhcVo+FK5IC4ujogwab
- Pi7YMWz432xjOxW4h1tBLreT12sHrKToyow72Up74igBB7VTUk4cZ8SdWubJ4vdlaeIZG9X8N
- tAS0MrSPSKNGoJqDBU6xbJTabRb8snLA7GITmdD8+GLtl9WCRc8gow228ipFgZd4Z86MXdgEa
- /9rpGLHu/GrEQLFz9bXrwxW1hrYlBm3PA32/2/tQ8ECUYVx6zbuzVtEXAXVKazUZmv52ehlvQ
- nEYBd6aphRy2nIuH8U7LKftYtSvHLycwi8MTZGFjbrD6/BWXEA+KYSAyxL/IWzpSalp04n6
+In-Reply-To: <20180214182113.27247-3-linux@dominikbrodowski.net>
+References: <20180214182113.27247-1-linux@dominikbrodowski.net> <20180214182113.27247-3-linux@dominikbrodowski.net>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Wed, 14 Feb 2018 13:36:06 -0500
+Message-ID: <CAMzpN2j4a166dt5M7QHmJE-m4XVBER42nUF-h8Wq-Tssq8Fgog@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/4] x86/entry/64: move ENTER_IRQ_STACK from interrupt
+ macro to helper function
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, Andi Kleen <ak@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Williams, Dan J" <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.02.2018 19:12, Richard Weinberger wrote:
+On Wed, Feb 14, 2018 at 1:21 PM, Dominik Brodowski
+<linux@dominikbrodowski.net> wrote:
+> Moving the switch to IRQ stack from the interrupt macro to the helper
+> function requires some trickery: All ENTER_IRQ_STACK really cares about
+> is where the "original" stack -- meaning the GP registers etc. -- is
+> stored. Therefore, we need to offset the stored RSP value by 8 whenever
+> ENTER_IRQ_STACK is called from within a function. In such cases, and
+> after switching to the IRQ stack, we need to push the "original" return
+> address (i.e. the return address from the call to the interrupt entry
+> function) to the IRQ stack.
+>
+> This trickery allows us to carve another 1k from the text size:
+>
+>    text    data     bss     dec     hex filename
+>   17905       0       0   17905    45f1 entry_64.o-orig
+>   16897       0       0   16897    4201 entry_64.o
+>
+> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+> ---
+>  arch/x86/entry/entry_64.S | 53 +++++++++++++++++++++++++++++++----------------
+>  1 file changed, 35 insertions(+), 18 deletions(-)
+>
+> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+> index de8a0da0d347..3046b12a1acb 100644
+> --- a/arch/x86/entry/entry_64.S
+> +++ b/arch/x86/entry/entry_64.S
+> @@ -449,10 +449,18 @@ END(irq_entries_start)
+>   *
+>   * The invariant is that, if irq_count != -1, then the IRQ stack is in use.
+>   */
+> -.macro ENTER_IRQ_STACK regs=1 old_rsp
+> +.macro ENTER_IRQ_STACK regs=1 old_rsp save_ret=0
+>         DEBUG_ENTRY_ASSERT_IRQS_OFF
+>         movq    %rsp, \old_rsp
+>
+> +       .if \save_ret
+> +       /*
+> +        * If save_ret is set, the original stack contains one additional
+> +        * entry -- the return address.
+> +        */
+> +       addq    $8, \old_rsp
+> +       .endif
 
-> BTW: Your issue is fixed/known. Just checked.
+Combine the mov and add into leaq 8(%rsp), \old_rsp.
 
-aha, on 1.2.28 ... I'll have to upgrade.
-
-
---mtx
-
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+--
+Brian Gerst
