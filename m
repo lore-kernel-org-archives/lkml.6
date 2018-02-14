@@ -1,47 +1,46 @@
 Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AH8x226daS0CWOtW0koI19r8QJ9cbBmRCVyyIH2KkZKs0raBZe7g2Ft6UkqSFS5kZHF98j/KvECd
-ARC-Seal: i=1; a=rsa-sha256; t=1518654979; cv=none;
+X-Google-Smtp-Source: AH8x227d43svdfSxiLVSuo/YC57j7R7AJwl/mvcXPMJjVDUBbnKQzTYZvzp5AiGqQUSIIe+SPHmt
+ARC-Seal: i=1; a=rsa-sha256; t=1518597740; cv=none;
         d=google.com; s=arc-20160816;
-        b=hOCm81yoxVmMZLQf/5c7FQN8rdDyHEXuXkmpo9SzO0S51aDj89wjWkilvBs/mXIxeg
-         LmhSQQBeGjAGUIaRstKFeMtDrBTh63WgY0n5lUrD9UT8aUJcF51vnD9ZExh8r83qjhF8
-         /NOmUi9OyIej92/zOTdfEelCZ3KMTwcOi6OiJ+1QGorfxoI4qq2qu5w2dFn1SuhOyfaC
-         sAAwH0TBtSCvXjKgCNyLwK0pEpm0XDQU5MdK5u8iaWlWTXJ9IU5lYwWu9X6h7FRiuO8w
-         nTFwJe57MDRC1obHwqBOshQp8I4cuPt8APlG/WFjT3b3Fw29gm77PvlOmGhYVcx+f/yK
-         aUAw==
+        b=RlYDZPA25ms+5sl2nDAhWz3Xu8bfcOG0aV92CMWZInT3bNajq69zQziEJ+mQuqx9AK
+         HZd+cNwn+hDL2SnhWQiegsr0ZAexxowK4EoTukZ27sQdiC8LeQr3/DjatcOtMPPYz+/+
+         7PtJkUTsjT5X/2fSsZaEKrBDgQzUH7/NMOSo4euxP2vif35X+rgnKDTDa+qqBKEdln++
+         AfopY0nRf7YeALn+FjIvkOHB1yDT62QKRio3wgrS1BqHmAlyJnXGwO6kZ9rhSduE3Cf0
+         tmmjORxsW3OrrFW7Y1TDp+2JgIbEA9lY/bPy25xFQ9gDDBmAAMv/Iq2ymuX7CeSMS0hV
+         oRGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=precedence:content-disposition:content-transfer-encoding
          :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
          :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=c2Kmp/iSMhlUlqxyk8nB7IMdTC46bWKsYzvFLCC4HlU=;
-        b=ei97CHVLaFXP5VJbpiPXZz4zKpJYoPb8VsluquyA+lJckx8sVDP4OzvlE6a9dQOT1n
-         pAnt5hgULaNPa8LlRV6lV74DlRo/mOOIzuI2/8wbrgy2wTFaXtC1g8ilzgSxCMsjfKUY
-         sW9JGDP2C9KLhbnToRmc+CCvckmbzTWXbJ2IG2SkXcL9LSMzSCDBgxeagZWOZFycP1Mv
-         emJvJEC6u3GGulPsopFc6a7kkoMtHiK/K1huKIag0t3pcHEcJdEetjQAPlGIOq7jc2JA
-         JyzpEzTzI84WX6skVjmOhUm1Lx1/8xMKBN4SELAcc3gyItqVx3Uj2hBYuQqqbL6+sXr3
-         IE4Q==
+        bh=hGHGBFXgxFd4qC4QUkYF53InZ+eYCfSce10I5/blR8g=;
+        b=uPzER4+jcQhG403EN2yIUTpFT/QX1Xsvha2v7DrKeqAe5FqZJfv8ejk6K6vE4yziDh
+         SYzjKZc86/Ge+J01H5ipuMJm0fw86Gq10f/9hcw+f+s7hwwQjOEskQfuKKkNhXjvBAtx
+         ajG4hszth4hkyEq0oK3zZYHA1hO0hRY7h5K1DVqHllJQwhidZxxO13JAFRQ1m+d6GvLk
+         XUwQpLc/to3gHuXHM9VgLXSAY8cXNQI2Juv0AdWzrmNElfqLlki0ZhKbR02NTqmsq236
+         h5ajUmlVoPx76VsKwatVcnvZpK2jjECcyZ2IeDf2Hvl/C0VM3RDRxFsQDpAcs9SYWPu2
+         3eHQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Wed, 14 Feb 2018 16:30:19 -0800
+Date: Wed, 14 Feb 2018 00:36:56 -0800
 Sender: tip tree robot <tipbot@zytor.com>
 From: tip-bot for Dan Carpenter <tipbot@zytor.com>
-Message-ID: <tip-9de29eac8d2189424d81c0d840cd0469aa3d41c8@git.kernel.org>
-Cc: hpa@zytor.com, gregkh@linuxfoundation.org, peterz@infradead.org,
-        mingo@kernel.org, tglx@linutronix.de, bp@suse.de, karahmed@amazon.de,
-        dwmw@amazon.co.uk, dan.carpenter@oracle.com,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        luto@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, dan.carpenter@oracle.com,
-        torvalds@linux-foundation.org, luto@kernel.org, hpa@zytor.com,
-        mingo@kernel.org, gregkh@linuxfoundation.org, peterz@infradead.org,
-        bp@suse.de, karahmed@amazon.de, tglx@linutronix.de, dwmw@amazon.co.uk
+Message-ID: <tip-b4764623932ff364df9a6bc8664ab7697c475339@git.kernel.org>
+Cc: torvalds@linux-foundation.org, mingo@kernel.org, peterz@infradead.org,
+        karahmed@amazon.de, bp@suse.de, hpa@zytor.com,
+        gregkh@linuxfoundation.org, luto@kernel.org, dan.carpenter@oracle.com,
+        tglx@linutronix.de, dwmw@amazon.co.uk, linux-kernel@vger.kernel.org
+Reply-To: peterz@infradead.org, bp@suse.de, karahmed@amazon.de, hpa@zytor.com,
+        mingo@kernel.org, torvalds@linux-foundation.org,
+        dan.carpenter@oracle.com, gregkh@linuxfoundation.org, luto@kernel.org,
+        linux-kernel@vger.kernel.org, dwmw@amazon.co.uk, tglx@linutronix.de
 In-Reply-To: <20180214071416.GA26677@mwanda>
 References: <20180214071416.GA26677@mwanda>
 To: linux-tip-commits@vger.kernel.org
 Subject: [tip:x86/pti] x86/spectre: Fix an error message
-Git-Commit-ID: 9de29eac8d2189424d81c0d840cd0469aa3d41c8
+Git-Commit-ID: b4764623932ff364df9a6bc8664ab7697c475339
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -52,16 +51,16 @@ Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592365143873210262?=
-X-GMAIL-MSGID: =?utf-8?q?1592425163381307031?=
+X-GMAIL-MSGID: =?utf-8?q?1592365143873210262?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  9de29eac8d2189424d81c0d840cd0469aa3d41c8
-Gitweb:     https://git.kernel.org/tip/9de29eac8d2189424d81c0d840cd0469aa3d41c8
+Commit-ID:  b4764623932ff364df9a6bc8664ab7697c475339
+Gitweb:     https://git.kernel.org/tip/b4764623932ff364df9a6bc8664ab7697c475339
 Author:     Dan Carpenter <dan.carpenter@oracle.com>
 AuthorDate: Wed, 14 Feb 2018 10:14:17 +0300
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 15 Feb 2018 01:15:53 +0100
+CommitDate: Wed, 14 Feb 2018 08:23:07 +0100
 
 x86/spectre: Fix an error message
 
