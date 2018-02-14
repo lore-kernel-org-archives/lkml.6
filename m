@@ -1,71 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032918AbeBNQtY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 11:49:24 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:43812 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032823AbeBNQtT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1032904AbeBNQtV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 11:49:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45977 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032526AbeBNQtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Feb 2018 11:49:19 -0500
-X-Google-Smtp-Source: AH8x227wHm1kPmSDDUwYS2fM2aRW6Romsd+B2hzkfw1S44cO3wsbMKYUad6nh3cDouGsGk8vKX/oldgJX4CCnq4fYLE=
+Subject: Re: [PATCH 2/3] x86/xen: Remove inert tracepoint in __init code
+To: Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Jason Baron <jbaron@akamai.com>,
+        Borislav Petkov <bp@suse.de>
+References: <cover.1518626149.git.jpoimboe@redhat.com>
+ <e6d9f3b13f2a5a55a0b158e79dfc5a2d8dc40bd7.1518626149.git.jpoimboe@redhat.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <b5a49222-9555-d986-ebcf-ca102c631e23@suse.com>
+Date: Wed, 14 Feb 2018 17:49:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <8261d041-ccd9-c0f8-4530-a4afb43ee7ab@users.sourceforge.net>
-References: <8261d041-ccd9-c0f8-4530-a4afb43ee7ab@users.sourceforge.net>
-From: Dan Streetman <ddstreet@ieee.org>
-Date: Wed, 14 Feb 2018 11:48:35 -0500
-X-Google-Sender-Auth: eecqMj3XeARPdqrM20sEOoaE32Y
-Message-ID: <CALZtONBqJ26mzfN02Zs8OjwuoZFLY0vz5BO9tRwyovXF11=SMw@mail.gmail.com>
-Subject: Re: [PATCH] crypto: nx-842: Delete an error message for a failed
- memory allocation in nx842_pseries_init()
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Haren Myneni <haren@us.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <e6d9f3b13f2a5a55a0b158e79dfc5a2d8dc40bd7.1518626149.git.jpoimboe@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 11:17 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 14 Feb 2018 17:05:13 +0100
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+On 14/02/18 17:40, Josh Poimboeuf wrote:
+> The jump_label code doesn't patch init code, so this tracepoint can
+> never be enabled.  Remove it.
+> 
+> Cc: Juergen Gross <jgross@suse.com>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
-Reviewed-by: Dan Streetman <ddstreet@ieee.org>
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-> ---
->  drivers/crypto/nx/nx-842-pseries.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/crypto/nx/nx-842-pseries.c b/drivers/crypto/nx/nx-842-pseries.c
-> index bf52cd1d7fca..66869976cfa2 100644
-> --- a/drivers/crypto/nx/nx-842-pseries.c
-> +++ b/drivers/crypto/nx/nx-842-pseries.c
-> @@ -1105,10 +1105,9 @@ static int __init nx842_pseries_init(void)
->
->         RCU_INIT_POINTER(devdata, NULL);
->         new_devdata = kzalloc(sizeof(*new_devdata), GFP_KERNEL);
-> -       if (!new_devdata) {
-> -               pr_err("Could not allocate memory for device data\n");
-> +       if (!new_devdata)
->                 return -ENOMEM;
-> -       }
-> +
->         RCU_INIT_POINTER(devdata, new_devdata);
->
->         ret = vio_register_driver(&nx842_vio_driver);
-> --
-> 2.16.1
->
+
+Juergen
