@@ -1,104 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030587AbeBNN4U (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 08:56:20 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52397 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030422AbeBNN4Q (ORCPT
+        id S1030608AbeBNN5P (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 08:57:15 -0500
+Received: from mailout3.hostsharing.net ([176.9.242.54]:59369 "EHLO
+        mailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030221AbeBNN5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 08:56:16 -0500
-X-Google-Smtp-Source: AH8x225bWrdbzuWEQm6Tp+T0LmQq8nLFhQ3NjB5eYSK32hg5vEEoYmVMH6mGq+KAS+zsNHHpg/i/XQ==
-From: Philipp Rossak <embed3d@gmail.com>
-To: wens@csie.org, a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        maxime.ripard@bootlin.com
-Cc: linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-rtc@vger.kernel.org
-Subject: [PATCH v3] rtc: ac100: Fix ac100 determine rate bug
-Date: Wed, 14 Feb 2018 14:56:12 +0100
-Message-Id: <20180214135612.21356-1-embed3d@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Wed, 14 Feb 2018 08:57:14 -0500
+Date: Wed, 14 Feb 2018 14:57:11 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Liviu Dudau <Liviu.Dudau@arm.com>
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Dave Airlie <airlied@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
+        dri-devel@lists.freedesktop.org, Peter Wu <peter@lekensteyn.nl>,
+        nouveau@lists.freedesktop.org, Lyude Paul <lyude@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Pierre Moreau <pierre.morrow@free.fr>, linux-kernel@vger.kernel.org,
+        Ismo Toijala <ismo.toijala@gmail.com>, intel-gfx@lists.freedesktop.org,
+        Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH 0/5] Fix deadlock on runtime suspend in DRM drivers
+Message-ID: <20180214135711.vg7ht2htlprypmie@wunner.de>
+References: <cover.1518338788.git.lukas@wunner.de>
+ <20180213105506.GF9111@e110455-lin.cambridge.arm.com>
+ <20180213115206.GA16075@wunner.de>
+ <20180213154608.GI9111@e110455-lin.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180213154608.GI9111@e110455-lin.cambridge.arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes a bug, that prevents the Allwinner A83T and the A80
-from a successful boot.
+On Tue, Feb 13, 2018 at 03:46:08PM +0000, Liviu Dudau wrote:
+> On Tue, Feb 13, 2018 at 12:52:06PM +0100, Lukas Wunner wrote:
+> > On Tue, Feb 13, 2018 at 10:55:06AM +0000, Liviu Dudau wrote:
+> > > On Sun, Feb 11, 2018 at 10:38:28AM +0100, Lukas Wunner wrote:
+> > > > DRM drivers poll connectors in 10 sec intervals.  The poll worker is
+> > > > stopped on ->runtime_suspend with cancel_delayed_work_sync().  However
+> > > > the poll worker invokes the DRM drivers' ->detect callbacks, which call
+> > > > pm_runtime_get_sync().  If the poll worker starts after runtime suspend
+> > > > has begun, pm_runtime_get_sync() will wait for runtime suspend to finish
+> > > > with the intention of runtime resuming the device afterwards.  The result
+> > > > is a circular wait between poll worker and autosuspend worker.
+> > > 
+> > > I think I understand the problem you are trying to solve, but I'm
+> > > struggling to understand where malidp makes any specific mistakes. First
+> > > of all, malidp is only a display engine, so there is no GPU attached to
+> > > it, but that is only a small clarification. Second, malidp doesn't use
+> > > directly any of the callbacks that you are referring to, it uses the
+> > > drm_cma_xxxx() API plus the generic drm_xxxx() call. So if there are any
+> > > issues there (as they might well be) I think they would apply to a lot
+> > > more drivers and the fix will involve more than just malidp, i915 and
+> > > msm.
+[snip]
+> > There are no ->detect hooks declared
+> > in drivers/gpu/drm/arm/, so it's unclear to me whether you're able to probe
+> > during runtime suspend.
+> 
+> That's because the drivers in drivers/gpu/drm/arm do not have
+> connectors, they are only the CRTC part of the driver. Both hdlcd and
+> mali-dp use the component framework to locate an encoder in device tree
+> that will then provide the connectors.
+> 
+> > 
+> > hdlcd_drv.c and malidp_drv.c both enable output polling.  Output polling
+> > is only necessary if you don't get HPD interrupts.
+> 
+> That's right, hdlcd and mali-dp don't receive HPD interrupts because
+> they don't have any. And because we don't know ahead of time which
+> encoder/connector will be paired with the driver, we enable polling as a
+> safe fallback.
+> 
 
-The bug is there since v4.16-rc1 and appeared after the clk branch was
-merged.
+Looking e.g. at inno_hdmi.c (used by rk3036.dtsi), this calls
+drm_helper_hpd_irq_event() on receiving an HPD interrupt, and that
+function returns immediately if polling is not enabled.  So you *have*
+to enable polling to receive HPD events.
 
-You can find the shortend trace below:
+You seem to keep the crtc runtime active as long as it's bound to an
+encoder.  If you do not ever intend to runtime suspend the crtc while
+an encoder is attached, you don't need to keep polling enabled during
+runtime suspend (because there's nothing to poll), but it shouldn't
+hurt either.
 
-Unable to handle kernel NULL pointer dereference at virtual address
-00000000
-pgd = (ptrval)
-[00000000] *pgd=00000000
-Internal error: Oops: 5 [#1] SMP ARM
-Modules linked in:
-CPU: 0 PID: 49 Comm: kworker/0:1 Not tainted 4.15.0-10190-gb89e32ccd1be #2
-Hardware name: Allwinner sun8i Family
-Workqueue: events deferred_probe_work_func
-PC is at clk_hw_get_rate+0x0/0x34
-LR is at ac100_clkout_determine_rate+0x48/0x19c
+If you would runtime suspend while an encoder is attached, then you
+would only runtime resume every 10 sec (upon polling) if the encoder
+was a child of the crtc and would support runtime suspend as well.
+That's because the PM core wakes the parent by default when a child
+runtime resumes.  However in the DT's I've looked at, the encoder
+is never a child of the crtc and at least inno_hdmi.c doesn't use
+runtime suspend.
 
-[ ... ]
+So I think you're all green, I can't spot any grave issues here.
+Just be aware of the above-mentioned constraints.
 
-(clk_hw_get_rate) from (ac100_clkout_determine_rate+0x48/0x19c)
-(ac100_clkout_determine_rate) from  (clk_core_set_rate_nolock+0x3c/0x1a0)
-(clk_core_set_rate_nolock) from (clk_set_rate+0x30/0x88)
-(clk_set_rate) from (of_clk_set_defaults+0x200/0x364)
-(of_clk_set_defaults) from (platform_drv_probe+0x18/0xb0)
+Thanks,
 
-To fix that bug, we first check if the return of the
-clk_hw_get_parent_by_index is non zero. If it is zero we skip that
-clock parent.
-
-The BUG report could be found here: https://lkml.org/lkml/2018/2/10/198
-
-Fixes: 04940631b8d2 ("rtc: ac100: Add clk output support")
-
-Signed-off-by: Philipp Rossak <embed3d@gmail.com>
----
-
-Changes in v3:
-	* add information when the bug appeared 
-	* make the comment more clear
-Changes in v2:
-	* add tag Fixes: ... to commit message
-	* add comment to if statement why we are doing this check
-
- drivers/rtc/rtc-ac100.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
-index 8ff9dc3fe5bf..2412aa2e8399 100644
---- a/drivers/rtc/rtc-ac100.c
-+++ b/drivers/rtc/rtc-ac100.c
-@@ -183,7 +183,24 @@ static int ac100_clkout_determine_rate(struct clk_hw *hw,
- 
- 	for (i = 0; i < num_parents; i++) {
- 		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
--		unsigned long tmp, prate = clk_hw_get_rate(parent);
-+		unsigned long tmp, prate;
-+
-+		/*
-+		 * The clock has two parents, one is a fixed clock which is
-+		 * internally registered by the ac100 driver. The other parent
-+		 * is a clock from the codec side of the chip, which we
-+		 * properly declare and reference in the devicetree and is
-+		 * not implemented in any driver right now.
-+		 * If the clock core looks for the parent of that second
-+		 * missing clock, it can't one that is registered and
-+		 * returns NULL.
-+		 * Thus we need to check if the parent exists before
-+		 * we get the parent rate.
-+		 */
-+		if (!parent)
-+			continue;
-+
-+		prate = clk_hw_get_rate(parent);
- 
- 		tmp = ac100_clkout_round_rate(hw, req->rate, prate);
- 
--- 
-2.11.0
+Lukas
