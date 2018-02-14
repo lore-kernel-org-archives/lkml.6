@@ -1,84 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967369AbeBNLQ4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 06:16:56 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40104 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S967252AbeBNLQz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 06:16:55 -0500
-Subject: Re: [patch] kvm: suppress KVM_SET_GSI_ROUTING allocation failure
-To: Paolo Bonzini <pbonzini@redhat.com>,
-        David Rientjes <rientjes@google.com>
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <alpine.DEB.2.10.1802081334120.133173@chino.kir.corp.google.com>
- <47a55220-0006-6486-5a9d-1d1142efcc47@de.ibm.com>
- <f9754c98-9b8d-97b6-54cf-6d5e55143100@redhat.com>
- <alpine.DEB.2.10.1802131702280.71590@chino.kir.corp.google.com>
- <179c1c39-2b3f-20f6-d4cb-0044aa49e570@redhat.com>
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Wed, 14 Feb 2018 12:14:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <179c1c39-2b3f-20f6-d4cb-0044aa49e570@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18021411-0012-0000-0000-000005AE9C12
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021411-0013-0000-0000-0000192A6745
-Message-Id: <cef46bea-c511-c303-e795-ca0e3b540164@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-14_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802140132
+        id S967425AbeBNLRR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 06:17:17 -0500
+Received: from mga11.intel.com ([192.55.52.93]:37976 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967375AbeBNLRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 06:17:13 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,512,1511856000";
+   d="scan'208";a="201054938"
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>, Borislav Petkov <bp@suse.de>,
+        Andi Kleen <ak@linux.intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: [PATCH 2/9] mm/zsmalloc: Prepare to variable MAX_PHYSMEM_BITS
+Date: Wed, 14 Feb 2018 14:16:49 +0300
+Message-Id: <20180214111656.88514-3-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180214111656.88514-1-kirill.shutemov@linux.intel.com>
+References: <20180214111656.88514-1-kirill.shutemov@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+With boot-time switching between paging mode we will have variable
+MAX_PHYSMEM_BITS.
 
+Let's use the maximum variable possible for CONFIG_X86_5LEVEL=y
+configuration to define zsmalloc data structures.
 
-On 02/14/2018 11:10 AM, Paolo Bonzini wrote:
-> On 14/02/2018 02:03, David Rientjes wrote:
->> On Tue, 13 Feb 2018, Paolo Bonzini wrote:
->>
->>>>> The KVM_SET_GSI_ROUTING ioctl does a vmalloc() of
->>>>> sizeof(struct kvm_irq_routing_entry) multiplied by a user-supplied value.
->>>>> This can be up to 4096 entries on architectures such as arm64 and s390
->>>>> (and the upper bound may be increased on s390 eventually).
->>>>>
->>>>> This can produce a vmalloc allocation failure warning:
->>>>>
->>>> [...]
->>>>>  kvm_vm_ioctl+0x910/0x15e0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4153
->>>>
->>>>                                                                        ^^^^^
->>>>
->>>>> @@ -3063,7 +3063,8 @@ static long kvm_vm_ioctl(struct file *filp,
->>>>
->>>>       ^^^^^
->>>>
->>>>
->>>> Are you sure that you got the right vmalloc?
->>>
->>> Nice catch!  But well, it's the only one in the whole file. :)
->>>
->>> That seems very much like an old patch then.  I'm unqueuing it.
->>>
->>
->> It's not a catch at all, the fact that I saw this warning with an older 
->> kernel for KVM_SET_GSI_ROUTING doesn't mean that I can't patch it with an 
->> upstream kernel.  Would you prefer I remove the stack trace completely?
-> 
-> The upstream kernel doesn't warn.  It checks "if (routing.nr)" before
-> calling vmalloc.
+The patch introduces MAX_POSSIBLE_PHYSMEM_BITS to cover such case.
+It also suits well to handle PAE special case.
 
-It will warn of the vmalloc space is really exhausted. But then I really ask
-myself if we really want to suppress this warning. This should be a big
-ALERT to the host admin.
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Acked-by: Minchan Kim <minchan@kernel.org>
+Reviewed-by: Nitin Gupta <ngupta@vflare.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+---
+ arch/x86/include/asm/pgtable-3level_types.h |  1 +
+ arch/x86/include/asm/pgtable_64_types.h     |  2 ++
+ mm/zsmalloc.c                               | 13 +++++++------
+ 3 files changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/include/asm/pgtable-3level_types.h b/arch/x86/include/asm/pgtable-3level_types.h
+index 876b4c77d983..6a59a6d0cc50 100644
+--- a/arch/x86/include/asm/pgtable-3level_types.h
++++ b/arch/x86/include/asm/pgtable-3level_types.h
+@@ -44,5 +44,6 @@ typedef union {
+  */
+ #define PTRS_PER_PTE	512
+ 
++#define MAX_POSSIBLE_PHYSMEM_BITS	36
+ 
+ #endif /* _ASM_X86_PGTABLE_3LEVEL_DEFS_H */
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index 6b8f73dcbc2c..7168de7d34eb 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -40,6 +40,8 @@ typedef struct { pteval_t pte; } pte_t;
+ #define P4D_SIZE	(_AC(1, UL) << P4D_SHIFT)
+ #define P4D_MASK	(~(P4D_SIZE - 1))
+ 
++#define MAX_POSSIBLE_PHYSMEM_BITS	52
++
+ #else /* CONFIG_X86_5LEVEL */
+ 
+ /*
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index c3013505c305..b7f61cd1c709 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -84,18 +84,19 @@
+  * This is made more complicated by various memory models and PAE.
+  */
+ 
+-#ifndef MAX_PHYSMEM_BITS
+-#ifdef CONFIG_HIGHMEM64G
+-#define MAX_PHYSMEM_BITS 36
+-#else /* !CONFIG_HIGHMEM64G */
++#ifndef MAX_POSSIBLE_PHYSMEM_BITS
++#ifdef MAX_PHYSMEM_BITS
++#define MAX_POSSIBLE_PHYSMEM_BITS MAX_PHYSMEM_BITS
++#else
+ /*
+  * If this definition of MAX_PHYSMEM_BITS is used, OBJ_INDEX_BITS will just
+  * be PAGE_SHIFT
+  */
+-#define MAX_PHYSMEM_BITS BITS_PER_LONG
++#define MAX_POSSIBLE_PHYSMEM_BITS BITS_PER_LONG
+ #endif
+ #endif
+-#define _PFN_BITS		(MAX_PHYSMEM_BITS - PAGE_SHIFT)
++
++#define _PFN_BITS		(MAX_POSSIBLE_PHYSMEM_BITS - PAGE_SHIFT)
+ 
+ /*
+  * Memory for allocating for handle keeps object position by
+-- 
+2.15.1
