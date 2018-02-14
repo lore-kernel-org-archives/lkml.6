@@ -1,61 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966528AbeBNC2A (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 21:28:00 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38728 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966382AbeBNC16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 21:27:58 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH] x86/entry/64: Fix CR3 restore order in paranoid_exit()
-Date: Tue, 13 Feb 2018 20:27:30 -0600
-Message-Id: <2b8ce3a31bcdfffa434269f4abf5d46816b75773.1518575248.git.jpoimboe@redhat.com>
+        id S966521AbeBNCdC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 21:33:02 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:43984 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966382AbeBNCdB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 21:33:01 -0500
+X-Google-Smtp-Source: AH8x225w9YbXrM6HTbdENJk8yFPuK4u+JhD7JtlUMCtpD8YErNBaM5CWPoR3Kxi+RXIngEceQTdXgg==
+Date: Wed, 14 Feb 2018 13:32:39 +1100
+From: Balbir Singh <bsingharora@gmail.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
+        <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [PATCH 1/2] powerpc/kdump: Add missing optional dummy functions
+Message-ID: <20180214133239.498a1e73@balbir.ozlabs.ibm.com>
+In-Reply-To: <20180212232551.GA5199@roeck-us.net>
+References: <1518474848-3158-1-git-send-email-linux@roeck-us.net>
+        <CAKTCnzmtDNJHThzuZa1+ydrriQG-dVovHA7uLSVvfLFG2MaidQ@mail.gmail.com>
+        <20180212232551.GA5199@roeck-us.net>
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The paranoid exit code only restores the saved CR3 when it switches back
-to the user GS.  However, even in the kernel GS case, it's possible that
-it needs to restore a user CR3, if for example, the paranoid exception
-occurred in the syscall exit path between SWITCH_TO_USER_CR3_STACK and
-SWAPGS.
+On Mon, 12 Feb 2018 15:25:51 -0800
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-Fix that issue by making the CR3 restore unconditional.  This is
-symmetrical with the unconditional CR3 save in paranoid_entry().
+> On Tue, Feb 13, 2018 at 10:01:57AM +1100, Balbir Singh wrote:
+> > On Tue, Feb 13, 2018 at 9:34 AM, Guenter Roeck <linux@roeck-us.net> wrote:  
+> > > If KEXEC_CORE is not enabled, PowerNV builds fail as follows.
+> > >
+> > > arch/powerpc/platforms/powernv/smp.c: In function 'pnv_smp_cpu_kill_self':
+> > > arch/powerpc/platforms/powernv/smp.c:236:4: error:
+> > >         implicit declaration of function 'crash_ipi_callback'
+> > >
+> > > Add dummy function calls, similar to kdump_in_progress(), to solve the
+> > > problem.
+> > >
+> > > Fixes: 4145f358644b ("powernv/kdump: Fix cases where the kdump kernel ...")
+> > > Cc: Balbir Singh <bsingharora@gmail.com>
+> > > Cc: Michael Ellerman <mpe@ellerman.id.au>
+> > > Cc: Nicholas Piggin <npiggin@gmail.com>
+> > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> > > ---  
+> > 
+> > Thanks for working on this.
+> > 
+> > You've added two functions, I understand the crash_send_ipi() bits
+> > that I broke. Looks like crash_ipi_callback broken without KEXEC_CORE?
+> >   
+> 
+> If I recall correctly, 4145f358644b introduced the call to crash_ipi_callback().
+> After I declared the dummy function for that, I got an error about the missing
+> crash_send_ipi(). I didn't spend more time on it but just added another dummy
+> function. It may well be that another problem was introduced in the same time
+> frame. On the other side, maybe I got it all wrong, and my patch is not worth
+> the computer it was written on.
+> 
 
-Also, since RESTORE_CR3 is now done before the EBX compare, it needs to
-use a different scratch register (R15 instead of RBX).
+The patches worked for me with CONFIG_KEXEC=n and CONFIG_KEXEC_CORE=n
 
-I haven't actually seen any real-world bugs caused by this, so I'm not
-sure how theoretical it is.  I just stumbled upon it in code review when
-looking for another bug.
+Tested-by: Balbir Singh <bsingharora@gmail.com>
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
----
- arch/x86/entry/entry_64.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index cd216c9431e1..68c95a09b48d 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -1167,10 +1167,10 @@ ENTRY(paranoid_exit)
- 	UNWIND_HINT_REGS
- 	DISABLE_INTERRUPTS(CLBR_ANY)
- 	TRACE_IRQS_OFF_DEBUG
-+	RESTORE_CR3	scratch_reg=%r15 save_reg=%r14
- 	testl	%ebx, %ebx			/* swapgs needed? */
- 	jnz	.Lparanoid_exit_no_swapgs
- 	TRACE_IRQS_IRETQ
--	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
- 	SWAPGS_UNSAFE_STACK
- 	jmp	.Lparanoid_exit_restore
- .Lparanoid_exit_no_swapgs:
--- 
-2.14.3
+Balbir Singh
