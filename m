@@ -1,94 +1,75 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x2270vsfSFjB9vtRKyVdWWP5m6oX4v8z0bfYqwAF5ImGD13+LMPQZO5Lpp/GBY/T68VmJ5jrW
-ARC-Seal: i=1; a=rsa-sha256; t=1519266897; cv=none;
+Return-Path: <kernel-hardening-return-11755-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x2258LhFPSbDpaXdjxXXj0lN02t7Lo0zMEZsfuz0UcQCWxaQTc1NP0CegPjb5xceDGzyHt9fT
+ARC-Seal: i=1; a=rsa-sha256; t=1518632838; cv=none;
         d=google.com; s=arc-20160816;
-        b=ouN0RuF+VQMhFqnb60rhZ9i7IyGtB8keI3sqdbiNzu2M4W+Xc4+VzhTrm36oXlsCRs
-         wpo3wmWkR5ACFKxRVpqM2hLzrxpFiFUyXBpzRZhl6au2XAAcL1dbw263g98drL/Zc3e8
-         FxMR7BaFcgdRwORCd2KWHJnU2WTOmu4e02zrPn/vSyZLwj2RvCe2/KFjU2Pje/mLTARx
-         7mHuugpqkK8j1b/YsAp7Twf9V4SzCnKZd/j0CZcIJsI7S1pwn9nsd9Ne/NANn9c0h+qR
-         0inEc2QkZMC85pPpzGn+nN6hiHc9IxoOfl+EmluzdFA5ufSocLdSJ/vuwac1c0BDkOFP
-         B69w==
+        b=g9B9ovPuzFS+iswOGzrj8mDdpDBrrzp8ra5yEs33iPOjJ2C9P8qDIi1XjPKA6KTG/X
+         EqxCrxwW/M6jbfrKL0YjGBmgzBfzFs4PuVyCxP9v847z1jdtM/vtdZ26bAmwisptp3XY
+         IC4ROvSraV/uLiKOZEarf680Tztn+dUR1TS7KJhdju2N2GW+52+KptxyjHM7N6BmdBU4
+         zfK79JVc3kwom5e7rU/oG8gV4B9wB+hyVDGEn54cIwJs8hu+sGscnyBFLc/sBHiCIF/8
+         jV4BLUd5EwM5lQPsKuaEThPK9OWOSOiMz3AO3fgk8h4yt25ma1X19xKux+QPIOvkGVjP
+         vsyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=gl+0JmoGJTMZGY0OxoUOAIBejbYmqV+v1Y6D76mfUKQ=;
-        b=y7csiPADiP9WoV0w7Nyt77zKOUjTlkmSA6svrCDCJ6iIitvtA5f836FTl0xUbPKvMQ
-         LJlJXZyxTkfX/oBWMwBKRt0oDiloH4HlQd0LEOzLrGzJD8ipPwKYh+8yICSugTIzqldt
-         H9OwMy3P36LY9iLYzYH7S7KxMkzPiuxHKDiKM6OXbEPsOxkgig/aTrUcSDzR7F5rFmyy
-         VzEd2XhvAvoIF9Ix5CrYyqKdgwu+sm63o3PdU3YZabvLOUjvlReqhEPIBFFuxoMeVFJ5
-         OYAloJ8SOk2XmUMgLKJZkninGnZbW8WfOpkgUa6xxVLovxh4TeCr70YwVp1L/gM+X8TV
-         ld8Q==
+        h=message-id:date:subject:cc:to:from:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=8EvrJzML4QbyIGOABtDwyZ9IvULxh4uqpwPOtxh3Av8=;
+        b=aKmBuwyolaJeJFFQ8/PS9KzcI387OKtIG6EuYCN38SiEClL5koSMLio3gXRau7lGeQ
+         narfdF5wGGIWM6JndcfVXG16KZ7yedokqXFzbj3U1mp8WwEd3anfCiM23eF9bQz+mmjr
+         +je3u+pDjxr14OMDVDrftkSF7ELCg3/Z3E3jBun90GZHbPz6eS4qmZhpi572BPcSXpg3
+         RP1HEKu0U/ULOP0jqC02Gff99pOS1SxumJ8DYfeJqRIZGe9ZfmhO8EHQmq0CZvNSpXeD
+         /ncQ8CCTe91VkCuxdn2I7kRy7L5rUDkZBg6DYok/9P+2ojQdmOEcC4fuOrjxm8w3arl4
+         pIIg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=D9CmX33+;
+       spf=pass (google.com: domain of kernel-hardening-return-11755-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11755-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751940AbeBVCel (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 21 Feb 2018 21:34:41 -0500
-Received: from mga09.intel.com ([134.134.136.24]:7819 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751810AbeBVCek (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Wed, 21 Feb 2018 21:34:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,376,1515484800";
-   d="scan'208";a="20152533"
-From: Li Zhijian <lizhijian@cn.fujitsu.com>
-To: shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Li Zhijian <zhijianx.li@intel.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Philip Li <philip.li@intel.com>
-Subject: [PATCH v2] selftests/bpf/test_maps: exit child process without error in ENOMEM case
-Date: Thu, 22 Feb 2018 10:34:02 +0800
-Message-Id: <1519266842-29004-1-git-send-email-lizhijian@cn.fujitsu.com>
-X-Mailer: git-send-email 2.7.4
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=D9CmX33+;
+       spf=pass (google.com: domain of kernel-hardening-return-11755-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11755-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>,
+	linux-mm@kvack.org,
+	Kees Cook <keescook@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com
+Subject: [PATCH 0/2] Add kvzalloc_struct to complement kvzalloc_array
+Date: Wed, 14 Feb 2018 10:26:16 -0800
+Message-Id: <20180214182618.14627-1-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593066805827109430?=
-X-GMAIL-MSGID: =?utf-8?q?1593066805827109430?=
+X-GMAIL-THRID: =?utf-8?q?1592401947833736714?=
+X-GMAIL-MSGID: =?utf-8?q?1592401947833736714?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Li Zhijian <zhijianx.li@intel.com>
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-test_maps contains a series of stress tests, and previously it will break the
-rest tests when it failed to alloc memory.
------------------------
-Failed to create hashmap key=8 value=262144 'Cannot allocate memory'
-Failed to create hashmap key=16 value=262144 'Cannot allocate memory'
-Failed to create hashmap key=8 value=262144 'Cannot allocate memory'
-Failed to create hashmap key=8 value=262144 'Cannot allocate memory'
-test_maps: test_maps.c:955: run_parallel: Assertion `status == 0' failed.
-Aborted
-not ok 1..3 selftests:  test_maps [FAIL]
------------------------
-after this patch, the rest tests will be continue when it occurs an ENOMEM failure
+We all know the perils of multiplying a value provided from userspace
+by a constant and then allocating the resulting number of bytes.  That's
+why we have kvmalloc_array(), so we don't have to think about it.
+This solves the same problem when we embed one of these arrays in a
+struct like this:
 
-CC: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-CC: Philip Li <philip.li@intel.com>
-Suggested-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Li Zhijian <zhijianx.li@intel.com>
----
- tools/testing/selftests/bpf/test_maps.c | 2 ++
- 1 file changed, 2 insertions(+)
+struct {
+	int n;
+	unsigned long array[];
+};
 
-diff --git a/tools/testing/selftests/bpf/test_maps.c b/tools/testing/selftests/bpf/test_maps.c
-index 436c4c7..9e03a4c 100644
---- a/tools/testing/selftests/bpf/test_maps.c
-+++ b/tools/testing/selftests/bpf/test_maps.c
-@@ -126,6 +126,8 @@ static void test_hashmap_sizes(int task, void *data)
- 			fd = bpf_create_map(BPF_MAP_TYPE_HASH, i, j,
- 					    2, map_flags);
- 			if (fd < 0) {
-+				if (errno == ENOMEM)
-+					return;
- 				printf("Failed to create hashmap key=%d value=%d '%s'\n",
- 				       i, j, strerror(errno));
- 				exit(1);
+Using kvzalloc_struct() to allocate this will save precious thinking
+time and reduce the possibilities of bugs.
+
+Matthew Wilcox (2):
+  mm: Add kernel-doc for kvfree
+  mm: Add kvmalloc_ab_c and kvzalloc_struct
+
+ include/linux/mm.h | 51 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ mm/util.c          | 10 ++++++++++
+ 2 files changed, 61 insertions(+)
+
 -- 
-2.7.4
-
+2.15.1
