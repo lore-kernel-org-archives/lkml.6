@@ -1,59 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967155AbeBNKHa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 05:07:30 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46461 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S966840AbeBNKFn (ORCPT
+        id S967096AbeBNKIZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 05:08:25 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:56555 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966933AbeBNKIX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 05:05:43 -0500
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-To: <lee.jones@linaro.org>, <thierry.reding@gmail.com>,
-        <alexandre.torgue@st.com>
-CC: <benjamin.gaignard@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
-        <mcoquelin.stm32@gmail.com>, <fabrice.gasnier@st.com>,
-        <benjamin.gaignard@st.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pwm@vger.kernel.org>
-Subject: [RESEND PATCH v2 8/8] ARM: dts: stm32: Enable pwm3 input capture on stm32f429i-eval
-Date: Wed, 14 Feb 2018 11:04:39 +0100
-Message-ID: <1518602679-3064-9-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1518602679-3064-1-git-send-email-fabrice.gasnier@st.com>
-References: <1518602679-3064-1-git-send-email-fabrice.gasnier@st.com>
+        Wed, 14 Feb 2018 05:08:23 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 3/5] arm64: dts: renesas: r8a7795-es1: Fix register mappings on VSPs
+Date: Wed, 14 Feb 2018 12:08:56 +0200
+Message-ID: <2009459.7Q8ChOu4tJ@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1518602108-1724-4-git-send-email-kbingham@kernel.org>
+References: <1518602108-1724-1-git-send-email-kbingham@kernel.org> <1518602108-1724-4-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-14_03:,,
- signatures=0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable pwm3 input capture on stm32f429i-eval, by using DMA.
+Hi Kieran,
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
----
- arch/arm/boot/dts/stm32429i-eval.dts | 3 +++
- 1 file changed, 3 insertions(+)
+Thank you for the patch.
 
-diff --git a/arch/arm/boot/dts/stm32429i-eval.dts b/arch/arm/boot/dts/stm32429i-eval.dts
-index 293ecb9..d5498dd 100644
---- a/arch/arm/boot/dts/stm32429i-eval.dts
-+++ b/arch/arm/boot/dts/stm32429i-eval.dts
-@@ -271,6 +271,9 @@
- &timers3 {
- 	status = "okay";
- 
-+	/* Enable PWM input capture by using dma */
-+	dmas = <&dma1 4 5 0x400 0x0>;
-+	dma-names = "ch1";
- 	pwm {
- 		pinctrl-0 = <&pwm3_pins>;
- 		pinctrl-names = "default";
+On Wednesday, 14 February 2018 11:55:06 EET Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> The VSPD includes a CLUT on RPF2. Ensure that the register space is
+> mapped correctly to support this.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+> b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi index
+> ed553338b4d4..1adfe6cad268 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+> @@ -80,7 +80,7 @@
+> 
+>  	vspd3: vsp@fea38000 {
+>  		compatible = "renesas,vsp2";
+> -		reg = <0 0xfea38000 0 0x4000>;
+> +		reg = <0 0xfea38000 0 0x8000>;
+>  		interrupts = <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>;
+>  		clocks = <&cpg CPG_MOD 620>;
+>  		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
