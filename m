@@ -1,98 +1,256 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031648AbeBNVyf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 16:54:35 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33353 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031452AbeBNVyd (ORCPT
+        id S1031600AbeBNV46 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 16:56:58 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:35956 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031452AbeBNV44 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 16:54:33 -0500
-X-Google-Smtp-Source: AH8x2274Fml9+SvsaZwPJVw97dx6Tit9vue9fJDo0TtEgWY0OvV2qV/3ZHJRrJPYKAfmTqNB8qCuAw==
-Date: Wed, 14 Feb 2018 22:54:30 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Karel Zak <kzak@redhat.com>
-Cc: Andreas Bombe <aeb@debian.org>, util-linux@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrius =?utf-8?B?xaB0aWtvbmFz?= <andrius@stikonas.eu>,
-        Curtis Gedak <gedakc@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: Linux & FAT32 label
-Message-ID: <20180214215430.dunkqhuztyic6tcn@pali>
-References: <20171004153332.GA6696@pali>
- <20171011212435.znmtdnsxcd5ectub@pali>
- <20171105130608.5oww3b2fnnrwe7ok@pali>
- <20171109212131.uxraxzwpvrlyfyys@pali>
- <20171119124440.ffxx64zjmwedmtdp@pali>
- <20171120111256.zqvmpzdcf6ncyi5m@ws.net.home>
- <20171126191925.zowfpduhyic5w4n5@pali>
- <20171127121301.b6obxoqr4azm3zvs@ws.net.home>
- <20180214215233.tbcoieywczdwvy37@pali>
+        Wed, 14 Feb 2018 16:56:56 -0500
+X-Google-Smtp-Source: AH8x2279lXoDrbssiHGIARtGy46AhqoAd0o0p3WpVP8yo4XEgYM1LmSa0EYjkm8L0yYf3jXg7wITbA==
+From: "Jingoo Han" <jingoohan1@gmail.com>
+To: "'Bartlomiej Zolnierkiewicz'" <b.zolnierkie@samsung.com>,
+        <linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>
+Cc: <linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
+References: <CGME20180214120041epcas2p37afd51e693a9cad842e59128a77d45ac@epcas2p3.samsung.com> <2621881.tniV7NOQqn@amdc3058>
+In-Reply-To: <2621881.tniV7NOQqn@amdc3058>
+Subject: Re: [PATCH] video: fbdev: s3c-fb: remove dead platform code for Exynos and S5PV210 platforms
+Date: Wed, 14 Feb 2018 16:56:53 -0500
+Message-ID: <000001d3a5de$b9d2d080$2d787180$@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="4wdw3rnnapsisys4"
-Content-Disposition: inline
-In-Reply-To: <20180214215233.tbcoieywczdwvy37@pali>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQDUKqHbLQa96xveCpHkrbN/LhrfHAGkShWhpZZFhhA=
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wednesday, February 14, 2018 7:01 AM wrote:
+> 
+> Exynos5, Exynos4 and S5PV210 platforms have been converted to
+> use Device Tree and Exynos DRM driver long time ago.  Remove
+> dead platform code for these platforms and update Kconfig
+> s3c-fb entry accordingly.
+> 
+> Cc: Jingoo Han <jingoohan1@gmail.com>
 
---4wdw3rnnapsisys4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
 
-On Wednesday 14 February 2018 22:52:33 Pali Roh=C3=A1r wrote:
-> On Monday 27 November 2017 13:13:01 Karel Zak wrote:
-> > On Sun, Nov 26, 2017 at 08:19:25PM +0100, Pali Roh=C3=A1r wrote:
-> > > On Monday 20 November 2017 12:12:56 Karel Zak wrote:
-> > > > Go ahead and send patch :-) (also with LABEL_FATBOOT=3D)
-> > >=20
-> > > Ok, I prepared patches for util-linux including LABEL_FATBOOT:
-> > > https://github.com/karelzak/util-linux/compare/master...pali:master
-> >=20
-> > Seems good. I'll wait for official pull request. Thanks!
-> >=20
-> > > I have not created official pull request on github yet as Andreas have
-> > > not decided yet about dosfstools/fatlabel...
-> >=20
-> > OK.
->=20
-> Looks like that Andreas is not responding to mailing list, nor to
-> private emails, nor on github for 3-4 months ... I hope he is OK.
->=20
-> But I do not know what happened with dosfstools project now in this
-> case, if it is going to be fixed or not.
->=20
-> I have prepared more patches for dosfstools project, but do not know if
-> I should open new pull requests or wait (how long?) or do something
-> else.
->=20
-> If it helps for somebody, I can create fork of dosfstools project and
-> include there all changes which I have prepared.
->=20
-> Any opinion? What other people think about this situation right now?
->=20
-> Karel, do you want to create official pull request for above util-linux
-> changes, even without fixes in dosfstools project?
+Best regards,
+Jingoo Han
 
-CC linux-fsdevel@vger.kernel.org as there can be other people interested
-in FAT & dosfstools...
-
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---4wdw3rnnapsisys4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCWoSwFAAKCRCL8Mk9A+RD
-UkElAKCqrVrS/L6IGUM3Qrh4II9NnpekJACgijAESFevrpdIxL3PYKlu2njbQ9A=
-=iLbC
------END PGP SIGNATURE-----
-
---4wdw3rnnapsisys4--
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/video/fbdev/Kconfig  |    3
+>  drivers/video/fbdev/s3c-fb.c |  162 -------------------------------------
+> ------
+>  2 files changed, 1 insertion(+), 164 deletions(-)
+> 
+> Index: b/drivers/video/fbdev/Kconfig
+> ===================================================================
+> --- a/drivers/video/fbdev/Kconfig	2018-02-12 14:28:32.392677896
+> +0100
+> +++ b/drivers/video/fbdev/Kconfig	2018-02-14 12:54:06.399057592
+> +0100
+> @@ -2020,8 +2020,7 @@ config FB_TMIO_ACCELL
+> 
+>  config FB_S3C
+>  	tristate "Samsung S3C framebuffer support"
+> -	depends on FB && (CPU_S3C2416 || ARCH_S3C64XX || \
+> -		ARCH_S5PV210 || ARCH_EXYNOS)
+> +	depends on FB && (CPU_S3C2416 || ARCH_S3C64XX)
+>  	select FB_CFB_FILLRECT
+>  	select FB_CFB_COPYAREA
+>  	select FB_CFB_IMAGEBLIT
+> Index: b/drivers/video/fbdev/s3c-fb.c
+> ===================================================================
+> --- a/drivers/video/fbdev/s3c-fb.c	2017-10-18 14:35:22.063448310
+> +0200
+> +++ b/drivers/video/fbdev/s3c-fb.c	2018-02-14 12:04:00.719262463
+> +0100
+> @@ -1716,63 +1716,6 @@ static struct s3c_fb_win_variant s3c_fb_
+>  	},
+>  };
+> 
+> -static struct s3c_fb_win_variant s3c_fb_data_s5p_wins[] = {
+> -	[0] = {
+> -		.has_osd_c	= 1,
+> -		.osd_size_off	= 0x8,
+> -		.palette_sz	= 256,
+> -		.valid_bpp	= (VALID_BPP1248 | VALID_BPP(13) |
+> -				   VALID_BPP(15) | VALID_BPP(16) |
+> -				   VALID_BPP(18) | VALID_BPP(19) |
+> -				   VALID_BPP(24) | VALID_BPP(25) |
+> -				   VALID_BPP(32)),
+> -	},
+> -	[1] = {
+> -		.has_osd_c	= 1,
+> -		.has_osd_d	= 1,
+> -		.osd_size_off	= 0xc,
+> -		.has_osd_alpha	= 1,
+> -		.palette_sz	= 256,
+> -		.valid_bpp	= (VALID_BPP1248 | VALID_BPP(13) |
+> -				   VALID_BPP(15) | VALID_BPP(16) |
+> -				   VALID_BPP(18) | VALID_BPP(19) |
+> -				   VALID_BPP(24) | VALID_BPP(25) |
+> -				   VALID_BPP(32)),
+> -	},
+> -	[2] = {
+> -		.has_osd_c	= 1,
+> -		.has_osd_d	= 1,
+> -		.osd_size_off	= 0xc,
+> -		.has_osd_alpha	= 1,
+> -		.palette_sz	= 256,
+> -		.valid_bpp	= (VALID_BPP1248 | VALID_BPP(13) |
+> -				   VALID_BPP(15) | VALID_BPP(16) |
+> -				   VALID_BPP(18) | VALID_BPP(19) |
+> -				   VALID_BPP(24) | VALID_BPP(25) |
+> -				   VALID_BPP(32)),
+> -	},
+> -	[3] = {
+> -		.has_osd_c	= 1,
+> -		.has_osd_alpha	= 1,
+> -		.palette_sz	= 256,
+> -		.valid_bpp	= (VALID_BPP1248 | VALID_BPP(13) |
+> -				   VALID_BPP(15) | VALID_BPP(16) |
+> -				   VALID_BPP(18) | VALID_BPP(19) |
+> -				   VALID_BPP(24) | VALID_BPP(25) |
+> -				   VALID_BPP(32)),
+> -	},
+> -	[4] = {
+> -		.has_osd_c	= 1,
+> -		.has_osd_alpha	= 1,
+> -		.palette_sz	= 256,
+> -		.valid_bpp	= (VALID_BPP1248 | VALID_BPP(13) |
+> -				   VALID_BPP(15) | VALID_BPP(16) |
+> -				   VALID_BPP(18) | VALID_BPP(19) |
+> -				   VALID_BPP(24) | VALID_BPP(25) |
+> -				   VALID_BPP(32)),
+> -	},
+> -};
+> -
+>  static struct s3c_fb_driverdata s3c_fb_data_64xx = {
+>  	.variant = {
+>  		.nr_windows	= 5,
+> @@ -1804,102 +1747,6 @@ static struct s3c_fb_driverdata s3c_fb_d
+>  	.win[4]	= &s3c_fb_data_64xx_wins[4],
+>  };
+> 
+> -static struct s3c_fb_driverdata s3c_fb_data_s5pv210 = {
+> -	.variant = {
+> -		.nr_windows	= 5,
+> -		.vidtcon	= VIDTCON0,
+> -		.wincon		= WINCON(0),
+> -		.winmap		= WINxMAP(0),
+> -		.keycon		= WKEYCON,
+> -		.osd		= VIDOSD_BASE,
+> -		.osd_stride	= 16,
+> -		.buf_start	= VIDW_BUF_START(0),
+> -		.buf_size	= VIDW_BUF_SIZE(0),
+> -		.buf_end	= VIDW_BUF_END(0),
+> -
+> -		.palette = {
+> -			[0] = 0x2400,
+> -			[1] = 0x2800,
+> -			[2] = 0x2c00,
+> -			[3] = 0x3000,
+> -			[4] = 0x3400,
+> -		},
+> -
+> -		.has_shadowcon	= 1,
+> -		.has_blendcon	= 1,
+> -		.has_clksel	= 1,
+> -		.has_fixvclk	= 1,
+> -	},
+> -	.win[0]	= &s3c_fb_data_s5p_wins[0],
+> -	.win[1]	= &s3c_fb_data_s5p_wins[1],
+> -	.win[2]	= &s3c_fb_data_s5p_wins[2],
+> -	.win[3]	= &s3c_fb_data_s5p_wins[3],
+> -	.win[4]	= &s3c_fb_data_s5p_wins[4],
+> -};
+> -
+> -static struct s3c_fb_driverdata s3c_fb_data_exynos4 = {
+> -	.variant = {
+> -		.nr_windows	= 5,
+> -		.vidtcon	= VIDTCON0,
+> -		.wincon		= WINCON(0),
+> -		.winmap		= WINxMAP(0),
+> -		.keycon		= WKEYCON,
+> -		.osd		= VIDOSD_BASE,
+> -		.osd_stride	= 16,
+> -		.buf_start	= VIDW_BUF_START(0),
+> -		.buf_size	= VIDW_BUF_SIZE(0),
+> -		.buf_end	= VIDW_BUF_END(0),
+> -
+> -		.palette = {
+> -			[0] = 0x2400,
+> -			[1] = 0x2800,
+> -			[2] = 0x2c00,
+> -			[3] = 0x3000,
+> -			[4] = 0x3400,
+> -		},
+> -
+> -		.has_shadowcon	= 1,
+> -		.has_blendcon	= 1,
+> -		.has_fixvclk	= 1,
+> -	},
+> -	.win[0]	= &s3c_fb_data_s5p_wins[0],
+> -	.win[1]	= &s3c_fb_data_s5p_wins[1],
+> -	.win[2]	= &s3c_fb_data_s5p_wins[2],
+> -	.win[3]	= &s3c_fb_data_s5p_wins[3],
+> -	.win[4]	= &s3c_fb_data_s5p_wins[4],
+> -};
+> -
+> -static struct s3c_fb_driverdata s3c_fb_data_exynos5 = {
+> -	.variant = {
+> -		.nr_windows	= 5,
+> -		.vidtcon	= FIMD_V8_VIDTCON0,
+> -		.wincon		= WINCON(0),
+> -		.winmap		= WINxMAP(0),
+> -		.keycon		= WKEYCON,
+> -		.osd		= VIDOSD_BASE,
+> -		.osd_stride	= 16,
+> -		.buf_start	= VIDW_BUF_START(0),
+> -		.buf_size	= VIDW_BUF_SIZE(0),
+> -		.buf_end	= VIDW_BUF_END(0),
+> -
+> -		.palette = {
+> -			[0] = 0x2400,
+> -			[1] = 0x2800,
+> -			[2] = 0x2c00,
+> -			[3] = 0x3000,
+> -			[4] = 0x3400,
+> -		},
+> -		.has_shadowcon	= 1,
+> -		.has_blendcon	= 1,
+> -		.has_fixvclk	= 1,
+> -	},
+> -	.win[0]	= &s3c_fb_data_s5p_wins[0],
+> -	.win[1]	= &s3c_fb_data_s5p_wins[1],
+> -	.win[2]	= &s3c_fb_data_s5p_wins[2],
+> -	.win[3]	= &s3c_fb_data_s5p_wins[3],
+> -	.win[4]	= &s3c_fb_data_s5p_wins[4],
+> -};
+> -
+>  /* S3C2443/S3C2416 style hardware */
+>  static struct s3c_fb_driverdata s3c_fb_data_s3c2443 = {
+>  	.variant = {
+> @@ -1942,15 +1789,6 @@ static const struct platform_device_id s
+>  		.name		= "s3c-fb",
+>  		.driver_data	= (unsigned long)&s3c_fb_data_64xx,
+>  	}, {
+> -		.name		= "s5pv210-fb",
+> -		.driver_data	= (unsigned long)&s3c_fb_data_s5pv210,
+> -	}, {
+> -		.name		= "exynos4-fb",
+> -		.driver_data	= (unsigned long)&s3c_fb_data_exynos4,
+> -	}, {
+> -		.name		= "exynos5-fb",
+> -		.driver_data	= (unsigned long)&s3c_fb_data_exynos5,
+> -	}, {
+>  		.name		= "s3c2443-fb",
+>  		.driver_data	= (unsigned long)&s3c_fb_data_s3c2443,
+>  	},
