@@ -1,58 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031531AbeBNPgW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 10:36:22 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:33484 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031287AbeBNPgU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:36:20 -0500
-Date: Wed, 14 Feb 2018 10:35:55 -0500
-From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: syzbot <syzbot+bbd8e9a06452cc48059b@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>, rds-devel@oss.oracle.com,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: use-after-free Read in rds_tcp_tune
-Message-ID: <20180214153555.GG11528@oracle.com>
-References: <001a1141a524c513ca05628d8ad4@google.com>
- <20180112183046.GA26098@oracle.com>
- <CACT4Y+aB0dZShujVMJFV6grb_7AYOMca13a1J2AkWsT7R0cgrQ@mail.gmail.com>
- <20180214152109.GF11528@oracle.com>
- <CACT4Y+bKpi8he1ygwAxgm4F_RJ=BRPBPdMaVAK64SbvCVGt7ww@mail.gmail.com>
+        id S1031543AbeBNPgy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 10:36:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39473 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031380AbeBNPgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 10:36:52 -0500
+Date: Wed, 14 Feb 2018 16:36:49 +0100
+From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Michal Suchanek <msuchanek@suse.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, Eric Anholt <eric@anholt.net>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Julia Lawall <Julia.Lawall@lip6.fr>, linux-mmc@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mmc: bcm2835: reset host on timeout
+Message-ID: <20180214163649.3a0c9476@kitsune.suse.cz>
+In-Reply-To: <1fbf0d77-cb53-f0fa-b810-e9954138d907@i2se.com>
+References: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
+        <1fbf0d77-cb53-f0fa-b810-e9954138d907@i2se.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+bKpi8he1ygwAxgm4F_RJ=BRPBPdMaVAK64SbvCVGt7ww@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8804 signatures=668670
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=1 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=1 mlxscore=1 mlxlogscore=227
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802140182
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (02/14/18 16:28), Dmitry Vyukov wrote:
-> syzbot is probably not seeing this problem. However if you don't add
-> the Reported-by tag to commit, nor provide syz fix tag, it will
-> consider it as "open". One consequence of this is that it is still on
-> our radars. Another consequence is that syzbot will never report bugs
-> in rds_tcp_tune ever again as it thinks that it's the same known bug,
-> so no point in bothering anybody.
+On Wed, 14 Feb 2018 15:58:31 +0100
+Stefan Wahren <stefan.wahren@i2se.com> wrote:
 
-understood, I think I saw this in the original syzbot mail as well,
-but I was hesitant to actually add the tag because the fix was
-based on code-inspection only, and I would have felt more comfortable
-about asserting the Reported-by if I'd done a clear-cut before/after
-verification.
+> Hi Michal,
+> 
+> Am 14.02.2018 um 15:38 schrieb Michal Suchanek:
+> > The bcm2835 mmc host tends to lock up for unknown reason so reset
+> > it on timeout. The upper mmc block layer tries retransimitting with
+> > single blocks which tends to work out after a long wait.
+> >
+> > This is better than giving up and leaving the machine broken for no
+> > obvious reason.  
+> 
+> could you please provide more information about this issue (affected
+> hardware, kernel config, version, dmesg, reproducible scenario)?
+> 
 
-btw, checkpatch.pl complains about the syzbot*@syzkaller.appspotmail.com
-addresses as "Unrecognized email address", we should fix that
-error from checkpatch at some point.
+The RPi3 is known to not work with some SD cards. You can find some
+wiki pages with large tables of known-working and known-broken cards. I
+have a couple of RPi3 boards and a card that works and card that does
+not. I tried debugging the issue but did not find anything I can do
+about it - AFAICT the issue happens somewhere inside the MMC controller
+IP. 
 
---Sowmini 
+I have no inside knowledge of the controller in question but during
+testing I tried to reset the controller whenever the issue happens so I
+can continue running the test system for a longer time until it gets
+unusable. While I did not find any solution to the problem the
+workaround with resetting the controller works quite reliably for me.
+
+So I am posting it in the hope that people with the wrong combination
+of RPi3 and SD card will not get a blank screen but rather a system
+that boots but tends to lock up for half a minute occasionally.
+
+Thanks
+
+Michal
