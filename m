@@ -1,128 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966687AbeBNDPS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 22:15:18 -0500
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:39733 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966600AbeBNDPQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 22:15:16 -0500
-X-Google-Smtp-Source: AH8x224Pu0Hrvw0nLiJz2AGj/KTpZq9U79KoBA5fT3uep+Ty3wiGbSBsiaV4sTv0khh3oQuXpfk0v7IMmpqdDtQl3Z0=
-MIME-Version: 1.0
-In-Reply-To: <20180213233945.55mfqpydfxmimak2@rob-hp-laptop>
-References: <e89b91042abbbcf04cb39a3350af000cc411eee1.1518076643.git.baolin.wang@linaro.org>
- <20180213233945.55mfqpydfxmimak2@rob-hp-laptop>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Wed, 14 Feb 2018 11:15:15 +0800
-Message-ID: <CAMz4ku+btJkpfE1BvZuuUSHVmiydsJ2i=0dePQocx67DKip8yQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: gpio: Add Spreadtrum EIC controller documentation
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, DTML <devicetree@vger.kernel.org>,
+        id S966708AbeBNDRX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 22:17:23 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39784 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966588AbeBNDRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 22:17:22 -0500
+Date: Tue, 13 Feb 2018 21:17:20 -0600
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Haozhong Zhang <haozhong.zhang@intel.com>
+Cc: Marc Haber <mh+linux-kernel@zugschlus.de>,
+        =?utf-8?B?546L6YeR5rWm?= <jinpuwang@gmail.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        "KVM-ML (kvm@vger.kernel.org)" <kvm@vger.kernel.org>, x86@kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: VMs freezing when host is running 4.14
+Message-ID: <20180214031720.jq6c6yv652wt5r6u@treble>
+References: <20171121161821.b6k3hdl3wgia5f5q@torres.zugschlus.de>
+ <20171122093945.5afa2di2g7qhf4eb@torres.zugschlus.de>
+ <CAD9gYJK7TOnfp+fnAyisYRQf--_TQv8J7h+kWH6KL98xNUH0bA@mail.gmail.com>
+ <20171201144358.7yffztjhylfxxytn@torres.zugschlus.de>
+ <20180108091025.2sup55jlpzbouo3d@torres.zugschlus.de>
+ <20180211133941.gayg52r3bqbtptvm@torres.zugschlus.de>
+ <20180214020445.ebu4fhnmogqehunb@treble>
+ <20180214025635.2lmvriql7uuzfop4@hz-desktop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180214025635.2lmvriql7uuzfop4@hz-desktop>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Wed, Feb 14, 2018 at 10:56:35AM +0800, Haozhong Zhang wrote:
+> On 02/13/18 20:04 -0600, Josh Poimboeuf wrote:
+> > On Sun, Feb 11, 2018 at 02:39:41PM +0100, Marc Haber wrote:
+> > > Hi,
+> > > 
+> > > after in total nine weeks of bisecting, broken filesystems, service
+> > > outages (thankfully on unportant systems), 4.15 seems to have fixed the
+> > > issue. After going to 4.15, the crashes never happened again.
+> > > 
+> > > They have, however, happened with each and every 4.14 release I tried,
+> > > which I stopped doing with 4.14.15 on Jan 28.
+> > > 
+> > > This means, for me, that the issue is fixed and that I have just wasted
+> > > nine weeks of time.
+> > > 
+> > > For you, this means that you have a crippling, data-eating issue in the
+> > > current long-term releae kernel. I do sincerely hope that I never have
+> > > to lay my eye on any 4.14 kernel and hope that no major distribution
+> > > will release with this version.
+> > 
+> > I saw something similar today, also in kvm_async_pf_task_wait().  I had
+> > -tip in the guest (based on 4.16.0-rc1) and Fedora
+> > 4.14.16-300.fc27.x86_64 on the host.
+> 
+> Could you check whether this patch [1] on the host kernel fixes your
+> issue?  Paolo had sent it to the stable tree and it may take a while
+> to be merged in the next 4.14 stable release (perhaps in this week).
+> 
+> [1] https://patchwork.kernel.org/patch/10155177/
 
-On 14 February 2018 at 07:39, Rob Herring <robh@kernel.org> wrote:
-> On Thu, Feb 08, 2018 at 04:01:42PM +0800, Baolin Wang wrote:
->> This patch adds the device tree bindings for the Spreadtrum EIC
->> controller. The EIC can be recognized as one special type of GPIO,
->> which can only be used as input.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> ---
->>  .../devicetree/bindings/gpio/gpio-eic-sprd.txt     |   51 ++++++++++++++++++++
->>  1 file changed, 51 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
->> new file mode 100644
->> index 0000000..34f194f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
->> @@ -0,0 +1,51 @@
->> +Spreadtrum EIC controller bindings
->> +
->> +The EIC is the abbreviation of external interrupt controller, which
->> +is only can be used as input mode. The EIC controller includes 4
->> +sub-modules: EIC-Debounce, EIC-Latch, EIC-Async, EIC-Sync.
->> +
->> +The EIC-debounce sub-module provides up to 8 source input signal
->> +connection. A debounce machanism is used to capture input signal's
->> +stable status (ms grade) and a single-trigger mechanism is introduced
->> +into this sub-module to enhance the input event detection reliability.
->> +In addition, this sub-module's clock can be shut-off automatically to
->> +reduce power dissipation. The debounce range is from 1ms to 4s with
->> +the step of 1ms. If the input signal is shorter than 1ms, it will be
->> +omitted as this sub-module.
->> +
->> +The EIC-latch sub-module is used to latch some special input signal
->> +and send interrupts to MCU core, and it can provide up to 8 latch
->> +source input signal connection.
->> +
->> +The EIC-async sub-module uses 32k clock to capture short signal (us
->> +grade) to generate interrupt to MCU by level or edge trigger.
->> +
->> +The EIC-sync is similar with GPIO's input function.
->> +
->> +Required properties:
->> +- compatible: Should be one of the following:
->> +  "sprd,sc9860-eic-debounce",
->> +  "sprd,sc9860-eic-latch",
->> +  "sprd,sc9860-eic-async",
->> +  "sprd,sc9860-eic-sync",
->> +  "sprd,sc27xx-eic-debounce".
->> +- reg: Define the base and range of the I/O address space containing
->> +  the GPIO controller registers.
->> +- gpio-controller: Marks the device node as a GPIO controller.
->
-> Why a gpio controller? Do you read the input pin state?
-
-We always regard it as GPIO except it only can be used as input mode.
-Like debounce eic, we still need request it before using it.
-
->
->> +- #gpio-cells: Should be <2>. The first cell is the gpio number and
->> +  the second cell is used to specify optional parameters.
->> +- interrupt-controller: Marks the device node as an interrupt controller.
->> +- #interrupt-cells: Should be <2>. Specifies the number of cells needed
->> +  to encode interrupt source.
->> +- interrupts: Should be the port interrupt shared by all the gpios.
->> +
->> +Example:
->> +     eic_debounce: eic@40210000 {
->
-> interrupt-controller@...
->
-> Or (if this remains a gpio controller)
->
-> gpio@...
-
-OK.
-
->
->> +             compatible = "sprd,sc9860-eic-debounce";
->> +             reg = <0 0x40210000 0 0x80>;
->> +             gpio-controller;
->> +             #gpio-cells = <2>;
->> +             interrupt-controller;
->> +             #interrupt-cells = <2>;
->> +             interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
->
-> The example doesn't seem to match your description of the block or
-> blocks. You talk about a bunch of sub modules and then there's just this
-> one node?
-
-I just list one as one example, and I will list all of them in next
-version. Thanks.
+Unfortunately I don't know how to recreate it, the VM had been sitting
+in idle for over an hour when it happened.  I'll leave it running
+overnight without the patch and see if it happens again.
 
 -- 
-Baolin.wang
-Best Regards
+Josh
