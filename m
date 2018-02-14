@@ -1,74 +1,96 @@
-Return-Path: <kernel-hardening-return-11789-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AH8x225WXkGqzWKl8KcxjGXzSn/x1apagSBy9wxEbeCOFtpV/TUhOz0Rvx59Pc4yRXoLHPvBtDWv
-ARC-Seal: i=1; a=rsa-sha256; t=1518640260; cv=none;
+Return-Path: <kernel-hardening-return-11784-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AH8x2274ZLidAwW9i5XsEY5XHNYm1n3mjmvAW02GDfzB0v+ildAzwJW1saiG/nVgNTxwOQMuhkt7
+ARC-Seal: i=1; a=rsa-sha256; t=1518639224; cv=none;
         d=google.com; s=arc-20160816;
-        b=nSgnxwDKWFfG6vRElxTFC6TWWCGD1PnWuB0tu6M5gJMf5h5duYEhMgm5axXgnhz9wD
-         vDdIuUIL82Gs0lZJpWwz+ULDOM+BS45gqrzdAl9xsEL536fGts1fNGf+4e0vY86bhZfC
-         WFCng6dwP2UxPzWygkWYJiGnhw2tjp45UV/7z4lHhLuQa+G06UloLwzRjB5OFc/jsLnC
-         0NJHI0sAQhPyJBC0g+lUx4immfOv1yu88kbA2khiac7B+B3SP/4WV7t09jXWRP1VkhRM
-         m7jNf2lztbA76gEH/X1L8hPGdQ0EeSrdEg/fL4yhuXZb2qTocwOsoMBZlf+hVqWEcDlo
-         GvpA==
+        b=UX2osO+T8IBqufPjFQHzWRQmR3M0mpSHhctJ64qA0GPkU45jWrNNWWD+NWP+cl+AOB
+         FxaoJAaNFThloGEFjLZZDe9aJYAzm2Iqp5YPZSP2nK7ifBx5eTFkk5dEBqeLUYA5ulGu
+         ayZnIPRshvGsmxD7Pz8eOm5UwgDDlbK/JofntZVnxjdE+E5KTzHXhbJ/aNpWncCrMK7K
+         crWk3WUR5MY0Q6+toVVEJw9MMf5j5m945pfa8iUAJ59LO/2ridtw1NATBfuNXKxCWV7s
+         55u8ijj5zAHIK+Oh3jRvW34o9DPZLH/hQ1LORMzVbkfuREVEv9KjCWxPJ9oYIi5tdJL4
+         In1Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
+         :list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=LYLMLeNI8S7YKYS5f5OaKBwUnCo4giGOIN4idZvyeuI=;
-        b=SgJRqtW9TCn/T8ZBIr7B8tQUjr6F5uWx+uD7DjsHqf+8sb1hyW3NJI3uezYOl/DeOh
-         /HUyQGNrh09TA+W7notFWUxM0XJ+5z0xxo3Qp/DxFvbJg/KZDmAum98rnx1iyUwGeNhh
-         t4+LekJEyuJpCVhlt945HRbSyjeVyQD54R50sTGbPJlhTCW+91//0KzarHpQetWCL/zz
-         t3gl66dd3jO4z1q7Feb5TZIoxPafhUruj6uCjcVLE+9ojHK6OMMcuRnlPAXcL0nVqOn8
-         WSJuwDiDvMXr6fRFjs7WbHyubLdoef+S1JkBPFEBPU3gYuJO8Na8SkusEVDCgb/tFDK2
-         Ibtg==
+        bh=olh2B0R6Wdl2+qoHIDoYnXvwVK14NaW4Mu5R+lvAgNI=;
+        b=dsQiMDNqojAiRLfR1z9VDPGGFBf1EpmuBgknq+L05fwuHUg8XjrpJSM/Io01jcgiTQ
+         wLm3a9H65/eVCCpn4tuPXgEcqVkmf2ALr1T5GIIDg9qN44ROT/K5xwCE0Z5jEXFahBsU
+         sua9CCILEG2g5aWPZpn6eH3DSR33/O+vMCHMGVjnyzvaTBvZ0deIfakvhIGpVv/2pVoO
+         S9MukUDiql3x1IkBcP2RuXAgTEhmOBhe4zPaiUiZwkN0FCEsFH3m99cjUbKWyCNSC5ts
+         2wRZrjwH10GT6x7xGZFQoIo+S7QAWvFfcPgc2fLX+bVZmKcDyKYLDyw3kCvEqUXbTLQL
+         Tq0w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11789-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11789-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=Tk6HX5S8;
+       spf=pass (google.com: domain of kernel-hardening-return-11784-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11784-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-11789-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11789-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=Tk6HX5S8;
+       spf=pass (google.com: domain of kernel-hardening-return-11784-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-11784-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:541:599:966:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1538:1593:1594:1711:1730:1747:1777:1792:2196:2198:2199:2200:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3870:3871:3874:4250:4321:4385:4605:5007:6119:10004:10400:10848:11232:11658:11914:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21611:21627:30054:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
-X-HE-Tag: feet86_23090c8df7714
-X-Filterd-Recvd-Size: 1594
-Message-ID: <1518640239.3678.26.camel@perches.com>
-Subject: Re: [PATCH v2 3/8] Convert virtio_console to kvzalloc_struct
-From: Joe Perches <joe@perches.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox
- <mawilcox@microsoft.com>, linux-mm@kvack.org, Kees Cook
- <keescook@chromium.org>,  linux-kernel@vger.kernel.org,
- kernel-hardening@lists.openwall.com
-Date: Wed, 14 Feb 2018 12:30:39 -0800
-In-Reply-To: <20180214202835.GE20627@bombadil.infradead.org>
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>,
+	linux-mm@kvack.org,
+	Kees Cook <keescook@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	Joe Perches <joe@perches.com>
+Subject: [PATCH v2 8/8] Convert jffs2 acl to kvzalloc_struct
+Date: Wed, 14 Feb 2018 12:11:54 -0800
+Message-Id: <20180214201154.10186-9-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180214201154.10186-1-willy@infradead.org>
 References: <20180214201154.10186-1-willy@infradead.org>
-	 <20180214201154.10186-4-willy@infradead.org>
-	 <1518639587.3678.25.camel@perches.com>
-	 <20180214202835.GE20627@bombadil.infradead.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592408604560950999?=
-X-GMAIL-MSGID: =?utf-8?q?1592409730339392935?=
+X-GMAIL-THRID: =?utf-8?q?1592408644336868874?=
+X-GMAIL-MSGID: =?utf-8?q?1592408644336868874?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 2018-02-14 at 12:28 -0800, Matthew Wilcox wrote:
-> On Wed, Feb 14, 2018 at 12:19:47PM -0800, Joe Perches wrote:
-> > On Wed, 2018-02-14 at 12:11 -0800, Matthew Wilcox wrote:
-> > >  	 */
-> > > -	buf = kmalloc(sizeof(*buf) + sizeof(struct scatterlist) * pages,
-> > > -		      GFP_KERNEL);
-> > > +	buf = kvzalloc_struct(buf, sg, pages, GFP_KERNEL);
-> > >  	if (!buf)
-> > 
-> > kvfree?
-> 
-> Yes, that would also need to be done.  The point of these last six
-> patches was to show the API in use, not for applying.
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-That's what RFC is for...
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ fs/jffs2/acl.c | 3 ++-
+ fs/jffs2/acl.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/jffs2/acl.c b/fs/jffs2/acl.c
+index 7ebacf14837f..9df7feffd6ea 100644
+--- a/fs/jffs2/acl.c
++++ b/fs/jffs2/acl.c
+@@ -13,6 +13,7 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/slab.h>
++#include <linux/mm.h>
+ #include <linux/fs.h>
+ #include <linux/sched.h>
+ #include <linux/time.h>
+@@ -133,7 +134,7 @@ static void *jffs2_acl_to_medium(const struct posix_acl *acl, size_t *size)
+ 	size_t i;
+ 
+ 	*size = jffs2_acl_size(acl->a_count);
+-	header = kmalloc(sizeof(*header) + acl->a_count * sizeof(*entry), GFP_KERNEL);
++	header = kvzalloc_struct(header, a_entries, acl->a_count, GFP_KERNEL);
+ 	if (!header)
+ 		return ERR_PTR(-ENOMEM);
+ 	header->a_version = cpu_to_je32(JFFS2_ACL_VERSION);
+diff --git a/fs/jffs2/acl.h b/fs/jffs2/acl.h
+index 2e2b5745c3b7..12d0271bdde3 100644
+--- a/fs/jffs2/acl.h
++++ b/fs/jffs2/acl.h
+@@ -22,6 +22,7 @@ struct jffs2_acl_entry_short {
+ 
+ struct jffs2_acl_header {
+ 	jint32_t	a_version;
++	struct jffs2_acl_entry	a_entries[];
+ };
+ 
+ #ifdef CONFIG_JFFS2_FS_POSIX_ACL
+-- 
+2.15.1
