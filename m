@@ -1,67 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966922AbeBNIVT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 03:21:19 -0500
-Received: from mout.web.de ([212.227.17.12]:60417 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754556AbeBNIVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 03:21:17 -0500
-Subject: Re: efi/apple-properties: Checking error handling in
- unmarshal_devices()
-To: Lukas Wunner <lukas@wunner.de>, linux-efi@vger.kernel.org
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <145f8fac-9297-b362-d89f-886632e2507f@users.sourceforge.net>
- <20180213184033.GA24299@wunner.de>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <af278523-44af-3483-8503-10ec93f7a6c6@users.sourceforge.net>
-Date: Wed, 14 Feb 2018 09:21:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754625AbeBNIXL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 03:23:11 -0500
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:35128 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754556AbeBNIXK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 03:23:10 -0500
+X-Google-Smtp-Source: AH8x2256X5HQITIMnIZFeia/QKh7WDc7kBiSg+uI34F1UPMd5wcUBbyvnqXB4ANnzL3VIGK8KMEnrQ==
+Date: Wed, 14 Feb 2018 11:23:06 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH -mm 2/3] proc: move "struct pde_opener" to kmem cache
+Message-ID: <20180214082306.GB17157@avx2>
+References: <20180214063033.GA15579@avx2>
+ <20180214081935.GA17157@avx2>
 MIME-Version: 1.0
-In-Reply-To: <20180213184033.GA24299@wunner.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:CTh4LtVfJErdJ2fZa4SLYfZj88er1ub4g+ETkHjiN8aAdezfZYJ
- biK2+YofDaM9p3ibu/0FNVOXwRfcxdd3zKylN8t6/JfAr1VsQ7fNoKiV2smjSyD3/eRjELl
- 3hAxMjsMSzGQsFNgsb7hI1zUjsQShgEmxlJ2CPp3FmMhAoQbGFDg4icRutVNPQy7pxyLBDP
- l3kXopvag9+dqgKbsl3gA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:HqZ+bzO2Mz0=:gH0fUEfeN5oEqgBLiGAdlp
- fkw1UpGAh3C5Y0shPgldpGL8lz26OzyLdQHahdRQ0TJvk3o7QLmhkw6NARNY52x0Uxy3XElrT
- gI3dC7hxM5ReG5SSMWUgYiVGACPZN5CIFV2wo7A/Zy35AjUwqrqKyinVg7QMTLkfLv5FluoYA
- TxHnDG90lHD2yfhSN5mJnTWikpNXKtmxh44KrUnCxakeOP/rLKfrZSu64mtk26rR9s2ZgpYpi
- yPpTHjGKQE8PbbZiKZGGAFVcoiLPMKP2BwXDtI6qusPCzVWNIfls8VNtgiazENTfE2nKsOD2J
- twsTysP94yRp4aW0mEBdZYII2sb/yqgnVmleLdXvO/0+rvjaO7fjVXKLAchP+JLN3VWS/7e+L
- oNs/mkMa1q1wrFKcDgbw7y8gx86IdajcIvqUV2jbVPKnMf6Jdu+7BPnl2RFheIVb4EvUn3v+v
- kwyNfCQPFTd0CyYOMNW8Q9SLIcnFxZYyCHwkuBj62X1WCX5Q90bJpQgGuTghGz1dyhomL4ESN
- zwBTJSMvCIOyatP+yP4mVVgTsyZ6akQOrBVapX8SSfTKS4/KzTe6R6J+1a5rXQASCLPZohyAX
- GgpxrH1piYjnXncXTZTiXn1pHAx6uZzGg3jLRqCFSs4ABxEgwExBPVXTZyYqlLJtvrQ/1hMkl
- dV1B5LeVkMQTaDwrXZjGyTbdXwTq28OZtopoOatCqcs4pCspI2Niqtk6WWPjhSgxLVsAz216S
- bRR6V/4wr+/1qJVZb3z1g/LFIWwqMfgvOiiipiJ4UTYkeor03N05mX0a1ILx7Wnj3ccjmIDvl
- ShXmQ1xunjGjfshx8UkvEzd6CzCWE/UDYCGm6N+BvHr6GveJgE=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180214081935.GA17157@avx2>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> While the allocator does print an error when allocations fail,
-> it may not be immediately apparent to the user what the
-> *consequences* are.  In this case, the consequence is that the
-> device properties will not be available for consumption by
-> drivers and they may fail to probe or behave in entirely
-> unexpected ways.
+"struct pde_opener" is fixed size and we can have more granular approach
+to debugging.
 
-Would it make sense to indicate such a questionable software situation
-be any return code?
+For those who don't know, per cache SLUB poisoning and red zoning
+don't work if there is at least one object allocated which is hopeless
+in case of kmalloc-64 but not in case of standalone cache.
+Although systemd opens 2 files from the get go, so it is hopeless after
+all.
 
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-> Hence I deliberately printed an error message here so that the user
-> can make the connection between erratic behavior of drivers later on
-> and the memory allocation error here.
+ fs/proc/inode.c    |   12 ++++++++----
+ fs/proc/internal.h |    2 +-
+ fs/proc/root.c     |    2 +-
+ 3 files changed, 10 insertions(+), 6 deletions(-)
 
-Do you find this terse message really sufficient?
-
-Can the mentioned properties be required for the desired system configuration?
-
-Regards,
-Markus
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -54,6 +54,7 @@ static void proc_evict_inode(struct inode *inode)
+ }
+ 
+ static struct kmem_cache *proc_inode_cachep __ro_after_init;
++static struct kmem_cache *pde_opener_cache __ro_after_init;
+ 
+ static struct inode *proc_alloc_inode(struct super_block *sb)
+ {
+@@ -92,7 +93,7 @@ static void init_once(void *foo)
+ 	inode_init_once(&ei->vfs_inode);
+ }
+ 
+-void __init proc_init_inodecache(void)
++void __init proc_init_kmemcache(void)
+ {
+ 	proc_inode_cachep = kmem_cache_create("proc_inode_cache",
+ 					     sizeof(struct proc_inode),
+@@ -100,6 +101,9 @@ void __init proc_init_inodecache(void)
+ 						SLAB_MEM_SPREAD|SLAB_ACCOUNT|
+ 						SLAB_PANIC),
+ 					     init_once);
++	pde_opener_cache =
++		kmem_cache_create("pde_opener", sizeof(struct pde_opener), 0,
++				  SLAB_PANIC, NULL);
+ }
+ 
+ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+@@ -172,7 +176,7 @@ static void close_pdeo(struct proc_dir_entry *pde, struct pde_opener *pdeo)
+ 		spin_unlock(&pde->pde_unload_lock);
+ 		if (unlikely(c))
+ 			complete(c);
+-		kfree(pdeo);
++		kmem_cache_free(pde_opener_cache, pdeo);
+ 	}
+ }
+ 
+@@ -347,7 +351,7 @@ static int proc_reg_open(struct inode *inode, struct file *file)
+ 
+ 	release = pde->proc_fops->release;
+ 	if (release) {
+-		pdeo = kmalloc(sizeof(struct pde_opener), GFP_KERNEL);
++		pdeo = kmem_cache_alloc(pde_opener_cache, GFP_KERNEL);
+ 		if (!pdeo) {
+ 			rv = -ENOMEM;
+ 			goto out_unuse;
+@@ -368,7 +372,7 @@ static int proc_reg_open(struct inode *inode, struct file *file)
+ 			list_add(&pdeo->lh, &pde->pde_openers);
+ 			spin_unlock(&pde->pde_unload_lock);
+ 		} else
+-			kfree(pdeo);
++			kmem_cache_free(pde_opener_cache, pdeo);
+ 	}
+ 
+ out_unuse:
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -182,7 +182,7 @@ extern const struct inode_operations proc_link_inode_operations;
+ 
+ extern const struct inode_operations proc_pid_link_inode_operations;
+ 
+-extern void proc_init_inodecache(void);
++void proc_init_kmemcache(void);
+ void set_proc_pid_nlink(void);
+ extern struct inode *proc_get_inode(struct super_block *, struct proc_dir_entry *);
+ extern int proc_fill_super(struct super_block *, void *data, int flags);
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -125,7 +125,7 @@ void __init proc_root_init(void)
+ {
+ 	int err;
+ 
+-	proc_init_inodecache();
++	proc_init_kmemcache();
+ 	set_proc_pid_nlink();
+ 	err = register_filesystem(&proc_fs_type);
+ 	if (err)
