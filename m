@@ -1,72 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031670AbeBNVkx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 16:40:53 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:34096 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031406AbeBNVkv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 16:40:51 -0500
-X-Google-Smtp-Source: AH8x224iCtHtF+Njyn8Rx/ksQgfRQBQPGZIyyCnpLRZTMdiCFaqCdh3uFbPt0njWnF3ObeQSh43KPGZ+yq9PZjW8VTA=
+        id S1031608AbeBNVlZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 16:41:25 -0500
+Received: from mga17.intel.com ([192.55.52.151]:35060 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031419AbeBNVlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 16:41:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,514,1511856000";
+   d="scan'208";a="20088283"
+Subject: Re: ERROR: "sst_context_init"
+ [sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
+To: kbuild test robot <fengguang.wu@intel.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <201802150332.ujDzQYVH%fengguang.wu@intel.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <bc8a4057-f666-30a4-9144-3bd01db1b6ba@linux.intel.com>
+Date: Wed, 14 Feb 2018 15:41:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <8bd4cb1d24af27d9ace70f03300d5033e38e5a48.1518429770.git.rgb@redhat.com>
-References: <8bd4cb1d24af27d9ace70f03300d5033e38e5a48.1518429770.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 14 Feb 2018 16:40:49 -0500
-Message-ID: <CAHC9VhQgG3X4w2XpUD6zwv1TnZAL6C6KarcUqk9XgEfJN47yrw@mail.gmail.com>
-Subject: Re: [PATCH] audit: session ID should not set arch quick field pointer
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <201802150332.ujDzQYVH%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 5:04 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> A bug was introduced in 8fae47705685fcaa75a1fe4c8c3e18300a702979
-> ("audit: add support for session ID user filter")
-> See: https://github.com/linux-audit/audit-kernel/issues/4
+On 02/14/2018 01:23 PM, kbuild test robot wrote:
+
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   6556677a80400ca5744340d8ff6fbed22621293e
+> commit: 4772c16ede522d46219a59646503d2020841a6f4 ASoC: Intel: Kconfig: Simplify-clarify ACPI/PCI dependencies
+> date:   5 weeks ago
+> config: x86_64-randconfig-s2-02150010 (attached as .config)
+> compiler: gcc-6 (Debian 6.4.0-9) 6.4.0 20171026
+> reproduce:
+>          git checkout 4772c16ede522d46219a59646503d2020841a6f4
+>          # save the attached .config to linux build tree
+>          make ARCH=x86_64
 >
-> When setting a session ID filter, the session ID filter field overwrote
-> the quick pointer reference to the arch field, potentially causing the
-> arch field to be misinterpreted.
+> All errors (new ones prefixed by >>):
 >
-> Passes audit-testsuite.
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+>     WARNING: modpost: missing MODULE_LICENSE() in drivers/iio/accel/kxsd9-i2c.o
+>     see include/linux/module.h for more information
+>     WARNING: modpost: missing MODULE_LICENSE() in drivers/iio/adc/qcom-vadc-common.o
+>     see include/linux/module.h for more information
+>     WARNING: modpost: missing MODULE_LICENSE() in sound/soc/codecs/snd-soc-pcm512x-spi.o
+>     see include/linux/module.h for more information
+This was reported by Arnd Bergman and fixed with a patch sent on January 
+24 to alsa-devel ("ASoC: Intel: atom: fix ACPI/PCI Kconfig"), but I 
+don't see it in Mark's tree?
+
+http://mailman.alsa-project.org/pipermail/alsa-devel/2018-January/130979.html
+
+
+>>> ERROR: "sst_context_init" [sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
+>>> ERROR: "sst_context_cleanup" [sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
+>>> ERROR: "sst_alloc_drv_context" [sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
+>>> ERROR: "intel_sst_pm" [sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
+>>> ERROR: "sst_configure_runtime_pm" [sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
 > ---
->  kernel/auditfilter.c | 1 -
->  1 file changed, 1 deletion(-)
-
-Good catch.  Merged.
-
-Looking at the original patch and audit_field_valid(), I think we
-should probably look into tightening up what constitutes "valid"
-fields.  For example, does it make sense to allow anything but
-equal/not-equal when comparing AUDIT_SUBJ_TYPE? (note well: this is
-just one example, there are many more)
-
-* https://github.com/linux-audit/audit-kernel/issues/73
-
-> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-> index 4a1758a..739a6d2 100644
-> --- a/kernel/auditfilter.c
-> +++ b/kernel/auditfilter.c
-> @@ -496,7 +496,6 @@ static struct audit_entry *audit_data_to_entry(struct audit_rule_data *data,
->                         if (!gid_valid(f->gid))
->                                 goto exit_free;
->                         break;
-> -               case AUDIT_SESSIONID:
->                 case AUDIT_ARCH:
->                         entry->rule.arch_f = f;
->                         break;
-> --
-> 1.8.3.1
->
-
--- 
-paul moore
-www.paul-moore.com
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
