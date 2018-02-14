@@ -1,98 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966944AbeBNJnb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 04:43:31 -0500
-Received: from mail-qk0-f180.google.com ([209.85.220.180]:33389 "EHLO
-        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966503AbeBNJn3 (ORCPT
+        id S966967AbeBNJoe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 04:44:34 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:59149 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966503AbeBNJoc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 04:43:29 -0500
-X-Google-Smtp-Source: AH8x2266MGvF4vRPu3StK+04zZKhaXOGP97u1lvzbZe20+5CKxKPyaPlEtDuOZDYheagD+0+7cJmpjFqkRfvxX3TwYc=
+        Wed, 14 Feb 2018 04:44:32 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w1E9iTrW020593
+X-Nifty-SrcIP: [209.85.217.179]
+X-Google-Smtp-Source: AH8x227/Arkq4oVUuaGUVWEsYKHS9NWQxMpOK0XvvjN5n1zmoCNO+H9Nwrpivz8bDVE/orqVu/JGcywN7g9Ixt4Ki3Y=
 MIME-Version: 1.0
-In-Reply-To: <ed556509-1460-3e05-b161-f476090ff480@redhat.com>
-References: <1518539815-13774-1-git-send-email-geert+renesas@glider.be>
- <1518539815-13774-3-git-send-email-geert+renesas@glider.be> <ed556509-1460-3e05-b161-f476090ff480@redhat.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Feb 2018 10:43:27 +0100
-X-Google-Sender-Auth: sNNLT6WP8qX26fB-V9_KwrJHoOE
-Message-ID: <CAMuHMdULCdVCY7k5ZHX66poxRMTJZ3B1KvDrCzBmtkEipC=CMw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] vfio: platform: Add generic DT reset support
-To: Auger Eric <eric.auger@redhat.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        KVM list <kvm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
+In-Reply-To: <CAPDyKFoxp7p0atQTV=PoQ7Bwt0fOs2aEq1KJHPtrq+zA3eFYgw@mail.gmail.com>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
+ <20180207191152.kvqrugblst2cko3c@ninjato> <CAPDyKFoxp7p0atQTV=PoQ7Bwt0fOs2aEq1KJHPtrq+zA3eFYgw@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Wed, 14 Feb 2018 18:43:48 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQaEJFH7Y+XsGEWDbrDkXTt35Yqd5DBmk0hpd6bggy+hQ@mail.gmail.com>
+Message-ID: <CAK7LNAQaEJFH7Y+XsGEWDbrDkXTt35Yqd5DBmk0hpd6bggy+hQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and cleanups
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        devicetree@vger.kernel.org, Linux-sh list <linux-sh@vger.kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rob Herring <robh@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Rich Felker <dalias@libc.org>, Mark Rutland <mark.rutland@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+Hi Ulf,
 
-On Wed, Feb 14, 2018 at 10:09 AM, Auger Eric <eric.auger@redhat.com> wrote:
-> On 13/02/18 17:36, Geert Uytterhoeven wrote:
->> Vfio-platform requires reset support, provided either by ACPI, or, on DT
->> platforms, by a device-specific reset driver matching against the
->> device's compatible value.
+
+2018-02-14 18:36 GMT+09:00 Ulf Hansson <ulf.hansson@linaro.org>:
+> On 7 February 2018 at 20:11, Wolfram Sang <wsa@the-dreams.de> wrote:
 >>
->> On many SoCs, devices are connected to an SoC-internal reset controller,
->> and can be reset in a generic way.  Hence add support to reset such
->> devices using the reset controller subsystem, provided the reset
->> hierarchy is described correctly in DT using the "resets" property.
+>>> I picked patch5 and patch6, as those seemed trivial. Unless there is a
+>>> rc9, let's aim for 4.17 for the rest.
+>>
+>> I can't find the branch where you picked these patches? I wanted to use
+>> it to apply the rest of the patches. They don't seem to fit on v4.15
+>> or current linus/master. Can you share this branch?
 >
-> I first acknowledge I am not familiar with what those reset controllers
-> do in practice. My fear is that we may rely on generic SW pieces that
-> may not be adapted to passthrough constraints. We must guarantee that
-> any DMA access attempted by the devices are stopped and any interrupts
-> gets stopped. Can we guarantee that the reset controller always induce
-> that? Otherwise we may leave the door opened to badly reset assigned
-> devices.
-
-An on-SoC reset controller is basically a block controlling signals to the
-reset inputs of the individual on-SoC devices.
-On Renesas ARM SoCs, this allows to do a full reset of the attached device.
-
-Of course the exact semantics depend on the actual SoC.
-If e.g. DMA and interrupts are not stopped for a specific device on a
-specific SoC, it still needs a device-specific reset driver, matching against
-the appropriate compatible value, cfr. the quoted paragraph below.
-
-You could add a whitelist for of_machine_is_compatible() or
-of_device_is_compatible(), but that will grow large fast.
-
->> Devices that require a more complex reset procedure can still
->> provide a device-specific reset driver, as that takes precedence.
-
->> @@ -138,6 +152,8 @@ static void vfio_platform_put_reset(struct vfio_platform_device *vdev)
+> You need to check again. :-)
+>
+> Patches up and to patch6 is already in Linus' tree v.16rc1, those I
+> carried for quite a while on my next branch before sending them in the
+> PR to Linus.
+>
 >>
->>       if (vdev->of_reset)
->>               module_put(vdev->reset_module);
->> +
-> if (vdev->reset_control) ?
-> reset_control_put seems to only check IS_ERR()
+>> I will do reviewing now "visually". But please wait until I tested them
+>> before applying.
+>
+> I am eager to apply those patches you already have reviewed (to
+> patch14), as those mostly seemed rather trivial and should be nice
+> cleanups.
+>
+> Do you mind me going ahead, then you can continue and review/test the rest?
+>
 
-    void reset_control_put(struct reset_control *rstc)
-    {
-            if (IS_ERR_OR_NULL(rstc))
-                    return;
 
-So it does handle NULL.
+If you move forward, please fix-up the commit log of the patch 11.
+(https://patchwork.kernel.org/patch/10170007/)
 
->> +     reset_control_put(vdev->reset_control);
 
-Gr{oetje,eeting}s,
+Documentation/devicetree/bindings/mmc/tmio_mmc.txt
 
-                        Geert
+  ->
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Documentation/devicetree/bindings/mmc/mmc.txt
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+
+Thanks.
+
+
+-- 
+Best Regards
+Masahiro Yamada
