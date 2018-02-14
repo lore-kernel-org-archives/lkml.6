@@ -1,151 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162812AbeBNTUw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 14:20:52 -0500
-Received: from mga06.intel.com ([134.134.136.31]:41685 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162781AbeBNTUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 14:20:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,513,1511856000";
-   d="scan'208";a="204241472"
-Subject: Re: [tip:x86/pti] x86/speculation: Use IBRS if available before
- calling into firmware
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave@sr71.net>,
-        hpa@zytor.com, tglx@linutronix.de, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, dwmw@amazon.co.uk,
-        linux-tip-commits@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-        Arjan van de Ven <arjan@infradead.org>
-References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
- <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
- <20180212102211.cdrrqqd4hdw7xu5y@gmail.com>
- <a85c28b8-1255-3264-bb4a-89e85e3c6009@sr71.net>
- <20180212165835.GO25181@hirez.programming.kicks-ass.net>
- <20180213075540.3lkikkpgjoe6ocjk@gmail.com>
- <5c3ba123-abbe-f153-7b75-a89d31d25c72@linux.intel.com>
- <20180214085614.GT25181@hirez.programming.kicks-ass.net>
-From: Tim Chen <tim.c.chen@linux.intel.com>
-Message-ID: <1fd7c8ef-a50c-53d8-7159-d992e669c2f2@linux.intel.com>
-Date: Wed, 14 Feb 2018 11:20:47 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        id S1162786AbeBNTVG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 14:21:06 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:36341 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162797AbeBNTUu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 14:20:50 -0500
+X-Google-Smtp-Source: AH8x226+hg43nRRJ36vpJK5s+BttJLPKMRiMiOx8fdmNl1PuhWlrxtcYlGv9ZPJNMr7wjCy9nspp1A3877OByj7aMJc=
 MIME-Version: 1.0
-In-Reply-To: <20180214085614.GT25181@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180214025533.GA28811@bombadil.infradead.org>
+References: <001a1144c4ca5dc9d6056520c7b7@google.com> <20180214025533.GA28811@bombadil.infradead.org>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 14 Feb 2018 20:20:29 +0100
+Message-ID: <CACT4Y+YMhfpQQBPgVuH=bLwovO1-TPOyN95JP84XVgSydreG8w@mail.gmail.com>
+Subject: Re: WARNING in kvmalloc_node
+To: Matthew Wilcox <willy@infradead.org>
+Cc: syzbot <syzbot+1a240cdb1f4cc88819df@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@suse.com>, Ingo Molnar <mingo@kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        syzkaller-bugs@googlegroups.com, Vlastimil Babka <vbabka@suse.cz>,
+        Al Viro <viro@zeniv.linux.org.uk>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/14/2018 12:56 AM, Peter Zijlstra wrote:
+On Wed, Feb 14, 2018 at 3:55 AM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Tue, Feb 13, 2018 at 03:59:01PM -0800, syzbot wrote:
+>> Hello,
+>>
+>> syzbot hit the following crash on bpf-next commit
+>> 7928b2cbe55b2a410a0f5c1f154610059c57b1b2 (Sun Feb 11 23:04:29 2018 +0000)
+>> Linux 4.16-rc1
+>>
+>> So far this crash happened 236 times on bpf-next.
+>> C reproducer is attached.
+>> syzkaller reproducer is attached.
+>> Raw console output is attached.
+>> compiler: gcc (GCC) 7.1.1 20170620
+>> .config is attached.
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+1a240cdb1f4cc88819df@syzkaller.appspotmail.com
+>> It will help syzbot understand when the bug is fixed. See footer for
+>> details.
+>> If you forward the report, please keep this part and the footer.
+>>
+>> audit: type=1400 audit(1518457683.474:7): avc:  denied  { map } for
+>> pid=4183 comm="syzkaller238030" path="/root/syzkaller238030826" dev="sda1"
+>> ino=16481 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
+>> tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
+>> WARNING: CPU: 1 PID: 4183 at mm/util.c:403 kvmalloc_node+0xc3/0xd0
+>> mm/util.c:403
+>
+> This WARN_ON is telling us that we were called with the wrong GFP flags.
+>
+>> audit: type=1400 audit(1518457683.474:8): avc:  denied  { map_create } for
+>> pid=4183 comm="syzkaller238030"
+>> scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
+>> tcontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023 tclass=bpf
+>> permissive=1
+>> Kernel panic - not syncing: panic_on_warn set ...
+>>
+>> CPU: 1 PID: 4183 Comm: syzkaller238030 Not tainted 4.16.0-rc1+ #12
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>> Google 01/01/2011
+>> Call Trace:
+>>  __dump_stack lib/dump_stack.c:17 [inline]
+>>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>> audit: type=1400 audit(1518457683.474:9): avc:  denied  { map_read map_write
+>> } for  pid=4183 comm="syzkaller238030"
+>> scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
+>> tcontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023 tclass=bpf
+>> permissive=1
+>>  panic+0x1e4/0x41c kernel/panic.c:183
+>>  __warn+0x1dc/0x200 kernel/panic.c:547
+>>  report_bug+0x211/0x2d0 lib/bug.c:184
+>>  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+>>  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+>>  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+>>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>>  invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:988
+>> RIP: 0010:kvmalloc_node+0xc3/0xd0 mm/util.c:403
+>> RSP: 0018:ffff8801b436f6e8 EFLAGS: 00010293
+>> RAX: ffff8801b1dd25c0 RBX: 0000000001088220 RCX: ffffffff81970ca3
+>> RDX: 0000000000000000 RSI: 0000000001088220 RDI: 0000000000000070
+>> RBP: ffff8801b436f708 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000070
+>> R13: 0000000000000000 R14: 00000000ffffffff R15: ffff8801d304cd00
+>>  kvmalloc include/linux/mm.h:541 [inline]
+>>  kvmalloc_array include/linux/mm.h:557 [inline]
+>>  __ptr_ring_init_queue_alloc include/linux/ptr_ring.h:474 [inline]
+>>  ptr_ring_init include/linux/ptr_ring.h:492 [inline]
+>>  __cpu_map_entry_alloc kernel/bpf/cpumap.c:359 [inline]
+>>  cpu_map_update_elem+0x3c3/0x8e0 kernel/bpf/cpumap.c:490
+>>  map_update_elem kernel/bpf/syscall.c:698 [inline]
+>
+> Blame the BPF people, not the MM people ;-)
 
-> 
-> At the very least this must disable and re-enable preemption, such that
-> we guarantee we inc/dec the same counter. ISTR some firmware calls (EFI)
-> actually are preemptible so that wouldn't work.
-> 
-> Further, consider:
-> 
-> 	this_cpu_inc_return()		// 0->1
-> 	<NMI>
-> 		this_cpu_inc_return()	// 1->2
-> 		call_broken_arse_firmware()
-> 		this_cpu_dec_return()	// 2->1
-> 	</NMI>
-> 	wrmsr(SPEC_CTRL, IBRS);
-> 
-> 	/* from dodgy firmware crap */
-> 
-> 	this_cpu_dec_return()		// 1->0
-> 	wrmsr(SPEC_CTRL, 0);
-> 
+Done:
+https://github.com/google/syzkaller/commit/77ed06bf1628ff4554aa800240fbc22bb2a133b7
+Now will be attributed to kernel/bpf/cpumap.c and titled "WARNING:
+kmalloc bug in cpu_map_update_elem".
 
-How about the following patch.
+Thanks!
 
-Thanks.
 
-Tim
-
----
->From a37d28622781acf2789dd63f2fdb57be733f15a4 Mon Sep 17 00:00:00 2001
-From: Tim Chen <tim.c.chen@linux.intel.com>
-Date: Tue, 13 Feb 2018 04:10:41 -0800
-Subject: [PATCH] x86/firmware: Prevent IBRS from being turned off prematurely.
-
-Dave Woodhoue proposed using IBRS to protect the firmware
-call path against Spectre exploit.  However, firmware path
-can go through NMI and we can get nested calls, causing
-unsafe firmware calls with missing IBRS as illustrated below:
-
-	firmware_restrict_branch_speculation_start (set IBRS=1)
-	NMI
-	    firmware_restrict_branch_speculation_start (set IBRS=1)
-	    firmware call
-	    firmware_restrict_branch_speculation_end (set IBRS=0)
-	NMI return
-	firmware call (with IBRS=0)  <---- unsafe call, premature IBRS disabling
-	firmware_restrict_branch_speculation_end (set IBRS=0)
-
-This patch proposes using a per cpu counter to track the IBRS
-firmware call nesting depth, to ensure that we don't turn off
-IBRS prematurely before calling firmware.
-
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
----
- arch/x86/include/asm/nospec-branch.h | 10 ++++++++--
- arch/x86/kernel/cpu/bugs.c           |  2 ++
- 2 files changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 297d457..a8dd9ea 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -146,6 +146,8 @@ enum spectre_v2_mitigation {
- extern char __indirect_thunk_start[];
- extern char __indirect_thunk_end[];
- 
-+DECLARE_PER_CPU(int, spec_ctrl_ibrs_fw_depth);
-+
- /*
-  * On VMEXIT we must ensure that no RSB predictions learned in the guest
-  * can be followed in the host, by overwriting the RSB completely. Both
-@@ -186,14 +188,18 @@ static inline void indirect_branch_prediction_barrier(void)
-  */
- static inline void firmware_restrict_branch_speculation_start(void)
- {
-+	preempt_disable();
-+	this_cpu_inc(spec_ctrl_ibrs_fw_depth);
- 	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
- 			      X86_FEATURE_USE_IBRS_FW);
- }
- 
- static inline void firmware_restrict_branch_speculation_end(void)
- {
--	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
--			      X86_FEATURE_USE_IBRS_FW);
-+	if (this_cpu_dec_return(spec_ctrl_ibrs_fw_depth) == 0)
-+		alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
-+				      X86_FEATURE_USE_IBRS_FW);
-+	preempt_enable();
- }
- #endif /* __ASSEMBLY__ */
- #endif /* _ASM_X86_NOSPEC_BRANCH_H_ */
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index c994dab..4ab13f0 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -27,6 +27,8 @@
- #include <asm/intel-family.h>
- 
- static void __init spectre_v2_select_mitigation(void);
-+DEFINE_PER_CPU(int, spec_ctrl_ibrs_fw_depth);
-+EXPORT_PER_CPU_SYMBOL(spec_ctrl_ibrs_fw_depth);
- 
- void __init check_bugs(void)
- {
--- 
-2.7.4
+>>  SYSC_bpf kernel/bpf/syscall.c:1872 [inline]
+>>  SyS_bpf+0x215f/0x4860 kernel/bpf/syscall.c:1843
+>>  do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
+>>  entry_SYSCALL_64_after_hwframe+0x26/0x9b
+>> RIP: 0033:0x43fda9
+>> RSP: 002b:00007ffe6b075798 EFLAGS: 00000203 ORIG_RAX: 0000000000000141
+>> RAX: ffffffffffffffda RBX: ffffffffffffffff RCX: 000000000043fda9
+>> RDX: 0000000000000020 RSI: 0000000020ef4fe0 RDI: 0000000000000002
+>> RBP: 00000000006ca018 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000000 R11: 0000000000000203 R12: 00000000004016d0
+>> R13: 0000000000401760 R14: 0000000000000000 R15: 0000000000000000
+>> Dumping ftrace buffer:
+>>    (ftrace buffer empty)
+>> Kernel Offset: disabled
+>> Rebooting in 86400 seconds..
+>>
+>>
+>> ---
+>> This bug is generated by a dumb bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for details.
+>> Direct all questions to syzkaller@googlegroups.com.
+>>
+>> syzbot will keep track of this bug report.
+>> If you forgot to add the Reported-by tag, once the fix for this bug is
+>> merged
+>> into any tree, please reply to this email with:
+>> #syz fix: exact-commit-title
+>> If you want to test a patch for this bug, please reply with:
+>> #syz test: git://repo/address.git branch
+>> and provide the patch inline or as an attachment.
+>> To mark this as a duplicate of another syzbot report, please reply with:
+>> #syz dup: exact-subject-of-another-report
+>> If it's a one-off invalid bug report, please reply with:
+>> #syz invalid
+>> Note: if the crash happens again, it will cause creation of a new bug
+>> report.
+>> Note: all commands must start from beginning of the line in the email body.
