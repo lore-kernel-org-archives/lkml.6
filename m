@@ -1,124 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967417AbeBNL34 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 06:29:56 -0500
-Received: from 9pmail.ess.barracuda.com ([64.235.150.224]:36061 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967342AbeBNL3y (ORCPT
+        id S967466AbeBNLaV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 06:30:21 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:43355 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967342AbeBNLaU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 06:29:54 -0500
-Subject: Re: [PATCH] irqchip: mips-gic: Avoid spuriously handling masked
- interrupts
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>,
-        Jason Cooper <jason@lakedaemon.net>, <linux-kernel@vger.kernel.org>
-References: <1517849136-29508-1-git-send-email-matt.redfearn@mips.com>
- <bb76fb4e-5e6c-92eb-d79a-96045f74e91b@arm.com>
- <e7ec98be-5a4b-ef54-797d-7e11cf2b14e5@mips.com>
- <5d6348d6-a87f-d3b7-b758-9a2003d9c50e@arm.com>
-From: Matt Redfearn <matt.redfearn@mips.com>
-Message-ID: <ad04b18e-c05f-0f07-a9ed-a69e20ad4b58@mips.com>
-Date: Wed, 14 Feb 2018 11:22:51 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Wed, 14 Feb 2018 06:30:20 -0500
+X-Google-Smtp-Source: AH8x2252s2MvPCEkEFeGV9x7W9hax6QASpcBc+RVhQi3w4O4MJiBPQtnFAbyOJ7OueLC/vthA+zuIFi3kW1GCGJHWzg=
 MIME-Version: 1.0
-In-Reply-To: <5d6348d6-a87f-d3b7-b758-9a2003d9c50e@arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.150.130.83]
-X-BESS-ID: 1518607778-637140-1059-221730-11
-X-BESS-VER: 2018.1-r1801291959
-X-BESS-Apparent-Source-IP: 12.201.5.28
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.190013
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+In-Reply-To: <24ddea73-5c84-e098-caae-8a4c14834cbd@metux.net>
+References: <0f058286-a432-379b-f559-f2fe713807ab@metux.net>
+ <5633d335-3926-d98f-d6d7-948b1e2a0b2c@metux.net> <20180213222751.p3fyg7whg6jqlzz5@gordon>
+ <39b08c53-3449-3164-c1b1-44ac587dd4ea@metux.net> <20180214045442.jyv6zpbwz5glzi4z@gordon>
+ <9c097fd9-3035-d5be-a829-fc18e7734f18@metux.net> <20180214102410.dxgbayb4i76h5exo@gordon>
+ <24ddea73-5c84-e098-caae-8a4c14834cbd@metux.net>
+From: Richard Weinberger <richard.weinberger@gmail.com>
+Date: Wed, 14 Feb 2018 12:30:18 +0100
+Message-ID: <CAFLxGvzxLP_UTQbwEY99bQfyftWzZHwaOP+WrzJ8099EKtbVLg@mail.gmail.com>
+Subject: Re: plan9 semantics on Linux - mount namespaces
+To: Enrico Weigelt <lkml@metux.net>
+Cc: Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 14, 2018 at 12:27 PM, Enrico Weigelt <lkml@metux.net> wrote:
+> On 14.02.2018 11:24, Aleksa Sarai wrote:
+>
+>> What distribution are you using and which release?
+>
+>
+> On a self-compiled system.
+>
+> Forgot to enable namespaces in the kernel. Now it seems to work
+> as root, but not as an unprivileged user:
+>
+>
+> daemon@alphabox:~ unshare -r -U
+> unshare: can't open '/proc/self/setgroups': Permission denied
+> daemon@alphabox:~ unshare -f -r -U
+> unshare: can't open '/proc/self/setgroups': Permission denied
+>
 
+Please read http://man7.org/linux/man-pages/man7/user_namespaces.7.html
+setgroups is a corner case and needs special care.
 
-On 07/02/18 10:41, Marc Zyngier wrote:
-> On 07/02/18 09:44, Matt Redfearn wrote:
->> Hi Marc,
->>
->> On 07/02/18 09:41, Marc Zyngier wrote:
->>> On 05/02/18 16:45, Matt Redfearn wrote:
->>>> Commit 7778c4b27cbe ("irqchip: mips-gic: Use pcpu_masks to avoid reading
->>>> GIC_SH_MASK*") removed the read of the hardware mask register when
->>>> handling shared interrupts, instead using the driver's shadow pcpu_masks
->>>> entry as the effective mask. Unfortunately this did not take account of
->>>> the write to pcpu_masks during gic_shared_irq_domain_map, which
->>>> effectively unmasks the interrupt early. If an interrupt is asserted,
->>>> gic_handle_shared_int decodes and processes the interrupt even though it
->>>> has not yet been unmasked via gic_unmask_irq, which also sets the
->>>> appropriate bit in pcpu_masks.
->>>>
->>>> On the MIPS Boston board, when a console command line of
->>>> "console=ttyS0,115200n8r" is passed, the modem status IRQ is enabled in
->>>> the UART, which is immediately raised to the GIC. The interrupt has been
->>>> mapped, but no handler has yet been registered, nor is it expected to be
->>>> unmasked. However, the write to pcpu_masks in gic_shared_irq_domain_map
->>>> has effectively unmasked it, resulting in endless reports of:
->>>>
->>>> [    5.058454] irq 13, desc: ffffffff80a7ad80, depth: 1, count: 0, unhandled: 0
->>>> [    5.062057] ->handle_irq():  ffffffff801b1838,
->>>> [    5.062175] handle_bad_irq+0x0/0x2c0
->>>>
->>>> Where IRQ 13 is the UART interrupt.
->>>>
->>>> To fix this, just remove the write to pcpu_masks in
->>>> gic_shared_irq_domain_map. The existing write in gic_unmask_irq is the
->>>> correct place for what is now the effective unmasking.
->>>>
->>>> Fixes: 7778c4b27cbe ("irqchip: mips-gic: Use pcpu_masks to avoid reading GIC_SH_MASK*")
->>>> Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
->>>> Reviewed-by: Paul Burton <paul.burton@mips.com>
->>>>
->>>> ---
->>>>
->>>>    drivers/irqchip/irq-mips-gic.c | 2 --
->>>>    1 file changed, 2 deletions(-)
->>>>
->>>> diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips-gic.c
->>>> index b2cfc6d66d74..2c3684ba46e5 100644
->>>> --- a/drivers/irqchip/irq-mips-gic.c
->>>> +++ b/drivers/irqchip/irq-mips-gic.c
->>>> @@ -429,8 +429,6 @@ static int gic_shared_irq_domain_map(struct irq_domain *d, unsigned int virq,
->>>>    	spin_lock_irqsave(&gic_lock, flags);
->>>>    	write_gic_map_pin(intr, GIC_MAP_PIN_MAP_TO_PIN | shared_cpu_pin);
->>>>    	write_gic_map_vp(intr, BIT(mips_cm_vp_id(cpu)));
->>>> -	gic_clear_pcpu_masks(intr);
->>>> -	set_bit(intr, per_cpu_ptr(pcpu_masks, cpu));
->>>>    	irq_data_update_effective_affinity(data, cpumask_of(cpu));
->>>>    	spin_unlock_irqrestore(&gic_lock, flags);
->>>>    
->>>>
->>>
->>> Does this need to be Cc to stable (since it fixes something that was
->>> merged in 4.14)?
->>
->> Sorry, missed stable off the CC list. Yes, it does indeed need to be
->> backported. Should I resubmit?
-> No need, I'll add that to the patch.
-
-Hi Marc,
-Not seen this turn up in tip, just wanted to check you're going to pick 
-it up?
-
+-- 
 Thanks,
-Matt
-
-
-> 
-> Thanks,
-> 
-> 	M.
-> 
+//richard
