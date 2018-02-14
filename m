@@ -1,65 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032073AbeBNXSB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 18:18:01 -0500
-Received: from mxf98a.netcup.net ([46.38.249.138]:40456 "EHLO
-        mxf98a.netcup.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031971AbeBNXR7 (ORCPT
+        id S1032044AbeBNXTK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 18:19:10 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54091 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031971AbeBNXTI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 18:17:59 -0500
-Authentication-Results: mxf98a;
-        spf=pass (sender IP is 77.7.22.39) smtp.mailfrom=rabel@robertabel.eu smtp.helo=[192.168.178.21]
-Subject: Re: [PATCH 1/3] auxdisplay: charlcd: fix hex literal ranges for
- graphics command
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20180209235012.4993-1-rabel@robertabel.eu>
- <20180209235012.4993-2-rabel@robertabel.eu>
- <CANiq72ka314rCgPHP4WVt5Rjidz8Rz0s2UtoVX6Bc0gWi=MLSw@mail.gmail.com>
- <20180210092003.GA20377@1wt.eu>
- <CANiq72m6bFYywFa30HhtiAxPP0sK+bWgsxwUhT+b-Sjh0baBCA@mail.gmail.com>
- <CAHp75VfQUNVB9qoxcM5DSWz7Peu40oqtVO6dQse8ASRQa5ufEg@mail.gmail.com>
-From: Robert Abel <rabel@robertabel.eu>
-Message-ID: <db968c03-f471-0ab5-2dba-74a567d2f6d1@robertabel.eu>
-Date: Thu, 15 Feb 2018 00:17:55 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 14 Feb 2018 18:19:08 -0500
+X-Google-Smtp-Source: AH8x224tBvMTi85j+zH/KY697GAklXNO7fkDZJzsR6Wk2uX20opQrgidp9GDRNtCRP6NXnDjexhWzQ==
+Date: Thu, 15 Feb 2018 00:19:04 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Dave Hansen <dave@sr71.net>,
+        hpa@zytor.com, tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, dwmw@amazon.co.uk,
+        linux-tip-commits@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        Arjan van de Ven <arjan@infradead.org>
+Subject: Re: [tip:x86/pti] x86/speculation: Use IBRS if available before
+ calling into firmware
+Message-ID: <20180214231904.ww46gjnytbx3jqef@gmail.com>
+References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
+ <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
+ <20180212102211.cdrrqqd4hdw7xu5y@gmail.com>
+ <a85c28b8-1255-3264-bb4a-89e85e3c6009@sr71.net>
+ <20180212165835.GO25181@hirez.programming.kicks-ass.net>
+ <20180213075540.3lkikkpgjoe6ocjk@gmail.com>
+ <5c3ba123-abbe-f153-7b75-a89d31d25c72@linux.intel.com>
+ <20180214085614.GT25181@hirez.programming.kicks-ass.net>
+ <1fd7c8ef-a50c-53d8-7159-d992e669c2f2@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VfQUNVB9qoxcM5DSWz7Peu40oqtVO6dQse8ASRQa5ufEg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <20180214231758.5400.16872@mxf98a.netcup.net>
-X-PPP-Vhost: robertabel.eu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1fd7c8ef-a50c-53d8-7159-d992e669c2f2@linux.intel.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 Feb 2018 14:36, Andy Shevchenko wrote:
-> I understand that we have a huge and hopefully nice library in the
-> kernel, but the question still the same, what prevents a developer or
-> maintainer to look at it from time to time?
+
+* Tim Chen <tim.c.chen@linux.intel.com> wrote:
+
+> On 02/14/2018 12:56 AM, Peter Zijlstra wrote:
 > 
-> For, I dare to say, ages we have hex_to_bin() and hex2bin().
-> Can we use it?
+> > 
+> > At the very least this must disable and re-enable preemption, such that
+> > we guarantee we inc/dec the same counter. ISTR some firmware calls (EFI)
+> > actually are preemptible so that wouldn't work.
+> > 
+> > Further, consider:
+> > 
+> > 	this_cpu_inc_return()		// 0->1
+> > 	<NMI>
+> > 		this_cpu_inc_return()	// 1->2
+> > 		call_broken_arse_firmware()
+> > 		this_cpu_dec_return()	// 2->1
+> > 	</NMI>
+> > 	wrmsr(SPEC_CTRL, IBRS);
+> > 
+> > 	/* from dodgy firmware crap */
+> > 
+> > 	this_cpu_dec_return()		// 1->0
+> > 	wrmsr(SPEC_CTRL, 0);
+> > 
+> 
+> How about the following patch.
 
-hex_to_bin look fine to me, although personally I'm not a big fan of its
-use of tolower.
+These fragile complications of the interface should now be unnecessary, as the 
+only driver that called firmware from NMI callbacks (hpwdt.c) is going to remove 
+those firmware callbacks in the near future - solving the problem at the source.
 
-The current parser implementation is much more lenient than hex2bin,
-however. hex2bin won't parse strings containing illegal characters
-(which are currently skipped) or hexadecimal strings with an odd number
-of digits (which are currently allowed and the final digit will be ignored).
+Thanks,
 
-I noticed the only part of the code that does make use of library
-functions, parsing x and y coordinates using kstrtoul, is broken.
-Apparently it used to use simple_strtoul, which worked and then got
-replaced. So apparently looking over the kernel lib from time to time
-can also do some harm ;)
-Patch incoming :)
-
-Regards,
-
-Robert
+	Ingo
