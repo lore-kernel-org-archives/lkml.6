@@ -1,55 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031084AbeBNVEO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 16:04:14 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:37640 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030618AbeBNVEN (ORCPT
+        id S1031214AbeBNVJq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 16:09:46 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:37971 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030501AbeBNVJo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 16:04:13 -0500
-X-Google-Smtp-Source: AH8x226zBQmQQ7kIpRAIUkEYt+7LLjK+7eQdJCp7eZmWCp4mk9zXY34ShbMCoW+YTP4qBloKNKsNd/7Vte948MV72GE=
+        Wed, 14 Feb 2018 16:09:44 -0500
+X-Google-Smtp-Source: AH8x2275rQkdXkwcFeKtK7TxEL/NlaSDpUhnvtMqbYM1GNGwFO6Xj8EjOEtGgS4kKtL78wChgoMbO5R6w/iZpGUhK5E=
 MIME-Version: 1.0
-In-Reply-To: <151864141010.23667.12512377970963681490.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <151864141010.23667.12512377970963681490.stgit@dwillia2-desk3.amr.corp.intel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 14 Feb 2018 13:04:11 -0800
-X-Google-Sender-Auth: qJqKA0OAlMnaimxZ5Xf6L2k0Vv4
-Message-ID: <CA+55aFxe2Q0vJ5nz-nRvf8n61ZWG2ak2jt=JK_3VFsFbiFS_XQ@mail.gmail.com>
-Subject: Re: [PATCH] x86, nospec: Fix uninitialized mask in array_index_mask_nospec()
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <fc8dc7d245b6962d330eeedea544d7e4fd56e78c.1518230355.git.rgb@redhat.com>
+References: <cover.1518230355.git.rgb@redhat.com> <fc8dc7d245b6962d330eeedea544d7e4fd56e78c.1518230355.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 14 Feb 2018 16:09:42 -0500
+Message-ID: <CAHC9VhT1B8bEu5w+U+oYFQbR8m7upk8x3o8qbQ7ZPa9ijE21uA@mail.gmail.com>
+Subject: Re: [PATCH V2 2/3] audit: bail ASAP on syscall entry
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 12:50 PM, Dan Williams <dan.j.williams@intel.com> wrote:
-> Break the false dependency on the uninitialized value of 'mask' in
-> array_index_mask_nospec(). This potentially allows the CPU to rename the
-> register, avoids reports from tools that can detect uninitialized inline
-> asm arguments, and makes it explicit that this sequence wants the result
-> of (0 - 0 - CARRY).
+On Fri, Feb 9, 2018 at 9:40 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Since removing the audit entry filter, test for early return before
+> setting up any context state.
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  kernel/auditsc.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
 
-NAK.
+Sigh.
 
-This is stupid.
+First off, thanks for making the changes, I think the end result of
+1/3+2/3 is better than the v1 patch.
 
-Any asm tools that think this is "uninitialized inline asm arguments"
-are complete garbage. It's an output-only register. Fix the tool, or
-ignore it as shit.
+However, this really didn't need to be two patches, please combine 1/3
+and 2/3 and resubmit.  I know I've done the patch squashing for you in
+the past, but I think it's time to start pushing some of this work
+back to you.
 
-And that false dependency argument is pure garbage too. Making this an
-input that has been initialized to zero doesn't just generate a
-pointless zeroing operation, it also adds to register pressure.
+Moving forward, if I provide feedback and do not explicitly suggest
+creating a new patch, please incorporate the changes into the existing
+patches.
 
-So NAK NAK NAK. The arguments for this patch are pure and utter shite.
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 9348302..bc534bf 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -1519,23 +1519,23 @@ void __audit_syscall_entry(int major, unsigned long a1, unsigned long a2,
+>         if (!audit_enabled)
+>                 return;
+>
+> -       context->arch       = syscall_get_arch();
+> -       context->major      = major;
+> -       context->argv[0]    = a1;
+> -       context->argv[1]    = a2;
+> -       context->argv[2]    = a3;
+> -       context->argv[3]    = a4;
+> -
+>         state = context->state;
+> +       if (state == AUDIT_DISABLED)
+> +               return;
+> +
+>         context->dummy = !audit_n_rules;
+>         if (!context->dummy && state == AUDIT_BUILD_CONTEXT) {
+>                 context->prio = 0;
+>                 if (auditd_test_task(tsk))
+>                         return;
+>         }
+> -       if (state == AUDIT_DISABLED)
+> -               return;
+>
+> +       context->arch       = syscall_get_arch();
+> +       context->major      = major;
+> +       context->argv[0]    = a1;
+> +       context->argv[1]    = a2;
+> +       context->argv[2]    = a3;
+> +       context->argv[3]    = a4;
+>         context->serial     = 0;
+>         context->ctime = current_kernel_time64();
+>         context->in_syscall = 1;
+> --
+> 1.8.3.1
+>
 
-If somebody can actually show a performance reason (with NUMBERS!) for
-it or some _real_ reason to do something this stupid, that's one
-thing. But these arguments are just bad, and the patch is bad.
 
-              Linus
+
+-- 
+paul moore
+www.paul-moore.com
