@@ -1,73 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967096AbeBNKIZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 05:08:25 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:56555 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966933AbeBNKIX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 05:08:23 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kbingham@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 3/5] arm64: dts: renesas: r8a7795-es1: Fix register mappings on VSPs
-Date: Wed, 14 Feb 2018 12:08:56 +0200
-Message-ID: <2009459.7Q8ChOu4tJ@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1518602108-1724-4-git-send-email-kbingham@kernel.org>
-References: <1518602108-1724-1-git-send-email-kbingham@kernel.org> <1518602108-1724-4-git-send-email-kbingham@kernel.org>
+        id S967122AbeBNKIi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 05:08:38 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41734 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966971AbeBNKIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 05:08:36 -0500
+Subject: Re: [RFC PATCH 2/2] KVM: SVM: Add MSR feature support for serializing
+ LFENCE
+To: Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <20180208225833.22074.25995.stgit@tlendack-t1.amdoffice.net>
+ <20180208225856.22074.98252.stgit@tlendack-t1.amdoffice.net>
+ <584e51cc-1a79-4e5d-45ef-1850bb6c155e@redhat.com>
+ <ee66fc2c-ba57-29da-0a03-498bc45a40fb@amd.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <1e3e64dc-00e4-adbd-2dd7-c44f8886ea52@redhat.com>
+Date: Wed, 14 Feb 2018 11:08:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <ee66fc2c-ba57-29da-0a03-498bc45a40fb@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
-
-Thank you for the patch.
-
-On Wednesday, 14 February 2018 11:55:06 EET Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On 14/02/2018 05:39, Tom Lendacky wrote:
+> On 2/13/2018 10:22 AM, Paolo Bonzini wrote:
+>> On 08/02/2018 23:58, Tom Lendacky wrote:
+>>> Create an entry in the new MSR as a feature framework to allow a guest to
+>>> recognize LFENCE as a serializing instruction on AMD processors.  The MSR
+>>> can only be set by the host, any write by the guest will be ignored.  A
+>>> read by the guest will return the value as set by the host.  In this way,
+>>> the support to expose the feature to the guest is controlled by the
+>>> hypervisor.
+>>>
+>>> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+>>> ---
+>>>  arch/x86/kvm/svm.c |   16 ++++++++++++++++
+>>>  arch/x86/kvm/x86.c |    6 ++++++
+>>>  2 files changed, 22 insertions(+)
+>>>
+>>> @@ -4047,6 +4052,17 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
+>>>  	case MSR_VM_IGNNE:
+>>>  		vcpu_unimpl(vcpu, "unimplemented wrmsr: 0x%x data 0x%llx\n", ecx, data);
+>>>  		break;
+>>> +	case MSR_F10H_DECFG:
+>>> +		/* Only the host can set this MSR, silently ignore */
+>>> +		if (!msr->host_initiated)
+>>> +			break;
+>>
+>> Just one thing I'm wondering, should we #GP if the guest attempts to
+>> clear MSR_F10H_DECFG_LFENCE_SERIALIZE?
 > 
-> The VSPD includes a CLUT on RPF2. Ensure that the register space is
-> mapped correctly to support this.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> It would be more consistent with other entries to do "return 1" here
+> instead.  The current kernel code that writes this bit is using
+> msr_set_bit(), so a #GP is caught and handled.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+That's also okay.  We don't know about Windows though...
 
-> ---
->  arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-> b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi index
-> ed553338b4d4..1adfe6cad268 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-> @@ -80,7 +80,7 @@
-> 
->  	vspd3: vsp@fea38000 {
->  		compatible = "renesas,vsp2";
-> -		reg = <0 0xfea38000 0 0x4000>;
-> +		reg = <0 0xfea38000 0 0x8000>;
->  		interrupts = <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>;
->  		clocks = <&cpg CPG_MOD 620>;
->  		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-
--- 
-Regards,
-
-Laurent Pinchart
+Paolo
