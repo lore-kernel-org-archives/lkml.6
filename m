@@ -1,79 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966731AbeBND1A (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 22:27:00 -0500
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:33478 "EHLO
-        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966631AbeBND06 (ORCPT
+        id S966750AbeBND17 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 22:27:59 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:32846 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S966631AbeBND15 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 22:26:58 -0500
-X-Google-Smtp-Source: AH8x224EVtHQoJA+qOGrHaeqhCGgyStpEXRa35EGBSZ04mvIC2w0q4u5mDfxq+gh3Pkswu4fmgiZFD4D2FEuhE4ehro=
+        Tue, 13 Feb 2018 22:27:57 -0500
+X-UUID: c7bedda1f9cb4c9bb78d870b53c80c9f-20180214
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-mediatek@lists.infradead.org>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v1] arm: dts: mt7623: add PCIe related nodes
+Date: Wed, 14 Feb 2018 11:27:34 +0800
+Message-ID: <4e567be2546f90ef62a5df0e957e8a014e460cde.1518576282.git.ryder.lee@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <324a8c3a-35f1-ad4b-1ff5-9ba742778470@redhat.com>
-References: <1517813878-22248-1-git-send-email-wanpengli@tencent.com> <324a8c3a-35f1-ad4b-1ff5-9ba742778470@redhat.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Wed, 14 Feb 2018 11:26:57 +0800
-Message-ID: <CANRm+CzUJg7ZozjBmZV1mQNNDtkL479k+LsQ81++i7GPUbEh2w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] KVM: X86: Add per-VM no-HLT-exiting capability
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1E3R4N1012529
 
-2018-02-14 0:02 GMT+08:00 Paolo Bonzini <pbonzini@redhat.com>:
-> On 05/02/2018 07:57, Wanpeng Li wrote:
->> From: Wanpeng Li <wanpengli@tencent.com>
->>
->> If host CPUs are dedicated to a VM, we can avoid VM exits on HLT.
->> This patch adds the per-VM non-HLT-exiting capability.
->>
->> Cc: Paolo Bonzini <pbonzini@redhat.com>
->> Cc: Radim Krčmář <rkrcmar@redhat.com>
->> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
->> ---
->> v1 -> v2:
->>  * vmx_clear_hlt() around INIT handling
->>  * vmx_clear_hlt() upon SMI and implement auto halt restart
->
-> Hi Wanpeng,
->
-> sorry I could not answer before.
->
-> We do not need to implement AutoHalt.  It's a messy functionality and
-> the way it works is much simpler: on RSM the microcode reads AutoHALT's
-> bit 0 and... decrements RIP if it is 1.  All you need to do however is
-> clear the activity state.  Guests should expect anyway that "CLI;HLT"
-> can be interrupted by an NMI and follow it with a JMP.
+This patch adds some device nodes for the PCIe function block and updates
+related pinmux.
 
-Thanks for pointing out.
+Moreover, we add interrupt-map properties in both parent and children as
+the chip only has one IRQ per slot that is connected to all INTx and get
+propagated through the bridges and it also represents the root ports own
+interrupts.
 
->
-> Second, I would prefer to implement at the same time MWAIT and PAUSE
-> passthrough, as in https://www.spinics.net/lists/kvm/msg159517.html:
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+---
 
-Understand.
+Sorry to send v1 in such a rush. Somehow I forgot to add something in previous version.
 
->
->> The three capabilities are more or less all doing the same thing.
->> Perhaps it would make some sense to only leave PAUSE spin loops in
->> guest, but not HLT/MWAIT; but apart from that I think users would
->> probably enable all of them.  So I think we should put in the
->> documentation that blindly passing the KVM_CHECK_EXTENSION result to
->> KVM_ENABLE_CAP is a valid thing to do when vCPUs are associated to
->> dedicated physical CPUs.
->>
->> Let's get rid of KVM_CAP_X86_GUEST_MWAIT altogether and
->> add a new capability.  But let's use just one.
->
-> Thanks again for your work, and sorry for slightly contradicting Radim's
-> review.  I've rebased and applied patch 2.
+changes since v1:
+ - enable device nodes - pcie0_phy & pcie2_phy
+ - fix dtc warning: Warning (pci_bridge): Node /pcie-controller@1a140000 node name is not "pci" or "pcie"
+---
+ arch/arm/boot/dts/mt7623.dtsi                 | 105 ++++++++++++++++++++++++++
+ arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts |  30 ++++++++
+ 2 files changed, 135 insertions(+)
 
-No problem. You and Radim's review is always appreciated and helpful.
-
-Regards,
-Wanpeng Li
+diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
+index 629c92b..137ce99 100644
+--- a/arch/arm/boot/dts/mt7623.dtsi
++++ b/arch/arm/boot/dts/mt7623.dtsi
+@@ -667,6 +667,111 @@
+ 		#reset-cells = <1>;
+ 	};
+ 
++	pcie: pcie@1a140000 {
++		compatible = "mediatek,mt7623-pcie";
++		device_type = "pci";
++		reg = <0 0x1a140000 0 0x1000>, /* PCIe shared registers */
++		      <0 0x1a142000 0 0x1000>, /* Port0 registers */
++		      <0 0x1a143000 0 0x1000>, /* Port1 registers */
++		      <0 0x1a144000 0 0x1000>; /* Port2 registers */
++		reg-names = "subsys", "port0", "port1", "port2";
++		#address-cells = <3>;
++		#size-cells = <2>;
++		#interrupt-cells = <1>;
++		interrupt-map-mask = <0xf800 0 0 0>;
++		interrupt-map = <0x0000 0 0 0 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW>,
++				<0x0800 0 0 0 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>,
++				<0x1000 0 0 0 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&topckgen CLK_TOP_ETHIF_SEL>,
++			 <&hifsys CLK_HIFSYS_PCIE0>,
++			 <&hifsys CLK_HIFSYS_PCIE1>,
++			 <&hifsys CLK_HIFSYS_PCIE2>;
++		clock-names = "free_ck", "sys_ck0", "sys_ck1", "sys_ck2";
++		resets = <&hifsys MT2701_HIFSYS_PCIE0_RST>,
++			 <&hifsys MT2701_HIFSYS_PCIE1_RST>,
++			 <&hifsys MT2701_HIFSYS_PCIE2_RST>;
++		reset-names = "pcie-rst0", "pcie-rst1", "pcie-rst2";
++		phys = <&pcie0_port PHY_TYPE_PCIE>,
++		       <&pcie1_port PHY_TYPE_PCIE>,
++		       <&u3port1 PHY_TYPE_PCIE>;
++		phy-names = "pcie-phy0", "pcie-phy1", "pcie-phy2";
++		power-domains = <&scpsys MT2701_POWER_DOMAIN_HIF>;
++		bus-range = <0x00 0xff>;
++		status = "disabled";
++		ranges = <0x81000000 0 0x1a160000 0 0x1a160000 0 0x00010000
++			  0x83000000 0 0x60000000 0 0x60000000 0 0x10000000>;
++
++		pcie@0,0 {
++			reg = <0x0000 0 0 0 0>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0>;
++			interrupt-map = <0 0 0 0 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW>;
++			ranges;
++			num-lanes = <1>;
++			status = "disabled";
++		};
++
++		pcie@1,0 {
++			reg = <0x0800 0 0 0 0>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0>;
++			interrupt-map = <0 0 0 0 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>;
++			ranges;
++			num-lanes = <1>;
++			status = "disabled";
++		};
++
++		pcie@2,0 {
++			reg = <0x1000 0 0 0 0>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0>;
++			interrupt-map = <0 0 0 0 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
++			ranges;
++			num-lanes = <1>;
++			status = "disabled";
++		};
++	};
++
++	pcie0_phy: pcie-phy@1a149000 {
++		compatible = "mediatek,generic-tphy-v1";
++		reg = <0 0x1a149000 0 0x0700>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++		status = "disabled";
++
++		pcie0_port: pcie-phy@1a149900 {
++			reg = <0 0x1a149900 0 0x0700>;
++			clocks = <&clk26m>;
++			clock-names = "ref";
++			#phy-cells = <1>;
++			status = "okay";
++		};
++	};
++
++	pcie1_phy: pcie-phy@1a14a000 {
++		compatible = "mediatek,generic-tphy-v1";
++		reg = <0 0x1a14a000 0 0x0700>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++		status = "disabled";
++
++		pcie1_port: pcie-phy@1a14a900 {
++			reg = <0 0x1a14a900 0 0x0700>;
++			clocks = <&clk26m>;
++			clock-names = "ref";
++			#phy-cells = <1>;
++			status = "okay";
++		};
++	};
++
+ 	usb1: usb@1a1c0000 {
+ 		compatible = "mediatek,mt7623-xhci",
+ 			     "mediatek,mt8173-xhci";
+diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+index 7bf5aa2..3efecc5 100644
+--- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
++++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+@@ -209,6 +209,28 @@
+ 	vqmmc-supply = <&mt6323_vio18_reg>;
+ };
+ 
++&pcie {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pcie_default>;
++	status = "okay";
++
++	pcie@0,0 {
++		status = "okay";
++	};
++
++	pcie@1,0 {
++		status = "okay";
++	};
++};
++
++&pcie0_phy {
++	status = "okay";
++};
++
++&pcie1_phy {
++	status = "okay";
++};
++
+ &pio {
+ 	cir_pins_a:cir@0 {
+ 		pins_cir {
+@@ -376,6 +398,14 @@
+ 		};
+ 	};
+ 
++	pcie_default: pcie_pin_default {
++		pins_cmd_dat {
++			pinmux = <MT7623_PIN_208_AUD_EXT_CK1_FUNC_PCIE0_PERST_N>,
++				 <MT7623_PIN_209_AUD_EXT_CK2_FUNC_PCIE1_PERST_N>;
++			bias-disable;
++		};
++	};
++
+ 	pwm_pins_a: pwm@0 {
+ 		pins_pwm {
+ 			pinmux = <MT7623_PIN_203_PWM0_FUNC_PWM0>,
+-- 
+1.9.1
