@@ -1,49 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032289AbeBNQPg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 11:15:36 -0500
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:36760 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032206AbeBNQPd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:15:33 -0500
-X-Google-Smtp-Source: AH8x224npdf/tBuJ9Bm7clGgutXN7r6DNa8hZ7y8qHV/wr0G0Q3WOO7cJ9vuM8FvyGKH4XHyn3sWZw==
-Subject: Re: [PATCH] PCI: qcom: use regulator bluk api for apq8064 supplies
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: stanimir.varbanov@linaro.org, svarbanov@mm-sol.com,
-        linux-pci@vger.kernel.org, bhelgaas@google.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180214122315.2069-1-srinivas.kandagatla@linaro.org>
- <20180214153545.GA93895@bjorns-mbp-2.lan>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <3b256b44-d3fe-9022-ed3b-b671ba5cadd1@linaro.org>
-Date: Wed, 14 Feb 2018 16:14:59 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1032296AbeBNQQl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 11:16:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43282 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032074AbeBNQQk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 11:16:40 -0500
+Date: Wed, 14 Feb 2018 17:16:37 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Petr Mladek <pmladek@suse.com>
+cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/7] livepatch: Atomic replace feature
+In-Reply-To: <20180206103424.10829-1-pmladek@suse.com>
+Message-ID: <alpine.LSU.2.21.1802141714430.28578@pobox.suse.cz>
+References: <20180206103424.10829-1-pmladek@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180214153545.GA93895@bjorns-mbp-2.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 6 Feb 2018, Petr Mladek wrote:
 
+> The atomic replace allows to create cumulative patches. They
+> are useful when you maintain many livepatches and want to remove
+> one that is lower on the stack. In addition it is very useful when
+> more patches touch the same function and there are dependencies
+> between them.
 
-On 14/02/18 15:35, Bjorn Andersson wrote:
->> +	res->supplies[1].supply = "vdda_phy";
->> +	res->supplies[1].supply = "vdda_refclk";
-> 2
-> 
->> +	ret = devm_regulator_bulk_get(dev, QCOM_PCIE_2_1_0_MAX_SUPPLY,
-> Use ARRAY_SIZE(res->supplies) instead.
-Thanks, Will fix it and send a new one.
+So I ported my old silly kgraft modules to livepatch and it works well. It 
+does not say that much, because the tests are really simple stupid, but at 
+least something.
 
---srini
-> 
->> +				      res->supplies);
->> +	if (ret)
->> +		return ret;
->>   
-> Other than that, this looks good.
+Miroslav
