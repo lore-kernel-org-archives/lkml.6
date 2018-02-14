@@ -1,113 +1,89 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AH8x225C88W/gF2KH5y6h/vTX6yeWYWBQDNTydb991Db5wlMPo2LPZp98YwRN8V4LPTlWNJncXp3
-ARC-Seal: i=1; a=rsa-sha256; t=1518572033; cv=none;
+X-Google-Smtp-Source: AH8x224oNLo7gP3auKf66mK+JUUfkdAqfjvuDEFPeLJgGHYlZn7djJAXXpPLhsaPKH+IQEb4B4CK
+ARC-Seal: i=1; a=rsa-sha256; t=1518572760; cv=none;
         d=google.com; s=arc-20160816;
-        b=oUHSwQJGnjA/j3ibfS/+fzYTETQ5YGVIkmZA+ph5FmEqDroSt7BX9JobvnhsMAyPtx
-         9cH6jzEs+b04ODntYA5pgVh3+Gvvt4CTjd5nzJRhLIgU1sscVrocath/jBUtFDk2afRg
-         CUSOEnh80NNEhRCA4dGk199dW2mNLvd4jlqIB6JzII6oV4nCb9vUBMsAk9xVnleoahAo
-         EsRyVyiif9D/1/Fu+He+Sx3T5UNwRmafB+vpv+KJyXYTXpmug++haRvAno96OijyeItk
-         cuRYnpUgP3aoqqp3Yb+cjK6yzo9wDYqYo2iZmRSRplPvx4ItgY4qY9TOXILZBkJZ0Qjb
-         n0BA==
+        b=KbY+qMUf9BDHE0KJ5FX1/Hq2M5nbSCgw2Gy2lOMwJ9CoQvlWD8xLW0aGt1N8hS9YYX
+         WpBobCWbesF7h1j2Uay/4ctAt7BHDwZL/R2saS1mhdCN6xJ/TkyuhKovYZmRfLVOl3Js
+         ORpH6KmrkHq9LdKLqSKGvV+m18IfFPzdnuLD8bcOnoN8T/wSfbB0J8ZRs01MuJr8OypA
+         k02nocXQHp/+9OdfyohhAzRBjc1N8ISQFR5jEG0a+bbikbwh7sJdyed+GnwWnvON5c4X
+         xmGCS/1kLe69SYenWY4UWB7RNKA8+Oxz8IvxAGJIYxhK5zGLLHd8CKx0zYTgzCWnG6cU
+         2w1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:user-agent:in-reply-to
-         :content-transfer-encoding:content-disposition:mime-version
-         :references:message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=kx9HfB9KAOqK8d8YDvzymSiGSZ8YZtnmhRVjp8Et0QU=;
-        b=irVqpXZMPedfVLXbgKKv63uNzEaMb2RhGErUG7T0mXgJNr/WmFNybcKgmpAuj5hB4n
-         G2fikHBVGa/DKS6wZ26dgGHljaY0ic6GKLNQcqQ/fnR/8Q3DfMf79tkdT+fpqOx3fGRo
-         /wCvGyC9x7g1lMtb7PPj1bk8L2zCJC+EIcJ0ylv5MJrd609lW/tl4Gbc8nO//WBY251p
-         8o0LtrkskTH/ABq2acD6avN1Zo4FsivLK7KTGwK7ZIYfohukSbdfvxoPuyqvlsgJdIPg
-         EDziEUZpTWI/0Hm/Yoy4WFb8TNZdOU8DwCewh7OUKqtovGKaDAJyJtLaBYx6LApVVSXF
-         024Q==
+        h=list-id:precedence:sender:content-transfer-encoding
+         :content-language:in-reply-to:mime-version:user-agent:date
+         :message-id:from:references:cc:to:subject:arc-authentication-results;
+        bh=XHbLi9jEIsip4ySgHrDP1Xx3pkiMUpmRcg3OnvBsiQk=;
+        b=bBCXtA03YSSwRRQbTa/VDPueLREeXJpNNC3hbAWeLPbz4hPvU0OKtH8UZ/oQ7P+7Cn
+         XmNwQh+yCkyAT+7wURPn8VpBrftKZsnKusEpExZXW2y1Y2N0KZ+nYRieywG2bsLabiSn
+         aC3cAWMXQhUUQtlQIqzBJE4+g+HEpqol7mOKFFy/8jJAJfwqp7EFkGhpYYeHO3+gd8B+
+         lNR2z9yoIQ/OnzTlvv4elg+0/dx1FvHiMxmjMNmqt04g21R87QGPFcQNKxHvyQQFjNbT
+         mfIXlf46aXK9Pv6APpT3RpQzK7kp3nxVJPZJMbYNwUYvQBgPL3+L2pKC/McBjw2gC9cl
+         pRAw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@infradead.org header.s=bombadil.20170209 header.b=fv0vulwQ;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
 Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@infradead.org header.s=bombadil.20170209 header.b=fv0vulwQ;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966383AbeBNBdw (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Tue, 13 Feb 2018 20:33:52 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60354 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966311AbeBNBdv (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Tue, 13 Feb 2018 20:33:51 -0500
-Date: Tue, 13 Feb 2018 17:33:47 -0800
-From: Darren Hart <dvhart@infradead.org>
-To: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: Daniel =?iso-8859-1?Q?D=EDaz?= <daniel.diaz@linaro.org>,
-        linux-kselftest@vger.kernel.org,
+        id S966372AbeBNBp7 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Tue, 13 Feb 2018 20:45:59 -0500
+Received: from osg.samsung.com ([64.30.133.232]:61110 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966364AbeBNBp7 (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Tue, 13 Feb 2018 20:45:59 -0500
+Subject: Re: [PATCH] selftests/futex: Fix line continuation in Makefile
+To: Darren Hart <dvhart@infradead.org>,
+        =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>
+Cc: linux-kselftest@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Shuah Khan <shuah@kernel.org>,
-        "open list:FUTEX SUBSYSTEM" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] selftests/futex: Fix line continuation in Makefile
-Message-ID: <20180214013347.GA5786@fury>
+        "open list:FUTEX SUBSYSTEM" <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuahkh@osg.samsung.com>
 References: <1518024271-12467-1-git-send-email-daniel.diaz@linaro.org>
  <dbf5a78f-4178-2210-9a6c-bf71de7b939d@osg.samsung.com>
+ <20180214013347.GA5786@fury>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Message-ID: <6d498007-de71-2071-646c-05eeb81b2b08@osg.samsung.com>
+Date: Tue, 13 Feb 2018 18:45:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20180214013347.GA5786@fury>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <dbf5a78f-4178-2210-9a6c-bf71de7b939d@osg.samsung.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591763894080699218?=
-X-GMAIL-MSGID: =?utf-8?q?1592338188514831049?=
+X-GMAIL-MSGID: =?utf-8?q?1592338950867040730?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 13, 2018 at 02:26:46PM -0700, Shuah Khan wrote:
-> On 02/07/2018 10:24 AM, Daniel Díaz wrote:
-> > The Makefile lacks a couple of line continuation backslashes
-> > in an `if' clause, which produces an error while make'ing:
-> > 
-> >   $ make
-> >   make[1]: Entering directory `/[...]/linux/tools/testing/selftests/futex'
-> >   /bin/sh: -c: line 5: syntax error: unexpected end of file
-> >   make[1]: *** [all] Error 1
-> >   make[1]: Leaving directory `/[...]/linux/tools/testing/selftests/futex'
-> >   make: *** [all] Error 2
-> > 
-
-What is the failure scenario here? Is this shell specific? What does /bin/sh
-point to for you?
-
-> > Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
-> > ---
-> >  tools/testing/selftests/futex/Makefile | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/tools/testing/selftests/futex/Makefile b/tools/testing/selftests/futex/Makefile
-> > index cea4adc..a63e845 100644
-> > --- a/tools/testing/selftests/futex/Makefile
-> > +++ b/tools/testing/selftests/futex/Makefile
-> > @@ -12,9 +12,9 @@ all:
-> >  		BUILD_TARGET=$(OUTPUT)/$$DIR;	\
-> >  		mkdir $$BUILD_TARGET  -p;	\
-> >  		make OUTPUT=$$BUILD_TARGET -C $$DIR $@;\
-> > -		if [ -e $$DIR/$(TEST_PROGS) ]; then
-> > -			rsync -a $$DIR/$(TEST_PROGS) $$BUILD_TARGET/;
-> > -		fi
-> > +		if [ -e $$DIR/$(TEST_PROGS) ]; then \
-> > +			rsync -a $$DIR/$(TEST_PROGS) $$BUILD_TARGET/; \
-> > +		fi \
-> >  	done
-> >  
-> >  override define RUN_TESTS
-> > 
+On 02/13/2018 06:33 PM, Darren Hart wrote:
+> On Tue, Feb 13, 2018 at 02:26:46PM -0700, Shuah Khan wrote:
+>> On 02/07/2018 10:24 AM, Daniel DÃ­az wrote:
+>>> The Makefile lacks a couple of line continuation backslashes
+>>> in an `if' clause, which produces an error while make'ing:
+>>>
+>>>   $ make
+>>>   make[1]: Entering directory `/[...]/linux/tools/testing/selftests/futex'
+>>>   /bin/sh: -c: line 5: syntax error: unexpected end of file
+>>>   make[1]: *** [all] Error 1
+>>>   make[1]: Leaving directory `/[...]/linux/tools/testing/selftests/futex'
+>>>   make: *** [all] Error 2
+>>>
 > 
-> Thanks for the patch. Applied to linux-kselftest fixes for 4.16-rc3
-> 
-> thanks,
-> -- Shuah
-> 
+> What is the failure scenario here? Is this shell specific? What does /bin/sh
+> point to for you?
 
--- 
-Darren Hart
-VMware Open Source Technology Center
+My understanding is that this problem is seen with make versions prior to 4.x.
+This specific problem is seen with make version 3.81
+
+I will let Daniel DÃ­az share details on his environment.
+
+thanks,
+-- Shuah
