@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966999AbeBNJzT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 04:55:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46234 "EHLO mail.kernel.org"
+        id S967021AbeBNJzW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 04:55:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966940AbeBNJzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 04:55:17 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 859E5217A0
+        id S966940AbeBNJzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 04:55:20 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B341821782
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
 From: Kieran Bingham <kbingham@kernel.org>
@@ -23,9 +23,9 @@ Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
         (AARCH64 ARCHITECTURE)),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 1/5] arm64: dts: renesas: r8a77995: add FCPV nodes
-Date: Wed, 14 Feb 2018 09:55:04 +0000
-Message-Id: <1518602108-1724-2-git-send-email-kbingham@kernel.org>
+Subject: [PATCH v3 2/5] arm64: dts: renesas: r8a77995: add VSP instances
+Date: Wed, 14 Feb 2018 09:55:05 +0000
+Message-Id: <1518602108-1724-3-git-send-email-kbingham@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518602108-1724-1-git-send-email-kbingham@kernel.org>
 References: <1518602108-1724-1-git-send-email-kbingham@kernel.org>
@@ -35,52 +35,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-The FCPVB handles the interface between the VSPB and memory, while the
-FCPVD handles the interface between the VSPD and memory.
+The r8a77995 has a VSPBS to support image processing such as blending of
+two input images, and has two VSPDs to handle display pipelines with a
+DU.
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 ---
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+v2:
+ - Fix VSPD register map size
+ - Squash VSPBS and VSPD patches together
+
+v3:
+ - Fix VSPBS register map size too :-)
+
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index cd3c6a30fc47..196a917afea6 100644
+index 196a917afea6..0db242114bc5 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -691,6 +691,33 @@
- 			#phy-cells = <0>;
+@@ -692,6 +692,16 @@
  			status = "disabled";
  		};
-+
-+		fcpvb0: fcp@fe96f000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfe96f000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 607>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 607>;
-+			iommus = <&ipmmu_vp0 5>;
-+		};
-+
-+		fcpvd0: fcp@fea27000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea27000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 603>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 603>;
-+			iommus = <&ipmmu_vi0 8>;
-+		};
-+
-+		fcpvd1: fcp@fea2f000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea2f000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 602>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 602>;
-+			iommus = <&ipmmu_vi0 9>;
-+		};
- 	};
  
- 	timer {
++		vspbs: vsp@fe960000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfe960000 0 0x8000>;
++			interrupts = <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 627>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 627>;
++			renesas,fcp = <&fcpvb0>;
++		};
++
+ 		fcpvb0: fcp@fe96f000 {
+ 			compatible = "renesas,fcpv";
+ 			reg = <0 0xfe96f000 0 0x200>;
+@@ -701,6 +711,16 @@
+ 			iommus = <&ipmmu_vp0 5>;
+ 		};
+ 
++		vspd0: vsp@fea20000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea20000 0 0x8000>;
++			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 623>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 623>;
++			renesas,fcp = <&fcpvd0>;
++		};
++
+ 		fcpvd0: fcp@fea27000 {
+ 			compatible = "renesas,fcpv";
+ 			reg = <0 0xfea27000 0 0x200>;
+@@ -710,6 +730,16 @@
+ 			iommus = <&ipmmu_vi0 8>;
+ 		};
+ 
++		vspd1: vsp@fea80000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea28000 0 0x8000>;
++			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 622>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 622>;
++			renesas,fcp = <&fcpvd1>;
++		};
++
+ 		fcpvd1: fcp@fea2f000 {
+ 			compatible = "renesas,fcpv";
+ 			reg = <0 0xfea2f000 0 0x200>;
 -- 
 2.7.4
