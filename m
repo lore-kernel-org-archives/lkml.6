@@ -1,72 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162314AbeBNSm2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 13:42:28 -0500
-Received: from ms.lwn.net ([45.79.88.28]:54666 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162199AbeBNSkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 13:40:31 -0500
-From: Jonathan Corbet <corbet@lwn.net>
-To: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, me@tobin.cc,
-        jani.nikula@linux.intel.com, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 3/8] docs: kernel-doc: Move STATE_NORMAL processing into its own function
-Date: Wed, 14 Feb 2018 11:40:04 -0700
-Message-Id: <20180214184009.12657-4-corbet@lwn.net>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180214184009.12657-1-corbet@lwn.net>
-References: <20180214184009.12657-1-corbet@lwn.net>
+        id S1162243AbeBNSpo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 13:45:44 -0500
+Received: from smtp-km-2.mail.tiscali.it ([213.205.35.82]:51774 "EHLO
+        smtp-km-2.mail.tiscali.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162120AbeBNSpn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 13:45:43 -0500
+x-auth-user: barra_cuda@katamail.com
+Date: Wed, 14 Feb 2018 19:37:21 +0100
+From: Michele Ballabio <barra_cuda@katamail.com>
+To: csoren@cpinternet.com
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>
+Subject: Re: block: oopses on 4.13.*, 4.14.* and 4.15-rc2
+Message-ID: <20180214193721.6a740f59@darkstar.example.org>
+In-Reply-To: <a428082c000fedab69295e4dade5b88c@cpinternet.com>
+References: <a428082c000fedab69295e4dade5b88c@cpinternet.com>
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; i486-slackware-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Begin the process of splitting up the nearly 500-line process_file()
-function by moving STATE_NORMAL processing to a separate function.
+On Tue, 13 Feb 2018 21:20:47 -0600
+csoren@cpinternet.com wrote:
+> Greetings Ming,
+> 
+> Do you have the patches that fix this? I'm getting these crashes too
+> on Linux 4.13.
+> 
+> The link to mark.info doesn't have the patches anymore, at least not
+> that I can tell.
+> 
+> TIA!
+> 
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
----
- scripts/kernel-doc | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+You can cherry-pick them from git, commits:
+14cb0dc6479dc5ebc63b3a459a5d89a2f1b39fed
+0abc2a10389f0c9070f76ca906c7382788036b93
 
-diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-index ad30c52f91ef..65150b7c8472 100755
---- a/scripts/kernel-doc
-+++ b/scripts/kernel-doc
-@@ -1780,6 +1780,21 @@ sub process_export_file($) {
-     close(IN);
- }
- 
-+#
-+# Parsers for the various processing states.
-+#
-+# STATE_NORMAL: looking for the /** to begin everything.
-+#
-+sub process_normal() {
-+    if (/$doc_start/o) {
-+	$state = STATE_NAME;	# next line is always the function name
-+	$in_doc_sect = 0;
-+	$declaration_start_line = $. + 1;
-+    }
-+}
-+
-+
-+
- sub process_file($) {
-     my $file;
-     my $identifier;
-@@ -1807,11 +1822,7 @@ sub process_file($) {
- 	# Replace tabs by spaces
-         while ($_ =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {};
- 	if ($state == STATE_NORMAL) {
--	    if (/$doc_start/o) {
--		$state = STATE_NAME;	# next line is always the function name
--		$in_doc_sect = 0;
--		$declaration_start_line = $. + 1;
--	    }
-+	    process_normal();
- 	} elsif ($state == STATE_NAME) {# this line is the function name (always)
- 	    if (/$doc_block/o) {
- 		$state = STATE_DOCBLOCK;
--- 
-2.14.3
+Also here:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=14cb0dc6479dc5ebc63b3a459a5d89a2f1b39fed
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=0abc2a10389f0c9070f76ca906c7382788036b93
+
+If I remember correctly, these patches should apply cleanly on 4.13.x.
+
+You probably know this already, but if not: consider upgrading
+to 4.14.x or 4.15.x (both contain the patches you are interested in).
+
+    Michele
+
+[Re-added ML on CC:]
+
+
+> On Sat, Dec 9, 2017 at 7:27 AM, Michele Ballabio
+> <barra_cuda@katamail.com> wrote:
+> > On Fri, 8 Dec 2017 13:08:37 -0700
+> > Jens Axboe <axboe@kernel.dk> wrote:
+> >  
+> >> On 12/08/2017 08:38 AM, Michele Ballabio wrote:  
+> >> > Hi,
+> >> > kernels 4.13.*, 4.14.* 4.15-rc2 crash on occasion,
+> >> > especially on x86-32 systems. To trigger the problem, run as
+> >> > root:
+> >> >
+> >> > while true
+> >> > do
+> >> > /sbin/udevadm trigger --type=subsystems --action=change
+> >> > /sbin/udevadm trigger --type=devices --action=change
+> >> > /sbin/udevadm settle --timeout=120
+> >> > done
+> >> >
+> >> > (Thanks to Patrick Volkerding for the reproducer).
+> >> >
+> >> > Sometimes the kernel oopses immediately, sometimes a bit later
+> >> > (less than five minutes).
+> >> >
+> >> > The bisection pointed to commit
+> >> > caa4b02476e31fc7933d2138062f7f355d3cd8f7 (blk-map: call
+> >> > blk_queue_bounce from blk_rq_append_bio). A revert fixes the
+> >> > problem (tested on 4.13 and master).  
+> >>
+> >> Thanks for your report - can you try the below patch? Totally
+> >> untested...  
+> >
+> > I applied the patch on master
+> > (968edbd93c0cbb40ab48aca972392d377713a0c3), I tried two times to
+> > boot the system but couldn't get to the shell. I found this in the
+> > log:  
+> 
+> Hi Michele,
+> 
+> Please test the patches I sent out and see if it fixes your issue. In
+> my environment
+> the two just works fine.
+> 
+> https://marc.info/?l=linux-block&m=151358285916762&w=2 [1]
+> 
