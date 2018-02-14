@@ -1,51 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967031AbeBNKAZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 05:00:25 -0500
-Received: from h1.radempa.de ([176.9.142.194]:46520 "EHLO mail.cosmopool.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966706AbeBNKAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 05:00:20 -0500
-From: Harald Geyer <harald@ccbib.org>
-To: Mark Brown <broonie@kernel.org>
-cc: Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org,
-        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH,RESEND2] regulator: fixed, gpio: dt: regulator-name is required property
-In-reply-to: <20180213154530.GF5988@sirena.org.uk>
-References: <1518532988-10990-1-git-send-email-harald@ccbib.org> <20180213154530.GF5988@sirena.org.uk>
-Comments: In-reply-to Mark Brown <broonie@kernel.org>
-   message dated "Tue, 13 Feb 2018 15:45:30 +0000."
+        id S967026AbeBNKCA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 05:02:00 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:60442 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966706AbeBNKB6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 05:01:58 -0500
+Date: Wed, 14 Feb 2018 11:01:53 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: geert@linux-m68k.org, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/15] Documentation: devicetree: R-Car M3-N SoC DT
+ bindings
+Message-ID: <20180214100150.dv2fkffussrfqkme@verge.net.au>
+References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1518515162-23663-2-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1295.1518602412.1@stardust.g4.wien.funkfeuer.at>
-Date: Wed, 14 Feb 2018 11:00:12 +0100
-Message-Id: <E1eltrI-0000Kv-W3@stardust.g4.wien.funkfeuer.at>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518515162-23663-2-git-send-email-jacopo+renesas@jmondi.org>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark Brown writes:
-> On Tue, Feb 13, 2018 at 02:43:08PM +0000, Harald Geyer wrote:
+On Tue, Feb 13, 2018 at 10:45:48AM +0100, Jacopo Mondi wrote:
+> Add device tree bindings documentation for Renesas R-Car M3-N (r8a77965)
+> SoC.
 > 
-> > BTW, it took me a bit to figure out that by "content free ping" you are
-> > refering to the quoting of the patch. Maybe you can reword your canned
-> > response to make it easier to understand.
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+
+Thanks, this looks fine to me but I think the subject should be updated to
+
+dt-bindings: arm: document R8A77965 SoC bindings
+
+I'll let this sit for a few days to see if any other review is forthcoming.
+
+> ---
+>  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> No, a content free ping is when you just send a reply saying something
-> to the effect of "hey, what's going on with this?".
-
-Well, I did quote the entire patch and gave a summary of the status
-as far as I know it. So I really don't understand why I got the
-"no content free pings" response ...
-
-> As I said in my
-> reply best case the answer is going to be "I have no idea, you need to
-> resend since I'll need the patch to do anything with it" and worst case
-> it just won't get seen at all if the thing really did get buried
-> somehow.
-
-So you are saying you don't want pings as followups to patches at all, if
-the patch is old enough that it probably got lost?
-
-I guess that would make sense too, but again it's not obvious to read
-the canned response that way.
+> diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+> index 5c3af7e..7eb4830 100644
+> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
+> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+> @@ -39,6 +39,8 @@ SoCs:
+>      compatible = "renesas,r8a7795"
+>    - R-Car M3-W (R8A77960)
+>      compatible = "renesas,r8a7796"
+> +  - R-Car M3-N (R8A77965)
+> +    compatible = "renesas,r8a77965"
+>    - R-Car V3M (R8A77970)
+>      compatible = "renesas,r8a77970"
+>    - R-Car D3 (R8A77995)
+> -- 
+> 2.7.4
+> 
