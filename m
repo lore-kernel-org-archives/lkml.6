@@ -1,117 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033131AbeBNQ4K (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 11:56:10 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:50722 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032939AbeBNQy4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:54:56 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Brian Norris <briannorris@chromium.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, dianders@chromium.org,
-        Chris Zhong <zyw@rock-chips.com>, William wu <wulf@rock-chips.com>,
-        hl@rock-chips.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: [PATCH v2 2/6] dt-bindings: phy-rockchip-typec: deprecate some register properties.
-Date: Wed, 14 Feb 2018 17:54:43 +0100
-Message-Id: <20180214165447.12181-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180214165447.12181-1-enric.balletbo@collabora.com>
-References: <20180214165447.12181-1-enric.balletbo@collabora.com>
+        id S1033083AbeBNQ5t (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 11:57:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45706 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032821AbeBNQ5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 11:57:48 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FC332177D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Wed, 14 Feb 2018 16:57:43 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/8] MIPS: mscc: add ocelot dtsi
+Message-ID: <20180214165743.GD3986@saruman>
+References: <20180116101240.5393-1-alexandre.belloni@free-electrons.com>
+ <20180116101240.5393-6-alexandre.belloni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="SFyWQ0h3ruR435lw"
+Content-Disposition: inline
+In-Reply-To: <20180116101240.5393-6-alexandre.belloni@free-electrons.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As now the following register properties are in the driver, document as
-deprecated these properties and recommend to not use them on new bindings.
 
-The deprecated properties are:
+--SFyWQ0h3ruR435lw
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-- rockchip,typec-conn-dir : the register of type-c connector direction
-- rockchip,usb3tousb2-en : the register of type-c force usb3 to usb2
-                           enable control.
-- rockchip,external-psm : the register of type-c phy external psm clock
-                          selection.
-- rockchip,pipe-status : the register of type-c phy pipe status.
+On Tue, Jan 16, 2018 at 11:12:37AM +0100, Alexandre Belloni wrote:
+> Add a device tree include file for the Microsemi Ocelot SoC.
+>=20
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
-Changes since v1:
-- This patch is new on these series and is just a documentation update
-  due patch [1/6]
+May I suggest Cc'ing the DT folk on this patch.
 
- .../devicetree/bindings/phy/phy-rockchip-typec.txt | 33 +++++-----------------
- 1 file changed, 7 insertions(+), 26 deletions(-)
+> diff --git a/arch/mips/boot/dts/mscc/Makefile b/arch/mips/boot/dts/mscc/M=
+akefile
+> new file mode 100644
+> index 000000000000..f0a155a74e02
+> --- /dev/null
+> +++ b/arch/mips/boot/dts/mscc/Makefile
+> @@ -0,0 +1,4 @@
+> +obj-y				+=3D $(patsubst %.dtb, %.dtb.o, $(dtb-y))
+> +
+> +# Force kbuild to make empty built-in.o if necessary
+> +obj-				+=3D dummy.o
 
-diff --git a/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt b/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
-index 6ea867e3176f..bc44d6abe283 100644
---- a/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
-+++ b/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
-@@ -16,24 +16,6 @@ Required properties:
- 		 "uphy", "uphy-pipe", "uphy-tcphy"
-  - extcon : extcon specifier for the Power Delivery
- 
--Note, there are 2 type-c phys for RK3399, and they are almost identical, except
--these registers(description below), every register node contains 3 sections:
--offset, enable bit, write mask bit.
-- - rockchip,typec-conn-dir : the register of type-c connector direction,
--   for type-c phy0, it must be <0xe580 0 16>;
--   for type-c phy1, it must be <0xe58c 0 16>;
-- - rockchip,usb3tousb2-en : the register of type-c force usb3 to usb2 enable
--   control.
--   for type-c phy0, it must be <0xe580 3 19>;
--   for type-c phy1, it must be <0xe58c 3 19>;
-- - rockchip,external-psm : the register of type-c phy external psm clock
--   selection.
--   for type-c phy0, it must be <0xe588 14 30>;
--   for type-c phy1, it must be <0xe594 14 30>;
-- - rockchip,pipe-status : the register of type-c phy pipe status.
--   for type-c phy0, it must be <0xe5c0 0 0>;
--   for type-c phy1, it must be <0xe5c0 16 16>;
--
- Required nodes : a sub-node is required for each port the phy provides.
- 		 The sub-node name is used to identify dp or usb3 port,
- 		 and shall be the following entries:
-@@ -43,6 +25,13 @@ Required nodes : a sub-node is required for each port the phy provides.
- Required properties (port (child) node):
- - #phy-cells : must be 0, See ./phy-bindings.txt for details.
- 
-+Deprecated properties, do not use in new device tree sources, these
-+properties are now in the driver:
-+ - rockchip,typec-conn-dir
-+ - rockchip,usb3tousb2-en
-+ - rockchip,external-psm
-+ - rockchip,pipe-status
-+
- Example:
- 	tcphy0: phy@ff7c0000 {
- 		compatible = "rockchip,rk3399-typec-phy";
-@@ -58,10 +47,6 @@ Example:
- 			 <&cru SRST_UPHY0_PIPE_L00>,
- 			 <&cru SRST_P_UPHY0_TCPHY>;
- 		reset-names = "uphy", "uphy-pipe", "uphy-tcphy";
--		rockchip,typec-conn-dir = <0xe580 0 16>;
--		rockchip,usb3tousb2-en = <0xe580 3 19>;
--		rockchip,external-psm = <0xe588 14 30>;
--		rockchip,pipe-status = <0xe5c0 0 0>;
- 
- 		tcphy0_dp: dp-port {
- 			#phy-cells = <0>;
-@@ -86,10 +71,6 @@ Example:
- 			 <&cru SRST_UPHY1_PIPE_L00>,
- 			 <&cru SRST_P_UPHY1_TCPHY>;
- 		reset-names = "uphy", "uphy-pipe", "uphy-tcphy";
--		rockchip,typec-conn-dir = <0xe58c 0 16>;
--		rockchip,usb3tousb2-en = <0xe58c 3 19>;
--		rockchip,external-psm = <0xe594 14 30>;
--		rockchip,pipe-status = <0xe5c0 16 16>;
- 
- 		tcphy1_dp: dp-port {
- 			#phy-cells = <0>;
--- 
-2.15.1
+I don't think you need this since f7adc3124da0 ("kbuild: create
+built-in.o automatically if parent directory wants it"). It was removed
+=66rom other places in bf070bb0e6c6 ("kbuild: remove all dummy assignments
+to obj-").
+
+Cheers
+James
+
+--SFyWQ0h3ruR435lw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqEaocACgkQbAtpk944
+dnr/eQ/7BOCB34KhnDCkU8TtMAAmYg63tT8gCWBZoH6MLtUED8zftuwL4VbbkRLh
+asip9p1141ReZokYC8HeRVORK+i2PzmIRUPAltvjNAn+QbBl4+q9twMH6fTImzBF
+/OoNSyAQxwPGxffsOXlbIz6xUR9H8JFuErLwOyue490ne6OSBixe/RTFb+0MgLHa
+E6p1JaYCRkwjEWMTUSZpLQ2ogryv+DV5fuRjSQC27XSR/22hMqOEWdEK9C52kOuS
+9cCoPd0gy0wUs9KzBmezceBMRS6pXVbkeMErzl0Uq3UsGlchcz56hRcQ4eCQ33pG
+wHOlP2K+aSadpKaPgpPdirWqRgCfVNta2l0MHAVhNddIYIWuEYs7n+CLrKmm138q
+odWxdku4K4f2+zLpE+FXz80bPxy9Yd1mMnS4aG433GFcVEExlUXNe+1ukBqS1c8w
+ppOUYmxE8L+liKSKl2sskw6/rLMIC/cXQAVbY/xcQw1KtySsFBA4MLRdSg/887qZ
+NzaFX7+BDtaw4Z487Vgs8xRzso60Jbvnry1ehuCfIh7ouSTWaTBWy5nEyHiItgBw
+xdiiJFrbTurR7zbudXC10RaXzXBnTFl0KKImrxT6thj8Tap8Ye+WmbTeklzQuW5i
+/sV3L+eDE1S00+AtV8sRW6PMnnqam1e6MEYByFbEKAVfK5A5eRs=
+=zP3d
+-----END PGP SIGNATURE-----
+
+--SFyWQ0h3ruR435lw--
