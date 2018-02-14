@@ -1,50 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935353AbeBNUbE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 15:31:04 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:48338 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754735AbeBNUa7 (ORCPT
+        id S935398AbeBNUbJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 15:31:09 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:44821 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935361AbeBNUbF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 15:30:59 -0500
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] SCSI fixes for 4.16-rc1
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1518639578.3223.44.camel@HansenPartnership.com>
-Date: Wed, 14 Feb 2018 15:30:51 -0500
-In-Reply-To: <1518639578.3223.44.camel@HansenPartnership.com> (James
-        Bottomley's message of "Wed, 14 Feb 2018 12:19:38 -0800")
-Message-ID: <yq1k1vfmhz8.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Wed, 14 Feb 2018 15:31:05 -0500
+Date: Wed, 14 Feb 2018 21:30:16 +0100 (CET)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: =?UTF-8?Q?Michal_Such=C3=A1nek?= <msuchanek@suse.de>
+Cc: Eric Anholt <eric@anholt.net>, bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        Phil Elwell <phil@raspberrypi.org>, Gerd Hoffmann <kraxel@redhat.com>,
+        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        linux-arm-kernel@lists.infradead.org
+Message-ID: <431948292.48734.1518640216077@email.1und1.de>
+In-Reply-To: <20180214202454.6e7ebeaf@naga.suse.cz>
+References: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
+ <1fbf0d77-cb53-f0fa-b810-e9954138d907@i2se.com>
+ <20180214163649.3a0c9476@kitsune.suse.cz>
+ <20180214165827.386b9bb1@kitsune.suse.cz>
+ <ecf8dd61-ab16-b298-d197-ea93ecf5982b@i2se.com>
+ <20180214202454.6e7ebeaf@naga.suse.cz>
+Subject: Re: [PATCH 1/2] mmc: bcm2835: reset host on timeout
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8805 signatures=668671
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=296
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802140239
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev21
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K0:oERPDb+/X5W65hsruIYLZlfyN1blF0rZ9N3xmnJynPp4fDslquT
+ V3nmjodvaiP+IcCqO0w/OofEJ8bYS+wyqVA8Y4uf5AWsVVRnP3VGG7XI5n1K2miRz7cO6LI
+ XOR2+c8EBcPx6xSLUqdF1JKa7xmpyDqbvuMcksnqy79TVn/n+rEBHZDy7p23ydZw4S9B4u/
+ wX19K4MJkfpAGouTqaCHQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:8GvB+xatAaM=:SdMAT02yGPB3pccnE1I9ug
+ 9jtPNL5c+PHDi7SZFEP89Jk6tuBYcTncakqPm5SD+O1Ob2Z8liUOypaJCazXB43WivqeuM3gf
+ w/7uOKSVSdOEcimuTVw5fhoZf96TKEKMMbzcuBNeZIaHu6cUHhCWfa3WG20zBoZXdnX9o8ieU
+ dZUdSWR3WNZZJrsvGGn6CDOPJlL/VOheKEeia5Z50+Um40166eP1fSBaVpbxbpc2PQQ2jhmWd
+ 4zQraeZiuY1X89sD5vbA8mPSDNh6VVDV1CnYCA9V3w8aY/qgBHYyPBmmGYcROjEthXIanL3zY
+ k2mogAcR9ByTaFvgcJJVU1lDHEwX4qU8iF+IV5WFvgMdEQDRkB9InqZo9qDM9/G41UZvqldzG
+ V4vxkJgufiQ7bP4lvr7QzExlzs0zgoCX/gaMLcGGZO4SGprWhORRt1b4GBWI2O8myUMIUdRAo
+ AKC5nhXQzyfcTRtJ3lL95q4HMkQ843lZNpD7+M/29nd2eazuQ9ohWcnuyMrNjpbVs3IvN3zLr
+ BZPfPtxJ4BT7yJA8i2qprLwZ+fFPN39+hal2Z3tdOKUyHiHscnUcjeWsTtrnxmAi43li12RUt
+ L3Y2g0RVOKNZjmb9uL6YD+OVbuAFGWpbdhJCxUJeMcoNSclfjZ7ArKi2PrkKf2Y6/UVCfqoTo
+ 6njlqxnvbqFDW6nt24LlVT0lLZ77RM6VyOSC9vfcL4OWYbxVju/alMRzAly+ixPrat++Dc5oY
+ Rs62gVCeAU1nI9QnbeSeFpe5pOZm7Tcl5thTHiQfQplvHMktMME/HPs2qZE=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1EKV7J5007660
 
+Hi Michal,
 
-James,
+> Michal Suchánek <msuchanek@suse.de> hat am 14. Februar 2018 um 20:24 geschrieben:
+> 
+> 
+> On Wed, 14 Feb 2018 17:49:31 +0100
+> Stefan Wahren <stefan.wahren@i2se.com> wrote:
+> 
+> > Hi Michal,
+> > 
+> > [add Phil]
+> > 
+> > Am 14.02.2018 um 17:13 schrieb Michal Suchánek:
+> > > On Wed, 14 Feb 2018 16:36:49 +0100
+> > > Michal Suchánek <msuchanek@suse.de> wrote:
+> > >  
+> > >> On Wed, 14 Feb 2018 15:58:31 +0100
+> > >> Stefan Wahren <stefan.wahren@i2se.com> wrote:
+> > >>  
+> > >>> Hi Michal,
+> > >>>
+> > >>> Am 14.02.2018 um 15:38 schrieb Michal Suchanek:    
+> > >>>> The bcm2835 mmc host tends to lock up for unknown reason so reset
+> > >>>> it on timeout. The upper mmc block layer tries retransimitting
+> > >>>> with single blocks which tends to work out after a long wait.
+> > >>>>
+> > >>>> This is better than giving up and leaving the machine broken for
+> > >>>> no obvious reason.      
+> > >>> could you please provide more information about this issue
+> > >>> (affected hardware, kernel config, version, dmesg, reproducible
+> > >>> scenario)? 
+> > > It tends to reproduce when upgrading a few packages with zypper and
+> > > otherwise at random during system operation. It seems that for my
+> > > card it worsens with age to some degree so perhaps it depends on the
+> > > fragmentation of the internal card flash.
+> > >
+> > > Attaching dmesg and kernel config.  
+> > 
+> > do you noticed this issue before 4.15-rc4?
+> 
+> I initially noticed it with 4.4 kernel with some backports to make it
+> bootable on RPi.
 
-> These are mostly fixes for problems with merge window code.  In
-> addition we have one doc update (alua) and two dead code removals
-> (aiclib and octogon) a spurious assignment removal (csiostor) and a
-> performance improvement for storvsc involving better interrupt
-> spreading and increasing the command per lun handling.
+this confuses me. Gerd and i ported this driver from downstream and finally it's got merged in 4.12. 
 
-Looks like your tree is out of sync with mine. I dropped one of the
-storvsc commits that broke build on non-SMP due to a missing macro.
+So do you mean that you backported the mainline version to 4.4 or the downstream version of 4.4?
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+On a quick look they seems identical, but they aren't.
+
+> > 
+> > Could you please test with 4.15 final again?
+> 
+> Right, I can apply the patches on something more recent.
+> 
+> > 
+> > What kind of SD card (name) triggers the issue?
+> 
+> Samsung EVO MB-MP16D
+
+Thanks
+
+> 
+> Also see https://elinux.org/RPi_SD_cards#Which_SD_card.3F
+
+I'm very sceptical about this list. The card above is listed as OK and NOK. The experienced issues doesn't need to be direct related to the card (unproperly umounted, bad driver, ...).
+
+Stefan
+
+> 
+> Thanks
+> 
+> Michal
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
