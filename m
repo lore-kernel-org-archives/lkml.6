@@ -1,56 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967597AbeBNLuA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 06:50:00 -0500
-Received: from 8bytes.org ([81.169.241.247]:45570 "EHLO theia.8bytes.org"
+        id S967562AbeBNLvZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 06:51:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36502 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967378AbeBNLt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 06:49:59 -0500
-Date: Wed, 14 Feb 2018 12:49:57 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: "Hook, Gary" <ghook@amd.com>
-Cc: Gary R Hook <gary.hook@amd.com>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/amd - Use dev_err to send events to the system log
-Message-ID: <20180214114957.GI16484@8bytes.org>
-References: <151736066756.21649.4739957712713863861.stgit@sosam4>
- <20180213132216.gyhndywyu23cdzbv@8bytes.org>
- <325d7406-e01b-f7a1-3da6-390b0cf9bc94@amd.com>
- <20180213160018.fg7baclgu5o5rgxc@8bytes.org>
- <f7e7e2c2-c83d-9c4a-f3ac-5c351576b567@amd.com>
+        id S967378AbeBNLvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 06:51:23 -0500
+Date: Wed, 14 Feb 2018 12:51:19 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Jason Wang <jasowang@redhat.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        syzbot <syzbot+1a240cdb1f4cc88819df@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, dhowells@redhat.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mingo@kernel.org,
+        rppt@linux.vnet.ibm.com, syzkaller-bugs@googlegroups.com,
+        vbabka@suse.cz, viro@zeniv.linux.org.uk,
+        Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org,
+        brouer@redhat.com, "Michael S. Tsirkin" <mst@redhat.com>
+Subject: Re: WARNING in kvmalloc_node
+Message-ID: <20180214115119.GA3443@dhcp22.suse.cz>
+References: <001a1144c4ca5dc9d6056520c7b7@google.com>
+ <20180214025533.GA28811@bombadil.infradead.org>
+ <20180214084308.GX3443@dhcp22.suse.cz>
+ <f3fda93e-b223-3c94-3213-43cad4346716@iogearbox.net>
+ <24351362-a099-3317-2b96-8cdc6835eb1e@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f7e7e2c2-c83d-9c4a-f3ac-5c351576b567@amd.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <24351362-a099-3317-2b96-8cdc6835eb1e@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 02:24:56PM -0500, Hook, Gary wrote:
-> Without actually running a driver and getting some debug info, I'll just
-> say that my example compiled, the amd_iommu structure points to a pci_dev
-> which contains a device, and the two possibilities are likely equivalent.
+On Wed 14-02-18 19:47:30, Jason Wang wrote:
 > 
-> I'll vet that, of course, but working under the assumption that they are
-> equivalent, the question becomes, do you have a preference?
+> 
+> On 2018年02月14日 17:28, Daniel Borkmann wrote:
+> > [ +Jason, +Jesper ]
+> > 
+> > On 02/14/2018 09:43 AM, Michal Hocko wrote:
+> > > On Tue 13-02-18 18:55:33, Matthew Wilcox wrote:
+> > > > On Tue, Feb 13, 2018 at 03:59:01PM -0800, syzbot wrote:
+> > > [...]
+> > > > >   kvmalloc include/linux/mm.h:541 [inline]
+> > > > >   kvmalloc_array include/linux/mm.h:557 [inline]
+> > > > >   __ptr_ring_init_queue_alloc include/linux/ptr_ring.h:474 [inline]
+> > > > >   ptr_ring_init include/linux/ptr_ring.h:492 [inline]
+> > > > >   __cpu_map_entry_alloc kernel/bpf/cpumap.c:359 [inline]
+> > > > >   cpu_map_update_elem+0x3c3/0x8e0 kernel/bpf/cpumap.c:490
+> > > > >   map_update_elem kernel/bpf/syscall.c:698 [inline]
+> > > > Blame the BPF people, not the MM people ;-)
+> > Heh, not really. ;-)
+> > 
+> > > Yes. kvmalloc (the vmalloc part) doesn't support GFP_ATOMIC semantic.
+> > Agree, that doesn't work.
+> > 
+> > Bug was added in commit 0bf7800f1799 ("ptr_ring: try vmalloc() when kmalloc() fails").
+> > 
+> > Jason, please take a look at fixing this, thanks!
+> 
+> It looks to me the only solution is to revert that commit.
 
-They are not equivalent, your version points to the pci_dev containing
-the IOMMU, my version points to the (virtual) iommu-device for that
-particular iommu in the kernel.
-
-So the difference in the prefix is:
-
-	your version: '0000:00:00.2:'
-
-	vs. my version: 'ivhd0:'
-
-The latter is the better prefix, because it points to the iommu. A
-pci_dev can contain more than one iommu, so that prefix is not specific
-enough. I know that there is currently no hardware implementing multiple
-iommus on one pci_dev, but it is allowed according to the spec.
-
-
-Regards,
-
-	Joerg
+Do you really need this to be GFP_ATOMIC? I can see some callers are
+under RCU read lock but can we perhaps do the allocation outside of this
+section?
+-- 
+Michal Hocko
+SUSE Labs
