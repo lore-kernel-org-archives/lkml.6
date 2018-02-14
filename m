@@ -1,30 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967867AbeBNNQU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 08:16:20 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:55415 "EHLO
+        id S1030215AbeBNNQr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 08:16:47 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:54097 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967846AbeBNNQR (ORCPT
+        with ESMTP id S967713AbeBNNQq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 08:16:17 -0500
-Date: Wed, 14 Feb 2018 05:04:51 -0800
+        Wed, 14 Feb 2018 08:16:46 -0500
+Date: Wed, 14 Feb 2018 05:06:23 -0800
 From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
-Message-ID: <tip-02390b87a9459937cdb299e6b34ff33992512ec7@git.kernel.org>
-Cc: hpa@zytor.com, tglx@linutronix.de, sergey.senozhatsky.work@gmail.com,
-        bp@suse.de, linux-kernel@vger.kernel.org, minchan@kernel.org,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com,
-        torvalds@linux-foundation.org, ngupta@vflare.org, luto@amacapital.net,
-        peterz@infradead.org
-Reply-To: ngupta@vflare.org, luto@amacapital.net,
-        torvalds@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        mingo@kernel.org, peterz@infradead.org,
-        sergey.senozhatsky.work@gmail.com, tglx@linutronix.de, hpa@zytor.com,
-        minchan@kernel.org, bp@suse.de, linux-kernel@vger.kernel.org
-In-Reply-To: <20180214111656.88514-3-kirill.shutemov@linux.intel.com>
-References: <20180214111656.88514-3-kirill.shutemov@linux.intel.com>
+Message-ID: <tip-5c7919bb1994f8dc7fed219a5db09e6bb9d473a5@git.kernel.org>
+Cc: luto@amacapital.net, hpa@zytor.com, peterz@infradead.org,
+        torvalds@linux-foundation.org, mingo@kernel.org, bp@suse.de,
+        linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
+        tglx@linutronix.de
+Reply-To: kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, bp@suse.de, mingo@kernel.org, hpa@zytor.com,
+        peterz@infradead.org, torvalds@linux-foundation.org,
+        luto@amacapital.net
+In-Reply-To: <20180214111656.88514-6-kirill.shutemov@linux.intel.com>
+References: <20180214111656.88514-6-kirill.shutemov@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] mm/zsmalloc: Prepare to variable MAX_PHYSMEM_BITS
-Git-Commit-ID: 02390b87a9459937cdb299e6b34ff33992512ec7
+Subject: [tip:x86/mm] x86/mm: Make LDT_BASE_ADDR dynamic
+Git-Commit-ID: 5c7919bb1994f8dc7fed219a5db09e6bb9d473a5
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -37,93 +35,83 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  02390b87a9459937cdb299e6b34ff33992512ec7
-Gitweb:     https://git.kernel.org/tip/02390b87a9459937cdb299e6b34ff33992512ec7
+Commit-ID:  5c7919bb1994f8dc7fed219a5db09e6bb9d473a5
+Gitweb:     https://git.kernel.org/tip/5c7919bb1994f8dc7fed219a5db09e6bb9d473a5
 Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate: Wed, 14 Feb 2018 14:16:49 +0300
+AuthorDate: Wed, 14 Feb 2018 14:16:52 +0300
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 14 Feb 2018 13:11:13 +0100
+CommitDate: Wed, 14 Feb 2018 13:11:14 +0100
 
-mm/zsmalloc: Prepare to variable MAX_PHYSMEM_BITS
+x86/mm: Make LDT_BASE_ADDR dynamic
 
-With boot-time switching between paging mode we will have variable
-MAX_PHYSMEM_BITS.
+LDT_BASE_ADDR has different value in 4- and 5-level paging
+configurations.
 
-Let's use the maximum variable possible for CONFIG_X86_5LEVEL=y
-configuration to define zsmalloc data structures.
-
-The patch introduces MAX_POSSIBLE_PHYSMEM_BITS to cover such case.
-It also suits well to handle PAE special case.
+We need to make it dynamic in preparation for boot-time switching
+between paging modes.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reviewed-by: Nitin Gupta <ngupta@vflare.org>
-Acked-by: Minchan Kim <minchan@kernel.org>
 Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Borislav Petkov <bp@suse.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180214111656.88514-3-kirill.shutemov@linux.intel.com
+Link: http://lkml.kernel.org/r/20180214111656.88514-6-kirill.shutemov@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/include/asm/pgtable-3level_types.h |  1 +
- arch/x86/include/asm/pgtable_64_types.h     |  2 ++
- mm/zsmalloc.c                               | 13 +++++++------
- 3 files changed, 10 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/pgtable_64_types.h | 9 +++++----
+ arch/x86/mm/dump_pagetables.c           | 5 ++++-
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable-3level_types.h b/arch/x86/include/asm/pgtable-3level_types.h
-index 876b4c7..6a59a6d 100644
---- a/arch/x86/include/asm/pgtable-3level_types.h
-+++ b/arch/x86/include/asm/pgtable-3level_types.h
-@@ -44,5 +44,6 @@ typedef union {
-  */
- #define PTRS_PER_PTE	512
- 
-+#define MAX_POSSIBLE_PHYSMEM_BITS	36
- 
- #endif /* _ASM_X86_PGTABLE_3LEVEL_DEFS_H */
 diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 6b8f73d..7168de7 100644
+index 5e2d724..903e4d05 100644
 --- a/arch/x86/include/asm/pgtable_64_types.h
 +++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -40,6 +40,8 @@ typedef struct { pteval_t pte; } pte_t;
- #define P4D_SIZE	(_AC(1, UL) << P4D_SHIFT)
- #define P4D_MASK	(~(P4D_SIZE - 1))
- 
-+#define MAX_POSSIBLE_PHYSMEM_BITS	52
-+
- #else /* CONFIG_X86_5LEVEL */
- 
- /*
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index c301350..b7f61cd 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -84,18 +84,19 @@
-  * This is made more complicated by various memory models and PAE.
+@@ -92,18 +92,19 @@ extern unsigned int pgtable_l5_enabled;
   */
+ #define MAXMEM			_AC(__AC(1, UL) << MAX_PHYSMEM_BITS, UL)
  
--#ifndef MAX_PHYSMEM_BITS
--#ifdef CONFIG_HIGHMEM64G
--#define MAX_PHYSMEM_BITS 36
--#else /* !CONFIG_HIGHMEM64G */
-+#ifndef MAX_POSSIBLE_PHYSMEM_BITS
-+#ifdef MAX_PHYSMEM_BITS
-+#define MAX_POSSIBLE_PHYSMEM_BITS MAX_PHYSMEM_BITS
-+#else
- /*
-  * If this definition of MAX_PHYSMEM_BITS is used, OBJ_INDEX_BITS will just
-  * be PAGE_SHIFT
-  */
--#define MAX_PHYSMEM_BITS BITS_PER_LONG
-+#define MAX_POSSIBLE_PHYSMEM_BITS BITS_PER_LONG
- #endif
- #endif
--#define _PFN_BITS		(MAX_PHYSMEM_BITS - PAGE_SHIFT)
++#define LDT_PGD_ENTRY_L4	-3UL
++#define LDT_PGD_ENTRY_L5	-112UL
++#define LDT_PGD_ENTRY		(pgtable_l5_enabled ? LDT_PGD_ENTRY_L5 : LDT_PGD_ENTRY_L4)
++#define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
 +
-+#define _PFN_BITS		(MAX_POSSIBLE_PHYSMEM_BITS - PAGE_SHIFT)
+ #ifdef CONFIG_X86_5LEVEL
+ # define VMALLOC_SIZE_TB	_AC(12800, UL)
+ # define __VMALLOC_BASE		_AC(0xffa0000000000000, UL)
+ # define __VMEMMAP_BASE		_AC(0xffd4000000000000, UL)
+-# define LDT_PGD_ENTRY		_AC(-112, UL)
+-# define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
+ #else
+ # define VMALLOC_SIZE_TB	_AC(32, UL)
+ # define __VMALLOC_BASE		_AC(0xffffc90000000000, UL)
+ # define __VMEMMAP_BASE		_AC(0xffffea0000000000, UL)
+-# define LDT_PGD_ENTRY		_AC(-3, UL)
+-# define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
+ #endif
  
- /*
-  * Memory for allocating for handle keeps object position by
+ #ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index 2a4849e..a89f2db 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -89,7 +89,7 @@ static struct addr_marker address_markers[] = {
+ 	[KASAN_SHADOW_END_NR]	= { KASAN_SHADOW_END,	"KASAN shadow end" },
+ #endif
+ #ifdef CONFIG_MODIFY_LDT_SYSCALL
+-	[LDT_NR]		= { LDT_BASE_ADDR,	"LDT remap" },
++	[LDT_NR]		= { 0UL,		"LDT remap" },
+ #endif
+ 	[CPU_ENTRY_AREA_NR]	= { CPU_ENTRY_AREA_BASE,"CPU entry Area" },
+ #ifdef CONFIG_X86_ESPFIX64
+@@ -570,6 +570,9 @@ static int __init pt_dump_init(void)
+ 	address_markers[LOW_KERNEL_NR].start_address = PAGE_OFFSET;
+ 	address_markers[VMALLOC_START_NR].start_address = VMALLOC_START;
+ 	address_markers[VMEMMAP_START_NR].start_address = VMEMMAP_START;
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
++	address_markers[LDT_NR].start_address = LDT_BASE_ADDR;
++#endif
+ #endif
+ #ifdef CONFIG_X86_32
+ 	address_markers[VMALLOC_START_NR].start_address = VMALLOC_START;
