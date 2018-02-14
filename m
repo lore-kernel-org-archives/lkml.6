@@ -1,260 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162783AbeBNTRB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 14:17:01 -0500
-Received: from mail.blih.net ([212.83.177.182]:13994 "EHLO mail.blih.net"
+        id S1162812AbeBNTUw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 14:20:52 -0500
+Received: from mga06.intel.com ([134.134.136.31]:41685 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162753AbeBNTQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 14:16:57 -0500
-Date: Wed, 14 Feb 2018 20:16:54 +0100
-From: Emmanuel Vadot <manu@bidouilliste.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: devicetree <devicetree@vger.kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [PATCH] Revert
- "ARM: dts: sunxi: Add regulators for Sinovoip BPI-M2"
-Message-Id: <20180214201654.cb8cb64bf50b958a53ebebbd@bidouilliste.com>
-In-Reply-To: <CAGb2v66BDbLgNVAp=D0QXH4WEMZpa+rCWYk+uLXexme2qgjeBg@mail.gmail.com>
-References: <20180203112353.13497-1-icenowy@aosc.io>
-        <20180205095558.2e713c24cdb7c3232943db52@bidouilliste.com>
-        <207CD143-6535-42C9-BEF3-9D2614336482@aosc.io>
-        <c59ee4bd3246172ec62705967bb8f751@megadrive.org>
-        <CAGb2v66BDbLgNVAp=D0QXH4WEMZpa+rCWYk+uLXexme2qgjeBg@mail.gmail.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; amd64-portbld-freebsd12.0)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+        id S1162781AbeBNTUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 14:20:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,513,1511856000";
+   d="scan'208";a="204241472"
+Subject: Re: [tip:x86/pti] x86/speculation: Use IBRS if available before
+ calling into firmware
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave@sr71.net>,
+        hpa@zytor.com, tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, dwmw@amazon.co.uk,
+        linux-tip-commits@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        Arjan van de Ven <arjan@infradead.org>
+References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
+ <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
+ <20180212102211.cdrrqqd4hdw7xu5y@gmail.com>
+ <a85c28b8-1255-3264-bb4a-89e85e3c6009@sr71.net>
+ <20180212165835.GO25181@hirez.programming.kicks-ass.net>
+ <20180213075540.3lkikkpgjoe6ocjk@gmail.com>
+ <5c3ba123-abbe-f153-7b75-a89d31d25c72@linux.intel.com>
+ <20180214085614.GT25181@hirez.programming.kicks-ass.net>
+From: Tim Chen <tim.c.chen@linux.intel.com>
+Message-ID: <1fd7c8ef-a50c-53d8-7159-d992e669c2f2@linux.intel.com>
+Date: Wed, 14 Feb 2018 11:20:47 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
+MIME-Version: 1.0
+In-Reply-To: <20180214085614.GT25181@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1EJH76e009150
 
-On Tue, 13 Feb 2018 18:36:24 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
+On 02/14/2018 12:56 AM, Peter Zijlstra wrote:
 
-> On Sat, Feb 10, 2018 at 5:20 AM, Emmanuel Vadot <manu@bidouilliste.com> wrote:
-> > On 2018-02-05 10:05, Icenowy Zheng wrote:
-> >>
-> >> ? 2018?2?5? GMT+08:00 ??4:55:58, Emmanuel Vadot <manu@bidouilliste.com>
-> >> ??:
-> >>>
-> >>>
-> >>> Hello,
-> >>>
-> >>> On Sat,  3 Feb 2018 19:23:53 +0800
-> >>> Icenowy Zheng <icenowy@aosc.io> wrote:
-> >>>
-> >>>> This reverts commit 7daa213700758b5b08fc0daab09bb139dd334165.
-> >>>>
-> >>>> The original commit has several problems:
-> >>>>
-> >>>> - vdd-cpus and aldo3 (AVCC of the SoC) are not set to always-on,
-> >>>
-> >>> which
-> >>>>
-> >>>> leads to system hang when disabling unused regulators.
-> >>>
-> >>>
-> >>> Indeed I should have make those always-on.
-> >>>
-> >>>> - GMAC (which uses dldo1 and aldo2) and Wi-Fi (which uses aldo1) are
-> >>>
-> >>> not
-> >>>>
-> >>>> considered, and will fail to work after adding this commit.
-> >>>
-> >>>
-> >>> While I understand the problem with vdd-cpus and aldo3 I don't see why
-> >>> when you don't declare regulator the code should do something with it.
-> >>> DT is supposed to describe the hardware and the code should not use
-> >>> hardware not described right ?
-> >>> The gmac node doesn't declare any regulators and the mmc2 uses
-> >>> reg_vcc3v0 (haven't checked on the schematics yet if it is correct).
-> >>
-> >>
-> >> It's because the regulator support isn't present before
-> >> this commit. However these parts really need special
-> >> regulators. I don't have M2 schematics at hand, so you'd
-> >> check it by yourself.
-> >
-> >
-> >  Yes but why does the PMIC should disable regulators not defined in the DTS
-> > ? That the part I don't understand and want to know where it is
-> > described/documented.
 > 
-> They are defined. See axp22x.dtsi, which you included in your patch.
+> At the very least this must disable and re-enable preemption, such that
+> we guarantee we inc/dec the same counter. ISTR some firmware calls (EFI)
+> actually are preemptible so that wouldn't work.
 > 
-> Now the system is free to do whatever it wants under the constraints
-> of the device tree. Since you do not reference the regulator, the
-> kernel is free to turn it off to save power.
-
- Yeah I realized that now and feel stupid ...
- Thanks for the clarification.
-
-> >
-> >> P.S. a proper device tree with AXP shouldn't use
-> >> reg_vcc3v0/3v3/1v8/etc. They're dummy
-> >> regulator nodes for
-> >> not implemented or not controllable regulators.
-> >>
-> >>>
-> >>>> This indicates that this patch should be not tested at all.
-> >>>
-> >>>
-> >>> This have indeed not been tested with linux.
-> >>> I think that this commit should not be reverted, I'll send a proper
-> >>> patch tonight or tomorow night max.
-> >>
-> >>
-> >> Please test patches sent to Linux on Linux :-)
-> >
-> >
-> >  If my patches adhere to the bindings I don't see why.
+> Further, consider:
 > 
-> It adheres to the bindings, but does not accurately describe the
-> hardware constraints.
-
- Is there a place where there is build of the linux kernel for
-sunxi/multi7 and initrd available for download so I can add that to my
-test bench ?
-
- Cheers,
-
-> ChenYu
+> 	this_cpu_inc_return()		// 0->1
+> 	<NMI>
+> 		this_cpu_inc_return()	// 1->2
+> 		call_broken_arse_firmware()
+> 		this_cpu_dec_return()	// 2->1
+> 	</NMI>
+> 	wrmsr(SPEC_CTRL, IBRS);
 > 
-> >
-> >
-> >>>
-> >>> P.S.: Also as I'm the original sender I think I should have been in CC
-> >>> no ?
-> >>
-> >>
-> >> get_maintainer.pl didn't mention you and I forgot... sorry.
-> >>
-> >>>
-> >>> Cheers,
-> >>>
-> >>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> >>>> ---
-> >>>>  arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts | 57
-> >>>
-> >>> ------------------------
-> >>>>
-> >>>>  1 file changed, 57 deletions(-)
-> >>>>
-> >>>> diff --git a/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
-> >>>
-> >>> b/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
-> >>>>
-> >>>> index 51e6f1d21c32..a565316eb340 100644
-> >>>> --- a/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
-> >>>> +++ b/arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts
-> >>>> @@ -86,10 +86,6 @@
-> >>>>         };
-> >>>>  };
-> >>>>
-> >>>> -&cpu0 {
-> >>>> -       cpu-supply = <&reg_dcdc3>;
-> >>>> -};
-> >>>> -
-> >>>>  &ehci0 {
-> >>>>         status = "okay";
-> >>>>  };
-> >>>> @@ -155,17 +151,6 @@
-> >>>>         status = "okay";
-> >>>>  };
-> >>>>
-> >>>> -&p2wi {
-> >>>> -       status = "okay";
-> >>>> -
-> >>>> -       axp22x: pmic@68 {
-> >>>> -               compatible = "x-powers,axp221";
-> >>>> -               reg = <0x68>;
-> >>>> -               interrupt-parent = <&nmi_intc>;
-> >>>> -               interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-> >>>> -       };
-> >>>> -};
-> >>>> -
-> >>>>  &pio {
-> >>>>         gmac_phy_reset_pin_bpi_m2: gmac_phy_reset_pin@0 {
-> >>>>                 pins = "PA21";
-> >>>> @@ -191,48 +176,6 @@
-> >>>>         };
-> >>>>  };
-> >>>>
-> >>>> -#include "axp22x.dtsi"
-> >>>> -
-> >>>> -&reg_dc5ldo {
-> >>>> -       regulator-min-microvolt = <700000>;
-> >>>> -       regulator-max-microvolt = <1320000>;
-> >>>> -       regulator-name = "vdd-cpus";
-> >>>> -};
-> >>>> -
-> >>>> -&reg_dcdc1 {
-> >>>> -       regulator-always-on;
-> >>>> -       regulator-min-microvolt = <3000000>;
-> >>>> -       regulator-max-microvolt = <3000000>;
-> >>>> -       regulator-name = "vdd-3v0";
-> >>>> -};
-> >>>> -
-> >>>> -&reg_dcdc2 {
-> >>>> -       regulator-min-microvolt = <700000>;
-> >>>> -       regulator-max-microvolt = <1320000>;
-> >>>> -       regulator-name = "vdd-gpu";
-> >>>> -};
-> >>>> -
-> >>>> -&reg_dcdc3 {
-> >>>> -       regulator-always-on;
-> >>>> -       regulator-min-microvolt = <700000>;
-> >>>> -       regulator-max-microvolt = <1320000>;
-> >>>> -       regulator-name = "vdd-cpu";
-> >>>> -};
-> >>>> -
-> >>>> -&reg_dcdc4 {
-> >>>> -       regulator-always-on;
-> >>>> -       regulator-min-microvolt = <700000>;
-> >>>> -       regulator-max-microvolt = <1320000>;
-> >>>> -       regulator-name = "vdd-sys-dll";
-> >>>> -};
-> >>>> -
-> >>>> -&reg_dcdc5 {
-> >>>> -       regulator-always-on;
-> >>>> -       regulator-min-microvolt = <1500000>;
-> >>>> -       regulator-max-microvolt = <1500000>;
-> >>>> -       regulator-name = "vcc-dram";
-> >>>> -};
-> >>>> -
-> >>>>  &uart0 {
-> >>>>         pinctrl-names = "default";
-> >>>>         pinctrl-0 = <&uart0_pins_a>;
-> >>>> --
-> >>>> 2.15.1
-> >>>>
-> >>>>
-> >>>> _______________________________________________
-> >>>> linux-arm-kernel mailing list
-> >>>> linux-arm-kernel@lists.infradead.org
-> >>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> >>
-> >>
-> >> _______________________________________________
-> >> linux-arm-kernel mailing list
-> >> linux-arm-kernel@lists.infradead.org
-> >> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> >
-> >
-> > --
-> > Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
+> 	/* from dodgy firmware crap */
 > 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 	this_cpu_dec_return()		// 1->0
+> 	wrmsr(SPEC_CTRL, 0);
+> 
 
+How about the following patch.
 
+Thanks.
+
+Tim
+
+---
+>From a37d28622781acf2789dd63f2fdb57be733f15a4 Mon Sep 17 00:00:00 2001
+From: Tim Chen <tim.c.chen@linux.intel.com>
+Date: Tue, 13 Feb 2018 04:10:41 -0800
+Subject: [PATCH] x86/firmware: Prevent IBRS from being turned off prematurely.
+
+Dave Woodhoue proposed using IBRS to protect the firmware
+call path against Spectre exploit.  However, firmware path
+can go through NMI and we can get nested calls, causing
+unsafe firmware calls with missing IBRS as illustrated below:
+
+	firmware_restrict_branch_speculation_start (set IBRS=1)
+	NMI
+	    firmware_restrict_branch_speculation_start (set IBRS=1)
+	    firmware call
+	    firmware_restrict_branch_speculation_end (set IBRS=0)
+	NMI return
+	firmware call (with IBRS=0)  <---- unsafe call, premature IBRS disabling
+	firmware_restrict_branch_speculation_end (set IBRS=0)
+
+This patch proposes using a per cpu counter to track the IBRS
+firmware call nesting depth, to ensure that we don't turn off
+IBRS prematurely before calling firmware.
+
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+---
+ arch/x86/include/asm/nospec-branch.h | 10 ++++++++--
+ arch/x86/kernel/cpu/bugs.c           |  2 ++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 297d457..a8dd9ea 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -146,6 +146,8 @@ enum spectre_v2_mitigation {
+ extern char __indirect_thunk_start[];
+ extern char __indirect_thunk_end[];
+ 
++DECLARE_PER_CPU(int, spec_ctrl_ibrs_fw_depth);
++
+ /*
+  * On VMEXIT we must ensure that no RSB predictions learned in the guest
+  * can be followed in the host, by overwriting the RSB completely. Both
+@@ -186,14 +188,18 @@ static inline void indirect_branch_prediction_barrier(void)
+  */
+ static inline void firmware_restrict_branch_speculation_start(void)
+ {
++	preempt_disable();
++	this_cpu_inc(spec_ctrl_ibrs_fw_depth);
+ 	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
+ 			      X86_FEATURE_USE_IBRS_FW);
+ }
+ 
+ static inline void firmware_restrict_branch_speculation_end(void)
+ {
+-	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
+-			      X86_FEATURE_USE_IBRS_FW);
++	if (this_cpu_dec_return(spec_ctrl_ibrs_fw_depth) == 0)
++		alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
++				      X86_FEATURE_USE_IBRS_FW);
++	preempt_enable();
+ }
+ #endif /* __ASSEMBLY__ */
+ #endif /* _ASM_X86_NOSPEC_BRANCH_H_ */
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index c994dab..4ab13f0 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -27,6 +27,8 @@
+ #include <asm/intel-family.h>
+ 
+ static void __init spectre_v2_select_mitigation(void);
++DEFINE_PER_CPU(int, spec_ctrl_ibrs_fw_depth);
++EXPORT_PER_CPU_SYMBOL(spec_ctrl_ibrs_fw_depth);
+ 
+ void __init check_bugs(void)
+ {
 -- 
-Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
+2.7.4
