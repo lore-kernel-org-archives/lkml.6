@@ -1,56 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966538AbeBNCOs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 13 Feb 2018 21:14:48 -0500
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:33472 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966429AbeBNCOr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Feb 2018 21:14:47 -0500
-X-Google-Smtp-Source: AH8x225H/wwdECzotYHdG9F7mA85w2cg5vLHDEZnoaZxlfpOpf4uRHh+TgoCQH54oXLA8GfRFnanL75fe8d048oMAjs=
-MIME-Version: 1.0
-In-Reply-To: <20180213124810.oyf4ec5bpbnsnkqy@earth.universe>
-References: <7655f39d44e804c9ed3209db475567abc250f642.1518169282.git.baolin.wang@linaro.org>
- <20180209123044.vjvkb3yfmk4gqfiv@earth.universe> <20180213124810.oyf4ec5bpbnsnkqy@earth.universe>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Wed, 14 Feb 2018 10:14:46 +0800
-Message-ID: <CAMz4ku+z6PBKQWfadhpi2yGeeM+=ZnPVAbdKc5+3XyvUvAZzAQ@mail.gmail.com>
-Subject: Re: [PATCH v2] power: reset: Add Spreadtrum SC27xx PMIC power off support
-To: Sebastian Reichel <sre@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S966528AbeBNC2A (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 13 Feb 2018 21:28:00 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38728 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966382AbeBNC16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Feb 2018 21:27:58 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH] x86/entry/64: Fix CR3 restore order in paranoid_exit()
+Date: Tue, 13 Feb 2018 20:27:30 -0600
+Message-Id: <2b8ce3a31bcdfffa434269f4abf5d46816b75773.1518575248.git.jpoimboe@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sebastian,
+The paranoid exit code only restores the saved CR3 when it switches back
+to the user GS.  However, even in the kernel GS case, it's possible that
+it needs to restore a user CR3, if for example, the paranoid exception
+occurred in the syscall exit path between SWITCH_TO_USER_CR3_STACK and
+SWAPGS.
 
-On 13 February 2018 at 20:48, Sebastian Reichel <sre@kernel.org> wrote:
-> Hi Baolin,
->
-> On Fri, Feb 09, 2018 at 01:30:44PM +0100, Sebastian Reichel wrote:
->> On Fri, Feb 09, 2018 at 05:43:38PM +0800, Baolin Wang wrote:
->> > On Spreadtrum platform, we need power off system through external SC27xx
->> > series PMICs including the SC2720, SC2721, SC2723, SC2730 and SC2731 chips.
->> > Thus this patch adds SC27xx series PMICs power-off support.
->> >
->> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->>
->> Thanks, queued. My public -next branch is waiting for 4.16-rc1,
->> though.
->
-> I just dropped this patch. It does not compile as a module:
->
-> ERROR: "freeze_secondary_cpus" [drivers/power/reset/sc27xx-poweroff.ko] undefined!
->
-> There is no EXPORT_SYMBOL for freeze_secondary_cpus, so you either
-> need to add that or make the new driver built-in only.
+Fix that issue by making the CR3 restore unconditional.  This is
+symmetrical with the unconditional CR3 save in paranoid_entry().
 
-I am sorry for the building error, and I will  make the driver
-built-in only in next version. Thanks.
+Also, since RESTORE_CR3 is now done before the EBX compare, it needs to
+use a different scratch register (R15 instead of RBX).
 
+I haven't actually seen any real-world bugs caused by this, so I'm not
+sure how theoretical it is.  I just stumbled upon it in code review when
+looking for another bug.
+
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+---
+ arch/x86/entry/entry_64.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index cd216c9431e1..68c95a09b48d 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1167,10 +1167,10 @@ ENTRY(paranoid_exit)
+ 	UNWIND_HINT_REGS
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+ 	TRACE_IRQS_OFF_DEBUG
++	RESTORE_CR3	scratch_reg=%r15 save_reg=%r14
+ 	testl	%ebx, %ebx			/* swapgs needed? */
+ 	jnz	.Lparanoid_exit_no_swapgs
+ 	TRACE_IRQS_IRETQ
+-	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
+ 	SWAPGS_UNSAFE_STACK
+ 	jmp	.Lparanoid_exit_restore
+ .Lparanoid_exit_no_swapgs:
 -- 
-Baolin.wang
-Best Regards
+2.14.3
