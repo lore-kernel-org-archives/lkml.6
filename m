@@ -1,62 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030511AbeBNOSN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 09:18:13 -0500
-Received: from lilium.sigma-star.at ([109.75.188.150]:51704 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030288AbeBNOSM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 09:18:12 -0500
-From: Richard Weinberger <richard@sigma-star.at>
-To: Enrico Weigelt <lkml@metux.net>
-Cc: Aleksa Sarai <asarai@suse.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: plan9 semantics on Linux - mount namespaces
-Date: Wed, 14 Feb 2018 15:19:24 +0100
-Message-ID: <2050418.Dl5pXkWGsk@blindfold>
-In-Reply-To: <a2a6f189-008e-38f2-afcb-b9393d8d440a@metux.net>
-References: <0f058286-a432-379b-f559-f2fe713807ab@metux.net> <2658681.ustYaP9yci@blindfold> <a2a6f189-008e-38f2-afcb-b9393d8d440a@metux.net>
+        id S1030572AbeBNOSy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 09:18:54 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36114 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1030288AbeBNOSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 09:18:52 -0500
+From: =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: bhe@redhat.com, slp@redhat.com, mst@redhat.com, somlo@cmu.edu,
+        xiaolong.ye@intel.com,
+        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
+Subject: [PATCH v14 0/9] fw_cfg: add DMA operations & etc/vmcoreinfo support
+Date: Wed, 14 Feb 2018 15:18:41 +0100
+Message-Id: <20180214141850.4017-1-marcandre.lureau@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, 14. Februar 2018, 15:03:55 CET schrieb Enrico Weigelt:
-> On 14.02.2018 13:53, Richard Weinberger wrote:
-> > It does what you ask it for. > Also see the --setgroups switch.> AFAICT
-> > --setgroups=deny is the new
-> default, then your command line should just> work. Maybe your unshare
-> tool is too old.
-> Also doesn't help:
-> 
-> daemon@alphabox:~ unshare -U -r --setgroups=deny
-> unshare: can't open '/proc/self/setgroups': Permission denied
+Hi,
 
-Works here(tm).
-Can you debug it? Maybe we miss something obvious.
- 
-> >> What I'd like to achieve is that processes can manipulate their private
-> >> >> namespace at will and mount other filesystems (primarily 9p and
-> fuse).>>>> For that, I need to get rid of setuid (and per-file caps) for
-> these>> private namespaces.>
-> 
-> > This is exactly why we have the user namespace.
-> > In the user namespace you can create your own mount namespace and do
-> > (almost) whatever you want.
-> 
-> What's the exact relation between user and mnt namespace ?
-> Why do I need an own user ns for private mnt ns ? (except for the suid
-> bit, which I wanna get rid of anyways).
+This series adds DMA operations support to the qemu fw_cfg kernel
+module and populates "etc/vmcoreinfo" with vmcoreinfo location
+details (entry added since qemu 2.11 with -device vmcoreinfo).
 
-mount related system calls are root-only. Therefore you need the user 
-namespace to become a root in your own little world. :)
+v14:
+- add "fw_cfg: add a public uapi header"
+- fix sparse warnings & don't introduce new warnings
+- add memory barriers to force IO ordering
+- split fw_cfg_read_blob() in fw_cfg_read_blob_io() and
+  fw_cfg_read_blob_dma()
+- add error handling to fw_cfg_read_blob() callers
+- minor stylistic changes
 
-Thanks,
-//richard
+v13:
+- reorder patch series, introduce DMA write before DMA read
+- do some measurements of DMA read speed-ups
+
+v12:
+- fix virt_to_phys(NULL) panic with CONFIG_DEBUG_VIRTUAL=y
+- do not use DMA read, except for kmalloc() memory we allocated
+  ourself (only fw_cfg_register_dir_entries() so far)
+
+v11:
+- add #include <linux/crash_core.h> in last patch,
+  fixing kbuild .config test
+
+Marc-André Lureau (9):
+  crash: export paddr_vmcoreinfo_note()
+  fw_cfg: add a public uapi header
+  fw_cfg: fix sparse warnings in fw_cfg_sel_endianness()
+  fw_cfg: fix sparse warnings with fw_cfg_file
+  fw_cfg: fix sparse warning reading FW_CFG_ID
+  fw_cfg: fix sparse warnings around FW_CFG_FILE_DIR read
+  fw_cfg: add DMA register
+  fw_cfg: write vmcoreinfo details
+  RFC: fw_cfg: do DMA read operation
+
+ MAINTAINERS                    |   1 +
+ drivers/firmware/qemu_fw_cfg.c | 333 +++++++++++++++++++++++++++++++++--------
+ include/uapi/linux/fw_cfg.h    | 102 +++++++++++++
+ kernel/crash_core.c            |   1 +
+ 4 files changed, 374 insertions(+), 63 deletions(-)
+ create mode 100644 include/uapi/linux/fw_cfg.h
 
 -- 
-sigma star gmbh - Eduard-Bodem-Gasse 6 - 6020 Innsbruck - Austria
-ATU66964118 - FN 374287y
+2.16.1.73.g5832b7e9f2
