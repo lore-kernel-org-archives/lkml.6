@@ -1,234 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030741AbeBNOTV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 09:19:21 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36162 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1030694AbeBNOTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1030726AbeBNOTT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 09:19:19 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:47806 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030288AbeBNOTP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Feb 2018 09:19:15 -0500
-From: =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: bhe@redhat.com, slp@redhat.com, mst@redhat.com, somlo@cmu.edu,
-        xiaolong.ye@intel.com,
-        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
-Subject: [PATCH v14 8/9] fw_cfg: write vmcoreinfo details
-Date: Wed, 14 Feb 2018 15:18:49 +0100
-Message-Id: <20180214141850.4017-9-marcandre.lureau@redhat.com>
-In-Reply-To: <20180214141850.4017-1-marcandre.lureau@redhat.com>
-References: <20180214141850.4017-1-marcandre.lureau@redhat.com>
+X-Google-Smtp-Source: AH8x225YKVdzMZcVrE/GeSNdzSeea8MxqBVxiTA9MPyHc68hQC9cUd5bXEu7Ts+6fw+DdaqnrjVpvw4DhSt9TEGVD0s=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180214050843.GA2811@jagdpanzerIV>
+References: <20180209192216.20509-1-pasha.tatashin@oracle.com>
+ <20180209192216.20509-2-pasha.tatashin@oracle.com> <20180214050843.GA2811@jagdpanzerIV>
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+Date: Wed, 14 Feb 2018 09:16:53 -0500
+X-Gmail-Original-Message-ID: <CAOAebxuwn0hvp7Rwv5nFDy=POUJf81X=xVEjM6MBEy6nzaNYgQ@mail.gmail.com>
+Message-ID: <CAOAebxuwn0hvp7Rwv5nFDy=POUJf81X=xVEjM6MBEy6nzaNYgQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] mm: initialize pages on demand during boot
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Steve Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>, m.mizuma@jp.fujitsu.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        baiyaowei@cmss.chinamobile.com, Wei Yang <richard.weiyang@gmail.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Miles Chen <miles.chen@mediatek.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8804 signatures=668670
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=8 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802140170
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the "etc/vmcoreinfo" fw_cfg file is present and we are not running
-the kdump kernel, write the addr/size of the vmcoreinfo ELF note.
+Hi Sergey,
 
-The DMA operation is expected to run synchronously with today qemu,
-but the specification states that it may become async, so we run
-"control" field check in a loop for eventual changes.
+Thank you for noticing this! I will send out an updated patch soon.
 
-Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
----
- drivers/firmware/qemu_fw_cfg.c | 144 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 141 insertions(+), 3 deletions(-)
+Pavel
 
-diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-index 37638b95cb45..69939e2529f2 100644
---- a/drivers/firmware/qemu_fw_cfg.c
-+++ b/drivers/firmware/qemu_fw_cfg.c
-@@ -34,11 +34,17 @@
- #include <linux/io.h>
- #include <linux/ioport.h>
- #include <linux/fw_cfg.h>
-+#include <linux/delay.h>
-+#include <linux/crash_dump.h>
-+#include <linux/crash_core.h>
- 
- MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
- MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
- MODULE_LICENSE("GPL");
- 
-+/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
-+static u32 fw_cfg_rev;
-+
- /* fw_cfg device i/o register addresses */
- static bool fw_cfg_is_mmio;
- static phys_addr_t fw_cfg_p_base;
-@@ -59,6 +65,65 @@ static inline u16 fw_cfg_sel_endianness(u16 key)
- 		(u16 __force)cpu_to_le16(key);
- }
- 
-+static inline bool fw_cfg_dma_enabled(void)
-+{
-+	return (fw_cfg_rev & FW_CFG_VERSION_DMA) && fw_cfg_reg_dma;
-+}
-+
-+/* qemu fw_cfg device is sync today, but spec says it may become async */
-+static void fw_cfg_wait_for_control(struct fw_cfg_dma_access *d)
-+{
-+	do {
-+		u32 ctrl = be32_to_cpu(READ_ONCE(d->control));
-+
-+		if ((ctrl & ~FW_CFG_DMA_CTL_ERROR) == 0)
-+			return;
-+
-+		usleep_range(50, 100);
-+	} while (true);
-+
-+	/* do not reorder the read to d->control */
-+	rmb();
-+}
-+
-+static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
-+{
-+	phys_addr_t dma;
-+	struct fw_cfg_dma_access *d = NULL;
-+	ssize_t ret = length;
-+
-+	d = kmalloc(sizeof(*d), GFP_KERNEL);
-+	if (!d) {
-+		ret = -ENOMEM;
-+		goto end;
-+	}
-+
-+	/* fw_cfg device does not need IOMMU protection, so use physical addresses */
-+	*d = (struct fw_cfg_dma_access) {
-+		.address = cpu_to_be64(address ? virt_to_phys(address) : 0),
-+		.length = cpu_to_be32(length),
-+		.control = cpu_to_be32(control)
-+	};
-+
-+	dma = virt_to_phys(d);
-+
-+	iowrite32be((u64)dma >> 32, fw_cfg_reg_dma);
-+	/* force memory to sync before notifying device via MMIO */
-+	wmb();
-+	iowrite32be(dma, fw_cfg_reg_dma + 4);
-+
-+	fw_cfg_wait_for_control(d);
-+
-+	if (be32_to_cpu(READ_ONCE(d->control)) & FW_CFG_DMA_CTL_ERROR) {
-+		ret = -EIO;
-+	}
-+
-+end:
-+	kfree(d);
-+
-+	return ret;
-+}
-+
- /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
- static inline void fw_cfg_read_blob(u16 key,
- 				    void *buf, loff_t pos, size_t count)
-@@ -87,6 +152,47 @@ static inline void fw_cfg_read_blob(u16 key,
- 	acpi_release_global_lock(glk);
- }
- 
-+#ifdef CONFIG_CRASH_CORE
-+/* write chunk of given fw_cfg blob (caller responsible for sanity-check) */
-+static ssize_t fw_cfg_write_blob(u16 key,
-+				 void *buf, loff_t pos, size_t count)
-+{
-+	u32 glk = -1U;
-+	acpi_status status;
-+	ssize_t ret = count;
-+
-+	/* If we have ACPI, ensure mutual exclusion against any potential
-+	 * device access by the firmware, e.g. via AML methods:
-+	 */
-+	status = acpi_acquire_global_lock(ACPI_WAIT_FOREVER, &glk);
-+	if (ACPI_FAILURE(status) && status != AE_NOT_CONFIGURED) {
-+		/* Should never get here */
-+		WARN(1, "%s: Failed to lock ACPI!\n", __func__);
-+		return -EINVAL;
-+	}
-+
-+	mutex_lock(&fw_cfg_dev_lock);
-+	if (pos == 0) {
-+		ret = fw_cfg_dma_transfer(buf, count, key << 16
-+					  | FW_CFG_DMA_CTL_SELECT
-+					  | FW_CFG_DMA_CTL_WRITE);
-+	} else {
-+		iowrite16(fw_cfg_sel_endianness(key), fw_cfg_reg_ctrl);
-+		ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
-+		if (ret < 0)
-+			goto end;
-+		ret = fw_cfg_dma_transfer(buf, count, FW_CFG_DMA_CTL_WRITE);
-+	}
-+
-+end:
-+	mutex_unlock(&fw_cfg_dev_lock);
-+
-+	acpi_release_global_lock(glk);
-+
-+	return ret;
-+}
-+#endif /* CONFIG_CRASH_CORE */
-+
- /* clean up fw_cfg device i/o */
- static void fw_cfg_io_cleanup(void)
- {
-@@ -185,9 +291,6 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
--static u32 fw_cfg_rev;
--
- static ssize_t fw_cfg_showrev(struct kobject *k, struct attribute *a, char *buf)
- {
- 	return sprintf(buf, "%u\n", fw_cfg_rev);
-@@ -210,6 +313,32 @@ struct fw_cfg_sysfs_entry {
- 	struct list_head list;
- };
- 
-+#ifdef CONFIG_CRASH_CORE
-+static ssize_t fw_cfg_write_vmcoreinfo(const struct fw_cfg_file *f)
-+{
-+	static struct fw_cfg_vmcoreinfo *data;
-+	ssize_t ret;
-+
-+	data = kmalloc(sizeof(struct fw_cfg_vmcoreinfo), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	*data = (struct fw_cfg_vmcoreinfo) {
-+		.guest_format = cpu_to_le16(FW_CFG_VMCOREINFO_FORMAT_ELF),
-+		.size = cpu_to_le32(VMCOREINFO_NOTE_SIZE),
-+		.paddr = cpu_to_le64(paddr_vmcoreinfo_note())
-+	};
-+	/* spare ourself reading host format support for now since we
-+	 * don't know what else to format - host may ignore ours
-+	 */
-+	ret = fw_cfg_write_blob(be16_to_cpu(f->select), data,
-+				0, sizeof(struct fw_cfg_vmcoreinfo));
-+
-+	kfree(data);
-+	return ret;
-+}
-+#endif /* CONFIG_CRASH_CORE */
-+
- /* get fw_cfg_sysfs_entry from kobject member */
- static inline struct fw_cfg_sysfs_entry *to_entry(struct kobject *kobj)
- {
-@@ -450,6 +579,15 @@ static int fw_cfg_register_file(const struct fw_cfg_file *f)
- 	int err;
- 	struct fw_cfg_sysfs_entry *entry;
- 
-+#ifdef CONFIG_CRASH_CORE
-+	if (fw_cfg_dma_enabled() &&
-+		strcmp(f->name, FW_CFG_VMCOREINFO_FILENAME) == 0 &&
-+		!is_kdump_kernel()) {
-+		if (fw_cfg_write_vmcoreinfo(f) < 0)
-+			pr_warn("fw_cfg: failed to write vmcoreinfo");
-+	}
-+#endif
-+
- 	/* allocate new entry */
- 	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
- 	if (!entry)
--- 
-2.16.1.73.g5832b7e9f2
+On Wed, Feb 14, 2018 at 12:08 AM, Sergey Senozhatsky
+<sergey.senozhatsky.work@gmail.com> wrote:
+> On (02/09/18 14:22), Pavel Tatashin wrote:
+> [..]
+>> +/*
+>> + * If this zone has deferred pages, try to grow it by initializing enough
+>> + * deferred pages to satisfy the allocation specified by order, rounded up to
+>> + * the nearest PAGES_PER_SECTION boundary.  So we're adding memory in increments
+>> + * of SECTION_SIZE bytes by initializing struct pages in increments of
+>> + * PAGES_PER_SECTION * sizeof(struct page) bytes.
+>> + *
+>> + * Return true when zone was grown by at least number of pages specified by
+>> + * order. Otherwise return false.
+>> + *
+>> + * Note: We use noinline because this function is needed only during boot, and
+>> + * it is called from a __ref function _deferred_grow_zone. This way we are
+>> + * making sure that it is not inlined into permanent text section.
+>> + */
+>> +static noinline bool __init
+>> +deferred_grow_zone(struct zone *zone, unsigned int order)
+>> +{
+>> +     int zid = zone_idx(zone);
+>> +     int nid = zone->node;
+>
+>                 ^^^^^^^^^
+>
+> Should be CONFIG_NUMA dependent
+>
+> struct zone {
+> ...
+> #ifdef CONFIG_NUMA
+>         int node;
+> #endif
+> ...
+>
+>         -ss
+>
+> --
+> To unsubscribe, send a message with 'unsubscribe linux-mm' in
+> the body to majordomo@kvack.org.  For more info on Linux MM,
+> see: http://www.linux-mm.org/ .
+> Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
