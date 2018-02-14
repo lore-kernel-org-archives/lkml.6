@@ -1,54 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032519AbeBNQXq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 11:23:46 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:41907 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032204AbeBNQXo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:23:44 -0500
-From: Colin King <colin.king@canonical.com>
-To: Hannes Reinecke <hare@suse.de>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][scsi-next] scsi: myrb: remove shadowed and unassigned variable ldev_num
-Date: Wed, 14 Feb 2018 16:23:41 +0000
-Message-Id: <20180214162341.335-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        id S1032464AbeBNQWz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 11:22:55 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36046 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1032446AbeBNQWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 11:22:53 -0500
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [RFC PATCH ghak21 1/4] audit: make ANOM_LINK obey audit_enabled and audit_dummy_context
+Date: Wed, 14 Feb 2018 11:18:21 -0500
+Message-Id: <3a9542b261d93bc4eaecfaf359affbba152cf965.1518603831.git.rgb@redhat.com>
+In-Reply-To: <cover.1518603831.git.rgb@redhat.com>
+References: <cover.1518603831.git.rgb@redhat.com>
+In-Reply-To: <cover.1518603831.git.rgb@redhat.com>
+References: <cover.1518603831.git.rgb@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Audit link denied events emit disjointed records when audit is disabled.
+No records should be emitted when audit is disabled.
 
-A lower-scoped variable ldev_num is never assigned and is shadowing
-the higher scoped iterator ldev_num and should be removed to avoid
-using garbage ldev_num values.
-
-Detected by CoverityScan, CID#1465226 ("Uninitialized scalar variable")
-
-Fixes: dd47c1072226 ("scsi: myrb: Add Mylex RAID controller (block interface)")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+See: https://github.com/linux-audit/audit-kernel/issues/21
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- drivers/scsi/myrb.c | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/audit.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/scsi/myrb.c b/drivers/scsi/myrb.c
-index 973a2250208f..65ade4d37b33 100644
---- a/drivers/scsi/myrb.c
-+++ b/drivers/scsi/myrb.c
-@@ -422,7 +422,6 @@ static unsigned short myrb_get_ldev_info(myrb_hba *cb)
- 		myrb_ldev_info *old = NULL;
- 		myrb_ldev_info *new = cb->ldev_info_buf[ldev_num];
- 		struct scsi_device *sdev;
--		unsigned short ldev_num;
- 		myrb_devstate old_state = DAC960_V1_Device_Offline;
+diff --git a/kernel/audit.c b/kernel/audit.c
+index 227db99..4c3fd24 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -2261,6 +2261,9 @@ void audit_log_link_denied(const char *operation, const struct path *link)
+ 	struct audit_buffer *ab;
+ 	struct audit_names *name;
  
- 		sdev = scsi_device_lookup(shost, myrb_logical_channel(shost),
++	if (!audit_enabled || audit_dummy_context())
++		return;
++
+ 	name = kzalloc(sizeof(*name), GFP_NOFS);
+ 	if (!name)
+ 		return;
 -- 
-2.15.1
+1.8.3.1
