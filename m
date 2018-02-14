@@ -1,48 +1,49 @@
 Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AH8x224wT0D1A7zGYtG+WIfAQT5sYOOQpE7SjzcrjiWc7mquz89LXwOPkS7a2lpgza8HpFdmyPqe
-ARC-Seal: i=1; a=rsa-sha256; t=1518655300; cv=none;
+X-Google-Smtp-Source: AH8x227lmvY/GX8hVq+xGwesbvIzfjF16e78JfFCYTuOXOuRNYg4E60dMwglw1UGYaQc/ZJa9BFr
+ARC-Seal: i=1; a=rsa-sha256; t=1518651713; cv=none;
         d=google.com; s=arc-20160816;
-        b=glrCdAnXLskRYTVbK73B/ZhXf+uG+qTbHs3HvfYuKR4PszeXg8hVqi5VdjLVsMlDrY
-         rEl+vcJi/1W4eWLod+XWBZb7E0wOiWaESKflYDumQ+YTBpCds7Uxtzh50dAqIvkUWZUx
-         LElydvwQWt8TxGxWYmLXttapfRoBYPcMPZ0dl34Bh8FJ0qF1KBMgeEQwcT4lJe+513Om
-         TKLUN7kxzYMMVtL8XVVCcPs7VkMGRQZ84nzOK9eBfhju5fp9f83W7Dy2ZfS3PTVj2tB1
-         dBkccKaNeHsXai7Cw1fFtzkTisqiZv4uyuFZifzUGbnU/E2L2PA67ZoKYWGI0D7rYaXU
-         hmzw==
+        b=gORPCsoCZh6izjqqWQ0IIJENdh+RuYQdW4gL4kQe+AHhTauZasIML2uEAts5g57D5T
+         As4A3Y4sdRQCyd3swe304aKOwA/IQ1sgrqIbUNvE+LE9z8fIYQkGQoQWrMdtzPwm4gy2
+         /XBk9UfVWVdsbyph4FSgSoyl1csDC6ohvo6GwhyYijjuDAeFQz1FfZ8Y4ZMTQLlEUf1E
+         5iUGc0tSvUzjp64DwPh4eZ9s3/uTR/oakSH/vWKD2jWXoWHJZ5g76DOqIUeBiGZq0NAU
+         NRcae20rk7IqxDMb5J9GYXN6Mw4y54jP08Gp3/B+a3oAxYvDXTen65Qf0o2T88MydgN0
+         Enbw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=precedence:content-disposition:content-transfer-encoding
          :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
          :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=wmWLyntccOROfN+3cvljjuEe098xczDFtnYGzTRkjlo=;
-        b=bYgsEmciM8spx4FsMJIg0nVJm+OYxLAsPiagTxBs+HigiY5BgC+1Bfdm3H2VA2sbI8
-         mLjIT9IEAuoa0xlstNhiCnx+TEaVlt05DlyPjHTNxIXHE1fJvGMqvXdLkFLJEIhKXOHA
-         rNyvPlDzOVsr8l8uy3ZrXAcJQNerj9eRBAInJ7WKvV1b2lFZFUPTdBvFVHiyxUQzaFpH
-         ZINo6IBHHhzeruQlF6de88II7FziMUpPQTrl3xnOaBbf1Tplz4J3h4Fm0kJ8H2KIM9Dy
-         GIiH6/aA5Xl0Yxzy47t6JKsAu2S6R/0qtKnoeBcREcny2sqGXRIHLO4nIBHlDnuoy8Cn
-         WE2Q==
+        bh=WiLnvULRfrPYezidbxzaRzBXbPwx9Ho945qjGW9ZZG4=;
+        b=Kmlw2Lv9NTX+0vuWuYvj8IA9eEOFPD1kEyKX/eCXBj5tbT2orgboG9IbTrkAzXzzR6
+         L/tuNvDEDc+hYocnbupT1uSBptYO2zJ54qKWo26tEDfksAHRbWCCOG0ze4qqZoAPGFgh
+         GMCl39n+Mv8wp435qbIxB1ZEQQLCx5d+D1QdzKSQhcXHKhRkx0grIC5ulcLxvW4BsmpL
+         rp8SAR2wDxRHLCnQJkISrLlA0/H66V32xcIjEjrFEUnC6mCRaIijOJvJxS91SI+9pKcr
+         JthEJWBj0mDpcTpbSf8N75dgtbATcUKGm+0V6q4rjD8ieZA8gYtEWdyiWV8kixV7jccS
+         PhQw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Wed, 14 Feb 2018 16:31:14 -0800
+Date: Wed, 14 Feb 2018 15:31:18 -0800
 Sender: tip tree robot <tipbot@zytor.com>
 From: tip-bot for Ingo Molnar <tipbot@zytor.com>
-Message-ID: <tip-e48657573481a5dff7cfdc3d57005c80aa816500@git.kernel.org>
-Cc: dan.j.williams@intel.com, linux-kernel@vger.kernel.org, bp@alien8.de,
-        luto@kernel.org, dwmw2@infradead.org, dave.hansen@linux.intel.com,
-        jpoimboe@redhat.com, tglx@linutronix.de, mingo@kernel.org,
-        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-        hpa@zytor.com, peterz@infradead.org, arjan@linux.intel.com
-Reply-To: peterz@infradead.org, arjan@linux.intel.com, hpa@zytor.com,
-        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
-        mingo@kernel.org, tglx@linutronix.de, jpoimboe@redhat.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, dwmw2@infradead.org,
-        bp@alien8.de, linux-kernel@vger.kernel.org, dan.j.williams@intel.com
+Message-ID: <tip-48753793350974b7afe9598fd1dc46b2f1f47c2d@git.kernel.org>
+Cc: peterz@infradead.org, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, mingo@kernel.org,
+        dave.hansen@linux.intel.com, arjan@linux.intel.com,
+        jpoimboe@redhat.com, bp@alien8.de, hpa@zytor.com,
+        gregkh@linuxfoundation.org, luto@kernel.org, dwmw2@infradead.org,
+        dan.j.williams@intel.com, tglx@linutronix.de
+Reply-To: hpa@zytor.com, bp@alien8.de, arjan@linux.intel.com,
+        jpoimboe@redhat.com, dave.hansen@linux.intel.com, mingo@kernel.org,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, tglx@linutronix.de, dan.j.williams@intel.com,
+        dwmw2@infradead.org, luto@kernel.org, gregkh@linuxfoundation.org
 In-Reply-To: <20180214073910.boevmg65upbk3vqb@gmail.com>
 References: <20180214073910.boevmg65upbk3vqb@gmail.com>
 To: linux-tip-commits@vger.kernel.org
 Subject: [tip:x86/pti] x86/entry/64: Fix CR3 restore in paranoid_exit()
-Git-Commit-ID: e48657573481a5dff7cfdc3d57005c80aa816500
+Git-Commit-ID: 48753793350974b7afe9598fd1dc46b2f1f47c2d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -53,16 +54,16 @@ Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592421738874138967?=
-X-GMAIL-MSGID: =?utf-8?q?1592425500104085915?=
+X-GMAIL-MSGID: =?utf-8?q?1592421738874138967?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  e48657573481a5dff7cfdc3d57005c80aa816500
-Gitweb:     https://git.kernel.org/tip/e48657573481a5dff7cfdc3d57005c80aa816500
+Commit-ID:  48753793350974b7afe9598fd1dc46b2f1f47c2d
+Gitweb:     https://git.kernel.org/tip/48753793350974b7afe9598fd1dc46b2f1f47c2d
 Author:     Ingo Molnar <mingo@kernel.org>
 AuthorDate: Wed, 14 Feb 2018 08:39:11 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 15 Feb 2018 01:15:54 +0100
+CommitDate: Thu, 15 Feb 2018 00:28:03 +0100
 
 x86/entry/64: Fix CR3 restore in paranoid_exit()
 
