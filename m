@@ -1,94 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755893AbeBOUmd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 15:42:33 -0500
-Received: from vulcan.natalenko.name ([104.207.131.136]:51482 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755879AbeBOUma (ORCPT
+        id S1166650AbeBOUnx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 15:43:53 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:42766 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161706AbeBOUnv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 15:42:30 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 4C2832F880C
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: TCP and BBR: reproducibly low cwnd and bandwidth
-Date: Thu, 15 Feb 2018 21:42:26 +0100
-Message-ID: <1697118.nv5eASg0nx@natalenko.name>
+        Thu, 15 Feb 2018 15:43:51 -0500
+X-Google-Smtp-Source: AH8x224HXyyz0fOkDnUpWb3p28/P3KlaT+1rtjCaixk6hBVECBBVZYpZKOGjrQxhXZz0ECdhcvn35wp/u5aSSdE+SMc=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1518727347;
-        h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding;
-        bh=UfhYGqNvxVp6r5MUMW3unOsBVjmhOFKCusZgs2veaPE=;
-        b=HUr4t5ofq88DM6UgbQCyw1xCTio9Fk4B8AdPbQvcbdd3H6RbPpjD28pzz8sswCSXTOgUgs
-        lsTrqRgCI0cgt1O5WyvBOvBoJigIDXoiWEGKH8iGYH1VlV+9f4WlV3v9Layh9AdbA7TgCl
-        iNQf7FieOtVI75AnhcQ01uDI4/Gr4GU=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1518727347; a=rsa-sha256;
-        cv=none;
-        b=OF+x+Esoru81t27NDw0z1DNee9UOFhP/1iOMJUCL9R8ygRhDN10qtBzX6nT52wVtnwAhDBRRoy8Gebb/DI3ks2zP8LeCdhNyZRDlPYQZwMhy0XCPKCFRnVGtY+Y/wCUBM4oozlIBZsNBjnAFEe1RaRFNe2CBRODDQnxOg2e1HG4=
-ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
-        smtp.mailfrom=oleksandr@natalenko.name
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <5f742621971f0267cf5854a6a5054746ef3ab95f.1518435853.git.rgb@redhat.com>
+References: <cover.1518435853.git.rgb@redhat.com> <5f742621971f0267cf5854a6a5054746ef3ab95f.1518435853.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 15 Feb 2018 15:43:49 -0500
+Message-ID: <CAHC9VhRtgzBB0HCNjE--CiYfUSfBq5C2U767BbN=ecRc_dqSZA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] fixup! audit: remove arch_f pointer from struct audit_krule
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello.
+On Mon, Feb 12, 2018 at 7:29 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  kernel/auditfilter.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-I've faced an issue with a limited TCP bandwidth between my laptop and a 
-server in my 1 Gbps LAN while using BBR as a congestion control mechanism. To 
-verify my observations, I've set up 2 KVM VMs with the following parameters:
+I realize this is an RFC patchset, but considering recent patchsets I
+feel some clarification might be helpful to prevent future delays ...
+when submitting patchsets for merging please do not submit "fixup!"
+patches which fix problems in patches that are submitted earlier in
+the patchset, simply merge/squash the "fixup!" patches before
+submitting.
 
-1) Linux v4.15.3
-2) virtio NICs
-3) 128 MiB of RAM
-4) 2 vCPUs
-5) tested on both non-PREEMPT/100 Hz and PREEMPT/1000 Hz
+> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+> index 3343d1c..48dcb59 100644
+> --- a/kernel/auditfilter.c
+> +++ b/kernel/auditfilter.c
+> @@ -221,11 +221,13 @@ static inline int audit_match_class_bits(int class, u32 *mask)
+>  static int audit_match_signal(struct audit_entry *entry)
+>  {
+>         int i;
+> +       u32 archval;
+>         struct audit_field *arch;
+>
+>         for (i = 0; i < entry->rule.field_count; i++)
+>                 if (entry->rule.fields[i].type == AUDIT_ARCH) {
+>                         arch = &entry->rule.fields[i];
+> +                       archval = arch->val;
+>                         break;
+>                 }
+>
+> @@ -238,7 +240,7 @@ static int audit_match_signal(struct audit_entry *entry)
+>                                                entry->rule.mask));
+>         }
+>
+> -       switch(audit_classify_arch(arch->val)) {
+> +       switch(audit_classify_arch(archval)) {
+>         case 0: /* native */
+>                 return (audit_match_class_bits(AUDIT_CLASS_SIGNAL,
+>                                                entry->rule.mask));
+> --
+> 1.8.3.1
+>
 
-The VMs are interconnected via host bridge (-netdev bridge). I was running 
-iperf3 in the default and reverse mode. Here are the results:
 
-1) BBR on both VMs
 
-upload: 3.42 Gbits/sec, cwnd ~ 320 KBytes
-download: 3.39 Gbits/sec, cwnd ~ 320 KBytes
-
-2) Reno on both VMs
-
-upload: 5.50 Gbits/sec, cwnd = 976 KBytes (constant)
-download: 5.22 Gbits/sec, cwnd = 1.20 MBytes (constant)
-
-3) Reno on client, BBR on server
-
-upload: 5.29 Gbits/sec, cwnd = 952 KBytes (constant)
-download: 3.45 Gbits/sec, cwnd ~ 320 KBytes
-
-4) BBR on client, Reno on server
-
-upload: 3.36 Gbits/sec, cwnd ~ 370 KBytes
-download: 5.21 Gbits/sec, cwnd = 887 KBytes (constant)
-
-So, as you may see, when BBR is in use, upload rate is bad and cwnd is low. If 
-using real HW (1 Gbps LAN, laptop and server), BBR limits the throughput to 
-~100 Mbps (verifiable not only by iperf3, but also by scp while transferring 
-some files between hosts).
-
-Also, I've tried to use YeAH instead of Reno, and it gives me the same results 
-as Reno (IOW, YeAH works fine too).
-
-Questions:
-
-1) is this expected?
-2) or am I missing some extra BBR tuneable?
-3) if it is not a regression (I don't have any previous data to compare with), 
-how can I fix this?
-4) if it is a bug in BBR, what else should I provide or check for a proper 
-investigation?
-
-Thanks.
-
-Regards,
-  Oleksandr
+-- 
+paul moore
+www.paul-moore.com
