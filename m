@@ -1,94 +1,137 @@
-Return-Path: <oneukum@suse.com>
-X-Google-Smtp-Source: AH8x227fWN5OSMh8cQicz6Tlf7bHr07uBxRinhJ9pSZloPWWThXRNrkfSZE/RH1uFmMZthZRYGBh
-ARC-Seal: i=1; a=rsa-sha256; t=1518516767; cv=none;
+Return-Path: <prvs=57756532b=stanislav.nijnikov@wdc.com>
+X-Google-Smtp-Source: AH8x227sZmmGsg0mEs2JBilHz8yTKvUOQRrhgMtbXjswr5ksQdzRWXjuvD4c/9Wbbj+swdxt4Fhm
+ARC-Seal: i=1; a=rsa-sha256; t=1518696857; cv=none;
         d=google.com; s=arc-20160816;
-        b=Il47KvEDRhS6UU9CZ6a+aDClwNziDBC5aRLRjTeu2maGja8PD0AR0EOhLW9H6Vycdc
-         ZJ4bOqEiJSSx51uctB9LHxsY5B4Uo1DKO8vv1yw9/PXSARq97K1ZjF0EHLF3MWPq/EaF
-         diX2Q3d5wJCdlBS2Zb52Sau4ZkvEfN9MEYLYXuPy0bEjaLj3iQpwjKEvY5Z7bWJzAr3a
-         ++gxoUQ7UHzEkOihmydh1OU+oBm5V1bCCGc1aMb1244I+pfQoTe5gyJm7Fbe50IBKzM2
-         dkIGLd2iEe+Gi8+RX/O2J4dErpnhvMWhuHXqj1v6UTR5p3T3B20EjRvbkdQOonpOV9BS
-         HReA==
+        b=PlqGXbQpjUEQu5Zw/fpUrQMut2fcgCxdIsyxGjjiXq+hkdm0WJ35KoIcJms/mHlMMC
+         s7q32sWMOE49uKqv8cWRS8Qa4yLgm4VRD03KaPP0vuCYjBL2x9+y/5j5vMd0YMeslwBD
+         A22EMQimY27aa7YoQVhdtXWExxj1TlMGxFmR72y8Hz7iXVCDVN63SEL4g4AV+lT8R76K
+         TWLEkHnpjKnUGUw5/qCWZ7ljmVxy87J/eggd8uggN2Px3kjch7WciJgXryi6RQDdAKTn
+         XyK10P4GuCEXZQFfzp/Ek0hc6cxmRyezmf7GQi1fmRM8hrA1EivZNiVxVe/itWgl7sax
+         Jvng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:arc-authentication-results;
-        bh=8AV4PNHFR0JhBJgVRILczxrUlz1URBNVnY3bDG6Sg7E=;
-        b=GQSUKsHPN5t785Se4JlD6d2VtDsC1S94AxkpMRFYt9sb/1HW8krelHVgkajKU6eidn
-         EKpJdsqx++b5/zQldCxf2lKTzV0a2lbJKnvyKszZuZMQVYsynLryYHXJjCTNmLq3H4Zt
-         JlXD7iRS5EGCf4YZE7JfXLF43Mcmswd9LleqJwwO062qCpuS9gxd8p0jwwT6oWtJ+fFm
-         LkI5r7D2ChoSmWZeGmCUsCltA2Ke9yejDCCN9MuZ36XWk0cnU3idBY5J+Q83aYSbZplf
-         JzBQoiPo8lkcCj2l73iXC1mH7MBwSSCh62GjD8cjyqqjXyK+5W/bWir++2fVbZM71teX
-         VPng==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=TLew3l0+/QYHuVXeYm3h16VFxykfmMHaB6EI8SomkV8=;
+        b=UVnZO7z/fdWb6exE8Vk2hbgul0QF7zGnIQXe8O9vWlO6O2cTTMG65zhUYe5Gevg22f
+         xW/yb0xgyxDY3eFAPpfFvnfTunXpEIL/CEJdpKkXmgwyNqwtWc31BQ4UEMkBdSqaQzdM
+         xukYqLSzNSaPC7POOdnWRvRNWvq/yBZ54NzueEBsIuLX9ovnIYgmWRHoWohvmcfkWDjT
+         BOT9gYRpx9jK6QzAMqbaFf3WC481OEWqgfgIcq68ZtW1iwfpVlX0ltfmXtd09/6bsM3R
+         MWZ8TXmrflfZiSqCAXFPxPZclxZSFJM9V/A3wdZzcd52GL0mialNnLHxw0UAEsjaWOqv
+         ipsA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of oneukum@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=oneukum@suse.com
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=IvCL/NZv;
+       spf=pass (google.com: domain of prvs=57756532b=stanislav.nijnikov@wdc.com designates 216.71.154.45 as permitted sender) smtp.mailfrom=prvs=57756532b=stanislav.nijnikov@wdc.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of oneukum@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=oneukum@suse.com
-Message-ID: <1518516440.4584.4.camel@suse.com>
-Subject: Re: [PATCH v1 1/1] usb: cdc_acm: prevent race at write to acm while
- system resumes
-From: Oliver Neukum <oneukum@suse.com>
-To: sathyanarayan.kuppuswamy@linux.intel.com, felipe.balbi@intel.com,
-	heikki.krogerus@intel.com, gregkh@linuxfoundation.org
-Cc: Dominik Bozek <dominikx.bozek@intel.com>, Sathyanarayanan Kuppuswamy
-	 <sathyanarayanan.kuppuswamy@intel.com>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Date: Tue, 13 Feb 2018 11:07:20 +0100
-In-Reply-To: <1518466503-36918-1-git-send-email-sathyanarayan.kuppuswamy@linux.intel.com>
-References: <1518466503-36918-1-git-send-email-sathyanarayan.kuppuswamy@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=IvCL/NZv;
+       spf=pass (google.com: domain of prvs=57756532b=stanislav.nijnikov@wdc.com designates 216.71.154.45 as permitted sender) smtp.mailfrom=prvs=57756532b=stanislav.nijnikov@wdc.com
+X-IronPort-AV: E=Sophos;i="5.46,517,1511798400";
+   d="scan'208";a="71975436"
+From: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+To: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	jaegeuk@kernel.org,
+	Bart.VanAssche@wdc.com
+Cc: alex.lemberg@wdc.com,
+	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+Subject: [PATCH v6 00/11] ufs: sysfs: read-only access to device
+Date: Thu, 15 Feb 2018 14:14:00 +0200
+Message-Id: <1518696851-6730-1-git-send-email-stanislav.nijnikov@wdc.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592227538406824462?=
-X-GMAIL-MSGID: =?utf-8?q?1592280237828286847?=
+X-GMAIL-THRID: =?utf-8?q?1592469075953787501?=
+X-GMAIL-MSGID: =?utf-8?q?1592469075953787501?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Am Montag, den 12.02.2018, 12:15 -0800 schrieb
-sathyanarayan.kuppuswamy@linux.intel.com:
-> From: Dominik Bozek <dominikx.bozek@intel.com>
-> 
-> ACM driver may accept data to transmit while system is not fully
-> resumed. In this case ACM driver buffers data and prepare URBs
-> on usb anchor list.
-> There is a little chance that two tasks put a char and initiate
-> acm_tty_flush_chars(). In such a case, driver will put one URB
-> twice on usb anchor list.
-> This patch also reset length of data before resue of a buffer.
-> This not only prevent sending rubbish, but also lower risc of race.
-> 
-> Without this patch we hit following kernel panic in one of our
-> stabilty/stress tests.
-> 
-> [   46.884442] *list_add double add*: new=ffff9b2ab7289330, prev=ffff9b2ab7289330, next=ffff9b2ab81e28e0.
-> [   46.884476] Modules linked in: hci_uart btbcm bluetooth rfkill_gpio igb_avb(O) cfg80211 snd_soc_sst_bxt_tdf8532 snd_soc_skl snd_soc_skl_ipc snd_soc_sst_ipc snd_soc_sst_dsp snd_soc_sst_acpi snd_soc_sst_match snd_hda_ext_core snd_hda_core trusty_timer trusty_wall trusty_log trusty_virtio trusty_ipc trusty_mem trusty_irq trusty virtio_ring virtio intel_ipu4_mmu_bxtB0 lib2600_mod_bxtB0 intel_ipu4_isys_mod_bxtB0 lib2600psys_mod_bxtB0 intel_ipu4_psys_mod_bxtB0 intel_ipu4_mod_bxtB0 intel_ipu4_wrapper_bxtB0 intel_ipu4_acpi videobuf2_dma_contig as3638 dw9714 lm3643 crlmodule smiapp smiapp_pll
-> [   46.884480] CPU: 1 PID: 33 Comm: kworker/u8:1 Tainted: G     U  W  O    4.9.56-quilt-2e5dc0ac-g618ed69ced6e-dirty #4
-> [   46.884489] Workqueue: events_unbound flush_to_ldisc
-> [   46.884494]  ffffb98ac012bb08 ffffffffad3e82e5 ffffb98ac012bb58 0000000000000000
-> [   46.884497]  ffffb98ac012bb48 ffffffffad0a23d1 00000024ad6374dd ffff9b2ab7289330
-> [   46.884500]  ffff9b2ab81e28e0 ffff9b2ab7289330 0000000000000002 0000000000000000
-> [   46.884501] Call Trace:
-> [   46.884507]  [<ffffffffad3e82e5>] dump_stack+0x67/0x92
-> [   46.884511]  [<ffffffffad0a23d1>] __warn+0xd1/0xf0
-> [   46.884513]  [<ffffffffad0a244f>] warn_slowpath_fmt+0x5f/0x80
-> [   46.884516]  [<ffffffffad407443>] __list_add+0xb3/0xc0
-> [   46.884521]  [<ffffffffad71133c>] *usb_anchor_urb*+0x4c/0xa0
-> [   46.884524]  [<ffffffffad782c6f>] *acm_tty_flush_chars*+0x8f/0xb0
-> [   46.884527]  [<ffffffffad782cd1>] *acm_tty_put_char*+0x41/0x100
-> [   46.884530]  [<ffffffffad4ced34>] tty_put_char+0x24/0x40
-> [   46.884533]  [<ffffffffad4d3bf5>] do_output_char+0xa5/0x200
-> [   46.884535]  [<ffffffffad4d3e98>] __process_echoes+0x148/0x290
-> [   46.884538]  [<ffffffffad4d654c>] n_tty_receive_buf_common+0x57c/0xb00
-> [   46.884541]  [<ffffffffad4d6ae4>] n_tty_receive_buf2+0x14/0x20
-> [   46.884543]  [<ffffffffad4d9662>] tty_ldisc_receive_buf+0x22/0x50
-> [   46.884545]  [<ffffffffad4d9c05>] flush_to_ldisc+0xc5/0xe0
-> [   46.884549]  [<ffffffffad0bcfe8>] process_one_work+0x148/0x440
-> [   46.884551]  [<ffffffffad0bdc19>] worker_thread+0x69/0x4a0
-> [   46.884554]  [<ffffffffad0bdbb0>] ? max_active_store+0x80/0x80
-> [   46.884556]  [<ffffffffad0c2e10>] kthread+0x110/0x130
-> [   46.884559]  [<ffffffffad0c2d00>] ? kthread_park+0x60/0x60
-> [   46.884563]  [<ffffffffadad9917>] ret_from_fork+0x27/0x40
-> [   46.884566] ---[ end trace 3bd599058b8a9eb3 ]---
-> 
-> Signed-off-by: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>
-Acked-by: Oliver Neukum <oneukum@suse.com>
+This patch introduces sysfs entries that will provide read-only access to
+device management data that could be received with UFS query requests.
+User-space applications will be able to read UFS device descriptors,
+flags and attributes. This will allow to get full UFS device configuration
+and its status. The descriptors are provided as set of files representing
+its parameters. The flags are using "true"/"false" representation of
+their value. The attributes are shown as hexadecimal value. The
+descriptors, attributes and flags are placed in separate subfolders under
+the UFS device sysfs entry (/sys/bus/platform/drivers/ufshcd/*/). The
+string descriptor subfolder contains five string descriptors defined by
+UFS specification 2.1. The LUN specific descriptor and attribute are 
+placed under corresponding SCSI device sysfs entries
+(/sys/class/scsi_device/*/device/).
+In addition the patch presents an additional field in the
+scsi_host_template structure - struct attribute_group **sdev_group.
+This field allows to define groups of attributes. It will provide an
+ability to use binary attributes in addition to device attributes and
+to group them under subfolders if necessary.
+
+Changelog:
+v5 -> v6
+The sysfs_remove_groups call is moved inside of the sdev->is_visible
+if case
+Identation of the changes in the drivers/scsi/scsi_sysfs.c file is
+fixed
+The SPDX license id is changed from "GPL-2.0-only" to "GPL-2.0"
+
+v4 -> v5
+Added "scsi: " to clarify the patch naming
+The scsi: ufs: sysfs: unit descriptor was split to two patches
+"scsi: host template attribute groups" and "scsi: ufs: sysfs: unit
+descriptor"
+The "const" modificator was added to the sdev_groups member type and
+all corresponding data structures. The type conversions in the relative
+calls of sysfs_create_groups/sysfs_remove_groups were cleared.
+The ufs_desc_param_size enumeration was replaced with numeric constants
+The UFS_LUN_ATTRIBUTE macro was removed
+The be*_to_cpu function calls were replaced with corresponding 
+get_unaligned_be* calls
+The legal information was cut leaving only the SPDX line and the
+copyright information
+
+v3 -> v4
+Additional patch that introduces default attributes group for the
+existing ufs sysfs entries (rpm_lvl and spm_lvl)
+The ufs_sysfs_read_desc_param function calls to ufshcd_read_desc_param
+insted of ufshcd_query_descriptor_retry to avoid code duplication.
+The code was updated to remove the checkpatch error "ERROR: Macros 
+with complex values should be enclosed in parentheses"
+Added "_" to macros parameters to remove "#undef DEVICE_CLASS"
+The legal information was updated to satisfy the SPDX requirements
+The date in Documentation/ABI/testing/sysfs-driver-ufs was updated.
+
+v2 -> v3
+The Makefile is updated to make ufs-sysfs.c part of the ufshcd module.
+The unnecessary EXPORT_SYMBOL were removed
+Added a legal info header to the new files
+The date in Documentation/ABI/testing/sysfs-driver-ufs was updated.
+
+v1 -> v2
+Provided additional description for the changes
+
+Stanislav Nijnikov (11):
+  scsi: ufs: sysfs: attribute group for existing sysfs entries.
+  scsi: ufs: sysfs: device descriptor
+  scsi: ufs: sysfs: interconnect descriptor
+  scsi: ufs: sysfs: geometry descriptor
+  scsi: ufs: sysfs: health descriptor
+  scsi: ufs: sysfs: power descriptor
+  scsi: ufs: sysfs: string descriptors
+  scsi: host template attribute groups
+  scsi: ufs: sysfs: unit descriptor
+  scsi: ufs: sysfs: flags
+  scsi: ufs: sysfs: attributes
+
+ Documentation/ABI/testing/sysfs-driver-ufs | 804 +++++++++++++++++++++++++++++
+ drivers/scsi/scsi_sysfs.c                  |  12 +
+ drivers/scsi/ufs/Makefile                  |   3 +-
+ drivers/scsi/ufs/ufs-sysfs.c               | 739 ++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufs-sysfs.h               |  17 +
+ drivers/scsi/ufs/ufs.h                     | 115 ++++-
+ drivers/scsi/ufs/ufshcd.c                  | 218 ++------
+ drivers/scsi/ufs/ufshcd.h                  |  34 ++
+ include/scsi/scsi_host.h                   |   6 +
+ 9 files changed, 1757 insertions(+), 191 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-ufs
+ create mode 100644 drivers/scsi/ufs/ufs-sysfs.c
+ create mode 100644 drivers/scsi/ufs/ufs-sysfs.h
+
+-- 
+2.7.4
