@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032384AbeBOAsY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 19:48:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58638 "EHLO mail.kernel.org"
+        id S1032445AbeBOAs3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 19:48:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032264AbeBOAsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 19:48:23 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0E2621775
+        id S1032264AbeBOAs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 19:48:26 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A2C721782
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
 From: Frederic Weisbecker <frederic@kernel.org>
@@ -21,48 +21,63 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
         Wanpeng Li <kernellwp@gmail.com>, Mike Galbraith <efault@gmx.de>,
         Rik van Riel <riel@redhat.com>
-Subject: [PATCH 0/6] isolation: 1Hz residual tick offloading v6
-Date: Thu, 15 Feb 2018 01:48:08 +0100
-Message-Id: <1518655694-8057-1-git-send-email-frederic@kernel.org>
+Subject: [PATCH 1/6] sched: Rename init_rq_hrtick to hrtick_rq_init
+Date: Thu, 15 Feb 2018 01:48:09 +0100
+Message-Id: <1518655694-8057-2-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518655694-8057-1-git-send-email-frederic@kernel.org>
+References: <1518655694-8057-1-git-send-email-frederic@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The version addresses the reviews from Ingo on v5:
+Do that rename in order to normalize the hrtick namespace.
 
-* Start changelog titles with verbs.
-* Improve/reword several comments.
-* Improve/reword documentation.
-* Various cosmetic changes.
-* Use BUG_ON() on boot allocation failure.
-
-git://git.kernel.org/pub/scm/linux/kernel/git/frederic/linux-dynticks.git
-	sched/0hz-v6
-
-HEAD: 7011ba38353ad8ec398ade7533c73828d27462ad
-
-Thanks,
-	Frederic
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: Chris Metcalf <cmetcalf@mellanox.com>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Luiz Capitulino <lcapitulino@redhat.com>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Wanpeng Li <kernellwp@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>
 ---
+ kernel/sched/core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Frederic Weisbecker (6):
-      sched: Rename init_rq_hrtick to hrtick_rq_init
-      nohz: Allow to check if remote CPU tick is stopped
-      sched/isolation: Isolate workqueues when "nohz_full=" is set
-      sched/isolation: Offload residual 1Hz scheduler tick
-      sched/nohz: Remove the 1 Hz tick code
-      sched/isolation: Update nohz documentation to explain tick offload
-
-
- Documentation/admin-guide/kernel-parameters.txt |  11 +++
- include/linux/sched/isolation.h                 |   1 +
- include/linux/sched/nohz.h                      |   4 -
- include/linux/tick.h                            |   2 +
- kernel/sched/core.c                             | 117 ++++++++++++++++++------
- kernel/sched/idle_task.c                        |   1 -
- kernel/sched/isolation.c                        |   7 +-
- kernel/sched/sched.h                            |  13 +--
- kernel/time/tick-sched.c                        |  13 +--
- kernel/workqueue.c                              |   3 +-
- 10 files changed, 122 insertions(+), 50 deletions(-)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index bf724c1..f09ec5c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -333,7 +333,7 @@ void hrtick_start(struct rq *rq, u64 delay)
+ }
+ #endif /* CONFIG_SMP */
+ 
+-static void init_rq_hrtick(struct rq *rq)
++static void hrtick_rq_init(struct rq *rq)
+ {
+ #ifdef CONFIG_SMP
+ 	rq->hrtick_csd_pending = 0;
+@@ -351,7 +351,7 @@ static inline void hrtick_clear(struct rq *rq)
+ {
+ }
+ 
+-static inline void init_rq_hrtick(struct rq *rq)
++static inline void hrtick_rq_init(struct rq *rq)
+ {
+ }
+ #endif	/* CONFIG_SCHED_HRTICK */
+@@ -6023,7 +6023,7 @@ void __init sched_init(void)
+ 		rq->last_sched_tick = 0;
+ #endif
+ #endif /* CONFIG_SMP */
+-		init_rq_hrtick(rq);
++		hrtick_rq_init(rq);
+ 		atomic_set(&rq->nr_iowait, 0);
+ 	}
+ 
+-- 
+2.7.4
