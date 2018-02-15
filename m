@@ -1,109 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755471AbeBOKVF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 05:21:05 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:37356 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755324AbeBOKVD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 05:21:03 -0500
-X-Google-Smtp-Source: AH8x226rrLrFnAKZ7PgC0UtY1geZopApHEka1jzRIAtTZ+9qfiooaTLxozbSK8FaIUwXLqdI+lojyg==
-Subject: Re: [PATCH 3/8] lightnvm: add support for 2.0 address format
-To: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <jg@lightnvm.io>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org,
-        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@cnexlabs.com>
-References: <1518530768-20956-1-git-send-email-javier@cnexlabs.com>
- <1518530768-20956-4-git-send-email-javier@cnexlabs.com>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <45cb1863-9f23-fffd-82ee-4ce37e6625d7@lightnvm.io>
-Date: Thu, 15 Feb 2018 11:21:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S966892AbeBOKVW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 05:21:22 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60360 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755357AbeBOKVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 05:21:20 -0500
+Date: Thu, 15 Feb 2018 11:21:15 +0100
+From: Karel Zak <kzak@redhat.com>
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc: Andreas Bombe <aeb@debian.org>, util-linux@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrius =?utf-8?B?xaB0aWtvbmFz?= <andrius@stikonas.eu>,
+        Curtis Gedak <gedakc@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: Linux & FAT32 label
+Message-ID: <20180215102115.hspgnqhm4yhejkts@ws.net.home>
+References: <20171004153332.GA6696@pali>
+ <20171011212435.znmtdnsxcd5ectub@pali>
+ <20171105130608.5oww3b2fnnrwe7ok@pali>
+ <20171109212131.uxraxzwpvrlyfyys@pali>
+ <20171119124440.ffxx64zjmwedmtdp@pali>
+ <20171120111256.zqvmpzdcf6ncyi5m@ws.net.home>
+ <20171126191925.zowfpduhyic5w4n5@pali>
+ <20171127121301.b6obxoqr4azm3zvs@ws.net.home>
+ <20180214215233.tbcoieywczdwvy37@pali>
+ <20180214215430.dunkqhuztyic6tcn@pali>
 MIME-Version: 1.0
-In-Reply-To: <1518530768-20956-4-git-send-email-javier@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180214215430.dunkqhuztyic6tcn@pali>
+User-Agent: NeoMutt/20170912-66-504cd9
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/13/2018 03:06 PM, Javier Gonz√°lez wrote:
-> Add support for 2.0 address format. Also, align address bits for 1.2 and 2.0 to
-> align.
-> 
-> Signed-off-by: Javier Gonz√°lez <javier@cnexlabs.com>
-> ---
->   include/linux/lightnvm.h | 45 ++++++++++++++++++++++++++++++++-------------
->   1 file changed, 32 insertions(+), 13 deletions(-)
-> 
-> diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
-> index 6a567bd19b73..e035ae4c9acc 100644
-> --- a/include/linux/lightnvm.h
-> +++ b/include/linux/lightnvm.h
-> @@ -16,12 +16,21 @@ enum {
->   	NVM_IOTYPE_GC = 1,
->   };
->   
-> -#define NVM_BLK_BITS (16)
-> -#define NVM_PG_BITS  (16)
-> -#define NVM_SEC_BITS (8)
-> -#define NVM_PL_BITS  (8)
-> -#define NVM_LUN_BITS (8)
-> -#define NVM_CH_BITS  (7)
-> +/* 1.2 format */
-> +#define NVM_12_CH_BITS  (8)
-> +#define NVM_12_LUN_BITS (8)
-> +#define NVM_12_BLK_BITS (16)
-> +#define NVM_12_PG_BITS  (16)
-> +#define NVM_12_PL_BITS  (4)
-> +#define NVM_12_SEC_BITS (4)
-> +#define NVM_12_RESERVED (8)
-> +
-> +/* 2.0 format */
-> +#define NVM_20_CH_BITS  (8)
-> +#define NVM_20_LUN_BITS (8)
-> +#define NVM_20_CHK_BITS (16)
-> +#define NVM_20_SEC_BITS (24)
-> +#define NVM_20_RESERVED (8)
->   
->   enum {
->   	NVM_OCSSD_SPEC_12 = 12,
-> @@ -31,16 +40,26 @@ enum {
->   struct ppa_addr {
->   	/* Generic structure for all addresses */
->   	union {
-> +		/* 1.2 device format */
->   		struct {
-> -			u64 blk		: NVM_BLK_BITS;
-> -			u64 pg		: NVM_PG_BITS;
-> -			u64 sec		: NVM_SEC_BITS;
-> -			u64 pl		: NVM_PL_BITS;
-> -			u64 lun		: NVM_LUN_BITS;
-> -			u64 ch		: NVM_CH_BITS;
-> -			u64 reserved	: 1;
-> +			u64 ch		: NVM_12_CH_BITS;
-> +			u64 lun		: NVM_12_LUN_BITS;
-> +			u64 blk		: NVM_12_BLK_BITS;
-> +			u64 pg		: NVM_12_PG_BITS;
-> +			u64 pl		: NVM_12_PL_BITS;
-> +			u64 sec		: NVM_12_SEC_BITS;
-> +			u64 reserved	: NVM_12_RESERVED;
->   		} g;
->   
-> +		/* 2.0 device format */
-> +		struct {
-> +			u64 ch		: NVM_20_CH_BITS;
-> +			u64 lun		: NVM_20_LUN_BITS;
-> +			u64 chk		: NVM_20_CHK_BITS;
-> +			u64 sec		: NVM_20_SEC_BITS;
-> +			u64 reserved	: NVM_20_RESERVED;
-> +		} m;
-> +
->   		struct {
->   			u64 line	: 63;
->   			u64 is_cached	: 1;
-> 
+On Wed, Feb 14, 2018 at 10:54:30PM +0100, Pali Roh·r wrote:
+> On Wednesday 14 February 2018 22:52:33 Pali Roh·r wrote:
+> > On Monday 27 November 2017 13:13:01 Karel Zak wrote:
+> > > On Sun, Nov 26, 2017 at 08:19:25PM +0100, Pali Roh·r wrote:
+> > > > On Monday 20 November 2017 12:12:56 Karel Zak wrote:
+> > > > > Go ahead and send patch :-) (also with LABEL_FATBOOT=)
+> > > > 
+> > > > Ok, I prepared patches for util-linux including LABEL_FATBOOT:
+> > > > https://github.com/karelzak/util-linux/compare/master...pali:master
+> > > 
+> > > Seems good. I'll wait for official pull request. Thanks!
+> > > 
+> > > > I have not created official pull request on github yet as Andreas have
+> > > > not decided yet about dosfstools/fatlabel...
+> > > 
+> > > OK.
+> > 
+> > Looks like that Andreas is not responding to mailing list, nor to
+> > private emails, nor on github for 3-4 months ... I hope he is OK.
+> > 
+> > But I do not know what happened with dosfstools project now in this
+> > case, if it is going to be fixed or not.
+> > 
+> > I have prepared more patches for dosfstools project, but do not know if
+> > I should open new pull requests or wait (how long?) or do something
+> > else.
+> > 
+> > If it helps for somebody, I can create fork of dosfstools project and
+> > include there all changes which I have prepared.
 
-You can fold this into the next patch.
+I think fork is possible way if you (or someone else) want to maintain
+dosfstools. 
+
+Please, try to talk about the current situation with downstream
+dosfstools maintainers from Debian, Suse, Fedora/RHEL, Gentoo, ...
+
+It's always good to have support from distros before you fork anything. 
+Nobody wants to use unmaintained stuff in distros so I guess you will see
+positive feedback.
+
+> > Karel, do you want to create official pull request for above util-linux
+> > changes, even without fixes in dosfstools project?
+
+I have no problem with the pull request, but if you want to try to
+fork dosfstools I can wait for any conclusion. 
+
+    Karel
+
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
