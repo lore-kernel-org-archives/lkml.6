@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2241641-1518720857-2-11827290801872175647
+X-Cyrus-Session-Id: sloti22d1t05-2243538-1518720853-2-2426526106578399275
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720856; b=EfiJjH89Vh5gfyS0wUp+5U3VrIdWBTg8+cncTPdBPSBPOyT
-    TSL/Decj4FeS3xA+87io+Q7oD5LrVEVNy8CIp4ah2dCHxdsPiVtOvEQpzoNCqIdP
-    jwX3vCVRVej5jLF2Np0PWdq9yU8C+9rQtbxH6YlRrPyfNcOBuLye8qAmLKRIHp56
-    1u+AKQD0ZfZEIabYN+bQ/OzFrtoTacNjpy48HQKXKoeUS9qgUlVsh4Ojj+dN8bqN
-    RBRj/XlXTHNT0AzZrlstd0s2wojoz0HXkfCPEG/2l4z88o1BewAI0x7iXZL62qrG
-    14AGOVKpuooAQrY7I/F40O92AJkBcpmX01khPig==
+    t=1518720852; b=Ve/6C0QGWsTsK+rilnHedSoC5/gA9hXAt9yVMkQpUa97L8S
+    1dNr9N6Y0qDflUBYNDGNe4blKMLVVMovsKX/qv9Xd0MNNy653PkO9LaAshfv3alu
+    UzoOjXYLQMY9wbxxJI7BwGiuBUjyV9kceukCQYpjrPnbXBs2vue9EZ6qzMheUlDk
+    UTRIQTOPFRTn0vQv4KFb1b7irpvUItjdbrTxlwucDg+Y4V0qP7sDKiQVLnnJNhfH
+    3ogwllZgDOh/9eNAO7W+uoten8qn6FN28wmeyOo4tX+nh80YqJI8crErgUmadqco
+    tHAvliHDntrozLExFgFG5hDWAV696fg/dGE6Wxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720856; bh=WqYgzoqeOY6uPBHFvzGxHgTl8L
-    Svnb77wGz28r9qPqA=; b=DD2OBqpo6LTX3OOhRLXs15fEQYr8eWbKrncaugrrmZ
-    vQWWBDjnBL3bb8rpWfKjF02cjqoQ0/n7ZYx/nQPieCsMGjkh3xABHjl2liXsNU4e
-    pgeRtvJ7R86cdbATpZC44vhqB8E4UaP0L+qLCDpFUVSqdQe7koBmAS2Bb40FdKrX
-    HZ1wPwX2D3Mc03SuGiV54LkxDEPTCrmLRvTj5d76RLHIBC63BPWctOL9gEwBsG6E
-    UfQGSynNbvdEVCZeEV9grYzTZZq+s4Wo5sPDPyzW23fhNwDIOO6kVqsl1BDbzAqb
-    FlW7pRv2Wvlko+m+5hlHt1lGxa1a/ON2xgPOtb/ZMgTg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518720852; bh=j/0nwS8WKdilTjcs4+zSWyhKdv
+    RnaYL/ArsCbgUoXQ0=; b=WJ8ixMk71SgpiQEAA6YN87MSt72jZb9vALxR8MpFbC
+    gQsh1VwilOxnt81R2dAR+h/hSRjSZaw/BsHZuE1N9n8XNJcvFlpSVzaL3wTeUQQx
+    e1ksMwEt5fUyZeYFUCWYU+tXSD7STv7AVkev593DGK6I8Efc34QTOYGqAPukTEZT
+    vqd4ECBnI2P6ETPReN1kiS85qquDSvcU3oqcKOaUXHr3YSl0c3H/igcWRRzx7xA6
+    Qh5NWPqy+ouo9MT66nET95tdlS1eH2NVZPrGgVAmSPiSm/AYgH1mjQ+WISK17nA5
+    QYVL1vnilTK/sLEeWRs4hoR8tYN8m5ofae+YUohr1amw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,21 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161881AbeBOPUz (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:20:55 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48454 "EHLO
+        id S1162099AbeBOSx5 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:53:57 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48470 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161799AbeBOPUx (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:20:53 -0500
+        with ESMTP id S1161902AbeBOPUz (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:20:55 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Modra <amodra@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.4 004/108] powerpc: Simplify module TOC handling
-Date: Thu, 15 Feb 2018 16:16:01 +0100
-Message-Id: <20180215151222.874728841@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Balbir Singh <bsingharora@gmail.com>
+Subject: [PATCH 4.4 005/108] powerpc/pseries: Add H_GET_CPU_CHARACTERISTICS flags & wrapper
+Date: Thu, 15 Feb 2018 16:16:02 +0100
+Message-Id: <20180215151223.085452525@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -77,122 +78,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alan Modra <amodra@gmail.com>
+From: Michael Neuling <mikey@neuling.org>
 
-commit c153693d7eb9eeb28478aa2deaaf0b4e7b5ff5e9 upstream.
+commit 191eccb1580939fb0d47deb405b82a85b0379070 upstream.
 
-PowerPC64 uses the symbol .TOC. much as other targets use
-_GLOBAL_OFFSET_TABLE_. It identifies the value of the GOT pointer (or in
-powerpc parlance, the TOC pointer). Global offset tables are generally
-local to an executable or shared library, or in the kernel, module. Thus
-it does not make sense for a module to resolve a relocation against
-.TOC. to the kernel's .TOC. value. A module has its own .TOC., and
-indeed the powerpc64 module relocation processing ignores the kernel
-value of .TOC. and instead calculates a module-local value.
+A new hypervisor call has been defined to communicate various
+characteristics of the CPU to guests. Add definitions for the hcall
+number, flags and a wrapper function.
 
-This patch removes code involved in exporting the kernel .TOC., tweaks
-modpost to ignore an undefined .TOC., and the module loader to twiddle
-the section symbol so that .TOC. isn't seen as undefined.
-
-Note that if the kernel was compiled with -msingle-pic-base then ELFv2
-would not have function global entry code setting up r2. In that case
-the module call stubs would need to be modified to set up r2 using the
-kernel .TOC. value, requiring some of this code to be reinstated.
-
-mpe: Furthermore a change in binutils master (not yet released) causes
-the current way we handle the TOC to no longer work when building with
-MODVERSIONS=y and RELOCATABLE=n. The symptom is that modules can not be
-loaded due to there being no version found for TOC.
-
-Signed-off-by: Alan Modra <amodra@gmail.com>
+Signed-off-by: Michael Neuling <mikey@neuling.org>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+[Balbir fixed conflicts in backport]
+Signed-off-by: Balbir Singh <bsingharora@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/misc_64.S   |   28 ----------------------------
- arch/powerpc/kernel/module_64.c |   12 +++++++++---
- scripts/mod/modpost.c           |    3 ++-
- 3 files changed, 11 insertions(+), 32 deletions(-)
+ arch/powerpc/include/asm/hvcall.h         |   17 +++++++++++++++++
+ arch/powerpc/include/asm/plpar_wrappers.h |   14 ++++++++++++++
+ 2 files changed, 31 insertions(+)
 
---- a/arch/powerpc/kernel/misc_64.S
-+++ b/arch/powerpc/kernel/misc_64.S
-@@ -701,31 +701,3 @@ _GLOBAL(kexec_sequence)
- 	li	r5,0
- 	blr	/* image->start(physid, image->start, 0); */
- #endif /* CONFIG_KEXEC */
--
--#ifdef CONFIG_MODULES
--#if defined(_CALL_ELF) && _CALL_ELF == 2
--
--#ifdef CONFIG_MODVERSIONS
--.weak __crc_TOC.
--.section "___kcrctab+TOC.","a"
--.globl __kcrctab_TOC.
--__kcrctab_TOC.:
--	.llong	__crc_TOC.
--#endif
--
--/*
-- * Export a fake .TOC. since both modpost and depmod will complain otherwise.
-- * Both modpost and depmod strip the leading . so we do the same here.
-- */
--.section "__ksymtab_strings","a"
--__kstrtab_TOC.:
--	.asciz "TOC."
--
--.section "___ksymtab+TOC.","a"
--/* This symbol name is important: it's used by modpost to find exported syms */
--.globl __ksymtab_TOC.
--__ksymtab_TOC.:
--	.llong 0 /* .value */
--	.llong __kstrtab_TOC.
--#endif /* ELFv2 */
--#endif /* MODULES */
---- a/arch/powerpc/kernel/module_64.c
-+++ b/arch/powerpc/kernel/module_64.c
-@@ -326,7 +326,10 @@ static void dedotify_versions(struct mod
- 		}
+--- a/arch/powerpc/include/asm/hvcall.h
++++ b/arch/powerpc/include/asm/hvcall.h
+@@ -239,6 +239,7 @@
+ #define H_GET_HCA_INFO          0x1B8
+ #define H_GET_PERF_COUNT        0x1BC
+ #define H_MANAGE_TRACE          0x1C0
++#define H_GET_CPU_CHARACTERISTICS 0x1C8
+ #define H_FREE_LOGICAL_LAN_BUFFER 0x1D4
+ #define H_QUERY_INT_STATE       0x1E4
+ #define H_POLL_PENDING		0x1D8
+@@ -285,6 +286,17 @@
+ #define H_SET_MODE_RESOURCE_ADDR_TRANS_MODE	3
+ #define H_SET_MODE_RESOURCE_LE			4
+ 
++/* H_GET_CPU_CHARACTERISTICS return values */
++#define H_CPU_CHAR_SPEC_BAR_ORI31	(1ull << 63) // IBM bit 0
++#define H_CPU_CHAR_BCCTRL_SERIALISED	(1ull << 62) // IBM bit 1
++#define H_CPU_CHAR_L1D_FLUSH_ORI30	(1ull << 61) // IBM bit 2
++#define H_CPU_CHAR_L1D_FLUSH_TRIG2	(1ull << 60) // IBM bit 3
++#define H_CPU_CHAR_L1D_THREAD_PRIV	(1ull << 59) // IBM bit 4
++
++#define H_CPU_BEHAV_FAVOUR_SECURITY	(1ull << 63) // IBM bit 0
++#define H_CPU_BEHAV_L1D_FLUSH_PR	(1ull << 62) // IBM bit 1
++#define H_CPU_BEHAV_BNDS_CHK_SPEC_BAR	(1ull << 61) // IBM bit 2
++
+ #ifndef __ASSEMBLY__
+ 
+ /**
+@@ -423,6 +435,11 @@ extern long pseries_big_endian_exception
+ 
+ #endif /* CONFIG_PPC_PSERIES */
+ 
++struct h_cpu_char_result {
++	u64 character;
++	u64 behaviour;
++};
++
+ #endif /* __ASSEMBLY__ */
+ #endif /* __KERNEL__ */
+ #endif /* _ASM_POWERPC_HVCALL_H */
+--- a/arch/powerpc/include/asm/plpar_wrappers.h
++++ b/arch/powerpc/include/asm/plpar_wrappers.h
+@@ -323,4 +323,18 @@ static inline long plapr_set_watchpoint0
+ 	return plpar_set_mode(0, H_SET_MODE_RESOURCE_SET_DAWR, dawr0, dawrx0);
  }
  
--/* Undefined symbols which refer to .funcname, hack to funcname (or .TOC.) */
-+/*
-+ * Undefined symbols which refer to .funcname, hack to funcname. Make .TOC.
-+ * seem to be defined (value set later).
-+ */
- static void dedotify(Elf64_Sym *syms, unsigned int numsyms, char *strtab)
- {
- 	unsigned int i;
-@@ -334,8 +337,11 @@ static void dedotify(Elf64_Sym *syms, un
- 	for (i = 1; i < numsyms; i++) {
- 		if (syms[i].st_shndx == SHN_UNDEF) {
- 			char *name = strtab + syms[i].st_name;
--			if (name[0] == '.')
-+			if (name[0] == '.') {
-+				if (strcmp(name+1, "TOC.") == 0)
-+					syms[i].st_shndx = SHN_ABS;
- 				syms[i].st_name++;
-+			}
- 		}
- 	}
- }
-@@ -351,7 +357,7 @@ static Elf64_Sym *find_dot_toc(Elf64_Shd
- 	numsyms = sechdrs[symindex].sh_size / sizeof(Elf64_Sym);
- 
- 	for (i = 1; i < numsyms; i++) {
--		if (syms[i].st_shndx == SHN_UNDEF
-+		if (syms[i].st_shndx == SHN_ABS
- 		    && strcmp(strtab + syms[i].st_name, "TOC.") == 0)
- 			return &syms[i];
- 	}
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -594,7 +594,8 @@ static int ignore_undef_symbol(struct el
- 		if (strncmp(symname, "_restgpr0_", sizeof("_restgpr0_") - 1) == 0 ||
- 		    strncmp(symname, "_savegpr0_", sizeof("_savegpr0_") - 1) == 0 ||
- 		    strncmp(symname, "_restvr_", sizeof("_restvr_") - 1) == 0 ||
--		    strncmp(symname, "_savevr_", sizeof("_savevr_") - 1) == 0)
-+		    strncmp(symname, "_savevr_", sizeof("_savevr_") - 1) == 0 ||
-+		    strcmp(symname, ".TOC.") == 0)
- 			return 1;
- 	/* Do not ignore this symbol */
- 	return 0;
++static inline long plpar_get_cpu_characteristics(struct h_cpu_char_result *p)
++{
++	unsigned long retbuf[PLPAR_HCALL_BUFSIZE];
++	long rc;
++
++	rc = plpar_hcall(H_GET_CPU_CHARACTERISTICS, retbuf);
++	if (rc == H_SUCCESS) {
++		p->character = retbuf[0];
++		p->behaviour = retbuf[1];
++	}
++
++	return rc;
++}
++
+ #endif /* _ASM_POWERPC_PLPAR_WRAPPERS_H */
