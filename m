@@ -1,42 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166902AbeBOSwK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 13:52:10 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:40776 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162019AbeBOSwG (ORCPT
+        id S1167083AbeBOS7s (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 13:59:48 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:38134 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161392AbeBOS7o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 13:52:06 -0500
-Date: Thu, 15 Feb 2018 18:52:04 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Enrico Weigelt <lkml@metux.net>
-Cc: Richard Weinberger <richard.weinberger@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: fs_struct refcounting: spinlock vs atomic
-Message-ID: <20180215185204.GD30522@ZenIV.linux.org.uk>
-References: <7547a9ed-a2e7-e975-a3ba-f41abc16f4bc@metux.net>
- <CAFLxGvz2t8rnEQh4VBJ8v3b66GKA5DY3iMk33jnMP664+RMubw@mail.gmail.com>
- <9cc188a2-406e-bf7c-e769-e982735ba5b6@metux.net>
- <20180215183956.GC30522@ZenIV.linux.org.uk>
+        Thu, 15 Feb 2018 13:59:44 -0500
+From: Colin King <colin.king@canonical.com>
+To: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        linux-rtc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rtc: tx4939: avoid unintended sign extension on a 24 bit shift
+Date: Thu, 15 Feb 2018 18:59:41 +0000
+Message-Id: <20180215185941.27547-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180215183956.GC30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 06:39:57PM +0000, Al Viro wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Not true.  We also assume that once fs_struct has been locked, the number of
-> tasks with reference to it won't change.  See fs/exec.c:check_unsafe_exec(),
-> for example.
+The shifting of buf[5] by 24 bits to the left will be promoted to
+a 32 bit signed int and then sign-extended to an unsigned long. If
+the top bit of buf[5] is set then all then all the upper bits sec
+end up as also being set because of the sign-extension. Fix this by
+casting buf[5] to an unsigned long before the shift.
 
-PS: any discussion of VFS and filesystems stuff belongs on fsdevel; Cc to l-k
-is fine, but don't expect anyone to be able to reliably spot it there.
+Detected by CoverityScan, CID#1465292 ("Unintended sign extension")
 
-l-k is far too high volume (and low S/N) to keep up with it; some of us have
-entirely given up on it (Linus is certainly not the only one who'd unsubscribed
-from l-k many years ago), some try to scan it for something relevant, but
-latency and reliability of such scans inevitably sucks.
+Fixes: 0e1492330cd2 ("rtc: add rtc-tx4939 driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/rtc/rtc-tx4939.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/rtc-tx4939.c b/drivers/rtc/rtc-tx4939.c
+index feededce3ded..b8a066cbcc42 100644
+--- a/drivers/rtc/rtc-tx4939.c
++++ b/drivers/rtc/rtc-tx4939.c
+@@ -170,7 +170,8 @@ static int tx4939_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	alrm->enabled = (ctl & TX4939_RTCCTL_ALME) ? 1 : 0;
+ 	alrm->pending = (ctl & TX4939_RTCCTL_ALMD) ? 1 : 0;
+ 	spin_unlock_irq(&pdata->lock);
+-	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
++	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
++		(buf[3] << 8) | buf[2];
+ 	rtc_time_to_tm(sec, &alrm->time);
+ 	return rtc_valid_tm(&alrm->time);
+ }
+-- 
+2.15.1
