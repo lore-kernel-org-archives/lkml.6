@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x22754HeJff7jd/213aslaDducky9TCCgMp+Manxa9XYkAguBTsR/B+eSwxW5TbBh9ktXmZdV
-ARC-Seal: i=1; a=rsa-sha256; t=1518708370; cv=none;
+X-Google-Smtp-Source: AH8x227U/aP6m0/atoozTN9ySpSFBELoMT2y+PTeqxicS8fWnyMSS0nhRVT1HAWIpW9jgg1Ya7n7
+ARC-Seal: i=1; a=rsa-sha256; t=1518708367; cv=none;
         d=google.com; s=arc-20160816;
-        b=xG3ySaH4+NDyiumW30/eYMu8xLBsx+FfCx2YXV4+UCHnrbijxNVxGRYQyUxkvqsB3N
-         HAHFwF4m/lmXM9IR+DlxAUsLo0sCMOPYBK5+/9L5N/QDAC4HkaQZsWAVdFCdtPylD25J
-         RbTcNNZkom7qlikcUpgRlkGYAtWuPVtmoDFI2poGvG0nF1eloZDUU6BiFWgFX7FmrKlp
-         S4IEeuTq68rQOOp0G/su7APABgSr2/ZtkLQSXSDkjegU2si6paJ5ha9M6Iev/LepuBuJ
-         i1pMX2zTQJeJOH7DTqHBR3edvdsrpJ/ON1+Qs+1y537eKASRTTOriP11LRVrkevvmg4d
-         GpEQ==
+        b=MqrSPMd3FA3no3I3kUEM3tYZreAR7kYDPlHPc6rEmLCYAmz+7ylDqWL2rB5yxIQ/J/
+         0244Hu4WVN2VYvMgR5TAh/+UlidMncnS1wHiDAGPLw1ofm6qbnjDvG5b4PBtCDJwBx4M
+         mN0ExsQ7MzWcReIEyD9Vp8TNsK6NEjre607DkT44YVYKOfQo/cqFoK7RqR56gmdY3oLo
+         oW6yLfRjyvDCktBkXZ2/EBUX0M+v11uDw22rf1AF5j3HusvRSUR/jRfOvfqC/G99q8ZB
+         ToMQjBFG7Vv4sS9kg6Dg3QLF8ni88UUsPITt5zCc6h4lK6BeUY3KG8IhIij3M4xYHCV6
+         GyIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ea5rY2FamHaaCIXbuTsfD2zbxYt4gs4AtLUvZghrLIg=;
-        b=egm0XeZhKC6VGI2D4d7fO5ridLGxhCh21NndHRYltVg9yKu+H9wJAx2th83jgRMf8R
-         rhOI9CFOqrT7aeiL8YopOgGxm++LfSoT/Exuwi8GfzD+I55BJi5Nr9dyYIiaCafplcZH
-         VPQgNMgNKLsb6u5XSygsJCwhsa2/R6qHiAsRyyVAfG9i7RpuObOaBY0ZqwIyaQfF8sMI
-         jB2Z3cAHdmON2AMMOFC/avFtu7D+QpXx8OlAakYRMs36xYTSRGA3O4vJDpjZqXWMzHng
-         kZyNZH+/D3vXQZInLmn4jiLa1B+cE0vbqoqtjyGvQDkW6jxiufop4sVNk73Y7qDLy/x5
-         b0Pg==
+        bh=mJ+zxyCcP591WvfHaFRTZacIjTgsfQlTpZu0Gm7GSNM=;
+        b=LR9jHMxd8Yt7BafMqAcEQnxIr5LLr2+PYBW5KIgJtGkn288e+YD58TbUn0CkGtyNYG
+         Wj2O1I+J/FRt5HhThUGp4jt6MivX27v2Mtaex3AxjOaAd0IIz8Oz64IYDFsqzSZXZ3wh
+         WidK5c3FOB2pa/FiJs84mdky8e3HpbTKr/FuScAlfOXR+q0F0i2pcVidfwmKZ8FptvNo
+         G4/6CNKMBJjvdpzrp4DRlsPMhKqErexkpV21sPHVxo/6lR7c4RMNbcLfpU15+8ACR8A7
+         cPtnBeg/RefGmDc2p+wV7MQ6cF+46B+RYdJhSjKII3yenHoR06gRJXDlG6op6D98+qeC
+         hE0g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Aurelien Aptel <aaptel@suse.com>,
-	Steve French <smfrench@gmail.com>,
-	Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 4.9 04/88] CIFS: zero sensitive data when freeing
-Date: Thu, 15 Feb 2018 16:16:31 +0100
-Message-Id: <20180215151223.108761945@linuxfoundation.org>
+	Daniel N Pettersson <danielnp@axis.com>,
+	Steve French <smfrench@gmail.com>
+Subject: [PATCH 4.9 03/88] cifs: Fix autonegotiate security settings mismatch
+Date: Thu, 15 Feb 2018 16:16:30 +0100
+Message-Id: <20180215151222.947185375@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480706706045067?=
-X-GMAIL-MSGID: =?utf-8?q?1592481148222399861?=
+X-GMAIL-THRID: =?utf-8?q?1592480805099835569?=
+X-GMAIL-MSGID: =?utf-8?q?1592481145246979614?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,94 +48,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Aurelien Aptel <aaptel@suse.com>
+From: Daniel N Pettersson <danielnp@axis.com>
 
-commit 97f4b7276b829a8927ac903a119bef2f963ccc58 upstream.
+commit 9aca7e454415f7878b28524e76bebe1170911a88 upstream.
 
-also replaces memset()+kfree() by kzfree().
+Autonegotiation gives a security settings mismatch error if the SMB
+server selects an SMBv3 dialect that isn't SMB3.02. The exact error is
+"protocol revalidation - security settings mismatch".
+This can be tested using Samba v4.2 or by setting the global Samba
+setting max protocol = SMB3_00.
 
-Signed-off-by: Aurelien Aptel <aaptel@suse.com>
+The check that fails in smb3_validate_negotiate is the dialect
+verification of the negotiate info response. This is because it tries
+to verify against the protocol_id in the global smbdefault_values. The
+protocol_id in smbdefault_values is SMB3.02.
+In SMB2_negotiate the protocol_id in smbdefault_values isn't updated,
+it is global so it probably shouldn't be, but server->dialect is.
+
+This patch changes the check in smb3_validate_negotiate to use
+server->dialect instead of server->vals->protocol_id. The patch works
+with autonegotiate and when using a specific version in the vers mount
+option.
+
+Signed-off-by: Daniel N Pettersson <danielnp@axis.com>
 Signed-off-by: Steve French <smfrench@gmail.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifsencrypt.c |    3 +--
- fs/cifs/connect.c     |    6 +++---
- fs/cifs/misc.c        |   14 ++++----------
- 3 files changed, 8 insertions(+), 15 deletions(-)
+ fs/cifs/smb2pdu.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/fs/cifs/cifsencrypt.c
-+++ b/fs/cifs/cifsencrypt.c
-@@ -318,9 +318,8 @@ int calc_lanman_hash(const char *passwor
- {
- 	int i;
- 	int rc;
--	char password_with_pad[CIFS_ENCPWD_SIZE];
-+	char password_with_pad[CIFS_ENCPWD_SIZE] = {0};
- 
--	memset(password_with_pad, 0, CIFS_ENCPWD_SIZE);
- 	if (password)
- 		strncpy(password_with_pad, password, CIFS_ENCPWD_SIZE);
- 
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -1667,7 +1667,7 @@ cifs_parse_mount_options(const char *mou
- 			tmp_end++;
- 			if (!(tmp_end < end && tmp_end[1] == delim)) {
- 				/* No it is not. Set the password to NULL */
--				kfree(vol->password);
-+				kzfree(vol->password);
- 				vol->password = NULL;
- 				break;
- 			}
-@@ -1705,7 +1705,7 @@ cifs_parse_mount_options(const char *mou
- 					options = end;
- 			}
- 
--			kfree(vol->password);
-+			kzfree(vol->password);
- 			/* Now build new password string */
- 			temp_len = strlen(value);
- 			vol->password = kzalloc(temp_len+1, GFP_KERNEL);
-@@ -4159,7 +4159,7 @@ cifs_construct_tcon(struct cifs_sb_info
- 		reset_cifs_unix_caps(0, tcon, NULL, vol_info);
- out:
- 	kfree(vol_info->username);
--	kfree(vol_info->password);
-+	kzfree(vol_info->password);
- 	kfree(vol_info);
- 
- 	return tcon;
---- a/fs/cifs/misc.c
-+++ b/fs/cifs/misc.c
-@@ -99,14 +99,11 @@ sesInfoFree(struct cifs_ses *buf_to_free
- 	kfree(buf_to_free->serverOS);
- 	kfree(buf_to_free->serverDomain);
- 	kfree(buf_to_free->serverNOS);
--	if (buf_to_free->password) {
--		memset(buf_to_free->password, 0, strlen(buf_to_free->password));
--		kfree(buf_to_free->password);
--	}
-+	kzfree(buf_to_free->password);
- 	kfree(buf_to_free->user_name);
- 	kfree(buf_to_free->domainName);
--	kfree(buf_to_free->auth_key.response);
--	kfree(buf_to_free);
-+	kzfree(buf_to_free->auth_key.response);
-+	kzfree(buf_to_free);
- }
- 
- struct cifs_tcon *
-@@ -137,10 +134,7 @@ tconInfoFree(struct cifs_tcon *buf_to_fr
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -585,8 +585,7 @@ int smb3_validate_negotiate(const unsign
  	}
- 	atomic_dec(&tconInfoAllocCount);
- 	kfree(buf_to_free->nativeFileSystem);
--	if (buf_to_free->password) {
--		memset(buf_to_free->password, 0, strlen(buf_to_free->password));
--		kfree(buf_to_free->password);
--	}
-+	kzfree(buf_to_free->password);
- 	kfree(buf_to_free);
- }
  
+ 	/* check validate negotiate info response matches what we got earlier */
+-	if (pneg_rsp->Dialect !=
+-			cpu_to_le16(tcon->ses->server->vals->protocol_id))
++	if (pneg_rsp->Dialect != cpu_to_le16(tcon->ses->server->dialect))
+ 		goto vneg_out;
+ 
+ 	if (pneg_rsp->SecurityMode != cpu_to_le16(tcon->ses->server->sec_mode))
