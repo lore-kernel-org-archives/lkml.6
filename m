@@ -1,69 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033740AbeBOPKW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 10:10:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50724 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033445AbeBOPKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 10:10:21 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEC1F217B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Thu, 15 Feb 2018 12:10:18 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        David Ahern <dsahern@gmail.com>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>
-Subject: Re: [PATCH 9/9] perf tests: Use arch__compare_symbol_names to
- compare symbols
-Message-ID: <20180215151018.GI30974@kernel.org>
-References: <20180215122635.24029-1-jolsa@kernel.org>
- <20180215122635.24029-10-jolsa@kernel.org>
- <20180215142711.GH22818@kernel.org>
- <1518705799.8kkjgp6cbr.naveen@linux.ibm.com>
+        id S1033752AbeBOPLe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 10:11:34 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:45916 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033510AbeBOPLd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 10:11:33 -0500
+Date: Thu, 15 Feb 2018 07:11:29 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org
+Subject: Re: [patch 1/2] mm, page_alloc: extend kernelcore and movablecore
+ for percent
+Message-ID: <20180215151129.GB12360@bombadil.infradead.org>
+References: <alpine.DEB.2.10.1802121622470.179479@chino.kir.corp.google.com>
+ <20180214095911.GB28460@dhcp22.suse.cz>
+ <alpine.DEB.2.10.1802140225290.261065@chino.kir.corp.google.com>
+ <20180215144525.GG7275@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1518705799.8kkjgp6cbr.naveen@linux.ibm.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180215144525.GG7275@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Feb 15, 2018 at 08:18:51PM +0530, Naveen N. Rao escreveu:
-> Arnaldo Carvalho de Melo wrote:
-> > Em Thu, Feb 15, 2018 at 01:26:35PM +0100, Jiri Olsa escreveu:
-> > > The symbol search called by machine__find_kernel_symbol_by_name
-> > > is using internally arch__compare_symbol_names function to compare
-> > > 2 symbol names, because different archs have different ways of
-> > > comparing symbols. Mostly for skipping '.' prefixes and similar.
-> > > 
-> > > In test 1 when we try to find matching symbols in kallsyms and
-> > > vmlinux, by address and by symbol name. When either is found
-> > > we compare the pair symbol names  by simple strcmp, which is not
-> > > good enough for reasons explained in previous paragraph.
-> > > 
-> > > On powerpc this can cause lockup, because even thought we found
-> > > the pair, the compared names are different and don't match
-> > > simple strcmp. Following code path is executed, that leads
-> > > to lockup:
+On Thu, Feb 15, 2018 at 03:45:25PM +0100, Michal Hocko wrote:
+> > When the amount of kernel 
+> > memory is well bounded for certain systems, it is better to aggressively 
+> > reclaim from existing MIGRATE_UNMOVABLE pageblocks rather than eagerly 
+> > fallback to others.
 > > 
-> > Added a:
-> > 
-> >     Fixes: 031b84c407c3 ("perf probe ppc: Enable matching against dot symbols automatically")
-> > 
-> > And CCed Naveen, the author of that patch, so that gets notified of this
-> > fix.
+> > We have additional patches that help with this fragmentation if you're 
+> > interested, specifically kcompactd compaction of MIGRATE_UNMOVABLE 
+> > pageblocks triggered by fallback of non-__GFP_MOVABLE allocations and 
+> > draining of pcp lists back to the zone free area to prevent stranding.
 > 
-> Thanks! This does fix the test on ppc64 BE. So:
-> Acked-and-Tested-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+> Yes, I think we need a proper fix. (Ab)using zone_movable for this
+> usecase is just sad.
 
-Thanks!
+What if ... on startup, slab allocated a MAX_ORDER page for itself.
+It would then satisfy its own page allocation requests from this giant
+page.  If we start to run low on memory in the rest of the system, slab
+can be induced to return some of it via its shrinker.  If slab runs low
+on memory, it tries to allocate another MAX_ORDER page for itself.
 
-- Arnaldo
+I think even this should reduce fragmentation.  We could enhance the
+fragmentation reduction by noticing when somebody else releases a page
+that was previously part of a slab MAX_ORDER page and handing that page
+back to slab.  When slab notices that it has an entire MAX_ORDER page free
+(and sufficient other memory on hand that it's unlikely to need it soon),
+it can hand that MAX_ORDER page back to the page allocator.
