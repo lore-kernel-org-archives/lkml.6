@@ -1,64 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166993AbeBOUpV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 15:45:21 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:36448 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161844AbeBOUpR (ORCPT
+        id S1161902AbeBOUrn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 15:47:43 -0500
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34316 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161064AbeBOUrk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 15:45:17 -0500
-X-Google-Smtp-Source: AH8x226K7NQ1z5xKMKmcabJf+HdHu/wXuDeTrNXlBoT9pIKZZ7cvcDV9fguCfXsExDzHpIloPpTM6w==
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH RFC v2 5/6] x86: Use global pages when PTI is disabled
-From: Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <3f69237a-ee32-3d06-dacd-a7f7897f6251@linux.intel.com>
-Date: Thu, 15 Feb 2018 12:45:11 -0800
-Cc: Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>, Willy Tarreau <w@1wt.eu>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Message-Id: <7B00EFC7-7BF2-4A17-981E-01EC69AEADA8@gmail.com>
-References: <20180215163602.61162-1-namit@vmware.com>
- <20180215163602.61162-6-namit@vmware.com>
- <CALCETrX+F5apPenXGBf9oAc+aJieQYDA81zigPk6q6q6pa_i5A@mail.gmail.com>
- <3f69237a-ee32-3d06-dacd-a7f7897f6251@linux.intel.com>
-To: Dave Hansen <dave.hansen@linux.intel.com>
-X-Mailer: Apple Mail (2.3273)
+        Thu, 15 Feb 2018 15:47:40 -0500
+X-Google-Smtp-Source: AH8x226xh9vWeskfpPn0QH2yxmUjvIvfTsRffqcC37pe8jOR6ibhYRYVHzADKZLm/63UP13sofmnAA==
+Date: Thu, 15 Feb 2018 12:47:37 -0800 (PST)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Michal Hocko <mhocko@kernel.org>
+cc: Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org
+Subject: Re: [patch 1/2] mm, page_alloc: extend kernelcore and movablecore
+ for percent
+In-Reply-To: <20180215144525.GG7275@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.10.1802151239470.217103@chino.kir.corp.google.com>
+References: <alpine.DEB.2.10.1802121622470.179479@chino.kir.corp.google.com> <20180214095911.GB28460@dhcp22.suse.cz> <alpine.DEB.2.10.1802140225290.261065@chino.kir.corp.google.com> <20180215144525.GG7275@dhcp22.suse.cz>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1FKjPoh025342
 
-Dave Hansen <dave.hansen@linux.intel.com> wrote:
+On Thu, 15 Feb 2018, Michal Hocko wrote:
 
-> On 02/15/2018 11:53 AM, Andy Lutomirski wrote:
->>> --- a/arch/x86/include/asm/tlbflush.h
->>> +++ b/arch/x86/include/asm/tlbflush.h
->>> @@ -319,6 +319,12 @@ static inline void set_cpu_pti_disable(unsigned short disable)
->>>        WARN_ON_ONCE(preemptible());
->>> 
->>>        pti_update_user_cs64(cpu_pti_disable(), disable);
->>> +       if (__supported_pte_mask & _PAGE_GLOBAL) {
->>> +               if (disable)
->>> +                       cr4_set_bits(X86_CR4_PGE);
->>> +               else
->>> +                       cr4_clear_bits(X86_CR4_PGE);
->>> +       }
->> This will be *extremely* slow, and I don't see the point at all.  What
->> are you accomplishing here?
+> > When the amount of kernel 
+> > memory is well bounded for certain systems, it is better to aggressively 
+> > reclaim from existing MIGRATE_UNMOVABLE pageblocks rather than eagerly 
+> > fallback to others.
+> > 
+> > We have additional patches that help with this fragmentation if you're 
+> > interested, specifically kcompactd compaction of MIGRATE_UNMOVABLE 
+> > pageblocks triggered by fallback of non-__GFP_MOVABLE allocations and 
+> > draining of pcp lists back to the zone free area to prevent stranding.
 > 
-> It won't be slow if you always run compat processes, I guess.
+> Yes, I think we need a proper fix. (Ab)using zone_movable for this
+> usecase is just sad.
 > 
-> But mixing these in here will eat a big chunk of the benefit of having
-> global pages (or PCIDs for that matter) in the first place.
 
-These are all good points. The idea was to allow workloads like Apache, that
-spawn multiple processes that frequently perform context-switches to incur
-TLB misses on kernel pages. 
+It's a hard balance to achieve between a fast page allocator with per-cpu 
+pagesets, reducing fragmentation of unmovable memory, and the performance 
+impact of any fix to reduce that fragmentation for users currently 
+unaffected.  Our patches to kick kcompactd for MIGRATE_UNMOVABLE 
+pageblocks on fallback would be a waste unless you have a ton of anonymous 
+memory you want backed by thp.
 
-The double-flushing was not intentional - I missed it. Anyhow, based on your
-comments, and because I don’t see an easy way to make the global
-cpu_entry_area (your recent patches) to work with this patch, I think I will
-drop this patch.
+If hugepages is the main motivation for reducing the fragmentation, 
+hugetlbfs could be suggested because it would give us more runtime control 
+and we could leave surplus pages sitting in the free pool unless reclaimed 
+under memory pressure.  That works fine in dedicated environments where we 
+know how much hugetlb to reserve; if we give it back under memory pressure 
+it becomes hard to reallocate the high number of hugepages we want (>95% 
+of system memory).  It's much more sloppy in shared environments where the 
+amount of hugepages are unknown.
+
+And of course this doesn't address when a pin prevents memory from being 
+migrated during memory compaction that is __GFP_MOVABLE at allocation but 
+later pinned in place, which can still be a problem with ZONE_MOVABLE.  It 
+would nice to have a solution where this memory can be annotated to want 
+to come from a non-MIGRATE_MOVABLE pageblock, if possible.
