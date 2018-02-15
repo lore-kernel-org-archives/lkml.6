@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226scjUPwWgyog0EO24MstsWKddJdnK7x0U6+jvxDTg2+dxzJCFZ/pqRyWwHZFKjpVQmRc/L
-ARC-Seal: i=1; a=rsa-sha256; t=1518709075; cv=none;
+X-Google-Smtp-Source: AH8x225MLXhAmjDX+VInjAZMyltjyNj0pUsfjabx9H1O170K5BUWShZTskPiG1kQ32Oxo+QHEGcv
+ARC-Seal: i=1; a=rsa-sha256; t=1518709072; cv=none;
         d=google.com; s=arc-20160816;
-        b=fUMINvvC+tFfVPvK5lwc6yY1HVY5hUjW57i9dJ0XpZ3hhlsIXvuojlMmlwZdCQTqBa
-         HEJWHNoaXUnt9fZNJ+oCxEFTM9SfjbAlaDe4wRnr1hJC3Z3+Ri/kle7pcfRty/GYFSGW
-         4WxoLdyi6TMkYig7L2xZI8MW7X7wSxlnyFrZ6fhgkHh4Iik70Eso2Vst35r3zXXLttsM
-         GeJzn3GlRxgw+hdJu5AaArUG+yGBMtIagBkOWfddTkLUPF6MPmJ+LFh/CclBhNU6qogq
-         OWEoHsCIk9+yMGtvqxFXticbzrqfeIn8S8EYVgCOaNsiTRZwLC/DG1e/inLnVnhgkp9p
-         yglA==
+        b=oKibGouZQaEAjwaPB+YGRxhHRO/tbsKW2sWdGt+mGyFCaTGo0SysoMOTYF12dJ4fHw
+         9kippDdTKHNzxyiXw5TgaZmwmZmQFrN2DZppqju+u1mdd6SGKECK2AzVTCU+KNGJGxS2
+         /1EZCbd3Za8sYcfbYA2nw3jRd4+VI7WA7ZHFbTr4O2K/2GdSRQnflgOVuQD8AfupIyjF
+         tquOPR0tWFExRwXeKxxZdfeEB6CkDWfz8rAkGJ+xuf/u6dc1PgKNKVas0j0sjY1XgEZy
+         ehxqQxBftZhL5zdXzB1W+RZ7MeuBzK0IPri0CnTdp4C+8j9UBb4+XfYAZLkwpygYqOmo
+         8wVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Ff38ysTjdcIHvUtbyhhGxBgMHEEXPDGJpYH8VUcm5Z0=;
-        b=SprzF1LmwBNw2NU5Qq4KnRns6BNhEk5/q54vJMjvM/3IxneErthDoY12wndL48UmVO
-         8V0FzHOZdotunilEEBhtHuzP0NmVHIJUIbLppBx/aZcKGIelhnHFbn5bY/3kWrTULDK6
-         XcgHebmm8z0kJiubU0NprBlMtc28ocdm1I78HDh9qVvbkATZlAJtIJkMAozQc86txhxp
-         eNfmWHIPOwgWr9P++ytvxtAFAJzjQYTuNFQJQLquqDbup7uUAuJhVGD1uFq+ioftOHAp
-         Hfi9zOIwi30Lnfo2i3/HPxX9x31Zp+bssMbJyyfzKPtiXVRlNpsngyA4Jb3W9VwwTZAk
-         Jvwg==
+        bh=TvLKUlogMlW6DMGtj18Q8+qgHDrgoqB0xdik92qrDhc=;
+        b=hx1+jX5oWuFQDDx9DaB5CTmONeh9UgCA4GIkhQJb4Kn7kvJHurLZKb3pxxeX7lTySl
+         Z63sSFQgzEDFUBmwPJdsl+yI+F2Lzb/U/yes1WJE3BbgTO1dEoF7/lnhViu1AmgPx1ge
+         agr1V9cBcNWlEmajCzvK7vZJUX0fhEw2od57Ft3dbR+EYPNdPMK8cozeb3ZQy9PnSe4L
+         LXlus8hU/cqYMfmYObDHYNoqttMMbgiW2AW33e5upfZRcaMreUF4zPgP3GeQd70x4vzL
+         nTWIQBYXnv+zobUr3xQvan69ymWnKL3DXOjKHOGHLLXWOJkrovUyl216JlNwjb7hZ5Uv
+         ni3A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nikolay Borisov <nborisov@suse.com>,
-	Qu Wenruo <wqu@suse.com>,
-	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 182/195] btrfs: Handle btrfs_set_extent_delalloc failure in fixup worker
-Date: Thu, 15 Feb 2018 16:17:53 +0100
-Message-Id: <20180215151715.348192237@linuxfoundation.org>
+	Andrey Ryabinin <aryabinin@virtuozzo.com>,
+	Sodagudi Prasad <psodagud@codeaurora.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 181/195] lib/ubsan: add type mismatch handler for new GCC/Clang
+Date: Thu, 15 Feb 2018 16:17:52 +0100
+Message-Id: <20180215151715.285772702@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481077358124918?=
-X-GMAIL-MSGID: =?utf-8?q?1592481887210045437?=
+X-GMAIL-THRID: =?utf-8?q?1592481334818391977?=
+X-GMAIL-MSGID: =?utf-8?q?1592481884359308398?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,44 +50,161 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
 
-commit f3038ee3a3f1017a1cbe9907e31fa12d366c5dcb upstream.
+commit 42440c1f9911b4b7b8ba3dc4e90c1197bc561211 upstream.
 
-This function was introduced by 247e743cbe6e ("Btrfs: Use async helpers
-to deal with pages that have been improperly dirtied") and it didn't do
-any error handling then. This function might very well fail in ENOMEM
-situation, yet it's not handled, this could lead to inconsistent state.
-So let's handle the failure by setting the mapping error bit.
+UBSAN=y fails to build with new GCC/clang:
 
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+    arch/x86/kernel/head64.o: In function `sanitize_boot_params':
+    arch/x86/include/asm/bootparam_utils.h:37: undefined reference to `__ubsan_handle_type_mismatch_v1'
+
+because Clang and GCC 8 slightly changed ABI for 'type mismatch' errors.
+Compiler now uses new __ubsan_handle_type_mismatch_v1() function with
+slightly modified 'struct type_mismatch_data'.
+
+Let's add new 'struct type_mismatch_data_common' which is independent from
+compiler's layout of 'struct type_mismatch_data'.  And make
+__ubsan_handle_type_mismatch[_v1]() functions transform compiler-dependent
+type mismatch data to our internal representation.  This way, we can
+support both old and new compilers with minimal amount of change.
+
+Link: http://lkml.kernel.org/r/20180119152853.16806-1-aryabinin@virtuozzo.com
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Reported-by: Sodagudi Prasad <psodagud@codeaurora.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- fs/btrfs/inode.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ lib/ubsan.c |   48 ++++++++++++++++++++++++++++++++++++++----------
+ lib/ubsan.h |   14 ++++++++++++++
+ 2 files changed, 52 insertions(+), 10 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -2101,8 +2101,15 @@ again:
- 		goto out;
- 	 }
+--- a/lib/ubsan.c
++++ b/lib/ubsan.c
+@@ -265,14 +265,14 @@ void __ubsan_handle_divrem_overflow(stru
+ }
+ EXPORT_SYMBOL(__ubsan_handle_divrem_overflow);
  
--	btrfs_set_extent_delalloc(inode, page_start, page_end, &cached_state,
--				  0);
-+	ret = btrfs_set_extent_delalloc(inode, page_start, page_end,
-+					&cached_state, 0);
-+	if (ret) {
-+		mapping_set_error(page->mapping, ret);
-+		end_extent_writepage(page, ret, page_start, page_end);
-+		ClearPageChecked(page);
-+		goto out;
-+	}
+-static void handle_null_ptr_deref(struct type_mismatch_data *data)
++static void handle_null_ptr_deref(struct type_mismatch_data_common *data)
+ {
+ 	unsigned long flags;
+ 
+-	if (suppress_report(&data->location))
++	if (suppress_report(data->location))
+ 		return;
+ 
+-	ubsan_prologue(&data->location, &flags);
++	ubsan_prologue(data->location, &flags);
+ 
+ 	pr_err("%s null pointer of type %s\n",
+ 		type_check_kinds[data->type_check_kind],
+@@ -281,15 +281,15 @@ static void handle_null_ptr_deref(struct
+ 	ubsan_epilogue(&flags);
+ }
+ 
+-static void handle_misaligned_access(struct type_mismatch_data *data,
++static void handle_misaligned_access(struct type_mismatch_data_common *data,
+ 				unsigned long ptr)
+ {
+ 	unsigned long flags;
+ 
+-	if (suppress_report(&data->location))
++	if (suppress_report(data->location))
+ 		return;
+ 
+-	ubsan_prologue(&data->location, &flags);
++	ubsan_prologue(data->location, &flags);
+ 
+ 	pr_err("%s misaligned address %p for type %s\n",
+ 		type_check_kinds[data->type_check_kind],
+@@ -299,15 +299,15 @@ static void handle_misaligned_access(str
+ 	ubsan_epilogue(&flags);
+ }
+ 
+-static void handle_object_size_mismatch(struct type_mismatch_data *data,
++static void handle_object_size_mismatch(struct type_mismatch_data_common *data,
+ 					unsigned long ptr)
+ {
+ 	unsigned long flags;
+ 
+-	if (suppress_report(&data->location))
++	if (suppress_report(data->location))
+ 		return;
+ 
+-	ubsan_prologue(&data->location, &flags);
++	ubsan_prologue(data->location, &flags);
+ 	pr_err("%s address %p with insufficient space\n",
+ 		type_check_kinds[data->type_check_kind],
+ 		(void *) ptr);
+@@ -315,7 +315,7 @@ static void handle_object_size_mismatch(
+ 	ubsan_epilogue(&flags);
+ }
+ 
+-void __ubsan_handle_type_mismatch(struct type_mismatch_data *data,
++static void ubsan_type_mismatch_common(struct type_mismatch_data_common *data,
+ 				unsigned long ptr)
+ {
+ 
+@@ -326,8 +326,36 @@ void __ubsan_handle_type_mismatch(struct
+ 	else
+ 		handle_object_size_mismatch(data, ptr);
+ }
 +
- 	ClearPageChecked(page);
- 	set_page_dirty(page);
- out:
++void __ubsan_handle_type_mismatch(struct type_mismatch_data *data,
++				unsigned long ptr)
++{
++	struct type_mismatch_data_common common_data = {
++		.location = &data->location,
++		.type = data->type,
++		.alignment = data->alignment,
++		.type_check_kind = data->type_check_kind
++	};
++
++	ubsan_type_mismatch_common(&common_data, ptr);
++}
+ EXPORT_SYMBOL(__ubsan_handle_type_mismatch);
+ 
++void __ubsan_handle_type_mismatch_v1(struct type_mismatch_data_v1 *data,
++				unsigned long ptr)
++{
++
++	struct type_mismatch_data_common common_data = {
++		.location = &data->location,
++		.type = data->type,
++		.alignment = 1UL << data->log_alignment,
++		.type_check_kind = data->type_check_kind
++	};
++
++	ubsan_type_mismatch_common(&common_data, ptr);
++}
++EXPORT_SYMBOL(__ubsan_handle_type_mismatch_v1);
++
+ void __ubsan_handle_nonnull_return(struct nonnull_return_data *data)
+ {
+ 	unsigned long flags;
+--- a/lib/ubsan.h
++++ b/lib/ubsan.h
+@@ -37,6 +37,20 @@ struct type_mismatch_data {
+ 	unsigned char type_check_kind;
+ };
+ 
++struct type_mismatch_data_v1 {
++	struct source_location location;
++	struct type_descriptor *type;
++	unsigned char log_alignment;
++	unsigned char type_check_kind;
++};
++
++struct type_mismatch_data_common {
++	struct source_location *location;
++	struct type_descriptor *type;
++	unsigned long alignment;
++	unsigned char type_check_kind;
++};
++
+ struct nonnull_arg_data {
+ 	struct source_location location;
+ 	struct source_location attr_location;
