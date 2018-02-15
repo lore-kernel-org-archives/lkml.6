@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2178418-1518719322-2-5859146388646965832
+X-Cyrus-Session-Id: sloti22d1t05-2178418-1518719283-2-15754692210910471390
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518719321; b=NRd/3OcmnXNfv3UQhFnqLD2f3foU2bI0f92Jd324cvON77H
-    R7bNmyYwNQJTnIPIHmzcBIdCoiw5ObupDOTlwAE0aGGYFuY0ov91VVWzdaJmx1mk
-    E/OaH9nKmKCNNOpiSOgB8xvhGmz8T7tOWmRnpKUznmVi61tapsgdKXhkLVTPa2Dh
-    4KMcFpg4q2pBos6zMKlOBTsCYNEyzK2Emph84/zECQFjDaNIJqSWlSycl/SHGDFI
-    0eaHq1lChQhgph6n+iw1tpeIE4LhDXFYxsQG4oiRhXXUgFnwXVtOYq9tWJFwgnJS
-    ixJSuy/KymAM4EsxyXDQPv0dicDHkSb62qwI7aQ==
+    t=1518719283; b=BHo5U9bjI/ExXz3rVTjznNh44qJwxuS7bHGbthVd/p+uZez
+    x3tEY/pkoLKTH/fYBOVPC5KqwPKpkjXuZnXpkw4CTa1r8ATylPf/5FnhT1cGWOoh
+    tbtFR7fSQsu78bWE3250nhKD0S1GhRF8Gle5F8Zsbd+gOGJ3X1Ar5OrAzXjB2qKm
+    VeyhA1q+RdLkgpEpit52a7tRPiLNnBYrgvRFX9znoQ8nLuPC6cdD3tkWTOvNYx2m
+    /mEvi/g9OBfb+y+ZTn6AB1puG7fNB8KErxkyDZYYIPCSdbq4A9J98KstpO+j7Vtp
+    WV06OElDjEBK/+3MymKfpyBskhiwirmQkAzAkaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518719321; bh=0jvdFlRDr6OiE7IsBx8eRWg9dL
-    C4sx92R9PjJ+CghwA=; b=UXhmdHlFMLVl2LY9b1dtZlL+/6tpn+9m9iB+4bnquL
-    oBftR1M9FyoU/k/XxT25zNcKmSb7FJD8bowpdxp7FI2CCAwOo7Qo69lnkvlZxkvn
-    pnScJS2aVB7Vq+9xYQSmd0JKidyI0P5EakdExOuwOvDoXqr0FH1MM6IPqMkyIrSM
-    kl0ZTKVWiUe0JdrbuJPsWZrg9AXZ+S0WXlVBcIxXqmwqESmlp82XlPvJH4RYImmk
-    PXTCWbL2tCp8rcRksAE8VIeZClheMPSN+WKTfHIzIi7A8xpFG9mISS8Mxu3/gdWT
-    bnq6J9RxeIc4XUyAQhNVhOBqSmdOYuyOsFWM5m+uZ9qA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518719283; bh=E7l+LNZ6s9fh1Q945KSaL37nRu
+    SQ0dsfH3iiKqipKCU=; b=QTVCpnmMWOkkBQb/zukgbJNuAIBlmQuGQaNYE9cRTA
+    eqEeI1LV24fN4xefbUOGTsHYcfS1p0Ho49J0EaqStFdttdz5b5VBPcE7szqQSPWp
+    gilYwpFk9PFpW7dIdUJ9VBHgCfRtSxMGk9rlFV7T5vGWQXsOqD4wbaWNRd+qLneU
+    MzZhBZPIYFQIw6CP5NpNdysyZjpMPYXxk9w05VkgDiVWi2RnPm3qb0DsMzT0bgeP
+    MwdUJnAJxkraNO338mIimUt1zQatkib0a1aI2jpNzIgG1gcOmcXpxY4hTt+tPw0u
+    uxzJDnd9P9rvNGjDSzdQcUzQrlyfL2ACWqsJwR12HV9g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,24 +47,21 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163191AbeBOS2Z (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 13:28:25 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52222 "EHLO
+        id S1163221AbeBOS1n (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:27:43 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52336 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163184AbeBOPZ2 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:25:28 -0500
+        with ESMTP id S1163208AbeBOPZj (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:25:39 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leif Liddy <leif.linux@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Daniel Drake <drake@endlessm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.4 094/108] Revert "Bluetooth: btusb: fix QCA Rome suspend/resume"
-Date: Thu, 15 Feb 2018 16:17:31 +0100
-Message-Id: <20180215151235.503138018@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@iguana.be>
+Subject: [PATCH 4.4 088/108] watchdog: imx2_wdt: restore previous timeout after suspend+resume
+Date: Thu, 15 Feb 2018 16:17:25 +0100
+Message-Id: <20180215151234.633840297@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -81,49 +78,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Martin Kaiser <martin@kaiser.cx>
 
-commit 7d06d5895c159f64c46560dc258e553ad8670fe0 upstream.
+commit 0be267255cef64e1c58475baa7b25568355a3816 upstream.
 
-This reverts commit fd865802c66bc451dc515ed89360f84376ce1a56.
+When the watchdog device is suspended, its timeout is set to the maximum
+value. During resume, the previously set timeout should be restored.
+This does not work at the moment.
 
-This commit causes a regression on some QCA ROME chips. The USB device
-reset happens in btusb_open(), hence firmware loading gets interrupted.
+The suspend function calls
 
-Furthermore, this commit stops working after commit
-("a0085f2510e8976614ad8f766b209448b385492f Bluetooth: btusb: driver to
-enable the usb-wakeup feature"). Reset-resume quirk only gets enabled in
-btusb_suspend() when it's not a wakeup source.
+imx2_wdt_set_timeout(wdog, IMX2_WDT_MAX_TIME);
 
-If we really want to reset the USB device, we need to do it before
-btusb_open(). Let's handle it in drivers/usb/core/quirks.c.
+and resume reverts this by calling
 
-Cc: Leif Liddy <leif.linux@gmail.com>
-Cc: Matthias Kaehlcke <mka@chromium.org>
-Cc: Brian Norris <briannorris@chromium.org>
-Cc: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Reviewed-by: Brian Norris <briannorris@chromium.org>
-Tested-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+imx2_wdt_set_timeout(wdog, wdog->timeout);
+
+However, imx2_wdt_set_timeout() updates wdog->timeout. Therefore,
+wdog->timeout is set to IMX2_WDT_MAX_TIME when we enter the resume
+function.
+
+Fix this by adding a new function __imx2_wdt_set_timeout() which
+only updates the hardware settings. imx2_wdt_set_timeout() now calls
+__imx2_wdt_set_timeout() and then saves the new timeout to
+wdog->timeout.
+
+During suspend, we call __imx2_wdt_set_timeout() directly so that
+wdog->timeout won't be updated and we can restore the previous value
+during resume. This approach makes wdog->timeout different from the
+actual setting in the hardware which is usually not a good thing.
+However, the two differ only while we're suspended and no kernel code is
+running, so it should be ok in this case.
+
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/bluetooth/btusb.c |    6 ------
- 1 file changed, 6 deletions(-)
+ drivers/watchdog/imx2_wdt.c |   20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -2969,12 +2969,6 @@ static int btusb_probe(struct usb_interf
- 	if (id->driver_info & BTUSB_QCA_ROME) {
- 		data->setup_on_usb = btusb_setup_qca;
- 		hdev->set_bdaddr = btusb_set_bdaddr_ath3012;
--
--		/* QCA Rome devices lose their updated firmware over suspend,
--		 * but the USB hub doesn't notice any status change.
--		 * Explicitly request a device reset on resume.
--		 */
--		set_bit(BTUSB_RESET_RESUME, &data->flags);
- 	}
+--- a/drivers/watchdog/imx2_wdt.c
++++ b/drivers/watchdog/imx2_wdt.c
+@@ -161,15 +161,21 @@ static void imx2_wdt_timer_ping(unsigned
+ 	mod_timer(&wdev->timer, jiffies + wdog->timeout * HZ / 2);
+ }
  
- #ifdef CONFIG_BT_HCIBTUSB_RTL
+-static int imx2_wdt_set_timeout(struct watchdog_device *wdog,
+-				unsigned int new_timeout)
++static void __imx2_wdt_set_timeout(struct watchdog_device *wdog,
++				   unsigned int new_timeout)
+ {
+ 	struct imx2_wdt_device *wdev = watchdog_get_drvdata(wdog);
+ 
+-	wdog->timeout = new_timeout;
+-
+ 	regmap_update_bits(wdev->regmap, IMX2_WDT_WCR, IMX2_WDT_WCR_WT,
+ 			   WDOG_SEC_TO_COUNT(new_timeout));
++}
++
++static int imx2_wdt_set_timeout(struct watchdog_device *wdog,
++				unsigned int new_timeout)
++{
++	__imx2_wdt_set_timeout(wdog, new_timeout);
++
++	wdog->timeout = new_timeout;
+ 	return 0;
+ }
+ 
+@@ -353,7 +359,11 @@ static int imx2_wdt_suspend(struct devic
+ 
+ 	/* The watchdog IP block is running */
+ 	if (imx2_wdt_is_running(wdev)) {
+-		imx2_wdt_set_timeout(wdog, IMX2_WDT_MAX_TIME);
++		/*
++		 * Don't update wdog->timeout, we'll restore the current value
++		 * during resume.
++		 */
++		__imx2_wdt_set_timeout(wdog, IMX2_WDT_MAX_TIME);
+ 		imx2_wdt_ping(wdog);
+ 
+ 		/* The watchdog is not active */
