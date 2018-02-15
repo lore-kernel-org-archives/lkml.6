@@ -1,84 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163170AbeBOPZV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 10:25:21 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:33951 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162134AbeBOPZR (ORCPT
+        id S1165175AbeBOPew (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 10:34:52 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36428 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1165142AbeBOPen (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 10:25:17 -0500
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH] nvme-pci: do a PCI reset after S3 on Samsung 960 EVO/PM961/SM961 + Razer Blade Stealth
-Date: Thu, 15 Feb 2018 23:24:56 +0800
-Message-Id: <20180215152456.21795-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Thu, 15 Feb 2018 10:34:43 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Abhijeet Kumar <abhijeet.kumar@intel.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>,
+        Jeeja KP <jeeja.kp@intel.com>,
+        Guneshwor Singh <guneshwor.o.singh@intel.com>,
+        "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
+        "Ughreja, Rakesh A" <rakesh.a.ughreja@intel.com>,
+        Puneeth Prabhu <puneethx.prabhu@intel.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        abhijeet.kumar@intel.com, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: hdac_hdmi : Ensuring proper setting of output widget power state" to the asoc tree
+In-Reply-To: <1518683739-4448-1-git-send-email-abhijeet.kumar@intel.com>
+Message-Id: <E1emLYG-0007Ln-Qd@debutante>
+Date: Thu, 15 Feb 2018 15:34:24 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similar to commit 8427bbc22486 ("nvme-pci: disable APST on Samsung SSD
-960 EVO + ASUS PRIME B350M-A"), the NVMe drops off the PCIe bus after
-S3.
+The patch
 
-We managed to find that a PCI reset after resume can workaround the
-issue.
+   ASoC: hdac_hdmi : Ensuring proper setting of output widget power state
 
-If we have more reports for Samsung 960 EVO/PM961/SM961, we should make
-this quirk mandatory.
+has been applied to the asoc tree at
 
-BugLink: https://bugs.launchpad.net/bugs/1746340
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 753597fbb7031ff147d4f2862426699e4ad8efca Mon Sep 17 00:00:00 2001
+From: Abhijeet Kumar <abhijeet.kumar@intel.com>
+Date: Thu, 15 Feb 2018 14:05:38 +0530
+Subject: [PATCH] ASoC: hdac_hdmi : Ensuring proper setting of output widget
+ power state
+
+In usecases like hot plug-unplug DP panel or modeset during a playback,
+sometimes we observe no audio after codec resets. During no audio
+condition, we have noticed that the power state of the pin or the
+connector is D3. Optimizing the way we set the power mitigates the
+issue. With this changes the verb is sent to set the power state and
+waits until actual state reaches target state. Thus ensuring power
+state is set.
+
+Signed-off-by: Abhijeet Kumar <abhijeet.kumar@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/nvme/host/nvme.h |  5 +++++
- drivers/nvme/host/pci.c  | 10 ++++++++++
- 2 files changed, 15 insertions(+)
+ sound/soc/codecs/hdac_hdmi.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 8e4550fa08f8..e970423b7944 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -83,6 +83,11 @@ enum nvme_quirks {
- 	 * Supports the LighNVM command set if indicated in vs[1].
- 	 */
- 	NVME_QUIRK_LIGHTNVM			= (1 << 6),
+diff --git a/sound/soc/codecs/hdac_hdmi.c b/sound/soc/codecs/hdac_hdmi.c
+index 0758927d1e06..60bea9d69fc0 100644
+--- a/sound/soc/codecs/hdac_hdmi.c
++++ b/sound/soc/codecs/hdac_hdmi.c
+@@ -718,10 +718,22 @@ static struct hdac_hdmi_pcm *hdac_hdmi_get_pcm(struct hdac_ext_device *edev,
+ static void hdac_hdmi_set_power_state(struct hdac_ext_device *edev,
+ 			     hda_nid_t nid, unsigned int pwr_state)
+ {
++	int count;
++	unsigned int state;
 +
-+	/*
-+	 * The controller needs to do a PCI reset after resume.
-+	 */
-+	NVME_QUIRK_PCI_RESET_RESUME		= (1 << 7),
- };
- 
- /*
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 6fe7af00a1f4..e96dc301a4e7 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2084,6 +2084,9 @@ static int nvme_pci_enable(struct nvme_dev *dev)
- 	int result = -ENOMEM;
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
- 
-+	if (dev->ctrl.quirks & NVME_QUIRK_PCI_RESET_RESUME)
-+		pci_reset_function(pdev);
+ 	if (get_wcaps(&edev->hdev, nid) & AC_WCAP_POWER) {
+-		if (!snd_hdac_check_power_state(&edev->hdev, nid, pwr_state))
+-			snd_hdac_codec_write(&edev->hdev, nid, 0,
+-				AC_VERB_SET_POWER_STATE, pwr_state);
++		if (!snd_hdac_check_power_state(&edev->hdac, nid, pwr_state)) {
++			for (count = 0; count < 10; count++) {
++				snd_hdac_codec_read(&edev->hdac, nid, 0,
++						AC_VERB_SET_POWER_STATE,
++						pwr_state);
++				state = snd_hdac_sync_power_state(&edev->hdac,
++						nid, pwr_state);
++				if (!(state & AC_PWRST_ERROR))
++					break;
++			}
++		}
 +
- 	if (pci_enable_device_mem(pdev))
- 		return result;
- 
-@@ -2455,6 +2458,13 @@ static unsigned long check_vendor_combination_bug(struct pci_dev *pdev)
- 		if (dmi_match(DMI_BOARD_VENDOR, "ASUSTeK COMPUTER INC.") &&
- 		    dmi_match(DMI_BOARD_NAME, "PRIME B350M-A"))
- 			return NVME_QUIRK_NO_APST;
-+		/*
-+		 * Samsung SSD 960 EVO and SM961/PM961 drop off the PCIe bus
-+		 * after system suspend on Razer Blade Stealth.
-+		 */
-+		else if (dmi_match(DMI_SYS_VENDOR, "Razer") &&
-+			 dmi_match(DMI_PRODUCT_NAME, "Blade Stealth"))
-+			return NVME_QUIRK_PCI_RESET_RESUME;
  	}
+ }
  
- 	return 0;
 -- 
-2.15.1
+2.16.1
