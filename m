@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227rFoxRdzT2oiwL8gPEuDshwqZDQx4Y7ZsepVsLhfGGPw1L8ng+c8uzPc0UEMLxIXJMLK+2
-ARC-Seal: i=1; a=rsa-sha256; t=1518708466; cv=none;
+X-Google-Smtp-Source: AH8x225aHuAvNsXrqGoEGbIzfOC7cgRNqaHdwtowHV86m+w54KF+4yQ55CdLCwMtdjZwByVYDiMX
+ARC-Seal: i=1; a=rsa-sha256; t=1518708463; cv=none;
         d=google.com; s=arc-20160816;
-        b=q8E2r5FjZot6oxJmlPZAJEUqDx2de8iYDOZQBK2RUrRIJX0N8Dj2ZM/BFRywZhBuTV
-         O3rXKdrH+q5zAJmjIr5Y6kGv3NM1Y8DeVz1dEN62LFQ9BcRH0605+P6tXgctOFJGQXFy
-         BLOCdEsBxKp7/hRDv1xugX7ORjUK2JdWlpj7G8ybbKPO+PLKziShNOZuzJsdkVpkSCnR
-         tehOTTIBiBqSzaiqP/RL8cQruYQeTnFjpBxn2ij4EhFUWOP4a9nJCFk5aKPHL77Hzbdy
-         /WFa6Kh4FOGc40MLlODA04tJxnJcQR0yOZKMAkeUdPh5M/aD5cmzAVOW4YFn4cnDanJG
-         EwPQ==
+        b=zvkN2NzxELGd1l55MSanocjTyGtftiH0cgWgEaF5xtfQ3Ah875rrzSss8hrFtrHEE1
+         k8NEurp99dp/JHaLjKxnMt7OqSd+X69X7jUZEWQIXIbhYOPg+VaM/IIRJO5SLto7HI9+
+         otvSIiJFRS36uNN29vFIEigbEz4uqEkTPzHWXCs3P0cUADFaZHWyWNj+Rb7Ts4E8sAsh
+         ohrE4WN5unfSsjwZW9e00jGDJuZDgvJ9eIip08myx/MJsBaEOUdpiCzanGUy1gJEiCo/
+         YFCLVcrLV7d1gfeadSz4Z8HKo+QI8xRygkwqRiNZ/RsnUVfeDi33P/LxcOrw7X3xQ3Pp
+         +4PA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=24njrcyBDQKwfTbV3SVSh1T/5rUZjOi5xAD+3AB++Cg=;
-        b=yDvtR/CPEoGIREEHzIIiQEEXP1g7AJNgByACqFNZtxuXkX3PQ4YMlYpJkoNR9p6NaN
-         V/tluO6H1+ytgxkKdto5/KUqDiqXsQeRYKV7kdAYdW9eItsJKjZ2bPXeGV/uzvW656ij
-         SvI2t4XRBQixlJ3mtqeb5IXFI6jUuwDMCa9uAKX2Z/9IGMhFvdfpEbn+D4KlHEPQQCej
-         ljRILYMdcacgGgcTJvrzCDPKSlQ6lkqDqG7Tmsy8EzUgvYk9o6TXTgSug6CWF6IGUrvH
-         15JCwsflv7PwZ9h4BkaZixla+Wa/ZUqeOry1CNmc8BQ4afd/eSn31r+CSQ3yYzEcI5QM
-         9Kug==
+        bh=6u59yxRV1Qb9Tb4Hhnm+aWEB5scJ7LFF49ZK9vzTy2Y=;
+        b=PZi9tHjubi1EsEljJiU6520akWBOq+uJhS2yL4vZj/2noUc25fPkdfiw0nnXeJhZ2T
+         X+pU0ghBdEM+/5Bsrtf9kJVcwdsIP8tyPSQe5YaJy/XTSTDBVKwomP6WUQL+JhIIHsw+
+         en1lCjUYuZfYnfrhNWUcpe1c4V/9VUQgKZJ2ldb2rCVcwbL/DIKaLM+27J7Xum/UXm0g
+         79+T8AkgTUY+us/RWX3lLMFxgyh72sPvHbIYfRSQ0aYQUAgzwJI2XOWj/h+ZmtX/nOw0
+         jsEsLbDTt2YaIax3xJ4ixZe/ylNuZnYvrNtHRCggoLPqvTyUITooIinpQPYkVvgV25qm
+         PdYg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christophe Leroy <christophe.leroy@c-s.fr>,
+	syzbot <syzkaller@googlegroups.com>,
+	Eric Biggers <ebiggers@google.com>,
 	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 51/88] crypto: talitos - fix Kernel Oops on hashing an empty file
-Date: Thu, 15 Feb 2018 16:17:18 +0100
-Message-Id: <20180215151229.786726949@linuxfoundation.org>
+Subject: [PATCH 4.9 50/88] crypto: sha512-mb - initialize pending lengths correctly
+Date: Thu, 15 Feb 2018 16:17:17 +0100
+Message-Id: <20180215151229.655280118@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481248467239227?=
-X-GMAIL-MSGID: =?utf-8?q?1592481248467239227?=
+X-GMAIL-THRID: =?utf-8?q?1592481245689572997?=
+X-GMAIL-MSGID: =?utf-8?q?1592481245689572997?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,59 +49,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: LEROY Christophe <christophe.leroy@c-s.fr>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 87a81dce53b1ea61acaeefa5191a0376a2d1d721 upstream.
+commit eff84b379089cd8b4e83599639c1f5f6e34ef7bf upstream.
 
-Performing the hash of an empty file leads to a kernel Oops
+The SHA-512 multibuffer code keeps track of the number of blocks pending
+in each lane.  The minimum of these values is used to identify the next
+lane that will be completed.  Unused lanes are set to a large number
+(0xFFFFFFFF) so that they don't affect this calculation.
 
-[   44.504600] Unable to handle kernel paging request for data at address 0x0000000c
-[   44.512819] Faulting instruction address: 0xc02d2be8
-[   44.524088] Oops: Kernel access of bad area, sig: 11 [#1]
-[   44.529171] BE PREEMPT CMPC885
-[   44.532232] CPU: 0 PID: 491 Comm: md5sum Not tainted 4.15.0-rc8-00211-g3a968610b6ea #81
-[   44.540814] NIP:  c02d2be8 LR: c02d2984 CTR: 00000000
-[   44.545812] REGS: c6813c90 TRAP: 0300   Not tainted  (4.15.0-rc8-00211-g3a968610b6ea)
-[   44.554223] MSR:  00009032 <EE,ME,IR,DR,RI>  CR: 48222822  XER: 20000000
-[   44.560855] DAR: 0000000c DSISR: c0000000
-[   44.560855] GPR00: c02d28fc c6813d40 c6828000 c646fa40 00000001 00000001 00000001 00000000
-[   44.560855] GPR08: 0000004c 00000000 c000bfcc 00000000 28222822 100280d4 00000000 10020008
-[   44.560855] GPR16: 00000000 00000020 00000000 00000000 10024008 00000000 c646f9f0 c6179a10
-[   44.560855] GPR24: 00000000 00000001 c62f0018 c6179a10 00000000 c6367a30 c62f0000 c646f9c0
-[   44.598542] NIP [c02d2be8] ahash_process_req+0x448/0x700
-[   44.603751] LR [c02d2984] ahash_process_req+0x1e4/0x700
-[   44.608868] Call Trace:
-[   44.611329] [c6813d40] [c02d28fc] ahash_process_req+0x15c/0x700 (unreliable)
-[   44.618302] [c6813d90] [c02060c4] hash_recvmsg+0x11c/0x210
-[   44.623716] [c6813db0] [c0331354] ___sys_recvmsg+0x98/0x138
-[   44.629226] [c6813eb0] [c03332c0] __sys_recvmsg+0x40/0x84
-[   44.634562] [c6813f10] [c03336c0] SyS_socketcall+0xb8/0x1d4
-[   44.640073] [c6813f40] [c000d1ac] ret_from_syscall+0x0/0x38
-[   44.645530] Instruction dump:
-[   44.648465] 38c00001 7f63db78 4e800421 7c791b78 54690ffe 0f090000 80ff0190 2f870000
-[   44.656122] 40befe50 2f990001 409e0210 813f01bc <8129000c> b39e003a 7d29c214 913e003c
+However, it was forgotten to set the lengths to this value in the
+initial state, where all lanes are unused.  As a result it was possible
+for sha512_mb_mgr_get_comp_job_avx2() to select an unused lane, causing
+a NULL pointer dereference.  Specifically this could happen in the case
+where ->update() was passed fewer than SHA512_BLOCK_SIZE bytes of data,
+so it then called sha_complete_job() without having actually submitted
+any blocks to the multi-buffer code.  This hit a NULL pointer
+dereference if another task happened to have submitted blocks
+concurrently to the same CPU and the flush timer had not yet expired.
 
-This patch fixes that Oops by checking if src is NULL.
+Fix this by initializing sha512_mb_mgr->lens correctly.
 
-Fixes: 6a1e8d14156d4 ("crypto: talitos - making mapping helpers more generic")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+As usual, this bug was found by syzkaller.
+
+Fixes: 45691e2d9b18 ("crypto: sha512-mb - submit/flush routines for AVX2")
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/talitos.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/crypto/sha512-mb/sha512_mb_mgr_init_avx2.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -1127,6 +1127,10 @@ int talitos_sg_map(struct device *dev, s
- 	to_talitos_ptr_len(ptr, len, is_sec1);
- 	to_talitos_ptr_ext_set(ptr, 0, is_sec1);
+--- a/arch/x86/crypto/sha512-mb/sha512_mb_mgr_init_avx2.c
++++ b/arch/x86/crypto/sha512-mb/sha512_mb_mgr_init_avx2.c
+@@ -57,10 +57,12 @@ void sha512_mb_mgr_init_avx2(struct sha5
+ {
+ 	unsigned int j;
  
-+	if (!src) {
-+		to_talitos_ptr(ptr, 0, 0, is_sec1);
-+		return 1;
-+	}
- 	if (sg_count == 1) {
- 		to_talitos_ptr(ptr, sg_dma_address(src) + offset, is_sec1);
- 		return sg_count;
+-	state->lens[0] = 0;
+-	state->lens[1] = 1;
+-	state->lens[2] = 2;
+-	state->lens[3] = 3;
++	/* initially all lanes are unused */
++	state->lens[0] = 0xFFFFFFFF00000000;
++	state->lens[1] = 0xFFFFFFFF00000001;
++	state->lens[2] = 0xFFFFFFFF00000002;
++	state->lens[3] = 0xFFFFFFFF00000003;
++
+ 	state->unused_lanes = 0xFF03020100;
+ 	for (j = 0; j < 4; j++)
+ 		state->ldata[j].job_in_lane = NULL;
