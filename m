@@ -1,45 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162496AbeBOPW4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 10:22:56 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:40435 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161910AbeBOPWv (ORCPT
+        id S1163170AbeBOPZV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 10:25:21 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:33951 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162134AbeBOPZR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 10:22:51 -0500
-X-Google-Smtp-Source: AH8x226pIz5D1nNuLCrZCMYcSxMuc5ZaqapNaQYqIPYQh2L+NBWNvZ/wW5Tcik5l+XAmr1xZGWX3Kg==
-Date: Thu, 15 Feb 2018 07:22:46 -0800
-From: Tejun Heo <tj@kernel.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Jason Baron <jbaron@akamai.com>,
-        Borislav Petkov <bp@suse.de>
-Subject: Re: [PATCH 3/3] percpu: Remove inert tracepoint in __init code
-Message-ID: <20180215152246.GT695913@devbig577.frc2.facebook.com>
-References: <cover.1518626149.git.jpoimboe@redhat.com>
- <42d6bf23a6d151b5d13778be969c7a063d60665a.1518626149.git.jpoimboe@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <42d6bf23a6d151b5d13778be969c7a063d60665a.1518626149.git.jpoimboe@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Thu, 15 Feb 2018 10:25:17 -0500
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH] nvme-pci: do a PCI reset after S3 on Samsung 960 EVO/PM961/SM961 + Razer Blade Stealth
+Date: Thu, 15 Feb 2018 23:24:56 +0800
+Message-Id: <20180215152456.21795-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 10:40:43AM -0600, Josh Poimboeuf wrote:
-> The jump_label code doesn't patch init code, so this tracepoint can
-> never be enabled.  Remove it.
-> 
-> Cc: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Similar to commit 8427bbc22486 ("nvme-pci: disable APST on Samsung SSD
+960 EVO + ASUS PRIME B350M-A"), the NVMe drops off the PCIe bus after
+S3.
 
-Applied to percpu/for-4.17.
+We managed to find that a PCI reset after resume can workaround the
+issue.
 
-Thanks.
+If we have more reports for Samsung 960 EVO/PM961/SM961, we should make
+this quirk mandatory.
 
+BugLink: https://bugs.launchpad.net/bugs/1746340
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+ drivers/nvme/host/nvme.h |  5 +++++
+ drivers/nvme/host/pci.c  | 10 ++++++++++
+ 2 files changed, 15 insertions(+)
+
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 8e4550fa08f8..e970423b7944 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -83,6 +83,11 @@ enum nvme_quirks {
+ 	 * Supports the LighNVM command set if indicated in vs[1].
+ 	 */
+ 	NVME_QUIRK_LIGHTNVM			= (1 << 6),
++
++	/*
++	 * The controller needs to do a PCI reset after resume.
++	 */
++	NVME_QUIRK_PCI_RESET_RESUME		= (1 << 7),
+ };
+ 
+ /*
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 6fe7af00a1f4..e96dc301a4e7 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2084,6 +2084,9 @@ static int nvme_pci_enable(struct nvme_dev *dev)
+ 	int result = -ENOMEM;
+ 	struct pci_dev *pdev = to_pci_dev(dev->dev);
+ 
++	if (dev->ctrl.quirks & NVME_QUIRK_PCI_RESET_RESUME)
++		pci_reset_function(pdev);
++
+ 	if (pci_enable_device_mem(pdev))
+ 		return result;
+ 
+@@ -2455,6 +2458,13 @@ static unsigned long check_vendor_combination_bug(struct pci_dev *pdev)
+ 		if (dmi_match(DMI_BOARD_VENDOR, "ASUSTeK COMPUTER INC.") &&
+ 		    dmi_match(DMI_BOARD_NAME, "PRIME B350M-A"))
+ 			return NVME_QUIRK_NO_APST;
++		/*
++		 * Samsung SSD 960 EVO and SM961/PM961 drop off the PCIe bus
++		 * after system suspend on Razer Blade Stealth.
++		 */
++		else if (dmi_match(DMI_SYS_VENDOR, "Razer") &&
++			 dmi_match(DMI_PRODUCT_NAME, "Blade Stealth"))
++			return NVME_QUIRK_PCI_RESET_RESUME;
+ 	}
+ 
+ 	return 0;
 -- 
-tejun
+2.15.1
