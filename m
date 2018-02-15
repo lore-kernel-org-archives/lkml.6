@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225AhxAV0sUvmINdEtDAypwO8VVPLVM6+Xpa6tuV7UlRBXoarlYzvb8PBqyJizu+hbi5dmTZ
-ARC-Seal: i=1; a=rsa-sha256; t=1518708951; cv=none;
+X-Google-Smtp-Source: AH8x224i022ESGd8U4p3AvAUZPPYDADqHj3im5zdeu5MZCjSSSKl7SzWH9/SKdpaD7l3BZUxTTSH
+ARC-Seal: i=1; a=rsa-sha256; t=1518708948; cv=none;
         d=google.com; s=arc-20160816;
-        b=V6qNatJ7tiHsuboij1YmLAjE9AVEHlhsgcnP9573UN8iQvzPN+SqkDLzV6ca2pVdfw
-         t64NC7ZuUEe0RBqwqs5fJyRUe5X46o2D7Lv/pUR8nbF9v1Cpg2y8dPt7VteYd8kBSQQh
-         fcRCePepF3CLcTfXCAMN1L5Lyra13OjJ/1/Bn0ecCCKsMwlarndnloBIFEwPDL189l/t
-         Zy5WcbwLmmTSqOzbFwk3qnta8anbzFSMta2BUs06zoByz8p8WBl6TeF71wngYLmdnw99
-         8RvDc08BSNbuGnvS56sSQZfhLKznBGaXWIkU2G5H4uee9TZ6TPZpKxfoFt2RVE5CnsBD
-         LOeg==
+        b=BUBW7sF3e5+6ERndNA875akkd8ESbInl7f9PKZlVF8p+EBr+rJxCuzDfHz/21jLyrw
+         1KvtAAMr6zJ5jL/fzijF8ypO6ToYNT6SBG3pmL4jYby0Rr+Db0Y7H7iB2i1VPksd40QH
+         L1Y1K0T5PEb70ANl9qkke0Lh7Ckf4a4eVetdLO44oaZYgafwF7JxRsPyVxYyaXXYbIzk
+         TaeyzOhGgxa92oBFcWKuE17BrlD1EFN06DnAQJI/rTXj8GC3Zm+8WpMeQd3Zo06afeDJ
+         oR1Hgwq18AojPodkm8QUltNfw2GgHpC1Ppysjn7MX5uZIvDN/dCVr1VY3P6IW9Ti+Hgz
+         QHhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WtfzdQ11VVM02uaznCl0gR1c0xCfq1MAdNS3Ofzu+hI=;
-        b=ym339QQKmGUePYr61Fiw5hElSwb5ZjNn19wtleIxHjXwNaq4VHGMS5CWcrz8fj/gNu
-         7fjLz7fEUgXaMhWmFmL89h7o6mv8qUxnOlzAJYp6EulwsRR3hYrc7s0fA2QbOBb10Yn1
-         lKiye8PCaq37DRvgzW9MIOo5YfnNNEqrpUCBEUUnQpIx1GYpCtv6RRm0DfFM595rruAp
-         vMPdwYfRV8dMTAlJ4Mu90uXbYr1beOkrAT7Jj1qUtIcKZXSYJ7+t0H3DLHqZKfJbR6Pb
-         LgvvjVBm42UefD0tbDPFNcv/kvNKTBwDmFpqlHnCnztPy1fZq26yoCkg1GeawG06DX8l
-         AOkg==
+        bh=BRc51G70HrZKySHryr/mWGu5IdNqh/KZGLd9+HFEHqk=;
+        b=uiE53Ob+ejk49wQlLwHPX9xVrG6zhckuyMvzUyCleZ/NcDUlg9Y10y2iSwqDNlXyQG
+         xA/TOFbeFIyPOEEdcEfffpRtb37crsyf1lEKH7GTM2z0AdR/7LS8kRlWy+/+mPzlq+iD
+         D4Kwwr82UFZ/Hw9mHipN1BTjcEV/hNutFJD1t6IKm5bJ9piJiEndBrKGqsHmh3cOdTZd
+         OjyQG87DqDqlQan0vxsv2FMqnLEfpBqT8o/b6IWRujH8y4rK4B4SN7KurDV6jURiBiwM
+         GJMRxcUT7Z9Rf/XRvn6u11SKOujWUvoOiEew/z/DRCZ3wZKHITv5mM3tFaBlDibooocu
+         OQpg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Paul Mackerras <paulus@ozlabs.org>
-Subject: [PATCH 4.14 139/195] KVM: PPC: Book3S HV: Make sure we dont re-enter guest without XIVE loaded
-Date: Thu, 15 Feb 2018 16:17:10 +0100
-Message-Id: <20180215151712.739402113@linuxfoundation.org>
+	Liran Alon <liran.alon@oracle.com>,
+	Nikita Leshenko <nikita.leshchenko@oracle.com>,
+	Krish Sadhukhan <krish.sadhukhan@oracle.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH 4.14 138/195] KVM: nVMX: Fix bug of injecting L2 exception into L1
+Date: Thu, 15 Feb 2018 16:17:09 +0100
+Message-Id: <20180215151712.690147137@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -38,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481757453918742?=
-X-GMAIL-MSGID: =?utf-8?q?1592481757453918742?=
+X-GMAIL-THRID: =?utf-8?q?1592481754467882981?=
+X-GMAIL-MSGID: =?utf-8?q?1592481754467882981?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -47,81 +51,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paul Mackerras <paulus@ozlabs.org>
+From: Liran Alon <liran.alon@oracle.com>
 
-commit 43ff3f65234061e08d234bdef5a9aadc19832b74 upstream.
+commit 5c7d4f9ad39d980728b39752304ce10bb2960cbf upstream.
 
-This fixes a bug where it is possible to enter a guest on a POWER9
-system without having the XIVE (interrupt controller) context loaded.
-This can happen because we unload the XIVE context from the CPU
-before doing the real-mode handling for machine checks.  After the
-real-mode handler runs, it is possible that we re-enter the guest
-via a fast path which does not load the XIVE context.
+kvm_clear_exception_queue() should clear pending exception.
+This also includes exceptions which were only marked pending but not
+yet injected. This is because exception.pending is used for both L1
+and L2 to determine if an exception should be raised to guest.
+Note that an exception which is pending but not yet injected will
+be raised again once the guest will be resumed.
 
-To fix this, we move the unloading of the XIVE context to come after
-the real-mode machine check handler is called.
+Consider the following scenario:
+1) L0 KVM with ignore_msrs=false.
+2) L1 prepare vmcs12 with the following:
+    a) No intercepts on MSR (MSR_BITMAP exist and is filled with 0).
+    b) No intercept for #GP.
+    c) vmx-preemption-timer is configured.
+3) L1 enters into L2.
+4) L2 reads an unhandled MSR that exists in MSR_BITMAP
+(such as 0x1fff).
 
-Fixes: 5af50993850a ("KVM: PPC: Book3S HV: Native usage of the XIVE interrupt controller")
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+L2 RDMSR could be handled as described below:
+1) L2 exits to L0 on RDMSR and calls handle_rdmsr().
+2) handle_rdmsr() calls kvm_inject_gp() which sets
+KVM_REQ_EVENT, exception.pending=true and exception.injected=false.
+3) vcpu_enter_guest() consumes KVM_REQ_EVENT and calls
+inject_pending_event() which calls vmx_check_nested_events()
+which sees that exception.pending=true but
+nested_vmx_check_exception() returns 0 and therefore does nothing at
+this point. However let's assume it later sees vmx-preemption-timer
+expired and therefore exits from L2 to L1 by calling
+nested_vmx_vmexit().
+4) nested_vmx_vmexit() calls prepare_vmcs12()
+which calls vmcs12_save_pending_event() but it does nothing as
+exception.injected is false. Also prepare_vmcs12() calls
+kvm_clear_exception_queue() which does nothing as
+exception.injected is already false.
+5) We now return from vmx_check_nested_events() with 0 while still
+having exception.pending=true!
+6) Therefore inject_pending_event() continues
+and we inject L2 exception to L1!...
+
+This commit will fix above issue by changing step (4) to
+clear exception.pending in kvm_clear_exception_queue().
+
+Fixes: 664f8e26b00c ("KVM: X86: Fix loss of exception which has not yet been injected")
+Signed-off-by: Liran Alon <liran.alon@oracle.com>
+Reviewed-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
+Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Signed-off-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kvm/book3s_hv_rmhandlers.S |   40 ++++++++++++++++----------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+ arch/x86/kvm/vmx.c |    1 -
+ arch/x86/kvm/x86.h |    1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/kvm/book3s_hv_rmhandlers.S
-+++ b/arch/powerpc/kvm/book3s_hv_rmhandlers.S
-@@ -1387,6 +1387,26 @@ END_FTR_SECTION_IFSET(CPU_FTR_ARCH_300)
- 	blt	deliver_guest_interrupt
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -11246,7 +11246,6 @@ static int vmx_check_nested_events(struc
+ 		if (block_nested_events)
+ 			return -EBUSY;
+ 		nested_vmx_inject_exception_vmexit(vcpu, exit_qual);
+-		vcpu->arch.exception.pending = false;
+ 		return 0;
+ 	}
  
- guest_exit_cont:		/* r9 = vcpu, r12 = trap, r13 = paca */
-+	/* Save more register state  */
-+	mfdar	r6
-+	mfdsisr	r7
-+	std	r6, VCPU_DAR(r9)
-+	stw	r7, VCPU_DSISR(r9)
-+	/* don't overwrite fault_dar/fault_dsisr if HDSI */
-+	cmpwi	r12,BOOK3S_INTERRUPT_H_DATA_STORAGE
-+	beq	mc_cont
-+	std	r6, VCPU_FAULT_DAR(r9)
-+	stw	r7, VCPU_FAULT_DSISR(r9)
-+
-+	/* See if it is a machine check */
-+	cmpwi	r12, BOOK3S_INTERRUPT_MACHINE_CHECK
-+	beq	machine_check_realmode
-+mc_cont:
-+#ifdef CONFIG_KVM_BOOK3S_HV_EXIT_TIMING
-+	addi	r3, r9, VCPU_TB_RMEXIT
-+	mr	r4, r9
-+	bl	kvmhv_accumulate_time
-+#endif
- #ifdef CONFIG_KVM_XICS
- 	/* We are exiting, pull the VP from the XIVE */
- 	lwz	r0, VCPU_XIVE_PUSHED(r9)
-@@ -1424,26 +1444,6 @@ guest_exit_cont:		/* r9 = vcpu, r12 = tr
- 	eieio
- 1:
- #endif /* CONFIG_KVM_XICS */
--	/* Save more register state  */
--	mfdar	r6
--	mfdsisr	r7
--	std	r6, VCPU_DAR(r9)
--	stw	r7, VCPU_DSISR(r9)
--	/* don't overwrite fault_dar/fault_dsisr if HDSI */
--	cmpwi	r12,BOOK3S_INTERRUPT_H_DATA_STORAGE
--	beq	mc_cont
--	std	r6, VCPU_FAULT_DAR(r9)
--	stw	r7, VCPU_FAULT_DSISR(r9)
--
--	/* See if it is a machine check */
--	cmpwi	r12, BOOK3S_INTERRUPT_MACHINE_CHECK
--	beq	machine_check_realmode
--mc_cont:
--#ifdef CONFIG_KVM_BOOK3S_HV_EXIT_TIMING
--	addi	r3, r9, VCPU_TB_RMEXIT
--	mr	r4, r9
--	bl	kvmhv_accumulate_time
--#endif
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -12,6 +12,7 @@
  
- 	mr 	r3, r12
- 	/* Increment exit count, poke other threads to exit */
+ static inline void kvm_clear_exception_queue(struct kvm_vcpu *vcpu)
+ {
++	vcpu->arch.exception.pending = false;
+ 	vcpu->arch.exception.injected = false;
+ }
+ 
