@@ -1,109 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033133AbeBOOHE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 09:07:04 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36072 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032953AbeBOOHC (ORCPT
+        id S1033091AbeBOOH7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 09:07:59 -0500
+Received: from mail-qk0-f171.google.com ([209.85.220.171]:33522 "EHLO
+        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032283AbeBOOH5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 09:07:02 -0500
-X-Google-Smtp-Source: AH8x2255y4kqEIeQQxz2SBzjD8QZDRDQRj7ydNcUELqBanMaQ1/9GqFFwbDUnrTYHoO8A7kRhW7jhYt/okPKSRkhDxc=
+        Thu, 15 Feb 2018 09:07:57 -0500
+X-Google-Smtp-Source: AH8x224yiAKly67u2r5AkbplsRX6DxA479Hou6wc/qilQX/LdSYjvT7XU1Nyab7ZVMfhYreFsBM8accriLU0UkKoaf4=
 MIME-Version: 1.0
-In-Reply-To: <20180214135612.21356-1-embed3d@gmail.com>
-References: <20180214135612.21356-1-embed3d@gmail.com>
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Fri, 16 Feb 2018 01:06:40 +1100
-Message-ID: <CAGRGNgX_9Hw6guN-TbANfDdH4jAjLBSRZdD9WtFcB-F+E-3GfA@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v3] rtc: ac100: Fix ac100 determine rate bug
-To: embed3d@gmail.com
-Cc: Chen-Yu Tsai <wens@csie.org>, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>, linux-rtc@vger.kernel.org
+In-Reply-To: <CA+oDAx_gxc_=NOa9naEmHJHjs4t3OP2ef29-4-TP2e8S5p_cEg@mail.gmail.com>
+References: <CAMet4B62Ni3Q5OzNvxWVpSfiRkWu2K_20xX6sGBZbROK+9-ULg@mail.gmail.com>
+ <CA+oDAx-OEk7q7TZ4k8s_q_OWmObCZEwm0irjPSh-a1W0uZwACQ@mail.gmail.com>
+ <1C1B9BF4-56EE-473A-9E92-F7E6BD188C25@canonical.com> <CA+oDAx8Gu0g97ivQ2r1EiLQTYZxhnyL-n2Cx+4J9Sztwj8brrw@mail.gmail.com>
+ <53F1AA2B-2049-4A7A-AEBC-4C1CA3C15F61@canonical.com> <9654fc1df0d4cc00cf88dbe10188fd0b@mail.gmail.com>
+ <CA+oDAx9K31LJtiKvG2EP4As7t_HqXFiAuLCbaSTdrL1YQwO3Uw@mail.gmail.com>
+ <781b8fed3ceaa133aa0e451d9bfbee26@mail.gmail.com> <CA+oDAx8A=VXx0nUXZxG7fJTvJzeWL6b1UYFHoB2Dw3h6yKgr3Q@mail.gmail.com>
+ <01bf0c0f91e259dacde4c27f3f31c9e6@mail.gmail.com> <CA+oDAx9s1iT2OJRZ0i5FwmhQx9QtJs8qU70wbfP3rGWYERPL6w@mail.gmail.com>
+ <CA+oDAx_gxc_=NOa9naEmHJHjs4t3OP2ef29-4-TP2e8S5p_cEg@mail.gmail.com>
+From: Siva Reddy Kallam <siva.kallam@broadcom.com>
+Date: Thu, 15 Feb 2018 19:37:56 +0530
+Message-ID: <CAMet4B5sE9DuUzRCCdkX=g8E4C0RtZTzDaPaHDz_N8rPNU9VOg@mail.gmail.com>
+Subject: Re: tg3 crashes under high load, when using 100Mbits
+To: Kai Heng Feng <kai.heng.feng@canonical.com>
+Cc: Prashant Sreedharan <prashant@broadcom.com>,
+        Michael Chan <mchan@broadcom.com>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stanley Hsiao <stanley.hsiao@canonical.com>,
+        Tim Chen <tim.chen119@canonical.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1FE842u018360
 
-Hi Phillipp,
-
-On Thu, Feb 15, 2018 at 12:56 AM, Philipp Rossak <embed3d@gmail.com> wrote:
-> This patch fixes a bug, that prevents the Allwinner A83T and the A80
-> from a successful boot.
->
-> The bug is there since v4.16-rc1 and appeared after the clk branch was
-> merged.
->
-> You can find the shortend trace below:
->
-> Unable to handle kernel NULL pointer dereference at virtual address
-> 00000000
-> pgd = (ptrval)
-> [00000000] *pgd=00000000
-> Internal error: Oops: 5 [#1] SMP ARM
-> Modules linked in:
-> CPU: 0 PID: 49 Comm: kworker/0:1 Not tainted 4.15.0-10190-gb89e32ccd1be #2
-> Hardware name: Allwinner sun8i Family
-> Workqueue: events deferred_probe_work_func
-> PC is at clk_hw_get_rate+0x0/0x34
-> LR is at ac100_clkout_determine_rate+0x48/0x19c
->
-> [ ... ]
->
-> (clk_hw_get_rate) from (ac100_clkout_determine_rate+0x48/0x19c)
-> (ac100_clkout_determine_rate) from  (clk_core_set_rate_nolock+0x3c/0x1a0)
-> (clk_core_set_rate_nolock) from (clk_set_rate+0x30/0x88)
-> (clk_set_rate) from (of_clk_set_defaults+0x200/0x364)
-> (of_clk_set_defaults) from (platform_drv_probe+0x18/0xb0)
->
-> To fix that bug, we first check if the return of the
-> clk_hw_get_parent_by_index is non zero. If it is zero we skip that
-> clock parent.
->
-> The BUG report could be found here: https://lkml.org/lkml/2018/2/10/198
->
-> Fixes: 04940631b8d2 ("rtc: ac100: Add clk output support")
->
-> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
-> ---
->
-> Changes in v3:
->         * add information when the bug appeared
->         * make the comment more clear
-> Changes in v2:
->         * add tag Fixes: ... to commit message
->         * add comment to if statement why we are doing this check
->
->  drivers/rtc/rtc-ac100.c | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
-> index 8ff9dc3fe5bf..2412aa2e8399 100644
-> --- a/drivers/rtc/rtc-ac100.c
-> +++ b/drivers/rtc/rtc-ac100.c
-> @@ -183,7 +183,24 @@ static int ac100_clkout_determine_rate(struct clk_hw *hw,
->
->         for (i = 0; i < num_parents; i++) {
->                 struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
-> -               unsigned long tmp, prate = clk_hw_get_rate(parent);
-> +               unsigned long tmp, prate;
-> +
-> +               /*
-> +                * The clock has two parents, one is a fixed clock which is
-> +                * internally registered by the ac100 driver. The other parent
-> +                * is a clock from the codec side of the chip, which we
-> +                * properly declare and reference in the devicetree and is
-> +                * not implemented in any driver right now.
-> +                * If the clock core looks for the parent of that second
-> +                * missing clock, it can't one that is registered and
-
-You've missed the word "find" between "it can't" and "one that is registered".
-
-Thanks,
-
--- 
-Julian Calaby
-
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+On Mon, Feb 12, 2018 at 10:59 AM, Siva Reddy Kallam
+<siva.kallam@broadcom.com> wrote:
+> On Fri, Feb 9, 2018 at 10:41 AM, Kai Heng Feng
+> <kai.heng.feng@canonical.com> wrote:
+>> Hi Broadcom folks,
+>>
+>> We are now enabling a new platform with tg3 nic, unfortunately we observed
+>> the bug [1] that dated back to 2015.
+>> I tried commit 4419bb1cedcd ("tg3: Add workaround to restrict 5762 MRRS to
+>> 2048”) but it does’t work.
+>>
+>> Do you have any idea how to solve the issue?
+>>
+>> [1] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1447664
+>>
+>> Kai-Heng
+>>
+> Thank you for reporting. We will check and update you.
+With link aware mode, the clock speed could be slow and boot code does not
+complete within the expected time with lower link speeds. Need to override
+and the clock in driver. We are checking the feasibility of adding
+this in driver or firmware.
