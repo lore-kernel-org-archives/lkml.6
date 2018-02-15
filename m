@@ -1,145 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031393AbeBONAL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 08:00:11 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5243 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1030245AbeBONAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 08:00:07 -0500
-Subject: Re: [PATCH v13 7/9] ACPI: Translate the I/O range of non-MMIO devices
- before scanning
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
- <1518543933-22456-8-git-send-email-john.garry@huawei.com>
- <20180214161635.GA13849@e107981-ln.cambridge.arm.com>
- <65185a4d-c712-4486-d713-3fa9de14e35d@huawei.com>
- <e3fb78b3-5f5c-fe96-9f02-e96092963c17@huawei.com>
- <CAJZ5v0jGvo+cutmvi3WSe1JNvQ1UvZhJr1mQ76=8=1E5Gq+iRg@mail.gmail.com>
-CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Hanjun Guo <hanjun.guo@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        "Bjorn Helgaas" <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
-        Dann Frazier <dann.frazier@canonical.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh@kernel.org>, Joe Perches <joe@perches.com>,
-        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, Corey Minyard <minyard@acm.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <4c81ecec-b3be-6b57-938a-b7d11ca7ee96@huawei.com>
-Date: Thu, 15 Feb 2018 12:59:36 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0jGvo+cutmvi3WSe1JNvQ1UvZhJr1mQ76=8=1E5Gq+iRg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+        id S1031597AbeBONBH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 08:01:07 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:39327 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030561AbeBONBF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 08:01:05 -0500
+From: Lukas Senger <lukas@fridolin.com>
+To: giometti@enneenne.com
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pps-gpio: implement echo pulses
+Date: Thu, 15 Feb 2018 13:59:19 +0100
+Message-Id: <20180215125921.29494-1-lukas@fridolin.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <ee4fdd16-0343-1a01-63a7-06046026659a@enneenne.com>
+References: <ee4fdd16-0343-1a01-63a7-06046026659a@enneenne.com>
+X-Provags-ID: V03:K0:y7ItheQZqI3XEpIT9ys1k3fsUhjmVaKCgJUXGXu0HwzCCnRKGEy
+ x1nmf3Ci617+HS8IwZkwbW+0QSh+2X6zL3otTCamcqhjs0jT1SoqJ7D+piqorNLmFVa6wSB
+ Tj1qMalKMu9NZrTb5qAe23/gIzBn2clspEJr6Ksz/t26Dk8n7LuHvBRmTdly9SRfgnQbudu
+ WR+7gL9PndecO2tYVxAAQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:5JWdw4gcXrE=:7j0oeZSchbA3cxeJv0NFy9
+ wO17UWH9p5HPamESKY0fonsKEFBorebwxWvhYgY4W6uyQsWNpmb0PPhADov4c9/pmRj863lpe
+ hYGLhKFVCaa2v+Jgb/RWPwbxoJp0p7ZraJ5bIL/2Me+JskZeK4FM+8S409LIGGru72szjE7Fv
+ 89dOTTyvGTs9ocsBx4wbpp3rBTODGbESaisUdFsNQS3vqpP/fFTkxB/PjjtWED+1YR7NwOdHn
+ KTn3/l6Y1yapC62SiamGcgDDw1cVDZRuvjFUkAd9pAWtlhmu6SLFsUe11tSBGJO7y5C2AV8k2
+ REd7eQIRT/yQATr11A+BwRmCw5upLkNXOK8Do7AYSMT9pIpOvvIjZe4VzXNxcpxVAGh4FFZCU
+ XXQtgQUZ4ntEyC66G3PIuaq7Bbevb8eTn7SxiHPfiGZArzuHWn8Qo3eh7Er4s/hyx0RTsOtVx
+ lbpzPCTVn96DEBUHLkvCbeIKW8We8MO9z2tI/OOPTFm7oFh+MtZdaZmRiukAToeXQ8xWXrlmr
+ Pa1vB2EkVuX5rE1hVjHUS1sXlJCK1LM+IZ+5sN46CtPRKVY5xsHS2lJzlwaS954n8a0QDBaOI
+ rYqWrO56OWmdregyBtICvMeEnM34MsBQKVHPdcCxQWF3jP47WwYLqAPqT/xJTi62dg8IIuaMg
+ PpEKn6ehKMA86B/Q4eODJugirZfgvHrk0x5Wk19ioF+Ko2t9PK3+1Z8c0a9GT+fBBfVP42ax6
+ KilWKMu12f8lv2vTrYgH7cxiqUEsXrzz+UiOEw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/02/2018 11:47, Rafael J. Wysocki wrote:
-> On Thu, Feb 15, 2018 at 12:19 PM, John Garry <john.garry@huawei.com> wrote:
->>> Nothing apart from only being used by arm64 platforms today, which is
->>> circumstantial.
->>>
->>>>
->>>> I understand you need to find a place to add the:
->>>>
->>>> acpi_indirect_io_scan_init()
->>>>
->>>> to be called from core ACPI code because ACPI can't handle probe
->>>> dependencies in any other way but other than that this patch is
->>>> a Hisilicon ACPI driver - there is nothing generic in it (or at
->>>> least there are no standard bindings to make it so).
->>>>
->>>> Whether a callback from ACPI core code (acpi_scan_init()) to a driver
->>>> specific hook is sane or not that's the question and the only reason
->>>> why you want to add this in drivers/acpi/arm64 rather than, say,
->>>> drivers/bus (as you do for the DT driver).
->>>>
->>>> I do not know Rafael's opinion on the above, I would like to help
->>>> you make forward progress but please understand my concerns, mostly
->>>> on FW side.
->>>>
->>>
->>> I did mention an alternative in my "ping" in v12 patch 7/9 (Feb 1), but
->>> no response to this specific note so I kept on the same path.
->>>
->>> Here's what I then wrote:
->>> "I think another solution - which you may prefer - is to avoid adding
->>> this scan handler (and all this other scan code) and add a check like
->>> acpi_is_serial_bus_slave() [which checks the device parent versus a list
->>> of known indirectIO hosts] to not enumerate these children, and do it
->>> from the LLDD host probe instead (https://lkml.org/lkml/2017/6/16/250)"
->>>
->>
->> Hi Rafael, Lorenzo,
->>
->> I can avoid adding the scan handler in acpi_indirectio.c by skipping the
->> child enumeration, like with this change in scan.c:
->>
+> No hardcoded stuff please! :-D
 
-Hi Rafael,
+I expected as much :) So I looked into it a bit more and came up with
+the patch below. It works for me but I'm unsure about two things in
+particular:
 
->> +static const struct acpi_device_id indirect_io_hosts[] = {
->> +    {"HISI0191", 0},    /* HiSilicon LPC host */
->> +    {},
->> +};
->> +
->> +static bool acpi_is_indirect_io_slave(struct acpi_device *device)
->> +{
->
-> Why don't you put the table definition here?
->
+In the __overrides__ section of the *.dts, why does gpiopin set reg and
+should echopin set this as well?
 
-I can do.
+In pps-gpio.c:135 how is pdata in the first part of this if-statement
+supposed to know about these values?
 
->> +    struct acpi_device *parent = dev->parent;
->> +
->> +    if (!parent || acpi_match_device_ids(parent, indirect_io_hosts))
->> +        return false;
->> +
->> +    return true;
->
-> return parent && !acpi_match_device_ids(parent, indirect_io_hosts);
-
-Fine, a bit more concise
-
->
->> +}
->> +
->>  static bool acpi_is_serial_bus_slave(struct acpi_device *device)
->>  {
->>      struct list_head resource_list;
->>      bool is_serial_bus_slave = false;
->>
->> +    if (acpi_is_indirect_io_slave(device))
->> +        return true;
->> +
->>      /* Macs use device properties in lieu of _CRS resources */
->>
->>
->> This means I can move all this scan code into the LLDD.
->>
->> What do you think? Please let me know.
->
-> If Lorenzo agrees, that will be fine by me modulo the above remarks.
->
-> .
-
-I see Lorenzo also finds this ok, so I'll go with that.
-
-Thanks to all,
-John
-
->
+Thanks,
+Lukas
