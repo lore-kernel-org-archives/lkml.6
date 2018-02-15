@@ -1,67 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967912AbeBOLwI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 06:52:08 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58230 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967814AbeBOLwH (ORCPT
+        id S967926AbeBOLzY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 06:55:24 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:34554 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967850AbeBOLzW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 06:52:07 -0500
-Date: Thu, 15 Feb 2018 11:52:02 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Harald Geyer <harald@ccbib.org>, Rob Herring <robh@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Applied "regulator: dt: regulator-name is required property" to
- the regulator tree
-Message-ID: <20180215115202.GC8374@sirena.org.uk>
-References: <1518532988-10990-1-git-send-email-harald@ccbib.org>
- <E1elzv3-0005l2-MP@debutante>
- <CAMuHMdVLO4Y-NzS6bLp2dUy1oSqmEthC_yD5jCe_R9H4vWBwMA@mail.gmail.com>
+        Thu, 15 Feb 2018 06:55:22 -0500
+X-Google-Smtp-Source: AH8x227ZlTy+D4M6l1s9YMLQ5l+1jVWgZwVqvfG5Tn1OjXrws3x5F83lUsHWk+ort5slp+4mwIlTeg==
+Subject: Re: [PATCH] ARM64: dts: meson-axg: fix pwm_AO_cd compatible
+To: Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180215101031.18934-1-jbrunet@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Organization: Baylibre
+Message-ID: <9a161f47-3e4a-d1ed-f829-d6989191583a@baylibre.com>
+Date: Thu, 15 Feb 2018 12:55:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="JWEK1jqKZ6MHAcjA"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVLO4Y-NzS6bLp2dUy1oSqmEthC_yD5jCe_R9H4vWBwMA@mail.gmail.com>
-X-Cookie: Stay on the trail.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180215101031.18934-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 15/02/2018 11:10, Jerome Brunet wrote:
+> The compatible in pwm_AO_cd is wrong and does not match anything.
+> Correct this with the correct compatible string
+> 
+> Fixes: 4a81e5ddfb43 ("ARM64: dts: meson-axg: add PWM DT info for Meson-Axg SoC")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> index a7cc9e401a92..880e25b113c1 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> @@ -844,7 +844,7 @@
+>  			};
+>  
+>  			pwm_AO_cd: pwm@2000 {
+> -				compatible = "amlogic,axg-ao-pwm";
+> +				compatible = "amlogic,meson-axg-ao-pwm";
+>  				reg = <0x0 0x02000  0x0 0x20>;
+>  				#pwm-cells = <3>;
+>  				status = "disabled";
+> 
 
---JWEK1jqKZ6MHAcjA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Feb 15, 2018 at 10:39:41AM +0100, Geert Uytterhoeven wrote:
-> On Wed, Feb 14, 2018 at 5:28 PM, Mark Brown <broonie@kernel.org> wrote:
-
-> > Signed-off-by: Harald Geyer <harald@ccbib.org>
-> > Acked-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Mark Brown <broonie@kernel.org>
-
-> What about using the DT node name instead, as is done for single-output
-> clocks?
-
-Yup, that'd work too.
-
---JWEK1jqKZ6MHAcjA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqFdGEACgkQJNaLcl1U
-h9Apagf/RG/WwNdJgKfW2k7PCdeziFugNavoXpQWwF3MLJzEbbh8uFN2vZ3LwSPY
-OH2xKQXSiVLAXVXiFmk+sbs2yaxHiy04hDrNgnzqnNnnJgELHmJalX3kQC1AqoNx
-I/Y8747o3hBXVH1LjQRZ9pa24AxmeiIMdmnRAMYsR3j/AF9x+oIoGwjUPt1E+TCu
-9ER5Aw7PfRIrfJB3aM1tyeQXCFooMwei/wmunyas5j4Bl+a9m18D7b1yM26+Q7f8
-CGfkDrp0+dpu1RcjtI/PvxqJJNCchs8Qj7XgTVQitazpVhMRcIbOfg8HnBwd+0dK
-Mwzq0hCJx6/FRgTRC47k2pG1jxvXHg==
-=t1+4
------END PGP SIGNATURE-----
-
---JWEK1jqKZ6MHAcjA--
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
