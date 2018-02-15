@@ -1,156 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033231AbeBOOaf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 09:30:35 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:49302 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032974AbeBOOae (ORCPT
+        id S1033259AbeBOOb2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 09:31:28 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:40590 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033100AbeBOObY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 09:30:34 -0500
-Subject: Re: [PATCH 6/8] arm64: dts: renesas: r8a77995-draak: Enable DU
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>,
-        Ulrich Hecht <ulrich.hecht@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>, geert@glider.be,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
- <1518683903-10681-7-git-send-email-kbingham@kernel.org>
- <6281511.bskcdgqsgb@avalon>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <8b2c853c-2963-a116-a246-5fdb30b0688e@ideasonboard.com>
-Date: Thu, 15 Feb 2018 14:30:28 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Thu, 15 Feb 2018 09:31:24 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7D45F60B67
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH 04/12] i2c: qup: schedule EOT and FLUSH tags at the end of
+ transfer
+To: Abhishek Sahu <absahu@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc: David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
+ <1517644697-30806-5-git-send-email-absahu@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <dcb7b543-3474-e573-cdc0-010cda5c2d67@codeaurora.org>
+Date: Thu, 15 Feb 2018 20:01:04 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <6281511.bskcdgqsgb@avalon>
+In-Reply-To: <1517644697-30806-5-git-send-email-absahu@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent, Simon,
+Hi Abhishek,
 
-On 15/02/18 14:12, Laurent Pinchart wrote:
-> Hi Kieran,
+On 2/3/2018 1:28 PM, Abhishek Sahu wrote:
+> A single BAM transfer can have multiple read and write messages.
+> The EOT and FLUSH tags should be scheduled at the end of BAM HW
+> descriptors. Since the READ and WRITE can be present in any order
+> so for some of the cases, these tags are not being written
+> correctly.
 > 
-> Thank you for the patch.
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
+>  drivers/i2c/busses/i2c-qup.c | 54 ++++++++++++++++++++------------------------
+>  1 file changed, 24 insertions(+), 30 deletions(-)
 > 
-> On Thursday, 15 February 2018 10:38:21 EET Kieran Bingham wrote:
->> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->>
->> Enable the DU, providing only the VGA output for now.
->>
->> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> I assume Simon will take care of this patch.
+> diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
+> index bb83a2967..6357aff 100644
+> --- a/drivers/i2c/busses/i2c-qup.c
+> +++ b/drivers/i2c/busses/i2c-qup.c
+> @@ -560,7 +560,7 @@ static int qup_i2c_set_tags_smb(u16 addr, u8 *tags, struct qup_i2c_dev *qup,
+>  }
+>  
+>  static int qup_i2c_set_tags(u8 *tags, struct qup_i2c_dev *qup,
+> -			    struct i2c_msg *msg,  int is_dma)
+> +			    struct i2c_msg *msg)
+>  {
+>  	u16 addr = i2c_8bit_addr_from_msg(msg);
+>  	int len = 0;
+> @@ -601,11 +601,6 @@ static int qup_i2c_set_tags(u8 *tags, struct qup_i2c_dev *qup,
+>  	else
+>  		tags[len++] = data_len;
+>  
+> -	if ((msg->flags & I2C_M_RD) && last && is_dma) {
+> -		tags[len++] = QUP_BAM_INPUT_EOT;
+> -		tags[len++] = QUP_BAM_FLUSH_STOP;
+> -	}
+> -
+>  	return len;
+>  }
+>  
+> @@ -614,7 +609,7 @@ static int qup_i2c_issue_xfer_v2(struct qup_i2c_dev *qup, struct i2c_msg *msg)
+>  	int data_len = 0, tag_len, index;
+>  	int ret;
+>  
+> -	tag_len = qup_i2c_set_tags(qup->blk.tags, qup, msg, 0);
+> +	tag_len = qup_i2c_set_tags(qup->blk.tags, qup, msg);
+>  	index = msg->len - qup->blk.data_len;
+>  
+>  	/* only tags are written for read */
+> @@ -710,7 +705,7 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+>  			while (qup->blk.pos < blocks) {
+>  				tlen = (i == (blocks - 1)) ? rem : limit;
+>  				tags = &qup->start_tag.start[off + len];
+> -				len += qup_i2c_set_tags(tags, qup, msg, 1);
+> +				len += qup_i2c_set_tags(tags, qup, msg);
+>  				qup->blk.data_len -= tlen;
+>  
+>  				/* scratch buf to read the start and len tags */
+> @@ -738,17 +733,11 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+>  				return ret;
+>  
+>  			off += len;
+> -			/* scratch buf to read the BAM EOT and FLUSH tags */
+> -			ret = qup_sg_set_buf(&qup->brx.sg[rx_buf++],
+> -					     &qup->brx.tag.start[0],
+> -					     2, qup, DMA_FROM_DEVICE);
+> -			if (ret)
+> -				return ret;
+>  		} else {
+>  			while (qup->blk.pos < blocks) {
+>  				tlen = (i == (blocks - 1)) ? rem : limit;
+>  				tags = &qup->start_tag.start[off + tx_len];
+> -				len = qup_i2c_set_tags(tags, qup, msg, 1);
+> +				len = qup_i2c_set_tags(tags, qup, msg);
+>  				qup->blk.data_len -= tlen;
+>  
+>  				ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++],
+> @@ -768,26 +757,31 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+>  			}
+>  			off += tx_len;
+>  
+> -			if (idx == (num - 1)) {
+> -				len = 1;
+> -				if (rx_buf) {
+> -					qup->btx.tag.start[0] =
+> -							QUP_BAM_INPUT_EOT;
+> -					len++;
+> -				}
+> -				qup->btx.tag.start[len - 1] =
+> -							QUP_BAM_FLUSH_STOP;
+> -				ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++],
+> -						     &qup->btx.tag.start[0],
+> -						     len, qup, DMA_TO_DEVICE);
+> -				if (ret)
+> -					return ret;
+> -			}
+>  		}
+>  		idx++;
+>  		msg++;
+>  	}
 
-That will be great, - One small caveat on this patch though:
+ While here, can you please split above the if, else in to two separate functions ?
+ and probably one more function for handling the NACK case down below. The function
+ size at the moment is too big.
 
+>  
+> +	/* schedule the EOT and FLUSH I2C tags */
+> +	len = 1;
+> +	if (rx_buf) {
+> +		qup->btx.tag.start[0] = QUP_BAM_INPUT_EOT;
+> +		len++;
+> +
+> +		/* scratch buf to read the BAM EOT and FLUSH tags */
+> +		ret = qup_sg_set_buf(&qup->brx.sg[rx_buf++],
+> +				     &qup->brx.tag.start[0],
+> +				     2, qup, DMA_FROM_DEVICE);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	qup->btx.tag.start[len - 1] = QUP_BAM_FLUSH_STOP;
+> +	ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++], &qup->btx.tag.start[0],
+> +			     len, qup, DMA_TO_DEVICE);
+> +	if (ret)
+> +		return ret;
+> +
 
->> ---
->>  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 51 +++++++++++++++++++++++
->>  1 file changed, 51 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
->> b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts index
->> af07da240be0..668e246dfc5d 100644
->> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
->> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
->> @@ -27,6 +27,38 @@
->>  		stdout-path = "serial0:115200n8";
->>  	};
->>
->> +	vga {
->> +		compatible = "vga-connector";
->> +
->> +		port {
->> +			vga_in: endpoint {
->> +				remote-endpoint = <&adv7123_out>;
->> +			};
->> +		};
->> +	};
->> +
->> +	vga-encoder {
->> +		compatible = "adi,adv7123";
->> +
->> +		ports {
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->> +
->> +			port@0 {
->> +				reg = <0>;
->> +				adv7123_in: endpoint {
->> +					remote-endpoint = <&du_out_rgb>;
->> +				};
->> +			};
->> +			port@1 {
->> +				reg = <1>;
->> +				adv7123_out: endpoint {
->> +					remote-endpoint = <&vga_in>;
->> +				};
->> +			};
->> +		};
->> +	};
->> +
->>  	memory@48000000 {
->>  		device_type = "memory";
->>  		/* first 128MB is reserved for secure area. */
->> @@ -46,6 +78,11 @@
->>  		};
->>  	};
->>
->> +	du_pins: du {
->> +		groups = "du_rgb888", "du_sync", "du_disp", "du_dotclkout0";
+  May be you can change the commit to make it explicit to say what is being
+  fixed, like "current code is broken when there is sequence of wr,rd,wr" like that.
+  Agree on this fix otherwise.
 
-The du_dotclkout0 is named differently in Uli's patch. (Of course I believe my
-version is correct, but there is some precedent set it would seem).
+Regards,
+ Sricharan
 
-Anyway, If Uli's version of the PFC is accepted (Which I'm sure it will be),
-then I will have to re-spin this patch with the 'different' "du_clk_out_0" value
-in the groups.
-
---
-Kieran
-
-
->> +		function = "du";
->> +	};
->> +
->>  	i2c0_pins: i2c0 {
->>  		groups = "i2c0";
->>  		function = "i2c0";
->> @@ -95,6 +132,20 @@
->>  	status = "okay";
->>  };
->>
->> +&du {
->> +	pinctrl-0 = <&du_pins>;
->> +	pinctrl-names = "default";
->> +	status = "okay";
->> +
->> +	ports {
->> +		port@0 {
->> +			endpoint {
->> +				remote-endpoint = <&adv7123_in>;
->> +			};
->> +		};
->> +	};
->> +};
->> +
->>  &ehci0 {
->>  	status = "okay";
->>  };
-> 
-> 
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
