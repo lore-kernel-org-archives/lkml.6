@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224dcV4RHwG1PCkjbwzSP+d/FL7mTQmjMRDFK+FlXdzDkf+nLSZ+y2PSd/ONiQz1mbrTJKVL
-ARC-Seal: i=1; a=rsa-sha256; t=1518708911; cv=none;
+X-Google-Smtp-Source: AH8x224OkH6WCHHKJjuVpRCcQi7b7b/espK4KAe/ZwQCgQUz9iQ2sRpHpaQciRMM3eiGHnzOxO+j
+ARC-Seal: i=1; a=rsa-sha256; t=1518708907; cv=none;
         d=google.com; s=arc-20160816;
-        b=cXRjE5kWozqd+tZjGVM/D0NZTPWMhRzhelpZTNHPt8PTh5K7jO/bY9KWev4NGM91pZ
-         +Ewk4iaPkwAGteHkwHiqoc/biqcGemRMxg3EYaPqsEDCw85eDsiXuc1EV0vaNR2ESK9N
-         Mmf15x6Vx0BMEKBp8v6sZDK8VbsLIAlfeowRFH1FOqDWJEtE4F2JjDB5Y3xtgQb3HFEb
-         vln1Ra3ZOEA/u2121b0Lhf5BZ7PHfrGE6cZ768gVO6qik4b9PUOAFmasjuGLRFW8ERH+
-         rrOUoUI1ugxz+JX7B6WpdmR/N1GM981AXV9B2lT+ggC/q3swKXIhbJSZm6+Lc3+rq2fL
-         UHOg==
+        b=O64vmgXwwK61QZY2UvJbXzVj47O7/ZAXFSzpRjJS6gKDD4e+TxOt3TMEt9IUWmNm5I
+         64lcKA1ch6sVUN/7kFiH4axj4IvXlx8cM0rT/sl5HT52m6oKvAjodIzsxcpVm0Q5U/oa
+         VBhXTJLxu4g2mvjXd611b0SYlMQF67NwmWXvAxUcTOZVKV862n9aUxM1UMBi8pnjmESf
+         vdMmfu1w21BDthKMcHDSw8r4+rErz+8vEVPhOxFw0iDDc5f4AGPgnldDkwCHogIfE7yD
+         CnkPcLOVPQ5ZjHmLYFS+2f/g03joCaQZR/pPvKos4AZIWlM3Yjat3zNQjlXuc0BfyvDE
+         maOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gc3pGXOW4JHOyg5QW7U7fd0cxQ2DQo8z6xU2/Ws0t24=;
-        b=SQliISbXohSyBh2Hygf44zy/TyCX1s9ZpJKIxr0BMRTzGmKUK/YLy20nahRNefYt6Z
-         csjvqB/h01GzIVN0fUire7G/B4kzzVSnAOTafRPoYxOG+C0pFNfTaf6e41WT2tcoHc7e
-         0eU19tH5BKighGbdl6tNKTxMNtWk2ZioDzzTWcsZI6QUCkEGM8UIB9AZ1qshAsgd3VBQ
-         eT7eyyjraGMdSz4HbW/wk2dtNS+wXnz4/Fxh1qiTvScupLpBwk5gISp69qEx1P8DU/a8
-         Bajtufk8PGz2c2SrE24LkG+FQ3IiIpRyexUCj6E/KyIROA1TIRfihxaOLbUPrX53ndLe
-         nonA==
+        bh=zwv7/SNqKMvsivwwD/A1nr6HpQrTAljCrPip0fKmRG4=;
+        b=f04Fve+2rYDOU6suD7mPMwqEZbeCDiXS7ExpmeZeCt+MXT6VonV0+FfpvwGv4yCkd3
+         srovoYhXVg3tDd3uuMxVrDbhnL3NX2SrA9zwu7CFWzG13bAN+RFeouGNb6eOeEYg5ZYU
+         +pulynWUHthoC9dVFb9jmf8lavF02PQe/ePv0JWQVPJmbhnIeQm1gJOWw2qgQW05rGb5
+         r7wWrypUAN6Bm6lcUXnZELP/fDdvGuOgjBLMUzujPUw/JEpm5Xe15PjUt3DjOBMKFVOi
+         GdMf4fR/LpDSKQBRhrhAioTJMqndpPqFmEZp0IwpiQp+P8dUTDdesMP4T/X01JgIN7Nh
+         yn0A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Robin Murphy <robin.murphy@arm.com>,
 	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Robin Murphy <robin.murphy@arm.com>,
 	Marc Zyngier <marc.zyngier@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.14 092/195] [Variant 2/Spectre-v2] arm/arm64: smccc: Implement SMCCC v1.1 inline primitive
-Date: Thu, 15 Feb 2018 16:16:23 +0100
-Message-Id: <20180215151710.300792627@linuxfoundation.org>
+Subject: [PATCH 4.14 091/195] [Variant 2/Spectre-v2] arm/arm64: smccc: Make function identifiers an unsigned quantity
+Date: Thu, 15 Feb 2018 16:16:22 +0100
+Message-Id: <20180215151710.259634874@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481715229974320?=
-X-GMAIL-MSGID: =?utf-8?q?1592481715229974320?=
+X-GMAIL-THRID: =?utf-8?q?1592481711869880811?=
+X-GMAIL-MSGID: =?utf-8?q?1592481711869880811?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,14 +54,19 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Marc Zyngier <marc.zyngier@arm.com>
 
 
-Commit f2d3b2e8759a upstream.
+Commit ded4c39e93f3 upstream.
 
-One of the major improvement of SMCCC v1.1 is that it only clobbers
-the first 4 registers, both on 32 and 64bit. This means that it
-becomes very easy to provide an inline version of the SMC call
-primitive, and avoid performing a function call to stash the
-registers that would otherwise be clobbered by SMCCC v1.0.
+Function identifiers are a 32bit, unsigned quantity. But we never
+tell so to the compiler, resulting in the following:
 
+ 4ac:   b26187e0        mov     x0, #0xffffffff80000001
+
+We thus rely on the firmware narrowing it for us, which is not
+always a reasonable expectation.
+
+Cc: stable@vger.kernel.org
+Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
@@ -70,155 +75,27 @@ Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/arm-smccc.h |  141 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 141 insertions(+)
+ include/linux/arm-smccc.h |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 --- a/include/linux/arm-smccc.h
 +++ b/include/linux/arm-smccc.h
-@@ -150,5 +150,146 @@ asmlinkage void __arm_smccc_hvc(unsigned
+@@ -14,14 +14,16 @@
+ #ifndef __LINUX_ARM_SMCCC_H
+ #define __LINUX_ARM_SMCCC_H
  
- #define arm_smccc_hvc_quirk(...) __arm_smccc_hvc(__VA_ARGS__)
++#include <uapi/linux/const.h>
++
+ /*
+  * This file provides common defines for ARM SMC Calling Convention as
+  * specified in
+  * http://infocenter.arm.com/help/topic/com.arm.doc.den0028a/index.html
+  */
  
-+/* SMCCC v1.1 implementation madness follows */
-+#ifdef CONFIG_ARM64
-+
-+#define SMCCC_SMC_INST	"smc	#0"
-+#define SMCCC_HVC_INST	"hvc	#0"
-+
-+#elif defined(CONFIG_ARM)
-+#include <asm/opcodes-sec.h>
-+#include <asm/opcodes-virt.h>
-+
-+#define SMCCC_SMC_INST	__SMC(0)
-+#define SMCCC_HVC_INST	__HVC(0)
-+
-+#endif
-+
-+#define ___count_args(_0, _1, _2, _3, _4, _5, _6, _7, _8, x, ...) x
-+
-+#define __count_args(...)						\
-+	___count_args(__VA_ARGS__, 7, 6, 5, 4, 3, 2, 1, 0)
-+
-+#define __constraint_write_0						\
-+	"+r" (r0), "=&r" (r1), "=&r" (r2), "=&r" (r3)
-+#define __constraint_write_1						\
-+	"+r" (r0), "+r" (r1), "=&r" (r2), "=&r" (r3)
-+#define __constraint_write_2						\
-+	"+r" (r0), "+r" (r1), "+r" (r2), "=&r" (r3)
-+#define __constraint_write_3						\
-+	"+r" (r0), "+r" (r1), "+r" (r2), "+r" (r3)
-+#define __constraint_write_4	__constraint_write_3
-+#define __constraint_write_5	__constraint_write_4
-+#define __constraint_write_6	__constraint_write_5
-+#define __constraint_write_7	__constraint_write_6
-+
-+#define __constraint_read_0
-+#define __constraint_read_1
-+#define __constraint_read_2
-+#define __constraint_read_3
-+#define __constraint_read_4	"r" (r4)
-+#define __constraint_read_5	__constraint_read_4, "r" (r5)
-+#define __constraint_read_6	__constraint_read_5, "r" (r6)
-+#define __constraint_read_7	__constraint_read_6, "r" (r7)
-+
-+#define __declare_arg_0(a0, res)					\
-+	struct arm_smccc_res   *___res = res;				\
-+	register u32           r0 asm("r0") = a0;			\
-+	register unsigned long r1 asm("r1");				\
-+	register unsigned long r2 asm("r2");				\
-+	register unsigned long r3 asm("r3")
-+
-+#define __declare_arg_1(a0, a1, res)					\
-+	struct arm_smccc_res   *___res = res;				\
-+	register u32           r0 asm("r0") = a0;			\
-+	register typeof(a1)    r1 asm("r1") = a1;			\
-+	register unsigned long r2 asm("r2");				\
-+	register unsigned long r3 asm("r3")
-+
-+#define __declare_arg_2(a0, a1, a2, res)				\
-+	struct arm_smccc_res   *___res = res;				\
-+	register u32           r0 asm("r0") = a0;			\
-+	register typeof(a1)    r1 asm("r1") = a1;			\
-+	register typeof(a2)    r2 asm("r2") = a2;			\
-+	register unsigned long r3 asm("r3")
-+
-+#define __declare_arg_3(a0, a1, a2, a3, res)				\
-+	struct arm_smccc_res   *___res = res;				\
-+	register u32           r0 asm("r0") = a0;			\
-+	register typeof(a1)    r1 asm("r1") = a1;			\
-+	register typeof(a2)    r2 asm("r2") = a2;			\
-+	register typeof(a3)    r3 asm("r3") = a3
-+
-+#define __declare_arg_4(a0, a1, a2, a3, a4, res)			\
-+	__declare_arg_3(a0, a1, a2, a3, res);				\
-+	register typeof(a4) r4 asm("r4") = a4
-+
-+#define __declare_arg_5(a0, a1, a2, a3, a4, a5, res)			\
-+	__declare_arg_4(a0, a1, a2, a3, a4, res);			\
-+	register typeof(a5) r5 asm("r5") = a5
-+
-+#define __declare_arg_6(a0, a1, a2, a3, a4, a5, a6, res)		\
-+	__declare_arg_5(a0, a1, a2, a3, a4, a5, res);			\
-+	register typeof(a6) r6 asm("r6") = a6
-+
-+#define __declare_arg_7(a0, a1, a2, a3, a4, a5, a6, a7, res)		\
-+	__declare_arg_6(a0, a1, a2, a3, a4, a5, a6, res);		\
-+	register typeof(a7) r7 asm("r7") = a7
-+
-+#define ___declare_args(count, ...) __declare_arg_ ## count(__VA_ARGS__)
-+#define __declare_args(count, ...)  ___declare_args(count, __VA_ARGS__)
-+
-+#define ___constraints(count)						\
-+	: __constraint_write_ ## count					\
-+	: __constraint_read_ ## count					\
-+	: "memory"
-+#define __constraints(count)	___constraints(count)
-+
-+/*
-+ * We have an output list that is not necessarily used, and GCC feels
-+ * entitled to optimise the whole sequence away. "volatile" is what
-+ * makes it stick.
-+ */
-+#define __arm_smccc_1_1(inst, ...)					\
-+	do {								\
-+		__declare_args(__count_args(__VA_ARGS__), __VA_ARGS__);	\
-+		asm volatile(inst "\n"					\
-+			     __constraints(__count_args(__VA_ARGS__)));	\
-+		if (___res)						\
-+			*___res = (typeof(*___res)){r0, r1, r2, r3};	\
-+	} while (0)
-+
-+/*
-+ * arm_smccc_1_1_smc() - make an SMCCC v1.1 compliant SMC call
-+ *
-+ * This is a variadic macro taking one to eight source arguments, and
-+ * an optional return structure.
-+ *
-+ * @a0-a7: arguments passed in registers 0 to 7
-+ * @res: result values from registers 0 to 3
-+ *
-+ * This macro is used to make SMC calls following SMC Calling Convention v1.1.
-+ * The content of the supplied param are copied to registers 0 to 7 prior
-+ * to the SMC instruction. The return values are updated with the content
-+ * from register 0 to 3 on return from the SMC instruction if not NULL.
-+ */
-+#define arm_smccc_1_1_smc(...)	__arm_smccc_1_1(SMCCC_SMC_INST, __VA_ARGS__)
-+
-+/*
-+ * arm_smccc_1_1_hvc() - make an SMCCC v1.1 compliant HVC call
-+ *
-+ * This is a variadic macro taking one to eight source arguments, and
-+ * an optional return structure.
-+ *
-+ * @a0-a7: arguments passed in registers 0 to 7
-+ * @res: result values from registers 0 to 3
-+ *
-+ * This macro is used to make HVC calls following SMC Calling Convention v1.1.
-+ * The content of the supplied param are copied to registers 0 to 7 prior
-+ * to the HVC instruction. The return values are updated with the content
-+ * from register 0 to 3 on return from the HVC instruction if not NULL.
-+ */
-+#define arm_smccc_1_1_hvc(...)	__arm_smccc_1_1(SMCCC_HVC_INST, __VA_ARGS__)
-+
- #endif /*__ASSEMBLY__*/
- #endif /*__LINUX_ARM_SMCCC_H*/
+-#define ARM_SMCCC_STD_CALL		0
+-#define ARM_SMCCC_FAST_CALL		1
++#define ARM_SMCCC_STD_CALL	        _AC(0,U)
++#define ARM_SMCCC_FAST_CALL	        _AC(1,U)
+ #define ARM_SMCCC_TYPE_SHIFT		31
+ 
+ #define ARM_SMCCC_SMC_32		0
