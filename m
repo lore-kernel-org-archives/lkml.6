@@ -1,46 +1,78 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226IlwsHo9mz9kfv169/gIOyZHF/6zQAjpE/1WDZWgcZoYrQuXOCzX6xgoSlrWu4jMM6IwtM
-ARC-Seal: i=1; a=rsa-sha256; t=1518707932; cv=none;
-        d=google.com; s=arc-20160816;
-        b=cjBuwtxF/mXZgJtRq1eP1G+tL8gc8qNrHR51mT76R4cByR1cz535tJUHWHjjiKWWCI
-         KwcfmQm42ht6rQTfj99Lp+mzA9CCSeOq/1hB8CJTvVzVGBlronxnO1NFGr1W+bFgNdVd
-         yFaaXR7XszoQpP33/qNyXu/jSLmdgW5Vap71Cn2ye2f+E1g9Zeiee/SiCH06wf0b6UB7
-         JBqvWmS4QcLR/rymtyBrSEsF0SzvP/32cCEKLoXDSbGITlyCNsHGpJCoDdd4gnNuq89Y
-         F4IoBjkvaLjx2wjv+Ek0iQzeycYZOok/EAP2XjWfqDN43Q1pe2GV0RSqDXR2J3JKwPoX
-         JcBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=v8zi7me87yVuRIrp+W0V9bB3mF2h5X1X5airx6IFBUE=;
-        b=Oasow3Oc3Iqw2VmY9cI6vCmsx7CNW9Mgvjo6gCVTZ17xHI5no0bdy9T1VtrqqJy+fr
-         FVzFCb7sUc7/KJ8Z/akyXfDf/4HeSleFcz3fpEP+DOHVZW7nUoPKYlvE7/5ZMo27XulR
-         28SxYp2BeNvcGpVQVStXuKg7durBZpVT353rCRi395DZNkDQLuX+7W9gRUzxFxAf9Uly
-         Djdu4d9ySLoI4Mgay2vt9OILpmIktIvf8cyixQhCc348Xjjixh1Hhp+J6NNrS0eRly6D
-         haQgmuhJcXPWz7kzzoyLz3BRF/g1LltLCd4Wp6mROZ19Nv5muO5IIFUwL5yEMXa1SIdF
-         Btww==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1797899-1518707929-2-11469894710724416939
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES caen,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518707928; b=VyZW8tbbZs/7NXXU9qt+4RVKh5QDzwdA00qe4xBleW1Nx8J
+    irUXdPngDR2sgDy6ivlTGlxAGf4N2smVwsBFcB7/kB8NgdWm5QOCUBRCyWzzb+l4
+    gDYJHWXWFP1Asm0mKagXhiqdvsX38b+/RSKkLyYIQYsKnNf0GeqkP2TjJlpDdZgZ
+    xA/c5Q0mm9zp7QORTkPccaEzzogShrcw9ZbjPt4kQ5ReXOm/2HiMoXKQBhfxDjGh
+    bGSKkX9TMT8Doy2uNfvSgEoFOggnr5bNRpNT5ANaNlGVfW9l+1Pv1i+K4Fbl829T
+    TWO4n8YiNy0P8DFKCHMh3iz/+aFP6kTxnhvkwCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1518707928; bh=7KgVRf6ZA238DtMaMVNr39s7sp
+    WUysUInkeoMpyf8pQ=; b=LkOxN/owAjpHw1gO6ALsAogaB8ugL+FoGxkyMgpKPy
+    5/jqG8ZIt49Qm0LVgIT4tFmRSrzsowGqfzfAB9iM5vbjk32yIvq7xNllIAScNf2Z
+    FByLtd7pAsBpMmaWyqJgSJDEWJ2XG1+Y+lkOz6uot72WQToHWKFAJ2OYuACtcFK5
+    06TzaC+bjd85sIRVJHm6Rb9DILg2rsFnY3m7PW7c0oJamJe8EKXmzvYACaC2ivzC
+    6nT03RG+41BR19nAjTeqg8Poxv0XEPPWYjhv2KGv9FQCtBvxcbJ3NQo7ptzqVEa2
+    Yf/VEhf0DSV/914szEmxQuhV41QEMsfsF+EruS27jIIA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1161081AbeBOPSq (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:18:46 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47572 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161079AbeBOPSn (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:18:43 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Chunhao Lin <hau@realtek.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 05/45] r8169: fix RTL8168EP take too long to complete driver initialization.
-Date: Thu, 15 Feb 2018 16:16:56 +0100
-Message-Id: <20180215144117.023077476@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot
+        <bot+eceb3204562c41a438fa1f2335e0fe4f6886d669@syzkaller.appspotmail.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 02/45] ip6mr: fix stale iterator
+Date: Thu, 15 Feb 2018 16:16:53 +0100
+Message-Id: <20180215144116.382367373@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215144115.863307741@linuxfoundation.org>
 References: <20180215144115.863307741@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480688468300089?=
-X-GMAIL-MSGID: =?utf-8?q?1592480688468300089?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,40 +80,112 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chunhao Lin <hau@realtek.com>
+From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 
 
-[ Upstream commit 086ca23d03c0d2f4088f472386778d293e15c5f6 ]
+[ Upstream commit 4adfa79fc254efb7b0eb3cd58f62c2c3f805f1ba ]
 
-Driver check the wrong register bit in rtl_ocp_tx_cond() that keep driver
-waiting until timeout.
+When we dump the ip6mr mfc entries via proc, we initialize an iterator
+with the table to dump but we don't clear the cache pointer which might
+be initialized from a prior read on the same descriptor that ended. This
+can result in lock imbalance (an unnecessary unlock) leading to other
+crashes and hangs. Clear the cache pointer like ipmr does to fix the issue.
+Thanks for the reliable reproducer.
 
-Fix this by waiting for the right register bit.
+Here's syzbot's trace:
+ WARNING: bad unlock balance detected!
+ 4.15.0-rc3+ #128 Not tainted
+ syzkaller971460/3195 is trying to release lock (mrt_lock) at:
+ [<000000006898068d>] ipmr_mfc_seq_stop+0xe1/0x130 net/ipv6/ip6mr.c:553
+ but there are no more locks to release!
 
-Signed-off-by: Chunhao Lin <hau@realtek.com>
+ other info that might help us debug this:
+ 1 lock held by syzkaller971460/3195:
+  #0:  (&p->lock){+.+.}, at: [<00000000744a6565>] seq_read+0xd5/0x13d0
+ fs/seq_file.c:165
+
+ stack backtrace:
+ CPU: 1 PID: 3195 Comm: syzkaller971460 Not tainted 4.15.0-rc3+ #128
+ Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+ Google 01/01/2011
+ Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x257 lib/dump_stack.c:53
+  print_unlock_imbalance_bug+0x12f/0x140 kernel/locking/lockdep.c:3561
+  __lock_release kernel/locking/lockdep.c:3775 [inline]
+  lock_release+0x5f9/0xda0 kernel/locking/lockdep.c:4023
+  __raw_read_unlock include/linux/rwlock_api_smp.h:225 [inline]
+  _raw_read_unlock+0x1a/0x30 kernel/locking/spinlock.c:255
+  ipmr_mfc_seq_stop+0xe1/0x130 net/ipv6/ip6mr.c:553
+  traverse+0x3bc/0xa00 fs/seq_file.c:135
+  seq_read+0x96a/0x13d0 fs/seq_file.c:189
+  proc_reg_read+0xef/0x170 fs/proc/inode.c:217
+  do_loop_readv_writev fs/read_write.c:673 [inline]
+  do_iter_read+0x3db/0x5b0 fs/read_write.c:897
+  compat_readv+0x1bf/0x270 fs/read_write.c:1140
+  do_compat_preadv64+0xdc/0x100 fs/read_write.c:1189
+  C_SYSC_preadv fs/read_write.c:1209 [inline]
+  compat_SyS_preadv+0x3b/0x50 fs/read_write.c:1203
+  do_syscall_32_irqs_on arch/x86/entry/common.c:327 [inline]
+  do_fast_syscall_32+0x3ee/0xf9d arch/x86/entry/common.c:389
+  entry_SYSENTER_compat+0x51/0x60 arch/x86/entry/entry_64_compat.S:125
+ RIP: 0023:0xf7f73c79
+ RSP: 002b:00000000e574a15c EFLAGS: 00000292 ORIG_RAX: 000000000000014d
+ RAX: ffffffffffffffda RBX: 000000000000000f RCX: 0000000020a3afb0
+ RDX: 0000000000000001 RSI: 0000000000000067 RDI: 0000000000000000
+ RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+ R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+ R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ BUG: sleeping function called from invalid context at lib/usercopy.c:25
+ in_atomic(): 1, irqs_disabled(): 0, pid: 3195, name: syzkaller971460
+ INFO: lockdep is turned off.
+ CPU: 1 PID: 3195 Comm: syzkaller971460 Not tainted 4.15.0-rc3+ #128
+ Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+ Google 01/01/2011
+ Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x257 lib/dump_stack.c:53
+  ___might_sleep+0x2b2/0x470 kernel/sched/core.c:6060
+  __might_sleep+0x95/0x190 kernel/sched/core.c:6013
+  __might_fault+0xab/0x1d0 mm/memory.c:4525
+  _copy_to_user+0x2c/0xc0 lib/usercopy.c:25
+  copy_to_user include/linux/uaccess.h:155 [inline]
+  seq_read+0xcb4/0x13d0 fs/seq_file.c:279
+  proc_reg_read+0xef/0x170 fs/proc/inode.c:217
+  do_loop_readv_writev fs/read_write.c:673 [inline]
+  do_iter_read+0x3db/0x5b0 fs/read_write.c:897
+  compat_readv+0x1bf/0x270 fs/read_write.c:1140
+  do_compat_preadv64+0xdc/0x100 fs/read_write.c:1189
+  C_SYSC_preadv fs/read_write.c:1209 [inline]
+  compat_SyS_preadv+0x3b/0x50 fs/read_write.c:1203
+  do_syscall_32_irqs_on arch/x86/entry/common.c:327 [inline]
+  do_fast_syscall_32+0x3ee/0xf9d arch/x86/entry/common.c:389
+  entry_SYSENTER_compat+0x51/0x60 arch/x86/entry/entry_64_compat.S:125
+ RIP: 0023:0xf7f73c79
+ RSP: 002b:00000000e574a15c EFLAGS: 00000292 ORIG_RAX: 000000000000014d
+ RAX: ffffffffffffffda RBX: 000000000000000f RCX: 0000000020a3afb0
+ RDX: 0000000000000001 RSI: 0000000000000067 RDI: 0000000000000000
+ RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+ R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+ R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ WARNING: CPU: 1 PID: 3195 at lib/usercopy.c:26 _copy_to_user+0xb5/0xc0
+ lib/usercopy.c:26
+
+Reported-by: syzbot <bot+eceb3204562c41a438fa1f2335e0fe4f6886d669@syzkaller.appspotmail.com>
+Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/realtek/r8169.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ipv6/ip6mr.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -1375,7 +1375,7 @@ DECLARE_RTL_COND(rtl_ocp_tx_cond)
- {
- 	void __iomem *ioaddr = tp->mmio_addr;
+--- a/net/ipv6/ip6mr.c
++++ b/net/ipv6/ip6mr.c
+@@ -498,6 +498,7 @@ static void *ipmr_mfc_seq_start(struct s
+ 		return ERR_PTR(-ENOENT);
  
--	return RTL_R8(IBISR0) & 0x02;
-+	return RTL_R8(IBISR0) & 0x20;
+ 	it->mrt = mrt;
++	it->cache = NULL;
+ 	return *pos ? ipmr_mfc_seq_idx(net, seq->private, *pos - 1)
+ 		: SEQ_START_TOKEN;
  }
- 
- static void rtl8168dp_driver_start(struct rtl8169_private *tp)
-@@ -1421,7 +1421,7 @@ static void rtl8168ep_driver_stop(struct
- 	void __iomem *ioaddr = tp->mmio_addr;
- 
- 	RTL_W8(IBCR2, RTL_R8(IBCR2) & ~0x01);
--	rtl_msleep_loop_wait_low(tp, &rtl_ocp_tx_cond, 50, 2000);
-+	rtl_msleep_loop_wait_high(tp, &rtl_ocp_tx_cond, 50, 2000);
- 	RTL_W8(IBISR0, RTL_R8(IBISR0) | 0x20);
- 	RTL_W8(IBCR0, RTL_R8(IBCR0) & ~0x01);
- 	ocp_write(tp, 0x01, 0x180, OOB_CMD_DRIVER_STOP);
