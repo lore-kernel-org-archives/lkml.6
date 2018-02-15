@@ -1,331 +1,196 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032825AbeBONNk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 08:13:40 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36518 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030561AbeBONMV (ORCPT
+        id S1032077AbeBONPq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 08:15:46 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:52704 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030561AbeBONPp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 08:12:21 -0500
-X-Google-Smtp-Source: AH8x224hEyt7YAUAhAsRzYPrLwEkxtHqDbNZ1b5Xs4qZqoz+fyRLMAK/tzp5SAWX3qmHLvQIa6KW2w==
-From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-To: linux-block@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        javier@cnexlabs.com,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [PATCH v2 2/6] lightnvm: flatten nvm_id_group into nvm_id
-Date: Thu, 15 Feb 2018 14:11:56 +0100
-Message-Id: <20180215131200.3354-3-mb@lightnvm.io>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180215131200.3354-1-mb@lightnvm.io>
-References: <20180215131200.3354-1-mb@lightnvm.io>
+        Thu, 15 Feb 2018 08:15:45 -0500
+Date: Thu, 15 Feb 2018 14:15:33 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: David Daney <david.daney@cavium.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-rtc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] rtc: isl12026: Add driver.
+Message-ID: <20180215131533.GL8219@piout.net>
+References: <20180214005536.22739-1-david.daney@cavium.com>
+ <CAHp75VcQm-gr0GRszBSRJSZOpdSutRyhVkw-BN_YAwhjaPM4yg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VcQm-gr0GRszBSRJSZOpdSutRyhVkw-BN_YAwhjaPM4yg@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are no groups in the 2.0 specification, make sure that the
-nvm_id structure is flattened before 2.0 data structures are added.
+On 15/02/2018 at 14:45:11 +0200, Andy Shevchenko wrote:
+> On Wed, Feb 14, 2018 at 2:55 AM, David Daney <david.daney@cavium.com> wrote:
+> > The ISL12026 is a combination RTC and EEPROM device with I2C
+> > interface.  The standard RTC driver interface is provided.  The EEPROM
+> > is accessed via the NVMEM interface via the "eeprom0" directory in the
+> > sysfs entry for the device.
+> 
+> Thanks for an update, my comments below.
+> 
+> > +struct isl12026 {
+> > +       struct rtc_device *rtc;
+> > +       struct i2c_client *nvm_client;
+> > +       struct nvmem_config nvm_cfg;
+> > +       /*
+> > +        * RTC write operations require that multiple messages be
+> > +        * transmitted, we hold the lock for all accesses to the
+> > +        * device so that these sequences cannot be disrupted.  Also,
+> 
+> > +        * the write cycle to the nvmem takes many mS during which the
+> 
+> What mS means? milliseconds? The standard abbreviation for it 'ms'.
+> 
+> > +        * device does not respond to commands, so holding the lock
+> > +        * also prevents access during these times.
+> > +        */
+> > +       struct mutex lock;
+> > +};
+> 
+> > +static int isl12026_read_reg(struct i2c_client *client, int reg)
+> > +{
+> 
+> > +       ret = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
+> > +       if (ret != ARRAY_SIZE(msgs)) {
+> > +               dev_err(&client->dev, "read reg error, ret=%d\n", ret);
+> > +               ret = ret < 0 ? ret : -EIO;
+> > +       } else {
+> > +               ret = val;
+> > +       }
+> 
+> > +       return val;
+> 
+> Something wrong. ret is not used after all.
+> 
+> > +}
+> 
+> Check entire code for such.
+> 
+> > +       /* 2 bytes of address, most significant first */
+> > +       addr[0] = (offset >> 8) & 0xff;
+> > +       addr[1] = offset & 0xff;
+> 
+> Consider to drop '& 0xff', they are pointless (you have u8 type).
+> 
+> > +               payload[0] = (offset >> 8) & 0xff;
+> > +               payload[1] = offset & 0xff;
+> 
+> Ditto.
+> 
+> > +static void isl12026_force_power_modes(struct i2c_client *client)
+> > +{
+> > +       int ret;
+> > +       int pwr, requested_pwr;
+> > +       u32 bsw_val, sbib_val;
+> 
+> > +       bool set_bsw, set_sbib;
+> > +
+> 
+> > +       ret = of_property_read_u32(client->dev.of_node,
+> > +                                  "isil,pwr-bsw", &bsw_val);
+> > +       set_bsw = (ret == 0);
+> 
+> Which is not fully correct. Better to do
+> 
+> set_bsw = of_property_present();
+> 
+> ret = of_property_read...();
+> if (ret)
+>   return ret;
+> 
+> > +
+> > +       ret = of_property_read_u32(client->dev.of_node,
+> > +                                  "isil,pwr-sbib", &sbib_val);
+> > +       set_sbib = (ret == 0);
+> 
+> Ditto.
+> 
+> > +
+> > +       /* Check if PWR.BSW and/or PWR.SBIB need specified values */
+> > +
+> 
+> > +       if (set_bsw || set_sbib) {
+> 
+> if (!x && !y)
+>  return;
+> 
+> > +               pwr = isl12026_read_reg(client, ISL12026_REG_PWR);
+> > +               if (pwr < 0) {
+> > +                       dev_err(&client->dev,
+> > +                               "Error: Failed to read PWR %d\n", pwr);
+> > +                       return;
+> > +               }
+> > +
+> > +               requested_pwr = pwr;
+> > +
+> > +               if (set_bsw) {
+> > +                       if (bsw_val)
+> > +                               requested_pwr |= ISL12026_REG_PWR_BSW;
+> > +                       else
+> > +                               requested_pwr &= ~ISL12026_REG_PWR_BSW;
+> > +               }
+> 
+> Undefined state if no value?
+> 
+> > +               if (set_sbib) {
+> > +                       if (sbib_val)
+> > +                               requested_pwr |= ISL12026_REG_PWR_SBIB;
+> > +                       else
+> > +                               requested_pwr &= ~ISL12026_REG_PWR_SBIB;
+> > +               }
+> 
+> Ditto.
+> 
+> > +
+> > +               if (pwr >= 0 && pwr != requested_pwr) {
+> 
+> > +                       dev_info(&client->dev, "PWR: %02x\n", (u8)pwr);
+> > +                       dev_info(&client->dev,
+> > +                                "Updating PWR to: %02x\n", (u8)requested_pwr);
+> > +                       isl12026_write_reg(client,
+> > +                                          ISL12026_REG_PWR, requested_pwr);
+> 
+> If you do explicit casting in printf() parameters you are doing
+> something wrong in 99.9% cases.
+> 
+> > +               }
+> > +       }
+> > +}
+> 
+> > +static int isl12026_probe_new(struct i2c_client *client)
+> > +{
+> > +       struct isl12026 *priv;
+> > +       int ret;
+> 
+> 
+> > +       /* The NVMem array responds at i2c address 0x57 */
+> > +       priv->nvm_client = i2c_new_dummy(client->adapter, 0x57);
+> 
+> Magic. Make it #define and put comment there.
+> 
+> > +       if (!priv->nvm_client)
+> > +               return -ENOMEM;
+> 
+> > +}
+> 
+> > +#ifdef CONFIG_OF
+> 
+> Remove this ugly #ifdef. Your driver OF only one.
+> 
 
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
----
- drivers/lightnvm/core.c      |  25 ++++++-----
- drivers/nvme/host/lightnvm.c | 100 +++++++++++++++++++++----------------------
- include/linux/lightnvm.h     |  53 +++++++++++------------
- 3 files changed, 86 insertions(+), 92 deletions(-)
+Well, it is DT only because you asked for that on v1.
 
-diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-index dcc9e621e651..c72863b36439 100644
---- a/drivers/lightnvm/core.c
-+++ b/drivers/lightnvm/core.c
-@@ -851,33 +851,32 @@ EXPORT_SYMBOL(nvm_get_tgt_bb_tbl);
- static int nvm_core_init(struct nvm_dev *dev)
- {
- 	struct nvm_id *id = &dev->identity;
--	struct nvm_id_group *grp = &id->grp;
- 	struct nvm_geo *geo = &dev->geo;
- 	int ret;
- 
- 	memcpy(&geo->ppaf, &id->ppaf, sizeof(struct nvm_addr_format));
- 
--	if (grp->mtype != 0) {
-+	if (id->mtype != 0) {
- 		pr_err("nvm: memory type not supported\n");
- 		return -EINVAL;
- 	}
- 
- 	/* Whole device values */
--	geo->nr_chnls = grp->num_ch;
--	geo->nr_luns = grp->num_lun;
-+	geo->nr_chnls = id->num_ch;
-+	geo->nr_luns = id->num_lun;
- 
- 	/* Generic device geometry values */
--	geo->ws_min = grp->ws_min;
--	geo->ws_opt = grp->ws_opt;
--	geo->ws_seq = grp->ws_seq;
--	geo->ws_per_chk = grp->ws_per_chk;
--	geo->nr_chks = grp->num_chk;
--	geo->sec_size = grp->csecs;
--	geo->oob_size = grp->sos;
--	geo->mccap = grp->mccap;
-+	geo->ws_min = id->ws_min;
-+	geo->ws_opt = id->ws_opt;
-+	geo->ws_seq = id->ws_seq;
-+	geo->ws_per_chk = id->ws_per_chk;
-+	geo->nr_chks = id->num_chk;
-+	geo->sec_size = id->csecs;
-+	geo->oob_size = id->sos;
-+	geo->mccap = id->mccap;
- 	geo->max_rq_size = dev->ops->max_phys_sect * geo->sec_size;
- 
--	geo->sec_per_chk = grp->clba;
-+	geo->sec_per_chk = id->clba;
- 	geo->sec_per_lun = geo->sec_per_chk * geo->nr_chks;
- 	geo->all_luns = geo->nr_luns * geo->nr_chnls;
- 
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index 60db3f1b59da..6412551ecc65 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -203,57 +203,55 @@ static inline void _nvme_nvm_check_size(void)
- static int init_grp(struct nvm_id *nvm_id, struct nvme_nvm_id12 *id12)
- {
- 	struct nvme_nvm_id12_grp *src;
--	struct nvm_id_group *grp;
- 	int sec_per_pg, sec_per_pl, pg_per_blk;
- 
- 	if (id12->cgrps != 1)
- 		return -EINVAL;
- 
- 	src = &id12->grp;
--	grp = &nvm_id->grp;
- 
--	grp->mtype = src->mtype;
--	grp->fmtype = src->fmtype;
-+	nvm_id->mtype = src->mtype;
-+	nvm_id->fmtype = src->fmtype;
- 
--	grp->num_ch = src->num_ch;
--	grp->num_lun = src->num_lun;
-+	nvm_id->num_ch = src->num_ch;
-+	nvm_id->num_lun = src->num_lun;
- 
--	grp->num_chk = le16_to_cpu(src->num_chk);
--	grp->csecs = le16_to_cpu(src->csecs);
--	grp->sos = le16_to_cpu(src->sos);
-+	nvm_id->num_chk = le16_to_cpu(src->num_chk);
-+	nvm_id->csecs = le16_to_cpu(src->csecs);
-+	nvm_id->sos = le16_to_cpu(src->sos);
- 
- 	pg_per_blk = le16_to_cpu(src->num_pg);
--	sec_per_pg = le16_to_cpu(src->fpg_sz) / grp->csecs;
-+	sec_per_pg = le16_to_cpu(src->fpg_sz) / nvm_id->csecs;
- 	sec_per_pl = sec_per_pg * src->num_pln;
--	grp->clba = sec_per_pl * pg_per_blk;
--	grp->ws_per_chk = pg_per_blk;
-+	nvm_id->clba = sec_per_pl * pg_per_blk;
-+	nvm_id->ws_per_chk = pg_per_blk;
- 
--	grp->mpos = le32_to_cpu(src->mpos);
--	grp->cpar = le16_to_cpu(src->cpar);
--	grp->mccap = le32_to_cpu(src->mccap);
-+	nvm_id->mpos = le32_to_cpu(src->mpos);
-+	nvm_id->cpar = le16_to_cpu(src->cpar);
-+	nvm_id->mccap = le32_to_cpu(src->mccap);
- 
--	grp->ws_opt = grp->ws_min = sec_per_pg;
--	grp->ws_seq = NVM_IO_SNGL_ACCESS;
-+	nvm_id->ws_opt = nvm_id->ws_min = sec_per_pg;
-+	nvm_id->ws_seq = NVM_IO_SNGL_ACCESS;
- 
--	if (grp->mpos & 0x020202) {
--		grp->ws_seq = NVM_IO_DUAL_ACCESS;
--		grp->ws_opt <<= 1;
--	} else if (grp->mpos & 0x040404) {
--		grp->ws_seq = NVM_IO_QUAD_ACCESS;
--		grp->ws_opt <<= 2;
-+	if (nvm_id->mpos & 0x020202) {
-+		nvm_id->ws_seq = NVM_IO_DUAL_ACCESS;
-+		nvm_id->ws_opt <<= 1;
-+	} else if (nvm_id->mpos & 0x040404) {
-+		nvm_id->ws_seq = NVM_IO_QUAD_ACCESS;
-+		nvm_id->ws_opt <<= 2;
- 	}
- 
--	grp->trdt = le32_to_cpu(src->trdt);
--	grp->trdm = le32_to_cpu(src->trdm);
--	grp->tprt = le32_to_cpu(src->tprt);
--	grp->tprm = le32_to_cpu(src->tprm);
--	grp->tbet = le32_to_cpu(src->tbet);
--	grp->tbem = le32_to_cpu(src->tbem);
-+	nvm_id->trdt = le32_to_cpu(src->trdt);
-+	nvm_id->trdm = le32_to_cpu(src->trdm);
-+	nvm_id->tprt = le32_to_cpu(src->tprt);
-+	nvm_id->tprm = le32_to_cpu(src->tprm);
-+	nvm_id->tbet = le32_to_cpu(src->tbet);
-+	nvm_id->tbem = le32_to_cpu(src->tbem);
- 
- 	/* 1.2 compatibility */
--	grp->num_pln = src->num_pln;
--	grp->num_pg = le16_to_cpu(src->num_pg);
--	grp->fpg_sz = le16_to_cpu(src->fpg_sz);
-+	nvm_id->num_pln = src->num_pln;
-+	nvm_id->num_pg = le16_to_cpu(src->num_pg);
-+	nvm_id->fpg_sz = le16_to_cpu(src->fpg_sz);
- 
- 	return 0;
- }
-@@ -740,14 +738,12 @@ static ssize_t nvm_dev_attr_show(struct device *dev,
- 	struct nvme_ns *ns = nvme_get_ns_from_dev(dev);
- 	struct nvm_dev *ndev = ns->ndev;
- 	struct nvm_id *id;
--	struct nvm_id_group *grp;
- 	struct attribute *attr;
- 
- 	if (!ndev)
- 		return 0;
- 
- 	id = &ndev->identity;
--	grp = &id->grp;
- 	attr = &dattr->attr;
- 
- 	if (strcmp(attr->name, "version") == 0) {
-@@ -771,41 +767,41 @@ static ssize_t nvm_dev_attr_show(struct device *dev,
- 			id->ppaf.pg_offset, id->ppaf.pg_len,
- 			id->ppaf.sect_offset, id->ppaf.sect_len);
- 	} else if (strcmp(attr->name, "media_type") == 0) {	/* u8 */
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->mtype);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->mtype);
- 	} else if (strcmp(attr->name, "flash_media_type") == 0) {
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->fmtype);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->fmtype);
- 	} else if (strcmp(attr->name, "num_channels") == 0) {
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->num_ch);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->num_ch);
- 	} else if (strcmp(attr->name, "num_luns") == 0) {
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->num_lun);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->num_lun);
- 	} else if (strcmp(attr->name, "num_planes") == 0) {
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->num_pln);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->num_pln);
- 	} else if (strcmp(attr->name, "num_blocks") == 0) {	/* u16 */
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->num_chk);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->num_chk);
- 	} else if (strcmp(attr->name, "num_pages") == 0) {
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->num_pg);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->num_pg);
- 	} else if (strcmp(attr->name, "page_size") == 0) {
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->fpg_sz);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->fpg_sz);
- 	} else if (strcmp(attr->name, "hw_sector_size") == 0) {
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->csecs);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->csecs);
- 	} else if (strcmp(attr->name, "oob_sector_size") == 0) {/* u32 */
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->sos);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->sos);
- 	} else if (strcmp(attr->name, "read_typ") == 0) {
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->trdt);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->trdt);
- 	} else if (strcmp(attr->name, "read_max") == 0) {
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->trdm);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->trdm);
- 	} else if (strcmp(attr->name, "prog_typ") == 0) {
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->tprt);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->tprt);
- 	} else if (strcmp(attr->name, "prog_max") == 0) {
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->tprm);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->tprm);
- 	} else if (strcmp(attr->name, "erase_typ") == 0) {
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->tbet);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->tbet);
- 	} else if (strcmp(attr->name, "erase_max") == 0) {
--		return scnprintf(page, PAGE_SIZE, "%u\n", grp->tbem);
-+		return scnprintf(page, PAGE_SIZE, "%u\n", id->tbem);
- 	} else if (strcmp(attr->name, "multiplane_modes") == 0) {
--		return scnprintf(page, PAGE_SIZE, "0x%08x\n", grp->mpos);
-+		return scnprintf(page, PAGE_SIZE, "0x%08x\n", id->mpos);
- 	} else if (strcmp(attr->name, "media_capabilities") == 0) {
--		return scnprintf(page, PAGE_SIZE, "0x%08x\n", grp->mccap);
-+		return scnprintf(page, PAGE_SIZE, "0x%08x\n", id->mccap);
- 	} else if (strcmp(attr->name, "max_phys_secs") == 0) {
- 		return scnprintf(page, PAGE_SIZE, "%u\n",
- 				ndev->ops->max_phys_sect);
-diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
-index 7f4b60abdf27..94b704a8d83d 100644
---- a/include/linux/lightnvm.h
-+++ b/include/linux/lightnvm.h
-@@ -154,9 +154,29 @@ struct nvm_id_lp_tbl {
- 	struct nvm_id_lp_mlc mlc;
- };
- 
--struct nvm_id_group {
--	u8	mtype;
--	u8	fmtype;
-+struct nvm_addr_format {
-+	u8	ch_offset;
-+	u8	ch_len;
-+	u8	lun_offset;
-+	u8	lun_len;
-+	u8	pln_offset;
-+	u8	pln_len;
-+	u8	blk_offset;
-+	u8	blk_len;
-+	u8	pg_offset;
-+	u8	pg_len;
-+	u8	sect_offset;
-+	u8	sect_len;
-+};
-+
-+struct nvm_id {
-+	u8	ver_id;
-+	u8	vmnt;
-+	u32	cap;
-+	u32	dom;
-+
-+	struct	nvm_addr_format ppaf;
-+
- 	u8	num_ch;
- 	u8	num_lun;
- 	u16	num_chk;
-@@ -180,33 +200,12 @@ struct nvm_id_group {
- 	u16	cpar;
- 
- 	/* 1.2 compatibility */
-+	u8	mtype;
-+	u8	fmtype;
-+
- 	u8	num_pln;
- 	u16	num_pg;
- 	u16	fpg_sz;
--};
--
--struct nvm_addr_format {
--	u8	ch_offset;
--	u8	ch_len;
--	u8	lun_offset;
--	u8	lun_len;
--	u8	pln_offset;
--	u8	pln_len;
--	u8	blk_offset;
--	u8	blk_len;
--	u8	pg_offset;
--	u8	pg_len;
--	u8	sect_offset;
--	u8	sect_len;
--};
--
--struct nvm_id {
--	u8	ver_id;
--	u8	vmnt;
--	u32	cap;
--	u32	dom;
--	struct nvm_addr_format ppaf;
--	struct nvm_id_group grp;
- } __packed;
- 
- struct nvm_target {
+
 -- 
-2.11.0
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
