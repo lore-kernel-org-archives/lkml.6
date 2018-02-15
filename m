@@ -1,112 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165844AbeBORw7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 12:52:59 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:60694 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1164213AbeBORws (ORCPT
+        id S1165859AbeBORxG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 12:53:06 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:46230 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1164213AbeBORxD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 12:52:48 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: <broonie@kernel.org>
-CC: <jic23@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
-        <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-Subject: [PATCH 2/5] regmap: Tidy up regmap_raw_read chunking code
-Date: Thu, 15 Feb 2018 17:52:17 +0000
-Message-ID: <20180215175220.2691-2-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180215175220.2691-1-ckeepax@opensource.cirrus.com>
-References: <20180215175220.2691-1-ckeepax@opensource.cirrus.com>
+        Thu, 15 Feb 2018 12:53:03 -0500
+Subject: Re: [PATCH] Build: Scripts/Makefile: Remove Repeated Lines
+To: Progyan Bhattacharya <bprogyan@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org, narmstrong@baylibre.com,
+        akpm@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
+        Daniel Golle <daniel@makrotopia.org>, Joe Perches <joe@perches.com>
+References: <20180214092558.5846-1-progyanb@acm.org>
+ <20180214224937.3f2feb80@canb.auug.org.au>
+ <CAGyWO1-9scERtpPw5CCwQcUbCU0SpcqpNq2eiBWRtwpRC-kB-A@mail.gmail.com>
+ <20180215160520.5828f900@canb.auug.org.au>
+ <bec02b84-316b-a41a-91ea-e0957d358ee3@infradead.org>
+ <CAGyWO1_tmrSB8WwyARGWXhYCz=SL-xqqU4d3Y0A1vqGWQ_8Trg@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <45b314c4-a087-ee0e-d4ad-79f5ee6ac807@infradead.org>
+Date: Thu, 15 Feb 2018 09:52:54 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1802150215
+In-Reply-To: <CAGyWO1_tmrSB8WwyARGWXhYCz=SL-xqqU4d3Y0A1vqGWQ_8Trg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Raw reads may need to be split into small chunks if max_raw_read is
-set.  Tidy up the code implementing this, the new code is slightly
-clearer, slightly shorter and slightly more efficient.
+On 02/15/2018 01:38 AM, Progyan Bhattacharya wrote:
+> I think some merge error happened in my local workspace.
+> 
+> Yes the file is correct in Linus's tree as well as current HEAD of linux-next.
+> Thanks.
+> I will update my tree accordingly.
+> 
+> About the nonstandard range statements in case, should I rewrite them. I think If-Else will be easier to read and understand.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- drivers/base/regmap/regmap.c | 44 +++++++++++++++++++-------------------------
- 1 file changed, 19 insertions(+), 25 deletions(-)
+I don't see a need for any such change.
 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index f78ddaa9a1e8..93d4218c5569 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -2542,44 +2542,38 @@ int regmap_raw_read(struct regmap *map, unsigned int reg, void *val,
- 
- 	if (regmap_volatile_range(map, reg, val_count) || map->cache_bypass ||
- 	    map->cache_type == REGCACHE_NONE) {
--		int chunk_stride = map->reg_stride;
--		size_t chunk_size = val_bytes;
--		size_t chunk_count = val_count;
-+		size_t chunk_count, chunk_bytes;
-+		size_t chunk_regs = val_count;
- 
- 		if (!map->bus->read) {
- 			ret = -ENOTSUPP;
- 			goto out;
- 		}
- 
--		if (!map->use_single_read) {
--			if (map->max_raw_read)
--				chunk_size = map->max_raw_read;
--			else
--				chunk_size = val_len;
--			if (chunk_size % val_bytes)
--				chunk_size -= chunk_size % val_bytes;
--			chunk_count = val_len / chunk_size;
--			chunk_stride *= chunk_size / val_bytes;
--		}
-+		if (map->use_single_read)
-+			chunk_regs = 1;
-+		else if (map->max_raw_read && val_len > map->max_raw_read)
-+			chunk_regs = map->max_raw_read / val_bytes;
- 
--		/* Read bytes that fit into a multiple of chunk_size */
-+		chunk_count = val_count / chunk_regs;
-+		chunk_bytes = chunk_regs * val_bytes;
-+
-+		/* Read bytes that fit into whole chunks */
- 		for (i = 0; i < chunk_count; i++) {
--			ret = _regmap_raw_read(map,
--					       reg + (i * chunk_stride),
--					       val + (i * chunk_size),
--					       chunk_size);
-+			ret = _regmap_raw_read(map, reg, val, chunk_bytes);
- 			if (ret != 0)
--				return ret;
-+				goto out;
-+
-+			reg += regmap_get_offset(map, chunk_regs);
-+			val += chunk_bytes;
-+			val_len -= chunk_bytes;
- 		}
- 
- 		/* Read remaining bytes */
--		if (chunk_size * i < val_len) {
--			ret = _regmap_raw_read(map,
--					       reg + (i * chunk_stride),
--					       val + (i * chunk_size),
--					       val_len - i * chunk_size);
-+		if (val_len) {
-+			ret = _regmap_raw_read(map, reg, val, val_len);
- 			if (ret != 0)
--				return ret;
-+				goto out;
- 		}
- 	} else {
- 		/* Otherwise go word by word for the cache; should be low
+
 -- 
-2.11.0
+~Randy
