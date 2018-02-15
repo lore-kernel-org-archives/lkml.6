@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224OkB6q6Yvy5gNH+LaNM9YMVsqNnpH+FwtqBfNr5yjF/mUVw/A8BK62Swnf+MPyCc5sq8lq
-ARC-Seal: i=1; a=rsa-sha256; t=1518708564; cv=none;
+X-Google-Smtp-Source: AH8x224oKIUTkoYbeGuzC9691puM41Qw4LANpalaWKv+A42gVX4riz5AYXr/1W4KWVrBc0sFzZ0S
+ARC-Seal: i=1; a=rsa-sha256; t=1518708561; cv=none;
         d=google.com; s=arc-20160816;
-        b=p0CRSnr2gHXzFP9nkkML3/M/Cb/uQSgkO5gysRpFU0Awe72f0uDPCs2/aoO+23t+xb
-         Ni58lVsTy1gXRJZIZd3dyD9EecunWq95B4xETn8hzORV/wWE89KHk7fINQahjV866CrT
-         CcHJowyJMKzKl/CKxHysOH/4GrUadEwbkwCzG6PxxPkBNt16HF0VWFs2w1rV1ZPzvu6X
-         b/fZhUjTi2m4pTZnpJHGppJpKJUs47KSSSaB+Ikfg+7HQYK6Cu4MDoX4OGBPZ44Qi2JQ
-         BCHfQkttJ2NusNErUcl8iInmFetsoWAJRln02fFjEZMMW8VSM4212TYUimnBTK+r5MY6
-         lr0g==
+        b=Rk7XsQqCKmcmDVxNXnLAYJKnFv5E5tRmNe/Do8EotYAjD7f8tFWbp1Ra0j5QedlmV4
+         pfOJMQPiudtskNMA+faP/COny+eJjAZRddDTYORtj49wZrxXr55mIU1Y5VR7hkIUzQGB
+         9yHrJT2b52aft0yuqMtvrZGIVOApbIc5HKWA+RSnnVbOgE2JJ+05xCmY/bsxNxiMYL6w
+         LYl6yw3M42w99OusqqPl4HaLCBcOCksDwsVMuqsndxbSUI9B9FIwtw1L+iiK5PIC4hMk
+         l2YwCY4E7vq+iwU3mSV6zcHPCuZyslZBCh2F2faxENKLMDNpg8suxWdhUOh9wQg6BrWZ
+         nvhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Ywz8n4/b3GDPP4HRS5738QrPuForXjQ2vGUcFAaabNA=;
-        b=c2pzf2vk+SDoDfDfDqVc+8V8lla642kuHBDc0wsx9A2ZAKrajInUi+Iaf6gSHemfgJ
-         zYWSxoA7m27lbIpnLTCjabQ0enhonCwxG4bgAI01PaWeUw4DcFf2vHTKmPtaF3xSlmsZ
-         9XXza0mt05pA4zXN2L5VwxWoDNs0gZSbajReceEEc7Z3Q16pbFI2i3ezUatjTncDXESc
-         l/YEqcL2jOSRFtaMtObA2r05UBgjI/W+DpMzZrcQH0dyTLkpAWLWEZRecEhw1XM75Syo
-         F3IR61IMK/6aadOuiTDqwuOT5OHSRVmmTQQU0q8Kl/PmqTHzLgThDfNLnYssIUZ4y5Pc
-         CEHg==
+        bh=/Z+odxrSOTfCnSprv6jwt2ir0Wa3NJ5JrgpqYRbkuWE=;
+        b=mrLvYnkPsjlHLRQ0cyyyCFrsYc5gzfjxkBD5lKu8AtOkondocNAW+kPZlSLsivXIuW
+         sPw9DSPkKAU3Bm0uA0hoQVGpciEaUbTEiHwklJ0wa5u3Hp+tUi2v8ukDW+iybs+IqhH3
+         W/Y9W4jTZUW9LIuZXfH2GSi4skLz1hf8HqdGbB+A/rRhW12S90l3RhYmFHVdbpQqeTWn
+         2Ba9orVI+SPWVE/fAb+1MUN8SDryMYH7BnvW3cB1kbTSFrHJktJzuADrhr70yQUl5ONj
+         sUiyUm/1yOGNXgG0uOcgGJ+xYwovitDBZurDlG38DgiOFly4fCTpBb/JGgSzhq8lDuMe
+         FryA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Enrico Mioso <mrkiko.rs@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: [PATCH 4.9 60/88] media: cxusb, dib0700: ignore XC2028_I2C_FLUSH
-Date: Thu, 15 Feb 2018 16:17:27 +0100
-Message-Id: <20180215151230.953933674@linuxfoundation.org>
+	Raphael Hertzog <raphael@ouaza.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	=?UTF-8?q?Rapha=C3=ABl=20Hertzog?= <hertzog@debian.org>,
+	Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.9 86/88] ovl: fix failure to fsync lower dir
+Date: Thu, 15 Feb 2018 16:17:53 +0100
+Message-Id: <20180215151234.349440340@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
@@ -39,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480749615627706?=
-X-GMAIL-MSGID: =?utf-8?q?1592481351485037620?=
+X-GMAIL-THRID: =?utf-8?q?1592481085875936301?=
+X-GMAIL-MSGID: =?utf-8?q?1592481348573312775?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,45 +50,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit 9893b905e743ded332575ca04486bd586c0772f7 upstream.
+commit d796e77f1dd541fe34481af2eee6454688d13982 upstream.
 
-The XC2028_I2C_FLUSH only needs to be implemented on a few
-devices. Others can safely ignore it.
+As a writable mount, it is not expected for overlayfs to return
+EINVAL/EROFS for fsync, even if dir/file is not changed.
 
-That prevents filling the dmesg with lots of messages like:
+This commit fixes the case of fsync of directory, which is easier to
+address, because overlayfs already implements fsync file operation for
+directories.
 
-	dib0700: stk7700ph_xc3028_callback: unknown command 2, arg 0
+The problem reported by Raphael is that new PostgreSQL 10.0 with a
+database in overlayfs where lower layer in squashfs fails to start.
+The failure is due to fsync error, when PostgreSQL does fsync on all
+existing db directories on startup and a specific directory exists
+lower layer with no changes.
 
-Fixes: 4d37ece757a8 ("[media] tuner/xc2028: Add I2C flush callback")
-Reported-by: Enrico Mioso <mrkiko.rs@gmail.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Reported-by: Raphael Hertzog <raphael@ouaza.com>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Tested-by: Raphaël Hertzog <hertzog@debian.org>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/dvb-usb/cxusb.c           |    2 ++
- drivers/media/usb/dvb-usb/dib0700_devices.c |    1 +
- 2 files changed, 3 insertions(+)
+ fs/overlayfs/readdir.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/media/usb/dvb-usb/cxusb.c
-+++ b/drivers/media/usb/dvb-usb/cxusb.c
-@@ -820,6 +820,8 @@ static int dvico_bluebird_xc2028_callbac
- 	case XC2028_RESET_CLK:
- 		deb_info("%s: XC2028_RESET_CLK %d\n", __func__, arg);
- 		break;
-+	case XC2028_I2C_FLUSH:
-+		break;
- 	default:
- 		deb_info("%s: unknown command %d, arg %d\n", __func__,
- 			 command, arg);
---- a/drivers/media/usb/dvb-usb/dib0700_devices.c
-+++ b/drivers/media/usb/dvb-usb/dib0700_devices.c
-@@ -431,6 +431,7 @@ static int stk7700ph_xc3028_callback(voi
- 		state->dib7000p_ops.set_gpio(adap->fe_adap[0].fe, 8, 0, 1);
- 		break;
- 	case XC2028_RESET_CLK:
-+	case XC2028_I2C_FLUSH:
- 		break;
- 	default:
- 		err("%s: unknown command %d, arg %d\n", __func__,
+--- a/fs/overlayfs/readdir.c
++++ b/fs/overlayfs/readdir.c
+@@ -434,10 +434,14 @@ static int ovl_dir_fsync(struct file *fi
+ 	struct dentry *dentry = file->f_path.dentry;
+ 	struct file *realfile = od->realfile;
+ 
++	/* Nothing to sync for lower */
++	if (!OVL_TYPE_UPPER(ovl_path_type(dentry)))
++		return 0;
++
+ 	/*
+ 	 * Need to check if we started out being a lower dir, but got copied up
+ 	 */
+-	if (!od->is_upper && OVL_TYPE_UPPER(ovl_path_type(dentry))) {
++	if (!od->is_upper) {
+ 		struct inode *inode = file_inode(file);
+ 
+ 		realfile = lockless_dereference(od->upperfile);
