@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2243538-1518720787-2-16510994158225710342
+X-Cyrus-Session-Id: sloti22d1t05-2241641-1518720782-2-15328349537091679213
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720786; b=pa0rxrWDus2pF2PgB4bqTiWsr+ezgnMmYURkOCqIOvm7Bvq
-    LwXV7y3OH17NumLTCv+9XHfTgsoONNtPv7Ys53rH6n7r6Ihkrfw37yfrNbnuiraC
-    5mJ2nBJ9w1a3O4KjEwA9FzkYIwirFV5Z4owjRPDLysHWKdcDt6UD4zW5hLWanaK7
-    GYEmRmXsNieQYZ2vNMMP0zdAz8KvHRaU4/3q3CcmpA6FGD8DRzc1quDGqv6avXGn
-    gkQzdrtTviGZOsAoGjlomtwYD+tZcs1buvpVT6GcZ2fpkZrRPew2ASTYfT6tnrGx
-    ZPDIYbt5WOjQHVDC/R8+j64EboNARDKzL7kak1Q==
+    t=1518720781; b=m8cliUwzAy1+PirIR2McBTlW9MNlU3xb3JhJrJi/FCwEcNY
+    bxgcqN49/HlpmxfxB70Y5RBAYnWD4nZ+hWcyYN1PbD+Ct0xsPNGRQLnHVqTAGiAE
+    Zne+IdRmRtsmUu0Pwu4uKF4Vy3oMZmIzxmc9nKGkm+ojQmDZRgfrjV9Uct049GP3
+    QKtmfY/H6gzXv/wP5uGGvMvyFBhR+IyPth6QUmeCHllYrO6mDS0B7NPEqzcB7bfI
+    kwDK0E9NJE7Yxf1eWQGty7M+wteEQmmyOwlb1wuRbtrzGjthM0Cmm+iLedjZUaaD
+    NtohW7PDCrKEoA52ShTmln5dEDkPzMNbCDVUuuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720786; bh=9pE+d0Skm1bZGkHE4iIygk7mQH
-    rTIjQFBhwB27ORr34=; b=KgOFLYRmDbXWzFWtNwvZVmfHYtvWFKyAYECI1uVMv2
-    5iNd27aQ3IZOulD/Y1lsRMwOH6ieAicDaRjRX/hTlslkVCrH2Zyy2mtO7A0FJQev
-    9Qe1TohXN1uU80BAiS/gHqAlgfe8uXbVBsdjT2uUv6q4AcXP+dNIP0LCR7EUf01r
-    UmJZtyv4DMPur4y8HCs5nZZMdpfqNQEI0uO8XIn799xAn7v3xbN7NKElbp05pdqO
-    n41wbGf2mNEpnwXaUil9Wya9zw1YFuk3U2hI4K03zh9jEvTspNEz5RdSOTxikhtX
-    GPiIvZTDXvGxHnLkSLyWQWq54dDsh79qZK12VQEWRWzg==
+    :list-id; s=arctest; t=1518720781; bh=O8NRPoK2FfQOkMVH66Z6O1qJRc
+    /69y+st/dRBIjjYPo=; b=OQf1iicJD2aPAFvlji196dw91xyxchyTcSGyrt5xc9
+    WbUr4MH0hByGH9aB3MlSXwR5xVa1vAij4w7akHlnEOR3DnpOuzoxBkI1VZJGl8LF
+    bCB7XsbT5fmO8PX8vsGMjox9Br5wPxbXCXKT5JH7uelwU2b69UB/PUxPX+jexRNj
+    62AfvjPJHZFGaxtJ/3EM5Hq9JvEAJyKVuIMwgebpG3Y5ElvOeBBMqISlz9t1xXSt
+    DJPOguMMLMDPRZeNYlrzfl+HJhz/JjZ1E8P4wjrgj2I5KoDOXhcqsr8DsO43gnbF
+    /VUXl9Y1CpkP3agmV/O4qaxgOFvk9JqsfXxl7+txXlQQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,19 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161985AbeBOPVL (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:21:11 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48536 "EHLO
+        id S1162100AbeBOSwp (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:52:45 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48566 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161956AbeBOPVK (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:21:10 -0500
+        with ESMTP id S1161956AbeBOPVP (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:21:15 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.4 010/108] powerpc/64s: Convert slb_miss_common to use RFI_TO_USER/KERNEL
-Date: Thu, 15 Feb 2018 16:16:07 +0100
-Message-Id: <20180215151223.813096591@linuxfoundation.org>
+        mrkiko.rs@gmail.com, Matthias Hintzmann <matthias.dev@gmx.de>
+Subject: [PATCH 4.4 020/108] net: cdc_ncm: initialize drvflags before usage
+Date: Thu, 15 Feb 2018 16:16:17 +0100
+Message-Id: <20180215151225.377489173@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -77,67 +76,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Matthias Hintzmann <matthias.dev@gmx.de>
 
-commit c7305645eb0c1621351cfc104038831ae87c0053 upstream.
+ctx->drvflags is checked in the if clause before beeing initialized.
+Move initialization before first usage.
 
-In the SLB miss handler we may be returning to user or kernel. We need
-to add a check early on and save the result in the cr4 register, and
-then we bifurcate the return path based on that.
+Note, that the if clause was backported with commit 75f82a703b30
+("cdc_ncm: Set NTB format again after altsetting switch for Huawei
+devices") from mainline (upstream commit 2b02c20ce0c2 ("cdc_ncm: Set NTB
+format again after altsetting switch for Huawei devices").  In mainline,
+the initialization is at the right place before the if clause.
 
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-[mpe: Backport to 4.4 based on patch from Balbir]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+[mrkiko.rs@gmail.com: commit message tweaks]
+
+Fixes: 75f82a703b30 ("cdc_ncm: Set NTB format again after altsetting switch for Huawei devices")
+Signed-off-by: Matthias Hintzmann <matthias.dev@gmx.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/powerpc/kernel/exceptions-64s.S |   22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ drivers/net/usb/cdc_ncm.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/kernel/exceptions-64s.S
-+++ b/arch/powerpc/kernel/exceptions-64s.S
-@@ -1503,6 +1503,8 @@ slb_miss_realmode:
+--- a/drivers/net/usb/cdc_ncm.c
++++ b/drivers/net/usb/cdc_ncm.c
+@@ -825,6 +825,9 @@ int cdc_ncm_bind_common(struct usbnet *d
+ 		goto error2;
+ 	}
  
- 	andi.	r10,r12,MSR_RI	/* check for unrecoverable exception */
- 	beq-	2f
-+	andi.	r10,r12,MSR_PR	/* check for user mode (PR != 0) */
-+	bne	1f
- 
- .machine	push
- .machine	"power4"
-@@ -1516,7 +1518,23 @@ slb_miss_realmode:
- 	ld	r11,PACA_EXSLB+EX_R11(r13)
- 	ld	r12,PACA_EXSLB+EX_R12(r13)
- 	ld	r13,PACA_EXSLB+EX_R13(r13)
--	rfid
-+	RFI_TO_KERNEL
-+	b	.	/* prevent speculative execution */
++	/* Device-specific flags */
++	ctx->drvflags = drvflags;
 +
-+1:
-+.machine	push
-+.machine	"power4"
-+	mtcrf	0x80,r9
-+	mtcrf	0x01,r9		/* slb_allocate uses cr0 and cr7 */
-+.machine	pop
-+
-+	RESTORE_PPR_PACA(PACA_EXSLB, r9)
-+	ld	r9,PACA_EXSLB+EX_R9(r13)
-+	ld	r10,PACA_EXSLB+EX_R10(r13)
-+	ld	r11,PACA_EXSLB+EX_R11(r13)
-+	ld	r12,PACA_EXSLB+EX_R12(r13)
-+	ld	r13,PACA_EXSLB+EX_R13(r13)
-+	RFI_TO_USER
- 	b	.	/* prevent speculative execution */
+ 	/*
+ 	 * Some Huawei devices have been observed to come out of reset in NDP32 mode.
+ 	 * Let's check if this is the case, and set the device to NDP16 mode again if
+@@ -873,9 +876,6 @@ int cdc_ncm_bind_common(struct usbnet *d
+ 	/* finish setting up the device specific data */
+ 	cdc_ncm_setup(dev);
  
- 2:	mfspr	r11,SPRN_SRR0
-@@ -1525,7 +1543,7 @@ slb_miss_realmode:
- 	mtspr	SPRN_SRR0,r10
- 	ld	r10,PACAKMSR(r13)
- 	mtspr	SPRN_SRR1,r10
--	rfid
-+	RFI_TO_KERNEL
- 	b	.
- 
- unrecov_slb:
+-	/* Device-specific flags */
+-	ctx->drvflags = drvflags;
+-
+ 	/* Allocate the delayed NDP if needed. */
+ 	if (ctx->drvflags & CDC_NCM_FLAG_NDP_TO_END) {
+ 		ctx->delayed_ndp16 = kzalloc(ctx->max_ndp_size, GFP_KERNEL);
