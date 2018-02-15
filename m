@@ -1,64 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426144AbeBOQho (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 11:37:44 -0500
-Received: from mga07.intel.com ([134.134.136.100]:53717 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1426072AbeBOQgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:36:17 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,517,1511856000";
-   d="scan'208";a="28306003"
-Date: Thu, 15 Feb 2018 08:38:11 -0800
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: "Raj, Ashok" <ashok.raj@intel.com>,
-        Sohil Mehta <sohil.mehta@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v7 0/5] Add Intel IOMMU debugfs support
-Message-ID: <20180215083811.3ec86e49@jacob-builder>
-In-Reply-To: <20180215095337.fccoozdclfnbepi4@8bytes.org>
-References: <1517619001-148586-1-git-send-email-sohil.mehta@intel.com>
-        <20180213140303.42mbzfxpypljy37l@8bytes.org>
-        <20180213214002.GA27066@otc-nc-03>
-        <20180213145332.35c73eda@jacob-builder>
-        <20180215095337.fccoozdclfnbepi4@8bytes.org>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1426073AbeBOQil (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 11:38:41 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:51443 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423969AbeBOQig (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 11:38:36 -0500
+Date: Thu, 15 Feb 2018 17:38:32 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kbingham@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/4] arm64: dts: renesas: r8a77995: add FCPVD nodes
+Message-ID: <20180215163832.abzsl4kcui55kgii@verge.net.au>
+References: <1518474330-8713-1-git-send-email-kbingham@kernel.org>
+ <1518474330-8713-3-git-send-email-kbingham@kernel.org>
+ <1541765.WkmPmS7X3L@avalon>
+ <20180215161404.pywzt7m3ccd7gygu@verge.net.au>
+ <0d235657-3b2e-7fbe-f7ba-e33756b76532@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0d235657-3b2e-7fbe-f7ba-e33756b76532@ideasonboard.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Feb 2018 10:53:38 +0100
-Joerg Roedel <joro@8bytes.org> wrote:
-
-> On Tue, Feb 13, 2018 at 02:53:32PM -0800, Jacob Pan wrote:
-> > We did start out with /dev/mem but run into CONFIG_STRICT_DEVMEM
-> > requirement which is turned on by default.
-> > libpci is only limited to PCI config space access, right?  
+On Thu, Feb 15, 2018 at 04:20:42PM +0000, Kieran Bingham wrote:
+> Hi Simon,
 > 
-> Even if /dev/mem is not an option, I am still not convinced that this
-> is a good idea. How should this be used? Will you just use it to debug
-> Intel IOMMUs when you guys work on the driver or should users report
-> the data back when they hit problems?
+> On 15/02/18 16:14, Simon Horman wrote:
+> > On Tue, Feb 13, 2018 at 02:32:22PM +0200, Laurent Pinchart wrote:
+> >> Hi Kieran,
+> >>
+> >> Thank you for the patch.
+> >>
+> >> On Tuesday, 13 February 2018 00:25:27 EET Kieran Bingham wrote:
+> >>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >>>
+> >>> The FCPVD handles the interface between the VSPD and memory.
+> >>>
+> >>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >>
+> >> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >>
+> >> I would however squash this with patch 1/4 from the same series.
+> > 
+> > Thanks, I've taken the liberty of doing so when applying this patch.
+> > The result is as follows:
 > 
-It is for both but mainly the latter. when we have customers/users
-reporting Intel IOMMU issues, it would be extremely helpful if we can
-ask them to turn debugfs on and report the state. As we move to SVA, we
-may also include io page table similar to /sys/kernel/debug/page_table
-for PASID etc.
+> That's probably fine, but there was a follow up series which already handles this.
 
-Just wondering if your concern is on the implementation or the debugfs
-idea in general. Perhaps have some common IOMMU debugfs?
+Thanks, I've dropped this and will use the follow-up series instead.
