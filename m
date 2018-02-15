@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1906823-1518710600-2-2824745914217963228
+X-Cyrus-Session-Id: sloti22d1t05-1883814-1518710567-2-15842499003803670364
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518710599; b=i5P/wkuE8Z7vUuAxparuoT2g/MyfrSLBIrb9uOYS2vy6cwI
-    LThAVSxkhGWdmrCsvUuhy/9+1fDEyEpSRXYZqo0Z5vdbIGfiZX4vrb7KKWixfDgi
-    ntzBUycp4QePLlj2hXfT+725fxxaUxu6fddIDNJejmQhidNtSBk6xiW6MUW6+bJs
-    wCK/3UgRNVGq5oyM8P8BHxtjaxrAy540yTj63Lr7bYxHzuGfa/5hDDweQtW/N5VP
-    70RULGf/GkPJKZvpDUsSg8JjTt5IBVxoxgsT4EpL5dSWvCSfqaB5y8wDcSAnZQSj
-    45TqN23GTOYSSBeJVWCTVy675s45SPjV4TNhvhQ==
+    t=1518710566; b=IoFUDYs2Sg8R1ol1cfpnQjnM3qcM03a0qiOO4FIL6USCKyN
+    PMD90igmb+J6rYYWaavhaeW8w7BCMK8NTq5cP8XhF5YSMijn/cpvVBJ7x+hvScQb
+    gvQCtu/jE4IFaDxINsIFv+BqTKZvTwwQrAYPl1PsIQzSel3m72o04I4JnSo7XUri
+    wI4RUEI4Nv4piLSD37HJw072MJ4XhETyjK2cCWxRmaGTg5MTT2BASsP7vkpAZ7kG
+    BT9o2gxeBV/gkAEVxaFOLjYSz05VJ0hR69CfmCxDOqj92GdoGJUJKw+3kAYL2DVX
+    CNTNgGNGm08v9tHNIK2yZCImj7CdNC/4wG6zqaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518710599; bh=7eZekoUN+QK+9pok6fMrR/vgIy
-    8wNet0OPks2INjT0I=; b=ABKu0olFa2vVNDkzbIA4isvGhU9YG4ZsGsKA3hZsic
-    PBZ+qoYChPLeJzUlorhFM6/cfDfbuOT/WAo6mpSFLMHsSpVjegouDGBG9MHePYQh
-    zUgzJ9EMOoH4C0x5vr1iaPLvn4iJoZ7TgUcAEZCTyF/AQtX+F3av1UeYEsaYMcA9
-    BRWyvvftD8/NSlDUW8klOk5APTArdQSB8Ko0B3QicoqhqopJ5Yeh6Yl6KnG5esNv
-    KkDj3UTqx7FFJh9HpFgz7WNXC++zWckiwJRRZPDPUuzpqVLUtJX2cjUgvj7pnd4s
-    3TaVfIHQORA/nSobqBYYSH/BMlmZj3JTWOe6xal3nnkg==
+    :list-id; s=arctest; t=1518710566; bh=cjgyVatN2b4KDg8hdmnkeTcmsW
+    iB/R617a03aBWyYvo=; b=g97cLNTggYx0BjogpqImYYwrnZrs9htUOGffoY4ULq
+    cCJq7XawT8JNpRMN5RA5No/u3ogg1LH1AWGOnInNU3YVAsbWhTmbMZLGMnUXvcvD
+    SEhMp3TsH5siKzBgObh/nmX3xyjFieHhKRflmlgzjQ/yOTGUzRPrKtyN2h1EGibr
+    8a4XTTgZhiPYZRgEw5n8v2Psnz1FW/CH1yAfpdhl4bPtWp5Td+cVQOOL6ISRgYBz
+    YTQ+moW8NAPJ0WD1JZi+Ess2RTY3kHYsPLW3NcpBs/1wCNVzUPxbvLISZIzc9Kzk
+    SP3fbLoenNy2U3HvZhcJ26xC+c9a9VEisQB5rAEHAyUA==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,19 +47,25 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425132AbeBOQCn (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 11:02:43 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35734 "EHLO
+        id S1424687AbeBOPqc (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:46:32 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35646 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424686AbeBOPqc (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:46:32 -0500
+        with ESMTP id S1424685AbeBOPq3 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:46:29 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 4.15 173/202] xtensa: fix futex_atomic_cmpxchg_inatomic
-Date: Thu, 15 Feb 2018 16:17:53 +0100
-Message-Id: <20180215151721.902899501@linuxfoundation.org>
+        stable@vger.kernel.org, Leif Liddy <leif.linux@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Daniel Drake <drake@endlessm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.15 164/202] Bluetooth: btusb: Restore QCA Rome suspend/resume fix with a "rewritten" version
+Date: Thu, 15 Feb 2018 16:17:44 +0100
+Message-Id: <20180215151721.461045833@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -76,68 +82,110 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit ca47480921587ae30417dd234a9f79af188e3666 upstream.
+commit 61f5acea8737d9b717fcc22bb6679924f3c82b98 upstream.
 
-Return 0 if the operation was successful, not the userspace memory
-value. Check that userspace value equals passed oldval, not itself.
-Don't update *uval if the value wasn't read from userspace memory.
+Commit 7d06d5895c15 ("Revert "Bluetooth: btusb: fix QCA...suspend/resume"")
+removed the setting of the BTUSB_RESET_RESUME quirk for QCA Rome devices,
+instead favoring adding USB_QUIRK_RESET_RESUME quirks in usb/core/quirks.c.
 
-This fixes process hang due to infinite loop in futex_lock_pi.
-It also fixes a bunch of glibc tests nptl/tst-mutexpi*.
+This was done because the DIY BTUSB_RESET_RESUME reset-resume handling
+has several issues (see the original commit message). An added advantage
+of moving over to the USB-core reset-resume handling is that it also
+disables autosuspend for these devices, which is similarly broken on these.
 
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+But there are 2 issues with this approach:
+1) It leaves the broken DIY BTUSB_RESET_RESUME code in place for Realtek
+   devices.
+2) Sofar only 2 of the 10 QCA devices known to the btusb code have been
+   added to usb/core/quirks.c and if we fix the Realtek case the same way
+   we need to add an additional 14 entries. So in essence we need to
+   duplicate a large part of the usb_device_id table in btusb.c in
+   usb/core/quirks.c and manually keep them in sync.
+
+This commit instead restores setting a reset-resume quirk for QCA devices
+in the btusb.c code, avoiding the duplicate usb_device_id table problem.
+
+This commit avoids the problems with the original DIY BTUSB_RESET_RESUME
+code by simply setting the USB_QUIRK_RESET_RESUME quirk directly on the
+usb_device.
+
+This commit also moves the BTUSB_REALTEK case over to directly setting the
+USB_QUIRK_RESET_RESUME on the usb_device and removes the now unused
+BTUSB_RESET_RESUME code.
+
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1514836
+Fixes: 7d06d5895c15 ("Revert "Bluetooth: btusb: fix QCA...suspend/resume"")
+Cc: Leif Liddy <leif.linux@gmail.com>
+Cc: Matthias Kaehlcke <mka@chromium.org>
+Cc: Brian Norris <briannorris@chromium.org>
+Cc: Daniel Drake <drake@endlessm.com>
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/xtensa/include/asm/futex.h |   23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+ drivers/bluetooth/btusb.c |   22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
---- a/arch/xtensa/include/asm/futex.h
-+++ b/arch/xtensa/include/asm/futex.h
-@@ -92,7 +92,6 @@ futex_atomic_cmpxchg_inatomic(u32 *uval,
- 			      u32 oldval, u32 newval)
- {
- 	int ret = 0;
--	u32 prev;
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -23,6 +23,7 @@
  
- 	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
- 		return -EFAULT;
-@@ -103,26 +102,24 @@ futex_atomic_cmpxchg_inatomic(u32 *uval,
+ #include <linux/module.h>
+ #include <linux/usb.h>
++#include <linux/usb/quirks.h>
+ #include <linux/firmware.h>
+ #include <linux/of_device.h>
+ #include <linux/of_irq.h>
+@@ -387,9 +388,8 @@ static const struct usb_device_id blackl
+ #define BTUSB_FIRMWARE_LOADED	7
+ #define BTUSB_FIRMWARE_FAILED	8
+ #define BTUSB_BOOTING		9
+-#define BTUSB_RESET_RESUME	10
+-#define BTUSB_DIAG_RUNNING	11
+-#define BTUSB_OOB_WAKE_ENABLED	12
++#define BTUSB_DIAG_RUNNING	10
++#define BTUSB_OOB_WAKE_ENABLED	11
  
- 	__asm__ __volatile__ (
- 	"	# futex_atomic_cmpxchg_inatomic\n"
--	"1:	l32i	%1, %3, 0\n"
--	"	mov	%0, %5\n"
--	"	wsr	%1, scompare1\n"
--	"2:	s32c1i	%0, %3, 0\n"
--	"3:\n"
-+	"	wsr	%5, scompare1\n"
-+	"1:	s32c1i	%1, %4, 0\n"
-+	"	s32i	%1, %6, 0\n"
-+	"2:\n"
- 	"	.section .fixup,\"ax\"\n"
- 	"	.align 4\n"
--	"4:	.long	3b\n"
--	"5:	l32r	%1, 4b\n"
--	"	movi	%0, %6\n"
-+	"3:	.long	2b\n"
-+	"4:	l32r	%1, 3b\n"
-+	"	movi	%0, %7\n"
- 	"	jx	%1\n"
- 	"	.previous\n"
- 	"	.section __ex_table,\"a\"\n"
--	"	.long 1b,5b,2b,5b\n"
-+	"	.long 1b,4b\n"
- 	"	.previous\n"
--	: "+r" (ret), "=&r" (prev), "+m" (*uaddr)
--	: "r" (uaddr), "r" (oldval), "r" (newval), "I" (-EFAULT)
-+	: "+r" (ret), "+r" (newval), "+m" (*uaddr), "+m" (*uval)
-+	: "r" (uaddr), "r" (oldval), "r" (uval), "I" (-EFAULT)
- 	: "memory");
+ struct btusb_data {
+ 	struct hci_dev       *hdev;
+@@ -3117,6 +3117,12 @@ static int btusb_probe(struct usb_interf
+ 	if (id->driver_info & BTUSB_QCA_ROME) {
+ 		data->setup_on_usb = btusb_setup_qca;
+ 		hdev->set_bdaddr = btusb_set_bdaddr_ath3012;
++
++		/* QCA Rome devices lose their updated firmware over suspend,
++		 * but the USB hub doesn't notice any status change.
++		 * explicitly request a device reset on resume.
++		 */
++		interface_to_usbdev(intf)->quirks |= USB_QUIRK_RESET_RESUME;
+ 	}
  
--	*uval = prev;
- 	return ret;
+ #ifdef CONFIG_BT_HCIBTUSB_RTL
+@@ -3127,7 +3133,7 @@ static int btusb_probe(struct usb_interf
+ 		 * but the USB hub doesn't notice any status change.
+ 		 * Explicitly request a device reset on resume.
+ 		 */
+-		set_bit(BTUSB_RESET_RESUME, &data->flags);
++		interface_to_usbdev(intf)->quirks |= USB_QUIRK_RESET_RESUME;
+ 	}
+ #endif
+ 
+@@ -3293,14 +3299,6 @@ static int btusb_suspend(struct usb_inte
+ 		enable_irq(data->oob_wake_irq);
+ 	}
+ 
+-	/* Optionally request a device reset on resume, but only when
+-	 * wakeups are disabled. If wakeups are enabled we assume the
+-	 * device will stay powered up throughout suspend.
+-	 */
+-	if (test_bit(BTUSB_RESET_RESUME, &data->flags) &&
+-	    !device_may_wakeup(&data->udev->dev))
+-		data->udev->reset_resume = 1;
+-
+ 	return 0;
  }
  
