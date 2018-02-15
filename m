@@ -1,47 +1,78 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224ufQT4tA3BJw6TD/xzwI1Imbtw9W4dAVU+M+fG8mno7bYuCsqMUJwSePrx53etUKk6KuYf
-ARC-Seal: i=1; a=rsa-sha256; t=1518707949; cv=none;
-        d=google.com; s=arc-20160816;
-        b=nOqd6/jyMYTd0umQs96Pe/L02yNAVPECrDGoSPqjxjrMHow6Xti868KYt0WRt2LPjk
-         15XE9BAbtWYPIWxGFCA1iI00KB6bX31oH0PdO3TmiPG1fbp61WfUjlHx6JXf/rmow/cB
-         CuDrpqSBEfHC3D5P35rgPjP+D9FRAR4RY8MwdngsFLaA+OIJudsiy0M0h6g+Wx7dG4HM
-         JzfdfuIiGMzT/44eC82vJbgeJW0SMJAjFHdVTs5aiwwMo1cOtTGPX/cl3cFAxziAkL4C
-         E2VH8xFpOdtoqecXG2CTUjn5DIXGRB9qgXIWCCPWGtESi7U0llBSckbJTL6KdtTC6/lm
-         bGLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=WEsB8OlQa1QdvQp0EMowQrlj8tMIG2RA10HGgzxafc8=;
-        b=aWZdnLjzQ2GREsqfBMKR54D+FbV2mIUHlpBezlTLZ0xlRU219ku4hEdp0uwLENM6zj
-         oqM1rJLrsK5Cqsjs6qOXLDD9N0evzs0pxrpqx8emBvhSZ3fthrFwF3ScRoCMaTfl+ly9
-         KubgZP130/hgypB0CQ4b+GcceK6JTf9aB/Bfkp9/fefR1Ykffz5wyG/xTXpJ1NRxIrfW
-         eFOk4BNvDXvfXkww1AoRpGuTTs5x95m7ZE38mjxTf1AZSmrXIvt1Slwd7mP5/aokbUsR
-         GNyh508RGrY2riUFMawD72WyXxoOd2mlkRswHNZHxWGEtNHPSBg53vwW/Yqeg5BYB7zP
-         u6Pg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1797899-1518707946-2-13054440094932513127
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518707946; b=m3e3LU+kvYwKpOzu7KloOpmGMxlOoRiyHnrtP2l5qkQmZoO
+    0LtJ/bQbPY2D9kxahvD+gXVz9hltUpEZbbsh/gznzYOlN6lgsEoi6Y+S7jHQiL+j
+    GeWT/vsu4QM06/jqEaCmNr/axHA9QsDyu0Q8f2zE5USMrPATjfiIu3yfZr3aet84
+    3OhE1B6bXdoGvYZlaOe2PCeV9F64B4GGpI44/pmMbPe3KXOlZS7xLbIWdZtXVTZl
+    hGvcTwdmIxuS14bYIXk4653s2GbT1zy+Z+1LjNVWOxivmM1tFWFrtoP84lF2Mrh/
+    Mza01ovsffphgT4lvbJfuID59Q4qaICTu4eaSmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1518707946; bh=eBE1l8RTOBcidwLGZ1/aaYL89M
+    VqmnruhsKGg58RdN4=; b=MEKCHlFbILhmaKH/Br4RFCC+OJgB7SyLoaZqfyj+sy
+    W/6YyI8bjgXH4U7NWzXe+KyDcNWdo8KJIwcTqHcvATlpQv5aHERTDGyQBS3d3gNN
+    AWdAv3Fa49qf7NGZIC0G+LY08gE461X+KsFhZp2JvV6Fsv0sR69rizTYse23Z/gn
+    wCMporPb6xdeLQsG40BoOOmKS95FqscnOE4i5EMbVMJlvW22tc4R/1CBnz4C33Yi
+    KbTlqU3PUab0EXuq+DZUfXCCGI++bVc9GqZCIdNdXeBPQE2VXLKWLHeX1CnV6Qz9
+    7sYYzNYeEErjVmO31PMOXxO4D7OThIN8+jLRCUfW8/xA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1161214AbeBOPTD (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:19:03 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47700 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161210AbeBOPTB (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:19:01 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Aurelien Aptel <aaptel@suse.com>,
-	Steve French <smfrench@gmail.com>,
-	Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 3.18 13/45] CIFS: zero sensitive data when freeing
-Date: Thu, 15 Feb 2018 16:17:04 +0100
-Message-Id: <20180215144118.632102898@linuxfoundation.org>
+        stable@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Eric Biggers <ebiggers@google.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <james.l.morris@oracle.com>,
+        Jin Qian <jinqian@google.com>
+Subject: [PATCH 3.18 09/45] KEYS: encrypted: fix buffer overread in valid_master_desc()
+Date: Thu, 15 Feb 2018 16:17:00 +0100
+Message-Id: <20180215144117.845016677@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215144115.863307741@linuxfoundation.org>
 References: <20180215144115.863307741@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480706706045067?=
-X-GMAIL-MSGID: =?utf-8?q?1592480706706045067?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,94 +80,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Aurelien Aptel <aaptel@suse.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 97f4b7276b829a8927ac903a119bef2f963ccc58 upstream.
+commit 794b4bc292f5d31739d89c0202c54e7dc9bc3add upstream.
 
-also replaces memset()+kfree() by kzfree().
+With the 'encrypted' key type it was possible for userspace to provide a
+data blob ending with a master key description shorter than expected,
+e.g. 'keyctl add encrypted desc "new x" @s'.  When validating such a
+master key description, validate_master_desc() could read beyond the end
+of the buffer.  Fix this by using strncmp() instead of memcmp().  [Also
+clean up the code to deduplicate some logic.]
 
-Signed-off-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Steve French <smfrench@gmail.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: James Morris <james.l.morris@oracle.com>
+Signed-off-by: Jin Qian <jinqian@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifsencrypt.c |    3 +--
- fs/cifs/connect.c     |    6 +++---
- fs/cifs/misc.c        |   14 ++++----------
- 3 files changed, 8 insertions(+), 15 deletions(-)
+ security/keys/encrypted-keys/encrypted.c |   31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
---- a/fs/cifs/cifsencrypt.c
-+++ b/fs/cifs/cifsencrypt.c
-@@ -303,9 +303,8 @@ int calc_lanman_hash(const char *passwor
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -141,23 +141,22 @@ static int valid_ecryptfs_desc(const cha
+  */
+ static int valid_master_desc(const char *new_desc, const char *orig_desc)
  {
- 	int i;
- 	int rc;
--	char password_with_pad[CIFS_ENCPWD_SIZE];
-+	char password_with_pad[CIFS_ENCPWD_SIZE] = {0};
- 
--	memset(password_with_pad, 0, CIFS_ENCPWD_SIZE);
- 	if (password)
- 		strncpy(password_with_pad, password, CIFS_ENCPWD_SIZE);
- 
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -1650,7 +1650,7 @@ cifs_parse_mount_options(const char *mou
- 			tmp_end++;
- 			if (!(tmp_end < end && tmp_end[1] == delim)) {
- 				/* No it is not. Set the password to NULL */
--				kfree(vol->password);
-+				kzfree(vol->password);
- 				vol->password = NULL;
- 				break;
- 			}
-@@ -1688,7 +1688,7 @@ cifs_parse_mount_options(const char *mou
- 					options = end;
- 			}
- 
--			kfree(vol->password);
-+			kzfree(vol->password);
- 			/* Now build new password string */
- 			temp_len = strlen(value);
- 			vol->password = kzalloc(temp_len+1, GFP_KERNEL);
-@@ -4046,7 +4046,7 @@ cifs_construct_tcon(struct cifs_sb_info
- 		reset_cifs_unix_caps(0, tcon, NULL, vol_info);
- out:
- 	kfree(vol_info->username);
--	kfree(vol_info->password);
-+	kzfree(vol_info->password);
- 	kfree(vol_info);
- 
- 	return tcon;
---- a/fs/cifs/misc.c
-+++ b/fs/cifs/misc.c
-@@ -99,14 +99,11 @@ sesInfoFree(struct cifs_ses *buf_to_free
- 	kfree(buf_to_free->serverOS);
- 	kfree(buf_to_free->serverDomain);
- 	kfree(buf_to_free->serverNOS);
--	if (buf_to_free->password) {
--		memset(buf_to_free->password, 0, strlen(buf_to_free->password));
--		kfree(buf_to_free->password);
--	}
-+	kzfree(buf_to_free->password);
- 	kfree(buf_to_free->user_name);
- 	kfree(buf_to_free->domainName);
--	kfree(buf_to_free->auth_key.response);
--	kfree(buf_to_free);
-+	kzfree(buf_to_free->auth_key.response);
-+	kzfree(buf_to_free);
+-	if (!memcmp(new_desc, KEY_TRUSTED_PREFIX, KEY_TRUSTED_PREFIX_LEN)) {
+-		if (strlen(new_desc) == KEY_TRUSTED_PREFIX_LEN)
+-			goto out;
+-		if (orig_desc)
+-			if (memcmp(new_desc, orig_desc, KEY_TRUSTED_PREFIX_LEN))
+-				goto out;
+-	} else if (!memcmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN)) {
+-		if (strlen(new_desc) == KEY_USER_PREFIX_LEN)
+-			goto out;
+-		if (orig_desc)
+-			if (memcmp(new_desc, orig_desc, KEY_USER_PREFIX_LEN))
+-				goto out;
+-	} else
+-		goto out;
++	int prefix_len;
++
++	if (!strncmp(new_desc, KEY_TRUSTED_PREFIX, KEY_TRUSTED_PREFIX_LEN))
++		prefix_len = KEY_TRUSTED_PREFIX_LEN;
++	else if (!strncmp(new_desc, KEY_USER_PREFIX, KEY_USER_PREFIX_LEN))
++		prefix_len = KEY_USER_PREFIX_LEN;
++	else
++		return -EINVAL;
++
++	if (!new_desc[prefix_len])
++		return -EINVAL;
++
++	if (orig_desc && strncmp(new_desc, orig_desc, prefix_len))
++		return -EINVAL;
++
+ 	return 0;
+-out:
+-	return -EINVAL;
  }
  
- struct cifs_tcon *
-@@ -136,10 +133,7 @@ tconInfoFree(struct cifs_tcon *buf_to_fr
- 	}
- 	atomic_dec(&tconInfoAllocCount);
- 	kfree(buf_to_free->nativeFileSystem);
--	if (buf_to_free->password) {
--		memset(buf_to_free->password, 0, strlen(buf_to_free->password));
--		kfree(buf_to_free->password);
--	}
-+	kzfree(buf_to_free->password);
- 	kfree(buf_to_free);
- }
- 
+ /*
