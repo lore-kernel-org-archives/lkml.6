@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033060AbeBOOK1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 09:10:27 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:48541 "EHLO
+        id S1033086AbeBOOMH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 09:12:07 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:48556 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032283AbeBOOKY (ORCPT
+        with ESMTP id S1032283AbeBOOMF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 09:10:24 -0500
+        Thu, 15 Feb 2018 09:12:05 -0500
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Kieran Bingham <kbingham@kernel.org>
 Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
@@ -19,12 +19,12 @@ Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/8] arm64: dts: renesas: r8a77995: Add LVDS support
-Date: Thu, 15 Feb 2018 16:10:58 +0200
-Message-ID: <1558036.KTdDODi8F6@avalon>
+Subject: Re: [PATCH 6/8] arm64: dts: renesas: r8a77995-draak: Enable DU
+Date: Thu, 15 Feb 2018 16:12:38 +0200
+Message-ID: <6281511.bskcdgqsgb@avalon>
 Organization: Ideas on Board Oy
-In-Reply-To: <1518683903-10681-6-git-send-email-kbingham@kernel.org>
-References: <1518683903-10681-1-git-send-email-kbingham@kernel.org> <1518683903-10681-6-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1518683903-10681-7-git-send-email-kbingham@kernel.org>
+References: <1518683903-10681-1-git-send-email-kbingham@kernel.org> <1518683903-10681-7-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -36,96 +36,99 @@ Hi Kieran,
 
 Thank you for the patch.
 
-On Thursday, 15 February 2018 10:38:20 EET Kieran Bingham wrote:
+On Thursday, 15 February 2018 10:38:21 EET Kieran Bingham wrote:
 > From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > 
-> The r8a77995 D3 platform has 2 LVDS channels connected to the DU.
+> Enable the DU, providing only the VGA output for now.
 > 
 > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+I assume Simon will take care of this patch.
+
 > ---
->  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 52 ++++++++++++++++++++++++++++
->  1 file changed, 52 insertions(+)
+>  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 51 +++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> b/arch/arm64/boot/dts/renesas/r8a77995.dtsi index
-> a57d5fecf79c..7851e37cfff1 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> @@ -773,18 +773,70 @@
->  				port@1 {
->  					reg = <1>;
->  					du_out_lvds0: endpoint {
-> +						remote-endpoint = <&du_out_lvds0>;
->  					};
->  				};
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts index
+> af07da240be0..668e246dfc5d 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> @@ -27,6 +27,38 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
 > 
->  				port@2 {
->  					reg = <2>;
->  					du_out_lvds1: endpoint {
-> +						remote-endpoint = <&du_out_lvds1>;
-
-It's interesting how the DU ports reference themselves :-)
-
->  					};
->  				};
->  			};
+> +	vga {
+> +		compatible = "vga-connector";
+> +
+> +		port {
+> +			vga_in: endpoint {
+> +				remote-endpoint = <&adv7123_out>;
+> +			};
+> +		};
+> +	};
+> +
+> +	vga-encoder {
+> +		compatible = "adi,adv7123";
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				adv7123_in: endpoint {
+> +					remote-endpoint = <&du_out_rgb>;
+> +				};
+> +			};
+> +			port@1 {
+> +				reg = <1>;
+> +				adv7123_out: endpoint {
+> +					remote-endpoint = <&vga_in>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+>  	memory@48000000 {
+>  		device_type = "memory";
+>  		/* first 128MB is reserved for secure area. */
+> @@ -46,6 +78,11 @@
 >  		};
 >  	};
 > 
-> +	lvds0: lvds@feb90000 {
-> +		compatible = "renesas,lvds-r8a77995";
-> +		reg = <0 0xfeb90000 0 0x20>;
-> +		clocks = <&cpg CPG_MOD 727>;
-> +		status = "disabled";
+> +	du_pins: du {
+> +		groups = "du_rgb888", "du_sync", "du_disp", "du_dotclkout0";
+> +		function = "du";
+> +	};
 > +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
+>  	i2c0_pins: i2c0 {
+>  		groups = "i2c0";
+>  		function = "i2c0";
+> @@ -95,6 +132,20 @@
+>  	status = "okay";
+>  };
+> 
+> +&du {
+> +	pinctrl-0 = <&du_pins>;
+> +	pinctrl-names = "default";
+> +	status = "okay";
 > +
-> +			port@0 {
-> +				reg = <0>;
-> +				lvds0_in: endpoint {
-> +					remote-endpoint = <&du_out_lvds0>;
-> +				};
-> +			};
-> +
-> +			port@1 {
-> +				reg = <1>;
-> +				lvds0_out: endpoint {
-> +				};
+> +	ports {
+> +		port@0 {
+> +			endpoint {
+> +				remote-endpoint = <&adv7123_in>;
 > +			};
 > +		};
 > +	};
+> +};
 > +
-> +	lvds1: lvds@feb90100 {
-> +		compatible = "renesas,lvds-r8a77995";
-> +		reg = <0 0xfeb90100 0 0x20>;
-> +		clocks = <&cpg CPG_MOD 727>;
-> +		status = "disabled";
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +				lvds1_in: endpoint {
-> +					remote-endpoint = <&du_out_lvds1>;
-> +				};
-> +			};
-> +
-> +			port@1 {
-> +				reg = <1>;
-> +				lvds1_out: endpoint {
-> +				};
-> +			};
-> +		};
-> +	};
-> +
->  	timer {
->  		compatible = "arm,armv8-timer";
->  		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) |
-> IRQ_TYPE_LEVEL_LOW)>,
+>  &ehci0 {
+>  	status = "okay";
+>  };
+
 
 -- 
 Regards,
