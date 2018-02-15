@@ -1,33 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425580AbeBOQMw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 11:12:52 -0500
-Received: from gateway24.websitewelcome.com ([192.185.50.66]:40428 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1424433AbeBOQMt (ORCPT
+        id S1424728AbeBOQNA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 11:13:00 -0500
+Received: from gateway23.websitewelcome.com ([192.185.50.119]:15492 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1425587AbeBOQM4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:12:49 -0500
-Subject: Re: [PATCH v3 4/8] i2c: ov9650: use 64-bit arithmetic instead of
- 32-bit
-To: Hans Verkuil <hverkuil@xs4all.nl>, Sakari Ailus <sakari.ailus@iki.fi>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1517929336.git.gustavo@embeddedor.com>
- <6f6fd607cf3428d6ab115f1deaa82c4963b170f1.1517929336.git.gustavo@embeddedor.com>
- <20180207215944.quwowjy52dclk7uc@valkosipuli.retiisi.org.uk>
- <3518830f-180c-2bf0-1319-eb4af8cc556f@embeddedor.com>
- <16032bbb-5063-4f94-bebd-3f512bed8199@xs4all.nl>
+        Thu, 15 Feb 2018 11:12:56 -0500
+Subject: Re: [PATCH] drm/amdkfd: Use ARRAY_SIZE macro in
+ kfd_build_sysfs_node_entry
+To: Oded Gabbay <oded.gabbay@gmail.com>
+Cc: Felix Kuehling <felix.kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+References: <20180119003955.GA28885@embeddedor.com>
+ <1fea2528-11a5-0210-6350-e916ebfebbdf@amd.com>
+ <422e897f-4b65-10f6-4184-36b78b6ea274@embeddedor.com>
+ <CAFCwf13TGeBGiS_4KiTWwbY3T23JZkWod6DJE-Mi=RmYXRr54w@mail.gmail.com>
 From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Message-ID: <46ae5358-0f35-55f2-b324-17d211a24aa1@embeddedor.com>
-Date: Thu, 15 Feb 2018 10:12:46 -0600
+Message-ID: <ea676cf7-622e-1ba7-18ff-3510410261e8@embeddedor.com>
+Date: Thu, 15 Feb 2018 10:10:57 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <16032bbb-5063-4f94-bebd-3f512bed8199@xs4all.nl>
+In-Reply-To: <CAFCwf13TGeBGiS_4KiTWwbY3T23JZkWod6DJE-Mi=RmYXRr54w@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -36,120 +40,80 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.175.4.238
 X-Source-L: No
-X-Exim-ID: 1emM9P-003uyJ-UQ
+X-Exim-ID: 1emM7e-003t8A-E7
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: ([192.168.1.66]) [189.175.4.238]:45690
+X-Source-Sender: ([192.168.1.66]) [189.175.4.238]:45678
 X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 27
+X-Email-Count: 15
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Oded,
 
-
-On 02/15/2018 07:52 AM, Hans Verkuil wrote:
-> On 08/02/18 17:39, Gustavo A. R. Silva wrote:
->> Hi Sakari,
->>
->> On 02/07/2018 03:59 PM, Sakari Ailus wrote:
->>> Hi Gustavo,
->>>
->>> On Tue, Feb 06, 2018 at 10:47:50AM -0600, Gustavo A. R. Silva wrote:
->>>> Add suffix ULL to constants 10000 and 1000000 in order to give the
->>>> compiler complete information about the proper arithmetic to use.
->>>> Notice that these constants are used in contexts that expect
->>>> expressions of type u64 (64 bits, unsigned).
->>>>
->>>> The following expressions:
->>>>
->>>> (u64)(fi->interval.numerator * 10000)
->>>> (u64)(iv->interval.numerator * 10000)
->>>> fiv->interval.numerator * 1000000 / fiv->interval.denominator
->>>>
->>>> are currently being evaluated using 32-bit arithmetic.
->>>>
->>>> Notice that those casts to u64 for the first two expressions are only
->>>> effective after such expressions are evaluated using 32-bit arithmetic,
->>>> which leads to potential integer overflows. So based on those casts, it
->>>> seems that the original intention of the code is to actually use 64-bit
->>>> arithmetic instead of 32-bit.
->>>>
->>>> Also, notice that once the suffix ULL is added to the constants, the
->>>> outer casts to u64 are no longer needed.
->>>>
->>>> Addresses-Coverity-ID: 1324146 ("Unintentional integer overflow")
->>>> Fixes: 84a15ded76ec ("[media] V4L: Add driver for OV9650/52 image sensors")
->>>> Fixes: 79211c8ed19c ("remove abs64()")
->>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>>> ---
->>>> Changes in v2:
->>>>    - Update subject and changelog to better reflect the proposed code changes.
->>>>    - Add suffix ULL to constants instead of casting variables.
->>>>    - Remove unnecessary casts to u64 as part of the code change.
->>>>    - Extend the same code change to other similar expressions.
->>>>
->>>> Changes in v3:
->>>>    - None.
->>>>
->>>>    drivers/media/i2c/ov9650.c | 9 +++++----
->>>>    1 file changed, 5 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/drivers/media/i2c/ov9650.c b/drivers/media/i2c/ov9650.c
->>>> index e519f27..e716e98 100644
->>>> --- a/drivers/media/i2c/ov9650.c
->>>> +++ b/drivers/media/i2c/ov9650.c
->>>> @@ -1130,7 +1130,7 @@ static int __ov965x_set_frame_interval(struct ov965x *ov965x,
->>>>        if (fi->interval.denominator == 0)
->>>>            return -EINVAL;
->>>>    -    req_int = (u64)(fi->interval.numerator * 10000) /
->>>> +    req_int = fi->interval.numerator * 10000ULL /
->>>>            fi->interval.denominator;
->>>
->>> This has been addressed by your earlier patch "i2c: ov9650: fix potential integer overflow in
->>> __ov965x_set_frame_interval" I tweaked a little. It's not in media tree
->>> master yet.
->>>
->>
->> Yeah. Actually this patch is supposed to be an improved version of the one you mention. That is why this is version 3.
->>
->> Also, I wonder if the same issue you mention below regarding 32-bit ARM applies in this case too?
->>
->>>>          for (i = 0; i < ARRAY_SIZE(ov965x_intervals); i++) {
->>>> @@ -1139,7 +1139,7 @@ static int __ov965x_set_frame_interval(struct ov965x *ov965x,
->>>>            if (mbus_fmt->width != iv->size.width ||
->>>>                mbus_fmt->height != iv->size.height)
->>>>                continue;
->>>> -        err = abs((u64)(iv->interval.numerator * 10000) /
->>>> +        err = abs(iv->interval.numerator * 10000ULL /
->>>
->>> This and the chunk below won't work on e.g. 32-bit ARM. do_div(), please.
->>>
->>
->> Thanks for pointing this out.
->>
->>>>                    iv->interval.denominator - req_int);
->>>>            if (err < min_err) {
->>>>                fiv = iv;
->>>> @@ -1148,8 +1148,9 @@ static int __ov965x_set_frame_interval(struct ov965x *ov965x,
->>>>        }
->>>>        ov965x->fiv = fiv;
->>>>    -    v4l2_dbg(1, debug, &ov965x->sd, "Changed frame interval to %u us\n",
->>>> -         fiv->interval.numerator * 1000000 / fiv->interval.denominator);
->>>> +    v4l2_dbg(1, debug, &ov965x->sd, "Changed frame interval to %llu us\n",
->>>> +         fiv->interval.numerator * 1000000ULL /
->>>> +         fiv->interval.denominator);
->>
->> I wonder if do_div should be used for the code above?
+On 02/15/2018 04:08 AM, Oded Gabbay wrote:
+> Hi Gustavo,
+> The patch is queued for the merge window of kernel 4.17 (opens in
+> about 7 weeks from now).
 > 
-> Yes, do_div should be used.
->
 
-I got it.
+Awesome.
 
-Thanks, Hans.
+Thanks for the info.
 --
 Gustavo
+
+> Oded
+> 
+> On Wed, Feb 14, 2018 at 11:30 PM, Gustavo A. R. Silva
+> <garsilva@embeddedor.com> wrote:
+>> Hi all,
+>>
+>> I was just wondering about the status of this patch.
+>>
+>> Thanks
+>> --
+>> Gustavo
+>>
+>>
+>> On 01/19/2018 04:18 PM, Felix Kuehling wrote:
+>>>
+>>> Looks good. This change is Reviewed-by: Felix Kuehling
+>>> <Felix.Kuehling@amd.com>
+>>>
+>>> Regards,
+>>>     Felix
+>>>
+>>>
+>>> On 2018-01-18 07:39 PM, Gustavo A. R. Silva wrote:
+>>>>
+>>>> Use ARRAY_SIZE instead of dividing sizeof array with sizeof an element.
+>>>>
+>>>> This issue was detected with the help of Coccinelle.
+>>>>
+>>>> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+>>>> ---
+>>>>    drivers/gpu/drm/amd/amdkfd/kfd_topology.c | 2 +-
+>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
+>>>> b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
+>>>> index c6a7609..7783250 100644
+>>>> --- a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
+>>>> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
+>>>> @@ -677,7 +677,7 @@ static int kfd_build_sysfs_node_entry(struct
+>>>> kfd_topology_device *dev,
+>>>>          }
+>>>>          /* All hardware blocks have the same number of attributes. */
+>>>> -       num_attrs = sizeof(perf_attr_iommu)/sizeof(struct kfd_perf_attr);
+>>>> +       num_attrs = ARRAY_SIZE(perf_attr_iommu);
+>>>>          list_for_each_entry(perf, &dev->perf_props, list) {
+>>>>                  perf->attr_group = kzalloc(sizeof(struct kfd_perf_attr)
+>>>>                          * num_attrs + sizeof(struct attribute_group),
+>>>
+>>>
+>>
