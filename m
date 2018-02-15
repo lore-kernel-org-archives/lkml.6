@@ -1,88 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033628AbeBOPBe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 10:01:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49822 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033445AbeBOPBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 10:01:33 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DE6F217D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Thu, 15 Feb 2018 12:01:30 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Sangwon Hong <qpakzk@gmail.com>, linux-kernel@vger.kernel.org,
-        Jiri Olsa <jolsa@kernel.org>, Taeung Song <treeze.taeung@gmail.com>,
-        kernel-team@lge.com
-Subject: Re: [PATCH 1/2] perf kmem: Document a missing option & an argument
-Message-ID: <20180215150130.GH30974@kernel.org>
-References: <1518381517-30766-1-git-send-email-qpakzk@gmail.com>
- <20180212015128.GC31513@sejong>
+        id S1033704AbeBOPIv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 10:08:51 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:44481 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033445AbeBOPIu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 10:08:50 -0500
+Date: Thu, 15 Feb 2018 16:08:45 +0100
+From: Lukas Senger <lukas@fridolin.com>
+To: Rodolfo Giometti <giometti@enneenne.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] pps-gpio: Set echo GPIO pin via devicetree
+Message-ID: <20180215160845.72da12c3@dinghy.localdomain>
+In-Reply-To: <eb34d5ef-2e99-5983-8bdd-bf6fd0dc8bd2@enneenne.com>
+References: <ee4fdd16-0343-1a01-63a7-06046026659a@enneenne.com>
+        <20180215125921.29494-1-lukas@fridolin.com>
+        <20180215125921.29494-3-lukas@fridolin.com>
+        <eb34d5ef-2e99-5983-8bdd-bf6fd0dc8bd2@enneenne.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180212015128.GC31513@sejong>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:CYr+lGsynp2hCkM4J/lKeDeuZIRxFDUhseUFMZiMzEBvPisZf8P
+ 0NJgM6NeCeoC0TnDabf9CuN2XMfLUczJNtPDWenGY2LRPDqS3AF8IrUxYxOdmDoQafEcO29
+ oSjZX4zi5QLAEn9D/Mf84fjK6MWbN//3i+7hF2txOGNaa/cX7ixCt3MvKs1GWHLgTLdBZnB
+ 1GhyqXX2Rszw9GnsF8LVw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:d3+EZ7IB0Rw=:KwJsUOASAVYdlo4ReZwkiO
+ z8y5t6uZCmJQpLOxnir4A5vougIs9nSaF+Jd/C73nIz7/CW5oRcIx30b75NdcQOjjLjJRKNZH
+ HjMduWCBdyWjSAyX71cMOAgfe5Vz+u4j6sNi2rYeKJYFQ/CJ5DemcS5wkDkn1YvwxHGIP8P5G
+ 1ytOuqNAxAlYb7PzmT8LJDpxrSVFIwkmK6J3MIJtaumydtJD4zoEVXivpB7kvOLz2RX0b6whH
+ 5nAvm3Q08IEXzLQ/hfGgHF7LNzUFUNB0axbUEd2vcSBU6G4hcQs6ur20Y4xuYdMUyeUD6e8TS
+ rURmzXdiR4SXVvyiVYJa0HU44u9o5jHkUwEkfyGZx/z9hyWJLliYPSMZPJ+0ViwsYk8luoSWv
+ VzrHgvbJBi44yCByHTBNurINu+LjW4uM6wjqa7NAecAqeoBCd0hZ23OVNbcKins8zX6c0PJ/a
+ acD/tEtMmdzuW/ODCRrRx/rexUd+koJYRJpmD+LmMiavSLEaAcVAK8bF3v6p26NoHPsmF4th1
+ 9x0Q4Ob3NhcXb1z+BHq6M8wef+2US3c0/9Cmc2v5yWXVBufpBvTXJRWMNczS5dpfsrpVAQ3vg
+ /Uzu0muVu4z4lUM7froGSuZOdwHfGEYhwdze6TWosnTqzcuK8ptuKGqfow7sewPvS/HxfQH+o
+ LfexHOXprLOklbV+FfMDnGr0PFrDbt0Qe1TKtw0zrbVKeoqSSunzxz2wdvCQl4kwUlAYFFOBg
+ NCehKEOJfjkhtKQ+ztSopADh4Tx/3uaICAy2KwB7bxIecJ1WWBTegsj+PYs=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Feb 12, 2018 at 10:51:28AM +0900, Namhyung Kim escreveu:
-> On Mon, Feb 12, 2018 at 05:38:36AM +0900, Sangwon Hong wrote:
-> > First, perf kmem has --force option, but didn't document it on the man
-> > page. So add missing --force option.
-> > 
-> > Second, --time option has to get a value, but didn't specify it on the
-> > man page. So describe --time option's argument.
-> > 
-> > Cc: Jiri Olsa <jolsa@kernel.org>
-> > Cc: Namhyung Kim <namhyung@kernel.org>
-> > Cc: Taeung Song <treeze.taeung@gmail.com>
-> > Signed-off-by: Sangwon Hong <qpakzk@gmail.com>
+> > @@ -20,18 +21,20 @@
+> >   		target = <&gpio>;
+> >   		__overlay__ {
+> >   			pps_pins: pps_pins@12 {
+> > -				brcm,pins =     <18>;
+> > -				brcm,function = <0>;    // in
+> > -				brcm,pull =     <0>;    // off
+> > +				brcm,pins =     <18 17>;
+> > +				brcm,function = <0 1>;    // in
+> > out
+> > +				brcm,pull =     <0 0>;    // off
+> > off  
 > 
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
+> These modifications are not PPS related.
 > 
-> A nit below though..
+> >   			};
+> >   		};
+> >   	};
+> >   
+> >   	__overrides__ {
+> > -		gpiopin = <&pps>,"gpios:4",
+> > +		gpiopin = <&pps>,"in-gpios:4",
+> >   			  <&pps>,"reg:0",
+> >   			  <&pps_pins>,"brcm,pins:0",
+> >   			  <&pps_pins>,"reg:0";
+> > +		echopin = <&pps>,"out-gpios:4",
+> > +			  <&pps_pins>,"brcm,pins:4";  
 > 
-> 
-> > ---
-> >  tools/perf/Documentation/perf-kmem.txt | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/perf/Documentation/perf-kmem.txt b/tools/perf/Documentation/perf-kmem.txt
-> > index 479fc32..c4aa843 100644
-> > --- a/tools/perf/Documentation/perf-kmem.txt
-> > +++ b/tools/perf/Documentation/perf-kmem.txt
-> > @@ -25,6 +25,9 @@ OPTIONS
-> >  --input=<file>::
-> >  	Select the input file (default: perf.data unless stdin is a fifo)
-> >  
-> > +-f::
-> > +--force::
-> > +	Don't do ownership validation
-> 
-> Please add a blank line here
+> Ditto.
 
-Done
- 
-> Thanks,
-> Namhyung
-> 
-> 
-> >  -v::
-> >  --verbose::
-> >          Be more verbose. (show symbol address, etc)
-> > @@ -61,7 +64,7 @@ OPTIONS
-> >  	default, but this option shows live (currently allocated) pages
-> >  	instead.  (This option works with --page option only)
-> >  
-> > ---time::
-> > +--time=<start>,<stop>::
-> >  	Only analyze samples within given time window: <start>,<stop>. Times
-> >  	have the format seconds.microseconds. If start is not given (i.e., time
-> >  	string is ',x.y') then analysis starts at the beginning of the file. If
-> > -- 
-> > 2.7.4
-> > 
+I don't understand why these modifications are unrelated. Especially
+the echopin-option should exist, shouldn't it?
+
+Cheers,
+Lukas
