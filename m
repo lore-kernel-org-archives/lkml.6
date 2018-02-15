@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2248mbJo48xMyoTNeUxMOJqoC9lkg5qj2yGfOvPVzYkPglc2muBKrsOD9wvt7DJkuHx2MwV5
-ARC-Seal: i=1; a=rsa-sha256; t=1518708799; cv=none;
+X-Google-Smtp-Source: AH8x224gxYi8HI1x7bS6jYnqmF6cX30w20c/eeQgE2l6zG6R63t0BmFW+AuEaVp6To2BTr+xmCjc
+ARC-Seal: i=1; a=rsa-sha256; t=1518708796; cv=none;
         d=google.com; s=arc-20160816;
-        b=gZGuUK0NfiLA/OHS/XDgObN3PIhO1ZpwJhvEJSD++sYXrB7vnHvcDdJorgS2APDcRm
-         mj+sLeZYuOQIvKBhHn8YYxWBzCsBlxA41LVFISSQFa07darKx4M5oq51u3jAcs0xHBdi
-         cXPvCW2vFv9xPiT9G+np3h0Za1hFkSHVRzdIASsxY4HIiPyi4DIIRYb/P6yiJD0DSPAs
-         h2p2w1Oq/yb1aVd5Nw8WVPX7+embuQjp0G3aUK3cNMpD/nuQ5LzuYKLalGa20gI20hz9
-         rlsrEXtEuDZkIFQ97ZwL9dbm8bd3NajiqUbDyw44Nl+csQqk/iaIhiQdjvpXUWaHvv1Z
-         4SuA==
+        b=wXrykcVADZBVc8sBXpHuc60mJ2X29+0v4MiCRrqySvp5t57Oxpc35Prhxq4+DhLwYQ
+         WWAVdD7u+o76m6toO7XQX8hzzsoiuLMEp3vsW8mTKVUYWNa7uaYIrb/N7XoEsMHIPDb3
+         GwkhqBuwdNeU9DJAlmgbzGAqyeNjoS3OdP/wJ00t7a3aeDuqzoaLjkQXJu7NvpELYckL
+         hSgGKp8tPZ8vB299mmg4Eo1eaaxEOYGguTM+CfJU9lwcBEf6Gxm7AU14bwzeQ/c143fc
+         kc0a80sxAe2Scbzhvj/cfOmmBuyOW3HaG+7XRUMUaD+ivZrOm4q+QWBvd4DHLqx26lYM
+         kKvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3fEbLEkoNZCk5ujMyexC+Tb4AQSlEnzFjzeEBiT9zR4=;
-        b=daXU5g5Ar4Gisb4qqqfpQbpH083c+9rY4CqTDeNJtk+Rp8lNNNTOIm4JWmJeahHYUf
-         uQeCe61tDT4qVhsq8iqRZw4HDq2bexIC8wpWwQu9ueiRLrF7awrwIDLchCxZe1ERcpna
-         1uIgUNUXJ3anX4Ya4I9/MaWNfAwylCDLjVzkf05IYT7jy58oA/qyjRMNbMwQU7nWsCen
-         CC4S+RKoRDciQkGlkxSxLEs3avyPYex+DEkQGSmJUNDMJd9dj0Sfp0Raq6OwkXe52Kuv
-         ml4wc5b4Hb5Ogz1sxkiXYbhSZ6FSPvVFxAGl1TAjN9EdiVvoMlYptklJsWwqo0jcUI1H
-         4OLQ==
+        bh=U60GRzeBg6JAEyUd27W40PPbbr9Crt8JbCZI1YtIjjA=;
+        b=Dx1H93lPb6iKv1jD8WYHgwvdGcggtfiTHBiNA7RRVA1xuRz1eNRsdVCq8Qxhn4grpC
+         fg/V5bQXJY5a/Nq+a2nCdmJxSpK+ARGH9CTHeipBqZOBPoal6sRWlKUSnZ+AJ0MIUK7x
+         JK5SZb6XNmEcvWfAU/8qx+mtlYhGIDs50J+WTPKhQg7Qp0jk3F062CQffq35Lm6JBnTi
+         XrkTLplOQm+mgUrb4qMc0Ra44Bop2s3YZY3fqm2/1unLZvyFU0Bj1ZdehTH5I7JLggmV
+         r9TBRtMSkMexoqxtvfBWtBnb8Uf2lQk38AN2TviuObc0TgSUudt/mF9ZEG4PH43tRXRQ
+         VNCA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Marc Zyngier <marc.zyngier@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.14 083/195] [Variant 2/Spectre-v2] arm/arm64: KVM: Implement PSCI 1.0 support
-Date: Thu, 15 Feb 2018 16:16:14 +0100
-Message-Id: <20180215151709.855940567@linuxfoundation.org>
+Subject: [PATCH 4.14 082/195] [Variant 2/Spectre-v2] arm/arm64: KVM: Add smccc accessors to PSCI code
+Date: Thu, 15 Feb 2018 16:16:13 +0100
+Message-Id: <20180215151709.790275706@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481598015215569?=
-X-GMAIL-MSGID: =?utf-8?q?1592481598015215569?=
+X-GMAIL-THRID: =?utf-8?q?1592481594942560702?=
+X-GMAIL-MSGID: =?utf-8?q?1592481594942560702?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,16 +54,10 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Marc Zyngier <marc.zyngier@arm.com>
 
 
-Commit 58e0b2239a4d upstream.
+Commit 84684fecd7ea upstream.
 
-PSCI 1.0 can be trivially implemented by providing the FEATURES
-call on top of PSCI 0.2 and returning 1.0 as the PSCI version.
-
-We happily ignore everything else, as they are either optional or
-are clarifications that do not require any additional change.
-
-PSCI 1.0 is now the default until we decide to add a userspace
-selection API.
+Instead of open coding the accesses to the various registers,
+let's add explicit SMCCC accessors.
 
 Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
 Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
@@ -73,87 +67,122 @@ Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/kvm/arm_psci.h |    3 +++
- virt/kvm/arm/psci.c    |   45 ++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 47 insertions(+), 1 deletion(-)
+ virt/kvm/arm/psci.c |   52 ++++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 42 insertions(+), 10 deletions(-)
 
---- a/include/kvm/arm_psci.h
-+++ b/include/kvm/arm_psci.h
-@@ -22,6 +22,9 @@
- 
- #define KVM_ARM_PSCI_0_1	PSCI_VERSION(0, 1)
- #define KVM_ARM_PSCI_0_2	PSCI_VERSION(0, 2)
-+#define KVM_ARM_PSCI_1_0	PSCI_VERSION(1, 0)
-+
-+#define KVM_ARM_PSCI_LATEST	KVM_ARM_PSCI_1_0
- 
- int kvm_psci_version(struct kvm_vcpu *vcpu);
- int kvm_psci_call(struct kvm_vcpu *vcpu);
 --- a/virt/kvm/arm/psci.c
 +++ b/virt/kvm/arm/psci.c
-@@ -234,7 +234,7 @@ static void kvm_psci_system_reset(struct
- int kvm_psci_version(struct kvm_vcpu *vcpu)
- {
- 	if (test_bit(KVM_ARM_VCPU_PSCI_0_2, vcpu->arch.features))
--		return KVM_ARM_PSCI_0_2;
-+		return KVM_ARM_PSCI_LATEST;
+@@ -32,6 +32,38 @@
  
- 	return KVM_ARM_PSCI_0_1;
- }
-@@ -313,6 +313,47 @@ static int kvm_psci_0_2_call(struct kvm_
+ #define AFFINITY_MASK(level)	~((0x1UL << ((level) * MPIDR_LEVEL_BITS)) - 1)
+ 
++static u32 smccc_get_function(struct kvm_vcpu *vcpu)
++{
++	return vcpu_get_reg(vcpu, 0);
++}
++
++static unsigned long smccc_get_arg1(struct kvm_vcpu *vcpu)
++{
++	return vcpu_get_reg(vcpu, 1);
++}
++
++static unsigned long smccc_get_arg2(struct kvm_vcpu *vcpu)
++{
++	return vcpu_get_reg(vcpu, 2);
++}
++
++static unsigned long smccc_get_arg3(struct kvm_vcpu *vcpu)
++{
++	return vcpu_get_reg(vcpu, 3);
++}
++
++static void smccc_set_retval(struct kvm_vcpu *vcpu,
++			     unsigned long a0,
++			     unsigned long a1,
++			     unsigned long a2,
++			     unsigned long a3)
++{
++	vcpu_set_reg(vcpu, 0, a0);
++	vcpu_set_reg(vcpu, 1, a1);
++	vcpu_set_reg(vcpu, 2, a2);
++	vcpu_set_reg(vcpu, 3, a3);
++}
++
+ static unsigned long psci_affinity_mask(unsigned long affinity_level)
+ {
+ 	if (affinity_level <= 3)
+@@ -77,7 +109,7 @@ static unsigned long kvm_psci_vcpu_on(st
+ 	unsigned long context_id;
+ 	phys_addr_t target_pc;
+ 
+-	cpu_id = vcpu_get_reg(source_vcpu, 1) & MPIDR_HWID_BITMASK;
++	cpu_id = smccc_get_arg1(source_vcpu) & MPIDR_HWID_BITMASK;
+ 	if (vcpu_mode_is_32bit(source_vcpu))
+ 		cpu_id &= ~((u32) 0);
+ 
+@@ -96,8 +128,8 @@ static unsigned long kvm_psci_vcpu_on(st
+ 			return PSCI_RET_INVALID_PARAMS;
+ 	}
+ 
+-	target_pc = vcpu_get_reg(source_vcpu, 2);
+-	context_id = vcpu_get_reg(source_vcpu, 3);
++	target_pc = smccc_get_arg2(source_vcpu);
++	context_id = smccc_get_arg3(source_vcpu);
+ 
+ 	kvm_reset_vcpu(vcpu);
+ 
+@@ -116,7 +148,7 @@ static unsigned long kvm_psci_vcpu_on(st
+ 	 * NOTE: We always update r0 (or x0) because for PSCI v0.1
+ 	 * the general puspose registers are undefined upon CPU_ON.
+ 	 */
+-	vcpu_set_reg(vcpu, 0, context_id);
++	smccc_set_retval(vcpu, context_id, 0, 0, 0);
+ 	vcpu->arch.power_off = false;
+ 	smp_mb();		/* Make sure the above is visible */
+ 
+@@ -136,8 +168,8 @@ static unsigned long kvm_psci_vcpu_affin
+ 	struct kvm *kvm = vcpu->kvm;
+ 	struct kvm_vcpu *tmp;
+ 
+-	target_affinity = vcpu_get_reg(vcpu, 1);
+-	lowest_affinity_level = vcpu_get_reg(vcpu, 2);
++	target_affinity = smccc_get_arg1(vcpu);
++	lowest_affinity_level = smccc_get_arg2(vcpu);
+ 
+ 	/* Determine target affinity mask */
+ 	target_affinity_mask = psci_affinity_mask(lowest_affinity_level);
+@@ -210,7 +242,7 @@ int kvm_psci_version(struct kvm_vcpu *vc
+ static int kvm_psci_0_2_call(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm *kvm = vcpu->kvm;
+-	unsigned long psci_fn = vcpu_get_reg(vcpu, 0) & ~((u32) 0);
++	u32 psci_fn = smccc_get_function(vcpu);
+ 	unsigned long val;
+ 	int ret = 1;
+ 
+@@ -277,14 +309,14 @@ static int kvm_psci_0_2_call(struct kvm_
+ 		break;
+ 	}
+ 
+-	vcpu_set_reg(vcpu, 0, val);
++	smccc_set_retval(vcpu, val, 0, 0, 0);
  	return ret;
  }
  
-+static int kvm_psci_1_0_call(struct kvm_vcpu *vcpu)
-+{
-+	u32 psci_fn = smccc_get_function(vcpu);
-+	u32 feature;
-+	unsigned long val;
-+	int ret = 1;
-+
-+	switch(psci_fn) {
-+	case PSCI_0_2_FN_PSCI_VERSION:
-+		val = KVM_ARM_PSCI_1_0;
-+		break;
-+	case PSCI_1_0_FN_PSCI_FEATURES:
-+		feature = smccc_get_arg1(vcpu);
-+		switch(feature) {
-+		case PSCI_0_2_FN_PSCI_VERSION:
-+		case PSCI_0_2_FN_CPU_SUSPEND:
-+		case PSCI_0_2_FN64_CPU_SUSPEND:
-+		case PSCI_0_2_FN_CPU_OFF:
-+		case PSCI_0_2_FN_CPU_ON:
-+		case PSCI_0_2_FN64_CPU_ON:
-+		case PSCI_0_2_FN_AFFINITY_INFO:
-+		case PSCI_0_2_FN64_AFFINITY_INFO:
-+		case PSCI_0_2_FN_MIGRATE_INFO_TYPE:
-+		case PSCI_0_2_FN_SYSTEM_OFF:
-+		case PSCI_0_2_FN_SYSTEM_RESET:
-+		case PSCI_1_0_FN_PSCI_FEATURES:
-+			val = 0;
-+			break;
-+		default:
-+			val = PSCI_RET_NOT_SUPPORTED;
-+			break;
-+		}
-+		break;
-+	default:
-+		return kvm_psci_0_2_call(vcpu);
-+	}
-+
-+	smccc_set_retval(vcpu, val, 0, 0, 0);
-+	return ret;
-+}
-+
  static int kvm_psci_0_1_call(struct kvm_vcpu *vcpu)
  {
  	struct kvm *kvm = vcpu->kvm;
-@@ -355,6 +396,8 @@ static int kvm_psci_0_1_call(struct kvm_
- int kvm_psci_call(struct kvm_vcpu *vcpu)
- {
- 	switch (kvm_psci_version(vcpu)) {
-+	case KVM_ARM_PSCI_1_0:
-+		return kvm_psci_1_0_call(vcpu);
- 	case KVM_ARM_PSCI_0_2:
- 		return kvm_psci_0_2_call(vcpu);
- 	case KVM_ARM_PSCI_0_1:
+-	unsigned long psci_fn = vcpu_get_reg(vcpu, 0) & ~((u32) 0);
++	u32 psci_fn = smccc_get_function(vcpu);
+ 	unsigned long val;
+ 
+ 	switch (psci_fn) {
+@@ -302,7 +334,7 @@ static int kvm_psci_0_1_call(struct kvm_
+ 		break;
+ 	}
+ 
+-	vcpu_set_reg(vcpu, 0, val);
++	smccc_set_retval(vcpu, val, 0, 0, 0);
+ 	return 1;
+ }
+ 
