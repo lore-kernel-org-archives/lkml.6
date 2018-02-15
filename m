@@ -1,187 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164934AbeBOXaF convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 18:30:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57002 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163785AbeBOXaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 18:30:04 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68858217CC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AH8x227xiymTHDMAI1vHNw1Ey2EIcR7HO3bj7oEEFufXMPaPFPJGcSb+KOlGhDEuU1NJD/Qsox+h8K9WNxZDh/X3F+k=
+        id S1165082AbeBOXcu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 18:32:50 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44464 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1163785AbeBOXcs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 18:32:48 -0500
+Date: Thu, 15 Feb 2018 15:32:59 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org,
+        stern@rowland.harvard.edu, will.deacon@arm.com, peterz@infradead.org,
+        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com
+Subject: Re: [PATCH RFC tip/lkmm 08/10] EXP Remove understore from
+ smp_mb__before_atomic() workings
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180209141832.GA17505@linux.vnet.ibm.com>
+ <1518186031-17997-8-git-send-email-paulmck@linux.vnet.ibm.com>
+ <20180215223009.GA5460@andrea>
+ <20180215224937.GD3617@linux.vnet.ibm.com>
+ <20180215231958.GA7422@andrea>
 MIME-Version: 1.0
-In-Reply-To: <9EB804CA-0EC9-4CBB-965A-F3C8520201E7@gmail.com>
-References: <20180215163602.61162-1-namit@vmware.com> <20180215163602.61162-5-namit@vmware.com>
- <CALCETrUY4uZeG2fz=OQWGuyCOcBBNbep6TaJz82CZSP89=g3-A@mail.gmail.com> <9EB804CA-0EC9-4CBB-965A-F3C8520201E7@gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 15 Feb 2018 23:29:42 +0000
-X-Gmail-Original-Message-ID: <CALCETrVP3BaOapL3eS8Tf=KFeM8VFPqvMoECGRkFa7WPLq=Asw@mail.gmail.com>
-Message-ID: <CALCETrVP3BaOapL3eS8Tf=KFeM8VFPqvMoECGRkFa7WPLq=Asw@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 4/6] x86: Disable PTI on compatibility mode
-To: Nadav Amit <nadav.amit@gmail.com>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>, Willy Tarreau <w@1wt.eu>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180215231958.GA7422@andrea>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18021523-0044-0000-0000-000003E4FF26
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008539; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000253; SDB=6.00990289; UDB=6.00502910; IPR=6.00769637;
+ MB=3.00019576; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-15 23:32:44
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18021523-0045-0000-0000-000008150062
+Message-Id: <20180215233259.GE3617@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-15_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802150279
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 8:58 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
-> Andy Lutomirski <luto@kernel.org> wrote:
->
->> On Thu, Feb 15, 2018 at 4:36 PM, Nadav Amit <namit@vmware.com> wrote:
->>> Based on the understanding that there should be no way for userspace to
->>> address the kernel-space from compatibility mode, disable it while
->>> running in compatibility mode as long as the 64-bit code segment of the
->>> user is not used.
->>>
->>> Reenabling PTI is performed by restoring NX-bits to the userspace
->>> mappings, flushing the TLBs, and notifying all the CPUs that use the
->>> affected mm to disable PTI. Each core responds by removing the present
->>> bit for the 64-bit code-segment, and marking that PTI is disabled on
->>> that core.
->>
->> I dislike this patch because it's conflating two things.  The patch
->> claims to merely disable PTI for compat tasks, whatever those are.
->> But it's also introducing a much stronger concept of what a compat
->> task is.  The kernel currently mostly doesn't care whether a task is
->> "compat" or not, and I think that most remaining code paths that do
->> care are buggy and should be removed.
->>
->> I think the right way to approach this is to add a new arch_prctl()
->> that changes allowable bitness, like this:
->>
->> arch_prctl(ARCH_SET_ALLOWED_GDT_CS, X86_ALLOW_CS32 | X86_ALLOW_CS64);
->>
->> this would set the current task to work the normal way, where 32-bit
->> and 64-bit CS are available.  You could set just X86_ALLOW_CS32 to
->> deny 64-bit mode and just X86_ALLOW_CS64 to deny 32-bit mode.  This
->> would make nice attack surface reduction tools for the more paranoid
->> sandbox users to use.  Doing arch_prctl(ARCH_SET_ALLOWED_GDT_CS, 0)
->> would return -EINVAL.
->>
->> A separate patch would turn PTI off if you set X86_ALLOW_CS32.
->>
->> This has the downside that old code doesn't get the benefit without
->> some code change, but that's not the end of the world.
->>
->>> +static void pti_cpu_update_func(void *info)
->>> +{
->>> +       struct mm_struct *mm = (struct mm_struct *)info;
->>> +
->>> +       if (mm != this_cpu_read(cpu_tlbstate.loaded_mm))
->>> +               return;
->>> +
->>> +       /*
->>> +        * Keep CS64 and CPU settings in sync despite potential concurrent
->>> +        * updates.
->>> +        */
->>> +       set_cpu_pti_disable(READ_ONCE(mm->context.pti_disable));
->>> +}
->>
->> I don't like this at all.  IMO a sane implementation should never
->> change PTI status on a remote CPU.  Just track it per task.
->
-> From your comments in the past, I understood that this requirement
-> (enabling/disabling PTI per mm) came from Linus. I can do it per task, but
-> that means that the NX-bit will always be cleared on the kernel page-table
-> for user mappings.
+On Fri, Feb 16, 2018 at 12:19:58AM +0100, Andrea Parri wrote:
+> On Thu, Feb 15, 2018 at 02:49:37PM -0800, Paul E. McKenney wrote:
+> > On Thu, Feb 15, 2018 at 11:30:09PM +0100, Andrea Parri wrote:
+> > > On Fri, Feb 09, 2018 at 06:20:29AM -0800, Paul E. McKenney wrote:
+> > > > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > 
+> > > nit: s/understore/underscore  (a very understandable lapsus, BTW ;-)
+> > 
+> > ;-)
+> > 
+> > Will fix when squashing.
+> > 
+> > > According to the cover letter, patches 8-10 of this series are intended
+> > > to be squashed together;  it could be useful to add a description then:
+> > > the motivation for these changes might appear "trivial" today;  months/
+> > > years from now?  mmh, I can't put my finger on it ;-)
+> > 
+> > Assuming we keep these patches, agreed.  Something like this for the
+> > aggregated single commit, perhaps:
+> > 
+> > 	tools/memory-model: Convert underscores to hyphens
+> > 
+> > 	Typical cat-language code uses hyphens for word separators in
+> > 	identifiers, but several LKMM identifiers use underscores instead.
+> > 	This commit therefore converts the underscores in the .bell and
+> > 	.cat files for smp_mb__before_atomic(), smp_mb__after_atomic(),
+> > 	and smp_mb__after_spinlock() to hyphens.
+> > 
+> > > IMO,  this descrition should also mention why this solution "is the way
+> > > to go" (e.g., compare with the solution recently implemented by Akira).
+> > 
+> > You lost me here.  Or are you asking for a commit log similar to that
+> > provided by Akira for his forward-port of Alan's unrelated patch?  If
+> > so, please see above.
+> 
+> I was mainly thinking "but rb_dep...";  or you're also planning to
+> rename this annotation and, maybe, the "rb-dep" relation (in order
+> to avoid the conflict)?
 
-I disagree with Linus here, although I could be convinced.  But
-there's still no need for an IPI -- even if it were per-mm, PTI could
-stay on until the next kernel entry.
+The rb_dep relation goes away completely once we catch LKMM up with
+the recent changes that remove smp_read_barrier_depends() from the
+core kernel.  So my current thought is hold back the "_"->"-" commit
+until that catch-up happens.
 
->
->>> +void __pti_reenable(void)
->>> +{
->>> +       struct mm_struct *mm = current->mm;
->>> +       int cpu;
->>> +
->>> +       if (!mm_pti_disable(mm))
->>> +               return;
->>> +
->>> +       /*
->>> +        * Prevent spurious page-fault storm while we set the NX-bit and have
->>> +        * yet not updated the per-CPU pti_disable flag.
->>> +        */
->>> +       down_write(&mm->mmap_sem);
->>> +
->>> +       if (!mm_pti_disable(mm))
->>> +               goto out;
->>> +
->>> +       /*
->>> +        * First, mark the PTI is enabled. Although we do anything yet, we are
->>> +        * safe as long as we do not reenable CS64. Since we did not update the
->>> +        * page tables yet, this may lead to spurious page-faults, but we need
->>> +        * the pti_disable in mm to be set for __pti_set_user_pgd() to do the
->>> +        * right thing.  Holding mmap_sem would ensure matter we hold the
->>> +        * mmap_sem to prevent them from swamping the system.
->>> +        */
->>> +       mm->context.pti_disable = PTI_DISABLE_OFF;
->>> +
->>> +       /* Second, restore the NX bits. */
->>> +       pti_update_user_pgds(mm, true);
->>
->> You're holding mmap_sem, but there are code paths that touch page
->> tables that don't hold mmap_sem, such as the stack extension code.
->
-> Do they change user mappings? These are the only ones pti_update_user_pgds()
-> changes.
+							Thanx, Paul
 
-I think they do -- it's the user stack.  page_table_lock may be more
-appropriate, although I'm far from an expert in this.
-
->
->>> +
->>> +bool pti_handle_segment_not_present(long error_code)
->>> +{
->>> +       if (!static_cpu_has(X86_FEATURE_PTI))
->>> +               return false;
->>> +
->>> +       if ((unsigned short)error_code != GDT_ENTRY_DEFAULT_USER_CS << 3)
->>> +               return false;
->>> +
->>> +       pti_reenable();
->>> +       return true;
->>> +}
->>
->> Please don't.  You're trying to emulate the old behavior here, but
->> you're emulating it wrong.  In particular, you won't trap on LAR.
->
-> Yes, I thought I’ll manage to address LAR, but failed. I thought you said
-> this is not a “show-stopper”. I’ll adapt your approach of using prctl, although
-> it really limits the benefit of this mechanism.
->
-
-It's possible we could get away with adding the prctl but making the
-default be that only the bitness that matches the program being run is
-allowed.  After all, it's possible that CRIU is literally the only
-program that switches bitness using the GDT.  (DOSEMU2 definitely does
-cross-bitness stuff, but it uses the LDT as far as I know.)  And I've
-never been entirely sure that CRIU fully counts toward the Linux
-"don't break ABI" guarantee.
-
-Linus, how would you feel about, by default, preventing 64-bit
-programs from long-jumping to __USER32_CS and vice versa?  I think it
-has some value as a hardening measure.  I've certainly engaged in some
-exploit shenanigans myself that took advantage of the ability to long
-jump/ret to change bitness at will.  This wouldn't affect users of
-modify_ldt() -- 64-bit programs could still create and use their own
-private 32-bit segments with modify_ldt(), and seccomp can (and
-should!) prevent that in sandboxed programs.
-
-In general, I prefer an approach where everything is explicit to an
-approach where we almost, but not quite, emulate the weird historical
-behavior.
-
-Pavel and Cyrill, how annoying would it be if CRIU had to do an extra
-arch_prctl() to enable its cross-bitness shenanigans when
-checkpointing and restoring a 32-bit program?
+>   Andrea
+> 
+> 
+> > 
+> > 							Thanx, Paul
+> > 
+> > >   Andrea
+> > > 
+> > > 
+> > > > ---
+> > > >  tools/memory-model/linux-kernel.bell | 2 +-
+> > > >  tools/memory-model/linux-kernel.cat  | 2 +-
+> > > >  tools/memory-model/linux-kernel.def  | 2 +-
+> > > >  3 files changed, 3 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
+> > > > index b984bbda01a5..558bbef9e08a 100644
+> > > > --- a/tools/memory-model/linux-kernel.bell
+> > > > +++ b/tools/memory-model/linux-kernel.bell
+> > > > @@ -28,7 +28,7 @@ enum Barriers = 'wmb (*smp_wmb*) ||
+> > > >  		'rcu-lock (*rcu_read_lock*)  ||
+> > > >  		'rcu-unlock (*rcu_read_unlock*) ||
+> > > >  		'sync-rcu (*synchronize_rcu*) ||
+> > > > -		'before_atomic (*smp_mb__before_atomic*) ||
+> > > > +		'before-atomic (*smp_mb__before_atomic*) ||
+> > > >  		'after_atomic (*smp_mb__after_atomic*) ||
+> > > >  		'after_spinlock (*smp_mb__after_spinlock*)
+> > > >  instructions F[Barriers]
+> > > > diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+> > > > index babe2b3b0bb3..31c08a44c088 100644
+> > > > --- a/tools/memory-model/linux-kernel.cat
+> > > > +++ b/tools/memory-model/linux-kernel.cat
+> > > > @@ -29,7 +29,7 @@ let rb-dep = [R] ; fencerel(Rb_dep) ; [R]
+> > > >  let rmb = [R \ Noreturn] ; fencerel(Rmb) ; [R \ Noreturn]
+> > > >  let wmb = [W] ; fencerel(Wmb) ; [W]
+> > > >  let mb = ([M] ; fencerel(Mb) ; [M]) |
+> > > > -	([M] ; fencerel(Before_atomic) ; [RMW] ; po? ; [M]) |
+> > > > +	([M] ; fencerel(Before-atomic) ; [RMW] ; po? ; [M]) |
+> > > >  	([M] ; po? ; [RMW] ; fencerel(After_atomic) ; [M]) |
+> > > >  	([M] ; po? ; [LKW] ; fencerel(After_spinlock) ; [M])
+> > > >  let gp = po ; [Sync-rcu] ; po?
+> > > > diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
+> > > > index a397387f77cc..ff4b756f4a44 100644
+> > > > --- a/tools/memory-model/linux-kernel.def
+> > > > +++ b/tools/memory-model/linux-kernel.def
+> > > > @@ -21,7 +21,7 @@ smp_mb() { __fence{mb} ; }
+> > > >  smp_rmb() { __fence{rmb} ; }
+> > > >  smp_wmb() { __fence{wmb} ; }
+> > > >  smp_read_barrier_depends() { __fence{rb_dep}; }
+> > > > -smp_mb__before_atomic() { __fence{before_atomic} ; }
+> > > > +smp_mb__before_atomic() { __fence{before-atomic} ; }
+> > > >  smp_mb__after_atomic() { __fence{after_atomic} ; }
+> > > >  smp_mb__after_spinlock() { __fence{after_spinlock} ; }
+> > > >  
+> > > > -- 
+> > > > 2.5.2
+> > > > 
+> > > 
+> > 
+> 
