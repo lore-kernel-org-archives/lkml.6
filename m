@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225ctyBrCTRhbBr7IiXqIPe6eJYHRg8eUjtYH2kMyGM5uMi5BT0haglQpj72JNQ57QC6Fg/5
-ARC-Seal: i=1; a=rsa-sha256; t=1518708719; cv=none;
+X-Google-Smtp-Source: AH8x226g8FPC/3Bcu84sQoZB42NSinoIpRpKPK/8onHOXjIAbkCfGs6lAJWReoEVItnQGsrk0k8R
+ARC-Seal: i=1; a=rsa-sha256; t=1518708717; cv=none;
         d=google.com; s=arc-20160816;
-        b=q/4SRmMfqvBBAXAnUsWEQWXlbwLz+bQ7ClCjbq7d+Sq/jawQLS/fV5Stmv7OrF68OL
-         /tvqiUILvyVCTlPmX780SDzMc5rUN4u9JiPJLSRryQDhsAI8nujuHty4QpSyxcOqfG1F
-         zkkkfVe0rC1774SchKYyjstCaecWFiD596+7iCaxZwS+9Y3DULGxaOUO3mw0mMQNLxcv
-         gIIpDyWU2ouem/gjHVYgNvYa/l4fxWEEWNo32F1VWB0rZamcMKcpaJ2MS3uIZ8azK4G1
-         KPWbuEDjLwk1lqKik5kfgXHCmv24MsMJJNLdMAexSLkiR9mS3nQpIsif1xzssfgx1fmH
-         YunA==
+        b=VJdG7MmhExGHy7gte/7282wxTDqaKQAD/rN1Q3Tz30simmzBLD6o3tgblgF6Kt4CdY
+         9vI/L3UUjqVZb3+ESoieF7trl4tNfy+eoC5W1Lp8XZqg/9tu8TBcrn/HxHh9C8/s9x4B
+         ngIsjiPGeX8stDHXdd52yKQhbmfdDRJFbwitpdNJLOv0++cTfOurY6kcTW1cZkP4s/Rr
+         4pP5de2J603AAecRaqWSxNU0r6ygXlXXu71dQocz/K2air+rZgTPowP4tWi+TxKpHbUe
+         gfA2TSeNwP36Gp0Ad1UCwIu0zCGcrLlYvTMN1l65F3KdTDiKE2yQM1zo2GfelsvWL7X5
+         w4HA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UerAKAiHtYecZSlLe+6AVyhsLsFNUs36FgwB5yKQQ8c=;
-        b=A+TGWokshTJAgbpkOjYu6z9KZZ4s2VASBjhtDL8P42s55NeHtevNKbXmo8VlWpaHBG
-         s7kyaM42d9GQSzFFLZ6uaWibbHSp9I48z/8d0ch/6FM64961e0ri3m8juM+qvo6OaFoc
-         bIDDnZXZS6ib9KICjoLiJm4fSjR2n/CBA3nurLhqhS9yqxz8S1pm5qNVLmshzXsq3roa
-         rbnuQ2oF/j9rps31+b0pHiI40pbVSdQhngNtIQEHCbWC84+34H1t7PfDMN6gWHA4sXmA
-         Kq3LdvYXzVYl4/R/sht03ByTJl3Cr+KVbHhFaDzJdaF2Q+0txw1f8dHeFsk6uNGuhhro
-         Y/Eg==
+        bh=AfYfZ9ZfS9U1AuU/szDsevNyDDpTuHu+N4flJL3lRag=;
+        b=jMHOab89ma81/BCxp09zra8WXICFZu0hEVrt60LrMjp4P90fhL/MGNs40ORVOx/yZS
+         5x9jH7lEpSR27zuU33TUCtn/YwncCawOp1wzVjJaFZdOg7JEsg9R7xE09iB1jrGj9pTa
+         sMpQuLN/iJp/VHF/tziN279GQ6jBYWf8+a1Vr6KNAHsoAM39Zd8IHY58WxcMr8meKZXq
+         5ikr1h/AVll7e7R6ELaQz2VWxY9PHJ895B/nr/3AbqgZAtDfKZTab3fCLBjeOL914/J0
+         vBAwK/3YSiSJiCcfk28XM7Uv24YoXs4MGRhDlDnG61uF+GBNF6nnFVw+hWxiAb33JUUI
+         1+rw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jayachandran C <jnair@caviumnetworks.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 048/195] [Variant 3/Meltdown] arm64: cputype: Add MIDR values for Cavium ThunderX2 CPUs
-Date: Thu, 15 Feb 2018 16:15:39 +0100
-Message-Id: <20180215151708.133706586@linuxfoundation.org>
+	Yang Shunyong <shunyong.yang@hxt-semitech.com>,
+	Adam Wallis <awallis@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>
+Subject: [PATCH 4.14 007/195] dmaengine: dmatest: fix container_of member in dmatest_callback
+Date: Thu, 15 Feb 2018 16:14:58 +0100
+Message-Id: <20180215151706.118253992@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481514543992610?=
-X-GMAIL-MSGID: =?utf-8?q?1592481514543992610?=
+X-GMAIL-THRID: =?utf-8?q?1592480912266361041?=
+X-GMAIL-MSGID: =?utf-8?q?1592481511888233539?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,39 +49,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jayachandran C <jnair@caviumnetworks.com>
+From: Yang Shunyong <shunyong.yang@hxt-semitech.com>
 
+commit 66b3bd2356e0a1531c71a3dcf96944621e25c17c upstream.
 
-Commit 0d90718871fe upstream.
+The type of arg passed to dmatest_callback is struct dmatest_done.
+It refers to test_done in struct dmatest_thread, not done_wait.
 
-Add the older Broadcom ID as well as the new Cavium ID for ThunderX2
-CPUs.
-
-Signed-off-by: Jayachandran C <jnair@caviumnetworks.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Fixes: 6f6a23a213be ("dmaengine: dmatest: move callback wait ...")
+Signed-off-by: Yang Shunyong <shunyong.yang@hxt-semitech.com>
+Acked-by: Adam Wallis <awallis@codeaurora.org>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/include/asm/cputype.h |    3 +++
- 1 file changed, 3 insertions(+)
 
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -87,6 +87,7 @@
- #define CAVIUM_CPU_PART_THUNDERX	0x0A1
- #define CAVIUM_CPU_PART_THUNDERX_81XX	0x0A2
- #define CAVIUM_CPU_PART_THUNDERX_83XX	0x0A3
-+#define CAVIUM_CPU_PART_THUNDERX2	0x0AF
- 
- #define BRCM_CPU_PART_VULCAN		0x516
- 
-@@ -100,6 +101,8 @@
- #define MIDR_THUNDERX	MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX)
- #define MIDR_THUNDERX_81XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_81XX)
- #define MIDR_THUNDERX_83XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_83XX)
-+#define MIDR_CAVIUM_THUNDERX2 MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX2)
-+#define MIDR_BRCM_VULCAN MIDR_CPU_MODEL(ARM_CPU_IMP_BRCM, BRCM_CPU_PART_VULCAN)
- #define MIDR_QCOM_FALKOR_V1 MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR_V1)
- #define MIDR_QCOM_FALKOR MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR)
- #define MIDR_QCOM_KRYO MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO)
+---
+ drivers/dma/dmatest.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/dma/dmatest.c
++++ b/drivers/dma/dmatest.c
+@@ -355,7 +355,7 @@ static void dmatest_callback(void *arg)
+ {
+ 	struct dmatest_done *done = arg;
+ 	struct dmatest_thread *thread =
+-		container_of(arg, struct dmatest_thread, done_wait);
++		container_of(done, struct dmatest_thread, test_done);
+ 	if (!thread->done) {
+ 		done->done = true;
+ 		wake_up_all(done->wait);
