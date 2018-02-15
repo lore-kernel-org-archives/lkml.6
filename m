@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2278XozZgHR2DFusq0bg5A8r9+EJawnEbp2bk6jeMWq9QnmLBRb1u1u7vKrRxMgMlyrZ47Kz
-ARC-Seal: i=1; a=rsa-sha256; t=1518708961; cv=none;
+X-Google-Smtp-Source: AH8x226nmX4Wz0lgz7YyEGzQMi5q17fJR0xNikDzA6LAPHZeREVfUNtOXLagyEz91lWP3nfpTClR
+ARC-Seal: i=1; a=rsa-sha256; t=1518708959; cv=none;
         d=google.com; s=arc-20160816;
-        b=efdK9y2KLQCqSXHxDm88zvWezw6lhex1zsZv91dj+KQkHKfvG6rnfn+K4GnUZotN7g
-         lkopnm5A95yCeBU47VF6TovYJmQRGt2TnSKrLMUVLHkyNRK+yDUL6M3jWfNAREfBkDsv
-         Lxh5SFjwNHrGytPgfCULVPW6Nre5tfCCDB/xmd6u6UwZOpChywU7d86jMK9dlOTO+P6w
-         YgXe5L3jSB1IU9rFtPXYT6uCMEc4iBjlbqYp64WSPENq97h89hNlOiiCC/YQ81ipOpuz
-         63aGzzhTGFitxNiXrHBuxCT86mes490NCnRNLxk/8vzl5kvwmjIKe9fGK+trRc2+QcT3
-         wyMQ==
+        b=p81WhiK29HlWVPr2YmJ5SunxkQA8nfr08BLR+yIU8yzig3Tx9QEh/sEkT9LX1Aa6Et
+         MWUUE0haUYnX0K8ZaxmOsQrHm5iEtOU9ayG5BuoB6SRNP6/Tfv0gpbYvlJLh0zpX3OAa
+         udWjtU/vYteEsCs1UNDljeumVf0bowOi0RSu2XPrEmIPx2Q01iDdbGAomEVSwogeczCx
+         tHrZ+YWFm24LrgILOJW9isrkv18F+kyzGWgxbCsSVP8O2l3A0y/mG9kxzeK452GDm2AC
+         X78kJJWjfy8Er7SrLjVXb49+3wyAWCYpLl0S2gTEGNIuqFQj7O3vu2jbfXlCRCilFCZL
+         qCSw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wEUROyW0xcs2ke/Rfa4LhcKTvsQmJ0GlTP5HKcxlUAc=;
-        b=fD+rdLTm3/X+SlYMffIeX5C2H+Jg9VIn8ExYXASt9xOhwrYJDSdPHWSVoyn2IapsGP
-         TT/6HDxH+qLYyUqTSTu0lm5dX/WndOEDr0bqhGniXhjuP5+o9WDY39Sw5HWZDK5n504q
-         L3H9JkbFxyReU/w+niYzrulBvzzlcgxTTCwnNGIYUVI10+ur1BZ7MZUrAWc3SrdHvak2
-         7RIVkB2m5GhLo5OPph9Sm7PgPSFWudRrE813EnixQ4yneMIeDWdVfH92RgGSXb+MlMi9
-         KWGuhOmK9I8NeMmNir/F0S9U3CJPfCGUu/Bjdvp4Mv+uOEOQryyH97OpUwz0LuMu+C2L
-         Nh3Q==
+        bh=tck2rzMlICxbVssdbg527+duMBONC7JS4ZF1tRahKwA=;
+        b=GJSkZ0pD48dFGf1hcgpJ/pkdg8ywMAbpWzSsLfK9/+lUU4CFY6sBqWExAjaNXbP0r5
+         tH2Ir26vHwqIFB56iLv0yaBH7epj8zpnXKm0lNXpuJpwSoFIEQv1qa1HR8gyET6+nKvS
+         f04w8jBZua3uylBhRNrnKQWmt6HIWSsIvRfKGOYtjyli5h8zTU4oK0s1L/Vfgi+9Vk6k
+         xyGuShdeobdqDkio936TSzpp0Z1X0H7kinFZgq1XWMkbcR6Lx9vimdurrkFbqsCLes8v
+         bL1+OujLN3YjW3Sc3hDgeXL/Y0G23wiXzm9ajV5F15RxBFspIfrN8TQXX2s5ZSrKGqcL
+         zoTA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ulf Magnusson <ulfalizer@gmail.com>,
-	Paul Mackerras <paulus@ozlabs.org>
-Subject: [PATCH 4.14 142/195] KVM: PPC: Book3S PR: Fix broken select due to misspelling
-Date: Thu, 15 Feb 2018 16:17:13 +0100
-Message-Id: <20180215151712.893209045@linuxfoundation.org>
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Christoffer Dall <christoffer.dall@linaro.org>,
+	James Morse <james.morse@arm.com>
+Subject: [PATCH 4.14 141/195] KVM: arm/arm64: Handle CPU_PM_ENTER_FAILED
+Date: Thu, 15 Feb 2018 16:17:12 +0100
+Message-Id: <20180215151712.834917069@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481768610584861?=
-X-GMAIL-MSGID: =?utf-8?q?1592481768610584861?=
+X-GMAIL-THRID: =?utf-8?q?1592481257354306127?=
+X-GMAIL-MSGID: =?utf-8?q?1592481765863443291?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,38 +49,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ulf Magnusson <ulfalizer@gmail.com>
+From: James Morse <james.morse@arm.com>
 
-commit 57ea5f161a7de5b1913c212d04f57a175b159fdf upstream.
+commit 58d6b15e9da5042a99c9c30ad725792e4569150e upstream.
 
-Commit 76d837a4c0f9 ("KVM: PPC: Book3S PR: Don't include SPAPR TCE code
-on non-pseries platforms") added a reference to the globally undefined
-symbol PPC_SERIES. Looking at the rest of the commit, PPC_PSERIES was
-probably intended.
+cpu_pm_enter() calls the pm notifier chain with CPU_PM_ENTER, then if
+there is a failure: CPU_PM_ENTER_FAILED.
 
-Change PPC_SERIES to PPC_PSERIES.
+When KVM receives CPU_PM_ENTER it calls cpu_hyp_reset() which will
+return us to the hyp-stub. If we subsequently get a CPU_PM_ENTER_FAILED,
+KVM does nothing, leaving the CPU running with the hyp-stub, at odds
+with kvm_arm_hardware_enabled.
 
-Discovered with the
-https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
-script.
+Add CPU_PM_ENTER_FAILED as a fallthrough for CPU_PM_EXIT, this reloads
+KVM based on kvm_arm_hardware_enabled. This is safe even if CPU_PM_ENTER
+never gets as far as KVM, as cpu_hyp_reinit() calls cpu_hyp_reset()
+to make sure the hyp-stub is loaded before reloading KVM.
 
-Fixes: 76d837a4c0f9 ("KVM: PPC: Book3S PR: Don't include SPAPR TCE code on non-pseries platforms")
-Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Fixes: 67f691976662 ("arm64: kvm: allows kvm cpu hotplug")
+CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
+Signed-off-by: James Morse <james.morse@arm.com>
+Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kvm/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ virt/kvm/arm/arm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/powerpc/kvm/Kconfig
-+++ b/arch/powerpc/kvm/Kconfig
-@@ -68,7 +68,7 @@ config KVM_BOOK3S_64
- 	select KVM_BOOK3S_64_HANDLER
- 	select KVM
- 	select KVM_BOOK3S_PR_POSSIBLE if !KVM_BOOK3S_HV_POSSIBLE
--	select SPAPR_TCE_IOMMU if IOMMU_SUPPORT && (PPC_SERIES || PPC_POWERNV)
-+	select SPAPR_TCE_IOMMU if IOMMU_SUPPORT && (PPC_PSERIES || PPC_POWERNV)
- 	---help---
- 	  Support running unmodified book3s_64 and book3s_32 guest kernels
- 	  in virtual machines on book3s_64 host processors.
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -1220,6 +1220,7 @@ static int hyp_init_cpu_pm_notifier(stru
+ 			cpu_hyp_reset();
+ 
+ 		return NOTIFY_OK;
++	case CPU_PM_ENTER_FAILED:
+ 	case CPU_PM_EXIT:
+ 		if (__this_cpu_read(kvm_arm_hardware_enabled))
+ 			/* The hardware was enabled before suspend. */
