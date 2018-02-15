@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1883814-1518710431-2-16582274422130848610
+X-Cyrus-Session-Id: sloti22d1t05-1883814-1518710378-2-16605781822852327202
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518710431; b=bieY02tfCwbu8AjZt24UgfM7pIAyKpEpoliJ9Esly6UZ6iu
-    Hy2jziPioqyjbIUXtu8NR6+DM7qF8Gv0T5dEamwxWs6iLLzr8KAlXqC8kwkqHV/2
-    5GCZRAKKqj8vPrGewzzaa5PhlaRMYzJK2lwlvh8PBDma5t20k1ddc+ZEE7ebPzXA
-    /VoJN5chPYywBA7C24MopFSsg69UmMf8hUZ7GH88ZC2Z9MQodFMQZmS0UzeEMYwZ
-    nWawQQX0QWyz7R384tYZ66IaY+Rukb0ELQtA29yzHW3B7c8uz6jVIbFznzHDlgy8
-    7mwjNrT5RxO250xL5w7L5VHct+7mFgL3vLKjMjw==
+    t=1518710377; b=sy0OMf8MnOK6AahjaMBFWE7vl5k3fw8LOgYA87rf1lSGFHq
+    l1EJxkigdY6jOhROqgKWdkB08mon4/mkk2Dg7+wi5X6Ug75ArtUPAXeqb/TcUgdf
+    rjziM+zksEMV06aWaKas9IMmEbeMs4vyfFnFn9fosxWMcR/rGFxlz5Cs4fkVlWWG
+    hcXY8yVTlo+sSMDCy7gpzq4f+PBAOh8kGPKICGL2lOWwmJgZZnkhBayrXHjmdArm
+    UHeKAo98Y6ZDbDvZ7T0rmhogiAriYuz9/iP/LPl8X/Jwbr3K5CFhHliA6Pc6PDHE
+    JkLnGz/UKnTnGMWGN1MV14yT3l0RXCV+g6K5z8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518710431; bh=ihLKjkrMxtR+0faU3QwP2HLQ/X
-    BntOc5KqS1Ju/RsM8=; b=sCSXOBr/GWMxGgFzJFY3bJwDdC2a7zeCg/BB+32G6r
-    shZdCQhvjRVHFeF9Tm4PQqYJLMDVl/2HvQHPHJ0NZeYpUTTV+QGeousJTqLztP22
-    nU6WOsHFG7/sGMAqd2QK2IpKHdMXG0k4s3q2j0IKpG1L/uaOkUHftvtiYyQghP0A
-    XMmwYsAfC4lCKW6Cloea7GEskaIEZsHpJwo4yHwOvE/s7ueXxIqycUod98rkom1C
-    /V7Kd7lNuU3Ll2crbDMOX0R+xXTls6pa0HBPkTQ7QFjSSnHD3IdSDF2uvWjPthtY
-    yAGSfLJ/qvhAucloPwgRDfxjSigM/xmzrpqFKdKlpMcQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518710377; bh=n/YF/0tPzTXbBdPX2GjCyYAKVF
+    GyK768i2qnKMmszuc=; b=S5iyEvGNHpKgDJLGGLST4VIDzdN8hlJt7cjUs2Mox0
+    kcfLc20gonLsBO/MK/TfZfhzuQ+9aXXdR2IGZ0rI9cQP0XSoBe7hBG1QmCMoyWxS
+    +/t6C9693ssj+0MibWECNlivKkYABpwYyFMohDk9aDfVPPwFu3rW1Dmlu2OkopI8
+    +T7IjZd+6WNZ2J80hb3tpGtNMmzAHOEE1xlqMfwbKLhZeyiBGY1syqx665VRdUiN
+    AAvZamV7n6MHmegkOIN4cUxOXHCXlFAxnbQKk0XFV174eiEky6w9SEBTQ+9Trv7X
+    QiudbFvtvzdfuLWTUzqpDNsPw7yqJN8FbL2HqbvENPzg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,21 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424803AbeBOPrA (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:47:00 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35996 "EHLO
+        id S1424878AbeBOP6m (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:58:42 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36006 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424796AbeBOPq7 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:46:59 -0500
+        with ESMTP id S1424812AbeBOPrB (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:47:01 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
-        Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 4.15 165/202] ipmi: use dynamic memory for DMI driver override
-Date: Thu, 15 Feb 2018 16:17:45 +0100
-Message-Id: <20180215151721.500079240@linuxfoundation.org>
+        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Yi Zhang <yi.zhang@redhat.com>, Ming Lei <ming.lei@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.15 183/202] blk-mq: quiesce queue before freeing queue
+Date: Thu, 15 Feb 2018 16:18:03 +0100
+Message-Id: <20180215151722.419280949@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -77,87 +78,101 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: John Garry <john.garry@huawei.com>
+From: Ming Lei <ming.lei@redhat.com>
 
-commit 5516e21a1e95e9b9f39985598431a25477d91643 upstream.
+commit c2856ae2f315d754a0b6a268e4c6745b332b42e7 upstream.
 
-Currently a crash can be seen if we reach the "err"
-label in dmi_add_platform_ipmi(), calling
-platform_device_put(), like here:
-[    7.270584]  (null): ipmi:dmi: Unable to add resources: -16
-[    7.330229] ------------[ cut here ]------------
-[    7.334889] kernel BUG at mm/slub.c:3894!
-[    7.338936] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-[    7.344475] Modules linked in:
-[    7.347556] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc2-00004-gbe9cb7b-dirty #114
-[    7.355907] Hardware name: Huawei Taishan 2280 /D05, BIOS Hisilicon D05 IT17 Nemo 2.0 RC0 11/29/2017
-[    7.365137] task: 00000000c211f6d3 task.stack: 00000000f276e9af
-[    7.371116] pstate: 60000005 (nZCv daif -PAN -UAO)
-[    7.375957] pc : kfree+0x194/0x1b4
-[    7.379389] lr : platform_device_release+0xcc/0xd8
-[    7.384225] sp : ffff0000092dba90
-[    7.387567] x29: ffff0000092dba90 x28: ffff000008a83000
-[    7.392933] x27: ffff0000092dbc10 x26: 00000000000000e6
-[    7.398297] x25: 0000000000000003 x24: ffff0000085b51e8
-[    7.403662] x23: 0000000000000100 x22: ffff7e0000234cc0
-[    7.409027] x21: ffff000008af3660 x20: ffff8017d21acc10
-[    7.414392] x19: ffff8017d21acc00 x18: 0000000000000002
-[    7.419757] x17: 0000000000000001 x16: 0000000000000008
-[    7.425121] x15: 0000000000000001 x14: 6666666678303d65
-[    7.430486] x13: 6469727265766f5f x12: 7265766972642e76
-[    7.435850] x11: 6564703e2d617020 x10: 6530326435373638
-[    7.441215] x9 : 3030303030303030 x8 : 3d76656420657361
-[    7.446580] x7 : ffff000008f59df8 x6 : ffff8017fbe0ea50
-[    7.451945] x5 : 0000000000000000 x4 : 0000000000000000
-[    7.457309] x3 : ffffffffffffffff x2 : 0000000000000000
-[    7.462674] x1 : 0fffc00000000800 x0 : ffff7e0000234ce0
-[    7.468039] Process swapper/0 (pid: 1, stack limit = 0x00000000f276e9af)
-[    7.474809] Call trace:
-[    7.477272]  kfree+0x194/0x1b4
-[    7.480351]  platform_device_release+0xcc/0xd8
-[    7.484837]  device_release+0x34/0x90
-[    7.488531]  kobject_put+0x70/0xcc
-[    7.491961]  put_device+0x14/0x1c
-[    7.495304]  platform_device_put+0x14/0x1c
-[    7.499439]  dmi_add_platform_ipmi+0x348/0x3ac
-[    7.503923]  scan_for_dmi_ipmi+0xfc/0x10c
-[    7.507970]  do_one_initcall+0x38/0x124
-[    7.511840]  kernel_init_freeable+0x188/0x228
-[    7.516238]  kernel_init+0x10/0x100
-[    7.519756]  ret_from_fork+0x10/0x18
-[    7.523362] Code: f94002c0 37780080 f94012c0 37000040 (d4210000)
-[    7.529552] ---[ end trace 11750e4787deef9e ]---
-[    7.534228] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
-[    7.534228]
+After queue is frozen, dispatch still may happen, for example:
 
-This is because when the device is released in
-platform_device_release(), we try to free
-pdev.driver_override. This is a const string, hence
-the crash.
-Fix by using dynamic memory for pdev->driver_override.
+1) requests are submitted from several contexts
+2) requests from all these contexts are inserted to queue, but may dispatch
+to LLD in one of these paths, but other paths sill need to move on even all
+these requests are completed(that means blk_mq_freeze_queue_wait() returns
+at that time)
+3) dispatch after queue freezing still moves on and causes use-after-free,
+because request queue is freed
 
-Signed-off-by: John Garry <john.garry@huawei.com>
-[Removed the free of driver_override from ipmi_si_remove_by_dev().  The
- free is done in platform_device_release(), and would result in a double
- free, and ipmi_si_remove_by_dev() is called by non-platform devices.]
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
+This patch quiesces queue after it is frozen, and makes sure all
+in-progress dispatch are completed.
+
+This patch fixes the following kernel crash when running heavy IOs vs.
+deleting device:
+
+[   36.719251] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+[   36.720318] IP: kyber_has_work+0x14/0x40
+[   36.720847] PGD 254bf5067 P4D 254bf5067 PUD 255e6a067 PMD 0
+[   36.721584] Oops: 0000 [#1] PREEMPT SMP
+[   36.722105] Dumping ftrace buffer:
+[   36.722570]    (ftrace buffer empty)
+[   36.723057] Modules linked in: scsi_debug ebtable_filter ebtables ip6table_filter ip6_tables tcm_loop iscsi_target_mod target_core_file target_core_iblock target_core_pscsi target_core_mod xt_CHECKSUM iptable_mangle ipt_MASQUERADE nf_nat_masquerade_ipv4 iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_nat nf_conntrack libcrc32c bridge stp llc fuse iptable_filter ip_tables sd_mod sg btrfs xor zstd_decompress zstd_compress xxhash raid6_pq mptsas mptscsih bcache crc32c_intel ahci mptbase libahci serio_raw scsi_transport_sas nvme libata shpchp lpc_ich virtio_scsi nvme_core binfmt_misc dm_mod iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi null_blk configs
+[   36.733438] CPU: 2 PID: 2374 Comm: fio Not tainted 4.15.0-rc2.blk_mq_quiesce+ #714
+[   36.735143] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.9.3-1.fc25 04/01/2014
+[   36.736688] RIP: 0010:kyber_has_work+0x14/0x40
+[   36.737515] RSP: 0018:ffffc9000209bca0 EFLAGS: 00010202
+[   36.738431] RAX: 0000000000000008 RBX: ffff88025578bfc8 RCX: ffff880257bf4ed0
+[   36.739581] RDX: 0000000000000038 RSI: ffffffff81a98c6d RDI: ffff88025578bfc8
+[   36.740730] RBP: ffff880253cebfc8 R08: ffffc9000209bda0 R09: ffff8802554f3480
+[   36.741885] R10: ffffc9000209be60 R11: ffff880263f72538 R12: ffff88025573e9e8
+[   36.743036] R13: ffff88025578bfd0 R14: 0000000000000001 R15: 0000000000000000
+[   36.744189] FS:  00007f9b9bee67c0(0000) GS:ffff88027fc80000(0000) knlGS:0000000000000000
+[   36.746617] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   36.748483] CR2: 0000000000000008 CR3: 0000000254bf4001 CR4: 00000000003606e0
+[   36.750164] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   36.751455] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   36.752796] Call Trace:
+[   36.753992]  blk_mq_do_dispatch_sched+0x7f/0xe0
+[   36.755110]  blk_mq_sched_dispatch_requests+0x119/0x190
+[   36.756179]  __blk_mq_run_hw_queue+0x83/0x90
+[   36.757144]  __blk_mq_delay_run_hw_queue+0xaf/0x110
+[   36.758046]  blk_mq_run_hw_queue+0x24/0x70
+[   36.758845]  blk_mq_flush_plug_list+0x1e7/0x270
+[   36.759676]  blk_flush_plug_list+0xd6/0x240
+[   36.760463]  blk_finish_plug+0x27/0x40
+[   36.761195]  do_io_submit+0x19b/0x780
+[   36.761921]  ? entry_SYSCALL_64_fastpath+0x1a/0x7d
+[   36.762788]  entry_SYSCALL_64_fastpath+0x1a/0x7d
+[   36.763639] RIP: 0033:0x7f9b9699f697
+[   36.764352] RSP: 002b:00007ffc10f991b8 EFLAGS: 00000206 ORIG_RAX: 00000000000000d1
+[   36.765773] RAX: ffffffffffffffda RBX: 00000000008f6f00 RCX: 00007f9b9699f697
+[   36.766965] RDX: 0000000000a5e6c0 RSI: 0000000000000001 RDI: 00007f9b8462a000
+[   36.768377] RBP: 0000000000000000 R08: 0000000000000001 R09: 00000000008f6420
+[   36.769649] R10: 00007f9b846e5000 R11: 0000000000000206 R12: 00007f9b795d6a70
+[   36.770807] R13: 00007f9b795e4140 R14: 00007f9b795e3fe0 R15: 0000000100000000
+[   36.771955] Code: 83 c7 10 e9 3f 68 d1 ff 0f 1f 44 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 8b 97 b0 00 00 00 48 8d 42 08 48 83 c2 38 <48> 3b 00 74 06 b8 01 00 00 00 c3 48 3b 40 08 75 f4 48 83 c0 10
+[   36.775004] RIP: kyber_has_work+0x14/0x40 RSP: ffffc9000209bca0
+[   36.776012] CR2: 0000000000000008
+[   36.776690] ---[ end trace 4045cbce364ff2a4 ]---
+[   36.777527] Kernel panic - not syncing: Fatal exception
+[   36.778526] Dumping ftrace buffer:
+[   36.779313]    (ftrace buffer empty)
+[   36.780081] Kernel Offset: disabled
+[   36.780877] ---[ end Kernel panic - not syncing: Fatal exception
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Tested-by: Yi Zhang <yi.zhang@redhat.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/ipmi/ipmi_dmi.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ block/blk-core.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/char/ipmi/ipmi_dmi.c
-+++ b/drivers/char/ipmi/ipmi_dmi.c
-@@ -106,7 +106,10 @@ static void __init dmi_add_platform_ipmi
- 		pr_err("ipmi:dmi: Error allocation IPMI platform device\n");
- 		return;
- 	}
--	pdev->driver_override = override;
-+	pdev->driver_override = kasprintf(GFP_KERNEL, "%s",
-+					  override);
-+	if (!pdev->driver_override)
-+		goto err;
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -699,6 +699,15 @@ void blk_cleanup_queue(struct request_qu
+ 	queue_flag_set(QUEUE_FLAG_DEAD, q);
+ 	spin_unlock_irq(lock);
  
- 	if (type == IPMI_DMI_TYPE_SSIF) {
- 		set_prop_entry(p[pidx++], "i2c-addr", u16, base_addr);
++	/*
++	 * make sure all in-progress dispatch are completed because
++	 * blk_freeze_queue() can only complete all requests, and
++	 * dispatch may still be in-progress since we dispatch requests
++	 * from more than one contexts
++	 */
++	if (q->mq_ops)
++		blk_mq_quiesce_queue(q);
++
+ 	/* for synchronous bio-based driver finish in-flight integrity i/o */
+ 	blk_flush_integrity();
+ 
