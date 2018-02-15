@@ -1,104 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166920AbeBOSqu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 13:46:50 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40387 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162390AbeBOPWY (ORCPT
+        id S1166950AbeBOSuL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 13:50:11 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52834 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162126AbeBOPVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 10:22:24 -0500
-X-Google-Smtp-Source: AH8x225FySU+1suX+nb5Aop9+J6xmK6JtEReSXeama3KGBZwrMPup0Q92LHlvYxZsvZOodx1g2Ur9Q==
-Message-ID: <1518708141.2883.94.camel@baylibre.com>
-Subject: Re: [PATCH] clk: use get_phase() if available
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 15 Feb 2018 16:22:21 +0100
-In-Reply-To: <20180215102822.7721-1-jbrunet@baylibre.com>
-References: <20180215102822.7721-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 15 Feb 2018 10:21:40 -0500
+Date: Thu, 15 Feb 2018 16:21:39 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>, tglx@linutronix.de,
+        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, arjan.van.de.ven@intel.com,
+        dave.hansen@intel.com
+Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
+ CPUs
+Message-ID: <20180215152139.GA23145@amd>
+References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
+ <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
+ <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="DocE+STaALJfprDB"
+Content-Disposition: inline
+In-Reply-To: <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-02-15 at 11:28 +0100, Jerome Brunet wrote:
-> When the get_phase() callback is available, we should use it
-> instead of just relying the values cached, and assumed un-rounded,
-> by the framework
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
-> 
-> Hi Mike, Stephen,
-> 
-> This changes applies on top of the phase fix I've sent [0]
-> 
-> [0]: https://lkml.kernel.org/r/20180215101958.22676-1-jbrunet@baylibre.com
-> 
->  drivers/clk/clk.c | 25 ++++++++++++++++++++++---
->  1 file changed, 22 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index b33d362239e7..bcd6ec980903 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2297,6 +2297,21 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
->  }
->  EXPORT_SYMBOL_GPL(clk_set_parent);
->  
-> +static int clk_core_get_phase_nolock(struct clk_core *core)
-> +{
-> +	int ret;
 
-+	if (!core)
-+		return 0;
+--DocE+STaALJfprDB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Forgot this, will add it the v2
+On Tue 2018-02-13 09:02:25, Paolo Bonzini wrote:
+> On 12/02/2018 16:27, David Woodhouse wrote:
+> > The original IBRS hack in microcode is horribly slow. For the next
+> > generation of CPUs, as a stopgap until we get a proper fix, Intel
+> > promise an "Enhanced IBRS" which will be fast.
+> >=20
+> > The assumption is that predictions in the BTB/RSB will be tagged with
+> > the VMX mode and ring that they were learned in, and thus the CPU will
+> > avoid consuming unsafe predictions without a performance penalty.
+> >=20
+> > Intel's documentation says that it is still required to set the IBRS bit
+> > in the SPEC_CTRL MSR and ensure that it remains set.
+> >=20
+> > Cope with this by trapping and emulating *all* access to SPEC_CTRL from
+> > KVM guests when the IBRS_ALL feature is present, so it can never be
+> > turned off. Guests who see IBRS_ALL should never do anything except
+> > turn it on at boot anyway. And if they didn't know about IBRS_ALL and
+> > they keep frobbing IBRS on every kernel entry/exit... well the vmexit
+> > for a no-op is probably going to be faster than they were expecting
+> > anyway, so they'll live.
+> >=20
+> > Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> > Acked-by: Arjan van de Ven <arjan.van.de.ven@intel.com>
+> > ---
+> >  arch/x86/include/asm/nospec-branch.h |  9 ++++++++-
+> >  arch/x86/kernel/cpu/bugs.c           | 16 ++++++++++++++--
+> >  arch/x86/kvm/vmx.c                   | 17 ++++++++++-------
+> >  3 files changed, 32 insertions(+), 10 deletions(-)
+> >=20
+> > diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/as=
+m/nospec-branch.h
+> > index 788c4da..524bb86 100644
+> > --- a/arch/x86/include/asm/nospec-branch.h
+> > +++ b/arch/x86/include/asm/nospec-branch.h
+> > @@ -140,9 +140,16 @@ enum spectre_v2_mitigation {
+> >  	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
+> >  	SPECTRE_V2_RETPOLINE_GENERIC,
+> >  	SPECTRE_V2_RETPOLINE_AMD,
+> > -	SPECTRE_V2_IBRS,
+> > +	SPECTRE_V2_IBRS_ALL,
+> >  };
+> > =20
+> > +extern enum spectre_v2_mitigation spectre_v2_enabled;
+> > +
+> > +static inline bool spectre_v2_ibrs_all(void)
+> > +{
+> > +	return spectre_v2_enabled =3D=3D SPECTRE_V2_IBRS_ALL;
+> > +}
+> > +
+> >  extern char __indirect_thunk_start[];
+> >  extern char __indirect_thunk_end[];
+> > =20
+> > diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> > index debcdda..047538a 100644
+> > --- a/arch/x86/kernel/cpu/bugs.c
+> > +++ b/arch/x86/kernel/cpu/bugs.c
+> > @@ -88,12 +88,13 @@ static const char *spectre_v2_strings[] =3D {
+> >  	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	=3D "Vulnerable: Minimal AMD ASM r=
+etpoline",
+> >  	[SPECTRE_V2_RETPOLINE_GENERIC]		=3D "Mitigation: Full generic retpoli=
+ne",
+> >  	[SPECTRE_V2_RETPOLINE_AMD]		=3D "Mitigation: Full AMD retpoline",
+> > +	[SPECTRE_V2_IBRS_ALL]			=3D "Mitigation: Enhanced IBRS",
+> >  };
 
-> +
-> +	if (!core->ops->get_phase)
-> +		return core->phase;
-> +
-> +	/* Update the phase if the callback is available */
-> +	ret = core->ops->get_phase(core->hw);
-> +	if (ret >= 0)
-> +		core->phase = ret;
-> +
-> +	return ret;
-> +}
-> +
->  static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
->  {
->  	int ret = -EINVAL;
-> @@ -2314,12 +2329,16 @@ static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
->  	if (core->ops->set_phase)
->  		ret = core->ops->set_phase(core->hw, degrees);
->  
-> -	if (!ret)
-> +	if (!ret) {
->  		core->phase = degrees;
->  
-> +		/* Read back the phase in case it got rounded */
-> +		ret = clk_core_get_phase_nolock(core);
-> +	}
-> +
->  	trace_clk_set_phase_complete(core, degrees);
->  
-> -	return ret;
-> +	return ret > 0 ? 0 : ret;
->  }
->  
->  /**
-> @@ -2375,7 +2394,7 @@ static int clk_core_get_phase(struct clk_core *core)
->  	int ret;
->  
->  	clk_prepare_lock();
-> -	ret = core->phase;
-> +	ret = clk_core_get_phase_nolock(core);
->  	clk_prepare_unlock();
->  
->  	return ret;
+Hmm. Probably not just your problem but these should really get
+documentation somewhere -- and adding another one should be treated
+like changing the ABI.
+
+How is poor userland expected to do anything inteligent with that
+file?
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--DocE+STaALJfprDB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqFpYMACgkQMOfwapXb+vKxnACfZXWBOKiOPMD8FGNAxIUlT46p
+xBgAnRZMYyDH18Yd+od9Krz84LYjXjfx
+=8gfT
+-----END PGP SIGNATURE-----
+
+--DocE+STaALJfprDB--
