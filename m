@@ -1,52 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164410AbeBOWJJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 17:09:09 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:33000 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162892AbeBOWJH (ORCPT
+        id S1756182AbeBOWPJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 17:15:09 -0500
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:36660 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752862AbeBOWPI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 17:09:07 -0500
-X-Google-Smtp-Source: AH8x227lWz4d5I/y3FDAF6BkX9Nur7q+BVV6AofMjG9uc+IP0NLYy0QzVKA0RDZRqabjjnaOB9Pk4Q==
-From: Guenter Roeck <linux@roeck-us.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hwmon fixes for v4.16-rc2
-Date: Thu, 15 Feb 2018 14:09:04 -0800
-Message-Id: <1518732544-17094-1-git-send-email-linux@roeck-us.net>
-X-Mailer: git-send-email 2.7.4
+        Thu, 15 Feb 2018 17:15:08 -0500
+X-Google-Smtp-Source: AH8x2276W9Sfe4JIJifA8vsMpqa3ZIpPB+PB4uoa3s3kmnuYcxJWN73X79RhiEUnTy49OfPDrJ7udjV2XHez7kjXiUo=
+MIME-Version: 1.0
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <cover.1518411444.git.rgb@redhat.com>
+References: <cover.1518411444.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 15 Feb 2018 17:15:05 -0500
+Message-ID: <CAHC9VhRFKTPhQRjL5QhPiQPA7WfV+TsVLgoVptnhLggkfvu0Cg@mail.gmail.com>
+Subject: Re: [PATCH ghak8 ALT4 V4 0/3] audit: show more information for
+ entries with anonymous parents
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon, Feb 12, 2018 at 12:02 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> More than one filesystem was causing hundreds to thousands of null PATH
+> records to be associated with the *init_module SYSCALL records on a few
+> modules with corresponding audit syscall rules.
+>
+> This patchset adds extra information to those PATH records to provide
+> insight into what is generating them, including a partial pathname,
+> fstype field, and two new filetypes that indicate the pathname isn't
+> anchored at the root of the task's root filesystem.
+>
+> Richard Guy Briggs (3):
+>   audit: show partial pathname for entries with anonymous parents
+>   audit: append new fstype field for anonymous PATH records
+>   audit: add new filetypes CREATE_ANON and PARENT_ANON
 
-Please pull hwmon fixes for Linux v4.16-rc2 from signed tag:
+The more I look at this, the more I prefer your original approach that
+prefixed the relative pathname with the fstype.  Yes, I do realize
+that you sort of work around that by including the fstype as a new
+field in the PATH records, but we're still stuck with those odd
+relative/un-rooted name fields.
 
-    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-linus-v4.16-rc2
+Further, I don't recall ever hearing a good reason why the original
+approach wasn't acceptable to Steve's userspace.  I know he did make
+some very last minute hand-wavy comments, but none of those made any
+sense to me; I don't understand why Steve's audit record parser is
+even looking in the pathname string.
 
-Thanks,
-Guenter
-------
+I'm going to park these patches in limbo for the time being.
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
-
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-linus-v4.16-rc2
-
-for you to fetch changes up to aef17ca1271948ee57cc39b2493d31110cc42625:
-
-  hwmon: (k10temp) Only apply temperature offset if result is positive (2018-02-12 14:23:29 -0800)
-
-----------------------------------------------------------------
-Fix bad temperature display on Ryzen/Threadripper
-
-----------------------------------------------------------------
-Guenter Roeck (1):
-      hwmon: (k10temp) Only apply temperature offset if result is positive
-
- drivers/hwmon/k10temp.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+-- 
+paul moore
+www.paul-moore.com
