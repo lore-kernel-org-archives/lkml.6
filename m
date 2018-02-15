@@ -1,91 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032439AbeBOAjQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 19:39:16 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41881 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032245AbeBOAjN (ORCPT
+        id S1032325AbeBOApH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 19:45:07 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:36885 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032245AbeBOApE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 19:39:13 -0500
-Date: Wed, 14 Feb 2018 16:26:40 -0800
-From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
-Message-ID: <tip-2b5db66862b95532cb6cca8165ae6eb73633cf85@git.kernel.org>
-Cc: luto@kernel.org, torvalds@linux-foundation.org, mingo@kernel.org,
-        tglx@linutronix.de, hpa@zytor.com, dvlasenk@redhat.com,
-        linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
-        arjan@linux.intel.com, brgerst@gmail.com, fengguang.wu@intel.com,
-        jpoimboe@redhat.com
-Reply-To: tglx@linutronix.de, hpa@zytor.com, dvlasenk@redhat.com,
-        linux-kernel@vger.kernel.org, bp@alien8.de,
-        torvalds@linux-foundation.org, luto@kernel.org, mingo@kernel.org,
-        brgerst@gmail.com, jpoimboe@redhat.com, fengguang.wu@intel.com,
-        peterz@infradead.org, arjan@linux.intel.com
-In-Reply-To: <0e483379275a42626ba8898117f918e1bf661e40.1518130694.git.jpoimboe@redhat.com>
-References: <0e483379275a42626ba8898117f918e1bf661e40.1518130694.git.jpoimboe@redhat.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/debug, objtool: Annotate WARN()-related UD2 as
- reachable
-Git-Commit-ID: 2b5db66862b95532cb6cca8165ae6eb73633cf85
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Wed, 14 Feb 2018 19:45:04 -0500
+X-Google-Smtp-Source: AH8x227ksnN4ra09sjw3dQPQsLTeyyE98JNohKx5MqUVrfaXbZzxCMwLxWLDh9fRWb7nfIwSgZ+mZQ==
+From: frowand.list@gmail.com
+To: Rob Herring <robh+dt@kernel.org>, cpandya@codeaurora.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] of: add early boot allocation of of_find_node_by_phandle() cache
+Date: Wed, 14 Feb 2018 16:44:25 -0800
+Message-Id: <1518655465-10759-1-git-send-email-frowand.list@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2b5db66862b95532cb6cca8165ae6eb73633cf85
-Gitweb:     https://git.kernel.org/tip/2b5db66862b95532cb6cca8165ae6eb73633cf85
-Author:     Josh Poimboeuf <jpoimboe@redhat.com>
-AuthorDate: Thu, 8 Feb 2018 17:09:26 -0600
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 15 Feb 2018 01:15:49 +0100
+From: Frank Rowand <frank.rowand@sony.com>
 
-x86/debug, objtool: Annotate WARN()-related UD2 as reachable
+The initial implementation of the of_find_node_by_phandle() cache
+allocates the cache using kcalloc().  Add an early boot allocation
+of the cache so it will be usable during early boot.  Switch over
+to the kcalloc() based cache once normal memory allocation
+becomes available.
 
-By default, objtool assumes that a UD2 is a dead end.  This is mainly
-because GCC 7+ sometimes inserts a UD2 when it detects a divide-by-zero
-condition.
-
-Now that WARN() is moving back to UD2, annotate the code after it as
-reachable so objtool can follow the code flow.
-
-Reported-by: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kbuild test robot <fengguang.wu@intel.com>
-Link: http://lkml.kernel.org/r/0e483379275a42626ba8898117f918e1bf661e40.1518130694.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
- arch/x86/include/asm/bug.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-index 34d99af4..71e6f4bf 100644
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -77,7 +77,11 @@ do {								\
- 	unreachable();						\
- } while (0)
+This patch is optional, to be added at Rob's discretion.  The
+extra complexity is not as much as I had feared, but the boot
+speed up is also likely small.
+
+ drivers/of/base.c       | 33 +++++++++++++++++++++++++++++++++
+ drivers/of/fdt.c        |  2 ++
+ drivers/of/of_private.h |  2 ++
+ 3 files changed, 37 insertions(+)
+
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index ab545dfa9173..d7b1ff1209e8 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -16,9 +16,11 @@
  
--#define __WARN_FLAGS(flags)	_BUG_FLAGS(ASM_UD0, BUGFLAG_WARNING|(flags))
-+#define __WARN_FLAGS(flags)					\
-+do {								\
-+	_BUG_FLAGS(ASM_UD0, BUGFLAG_WARNING|(flags));		\
-+	annotate_reachable();					\
-+} while (0)
+ #define pr_fmt(fmt)	"OF: " fmt
  
- #include <asm-generic/bug.h>
++#include <linux/bootmem.h>
+ #include <linux/console.h>
+ #include <linux/ctype.h>
+ #include <linux/cpu.h>
++#include <linux/memblock.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+@@ -131,6 +133,29 @@ static void of_populate_phandle_cache(void)
+ 	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+ }
  
++void __init of_populate_phandle_cache_early(void)
++{
++	u32 cache_entries;
++	struct device_node *np;
++	u32 phandles = 0;
++	size_t size;
++
++	for_each_of_allnodes(np)
++		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
++			phandles++;
++
++	cache_entries = roundup_pow_of_two(phandles);
++	phandle_cache_mask = cache_entries - 1;
++
++	size = cache_entries * sizeof(*phandle_cache);
++	phandle_cache = memblock_virt_alloc(size, 4);
++	memset(phandle_cache, 0, size);
++
++	for_each_of_allnodes(np)
++		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
++			phandle_cache[np->phandle & phandle_cache_mask] = np;
++}
++
+ #ifndef CONFIG_MODULES
+ static int __init of_free_phandle_cache(void)
+ {
+@@ -150,7 +175,15 @@ static int __init of_free_phandle_cache(void)
+ 
+ void __init of_core_init(void)
+ {
++	unsigned long flags;
+ 	struct device_node *np;
++	phys_addr_t size;
++
++	raw_spin_lock_irqsave(&devtree_lock, flags);
++	size = (phandle_cache_mask + 1) * sizeof(*phandle_cache);
++	memblock_free(__pa(phandle_cache), size);
++	phandle_cache = NULL;
++	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+ 
+ 	of_populate_phandle_cache();
+ 
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index 84aa9d676375..cb320df23f26 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -1264,6 +1264,8 @@ void __init unflatten_device_tree(void)
+ 	of_alias_scan(early_init_dt_alloc_memory_arch);
+ 
+ 	unittest_unflatten_overlay_base();
++
++	of_populate_phandle_cache_early();
+ }
+ 
+ /**
+diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
+index fa70650136b4..6720448c84cc 100644
+--- a/drivers/of/of_private.h
++++ b/drivers/of/of_private.h
+@@ -134,6 +134,8 @@ extern void __of_sysfs_remove_bin_file(struct device_node *np,
+ /* illegal phandle value (set when unresolved) */
+ #define OF_PHANDLE_ILLEGAL	0xdeadbeef
+ 
++extern void __init of_populate_phandle_cache_early(void);
++
+ /* iterators for transactions, used for overlays */
+ /* forward iterator */
+ #define for_each_transaction_entry(_oft, _te) \
+-- 
+Frank Rowand <frank.rowand@sony.com>
