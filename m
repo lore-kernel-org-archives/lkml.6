@@ -1,81 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1167222AbeBOUzg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 15:55:36 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:51700 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162995AbeBOUze (ORCPT
+        id S1167201AbeBOUym (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 15:54:42 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:41226 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752192AbeBOUyj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 15:55:34 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6077460386
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Thu, 15 Feb 2018 20:55:32 +0000
-From: Lina Iyer <ilina@codeaurora.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 03/10] drivers: qcom: rpmh-rsc: log RPMH requests in
- FTRACE
-Message-ID: <20180215205532.GA29280@codeaurora.org>
-References: <20180215173507.10989-1-ilina@codeaurora.org>
- <20180215173507.10989-4-ilina@codeaurora.org>
- <20180215204118.GF23714@codeaurora.org>
- <20180215155135.187b1501@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180215155135.187b1501@gandalf.local.home>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Thu, 15 Feb 2018 15:54:39 -0500
+X-Google-Smtp-Source: AH8x227j9uDU1qOyg7uMTcjdaY/xBJWpSI07jteYpengR7e7uCAH0dNT8U/FVNWIfr2b7UiuRXugcA==
+From: Moritz Fischer <moritz.fischer@ettus.com>
+To: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        mark.rutland@arm.com, robh+dt@kernel.org, sre@kernel.org,
+        Moritz Fischer <mdf@kernel.org>
+Subject: [PATCH 2/2] power: reset: gpio-poweroff: Add support for timeout from DT
+Date: Thu, 15 Feb 2018 12:49:26 -0800
+Message-Id: <20180215204926.23347-2-moritz.fischer@ettus.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180215204926.23347-1-moritz.fischer@ettus.com>
+References: <20180215204926.23347-1-moritz.fischer@ettus.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15 2018 at 20:51 +0000, Steven Rostedt wrote:
->On Thu, 15 Feb 2018 20:41:18 +0000
->Lina Iyer <ilina@codeaurora.org> wrote:
->
->
->> >--- a/drivers/soc/qcom/Makefile
->> >+++ b/drivers/soc/qcom/Makefile
->> >@@ -1,4 +1,5 @@
->> > # SPDX-License-Identifier: GPL-2.0
->> >+CFLAGS_trace-rpmh.o := -I$(src)
->> I did this here..
->
->Needs to be:
->
-> CFLAGS_rpmh-rsc.o
->
->You need to use the C file that has the CREATE_TRACE_POINTS define.
->
-Thank you so much.
+From: Moritz Fischer <mdf@kernel.org>
 
--- Lina
+Add support for reading a timeout value from devicetree.
+Fall back to previous default of 3s if nothing is specified.
 
->-- Steve
->
->>
->> ...
->>
->> >+#undef TRACE_INCLUDE_PATH
->> >+#define TRACE_INCLUDE_PATH ../../drivers/soc/qcom
->> >+
->> Yet, I had to define the whole path here for it to compile. Per comments
->> I should just need to do this -
->>
->> #define TRACE_INCLUDE_PATH .
->>
->> But it doesn't work. What am I missing?
->>
->> >+#undef TRACE_INCLUDE_FILE
->> >+#define TRACE_INCLUDE_FILE trace-rpmh
->> >+
->> >+#include <trace/define_trace.h>
->> >--
->>
->> Thanks,
->> Lina
->
+Signed-off-by: Moritz Fischer <mdf@kernel.org>
+---
+ drivers/power/reset/gpio-poweroff.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/power/reset/gpio-poweroff.c b/drivers/power/reset/gpio-poweroff.c
+index be3d81ff51cc..bc9fad17d22a 100644
+--- a/drivers/power/reset/gpio-poweroff.c
++++ b/drivers/power/reset/gpio-poweroff.c
+@@ -19,11 +19,13 @@
+ #include <linux/of_platform.h>
+ #include <linux/module.h>
+ 
++#define DEFAULT_TIMEOUT_MS 3000
+ /*
+  * Hold configuration here, cannot be more than one instance of the driver
+  * since pm_power_off itself is global.
+  */
+ static struct gpio_desc *reset_gpio;
++static u32 timeout;
+ 
+ static void gpio_poweroff_do_poweroff(void)
+ {
+@@ -40,7 +42,7 @@ static void gpio_poweroff_do_poweroff(void)
+ 	gpiod_set_value(reset_gpio, 1);
+ 
+ 	/* give it some time */
+-	mdelay(3000);
++	mdelay(timeout);
+ 
+ 	WARN_ON(1);
+ }
+@@ -49,6 +51,7 @@ static int gpio_poweroff_probe(struct platform_device *pdev)
+ {
+ 	bool input = false;
+ 	enum gpiod_flags flags;
++	int ret;
+ 
+ 	/* If a pm_power_off function has already been added, leave it alone */
+ 	if (pm_power_off != NULL) {
+@@ -64,6 +67,10 @@ static int gpio_poweroff_probe(struct platform_device *pdev)
+ 	else
+ 		flags = GPIOD_OUT_LOW;
+ 
++	ret = of_property_read_u32(pdev->dev.of_node, "timeout", &timeout);
++	if (ret)
++		timeout = DEFAULT_TIMEOUT_MS;
++
+ 	reset_gpio = devm_gpiod_get(&pdev->dev, NULL, flags);
+ 	if (IS_ERR(reset_gpio))
+ 		return PTR_ERR(reset_gpio);
+-- 
+2.16.1
