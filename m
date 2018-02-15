@@ -1,49 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165859AbeBORxG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 12:53:06 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46230 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164213AbeBORxD (ORCPT
+        id S1165830AbeBORw4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 12:52:56 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:59404 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1165798AbeBORws (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 12:53:03 -0500
-Subject: Re: [PATCH] Build: Scripts/Makefile: Remove Repeated Lines
-To: Progyan Bhattacharya <bprogyan@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
-        linux-next@vger.kernel.org, narmstrong@baylibre.com,
-        akpm@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
-        Daniel Golle <daniel@makrotopia.org>, Joe Perches <joe@perches.com>
-References: <20180214092558.5846-1-progyanb@acm.org>
- <20180214224937.3f2feb80@canb.auug.org.au>
- <CAGyWO1-9scERtpPw5CCwQcUbCU0SpcqpNq2eiBWRtwpRC-kB-A@mail.gmail.com>
- <20180215160520.5828f900@canb.auug.org.au>
- <bec02b84-316b-a41a-91ea-e0957d358ee3@infradead.org>
- <CAGyWO1_tmrSB8WwyARGWXhYCz=SL-xqqU4d3Y0A1vqGWQ_8Trg@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <45b314c4-a087-ee0e-d4ad-79f5ee6ac807@infradead.org>
-Date: Thu, 15 Feb 2018 09:52:54 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 15 Feb 2018 12:52:48 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: <broonie@kernel.org>
+CC: <jic23@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
+Subject: [PATCH 5/5] regmap: Remove regmap_get_raw_read_max
+Date: Thu, 15 Feb 2018 17:52:20 +0000
+Message-ID: <20180215175220.2691-5-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180215175220.2691-1-ckeepax@opensource.cirrus.com>
+References: <20180215175220.2691-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGyWO1_tmrSB8WwyARGWXhYCz=SL-xqqU4d3Y0A1vqGWQ_8Trg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=777 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1802150215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/15/2018 01:38 AM, Progyan Bhattacharya wrote:
-> I think some merge error happened in my local workspace.
-> 
-> Yes the file is correct in Linus's tree as well as current HEAD of linux-next.
-> Thanks.
-> I will update my tree accordingly.
-> 
-> About the nonstandard range statements in case, should I rewrite them. I think If-Else will be easier to read and understand.
+Since the handling for max_raw_read is now inside regmap_raw_read there
+should be no need for client drivers to query as max_raw_read.
 
-I don't see a need for any such change.
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+ drivers/base/regmap/regmap.c | 11 -----------
+ include/linux/regmap.h       |  1 -
+ 2 files changed, 12 deletions(-)
 
-
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 872be065e3fe..a7ee885fce89 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -1641,17 +1641,6 @@ bool regmap_can_raw_write(struct regmap *map)
+ EXPORT_SYMBOL_GPL(regmap_can_raw_write);
+ 
+ /**
+- * regmap_get_raw_read_max - Get the maximum size we can read
+- *
+- * @map: Map to check.
+- */
+-size_t regmap_get_raw_read_max(struct regmap *map)
+-{
+-	return map->max_raw_read;
+-}
+-EXPORT_SYMBOL_GPL(regmap_get_raw_read_max);
+-
+-/**
+  * regmap_get_raw_write_max - Get the maximum size we can read
+  *
+  * @map: Map to check.
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index 6a3aeba40e9e..0382fb787c10 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -936,7 +936,6 @@ int regmap_get_max_register(struct regmap *map);
+ int regmap_get_reg_stride(struct regmap *map);
+ int regmap_async_complete(struct regmap *map);
+ bool regmap_can_raw_write(struct regmap *map);
+-size_t regmap_get_raw_read_max(struct regmap *map);
+ size_t regmap_get_raw_write_max(struct regmap *map);
+ 
+ int regcache_sync(struct regmap *map);
 -- 
-~Randy
+2.11.0
