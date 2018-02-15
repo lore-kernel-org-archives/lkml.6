@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224iPcBBLRF8fJhks9+1XHYK1H0YfyKXSpNEj3/fQfwgoqz1CFcxYc9sK9+dV8GzhjBphyXT
-ARC-Seal: i=1; a=rsa-sha256; t=1518708823; cv=none;
+X-Google-Smtp-Source: AH8x227+kRqSKsUF7OTWDNOnpVx7FGwrw1GHvgJKycfzblDmuHc+bYVX+xG3S1WyoeIx9Hm8ttuF
+ARC-Seal: i=1; a=rsa-sha256; t=1518708821; cv=none;
         d=google.com; s=arc-20160816;
-        b=dpeK8hBHr1Fb8W4N/uuDtkbSBNF698p+iE9/6WUN7v4HJhwbhBntB/gJdvS3dXx1C7
-         x+zAINPIQbdyAkqU+jtT/ODp8p0CYFSA2avP3tqNg5p7nxpQDJOVDCRUhI3XfpD0P7Xj
-         Za3+ol8MKuQKyj0o3p46Fk9KkKiEZZmHveoNwBRjIaUZym9YnobgcIfl2IArfwm3YBXq
-         1H1AckECOcB2kb9Jow7fN6tRw8uHQTf/6kMe3q6kLyhCTiGsiPSPdedzUHJ+TbrNbAFj
-         1J34jfVIzRaVsscJis9LuRv6qAd39FyeNirzBgDFgsGNPqEVQ+ZiZKotTz8PyXrb2Fqg
-         cTFQ==
+        b=Tpz3EtRkGarpuP5R0GuzVxzpupAJvfgXU4f99P2vcTzLEGoPJPWjgZ/dvHdOO7KcPH
+         cRlpM30c2cuZFp0PiswlwiVs3sVN3xPn0/DC03SiLfTP1U3CYwfa64bD5yeTkwtFG8+B
+         8rtOiYvPLXFCISvkAlhni6xsz+Rb6xtNR/c+Nfb5XUH8EVG2NqFHRSd64Yg+mwPWlaNl
+         UBUFQAGdyMzPrU7sE6UahALIFdWMdYn/xS4n2ZjCkgTjvEl0toQI5TYB+x4QU3Fn4Gkf
+         J9/bKwqjNQ6tRcHI13hzksW00i2xKki4VB/VNtCTTlWqBpheYo7qB/TFL+eUOlCmguzE
+         OReA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZEnvLotxLBNUhBPOu1wQ9I0c2Rbjfz+qYEWqWcnJVQg=;
-        b=CMXsUDGDdH51sO/H1rpMRrHZOsNeKQEUU85IbAS1DssJBbVtdEtnSFRYceY5QhRtpp
-         6UUolwxsdee0tOnIjxs7Jt7/XEAmBGjMY2lHeL4m+/k22uYN8gFBxaQGdDbRITIbEq7j
-         beIA+dz+MZcS7ioYo01zJ1lXaeMySR/O8OiwHBNpR+jxEL/ZEa1ukiEjqE8HHxhBRouH
-         SurBOFuruRpBMcnlk7zk+EbPgyGLF5F116BwoUbXqS2ze5KCg61Cdj9VBxuF139mFtRe
-         IHD0tu+fF3CqcGzjSBhbKKyQPaY76oN3SPS1XZqAhohKsIn9inrURQ0KwNHsEANmwLYC
-         cUPg==
+        bh=LVgUfovXsXmxcpfRpioJfHhgGFLt6Z0L1RS2ftlifyA=;
+        b=Q9nOPhW/7Cf1zQhLP0Ks3tJUt/TuspnhVGIPO7J2TxTPjQ+UMvY+JZfwZMq4Jsm5LA
+         KUgItl8HaXxXDzTXNtRV5Rdi2Bgkl8VAbGw+nt3VF/rNSS6ZQZ31gXIEFN6n+/p5K6pm
+         n0YzUgFcb+9BYlcaZxcosomrNtIsA6ciORlUaz907Ks0ocieDEMs8z+p6SZMBfkG9Znr
+         Pl0WO97ITEY9Rr+dyR/EK1tyZj1V0seSEcjQq1YckJkQlC5NvJvFMFsLWasrycPFwC1K
+         KMAeOAToVKh4v3Rx4FfNWz2GJTZF/Ru2HLM0k4SRoDqA5jo24CLL5BQfyAUhyB0675X+
+         gQlw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
 	Will Deacon <will.deacon@arm.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	James Morse <james.morse@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.14 047/195] [Variant 3/Meltdown] arm64: kpti: Fix the interaction between ASID switching and software PAN
-Date: Thu, 15 Feb 2018 16:15:38 +0100
-Message-Id: <20180215151708.092544424@linuxfoundation.org>
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 4.14 056/195] [Variant 1/Spectre-v1] arm64: barrier: Add CSDB macros to control data-value prediction
+Date: Thu, 15 Feb 2018 16:15:47 +0100
+Message-Id: <20180215151708.535992836@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481623760290774?=
-X-GMAIL-MSGID: =?utf-8?q?1592481623760290774?=
+X-GMAIL-THRID: =?utf-8?q?1592481620719505373?=
+X-GMAIL-MSGID: =?utf-8?q?1592481620719505373?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,282 +50,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Catalin Marinas <catalin.marinas@arm.com>
+From: Will Deacon <will.deacon@arm.com>
 
 
-Commit 6b88a32c7af6 upstream.
+Commit 669474e772b9 upstream.
 
-With ARM64_SW_TTBR0_PAN enabled, the exception entry code checks the
-active ASID to decide whether user access was enabled (non-zero ASID)
-when the exception was taken. On return from exception, if user access
-was previously disabled, it re-instates TTBR0_EL1 from the per-thread
-saved value (updated in switch_mm() or efi_set_pgd()).
+For CPUs capable of data value prediction, CSDB waits for any outstanding
+predictions to architecturally resolve before allowing speculative execution
+to continue. Provide macros to expose it to the arch code.
 
-Commit 7655abb95386 ("arm64: mm: Move ASID from TTBR0 to TTBR1") makes a
-TTBR0_EL1 + ASID switching non-atomic. Subsequently, commit 27a921e75711
-("arm64: mm: Fix and re-enable ARM64_SW_TTBR0_PAN") changes the
-__uaccess_ttbr0_disable() function and asm macro to first write the
-reserved TTBR0_EL1 followed by the ASID=0 update in TTBR1_EL1. If an
-exception occurs between these two, the exception return code will
-re-instate a valid TTBR0_EL1. Similar scenario can happen in
-cpu_switch_mm() between setting the reserved TTBR0_EL1 and the ASID
-update in cpu_do_switch_mm().
-
-This patch reverts the entry.S check for ASID == 0 to TTBR0_EL1 and
-disables the interrupts around the TTBR0_EL1 and ASID switching code in
-__uaccess_ttbr0_disable(). It also ensures that, when returning from the
-EFI runtime services, efi_set_pgd() doesn't leave a non-zero ASID in
-TTBR1_EL1 by using uaccess_ttbr0_{enable,disable}.
-
-The accesses to current_thread_info()->ttbr0 are updated to use
-READ_ONCE/WRITE_ONCE.
-
-As a safety measure, __uaccess_ttbr0_enable() always masks out any
-existing non-zero ASID TTBR1_EL1 before writing in the new ASID.
-
-Fixes: 27a921e75711 ("arm64: mm: Fix and re-enable ARM64_SW_TTBR0_PAN")
-Acked-by: Will Deacon <will.deacon@arm.com>
-Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: James Morse <james.morse@arm.com>
-Tested-by: James Morse <james.morse@arm.com>
-Co-developed-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/asm-uaccess.h |   12 +++++++-----
- arch/arm64/include/asm/efi.h         |   12 +++++++-----
- arch/arm64/include/asm/mmu_context.h |    3 ++-
- arch/arm64/include/asm/uaccess.h     |    9 ++++++---
- arch/arm64/kernel/entry.S            |    2 +-
- arch/arm64/lib/clear_user.S          |    2 +-
- arch/arm64/lib/copy_from_user.S      |    2 +-
- arch/arm64/lib/copy_in_user.S        |    2 +-
- arch/arm64/lib/copy_to_user.S        |    2 +-
- arch/arm64/mm/cache.S                |    2 +-
- arch/arm64/mm/proc.S                 |    3 +++
- arch/arm64/xen/hypercall.S           |    2 +-
- 12 files changed, 32 insertions(+), 21 deletions(-)
+ arch/arm64/include/asm/assembler.h |    7 +++++++
+ arch/arm64/include/asm/barrier.h   |    2 ++
+ 2 files changed, 9 insertions(+)
 
---- a/arch/arm64/include/asm/asm-uaccess.h
-+++ b/arch/arm64/include/asm/asm-uaccess.h
-@@ -14,11 +14,11 @@
- #ifdef CONFIG_ARM64_SW_TTBR0_PAN
- 	.macro	__uaccess_ttbr0_disable, tmp1
- 	mrs	\tmp1, ttbr1_el1		// swapper_pg_dir
-+	bic	\tmp1, \tmp1, #TTBR_ASID_MASK
- 	add	\tmp1, \tmp1, #SWAPPER_DIR_SIZE	// reserved_ttbr0 at the end of swapper_pg_dir
- 	msr	ttbr0_el1, \tmp1		// set reserved TTBR0_EL1
- 	isb
- 	sub	\tmp1, \tmp1, #SWAPPER_DIR_SIZE
--	bic	\tmp1, \tmp1, #TTBR_ASID_MASK
- 	msr	ttbr1_el1, \tmp1		// set reserved ASID
- 	isb
- 	.endm
-@@ -35,9 +35,11 @@
- 	isb
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -96,6 +96,13 @@
  	.endm
  
--	.macro	uaccess_ttbr0_disable, tmp1
-+	.macro	uaccess_ttbr0_disable, tmp1, tmp2
- alternative_if_not ARM64_HAS_PAN
-+	save_and_disable_irq \tmp2		// avoid preemption
- 	__uaccess_ttbr0_disable \tmp1
-+	restore_irq \tmp2
- alternative_else_nop_endif
- 	.endm
- 
-@@ -49,7 +51,7 @@ alternative_if_not ARM64_HAS_PAN
- alternative_else_nop_endif
- 	.endm
- #else
--	.macro	uaccess_ttbr0_disable, tmp1
-+	.macro	uaccess_ttbr0_disable, tmp1, tmp2
- 	.endm
- 
- 	.macro	uaccess_ttbr0_enable, tmp1, tmp2, tmp3
-@@ -59,8 +61,8 @@ alternative_else_nop_endif
  /*
-  * These macros are no-ops when UAO is present.
++ * Value prediction barrier
++ */
++	.macro	csdb
++	hint	#20
++	.endm
++
++/*
+  * NOP sequence
   */
--	.macro	uaccess_disable_not_uao, tmp1
--	uaccess_ttbr0_disable \tmp1
-+	.macro	uaccess_disable_not_uao, tmp1, tmp2
-+	uaccess_ttbr0_disable \tmp1, \tmp2
- alternative_if ARM64_ALT_PAN_NOT_UAO
- 	SET_PSTATE_PAN(1)
- alternative_else_nop_endif
---- a/arch/arm64/include/asm/efi.h
-+++ b/arch/arm64/include/asm/efi.h
-@@ -121,19 +121,21 @@ static inline void efi_set_pgd(struct mm
- 		if (mm != current->active_mm) {
- 			/*
- 			 * Update the current thread's saved ttbr0 since it is
--			 * restored as part of a return from exception. Set
--			 * the hardware TTBR0_EL1 using cpu_switch_mm()
--			 * directly to enable potential errata workarounds.
-+			 * restored as part of a return from exception. Enable
-+			 * access to the valid TTBR0_EL1 and invoke the errata
-+			 * workaround directly since there is no return from
-+			 * exception when invoking the EFI run-time services.
- 			 */
- 			update_saved_ttbr0(current, mm);
--			cpu_switch_mm(mm->pgd, mm);
-+			uaccess_ttbr0_enable();
-+			post_ttbr_update_workaround();
- 		} else {
- 			/*
- 			 * Defer the switch to the current thread's TTBR0_EL1
- 			 * until uaccess_enable(). Restore the current
- 			 * thread's saved ttbr0 corresponding to its active_mm
- 			 */
--			cpu_set_reserved_ttbr0();
-+			uaccess_ttbr0_disable();
- 			update_saved_ttbr0(current, current->active_mm);
- 		}
- 	}
---- a/arch/arm64/include/asm/mmu_context.h
-+++ b/arch/arm64/include/asm/mmu_context.h
-@@ -175,7 +175,7 @@ static inline void update_saved_ttbr0(st
- 	else
- 		ttbr = virt_to_phys(mm->pgd) | ASID(mm) << 48;
+ 	.macro	nops, num
+--- a/arch/arm64/include/asm/barrier.h
++++ b/arch/arm64/include/asm/barrier.h
+@@ -31,6 +31,8 @@
+ #define dmb(opt)	asm volatile("dmb " #opt : : : "memory")
+ #define dsb(opt)	asm volatile("dsb " #opt : : : "memory")
  
--	task_thread_info(tsk)->ttbr0 = ttbr;
-+	WRITE_ONCE(task_thread_info(tsk)->ttbr0, ttbr);
- }
- #else
- static inline void update_saved_ttbr0(struct task_struct *tsk,
-@@ -230,6 +230,7 @@ switch_mm(struct mm_struct *prev, struct
- #define activate_mm(prev,next)	switch_mm(prev, next, current)
- 
- void verify_cpu_asid_bits(void);
-+void post_ttbr_update_workaround(void);
- 
- #endif /* !__ASSEMBLY__ */
- 
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -105,16 +105,18 @@ static inline void set_fs(mm_segment_t f
- #ifdef CONFIG_ARM64_SW_TTBR0_PAN
- static inline void __uaccess_ttbr0_disable(void)
- {
--	unsigned long ttbr;
-+	unsigned long flags, ttbr;
- 
-+	local_irq_save(flags);
- 	ttbr = read_sysreg(ttbr1_el1);
-+	ttbr &= ~TTBR_ASID_MASK;
- 	/* reserved_ttbr0 placed at the end of swapper_pg_dir */
- 	write_sysreg(ttbr + SWAPPER_DIR_SIZE, ttbr0_el1);
- 	isb();
- 	/* Set reserved ASID */
--	ttbr &= ~TTBR_ASID_MASK;
- 	write_sysreg(ttbr, ttbr1_el1);
- 	isb();
-+	local_irq_restore(flags);
- }
- 
- static inline void __uaccess_ttbr0_enable(void)
-@@ -127,10 +129,11 @@ static inline void __uaccess_ttbr0_enabl
- 	 * roll-over and an update of 'ttbr0'.
- 	 */
- 	local_irq_save(flags);
--	ttbr0 = current_thread_info()->ttbr0;
-+	ttbr0 = READ_ONCE(current_thread_info()->ttbr0);
- 
- 	/* Restore active ASID */
- 	ttbr1 = read_sysreg(ttbr1_el1);
-+	ttbr1 &= ~TTBR_ASID_MASK;		/* safety measure */
- 	ttbr1 |= ttbr0 & TTBR_ASID_MASK;
- 	write_sysreg(ttbr1, ttbr1_el1);
- 	isb();
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -204,7 +204,7 @@ alternative_if ARM64_HAS_PAN
- alternative_else_nop_endif
- 
- 	.if	\el != 0
--	mrs	x21, ttbr1_el1
-+	mrs	x21, ttbr0_el1
- 	tst	x21, #TTBR_ASID_MASK		// Check for the reserved ASID
- 	orr	x23, x23, #PSR_PAN_BIT		// Set the emulated PAN in the saved SPSR
- 	b.eq	1f				// TTBR0 access already disabled
---- a/arch/arm64/lib/clear_user.S
-+++ b/arch/arm64/lib/clear_user.S
-@@ -50,7 +50,7 @@ uao_user_alternative 9f, strh, sttrh, wz
- 	b.mi	5f
- uao_user_alternative 9f, strb, sttrb, wzr, x0, 0
- 5:	mov	x0, #0
--	uaccess_disable_not_uao x2
-+	uaccess_disable_not_uao x2, x3
- 	ret
- ENDPROC(__clear_user)
- 
---- a/arch/arm64/lib/copy_from_user.S
-+++ b/arch/arm64/lib/copy_from_user.S
-@@ -67,7 +67,7 @@ ENTRY(__arch_copy_from_user)
- 	uaccess_enable_not_uao x3, x4, x5
- 	add	end, x0, x2
- #include "copy_template.S"
--	uaccess_disable_not_uao x3
-+	uaccess_disable_not_uao x3, x4
- 	mov	x0, #0				// Nothing to copy
- 	ret
- ENDPROC(__arch_copy_from_user)
---- a/arch/arm64/lib/copy_in_user.S
-+++ b/arch/arm64/lib/copy_in_user.S
-@@ -68,7 +68,7 @@ ENTRY(raw_copy_in_user)
- 	uaccess_enable_not_uao x3, x4, x5
- 	add	end, x0, x2
- #include "copy_template.S"
--	uaccess_disable_not_uao x3
-+	uaccess_disable_not_uao x3, x4
- 	mov	x0, #0
- 	ret
- ENDPROC(raw_copy_in_user)
---- a/arch/arm64/lib/copy_to_user.S
-+++ b/arch/arm64/lib/copy_to_user.S
-@@ -66,7 +66,7 @@ ENTRY(__arch_copy_to_user)
- 	uaccess_enable_not_uao x3, x4, x5
- 	add	end, x0, x2
- #include "copy_template.S"
--	uaccess_disable_not_uao x3
-+	uaccess_disable_not_uao x3, x4
- 	mov	x0, #0
- 	ret
- ENDPROC(__arch_copy_to_user)
---- a/arch/arm64/mm/cache.S
-+++ b/arch/arm64/mm/cache.S
-@@ -72,7 +72,7 @@ USER(9f, ic	ivau, x4	)		// invalidate I
- 	isb
- 	mov	x0, #0
- 1:
--	uaccess_ttbr0_disable x1
-+	uaccess_ttbr0_disable x1, x2
- 	ret
- 9:
- 	mov	x0, #-EFAULT
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -140,6 +140,9 @@ ENDPROC(cpu_do_resume)
- ENTRY(cpu_do_switch_mm)
- 	mrs	x2, ttbr1_el1
- 	mmid	x1, x1				// get mm->context.id
-+#ifdef CONFIG_ARM64_SW_TTBR0_PAN
-+	bfi	x0, x1, #48, #16		// set the ASID field in TTBR0
-+#endif
- 	bfi	x2, x1, #48, #16		// set the ASID
- 	msr	ttbr1_el1, x2			// in TTBR1 (since TCR.A1 is set)
- 	isb
---- a/arch/arm64/xen/hypercall.S
-+++ b/arch/arm64/xen/hypercall.S
-@@ -107,6 +107,6 @@ ENTRY(privcmd_call)
- 	/*
- 	 * Disable userspace access from kernel once the hyp call completed.
- 	 */
--	uaccess_ttbr0_disable x6
-+	uaccess_ttbr0_disable x6, x7
- 	ret
- ENDPROC(privcmd_call);
++#define csdb()		asm volatile("hint #20" : : : "memory")
++
+ #define mb()		dsb(sy)
+ #define rmb()		dsb(ld)
+ #define wmb()		dsb(st)
