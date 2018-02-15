@@ -1,37 +1,37 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2271HZ4BVgBigiDOhJcHc2oWtAGQtcOJHGfiusFnXeQ3xK2/ZLKr20Y9A73OYPSYdqvsYCxx
-ARC-Seal: i=1; a=rsa-sha256; t=1518708455; cv=none;
+X-Google-Smtp-Source: AH8x226lVYgdQQng0/mB0lrc825qwoLBxlJxw7wYOGR7c3wBW2XTtQhz9iExJWbKC8flAmQFQ23r
+ARC-Seal: i=1; a=rsa-sha256; t=1518708452; cv=none;
         d=google.com; s=arc-20160816;
-        b=iQlZDL/6ORfo7cvlwdpGPe3USK6wPGOz3pzF6mEOrx/wAi+1Arc687BPcCX7QHGIvk
-         J4kwzHwRW7pE9xUy94d20EFYtxPt99Sz2M1O/yOzeOPOwk2wRR4OXB2r+ga1b7A+v/CV
-         2J3qh/oy7IWHrocZqISX4/3noJpWBC5cfZtWvi+b9Qe5QnAXIJ1/l4eklKxYqy55EpKW
-         Mh+TAPMAwjPIUaWksFNGW18G8AbzNqk0ADAKeYQj6k0Gz/qM/bDRyXSoEmD0wzCEO/eK
-         uKkFWHF7Xphc+3jVSoBSWmUSa2HUMC0AWmcf/rg+YV5VGtKoYL1AAEkuEJPMhqkAHBol
-         NU4A==
+        b=l3BrRBzVF82pX4ZM2fiIda7nfQvQyh35V/UhOwr3X1aUf0dEDwuLy48gjVA4aAEcqp
+         z6d3UJIMwQlSiidGfXEGtnXhxzH10HNbYGWzeFACO+gs/J+44RHVstyuBE5ZavGCTj+Z
+         2726MZC3G1Yglxb3kmPLPjet8c0aXIvTJkYv2ackYgeht806Gm2sK3I9p2wjpESvUmXE
+         AgxfhM1di5MnZYvhpm+TB15y+KR6VTRi8YgKzv4n0rKnNZJO8yc6Z3oXaFIld0+Km7ao
+         MU5mPQWhKyninrK3dqRoXyibcIlrdyGN0X66tE8aQIbQjC1jE8Je3+KQPy689TIKAyzY
+         Eu9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=FyqJSUz19M74BW6xSC1wvCTdbB4eW0nYjiX9CSnCKzo=;
-        b=TgmocOQerX2DZpLP7zY1yKdHxCCWSFsHw/KDoBrFKSCPOkT9SufBLUzm8+Vj6PJYuG
-         nPJX7MjFTniQYBDV/WpnxzV2dJTZyhcsU8qqF9YHOgeulaSc12cyed+newDWd7gSM+SA
-         1d1zlPoyScmn9NeZqNPT9PT90l7Dc/KUV5XtA2ESh2cbqZ6vwTWFsEhw/5gexHnCcsI1
-         5nirbHRPRz6Ta6JierY0exCp8uUbLXa6EI+2zmX2rdwfuEIhEDdL/+L7fS0fXfgnqCyy
-         JEx8OR8MdnNp44oam+Nj3qjRMrEtmjqC+0OiyI0O4ZNlTAE6yWWJ88A157iuELS/ZyoR
-         1rQg==
+        bh=1F/dJoM7AwdYwuiCoj+g6KL+3xp6BdIdbNK4e7M6DaY=;
+        b=WlLCwGdZSyv0ye84AqavpeuS5M7xeYlnay/wDdu1XHNTAo7CqfJWyGT5FmCa168zLa
+         XhGKOTOZ9yMFKXtfpgMmY7sbagtkp5RYnMh92VHKtCrV4/ecuP68iX2Mz/+FloGPH9Fr
+         HMI4E+yr67AekQ7B/ky4uVQyKbDu5nKLJhmaQSp7Evy1irMlSOA4DjbjB8jpGsndwm7b
+         EiVTwXrtlDiuItJwJNde+v8jidlz0g0quyjfA/8tso3aO2ju41RkNzJqYZLGQT5FVyVW
+         NQTwi1gg1O27aq4TsmJuEN7Qn0An4nxFQ0ixUXLYSZ5oCFnXuqFNOCMyyISD9l0kJwPp
+         lYmg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.9 47/88] media: v4l2-compat-ioctl32.c: dont copy back the result for certain errors
-Date: Thu, 15 Feb 2018 16:17:14 +0100
-Message-Id: <20180215151229.215925423@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Bradley Bolen <bradleybolen@gmail.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.9 20/88] ubi: block: Fix locking for idr_alloc/idr_remove
+Date: Thu, 15 Feb 2018 16:16:47 +0100
+Message-Id: <20180215151225.558802562@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481025461471591?=
-X-GMAIL-MSGID: =?utf-8?q?1592481236860003693?=
+X-GMAIL-THRID: =?utf-8?q?1592480969135641331?=
+X-GMAIL-MSGID: =?utf-8?q?1592481234199915130?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,31 +49,186 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+From: Bradley Bolen <bradleybolen@gmail.com>
 
-commit d83a8243aaefe62ace433e4384a4f077bed86acb upstream.
+commit 7f29ae9f977bcdc3654e68bc36d170223c52fd48 upstream.
 
-Some ioctls need to copy back the result even if the ioctl returned
-an error. However, don't do this for the error code -ENOTTY.
-It makes no sense in that cases.
+This fixes a race with idr_alloc where gd->first_minor can be set to the
+same value for two simultaneous calls to ubiblock_create.  Each instance
+calls device_add_disk with the same first_minor.  device_add_disk calls
+bdi_register_owner which generates several warnings.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+WARNING: CPU: 1 PID: 179 at kernel-source/fs/sysfs/dir.c:31
+sysfs_warn_dup+0x68/0x88
+sysfs: cannot create duplicate filename '/devices/virtual/bdi/252:2'
+
+WARNING: CPU: 1 PID: 179 at kernel-source/lib/kobject.c:240
+kobject_add_internal+0x1ec/0x2f8
+kobject_add_internal failed for 252:2 with -EEXIST, don't try to
+register things with the same name in the same directory
+
+WARNING: CPU: 1 PID: 179 at kernel-source/fs/sysfs/dir.c:31
+sysfs_warn_dup+0x68/0x88
+sysfs: cannot create duplicate filename '/dev/block/252:2'
+
+However, device_add_disk does not error out when bdi_register_owner
+returns an error.  Control continues until reaching blk_register_queue.
+It then BUGs.
+
+kernel BUG at kernel-source/fs/sysfs/group.c:113!
+[<c01e26cc>] (internal_create_group) from [<c01e2950>]
+(sysfs_create_group+0x20/0x24)
+[<c01e2950>] (sysfs_create_group) from [<c00e3d38>]
+(blk_trace_init_sysfs+0x18/0x20)
+[<c00e3d38>] (blk_trace_init_sysfs) from [<c02bdfbc>]
+(blk_register_queue+0xd8/0x154)
+[<c02bdfbc>] (blk_register_queue) from [<c02cec84>]
+(device_add_disk+0x194/0x44c)
+[<c02cec84>] (device_add_disk) from [<c0436ec8>]
+(ubiblock_create+0x284/0x2e0)
+[<c0436ec8>] (ubiblock_create) from [<c0427bb8>]
+(vol_cdev_ioctl+0x450/0x554)
+[<c0427bb8>] (vol_cdev_ioctl) from [<c0189110>] (vfs_ioctl+0x30/0x44)
+[<c0189110>] (vfs_ioctl) from [<c01892e0>] (do_vfs_ioctl+0xa0/0x790)
+[<c01892e0>] (do_vfs_ioctl) from [<c0189a14>] (SyS_ioctl+0x44/0x68)
+[<c0189a14>] (SyS_ioctl) from [<c0010640>] (ret_fast_syscall+0x0/0x34)
+
+Locking idr_alloc/idr_remove removes the race and keeps gd->first_minor
+unique.
+
+Fixes: 2bf50d42f3a4 ("UBI: block: Dynamically allocate minor numbers")
+Signed-off-by: Bradley Bolen <bradleybolen@gmail.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    3 +++
- 1 file changed, 3 insertions(+)
 
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -956,6 +956,9 @@ static long do_video_ioctl(struct file *
- 		set_fs(old_fs);
+---
+ drivers/mtd/ubi/block.c |   42 ++++++++++++++++++++++++++----------------
+ 1 file changed, 26 insertions(+), 16 deletions(-)
+
+--- a/drivers/mtd/ubi/block.c
++++ b/drivers/mtd/ubi/block.c
+@@ -99,6 +99,8 @@ struct ubiblock {
+ 
+ /* Linked list of all ubiblock instances */
+ static LIST_HEAD(ubiblock_devices);
++static DEFINE_IDR(ubiblock_minor_idr);
++/* Protects ubiblock_devices and ubiblock_minor_idr */
+ static DEFINE_MUTEX(devices_mutex);
+ static int ubiblock_major;
+ 
+@@ -353,8 +355,6 @@ static struct blk_mq_ops ubiblock_mq_ops
+ 	.init_request	= ubiblock_init_request,
+ };
+ 
+-static DEFINE_IDR(ubiblock_minor_idr);
+-
+ int ubiblock_create(struct ubi_volume_info *vi)
+ {
+ 	struct ubiblock *dev;
+@@ -367,14 +367,15 @@ int ubiblock_create(struct ubi_volume_in
+ 	/* Check that the volume isn't already handled */
+ 	mutex_lock(&devices_mutex);
+ 	if (find_dev_nolock(vi->ubi_num, vi->vol_id)) {
+-		mutex_unlock(&devices_mutex);
+-		return -EEXIST;
++		ret = -EEXIST;
++		goto out_unlock;
+ 	}
+-	mutex_unlock(&devices_mutex);
+ 
+ 	dev = kzalloc(sizeof(struct ubiblock), GFP_KERNEL);
+-	if (!dev)
+-		return -ENOMEM;
++	if (!dev) {
++		ret = -ENOMEM;
++		goto out_unlock;
++	}
+ 
+ 	mutex_init(&dev->dev_mutex);
+ 
+@@ -439,14 +440,13 @@ int ubiblock_create(struct ubi_volume_in
+ 		goto out_free_queue;
  	}
  
-+	if (err == -ENOTTY)
-+		return err;
+-	mutex_lock(&devices_mutex);
+ 	list_add_tail(&dev->list, &ubiblock_devices);
+-	mutex_unlock(&devices_mutex);
+ 
+ 	/* Must be the last step: anyone can call file ops from now on */
+ 	add_disk(dev->gd);
+ 	dev_info(disk_to_dev(dev->gd), "created from ubi%d:%d(%s)",
+ 		 dev->ubi_num, dev->vol_id, vi->name);
++	mutex_unlock(&devices_mutex);
+ 	return 0;
+ 
+ out_free_queue:
+@@ -459,6 +459,8 @@ out_put_disk:
+ 	put_disk(dev->gd);
+ out_free_dev:
+ 	kfree(dev);
++out_unlock:
++	mutex_unlock(&devices_mutex);
+ 
+ 	return ret;
+ }
+@@ -480,30 +482,36 @@ static void ubiblock_cleanup(struct ubib
+ int ubiblock_remove(struct ubi_volume_info *vi)
+ {
+ 	struct ubiblock *dev;
++	int ret;
+ 
+ 	mutex_lock(&devices_mutex);
+ 	dev = find_dev_nolock(vi->ubi_num, vi->vol_id);
+ 	if (!dev) {
+-		mutex_unlock(&devices_mutex);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out_unlock;
+ 	}
+ 
+ 	/* Found a device, let's lock it so we can check if it's busy */
+ 	mutex_lock(&dev->dev_mutex);
+ 	if (dev->refcnt > 0) {
+-		mutex_unlock(&dev->dev_mutex);
+-		mutex_unlock(&devices_mutex);
+-		return -EBUSY;
++		ret = -EBUSY;
++		goto out_unlock_dev;
+ 	}
+ 
+ 	/* Remove from device list */
+ 	list_del(&dev->list);
+-	mutex_unlock(&devices_mutex);
+-
+ 	ubiblock_cleanup(dev);
+ 	mutex_unlock(&dev->dev_mutex);
++	mutex_unlock(&devices_mutex);
 +
- 	/* Special case: even after an error we need to put the
- 	   results back for these ioctls since the error_idx will
- 	   contain information on which control failed. */
+ 	kfree(dev);
+ 	return 0;
++
++out_unlock_dev:
++	mutex_unlock(&dev->dev_mutex);
++out_unlock:
++	mutex_unlock(&devices_mutex);
++	return ret;
+ }
+ 
+ static int ubiblock_resize(struct ubi_volume_info *vi)
+@@ -632,6 +640,7 @@ static void ubiblock_remove_all(void)
+ 	struct ubiblock *next;
+ 	struct ubiblock *dev;
+ 
++	mutex_lock(&devices_mutex);
+ 	list_for_each_entry_safe(dev, next, &ubiblock_devices, list) {
+ 		/* The module is being forcefully removed */
+ 		WARN_ON(dev->desc);
+@@ -640,6 +649,7 @@ static void ubiblock_remove_all(void)
+ 		ubiblock_cleanup(dev);
+ 		kfree(dev);
+ 	}
++	mutex_unlock(&devices_mutex);
+ }
+ 
+ int __init ubiblock_init(void)
