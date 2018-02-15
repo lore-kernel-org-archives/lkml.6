@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2240LSDDwT9iSfP2YP5J3/LpS7I+rvQOhf50Q6dof7kVYPGb5mhS30EjyZEuqBxMCtFslhPO
-ARC-Seal: i=1; a=rsa-sha256; t=1518708490; cv=none;
+X-Google-Smtp-Source: AH8x227uH3mvBf7wM9fDO2pppZIp9qG+lTkI79SQ0fyf3vmcb3z2+Ri/BcRK04O5GJdAXPRrInKp
+ARC-Seal: i=1; a=rsa-sha256; t=1518708487; cv=none;
         d=google.com; s=arc-20160816;
-        b=c0ziTIWjCjgXV4pjPexbtLuO02LHsHH4qbU1aOtqdIXeCOV7Z7/ncWTJxU1EbNgHEu
-         JOdCNsbyvj+jnlRc7I0tS/kej1eWPh72Qyj0T2z49A+lSeFGFAcFA31O9gqJge1t46sK
-         puadtquAoS38NtNcnao8+JmRdjD5TNtMF8iR9VnGSGY/qywHF9B0e/lP4aae8Td+4xnh
-         SwCENQMF7AvpzU2hJmyt2CFFBWeKAHv2zZkT6G1A7qutTYt6hlR1MfsX0HYw1GvNIWce
-         Q8kz2X5cIrS5OkPBN1ZQgJcKburiiT7mn7Nlj5AOpRREY8mVIf58b0bozlEE+QmVRncE
-         ZnaA==
+        b=g9K5YL2we8xsqW815odZjtmqxCtS/KxIpltQ4G9b+9AIUmArA3+THrZI3oxEH09HLZ
+         FGV79xGAW7Go3xv1ebhKli/qgJCa8Y86swEfDETYMVNXFc0ZITzCXunSnhhfh7eKUHOK
+         qw71Aoh2wOfJkxJTz5DccLn1udQnbNlYEMd1ZHNDFLRoZM2uQJgOjKuYfU8gZbkrI5Sk
+         CMxrm8lnahAuiGay+Vea43tBibnJY6MFc+5JDFaGxFWjKMrfBl9YJ2gSJo5qwn7HhrZm
+         dElj2BksPifTM022l4NGyr/WsMMK8iQAHY+aCtp2GrpT0XFIDfbRKC9cZIVsSmErKjlu
+         WkbA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9pJdzQdPeYS287d48gUla4klZOfPZ6A4pRaIiZdW0oI=;
-        b=gZV1oXQ2Xy0yAQaD6sCa4JoTCH9UWb7gSFB/dXWLrmIE9Hyy622aiyf07j3upAy5PG
-         Xd9hGs0hCTHpgXaEUzZGaFRnYsqNGfGrnhBEflwRtzvzinGNMNMq2iWSEnUVohlJuO0i
-         ALYhP0ESgIpbdM8Cxr3iKVmZC1HkB9PnJ+nU5FdyMvPQuA418eYyXAgQ14fUf7E2jh5+
-         4nibVsrEoqNM7AoQtpeBqL1CluEHqcWRIYlA0fg9RoTCZHp/x+VUyZlIW356MlPfXKPk
-         SkcpM38n5dteT6MYBrk55VlVaepeyCQC6E+0rhP/i9GpH8DpX77HX5vgwd7DNq6PTIGr
-         v16g==
+        bh=NklkrcAXmyCwndTbNUZMupkxTS6ZEDRUSk1xNysg/Hw=;
+        b=gUi3mqFlWakqr0cXrLDnFshgmBdrNgshun0Gh70nRKVwra7sCUPdcH3pYD0oMQV2Tu
+         fwgwbNk9LiCd1QRuQj0YW3UNemB+0DjxcbObedf1wuBQaSBkANmJT93hL+7tPbwa7pxP
+         LuPNhhTOr5mocEQqF56x78l+QLVkxiY5DO6Pht0kIBhcqHcwZdI30BRQ9uCOBjsr97es
+         Wso+vnKbauxrkwh/LCb2/iYItKn5TcP80IUwzbiSLlKUiRk9xc0RRgtAU3q41qWutRXN
+         W1ClUAl1N6DBaGWW9nR4QjSMyEkh6mzQTZaPazXWVqJk5KGVE+uiOxs2h0uN5WDELKsO
+         NdRQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"J. Bruce Fields" <bfields@redhat.com>,
+	Mike Galbraith <efault@gmx.de>,
 	Trond Myklebust <trond.myklebust@primarydata.com>
-Subject: [PATCH 4.9 24/88] NFS: commit direct writes even if they fail partially
-Date: Thu, 15 Feb 2018 16:16:51 +0100
-Message-Id: <20180215151226.012002344@linuxfoundation.org>
+Subject: [PATCH 4.9 23/88] NFS: Add a cond_resched() to nfs_commit_release_pages()
+Date: Thu, 15 Feb 2018 16:16:50 +0100
+Message-Id: <20180215151225.894700764@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480730180404338?=
-X-GMAIL-MSGID: =?utf-8?q?1592481274279023747?=
+X-GMAIL-THRID: =?utf-8?q?1592480726935884245?=
+X-GMAIL-MSGID: =?utf-8?q?1592481271578312858?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,38 +48,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: J. Bruce Fields <bfields@redhat.com>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 
-commit 1b8d97b0a837beaf48a8449955b52c650a7114b4 upstream.
+commit 7f1bda447c9bd48b415acedba6b830f61591601f upstream.
 
-If some of the WRITE calls making up an O_DIRECT write syscall fail,
-we neglect to commit, even if some of the WRITEs succeed.
+The commit list can get very large, and so we need a cond_resched()
+in nfs_commit_release_pages() in order to ensure we don't hog the CPU
+for excessive periods of time.
 
-We also depend on the commit code to free the reference count on the
-nfs_page taken in the "if (request_commit)" case at the end of
-nfs_direct_write_completion().  The problem was originally noticed
-because ENOSPC's encountered partway through a write would result in a
-closed file being sillyrenamed when it should have been unlinked.
-
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Reported-by: Mike Galbraith <efault@gmx.de>
 Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/direct.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/nfs/write.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@ -787,10 +787,8 @@ static void nfs_direct_write_completion(
- 
- 	spin_lock(&dreq->lock);
- 
--	if (test_bit(NFS_IOHDR_ERROR, &hdr->flags)) {
--		dreq->flags = 0;
-+	if (test_bit(NFS_IOHDR_ERROR, &hdr->flags))
- 		dreq->error = hdr->error;
--	}
- 	if (dreq->error == 0) {
- 		nfs_direct_good_bytes(dreq, hdr);
- 		if (nfs_write_need_commit(hdr)) {
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -1806,6 +1806,8 @@ static void nfs_commit_release_pages(str
+ 		set_bit(NFS_CONTEXT_RESEND_WRITES, &req->wb_context->flags);
+ 	next:
+ 		nfs_unlock_and_release_request(req);
++		/* Latency breaker */
++		cond_resched();
+ 	}
+ 	nfss = NFS_SERVER(data->inode);
+ 	if (atomic_long_read(&nfss->writeback) < NFS_CONGESTION_OFF_THRESH)
