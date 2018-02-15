@@ -1,75 +1,227 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032797AbeBONMq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 08:12:46 -0500
-Received: from mail.efficios.com ([167.114.142.141]:47051 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032780AbeBONMn (ORCPT
+        id S1032721AbeBONMh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 08:12:37 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:42064 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032118AbeBONMZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 08:12:43 -0500
-Date: Thu, 15 Feb 2018 13:13:39 +0000 (UTC)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Message-ID: <1626999028.22440.1518700419721.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180215114927.GV25201@hirez.programming.kicks-ass.net>
-References: <20180214120254.qq4w4s42ecxio7lu@lakrids.cambridge.arm.com> <20180214150739.GH2992@arm.com> <20180214165131.o25r3hhrtrjk3ejq@lakrids.cambridge.arm.com> <254787533.21950.1518634424009.JavaMail.zimbra@efficios.com> <20180215114927.GV25201@hirez.programming.kicks-ass.net>
-Subject: Re: arm64/v4.16-rc1: KASAN: use-after-free Read in
- finish_task_switch
+        Thu, 15 Feb 2018 08:12:25 -0500
+X-Google-Smtp-Source: AH8x225PeXSvdiy+GW+BrQVmwYkCten4V1NTrhhKKJ9ulGXz/AGqfnBlOBEBssrLMmGCZ0TIkhDPlA==
+From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To: linux-block@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        javier@cnexlabs.com,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [PATCH v2 5/6] lightnvm: remove nvm_dev_ops->max_phys_sect
+Date: Thu, 15 Feb 2018 14:11:59 +0100
+Message-Id: <20180215131200.3354-6-mb@lightnvm.io>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180215131200.3354-1-mb@lightnvm.io>
+References: <20180215131200.3354-1-mb@lightnvm.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.141]
-X-Mailer: Zimbra 8.7.11_GA_1854 (ZimbraWebClient - FF52 (Linux)/8.7.11_GA_1854)
-Thread-Topic: arm64/v4.16-rc1: KASAN: use-after-free Read in finish_task_switch
-Thread-Index: QsU4P0oDtP33RdDsS/KsoKBlz0yxfQ==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Feb 15, 2018, at 6:49 AM, Peter Zijlstra peterz@infradead.org wrote:
+The value of max_phys_sect is always static. Instead of
+defining it in the nvm_dev_ops structure, declare it as a global
+value.
 
-> On Wed, Feb 14, 2018 at 06:53:44PM +0000, Mathieu Desnoyers wrote:
->> However, given the scenario involves multiples CPUs (one doing exit_mm(),
->> the other doing context switch), the actual order of perceived load/store
->> can be shuffled. And AFAIU nothing prevents the CPU from ordering the
->> atomic_inc() done by mmgrab(mm) _after_ the store to current->mm.
->> 
->> I wonder if we should not simply add a smp_mb__after_atomic() into
->> mmgrab() instead ? I see that e.g. futex.c does:
-> 
-> Don't think so, the futex case is really rather special and I suspect
-> this one is too. I would much rather have explicit comments rather than
-> implicit works by magic.
-> 
-> As per the rationale used for refcount_t, increments should be
-> unordered, because you ACQUIRE your object _before_ you can do the
-> increment.
-> 
-> The futex thing is simply abusing a bunch of implied barriers and
-> patching up the holes in paths that didn't already imply a barrier in
-> order to avoid having to add explicit barriers (which had measurable
-> performance issues).
-> 
-> And here we have explicit ordering outside of the reference counting
-> too, we want to ensure the reference is incremented before we modify
-> a second object.
-> 
-> This ordering is not at all related to acquiring the reference, so
-> bunding it seems odd.
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+---
+ drivers/lightnvm/core.c          | 28 +++++++---------------------
+ drivers/lightnvm/pblk-init.c     |  9 ++++-----
+ drivers/lightnvm/pblk-recovery.c |  8 ++------
+ drivers/nvme/host/lightnvm.c     |  5 +----
+ include/linux/lightnvm.h         |  5 ++---
+ 5 files changed, 16 insertions(+), 39 deletions(-)
 
-I understand your point. Will's added barrier and comment is fine.
-
-Thanks,
-
-Mathieu
-
-
-
+diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+index 511c81c319ee..782f381e4d61 100644
+--- a/drivers/lightnvm/core.c
++++ b/drivers/lightnvm/core.c
+@@ -407,7 +407,8 @@ static int nvm_create_tgt(struct nvm_dev *dev, struct nvm_ioctl_create *create)
+ 	tdisk->private_data = targetdata;
+ 	tqueue->queuedata = targetdata;
+ 
+-	blk_queue_max_hw_sectors(tqueue, 8 * dev->ops->max_phys_sect);
++	blk_queue_max_hw_sectors(tqueue,
++			(dev->geo.sec_size >> 9) * NVM_MAX_VLBA);
+ 
+ 	set_capacity(tdisk, tt->capacity(targetdata));
+ 	add_disk(tdisk);
+@@ -719,7 +720,7 @@ int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *tgt_dev, struct ppa_addr *ppas,
+ 	struct nvm_rq rqd;
+ 	int ret;
+ 
+-	if (nr_ppas > dev->ops->max_phys_sect) {
++	if (nr_ppas > NVM_MAX_VLBA) {
+ 		pr_err("nvm: unable to update all blocks atomically\n");
+ 		return -EINVAL;
+ 	}
+@@ -740,14 +741,6 @@ int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *tgt_dev, struct ppa_addr *ppas,
+ }
+ EXPORT_SYMBOL(nvm_set_tgt_bb_tbl);
+ 
+-int nvm_max_phys_sects(struct nvm_tgt_dev *tgt_dev)
+-{
+-	struct nvm_dev *dev = tgt_dev->parent;
+-
+-	return dev->ops->max_phys_sect;
+-}
+-EXPORT_SYMBOL(nvm_max_phys_sects);
+-
+ int nvm_submit_io(struct nvm_tgt_dev *tgt_dev, struct nvm_rq *rqd)
+ {
+ 	struct nvm_dev *dev = tgt_dev->parent;
+@@ -965,17 +958,10 @@ int nvm_register(struct nvm_dev *dev)
+ 	if (!dev->q || !dev->ops)
+ 		return -EINVAL;
+ 
+-	if (dev->ops->max_phys_sect > 256) {
+-		pr_info("nvm: max sectors supported is 256.\n");
+-		return -EINVAL;
+-	}
+-
+-	if (dev->ops->max_phys_sect > 1) {
+-		dev->dma_pool = dev->ops->create_dma_pool(dev, "ppalist");
+-		if (!dev->dma_pool) {
+-			pr_err("nvm: could not create dma pool\n");
+-			return -ENOMEM;
+-		}
++	dev->dma_pool = dev->ops->create_dma_pool(dev, "ppalist");
++	if (!dev->dma_pool) {
++		pr_err("nvm: could not create dma pool\n");
++		return -ENOMEM;
+ 	}
+ 
+ 	ret = nvm_init(dev);
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 86a94a7faa96..5261702e9ff7 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -260,8 +260,7 @@ static int pblk_core_init(struct pblk *pblk)
+ 		return -ENOMEM;
+ 
+ 	/* Internal bios can be at most the sectors signaled by the device. */
+-	pblk->page_bio_pool = mempool_create_page_pool(nvm_max_phys_sects(dev),
+-									0);
++	pblk->page_bio_pool = mempool_create_page_pool(NVM_MAX_VLBA, 0);
+ 	if (!pblk->page_bio_pool)
+ 		goto free_global_caches;
+ 
+@@ -716,12 +715,12 @@ static int pblk_lines_init(struct pblk *pblk)
+ 
+ 	pblk->min_write_pgs = geo->sec_per_pl * (geo->sec_size / PAGE_SIZE);
+ 	max_write_ppas = pblk->min_write_pgs * geo->all_luns;
+-	pblk->max_write_pgs = (max_write_ppas < nvm_max_phys_sects(dev)) ?
+-				max_write_ppas : nvm_max_phys_sects(dev);
++	pblk->max_write_pgs = min_t(int, max_write_ppas, NVM_MAX_VLBA);
+ 	pblk_set_sec_per_write(pblk, pblk->min_write_pgs);
+ 
+ 	if (pblk->max_write_pgs > PBLK_MAX_REQ_ADDRS) {
+-		pr_err("pblk: cannot support device max_phys_sect\n");
++		pr_err("pblk: vector list too big(%u > %u)\n",
++				pblk->max_write_pgs, PBLK_MAX_REQ_ADDRS);
+ 		return -EINVAL;
+ 	}
+ 
+diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+index e75a1af2eebe..aaab9a5c17cc 100644
+--- a/drivers/lightnvm/pblk-recovery.c
++++ b/drivers/lightnvm/pblk-recovery.c
+@@ -21,17 +21,15 @@ void pblk_submit_rec(struct work_struct *work)
+ 	struct pblk_rec_ctx *recovery =
+ 			container_of(work, struct pblk_rec_ctx, ws_rec);
+ 	struct pblk *pblk = recovery->pblk;
+-	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_rq *rqd = recovery->rqd;
+ 	struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
+-	int max_secs = nvm_max_phys_sects(dev);
+ 	struct bio *bio;
+ 	unsigned int nr_rec_secs;
+ 	unsigned int pgs_read;
+ 	int ret;
+ 
+ 	nr_rec_secs = bitmap_weight((unsigned long int *)&rqd->ppa_status,
+-								max_secs);
++								NVM_MAX_VLBA);
+ 
+ 	bio = bio_alloc(GFP_KERNEL, nr_rec_secs);
+ 
+@@ -74,8 +72,6 @@ int pblk_recov_setup_rq(struct pblk *pblk, struct pblk_c_ctx *c_ctx,
+ 			struct pblk_rec_ctx *recovery, u64 *comp_bits,
+ 			unsigned int comp)
+ {
+-	struct nvm_tgt_dev *dev = pblk->dev;
+-	int max_secs = nvm_max_phys_sects(dev);
+ 	struct nvm_rq *rec_rqd;
+ 	struct pblk_c_ctx *rec_ctx;
+ 	int nr_entries = c_ctx->nr_valid + c_ctx->nr_padded;
+@@ -86,7 +82,7 @@ int pblk_recov_setup_rq(struct pblk *pblk, struct pblk_c_ctx *c_ctx,
+ 	/* Copy completion bitmap, but exclude the first X completed entries */
+ 	bitmap_shift_right((unsigned long int *)&rec_rqd->ppa_status,
+ 				(unsigned long int *)comp_bits,
+-				comp, max_secs);
++				comp, NVM_MAX_VLBA);
+ 
+ 	/* Save the context for the entries that need to be re-written and
+ 	 * update current context with the completed entries.
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index 8b243af8a949..e38d835b15b5 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -612,8 +612,6 @@ static struct nvm_dev_ops nvme_nvm_dev_ops = {
+ 	.destroy_dma_pool	= nvme_nvm_destroy_dma_pool,
+ 	.dev_dma_alloc		= nvme_nvm_dev_dma_alloc,
+ 	.dev_dma_free		= nvme_nvm_dev_dma_free,
+-
+-	.max_phys_sect		= 64,
+ };
+ 
+ static int nvme_nvm_submit_user_cmd(struct request_queue *q,
+@@ -932,8 +930,7 @@ static ssize_t nvm_dev_attr_show_12(struct device *dev,
+ 	} else if (strcmp(attr->name, "media_capabilities") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "0x%08x\n", id->mccap);
+ 	} else if (strcmp(attr->name, "max_phys_secs") == 0) {
+-		return scnprintf(page, PAGE_SIZE, "%u\n",
+-				ndev->ops->max_phys_sect);
++		return scnprintf(page, PAGE_SIZE, "%u\n", NVM_MAX_VLBA);
+ 	} else {
+ 		return scnprintf(page,
+ 				 PAGE_SIZE,
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index 67b4fa8e4906..e55b10573c99 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -73,8 +73,6 @@ struct nvm_dev_ops {
+ 	nvm_destroy_dma_pool_fn	*destroy_dma_pool;
+ 	nvm_dev_dma_alloc_fn	*dev_dma_alloc;
+ 	nvm_dev_dma_free_fn	*dev_dma_free;
+-
+-	unsigned int		max_phys_sect;
+ };
+ 
+ #ifdef CONFIG_NVM
+@@ -228,6 +226,8 @@ struct nvm_target {
+ #define NVM_VERSION_MINOR 0
+ #define NVM_VERSION_PATCH 0
+ 
++#define NVM_MAX_VLBA (64) /* max logical blocks in a vector command */
++
+ struct nvm_rq;
+ typedef void (nvm_end_io_fn)(struct nvm_rq *);
+ 
+@@ -436,7 +436,6 @@ extern void nvm_unregister(struct nvm_dev *);
+ 
+ extern int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *, struct ppa_addr *,
+ 			      int, int);
+-extern int nvm_max_phys_sects(struct nvm_tgt_dev *);
+ extern int nvm_submit_io(struct nvm_tgt_dev *, struct nvm_rq *);
+ extern int nvm_submit_io_sync(struct nvm_tgt_dev *, struct nvm_rq *);
+ extern void nvm_end_io(struct nvm_rq *);
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+2.11.0
