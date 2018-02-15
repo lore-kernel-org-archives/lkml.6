@@ -1,67 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033021AbeBON6w (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 08:58:52 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:54312 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032283AbeBON6v (ORCPT
+        id S1033040AbeBON7F (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 08:59:05 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:48458 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032782AbeBON6w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 08:58:51 -0500
-Date: Thu, 15 Feb 2018 14:58:40 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: sun7i: dt: Add Mali node
-Message-ID: <20180215135840.vt4ujoecvirpidbr@flea.lan>
-References: <1518702362-115625-1-git-send-email-giulio.benetti@micronovasrl.com>
+        Thu, 15 Feb 2018 08:58:52 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>, geert@glider.be,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/8] dt-bindings: display: renesas,du: Document r8a77995 bindings
+Date: Thu, 15 Feb 2018 15:59:25 +0200
+Message-ID: <4647820.7KnCr1m3Y8@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1518683903-10681-3-git-send-email-kbingham@kernel.org>
+References: <1518683903-10681-1-git-send-email-kbingham@kernel.org> <1518683903-10681-3-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="olxufokcp5gvic37"
-Content-Disposition: inline
-In-Reply-To: <1518702362-115625-1-git-send-email-giulio.benetti@micronovasrl.com>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Kieran,
 
---olxufokcp5gvic37
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for the patch.
 
-On Thu, Feb 15, 2018 at 02:46:02PM +0100, Giulio Benetti wrote:
-> The A20 has an ARM Mali 400 GPU, so add binding to our DT.
->=20
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+On Thursday, 15 February 2018 10:38:17 EET Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> Document the D3 (r8a77995) SoC in the R-Car DU bindings.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-The prefix should have been ARM: dts: sun7i. Fixed and applied, thanks!
-Maxime
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+and applied to my tree.
 
---olxufokcp5gvic37
-Content-Type: application/pgp-signature; name="signature.asc"
+> ---
+>  Documentation/devicetree/bindings/display/renesas,du.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt
+> b/Documentation/devicetree/bindings/display/renesas,du.txt index
+> 8f6e0e118e3e..56f67453b9aa 100644
+> --- a/Documentation/devicetree/bindings/display/renesas,du.txt
+> +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+> @@ -13,6 +13,7 @@ Required Properties:
+>      - "renesas,du-r8a7794" for R8A7794 (R-Car E2) compatible DU
+>      - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
+>      - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
+> +    - "renesas,du-r8a77995" for R8A77995 (R-Car D3) compatible DU
+> 
+>    - reg: A list of base address and length of each memory resource, one for
+> each entry in the reg-names property.
+> @@ -60,6 +61,7 @@ corresponding to each DU output.
+>   R8A7794 (R-Car E2)   DPAD 0         DPAD 1         -              -
+>   R8A7795 (R-Car H3)   DPAD 0         HDMI 0         HDMI 1         LVDS 0
+>   R8A7796 (R-Car M3-W) DPAD 0         HDMI 0         LVDS 0         -
+> + R8A77995 (R-Car D3)  DPAD 0         LVDS 0         LVDS 1         -
+> 
+> 
+>  Example: R8A7795 (R-Car H3) ES2.0 DU
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqFkg8ACgkQ0rTAlCFN
-r3T8Iw/+JrhdaVqLBs/Ljs8woZIhUNmvlnEu4wxpF0309JF8uFHNqOgS2oSXBCaP
-ms3fRRIRYyRanzw7A7oWfDU5nRXTfA1kiojHwV+gLFNts+AUHTPKOhqjQRn88LL/
-JFv/daYPrmQ8DgQXDZQKh1lftbVnak30zPE3681QkBYWOyv8N8SbhaRZOkxYjWfJ
-dqaTeVtm5yp/2GrewVSRm2MmJEHijy6xQNdCLFf9WuJm5TqYR+G/LYc1CPjRM6Sm
-c1wPcdymbjLLOQUch/zLvD7XAPIaWJClBmKAKSeBcLzeC5Ofx1VvSvvHurvtG8hp
-gZFx/8alOprlODuPe5W5imqO33PNAbmM0l/MhWddGrP3hDwM/Yw3R/8tJwIpgGk8
-9W0+ok01tzSiI5CT1mwZ8bNDXTHQudVXw9kIzF7h89znWAU3ixzwjyoN/cNbnzCE
-XhW1n5HXDIlD12Lp7PzCO2WhZZK262rnPcM8M8XG25inP7ygrCNRtawa1bb9M5m6
-jyroHBocjZ0VR3YGIiHDeM8jNrw5n61cmynN+2GxLdhCbK4SIwzse1Xww4zCUo8b
-rxdTexJGRmlC4/0iJrVb2EtmP3dnpW9xg5hZ4Lx1xAbiBrCLqxBNC75cItR6SOsO
-bPNatz/v9jYgVr7Ch7Ao4VFv54sXXSciWSKH3HPdVOVSlliB7Ws=
-=6ei6
------END PGP SIGNATURE-----
+-- 
+Regards,
 
---olxufokcp5gvic37--
+Laurent Pinchart
