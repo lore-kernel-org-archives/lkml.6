@@ -1,103 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755603AbeBOUOL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 15:14:11 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46152 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1165492AbeBOUOK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 15:14:10 -0500
-Date: Thu, 15 Feb 2018 12:14:05 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Christopher Lameter <cl@linux.com>
-Cc: Michal Hocko <mhocko@kernel.org>, David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org
-Subject: Re: [patch 1/2] mm, page_alloc: extend kernelcore and movablecore
- for percent
-Message-ID: <20180215201405.GA22948@bombadil.infradead.org>
-References: <alpine.DEB.2.10.1802121622470.179479@chino.kir.corp.google.com>
- <20180214095911.GB28460@dhcp22.suse.cz>
- <alpine.DEB.2.10.1802140225290.261065@chino.kir.corp.google.com>
- <20180215144525.GG7275@dhcp22.suse.cz>
- <20180215151129.GB12360@bombadil.infradead.org>
- <alpine.DEB.2.20.1802150947240.1902@nuc-kabylake>
+        id S1165751AbeBOUT2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 15:19:28 -0500
+Received: from mga01.intel.com ([192.55.52.88]:15619 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1033426AbeBOUT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 15:19:27 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,517,1511856000";
+   d="scan'208";a="201501934"
+Date: Thu, 15 Feb 2018 13:19:20 -0700
+From: Keith Busch <keith.busch@intel.com>
+To: Julien Durillon <julien@durillon.xyz>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [BUG? NVME Linux-4.15] Dracut loops indefinitely with 4.15
+Message-ID: <20180215201919.GA7076@localhost.localdomain>
+References: <CAPVZMnqi0dF1u=Q223trP=mtvYd80Ydp5wamtz3Vt3xhRY-FEQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1802150947240.1902@nuc-kabylake>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAPVZMnqi0dF1u=Q223trP=mtvYd80Ydp5wamtz3Vt3xhRY-FEQ@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 09:49:00AM -0600, Christopher Lameter wrote:
-> On Thu, 15 Feb 2018, Matthew Wilcox wrote:
+On Thu, Feb 15, 2018 at 02:49:56PM +0100, Julien Durillon wrote:
+> I opened an issue here:
+> https://github.com/dracutdevs/dracut/issues/373 for dracut. You can
+> read there how dracuts enters an infinite loop.
 > 
-> > What if ... on startup, slab allocated a MAX_ORDER page for itself.
-> > It would then satisfy its own page allocation requests from this giant
-> > page.  If we start to run low on memory in the rest of the system, slab
-> > can be induced to return some of it via its shrinker.  If slab runs low
-> > on memory, it tries to allocate another MAX_ORDER page for itself.
-> 
-> The inducing of releasing memory back is not there but you can run SLUB
-> with MAX_ORDER allocations by passing "slab_min_order=9" or so on bootup.
+> TL;DR: in linux-4.14, trying to find the last "slave" of /dev/dm-0
+> ends with a maj:min of "249:0" which does not exist in /sys/dev/block.
+> In linux-4.15, the same thing loops as "249:0" exists.
 
-Maybe we should try this patch in order to automatically scale the slub
-page size with the amount of memory in the machine?
-
-diff --git a/mm/internal.h b/mm/internal.h
-index e6bd35182dae..7059a8389194 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -167,6 +167,7 @@ extern void prep_compound_page(struct page *page, unsigned int order);
- extern void post_alloc_hook(struct page *page, unsigned int order,
- 					gfp_t gfp_flags);
- extern int user_min_free_kbytes;
-+extern unsigned long __meminitdata nr_kernel_pages;
- 
- #if defined CONFIG_COMPACTION || defined CONFIG_CMA
- 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index ef9c259db041..3c51bb22403f 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -264,7 +264,7 @@ int min_free_kbytes = 1024;
- int user_min_free_kbytes = -1;
- int watermark_scale_factor = 10;
- 
--static unsigned long __meminitdata nr_kernel_pages;
-+unsigned long __meminitdata nr_kernel_pages;
- static unsigned long __meminitdata nr_all_pages;
- static unsigned long __meminitdata dma_reserve;
- 
-diff --git a/mm/slub.c b/mm/slub.c
-index e381728a3751..abca4a6e9b6c 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -4194,6 +4194,23 @@ void __init kmem_cache_init(void)
- 
- 	if (debug_guardpage_minorder())
- 		slub_max_order = 0;
-+	if (slub_min_order == 0) {
-+		unsigned long numentries = nr_kernel_pages;
-+
-+		/*
-+		 * Above 4GB, we start to care more about fragmenting large
-+		 * pages than about using the minimum amount of memory.
-+		 * Scale the slub page size at half the rate that we scale
-+		 * the memory size; at 4GB we double the page size to 8k,
-+		 * 16GB to 16k, 64GB to 32k, 256GB to 64k.
-+		 */
-+		while (numentries > (4UL << 30)) {
-+			if (slub_min_order >= slub_max_order)
-+				break;
-+			slub_min_order++;
-+			numentries /= 4;
-+		}
-+	}
- 
- 	kmem_cache_node = &boot_kmem_cache_node;
- 	kmem_cache = &boot_kmem_cache;
+The problem is dracut assumes the 'dev' file for an nvme namespace's
+parent device contains a maj:min for a block device. It's actually a
+character device, and its maj:min happens to also be be the same as the
+device mapper's block device.
