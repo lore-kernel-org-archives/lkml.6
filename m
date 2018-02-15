@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225Y3qJ5Zz0Xu9aqhRFPbUEb8IAnYGgKP/mRrxZPD8rLPU1a4fae+Hl/S9xhBrCmqUSXersC
-ARC-Seal: i=1; a=rsa-sha256; t=1518708588; cv=none;
+X-Google-Smtp-Source: AH8x227KGec1cyl3zSSwX6MPB5Xv5DF5Z7Pw92Wb4SKzQHy064itpPDuv6laUpeecbWyf4iYiEQ6
+ARC-Seal: i=1; a=rsa-sha256; t=1518708585; cv=none;
         d=google.com; s=arc-20160816;
-        b=JXIlXM35eLS1GgEH33pcB0fAAZyX2JKVg+Odx8vwKPFBAbIJgPtUhXcVLAlqQ96F4H
-         R3jb4Q856kaP+3R4XmHxSV4rqObV5x1zBzIp5+M7V4uutR2r3IxUTMsco8Af/rqjvEdV
-         cNu+v1H3YRZe8ppUkeMtv85KVPytAkOO37Iphu1XL2gcYb0YAUw9lAe69wqJrfja/aTM
-         9doN9bVBwOobTV5cgsXpE54WBoHX3I/00uB2Cau2iJtGxF5fcz/la4HxUNKZ4jBnSzuY
-         DD18oAisBN5/E87BLvZGieTbI1GrBXuQNHD2Dt/YezHmiCilxaD0ChA5rCM8RvP0REhk
-         4ZKQ==
+        b=hpQAdsNYTLtG1Masfk9bMFOGPl80XK52/zCxRYxVRw3o/PGl+KfCk2Ik8NtaW24taJ
+         ZXTCMEVj6yg+I7VgpIf3VSkHXR/Qf5Li3faD5dtXWBeyXAvN0t/hDn7ZJYbPOSUVB1N5
+         YlyQ0uy8lFX+UppGBR+GQiIz7Y+o4dy4oXoLh+auidkWnKRMmkD+Fx0UK2aWfaIZawTG
+         FUdX/TzcxXH00YlFaP59bmFOalXL4fa5mscRkf57pIsm0+M8PjnKLXzjPwI3Ki4U36d5
+         G0LefQ4YV0FmQj9RJHF8xp9s6+X5t0xbi63Oj7Vv55q7qRJrDGcQXLppHPffPBh6pWCE
+         YwAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rrMWz/DhWg8YR/MU4MifNMWvkuCGBknKWDRql1ZRYTg=;
-        b=DwBl6L48405frgTPvdvqhKKCsWqa9vYo3eV/UQn3BLf3nTAcFPUVIA5mRRuAdVaUcv
-         SzhN+pnkcrU9Kf6Q7wmuzt80evnyTOZAd8PRCTvb2g7QWqDFHdAgFaiIhnGc92wVS0/E
-         sJ4TH2gyRfe/CY9rJfyLoVYEyzcQgHlzVuhAbKrSCKkFt4FDqoquc9i7SEi7ACcjELaw
-         jswL9cxjT4kitm3gmeDwpaqd3eGKY7QoMPQcpxjTQnspFQHgRm47gcqyP2xaGeaKAPxL
-         kJhEss8wNfTAwTP6xsk4nO8iZ9QDMvHOqZp/kHZr1PJW6MpFGIoGLz8eTHY/rTVU20B3
-         Tblg==
+        bh=kxWFhIy55KQqovMdqoh8XqiEEKtL13Bq+4X/eiV7+wc=;
+        b=dUDTxF7+8a9EiX3zw1W9KulgAYfALQI53qVWzqKBZGf1WPU7wbMG1Oku5B8LjUiLD5
+         sGbpv768RvD+n9XXOus5XWyPKKoIiAkHYfwfRyHAiRDmzsr8rQQ22ve3Omvmdgy7E6xU
+         GAOmhmXD/vcrS434TeXjsJ0Mz90bZCccOfKgn8uo/rGUBiqaAcGCDWLdNOVzF6VV/4n0
+         +s3jF7gK6pALllA5t8zC6y1S1vn+EnKk0SLZHPG3go4T7WeuMd50dhuFMHEjdYBrsuFB
+         yTPKeB4iEEN5sNWTw3HABr5sMI2Me1U30l6QVR8M4g5MkZuDvIQQcaPns2nWv0cYy261
+         BYlw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Martin Kaiser <martin@kaiser.cx>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Wim Van Sebroeck <wim@iguana.be>
-Subject: [PATCH 4.9 57/88] watchdog: imx2_wdt: restore previous timeout after suspend+resume
-Date: Thu, 15 Feb 2018 16:17:24 +0100
-Message-Id: <20180215151230.590362280@linuxfoundation.org>
+	Hans de Goede <hdegoede@redhat.com>,
+	Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.9 66/88] HID: quirks: Fix keyboard + touchpad on Toshiba Click Mini not working
+Date: Thu, 15 Feb 2018 16:17:33 +0100
+Message-Id: <20180215151231.719227548@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481116779538843?=
-X-GMAIL-MSGID: =?utf-8?q?1592481377243652673?=
+X-GMAIL-THRID: =?utf-8?q?1592481099537609475?=
+X-GMAIL-MSGID: =?utf-8?q?1592481374254392448?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,86 +48,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Kaiser <martin@kaiser.cx>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 0be267255cef64e1c58475baa7b25568355a3816 upstream.
+commit edfc3722cfef4217c7fe92b272cbe0288ba1ff57 upstream.
 
-When the watchdog device is suspended, its timeout is set to the maximum
-value. During resume, the previously set timeout should be restored.
-This does not work at the moment.
+The Toshiba Click Mini uses an i2c attached keyboard/touchpad combo
+(single i2c_hid device for both) which has a vid:pid of 04F3:0401,
+which is also used by a bunch of Elan touchpads which are handled by the
+drivers/input/mouse/elan_i2c driver, but that driver deals with pure
+touchpads and does not work for a combo device such as the one on the
+Toshiba Click Mini.
 
-The suspend function calls
+The combo on the Mini has an ACPI id of ELAN0800, which is not claimed
+by the elan_i2c driver, so check for that and if it is found do not ignore
+the device. This fixes the keyboard/touchpad combo on the Mini not working
+(although with the touchpad in mouse emulation mode).
 
-imx2_wdt_set_timeout(wdog, IMX2_WDT_MAX_TIME);
-
-and resume reverts this by calling
-
-imx2_wdt_set_timeout(wdog, wdog->timeout);
-
-However, imx2_wdt_set_timeout() updates wdog->timeout. Therefore,
-wdog->timeout is set to IMX2_WDT_MAX_TIME when we enter the resume
-function.
-
-Fix this by adding a new function __imx2_wdt_set_timeout() which
-only updates the hardware settings. imx2_wdt_set_timeout() now calls
-__imx2_wdt_set_timeout() and then saves the new timeout to
-wdog->timeout.
-
-During suspend, we call __imx2_wdt_set_timeout() directly so that
-wdog->timeout won't be updated and we can restore the previous value
-during resume. This approach makes wdog->timeout different from the
-actual setting in the hardware which is usually not a good thing.
-However, the two differ only while we're suspended and no kernel code is
-running, so it should be ok in this case.
-
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/watchdog/imx2_wdt.c |   20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ drivers/hid/hid-core.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/drivers/watchdog/imx2_wdt.c
-+++ b/drivers/watchdog/imx2_wdt.c
-@@ -169,15 +169,21 @@ static int imx2_wdt_ping(struct watchdog
- 	return 0;
- }
- 
--static int imx2_wdt_set_timeout(struct watchdog_device *wdog,
--				unsigned int new_timeout)
-+static void __imx2_wdt_set_timeout(struct watchdog_device *wdog,
-+				   unsigned int new_timeout)
- {
- 	struct imx2_wdt_device *wdev = watchdog_get_drvdata(wdog);
- 
--	wdog->timeout = new_timeout;
--
- 	regmap_update_bits(wdev->regmap, IMX2_WDT_WCR, IMX2_WDT_WCR_WT,
- 			   WDOG_SEC_TO_COUNT(new_timeout));
-+}
-+
-+static int imx2_wdt_set_timeout(struct watchdog_device *wdog,
-+				unsigned int new_timeout)
-+{
-+	__imx2_wdt_set_timeout(wdog, new_timeout);
-+
-+	wdog->timeout = new_timeout;
- 	return 0;
- }
- 
-@@ -371,7 +377,11 @@ static int imx2_wdt_suspend(struct devic
- 
- 	/* The watchdog IP block is running */
- 	if (imx2_wdt_is_running(wdev)) {
--		imx2_wdt_set_timeout(wdog, IMX2_WDT_MAX_TIME);
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -2365,7 +2365,6 @@ static const struct hid_device_id hid_ig
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_DELORME, USB_DEVICE_ID_DELORME_EARTHMATE) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_DELORME, USB_DEVICE_ID_DELORME_EM_LT20) },
+ 	{ HID_I2C_DEVICE(USB_VENDOR_ID_ELAN, 0x0400) },
+-	{ HID_I2C_DEVICE(USB_VENDOR_ID_ELAN, 0x0401) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_ESSENTIAL_REALITY, USB_DEVICE_ID_ESSENTIAL_REALITY_P5) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_ETT, USB_DEVICE_ID_TC5UH) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_ETT, USB_DEVICE_ID_TC4UM) },
+@@ -2635,6 +2634,17 @@ bool hid_ignore(struct hid_device *hdev)
+ 			strncmp(hdev->name, "www.masterkit.ru MA901", 22) == 0)
+ 			return true;
+ 		break;
++	case USB_VENDOR_ID_ELAN:
 +		/*
-+		 * Don't update wdog->timeout, we'll restore the current value
-+		 * during resume.
++		 * Many Elan devices have a product id of 0x0401 and are handled
++		 * by the elan_i2c input driver. But the ACPI HID ELAN0800 dev
++		 * is not (and cannot be) handled by that driver ->
++		 * Ignore all 0x0401 devs except for the ELAN0800 dev.
 +		 */
-+		__imx2_wdt_set_timeout(wdog, IMX2_WDT_MAX_TIME);
- 		imx2_wdt_ping(wdog);
++		if (hdev->product == 0x0401 &&
++		    strncmp(hdev->name, "ELAN0800", 8) != 0)
++			return true;
++		break;
  	}
  
+ 	if (hdev->type == HID_TYPE_USBMOUSE &&
