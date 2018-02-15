@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1883814-1518710051-2-11665626604941070237
+X-Cyrus-Session-Id: sloti22d1t05-1883814-1518710042-2-14658811605148374751
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enca,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518710051; b=cLkcZQTcgQNutRKEJuZnL005KOF58+ZRfkj082FSgefgNuj
-    iZhx+0kp67famb5LXTNB4fksS9aVXMUWsGvIjV9SqSVuwN+iu8IeIx7cHg3AdKp9
-    ASHXoDlVHWiAQoe1YOR9VOafn4QMrMXfzcbqqRxq/9LZXE7Wa7S2DodtN0vSPZww
-    fNHYcPoT2zDEJ68m2CNhJVtXluduo1wQFnLarkZi4tswHetLFAxKEVc57kDaniJt
-    4RM2K1d50iUNe1DHO/c7RUflqZUvWqAsU/KeFKgmpc7yjyY++QixGIhOuTOvkp4y
-    Z+pE07l5E1dW/BoVlhs56TS0GFF8oOJpbNqwGMA==
+    t=1518710041; b=mAyYE41Xwp/Z7E5mD/X28k0s0KOJBXTbwcQHlIvjpqta8gd
+    TBYXaqk7TNJAvemDa0csQTBB7WfhPDlYSIz/wZzdjCNhCmI77nwg3+QHDnkxARIV
+    /UTHJ98xl/sUKym10dynhD8/53TIgKrFFt6reCoF1h4kSNpFv2afX23iadjG5DcE
+    FBp4pPri2ov526vWx9yHOHFPaF32EGn5/PhyP8ApcCwRQ4fVy8woQXKTem7tcxT+
+    sMi4mh7qgvuSE6UugS/dEi+DL2OL2PpPDGCZAg2f+tugQJMnJXbzvHUaHEuMMdLW
+    dVpidoHsmaK1/N5I8CfTfDWtlc+nt4tNuePyR1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518710051; bh=/wBLdHA1I4dRmC8XrZ56hIZggD
-    zqibpSTuukFzskEnc=; b=oUp6xdQuOXX399XWyquqEn/TYDFxLguEB7QZuWlOSE
-    q8cOlefmHPeFqcjFSmDIlAEf1Xa8O5sBUf8i30XUh/5KgRaKs6CHczGeSUCoFieu
-    y8RZLhJJrYi6NcNC6tltv3LXgJkIOelNemEb1zGY6oc7jreGmtsiuE9C9cjxGO+j
-    FLZv7wEMFfPKizcfhUwB7dzfAzW9YHXP/bVSe0ly4Hez4SC7XEvakk0J+a96SJrH
-    1RO+LLb052Cr+rUb/rNT5XBJblY2Inkydf4Oteh8GWMec34OlDE5GqNDZSpir0RJ
-    bMfGatq+ElNjxC7GkxJ2pzm9VwrsxB8aR8LEZA/z1FrA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518710041; bh=4ip9nABXFrmBNiMO17swPhnHnP
+    XyEr/TZlF1TT0pzKg=; b=G2ExF01LeBQOOlsDlyafdh1N/JcS0i9VKfaHNZva9O
+    6jnw79i8XNT83y8pIuXkkgvmPX8SKC18St3b+HoR+46dLgUVlhyUQBvQDpIUzmUV
+    nw1SqKi6dQ4g3RjkcgCfwqEuZyw575wU1Ad9fSv1/gUNNcIaUpqxT1kgUjpTczQs
+    piI0Lxypxz9R9WyOd2+b5+AJ7B4dvcS2FU1prPW7DD2XS6mBEGx2QSwXhCs+65LV
+    6297oHWNReZfYDPGPEl4yEf8ei6bYyThH2tiZg62aOlC09GQOqU+Mv/lGLQTJQjK
+    bbBF+eRsBI0HBIl4iTbEu9Cgrs3il3MIWT7terisviTg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,21 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424936AbeBOPrl (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:47:41 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36308 "EHLO
+        id S1424582AbeBOPwB (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:52:01 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36328 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424903AbeBOPrj (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:47:39 -0500
+        with ESMTP id S1424319AbeBOPro (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:47:44 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@axis.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.15 196/202] ovl: hash directory inodes for fsnotify
-Date: Thu, 15 Feb 2018 16:18:16 +0100
-Message-Id: <20180215151722.927896229@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.15 198/202] devpts: fix error handling in devpts_mntget()
+Date: Thu, 15 Feb 2018 16:18:18 +0100
+Message-Id: <20180215151723.007375147@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -78,147 +78,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 31747eda41ef3c30c09c5c096b380bf54013746a upstream.
+commit c9cc8d01fb04117928830449388512a5047569c9 upstream.
 
-fsnotify pins a watched directory inode in cache, but if directory dentry
-is released, new lookup will allocate a new dentry and a new inode.
-Directory events will be notified on the new inode, while fsnotify listener
-is watching the old pinned inode.
+If devpts_ptmx_path() returns an error code, then devpts_mntget()
+dereferences an ERR_PTR():
 
-Hash all directory inodes to reuse the pinned inode on lookup. Pure upper
-dirs are hashes by real upper inode, merge and lower dirs are hashed by
-real lower inode.
+    BUG: unable to handle kernel paging request at fffffffffffffff5
+    IP: devpts_mntget+0x13f/0x280 fs/devpts/inode.c:173
 
-The reference to lower inode was being held by the lower dentry object
-in the overlay dentry (oe->lowerstack[0]). Releasing the overlay dentry
-may drop lower inode refcount to zero. Add a refcount on behalf of the
-overlay inode to prevent that.
+Fix it by returning early in the error paths.
 
-As a by-product, hashing directory inodes also detects multiple
-redirected dirs to the same lower dir and uncovered redirected dir
-target on and returns -ESTALE on lookup.
+Reproducer:
 
-The reported issue dates back to initial version of overlayfs, but this
-patch depends on ovl_inode code that was introduced in kernel v4.13.
+    #define _GNU_SOURCE
+    #include <fcntl.h>
+    #include <sched.h>
+    #include <sys/ioctl.h>
+    #define TIOCGPTPEER _IO('T', 0x41)
 
-Reported-by: Niklas Cassel <niklas.cassel@axis.com>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Tested-by: Niklas Cassel <niklas.cassel@axis.com>
+    int main()
+    {
+        for (;;) {
+            int fd = open("/dev/ptmx", 0);
+            unshare(CLONE_NEWNS);
+            ioctl(fd, TIOCGPTPEER, 0);
+        }
+    }
+
+Fixes: 311fc65c9fb9 ("pty: Repair TIOCGPTPEER")
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/overlayfs/inode.c |   39 ++++++++++++++++++++++++++++-----------
- fs/overlayfs/super.c |    1 +
- fs/overlayfs/util.c  |    4 ++--
- 3 files changed, 31 insertions(+), 13 deletions(-)
+ fs/devpts/inode.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -606,6 +606,16 @@ static int ovl_inode_set(struct inode *i
- static bool ovl_verify_inode(struct inode *inode, struct dentry *lowerdentry,
- 			     struct dentry *upperdentry)
- {
-+	if (S_ISDIR(inode->i_mode)) {
-+		/* Real lower dir moved to upper layer under us? */
-+		if (!lowerdentry && ovl_inode_lower(inode))
-+			return false;
-+
-+		/* Lookup of an uncovered redirect origin? */
-+		if (!upperdentry && ovl_inode_upper(inode))
-+			return false;
-+	}
-+
- 	/*
- 	 * Allow non-NULL lower inode in ovl_inode even if lowerdentry is NULL.
- 	 * This happens when finding a copied up overlay inode for a renamed
-@@ -633,6 +643,8 @@ struct inode *ovl_get_inode(struct dentr
- 	struct inode *inode;
- 	/* Already indexed or could be indexed on copy up? */
- 	bool indexed = (index || (ovl_indexdir(dentry->d_sb) && !upperdentry));
-+	struct dentry *origin = indexed ? lowerdentry : NULL;
-+	bool is_dir;
- 
- 	if (WARN_ON(upperdentry && indexed && !lowerdentry))
- 		return ERR_PTR(-EIO);
-@@ -641,15 +653,19 @@ struct inode *ovl_get_inode(struct dentr
- 		realinode = d_inode(lowerdentry);
- 
- 	/*
--	 * Copy up origin (lower) may exist for non-indexed upper, but we must
--	 * not use lower as hash key in that case.
--	 * Hash inodes that are or could be indexed by origin inode and
--	 * non-indexed upper inodes that could be hard linked by upper inode.
-+	 * Copy up origin (lower) may exist for non-indexed non-dir upper, but
-+	 * we must not use lower as hash key in that case.
-+	 * Hash non-dir that is or could be indexed by origin inode.
-+	 * Hash dir that is or could be merged by origin inode.
-+	 * Hash pure upper and non-indexed non-dir by upper inode.
- 	 */
--	if (!S_ISDIR(realinode->i_mode) && (upperdentry || indexed)) {
--		struct inode *key = d_inode(indexed ? lowerdentry :
--						      upperdentry);
--		unsigned int nlink;
-+	is_dir = S_ISDIR(realinode->i_mode);
-+	if (is_dir)
-+		origin = lowerdentry;
-+
-+	if (upperdentry || origin) {
-+		struct inode *key = d_inode(origin ?: upperdentry);
-+		unsigned int nlink = is_dir ? 1 : realinode->i_nlink;
- 
- 		inode = iget5_locked(dentry->d_sb, (unsigned long) key,
- 				     ovl_inode_test, ovl_inode_set, key);
-@@ -670,8 +686,9 @@ struct inode *ovl_get_inode(struct dentr
- 			goto out;
- 		}
- 
--		nlink = ovl_get_nlink(lowerdentry, upperdentry,
--				      realinode->i_nlink);
-+		/* Recalculate nlink for non-dir due to indexing */
-+		if (!is_dir)
-+			nlink = ovl_get_nlink(lowerdentry, upperdentry, nlink);
- 		set_nlink(inode, nlink);
- 	} else {
- 		inode = new_inode(dentry->d_sb);
-@@ -685,7 +702,7 @@ struct inode *ovl_get_inode(struct dentr
- 		ovl_set_flag(OVL_IMPURE, inode);
- 
- 	/* Check for non-merge dir that may have whiteouts */
--	if (S_ISDIR(realinode->i_mode)) {
-+	if (is_dir) {
- 		struct ovl_entry *oe = dentry->d_fsdata;
- 
- 		if (((upperdentry && lowerdentry) || oe->numlower > 1) ||
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -211,6 +211,7 @@ static void ovl_destroy_inode(struct ino
- 	struct ovl_inode *oi = OVL_I(inode);
- 
- 	dput(oi->__upperdentry);
-+	iput(oi->lower);
- 	kfree(oi->redirect);
- 	ovl_dir_cache_free(inode);
- 	mutex_destroy(&oi->lock);
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -257,7 +257,7 @@ void ovl_inode_init(struct inode *inode,
- 	if (upperdentry)
- 		OVL_I(inode)->__upperdentry = upperdentry;
- 	if (lowerdentry)
--		OVL_I(inode)->lower = d_inode(lowerdentry);
-+		OVL_I(inode)->lower = igrab(d_inode(lowerdentry));
- 
- 	ovl_copyattr(d_inode(upperdentry ?: lowerdentry), inode);
- }
-@@ -273,7 +273,7 @@ void ovl_inode_update(struct inode *inod
- 	 */
- 	smp_wmb();
- 	OVL_I(inode)->__upperdentry = upperdentry;
--	if (!S_ISDIR(upperinode->i_mode) && inode_unhashed(inode)) {
-+	if (inode_unhashed(inode)) {
- 		inode->i_private = upperinode;
- 		__insert_inode_hash(inode, (unsigned long) upperinode);
+--- a/fs/devpts/inode.c
++++ b/fs/devpts/inode.c
+@@ -168,11 +168,11 @@ struct vfsmount *devpts_mntget(struct fi
+ 	dput(path.dentry);
+ 	if (err) {
+ 		mntput(path.mnt);
+-		path.mnt = ERR_PTR(err);
++		return ERR_PTR(err);
  	}
+ 	if (DEVPTS_SB(path.mnt->mnt_sb) != fsi) {
+ 		mntput(path.mnt);
+-		path.mnt = ERR_PTR(-ENODEV);
++		return ERR_PTR(-ENODEV);
+ 	}
+ 	return path.mnt;
+ }
