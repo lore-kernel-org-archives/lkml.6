@@ -1,153 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164146AbeBOSHE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 13:07:04 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:38445 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163521AbeBOSHA (ORCPT
+        id S1166072AbeBOSIB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 13:08:01 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:53610 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1164030AbeBOSH4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 13:07:00 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180215180657euoutp0229085d9d33700a5309a1f8786a2bcaed~Tkf2Z7TOI2322623226euoutp02X
-X-AuditID: cbfec7f5-b45ff700000028a9-01-5a85cc40a3a4
-Subject: Re: [PATCH v3 0/5] crypto: ahash.c: Require export/import in ahash
-To: Marek Vasut <marex@denx.de>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sonic Zhang <sonic.zhang@analog.com>,
-        Fabio Estevam <fabio.estevam@freescale.com>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Jan Engelhardt <jengelh@inai.de>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Joakim Bech <joakim.bech@linaro.org>, linux-kernel@vger.kernel.org
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Message-id: <cdb62a71-bb7e-8c62-06bc-ab91c9642e06@partner.samsung.com>
-Date: Thu, 15 Feb 2018 19:06:53 +0100
+        Thu, 15 Feb 2018 13:07:56 -0500
+Subject: Re: [RFC 1/2] sched: reduce migration cost between faster caches for
+ idle_balance
+To: Steven Sistare <steven.sistare@oracle.com>,
+        Mike Galbraith <efault@gmx.de>, linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, mingo@redhat.com, joelaf@google.com,
+        jbacik@fb.com, riel@redhat.com, juri.lelli@redhat.com,
+        dhaval.giani@oracle.com
+References: <1518128395-14606-1-git-send-email-rohit.k.jain@oracle.com>
+ <1518128395-14606-2-git-send-email-rohit.k.jain@oracle.com>
+ <1518147735.24350.26.camel@gmx.de>
+ <e773350b-dd8c-ab1a-5dae-8f62cea225de@oracle.com>
+ <1518244651.10229.66.camel@gmx.de>
+ <dd972024-b3d6-fa53-7cc5-9e71a01c1837@oracle.com>
+From: Rohit Jain <rohit.k.jain@oracle.com>
+Message-ID: <7e6ee88e-8462-b1ab-a7bf-536a2c576c7d@oracle.com>
+Date: Thu, 15 Feb 2018 10:07:43 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.6.0
-MIME-version: 1.0
-In-reply-to: <d7300e36-392a-18cf-5176-6eaf4c16eb43@denx.de>
-Content-type: text/plain; charset="utf-8"
-Content-language: en-US
-Content-transfer-encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRTud19ercmvqeyUYrQQepAWWV4wyh7EjYgKEmqVecuLSr7asrIX
-        Zlo6NWsZ2SozEpf2nNoyc6ZTWpEyUhKs+chhmbUgLOlhVvNO2H/fOef7zjnf4bCkvJOeySam
-        HBDVKUKSkvGhTM9+2hZGteWoFhW8YbiuwhskZyy5T3NXbdkUp9cu5PKHg7isj06CG6kapLji
-        MQPB9fX+JLjO+qsM9/n0ScQN3isnOfvDUwzXWtxIR/nyOR1/GH749Sq+trKb4Ev1zyl+vKWI
-        4B/re7x4U1MIb3z/geLtXQ0Mf7a2CvEj1cGbp6p8lseJSYkHRXXYilifhJJrb5k0s+KwubKb
-        yUQmuRZ5s4DDwVrVQmmRDyvHtxA86SsjpGAEwZXCZjTJyhpykFKhAoGz3+CWvEdwzVnvpUUs
-        64c3wK8x7BL44/Xw7mku7eKQeIAEXfPdiU4MjoCBR22EC8vwOmgaPTOBKRwC/T01pAsH4G1w
-        4+IgkjjT4ceFXsrV3xtHgta+zJUm8TwY+qajJKyAUzndbjwLau44JxYFXOEFhv5yRnKwFhrP
-        F7jd+MGwtdZLwkGQl9tMSIIiBEWll2kpKEHgMLbTEisSWqyvaGmEL+hMl0jXRoBlkHvafUge
-        frc63QNWgck8TEsXGiSgts1Gn0PBeg9Deg8Xeg8Xeg8XZYiqQgoxXZMcL2qWpIiHQjVCsiY9
-        JT50b2pyNfr/ai/Hrd/rUOPYHgvCLFJOkz0ozFHJaeGgJiPZgoAllf6yr6r/KVmckHFEVKfu
-        VqcniRoLCmQppUIWM/eESo7jhQPiPlFME9WTVYL1npmJXui2PusxdcbWjc4tnNaft39JcI1p
-        wLEzdsuj/Orb2L40j1mzeulfX2OMbddKwhba2rsgLyJAqzopTztua7TXlCqO9DSMferaaHid
-        HTLljjr6W5LQbay7FOjYviNmRon5psW8aXa7MeSYzH49VVjQ9vvPveg5HXHhX8rDjr5xruRH
-        lZQmQVg8n1RrhH+WeRRoZgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIIsWRmVeSWpSXmKPExsVy+t/xy7r2Z1qjDL4/4ba41ruQ2WLjjPWs
-        FnPOt7BYzOrSteh+JWPR9PItk8XnVU9ZLKb8Wc5kcf/eTyaLy7vmsFm8aWtktHi6bgmzxZ2t
-        zWwWR6bsY3Xg82i99JfN49VVR48tK28yecybdYLF49/hfiaPnbPusntsO6DqsfHZcxaPO9f2
-        sHn0bVnF6PF5k1wAdxSXTUpqTmZZapG+XQJXxoy5t9kK9opX7F15k62BcZtQFyMnh4SAiUTT
-        i8fMILaQwBJGicsvkrsYuYDsZ4wSB88uYO1i5OAQFvCW+PVHAKRGRMBT4uH+DlaQGmaBJ8wS
-        h/duY4FoeM4kcW72C3aQKjYBc4lH288wgdi8Am4SB761g9ksAqoSD+5uBtsmKhAh0blyPgtE
-        jaDEj8n3WECWcQpYS3TdMQMxmQXUJaZMyQWpYBYQl2huvckCYctLbF7zlnkCo8AsJM2zEDpm
-        IemYhaRjASPLKkaR1NLi3PTcYkO94sTc4tK8dL3k/NxNjMCI23bs5+YdjJc2Bh9iFOBgVOLh
-        3dDbGiXEmlhWXJl7iFGCg1lJhPdjFFCINyWxsiq1KD++qDQntfgQozQHi5I473mDyighgfTE
-        ktTs1NSC1CKYLBMHp1QDY/Qjhfcxu7htzTQUsp859c1vZe3/Y703WCtt15NMCauZMvmtATeW
-        7LlX3n/w6CS/tLp/QaxPv0y5fT/bMyEsw/i8ssv3srce6hW2gsxdMn6zJ25Q6rk7KVLiyNvO
-        H2F3r3V/+RT1NzNxW6TbTudbSz28PvlckFK0lGNij2P5plrwWj3v0ozHSizFGYmGWsxFxYkA
-        ow414rQCAAA=
-X-CMS-MailID: 20180215180655eucas1p16a614dbbebc375fcfd148d5a8ecaf02b
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180118183438eucas1p2e2e7be8625ae0950c519e27424f9301a
-X-RootMTR: 20180118183438eucas1p2e2e7be8625ae0950c519e27424f9301a
-References: <CGME20180118183438eucas1p2e2e7be8625ae0950c519e27424f9301a@eucas1p2.samsung.com>
-        <20180118183404.12583-1-k.konieczny@partner.samsung.com>
-        <20180215154132.GA7352@gondor.apana.org.au>
-        <6b29116a-c39c-9813-34a0-d5c05bd30c9d@denx.de>
-        <32069edc-e816-6ab0-f057-b1dab5d30db4@partner.samsung.com>
-        <d7300e36-392a-18cf-5176-6eaf4c16eb43@denx.de>
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <dd972024-b3d6-fa53-7cc5-9e71a01c1837@oracle.com>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8806 signatures=668672
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=867
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802150218
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 15.02.2018 18:06, Marek Vasut wrote:
-> On 02/15/2018 06:00 PM, Kamil Konieczny wrote:
+On 02/15/2018 08:35 AM, Steven Sistare wrote:
+> On 2/10/2018 1:37 AM, Mike Galbraith wrote:
+>> On Fri, 2018-02-09 at 11:08 -0500, Steven Sistare wrote:
+>>>>> @@ -8804,7 +8803,8 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
+>>>>>   		if (!(sd->flags & SD_LOAD_BALANCE))
+>>>>>   			continue;
+>>>>>   
+>>>>> -		if (this_rq->avg_idle < curr_cost + sd->max_newidle_lb_cost) {
+>>>>> +		if (this_rq->avg_idle < curr_cost + sd->max_newidle_lb_cost +
+>>>>> +		    sd->sched_migration_cost) {
+>>>>>   			update_next_balance(sd, &next_balance);
+>>>>>   			break;
+>>>>>   		}
+>>>> Ditto.
+>>> The old code did not migrate if the expected costs exceeded the expected idle
+>>> time.  The new code just adds the sd-specific penalty (essentially loss of cache
+>>> footprint) to the costs.  The for_each_domain loop visit smallest to largest
+>>> sd's, hence visiting smallest to largest migration costs (though the tunables do
+>>> not enforce an ordering), and bails at the first sd where the total cost is a lose.
+>> Hrm..
 >>
+>> You're now adding a hypothetical cost to the measured cost of running
+>> the LB machinery, which implies that the measurement is insufficient,
+>> but you still don't say why it is insufficient.  What happens if you
+>> don't do that?  I ask, because when I removed the...
 >>
->> On 15.02.2018 17:27, Marek Vasut wrote:
->>> On 02/15/2018 04:41 PM, Herbert Xu wrote:
->>>> On Thu, Jan 18, 2018 at 07:33:59PM +0100, Kamil Konieczny wrote:
->>>>> First four patches add empty hash export and import functions to each driver,
->>>>> with the same behaviour as in crypto framework. The last one drops them from
->>>>> crypto framework. Last one for ahash.c depends on all previous.
->>>>>
->>>>> Changes in v3:
->>>>> added change for bfin_crc.c
->>>>> make this a patchset, instead of unreleated patches
->>>>> make commit message more descriptive
->>>>>
->>>>> Kamil Konieczny (5):
->>>>>   crypto: mxs-dcp: Add empty hash export and import
->>>>>   crypto: n2_core: Add empty hash export and import
->>>>>   crypto: ux500/hash: Add empty export and import
->>>>>   crypto: bfin_crc: Add empty hash export and import
->>>>>   crypto: ahash.c: Require export/import in ahash
->>>>>
->>>>>  crypto/ahash.c                        | 18 ++----------------
->>>>>  drivers/crypto/bfin_crc.c             | 12 ++++++++++++
->>>>>  drivers/crypto/mxs-dcp.c              | 14 ++++++++++++++
->>>>>  drivers/crypto/n2_core.c              | 12 ++++++++++++
->>>>>  drivers/crypto/ux500/hash/hash_core.c | 18 ++++++++++++++++++
->>>>>  5 files changed, 58 insertions(+), 16 deletions(-)
->>>>
->>>> All applied.  Thanks.
->>>
->>> This makes no sense, cfr my comment on 5/5
->>>
->>> Seems like if the driver doesn't implement those, the core can easily
->>> detect that and perform the necessary action. Moving the checks out of
->>> core seems like the wrong thing to do, rather you should enhance the
->>> checks in core if they're insufficient in my opinion.
+>>     this_rq->avg_idle < sysctl_sched_migration_cost
 >>
->> The bug can only be in driver which will not implement those two functions,
->> but we already had all drivers with those due to patches 1..4
->> All other drivers do have them.
-> 
-> The core can very well check if these functions are not populated and
-> return ENOSYS
-> 
->> Additionally, with crypto we want minimize code and run as fast as possible.
-> 
-> So you remove all NULL pointer checks ? Esp. in security-sensitive code?
-> What is the impact of this non-critical path code on performance?
-> 
-> Come on ...
-> 
+>> ...bits to check removal effect for Peter, the original reason for it
+>> being added did not re-materialize, making me wonder why you need to
+>> make this cutoff more aggressive.
+> The current code with sysctl_sched_migration_cost discourages migration
+> too much, per our test results.  Deleting it entirely from idle_balance()
+> may be the right solution, or it may allow too much migration and
+> cause regressions due to loss of cache warmth on some workloads.
+> Rohit's patch deletes it and adds the sd->sched_migration_cost term
+> to allow a migration rate that is somewhere in the middle, and is
+> logically sound.  It discourages but does not prevent migration between
+> nodes, and encourages but does not always allow migration between cores.
+> By contrast, setting relax_domain_level to disable SD_BALANCE_NEWIDLE
+> at the SD_NUMA level is a big hammer.
+>
+> I would be perfectly happy if deleting sysctl_sched_migration_cost from
+> idle_balance does the trick.  Last week in a different thread you mentioned
+> it did not hurt tbench:
+>
+>>> Mike, do you remember what comes apart when we take
+>>> out the sysctl_sched_migration_cost test in idle_balance()?
+>> Used to be anything scheduling cross-core heftily suffered, ie pretty
+>> much any localhost communication heavy load.  I just tried disabling it
+>> in 4.13 though (pre pti cliff), tried tbench, and it made zip squat
+>> difference.  I presume that's due to the meanwhile added
+>> this_rq->rd->overload and/or curr_cost checks.
+> Can you provide more details on the sysbench oltp test that motivated you
+> to add sysctl_sched_migration_cost to idle_balance, so Rohit can re-test it?
+>     1b9508f6 sched: Rate-limit newidle
+>     Rate limit newidle to migration_cost. It's a win for all stages of
+>     sysbench oltp tests.
+>
+> Rohit is running more tests with a patch that deletes
+> sysctl_sched_migration_cost from idle_balance, and for his patch but
+> with the 5000 usec mistake corrected back to 500 usec.  So far both
+> give improvements over the baseline, but for different cases, so we
+> need to try more workloads before we draw any conclusions.
+>
+> Rohit, can you share your data so far?
 
-Why you want checks for something that not exist ?
+Results:
 
-Those without them will not work and will do Oops in crypto testmgr,
-so such drivers should not be used nor accepted in drivers/crypto
+In the following results, "Domain based" approach is as mentioned in the
+RFC sent out with the values fixed (As pointed out by Mike). "No check" is
+the patch where I just remove the check against sysctl_sched_migration_cost
 
-Ask yourself why crypto do not check for NULL in ahash digest or other
-required ahash functions.
+1) Hackbench results on 2 socket, 44 core and 88 threads Intel x86 machine
+(lower is better):
 
->> Moving checks out of core will impose on driver author need for implement
->> those functions, or declare them empty, but in case of empty ones 
->> crypto will not work properly with such driver.
-> 
-> You can very well impose that in the core, except you don't duplicate
-> the code.
++--------------+-----------------+--------------------------+-------------------------+
+|              | Without Patch   |Domain Based              |No Check                 |
++------+-------+--------+--------+-----------------+--------+----------------+--------+
+|Loops | Groups|Average |%Std Dev|Average          |%Std Dev|Average         |%Std Dev|
++------+-------+--------+--------+-----------------+--------+----------------+--------+
+|100000| 4     |9.701   |0.78    |7.971  (+17.84%) | 1.34   |8.919  (+8.07%) |1.07    |
+|100000| 8     |17.186  |0.77    |16.712 (+2.76%)  | 0.87   |17.043 (+0.83%) |0.83    |
+|100000| 16    |30.378  |0.55    |29.780 (+1.97%)  | 0.38   |29.565 (+2.67%) |0.29    |
+|100000| 32    |54.712  |0.54    |53.001 (+3.13%)  | 0.19   |52.158 (+4.67%) |0.22    |
++------+-------+--------+--------+-----------------+--------+----------------+--------+
 
-Now size of crypto core is reduced.
+2) Sysbench MySQL results on 2 socket, 44 core and 88 threads Intel x86
+machine (higher is better):
 
--- 
-Best regards,
-Kamil Konieczny
-Samsung R&D Institute Poland
++-------+--------------------+----------------------------+----------------------------+
+|       | Without Patch      | Domain based               | No check                   |
++-------+-----------+--------+-------------------+--------+-------------------+--------+
+|Num    | Average   |        | Average           |        | Average           |        |
+|Threads| throughput|%Std Dev| throughput        |%Std Dev| throughput        |%Std Dev|
++-------+-----------+--------+-------------------+--------+-------------------+--------+
+|    8  | 133658.2  | 0.66   | 134909.4 (+0.94%) | 0.94   | 134232.2 (+0.43%) | 1.29   |
+|   16  | 266540    | 0.48   | 268253.4 (+0.64%) | 0.64   | 268584.6 (+0.77%) | 0.37   |
+|   32  | 466315.6  | 0.15   | 465903.6 (-0.09%) | 0.28   | 468594.2 (+0.49%) | 0.23   |
+|   64  | 720039.4  | 0.23   | 725663.8 (+0.78%) | 0.42   | 717253.8 (-0.39%) | 0.36   |
+|   72  | 757284.4  | 0.25   | 770693.4 (+1.77%) | 0.29   | 764984.0 (+1.02%) | 0.38   |
+|   80  | 807955.6  | 0.22   | 818446.0 (+1.30%) | 0.24   | 831372.2 (+2.90%) | 0.10   |
+|   88  | 863173.8  | 0.25   | 870520.4 (+0.85%) | 0.23   | 887049.0 (+2.77%) | 0.56   |
+|   96  | 882950.8  | 0.32   | 890775.4 (+0.89%) | 0.40   | 892913.8 (+1.13%) | 0.41   |
+|  128  | 895112.6  | 0.13   | 898524.2 (+0.38%) | 0.16   | 901195.0 (+0.68%) | 0.28   |
++-------+-----------+--------+-------------------+--------+-------------------+--------+
+
+Thanks,
+Rohit
