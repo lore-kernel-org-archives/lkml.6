@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2243538-1518720659-2-17440280411875312285
+X-Cyrus-Session-Id: sloti22d1t05-2241641-1518720658-2-8874462471414380291
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES caen,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720659; b=WmEHLgohz3VdEzNbcd3MKYEBvUzgiri2jEYxvQVI4WKyv6P
-    /2Uunon4alqjCFqJgDBOit4YLkqrtR/equ08sNxNXkm557kqCN93YBm5VTgawz8a
-    cUvznq/Cwow16LbsI0s1id3VIxfwe5LIoeCQ4DIQdYvFCPucMJEs2zHv+b32zFqa
-    /vhz3hW42/V7jrgTOKp6A70Fmx9tNvGKd+kpI7f+a+ENRsXlagNCBHEZuY4LpIsp
-    T5DNfoXK69b/e2ABOu2/+CGwMaY2HaX6qhgMdp1lHRdpZhDrCk1tZWSX9QNDhYWf
-    zuxYC2y/kNhmKyolbBmpAlWmE7EFQ++F6iMtJtA==
+    t=1518720658; b=LIZgEb7CYtGIHmIxoz28Y2OTd+ok4ccVG1b2er7vloXTqUr
+    watEt8E1izYu+UOO1PcTyr0NpAGfI1hYSxQwGjf4DNA0hQUrHVEZyaLU3Em96TIT
+    j8R9h3WMHtwXhhlwZwFdimfRu9oYq0kQpKy23AtkEsv8aiAkhhHYV0+hVB5UgbYK
+    95LsvW94S/xTCQfrctBTLgLt5+itbgraUEFSivwFFK5axC+sPVTCIE7JsnF03wK1
+    kZknEQXsQI2f8vn4CLUY/d6CCTGWPeyO718PK8y7XCPLyov681L88w11l3KOB3ry
+    VPFPw9DGWWPakFd3SgzIox2thTKUCoUsAEhpnug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720659; bh=zmwKzPYoaYt9IHevADrZ+Q6vhh
-    hksBw6K4N9UVWgfsc=; b=oIVJD071Uick8u2smUSMncRiRgYfXYgqRqPVCcbk5O
-    gS4y3rSrsz9l4tX/pf07Pj67SLs/yeEFTt04l13JuC3fYhCEZ3VxJg3s5VXboOJ/
-    HVjMYBJl+YwRbFkZGIVX3rPbDvp8pQTrr4G4S1n9812xF3fVOJvgeoNUtIeZSJPx
-    L/7ObHxIiq6t0N1ja1B7E1yUDNUOX7lI6ITztKHBM3Phu00HwPKLamBlUboTYy7b
-    ScMaxMHF81I80uRouIXP1q603K4dFWGeCVgUWpV0jgP7cMff3O7u2pMCV6nEV6qk
-    d5+G+s/SuAc0xS/hdXE8VMtHMPllGXC0tTdz54D6N6Yg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518720658; bh=Ch7uMvXPvhYGE+5RDW0c1cq80N
+    rEaHhonngDza9xrVg=; b=jzhfvTWcDKQOout9mbWtf9YUufQV+wSerFGJt78mQ2
+    rBV75HFmBJzb8OcMwDC4lPoOiFXArIxPZnXD1cqNXiJ4CcXfTMhvNq+o6tDjDd4C
+    ffmEwkU8RMTWVpoXyl5ZDgQHZMnYOuPc5HumfSvK7k4iHlpZp3CJ4TZgGlvw0JDd
+    ZzdRlewmHOaaACYh9M55qG+K1hMP3wOCFcQVrWozfKQuw0ZwiYJHQvW5uJ+BUftW
+    +O90VBNbmb027HkrMwGWVOWaAvuFJH/rhCuzB9s/Gcjry/nL8h0WNGtF9VuVXPGB
+    0fxcH7KAssT1QX/Qpo/CT3pvrHHLM/URuV35/IqNW7Ag==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,23 +47,30 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162119AbeBOSuz (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 13:50:55 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49150 "EHLO
+        id S1162087AbeBOPVe (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:21:34 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49088 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162086AbeBOPVe (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:21:34 -0500
+        with ESMTP id S1162080AbeBOPVb (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:21:31 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot
-        <bot+eceb3204562c41a438fa1f2335e0fe4f6886d669@syzkaller.appspotmail.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 027/108] ip6mr: fix stale iterator
-Date: Thu, 15 Feb 2018 16:16:24 +0100
-Message-Id: <20180215151226.289712678@linuxfoundation.org>
+        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dmitriy Vyukov <dvyukov@google.com>, LKP <lkp@01.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Miguel Bernal Marin <miguel.bernal.marin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 026/108] x86/asm: Fix inline asm call constraints for GCC 4.4
+Date: Thu, 15 Feb 2018 16:16:23 +0100
+Message-Id: <20180215151226.199156719@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -80,112 +87,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
+commit 520a13c530aeb5f63e011d668c42db1af19ed349 upstream.
 
-[ Upstream commit 4adfa79fc254efb7b0eb3cd58f62c2c3f805f1ba ]
+The kernel test bot (run by Xiaolong Ye) reported that the following commit:
 
-When we dump the ip6mr mfc entries via proc, we initialize an iterator
-with the table to dump but we don't clear the cache pointer which might
-be initialized from a prior read on the same descriptor that ended. This
-can result in lock imbalance (an unnecessary unlock) leading to other
-crashes and hangs. Clear the cache pointer like ipmr does to fix the issue.
-Thanks for the reliable reproducer.
+  f5caf621ee35 ("x86/asm: Fix inline asm call constraints for Clang")
 
-Here's syzbot's trace:
- WARNING: bad unlock balance detected!
- 4.15.0-rc3+ #128 Not tainted
- syzkaller971460/3195 is trying to release lock (mrt_lock) at:
- [<000000006898068d>] ipmr_mfc_seq_stop+0xe1/0x130 net/ipv6/ip6mr.c:553
- but there are no more locks to release!
+is causing double faults in a kernel compiled with GCC 4.4.
 
- other info that might help us debug this:
- 1 lock held by syzkaller971460/3195:
-  #0:  (&p->lock){+.+.}, at: [<00000000744a6565>] seq_read+0xd5/0x13d0
- fs/seq_file.c:165
+Linus subsequently diagnosed the crash pattern and the buggy commit and found that
+the issue is with this code:
 
- stack backtrace:
- CPU: 1 PID: 3195 Comm: syzkaller971460 Not tainted 4.15.0-rc3+ #128
- Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
- Google 01/01/2011
- Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x257 lib/dump_stack.c:53
-  print_unlock_imbalance_bug+0x12f/0x140 kernel/locking/lockdep.c:3561
-  __lock_release kernel/locking/lockdep.c:3775 [inline]
-  lock_release+0x5f9/0xda0 kernel/locking/lockdep.c:4023
-  __raw_read_unlock include/linux/rwlock_api_smp.h:225 [inline]
-  _raw_read_unlock+0x1a/0x30 kernel/locking/spinlock.c:255
-  ipmr_mfc_seq_stop+0xe1/0x130 net/ipv6/ip6mr.c:553
-  traverse+0x3bc/0xa00 fs/seq_file.c:135
-  seq_read+0x96a/0x13d0 fs/seq_file.c:189
-  proc_reg_read+0xef/0x170 fs/proc/inode.c:217
-  do_loop_readv_writev fs/read_write.c:673 [inline]
-  do_iter_read+0x3db/0x5b0 fs/read_write.c:897
-  compat_readv+0x1bf/0x270 fs/read_write.c:1140
-  do_compat_preadv64+0xdc/0x100 fs/read_write.c:1189
-  C_SYSC_preadv fs/read_write.c:1209 [inline]
-  compat_SyS_preadv+0x3b/0x50 fs/read_write.c:1203
-  do_syscall_32_irqs_on arch/x86/entry/common.c:327 [inline]
-  do_fast_syscall_32+0x3ee/0xf9d arch/x86/entry/common.c:389
-  entry_SYSENTER_compat+0x51/0x60 arch/x86/entry/entry_64_compat.S:125
- RIP: 0023:0xf7f73c79
- RSP: 002b:00000000e574a15c EFLAGS: 00000292 ORIG_RAX: 000000000000014d
- RAX: ffffffffffffffda RBX: 000000000000000f RCX: 0000000020a3afb0
- RDX: 0000000000000001 RSI: 0000000000000067 RDI: 0000000000000000
- RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
- R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
- R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- BUG: sleeping function called from invalid context at lib/usercopy.c:25
- in_atomic(): 1, irqs_disabled(): 0, pid: 3195, name: syzkaller971460
- INFO: lockdep is turned off.
- CPU: 1 PID: 3195 Comm: syzkaller971460 Not tainted 4.15.0-rc3+ #128
- Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
- Google 01/01/2011
- Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x257 lib/dump_stack.c:53
-  ___might_sleep+0x2b2/0x470 kernel/sched/core.c:6060
-  __might_sleep+0x95/0x190 kernel/sched/core.c:6013
-  __might_fault+0xab/0x1d0 mm/memory.c:4525
-  _copy_to_user+0x2c/0xc0 lib/usercopy.c:25
-  copy_to_user include/linux/uaccess.h:155 [inline]
-  seq_read+0xcb4/0x13d0 fs/seq_file.c:279
-  proc_reg_read+0xef/0x170 fs/proc/inode.c:217
-  do_loop_readv_writev fs/read_write.c:673 [inline]
-  do_iter_read+0x3db/0x5b0 fs/read_write.c:897
-  compat_readv+0x1bf/0x270 fs/read_write.c:1140
-  do_compat_preadv64+0xdc/0x100 fs/read_write.c:1189
-  C_SYSC_preadv fs/read_write.c:1209 [inline]
-  compat_SyS_preadv+0x3b/0x50 fs/read_write.c:1203
-  do_syscall_32_irqs_on arch/x86/entry/common.c:327 [inline]
-  do_fast_syscall_32+0x3ee/0xf9d arch/x86/entry/common.c:389
-  entry_SYSENTER_compat+0x51/0x60 arch/x86/entry/entry_64_compat.S:125
- RIP: 0023:0xf7f73c79
- RSP: 002b:00000000e574a15c EFLAGS: 00000292 ORIG_RAX: 000000000000014d
- RAX: ffffffffffffffda RBX: 000000000000000f RCX: 0000000020a3afb0
- RDX: 0000000000000001 RSI: 0000000000000067 RDI: 0000000000000000
- RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
- R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
- R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- WARNING: CPU: 1 PID: 3195 at lib/usercopy.c:26 _copy_to_user+0xb5/0xc0
- lib/usercopy.c:26
+  register unsigned int __asm_call_sp asm("esp");
+  #define ASM_CALL_CONSTRAINT "+r" (__asm_call_sp)
 
-Reported-by: syzbot <bot+eceb3204562c41a438fa1f2335e0fe4f6886d669@syzkaller.appspotmail.com>
-Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Even on a 64-bit kernel, it's using ESP instead of RSP.  That causes GCC
+to produce the following bogus code:
+
+  ffffffff8147461d:       89 e0                   mov    %esp,%eax
+  ffffffff8147461f:       4c 89 f7                mov    %r14,%rdi
+  ffffffff81474622:       4c 89 fe                mov    %r15,%rsi
+  ffffffff81474625:       ba 20 00 00 00          mov    $0x20,%edx
+  ffffffff8147462a:       89 c4                   mov    %eax,%esp
+  ffffffff8147462c:       e8 bf 52 05 00          callq  ffffffff814c98f0 <copy_user_generic_unrolled>
+
+Despite the absurdity of it backing up and restoring the stack pointer
+for no reason, the bug is actually the fact that it's only backing up
+and restoring the lower 32 bits of the stack pointer.  The upper 32 bits
+are getting cleared out, corrupting the stack pointer.
+
+So change the '__asm_call_sp' register variable to be associated with
+the actual full-size stack pointer.
+
+This also requires changing the __ASM_SEL() macro to be based on the
+actual compiled arch size, rather than the CONFIG value, because
+CONFIG_X86_64 compiles some files with '-m32' (e.g., realmode and vdso).
+Otherwise Clang fails to build the kernel because it complains about the
+use of a 64-bit register (RSP) in a 32-bit file.
+
+Reported-and-Bisected-and-Tested-by: kernel test robot <xiaolong.ye@intel.com>
+Diagnosed-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Dmitriy Vyukov <dvyukov@google.com>
+Cc: LKP <lkp@01.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthias Kaehlcke <mka@chromium.org>
+Cc: Miguel Bernal Marin <miguel.bernal.marin@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: f5caf621ee35 ("x86/asm: Fix inline asm call constraints for Clang")
+Link: http://lkml.kernel.org/r/20170928215826.6sdpmwtkiydiytim@treble
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Matthias Kaehlcke <mka@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/ip6mr.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/net/ipv6/ip6mr.c
-+++ b/net/ipv6/ip6mr.c
-@@ -495,6 +495,7 @@ static void *ipmr_mfc_seq_start(struct s
- 		return ERR_PTR(-ENOENT);
+---
+ arch/x86/include/asm/asm.h |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -11,10 +11,12 @@
+ # define __ASM_FORM_COMMA(x) " " #x ","
+ #endif
  
- 	it->mrt = mrt;
-+	it->cache = NULL;
- 	return *pos ? ipmr_mfc_seq_idx(net, seq->private, *pos - 1)
- 		: SEQ_START_TOKEN;
- }
+-#ifdef CONFIG_X86_32
++#ifndef __x86_64__
++/* 32 bit */
+ # define __ASM_SEL(a,b) __ASM_FORM(a)
+ # define __ASM_SEL_RAW(a,b) __ASM_FORM_RAW(a)
+ #else
++/* 64 bit */
+ # define __ASM_SEL(a,b) __ASM_FORM(b)
+ # define __ASM_SEL_RAW(a,b) __ASM_FORM_RAW(b)
+ #endif
