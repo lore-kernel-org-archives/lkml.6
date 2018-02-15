@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1906823-1518710759-2-1228071316638049303
+X-Cyrus-Session-Id: sloti22d1t05-1883814-1518710757-2-10001259041058056238
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518710758; b=Xn99qBlkKXmdzudxchjO+jY6ICJARfA7ctQJJrXoXcmPiUu
-    ZWOQnQivftiddRUDaG1nLKkmhnP6KpKelaUh7NjRfYQxrPCwD8a9jiY/4rlFLaSP
-    c3iIZR/vhFbqpkXBQL2ydj3bWT1E/ykV9TdgxNhsTaBsdRpL+KjreNhwLPf9l78U
-    e5wh+J7uFjk12lgIrar49iw/CJ5jT8eqLnd6y/l1lAfl8HRHc48uSLIdqvm+gIqX
-    ZS7DYiOt6nJfkxEM5lwH6fuj7GbzcNKZvcIQvTJBH66nhDp7u40lFRhQhKLdaKXP
-    rh90b0kb+/Z8t0wFpnrbSOTaHFuGgQQy6OfF4Mg==
+    t=1518710756; b=sgY5aokgUDeB1Hch6APwSQVudqY5AROh0qDNGWHR2k1ThsA
+    Siy2BY+tSGQV0syUmff85yAfKfcc414ytrZfrJ6IusODafaGDgNoJ2q81bHUJ59H
+    rfunU4BjzEDFn2OSSc6Uo6UJFUYcloNTrD845GRoaJxVVSndMxINheQtwgJF4xVp
+    P/MKPSnBgDhTwW67RX2DGj14h7qaRsj4AS3UmrerjZU+0LlLrxFWhMsIO2tOKoaL
+    xhbd2jGZ2xZ3+pVOxeJE5O53nfmwadh5sZgSdI+2NTGOP6D1UXOHrQXY+KR0vHCZ
+    4oCY1oJLdsUwpKKLwcJaJ2bRWKy1wejZjIRxA3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518710758; bh=2tzE0IhnnohuF+eeV/W40BKIej
-    39AhzGhIrhAhCK6mg=; b=ZBUbJ1uRHKfBtTPzGuvdDYE+3nGcedvakR2y5mkW6L
-    jG1j7cyB/QL37sMydAkDhsrlu43q4NDm04KzL1ip4JlO2nALyuXGiSqGg4+JV1xR
-    FCNVJkEjFk86st5wxlloN6i4HtRsXGRCxJAybc2cfidK2MmhLd+32DMfe+4dqdeK
-    ZqPZV1LNxqrUoPyhMH7Wa/md1zJt2YnSM52KMKnhzRDnn2pDsLH4LCrMQbY7gbgU
-    /GwdXSRg+dCl7TxPtYmgxIeJCO1yTWdttVn6eFJaZdG2TKRf5pVarS8gAS6K0t0S
-    At4oEnmir9pp88UvDLM75qoN4PF2W1pprB2jz3tFDfJw==
+    :list-id; s=arctest; t=1518710756; bh=3k7PTG5q5ZLe3i5k55Z2q2qQ+V
+    RFuRqHlGewlwKxF9E=; b=gkBoOKBG4MBYz3PB6JsXmI4yqvELj4gZm+iCjcqzdm
+    yHaHutBWEMKyA12Rao0arb1xfD4w71EbtrjavwGJYjVBOzkRsIM79ISk4Rx4OL5B
+    trT6jeWf1gaYOR6oxGq+yzOSfupQHlqLFMoLqvqLX4JyyorjsseaVVs/HLe/3W4f
+    6VH+z3V6QLanGt7+wGw4ge0IZD6VEAkmK1V8iyEvEeL9aFt36oxeIL0vOh3+oxss
+    gk3I+9AWIsPqw2/ivlwZ8m8E/GWPs4HybnfZYeXvKSG7xA4GeSu2y6wSca9QGEY5
+    Xl68IgZgLKeDNQiU+MkzUoGJKWphJSwEPkiswvVZeONw==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424605AbeBOPqI (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:46:08 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35252 "EHLO
+        id S1424610AbeBOPqJ (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:46:09 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35228 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424250AbeBOPqH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:46:07 -0500
+        with ESMTP id S1424599AbeBOPqE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:46:04 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.15 162/202] Bluetooth: btsdio: Do not bind to non-removable BCM43341
-Date: Thu, 15 Feb 2018 16:17:42 +0100
-Message-Id: <20180215151721.352220231@linuxfoundation.org>
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.15 161/202] HID: quirks: Fix keyboard + touchpad on Toshiba Click Mini not working
+Date: Thu, 15 Feb 2018 16:17:41 +0100
+Message-Id: <20180215151721.304163229@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -79,53 +79,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Hans de Goede <hdegoede@redhat.com>
 
-commit b4cdaba274247c9c841c6a682c08fa91fb3aa549 upstream.
+commit edfc3722cfef4217c7fe92b272cbe0288ba1ff57 upstream.
 
-BCM43341 devices soldered onto the PCB (non-removable) always (AFAICT)
-use an UART connection for bluetooth. But they also advertise btsdio
-support on their 3th sdio function, this causes 2 problems:
+The Toshiba Click Mini uses an i2c attached keyboard/touchpad combo
+(single i2c_hid device for both) which has a vid:pid of 04F3:0401,
+which is also used by a bunch of Elan touchpads which are handled by the
+drivers/input/mouse/elan_i2c driver, but that driver deals with pure
+touchpads and does not work for a combo device such as the one on the
+Toshiba Click Mini.
 
-1) A non functioning BT HCI getting registered
-
-2) Since the btsdio driver does not have suspend/resume callbacks,
-mmc_sdio_pre_suspend will return -ENOSYS, causing mmc_pm_notify()
-to react as if the SDIO-card is removed and since the slot is
-marked as non-removable it will never get detected as inserted again.
-Which results in wifi no longer working after a suspend/resume.
-
-This commit fixes both by making btsdio ignore BCM43341 devices
-when connected to a slot which is marked non-removable.
+The combo on the Mini has an ACPI id of ELAN0800, which is not claimed
+by the elan_i2c driver, so check for that and if it is found do not ignore
+the device. This fixes the keyboard/touchpad combo on the Mini not working
+(although with the touchpad in mouse emulation mode).
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/bluetooth/btsdio.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/hid/hid-core.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/drivers/bluetooth/btsdio.c
-+++ b/drivers/bluetooth/btsdio.c
-@@ -31,6 +31,7 @@
- #include <linux/errno.h>
- #include <linux/skbuff.h>
- 
-+#include <linux/mmc/host.h>
- #include <linux/mmc/sdio_ids.h>
- #include <linux/mmc/sdio_func.h>
- 
-@@ -292,6 +293,14 @@ static int btsdio_probe(struct sdio_func
- 		tuple = tuple->next;
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -2643,7 +2643,6 @@ static const struct hid_device_id hid_ig
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_DELORME, USB_DEVICE_ID_DELORME_EARTHMATE) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_DELORME, USB_DEVICE_ID_DELORME_EM_LT20) },
+ 	{ HID_I2C_DEVICE(USB_VENDOR_ID_ELAN, 0x0400) },
+-	{ HID_I2C_DEVICE(USB_VENDOR_ID_ELAN, 0x0401) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_ESSENTIAL_REALITY, USB_DEVICE_ID_ESSENTIAL_REALITY_P5) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_ETT, USB_DEVICE_ID_TC5UH) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_ETT, USB_DEVICE_ID_TC4UM) },
+@@ -2913,6 +2912,17 @@ bool hid_ignore(struct hid_device *hdev)
+ 			strncmp(hdev->name, "www.masterkit.ru MA901", 22) == 0)
+ 			return true;
+ 		break;
++	case USB_VENDOR_ID_ELAN:
++		/*
++		 * Many Elan devices have a product id of 0x0401 and are handled
++		 * by the elan_i2c input driver. But the ACPI HID ELAN0800 dev
++		 * is not (and cannot be) handled by that driver ->
++		 * Ignore all 0x0401 devs except for the ELAN0800 dev.
++		 */
++		if (hdev->product == 0x0401 &&
++		    strncmp(hdev->name, "ELAN0800", 8) != 0)
++			return true;
++		break;
  	}
  
-+	/* BCM43341 devices soldered onto the PCB (non-removable) use an
-+	 * uart connection for bluetooth, ignore the BT SDIO interface.
-+	 */
-+	if (func->vendor == SDIO_VENDOR_ID_BROADCOM &&
-+	    func->device == SDIO_DEVICE_ID_BROADCOM_43341 &&
-+	    !mmc_card_is_removable(func->card->host))
-+		return -ENODEV;
-+
- 	data = devm_kzalloc(&func->dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
+ 	if (hdev->type == HID_TYPE_USBMOUSE &&
