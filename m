@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755313AbeBOIis (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 03:38:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57844 "EHLO mail.kernel.org"
+        id S1755330AbeBOIiv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 03:38:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755293AbeBOIin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 03:38:43 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 012BD217C0
+        id S1755293AbeBOIit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 03:38:49 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52F3021776
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
 From: Kieran Bingham <kbingham@kernel.org>
@@ -16,14 +16,14 @@ To: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Simon Horman <horms@verge.net.au>, geert@glider.be,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 3/8] dt-bindings: display: renesas,lvds: Add LVDS binding for D3
-Date: Thu, 15 Feb 2018 08:38:18 +0000
-Message-Id: <1518683903-10681-4-git-send-email-kbingham@kernel.org>
+Subject: [PATCH 5/8] arm64: dts: renesas: r8a77995: Add LVDS support
+Date: Thu, 15 Feb 2018 08:38:20 +0000
+Message-Id: <1518683903-10681-6-git-send-email-kbingham@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
 References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
@@ -33,24 +33,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-The D3 supports two LVDS channels. Extend the binding to support them.
+The r8a77995 D3 platform has 2 LVDS channels connected to the DU.
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 52 +++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-index 79860f58a7ad..0dcf488b70df 100644
---- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-@@ -14,6 +14,7 @@ Required properties:
- - compatible : Shall contain one of
-   - "renesas,lvds-r8a7795" for R8A7795 (R-Car H3) compatible LVDS encoders
-   - "renesas,lvds-r8a7796" for R8A7796 (R-Car M3-W) compatible LVDS encoders
-+  - "renesas,lvds-r8a77995" for R8A77995 (R-Car D3) compatible LVDS encoders
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index a57d5fecf79c..7851e37cfff1 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -773,18 +773,70 @@
+ 				port@1 {
+ 					reg = <1>;
+ 					du_out_lvds0: endpoint {
++						remote-endpoint = <&du_out_lvds0>;
+ 					};
+ 				};
  
- - reg: Base address and length for the memory-mapped registers
- - clocks: A phandle + clock-specifier pair for the functional clock
+ 				port@2 {
+ 					reg = <2>;
+ 					du_out_lvds1: endpoint {
++						remote-endpoint = <&du_out_lvds1>;
+ 					};
+ 				};
+ 			};
+ 		};
+ 	};
+ 
++	lvds0: lvds@feb90000 {
++		compatible = "renesas,lvds-r8a77995";
++		reg = <0 0xfeb90000 0 0x20>;
++		clocks = <&cpg CPG_MOD 727>;
++		status = "disabled";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				lvds0_in: endpoint {
++					remote-endpoint = <&du_out_lvds0>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				lvds0_out: endpoint {
++				};
++			};
++		};
++	};
++
++	lvds1: lvds@feb90100 {
++		compatible = "renesas,lvds-r8a77995";
++		reg = <0 0xfeb90100 0 0x20>;
++		clocks = <&cpg CPG_MOD 727>;
++		status = "disabled";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				lvds1_in: endpoint {
++					remote-endpoint = <&du_out_lvds1>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				lvds1_out: endpoint {
++				};
++			};
++		};
++	};
++
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
 -- 
 2.7.4
