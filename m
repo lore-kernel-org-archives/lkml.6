@@ -1,65 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754895AbeBOHYy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 02:24:54 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54484 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754802AbeBOHYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 02:24:53 -0500
-From: Hans de Goede <hdegoede@redhat.com>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] extcon: intel-cht-wc: Also set direction and drv flags for V5 boost GPIO
-Date: Thu, 15 Feb 2018 08:24:50 +0100
-Message-Id: <20180215072450.7160-1-hdegoede@redhat.com>
+        id S1754892AbeBOHgB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 02:36:01 -0500
+Received: from mga11.intel.com ([192.55.52.93]:51652 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754805AbeBOHf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 02:35:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,516,1511856000";
+   d="scan'208";a="17812886"
+Message-ID: <1518680151.7832.26.camel@intel.com>
+Subject: Re: [PATCH 18/20] iwlwifi: fix malformed CONFIG_IWLWIFI_PCIE_RTPM
+ default
+From: Luciano Coelho <luciano.coelho@intel.com>
+To: Ulf Magnusson <ulfalizer@gmail.com>, linux-kernel@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org, tfiga@chromium.org, paul.burton@mips.com,
+        m.szyprowski@samsung.com, egtvedt@samfundet.no,
+        linus.walleij@linaro.org, vgupta@synopsys.com,
+        mgorman@techsingularity.net, hch@lst.de, mina86@mina86.com,
+        robh@kernel.org, sboyd@codeaurora.org, paulus@ozlabs.org,
+        will.deacon@arm.com, tony@atomide.com, npiggin@gmail.com,
+        yamada.masahiro@socionext.com, Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Date: Thu, 15 Feb 2018 09:35:51 +0200
+In-Reply-To: <20180205012146.23981-19-ulfalizer@gmail.com>
+References: <20180205012146.23981-1-ulfalizer@gmail.com>
+         <20180205012146.23981-19-ulfalizer@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.3-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sometimes (firmware bug?) the V5 boost GPIO is not configured as output
-by the BIOS, leading to the 5V boost convertor being permanently on,
+On Mon, 2018-02-05 at 02:21 +0100, Ulf Magnusson wrote:
+> 'default false' should be 'default n', though they happen to have the
+> same effect here, due to undefined symbols ('false' in this case)
+> evaluating to n in a tristate sense.
+> 
+> Remove the default instead of changing it. bool and tristate symbols
+> implicitly default to n.
+> 
+> Discovered with the
+> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_und
+> efined.py
+> script.
+> 
+> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+> ---
 
-Explicitly set the direction and drv flags rather then inheriting them
-from the firmware to fix this.
+Thanks, Ulf!
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/extcon/extcon-intel-cht-wc.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+This is applied in our internal tree and will eventually reach the
+mainline, following our usual upstreaming process.
 
-diff --git a/drivers/extcon/extcon-intel-cht-wc.c b/drivers/extcon/extcon-intel-cht-wc.c
-index 7c4bc8c44c3f..b7e9ea377d70 100644
---- a/drivers/extcon/extcon-intel-cht-wc.c
-+++ b/drivers/extcon/extcon-intel-cht-wc.c
-@@ -66,6 +66,8 @@
- 
- #define CHT_WC_VBUS_GPIO_CTLO		0x6e2d
- #define CHT_WC_VBUS_GPIO_CTLO_OUTPUT	BIT(0)
-+#define CHT_WC_VBUS_GPIO_CTLO_DRV_OD	BIT(4)
-+#define CHT_WC_VBUS_GPIO_CTLO_DIR_OUT	BIT(5)
- 
- enum cht_wc_usb_id {
- 	USB_ID_OTG,
-@@ -183,14 +185,15 @@ static void cht_wc_extcon_set_5v_boost(struct cht_wc_extcon_data *ext,
- {
- 	int ret, val;
- 
--	val = enable ? CHT_WC_VBUS_GPIO_CTLO_OUTPUT : 0;
--
- 	/*
- 	 * The 5V boost converter is enabled through a gpio on the PMIC, since
- 	 * there currently is no gpio driver we access the gpio reg directly.
- 	 */
--	ret = regmap_update_bits(ext->regmap, CHT_WC_VBUS_GPIO_CTLO,
--				 CHT_WC_VBUS_GPIO_CTLO_OUTPUT, val);
-+	val = CHT_WC_VBUS_GPIO_CTLO_DRV_OD | CHT_WC_VBUS_GPIO_CTLO_DIR_OUT;
-+	if (enable)
-+		val |= CHT_WC_VBUS_GPIO_CTLO_OUTPUT;
-+
-+	ret = regmap_write(ext->regmap, CHT_WC_VBUS_GPIO_CTLO, val);
- 	if (ret)
- 		dev_err(ext->dev, "Error writing Vbus GPIO CTLO: %d\n", ret);
- }
--- 
-2.14.3
+--
+Cheers,
+Luca.
