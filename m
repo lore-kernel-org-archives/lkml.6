@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2241641-1518720520-2-2425093939810400269
+X-Cyrus-Session-Id: sloti22d1t05-2243538-1518720503-2-5719182777304080554
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720519; b=UBGLGF/W6zTZruDjN9VYWeMBwBMNISc4h+WjiWYzlqxOhqz
-    I08McBmM8a4+7QVMQ7lujod7kFMoPNN7h8eICKmhNWRV4z8JMOhNPw4RHqSdhlaV
-    AZxWktl76FkAYuv/zjCYJW8jvThBiyEWAm93TYKeZBVpNCItK89EA6AAick+/xyJ
-    2uVvqyPAA3R1Scqrn0IV96YHUrKqUcz1OE6zK7252J+VaBTrTOtw22sqt+6IQIa2
-    08elUEvf0ixHDhsND5oEmJzNgi+oSDe6UGc1eR0uBpz9tQ+OjIx/yrTtD0vN0OUi
-    BCJu8tQ0Z1P2oWpU/9PDmxiHX4VGcTzkcePalBA==
+    t=1518720502; b=XPGmtq/uO2IhOpiahyXuKnF/rUfzSIctDPzs+HPH36nX8Z2
+    DsIYRSIHlWx+Ir++xNIub6E6nQLfkfQmITw2WXBGstzVjmUw+NQ9aip7BeC7CMSV
+    ymFrgTd3+undDaYhsc/gXMTxNG0YoNpI6clrAoR2UTqgqu3+HGKkVfd5+0lAMMDc
+    SlbtM0qWT8FJ6JGD6o0OxYP6wi8tdi7saGbkm0xnuDcdkOX2TjL3HQbmtalx/oVn
+    h4HBtyUimWvr4Ts69ttCVqvttPKHt/+RdPSSOdyph30RPri6C/KcOYFYo9QNo0eq
+    ZleYRYhjNb7v9e2te7EBYOOsIZXjK1zmFB2cpiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720519; bh=/yp2oFhd71JzvkIPU7m4KO0qnr
-    9+zXOaryvggGRsKEo=; b=e6wUBjU6WyI0baYB17yJCNzb0vzrvGL0m8Zp5HUfRv
-    AkGSdbcvXoBD4v7jLnnjt9zIxlwNtFSfmNvjBHGdWfhuSQKYy5fWoSTZEQ8Bgl5C
-    VMsu0eH1E1NVZ9N5Tj5gif0aRBMOJb46IS9r30+bvi6rnGR1FOmvDNOlYF+lyU1Y
-    kV3x2IKcx2CYnx74GBTrpOXSD5cgJAhUR2D0Vg6qOClZIj7G0wC15unhWcSIJcBW
-    Ll+UXvhw1AmCu/TlcGiN2kVW8K28P95pp/SafZA7D24nlrjzO32Nlk8F1MCBbxbk
-    gIPbIaoOkHDmzWpPJ26ZRab9+DZlGLC7HvGWzdwPq4jA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518720502; bh=fYLIg73O2kzrZyxVLurjPgDvoU
+    9B+cAYbp66lnsZMso=; b=G/gMC7TBw4QwCMMAOevJy4XVqCG5URFQUQoPEvpRbc
+    +VYiIDWdXLkbCIx8PXq8PGYsYkAX/AS7nlpfqPSbm2rP7I8EVuC5IlKDM2Audmm/
+    RAATVH3l6Df3b45fz9G2/z0TS4NuddrbMJe/gMWzYX17a7FNZal49skDTqnOKPKf
+    SE0jSkJLX0up+UNrH98SmIFmL7TuRjJqeDe7q6EVJZknxLbTx9xQk7PVMWfD1Fqq
+    qebVmba2H+Iysb8KvD0/2p5J2mpXdc5ecepo+gU9zuo5wBtLBgm5hZk/jnPsVx05
+    gEomFvjnTUJMNIQhLhhwnXyESv24UGoD97+FDJdiGT4g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,19 +47,24 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162505AbeBOSsX (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 13:48:23 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49406 "EHLO
+        id S1162300AbeBOPWK (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:22:10 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49388 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162294AbeBOPWK (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:22:10 -0500
+        with ESMTP id S1162248AbeBOPWH (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:22:07 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.4 012/108] powerpc/64s: Support disabling RFI flush with no_rfi_flush and nopti
-Date: Thu, 15 Feb 2018 16:16:09 +0100
-Message-Id: <20180215151224.118610505@linuxfoundation.org>
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Rolf Neugebauer <rolf.neugebauer@docker.com>
+Subject: [PATCH 4.4 038/108] x86/microcode: Do the family check first
+Date: Thu, 15 Feb 2018 16:16:35 +0100
+Message-Id: <20180215151227.742442946@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -76,65 +81,90 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Borislav Petkov <bp@suse.de>
 
-commit bc9c9304a45480797e13a8e1df96ffcf44fb62fe upstream.
+commit 1f161f67a272cc4f29f27934dd3f74cb657eb5c4 upstream with adjustments.
 
-Because there may be some performance overhead of the RFI flush, add
-kernel command line options to disable it.
+On CPUs like AMD's Geode, for example, we shouldn't even try to load
+microcode because they do not support the modern microcode loading
+interface.
 
-We add a sensibly named 'no_rfi_flush' option, but we also hijack the
-x86 option 'nopti'. The RFI flush is not the same as KPTI, but if we
-see 'nopti' we can guess that the user is trying to avoid any overhead
-of Meltdown mitigations, and it means we don't have to educate every
-one about a different command line option.
+However, we do the family check *after* the other checks whether the
+loader has been disabled on the command line or whether we're running in
+a guest.
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+So move the family checks first in order to exit early if we're being
+loaded on an unsupported family.
+
+Reported-and-tested-by: Sven Glodowski <glodi1@arcor.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: <stable@vger.kernel.org> # 4.11..
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://bugzilla.suse.com/show_bug.cgi?id=1061396
+Link: http://lkml.kernel.org/r/20171012112316.977-1-bp@alien8.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Rolf Neugebauer <rolf.neugebauer@docker.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/setup_64.c |   24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/microcode/core.c |   27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
 
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -838,8 +838,29 @@ early_initcall(disable_hardlockup_detect
- #ifdef CONFIG_PPC_BOOK3S_64
- static enum l1d_flush_type enabled_flush_types;
- static void *l1d_flush_fallback_area;
-+static bool no_rfi_flush;
- bool rfi_flush;
- 
-+static int __init handle_no_rfi_flush(char *p)
-+{
-+	pr_info("rfi-flush: disabled on command line.");
-+	no_rfi_flush = true;
-+	return 0;
-+}
-+early_param("no_rfi_flush", handle_no_rfi_flush);
-+
-+/*
-+ * The RFI flush is not KPTI, but because users will see doco that says to use
-+ * nopti we hijack that option here to also disable the RFI flush.
-+ */
-+static int __init handle_no_pti(char *p)
-+{
-+	pr_info("rfi-flush: disabling due to 'nopti' on command line.\n");
-+	handle_no_rfi_flush(NULL);
-+	return 0;
-+}
-+early_param("nopti", handle_no_pti);
-+
- static void do_nothing(void *unused)
- {
- 	/*
-@@ -910,7 +931,8 @@ void __init setup_rfi_flush(enum l1d_flu
- 
- 	enabled_flush_types = types;
- 
--	rfi_flush_enable(enable);
-+	if (!no_rfi_flush)
-+		rfi_flush_enable(enable);
- }
- #endif /* CONFIG_PPC_BOOK3S_64 */
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -94,9 +94,6 @@ static bool __init check_loader_disabled
+ 	bool *res = &dis_ucode_ldr;
  #endif
+ 
+-	if (!have_cpuid_p())
+-		return *res;
+-
+ 	a = 1;
+ 	c = 0;
+ 	native_cpuid(&a, &b, &c, &d);
+@@ -138,8 +135,9 @@ void __init load_ucode_bsp(void)
+ {
+ 	int vendor;
+ 	unsigned int family;
++	bool intel = true;
+ 
+-	if (check_loader_disabled_bsp())
++	if (!have_cpuid_p())
+ 		return;
+ 
+ 	vendor = x86_vendor();
+@@ -147,16 +145,27 @@ void __init load_ucode_bsp(void)
+ 
+ 	switch (vendor) {
+ 	case X86_VENDOR_INTEL:
+-		if (family >= 6)
+-			load_ucode_intel_bsp();
++		if (family < 6)
++			return;
+ 		break;
++
+ 	case X86_VENDOR_AMD:
+-		if (family >= 0x10)
+-			load_ucode_amd_bsp(family);
++		if (family < 0x10)
++			return;
++		intel = false;
+ 		break;
++
+ 	default:
+-		break;
++		return;
+ 	}
++
++	if (check_loader_disabled_bsp())
++		return;
++
++	if (intel)
++		load_ucode_intel_bsp();
++	else
++		load_ucode_amd_bsp(family);
+ }
+ 
+ static bool check_loader_disabled_ap(void)
