@@ -1,87 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165206AbeBOPfG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 10:35:06 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36840 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1165194AbeBOPe6 (ORCPT
+        id S1422889AbeBOPg3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 10:36:29 -0500
+Received: from smtpweb130.aruba.it ([62.149.158.130]:50357 "EHLO
+        smtpweb130.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1422875AbeBOPg1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 10:34:58 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: uniphier: remove redundant check of blk_id" to the asoc tree
-In-Reply-To: <20180214161036.32446-1-colin.king@canonical.com>
-Message-Id: <E1emLY7-0007KZ-Mh@debutante>
-Date: Thu, 15 Feb 2018 15:34:15 +0000
+        Thu, 15 Feb 2018 10:36:27 -0500
+Subject: Re: [PATCH 1/2] pps-gpio: Avoid flooding syslog
+To: Lukas Senger <lukas@fridolin.com>
+Cc: linux-kernel@vger.kernel.org
+References: <ee4fdd16-0343-1a01-63a7-06046026659a@enneenne.com>
+ <20180215125921.29494-1-lukas@fridolin.com>
+ <20180215125921.29494-2-lukas@fridolin.com>
+ <6c424674-e8f0-eaf1-c056-889e354b43b7@enneenne.com>
+ <20180215161238.23e0c117@dinghy.localdomain>
+From: Rodolfo Giometti <giometti@enneenne.com>
+Message-ID: <a9b965fe-fee2-3aab-0f2c-681d2835070c@enneenne.com>
+Date: Thu, 15 Feb 2018 16:36:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180215161238.23e0c117@dinghy.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 15/02/18 16:12, Lukas Senger wrote:
+> 
+>> Why a void function? You should use it to toggle echoing GPIO... =8-o
+> 
+> RFC 2783 says to generate the echo pulse "as rapidly as possible" which
+> is why I do the toggling in the irq handler. However this leaves the
+> default echo function installed which just floods syslog.
 
-   ASoC: uniphier: remove redundant check of blk_id
+The pps_event() function does it for you in a beauty-and-clear way by using the 
+info.echo() function. :-D
 
-has been applied to the asoc tree at
+> Another problem with this patch is that it also is against my old one
+> and not against current kernel code.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Yes, correct it please.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Ciao,
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Rodolfo
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 53b8e4504aaa7fc88fd18e6caac3a4d4367bd4a4 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 14 Feb 2018 16:10:36 +0000
-Subject: [PATCH] ASoC: uniphier: remove redundant check of blk_id
-
-The check of blk_id == AUD_CLK_IO is redundant as it also being performed
-in the following switch statement with the same return of -ENOTSUPP. Fix
-this by removing the redundant comparison.
-
-Detected by CoverityScan, CID#1465227 ("Logically dead code")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/uniphier/aio-cpu.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/sound/soc/uniphier/aio-cpu.c b/sound/soc/uniphier/aio-cpu.c
-index 55f3248a31fd..7cf2316c69a2 100644
---- a/sound/soc/uniphier/aio-cpu.c
-+++ b/sound/soc/uniphier/aio-cpu.c
-@@ -134,9 +134,6 @@ static int uniphier_aio_set_sysclk(struct snd_soc_dai *dai, int clk_id,
- 	bool pll_auto = false;
- 	int pll_id, div_id;
- 
--	if (clk_id == AUD_CLK_IO)
--		return -ENOTSUPP;
--
- 	switch (clk_id) {
- 	case AUD_CLK_IO:
- 		return -ENOTSUPP;
 -- 
-2.16.1
+
+HCE Engineering                      e-mail: giometti@hce-engineering.it
+GNU/Linux Solutions                          giometti@enneenne.com
+Linux Device Driver                          giometti@linux.it
+Embedded Systems                     phone:  +39 349 2432127
+UNIX programming                     skype:  rodolfo.giometti
+Cosino Project - the quick prototyping embedded system - www.cosino.it
+Freelance ICT Italia - Consulente ICT Italia - www.consulenti-ict.it
