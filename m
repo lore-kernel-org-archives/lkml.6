@@ -1,68 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164233AbeBOWRY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 17:17:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34062 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163612AbeBOWRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 17:17:23 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB485217B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Thu, 15 Feb 2018 22:17:18 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Joe Perches <joe@perches.com>
-Cc: linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        linux-mips@linux-mips.org
-Subject: Re: [PATCH] MIPS: Octeon: Fix logging messages with spurious periods
- after newlines
-Message-ID: <20180215221717.GO3986@saruman>
-References: <ac33924a3e39541330e8f008f3ad0fbda74845d6.1512543855.git.joe@perches.com>
+        id S1164280AbeBOWSP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 17:18:15 -0500
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:41716 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163612AbeBOWSN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 17:18:13 -0500
+X-Google-Smtp-Source: AH8x225MxUkhOKq1tiXyEUCvHDkWjkcdi95otaJkGU1XhVaL8edv6vh3weg6PZMDmybpwCiBGFcDZWTNrKxyzwEXzT4=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="XVTPT6MZt3zd/C+/"
-Content-Disposition: inline
-In-Reply-To: <ac33924a3e39541330e8f008f3ad0fbda74845d6.1512543855.git.joe@perches.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 15 Feb 2018 23:18:12 +0100
+X-Google-Sender-Auth: QoIy35cKdIb1l-EtMeSSW9HzG4g
+Message-ID: <CAJZ5v0gvN5hGZMt4kceyAJhbpJdyJdbCArWgWO2F07d02zN0Ug@mail.gmail.com>
+Subject: [GIT PULL] ACPI updates for v4.16-rc2
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
---XVTPT6MZt3zd/C+/
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please pull from the tag
 
-On Tue, Dec 05, 2017 at 11:04:58PM -0800, Joe Perches wrote:
-> Using a period after a newline causes bad output.
->=20
-> Signed-off-by: Joe Perches <joe@perches.com>
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-4.16-rc2
 
-Applied for 4.17,
+with top-most commit 31a3be353fc21f13e2ccdc661cda253f78b16661
 
-Thanks
-James
+ Merge branches 'acpi-ec', 'acpi-tables' and 'acpi-doc'
 
---XVTPT6MZt3zd/C+/
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+on top of commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2
 
------BEGIN PGP SIGNATURE-----
+ Linux 4.16-rc1
 
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqGBu0ACgkQbAtpk944
-dnqCSA/+LvMOmchhHoEefzYbReb/HtaViYODVwXjk14uMRnw7dujDivXPvMoE3B0
-u4ZoTYYlua73EWgorwI+4AoFbd9+/WL49L7RBOMwA3ZS2OXor79nSG4RPl3q17h3
-n5wx6BxR77oaeRrTP5sg9XIr+/olAl+fk3CBt2WUnTW0Nvcl55T5O99uXHyuUpor
-bH6Y+AF90BAzN0z+C5T1eTjmlhvwmhYSNRDIZ9t2O1JzPmuU5GbvzTbdpzp9xm8S
-ZEzV1576LYPYOUqGtQ45GuYKUX1kETxa3N9VGSzjWkXNXFYCGFDoYAPq9/PSl0Fv
-x+EJOYtQB9jRupTprlBTds3GmXP56HcDMgR5O5E9XuJfyphrfEwWT7JKYYAd7bZC
-OAUkAadaIERRTMLpi7X7wGBTleiFHJ3PM9BhMwyk+65ATJ2Lyb0MZ/CMDMwBqua8
-FLPLMf+vYOY8xgLd2sD88lmDdqpnNyq5+NAF+1sA4b0wI4eM1y9VSMO6g6WhBwiq
-knt0v/KmaPIViW9WqnbNSi2gVA0XCXVwvm8/7bLDwTlWMH6blstzCAfFyQKZCYvf
-3e05PvsGnu4dJx/MFKwg+o9bTHpg5yMGR7cJTg23QLmwkvVl44zMAoU7441417NA
-nITwre7Qr93gKA+9ik9HuGRiWg7TJKeqBL1V+lzJcgjYgmyoDAM=
-=8qR7
------END PGP SIGNATURE-----
+to receive ACPI updates for 4.16-rc2.
 
---XVTPT6MZt3zd/C+/--
+These fix a system resume regression from the 4.13 cycle, clean up
+device table handling in the ACPI core, update sysfs ABI documentation
+of a couple of drivers and add an expected switch fall-through marker
+to the SPCR table parsing code.
+
+Specifics:
+
+ - Revert a problematic EC driver change from the 4.13 cycle that
+   introduced a system resume regression on Thinkpad X240 (Rafael
+   Wysocki).
+
+ - Clean up device tables handling in the ACPI core and the related
+   part of the device properties framework (Andy Shevchenko).
+
+ - Update the sysfs ABI documentatio of the dock and the INT3407
+   special device drivers (Aishwarya Pant).
+
+ - Add an expected switch fall-through marker to the SPCR table
+   parsing code (Gustavo Silva).
+
+Thanks!
+
+
+---------------
+
+Aishwarya Pant (2):
+      ACPI / DPTF: Document dptf_power sysfs atttributes
+      ACPI: dock: document sysfs interface
+
+Andy Shevchenko (4):
+      ACPI / bus: Do not traverse through non-existed device table
+      ACPI / bus: Remove checks in acpi_get_match_data()
+      ACPI / bus: Rename acpi_get_match_data() to acpi_device_get_match_data()
+      device property: Constify device_get_match_data()
+
+Gustavo A. R. Silva (1):
+      ACPI: SPCR: Mark expected switch fall-through in acpi_parse_spcr
+
+Rafael J. Wysocki (1):
+      ACPI / EC: Restore polling during noirq suspend/resume phases
+
+---------------
+
+ .../ABI/testing/sysfs-devices-platform-dock        | 39 +++++++++++
+ Documentation/ABI/testing/sysfs-platform-dptf      | 40 ++++++++++++
+ drivers/acpi/bus.c                                 | 75 ++++++++++++----------
+ drivers/acpi/ec.c                                  |  6 ++
+ drivers/acpi/property.c                            |  4 +-
+ drivers/acpi/spcr.c                                |  1 +
+ drivers/base/property.c                            |  5 +-
+ drivers/of/property.c                              |  4 +-
+ include/linux/acpi.h                               |  4 +-
+ include/linux/fwnode.h                             |  4 +-
+ include/linux/property.h                           |  2 +-
+ 11 files changed, 138 insertions(+), 46 deletions(-)
