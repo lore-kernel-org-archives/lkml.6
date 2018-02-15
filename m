@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227dDZcuBpqBboDUQru07q7Zn9ZNN9Z8EKT3mwiFhk1l+JWf2nb5d7RRDCWYFZgKTKzL7j2Y
-ARC-Seal: i=1; a=rsa-sha256; t=1518708818; cv=none;
+X-Google-Smtp-Source: AH8x225ijWFEPNZqmXFwaaqLsP+3rE8iDaaBKNE05r6fWATtgjley4mAVP+aV08Yd5RmOOrG2Z8H
+ARC-Seal: i=1; a=rsa-sha256; t=1518708815; cv=none;
         d=google.com; s=arc-20160816;
-        b=HuXi/ftDNqweTPcKpd/FFGPUOHv+y8bkG+KdTRL/4QXqGehl9CKIw8UlHB3R2tS9vO
-         wxW5PKE4CDccH4s/j1ioUEoFZv2TomA6BK77b8nVZY0MRrvkoKhFnMZc++TSgBrxIGSt
-         rx9jv0STZZgN6tsm1eztrhbqDzCbzhnDTrmFykogQODvHtzhAeK9oyV6py8oE07rp2bA
-         eABkXYUVi1YlEdWe8l1t2tA+aCH638b9j2lAva0r4G/UftSv2ogV85tmbEiqlMptZ4js
-         3N+bvrH81A7JyavpxbGSefBxu1WItJljj8k5mHN7SKm8Mir8y6y4hXJf26vraznPb9sr
-         FaVw==
+        b=vqG0YPOllwA62O1f2gdzxqZ+kdSdhg5EAqnAHqMH40n7wX3GRoXP3PDzK5lOKIVHvD
+         gBq8jJNjsPMeDZn5rNMUTj9aN8pDU7jyW+QkdOAYWyn8FpMepG4FJEHyc3ESdO9PQD+H
+         +WEGUS1ImZKZCv8DLw+9YM3vA9+/p0VRg92S88sFGzO5c7EUkP2fS7ivLjXlU1OET3Qh
+         zl3vHO3k2m9JbGy7sQ0MCmhWkbnoeDMOONiK0bZc6suajedfETvZCxSlHK1yJKEE6XuC
+         tYsYuxTpCqyPwU3lvn8eOKi1TfhbIXWCD8zm0k5fzqzmmPa7LjFq/7YF+MUuMsiOnLdL
+         xtFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AQ1BAuFHaAC71IWd5duUqBGWigWkmdfPG/tLchEWiwM=;
-        b=OnYMmQ052XtDB7sWg4mbvBIqYOCxLtbkh/VgR98LlPpokrFIeA+vJCOP3uVQWJz6Ei
-         BrNxNvZdoKjElWD9hj5vv3m1tkTTSD51I0QIkOyVxyb5QCcKdnYmxdMuynBoEJF9Ulph
-         F5S8jO0cQn/sNwZtfx138EKmj+wI4UWaoTT0yycPi2Qxbodk+pV56EHGhUP/7ojkGBgy
-         1YMLyA2TSIQ/zAUpHUwbOygoKU1VcBOP0E4IUE6ljSIZroeqtkJ9JN0RbpT7P76hKUR1
-         W+L2EakuFKmScvF3dNvHcEqQoKeUpGPCuHBbybwz+mPbcQtklCdIB6vldryMaAgVfRkm
-         RoMA==
+        bh=lmUvg6EibFIPLn8uztA8rYxVesKAddpu+kvGDCbyQpQ=;
+        b=ruJohljKQtSo0tgA1iYCi1BHmjvVXmceRSGHgOraUS0OD4WzbOdbAgMzuAVUYydeie
+         05MmpdXwhCEjjOlcGwgeiPU6zXtrkmQJTbsuDg29sQjYDV71AOL7/kyWIv8S9iXYPfkw
+         TJdQ7XmnEccQacwrtG5N2gZO6KCEdODBbxXnJIlVAzJIyjpj3pJ3R6vBxZa12N7lbVtq
+         VyjB0Pj0WxsZd9sEFXRo1blZpcUpwzlMpv9b+7P16McXNLui6CSxupKFAHsH/0qLCrDI
+         VsFl8+teG0WnjEcLD/SiX5I7l9xN2uaOQlXIXJkoS4H/SJ5DpDUj4PASea+BjICJE1Hc
+         hd9A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Marc Zyngier <marc.zyngier@arm.com>,
 	Will Deacon <will.deacon@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 055/195] [Variant 3/Meltdown] arm64: idmap: Use "awx" flags for .idmap.text .pushsection directives
-Date: Thu, 15 Feb 2018 16:15:46 +0100
-Message-Id: <20180215151708.484383036@linuxfoundation.org>
+Subject: [PATCH 4.14 054/195] [Variant 3/Meltdown] arm64: entry: Reword comment about post_ttbr_update_workaround
+Date: Thu, 15 Feb 2018 16:15:45 +0100
+Message-Id: <20180215151708.438842785@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481617965638958?=
-X-GMAIL-MSGID: =?utf-8?q?1592481617965638958?=
+X-GMAIL-THRID: =?utf-8?q?1592481614830808398?=
+X-GMAIL-MSGID: =?utf-8?q?1592481614830808398?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,93 +52,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Will Deacon <will.deacon@arm.com>
 
 
-Commit 439e70e27a51 upstream.
+Commit f167211a93ac upstream.
 
-The identity map is mapped as both writeable and executable by the
-SWAPPER_MM_MMUFLAGS and this is relied upon by the kpti code to manage
-a synchronisation flag. Update the .pushsection flags to reflect the
-actual mapping attributes.
+We don't fully understand the Cavium ThunderX erratum, but it appears
+that mapping the kernel as nG can lead to horrible consequences such as
+attempting to execute userspace from kernel context. Since kpti isn't
+enabled for these CPUs anyway, simplify the comment justifying the lack
+of post_ttbr_update_workaround in the exception trampoline.
 
-Reported-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/cpu-reset.S |    2 +-
- arch/arm64/kernel/head.S      |    2 +-
- arch/arm64/kernel/sleep.S     |    2 +-
- arch/arm64/mm/proc.S          |    8 ++++----
- 4 files changed, 7 insertions(+), 7 deletions(-)
+ arch/arm64/kernel/entry.S |   13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
---- a/arch/arm64/kernel/cpu-reset.S
-+++ b/arch/arm64/kernel/cpu-reset.S
-@@ -16,7 +16,7 @@
- #include <asm/virt.h>
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -962,16 +962,9 @@ alternative_else_nop_endif
+ 	orr	\tmp, \tmp, #USER_ASID_FLAG
+ 	msr	ttbr1_el1, \tmp
+ 	/*
+-	 * We avoid running the post_ttbr_update_workaround here because the
+-	 * user and kernel ASIDs don't have conflicting mappings, so any
+-	 * "blessing" as described in:
+-	 *
+-	 *   http://lkml.kernel.org/r/56BB848A.6060603@caviumnetworks.com
+-	 *
+-	 * will not hurt correctness. Whilst this may partially defeat the
+-	 * point of using split ASIDs in the first place, it avoids
+-	 * the hit of invalidating the entire I-cache on every return to
+-	 * userspace.
++	 * We avoid running the post_ttbr_update_workaround here because
++	 * it's only needed by Cavium ThunderX, which requires KPTI to be
++	 * disabled.
+ 	 */
+ 	.endm
  
- .text
--.pushsection    .idmap.text, "ax"
-+.pushsection    .idmap.text, "awx"
- 
- /*
-  * __cpu_soft_restart(el2_switch, entry, arg0, arg1, arg2) - Helper for
---- a/arch/arm64/kernel/head.S
-+++ b/arch/arm64/kernel/head.S
-@@ -371,7 +371,7 @@ ENDPROC(__primary_switched)
-  * end early head section, begin head code that is also used for
-  * hotplug and needs to have the same protections as the text region
-  */
--	.section ".idmap.text","ax"
-+	.section ".idmap.text","awx"
- 
- ENTRY(kimage_vaddr)
- 	.quad		_text - TEXT_OFFSET
---- a/arch/arm64/kernel/sleep.S
-+++ b/arch/arm64/kernel/sleep.S
-@@ -96,7 +96,7 @@ ENTRY(__cpu_suspend_enter)
- 	ret
- ENDPROC(__cpu_suspend_enter)
- 
--	.pushsection ".idmap.text", "ax"
-+	.pushsection ".idmap.text", "awx"
- ENTRY(cpu_resume)
- 	bl	el2_setup		// if in EL2 drop to EL1 cleanly
- 	bl	__cpu_setup
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -86,7 +86,7 @@ ENDPROC(cpu_do_suspend)
-  *
-  * x0: Address of context pointer
-  */
--	.pushsection ".idmap.text", "ax"
-+	.pushsection ".idmap.text", "awx"
- ENTRY(cpu_do_resume)
- 	ldp	x2, x3, [x0]
- 	ldp	x4, x5, [x0, #16]
-@@ -152,7 +152,7 @@ ENTRY(cpu_do_switch_mm)
- 	ret
- ENDPROC(cpu_do_switch_mm)
- 
--	.pushsection ".idmap.text", "ax"
-+	.pushsection ".idmap.text", "awx"
- 
- .macro	__idmap_cpu_set_reserved_ttbr1, tmp1, tmp2
- 	adrp	\tmp1, empty_zero_page
-@@ -185,7 +185,7 @@ ENDPROC(idmap_cpu_replace_ttbr1)
- 	.popsection
- 
- #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
--	.pushsection ".idmap.text", "ax"
-+	.pushsection ".idmap.text", "awx"
- 
- 	.macro	__idmap_kpti_get_pgtable_ent, type
- 	dc	cvac, cur_\()\type\()p		// Ensure any existing dirty
-@@ -373,7 +373,7 @@ ENDPROC(idmap_kpti_install_ng_mappings)
-  *	Initialise the processor for turning the MMU on.  Return in x0 the
-  *	value of the SCTLR_EL1 register.
-  */
--	.pushsection ".idmap.text", "ax"
-+	.pushsection ".idmap.text", "awx"
- ENTRY(__cpu_setup)
- 	tlbi	vmalle1				// Invalidate local TLB
- 	dsb	nsh
