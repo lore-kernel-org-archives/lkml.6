@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2266gN4MnKqT5d1wQfFOvEYTN4LJrrWtlPw/D4Bzo1qn3835sCscneYppSU+KeUqxl8xXwHh
-ARC-Seal: i=1; a=rsa-sha256; t=1518708025; cv=none;
+X-Google-Smtp-Source: AH8x226PHq4onG2G9sqATrmiivQCg0VC/gKrpfsiW/QwnQpEDI8c4u2x8YmUxnSF6kl9V65JY/JU
+ARC-Seal: i=1; a=rsa-sha256; t=1518708022; cv=none;
         d=google.com; s=arc-20160816;
-        b=d9bCm3lNvtJYDcFomwJUBdw5SoCPNMmOVKGJs2XBPH5gWWdSz2CaRjSGxbma9KaDw6
-         G0ecyXDP5rkeswPbrdqN+tzqLQ6k8grCCruE2j0UrwN+99nRAfoDJpNSb83xkmnZYQUb
-         hmhEM0rXftm4Yfk8tmtTzq35mANgdCMRzFRqNMVHEQzTA8n/tN9f3MSSP+7MD6TIXhfc
-         hk83FJnMJzJ8Zi4wBqraCAYilnqzFH4JnePYmSZBoKN3vO5YVl1BjxG2NhPLfhr+Qqj3
-         yYwgg8qgqW1VQtH6MZ09Y5sMkxaEIm8+RgeuqoTObnGn9MQDSpbRP7wB4de9rbW7f9zb
-         9kBQ==
+        b=mhFomIZ+lIMTwvKR3zgZfdoy1b7PgPKdMdUuSkki7Ie6Zlb6DaA58vpPggnOyW9UI0
+         gzkqnthRNZ48+avcH9SmI1opzSNyjSSUZBexpY6JneloQqo3UKXLDs7Bk0ZeF0EAWa1H
+         j+IFayOZMg3hyM0WZb8Xc0rESGbriHOIuTFX6zO6cIgZsDdI8oBaZs26in5RgSUnWEq4
+         kEX1et15xhC4dFagj5Dl4gaG8z8+pLnhqm8Z31ZUx1iHMz6+lptVLyD204gECXP773vw
+         ZViYxRu3DeT5oT9G/Hxuajy0OlHIJvTig86qjy8gVcfcV+4o3f7ZngJ0UhnJ8gv1oKni
+         Cs2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3xPIWvjqMdj4dGBfJYcLjkztDhKO5VnVW060DFR836E=;
-        b=eC4paJaVovcV99cGq4bPQ9NkTTINn+DZ/gVZ8jOYuOkrumoKiD1bRpGSEQPf4l9ohl
-         uIBMO7x3DAozsKSbiAeGqAp2X2x9DuqVSARURbNPtgPSVJ7DSF+r9hNYNS2KIdlswxfh
-         PYyRoyrYfvMktycMcOd+LI2RKk/pihwZQYD5OytwzxuU3Ohsg3HGrv4IRcLOwCeD8DPI
-         zWOLRqHBGXxI/qFSpUsrKUzNXDVPnSOzGdNglX2/gaTyHJ3DEL2Cgylw3jzpcfZuNqAP
-         3BLwrNioN7Jo+ngtZLXaB+ixznxpYJKD4HwZze39FSMnqnMaRY9/kTiT1n4I9LYjebqg
-         dPxA==
+        bh=sSd6ysWcox7mhawq4IK+lObiaD9lHSzGR74hROgK2v4=;
+        b=pGzxAWIulzwUZBjX2JtOQ2hnthX/7tH/L3NzM/6kLTGPwlv6NAwN3KRSo+b2oElUHE
+         P1sFDBWQU6X+EMSFwdqK3bm6aJgi6DmN64zLJg5l9ekGn26PqxxYGsTd/lWqfqqm3tB1
+         yJ15t6YhNM+V7BCkwKtddZ/+yvb5frBHmB/g0BuOSdtSXegNZqBVeabuP3qmNxa0whk0
+         ID2oYcbR7+ErCuJJNdaM2xIYDjY+4mEf0mDj9jbn9ueM6Gs7V/mV92PJ5KUlzCyKGt6K
+         9SQ1P9nEY5Y51pNvnz4f7v1hY3PwU8YZ5GxF8dDyKK9zT8p4gKt1/245x0s9pZ+wSfPf
+         gSiA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Secunia Research <vuln@secunia.com>,
-	Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 3.18 16/45] usbip: fix stub_rx: harden CMD_SUBMIT path to handle malicious input
-Date: Thu, 15 Feb 2018 16:17:07 +0100
-Message-Id: <20180215144119.306946021@linuxfoundation.org>
+	David Howells <dhowells@redhat.com>,
+	Masakazu Urade <urade.masakazu@jp.panasonic.com>,
+	Koichi Yasutake <yasutake.koichi@jp.panasonic.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 3.18 45/45] mn10300/misalignment: Use SIGSEGV SEGV_MAPERR to report a failed user copy
+Date: Thu, 15 Feb 2018 16:17:36 +0100
+Message-Id: <20180215144125.485663072@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215144115.863307741@linuxfoundation.org>
 References: <20180215144115.863307741@linuxfoundation.org>
@@ -39,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480786081271245?=
-X-GMAIL-MSGID: =?utf-8?q?1592480786081271245?=
+X-GMAIL-THRID: =?utf-8?q?1592480783215634672?=
+X-GMAIL-MSGID: =?utf-8?q?1592480783215634672?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,93 +50,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit c6688ef9f29762e65bce325ef4acd6c675806366 upstream.
+commit 6ac1dc736b323011a55ecd1fc5897c24c4f77cbd upstream.
 
-Harden CMD_SUBMIT path to handle malicious input that could trigger
-large memory allocations. Add checks to validate transfer_buffer_length
-and number_of_packets to protect against bad input requesting for
-unbounded memory allocations. Validate early in get_pipe() and return
-failure.
+Setting si_code to 0 is the same a setting si_code to SI_USER which is definitely
+not correct.  With si_code set to SI_USER si_pid and si_uid will be copied to
+userspace instead of si_addr.  Which is very wrong.
 
-Reported-by: Secunia Research <vuln@secunia.com>
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+So fix this by using a sensible si_code (SEGV_MAPERR) for this failure.
+
+Fixes: b920de1b77b7 ("mn10300: add the MN10300/AM33 architecture to the kernel")
+Cc: David Howells <dhowells@redhat.com>
+Cc: Masakazu Urade <urade.masakazu@jp.panasonic.com>
+Cc: Koichi Yasutake <yasutake.koichi@jp.panasonic.com>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- drivers/usb/usbip/stub_rx.c |   30 +++++++++++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
+ arch/mn10300/mm/misalignment.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/usbip/stub_rx.c
-+++ b/drivers/usb/usbip/stub_rx.c
-@@ -341,11 +341,13 @@ static struct stub_priv *stub_priv_alloc
- 	return priv;
- }
+--- a/arch/mn10300/mm/misalignment.c
++++ b/arch/mn10300/mm/misalignment.c
+@@ -437,7 +437,7 @@ transfer_failed:
  
--static int get_pipe(struct stub_device *sdev, int epnum, int dir)
-+static int get_pipe(struct stub_device *sdev, struct usbip_header *pdu)
- {
- 	struct usb_device *udev = sdev->udev;
- 	struct usb_host_endpoint *ep;
- 	struct usb_endpoint_descriptor *epd = NULL;
-+	int epnum = pdu->base.ep;
-+	int dir = pdu->base.direction;
- 
- 	if (epnum < 0 || epnum > 15)
- 		goto err_ret;
-@@ -358,6 +360,7 @@ static int get_pipe(struct stub_device *
- 		goto err_ret;
- 
- 	epd = &ep->desc;
-+
- 	if (usb_endpoint_xfer_control(epd)) {
- 		if (dir == USBIP_DIR_OUT)
- 			return usb_sndctrlpipe(udev, epnum);
-@@ -380,6 +383,27 @@ static int get_pipe(struct stub_device *
- 	}
- 
- 	if (usb_endpoint_xfer_isoc(epd)) {
-+		/* validate packet size and number of packets */
-+		unsigned int maxp, packets, bytes;
-+
-+#define USB_EP_MAXP_MULT_SHIFT  11
-+#define USB_EP_MAXP_MULT_MASK   (3 << USB_EP_MAXP_MULT_SHIFT)
-+#define USB_EP_MAXP_MULT(m) \
-+	(((m) & USB_EP_MAXP_MULT_MASK) >> USB_EP_MAXP_MULT_SHIFT)
-+
-+		maxp = usb_endpoint_maxp(epd);
-+		maxp *= (USB_EP_MAXP_MULT(
-+				__le16_to_cpu(epd->wMaxPacketSize)) + 1);
-+		bytes = pdu->u.cmd_submit.transfer_buffer_length;
-+		packets = DIV_ROUND_UP(bytes, maxp);
-+
-+		if (pdu->u.cmd_submit.number_of_packets < 0 ||
-+		    pdu->u.cmd_submit.number_of_packets > packets) {
-+			dev_err(&sdev->udev->dev,
-+				"CMD_SUBMIT: isoc invalid num packets %d\n",
-+				pdu->u.cmd_submit.number_of_packets);
-+			return -1;
-+		}
- 		if (dir == USBIP_DIR_OUT)
- 			return usb_sndisocpipe(udev, epnum);
- 		else
-@@ -388,7 +412,7 @@ static int get_pipe(struct stub_device *
- 
- err_ret:
- 	/* NOT REACHED */
--	dev_err(&sdev->interface->dev, "get pipe, epnum %d\n", epnum);
-+	dev_err(&sdev->udev->dev, "CMD_SUBMIT: invalid epnum %d\n", epnum);
- 	return -1;
- }
- 
-@@ -453,7 +477,7 @@ static void stub_recv_cmd_submit(struct
- 	struct stub_priv *priv;
- 	struct usbip_device *ud = &sdev->ud;
- 	struct usb_device *udev = sdev->udev;
--	int pipe = get_pipe(sdev, pdu->base.ep, pdu->base.direction);
-+	int pipe = get_pipe(sdev, pdu);
- 
- 	if (pipe == -1)
- 		return;
+ 	info.si_signo	= SIGSEGV;
+ 	info.si_errno	= 0;
+-	info.si_code	= 0;
++	info.si_code	= SEGV_MAPERR;
+ 	info.si_addr	= (void *) regs->pc;
+ 	force_sig_info(SIGSEGV, &info, current);
+ 	return;
