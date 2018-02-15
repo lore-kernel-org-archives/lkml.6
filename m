@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226JVoFtoBVWf9WRPtFuLh/zgWIr+WUboUUqvMQiIA9P2nS//NhDCMSHa9kfnM3JFxUE/1zw
-ARC-Seal: i=1; a=rsa-sha256; t=1518709248; cv=none;
+X-Google-Smtp-Source: AH8x226qhG+I30/UN8eBAW/HRjOhlv8NNKaevLcsURsiJ2u4YAtf9+NDCj+jE8keQbuGb2S0cPJy
+ARC-Seal: i=1; a=rsa-sha256; t=1518709240; cv=none;
         d=google.com; s=arc-20160816;
-        b=TS39iDBno2UyFeXiLIyrz8E5jlGOWjg0d4KfZ016MqbSUHDcwb0LoVFEfAKgd3RBI5
-         yyk3BX9otB3mHnxB7NDmn1rqmeYTnolnDW9LdJ1G1ySsq/aQZlLFm/tZIu74HaC4zvZR
-         Vx3lfDMpIY9YJpKc0usjWgCdrSaWQ41jxgN6YCrSqcHoN8snQ0DpuZOk5SgR4LMi1UwF
-         QE5A6hEZlwY8pAPkAboBFi4p7UnFdqC8qnQ6I71JINyiowKPpswBjHZBonpeoORXBdsv
-         CsLLEA3RqOlOn/5uTDvtLdnKvyfOAuHuMoshrAf2zvus7dqONyB/PScUrvuw6JeZ/v0Y
-         0VuQ==
+        b=E6HqKFHsk0HeNPPzn/35XnZkOCPcIohFhG7HrAoaP3GZomTMM2n3/edmwpd/ntOh4A
+         tLeG4yIRA2PuGXFMN0KckCBnoWnzeLmeyxvb19WO6TabbrBQZkv3HUehViG3gwdQiN8I
+         yBv8NYtbs9SC7b4bTjQM5I0PDlNIIYO4+h1HlF0D1tiwSkyikC+y/nqQJDkMxPHrWUdU
+         m7etIUSMEAgUg3dUIF9kk5nt/fKC+ubob5e7RQxbZirWzcyGDste+/q++ekIRhFgl/Ta
+         MfvTYQvqKjMF2cDOuRVETZ/wp3BLv98D9Py6YW/mxvL6vF9xR9RGmoHduFD24bsoAJIG
+         vlJg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=alHq6o2bwE4Y9QFzjd4yL/n+9g1VEyvJjccijbgIuIQ=;
-        b=fNtvlDYT5LBT2H8a2TLs0+DtJ1oTdKykeZBQ6mW9Bens0dUPexgbApLjx9O3CNKSVh
-         cQ1gQQh9FE+MzdkvzLyULTMT/1Ci/xZaAQQsnYRYi08jH+vSs79nTfP9Ptb71frj5wPv
-         fZaC67uApi6hdcOrP0+jiMfWwcc0UWqYNbTRz+jaHu1c3DHNqPBC8Sbb0wESp59j/Air
-         NOBDIbG4/iuxxQIDrcnCFIHY+6VM4oFO8Wqd/bNC58JD24P7yRLTLx6ynygpSLuRdBF7
-         zZlGdbaHBv9Du1wnrKsYYygWjuEo4KkbfgeGkLl+wUYDf1HTVJxMDOkcBwzYfADrQB6X
-         tj0w==
+        bh=o38qThj6t3kt1iX4UVs9oUEbo91zpRnwCx9dRiQ+EtY=;
+        b=aguRDPOz9UO9BIjez1HSLm2clApxV5MEEdH88QwxFFJKjFnq1vIPxNDziO13Ih/+iY
+         jauUDpgxUJ6E5C82jE6dwK6kN6OoGd2hb+nTYiUxtCozLW3lusaXCPC9BrZbw+72ZmX+
+         MftJi3keDwy9TRw0iUQ8Y91aDP7HF9W9AbR3F3uASxj2ARxOjER+y97iw25xzcW+7T3l
+         KDXfepJWXECTNzttf17PavSjkGHm/M2nWZ4KFuatyGoZbNeP7jLb/U3VRiF1eB717DAG
+         PmIRpfD/sX5k6ZfMPeiuVld21w2ZfSF+/8IJ1GfwEv8K6FAUio2hVu9vhlfiNOuNgAYn
+         vJgQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andrey Konovalov <andreyknvl@google.com>,
-	Malcolm Priestley <tvboxspy@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.15 013/202] media: dvb-usb-v2: lmedm04: move ts2020 attach to dm04_lme2510_tuner
-Date: Thu, 15 Feb 2018 16:15:13 +0100
-Message-Id: <20180215151713.521839138@linuxfoundation.org>
+	Pavan Kondeti <pkondeti@codeaurora.org>,
+	"Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Mike Galbraith <efault@gmx.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.15 010/202] sched/rt: Use container_of() to get root domain in rto_push_irq_work_func()
+Date: Thu, 15 Feb 2018 16:15:10 +0100
+Message-Id: <20180215151713.352610375@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -41,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480721810490491?=
-X-GMAIL-MSGID: =?utf-8?q?1592482069260019971?=
+X-GMAIL-THRID: =?utf-8?q?1592480996908357247?=
+X-GMAIL-MSGID: =?utf-8?q?1592482061061511693?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,70 +54,92 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 7bf7a7116ed313c601307f7e585419369926ab05 upstream.
+commit ad0f1d9d65938aec72a698116cd73a980916895e upstream.
 
-When the tuner was split from m88rs2000 the attach function is in wrong
-place.
+When the rto_push_irq_work_func() is called, it looks at the RT overloaded
+bitmask in the root domain via the runqueue (rq->rd). The problem is that
+during CPU up and down, nothing here stops rq->rd from changing between
+taking the rq->rd->rto_lock and releasing it. That means the lock that is
+released is not the same lock that was taken.
 
-Move to dm04_lme2510_tuner to trap errors on failure and removing
-a call to lme_coldreset.
+Instead of using this_rq()->rd to get the root domain, as the irq work is
+part of the root domain, we can simply get the root domain from the irq work
+that is passed to the routine:
 
-Prevents driver starting up without any tuner connected.
+ container_of(work, struct root_domain, rto_push_work)
 
-Fixes to trap for ts2020 fail.
-LME2510(C): FE Found M88RS2000
-ts2020: probe of 0-0060 failed with error -11
-...
-LME2510(C): TUN Found RS2000 tuner
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
+This keeps the root domain consistent.
 
-Reported-by: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Tested-by: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Reported-by: Pavan Kondeti <pkondeti@codeaurora.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 4bdced5c9a292 ("sched/rt: Simplify the IPI based RT balancing logic")
+Link: http://lkml.kernel.org/r/CAEU1=PkiHO35Dzna8EQqNSKW1fr1y1zRQ5y66X117MG06sQtNA@mail.gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/dvb-usb-v2/lmedm04.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ kernel/sched/rt.c |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
---- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
-+++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
-@@ -1076,8 +1076,6 @@ static int dm04_lme2510_frontend_attach(
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -1907,9 +1907,8 @@ static void push_rt_tasks(struct rq *rq)
+  * the rt_loop_next will cause the iterator to perform another scan.
+  *
+  */
+-static int rto_next_cpu(struct rq *rq)
++static int rto_next_cpu(struct root_domain *rd)
+ {
+-	struct root_domain *rd = rq->rd;
+ 	int next;
+ 	int cpu;
  
- 		if (adap->fe[0]) {
- 			info("FE Found M88RS2000");
--			dvb_attach(ts2020_attach, adap->fe[0], &ts2020_config,
--					&d->i2c_adap);
- 			st->i2c_tuner_gate_w = 5;
- 			st->i2c_tuner_gate_r = 5;
- 			st->i2c_tuner_addr = 0x60;
-@@ -1143,17 +1141,18 @@ static int dm04_lme2510_tuner(struct dvb
- 			ret = st->tuner_config;
- 		break;
- 	case TUNER_RS2000:
--		ret = st->tuner_config;
-+		if (dvb_attach(ts2020_attach, adap->fe[0],
-+			       &ts2020_config, &d->i2c_adap))
-+			ret = st->tuner_config;
- 		break;
- 	default:
- 		break;
+@@ -1985,7 +1984,7 @@ static void tell_cpu_to_push(struct rq *
+ 	 * Otherwise it is finishing up and an ipi needs to be sent.
+ 	 */
+ 	if (rq->rd->rto_cpu < 0)
+-		cpu = rto_next_cpu(rq);
++		cpu = rto_next_cpu(rq->rd);
+ 
+ 	raw_spin_unlock(&rq->rd->rto_lock);
+ 
+@@ -1998,6 +1997,8 @@ static void tell_cpu_to_push(struct rq *
+ /* Called from hardirq context */
+ void rto_push_irq_work_func(struct irq_work *work)
+ {
++	struct root_domain *rd =
++		container_of(work, struct root_domain, rto_push_work);
+ 	struct rq *rq;
+ 	int cpu;
+ 
+@@ -2013,18 +2014,18 @@ void rto_push_irq_work_func(struct irq_w
+ 		raw_spin_unlock(&rq->lock);
  	}
  
--	if (ret)
-+	if (ret) {
- 		info("TUN Found %s tuner", tun_msg[ret]);
--	else {
--		info("TUN No tuner found --- resetting device");
--		lme_coldreset(d);
-+	} else {
-+		info("TUN No tuner found");
- 		return -ENODEV;
- 	}
+-	raw_spin_lock(&rq->rd->rto_lock);
++	raw_spin_lock(&rd->rto_lock);
+ 
+ 	/* Pass the IPI to the next rt overloaded queue */
+-	cpu = rto_next_cpu(rq);
++	cpu = rto_next_cpu(rd);
+ 
+-	raw_spin_unlock(&rq->rd->rto_lock);
++	raw_spin_unlock(&rd->rto_lock);
+ 
+ 	if (cpu < 0)
+ 		return;
+ 
+ 	/* Try the next RT overloaded CPU */
+-	irq_work_queue_on(&rq->rd->rto_push_work, cpu);
++	irq_work_queue_on(&rd->rto_push_work, cpu);
+ }
+ #endif /* HAVE_RT_PUSH_IPI */
  
