@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227uEWDVdvitSOKqcFjPRvgqpnT1PU5JPTurrnkidoqXcj+PVyza49WT3Y1V1FIW14ByQ6E2
-ARC-Seal: i=1; a=rsa-sha256; t=1518708898; cv=none;
+X-Google-Smtp-Source: AH8x226uJ1AYZVutZqZhsiULgZWVbi3So0oz7ABJhYjHyTwjWDBoVnH2/4sCPfWgVvB+ojKrjiDN
+ARC-Seal: i=1; a=rsa-sha256; t=1518708895; cv=none;
         d=google.com; s=arc-20160816;
-        b=NHjeDgzUH2VCHSBWfvKgUWAOKtet65NZSF8SRDRNS71qd0RnF3rugjaUI5xFXVqS8M
-         uOyFSEKfYhEzD0E/C3YwYGKx0cG5YFZ49lhyZKB15e1WkQYNTjMw4o3nbBA76M8q9o0D
-         wo6Kun8rJgpk5yT34XJxm6+bevKOc3G33nXsFhXDcEuHENleyt7phgWWv5lVbQJ284KX
-         sW+fgGaWwDICyCA/kjcOTFlKEQTy8aRymCBQIis1vrYo1oQsOTAid6bzT4jID22Q3mTr
-         +t8x7C4p+4dtUFx0QAIpDBHeybwYxGF38gBd4QZ/9dnmj4Y7XrP9DR/DcUXXxpHBBLp1
-         9ZQw==
+        b=FbEeTUmJGcjHqveJT/LINcJ7M/nRHaUjPcQh1zimbrVUhBWR6vAeR24fshpIcZCqbl
+         mRG7CWtDKuL72nSfpw5CkOGAn66RvSkmYy522tlgz9J1XoNTxn/JEGQTHVBkHjzAQLYd
+         lwGSESa39L6pPrJ3E3GD//UZlADwaWLgLXEzjU9nJMmma8T9qyBWR780U4Imnid2eWrT
+         MCM51RQeH7brY1okhWycx/yDS7F5+yP/RsvyoyYXTGv8cm/AT5AwmqnXAm5v+YDPuvUE
+         h5yGLGSJrerGBGeeUZZWojaEqdHGuGL8HzPI3BtYv2/MydowIg3mEDX+2gPbGJs+7FB9
+         rDSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1cpgAmPsRtwEY+EPLA/qdg0wyD2Ejg4ojQ3i9a1Bn7E=;
-        b=iI+4ysWyo138TjU6mufvSMrTgJ3yfGO4fW8Pbjwk5vHoeQmb5nYJorwdDg/JDCLk8G
-         NrMVkofThHFbx/Qhfa2iwJG/z4gDH5/rFULufXC0Saq6/sVSKGmcOvhMekV4hoQKvrth
-         /taxqiYP1OWkUmpwn8dIb1PWkiIO+ItsvWJNs1PsxZ5jmsadiViR97kDmuzfWj1DehNt
-         6vahlLcggpOLxGWRDP0mpCPeoDBkVchZwE9gzPE7NwruZ8+lH4HVf1FvWNEELid4UjHY
-         BLVoiHbyK9zw6OZeVLVZEubV84ik5PtQ5f7YAjXPxUpJpfA/At2+G4Dx7xb3vMQSsl2N
-         gN9g==
+        bh=Vc3wngX793LyYsc4XIubSnBeaPdra2sc9FL/k/bIkHo=;
+        b=mhFOfJGgFbYyupmphv0nDACvqa992epAYo6Yr884wXZvaOxKAcAdUMvcMKfDCs5sv6
+         jmXkjhi2rQrMHJCt705+OcZDrRpn9MX2/MaVX0vWiVWljq/1FAutRvhOI/iCQsHJFXdD
+         uLcPBCYx1eR8OG689qqc2ssZnOCnQ/c/WtHABa7ikLoQtwLuze5dcKKzHQBD+xUasYjs
+         Omt9PbPkbD/G580vqUAs94ly3Jsn5jYcdS6rmLwXzB3CvsdXibBG3oE6uY8JwV5EnN4q
+         rNgtZuphbOtB0LjpvcU6lc1lelhkd5tZvvfPP6kqSjD8XCSq96Dcm6pBmcj83U1VMk64
+         lkxQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot <syzkaller@googlegroups.com>,
 	Eric Biggers <ebiggers@google.com>,
 	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 119/195] crypto: hash - prevent using keyed hashes without setting key
-Date: Thu, 15 Feb 2018 16:16:50 +0100
-Message-Id: <20180215151711.627221132@linuxfoundation.org>
+Subject: [PATCH 4.14 118/195] crypto: hash - annotate algorithms taking optional key
+Date: Thu, 15 Feb 2018 16:16:49 +0100
+Message-Id: <20180215151711.584673444@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481701440421215?=
-X-GMAIL-MSGID: =?utf-8?q?1592481701440421215?=
+X-GMAIL-THRID: =?utf-8?q?1592481698724229299?=
+X-GMAIL-MSGID: =?utf-8?q?1592481698724229299?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,364 +50,254 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Eric Biggers <ebiggers@google.com>
 
-commit 9fa68f620041be04720d0cbfb1bd3ddfc6310b24 upstream.
+commit a208fa8f33031b9e0aba44c7d1b7e68eb0cbd29e upstream.
 
-Currently, almost none of the keyed hash algorithms check whether a key
-has been set before proceeding.  Some algorithms are okay with this and
-will effectively just use a key of all 0's or some other bogus default.
-However, others will severely break, as demonstrated using
-"hmac(sha3-512-generic)", the unkeyed use of which causes a kernel crash
-via a (potentially exploitable) stack buffer overflow.
+We need to consistently enforce that keyed hashes cannot be used without
+setting the key.  To do this we need a reliable way to determine whether
+a given hash algorithm is keyed or not.  AF_ALG currently does this by
+checking for the presence of a ->setkey() method.  However, this is
+actually slightly broken because the CRC-32 algorithms implement
+->setkey() but can also be used without a key.  (The CRC-32 "key" is not
+actually a cryptographic key but rather represents the initial state.
+If not overridden, then a default initial state is used.)
 
-A while ago, this problem was solved for AF_ALG by pairing each hash
-transform with a 'has_key' bool.  However, there are still other places
-in the kernel where userspace can specify an arbitrary hash algorithm by
-name, and the kernel uses it as unkeyed hash without checking whether it
-is really unkeyed.  Examples of this include:
+Prepare to fix this by introducing a flag CRYPTO_ALG_OPTIONAL_KEY which
+indicates that the algorithm has a ->setkey() method, but it is not
+required to be called.  Then set it on all the CRC-32 algorithms.
 
-    - KEYCTL_DH_COMPUTE, via the KDF extension
-    - dm-verity
-    - dm-crypt, via the ESSIV support
-    - dm-integrity, via the "internal hash" mode with no key given
-    - drbd (Distributed Replicated Block Device)
+The same also applies to the Adler-32 implementation in Lustre.
 
-This bug is especially bad for KEYCTL_DH_COMPUTE as that requires no
-privileges to call.
+Also, the cryptd and mcryptd templates have to pass through the flag
+from their underlying algorithm.
 
-Fix the bug for all users by adding a flag CRYPTO_TFM_NEED_KEY to the
-->crt_flags of each hash transform that indicates whether the transform
-still needs to be keyed or not.  Then, make the hash init, import, and
-digest functions return -ENOKEY if the key is still needed.
-
-The new flag also replaces the 'has_key' bool which algif_hash was
-previously using, thereby simplifying the algif_hash implementation.
-
-Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/ahash.c         |   22 ++++++++++++++++----
- crypto/algif_hash.c    |   52 ++++++++++---------------------------------------
- crypto/shash.c         |   25 +++++++++++++++++++----
- include/crypto/hash.h  |   34 ++++++++++++++++++++++----------
- include/linux/crypto.h |    2 +
- 5 files changed, 75 insertions(+), 60 deletions(-)
+ arch/arm/crypto/crc32-ce-glue.c                               |    2 ++
+ arch/arm64/crypto/crc32-ce-glue.c                             |    2 ++
+ arch/powerpc/crypto/crc32c-vpmsum_glue.c                      |    1 +
+ arch/s390/crypto/crc32-vx.c                                   |    3 +++
+ arch/sparc/crypto/crc32c_glue.c                               |    1 +
+ arch/x86/crypto/crc32-pclmul_glue.c                           |    1 +
+ arch/x86/crypto/crc32c-intel_glue.c                           |    1 +
+ crypto/crc32_generic.c                                        |    1 +
+ crypto/crc32c_generic.c                                       |    1 +
+ crypto/cryptd.c                                               |    7 +++----
+ crypto/mcryptd.c                                              |    7 +++----
+ drivers/crypto/bfin_crc.c                                     |    3 ++-
+ drivers/crypto/stm32/stm32_crc32.c                            |    2 ++
+ drivers/staging/lustre/lnet/libcfs/linux/linux-crypto-adler.c |    1 +
+ include/linux/crypto.h                                        |    6 ++++++
+ 15 files changed, 30 insertions(+), 9 deletions(-)
 
---- a/crypto/ahash.c
-+++ b/crypto/ahash.c
-@@ -193,11 +193,18 @@ int crypto_ahash_setkey(struct crypto_ah
- 			unsigned int keylen)
- {
- 	unsigned long alignmask = crypto_ahash_alignmask(tfm);
-+	int err;
+--- a/arch/arm/crypto/crc32-ce-glue.c
++++ b/arch/arm/crypto/crc32-ce-glue.c
+@@ -188,6 +188,7 @@ static struct shash_alg crc32_pmull_algs
+ 	.base.cra_name		= "crc32",
+ 	.base.cra_driver_name	= "crc32-arm-ce",
+ 	.base.cra_priority	= 200,
++	.base.cra_flags		= CRYPTO_ALG_OPTIONAL_KEY,
+ 	.base.cra_blocksize	= 1,
+ 	.base.cra_module	= THIS_MODULE,
+ }, {
+@@ -203,6 +204,7 @@ static struct shash_alg crc32_pmull_algs
+ 	.base.cra_name		= "crc32c",
+ 	.base.cra_driver_name	= "crc32c-arm-ce",
+ 	.base.cra_priority	= 200,
++	.base.cra_flags		= CRYPTO_ALG_OPTIONAL_KEY,
+ 	.base.cra_blocksize	= 1,
+ 	.base.cra_module	= THIS_MODULE,
+ } };
+--- a/arch/arm64/crypto/crc32-ce-glue.c
++++ b/arch/arm64/crypto/crc32-ce-glue.c
+@@ -185,6 +185,7 @@ static struct shash_alg crc32_pmull_algs
+ 	.base.cra_name		= "crc32",
+ 	.base.cra_driver_name	= "crc32-arm64-ce",
+ 	.base.cra_priority	= 200,
++	.base.cra_flags		= CRYPTO_ALG_OPTIONAL_KEY,
+ 	.base.cra_blocksize	= 1,
+ 	.base.cra_module	= THIS_MODULE,
+ }, {
+@@ -200,6 +201,7 @@ static struct shash_alg crc32_pmull_algs
+ 	.base.cra_name		= "crc32c",
+ 	.base.cra_driver_name	= "crc32c-arm64-ce",
+ 	.base.cra_priority	= 200,
++	.base.cra_flags		= CRYPTO_ALG_OPTIONAL_KEY,
+ 	.base.cra_blocksize	= 1,
+ 	.base.cra_module	= THIS_MODULE,
+ } };
+--- a/arch/powerpc/crypto/crc32c-vpmsum_glue.c
++++ b/arch/powerpc/crypto/crc32c-vpmsum_glue.c
+@@ -141,6 +141,7 @@ static struct shash_alg alg = {
+ 		.cra_name		= "crc32c",
+ 		.cra_driver_name	= "crc32c-vpmsum",
+ 		.cra_priority		= 200,
++		.cra_flags		= CRYPTO_ALG_OPTIONAL_KEY,
+ 		.cra_blocksize		= CHKSUM_BLOCK_SIZE,
+ 		.cra_ctxsize		= sizeof(u32),
+ 		.cra_module		= THIS_MODULE,
+--- a/arch/s390/crypto/crc32-vx.c
++++ b/arch/s390/crypto/crc32-vx.c
+@@ -238,6 +238,7 @@ static struct shash_alg crc32_vx_algs[]
+ 			.cra_name	 = "crc32",
+ 			.cra_driver_name = "crc32-vx",
+ 			.cra_priority	 = 200,
++			.cra_flags	 = CRYPTO_ALG_OPTIONAL_KEY,
+ 			.cra_blocksize	 = CRC32_BLOCK_SIZE,
+ 			.cra_ctxsize	 = sizeof(struct crc_ctx),
+ 			.cra_module	 = THIS_MODULE,
+@@ -258,6 +259,7 @@ static struct shash_alg crc32_vx_algs[]
+ 			.cra_name	 = "crc32be",
+ 			.cra_driver_name = "crc32be-vx",
+ 			.cra_priority	 = 200,
++			.cra_flags	 = CRYPTO_ALG_OPTIONAL_KEY,
+ 			.cra_blocksize	 = CRC32_BLOCK_SIZE,
+ 			.cra_ctxsize	 = sizeof(struct crc_ctx),
+ 			.cra_module	 = THIS_MODULE,
+@@ -278,6 +280,7 @@ static struct shash_alg crc32_vx_algs[]
+ 			.cra_name	 = "crc32c",
+ 			.cra_driver_name = "crc32c-vx",
+ 			.cra_priority	 = 200,
++			.cra_flags	 = CRYPTO_ALG_OPTIONAL_KEY,
+ 			.cra_blocksize	 = CRC32_BLOCK_SIZE,
+ 			.cra_ctxsize	 = sizeof(struct crc_ctx),
+ 			.cra_module	 = THIS_MODULE,
+--- a/arch/sparc/crypto/crc32c_glue.c
++++ b/arch/sparc/crypto/crc32c_glue.c
+@@ -133,6 +133,7 @@ static struct shash_alg alg = {
+ 		.cra_name		=	"crc32c",
+ 		.cra_driver_name	=	"crc32c-sparc64",
+ 		.cra_priority		=	SPARC_CR_OPCODE_PRIORITY,
++		.cra_flags		=	CRYPTO_ALG_OPTIONAL_KEY,
+ 		.cra_blocksize		=	CHKSUM_BLOCK_SIZE,
+ 		.cra_ctxsize		=	sizeof(u32),
+ 		.cra_alignmask		=	7,
+--- a/arch/x86/crypto/crc32-pclmul_glue.c
++++ b/arch/x86/crypto/crc32-pclmul_glue.c
+@@ -162,6 +162,7 @@ static struct shash_alg alg = {
+ 			.cra_name		= "crc32",
+ 			.cra_driver_name	= "crc32-pclmul",
+ 			.cra_priority		= 200,
++			.cra_flags		= CRYPTO_ALG_OPTIONAL_KEY,
+ 			.cra_blocksize		= CHKSUM_BLOCK_SIZE,
+ 			.cra_ctxsize		= sizeof(u32),
+ 			.cra_module		= THIS_MODULE,
+--- a/arch/x86/crypto/crc32c-intel_glue.c
++++ b/arch/x86/crypto/crc32c-intel_glue.c
+@@ -226,6 +226,7 @@ static struct shash_alg alg = {
+ 		.cra_name		=	"crc32c",
+ 		.cra_driver_name	=	"crc32c-intel",
+ 		.cra_priority		=	200,
++		.cra_flags		=	CRYPTO_ALG_OPTIONAL_KEY,
+ 		.cra_blocksize		=	CHKSUM_BLOCK_SIZE,
+ 		.cra_ctxsize		=	sizeof(u32),
+ 		.cra_module		=	THIS_MODULE,
+--- a/crypto/crc32_generic.c
++++ b/crypto/crc32_generic.c
+@@ -133,6 +133,7 @@ static struct shash_alg alg = {
+ 		.cra_name		= "crc32",
+ 		.cra_driver_name	= "crc32-generic",
+ 		.cra_priority		= 100,
++		.cra_flags		= CRYPTO_ALG_OPTIONAL_KEY,
+ 		.cra_blocksize		= CHKSUM_BLOCK_SIZE,
+ 		.cra_ctxsize		= sizeof(u32),
+ 		.cra_module		= THIS_MODULE,
+--- a/crypto/crc32c_generic.c
++++ b/crypto/crc32c_generic.c
+@@ -146,6 +146,7 @@ static struct shash_alg alg = {
+ 		.cra_name		=	"crc32c",
+ 		.cra_driver_name	=	"crc32c-generic",
+ 		.cra_priority		=	100,
++		.cra_flags		=	CRYPTO_ALG_OPTIONAL_KEY,
+ 		.cra_blocksize		=	CHKSUM_BLOCK_SIZE,
+ 		.cra_alignmask		=	3,
+ 		.cra_ctxsize		=	sizeof(struct chksum_ctx),
+--- a/crypto/cryptd.c
++++ b/crypto/cryptd.c
+@@ -895,10 +895,9 @@ static int cryptd_create_hash(struct cry
+ 	if (err)
+ 		goto out_free_inst;
  
- 	if ((unsigned long)key & alignmask)
--		return ahash_setkey_unaligned(tfm, key, keylen);
-+		err = ahash_setkey_unaligned(tfm, key, keylen);
-+	else
-+		err = tfm->setkey(tfm, key, keylen);
-+
-+	if (err)
-+		return err;
+-	type = CRYPTO_ALG_ASYNC;
+-	if (alg->cra_flags & CRYPTO_ALG_INTERNAL)
+-		type |= CRYPTO_ALG_INTERNAL;
+-	inst->alg.halg.base.cra_flags = type;
++	inst->alg.halg.base.cra_flags = CRYPTO_ALG_ASYNC |
++		(alg->cra_flags & (CRYPTO_ALG_INTERNAL |
++				   CRYPTO_ALG_OPTIONAL_KEY));
  
--	return tfm->setkey(tfm, key, keylen);
-+	crypto_ahash_clear_flags(tfm, CRYPTO_TFM_NEED_KEY);
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(crypto_ahash_setkey);
+ 	inst->alg.halg.digestsize = salg->digestsize;
+ 	inst->alg.halg.statesize = salg->statesize;
+--- a/crypto/mcryptd.c
++++ b/crypto/mcryptd.c
+@@ -517,10 +517,9 @@ static int mcryptd_create_hash(struct cr
+ 	if (err)
+ 		goto out_free_inst;
  
-@@ -370,7 +377,12 @@ EXPORT_SYMBOL_GPL(crypto_ahash_finup);
+-	type = CRYPTO_ALG_ASYNC;
+-	if (alg->cra_flags & CRYPTO_ALG_INTERNAL)
+-		type |= CRYPTO_ALG_INTERNAL;
+-	inst->alg.halg.base.cra_flags = type;
++	inst->alg.halg.base.cra_flags = CRYPTO_ALG_ASYNC |
++		(alg->cra_flags & (CRYPTO_ALG_INTERNAL |
++				   CRYPTO_ALG_OPTIONAL_KEY));
  
- int crypto_ahash_digest(struct ahash_request *req)
- {
--	return crypto_ahash_op(req, crypto_ahash_reqtfm(req)->digest);
-+	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-+
-+	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
-+		return -ENOKEY;
-+
-+	return crypto_ahash_op(req, tfm->digest);
- }
- EXPORT_SYMBOL_GPL(crypto_ahash_digest);
- 
-@@ -456,7 +468,6 @@ static int crypto_ahash_init_tfm(struct
- 	struct ahash_alg *alg = crypto_ahash_alg(hash);
- 
- 	hash->setkey = ahash_nosetkey;
--	hash->has_setkey = false;
- 	hash->export = ahash_no_export;
- 	hash->import = ahash_no_import;
- 
-@@ -471,7 +482,8 @@ static int crypto_ahash_init_tfm(struct
- 
- 	if (alg->setkey) {
- 		hash->setkey = alg->setkey;
--		hash->has_setkey = true;
-+		if (!(alg->halg.base.cra_flags & CRYPTO_ALG_OPTIONAL_KEY))
-+			crypto_ahash_set_flags(hash, CRYPTO_TFM_NEED_KEY);
- 	}
- 	if (alg->export)
- 		hash->export = alg->export;
---- a/crypto/algif_hash.c
-+++ b/crypto/algif_hash.c
-@@ -34,11 +34,6 @@ struct hash_ctx {
- 	struct ahash_request req;
- };
- 
--struct algif_hash_tfm {
--	struct crypto_ahash *hash;
--	bool has_key;
--};
--
- static int hash_alloc_result(struct sock *sk, struct hash_ctx *ctx)
- {
- 	unsigned ds;
-@@ -309,7 +304,7 @@ static int hash_check_key(struct socket
- 	int err = 0;
- 	struct sock *psk;
- 	struct alg_sock *pask;
--	struct algif_hash_tfm *tfm;
-+	struct crypto_ahash *tfm;
- 	struct sock *sk = sock->sk;
- 	struct alg_sock *ask = alg_sk(sk);
- 
-@@ -323,7 +318,7 @@ static int hash_check_key(struct socket
- 
- 	err = -ENOKEY;
- 	lock_sock_nested(psk, SINGLE_DEPTH_NESTING);
--	if (!tfm->has_key)
-+	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
- 		goto unlock;
- 
- 	if (!pask->refcnt++)
-@@ -414,41 +409,17 @@ static struct proto_ops algif_hash_ops_n
- 
- static void *hash_bind(const char *name, u32 type, u32 mask)
- {
--	struct algif_hash_tfm *tfm;
--	struct crypto_ahash *hash;
--
--	tfm = kzalloc(sizeof(*tfm), GFP_KERNEL);
--	if (!tfm)
--		return ERR_PTR(-ENOMEM);
--
--	hash = crypto_alloc_ahash(name, type, mask);
--	if (IS_ERR(hash)) {
--		kfree(tfm);
--		return ERR_CAST(hash);
--	}
--
--	tfm->hash = hash;
--
--	return tfm;
-+	return crypto_alloc_ahash(name, type, mask);
- }
- 
- static void hash_release(void *private)
- {
--	struct algif_hash_tfm *tfm = private;
--
--	crypto_free_ahash(tfm->hash);
--	kfree(tfm);
-+	crypto_free_ahash(private);
- }
- 
- static int hash_setkey(void *private, const u8 *key, unsigned int keylen)
- {
--	struct algif_hash_tfm *tfm = private;
--	int err;
--
--	err = crypto_ahash_setkey(tfm->hash, key, keylen);
--	tfm->has_key = !err;
--
--	return err;
-+	return crypto_ahash_setkey(private, key, keylen);
- }
- 
- static void hash_sock_destruct(struct sock *sk)
-@@ -463,11 +434,10 @@ static void hash_sock_destruct(struct so
- 
- static int hash_accept_parent_nokey(void *private, struct sock *sk)
- {
--	struct hash_ctx *ctx;
-+	struct crypto_ahash *tfm = private;
- 	struct alg_sock *ask = alg_sk(sk);
--	struct algif_hash_tfm *tfm = private;
--	struct crypto_ahash *hash = tfm->hash;
--	unsigned len = sizeof(*ctx) + crypto_ahash_reqsize(hash);
-+	struct hash_ctx *ctx;
-+	unsigned int len = sizeof(*ctx) + crypto_ahash_reqsize(tfm);
- 
- 	ctx = sock_kmalloc(sk, len, GFP_KERNEL);
- 	if (!ctx)
-@@ -480,7 +450,7 @@ static int hash_accept_parent_nokey(void
- 
- 	ask->private = ctx;
- 
--	ahash_request_set_tfm(&ctx->req, hash);
-+	ahash_request_set_tfm(&ctx->req, tfm);
- 	ahash_request_set_callback(&ctx->req, CRYPTO_TFM_REQ_MAY_BACKLOG,
- 				   af_alg_complete, &ctx->completion);
- 
-@@ -491,9 +461,9 @@ static int hash_accept_parent_nokey(void
- 
- static int hash_accept_parent(void *private, struct sock *sk)
- {
--	struct algif_hash_tfm *tfm = private;
-+	struct crypto_ahash *tfm = private;
- 
--	if (!tfm->has_key && crypto_ahash_has_setkey(tfm->hash))
-+	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
- 		return -ENOKEY;
- 
- 	return hash_accept_parent_nokey(private, sk);
---- a/crypto/shash.c
-+++ b/crypto/shash.c
-@@ -58,11 +58,18 @@ int crypto_shash_setkey(struct crypto_sh
- {
- 	struct shash_alg *shash = crypto_shash_alg(tfm);
- 	unsigned long alignmask = crypto_shash_alignmask(tfm);
-+	int err;
- 
- 	if ((unsigned long)key & alignmask)
--		return shash_setkey_unaligned(tfm, key, keylen);
-+		err = shash_setkey_unaligned(tfm, key, keylen);
-+	else
-+		err = shash->setkey(tfm, key, keylen);
-+
-+	if (err)
-+		return err;
- 
--	return shash->setkey(tfm, key, keylen);
-+	crypto_shash_clear_flags(tfm, CRYPTO_TFM_NEED_KEY);
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(crypto_shash_setkey);
- 
-@@ -181,6 +188,9 @@ int crypto_shash_digest(struct shash_des
- 	struct shash_alg *shash = crypto_shash_alg(tfm);
- 	unsigned long alignmask = crypto_shash_alignmask(tfm);
- 
-+	if (crypto_shash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
-+		return -ENOKEY;
-+
- 	if (((unsigned long)data | (unsigned long)out) & alignmask)
- 		return shash_digest_unaligned(desc, data, len, out);
- 
-@@ -360,7 +370,8 @@ int crypto_init_shash_ops_async(struct c
- 	crt->digest = shash_async_digest;
- 	crt->setkey = shash_async_setkey;
- 
--	crt->has_setkey = alg->setkey != shash_no_setkey;
-+	crypto_ahash_set_flags(crt, crypto_shash_get_flags(shash) &
-+				    CRYPTO_TFM_NEED_KEY);
- 
- 	if (alg->export)
- 		crt->export = shash_async_export;
-@@ -375,8 +386,14 @@ int crypto_init_shash_ops_async(struct c
- static int crypto_shash_init_tfm(struct crypto_tfm *tfm)
- {
- 	struct crypto_shash *hash = __crypto_shash_cast(tfm);
-+	struct shash_alg *alg = crypto_shash_alg(hash);
-+
-+	hash->descsize = alg->descsize;
-+
-+	if (crypto_shash_alg_has_setkey(alg) &&
-+	    !(alg->base.cra_flags & CRYPTO_ALG_OPTIONAL_KEY))
-+		crypto_shash_set_flags(hash, CRYPTO_TFM_NEED_KEY);
- 
--	hash->descsize = crypto_shash_alg(hash)->descsize;
- 	return 0;
- }
- 
---- a/include/crypto/hash.h
-+++ b/include/crypto/hash.h
-@@ -205,7 +205,6 @@ struct crypto_ahash {
- 		      unsigned int keylen);
- 
- 	unsigned int reqsize;
--	bool has_setkey;
- 	struct crypto_tfm base;
- };
- 
-@@ -405,11 +404,6 @@ static inline void *ahash_request_ctx(st
- int crypto_ahash_setkey(struct crypto_ahash *tfm, const u8 *key,
- 			unsigned int keylen);
- 
--static inline bool crypto_ahash_has_setkey(struct crypto_ahash *tfm)
--{
--	return tfm->has_setkey;
--}
--
- /**
-  * crypto_ahash_finup() - update and finalize message digest
-  * @req: reference to the ahash_request handle that holds all information
-@@ -481,7 +475,12 @@ static inline int crypto_ahash_export(st
-  */
- static inline int crypto_ahash_import(struct ahash_request *req, const void *in)
- {
--	return crypto_ahash_reqtfm(req)->import(req, in);
-+	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-+
-+	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
-+		return -ENOKEY;
-+
-+	return tfm->import(req, in);
- }
- 
- /**
-@@ -498,7 +497,12 @@ static inline int crypto_ahash_import(st
-  */
- static inline int crypto_ahash_init(struct ahash_request *req)
- {
--	return crypto_ahash_reqtfm(req)->init(req);
-+	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-+
-+	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
-+		return -ENOKEY;
-+
-+	return tfm->init(req);
- }
- 
- /**
-@@ -851,7 +855,12 @@ static inline int crypto_shash_export(st
-  */
- static inline int crypto_shash_import(struct shash_desc *desc, const void *in)
- {
--	return crypto_shash_alg(desc->tfm)->import(desc, in);
-+	struct crypto_shash *tfm = desc->tfm;
-+
-+	if (crypto_shash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
-+		return -ENOKEY;
-+
-+	return crypto_shash_alg(tfm)->import(desc, in);
- }
- 
- /**
-@@ -867,7 +876,12 @@ static inline int crypto_shash_import(st
-  */
- static inline int crypto_shash_init(struct shash_desc *desc)
- {
--	return crypto_shash_alg(desc->tfm)->init(desc);
-+	struct crypto_shash *tfm = desc->tfm;
-+
-+	if (crypto_shash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
-+		return -ENOKEY;
-+
-+	return crypto_shash_alg(tfm)->init(desc);
- }
- 
- /**
+ 	inst->alg.halg.digestsize = halg->digestsize;
+ 	inst->alg.halg.statesize = halg->statesize;
+--- a/drivers/crypto/bfin_crc.c
++++ b/drivers/crypto/bfin_crc.c
+@@ -494,7 +494,8 @@ static struct ahash_alg algs = {
+ 		.cra_driver_name	= DRIVER_NAME,
+ 		.cra_priority		= 100,
+ 		.cra_flags		= CRYPTO_ALG_TYPE_AHASH |
+-						CRYPTO_ALG_ASYNC,
++						CRYPTO_ALG_ASYNC |
++						CRYPTO_ALG_OPTIONAL_KEY,
+ 		.cra_blocksize		= CHKSUM_BLOCK_SIZE,
+ 		.cra_ctxsize		= sizeof(struct bfin_crypto_crc_ctx),
+ 		.cra_alignmask		= 3,
+--- a/drivers/crypto/stm32/stm32_crc32.c
++++ b/drivers/crypto/stm32/stm32_crc32.c
+@@ -208,6 +208,7 @@ static struct shash_alg algs[] = {
+ 			.cra_name               = "crc32",
+ 			.cra_driver_name        = DRIVER_NAME,
+ 			.cra_priority           = 200,
++			.cra_flags		= CRYPTO_ALG_OPTIONAL_KEY,
+ 			.cra_blocksize          = CHKSUM_BLOCK_SIZE,
+ 			.cra_alignmask          = 3,
+ 			.cra_ctxsize            = sizeof(struct stm32_crc_ctx),
+@@ -229,6 +230,7 @@ static struct shash_alg algs[] = {
+ 			.cra_name               = "crc32c",
+ 			.cra_driver_name        = DRIVER_NAME,
+ 			.cra_priority           = 200,
++			.cra_flags		= CRYPTO_ALG_OPTIONAL_KEY,
+ 			.cra_blocksize          = CHKSUM_BLOCK_SIZE,
+ 			.cra_alignmask          = 3,
+ 			.cra_ctxsize            = sizeof(struct stm32_crc_ctx),
+--- a/drivers/staging/lustre/lnet/libcfs/linux/linux-crypto-adler.c
++++ b/drivers/staging/lustre/lnet/libcfs/linux/linux-crypto-adler.c
+@@ -119,6 +119,7 @@ static struct shash_alg alg = {
+ 		.cra_name		= "adler32",
+ 		.cra_driver_name	= "adler32-zlib",
+ 		.cra_priority		= 100,
++		.cra_flags		= CRYPTO_ALG_OPTIONAL_KEY,
+ 		.cra_blocksize		= CHKSUM_BLOCK_SIZE,
+ 		.cra_ctxsize		= sizeof(u32),
+ 		.cra_module		= THIS_MODULE,
 --- a/include/linux/crypto.h
 +++ b/include/linux/crypto.h
-@@ -114,6 +114,8 @@
+@@ -106,6 +106,12 @@
+ #define CRYPTO_ALG_INTERNAL		0x00002000
+ 
  /*
++ * Set if the algorithm has a ->setkey() method but can be used without
++ * calling it first, i.e. there is a default key.
++ */
++#define CRYPTO_ALG_OPTIONAL_KEY		0x00004000
++
++/*
   * Transform masks and values (for crt_flags).
   */
-+#define CRYPTO_TFM_NEED_KEY		0x00000001
-+
  #define CRYPTO_TFM_REQ_MASK		0x000fff00
- #define CRYPTO_TFM_RES_MASK		0xfff00000
- 
