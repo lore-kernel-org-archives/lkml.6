@@ -1,42 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164771AbeBOPdE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 10:33:04 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56086 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164702AbeBOPdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 10:33:00 -0500
-Date: Thu, 15 Feb 2018 15:33:07 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: arm64/v4.16-rc1: KASAN: use-after-free Read in finish_task_switch
-Message-ID: <20180215153307.GA11712@arm.com>
-References: <20180214120254.qq4w4s42ecxio7lu@lakrids.cambridge.arm.com>
- <20180214150739.GH2992@arm.com>
- <20180214165131.o25r3hhrtrjk3ejq@lakrids.cambridge.arm.com>
- <254787533.21950.1518634424009.JavaMail.zimbra@efficios.com>
- <20180215142239.GF16623@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180215142239.GF16623@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1427391AbeBORfX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 12:35:23 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:43118 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1422826AbeBORfU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 12:35:20 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 485736043F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From: Lina Iyer <ilina@codeaurora.org>
+To: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH v2 00/10] drivers/qcom: add RPMH communication support
+Date: Thu, 15 Feb 2018 10:34:57 -0700
+Message-Id: <20180215173507.10989-1-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 02:22:39PM +0000, Will Deacon wrote:
-> Assuming others agree with this diagnosis, I'm not sure how to fix it.
-> It's basically not safe to set current->mm = NULL with preemption enabled.
+Changes in v2:
+- Added sleep/wake, async and batch requests support
+- Addressed Bjorn's comments
+- Private FTRACE for drivers/soc/qcom as suggested by Steven
+- Sparse checked on these patches
+- Use SPDX license commenting sytle
 
-One thing we could try would be to leave current->mm alone and just do the
-mmdrop in finish_task_switch at the point where we put the task_struct for
-DEAD tasks. mm_update_next_owner might need updating so that it doesn't
-re-assign current as the owner and run into a BUG_ON.
+This set of patches add the ability for platform drivers to make use of shared
+resources in newer Qualcomm SoCs like SDM845. Resources that are shared between
+multiple processors in a SoC are generally controlled by a dedicated remote
+processor. The remote processor (Resource Power Manager or RPM in previous QCOM
+SoCs) receives requests for resource state from other processors using the
+shared resource, aggregates the request and applies the result on the shared
+resource. SDM845 advances this concept and uses h/w (hardened I/P) blocks for
+aggregating requests and applying the result on the resource. The resources
+could be clocks, regulators or bandwidth requests for buses. This new
+architecture is called RPM-hardened or RPMH in short.
+
+Since this communication mechanism is completely hardware driven without a
+processor intervention on the remote end, existing mechanisms like RPM-SMD are
+no longer useful. Also, there is no serialization of data or is data is written
+to a shared memory in this new format. The data used is different, unsigned 32
+bits are used for representing an address, data and header. Each resource's
+property is a unique u32 address and have pre-defined set of property specific
+valid values. A request that comprises of <header, addr, data> is sent by
+writing to a set of registers from Linux and transmitted to the remote slave
+through an internal bus. The remote end aggregates this request along with
+requests from other processors for the <addr> and applies the result.
+
+The hardware block that houses this functionality is called Resource State
+Coordinator or RSC. Inside the RSC are set of slots for sending RPMH requests
+called Trigger Commands Sets (TCS). The set of patches are for writing the
+requests into these TCSes and sending them to hardened IP blocks.
+
+The driver design is split into two components. The RSC driver housed in
+rpmh-rsc.c and the set of library functions in rpmh.c that frame the request and
+transmit it using the controller. This first set of patches allow a simple
+synchronous request to be made by the platform drivers. Future patches will add
+more functionality that cater to complex drivers and use cases.
+
+Please consider reviewing this patchset.
+
+v1: https://www.spinics.net/lists/devicetree/msg210980.html
 
 
-Will
+Lina Iyer (10):
+  drivers: qcom: rpmh-rsc: add RPMH controller for QCOM SoCs
+  dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
+  drivers: qcom: rpmh-rsc: log RPMH requests in FTRACE
+  drivers: qcom: rpmh: add RPMH helper functions
+  drivers: qcom: rpmh-rsc: write sleep/wake requests to TCS
+  drivers: qcom: rpmh-rsc: allow invalidation of sleep/wake TCS
+  drivers: qcom: rpmh: cache sleep/wake state requests
+  drivers: qcom: rpmh: allow requests to be sent asynchronously
+  drivers: qcom: rpmh: add support for batch RPMH request
+  drivers: qcom: rpmh-rsc: allow active requests from wake TCS
+
+ .../devicetree/bindings/arm/msm/rpmh-rsc.txt       | 146 ++++
+ drivers/soc/qcom/Kconfig                           |  10 +
+ drivers/soc/qcom/Makefile                          |   4 +
+ drivers/soc/qcom/rpmh-internal.h                   |  96 +++
+ drivers/soc/qcom/rpmh-rsc.c                        | 794 +++++++++++++++++++++
+ drivers/soc/qcom/rpmh.c                            | 670 +++++++++++++++++
+ drivers/soc/qcom/trace-rpmh.h                      |  89 +++
+ include/dt-bindings/soc/qcom,rpmh-rsc.h            |  14 +
+ include/soc/qcom/rpmh.h                            |  60 ++
+ include/soc/qcom/tcs.h                             |  56 ++
+ 10 files changed, 1939 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/msm/rpmh-rsc.txt
+ create mode 100644 drivers/soc/qcom/rpmh-internal.h
+ create mode 100644 drivers/soc/qcom/rpmh-rsc.c
+ create mode 100644 drivers/soc/qcom/rpmh.c
+ create mode 100644 drivers/soc/qcom/trace-rpmh.h
+ create mode 100644 include/dt-bindings/soc/qcom,rpmh-rsc.h
+ create mode 100644 include/soc/qcom/rpmh.h
+ create mode 100644 include/soc/qcom/tcs.h
+
+--
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
