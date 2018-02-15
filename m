@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1841884-1518709686-2-5386180227891748845
+X-Cyrus-Session-Id: sloti22d1t05-1841884-1518709672-2-16606540083984878
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518709685; b=VYDc6EfS9dZ0PfSkvvO6ikeWH7GlWDSDL2KqxzSqgOdPZN9
-    w+DaMBtmcRxQ4mpgquRZdzSVzW9dEm9WEWkDplcrtXhOiZLvjsAlZLF11lUqKnNq
-    Ae2qF15BqTyAF21Hg7FYQTRJEQPIhY3duh6y+ba7Z5K8Ey9bCp5NbVfwMSY2URlx
-    41H6t5urN8wNXpvq4Xqfdvo76/81rm1BY7B1JQckr8VCFYwWPLsYN0I5qPajd3iG
-    BTNzJ1WfQ2N6eE8EF+vTTUyGtxl1BQpz30ky1YUUwvitNpJTjtA4OGIDyfnJ18OS
-    G6VvGrN7g02e0TE4Y9HW0IrESPXdbKYuEZPDbLA==
+    t=1518709671; b=r+kVjoBjuPXIuMmoOMm3yQinGA9C5iaH3vk/um/XUsDFs6E
+    zP9IuMhy9SxWCYR4zQLlzSpPq1Q868M4Xh6J2qU3Xv8ocjIQQfVKXlUVGDt0b57Y
+    bGbFy3vUa7JKPuENZ5az/GjTDy8fmPrMPCAkN3VnEJVAj5OyVmsKZN/XRc5/QWMo
+    vm8l4YJOdd14y8uHINkjgYW9kf1NLSbR9Ev+R7gpRmorMmqeMqoE9iWt6ZPhGOcD
+    I4Al+7eKJAPCuI0o34qG4smrWxzRWXnyhe3yxRspNk9ExsQaNRuAeKKyeHJfwxNZ
+    KKvEmgxF7DnsXUXof1gkNFoVH6wDxOM7YHkjkhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518709685; bh=7MjV7CmF9j/weCNRcn0fI4D9fB
-    fUusRbERoubk/z9ro=; b=q9JypGYdvOKXG3KrJSSwDbfZ5smx2KTxd1+xV3oree
-    qCUC7ZAv7dPhOLoLvl22vFdt4KNixlwizBE7zZtYDgrixpAUQ0oBOblVZls3Ppaw
-    emI6ENaDf8hRArfgrJTPcVUgIoXGgZOv9mY00KXrzDHJjQLfJIO3MJc7Gw+PgEY4
-    Vm+AktW/Rb13GhaabKgqc+WJrrsK370u5xUE+wpk6dNFAf+DqLIYWIgBQZL/zVBx
-    Pys8ij0vQs78CDGd+EI5+n3jGs1nraexZxI0XsZZzdw0aX3ZZJ+a716oQ9CAlvKb
-    nCgJDtkwdsBMP3fIaV6wpRlHnSiY2VY2GnfTPGzatnrQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518709671; bh=kDWu5G+9wpzI/mqTJvQgNMizqY
+    MADd/p2T3Q09RAJOY=; b=cD31dTpibmDlqVDqB0kBgaXCLymqHQnO1BmR3u8dDO
+    vlqb3M4HENeo2IpRN84jv7VkdnqrgljJT68arjjfJEHZ0Q/JbKUl/4WAsxYfWUJP
+    TWQqSzOK2RImXsWaZ1COpwkKMUoizgGL5OZDcxAcxRsd4RluEwFDHnSgvkEpHN+C
+    qK87mkd84ACmxEXd8gPNiYkTFSNeMk3y0OsQucMp6voNnD+kn8hrIPLfeUbXbffj
+    SCDkQ5y+5eRluG9yPXHpHMHVuT4rxxN/IIH49L/blNJlkLjSzpX5hdyDSW+u0uvE
+    o6Iog+d2bG3Ac/+HjLBSYhsHcisX77qmTybIBn43E/EA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,22 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424974AbeBOPsA (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:48:00 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36398 "EHLO
+        id S1424487AbeBOPrt (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:47:49 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36340 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424419AbeBOPr7 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:47:59 -0500
+        with ESMTP id S1424947AbeBOPrr (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:47:47 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Matt Turner <mattst88@gmail.com>
-Subject: [PATCH 4.15 168/202] alpha: fix crash if pthread_create races with signal delivery
-Date: Thu, 15 Feb 2018 16:17:48 +0100
-Message-Id: <20180215151721.658590860@linuxfoundation.org>
+        stable@vger.kernel.org, Dmitry Safonov <0x7f454c46@gmail.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.15 199/202] ftrace: Remove incorrect setting of glob search field
+Date: Thu, 15 Feb 2018 16:18:19 +0100
+Message-Id: <20180215151723.055165995@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -77,54 +79,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 21ffceda1c8b3807615c40d440d7815e0c85d366 upstream.
+commit 7b6586562708d2b3a04fe49f217ddbadbbbb0546 upstream.
 
-On alpha, a process will crash if it attempts to start a thread and a
-signal is delivered at the same time. The crash can be reproduced with
-this program: https://cygwin.com/ml/cygwin/2014-11/msg00473.html
+__unregister_ftrace_function_probe() will incorrectly parse the glob filter
+because it resets the search variable that was setup by filter_parse_regex().
 
-The reason for the crash is this:
-* we call the clone syscall
-* we go to the function copy_process
-* copy process calls copy_thread_tls, it is a wrapper around copy_thread
-* copy_thread sets the tls pointer: childti->pcb.unique = regs->r20
-* copy_thread sets regs->r20 to zero
-* we go back to copy_process
-* copy process checks "if (signal_pending(current))" and returns
-  -ERESTARTNOINTR
-* the clone syscall is restarted, but this time, regs->r20 is zero, so
-  the new thread is created with zero tls pointer
-* the new thread crashes in start_thread when attempting to access tls
+Al Viro reported this:
 
-The comment in the code says that setting the register r20 is some
-compatibility with OSF/1. But OSF/1 doesn't use the CLONE_SETTLS flag, so
-we don't have to zero r20 if CLONE_SETTLS is set. This patch fixes the bug
-by zeroing regs->r20 only if CLONE_SETTLS is not set.
+    After that call of filter_parse_regex() we could have func_g.search not
+    equal to glob only if glob started with '!' or '*'.  In the former case
+    we would've buggered off with -EINVAL (not = 1).  In the latter we
+    would've set func_g.search equal to glob + 1, calculated the length of
+    that thing in func_g.len and proceeded to reset func_g.search back to
+    glob.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Matt Turner <mattst88@gmail.com>
+    Suppose the glob is e.g. *foo*.  We end up with
+	    func_g.type = MATCH_MIDDLE_ONLY;
+	    func_g.len = 3;
+	    func_g.search = "*foo";
+    Feeding that to ftrace_match_record() will not do anything sane - we
+    will be looking for names containing "*foo" (->len is ignored for that
+    one).
+
+Link: http://lkml.kernel.org/r/20180127031706.GE13338@ZenIV.linux.org.uk
+
+Fixes: 3ba009297149f ("ftrace: Introduce ftrace_glob structure")
+Reviewed-by: Dmitry Safonov <0x7f454c46@gmail.com>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/alpha/kernel/process.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/trace/ftrace.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/arch/alpha/kernel/process.c
-+++ b/arch/alpha/kernel/process.c
-@@ -269,12 +269,13 @@ copy_thread(unsigned long clone_flags, u
- 	   application calling fork.  */
- 	if (clone_flags & CLONE_SETTLS)
- 		childti->pcb.unique = regs->r20;
-+	else
-+		regs->r20 = 0;	/* OSF/1 has some strange fork() semantics.  */
- 	childti->pcb.usp = usp ?: rdusp();
- 	*childregs = *regs;
- 	childregs->r0 = 0;
- 	childregs->r19 = 0;
- 	childregs->r20 = 1;	/* OSF/1 has some strange fork() semantics.  */
--	regs->r20 = 0;
- 	stack = ((struct switch_stack *) regs) - 1;
- 	*childstack = *stack;
- 	childstack->r26 = (unsigned long) ret_from_fork;
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -4456,7 +4456,6 @@ unregister_ftrace_function_probe_func(ch
+ 		func_g.type = filter_parse_regex(glob, strlen(glob),
+ 						 &func_g.search, &not);
+ 		func_g.len = strlen(func_g.search);
+-		func_g.search = glob;
+ 
+ 		/* we do not support '!' for function probes */
+ 		if (WARN_ON(not))
