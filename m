@@ -1,45 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426564AbeBOQv2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 11:51:28 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:51696 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423796AbeBOQv0 (ORCPT
+        id S1426593AbeBOQwV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 11:52:21 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:49778 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423757AbeBOQwR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:51:26 -0500
-Date: Thu, 15 Feb 2018 17:51:22 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Kieran Bingham <kbingham@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>, geert@glider.be,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/8] arm64: dts: renesas: r8a77995: Add LVDS support
-Message-ID: <20180215165122.jhcmfkxc2u33b4i2@verge.net.au>
-References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
- <1518683903-10681-6-git-send-email-kbingham@kernel.org>
+        Thu, 15 Feb 2018 11:52:17 -0500
+Date: Thu, 15 Feb 2018 17:52:12 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Christopher Diaz Riveros <chrisadr@gentoo.org>
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH-next] sched/headers: Clean up <linux/sched.h>
+Message-ID: <20180215165212.GB25181@hirez.programming.kicks-ass.net>
+References: <20180215154318.15894-1-chrisadr@gentoo.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1518683903-10681-6-git-send-email-kbingham@kernel.org>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180215154318.15894-1-chrisadr@gentoo.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 08:38:20AM +0000, Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> The r8a77995 D3 platform has 2 LVDS channels connected to the DU.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Thu, Feb 15, 2018 at 10:43:18AM -0500, Christopher Diaz Riveros wrote:
+> @@ -183,7 +183,7 @@ extern void io_schedule_finish(int token);
+>  extern long io_schedule_timeout(long timeout);
+>  extern void io_schedule(void);
+>  
+> -/**
+> +/*
+>   * struct prev_cputime - snapshot of system and user cputime
+>   * @utime: time spent in user mode
+>   * @stime: time spent in system mode
+> @@ -200,7 +200,7 @@ struct prev_cputime {
+>  #endif
+>  };
+>  
+> -/**
+> +/*
+>   * struct task_cputime - collected CPU time counts
+>   * @utime:		time spent in user mode, in nanoseconds
+>   * @stime:		time spent in kernel mode, in nanoseconds
 
-It looks like there has been some review of this patch that needs
-addressing, I've marked it as "Changes Requested".
+Why, are those not valid kerneldoc comments?
+
+> @@ -437,20 +437,28 @@ struct sched_dl_entity {
+>  	 * during sched_setattr(), they will remain the same until
+>  	 * the next sched_setattr().
+>  	 */
+> -	u64				dl_runtime;	/* Maximum runtime for each instance	*/
+> -	u64				dl_deadline;	/* Relative deadline of each instance	*/
+> -	u64				dl_period;	/* Separation of two instances (period) */
+> -	u64				dl_bw;		/* dl_runtime / dl_period		*/
+> -	u64				dl_density;	/* dl_runtime / dl_deadline		*/
+> +	/* Maximum runtime for each instance	*/
+> +	u64				dl_runtime;
+> +	/* Relative deadline of each instance	*/
+> +	u64				dl_deadline;
+> +	/* Separation of two instances (period) */
+> +	u64				dl_period;
+> +	/* dl_runtime / dl_period		*/
+> +	u64				dl_bw;
+> +	/* dl_runtime / dl_deadline		*/
+> +	u64				dl_density;
+
+That's a whole lot less readable :/
