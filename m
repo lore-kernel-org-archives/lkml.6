@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427430AbeBORfb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 12:35:31 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:43404 "EHLO
+        id S1427459AbeBORgB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 12:36:01 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:43574 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1427393AbeBORfZ (ORCPT
+        with ESMTP id S1427416AbeBORf3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 12:35:25 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E1E19608BF
+        Thu, 15 Feb 2018 12:35:29 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FB1D6079C
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
 From: Lina Iyer <ilina@codeaurora.org>
@@ -15,9 +15,9 @@ To: andy.gross@linaro.org, david.brown@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
         linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH v2 06/10] drivers: qcom: rpmh-rsc: allow invalidation of sleep/wake TCS
-Date: Thu, 15 Feb 2018 10:35:03 -0700
-Message-Id: <20180215173507.10989-7-ilina@codeaurora.org>
+Subject: [PATCH v2 10/10] drivers: qcom: rpmh-rsc: allow active requests from wake TCS
+Date: Thu, 15 Feb 2018 10:35:07 -0700
+Message-Id: <20180215173507.10989-11-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215173507.10989-1-ilina@codeaurora.org>
 References: <20180215173507.10989-1-ilina@codeaurora.org>
@@ -25,84 +25,56 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow sleep and wake commands to be cleared from the respective TCSes,
-so that they can be re-populated.
+Some RSCs may only have sleep and wake TCS, i.e, there is no dedicated
+TCS for active mode request, but drivers may still want to make active
+requests from these RSCs. In such cases re-purpose the wake TCS to send
+active state requests.
+
+The requirement for this is that the driver is aware that the wake TCS
+is being repurposed to send active request, hence the sleep and wake
+TCSes be invalidated before the active request is sent.
 
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 ---
- drivers/soc/qcom/rpmh-internal.h |  1 +
- drivers/soc/qcom/rpmh-rsc.c      | 46 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 47 insertions(+)
+ drivers/soc/qcom/rpmh-rsc.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
-index 957b1a79c4c8..fa1d36f796b0 100644
---- a/drivers/soc/qcom/rpmh-internal.h
-+++ b/drivers/soc/qcom/rpmh-internal.h
-@@ -89,6 +89,7 @@ struct rsc_drv {
- 
- int rpmh_rsc_send_data(struct rsc_drv *drv, struct tcs_request *msg);
- int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv, struct tcs_request *msg);
-+int rpmh_rsc_invalidate(struct rsc_drv *drv);
- 
- void rpmh_tx_done(struct tcs_request *msg, int r);
- 
 diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index ae555fdc3ab7..951b797a8cc7 100644
+index 951b797a8cc7..e13abf9ad8fd 100644
 --- a/drivers/soc/qcom/rpmh-rsc.c
 +++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -170,6 +170,52 @@ static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
- 	return tcs;
- }
- 
-+/**
-+ * rpmh_rsc_invalidate - Invalidate sleep and wake TCSes
-+ *
-+ * @drv: the mailbox controller
-+ */
-+int rpmh_rsc_invalidate(struct rsc_drv *drv)
-+{
-+	struct tcs_group *tcs;
-+	int m, type, ret = 0;
-+	int inv_types[] = { WAKE_TCS, SLEEP_TCS };
-+	unsigned long drv_flags, flags;
-+
-+	/* Lock the DRV and clear sleep and wake TCSes */
-+	spin_lock_irqsave(&drv->drv_lock, drv_flags);
-+	for (type = 0; type < ARRAY_SIZE(inv_types); type++) {
-+		tcs = get_tcs_of_type(drv, inv_types[type]);
-+		if (IS_ERR(tcs))
-+			continue;
-+
-+		spin_lock_irqsave(&tcs->tcs_lock, flags);
-+		if (bitmap_empty(tcs->slots, MAX_TCS_SLOTS)) {
-+			spin_unlock_irqrestore(&tcs->tcs_lock, flags);
-+			continue;
-+		}
-+
-+		/* Clear the enable register for each TCS of the type */
-+		for (m = tcs->tcs_offset;
-+		    m < tcs->tcs_offset + tcs->num_tcs; m++) {
-+			if (!tcs_is_free(drv, m)) {
-+				spin_unlock_irqrestore(&tcs->tcs_lock, flags);
-+				ret = -EAGAIN;
-+				goto drv_unlock;
-+			}
-+			write_tcs_reg_sync(drv, RSC_DRV_CMD_ENABLE, m, 0, 0);
-+			/* Mark the TCS slots as free */
-+			bitmap_zero(tcs->slots, MAX_TCS_SLOTS);
-+		}
-+		spin_unlock_irqrestore(&tcs->tcs_lock, flags);
-+	}
-+drv_unlock:
-+	spin_unlock_irqrestore(&drv->drv_lock, drv_flags);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(rpmh_rsc_invalidate);
-+
- static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
+@@ -220,6 +220,7 @@ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
  					struct tcs_request *msg)
  {
+ 	int type;
++	struct tcs_group *tcs;
+ 
+ 	switch (msg->state) {
+ 	case RPMH_ACTIVE_ONLY_STATE:
+@@ -235,7 +236,22 @@ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	return get_tcs_of_type(drv, type);
++	/*
++	 * If we are making an active request on a RSC that does not have a
++	 * dedicated TCS for active state use, then re-purpose a wake TCS to
++	 * send active votes.
++	 * NOTE: The driver must be aware that this RSC does not have a
++	 * dedicated AMC, and therefore would invalidate the sleep and wake
++	 * TCSes before making an active state request.
++	 */
++	tcs = get_tcs_of_type(drv, type);
++	if (msg->state == RPMH_ACTIVE_ONLY_STATE && IS_ERR(tcs)) {
++		tcs = get_tcs_of_type(drv, WAKE_TCS);
++		if (!IS_ERR(tcs))
++			rpmh_rsc_invalidate(drv);
++	}
++
++	return tcs;
+ }
+ 
+ static void send_tcs_response(struct tcs_response *resp)
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
