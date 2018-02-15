@@ -1,95 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756217AbeBOWaT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 17:30:19 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:35114 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756203AbeBOWaS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 17:30:18 -0500
-X-Google-Smtp-Source: AH8x225HGN0whLbfZWtjQBDTi1VLvhGy10atHbuA3Q7GApu+FSlqSIBnJ6M7KALEPlOLzjByvpYH6g==
-Date: Thu, 15 Feb 2018 23:30:09 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org,
-        stern@rowland.harvard.edu, will.deacon@arm.com, peterz@infradead.org,
-        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com
-Subject: Re: [PATCH RFC tip/lkmm 08/10] EXP Remove understore from
- smp_mb__before_atomic() workings
-Message-ID: <20180215223009.GA5460@andrea>
-References: <20180209141832.GA17505@linux.vnet.ibm.com>
- <1518186031-17997-8-git-send-email-paulmck@linux.vnet.ibm.com>
+        id S1756233AbeBOWbZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 17:31:25 -0500
+Received: from eso.teric.us ([69.164.192.171]:60378 "EHLO eso.teric.us"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756203AbeBOWbX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 17:31:23 -0500
+Date: Thu, 15 Feb 2018 16:31:23 -0600
+From: Julia Cartwright <juliac@eso.teric.us>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH 1/2] kernel/sofirq: consolidate common code in
+ __tasklet_schedule() + _hi_
+Message-ID: <20180215223123.GB1924@kryptos.localdomain>
+References: <20180215172042.31573-1-bigeasy@linutronix.de>
+ <20180215172042.31573-2-bigeasy@linutronix.de>
+ <20180215150707.49cc2332@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1518186031-17997-8-git-send-email-paulmck@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180215150707.49cc2332@gandalf.local.home>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 09, 2018 at 06:20:29AM -0800, Paul E. McKenney wrote:
-> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-
-nit: s/understore/underscore  (a very understandable lapsus, BTW ;-)
-
-According to the cover letter, patches 8-10 of this series are intended
-to be squashed together;  it could be useful to add a description then:
-the motivation for these changes might appear "trivial" today;  months/
-years from now?  mmh, I can't put my finger on it ;-)
-
-IMO,  this descrition should also mention why this solution "is the way
-to go" (e.g., compare with the solution recently implemented by Akira).
-
-  Andrea
-
-
-> ---
->  tools/memory-model/linux-kernel.bell | 2 +-
->  tools/memory-model/linux-kernel.cat  | 2 +-
->  tools/memory-model/linux-kernel.def  | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
+On Thu, Feb 15, 2018 at 03:07:07PM -0500, Steven Rostedt wrote:
+> On Thu, 15 Feb 2018 18:20:41 +0100
+> Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
 > 
-> diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
-> index b984bbda01a5..558bbef9e08a 100644
-> --- a/tools/memory-model/linux-kernel.bell
-> +++ b/tools/memory-model/linux-kernel.bell
-> @@ -28,7 +28,7 @@ enum Barriers = 'wmb (*smp_wmb*) ||
->  		'rcu-lock (*rcu_read_lock*)  ||
->  		'rcu-unlock (*rcu_read_unlock*) ||
->  		'sync-rcu (*synchronize_rcu*) ||
-> -		'before_atomic (*smp_mb__before_atomic*) ||
-> +		'before-atomic (*smp_mb__before_atomic*) ||
->  		'after_atomic (*smp_mb__after_atomic*) ||
->  		'after_spinlock (*smp_mb__after_spinlock*)
->  instructions F[Barriers]
-> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-> index babe2b3b0bb3..31c08a44c088 100644
-> --- a/tools/memory-model/linux-kernel.cat
-> +++ b/tools/memory-model/linux-kernel.cat
-> @@ -29,7 +29,7 @@ let rb-dep = [R] ; fencerel(Rb_dep) ; [R]
->  let rmb = [R \ Noreturn] ; fencerel(Rmb) ; [R \ Noreturn]
->  let wmb = [W] ; fencerel(Wmb) ; [W]
->  let mb = ([M] ; fencerel(Mb) ; [M]) |
-> -	([M] ; fencerel(Before_atomic) ; [RMW] ; po? ; [M]) |
-> +	([M] ; fencerel(Before-atomic) ; [RMW] ; po? ; [M]) |
->  	([M] ; po? ; [RMW] ; fencerel(After_atomic) ; [M]) |
->  	([M] ; po? ; [LKW] ; fencerel(After_spinlock) ; [M])
->  let gp = po ; [Sync-rcu] ; po?
-> diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
-> index a397387f77cc..ff4b756f4a44 100644
-> --- a/tools/memory-model/linux-kernel.def
-> +++ b/tools/memory-model/linux-kernel.def
-> @@ -21,7 +21,7 @@ smp_mb() { __fence{mb} ; }
->  smp_rmb() { __fence{rmb} ; }
->  smp_wmb() { __fence{wmb} ; }
->  smp_read_barrier_depends() { __fence{rb_dep}; }
-> -smp_mb__before_atomic() { __fence{before_atomic} ; }
-> +smp_mb__before_atomic() { __fence{before-atomic} ; }
->  smp_mb__after_atomic() { __fence{after_atomic} ; }
->  smp_mb__after_spinlock() { __fence{after_spinlock} ; }
->  
-> -- 
-> 2.5.2
+> > -void __tasklet_schedule(struct tasklet_struct *t)
+> > +static void __tasklet_schedule_common(struct tasklet_struct *t,
+> > +				      struct tasklet_head *head,
+> > +				      unsigned int softirq_nr)
+> >  {
+> >  	unsigned long flags;
+> >  
+> >  	local_irq_save(flags);
 > 
+> If you look at the original patch, it did not move local_irq_save()
+> into the common function.
+> 
+> >  	t->next = NULL;
+> > -	*__this_cpu_read(tasklet_vec.tail) = t;
+> > -	__this_cpu_write(tasklet_vec.tail, &(t->next));
+> > -	raise_softirq_irqoff(TASKLET_SOFTIRQ);
+> > +	*head->tail = t;
+> > +	head->tail = &(t->next);
+> > +	raise_softirq_irqoff(softirq_nr);
+> >  	local_irq_restore(flags);
+> >  }
+> > +
+> > +void __tasklet_schedule(struct tasklet_struct *t)
+> > +{
+> > +	__tasklet_schedule_common(t, this_cpu_ptr(&tasklet_vec),
+> 
+> What can happen is, we reference (tasklet_vec) on one CPU, get
+> preempted (running in ksoftirqd), scheduled on another CPU, then when
+> inside the common code, we are executing on a different CPU than the
+> tasklet is for. The rasise_softirq() is happening on the wrong CPU.
+> 
+> The local_irq_save() can't be moved to the common function. It must be
+> done by each individual function.
+
+Well, it can be, but the percpu access needs to go with it; so an
+alternative solution would be the below.
+
+I'm also wondering whether the t->next = NULL assignment could be lifted
+out from irqs-disabled region.
+
+   Julia
+
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index fa7ed89a9fcf..177de3640c78 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -461,12 +461,14 @@ static DEFINE_PER_CPU(struct tasklet_head, tasklet_vec);
+ static DEFINE_PER_CPU(struct tasklet_head, tasklet_hi_vec);
+ 
+ static void __tasklet_schedule_common(struct tasklet_struct *t,
+-				      struct tasklet_head *head,
++				      struct tasklet_head __percpu *headp,
+ 				      unsigned int softirq_nr)
+ {
++	struct tasklet_head *head;
+ 	unsigned long flags;
+ 
+ 	local_irq_save(flags);
++	head = this_cpu_ptr(headp);
+ 	t->next = NULL;
+ 	*head->tail = t;
+ 	head->tail = &(t->next);
+@@ -476,14 +478,14 @@ static void __tasklet_schedule_common(struct tasklet_struct *t,
+ 
+ void __tasklet_schedule(struct tasklet_struct *t)
+ {
+-	__tasklet_schedule_common(t, this_cpu_ptr(&tasklet_vec),
++	__tasklet_schedule_common(t, &tasklet_vec,
+ 				  TASKLET_SOFTIRQ);
+ }
+ EXPORT_SYMBOL(__tasklet_schedule);
+ 
+ void __tasklet_hi_schedule(struct tasklet_struct *t)
+ {
+-	__tasklet_schedule_common(t, this_cpu_ptr(&tasklet_hi_vec),
++	__tasklet_schedule_common(t, &tasklet_hi_vec,
+ 				  HI_SOFTIRQ);
+ }
+ EXPORT_SYMBOL(__tasklet_hi_schedule);
