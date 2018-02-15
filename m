@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226m5BU0is2sb/5jDe7zIj9Wo5qMq0csMXd4mXOFhT/qCcdBnqWJfF4Jsn8n2mFL/7HD+K0K
-ARC-Seal: i=1; a=rsa-sha256; t=1518709026; cv=none;
+X-Google-Smtp-Source: AH8x226woX5wemGl1QJR8V0pO6BudgV8RgOgwoBASEscPghvFpNIZ0Ea4LvTg657EMri6oqh5s3/
+ARC-Seal: i=1; a=rsa-sha256; t=1518709021; cv=none;
         d=google.com; s=arc-20160816;
-        b=b1Y1FUz6/F+YacSmFKpzTj2/sKEKmBDLHSihzszJMypQ/+e8e5nlN8nsd7ptWgVBrP
-         KB1Z8AOAR4MdUr5FnG27tg0fROr6VjGEkwsFCEjsodpWK77VxM/H/ZYuPXM42KS10Qz0
-         s5Cbnizt3REBAfpQzU4fQVEhmatVLQ/DUnf1PJ+MRo3JqfyTYdl2sXtKQeGRj3xYiwl/
-         SEP+bCz+rR8D5WoO4s5dfpKGLEFRNpIkyWwqPvsXxEr0QfbNJ5CrPCI69yaVH5M+MpkZ
-         qsmtJA+ABEahniEOCb0h/NoGsHmpDRm8meEZhquxXygbd8a+DH/MWBKmk9TRMdybo96R
-         I/7A==
+        b=Y6u+786J6IdpZYvjNnrUhgC9K2Y1qG4h8EevMADXK0UCtnMn3uIxo39UsKz6XKkLqu
+         A8pS2OKUIvou4MXc88ixfu8Ws3LvFfCC11rlTVIcQ9dQ078/l/CyJmB+cOFONkPeCNUG
+         U2VyocOxtZDB4VqFAEgIx80sbmd1uZpmpnD3tId5rlP5+ekkvfD3y1I/oE23eVOb6Dwy
+         EVzvi6GEvbt0wykxqpw21bsG2t89Lra+UBosNMQaHokwbvFJOyiDCbczmNW/56lqb9Ed
+         ZkzKRy8VopVPZTOZRRho7ZKPuJm45ig2NIUt3XjFBkYr/Z4t7bH77ueZCJU4+dbG5oN1
+         mUjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6eynA7+GW07pPge6WmETiOxLqGXzmwJjMw6Ycd/naFU=;
-        b=B8oOaHUB7bPeLbWyYOEZrfu1eczWwyFujeF7k0hGzgrOyULCyWjehIh9MLd43yhomG
-         U/BUP1HUnTuRIinj6iOzYFS7Esk81/oJxPyujrjNF3R9p5qtQ5RIf9edCx0lCLOZWQhH
-         emfphMPXv1aMnY4Yl4V/nd6AblgzfikaywxCRd6TjBAANVzrEmCjv2BSvGqhVZkKlgKZ
-         jsD3genyBSVpk1lcDyjwMIBlX5TqMujnrhnPc8h85d6Ia5ianuUvC/GEvkbpfMV62Boe
-         c4dLlZqmPmZdHC7BQyuI5NxzAzpWky+7gnmD9VAoeWIC80O4dDffdg986/a0eWE9XIMg
-         pg0w==
+        bh=sJrTUn+E3IhVGnWgvIzT/tJ3HVeNCfwWn9yb2xtC4t0=;
+        b=jl8TJOie0Ghjv6qPJIvXtCEvJHu8z4UOBVQX/xcRZi5+CQWQcyeqON2UZwDR37Lmsn
+         503JK80ywLPnrbdQg9WI1MpxuyLs1VAOwGFKkoDiI1tDySceLqbANoa0JVJ5g+kV+Aoh
+         +iMgwND4oocxDAz30ofeMX5do2Y7l2dlxmhm1gZ55+Xf9HuD9YPm4bIxIuEok8aXpu1b
+         IcwoZE61mYTf4NmYFj9HO9NDtR2D5fLIlWJEtlVOX/HQWJM8K6O8BUwJeH2Ox+qfin2d
+         KXk5tpS3GQ6kbaVYLxa7HqQ1jIk4L+ad0mTeYuHZwXsat8BT8nEHE7cdx/yEhXhbQ6ZA
+         rkJA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Hans Verkuil <hans.verkuil@cisco.com>,
 	Sakari Ailus <sakari.ailus@linux.intel.com>,
 	Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.14 130/195] media: v4l2-compat-ioctl32.c: dont copy back the result for certain errors
-Date: Thu, 15 Feb 2018 16:17:01 +0100
-Message-Id: <20180215151712.249453715@linuxfoundation.org>
+Subject: [PATCH 4.14 129/195] media: v4l2-compat-ioctl32.c: drop pr_info for unknown buffer type
+Date: Thu, 15 Feb 2018 16:17:00 +0100
+Message-Id: <20180215151712.200067166@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481025461471591?=
-X-GMAIL-MSGID: =?utf-8?q?1592481835498589676?=
+X-GMAIL-THRID: =?utf-8?q?1592481022948715937?=
+X-GMAIL-MSGID: =?utf-8?q?1592481831045201119?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,29 +51,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit d83a8243aaefe62ace433e4384a4f077bed86acb upstream.
+commit 169f24ca68bf0f247d111aef07af00dd3a02ae88 upstream.
 
-Some ioctls need to copy back the result even if the ioctl returned
-an error. However, don't do this for the error code -ENOTTY.
-It makes no sense in that cases.
+There is nothing wrong with using an unknown buffer type. So
+stop spamming the kernel log whenever this happens. The kernel
+will just return -EINVAL to signal this.
 
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
 --- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
 +++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -968,6 +968,9 @@ static long do_video_ioctl(struct file *
- 		set_fs(old_fs);
+@@ -179,8 +179,6 @@ static int __get_v4l2_format32(struct v4
+ 		return copy_from_user(&kp->fmt.meta, &up->fmt.meta,
+ 				      sizeof(kp->fmt.meta)) ? -EFAULT : 0;
+ 	default:
+-		pr_info("compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
+-			kp->type);
+ 		return -EINVAL;
  	}
- 
-+	if (err == -ENOTTY)
-+		return err;
-+
- 	/* Special case: even after an error we need to put the
- 	   results back for these ioctls since the error_idx will
- 	   contain information on which control failed. */
+ }
+@@ -233,8 +231,6 @@ static int __put_v4l2_format32(struct v4
+ 		return copy_to_user(&up->fmt.meta, &kp->fmt.meta,
+ 				    sizeof(kp->fmt.meta)) ? -EFAULT : 0;
+ 	default:
+-		pr_info("compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
+-			kp->type);
+ 		return -EINVAL;
+ 	}
+ }
