@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1841884-1518709792-2-15655036016768475345
+X-Cyrus-Session-Id: sloti22d1t05-1841884-1518709786-2-16714911653604499808
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518709792; b=wGB2w050IGiGukFMyaJyyhGM86kB+RFGYwu9Ovr/qx85H0Y
-    0d3QgggXK/bDh7f0qWaurzL7vspMqCvRaFfEj5ixIjpjsqdUmK12wd6WPaDqjITR
-    kRoo5oHRoASta9NWLgBXWxM5UJZpP36QyGpEzYjktbKwEZYjx4AvfPuePY7O3k07
-    F7G34GTp0EGO0+jkf7jKcNoffF5OV7225/KmVMvXwk+JJWa+poMHd75OgRgVr0+i
-    A1TZD5uabnHqXp3z4Te8KETA+fJ2DzjFbvahRmETtK6H8EAyvDxK9jLPkoi23+VE
-    HV1ts2hdWC24rtxlrg5WpRPfdEdAmwQ4GTcZemA==
+    t=1518709785; b=wJwWIq0TYG+Gc0nb+gLmMc59LMs6icg6RPKWHwN/P+O5g/4
+    K+5d3OUMJTvB2lZxfeqOQztbr4IP/NfE7dJzCkJ1VOurnU7gZCqyrHWKRhzbCZWU
+    eY8Pnlh7YtBrwikXqUvx9Nw4fehmt+lQ+Ec8xmDyvnhIVLs0fbFjGTFTprvOnqhv
+    q8qXo750jjHIywJpNELBySTiERNJUBbfxp1uXnWgvrluZcWAX0S9W1nTYZ5vT9Q5
+    soJb5nXmFH+njPE/G5VJrvMrrL+m66ztpyMwissySMuYB5AsN22LVPbhJELkxX1+
+    HllXsJEUkDfpACUmWDLm6iLPmEYsNDNTIbc2T5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518709792; bh=UkFO0MA9Bdt5eF6E+gixuxzpza
-    x4+99otMPDsnMnFU4=; b=p3zZwatDtYXG3FPl9S0ZIBmsJc0hpXh0Qwij+wlfVR
-    LzQDMFCYNVkmtFJs1oTqnk8+qxJIoGDCE6ffQuV31usxbxVgLmi2Rr0Pko1fGJPP
-    A1VH5oVrUYWHV7Kgtv/34qm67DvpKjSCaICVb2X1TpsdzSJRkSJz1TG4swVyMdM+
-    0as5479z2bTQR+huV/wgi4tD8ubHECqog4D9EXVv+fDCvFwzTy/QhLtYphom5ayB
-    tyK+83bGVXzfdtBqZS8BSMbQu2MbszbodiNMKrmlq8Y9XsMp8r/xCjXJQYHS2YF5
-    XWxxs/2GBQhEWUlXrjgOG/2VDBNB+cFZ9EZMfYjO1ubA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518709785; bh=WPKBKLJunbz808X0/Z1c2s0dgs
+    O+h0Z1nPbDn8r5EOw=; b=A24Ei8qPgbhLavjEctHlzSW3PH/t63cIP+3N+NPX6L
+    r76ze/d3C/QWLMcHPkuQ+ipUWaO3HcGZCAkoZ/f4d/U8E7KDHW1b3FRGZOEXAbZ/
+    bnAoA9u1s9wVqoelmQubS5GVSsIlmsnnbvc4NMSjQj9WA2oLu2RCzK0oMuX0Ppx1
+    eCMzzq8+3NVtImNgDivt3FoMoM82pjTcR12OEZPu4cTZgdmIB5wMXJYbZ4sNhmHd
+    H+sUJBuxz5vIfmMJ0QMleSiBArrsG5BeWldZ2XGZoKOWLdlTUGCdosT6iIL6T8Za
+    b40csURfmlN7MN+R98kRWJ8v8F+iqbE/s6fLsNpizv1g==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425038AbeBOPsJ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:48:09 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36426 "EHLO
+        id S1424877AbeBOPt1 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:49:27 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36450 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1425022AbeBOPsE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:48:04 -0500
+        with ESMTP id S1425044AbeBOPsK (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:48:10 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Cree <mcree@orcon.net.nz>,
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
         Matt Turner <mattst88@gmail.com>
-Subject: [PATCH 4.15 170/202] alpha: Fix mixed up args in EXC macro in futex operations
-Date: Thu, 15 Feb 2018 16:17:50 +0100
-Message-Id: <20180215151721.755805971@linuxfoundation.org>
+Subject: [PATCH 4.15 172/202] alpha: fix formating of stack content
+Date: Thu, 15 Feb 2018 16:17:52 +0100
+Message-Id: <20180215151721.859672517@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -77,43 +77,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Cree <mcree@orcon.net.nz>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 84e455361ec97ea6037d31d42a2955628ea2094b upstream.
+commit 4b01abdb32fc36abe877503bfbd33019159fad71 upstream.
 
-Fix the typo (mixed up arguments) in the EXC macro in the futex
-definitions introduced by commit ca282f697381 (alpha: add a
-helper for emitting exception table entries).
+Since version 4.9, the kernel automatically breaks printk calls into
+multiple newlines unless pr_cont is used. Fix the alpha stacktrace code,
+so that it prints stack trace in four columns, as it was initially
+intended.
 
-Signed-off-by: Michael Cree <mcree@orcon.net.nz>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
 Signed-off-by: Matt Turner <mattst88@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/alpha/include/asm/futex.h |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/alpha/kernel/traps.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
---- a/arch/alpha/include/asm/futex.h
-+++ b/arch/alpha/include/asm/futex.h
-@@ -20,8 +20,8 @@
- 	"3:	.subsection 2\n"				\
- 	"4:	br	1b\n"					\
- 	"	.previous\n"					\
--	EXC(1b,3b,%1,$31)					\
--	EXC(2b,3b,%1,$31)					\
-+	EXC(1b,3b,$31,%1)					\
-+	EXC(2b,3b,$31,%1)					\
- 	:	"=&r" (oldval), "=&r"(ret)			\
- 	:	"r" (uaddr), "r"(oparg)				\
- 	:	"memory")
-@@ -82,8 +82,8 @@ futex_atomic_cmpxchg_inatomic(u32 *uval,
- 	"3:	.subsection 2\n"
- 	"4:	br	1b\n"
- 	"	.previous\n"
--	EXC(1b,3b,%0,$31)
--	EXC(2b,3b,%0,$31)
-+	EXC(1b,3b,$31,%0)
-+	EXC(2b,3b,$31,%0)
- 	:	"+r"(ret), "=&r"(prev), "=&r"(cmp)
- 	:	"r"(uaddr), "r"((long)(int)oldval), "r"(newval)
- 	:	"memory");
+--- a/arch/alpha/kernel/traps.c
++++ b/arch/alpha/kernel/traps.c
+@@ -160,11 +160,16 @@ void show_stack(struct task_struct *task
+ 	for(i=0; i < kstack_depth_to_print; i++) {
+ 		if (((long) stack & (THREAD_SIZE-1)) == 0)
+ 			break;
+-		if (i && ((i % 4) == 0))
+-			printk("\n       ");
+-		printk("%016lx ", *stack++);
++		if ((i % 4) == 0) {
++			if (i)
++				pr_cont("\n");
++			printk("       ");
++		} else {
++			pr_cont(" ");
++		}
++		pr_cont("%016lx", *stack++);
+ 	}
+-	printk("\n");
++	pr_cont("\n");
+ 	dik_show_trace(sp);
+ }
+ 
