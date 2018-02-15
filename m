@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2179907-1518719798-2-11657348273641237469
+X-Cyrus-Session-Id: sloti22d1t05-2178418-1518719782-2-2693767912374190390
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518719797; b=LmMYUEPOSmf8eVKx9BJjZ4+jljBwXM05xy7bqdCnkTdOQm+
-    PDeJ8tHmiaSgKUyDx2vQZM5Ev4wXAvZD7NIsvmjPkd0kPZrYPrQKWtao3PxYeWEA
-    B8nuAU7VSe2qqGNb3SkfbYpszCM5xrx55BcGeh5znBKlBpt0CPUm3u7hIutAKIAL
-    XN+Org/BUbVyeORXsEyk7UDbhILfsc7ig+YBn5QfNEzdkIYxyHBYvlHjvXhyIWRW
-    AO7zDeZ8Qs3u/xDD88+0QDrrEzyDDxolWEGOrx0u0N2w02pu641l97A+kEvYRFGc
-    E1IuleSQZUp2we3i+BJAhPUjknVCvUqe4L7fSTw==
+    t=1518719782; b=ZN/fxbxRku71XU63kY5ONCMDfAkXCCtOAvprwGtGfFuCbF8
+    UjmXP4Z1gQnrUynKK2LC+UYR9KX84N0U5aRGfDwth9IQ5WK2M1QeQ6oD16YZt2/c
+    f9q6JR0/Cd3kuTj9IdB/cfu7r9NqToaw0tbJLGfViRrniYy4JlJf7V78kPhL8QK7
+    ZgYhSEvNEisZcZFSAMKTcbadcyvKnZewGK8mNIBcq+YQmNOm/t4pC/qKrFM5Khma
+    /KtBKbabAlIg3LTmBf1uX3/ctIfReSpum2r08cyB3+rbcH4xX6NIeAXJ8XCE9FC4
+    OskiFeRL8ITlBI3/or1slwyZ+tkQ8UjzLKyDlPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518719797; bh=THbJBr5MWSwUQPvjKU+nPOOU1L
-    BrAly1FxbTEAbIfcQ=; b=SJ6uz9HBpSESR0UatHPQVozRu3/8uqjf3L6czHD7bJ
-    UyCHpzYgN6T0zi16FZKBBCqUReBCI6/+9q5vPaaYuZH1CwG5rjvQI30ppzw7X4R8
-    5IFOEd7SvilRc6RExnzNrTvTaTwDHu4pxtoIKeAGEPVaEvwuwhINFA6b6v35gvTA
-    0VA4xTvIePiWNFafeXgOe2M9WvnzAdiwiNrxVBMpcd0P3q2gz0LGmiJlvlheqxRP
-    /kbEqGaybmBmwTJhWdqLYWyxHXC6oxyjMYFtgSiC+obgbbUVmRy6k5kCxNNHkPTP
-    jt+jBVEPbSmhGQQeeBh+MO8YDXOO3qGSvBp8/Nx2A1Sg==
+    :list-id; s=arctest; t=1518719782; bh=Yhyr41pTDP5Vt8uH2Jk4VPe4A/
+    KJKj3TwUFwAjh3d3c=; b=p8kf9kx60ym3M3tqDTuI4t+IMS5nvmPgDo25xC2q6k
+    9+S6VPwl89xT0zIqCNgBYpZLWRkevANtr49MdnpoSCIiMKViPlHw3YT6YZlo1/bN
+    Tk3AdAKjw0Tfnzh4LVHAiOh/BB9ukyl3wtKpH+eeeNWzbRElfokaZ/BBEBBI2bvK
+    ibOPTwqDSgbGESZwDXeeBMzTZBcOFCxDufRIaCmsjIgJbRiE33t06VN5lj+/6/A8
+    aiYKyoWvN3/kRNVp0er/AmEVQOi4oitNDy7mBtXS1PehSatRuaq7lt4xwl4DVHsn
+    dGUEsoAeqXbv0CUmeh+pcbMp1UTVUfITQU52E7LyiFVQ==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,22 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033949AbeBOPYX (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:24:23 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51864 "EHLO
+        id S1162879AbeBOPY2 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:24:28 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51884 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033898AbeBOPYV (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:24:21 -0500
+        with ESMTP id S1162872AbeBOPY0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:24:26 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.4 086/108] arm: KVM: Fix SMCCC handling of unimplemented SMC/HVC calls
-Date: Thu, 15 Feb 2018 16:17:23 +0100
-Message-Id: <20180215151234.348680449@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
+        Malcolm Priestley <tvboxspy@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 052/108] media: dvb-usb-v2: lmedm04: Improve logic checking of warm start
+Date: Thu, 15 Feb 2018 16:16:49 +0100
+Message-Id: <20180215151229.688622415@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -78,53 +79,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Malcolm Priestley <tvboxspy@gmail.com>
 
-commit 20e8175d246e9f9deb377f2784b3e7dfb2ad3e86 upstream.
+commit 3d932ee27e852e4904647f15b64dedca51187ad7 upstream.
 
-KVM doesn't follow the SMCCC when it comes to unimplemented calls,
-and inject an UNDEF instead of returning an error. Since firmware
-calls are now used for security mitigation, they are becoming more
-common, and the undef is counter productive.
+Warm start has no check as whether a genuine device has
+connected and proceeds to next execution path.
 
-Instead, let's follow the SMCCC which states that -1 must be returned
-to the caller when getting an unknown function number.
+Check device should read 0x47 at offset of 2 on USB descriptor read
+and it is the amount requested of 6 bytes.
 
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Fix for
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access as
+
+Reported-by: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/kvm/handle_exit.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/media/usb/dvb-usb-v2/lmedm04.c |   26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
---- a/arch/arm/kvm/handle_exit.c
-+++ b/arch/arm/kvm/handle_exit.c
-@@ -45,7 +45,7 @@ static int handle_hvc(struct kvm_vcpu *v
+--- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
++++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
+@@ -503,18 +503,23 @@ static int lme2510_pid_filter(struct dvb
  
- 	ret = kvm_psci_call(vcpu);
- 	if (ret < 0) {
--		kvm_inject_undefined(vcpu);
-+		vcpu_set_reg(vcpu, 0, ~0UL);
- 		return 1;
+ static int lme2510_return_status(struct dvb_usb_device *d)
+ {
+-	int ret = 0;
++	int ret;
+ 	u8 *data;
+ 
+-	data = kzalloc(10, GFP_KERNEL);
++	data = kzalloc(6, GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	ret |= usb_control_msg(d->udev, usb_rcvctrlpipe(d->udev, 0),
+-			0x06, 0x80, 0x0302, 0x00, data, 0x0006, 200);
+-	info("Firmware Status: %x (%x)", ret , data[2]);
++	ret = usb_control_msg(d->udev, usb_rcvctrlpipe(d->udev, 0),
++			      0x06, 0x80, 0x0302, 0x00,
++			      data, 0x6, 200);
++	if (ret != 6)
++		ret = -EINVAL;
++	else
++		ret = data[2];
++
++	info("Firmware Status: %6ph", data);
+ 
+-	ret = (ret < 0) ? -ENODEV : data[2];
+ 	kfree(data);
+ 	return ret;
+ }
+@@ -1199,6 +1204,7 @@ static int lme2510_get_adapter_count(str
+ static int lme2510_identify_state(struct dvb_usb_device *d, const char **name)
+ {
+ 	struct lme2510_state *st = d->priv;
++	int status;
+ 
+ 	usb_reset_configuration(d->udev);
+ 
+@@ -1207,12 +1213,16 @@ static int lme2510_identify_state(struct
+ 
+ 	st->dvb_usb_lme2510_firmware = dvb_usb_lme2510_firmware;
+ 
+-	if (lme2510_return_status(d) == 0x44) {
++	status = lme2510_return_status(d);
++	if (status == 0x44) {
+ 		*name = lme_firmware_switch(d, 0);
+ 		return COLD;
  	}
  
-@@ -54,7 +54,16 @@ static int handle_hvc(struct kvm_vcpu *v
- 
- static int handle_smc(struct kvm_vcpu *vcpu, struct kvm_run *run)
- {
--	kvm_inject_undefined(vcpu);
-+	/*
-+	 * "If an SMC instruction executed at Non-secure EL1 is
-+	 * trapped to EL2 because HCR_EL2.TSC is 1, the exception is a
-+	 * Trap exception, not a Secure Monitor Call exception [...]"
-+	 *
-+	 * We need to advance the PC after the trap, as it would
-+	 * otherwise return to the same address...
-+	 */
-+	vcpu_set_reg(vcpu, 0, ~0UL);
-+	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
- 	return 1;
+-	return 0;
++	if (status != 0x47)
++		return -EINVAL;
++
++	return WARM;
  }
  
+ static int lme2510_get_stream_config(struct dvb_frontend *fe, u8 *ts_type,
