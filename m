@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225ZnR1wfRWD4p0p2wjESXmBnrzYhfrGSf21yyhPivrb9ug1siVpFT7ToRrZjfgoWOTi+uGC
-ARC-Seal: i=1; a=rsa-sha256; t=1518709211; cv=none;
+X-Google-Smtp-Source: AH8x224nHBu2D29FkNPBhxeIrLW6EoKgZxbX38XUHXc9Zl8xhmBuq9XbXBIP4W7YmUtn6sfqAemD
+ARC-Seal: i=1; a=rsa-sha256; t=1518709208; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZL5nhdb1nehkPdn01jf/zq7BoFKl5cBZNkVpapdqBl2nZPTr1xPe5DvyN5EBC7+0Zq
-         xE3Q64+ZNdYLZ7DDH11dccBbuY+ypWs7XLEnjB/muQR2Ku+RyMasqedE+ydR8DdCHm6I
-         vV5P1vfPkTBw3WsreIg7/lS1j2lw/8bICxspyu5plAv7rx04EtxgBCUngsG6UbaXKC8L
-         llBWo1ZoStB7dIjsfc8tEcpkVIfoYZVXa9ci7buVCLnRA0ClDkxTFhFr5zLRrUoNTh3V
-         Dy1inaZHgGrFnQ79Vm6+xaHe6YOsrg7E1tusydHZsKVOv65VnWmduFYk02rDNKL4HPgf
-         A/Hw==
+        b=ehdef9E9QxfPgFvG/oYaspBHHxK/+567Tho3Jh1hdOXyHyg57kkn3TylgpUyOrc41F
+         tDRkmxI7kk5cPFXw822eddXc21NLHREUSApaRuGDoNrlhi3kiiSbZcF+ApuKeaCDs4YF
+         y9kdTJ225Ds/EmpHu+FSgPOmbhgO+bwO6NLXIOmMi54bEO4/33PQds4275/UKOWhwOWs
+         IM8tybXt5FkL4ImId75kB8CxPQEk3yDmrWvggQRw1c77As9R/AkzmnbmgPv6OOcb0aet
+         ImNrEMtGjGrWAwbutHzHR/1z2jXvwkLzBsvVcjlaX3LaunRBq1ArPo6IHF3pnnj25zOu
+         P1Sg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5lJaiqZQ7PeZ2CLWdHj3jbhrUk3OSbvCTM5QCMIyPOo=;
-        b=cr/b9rJPMPtFdpxr6sQFXM9WXehXhaKh0yTO0M1qdcdjAewwoKFWCNmB+LtAKxtR6O
-         b6YAosAWOXeyCYiqllCRZwNW1W8h/wFjMNo/PGPTgRLv1oUJfgDLZ96DYRxKRfMhL7Ms
-         bx9rUuD5rmwGstD8gLTT0adB7BsMXzWplwpskCSGqIHSezn4EctwCrYYxLhqYm0GDcUm
-         Zcj1P8Q71U2PlaHzGCMXQItjtSneWjO2Dn8tsed1A2eW2gU5bF7COx+6VxxRSnv/nDWJ
-         ozD/ErlzP2szFf6E5gBTX6VkZWVjj0MaNf20HSNzayKjBL/CMVQAJbp8eDUcA/6uslRX
-         kcHQ==
+        bh=KWAt648QBbR3zieAPJlGJNp7QzjQcQCxyoP25UO47sA=;
+        b=Vv55FyRVuC7NQbFj3wRWbmRK6gw4P6Veweib5Iw71F3MujvB9Xl5zeTGYNixY4on07
+         Zf8TbKdBK8ntb0htj0KFZIrZ5dr2gYiFpog0kWbyItaLJkLTt5juAkFUBH8ke03Wf5Wh
+         Ocapff2tTzTXJxBO0bHEAnJ5GlS0xYqFWIN4sQYMXWvLftUw3uQwE8KGTM5lakt69hZv
+         XXWZJTNXp+NkhIWw34W1OFV2uhFYzEYSSJbt+ooPxqSeT8mVX7LVyDZ6gjobW5CyERv5
+         zDJOSDDAu6fFoMpnGkAnMIMWsvcrIKwjgVz157tLMR5RK5f6Anjwve5dHUxJJQdwJpA0
+         ElbQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Will Deacon <will.deacon@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.15 035/202] [Variant 3/Meltdown] arm64: Kconfig: Reword UNMAP_KERNEL_AT_EL0 kconfig entry
-Date: Thu, 15 Feb 2018 16:15:35 +0100
-Message-Id: <20180215151714.840722419@linuxfoundation.org>
+	Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Wim Van Sebroeck <wim@iguana.be>
+Subject: [PATCH 4.15 008/202] watchdog: gpio_wdt: set WDOG_HW_RUNNING in gpio_wdt_stop
+Date: Thu, 15 Feb 2018 16:15:08 +0100
+Message-Id: <20180215151713.242766975@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481483131893734?=
-X-GMAIL-MSGID: =?utf-8?q?1592482030026602443?=
+X-GMAIL-THRID: =?utf-8?q?1592481432327285756?=
+X-GMAIL-MSGID: =?utf-8?q?1592482027561542087?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,46 +49,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
 
+commit bc137dfdbec27c0ec5731a89002daded4a4aa1ea upstream.
 
-Commit 0617052ddde3 upstream.
+The first patch above (https://patchwork.kernel.org/patch/9970181/)
+makes the oops go away, but it just papers over the problem. The real
+problem is that the watchdog core clears WDOG_HW_RUNNING in
+watchdog_stop, and the gpio driver fails to set it in its stop
+function when it doesn't actually stop it. This means that the core
+doesn't know that it now has responsibility for petting the device, in
+turn causing the device to reset the system (I hadn't noticed this
+because the board I'm working on has that reset logic disabled).
 
-Although CONFIG_UNMAP_KERNEL_AT_EL0 does make KASLR more robust, it's
-actually more useful as a mitigation against speculation attacks that
-can leak arbitrary kernel data to userspace through speculation.
+How about this (other drivers may of course have the same problem, I
+haven't checked). One might say that ->stop should return an error
+when the device can't be stopped, but OTOH this brings parity between
+a device without a ->stop method and a GPIO wd that has always-running
+set. IOW, I think ->stop should only return an error when an actual
+attempt to stop the hardware failed.
 
-Reword the Kconfig help message to reflect this, and make the option
-depend on EXPERT so that it is on by default for the majority of users.
+From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
 
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+The watchdog framework clears WDOG_HW_RUNNING before calling
+->stop. If the driver is unable to stop the device, it is supposed to
+set that bit again so that the watchdog core takes care of sending
+heart-beats while the device is not open from user-space. Update the
+gpio_wdt driver to honour that contract (and get rid of the redundant
+clearing of WDOG_HW_RUNNING).
+
+Fixes: 3c10bbde10 ("watchdog: core: Clear WDOG_HW_RUNNING before calling the stop function")
+Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/Kconfig |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
 
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -844,15 +844,14 @@ config FORCE_MAX_ZONEORDER
- 	  4M allocations matching the default size used by generic code.
+---
+ drivers/watchdog/gpio_wdt.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/watchdog/gpio_wdt.c
++++ b/drivers/watchdog/gpio_wdt.c
+@@ -80,7 +80,8 @@ static int gpio_wdt_stop(struct watchdog
  
- config UNMAP_KERNEL_AT_EL0
--	bool "Unmap kernel when running in userspace (aka \"KAISER\")"
-+	bool "Unmap kernel when running in userspace (aka \"KAISER\")" if EXPERT
- 	default y
- 	help
--	  Some attacks against KASLR make use of the timing difference between
--	  a permission fault which could arise from a page table entry that is
--	  present in the TLB, and a translation fault which always requires a
--	  page table walk. This option defends against these attacks by unmapping
--	  the kernel whilst running in userspace, therefore forcing translation
--	  faults for all of kernel space.
-+	  Speculation attacks against some high-performance processors can
-+	  be used to bypass MMU permission checks and leak kernel data to
-+	  userspace. This can be defended against by unmapping the kernel
-+	  when running in userspace, mapping it back in on exception entry
-+	  via a trampoline page in the vector table.
+ 	if (!priv->always_running) {
+ 		gpio_wdt_disable(priv);
+-		clear_bit(WDOG_HW_RUNNING, &wdd->status);
++	} else {
++		set_bit(WDOG_HW_RUNNING, &wdd->status);
+ 	}
  
- 	  If unsure, say Y.
- 
+ 	return 0;
