@@ -1,67 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967556AbeBOLMi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 06:12:38 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37694 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755378AbeBOLMg (ORCPT
+        id S967847AbeBOLOE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 06:14:04 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:49184 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966589AbeBOLOD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 06:12:36 -0500
-Subject: Re: [PATCH v2 1/3] Kconfig : Remove HAS_IOMEM dependency for Graphics
- support
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Farhan Ali <alifm@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        geert@linux-m68k.org, stefan.kristiansson@saunalahti.fi,
-        tomi.valkeinen@ti.com, schwidefsky@de.ibm.com,
-        dri-devel@lists.freedesktop.org, Chen Liqin <liqin.linux@gmail.com>,
-        Lennox Wu <lennox.wu@gmail.com>, Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        user-mode-linux-devel@lists.sourceforge.net
-References: <cover.1517508744.git.alifm@linux.vnet.ibm.com>
- <CGME20180202080007epcas5p306896fe66e4bbf4bf5f8d91306a5d016@epcas5p3.samsung.com>
- <246f92c9-15dc-223f-59d9-b2f0756cdf5e@de.ibm.com>
- <1610039.4trOurtpys@amdc3058>
- <2324e2cc-ff55-4d57-2807-c7f72f9ea0ca@de.ibm.com>
-Date: Thu, 15 Feb 2018 12:02:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <2324e2cc-ff55-4d57-2807-c7f72f9ea0ca@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18021511-0016-0000-0000-0000052304F0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021511-0017-0000-0000-0000285FD2A0
-Message-Id: <b1a3933e-6a8f-bd24-3629-5da730398f32@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-15_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802150138
+        Thu, 15 Feb 2018 06:14:03 -0500
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2] nvme-pci: set cq_vector to -1 if io queue setup fails
+Date: Thu, 15 Feb 2018 19:13:41 +0800
+Message-Id: <1518693221-2430-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8805 signatures=668671
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802150139
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An even simpler approach would be:
+nvme cq irq is freed based on queue_count. When the sq/cq creation
+fails, irq will not be setup. free_irq will warn 'Try to free
+already-free irq'.
 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index cbe1d978693a..35b7aba4b6a0 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -952,6 +952,10 @@ config S390_HYPFS_FS
+To fix it, set the nvmeq->cq_vector to -1, then nvme_suspend_queue
+will ignore it.
+
+Change log:
+V1 -> V2
+ - Follow Keith's suggestion, just set cq_vector to -1 if io queue setup
+   fails.
+ - Change patch name and comment
+
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ drivers/nvme/host/pci.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 4a7c420..f4528ef 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1452,7 +1452,7 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
+ 	nvmeq->cq_vector = qid - 1;
+ 	result = adapter_alloc_cq(dev, qid, nvmeq);
+ 	if (result < 0)
+-		return result;
++		goto clean_cq_vector;
  
- source "arch/s390/kvm/Kconfig"
+ 	result = adapter_alloc_sq(dev, qid, nvmeq);
+ 	if (result < 0)
+@@ -1461,14 +1461,17 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
+ 	nvme_init_queue(nvmeq, qid);
+ 	result = queue_request_irq(nvmeq);
+ 	if (result < 0)
+-		goto release_sq;
++		goto offline;
  
-+config DUMMY_CONSOLE
-+       bool
-+       default y
-+
- config S390_GUEST
-        def_bool y
-        prompt "s390 support for virtio devices"
+ 	return result;
+ 
+- release_sq:
++offline:
++	dev->online_queues--;
+ 	adapter_delete_sq(dev, qid);
+- release_cq:
++release_cq:
+ 	adapter_delete_cq(dev, qid);
++clean_cq_vector:
++	nvmeq->cq_vector = -1;
+ 	return result;
+ }
+ 
+-- 
+2.7.4
