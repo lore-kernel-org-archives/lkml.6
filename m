@@ -1,80 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755492AbeBOTai (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 14:30:38 -0500
-Received: from mout.web.de ([212.227.17.11]:39655 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751104AbeBOTag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 14:30:36 -0500
-Subject: [PATCH 2/2] cpufreq: powernow-k8: Delete an unnecessary return
- statement in two functions
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <4dd36236-fc39-19e6-c1a7-a094cf13469c@users.sourceforge.net>
-Message-ID: <f673f072-86f3-ed72-e715-bed883551be4@users.sourceforge.net>
-Date: Thu, 15 Feb 2018 20:30:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1755531AbeBOTgR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 14:36:17 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:39086 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751157AbeBOTgQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 14:36:16 -0500
+From: Colin King <colin.king@canonical.com>
+To: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        linux-rtc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] rtc: tx4939: avoid unintended sign extension on a 24 bit shift
+Date: Thu, 15 Feb 2018 19:36:14 +0000
+Message-Id: <20180215193614.28684-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <4dd36236-fc39-19e6-c1a7-a094cf13469c@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:QpPPgSY/BJsWv7v3BsXhtQhkocKTTHpMms+EPL7lTi+rdk4yekM
- 6CbdQKFTrc60v7vVZ6e448Khtkd+lBEBcVMyY2/9wew866O/7sE1FKMndMoxJIx2KmOinzA
- BZsYCeIqrY+P2+ntE0Co6RR0bPXKy1KfCWUYPnGOGJZ2mt5XA+r04nL+zViFR2ZLmX5zAZX
- +HvfwFdRaJB4vW6H7QuaA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:LhVa1OE4k4M=:W4Rs9kVhl7UXq9xKGjeJ/H
- mEWUQoc2efy1Qujd82VeF7XcleKbrrb5lsJj0bSJ8DWz86QYvd4ECjXjoBv8W+NH8szcTI65N
- +NqiN0ozbd51Jlehrbnki6QRnyPlwJZhOw/pSl7EuN12FY2ZPDLAYGgPRvv/N/ulrX4fyDOGF
- bYMnyrYoZ1ibXgt5KQjkKJraJLVb6XARu/Db4YbsdDbir8nlwI89YsGMr4DEHfhy6CM/TdtQ3
- xNK5I0xBbOkcRawYtr6zlat7FBB6A5yJgKa8Atn8/bBPq4b3s8uqZ8fTsEm8cWWM+R7tH+Ohx
- fIyOlkCEc9dhImgnW42T2Efre9R+Ig4oSrIWtr0af9+tbDYJVgoVsb2u1zjPc1+btw4xuN/2a
- Px2xMSYcUaaKtkq501RiYSqi1jfpZ667WnT2VhMB41fVjbko/v/JD8ZkyGxbMQbTjIbaoPuPY
- EuquH4iD4ZtK9uo/F45TvFM9xeV+OfeXIvH/OTYNARIGIn2O7RgpeDta4NLXJwRhC73iZESpn
- OY8eTHbvDp/1+zTOzmj7FsGAxwVXcEYrqtczaIQzArAfMewRHpUXr8gCJk3sPVN4kwyP6YcIi
- 2WVeRm4AupQ+U4W6d7M7lNKA0ETYdYaTNcO6BOoeXNQ+OaQ0fPT8I5LYkHdR7ceSGF93/4JEJ
- w4Fwr1KKwaQVLyxFvChwHwmrkqRx2UxfAuFUsGfDjs4bGbuVcV69lrAWb5CXz2tJlcWtnDvrh
- Q60SoCdXz9BFZIKtjX4saS16jdQJ2i13AE2db43DNLtaZfFfrNpkNHhLgZmIfimLz3xBB1OI+
- bJaj9nQmGlw2unQCoPN1f6PcFjyA4WZFmvO2CtHtk0eACAw56Y=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 15 Feb 2018 20:14:32 +0100
+From: Colin Ian King <colin.king@canonical.com>
 
-The script "checkpatch.pl" pointed information out like the following.
+The shifting of buf[5] by 24 bits to the left will be promoted to
+a 32 bit signed int and then sign-extended to an unsigned long. If
+the top bit of buf[5] is set then all then all the upper bits sec
+end up as also being set because of the sign-extension. Fix this by
+casting buf[5] to an unsigned long before the shift.
 
-WARNING: void function return statements are not generally useful
+Detected by CoverityScan, CID#1465292 ("Unintended sign extension")
 
-Thus remove such a statement in the affected functions.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 0e1492330cd2 ("rtc: add rtc-tx4939 driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/cpufreq/powernow-k8.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/rtc/rtc-tx4939.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cpufreq/powernow-k8.c b/drivers/cpufreq/powernow-k8.c
-index 460bf22a8a2b..782a8c2a359d 100644
---- a/drivers/cpufreq/powernow-k8.c
-+++ b/drivers/cpufreq/powernow-k8.c
-@@ -122,14 +122,12 @@ static int query_current_values_with_pending_wait(struct powernow_k8_data *data)
- static void count_off_irt(struct powernow_k8_data *data)
- {
- 	udelay((1 << data->irt) * 10);
--	return;
+diff --git a/drivers/rtc/rtc-tx4939.c b/drivers/rtc/rtc-tx4939.c
+index feededce3ded..1f351308afdc 100644
+--- a/drivers/rtc/rtc-tx4939.c
++++ b/drivers/rtc/rtc-tx4939.c
+@@ -109,7 +109,8 @@ static int tx4939_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	for (i = 2; i < 6; i++)
+ 		buf[i] = __raw_readl(&rtcreg->dat);
+ 	spin_unlock_irq(&pdata->lock);
+-	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
++	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
++		(buf[3] << 8) | buf[2];
+ 	rtc_time_to_tm(sec, tm);
+ 	return rtc_valid_tm(tm);
  }
- 
- /* the voltage stabilization time */
- static void count_off_vst(struct powernow_k8_data *data)
- {
- 	udelay(data->vstable * VST_UNITS_20US);
--	return;
+@@ -170,7 +171,8 @@ static int tx4939_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	alrm->enabled = (ctl & TX4939_RTCCTL_ALME) ? 1 : 0;
+ 	alrm->pending = (ctl & TX4939_RTCCTL_ALMD) ? 1 : 0;
+ 	spin_unlock_irq(&pdata->lock);
+-	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
++	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
++		(buf[3] << 8) | buf[2];
+ 	rtc_time_to_tm(sec, &alrm->time);
+ 	return rtc_valid_tm(&alrm->time);
  }
- 
- /* need to init the control msr to a safe value (for each cpu) */
 -- 
-2.16.1
+2.15.1
