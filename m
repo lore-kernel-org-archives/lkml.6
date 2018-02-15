@@ -1,112 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033527AbeBOOtB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 09:49:01 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:33199 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033102AbeBOOs7 (ORCPT
+        id S1033545AbeBOOtJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 09:49:09 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43860 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1033102AbeBOOtD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 09:48:59 -0500
-X-Google-Smtp-Source: AH8x227oKXV9wCCkbKi/Be7/i0F0PEQqmo9MbK1ZXOPF2vSjQgQzzeM4Q1ss+weUUr3rc7zHQin9Aw==
-Date: Thu, 15 Feb 2018 15:48:56 +0100
-From: Christian Brauner <christian.brauner@canonical.com>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Tom Hromatka <tom.hromatka@oracle.com>,
-        Sargun Dhillon <sargun@sargun.me>, Paul Moore <pmoore@redhat.com>
-Subject: Re: [RFC 1/3] seccomp: add a return code to trap to userspace
-Message-ID: <20180215144855.GA16088@gmail.com>
-References: <20180204104946.25559-1-tycho@tycho.ws>
- <20180204104946.25559-2-tycho@tycho.ws>
- <CAGXu5jLAAKY19a9iC1PmXRyuwdn1Zxr2Cb318zdzkqgYt8vtdg@mail.gmail.com>
- <20180214152958.cjgwh2k52zji2jxk@cisco>
- <CALCETrXeZZfVzXh7SwKhyB=+ySDk5fhrrdrXrcABsQ=JpQT7Tg@mail.gmail.com>
+        Thu, 15 Feb 2018 09:49:03 -0500
+Date: Thu, 15 Feb 2018 20:18:51 +0530
+From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Subject: Re: [PATCH 9/9] perf tests: Use arch__compare_symbol_names to compare
+ symbols
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        David Ahern <dsahern@gmail.com>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>
+References: <20180215122635.24029-1-jolsa@kernel.org>
+        <20180215122635.24029-10-jolsa@kernel.org>
+        <20180215142711.GH22818@kernel.org>
+In-Reply-To: <20180215142711.GH22818@kernel.org>
+User-Agent: astroid/0.11.0 (https://github.com/astroidmail/astroid)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CALCETrXeZZfVzXh7SwKhyB=+ySDk5fhrrdrXrcABsQ=JpQT7Tg@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+X-TM-AS-GCONF: 00
+x-cbid: 18021514-0040-0000-0000-0000043411C6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18021514-0041-0000-0000-000020D6127A
+Message-Id: <1518705799.8kkjgp6cbr.naveen@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-15_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802150182
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 05:19:52PM +0000, Andy Lutomirski wrote:
-> On Wed, Feb 14, 2018 at 3:29 PM, Tycho Andersen <tycho@tycho.ws> wrote:
-> > Hey Kees,
-> >
-> > Thanks for taking a look!
-> >
-> > On Tue, Feb 13, 2018 at 01:09:20PM -0800, Kees Cook wrote:
-> >> On Sun, Feb 4, 2018 at 2:49 AM, Tycho Andersen <tycho@tycho.ws> wrote:
-> >> > This patch introduces a means for syscalls matched in seccomp to notify
-> >> > some other task that a particular filter has been triggered.
-> >> >
-> >> > The motivation for this is primarily for use with containers. For example,
-> >> > if a container does an init_module(), we obviously don't want to load this
-> >> > untrusted code, which may be compiled for the wrong version of the kernel
-> >> > anyway. Instead, we could parse the module image, figure out which module
-> >> > the container is trying to load and load it on the host.
-> >> >
-> >> > As another example, containers cannot mknod(), since this checks
-> >> > capable(CAP_SYS_ADMIN). However, harmless devices like /dev/null or
-> >> > /dev/zero should be ok for containers to mknod, but we'd like to avoid hard
-> >> > coding some whitelist in the kernel. Another example is mount(), which has
-> >> > many security restrictions for good reason, but configuration or runtime
-> >> > knowledge could potentially be used to relax these restrictions.
-> >>
-> >> Related to the eBPF seccomp thread, can the logic for these things be
-> >> handled entirely by eBPF? My assumption is that you still need to stop
-> >> the process to do something (i.e. do a mknod, or a mount) before
-> >> letting it continue. Is there some "wait for notification" system in
-> >> eBPF?
-> >
-> > I replied in the other thread
-> > (https://patchwork.ozlabs.org/cover/872938/#1856642 for those
-> > following along at home), but no, at least not that I know of.
+Arnaldo Carvalho de Melo wrote:
+> Em Thu, Feb 15, 2018 at 01:26:35PM +0100, Jiri Olsa escreveu:
+>> The symbol search called by machine__find_kernel_symbol_by_name
+>> is using internally arch__compare_symbol_names function to compare
+>> 2 symbol names, because different archs have different ways of
+>> comparing symbols. Mostly for skipping '.' prefixes and similar.
+>> 
+>> In test 1 when we try to find matching symbols in kallsyms and
+>> vmlinux, by address and by symbol name. When either is found
+>> we compare the pair symbol names  by simple strcmp, which is not
+>> good enough for reasons explained in previous paragraph.
+>> 
+>> On powerpc this can cause lockup, because even thought we found
+>> the pair, the compared names are different and don't match
+>> simple strcmp. Following code path is executed, that leads
+>> to lockup:
 > 
-> eBPF can call functions.  One of those functions could put the caller
-> to sleep.  In fact, I think I once proposed doing this for the seccomp
-> logging action as well.
+> Added a:
 > 
-> >> I wonder if this communication should be netlink, which gives a more
-> >> well-structured way to describe what's on the wire? The reason I ask
-> >> is because if we ever change the seccomp_data structure, we'll now
-> >> have two places where we need to deal with it (the first being within
-> >> the BPF itself). My initial idea was to prefix the communication with
-> >> a size field, then send the structure, and then I had nightmares, and
-> >> realized this was basically netlink reinvented.
-> >
-> > I suggested netlink in LA, and everyone (especially Andy) groaned very
-> > loudly :). I'm happy to switch it to netlink if you like, although i
-> > think memcpy() of structs should be safe here, since the return value
-> > from read or write can indicate the size of things.
+>     Fixes: 031b84c407c3 ("perf probe ppc: Enable matching against dot symbols automatically")
 > 
-> I could easily get on board with "netlink" (i.e. NLA) messages sent
-> over an fd.  I will object strongly to the use of netlink *sockets*.
+> And CCed Naveen, the author of that patch, so that gets notified of this
+> fix.
 
-I think sending netlink messages makes perfect sense here although we
-burden userspace with all those nice macros to parse these messages.
-Are there already other cases where userspace gets netlink messages on
-fds without having opened a netlink socket.
+Thanks! This does fix the test on ppc64 BE. So:
+Acked-and-Tested-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
 
-> 
-> >
-> >> An ERRNO filter would block a USER_NOTIF because it's unconditional.
-> >> TRACE could be either, USER_NOTIF could be either.
-> >>
-> >> This means TRACE rules would be bumped by a USER_NOTIF... hmm.
-> >
-> > Yes, I didn't exactly know what to do here. ERRNO, TRAP, and KILL all
-> > seemed more important than USER_NOTIF, but TRACE didn't. I don't have
-> > a strong opinion about what to do here, because users can adjust their
-> > filters accordingly. Let me know what you prefer.
-> 
-> If we switched to eBPF functions, this whole issue goes away.
+- Naveen
