@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2178418-1518719782-2-2693767912374190390
+X-Cyrus-Session-Id: sloti22d1t05-2178418-1518719779-2-2953841376322749230
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518719782; b=ZN/fxbxRku71XU63kY5ONCMDfAkXCCtOAvprwGtGfFuCbF8
-    UjmXP4Z1gQnrUynKK2LC+UYR9KX84N0U5aRGfDwth9IQ5WK2M1QeQ6oD16YZt2/c
-    f9q6JR0/Cd3kuTj9IdB/cfu7r9NqToaw0tbJLGfViRrniYy4JlJf7V78kPhL8QK7
-    ZgYhSEvNEisZcZFSAMKTcbadcyvKnZewGK8mNIBcq+YQmNOm/t4pC/qKrFM5Khma
-    /KtBKbabAlIg3LTmBf1uX3/ctIfReSpum2r08cyB3+rbcH4xX6NIeAXJ8XCE9FC4
-    OskiFeRL8ITlBI3/or1slwyZ+tkQ8UjzLKyDlPQ==
+    t=1518719779; b=PkD25h8WXc+G37BtQfTKDR3wUqsJCPIhTr7UJ+isPf8YZ8y
+    UPSLg5I9t/d/8sY5QJuLirpcLGkRvrwZwPhvGNEnpN0e7tBw8DEZJUb8GcputElx
+    pNn3Rz0gMNRb/Jcs+/4U+1GMHhuH4aK6P+3U4vl0N7a0OC2xukP7auVrtJ4YcFhc
+    GilmR7xvU0SGsQQdmdYVUzqztsOYXRGwiAZ4+F47hApc9DMEE69ZB14/sBECHfpE
+    LfaVHt3Ncnex11dZ9w3Q68A+tP11q11ZWr/LZa/LMu9DXqijZ3hzq22zaz5p1gMk
+    M0lRlK4kBfrQ2uKLK7Y3LAzJS337amFGMqolgrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518719782; bh=Yhyr41pTDP5Vt8uH2Jk4VPe4A/
-    KJKj3TwUFwAjh3d3c=; b=p8kf9kx60ym3M3tqDTuI4t+IMS5nvmPgDo25xC2q6k
-    9+S6VPwl89xT0zIqCNgBYpZLWRkevANtr49MdnpoSCIiMKViPlHw3YT6YZlo1/bN
-    Tk3AdAKjw0Tfnzh4LVHAiOh/BB9ukyl3wtKpH+eeeNWzbRElfokaZ/BBEBBI2bvK
-    ibOPTwqDSgbGESZwDXeeBMzTZBcOFCxDufRIaCmsjIgJbRiE33t06VN5lj+/6/A8
-    aiYKyoWvN3/kRNVp0er/AmEVQOi4oitNDy7mBtXS1PehSatRuaq7lt4xwl4DVHsn
-    dGUEsoAeqXbv0CUmeh+pcbMp1UTVUfITQU52E7LyiFVQ==
+    :list-id; s=arctest; t=1518719779; bh=lyepY1z2GdYo0QYsDoi0vsyMz3
+    wNLiLTP1T3X6hAjkY=; b=XgRJWkT3X3hYxgRy91wysC08Io7gmc/US64P50BA/u
+    r2ZTQ6ozi4z3d3xEj/EOV38gerpR4ERdjCPn/WitmZa2mgnLz4/QV64U3HtIBk5o
+    PRZzzmcu3iIeIv88b0c2QLrXE/gdezsjjr0l34Bryx6+Pilocbfr9VUYDPJtSD7w
+    vvf2YjRW1E2ZroR/CQnKbkmF8gU3NnlShFrmm68BoOSBxuJapG37JSBxqJ0dxQ5m
+    iks+ThlsCSXoluqVRn1fzGT5zgAJyVfCL+j459un8zM2RYvPLmqhJQWl9SmV+yP/
+    5HBagC8kH2n5uiC75gVsrVts7gn9vYtsWGp+1qWt18xQ==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,12 +47,12 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162879AbeBOPY2 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:24:28 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51884 "EHLO
+        id S1162875AbeBOSgC (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:36:02 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51900 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162872AbeBOPY0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:24:26 -0500
+        with ESMTP id S1162888AbeBOPY3 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:24:29 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -60,9 +60,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Malcolm Priestley <tvboxspy@gmail.com>,
         Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 052/108] media: dvb-usb-v2: lmedm04: Improve logic checking of warm start
-Date: Thu, 15 Feb 2018 16:16:49 +0100
-Message-Id: <20180215151229.688622415@linuxfoundation.org>
+Subject: [PATCH 4.4 053/108] media: dvb-usb-v2: lmedm04: move ts2020 attach to dm04_lme2510_tuner
+Date: Thu, 15 Feb 2018 16:16:50 +0100
+Message-Id: <20180215151229.799940328@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -81,84 +81,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Malcolm Priestley <tvboxspy@gmail.com>
 
-commit 3d932ee27e852e4904647f15b64dedca51187ad7 upstream.
+commit 7bf7a7116ed313c601307f7e585419369926ab05 upstream.
 
-Warm start has no check as whether a genuine device has
-connected and proceeds to next execution path.
+When the tuner was split from m88rs2000 the attach function is in wrong
+place.
 
-Check device should read 0x47 at offset of 2 on USB descriptor read
-and it is the amount requested of 6 bytes.
+Move to dm04_lme2510_tuner to trap errors on failure and removing
+a call to lme_coldreset.
 
-Fix for
+Prevents driver starting up without any tuner connected.
+
+Fixes to trap for ts2020 fail.
+LME2510(C): FE Found M88RS2000
+ts2020: probe of 0-0060 failed with error -11
+...
+LME2510(C): TUN Found RS2000 tuner
 kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access as
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
 
 Reported-by: Andrey Konovalov <andreyknvl@google.com>
 Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
+Tested-by: Andrey Konovalov <andreyknvl@google.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/dvb-usb-v2/lmedm04.c |   26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+ drivers/media/usb/dvb-usb-v2/lmedm04.c |   13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
 --- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
 +++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
-@@ -503,18 +503,23 @@ static int lme2510_pid_filter(struct dvb
+@@ -1083,8 +1083,6 @@ static int dm04_lme2510_frontend_attach(
  
- static int lme2510_return_status(struct dvb_usb_device *d)
- {
--	int ret = 0;
-+	int ret;
- 	u8 *data;
- 
--	data = kzalloc(10, GFP_KERNEL);
-+	data = kzalloc(6, GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
--	ret |= usb_control_msg(d->udev, usb_rcvctrlpipe(d->udev, 0),
--			0x06, 0x80, 0x0302, 0x00, data, 0x0006, 200);
--	info("Firmware Status: %x (%x)", ret , data[2]);
-+	ret = usb_control_msg(d->udev, usb_rcvctrlpipe(d->udev, 0),
-+			      0x06, 0x80, 0x0302, 0x00,
-+			      data, 0x6, 200);
-+	if (ret != 6)
-+		ret = -EINVAL;
-+	else
-+		ret = data[2];
-+
-+	info("Firmware Status: %6ph", data);
- 
--	ret = (ret < 0) ? -ENODEV : data[2];
- 	kfree(data);
- 	return ret;
- }
-@@ -1199,6 +1204,7 @@ static int lme2510_get_adapter_count(str
- static int lme2510_identify_state(struct dvb_usb_device *d, const char **name)
- {
- 	struct lme2510_state *st = d->priv;
-+	int status;
- 
- 	usb_reset_configuration(d->udev);
- 
-@@ -1207,12 +1213,16 @@ static int lme2510_identify_state(struct
- 
- 	st->dvb_usb_lme2510_firmware = dvb_usb_lme2510_firmware;
- 
--	if (lme2510_return_status(d) == 0x44) {
-+	status = lme2510_return_status(d);
-+	if (status == 0x44) {
- 		*name = lme_firmware_switch(d, 0);
- 		return COLD;
+ 		if (adap->fe[0]) {
+ 			info("FE Found M88RS2000");
+-			dvb_attach(ts2020_attach, adap->fe[0], &ts2020_config,
+-					&d->i2c_adap);
+ 			st->i2c_tuner_gate_w = 5;
+ 			st->i2c_tuner_gate_r = 5;
+ 			st->i2c_tuner_addr = 0x60;
+@@ -1150,17 +1148,18 @@ static int dm04_lme2510_tuner(struct dvb
+ 			ret = st->tuner_config;
+ 		break;
+ 	case TUNER_RS2000:
+-		ret = st->tuner_config;
++		if (dvb_attach(ts2020_attach, adap->fe[0],
++			       &ts2020_config, &d->i2c_adap))
++			ret = st->tuner_config;
+ 		break;
+ 	default:
+ 		break;
  	}
  
--	return 0;
-+	if (status != 0x47)
-+		return -EINVAL;
-+
-+	return WARM;
- }
+-	if (ret)
++	if (ret) {
+ 		info("TUN Found %s tuner", tun_msg[ret]);
+-	else {
+-		info("TUN No tuner found --- resetting device");
+-		lme_coldreset(d);
++	} else {
++		info("TUN No tuner found");
+ 		return -ENODEV;
+ 	}
  
- static int lme2510_get_stream_config(struct dvb_frontend *fe, u8 *ts_type,
