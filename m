@@ -1,69 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032624AbeBOC3P (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 21:29:15 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:42639 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032483AbeBOC3M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 21:29:12 -0500
-X-Google-Smtp-Source: AH8x226Pb35zWZPjZBMXH8/n7hAsNpubKzLDLaMBhLDuhCECyNP1pCVROOl3XzE9znBAJGzFx4EaqXsAbu4TZZUsVOs=
-MIME-Version: 1.0
-In-Reply-To: <CACPK8XdXOaPZ5i=qKns3=V87nhfY62PNr4kwH9xwVYxY0djo0g@mail.gmail.com>
-References: <20180205235757.246758-1-brendanhiggins@google.com>
- <20180205235757.246758-3-brendanhiggins@google.com> <CACPK8XdXOaPZ5i=qKns3=V87nhfY62PNr4kwH9xwVYxY0djo0g@mail.gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-Date: Thu, 15 Feb 2018 12:58:51 +1030
-X-Google-Sender-Auth: UyzrrAqUK85-YDE5GHJHKbRT1W4
-Message-ID: <CACPK8XeOUrrGinU_fmnmn4atYm3Bs-xSoB2MqT0Yr-LytHt78Q@mail.gmail.com>
-Subject: Re: [PATCH v9 2/3] arm: dts: add Nuvoton NPCM750 device tree
-To: Brendan Higgins <brendanhiggins@google.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc: Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, julien.thierry@arm.com,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1032618AbeBOCdX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 21:33:23 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52066 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1032437AbeBOCdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 21:33:22 -0500
+From: Richard Guy Briggs <rgb@redhat.com>
+To: LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
+Cc: viro@zeniv.linux.org.uk, Paul Moore <paul@paul-moore.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH] namei: fix hardlink speeling error
+Date: Wed, 14 Feb 2018 21:28:54 -0500
+Message-Id: <68d4b8c4ad6b85d4336f2a2893e3ea04ffdc7794.1518661649.git.rgb@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 4:52 PM, Joel Stanley <joel@jms.id.au> wrote:
-> Hi Brendan,
->
-> On Tue, Feb 6, 2018 at 10:27 AM, Brendan Higgins
-> <brendanhiggins@google.com> wrote:
->> Add a common device tree for all Nuvoton NPCM750 BMCs and a board
->> specific device tree for the NPCM750 (Poleg) evaluation board.
->>
->> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
->> Reviewed-by: Tomer Maimon <tmaimon77@gmail.com>
->> Reviewed-by: Avi Fishman <avifishman70@gmail.com>
->> Reviewed-by: Joel Stanley <joel@jms.id.au>
->> Reviewed-by: Rob Herring <robh@kernel.org>
->> Tested-by: Tomer Maimon <tmaimon77@gmail.com>
->> Tested-by: Avi Fishman <avifishman70@gmail.com>
->
-> This looks well acked, reviewed and tested. How do you plan to have
-> the ARM SoC maintainers merge your patches?
+Fix handlink to hardlink.
 
-Following up on an IRC conversation with Brendan:
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+---
+ fs/namei.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The process is normally to create a git branch based on on -rc1, apply
-your patches, and send them to the ARM maintainers. You then push a
-signed tag to a repository somewhere, send a pull request (a git
-request-pull email, not a Github PR) and Arnd, Olof or one of the
-other maintainers will pull your tree some time before the next merge
-window opens.
-
-Arnd, do we have this documented somewhere for new maintainers to follow?
-
-Cheers,
-
-Joel
+diff --git a/fs/namei.c b/fs/namei.c
+index bf1c046b..bbfb21d3 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -4258,7 +4258,7 @@ int vfs_link(struct dentry *old_dentry, struct inode *dir, struct dentry *new_de
+ 	/*
+ 	 * To use null names we require CAP_DAC_READ_SEARCH
+ 	 * This ensures that not everyone will be able to create
+-	 * handlink using the passed filedescriptor.
++	 * hardlink using the passed filedescriptor.
+ 	 */
+ 	if (flags & AT_EMPTY_PATH) {
+ 		if (!capable(CAP_DAC_READ_SEARCH))
+-- 
+1.8.3.1
