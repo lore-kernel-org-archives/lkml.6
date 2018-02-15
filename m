@@ -1,77 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1771605-1518708034-2-13000474774738410795
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518708034; b=HmDnwiuTAgPjzxBO3jkqsPrnLGJFu4UbDnKmcwSZdthNjeC
-    lbdntJhGDT6NL/k2Fo8fqrrR2V++c5oeEDcIP5Ui5haxU6Z/ijuZXgz3saYoQV9Z
-    vpXmsDCCEuZMhohrqsV7/EMZ2Vw77ZV1DQ3dDlbMwnTGr3VR52n3m7Lxrc+tjCq1
-    4Vb5BYjQJsF4JAtDlZniD+0mihIcGVH9jqnoJ3sLlYIrtD/eT2uuyTy1yYHNZwz9
-    J8ytfxY9JnWAxY3O/eBoCKgG3oCdY9BaGwAzHa/tGyzv0a0uOIEusRIXld/S31B1
-    x2HC1TvrQPy1UmpeuHSnzsrBWpDMis9+spDL9rQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518708034; bh=JIlB3Nmg79zaUckVekJm8ehOAf
-    3yqqBwMDeNliVestY=; b=s+xPfHnIPL2/ICtMOaigTYy953b8UlwbRpdFsbzSQd
-    kTYXO3eXOyo7NY7uG+/Amy77iswunrxTifcRnZg+AtCAUdFUvB79meGFuLJAC93h
-    wOKp4Bz8+XN4Ki/6+Ec55YLfmoJQPetB/34IV/QhtsmQe51qP0WPIO2AKh/J39/8
-    LqrKImVibKnNzLf+Z3Z2OJeY5Y5rDGUu0B0Gp9PndR0VwECDAo+m9DcCA+wGQd/C
-    nonTAo80NWNwn6XlJmw1DoKbsLwEEvrTrp7MzhO1Pncz4HFZcu4IjaWHuIwcUpVG
-    0QOcrzwDLPpiyq/c9+5ajxXwYvDDmdqD+N1VubO2WdrQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161624AbeBOPUb (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:20:31 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48356 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161735AbeBOPU3 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:20:29 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x226AaY7G40jSa38jLvd/bgIhhZk5xtRWYjEf2sCezsK9KU+zn5ktW30ROpsMjsoulHGnopEm
+ARC-Seal: i=1; a=rsa-sha256; t=1518708034; cv=none;
+        d=google.com; s=arc-20160816;
+        b=lgOqB5cQjAw3a/maWZxtUApalKNwzBbSEgtklxUN3dZeVxwqMjvjJlXDDKiH1BpChI
+         +2DLWSrQsBRZ1I7kMdPuc/N9Py/zRUdSvrQlaAv4Iu8YT87X3UT31RcrippAJGTjZDBx
+         wOSpOrYxSJQks8WCfeK8UA/QRDhFRP3haHn8z+A6okzH1PCjD6db3Xasni2srdnB6t4f
+         79bOBKeNyG/Xo3ipeaSiuYb2HrNEMvPuhqMndD3B1cuQQKYqFftAN+j6ZBs+VGu3Bkw5
+         EFF3XPQWS+NF+oPKWgJb1ieGAD1o7anShxi5tt/G042l9uO9aPuR83EmeMc3IjsRkCe5
+         7IMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=KXU24SWJP9hzXpD5SHDvIK8+ZRF7C1SGWEYNEo/gMV4=;
+        b=wVD6tawN/WfV6CDpmiBxLV9b5czuapmwe6P4MssGnFGhPDsuPu3vDRymayRr00vNFf
+         sst8YSs0lioOFp5nkE2miA/VKGIM5zPbTW6NXCneukHOOUCzvIaKtn/HWzqRol0dq6iU
+         OYXQbcDgI0bREZl3dmX5g9Qim7Rpz5aE8fcVzCvY5GT2f0GhTC6tm140wVELTUMwovip
+         zdK5w6ukSNfr+KxETjRQU9TTmiDr+my+4CSESI5c70tdxJn57hwb86hf4IXyTMe1NF3j
+         CQhrGnDCS2sizLpSR14tRXAWwEiGnCjpDa3tG5Uit0nT9OFClYNpSe80JsdgjfqOV4ip
+         /22A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Peter Senna Tschudin <peter.senna@gmail.com>,
-        Jonathan Dieter <jdieter@lesbg.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 3.18 18/45] usbip: Fix potential format overflow in userspace tools
-Date: Thu, 15 Feb 2018 16:17:09 +0100
-Message-Id: <20180215144119.706452573@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Andrew Goodbody <andrew.goodbody@cambrionix.com>,
+	Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH 3.18 19/45] usb: usbip: Fix possible deadlocks reported by lockdep
+Date: Thu, 15 Feb 2018 16:17:10 +0100
+Message-Id: <20180215144120.038606867@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215144115.863307741@linuxfoundation.org>
 References: <20180215144115.863307741@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1592480795539268142?=
+X-GMAIL-MSGID: =?utf-8?q?1592480795539268142?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -79,105 +48,624 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jonathan Dieter <jdieter@lesbg.com>
+From: Andrew Goodbody <andrew.goodbody@cambrionix.com>
 
-commit e5dfa3f902b9a642ae8c6997d57d7c41e384a90b upstream.
+commit 21619792d1eca7e772ca190ba68588e57f29595b upstream.
 
-The usbip userspace tools call sprintf()/snprintf() and don't check for
-the return value which can lead the paths to overflow, truncating the
-final file in the path.
+Change spin_lock calls to spin_lock_irqsave to prevent
+attmpted recursive lock taking in interrupt context.
 
-More urgently, GCC 7 now warns that these aren't checked with
--Wformat-overflow, and with -Werror enabled in configure.ac, that makes
-these tools unbuildable.
+This patch fixes Bug 109351
+  https://bugzilla.kernel.org/show_bug.cgi?id=109351
 
-This patch fixes these problems by replacing sprintf() with snprintf() in
-one place and adding checks for the return value of snprintf().
-
-Reviewed-by: Peter Senna Tschudin <peter.senna@gmail.com>
-Signed-off-by: Jonathan Dieter <jdieter@lesbg.com>
-Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
+Signed-off-by: Andrew Goodbody <andrew.goodbody@cambrionix.com>
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- tools/usb/usbip/libsrc/usbip_common.c      |    9 ++++++++-
- tools/usb/usbip/libsrc/usbip_host_driver.c |   27 ++++++++++++++++++++++-----
- 2 files changed, 30 insertions(+), 6 deletions(-)
+ drivers/usb/usbip/usbip_event.c |    5 +-
+ drivers/usb/usbip/vhci_hcd.c    |   88 +++++++++++++++++++++++-----------------
+ drivers/usb/usbip/vhci_rx.c     |   30 +++++++------
+ drivers/usb/usbip/vhci_sysfs.c  |   19 +++++---
+ drivers/usb/usbip/vhci_tx.c     |   14 +++---
+ 5 files changed, 91 insertions(+), 65 deletions(-)
 
---- a/tools/usb/usbip/libsrc/usbip_common.c
-+++ b/tools/usb/usbip/libsrc/usbip_common.c
-@@ -215,9 +215,16 @@ int read_usb_interface(struct usbip_usb_
- 		       struct usbip_usb_interface *uinf)
+--- a/drivers/usb/usbip/usbip_event.c
++++ b/drivers/usb/usbip/usbip_event.c
+@@ -117,11 +117,12 @@ EXPORT_SYMBOL_GPL(usbip_event_add);
+ int usbip_event_happened(struct usbip_device *ud)
  {
- 	char busid[SYSFS_BUS_ID_SIZE];
-+	int size;
- 	struct udev_device *sif;
+ 	int happened = 0;
++	unsigned long flags;
  
--	sprintf(busid, "%s:%d.%d", udev->busid, udev->bConfigurationValue, i);
-+	size = snprintf(busid, sizeof(busid), "%s:%d.%d",
-+			udev->busid, udev->bConfigurationValue, i);
-+	if (size < 0 || (unsigned int)size >= sizeof(busid)) {
-+		err("busid length %i >= %lu or < 0", size,
-+		    (unsigned long)sizeof(busid));
-+		return -1;
-+	}
+-	spin_lock(&ud->lock);
++	spin_lock_irqsave(&ud->lock, flags);
+ 	if (ud->event != 0)
+ 		happened = 1;
+-	spin_unlock(&ud->lock);
++	spin_unlock_irqrestore(&ud->lock, flags);
  
- 	sif = udev_device_new_from_subsystem_sysname(udev_context, "usb", busid);
- 	if (!sif) {
---- a/tools/usb/usbip/libsrc/usbip_host_driver.c
-+++ b/tools/usb/usbip/libsrc/usbip_host_driver.c
-@@ -39,13 +39,19 @@ struct udev *udev_context;
- static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
+ 	return happened;
+ }
+--- a/drivers/usb/usbip/vhci_hcd.c
++++ b/drivers/usb/usbip/vhci_hcd.c
+@@ -121,9 +121,11 @@ static void dump_port_status_diff(u32 pr
+ 
+ void rh_port_connect(int rhport, enum usb_device_speed speed)
  {
- 	char status_attr_path[SYSFS_PATH_MAX];
-+	int size;
- 	int fd;
- 	int length;
- 	char status;
- 	int value = 0;
++	unsigned long	flags;
++
+ 	usbip_dbg_vhci_rh("rh_port_connect %d\n", rhport);
  
--	snprintf(status_attr_path, SYSFS_PATH_MAX, "%s/usbip_status",
--		 udev->path);
-+	size = snprintf(status_attr_path, SYSFS_PATH_MAX, "%s/usbip_status",
-+			udev->path);
-+	if (size < 0 || (unsigned int)size >= sizeof(status_attr_path)) {
-+		err("usbip_status path length %i >= %lu or < 0", size,
-+		    (unsigned long)sizeof(status_attr_path));
-+		return -1;
-+	}
+-	spin_lock(&the_controller->lock);
++	spin_lock_irqsave(&the_controller->lock, flags);
  
- 	fd = open(status_attr_path, O_RDONLY);
- 	if (fd < 0) {
-@@ -225,6 +231,7 @@ int usbip_host_export_device(struct usbi
- {
- 	char attr_name[] = "usbip_sockfd";
- 	char sockfd_attr_path[SYSFS_PATH_MAX];
-+	int size;
- 	char sockfd_buff[30];
- 	int ret;
- 
-@@ -244,10 +251,20 @@ int usbip_host_export_device(struct usbi
+ 	the_controller->port_status[rhport] |= USB_PORT_STAT_CONNECTION
+ 		| (1 << USB_PORT_FEAT_C_CONNECTION);
+@@ -139,22 +141,24 @@ void rh_port_connect(int rhport, enum us
+ 		break;
  	}
  
- 	/* only the first interface is true */
--	snprintf(sockfd_attr_path, sizeof(sockfd_attr_path), "%s/%s",
--		 edev->udev.path, attr_name);
-+	size = snprintf(sockfd_attr_path, sizeof(sockfd_attr_path), "%s/%s",
-+			edev->udev.path, attr_name);
-+	if (size < 0 || (unsigned int)size >= sizeof(sockfd_attr_path)) {
-+		err("exported device path length %i >= %lu or < 0", size,
-+		    (unsigned long)sizeof(sockfd_attr_path));
-+		return -1;
-+	}
+-	spin_unlock(&the_controller->lock);
++	spin_unlock_irqrestore(&the_controller->lock, flags);
  
--	snprintf(sockfd_buff, sizeof(sockfd_buff), "%d\n", sockfd);
-+	size = snprintf(sockfd_buff, sizeof(sockfd_buff), "%d\n", sockfd);
-+	if (size < 0 || (unsigned int)size >= sizeof(sockfd_buff)) {
-+		err("socket length %i >= %lu or < 0", size,
-+		    (unsigned long)sizeof(sockfd_buff));
-+		return -1;
-+	}
+ 	usb_hcd_poll_rh_status(vhci_to_hcd(the_controller));
+ }
  
- 	ret = write_sysfs_attribute(sockfd_attr_path, sockfd_buff,
- 				    strlen(sockfd_buff));
+ static void rh_port_disconnect(int rhport)
+ {
++	unsigned long	flags;
++
+ 	usbip_dbg_vhci_rh("rh_port_disconnect %d\n", rhport);
+ 
+-	spin_lock(&the_controller->lock);
++	spin_lock_irqsave(&the_controller->lock, flags);
+ 
+ 	the_controller->port_status[rhport] &= ~USB_PORT_STAT_CONNECTION;
+ 	the_controller->port_status[rhport] |=
+ 					(1 << USB_PORT_FEAT_C_CONNECTION);
+ 
+-	spin_unlock(&the_controller->lock);
++	spin_unlock_irqrestore(&the_controller->lock, flags);
+ 	usb_hcd_poll_rh_status(vhci_to_hcd(the_controller));
+ }
+ 
+@@ -182,13 +186,14 @@ static int vhci_hub_status(struct usb_hc
+ 	int		retval;
+ 	int		rhport;
+ 	int		changed = 0;
++	unsigned long	flags;
+ 
+ 	retval = DIV_ROUND_UP(VHCI_NPORTS + 1, 8);
+ 	memset(buf, 0, retval);
+ 
+ 	vhci = hcd_to_vhci(hcd);
+ 
+-	spin_lock(&vhci->lock);
++	spin_lock_irqsave(&vhci->lock, flags);
+ 	if (!HCD_HW_ACCESSIBLE(hcd)) {
+ 		usbip_dbg_vhci_rh("hw accessible flag not on?\n");
+ 		goto done;
+@@ -209,7 +214,7 @@ static int vhci_hub_status(struct usb_hc
+ 		usb_hcd_resume_root_hub(hcd);
+ 
+ done:
+-	spin_unlock(&vhci->lock);
++	spin_unlock_irqrestore(&vhci->lock, flags);
+ 	return changed ? retval : 0;
+ }
+ 
+@@ -230,6 +235,7 @@ static int vhci_hub_control(struct usb_h
+ 	struct vhci_hcd	*dum;
+ 	int             retval = 0;
+ 	int		rhport;
++	unsigned long	flags;
+ 
+ 	u32 prev_port_status[VHCI_NPORTS];
+ 
+@@ -248,7 +254,7 @@ static int vhci_hub_control(struct usb_h
+ 
+ 	dum = hcd_to_vhci(hcd);
+ 
+-	spin_lock(&dum->lock);
++	spin_lock_irqsave(&dum->lock, flags);
+ 
+ 	/* store old status and compare now and old later */
+ 	if (usbip_dbg_flag_vhci_rh) {
+@@ -402,7 +408,7 @@ static int vhci_hub_control(struct usb_h
+ 	}
+ 	usbip_dbg_vhci_rh(" bye\n");
+ 
+-	spin_unlock(&dum->lock);
++	spin_unlock_irqrestore(&dum->lock, flags);
+ 
+ 	return retval;
+ }
+@@ -425,6 +431,7 @@ static void vhci_tx_urb(struct urb *urb)
+ {
+ 	struct vhci_device *vdev = get_vdev(urb->dev);
+ 	struct vhci_priv *priv;
++	unsigned long flags;
+ 
+ 	if (!vdev) {
+ 		pr_err("could not get virtual device");
+@@ -437,7 +444,7 @@ static void vhci_tx_urb(struct urb *urb)
+ 		return;
+ 	}
+ 
+-	spin_lock(&vdev->priv_lock);
++	spin_lock_irqsave(&vdev->priv_lock, flags);
+ 
+ 	priv->seqnum = atomic_inc_return(&the_controller->seqnum);
+ 	if (priv->seqnum == 0xffff)
+@@ -451,7 +458,7 @@ static void vhci_tx_urb(struct urb *urb)
+ 	list_add_tail(&priv->list, &vdev->priv_tx);
+ 
+ 	wake_up(&vdev->waitq_tx);
+-	spin_unlock(&vdev->priv_lock);
++	spin_unlock_irqrestore(&vdev->priv_lock, flags);
+ }
+ 
+ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb,
+@@ -460,6 +467,7 @@ static int vhci_urb_enqueue(struct usb_h
+ 	struct device *dev = &urb->dev->dev;
+ 	int ret = 0;
+ 	struct vhci_device *vdev;
++	unsigned long flags;
+ 
+ 	usbip_dbg_vhci_hc("enter, usb_hcd %p urb %p mem_flags %d\n",
+ 			  hcd, urb, mem_flags);
+@@ -467,11 +475,11 @@ static int vhci_urb_enqueue(struct usb_h
+ 	/* patch to usb_sg_init() is in 2.5.60 */
+ 	BUG_ON(!urb->transfer_buffer && urb->transfer_buffer_length);
+ 
+-	spin_lock(&the_controller->lock);
++	spin_lock_irqsave(&the_controller->lock, flags);
+ 
+ 	if (urb->status != -EINPROGRESS) {
+ 		dev_err(dev, "URB already unlinked!, status %d\n", urb->status);
+-		spin_unlock(&the_controller->lock);
++		spin_unlock_irqrestore(&the_controller->lock, flags);
+ 		return urb->status;
+ 	}
+ 
+@@ -483,7 +491,7 @@ static int vhci_urb_enqueue(struct usb_h
+ 	    vdev->ud.status == VDEV_ST_ERROR) {
+ 		dev_err(dev, "enqueue for inactive port %d\n", vdev->rhport);
+ 		spin_unlock(&vdev->ud.lock);
+-		spin_unlock(&the_controller->lock);
++		spin_unlock_irqrestore(&the_controller->lock, flags);
+ 		return -ENODEV;
+ 	}
+ 	spin_unlock(&vdev->ud.lock);
+@@ -558,14 +566,14 @@ static int vhci_urb_enqueue(struct usb_h
+ 
+ out:
+ 	vhci_tx_urb(urb);
+-	spin_unlock(&the_controller->lock);
++	spin_unlock_irqrestore(&the_controller->lock, flags);
+ 
+ 	return 0;
+ 
+ no_need_xmit:
+ 	usb_hcd_unlink_urb_from_ep(hcd, urb);
+ no_need_unlink:
+-	spin_unlock(&the_controller->lock);
++	spin_unlock_irqrestore(&the_controller->lock, flags);
+ 	usb_hcd_giveback_urb(vhci_to_hcd(the_controller), urb, urb->status);
+ 	return ret;
+ }
+@@ -620,16 +628,17 @@ static int vhci_urb_dequeue(struct usb_h
+ {
+ 	struct vhci_priv *priv;
+ 	struct vhci_device *vdev;
++	unsigned long flags;
+ 
+ 	pr_info("dequeue a urb %p\n", urb);
+ 
+-	spin_lock(&the_controller->lock);
++	spin_lock_irqsave(&the_controller->lock, flags);
+ 
+ 	priv = urb->hcpriv;
+ 	if (!priv) {
+ 		/* URB was never linked! or will be soon given back by
+ 		 * vhci_rx. */
+-		spin_unlock(&the_controller->lock);
++		spin_unlock_irqrestore(&the_controller->lock, flags);
+ 		return 0;
+ 	}
+ 
+@@ -638,7 +647,7 @@ static int vhci_urb_dequeue(struct usb_h
+ 
+ 		ret = usb_hcd_check_unlink_urb(hcd, urb, status);
+ 		if (ret) {
+-			spin_unlock(&the_controller->lock);
++			spin_unlock_irqrestore(&the_controller->lock, flags);
+ 			return ret;
+ 		}
+ 	}
+@@ -666,10 +675,10 @@ static int vhci_urb_dequeue(struct usb_h
+ 
+ 		usb_hcd_unlink_urb_from_ep(hcd, urb);
+ 
+-		spin_unlock(&the_controller->lock);
++		spin_unlock_irqrestore(&the_controller->lock, flags);
+ 		usb_hcd_giveback_urb(vhci_to_hcd(the_controller), urb,
+ 				     urb->status);
+-		spin_lock(&the_controller->lock);
++		spin_lock_irqsave(&the_controller->lock, flags);
+ 
+ 	} else {
+ 		/* tcp connection is alive */
+@@ -681,7 +690,7 @@ static int vhci_urb_dequeue(struct usb_h
+ 		unlink = kzalloc(sizeof(struct vhci_unlink), GFP_ATOMIC);
+ 		if (!unlink) {
+ 			spin_unlock(&vdev->priv_lock);
+-			spin_unlock(&the_controller->lock);
++			spin_unlock_irqrestore(&the_controller->lock, flags);
+ 			usbip_event_add(&vdev->ud, VDEV_EVENT_ERROR_MALLOC);
+ 			return -ENOMEM;
+ 		}
+@@ -702,7 +711,7 @@ static int vhci_urb_dequeue(struct usb_h
+ 		spin_unlock(&vdev->priv_lock);
+ 	}
+ 
+-	spin_unlock(&the_controller->lock);
++	spin_unlock_irqrestore(&the_controller->lock, flags);
+ 
+ 	usbip_dbg_vhci_hc("leave\n");
+ 	return 0;
+@@ -711,8 +720,9 @@ static int vhci_urb_dequeue(struct usb_h
+ static void vhci_device_unlink_cleanup(struct vhci_device *vdev)
+ {
+ 	struct vhci_unlink *unlink, *tmp;
++	unsigned long flags;
+ 
+-	spin_lock(&the_controller->lock);
++	spin_lock_irqsave(&the_controller->lock, flags);
+ 	spin_lock(&vdev->priv_lock);
+ 
+ 	list_for_each_entry_safe(unlink, tmp, &vdev->unlink_tx, list) {
+@@ -746,19 +756,19 @@ static void vhci_device_unlink_cleanup(s
+ 		list_del(&unlink->list);
+ 
+ 		spin_unlock(&vdev->priv_lock);
+-		spin_unlock(&the_controller->lock);
++		spin_unlock_irqrestore(&the_controller->lock, flags);
+ 
+ 		usb_hcd_giveback_urb(vhci_to_hcd(the_controller), urb,
+ 				     urb->status);
+ 
+-		spin_lock(&the_controller->lock);
++		spin_lock_irqsave(&the_controller->lock, flags);
+ 		spin_lock(&vdev->priv_lock);
+ 
+ 		kfree(unlink);
+ 	}
+ 
+ 	spin_unlock(&vdev->priv_lock);
+-	spin_unlock(&the_controller->lock);
++	spin_unlock_irqrestore(&the_controller->lock, flags);
+ }
+ 
+ /*
+@@ -825,8 +835,9 @@ static void vhci_shutdown_connection(str
+ static void vhci_device_reset(struct usbip_device *ud)
+ {
+ 	struct vhci_device *vdev = container_of(ud, struct vhci_device, ud);
++	unsigned long flags;
+ 
+-	spin_lock(&ud->lock);
++	spin_lock_irqsave(&ud->lock, flags);
+ 
+ 	vdev->speed  = 0;
+ 	vdev->devid  = 0;
+@@ -841,14 +852,16 @@ static void vhci_device_reset(struct usb
+ 	}
+ 	ud->status = VDEV_ST_NULL;
+ 
+-	spin_unlock(&ud->lock);
++	spin_unlock_irqrestore(&ud->lock, flags);
+ }
+ 
+ static void vhci_device_unusable(struct usbip_device *ud)
+ {
+-	spin_lock(&ud->lock);
++	unsigned long flags;
++
++	spin_lock_irqsave(&ud->lock, flags);
+ 	ud->status = VDEV_ST_ERROR;
+-	spin_unlock(&ud->lock);
++	spin_unlock_irqrestore(&ud->lock, flags);
+ }
+ 
+ static void vhci_device_init(struct vhci_device *vdev)
+@@ -938,12 +951,13 @@ static int vhci_get_frame_number(struct
+ static int vhci_bus_suspend(struct usb_hcd *hcd)
+ {
+ 	struct vhci_hcd *vhci = hcd_to_vhci(hcd);
++	unsigned long flags;
+ 
+ 	dev_dbg(&hcd->self.root_hub->dev, "%s\n", __func__);
+ 
+-	spin_lock(&vhci->lock);
++	spin_lock_irqsave(&vhci->lock, flags);
+ 	hcd->state = HC_STATE_SUSPENDED;
+-	spin_unlock(&vhci->lock);
++	spin_unlock_irqrestore(&vhci->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -952,15 +966,16 @@ static int vhci_bus_resume(struct usb_hc
+ {
+ 	struct vhci_hcd *vhci = hcd_to_vhci(hcd);
+ 	int rc = 0;
++	unsigned long flags;
+ 
+ 	dev_dbg(&hcd->self.root_hub->dev, "%s\n", __func__);
+ 
+-	spin_lock(&vhci->lock);
++	spin_lock_irqsave(&vhci->lock, flags);
+ 	if (!HCD_HW_ACCESSIBLE(hcd))
+ 		rc = -ESHUTDOWN;
+ 	else
+ 		hcd->state = HC_STATE_RUNNING;
+-	spin_unlock(&vhci->lock);
++	spin_unlock_irqrestore(&vhci->lock, flags);
+ 
+ 	return rc;
+ }
+@@ -1058,17 +1073,18 @@ static int vhci_hcd_suspend(struct platf
+ 	int rhport = 0;
+ 	int connected = 0;
+ 	int ret = 0;
++	unsigned long flags;
+ 
+ 	hcd = platform_get_drvdata(pdev);
+ 
+-	spin_lock(&the_controller->lock);
++	spin_lock_irqsave(&the_controller->lock, flags);
+ 
+ 	for (rhport = 0; rhport < VHCI_NPORTS; rhport++)
+ 		if (the_controller->port_status[rhport] &
+ 		    USB_PORT_STAT_CONNECTION)
+ 			connected += 1;
+ 
+-	spin_unlock(&the_controller->lock);
++	spin_unlock_irqrestore(&the_controller->lock, flags);
+ 
+ 	if (connected > 0) {
+ 		dev_info(&pdev->dev,
+--- a/drivers/usb/usbip/vhci_rx.c
++++ b/drivers/usb/usbip/vhci_rx.c
+@@ -72,10 +72,11 @@ static void vhci_recv_ret_submit(struct
+ {
+ 	struct usbip_device *ud = &vdev->ud;
+ 	struct urb *urb;
++	unsigned long flags;
+ 
+-	spin_lock(&vdev->priv_lock);
++	spin_lock_irqsave(&vdev->priv_lock, flags);
+ 	urb = pickup_urb_and_free_priv(vdev, pdu->base.seqnum);
+-	spin_unlock(&vdev->priv_lock);
++	spin_unlock_irqrestore(&vdev->priv_lock, flags);
+ 
+ 	if (!urb) {
+ 		pr_err("cannot find a urb of seqnum %u\n", pdu->base.seqnum);
+@@ -104,9 +105,9 @@ static void vhci_recv_ret_submit(struct
+ 
+ 	usbip_dbg_vhci_rx("now giveback urb %p\n", urb);
+ 
+-	spin_lock(&the_controller->lock);
++	spin_lock_irqsave(&the_controller->lock, flags);
+ 	usb_hcd_unlink_urb_from_ep(vhci_to_hcd(the_controller), urb);
+-	spin_unlock(&the_controller->lock);
++	spin_unlock_irqrestore(&the_controller->lock, flags);
+ 
+ 	usb_hcd_giveback_urb(vhci_to_hcd(the_controller), urb, urb->status);
+ 
+@@ -117,8 +118,9 @@ static struct vhci_unlink *dequeue_pendi
+ 						  struct usbip_header *pdu)
+ {
+ 	struct vhci_unlink *unlink, *tmp;
++	unsigned long flags;
+ 
+-	spin_lock(&vdev->priv_lock);
++	spin_lock_irqsave(&vdev->priv_lock, flags);
+ 
+ 	list_for_each_entry_safe(unlink, tmp, &vdev->unlink_rx, list) {
+ 		pr_info("unlink->seqnum %lu\n", unlink->seqnum);
+@@ -127,12 +129,12 @@ static struct vhci_unlink *dequeue_pendi
+ 					  unlink->seqnum);
+ 			list_del(&unlink->list);
+ 
+-			spin_unlock(&vdev->priv_lock);
++			spin_unlock_irqrestore(&vdev->priv_lock, flags);
+ 			return unlink;
+ 		}
+ 	}
+ 
+-	spin_unlock(&vdev->priv_lock);
++	spin_unlock_irqrestore(&vdev->priv_lock, flags);
+ 
+ 	return NULL;
+ }
+@@ -142,6 +144,7 @@ static void vhci_recv_ret_unlink(struct
+ {
+ 	struct vhci_unlink *unlink;
+ 	struct urb *urb;
++	unsigned long flags;
+ 
+ 	usbip_dump_header(pdu);
+ 
+@@ -152,9 +155,9 @@ static void vhci_recv_ret_unlink(struct
+ 		return;
+ 	}
+ 
+-	spin_lock(&vdev->priv_lock);
++	spin_lock_irqsave(&vdev->priv_lock, flags);
+ 	urb = pickup_urb_and_free_priv(vdev, unlink->unlink_seqnum);
+-	spin_unlock(&vdev->priv_lock);
++	spin_unlock_irqrestore(&vdev->priv_lock, flags);
+ 
+ 	if (!urb) {
+ 		/*
+@@ -171,9 +174,9 @@ static void vhci_recv_ret_unlink(struct
+ 		urb->status = pdu->u.ret_unlink.status;
+ 		pr_info("urb->status %d\n", urb->status);
+ 
+-		spin_lock(&the_controller->lock);
++		spin_lock_irqsave(&the_controller->lock, flags);
+ 		usb_hcd_unlink_urb_from_ep(vhci_to_hcd(the_controller), urb);
+-		spin_unlock(&the_controller->lock);
++		spin_unlock_irqrestore(&the_controller->lock, flags);
+ 
+ 		usb_hcd_giveback_urb(vhci_to_hcd(the_controller), urb,
+ 				     urb->status);
+@@ -185,10 +188,11 @@ static void vhci_recv_ret_unlink(struct
+ static int vhci_priv_tx_empty(struct vhci_device *vdev)
+ {
+ 	int empty = 0;
++	unsigned long flags;
+ 
+-	spin_lock(&vdev->priv_lock);
++	spin_lock_irqsave(&vdev->priv_lock, flags);
+ 	empty = list_empty(&vdev->priv_rx);
+-	spin_unlock(&vdev->priv_lock);
++	spin_unlock_irqrestore(&vdev->priv_lock, flags);
+ 
+ 	return empty;
+ }
+--- a/drivers/usb/usbip/vhci_sysfs.c
++++ b/drivers/usb/usbip/vhci_sysfs.c
+@@ -32,10 +32,11 @@ static ssize_t status_show(struct device
+ {
+ 	char *s = out;
+ 	int i = 0;
++	unsigned long flags;
+ 
+ 	BUG_ON(!the_controller || !out);
+ 
+-	spin_lock(&the_controller->lock);
++	spin_lock_irqsave(&the_controller->lock, flags);
+ 
+ 	/*
+ 	 * output example:
+@@ -73,7 +74,7 @@ static ssize_t status_show(struct device
+ 		spin_unlock(&vdev->ud.lock);
+ 	}
+ 
+-	spin_unlock(&the_controller->lock);
++	spin_unlock_irqrestore(&the_controller->lock, flags);
+ 
+ 	return out - s;
+ }
+@@ -83,11 +84,12 @@ static DEVICE_ATTR_RO(status);
+ static int vhci_port_disconnect(__u32 rhport)
+ {
+ 	struct vhci_device *vdev;
++	unsigned long flags;
+ 
+ 	usbip_dbg_vhci_sysfs("enter\n");
+ 
+ 	/* lock */
+-	spin_lock(&the_controller->lock);
++	spin_lock_irqsave(&the_controller->lock, flags);
+ 
+ 	vdev = port_to_vdev(rhport);
+ 
+@@ -97,14 +99,14 @@ static int vhci_port_disconnect(__u32 rh
+ 
+ 		/* unlock */
+ 		spin_unlock(&vdev->ud.lock);
+-		spin_unlock(&the_controller->lock);
++		spin_unlock_irqrestore(&the_controller->lock, flags);
+ 
+ 		return -EINVAL;
+ 	}
+ 
+ 	/* unlock */
+ 	spin_unlock(&vdev->ud.lock);
+-	spin_unlock(&the_controller->lock);
++	spin_unlock_irqrestore(&the_controller->lock, flags);
+ 
+ 	usbip_event_add(&vdev->ud, VDEV_EVENT_DOWN);
+ 
+@@ -180,6 +182,7 @@ static ssize_t store_attach(struct devic
+ 	int sockfd = 0;
+ 	__u32 rhport = 0, devid = 0, speed = 0;
+ 	int err;
++	unsigned long flags;
+ 
+ 	/*
+ 	 * @rhport: port number of vhci_hcd
+@@ -205,14 +208,14 @@ static ssize_t store_attach(struct devic
+ 	/* now need lock until setting vdev status as used */
+ 
+ 	/* begin a lock */
+-	spin_lock(&the_controller->lock);
++	spin_lock_irqsave(&the_controller->lock, flags);
+ 	vdev = port_to_vdev(rhport);
+ 	spin_lock(&vdev->ud.lock);
+ 
+ 	if (vdev->ud.status != VDEV_ST_NULL) {
+ 		/* end of the lock */
+ 		spin_unlock(&vdev->ud.lock);
+-		spin_unlock(&the_controller->lock);
++		spin_unlock_irqrestore(&the_controller->lock, flags);
+ 
+ 		sockfd_put(socket);
+ 
+@@ -231,7 +234,7 @@ static ssize_t store_attach(struct devic
+ 	vdev->ud.status     = VDEV_ST_NOTASSIGNED;
+ 
+ 	spin_unlock(&vdev->ud.lock);
+-	spin_unlock(&the_controller->lock);
++	spin_unlock_irqrestore(&the_controller->lock, flags);
+ 	/* end the lock */
+ 
+ 	vdev->ud.tcp_rx = kthread_get_run(vhci_rx_loop, &vdev->ud, "vhci_rx");
+--- a/drivers/usb/usbip/vhci_tx.c
++++ b/drivers/usb/usbip/vhci_tx.c
+@@ -47,16 +47,17 @@ static void setup_cmd_submit_pdu(struct
+ static struct vhci_priv *dequeue_from_priv_tx(struct vhci_device *vdev)
+ {
+ 	struct vhci_priv *priv, *tmp;
++	unsigned long flags;
+ 
+-	spin_lock(&vdev->priv_lock);
++	spin_lock_irqsave(&vdev->priv_lock, flags);
+ 
+ 	list_for_each_entry_safe(priv, tmp, &vdev->priv_tx, list) {
+ 		list_move_tail(&priv->list, &vdev->priv_rx);
+-		spin_unlock(&vdev->priv_lock);
++		spin_unlock_irqrestore(&vdev->priv_lock, flags);
+ 		return priv;
+ 	}
+ 
+-	spin_unlock(&vdev->priv_lock);
++	spin_unlock_irqrestore(&vdev->priv_lock, flags);
+ 
+ 	return NULL;
+ }
+@@ -136,16 +137,17 @@ static int vhci_send_cmd_submit(struct v
+ static struct vhci_unlink *dequeue_from_unlink_tx(struct vhci_device *vdev)
+ {
+ 	struct vhci_unlink *unlink, *tmp;
++	unsigned long flags;
+ 
+-	spin_lock(&vdev->priv_lock);
++	spin_lock_irqsave(&vdev->priv_lock, flags);
+ 
+ 	list_for_each_entry_safe(unlink, tmp, &vdev->unlink_tx, list) {
+ 		list_move_tail(&unlink->list, &vdev->unlink_rx);
+-		spin_unlock(&vdev->priv_lock);
++		spin_unlock_irqrestore(&vdev->priv_lock, flags);
+ 		return unlink;
+ 	}
+ 
+-	spin_unlock(&vdev->priv_lock);
++	spin_unlock_irqrestore(&vdev->priv_lock, flags);
+ 
+ 	return NULL;
+ }
