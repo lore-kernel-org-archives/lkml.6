@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227oPtMrOVJYpvmvlKz4oFcgZ2s97ICa4wP0AJkNWAwI0xPwpz4lIArk6Pv8kaMyoRN3Uwx2
-ARC-Seal: i=1; a=rsa-sha256; t=1518709102; cv=none;
+X-Google-Smtp-Source: AH8x2254cxJZzgY3szIpHKVwJMV3bqXmgwV63DPU/JTVutMdzmvio7gn7bioVqe1kiEFJvcjxEZL
+ARC-Seal: i=1; a=rsa-sha256; t=1518709099; cv=none;
         d=google.com; s=arc-20160816;
-        b=J39k27trTHAuoTCYfsiHar4BuIWSbWXE/ZwhIFkUsjJAhOGRRlU44ah2YVpfA4FsOJ
-         IO+XcSRko5BUdXJC3Um4HOGNREyW5827p1znydMMAisRAhyRtm4lqfH52PWt13hHOOMS
-         /zeq4qNg+/DD7y47jB0mFfhfyiBoDgMFNFnB62m63ij0TOFZxlgG76SA93lq5BhITiSY
-         UvX/gT3JPcUOX1lCwQIfgMrvcgDVNA5UAL66MvAIP3QHbXNJxNM3yDtvU1ZB3eK8NIkd
-         qDcRHvFXdsSNRyyEOx58ZnJ9GHoOiQOhH7wE8mKHqmunoPTsgSW/2bIzdpU/q+XLM+Hf
-         ytxQ==
+        b=mhwSDlllO/fIQOGeWDdV0fLZRycIiL39gRBRWZP2JGNvBFFe/g1Ny7WKvE9rjlofks
+         JO7Dq9/5T82Cq0yHqSOFeZtLO0WWp99c6OmBqxEGjORqKZdiUJOnYBqEgERkdgakYl/C
+         evugto/cV9Aqz4SfeHkWmF6vsLLue7Dr/psTbdhU2CSlxELrH2asQ7HyEvXrDLVGzLgO
+         J1j6OZjPPZxwNCgVK7tqXmprn0mrC374aO7u/px5QJs/WzZkNiP6q4qxZbHql5u8T+yU
+         XNZf/k3RcHZi1ysHzj+VTqWEce0orN/sI8yqKxcNXzAaFZRxR3qSdi8LHBdO8gxXs9P0
+         ngxA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UNhkV7zyaSgj8betJpA1whXeFsLpthwMf0Oi+NgxxRQ=;
-        b=i4Pky4nV+L1X4zrrSJIqsyM2pbC9CTLODoCypXiLqQcR+hpV5EO3SFroRq86FFEBSp
-         rH0o3oe+qWFyJpeHvIaGTjcWuV6jgO4cqGxox2lEaDkSEhe8hHA0z97C5RedKfFv6kHz
-         a1xbzOMZfmBBwUa1dJSQ39cdEjpJXzfHYcH+s0ZsRTmsHhy/glnB8tsoughwsuyRVQNZ
-         VFQPCJglkzsAW7PnvRLxpJyrzU+hwqOmMrN4ldMMNAWHNnXPA6/JSy/sbaG2RjAbuQwG
-         St/oiPvQ079dJW17dY/VVkB3BWFxZH8GwgEFElsZfpQy2IN27fFLRfUYiplnDJDEfMNH
-         CRzw==
+        bh=5MFXlZkG3fDaeMhXOcNyF30Fi1eifq0RYRSp0gQ/z9g=;
+        b=veEGkEp9Wo9CYSv7KYEalw4zA9r11DtMoyIszwh5LVzJizeNhrbU48i8tbzcwPIneM
+         FYuxJLmEVBkxpgWmlWarz09reYYSPwWYjDVt43eKcWimSP+f3Mcotb1+Z0VxU/16KAAp
+         b2ylcmFwcjxOqjNJTWmLHv/6f3jdCX3y+wLmUiyX4iO/kMBU7+ljNx0A3OnJhD6KXDBF
+         jZk6O0V90n2ff1EsKdLWGXlivv8XGv7gGyJhzg15htOGIqKaY0bc6O9D2RoqOmfB9ot6
+         /N1cq14CN3YHgLQdXrFwlnyh4POF8ZPR9E09L9XTJIczd8vAxcNTEoFXMbNeteW/FgnD
+         gkuA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot <syzkaller@googlegroups.com>,
-	Eric Biggers <ebiggers@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 191/195] devpts: fix error handling in devpts_mntget()
-Date: Thu, 15 Feb 2018 16:18:02 +0100
-Message-Id: <20180215151715.878189408@linuxfoundation.org>
+	David Howells <dhowells@redhat.com>,
+	Masakazu Urade <urade.masakazu@jp.panasonic.com>,
+	Koichi Yasutake <yasutake.koichi@jp.panasonic.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 4.14 190/195] mn10300/misalignment: Use SIGSEGV SEGV_MAPERR to report a failed user copy
+Date: Thu, 15 Feb 2018 16:18:01 +0100
+Message-Id: <20180215151715.817169623@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481915554763095?=
-X-GMAIL-MSGID: =?utf-8?q?1592481915554763095?=
+X-GMAIL-THRID: =?utf-8?q?1592480783215634672?=
+X-GMAIL-MSGID: =?utf-8?q?1592481913186469772?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,58 +50,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit c9cc8d01fb04117928830449388512a5047569c9 upstream.
+commit 6ac1dc736b323011a55ecd1fc5897c24c4f77cbd upstream.
 
-If devpts_ptmx_path() returns an error code, then devpts_mntget()
-dereferences an ERR_PTR():
+Setting si_code to 0 is the same a setting si_code to SI_USER which is definitely
+not correct.  With si_code set to SI_USER si_pid and si_uid will be copied to
+userspace instead of si_addr.  Which is very wrong.
 
-    BUG: unable to handle kernel paging request at fffffffffffffff5
-    IP: devpts_mntget+0x13f/0x280 fs/devpts/inode.c:173
+So fix this by using a sensible si_code (SEGV_MAPERR) for this failure.
 
-Fix it by returning early in the error paths.
-
-Reproducer:
-
-    #define _GNU_SOURCE
-    #include <fcntl.h>
-    #include <sched.h>
-    #include <sys/ioctl.h>
-    #define TIOCGPTPEER _IO('T', 0x41)
-
-    int main()
-    {
-        for (;;) {
-            int fd = open("/dev/ptmx", 0);
-            unshare(CLONE_NEWNS);
-            ioctl(fd, TIOCGPTPEER, 0);
-        }
-    }
-
-Fixes: 311fc65c9fb9 ("pty: Repair TIOCGPTPEER")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: b920de1b77b7 ("mn10300: add the MN10300/AM33 architecture to the kernel")
+Cc: David Howells <dhowells@redhat.com>
+Cc: Masakazu Urade <urade.masakazu@jp.panasonic.com>
+Cc: Koichi Yasutake <yasutake.koichi@jp.panasonic.com>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/devpts/inode.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/mn10300/mm/misalignment.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/devpts/inode.c
-+++ b/fs/devpts/inode.c
-@@ -168,11 +168,11 @@ struct vfsmount *devpts_mntget(struct fi
- 	dput(path.dentry);
- 	if (err) {
- 		mntput(path.mnt);
--		path.mnt = ERR_PTR(err);
-+		return ERR_PTR(err);
- 	}
- 	if (DEVPTS_SB(path.mnt->mnt_sb) != fsi) {
- 		mntput(path.mnt);
--		path.mnt = ERR_PTR(-ENODEV);
-+		return ERR_PTR(-ENODEV);
- 	}
- 	return path.mnt;
- }
+--- a/arch/mn10300/mm/misalignment.c
++++ b/arch/mn10300/mm/misalignment.c
+@@ -437,7 +437,7 @@ transfer_failed:
+ 
+ 	info.si_signo	= SIGSEGV;
+ 	info.si_errno	= 0;
+-	info.si_code	= 0;
++	info.si_code	= SEGV_MAPERR;
+ 	info.si_addr	= (void *) regs->pc;
+ 	force_sig_info(SIGSEGV, &info, current);
+ 	return;
