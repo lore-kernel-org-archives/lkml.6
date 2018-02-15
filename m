@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2243538-1518720503-2-5719182777304080554
+X-Cyrus-Session-Id: sloti22d1t05-2241641-1518720498-2-11342175421168276214
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720502; b=XPGmtq/uO2IhOpiahyXuKnF/rUfzSIctDPzs+HPH36nX8Z2
-    DsIYRSIHlWx+Ir++xNIub6E6nQLfkfQmITw2WXBGstzVjmUw+NQ9aip7BeC7CMSV
-    ymFrgTd3+undDaYhsc/gXMTxNG0YoNpI6clrAoR2UTqgqu3+HGKkVfd5+0lAMMDc
-    SlbtM0qWT8FJ6JGD6o0OxYP6wi8tdi7saGbkm0xnuDcdkOX2TjL3HQbmtalx/oVn
-    h4HBtyUimWvr4Ts69ttCVqvttPKHt/+RdPSSOdyph30RPri6C/KcOYFYo9QNo0eq
-    ZleYRYhjNb7v9e2te7EBYOOsIZXjK1zmFB2cpiw==
+    t=1518720498; b=WiqUBHVDeck1XZtIzhTE27Q9DrQcPrqh5fYw1jrAGyN6uAO
+    7guXIDRHdNOgdGh+xRWJh70ywE9vR6KKnpdcd0QG1v3nQeAYktCaXubCByeCJR1C
+    wU/cWom/I/+rflyurUm6O/BkcGausutN+kpNgYG7ATmBqYhJ9jBWLvKPrnNGBcbr
+    QU9aRRnFtgk6YsRt+Jdkm24vClUui3Zw1a/0bKz/y6zMy/Ke+KuJOhZuFa1MOoLw
+    9Zt7bHvZTnvV49oRF0XlQ45Cu6KGFDHvAnzJlPGyjjmpBuBGiW5X/8mdmkdvGnf3
+    y5qmNX4IzyNsfF8Z9C7qWzAcxbuMseu36r/YpAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720502; bh=fYLIg73O2kzrZyxVLurjPgDvoU
-    9B+cAYbp66lnsZMso=; b=G/gMC7TBw4QwCMMAOevJy4XVqCG5URFQUQoPEvpRbc
-    +VYiIDWdXLkbCIx8PXq8PGYsYkAX/AS7nlpfqPSbm2rP7I8EVuC5IlKDM2Audmm/
-    RAATVH3l6Df3b45fz9G2/z0TS4NuddrbMJe/gMWzYX17a7FNZal49skDTqnOKPKf
-    SE0jSkJLX0up+UNrH98SmIFmL7TuRjJqeDe7q6EVJZknxLbTx9xQk7PVMWfD1Fqq
-    qebVmba2H+Iysb8KvD0/2p5J2mpXdc5ecepo+gU9zuo5wBtLBgm5hZk/jnPsVx05
-    gEomFvjnTUJMNIQhLhhwnXyESv24UGoD97+FDJdiGT4g==
+    :list-id; s=arctest; t=1518720498; bh=CjAuNo8pHmUMa3buOnrD02IWtM
+    qgzfC8PuGFF1Q2E/A=; b=Pe872zy25h5zvnaBlgt3xY6n/n977+Ml3J0JUyWvGR
+    /E7sMJb/amYyNLGTCiLenjU5wSS3TJn4ywgQfXnjmZnN8HBEFZqcdKX5/uj1NiIn
+    EZV+jtP/mNBKcojVR2pSrci2vcpk3mlqcnNpVmMzBz/sTByRz2aZKkj3J0vgUdFF
+    gO7u+wQ5JZS25+1PF/21XjW/5tuRlmOOBIS54IQMQhFIfHx/kBV2tFsR83BwkuHP
+    e/lhGNddj8xXm5uwGXfcE1PB5/Kl4hKbuxZFT1Vr2A8r2336Qbsqw4R5Cgo70vgF
+    Uv5tH/r0JMZ2AUQqKBb6zcSILd+R9xR6jsg+bgbQhdDA==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,24 +47,23 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162300AbeBOPWK (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:22:10 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49388 "EHLO
+        id S1162307AbeBOPWL (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:22:11 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49368 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162248AbeBOPWH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:22:07 -0500
+        with ESMTP id S1162270AbeBOPWE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:22:04 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
         Rolf Neugebauer <rolf.neugebauer@docker.com>
-Subject: [PATCH 4.4 038/108] x86/microcode: Do the family check first
-Date: Thu, 15 Feb 2018 16:16:35 +0100
-Message-Id: <20180215151227.742442946@linuxfoundation.org>
+Subject: [PATCH 4.4 037/108] x86/microcode/AMD: Do not load when running on a hypervisor
+Date: Thu, 15 Feb 2018 16:16:34 +0100
+Message-Id: <20180215151227.581698482@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -83,88 +82,99 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Borislav Petkov <bp@suse.de>
 
-commit 1f161f67a272cc4f29f27934dd3f74cb657eb5c4 upstream with adjustments.
+commit a15a753539eca8ba243d576f02e7ca9c4b7d7042 upstream with minor
+adjustments.
 
-On CPUs like AMD's Geode, for example, we shouldn't even try to load
-microcode because they do not support the modern microcode loading
-interface.
+Doing so is completely void of sense for multiple reasons so prevent
+it. Set dis_ucode_ldr to true and thus disable the microcode loader by
+default to address xen pv guests which execute the AP path but not the
+BSP path.
 
-However, we do the family check *after* the other checks whether the
-loader has been disabled on the command line or whether we're running in
-a guest.
+By having it turned off by default, the APs won't run into the loader
+either.
 
-So move the family checks first in order to exit early if we're being
-loaded on an unsupported family.
+Also, check CPUID(1).ECX[31] which hypervisors set. Well almost, not the
+xen pv one. That one gets the aforementioned "fix".
 
-Reported-and-tested-by: Sven Glodowski <glodi1@arcor.de>
+Also, improve the detection method by caching the final decision whether
+to continue loading in dis_ucode_ldr and do it once on the BSP. The APs
+then simply test that value.
+
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: <stable@vger.kernel.org> # 4.11..
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://bugzilla.suse.com/show_bug.cgi?id=1061396
-Link: http://lkml.kernel.org/r/20171012112316.977-1-bp@alien8.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Tested-by: Juergen Gross <jgross@suse.com>
+Tested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Acked-by: Juergen Gross <jgross@suse.com>
+Link: http://lkml.kernel.org/r/20161218164414.9649-4-bp@alien8.de
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Rolf Neugebauer <rolf.neugebauer@docker.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/microcode/core.c |   27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
+ arch/x86/kernel/cpu/microcode/core.c |   28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
 
 --- a/arch/x86/kernel/cpu/microcode/core.c
 +++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -94,9 +94,6 @@ static bool __init check_loader_disabled
+@@ -44,7 +44,7 @@
+ 
+ static struct microcode_ops	*microcode_ops;
+ 
+-static bool dis_ucode_ldr;
++static bool dis_ucode_ldr = true;
+ 
+ static int __init disable_loader(char *str)
+ {
+@@ -81,6 +81,7 @@ struct cpu_info_ctx {
+ 
+ static bool __init check_loader_disabled_bsp(void)
+ {
++	u32 a, b, c, d;
+ #ifdef CONFIG_X86_32
+ 	const char *cmdline = (const char *)__pa_nodebug(boot_command_line);
+ 	const char *opt	    = "dis_ucode_ldr";
+@@ -93,8 +94,23 @@ static bool __init check_loader_disabled
  	bool *res = &dis_ucode_ldr;
  #endif
  
--	if (!have_cpuid_p())
--		return *res;
--
- 	a = 1;
- 	c = 0;
- 	native_cpuid(&a, &b, &c, &d);
-@@ -138,8 +135,9 @@ void __init load_ucode_bsp(void)
- {
- 	int vendor;
- 	unsigned int family;
-+	bool intel = true;
- 
--	if (check_loader_disabled_bsp())
+-	if (cmdline_find_option_bool(cmdline, option))
+-		*res = true;
 +	if (!have_cpuid_p())
++		return *res;
++
++	a = 1;
++	c = 0;
++	native_cpuid(&a, &b, &c, &d);
++
++	/*
++	 * CPUID(1).ECX[31]: reserved for hypervisor use. This is still not
++	 * completely accurate as xen pv guests don't see that CPUID bit set but
++	 * that's good enough as they don't land on the BSP path anyway.
++	 */
++	if (c & BIT(31))
++		return *res;
++
++	if (cmdline_find_option_bool(cmdline, option) <= 0)
++		*res = false;
+ 
+ 	return *res;
+ }
+@@ -126,9 +142,6 @@ void __init load_ucode_bsp(void)
+ 	if (check_loader_disabled_bsp())
  		return;
  
+-	if (!have_cpuid_p())
+-		return;
+-
  	vendor = x86_vendor();
-@@ -147,16 +145,27 @@ void __init load_ucode_bsp(void)
+ 	family = x86_family();
  
- 	switch (vendor) {
- 	case X86_VENDOR_INTEL:
--		if (family >= 6)
--			load_ucode_intel_bsp();
-+		if (family < 6)
-+			return;
- 		break;
-+
- 	case X86_VENDOR_AMD:
--		if (family >= 0x10)
--			load_ucode_amd_bsp(family);
-+		if (family < 0x10)
-+			return;
-+		intel = false;
- 		break;
-+
- 	default:
--		break;
-+		return;
- 	}
-+
-+	if (check_loader_disabled_bsp())
-+		return;
-+
-+	if (intel)
-+		load_ucode_intel_bsp();
-+	else
-+		load_ucode_amd_bsp(family);
- }
+@@ -162,9 +175,6 @@ void load_ucode_ap(void)
+ 	if (check_loader_disabled_ap())
+ 		return;
  
- static bool check_loader_disabled_ap(void)
+-	if (!have_cpuid_p())
+-		return;
+-
+ 	vendor = x86_vendor();
+ 	family = x86_family();
+ 
