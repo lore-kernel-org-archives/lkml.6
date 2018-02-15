@@ -1,176 +1,70 @@
-Return-Path: <BATV+1bf800642d6cdbdad6da+5289+infradead.org+dwmw2@twosheds.srs.infradead.org>
-X-Google-Smtp-Source: AH8x2255QhMdWJcer168wIdfoIzHbrUI4wgOPVs3cCGHaM5DqouIpasA+MU38HweudzqLRxBvIKU
-ARC-Seal: i=1; a=rsa-sha256; t=1518737336; cv=none;
+Return-Path: <richard@sigma-star.at>
+X-Google-Smtp-Source: AH8x226skE+K+kD1LD4zaz/K2YX3XWXPQUukibznoKSM/DTTMgfmSuP91wGBMZOr15PfYP1EsR8/
+ARC-Seal: i=1; a=rsa-sha256; t=1518738254; cv=none;
         d=google.com; s=arc-20160816;
-        b=dvIk7v3wQNKBT0RccfrhJCAzrb9av9mjQvmbmkAB9GlAn9xbAVYQMbLrLn5bpq0T2m
-         fusV/LRg6Ka9ZY9mA99k10zoVxtMSUrZx+R9VVSPbcCn4wiZRFxIt6mCpz9kTJv6WlVK
-         sOR7an4MTiio3nazK+oQFslidOa2YmO63Vqm5KbpopFQs73CW5tGRMZmwaNnAwvWEvZA
-         pgw1lWPTTl/3f7bxHtf/070uMf2u4fx18dKCt5LtqWnVFifSIGcMqA1RO5drgTaktC3V
-         nBEBG7T6ygbjGcqhHQtgm5SSEbyMblPqz9lhbcJxI5pl4zntcEqMgYDxybB5X57Z0ONA
-         kASw==
+        b=b1bW7s2yDcwaniW6RVz7l13KhGEr0pfx0fCwPpnyjKeOeT+M9SU173qnkulRxgL6VT
+         UnVLfWUfMOEmUXgDRnset/1jka1PVafrtiBPqWxLn3AyR7+Vnx8IE/IlNigKVxRIed+N
+         XCy5tJFaFX81yJ0UpbdSGySC8gro+H6GKiC2c595H2dPycN9dVNsuRQ/aBT1axakhagh
+         rZXvHiZVlGF9tMpnyWb4n3i4RfcZVF83jbDeSGp2tVt9+SspfUFDXweURNH4CcJcao9S
+         obMNe6+Dw9dCi/UUDGWu+mFFcWmlFhz4O7ujgS8mZ9DyxNoTJ5keDbThV/iM6mjS7krh
+         +1bg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:date:face:references:in-reply-to:cc:to:from:subject
-         :message-id:dkim-signature:arc-authentication-results;
-        bh=3MU4KMkHO5hCoWpibjfoUX+5UVYCyx528cNBJ8Nj72E=;
-        b=HHgWXHL8Rxm8ZwyGUvLinp4rsYjLo38+RXN4E0hx73xgIKFrsNU0keaZ394dUovRy5
-         GhTRyHUrwrbiiRihji/Yc/2xcNjqR46poYguXZGQfxp23ltNvURuSiCgf03IqrXGGSzJ
-         wcozrLTdNoFSA/H2Uvklc5ZOYR+fmTX/ik5heiGJqfXlQczYgM+e1IcIbxNyv2/bCiqk
-         z/dmc3ICRzLljltdBzzemaQUe/dOQURiowZ3m5tHt5FJACJwBf4u8YYSWa1tdtu1AJxI
-         cZkfkgna9UXk45LIHU0dUQdgEqWuVdGVnBcQ87VnoJ0QpsWXErbZvJYvLWyrzVA7g39O
-         5xSQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=mOen61VHbGkB9Mzf+na23+IVNOCEM1/B0Za0RU0YHPA=;
+        b=X7tOjRmyGxbXwzrAxON1T/1s7BvntJ3Y1YdDGNNzvDv+/JXz6IXI9XsGH+80VSSGDf
+         BSjFREviBELigY9kh9l1mOrNBQo3RlwoQeoMp6JLLsU88fHZp7x2UXtQbGJJEadtCZw5
+         Sv1CcJNjPmvUAtCeXG2QbnU7Z1L79xHn/G4fiM9Cyph+64JuST4zhgiKCZz9k2WAMO9C
+         oN6GKO/SN6jKgi3Egcy1tAL/gHvfYvd/sjIu/ViEpe3vB/tf4gFpjTUDtHdTAnLGBxEG
+         W+oFGx9wcbhAFq0drZnP+FAviJhdplM2UgCluosNStWEMNtQ4KDAoR9+fi7Fj+h5RT6c
+         wABA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=Ol3Z/MIK;
-       spf=pass (google.com: best guess record for domain of batv+1bf800642d6cdbdad6da+5289+infradead.org+dwmw2@twosheds.srs.infradead.org designates 2001:8b0:10b:1:21d:7dff:fe04:dbe2 as permitted sender) smtp.mailfrom=BATV+1bf800642d6cdbdad6da+5289+infradead.org+dwmw2@twosheds.srs.infradead.org
+       spf=pass (google.com: domain of richard@sigma-star.at designates 109.75.188.150 as permitted sender) smtp.mailfrom=richard@sigma-star.at
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=twosheds.20170209 header.b=Ol3Z/MIK;
-       spf=pass (google.com: best guess record for domain of batv+1bf800642d6cdbdad6da+5289+infradead.org+dwmw2@twosheds.srs.infradead.org designates 2001:8b0:10b:1:21d:7dff:fe04:dbe2 as permitted sender) smtp.mailfrom=BATV+1bf800642d6cdbdad6da+5289+infradead.org+dwmw2@twosheds.srs.infradead.org
-Message-ID: <1518737310.7876.10.camel@infradead.org>
-Subject: Re: Revert "x86/speculation: Simplify
- indirect_branch_prediction_barrier()" crashes KVM guest
-From: David Woodhouse <dwmw2@infradead.org>
-To: Richard Weinberger <richard@sigma-star.at>
-Cc: mingo@kernel.org, luto@kernel.org, arjan@linux.intel.com, bp@alien8.de,
-  dan.j.williams@intel.com, dave.hansen@linux.intel.com,
- gregkh@linuxfoundation.org, jpoimboe@redhat.com,
- torvalds@linux-foundation.org,  peterz@infradead.org, tglx@linutronix.de,
- arjan.van.de.ven@intel.com,  dave.hansen@intel.com, jmattson@google.com,
- karahmed@amazon.de,  kvm@vger.kernel.org, pbonzini@redhat.com,
- rkrcmar@redhat.com, sironi@amazon.de,  linux-kernel@vger.kernel.org
-In-Reply-To: <1753460.Vme2X1QhPT@blindfold>
-References: <1753460.Vme2X1QhPT@blindfold>
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-kRiTdyG4GV759X22D6Ky"
-Date: Thu, 15 Feb 2018 23:28:30 +0000
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+       spf=pass (google.com: domain of richard@sigma-star.at designates 109.75.188.150 as permitted sender) smtp.mailfrom=richard@sigma-star.at
+From: Richard Weinberger <richard@sigma-star.at>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: mingo@kernel.org, luto@kernel.org, arjan@linux.intel.com, bp@alien8.de, dan.j.williams@intel.com, dave.hansen@linux.intel.com, gregkh@linuxfoundation.org, jpoimboe@redhat.com, torvalds@linux-foundation.org, peterz@infradead.org, tglx@linutronix.de, arjan.van.de.ven@intel.com, dave.hansen@intel.com, jmattson@google.com, karahmed@amazon.de, kvm@vger.kernel.org, pbonzini@redhat.com, rkrcmar@redhat.com, sironi@amazon.de, linux-kernel@vger.kernel.org
+Subject: Re: Revert "x86/speculation: Simplify indirect_branch_prediction_barrier()" crashes KVM guest
+Date: Fri, 16 Feb 2018 00:45:29 +0100
+Message-ID: <3378738.8dlq1zuRqp@blindfold>
+In-Reply-To: <1518737310.7876.10.camel@infradead.org>
+References: <1753460.Vme2X1QhPT@blindfold> <1518737310.7876.10.camel@infradead.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592510409183573045?=
-X-GMAIL-MSGID: =?utf-8?q?1592511519808970840?=
+X-GMAIL-MSGID: =?utf-8?q?1592512483856498443?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Am Freitag, 16. Februar 2018, 00:28:30 CET schrieb David Woodhouse:
+> On Fri, 2018-02-16 at 00:12 +0100, Richard Weinberger wrote:
+> > [    2.791518] Code: 8b 45 00 49 8b 7d 08 49 83 c5 18 31 d2 31 f6 ff
+> > d0 49 8b 45 00 48 85 c0 75 e9 eb b1 b9 49 00 00 00 b8 01 00 00 00 ba
+> > 00 00 00 00 <0f> 30 e9 68 fd ff ff 9c 58 0f 1f 44 00 00 48 89 c5 fa
+> > 66 0f 1f
+>=20
+>   23:   b9 49 00 00 00          mov    $0x49,%ecx
+>   28:   b8 01 00 00 00          mov    $0x1,%eax
+>   2d:   ba 00 00 00 00          mov    $0x0,%edx
+>   32:   0f 30                   wrmsr =20
+>=20
+> The faulting instruction is the wrmsr itself. That shouldn't happen; if
+> the CPUID bit indicates that the MSR exists, then it should exist.
+>=20
+> The reverted patch did use the C __wrmsr() macro which contained a
+> fixup for this GP# but it was just a side-effect of the "cleanup" =E2=80=
+=94 it
+> wasn't intentional because that really shouldn't happen. That looks
+> like a qemu bug as first glance.
 
---=-kRiTdyG4GV759X22D6Ky
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Hmmm, yes seems so. Just gave latest qemu a try, works fine. ;-\
 
-T24gRnJpLCAyMDE4LTAyLTE2IGF0IDAwOjEyICswMTAwLCBSaWNoYXJkIFdlaW5iZXJnZXIgd3Jv
-dGU6Cj4gCj4gW8KgwqDCoCAyLjc5MTUxOF0gQ29kZTogOGIgNDUgMDAgNDkgOGIgN2QgMDggNDkg
-ODMgYzUgMTggMzEgZDIgMzEgZjYgZmYKPiBkMCA0OSA4YiA0NSAwMCA0OCA4NSBjMCA3NSBlOSBl
-YiBiMSBiOSA0OSAwMCAwMCAwMCBiOCAwMSAwMCAwMCAwMCBiYQo+IDAwIDAwIDAwIDAwIDwwZj4g
-MzAgZTkgNjggZmQgZmYgZmYgOWMgNTggMGYgMWYgNDQgMDAgMDAgNDggODkgYzUgZmEKPiA2NiAw
-ZiAxZgoKwqAgMjM6wqDCoMKgYjkgNDkgMDAgMDAgMDDCoMKgwqDCoMKgwqDCoMKgwqDCoG1vdsKg
-wqDCoMKgJDB4NDksJWVjeArCoCAyODrCoMKgwqBiOCAwMSAwMCAwMCAwMMKgwqDCoMKgwqDCoMKg
-wqDCoMKgbW92wqDCoMKgwqAkMHgxLCVlYXgKwqAgMmQ6wqDCoMKgYmEgMDAgMDAgMDAgMDDCoMKg
-wqDCoMKgwqDCoMKgwqDCoG1vdsKgwqDCoMKgJDB4MCwlZWR4CsKgIDMyOsKgwqDCoDBmIDMwwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB3cm1zciDCoAoKVGhlIGZhdWx0aW5n
-IGluc3RydWN0aW9uIGlzIHRoZSB3cm1zciBpdHNlbGYuIFRoYXQgc2hvdWxkbid0IGhhcHBlbjsg
-aWYKdGhlIENQVUlEIGJpdCBpbmRpY2F0ZXMgdGhhdCB0aGUgTVNSIGV4aXN0cywgdGhlbiBpdCBz
-aG91bGQgZXhpc3QuCgpUaGUgcmV2ZXJ0ZWQgcGF0Y2ggZGlkIHVzZSB0aGUgQyBfX3dybXNyKCkg
-bWFjcm8gd2hpY2ggY29udGFpbmVkIGEKZml4dXAgZm9yIHRoaXMgR1AjIGJ1dCBpdCB3YXMganVz
-dCBhIHNpZGUtZWZmZWN0IG9mIHRoZSAiY2xlYW51cCIg4oCUIGl0Cndhc24ndCBpbnRlbnRpb25h
-bCBiZWNhdXNlIHRoYXQgcmVhbGx5IHNob3VsZG4ndCBoYXBwZW4uIFRoYXQgbG9va3MKbGlrZSBh
-IHFlbXUgYnVnIGFzIGZpcnN0IGdsYW5jZS4=
+Thanks,
+//richard
 
-
---=-kRiTdyG4GV759X22D6Ky
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMTUyMzI4MzBaMC8GCSqG
-SIb3DQEJBDEiBCD1T43W4ULCkkogLz8FiRHHKbvscxWVbRPrQIdur8o7ODCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAMTsbpkCodxL
-xWVs+uitiFUS7Mczy7JfLmaWCfWWYtvAinjcFfBsTGct4dUUdlFvjefgV314lkXv6UkI4EEZ8rkz
-8uQOX9uMIsYGAN526ibBYD3G+7eZhNsEc0MZo/Wnoeb32Ml2HchIBbIrHZZY1rMjSwpBw6/RcsHS
-z0n8lof9A7GeeMEIOiaR4NER4LKVBFJfReIdeE2R0XWdhYyQZ76pT8lBi8N4nhdAYmU9/kzhCcme
-GhzpeML6s/gOPBSUc0+G9hPhYq8QpWI3NHYz5Xx/ggwV6Eupjpkv8qvowv/NAs6jMv/U9IiKghOQ
-Aqc3FZZcH6RF1NecJX0swYAqe7wAAAAAAAA=
-
-
---=-kRiTdyG4GV759X22D6Ky--
+=2D-=20
+sigma star gmbh - Eduard-Bodem-Gasse 6 - 6020 Innsbruck - Austria
+ATU66964118 - FN 374287y
