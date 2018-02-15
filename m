@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1841884-1518709629-2-9211412713001462536
+X-Cyrus-Session-Id: sloti22d1t05-1841884-1518709617-2-18041737936879848260
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518709629; b=aklPZGCtWny/i7/+nFyx25dKjj3Yx3NxaLE5IG2D4sKlnjz
-    tVBWHxGQ0+3JUTS1PsiFmHsVGM+ljLPn4hAz70bPC2jc8K7v9V9GK5phcToM3paL
-    h+9hgxETmxjdiv/WMgHBA8XujfsYPGV7m7rYpaDL3W8ksTwxKN2yC92jpSN8rpX9
-    vdZppr86XsCezptjOxlMckbG5K+DNg1RFcWixiSWlgf7H0bLmmGKxCVFjFvDYIpL
-    25MozhLdVnjG3JAEjebkNfB3l8CCeg3CYHVEl0G5AAlgAi2BVFgg5RPvGvv4xLuT
-    dGSS+sBqPVaYbYl9y9/n9uCadUhoL05ihrsoA4g==
+    t=1518709616; b=guX7apOsBf644T/L/eR130FY5f2HNntcOp84g4oAwtS7gh0
+    7BP/OOUwt9b4eUf/k/nEPNt73OAudeETYdHSrbbvrvV+puGMW69TOttuJRQpKYHo
+    8UOClUROzmPP3E6+tgRxDLZ+7DQGJXeIU8zh5qyD35nsy6OstHbk2AnH66oZPm5d
+    UEydeACgmrSHomPZV0YyiuByW7j5nRc3ua9pirYXQt1qjfEe0OSvoqILWpmdzm+j
+    aZ9M+Oah9CfNvJcV1qlDrKhGBreBbLScMmsKisjXY5UTkNMuPO/u2eERvfCSj5AW
+    sKsKhXhAZon7SBiZS1ZtfX0Pg3uh9XFYagJJN7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518709629; bh=Od+v9tEeTBHG4b3iqwcLZmZvlc
-    hG/t/4B3SQI8sjGxw=; b=OQKCnO0T8npl3uoKvnzc3wPt4rHrf7860OZPx3p8A4
-    mrYR9PopLLq6zCP/FSTyUbUcmOFa2NCp6jp98GU8FAVRYWFhiM2fu1bRag580MAa
-    2gNOJU16ML3GWqqwBoP7CsqAfHNsRmD179RmbrLCAtR6T/GGQh9npZZld83lr11C
-    9zCcga6n49hm1EA1yEkb7Y3eqw8KpQj/yiBm8Lr/y2FdoeJw9Y2Axf3eMcBdRoyT
-    qYr42/TaQebGLmbHpnj8vTC2aNJV9gBD4N8PcKQJWhIAOANQzFuorPzVRR8KZkRo
-    zqFJXlgkDNAFLAjMfihS4BmTINpIlsscps+9oLaRCB4g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518709616; bh=3q0/9ThgcQmtX2lv2Ue1NyzcD1
+    AbznGC3Sk4XznoDr0=; b=DN4KZJGsTz0HebmVcBAmVjLq+2a7cyuhJoqHcYUFpK
+    ng8Od39ubJjzEqvf5TZ8To9glXKfNIzMLw7I3BDMaWLzmUr9o+hzkP95BSx0oASf
+    VXV+DQxl2TEJt7Tlw+Bqejz+mwJobbZOaXwQTJ7H8+tBCMWW5ByclVvZa6VmTWHG
+    PmK29AQ7BhMkC5yGHDrUgfojIoJCqlJf5jt848dH3x4laWKMa1iasB8u5m8u3YCA
+    3NB3o5yBfbqv2Eq+vjYnxXuszOrQosvFy2PoFvcktvegF97ckyxOED0FI/56l2JE
+    oEKvOtDEtyAYXsV1ioTUH2MxIbRkVMwCQPUrKAlrTQqw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,27 +47,20 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424820AbeBOPrF (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:47:05 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36020 "EHLO
+        id S1424752AbeBOPqw (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:46:52 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35960 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424796AbeBOPrE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:47:04 -0500
+        with ESMTP id S1424685AbeBOPqv (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:46:51 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 184/202] clocksource/drivers/stm32: Fix kernel panic with multiple timers
-Date: Thu, 15 Feb 2018 16:18:04 +0100
-Message-Id: <20180215151722.461571222@linuxfoundation.org>
+        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        Peter Rosin <peda@axentia.se>
+Subject: [PATCH 4.15 180/202] pinctrl: sx150x: Add a static gpio/pinctrl pin range mapping
+Date: Thu, 15 Feb 2018 16:18:00 +0100
+Message-Id: <20180215151722.282779075@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -84,82 +77,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
+From: Peter Rosin <peda@axentia.se>
 
-commit e0aeca3d8cbaea514eb98df1149faa918f9ec42d upstream.
+commit b930151e5b55a0e62a3aad06876de891ac980471 upstream.
 
-The current code hides a couple of bugs:
+Without such a range, gpiolib fails with -EPROBE_DEFER, pending the
+addition of the range. So, without a range, gpiolib will keep
+deferring indefinitely.
 
- - The global variable 'clock_event_ddata' is overwritten each time the
-   init function is invoked.
-
-This is fixed with a kmemdup() instead of assigning the global variable. That
-prevents a memory corruption when several timers are defined in the DT.
-
- - The clockevent's event_handler is NULL if the time framework does
-   not select the clockevent when registering it, this is fine but the init
-   code generates in any case an interrupt leading to dereference this
-   NULL pointer.
-
-The stm32 timer works with shadow registers, a mechanism to cache the
-registers. When a change is done in one buffered register, we need to
-artificially generate an event to force the timer to copy the content
-of the register to the shadowed register.
-
-The auto-reload register (ARR) is one of the shadowed register as well as
-the prescaler register (PSC), so in order to force the copy, we issue an
-event which in turn leads to an interrupt and the NULL dereference.
-
-This is fixed by inverting two lines where we clear the status register
-before enabling the update event interrupt.
-
-As this kernel crash is resulting from the combination of these two bugs,
-the fixes are grouped into a single patch.
-
-Tested-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Acked-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1515418139-23276-11-git-send-email-daniel.lezcano@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 9e80f9064e73 ("pinctrl: Add SX150X GPIO Extender Pinctrl Driver")
+Fixes: e10f72bf4b3e ("gpio: gpiolib: Generalise state persistence beyond sleep")
+Suggested-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clocksource/timer-stm32.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-sx150x.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/clocksource/timer-stm32.c
-+++ b/drivers/clocksource/timer-stm32.c
-@@ -106,6 +106,10 @@ static int __init stm32_clockevent_init(
- 	unsigned long rate, max_delta;
- 	int irq, ret, bits, prescaler = 1;
+--- a/drivers/pinctrl/pinctrl-sx150x.c
++++ b/drivers/pinctrl/pinctrl-sx150x.c
+@@ -1193,6 +1193,11 @@ static int sx150x_probe(struct i2c_clien
+ 	if (ret)
+ 		return ret;
  
-+	data = kmemdup(&clock_event_ddata, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
++	ret = gpiochip_add_pin_range(&pctl->gpio, dev_name(dev),
++				     0, 0, pctl->data->npins);
++	if (ret)
++		return ret;
 +
- 	clk = of_clk_get(np, 0);
- 	if (IS_ERR(clk)) {
- 		ret = PTR_ERR(clk);
-@@ -156,8 +160,8 @@ static int __init stm32_clockevent_init(
- 
- 	writel_relaxed(prescaler - 1, data->base + TIM_PSC);
- 	writel_relaxed(TIM_EGR_UG, data->base + TIM_EGR);
--	writel_relaxed(TIM_DIER_UIE, data->base + TIM_DIER);
- 	writel_relaxed(0, data->base + TIM_SR);
-+	writel_relaxed(TIM_DIER_UIE, data->base + TIM_DIER);
- 
- 	data->periodic_top = DIV_ROUND_CLOSEST(rate, prescaler * HZ);
- 
-@@ -184,6 +188,7 @@ err_iomap:
- err_clk_enable:
- 	clk_put(clk);
- err_clk_get:
-+	kfree(data);
- 	return ret;
- }
- 
+ 	/* Add Interrupt support if an irq is specified */
+ 	if (client->irq > 0) {
+ 		pctl->irq_chip.name = devm_kstrdup(dev, client->name,
