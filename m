@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224oKIUTkoYbeGuzC9691puM41Qw4LANpalaWKv+A42gVX4riz5AYXr/1W4KWVrBc0sFzZ0S
-ARC-Seal: i=1; a=rsa-sha256; t=1518708561; cv=none;
+X-Google-Smtp-Source: AH8x227gxBKss2ve3llkMZRXmMWsTBbSJuvRePbw/MnBmw+C1l7nps2NtsNFabTirVhlElZ1Po32
+ARC-Seal: i=1; a=rsa-sha256; t=1518708558; cv=none;
         d=google.com; s=arc-20160816;
-        b=Rk7XsQqCKmcmDVxNXnLAYJKnFv5E5tRmNe/Do8EotYAjD7f8tFWbp1Ra0j5QedlmV4
-         pfOJMQPiudtskNMA+faP/COny+eJjAZRddDTYORtj49wZrxXr55mIU1Y5VR7hkIUzQGB
-         9yHrJT2b52aft0yuqMtvrZGIVOApbIc5HKWA+RSnnVbOgE2JJ+05xCmY/bsxNxiMYL6w
-         LYl6yw3M42w99OusqqPl4HaLCBcOCksDwsVMuqsndxbSUI9B9FIwtw1L+iiK5PIC4hMk
-         l2YwCY4E7vq+iwU3mSV6zcHPCuZyslZBCh2F2faxENKLMDNpg8suxWdhUOh9wQg6BrWZ
-         nvhA==
+        b=uPpnnzNcQ5onVs4NDMN8wh5+IyYxHCvQe8wCY8bGdiotWMgIlzAr9BvjEkVK6b12bj
+         3Dw1x8OJwftI9dT752BRWKkjZqn+RXoHrIBcu7EkO8zzth6KOFaqjNMRm5nJ1hTQ0qLQ
+         sbZUVjDlS/BPMUfkvalXyT3uoZlKixLMezyKl7i9ElwMJYzvOtFwNsese+jSNNro+RwU
+         ikh/b8iMtSfJERtx2Gcwku/3zxwgyFW6NQFTk4YWQ0Lao3dD6qel0gHy622UR8uOfVcA
+         oz+rrZ4tQ4GNNiWMKic19CfFIwhmBkWaYWnaU5A8wORtF6795pdBpOV/G+/LBkUg43/c
+         EOwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/Z+odxrSOTfCnSprv6jwt2ir0Wa3NJ5JrgpqYRbkuWE=;
-        b=mrLvYnkPsjlHLRQ0cyyyCFrsYc5gzfjxkBD5lKu8AtOkondocNAW+kPZlSLsivXIuW
-         sPw9DSPkKAU3Bm0uA0hoQVGpciEaUbTEiHwklJ0wa5u3Hp+tUi2v8ukDW+iybs+IqhH3
-         W/Y9W4jTZUW9LIuZXfH2GSi4skLz1hf8HqdGbB+A/rRhW12S90l3RhYmFHVdbpQqeTWn
-         2Ba9orVI+SPWVE/fAb+1MUN8SDryMYH7BnvW3cB1kbTSFrHJktJzuADrhr70yQUl5ONj
-         sUiyUm/1yOGNXgG0uOcgGJ+xYwovitDBZurDlG38DgiOFly4fCTpBb/JGgSzhq8lDuMe
-         FryA==
+        bh=+bNL1gLM0RTZ61VGFTWF5fQP9ya5uIr+gWeHKNULyG4=;
+        b=Z+LFQR9hLkVXKni5+bHKB4bX/OfVItk3EGlhmJNbD2QdGw16HTAIOPEp9pxzKx+/EC
+         3OVLOZdRUECeSV64xXApeMBeG7jjNI7I0M2yn21K/drHHZkoPrHhqmOCcr5LG9Luplhz
+         Zkti+J6/100X8TMDpaeGMsbyqLr0GAgboPwTo2QEzT56c99m/PEzbOt1zWKiwfdncx5L
+         FGBppzElKTsWK4TtkOvsE9ivw+nS8LQSCNbzDfsTkJFPsWrEQvL7AKCSnYP9FNFs9wWI
+         7vz21NSCZnk1GJ8GmfBAE/d9cAKToILI0ztP8LL0JzkwLJs/PHWX4iyQ5uJCX3fqXzOm
+         tiRA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Raphael Hertzog <raphael@ouaza.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	=?UTF-8?q?Rapha=C3=ABl=20Hertzog?= <hertzog@debian.org>,
-	Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.9 86/88] ovl: fix failure to fsync lower dir
-Date: Thu, 15 Feb 2018 16:17:53 +0100
-Message-Id: <20180215151234.349440340@linuxfoundation.org>
+	Toshi Kani <toshi.kani@hpe.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.9 85/88] acpi, nfit: fix register dimm error handling
+Date: Thu, 15 Feb 2018 16:17:52 +0100
+Message-Id: <20180215151234.232466114@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481085875936301?=
-X-GMAIL-MSGID: =?utf-8?q?1592481348573312775?=
+X-GMAIL-THRID: =?utf-8?q?1592481345316957816?=
+X-GMAIL-MSGID: =?utf-8?q?1592481345316957816?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,48 +49,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Toshi Kani <toshi.kani@hpe.com>
 
-commit d796e77f1dd541fe34481af2eee6454688d13982 upstream.
+commit 23fbd7c70aec7600e3227eb24259fc55bf6e4881 upstream.
 
-As a writable mount, it is not expected for overlayfs to return
-EINVAL/EROFS for fsync, even if dir/file is not changed.
+A NULL pointer reference kernel bug was observed when
+acpi_nfit_add_dimm() called in acpi_nfit_register_dimms() failed. This
+error path does not set nfit_mem->nvdimm, but the 2nd
+list_for_each_entry() loop in the function assumes it's always set. Add
+a check to nfit_mem->nvdimm.
 
-This commit fixes the case of fsync of directory, which is easier to
-address, because overlayfs already implements fsync file operation for
-directories.
-
-The problem reported by Raphael is that new PostgreSQL 10.0 with a
-database in overlayfs where lower layer in squashfs fails to start.
-The failure is due to fsync error, when PostgreSQL does fsync on all
-existing db directories on startup and a specific directory exists
-lower layer with no changes.
-
-Reported-by: Raphael Hertzog <raphael@ouaza.com>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Tested-by: Raphaël Hertzog <hertzog@debian.org>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: ba9c8dd3c222 ("acpi, nfit: add dimm device notification support")
+Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/overlayfs/readdir.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/acpi/nfit/core.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/overlayfs/readdir.c
-+++ b/fs/overlayfs/readdir.c
-@@ -434,10 +434,14 @@ static int ovl_dir_fsync(struct file *fi
- 	struct dentry *dentry = file->f_path.dentry;
- 	struct file *realfile = od->realfile;
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -1535,6 +1535,9 @@ static int acpi_nfit_register_dimms(stru
+ 		struct kernfs_node *nfit_kernfs;
  
-+	/* Nothing to sync for lower */
-+	if (!OVL_TYPE_UPPER(ovl_path_type(dentry)))
-+		return 0;
+ 		nvdimm = nfit_mem->nvdimm;
++		if (!nvdimm)
++			continue;
 +
- 	/*
- 	 * Need to check if we started out being a lower dir, but got copied up
- 	 */
--	if (!od->is_upper && OVL_TYPE_UPPER(ovl_path_type(dentry))) {
-+	if (!od->is_upper) {
- 		struct inode *inode = file_inode(file);
- 
- 		realfile = lockless_dereference(od->upperfile);
+ 		nfit_kernfs = sysfs_get_dirent(nvdimm_kobj(nvdimm)->sd, "nfit");
+ 		if (nfit_kernfs)
+ 			nfit_mem->flags_attr = sysfs_get_dirent(nfit_kernfs,
