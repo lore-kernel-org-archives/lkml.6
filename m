@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225ySRRjcQGdHlCPmx1Pox5ukSXQBix2ChEygSi6cYH09ROMZ95rRdC91NWGlIdtui9prYl8
-ARC-Seal: i=1; a=rsa-sha256; t=1518708398; cv=none;
+X-Google-Smtp-Source: AH8x224YgjFVSgkqFl+wQqjOaFh6LNIPnlRhpXKH4oYESrOtXqEiTLNmWt/fBE6UIE/WV12QKkQ9
+ARC-Seal: i=1; a=rsa-sha256; t=1518708395; cv=none;
         d=google.com; s=arc-20160816;
-        b=gOR+aranuxvpyHNcQa1ApQ3w2r/M89K7sWXTN7yqOCe89SlJX0Zq7YVgYqzJvATsUX
-         zzZ0i3AtSfp8D4cwYW67gU014/w+yAenZgxFgK8uoH67xVhyuQ+YrKtlPy00glQ6DAnC
-         AsjbAqkX1OphBLzHWH1L6f0r+u11negi8yuP9LrhzYyBYRotVxxRpz30a7fkJZXEzLxO
-         8TtPceuh03rsyG6YiPU45JqQbRvZacB0hi+dvGTUwNPINg2h3vKA7ku/JrdxZcfgqwSl
-         Brcyhovs3STnHf0vYkk2BEg2jzlGB/yvFHOkMunwSXWYdgZ+Qdyjq23w58SXB4nm8P63
-         rS3A==
+        b=y5nHCDWZveo/bM1IgqKYMo+2ykKpjg+nWYAeqAhYk9y2VIQQebVxbEcRzVi08VQhyQ
+         izhwsi+lGHeXou3k2eBMZT+fYXV52AeZWK0YmD+WmtfehUJCesUqNzlu6jEqDRaR5yI5
+         z7u+wmNY9o+JeOwDd0L16Nrid+1IwmSLbbhA+BAtcfNxZTpI5W8I3AkBKlYTfi1NnyWj
+         OcKZQcBHfGTji4H+m/8wvPeE46LUS4sxI+TPLPYBAUT5BQUyzkGfGPvSof7qN3kk14gR
+         bN03JRfFKe1QCxHJB26SEv5J5vAneJNxctetpZBfRfNVW3sXHEp+yZUIu9Rg+toYuIsD
+         ElmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=l0Xa3h7nD7uAAw3IF1bgaoXDy4dmD+Aa5x2rRM7T2i0=;
-        b=bSDBsApdbMCCE19J1hLCI1plq+L+TH98wSayM3B504St9pL8THo8CSujk8FztjADEH
-         b6S/AEmXTTrseVuiFULM7ryqQVws8bhYXczTNY2UBJQK1IsktJqiTvUXhmhiPdA+bgQB
-         LADF7C1g2BWnlnrFKhS3BjkJ2FBKDn+7JDPMwUb8+I/0PT68i92RX00UZ6tLquFtryCq
-         D8EnB67eK7H2tP73daWEtD66mW581EWyV/qom6djLsvOlIOt7PFjznmjkKe0CBsuFuZE
-         PoXA/eVeGwDII4Z1Z1PFF96Eu3g2l2+sQpHJWV3WcOAgEA3TkJ94gUqIl1lZ8OC4rnwS
-         CKUw==
+        bh=C7aNo/AcE4jnxwy1MXiQTFKi8qVtpKuqXmo+iPeuSi0=;
+        b=d9tdKX17VcXAHZttKWzoXezyMmuaLH5nFWqFrwwmw+H6dQ+TBEzRjB14BejzbfauJe
+         pCg9wbvlRSH6TkiJ4UKtEU7AMP1wrQc7vOE0bUviJKQJpRYO0XZ4YGFBOWpbvOJ5vsEk
+         NVI+NFIVo6vouAZMx3WklZT3WPZCPHxW5Bfie+gkiz+cpDWTU55YgYqRTcfjr+47n78x
+         F1hauBhCKLweHxsVgy+myq9HJlycWdl2KJU0mI1CUMx3S8UptCbQSqIQS7ZoiNjH8KAO
+         4elzTaaX/+pNX7DBhpm6aGzCeGqyYR51jk0xufwWCnQSSL551THqFfPKNjo2R5zV9fxm
+         J0lQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Hans de Goede <hdegoede@redhat.com>,
 	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.9 29/88] ahci: Add PCI ids for Intel Bay Trail, Cherry Trail and Apollo Lake AHCI
-Date: Thu, 15 Feb 2018 16:16:56 +0100
-Message-Id: <20180215151226.688685094@linuxfoundation.org>
+Subject: [PATCH 4.9 28/88] ahci: Annotate PCI ids for mobile Intel chipsets as such
+Date: Thu, 15 Feb 2018 16:16:55 +0100
+Message-Id: <20180215151226.542318797@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480988459081410?=
-X-GMAIL-MSGID: =?utf-8?q?1592481178013258949?=
+X-GMAIL-THRID: =?utf-8?q?1592480981385689388?=
+X-GMAIL-MSGID: =?utf-8?q?1592481174354182943?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,30 +50,104 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Hans de Goede <hdegoede@redhat.com>
 
-commit 998008b779e424bd7513c434d0ab9c1268459009 upstream.
+commit ca1b4974bd237f2373b0e980b11957aac3499b56 upstream.
 
-Add PCI ids for Intel Bay Trail, Cherry Trail and Apollo Lake AHCI
-SATA controllers. This commit is a preparation patch for allowing a
-different default sata link powermanagement policy for mobile chipsets.
+Intel uses different SATA PCI ids for the Desktop and Mobile SKUs of their
+chipsets. For older models the comment describing which chipset the PCI id
+is for, aksi indicates when we're dealing with a mobile SKU. Extend the
+comments for recent chipsets to also indicate mobile SKUs.
+
+The information this commit adds comes from Intel's chipset datasheets.
+
+This commit is a preparation patch for allowing a different default
+sata link powermanagement policy for mobile chipsets.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/ahci.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/ata/ahci.c |   32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
 --- a/drivers/ata/ahci.c
 +++ b/drivers/ata/ahci.c
-@@ -383,6 +383,10 @@ static const struct pci_device_id ahci_p
- 	{ PCI_VDEVICE(INTEL, 0xa206), board_ahci }, /* Lewisburg RAID*/
- 	{ PCI_VDEVICE(INTEL, 0xa252), board_ahci }, /* Lewisburg RAID*/
- 	{ PCI_VDEVICE(INTEL, 0xa256), board_ahci }, /* Lewisburg RAID*/
-+	{ PCI_VDEVICE(INTEL, 0x0f22), board_ahci }, /* Bay Trail AHCI */
-+	{ PCI_VDEVICE(INTEL, 0x0f23), board_ahci }, /* Bay Trail AHCI */
-+	{ PCI_VDEVICE(INTEL, 0x22a3), board_ahci }, /* Cherry Trail AHCI */
-+	{ PCI_VDEVICE(INTEL, 0x5ae3), board_ahci }, /* Apollo Lake AHCI */
- 
- 	/* JMicron 360/1/3/5/6, match class to avoid IDE function */
- 	{ PCI_VENDOR_ID_JMICRON, PCI_ANY_ID, PCI_ANY_ID, PCI_ANY_ID,
+@@ -265,9 +265,9 @@ static const struct pci_device_id ahci_p
+ 	{ PCI_VDEVICE(INTEL, 0x3b23), board_ahci }, /* PCH AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x3b24), board_ahci }, /* PCH RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x3b25), board_ahci }, /* PCH RAID */
+-	{ PCI_VDEVICE(INTEL, 0x3b29), board_ahci }, /* PCH AHCI */
++	{ PCI_VDEVICE(INTEL, 0x3b29), board_ahci }, /* PCH M AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x3b2b), board_ahci }, /* PCH RAID */
+-	{ PCI_VDEVICE(INTEL, 0x3b2c), board_ahci }, /* PCH RAID */
++	{ PCI_VDEVICE(INTEL, 0x3b2c), board_ahci }, /* PCH M RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x3b2f), board_ahci }, /* PCH AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x19b0), board_ahci }, /* DNV AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x19b1), board_ahci }, /* DNV AHCI */
+@@ -290,9 +290,9 @@ static const struct pci_device_id ahci_p
+ 	{ PCI_VDEVICE(INTEL, 0x19cE), board_ahci }, /* DNV AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x19cF), board_ahci }, /* DNV AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x1c02), board_ahci }, /* CPT AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x1c03), board_ahci }, /* CPT AHCI */
++	{ PCI_VDEVICE(INTEL, 0x1c03), board_ahci }, /* CPT M AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x1c04), board_ahci }, /* CPT RAID */
+-	{ PCI_VDEVICE(INTEL, 0x1c05), board_ahci }, /* CPT RAID */
++	{ PCI_VDEVICE(INTEL, 0x1c05), board_ahci }, /* CPT M RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x1c06), board_ahci }, /* CPT RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x1c07), board_ahci }, /* CPT RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x1d02), board_ahci }, /* PBG AHCI */
+@@ -301,20 +301,20 @@ static const struct pci_device_id ahci_p
+ 	{ PCI_VDEVICE(INTEL, 0x2826), board_ahci }, /* PBG RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x2323), board_ahci }, /* DH89xxCC AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x1e02), board_ahci }, /* Panther Point AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x1e03), board_ahci }, /* Panther Point AHCI */
++	{ PCI_VDEVICE(INTEL, 0x1e03), board_ahci }, /* Panther Point M AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x1e04), board_ahci }, /* Panther Point RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x1e05), board_ahci }, /* Panther Point RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x1e06), board_ahci }, /* Panther Point RAID */
+-	{ PCI_VDEVICE(INTEL, 0x1e07), board_ahci }, /* Panther Point RAID */
++	{ PCI_VDEVICE(INTEL, 0x1e07), board_ahci }, /* Panther Point M RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x1e0e), board_ahci }, /* Panther Point RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x8c02), board_ahci }, /* Lynx Point AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x8c03), board_ahci }, /* Lynx Point AHCI */
++	{ PCI_VDEVICE(INTEL, 0x8c03), board_ahci }, /* Lynx Point M AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x8c04), board_ahci }, /* Lynx Point RAID */
+-	{ PCI_VDEVICE(INTEL, 0x8c05), board_ahci }, /* Lynx Point RAID */
++	{ PCI_VDEVICE(INTEL, 0x8c05), board_ahci }, /* Lynx Point M RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x8c06), board_ahci }, /* Lynx Point RAID */
+-	{ PCI_VDEVICE(INTEL, 0x8c07), board_ahci }, /* Lynx Point RAID */
++	{ PCI_VDEVICE(INTEL, 0x8c07), board_ahci }, /* Lynx Point M RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x8c0e), board_ahci }, /* Lynx Point RAID */
+-	{ PCI_VDEVICE(INTEL, 0x8c0f), board_ahci }, /* Lynx Point RAID */
++	{ PCI_VDEVICE(INTEL, 0x8c0f), board_ahci }, /* Lynx Point M RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x9c02), board_ahci }, /* Lynx Point-LP AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x9c03), board_ahci }, /* Lynx Point-LP AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x9c04), board_ahci }, /* Lynx Point-LP RAID */
+@@ -355,21 +355,21 @@ static const struct pci_device_id ahci_p
+ 	{ PCI_VDEVICE(INTEL, 0x9c87), board_ahci }, /* Wildcat Point-LP RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x9c8f), board_ahci }, /* Wildcat Point-LP RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x8c82), board_ahci }, /* 9 Series AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x8c83), board_ahci }, /* 9 Series AHCI */
++	{ PCI_VDEVICE(INTEL, 0x8c83), board_ahci }, /* 9 Series M AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x8c84), board_ahci }, /* 9 Series RAID */
+-	{ PCI_VDEVICE(INTEL, 0x8c85), board_ahci }, /* 9 Series RAID */
++	{ PCI_VDEVICE(INTEL, 0x8c85), board_ahci }, /* 9 Series M RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x8c86), board_ahci }, /* 9 Series RAID */
+-	{ PCI_VDEVICE(INTEL, 0x8c87), board_ahci }, /* 9 Series RAID */
++	{ PCI_VDEVICE(INTEL, 0x8c87), board_ahci }, /* 9 Series M RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x8c8e), board_ahci }, /* 9 Series RAID */
+-	{ PCI_VDEVICE(INTEL, 0x8c8f), board_ahci }, /* 9 Series RAID */
++	{ PCI_VDEVICE(INTEL, 0x8c8f), board_ahci }, /* 9 Series M RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x9d03), board_ahci }, /* Sunrise Point-LP AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x9d05), board_ahci }, /* Sunrise Point-LP RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x9d07), board_ahci }, /* Sunrise Point-LP RAID */
+ 	{ PCI_VDEVICE(INTEL, 0xa102), board_ahci }, /* Sunrise Point-H AHCI */
+-	{ PCI_VDEVICE(INTEL, 0xa103), board_ahci }, /* Sunrise Point-H AHCI */
++	{ PCI_VDEVICE(INTEL, 0xa103), board_ahci }, /* Sunrise Point-H M AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0xa105), board_ahci }, /* Sunrise Point-H RAID */
+ 	{ PCI_VDEVICE(INTEL, 0xa106), board_ahci }, /* Sunrise Point-H RAID */
+-	{ PCI_VDEVICE(INTEL, 0xa107), board_ahci }, /* Sunrise Point-H RAID */
++	{ PCI_VDEVICE(INTEL, 0xa107), board_ahci }, /* Sunrise Point-H M RAID */
+ 	{ PCI_VDEVICE(INTEL, 0xa10f), board_ahci }, /* Sunrise Point-H RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x2822), board_ahci }, /* Lewisburg RAID*/
+ 	{ PCI_VDEVICE(INTEL, 0x2823), board_ahci }, /* Lewisburg AHCI*/
