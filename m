@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967965AbeBOL44 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 06:56:56 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52516 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S967902AbeBOL4x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 06:56:53 -0500
+        id S967976AbeBOL5p (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 06:57:45 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38458 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S967843AbeBOL5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 06:57:43 -0500
 Subject: Re: [PATCH] s390/console: enable dummy console for vt
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
 Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Farhan Ali <alifm@linux.vnet.ibm.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -20,37 +20,25 @@ Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         DRI Development <dri-devel@lists.freedesktop.org>,
         Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
         Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        uml-devel <user-mode-linux-devel@lists.sourceforge.net>,
-        Thomas Huth <thuth@redhat.com>
+        uml-devel <user-mode-linux-devel@lists.sourceforge.net>
 References: <2324e2cc-ff55-4d57-2807-c7f72f9ea0ca@de.ibm.com>
  <20180215111423.96598-1-borntraeger@de.ibm.com>
  <CAMuHMdWCK1V3PWXHMNZUmFVMCSqi5xhs72mT_M=gE96TSzMN9w@mail.gmail.com>
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Thu, 15 Feb 2018 12:56:44 +0100
+From: Thomas Huth <thuth@redhat.com>
+Message-ID: <f621e016-3811-b9c5-e044-779adc6b420c@redhat.com>
+Date: Thu, 15 Feb 2018 12:57:37 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
 In-Reply-To: <CAMuHMdWCK1V3PWXHMNZUmFVMCSqi5xhs72mT_M=gE96TSzMN9w@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18021511-0020-0000-0000-000003F5F019
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021511-0021-0000-0000-0000428882D3
-Message-Id: <13a674d4-68d5-6fb4-5902-26c6b631b596@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-15_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802150149
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/15/2018 12:26 PM, Geert Uytterhoeven wrote:
+On 15.02.2018 12:26, Geert Uytterhoeven wrote:
 > Hi Christian,
 > 
 > On Thu, Feb 15, 2018 at 12:14 PM, Christian Borntraeger
@@ -88,33 +76,11 @@ On 02/15/2018 12:26 PM, Geert Uytterhoeven wrote:
 > 
 > You already have your own copy of HAS_IOMEM, which makes it hard for
 > people to track which one applies where.
-> 
 
-I am open for better suggestions. One idea that I had was to reverse
-the logic in s390 (and use the common code HAS_IOMEM)
+I think I agree with Geert - let's better fix this in a proper way
+instead of doing hacks like this. I guess there will be other
+architectures in the future that might want to use the dummy console
+without CONFIG_IOMEM, so fixing this in drivers/video/ instead sounds
+better to me.
 
-like
-
-
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index cbe1d978693a..123dd593ea20 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -715,8 +715,8 @@ endif       # PCI
- config PCI_DOMAINS
-        def_bool PCI
- 
--config HAS_IOMEM
--       def_bool PCI
-+config NO_IOMEM
-+       def_bool y if !PCI
- 
- config IOMMU_HELPER
-        def_bool PCI
-
-
-This would enable CONFIG_VT and also CONFIG_DUMMY_CONSOLE as long as
-PCI is enabled. If DUMMY_CONSOLE is not enabled (e.g. due to missing PCI),
-we get a crash in the VT layer as conswitchp is then null.
-
-Somewhat tricky.
+ Thomas
