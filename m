@@ -1,79 +1,47 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1825685-1518708617-2-13028731280381177921
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518708616; b=qZYLZgd3brh6xKNRCtlQKvu+4wypiOymyISjrOixF13m8TT
-    HJUqpPb6Vv97nWQ3PP8xCxFJxrDMQqIGjR1TSMXJ36XMpbCwLE+sDmh640ngjtJF
-    xilN/3OtnSgWksmcHwQVxk950/UYziChUltn9rEqu5WtTaaraJwsH7BepVg2fbJe
-    K5hlMFZ1sZTbSD3GLGVVswJymwgVracnFs0PxrcKecc6mM0sqnWsSA9yJh8NhYyR
-    9EaYg7Fgdo3tDUN3gJSsabhnNjc1OY5txrX9J7VIvOAtsOoHuPK5rYzwy8bI2fyO
-    YzTLqfAFecnTlB8O9pk3QB28J7jVyadTk6QUOtQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518708616; bh=wFJWLcbmfPTfVsYuDcFvDmbx69
-    VaJEx1J0U0Ax95blQ=; b=OvDsEicitQtKoot5YfgmBjBblQdeiASLjIx/3wta0x
-    ao4FFlvxGk6ht7fC8CBoD73C4nLbHFGyRO4xW2KJRkPmwLc6H+MYM4u1MI68IZWH
-    xWVgT8K4J59AGrRVOFAJF6AvLzfmhNpRWSA1vZ8SHtGfo0k0kEaHms/ia3mkkYW0
-    5y+GlYeN9c9KwawqhrmqRVG8RR/XkRNex6kBYWOL324xlbKjxfOSc3HklPL2ecZc
-    OFsX/2m64zbaOEu4uJDN8Qoxswq9xzUmfgFpaJ5XeqFHN1bKuCooKk6IkwaMyJlC
-    jNvfCAUhqicoajHi76I0pmFyShdbtYVL3IseKJ2jpOlA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164170AbeBOPaN (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:30:13 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54946 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163719AbeBOPaK (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:30:10 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x227BlL6CMKXFonFrT6IUSbfBkbPoxU8C2pyJlVAipbxMmxhX8dJgRpfbrqYvmqB0EHzswOxR
+ARC-Seal: i=1; a=rsa-sha256; t=1518708614; cv=none;
+        d=google.com; s=arc-20160816;
+        b=y0EErAhAr/mXNPiMRjKxjANaPswBeyAHYeTICYxQv4LPYpyhSDtSxZ73m4DlhcUZct
+         QYNt4mRxgHIJOkCHP9a3GYHoQGCjr7esI9wwuG96EEP5n1zaEKyf28/fH0clcwfTJGBA
+         RcjrnK8yVUi6WhiCNauGJS2S5uNpCoLatDRHWaEyOxR5qJCLFCtF3jtuD0w98AgiRDhg
+         Ko97VLOHbViu5VY0rNKeVeuDoqQpvcpN9tbx91dmWBTpTwHyaE5hdXECv97N5siGCzi5
+         GCxnBok2rYmggXZ8dIgFefW8WqZz5trtegv3b9uQmw3HRkS1cxLW1Pi+OIrlVb/XR6eB
+         jZOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=HVA/JcGKU0kyf0Zo1fJMN5b5pZcRjolA5A/P4sWm/8c=;
+        b=KehgB+b/GK1EPPGS/xHmTelQ0eBxK/tx9kP3KBaLBGfNsPh17gbLEPjeGmkXoylO2h
+         uwsM3c0rMSQlj4eEvFux/1Z2g1Af4FXUyfKnkK3YWp6jIvlawab1vM4g50LnTQkIDIDo
+         F0+/tPKXFzpq8z07ufwGIC97tXppQREIZYKE8abKMDFYtb6GJ5b1K9WIl2Pi9G24QTR9
+         6ADJAyPLpzq2jliUQ60ZdMGk1Hi6rtjvqBB2V02fr8eY0c9r+58ikK6KR7LFnviqhTC2
+         ds3SmjJRc/c/8KagiWC+nKGJ23bSNyr3g6byUDE5Qe49fMdS0jzd6alY8bisoUiNGZeg
+         W+rg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, kernel-team@fb.com,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 008/195] sched/wait: Fix add_wait_queue() behavioral change
-Date: Thu, 15 Feb 2018 16:14:59 +0100
-Message-Id: <20180215151706.164372057@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Chris Wilson <chris@chris-wilson.co.uk>,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 4.14 017/195] drm/i915: Fix deadlock in i830_disable_pipe()
+Date: Thu, 15 Feb 2018 16:15:08 +0100
+Message-Id: <20180215151706.609701756@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1592481404180643516?=
+X-GMAIL-MSGID: =?utf-8?q?1592481404180643516?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,46 +49,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Omar Sandoval <osandov@fb.com>
+From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-commit c6b9d9a33029014446bd9ed84c1688f6d3d4eab9 upstream.
+commit 4488496d58200c7511842e049a4cc891d928da56 upstream.
 
-The following cleanup commit:
+i830_disable_pipe() gets called from the power well code, and thus
+we're already holding the power domain mutex. That means we can't
+call plane->get_hw_state() as it will also try to grab the
+same mutex and will thus deadlock.
 
-  50816c48997a ("sched/wait: Standardize internal naming of wait-queue entries")
+Replace the assert_plane() calls (which calls ->get_hw_state()) with
+just raw register reads in i830_disable_pipe(). As a bonus we can
+now get a warning if plane C is enabled even though we don't even
+expose it as a drm plane.
 
-... unintentionally changed the behavior of add_wait_queue() from
-inserting the wait entry at the head of the wait queue to the tail
-of the wait queue.
+v2: Do a separate WARN_ON() for each plane (Chris)
 
-Beyond a negative performance impact this change in behavior
-theoretically also breaks wait queues which mix exclusive and
-non-exclusive waiters, as non-exclusive waiters will not be
-woken up if they are queued behind enough exclusive waiters.
-
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-team@fb.com
-Fixes: ("sched/wait: Standardize internal naming of wait-queue entries")
-Link: http://lkml.kernel.org/r/a16c8ccffd39bd08fdaa45a5192294c784b803a7.1512544324.git.osandov@fb.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+Fixes: d87ce7640295 ("drm/i915: Add .get_hw_state() method for planes")
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20171129125411.29055-1-ville.syrjala@linux.intel.com
+(cherry picked from commit 5816d9cbc0a0fbf232fe297cefcb85361a3cde90)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/sched/wait.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/i915/intel_display.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/kernel/sched/wait.c
-+++ b/kernel/sched/wait.c
-@@ -27,7 +27,7 @@ void add_wait_queue(struct wait_queue_he
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -14717,8 +14717,11 @@ void i830_disable_pipe(struct drm_i915_p
+ 	DRM_DEBUG_KMS("disabling pipe %c due to force quirk\n",
+ 		      pipe_name(pipe));
  
- 	wq_entry->flags &= ~WQ_FLAG_EXCLUSIVE;
- 	spin_lock_irqsave(&wq_head->lock, flags);
--	__add_wait_queue_entry_tail(wq_head, wq_entry);
-+	__add_wait_queue(wq_head, wq_entry);
- 	spin_unlock_irqrestore(&wq_head->lock, flags);
- }
- EXPORT_SYMBOL(add_wait_queue);
+-	assert_planes_disabled(intel_get_crtc_for_pipe(dev_priv, PIPE_A));
+-	assert_planes_disabled(intel_get_crtc_for_pipe(dev_priv, PIPE_B));
++	WARN_ON(I915_READ(DSPCNTR(PLANE_A)) & DISPLAY_PLANE_ENABLE);
++	WARN_ON(I915_READ(DSPCNTR(PLANE_B)) & DISPLAY_PLANE_ENABLE);
++	WARN_ON(I915_READ(DSPCNTR(PLANE_C)) & DISPLAY_PLANE_ENABLE);
++	WARN_ON(I915_READ(CURCNTR(PIPE_A)) & CURSOR_MODE);
++	WARN_ON(I915_READ(CURCNTR(PIPE_B)) & CURSOR_MODE);
+ 
+ 	I915_WRITE(PIPECONF(pipe), 0);
+ 	POSTING_READ(PIPECONF(pipe));
