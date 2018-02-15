@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1906823-1518711164-2-11049704001932962197
+X-Cyrus-Session-Id: sloti22d1t05-1883814-1518711135-2-925200806910245226
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518711164; b=hedGpmeh4p2CqLl3oSX4FP+dLiqGQb9jpClH5aC82f+W3a7
-    PPbMMMwb+bTYb86UOSr8sglKnwXBjiJsbj/11Ouo+XRBD09tDgpwxELTZzv9rruV
-    YiMuMUMK43/+ojKOHpqwLJpCnEqhLOGCZy5ouPRDRnEVD1a334gnDA28FArKWHLv
-    9GvJUNMY6t6w4jNWNkNqeq7LSG5MjYkxM97K53Hm5uCwud30CtVQMgLslTC12kVW
-    i0ZMcGssa4D3fLGbh/P9X7EECSfJJgGfwKnalPZY9XjqTDYlV2JR3KUDr+X2mNOb
-    DxhCvVcqwwZPUYoCTG8U5wXywZAdf9JmP4GFU9w==
+    t=1518711134; b=W9lbYFe3o0B5ym5Y86XI+QikkJA64rbAnp1mQiE2YrSosU0
+    Yvq5hPl63zp4j0eweP09/BrP6SRRzRWesDzzaE5fkFN6HhNpo+jg8eRW0z3c1uQ9
+    b/hsW93IhKACGLCjx+j0M34KHrHFBVIwVz68F2BJh0pYhv7gbQLrVqDCg5uCVLui
+    qTQewZATifZtcUt9PuPIkL+KBDkLTpJStarZ+qjVdY4tx1KDlbvsJPOqXxxxtveU
+    kw1QRYPRihY+4xvA+WdNoWQpsIv5OX9qOAbyvUZtBe0373p2Xkfi0DAmiu7Gzckx
+    AG0o5TQYca3RfkEwCHaJSobFyLe6LUXwg9HYfPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518711164; bh=iT5wO5iPnALTCuTpQyIjB8BCH1
-    RoVCtEoUjbUBBY5J4=; b=S1/FIVnOgeiuldcmShm1MW6rUxkacroirapDJavzkO
-    yzhvZT9GPZeL6z1hcmGYVvUB51klO9GoUSkAq1XoxZVkQPButvvpKfc9dUJk4gSD
-    sXE3VYGnglAgqpVupEc2kMqYjFfegvVhqH6QE6waaxh4074UJtk3FmxqyIAI8ziV
-    pD2SK9m7nSNn8Fpw2jmXmUeQ3tqUvPkv+9USGZQD5dGkZ4xbLLDEq/Dvl/+X1mOe
-    PQdsBjpqBM60oHre+97BJWctr4pa5oYYYs3elnHmX11/FXmyL6+rbQyitfDPMIuC
-    j744qEdzHTxjRb4/IlC/9ViwjLF1JYMNjuEHQ84R9/vA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518711134; bh=EtIfRxTQ9PVoxhEBxrhrQM/meX
+    mF63a0PXluqmZSPVI=; b=m4Pg0ds9ygTUPfEd4JIS6l+9OccmYE2K6dML91CWjl
+    yPJC3FGmBwoPU6/uXdVR3Y2l9IOA9GAy+97jTAlPAexHRATKI4lRhwDW0tmJHEjD
+    39E9SipA+WgNLr5BTaaVCdweTzeH6c+EvS5RoZnqSmf9a1M4AvezqILo1Kzq+s0p
+    5VwHBaTSSocihQAi62U5L8xlvQ0O3Wh/6sByqtTHkLD41R/v0DiggzEjyInWV+MU
+    A3iio7R0CcZeDDsPIW60UL85rl3rFfCK/bUWmX+SBsF6j6hOOxYRk95oCcGIt9GA
+    UBB+Han1jIOVnNfG0z/pKRvIMQc4lHQtP9iwvna1H2aQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,21 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424529AbeBOQMa (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 11:12:30 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34838 "EHLO
+        id S1424427AbeBOPpR (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:45:17 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34870 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424395AbeBOPpK (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:45:10 -0500
+        with ESMTP id S1424390AbeBOPpP (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:45:15 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.15 126/202] media: v4l2-compat-ioctl32.c: make ctrl_is_pointer work for subdevs
-Date: Thu, 15 Feb 2018 16:17:06 +0100
-Message-Id: <20180215151719.815489578@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jonathan Billings <jsbillings@jsbillings.org>,
+        David Howells <dhowells@redhat.com>
+Subject: [PATCH 4.15 145/202] afs: Fix server list handling
+Date: Thu, 15 Feb 2018 16:17:25 +0100
+Message-Id: <20180215151720.625144922@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -79,39 +78,164 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans Verkuil <hansverk@cisco.com>
+From: David Howells <dhowells@redhat.com>
 
-commit 273caa260035c03d89ad63d72d8cd3d9e5c5e3f1 upstream.
+commit 45df8462730d2149834980d3db16e2d2b9daaf60 upstream.
 
-If the device is of type VFL_TYPE_SUBDEV then vdev->ioctl_ops
-is NULL so the 'if (!ops->vidioc_query_ext_ctrl)' check would crash.
-Add a test for !ops to the condition.
+Fix server list handling in the following ways:
 
-All sub-devices that have controls will use the control framework,
-so they do not have an equivalent to ops->vidioc_query_ext_ctrl.
-Returning false if ops is NULL is the correct thing to do here.
+ (1) In afs_alloc_volume(), remove duplicate server list build code.  This
+     was already done by afs_alloc_server_list() which afs_alloc_volume()
+     previously called.  This just results in twice as many VL RPCs.
 
-Fixes: b8c601e8af ("v4l2-compat-ioctl32.c: fix ctrl_is_pointer")
+ (2) In afs_deliver_vl_get_entry_by_name_u(), use the number of server
+     records indicated by ->nServers in the UVLDB record returned by the
+     VL.GetEntryByNameU RPC call rather than scanning all NMAXNSERVERS
+     slots.  Unused slots may contain garbage.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+ (3) In afs_alloc_server_list(), don't stop converting a UVLDB record into
+     a server list just because we can't look up one of the servers.  Just
+     skip that server and go on to the next.  If we can't look up any of
+     the servers then we'll fail at the end.
+
+Without this patch, an attempt to view the umich.edu root cell using
+something like "ls /afs/umich.edu" on a dynamic root (future patch) mount
+or an autocell mount will result in ENOMEDIUM.  The failure is due to kafs
+not stopping after nServers'worth of records have been read, but then
+trying to access a server with a garbage UUID and getting an error, which
+aborts the server list build.
+
+Fixes: d2ddc776a458 ("afs: Overhaul volume and server record caching and fileserver rotation")
+Reported-by: Jonathan Billings <jsbillings@jsbillings.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/afs/server_list.c |    3 ++-
+ fs/afs/vlclient.c    |   10 +++++++---
+ fs/afs/volume.c      |   46 ++--------------------------------------------
+ 3 files changed, 11 insertions(+), 48 deletions(-)
 
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -770,7 +770,7 @@ static inline bool ctrl_is_pointer(struc
- 		return ctrl && ctrl->is_ptr;
+--- a/fs/afs/server_list.c
++++ b/fs/afs/server_list.c
+@@ -58,7 +58,8 @@ struct afs_server_list *afs_alloc_server
+ 		server = afs_lookup_server(cell, key, &vldb->fs_server[i]);
+ 		if (IS_ERR(server)) {
+ 			ret = PTR_ERR(server);
+-			if (ret == -ENOENT)
++			if (ret == -ENOENT ||
++			    ret == -ENOMEDIUM)
+ 				continue;
+ 			goto error_2;
+ 		}
+--- a/fs/afs/vlclient.c
++++ b/fs/afs/vlclient.c
+@@ -23,7 +23,7 @@ static int afs_deliver_vl_get_entry_by_n
+ 	struct afs_uvldbentry__xdr *uvldb;
+ 	struct afs_vldb_entry *entry;
+ 	bool new_only = false;
+-	u32 tmp;
++	u32 tmp, nr_servers;
+ 	int i, ret;
+ 
+ 	_enter("");
+@@ -36,6 +36,10 @@ static int afs_deliver_vl_get_entry_by_n
+ 	uvldb = call->buffer;
+ 	entry = call->reply[0];
+ 
++	nr_servers = ntohl(uvldb->nServers);
++	if (nr_servers > AFS_NMAXNSERVERS)
++		nr_servers = AFS_NMAXNSERVERS;
++
+ 	for (i = 0; i < ARRAY_SIZE(uvldb->name) - 1; i++)
+ 		entry->name[i] = (u8)ntohl(uvldb->name[i]);
+ 	entry->name[i] = 0;
+@@ -44,14 +48,14 @@ static int afs_deliver_vl_get_entry_by_n
+ 	/* If there is a new replication site that we can use, ignore all the
+ 	 * sites that aren't marked as new.
+ 	 */
+-	for (i = 0; i < AFS_NMAXNSERVERS; i++) {
++	for (i = 0; i < nr_servers; i++) {
+ 		tmp = ntohl(uvldb->serverFlags[i]);
+ 		if (!(tmp & AFS_VLSF_DONTUSE) &&
+ 		    (tmp & AFS_VLSF_NEWREPSITE))
+ 			new_only = true;
  	}
  
--	if (!ops->vidioc_query_ext_ctrl)
-+	if (!ops || !ops->vidioc_query_ext_ctrl)
- 		return false;
+-	for (i = 0; i < AFS_NMAXNSERVERS; i++) {
++	for (i = 0; i < nr_servers; i++) {
+ 		struct afs_uuid__xdr *xdr;
+ 		struct afs_uuid *uuid;
+ 		int j;
+--- a/fs/afs/volume.c
++++ b/fs/afs/volume.c
+@@ -26,9 +26,8 @@ static struct afs_volume *afs_alloc_volu
+ 					   unsigned long type_mask)
+ {
+ 	struct afs_server_list *slist;
+-	struct afs_server *server;
+ 	struct afs_volume *volume;
+-	int ret = -ENOMEM, nr_servers = 0, i, j;
++	int ret = -ENOMEM, nr_servers = 0, i;
  
- 	return !ops->vidioc_query_ext_ctrl(file, fh, &qec) &&
+ 	for (i = 0; i < vldb->nr_servers; i++)
+ 		if (vldb->fs_mask[i] & type_mask)
+@@ -58,49 +57,8 @@ static struct afs_volume *afs_alloc_volu
+ 
+ 	refcount_set(&slist->usage, 1);
+ 	volume->servers = slist;
+-
+-	/* Make sure a records exists for each server this volume occupies. */
+-	for (i = 0; i < nr_servers; i++) {
+-		if (!(vldb->fs_mask[i] & type_mask))
+-			continue;
+-
+-		server = afs_lookup_server(params->cell, params->key,
+-					   &vldb->fs_server[i]);
+-		if (IS_ERR(server)) {
+-			ret = PTR_ERR(server);
+-			if (ret == -ENOENT)
+-				continue;
+-			goto error_2;
+-		}
+-
+-		/* Insertion-sort by server pointer */
+-		for (j = 0; j < slist->nr_servers; j++)
+-			if (slist->servers[j].server >= server)
+-				break;
+-		if (j < slist->nr_servers) {
+-			if (slist->servers[j].server == server) {
+-				afs_put_server(params->net, server);
+-				continue;
+-			}
+-
+-			memmove(slist->servers + j + 1,
+-				slist->servers + j,
+-				(slist->nr_servers - j) * sizeof(struct afs_server_entry));
+-		}
+-
+-		slist->servers[j].server = server;
+-		slist->nr_servers++;
+-	}
+-
+-	if (slist->nr_servers == 0) {
+-		ret = -EDESTADDRREQ;
+-		goto error_2;
+-	}
+-
+ 	return volume;
+ 
+-error_2:
+-	afs_put_serverlist(params->net, slist);
+ error_1:
+ 	afs_put_cell(params->net, volume->cell);
+ 	kfree(volume);
+@@ -328,7 +286,7 @@ static int afs_update_volume_status(stru
+ 
+ 	/* See if the volume's server list got updated. */
+ 	new = afs_alloc_server_list(volume->cell, key,
+-				      vldb, (1 << volume->type));
++				    vldb, (1 << volume->type));
+ 	if (IS_ERR(new)) {
+ 		ret = PTR_ERR(new);
+ 		goto error_vldb;
