@@ -1,265 +1,129 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1690823-1517938220-2-3862794467816244410
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
-  MailFrom='org'
-X-Spam-charsets: to='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1517938219; b=S5BGOZ12BUelgryJmmQgD4zxp4vwu8MdQ1/T4LSSvuX2Ytu
-    FzkhE8tSI0Kvyng4u81rk/OKSU6Rikdj2G7Ftl0rOP+eieuPHNL99gv12esHGmXj
-    bNi1e3W3L2RFi5WCVOusnkLYbuPFzjsih1p7sdrsEDzrJXPBKGr5DItrFDdjrKhY
-    rC2sYeX7Ez9cDhLEF7S3mlBp91TXCb4sJ7Bu4LXfgpkhirzatENjgY/7RaWPimqB
-    895G3Uau4r+6iIT8ukeed2dp500BINxi03rhkXFNQmsXfJdHl+Oi2i57mpfCuLsd
-    qJt0HCXMHmbm8u0qausTAHM5Kv8SVLuxgzWsxZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1517938219;
-    bh=+Hzg7DFoYpfWA42oO6osZ5km2Wqrs7a9lqm05HkahQQ=; b=RZQBhxUS7BY8
-    KjnhAJ7noIRQnMwPdtSNhYh2neQYsDfcXFabzwl4jGCLMUyaY0nM8CUZnQWNWmcT
-    wffD5a+fzW64So/xzX7y2PAZSCA1owyQWuB+lyHU3zb/R2Drn4OgM369BBsQiF9p
-    QNH3vKJUN4yQjzftnX7mgvKwMFM6JgJ9JloMztWqOMFeyGhNkK9A6KWDHcG8xTOQ
-    0C9+Ash7gCE2lrPIpH+LWvqWm4rW4q8YpFPh9rsOiL2kSzvsRNFHfB6462vOU6eI
-    7//KNwuX1kvx8SiiEb3YklwoPc+uqVkXiMk4gcPcEv0c91hDomiKBopy9iEPg5W0
-    Tv0DU7/Stw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim-adsp=pass (ADSP policy from amazon.co.uk);
-    dkim=pass (1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=IdxMf35Q x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
-    dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=amazon.co.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.co.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim-adsp=pass (ADSP policy from amazon.co.uk);
-    dkim=pass (1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=IdxMf35Q x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
-    dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=amazon.co.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.co.uk header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752820AbeBFRaQ (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Feb 2018 12:30:16 -0500
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:44336 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752749AbeBFR35 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 6 Feb 2018 12:29:57 -0500
-X-IronPort-AV: E=Sophos;i="5.46,469,1511827200";
-   d="scan'208";a="330970458"
-From: David Woodhouse <dwmw@amazon.co.uk>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        KarimAllah Ahmed <karahmed@amazon.de>,
-        gregkh@linuxfoundation.org, stable@vger.kernel.org
-Subject: [PATCH 9/9] KVM/SVM: Allow direct access to MSR_IA32_SPEC_CTRL
-Date: Tue,  6 Feb 2018 17:29:41 +0000
-Message-Id: <1517938181-15317-10-git-send-email-dwmw@amazon.co.uk>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1517938181-15317-1-git-send-email-dwmw@amazon.co.uk>
-References: <1517938181-15317-1-git-send-email-dwmw@amazon.co.uk>
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <pasha.tatashin@oracle.com>
+X-Google-Smtp-Source: AH8x225UzB4h85q5I67C9IlZU29iQ1YhA0cwjeWUtfSA2SFW58NUe4x1icA8Dbkj+caFqdsl+/CG
+ARC-Seal: i=1; a=rsa-sha256; t=1518713982; cv=none;
+        d=google.com; s=arc-20160816;
+        b=thJL5tS4NKG31iZ3Ss6WX6tEslKmIwskWNHpSkxgON/OnLf5NcYcRj/vD4/2OlyYZf
+         PQCwPw9zKXInMzxev0d3fMmsCN2IHjCGyMhLzTRXezS8lu2zlPB9KElzkkuIvGBsJhe5
+         1r2vMYXAL+EwTQcQ/O4lGbPQD5lCR5cgLXWosZ6fOR0SVpVKVXmJm+vw1/y5Bcq3ahxS
+         7/EJH9MTQgNM27jT4BYVHOkM10Rbr+9L81xAM2MRiykAALk+txc07VWrl9RIl2c7K0mR
+         nnOJIFNp4xH5bjL9mRX8UqbiOOpPiNauTQQuwGjs3XHgApntRDuupbIQDHuUVGbHFam1
+         /Wqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=SOQz10HVteTzZxyN4bNZPRm+egG9LAy9hLapnf09dOM=;
+        b=iF6evZYX+y5wC/6Azy6hWdyF56A3I8/qgDaM3ai7HujQMW6JYMTvRaqPQOt0Org0hy
+         dlOtGF0sQM1KCMXbMwkTCr/LtiBXDQ+8sYuiMXxHYe9RR0FfLGruL6Lpvc+hmiLIZGhV
+         pX+GYOSQQlt1YjssL3MUpfrvAmjGj+eZ6G/iQlGAW7o8SH9TA4O1wDFPPRnIHwfuJO14
+         g9lVODMJk4SJUmStw6xaNtgwooI1RFqzOx8yPmkndWuMRYiUdr3xYgxiJG85XMukM9W5
+         UjPURmg0ALWA6Qbh+QJsFw/HzICi5kZiLWuSxQSNRYY8P/SON7GKnoISctA80lLD0FTT
+         24Og==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=LtNfz8Yd;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=LtNfz8Yd;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        akpm@linux-foundation.org, mgorman@techsingularity.net,
+        mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, vbabka@suse.cz, bharata@linux.vnet.ibm.com,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com,
+        bhe@redhat.com
+Subject: [v4 0/6] optimize memory hotplug
+Date: Thu, 15 Feb 2018 11:59:14 -0500
+Message-Id: <20180215165920.8570-1-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.16.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8806 signatures=668672
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=572
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802150205
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592487033227290538?=
+X-GMAIL-MSGID: =?utf-8?q?1592487033227290538?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: KarimAllah Ahmed <karahmed@amazon.de>
+Changelog:
+	v3 - v4
+	Addressed comments from Ingo Molnar and from Michal Hocko
+	Splitted 4th patch into three patches
+	Instead of using section table to save node ids, saving node id in
+	the first page of every section.
 
-[ Based on a patch from Paolo Bonzini <pbonzini@redhat.com> ]
+	v2 - v3
+	Fixed two issues found during testing
+	Addressed Kbuild warning reports
 
-... basically doing exactly what we do for VMX:
+	v1 - v2
+	Added struct page poisoning checking in order to verify that
+	struct pages are never accessed until initialized during memory
+	hotplug
 
-- Passthrough SPEC_CTRL to guests (if enabled in guest CPUID)
-- Save and restore SPEC_CTRL around VMExit and VMEntry only if the guest
-  actually used it.
+This patchset:
+- Improves hotplug performance by eliminating a number of
+struct page traverses during memory hotplug.
 
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jun Nakajima <jun.nakajima@intel.com>
-Cc: kvm@vger.kernel.org
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Link: https://lkml.kernel.org/r/1517669783-20732-1-git-send-email-karahmed@amazon.de
+- Fixes some issues with hotplugging, where boundaries
+were not properly checked. And on x86 block size was not properly aligned
+with end of memory
 
-(cherry picked from commit b2ac58f90540e39324e7a29a7ad471407ae0bf48)
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- arch/x86/kvm/svm.c | 88 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 88 insertions(+)
+- Also, potentially improves boot performance by eliminating condition from
+  __init_single_page().
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 6de8d65..be644af 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -183,6 +183,8 @@ struct vcpu_svm {
- 		u64 gs_base;
- 	} host;
- 
-+	u64 spec_ctrl;
-+
- 	u32 *msrpm;
- 
- 	ulong nmi_iret_rip;
-@@ -248,6 +250,7 @@ static const struct svm_direct_access_msrs {
- 	{ .index = MSR_CSTAR,				.always = true  },
- 	{ .index = MSR_SYSCALL_MASK,			.always = true  },
- #endif
-+	{ .index = MSR_IA32_SPEC_CTRL,			.always = false },
- 	{ .index = MSR_IA32_PRED_CMD,			.always = false },
- 	{ .index = MSR_IA32_LASTBRANCHFROMIP,		.always = false },
- 	{ .index = MSR_IA32_LASTBRANCHTOIP,		.always = false },
-@@ -863,6 +866,25 @@ static bool valid_msr_intercept(u32 index)
- 	return false;
- }
- 
-+static bool msr_write_intercepted(struct kvm_vcpu *vcpu, unsigned msr)
-+{
-+	u8 bit_write;
-+	unsigned long tmp;
-+	u32 offset;
-+	u32 *msrpm;
-+
-+	msrpm = is_guest_mode(vcpu) ? to_svm(vcpu)->nested.msrpm:
-+				      to_svm(vcpu)->msrpm;
-+
-+	offset    = svm_msrpm_offset(msr);
-+	bit_write = 2 * (msr & 0x0f) + 1;
-+	tmp       = msrpm[offset];
-+
-+	BUG_ON(offset == MSR_INVALID);
-+
-+	return !!test_bit(bit_write,  &tmp);
-+}
-+
- static void set_msr_interception(u32 *msrpm, unsigned msr,
- 				 int read, int write)
- {
-@@ -1537,6 +1559,8 @@ static void svm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
- 	u32 dummy;
- 	u32 eax = 1;
- 
-+	svm->spec_ctrl = 0;
-+
- 	if (!init_event) {
- 		svm->vcpu.arch.apic_base = APIC_DEFAULT_PHYS_BASE |
- 					   MSR_IA32_APICBASE_ENABLE;
-@@ -3520,6 +3544,13 @@ static int svm_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	case MSR_VM_CR:
- 		msr_info->data = svm->nested.vm_cr_msr;
- 		break;
-+	case MSR_IA32_SPEC_CTRL:
-+		if (!msr_info->host_initiated &&
-+		    !guest_cpuid_has_ibrs(vcpu))
-+			return 1;
-+
-+		msr_info->data = svm->spec_ctrl;
-+		break;
- 	case MSR_IA32_UCODE_REV:
- 		msr_info->data = 0x01000065;
- 		break;
-@@ -3611,6 +3642,33 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 	case MSR_IA32_TSC:
- 		kvm_write_tsc(vcpu, msr);
- 		break;
-+	case MSR_IA32_SPEC_CTRL:
-+		if (!msr->host_initiated &&
-+		    !guest_cpuid_has_ibrs(vcpu))
-+			return 1;
-+
-+		/* The STIBP bit doesn't fault even if it's not advertised */
-+		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP))
-+			return 1;
-+
-+		svm->spec_ctrl = data;
-+
-+		if (!data)
-+			break;
-+
-+		/*
-+		 * For non-nested:
-+		 * When it's written (to non-zero) for the first time, pass
-+		 * it through.
-+		 *
-+		 * For nested:
-+		 * The handling of the MSR bitmap for L2 guests is done in
-+		 * nested_svm_vmrun_msrpm.
-+		 * We update the L1 MSR bit as well since it will end up
-+		 * touching the MSR anyway now.
-+		 */
-+		set_msr_interception(svm->msrpm, MSR_IA32_SPEC_CTRL, 1, 1);
-+		break;
- 	case MSR_IA32_PRED_CMD:
- 		if (!msr->host_initiated &&
- 		    !guest_cpuid_has_ibpb(vcpu))
-@@ -4854,6 +4912,15 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
- 
- 	local_irq_enable();
- 
-+	/*
-+	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
-+	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
-+	 * is no need to worry about the conditional branch over the wrmsr
-+	 * being speculatively taken.
-+	 */
-+	if (svm->spec_ctrl)
-+		wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
-+
- 	asm volatile (
- 		"push %%" _ASM_BP "; \n\t"
- 		"mov %c[rbx](%[svm]), %%" _ASM_BX " \n\t"
-@@ -4946,6 +5013,27 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
- #endif
- 		);
- 
-+	/*
-+	 * We do not use IBRS in the kernel. If this vCPU has used the
-+	 * SPEC_CTRL MSR it may have left it on; save the value and
-+	 * turn it off. This is much more efficient than blindly adding
-+	 * it to the atomic save/restore list. Especially as the former
-+	 * (Saving guest MSRs on vmexit) doesn't even exist in KVM.
-+	 *
-+	 * For non-nested case:
-+	 * If the L01 MSR bitmap does not intercept the MSR, then we need to
-+	 * save it.
-+	 *
-+	 * For nested case:
-+	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
-+	 * save it.
-+	 */
-+	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
-+		rdmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
-+
-+	if (svm->spec_ctrl)
-+		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-+
- 	/* Eliminate branch target predictions from guest mode */
- 	vmexit_fill_RSB();
- 
+- Adds robustness by verifying that that struct pages are correctly
+  poisoned when flags are accessed.
+
+The following experiments were performed on Xeon(R) CPU E7-8895 v3 @ 2.60GHz
+with 1T RAM:
+
+booting in qemu with 960G of memory, time to initialize struct pages:
+
+no-kvm:
+	TRY1		TRY2
+BEFORE:	39.433668	39.39705
+AFTER:	36.903781	36.989329
+
+with-kvm:
+BEFORE:	10.977447	11.103164
+AFTER:	10.929072	10.751885
+
+Hotplug 896G memory:
+no-kvm:
+	TRY1		TRY2
+BEFORE: 848.740000	846.910000
+AFTER:  783.070000	786.560000
+
+with-kvm:
+	TRY1		TRY2
+BEFORE: 34.410000	33.57
+AFTER:	29.810000	29.580000
+
+Pavel Tatashin (6):
+  mm/memory_hotplug: enforce block size aligned range check
+  x86/mm/memory_hotplug: determine block size based on the end of boot
+    memory
+  mm: uninitialized struct page poisoning sanity checking
+  mm/memory_hotplug: optimize probe routine
+  mm/memory_hotplug: don't read nid from struct page during hotplug
+  mm/memory_hotplug: optimize memory hotplug
+
+ arch/x86/mm/init_64.c      | 33 +++++++++++++++++++++++++++++----
+ drivers/base/memory.c      | 38 +++++++++++++++++++++-----------------
+ drivers/base/node.c        | 22 +++++++++++++++-------
+ include/linux/mm.h         |  4 +++-
+ include/linux/node.h       |  4 ++--
+ include/linux/page-flags.h | 22 +++++++++++++++++-----
+ mm/memblock.c              |  2 +-
+ mm/memory_hotplug.c        | 36 ++++++++++++++----------------------
+ mm/page_alloc.c            | 28 ++++++++++------------------
+ mm/sparse.c                |  9 ++++++++-
+ 10 files changed, 120 insertions(+), 78 deletions(-)
+
 -- 
-2.7.4
+2.16.1
