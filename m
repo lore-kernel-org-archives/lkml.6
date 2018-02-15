@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224k1QPeyugXClucg9RgS72iNajYbKTAisFV+Er+nvNDnE9FmJmjjFMCQsb7HR7fT1XDInZa
-ARC-Seal: i=1; a=rsa-sha256; t=1518709238; cv=none;
+X-Google-Smtp-Source: AH8x227IAZhvYC8UkSV/9bH1DC+0BG4F4EBX7t3+CSHEo12nmBgR77ThNFQcdSVMytMic5K+guS4
+ARC-Seal: i=1; a=rsa-sha256; t=1518709235; cv=none;
         d=google.com; s=arc-20160816;
-        b=OdWBd8YYQk/Ktn8axpZ+X1h1EY7O7IaQ079PEaDJaNj6Ikdfd6DixCKBryNWvwe1Q/
-         4opD+Ng/SEkb8krrjDWkN0XLf/J5F9+N9Ykb6FVf0Z37gqctUaCHL4XOxWcu7paOlPhe
-         7Mk/VngPho+EL7pher5hHVM14NbaEoUcNDyvw7QBWdEF6iwhjS3kcOK8F/FHQuvVVMNo
-         DqVseA70lLf/YrT5oShRvEpATrt3ZCM4bEavHxMOKITkWHvZAQh0OXhua3OA1GOrqO5h
-         4jYzZIV81veGEDEdaIDoF9zfrLr+o+pqOWruKnri2BncUSN3AZXAzgRHFpXeNhw1Aphq
-         N+yw==
+        b=MFuvg2Y77nG1CYr/ZkhMJzij7IKRDkbq0yXqWgBg20G/+Le/6RhwldtUv2hS1NViKu
+         hjsmb5YmLoaS8HkmgbIpjJKvJMaSPo/cSYoDMRgfltPXSPEhSYEa1Z82L4dxbs3lLopA
+         EJOYpKeMJP1Yut/qOQ2Hd5c1UMScSb6t8dstbK2tEjE/IMC4GYIDAM3tuOCenbhKpnUI
+         gYO4tVNinjGIiekmBvEvGu+Io02CL1lYJ5MbeVHROfmDt+J3NuaTAlIW6JeryZTPn9D+
+         crOxErqbSmSZf0MU4/+oqx7XNXJgMW26TiUWxzIvwefH8Lj/3iAGrUz34Kr7enBxvgIq
+         dAng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gGXmEz/RAnHyfK8LNdY41phSBUJV71Nlte4caBtf5Ys=;
-        b=kTDgZe8xGlM8l01/pbmZWYhyk7hgov8Xfu+8LxGIQooEs8fnE6fECXqLx1gZWBnjKV
-         BVXoHNt7/WxHZas9rQsCG+6O/WnSefz97566kuiCAm2F7bl18Z/vgVfLbsYaKltdNxpK
-         2Uj5+6/lFdvd3nOayck7OoZ9FZl1m1Pybujl4n1C/uJgfSKv9mULJTNfRNv9i0zo9NaA
-         iPxt0MEA7jzF9c4IJhjGtobGuiJBkllGkkqyhbSbv0Uaqei5fv6R8gg1q4R4Jf2Uvu9K
-         jB/z3eEUxiWo+hIPeJ1BXoDzRgCgKjHq7dH5Er4Mdgyfy8X1/FJRpQumXecZXj3BZKGQ
-         yoqA==
+        bh=mY4pQTt5b7dnAnBaXBc8mVOgFWq+frDponjbPKNXdlc=;
+        b=V/JKgVM0zZqM8W/XJSzNxPc3PgN2Q9bDFBkzYDBmSXjHdC3AJnRT+/R8sOV+j67gKu
+         EE27y3oK0IfXmVmCdtDZoZrbL/wIvTIQYsPWZLhusThOCSqD13LdHWza8BXwUHyGgFi6
+         IvvAgHrJsLGA9D+dAzpphVaq179e98Lj/bSSfkMzUC+rofYwAh48TVEr6tFbQCDGHZ+2
+         sBg5MtLrzs9hIEv0hNWUMD3aq9NH9cq70OMAinWMeAZ0bt2xeXwXBxO0Vha6BlOcxb/I
+         6OjD92F+/l0cdNYVR74RczuOD/0/TVrEYyCR/AwPYYR0Q+TvAAWYPVmoC9isjGcvUXsH
+         OPoA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Ozkan Sezer <sezeroz@gmail.com>
-Subject: [PATCH 4.15 009/202] Revert "drm/i915: mark all device info struct with __initconst"
-Date: Thu, 15 Feb 2018 16:15:09 +0100
-Message-Id: <20180215151713.295801905@linuxfoundation.org>
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.15 044/202] [Variant 3/Meltdown] arm64: kpti: Add ->enable callback to remap swapper using nG mappings
+Date: Thu, 15 Feb 2018 16:15:44 +0100
+Message-Id: <20180215151715.485348890@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592482058623726019?=
-X-GMAIL-MSGID: =?utf-8?q?1592482058623726019?=
+X-GMAIL-THRID: =?utf-8?q?1592481609583456068?=
+X-GMAIL-MSGID: =?utf-8?q?1592482055430612825?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,392 +49,312 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit b5a756a722286af9702d565501e1f690d075d16b upstream.
 
-This reverts commit 5b54eddd3920e9f6f1a6d972454baf350cbae77e.
+Commit f992b4dfd58b upstream.
 
- Conflicts:
-	drivers/gpu/drm/i915/i915_pci.c
+Defaulting to global mappings for kernel space is generally good for
+performance and appears to be necessary for Cavium ThunderX. If we
+subsequently decide that we need to enable kpti, then we need to rewrite
+our existing page table entries to be non-global. This is fiddly, and
+made worse by the possible use of contiguous mappings, which require
+a strict break-before-make sequence.
 
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=104805
-Signed-off-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-Fixes: 5b54eddd3920 ("drm/i915: mark all device info struct with __initconst")
-Link: https://patchwork.freedesktop.org/patch/msgid/20180129083346.29173-1-lionel.g.landwerlin@intel.com
-(cherry picked from commit 5db47e37b38755c5e26e6b8fbc1a32ce73495940)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Ozkan Sezer <sezeroz@gmail.com>
+Since the enable callback runs on each online CPU from stop_machine
+context, we can have all CPUs enter the idmap, where secondaries can
+wait for the primary CPU to rewrite swapper with its MMU off. It's all
+fairly horrible, but at least it only runs once.
+
+Tested-by: Marc Zyngier <marc.zyngier@arm.com>
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Conflicts:
+	arch/arm64/mm/proc.S
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/i915/i915_pci.c |   94 ++++++++++++++++++++--------------------
- 1 file changed, 47 insertions(+), 47 deletions(-)
+ arch/arm64/include/asm/assembler.h |    4 
+ arch/arm64/kernel/cpufeature.c     |   25 ++++
+ arch/arm64/mm/proc.S               |  202 +++++++++++++++++++++++++++++++++++--
+ 3 files changed, 224 insertions(+), 7 deletions(-)
 
---- a/drivers/gpu/drm/i915/i915_pci.c
-+++ b/drivers/gpu/drm/i915/i915_pci.c
-@@ -74,19 +74,19 @@
- 	GEN_DEFAULT_PAGE_SIZES, \
- 	CURSOR_OFFSETS
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -489,6 +489,10 @@ alternative_else_nop_endif
+ #endif
+ 	.endm
  
--static const struct intel_device_info intel_i830_info __initconst = {
-+static const struct intel_device_info intel_i830_info = {
- 	GEN2_FEATURES,
- 	.platform = INTEL_I830,
- 	.is_mobile = 1, .cursor_needs_physical = 1,
- 	.num_pipes = 2, /* legal, last one wins */
- };
++	.macro	pte_to_phys, phys, pte
++	and	\phys, \pte, #(((1 << (48 - PAGE_SHIFT)) - 1) << PAGE_SHIFT)
++	.endm
++
+ /**
+  * Errata workaround prior to disable MMU. Insert an ISB immediately prior
+  * to executing the MSR that will change SCTLR_ELn[M] from a value of 1 to 0.
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -878,6 +878,30 @@ static bool unmap_kernel_at_el0(const st
+ 						     ID_AA64PFR0_CSV3_SHIFT);
+ }
  
--static const struct intel_device_info intel_i845g_info __initconst = {
-+static const struct intel_device_info intel_i845g_info = {
- 	GEN2_FEATURES,
- 	.platform = INTEL_I845G,
- };
++static int kpti_install_ng_mappings(void *__unused)
++{
++	typedef void (kpti_remap_fn)(int, int, phys_addr_t);
++	extern kpti_remap_fn idmap_kpti_install_ng_mappings;
++	kpti_remap_fn *remap_fn;
++
++	static bool kpti_applied = false;
++	int cpu = smp_processor_id();
++
++	if (kpti_applied)
++		return 0;
++
++	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
++
++	cpu_install_idmap();
++	remap_fn(cpu, num_online_cpus(), __pa_symbol(swapper_pg_dir));
++	cpu_uninstall_idmap();
++
++	if (!cpu)
++		kpti_applied = true;
++
++	return 0;
++}
++
+ static int __init parse_kpti(char *str)
+ {
+ 	bool enabled;
+@@ -984,6 +1008,7 @@ static const struct arm64_cpu_capabiliti
+ 		.capability = ARM64_UNMAP_KERNEL_AT_EL0,
+ 		.def_scope = SCOPE_SYSTEM,
+ 		.matches = unmap_kernel_at_el0,
++		.enable = kpti_install_ng_mappings,
+ 	},
+ #endif
+ 	{
+--- a/arch/arm64/mm/proc.S
++++ b/arch/arm64/mm/proc.S
+@@ -153,6 +153,16 @@ ENTRY(cpu_do_switch_mm)
+ ENDPROC(cpu_do_switch_mm)
  
--static const struct intel_device_info intel_i85x_info __initconst = {
-+static const struct intel_device_info intel_i85x_info = {
- 	GEN2_FEATURES,
- 	.platform = INTEL_I85X, .is_mobile = 1,
- 	.num_pipes = 2, /* legal, last one wins */
-@@ -94,7 +94,7 @@ static const struct intel_device_info in
- 	.has_fbc = 1,
- };
+ 	.pushsection ".idmap.text", "ax"
++
++.macro	__idmap_cpu_set_reserved_ttbr1, tmp1, tmp2
++	adrp	\tmp1, empty_zero_page
++	msr	ttbr1_el1, \tmp2
++	isb
++	tlbi	vmalle1
++	dsb	nsh
++	isb
++.endm
++
+ /*
+  * void idmap_cpu_replace_ttbr1(phys_addr_t new_pgd)
+  *
+@@ -162,13 +172,7 @@ ENDPROC(cpu_do_switch_mm)
+ ENTRY(idmap_cpu_replace_ttbr1)
+ 	save_and_disable_daif flags=x2
  
--static const struct intel_device_info intel_i865g_info __initconst = {
-+static const struct intel_device_info intel_i865g_info = {
- 	GEN2_FEATURES,
- 	.platform = INTEL_I865G,
- };
-@@ -108,7 +108,7 @@ static const struct intel_device_info in
- 	GEN_DEFAULT_PAGE_SIZES, \
- 	CURSOR_OFFSETS
+-	adrp	x1, empty_zero_page
+-	msr	ttbr1_el1, x1
+-	isb
+-
+-	tlbi	vmalle1
+-	dsb	nsh
+-	isb
++	__idmap_cpu_set_reserved_ttbr1 x1, x3
  
--static const struct intel_device_info intel_i915g_info __initconst = {
-+static const struct intel_device_info intel_i915g_info = {
- 	GEN3_FEATURES,
- 	.platform = INTEL_I915G, .cursor_needs_physical = 1,
- 	.has_overlay = 1, .overlay_needs_physical = 1,
-@@ -116,7 +116,7 @@ static const struct intel_device_info in
- 	.unfenced_needs_alignment = 1,
- };
+ 	msr	ttbr1_el1, x0
+ 	isb
+@@ -179,6 +183,190 @@ ENTRY(idmap_cpu_replace_ttbr1)
+ ENDPROC(idmap_cpu_replace_ttbr1)
+ 	.popsection
  
--static const struct intel_device_info intel_i915gm_info __initconst = {
-+static const struct intel_device_info intel_i915gm_info = {
- 	GEN3_FEATURES,
- 	.platform = INTEL_I915GM,
- 	.is_mobile = 1,
-@@ -128,7 +128,7 @@ static const struct intel_device_info in
- 	.unfenced_needs_alignment = 1,
- };
- 
--static const struct intel_device_info intel_i945g_info __initconst = {
-+static const struct intel_device_info intel_i945g_info = {
- 	GEN3_FEATURES,
- 	.platform = INTEL_I945G,
- 	.has_hotplug = 1, .cursor_needs_physical = 1,
-@@ -137,7 +137,7 @@ static const struct intel_device_info in
- 	.unfenced_needs_alignment = 1,
- };
- 
--static const struct intel_device_info intel_i945gm_info __initconst = {
-+static const struct intel_device_info intel_i945gm_info = {
- 	GEN3_FEATURES,
- 	.platform = INTEL_I945GM, .is_mobile = 1,
- 	.has_hotplug = 1, .cursor_needs_physical = 1,
-@@ -148,14 +148,14 @@ static const struct intel_device_info in
- 	.unfenced_needs_alignment = 1,
- };
- 
--static const struct intel_device_info intel_g33_info __initconst = {
-+static const struct intel_device_info intel_g33_info = {
- 	GEN3_FEATURES,
- 	.platform = INTEL_G33,
- 	.has_hotplug = 1,
- 	.has_overlay = 1,
- };
- 
--static const struct intel_device_info intel_pineview_info __initconst = {
-+static const struct intel_device_info intel_pineview_info = {
- 	GEN3_FEATURES,
- 	.platform = INTEL_PINEVIEW, .is_mobile = 1,
- 	.has_hotplug = 1,
-@@ -172,7 +172,7 @@ static const struct intel_device_info in
- 	GEN_DEFAULT_PAGE_SIZES, \
- 	CURSOR_OFFSETS
- 
--static const struct intel_device_info intel_i965g_info __initconst = {
-+static const struct intel_device_info intel_i965g_info = {
- 	GEN4_FEATURES,
- 	.platform = INTEL_I965G,
- 	.has_overlay = 1,
-@@ -180,7 +180,7 @@ static const struct intel_device_info in
- 	.has_snoop = false,
- };
- 
--static const struct intel_device_info intel_i965gm_info __initconst = {
-+static const struct intel_device_info intel_i965gm_info = {
- 	GEN4_FEATURES,
- 	.platform = INTEL_I965GM,
- 	.is_mobile = 1, .has_fbc = 1,
-@@ -190,13 +190,13 @@ static const struct intel_device_info in
- 	.has_snoop = false,
- };
- 
--static const struct intel_device_info intel_g45_info __initconst = {
-+static const struct intel_device_info intel_g45_info = {
- 	GEN4_FEATURES,
- 	.platform = INTEL_G45,
- 	.ring_mask = RENDER_RING | BSD_RING,
- };
- 
--static const struct intel_device_info intel_gm45_info __initconst = {
-+static const struct intel_device_info intel_gm45_info = {
- 	GEN4_FEATURES,
- 	.platform = INTEL_GM45,
- 	.is_mobile = 1, .has_fbc = 1,
-@@ -213,12 +213,12 @@ static const struct intel_device_info in
- 	GEN_DEFAULT_PAGE_SIZES, \
- 	CURSOR_OFFSETS
- 
--static const struct intel_device_info intel_ironlake_d_info __initconst = {
-+static const struct intel_device_info intel_ironlake_d_info = {
- 	GEN5_FEATURES,
- 	.platform = INTEL_IRONLAKE,
- };
- 
--static const struct intel_device_info intel_ironlake_m_info __initconst = {
-+static const struct intel_device_info intel_ironlake_m_info = {
- 	GEN5_FEATURES,
- 	.platform = INTEL_IRONLAKE,
- 	.is_mobile = 1, .has_fbc = 1,
-@@ -241,12 +241,12 @@ static const struct intel_device_info in
- 	GEN6_FEATURES, \
- 	.platform = INTEL_SANDYBRIDGE
- 
--static const struct intel_device_info intel_sandybridge_d_gt1_info __initconst = {
-+static const struct intel_device_info intel_sandybridge_d_gt1_info = {
- 	SNB_D_PLATFORM,
- 	.gt = 1,
- };
- 
--static const struct intel_device_info intel_sandybridge_d_gt2_info __initconst = {
-+static const struct intel_device_info intel_sandybridge_d_gt2_info = {
- 	SNB_D_PLATFORM,
- 	.gt = 2,
- };
-@@ -257,12 +257,12 @@ static const struct intel_device_info in
- 	.is_mobile = 1
- 
- 
--static const struct intel_device_info intel_sandybridge_m_gt1_info __initconst = {
-+static const struct intel_device_info intel_sandybridge_m_gt1_info = {
- 	SNB_M_PLATFORM,
- 	.gt = 1,
- };
- 
--static const struct intel_device_info intel_sandybridge_m_gt2_info __initconst = {
-+static const struct intel_device_info intel_sandybridge_m_gt2_info = {
- 	SNB_M_PLATFORM,
- 	.gt = 2,
- };
-@@ -286,12 +286,12 @@ static const struct intel_device_info in
- 	.platform = INTEL_IVYBRIDGE, \
- 	.has_l3_dpf = 1
- 
--static const struct intel_device_info intel_ivybridge_d_gt1_info __initconst = {
-+static const struct intel_device_info intel_ivybridge_d_gt1_info = {
- 	IVB_D_PLATFORM,
- 	.gt = 1,
- };
- 
--static const struct intel_device_info intel_ivybridge_d_gt2_info __initconst = {
-+static const struct intel_device_info intel_ivybridge_d_gt2_info = {
- 	IVB_D_PLATFORM,
- 	.gt = 2,
- };
-@@ -302,17 +302,17 @@ static const struct intel_device_info in
- 	.is_mobile = 1, \
- 	.has_l3_dpf = 1
- 
--static const struct intel_device_info intel_ivybridge_m_gt1_info __initconst = {
-+static const struct intel_device_info intel_ivybridge_m_gt1_info = {
- 	IVB_M_PLATFORM,
- 	.gt = 1,
- };
- 
--static const struct intel_device_info intel_ivybridge_m_gt2_info __initconst = {
-+static const struct intel_device_info intel_ivybridge_m_gt2_info = {
- 	IVB_M_PLATFORM,
- 	.gt = 2,
- };
- 
--static const struct intel_device_info intel_ivybridge_q_info __initconst = {
-+static const struct intel_device_info intel_ivybridge_q_info = {
- 	GEN7_FEATURES,
- 	.platform = INTEL_IVYBRIDGE,
- 	.gt = 2,
-@@ -320,7 +320,7 @@ static const struct intel_device_info in
- 	.has_l3_dpf = 1,
- };
- 
--static const struct intel_device_info intel_valleyview_info __initconst = {
-+static const struct intel_device_info intel_valleyview_info = {
- 	.platform = INTEL_VALLEYVIEW,
- 	.gen = 7,
- 	.is_lp = 1,
-@@ -356,17 +356,17 @@ static const struct intel_device_info in
- 	.platform = INTEL_HASWELL, \
- 	.has_l3_dpf = 1
- 
--static const struct intel_device_info intel_haswell_gt1_info __initconst = {
-+static const struct intel_device_info intel_haswell_gt1_info = {
- 	HSW_PLATFORM,
- 	.gt = 1,
- };
- 
--static const struct intel_device_info intel_haswell_gt2_info __initconst = {
-+static const struct intel_device_info intel_haswell_gt2_info = {
- 	HSW_PLATFORM,
- 	.gt = 2,
- };
- 
--static const struct intel_device_info intel_haswell_gt3_info __initconst = {
-+static const struct intel_device_info intel_haswell_gt3_info = {
- 	HSW_PLATFORM,
- 	.gt = 3,
- };
-@@ -386,17 +386,17 @@ static const struct intel_device_info in
- 	.gen = 8, \
- 	.platform = INTEL_BROADWELL
- 
--static const struct intel_device_info intel_broadwell_gt1_info __initconst = {
-+static const struct intel_device_info intel_broadwell_gt1_info = {
- 	BDW_PLATFORM,
- 	.gt = 1,
- };
- 
--static const struct intel_device_info intel_broadwell_gt2_info __initconst = {
-+static const struct intel_device_info intel_broadwell_gt2_info = {
- 	BDW_PLATFORM,
- 	.gt = 2,
- };
- 
--static const struct intel_device_info intel_broadwell_rsvd_info __initconst = {
-+static const struct intel_device_info intel_broadwell_rsvd_info = {
- 	BDW_PLATFORM,
- 	.gt = 3,
- 	/* According to the device ID those devices are GT3, they were
-@@ -404,13 +404,13 @@ static const struct intel_device_info in
- 	 */
- };
- 
--static const struct intel_device_info intel_broadwell_gt3_info __initconst = {
-+static const struct intel_device_info intel_broadwell_gt3_info = {
- 	BDW_PLATFORM,
- 	.gt = 3,
- 	.ring_mask = RENDER_RING | BSD_RING | BLT_RING | VEBOX_RING | BSD2_RING,
- };
- 
--static const struct intel_device_info intel_cherryview_info __initconst = {
-+static const struct intel_device_info intel_cherryview_info = {
- 	.gen = 8, .num_pipes = 3,
- 	.has_hotplug = 1,
- 	.is_lp = 1,
-@@ -453,12 +453,12 @@ static const struct intel_device_info in
- 	.gen = 9, \
- 	.platform = INTEL_SKYLAKE
- 
--static const struct intel_device_info intel_skylake_gt1_info __initconst = {
-+static const struct intel_device_info intel_skylake_gt1_info = {
- 	SKL_PLATFORM,
- 	.gt = 1,
- };
- 
--static const struct intel_device_info intel_skylake_gt2_info __initconst = {
-+static const struct intel_device_info intel_skylake_gt2_info = {
- 	SKL_PLATFORM,
- 	.gt = 2,
- };
-@@ -468,12 +468,12 @@ static const struct intel_device_info in
- 	.ring_mask = RENDER_RING | BSD_RING | BLT_RING | VEBOX_RING | BSD2_RING
- 
- 
--static const struct intel_device_info intel_skylake_gt3_info __initconst = {
-+static const struct intel_device_info intel_skylake_gt3_info = {
- 	SKL_GT3_PLUS_PLATFORM,
- 	.gt = 3,
- };
- 
--static const struct intel_device_info intel_skylake_gt4_info __initconst = {
-+static const struct intel_device_info intel_skylake_gt4_info = {
- 	SKL_GT3_PLUS_PLATFORM,
- 	.gt = 4,
- };
-@@ -509,13 +509,13 @@ static const struct intel_device_info in
- 	IVB_CURSOR_OFFSETS, \
- 	BDW_COLORS
- 
--static const struct intel_device_info intel_broxton_info __initconst = {
-+static const struct intel_device_info intel_broxton_info = {
- 	GEN9_LP_FEATURES,
- 	.platform = INTEL_BROXTON,
- 	.ddb_size = 512,
- };
- 
--static const struct intel_device_info intel_geminilake_info __initconst = {
-+static const struct intel_device_info intel_geminilake_info = {
- 	GEN9_LP_FEATURES,
- 	.platform = INTEL_GEMINILAKE,
- 	.ddb_size = 1024,
-@@ -527,17 +527,17 @@ static const struct intel_device_info in
- 	.gen = 9, \
- 	.platform = INTEL_KABYLAKE
- 
--static const struct intel_device_info intel_kabylake_gt1_info __initconst = {
-+static const struct intel_device_info intel_kabylake_gt1_info = {
- 	KBL_PLATFORM,
- 	.gt = 1,
- };
- 
--static const struct intel_device_info intel_kabylake_gt2_info __initconst = {
-+static const struct intel_device_info intel_kabylake_gt2_info = {
- 	KBL_PLATFORM,
- 	.gt = 2,
- };
- 
--static const struct intel_device_info intel_kabylake_gt3_info __initconst = {
-+static const struct intel_device_info intel_kabylake_gt3_info = {
- 	KBL_PLATFORM,
- 	.gt = 3,
- 	.ring_mask = RENDER_RING | BSD_RING | BLT_RING | VEBOX_RING | BSD2_RING,
-@@ -548,17 +548,17 @@ static const struct intel_device_info in
- 	.gen = 9, \
- 	.platform = INTEL_COFFEELAKE
- 
--static const struct intel_device_info intel_coffeelake_gt1_info __initconst = {
-+static const struct intel_device_info intel_coffeelake_gt1_info = {
- 	CFL_PLATFORM,
- 	.gt = 1,
- };
- 
--static const struct intel_device_info intel_coffeelake_gt2_info __initconst = {
-+static const struct intel_device_info intel_coffeelake_gt2_info = {
- 	CFL_PLATFORM,
- 	.gt = 2,
- };
- 
--static const struct intel_device_info intel_coffeelake_gt3_info __initconst = {
-+static const struct intel_device_info intel_coffeelake_gt3_info = {
- 	CFL_PLATFORM,
- 	.gt = 3,
- 	.ring_mask = RENDER_RING | BSD_RING | BLT_RING | VEBOX_RING | BSD2_RING,
-@@ -569,7 +569,7 @@ static const struct intel_device_info in
- 	.ddb_size = 1024, \
- 	GLK_COLORS
- 
--static const struct intel_device_info intel_cannonlake_gt2_info __initconst = {
-+static const struct intel_device_info intel_cannonlake_gt2_info = {
- 	GEN10_FEATURES,
- 	.is_alpha_support = 1,
- 	.platform = INTEL_CANNONLAKE,
++#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
++	.pushsection ".idmap.text", "ax"
++
++	.macro	__idmap_kpti_get_pgtable_ent, type
++	dc	cvac, cur_\()\type\()p		// Ensure any existing dirty
++	dmb	sy				// lines are written back before
++	ldr	\type, [cur_\()\type\()p]	// loading the entry
++	tbz	\type, #0, next_\()\type	// Skip invalid entries
++	.endm
++
++	.macro __idmap_kpti_put_pgtable_ent_ng, type
++	orr	\type, \type, #PTE_NG		// Same bit for blocks and pages
++	str	\type, [cur_\()\type\()p]	// Update the entry and ensure it
++	dc	civac, cur_\()\type\()p		// is visible to all CPUs.
++	.endm
++
++/*
++ * void __kpti_install_ng_mappings(int cpu, int num_cpus, phys_addr_t swapper)
++ *
++ * Called exactly once from stop_machine context by each CPU found during boot.
++ */
++__idmap_kpti_flag:
++	.long	1
++ENTRY(idmap_kpti_install_ng_mappings)
++	cpu		.req	w0
++	num_cpus	.req	w1
++	swapper_pa	.req	x2
++	swapper_ttb	.req	x3
++	flag_ptr	.req	x4
++	cur_pgdp	.req	x5
++	end_pgdp	.req	x6
++	pgd		.req	x7
++	cur_pudp	.req	x8
++	end_pudp	.req	x9
++	pud		.req	x10
++	cur_pmdp	.req	x11
++	end_pmdp	.req	x12
++	pmd		.req	x13
++	cur_ptep	.req	x14
++	end_ptep	.req	x15
++	pte		.req	x16
++
++	mrs	swapper_ttb, ttbr1_el1
++	adr	flag_ptr, __idmap_kpti_flag
++
++	cbnz	cpu, __idmap_kpti_secondary
++
++	/* We're the boot CPU. Wait for the others to catch up */
++	sevl
++1:	wfe
++	ldaxr	w18, [flag_ptr]
++	eor	w18, w18, num_cpus
++	cbnz	w18, 1b
++
++	/* We need to walk swapper, so turn off the MMU. */
++	pre_disable_mmu_workaround
++	mrs	x18, sctlr_el1
++	bic	x18, x18, #SCTLR_ELx_M
++	msr	sctlr_el1, x18
++	isb
++
++	/* Everybody is enjoying the idmap, so we can rewrite swapper. */
++	/* PGD */
++	mov	cur_pgdp, swapper_pa
++	add	end_pgdp, cur_pgdp, #(PTRS_PER_PGD * 8)
++do_pgd:	__idmap_kpti_get_pgtable_ent	pgd
++	tbnz	pgd, #1, walk_puds
++	__idmap_kpti_put_pgtable_ent_ng	pgd
++next_pgd:
++	add	cur_pgdp, cur_pgdp, #8
++	cmp	cur_pgdp, end_pgdp
++	b.ne	do_pgd
++
++	/* Publish the updated tables and nuke all the TLBs */
++	dsb	sy
++	tlbi	vmalle1is
++	dsb	ish
++	isb
++
++	/* We're done: fire up the MMU again */
++	mrs	x18, sctlr_el1
++	orr	x18, x18, #SCTLR_ELx_M
++	msr	sctlr_el1, x18
++	isb
++
++	/* Set the flag to zero to indicate that we're all done */
++	str	wzr, [flag_ptr]
++	ret
++
++	/* PUD */
++walk_puds:
++	.if CONFIG_PGTABLE_LEVELS > 3
++	pte_to_phys	cur_pudp, pgd
++	add	end_pudp, cur_pudp, #(PTRS_PER_PUD * 8)
++do_pud:	__idmap_kpti_get_pgtable_ent	pud
++	tbnz	pud, #1, walk_pmds
++	__idmap_kpti_put_pgtable_ent_ng	pud
++next_pud:
++	add	cur_pudp, cur_pudp, 8
++	cmp	cur_pudp, end_pudp
++	b.ne	do_pud
++	b	next_pgd
++	.else /* CONFIG_PGTABLE_LEVELS <= 3 */
++	mov	pud, pgd
++	b	walk_pmds
++next_pud:
++	b	next_pgd
++	.endif
++
++	/* PMD */
++walk_pmds:
++	.if CONFIG_PGTABLE_LEVELS > 2
++	pte_to_phys	cur_pmdp, pud
++	add	end_pmdp, cur_pmdp, #(PTRS_PER_PMD * 8)
++do_pmd:	__idmap_kpti_get_pgtable_ent	pmd
++	tbnz	pmd, #1, walk_ptes
++	__idmap_kpti_put_pgtable_ent_ng	pmd
++next_pmd:
++	add	cur_pmdp, cur_pmdp, #8
++	cmp	cur_pmdp, end_pmdp
++	b.ne	do_pmd
++	b	next_pud
++	.else /* CONFIG_PGTABLE_LEVELS <= 2 */
++	mov	pmd, pud
++	b	walk_ptes
++next_pmd:
++	b	next_pud
++	.endif
++
++	/* PTE */
++walk_ptes:
++	pte_to_phys	cur_ptep, pmd
++	add	end_ptep, cur_ptep, #(PTRS_PER_PTE * 8)
++do_pte:	__idmap_kpti_get_pgtable_ent	pte
++	__idmap_kpti_put_pgtable_ent_ng	pte
++next_pte:
++	add	cur_ptep, cur_ptep, #8
++	cmp	cur_ptep, end_ptep
++	b.ne	do_pte
++	b	next_pmd
++
++	/* Secondary CPUs end up here */
++__idmap_kpti_secondary:
++	/* Uninstall swapper before surgery begins */
++	__idmap_cpu_set_reserved_ttbr1 x18, x17
++
++	/* Increment the flag to let the boot CPU we're ready */
++1:	ldxr	w18, [flag_ptr]
++	add	w18, w18, #1
++	stxr	w17, w18, [flag_ptr]
++	cbnz	w17, 1b
++
++	/* Wait for the boot CPU to finish messing around with swapper */
++	sevl
++1:	wfe
++	ldxr	w18, [flag_ptr]
++	cbnz	w18, 1b
++
++	/* All done, act like nothing happened */
++	msr	ttbr1_el1, swapper_ttb
++	isb
++	ret
++
++	.unreq	cpu
++	.unreq	num_cpus
++	.unreq	swapper_pa
++	.unreq	swapper_ttb
++	.unreq	flag_ptr
++	.unreq	cur_pgdp
++	.unreq	end_pgdp
++	.unreq	pgd
++	.unreq	cur_pudp
++	.unreq	end_pudp
++	.unreq	pud
++	.unreq	cur_pmdp
++	.unreq	end_pmdp
++	.unreq	pmd
++	.unreq	cur_ptep
++	.unreq	end_ptep
++	.unreq	pte
++ENDPROC(idmap_kpti_install_ng_mappings)
++	.popsection
++#endif
++
+ /*
+  *	__cpu_setup
+  *
