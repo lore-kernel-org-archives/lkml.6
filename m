@@ -1,134 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967987AbeBOMgy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 07:36:54 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52974 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967920AbeBOMgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 07:36:52 -0500
-Date: Thu, 15 Feb 2018 12:36:42 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: John Garry <john.garry@huawei.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Hanjun Guo <hanjun.guo@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
-        Dann Frazier <dann.frazier@canonical.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh@kernel.org>, Joe Perches <joe@perches.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, Corey Minyard <minyard@acm.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v13 7/9] ACPI: Translate the I/O range of non-MMIO
- devices before scanning
-Message-ID: <20180215123642.GA28256@e107981-ln.cambridge.arm.com>
-References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
- <1518543933-22456-8-git-send-email-john.garry@huawei.com>
- <20180214161635.GA13849@e107981-ln.cambridge.arm.com>
- <65185a4d-c712-4486-d713-3fa9de14e35d@huawei.com>
- <e3fb78b3-5f5c-fe96-9f02-e96092963c17@huawei.com>
- <CAJZ5v0jGvo+cutmvi3WSe1JNvQ1UvZhJr1mQ76=8=1E5Gq+iRg@mail.gmail.com>
+        id S968018AbeBOMlL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 07:41:11 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:48227 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967920AbeBOMlJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 07:41:09 -0500
+Subject: Re: [PATCH 5/8] arm64: dts: renesas: r8a77995: Add LVDS support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
+ <1518683903-10681-6-git-send-email-kbingham@kernel.org>
+ <CAMuHMdVKczZpoXgSDOSEJZb59LAZtbWsopRaa8PtHDoZcFEMTQ@mail.gmail.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <b8cc84ad-0a64-38f0-d8ac-ad9ae88c5912@ideasonboard.com>
+Date: Thu, 15 Feb 2018 12:41:05 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0jGvo+cutmvi3WSe1JNvQ1UvZhJr1mQ76=8=1E5Gq+iRg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAMuHMdVKczZpoXgSDOSEJZb59LAZtbWsopRaa8PtHDoZcFEMTQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 12:47:25PM +0100, Rafael J. Wysocki wrote:
-> On Thu, Feb 15, 2018 at 12:19 PM, John Garry <john.garry@huawei.com> wrote:
-> >> Nothing apart from only being used by arm64 platforms today, which is
-> >> circumstantial.
-> >>
-> >>>
-> >>> I understand you need to find a place to add the:
-> >>>
-> >>> acpi_indirect_io_scan_init()
-> >>>
-> >>> to be called from core ACPI code because ACPI can't handle probe
-> >>> dependencies in any other way but other than that this patch is
-> >>> a Hisilicon ACPI driver - there is nothing generic in it (or at
-> >>> least there are no standard bindings to make it so).
-> >>>
-> >>> Whether a callback from ACPI core code (acpi_scan_init()) to a driver
-> >>> specific hook is sane or not that's the question and the only reason
-> >>> why you want to add this in drivers/acpi/arm64 rather than, say,
-> >>> drivers/bus (as you do for the DT driver).
-> >>>
-> >>> I do not know Rafael's opinion on the above, I would like to help
-> >>> you make forward progress but please understand my concerns, mostly
-> >>> on FW side.
-> >>>
-> >>
-> >> I did mention an alternative in my "ping" in v12 patch 7/9 (Feb 1), but
-> >> no response to this specific note so I kept on the same path.
-> >>
-> >> Here's what I then wrote:
-> >> "I think another solution - which you may prefer - is to avoid adding
-> >> this scan handler (and all this other scan code) and add a check like
-> >> acpi_is_serial_bus_slave() [which checks the device parent versus a list
-> >> of known indirectIO hosts] to not enumerate these children, and do it
-> >> from the LLDD host probe instead (https://lkml.org/lkml/2017/6/16/250)"
-> >>
-> >
-> > Hi Rafael, Lorenzo,
-> >
-> > I can avoid adding the scan handler in acpi_indirectio.c by skipping the
-> > child enumeration, like with this change in scan.c:
-> >
-> > +static const struct acpi_device_id indirect_io_hosts[] = {
-> > +    {"HISI0191", 0},    /* HiSilicon LPC host */
-> > +    {},
-> > +};
-> > +
-> > +static bool acpi_is_indirect_io_slave(struct acpi_device *device)
-> > +{
-> 
-> Why don't you put the table definition here?
-> 
-> > +    struct acpi_device *parent = dev->parent;
-> > +
-> > +    if (!parent || acpi_match_device_ids(parent, indirect_io_hosts))
-> > +        return false;
-> > +
-> > +    return true;
-> 
-> return parent && !acpi_match_device_ids(parent, indirect_io_hosts);
-> 
-> > +}
-> > +
-> >  static bool acpi_is_serial_bus_slave(struct acpi_device *device)
-> >  {
-> >      struct list_head resource_list;
-> >      bool is_serial_bus_slave = false;
-> >
-> > +    if (acpi_is_indirect_io_slave(device))
-> > +        return true;
-> > +
-> >      /* Macs use device properties in lieu of _CRS resources */
-> >
-> >
-> > This means I can move all this scan code into the LLDD.
-> >
-> > What do you think? Please let me know.
-> 
-> If Lorenzo agrees, that will be fine by me modulo the above remarks.
+Hi Geert,
 
-I agree and I thank you for accepting this in core ACPI code, I think
-that's much cleaner than a driver specific scan hook.
+On 15/02/18 09:07, Geert Uytterhoeven wrote:
+> Hi Kieran,
+> 
+> On Thu, Feb 15, 2018 at 9:38 AM, Kieran Bingham <kbingham@kernel.org> wrote:
+>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> The r8a77995 D3 platform has 2 LVDS channels connected to the DU.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> I love your patch!
+> Yet something to improve...
+> 
+>> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> @@ -773,18 +773,70 @@
+>>                                 port@1 {
+>>                                         reg = <1>;
+>>                                         du_out_lvds0: endpoint {
+>> +                                               remote-endpoint = <&du_out_lvds0>;
+>>                                         };
+>>                                 };
+>>
+>>                                 port@2 {
+>>                                         reg = <2>;
+>>                                         du_out_lvds1: endpoint {
+>> +                                               remote-endpoint = <&du_out_lvds1>;
+>>                                         };
+>>                                 };
+>>                         };
+>>                 };
+>>         };
+>>
+>> +       lvds0: lvds@feb90000 {
+>> +               compatible = "renesas,lvds-r8a77995";
+>> +               reg = <0 0xfeb90000 0 0x20>;
+>> +               clocks = <&cpg CPG_MOD 727>;
+>> +               status = "disabled";
+> 
+> Missing resets, power-domains
 
-It is a shame we do not have a generic identifier for such bus in ACPI
-but that won't happen overnight anyway (if ever, I think a binding for
-LPC in the ACPI specs is hard to justify).
+Both lvds0, and lvds1 are actually the same 'module' (just different mappings
+within the same IP block).
 
-Thank you,
-Lorenzo
+That means they will share clock, reset etc.
+
+Will specifying the resets cause one to affect the other unduly?
+
+like if one becomes un-used, will it power down? or is it refcounted, and will
+gracefully handle both device nodes from the same device?
+
+I'm already fairly sure clocks is fine for this - but it's just the reset's that
+worry me. If the reset module tries to reset lvds0 for some reason - would lvds1
+get reset as a side effect ...
+
+Or perhaps that won't ever happen with an :
+
+		power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+		resets = <&cpg 727>;
+
+Regards
+--
+Kieran
+
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
