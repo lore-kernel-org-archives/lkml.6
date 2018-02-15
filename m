@@ -1,142 +1,235 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426314AbeBOQmF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 11:42:05 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52065 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423914AbeBOQmE (ORCPT
+        id S1426335AbeBOQmh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 11:42:37 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:33215 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1426185AbeBOQjr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:42:04 -0500
-Subject: Re: [PATCH v3 2/5] arm64: dts: renesas: r8a77995: add VSP instances
-To: Simon Horman <horms@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1518602108-1724-1-git-send-email-kbingham@kernel.org>
- <1518602108-1724-3-git-send-email-kbingham@kernel.org>
- <20180215163342.4evihm3uts3lfu5c@verge.net.au>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <7db13491-f4f6-4c7c-e9e3-c1e91b0054b6@ideasonboard.com>
-Date: Thu, 15 Feb 2018 16:41:58 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <20180215163342.4evihm3uts3lfu5c@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Thu, 15 Feb 2018 11:39:47 -0500
+X-Google-Smtp-Source: AH8x227O0QPu7/1JtwiwR8IpHpW4SbhylfyiE8Y+YFhhCPy8VSl2YD26UgKbHuJkLjmPg02TvYkdMg==
+From: Tim Harvey <tharvey@gateworks.com>
+To: linux-media@vger.kernel.org, alsa-devel@alsa-project.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Subject: [PATCH v12 1/8] v4l2-dv-timings: add v4l2_hdmi_colorimetry()
+Date: Thu, 15 Feb 2018 08:39:20 -0800
+Message-Id: <1518712767-21928-2-git-send-email-tharvey@gateworks.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518712767-21928-1-git-send-email-tharvey@gateworks.com>
+References: <1518712767-21928-1-git-send-email-tharvey@gateworks.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Simon,
+From: Hans Verkuil <hverkuil@xs4all.nl>
 
-On 15/02/18 16:33, Simon Horman wrote:
-> On Wed, Feb 14, 2018 at 09:55:05AM +0000, Kieran Bingham wrote:
->> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->>
->> The r8a77995 has a VSPBS to support image processing such as blending of
->> two input images, and has two VSPDs to handle display pipelines with a
->> DU.
->>
->> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>
->> ---
->> v2:
->>  - Fix VSPD register map size
->>  - Squash VSPBS and VSPD patches together
->>
->> v3:
->>  - Fix VSPBS register map size too :-)
->>
->>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 30 ++++++++++++++++++++++++++++++
->>  1 file changed, 30 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
->> index 196a917afea6..0db242114bc5 100644
->> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
->> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
->> @@ -692,6 +692,16 @@
->>  			status = "disabled";
->>  		};
->>  
->> +		vspbs: vsp@fe960000 {
->> +			compatible = "renesas,vsp2";
->> +			reg = <0 0xfe960000 0 0x8000>;
->> +			interrupts = <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&cpg CPG_MOD 627>;
->> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
->> +			resets = <&cpg 627>;
->> +			renesas,fcp = <&fcpvb0>;
->> +		};
->> +
->>  		fcpvb0: fcp@fe96f000 {
->>  			compatible = "renesas,fcpv";
->>  			reg = <0 0xfe96f000 0 0x200>;
->> @@ -701,6 +711,16 @@
->>  			iommus = <&ipmmu_vp0 5>;
->>  		};
->>  
->> +		vspd0: vsp@fea20000 {
->> +			compatible = "renesas,vsp2";
->> +			reg = <0 0xfea20000 0 0x8000>;
->> +			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&cpg CPG_MOD 623>;
->> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
->> +			resets = <&cpg 623>;
->> +			renesas,fcp = <&fcpvd0>;
->> +		};
->> +
->>  		fcpvd0: fcp@fea27000 {
->>  			compatible = "renesas,fcpv";
->>  			reg = <0 0xfea27000 0 0x200>;
->> @@ -710,6 +730,16 @@
->>  			iommus = <&ipmmu_vi0 8>;
->>  		};
->>  
->> +		vspd1: vsp@fea80000 {
-> 
-> The above should be:
-> 
-> 		vspd1: vsp@fea28000 {
+Add the v4l2_hdmi_colorimetry() function so we have a single function
+that determines the colorspace, YCbCr encoding, quantization range and
+transfer function from the InfoFrame data.
 
-Good spot.
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+v9:
+ - fix kernel-doc format (Randy)
 
-</me looks to datasheet> That is correct.
+ drivers/media/v4l2-core/v4l2-dv-timings.c | 141 ++++++++++++++++++++++++++++++
+ include/media/v4l2-dv-timings.h           |  21 +++++
+ 2 files changed, 162 insertions(+)
 
-Would you like me to resubmit this patch ? Or will you fix this up locally?
-
---
-Regards
-
-Kieran
-
-
-> 
->> +			compatible = "renesas,vsp2";
->> +			reg = <0 0xfea28000 0 0x8000>;
->> +			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&cpg CPG_MOD 622>;
->> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
->> +			resets = <&cpg 622>;
->> +			renesas,fcp = <&fcpvd1>;
->> +		};
->> +
->>  		fcpvd1: fcp@fea2f000 {
->>  			compatible = "renesas,fcpv";
->>  			reg = <0 0xfea2f000 0 0x200>;
->> -- 
->> 2.7.4
->>
+diff --git a/drivers/media/v4l2-core/v4l2-dv-timings.c b/drivers/media/v4l2-core/v4l2-dv-timings.c
+index 930f9c5..5663d86 100644
+--- a/drivers/media/v4l2-core/v4l2-dv-timings.c
++++ b/drivers/media/v4l2-core/v4l2-dv-timings.c
+@@ -27,6 +27,7 @@
+ #include <linux/v4l2-dv-timings.h>
+ #include <media/v4l2-dv-timings.h>
+ #include <linux/math64.h>
++#include <linux/hdmi.h>
+ 
+ MODULE_AUTHOR("Hans Verkuil");
+ MODULE_DESCRIPTION("V4L2 DV Timings Helper Functions");
+@@ -814,3 +815,143 @@ struct v4l2_fract v4l2_calc_aspect_ratio(u8 hor_landscape, u8 vert_portrait)
+ 	return aspect;
+ }
+ EXPORT_SYMBOL_GPL(v4l2_calc_aspect_ratio);
++
++/** v4l2_hdmi_rx_colorimetry - determine HDMI colorimetry information
++ *	based on various InfoFrames.
++ * @avi: the AVI InfoFrame
++ * @hdmi: the HDMI Vendor InfoFrame, may be NULL
++ * @height: the frame height
++ *
++ * Determines the HDMI colorimetry information, i.e. how the HDMI
++ * pixel color data should be interpreted.
++ *
++ * Note that some of the newer features (DCI-P3, HDR) are not yet
++ * implemented: the hdmi.h header needs to be updated to the HDMI 2.0
++ * and CTA-861-G standards.
++ */
++struct v4l2_hdmi_colorimetry
++v4l2_hdmi_rx_colorimetry(const struct hdmi_avi_infoframe *avi,
++			 const struct hdmi_vendor_infoframe *hdmi,
++			 unsigned int height)
++{
++	struct v4l2_hdmi_colorimetry c = {
++		V4L2_COLORSPACE_SRGB,
++		V4L2_YCBCR_ENC_DEFAULT,
++		V4L2_QUANTIZATION_FULL_RANGE,
++		V4L2_XFER_FUNC_SRGB
++	};
++	bool is_ce = avi->video_code || (hdmi && hdmi->vic);
++	bool is_sdtv = height <= 576;
++	bool default_is_lim_range_rgb = avi->video_code > 1;
++
++	switch (avi->colorspace) {
++	case HDMI_COLORSPACE_RGB:
++		/* RGB pixel encoding */
++		switch (avi->colorimetry) {
++		case HDMI_COLORIMETRY_EXTENDED:
++			switch (avi->extended_colorimetry) {
++			case HDMI_EXTENDED_COLORIMETRY_ADOBE_RGB:
++				c.colorspace = V4L2_COLORSPACE_ADOBERGB;
++				c.xfer_func = V4L2_XFER_FUNC_ADOBERGB;
++				break;
++			case HDMI_EXTENDED_COLORIMETRY_BT2020:
++				c.colorspace = V4L2_COLORSPACE_BT2020;
++				c.xfer_func = V4L2_XFER_FUNC_709;
++				break;
++			default:
++				break;
++			}
++			break;
++		default:
++			break;
++		}
++		switch (avi->quantization_range) {
++		case HDMI_QUANTIZATION_RANGE_LIMITED:
++			c.quantization = V4L2_QUANTIZATION_LIM_RANGE;
++			break;
++		case HDMI_QUANTIZATION_RANGE_FULL:
++			break;
++		default:
++			if (default_is_lim_range_rgb)
++				c.quantization = V4L2_QUANTIZATION_LIM_RANGE;
++			break;
++		}
++		break;
++
++	default:
++		/* YCbCr pixel encoding */
++		c.quantization = V4L2_QUANTIZATION_LIM_RANGE;
++		switch (avi->colorimetry) {
++		case HDMI_COLORIMETRY_NONE:
++			if (!is_ce)
++				break;
++			if (is_sdtv) {
++				c.colorspace = V4L2_COLORSPACE_SMPTE170M;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_601;
++			} else {
++				c.colorspace = V4L2_COLORSPACE_REC709;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_709;
++			}
++			c.xfer_func = V4L2_XFER_FUNC_709;
++			break;
++		case HDMI_COLORIMETRY_ITU_601:
++			c.colorspace = V4L2_COLORSPACE_SMPTE170M;
++			c.ycbcr_enc = V4L2_YCBCR_ENC_601;
++			c.xfer_func = V4L2_XFER_FUNC_709;
++			break;
++		case HDMI_COLORIMETRY_ITU_709:
++			c.colorspace = V4L2_COLORSPACE_REC709;
++			c.ycbcr_enc = V4L2_YCBCR_ENC_709;
++			c.xfer_func = V4L2_XFER_FUNC_709;
++			break;
++		case HDMI_COLORIMETRY_EXTENDED:
++			switch (avi->extended_colorimetry) {
++			case HDMI_EXTENDED_COLORIMETRY_XV_YCC_601:
++				c.colorspace = V4L2_COLORSPACE_REC709;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_XV709;
++				c.xfer_func = V4L2_XFER_FUNC_709;
++				break;
++			case HDMI_EXTENDED_COLORIMETRY_XV_YCC_709:
++				c.colorspace = V4L2_COLORSPACE_REC709;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_XV601;
++				c.xfer_func = V4L2_XFER_FUNC_709;
++				break;
++			case HDMI_EXTENDED_COLORIMETRY_S_YCC_601:
++				c.colorspace = V4L2_COLORSPACE_SRGB;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_601;
++				c.xfer_func = V4L2_XFER_FUNC_SRGB;
++				break;
++			case HDMI_EXTENDED_COLORIMETRY_ADOBE_YCC_601:
++				c.colorspace = V4L2_COLORSPACE_ADOBERGB;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_601;
++				c.xfer_func = V4L2_XFER_FUNC_ADOBERGB;
++				break;
++			case HDMI_EXTENDED_COLORIMETRY_BT2020:
++				c.colorspace = V4L2_COLORSPACE_BT2020;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_BT2020;
++				c.xfer_func = V4L2_XFER_FUNC_709;
++				break;
++			case HDMI_EXTENDED_COLORIMETRY_BT2020_CONST_LUM:
++				c.colorspace = V4L2_COLORSPACE_BT2020;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_BT2020_CONST_LUM;
++				c.xfer_func = V4L2_XFER_FUNC_709;
++				break;
++			default: /* fall back to ITU_709 */
++				c.colorspace = V4L2_COLORSPACE_REC709;
++				c.ycbcr_enc = V4L2_YCBCR_ENC_709;
++				c.xfer_func = V4L2_XFER_FUNC_709;
++				break;
++			}
++			break;
++		default:
++			break;
++		}
++		/*
++		 * YCC Quantization Range signaling is more-or-less broken,
++		 * let's just ignore this.
++		 */
++		break;
++	}
++	return c;
++}
++EXPORT_SYMBOL_GPL(v4l2_hdmi_rx_colorimetry);
+diff --git a/include/media/v4l2-dv-timings.h b/include/media/v4l2-dv-timings.h
+index 61a1889..835aef7 100644
+--- a/include/media/v4l2-dv-timings.h
++++ b/include/media/v4l2-dv-timings.h
+@@ -223,5 +223,26 @@ static inline  bool can_reduce_fps(struct v4l2_bt_timings *bt)
+ 	return false;
+ }
+ 
++/**
++ * struct v4l2_hdmi_rx_colorimetry - describes the HDMI colorimetry information
++ * @colorspace:		enum v4l2_colorspace, the colorspace
++ * @ycbcr_enc:		enum v4l2_ycbcr_encoding, Y'CbCr encoding
++ * @quantization:	enum v4l2_quantization, colorspace quantization
++ * @xfer_func:		enum v4l2_xfer_func, colorspace transfer function
++ */
++struct v4l2_hdmi_colorimetry {
++	enum v4l2_colorspace colorspace;
++	enum v4l2_ycbcr_encoding ycbcr_enc;
++	enum v4l2_quantization quantization;
++	enum v4l2_xfer_func xfer_func;
++};
++
++struct hdmi_avi_infoframe;
++struct hdmi_vendor_infoframe;
++
++struct v4l2_hdmi_colorimetry
++v4l2_hdmi_rx_colorimetry(const struct hdmi_avi_infoframe *avi,
++			 const struct hdmi_vendor_infoframe *hdmi,
++			 unsigned int height);
+ 
+ #endif
+-- 
+2.7.4
