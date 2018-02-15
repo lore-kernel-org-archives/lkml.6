@@ -1,61 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755139AbeBOI5p (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 03:57:45 -0500
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:39483 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754909AbeBOI5m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 03:57:42 -0500
-X-Google-Smtp-Source: AH8x227MYZHFNCQGlpCdsqKilEKxoF6Nae9EFZb/V6d5zie/a5+J6bbSjtFur7CgnefnSE1IY1PsfA==
-Subject: Re: [PATCH V2 4/4] nvme: lightnvm: add late setup of block size and
- metadata
-To: Javier Gonzalez <javier@cnexlabs.com>
-Cc: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
-References: <20180209092719.10679-1-mb@lightnvm.io>
- <20180209092719.10679-5-mb@lightnvm.io>
- <098A1343-A9FB-47BD-A4B5-6E77A1861A4B@cnexlabs.com>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <e4b51c0b-35da-705e-b723-2f568fee69a7@lightnvm.io>
-Date: Thu, 15 Feb 2018 09:57:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1755125AbeBOJAX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 04:00:23 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33733 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754825AbeBOJAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 04:00:22 -0500
+From: NeilBrown <neilb@suse.com>
+To: Milan Broz <gmazyland@gmail.com>, Mike Snitzer <snitzer@redhat.com>,
+        device-mapper development <dm-devel@redhat.com>
+Date: Thu, 15 Feb 2018 20:00:15 +1100
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH] dm: correctly handle chained bios in dec_pending()
+In-Reply-To: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
+References: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
+Message-ID: <87k1vepqzk.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-In-Reply-To: <098A1343-A9FB-47BD-A4B5-6E77A1861A4B@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/12/2018 09:21 PM, Javier Gonzalez wrote:
-> 
->> On 9 Feb 2018, at 01.27, Matias Bjørling <mb@lightnvm.io> wrote:
->>
->> The nvme driver sets up the size of the nvme namespace in two steps.
->> First it initializes the device with standard logical block and
->> metadata sizes, and then sets the correct logical block and metadata
->> size. Due to the OCSSD 2.0 specification relies on the namespace to
->> expose these sizes for correct initialization, let it be updated
->> appropriately on the LightNVM side as well.
->>
->> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
->> ---
->>
-> 
-> This late initialization breaks ligthnvm's core init since the sector
-> size (csecs) is used on the first init part to set the logical block size.
-> 
-> nvm_core_init -> blk_queue_logical_block_size(dev->q, dev_geo->c.csecs);
-> 
-> We can do do a nvme_nvm_revalidate and set this on the revalidation path
-> instead of simply updating the info as in nvme_nvm_update_nvm_info().'
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-I believe that is what the patch does (nvme_nvm_update_nvm_info is 
-called from the nvme_revalidate_disk context).
 
-The nvm_core_init initialization of the block size is redundant and 
-should be removed. I'll update the patch.
+dec_pending() is given an error status (possibly 0)
+to be recorded against a bio.
+It can be called several times on the one 'struct dm_io',
+and it is careful to only assign a non-zero error to
+io->status.
+However when it then assigned io->status to bio->bi_status,
+it is not careful and could overwrite a genuine error status with
+zero.
+
+This can happen when chained bios are in use.  If a bio is chained
+beneath the bio that this dm_io is handling, the child bio might
+complete and set bio->bi_status before the dm_io completes.
+
+This has been possible since chained bios were introduced in 3.14, and
+become a lot easier to trigger with commit 18a25da84354 ("dm: ensure bio
+submission follows a depth-first tree walk") as that commit caused dm to
+start using chained bios itself.
+
+A particular failure mode is that if a bio spans an 'error' target and
+a working target, the 'error' fragment will complete instantly and set
+the ->bi_status, and the other fragment will normally complete a
+little later, and will clear ->bi_status.
+
+The fix is simply to only assign io_error to bio->bi_status when
+io_error is not zero.
+
+Reported-and-tested-by: Milan Broz <gmazyland@gmail.com>
+Cc: stable@vger.kernel.org (v3.14+)
+Signed-off-by: NeilBrown <neilb@suse.com>
+=2D--
+ drivers/md/dm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index d6de00f367ef..68136806d365 100644
+=2D-- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -903,7 +903,8 @@ static void dec_pending(struct dm_io *io, blk_status_t =
+error)
+ 			queue_io(md, bio);
+ 		} else {
+ 			/* done with normal IO or empty flush */
+=2D			bio->bi_status =3D io_error;
++			if (io_error)
++				bio->bi_status =3D io_error;
+ 			bio_endio(bio);
+ 		}
+ 	}
+=2D-=20
+2.14.0.rc0.dirty
+
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlqFTB8ACgkQOeye3VZi
+gbnIWQ//boIh7VP4NRCJxy1CgFlcx8UHEALUBBvPBKUJ5GZdSy/SM2OiYHvnSUNI
+GZZx7P9Dp2F4KElFI4sIeXpfPketwHsX2DT/1kGH2H9lMV+v/8qqO2CcxSPTxshq
+91W56zgEdbjcZX+Tcj2ZH4xeNtqkRHB/9RpZdF/TqYbU72Vog3o/UzXX8EIEFZ0s
+SWUVA9AI7mCQm4uYbzieY/uMaugZKxDQxgDosy9QNFhgMS6gVUB0L71naY4vANlR
+loc8J6ORoQPJ5sM7kYBX1Tyxgao1RYDFvF0SASlveamhb0ktxELC4O0alLLDgfv4
+HXM6tuZLva0FmAhCDs+nWzp9KAB/dMgIUigvf9oXxfTl5cve/V8sLMMPmTq7vH5w
+b28H4cM/YYfTC4RRZagiVqn2EScoWqxKBBh8KXsjvE3nARLer0HPWGm5DMecTh3D
+E4/2GNjlp5zkFjPPaTbO8WU+yC/wABOaBrHid5piyQhaPpt9AL7xDtIW16LhfJaB
+snJcn4oRjcRROPk2Qb1FpiPkWrq0BYzBo5tOLgGbbQy6mnEDFtw1LB0+ZeS9T1hZ
+AX8bW2TW3ZL3m74yJRwlvisLTAvBTWmZTGwlzpkUw78dzoWOE/A3MkRjptByrToR
+ZFAfHXvAq4XWAvqmHEkBCFCx8gqhWm7s2KHpDx7+dzpN6vrK934=
+=WsZm
+-----END PGP SIGNATURE-----
+--=-=-=--
