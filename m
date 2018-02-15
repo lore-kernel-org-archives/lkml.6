@@ -1,109 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755479AbeBOLIu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 06:08:50 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:42767 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755389AbeBOLIs (ORCPT
+        id S967556AbeBOLMi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 06:12:38 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37694 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755378AbeBOLMg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 06:08:48 -0500
-X-Google-Smtp-Source: AH8x22781lxFeIfu0uJaVf+g+VhQx8lMmIn70fhNMH2YpVILW8ccD0Q2Ohf7VWOx3UVxWDwxuEY8cg==
-Date: Thu, 15 Feb 2018 12:08:44 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Li Zefan <lizefan@huawei.com>,
-        Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-        "luca.abeni" <luca.abeni@santannapisa.it>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 04/10] sched/core: Prevent race condition between
- cpuset and __sched_setscheduler()
-Message-ID: <20180215110844.GY12979@localhost.localdomain>
-References: <1518553967-20656-1-git-send-email-mathieu.poirier@linaro.org>
- <1518553967-20656-5-git-send-email-mathieu.poirier@linaro.org>
- <20180214103639.GR12979@localhost.localdomain>
- <20180214104935.GS12979@localhost.localdomain>
- <20180214112721.GT12979@localhost.localdomain>
- <CANLsYkwPo-uHOWwLZDdvhykx1EU2O--uphJ9KbZYAnD--nFoVg@mail.gmail.com>
- <20180214163145.GV12979@localhost.localdomain>
- <20180215103353.GX12979@localhost.localdomain>
+        Thu, 15 Feb 2018 06:12:36 -0500
+Subject: Re: [PATCH v2 1/3] Kconfig : Remove HAS_IOMEM dependency for Graphics
+ support
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Farhan Ali <alifm@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        geert@linux-m68k.org, stefan.kristiansson@saunalahti.fi,
+        tomi.valkeinen@ti.com, schwidefsky@de.ibm.com,
+        dri-devel@lists.freedesktop.org, Chen Liqin <liqin.linux@gmail.com>,
+        Lennox Wu <lennox.wu@gmail.com>, Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        user-mode-linux-devel@lists.sourceforge.net
+References: <cover.1517508744.git.alifm@linux.vnet.ibm.com>
+ <CGME20180202080007epcas5p306896fe66e4bbf4bf5f8d91306a5d016@epcas5p3.samsung.com>
+ <246f92c9-15dc-223f-59d9-b2f0756cdf5e@de.ibm.com>
+ <1610039.4trOurtpys@amdc3058>
+ <2324e2cc-ff55-4d57-2807-c7f72f9ea0ca@de.ibm.com>
+Date: Thu, 15 Feb 2018 12:02:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180215103353.GX12979@localhost.localdomain>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <2324e2cc-ff55-4d57-2807-c7f72f9ea0ca@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18021511-0016-0000-0000-0000052304F0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18021511-0017-0000-0000-0000285FD2A0
+Message-Id: <b1a3933e-6a8f-bd24-3629-5da730398f32@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-15_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802150138
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/02/18 11:33, Juri Lelli wrote:
-> On 14/02/18 17:31, Juri Lelli wrote:
-> 
-> [...]
-> 
-> > Still grabbing it is a no-go, as do_sched_setscheduler calls
-> > sched_setscheduler from inside an RCU read-side critical section.
-> 
-> I was then actually thinking that trylocking might do.. not sure however
-> if failing with -EBUSY in the contended case is feasible (and about the
-> general uglyness of the solution :/).
+An even simpler approach would be:
 
-Or, as suggested by Peter in IRC, the following (which still would
-require conditional locking for the sysrq case).
-
---->8---
- kernel/sched/core.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 0d8badcf1f0f..4e9405d50cbd 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4312,6 +4312,7 @@ static int __sched_setscheduler(struct task_struct *p,
- 	/* Avoid rq from going away on us: */
- 	preempt_disable();
- 	task_rq_unlock(rq, p, &rf);
-+	cpuset_unlock();
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index cbe1d978693a..35b7aba4b6a0 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -952,6 +952,10 @@ config S390_HYPFS_FS
  
- 	if (pi)
- 		rt_mutex_adjust_pi(p);
-@@ -4409,10 +4410,16 @@ do_sched_setscheduler(pid_t pid, int policy, struct sched_param __user *param)
- 	rcu_read_lock();
- 	retval = -ESRCH;
- 	p = find_process_by_pid(pid);
--	if (p != NULL)
--		retval = sched_setscheduler(p, policy, &lparam);
-+	if (!p) {
-+		rcu_read_unlock();
-+		goto exit;
-+	}
-+	get_task_struct(p);
- 	rcu_read_unlock();
-+	retval = sched_setscheduler(p, policy, &lparam);
-+	put_task_struct(p);
+ source "arch/s390/kvm/Kconfig"
  
-+exit:
- 	return retval;
- }
- 
-@@ -4540,10 +4547,16 @@ SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr,
- 	rcu_read_lock();
- 	retval = -ESRCH;
- 	p = find_process_by_pid(pid);
--	if (p != NULL)
--		retval = sched_setattr(p, &attr);
-+	if (!p) {
-+		rcu_read_unlock();
-+		goto exit;
-+	}
-+	get_task_struct(p);
- 	rcu_read_unlock();
-+	retval = sched_setattr(p, &attr);
-+	put_task_struct(p);
- 
-+exit:
- 	return retval;
- }
- 
++config DUMMY_CONSOLE
++       bool
++       default y
++
+ config S390_GUEST
+        def_bool y
+        prompt "s390 support for virtio devices"
