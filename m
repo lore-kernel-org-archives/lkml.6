@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227fekTx5Q/bnWqK9QKOdanPd+tQpVS88W379z9XVbtaR397+QiNq6/wmxpyH3yqeRs3yv2q
-ARC-Seal: i=1; a=rsa-sha256; t=1518708665; cv=none;
+X-Google-Smtp-Source: AH8x224tAYsuOAXNWt857N3G0+Ysy3qoKqjAe7wkzQ65S9167hlaFrECIEERS8iX6M01q7ggF82E
+ARC-Seal: i=1; a=rsa-sha256; t=1518708663; cv=none;
         d=google.com; s=arc-20160816;
-        b=KXt4MWtbbIY7NXdNNgH8Dms7PiytezcbXuNCRzEKfj5ekeE+p+LOklXAonE/gMk3Z2
-         OE8pKN06M2Hhx8n5SFaicC3P2bW+vTPm6KHQ8EP9CMFf3WxtW7/EuJ/qRGl/96uv+kfl
-         vQhnkPCoHojfUpxjpBBXzFpJXBeSafZw5kuB78KfWYd+fI2eRTMEfDReKPMTsjag6iJf
-         tqsSucgnQDAWm0kTJKswK+cTgbGX4r2WBuFyBN1UZ9KnfD4pbfujWY44bF8q8Lx/jR6E
-         ycCa3YtqR7ZCwvmpWhNLv1PR8hbmkCMs7N/ZmRT8LThsOkruQlcp1o7yHTlmP1XjoQ0/
-         lYOQ==
+        b=BW5UGB/x4qJtmxdAFEiy+yiPk4/3gABZ+yttWWxQSQOQPKpO/lW4hOB+cpR+9anESS
+         xE9SGnnXSvwEAsh5F9bMqOOgb7NMS1D0Z4ZzdClqZ8NHwBuHk/XZbhI+3TtF57OQeutX
+         nokACpI3AhOZE8yeNveIQshwqF07tRze1zfjKK7/dPfer1/Ukd+J5f2G0FpzoLnPY+/b
+         zxiVCD9toR09YnxbnnnrQv86iRJWdYRbF5S2n6rYEtyD7/FM3BS1nQMnPmDCHaqhCqAV
+         zKlniA+YAFGKUKX+7AN4JIoXx6+SENjQmRmW5dfhVOpaiPqzQ+96+ngkKRwW1hGNf+dA
+         Zi2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=jr0hRGrVxP5c6ZId/yGOgaWglGtGmfrkdVmZ7u6ntOA=;
-        b=s6TSL6+skKaT0s9TShQtc+Utg4gPIn58WSAcMXmW6Ab8AcK3/aGYJ3voKp29hAdXg2
-         720RCvBsm2+Cxh7iVEE1ALFI5TEwrdLJO4LFifKE/hoInLa5k4TWSp9XDnHSAfnvAs2Z
-         bOu8zcd2hYUWBgfSaWj0emyeI9DPIZ2wboPt+u+lrOye55LOMyWf1IRhTq/zRqgKRm0S
-         PZ755D0a0S63RArg4V/U7V88FZ+XnXZfxRHXUGi1esgz4/4gTKhhJjycWWbGFkjn2pSO
-         RPVMdHbP2IVPWNkqfDKJZNArUXOx4FuGHAmweoTmZAuyM5+SgLnchzwLueC5KNYl94ec
-         wnog==
+        bh=4iJKdl+pBSRvO0sxardda0LVXuY7BzwXQiMhyIpFsko=;
+        b=zrTNDy4DPAGvqFd0+XXu+an+MT5A77BoWsNiGnEYmndzFCTQfHZe7L6lTpzzY0SiDl
+         9v018zt+kMRC7kXwZzYBqhgVePiJwschLtTASUj9QMuVBNLjbLpX6w8xlcn0oBYyMsRj
+         Hoi24/C5kRdOoMuiKCl9INkehmVEX7S2HXnz2LhLgt/dfGAcGG7DAqZuJ5kwARbvnW+9
+         J+crABVThGHpuA04m5mejguHiMFg+/wie1DG5lk1YyKvRl1Sb7+zc0A5aHLUO6b5iKNT
+         0rJjVKSs9aG5c444UIdl94veQLLmy9B62C807y+1ygPQqG4OymOiEKbuIeLMhykVLLEk
+         pg+g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Shanker Donthineni <shankerd@codeaurora.org>,
 	Will Deacon <will.deacon@arm.com>,
 	Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 035/195] [Variant 3/Meltdown] arm64: entry: Hook up entry trampoline to exception vectors
-Date: Thu, 15 Feb 2018 16:15:26 +0100
-Message-Id: <20180215151707.504392097@linuxfoundation.org>
+Subject: [PATCH 4.14 034/195] [Variant 3/Meltdown] arm64: entry: Explicitly pass exception level to kernel_ventry macro
+Date: Thu, 15 Feb 2018 16:15:25 +0100
+Message-Id: <20180215151707.463484280@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481457484988866?=
-X-GMAIL-MSGID: =?utf-8?q?1592481457484988866?=
+X-GMAIL-THRID: =?utf-8?q?1592481454823379099?=
+X-GMAIL-MSGID: =?utf-8?q?1592481454823379099?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,13 +54,11 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Will Deacon <will.deacon@arm.com>
 
 
-Commit 4bf3286d29f3 upstream.
+Commit 5b1f7fe41909 upstream.
 
-Hook up the entry trampoline to our exception vectors so that all
-exceptions from and returns to EL0 go via the trampoline, which swizzles
-the vector base register accordingly. Transitioning to and from the
-kernel clobbers x30, so we use tpidrro_el0 and far_el1 as scratch
-registers for native tasks.
+We will need to treat exceptions from EL0 differently in kernel_ventry,
+so rework the macro to take the exception level as an argument and
+construct the branch target using that.
 
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Tested-by: Laura Abbott <labbott@redhat.com>
@@ -69,85 +67,89 @@ Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/entry.S |   39 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 36 insertions(+), 3 deletions(-)
+ arch/arm64/kernel/entry.S |   50 +++++++++++++++++++++++-----------------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
 
 --- a/arch/arm64/kernel/entry.S
 +++ b/arch/arm64/kernel/entry.S
-@@ -73,6 +73,17 @@
+@@ -71,7 +71,7 @@
+ #define BAD_FIQ		2
+ #define BAD_ERROR	3
  
- 	.macro kernel_ventry, el, label, regsize = 64
+-	.macro kernel_ventry	label
++	.macro kernel_ventry, el, label, regsize = 64
  	.align 7
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+	.if	\el == 0
-+	.if	\regsize == 64
-+	mrs	x30, tpidrro_el0
-+	msr	tpidrro_el0, xzr
-+	.else
-+	mov	x30, xzr
-+	.endif
-+	.endif
-+#endif
-+
  	sub	sp, sp, #S_FRAME_SIZE
  #ifdef CONFIG_VMAP_STACK
+@@ -84,7 +84,7 @@
+ 	tbnz	x0, #THREAD_SHIFT, 0f
+ 	sub	x0, sp, x0			// x0'' = sp' - x0' = (sp + x0) - sp = x0
+ 	sub	sp, sp, x0			// sp'' = sp' - x0 = (sp + x0) - x0 = sp
+-	b	\label
++	b	el\()\el\()_\label
+ 
+ 0:
  	/*
-@@ -119,6 +130,11 @@
- 	b	el\()\el\()_\label
+@@ -116,7 +116,7 @@
+ 	sub	sp, sp, x0
+ 	mrs	x0, tpidrro_el0
+ #endif
+-	b	\label
++	b	el\()\el\()_\label
  	.endm
  
-+	.macro tramp_alias, dst, sym
-+	mov_q	\dst, TRAMP_VALIAS
-+	add	\dst, \dst, #(\sym - .entry.tramp.text)
-+	.endm
-+
  	.macro	kernel_entry, el, regsize = 64
- 	.if	\regsize == 32
- 	mov	w0, w0				// zero upper 32 bits of x0
-@@ -269,18 +285,20 @@ alternative_else_nop_endif
- 	.if	\el == 0
- 	ldr	x23, [sp, #S_SP]		// load return stack pointer
- 	msr	sp_el0, x23
-+	tst	x22, #PSR_MODE32_BIT		// native task?
-+	b.eq	3f
+@@ -367,31 +367,31 @@ tsk	.req	x28		// current thread_info
+ 
+ 	.align	11
+ ENTRY(vectors)
+-	kernel_ventry	el1_sync_invalid		// Synchronous EL1t
+-	kernel_ventry	el1_irq_invalid			// IRQ EL1t
+-	kernel_ventry	el1_fiq_invalid			// FIQ EL1t
+-	kernel_ventry	el1_error_invalid		// Error EL1t
+-
+-	kernel_ventry	el1_sync			// Synchronous EL1h
+-	kernel_ventry	el1_irq				// IRQ EL1h
+-	kernel_ventry	el1_fiq_invalid			// FIQ EL1h
+-	kernel_ventry	el1_error_invalid		// Error EL1h
+-
+-	kernel_ventry	el0_sync			// Synchronous 64-bit EL0
+-	kernel_ventry	el0_irq				// IRQ 64-bit EL0
+-	kernel_ventry	el0_fiq_invalid			// FIQ 64-bit EL0
+-	kernel_ventry	el0_error_invalid		// Error 64-bit EL0
++	kernel_ventry	1, sync_invalid			// Synchronous EL1t
++	kernel_ventry	1, irq_invalid			// IRQ EL1t
++	kernel_ventry	1, fiq_invalid			// FIQ EL1t
++	kernel_ventry	1, error_invalid		// Error EL1t
 +
- #ifdef CONFIG_ARM64_ERRATUM_845719
- alternative_if ARM64_WORKAROUND_845719
--	tbz	x22, #4, 1f
- #ifdef CONFIG_PID_IN_CONTEXTIDR
- 	mrs	x29, contextidr_el1
- 	msr	contextidr_el1, x29
++	kernel_ventry	1, sync				// Synchronous EL1h
++	kernel_ventry	1, irq				// IRQ EL1h
++	kernel_ventry	1, fiq_invalid			// FIQ EL1h
++	kernel_ventry	1, error_invalid		// Error EL1h
++
++	kernel_ventry	0, sync				// Synchronous 64-bit EL0
++	kernel_ventry	0, irq				// IRQ 64-bit EL0
++	kernel_ventry	0, fiq_invalid			// FIQ 64-bit EL0
++	kernel_ventry	0, error_invalid		// Error 64-bit EL0
+ 
+ #ifdef CONFIG_COMPAT
+-	kernel_ventry	el0_sync_compat			// Synchronous 32-bit EL0
+-	kernel_ventry	el0_irq_compat			// IRQ 32-bit EL0
+-	kernel_ventry	el0_fiq_invalid_compat		// FIQ 32-bit EL0
+-	kernel_ventry	el0_error_invalid_compat	// Error 32-bit EL0
++	kernel_ventry	0, sync_compat, 32		// Synchronous 32-bit EL0
++	kernel_ventry	0, irq_compat, 32		// IRQ 32-bit EL0
++	kernel_ventry	0, fiq_invalid_compat, 32	// FIQ 32-bit EL0
++	kernel_ventry	0, error_invalid_compat, 32	// Error 32-bit EL0
  #else
- 	msr contextidr_el1, xzr
+-	kernel_ventry	el0_sync_invalid		// Synchronous 32-bit EL0
+-	kernel_ventry	el0_irq_invalid			// IRQ 32-bit EL0
+-	kernel_ventry	el0_fiq_invalid			// FIQ 32-bit EL0
+-	kernel_ventry	el0_error_invalid		// Error 32-bit EL0
++	kernel_ventry	0, sync_invalid, 32		// Synchronous 32-bit EL0
++	kernel_ventry	0, irq_invalid, 32		// IRQ 32-bit EL0
++	kernel_ventry	0, fiq_invalid, 32		// FIQ 32-bit EL0
++	kernel_ventry	0, error_invalid, 32		// Error 32-bit EL0
  #endif
--1:
- alternative_else_nop_endif
- #endif
-+3:
- 	.endif
+ END(vectors)
  
- 	msr	elr_el1, x21			// set up the return data
-@@ -302,7 +320,22 @@ alternative_else_nop_endif
- 	ldp	x28, x29, [sp, #16 * 14]
- 	ldr	lr, [sp, #S_LR]
- 	add	sp, sp, #S_FRAME_SIZE		// restore sp
--	eret					// return to kernel
-+
-+#ifndef CONFIG_UNMAP_KERNEL_AT_EL0
-+	eret
-+#else
-+	.if	\el == 0
-+	bne	4f
-+	msr	far_el1, x30
-+	tramp_alias	x30, tramp_exit_native
-+	br	x30
-+4:
-+	tramp_alias	x30, tramp_exit_compat
-+	br	x30
-+	.else
-+	eret
-+	.endif
-+#endif
- 	.endm
- 
- 	.macro	irq_stack_entry
