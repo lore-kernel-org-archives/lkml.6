@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163538AbeBOVdx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 16:33:53 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59138 "EHLO mx1.redhat.com"
+        id S1167409AbeBOVeT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 16:34:19 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54024 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1163497AbeBOVdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 16:33:50 -0500
+        id S1163496AbeBOVdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 16:33:52 -0500
 From: =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: slp@redhat.com, bhe@redhat.com, mst@redhat.com, somlo@cmu.edu,
         xiaolong.ye@intel.com,
         =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
-Subject: [PATCH v15 09/11] fw_cfg: add DMA register
-Date: Thu, 15 Feb 2018 22:33:10 +0100
-Message-Id: <20180215213312.29234-10-marcandre.lureau@redhat.com>
+Subject: [PATCH v15 10/11] fw_cfg: write vmcoreinfo details
+Date: Thu, 15 Feb 2018 22:33:11 +0100
+Message-Id: <20180215213312.29234-11-marcandre.lureau@redhat.com>
 In-Reply-To: <20180215213312.29234-1-marcandre.lureau@redhat.com>
 References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
 MIME-Version: 1.0
@@ -23,182 +23,259 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an optional <dma_off> kernel module (or command line) parameter
-using the following syntax:
+If the "etc/vmcoreinfo" fw_cfg file is present and we are not running
+the kdump kernel, write the addr/size of the vmcoreinfo ELF note.
 
-      [qemu_fw_cfg.]ioport=<size>@<base>[:<ctrl_off>:<data_off>[:<dma_off>]]
- or
-      [qemu_fw_cfg.]mmio=<size>@<base>[:<ctrl_off>:<data_off>[:<dma_off>]]
-
-and initializes the register address using given or default offset.
+The DMA operation is expected to run synchronously with today qemu,
+but the specification states that it may become async, so we run
+"control" field check in a loop for eventual changes.
 
 Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
-Reviewed-by: Gabriel Somlo <somlo@cmu.edu>
 ---
- drivers/firmware/qemu_fw_cfg.c | 53 ++++++++++++++++++++++++++++++++----------
- 1 file changed, 41 insertions(+), 12 deletions(-)
+ drivers/firmware/qemu_fw_cfg.c | 143 ++++++++++++++++++++++++++++++++++++++++-
+ include/uapi/linux/fw_cfg.h    |  31 +++++++++
+ 2 files changed, 171 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-index 5e6e5ac71dab..c28bec4b5663 100644
+index c28bec4b5663..3015e77aebca 100644
 --- a/drivers/firmware/qemu_fw_cfg.c
 +++ b/drivers/firmware/qemu_fw_cfg.c
-@@ -10,20 +10,21 @@
-  * and select subsets of aarch64), a Device Tree node (on arm), or using
-  * a kernel module (or command line) parameter with the following syntax:
-  *
-- *      [qemu_fw_cfg.]ioport=<size>@<base>[:<ctrl_off>:<data_off>]
-+ *      [qemu_fw_cfg.]ioport=<size>@<base>[:<ctrl_off>:<data_off>[:<dma_off>]]
-  * or
-- *      [qemu_fw_cfg.]mmio=<size>@<base>[:<ctrl_off>:<data_off>]
-+ *      [qemu_fw_cfg.]mmio=<size>@<base>[:<ctrl_off>:<data_off>[:<dma_off>]]
-  *
-  * where:
-  *      <size>     := size of ioport or mmio range
-  *      <base>     := physical base address of ioport or mmio range
-  *      <ctrl_off> := (optional) offset of control register
-  *      <data_off> := (optional) offset of data register
-+ *      <dma_off> := (optional) offset of dma register
-  *
-  * e.g.:
-- *      qemu_fw_cfg.ioport=2@0x510:0:1		(the default on x86)
-+ *      qemu_fw_cfg.ioport=12@0x510:0:1:4	(the default on x86)
-  * or
-- *      qemu_fw_cfg.mmio=0xA@0x9020000:8:0	(the default on arm)
-+ *      qemu_fw_cfg.mmio=16@0x9020000:8:0:16	(the default on arm)
-  */
+@@ -34,11 +34,17 @@
+ #include <linux/io.h>
+ #include <linux/ioport.h>
+ #include <uapi/linux/fw_cfg.h>
++#include <linux/delay.h>
++#include <linux/crash_dump.h>
++#include <linux/crash_core.h>
  
- #include <linux/module.h>
-@@ -45,6 +46,7 @@ static resource_size_t fw_cfg_p_size;
- static void __iomem *fw_cfg_dev_base;
- static void __iomem *fw_cfg_reg_ctrl;
- static void __iomem *fw_cfg_reg_data;
-+static void __iomem *fw_cfg_reg_dma;
+ MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
+ MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
+ MODULE_LICENSE("GPL");
  
- /* atomic access to fw_cfg device (potentially slow i/o, so using mutex) */
- static DEFINE_MUTEX(fw_cfg_dev_lock);
-@@ -104,12 +106,14 @@ static void fw_cfg_io_cleanup(void)
- # if (defined(CONFIG_ARM) || defined(CONFIG_ARM64))
- #  define FW_CFG_CTRL_OFF 0x08
- #  define FW_CFG_DATA_OFF 0x00
-+#  define FW_CFG_DMA_OFF 0x10
- # elif (defined(CONFIG_PPC_PMAC) || defined(CONFIG_SPARC32)) /* ppc/mac,sun4m */
- #  define FW_CFG_CTRL_OFF 0x00
- #  define FW_CFG_DATA_OFF 0x02
- # elif (defined(CONFIG_X86) || defined(CONFIG_SPARC64)) /* x86, sun4u */
- #  define FW_CFG_CTRL_OFF 0x00
- #  define FW_CFG_DATA_OFF 0x01
-+#  define FW_CFG_DMA_OFF 0x04
- # else
- #  error "QEMU FW_CFG not available on this architecture!"
- # endif
-@@ -119,7 +123,7 @@ static void fw_cfg_io_cleanup(void)
- static int fw_cfg_do_platform_probe(struct platform_device *pdev)
++/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
++static u32 fw_cfg_rev;
++
+ /* fw_cfg device i/o register addresses */
+ static bool fw_cfg_is_mmio;
+ static phys_addr_t fw_cfg_p_base;
+@@ -60,6 +66,64 @@ static void fw_cfg_sel_endianness(u16 key)
+ 		iowrite16(key, fw_cfg_reg_ctrl);
+ }
+ 
++static inline bool fw_cfg_dma_enabled(void)
++{
++	return (fw_cfg_rev & FW_CFG_VERSION_DMA) && fw_cfg_reg_dma;
++}
++
++/* qemu fw_cfg device is sync today, but spec says it may become async */
++static void fw_cfg_wait_for_control(struct fw_cfg_dma_access *d)
++{
++	for (;;) {
++		u32 ctrl = be32_to_cpu(READ_ONCE(d->control));
++
++		/* do not reorder the read to d->control */
++		rmb();
++		if ((ctrl & ~FW_CFG_DMA_CTL_ERROR) == 0)
++			return;
++
++		cpu_relax();
++	}
++}
++
++static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
++{
++	phys_addr_t dma;
++	struct fw_cfg_dma_access *d = NULL;
++	ssize_t ret = length;
++
++	d = kmalloc(sizeof(*d), GFP_KERNEL);
++	if (!d) {
++		ret = -ENOMEM;
++		goto end;
++	}
++
++	/* fw_cfg device does not need IOMMU protection, so use physical addresses */
++	*d = (struct fw_cfg_dma_access) {
++		.address = cpu_to_be64(address ? virt_to_phys(address) : 0),
++		.length = cpu_to_be32(length),
++		.control = cpu_to_be32(control)
++	};
++
++	dma = virt_to_phys(d);
++
++	iowrite32be((u64)dma >> 32, fw_cfg_reg_dma);
++	/* force memory to sync before notifying device via MMIO */
++	wmb();
++	iowrite32be(dma, fw_cfg_reg_dma + 4);
++
++	fw_cfg_wait_for_control(d);
++
++	if (be32_to_cpu(READ_ONCE(d->control)) & FW_CFG_DMA_CTL_ERROR) {
++		ret = -EIO;
++	}
++
++end:
++	kfree(d);
++
++	return ret;
++}
++
+ /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
+ static ssize_t fw_cfg_read_blob(u16 key,
+ 				void *buf, loff_t pos, size_t count)
+@@ -89,6 +153,47 @@ static ssize_t fw_cfg_read_blob(u16 key,
+ 	return count;
+ }
+ 
++#ifdef CONFIG_CRASH_CORE
++/* write chunk of given fw_cfg blob (caller responsible for sanity-check) */
++static ssize_t fw_cfg_write_blob(u16 key,
++				 void *buf, loff_t pos, size_t count)
++{
++	u32 glk = -1U;
++	acpi_status status;
++	ssize_t ret = count;
++
++	/* If we have ACPI, ensure mutual exclusion against any potential
++	 * device access by the firmware, e.g. via AML methods:
++	 */
++	status = acpi_acquire_global_lock(ACPI_WAIT_FOREVER, &glk);
++	if (ACPI_FAILURE(status) && status != AE_NOT_CONFIGURED) {
++		/* Should never get here */
++		WARN(1, "%s: Failed to lock ACPI!\n", __func__);
++		return -EINVAL;
++	}
++
++	mutex_lock(&fw_cfg_dev_lock);
++	if (pos == 0) {
++		ret = fw_cfg_dma_transfer(buf, count, key << 16
++					  | FW_CFG_DMA_CTL_SELECT
++					  | FW_CFG_DMA_CTL_WRITE);
++	} else {
++		fw_cfg_sel_endianness(key);
++		ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
++		if (ret < 0)
++			goto end;
++		ret = fw_cfg_dma_transfer(buf, count, FW_CFG_DMA_CTL_WRITE);
++	}
++
++end:
++	mutex_unlock(&fw_cfg_dev_lock);
++
++	acpi_release_global_lock(glk);
++
++	return ret;
++}
++#endif /* CONFIG_CRASH_CORE */
++
+ /* clean up fw_cfg device i/o */
+ static void fw_cfg_io_cleanup(void)
  {
- 	char sig[FW_CFG_SIG_SIZE];
--	struct resource *range, *ctrl, *data;
-+	struct resource *range, *ctrl, *data, *dma;
+@@ -188,9 +293,6 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
+ 	return 0;
+ }
  
- 	/* acquire i/o range details */
- 	fw_cfg_is_mmio = false;
-@@ -156,6 +160,7 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
- 	/* were custom register offsets provided (e.g. on the command line)? */
- 	ctrl = platform_get_resource_byname(pdev, IORESOURCE_REG, "ctrl");
- 	data = platform_get_resource_byname(pdev, IORESOURCE_REG, "data");
-+	dma = platform_get_resource_byname(pdev, IORESOURCE_REG, "dma");
- 	if (ctrl && data) {
- 		fw_cfg_reg_ctrl = fw_cfg_dev_base + ctrl->start;
- 		fw_cfg_reg_data = fw_cfg_dev_base + data->start;
-@@ -165,6 +170,13 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
- 		fw_cfg_reg_data = fw_cfg_dev_base + FW_CFG_DATA_OFF;
- 	}
+-/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
+-static u32 fw_cfg_rev;
+-
+ static ssize_t fw_cfg_showrev(struct kobject *k, struct attribute *a, char *buf)
+ {
+ 	return sprintf(buf, "%u\n", fw_cfg_rev);
+@@ -213,6 +315,32 @@ struct fw_cfg_sysfs_entry {
+ 	struct list_head list;
+ };
  
-+	if (dma)
-+		fw_cfg_reg_dma = fw_cfg_dev_base + dma->start;
-+#ifdef FW_CFG_DMA_OFF
-+	else
-+		fw_cfg_reg_dma = fw_cfg_dev_base + FW_CFG_DMA_OFF;
++#ifdef CONFIG_CRASH_CORE
++static ssize_t fw_cfg_write_vmcoreinfo(const struct fw_cfg_file *f)
++{
++	static struct fw_cfg_vmcoreinfo *data;
++	ssize_t ret;
++
++	data = kmalloc(sizeof(struct fw_cfg_vmcoreinfo), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	*data = (struct fw_cfg_vmcoreinfo) {
++		.guest_format = cpu_to_le16(FW_CFG_VMCOREINFO_FORMAT_ELF),
++		.size = cpu_to_le32(VMCOREINFO_NOTE_SIZE),
++		.paddr = cpu_to_le64(paddr_vmcoreinfo_note())
++	};
++	/* spare ourself reading host format support for now since we
++	 * don't know what else to format - host may ignore ours
++	 */
++	ret = fw_cfg_write_blob(be16_to_cpu(f->select), data,
++				0, sizeof(struct fw_cfg_vmcoreinfo));
++
++	kfree(data);
++	return ret;
++}
++#endif /* CONFIG_CRASH_CORE */
++
+ /* get fw_cfg_sysfs_entry from kobject member */
+ static inline struct fw_cfg_sysfs_entry *to_entry(struct kobject *kobj)
+ {
+@@ -452,6 +580,15 @@ static int fw_cfg_register_file(const struct fw_cfg_file *f)
+ 	int err;
+ 	struct fw_cfg_sysfs_entry *entry;
+ 
++#ifdef CONFIG_CRASH_CORE
++	if (fw_cfg_dma_enabled() &&
++		strcmp(f->name, FW_CFG_VMCOREINFO_FILENAME) == 0 &&
++		!is_kdump_kernel()) {
++		if (fw_cfg_write_vmcoreinfo(f) < 0)
++			pr_warn("fw_cfg: failed to write vmcoreinfo");
++	}
 +#endif
 +
- 	/* verify fw_cfg device signature */
- 	if (fw_cfg_read_blob(FW_CFG_SIGNATURE, sig,
- 				0, FW_CFG_SIG_SIZE) < 0 ||
-@@ -630,6 +642,7 @@ static struct platform_device *fw_cfg_cmdline_dev;
- /* use special scanf/printf modifier for phys_addr_t, resource_size_t */
- #define PH_ADDR_SCAN_FMT "@%" __PHYS_ADDR_PREFIX "i%n" \
- 			 ":%" __PHYS_ADDR_PREFIX "i" \
-+			 ":%" __PHYS_ADDR_PREFIX "i%n" \
- 			 ":%" __PHYS_ADDR_PREFIX "i%n"
+ 	/* allocate new entry */
+ 	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+ 	if (!entry)
+diff --git a/include/uapi/linux/fw_cfg.h b/include/uapi/linux/fw_cfg.h
+index c698ac3812f6..e089c0159ec2 100644
+--- a/include/uapi/linux/fw_cfg.h
++++ b/include/uapi/linux/fw_cfg.h
+@@ -54,6 +54,7 @@
  
- #define PH_ADDR_PR_1_FMT "0x%" __PHYS_ADDR_PREFIX "x@" \
-@@ -639,12 +652,15 @@ static struct platform_device *fw_cfg_cmdline_dev;
- 			 ":%" __PHYS_ADDR_PREFIX "u" \
- 			 ":%" __PHYS_ADDR_PREFIX "u"
+ /* FW_CFG_ID bits */
+ #define FW_CFG_VERSION		0x01
++#define FW_CFG_VERSION_DMA	0x02
  
-+#define PH_ADDR_PR_4_FMT PH_ADDR_PR_3_FMT \
-+			 ":%" __PHYS_ADDR_PREFIX "u"
+ /* fw_cfg file directory entry type */
+ struct fw_cfg_file {
+@@ -63,4 +64,34 @@ struct fw_cfg_file {
+ 	char name[FW_CFG_MAX_FILE_PATH];
+ };
+ 
++/* FW_CFG_DMA_CONTROL bits */
++#define FW_CFG_DMA_CTL_ERROR	0x01
++#define FW_CFG_DMA_CTL_READ	0x02
++#define FW_CFG_DMA_CTL_SKIP	0x04
++#define FW_CFG_DMA_CTL_SELECT	0x08
++#define FW_CFG_DMA_CTL_WRITE	0x10
 +
- static int fw_cfg_cmdline_set(const char *arg, const struct kernel_param *kp)
- {
--	struct resource res[3] = {};
-+	struct resource res[4] = {};
- 	char *str;
- 	phys_addr_t base;
--	resource_size_t size, ctrl_off, data_off;
-+	resource_size_t size, ctrl_off, data_off, dma_off;
- 	int processed, consumed = 0;
- 
- 	/* only one fw_cfg device can exist system-wide, so if one
-@@ -660,19 +676,20 @@ static int fw_cfg_cmdline_set(const char *arg, const struct kernel_param *kp)
- 	/* consume "<size>" portion of command line argument */
- 	size = memparse(arg, &str);
- 
--	/* get "@<base>[:<ctrl_off>:<data_off>]" chunks */
-+	/* get "@<base>[:<ctrl_off>:<data_off>[:<dma_off>]]" chunks */
- 	processed = sscanf(str, PH_ADDR_SCAN_FMT,
- 			   &base, &consumed,
--			   &ctrl_off, &data_off, &consumed);
-+			   &ctrl_off, &data_off, &consumed,
-+			   &dma_off, &consumed);
- 
--	/* sscanf() must process precisely 1 or 3 chunks:
-+	/* sscanf() must process precisely 1, 3 or 4 chunks:
- 	 * <base> is mandatory, optionally followed by <ctrl_off>
--	 * and <data_off>;
-+	 * and <data_off>, and <dma_off>;
- 	 * there must be no extra characters after the last chunk,
- 	 * so str[consumed] must be '\0'.
- 	 */
- 	if (str[consumed] ||
--	    (processed != 1 && processed != 3))
-+	    (processed != 1 && processed != 3 && processed != 4))
- 		return -EINVAL;
- 
- 	res[0].start = base;
-@@ -689,6 +706,11 @@ static int fw_cfg_cmdline_set(const char *arg, const struct kernel_param *kp)
- 		res[2].start = data_off;
- 		res[2].flags = IORESOURCE_REG;
- 	}
-+	if (processed > 3) {
-+		res[3].name = "dma";
-+		res[3].start = dma_off;
-+		res[3].flags = IORESOURCE_REG;
-+	}
- 
- 	/* "processed" happens to nicely match the number of resources
- 	 * we need to pass in to this platform device.
-@@ -721,6 +743,13 @@ static int fw_cfg_cmdline_get(char *buf, const struct kernel_param *kp)
- 				fw_cfg_cmdline_dev->resource[0].start,
- 				fw_cfg_cmdline_dev->resource[1].start,
- 				fw_cfg_cmdline_dev->resource[2].start);
-+	case 4:
-+		return snprintf(buf, PAGE_SIZE, PH_ADDR_PR_4_FMT,
-+				resource_size(&fw_cfg_cmdline_dev->resource[0]),
-+				fw_cfg_cmdline_dev->resource[0].start,
-+				fw_cfg_cmdline_dev->resource[1].start,
-+				fw_cfg_cmdline_dev->resource[2].start,
-+				fw_cfg_cmdline_dev->resource[3].start);
- 	}
- 
- 	/* Should never get here */
++#define FW_CFG_DMA_SIGNATURE    0x51454d5520434647ULL /* "QEMU CFG" */
++
++/* Control as first field allows for different structures selected by this
++ * field, which might be useful in the future
++ */
++struct fw_cfg_dma_access {
++	__be32 control;
++	__be32 length;
++	__be64 address;
++};
++
++#define FW_CFG_VMCOREINFO_FILENAME "etc/vmcoreinfo"
++
++#define FW_CFG_VMCOREINFO_FORMAT_NONE 0x0
++#define FW_CFG_VMCOREINFO_FORMAT_ELF 0x1
++
++struct fw_cfg_vmcoreinfo {
++	__le16 host_format;
++	__le16 guest_format;
++	__le32 size;
++	__le64 paddr;
++};
++
+ #endif
 -- 
 2.16.1.73.g5832b7e9f2
