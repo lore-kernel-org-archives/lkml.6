@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2179907-1518719980-2-12711411955496490606
+X-Cyrus-Session-Id: sloti22d1t05-2178418-1518719961-2-13844976330491351621
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518719979; b=AiwFEtXpO19Vtq6cxdNa3863AFGN+/yAHbgNyEVk5vYA0/w
-    A4HeJudLxp4bITFXgDTxFkugzIElhvLRdynlE3r+43wX4h/5xaAKDCOJkxR/u+xX
-    VdRJqkZmL3Wxh4mCv+ZLF/aAGUlN3ie7Yzg+uWar/9ko0eVZj5C/c9CaZDU9dDMp
-    gOHiEpv/3J7n/DX1+NNgnYjkWQhBlEqi2wSYDqiBqPGtTUK7App8bDUxfe3ni4xb
-    JWU08bAQZW7w5kfd9xT3vyvY4X8nt3gNHTUp6vng5JnaWxgLcwmXD4oYQGM1o0lv
-    5iJNQTggk+Qg00W7bq9Lw5Y/NCqDNp5dOspAw9Q==
+    t=1518719961; b=Yp7LYTwANawp1lpzutHiuA8pKOqtyiUdC4/UVYuV8LvA4eQ
+    PY1svMn1ojGneims3U2Z12CRjuPo+gCPqZsuMtBvzMBQ8LpdCGnemmipSSOB3Vy1
+    RQ0yRNorlx7v4jmV4zljaiQJe6HjV0jtdPZjPAt/6hgDi9gF9Tk98QVtm52RAPUJ
+    iZ692UNch0ZNl0lOzOut4KInuhf0b6SwrCbkMlgdiKzXk/dC9e0v0iUKV419tCrH
+    EDblx21BsfzjvhBgW3vMGLIxlLU3nWhPS9zPI6wc401Bye8ArT7gmiAlgDsubra8
+    qOJv8fFBOoQ8j7FqCujn9Kb0Kyug2Pvepe1Ybeg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518719979; bh=EEqrx9VPEpjFUDJNaFtdc2qD3i
-    YIxBHg+YdgZNoLdmI=; b=UrKoAtns/6EG3CMOmeFU8c/Ej0r7m/97Niv83uoAwj
-    UJTzaaNMGqOFQ22aHSep4NnrmjHtlGaym9Sa5gfoMOSKVlxLa5Z5f+0tnqhggRal
-    lc4wbUwkHNjklhj2Cs6CfLrxEuGr7DV0bqfVzD7UBH87vXWmo1inLcZ9rs9xymLs
-    mtlUbP7z99toZGtZhkxzMRKrLrfuGqAt7Vlx8GTzXQRbMH9PlwrMkJJTKKzzquKe
-    SwbsFaroZOdFPVx3vU7XafOSct+NhY7XFmiYa8ZXxXFtA3RjhY5we/LmnrO9XqtS
-    IPv3iw73i2shOTtvRhcIWEGq6UXw2nXiW7bEDIx0hTwg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518719961; bh=LjRoZpdF3RqKbgcyZg1rnbFgB6
+    K4UFv9wsa1scqJbzI=; b=oqC9dlCrKlgWcKwjDzAhXnxc/ChyICRcIElKK5VE8X
+    MgjaPO0BRMajPDNHZBxCpQGxVJ5d/BdrYzWXZPV6A/t1e64CoFFrnvtdW2mL3cg3
+    nhLdmngv7TkJs4paC0b6RpksnsdwSDILhhx+TTbq5/1goIq8emhlATURDx3amJ3y
+    2L2LrPE5vf36UjtICPqPX6Uvx0d1DY8pPHh+cHx6etwKmO8Vw5Zec2qyo4HbCLPp
+    tj4SPRpklwFrtvZl0+dHoi+6zpzjKqqFFF3rD/lYlr0GHRrlwMbVpBN3W4ubs5Ut
+    QueRKil5afI7oa1q1N8RKLPq5ox3jsvr3v2YKYnFCvTA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,26 +47,21 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162739AbeBOPXv (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:23:51 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51576 "EHLO
+        id S1163278AbeBOSiw (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:38:52 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51712 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162733AbeBOPXp (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:45 -0500
+        with ESMTP id S1162805AbeBOPXy (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:54 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavan Kondeti <pkondeti@codeaurora.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 050/108] sched/rt: Up the root domain ref count when passing it around via IPIs
-Date: Thu, 15 Feb 2018 16:16:47 +0100
-Message-Id: <20180215151229.400560633@linuxfoundation.org>
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.4 077/108] media: v4l2-compat-ioctl32.c: copy m.userptr in put_v4l2_plane32
+Date: Thu, 15 Feb 2018 16:17:14 +0100
+Message-Id: <20180215151233.041976075@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -83,99 +78,127 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit 364f56653708ba8bcdefd4f0da2a42904baa8eeb upstream.
+commit 8ed5a59dcb47a6f76034ee760b36e089f3e82529 upstream.
 
-When issuing an IPI RT push, where an IPI is sent to each CPU that has more
-than one RT task scheduled on it, it references the root domain's rto_mask,
-that contains all the CPUs within the root domain that has more than one RT
-task in the runable state. The problem is, after the IPIs are initiated, the
-rq->lock is released. This means that the root domain that is associated to
-the run queue could be freed while the IPIs are going around.
+The struct v4l2_plane32 should set m.userptr as well. The same
+happens in v4l2_buffer32 and v4l2-compliance tests for this.
 
-Add a sched_get_rd() and a sched_put_rd() that will increment and decrement
-the root domain's ref count respectively. This way when initiating the IPIs,
-the scheduler will up the root domain's ref count before releasing the
-rq->lock, ensuring that the root domain does not go away until the IPI round
-is complete.
-
-Reported-by: Pavan Kondeti <pkondeti@codeaurora.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 4bdced5c9a292 ("sched/rt: Simplify the IPI based RT balancing logic")
-Link: http://lkml.kernel.org/r/CAEU1=PkiHO35Dzna8EQqNSKW1fr1y1zRQ5y66X117MG06sQtNA@mail.gmail.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/sched/core.c  |   13 +++++++++++++
- kernel/sched/rt.c    |    9 +++++++--
- kernel/sched/sched.h |    2 ++
- 3 files changed, 22 insertions(+), 2 deletions(-)
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |   47 +++++++++++++++-----------
+ 1 file changed, 28 insertions(+), 19 deletions(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5896,6 +5896,19 @@ static void rq_attach_root(struct rq *rq
- 		call_rcu_sched(&old_rd->rcu, free_rootdomain);
- }
+--- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
++++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+@@ -299,19 +299,24 @@ static int get_v4l2_plane32(struct v4l2_
+ 			 sizeof(up->data_offset)))
+ 		return -EFAULT;
  
-+void sched_get_rd(struct root_domain *rd)
-+{
-+	atomic_inc(&rd->refcount);
-+}
-+
-+void sched_put_rd(struct root_domain *rd)
-+{
-+	if (!atomic_dec_and_test(&rd->refcount))
-+		return;
-+
-+	call_rcu_sched(&rd->rcu, free_rootdomain);
-+}
-+
- static int init_rootdomain(struct root_domain *rd)
+-	if (memory == V4L2_MEMORY_USERPTR) {
++	switch (memory) {
++	case V4L2_MEMORY_MMAP:
++	case V4L2_MEMORY_OVERLAY:
++		if (copy_in_user(&up->m.mem_offset, &up32->m.mem_offset,
++				 sizeof(up32->m.mem_offset)))
++			return -EFAULT;
++		break;
++	case V4L2_MEMORY_USERPTR:
+ 		if (get_user(p, &up32->m.userptr))
+ 			return -EFAULT;
+ 		up_pln = compat_ptr(p);
+ 		if (put_user((unsigned long)up_pln, &up->m.userptr))
+ 			return -EFAULT;
+-	} else if (memory == V4L2_MEMORY_DMABUF) {
++		break;
++	case V4L2_MEMORY_DMABUF:
+ 		if (copy_in_user(&up->m.fd, &up32->m.fd, sizeof(up32->m.fd)))
+ 			return -EFAULT;
+-	} else {
+-		if (copy_in_user(&up->m.mem_offset, &up32->m.mem_offset,
+-				 sizeof(up32->m.mem_offset)))
+-			return -EFAULT;
++		break;
+ 	}
+ 
+ 	return 0;
+@@ -320,22 +325,32 @@ static int get_v4l2_plane32(struct v4l2_
+ static int put_v4l2_plane32(struct v4l2_plane __user *up, struct v4l2_plane32 __user *up32,
+ 			    enum v4l2_memory memory)
  {
- 	memset(rd, 0, sizeof(*rd));
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1916,8 +1916,11 @@ static void tell_cpu_to_push(struct rq *
++	unsigned long p;
++
+ 	if (copy_in_user(up32, up, 2 * sizeof(__u32)) ||
+ 	    copy_in_user(&up32->data_offset, &up->data_offset,
+ 			 sizeof(up->data_offset)))
+ 		return -EFAULT;
  
- 	rto_start_unlock(&rq->rd->rto_loop_start);
- 
--	if (cpu >= 0)
-+	if (cpu >= 0) {
-+		/* Make sure the rd does not get freed while pushing */
-+		sched_get_rd(rq->rd);
- 		irq_work_queue_on(&rq->rd->rto_push_work, cpu);
+-	/* For MMAP, driver might've set up the offset, so copy it back.
+-	 * USERPTR stays the same (was userspace-provided), so no copying. */
+-	if (memory == V4L2_MEMORY_MMAP)
++	switch (memory) {
++	case V4L2_MEMORY_MMAP:
++	case V4L2_MEMORY_OVERLAY:
+ 		if (copy_in_user(&up32->m.mem_offset, &up->m.mem_offset,
+ 				 sizeof(up->m.mem_offset)))
+ 			return -EFAULT;
+-	/* For DMABUF, driver might've set up the fd, so copy it back. */
+-	if (memory == V4L2_MEMORY_DMABUF)
++		break;
++	case V4L2_MEMORY_USERPTR:
++		if (get_user(p, &up->m.userptr) ||
++		    put_user((compat_ulong_t)ptr_to_compat((__force void *)p),
++			     &up32->m.userptr))
++			return -EFAULT;
++		break;
++	case V4L2_MEMORY_DMABUF:
+ 		if (copy_in_user(&up32->m.fd, &up->m.fd,
+ 				 sizeof(up->m.fd)))
+ 			return -EFAULT;
++		break;
 +	}
+ 
+ 	return 0;
  }
- 
- /* Called from hardirq context */
-@@ -1947,8 +1950,10 @@ void rto_push_irq_work_func(struct irq_w
- 
- 	raw_spin_unlock(&rd->rto_lock);
- 
--	if (cpu < 0)
-+	if (cpu < 0) {
-+		sched_put_rd(rd);
- 		return;
-+	}
- 
- 	/* Try the next RT overloaded CPU */
- 	irq_work_queue_on(&rd->rto_push_work, cpu);
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -553,6 +553,8 @@ struct root_domain {
- };
- 
- extern struct root_domain def_root_domain;
-+extern void sched_get_rd(struct root_domain *rd);
-+extern void sched_put_rd(struct root_domain *rd);
- 
- #ifdef HAVE_RT_PUSH_IPI
- extern void rto_push_irq_work_func(struct irq_work *work);
+@@ -395,6 +410,7 @@ static int get_v4l2_buffer32(struct v4l2
+ 	} else {
+ 		switch (kp->memory) {
+ 		case V4L2_MEMORY_MMAP:
++		case V4L2_MEMORY_OVERLAY:
+ 			if (get_user(kp->m.offset, &up->m.offset))
+ 				return -EFAULT;
+ 			break;
+@@ -408,10 +424,6 @@ static int get_v4l2_buffer32(struct v4l2
+ 				kp->m.userptr = (unsigned long)compat_ptr(tmp);
+ 			}
+ 			break;
+-		case V4L2_MEMORY_OVERLAY:
+-			if (get_user(kp->m.offset, &up->m.offset))
+-				return -EFAULT;
+-			break;
+ 		case V4L2_MEMORY_DMABUF:
+ 			if (get_user(kp->m.fd, &up->m.fd))
+ 				return -EFAULT;
+@@ -468,6 +480,7 @@ static int put_v4l2_buffer32(struct v4l2
+ 	} else {
+ 		switch (kp->memory) {
+ 		case V4L2_MEMORY_MMAP:
++		case V4L2_MEMORY_OVERLAY:
+ 			if (put_user(kp->m.offset, &up->m.offset))
+ 				return -EFAULT;
+ 			break;
+@@ -475,10 +488,6 @@ static int put_v4l2_buffer32(struct v4l2
+ 			if (put_user(kp->m.userptr, &up->m.userptr))
+ 				return -EFAULT;
+ 			break;
+-		case V4L2_MEMORY_OVERLAY:
+-			if (put_user(kp->m.offset, &up->m.offset))
+-				return -EFAULT;
+-			break;
+ 		case V4L2_MEMORY_DMABUF:
+ 			if (put_user(kp->m.fd, &up->m.fd))
+ 				return -EFAULT;
