@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224/jW9UptW/zGb/RcXGFw8+AlZjnQkUiltw0t3Sr5E6HWSWBcfJeUEYHgcbHkDM/U3xd7ZV
-ARC-Seal: i=1; a=rsa-sha256; t=1518709094; cv=none;
+X-Google-Smtp-Source: AH8x227LPFZQ0mjXfKFpjmrVdl+TVjEBf2BfA4URkH7Ef6tH1SSeQK9bbbk70DmOeRhfEKuhmEec
+ARC-Seal: i=1; a=rsa-sha256; t=1518709091; cv=none;
         d=google.com; s=arc-20160816;
-        b=TtHKC+voQ7mkKiPKeiKMEfZZkti8QBNPK4x5yiJZ7QlFYpmxH3lB0iiseSrWuqhFrQ
-         bedAs0FmW6I4PD1JiaQwgNNa9Fydo1jwlgFRzi0oRY5cw7TRDGgLIL5usq6RxICsYMbb
-         haJ9rPfOgT693anHDNTJhmZGN268pWL/0qr1xkHp1kzzFRKGYtzOkOR+y9mu7w/y03eb
-         QW9T31tajHgJfCch/ysPm01Hhlb0JR9Vi6WLU8cX9viJCrq+NlMNeyJF2Kf2zH0hpvoZ
-         C3U2fantWQCn2puQZWMZ/rW8MkwSvW1NHK7TJXpLvHcXR7hFjydusSGmMQAUU3F3mh1g
-         HHcQ==
+        b=rUzd8EmyolwdapanMXzueaE/tC11Jo2hBX/A7AasbfqUdqosxWSt5Zk2y0lYkKIqFR
+         8UOXGziywbbNGXtpj/+aWRltxQkc6xvMJQuh/26INrgBjHS8vSJpY0QaBlD5SKLIW5I3
+         MjTZdv02tWHo8fxH39RZlFpCc5wGJD8KFN24vzN0+lN8T09aSrhDlJw/iL/SeAOVr2FM
+         VGFlrO2H2MsRbNqW/U5s8lsFS745VlwrWoMVl3tMmwDduUPK+qp0w974Mbei8k94WLUn
+         hNksSKHvIr7jN6SCcm05KUrKGwcdmRalLvjHEQ6OyFVIxu0ZMiUg8fRmQZGAsoVv2on8
+         8+yA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ggp7hr74LX7pHB1D9oUF+MwkM/SWqM9RCOeRs/93Op4=;
-        b=Vi8UHHXN09sDBL8PYdcOw4L/B3tda0W0yN93OHhdiL9wcJn0tRLyhz5IV7+DewwOCL
-         IupXa2sphYdSOk6dwAxW4CyYm20PTahG2bBMOkYmnF5+swqNd0MjCsFxXcBCmgLFH0Gv
-         yJ5bmc8LcmzT2gOoIS7eIGD5C15OuRwiThB/yFidzvY6FiVLY/BKloNT8u6tafWoybfh
-         GSHYcNwK0gpISDA+9OR872Tae3or8WvorMh0Qho0uqZTIKgTpiV8VesxJizKN3g7dYna
-         7STNZfS3S263Twlwn+MFc5owC85NcjRAh0z588OBgffit4QT+kTT+5kfkrzsmr8MkRrE
-         Y05g==
+        bh=NYyVeHYqH8Ay09SNIs/zrBw53XJPimD6O60BretMuHI=;
+        b=SY8xQzkLfQeLy+HS8UJ7G2z1KRlTfIdb3bw5wjLKKAfMD89klSMYhByF2YvsjcKSYf
+         wghTyEF5HVKc4gVud109B1EnAqXzHNTwr8ia4HFqzHffMQ3h3TJcCW1FlhfviH6QAclH
+         I8hKiFuCtmegBLxZUFxOC1OnbdsnO17oZHHQelGvtgMd7Xrm7tEHbfpxu7OGdAAE/mLK
+         EwwQzWaPL1cHzt2TMbr6qFuZWvw73LczcGm8SWE0q4TLfAnZctCAN3bcrHoIwofiFQE9
+         ENRUZpaF2lwWqK+ADriyZd8uqIAkHEBvfSddHicu2+YP37Q2pOv5zHcEIxwcd6mH8FVK
+         GMwA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Raphael Hertzog <raphael@ouaza.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	=?UTF-8?q?Rapha=C3=ABl=20Hertzog?= <hertzog@debian.org>,
-	Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.14 188/195] ovl: fix failure to fsync lower dir
-Date: Thu, 15 Feb 2018 16:17:59 +0100
-Message-Id: <20180215151715.700123636@linuxfoundation.org>
+	John Garry <john.garry@huawei.com>,
+	Corey Minyard <cminyard@mvista.com>
+Subject: [PATCH 4.14 161/195] ipmi: use dynamic memory for DMI driver override
+Date: Thu, 15 Feb 2018 16:17:32 +0100
+Message-Id: <20180215151713.995214209@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -41,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481085875936301?=
-X-GMAIL-MSGID: =?utf-8?q?1592481906841844745?=
+X-GMAIL-THRID: =?utf-8?q?1592481904300588196?=
+X-GMAIL-MSGID: =?utf-8?q?1592481904300588196?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,48 +48,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: John Garry <john.garry@huawei.com>
 
-commit d796e77f1dd541fe34481af2eee6454688d13982 upstream.
+commit 5516e21a1e95e9b9f39985598431a25477d91643 upstream.
 
-As a writable mount, it is not expected for overlayfs to return
-EINVAL/EROFS for fsync, even if dir/file is not changed.
+Currently a crash can be seen if we reach the "err"
+label in dmi_add_platform_ipmi(), calling
+platform_device_put(), like here:
+[    7.270584]  (null): ipmi:dmi: Unable to add resources: -16
+[    7.330229] ------------[ cut here ]------------
+[    7.334889] kernel BUG at mm/slub.c:3894!
+[    7.338936] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+[    7.344475] Modules linked in:
+[    7.347556] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc2-00004-gbe9cb7b-dirty #114
+[    7.355907] Hardware name: Huawei Taishan 2280 /D05, BIOS Hisilicon D05 IT17 Nemo 2.0 RC0 11/29/2017
+[    7.365137] task: 00000000c211f6d3 task.stack: 00000000f276e9af
+[    7.371116] pstate: 60000005 (nZCv daif -PAN -UAO)
+[    7.375957] pc : kfree+0x194/0x1b4
+[    7.379389] lr : platform_device_release+0xcc/0xd8
+[    7.384225] sp : ffff0000092dba90
+[    7.387567] x29: ffff0000092dba90 x28: ffff000008a83000
+[    7.392933] x27: ffff0000092dbc10 x26: 00000000000000e6
+[    7.398297] x25: 0000000000000003 x24: ffff0000085b51e8
+[    7.403662] x23: 0000000000000100 x22: ffff7e0000234cc0
+[    7.409027] x21: ffff000008af3660 x20: ffff8017d21acc10
+[    7.414392] x19: ffff8017d21acc00 x18: 0000000000000002
+[    7.419757] x17: 0000000000000001 x16: 0000000000000008
+[    7.425121] x15: 0000000000000001 x14: 6666666678303d65
+[    7.430486] x13: 6469727265766f5f x12: 7265766972642e76
+[    7.435850] x11: 6564703e2d617020 x10: 6530326435373638
+[    7.441215] x9 : 3030303030303030 x8 : 3d76656420657361
+[    7.446580] x7 : ffff000008f59df8 x6 : ffff8017fbe0ea50
+[    7.451945] x5 : 0000000000000000 x4 : 0000000000000000
+[    7.457309] x3 : ffffffffffffffff x2 : 0000000000000000
+[    7.462674] x1 : 0fffc00000000800 x0 : ffff7e0000234ce0
+[    7.468039] Process swapper/0 (pid: 1, stack limit = 0x00000000f276e9af)
+[    7.474809] Call trace:
+[    7.477272]  kfree+0x194/0x1b4
+[    7.480351]  platform_device_release+0xcc/0xd8
+[    7.484837]  device_release+0x34/0x90
+[    7.488531]  kobject_put+0x70/0xcc
+[    7.491961]  put_device+0x14/0x1c
+[    7.495304]  platform_device_put+0x14/0x1c
+[    7.499439]  dmi_add_platform_ipmi+0x348/0x3ac
+[    7.503923]  scan_for_dmi_ipmi+0xfc/0x10c
+[    7.507970]  do_one_initcall+0x38/0x124
+[    7.511840]  kernel_init_freeable+0x188/0x228
+[    7.516238]  kernel_init+0x10/0x100
+[    7.519756]  ret_from_fork+0x10/0x18
+[    7.523362] Code: f94002c0 37780080 f94012c0 37000040 (d4210000)
+[    7.529552] ---[ end trace 11750e4787deef9e ]---
+[    7.534228] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+[    7.534228]
 
-This commit fixes the case of fsync of directory, which is easier to
-address, because overlayfs already implements fsync file operation for
-directories.
+This is because when the device is released in
+platform_device_release(), we try to free
+pdev.driver_override. This is a const string, hence
+the crash.
+Fix by using dynamic memory for pdev->driver_override.
 
-The problem reported by Raphael is that new PostgreSQL 10.0 with a
-database in overlayfs where lower layer in squashfs fails to start.
-The failure is due to fsync error, when PostgreSQL does fsync on all
-existing db directories on startup and a specific directory exists
-lower layer with no changes.
-
-Reported-by: Raphael Hertzog <raphael@ouaza.com>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Tested-by: Raphaël Hertzog <hertzog@debian.org>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
+[Removed the free of driver_override from ipmi_si_remove_by_dev().  The
+ free is done in platform_device_release(), and would result in a double
+ free, and ipmi_si_remove_by_dev() is called by non-platform devices.]
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/overlayfs/readdir.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/char/ipmi/ipmi_dmi.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/overlayfs/readdir.c
-+++ b/fs/overlayfs/readdir.c
-@@ -751,10 +751,14 @@ static int ovl_dir_fsync(struct file *fi
- 	struct dentry *dentry = file->f_path.dentry;
- 	struct file *realfile = od->realfile;
+--- a/drivers/char/ipmi/ipmi_dmi.c
++++ b/drivers/char/ipmi/ipmi_dmi.c
+@@ -81,7 +81,10 @@ static void __init dmi_add_platform_ipmi
+ 		pr_err("ipmi:dmi: Error allocation IPMI platform device");
+ 		return;
+ 	}
+-	pdev->driver_override = override;
++	pdev->driver_override = kasprintf(GFP_KERNEL, "%s",
++					  override);
++	if (!pdev->driver_override)
++		goto err;
  
-+	/* Nothing to sync for lower */
-+	if (!OVL_TYPE_UPPER(ovl_path_type(dentry)))
-+		return 0;
-+
- 	/*
- 	 * Need to check if we started out being a lower dir, but got copied up
- 	 */
--	if (!od->is_upper && OVL_TYPE_UPPER(ovl_path_type(dentry))) {
-+	if (!od->is_upper) {
- 		struct inode *inode = file_inode(file);
- 
- 		realfile = READ_ONCE(od->upperfile);
+ 	if (type == IPMI_DMI_TYPE_SSIF)
+ 		goto add_properties;
