@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032280AbeBOA30 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 19:29:26 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:56499 "EHLO
+        id S1032309AbeBOA3v (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 19:29:51 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:56889 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032127AbeBOA3Y (ORCPT
+        with ESMTP id S1032219AbeBOA3t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 19:29:24 -0500
-Date: Wed, 14 Feb 2018 16:28:00 -0800
-From: tip-bot for Will Deacon <tipbot@zytor.com>
-Message-ID: <tip-8fa80c503b484ddc1abbd10c7cb2ab81f3824a50@git.kernel.org>
-Cc: mingo@kernel.org, torvalds@linux-foundation.org, will.deacon@arm.com,
-        peterz@infradead.org, dan.j.williams@intel.com, tglx@linutronix.de,
-        hpa@zytor.com, linux-kernel@vger.kernel.org
-Reply-To: torvalds@linux-foundation.org, mingo@kernel.org, will.deacon@arm.com,
-        tglx@linutronix.de, hpa@zytor.com, dan.j.williams@intel.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <1517840166-15399-1-git-send-email-will.deacon@arm.com>
-References: <1517840166-15399-1-git-send-email-will.deacon@arm.com>
+        Wed, 14 Feb 2018 19:29:49 -0500
+Date: Wed, 14 Feb 2018 16:29:24 -0800
+From: tip-bot for Rui Wang <tipbot@zytor.com>
+Message-ID: <tip-961888b1d76d84efc66a8f5604b06ac12ac2f978@git.kernel.org>
+Cc: hpa@zytor.com, torvalds@linux-foundation.org, tglx@linutronix.de,
+        peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        rui.y.wang@intel.com
+Reply-To: peterz@infradead.org, mingo@kernel.org, rui.y.wang@intel.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        torvalds@linux-foundation.org
+In-Reply-To: <1513586050-1641-1-git-send-email-rui.y.wang@intel.com>
+References: <1513586050-1641-1-git-send-email-rui.y.wang@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] nospec: Move array_index_nospec() parameter checking
- into separate macro
-Git-Commit-ID: 8fa80c503b484ddc1abbd10c7cb2ab81f3824a50
+Subject: [tip:x86/pti] selftests/x86/mpx: Fix incorrect bounds with old
+ _sigfault
+Git-Commit-ID: 961888b1d76d84efc66a8f5604b06ac12ac2f978
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,92 +34,94 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8fa80c503b484ddc1abbd10c7cb2ab81f3824a50
-Gitweb:     https://git.kernel.org/tip/8fa80c503b484ddc1abbd10c7cb2ab81f3824a50
-Author:     Will Deacon <will.deacon@arm.com>
-AuthorDate: Mon, 5 Feb 2018 14:16:06 +0000
+Commit-ID:  961888b1d76d84efc66a8f5604b06ac12ac2f978
+Gitweb:     https://git.kernel.org/tip/961888b1d76d84efc66a8f5604b06ac12ac2f978
+Author:     Rui Wang <rui.y.wang@intel.com>
+AuthorDate: Mon, 18 Dec 2017 16:34:10 +0800
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 15 Feb 2018 01:15:51 +0100
+CommitDate: Thu, 15 Feb 2018 01:15:52 +0100
 
-nospec: Move array_index_nospec() parameter checking into separate macro
+selftests/x86/mpx: Fix incorrect bounds with old _sigfault
 
-For architectures providing their own implementation of
-array_index_mask_nospec() in asm/barrier.h, attempting to use WARN_ONCE() to
-complain about out-of-range parameters using WARN_ON() results in a mess
-of mutually-dependent include files.
+For distributions with old userspace header files, the _sigfault
+structure is different. mpx-mini-test fails with the following
+error:
 
-Rather than unpick the dependencies, simply have the core code in nospec.h
-perform the checking for us.
+  [root@Purley]# mpx-mini-test_64 tabletest
+  XSAVE is supported by HW & OS
+  XSAVE processor supported state mask: 0x2ff
+  XSAVE OS supported state mask: 0x2ff
+   BNDREGS: size: 64 user: 1 supervisor: 0 aligned: 0
+    BNDCSR: size: 64 user: 1 supervisor: 0 aligned: 0
+  starting mpx bounds table test
+  ERROR: siginfo bounds do not match shadow bounds for register 0
 
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
+Fix it by using the correct offset of _lower/_upper in _sigfault.
+RHEL needs this patch to work.
+
+Signed-off-by: Rui Wang <rui.y.wang@intel.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1517840166-15399-1-git-send-email-will.deacon@arm.com
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: dave.hansen@linux.intel.com
+Fixes: e754aedc26ef ("x86/mpx, selftests: Add MPX self test")
+Link: http://lkml.kernel.org/r/1513586050-1641-1-git-send-email-rui.y.wang@intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/nospec.h | 36 +++++++++++++++++++++---------------
- 1 file changed, 21 insertions(+), 15 deletions(-)
+ tools/testing/selftests/x86/mpx-mini-test.c | 32 +++++++++++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/nospec.h b/include/linux/nospec.h
-index b99bced..fbc98e2 100644
---- a/include/linux/nospec.h
-+++ b/include/linux/nospec.h
-@@ -20,20 +20,6 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
- 						    unsigned long size)
- {
- 	/*
--	 * Warn developers about inappropriate array_index_nospec() usage.
--	 *
--	 * Even if the CPU speculates past the WARN_ONCE branch, the
--	 * sign bit of @index is taken into account when generating the
--	 * mask.
--	 *
--	 * This warning is compiled out when the compiler can infer that
--	 * @index and @size are less than LONG_MAX.
--	 */
--	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,
--			"array_index_nospec() limited to range of [0, LONG_MAX]\n"))
--		return 0;
--
--	/*
- 	 * Always calculate and emit the mask even if the compiler
- 	 * thinks the mask is not needed. The compiler does not take
- 	 * into account the value of @index under speculation.
-@@ -44,6 +30,26 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
- #endif
- 
- /*
-+ * Warn developers about inappropriate array_index_nospec() usage.
-+ *
-+ * Even if the CPU speculates past the WARN_ONCE branch, the
-+ * sign bit of @index is taken into account when generating the
-+ * mask.
-+ *
-+ * This warning is compiled out when the compiler can infer that
-+ * @index and @size are less than LONG_MAX.
-+ */
-+#define array_index_mask_nospec_check(index, size)				\
-+({										\
-+	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,			\
-+	    "array_index_nospec() limited to range of [0, LONG_MAX]\n"))	\
-+		_mask = 0;							\
-+	else									\
-+		_mask = array_index_mask_nospec(index, size);			\
-+	_mask;									\
-+})
+diff --git a/tools/testing/selftests/x86/mpx-mini-test.c b/tools/testing/selftests/x86/mpx-mini-test.c
+index ec0f6b4..9c0325e 100644
+--- a/tools/testing/selftests/x86/mpx-mini-test.c
++++ b/tools/testing/selftests/x86/mpx-mini-test.c
+@@ -315,11 +315,39 @@ static inline void *__si_bounds_upper(siginfo_t *si)
+ 	return si->si_upper;
+ }
+ #else
 +
 +/*
-  * array_index_nospec - sanitize an array index after a bounds check
-  *
-  * For a code sequence like:
-@@ -61,7 +67,7 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
- ({									\
- 	typeof(index) _i = (index);					\
- 	typeof(size) _s = (size);					\
--	unsigned long _mask = array_index_mask_nospec(_i, _s);		\
-+	unsigned long _mask = array_index_mask_nospec_check(_i, _s);	\
- 									\
- 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
- 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
++ * This deals with old version of _sigfault in some distros:
++ *
++
++old _sigfault:
++        struct {
++            void *si_addr;
++	} _sigfault;
++
++new _sigfault:
++	struct {
++		void __user *_addr;
++		int _trapno;
++		short _addr_lsb;
++		union {
++			struct {
++				void __user *_lower;
++				void __user *_upper;
++			} _addr_bnd;
++			__u32 _pkey;
++		};
++	} _sigfault;
++ *
++ */
++
+ static inline void **__si_bounds_hack(siginfo_t *si)
+ {
+ 	void *sigfault = &si->_sifields._sigfault;
+ 	void *end_sigfault = sigfault + sizeof(si->_sifields._sigfault);
+-	void **__si_lower = end_sigfault;
++	int *trapno = (int*)end_sigfault;
++	/* skip _trapno and _addr_lsb */
++	void **__si_lower = (void**)(trapno + 2);
+ 
+ 	return __si_lower;
+ }
+@@ -331,7 +359,7 @@ static inline void *__si_bounds_lower(siginfo_t *si)
+ 
+ static inline void *__si_bounds_upper(siginfo_t *si)
+ {
+-	return (*__si_bounds_hack(si)) + sizeof(void *);
++	return *(__si_bounds_hack(si) + 1);
+ }
+ #endif
+ 
