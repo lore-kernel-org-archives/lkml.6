@@ -1,177 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032253AbeBOAXA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 19:23:00 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:35429 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032127AbeBOAW5 (ORCPT
+        id S1032255AbeBOAZm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 19:25:42 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:53167 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032127AbeBOAZk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 19:22:57 -0500
-X-Google-Smtp-Source: AH8x2247dKcTYg1zG/Job91AqWXN4OzcDjVV4RtCdg8Urc0msvjZfZ/FjtmjK+pKo+9e+cYwrUCwWw==
-Date: Wed, 14 Feb 2018 16:22:54 -0800
-From: Brian Norris <briannorris@chromium.org>
-To: Matthias Kaehlcke <mka@chromium.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dylan Reid <dgreid@chromium.org>,
-        huang lin <hl@rock-chips.com>
-Subject: Re: [PATCH] ASoC: dmic: Add optional wakeup delay
-Message-ID: <20180215002253.GA12697@rodete-desktop-imager.corp.google.com>
-References: <20180214235156.81589-1-mka@chromium.org>
+        Wed, 14 Feb 2018 19:25:40 -0500
+Date: Wed, 14 Feb 2018 16:25:11 -0800
+From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
+Message-ID: <tip-4105c69703cdeba76f384b901712c9397b04e9c2@git.kernel.org>
+Cc: tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+        linux@dominikbrodowski.net, torvalds@linux-foundation.org,
+        dsafonov@virtuozzo.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, luto@kernel.org
+Reply-To: mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        torvalds@linux-foundation.org, linux@dominikbrodowski.net,
+        linux-kernel@vger.kernel.org, dsafonov@virtuozzo.com, luto@kernel.org,
+        peterz@infradead.org
+In-Reply-To: <20180211111013.16888-5-linux@dominikbrodowski.net>
+References: <20180211111013.16888-5-linux@dominikbrodowski.net>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] selftests/x86: Do not rely on "int $0x80" in
+ single_step_syscall.c
+Git-Commit-ID: 4105c69703cdeba76f384b901712c9397b04e9c2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180214235156.81589-1-mka@chromium.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+Commit-ID:  4105c69703cdeba76f384b901712c9397b04e9c2
+Gitweb:     https://git.kernel.org/tip/4105c69703cdeba76f384b901712c9397b04e9c2
+Author:     Dominik Brodowski <linux@dominikbrodowski.net>
+AuthorDate: Tue, 13 Feb 2018 09:13:21 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 15 Feb 2018 01:15:48 +0100
 
-On Wed, Feb 14, 2018 at 03:51:56PM -0800, Matthias Kaehlcke wrote:
-> On some systems a delay is needed after switching on the clocks, to allow
-> the DMIC output to stabilize and avoid a popping noise at the beginning
-> of the recording. Add the optional device tree property 'wakeup-delay-ms'
-> and apply the specified delay in the new dmic_daiops_prepare().
-> 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
->  .../devicetree/bindings/sound/dmic.txt        |  2 +
->  sound/soc/codecs/dmic.c                       | 54 ++++++++++++++-----
->  2 files changed, 42 insertions(+), 14 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/dmic.txt b/Documentation/devicetree/bindings/sound/dmic.txt
-> index 54c8ef6498a8..de741c6609d0 100644
-> --- a/Documentation/devicetree/bindings/sound/dmic.txt
-> +++ b/Documentation/devicetree/bindings/sound/dmic.txt
-> @@ -7,10 +7,12 @@ Required properties:
->  
->  Optional properties:
->  	- dmicen-gpios: GPIO specifier for dmic to control start and stop
-> +	- wakeup-delay-ms: Delay (in ms) after enabling the DMIC
->  
->  Example node:
->  
->  	dmic_codec: dmic@0 {
->  		compatible = "dmic-codec";
->  		dmicen-gpios = <&gpio4 3 GPIO_ACTIVE_HIGH>;
-> +		wakeup-delay-ms <50>;
->  	};
-> diff --git a/sound/soc/codecs/dmic.c b/sound/soc/codecs/dmic.c
-> index b88a1ee66f80..11f6abf11074 100644
-> --- a/sound/soc/codecs/dmic.c
-> +++ b/sound/soc/codecs/dmic.c
-> @@ -19,6 +19,7 @@
->   *
->   */
->  
-> +#include <linux/delay.h>
->  #include <linux/gpio.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/platform_device.h>
-> @@ -29,24 +30,38 @@
->  #include <sound/soc.h>
->  #include <sound/soc-dapm.h>
->  
-> +struct dmic {
-> +	struct gpio_desc *gpio_en;
-> +	int wakeup_delay;
-> +};
-> +
-> +static int dmic_daiops_prepare(struct snd_pcm_substream *substream,
-> +				struct snd_soc_dai *dai)
-> +{
-> +	struct dmic *dmic = snd_soc_dai_get_drvdata(dai);
-> +
-> +	if (dmic->gpio_en)
-> +		gpiod_set_value(dmic->gpio_en, 1);
-> +
-> +	if (dmic->wakeup_delay)
-> +		msleep(dmic->wakeup_delay);
-> +
-> +	return 0;
-> +}
-> +
->  static int dmic_daiops_trigger(struct snd_pcm_substream *substream,
->  		int cmd, struct snd_soc_dai *dai)
->  {
-> -	struct gpio_desc *dmic_en = snd_soc_dai_get_drvdata(dai);
-> +	struct dmic *dmic = snd_soc_dai_get_drvdata(dai);
->  
-> -	if (!dmic_en)
-> +	if (!dmic->gpio_en)
->  		return 0;
->  
->  	switch (cmd) {
-> -	case SNDRV_PCM_TRIGGER_START:
-> -	case SNDRV_PCM_TRIGGER_RESUME:
-> -	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
-> -		gpiod_set_value(dmic_en, 1);
-> -		break;
->  	case SNDRV_PCM_TRIGGER_STOP:
->  	case SNDRV_PCM_TRIGGER_SUSPEND:
->  	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
-> -		gpiod_set_value(dmic_en, 0);
-> +		gpiod_set_value(dmic->gpio_en, 0);
->  		break;
+selftests/x86: Do not rely on "int $0x80" in single_step_syscall.c
 
-N00b question: are you sure this is legit? Is it possible to get
-START/STOP/START (or similar) with no prepare() in between?
+On 64-bit builds, we should not rely on "int $0x80" working (it only does if
+CONFIG_IA32_EMULATION=y is enabled). To keep the "Set TF and check int80"
+test running on 64-bit installs with CONFIG_IA32_EMULATION=y enabled, build
+this test only if we can also build 32-bit binaries (which should be a
+good approximation for that).
 
->  	}
->  
-> @@ -54,6 +69,7 @@ static int dmic_daiops_trigger(struct snd_pcm_substream *substream,
->  }
->  
->  static const struct snd_soc_dai_ops dmic_dai_ops = {
-> +	.prepare	= dmic_daiops_prepare,
->  	.trigger	= dmic_daiops_trigger,
->  };
->  
-> @@ -73,14 +89,24 @@ static struct snd_soc_dai_driver dmic_dai = {
->  
->  static int dmic_codec_probe(struct snd_soc_codec *codec)
->  {
-> -	struct gpio_desc *dmic_en;
-> +	struct dmic *dmic;
-> +	int err;
-> +
-> +	dmic = devm_kzalloc(codec->dev, sizeof(*dmic), GFP_KERNEL);
-> +	if (!dmic)
-> +		return -ENOMEM;
-> +
-> +	dmic->gpio_en = devm_gpiod_get_optional(codec->dev,
-> +						"dmicen", GPIOD_OUT_LOW);
-> +	if (IS_ERR(dmic->gpio_en))
-> +		return PTR_ERR(dmic->gpio_en);
->  
-> -	dmic_en = devm_gpiod_get_optional(codec->dev,
-> -					"dmicen", GPIOD_OUT_LOW);
-> -	if (IS_ERR(dmic_en))
-> -		return PTR_ERR(dmic_en);
-> +	err = device_property_read_u32(codec->dev, "wakeup-delay-ms",
-> +				       &dmic->wakeup_delay);
-> +	if (err && (err != -EINVAL))
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kselftest@vger.kernel.org
+Cc: shuah@kernel.org
+Link: http://lkml.kernel.org/r/20180211111013.16888-5-linux@dominikbrodowski.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ tools/testing/selftests/x86/Makefile              | 2 ++
+ tools/testing/selftests/x86/single_step_syscall.c | 5 ++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-You really want to be strict about error codes? What about -ENXIO ("no
-suitable firmware interface is present")? Seems like we should ignore
-that one too.
-
-In practice, it looks like many drivers that are reading optional
-properties like this just tend to ignore the return code entirely.
-
-Brian
-
-> +		return err;
->  
-> -	snd_soc_codec_set_drvdata(codec, dmic_en);
-> +	snd_soc_codec_set_drvdata(codec, dmic);
->  
->  	return 0;
->  }
-> -- 
-> 2.16.1.291.g4437f3f132-goog
-> 
+diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
+index 91fbfa8..73b8ef6 100644
+--- a/tools/testing/selftests/x86/Makefile
++++ b/tools/testing/selftests/x86/Makefile
+@@ -30,11 +30,13 @@ CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
+ ifeq ($(CAN_BUILD_I386),1)
+ all: all_32
+ TEST_PROGS += $(BINARIES_32)
++EXTRA_CFLAGS += -DCAN_BUILD_32
+ endif
+ 
+ ifeq ($(CAN_BUILD_X86_64),1)
+ all: all_64
+ TEST_PROGS += $(BINARIES_64)
++EXTRA_CFLAGS += -DCAN_BUILD_64
+ endif
+ 
+ all_32: $(BINARIES_32)
+diff --git a/tools/testing/selftests/x86/single_step_syscall.c b/tools/testing/selftests/x86/single_step_syscall.c
+index a48da95..ddfdd63 100644
+--- a/tools/testing/selftests/x86/single_step_syscall.c
++++ b/tools/testing/selftests/x86/single_step_syscall.c
+@@ -119,7 +119,9 @@ static void check_result(void)
+ 
+ int main()
+ {
++#ifdef CAN_BUILD_32
+ 	int tmp;
++#endif
+ 
+ 	sethandler(SIGTRAP, sigtrap, 0);
+ 
+@@ -139,12 +141,13 @@ int main()
+ 		      : : "c" (post_nop) : "r11");
+ 	check_result();
+ #endif
+-
++#ifdef CAN_BUILD_32
+ 	printf("[RUN]\tSet TF and check int80\n");
+ 	set_eflags(get_eflags() | X86_EFLAGS_TF);
+ 	asm volatile ("int $0x80" : "=a" (tmp) : "a" (SYS_getpid)
+ 			: INT80_CLOBBERS);
+ 	check_result();
++#endif
+ 
+ 	/*
+ 	 * This test is particularly interesting if fast syscalls use
