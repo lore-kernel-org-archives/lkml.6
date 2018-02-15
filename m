@@ -1,53 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031417AbeBOMqv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 07:46:51 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49132 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030334AbeBOMqt (ORCPT
+        id S1031223AbeBOMuh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 07:50:37 -0500
+Received: from mail-qk0-f175.google.com ([209.85.220.175]:39902 "EHLO
+        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030245AbeBOMuf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 07:46:49 -0500
-Date: Thu, 15 Feb 2018 04:46:44 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Aaron Lu <aaron.lu@intel.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v2 1/2] free_pcppages_bulk: do not hold lock when picking
- pages to free
-Message-ID: <20180215124644.GA12360@bombadil.infradead.org>
-References: <20180124023050.20097-1-aaron.lu@intel.com>
- <20180124163926.c7ptagn655aeiut3@techsingularity.net>
- <20180125072144.GA27678@intel.com>
+        Thu, 15 Feb 2018 07:50:35 -0500
+X-Google-Smtp-Source: AH8x224+nX2pEFzwEuZa9BgIVkptyjzhjt7DqoIDb3kcJjKJyXuKFEdHtaMNhIG5LFyP+kes6tFmvru5Bl9UWlz8Czk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180125072144.GA27678@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <eed11463-a2f6-0b4d-6138-f5082f97dd5e@pressers.name>
+References: <010001602cf53153-39ad69f1-1b39-4e6d-a748-9455a16c2fbd-000000@email.amazonses.com>
+ <20171210182152.70ad8fbf@archlinux> <01000160dccefcb4-25edfd89-56f3-486f-88a4-cb8c07253974-000000@email.amazonses.com>
+ <20180114104330.2aa7c1fd@archlinux> <20180128094021.572ab366@archlinux>
+ <CAHp75VenBEYSZ9okZfGZUmBX+ikL236a9_qjtn-DJtSihw5X+g@mail.gmail.com>
+ <20180130160107.000006df@huawei.com> <CAHp75VchRJzp1CM33q18e9x8Uq7bNrPZykz-GdpRgB3=y2C+KQ@mail.gmail.com>
+ <CAHp75Vf==OQ=Cx4Nzrd+vAOJshT-oL6L8Y54aWt0cGyJJuacjg@mail.gmail.com>
+ <CADXBfmvKF_doLv0Vg0TY4cH_rDBEP5NvJ4jHJf85iuOjJB6TzA@mail.gmail.com>
+ <CAHp75VdsDAbgJ1XmhaxA5C8FTcYX7tBa4x_Y4ZYk6Sub510nqw@mail.gmail.com>
+ <f42f6acc-cb30-e36d-0c98-42b7e3d40457@pressers.name> <CAHp75VfmH5aNPzBLvm-GrQ-49uyJNNwdjbte3uh_kmaC91bz6A@mail.gmail.com>
+ <197f448e-322f-dae4-aa4b-3cc2bd5b16bb@pressers.name> <CAHp75VeVuS51Z7U2P+t3YnfitUtVVAa_8oSbnXCHTY7rqrJUEQ@mail.gmail.com>
+ <CAHp75VfPBP0TVt-==0wjcK6Oxg1kVN4mQf5Ji50RBy=SXf6yFw@mail.gmail.com> <eed11463-a2f6-0b4d-6138-f5082f97dd5e@pressers.name>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 15 Feb 2018 14:50:33 +0200
+Message-ID: <CAHp75Ve=B_=s5cHqcPqaAnQ3bPj+4aHpudwsfX89YqS0-M37xw@mail.gmail.com>
+Subject: Re: [PATCH v2] iio: accel: bmc150: Check for a second ACPI device for BOSC0200
+To: Steven Presser <steve@pressers.name>
+Cc: Hans de Goede <hdegoede@redhat.com>, Hartmut Knaack <knaack.h@gmx.de>,
+        Jeremy Cline <jeremy@jcline.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Jonathan Cameron <jic23@jic23.retrosnub.co.uk>,
+        Lars Kellogg-Stedman <lars@oddbit.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-iio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 25, 2018 at 03:21:44PM +0800, Aaron Lu wrote:
-> When freeing a batch of pages from Per-CPU-Pages(PCP) back to buddy,
-> the zone->lock is held and then pages are chosen from PCP's migratetype
-> list. While there is actually no need to do this 'choose part' under
-> lock since it's PCP pages, the only CPU that can touch them is us and
-> irq is also disabled.
+On Sun, Feb 4, 2018 at 8:25 PM, Steven Presser <steve@pressers.name> wrote:
 
-I have no objection to this patch.  If you're looking for ideas for
-future improvement though, I wonder whether using a LIST_HEAD is the
-best way to store these pages temporarily.  If you batch them into a
-pagevec and then free the entire pagevec, the CPU should be a little
-faster scanning a short array than walking a linked list.
+> The information is in kernel bug 198671.
 
-It would also puts a hard boundary on how long zone->lock is held, as
-you'd drop it and go back for another batch after 15 pages.  That might
-be bad, of course.
+Steve, any news on testing?
+Shall I submit the series for official review?
 
-Another minor change I'd like to see is free_pcpages_bulk updating
-pcp->count itself; all of the callers do it currently.
+>> Here [1] is the branch with another approach. Can you test it and tell
+>> if it fixes the issue?
+>>
+>> [1]: https://bitbucket.org/andy-shev/linux/branch/topic/iio-acpi
+>> It's based on linux-next + compiletest branch of IIO subsystem.
+
+-- 
+With Best Regards,
+Andy Shevchenko
