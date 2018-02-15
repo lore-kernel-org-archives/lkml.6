@@ -1,36 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163853AbeBOVlT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 16:41:19 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54356 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163784AbeBOVlR (ORCPT
+        id S1164012AbeBOVlx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 16:41:53 -0500
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:46597 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163784AbeBOVlw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 16:41:17 -0500
-X-Google-Smtp-Source: AH8x227DUlhKm59y+uJP6/1/+X8fyNhFr6LBHr3XUad4XP+p0aD2TPvqvWQWDnIlrL91kQmc1I3HTg==
-Date: Fri, 16 Feb 2018 00:41:13 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -mm 1/3] proc: randomize "struct pde_opener"
-Message-ID: <20180215214113.GA27190@avx2>
-References: <20180214063033.GA15579@avx2>
- <20180214081935.GA17157@avx2>
- <20180215190713.GF30522@ZenIV.linux.org.uk>
+        Thu, 15 Feb 2018 16:41:52 -0500
+X-Google-Smtp-Source: AH8x2257t8H7+7mMVe3hppM8t27ojPqGvKLezgxIYYg6P49Mm9zGb2IxulKyXMTZfFiMpOH+bFoN3w==
+Date: Thu, 15 Feb 2018 13:41:48 -0800
+From: Tejun Heo <tj@kernel.org>
+To: Dennis Zhou <dennisszhou@gmail.com>
+Cc: Christoph Lameter <cl@linux.com>,
+        Daniel Borkmann <daniel@iogearbox.net>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] percpu: allow select gfp to be passed to underlying
+ allocators
+Message-ID: <20180215214148.GV695913@devbig577.frc2.facebook.com>
+References: <cover.1518668149.git.dennisszhou@gmail.com>
+ <a166972c727e3a1235a7ad17b9df94ca407a1548.1518668149.git.dennisszhou@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180215190713.GF30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <a166972c727e3a1235a7ad17b9df94ca407a1548.1518668149.git.dennisszhou@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 07:07:13PM +0000, Al Viro wrote:
-> On Wed, Feb 14, 2018 at 11:19:35AM +0300, Alexey Dobriyan wrote:
-> 
-> > The more the merrier.
-> 
-> ITYM "Sanity is overrated anyway."
+Hello,
 
-If you view annotations as debugging option the thing is not that bad.
+On Thu, Feb 15, 2018 at 10:08:16AM -0600, Dennis Zhou wrote:
+> +/* the whitelisted flags that can be passed to the backing allocators */
+> +#define gfp_percpu_mask(gfp) (((gfp) & (__GFP_NORETRY | __GFP_NOWARN)) | \
+> +			      GFP_KERNEL)
+
+Isn't there just one place where gfp comes in from outside?  If so,
+this looks like a bit of overkill.  Can't we just filter there?
+
+Thanks.
+
+-- 
+tejun
