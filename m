@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227wrtgWI3EnehovIxTUe9tOtF6EG8XLKiYwqUTLNTK4wNY+uIhHyKhPm2oETIgmdl7cjyMl
-ARC-Seal: i=1; a=rsa-sha256; t=1518708837; cv=none;
+X-Google-Smtp-Source: AH8x2262ZIg/QoTFC2RHm0Af1KEHDB5IicSl5LKaUZlusxM/hqAFZiatI3yY4+1o/0yh8MQP4Ec5
+ARC-Seal: i=1; a=rsa-sha256; t=1518708834; cv=none;
         d=google.com; s=arc-20160816;
-        b=kCKJWnbeF0fnRsIRL4nOer+3KHuqnw50Scs9LH3ayLVBfBvk+t+ozeH/7xqZivpv8R
-         V+Iuuic+Gwm6OWmIdyHHgDIgqabgz01up0nxCfupjLWHd0PBinXbf02kwzLctE7S0fEi
-         NB9i/MXhHvqwjTHSYLXX1Vvd6R8tltqpgFigBySuotHeZJ9uARzldT/bqRCEupCQDjd5
-         xeWjK/UOYW6A1AZ9f9r2/BX2vhgMZHRiawmyH5CgnRJDNo1zecohs/TuBKOuFMB1xEu2
-         u8Bi/av/gnslcERsWAJiAtyZ+26J4/THWZLf6z7i5q4+ZfWIpJNzXA6hi181usk6PIZ8
-         z63Q==
+        b=Wzo8fzfEbHG4Iz5l3FfBVFOxt4yc/SCHR3pK8J/BOew56/BB48htTXQzS9e5Bgweun
+         Tpra5/pEVQzyvcacmjEanGk/sxDmt0nxjQlPsVxJ0E7cxv2XUPXwaVM/SeSaTZwHQaQJ
+         ugW7b2DWuL6SDJinDOYvTL5DBVQ+DMctbgGLeFgUwC7LgtwA3+QlR+lPV2M4sW87DWIZ
+         2cr1fWDSQR+curTqGb9l+DdvjlOJ68GISu+8jSsGli5CI31VmjtQ+UOyd1m2+cZ6F5fP
+         ICwb4YTYhzK4FQlZ+OwJynSxUcElV+EefIaP40qftfmNpgiOL1loLnvTOjG1Ccm0tD1C
+         OnIw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=d5JwATqItvZ90NwbCdTJ8i8LbuxbbrBwDNSzjUS+h9Y=;
-        b=TZXeAh+mOCaXxBCovtW7GVaSGsFfn/rFRMW11eWZ4+Hp6gqYJczuiM3N6pI1fXWJ/f
-         EfiCwESXQqqQw6mig7rfvxOIfohSfVuRWstXJmOFCuzmQ3gSgp1cH1tEYCi3ENih6cNu
-         q3h38sPWv30MAUOioK027AIZXgaCCFr/+6kIAhi0q3MPIkDXQYp/ApAuXyl3lB5h+3Ak
-         jl5wzxFKVYN05KGhb93i73/bS7kp2dHAcOyz+YLDwPbeLne9k2K79wkuzHv1GLOhUWc0
-         VoMUJtRvL2ZivbC3YvaiPWy2Z6b7AasrZHKUyBoCt48yzvdYVlQfd7VTyjjerwJ2MYSc
-         dknQ==
+        bh=Pr6QFJ8Yu8mxlEnUPfnAvpfUx6kui/ozxUxw0fQwv3E=;
+        b=IT0UdDGtUBu3Co1y7J49HAoKbRJN9RBw7d5Ac9h2A3SsB7xfNRpaJBzHYqbRUfYexw
+         Fz7Or+XneMao00Z6/9AE1aGuVYMSwUZZNqAXYeuDaTubtA0Og97/CJQhzHdyPbARe6Ld
+         +qHF5EGEWrzl1aob+tm8zEP4Xqr9Y9wewlRJighsrQd2hWF9IAeMjdPMPUyXKklfvSvL
+         /SWDRKDR6xqAKQSibK5GtufWIE/jQbFTe660PWmnR8ZAFdrs5DpK9uoSSytY8/Q9wtnU
+         2/XwUQccKUcmQPjcyipE5ye5uZu1V/tt//iCSilMYJlgoF6YkVAp6ZkSOZuWnxL5KGxF
+         JFKQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Clay McClure <clay@daemons.net>,
-	Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.14 099/195] ubi: Fix race condition between ubi volume creation and udev
-Date: Thu, 15 Feb 2018 16:16:30 +0100
-Message-Id: <20180215151710.642247933@linuxfoundation.org>
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Miquel Raynal <miquel.raynal@free-electrons.com>
+Subject: [PATCH 4.14 098/195] mtd: nand: sunxi: Fix ECC strength choice
+Date: Thu, 15 Feb 2018 16:16:29 +0100
+Message-Id: <20180215151710.599351295@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481637537037246?=
-X-GMAIL-MSGID: =?utf-8?q?1592481637537037246?=
+X-GMAIL-THRID: =?utf-8?q?1592481054802877681?=
+X-GMAIL-MSGID: =?utf-8?q?1592481634867364433?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,57 +48,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Clay McClure <clay@daemons.net>
+From: Miquel Raynal <miquel.raynal@free-electrons.com>
 
-commit a51a0c8d213594bc094cb8e54aad0cb6d7f7b9a6 upstream.
+commit f4c6cd1a7f2275d5bc0e494b21fff26f8dde80f0 upstream.
 
-Similar to commit 714fb87e8bc0 ("ubi: Fix race condition between ubi
-device creation and udev"), we should make the volume active before
-registering it.
+When the requested ECC strength does not exactly match the strengths
+supported by the ECC engine, the driver is selecting the closest
+strength meeting the 'selected_strength > requested_strength'
+constraint. Fix the fact that, in this particular case, ecc->strength
+value was not updated to match the 'selected_strength'.
 
-Signed-off-by: Clay McClure <clay@daemons.net>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+For instance, one can encounter this issue when no ECC requirement is
+filled in the device tree while the NAND chip minimum requirement is not
+a strength/step_size combo natively supported by the ECC engine.
+
+Fixes: 1fef62c1423b ("mtd: nand: add sunxi NAND flash controller support")
+Suggested-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@free-electrons.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/ubi/vmt.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/mtd/nand/sunxi_nand.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/mtd/ubi/vmt.c
-+++ b/drivers/mtd/ubi/vmt.c
-@@ -270,6 +270,12 @@ int ubi_create_volume(struct ubi_device
- 			vol->last_eb_bytes = vol->usable_leb_size;
+--- a/drivers/mtd/nand/sunxi_nand.c
++++ b/drivers/mtd/nand/sunxi_nand.c
+@@ -1853,8 +1853,14 @@ static int sunxi_nand_hw_common_ecc_ctrl
+ 
+ 	/* Add ECC info retrieval from DT */
+ 	for (i = 0; i < ARRAY_SIZE(strengths); i++) {
+-		if (ecc->strength <= strengths[i])
++		if (ecc->strength <= strengths[i]) {
++			/*
++			 * Update ecc->strength value with the actual strength
++			 * that will be used by the ECC engine.
++			 */
++			ecc->strength = strengths[i];
+ 			break;
++		}
  	}
  
-+	/* Make volume "available" before it becomes accessible via sysfs */
-+	spin_lock(&ubi->volumes_lock);
-+	ubi->volumes[vol_id] = vol;
-+	ubi->vol_count += 1;
-+	spin_unlock(&ubi->volumes_lock);
-+
- 	/* Register character device for the volume */
- 	cdev_init(&vol->cdev, &ubi_vol_cdev_operations);
- 	vol->cdev.owner = THIS_MODULE;
-@@ -298,11 +304,6 @@ int ubi_create_volume(struct ubi_device
- 	if (err)
- 		goto out_sysfs;
- 
--	spin_lock(&ubi->volumes_lock);
--	ubi->volumes[vol_id] = vol;
--	ubi->vol_count += 1;
--	spin_unlock(&ubi->volumes_lock);
--
- 	ubi_volume_notify(ubi, vol, UBI_VOLUME_ADDED);
- 	self_check_volumes(ubi);
- 	return err;
-@@ -315,6 +316,10 @@ out_sysfs:
- 	 */
- 	cdev_device_del(&vol->cdev, &vol->dev);
- out_mapping:
-+	spin_lock(&ubi->volumes_lock);
-+	ubi->volumes[vol_id] = NULL;
-+	ubi->vol_count -= 1;
-+	spin_unlock(&ubi->volumes_lock);
- 	ubi_eba_destroy_table(eba_tbl);
- out_acc:
- 	spin_lock(&ubi->volumes_lock);
+ 	if (i >= ARRAY_SIZE(strengths)) {
