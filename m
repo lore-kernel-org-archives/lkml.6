@@ -1,99 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166018AbeBOUmL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 15:42:11 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:43467 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755862AbeBOUmH (ORCPT
+        id S1755893AbeBOUmd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 15:42:33 -0500
+Received: from vulcan.natalenko.name ([104.207.131.136]:51482 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755879AbeBOUma (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 15:42:07 -0500
-X-Google-Smtp-Source: AH8x227IXkvnwGugGWCCla5iusOrDGDn7q/ycciQe2pX+1Lnucw2/L8WhmDoQyK2sBkngS9e4mJV2FzHrafVKHqULA4=
+        Thu, 15 Feb 2018 15:42:30 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 4C2832F880C
+Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: TCP and BBR: reproducibly low cwnd and bandwidth
+Date: Thu, 15 Feb 2018 21:42:26 +0100
+Message-ID: <1697118.nv5eASg0nx@natalenko.name>
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <7289e57d94a0a13965e3dbd279cc8cd12dfb29a6.1518435853.git.rgb@redhat.com>
-References: <cover.1518435853.git.rgb@redhat.com> <7289e57d94a0a13965e3dbd279cc8cd12dfb29a6.1518435853.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 15 Feb 2018 15:42:04 -0500
-Message-ID: <CAHC9VhRv_F=Gqs7EyTR2ZmLtJobyH9B8Cg-iiHE5hacTC-d=Pw@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/3] audit: remove arch_f pointer from struct audit_krule
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=arc-20170712; t=1518727347;
+        h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding;
+        bh=UfhYGqNvxVp6r5MUMW3unOsBVjmhOFKCusZgs2veaPE=;
+        b=HUr4t5ofq88DM6UgbQCyw1xCTio9Fk4B8AdPbQvcbdd3H6RbPpjD28pzz8sswCSXTOgUgs
+        lsTrqRgCI0cgt1O5WyvBOvBoJigIDXoiWEGKH8iGYH1VlV+9f4WlV3v9Layh9AdbA7TgCl
+        iNQf7FieOtVI75AnhcQ01uDI4/Gr4GU=
+ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1518727347; a=rsa-sha256;
+        cv=none;
+        b=OF+x+Esoru81t27NDw0z1DNee9UOFhP/1iOMJUCL9R8ygRhDN10qtBzX6nT52wVtnwAhDBRRoy8Gebb/DI3ks2zP8LeCdhNyZRDlPYQZwMhy0XCPKCFRnVGtY+Y/wCUBM4oozlIBZsNBjnAFEe1RaRFNe2CBRODDQnxOg2e1HG4=
+ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
+        smtp.mailfrom=oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 7:29 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> The arch_f pointer was added to the struct audit_krule in commit:
-> e54dc2431d740a79a6bd013babade99d71b1714f ("audit signal recipients")
->
-> This is only used on addition and deletion of rules which isn't time
-> critical and the arch field is likely to be one of the first fields,
-> easily found iterating over the field type.  This isn't worth the
-> additional complexity and storage.  Delete the field.
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  include/linux/audit.h |  1 -
->  kernel/auditfilter.c  | 12 ++++++++----
->  2 files changed, 8 insertions(+), 5 deletions(-)
+Hello.
 
-I haven't decided if I like the removal of arch_f or not, but I think
-I might know where your oops/panic is coming from, thoughts below ...
+I've faced an issue with a limited TCP bandwidth between my laptop and a 
+server in my 1 Gbps LAN while using BBR as a congestion control mechanism. To 
+verify my observations, I've set up 2 KVM VMs with the following parameters:
 
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index af410d9..64a3b0e 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -58,7 +58,6 @@ struct audit_krule {
->         u32                     field_count;
->         char                    *filterkey; /* ties events to rules */
->         struct audit_field      *fields;
-> -       struct audit_field      *arch_f; /* quick access to arch field */
->         struct audit_field      *inode_f; /* quick access to an inode field */
->         struct audit_watch      *watch; /* associated watch */
->         struct audit_tree       *tree;  /* associated watched tree */
-> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-> index 739a6d2..3343d1c 100644
-> --- a/kernel/auditfilter.c
-> +++ b/kernel/auditfilter.c
-> @@ -220,7 +220,14 @@ static inline int audit_match_class_bits(int class, u32 *mask)
->
->  static int audit_match_signal(struct audit_entry *entry)
->  {
-> -       struct audit_field *arch = entry->rule.arch_f;
-> +       int i;
-> +       struct audit_field *arch;
-> +
-> +       for (i = 0; i < entry->rule.field_count; i++)
-> +               if (entry->rule.fields[i].type == AUDIT_ARCH) {
-> +                       arch = &entry->rule.fields[i];
-> +                       break;
-> +               }
+1) Linux v4.15.3
+2) virtio NICs
+3) 128 MiB of RAM
+4) 2 vCPUs
+5) tested on both non-PREEMPT/100 Hz and PREEMPT/1000 Hz
 
-In the original code arch_f was initialized to NULL via the allocator
-so the arch local variable was guaranteed to have a valid value or
-NULL.  Unfortunately, in your code if there is no AUDIT_ARCH field
-arch could remain uninitialized which I believe could lead to the
-oops/panic you are seeing.
+The VMs are interconnected via host bridge (-netdev bridge). I was running 
+iperf3 in the default and reverse mode. Here are the results:
 
->         if (!arch) {
->                 /* When arch is unspecified, we must check both masks on biarch
-> @@ -496,9 +503,6 @@ static struct audit_entry *audit_data_to_entry(struct audit_rule_data *data,
->                         if (!gid_valid(f->gid))
->                                 goto exit_free;
->                         break;
-> -               case AUDIT_ARCH:
-> -                       entry->rule.arch_f = f;
-> -                       break;
->                 case AUDIT_SUBJ_USER:
->                 case AUDIT_SUBJ_ROLE:
->                 case AUDIT_SUBJ_TYPE:
-> --
-> 1.8.3.1
+1) BBR on both VMs
 
--- 
-paul moore
-www.paul-moore.com
+upload: 3.42 Gbits/sec, cwnd ~ 320 KBytes
+download: 3.39 Gbits/sec, cwnd ~ 320 KBytes
+
+2) Reno on both VMs
+
+upload: 5.50 Gbits/sec, cwnd = 976 KBytes (constant)
+download: 5.22 Gbits/sec, cwnd = 1.20 MBytes (constant)
+
+3) Reno on client, BBR on server
+
+upload: 5.29 Gbits/sec, cwnd = 952 KBytes (constant)
+download: 3.45 Gbits/sec, cwnd ~ 320 KBytes
+
+4) BBR on client, Reno on server
+
+upload: 3.36 Gbits/sec, cwnd ~ 370 KBytes
+download: 5.21 Gbits/sec, cwnd = 887 KBytes (constant)
+
+So, as you may see, when BBR is in use, upload rate is bad and cwnd is low. If 
+using real HW (1 Gbps LAN, laptop and server), BBR limits the throughput to 
+~100 Mbps (verifiable not only by iperf3, but also by scp while transferring 
+some files between hosts).
+
+Also, I've tried to use YeAH instead of Reno, and it gives me the same results 
+as Reno (IOW, YeAH works fine too).
+
+Questions:
+
+1) is this expected?
+2) or am I missing some extra BBR tuneable?
+3) if it is not a regression (I don't have any previous data to compare with), 
+how can I fix this?
+4) if it is a bug in BBR, what else should I provide or check for a proper 
+investigation?
+
+Thanks.
+
+Regards,
+  Oleksandr
