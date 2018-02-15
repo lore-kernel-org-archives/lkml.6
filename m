@@ -1,130 +1,102 @@
-Return-Path: <green.hu@gmail.com>
-X-Cyrus-Session-Id: sloti22d1t05-3695236-1518513061-5-6146642802732049769
+Return-Path: <robh+dt@kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1825685-1518709274-2-14173012705142965312
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FROM 0.001, RCVD_IN_DNSWL_NONE -0.0001,
-  RCVD_IN_MSPIKE_H3 -0.01, RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001,
-  LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='74.125.83.66', Host='mail-pg0-f66.google.com', Country='US',
-  FromHeader='com', MailFrom='com'
-X-Spam-charsets: 
+X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='198.145.29.99', Host='mail.kernel.org', Country='US', FromHeader='org',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: green.hu@gmail.com
+X-Mail-from: robh+dt@kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518513061; b=fI45nhOWr+/ploWT4ud1o77y2zccRP/U0d0dD/q0+g71sHN
-    Bhtl64jAG/3vfaxDT1d9iL+OmIsfXIdxvXVzas1UdrfCsfmasnIbYu8+55iHETbt
-    mNu2LnYctDkSJZDDrPOITa/yT5Hc319VwyWwJsuuAlOApdnc8TROzd7KlIE5x1XO
-    HGpcV6TCrVtl5IiufWvC1Ehx1JopXLZAoxoQTPyTvMtyFV6GGvjBgvZ7+GfQScBd
-    a2dUylYigRz92ySGOtgfzK8voeYnXN77L01doLj7j9lQqBQqlPir/yENrGvRrsX1
-    dYgP9t/WdNArEkluQvzlc+xt4Yp1SmNnC1LkB2w==
+    t=1518709273; b=OjsIP9CKKmPRjFaP7H0kfCYwwvZyNd4tAgp9NBttq6sTZ/2
+    ZPfpXc1+9OIiyEwUlCMf8h6NVihrDY8p73MR4BtXGujSdJXH9jNZA0fFtXUfjare
+    nccrr7AkDLcEAJ0Nsr4daSjO7MHkV+xkVUD2QWrVR5DYG1YkssvHFRY5dTss4qEz
+    ZfE64BIeuFPUu86L6HjAwgSTBmzjYX8kNVUIU1qAQ8332qUU4Ccs+M22NsVuI1ym
+    O70+sQ3fPddPCJbo4xsIbBXS73/lH4PNsZoDolErNj10FITDAjkN7gQYjPq5s0C4
+    ndpZqS40MDowftoirII9vtIHWcq7DOaSLql4FWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:in-reply-to:references; s=arctest; t=
-    1518513061; bh=x3FTzZHXxHvAUhh6d+9ZQkYzOrGoDthddBEATx8T3DI=; b=g
-    mg5cNw+sM16/wVV0pqyrg6ce7EFnWBls4Yus938cA0zSnmkJHXZzQrMcCjA3xX1q
-    19ak5qN06WHGItoLSMYk2pjGlHdzpNAOl8EFq5Cj/R/hpoBc5M45jD+ki29sjhqz
-    RsfVvv15KS7H0qKUAecGBEbhbxufpo8AVaq61LJJJ8N07OftMBHOdpET+RwVbLmk
-    Dq6nnFp5dy99tQg53QnokdH03MPJCfdk7RyzKprXVrz9XKeGi+Ke6v1PC3gByAwQ
-    /ZqiBW/Ar9i7+EsDru3V2OtmNt/11fRr9uIYUKBMMQQdl79iUqhohC0bocjCuPwE
-    YUdePGvTeQWwa6p/3QZOQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ixieXlXc x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=74.125.83.66 (mail-pg0-f66.google.com);
-    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pg0-f66.google.com;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type; s=arctest; t=
+    1518709273; bh=SXHF2gbNY5BNNjL0TOOIoEE0jr22fAiAHEjbOTNeisc=; b=U
+    3v0bZnPP3Jt2V9q89UXDmI2iRVSo9N7UMclGIhvOjlz9Oo6w4BD6/OGGUZ+pAHwr
+    NPgxhRvEjz1e6N+rH/nZP7Ewd06L4CXMuNGial7KfTBQZ1JC/zIYmGaKmCWg1Kb4
+    ck96toQVLSMTqPQvxuL28n898yI9TQHJTjNgIw5KVdgrLdu9Qe0w/K1hcaeX/3CN
+    AZ+8gbVN66ntVvk542TjaZHC/L2hDjyP0KArljkQKrFMYCqxzgukf95WH9x9JG3Z
+    eCRqrllV1zRt/UOZ/jPPD7fg2UiedYFeBG5R12gqUEHoozriwXEmDPMOTs3GohyY
+    qRmgTIx7gGtL49Dn1ojzA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
+    spf=none smtp.mailfrom=robh+dt@kernel.org smtp.helo=mail.kernel.org;
     x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=PpRIKqhP;
-    x-ptr=pass x-ptr-helo=mail-pg0-f66.google.com x-ptr-lookup=mail-pg0-f66.google.com;
-    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
+    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ixieXlXc x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=74.125.83.66 (mail-pg0-f66.google.com);
-    spf=pass smtp.mailfrom=green.hu@gmail.com smtp.helo=mail-pg0-f66.google.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
+    spf=none smtp.mailfrom=robh+dt@kernel.org smtp.helo=mail.kernel.org;
     x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=PpRIKqhP;
-    x-ptr=pass x-ptr-helo=mail-pg0-f66.google.com x-ptr-lookup=mail-pg0-f66.google.com;
-    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
+    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Google-Smtp-Source: AH8x225Cne1vWR1mXO0KBvA2ahFvOm3cLgdhWCMGbzRyERmEedXSJKOziL6Ls2I2Ho1FhZDmNbl5uA==
-From: Greentime Hu <green.hu@gmail.com>
-X-Google-Original-From: Greentime Hu <greentime@andestech.com>
-To: greentime@andestech.com,
-	linux-kernel@vger.kernel.org,
-	arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	tglx@linutronix.de,
-	jason@lakedaemon.net,
-	marc.zyngier@arm.com,
-	robh+dt@kernel.org,
-	netdev@vger.kernel.org,
-	deanbo422@gmail.com,
-	devicetree@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	dhowells@redhat.com,
-	will.deacon@arm.com,
-	daniel.lezcano@linaro.org,
-	linux-serial@vger.kernel.org,
-	geert.uytterhoeven@gmail.com,
-	linus.walleij@linaro.org,
-	mark.rutland@arm.com,
-	greg@kroah.com,
-	ren_guo@c-sky.com,
-	rdunlap@infradead.org,
-	davem@davemloft.net,
-	jonas@southpole.se,
-	stefan.kristiansson@saunalahti.fi,
-	shorne@gmail.com
-Cc: green.hu@gmail.com,
-	Peter Hurley <peter@hurleysoftware.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v7 04/37] earlycon: add reg-offset to physical address before mapping
-Date: Tue, 13 Feb 2018 17:09:08 +0800
-Message-Id: <968497070242f849dd70ab1fa81635451f8fda7f.1518505384.git.greentime@andestech.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <cover.1518505384.git.greentime@andestech.com>
-References: <cover.1518505384.git.greentime@andestech.com>
-In-Reply-To: <cover.1518505384.git.greentime@andestech.com>
-References: <cover.1518505384.git.greentime@andestech.com>
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25F0A2183F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AH8x227SkHWLbdzFpeCEhvxZuAoO2r6Q5eiZ/3J7KOfPZfDV1cUwq0aQ1JfKfYzvq4+n9saqT+MDyPl95vF882eeKr0=
+MIME-Version: 1.0
+In-Reply-To: <968497070242f849dd70ab1fa81635451f8fda7f.1518505384.git.greentime@andestech.com>
+References: <cover.1518505384.git.greentime@andestech.com> <968497070242f849dd70ab1fa81635451f8fda7f.1518505384.git.greentime@andestech.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Thu, 15 Feb 2018 09:40:49 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJteT1P2GJGdesTsz=PuXU1qxiyhtKLURkGwV9sSQ7XZQ@mail.gmail.com>
+Message-ID: <CAL_JsqJteT1P2GJGdesTsz=PuXU1qxiyhtKLURkGwV9sSQ7XZQ@mail.gmail.com>
+Subject: Re: [PATCH v7 04/37] earlycon: add reg-offset to physical address
+ before mapping
+To: Greentime Hu <green.hu@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: greentime@andestech.com,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>, netdev <netdev@vger.kernel.org>, deanbo422@gmail.com,
+	devicetree@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+	David Howells <dhowells@redhat.com>, Will Deacon <will.deacon@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, linux-serial@vger.kernel.org,
+	Geert Uytterhoeven <geert.uytterhoeven@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>, Greg KH <greg@kroah.com>, ren_guo@c-sky.com,
+	Randy Dunlap <rdunlap@infradead.org>, David Miller <davem@davemloft.net>,
+	Jonas Bonn <jonas@southpole.se>,
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>,
+	Peter Hurley <peter@hurleysoftware.com>, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-It will get the wrong virtual address because port->mapbase is not added
-the correct reg-offset yet. We have to update it before earlycon_map()
-is called
+On Tue, Feb 13, 2018 at 3:09 AM, Greentime Hu <green.hu@gmail.com> wrote:
+> It will get the wrong virtual address because port->mapbase is not added
+> the correct reg-offset yet. We have to update it before earlycon_map()
+> is called
+>
+> Signed-off-by: Greentime Hu <greentime@andestech.com>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> Cc: Peter Hurley <peter@hurleysoftware.com>
+> Cc: stable@vger.kernel.org
+> Fixes: 088da2a17619 ("of: earlycon: Initialize port fields from DT
+> properties")
 
-Signed-off-by: Greentime Hu <greentime@andestech.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Peter Hurley <peter@hurleysoftware.com>
-Cc: stable@vger.kernel.org
-Fixes: 088da2a17619 ("of: earlycon: Initialize port fields from DT properties")
+This should get applied now rather than sit in numerous revisions of
+this series for nds32.
+
 Acked-by: Rob Herring <robh@kernel.org>
----
- drivers/tty/serial/earlycon.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/earlycon.c b/drivers/tty/serial/earlycon.c
-index 870e84fb6e39..a24278380fec 100644
---- a/drivers/tty/serial/earlycon.c
-+++ b/drivers/tty/serial/earlycon.c
-@@ -245,11 +245,12 @@ int __init of_setup_earlycon(const struct earlycon_id *match,
- 	}
- 	port->mapbase = addr;
- 	port->uartclk = BASE_BAUD * 16;
--	port->membase = earlycon_map(port->mapbase, SZ_4K);
- 
- 	val = of_get_flat_dt_prop(node, "reg-offset", NULL);
- 	if (val)
- 		port->mapbase += be32_to_cpu(*val);
-+	port->membase = earlycon_map(port->mapbase, SZ_4K);
-+
- 	val = of_get_flat_dt_prop(node, "reg-shift", NULL);
- 	if (val)
- 		port->regshift = be32_to_cpu(*val);
--- 
-2.16.1
+Greg, can you apply?
+
+Rob
