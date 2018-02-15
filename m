@@ -1,65 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967983AbeBOM0k (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 07:26:40 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35468 "EHLO mx1.redhat.com"
+        id S968026AbeBOM0s (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 07:26:48 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38488 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S967889AbeBOM0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 07:26:39 -0500
+        id S967889AbeBOM0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 07:26:41 -0500
 From: Jiri Olsa <jolsa@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCHv3 0/9] perf tool: Assorted fixes
-Date: Thu, 15 Feb 2018 13:26:26 +0100
-Message-Id: <20180215122635.24029-1-jolsa@kernel.org>
+Subject: [PATCH 2/9] perf tools: Check if we read regular file in dso__load
+Date: Thu, 15 Feb 2018 13:26:28 +0100
+Message-Id: <20180215122635.24029-3-jolsa@kernel.org>
+In-Reply-To: <20180215122635.24029-1-jolsa@kernel.org>
+References: <20180215122635.24029-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hi,
-sending assorted general fixes that queued
-up in my other branches.
+Current code in dso__load calls the is_regular_file function,
+but it checks its return value only after calling symsrc__init.
 
-v3 changes:
-  - reworked machine__create_kernel_maps to take into account
-    kernel modules based on Namhyung's comments
-  - fixed dso__load changes to take into account namespace switch
-  - add perf test 1 fix
+That can make symsrc__init block in elf_* functions on reading
+the file if the file happens to be device and not regular one.
 
-v2 changes:
-  - rebased on current perf/core
-  - detailed changelog for patch 1
-  - using zfree instead of free in patch 2
-  - using machine__set_mmap_name function name
+Calling symsrc__init only for regular files. Also removing
+the symsrc__destroy cleanup, which is not needed now, because
+we call symsrc__init only for regular files.
 
-Also available in here:
-  https://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
-  perf/fixes
-
-thanks,
-jirka
-
-
+Link: http://lkml.kernel.org/n/tip-qm0sl764xzwvzgz0abqt6m46@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
-Jiri Olsa (9):
-      tools lib symbol: Skip non-address kallsyms line
-      perf tools: Check if we read regular file in dso__load
-      perf tools: Free root_dir in machine__init error path
-      perf tools: Move kernel mmap name into struct machine
-      perf tools: Generalize machine__set_kernel_mmap function
-      perf tools: Don't search for active kernel start in __machine__create_kernel_maps
-      perf tools: Remove machine__load_kallsyms function
-      perf tools: Do not create kernel maps in sample__resolve
-      perf tests: Use arch__compare_symbol_names to compare symbols
+ tools/perf/util/symbol.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
- tools/lib/symbol/kallsyms.c         |   4 ++++
- tools/perf/tests/vmlinux-kallsyms.c |   4 ++--
- tools/perf/util/build-id.c          |  10 +++------
- tools/perf/util/event.c             |  16 +-------------
- tools/perf/util/machine.c           | 145 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------------------------------------------------------
- tools/perf/util/machine.h           |   6 +-----
- tools/perf/util/symbol.c            |  13 +++++-------
- 7 files changed, 87 insertions(+), 111 deletions(-)
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index cc065d4bfafc..e366e3060e6b 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -1582,7 +1582,7 @@ int dso__load(struct dso *dso, struct map *map)
+ 		bool next_slot = false;
+ 		bool is_reg;
+ 		bool nsexit;
+-		int sirc;
++		int sirc = -1;
+ 
+ 		enum dso_binary_type symtab_type = binary_type_symtab[i];
+ 
+@@ -1600,16 +1600,14 @@ int dso__load(struct dso *dso, struct map *map)
+ 			nsinfo__mountns_exit(&nsc);
+ 
+ 		is_reg = is_regular_file(name);
+-		sirc = symsrc__init(ss, dso, name, symtab_type);
++		if (is_reg)
++			sirc = symsrc__init(ss, dso, name, symtab_type);
+ 
+ 		if (nsexit)
+ 			nsinfo__mountns_enter(dso->nsinfo, &nsc);
+ 
+-		if (!is_reg || sirc < 0) {
+-			if (sirc >= 0)
+-				symsrc__destroy(ss);
++		if (!is_reg || sirc < 0)
+ 			continue;
+-		}
+ 
+ 		if (!syms_ss && symsrc__has_symtab(ss)) {
+ 			syms_ss = ss;
+-- 
+2.13.6
