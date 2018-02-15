@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2179907-1518719400-2-1891109790661484264
+X-Cyrus-Session-Id: sloti22d1t05-2178418-1518719342-2-8336780669896094163
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518719400; b=dbDGxD34/42n5UCfGC9ThrJwmROO97ZLUk3BDDnEfVGodND
-    yo90L/dNReDGqMf/wZPA1YDyIl9du40YVGH0fZUKq+04NgBSvpd1i4Ilshke00+B
-    F2d5rInbtpb1DDN/tWxRRqG/WUyNnNPwif/kdMR13M/Ju6kvcu99Oo8IXoI2tbXE
-    nhoMHIszgKu6qcHT1l9wI+sEA/3keUg//jVho4DWK8dwc1JH7J5vhbdPwTp6/h7C
-    suhbmhFpx+i13C2kqrDIaytdRLt0I1xt4uRXDQNeN+6zwZr7zqDYf3fwPbnnA9qY
-    h5tBbvf87Nt4w/O0seZlhav74e1zcy/IoElv5zw==
+    t=1518719342; b=WwA4VFCoL43rXYH4icZQGGaQqImR8pq9jV8F94kMJwuWqix
+    yB1/PDRZsln1b+NjH8S5qFvH3tiqtDfObf7fzn1mVc2IbJH521BiVMfafkncY1aL
+    leeK/LxDMRMbx9Vn7er+xpdazXbhXPYWpNtPPucWG0m8QxmbzNBn3ArBG6JMgbUz
+    sFZ/5WPQe+96nqSc6nllUpZ3W7qCIdJiKcdfJY9SvYGpApEUGicYJUvpD5fsJlw4
+    WvqZ7Jjf9twS0ODL7PFK9Gu7tbC0AwF0fkamXUijZF5v5HvTLSFp7oHy6RuufQlx
+    q9c7WVN8i4ZAM2YMdR1o7HdzAZnOZhaVkZZC8yQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518719400; bh=jQdZliIbuP1gT1U/oXQ8xOG9hS
-    4Tzh/zmmwp+eEeKOc=; b=ecXV6D+jHlYXqiI6SJNZGCOoCZD24y/u9KfuAiM5k3
-    Uh41yLgGzWRv5EploV7imhFtupu7LUHIjcsULiNZBGXDlMl5SLiZFCljSbf+kWvC
-    79OWvj5+OdV1aucTrzCRS4vOyhABNKYy8HU+oJnuhzvK8fKgk5Df67vZt3V/KqLk
-    J5nyhFMbmT9GEwq3pS8EfkoxynI7QqYGhKn1NfAzakY7XKbL/gA/UKbWuSb5nH22
-    aWg2BcXQpU8wWS5OwZLVgiYGVMb6XMV09n+Wv2LQIgXaprbLRdugW1jVyMgPtAeN
-    AQwTe54DLNa84mjnbW4xtelxKpitbSIQURMb5lU2iAAQ==
+    :list-id; s=arctest; t=1518719342; bh=fynkW+AUswng/PApyRKOHx96e8
+    VzR2jggqwusgZonTs=; b=YWHSvMF0Kbq1evxjU9ZuNHh/g9eQvipaZwS6EZuaTi
+    Rf+eh6dm/+P8BI9mx1YG3wEnKYDlAidX2B5ynkBd9BLhlCHdA05nnL0CMudQN15c
+    STouXD4VUmtHqDrbOPEOnpCqMPTHWCJoJSPuE5/2yU7T9zXKpVYtV9OP6vNVu7l+
+    eJzebd704vBPHUeM8FIb04NCe0vJ21ZK+QJ2tKjcEc63oYSxpv1BRap9plV3eEOw
+    qU4ZN6ximfao+RgKSPSWAegZCh2YCJBFtlD245FB4PmUFGDoVYlZbJDQfGmkLjK0
+    s9LeCx7LQSCWSu7itw2E59apIJLhO6agRTZs81gizSrg==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,26 +47,20 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162407AbeBOS3l (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 13:29:41 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52190 "EHLO
+        id S1166467AbeBOS2o (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:28:44 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52212 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163154AbeBOPZU (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:25:20 -0500
+        with ESMTP id S1163176AbeBOPZZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:25:25 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Tejun Heo <tj@kernel.org>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Adam Wallis <awallis@codeaurora.org>,
-        Lai Jiangshan <laijs@cn.fujitsu.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 091/108] kernel/async.c: revert "async: simplify lowest_in_progress()"
-Date: Thu, 15 Feb 2018 16:17:28 +0100
-Message-Id: <20180215151235.075330399@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.4 093/108] Bluetooth: btsdio: Do not bind to non-removable BCM43341
+Date: Thu, 15 Feb 2018 16:17:30 +0100
+Message-Id: <20180215151235.362338659@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -83,85 +77,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 4f7e988e63e336827f4150de48163bed05d653bd upstream.
+commit b4cdaba274247c9c841c6a682c08fa91fb3aa549 upstream.
 
-This reverts commit 92266d6ef60c ("async: simplify lowest_in_progress()")
-which was simply wrong: In the case where domain is NULL, we now use the
-wrong offsetof() in the list_first_entry macro, so we don't actually
-fetch the ->cookie value, but rather the eight bytes located
-sizeof(struct list_head) further into the struct async_entry.
+BCM43341 devices soldered onto the PCB (non-removable) always (AFAICT)
+use an UART connection for bluetooth. But they also advertise btsdio
+support on their 3th sdio function, this causes 2 problems:
 
-On 64 bit, that's the data member, while on 32 bit, that's a u64 built
-from func and data in some order.
+1) A non functioning BT HCI getting registered
 
-I think the bug happens to be harmless in practice: It obviously only
-affects callers which pass a NULL domain, and AFAICT the only such
-caller is
+2) Since the btsdio driver does not have suspend/resume callbacks,
+mmc_sdio_pre_suspend will return -ENOSYS, causing mmc_pm_notify()
+to react as if the SDIO-card is removed and since the slot is
+marked as non-removable it will never get detected as inserted again.
+Which results in wifi no longer working after a suspend/resume.
 
-  async_synchronize_full() ->
-  async_synchronize_full_domain(NULL) ->
-  async_synchronize_cookie_domain(ASYNC_COOKIE_MAX, NULL)
+This commit fixes both by making btsdio ignore BCM43341 devices
+when connected to a slot which is marked non-removable.
 
-and the ASYNC_COOKIE_MAX means that in practice we end up waiting for
-the async_global_pending list to be empty - but it would break if
-somebody happened to pass (void*)-1 as the data element to
-async_schedule, and of course also if somebody ever does a
-async_synchronize_cookie_domain(, NULL) with a "finite" cookie value.
-
-Maybe the "harmless in practice" means this isn't -stable material.  But
-I'm not completely confident my quick git grep'ing is enough, and there
-might be affected code in one of the earlier kernels that has since been
-removed, so I'll leave the decision to the stable guys.
-
-Link: http://lkml.kernel.org/r/20171128104938.3921-1-linux@rasmusvillemoes.dk
-Fixes: 92266d6ef60c "async: simplify lowest_in_progress()"
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Acked-by: Tejun Heo <tj@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Adam Wallis <awallis@codeaurora.org>
-Cc: Lai Jiangshan <laijs@cn.fujitsu.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/async.c |   20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ drivers/bluetooth/btsdio.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/kernel/async.c
-+++ b/kernel/async.c
-@@ -84,20 +84,24 @@ static atomic_t entry_count;
+--- a/drivers/bluetooth/btsdio.c
++++ b/drivers/bluetooth/btsdio.c
+@@ -31,6 +31,7 @@
+ #include <linux/errno.h>
+ #include <linux/skbuff.h>
  
- static async_cookie_t lowest_in_progress(struct async_domain *domain)
- {
--	struct list_head *pending;
-+	struct async_entry *first = NULL;
- 	async_cookie_t ret = ASYNC_COOKIE_MAX;
- 	unsigned long flags;
++#include <linux/mmc/host.h>
+ #include <linux/mmc/sdio_ids.h>
+ #include <linux/mmc/sdio_func.h>
  
- 	spin_lock_irqsave(&async_lock, flags);
+@@ -291,6 +292,14 @@ static int btsdio_probe(struct sdio_func
+ 		tuple = tuple->next;
+ 	}
  
--	if (domain)
--		pending = &domain->pending;
--	else
--		pending = &async_global_pending;
-+	if (domain) {
-+		if (!list_empty(&domain->pending))
-+			first = list_first_entry(&domain->pending,
-+					struct async_entry, domain_list);
-+	} else {
-+		if (!list_empty(&async_global_pending))
-+			first = list_first_entry(&async_global_pending,
-+					struct async_entry, global_list);
-+	}
- 
--	if (!list_empty(pending))
--		ret = list_first_entry(pending, struct async_entry,
--				       domain_list)->cookie;
-+	if (first)
-+		ret = first->cookie;
- 
- 	spin_unlock_irqrestore(&async_lock, flags);
- 	return ret;
++	/* BCM43341 devices soldered onto the PCB (non-removable) use an
++	 * uart connection for bluetooth, ignore the BT SDIO interface.
++	 */
++	if (func->vendor == SDIO_VENDOR_ID_BROADCOM &&
++	    func->device == SDIO_DEVICE_ID_BROADCOM_43341 &&
++	    !mmc_card_is_removable(func->card->host))
++		return -ENODEV;
++
+ 	data = devm_kzalloc(&func->dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
