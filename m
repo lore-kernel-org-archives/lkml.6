@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224u21UROqJR1mz00I3VvzNZbgcmBCQOwym3VjPv38sZ+7iswP4sMcuottkc/un5EehnZtJ4
-ARC-Seal: i=1; a=rsa-sha256; t=1518708768; cv=none;
+X-Google-Smtp-Source: AH8x2242lf/J5WVzOHeOVkYWJQJCJImFK16Kw0OPnOJOOX1i+rec3N0sKe/dxVb/IZTJlutfT4g8
+ARC-Seal: i=1; a=rsa-sha256; t=1518708765; cv=none;
         d=google.com; s=arc-20160816;
-        b=lubyd7E2SYIOhbtLyG1ldxilu/bDPSjtW4tqRXJWhZmblluDlHYVYFh05X9ezDIpEy
-         UAZaxGMxZEkboiFZ/wsKsUlrkI6Ae33nK/rR25x9y5D0DJYXwNo9M/y9wM4gCJpM57CX
-         e7Vfi6yKjuHMOpojspFZP3pk+QSq7yGDgLO5Vv1EkvLVm669UhDC8vfb7kEAnDrh1ZMD
-         whAe8ssAGNC+zmhd+kR5UyX0nw2ZFkZ5pPhknHcycHBn7qRoH9sNoiZmKucI1RJeYRvB
-         NogISa/fjhE2ZdgFlf6QOHcr40BUbBxopLGciSmSLQkB0swupwJyXOV1psFCRxYMSNc6
-         p2Fw==
+        b=IA7OubQeTa06a5lPodnm9HnNJwDi3zdm9eQXlgN8MFeHoAU1Sr+mOgOGJGl0FoJBTS
+         30TcfK92heHWRzaZMqEUxm1QzBPcTyC7RIPeCvTYbuNXt3SkRjIemitlCgGhWF3FS9o6
+         mRsP/g30VZU43ZMDcabXWGqcrt52GbVrehu5Y80oby8/0ugzshf+ltq094HDnT+fd2eq
+         zIhc20unDsr4t7ZbX7+mt7hOxFMVUq+DZvByS4u0x5UIqC44t3Cqcr8AwvDcQL4kLdKH
+         JPAvI2kdnX4ZfFebanp750Tq5d/yswmmYqFrkbggbftjQq/oVvRgGPgZDnLitn4zevFZ
+         NnTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=h+fWMlVpPKysrD4+3ED8+N0hJYD1AsecrAB2CKjh0/w=;
-        b=ie4KyfnJrDvGUALP5sr+mdY7HNSBWDeWy3tcYOtZu+zXH5Ct5GX+5sbffHg3sEniTS
-         zxXRDINEAIE2vXmiYyL52cnCUp9WAdNfb5qLFvn9zhkE7KFn7UnRIdD6uPXhg247HYmy
-         Gas0Bl6Gi+cW9zV9vND3AecjONu3Xb5bKKnAQBqvHGzSYMyXuOdKryYK/hZY4vAqnXJM
-         JPQkpGw/uEDRIXuB7FvSVeXUqfN0ftgflPMBgsEXTsl+CibaRLHmyGQNqWmi3GVgRVXt
-         RMEcZZsolDygBvXufc63eZTe6SdGFq90VdCLNdJHQIEKMKeX+btIDpiMQYvAEIAmwDN0
-         wEjQ==
+        bh=Qk68ZDTrBLkcDJWMv0t6hkI/x/X2LkQKlawd73CuUyQ=;
+        b=pY/lAGvnuRgPJYkF5vjpI/v9J/sEvBMmjP2I+cAhNPgDO8xtkVWf/TVl7PswONtuP6
+         X8MdHQL4sSqxY7Z+n3aLPpliHQjEgF2EvHxyZSfgwWSBLOmsVcpWHNJme1BifHhG4mxF
+         9z6kO3D0keufVXPGtFu7WngwZ0o8+ZssRYOeJ57c5xhD3vtxjZ1G1JYusLFSNl934NaB
+         ltriTk0USLplRqlbtuxIafzCcjCSS0+mui8OE0Yp7omKtAzQf0OlV5y0wFWlLHFeWTyV
+         xG3wAIAGNhsZKVZHdQem4jEOIOq5Nj+CT0hrr5PRk9NgUMZWAvJP0cfgrUECGh/YFPhT
+         HOTQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Hettena <dhettena@nvidia.com>,
 	Marc Zyngier <marc.zyngier@arm.com>,
 	Will Deacon <will.deacon@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 073/195] [Variant 2/Spectre-v2] arm64: entry: Apply BP hardening for high-priority synchronous exceptions
-Date: Thu, 15 Feb 2018 16:16:04 +0100
-Message-Id: <20180215151709.358499659@linuxfoundation.org>
+Subject: [PATCH 4.14 072/195] [Variant 2/Spectre-v2] arm64: KVM: Use per-CPU vector when BP hardening is enabled
+Date: Thu, 15 Feb 2018 16:16:03 +0100
+Message-Id: <20180215151709.301843339@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481565852328465?=
-X-GMAIL-MSGID: =?utf-8?q?1592481565852328465?=
+X-GMAIL-THRID: =?utf-8?q?1592481562742963731?=
+X-GMAIL-MSGID: =?utf-8?q?1592481562742963731?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,63 +50,122 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
 
-Commit 5dfc6ed27710 upstream.
+Commit 6840bdd73d07 upstream.
 
-Software-step and PC alignment fault exceptions have higher priority than
-instruction abort exceptions, so apply the BP hardening hooks there too
-if the user PC appears to reside in kernel space.
+Now that we have per-CPU vectors, let's plug then in the KVM/arm64 code.
 
-Reported-by: Dan Hettena <dhettena@nvidia.com>
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/entry.S |    6 ++++--
- arch/arm64/mm/fault.c     |    9 +++++++++
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ arch/arm/include/asm/kvm_mmu.h   |   10 ++++++++++
+ arch/arm64/include/asm/kvm_mmu.h |   38 ++++++++++++++++++++++++++++++++++++++
+ arch/arm64/kvm/hyp/switch.c      |    2 +-
+ virt/kvm/arm/arm.c               |    8 +++++++-
+ 4 files changed, 56 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -759,8 +759,10 @@ el0_sp_pc:
- 	 * Stack or PC alignment exception handling
- 	 */
- 	mrs	x26, far_el1
--	// enable interrupts before calling the main handler
--	enable_dbg_and_irq
-+	enable_dbg
-+#ifdef CONFIG_TRACE_IRQFLAGS
-+	bl	trace_hardirqs_off
-+#endif
- 	ct_user_exit
- 	mov	x0, x26
- 	mov	x1, x25
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -778,6 +778,12 @@ asmlinkage void __exception do_sp_pc_abo
- 	struct siginfo info;
- 	struct task_struct *tsk = current;
+--- a/arch/arm/include/asm/kvm_mmu.h
++++ b/arch/arm/include/asm/kvm_mmu.h
+@@ -221,6 +221,16 @@ static inline unsigned int kvm_get_vmid_
+ 	return 8;
+ }
  
-+	if (user_mode(regs)) {
-+		if (instruction_pointer(regs) > TASK_SIZE)
-+			arm64_apply_bp_hardening();
-+		local_irq_enable();
++static inline void *kvm_get_hyp_vector(void)
++{
++	return kvm_ksym_ref(__kvm_hyp_vector);
++}
++
++static inline int kvm_map_vectors(void)
++{
++	return 0;
++}
++
+ #endif	/* !__ASSEMBLY__ */
+ 
+ #endif /* __ARM_KVM_MMU_H__ */
+--- a/arch/arm64/include/asm/kvm_mmu.h
++++ b/arch/arm64/include/asm/kvm_mmu.h
+@@ -309,5 +309,43 @@ static inline unsigned int kvm_get_vmid_
+ 	return (cpuid_feature_extract_unsigned_field(reg, ID_AA64MMFR1_VMIDBITS_SHIFT) == 2) ? 16 : 8;
+ }
+ 
++#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
++#include <asm/mmu.h>
++
++static inline void *kvm_get_hyp_vector(void)
++{
++	struct bp_hardening_data *data = arm64_get_bp_hardening_data();
++	void *vect = kvm_ksym_ref(__kvm_hyp_vector);
++
++	if (data->fn) {
++		vect = __bp_harden_hyp_vecs_start +
++		       data->hyp_vectors_slot * SZ_2K;
++
++		if (!has_vhe())
++			vect = lm_alias(vect);
 +	}
 +
- 	if (show_unhandled_signals && unhandled_signal(tsk, SIGBUS))
- 		pr_info_ratelimited("%s[%d]: %s exception: pc=%p sp=%p\n",
- 				    tsk->comm, task_pid_nr(tsk),
-@@ -837,6 +843,9 @@ asmlinkage int __exception do_debug_exce
- 	if (interrupts_enabled(regs))
- 		trace_hardirqs_off();
- 
-+	if (user_mode(regs) && instruction_pointer(regs) > TASK_SIZE)
-+		arm64_apply_bp_hardening();
++	return vect;
++}
 +
- 	if (!inf->fn(addr, esr, regs)) {
- 		rv = 1;
- 	} else {
++static inline int kvm_map_vectors(void)
++{
++	return create_hyp_mappings(kvm_ksym_ref(__bp_harden_hyp_vecs_start),
++				   kvm_ksym_ref(__bp_harden_hyp_vecs_end),
++				   PAGE_HYP_EXEC);
++}
++
++#else
++static inline void *kvm_get_hyp_vector(void)
++{
++	return kvm_ksym_ref(__kvm_hyp_vector);
++}
++
++static inline int kvm_map_vectors(void)
++{
++	return 0;
++}
++#endif
++
+ #endif /* __ASSEMBLY__ */
+ #endif /* __ARM64_KVM_MMU_H__ */
+--- a/arch/arm64/kvm/hyp/switch.c
++++ b/arch/arm64/kvm/hyp/switch.c
+@@ -51,7 +51,7 @@ static void __hyp_text __activate_traps_
+ 	val &= ~CPACR_EL1_FPEN;
+ 	write_sysreg(val, cpacr_el1);
+ 
+-	write_sysreg(__kvm_hyp_vector, vbar_el1);
++	write_sysreg(kvm_get_hyp_vector(), vbar_el1);
+ }
+ 
+ static void __hyp_text __activate_traps_nvhe(void)
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -1139,7 +1139,7 @@ static void cpu_init_hyp_mode(void *dumm
+ 	pgd_ptr = kvm_mmu_get_httbr();
+ 	stack_page = __this_cpu_read(kvm_arm_hyp_stack_page);
+ 	hyp_stack_ptr = stack_page + PAGE_SIZE;
+-	vector_ptr = (unsigned long)kvm_ksym_ref(__kvm_hyp_vector);
++	vector_ptr = (unsigned long)kvm_get_hyp_vector();
+ 
+ 	__cpu_init_hyp_mode(pgd_ptr, hyp_stack_ptr, vector_ptr);
+ 	__cpu_init_stage2();
+@@ -1384,6 +1384,12 @@ static int init_hyp_mode(void)
+ 		goto out_err;
+ 	}
+ 
++	err = kvm_map_vectors();
++	if (err) {
++		kvm_err("Cannot map vectors\n");
++		goto out_err;
++	}
++
+ 	/*
+ 	 * Map the Hyp stack pages
+ 	 */
