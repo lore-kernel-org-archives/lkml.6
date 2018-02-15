@@ -1,36 +1,37 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225ZKiDb4Le8GVOUmHPasJogrCRvhBUY9f6mqe2M7qCDVoBeLD3JB9758l1CeneCuNsNYkYT
+X-Google-Smtp-Source: AH8x2246CZ0F76GACir9WhuA3WZHNvl4i2XojKU1pVL0z07LIWI+9KCH3DJDSMKH79ejnfOS8xIC
 ARC-Seal: i=1; a=rsa-sha256; t=1518708997; cv=none;
         d=google.com; s=arc-20160816;
-        b=aqDUNhIOyK+Oa1we91wHgmA/UiEz4clTxAwWY1ktxltySXiG8IFp6ZBY/Z9WdU2FxS
-         9OrtGijLkhYQhTVa5Ux1N+WRosr6puGYnJzWXsILO7msyPRUB7LbmPPHH8eCVktN9wsL
-         6bEmn+ttbo5ZjaGwkUM7Kgz5X1/Up5sQLswaRQ3B8T5kfVx8V3IHvl49kbju9qqnnTaV
-         Eq4/jUIEu9dBzzDd1Bov+H+w+SZWaJlMCCA5/bUy1S0wyIvVAFOgi7UgktFWzcIwGUit
-         p9XKRmLpMU1qAdgi7z2bbYZiJPkCut45oZPZRgrczcyhzTCOjGfxvGf/ViM/9aasodin
-         S8RQ==
+        b=WzNEX0Z5Bms+Wgipoy/NpkP2BuYDZe72RYgk8QN8S2HOppvEFm0djOSpQHVQttwr+q
+         0Bl6ExXsu/IQJ+xEg/PZ/a0q+i2Yl9dehZ2AzFs/6ly5k7IVQ/ykJ+HRmOQAsZAr5L3/
+         xxUnFI180aWtdgnHDNVl8fvXX9rObKobW6CnSAguPhW5u1KbfHxU1SsRB/4aDlpvN7Dx
+         LLS+8ayd30ak9ASN6BjT9auJ7vK3lQNTqAFMbV98A9fuz+48LDGxvxdQ0VGfaYsCt9wi
+         3n9PJ6pEHvfVC4BxWL2zWgz63oVMiSUgq6X48mwMTCSa/uLlJCY9ly60RezukyeKvqFe
+         vXOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UnW9Kw9xKOWbEvExYVOX4BD5FyST4jJ2w+IT7yBbNMk=;
-        b=y/CRNmlzkW7niKmk0qS3mRkTkBqfTAS+ahz11BXO5dC+50Lzcl/8rjyx4YInXXwfoI
-         vfgfACMIxVwf1O2FIJezHLJ3IQ0tR/PJOSmWODnOc6RlqPWwoFjIBTn2e9V7QvoRzd9k
-         KFBgeXRgvFOOJCdIucMQotbNSiOr876tj7u+zbweYAMZQmQmomnbZZapusagce0t9hLi
-         crJV8EcOIfbxdvnxqwWEoPCEdeFD4q4SaeN4u1gYYRWKOj9WopRJxHvTTM8+nswv7Jxd
-         QiWxHrwUSDscU/doE5bZl77aqDPlH2H67w6WDxqfNoQu5Ur1nn7zz4+EjdBUmOBIyyxS
-         s6kw==
+        bh=PTDhofjqRiU91jIEIbidsf8civMPqGNr8kUq+09u96U=;
+        b=hXNnBc5jb1S9W53E3jkDT/ochgYisjxlL9hzgRp72BwkNQhevRV4bVTGP3a0j5fWKc
+         n4gZvGp4fzg0OngO/gZSx1/suWc3qjm0CFvOfIlGIRv8QLzBihlFBsEN1sTtfxpM8zXj
+         ShK+Ue0fmJm3hyp2e3vKLt46LLsE59TEpYBFDabXmCOylTZvycNcgCqUxxypNSWKYK0R
+         PGPCzKxkZMUd4tv3sUTL4MFKfZoSByuEjyckbdGK/+wrc1repaHd9LkJnggQzjwtxTgH
+         /Mw1GQgxchTvjCf1C09ruPt1rbaCqkWTEsx/SrwC+F9XdlShFYoyygSEPvf8Vo9WYcOK
+         tAZQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Enrico Mioso <mrkiko.rs@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: [PATCH 4.14 151/195] media: cxusb, dib0700: ignore XC2028_I2C_FLUSH
-Date: Thu, 15 Feb 2018 16:17:22 +0100
-Message-Id: <20180215151713.433633618@linuxfoundation.org>
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.14 124/195] media: v4l2-compat-ioctl32.c: move helper functions to __get/put_v4l2_format32
+Date: Thu, 15 Feb 2018 16:16:55 +0100
+Message-Id: <20180215151711.928637924@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480749615627706?=
-X-GMAIL-MSGID: =?utf-8?q?1592481806178753254?=
+X-GMAIL-THRID: =?utf-8?q?1592481000880482937?=
+X-GMAIL-MSGID: =?utf-8?q?1592481806342378869?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,45 +49,189 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit 9893b905e743ded332575ca04486bd586c0772f7 upstream.
+commit 486c521510c44a04cd756a9267e7d1e271c8a4ba upstream.
 
-The XC2028_I2C_FLUSH only needs to be implemented on a few
-devices. Others can safely ignore it.
+These helper functions do not really help. Move the code to the
+__get/put_v4l2_format32 functions.
 
-That prevents filling the dmesg with lots of messages like:
-
-	dib0700: stk7700ph_xc3028_callback: unknown command 2, arg 0
-
-Fixes: 4d37ece757a8 ("[media] tuner/xc2028: Add I2C flush callback")
-Reported-by: Enrico Mioso <mrkiko.rs@gmail.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/media/usb/dvb-usb/cxusb.c           |    2 ++
- drivers/media/usb/dvb-usb/dib0700_devices.c |    1 +
- 2 files changed, 3 insertions(+)
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |  124 +++++---------------------
+ 1 file changed, 24 insertions(+), 100 deletions(-)
 
---- a/drivers/media/usb/dvb-usb/cxusb.c
-+++ b/drivers/media/usb/dvb-usb/cxusb.c
-@@ -677,6 +677,8 @@ static int dvico_bluebird_xc2028_callbac
- 	case XC2028_RESET_CLK:
- 		deb_info("%s: XC2028_RESET_CLK %d\n", __func__, arg);
- 		break;
-+	case XC2028_I2C_FLUSH:
-+		break;
+--- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
++++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+@@ -92,92 +92,6 @@ static int put_v4l2_window32(struct v4l2
+ 	return 0;
+ }
+ 
+-static inline int get_v4l2_pix_format(struct v4l2_pix_format *kp, struct v4l2_pix_format __user *up)
+-{
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_pix_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int get_v4l2_pix_format_mplane(struct v4l2_pix_format_mplane *kp,
+-					     struct v4l2_pix_format_mplane __user *up)
+-{
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_pix_format_mplane)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int put_v4l2_pix_format(struct v4l2_pix_format *kp, struct v4l2_pix_format __user *up)
+-{
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_pix_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int put_v4l2_pix_format_mplane(struct v4l2_pix_format_mplane *kp,
+-					     struct v4l2_pix_format_mplane __user *up)
+-{
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_pix_format_mplane)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int get_v4l2_vbi_format(struct v4l2_vbi_format *kp, struct v4l2_vbi_format __user *up)
+-{
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_vbi_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int put_v4l2_vbi_format(struct v4l2_vbi_format *kp, struct v4l2_vbi_format __user *up)
+-{
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_vbi_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int get_v4l2_sliced_vbi_format(struct v4l2_sliced_vbi_format *kp, struct v4l2_sliced_vbi_format __user *up)
+-{
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_sliced_vbi_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int put_v4l2_sliced_vbi_format(struct v4l2_sliced_vbi_format *kp, struct v4l2_sliced_vbi_format __user *up)
+-{
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_sliced_vbi_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int get_v4l2_sdr_format(struct v4l2_sdr_format *kp, struct v4l2_sdr_format __user *up)
+-{
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_sdr_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int put_v4l2_sdr_format(struct v4l2_sdr_format *kp, struct v4l2_sdr_format __user *up)
+-{
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_sdr_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int get_v4l2_meta_format(struct v4l2_meta_format *kp, struct v4l2_meta_format __user *up)
+-{
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_meta_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int put_v4l2_meta_format(struct v4l2_meta_format *kp, struct v4l2_meta_format __user *up)
+-{
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_meta_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+ struct v4l2_format32 {
+ 	__u32	type;	/* enum v4l2_buf_type */
+ 	union {
+@@ -217,25 +131,30 @@ static int __get_v4l2_format32(struct v4
+ 	switch (kp->type) {
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
+-		return get_v4l2_pix_format(&kp->fmt.pix, &up->fmt.pix);
++		return copy_from_user(&kp->fmt.pix, &up->fmt.pix,
++				      sizeof(kp->fmt.pix)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+-		return get_v4l2_pix_format_mplane(&kp->fmt.pix_mp,
+-						  &up->fmt.pix_mp);
++		return copy_from_user(&kp->fmt.pix_mp, &up->fmt.pix_mp,
++				      sizeof(kp->fmt.pix_mp)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
+ 		return get_v4l2_window32(&kp->fmt.win, &up->fmt.win);
+ 	case V4L2_BUF_TYPE_VBI_CAPTURE:
+ 	case V4L2_BUF_TYPE_VBI_OUTPUT:
+-		return get_v4l2_vbi_format(&kp->fmt.vbi, &up->fmt.vbi);
++		return copy_from_user(&kp->fmt.vbi, &up->fmt.vbi,
++				      sizeof(kp->fmt.vbi)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
+ 	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
+-		return get_v4l2_sliced_vbi_format(&kp->fmt.sliced, &up->fmt.sliced);
++		return copy_from_user(&kp->fmt.sliced, &up->fmt.sliced,
++				      sizeof(kp->fmt.sliced)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_SDR_CAPTURE:
+ 	case V4L2_BUF_TYPE_SDR_OUTPUT:
+-		return get_v4l2_sdr_format(&kp->fmt.sdr, &up->fmt.sdr);
++		return copy_from_user(&kp->fmt.sdr, &up->fmt.sdr,
++				      sizeof(kp->fmt.sdr)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_META_CAPTURE:
+-		return get_v4l2_meta_format(&kp->fmt.meta, &up->fmt.meta);
++		return copy_from_user(&kp->fmt.meta, &up->fmt.meta,
++				      sizeof(kp->fmt.meta)) ? -EFAULT : 0;
  	default:
- 		deb_info("%s: unknown command %d, arg %d\n", __func__,
- 			 command, arg);
---- a/drivers/media/usb/dvb-usb/dib0700_devices.c
-+++ b/drivers/media/usb/dvb-usb/dib0700_devices.c
-@@ -430,6 +430,7 @@ static int stk7700ph_xc3028_callback(voi
- 		state->dib7000p_ops.set_gpio(adap->fe_adap[0].fe, 8, 0, 1);
- 		break;
- 	case XC2028_RESET_CLK:
-+	case XC2028_I2C_FLUSH:
- 		break;
+ 		pr_info("compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
+ 			kp->type);
+@@ -266,25 +185,30 @@ static int __put_v4l2_format32(struct v4
+ 	switch (kp->type) {
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
+-		return put_v4l2_pix_format(&kp->fmt.pix, &up->fmt.pix);
++		return copy_to_user(&up->fmt.pix, &kp->fmt.pix,
++				    sizeof(kp->fmt.pix)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+-		return put_v4l2_pix_format_mplane(&kp->fmt.pix_mp,
+-						  &up->fmt.pix_mp);
++		return copy_to_user(&up->fmt.pix_mp, &kp->fmt.pix_mp,
++				    sizeof(kp->fmt.pix_mp)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
+ 		return put_v4l2_window32(&kp->fmt.win, &up->fmt.win);
+ 	case V4L2_BUF_TYPE_VBI_CAPTURE:
+ 	case V4L2_BUF_TYPE_VBI_OUTPUT:
+-		return put_v4l2_vbi_format(&kp->fmt.vbi, &up->fmt.vbi);
++		return copy_to_user(&up->fmt.vbi, &kp->fmt.vbi,
++				    sizeof(kp->fmt.vbi)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
+ 	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
+-		return put_v4l2_sliced_vbi_format(&kp->fmt.sliced, &up->fmt.sliced);
++		return copy_to_user(&up->fmt.sliced, &kp->fmt.sliced,
++				    sizeof(kp->fmt.sliced)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_SDR_CAPTURE:
+ 	case V4L2_BUF_TYPE_SDR_OUTPUT:
+-		return put_v4l2_sdr_format(&kp->fmt.sdr, &up->fmt.sdr);
++		return copy_to_user(&up->fmt.sdr, &kp->fmt.sdr,
++				    sizeof(kp->fmt.sdr)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_META_CAPTURE:
+-		return put_v4l2_meta_format(&kp->fmt.meta, &up->fmt.meta);
++		return copy_to_user(&up->fmt.meta, &kp->fmt.meta,
++				    sizeof(kp->fmt.meta)) ? -EFAULT : 0;
  	default:
- 		err("%s: unknown command %d, arg %d\n", __func__,
+ 		pr_info("compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
+ 			kp->type);
