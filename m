@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227UyIBpjZHAzJv5J1ifX+h8aiUOS0BbvLbl4QRLwE3wkkNzePvxT/+It6l1+mLRoIMcYBN5
-ARC-Seal: i=1; a=rsa-sha256; t=1518709387; cv=none;
+X-Google-Smtp-Source: AH8x226YpDRMzfLyjA+X8+XX8oUyTGT83EtZoGiFALHeIMnSQ5jUdDGnPnM667nyBK3jtydaUtxz
+ARC-Seal: i=1; a=rsa-sha256; t=1518709385; cv=none;
         d=google.com; s=arc-20160816;
-        b=xwGCqhQba9TXBhEOUQkAtn+M1YPKkroizvrxCrxB2c0/B2V2Tcc/gYmhNTSsCu/SQw
-         1/T1Z3E4Nc8nySqpvnu623t+goaf7AY7DI5Y+aVXfrFmQcrb1Xn8ZTUhtlMGr8x2/KUh
-         rbbTG0+6iqhaVcJfb5MXzJN4gOXaqao4luxY9oXQjyIAjb9AasH9+eKoFofS5vNb1xS6
-         t85Vv7JG9vFELP20RyvsjVjtSb2SoGO0MKs6ulP50oqf1Z+418ty7PexXzS2nvHvYgxd
-         0en/aBBfHaRuAFipt3IhN4X3cnyrebfcOdR9LsnfbI1hpKEnsDA+b3QbWzEY9H0CHL/Y
-         sBbw==
+        b=fe4r+6BDzDZx4YvTq3dlWneTsHZsNX+o+yy+3YYgqs1sHWyNqAKEugAF4KZFDBa77S
+         rnONwPm9ddzUlTEI0K9o/spN/duCGSqPAvrCUXYwTRDEPMDWmNk72rixVOge6A3LDYmd
+         uxvBb2v3BTxYNZi43SKrxf/RFDku7oid6sSUIZvnThA3uOz5wzxovtXE2Ea5oEadkRAi
+         K09a96sVF5gJr/bft6ALX3V8BO/48STP5UhlPtIt5Rx0zlm6yQ19Gq5rJSF+bOGQvQP2
+         z0iJo/0ta3BYHOAJgrWcAJwOZXyTx4dgT7Jqaxg+MiR4zAlKEBTDFrYXw70sF2FWW8WI
+         u36w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2bRmBzL0WaHKn8vobiK+Ok5qONd5ihODnQqXFVmVLi0=;
-        b=f7cqRke8uegd/gonrCDOIwgsfR7vq+5KQ0AUYMoHDC34uj1MZWhjY76e0kXkWClGmZ
-         TrsNBUDtab89ViWWpGRDwpVzIv6ZgrRgSUdNl6tAC3Wsy04phzCVnDebJ2KUTgSpt1fB
-         FNPAC+Zfp79xezU5GmP7hIyHrn14pzh44nVf2ea5nqfC0DjyEgWvS98D/IA1l9shissK
-         W7S9gf0ymNmiNgSk6PbNpWgOEjZyOblahQYj3qv8n3203yYVBrJSJJ6G4/KgRzJva+9G
-         KPAE37MAo3bSgIFBZsgRCJhtYMRxwxfGEe7TvbeM0UKNGGHrnnNZ1kX09YY4ZOQ63w1G
-         wJIw==
+        bh=BdoiL+r0bRtlNFV6W5lO/L7VgLcnWY6Jc4WUTcTEwCM=;
+        b=ESx+e/cBUw+iVT1bSYZ7NCnqA1tZWLTsnXrsbF63qotZLSBnS7kjwQupo9GILirWmd
+         ZEWoyHM0t8TMofTcv16/ukkgFE/jDbNWQyy2Sjy9nvgb1ahO2jM/nsC28lLISGoskCmj
+         g+U4n35febZLjS45n3rzvJQjYui91f6xodsN/u0UMxHyzaAlgTs91vhWPITaTeK8+KrY
+         2LxORNDFsJzg14Gf5qetisQy8ZrWwowGPii6rdpNlr2hmuFWRvnEyDJjSJDBl/7y+FxT
+         FZz45fCIfLtlp8JP5BifqyZiYNsT3ZpIv4bZXG+qY557ExTohB4lC2bbNONKfkLqQp9G
+         4AHA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"J. Bruce Fields" <bfields@redhat.com>,
 	Trond Myklebust <trond.myklebust@primarydata.com>
-Subject: [PATCH 4.15 100/202] NFS: commit direct writes even if they fail partially
-Date: Thu, 15 Feb 2018 16:16:40 +0100
-Message-Id: <20180215151718.558528669@linuxfoundation.org>
+Subject: [PATCH 4.15 099/202] NFS: Fix nfsstat breakage due to LOOKUPP
+Date: Thu, 15 Feb 2018 16:16:39 +0100
+Message-Id: <20180215151718.508510810@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -39,8 +38,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480730180404338?=
-X-GMAIL-MSGID: =?utf-8?q?1592482215216301600?=
+X-GMAIL-THRID: =?utf-8?q?1592481660024302424?=
+X-GMAIL-MSGID: =?utf-8?q?1592482212556188342?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,38 +47,160 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: J. Bruce Fields <bfields@redhat.com>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 
-commit 1b8d97b0a837beaf48a8449955b52c650a7114b4 upstream.
+commit 8634ef5e05311f32d7f2aee06f6b27a8834a3bd6 upstream.
 
-If some of the WRITE calls making up an O_DIRECT write syscall fail,
-we neglect to commit, even if some of the WRITEs succeed.
+The LOOKUPP operation was inserted into the nfs4_procedures array
+rather than being appended, which put /proc/net/rpc/nfs out of
+whack, and broke the nfsstat utility.
+Fix by moving the LOOKUPP operation to the end of the array, and
+by ensuring that it keeps the same length whether or not NFSV4.1
+and NFSv4.2 are compiled in.
 
-We also depend on the commit code to free the reference count on the
-nfs_page taken in the "if (request_commit)" case at the end of
-nfs_direct_write_completion().  The problem was originally noticed
-because ENOSPC's encountered partway through a write would result in a
-closed file being sillyrenamed when it should have been unlinked.
-
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Fixes: 5b5faaf6df734 ("nfs4: add NFSv4 LOOKUPP handlers")
 Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/direct.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/nfs/nfs4xdr.c     |   64 ++++++++++++++++++++++++++++++---------------------
+ include/linux/nfs4.h |   12 ++++++---
+ 2 files changed, 46 insertions(+), 30 deletions(-)
 
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@ -775,10 +775,8 @@ static void nfs_direct_write_completion(
+--- a/fs/nfs/nfs4xdr.c
++++ b/fs/nfs/nfs4xdr.c
+@@ -7678,6 +7678,22 @@ nfs4_stat_to_errno(int stat)
+ 	.p_name = #proc,	\
+ }
  
- 	spin_lock(&dreq->lock);
++#if defined(CONFIG_NFS_V4_1)
++#define PROC41(proc, argtype, restype)				\
++	PROC(proc, argtype, restype)
++#else
++#define PROC41(proc, argtype, restype)				\
++	STUB(proc)
++#endif
++
++#if defined(CONFIG_NFS_V4_2)
++#define PROC42(proc, argtype, restype)				\
++	PROC(proc, argtype, restype)
++#else
++#define PROC42(proc, argtype, restype)				\
++	STUB(proc)
++#endif
++
+ const struct rpc_procinfo nfs4_procedures[] = {
+ 	PROC(READ,		enc_read,		dec_read),
+ 	PROC(WRITE,		enc_write,		dec_write),
+@@ -7698,7 +7714,6 @@ const struct rpc_procinfo nfs4_procedure
+ 	PROC(ACCESS,		enc_access,		dec_access),
+ 	PROC(GETATTR,		enc_getattr,		dec_getattr),
+ 	PROC(LOOKUP,		enc_lookup,		dec_lookup),
+-	PROC(LOOKUPP,		enc_lookupp,		dec_lookupp),
+ 	PROC(LOOKUP_ROOT,	enc_lookup_root,	dec_lookup_root),
+ 	PROC(REMOVE,		enc_remove,		dec_remove),
+ 	PROC(RENAME,		enc_rename,		dec_rename),
+@@ -7717,33 +7732,30 @@ const struct rpc_procinfo nfs4_procedure
+ 	PROC(RELEASE_LOCKOWNER,	enc_release_lockowner,	dec_release_lockowner),
+ 	PROC(SECINFO,		enc_secinfo,		dec_secinfo),
+ 	PROC(FSID_PRESENT,	enc_fsid_present,	dec_fsid_present),
+-#if defined(CONFIG_NFS_V4_1)
+-	PROC(EXCHANGE_ID,	enc_exchange_id,	dec_exchange_id),
+-	PROC(CREATE_SESSION,	enc_create_session,	dec_create_session),
+-	PROC(DESTROY_SESSION,	enc_destroy_session,	dec_destroy_session),
+-	PROC(SEQUENCE,		enc_sequence,		dec_sequence),
+-	PROC(GET_LEASE_TIME,	enc_get_lease_time,	dec_get_lease_time),
+-	PROC(RECLAIM_COMPLETE,	enc_reclaim_complete,	dec_reclaim_complete),
+-	PROC(GETDEVICEINFO,	enc_getdeviceinfo,	dec_getdeviceinfo),
+-	PROC(LAYOUTGET,		enc_layoutget,		dec_layoutget),
+-	PROC(LAYOUTCOMMIT,	enc_layoutcommit,	dec_layoutcommit),
+-	PROC(LAYOUTRETURN,	enc_layoutreturn,	dec_layoutreturn),
+-	PROC(SECINFO_NO_NAME,	enc_secinfo_no_name,	dec_secinfo_no_name),
+-	PROC(TEST_STATEID,	enc_test_stateid,	dec_test_stateid),
+-	PROC(FREE_STATEID,	enc_free_stateid,	dec_free_stateid),
++	PROC41(EXCHANGE_ID,	enc_exchange_id,	dec_exchange_id),
++	PROC41(CREATE_SESSION,	enc_create_session,	dec_create_session),
++	PROC41(DESTROY_SESSION,	enc_destroy_session,	dec_destroy_session),
++	PROC41(SEQUENCE,	enc_sequence,		dec_sequence),
++	PROC41(GET_LEASE_TIME,	enc_get_lease_time,	dec_get_lease_time),
++	PROC41(RECLAIM_COMPLETE,enc_reclaim_complete,	dec_reclaim_complete),
++	PROC41(GETDEVICEINFO,	enc_getdeviceinfo,	dec_getdeviceinfo),
++	PROC41(LAYOUTGET,	enc_layoutget,		dec_layoutget),
++	PROC41(LAYOUTCOMMIT,	enc_layoutcommit,	dec_layoutcommit),
++	PROC41(LAYOUTRETURN,	enc_layoutreturn,	dec_layoutreturn),
++	PROC41(SECINFO_NO_NAME,	enc_secinfo_no_name,	dec_secinfo_no_name),
++	PROC41(TEST_STATEID,	enc_test_stateid,	dec_test_stateid),
++	PROC41(FREE_STATEID,	enc_free_stateid,	dec_free_stateid),
+ 	STUB(GETDEVICELIST),
+-	PROC(BIND_CONN_TO_SESSION,
++	PROC41(BIND_CONN_TO_SESSION,
+ 			enc_bind_conn_to_session, dec_bind_conn_to_session),
+-	PROC(DESTROY_CLIENTID,	enc_destroy_clientid,	dec_destroy_clientid),
+-#endif /* CONFIG_NFS_V4_1 */
+-#ifdef CONFIG_NFS_V4_2
+-	PROC(SEEK,		enc_seek,		dec_seek),
+-	PROC(ALLOCATE,		enc_allocate,		dec_allocate),
+-	PROC(DEALLOCATE,	enc_deallocate,		dec_deallocate),
+-	PROC(LAYOUTSTATS,	enc_layoutstats,	dec_layoutstats),
+-	PROC(CLONE,		enc_clone,		dec_clone),
+-	PROC(COPY,		enc_copy,		dec_copy),
+-#endif /* CONFIG_NFS_V4_2 */
++	PROC41(DESTROY_CLIENTID,enc_destroy_clientid,	dec_destroy_clientid),
++	PROC42(SEEK,		enc_seek,		dec_seek),
++	PROC42(ALLOCATE,	enc_allocate,		dec_allocate),
++	PROC42(DEALLOCATE,	enc_deallocate,		dec_deallocate),
++	PROC42(LAYOUTSTATS,	enc_layoutstats,	dec_layoutstats),
++	PROC42(CLONE,		enc_clone,		dec_clone),
++	PROC42(COPY,		enc_copy,		dec_copy),
++	PROC(LOOKUPP,		enc_lookupp,		dec_lookupp),
+ };
  
--	if (test_bit(NFS_IOHDR_ERROR, &hdr->flags)) {
--		dreq->flags = 0;
-+	if (test_bit(NFS_IOHDR_ERROR, &hdr->flags))
- 		dreq->error = hdr->error;
--	}
- 	if (dreq->error == 0) {
- 		nfs_direct_good_bytes(dreq, hdr);
- 		if (nfs_write_need_commit(hdr)) {
+ static unsigned int nfs_version4_counts[ARRAY_SIZE(nfs4_procedures)];
+--- a/include/linux/nfs4.h
++++ b/include/linux/nfs4.h
+@@ -457,7 +457,12 @@ enum lock_type4 {
+ 
+ #define NFS4_DEBUG 1
+ 
+-/* Index of predefined Linux client operations */
++/*
++ * Index of predefined Linux client operations
++ *
++ * To ensure that /proc/net/rpc/nfs remains correctly ordered, please
++ * append only to this enum when adding new client operations.
++ */
+ 
+ enum {
+ 	NFSPROC4_CLNT_NULL = 0,		/* Unused */
+@@ -480,7 +485,6 @@ enum {
+ 	NFSPROC4_CLNT_ACCESS,
+ 	NFSPROC4_CLNT_GETATTR,
+ 	NFSPROC4_CLNT_LOOKUP,
+-	NFSPROC4_CLNT_LOOKUPP,
+ 	NFSPROC4_CLNT_LOOKUP_ROOT,
+ 	NFSPROC4_CLNT_REMOVE,
+ 	NFSPROC4_CLNT_RENAME,
+@@ -500,7 +504,6 @@ enum {
+ 	NFSPROC4_CLNT_SECINFO,
+ 	NFSPROC4_CLNT_FSID_PRESENT,
+ 
+-	/* nfs41 */
+ 	NFSPROC4_CLNT_EXCHANGE_ID,
+ 	NFSPROC4_CLNT_CREATE_SESSION,
+ 	NFSPROC4_CLNT_DESTROY_SESSION,
+@@ -518,13 +521,14 @@ enum {
+ 	NFSPROC4_CLNT_BIND_CONN_TO_SESSION,
+ 	NFSPROC4_CLNT_DESTROY_CLIENTID,
+ 
+-	/* nfs42 */
+ 	NFSPROC4_CLNT_SEEK,
+ 	NFSPROC4_CLNT_ALLOCATE,
+ 	NFSPROC4_CLNT_DEALLOCATE,
+ 	NFSPROC4_CLNT_LAYOUTSTATS,
+ 	NFSPROC4_CLNT_CLONE,
+ 	NFSPROC4_CLNT_COPY,
++
++	NFSPROC4_CLNT_LOOKUPP,
+ };
+ 
+ /* nfs41 types */
