@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x22771Pm+Y01aTIWN6gknTGjTFvyBEcNGCYrmRuMPPiydKUYEO9kBIncDV6F4vC171k2crpeD
-ARC-Seal: i=1; a=rsa-sha256; t=1518708923; cv=none;
+X-Google-Smtp-Source: AH8x225Ug+dy2WZegFjNfXrDGKRCkTfGOsidUzWfDc7eiIgFs/0mhvHTU0cyYO2RoNX5K4kG3X+O
+ARC-Seal: i=1; a=rsa-sha256; t=1518708920; cv=none;
         d=google.com; s=arc-20160816;
-        b=dLMbtkJlOtFr2eut+/lMRSs37YohQ3YAjbZOr+kLiWTccH1l4SfdPDRG1NN24F7y+9
-         oseI5PxxvKI15iWIgVCIelLhoQ/WOyMEPbKqJSjdZy8kLxMPagg8wpoaeGaHxgC8GMln
-         33/6aCuBRO6IdxzlJ1NQzQC7xuhjzWOhdKG6RVmtuV2HYzw+PkD28xzzgApE7BBZI638
-         vkAWLwpwgj7GG6P34TCMNEXgnufNsJ/HdJYwg/uDI2r62mpWwvMEt5IUJcSdxoGcoZ0h
-         htRyRUuxVJRH5Rap8Jazj4TEhyiu/sNSfFbkRCeJQD4gbnxrdgc2p5xN8YVaZdSoLV/B
-         aK5w==
+        b=RzcXJtPK7gIx6BovuYfySp3P64fxQE5jKhgbGOJmIa+ZvD6qeYKOIrO6ORFYifiuXV
+         VVOxNJ3ADvIyjnoajKoDtT7/C4t5b4EE0fvLEoltfeu26f+jXJBSC6gqOaboiyyagWo/
+         PphJcfXGr6Lg7VuHy5gWrfsXxd+bjrj0jeLvR4aM4D3wimIurrUIxOZvWUyyoeepP2VU
+         n2hzjhSzQac6n+otlKu8z6YhdNawOg5MmTsp4vu7tbKpqjl5QBta1YmiVusZ0560qL8e
+         aearOMtOlSVKrzS/T+G/WICnneZwERhxgx0gP7plWILJ/GxtJnhnIHB2CX1DEbVdpixX
+         wGBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qM6V7sczBkVvAKZTCbc0Gy6Aem/aQSLQgBgD8Aaparc=;
-        b=wHQv+axXhXkRDKV3QV3VM9IToO/H5yCey46e8iunjHNXmdm6FLpdnduiMG5FpxODev
-         LViTPPgwDDJOCC49ApEQ4JVRLVTL7rDZwr9nrYtt0SS9+iomT+xdmK9NqDsZF1bHHJHn
-         NZRzbr5ouOoL67zxTOAppv5piW8PuYP1jrd9sgJoTGBhN7qWJd99/fyNiuf27iE3242E
-         fGsx1h5XAMVKSgvHJP15ZjFJWeiiPk/2C16OV7aDPSCblH/qENMqASx+lLQENrerXyG6
-         fQ3JtfxslORfzN6UuF/dwyArtYPLTrjmf0NHWzEvOXubYPqCURvUmgHfjgdP9eobdJA5
-         yhYw==
+        bh=Ordzn02Hkl77EzOsaLbg9QWRhUzZJsAVJAPtEOklS0U=;
+        b=ZpoPmpwyTfy0RXQ1Rd1g/z4yz+G9Rdb1OC7ZjKLKh1UZ+dY4Fk4IKEcOO29/RQI0Q9
+         Lck+ca3G05myM52zPOKNrUYZUidIXAWxLeWy9VKU/a+97EcHFOZM+GYBGHfRNJSouIzs
+         cT9W3hViWHntSxlSxMsMO0gS0Geiv02ez9g7kTN3yS/W82oZjJWkPJ1WiAYmiOS5YpZD
+         hRL9THRcFBC18tkFiH2QFatghVo1i6ruP3ZQGBFKUqUW2PdiiBeJdK3TYTlnq2OmWFUn
+         hDz75x9PBwJso0reloKTFh92RSGxGVChYSi4AhEL+H7ka7vgQnGQppm+e0zpfZKr5UDe
+         2mKg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Christoffer Dall <christoffer.dall@linaro.org>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.14 086/195] [Variant 2/Spectre-v2] arm/arm64: KVM: Turn kvm_psci_version into a static inline
-Date: Thu, 15 Feb 2018 16:16:17 +0100
-Message-Id: <20180215151710.006645086@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Richard Weinberger <richard@nod.at>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 4.14 095/195] mtd: cfi: convert inline functions to macros
+Date: Thu, 15 Feb 2018 16:16:26 +0100
+Message-Id: <20180215151710.448472190@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481728071968329?=
-X-GMAIL-MSGID: =?utf-8?q?1592481728071968329?=
+X-GMAIL-THRID: =?utf-8?q?1592481046728605284?=
+X-GMAIL-MSGID: =?utf-8?q?1592481724980818018?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,132 +49,183 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
+commit 9e343e87d2c4c707ef8fae2844864d4dde3a2d13 upstream.
 
-Commit a4097b351118 upstream.
+The map_word_() functions, dating back to linux-2.6.8, try to perform
+bitwise operations on a 'map_word' structure. This may have worked
+with compilers that were current then (gcc-3.4 or earlier), but end
+up being rather inefficient on any version I could try now (gcc-4.4 or
+higher). Specifically we hit a problem analyzed in gcc PR81715 where we
+fail to reuse the stack space for local variables.
 
-We're about to need kvm_psci_version in HYP too. So let's turn it
-into a static inline, and pass the kvm structure as a second
-parameter (so that HYP can do a kern_hyp_va on it).
+This can be seen immediately in the stack consumption for
+cfi_staa_erase_varsize() and other functions that (with CONFIG_KASAN)
+can be up to 2200 bytes. Changing the inline functions into macros brings
+this down to 1280 bytes.  Without KASAN, the same problem exists, but
+the stack consumption is lower to start with, my patch shrinks it from
+920 to 496 bytes on with arm-linux-gnueabi-gcc-5.4, and saves around
+1KB in .text size for cfi_cmdset_0020.c, as it avoids copying map_word
+structures for each call to one of these helpers.
 
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+With the latest gcc-8 snapshot, the problem is fixed in upstream gcc,
+but nobody uses that yet, so we should still work around it in mainline
+kernels and probably backport the workaround to stable kernels as well.
+We had a couple of other functions that suffered from the same gcc bug,
+and all of those had a simpler workaround involving dummy variables
+in the inline function. Unfortunately that did not work here, the
+macro hack was the best I could come up with.
+
+It would also be helpful to have someone to a little performance testing
+on the patch, to see how much it helps in terms of CPU utilitzation.
+
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/kvm/hyp/switch.c |   18 +++++++++++-------
- include/kvm/arm_psci.h      |   21 ++++++++++++++++++++-
- virt/kvm/arm/psci.c         |   12 ++----------
- 3 files changed, 33 insertions(+), 18 deletions(-)
 
---- a/arch/arm64/kvm/hyp/switch.c
-+++ b/arch/arm64/kvm/hyp/switch.c
-@@ -19,6 +19,8 @@
- #include <linux/jump_label.h>
- #include <uapi/linux/psci.h>
+---
+ include/linux/mtd/map.h |  130 ++++++++++++++++++++++--------------------------
+ 1 file changed, 61 insertions(+), 69 deletions(-)
+
+--- a/include/linux/mtd/map.h
++++ b/include/linux/mtd/map.h
+@@ -270,75 +270,67 @@ void map_destroy(struct mtd_info *mtd);
+ #define INVALIDATE_CACHED_RANGE(map, from, size) \
+ 	do { if (map->inval_cache) map->inval_cache(map, from, size); } while (0)
  
-+#include <kvm/arm_psci.h>
-+
- #include <asm/kvm_asm.h>
- #include <asm/kvm_emulate.h>
- #include <asm/kvm_hyp.h>
-@@ -325,14 +327,16 @@ again:
- 
- 	if (exit_code == ARM_EXCEPTION_TRAP &&
- 	    (kvm_vcpu_trap_get_class(vcpu) == ESR_ELx_EC_HVC64 ||
--	     kvm_vcpu_trap_get_class(vcpu) == ESR_ELx_EC_HVC32) &&
--	    vcpu_get_reg(vcpu, 0) == PSCI_0_2_FN_PSCI_VERSION) {
--		u64 val = PSCI_RET_NOT_SUPPORTED;
--		if (test_bit(KVM_ARM_VCPU_PSCI_0_2, vcpu->arch.features))
--			val = 2;
-+	     kvm_vcpu_trap_get_class(vcpu) == ESR_ELx_EC_HVC32)) {
-+		u32 val = vcpu_get_reg(vcpu, 0);
- 
--		vcpu_set_reg(vcpu, 0, val);
--		goto again;
-+		if (val == PSCI_0_2_FN_PSCI_VERSION) {
-+			val = kvm_psci_version(vcpu, kern_hyp_va(vcpu->kvm));
-+			if (unlikely(val == KVM_ARM_PSCI_0_1))
-+				val = PSCI_RET_NOT_SUPPORTED;
-+			vcpu_set_reg(vcpu, 0, val);
-+			goto again;
-+		}
- 	}
- 
- 	if (static_branch_unlikely(&vgic_v2_cpuif_trap) &&
---- a/include/kvm/arm_psci.h
-+++ b/include/kvm/arm_psci.h
-@@ -18,6 +18,7 @@
- #ifndef __KVM_ARM_PSCI_H__
- #define __KVM_ARM_PSCI_H__
- 
-+#include <linux/kvm_host.h>
- #include <uapi/linux/psci.h>
- 
- #define KVM_ARM_PSCI_0_1	PSCI_VERSION(0, 1)
-@@ -26,7 +27,25 @@
- 
- #define KVM_ARM_PSCI_LATEST	KVM_ARM_PSCI_1_0
- 
--int kvm_psci_version(struct kvm_vcpu *vcpu);
-+/*
-+ * We need the KVM pointer independently from the vcpu as we can call
-+ * this from HYP, and need to apply kern_hyp_va on it...
-+ */
-+static inline int kvm_psci_version(struct kvm_vcpu *vcpu, struct kvm *kvm)
-+{
-+	/*
-+	 * Our PSCI implementation stays the same across versions from
-+	 * v0.2 onward, only adding the few mandatory functions (such
-+	 * as FEATURES with 1.0) that are required by newer
-+	 * revisions. It is thus safe to return the latest.
-+	 */
-+	if (test_bit(KVM_ARM_VCPU_PSCI_0_2, vcpu->arch.features))
-+		return KVM_ARM_PSCI_LATEST;
-+
-+	return KVM_ARM_PSCI_0_1;
-+}
-+
-+
- int kvm_hvc_call_handler(struct kvm_vcpu *vcpu);
- 
- #endif /* __KVM_ARM_PSCI_H__ */
---- a/virt/kvm/arm/psci.c
-+++ b/virt/kvm/arm/psci.c
-@@ -123,7 +123,7 @@ static unsigned long kvm_psci_vcpu_on(st
- 	if (!vcpu)
- 		return PSCI_RET_INVALID_PARAMS;
- 	if (!vcpu->arch.power_off) {
--		if (kvm_psci_version(source_vcpu) != KVM_ARM_PSCI_0_1)
-+		if (kvm_psci_version(source_vcpu, kvm) != KVM_ARM_PSCI_0_1)
- 			return PSCI_RET_ALREADY_ON;
- 		else
- 			return PSCI_RET_INVALID_PARAMS;
-@@ -232,14 +232,6 @@ static void kvm_psci_system_reset(struct
- 	kvm_prepare_system_event(vcpu, KVM_SYSTEM_EVENT_RESET);
- }
- 
--int kvm_psci_version(struct kvm_vcpu *vcpu)
--{
--	if (test_bit(KVM_ARM_VCPU_PSCI_0_2, vcpu->arch.features))
--		return KVM_ARM_PSCI_LATEST;
 -
--	return KVM_ARM_PSCI_0_1;
+-static inline int map_word_equal(struct map_info *map, map_word val1, map_word val2)
+-{
+-	int i;
+-
+-	for (i = 0; i < map_words(map); i++) {
+-		if (val1.x[i] != val2.x[i])
+-			return 0;
+-	}
+-
+-	return 1;
 -}
 -
- static int kvm_psci_0_2_call(struct kvm_vcpu *vcpu)
+-static inline map_word map_word_and(struct map_info *map, map_word val1, map_word val2)
+-{
+-	map_word r;
+-	int i;
+-
+-	for (i = 0; i < map_words(map); i++)
+-		r.x[i] = val1.x[i] & val2.x[i];
+-
+-	return r;
+-}
+-
+-static inline map_word map_word_clr(struct map_info *map, map_word val1, map_word val2)
+-{
+-	map_word r;
+-	int i;
+-
+-	for (i = 0; i < map_words(map); i++)
+-		r.x[i] = val1.x[i] & ~val2.x[i];
+-
+-	return r;
+-}
+-
+-static inline map_word map_word_or(struct map_info *map, map_word val1, map_word val2)
+-{
+-	map_word r;
+-	int i;
+-
+-	for (i = 0; i < map_words(map); i++)
+-		r.x[i] = val1.x[i] | val2.x[i];
+-
+-	return r;
+-}
+-
+-static inline int map_word_andequal(struct map_info *map, map_word val1, map_word val2, map_word val3)
+-{
+-	int i;
+-
+-	for (i = 0; i < map_words(map); i++) {
+-		if ((val1.x[i] & val2.x[i]) != val3.x[i])
+-			return 0;
+-	}
+-
+-	return 1;
+-}
+-
+-static inline int map_word_bitsset(struct map_info *map, map_word val1, map_word val2)
+-{
+-	int i;
+-
+-	for (i = 0; i < map_words(map); i++) {
+-		if (val1.x[i] & val2.x[i])
+-			return 1;
+-	}
+-
+-	return 0;
+-}
++#define map_word_equal(map, val1, val2)					\
++({									\
++	int i, ret = 1;							\
++	for (i = 0; i < map_words(map); i++)				\
++		if ((val1).x[i] != (val2).x[i]) {			\
++			ret = 0;					\
++			break;						\
++		}							\
++	ret;								\
++})
++
++#define map_word_and(map, val1, val2)					\
++({									\
++	map_word r;							\
++	int i;								\
++	for (i = 0; i < map_words(map); i++)				\
++		r.x[i] = (val1).x[i] & (val2).x[i];			\
++	r;								\
++})
++
++#define map_word_clr(map, val1, val2)					\
++({									\
++	map_word r;							\
++	int i;								\
++	for (i = 0; i < map_words(map); i++)				\
++		r.x[i] = (val1).x[i] & ~(val2).x[i];			\
++	r;								\
++})
++
++#define map_word_or(map, val1, val2)					\
++({									\
++	map_word r;							\
++	int i;								\
++	for (i = 0; i < map_words(map); i++)				\
++		r.x[i] = (val1).x[i] | (val2).x[i];			\
++	r;								\
++})
++
++#define map_word_andequal(map, val1, val2, val3)			\
++({									\
++	int i, ret = 1;							\
++	for (i = 0; i < map_words(map); i++) {				\
++		if (((val1).x[i] & (val2).x[i]) != (val2).x[i]) {	\
++			ret = 0;					\
++			break;						\
++		}							\
++	}								\
++	ret;								\
++})
++
++#define map_word_bitsset(map, val1, val2)				\
++({									\
++	int i, ret = 0;							\
++	for (i = 0; i < map_words(map); i++) {				\
++		if ((val1).x[i] & (val2).x[i]) {			\
++			ret = 1;					\
++			break;						\
++		}							\
++	}								\
++	ret;								\
++})
+ 
+ static inline map_word map_word_load(struct map_info *map, const void *ptr)
  {
- 	struct kvm *kvm = vcpu->kvm;
-@@ -397,7 +389,7 @@ static int kvm_psci_0_1_call(struct kvm_
-  */
- static int kvm_psci_call(struct kvm_vcpu *vcpu)
- {
--	switch (kvm_psci_version(vcpu)) {
-+	switch (kvm_psci_version(vcpu, vcpu->kvm)) {
- 	case KVM_ARM_PSCI_1_0:
- 		return kvm_psci_1_0_call(vcpu);
- 	case KVM_ARM_PSCI_0_2:
