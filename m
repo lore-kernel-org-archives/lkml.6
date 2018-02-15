@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227MLZAR2jagcVUdKBkatlWHlVFXjjmxfMvDSD9rFq22JiQ1L/C9GfMyLBtfFhaEH411VnqO
-ARC-Seal: i=1; a=rsa-sha256; t=1518709357; cv=none;
+X-Google-Smtp-Source: AH8x2251V5P6Op7vZb/LcCiEvQOZA3xhviUZyGP+saULT6ETfb7DTJ1FF3GgwQH7wls6bZiw9frG
+ARC-Seal: i=1; a=rsa-sha256; t=1518709354; cv=none;
         d=google.com; s=arc-20160816;
-        b=yiigUpMKLGbxIVw8FHjTkOfCIDlCmaaz2YgwNuV7mLlL/2eQj7IXGqte+7DhFk1t+x
-         l2YbUTvvY3PnQBDyaq7BxcfvIK2EqHtVicThfITP4BwkjOFLVDLxuFoZj36mgYU0sf9F
-         y1LCUX9a3a3GKrJG6BgiboMXOi/Ty72cn9y9nZD53gvkFBhMQVgnV/QWwbD0S16jPqb/
-         fk2VKsoVAHifIbRTUX6BZuluCaaIT6fBTx+1OqStHAOmAGLd6pFlgcJilwj3r9IX05AZ
-         75nythgTn5EaJpPO52l3XzT5pWBOAFA2tJU9z+Y0GCSopQ1n8lV8Lz6vit/er5M/KyTs
-         VgbQ==
+        b=YUhyJJPPxfnvIfwSlhclpPruVm6TEGL7T6yCa1TuMC3Ww0rqks7D/uLfaiFC+Lmdcv
+         IWEk49pnQ4FIb2Xety2u2bmwmOhvL0ycKT6okGp3/iM23JK5K37GOXTtxkANSQIhgDOj
+         6tY1kpYgDH9qqKhJ+8b04x7LMVc+uEdu7bAW+nrx7syer+u4taoMqcc62BFkU+BH1zV2
+         5DL5K3jqXAQy7+2uTqqNaQTgHBs07aZQj4UzXlR9vs8+gPqV2Vg8Oyn6SOtloCvHWyzD
+         0V0UnP22m2UKFoQPjtZaIYn82h+f/xRykMr5HCgW73wCa+bJ7RaegJ3u+iP4emldfEIj
+         wHnQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AjqPufArAALc9zRTgk/YEekF0mYqYH08r8DYC6Xcsto=;
-        b=lcJMnZCs7GtfqF/y6iG2bIMr+bWcTrkEMaHW/nH3LOxGc7LGRWQ+mJO+VYM2/yxEXR
-         F2U4eHrtfgtfsblcFxLdqH+HPGzuSY+4m8Ray7FNd3Ck89gZKT7BTP/jKfz0z/ktLRih
-         hGrgRc/muv4WU0St5x2lZN5nLAOx8USsmPjnQ8VRPKQroyX695jwjETQytX8rziBR05r
-         LJ62w8h1a5c1qcHejk/HSDiraUpd20XnhvAuJ1Tc8+7J3eFqypYiSLg4fEbnfQstqrjy
-         0Z/bPAo+D2PwYysbAStNwNYjA6bOZ7CXe57qXUyjfuI0TQ5JyuwR6DJ671komtbr0Ga2
-         C9Zg==
+        bh=LNbwE97mkqJNvrVEMZ4ZNxijO5XhqeuzPP1UFBzZmqM=;
+        b=KsdxWxWrEqCwu5CUMQrWUd1UGQbktbK5wlSDmQUK9DfAuUWt08S8mm/VyPQBwlfY+T
+         b8gs3GALMEEuvcER76aY426pdqd9J3JERYZO2oeU10XrVgLOOKyQVRjywGbR0f9Ps7bj
+         G1arLsI6QpP+nJgmuarY259vF6WbJgBt1okx66qy3aalMdEzZfTTyDejbYo6QAfHC7m3
+         6VsmIwcRDdXPQXkda542H2kpxl2QVvSHtC4t3I3j9sB2zq1cwfG7Gi9UWVzhoXNX1s8f
+         JoRJzt8nRxbz09a0+UV6S+j2XEc4aXqTYe8eoyKef/N2KFdNIUIBwdfXTYYo4n3oiraE
+         6nMg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
+	Robin Murphy <robin.murphy@arm.com>,
 	Will Deacon <will.deacon@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.15 053/202] [Variant 1/Spectre-v1] arm64: entry: Ensure branch through syscall table is bounded under speculation
-Date: Thu, 15 Feb 2018 16:15:53 +0100
-Message-Id: <20180215151716.007874324@linuxfoundation.org>
+Subject: [PATCH 4.15 052/202] [Variant 1/Spectre-v1] arm64: Use pointer masking to limit uaccess speculation
+Date: Thu, 15 Feb 2018 16:15:52 +0100
+Message-Id: <20180215151715.956044292@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481526327320243?=
-X-GMAIL-MSGID: =?utf-8?q?1592482183604496847?=
+X-GMAIL-THRID: =?utf-8?q?1592481523975589149?=
+X-GMAIL-MSGID: =?utf-8?q?1592482180168825740?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,61 +49,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
 
 
-Commit 6314d90e6493 upstream.
+Commit 4d8efc2d5ee4 upstream.
 
-In a similar manner to array_index_mask_nospec, this patch introduces an
-assembly macro (mask_nospec64) which can be used to bound a value under
-speculation. This macro is then used to ensure that the indirect branch
-through the syscall table is bounded under speculation, with out-of-range
-addresses speculating as calls to sys_io_setup (0).
+Similarly to x86, mitigate speculation past an access_ok() check by
+masking the pointer against the address limit before use.
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Even if we don't expect speculative writes per se, it is plausible that
+a CPU may still speculate at least as far as fetching a cache line for
+writing, hence we also harden put_user() and clear_user() for peace of
+mind.
+
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/assembler.h |   11 +++++++++++
- arch/arm64/kernel/entry.S          |    2 ++
- 2 files changed, 13 insertions(+)
+ arch/arm64/include/asm/uaccess.h |   26 +++++++++++++++++++++++---
+ 1 file changed, 23 insertions(+), 3 deletions(-)
 
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -116,6 +116,17 @@
- 	.endm
+--- a/arch/arm64/include/asm/uaccess.h
++++ b/arch/arm64/include/asm/uaccess.h
+@@ -216,6 +216,26 @@ static inline void uaccess_enable_not_ua
+ }
  
  /*
-+ * Sanitise a 64-bit bounded index wrt speculation, returning zero if out
-+ * of bounds.
++ * Sanitise a uaccess pointer such that it becomes NULL if above the
++ * current addr_limit.
 + */
-+	.macro	mask_nospec64, idx, limit, tmp
-+	sub	\tmp, \idx, \limit
-+	bic	\tmp, \tmp, \idx
-+	and	\idx, \idx, \tmp, asr #63
-+	csdb
-+	.endm
++#define uaccess_mask_ptr(ptr) (__typeof__(ptr))__uaccess_mask_ptr(ptr)
++static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
++{
++	void __user *safe_ptr;
++
++	asm volatile(
++	"	bics	xzr, %1, %2\n"
++	"	csel	%0, %1, xzr, eq\n"
++	: "=&r" (safe_ptr)
++	: "r" (ptr), "r" (current_thread_info()->addr_limit)
++	: "cc");
++
++	csdb();
++	return safe_ptr;
++}
 +
 +/*
-  * NOP sequence
-  */
- 	.macro	nops, num
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -378,6 +378,7 @@ alternative_insn eret, nop, ARM64_UNMAP_
-  * x7 is reserved for the system call number in 32-bit mode.
-  */
- wsc_nr	.req	w25		// number of system calls
-+xsc_nr	.req	x25		// number of system calls (zero-extended)
- wscno	.req	w26		// syscall number
- xscno	.req	x26		// syscall number (zero-extended)
- stbl	.req	x27		// syscall table pointer
-@@ -932,6 +933,7 @@ el0_svc_naked:					// compat entry point
- 	b.ne	__sys_trace
- 	cmp     wscno, wsc_nr			// check upper syscall limit
- 	b.hs	ni_sys
-+	mask_nospec64 xscno, xsc_nr, x19	// enforce bounds for syscall number
- 	ldr	x16, [stbl, xscno, lsl #3]	// address in the syscall table
- 	blr	x16				// call sys_* routine
- 	b	ret_fast_syscall
+  * The "__xxx" versions of the user access functions do not verify the address
+  * space - it must have been done previously with a separate "access_ok()"
+  * call.
+@@ -285,7 +305,7 @@ do {									\
+ 	__typeof__(*(ptr)) __user *__p = (ptr);				\
+ 	might_fault();							\
+ 	access_ok(VERIFY_READ, __p, sizeof(*__p)) ?			\
+-		__get_user((x), __p) :					\
++		__p = uaccess_mask_ptr(__p), __get_user((x), __p) :	\
+ 		((x) = 0, -EFAULT);					\
+ })
+ 
+@@ -349,7 +369,7 @@ do {									\
+ 	__typeof__(*(ptr)) __user *__p = (ptr);				\
+ 	might_fault();							\
+ 	access_ok(VERIFY_WRITE, __p, sizeof(*__p)) ?			\
+-		__put_user((x), __p) :					\
++		__p = uaccess_mask_ptr(__p), __put_user((x), __p) :	\
+ 		-EFAULT;						\
+ })
+ 
+@@ -365,7 +385,7 @@ extern unsigned long __must_check __clea
+ static inline unsigned long __must_check clear_user(void __user *to, unsigned long n)
+ {
+ 	if (access_ok(VERIFY_WRITE, to, n))
+-		n = __clear_user(to, n);
++		n = __clear_user(__uaccess_mask_ptr(to), n);
+ 	return n;
+ }
+ 
