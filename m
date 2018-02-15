@@ -1,60 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756252AbeBOWgB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 17:36:01 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59294 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756203AbeBOWgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 17:36:00 -0500
-Date: Thu, 15 Feb 2018 16:35:58 -0600
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Jason Baron <jbaron@akamai.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@suse.de>,
-        Juergen Gross <jgross@suse.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 1/3] jump_label: Warn on failed jump_label patch
-Message-ID: <20180215223558.poirr2e6wxs2jhzb@treble>
-References: <cover.1518626149.git.jpoimboe@redhat.com>
- <b8f1b55f17c346fba39d3f59a01251185e09e151.1518626149.git.jpoimboe@redhat.com>
- <20180214120112.43821b5e@gandalf.local.home>
- <a4ad6f69-8836-779b-f7e7-0e303885c7f5@akamai.com>
- <20180214173407.guhytdurv4pmhzvk@treble>
- <20180214124034.13d7d833@gandalf.local.home>
- <20180214211707.hivwfwemghgy62mh@treble>
+        id S1756276AbeBOWiR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 17:38:17 -0500
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:35835 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756260AbeBOWiP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 17:38:15 -0500
+X-Google-Smtp-Source: AH8x227x6HkQXLcXl9iK+o2MGTFKZg0/FW1XFLE/5wkbuV+7hWbsodJOfzeleZmWIq6kg9OOKYF3plSYcqCTM8QKDXc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180214211707.hivwfwemghgy62mh@treble>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+In-Reply-To: <1518701959-22899-2-git-send-email-tali.perry1@gmail.com>
+References: <1518701959-22899-1-git-send-email-tali.perry1@gmail.com> <1518701959-22899-2-git-send-email-tali.perry1@gmail.com>
+From: Brendan Higgins <brendanhiggins@google.com>
+Date: Thu, 15 Feb 2018 14:38:12 -0800
+Message-ID: <CAFd5g44gBJp0-mYEWGdyiA67BCi2pZWAG2bYPS-WdJEwH1oA5A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] clk: npcm750: update text with fixed clocks
+To: Tali Perry <tali.perry1@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>, Rick Altherr <raltherr@google.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Nancy Yuen <yuenn@google.com>, Patrick Venture <venture@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 03:17:07PM -0600, Josh Poimboeuf wrote:
-> On Wed, Feb 14, 2018 at 12:40:34PM -0500, Steven Rostedt wrote:
-> > On Wed, 14 Feb 2018 11:34:07 -0600
-> > Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> > 
-> > 
-> > > And in patch 1 the warning conditions need to be tweaked a bit to
-> > > exclude the __init case.
-> > > 
-> > 
-> > Hmm, I wonder if we could simply remove the references from the jump
-> > label table when init is freed.
-> 
-> Interesting idea.  The static key's entries (i.e. tracepoint sites) are
-> in a static array.  Maybe we could rewrite the affected arrays when init
-> memory is freed.  I'm not sure whether that would be overkill though.  I
-> can tinker with it and see how it compares to the current solution.
+On Thu, Feb 15, 2018 at 5:39 AM, Tali Perry <tali.perry1@gmail.com> wrote:
+>
+> Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+>
+ <snip>
 
-It turns out that something like this is already done for module init
-code.  It doesn't *remove* the entry, but it does disable it by setting
-entry->code to zero.  I'll just do the same thing right before initmem
-is freed.
+I think this should probably be rolled into [PATCH v2 1/1] npcm750: add fixed
+clocks (moved from drivers/clk/clk-npcm7xx.c):
+https://www.spinics.net/lists/arm-kernel/msg634678.html
 
--- 
-Josh
+Cheers
