@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2241641-1518720650-2-12699997664943422987
+X-Cyrus-Session-Id: sloti22d1t05-2243538-1518720635-2-10623096087397958292
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720650; b=jeYnKwPLpMs6m2ghN26Xh5RXwKAlegCGFcgRgmmf98gWmRM
-    j6I1UTgtkaOwULdzaEWo1uSy4LKS/ahuSM+ZTjEMq0qoHPiZoSU/7ED82LUUkC51
-    hdKHnQXPsz/UZbvOHuidgCwN+3ZEhR7ejfHZb/+PO3BQsdGvXxUavdyRflDMDUGf
-    +bLx+LmfOMiCJWk7jWj3BD1wepKrLnScCKJMW0WS2ur6rZzMdg2Sbn7BCC6gjKKR
-    C/rgW3YHP1hmBMMhmxwyd4Uu/DsoaPg2ezpI4Eibrry9bb0lCgtiPebkGVMFeA7g
-    w5qaRSwVgOU3VtBMS8lBlv7CS+qakT8Vl4i3wwQ==
+    t=1518720634; b=w27g0INwb+jnIYID3UFyuGGKDLzL1nLjmKGoIOMIzao1dxp
+    tmkuFQ5lOFHbepjlYwr/0gAfAieuK1Cqyv5XzG/RYMqoPFrjcAv1d9dX/X+aTCuI
+    u37aP79eur29D5+VB5cnSaPT0tM/z+aKA6Hrn7d0jpo61LF/yQFihJr5kPPZgGK5
+    EfBaS+ej+B4pbgOw/Zfyk+m0dSt2Q4HN6cFUgDoDPavJF07MY6lZb9/R17QCB1ud
+    LucJtmgK1sIAt5GKxnaSn63euhnyBmX4MQ+iTaq/6JuUfDpm8Wm+J4Kp5MjtUXJr
+    EuUbYtbL6bdgmGM0qf2Q58l8YzQll4wi/rYPdbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720650; bh=JKkHUHQlKTclgLVYvQEqWyzAfB
-    dnFJzio8t8Q1lf7Mc=; b=adIBempbyu6PgHZC9eGI6B7oXTW+fTWkxuHoxCvecG
-    1vvLlw0UUSelvUAq5ptNBSqeIM9UXLQ0uXuKFaMPylrkBrbWn7HH2gEx5tQnXx8W
-    qrucG2PgnAnrWlCn7BQNEVTUs7rDUnVGXtbiei7Y8+MvZTpL/5Pe+dd8qnIe4yS4
-    dZknD3B1K61Vsy466xCKufiYIgOBBmz6iqCcFxBrkEyopYjNvrN5mahao3veM5xa
-    2ndVF0GiyMYc2iWMYWK1224DpRb9BRQczkLSXRwgBaMVAqhRpXt/oHKf/PMrL3G8
-    ibwYesO1Tt1nz1ed7oy8/0uCa+hTFvLimE4ReUptWaIQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518720634; bh=bXiIxBN8eh3SikTF4BNxzMyr+7
+    IScFre3UGriO2C62Y=; b=mxAYg3v4DcVOZBxvf9VPY+wvN2WxrTSMis3xfMhqqN
+    gud73y7werL9/xgJ8GhsXIB6QqwTb32DQ2pS4NinHOFbn14S+u7jsEl19e3576w9
+    hGydx7Rf1RZieNmMBXUOrjpq9gtVelNqduYP1Ty02Fok41bmJoZNtybIC+IIQFRG
+    BOFIWPfHW1nyHwed0yGxRvdoxPtFyNMyoXEXAbRVuaR0KqSMdFgTFFF6PQ3Xi637
+    SGs6elpdAbYCwWXa0ctQtteHGpQQHYStIhMDzx0VPm6NZ4Xtwl0QtInc3A2fLgPn
+    yknhO3oqovWNSxh5w+YonAuARqVT37c2NX7POiORugOg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,22 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161898AbeBOPVj (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:21:39 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49170 "EHLO
+        id S1162390AbeBOSub (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:50:31 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49182 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162080AbeBOPVg (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:21:36 -0500
+        with ESMTP id S1162119AbeBOPVj (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:21:39 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 028/108] net: igmp: add a missing rcu locking section
-Date: Thu, 15 Feb 2018 16:16:25 +0100
-Message-Id: <20180215151226.414267434@linuxfoundation.org>
+        stable@vger.kernel.org, Jon Masters <jcm@redhat.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Balbir Singh <bsingharora@gmail.com>
+Subject: [PATCH 4.4 011/108] powerpc/64s: Add support for RFI flush of L1-D cache
+Date: Thu, 15 Feb 2018 16:16:08 +0100
+Message-Id: <20180215151223.968660664@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -78,79 +79,467 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
+commit aa8a5e0062ac940f7659394f4817c948dc8c0667 upstream.
 
-[ Upstream commit e7aadb27a5415e8125834b84a74477bfbee4eff5 ]
+On some CPUs we can prevent the Meltdown vulnerability by flushing the
+L1-D cache on exit from kernel to user mode, and from hypervisor to
+guest.
 
-Newly added igmpv3_get_srcaddr() needs to be called under rcu lock.
+This is known to be the case on at least Power7, Power8 and Power9. At
+this time we do not know the status of the vulnerability on other CPUs
+such as the 970 (Apple G5), pasemi CPUs (AmigaOne X1000) or Freescale
+CPUs. As more information comes to light we can enable this, or other
+mechanisms on those CPUs.
 
-Timer callbacks do not ensure this locking.
+The vulnerability occurs when the load of an architecturally
+inaccessible memory region (eg. userspace load of kernel memory) is
+speculatively executed to the point where its result can influence the
+address of a subsequent speculatively executed load.
 
-=============================
-WARNING: suspicious RCU usage
-4.15.0+ #200 Not tainted
------------------------------
-./include/linux/inetdevice.h:216 suspicious rcu_dereference_check() usage!
+In order for that to happen, the first load must hit in the L1,
+because before the load is sent to the L2 the permission check is
+performed. Therefore if no kernel addresses hit in the L1 the
+vulnerability can not occur. We can ensure that is the case by
+flushing the L1 whenever we return to userspace. Similarly for
+hypervisor vs guest.
 
-other info that might help us debug this:
+In order to flush the L1-D cache on exit, we add a section of nops at
+each (h)rfi location that returns to a lower privileged context, and
+patch that with some sequence. Newer firmwares are able to advertise
+to us that there is a special nop instruction that flushes the L1-D.
+If we do not see that advertised, we fall back to doing a displacement
+flush in software.
 
-rcu_scheduler_active = 2, debug_locks = 1
-3 locks held by syzkaller616973/4074:
- #0:  (&mm->mmap_sem){++++}, at: [<00000000bfce669e>] __do_page_fault+0x32d/0xc90 arch/x86/mm/fault.c:1355
- #1:  ((&im->timer)){+.-.}, at: [<00000000619d2f71>] lockdep_copy_map include/linux/lockdep.h:178 [inline]
- #1:  ((&im->timer)){+.-.}, at: [<00000000619d2f71>] call_timer_fn+0x1c6/0x820 kernel/time/timer.c:1316
- #2:  (&(&im->lock)->rlock){+.-.}, at: [<000000005f833c5c>] spin_lock_bh include/linux/spinlock.h:315 [inline]
- #2:  (&(&im->lock)->rlock){+.-.}, at: [<000000005f833c5c>] igmpv3_send_report+0x98/0x5b0 net/ipv4/igmp.c:600
+For guest kernels we support migration between some CPU versions, and
+different CPUs may use different flush instructions. So that we are
+prepared to migrate to a machine with a different flush instruction
+activated, we may have to patch more than one flush instruction at
+boot if the hypervisor tells us to.
 
-stack backtrace:
-CPU: 0 PID: 4074 Comm: syzkaller616973 Not tainted 4.15.0+ #200
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x194/0x257 lib/dump_stack.c:53
- lockdep_rcu_suspicious+0x123/0x170 kernel/locking/lockdep.c:4592
- __in_dev_get_rcu include/linux/inetdevice.h:216 [inline]
- igmpv3_get_srcaddr net/ipv4/igmp.c:329 [inline]
- igmpv3_newpack+0xeef/0x12e0 net/ipv4/igmp.c:389
- add_grhead.isra.27+0x235/0x300 net/ipv4/igmp.c:432
- add_grec+0xbd3/0x1170 net/ipv4/igmp.c:565
- igmpv3_send_report+0xd5/0x5b0 net/ipv4/igmp.c:605
- igmp_send_report+0xc43/0x1050 net/ipv4/igmp.c:722
- igmp_timer_expire+0x322/0x5c0 net/ipv4/igmp.c:831
- call_timer_fn+0x228/0x820 kernel/time/timer.c:1326
- expire_timers kernel/time/timer.c:1363 [inline]
- __run_timers+0x7ee/0xb70 kernel/time/timer.c:1666
- run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
- __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
- invoke_softirq kernel/softirq.c:365 [inline]
- irq_exit+0x1cc/0x200 kernel/softirq.c:405
- exiting_irq arch/x86/include/asm/apic.h:541 [inline]
- smp_apic_timer_interrupt+0x16b/0x700 arch/x86/kernel/apic/apic.c:1052
- apic_timer_interrupt+0xa9/0xb0 arch/x86/entry/entry_64.S:938
+In the end this patch is mostly the work of Nicholas Piggin and
+Michael Ellerman. However a cast of thousands contributed to analysis
+of the issue, earlier versions of the patch, back ports testing etc.
+Many thanks to all of them.
 
-Fixes: a46182b00290 ("net: igmp: Use correct source address on IGMPv3 reports")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Tested-by: Jon Masters <jcm@redhat.com>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+[Balbir - back ported to stable with changes]
+Signed-off-by: Balbir Singh <bsingharora@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/igmp.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/powerpc/include/asm/exception-64s.h  |   40 +++++++++++--
+ arch/powerpc/include/asm/feature-fixups.h |   15 +++++
+ arch/powerpc/include/asm/paca.h           |   10 +++
+ arch/powerpc/include/asm/setup.h          |   13 ++++
+ arch/powerpc/kernel/asm-offsets.c         |    4 +
+ arch/powerpc/kernel/exceptions-64s.S      |   86 ++++++++++++++++++++++++++++++
+ arch/powerpc/kernel/setup_64.c            |   79 +++++++++++++++++++++++++++
+ arch/powerpc/kernel/vmlinux.lds.S         |    9 +++
+ arch/powerpc/lib/feature-fixups.c         |   42 ++++++++++++++
+ 9 files changed, 290 insertions(+), 8 deletions(-)
 
---- a/net/ipv4/igmp.c
-+++ b/net/ipv4/igmp.c
-@@ -392,7 +392,11 @@ static struct sk_buff *igmpv3_newpack(st
- 	pip->frag_off = htons(IP_DF);
- 	pip->ttl      = 1;
- 	pip->daddr    = fl4.daddr;
+--- a/arch/powerpc/include/asm/exception-64s.h
++++ b/arch/powerpc/include/asm/exception-64s.h
+@@ -50,34 +50,58 @@
+ #define EX_PPR		88	/* SMT thread status register (priority) */
+ #define EX_CTR		96
+ 
+-/* Macros for annotating the expected destination of (h)rfid */
++/*
++ * Macros for annotating the expected destination of (h)rfid
++ *
++ * The nop instructions allow us to insert one or more instructions to flush the
++ * L1-D cache when returning to userspace or a guest.
++ */
++#define RFI_FLUSH_SLOT							\
++	RFI_FLUSH_FIXUP_SECTION;					\
++	nop;								\
++	nop;								\
++	nop
+ 
+ #define RFI_TO_KERNEL							\
+ 	rfid
+ 
+ #define RFI_TO_USER							\
+-	rfid
++	RFI_FLUSH_SLOT;							\
++	rfid;								\
++	b	rfi_flush_fallback
+ 
+ #define RFI_TO_USER_OR_KERNEL						\
+-	rfid
++	RFI_FLUSH_SLOT;							\
++	rfid;								\
++	b	rfi_flush_fallback
+ 
+ #define RFI_TO_GUEST							\
+-	rfid
++	RFI_FLUSH_SLOT;							\
++	rfid;								\
++	b	rfi_flush_fallback
+ 
+ #define HRFI_TO_KERNEL							\
+ 	hrfid
+ 
+ #define HRFI_TO_USER							\
+-	hrfid
++	RFI_FLUSH_SLOT;							\
++	hrfid;								\
++	b	hrfi_flush_fallback
+ 
+ #define HRFI_TO_USER_OR_KERNEL						\
+-	hrfid
++	RFI_FLUSH_SLOT;							\
++	hrfid;								\
++	b	hrfi_flush_fallback
+ 
+ #define HRFI_TO_GUEST							\
+-	hrfid
++	RFI_FLUSH_SLOT;							\
++	hrfid;								\
++	b	hrfi_flush_fallback
+ 
+ #define HRFI_TO_UNKNOWN							\
+-	hrfid
++	RFI_FLUSH_SLOT;							\
++	hrfid;								\
++	b	hrfi_flush_fallback
+ 
+ #ifdef CONFIG_RELOCATABLE
+ #define __EXCEPTION_RELON_PROLOG_PSERIES_1(label, h)			\
+--- a/arch/powerpc/include/asm/feature-fixups.h
++++ b/arch/powerpc/include/asm/feature-fixups.h
+@@ -184,4 +184,19 @@ label##3:					       	\
+ 	FTR_ENTRY_OFFSET label##1b-label##3b;		\
+ 	.popsection;
+ 
++#define RFI_FLUSH_FIXUP_SECTION				\
++951:							\
++	.pushsection __rfi_flush_fixup,"a";		\
++	.align 2;					\
++952:							\
++	FTR_ENTRY_OFFSET 951b-952b;			\
++	.popsection;
 +
-+	rcu_read_lock();
- 	pip->saddr    = igmpv3_get_srcaddr(dev, &fl4);
-+	rcu_read_unlock();
 +
- 	pip->protocol = IPPROTO_IGMP;
- 	pip->tot_len  = 0;	/* filled in later */
- 	ip_select_ident(net, skb, NULL);
++#ifndef __ASSEMBLY__
++
++extern long __start___rfi_flush_fixup, __stop___rfi_flush_fixup;
++
++#endif
++
+ #endif /* __ASM_POWERPC_FEATURE_FIXUPS_H */
+--- a/arch/powerpc/include/asm/paca.h
++++ b/arch/powerpc/include/asm/paca.h
+@@ -192,6 +192,16 @@ struct paca_struct {
+ #endif
+ 	struct kvmppc_host_state kvm_hstate;
+ #endif
++#ifdef CONFIG_PPC_BOOK3S_64
++	/*
++	 * rfi fallback flush must be in its own cacheline to prevent
++	 * other paca data leaking into the L1d
++	 */
++	u64 exrfi[13] __aligned(0x80);
++	void *rfi_flush_fallback_area;
++	u64 l1d_flush_congruence;
++	u64 l1d_flush_sets;
++#endif
+ };
+ 
+ extern struct paca_struct *paca;
+--- a/arch/powerpc/include/asm/setup.h
++++ b/arch/powerpc/include/asm/setup.h
+@@ -26,6 +26,19 @@ void initmem_init(void);
+ void setup_panic(void);
+ #define ARCH_PANIC_TIMEOUT 180
+ 
++void rfi_flush_enable(bool enable);
++
++/* These are bit flags */
++enum l1d_flush_type {
++	L1D_FLUSH_NONE		= 0x1,
++	L1D_FLUSH_FALLBACK	= 0x2,
++	L1D_FLUSH_ORI		= 0x4,
++	L1D_FLUSH_MTTRIG	= 0x8,
++};
++
++void __init setup_rfi_flush(enum l1d_flush_type, bool enable);
++void do_rfi_flush_fixups(enum l1d_flush_type types);
++
+ #endif /* !__ASSEMBLY__ */
+ 
+ #endif	/* _ASM_POWERPC_SETUP_H */
+--- a/arch/powerpc/kernel/asm-offsets.c
++++ b/arch/powerpc/kernel/asm-offsets.c
+@@ -243,6 +243,10 @@ int main(void)
+ #ifdef CONFIG_PPC_BOOK3S_64
+ 	DEFINE(PACAMCEMERGSP, offsetof(struct paca_struct, mc_emergency_sp));
+ 	DEFINE(PACA_IN_MCE, offsetof(struct paca_struct, in_mce));
++	DEFINE(PACA_RFI_FLUSH_FALLBACK_AREA, offsetof(struct paca_struct, rfi_flush_fallback_area));
++	DEFINE(PACA_EXRFI, offsetof(struct paca_struct, exrfi));
++	DEFINE(PACA_L1D_FLUSH_CONGRUENCE, offsetof(struct paca_struct, l1d_flush_congruence));
++	DEFINE(PACA_L1D_FLUSH_SETS, offsetof(struct paca_struct, l1d_flush_sets));
+ #endif
+ 	DEFINE(PACAHWCPUID, offsetof(struct paca_struct, hw_cpu_id));
+ 	DEFINE(PACAKEXECSTATE, offsetof(struct paca_struct, kexec_state));
+--- a/arch/powerpc/kernel/exceptions-64s.S
++++ b/arch/powerpc/kernel/exceptions-64s.S
+@@ -1564,6 +1564,92 @@ power4_fixup_nap:
+ 	blr
+ #endif
+ 
++	.globl rfi_flush_fallback
++rfi_flush_fallback:
++	SET_SCRATCH0(r13);
++	GET_PACA(r13);
++	std	r9,PACA_EXRFI+EX_R9(r13)
++	std	r10,PACA_EXRFI+EX_R10(r13)
++	std	r11,PACA_EXRFI+EX_R11(r13)
++	std	r12,PACA_EXRFI+EX_R12(r13)
++	std	r8,PACA_EXRFI+EX_R13(r13)
++	mfctr	r9
++	ld	r10,PACA_RFI_FLUSH_FALLBACK_AREA(r13)
++	ld	r11,PACA_L1D_FLUSH_SETS(r13)
++	ld	r12,PACA_L1D_FLUSH_CONGRUENCE(r13)
++	/*
++	 * The load adresses are at staggered offsets within cachelines,
++	 * which suits some pipelines better (on others it should not
++	 * hurt).
++	 */
++	addi	r12,r12,8
++	mtctr	r11
++	DCBT_STOP_ALL_STREAM_IDS(r11) /* Stop prefetch streams */
++
++	/* order ld/st prior to dcbt stop all streams with flushing */
++	sync
++1:	li	r8,0
++	.rept	8 /* 8-way set associative */
++	ldx	r11,r10,r8
++	add	r8,r8,r12
++	xor	r11,r11,r11	// Ensure r11 is 0 even if fallback area is not
++	add	r8,r8,r11	// Add 0, this creates a dependency on the ldx
++	.endr
++	addi	r10,r10,128 /* 128 byte cache line */
++	bdnz	1b
++
++	mtctr	r9
++	ld	r9,PACA_EXRFI+EX_R9(r13)
++	ld	r10,PACA_EXRFI+EX_R10(r13)
++	ld	r11,PACA_EXRFI+EX_R11(r13)
++	ld	r12,PACA_EXRFI+EX_R12(r13)
++	ld	r8,PACA_EXRFI+EX_R13(r13)
++	GET_SCRATCH0(r13);
++	rfid
++
++	.globl hrfi_flush_fallback
++hrfi_flush_fallback:
++	SET_SCRATCH0(r13);
++	GET_PACA(r13);
++	std	r9,PACA_EXRFI+EX_R9(r13)
++	std	r10,PACA_EXRFI+EX_R10(r13)
++	std	r11,PACA_EXRFI+EX_R11(r13)
++	std	r12,PACA_EXRFI+EX_R12(r13)
++	std	r8,PACA_EXRFI+EX_R13(r13)
++	mfctr	r9
++	ld	r10,PACA_RFI_FLUSH_FALLBACK_AREA(r13)
++	ld	r11,PACA_L1D_FLUSH_SETS(r13)
++	ld	r12,PACA_L1D_FLUSH_CONGRUENCE(r13)
++	/*
++	 * The load adresses are at staggered offsets within cachelines,
++	 * which suits some pipelines better (on others it should not
++	 * hurt).
++	 */
++	addi	r12,r12,8
++	mtctr	r11
++	DCBT_STOP_ALL_STREAM_IDS(r11) /* Stop prefetch streams */
++
++	/* order ld/st prior to dcbt stop all streams with flushing */
++	sync
++1:	li	r8,0
++	.rept	8 /* 8-way set associative */
++	ldx	r11,r10,r8
++	add	r8,r8,r12
++	xor	r11,r11,r11	// Ensure r11 is 0 even if fallback area is not
++	add	r8,r8,r11	// Add 0, this creates a dependency on the ldx
++	.endr
++	addi	r10,r10,128 /* 128 byte cache line */
++	bdnz	1b
++
++	mtctr	r9
++	ld	r9,PACA_EXRFI+EX_R9(r13)
++	ld	r10,PACA_EXRFI+EX_R10(r13)
++	ld	r11,PACA_EXRFI+EX_R11(r13)
++	ld	r12,PACA_EXRFI+EX_R12(r13)
++	ld	r8,PACA_EXRFI+EX_R13(r13)
++	GET_SCRATCH0(r13);
++	hrfid
++
+ /*
+  * Hash table stuff
+  */
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -834,4 +834,83 @@ static int __init disable_hardlockup_det
+ 	return 0;
+ }
+ early_initcall(disable_hardlockup_detector);
++
++#ifdef CONFIG_PPC_BOOK3S_64
++static enum l1d_flush_type enabled_flush_types;
++static void *l1d_flush_fallback_area;
++bool rfi_flush;
++
++static void do_nothing(void *unused)
++{
++	/*
++	 * We don't need to do the flush explicitly, just enter+exit kernel is
++	 * sufficient, the RFI exit handlers will do the right thing.
++	 */
++}
++
++void rfi_flush_enable(bool enable)
++{
++	if (rfi_flush == enable)
++		return;
++
++	if (enable) {
++		do_rfi_flush_fixups(enabled_flush_types);
++		on_each_cpu(do_nothing, NULL, 1);
++	} else
++		do_rfi_flush_fixups(L1D_FLUSH_NONE);
++
++	rfi_flush = enable;
++}
++
++static void init_fallback_flush(void)
++{
++	u64 l1d_size, limit;
++	int cpu;
++
++	l1d_size = ppc64_caches.dsize;
++	limit = min(safe_stack_limit(), ppc64_rma_size);
++
++	/*
++	 * Align to L1d size, and size it at 2x L1d size, to catch possible
++	 * hardware prefetch runoff. We don't have a recipe for load patterns to
++	 * reliably avoid the prefetcher.
++	 */
++	l1d_flush_fallback_area = __va(memblock_alloc_base(l1d_size * 2, l1d_size, limit));
++	memset(l1d_flush_fallback_area, 0, l1d_size * 2);
++
++	for_each_possible_cpu(cpu) {
++		/*
++		 * The fallback flush is currently coded for 8-way
++		 * associativity. Different associativity is possible, but it
++		 * will be treated as 8-way and may not evict the lines as
++		 * effectively.
++		 *
++		 * 128 byte lines are mandatory.
++		 */
++		u64 c = l1d_size / 8;
++
++		paca[cpu].rfi_flush_fallback_area = l1d_flush_fallback_area;
++		paca[cpu].l1d_flush_congruence = c;
++		paca[cpu].l1d_flush_sets = c / 128;
++	}
++}
++
++void __init setup_rfi_flush(enum l1d_flush_type types, bool enable)
++{
++	if (types & L1D_FLUSH_FALLBACK) {
++		pr_info("rfi-flush: Using fallback displacement flush\n");
++		init_fallback_flush();
++	}
++
++	if (types & L1D_FLUSH_ORI)
++		pr_info("rfi-flush: Using ori type flush\n");
++
++	if (types & L1D_FLUSH_MTTRIG)
++		pr_info("rfi-flush: Using mttrig type flush\n");
++
++	enabled_flush_types = types;
++
++	rfi_flush_enable(enable);
++}
++#endif /* CONFIG_PPC_BOOK3S_64 */
+ #endif
+--- a/arch/powerpc/kernel/vmlinux.lds.S
++++ b/arch/powerpc/kernel/vmlinux.lds.S
+@@ -72,6 +72,15 @@ SECTIONS
+ 	/* Read-only data */
+ 	RODATA
+ 
++#ifdef CONFIG_PPC64
++	. = ALIGN(8);
++	__rfi_flush_fixup : AT(ADDR(__rfi_flush_fixup) - LOAD_OFFSET) {
++		__start___rfi_flush_fixup = .;
++		*(__rfi_flush_fixup)
++		__stop___rfi_flush_fixup = .;
++	}
++#endif
++
+ 	EXCEPTION_TABLE(0)
+ 
+ 	NOTES :kernel :notes
+--- a/arch/powerpc/lib/feature-fixups.c
++++ b/arch/powerpc/lib/feature-fixups.c
+@@ -20,6 +20,7 @@
+ #include <asm/code-patching.h>
+ #include <asm/page.h>
+ #include <asm/sections.h>
++#include <asm/setup.h>
+ 
+ 
+ struct fixup_entry {
+@@ -113,6 +114,47 @@ void do_feature_fixups(unsigned long val
+ 	}
+ }
+ 
++#ifdef CONFIG_PPC_BOOK3S_64
++void do_rfi_flush_fixups(enum l1d_flush_type types)
++{
++	unsigned int instrs[3], *dest;
++	long *start, *end;
++	int i;
++
++	start = PTRRELOC(&__start___rfi_flush_fixup),
++	end = PTRRELOC(&__stop___rfi_flush_fixup);
++
++	instrs[0] = 0x60000000; /* nop */
++	instrs[1] = 0x60000000; /* nop */
++	instrs[2] = 0x60000000; /* nop */
++
++	if (types & L1D_FLUSH_FALLBACK)
++		/* b .+16 to fallback flush */
++		instrs[0] = 0x48000010;
++
++	i = 0;
++	if (types & L1D_FLUSH_ORI) {
++		instrs[i++] = 0x63ff0000; /* ori 31,31,0 speculation barrier */
++		instrs[i++] = 0x63de0000; /* ori 30,30,0 L1d flush*/
++	}
++
++	if (types & L1D_FLUSH_MTTRIG)
++		instrs[i++] = 0x7c12dba6; /* mtspr TRIG2,r0 (SPR #882) */
++
++	for (i = 0; start < end; start++, i++) {
++		dest = (void *)start + *start;
++
++		pr_devel("patching dest %lx\n", (unsigned long)dest);
++
++		patch_instruction(dest, instrs[0]);
++		patch_instruction(dest + 1, instrs[1]);
++		patch_instruction(dest + 2, instrs[2]);
++	}
++
++	printk(KERN_DEBUG "rfi-flush: patched %d locations\n", i);
++}
++#endif /* CONFIG_PPC_BOOK3S_64 */
++
+ void do_lwsync_fixups(unsigned long value, void *fixup_start, void *fixup_end)
+ {
+ 	long *start, *end;
