@@ -1,69 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030539AbeBOMGL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 07:06:11 -0500
-Received: from outbound-smtp10.blacknight.com ([46.22.139.15]:60445 "EHLO
-        outbound-smtp10.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S967889AbeBOMGK (ORCPT
+        id S967967AbeBOMXD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 07:23:03 -0500
+Received: from mail-qk0-f174.google.com ([209.85.220.174]:42544 "EHLO
+        mail-qk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967889AbeBOMXA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 07:06:10 -0500
-Date: Thu, 15 Feb 2018 12:06:08 +0000
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Aaron Lu <aaron.lu@intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v2 1/2] free_pcppages_bulk: do not hold lock when picking
- pages to free
-Message-ID: <20180215120608.g5wj2qb2thkkzu5e@techsingularity.net>
-References: <20180124023050.20097-1-aaron.lu@intel.com>
- <20180124163926.c7ptagn655aeiut3@techsingularity.net>
- <20180125072144.GA27678@intel.com>
+        Thu, 15 Feb 2018 07:23:00 -0500
+X-Google-Smtp-Source: AH8x227jWVGBpqqGts7AXzr+jUtIu/AaVZbr91/Yw9v8DY4osPIv3OZkBhzVDTanrSWZg73B1zUQvFlzyIVPDhvKJ58=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20180125072144.GA27678@intel.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <e3fb78b3-5f5c-fe96-9f02-e96092963c17@huawei.com>
+References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
+ <1518543933-22456-8-git-send-email-john.garry@huawei.com> <20180214161635.GA13849@e107981-ln.cambridge.arm.com>
+ <65185a4d-c712-4486-d713-3fa9de14e35d@huawei.com> <e3fb78b3-5f5c-fe96-9f02-e96092963c17@huawei.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 15 Feb 2018 14:22:58 +0200
+Message-ID: <CAHp75VfFKcnUVQwPUxynzp88RXWdV8VEqtXxd0=_Q_GJKO6UpQ@mail.gmail.com>
+Subject: Re: [PATCH v13 7/9] ACPI: Translate the I/O range of non-MMIO devices
+ before scanning
+To: John Garry <john.garry@huawei.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Hanjun Guo <hanjun.guo@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
+        Dann Frazier <dann.frazier@canonical.com>,
+        Rob Herring <robh@kernel.org>, Joe Perches <joe@perches.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, Corey Minyard <minyard@acm.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 25, 2018 at 03:21:44PM +0800, Aaron Lu wrote:
-> When freeing a batch of pages from Per-CPU-Pages(PCP) back to buddy,
-> the zone->lock is held and then pages are chosen from PCP's migratetype
-> list. While there is actually no need to do this 'choose part' under
-> lock since it's PCP pages, the only CPU that can touch them is us and
-> irq is also disabled.
-> 
-> Moving this part outside could reduce lock held time and improve
-> performance. Test with will-it-scale/page_fault1 full load:
-> 
-> kernel      Broadwell(2S)  Skylake(2S)   Broadwell(4S)  Skylake(4S)
-> v4.15-rc4   9037332        8000124       13642741       15728686
-> this patch  9608786 +6.3%  8368915 +4.6% 14042169 +2.9% 17433559 +10.8%
-> 
-> What the test does is: starts $nr_cpu processes and each will repeatedly
-> do the following for 5 minutes:
-> 1 mmap 128M anonymouse space;
-> 2 write access to that space;
-> 3 munmap.
-> The score is the aggregated iteration.
-> 
-> https://github.com/antonblanchard/will-it-scale/blob/master/tests/page_fault1.c
-> 
-> Acked-by: Mel Gorman <mgorman@techsingularity.net>
-> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+On Thu, Feb 15, 2018 at 1:19 PM, John Garry <john.garry@huawei.com> wrote:
 
-It looks like this series may have gotten lost because it was embedded
-within an existing thread or else it was the proximity to the merge
-window. I suggest a rebase, retest and resubmit unless there was some
-major objection that I missed. Patch 1 is fine by me at least. I never
-explicitly acked patch 2 but I've no major objection to it, just am a tad
-uncomfortable with prefetch magic sauce in general.
+> +static const struct acpi_device_id indirect_io_hosts[] = {
+> +    {"HISI0191", 0},    /* HiSilicon LPC host */
+> +    {},
+
+Just a nit.
+
+It seems lately this happens more often than usual, I mean a comma in
+the terminator line.
+
+If we remove it. we terminate not only at runtime, but at compile
+time, which is slightly better.
+
+> +};
 
 -- 
-Mel Gorman
-SUSE Labs
+With Best Regards,
+Andy Shevchenko
