@@ -1,218 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164308AbeBOWH5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 17:07:57 -0500
-Received: from mail.efficios.com ([167.114.142.141]:55977 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162892AbeBOWH4 (ORCPT
+        id S1164367AbeBOWIc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 17:08:32 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:49146 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162892AbeBOWIb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 17:07:56 -0500
-Date: Thu, 15 Feb 2018 22:08:56 +0000 (UTC)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Will Deacon <will.deacon@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Message-ID: <1144433342.22716.1518732536600.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180215182154.GD15274@arm.com>
-References: <20180214120254.qq4w4s42ecxio7lu@lakrids.cambridge.arm.com> <20180214150739.GH2992@arm.com> <20180214165131.o25r3hhrtrjk3ejq@lakrids.cambridge.arm.com> <254787533.21950.1518634424009.JavaMail.zimbra@efficios.com> <20180215142239.GF16623@arm.com> <20180215164754.GW25201@hirez.programming.kicks-ass.net> <20180215182154.GD15274@arm.com>
-Subject: Re: arm64/v4.16-rc1: KASAN: use-after-free Read in
- finish_task_switch
+        Thu, 15 Feb 2018 17:08:31 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Saravana Kannan <skannan@codeaurora.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Bo Yan <byan@nvidia.com>,
+        sgurrappadi@nvidia.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: skip cpufreq resume if it's not suspended
+Date: Thu, 15 Feb 2018 23:06:39 +0100
+Message-ID: <2807403.a9gdqJGhH8@aspire.rjw.lan>
+In-Reply-To: <5A85FB2E.2050407@codeaurora.org>
+References: <1516744675-21233-1-git-send-email-byan@nvidia.com> <20180205090546.GE28462@vireshk-i7> <5A85FB2E.2050407@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.141]
-X-Mailer: Zimbra 8.7.11_GA_1854 (ZimbraWebClient - FF52 (Linux)/8.7.11_GA_1854)
-Thread-Topic: arm64/v4.16-rc1: KASAN: use-after-free Read in finish_task_switch
-Thread-Index: ibTSQFrChGd28w09oDNUx5OVVCysqg==
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Feb 15, 2018, at 1:21 PM, Will Deacon will.deacon@arm.com wrote:
-
-> On Thu, Feb 15, 2018 at 05:47:54PM +0100, Peter Zijlstra wrote:
->> On Thu, Feb 15, 2018 at 02:22:39PM +0000, Will Deacon wrote:
->> > Instead, we've come up with a more plausible sequence that can in theory
->> > happen on a single CPU:
->> > 
->> > <task foo calls exit()>
->> > 
->> > do_exit
->> > 	exit_mm
->> 
->> If this is the last task of the process, we would expect:
->> 
->>   mm_count == 1
->>   mm_users == 1
->> 
->> at this point.
->> 
->> > 		mmgrab(mm);			// foo's mm has count +1
->> > 		BUG_ON(mm != current->active_mm);
->> > 		task_lock(current);
->> > 		current->mm = NULL;
->> > 		task_unlock(current);
->> 
->> So the whole active_mm is basically the last 'real' mm, and its purpose
->> is to avoid switch_mm() between user tasks and kernel tasks.
->> 
->> A kernel task has !->mm. We do this by incrementing mm_count when
->> switching from user to kernel task and decrementing when switching from
->> kernel to user.
->> 
->> What exit_mm() does is change a user task into a 'kernel' task. So it
->> should increment mm_count to mirror the context switch. I suspect this
->> is what the mmgrab() in exit_mm() is for.
->> 
->> > <irq and ctxsw to kthread>
->> > 
->> > context_switch(prev=foo, next=kthread)
->> > 	mm = next->mm;
->> > 	oldmm = prev->active_mm;
->> > 
->> > 	if (!mm) {				// True for kthread
->> > 		next->active_mm = oldmm;
->> > 		mmgrab(oldmm);			// foo's mm has count +2
->> > 	}
->> > 
->> > 	if (!prev->mm) {			// True for foo
->> > 		rq->prev_mm = oldmm;
->> > 	}
->> > 
->> > 	finish_task_switch
->> > 		mm = rq->prev_mm;
->> > 		if (mm) {			// True (foo's mm)
->> > 			mmdrop(mm);		// foo's mm has count +1
->> > 		}
->> > 
->> > 	[...]
->> > 
->> > <ctxsw to task bar>
->> > 
->> > context_switch(prev=kthread, next=bar)
->> > 	mm = next->mm;
->> > 	oldmm = prev->active_mm;		// foo's mm!
->> > 
->> > 	if (!prev->mm) {			// True for kthread
->> > 		rq->prev_mm = oldmm;
->> > 	}
->> > 
->> > 	finish_task_switch
->> > 		mm = rq->prev_mm;
->> > 		if (mm) {			// True (foo's mm)
->> > 			mmdrop(mm);		// foo's mm has count +0
->> 
->> The context switch into the next user task will then decrement. At this
->> point foo no longer has a reference to its mm, except on the stack.
->> 
->> > 		}
->> > 
->> > 	[...]
->> > 
->> > <ctxsw back to task foo>
->> > 
->> > context_switch(prev=bar, next=foo)
->> > 	mm = next->mm;
->> > 	oldmm = prev->active_mm;
->> > 
->> > 	if (!mm) {				// True for foo
->> > 		next->active_mm = oldmm;	// This is bar's mm
->> > 		mmgrab(oldmm);			// bar's mm has count +1
->> > 	}
->> > 
->> > 
->> > 	[return back to exit_mm]
->> 
->> Enter mm_users, this counts the number of tasks associated with the mm.
->> We start with 1 in mm_init(), and when it drops to 0, we decrement
->> mm_count. Since we also start with mm_count == 1, this would appear
->> consistent.
->> 
->>   mmput() // --mm_users == 0, which then results in:
->> 
->> > mmdrop(mm);					// foo's mm has count -1
->> 
->> In the above case, that's the very last reference to the mm, and since
->> we started out with mm_count == 1, this -1 makes 0 and we do the actual
->> free.
->> 
->> > At this point, we've got an imbalanced count on the mm and could free it
->> > prematurely as seen in the KASAN log.
->> 
->> I'm not sure I see premature. At this point mm_users==0, mm_count==0 and
->> we freed mm and there is no further use of the on-stack mm pointer and
->> foo no longer has a pointer to it in either ->mm or ->active_mm. It's
->> well and proper dead.
->> 
->> > A subsequent context-switch away from foo would therefore result in a
->> > use-after-free.
->> 
->> At the above point, foo no longer has a reference to mm, we cleared ->mm
->> early, and the context switch to bar cleared ->active_mm. The switch
->> back into foo then results with foo->active_mm == bar->mm, which is
->> fine.
+On Thursday, February 15, 2018 10:27:10 PM CET Saravana Kannan wrote:
+> On 02/05/2018 01:05 AM, Viresh Kumar wrote:
+> > On 05-02-18, 09:50, Rafael J. Wysocki wrote:
+> >> By design (which I admit may be confusing) it should be fine to call
+> >> dpm_resume_end() after a failing dpm_suspend_start(), whatever the reason
+> >> for the failure is.  cpufreq_suspend/resume() don't take that into account,
+> >> everybody else does.
+> >
+> > Hmm, I see. Can't do much then, just fix the only broken piece of code :)
+> >
 > 
-> Bugger, you're right. When we switch off foo after freeing the mm, we'll
-> actually access it's active mm which points to bar's mm. So whilst this
-> can explain part of the kasan splat, it doesn't explain the actual
-> use-after-free.
+> Sorry for the late reply, this email didn't get filtered into the right 
+> folder.
 > 
-> More head-scratching required :(
+> I think the design of dpm_suspend_start() and dpm_resume_end() generally 
+> works fine because we seem to keep track of what devices have been 
+> suspended so far (in the dpm_suspended_list) and call resume only of 
+> those. So, why isn't the right fix to have cpufreq get put into that 
+> list?
 
-My current theory: do_exit() gets preempted after having set current->mm
-to NULL, and after having issued mmput(), which brings the mm_count down
-to 0. Unfortunately, if the scheduler switches from a userspace thread
-to a kernel thread, context_switch() loads prev->active_mm which still
-points to the now-freed mm, mmgrab the mm, and eventually does mmdrop
-in finish_task_switch().
+Because it is more complicated?
 
-If my understanding is correct, the following patch should help. The idea
-is to keep a reference on the mm_count until after we are sure the scheduler
-cannot schedule the task anymore. What I'm not sure is where exactly in
-do_exit() are we sure the task cannot ever be preempted anymore ?
+> Instead of just always call it on the resume path even if it 
+> wasn't suspended? That seems to be the real issue.
+> 
+> So, we should either have dpm_suspend/resume() have a flag to keep track 
+> of if cpufreq_suspend/resume() was called and make sure they are called 
+> in proper pairs.
 
+Why?
 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 995453d..fefba68 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -764,6 +764,7 @@ void __noreturn do_exit(long code)
- {
-        struct task_struct *tsk = current;
-        int group_dead;
-+       struct mm_struct *mm;
- 
-        profile_task_exit(tsk);
-        kcov_task_exit(tsk);
-@@ -849,6 +850,10 @@ void __noreturn do_exit(long code)
-        tsk->exit_code = code;
-        taskstats_exit(tsk, group_dead);
- 
-+       mm = current->mm;
-+       if (mm)
-+               mmgrab(mm);
-+
-        exit_mm();
- 
-        if (group_dead)
-@@ -920,6 +925,9 @@ void __noreturn do_exit(long code)
- 
-        lockdep_free_task(tsk);
-        do_task_dead();
-+
-+       if (mm)
-+               mmdrop(mm);
- }
- EXPORT_SYMBOL_GPL(do_exit);
- 
+> Or have cpufreq register in a way that gets it put in 
+> the suspend/resume list.
+> 
+> I'd still like to NACK this change.
 
-
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+It's gone in already, sorry.
