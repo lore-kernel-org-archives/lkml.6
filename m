@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032550AbeBOAtT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 19:49:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59104 "EHLO mail.kernel.org"
+        id S1032567AbeBOAtg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 19:49:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032403AbeBOAsi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 19:48:38 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8E9D217C0
+        id S1032264AbeBOAsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 19:48:32 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66DEB217B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
 From: Frederic Weisbecker <frederic@kernel.org>
@@ -21,9 +21,9 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
         Wanpeng Li <kernellwp@gmail.com>, Mike Galbraith <efault@gmx.de>,
         Rik van Riel <riel@redhat.com>
-Subject: [PATCH 5/6] sched/nohz: Remove the 1 Hz tick code
-Date: Thu, 15 Feb 2018 01:48:13 +0100
-Message-Id: <1518655694-8057-6-git-send-email-frederic@kernel.org>
+Subject: [PATCH 3/6] sched/isolation: Isolate workqueues when "nohz_full=" is set
+Date: Thu, 15 Feb 2018 01:48:11 +0100
+Message-Id: <1518655694-8057-4-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518655694-8057-1-git-send-email-frederic@kernel.org>
 References: <1518655694-8057-1-git-send-email-frederic@kernel.org>
@@ -31,8 +31,9 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the 1Hz tick is offloaded to workqueues, we can safely remove
-the residual code that used to handle it locally.
+As we prepare for offloading the residual 1hz scheduler ticks to
+workqueue, let's affine those to housekeepers so that they don't
+interrupt the CPUs that don't want to be disturbed.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Chris Metcalf <cmetcalf@mellanox.com>
@@ -46,133 +47,62 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Wanpeng Li <kernellwp@gmail.com>
 Cc: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/sched/nohz.h |  4 ----
- kernel/sched/core.c        | 29 -----------------------------
- kernel/sched/idle_task.c   |  1 -
- kernel/sched/sched.h       | 11 +----------
- kernel/time/tick-sched.c   |  6 ------
- 5 files changed, 1 insertion(+), 50 deletions(-)
+ include/linux/sched/isolation.h | 1 +
+ kernel/sched/isolation.c        | 3 ++-
+ kernel/workqueue.c              | 3 ++-
+ 3 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/sched/nohz.h b/include/linux/sched/nohz.h
-index 3d3a97d..0942172 100644
---- a/include/linux/sched/nohz.h
-+++ b/include/linux/sched/nohz.h
-@@ -37,8 +37,4 @@ extern void wake_up_nohz_cpu(int cpu);
- static inline void wake_up_nohz_cpu(int cpu) { }
- #endif
+diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
+index d849431..4a6582c 100644
+--- a/include/linux/sched/isolation.h
++++ b/include/linux/sched/isolation.h
+@@ -12,6 +12,7 @@ enum hk_flags {
+ 	HK_FLAG_SCHED		= (1 << 3),
+ 	HK_FLAG_TICK		= (1 << 4),
+ 	HK_FLAG_DOMAIN		= (1 << 5),
++	HK_FLAG_WQ		= (1 << 6),
+ };
  
--#ifdef CONFIG_NO_HZ_FULL
--extern u64 scheduler_tick_max_deferment(void);
--#endif
--
- #endif /* _LINUX_SCHED_NOHZ_H */
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 86eefc4..099c9cb 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3091,35 +3091,9 @@ void scheduler_tick(void)
- 	rq->idle_balance = idle_cpu(cpu);
- 	trigger_load_balance(rq);
- #endif
--	rq_last_tick_reset(rq);
- }
+ #ifdef CONFIG_CPU_ISOLATION
+diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+index b71b436..a2500c4 100644
+--- a/kernel/sched/isolation.c
++++ b/kernel/sched/isolation.c
+@@ -3,6 +3,7 @@
+  *  any CPU: unbound workqueues, timers, kthreads and any offloadable work.
+  *
+  * Copyright (C) 2017 Red Hat, Inc., Frederic Weisbecker
++ * Copyright (C) 2017-2018 SUSE, Frederic Weisbecker
+  *
+  */
  
- #ifdef CONFIG_NO_HZ_FULL
--/**
-- * scheduler_tick_max_deferment
-- *
-- * Keep at least one tick per second when a single
-- * active task is running because the scheduler doesn't
-- * yet completely support full dynticks environment.
-- *
-- * This makes sure that uptime, CFS vruntime, load
-- * balancing, etc... continue to move forward, even
-- * with a very low granularity.
-- *
-- * Return: Maximum deferment in nanoseconds.
-- */
--u64 scheduler_tick_max_deferment(void)
--{
--	struct rq *rq = this_rq();
--	unsigned long next, now = READ_ONCE(jiffies);
--
--	next = rq->last_sched_tick + HZ;
--
--	if (time_before_eq(next, now))
--		return 0;
--
--	return jiffies_to_nsecs(next - now);
--}
- 
- struct tick_work {
- 	int			cpu;
-@@ -6111,9 +6085,6 @@ void __init sched_init(void)
- 		rq->last_load_update_tick = jiffies;
- 		rq->nohz_flags = 0;
- #endif
--#ifdef CONFIG_NO_HZ_FULL
--		rq->last_sched_tick = 0;
--#endif
- #endif /* CONFIG_SMP */
- 		hrtick_rq_init(rq);
- 		atomic_set(&rq->nr_iowait, 0);
-diff --git a/kernel/sched/idle_task.c b/kernel/sched/idle_task.c
-index d518664..a64fc92 100644
---- a/kernel/sched/idle_task.c
-+++ b/kernel/sched/idle_task.c
-@@ -48,7 +48,6 @@ dequeue_task_idle(struct rq *rq, struct task_struct *p, int flags)
- 
- static void put_prev_task_idle(struct rq *rq, struct task_struct *prev)
+@@ -119,7 +120,7 @@ static int __init housekeeping_nohz_full_setup(char *str)
  {
--	rq_last_tick_reset(rq);
+ 	unsigned int flags;
+ 
+-	flags = HK_FLAG_TICK | HK_FLAG_TIMER | HK_FLAG_RCU | HK_FLAG_MISC;
++	flags = HK_FLAG_TICK | HK_FLAG_WQ | HK_FLAG_TIMER | HK_FLAG_RCU | HK_FLAG_MISC;
+ 
+ 	return housekeeping_setup(str, flags);
  }
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index 017044c..593dbe7 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -5565,12 +5565,13 @@ static void __init wq_numa_init(void)
+ int __init workqueue_init_early(void)
+ {
+ 	int std_nice[NR_STD_WORKER_POOLS] = { 0, HIGHPRI_NICE_LEVEL };
++	int hk_flags = HK_FLAG_DOMAIN | HK_FLAG_WQ;
+ 	int i, cpu;
  
- static void task_tick_idle(struct rq *rq, struct task_struct *curr, int queued)
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index c1c7c78..dc6c8b5 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -727,9 +727,7 @@ struct rq {
- #endif /* CONFIG_SMP */
- 	unsigned long nohz_flags;
- #endif /* CONFIG_NO_HZ_COMMON */
--#ifdef CONFIG_NO_HZ_FULL
--	unsigned long last_sched_tick;
--#endif
-+
- 	/* capture load from *all* tasks on this cpu: */
- 	struct load_weight load;
- 	unsigned long nr_load_updates;
-@@ -1626,13 +1624,6 @@ static inline void sub_nr_running(struct rq *rq, unsigned count)
- 	sched_update_tick_dependency(rq);
- }
+ 	WARN_ON(__alignof__(struct pool_workqueue) < __alignof__(long long));
  
--static inline void rq_last_tick_reset(struct rq *rq)
--{
--#ifdef CONFIG_NO_HZ_FULL
--	rq->last_sched_tick = jiffies;
--#endif
--}
--
- extern void update_rq_clock(struct rq *rq);
+ 	BUG_ON(!alloc_cpumask_var(&wq_unbound_cpumask, GFP_KERNEL));
+-	cpumask_copy(wq_unbound_cpumask, housekeeping_cpumask(HK_FLAG_DOMAIN));
++	cpumask_copy(wq_unbound_cpumask, housekeeping_cpumask(hk_flags));
  
- extern void activate_task(struct rq *rq, struct task_struct *p, int flags);
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index b517485..0c615a0 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -748,12 +748,6 @@ static ktime_t tick_nohz_stop_sched_tick(struct tick_sched *ts,
- 		delta = KTIME_MAX;
- 	}
+ 	pwq_cache = KMEM_CACHE(pool_workqueue, SLAB_PANIC);
  
--#ifdef CONFIG_NO_HZ_FULL
--	/* Limit the tick delta to the maximum scheduler deferment */
--	if (!ts->inidle)
--		delta = min(delta, scheduler_tick_max_deferment());
--#endif
--
- 	/* Calculate the next expiry time */
- 	if (delta < (KTIME_MAX - basemono))
- 		expires = basemono + delta;
 -- 
 2.7.4
