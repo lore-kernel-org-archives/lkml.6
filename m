@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2179907-1518719631-2-14239425684654407430
+X-Cyrus-Session-Id: sloti22d1t05-2179907-1518719624-2-8155474182131865259
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518719631; b=pxLKfVty7tp3PfZbcVIESb3Z8DWb23d2Yk8MH+Aj6J9gTlG
-    vN+wjKkyt9uFbrTCnChsISvGks0Qjoz+IDcbNiXP+0k+qKYym/MIWXYgvyh6vGjj
-    xQ4oxypVTImaf9ulsiW+t0z/HfSLwN4iJx9jRKwuTzCVOqIc5AwNrKpTavyx/AUq
-    MKMxl5VEymu6enKB7M1RjINYTQ+0zwJw2UD82h8vafChshxs9yn2KWW8mXpsEJmJ
-    Knq+tTRtomGx07UjRSNf7w85jfTvErXkVepdFeNWZeBN743ogh3QKvHsqODEwwgm
-    67/PE1xjlWkLISxiyJo9wtNkLEPVTf9vJpe9/bA==
+    t=1518719624; b=wZc8xw4hR/AMOBn/So9CiurWiTZjYQhR3F2NcWZLMLlDd9j
+    wG/sH/ohBrM7dOMm0L3a8yot/2iw00yFd7RO4qU7KJrxNK1/ZMOQ1pYZPPP61XG/
+    j84bSzfhpbwRfCtWGnlOJ59ffv7yWm4dlMrdSXUGVUx98XSmm7k8qaUtVVW0qIT1
+    2bztBPsIpv0nlI5b4ddTb7hrHBni+OVQzVJs70PRXnHyzLBn+wzelFbhTlMxzi+z
+    G6Xo0Ky/+otIVW1AoNhwPcYWa332kc9ixW+jmoLJBBi6yrMzlRTFvNqK/TFwcNJI
+    2/+8Sjff66JMGFH0suiwmvMj8ye1uDhC95y9cCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518719631; bh=3BNRhIuNPhkuBz/jcUi913LwAG
-    vYy7g755iLIpTsN88=; b=Ts6HSMv4cV8vURoDmoI6b6BfIz421pcFxeFSY39d5B
-    HJrPGLqL8EBofjWyHtaLqoUYWx0dz/iDm/mHv1fjjlw7TgQ2mYmMNaVydVIG2N3Z
-    Kf7Z5SnLgy7bWaIhHEH1GXc0Nj751Jbw8XZUORJQq5mkV8mBo7mQLRTSPgcxuSAx
-    aoAqTPy2LvHFrcc52Do5acE8xdZbq/VeFQvmdWaiPmb5Y14BqcrxVQFE0n5q0BlS
-    0QOXx26AhxvUfn6Xak0AYg4RYv09jxewApKKDq01XDRW/9+mtk9XgY4DdezAG01r
-    xRYb1ZGe3uOxGBYGBuC781zPI2kGWX4fyGH48woxra5Q==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518719624; bh=8QhCOmBeKkxBcAlaYw3BZAHtJd
+    2LU4ykTaT1vOxrbPg=; b=io1tTwNTIQLuGxhsA89tMMhd2Cb2IM4kV445ZuJ5wC
+    Pk19Y+wygrjEjohVnugSABl34lMkNrIMYXI105abgmOD8rMZZnOa20+h7YiZ8qAp
+    BEPIYvcaSqRhFzuvrFGb2WnOAIBOKPwDxqcvr0waSC1VTdtxj5c1jM2H/ctQ7fVm
+    yeUSGhXOibCbf6t0eN0JQ8dNEsjDP5fVRWgW5UZmMbyYPyOp0en2fPg3CozRDKBZ
+    J5JiGVrkSvhV+HpMwtFsjRPXZ2xmRrit5Z/MbrS2Dpyy1tV2At9DyUX7o4O3UYtd
+    SCXhN60dgW68f9zTSY3kzRIlotxWsvkSz/DonCnljqQw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162954AbeBOPYp (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:24:45 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51948 "EHLO
+        id S1163120AbeBOSd0 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:33:26 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51964 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161886AbeBOPYm (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:24:42 -0500
+        with ESMTP id S1162960AbeBOPYp (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:24:45 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Cvek <petr.cvek@tul.cz>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.4 048/108] usb: gadget: uvc: Missing files for configfs interface
-Date: Thu, 15 Feb 2018 16:16:45 +0100
-Message-Id: <20180215151229.152971288@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.4 089/108] media: ts2020: avoid integer overflows on 32 bit machines
+Date: Thu, 15 Feb 2018 16:17:26 +0100
+Message-Id: <20180215151234.788606411@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -77,58 +77,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Petr Cvek <petr.cvek@tul.cz>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-commit c8cd751060b149997b9de53a494fb1490ded72c5 upstream.
+commit 81742be14b6a90c9fd0ff6eb4218bdf696ad8e46 upstream.
 
-Commit 76e0da34c7ce ("usb-gadget/uvc: use per-attribute show and store
-methods") caused a stringification of an undefined macro argument "aname",
-so three UVC parameters (streaming_interval, streaming_maxpacket and
-streaming_maxburst) were named "aname".
+Before this patch, when compiled for arm32, the signal strength
+were reported as:
 
-Add the definition of "aname" to the main macro and name the filenames as
-originaly intended.
+Lock   (0x1f) Signal= 4294908.66dBm C/N= 12.79dB
 
-Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Because of a 32 bit integer overflow. After it, it is properly
+reported as:
+
+	Lock   (0x1f) Signal= -58.64dBm C/N= 12.79dB
+
+Fixes: 0f91c9d6bab9 ("[media] TS2020: Calculate tuner gain correctly")
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/gadget/function/uvc_configfs.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/media/dvb-frontends/ts2020.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/gadget/function/uvc_configfs.c
-+++ b/drivers/usb/gadget/function/uvc_configfs.c
-@@ -2202,7 +2202,7 @@ static struct configfs_item_operations u
- 	.release		= uvc_attr_release,
- };
+--- a/drivers/media/dvb-frontends/ts2020.c
++++ b/drivers/media/dvb-frontends/ts2020.c
+@@ -369,7 +369,7 @@ static int ts2020_read_tuner_gain(struct
+ 		gain2 = clamp_t(long, gain2, 0, 13);
+ 		v_agc = clamp_t(long, v_agc, 400, 1100);
  
--#define UVCG_OPTS_ATTR(cname, conv, str2u, uxx, vnoc, limit)		\
-+#define UVCG_OPTS_ATTR(cname, aname, conv, str2u, uxx, vnoc, limit)	\
- static ssize_t f_uvc_opts_##cname##_show(				\
- 	struct config_item *item, char *page)				\
- {									\
-@@ -2245,16 +2245,16 @@ end:									\
- 	return ret;							\
- }									\
- 									\
--UVC_ATTR(f_uvc_opts_, cname, aname)
-+UVC_ATTR(f_uvc_opts_, cname, cname)
+-		*_gain = -(gain1 * 2330 +
++		*_gain = -((__s64)gain1 * 2330 +
+ 			   gain2 * 3500 +
+ 			   v_agc * 24 / 10 * 10 +
+ 			   10000);
+@@ -387,7 +387,7 @@ static int ts2020_read_tuner_gain(struct
+ 		gain3 = clamp_t(long, gain3, 0, 6);
+ 		v_agc = clamp_t(long, v_agc, 600, 1600);
  
- #define identity_conv(x) (x)
- 
--UVCG_OPTS_ATTR(streaming_interval, identity_conv, kstrtou8, u8, identity_conv,
--	       16);
--UVCG_OPTS_ATTR(streaming_maxpacket, le16_to_cpu, kstrtou16, u16, le16_to_cpu,
--	       3072);
--UVCG_OPTS_ATTR(streaming_maxburst, identity_conv, kstrtou8, u8, identity_conv,
--	       15);
-+UVCG_OPTS_ATTR(streaming_interval, streaming_interval, identity_conv,
-+	       kstrtou8, u8, identity_conv, 16);
-+UVCG_OPTS_ATTR(streaming_maxpacket, streaming_maxpacket, le16_to_cpu,
-+	       kstrtou16, u16, le16_to_cpu, 3072);
-+UVCG_OPTS_ATTR(streaming_maxburst, streaming_maxburst, identity_conv,
-+	       kstrtou8, u8, identity_conv, 15);
- 
- #undef identity_conv
- 
+-		*_gain = -(gain1 * 2650 +
++		*_gain = -((__s64)gain1 * 2650 +
+ 			   gain2 * 3380 +
+ 			   gain3 * 2850 +
+ 			   v_agc * 176 / 100 * 10 -
