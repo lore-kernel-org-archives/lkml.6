@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224fz3nxWBaXASaOXUi0Z2JvZInH8Fv9RUJVGbxpK1dZJKqMS/PNCkKBnOgBWWmZkoZtDc7s
-ARC-Seal: i=1; a=rsa-sha256; t=1518709048; cv=none;
+X-Google-Smtp-Source: AH8x225XTZ0a7hMAfsV9YVAJlIivozrUUuwEwAtqa330e7q1bz/CcK8mdJukKCkdJmsg3Bguf8DT
+ARC-Seal: i=1; a=rsa-sha256; t=1518709045; cv=none;
         d=google.com; s=arc-20160816;
-        b=g1shMhCni2hzg354aYs69HH1RtEfY+1Xel7KnEAs4ZIKtwQyeyszQfpTw6kD1nJF/9
-         rMgZAOC45zqMMaS2eozWTWg8eN0BmGGXeLxtfIv25X6hr3JyUjgUCsXt77xzrPUFGJ6T
-         A1nu3+eZqqga+1VssiMosUE24zlNGyDD/pcXyiR9JFLeJIAUvK7tiqifNnWH9onCYkJg
-         Sk8zLtHCKp71X6wVYhxyDbjF23k8VXN6l+Rq6a25CbD2z7BVKkL3AAUY+X2wm6A8YdwO
-         Ch4IWl0M/hnre5TNSseDrfcJrHFjZfQKEBtQidVOCs2TgcSCaZhAMNbXEXO1GwXCJuvB
-         FUQg==
+        b=Tz5+H8OIXz+g/ioLiO4HFIbYeWyRdSeCGB5pujLHHHHHxgFF8QF/pqctEUOOw33I4l
+         6UNNVvRQxRs8NHoqQwvQFfgr+BQkLZeB+c+PBS4eNLTzsQdo3zldO/MKzyyvKnxvAXvk
+         x0Ymt1fuMk0xDcuTrI+k3onAjEBnH6V6B26EVzADVTrnqF4nyp2TpcIEy3g4mDPEI9bU
+         HzW51f+n3YOXsIO3t2jmdu0NMEpEVWVMNKBu71haJEW1/NaC+B9bt5vlnh4BoWo3YWxJ
+         iwJ51j2UT8ImwHrMXZoWuxT1tKvh1RefBldUP9DVO9sftATTpMilFLA3DZAdob4zxZ32
+         RgxA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=pWDFPLGUSLlt/McvZuUvQdye7MW3Y6oXxQQnm5NSi4I=;
-        b=oFsxYk5b6J2zmbdYOD9wwnuFR3+PVHZtB2cb9f9QS9eF+/9qIp7UNWAxEnYP3OAYqs
-         3A/hXKrpQ/X8Ri2seezEK/APS5sxLWJGl8VQ4krrRphLl0AtfgDbiQ03qUMbTGPwnNvM
-         sMf6pKaOi19gyOACLCxnGVqAOt2cHKLsTqCb5AS5Bu/+jwKOLO5lSfuqnoJLstvXXmXc
-         QommV9NfmSFmTlUhTKElI3eTlwburs+QRlc1n5G1aCtcEL/H6rkIBP13DC1UssqzbF2Z
-         Tynb+cyYBHBu7xRv2IAMg2bDL3JMuLFmYoUeH+6OcZ02V62/7c3ha17CIP/JjvW46BNQ
-         7SNg==
+        bh=6qjiO/5qc8Pq/nsgFOjQMYrtLuGz2kui0tL0c2Py/Nw=;
+        b=EC0sL6O7gpePmjnY/LZ8TBFxqvA8+bcTwz6Hg6qIjwhRGbZSbTRIVpvQjjptgTvDhj
+         q9MxInc4TJ3GWfmsePWKe9BaiEiX8357rzDS9ToirF8dmF8gRv/f4TkGiWL8ioFbh3Lt
+         lRi4Bv8luOE5MZbQL3ub+G3cXNaMw5PYl4VzCgyetc8p3L9A6PuSNUZua6bQIrV+YvWR
+         FSQe0e0xI156FJNUM/9D0cbWUplQLZKQGLE9MMaE6Ya0f7HY26r3j0HGddM4V/oFFM8n
+         eJVUzBPb28id5AGMgGmJl4c7WEDFIaVYQFEtHf18uJETmEikUvW/2WIwY9StJ93ktn3Q
+         NBEg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>,
+	Dmitry Mastykin <mastichi@gmail.com>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.14 173/195] pinctrl: sx150x: Unregister the pinctrl on release
-Date: Thu, 15 Feb 2018 16:17:44 +0100
-Message-Id: <20180215151714.706772491@linuxfoundation.org>
+Subject: [PATCH 4.14 172/195] pinctrl: mcp23s08: fix irq setup order
+Date: Thu, 15 Feb 2018 16:17:43 +0100
+Message-Id: <20180215151714.663835340@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481858598468107?=
-X-GMAIL-MSGID: =?utf-8?q?1592481858598468107?=
+X-GMAIL-THRID: =?utf-8?q?1592481856301862398?=
+X-GMAIL-MSGID: =?utf-8?q?1592481856301862398?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,30 +48,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Peter Rosin <peda@axentia.se>
+From: Dmitry Mastykin <mastichi@gmail.com>
 
-commit 0657cb50b5a75abd92956028727dc255d690a4a6 upstream.
+commit 02e389e63e3523828fc3832f27e0341885f60f6f upstream.
 
-There is no matching call to pinctrl_unregister, so switch to the
-managed devm_pinctrl_register to clean up properly when done.
+When using mcp23s08 module with gpio-keys, often (50% of boots)
+it fails to get irq numbers with message:
+"gpio-keys keys: Unable to get irq number for GPIO 0, error -6".
+Seems that irqs must be setup before devm_gpiochip_add_data().
 
-Fixes: 9e80f9064e73 ("pinctrl: Add SX150X GPIO Extender Pinctrl Driver")
-Signed-off-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Dmitry Mastykin <mastichi@gmail.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/pinctrl-sx150x.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-mcp23s08.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/pinctrl/pinctrl-sx150x.c
-+++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -1225,7 +1225,7 @@ static int sx150x_probe(struct i2c_clien
- 	pctl->pinctrl_desc.npins = pctl->data->npins;
- 	pctl->pinctrl_desc.owner = THIS_MODULE;
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -891,16 +891,16 @@ static int mcp23s08_probe_one(struct mcp
+ 			goto fail;
+ 	}
  
--	pctl->pctldev = pinctrl_register(&pctl->pinctrl_desc, dev, pctl);
-+	pctl->pctldev = devm_pinctrl_register(dev, &pctl->pinctrl_desc, pctl);
- 	if (IS_ERR(pctl->pctldev)) {
- 		dev_err(dev, "Failed to register pinctrl device\n");
- 		return PTR_ERR(pctl->pctldev);
+-	ret = devm_gpiochip_add_data(dev, &mcp->chip, mcp);
+-	if (ret < 0)
+-		goto fail;
+-
+ 	if (mcp->irq && mcp->irq_controller) {
+ 		ret = mcp23s08_irq_setup(mcp);
+ 		if (ret)
+ 			goto fail;
+ 	}
+ 
++	ret = devm_gpiochip_add_data(dev, &mcp->chip, mcp);
++	if (ret < 0)
++		goto fail;
++
+ 	mcp->pinctrl_desc.name = "mcp23xxx-pinctrl";
+ 	mcp->pinctrl_desc.pctlops = &mcp_pinctrl_ops;
+ 	mcp->pinctrl_desc.confops = &mcp_pinconf_ops;
