@@ -1,68 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032810AbeBON3C (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 08:29:02 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:54414 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032301AbeBON3A (ORCPT
+        id S1032828AbeBONgO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 08:36:14 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:49943 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1031445AbeBONgK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 08:29:00 -0500
-X-Google-Smtp-Source: AH8x227ZPdDfjk4IXudKxtDsF7DlD9Lc39PMnWqzjTXBjokrudpYs8ctTVZysuUYfMG5ty3YQb4vzsbI7C6oawVZVyg=
+        Thu, 15 Feb 2018 08:36:10 -0500
+From: Ludovic Barre <ludovic.Barre@st.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>
+CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH 0/5] mmc: add stm32 sdmmc controller
+Date: Thu, 15 Feb 2018 14:34:52 +0100
+Message-ID: <1518701697-14242-1-git-send-email-ludovic.Barre@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180215105510.5md37yoqij2f663k@suse.de>
-References: <20180214163343.21234-1-pasha.tatashin@oracle.com>
- <20180214163343.21234-2-pasha.tatashin@oracle.com> <20180215105510.5md37yoqij2f663k@suse.de>
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-Date: Thu, 15 Feb 2018 08:20:18 -0500
-X-Gmail-Original-Message-ID: <CAOAebxs3Lch0ZQ6h8jSVqHMpLxfUHv-y4rkJztPziFgm2VfH0g@mail.gmail.com>
-Message-ID: <CAOAebxs3Lch0ZQ6h8jSVqHMpLxfUHv-y4rkJztPziFgm2VfH0g@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] mm: initialize pages on demand during boot
-To: Mel Gorman <mgorman@suse.de>
-Cc: Steve Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>, m.mizuma@jp.fujitsu.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        baiyaowei@cmss.chinamobile.com, Wei Yang <richard.weiyang@gmail.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Miles Chen <miles.chen@mediatek.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8805 signatures=668671
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=8 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=898
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802150168
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.237]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-15_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you Mel!
+From: Ludovic Barre <ludovic.barre@st.com>
 
-Pavel
+This patch serie adds support of stm32 SDMMC controller.
+stm32h7 is the first SoC to use stm32 SDMMC controller
+(previous SoC had pl180 controller).
 
-On Thu, Feb 15, 2018 at 5:55 AM, Mel Gorman <mgorman@suse.de> wrote:
-> On Wed, Feb 14, 2018 at 11:33:43AM -0500, Pavel Tatashin wrote:
->> Deferred page initialization allows the boot cpu to initialize a small
->> subset of the system's pages early in boot, with other cpus doing the rest
->> later on.
->>
->
-> Bit late to the game but
->
-> Acked-by: Mel Gorman <mgorman@suse.de>
->
-> --
-> Mel Gorman
-> SUSE Labs
->
-> --
-> To unsubscribe, send a message with 'unsubscribe linux-mm' in
-> the body to majordomo@kvack.org.  For more info on Linux MM,
-> see: http://www.linux-mm.org/ .
-> Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+The SDMMC features include the following:
+-Full compliance with MultiMediaCard System Specification Version 4.51.
+ Card support for three different databus modes:
+ 1-bit (default), 4-bit and 8-bit.
+-Full compliance with SD memory card specifications version 4.1.
+ SDR104 speed limited to maximum allowed I/O speed, SPI mode and
+ UHS-II mode not supported.
+-Full compliance with SDIO card specification version 4.0.
+
+Ludovic Barre (5):
+  dt-bindings: mmc: document the stm32 sdmmc bindings
+  mmc: add stm32 sdmmc controller driver
+  ARM: dts: stm32: add sdmmc support for stm32h743
+  ARM: dts: stm32: add sdmmc1 support for stm32h743i-eval
+  ARM: configs: stm32: add mmc and ext2/3/4 support
+
+ .../devicetree/bindings/mmc/st,stm32-sdmmc.txt     |  35 +
+ arch/arm/boot/dts/stm32h743-pinctrl.dtsi           |  26 +
+ arch/arm/boot/dts/stm32h743.dtsi                   |  26 +
+ arch/arm/boot/dts/stm32h743i-eval.dts              |  11 +
+ arch/arm/configs/stm32_defconfig                   |   4 +-
+ drivers/mmc/host/Kconfig                           |   8 +
+ drivers/mmc/host/Makefile                          |   1 +
+ drivers/mmc/host/stm32-sdmmc.c                     | 710 +++++++++++++++++++++
+ drivers/mmc/host/stm32-sdmmc.h                     | 220 +++++++
+ 9 files changed, 1040 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/st,stm32-sdmmc.txt
+ create mode 100644 drivers/mmc/host/stm32-sdmmc.c
+ create mode 100644 drivers/mmc/host/stm32-sdmmc.h
+
+-- 
+2.7.4
