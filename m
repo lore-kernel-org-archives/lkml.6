@@ -1,150 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032640AbeBOCj7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 21:39:59 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:34787 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032437AbeBOCj5 (ORCPT
+        id S1032642AbeBOCo0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 21:44:26 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:35584 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032483AbeBOCoY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 21:39:57 -0500
-X-Google-Smtp-Source: AH8x224EFX8sTy2uVrVhhxhY9ISAywlgj6Nh4Y28rfVDaRvAHU9OmxugxX8SkidqbwzC9oyAfIRWR1rId3mK3wFVw0s=
+        Wed, 14 Feb 2018 21:44:24 -0500
+X-Google-Smtp-Source: AH8x224oT0LEBVD1d3G1pS5y4tOCW3J1ERFcUlWq15HDcP+MS74P4aBhgxe3TYp83nj4STFnOdI1ag==
+Date: Wed, 14 Feb 2018 18:44:22 -0800
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dylan Reid <dgreid@chromium.org>,
+        huang lin <hl@rock-chips.com>
+Subject: Re: [PATCH] ASoC: dmic: Add optional wakeup delay
+Message-ID: <20180215024422.GA99727@google.com>
+References: <20180214235156.81589-1-mka@chromium.org>
+ <20180215002253.GA12697@rodete-desktop-imager.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180213200959.160157-3-brendanhiggins@google.com>
-References: <20180213200959.160157-1-brendanhiggins@google.com> <20180213200959.160157-3-brendanhiggins@google.com>
-From: Joel Stanley <joel@jms.id.au>
-Date: Thu, 15 Feb 2018 13:09:35 +1030
-X-Google-Sender-Auth: gZeK3yXce1S_nW_qkG7lxqDAi4g
-Message-ID: <CACPK8XeU=6SooAka-eQTp1938CmMTDgA-dOP8Wur=+EzQ6Lpfw@mail.gmail.com>
-Subject: Re: [PATCH v10 2/3] arm: dts: add Nuvoton NPCM750 device tree
-To: Brendan Higgins <brendanhiggins@google.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, julien.thierry@arm.com,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Arnd Bergmann <arnd@arndb.de>, devicetree <devicetree@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180215002253.GA12697@rodete-desktop-imager.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 6:39 AM, Brendan Higgins
-<brendanhiggins@google.com> wrote:
+El Wed, Feb 14, 2018 at 04:22:54PM -0800 Brian Norris ha dit:
 
-> +       ahb {
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +               compatible = "simple-bus";
-> +               interrupt-parent = <&gic>;
-> +               ranges;
-> +
-> +               clk: clock-controller@f0801000 {
-> +                       compatible = "nuvoton,npcm750-clk";
-> +                       #clock-cells = <1>;
-> +                       reg = <0xf0801000 0x1000>;
-> +                       status = "okay";
+> Hi Matthias,
+> 
+> On Wed, Feb 14, 2018 at 03:51:56PM -0800, Matthias Kaehlcke wrote:
+> > On some systems a delay is needed after switching on the clocks, to allow
+> > the DMIC output to stabilize and avoid a popping noise at the beginning
+> > of the recording. Add the optional device tree property 'wakeup-delay-ms'
+> > and apply the specified delay in the new dmic_daiops_prepare().
+> > 
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> >  .../devicetree/bindings/sound/dmic.txt        |  2 +
+> >  sound/soc/codecs/dmic.c                       | 54 ++++++++++++++-----
+> >  2 files changed, 42 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/sound/dmic.txt b/Documentation/devicetree/bindings/sound/dmic.txt
+> > index 54c8ef6498a8..de741c6609d0 100644
+> > --- a/Documentation/devicetree/bindings/sound/dmic.txt
+> > +++ b/Documentation/devicetree/bindings/sound/dmic.txt
+> > @@ -7,10 +7,12 @@ Required properties:
+> >  
+> >  Optional properties:
+> >  	- dmicen-gpios: GPIO specifier for dmic to control start and stop
+> > +	- wakeup-delay-ms: Delay (in ms) after enabling the DMIC
+> >  
+> >  Example node:
+> >  
+> >  	dmic_codec: dmic@0 {
+> >  		compatible = "dmic-codec";
+> >  		dmicen-gpios = <&gpio4 3 GPIO_ACTIVE_HIGH>;
+> > +		wakeup-delay-ms <50>;
+> >  	};
+> > diff --git a/sound/soc/codecs/dmic.c b/sound/soc/codecs/dmic.c
+> > index b88a1ee66f80..11f6abf11074 100644
+> > --- a/sound/soc/codecs/dmic.c
+> > +++ b/sound/soc/codecs/dmic.c
+> > @@ -19,6 +19,7 @@
+> >   *
+> >   */
+> >  
+> > +#include <linux/delay.h>
+> >  #include <linux/gpio.h>
+> >  #include <linux/gpio/consumer.h>
+> >  #include <linux/platform_device.h>
+> > @@ -29,24 +30,38 @@
+> >  #include <sound/soc.h>
+> >  #include <sound/soc-dapm.h>
+> >  
+> > +struct dmic {
+> > +	struct gpio_desc *gpio_en;
+> > +	int wakeup_delay;
+> > +};
+> > +
+> > +static int dmic_daiops_prepare(struct snd_pcm_substream *substream,
+> > +				struct snd_soc_dai *dai)
+> > +{
+> > +	struct dmic *dmic = snd_soc_dai_get_drvdata(dai);
+> > +
+> > +	if (dmic->gpio_en)
+> > +		gpiod_set_value(dmic->gpio_en, 1);
+> > +
+> > +	if (dmic->wakeup_delay)
+> > +		msleep(dmic->wakeup_delay);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int dmic_daiops_trigger(struct snd_pcm_substream *substream,
+> >  		int cmd, struct snd_soc_dai *dai)
+> >  {
+> > -	struct gpio_desc *dmic_en = snd_soc_dai_get_drvdata(dai);
+> > +	struct dmic *dmic = snd_soc_dai_get_drvdata(dai);
+> >  
+> > -	if (!dmic_en)
+> > +	if (!dmic->gpio_en)
+> >  		return 0;
+> >  
+> >  	switch (cmd) {
+> > -	case SNDRV_PCM_TRIGGER_START:
+> > -	case SNDRV_PCM_TRIGGER_RESUME:
+> > -	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+> > -		gpiod_set_value(dmic_en, 1);
+> > -		break;
+> >  	case SNDRV_PCM_TRIGGER_STOP:
+> >  	case SNDRV_PCM_TRIGGER_SUSPEND:
+> >  	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+> > -		gpiod_set_value(dmic_en, 0);
+> > +		gpiod_set_value(dmic->gpio_en, 0);
+> >  		break;
+> 
+> N00b question: are you sure this is legit? Is it possible to get
+> START/STOP/START (or similar) with no prepare() in between?
 
-Nit: The ok is redundant.
+To be honest I can't answer this question with authority and have to
+defer it to the experts.
 
-> +               };
-> +
-> +               apb {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <1>;
-> +                       compatible = "simple-bus";
-> +                       interrupt-parent = <&gic>;
-> +                       ranges = <0x0 0xf0000000 0x00300000>;
-> +
-> +                       timer0: timer@8000 {
-> +                               compatible = "nuvoton,npcm750-timer";
-> +                               interrupts = <0 32 4>;
-> +                               reg = <0x8000 0x1000>;
-> +                               clocks = <&clk NPCM7XX_CLK_TIMER>;
-> +                       };
-> +
-> +                       serial0: serial@1000 {
-> +                               compatible = "nuvoton,npcm750-uart";
-> +                               reg = <0x1000 0x1000>;
-> +                               clocks = <&clk NPCM7XX_CLK_UART_CORE>;
+> >  	}
+> >  
+> > @@ -54,6 +69,7 @@ static int dmic_daiops_trigger(struct snd_pcm_substream *substream,
+> >  }
+> >  
+> >  static const struct snd_soc_dai_ops dmic_dai_ops = {
+> > +	.prepare	= dmic_daiops_prepare,
+> >  	.trigger	= dmic_daiops_trigger,
+> >  };
+> >  
+> > @@ -73,14 +89,24 @@ static struct snd_soc_dai_driver dmic_dai = {
+> >  
+> >  static int dmic_codec_probe(struct snd_soc_codec *codec)
+> >  {
+> > -	struct gpio_desc *dmic_en;
+> > +	struct dmic *dmic;
+> > +	int err;
+> > +
+> > +	dmic = devm_kzalloc(codec->dev, sizeof(*dmic), GFP_KERNEL);
+> > +	if (!dmic)
+> > +		return -ENOMEM;
+> > +
+> > +	dmic->gpio_en = devm_gpiod_get_optional(codec->dev,
+> > +						"dmicen", GPIOD_OUT_LOW);
+> > +	if (IS_ERR(dmic->gpio_en))
+> > +		return PTR_ERR(dmic->gpio_en);
+> >  
+> > -	dmic_en = devm_gpiod_get_optional(codec->dev,
+> > -					"dmicen", GPIOD_OUT_LOW);
+> > -	if (IS_ERR(dmic_en))
+> > -		return PTR_ERR(dmic_en);
+> > +	err = device_property_read_u32(codec->dev, "wakeup-delay-ms",
+> > +				       &dmic->wakeup_delay);
+> > +	if (err && (err != -EINVAL))
+> 
+> You really want to be strict about error codes? What about -ENXIO ("no
+> suitable firmware interface is present")? Seems like we should ignore
+> that one too.
+> 
+> In practice, it looks like many drivers that are reading optional
+> properties like this just tend to ignore the return code entirely.
 
-I really would like to see this merged, but lets get the last of these
-things sorted out first.
+Ok, let's follow the common practice for optional properties
+then. I'll update it in v2.
 
-The clocks.h that I have in the openbmc tree uses NPCM7XX_CLK_UART. Is
-what you have here line up with the latest version of the clk driver
-that Tomer posted?
+Thanks
 
- https://patchwork.kernel.org/patch/10200029/
+Matthias
 
-His driver calls for a header called dt-bindings/clock/nuvoton,npcm7xx-clock.h.
-
-An alternative would be to defer this by using the numbers instead of
-#defines here, and omitting the header until the clock patch is
-reviewed and merged. I had a similar chicken-egg problem with the
-aspeed clk driver.
-
-> +                               interrupts = <0 2 4>;
-
-The irq header provides defines for the first and third cell. These
-could instead be:
-
-interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-
-> +                               status = "disabled";
-
-Add reg-shift = <2> to all of the uart nodes. This is required now
-that we're using the generic 8250 driver.
-
-> +                       };
-> +
-
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/nuvoton,npcm7xx-clks.h
-> @@ -0,0 +1,35 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (c) 2018 Nuvoton Technology corporation.
-> +// Copyright 2018 Google, Inc.
-> +
-> +#ifndef _DT_BINDINGS_CLK_NPCM7XX_H
-> +#define _DT_BINDINGS_CLK_NPCM7XX_H
-> +
-> +#define NPCM7XX_CLK_PLL0       0
-> +#define NPCM7XX_CLK_PLL1       1
-> +#define NPCM7XX_CLK_PLL2       2
-> +#define NPCM7XX_CLK_GFX                3
-> +#define NPCM7XX_CLK_APB1       4
-> +#define NPCM7XX_CLK_APB2       5
-> +#define NPCM7XX_CLK_APB3       6
-> +#define NPCM7XX_CLK_APB4       7
-> +#define NPCM7XX_CLK_APB5       8
-> +#define NPCM7XX_CLK_MC         9
-> +#define NPCM7XX_CLK_CPU                10
-> +#define NPCM7XX_CLK_SPI0       11
-> +#define NPCM7XX_CLK_SPI3       12
-> +#define NPCM7XX_CLK_SPIX       13
-> +#define NPCM7XX_CLK_UART_CORE  14
-> +#define NPCM7XX_CLK_TIMER      15
-> +#define NPCM7XX_CLK_HOST_UART  16
-> +#define NPCM7XX_CLK_MMC                17
-> +#define NPCM7XX_CLK_SDHC       18
-> +#define NPCM7XX_CLK_ADC                19
-> +#define NPCM7XX_CLK_GFX_MEM    20
-> +#define NPCM7XX_CLK_USB_BRIDGE 21
-> +#define NPCM7XX_CLK_AXI                22
-> +#define NPCM7XX_CLK_AHB                23
-> +#define NPCM7XX_CLK_EMC                24
-> +#define NPCM7XX_CLK_GMAC       25
-> +
-> +#endif
-> --
-> 2.16.0.rc1.238.g530d649a79-goog
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> > +		return err;
+> >  
+> > -	snd_soc_codec_set_drvdata(codec, dmic_en);
+> > +	snd_soc_codec_set_drvdata(codec, dmic);
+> >  
+> >  	return 0;
+> >  }
