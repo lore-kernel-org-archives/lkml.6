@@ -1,125 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1945952AbeBORAy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 12:00:54 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:54676 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423522AbeBORAu (ORCPT
+        id S1426896AbeBORDa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 12:03:30 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:50558 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423381AbeBOPit (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 12:00:50 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180215170047euoutp01988adcd2eb04a00246a7eb065ebc83ad~TjmFCSo1j2824128241euoutp01H
-X-AuditID: cbfec7f5-b45ff700000028a9-c2-5a85bcbeebc5
-Subject: Re: [PATCH v3 0/5] crypto: ahash.c: Require export/import in ahash
-To: Marek Vasut <marex@denx.de>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sonic Zhang <sonic.zhang@analog.com>,
-        Fabio Estevam <fabio.estevam@freescale.com>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Jan Engelhardt <jengelh@inai.de>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Joakim Bech <joakim.bech@linaro.org>, linux-kernel@vger.kernel.org
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Message-id: <32069edc-e816-6ab0-f057-b1dab5d30db4@partner.samsung.com>
-Date: Thu, 15 Feb 2018 18:00:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.6.0
-MIME-version: 1.0
-In-reply-to: <6b29116a-c39c-9813-34a0-d5c05bd30c9d@denx.de>
-Content-type: text/plain; charset="utf-8"
-Content-language: en-US
-Content-transfer-encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMKsWRmVeSWpSXmKPExsWy7djPc7r79rRGGdyZqmFxrXchs8XGGetZ
-        Leacb2GxmNWla9H9Ssai6eVbJovPq56yWEz5s5zJ4v69n0wWl3fNYbN409bIaPF03RJmiztb
-        m9ksjkzZx+rA59F66S+bx6urjh5bVt5k8pg36wSLx7/D/UweO2fdZffYdkDVY+Oz5ywed67t
-        YfPo27KK0ePzJrkA7igum5TUnMyy1CJ9uwSujOX7P7AXnBWouLBatIHxH08XIyeHhICJxLUX
-        H1i6GLk4hARWMEpcmtLMDuF8ZpSYu/0II0zVtv1LGCESyxglDvR9YYZwnjFK7Pj4EyjDwSEs
-        4C3x648ASIOIgKfEw/0drCA1zAKPmCUmHVwLNolNwFzi0fYzTCA2r4CbROuFO2wgNouAqsS3
-        fd/ZQWxRgQiJhVOfMkLUCEr8mHyPBcTmFLCW2PXiOlgNs4CmxIsvk1ggbHGJ5tabULa8xOY1
-        b8GOkxBYxi5x7uwxdogXXCRWrZ7KAmELS7w6vgUqLiPR2XGQCaKhn1Gif95MVghnBqPE441n
-        WSGqrCUOH7/ICrGCT2LStunMIC9LCPBKdLQJQZR4SPw+8hYaXo4S2/a+YoUE0XdGiZZ5j1gm
-        MMrNQvLRLCRfzELyxSwkXyxgZFnFKJ5aWpybnlpsnJdarlecmFtcmpeul5yfu4kRmNRO/zv+
-        dQfjvj9JhxgFOBiVeHg39LZGCbEmlhVX5h5ilOBgVhLh/RgFFOJNSaysSi3Kjy8qzUktPsQo
-        zcGiJM4bp1EXJSSQnliSmp2aWpBaBJNl4uCUamD0cPzOrsqvW3aCbcop4xlKRm+3Tp0WfUhg
-        17f3PKf+/oqtePPoa9fp2p6azKOvJ3OslH1Wfcl1r6P2pbnesgLOpZVq+eUa8adPZu6UPsi+
-        P4uR29jxPq+t8TcuD6uU5hCRMps3OZ5Hd137ftkphHViXo0N1/ZKy0qVtcqKP3cvuOW/2lgp
-        XVWJpTgj0VCLuag4EQAq7AzBZgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsVy+t/xq7r79rRGGTT847S41ruQ2WLjjPWs
-        FnPOt7BYzOrSteh+JWPR9PItk8XnVU9ZLKb8Wc5kcf/eTyaLy7vmsFm8aWtktHi6bgmzxZ2t
-        zWwWR6bsY3Xg82i99JfN49VVR48tK28yecybdYLF49/hfiaPnbPusntsO6DqsfHZcxaPO9f2
-        sHn0bVnF6PF5k1wAdxSXTUpqTmZZapG+XQJXxvL9H9gLzgpUXFgt2sD4j6eLkZNDQsBEYtv+
-        JYxdjFwcQgJLGCUal7WzQTjPGCWaOq4ydzFycAgLeEv8+iMA0iAi4CnxcH8HK0gNs8ATZonD
-        e7exQDT8BGrY8IkNpIpNwFzi0fYzTCA2r4CbROuFO2BxFgFViW/7vrOD2KICERKdK+ezQNQI
-        SvyYfA/M5hSwltj14jo7yGJmAXWJKVNyQcLMAuISza03WSBseYnNa94yT2AUmIWkexZCxywk
-        HbOQdCxgZFnFKJJaWpybnltsqFecmFtcmpeul5yfu4kRGHPbjv3cvIPx0sbgQ4wCHIxKPLwb
-        elujhFgTy4orcw8xSnAwK4nwfowCCvGmJFZWpRblxxeV5qQWH2KU5mBREuc9b1AZJSSQnliS
-        mp2aWpBaBJNl4uCUamBkaGv8sMN3h9Gdj/feOqxa9vdslWenivukp9yHzkxPcw5fI5wuK/BS
-        JMC/1/H9X3WJgss7OvIX1T1gbP+VkxPCybS0+8ghy0lMW3ZMV/g++3jLBcf9qZ/7RE6/zC8q
-        vrs4cTOn7dVtF/c8Kp9/Sv5k5WWvA3rRSskJ3Tc7p6W9PRDhPM024aSGEktxRqKhFnNRcSIA
-        8Q1ncrUCAAA=
-X-CMS-MailID: 20180215170046eucas1p1584287a2d0eaf241673a2c57b26a1ec6
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180118183438eucas1p2e2e7be8625ae0950c519e27424f9301a
-X-RootMTR: 20180118183438eucas1p2e2e7be8625ae0950c519e27424f9301a
-References: <CGME20180118183438eucas1p2e2e7be8625ae0950c519e27424f9301a@eucas1p2.samsung.com>
-        <20180118183404.12583-1-k.konieczny@partner.samsung.com>
-        <20180215154132.GA7352@gondor.apana.org.au>
-        <6b29116a-c39c-9813-34a0-d5c05bd30c9d@denx.de>
+        Thu, 15 Feb 2018 10:38:49 -0500
+Date: Thu, 15 Feb 2018 16:38:44 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 05/15] ARM64: dts: Add R-Car Salvator-x M3-N support
+Message-ID: <20180215153843.b33svmvuhofstw4e@verge.net.au>
+References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1518515162-23663-6-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdW0SYdwNNWfzNttY8xdfnB-oLR4MvhWpO7Pks-WY76=3g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW0SYdwNNWfzNttY8xdfnB-oLR4MvhWpO7Pks-WY76=3g@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 15.02.2018 17:27, Marek Vasut wrote:
-> On 02/15/2018 04:41 PM, Herbert Xu wrote:
->> On Thu, Jan 18, 2018 at 07:33:59PM +0100, Kamil Konieczny wrote:
->>> First four patches add empty hash export and import functions to each driver,
->>> with the same behaviour as in crypto framework. The last one drops them from
->>> crypto framework. Last one for ahash.c depends on all previous.
->>>
->>> Changes in v3:
->>> added change for bfin_crc.c
->>> make this a patchset, instead of unreleated patches
->>> make commit message more descriptive
->>>
->>> Kamil Konieczny (5):
->>>   crypto: mxs-dcp: Add empty hash export and import
->>>   crypto: n2_core: Add empty hash export and import
->>>   crypto: ux500/hash: Add empty export and import
->>>   crypto: bfin_crc: Add empty hash export and import
->>>   crypto: ahash.c: Require export/import in ahash
->>>
->>>  crypto/ahash.c                        | 18 ++----------------
->>>  drivers/crypto/bfin_crc.c             | 12 ++++++++++++
->>>  drivers/crypto/mxs-dcp.c              | 14 ++++++++++++++
->>>  drivers/crypto/n2_core.c              | 12 ++++++++++++
->>>  drivers/crypto/ux500/hash/hash_core.c | 18 ++++++++++++++++++
->>>  5 files changed, 58 insertions(+), 16 deletions(-)
->>
->> All applied.  Thanks.
+On Wed, Feb 14, 2018 at 02:58:34PM +0100, Geert Uytterhoeven wrote:
+> Hi Jacopo,
 > 
-> This makes no sense, cfr my comment on 5/5
+> On Tue, Feb 13, 2018 at 10:45 AM, Jacopo Mondi
+> <jacopo+renesas@jmondi.org> wrote:
+> > Add initial support for R-Car M3-N Salvator-x and r8a77965 SoC in
+> > device tree with cpg-mssr, reset and clock nodes.
+> >
+> > Add place-holder device nodes for all nodes referred by
+> > "salvator-common.dtsi"
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > 
-> Seems like if the driver doesn't implement those, the core can easily
-> detect that and perform the necessary action. Moving the checks out of
-> core seems like the wrong thing to do, rather you should enhance the
-> checks in core if they're insufficient in my opinion.
+> Thanks for your patch!
+> 
+> Looks mostly fine to me.
+> 
+> P.S. scripts/dtc/dtx_diff arch/arm64/boot/dts/renesas/r8a7796{,5}-salvator-x.dtb
+>      is your friend.
+> 
+> >  arch/arm64/Kconfig.platforms                       |   6 +
+> >  arch/arm64/boot/dts/renesas/Makefile               |   1 +
+> >  .../arm64/boot/dts/renesas/r8a77965-salvator-x.dts |  30 ++
+> >  arch/arm64/boot/dts/renesas/r8a77965.dtsi          | 495 +++++++++++++++++++++
+> >  4 files changed, 532 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+> >  create mode 100644 arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> 
+> The maintainer will probably ask you to split this in three parts:
+>   - ARCH_R8A77965
+>   - r8a77965.dtsi
+>   - r8a77965-salvator-x.dts
 
-The bug can only be in driver which will not implement those two functions,
-but we already had all drivers with those due to patches 1..4
-All other drivers do have them.
+Yes, I would like to ask for that.
 
-Additionally, with crypto we want minimize code and run as fast as possible.
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+> > @@ -0,0 +1,30 @@
+> > +// SPDX-License-Identifier: GPL-2.
+> > +/*
+> > + * Device Tree Source for the Salvator-X board
+> 
+> with R-Car M3-N
+> 
+> > + *
+> > + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > + */
+> > +
+> > +/dts-v1/;
+> > +#include "r8a77965.dtsi"
+> > +#include "salvator-x.dtsi"
+> > +
+> > +/ {
+> > +       model = "Renesas Salvator-X board based on r8a77965";
+> > +       compatible = "renesas,salvator-x", "renesas,r8a77965";
+> > +
+> > +       aliases {
+> > +               serial0 = &scif2;
+> > +       };
+> > +
+> > +       chosen {
+> > +               bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+> > +               stdout-path = "serial0:115200n8";
+> > +       };
+> 
+> Both aliases and chosen are already defined in salvator-common.dtsi,
+> included via salvator-x.dtsi.
+> 
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> > @@ -0,0 +1,495 @@
+> > +// SPDX-License-Identifier: GPL-2.
+> > +/*
+> > + * Device Tree Source for the r8a77965 SoC
+> > + *
+> > + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > + *
+> > + * Based on r8a7796.dtsi
+> > + * Copyright (C) 2016 Renesas Electronics Corp.
+> > + */
+> > +
+> > +#include <dt-bindings/clock/r8a77965-cpg-mssr.h>
+> > +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +#include <dt-bindings/power/r8a77965-sysc.h>
+> > +
+> > +#define CPG_AUDIO_CLK_I                R8A77965_CLK_S0D4
+> > +
+> > +/ {
+> 
+> > +       soc {
+> > +               compatible = "simple-bus";
+> > +               interrupt-parent = <&gic>;
+> > +               #address-cells = <2>;
+> > +               #size-cells = <2>;
+> > +               ranges;
+> 
+> > +               timer {
+> > +                       compatible = "arm,armv8-timer";
+> > +                       interrupts = <GIC_PPI 13
+> > +                                       (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+> > +                                    <GIC_PPI 14
+> > +                                       (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+> > +                                    <GIC_PPI 11
+> > +                                       (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+> > +                                    <GIC_PPI 10
+> > +                                       (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
+> > +               };
+> 
+> Please move the timer out of the soc node, as it does't have a unit address
+> and a reg property.
+> 
+> > +               pmu_a57 {
+> > +                       compatible = "arm,cortex-a57-pmu";
+> > +                       interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                    <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+> > +                       interrupt-affinity = <&a57_0>,
+> > +                                            <&a57_1>;
+> > +               };
+> 
+> Please move the pmu out of the soc node, as it does't have a unit address
+> and a reg property.
 
-Moving checks out of core will impose on driver author need for implement
-those functions, or declare them empty, but in case of empty ones 
-crypto will not work properly with such driver.
-
--- 
-Best regards,
-Kamil Konieczny
-Samsung R&D Institute Poland
+Please refer to one of the upstream Gen3 dtsi files for examples of the
+above.
