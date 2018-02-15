@@ -1,70 +1,153 @@
 Return-Path: <pasha.tatashin@oracle.com>
-X-Google-Smtp-Source: AH8x225y+mBaMUAEN05yVHICupWeAPvBuZ/AyNx8K3P83vlhK1jmvEYgQb3Em5Y4V7qxZISpydKj
-ARC-Seal: i=1; a=rsa-sha256; t=1518786753; cv=none;
+X-Google-Smtp-Source: AH8x226fRib4urdCsNMBi06FDIZDaupW54+I535M3suRmHbJBJocJQD1L8JObB4pYIZMFQJAy8sW
+ARC-Seal: i=1; a=rsa-sha256; t=1518714049; cv=none;
         d=google.com; s=arc-20160816;
-        b=eptv6w6YlIr+LE8whBtF9eTePyCd6n1ZTbHYxJCPlT56Y2XiF9VfwcCg0uaeaChEKy
-         hSIZXM/k5AOjOP54sBeGUU+C9xaNTNWakdH5Qsk4dMMPyi9HCXtxQU9OrBdTheOr4dWf
-         Uctxkt/nrelmtf1+eK6aGFZoIh51tIJah1PJF/r9LD79DE+IAvSaIxvbqGj86LunnHY7
-         H5ExuxHbmWf2uDE4u5fvUcFofLZDhfer3uMjlxYIi2UD+UkCFzLEu2fA2U2yZRR5pEan
-         SmJltwC+VB2y8HdsSDKNwj7wy1tO/toh+MHReVlH9bcD73r1hIG+9voCY8c6B64ekJBO
-         L9Cw==
+        b=ieMOj0slYM2gHLcLQ7NDSMs3aofxhkRTBL5cDwKeZtxpwn9J583plzZO6R5GGVZThf
+         e3FgsFOtD67t6LHS6krrikSc1fWFOmSE5Ursa1zeDwlB+PnA27xQMpH0pOKujUsDLC/N
+         HJoPE5rJemR3Q3Gn2Y+jMl/HqJ5hi0Su+uOpXnP+RpfVXH2ehzFGoWyshiBOCQxsfNSj
+         TvYzIeXODfARS0xk328LIey/JyJpIYp7hbFiL+wQ203Rb3mMfmpKZYs335A9ES+PspFT
+         NgEtlJ22zQXqL1dF+T3hXBk8eSWjw2qkidb/cVgKv+MhpFpw54+UFcThgDZ2USQpe62O
+         5Rgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=4+6hGbUzYFVfF7vz39eWL0A/lMRgu3waeO2WPXN5Agw=;
-        b=lUvqBC2rC8i2oohUkd+wl7B3ynBZBjBjS91lAtB079Tb70xTrkx2yTFzrYCmnaXXXC
-         ega6XGXeDpc5dw7hU5mtWzDJQzb/8eAK1aGQwNKM5rK7y8WwdeDUnwCGF5qnLaowMMaV
-         wCOUBA6qQvshgbx7BaPTiEAgAP8KqGCnlYowuIwt8Hmw6sQOU2p099EUorAqgiAaT4u+
-         omBzUbfFL3KIT5DlMVohd9AMxC61RPkhNMver43Wbl+A/B1xDvVu/8ATYItWsFl5R3LA
-         LEmvhvPHpHm4HRFL459OztAtdifIa8AEs3hUsX9JnUWgM1encFhYYEngctP//WgGkxlv
-         bbCg==
+        h=references:in-reply-to:message-id:date:subject:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=pURwZi1uEwvE1x8RDR5wM4of+423yULw1TtJn6LFJ3w=;
+        b=jZEBfAK95PKIQ4Bbk6edJ7VIORUGdbdPkquWOlwt6PNw8Tw4B+JlUvB4RyutsDu/YS
+         Abq36sKJnTeyqhltgygnZ8QvpUArm+Irsy4ebS240gByVMEXMUsVcHLrWnR9sge2bmoH
+         XmbIYAKt3nxYVn4VAwO7U9O98pgjh/eiTGKc4qDrYmDMSCurqmFw4ZGlX2qaiLESGm/N
+         LH7PAL9RuZet2SpaECIPi6GD4DSZTgyA5z0Ht4/8y1J7zL5SIe+gViysDfeR++M7DUSv
+         GFDEjJqCPjCZ7b4hDYvtj95LNAzKYpGePhwJfTCOrIhdUv7/nlyDxR/cgFkwNuc18a1A
+         5yxQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=kOUunR6H;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=QzJQWlGK;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=kOUunR6H;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=QzJQWlGK;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-MIME-Version: 1.0
-In-Reply-To: <20180216092959.gkm6d4j2zplk724r@gmail.com>
-References: <20180215165920.8570-1-pasha.tatashin@oracle.com>
- <20180215165920.8570-7-pasha.tatashin@oracle.com> <20180216092959.gkm6d4j2zplk724r@gmail.com>
 From: Pavel Tatashin <pasha.tatashin@oracle.com>
-Date: Fri, 16 Feb 2018 08:12:31 -0500
-X-Gmail-Original-Message-ID: <CAOAebxuFivBx+6kexgV0JRtdxi+j9qy-hReMPsYk8NmzaKUNkQ@mail.gmail.com>
-Message-ID: <CAOAebxuFivBx+6kexgV0JRtdxi+j9qy-hReMPsYk8NmzaKUNkQ@mail.gmail.com>
-Subject: Re: [v4 6/6] mm/memory_hotplug: optimize memory hotplug
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Steve Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Bharata B Rao <bharata@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, dan.j.williams@intel.com,
-        kirill.shutemov@linux.intel.com, bhe@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        akpm@linux-foundation.org, mgorman@techsingularity.net,
+        mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, vbabka@suse.cz, bharata@linux.vnet.ibm.com,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com,
+        bhe@redhat.com
+Subject: [v4 5/6] mm/memory_hotplug: don't read nid from struct page during hotplug
+Date: Thu, 15 Feb 2018 11:59:19 -0500
+Message-Id: <20180215165920.8570-6-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180215165920.8570-1-pasha.tatashin@oracle.com>
+References: <20180215165920.8570-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8806 signatures=668672
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=308
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=902
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802160159
+ engine=8.0.1-1711220000 definitions=main-1802150205
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592315446931456044?=
-X-GMAIL-MSGID: =?utf-8?q?1592563339035999057?=
+X-GMAIL-THRID: =?utf-8?q?1592487103505854531?=
+X-GMAIL-MSGID: =?utf-8?q?1592487103505854531?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
->
->   Reviewed-by: Ingo Molnar <mingo@kernel.org>
+During memory hotplugging the probe routine will leave struct pages
+uninitialized, the same as it is currently done during boot. Therefore, we
+do not want to access the inside of struct pages before
+__init_single_page() is called during onlining.
 
-Thank you for your review! I will address all of your comments in the
-next patch iteration.
+Because during hotplug we know that pages in one memory block belong to
+the same numa node, we can skip the checking. We should keep checking for
+the boot case.
 
-Pavel
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+---
+ drivers/base/memory.c |  2 +-
+ drivers/base/node.c   | 22 +++++++++++++++-------
+ include/linux/node.h  |  4 ++--
+ 3 files changed, 18 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+index deb3f029b451..a14fb0cd424a 100644
+--- a/drivers/base/memory.c
++++ b/drivers/base/memory.c
+@@ -731,7 +731,7 @@ int register_new_memory(int nid, struct mem_section *section)
+ 	}
+ 
+ 	if (mem->section_count == sections_per_block)
+-		ret = register_mem_sect_under_node(mem, nid);
++		ret = register_mem_sect_under_node(mem, nid, false);
+ out:
+ 	mutex_unlock(&mem_sysfs_mutex);
+ 	return ret;
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index ee090ab9171c..d7cfc8d8a5c5 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -397,7 +397,8 @@ static int __ref get_nid_for_pfn(unsigned long pfn)
+ }
+ 
+ /* register memory section under specified node if it spans that node */
+-int register_mem_sect_under_node(struct memory_block *mem_blk, int nid)
++int register_mem_sect_under_node(struct memory_block *mem_blk, int nid,
++				 bool check_nid)
+ {
+ 	int ret;
+ 	unsigned long pfn, sect_start_pfn, sect_end_pfn;
+@@ -423,11 +424,18 @@ int register_mem_sect_under_node(struct memory_block *mem_blk, int nid)
+ 			continue;
+ 		}
+ 
+-		page_nid = get_nid_for_pfn(pfn);
+-		if (page_nid < 0)
+-			continue;
+-		if (page_nid != nid)
+-			continue;
++		/*
++		 * We need to check if page belongs to nid only for the boot
++		 * case, during hotplug we know that all pages in the memory
++		 * block belong to the same node.
++		 */
++		if (check_nid) {
++			page_nid = get_nid_for_pfn(pfn);
++			if (page_nid < 0)
++				continue;
++			if (page_nid != nid)
++				continue;
++		}
+ 		ret = sysfs_create_link_nowarn(&node_devices[nid]->dev.kobj,
+ 					&mem_blk->dev.kobj,
+ 					kobject_name(&mem_blk->dev.kobj));
+@@ -502,7 +510,7 @@ int link_mem_sections(int nid, unsigned long start_pfn, unsigned long nr_pages)
+ 
+ 		mem_blk = find_memory_block_hinted(mem_sect, mem_blk);
+ 
+-		ret = register_mem_sect_under_node(mem_blk, nid);
++		ret = register_mem_sect_under_node(mem_blk, nid, true);
+ 		if (!err)
+ 			err = ret;
+ 
+diff --git a/include/linux/node.h b/include/linux/node.h
+index 4ece0fee0ffc..41f171861dcc 100644
+--- a/include/linux/node.h
++++ b/include/linux/node.h
+@@ -67,7 +67,7 @@ extern void unregister_one_node(int nid);
+ extern int register_cpu_under_node(unsigned int cpu, unsigned int nid);
+ extern int unregister_cpu_under_node(unsigned int cpu, unsigned int nid);
+ extern int register_mem_sect_under_node(struct memory_block *mem_blk,
+-						int nid);
++						int nid, bool check_nid);
+ extern int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
+ 					   unsigned long phys_index);
+ 
+@@ -97,7 +97,7 @@ static inline int unregister_cpu_under_node(unsigned int cpu, unsigned int nid)
+ 	return 0;
+ }
+ static inline int register_mem_sect_under_node(struct memory_block *mem_blk,
+-							int nid)
++							int nid, bool check_nid)
+ {
+ 	return 0;
+ }
+-- 
+2.16.1
