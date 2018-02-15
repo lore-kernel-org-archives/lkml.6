@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032255AbeBOAZm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 19:25:42 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:53167 "EHLO
+        id S1032273AbeBOA0G (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 19:26:06 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57789 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032127AbeBOAZk (ORCPT
+        with ESMTP id S1032127AbeBOA0E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 19:25:40 -0500
-Date: Wed, 14 Feb 2018 16:25:11 -0800
+        Wed, 14 Feb 2018 19:26:04 -0500
+Date: Wed, 14 Feb 2018 16:25:40 -0800
 From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
-Message-ID: <tip-4105c69703cdeba76f384b901712c9397b04e9c2@git.kernel.org>
-Cc: tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
-        linux@dominikbrodowski.net, torvalds@linux-foundation.org,
-        dsafonov@virtuozzo.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, luto@kernel.org
-Reply-To: mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        torvalds@linux-foundation.org, linux@dominikbrodowski.net,
-        linux-kernel@vger.kernel.org, dsafonov@virtuozzo.com, luto@kernel.org,
-        peterz@infradead.org
-In-Reply-To: <20180211111013.16888-5-linux@dominikbrodowski.net>
-References: <20180211111013.16888-5-linux@dominikbrodowski.net>
+Message-ID: <tip-9279ddf23ce78ff2676e8e8e19fec0f022c26d04@git.kernel.org>
+Cc: dsafonov@virtuozzo.com, linux-kernel@vger.kernel.org,
+        linux@dominikbrodowski.net, tglx@linutronix.de, hpa@zytor.com,
+        mingo@kernel.org, peterz@infradead.org, torvalds@linux-foundation.org,
+        luto@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, dsafonov@virtuozzo.com,
+        linux@dominikbrodowski.net, hpa@zytor.com, tglx@linutronix.de,
+        peterz@infradead.org, torvalds@linux-foundation.org, mingo@kernel.org,
+        luto@kernel.org
+In-Reply-To: <20180211111013.16888-6-linux@dominikbrodowski.net>
+References: <20180211111013.16888-6-linux@dominikbrodowski.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] selftests/x86: Do not rely on "int $0x80" in
- single_step_syscall.c
-Git-Commit-ID: 4105c69703cdeba76f384b901712c9397b04e9c2
+Subject: [tip:x86/pti] selftests/x86: Disable tests requiring 32-bit support
+ on pure 64-bit systems
+Git-Commit-ID: 9279ddf23ce78ff2676e8e8e19fec0f022c26d04
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,20 +36,22 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4105c69703cdeba76f384b901712c9397b04e9c2
-Gitweb:     https://git.kernel.org/tip/4105c69703cdeba76f384b901712c9397b04e9c2
+Commit-ID:  9279ddf23ce78ff2676e8e8e19fec0f022c26d04
+Gitweb:     https://git.kernel.org/tip/9279ddf23ce78ff2676e8e8e19fec0f022c26d04
 Author:     Dominik Brodowski <linux@dominikbrodowski.net>
-AuthorDate: Tue, 13 Feb 2018 09:13:21 +0100
+AuthorDate: Tue, 13 Feb 2018 09:15:19 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Thu, 15 Feb 2018 01:15:48 +0100
 
-selftests/x86: Do not rely on "int $0x80" in single_step_syscall.c
+selftests/x86: Disable tests requiring 32-bit support on pure 64-bit systems
 
-On 64-bit builds, we should not rely on "int $0x80" working (it only does if
-CONFIG_IA32_EMULATION=y is enabled). To keep the "Set TF and check int80"
-test running on 64-bit installs with CONFIG_IA32_EMULATION=y enabled, build
-this test only if we can also build 32-bit binaries (which should be a
-good approximation for that).
+The ldt_gdt and ptrace_syscall selftests, even in their 64-bit variant, use
+hard-coded 32-bit syscall numbers and call "int $0x80".
+
+This will fail on 64-bit systems with CONFIG_IA32_EMULATION=y disabled.
+
+Therefore, do not build these tests if we cannot build 32-bit binaries
+(which should be a good approximation for CONFIG_IA32_EMULATION=y being enabled).
 
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -59,57 +61,54 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-kselftest@vger.kernel.org
 Cc: shuah@kernel.org
-Link: http://lkml.kernel.org/r/20180211111013.16888-5-linux@dominikbrodowski.net
+Link: http://lkml.kernel.org/r/20180211111013.16888-6-linux@dominikbrodowski.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/testing/selftests/x86/Makefile              | 2 ++
- tools/testing/selftests/x86/single_step_syscall.c | 5 ++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ tools/testing/selftests/x86/Makefile | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
 diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-index 91fbfa8..73b8ef6 100644
+index 73b8ef6..aa6e2d7 100644
 --- a/tools/testing/selftests/x86/Makefile
 +++ b/tools/testing/selftests/x86/Makefile
-@@ -30,11 +30,13 @@ CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
+@@ -5,16 +5,26 @@ include ../lib.mk
+ 
+ .PHONY: all all_32 all_64 warn_32bit_failure clean
+ 
+-TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt ptrace_syscall test_mremap_vdso \
+-			check_initial_reg_state sigreturn ldt_gdt iopl mpx-mini-test ioperm \
++UNAME_M := $(shell uname -m)
++CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC) trivial_32bit_program.c -m32)
++CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
++
++TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt test_mremap_vdso \
++			check_initial_reg_state sigreturn iopl mpx-mini-test ioperm \
+ 			protection_keys test_vdso test_vsyscall
+ TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault test_syscall_vdso unwind_vdso \
+ 			test_FCMOV test_FCOMI test_FISTTP \
+ 			vdso_restorer
+ TARGETS_C_64BIT_ONLY := fsgsbase sysret_rip
++# Some selftests require 32bit support enabled also on 64bit systems
++TARGETS_C_32BIT_NEEDED := ldt_gdt ptrace_syscall
+ 
+-TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY)
++TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY) $(TARGETS_C_32BIT_NEEDED)
+ TARGETS_C_64BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_64BIT_ONLY)
++ifeq ($(CAN_BUILD_I386)$(CAN_BUILD_X86_64),11)
++TARGETS_C_64BIT_ALL += $(TARGETS_C_32BIT_NEEDED)
++endif
++
+ BINARIES_32 := $(TARGETS_C_32BIT_ALL:%=%_32)
+ BINARIES_64 := $(TARGETS_C_64BIT_ALL:%=%_64)
+ 
+@@ -23,10 +33,6 @@ BINARIES_64 := $(patsubst %,$(OUTPUT)/%,$(BINARIES_64))
+ 
+ CFLAGS := -O2 -g -std=gnu99 -pthread -Wall -no-pie
+ 
+-UNAME_M := $(shell uname -m)
+-CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC) trivial_32bit_program.c -m32)
+-CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
+-
  ifeq ($(CAN_BUILD_I386),1)
  all: all_32
  TEST_PROGS += $(BINARIES_32)
-+EXTRA_CFLAGS += -DCAN_BUILD_32
- endif
- 
- ifeq ($(CAN_BUILD_X86_64),1)
- all: all_64
- TEST_PROGS += $(BINARIES_64)
-+EXTRA_CFLAGS += -DCAN_BUILD_64
- endif
- 
- all_32: $(BINARIES_32)
-diff --git a/tools/testing/selftests/x86/single_step_syscall.c b/tools/testing/selftests/x86/single_step_syscall.c
-index a48da95..ddfdd63 100644
---- a/tools/testing/selftests/x86/single_step_syscall.c
-+++ b/tools/testing/selftests/x86/single_step_syscall.c
-@@ -119,7 +119,9 @@ static void check_result(void)
- 
- int main()
- {
-+#ifdef CAN_BUILD_32
- 	int tmp;
-+#endif
- 
- 	sethandler(SIGTRAP, sigtrap, 0);
- 
-@@ -139,12 +141,13 @@ int main()
- 		      : : "c" (post_nop) : "r11");
- 	check_result();
- #endif
--
-+#ifdef CAN_BUILD_32
- 	printf("[RUN]\tSet TF and check int80\n");
- 	set_eflags(get_eflags() | X86_EFLAGS_TF);
- 	asm volatile ("int $0x80" : "=a" (tmp) : "a" (SYS_getpid)
- 			: INT80_CLOBBERS);
- 	check_result();
-+#endif
- 
- 	/*
- 	 * This test is particularly interesting if fast syscalls use
