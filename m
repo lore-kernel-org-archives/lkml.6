@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2178418-1518719474-2-11797735256240426250
+X-Cyrus-Session-Id: sloti22d1t05-2178418-1518719458-2-75477530165576606
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518719473; b=md8/dFgdGKo295W3K6n655YrdkqBmPVNZRR4cXeI1jFshuP
-    MJPCV1niZL4UzDQ7IM4L6puXnHwJUhEqx/x++j8/zNtnRDq60lsVi7/PwVGX7eGq
-    fGXLZS0VtYFWPTmIAtS54NRT4xM6DhmeddK8KJHYt4x8mtmXZYk/QdJgL2mkUEjG
-    qNQXyKTj5vLx4dHxIYWwLBBgONj6sb+WcFowTCIyA24xv/Hgzs+e+V6eBW9DFTmj
-    H9Kxzec8xxZnRGul5GJdnboeWkqmifBLWyOKguqlXOteJEa1hV9I9WueXDEEVZhY
-    gvq7mSvlVKQWczUbTSmv3ZVjNRdlqfDX+1+uFzg==
+    t=1518719458; b=U7uav2hHaYMCtq/IOmFPQIcCdi6Mwj5FoWhmbpUZ9rKLtwg
+    FPzQX+mra+dFVECtMpeMJKERMWob75sgZlrbUGALslQtxyAx+MoksURswGE1sSNU
+    glYvyE50fQwReAEGKZpK5G1trqen/75JJUD7QLphIfkcapP2FRQyZB1dwYQf2RhY
+    H6Ri8SWb4GobuK+cKIYEVjUl2HDfuuFX9Jk525tsf2ZbEPN0kyZ6A6KjO0AJbNPv
+    tzzD5G/Toux1vE55FT9p10biZPYt6ocHxkmz3GJcCtO/7Ctg2wBPbbeClNML2U0l
+    3bQupKvc23RbuB2dCPbl5dvUXMNtTPJWWvSXqwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518719473; bh=BhHvgbBpUzBEN6gJL5JMJ/ZJ2s
-    kbvwrLEGIqlHPd+Pw=; b=VEDny8bOdfTuA+pGb/rohv9BxQTRNKv5FwzT90/Lb2
-    /YaPHaDNQxgi7obKjYhYkXQw1Orwb8vsx4KRMHJm/rW5Clh0yLCL1Qx1a/vgXeGV
-    pYUqBFxM7fYaejnP60c3TUiAVLzBl+MTlQIgrbfLEOLY6QrDf7HdEUD8y2XDJdCZ
-    vjbGn5A+nSAp4CrCra+XVUvWOz9wcJaGAfJVYwNuwvKpu/rTbgjuMoDkxCFOWcqB
-    P7AwAvwSNihEJTCTAm/zRwKfR485rKdZmR6RBGyolbiuHfxyTqQtMvaNzEWU+ZEf
-    HHV+PnCFXfOnySpp5II5deLQwTJHcTxBz7Iks9mDO+BA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518719458; bh=S8zTDCY+MwesjenmKex3UdJbg9
+    k+9LLuUvMMI2PVxZE=; b=DIg7X8kZBAajr+NO+4VBOIhWhcQQ6Qh3/SRmUWu5Vd
+    y1bjdNDpbN7jLsV9GAfgrkx/HJ4+aTxHPmFHHpw7Nb3NxqhOfZpPeHJKYGDiptnO
+    NdRjAO9ZgcyKoFPo6syyPkz+XTR+C9XsR5HdtaKDYf6YsKhILfFfj4v1m7/7BEWX
+    m7orGXWNs31A9vrCl9TXnI8uanxHR55YIJf3tzkE/c6op7K14BTBgPtI011gDpE0
+    sh2wpVTQyEkXb+NKW3nJ+eYcU6bka9rIv+ZIv5UXSRlDAYrq2Dh5cetdjyY4pEN3
+    QaJVWt3NEE8gVKovt2qHSo6jMLD+skGLVUlk/aMBh8rA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,19 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163175AbeBOSaz (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 13:30:55 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52106 "EHLO
+        id S1163078AbeBOPZH (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:25:07 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52088 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162990AbeBOPZH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:25:07 -0500
+        with ESMTP id S1162134AbeBOPZE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:25:04 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wang Qize <wang_qize@venustech.com.cn>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.4 105/108] ACPI: sbshc: remove raw pointer from printk() message
-Date: Thu, 15 Feb 2018 16:17:42 +0100
-Message-Id: <20180215151236.910149177@linuxfoundation.org>
+        stable@vger.kernel.org, Keith Busch <keith.busch@intel.com>
+Subject: [PATCH 4.4 104/108] nvme: Fix managing degraded controllers
+Date: Thu, 15 Feb 2018 16:17:41 +0100
+Message-Id: <20180215151236.792034374@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -77,33 +76,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Keith Busch <keith.busch@intel.com>
 
-commit 43cdd1b716b26f6af16da4e145b6578f98798bf6 upstream.
+commit 5bae7f73d378a986 upstream
 
-There's no need to be printing a raw kernel pointer to the kernel log at
-every boot.  So just remove it, and change the whole message to use the
-correct dev_info() call at the same time.
+Upstream is a near rewrite of the async nvme probe that ultimately didn't
+even cleanly merge in 4.5. This patch is a much smaller change targeted
+to the regression introduced in 4.4.
 
-Reported-by: Wang Qize <wang_qize@venustech.com.cn>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+If a controller is in a degraded mode that needs admin assistence to
+recover, we need to leave the controller running. We just want to disable
+namespace access without shuting the controller down.
+
+Fixes: 3cf519b5a8d4("nvme: merge nvme_dev_start, nvme_dev_resume and nvme_async_probe")
+
+Signed-off-by: Keith Busch <keith.busch@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/sbshc.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/nvme/host/pci.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
---- a/drivers/acpi/sbshc.c
-+++ b/drivers/acpi/sbshc.c
-@@ -275,8 +275,8 @@ static int acpi_smbus_hc_add(struct acpi
- 	device->driver_data = hc;
- 
- 	acpi_ec_add_query_handler(hc->ec, hc->query_bit, NULL, smbus_alarm, hc);
--	printk(KERN_INFO PREFIX "SBS HC: EC = 0x%p, offset = 0x%0x, query_bit = 0x%0x\n",
--		hc->ec, hc->offset, hc->query_bit);
-+	dev_info(&device->dev, "SBS HC: offset = 0x%0x, query_bit = 0x%0x\n",
-+		 hc->offset, hc->query_bit);
- 
- 	return 0;
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2976,10 +2976,16 @@ static void nvme_dev_shutdown(struct nvm
+ 	mutex_unlock(&dev->shutdown_lock);
  }
+ 
+-static void nvme_dev_remove(struct nvme_dev *dev)
++static void nvme_remove_namespaces(struct nvme_dev *dev)
+ {
+ 	struct nvme_ns *ns, *next;
+ 
++	list_for_each_entry_safe(ns, next, &dev->namespaces, list)
++		nvme_ns_remove(ns);
++}
++
++static void nvme_dev_remove(struct nvme_dev *dev)
++{
+ 	if (nvme_io_incapable(dev)) {
+ 		/*
+ 		 * If the device is not capable of IO (surprise hot-removal,
+@@ -2989,8 +2995,7 @@ static void nvme_dev_remove(struct nvme_
+ 		 */
+ 		nvme_dev_shutdown(dev);
+ 	}
+-	list_for_each_entry_safe(ns, next, &dev->namespaces, list)
+-		nvme_ns_remove(ns);
++	nvme_remove_namespaces(dev);
+ }
+ 
+ static int nvme_setup_prp_pools(struct nvme_dev *dev)
+@@ -3174,7 +3179,7 @@ static void nvme_probe_work(struct work_
+ 	 */
+ 	if (dev->online_queues < 2) {
+ 		dev_warn(dev->dev, "IO queues not created\n");
+-		nvme_dev_remove(dev);
++		nvme_remove_namespaces(dev);
+ 	} else {
+ 		nvme_unfreeze_queues(dev);
+ 		nvme_dev_add(dev);
