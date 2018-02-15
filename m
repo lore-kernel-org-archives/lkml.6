@@ -1,68 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426073AbeBOQil (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 11:38:41 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:51443 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423969AbeBOQig (ORCPT
+        id S1426173AbeBOQjT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 11:39:19 -0500
+Received: from resqmta-ch2-07v.sys.comcast.net ([69.252.207.39]:46668 "EHLO
+        resqmta-ch2-07v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1423532AbeBOQjP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:38:36 -0500
-Date: Thu, 15 Feb 2018 17:38:32 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kbingham@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/4] arm64: dts: renesas: r8a77995: add FCPVD nodes
-Message-ID: <20180215163832.abzsl4kcui55kgii@verge.net.au>
-References: <1518474330-8713-1-git-send-email-kbingham@kernel.org>
- <1518474330-8713-3-git-send-email-kbingham@kernel.org>
- <1541765.WkmPmS7X3L@avalon>
- <20180215161404.pywzt7m3ccd7gygu@verge.net.au>
- <0d235657-3b2e-7fbe-f7ba-e33756b76532@ideasonboard.com>
+        Thu, 15 Feb 2018 11:39:15 -0500
+Date: Thu, 15 Feb 2018 10:39:13 -0600 (CST)
+From: Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To: Dennis Zhou <dennisszhou@gmail.com>
+cc: Tejun Heo <tj@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] percpu: match chunk allocator declarations with
+ definitions
+In-Reply-To: <3865d86559d8499f9bbb12f578bf9e6aa8f8882e.1518668149.git.dennisszhou@gmail.com>
+Message-ID: <alpine.DEB.2.20.1802151038510.2970@nuc-kabylake>
+References: <cover.1518668149.git.dennisszhou@gmail.com> <3865d86559d8499f9bbb12f578bf9e6aa8f8882e.1518668149.git.dennisszhou@gmail.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d235657-3b2e-7fbe-f7ba-e33756b76532@ideasonboard.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+X-CMAE-Envelope: MS4wfN87+XIWdx7HFyxt+5frj27BOX5u1yIIP0sAYZDZ92UiFWFyf8KtQhW914ZxbQc0lEiPGhBP0bVzAW+fIIz+FKABd2Ik1nuhSFfBvY8bbq24NsKQi9lm
+ 0c/lMqS2InuX/extLhIKHbdTs5zEvYdZKSloXPi9L9bkWZtVwEUMZwZyYNxvLsNb6oVh8IG+9zwLfsFT06j2Xukdjn/MrQr960YAfz3gYbdaKuL2zpgM51+E
+ l+bIVagYbTc8b7AG4lo3mq1fA8c2k3kDs6nvKTGRNsWBwGcOLjCgYvwe6F5Yy6Od
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 04:20:42PM +0000, Kieran Bingham wrote:
-> Hi Simon,
-> 
-> On 15/02/18 16:14, Simon Horman wrote:
-> > On Tue, Feb 13, 2018 at 02:32:22PM +0200, Laurent Pinchart wrote:
-> >> Hi Kieran,
-> >>
-> >> Thank you for the patch.
-> >>
-> >> On Tuesday, 13 February 2018 00:25:27 EET Kieran Bingham wrote:
-> >>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> >>>
-> >>> The FCPVD handles the interface between the VSPD and memory.
-> >>>
-> >>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> >>
-> >> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>
-> >> I would however squash this with patch 1/4 from the same series.
-> > 
-> > Thanks, I've taken the liberty of doing so when applying this patch.
-> > The result is as follows:
-> 
-> That's probably fine, but there was a follow up series which already handles this.
+On Thu, 15 Feb 2018, Dennis Zhou wrote:
 
-Thanks, I've dropped this and will use the follow-up series instead.
+> At some point the function declaration parameters got out of sync with
+> the function definitions in percpu-vm.c and percpu-km.c. This patch
+> makes them match again.
+
+Acked-by: Christoph Lameter <cl@linux.com>
