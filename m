@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756057AbeBOVdV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 16:33:21 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46214 "EHLO mx1.redhat.com"
+        id S1163274AbeBOVdc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 16:33:32 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40068 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752533AbeBOVdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 16:33:19 -0500
+        id S1162678AbeBOVda (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 16:33:30 -0500
 From: =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: slp@redhat.com, bhe@redhat.com, mst@redhat.com, somlo@cmu.edu,
         xiaolong.ye@intel.com,
         =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>
-Subject: [PATCH v15 00/11] fw_cfg: add DMA operations & etc/vmcoreinfo support
-Date: Thu, 15 Feb 2018 22:33:01 +0100
-Message-Id: <20180215213312.29234-1-marcandre.lureau@redhat.com>
+Subject: [PATCH v15 03/11] fw_cfg: fix sparse warnings in fw_cfg_sel_endianness()
+Date: Thu, 15 Feb 2018 22:33:04 +0100
+Message-Id: <20180215213312.29234-4-marcandre.lureau@redhat.com>
+In-Reply-To: <20180215213312.29234-1-marcandre.lureau@redhat.com>
+References: <20180215213312.29234-1-marcandre.lureau@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -21,64 +23,55 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Dispatch to the appropriate iowrite() instead of casting restricted
+type to u16.
 
-This series adds DMA operations support to the qemu fw_cfg kernel
-module and populates "etc/vmcoreinfo" with vmcoreinfo location
-details (entry added since qemu 2.11 with -device vmcoreinfo).
+- if fw_cfg_is_mmio:
+  before: iowrite16(cpu_to_be16(key))
+  after: iowrite16be(key)
+- if !fw_cfg_is_mmio:
+  before: iowrite16(cpu_to_le16(key))
+  after: iowrite16(key)
+  which is equivalent on little-endian systems, where fw_cfg IO is supported.
 
-v15:
-- fix fw_cfg.h uapi header #include
-- use BSD license for fw_cfg.h uapi header
-- move the uapi defines/structs for DMA & vmcoreinfo in the
-  corresponding patch
-- use cpu_relax() instead of usleep_range(50, 100);
-- replace do { } while(true) by for (;;)
-- fix the rmb() call location
-- add a preliminary patch to handle error from fw_cfg_write_blob()
-- rewrite fw_cfg_sel_endianness() to wrap iowrite() calls
+Fixes:
+$ make C=1 CF=-D__CHECK_ENDIAN__ drivers/firmware/qemu_fw_cfg.o
 
-v14:
-- add "fw_cfg: add a public uapi header"
-- fix sparse warnings & don't introduce new warnings
-- add memory barriers to force IO ordering
-- split fw_cfg_read_blob() in fw_cfg_read_blob_io() and
-  fw_cfg_read_blob_dma()
-- add error handling to fw_cfg_read_blob() callers
-- minor stylistic changes
+drivers/firmware/qemu_fw_cfg.c:55:33: warning: restricted __be16 degrades to integer
+drivers/firmware/qemu_fw_cfg.c:55:52: warning: restricted __le16 degrades to integer
 
-v13:
-- reorder patch series, introduce DMA write before DMA read
-- do some measurements of DMA read speed-ups
+Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+---
+ drivers/firmware/qemu_fw_cfg.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-v12:
-- fix virt_to_phys(NULL) panic with CONFIG_DEBUG_VIRTUAL=y
-- do not use DMA read, except for kmalloc() memory we allocated
-  ourself (only fw_cfg_register_dir_entries() so far)
-
-v11:
-- add #include <linux/crash_core.h> in last patch,
-  fixing kbuild .config test
-
-Marc-André Lureau (11):
-  crash: export paddr_vmcoreinfo_note()
-  fw_cfg: add a public uapi header
-  fw_cfg: fix sparse warnings in fw_cfg_sel_endianness()
-  fw_cfg: fix sparse warnings with fw_cfg_file
-  fw_cfg: fix sparse warning reading FW_CFG_ID
-  fw_cfg: fix sparse warnings around FW_CFG_FILE_DIR read
-  fw_cfg: remove inline from fw_cfg_read_blob()
-  fw_cfg: handle fw_cfg_read_blob() error
-  fw_cfg: add DMA register
-  fw_cfg: write vmcoreinfo details
-  RFC: fw_cfg: do DMA read operation
-
- MAINTAINERS                    |   1 +
- drivers/firmware/qemu_fw_cfg.c | 334 +++++++++++++++++++++++++++++++++--------
- include/uapi/linux/fw_cfg.h    |  97 ++++++++++++
- kernel/crash_core.c            |   1 +
- 4 files changed, 369 insertions(+), 64 deletions(-)
- create mode 100644 include/uapi/linux/fw_cfg.h
-
+diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+index 42601a3eaed5..6164731a3c35 100644
+--- a/drivers/firmware/qemu_fw_cfg.c
++++ b/drivers/firmware/qemu_fw_cfg.c
+@@ -50,9 +50,12 @@ static void __iomem *fw_cfg_reg_data;
+ static DEFINE_MUTEX(fw_cfg_dev_lock);
+ 
+ /* pick appropriate endianness for selector key */
+-static inline u16 fw_cfg_sel_endianness(u16 key)
++static void fw_cfg_sel_endianness(u16 key)
+ {
+-	return fw_cfg_is_mmio ? cpu_to_be16(key) : cpu_to_le16(key);
++	if (fw_cfg_is_mmio)
++		iowrite16be(key, fw_cfg_reg_ctrl);
++	else
++		iowrite16(key, fw_cfg_reg_ctrl);
+ }
+ 
+ /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
+@@ -74,7 +77,7 @@ static inline void fw_cfg_read_blob(u16 key,
+ 	}
+ 
+ 	mutex_lock(&fw_cfg_dev_lock);
+-	iowrite16(fw_cfg_sel_endianness(key), fw_cfg_reg_ctrl);
++	fw_cfg_sel_endianness(key);
+ 	while (pos-- > 0)
+ 		ioread8(fw_cfg_reg_data);
+ 	ioread8_rep(fw_cfg_reg_data, buf, count);
 -- 
 2.16.1.73.g5832b7e9f2
