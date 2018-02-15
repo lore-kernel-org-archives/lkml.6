@@ -1,60 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163917AbeBOWQm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 17:16:42 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51782 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752862AbeBOWQi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 17:16:38 -0500
-X-Google-Smtp-Source: AH8x227hxXaBn4FGDK8cER3O4WeiI+NK8mThstP6en2XxgjutEmq1SAhWaXCiiva5Nc+C4kpZMUAhQ==
-Date: Thu, 15 Feb 2018 23:16:33 +0100
-From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: Jiri Kosina <jikos@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH 2/3] HID: steam: add serial number information.
-Message-ID: <20180215221633.GA18755@casa>
-References: <20180213120308.23879-1-rodrigorivascosta@gmail.com>
- <20180213120308.23879-2-rodrigorivascosta@gmail.com>
- <CAO-hwJK5sos9=RDajS_cXBzfePqf6TJs3Z-jk568sumR-zjqdw@mail.gmail.com>
+        id S1164233AbeBOWRY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 17:17:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34062 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1163612AbeBOWRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 17:17:23 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB485217B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Thu, 15 Feb 2018 22:17:18 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Joe Perches <joe@perches.com>
+Cc: linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        linux-mips@linux-mips.org
+Subject: Re: [PATCH] MIPS: Octeon: Fix logging messages with spurious periods
+ after newlines
+Message-ID: <20180215221717.GO3986@saruman>
+References: <ac33924a3e39541330e8f008f3ad0fbda74845d6.1512543855.git.joe@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="XVTPT6MZt3zd/C+/"
 Content-Disposition: inline
-In-Reply-To: <CAO-hwJK5sos9=RDajS_cXBzfePqf6TJs3Z-jk568sumR-zjqdw@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <ac33924a3e39541330e8f008f3ad0fbda74845d6.1512543855.git.joe@perches.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 03:51:31PM +0100, Benjamin Tissoires wrote:
-> On Tue, Feb 13, 2018 at 1:03 PM, Rodrigo Rivas Costa
-> > +#define STEAM_FEATURE_REPORT_SIZE 65
-> > +
-> > +static int steam_send_report(struct steam_device *steam,
-> > +               u8 *cmd, int size)
-> > +{
-> > +       int retry;
-> > +       int ret;
-> > +       u8 *buf = kzalloc(STEAM_FEATURE_REPORT_SIZE, GFP_KERNEL);
-> 
-> Please use hid_alloc_report_buf() as sometimes we need to allocate a
-> slightly bigger report.
 
-I have an issue with this one. The problem is that using
-hid_report_len() on the feature report returns 64. But I must call
-hid_hw_raw_request() with 65 or it will fail with EOVERFLOW.
+--XVTPT6MZt3zd/C+/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Currently I'm allocating a buffer of 65 bytes and all is well.
-If I change to hid_alloc_report_buf(), the current implementation
-allocates (64+7), so I'm still safe. But I'm worried that the extra
-bytes are not guaranteed and a future implementation could return
-exactly 64 bytes, leaving me 1 byte short.
+On Tue, Dec 05, 2017 at 11:04:58PM -0800, Joe Perches wrote:
+> Using a period after a newline causes bad output.
+>=20
+> Signed-off-by: Joe Perches <joe@perches.com>
 
-About why an array of 65 is required for a report of size 64, I think it
-is related to hid_report->id == 0 (so hid_report_enum->numbered == 0).
+Applied for 4.17,
 
-So what would be the proper solution?
+Thanks
+James
 
-Thanks.
-Rodrigo.
+--XVTPT6MZt3zd/C+/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqGBu0ACgkQbAtpk944
+dnqCSA/+LvMOmchhHoEefzYbReb/HtaViYODVwXjk14uMRnw7dujDivXPvMoE3B0
+u4ZoTYYlua73EWgorwI+4AoFbd9+/WL49L7RBOMwA3ZS2OXor79nSG4RPl3q17h3
+n5wx6BxR77oaeRrTP5sg9XIr+/olAl+fk3CBt2WUnTW0Nvcl55T5O99uXHyuUpor
+bH6Y+AF90BAzN0z+C5T1eTjmlhvwmhYSNRDIZ9t2O1JzPmuU5GbvzTbdpzp9xm8S
+ZEzV1576LYPYOUqGtQ45GuYKUX1kETxa3N9VGSzjWkXNXFYCGFDoYAPq9/PSl0Fv
+x+EJOYtQB9jRupTprlBTds3GmXP56HcDMgR5O5E9XuJfyphrfEwWT7JKYYAd7bZC
+OAUkAadaIERRTMLpi7X7wGBTleiFHJ3PM9BhMwyk+65ATJ2Lyb0MZ/CMDMwBqua8
+FLPLMf+vYOY8xgLd2sD88lmDdqpnNyq5+NAF+1sA4b0wI4eM1y9VSMO6g6WhBwiq
+knt0v/KmaPIViW9WqnbNSi2gVA0XCXVwvm8/7bLDwTlWMH6blstzCAfFyQKZCYvf
+3e05PvsGnu4dJx/MFKwg+o9bTHpg5yMGR7cJTg23QLmwkvVl44zMAoU7441417NA
+nITwre7Qr93gKA+9ik9HuGRiWg7TJKeqBL1V+lzJcgjYgmyoDAM=
+=8qR7
+-----END PGP SIGNATURE-----
+
+--XVTPT6MZt3zd/C+/--
