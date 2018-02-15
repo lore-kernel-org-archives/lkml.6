@@ -1,99 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032539AbeBOAsv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 19:48:51 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:34862 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032447AbeBOAsq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 19:48:46 -0500
-X-Google-Smtp-Source: AH8x225Bu4yN2BIKOpDBIrx4r5tR3YCMRdfCi4ozS/xQaihy4+v5y/W/WYt2jnBImhu04M+xGWKJ8QrkBMSTMu8Nt+s=
-MIME-Version: 1.0
-In-Reply-To: <CALCETrXvD7ZwtXnABT3XW7as4ogdSiyBsRUTY3t_LWtm7KiZeA@mail.gmail.com>
-References: <20180214182113.27247-1-linux@dominikbrodowski.net>
- <20180214182113.27247-3-linux@dominikbrodowski.net> <CALCETrXvD7ZwtXnABT3XW7as4ogdSiyBsRUTY3t_LWtm7KiZeA@mail.gmail.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Wed, 14 Feb 2018 19:48:45 -0500
-Message-ID: <CAMzpN2iA6N7hq8zYBAiMq48emWnidDHvnOPg3h5pYGtBOZOm6Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/4] x86/entry/64: move ENTER_IRQ_STACK from interrupt
- macro to helper function
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
-        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        X86 ML <x86@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andi Kleen <ak@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1032550AbeBOAtT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 19:49:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59104 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032403AbeBOAsi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 19:48:38 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8E9D217C0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Luiz Capitulino <lcapitulino@redhat.com>,
+        Christoph Lameter <cl@linux.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Wanpeng Li <kernellwp@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Rik van Riel <riel@redhat.com>
+Subject: [PATCH 5/6] sched/nohz: Remove the 1 Hz tick code
+Date: Thu, 15 Feb 2018 01:48:13 +0100
+Message-Id: <1518655694-8057-6-git-send-email-frederic@kernel.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518655694-8057-1-git-send-email-frederic@kernel.org>
+References: <1518655694-8057-1-git-send-email-frederic@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 7:17 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> On Wed, Feb 14, 2018 at 6:21 PM, Dominik Brodowski
-> <linux@dominikbrodowski.net> wrote:
->> Moving the switch to IRQ stack from the interrupt macro to the helper
->> function requires some trickery: All ENTER_IRQ_STACK really cares about
->> is where the "original" stack -- meaning the GP registers etc. -- is
->> stored. Therefore, we need to offset the stored RSP value by 8 whenever
->> ENTER_IRQ_STACK is called from within a function. In such cases, and
->> after switching to the IRQ stack, we need to push the "original" return
->> address (i.e. the return address from the call to the interrupt entry
->> function) to the IRQ stack.
->>
->> This trickery allows us to carve another 1k from the text size:
->>
->>    text    data     bss     dec     hex filename
->>   17905       0       0   17905    45f1 entry_64.o-orig
->>   16897       0       0   16897    4201 entry_64.o
->>
->> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
->> ---
->>  arch/x86/entry/entry_64.S | 53 +++++++++++++++++++++++++++++++----------------
->>  1 file changed, 35 insertions(+), 18 deletions(-)
->>
->> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
->> index de8a0da0d347..3046b12a1acb 100644
->> --- a/arch/x86/entry/entry_64.S
->> +++ b/arch/x86/entry/entry_64.S
->> @@ -449,10 +449,18 @@ END(irq_entries_start)
->>   *
->>   * The invariant is that, if irq_count != -1, then the IRQ stack is in use.
->>   */
->> -.macro ENTER_IRQ_STACK regs=1 old_rsp
->> +.macro ENTER_IRQ_STACK regs=1 old_rsp save_ret=0
->>         DEBUG_ENTRY_ASSERT_IRQS_OFF
->>         movq    %rsp, \old_rsp
->>
->> +       .if \save_ret
->> +       /*
->> +        * If save_ret is set, the original stack contains one additional
->> +        * entry -- the return address.
->> +        */
->> +       addq    $8, \old_rsp
->> +       .endif
->> +
->
-> This is a bit alarming in that you now have live data below RSP.  For
-> x86_32, this would be a big no-no due to NMI.  For x86_64, it might
-> still be bad if there are code paths where NMI is switched to non-IST
-> temporarily, which was the case at some point and might still be the
-> case.  (I think it is.)  Remember that the x86_64 *kernel* ABI has no
-> red zone.
->
-> It also means that, if you manage to hit vmalloc_fault() in here when
-> you touch the IRQ stack, you're dead.  IOW you hit:
->
->         movq    \old_rsp, PER_CPU_VAR(irq_stack_union + IRQ_STACK_SIZE - 8)
->
-> which gets #PF and eats your return pointer.  Debugging this will be
-> quite nasty because you'll only hit it on really huge systems after a
-> thread gets migrated, and even then only if you get unlucky on your
-> stack alignment.
->
-> So can you find another way to do this?
+Now that the 1Hz tick is offloaded to workqueues, we can safely remove
+the residual code that used to handle it locally.
 
-It's adding 8 to the temp register, not %rsp.
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: Chris Metcalf <cmetcalf@mellanox.com>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Luiz Capitulino <lcapitulino@redhat.com>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Wanpeng Li <kernellwp@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+---
+ include/linux/sched/nohz.h |  4 ----
+ kernel/sched/core.c        | 29 -----------------------------
+ kernel/sched/idle_task.c   |  1 -
+ kernel/sched/sched.h       | 11 +----------
+ kernel/time/tick-sched.c   |  6 ------
+ 5 files changed, 1 insertion(+), 50 deletions(-)
 
---
-Brian Gerst
+diff --git a/include/linux/sched/nohz.h b/include/linux/sched/nohz.h
+index 3d3a97d..0942172 100644
+--- a/include/linux/sched/nohz.h
++++ b/include/linux/sched/nohz.h
+@@ -37,8 +37,4 @@ extern void wake_up_nohz_cpu(int cpu);
+ static inline void wake_up_nohz_cpu(int cpu) { }
+ #endif
+ 
+-#ifdef CONFIG_NO_HZ_FULL
+-extern u64 scheduler_tick_max_deferment(void);
+-#endif
+-
+ #endif /* _LINUX_SCHED_NOHZ_H */
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 86eefc4..099c9cb 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3091,35 +3091,9 @@ void scheduler_tick(void)
+ 	rq->idle_balance = idle_cpu(cpu);
+ 	trigger_load_balance(rq);
+ #endif
+-	rq_last_tick_reset(rq);
+ }
+ 
+ #ifdef CONFIG_NO_HZ_FULL
+-/**
+- * scheduler_tick_max_deferment
+- *
+- * Keep at least one tick per second when a single
+- * active task is running because the scheduler doesn't
+- * yet completely support full dynticks environment.
+- *
+- * This makes sure that uptime, CFS vruntime, load
+- * balancing, etc... continue to move forward, even
+- * with a very low granularity.
+- *
+- * Return: Maximum deferment in nanoseconds.
+- */
+-u64 scheduler_tick_max_deferment(void)
+-{
+-	struct rq *rq = this_rq();
+-	unsigned long next, now = READ_ONCE(jiffies);
+-
+-	next = rq->last_sched_tick + HZ;
+-
+-	if (time_before_eq(next, now))
+-		return 0;
+-
+-	return jiffies_to_nsecs(next - now);
+-}
+ 
+ struct tick_work {
+ 	int			cpu;
+@@ -6111,9 +6085,6 @@ void __init sched_init(void)
+ 		rq->last_load_update_tick = jiffies;
+ 		rq->nohz_flags = 0;
+ #endif
+-#ifdef CONFIG_NO_HZ_FULL
+-		rq->last_sched_tick = 0;
+-#endif
+ #endif /* CONFIG_SMP */
+ 		hrtick_rq_init(rq);
+ 		atomic_set(&rq->nr_iowait, 0);
+diff --git a/kernel/sched/idle_task.c b/kernel/sched/idle_task.c
+index d518664..a64fc92 100644
+--- a/kernel/sched/idle_task.c
++++ b/kernel/sched/idle_task.c
+@@ -48,7 +48,6 @@ dequeue_task_idle(struct rq *rq, struct task_struct *p, int flags)
+ 
+ static void put_prev_task_idle(struct rq *rq, struct task_struct *prev)
+ {
+-	rq_last_tick_reset(rq);
+ }
+ 
+ static void task_tick_idle(struct rq *rq, struct task_struct *curr, int queued)
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index c1c7c78..dc6c8b5 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -727,9 +727,7 @@ struct rq {
+ #endif /* CONFIG_SMP */
+ 	unsigned long nohz_flags;
+ #endif /* CONFIG_NO_HZ_COMMON */
+-#ifdef CONFIG_NO_HZ_FULL
+-	unsigned long last_sched_tick;
+-#endif
++
+ 	/* capture load from *all* tasks on this cpu: */
+ 	struct load_weight load;
+ 	unsigned long nr_load_updates;
+@@ -1626,13 +1624,6 @@ static inline void sub_nr_running(struct rq *rq, unsigned count)
+ 	sched_update_tick_dependency(rq);
+ }
+ 
+-static inline void rq_last_tick_reset(struct rq *rq)
+-{
+-#ifdef CONFIG_NO_HZ_FULL
+-	rq->last_sched_tick = jiffies;
+-#endif
+-}
+-
+ extern void update_rq_clock(struct rq *rq);
+ 
+ extern void activate_task(struct rq *rq, struct task_struct *p, int flags);
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index b517485..0c615a0 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -748,12 +748,6 @@ static ktime_t tick_nohz_stop_sched_tick(struct tick_sched *ts,
+ 		delta = KTIME_MAX;
+ 	}
+ 
+-#ifdef CONFIG_NO_HZ_FULL
+-	/* Limit the tick delta to the maximum scheduler deferment */
+-	if (!ts->inidle)
+-		delta = min(delta, scheduler_tick_max_deferment());
+-#endif
+-
+ 	/* Calculate the next expiry time */
+ 	if (delta < (KTIME_MAX - basemono))
+ 		expires = basemono + delta;
+-- 
+2.7.4
