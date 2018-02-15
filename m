@@ -1,130 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755783AbeBOUj6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 15:39:58 -0500
-Received: from mga01.intel.com ([192.55.52.88]:16681 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752028AbeBOUj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 15:39:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,518,1511856000";
-   d="scan'208";a="18050536"
-Subject: Re: [RFC PATCH V2 00/22] Intel(R) Resource Director Technology Cache
- Pseudo-Locking enabling
-From: Reinette Chatre <reinette.chatre@intel.com>
-To: Mike Kravetz <mike.kravetz@oracle.com>, tglx@linutronix.de,
-        fenghua.yu@intel.com, tony.luck@intel.com
-Cc: gavin.hindman@intel.com, vikas.shivappa@linux.intel.com,
-        dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>
-References: <cover.1518443616.git.reinette.chatre@intel.com>
- <e0d59d83-14a1-6059-6f0b-da47b3b7de31@oracle.com>
- <29d1be82-9fc8-ecde-a5ee-4eafc92e39f1@intel.com>
-Message-ID: <c8dbff0b-4d8c-85d9-3f83-539183a95bfa@intel.com>
-Date: Thu, 15 Feb 2018 12:39:55 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1755847AbeBOUlW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 15:41:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45294 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752381AbeBOUlU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 15:41:20 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 043B860386
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Thu, 15 Feb 2018 20:41:18 +0000
+From: Lina Iyer <ilina@codeaurora.org>
+To: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v2 03/10] drivers: qcom: rpmh-rsc: log RPMH requests in
+ FTRACE
+Message-ID: <20180215204118.GF23714@codeaurora.org>
+References: <20180215173507.10989-1-ilina@codeaurora.org>
+ <20180215173507.10989-4-ilina@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <29d1be82-9fc8-ecde-a5ee-4eafc92e39f1@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180215173507.10989-4-ilina@codeaurora.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/14/2018 10:31 AM, Reinette Chatre wrote:
-> On 2/14/2018 10:12 AM, Mike Kravetz wrote:
->> On 02/13/2018 07:46 AM, Reinette Chatre wrote:
->>> Adding MM maintainers to v2 to share the new MM change (patch 21/22) that
->>> enables large contiguous regions that was created to support large Cache
->>> Pseudo-Locked regions (patch 22/22). This week MM team received another
->>> proposal to support large contiguous allocations ("[RFC PATCH 0/3]
->>> Interface for higher order contiguous allocations" at
->>> http://lkml.kernel.org/r/20180212222056.9735-1-mike.kravetz@oracle.com).
->>> I have not yet tested with this new proposal but it does seem appropriate
->>> and I should be able to rework patch 22 from this series on top of that if
->>> it is accepted instead of what I have in patch 21 of this series.
->>>
->>
->> Well, I certainly would prefer the adoption and use of a more general
->> purpose interface rather than exposing alloc_gigantic_page().
->>
->> Both the interface I suggested and alloc_gigantic_page end up calling
->> alloc_contig_range().  I have not looked at your entire patch series, but
->> do be aware that in its present form alloc_contig_range will run into
->> issues if called by two threads simultaneously for the same page range.
->> Calling alloc_gigantic_page without some form of synchronization will
->> expose this issue.  Currently this is handled by hugetlb_lock for all
->> users of alloc_gigantic_page.  If you simply expose alloc_gigantic_page
->> without any type of synchronization, you may run into issues.  The first
->> patch in my RFC "mm: make start_isolate_page_range() fail if already
->> isolated" should handle this situation IF we decide to expose
->> alloc_gigantic_page (which I do not suggest).
-> 
-> My work depends on the ability to create large contiguous regions,
-> creating these large regions is not the goal in itself. Certainly I
-> would want to use the most appropriate mechanism and I would gladly
-> modify my work to do so.
-> 
-> I do not insist on using alloc_gigantic_page(). Now that I am aware of
-> your RFC I started the process to convert to the new
-> find_alloc_contig_pages(). I did not do so earlier because it was not
-> available when I prepared this work for submission. I plan to respond to
-> your RFC when my testing is complete but please give me a few days to do
-> so. Could you please also cc me if you do send out any new versions?
+Hi Steve,
 
-Testing with the new find_alloc_contig_pages() introduced in
-"[RFC PATCH 0/3] Interface for higher order contiguous allocations" at
-http://lkml.kernel.org/r/20180212222056.9735-1-mike.kravetz@oracle.com
-was successful. If this new interface is merged then Cache
-Pseudo-Locking can easily be ported to use that instead of what I have
-in patch 21/22 (exposing alloc_gigantic_page()) with the following
-change to patch 22/22:
+On Thu, Feb 15 2018 at 17:35 +0000, Lina Iyer wrote:
+>Log sent RPMH requests and interrupt responses in FTRACE.
+>
+>Cc: Steven Rostedt <rostedt@goodmis.org>
+>Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>---
+> drivers/soc/qcom/Makefile     |  1 +
+> drivers/soc/qcom/rpmh-rsc.c   |  6 +++
+> drivers/soc/qcom/trace-rpmh.h | 89 +++++++++++++++++++++++++++++++++++++++++++
+> 3 files changed, 96 insertions(+)
+> create mode 100644 drivers/soc/qcom/trace-rpmh.h
+>
+>diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+>index 7426979ea9fb..094b639ece2f 100644
+>--- a/drivers/soc/qcom/Makefile
+>+++ b/drivers/soc/qcom/Makefile
+>@@ -1,4 +1,5 @@
+> # SPDX-License-Identifier: GPL-2.0
+>+CFLAGS_trace-rpmh.o := -I$(src)
+I did this here..
 
+...
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index 99918943a98a..b5e4ae379352 100644
---- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -228,9 +228,10 @@ static int contig_mem_alloc(struct
-pseudo_lock_region *plr)
-        }
+>+#undef TRACE_INCLUDE_PATH
+>+#define TRACE_INCLUDE_PATH ../../drivers/soc/qcom
+>+
+Yet, I had to define the whole path here for it to compile. Per comments
+I should just need to do this -
 
-        if (plr->size > KMALLOC_MAX_SIZE) {
--               plr->kmem = alloc_gigantic_page(cpu_to_node(plr->cpu),
--                                               get_order(plr->size),
--                                               GFP_KERNEL | __GFP_ZERO);
-+               plr->kmem = find_alloc_contig_pages(get_order(plr->size),
-+                                                   GFP_KERNEL | __GFP_ZERO,
-+                                                   cpu_to_node(plr->cpu),
-+                                                   NULL);
-                if (!plr->kmem) {
-                        rdt_last_cmd_puts("unable to allocate gigantic
-page\n");
-                        return -ENOMEM;
-@@ -255,7 +256,7 @@ static int contig_mem_alloc(struct
-pseudo_lock_region *plr)
- static void contig_mem_free(struct pseudo_lock_region *plr)
- {
-        if (plr->size > KMALLOC_MAX_SIZE)
--               free_gigantic_page(plr->kmem, get_order(plr->size));
-+               free_contig_pages(plr->kmem, 1 << get_order(plr->size));
-        else
-                kfree(page_to_virt(plr->kmem));
- }
+#define TRACE_INCLUDE_PATH .
 
+But it doesn't work. What am I missing?
 
-It does seem as though there will be a new API for large contiguous
-allocations, eliminating the need for patch 21 of this series. How large
-contiguous regions are allocated are independent of Cache Pseudo-Locking
-though and the patch series as submitted still stands. I can include the
-above snippet in a new version of the series but I am not sure if it is
-preferred at this time. Please do let me know, I'd be happy to.
+>+#undef TRACE_INCLUDE_FILE
+>+#define TRACE_INCLUDE_FILE trace-rpmh
+>+
+>+#include <trace/define_trace.h>
+>--
 
-Reinette
+Thanks,
+Lina
