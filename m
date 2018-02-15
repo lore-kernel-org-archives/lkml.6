@@ -1,175 +1,246 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755203AbeBOJWS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 04:22:18 -0500
-Received: from twosheds.infradead.org ([90.155.92.209]:44022 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755126AbeBOJWP (ORCPT
+        id S1755207AbeBOJZc convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 04:25:32 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:42110 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755126AbeBOJZ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 04:22:15 -0500
-Message-ID: <1518686516.12890.165.camel@infradead.org>
-Subject: Re: [PATCH v2 1/4] x86/speculation: Use IBRS if available before
- calling into firmware
-From: David Woodhouse <dwmw2@infradead.org>
-To: Jim Mattson <jmattson@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        KarimAllah Ahmed <karahmed@amazon.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>, mingo@kernel.org
-In-Reply-To: <CALMp9eRk8WvcALB4wHKo+P=dv2Xs9os6=15g_bL2Uy5+4uPTJA@mail.gmail.com>
-References: <1518650958-550-1-git-send-email-dwmw@amazon.co.uk>
-         <1518650958-550-2-git-send-email-dwmw@amazon.co.uk>
-         <CALMp9eRk8WvcALB4wHKo+P=dv2Xs9os6=15g_bL2Uy5+4uPTJA@mail.gmail.com>
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-DosBl6Oqp7p0qPK160E3"
-Date: Thu, 15 Feb 2018 09:21:56 +0000
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+        Thu, 15 Feb 2018 04:25:29 -0500
+X-Google-Smtp-Source: AH8x224H9Itgz1dENq8XwU3aUjdd/anHC4LG1S7VXmx4wq4m3zS/NsaDSe9k/ub3/AX97w4v5SOOaO1Cc9C75MnXl0Y=
+MIME-Version: 1.0
+In-Reply-To: <20180214223631-mutt-send-email-mst@kernel.org>
+References: <20180214141850.4017-1-marcandre.lureau@redhat.com>
+ <20180214141850.4017-3-marcandre.lureau@redhat.com> <20180214223631-mutt-send-email-mst@kernel.org>
+From: Marc-Andre Lureau <mlureau@redhat.com>
+Date: Thu, 15 Feb 2018 10:25:27 +0100
+Message-ID: <CAMxuvaz20UcZkiBwDUNM7H3vCQ=faRK+vC5b0HJSaEsfvy06oA@mail.gmail.com>
+Subject: Re: [PATCH v14 2/9] fw_cfg: add a public uapi header
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Baoquan He <bhe@redhat.com>, Sergio Lopez Pascual <slp@redhat.com>,
+        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi
 
---=-DosBl6Oqp7p0qPK160E3
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+On Wed, Feb 14, 2018 at 9:41 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> On Wed, Feb 14, 2018 at 03:18:43PM +0100, Marc-André Lureau wrote:
+>> Create a common header file for well-known values and structures to be
+>> shared by the Linux kernel with qemu or other projects.
+>>
+>> Suggested-by: Michael S. Tsirkin <mst@redhat.com>
+>> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+>>
+>> ---
+>>
+>> The related qemu patch making use of it, to be submitted:
+>> https://github.com/elmarco/qemu/commit/4884fc9e9c4c4467a371e5a40f3181239e1b70f5
+>> ---
+>>  MAINTAINERS                    |   1 +
+>>  drivers/firmware/qemu_fw_cfg.c |  22 +--------
+>>  include/uapi/linux/fw_cfg.h    | 102 +++++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 105 insertions(+), 20 deletions(-)
+>>  create mode 100644 include/uapi/linux/fw_cfg.h
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 3bdc260e36b7..a66b65f62811 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -11352,6 +11352,7 @@ M:    "Michael S. Tsirkin" <mst@redhat.com>
+>>  L:   qemu-devel@nongnu.org
+>>  S:   Maintained
+>>  F:   drivers/firmware/qemu_fw_cfg.c
+>> +F:   include/uapi/linux/fw_cfg.h
+>>
+>>  QIB DRIVER
+>>  M:   Dennis Dalessandro <dennis.dalessandro@intel.com>
+>> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+>> index a41b572eeeb1..90f467232777 100644
+>> --- a/drivers/firmware/qemu_fw_cfg.c
+>> +++ b/drivers/firmware/qemu_fw_cfg.c
+>> @@ -32,30 +32,12 @@
+>>  #include <linux/slab.h>
+>>  #include <linux/io.h>
+>>  #include <linux/ioport.h>
+>> +#include <linux/fw_cfg.h>
+>>
+>>  MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
+>>  MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
+>>  MODULE_LICENSE("GPL");
+>>
+>> -/* selector key values for "well-known" fw_cfg entries */
+>> -#define FW_CFG_SIGNATURE  0x00
+>> -#define FW_CFG_ID         0x01
+>> -#define FW_CFG_FILE_DIR   0x19
+>> -
+>> -/* size in bytes of fw_cfg signature */
+>> -#define FW_CFG_SIG_SIZE 4
+>> -
+>> -/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
+>> -#define FW_CFG_MAX_FILE_PATH 56
+>> -
+>> -/* fw_cfg file directory entry type */
+>> -struct fw_cfg_file {
+>> -     u32 size;
+>> -     u16 select;
+>> -     u16 reserved;
+>> -     char name[FW_CFG_MAX_FILE_PATH];
+>> -};
+>> -
+>>  /* fw_cfg device i/o register addresses */
+>>  static bool fw_cfg_is_mmio;
+>>  static phys_addr_t fw_cfg_p_base;
+>> @@ -597,7 +579,7 @@ MODULE_DEVICE_TABLE(of, fw_cfg_sysfs_mmio_match);
+>>
+>>  #ifdef CONFIG_ACPI
+>>  static const struct acpi_device_id fw_cfg_sysfs_acpi_match[] = {
+>> -     { "QEMU0002", },
+>> +     { FW_CFG_ACPI_DEVICE_ID, },
+>>       {},
+>>  };
+>>  MODULE_DEVICE_TABLE(acpi, fw_cfg_sysfs_acpi_match);
+>> diff --git a/include/uapi/linux/fw_cfg.h b/include/uapi/linux/fw_cfg.h
+>> new file mode 100644
+>> index 000000000000..5b8136ce46ee
+>> --- /dev/null
+>> +++ b/include/uapi/linux/fw_cfg.h
+>> @@ -0,0 +1,102 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>> +#ifndef _LINUX_FW_CFG_H
+>> +#define _LINUX_FW_CFG_H
+>> +
+>> +#include <linux/types.h>
+>> +
+>> +#define FW_CFG_ACPI_DEVICE_ID        "QEMU0002"
+>> +
+>> +/* selector key values for "well-known" fw_cfg entries */
+>> +#define FW_CFG_SIGNATURE     0x00
+>> +#define FW_CFG_ID            0x01
+>> +#define FW_CFG_UUID          0x02
+>> +#define FW_CFG_RAM_SIZE              0x03
+>> +#define FW_CFG_NOGRAPHIC     0x04
+>> +#define FW_CFG_NB_CPUS               0x05
+>> +#define FW_CFG_MACHINE_ID    0x06
+>> +#define FW_CFG_KERNEL_ADDR   0x07
+>> +#define FW_CFG_KERNEL_SIZE   0x08
+>> +#define FW_CFG_KERNEL_CMDLINE        0x09
+>> +#define FW_CFG_INITRD_ADDR   0x0a
+>> +#define FW_CFG_INITRD_SIZE   0x0b
+>> +#define FW_CFG_BOOT_DEVICE   0x0c
+>> +#define FW_CFG_NUMA          0x0d
+>> +#define FW_CFG_BOOT_MENU     0x0e
+>> +#define FW_CFG_MAX_CPUS              0x0f
+>> +#define FW_CFG_KERNEL_ENTRY  0x10
+>> +#define FW_CFG_KERNEL_DATA   0x11
+>> +#define FW_CFG_INITRD_DATA   0x12
+>> +#define FW_CFG_CMDLINE_ADDR  0x13
+>> +#define FW_CFG_CMDLINE_SIZE  0x14
+>> +#define FW_CFG_CMDLINE_DATA  0x15
+>> +#define FW_CFG_SETUP_ADDR    0x16
+>> +#define FW_CFG_SETUP_SIZE    0x17
+>> +#define FW_CFG_SETUP_DATA    0x18
+>> +#define FW_CFG_FILE_DIR              0x19
+>> +
+>> +#define FW_CFG_FILE_FIRST    0x20
+>> +#define FW_CFG_FILE_SLOTS_MIN        0x10
+>> +
+>> +#define FW_CFG_WRITE_CHANNEL 0x4000
+>> +#define FW_CFG_ARCH_LOCAL    0x8000
+>> +#define FW_CFG_ENTRY_MASK    (~(FW_CFG_WRITE_CHANNEL | FW_CFG_ARCH_LOCAL))
+>> +
+>> +#define FW_CFG_INVALID               0xffff
+>> +
+>> +/* width in bytes of fw_cfg control register */
+>> +#define FW_CFG_CTL_SIZE              0x02
+>> +
+>> +/* fw_cfg "file name" is up to 56 characters (including terminating nul) */
+>> +#define FW_CFG_MAX_FILE_PATH 56
+>> +
+>> +/* size in bytes of fw_cfg signature */
+>> +#define FW_CFG_SIG_SIZE 4
+>> +
+>> +/* FW_CFG_ID bits */
+>> +#define FW_CFG_VERSION               0x01
+>> +#define FW_CFG_VERSION_DMA   0x02
+>> +
+>> +/* fw_cfg file directory entry type */
+>> +struct fw_cfg_file {
+>> +     __be32 size;                    /* file size */
+>> +     __be16 select;                  /* write this to 0x510 to read it */
+>> +     __u16 reserved;
+>> +     char name[FW_CFG_MAX_FILE_PATH];
+>> +};
+>> +
+>> +struct fw_cfg_files {
+>> +     __be32 count; /* number of entries */
+>> +     struct fw_cfg_file f[];
+>> +};
+>
+> This struct wasn't there in the original file.
+> Is the source of these structures QEMU or Linux?
+> If Linux, then pls split this
+> 1. move code out to a header
+> 2. add more structs
 
-T24gV2VkLCAyMDE4LTAyLTE0IGF0IDE2OjQ2IC0wODAwLCBKaW0gTWF0dHNvbiB3cm90ZToKPiBP
-biBXZWQsIEZlYiAxNCwgMjAxOCBhdCAzOjI5IFBNLCBEYXZpZCBXb29kaG91c2UgPGR3bXdAYW1h
-em9uLmNvLnVrPiB3cm90ZToKPiAKPiA+ICsjZGVmaW5lIGFsdGVybmF0aXZlX21zcl93cml0ZShf
-bXNyLCBfdmFsLCBfZmVhdHVyZSnCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFwKPiA+ICvCoMKgwqDC
-oMKgwqAgYXNtIHZvbGF0aWxlKEFMVEVSTkFUSVZFKCIiLMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBcCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgIm1vdmwgJVttc3Jd
-LCAlJWVjeFxuXHQiwqDCoMKgwqDCoMKgIFwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAibW92bCAlW3ZhbF0sICUlZWF4
-XG5cdCLCoMKgwqDCoMKgwqAgXAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICJtb3ZsICQwLCAlJWVkeFxuXHQiwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgXAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICJ3cm1zciIswqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIF9mZWF0dXJlKcKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBcCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgOiA6IFttc3JdICJpIiAoX21zciksIFt2YWxdICJpIiAoX3Zh
-bCnCoMKgwqDCoCBcCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-OiAiZWF4IiwgImVjeCIsICJlZHgiLCAibWVtb3J5IikKPiA+ICsKPiAKPiBJdCdzIG5vdCBuZWVk
-ZWQgbm93LCBidXQgdGhpcyB3b3VsZCBiZSBtb3JlIGdlbmVyYWxseSB1c2VmdWwgaWYgdGhlCj4g
-aGlnaCAzMiBiaXRzIG9mIHRoZSBNU1IgdmFsdWUgY291bGQgYWxzbyBiZSBzcGVjaWZpZWQuCgpZ
-ZWFoLCBpZiB3ZSBldmVyIGRvIHdhbnQgdG8gbWFrZSBpdCBjb21wbGV0ZWx5IGdlbmVyaWMgdGhl
-biB3ZSBjb3VsZAptb3ZlIGl0IGZyb20gbm9zcGVjLWJyYW5jaC5oIHRvIGFsdGVybmF0aXZlLmgg
-YW5kIG1ha2UgaXQgcG9zc2libGUgdG8Kc2V0IHRoZSBoaWdoIHdvcmQuIEJ1dCBmb3Igbm93IEkn
-bSBpbmNsaW5lZCBub3QgdG8gb3ZlcmVuZ2luZWVyIGl0LgoKVGhlIGlkZWEgKndhcyogdGhhdCBC
-b3JpcyB3YXMgZ29pbmcgdG8gYmlrZXNoZWQgaXQgYXdheSBpbnRvIHNvbWUgb3RoZXIKZm9ybSwg
-YnV0IGhhdmluZyBqdXN0IHJldmVydGVkIHR3byBvZiB0aG9zZSBwYXRjaGVzIEkgYW0gbGVzcyBp
-bmNsaW5lZAp0byBhY2NlcHQgYW55IG1vcmUgb2YgdGhhdCBraW5kIG9mIGNoYW5nZSB0aGF0IGRv
-ZXNuJ3QgYWN0dWFsbHkgZml4IGEKcmVhbCBidWcuCg==
+It is based from Linux source + qemu docs/specs/fw_cfg.txt which
+references include/hw/nvram/fw_cfg_keys.h "for the most up-to-date and
+authoritative list" & vmcoreinfo.txt.
+
+QEMU ./include/hw/nvram/fw_cfg_keys.h doesn't have specific licence
+text, and QEMU as a whole is released under the GNU General Public
+License, version 2.
+
+Let me know if I still need to change the license and what you
+recommend instead.
+
+>
+>> +
+>> +/* FW_CFG_DMA_CONTROL bits */
+>> +#define FW_CFG_DMA_CTL_ERROR 0x01
+>> +#define FW_CFG_DMA_CTL_READ  0x02
+>> +#define FW_CFG_DMA_CTL_SKIP  0x04
+>> +#define FW_CFG_DMA_CTL_SELECT        0x08
+>> +#define FW_CFG_DMA_CTL_WRITE 0x10
+>> +
+>> +#define FW_CFG_DMA_SIGNATURE    0x51454d5520434647ULL /* "QEMU CFG" */
+>> +
+>> +/* Control as first field allows for different structures selected by this
+>> + * field, which might be useful in the future
+>> + */
+>> +struct fw_cfg_dma_access {
+>> +     __be32 control;
+>> +     __be32 length;
+>> +     __be64 address;
+>> +};
+>
+> Maybe this should be part of the dma patch.
+
+I prefer to introduce all the spec defines in one patch, but I can
+split it if it helps.
+
+>
+>> +
+>> +#define FW_CFG_VMCOREINFO_FILENAME "etc/vmcoreinfo"
+>> +
+>> +#define FW_CFG_VMCOREINFO_FORMAT_NONE 0x0
+>> +#define FW_CFG_VMCOREINFO_FORMAT_ELF 0x1
+>> +
+>> +struct fw_cfg_vmcoreinfo {
+>> +     __le16 host_format;
+>> +     __le16 guest_format;
+>> +     __le32 size;
+>> +     __le64 paddr;
+>> +};
+>
+> Maybe this should be part of the vmcore patch.
+
+same
 
 
---=-DosBl6Oqp7p0qPK160E3
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMTUwOTIxNTZaMC8GCSqG
-SIb3DQEJBDEiBCB0VzN6G8Bjh3+/I+/TuBoHVNmXLJA844T6DYyJ5sakjDCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAINQIC5DB2Fn
-YCdxnQ0I7K9/URV5vMf0B2ha3wEBJmsOWS2450aV2unH+Bvcbx0ubZQpQnVee1V5F8qFcH/aUqHM
-H0eqA9bQ2rTCiCHiQsm4J16IxhTNLuuEuY2Kls/V6oFsVS2iRdci13b+tPE4gcKhVNTPRyDpXN+q
-haB2WtiWf0lr+F/hpbr9gYr6P1URuCh/FeQm0d5NCKX2sMdXxKmDEI0eieq3WePQWof4vWEv5fw8
-4JbY9pRhyr5ctcol8H6uIkMG+B8aXSeOaGT63PRgJwJ9rRL1abxUt3/zdHcsH63hiMeFlB91YLpX
-EfdDPzE9fNUAnkNYyYPxmH7f4zcAAAAAAAA=
-
-
---=-DosBl6Oqp7p0qPK160E3--
+Thanks
