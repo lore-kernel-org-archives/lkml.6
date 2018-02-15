@@ -1,285 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164749AbeBOXXB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 18:23:01 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42412 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1163785AbeBOXXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 18:23:00 -0500
-Date: Thu, 15 Feb 2018 18:19:07 -0500
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Steve Grubb <sgrubb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>
-Subject: Re: [PATCH ghak8 ALT4 V4 1/3] audit: show partial pathname for
- entries with anonymous parents
-Message-ID: <20180215231907.m47ecthfq5n6sr2a@madcap2.tricolour.ca>
-References: <cover.1518411444.git.rgb@redhat.com>
- <9a249968b7c994eaec1da8ae6d5bb48e385acf5c.1518411444.git.rgb@redhat.com>
- <2739042.dBRvusNJAk@x2>
+        id S1164934AbeBOXaF convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 18:30:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57002 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1163785AbeBOXaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 18:30:04 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68858217CC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AH8x227xiymTHDMAI1vHNw1Ey2EIcR7HO3bj7oEEFufXMPaPFPJGcSb+KOlGhDEuU1NJD/Qsox+h8K9WNxZDh/X3F+k=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2739042.dBRvusNJAk@x2>
-User-Agent: NeoMutt/20171027
+In-Reply-To: <9EB804CA-0EC9-4CBB-965A-F3C8520201E7@gmail.com>
+References: <20180215163602.61162-1-namit@vmware.com> <20180215163602.61162-5-namit@vmware.com>
+ <CALCETrUY4uZeG2fz=OQWGuyCOcBBNbep6TaJz82CZSP89=g3-A@mail.gmail.com> <9EB804CA-0EC9-4CBB-965A-F3C8520201E7@gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 15 Feb 2018 23:29:42 +0000
+X-Gmail-Original-Message-ID: <CALCETrVP3BaOapL3eS8Tf=KFeM8VFPqvMoECGRkFa7WPLq=Asw@mail.gmail.com>
+Message-ID: <CALCETrVP3BaOapL3eS8Tf=KFeM8VFPqvMoECGRkFa7WPLq=Asw@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 4/6] x86: Disable PTI on compatibility mode
+To: Nadav Amit <nadav.amit@gmail.com>,
+        Pavel Emelyanov <xemul@parallels.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>, Willy Tarreau <w@1wt.eu>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-15 18:07, Steve Grubb wrote:
-> On Monday, February 12, 2018 12:02:21 AM EST Richard Guy Briggs wrote:
-> > Tracefs or debugfs were causing hundreds to thousands of null PATH
-> > records to be associated with the init_module and finit_module SYSCALL
-> > records on a few modules when the following rule was in place for
-> > startup:
-> >         -a always,exit -F arch=x86_64 -S init_module -F key=mod-load
-> > 
-> > This happens because the parent inode is not found in the task's
-> > audit_names list and hence treats it as anonymous.  This gives us no
-> > information other than a numerical device number for a device that may
-> > no longer be visible upon log inspeciton, and an inode number.
-> > 
-> > Fill in the partial known pathname from the filesystem mount point to
-> > the leaf node on previously null PATH records from entries that have an
-> > anonymous parent from the child dentry using dentry_path_raw().
-> > 
-> > Make the dentry argument of __audit_inode_child() non-const so that we
-> > can take a reference to it in the case of an anonymous parent with
-> > dget() and dget_parent() to be able to later print a partial path from
-> > the host filesystem rather than null.
-> > 
-> > Since all we are given is an inode of the parent and the dentry of the
-> > child, finding the path from the mount point to the root of the
-> > filesystem is more challenging that would involve searching all
-> > vfsmounts from "/" until a matching dentry is found for that
-> > filesystem's root dentry.  Even if one is found, there may be more than
-> > one mount point.  At this point the gain seems marginal since
-> > knowing the filesystem type and path are a significant help in tracking
-> > down the source of the PATH records and being able to address them.
-> > 
-> > Sample output:
-> > type=PROCTITLE msg=audit(1488317694.446:143):
-> > proctitle=2F7362696E2F6D6F6470726F6265002D71002D2D006E66737634 type=PATH
-> > msg=audit(1488317694.446:143): item=797
-> > name=events/nfs4/nfs4_setclientid/format inode=15969 dev=00:09
-> > mode=0100444 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:tracefs_t:s0
-> > nametype=CREATE cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0
-> > cap_fver=0 type=PATH msg=audit(1488317694.446:143): item=796
-> > name=events/nfs4/nfs4_setclientid inode=15964 dev=00:09 mode=040755 ouid=0
-> > ogid=0 rdev=00:00 obj=system_u:object_r:tracefs_t:s0 nametype=PARENT
-> > cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0 cap_fver=0 ...
-> > type=PATH msg=audit(1488317694.446:143): item=1 name=events/nfs4
-> > inode=15571 dev=00:09 mode=040755 ouid=0 ogid=0 rdev=00:00
-> > obj=system_u:object_r:tracefs_t:s0 nametype=CREATE cap_fp=0000000000000000
-> > cap_fi=0000000000000000 cap_fe=0 cap_fver=0 type=PATH
-> > msg=audit(1488317694.446:143): item=0 name=events inode=119 dev=00:09
-> > mode=040755 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:tracefs_t:s0
-> > nametype=PARENT cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0
-> > cap_fver=0 type=KERN_MODULE msg=audit(1488317694.446:143): name="nfsv4"
-> > type=SYSCALL msg=audit(1488317694.446:143): arch=c000003e syscall=313
-> > success=yes exit=0 a0=1 a1=55d5a35ce106 a2=0 a3=1 items=798 ppid=6 pid=528
-> > auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0
-> > tty=(none) ses=4294967295 comm="modprobe" exe="/usr/bin/kmod"
-> > subj=system_u:system_r:insmod_t:s0 key="mod-load"
-> 
-> Thanks for the samples, but the event above fails the ausearch-test test 
-> suite. The "name" field in the PATH record is not properly escaped.
+On Thu, Feb 15, 2018 at 8:58 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
+> Andy Lutomirski <luto@kernel.org> wrote:
+>
+>> On Thu, Feb 15, 2018 at 4:36 PM, Nadav Amit <namit@vmware.com> wrote:
+>>> Based on the understanding that there should be no way for userspace to
+>>> address the kernel-space from compatibility mode, disable it while
+>>> running in compatibility mode as long as the 64-bit code segment of the
+>>> user is not used.
+>>>
+>>> Reenabling PTI is performed by restoring NX-bits to the userspace
+>>> mappings, flushing the TLBs, and notifying all the CPUs that use the
+>>> affected mm to disable PTI. Each core responds by removing the present
+>>> bit for the 64-bit code-segment, and marking that PTI is disabled on
+>>> that core.
+>>
+>> I dislike this patch because it's conflating two things.  The patch
+>> claims to merely disable PTI for compat tasks, whatever those are.
+>> But it's also introducing a much stronger concept of what a compat
+>> task is.  The kernel currently mostly doesn't care whether a task is
+>> "compat" or not, and I think that most remaining code paths that do
+>> care are buggy and should be removed.
+>>
+>> I think the right way to approach this is to add a new arch_prctl()
+>> that changes allowable bitness, like this:
+>>
+>> arch_prctl(ARCH_SET_ALLOWED_GDT_CS, X86_ALLOW_CS32 | X86_ALLOW_CS64);
+>>
+>> this would set the current task to work the normal way, where 32-bit
+>> and 64-bit CS are available.  You could set just X86_ALLOW_CS32 to
+>> deny 64-bit mode and just X86_ALLOW_CS64 to deny 32-bit mode.  This
+>> would make nice attack surface reduction tools for the more paranoid
+>> sandbox users to use.  Doing arch_prctl(ARCH_SET_ALLOWED_GDT_CS, 0)
+>> would return -EINVAL.
+>>
+>> A separate patch would turn PTI off if you set X86_ALLOW_CS32.
+>>
+>> This has the downside that old code doesn't get the benefit without
+>> some code change, but that's not the end of the world.
+>>
+>>> +static void pti_cpu_update_func(void *info)
+>>> +{
+>>> +       struct mm_struct *mm = (struct mm_struct *)info;
+>>> +
+>>> +       if (mm != this_cpu_read(cpu_tlbstate.loaded_mm))
+>>> +               return;
+>>> +
+>>> +       /*
+>>> +        * Keep CS64 and CPU settings in sync despite potential concurrent
+>>> +        * updates.
+>>> +        */
+>>> +       set_cpu_pti_disable(READ_ONCE(mm->context.pti_disable));
+>>> +}
+>>
+>> I don't like this at all.  IMO a sane implementation should never
+>> change PTI status on a remote CPU.  Just track it per task.
+>
+> From your comments in the past, I understood that this requirement
+> (enabling/disabling PTI per mm) came from Linus. I can do it per task, but
+> that means that the NX-bit will always be cleared on the kernel page-table
+> for user mappings.
 
-Let me re-run the ausearch-test on the log file from the machine in
-question...  I don't remember if I copied the above from a recent run,
-or just hand-edited the output to update it.  It should be fine since it
-was updated to now run through audit_log_untrustedstring().
+I disagree with Linus here, although I could be convinced.  But
+there's still no need for an IPI -- even if it were per-mm, PTI could
+stay on until the next kernel entry.
 
-> -Steve
-> 
-> > See: https://github.com/linux-audit/audit-kernel/issues/8
-> > Test case: https://github.com/linux-audit/audit-testsuite/issues/42
-> > 
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > 
-> > ---
-> > v4:
-> >   fix fullpath memleak
-> >   switch from log_format() to audit_log_untrustedstring()
-> >   remove leading / from pathname relative to unknown mount point
-> > 
-> > v3:
-> >   fix audit_buffer leak and dname error allocation leak audit_log_name
-> >   only put audit_name->dentry if it is being replaced
-> > 
-> > v2:
-> >   deconstify struct dentry*
-> >   add hex prefix to fstype
-> > ---
-> >  include/linux/audit.h |  8 ++++----
-> >  kernel/audit.c        | 28 +++++++++++++++++++++++++++-
-> >  kernel/audit.h        |  1 +
-> >  kernel/auditsc.c      |  8 +++++++-
-> >  4 files changed, 39 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > index af410d9..2020f1d 100644
-> > --- a/include/linux/audit.h
-> > +++ b/include/linux/audit.h
-> > @@ -232,7 +232,7 @@ extern void __audit_inode(struct filename *name, const
-> > struct dentry *dentry, unsigned int flags);
-> >  extern void __audit_file(const struct file *);
-> >  extern void __audit_inode_child(struct inode *parent,
-> > -				const struct dentry *dentry,
-> > +				struct dentry *dentry,
-> >  				const unsigned char type);
-> >  extern void __audit_seccomp(unsigned long syscall, long signr, int code);
-> >  extern void __audit_ptrace(struct task_struct *t);
-> > @@ -297,7 +297,7 @@ static inline void audit_inode_parent_hidden(struct
-> > filename *name, AUDIT_INODE_PARENT | AUDIT_INODE_HIDDEN);
-> >  }
-> >  static inline void audit_inode_child(struct inode *parent,
-> > -				     const struct dentry *dentry,
-> > +				     struct dentry *dentry,
-> >  				     const unsigned char type) {
-> >  	if (unlikely(!audit_dummy_context()))
-> >  		__audit_inode_child(parent, dentry, type);
-> > @@ -481,7 +481,7 @@ static inline void __audit_inode(struct filename *name,
-> > unsigned int flags)
-> >  { }
-> >  static inline void __audit_inode_child(struct inode *parent,
-> > -					const struct dentry *dentry,
-> > +					struct dentry *dentry,
-> >  					const unsigned char type)
-> >  { }
-> >  static inline void audit_inode(struct filename *name,
-> > @@ -495,7 +495,7 @@ static inline void audit_inode_parent_hidden(struct
-> > filename *name, const struct dentry *dentry)
-> >  { }
-> >  static inline void audit_inode_child(struct inode *parent,
-> > -				     const struct dentry *dentry,
-> > +				     struct dentry *dentry,
-> >  				     const unsigned char type)
-> >  { }
-> >  static inline void audit_core_dumps(long signr)
-> > diff --git a/kernel/audit.c b/kernel/audit.c
-> > index 227db99..0c8d5a8 100644
-> > --- a/kernel/audit.c
-> > +++ b/kernel/audit.c
-> > @@ -72,6 +72,7 @@
-> >  #include <linux/freezer.h>
-> >  #include <linux/pid_namespace.h>
-> >  #include <net/netns/generic.h>
-> > +#include <linux/dcache.h>
-> > 
-> >  #include "audit.h"
-> > 
-> > @@ -2056,6 +2057,10 @@ void audit_copy_inode(struct audit_names *name,
-> > const struct dentry *dentry, name->gid   = inode->i_gid;
-> >  	name->rdev  = inode->i_rdev;
-> >  	security_inode_getsecid(inode, &name->osid);
-> > +	if (name->dentry) {
-> > +		dput(name->dentry);
-> > +		name->dentry = NULL;
-> > +	}
-> >  	audit_copy_fcaps(name, dentry);
-> >  }
-> > 
-> > @@ -2097,8 +2102,29 @@ void audit_log_name(struct audit_context *context,
-> > struct audit_names *n, audit_log_n_untrustedstring(ab, n->name->name,
-> >  						    n->name_len);
-> >  		}
-> > -	} else
-> > +	} else if (n->dentry) {
-> > +		char *fullpath;
-> > +		const char *fullpathp = NULL;
-> > +
-> > +		fullpath = kmalloc(PATH_MAX, GFP_KERNEL);
-> > +		if (fullpath) {
-> > +			fullpathp = dentry_path_raw(n->dentry, fullpath, PATH_MAX);
-> > +			if (IS_ERR(fullpathp)) {
-> > +				fullpathp = NULL;
-> > +			} else {
-> > +				while (*fullpathp == '/')
-> > +					fullpathp++;
-> > +				if (*fullpathp == 0)
-> > +					fullpathp = NULL;
-> > +			}
-> > +		}
-> > +		audit_log_format(ab, " name=");
-> > +		audit_log_untrustedstring(ab, fullpathp ?: "?");
-> > +		if (fullpath)
-> > +			kfree(fullpath);
-> > +	} else {
-> >  		audit_log_format(ab, " name=(null)");
-> > +	}
-> > 
-> >  	if (n->ino != AUDIT_INO_UNSET)
-> >  		audit_log_format(ab, " inode=%lu"
-> > diff --git a/kernel/audit.h b/kernel/audit.h
-> > index af5bc59..81f6865 100644
-> > --- a/kernel/audit.h
-> > +++ b/kernel/audit.h
-> > @@ -85,6 +85,7 @@ struct audit_names {
-> > 
-> >  	unsigned long		ino;
-> >  	dev_t			dev;
-> > +	struct dentry		*dentry;
-> >  	umode_t			mode;
-> >  	kuid_t			uid;
-> >  	kgid_t			gid;
-> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > index e80459f..b73ede0 100644
-> > --- a/kernel/auditsc.c
-> > +++ b/kernel/auditsc.c
-> > @@ -75,6 +75,7 @@
-> >  #include <linux/uaccess.h>
-> >  #include <linux/fsnotify_backend.h>
-> >  #include <uapi/linux/limits.h>
-> > +#include <linux/dcache.h>
-> > 
-> >  #include "audit.h"
-> > 
-> > @@ -882,6 +883,8 @@ static inline void audit_free_names(struct
-> > audit_context *context) list_del(&n->list);
-> >  		if (n->name)
-> >  			putname(n->name);
-> > +		if (n->dentry)
-> > +			dput(n->dentry);
-> >  		if (n->should_free)
-> >  			kfree(n);
-> >  	}
-> > @@ -1862,7 +1865,7 @@ void __audit_file(const struct file *file)
-> >   * unsuccessful attempts.
-> >   */
-> >  void __audit_inode_child(struct inode *parent,
-> > -			 const struct dentry *dentry,
-> > +			 struct dentry *dentry,
-> >  			 const unsigned char type)
-> >  {
-> >  	struct audit_context *context = current->audit_context;
-> > @@ -1941,6 +1944,7 @@ void __audit_inode_child(struct inode *parent,
-> >  		if (!n)
-> >  			return;
-> >  		audit_copy_inode(n, NULL, parent);
-> > +		n->dentry = dget_parent(dentry);
-> >  	}
-> > 
-> >  	if (!found_child) {
-> > @@ -1962,6 +1966,8 @@ void __audit_inode_child(struct inode *parent,
-> >  		audit_copy_inode(found_child, dentry, inode);
-> >  	else
-> >  		found_child->ino = AUDIT_INO_UNSET;
-> > +	if (!found_parent)
-> > +		found_child->dentry = dget(dentry);
-> >  }
-> >  EXPORT_SYMBOL_GPL(__audit_inode_child);
-> 
-> 
-> 
-> 
+>
+>>> +void __pti_reenable(void)
+>>> +{
+>>> +       struct mm_struct *mm = current->mm;
+>>> +       int cpu;
+>>> +
+>>> +       if (!mm_pti_disable(mm))
+>>> +               return;
+>>> +
+>>> +       /*
+>>> +        * Prevent spurious page-fault storm while we set the NX-bit and have
+>>> +        * yet not updated the per-CPU pti_disable flag.
+>>> +        */
+>>> +       down_write(&mm->mmap_sem);
+>>> +
+>>> +       if (!mm_pti_disable(mm))
+>>> +               goto out;
+>>> +
+>>> +       /*
+>>> +        * First, mark the PTI is enabled. Although we do anything yet, we are
+>>> +        * safe as long as we do not reenable CS64. Since we did not update the
+>>> +        * page tables yet, this may lead to spurious page-faults, but we need
+>>> +        * the pti_disable in mm to be set for __pti_set_user_pgd() to do the
+>>> +        * right thing.  Holding mmap_sem would ensure matter we hold the
+>>> +        * mmap_sem to prevent them from swamping the system.
+>>> +        */
+>>> +       mm->context.pti_disable = PTI_DISABLE_OFF;
+>>> +
+>>> +       /* Second, restore the NX bits. */
+>>> +       pti_update_user_pgds(mm, true);
+>>
+>> You're holding mmap_sem, but there are code paths that touch page
+>> tables that don't hold mmap_sem, such as the stack extension code.
+>
+> Do they change user mappings? These are the only ones pti_update_user_pgds()
+> changes.
 
-- RGB
+I think they do -- it's the user stack.  page_table_lock may be more
+appropriate, although I'm far from an expert in this.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+>
+>>> +
+>>> +bool pti_handle_segment_not_present(long error_code)
+>>> +{
+>>> +       if (!static_cpu_has(X86_FEATURE_PTI))
+>>> +               return false;
+>>> +
+>>> +       if ((unsigned short)error_code != GDT_ENTRY_DEFAULT_USER_CS << 3)
+>>> +               return false;
+>>> +
+>>> +       pti_reenable();
+>>> +       return true;
+>>> +}
+>>
+>> Please don't.  You're trying to emulate the old behavior here, but
+>> you're emulating it wrong.  In particular, you won't trap on LAR.
+>
+> Yes, I thought I’ll manage to address LAR, but failed. I thought you said
+> this is not a “show-stopper”. I’ll adapt your approach of using prctl, although
+> it really limits the benefit of this mechanism.
+>
+
+It's possible we could get away with adding the prctl but making the
+default be that only the bitness that matches the program being run is
+allowed.  After all, it's possible that CRIU is literally the only
+program that switches bitness using the GDT.  (DOSEMU2 definitely does
+cross-bitness stuff, but it uses the LDT as far as I know.)  And I've
+never been entirely sure that CRIU fully counts toward the Linux
+"don't break ABI" guarantee.
+
+Linus, how would you feel about, by default, preventing 64-bit
+programs from long-jumping to __USER32_CS and vice versa?  I think it
+has some value as a hardening measure.  I've certainly engaged in some
+exploit shenanigans myself that took advantage of the ability to long
+jump/ret to change bitness at will.  This wouldn't affect users of
+modify_ldt() -- 64-bit programs could still create and use their own
+private 32-bit segments with modify_ldt(), and seccomp can (and
+should!) prevent that in sandboxed programs.
+
+In general, I prefer an approach where everything is explicit to an
+approach where we almost, but not quite, emulate the weird historical
+behavior.
+
+Pavel and Cyrill, how annoying would it be if CRIU had to do an extra
+arch_prctl() to enable its cross-bitness shenanigans when
+checkpointing and restoring a 32-bit program?
