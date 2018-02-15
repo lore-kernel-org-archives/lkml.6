@@ -1,91 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033217AbeBOOUN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 09:20:13 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:33802 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033058AbeBOOTs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 09:19:48 -0500
-X-Google-Smtp-Source: AH8x227O2jjM4JA/lXkrmu4su1oj9Rr5JIiW4TtkOQr4RTgPZgbRBX8uCYYqsGQfTbeQH94RomkHIA==
-From: "=?UTF-8?q?Christian=20K=C3=B6nig?="
-        <ckoenig.leichtzumerken@gmail.com>
-X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-To: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] drm/ttm: handle already locked BOs during eviction and swapout.
-Date: Thu, 15 Feb 2018 15:19:43 +0100
-Message-Id: <20180215141944.4332-2-christian.koenig@amd.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180215141944.4332-1-christian.koenig@amd.com>
-References: <20180215141944.4332-1-christian.koenig@amd.com>
+        id S1033180AbeBOOWe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 09:22:34 -0500
+Received: from foss.arm.com ([217.140.101.70]:54850 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1033031AbeBOOWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 09:22:33 -0500
+Date: Thu, 15 Feb 2018 14:22:39 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: arm64/v4.16-rc1: KASAN: use-after-free Read in finish_task_switch
+Message-ID: <20180215142239.GF16623@arm.com>
+References: <20180214120254.qq4w4s42ecxio7lu@lakrids.cambridge.arm.com>
+ <20180214150739.GH2992@arm.com>
+ <20180214165131.o25r3hhrtrjk3ejq@lakrids.cambridge.arm.com>
+ <254787533.21950.1518634424009.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <254787533.21950.1518634424009.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This solves the problem that when we swapout a BO from a domain we
-sometimes couldn't make room for it because holding the lock blocks all
-other BOs with this reservation object.
+On Wed, Feb 14, 2018 at 06:53:44PM +0000, Mathieu Desnoyers wrote:
+> ----- On Feb 14, 2018, at 11:51 AM, Mark Rutland mark.rutland@arm.com wrote:
+> > On Wed, Feb 14, 2018 at 03:07:41PM +0000, Will Deacon wrote:
+> >> If the exit()ing task had recently migrated from another CPU, then that
+> >> CPU could concurrently run context_switch() and take this path:
+> >> 
+> >> 	if (!prev->mm) {
+> >> 		prev->active_mm = NULL;
+> >> 		rq->prev_mm = oldmm;
+> >> 	}
+> > 
+> > IIUC, on the prior context_switch, next->mm == NULL, so we set
+> > next->active_mm to prev->mm.
+> > 
+> > Then, in this context_switch we set oldmm = prev->active_mm (where prev
+> > is next from the prior context switch).
+> > 
+> > ... right?
+> > 
+> >> which then means finish_task_switch will call mmdrop():
+> >> 
+> >> 	struct mm_struct *mm = rq->prev_mm;
+> >> 	[...]
+> >> 	if (mm) {
+> >> 		membarrier_mm_sync_core_before_usermode(mm);
+> >> 		mmdrop(mm);
+> >> 	}
+> > 
+> > ... then here we use what was prev->active_mm in the most recent context
+> > switch.
+> > 
+> > So AFAICT, we're never concurrently accessing a task_struct::mm field
+> > here, only prev::{mm,active_mm} while prev is current...
+> > 
+> > [...]
+> > 
+> >> diff --git a/kernel/exit.c b/kernel/exit.c
+> >> index 995453d9fb55..f91e8d56b03f 100644
+> >> --- a/kernel/exit.c
+> >> +++ b/kernel/exit.c
+> >> @@ -534,8 +534,9 @@ static void exit_mm(void)
+> >>         }
+> >>         mmgrab(mm);
+> >>         BUG_ON(mm != current->active_mm);
+> >> -       /* more a memory barrier than a real lock */
+> >>         task_lock(current);
+> >> +       /* Ensure we've grabbed the mm before setting current->mm to NULL */
+> >> +       smp_mb__after_spin_lock();
+> >>         current->mm = NULL;
+> > 
+> > ... and thus I don't follow why we would need to order these with
+> > anything more than a compiler barrier (if we're preemptible here).
+> > 
+> > What have I completely misunderstood? ;)
+> 
+> The compiler barrier would not change anything, because task_lock()
+> already implies a compiler barrier (provided by the arch spin lock
+> inline asm memory clobber). So compiler-wise, it cannot move the
+> mmgrab(mm) after the store "current->mm = NULL".
+> 
+> However, given the scenario involves multiples CPUs (one doing exit_mm(),
+> the other doing context switch), the actual order of perceived load/store
+> can be shuffled. And AFAIU nothing prevents the CPU from ordering the
+> atomic_inc() done by mmgrab(mm) _after_ the store to current->mm.
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
----
- drivers/gpu/drm/ttm/ttm_bo.c | 33 ++++++++++++++++-----------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
+Mark and I have spent most of the morning looking at this and realised I
+made a mistake in my original guesswork: prev can't migrate until half way
+down finish_task_switch when on_cpu = 0, so the access of prev->mm in
+context_switch can't race with exit_mm() for that task.
 
-diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
-index d90b1cf10b27..fba40e22d088 100644
---- a/drivers/gpu/drm/ttm/ttm_bo.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo.c
-@@ -713,31 +713,30 @@ bool ttm_bo_eviction_valuable(struct ttm_buffer_object *bo,
- EXPORT_SYMBOL(ttm_bo_eviction_valuable);
- 
- /**
-- * Check the target bo is allowable to be evicted or swapout, including cases:
-- *
-- * a. if share same reservation object with ctx->resv, have assumption
-- * reservation objects should already be locked, so not lock again and
-- * return true directly when either the opreation allow_reserved_eviction
-- * or the target bo already is in delayed free list;
-- *
-- * b. Otherwise, trylock it.
-+ * Check if the target bo is allowed to be evicted or swapedout.
-  */
- static bool ttm_bo_evict_swapout_allowable(struct ttm_buffer_object *bo,
--			struct ttm_operation_ctx *ctx, bool *locked)
-+					   struct ttm_operation_ctx *ctx,
-+					   bool *locked)
- {
--	bool ret = false;
-+	/* First check if we can lock it */
-+	*locked = reservation_object_trylock(bo->resv);
-+	if (*locked)
-+		return true;
- 
--	*locked = false;
-+	/* Check if it's locked because it is part of the current operation */
- 	if (bo->resv == ctx->resv) {
- 		reservation_object_assert_held(bo->resv);
--		if (ctx->allow_reserved_eviction || !list_empty(&bo->ddestroy))
--			ret = true;
--	} else {
--		*locked = reservation_object_trylock(bo->resv);
--		ret = *locked;
-+		return ctx->allow_reserved_eviction ||
-+			!list_empty(&bo->ddestroy);
- 	}
- 
--	return ret;
-+	/* Check if it's locked because it was already evicted */
-+	if (ww_mutex_is_owned_by(&bo->resv->lock, current, NULL))
-+		return true;
-+
-+	/* Some other thread is using it, don't touch it */
-+	return false;
- }
- 
- static int ttm_mem_evict_first(struct ttm_bo_device *bdev,
--- 
-2.14.1
+Furthermore, although the mmgrab() could in theory be reordered with
+current->mm = NULL (and the ARMv8 architecture allows this too), it's
+pretty unlikely with LL/SC atomics and the backwards branch, where the
+CPU would have to pull off quite a few tricks for this to happen.
+
+Instead, we've come up with a more plausible sequence that can in theory
+happen on a single CPU:
+
+<task foo calls exit()>
+
+do_exit
+	exit_mm
+		mmgrab(mm);			// foo's mm has count +1
+		BUG_ON(mm != current->active_mm);
+		task_lock(current);
+		current->mm = NULL;
+		task_unlock(current);
+
+<irq and ctxsw to kthread>
+
+context_switch(prev=foo, next=kthread)
+	mm = next->mm;
+	oldmm = prev->active_mm;
+
+	if (!mm) {				// True for kthread
+		next->active_mm = oldmm;
+		mmgrab(oldmm);			// foo's mm has count +2
+	}
+
+	if (!prev->mm) {			// True for foo
+		rq->prev_mm = oldmm;
+	}
+
+	finish_task_switch
+		mm = rq->prev_mm;
+		if (mm) {			// True (foo's mm)
+			mmdrop(mm);		// foo's mm has count +1
+		}
+
+	[...]
+
+<ctxsw to task bar>
+
+context_switch(prev=kthread, next=bar)
+	mm = next->mm;
+	oldmm = prev->active_mm;		// foo's mm!
+
+	if (!prev->mm) {			// True for kthread
+		rq->prev_mm = oldmm;
+	}
+
+	finish_task_switch
+		mm = rq->prev_mm;
+		if (mm) {			// True (foo's mm)
+			mmdrop(mm);		// foo's mm has count +0
+		}
+
+	[...]
+
+<ctxsw back to task foo>
+
+context_switch(prev=bar, next=foo)
+	mm = next->mm;
+	oldmm = prev->active_mm;
+
+	if (!mm) {				// True for foo
+		next->active_mm = oldmm;	// This is bar's mm
+		mmgrab(oldmm);			// bar's mm has count +1
+	}
+
+
+	[return back to exit_mm]
+
+mmdrop(mm);					// foo's mm has count -1
+
+At this point, we've got an imbalanced count on the mm and could free it
+prematurely as seen in the KASAN log. A subsequent context-switch away
+from foo would therefore result in a use-after-free.
+
+Assuming others agree with this diagnosis, I'm not sure how to fix it.
+It's basically not safe to set current->mm = NULL with preemption enabled.
+
+Will
