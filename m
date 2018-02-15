@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2241641-1518720573-2-3819306494722952133
+X-Cyrus-Session-Id: sloti22d1t05-2243538-1518720556-2-10453909194322395760
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720572; b=jayWnvxpANwtXLj7bB0PxPsV16CbMu/uBA/+/twGywzVfUO
-    ASkkh7oad+GBZ+uZv3WWxGdeYzpob9uom2FtMsKGYsgX+3aeENsDL9BCuQzkCJKT
-    O8Z12m4acCdhMW7y5tUUrK/mwfQtKtu0WrN3lgYmKnpG9CMkFFhXpENN0nAUsQPi
-    50NzGcUvI4ruU1wDFKIXf2xjBIuFllVXmr9uS/j9N2ZJmknefKx7B/K/2GKkrqDf
-    sz2XcVr/EBYAWGe8cV21ElzJK0MggTR33U0ZW1WnDWK528F6x7WC/ltdewnzeDd/
-    j1Dj4y74DHOku9XxgX1Sl0eaEkuFWzGfBrnQ0OQ==
+    t=1518720556; b=Fg0EU9Vgf5ED82ko5NKhbgXrFjhyLRURPRGaJy6XWDEj9Xv
+    QEHsWW5uvWtGDpOSQd36zCw4dokCpiWcgBapSL31NFVPKX96Um0zlFqjLOhH2PIo
+    bN0WgxwKFY1uAxSNY78CZNx2LEx03ZGIBLInQgv15nkoeyyjwSawwjHCUyI371pM
+    4stVgP74JTEci9GqJVlqvepk7hYDuXBBJ/w/xxOA0blfZPpz8pCawmaGB+c/iXm8
+    KPCrEde74PV7v5J18Xk9/dGMC8NDQZ6RgJy0bLGDQhp1jKvVJD6neXDa4gicaXzD
+    pFytdoYf2+/W+SH+3ra1yBqC37IY1Hj4OGtA38A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720572; bh=jC+ztDaLgUWElPUXjWA8TyzU90
-    7eysEaIWhwXeH3diY=; b=Jw08b7629L8z64Ayt+KJB0wcbMWdppK8BD/t76Wg3n
-    CBh/+SMX5k8pgQYC05MR0jUdijvQ37+FBOY4WxYG2BXMkQvU5LJSOCoEMQC82zBc
-    N1R1NgY5LgXpQuZUFJhNtBnDKGlSYPij4WUwHc7+P35anrYK7zUpRPl7VP/30ZXI
-    sIeF0KRBhMbMFDxEoZDK5eRWi+y+tzJlF/IwRq70PbBiADBanimUpDQ7lMEll/yV
-    QOSUZewnFK75V+Zc471dr9LGJE3ng6o8C/tuBM+JSldtDl4WtmJzkq9OKMenm6ub
-    0V10X47rlVXVF25FP+PPfkonMYzZBkeRTWsZWcgVkZKg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518720556; bh=YvQ+Y/rMtQFhV4+RpwjbmeHo/i
+    kF4seTfabZXf8pDss=; b=d5sxCNE1thvahma6SfreQVBirf4hefWsUWAK050QQ9
+    GDWHzrhbiG08ay9qiseaNSppVOtjx+iba+pxpFcdZEjrApY1z1Hj1lMqE5mWeInW
+    sFofgCvSXqsZaJpaoj71Vbn+dXoeDcr5CD36TnyUOxiXNLb/eYNMFlYIHCbIi5yl
+    TZxaNhVAArt/U68ov/BVTxDb5ZFuw2I0MZYx0c56jCTHRQKIp2Al1sTkuFBZ7XGf
+    pw5Cp0Gm4rQhWly94G+DN00XC8+ZVXyx5th3pOcpDKwQ8HnaHSWzqdjX7OauA1lu
+    pHZ//964rbUxP2hN7WCHAa64wJqko3yTNl1JnoL/WEGg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,22 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162294AbeBOStP (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 13:49:15 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49284 "EHLO
+        id S1162194AbeBOPVw (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:21:52 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49252 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162201AbeBOPVx (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:21:53 -0500
+        with ESMTP id S1162138AbeBOPVu (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:21:50 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesse Chan <jc@linux.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.4 033/108] media: soc_camera: soc_scale_crop: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
-Date: Thu, 15 Feb 2018 16:16:30 +0100
-Message-Id: <20180215151227.045243423@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+eb17c6162478cc50632c@syzkaller.appspotmail.com,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 032/108] vhost_net: stop device during reset owner
+Date: Thu, 15 Feb 2018 16:16:29 +0100
+Message-Id: <20180215151226.915629314@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -78,36 +79,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jesse Chan <jc@linux.com>
+From: Jason Wang <jasowang@redhat.com>
 
-commit 5331aec1bf9c9da557668174e0a4bfcee39f1121 upstream.
 
-This change resolves a new compile-time warning
-when built as a loadable module:
+[ Upstream commit 4cd879515d686849eec5f718aeac62a70b067d82 ]
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/media/platform/soc_camera/soc_scale_crop.o
-see include/linux/module.h for more information
+We don't stop device before reset owner, this means we could try to
+serve any virtqueue kick before reset dev->worker. This will result a
+warn since the work was pending at llist during owner resetting. Fix
+this by stopping device during owner reset.
 
-This adds the license as "GPL", which matches the header of the file.
-
-MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
-
-Signed-off-by: Jesse Chan <jc@linux.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Reported-by: syzbot+eb17c6162478cc50632c@syzkaller.appspotmail.com
+Fixes: 3a4d5c94e9593 ("vhost_net: a kernel-level virtio server")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/media/platform/soc_camera/soc_scale_crop.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/vhost/net.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/media/platform/soc_camera/soc_scale_crop.c
-+++ b/drivers/media/platform/soc_camera/soc_scale_crop.c
-@@ -405,3 +405,7 @@ void soc_camera_calc_client_output(struc
- 	mf->height = soc_camera_shift_scale(rect->height, shift, scale_v);
- }
- EXPORT_SYMBOL(soc_camera_calc_client_output);
-+
-+MODULE_DESCRIPTION("soc-camera scaling-cropping functions");
-+MODULE_AUTHOR("Guennadi Liakhovetski <kernel@pengutronix.de>");
-+MODULE_LICENSE("GPL");
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -981,6 +981,7 @@ static long vhost_net_reset_owner(struct
+ 	}
+ 	vhost_net_stop(n, &tx_sock, &rx_sock);
+ 	vhost_net_flush(n);
++	vhost_dev_stop(&n->dev);
+ 	vhost_dev_reset_owner(&n->dev, memory);
+ 	vhost_net_vq_reset(n);
+ done:
