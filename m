@@ -1,86 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165778AbeBORwA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 12:52:00 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:51774 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1164231AbeBORv5 (ORCPT
+        id S1165844AbeBORw7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 12:52:59 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:60694 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1164213AbeBORws (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 12:51:57 -0500
-Date: Thu, 15 Feb 2018 12:51:56 -0500 (EST)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: Akira Yokosawa <akiyks@gmail.com>
-cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        <linux-kernel@vger.kernel.org>, <mingo@kernel.org>,
-        <parri.andrea@gmail.com>, <will.deacon@arm.com>,
-        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
-        <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: Trial of conflict resolution of Alan's patch
-In-Reply-To: <fa35db31-7a73-4865-1505-5378dcb2a0f8@gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1802151246190.1286-100000@iolanthe.rowland.org>
+        Thu, 15 Feb 2018 12:52:48 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: <broonie@kernel.org>
+CC: <jic23@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
+Subject: [PATCH 2/5] regmap: Tidy up regmap_raw_read chunking code
+Date: Thu, 15 Feb 2018 17:52:17 +0000
+Message-ID: <20180215175220.2691-2-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180215175220.2691-1-ckeepax@opensource.cirrus.com>
+References: <20180215175220.2691-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1802150215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Feb 2018, Akira Yokosawa wrote:
+Raw reads may need to be split into small chunks if max_raw_read is
+set.  Tidy up the code implementing this, the new code is slightly
+clearer, slightly shorter and slightly more efficient.
 
-> So, I attempted to rebase the patch to current (somewhat old) master of
-> https://github.com/aparri/memory-model. Why? Because the lkmm branch
-> in Paul's -rcu tree doesn't have linux-kernel-hardware.cat.
-> 
-> However, after this change, Z6.0+pooncelock+pooncelock+pombonce still
-> has the result "Sometimes". I must have done something wrong in the
-> conflict resolution.
-> 
-> Note: I have almost no idea what this patch is doing. I'm just hoping
-> to give a starting point of a discussion.
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+ drivers/base/regmap/regmap.c | 44 +++++++++++++++++++-------------------------
+ 1 file changed, 19 insertions(+), 25 deletions(-)
 
-Yes, that litmus test gives "Sometimes" both with and without the 
-patch.  But consider instead this slightly changed version of that 
-test, in which P2 reads Z instead of writing it:
-
-C Z6.0-variant
-
-{}
-
-P0(int *x, int *y, spinlock_t *mylock)
-{
-	spin_lock(mylock);
-	WRITE_ONCE(*x, 1);
-	WRITE_ONCE(*y, 1);
-	spin_unlock(mylock);
-}
-
-P1(int *y, int *z, spinlock_t *mylock)
-{
-	int r0;
-
-	spin_lock(mylock);
-	r0 = READ_ONCE(*y);
-	WRITE_ONCE(*z, 1);
-	spin_unlock(mylock);
-}
-
-P2(int *x, int *z)
-{
-	int r1;
-	int r2;
-
-	r2 = READ_ONCE(*z);
-	smp_mb();
-	r1 = READ_ONCE(*x);
-}
-
-exists (1:r0=1 /\ 2:r2=1 /\ 2:r1=0)
-
-Without the patch, this test gives "Sometimes"; with the patch it gives 
-"Never".  That is what I thought Paul was talking about originally.  
-
-Sorry if my misunderstanding caused too much confusion for other 
-people.
-
-Alan
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index f78ddaa9a1e8..93d4218c5569 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -2542,44 +2542,38 @@ int regmap_raw_read(struct regmap *map, unsigned int reg, void *val,
+ 
+ 	if (regmap_volatile_range(map, reg, val_count) || map->cache_bypass ||
+ 	    map->cache_type == REGCACHE_NONE) {
+-		int chunk_stride = map->reg_stride;
+-		size_t chunk_size = val_bytes;
+-		size_t chunk_count = val_count;
++		size_t chunk_count, chunk_bytes;
++		size_t chunk_regs = val_count;
+ 
+ 		if (!map->bus->read) {
+ 			ret = -ENOTSUPP;
+ 			goto out;
+ 		}
+ 
+-		if (!map->use_single_read) {
+-			if (map->max_raw_read)
+-				chunk_size = map->max_raw_read;
+-			else
+-				chunk_size = val_len;
+-			if (chunk_size % val_bytes)
+-				chunk_size -= chunk_size % val_bytes;
+-			chunk_count = val_len / chunk_size;
+-			chunk_stride *= chunk_size / val_bytes;
+-		}
++		if (map->use_single_read)
++			chunk_regs = 1;
++		else if (map->max_raw_read && val_len > map->max_raw_read)
++			chunk_regs = map->max_raw_read / val_bytes;
+ 
+-		/* Read bytes that fit into a multiple of chunk_size */
++		chunk_count = val_count / chunk_regs;
++		chunk_bytes = chunk_regs * val_bytes;
++
++		/* Read bytes that fit into whole chunks */
+ 		for (i = 0; i < chunk_count; i++) {
+-			ret = _regmap_raw_read(map,
+-					       reg + (i * chunk_stride),
+-					       val + (i * chunk_size),
+-					       chunk_size);
++			ret = _regmap_raw_read(map, reg, val, chunk_bytes);
+ 			if (ret != 0)
+-				return ret;
++				goto out;
++
++			reg += regmap_get_offset(map, chunk_regs);
++			val += chunk_bytes;
++			val_len -= chunk_bytes;
+ 		}
+ 
+ 		/* Read remaining bytes */
+-		if (chunk_size * i < val_len) {
+-			ret = _regmap_raw_read(map,
+-					       reg + (i * chunk_stride),
+-					       val + (i * chunk_size),
+-					       val_len - i * chunk_size);
++		if (val_len) {
++			ret = _regmap_raw_read(map, reg, val, val_len);
+ 			if (ret != 0)
+-				return ret;
++				goto out;
+ 		}
+ 	} else {
+ 		/* Otherwise go word by word for the cache; should be low
+-- 
+2.11.0
