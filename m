@@ -1,69 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161820AbeBOVW1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 16:22:27 -0500
-Received: from mout.web.de ([212.227.17.11]:49075 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161516AbeBOVWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 16:22:25 -0500
-To: linux-ide@vger.kernel.org, Tejun Heo <tj@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] sata_dwc_460ex: Delete an error message for a failed memory
- allocation in sata_dwc_port_start()
-Message-ID: <3ba388af-286a-df63-e78f-c82c1d084439@users.sourceforge.net>
-Date: Thu, 15 Feb 2018 22:22:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1755975AbeBOV1N (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 16:27:13 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:35652 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755950AbeBOV1M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 16:27:12 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 21A3960960
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
+Message-ID: <5A85FB2E.2050407@codeaurora.org>
+Date: Thu, 15 Feb 2018 13:27:10 -0800
+From: Saravana Kannan <skannan@codeaurora.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130329 Thunderbird/17.0.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+To: Viresh Kumar <viresh.kumar@linaro.org>
+CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Bo Yan <byan@nvidia.com>,
+        sgurrappadi@nvidia.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: skip cpufreq resume if it's not suspended
+References: <1516744675-21233-1-git-send-email-byan@nvidia.com> <dc33ef16-9684-3d8d-f4cc-6e24697f007f@nvidia.com> <20180205040118.GB28462@vireshk-i7> <1710637.vo8uP0oTBm@aspire.rjw.lan> <20180205090546.GE28462@vireshk-i7>
+In-Reply-To: <20180205090546.GE28462@vireshk-i7>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:ByR1GXMSDTeyn8vRLjkLgt7nAR6RlwW80afXCbylBNHWAfDQzJn
- FcnTSyV4jPzf+WyKdBQEBYX/yG3X5Jp5zosLS3XhIT9Q01YnU7uK7nU0rCeKmCaWMOotUd8
- pfNkv2JHTjK2uaPJ0Jc0Vrzy+0Uo5AfQtc6YICLzDfJmh1UynHq87zpHAgvCurQfhFPV4vA
- euDEvEeT5JCjBjocKGUfg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:2ZpI4bAnRHM=:/pyyRIM2RevoYgKGmCbn+H
- 8gNMprjhfGS9Atz2xULlWOss61bZzAczS1YQL5/AupxWg2sVnXs2RR903KIOs4HkngV0HNN+u
- AaSqtRvlySPgqXn5EIZuK+GKPR2N028floCpUMasphyCsN0wCcBVi7IlZPw6Gf7/zn0Rna+O8
- PGgaXZrW+m8viqbVDvz947Lu8YGNFlgHA0S2j3/V5kOcAxBcxQVo63ImZiPDdUZgAVnZHW2+5
- j8M8LVRqOlnn5rylQqX1ZVyfhcQJa4LstHbDQrDH3cZ+eqaNKjSQw054nlzWasO3mu/AxRIQ3
- AIPQVEqRCn09LMrRZNtqJoBnRi7jMPjtBmekGgU8v/mH0t/7Ua31o+G8Wh+1OIGhE09LIqbKx
- SSuL+rZpFh+tpWuMUcK2oKLQ1xVpVapidHBzTXYnWet9WsGun/4ALMVpFUWIauGmuTigjjv2M
- +6H4jlNwY7SGna3FA2spqdJ2xfHYwIfFUN61BuGTCC3LJx6NlVga/7f9GXMkA9zxDr6oh2rxN
- rAg2l6b90XDcD3shlc+QW4uU0guIMDzdbYEVRAHg2Ueg4v3mZh6oMcpyVOdNcfJzJus8GqvTP
- LKcWWFyXyKS1bjCb6gFSrLX2TS6KYT/RmX+lWtFhJSWYrklnhCdDem52r1zeYSTdCDmkRt8Y2
- pc7DmTjqzbe/nAjs1Eds7FKqamianm0hw0Y9rXS2e4gxIMNSFnUG+WeKMCxcg6MgdsGhWUaCs
- av6SZQxHlY+0ghHHNwGixeCl1UYnjV+prQ1+HZ2VgV8P91hJ8E+xbTAQ6JheoAjY3v3u4bwSp
- IePX/M5dYbJt7x7WpSbPF81hmXPKjUxT77zBrfehXYnt861dAw=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 15 Feb 2018 22:15:25 +0100
+On 02/05/2018 01:05 AM, Viresh Kumar wrote:
+> On 05-02-18, 09:50, Rafael J. Wysocki wrote:
+>> By design (which I admit may be confusing) it should be fine to call
+>> dpm_resume_end() after a failing dpm_suspend_start(), whatever the reason
+>> for the failure is.  cpufreq_suspend/resume() don't take that into account,
+>> everybody else does.
+>
+> Hmm, I see. Can't do much then, just fix the only broken piece of code :)
+>
 
-Omit an extra message for a memory allocation failure in this function.
+Sorry for the late reply, this email didn't get filtered into the right 
+folder.
 
-This issue was detected by using the Coccinelle software.
+I think the design of dpm_suspend_start() and dpm_resume_end() generally 
+works fine because we seem to keep track of what devices have been 
+suspended so far (in the dpm_suspended_list) and call resume only of 
+those. So, why isn't the right fix to have cpufreq get put into that 
+list? Instead of just always call it on the resume path even if it 
+wasn't suspended? That seems to be the real issue.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/ata/sata_dwc_460ex.c | 1 -
- 1 file changed, 1 deletion(-)
+So, we should either have dpm_suspend/resume() have a flag to keep track 
+of if cpufreq_suspend/resume() was called and make sure they are called 
+in proper pairs. Or have cpufreq register in a way that gets it put in 
+the suspend/resume list.
 
-diff --git a/drivers/ata/sata_dwc_460ex.c b/drivers/ata/sata_dwc_460ex.c
-index 6af4ec3c88c3..ce3d6674ef80 100644
---- a/drivers/ata/sata_dwc_460ex.c
-+++ b/drivers/ata/sata_dwc_460ex.c
-@@ -901,7 +901,6 @@ static int sata_dwc_port_start(struct ata_port *ap)
- 	/* Allocate Port Struct */
- 	hsdevp = kzalloc(sizeof(*hsdevp), GFP_KERNEL);
- 	if (!hsdevp) {
--		dev_err(ap->dev, "%s: kmalloc failed for hsdevp\n", __func__);
- 		err = -ENOMEM;
- 		goto CLEANUP;
- 	}
+I'd still like to NACK this change.
+
+-Saravana
+
 -- 
-2.16.1
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
