@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225syaFb+23wVpfskRvxHdSCCLwu4LN9EYX+Hk8+FCY3lZJ3AukWCgBCMUxdpIrEG6fKB4Wn
-ARC-Seal: i=1; a=rsa-sha256; t=1518708701; cv=none;
+X-Google-Smtp-Source: AH8x227Bjpb6Nx2AiXMAFdLzSzCC/XHVn0dXJsPEXW3mNPjWC6YeAvRR0V7K5WAr45k8wY7+MHHd
+ARC-Seal: i=1; a=rsa-sha256; t=1518708697; cv=none;
         d=google.com; s=arc-20160816;
-        b=p4TUWzElKAfvE1xNdxm7xmuqnHOgo4pQGnYP3DMRSmJaNTF4JfqpN3o1sD2oV4c1YJ
-         eNHGQ4tq1boI/a8Bqo29bCiKkU7drtq1Svm/Rhl4/VbSEpjWOVXmyaFfBicUveU/5Bl6
-         xEWkLySH8epogXvBoH5NgWaTip/0SH8ljQXw33pdPNexckG0ZFXe0dm26sQ+5KZHpsb4
-         vzUPcBVOqh0Tdc7LHFcPPSVgGFtlhrsN6RhptsgPddDLOCrZUW8hi4YKB7xxAeOhUL59
-         UIbWg44crnMaiVhJ0Ehxh4VG0Xy7XQm3LGViREb/sOMExyMckLDyGaav2vuYGu75nWqb
-         F1kA==
+        b=qwgUTrXi+5ks5vnW8u6ENQ4ZL3YEPg/fEhGaDSEnyN/X8LvQcaHx7DmgL7c2mrdEH6
+         YN6BG22BGJHsKVCQV0AoLfC0t/4HQudrLv+cfnmm8Ntx36EdpSfiyR4TA+0qu5Yjwqhy
+         hu6d0m7LNbx5GLu2xTa96cN9/Y1KlwtIyo4waY3jStjutwRyh7MEZQGGRBbqW9QsLRRt
+         hxCqB3MTK58soreWVvT1Pvj2Jn/kivbK1ntJSbaAcdm3KzQ/ykPGrzZL6rqiUR/gv0RJ
+         LcI6+nFieY0UDQ+gfW+/pi/WF9fHHpDTB/fq8zmzFBHy8GPcIa8mrCczDETexjMyxHyW
+         gr2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=EqE95B9sgFdBmVdOrWgdyNFHWnkGV0houqH145pL8Ec=;
-        b=QRdnXLTRpxRr037EymsF3gH0JWS8AJ6L2Eo7Wg4BrWM06bTWR9U9463/Sw3v/0hjyl
-         zG3kb3LzzkOZ7TgDAIzlUK94Cso2G7XJXv/ps0i7Fr9VyQni93p5p9nUdqlt1a3VFUlO
-         /CeUKnXwtvLiTza5BNl2ASjaMUVVke+kRyjyQybbJ0eMCZTjQKmchof0E+6KkcV5PjU0
-         wcNwjdVorEhgQaFQhgTTPfTMQL0KzuxyCbC0QE14ZePHwH+tb86l0HEeMhU2txLFmt/r
-         SlIK4LgbB5y0BVfW7Uz4GgEyD2aNeefdLaKPysOoLrDBFXnfZDy6PcSTnoQSMf9/oeGa
-         594w==
+        bh=4kHOqRFARhpcj5YXNyqEQ4QDS5Bp8s14z1sB2ZwUT4g=;
+        b=FDin3KIgdFy3lbFykoqBeQNuT7wpC57JqV3t9dFSYgDnaMymmJq0o8rIu/bfEmkdfO
+         cOzXywwLZb/3rouL9uqVRJngxymHLXoN8M2XhP68WCXHvkM2MpoE/Kmfq8ALB4KE2KIw
+         PuC/kiYxwPX7igse0ALRNjrL12qmY2vHsdj8r7oA0PLRQO/yEbqHV9hhJObbjw1emU2e
+         6tIscVEfhkUXktJab5Mh4cYeo5QdH5V0QlazQVIgcdl3tpBoEfJ0tGkhBXTnsuxgUPQ2
+         KROPfsT2l5tut6iux3UD7IJNdnfJOrKdujP3PjPiuI1YZZ1prtsKpYx5ip/SJ7mMbRos
+         8I3A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Laura Abbott <labbott@redhat.com>,
 	Shanker Donthineni <shankerd@codeaurora.org>,
 	Will Deacon <will.deacon@arm.com>,
-	Timur Tabi <timur@codeaurora.org>
-Subject: [PATCH 4.14 011/195] arm64: Add software workaround for Falkor erratum 1041
-Date: Thu, 15 Feb 2018 16:15:02 +0100
-Message-Id: <20180215151706.307474308@linuxfoundation.org>
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 4.14 046/195] [Variant 3/Meltdown] arm64: mm: Introduce TTBR_ASID_MASK for getting at the ASID in the TTBR
+Date: Thu, 15 Feb 2018 16:15:37 +0100
+Message-Id: <20180215151708.038968792@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481495113028061?=
-X-GMAIL-MSGID: =?utf-8?q?1592481495113028061?=
+X-GMAIL-THRID: =?utf-8?q?1592481491662420216?=
+X-GMAIL-MSGID: =?utf-8?q?1592481491662420216?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,155 +51,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shanker Donthineni <shankerd@codeaurora.org>
+From: Will Deacon <will.deacon@arm.com>
 
-commit 932b50c7c1c65e6f23002e075b97ee083c4a9e71 upstream.
 
-The ARM architecture defines the memory locations that are permitted
-to be accessed as the result of a speculative instruction fetch from
-an exception level for which all stages of translation are disabled.
-Specifically, the core is permitted to speculatively fetch from the
-4KB region containing the current program counter 4K and next 4K.
+Commit b519538dfefc upstream.
 
-When translation is changed from enabled to disabled for the running
-exception level (SCTLR_ELn[M] changed from a value of 1 to 0), the
-Falkor core may errantly speculatively access memory locations outside
-of the 4KB region permitted by the architecture. The errant memory
-access may lead to one of the following unexpected behaviors.
+There are now a handful of open-coded masks to extract the ASID from a
+TTBR value, so introduce a TTBR_ASID_MASK and use that instead.
 
-1) A System Error Interrupt (SEI) being raised by the Falkor core due
-   to the errant memory access attempting to access a region of memory
-   that is protected by a slave-side memory protection unit.
-2) Unpredictable device behavior due to a speculative read from device
-   memory. This behavior may only occur if the instruction cache is
-   disabled prior to or coincident with translation being changed from
-   enabled to disabled.
-
-The conditions leading to this erratum will not occur when either of the
-following occur:
- 1) A higher exception level disables translation of a lower exception level
-   (e.g. EL2 changing SCTLR_EL1[M] from a value of 1 to 0).
- 2) An exception level disabling its stage-1 translation if its stage-2
-    translation is enabled (e.g. EL1 changing SCTLR_EL1[M] from a value of 1
-    to 0 when HCR_EL2[VM] has a value of 1).
-
-To avoid the errant behavior, software must execute an ISB immediately
-prior to executing the MSR that will change SCTLR_ELn[M] from 1 to 0.
-
-Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+Suggested-by: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Laura Abbott <labbott@redhat.com>
+Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
-Cc: Timur Tabi <timur@codeaurora.org>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- Documentation/arm64/silicon-errata.txt |    1 +
- arch/arm64/Kconfig                     |   10 ++++++++++
- arch/arm64/include/asm/assembler.h     |   10 ++++++++++
- arch/arm64/kernel/cpu-reset.S          |    1 +
- arch/arm64/kernel/efi-entry.S          |    2 ++
- arch/arm64/kernel/head.S               |    1 +
- arch/arm64/kernel/relocate_kernel.S    |    1 +
- arch/arm64/kvm/hyp-init.S              |    1 +
- 8 files changed, 27 insertions(+)
+ arch/arm64/include/asm/asm-uaccess.h |    3 ++-
+ arch/arm64/include/asm/mmu.h         |    1 +
+ arch/arm64/include/asm/uaccess.h     |    4 ++--
+ arch/arm64/kernel/entry.S            |    2 +-
+ 4 files changed, 6 insertions(+), 4 deletions(-)
 
---- a/Documentation/arm64/silicon-errata.txt
-+++ b/Documentation/arm64/silicon-errata.txt
-@@ -74,3 +74,4 @@ stable kernels.
- | Qualcomm Tech. | Falkor v1       | E1003           | QCOM_FALKOR_ERRATUM_1003    |
- | Qualcomm Tech. | Falkor v1       | E1009           | QCOM_FALKOR_ERRATUM_1009    |
- | Qualcomm Tech. | QDF2400 ITS     | E0065           | QCOM_QDF2400_ERRATUM_0065   |
-+| Qualcomm Tech. | Falkor v{1,2}   | E1041           | QCOM_FALKOR_ERRATUM_1041    |
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -539,6 +539,16 @@ config QCOM_QDF2400_ERRATUM_0065
+--- a/arch/arm64/include/asm/asm-uaccess.h
++++ b/arch/arm64/include/asm/asm-uaccess.h
+@@ -4,6 +4,7 @@
  
- 	  If unsure, say Y.
+ #include <asm/alternative.h>
+ #include <asm/kernel-pgtable.h>
++#include <asm/mmu.h>
+ #include <asm/sysreg.h>
+ #include <asm/assembler.h>
  
-+config QCOM_FALKOR_ERRATUM_E1041
-+	bool "Falkor E1041: Speculative instruction fetches might cause errant memory access"
-+	default y
-+	help
-+	  Falkor CPU may speculatively fetch instructions from an improper
-+	  memory location when MMU translation is changed from SCTLR_ELn[M]=1
-+	  to SCTLR_ELn[M]=0. Prefix an ISB instruction to fix the problem.
-+
-+	  If unsure, say Y.
-+
- endmenu
- 
- 
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -499,4 +499,14 @@ alternative_else_nop_endif
- #endif
+@@ -17,7 +18,7 @@
+ 	msr	ttbr0_el1, \tmp1		// set reserved TTBR0_EL1
+ 	isb
+ 	sub	\tmp1, \tmp1, #SWAPPER_DIR_SIZE
+-	bic	\tmp1, \tmp1, #(0xffff << 48)
++	bic	\tmp1, \tmp1, #TTBR_ASID_MASK
+ 	msr	ttbr1_el1, \tmp1		// set reserved ASID
+ 	isb
  	.endm
+--- a/arch/arm64/include/asm/mmu.h
++++ b/arch/arm64/include/asm/mmu.h
+@@ -18,6 +18,7 @@
  
-+/**
-+ * Errata workaround prior to disable MMU. Insert an ISB immediately prior
-+ * to executing the MSR that will change SCTLR_ELn[M] from a value of 1 to 0.
-+ */
-+	.macro pre_disable_mmu_workaround
-+#ifdef CONFIG_QCOM_FALKOR_ERRATUM_E1041
-+	isb
-+#endif
-+	.endm
-+
- #endif	/* __ASM_ASSEMBLER_H */
---- a/arch/arm64/kernel/cpu-reset.S
-+++ b/arch/arm64/kernel/cpu-reset.S
-@@ -37,6 +37,7 @@ ENTRY(__cpu_soft_restart)
- 	mrs	x12, sctlr_el1
- 	ldr	x13, =SCTLR_ELx_FLAGS
- 	bic	x12, x12, x13
-+	pre_disable_mmu_workaround
- 	msr	sctlr_el1, x12
- 	isb
+ #define MMCF_AARCH32	0x1	/* mm context flag for AArch32 executables */
+ #define USER_ASID_FLAG	(UL(1) << 48)
++#define TTBR_ASID_MASK	(UL(0xffff) << 48)
  
---- a/arch/arm64/kernel/efi-entry.S
-+++ b/arch/arm64/kernel/efi-entry.S
-@@ -96,6 +96,7 @@ ENTRY(entry)
- 	mrs	x0, sctlr_el2
- 	bic	x0, x0, #1 << 0	// clear SCTLR.M
- 	bic	x0, x0, #1 << 2	// clear SCTLR.C
-+	pre_disable_mmu_workaround
- 	msr	sctlr_el2, x0
- 	isb
- 	b	2f
-@@ -103,6 +104,7 @@ ENTRY(entry)
- 	mrs	x0, sctlr_el1
- 	bic	x0, x0, #1 << 0	// clear SCTLR.M
- 	bic	x0, x0, #1 << 2	// clear SCTLR.C
-+	pre_disable_mmu_workaround
- 	msr	sctlr_el1, x0
- 	isb
- 2:
---- a/arch/arm64/kernel/head.S
-+++ b/arch/arm64/kernel/head.S
-@@ -732,6 +732,7 @@ __primary_switch:
- 	 * to take into account by discarding the current kernel mapping and
- 	 * creating a new one.
- 	 */
-+	pre_disable_mmu_workaround
- 	msr	sctlr_el1, x20			// disable the MMU
- 	isb
- 	bl	__create_page_tables		// recreate kernel mapping
---- a/arch/arm64/kernel/relocate_kernel.S
-+++ b/arch/arm64/kernel/relocate_kernel.S
-@@ -45,6 +45,7 @@ ENTRY(arm64_relocate_new_kernel)
- 	mrs	x0, sctlr_el2
- 	ldr	x1, =SCTLR_ELx_FLAGS
- 	bic	x0, x0, x1
-+	pre_disable_mmu_workaround
- 	msr	sctlr_el2, x0
- 	isb
- 1:
---- a/arch/arm64/kvm/hyp-init.S
-+++ b/arch/arm64/kvm/hyp-init.S
-@@ -151,6 +151,7 @@ reset:
- 	mrs	x5, sctlr_el2
- 	ldr	x6, =SCTLR_ELx_FLAGS
- 	bic	x5, x5, x6		// Clear SCTL_M and etc
-+	pre_disable_mmu_workaround
- 	msr	sctlr_el2, x5
- 	isb
+ #ifndef __ASSEMBLY__
  
+--- a/arch/arm64/include/asm/uaccess.h
++++ b/arch/arm64/include/asm/uaccess.h
+@@ -112,7 +112,7 @@ static inline void __uaccess_ttbr0_disab
+ 	write_sysreg(ttbr + SWAPPER_DIR_SIZE, ttbr0_el1);
+ 	isb();
+ 	/* Set reserved ASID */
+-	ttbr &= ~(0xffffUL << 48);
++	ttbr &= ~TTBR_ASID_MASK;
+ 	write_sysreg(ttbr, ttbr1_el1);
+ 	isb();
+ }
+@@ -131,7 +131,7 @@ static inline void __uaccess_ttbr0_enabl
+ 
+ 	/* Restore active ASID */
+ 	ttbr1 = read_sysreg(ttbr1_el1);
+-	ttbr1 |= ttbr0 & (0xffffUL << 48);
++	ttbr1 |= ttbr0 & TTBR_ASID_MASK;
+ 	write_sysreg(ttbr1, ttbr1_el1);
+ 	isb();
+ 
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -205,7 +205,7 @@ alternative_else_nop_endif
+ 
+ 	.if	\el != 0
+ 	mrs	x21, ttbr1_el1
+-	tst	x21, #0xffff << 48		// Check for the reserved ASID
++	tst	x21, #TTBR_ASID_MASK		// Check for the reserved ASID
+ 	orr	x23, x23, #PSR_PAN_BIT		// Set the emulated PAN in the saved SPSR
+ 	b.eq	1f				// TTBR0 access already disabled
+ 	and	x23, x23, #~PSR_PAN_BIT		// Clear the emulated PAN in the saved SPSR
