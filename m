@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227ZnF9OddNQM7D40YznkFV0qZjvB3+9uNTbJBPxIdAF3EH+oO4VuexLrq8pyPCikQUbDn+f
-ARC-Seal: i=1; a=rsa-sha256; t=1518709346; cv=none;
+X-Google-Smtp-Source: AH8x225B7sY6R9ZbBKuEfUwJ3GilkrJtdcAl+NTN0gHVpBXzJjqCqk8T9GtJFW2TfZwJ4rstwYhT
+ARC-Seal: i=1; a=rsa-sha256; t=1518709344; cv=none;
         d=google.com; s=arc-20160816;
-        b=vQcRHiKGx7NOq1g6kMJ3oFpybk6SXrcIABrei6YEm69NnP//l0LA94az2DfUIHNT3Q
-         CDoQf7iM+tdohWodRLZg/TAQXiV3TnZBY++6tKUZ9jxwBkMZdeMxdmV2jEJ5hpy/t5YV
-         BVW3KkpzkeJPwv+FiwEDd1r/5wdpr7W8oBHMwXTewOrfajoed7ltnBe8cgTS/55cVXc1
-         kz1mbYRrgx6j40VeX7gnrjIFYWXjVl7JVfOnPI0vx9QuoaOzri2cZKLGBsBHbWK/xU9G
-         zBSGa7tOnofddLsvIkLHoxNsSTGDVgZ4GLt8x3CsRV/mIW5QlVAMe+r/GAi10atEdnNt
-         z7wA==
+        b=yagN4kChr9e0oyzWK44lIrPYi5YdRCL7ra3CZmwjZgXIhJdK1oFSNOFISQMJ5oBxv+
+         +bmTGG5RW8F+8+DkMg0I2uNGPjU+BkS1doj/pexysv/rhiM/o/H7OK2/nfIG64wYWA2K
+         9jiKY2OwDVg/UyDySRboVhdoG6gudnq+BYulEeb1MVKSwwSljVUA5BY2XKNYrWUorb0s
+         N5kWYbEZf1yozM0VAcx5eeXny2xC/+zV6suUGJJqrTq49og72xaJr34aN8YHVhjqPBvG
+         FHZ8D3P0VUS71pzjVbfPANzcDF9WEwhMXCMeIe9+hP2LPCimJv3cec0StO9lOzRkV2Ta
+         RZ5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=lErbmpuGUm4FXeezRLGdKMo3/VBqIvY4/u5Y6eMeBwM=;
-        b=H+jHlBm/9L4cPS+UsoefIDAZ85khSUAbBKq+ZlWMUbEGXyb8o38j80vTWAkbibw+xJ
-         PBKyUhPZFMueGcYTu5NTSrAcaQ9UI2nJIaNgyCK0nGRZUhCWEcSUJWFgkgP/9l4yvgMV
-         JS+bPwa6v0nOYdIsc+5DdirHYmhr518XlvVi3CCDkfJCvL6Ydvciv65jbF/Z71ltuV6r
-         gGvTR1hh1K8VKzkVnFxjT/WyQ5L/83eef+t7cWKFkF0M3mKY6VXS67a4qAUcy1I3vNpX
-         qSYAt9zKJwt6YI2ekWqv0poHiQRNSsXpKf2cnjuhLTtR1vsLjowf0YTXt1SoiGL3zX+n
-         W4bw==
+        bh=wzh+J5sSZqtVYG43tfbqKsbQPl2USyYCMyuSFvcw6Ms=;
+        b=H+nQy602NXBPW17AzWWzSQyZbSGOQR1QEytwApB+RBSv4n6MFI8fJDAwsXe7w5QXZ7
+         RSgHSalAV4+uFiUGYuMxi4cR45CK8EDyyeDgHex92tLp+Lb/wLUk+8ewGkZVCiqkufQQ
+         Phajg9NoI6KPTuCGMeM7+mjVImOaHqLgOfrT2Mo3H9F3NzBAxf6esC9yoslicJTh37Xr
+         Yt38OXblvlruph1Xu1ljRzVjKscaMjvdVlPcZfrp5VXcSU8/krLIkL5ytjrz5wh8/01V
+         /IFh62l1p9A3e6CNNrFS5PSzUX8E9Fx75/usk7GD+09TZZIZk+LVTDZDJVyQ9K9w0s1v
+         xEiQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.15 049/202] [Variant 1/Spectre-v1] arm64: barrier: Add CSDB macros to control data-value prediction
-Date: Thu, 15 Feb 2018 16:15:49 +0100
-Message-Id: <20180215151715.780120327@linuxfoundation.org>
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.15 083/202] [Variant 2/Spectre-v2] firmware/psci: Expose SMCCC version through psci_ops
+Date: Thu, 15 Feb 2018 16:16:23 +0100
+Message-Id: <20180215151717.804235463@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -40,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481620719505373?=
-X-GMAIL-MSGID: =?utf-8?q?1592482172583067929?=
+X-GMAIL-THRID: =?utf-8?q?1592481708878297459?=
+X-GMAIL-MSGID: =?utf-8?q?1592482169763511101?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,50 +52,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
 
-Commit 669474e772b9 upstream.
+Commit e78eef554a91 upstream.
 
-For CPUs capable of data value prediction, CSDB waits for any outstanding
-predictions to architecturally resolve before allowing speculative execution
-to continue. Provide macros to expose it to the arch code.
+Since PSCI 1.0 allows the SMCCC version to be (indirectly) probed,
+let's do that at boot time, and expose the version of the calling
+convention as part of the psci_ops structure.
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-
-Conflicts:
-	arch/arm64/include/asm/assembler.h
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/assembler.h |    7 +++++++
- arch/arm64/include/asm/barrier.h   |    1 +
- 2 files changed, 8 insertions(+)
+ drivers/firmware/psci.c |   27 +++++++++++++++++++++++++++
+ include/linux/psci.h    |    6 ++++++
+ 2 files changed, 33 insertions(+)
 
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -109,6 +109,13 @@
- 	.endm
+--- a/drivers/firmware/psci.c
++++ b/drivers/firmware/psci.c
+@@ -61,6 +61,7 @@ bool psci_tos_resident_on(int cpu)
  
- /*
-+ * Value prediction barrier
-+ */
-+	.macro	csdb
-+	hint	#20
-+	.endm
+ struct psci_operations psci_ops = {
+ 	.conduit = PSCI_CONDUIT_NONE,
++	.smccc_version = SMCCC_VERSION_1_0,
+ };
+ 
+ typedef unsigned long (psci_fn)(unsigned long, unsigned long,
+@@ -511,6 +512,31 @@ static void __init psci_init_migrate(voi
+ 	pr_info("Trusted OS resident on physical CPU 0x%lx\n", cpuid);
+ }
+ 
++static void __init psci_init_smccc(void)
++{
++	u32 ver = ARM_SMCCC_VERSION_1_0;
++	int feature;
 +
-+/*
-  * NOP sequence
-  */
- 	.macro	nops, num
---- a/arch/arm64/include/asm/barrier.h
-+++ b/arch/arm64/include/asm/barrier.h
-@@ -32,6 +32,7 @@
- #define dsb(opt)	asm volatile("dsb " #opt : : : "memory")
++	feature = psci_features(ARM_SMCCC_VERSION_FUNC_ID);
++
++	if (feature != PSCI_RET_NOT_SUPPORTED) {
++		u32 ret;
++		ret = invoke_psci_fn(ARM_SMCCC_VERSION_FUNC_ID, 0, 0, 0);
++		if (ret == ARM_SMCCC_VERSION_1_1) {
++			psci_ops.smccc_version = SMCCC_VERSION_1_1;
++			ver = ret;
++		}
++	}
++
++	/*
++	 * Conveniently, the SMCCC and PSCI versions are encoded the
++	 * same way. No, this isn't accidental.
++	 */
++	pr_info("SMC Calling Convention v%d.%d\n",
++		PSCI_VERSION_MAJOR(ver), PSCI_VERSION_MINOR(ver));
++
++}
++
+ static void __init psci_0_2_set_functions(void)
+ {
+ 	pr_info("Using standard PSCI v0.2 function IDs\n");
+@@ -559,6 +585,7 @@ static int __init psci_probe(void)
+ 	psci_init_migrate();
  
- #define psb_csync()	asm volatile("hint #17" : : : "memory")
-+#define csdb()		asm volatile("hint #20" : : : "memory")
+ 	if (PSCI_VERSION_MAJOR(ver) >= 1) {
++		psci_init_smccc();
+ 		psci_init_cpu_suspend();
+ 		psci_init_system_suspend();
+ 	}
+--- a/include/linux/psci.h
++++ b/include/linux/psci.h
+@@ -31,6 +31,11 @@ enum psci_conduit {
+ 	PSCI_CONDUIT_HVC,
+ };
  
- #define mb()		dsb(sy)
- #define rmb()		dsb(ld)
++enum smccc_version {
++	SMCCC_VERSION_1_0,
++	SMCCC_VERSION_1_1,
++};
++
+ struct psci_operations {
+ 	u32 (*get_version)(void);
+ 	int (*cpu_suspend)(u32 state, unsigned long entry_point);
+@@ -41,6 +46,7 @@ struct psci_operations {
+ 			unsigned long lowest_affinity_level);
+ 	int (*migrate_info_type)(void);
+ 	enum psci_conduit conduit;
++	enum smccc_version smccc_version;
+ };
+ 
+ extern struct psci_operations psci_ops;
