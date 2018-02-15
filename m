@@ -1,128 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427029AbeBORI5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 12:08:57 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:49982 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1422885AbeBORIv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 12:08:51 -0500
-Date: Thu, 15 Feb 2018 18:08:47 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Will Deacon <will.deacon@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mingo@kernel.org
-Subject: Re: [RFC PATCH 3/5] asm-generic/bitops/atomic.h: Rewrite using
- atomic_fetch_*
-Message-ID: <20180215170847.GD25181@hirez.programming.kicks-ass.net>
-References: <1518708575-12284-1-git-send-email-will.deacon@arm.com>
- <1518708575-12284-4-git-send-email-will.deacon@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518708575-12284-4-git-send-email-will.deacon@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1427031AbeBORKo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 12:10:44 -0500
+Received: from smtp.gentoo.org ([140.211.166.183]:55990 "EHLO smtp.gentoo.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1422753AbeBORKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 12:10:41 -0500
+Message-ID: <1518714636.2464.12.camel@gentoo.org>
+Subject: Re: [PATCH-next] sched/headers: Clean up <linux/sched.h>
+From: Christopher =?ISO-8859-1?Q?D=EDaz?= Riveros <chrisadr@gentoo.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Date: Thu, 15 Feb 2018 12:10:36 -0500
+In-Reply-To: <20180215165212.GB25181@hirez.programming.kicks-ass.net>
+References: <20180215154318.15894-1-chrisadr@gentoo.org>
+         <20180215165212.GB25181@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.24.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 03:29:33PM +0000, Will Deacon wrote:
-> +static inline void set_bit(unsigned int nr, volatile unsigned long *p)
-> +{
-> +	p += BIT_WORD(nr);
-> +	atomic_long_fetch_or_relaxed(BIT_MASK(nr), (atomic_long_t *)p);
-> +}
->  
-> +static inline void clear_bit(unsigned int nr, volatile unsigned long *p)
-> +{
-> +	p += BIT_WORD(nr);
-> +	atomic_long_fetch_andnot_relaxed(BIT_MASK(nr), (atomic_long_t *)p);
-> +}
->  
-> +static inline void change_bit(unsigned int nr, volatile unsigned long *p)
-> +{
-> +	p += BIT_WORD(nr);
-> +	atomic_long_fetch_xor_relaxed(BIT_MASK(nr), (atomic_long_t *)p);
-> +}
->  
-> +static inline int test_and_set_bit(unsigned int nr, volatile unsigned long *p)
->  {
-> +	long old;
->  	unsigned long mask = BIT_MASK(nr);
->  
-> +	p += BIT_WORD(nr);
-> +	if (READ_ONCE(*p) & mask)
-> +		return 1;
-> +
-> +	old = atomic_long_fetch_or(mask, (atomic_long_t *)p);
-> +	return !!(old & mask);
->  }
->  
-> +static inline int test_and_clear_bit(unsigned int nr, volatile unsigned long *p)
->  {
-> +	long old;
->  	unsigned long mask = BIT_MASK(nr);
->  
-> +	p += BIT_WORD(nr);
-> +	if (!(READ_ONCE(*p) & mask))
-> +		return 0;
-> +
-> +	old = atomic_long_fetch_andnot(mask, (atomic_long_t *)p);
-> +	return !!(old & mask);
->  }
->  
-> +static inline int test_and_change_bit(unsigned int nr, volatile unsigned long *p)
->  {
-> +	long old;
->  	unsigned long mask = BIT_MASK(nr);
->  
-> +	p += BIT_WORD(nr);
-> +	old = atomic_long_fetch_xor(mask, (atomic_long_t *)p);
-> +	return !!(old & mask);
->  }
->  
-> +static inline int test_and_set_bit_lock(unsigned int nr,
-> +					volatile unsigned long *p)
->  {
-> +	long old;
->  	unsigned long mask = BIT_MASK(nr);
->  
-> +	p += BIT_WORD(nr);
-> +	if (READ_ONCE(*p) & mask)
-> +		return 1;
->  
-> +	old = atomic_long_fetch_or_acquire(mask, (atomic_long_t *)p);
-> +	return !!(old & mask);
->  }
->  
-> +static inline void clear_bit_unlock(unsigned int nr, volatile unsigned long *p)
->  {
-> +	p += BIT_WORD(nr);
-> +	atomic_long_fetch_andnot_release(BIT_MASK(nr), (atomic_long_t *)p);
-> +}
->  
-> +static inline void __clear_bit_unlock(unsigned int nr,
-> +				      volatile unsigned long *p)
-> +{
-> +	unsigned long old;
->  
-> +	p += BIT_WORD(nr);
-> +	old = READ_ONCE(*p);
-> +	old &= ~BIT_MASK(nr);
-> +	smp_store_release(p, old);
+Hi Peter, thanks for the reply.
 
-This should be atomic_set_release() I think, for the special case where
-atomics are implemented with spinlocks, see the 'fun' case in
-Documentation/atomic_t.txt.
 
->  }
+El jue, 15-02-2018 a las 17:52 +0100, Peter Zijlstra escribió:
+> On Thu, Feb 15, 2018 at 10:43:18AM -0500, Christopher Diaz Riveros
+> wrote:
+> > @@ -183,7 +183,7 @@ extern void io_schedule_finish(int token);
+> >  extern long io_schedule_timeout(long timeout);
+> >  extern void io_schedule(void);
+> >  
+> > -/**
+> > +/*
+> >   * struct prev_cputime - snapshot of system and user cputime
+> >   * @utime: time spent in user mode
+> >   * @stime: time spent in system mode
+> > @@ -200,7 +200,7 @@ struct prev_cputime {
+> >  #endif
+> >  };
+> >  
+> > -/**
+> > +/*
+> >   * struct task_cputime - collected CPU time counts
+> >   * @utime:		time spent in user mode, in nanoseconds
+> >   * @stime:		time spent in kernel mode, in
+> > nanoseconds
+> 
+> Why, are those not valid kerneldoc comments?
 
-The only other comment is that I think it would be better if you use
-atomic_t instead of atomic_long_t. It would just mean changing
-BIT_WORD() and BIT_MASK().
+Following the same structure from most of the multiline comments in the
+file, they tend to be 
 
-The reason is that we generate a pretty sane set of atomic_t primitives
-as long as the architecture supplies cmpxchg, but atomic64 defaults to
-utter crap, even on 64bit platforms.
+/*
+ *
+ */
 
-Otherwise this looks pretty neat.
+I thought it was a typo, and maybe this makes the whole file have a
+uniform multiline comment style.
+
+> 
+> > @@ -437,20 +437,28 @@ struct sched_dl_entity {
+> >  	 * during sched_setattr(), they will remain the same until
+> >  	 * the next sched_setattr().
+> >  	 */
+> > -	u64				dl_runtime;	/*
+> > Maximum runtime for each instance	*/
+> > -	u64				dl_deadline;	/*
+> > Relative deadline of each instance	*/
+> > -	u64				dl_period;	/*
+> > Separation of two instances (period) */
+> > -	u64				dl_bw;		/
+> > * dl_runtime / dl_period		*/
+> > -	u64				dl_density;	/*
+> > dl_runtime / dl_deadline		*/
+> > +	/* Maximum runtime for each instance	*/
+> > +	u64				dl_runtime;
+> > +	/* Relative deadline of each instance	*/
+> > +	u64				dl_deadline;
+> > +	/* Separation of two instances (period) */
+> > +	u64				dl_period;
+> > +	/* dl_runtime / dl_period		*/
+> > +	u64				dl_bw;
+> > +	/* dl_runtime / dl_deadline		*/
+> > +	u64				dl_density;
+> 
+> That's a whole lot less readable :/
+
+Well, while reading the file on a 80 columns width terminal, it breaks
+lines producing results like:
+
+/* Maximum runtime for e
+ach instance */
+
+/* dl_runtime / dl_deadl
+ine */
+
+among others.
+
+In fact, most of the comments in the file follow the structure:
+
+/* comment about var */
+type 			identifier
+
+You can see this structure in lines:
+
+631
+689
+740
+781
+820
+among others.
+
+-- 
+Christopher Díaz Riveros
+Gentoo Linux Developer
+GPG Fingerprint: E517 5ECB 8152 98E4 FEBC  2BAA 4DBB D10F 0FDD 2547
