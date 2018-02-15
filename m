@@ -1,126 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162816AbeBOTRg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 14:17:36 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:40408 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161053AbeBOTRc (ORCPT
+        id S1754862AbeBOTZF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 14:25:05 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:38889 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750832AbeBOTZD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 14:17:32 -0500
-X-Google-Smtp-Source: AH8x226DJvAckns2SHfblLnsRdlDBdNcZHRQ1lHW8LitTNSCJKOP7RyRdtOOAkh1amXDPNryxaRGiw==
-From: Dmitry Safonov <dima@arista.com>
-To: linux-kernel@vger.kernel.org
-Cc: 0x7f454c46@gmail.com, Dmitry Safonov <dima@arista.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Joerg Roedel <joro@8bytes.org>, Lu Baolu <baolu.lu@linux.intel.com>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCHv3] iommu/intel: Ratelimit each dmar fault printing
-Date: Thu, 15 Feb 2018 19:17:29 +0000
-Message-Id: <20180215191729.15777-1-dima@arista.com>
-X-Mailer: git-send-email 2.13.6
+        Thu, 15 Feb 2018 14:25:03 -0500
+Subject: NACK: [PATCH] rtc: tx4939: avoid unintended sign extension on a 24
+ bit shift
+From: Colin Ian King <colin.king@canonical.com>
+To: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        linux-rtc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180215185941.27547-1-colin.king@canonical.com>
+Message-ID: <39b61428-be04-7233-edd8-ab7b37b469d0@canonical.com>
+Date: Thu, 15 Feb 2018 19:25:01 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180215185941.27547-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a ratelimit for printing, but it's incremented each time the
-cpu recives dmar fault interrupt. While one interrupt may signal about
-*many* faults.
-So, measuring the impact it turns out that reading/clearing one fault
-takes < 1 usec, and printing info about the fault takes ~170 msec.
+On 15/02/18 18:59, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The shifting of buf[5] by 24 bits to the left will be promoted to
+> a 32 bit signed int and then sign-extended to an unsigned long. If
+> the top bit of buf[5] is set then all then all the upper bits sec
+> end up as also being set because of the sign-extension. Fix this by
+> casting buf[5] to an unsigned long before the shift.
+> 
+> Detected by CoverityScan, CID#1465292 ("Unintended sign extension")
+> 
+> Fixes: 0e1492330cd2 ("rtc: add rtc-tx4939 driver")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/rtc/rtc-tx4939.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/rtc/rtc-tx4939.c b/drivers/rtc/rtc-tx4939.c
+> index feededce3ded..b8a066cbcc42 100644
+> --- a/drivers/rtc/rtc-tx4939.c
+> +++ b/drivers/rtc/rtc-tx4939.c
+> @@ -170,7 +170,8 @@ static int tx4939_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	alrm->enabled = (ctl & TX4939_RTCCTL_ALME) ? 1 : 0;
+>  	alrm->pending = (ctl & TX4939_RTCCTL_ALMD) ? 1 : 0;
+>  	spin_unlock_irq(&pdata->lock);
+> -	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
+> +	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
+> +		(buf[3] << 8) | buf[2];
+>  	rtc_time_to_tm(sec, &alrm->time);
+>  	return rtc_valid_tm(&alrm->time);
+>  }
+> 
+Nack, there are two occurrences of this sign extension, I missed the
+other one. I'll re-send a fix.
 
-Having in mind that maximum number of fault recording registers per
-remapping hardware unit is 256.. IRQ handler may run for (170*256) msec.
-And as fault-serving loop runs without a time limit, during servicing
-new faults may occur..
-
-Ratelimit each fault printing rather than each irq printing.
-
-Fixes: commit c43fce4eebae ("iommu/vt-d: Ratelimit fault handler")
-
-BUG: spinlock lockup suspected on CPU#0, CliShell/9903
- lock: 0xffffffff81a47440, .magic: dead4ead, .owner: kworker/u16:2/8915, .owner_cpu: 6
-CPU: 0 PID: 9903 Comm: CliShell
-Call Trace:$\n'
-[..] dump_stack+0x65/0x83$\n'
-[..] spin_dump+0x8f/0x94$\n'
-[..] do_raw_spin_lock+0x123/0x170$\n'
-[..] _raw_spin_lock_irqsave+0x32/0x3a$\n'
-[..] uart_chars_in_buffer+0x20/0x4d$\n'
-[..] tty_chars_in_buffer+0x18/0x1d$\n'
-[..] n_tty_poll+0x1cb/0x1f2$\n'
-[..] tty_poll+0x5e/0x76$\n'
-[..] do_select+0x363/0x629$\n'
-[..] compat_core_sys_select+0x19e/0x239$\n'
-[..] compat_SyS_select+0x98/0xc0$\n'
-[..] sysenter_dispatch+0x7/0x25$\n'
-[..]
-NMI backtrace for cpu 6
-CPU: 6 PID: 8915 Comm: kworker/u16:2
-Workqueue: dmar_fault dmar_fault_work
-Call Trace:$\n'
-[..] wait_for_xmitr+0x26/0x8f$\n'
-[..] serial8250_console_putchar+0x1c/0x2c$\n'
-[..] uart_console_write+0x40/0x4b$\n'
-[..] serial8250_console_write+0xe6/0x13f$\n'
-[..] call_console_drivers.constprop.13+0xce/0x103$\n'
-[..] console_unlock+0x1f8/0x39b$\n'
-[..] vprintk_emit+0x39e/0x3e6$\n'
-[..] printk+0x4d/0x4f$\n'
-[..] dmar_fault+0x1a8/0x1fc$\n'
-[..] dmar_fault_work+0x15/0x17$\n'
-[..] process_one_work+0x1e8/0x3a9$\n'
-[..] worker_thread+0x25d/0x345$\n'
-[..] kthread+0xea/0xf2$\n'
-[..] ret_from_fork+0x58/0x90$\n'
-
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: iommu@lists.linux-foundation.org
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
-Maybe it's worth to limit while(1) cycle.
-If IOMMU generates faults with equal speed as irq handler cleans
-them, it may turn into long-irq-disabled region again.
-Not sure if it can happen anyway.
-
- drivers/iommu/dmar.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index accf58388bdb..6c4ea32ee6a9 100644
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -1618,17 +1618,13 @@ irqreturn_t dmar_fault(int irq, void *dev_id)
- 	int reg, fault_index;
- 	u32 fault_status;
- 	unsigned long flag;
--	bool ratelimited;
- 	static DEFINE_RATELIMIT_STATE(rs,
- 				      DEFAULT_RATELIMIT_INTERVAL,
- 				      DEFAULT_RATELIMIT_BURST);
- 
--	/* Disable printing, simply clear the fault when ratelimited */
--	ratelimited = !__ratelimit(&rs);
--
- 	raw_spin_lock_irqsave(&iommu->register_lock, flag);
- 	fault_status = readl(iommu->reg + DMAR_FSTS_REG);
--	if (fault_status && !ratelimited)
-+	if (fault_status && __ratelimit(&rs))
- 		pr_err("DRHD: handling fault status reg %x\n", fault_status);
- 
- 	/* TBD: ignore advanced fault log currently */
-@@ -1638,6 +1634,8 @@ irqreturn_t dmar_fault(int irq, void *dev_id)
- 	fault_index = dma_fsts_fault_record_index(fault_status);
- 	reg = cap_fault_reg_offset(iommu->cap);
- 	while (1) {
-+		/* Disable printing, simply clear the fault when ratelimited */
-+		bool ratelimited = !__ratelimit(&rs);
- 		u8 fault_reason;
- 		u16 source_id;
- 		u64 guest_addr;
--- 
-2.13.6
+Colin
