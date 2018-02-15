@@ -1,77 +1,48 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1825685-1518709171-2-16496574805126047408
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518709171; b=C0ulYoOOFshLKU/Lvs1VLYwxpXwczPdWChq9x+S0uxf5arA
-    MVA0Zhaw9gR62obwptwsHb8rrLeTxo7Jqbtx156jqM0bldkiWJ2JLErjE6UEwKyf
-    kGrY/KPcolSufLYewTdaK2BUOGBPEqSM2t8TVBRGoLqBKPSUCPCVAPk/wBUrO6cd
-    9bhvwEvDUylNggO/PfyqllKIvyo0Fr/pWuSK22RWK+HdheVoLUDEsVEouw5nXcSE
-    NFS7lwppC5ekj6XhFRHfeJC2rcx6UOA7SXxUDZcZsc3SgXY9IxNtAFtOPbC01eBK
-    FFey8aXqFix8uYbblBBxxvdixveHihhtB1ik0Nw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518709171; bh=YQyMFrUOtlsFMwijZi9ciCFMCa
-    nxv5GNsqifGiwcRbo=; b=ZcJ7Qm07m/TlnYION6SKByogvfRmTkdC5sjaQgxLlh
-    dVey2D/K5uYaPKV3PEl1sJxwh0xZhGEKX2nNNVVRNHYgeO4eUat54WOZ/K0rDNyy
-    rOfb9E9X5tXUe67xLBZnVCN397QRpD6BJo8PTdDFhFaP58beDRd4x9nFxaW9PQDY
-    58RdEBFmCg1wP1a/gL6tKeNN7cZejTDNewcnB2pxHPBCxIcU/Zf1Ljl4nWiGbpCa
-    VmINlE4I2tUEOgl0S5FSXI3xszCdwXvNKg+YwN9XK1RHBEAwOcIYlK2GizN8OLhX
-    Jktg7k//GGm2iL0h+NQZ+9OFWhwJHJd5dYW/aV131wZw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423519AbeBOPj0 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:39:26 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59738 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423502AbeBOPjV (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:39:21 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x227+zpgzzKQuJlw6DFuFBDxtR3/1NXeVa+DvruoTo+ytwEP4Ln8fMgvcV/edja7yHdaLhWFa
+ARC-Seal: i=1; a=rsa-sha256; t=1518709170; cv=none;
+        d=google.com; s=arc-20160816;
+        b=lLsVkXBecweo8zxbTw19DqyPWzedkqCl1T5rMUq1gAUr5uekeTtb8FMnhpapUVcv9w
+         S7qrhA7l2NVWB6FFiEqCMuXRf19pj9d1Ve4Sb1jEzpkDSrR1RJjWszYPzLvPPMbtXuUr
+         TavOvZcBmo6i8fo84MO98wVjCu4B4FEf7BxiP7v7dzpz9EGrymz02gXYWsQy64rgjqTq
+         nKEJd4k5YkQrn+qpR3ofwuqvLeozHYLKyzJQJwWWgEWrGB2S0X+b/9PiR7cnaodDiLEM
+         6FO5wZJBDI73BN/WOrQ9Quz7rR3EXlgasL4cHl0+xQbWAmJ/c0OTrBQDrS6c1xzb2wmu
+         LSyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=rMPH2i7DuX8+uT21mEDoezp0o2wH46f/sEUnnoEyxHk=;
+        b=ymEIb9iAdjFek+3GsbYAbfG126rncIXpWuLAeV+LXhB9CNuQTxUY36e86PEr1szBBs
+         eoX56vgsJFFC6OZEq45lCfvJWcI8hZaCP1zAZRV83Uy9oxyKq7s/GGlRIX9YrvMKkfcX
+         mRa7uaQa2t14tgj3wCbk4vG4+njFNKFaQdTnU+zOe5YitTQ3is+SPc08FE3XgP3j7bNz
+         oIQhpWFISh1eFfWc4vmbVLjfM4HhTuEH0rcuu8cqTop3q4jnNFgEPNz4Ih0Ruv8SP7pS
+         OQP78hAjhBOJhFceoADLjJDrjxmybAndwtp0ow1TOq+PtWJYpH4t+NH/GWPqqNK1xxEt
+         4zyQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Shanker Donthineni <shankerd@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.15 019/202] [Variant 3/Meltdown] arm64: mm: Rename post_ttbr0_update_workaround
-Date: Thu, 15 Feb 2018 16:15:19 +0100
-Message-Id: <20180215151713.882305520@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Laura Abbott <labbott@redhat.com>,
+	Shanker Donthineni <shankerd@codeaurora.org>,
+	Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.15 022/202] [Variant 3/Meltdown] arm64: mm: Add arm64_kernel_unmapped_at_el0 helper
+Date: Thu, 15 Feb 2018 16:15:22 +0100
+Message-Id: <20180215151714.063533844@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1592481443573794235?=
+X-GMAIL-MSGID: =?utf-8?q?1592481986785862744?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,11 +53,15 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Will Deacon <will.deacon@arm.com>
 
 
-Commit 158d495899ce upstream.
+Commit fc0e1299da54 upstream.
 
-The post_ttbr0_update_workaround hook applies to any change to TTBRx_EL1.
-Since we're using TTBR1 for the ASID, rename the hook to make it clearer
-as to what it's doing.
+In order for code such as TLB invalidation to operate efficiently when
+the decision to map the kernel at EL0 is determined at runtime, this
+patch introduces a helper function, arm64_kernel_unmapped_at_el0, to
+determine whether or not the kernel is mapped whilst running in userspace.
+
+Currently, this just reports the value of CONFIG_UNMAP_KERNEL_AT_EL0,
+but will later be hooked up to a fake CPU capability using a static key.
 
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Tested-by: Laura Abbott <labbott@redhat.com>
@@ -94,45 +69,35 @@ Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/assembler.h |    5 ++---
- arch/arm64/kernel/entry.S          |    2 +-
- arch/arm64/mm/proc.S               |    2 +-
- 3 files changed, 4 insertions(+), 5 deletions(-)
+ arch/arm64/include/asm/mmu.h |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -477,10 +477,9 @@ alternative_endif
- 	.endm
+--- a/arch/arm64/include/asm/mmu.h
++++ b/arch/arm64/include/asm/mmu.h
+@@ -19,6 +19,8 @@
+ #define MMCF_AARCH32	0x1	/* mm context flag for AArch32 executables */
+ #define USER_ASID_FLAG	(UL(1) << 48)
  
- /*
--/*
-- * Errata workaround post TTBR0_EL1 update.
-+ * Errata workaround post TTBRx_EL1 update.
++#ifndef __ASSEMBLY__
++
+ typedef struct {
+ 	atomic64_t	id;
+ 	void		*vdso;
+@@ -32,6 +34,11 @@ typedef struct {
   */
--	.macro	post_ttbr0_update_workaround
-+	.macro	post_ttbr_update_workaround
- #ifdef CONFIG_CAVIUM_ERRATUM_27456
- alternative_if ARM64_WORKAROUND_CAVIUM_27456
- 	ic	iallu
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -257,7 +257,7 @@ alternative_else_nop_endif
- 	 * Cavium erratum 27456 (broadcast TLBI instructions may cause I-cache
- 	 * corruption).
- 	 */
--	post_ttbr0_update_workaround
-+	post_ttbr_update_workaround
- 	.endif
- 1:
- 	.if	\el != 0
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -145,7 +145,7 @@ ENTRY(cpu_do_switch_mm)
- 	isb
- 	msr	ttbr0_el1, x0			// now update TTBR0
- 	isb
--	post_ttbr0_update_workaround
-+	post_ttbr_update_workaround
- 	ret
- ENDPROC(cpu_do_switch_mm)
+ #define ASID(mm)	((mm)->context.id.counter & 0xffff)
  
++static inline bool arm64_kernel_unmapped_at_el0(void)
++{
++	return IS_ENABLED(CONFIG_UNMAP_KERNEL_AT_EL0);
++}
++
+ extern void paging_init(void);
+ extern void bootmem_init(void);
+ extern void __iomem *early_io_map(phys_addr_t phys, unsigned long virt);
+@@ -42,4 +49,5 @@ extern void create_pgd_mapping(struct mm
+ extern void *fixmap_remap_fdt(phys_addr_t dt_phys);
+ extern void mark_linear_text_alias_ro(void);
+ 
++#endif	/* !__ASSEMBLY__ */
+ #endif
