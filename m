@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225MLXhAmjDX+VInjAZMyltjyNj0pUsfjabx9H1O170K5BUWShZTskPiG1kQ32Oxo+QHEGcv
-ARC-Seal: i=1; a=rsa-sha256; t=1518709072; cv=none;
+X-Google-Smtp-Source: AH8x224nqFe0sQyJWo0i9Mwd3J9DVYiJt0SenKIQs+tRNBoAry0U2VyLtlzfxavKT2w/4bn4bMqO
+ARC-Seal: i=1; a=rsa-sha256; t=1518709066; cv=none;
         d=google.com; s=arc-20160816;
-        b=oKibGouZQaEAjwaPB+YGRxhHRO/tbsKW2sWdGt+mGyFCaTGo0SysoMOTYF12dJ4fHw
-         9kippDdTKHNzxyiXw5TgaZmwmZmQFrN2DZppqju+u1mdd6SGKECK2AzVTCU+KNGJGxS2
-         /1EZCbd3Za8sYcfbYA2nw3jRd4+VI7WA7ZHFbTr4O2K/2GdSRQnflgOVuQD8AfupIyjF
-         tquOPR0tWFExRwXeKxxZdfeEB6CkDWfz8rAkGJ+xuf/u6dc1PgKNKVas0j0sjY1XgEZy
-         ehxqQxBftZhL5zdXzB1W+RZ7MeuBzK0IPri0CnTdp4C+8j9UBb4+XfYAZLkwpygYqOmo
-         8wVA==
+        b=BqGmA0q1QkF8StfHLn1ss/ZR7YX3HA3V74ohgtZKCs4dTRD+wEcgcx1XCc0TgpCFUu
+         PV0OWcltdD9BZWqPf2VG+WVvz1foqzLmwdDJrO1DZGJF2qezjbCffqwkcXVDYkBV5ngB
+         vYf4SbWw409NP4gTqYKQTXm/eQaXh+5yVOO8lERpJ6rxhsUDYti6wXWE5pCNR9YbzwKm
+         8cvKplrsZr6/BwAlFNchMU3QZt2PdtMcJTW6yug++Gk7VRY0IObmRKAsHqMmOSn9jXAU
+         2lg2087bo8i+M0CLKKb1vvbggVyHmdhFkatnOtPlqOYdotC1gu/ejRLx5A+1fB/DMJFi
+         1oog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=TvLKUlogMlW6DMGtj18Q8+qgHDrgoqB0xdik92qrDhc=;
-        b=hx1+jX5oWuFQDDx9DaB5CTmONeh9UgCA4GIkhQJb4Kn7kvJHurLZKb3pxxeX7lTySl
-         Z63sSFQgzEDFUBmwPJdsl+yI+F2Lzb/U/yes1WJE3BbgTO1dEoF7/lnhViu1AmgPx1ge
-         agr1V9cBcNWlEmajCzvK7vZJUX0fhEw2od57Ft3dbR+EYPNdPMK8cozeb3ZQy9PnSe4L
-         LXlus8hU/cqYMfmYObDHYNoqttMMbgiW2AW33e5upfZRcaMreUF4zPgP3GeQd70x4vzL
-         nTWIQBYXnv+zobUr3xQvan69ymWnKL3DXOjKHOGHLLXWOJkrovUyl216JlNwjb7hZ5Uv
-         ni3A==
+        bh=jbb9VNpk1xuMWsqBgcVKHPdBoB9JY4q2nHOOCJMSV1Y=;
+        b=mwRvoGfBrcVkQiARjbM4M2afV5WRfNcKIeq7yOQz6oIY91B/Weyc2XB5sGdvp7O0pc
+         a1T/jzhQvx7zoipVSWZ+1B3ydHmh1TOuUwufpYvPX/UQHbfe98JSKbf53nRH8rBfKUG4
+         dUNC2cZQGknqBVn2wf2AWxOMrDiAtuT0QX2X87HRJeHAYUCSw2zqLkkdyv/ahjaBA5dv
+         AC6yn4tV/y9F1yrMsdxUmr6duSmTQ283vVofMagrcaqnFGP9qTYDkrirHPeP8X5IGSM4
+         sIn7xQ1P8NHWdiWc35F2dejwaR9iC/PZ5s2d9FUQlStIEpuPVU52GfH+nwjIAEN1d1GM
+         St9g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	Sodagudi Prasad <psodagud@codeaurora.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 181/195] lib/ubsan: add type mismatch handler for new GCC/Clang
-Date: Thu, 15 Feb 2018 16:17:52 +0100
-Message-Id: <20180215151715.285772702@linuxfoundation.org>
+	Benjamin Gaignard <benjamin.gaignard@st.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 179/195] clocksource/drivers/stm32: Fix kernel panic with multiple timers
+Date: Thu, 15 Feb 2018 16:17:50 +0100
+Message-Id: <20180215151715.162071962@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -41,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481334818391977?=
-X-GMAIL-MSGID: =?utf-8?q?1592481884359308398?=
+X-GMAIL-THRID: =?utf-8?q?1592481328881100726?=
+X-GMAIL-MSGID: =?utf-8?q?1592481878134818273?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,161 +54,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-commit 42440c1f9911b4b7b8ba3dc4e90c1197bc561211 upstream.
+commit e0aeca3d8cbaea514eb98df1149faa918f9ec42d upstream.
 
-UBSAN=y fails to build with new GCC/clang:
+The current code hides a couple of bugs:
 
-    arch/x86/kernel/head64.o: In function `sanitize_boot_params':
-    arch/x86/include/asm/bootparam_utils.h:37: undefined reference to `__ubsan_handle_type_mismatch_v1'
+ - The global variable 'clock_event_ddata' is overwritten each time the
+   init function is invoked.
 
-because Clang and GCC 8 slightly changed ABI for 'type mismatch' errors.
-Compiler now uses new __ubsan_handle_type_mismatch_v1() function with
-slightly modified 'struct type_mismatch_data'.
+This is fixed with a kmemdup() instead of assigning the global variable. That
+prevents a memory corruption when several timers are defined in the DT.
 
-Let's add new 'struct type_mismatch_data_common' which is independent from
-compiler's layout of 'struct type_mismatch_data'.  And make
-__ubsan_handle_type_mismatch[_v1]() functions transform compiler-dependent
-type mismatch data to our internal representation.  This way, we can
-support both old and new compilers with minimal amount of change.
+ - The clockevent's event_handler is NULL if the time framework does
+   not select the clockevent when registering it, this is fine but the init
+   code generates in any case an interrupt leading to dereference this
+   NULL pointer.
 
-Link: http://lkml.kernel.org/r/20180119152853.16806-1-aryabinin@virtuozzo.com
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Reported-by: Sodagudi Prasad <psodagud@codeaurora.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+The stm32 timer works with shadow registers, a mechanism to cache the
+registers. When a change is done in one buffered register, we need to
+artificially generate an event to force the timer to copy the content
+of the register to the shadowed register.
+
+The auto-reload register (ARR) is one of the shadowed register as well as
+the prescaler register (PSC), so in order to force the copy, we issue an
+event which in turn leads to an interrupt and the NULL dereference.
+
+This is fixed by inverting two lines where we clear the status register
+before enabling the update event interrupt.
+
+As this kernel crash is resulting from the combination of these two bugs,
+the fixes are grouped into a single patch.
+
+Tested-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Acked-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/1515418139-23276-11-git-send-email-daniel.lezcano@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/ubsan.c |   48 ++++++++++++++++++++++++++++++++++++++----------
- lib/ubsan.h |   14 ++++++++++++++
- 2 files changed, 52 insertions(+), 10 deletions(-)
+ drivers/clocksource/timer-stm32.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/lib/ubsan.c
-+++ b/lib/ubsan.c
-@@ -265,14 +265,14 @@ void __ubsan_handle_divrem_overflow(stru
- }
- EXPORT_SYMBOL(__ubsan_handle_divrem_overflow);
+--- a/drivers/clocksource/timer-stm32.c
++++ b/drivers/clocksource/timer-stm32.c
+@@ -106,6 +106,10 @@ static int __init stm32_clockevent_init(
+ 	unsigned long rate, max_delta;
+ 	int irq, ret, bits, prescaler = 1;
  
--static void handle_null_ptr_deref(struct type_mismatch_data *data)
-+static void handle_null_ptr_deref(struct type_mismatch_data_common *data)
- {
- 	unsigned long flags;
++	data = kmemdup(&clock_event_ddata, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
+ 	clk = of_clk_get(np, 0);
+ 	if (IS_ERR(clk)) {
+ 		ret = PTR_ERR(clk);
+@@ -156,8 +160,8 @@ static int __init stm32_clockevent_init(
  
--	if (suppress_report(&data->location))
-+	if (suppress_report(data->location))
- 		return;
+ 	writel_relaxed(prescaler - 1, data->base + TIM_PSC);
+ 	writel_relaxed(TIM_EGR_UG, data->base + TIM_EGR);
+-	writel_relaxed(TIM_DIER_UIE, data->base + TIM_DIER);
+ 	writel_relaxed(0, data->base + TIM_SR);
++	writel_relaxed(TIM_DIER_UIE, data->base + TIM_DIER);
  
--	ubsan_prologue(&data->location, &flags);
-+	ubsan_prologue(data->location, &flags);
+ 	data->periodic_top = DIV_ROUND_CLOSEST(rate, prescaler * HZ);
  
- 	pr_err("%s null pointer of type %s\n",
- 		type_check_kinds[data->type_check_kind],
-@@ -281,15 +281,15 @@ static void handle_null_ptr_deref(struct
- 	ubsan_epilogue(&flags);
- }
- 
--static void handle_misaligned_access(struct type_mismatch_data *data,
-+static void handle_misaligned_access(struct type_mismatch_data_common *data,
- 				unsigned long ptr)
- {
- 	unsigned long flags;
- 
--	if (suppress_report(&data->location))
-+	if (suppress_report(data->location))
- 		return;
- 
--	ubsan_prologue(&data->location, &flags);
-+	ubsan_prologue(data->location, &flags);
- 
- 	pr_err("%s misaligned address %p for type %s\n",
- 		type_check_kinds[data->type_check_kind],
-@@ -299,15 +299,15 @@ static void handle_misaligned_access(str
- 	ubsan_epilogue(&flags);
+@@ -184,6 +188,7 @@ err_iomap:
+ err_clk_enable:
+ 	clk_put(clk);
+ err_clk_get:
++	kfree(data);
+ 	return ret;
  }
  
--static void handle_object_size_mismatch(struct type_mismatch_data *data,
-+static void handle_object_size_mismatch(struct type_mismatch_data_common *data,
- 					unsigned long ptr)
- {
- 	unsigned long flags;
- 
--	if (suppress_report(&data->location))
-+	if (suppress_report(data->location))
- 		return;
- 
--	ubsan_prologue(&data->location, &flags);
-+	ubsan_prologue(data->location, &flags);
- 	pr_err("%s address %p with insufficient space\n",
- 		type_check_kinds[data->type_check_kind],
- 		(void *) ptr);
-@@ -315,7 +315,7 @@ static void handle_object_size_mismatch(
- 	ubsan_epilogue(&flags);
- }
- 
--void __ubsan_handle_type_mismatch(struct type_mismatch_data *data,
-+static void ubsan_type_mismatch_common(struct type_mismatch_data_common *data,
- 				unsigned long ptr)
- {
- 
-@@ -326,8 +326,36 @@ void __ubsan_handle_type_mismatch(struct
- 	else
- 		handle_object_size_mismatch(data, ptr);
- }
-+
-+void __ubsan_handle_type_mismatch(struct type_mismatch_data *data,
-+				unsigned long ptr)
-+{
-+	struct type_mismatch_data_common common_data = {
-+		.location = &data->location,
-+		.type = data->type,
-+		.alignment = data->alignment,
-+		.type_check_kind = data->type_check_kind
-+	};
-+
-+	ubsan_type_mismatch_common(&common_data, ptr);
-+}
- EXPORT_SYMBOL(__ubsan_handle_type_mismatch);
- 
-+void __ubsan_handle_type_mismatch_v1(struct type_mismatch_data_v1 *data,
-+				unsigned long ptr)
-+{
-+
-+	struct type_mismatch_data_common common_data = {
-+		.location = &data->location,
-+		.type = data->type,
-+		.alignment = 1UL << data->log_alignment,
-+		.type_check_kind = data->type_check_kind
-+	};
-+
-+	ubsan_type_mismatch_common(&common_data, ptr);
-+}
-+EXPORT_SYMBOL(__ubsan_handle_type_mismatch_v1);
-+
- void __ubsan_handle_nonnull_return(struct nonnull_return_data *data)
- {
- 	unsigned long flags;
---- a/lib/ubsan.h
-+++ b/lib/ubsan.h
-@@ -37,6 +37,20 @@ struct type_mismatch_data {
- 	unsigned char type_check_kind;
- };
- 
-+struct type_mismatch_data_v1 {
-+	struct source_location location;
-+	struct type_descriptor *type;
-+	unsigned char log_alignment;
-+	unsigned char type_check_kind;
-+};
-+
-+struct type_mismatch_data_common {
-+	struct source_location *location;
-+	struct type_descriptor *type;
-+	unsigned long alignment;
-+	unsigned char type_check_kind;
-+};
-+
- struct nonnull_arg_data {
- 	struct source_location location;
- 	struct source_location attr_location;
