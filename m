@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224XDEjt3vQSm28nJTNdXJp56FmDfc2JcZ0+iASg+4N0cc0dDV0HvL/EVD5vlm05+fRBo0u5
-ARC-Seal: i=1; a=rsa-sha256; t=1518707937; cv=none;
+X-Google-Smtp-Source: AH8x225T6fU+ZqTUvRLuigzHcX2mjY4gDYey+AIZRuxiqJLMADFiMpjYchJ7LsyeArE4uxWf0g+I
+ARC-Seal: i=1; a=rsa-sha256; t=1518707934; cv=none;
         d=google.com; s=arc-20160816;
-        b=I+caeWqISIuIo2V5Zsox9ZrUjC+w9DCpmGIvQ9QqFEgCnXabYxRX4KjW7jPrIRQYEy
-         OTgoNYAASd6WvDqvMYMKfgExnDiwdPO1smtSQSx3OHMgApdclnOn/7Kxy6UvF7SfU4bO
-         BK32aGHKiq/qFfLQF5rWF5I2zv8WmOOE6LwA1hUhRlTsjkx7t+28OqpgnbGcfinWj/T6
-         jgnKHvyVOOhm7zt3fmeHF9HGThPZKVhOj0XtAvKvdv628rMVS9CqPYECOKp7Jo4ds1zB
-         G+uZUwcSqYp6/Hg6eKrmbAbJExoyMdGVcw/BIAx8AtgljM5cMIofXah/ELrvKWQn6gZu
-         AWPw==
+        b=UxupzVc4AxGXzKUrt9M1ly3+NpVkkq4zjV9zVf37V4aA52ePGVjhYN7CuCi9KsKtD4
+         xKa1U3mT8iggbWCzQUdgfvGqtStyqCQdkp1VHxbT9XQJwAqQpa3ID9JOx+uCtaEzyNL8
+         owclc/4yE+0YoYm9IaYM7y4WZXWbIfEge2ypkwfX+y0RXPSTqFRTL6c+fM64ifQQ32H/
+         Y+O3Bpz+qeoa1EJqujjNmaCf+vX+dsvO+tsl0YPs0ADAoWfSTSU4wW64g7K1wSWQt8f3
+         nkfDN/CNzIStfYZQdHvJ85uyFuYqHM5R5jH1MIZWH6+rygAIGke72xSO+c3X912oDeEh
+         zg7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=CXIqNjaERiJQ9ibAqgy0AvncY6cAumVnlDB/rScTAlc=;
-        b=ngzX5EYdA8qBlbKKR7qgQMDwUL3XPUP2bmVE5A6oEJYDcx5asD03AGHZ3qBBs9xoiW
-         LGeLn0S7GAGnNJKkPg0PKaNwRMUFMwXvSkhtkItASoDqduc2ndG8KL2A46fja1yMdeeo
-         SvQJw8SjSoBuwZpy4pUHs/lJAi/iWrFhST09pUNb3Y+/GbtFt4m/KUP4uoN5S9ALF7rk
-         /IQGeNOa6qXlMGO4Qv+uSFMgd6GfuXVaKet0jzkZKlo2vYSspOsFOZgSk6KIm+mHvIr6
-         JHUMtThXv+rJS8MEDZbTADNa9gAAJz2mi7ZIIMEdPRanuztfFSE0/MCmQhJpMN++uWrr
-         Rdjg==
+        bh=gzAhokbhuWDr747imKSRauLjoZYx1OBz+h9mzPhRpQM=;
+        b=iQ97+sZPg/E6oxuVSvJ2mLqRk15UGT9Zxf8ZdkTrmkJ8+JmNkR8J+lSlNW9aV9r0Mo
+         dYKZ+qGHvJDvEZoSj3XIS/kRBexFOgcWVermAXUYjkXTWkqjA7wzAvQil1bo/va358y6
+         rIVh/E0wdlbKafi07RN7e4JX3VI81RD0swoOGmh4g99UxWclsrfli9SqmA8gOJIJGs1G
+         0UlMYSn8XtqXVeTpCAvzf52e6rPUIyGDzNMK4fdq9TMJin7oqM0eDOawuWZxtB6XI660
+         sLnvH5zYnWfOhZ/Xhh60/G5ndvzS5pvqIiqBK/l/yFjH6/cRLRXbuJDLnXDDUmw8kU0C
+         2AkA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
-	Kukjin Kim <kgene@kernel.org>,
-	Guillaume Tucker <guillaume.tucker@collabora.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 3.18 07/45] ARM: exynos_defconfig: Enable options to mount a rootfs via NFS
-Date: Thu, 15 Feb 2018 16:16:58 +0100
-Message-Id: <20180215144117.417228594@linuxfoundation.org>
+	Li RongQing <lirongqing@baidu.com>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 06/45] tcp: release sk_frag.page in tcp_disconnect
+Date: Thu, 15 Feb 2018 16:16:57 +0100
+Message-Id: <20180215144117.241653341@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215144115.863307741@linuxfoundation.org>
 References: <20180215144115.863307741@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480694306480970?=
-X-GMAIL-MSGID: =?utf-8?q?1592480694306480970?=
+X-GMAIL-THRID: =?utf-8?q?1592480691683989629?=
+X-GMAIL-MSGID: =?utf-8?q?1592480691683989629?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,42 +49,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Li RongQing <lirongqing@baidu.com>
 
-commit 19f79ccf6d77409cd138bce8db206cdac7fd5ea7 upstream.
 
-This patch enables the options to mount a rootfs over NFS and also
-support for automatic configuration of IP addresses during boot as
-needed by NFS.
+[ Upstream commit 9b42d55a66d388e4dd5550107df051a9637564fc ]
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Signed-off-by: Kukjin Kim <kgene@kernel.org>
-Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+socket can be disconnected and gets transformed back to a listening
+socket, if sk_frag.page is not released, which will be cloned into
+a new socket by sk_clone_lock, but the reference count of this page
+is increased, lead to a use after free or double free issue
+
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/configs/exynos_defconfig |    6 ++++++
+ net/ipv4/tcp.c |    6 ++++++
  1 file changed, 6 insertions(+)
 
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -33,6 +33,10 @@ CONFIG_PACKET=y
- CONFIG_UNIX=y
- CONFIG_NET_KEY=y
- CONFIG_INET=y
-+CONFIG_IP_PNP=y
-+CONFIG_IP_PNP_DHCP=y
-+CONFIG_IP_PNP_BOOTP=y
-+CONFIG_IP_PNP_RARP=y
- CONFIG_RFKILL_REGULATOR=y
- CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
- CONFIG_DEVTMPFS=y
-@@ -170,6 +174,8 @@ CONFIG_TMPFS=y
- CONFIG_TMPFS_POSIX_ACL=y
- CONFIG_CRAMFS=y
- CONFIG_ROMFS_FS=y
-+CONFIG_NFS_FS=y
-+CONFIG_ROOT_NFS=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ASCII=y
- CONFIG_NLS_ISO8859_1=y
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2280,6 +2280,12 @@ int tcp_disconnect(struct sock *sk, int
+ 
+ 	WARN_ON(inet->inet_num && !icsk->icsk_bind_hash);
+ 
++	if (sk->sk_frag.page) {
++		put_page(sk->sk_frag.page);
++		sk->sk_frag.page = NULL;
++		sk->sk_frag.offset = 0;
++	}
++
+ 	sk->sk_error_report(sk);
+ 	return err;
+ }
