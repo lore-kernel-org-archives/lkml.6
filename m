@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2178418-1518720257-2-1441895883440958638
+X-Cyrus-Session-Id: sloti22d1t05-2179907-1518720247-2-15795197718519460657
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720257; b=PAdSBeFgigy9/KY3zNTnmSp9I2+broX9DB3xD584PZQ3GUw
-    Vjv45RNiRp8fj+U3p1ItwMfeD5kR8uDmzeP4ojNT3bpBAup/Ke7G5crlig/VdyzL
-    Dl27o5itdb32axpUz6afau8UplmA1mfUyn72Hjnt3eNs3ZwWhE2Q0M+LqpYGR7uA
-    3i3pcg3Ys55fIsK8s0q4pZbku61F7sKimUqIXvqMLlwqBX5ClJT34fiP2G14qZdr
-    48+c614ioQSD9FWXwtTBTBXne3cUiYzX/oB5YCt7dR1pXQM9OUGOmwANdy/j9weL
-    O4/x9iK5JukFCQmYes69z+Fy6XvYFuGFd41lu2Q==
+    t=1518720247; b=lC7zzXmkzo9TuW/sfhSKzTv4AlNMBd6kn+Qt4QAgql3fFP+
+    v3DLCT7hK73gt5txNMYPtgNUzSwjJR64+oN4oTBAqWYsvuYJGsD3FfQ5di9nwTH9
+    JcIh9GTxlzecbaOEP+pHbKqmpjZtlkC3GN3BFqN+GCnQl1cyXpDJk8tmNmZvi4Ym
+    z4P9igLg0jFZBehPiPsgTFkxjzKmtcgV9wEZWKxVAI8hQIjxLekDmAMNUUTPgCna
+    +kqk3bljP2YV6qZImaVwS9r+uScqMa81GPPOBdFiTML41SPUppGns0YUJsuVF91H
+    nUQfxkO9Kqz2372Kz42x3ELDArEHpM5yOhq6rnQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720257; bh=VHpQ6VUKTCiHrZV2aV6z3vvfy9
-    /kk+AUWxeF6fclyRA=; b=SPqrszmdasmR6Q+xko/1l8oq3RfMTuKI2rgfS4msGA
-    tDzftwlDBi0vB3GpKh9JLegUVocmdwe9Ab/3Tu2FHuh1Ilsg+JDSz/Avg1iyPz5F
-    3RShPcsV3GmZnevEaT0Vnv2JWXF2HMdwW25f8yhgYe91bXQ6sfPQ5wc7AhwnhmM/
-    S5R6pbem6S2sQ7KvlhjP74AKwojzO1LHUL+rLC7Vx/jpck9YIPEQtaUf1skGPjQI
-    1+kpx3G98KpcZPOdDj9koCW9ei9wotVV0lRcHF1k4+Qhf4OHqJqoaXPDAND7+6mx
-    fQ8h52ElGg0faaQJAxTvTsa7Y8eibVJPHunM3FKXuOmA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518720247; bh=fa/gcb5jsb4LvJlWOwU2tJLpNw
+    vmws8gZFseG6E5xaw=; b=psFuXSH1ISfMW76+u8fjnVgNFAKU+VbgJVOdjCS/uy
+    nrk1irp52AjNSKsyltXYAsdfFGRWqrYsdljIbLnLi5B1zmgPnEa4kYImE6mYE6Gv
+    +dR3nQBopYpXEMXAB01r1sS+ouHfT+PXmXXRUqFS4xZRQmSf4z4w5cscO8YR46TD
+    e5sq0Wd1xEB/0pjXzDYlOsEMrUVPGEo8n5kO6QlGzSH5S+abeMON9bQgDTHsHKzs
+    /jhZQ00oYrG4DAHYpyL5pKxwqcgVYQtqSvwpXza5jjsp0fOz+aybLp2qx3WlB04l
+    wQveKSx5inENWkK0uwItkAifoE8SEl9E7+V4tErvDCBA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162593AbeBOPXM (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:23:12 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50690 "EHLO
+        id S1162622AbeBOSnx (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:43:53 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50724 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161910AbeBOPXJ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:09 -0500
+        with ESMTP id S1162408AbeBOPXO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:14 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>
-Subject: [PATCH 4.4 016/108] powerpc/64s: Allow control of RFI flush via debugfs
-Date: Thu, 15 Feb 2018 16:16:13 +0100
-Message-Id: <20180215151224.849053614@linuxfoundation.org>
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.4 009/108] powerpc/64: Convert the syscall exit path to use RFI_TO_USER/KERNEL
+Date: Thu, 15 Feb 2018 16:16:06 +0100
+Message-Id: <20180215151223.697415821@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -77,70 +77,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit 236003e6b5443c45c18e613d2b0d776a9f87540e upstream.
+commit b8e90cb7bc04a509e821e82ab6ed7a8ef11ba333 upstream.
 
-Expose the state of the RFI flush (enabled/disabled) via debugfs, and
-allow it to be enabled/disabled at runtime.
+In the syscall exit path we may be returning to user or kernel
+context. We already have a test for that, because we conditionally
+restore r13. So use that existing test and branch, and bifurcate the
+return based on that.
 
-eg: $ cat /sys/kernel/debug/powerpc/rfi_flush
-    1
-    $ echo 0 > /sys/kernel/debug/powerpc/rfi_flush
-    $ cat /sys/kernel/debug/powerpc/rfi_flush
-    0
-
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/setup_64.c |   30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ arch/powerpc/kernel/entry_64.S |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -38,6 +38,7 @@
- #include <linux/hugetlb.h>
- #include <linux/memory.h>
- #include <linux/nmi.h>
-+#include <linux/debugfs.h>
+--- a/arch/powerpc/kernel/entry_64.S
++++ b/arch/powerpc/kernel/entry_64.S
+@@ -230,13 +230,23 @@ END_FTR_SECTION_IFCLR(CPU_FTR_STCX_CHECK
+ 	ACCOUNT_CPU_USER_EXIT(r11, r12)
+ 	HMT_MEDIUM_LOW_HAS_PPR
+ 	ld	r13,GPR13(r1)	/* only restore r13 if returning to usermode */
++	ld	r2,GPR2(r1)
++	ld	r1,GPR1(r1)
++	mtlr	r4
++	mtcr	r5
++	mtspr	SPRN_SRR0,r7
++	mtspr	SPRN_SRR1,r8
++	RFI_TO_USER
++	b	.	/* prevent speculative execution */
++
++	/* exit to kernel */
+ 1:	ld	r2,GPR2(r1)
+ 	ld	r1,GPR1(r1)
+ 	mtlr	r4
+ 	mtcr	r5
+ 	mtspr	SPRN_SRR0,r7
+ 	mtspr	SPRN_SRR1,r8
+-	RFI
++	RFI_TO_KERNEL
+ 	b	.	/* prevent speculative execution */
  
- #include <asm/io.h>
- #include <asm/kdump.h>
-@@ -935,6 +936,35 @@ void __init setup_rfi_flush(enum l1d_flu
- 		rfi_flush_enable(enable);
- }
- 
-+#ifdef CONFIG_DEBUG_FS
-+static int rfi_flush_set(void *data, u64 val)
-+{
-+	if (val == 1)
-+		rfi_flush_enable(true);
-+	else if (val == 0)
-+		rfi_flush_enable(false);
-+	else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int rfi_flush_get(void *data, u64 *val)
-+{
-+	*val = rfi_flush ? 1 : 0;
-+	return 0;
-+}
-+
-+DEFINE_SIMPLE_ATTRIBUTE(fops_rfi_flush, rfi_flush_get, rfi_flush_set, "%llu\n");
-+
-+static __init int rfi_flush_debugfs_init(void)
-+{
-+	debugfs_create_file("rfi_flush", 0600, powerpc_debugfs_root, NULL, &fops_rfi_flush);
-+	return 0;
-+}
-+device_initcall(rfi_flush_debugfs_init);
-+#endif
-+
- ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	if (rfi_flush)
+ syscall_error:	
