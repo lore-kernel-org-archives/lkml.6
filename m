@@ -1,163 +1,71 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2169032-1518466524-2-12586223202501214749
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518466523; b=YLuJoNEdCVwDbqqkGwLO6n9h7TB4kAkb7eo/TyqeLxt0cx+
-    upCHstlUEZnKXSVjsDZkVTbRJDm9f98fvm43aLyXMpZyIu7Qq8ccYuFX1y3+3nTi
-    4dR20qEBIWChbYCUkIu+I6x+PCzOiyUjW/4ARJHkeIBFQUI18QB1ys9QueZMS7oy
-    nvVBuihM4dInoxEw4n5ewHDU/4/KHModu+KzkJh9/90KBSWRTJZzkRlTWExNhFI0
-    CVqvoNyXpesg5cyJPoX6223W8V9wLPpPMMcWHT6rTV3U0FHtwwR4l1jmP/LehZ91
-    Q21VLK17ryY8Kk3DHDv1yIj598pTqjzf9X30Cig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1518466523; bh=B9Pv8grZOWHagRo96BqH/E70Np
-    uXi2XrTVJgr1HdI9E=; b=ghbNXp70EbopBTMlrn6FeYdnrZ1ySFZD5WnZXkBW+/
-    iKpmrxlXOEK7yjdOUbQKhZRkaGJvr9DgiOXlCUsG2nlkJyVEAIXZVRfQ03WtYmX6
-    yArwDtzBOEUF2ctSkUqEEzG9khyDb11hbtNY5Jc5ePruynqEGsQREJi67d1wy6tv
-    DWKoAWohDeugjrSAhzD/sQ/RQPjmzJljlzGNrrQVUFR08cpL8lSkHPkGjYZCYLrC
-    4S9hd8LVg/7Q2I8Yjkz6RWC7erWO1Mtqm7iYKatfNEWLEqZPe/H4bucx16FAgGx2
-    5gPfoTvFeNVVjvajDP021LUO8/m5ktHqu/W524UGwJcA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751738AbeBLUPK (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 12 Feb 2018 15:15:10 -0500
-Received: from mga03.intel.com ([134.134.136.65]:42837 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751190AbeBLUPJ (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Mon, 12 Feb 2018 15:15:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,503,1511856000";
-   d="scan'208";a="34132884"
-From: sathyanarayan.kuppuswamy@linux.intel.com
-To: gregkh@linuxfoundation.org, oneukum@suse.com,
-        felipe.balbi@intel.com, heikki.krogerus@intel.com
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dominik Bozek <dominikx.bozek@intel.com>,
-        Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>
-Subject: [PATCH v1 1/1] usb: cdc_acm: prevent race at write to acm while system resumes
-Date: Mon, 12 Feb 2018 12:15:03 -0800
-Message-Id: <1518466503-36918-1-git-send-email-sathyanarayan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
-X-getmail-retrieved-from-mailbox: INBOX
+Date: Thu, 15 Feb 2018 18:37:20 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: sathyanarayan.kuppuswamy@linux.intel.com
+Cc: oneukum@suse.com, felipe.balbi@intel.com, heikki.krogerus@intel.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dominik Bozek <dominikx.bozek@intel.com>,
+	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>
+Subject: Re: [PATCH v1 1/1] usb: cdc_acm: prevent race at write to acm while
+ system resumes
+Message-ID: <20180215173720.GA12311@kroah.com>
+References: <1518466503-36918-1-git-send-email-sathyanarayan.kuppuswamy@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518466503-36918-1-git-send-email-sathyanarayan.kuppuswamy@linux.intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Dominik Bozek <dominikx.bozek@intel.com>
+On Mon, Feb 12, 2018 at 12:15:03PM -0800, sathyanarayan.kuppuswamy@linux.intel.com wrote:
+> From: Dominik Bozek <dominikx.bozek@intel.com>
+> 
+> ACM driver may accept data to transmit while system is not fully
+> resumed. In this case ACM driver buffers data and prepare URBs
+> on usb anchor list.
+> There is a little chance that two tasks put a char and initiate
+> acm_tty_flush_chars(). In such a case, driver will put one URB
+> twice on usb anchor list.
+> This patch also reset length of data before resue of a buffer.
+> This not only prevent sending rubbish, but also lower risc of race.
+> 
+> Without this patch we hit following kernel panic in one of our
+> stabilty/stress tests.
+> 
+> [   46.884442] *list_add double add*: new=ffff9b2ab7289330, prev=ffff9b2ab7289330, next=ffff9b2ab81e28e0.
+> [   46.884476] Modules linked in: hci_uart btbcm bluetooth rfkill_gpio igb_avb(O) cfg80211 snd_soc_sst_bxt_tdf8532 snd_soc_skl snd_soc_skl_ipc snd_soc_sst_ipc snd_soc_sst_dsp snd_soc_sst_acpi snd_soc_sst_match snd_hda_ext_core snd_hda_core trusty_timer trusty_wall trusty_log trusty_virtio trusty_ipc trusty_mem trusty_irq trusty virtio_ring virtio intel_ipu4_mmu_bxtB0 lib2600_mod_bxtB0 intel_ipu4_isys_mod_bxtB0 lib2600psys_mod_bxtB0 intel_ipu4_psys_mod_bxtB0 intel_ipu4_mod_bxtB0 intel_ipu4_wrapper_bxtB0 intel_ipu4_acpi videobuf2_dma_contig as3638 dw9714 lm3643 crlmodule smiapp smiapp_pll
+> [   46.884480] CPU: 1 PID: 33 Comm: kworker/u8:1 Tainted: G     U  W  O    4.9.56-quilt-2e5dc0ac-g618ed69ced6e-dirty #4
+> [   46.884489] Workqueue: events_unbound flush_to_ldisc
+> [   46.884494]  ffffb98ac012bb08 ffffffffad3e82e5 ffffb98ac012bb58 0000000000000000
+> [   46.884497]  ffffb98ac012bb48 ffffffffad0a23d1 00000024ad6374dd ffff9b2ab7289330
+> [   46.884500]  ffff9b2ab81e28e0 ffff9b2ab7289330 0000000000000002 0000000000000000
+> [   46.884501] Call Trace:
+> [   46.884507]  [<ffffffffad3e82e5>] dump_stack+0x67/0x92
+> [   46.884511]  [<ffffffffad0a23d1>] __warn+0xd1/0xf0
+> [   46.884513]  [<ffffffffad0a244f>] warn_slowpath_fmt+0x5f/0x80
+> [   46.884516]  [<ffffffffad407443>] __list_add+0xb3/0xc0
+> [   46.884521]  [<ffffffffad71133c>] *usb_anchor_urb*+0x4c/0xa0
+> [   46.884524]  [<ffffffffad782c6f>] *acm_tty_flush_chars*+0x8f/0xb0
+> [   46.884527]  [<ffffffffad782cd1>] *acm_tty_put_char*+0x41/0x100
+> [   46.884530]  [<ffffffffad4ced34>] tty_put_char+0x24/0x40
+> [   46.884533]  [<ffffffffad4d3bf5>] do_output_char+0xa5/0x200
+> [   46.884535]  [<ffffffffad4d3e98>] __process_echoes+0x148/0x290
+> [   46.884538]  [<ffffffffad4d654c>] n_tty_receive_buf_common+0x57c/0xb00
+> [   46.884541]  [<ffffffffad4d6ae4>] n_tty_receive_buf2+0x14/0x20
+> [   46.884543]  [<ffffffffad4d9662>] tty_ldisc_receive_buf+0x22/0x50
+> [   46.884545]  [<ffffffffad4d9c05>] flush_to_ldisc+0xc5/0xe0
+> [   46.884549]  [<ffffffffad0bcfe8>] process_one_work+0x148/0x440
+> [   46.884551]  [<ffffffffad0bdc19>] worker_thread+0x69/0x4a0
+> [   46.884554]  [<ffffffffad0bdbb0>] ? max_active_store+0x80/0x80
+> [   46.884556]  [<ffffffffad0c2e10>] kthread+0x110/0x130
+> [   46.884559]  [<ffffffffad0c2d00>] ? kthread_park+0x60/0x60
+> [   46.884563]  [<ffffffffadad9917>] ret_from_fork+0x27/0x40
+> [   46.884566] ---[ end trace 3bd599058b8a9eb3 ]---
+> 
+> Signed-off-by: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>
 
-ACM driver may accept data to transmit while system is not fully
-resumed. In this case ACM driver buffers data and prepare URBs
-on usb anchor list.
-There is a little chance that two tasks put a char and initiate
-acm_tty_flush_chars(). In such a case, driver will put one URB
-twice on usb anchor list.
-This patch also reset length of data before resue of a buffer.
-This not only prevent sending rubbish, but also lower risc of race.
+Why hasn't the author of this patch signed off on it?
 
-Without this patch we hit following kernel panic in one of our
-stabilty/stress tests.
+thanks,
 
-[   46.884442] *list_add double add*: new=ffff9b2ab7289330, prev=ffff9b2ab7289330, next=ffff9b2ab81e28e0.
-[   46.884476] Modules linked in: hci_uart btbcm bluetooth rfkill_gpio igb_avb(O) cfg80211 snd_soc_sst_bxt_tdf8532 snd_soc_skl snd_soc_skl_ipc snd_soc_sst_ipc snd_soc_sst_dsp snd_soc_sst_acpi snd_soc_sst_match snd_hda_ext_core snd_hda_core trusty_timer trusty_wall trusty_log trusty_virtio trusty_ipc trusty_mem trusty_irq trusty virtio_ring virtio intel_ipu4_mmu_bxtB0 lib2600_mod_bxtB0 intel_ipu4_isys_mod_bxtB0 lib2600psys_mod_bxtB0 intel_ipu4_psys_mod_bxtB0 intel_ipu4_mod_bxtB0 intel_ipu4_wrapper_bxtB0 intel_ipu4_acpi videobuf2_dma_contig as3638 dw9714 lm3643 crlmodule smiapp smiapp_pll
-[   46.884480] CPU: 1 PID: 33 Comm: kworker/u8:1 Tainted: G     U  W  O    4.9.56-quilt-2e5dc0ac-g618ed69ced6e-dirty #4
-[   46.884489] Workqueue: events_unbound flush_to_ldisc
-[   46.884494]  ffffb98ac012bb08 ffffffffad3e82e5 ffffb98ac012bb58 0000000000000000
-[   46.884497]  ffffb98ac012bb48 ffffffffad0a23d1 00000024ad6374dd ffff9b2ab7289330
-[   46.884500]  ffff9b2ab81e28e0 ffff9b2ab7289330 0000000000000002 0000000000000000
-[   46.884501] Call Trace:
-[   46.884507]  [<ffffffffad3e82e5>] dump_stack+0x67/0x92
-[   46.884511]  [<ffffffffad0a23d1>] __warn+0xd1/0xf0
-[   46.884513]  [<ffffffffad0a244f>] warn_slowpath_fmt+0x5f/0x80
-[   46.884516]  [<ffffffffad407443>] __list_add+0xb3/0xc0
-[   46.884521]  [<ffffffffad71133c>] *usb_anchor_urb*+0x4c/0xa0
-[   46.884524]  [<ffffffffad782c6f>] *acm_tty_flush_chars*+0x8f/0xb0
-[   46.884527]  [<ffffffffad782cd1>] *acm_tty_put_char*+0x41/0x100
-[   46.884530]  [<ffffffffad4ced34>] tty_put_char+0x24/0x40
-[   46.884533]  [<ffffffffad4d3bf5>] do_output_char+0xa5/0x200
-[   46.884535]  [<ffffffffad4d3e98>] __process_echoes+0x148/0x290
-[   46.884538]  [<ffffffffad4d654c>] n_tty_receive_buf_common+0x57c/0xb00
-[   46.884541]  [<ffffffffad4d6ae4>] n_tty_receive_buf2+0x14/0x20
-[   46.884543]  [<ffffffffad4d9662>] tty_ldisc_receive_buf+0x22/0x50
-[   46.884545]  [<ffffffffad4d9c05>] flush_to_ldisc+0xc5/0xe0
-[   46.884549]  [<ffffffffad0bcfe8>] process_one_work+0x148/0x440
-[   46.884551]  [<ffffffffad0bdc19>] worker_thread+0x69/0x4a0
-[   46.884554]  [<ffffffffad0bdbb0>] ? max_active_store+0x80/0x80
-[   46.884556]  [<ffffffffad0c2e10>] kthread+0x110/0x130
-[   46.884559]  [<ffffffffad0c2d00>] ? kthread_park+0x60/0x60
-[   46.884563]  [<ffffffffadad9917>] ret_from_fork+0x27/0x40
-[   46.884566] ---[ end trace 3bd599058b8a9eb3 ]---
-
-Signed-off-by: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>
-Acked-by: Oliver Neukum <oneukum@suse.com>
-Cc: stable <stable@vger.kernel.org>
----
- drivers/usb/class/cdc-acm.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
-index 8e0636c963a7..f2b351100b9f 100644
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -174,6 +174,7 @@ static int acm_wb_alloc(struct acm *acm)
- 		wb = &acm->wb[wbn];
- 		if (!wb->use) {
- 			wb->use = 1;
-+			wb->len = 0;
- 			return wbn;
- 		}
- 		wbn = (wbn + 1) % ACM_NW;
-@@ -805,16 +806,18 @@ static int acm_tty_write(struct tty_struct *tty,
- static void acm_tty_flush_chars(struct tty_struct *tty)
- {
- 	struct acm *acm = tty->driver_data;
--	struct acm_wb *cur = acm->putbuffer;
-+	struct acm_wb *cur;
- 	int err;
- 	unsigned long flags;
- 
-+	spin_lock_irqsave(&acm->write_lock, flags);
-+
-+	cur = acm->putbuffer;
- 	if (!cur) /* nothing to do */
--		return;
-+		goto out;
- 
- 	acm->putbuffer = NULL;
- 	err = usb_autopm_get_interface_async(acm->control);
--	spin_lock_irqsave(&acm->write_lock, flags);
- 	if (err < 0) {
- 		cur->use = 0;
- 		acm->putbuffer = cur;
--- 
-2.7.4
-
+greg k-h
