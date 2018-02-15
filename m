@@ -1,112 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756233AbeBOWbZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 17:31:25 -0500
-Received: from eso.teric.us ([69.164.192.171]:60378 "EHLO eso.teric.us"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756203AbeBOWbX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 17:31:23 -0500
-Date: Thu, 15 Feb 2018 16:31:23 -0600
-From: Julia Cartwright <juliac@eso.teric.us>
+        id S1756252AbeBOWgB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 17:36:01 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59294 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1756203AbeBOWgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 17:36:00 -0500
+Date: Thu, 15 Feb 2018 16:35:58 -0600
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH 1/2] kernel/sofirq: consolidate common code in
- __tasklet_schedule() + _hi_
-Message-ID: <20180215223123.GB1924@kryptos.localdomain>
-References: <20180215172042.31573-1-bigeasy@linutronix.de>
- <20180215172042.31573-2-bigeasy@linutronix.de>
- <20180215150707.49cc2332@gandalf.local.home>
+Cc: Jason Baron <jbaron@akamai.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@suse.de>,
+        Juergen Gross <jgross@suse.com>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH 1/3] jump_label: Warn on failed jump_label patch
+Message-ID: <20180215223558.poirr2e6wxs2jhzb@treble>
+References: <cover.1518626149.git.jpoimboe@redhat.com>
+ <b8f1b55f17c346fba39d3f59a01251185e09e151.1518626149.git.jpoimboe@redhat.com>
+ <20180214120112.43821b5e@gandalf.local.home>
+ <a4ad6f69-8836-779b-f7e7-0e303885c7f5@akamai.com>
+ <20180214173407.guhytdurv4pmhzvk@treble>
+ <20180214124034.13d7d833@gandalf.local.home>
+ <20180214211707.hivwfwemghgy62mh@treble>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180215150707.49cc2332@gandalf.local.home>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <20180214211707.hivwfwemghgy62mh@treble>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 03:07:07PM -0500, Steven Rostedt wrote:
-> On Thu, 15 Feb 2018 18:20:41 +0100
-> Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+On Wed, Feb 14, 2018 at 03:17:07PM -0600, Josh Poimboeuf wrote:
+> On Wed, Feb 14, 2018 at 12:40:34PM -0500, Steven Rostedt wrote:
+> > On Wed, 14 Feb 2018 11:34:07 -0600
+> > Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> > 
+> > 
+> > > And in patch 1 the warning conditions need to be tweaked a bit to
+> > > exclude the __init case.
+> > > 
+> > 
+> > Hmm, I wonder if we could simply remove the references from the jump
+> > label table when init is freed.
 > 
-> > -void __tasklet_schedule(struct tasklet_struct *t)
-> > +static void __tasklet_schedule_common(struct tasklet_struct *t,
-> > +				      struct tasklet_head *head,
-> > +				      unsigned int softirq_nr)
-> >  {
-> >  	unsigned long flags;
-> >  
-> >  	local_irq_save(flags);
-> 
-> If you look at the original patch, it did not move local_irq_save()
-> into the common function.
-> 
-> >  	t->next = NULL;
-> > -	*__this_cpu_read(tasklet_vec.tail) = t;
-> > -	__this_cpu_write(tasklet_vec.tail, &(t->next));
-> > -	raise_softirq_irqoff(TASKLET_SOFTIRQ);
-> > +	*head->tail = t;
-> > +	head->tail = &(t->next);
-> > +	raise_softirq_irqoff(softirq_nr);
-> >  	local_irq_restore(flags);
-> >  }
-> > +
-> > +void __tasklet_schedule(struct tasklet_struct *t)
-> > +{
-> > +	__tasklet_schedule_common(t, this_cpu_ptr(&tasklet_vec),
-> 
-> What can happen is, we reference (tasklet_vec) on one CPU, get
-> preempted (running in ksoftirqd), scheduled on another CPU, then when
-> inside the common code, we are executing on a different CPU than the
-> tasklet is for. The rasise_softirq() is happening on the wrong CPU.
-> 
-> The local_irq_save() can't be moved to the common function. It must be
-> done by each individual function.
+> Interesting idea.  The static key's entries (i.e. tracepoint sites) are
+> in a static array.  Maybe we could rewrite the affected arrays when init
+> memory is freed.  I'm not sure whether that would be overkill though.  I
+> can tinker with it and see how it compares to the current solution.
 
-Well, it can be, but the percpu access needs to go with it; so an
-alternative solution would be the below.
+It turns out that something like this is already done for module init
+code.  It doesn't *remove* the entry, but it does disable it by setting
+entry->code to zero.  I'll just do the same thing right before initmem
+is freed.
 
-I'm also wondering whether the t->next = NULL assignment could be lifted
-out from irqs-disabled region.
-
-   Julia
-
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index fa7ed89a9fcf..177de3640c78 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -461,12 +461,14 @@ static DEFINE_PER_CPU(struct tasklet_head, tasklet_vec);
- static DEFINE_PER_CPU(struct tasklet_head, tasklet_hi_vec);
- 
- static void __tasklet_schedule_common(struct tasklet_struct *t,
--				      struct tasklet_head *head,
-+				      struct tasklet_head __percpu *headp,
- 				      unsigned int softirq_nr)
- {
-+	struct tasklet_head *head;
- 	unsigned long flags;
- 
- 	local_irq_save(flags);
-+	head = this_cpu_ptr(headp);
- 	t->next = NULL;
- 	*head->tail = t;
- 	head->tail = &(t->next);
-@@ -476,14 +478,14 @@ static void __tasklet_schedule_common(struct tasklet_struct *t,
- 
- void __tasklet_schedule(struct tasklet_struct *t)
- {
--	__tasklet_schedule_common(t, this_cpu_ptr(&tasklet_vec),
-+	__tasklet_schedule_common(t, &tasklet_vec,
- 				  TASKLET_SOFTIRQ);
- }
- EXPORT_SYMBOL(__tasklet_schedule);
- 
- void __tasklet_hi_schedule(struct tasklet_struct *t)
- {
--	__tasklet_schedule_common(t, this_cpu_ptr(&tasklet_hi_vec),
-+	__tasklet_schedule_common(t, &tasklet_hi_vec,
- 				  HI_SOFTIRQ);
- }
- EXPORT_SYMBOL(__tasklet_hi_schedule);
+-- 
+Josh
