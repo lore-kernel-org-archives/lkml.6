@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967359AbeBOJrX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 04:47:23 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51622 "EHLO huawei.com"
+        id S1755375AbeBOJse (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 04:48:34 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59926 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755165AbeBOJrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 04:47:16 -0500
+        id S966892AbeBOJrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 04:47:21 -0500
 From: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 To: <alex.williamson@redhat.com>, <eric.auger@redhat.com>,
         <pmorel@linux.vnet.ibm.com>
 CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <john.garry@huawei.com>, <xuwei5@hisilicon.com>,
         Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Subject: [PATCH v3 5/6] vfio/type1: Add IOVA range capability support
-Date: Thu, 15 Feb 2018 09:45:03 +0000
-Message-ID: <20180215094504.4972-6-shameerali.kolothum.thodi@huawei.com>
+Subject: [PATCH v3 2/6] vfio/type1: Check reserve region conflict and update iova list
+Date: Thu, 15 Feb 2018 09:45:00 +0000
+Message-ID: <20180215094504.4972-3-shameerali.kolothum.thodi@huawei.com>
 X-Mailer: git-send-email 2.12.0.windows.1
 In-Reply-To: <20180215094504.4972-1-shameerali.kolothum.thodi@huawei.com>
 References: <20180215094504.4972-1-shameerali.kolothum.thodi@huawei.com>
@@ -26,167 +26,146 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This  allows the user-space to retrieve the supported IOVA
-range(s), excluding any reserved regions. The implementation
-is based on capability chains, added to VFIO_IOMMU_GET_INFO ioctl.
+This retrieves the reserved regions associated with dev group and
+checks for conflicts with any existing dma mappings. Also update
+the iova list excluding the reserved regions.
 
 Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 ---
- drivers/vfio/vfio_iommu_type1.c | 92 +++++++++++++++++++++++++++++++++++++++++
- include/uapi/linux/vfio.h       | 23 +++++++++++
- 2 files changed, 115 insertions(+)
+ drivers/vfio/vfio_iommu_type1.c | 86 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 85 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index dae01c5..21e575c 100644
+index 4726f55..4db87a9 100644
 --- a/drivers/vfio/vfio_iommu_type1.c
 +++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -1925,6 +1925,68 @@ static int vfio_domains_have_iommu_cache(struct vfio_iommu *iommu)
- 	return ret;
+@@ -1303,6 +1303,72 @@ static int vfio_iommu_aper_resize(struct list_head *iova,
+ 	return 0;
  }
  
-+static int vfio_add_iova_cap(struct vfio_info_cap *caps,
-+		 struct vfio_iommu_type1_info_cap_iova_range *cap_iovas,
-+		 size_t size)
++/*
++ * Check reserved region conflicts with existing dma mappings
++ */
++static bool vfio_iommu_resv_conflict(struct vfio_iommu *iommu,
++				struct list_head *resv_regions)
 +{
-+	struct vfio_info_cap_header *header;
-+	struct vfio_iommu_type1_info_cap_iova_range *iova_cap;
++	struct iommu_resv_region *region;
 +
-+	header = vfio_info_cap_add(caps, size,
-+				VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE, 1);
-+	if (IS_ERR(header))
-+		return PTR_ERR(header);
++	/* Check for conflict with existing dma mappings */
++	list_for_each_entry(region, resv_regions, list) {
++		if (vfio_find_dma(iommu, region->start, region->length))
++			return true;
++	}
 +
-+	iova_cap = container_of(header,
-+			struct vfio_iommu_type1_info_cap_iova_range, header);
-+	iova_cap->nr_iovas = cap_iovas->nr_iovas;
-+	memcpy(iova_cap->iova_ranges, cap_iovas->iova_ranges,
-+		cap_iovas->nr_iovas * sizeof(*cap_iovas->iova_ranges));
++	return false;
++}
++
++/*
++ * Check iova region overlap with  reserved regions and
++ * exclude them from the iommu iova range
++ */
++static int vfio_iommu_resv_exclude(struct list_head *iova,
++					struct list_head *resv_regions)
++{
++	struct iommu_resv_region *resv;
++	struct vfio_iova *n, *next;
++
++	list_for_each_entry(resv, resv_regions, list) {
++		phys_addr_t start, end;
++
++		start = resv->start;
++		end = resv->start + resv->length - 1;
++
++		list_for_each_entry_safe(n, next, iova, list) {
++			int ret = 0;
++
++			/* No overlap */
++			if ((start > n->end) || (end < n->start))
++				continue;
++			/*
++			 * Insert a new node if current node overlaps with the
++			 * reserve region to exlude that from valid iova range.
++			 * Note that, new node is inserted before the current
++			 * node and finally the current node is deleted keeping
++			 * the list updated and sorted.
++			 */
++			if (start > n->start)
++				ret = vfio_insert_iova(n->start, start - 1,
++								 &n->list);
++			if (!ret && end < n->end)
++				ret = vfio_insert_iova(end + 1, n->end,
++							     &n->list);
++			if (ret)
++				return ret;
++
++			list_del(&n->list);
++			kfree(n);
++		}
++	}
++
++	if (list_empty(iova))
++		return -EINVAL;
++
 +	return 0;
 +}
 +
-+static int vfio_build_iommu_iova_caps(struct vfio_iommu *iommu,
-+				struct vfio_info_cap *caps)
-+{
-+	struct vfio_iommu_type1_info_cap_iova_range *cap_iovas;
-+	struct vfio_iova *iova;
-+	size_t size;
-+	int iovas = 0, i = 0, ret;
-+
-+	mutex_lock(&iommu->lock);
-+
-+	list_for_each_entry(iova, &iommu->iova_list, list)
-+		iovas++;
-+
-+	if (!iovas) {
-+		ret = -EINVAL;
-+		goto out_unlock;
-+	}
-+
-+	size = sizeof(*cap_iovas) + (iovas * sizeof(*cap_iovas->iova_ranges));
-+
-+	cap_iovas = kzalloc(size, GFP_KERNEL);
-+	if (!cap_iovas) {
-+		ret = -ENOMEM;
-+		goto out_unlock;
-+	}
-+
-+	cap_iovas->nr_iovas = iovas;
-+
-+	list_for_each_entry(iova, &iommu->iova_list, list) {
-+		cap_iovas->iova_ranges[i].start = iova->start;
-+		cap_iovas->iova_ranges[i].end = iova->end;
-+		i++;
-+	}
-+
-+	ret = vfio_add_iova_cap(caps, cap_iovas, size);
-+
-+	kfree(cap_iovas);
-+out_unlock:
-+	mutex_unlock(&iommu->lock);
-+	return ret;
-+}
-+
- static long vfio_iommu_type1_ioctl(void *iommu_data,
- 				   unsigned int cmd, unsigned long arg)
+ static int vfio_iommu_get_iova_copy(struct vfio_iommu *iommu,
+ 				struct list_head *iova_copy)
  {
-@@ -1946,6 +2008,8 @@ static long vfio_iommu_type1_ioctl(void *iommu_data,
- 		}
- 	} else if (cmd == VFIO_IOMMU_GET_INFO) {
- 		struct vfio_iommu_type1_info info;
-+		struct vfio_info_cap caps = { .buf = NULL, .size = 0 };
-+		int ret;
+@@ -1346,7 +1412,8 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 	bool resv_msi, msi_remap;
+ 	phys_addr_t resv_msi_base;
+ 	struct iommu_domain_geometry geo;
+-	struct list_head iova_copy;
++	struct list_head iova_copy, group_resv_regions;
++	struct iommu_resv_region *resv, *resv_next;
+ 	struct vfio_iova *iova, *iova_next;
  
- 		minsz = offsetofend(struct vfio_iommu_type1_info, iova_pgsizes);
+ 	mutex_lock(&iommu->lock);
+@@ -1426,6 +1493,14 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 		goto out_detach;
+ 	}
  
-@@ -1959,6 +2023,34 @@ static long vfio_iommu_type1_ioctl(void *iommu_data,
++	INIT_LIST_HEAD(&group_resv_regions);
++	iommu_get_group_resv_regions(iommu_group, &group_resv_regions);
++
++	if (vfio_iommu_resv_conflict(iommu, &group_resv_regions)) {
++		ret = -EINVAL;
++		goto out_detach;
++	}
++
+ 	/* Get a copy of the current iova list and work on it */
+ 	INIT_LIST_HEAD(&iova_copy);
+ 	ret = vfio_iommu_get_iova_copy(iommu, &iova_copy);
+@@ -1437,6 +1512,10 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 	if (ret)
+ 		goto out_detach;
  
- 		info.iova_pgsizes = vfio_pgsize_bitmap(iommu);
++	ret = vfio_iommu_resv_exclude(&iova_copy, &group_resv_regions);
++	if (ret)
++		goto out_detach;
++
+ 	resv_msi = vfio_iommu_has_sw_msi(iommu_group, &resv_msi_base);
  
-+		if (info.argsz == minsz)
-+			goto done;
-+
-+		ret = vfio_build_iommu_iova_caps(iommu, &caps);
-+		if (ret)
-+			return ret;
-+
-+		if (caps.size) {
-+			info.flags |= VFIO_IOMMU_INFO_CAPS;
-+			minsz = offsetofend(struct vfio_iommu_type1_info,
-+							 cap_offset);
-+			if (info.argsz < sizeof(info) + caps.size) {
-+				info.argsz = sizeof(info) + caps.size;
-+				info.cap_offset = 0;
-+			} else {
-+				vfio_info_cap_shift(&caps, sizeof(info));
-+				if (copy_to_user((void __user *)arg +
-+						sizeof(info), caps.buf,
-+						caps.size)) {
-+					kfree(caps.buf);
-+					return -EFAULT;
-+				}
-+				info.cap_offset = sizeof(info);
-+			}
-+
-+			kfree(caps.buf);
-+		}
-+done:
- 		return copy_to_user((void __user *)arg, &info, minsz) ?
- 			-EFAULT : 0;
+ 	INIT_LIST_HEAD(&domain->group_list);
+@@ -1497,6 +1576,9 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 	/* Delete the old one and insert new iova list */
+ 	vfio_iommu_insert_iova_copy(iommu, &iova_copy);
  
-diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-index c743721..46b49e9 100644
---- a/include/uapi/linux/vfio.h
-+++ b/include/uapi/linux/vfio.h
-@@ -589,7 +589,30 @@ struct vfio_iommu_type1_info {
- 	__u32	argsz;
- 	__u32	flags;
- #define VFIO_IOMMU_INFO_PGSIZES (1 << 0)	/* supported page sizes info */
-+#define VFIO_IOMMU_INFO_CAPS	(1 << 1)	/* Info supports caps */
- 	__u64	iova_pgsizes;		/* Bitmap of supported page sizes */
-+	__u32   cap_offset;	/* Offset within info struct of first cap */
-+};
++	list_for_each_entry_safe(resv, resv_next, &group_resv_regions, list)
++		kfree(resv);
 +
-+/*
-+ * The IOVA capability allows to report the valid IOVA range(s)
-+ * excluding any reserved regions associated with dev group. Any dma
-+ * map attempt outside the valid iova range will return error.
-+ *
-+ * The structures below define version 1 of this capability.
-+ */
-+#define VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE  1
-+
-+struct vfio_iova_range {
-+	__u64	start;
-+	__u64	end;
-+};
-+
-+struct vfio_iommu_type1_info_cap_iova_range {
-+	struct vfio_info_cap_header header;
-+	__u32	nr_iovas;
-+	__u32	reserved;
-+	struct vfio_iova_range iova_ranges[];
- };
+ 	mutex_unlock(&iommu->lock);
  
- #define VFIO_IOMMU_GET_INFO _IO(VFIO_TYPE, VFIO_BASE + 12)
+ 	return 0;
+@@ -1507,6 +1589,8 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 	iommu_domain_free(domain->domain);
+ 	list_for_each_entry_safe(iova, iova_next, &iova_copy, list)
+ 		kfree(iova);
++	list_for_each_entry_safe(resv, resv_next, &group_resv_regions, list)
++		kfree(resv);
+ out_free:
+ 	kfree(domain);
+ 	kfree(group);
 -- 
 2.7.4
