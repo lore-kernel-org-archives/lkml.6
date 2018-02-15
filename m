@@ -1,74 +1,82 @@
-Return-Path: <pasha.tatashin@oracle.com>
-X-Google-Smtp-Source: AH8x227w60fWTqSqWjOl7+t9QK0btej8DtbztJ75oYttYnT4HJWGFHQTUag7JdLzVATUiiJgKg3K
-ARC-Seal: i=1; a=rsa-sha256; t=1518701991; cv=none;
+Return-Path: <mingo.kernel.org@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518721205; cv=none;
         d=google.com; s=arc-20160816;
-        b=Zaasl2aI+9ZaRLlA72VIbhkbrG2A2U8XA1oU4OTXY9hutq27mO8lQ4a0QNfG4br3aq
-         lQMgbXvzwXEhxkfiier+7fgGddZX57pN3mw0vaekwAl50JoWHFCfHPiZIz+4DYBZ5U5L
-         +sTY8tvYVMVLUHkoH65fi1ULsuOA8rjODIS7uRMDeVAX/oUFUC+t5cp8Wm1VzHaGCKLB
-         q2PN8lC13nJ2ERGyWlOZSJq74LE4ZFYKMLX3fz8ChQ+ldaL2JbHMZga2qhDcoqA35E8L
-         ZbmYMUvr9GT6bCYkh2wEZ9JOY/nTnjcViRs2YgeCNnskGPQED0ry4jk0950lusOydu+g
-         2XDQ==
+        b=RpDEYp2jLOshozrUgFZ6DHCtdLAQjKfpc69ahrCE7tq6bYR9Oi7k4uLQbNqUFhvgv1
+         boDuYmEevo2nwwsaSavU8YK1XLGK2U7Betgb8SYz+b766DUHkRlMl1bXX8UqmPEfzft1
+         0JCE0QofTg4gwGHIadm9Ob9iq6JIbi2mr9BxItOHXr8ZJ/X0Xa7h/TASOfHBz6BRDLZP
+         3Ctlst3xJpcSZhevziGVilU71LWcTWxqdgm84y+hv4bQfeL8WcCueJ5C0ZGzynDlUy6R
+         k+snyH8cGis/osE6orBa2QAZbJdYHt766hPo2+aPzkGAZqweCyMLK3FiL+s1o1Pz45vO
+         Ohzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=vQRTxFLk7M0oFGEXFAHavydgp3RZp6IoV1WjPynfKv4=;
-        b=GTyCyDLLjSV6YDoHtEHNDwBRSj48Zo9EY0saCD1j4unpydgRrsmUyeCjoaPvrJDjz8
-         R6pocipzNDBD5eqB6+RZ4EM/a20EziIvxfc4IK36OOOcRV7C6hT+POGxJMEaZqr7iB9v
-         mosjHcXvr9qKVQuoljtj9F3s5FmNWtTNtCDIq1orRbP43ROdJ8HauBArAztjyvE5tzpN
-         8vYf8TNS9g4oIcAFc5lRRZEvFKkyj4hoxQp/f6oi1sJbq22PcXKWb6N1MXasV2GeqpaM
-         ISjr0lqvFX/29g3vrcSQ9pXgUvj3KeSvUiHZmqQmmbIgZAwsUla206KfRXluwOjN2f+Z
-         2Qnw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:sender:dkim-signature
+         :arc-authentication-results;
+        bh=cK03mt6sgEV8OJnWfsb+TPCgve0vT6yoh/hQcnViDoc=;
+        b=RbADPNR+6f2fji9LmmAKUfFbq2i2RpCKCh6PCX1mc020Z4Ngld5gdg9HIjsILmBO2E
+         bTkGWVI7W0Oo1EEQg+5kQeB6mNjtSchODvlXDdEUlPcQ3/t/fGFi/6u9vdIJiTMBFzdQ
+         q4wJ/JAnU4iuGNbGtWRb0x2NhjCC5t+NewLUhfVYc8GCBbEkscl9dHfj3B6en9TrJdY0
+         snFyblLJ3afhuzhoYqe8NayAXQ5XZrNz6q5d//xZflwtrB26prPi7eU+m19Qxogoy+sC
+         KeANqgaN5CbDjgrIFohJxaxUBqNOVIKWuOB4wn+q2QhALkG5SiIA4Lr/pbDNH2SnUnnV
+         tW9g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=rJgz+3Og;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=sSAxcv0t;
+       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=rJgz+3Og;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-MIME-Version: 1.0
-In-Reply-To: <20180215113725.GC7275@dhcp22.suse.cz>
-References: <20180213193159.14606-1-pasha.tatashin@oracle.com>
- <20180213193159.14606-3-pasha.tatashin@oracle.com> <20180215113725.GC7275@dhcp22.suse.cz>
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-Date: Thu, 15 Feb 2018 08:39:47 -0500
-X-Gmail-Original-Message-ID: <CAOAebxu5EM1qhC=pS2cCqjGfBabFEj0aQQNon1nAz5_3YPOsCw@mail.gmail.com>
-Message-ID: <CAOAebxu5EM1qhC=pS2cCqjGfBabFEj0aQQNon1nAz5_3YPOsCw@mail.gmail.com>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=sSAxcv0t;
+       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
+X-Google-Smtp-Source: AH8x225kr8MwKJNcLvMRyRaYmI2+1X0LH6qvoVQAvIperlycZZZXGCxltSYl5Plp1f1+eSdC1SYyDQ==
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Thu, 15 Feb 2018 20:00:01 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Michal Hocko <mhocko@kernel.org>,
+	Steve Sistare <steven.sistare@oracle.com>,
+	Daniel Jordan <daniel.m.jordan@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Bharata B Rao <bharata@linux.vnet.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+	hpa@zytor.com, x86@kernel.org, dan.j.williams@intel.com,
+	kirill.shutemov@linux.intel.com, bhe@redhat.com
 Subject: Re: [PATCH v3 2/4] x86/mm/memory_hotplug: determine block size based
  on the end of boot memory
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Steve Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Bharata B Rao <bharata@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, dan.j.williams@intel.com,
-        kirill.shutemov@linux.intel.com, bhe@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8805 signatures=668671
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=699
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1802150170
+Message-ID: <20180215190001.rbvrb74jxpvs6vrz@gmail.com>
+References: <20180213193159.14606-1-pasha.tatashin@oracle.com>
+ <20180213193159.14606-3-pasha.tatashin@oracle.com>
+ <20180215113725.GC7275@dhcp22.suse.cz>
+ <CAOAebxu5EM1qhC=pS2cCqjGfBabFEj0aQQNon1nAz5_3YPOsCw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOAebxu5EM1qhC=pS2cCqjGfBabFEj0aQQNon1nAz5_3YPOsCw@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592315446070110278?=
-X-GMAIL-MSGID: =?utf-8?q?1592474459033543975?=
+X-GMAIL-MSGID: =?utf-8?q?1592494607564304892?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-> I dunno. If x86 maintainers are OK with this then why not, but I do not
-> like how this is x86 specific. I would much rather address this by
-> making the memblock user interface more sane.
->
 
-Hi Michal,
+* Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
 
-Ingo Molnar reviewed this patch, and Okayed it.
+> > I dunno. If x86 maintainers are OK with this then why not, but I do not
+> > like how this is x86 specific. I would much rather address this by
+> > making the memblock user interface more sane.
+> >
+> 
+> Hi Michal,
+> 
+> Ingo Molnar reviewed this patch, and Okayed it.
 
-Thank you,
-Pavel
+But I'd not be against robustifying the whole generic interface against such 
+misconfiguration either.
+
+But having the warning should be enough in practice, right?
+
+Thanks,
+
+	Ingo
