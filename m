@@ -1,60 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756182AbeBOWPJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 17:15:09 -0500
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:36660 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752862AbeBOWPI (ORCPT
+        id S1756198AbeBOWQf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 17:16:35 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:37502 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752862AbeBOWQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 17:15:08 -0500
-X-Google-Smtp-Source: AH8x2276W9Sfe4JIJifA8vsMpqa3ZIpPB+PB4uoa3s3kmnuYcxJWN73X79RhiEUnTy49OfPDrJ7udjV2XHez7kjXiUo=
+        Thu, 15 Feb 2018 17:16:33 -0500
+X-Google-Smtp-Source: AH8x227dgm3GT7XpGgSqzBujHt1ei67Bxb2BDgeGjWByfRVhbu08uH7eK9wNBbi28MdJ7j1nBeWJfIoZtxJEUEGQrE4=
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <cover.1518411444.git.rgb@redhat.com>
-References: <cover.1518411444.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 15 Feb 2018 17:15:05 -0500
-Message-ID: <CAHC9VhRFKTPhQRjL5QhPiQPA7WfV+TsVLgoVptnhLggkfvu0Cg@mail.gmail.com>
-Subject: Re: [PATCH ghak8 ALT4 V4 0/3] audit: show more information for
- entries with anonymous parents
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 15 Feb 2018 23:16:32 +0100
+X-Google-Sender-Auth: 7mTs_jLkJ1XuOUnOjllZLwNrAEs
+Message-ID: <CAJZ5v0gq6Z=Y_vvnn9bT9vQjD5GHrs=mQRh+RY3oH=esiRh47Q@mail.gmail.com>
+Subject: [GIT PULL] Power management updates for v4.16-rc2
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 12:02 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> More than one filesystem was causing hundreds to thousands of null PATH
-> records to be associated with the *init_module SYSCALL records on a few
-> modules with corresponding audit syscall rules.
->
-> This patchset adds extra information to those PATH records to provide
-> insight into what is generating them, including a partial pathname,
-> fstype field, and two new filetypes that indicate the pathname isn't
-> anchored at the root of the task's root filesystem.
->
-> Richard Guy Briggs (3):
->   audit: show partial pathname for entries with anonymous parents
->   audit: append new fstype field for anonymous PATH records
->   audit: add new filetypes CREATE_ANON and PARENT_ANON
+i Linus,
 
-The more I look at this, the more I prefer your original approach that
-prefixed the relative pathname with the fstype.  Yes, I do realize
-that you sort of work around that by including the fstype as a new
-field in the PATH records, but we're still stuck with those odd
-relative/un-rooted name fields.
+Please pull from the tag
 
-Further, I don't recall ever hearing a good reason why the original
-approach wasn't acceptable to Steve's userspace.  I know he did make
-some very last minute hand-wavy comments, but none of those made any
-sense to me; I don't understand why Steve's audit record parser is
-even looking in the pathname string.
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-4.16-rc2
 
-I'm going to park these patches in limbo for the time being.
+with top-most commit 822ffaa58183e0b2dfdf4b51f04a387c9edd806d
 
--- 
-paul moore
-www.paul-moore.com
+ Merge branches 'pm-cpuidle' and 'pm-opp'
+
+on top of commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2
+
+ Linux 4.16-rc1
+
+to receive power management updates for 4.16-rc2.
+
+These fix a recently introduced build issue related to cpuidle
+and two bugs in the PM core, update cpuidle documentation and
+clean up memory allocations in the operating performance points
+(OPP) framework.
+
+Specifics:
+
+ - Fix a recently introduced build issue related to cpuidle by
+   covering all of the relevant combinations of Kconfig options
+   in its header (Rafael Wysocki).
+
+ - Add missing invocation of pm_runtime_drop_link() to the
+   !CONFIG_SRCU variant of __device_link_del() (Lukas Wunner).
+
+ - Fix unbalanced IRQ enable in the wakeup interrupts framework
+   (Tony Lindgren).
+
+ - Update cpuidle sysfs ABI documentation (Aishwarya Pant).
+
+ - Use GFP_KERNEL instead of GFP_ATOMIC for allocating memory
+   in dev_pm_opp_init_cpufreq_table() (Jia-Ju Bai).
+
+Thanks!
+
+
+---------------
+
+Aishwarya Pant (1):
+      Documentation/ABI: update cpuidle sysfs documentation
+
+Jia-Ju Bai (1):
+      opp: cpu: Replace GFP_ATOMIC with GFP_KERNEL in
+dev_pm_opp_init_cpufreq_table
+
+Lukas Wunner (1):
+      PM / runtime: Update links_count also if !CONFIG_SRCU
+
+Rafael J. Wysocki (1):
+      PM: cpuidle: Fix cpuidle_poll_state_init() prototype
+
+Tony Lindgren (1):
+      PM / wakeirq: Fix unbalanced IRQ enable for wakeirq
+
+---------------
+
+ Documentation/ABI/testing/sysfs-devices-system-cpu | 77 +++++++++++++++++++++-
+ drivers/base/core.c                                |  3 +
+ drivers/base/power/wakeirq.c                       |  6 +-
+ drivers/opp/cpu.c                                  |  2 +-
+ include/linux/cpuidle.h                            |  2 +-
+ 5 files changed, 84 insertions(+), 6 deletions(-)
