@@ -1,46 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165937AbeBOSKW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 13:10:22 -0500
-Received: from mga12.intel.com ([192.55.52.136]:50369 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163370AbeBOSKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 13:10:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,517,1511856000";
-   d="scan'208";a="18781483"
-Subject: Re: [PATCH RFC v2 1/6] x86: Skip PTI when disable indication is set
-To: Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>
-References: <20180215163602.61162-1-namit@vmware.com>
- <20180215163602.61162-2-namit@vmware.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Willy Tarreau <w@1wt.eu>,
-        Nadav Amit <nadav.amit@gmail.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <7057a6cc-f3ea-8826-5440-61e0154950da@linux.intel.com>
-Date: Thu, 15 Feb 2018 10:10:19 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1166105AbeBOSK3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 13:10:29 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.191]:46941 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1163370AbeBOSK0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 13:10:26 -0500
+Date: Thu, 15 Feb 2018 12:10:05 -0600
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Brandon Streiff <brandon.streiff@ni.com>, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] net: dsa: mv88e6xxx: hwtstamp: fix potential negative array
+ index read
+Message-ID: <20180215181005.GA21263@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <20180215163602.61162-2-namit@vmware.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.4.238
+X-Source-L: No
+X-Exim-ID: 1emNz6-001URb-6f
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.175.4.238]:36444
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/15/2018 08:35 AM, Nadav Amit wrote:
-> +.Lno_spec_\@:
-> +	lfence
-> +	jmp	.Lend_\@
-> +
->  .Lnoflush_\@:
->  	SET_NOFLUSH_BIT \save_reg
->  
+_port_ is being used as index to array port_hwtstamp before verifying
+it is a non-negative number and a valid index at 209:
 
-How expensive is this?
+if (port < 0 || port >= mv88e6xxx_num_ports(chip))
+
+Fix this by checking _port_ before using it as index to array
+port_hwtstamp.
+
+Addresses-Coverity-ID: 1465287 ("Negative array index read")
+Fixes: c6fe0ad2c349 ("net: dsa: mv88e6xxx: add rx/tx timestamping support")
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+---
+ drivers/net/dsa/mv88e6xxx/hwtstamp.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/dsa/mv88e6xxx/hwtstamp.c b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
+index b251d53..761decc 100644
+--- a/drivers/net/dsa/mv88e6xxx/hwtstamp.c
++++ b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
+@@ -200,8 +200,8 @@ int mv88e6xxx_port_hwtstamp_get(struct dsa_switch *ds, int port,
+ 				struct ifreq *ifr)
+ {
+ 	struct mv88e6xxx_chip *chip = ds->priv;
+-	struct mv88e6xxx_port_hwtstamp *ps = &chip->port_hwtstamp[port];
+-	struct hwtstamp_config *config = &ps->tstamp_config;
++	struct mv88e6xxx_port_hwtstamp *ps;
++	struct hwtstamp_config *config;
+ 
+ 	if (!chip->info->ptp_support)
+ 		return -EOPNOTSUPP;
+@@ -209,6 +209,9 @@ int mv88e6xxx_port_hwtstamp_get(struct dsa_switch *ds, int port,
+ 	if (port < 0 || port >= mv88e6xxx_num_ports(chip))
+ 		return -EINVAL;
+ 
++	ps = &chip->port_hwtstamp[port];
++	config = &ps->tstamp_config;
++
+ 	return copy_to_user(ifr->ifr_data, config, sizeof(*config)) ?
+ 		-EFAULT : 0;
+ }
+-- 
+2.7.4
