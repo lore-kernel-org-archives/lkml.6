@@ -1,82 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751565AbeBOFUZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 00:20:25 -0500
-Received: from gateway20.websitewelcome.com ([192.185.62.46]:49989 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750743AbeBOFUX (ORCPT
+        id S1751865AbeBOFZJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 00:25:09 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49726 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751074AbeBOFZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 00:20:23 -0500
-Date: Wed, 14 Feb 2018 23:20:00 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] drm/amdgpu_gem: fix error handling path in
- amdgpu_gem_va_update_vm
-Message-ID: <20180215052000.GA25691@embeddedgus>
+        Thu, 15 Feb 2018 00:25:08 -0500
+Subject: Re: [PATCH] Build: Scripts/Makefile: Remove Repeated Lines
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Progyan Bhattacharya <bprogyan@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        narmstrong@baylibre.com, akpm@linux-foundation.org,
+        Arnd Bergmann <arnd@arndb.de>, Daniel Golle <daniel@makrotopia.org>,
+        Joe Perches <joe@perches.com>
+References: <20180214092558.5846-1-progyanb@acm.org>
+ <20180214224937.3f2feb80@canb.auug.org.au>
+ <CAGyWO1-9scERtpPw5CCwQcUbCU0SpcqpNq2eiBWRtwpRC-kB-A@mail.gmail.com>
+ <20180215160520.5828f900@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <bec02b84-316b-a41a-91ea-e0957d358ee3@infradead.org>
+Date: Wed, 14 Feb 2018 21:24:55 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.4.238
-X-Source-L: No
-X-Exim-ID: 1emBxh-002rU9-9N
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.175.4.238]:45954
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180215160520.5828f900@canb.auug.org.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, if amdgpu_vm_bo_update() fails, the returned error
-is being ignored.
+On 02/14/2018 09:05 PM, Stephen Rothwell wrote:
+> Hi Progyan,
+> 
+> On Thu, 15 Feb 2018 09:50:03 +0530 Progyan Bhattacharya <bprogyan@gmail.com> wrote:
+>>
+> 
+>> PS: I have another question, Is use of range expression within case
+>> statements allowed in Kernel? If not, are we using If-Else ladder for that?
+> 
+> I am not sure if we have a policy on ranges in case labels, but it is
+> not standard C (well, C11 at least).  If-else ladders are certainly
+> common.
 
-Fix this by properly checking _r_ after calling amdgpu_vm_bo_update.
-Also, remove redundant code just before label _error_.
+I found 964 case ranges in 4.16-rc1.
 
-Addresses-Coverity-ID: 1464280 ("Unused value")
-Fixes: 0abc6878fc2d ("drm/amdgpu: update VM PDs after the PTs")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+or you use something like:
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-index e48b4ec..db85fc0 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-@@ -523,12 +523,13 @@ static void amdgpu_gem_va_update_vm(struct amdgpu_device *adev,
- 		goto error;
- 
- 	if (operation == AMDGPU_VA_OP_MAP ||
--	    operation == AMDGPU_VA_OP_REPLACE)
-+	    operation == AMDGPU_VA_OP_REPLACE) {
- 		r = amdgpu_vm_bo_update(adev, bo_va, false);
-+		if (r)
-+			goto error;
-+	}
- 
- 	r = amdgpu_vm_update_directories(adev, vm);
--	if (r)
--		goto error;
- 
- error:
- 	if (r && r != -ERESTARTSYS)
+	switch (val) {
+	case 5:
+	case 10:
+	case 15:
+		// handle multiples of 5:
+		break;
+	default:
+	}
+
+
+
 -- 
-2.7.4
+~Randy
