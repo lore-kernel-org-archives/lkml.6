@@ -1,91 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966496AbeBOD7e (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 22:59:34 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:33087 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752371AbeBOD7b (ORCPT
+        id S966790AbeBOE26 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 23:28:58 -0500
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:57148 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754214AbeBOE24 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 22:59:31 -0500
-X-Google-Smtp-Source: AH8x225Pp99FJi7rCsVMmmGoMX1plMkVMMEW3OtXwfprdQXMWkd5U8t8t6938ZMub/VIMWNrDsevaw==
-Date: Wed, 14 Feb 2018 19:59:25 -0800
-In-Reply-To: <CACPK8XeOUrrGinU_fmnmn4atYm3Bs-xSoB2MqT0Yr-LytHt78Q@mail.gmail.com>
-References: <20180205235757.246758-1-brendanhiggins@google.com> <20180205235757.246758-3-brendanhiggins@google.com> <CACPK8XdXOaPZ5i=qKns3=V87nhfY62PNr4kwH9xwVYxY0djo0g@mail.gmail.com> <CACPK8XeOUrrGinU_fmnmn4atYm3Bs-xSoB2MqT0Yr-LytHt78Q@mail.gmail.com>
+        Wed, 14 Feb 2018 23:28:56 -0500
+Subject: Re: [PATCH 2/3] PCI: dwc: pci-dra7xx: Improve MSI IRQ handling
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC: Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        KISHON VIJAY ABRAHAM <kishon@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Niklas Cassel <niklas.cassel@axis.com>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180209120415.17590-1-vigneshr@ti.com>
+ <20180209120415.17590-3-vigneshr@ti.com>
+ <20180212175801.GA29070@e107981-ln.cambridge.arm.com>
+From: Vignesh R <vigneshr@ti.com>
+Message-ID: <7cfa73af-09fa-d298-aaab-3e74ee7e1dd5@ti.com>
+Date: Thu, 15 Feb 2018 09:59:21 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH v9 2/3] arm: dts: add Nuvoton NPCM750 device tree
-To: Joel Stanley <joel@jms.id.au>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-CC: Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>, julien.thierry@arm.com,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <A86ACBBE-0825-482F-81BE-24B7CAED92CD@gmail.com>
+In-Reply-To: <20180212175801.GA29070@e107981-ln.cambridge.arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1F3xdpQ014267
 
-On February 14, 2018 6:28:51 PM PST, Joel Stanley <joel@jms.id.au> wrote:
->On Tue, Feb 13, 2018 at 4:52 PM, Joel Stanley <joel@jms.id.au> wrote:
->> Hi Brendan,
->>
->> On Tue, Feb 6, 2018 at 10:27 AM, Brendan Higgins
->> <brendanhiggins@google.com> wrote:
->>> Add a common device tree for all Nuvoton NPCM750 BMCs and a board
->>> specific device tree for the NPCM750 (Poleg) evaluation board.
->>>
->>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
->>> Reviewed-by: Tomer Maimon <tmaimon77@gmail.com>
->>> Reviewed-by: Avi Fishman <avifishman70@gmail.com>
->>> Reviewed-by: Joel Stanley <joel@jms.id.au>
->>> Reviewed-by: Rob Herring <robh@kernel.org>
->>> Tested-by: Tomer Maimon <tmaimon77@gmail.com>
->>> Tested-by: Avi Fishman <avifishman70@gmail.com>
->>
->> This looks well acked, reviewed and tested. How do you plan to have
->> the ARM SoC maintainers merge your patches?
->
->Following up on an IRC conversation with Brendan:
->
->The process is normally to create a git branch based on on -rc1, apply
->your patches, and send them to the ARM maintainers. You then push a
->signed tag to a repository somewhere, send a pull request (a git
->request-pull email, not a Github PR) and Arnd, Olof or one of the
->other maintainers will pull your tree some time before the next merge
->window opens.
->
->Arnd, do we have this documented somewhere for new maintainers to
->follow?
+Hi,
 
-I would add a few things that we had to go through before for Broadcom SoCs:
+On Monday 12 February 2018 11:28 PM, Lorenzo Pieralisi wrote:
+> On Fri, Feb 09, 2018 at 05:34:14PM +0530, Vignesh R wrote:
+>> We need to ensure that there are no pending MSI IRQ vector set (i.e
+>> PCIE_MSI_INTR0_STATUS reads 0 at least once) before exiting
+>> dra7xx_pcie_msi_irq_handler(). Else, the dra7xx PCIe wrapper will not
+>> register new MSI IRQs even though PCIE_MSI_INTR0_STATUS shows IRQs are
+>> pending. Therefore, keep calling dra7xx_pcie_msi_irq_handler() until it
+>> returns IRQ_NONE, which suggests that PCIE_MSI_INTR0_STATUS is 0.
+>> 
+>> This fixes a bug, where PCIe wifi cards with 4 DMA queues like Intel
+>> 8260 used to throw following error and stall during ping/iperf3 tests.
+>> 
+>> [   97.776310] iwlwifi 0000:01:00.0: Queue 9 stuck for 2500 ms.
+>> 
+>> Signed-off-by: Vignesh R <vigneshr@ti.com>
+>> ---
+>>  drivers/pci/dwc/pci-dra7xx.c | 21 ++++++++++++++++++---
+>>  1 file changed, 18 insertions(+), 3 deletions(-)
+>> 
+>> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+>> index ed8558d638e5..3420cbf7b60a 100644
+>> --- a/drivers/pci/dwc/pci-dra7xx.c
+>> +++ b/drivers/pci/dwc/pci-dra7xx.c
+>> @@ -254,14 +254,31 @@ static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
+>>        struct dra7xx_pcie *dra7xx = arg;
+>>        struct dw_pcie *pci = dra7xx->pci;
+>>        struct pcie_port *pp = &pci->pp;
+>> +     int count = 0;
+>>        unsigned long reg;
+>>        u32 virq, bit;
+>>  
+>>        reg = dra7xx_pcie_readl(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI);
+>> +     dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
+>>  
+>>        switch (reg) {
+>>        case MSI:
+>> -             dw_handle_msi_irq(pp);
+>> +             /*
+>> +              * Need to make sure no MSI IRQs are pending before
+>> +              * exiting handler, else the wrapper will not catch new
+>> +              * IRQs. So loop around till dw_handle_msi_irq() returns
+>> +              * IRQ_NONE
+>> +              */
+>> +             while (dw_handle_msi_irq(pp) != IRQ_NONE && count < 1000)
+>> +                     count++;
+>> +
+>> +             if (count == 1000) {
+>> +                     dev_err(pci->dev, "too much work in msi irq\n");
+>> +                     dra7xx_pcie_writel(dra7xx,
+>> +                                        PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI,
+>> +                                        reg);
+>> +                     return IRQ_HANDLED;
+> 
+> I am not merging any code patching this IRQ handling routine anymore
+> unless you thoroughly explain to me how this CONF_IRQSTATUS_MSI register
+> works (and how it is related to DW registers) and why this specific host
+> controller needs handling that is not required by any other host
+> controller relying on dw_handle_msi_irq().
 
-- send your pull requests to arm@kernel.org and copy Arnd, Olof and Kevin
+Unlike other DW PCIe controllers, TI implementation has a wrapper on top
+of DW core. This wrapper latches the DW core level MSI and legacy
+interrupts and then propagates it to GIC.
+PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI register is present in this TI
+wrapper which aggregates all the MSI IRQs(PCIE_MSI_INTR0_STATUS) of DW
+level. They are mapped on the MSI interrupt line of PCIe controller,
+using a single status bit in the PCIECTRL_TI_CONF_IRQSTATUS_MSI register.
 
-- you would want to get your PGP key signed by as many people as people as possible which should not be a problem if you are in an area with lots of kernel people like the Bay Area (which reminds me I should do that)
+So, the irq handler, dra7xx_pcie_msi_irq_handler(), first needs to look
+at PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI[4] to know that its MSI IRQ and
+then call dw_handle_msi_irq() to handle individual MSI vectors.
+Driver has to make sure there are no pending vectors in DW core MSI
+status register before exiting handler. Otherwise next MSI IRQ will not
+be latched by the wrapper.
 
-- if you are going to be reasonably active every cycle consider getting a kernel.org account to host your tree (we are still not doing that...)
 
-- for future pull requests, you might want to break them into e.g: DTS, board/Kconfig, drivers, defconfig, maintainers file, and have as little dependencies between each branch to minimize merge conflicts
+> 
+> I suspect there is a code design flaw with the way this host handles
+> IRQs and we are going to find it and fix it the way it should, not with
+> any plaster like this patch.
+> 
 
-- build test and run test your changes against at least one other platform, e.g: QEMU to check for multiplatform issues
+I agree there has been some churn wrt this wrapper level IRQ handler.
+But, that was because hardware documentation/TRM did not match
+actual behavior and so it took some time to understand how the
+hardware is working. I have extensively tested this series on multiple
+problematic PCIe USB cards and PCIe WiFi cards over week long stress
+tests. And also had some agreement with internal hardware designers.
+Hardware documentations will also be updated.
 
-In case this is of any value, there is a script here that will automatically generate pull requests emails for you based on branches matching what was mentioned above, it will also take care of CC'ing the people involved in the different patches:
 
-https://github.com/ffainelli/misc-scripts/blob/master/gen-pull.pl
-
-It still requires you to create an appropriate tag for the pull requests, though I might semi-automate that in the future, at least spawn an editor and offer some guidance, based on commit messages as to what should be in the pull request email/tag.
-
-HTH
+> Lorenzo
+> 
+>> +             }
+>>                break;
+>>        case INTA:
+>>        case INTB:
+>> @@ -275,8 +292,6 @@ static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
+>>                break;
+>>        }
+>>  
+>> -     dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
+>> -
+>>        return IRQ_HANDLED;
+>>  }
+>>  
+>> -- 
+>> 2.16.1
+>> 
 
 -- 
-Florian
+Regards
+Vignesh
