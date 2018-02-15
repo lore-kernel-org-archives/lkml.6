@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224i022ESGd8U4p3AvAUZPPYDADqHj3im5zdeu5MZCjSSSKl7SzWH9/SKdpaD7l3BZUxTTSH
-ARC-Seal: i=1; a=rsa-sha256; t=1518708948; cv=none;
+X-Google-Smtp-Source: AH8x226j3Rmr2+CPY24dqWNeiF34yL/ARvhHXwE0QJrBqJ9s5va1fSBrxEVbxLcF0Xyl/J9poEBq
+ARC-Seal: i=1; a=rsa-sha256; t=1518708946; cv=none;
         d=google.com; s=arc-20160816;
-        b=BUBW7sF3e5+6ERndNA875akkd8ESbInl7f9PKZlVF8p+EBr+rJxCuzDfHz/21jLyrw
-         1KvtAAMr6zJ5jL/fzijF8ypO6ToYNT6SBG3pmL4jYby0Rr+Db0Y7H7iB2i1VPksd40QH
-         L1Y1K0T5PEb70ANl9qkke0Lh7Ckf4a4eVetdLO44oaZYgafwF7JxRsPyVxYyaXXYbIzk
-         TaeyzOhGgxa92oBFcWKuE17BrlD1EFN06DnAQJI/rTXj8GC3Zm+8WpMeQd3Zo06afeDJ
-         oR1Hgwq18AojPodkm8QUltNfw2GgHpC1Ppysjn7MX5uZIvDN/dCVr1VY3P6IW9Ti+Hgz
-         QHhA==
+        b=eKg9XV1ZuzaZY4oo9KXSTBS30Ph58V6547gDU/WhTuBfetunHudJwZ4uoBLRCoVyaN
+         t3qwHrMu/SBihQ2Qt8O7vQtQCXf+Hz6nVbQD/b6eAsTWsYezb+w5pZ+s//9nwu0zKdiP
+         BojYvaz0T+iR6BEp7ag+lDzEKy6z2OMBhhVsknk0Lc1f4GSaama0qZHQAiEETtZxIS3X
+         Z2F+USOy44w7OWcMBhaZsg8XDTAYF6BM84Q9FIK5GneCy4hu4SG2nx9OwG4OsggvaMDj
+         lSEuUxV6jqaN8NN6q31rqLE7Ti+Oh79GEX8jtqnvz6vmBiAbUTEBkCVdBUeApPmhCMta
+         KjHw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BRc51G70HrZKySHryr/mWGu5IdNqh/KZGLd9+HFEHqk=;
-        b=uiE53Ob+ejk49wQlLwHPX9xVrG6zhckuyMvzUyCleZ/NcDUlg9Y10y2iSwqDNlXyQG
-         xA/TOFbeFIyPOEEdcEfffpRtb37crsyf1lEKH7GTM2z0AdR/7LS8kRlWy+/+mPzlq+iD
-         D4Kwwr82UFZ/Hw9mHipN1BTjcEV/hNutFJD1t6IKm5bJ9piJiEndBrKGqsHmh3cOdTZd
-         OjyQG87DqDqlQan0vxsv2FMqnLEfpBqT8o/b6IWRujH8y4rK4B4SN7KurDV6jURiBiwM
-         GJMRxcUT7Z9Rf/XRvn6u11SKOujWUvoOiEew/z/DRCZ3wZKHITv5mM3tFaBlDibooocu
-         OQpg==
+        bh=hcrd+riL62XJkcE1A+BuT2ky0QmH3mkspwtLb43WDU4=;
+        b=DYm0h3bAiWAwikr6MY5OZCSMb3+UnSadoV2dVgAIam+1FmEI+GUGfHAJ8PIn1AHU2P
+         I5NsBbJ3y+NF4XptUjGU6yJGbxqP7w5gmKr1dXtvQqa0rpCEM3PJA6LhHKwYBeBY2vee
+         5piZ1ShhF4c9jo5QDrl3QKLTwOOjswHHEPRoPlaBXSPDwND1cvya7kaPEUrN8/HKi3jL
+         dhH27Rp1seEoPE6VZC+wvktxlTAiA5XI8f5aF5NJ60XTgQFOPUgu0a0yOGNuSntF5qgf
+         7Gj1fH1DXScsEnJpqzSQtX2lMMpwJNb5p8Tm/H0wB/f2hAbU6+Q8Jzo3bYtlZe60Vj+3
+         SzqQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Krish Sadhukhan <krish.sadhukhan@oracle.com>,
 	Paolo Bonzini <pbonzini@redhat.com>,
 	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH 4.14 138/195] KVM: nVMX: Fix bug of injecting L2 exception into L1
-Date: Thu, 15 Feb 2018 16:17:09 +0100
-Message-Id: <20180215151712.690147137@linuxfoundation.org>
+Subject: [PATCH 4.14 137/195] KVM: nVMX: Fix races when sending nested PI while dest enters/leaves L2
+Date: Thu, 15 Feb 2018 16:17:08 +0100
+Message-Id: <20180215151712.646290595@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481754467882981?=
-X-GMAIL-MSGID: =?utf-8?q?1592481754467882981?=
+X-GMAIL-THRID: =?utf-8?q?1592481037885961253?=
+X-GMAIL-MSGID: =?utf-8?q?1592481751930368802?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,80 +53,90 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Liran Alon <liran.alon@oracle.com>
 
-commit 5c7d4f9ad39d980728b39752304ce10bb2960cbf upstream.
-
-kvm_clear_exception_queue() should clear pending exception.
-This also includes exceptions which were only marked pending but not
-yet injected. This is because exception.pending is used for both L1
-and L2 to determine if an exception should be raised to guest.
-Note that an exception which is pending but not yet injected will
-be raised again once the guest will be resumed.
+commit 6b6977117f50d60455ace86b2d256f6fb4f3de05 upstream.
 
 Consider the following scenario:
-1) L0 KVM with ignore_msrs=false.
-2) L1 prepare vmcs12 with the following:
-    a) No intercepts on MSR (MSR_BITMAP exist and is filled with 0).
-    b) No intercept for #GP.
-    c) vmx-preemption-timer is configured.
-3) L1 enters into L2.
-4) L2 reads an unhandled MSR that exists in MSR_BITMAP
-(such as 0x1fff).
+1. CPU A calls vmx_deliver_nested_posted_interrupt() to send an IPI
+to CPU B via virtual posted-interrupt mechanism.
+2. CPU B is currently executing L2 guest.
+3. vmx_deliver_nested_posted_interrupt() calls
+kvm_vcpu_trigger_posted_interrupt() which will note that
+vcpu->mode == IN_GUEST_MODE.
+4. Assume that before CPU A sends the physical POSTED_INTR_NESTED_VECTOR
+IPI, CPU B exits from L2 to L0 during event-delivery
+(valid IDT-vectoring-info).
+5. CPU A now sends the physical IPI. The IPI is received in host and
+it's handler (smp_kvm_posted_intr_nested_ipi()) does nothing.
+6. Assume that before CPU A sets pi_pending=true and KVM_REQ_EVENT,
+CPU B continues to run in L0 and reach vcpu_enter_guest(). As
+KVM_REQ_EVENT is not set yet, vcpu_enter_guest() will continue and resume
+L2 guest.
+7. At this point, CPU A sets pi_pending=true and KVM_REQ_EVENT but
+it's too late! CPU B already entered L2 and KVM_REQ_EVENT will only be
+consumed at next L2 entry!
 
-L2 RDMSR could be handled as described below:
-1) L2 exits to L0 on RDMSR and calls handle_rdmsr().
-2) handle_rdmsr() calls kvm_inject_gp() which sets
-KVM_REQ_EVENT, exception.pending=true and exception.injected=false.
-3) vcpu_enter_guest() consumes KVM_REQ_EVENT and calls
-inject_pending_event() which calls vmx_check_nested_events()
-which sees that exception.pending=true but
-nested_vmx_check_exception() returns 0 and therefore does nothing at
-this point. However let's assume it later sees vmx-preemption-timer
-expired and therefore exits from L2 to L1 by calling
-nested_vmx_vmexit().
-4) nested_vmx_vmexit() calls prepare_vmcs12()
-which calls vmcs12_save_pending_event() but it does nothing as
-exception.injected is false. Also prepare_vmcs12() calls
-kvm_clear_exception_queue() which does nothing as
-exception.injected is already false.
-5) We now return from vmx_check_nested_events() with 0 while still
-having exception.pending=true!
-6) Therefore inject_pending_event() continues
-and we inject L2 exception to L1!...
+Another scenario to consider:
+1. CPU A calls vmx_deliver_nested_posted_interrupt() to send an IPI
+to CPU B via virtual posted-interrupt mechanism.
+2. Assume that before CPU A calls kvm_vcpu_trigger_posted_interrupt(),
+CPU B is at L0 and is about to resume into L2. Further assume that it is
+in vcpu_enter_guest() after check for KVM_REQ_EVENT.
+3. At this point, CPU A calls kvm_vcpu_trigger_posted_interrupt() which
+will note that vcpu->mode != IN_GUEST_MODE. Therefore, do nothing and
+return false. Then, will set pi_pending=true and KVM_REQ_EVENT.
+4. Now CPU B continue and resumes into L2 guest without processing
+the posted-interrupt until next L2 entry!
 
-This commit will fix above issue by changing step (4) to
-clear exception.pending in kvm_clear_exception_queue().
+To fix both issues, we just need to change
+vmx_deliver_nested_posted_interrupt() to set pi_pending=true and
+KVM_REQ_EVENT before calling kvm_vcpu_trigger_posted_interrupt().
 
-Fixes: 664f8e26b00c ("KVM: X86: Fix loss of exception which has not yet been injected")
+It will fix the first scenario by chaging step (6) to note that
+KVM_REQ_EVENT and pi_pending=true and therefore process
+nested posted-interrupt.
+
+It will fix the second scenario by two possible ways:
+1. If kvm_vcpu_trigger_posted_interrupt() is called while CPU B has changed
+vcpu->mode to IN_GUEST_MODE, physical IPI will be sent and will be received
+when CPU resumes into L2.
+2. If kvm_vcpu_trigger_posted_interrupt() is called while CPU B hasn't yet
+changed vcpu->mode to IN_GUEST_MODE, then after CPU B will change
+vcpu->mode it will call kvm_request_pending() which will return true and
+therefore force another round of vcpu_enter_guest() which will note that
+KVM_REQ_EVENT and pi_pending=true and therefore process nested
+posted-interrupt.
+
+Fixes: 705699a13994 ("KVM: nVMX: Enable nested posted interrupt processing")
 Signed-off-by: Liran Alon <liran.alon@oracle.com>
 Reviewed-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
 Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
-Signed-off-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+[Add kvm_vcpu_kick to also handle the case where L1 doesn't intercept L2 HLT
+ and L2 executes HLT instruction. - Paolo]
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx.c |    1 -
- arch/x86/kvm/x86.h |    1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/vmx.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -11246,7 +11246,6 @@ static int vmx_check_nested_events(struc
- 		if (block_nested_events)
- 			return -EBUSY;
- 		nested_vmx_inject_exception_vmexit(vcpu, exit_qual);
--		vcpu->arch.exception.pending = false;
+@@ -5322,14 +5322,15 @@ static int vmx_deliver_nested_posted_int
+ 
+ 	if (is_guest_mode(vcpu) &&
+ 	    vector == vmx->nested.posted_intr_nv) {
+-		/* the PIR and ON have been set by L1. */
+-		kvm_vcpu_trigger_posted_interrupt(vcpu, true);
+ 		/*
+ 		 * If a posted intr is not recognized by hardware,
+ 		 * we will accomplish it in the next vmentry.
+ 		 */
+ 		vmx->nested.pi_pending = true;
+ 		kvm_make_request(KVM_REQ_EVENT, vcpu);
++		/* the PIR and ON have been set by L1. */
++		if (!kvm_vcpu_trigger_posted_interrupt(vcpu, true))
++			kvm_vcpu_kick(vcpu);
  		return 0;
  	}
- 
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -12,6 +12,7 @@
- 
- static inline void kvm_clear_exception_queue(struct kvm_vcpu *vcpu)
- {
-+	vcpu->arch.exception.pending = false;
- 	vcpu->arch.exception.injected = false;
- }
- 
+ 	return -1;
