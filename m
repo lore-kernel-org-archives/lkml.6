@@ -1,77 +1,50 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1797899-1518708573-2-6864449793081976153
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518708572; b=LEzCc4wEYmX4XSviecuRMKUEJnBTCmbwqrnD1w8vOF7qlyN
-    I87Ll4yBD8C00ZRFQtSq4jxiLNwogpgGsH4m/n3YR9WuPyLgLjeItdjl1n4InrTr
-    uuxmA+g6kxd68rwWKl/xyouXvYXosQJdON7+Uh1qa8B0AURe+1iC8pPhYlBTRBZQ
-    y6oznTiMIOJme5egfca+FKVPjS9IHCiCoobKpBl+rME52Qh19P/zDI7S1YeiXTzj
-    8QTNGZHNYT6/1bMjxasmqSoZXR5L5WWfVqdwc4/p+yXelDoROzeNFxGIvg2C+0QO
-    aDL3KrtYAQzfhyS9d1qACzEZg30fws/2QgHqS7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518708572; bh=z5Nm4bPU7sezaCNB56uNJlsidI
-    NOUo76ioJWmG0w+eg=; b=koWUlcqlPOoeNqtSgd5qoig0JdlhcdCYTXsxGRrkNK
-    gb8JxNQ1ntyAqgfXBMdS3nKnRZRJiovANCBaSvHbRWrm1E4kmEknBBnGzORI07S0
-    8D5txEPV7O/744O9oqAFUE1uQNcyS68l4Adx+u4eHJAmH2uaZ/rEukXxMlCfB06R
-    5O0P2FoFVNA2vZuQWmWBoUAuGq3ReKnE54gj4vUR7COlArG6IsTGrhJ/GX/3y63P
-    IyE4IE9HuKo+12sK1+AEuVBQxdX0QQztDwyhdDvSb90F9gNVqw/76tuToVQfALOw
-    TxKinLJmPmUmuinaIapaATkW3LK3y3kK0fvL3B0Qm1Dg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164041AbeBOP33 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:29:29 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54414 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163607AbeBOP32 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:29:28 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x227yxnWMpDiENsCoy4d9wGnNkxQtawMVTdkVDT4ZYBiUvAndAb+qSAD60nSJpYcZxmkCNUzL
+ARC-Seal: i=1; a=rsa-sha256; t=1518708572; cv=none;
+        d=google.com; s=arc-20160816;
+        b=uyOsojTyLB7XOEHylhNGOeiB/BhKmzUypfaWlp/iO+frsw8WtGmKX4TucTIUntCeub
+         dJpjU/vGT+p3Hwq7Du7CbMA8oSkU4x0Y90YCmnJlxIejAUgLFu9kcF7EZHkCbodcyPJv
+         jel6UezEIEzvKKxJ3rdsGzOgZWXxzauSdwM4ikCy5Z3EdrkfKBk0h8S5cX/l5TWldtuN
+         HFuACpq9Twe0f+b17QEo3w6CvGq4pmiM++EROkECs9l1YEvpgBH9U+/xdw3ij2+kkTBW
+         /TwDVf/zS/UDLcskx9ZZ5XUdcxMqYp6SL9+wWQqM99/xgzmPM6fk8+Ac4WLMPAGVhFIx
+         0fpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=1g088M/YuyaKb3LiEL0dvgbg0f8gCA23Z9mF8CEZCGw=;
+        b=eyPRAFxUENdS/5XYMcBp+0jYt29CV8pkHigK07pUiS4VYKm/HMViF+W+WS6hudBCcu
+         tKzrQ5LU5rGJeOEqBkuyJw+Idrve22jS52XLHfkMuWCYhrh1RDmFxdwpSIVxl0dk/hzo
+         9gQIRSeqfB9bL1OQA2eOCxOD8S1eLXMqI01/OFpI3mx/kPHYyw5of13bjJinuhzYRMYa
+         zzQ1393nfSlo0zulkUxxyPmzzCaybAN5v910LnOZnwoVttd3PX1fArquZD4L1s/mm//Q
+         uB+qRIIgPQ1+VZBdiHPvYKzjnw3XYdsg5I44h8G971IDvPGfsl5xhFXgsf2OueEuX5xb
+         X2zw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Safonov <0x7f454c46@gmail.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.9 88/88] ftrace: Remove incorrect setting of glob search field
-Date: Thu, 15 Feb 2018 16:17:55 +0100
-Message-Id: <20180215151234.639070044@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Heiko Carstens <heiko.carstens@de.ibm.com>,
+	Kees Cook <keescook@chromium.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Al Viro <viro@ZenIV.linux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 61/88] fs/proc/kcore.c: use probe_kernel_read() instead of memcpy()
+Date: Thu, 15 Feb 2018 16:17:28 +0100
+Message-Id: <20180215151231.108665950@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1592481359907139719?=
+X-GMAIL-MSGID: =?utf-8?q?1592481359907139719?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -79,50 +52,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
 
-commit 7b6586562708d2b3a04fe49f217ddbadbbbb0546 upstream.
+commit d0290bc20d4739b7a900ae37eb5d4cc3be2b393f upstream.
 
-__unregister_ftrace_function_probe() will incorrectly parse the glob filter
-because it resets the search variable that was setup by filter_parse_regex().
+Commit df04abfd181a ("fs/proc/kcore.c: Add bounce buffer for ktext
+data") added a bounce buffer to avoid hardened usercopy checks.  Copying
+to the bounce buffer was implemented with a simple memcpy() assuming
+that it is always valid to read from kernel memory iff the
+kern_addr_valid() check passed.
 
-Al Viro reported this:
+A simple, but pointless, test case like "dd if=/proc/kcore of=/dev/null"
+now can easily crash the kernel, since the former execption handling on
+invalid kernel addresses now doesn't work anymore.
 
-    After that call of filter_parse_regex() we could have func_g.search not
-    equal to glob only if glob started with '!' or '*'.  In the former case
-    we would've buggered off with -EINVAL (not = 1).  In the latter we
-    would've set func_g.search equal to glob + 1, calculated the length of
-    that thing in func_g.len and proceeded to reset func_g.search back to
-    glob.
+Also adding a kern_addr_valid() implementation wouldn't help here.  Most
+architectures simply return 1 here, while a couple implemented a page
+table walk to figure out if something is mapped at the address in
+question.
 
-    Suppose the glob is e.g. *foo*.  We end up with
-	    func_g.type = MATCH_MIDDLE_ONLY;
-	    func_g.len = 3;
-	    func_g.search = "*foo";
-    Feeding that to ftrace_match_record() will not do anything sane - we
-    will be looking for names containing "*foo" (->len is ignored for that
-    one).
+With DEBUG_PAGEALLOC active mappings are established and removed all the
+time, so that relying on the result of kern_addr_valid() before
+executing the memcpy() also doesn't work.
 
-Link: http://lkml.kernel.org/r/20180127031706.GE13338@ZenIV.linux.org.uk
+Therefore simply use probe_kernel_read() to copy to the bounce buffer.
+This also allows to simplify read_kcore().
 
-Fixes: 3ba009297149f ("ftrace: Introduce ftrace_glob structure")
-Reviewed-by: Dmitry Safonov <0x7f454c46@gmail.com>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+At least on s390 this fixes the observed crashes and doesn't introduce
+warnings that were removed with df04abfd181a ("fs/proc/kcore.c: Add
+bounce buffer for ktext data"), even though the generic
+probe_kernel_read() implementation uses uaccess functions.
+
+While looking into this I'm also wondering if kern_addr_valid() could be
+completely removed...(?)
+
+Link: http://lkml.kernel.org/r/20171202132739.99971-1-heiko.carstens@de.ibm.com
+Fixes: df04abfd181a ("fs/proc/kcore.c: Add bounce buffer for ktext data")
+Fixes: f5509cc18daa ("mm: Hardened usercopy")
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/ftrace.c |    1 -
- 1 file changed, 1 deletion(-)
+ fs/proc/kcore.c |   18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -3911,7 +3911,6 @@ __unregister_ftrace_function_probe(char
- 		func_g.type = filter_parse_regex(glob, strlen(glob),
- 						 &func_g.search, &not);
- 		func_g.len = strlen(func_g.search);
--		func_g.search = glob;
- 
- 		/* we do not support '!' for function probes */
- 		if (WARN_ON(not))
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -507,23 +507,15 @@ read_kcore(struct file *file, char __use
+ 				return -EFAULT;
+ 		} else {
+ 			if (kern_addr_valid(start)) {
+-				unsigned long n;
+-
+ 				/*
+ 				 * Using bounce buffer to bypass the
+ 				 * hardened user copy kernel text checks.
+ 				 */
+-				memcpy(buf, (char *) start, tsz);
+-				n = copy_to_user(buffer, buf, tsz);
+-				/*
+-				 * We cannot distinguish between fault on source
+-				 * and fault on destination. When this happens
+-				 * we clear too and hope it will trigger the
+-				 * EFAULT again.
+-				 */
+-				if (n) { 
+-					if (clear_user(buffer + tsz - n,
+-								n))
++				if (probe_kernel_read(buf, (void *) start, tsz)) {
++					if (clear_user(buffer, tsz))
++						return -EFAULT;
++				} else {
++					if (copy_to_user(buffer, buf, tsz))
+ 						return -EFAULT;
+ 				}
+ 			} else {
