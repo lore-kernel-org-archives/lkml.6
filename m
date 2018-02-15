@@ -1,61 +1,94 @@
-Return-Path: <robherring2@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519055452; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ytG6NnNfM84bSPO589+1iiPtFkx0lb6FzoQoT23HNnquHWgFHNQ3NGsiYG/0imCToT
-         xagbRykCEMtIhikJT94tS/d4/9DmRrTwWnDrzd3GF5lALMSw8z8gFpSf+ZhAGYzc3ESr
-         jGJwXA/ku0Uwt4OZrdJjeqM535biWyi7wjTRmd+oIV3Yqaa4SAE7P3MRMIWrP4gEilMB
-         eymHU92+SjMbQR38W0Il24OZUyXvWECIf9gA/A5Ht68O/Q0IoBuG/FmwFhVq0Up/PqlN
-         8oApLDvqBOIsj8uuQsBVf03YK6GyNzv4mDS5a/95l4BlPZHrFgt7mWcQTU1Gaap5CCso
-         ldfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=SxZz6YQHDE/r3kUK1oTBZimPD7uGwxGTozNDFf2aSXg=;
-        b=S7xzdzMyaur8oxFKFzI9tjrPlPgLtl8KvteJyboypordj6ew2/nm221GpnZ+Liw7Nw
-         zoyYIBFRx05AoJ5Vd0sHcCZvo9MncFaudZ4rqj4WTdBmhNTMAcIzDRq/rNuXK66t6IN2
-         C0zenU2PReNpQBx40cGddzM4izyw1qvo8r8UbFmHec7JL/0DHaBpLmQf2Z7Puu/C4vXu
-         vVsMIJleMPgxRpg8u0XyuKZ5AQ8iAxsX3Vyo6V6+pxvi5wypzMETvNIUuqotHtW8bTKY
-         DiXbZMOtP+n8vPGbwlUbl/YuPd2yfs+/LkkH5SLc0YRK8bqgZLC7hu91PvuTURfzhHog
-         Z+0Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
-X-Google-Smtp-Source: AH8x22491s9AdXUfe+bMNzLqisyHQsJwaWw0bV8xerY+2J8m0deVgvqDdKbrXs5GF4EYxRoLPbdtCQ==
-Date: Mon, 19 Feb 2018 09:50:50 -0600
-From: Rob Herring <robh@kernel.org>
-To: Amelie Delaunay <amelie.delaunay@st.com>
-Cc: John Youn <johnyoun@synopsys.com>, Felipe Balbi <balbi@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: usb: fix the STM32F7 DWC2 OTG HS core
- binding
-Message-ID: <20180219155050.66n6db3pdo3vub4p@rob-hp-laptop>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1906823-1518710448-2-14712350638163554993
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518710447; b=PDibYDBk+a/yPwMJ9tjsN/a5ZL2Xp9pjpenqd1NACwsyoNY
+    cuMp3Ozkz1f5sZwII8uyUV7NwI/XdnjsgpUQvbXSjnGfAR+Z/CpK7f9y0wBhfpp7
+    AbQeL7flE1CwEJ0Fx/t3O824LDPnbNUYfHyykGt26LpGPHneicwHdKGgWwQL1vpQ
+    lyv63jBLKvo22k+WsOnvK8SPI9SFGBYvAT2+8J/B+jlvzYbzJC+z2+Bz6xcDjvtg
+    KRkFDHrwQQ4h9gpPlLCDAvAXpZxJduLLpKkAxLTIXFZr8vphQHv6rs/qzDUGabqy
+    ad6c1Ln/iNfqdA8eibDkUMHD8f3bwCalFbv7VDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1518710447; bh=WL2vP5EQ0PKa77y7MHWejV4+5e
+    vWBwOZD/xZ9B6vgVo=; b=QJQ3grCZEfPAw7lzAsHhTloQXwJMfRIaI5pdQvcwA8
+    BIwNruVGINg4f/EQp+eWIvfS4NXDhmTMItD756YYAv8OMSUPAReqjpmfG7PQv8Nt
+    4wFL63C+rHU1qKjcv6+qNRJcuvK7yIdztFc6LXG3WSWwYx5wZmeu40MSD2jrX1RE
+    hh3fEK07Hf3GA2aKExTPttfeDR5agEE6LQwmM9TJTHlgvip1IMFxZR2fxs0zPzM4
+    loJCICE+1f+TOJXn8/7CKE7yAh66XF9ORsS8pzAHxYewmu5MCmtuO74dFnAzpg+c
+    XNQ9EbmLRYOimILEpAuG7wi1DQZIsLS+HkxdxkeK0ccA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1424830AbeBOQA3 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 11:00:29 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:34262 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1424800AbeBOPrA (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 15 Feb 2018 10:47:00 -0500
+From: Amelie Delaunay <amelie.delaunay@st.com>
+To: John Youn <johnyoun@synopsys.com>, Felipe Balbi <balbi@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [[INTERNAL] PATCH 0/2] Fix STM32F7 DWC2 OTG HS binding
+Date: Thu, 15 Feb 2018 16:46:39 +0100
+Message-ID: <1518709601-17232-2-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518709601-17232-1-git-send-email-amelie.delaunay@st.com>
 References: <1518709601-17232-1-git-send-email-amelie.delaunay@st.com>
- <1518709601-17232-3-git-send-email-amelie.delaunay@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518709601-17232-3-git-send-email-amelie.delaunay@st.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-15_06:,,
+ signatures=0
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592482455277475921?=
-X-GMAIL-MSGID: =?utf-8?q?1592845090065019562?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 15, 2018 at 04:46:40PM +0100, Amelie Delaunay wrote:
-> This patch fixes binding documentation for DWC2 controller in HS mode
-> found on STMicroelectronics STM32F7 SoC.
-> The v2 former patch [1] had been acked by Rob Herring, but v1 was merged.
-> 
-> [1] https://patchwork.kernel.org/patch/9925575/
-> 
-> Fixes: 000777dadc7e ("dt-bindings: usb: Document the STM32F7xx DWC2 ...")
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-> ---
->  Documentation/devicetree/bindings/usb/dwc2.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+This patchset fixes STM32F7 DWC2 OTG HS binding. It actually
+re-applies the v2 former patches adding STM32F7 DWC2 OTG HS support.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Amelie Delaunay (2):
+  dt-bindings: usb: fix the STM32F7 DWC2 OTG HS core binding
+  usb: dwc2: fix STM32F7 USB OTG HS compatible
+
+ Documentation/devicetree/bindings/usb/dwc2.txt | 2 +-
+ drivers/usb/dwc2/params.c                      | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+-- 
+2.7.4
+
