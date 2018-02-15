@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2255UxgeTuzunYrX4MMXIm4gZ4AkSDzKp/Ua4uGVRJaW+X6FY1iGt+DrCoSh8rk+jEO7+Uo/
-ARC-Seal: i=1; a=rsa-sha256; t=1518708351; cv=none;
+X-Google-Smtp-Source: AH8x225P5saz453hO+PAIRZU1u+hzvO3DSnlVw67OeXz3+xBkav6hVHZ06th7vdgIVGYf9C1Tl4v
+ARC-Seal: i=1; a=rsa-sha256; t=1518708348; cv=none;
         d=google.com; s=arc-20160816;
-        b=O6SlkSKnRN3+h0aC822nycNfcFlMhBKyti/Tk43dYmeVo3PvVlBJ9v/DXOW3DclKRt
-         4GD1vnimOoV/RlXhtfemVCdLOZeTp24U6RWkF03BNPTPZwdJx+yvHiT++NRcJuETkF5a
-         /tR0HS+HE/pyQkBTmMB6qNOHRDLzqO6nethHT5owKl8NRy8PVI/I64YlqzAYmKr7e+W2
-         uFMQBHqocddjjvUNjCeqehhqykaIH2FE05GWrK4qkTVUcn3pDch2K4bhM5NVXfoxExm/
-         DGYZmJLBe0OS+6glb5w4KgrgJpzen9Zk+AsPKrde0qu31IMW28COPlFpw2aP798lpoeR
-         D2jA==
+        b=zpN8rSylFU5MqfHDDN3TpLPi/hYlcjhzdQey9fA7G0dWPVxKzMn+qsrey4hsUbMqts
+         KMPDHqvox+cNx3yGNNyQXv89nzPi4s+RIO6ArkNevZDHyGTPJf8fK67eEKvsiAyxcepc
+         rDDCmzrApj0+oauPfS8YwLeIUZXR71yEQ5kEZhC1sLbfpJg3mjM72LB0MLXJ2u7Mm+/J
+         zO7Rtnm/z7v/mrhsgdaMOFk3wjw0DJ9St4k+iCXND16cGomoOThty++UMzKMVWRn/bcg
+         oHZAKHTWjAgv+8eocKN+JcZCxG+l0CBKllyXV8oSfj0BbMaHCW28EFRYhBkoyFSrPXTO
+         czwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NPMQkzCOyMEyUlb1cwFpLUiJCdlsKabN7WHnQ2JTdmk=;
-        b=oyT2PaPfmXeB9xyMXXgGGw3mQvY1CD7Ker87UwD5Tj1fS5CesJkoijQAm+VnuDWiXY
-         ienRJYaJCn+vORrRL7iXRNrPQsvkr9Oiss+6lvQXB4c6pn2oyOEf+nteektBvG8a1pRk
-         7Qjz+QzJtBY5gpvQgycuX8oNlnlMPK3s7tr6+2LDTaPKGxmTnKphgeirRC0ztBcnfuj1
-         pjwBUBzi8fPx+zzSUKqpMJofVKWlqU8XcZS4HkSEKibaM/8kyjHDmI0AimDmbxYOpDDJ
-         9XxYQfXs/mRYoFoU2efKDJjNENPl7YuDvCrc1FHXKUKnhJy6g6fj/hn121PnMpomqpVD
-         l9DQ==
+        bh=VY9WsuM0mocvvkWaSnqN6xNvFWF4JJzXUicFn/Jh0MU=;
+        b=MaS8jAYOAXNaMW4OZErwWAzeHBGDU+cl61DFRsD9jURYljb/F7nDN7sTZutB0zjq8q
+         qmjwC/D+tITB92O4sG846pAgY34VaQhRyAYeui+OIvEgFbzyP+lS6tVQrv9W8mOzOj4j
+         l0eZoJmJtr8tjhwTYRhWz6VrMOMxPYrZ6r4D8RjqYCHaQETFH7GNehHUT7X6Q+beIm0g
+         vJv/4C6cAg60h2CILMloGn1HECnB5PJk+3La+mcfsAncbsduioAq0NVoFK3lbmrk5Jif
+         6kOXz/MUbX7J/bzwnvHfXToq2CfVmmpTya4Xmkl7jr9STc607ClOkUyz4NtuRxA7FLDd
+         c7Iw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andrey Konovalov <andreyknvl@google.com>,
-	Malcolm Priestley <tvboxspy@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 12/88] media: dvb-usb-v2: lmedm04: Improve logic checking of warm start
-Date: Thu, 15 Feb 2018 16:16:39 +0100
-Message-Id: <20180215151224.402009234@linuxfoundation.org>
+	Mohamed Ghannam <simo.ghannam@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 11/88] dccp: CVE-2017-8824: use-after-free in DCCP code
+Date: Thu, 15 Feb 2018 16:16:38 +0100
+Message-Id: <20180215151224.221514352@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480718416650893?=
-X-GMAIL-MSGID: =?utf-8?q?1592481128477648132?=
+X-GMAIL-THRID: =?utf-8?q?1592480715990046369?=
+X-GMAIL-MSGID: =?utf-8?q?1592481125321655654?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,86 +49,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Mohamed Ghannam <simo.ghannam@gmail.com>
 
-commit 3d932ee27e852e4904647f15b64dedca51187ad7 upstream.
+commit 69c64866ce072dea1d1e59a0d61e0f66c0dffb76 upstream.
 
-Warm start has no check as whether a genuine device has
-connected and proceeds to next execution path.
+Whenever the sock object is in DCCP_CLOSED state,
+dccp_disconnect() must free dccps_hc_tx_ccid and
+dccps_hc_rx_ccid and set to NULL.
 
-Check device should read 0x47 at offset of 2 on USB descriptor read
-and it is the amount requested of 6 bytes.
-
-Fix for
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access as
-
-Reported-by: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Mohamed Ghannam <simo.ghannam@gmail.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/dvb-usb-v2/lmedm04.c |   26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+ net/dccp/proto.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
-+++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
-@@ -504,18 +504,23 @@ static int lme2510_pid_filter(struct dvb
- 
- static int lme2510_return_status(struct dvb_usb_device *d)
+--- a/net/dccp/proto.c
++++ b/net/dccp/proto.c
+@@ -259,6 +259,7 @@ int dccp_disconnect(struct sock *sk, int
  {
--	int ret = 0;
-+	int ret;
- 	u8 *data;
+ 	struct inet_connection_sock *icsk = inet_csk(sk);
+ 	struct inet_sock *inet = inet_sk(sk);
++	struct dccp_sock *dp = dccp_sk(sk);
+ 	int err = 0;
+ 	const int old_state = sk->sk_state;
  
--	data = kzalloc(10, GFP_KERNEL);
-+	data = kzalloc(6, GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
+@@ -278,6 +279,10 @@ int dccp_disconnect(struct sock *sk, int
+ 		sk->sk_err = ECONNRESET;
  
--	ret |= usb_control_msg(d->udev, usb_rcvctrlpipe(d->udev, 0),
--			0x06, 0x80, 0x0302, 0x00, data, 0x0006, 200);
--	info("Firmware Status: %x (%x)", ret , data[2]);
-+	ret = usb_control_msg(d->udev, usb_rcvctrlpipe(d->udev, 0),
-+			      0x06, 0x80, 0x0302, 0x00,
-+			      data, 0x6, 200);
-+	if (ret != 6)
-+		ret = -EINVAL;
-+	else
-+		ret = data[2];
-+
-+	info("Firmware Status: %6ph", data);
+ 	dccp_clear_xmit_timers(sk);
++	ccid_hc_rx_delete(dp->dccps_hc_rx_ccid, sk);
++	ccid_hc_tx_delete(dp->dccps_hc_tx_ccid, sk);
++	dp->dccps_hc_rx_ccid = NULL;
++	dp->dccps_hc_tx_ccid = NULL;
  
--	ret = (ret < 0) ? -ENODEV : data[2];
- 	kfree(data);
- 	return ret;
- }
-@@ -1200,6 +1205,7 @@ static int lme2510_get_adapter_count(str
- static int lme2510_identify_state(struct dvb_usb_device *d, const char **name)
- {
- 	struct lme2510_state *st = d->priv;
-+	int status;
- 
- 	usb_reset_configuration(d->udev);
- 
-@@ -1208,12 +1214,16 @@ static int lme2510_identify_state(struct
- 
- 	st->dvb_usb_lme2510_firmware = dvb_usb_lme2510_firmware;
- 
--	if (lme2510_return_status(d) == 0x44) {
-+	status = lme2510_return_status(d);
-+	if (status == 0x44) {
- 		*name = lme_firmware_switch(d, 0);
- 		return COLD;
- 	}
- 
--	return 0;
-+	if (status != 0x47)
-+		return -EINVAL;
-+
-+	return WARM;
- }
- 
- static int lme2510_get_stream_config(struct dvb_frontend *fe, u8 *ts_type,
+ 	__skb_queue_purge(&sk->sk_receive_queue);
+ 	__skb_queue_purge(&sk->sk_write_queue);
