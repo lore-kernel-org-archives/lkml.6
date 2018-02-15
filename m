@@ -1,90 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166581AbeBOSc2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 13:32:28 -0500
-Received: from mail-ot0-f175.google.com ([74.125.82.175]:45751 "EHLO
-        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1166435AbeBOScZ (ORCPT
+        id S1166593AbeBOScj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 13:32:39 -0500
+Received: from mail-out.m-online.net ([212.18.0.9]:36458 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163091AbeBOScg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 13:32:25 -0500
-X-Google-Smtp-Source: AH8x224mxw/aCO2qcHsNEN1PB0ZNaMLh88wdZfK4VgQzMP+2J5CC/oAgIxK3kDY7XiDkTQiELwdpzw==
-Subject: Re: collecting simple benchmark scripts?
-To: Kees Cook <keescook@google.com>, Shuah Khan <shuah@kernel.org>,
-        Fengguang Wu <fengguang.wu@intel.com>, Tycho Andersen <tycho@tycho.ws>,
-        Steven Rostedt <srostedt@redhat.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <CAGXu5j+LVvfdeD4rhTKAQ0PP5s5ysAjNtrfkpcp2sLzwKqbVHw@mail.gmail.com>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <7723ae8d-8333-ba17-6983-a45ec8b11c54@redhat.com>
-Date: Thu, 15 Feb 2018 10:32:21 -0800
+        Thu, 15 Feb 2018 13:32:36 -0500
+X-Auth-Info: WvEBybhg9N1gWXFljajk5+RYJ5P8kFraiZAsguDyfk8=
+Subject: Re: [PATCH v3 0/5] crypto: ahash.c: Require export/import in ahash
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sonic Zhang <sonic.zhang@analog.com>,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Jan Engelhardt <jengelh@inai.de>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Joakim Bech <joakim.bech@linaro.org>, linux-kernel@vger.kernel.org
+References: <CGME20180118183438eucas1p2e2e7be8625ae0950c519e27424f9301a@eucas1p2.samsung.com>
+ <20180118183404.12583-1-k.konieczny@partner.samsung.com>
+ <20180215154132.GA7352@gondor.apana.org.au>
+ <6b29116a-c39c-9813-34a0-d5c05bd30c9d@denx.de>
+ <32069edc-e816-6ab0-f057-b1dab5d30db4@partner.samsung.com>
+ <d7300e36-392a-18cf-5176-6eaf4c16eb43@denx.de>
+ <cdb62a71-bb7e-8c62-06bc-ab91c9642e06@partner.samsung.com>
+From: Marek Vasut <marex@denx.de>
+Message-ID: <14364c45-8f56-e6d6-66f2-8357bf89a894@denx.de>
+Date: Thu, 15 Feb 2018 19:32:31 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+LVvfdeD4rhTKAQ0PP5s5ysAjNtrfkpcp2sLzwKqbVHw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <cdb62a71-bb7e-8c62-06bc-ab91c9642e06@partner.samsung.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/14/2018 02:50 PM, Kees Cook wrote:
-> Hi,
+On 02/15/2018 07:06 PM, Kamil Konieczny wrote:
 > 
-> In a separate thread, some folks were looking for some simple
-> benchmarks for evaluating various changes to kernel internals (as
-> opposed to the much more focused things like xfstests). For me, this
-> has been an area of lore and passed-around scripts, and it seems like
-> maybe we should have a subdirectory of tools/testing/benchmarks/ or
-> something to collect these?
 > 
-> (Or maybe this already exists and I've totally missed it?)
+> On 15.02.2018 18:06, Marek Vasut wrote:
+>> On 02/15/2018 06:00 PM, Kamil Konieczny wrote:
+>>>
+>>>
+>>> On 15.02.2018 17:27, Marek Vasut wrote:
+>>>> On 02/15/2018 04:41 PM, Herbert Xu wrote:
+>>>>> On Thu, Jan 18, 2018 at 07:33:59PM +0100, Kamil Konieczny wrote:
+>>>>>> First four patches add empty hash export and import functions to each driver,
+>>>>>> with the same behaviour as in crypto framework. The last one drops them from
+>>>>>> crypto framework. Last one for ahash.c depends on all previous.
+>>>>>>
+>>>>>> Changes in v3:
+>>>>>> added change for bfin_crc.c
+>>>>>> make this a patchset, instead of unreleated patches
+>>>>>> make commit message more descriptive
+>>>>>>
+>>>>>> Kamil Konieczny (5):
+>>>>>>   crypto: mxs-dcp: Add empty hash export and import
+>>>>>>   crypto: n2_core: Add empty hash export and import
+>>>>>>   crypto: ux500/hash: Add empty export and import
+>>>>>>   crypto: bfin_crc: Add empty hash export and import
+>>>>>>   crypto: ahash.c: Require export/import in ahash
+>>>>>>
+>>>>>>  crypto/ahash.c                        | 18 ++----------------
+>>>>>>  drivers/crypto/bfin_crc.c             | 12 ++++++++++++
+>>>>>>  drivers/crypto/mxs-dcp.c              | 14 ++++++++++++++
+>>>>>>  drivers/crypto/n2_core.c              | 12 ++++++++++++
+>>>>>>  drivers/crypto/ux500/hash/hash_core.c | 18 ++++++++++++++++++
+>>>>>>  5 files changed, 58 insertions(+), 16 deletions(-)
+>>>>>
+>>>>> All applied.  Thanks.
+>>>>
+>>>> This makes no sense, cfr my comment on 5/5
+>>>>
+>>>> Seems like if the driver doesn't implement those, the core can easily
+>>>> detect that and perform the necessary action. Moving the checks out of
+>>>> core seems like the wrong thing to do, rather you should enhance the
+>>>> checks in core if they're insufficient in my opinion.
+>>>
+>>> The bug can only be in driver which will not implement those two functions,
+>>> but we already had all drivers with those due to patches 1..4
+>>> All other drivers do have them.
+>>
+>> The core can very well check if these functions are not populated and
+>> return ENOSYS
+>>
+>>> Additionally, with crypto we want minimize code and run as fast as possible.
+>>
+>> So you remove all NULL pointer checks ? Esp. in security-sensitive code?
+>> What is the impact of this non-critical path code on performance?
+>>
+>> Come on ...
+>>
 > 
-> I've got at least one micro-benchmark in
-> tools/testing/selftests/seccomp/seccomp_benchmark.c, and searches show
-> tools/testing/selftests/vm/gup_benchmark.c too, but I was thinking of
-> either more generali things more like the famous "kernel build
-> benchmark" or a wrapper for running hackbench to get some statistics
-> out of it, etc.
+> Why you want checks for something that not exist ?
 > 
-> Or, I guess, at least collecting all the micro-benchmarks in some
-> single place, as they're a bit scattered.
+> Those without them will not work and will do Oops in crypto testmgr,
+> so such drivers should not be used nor accepted in drivers/crypto
 > 
-> I'm sure I'm not remotely the first person to bring this up, but my
-> attempts at searches for this have failed.
-> 
-> Thoughts?
-> 
-> -Kees
-> 
+> Ask yourself why crypto do not check for NULL in ahash digest or other
+> required ahash functions.
 
-This is the script I've been using for hackbench since it can
-be noisy. I expect someone to tell me the math is wrong but
-I'd be happy to throw this in a repo if others are interested
+Are you suggesting that the kernel code should NOT perform NULL pointer
+checks ?
 
-#!/bin/sh
+Are you suggesting each driver should implement every single callback
+available and if it is not implemented, return -ENOSYS ? This looks like
+a MASSIVE code duplication.
 
-CNT=100
-mean=0.0
-M2=0.0
-for i in $(seq 1 $CNT); do
-	echo $i
-	r=`hackbench -g 20 -l 1000 | grep Time | cut -d ' ' -f 2`
-	d_calc="$r-$mean"
-         d=`echo $d_calc | bc -l`
-	mean_calc="$mean+($d/$i)"
-	mean=`echo $mean_calc | bc -l`
-	M2_calc="$M2+($d*($r-$mean))"
-	M2=`echo  $M2_calc| bc -l`
-done
+>>> Moving checks out of core will impose on driver author need for implement
+>>> those functions, or declare them empty, but in case of empty ones 
+>>> crypto will not work properly with such driver.
+>>
+>> You can very well impose that in the core, except you don't duplicate
+>> the code.
+> 
+> Now size of crypto core is reduced.
 
-echo "mean $mean"
-V_calc="$M2/$(($CNT-1))"
-V=`echo $V_calc | bc -l`
-DEV_calc="sqrt($V)"
-DEV=`echo $DEV_calc | bc -l`
-echo "variance $V"
-echo "stdev $DEV"
+You implemented the same code thrice, it surely is not reduced.
+
+-- 
+Best regards,
+Marek Vasut
