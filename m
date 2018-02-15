@@ -1,69 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751507AbeBOFNP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 00:13:15 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:55782 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750713AbeBOFNN (ORCPT
+        id S1751565AbeBOFUZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 00:20:25 -0500
+Received: from gateway20.websitewelcome.com ([192.185.62.46]:49989 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750743AbeBOFUX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 00:13:13 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 351D760585
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH v3 3/3] arm64: dts: sdm845: Add serial console support
-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Doug Anderson <dianders@chromium.org>
-Cc: Andy Gross <andy.gross@linaro.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, evgreen@chromium.org
-References: <20180212062832.2791-1-rnayak@codeaurora.org>
- <20180212062832.2791-4-rnayak@codeaurora.org>
- <CAD=FV=UXrmpsK3k+8yZCqVi6S+c_3icPUViDST+shnrQW1A6EA@mail.gmail.com>
- <20180214191125.GD93895@bjorns-mbp-2.lan>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <a7008b8a-1c07-6a49-f586-cea88a6e9a18@codeaurora.org>
-Date: Thu, 15 Feb 2018 10:43:07 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Thu, 15 Feb 2018 00:20:23 -0500
+Date: Wed, 14 Feb 2018 23:20:00 -0600
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] drm/amdgpu_gem: fix error handling path in
+ amdgpu_gem_va_update_vm
+Message-ID: <20180215052000.GA25691@embeddedgus>
 MIME-Version: 1.0
-In-Reply-To: <20180214191125.GD93895@bjorns-mbp-2.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.4.238
+X-Source-L: No
+X-Exim-ID: 1emBxh-002rU9-9N
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.175.4.238]:45954
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Currently, if amdgpu_vm_bo_update() fails, the returned error
+is being ignored.
 
+Fix this by properly checking _r_ after calling amdgpu_vm_bo_update.
+Also, remove redundant code just before label _error_.
 
-On 02/15/2018 12:41 AM, Bjorn Andersson wrote:
-> [..]
->>> +
->>> +               qup_1: geni-se@ac0000 {
->> Color me confused.  So you're saying here that this is "qup_1".
->> ...but above you turn the pinmux for pins "GPIO4" and "GPIO5" to
->> "qup9", right?  So UART2 is on "qup 1" and "qup 9"?
->>
->> ...OK, so I stared at manuals a bunch more, and _maybe_ I get it.
->> Maybe there are 3 "QUP v3 modules" each of which handles up to 8
->> "QUP"s.  So QUP 9 is on "QUP module 1", is that right?  If everyone
->> understands this already and it's just me that's confused then I guess
->> you can just ignore this comment.  However, if you can think of any
->> better alias than "qup_1" that makes this less confusing then that
->> would make me extra happy.  Like maybe "qupv3_id_1" to match the
->> manual?
-> This is indeed a source of confusion, in particular since there tend to
-> be different numbering depending on what part of the puzzle you look at.
-> But you're right that each QUP has a number of engines, each one being a
-> UART/I2C/SPI controller.
-> 
-> I don't see a reason for labeling this particular node though, aliases
-> references individual engines, not the wrapper.
+Addresses-Coverity-ID: 1464280 ("Unused value")
+Fixes: 0abc6878fc2d ("drm/amdgpu: update VM PDs after the PTs")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-makes sense, I'll just drop the label.
-
-
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+index e48b4ec..db85fc0 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+@@ -523,12 +523,13 @@ static void amdgpu_gem_va_update_vm(struct amdgpu_device *adev,
+ 		goto error;
+ 
+ 	if (operation == AMDGPU_VA_OP_MAP ||
+-	    operation == AMDGPU_VA_OP_REPLACE)
++	    operation == AMDGPU_VA_OP_REPLACE) {
+ 		r = amdgpu_vm_bo_update(adev, bo_va, false);
++		if (r)
++			goto error;
++	}
+ 
+ 	r = amdgpu_vm_update_directories(adev, vm);
+-	if (r)
+-		goto error;
+ 
+ error:
+ 	if (r && r != -ERESTARTSYS)
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+2.7.4
