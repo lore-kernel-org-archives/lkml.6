@@ -1,105 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427391AbeBORfX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 12:35:23 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:43118 "EHLO
+        id S1427414AbeBORf2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 12:35:28 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:43254 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1422826AbeBORfU (ORCPT
+        with ESMTP id S1427384AbeBORfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 12:35:20 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 485736043F
+        Thu, 15 Feb 2018 12:35:23 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2DFD66079C
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
 From: Lina Iyer <ilina@codeaurora.org>
 To: andy.gross@linaro.org, david.brown@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH v2 00/10] drivers/qcom: add RPMH communication support
-Date: Thu, 15 Feb 2018 10:34:57 -0700
-Message-Id: <20180215173507.10989-1-ilina@codeaurora.org>
+        linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH v2 03/10] drivers: qcom: rpmh-rsc: log RPMH requests in FTRACE
+Date: Thu, 15 Feb 2018 10:35:00 -0700
+Message-Id: <20180215173507.10989-4-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180215173507.10989-1-ilina@codeaurora.org>
+References: <20180215173507.10989-1-ilina@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes in v2:
-- Added sleep/wake, async and batch requests support
-- Addressed Bjorn's comments
-- Private FTRACE for drivers/soc/qcom as suggested by Steven
-- Sparse checked on these patches
-- Use SPDX license commenting sytle
+Log sent RPMH requests and interrupt responses in FTRACE.
 
-This set of patches add the ability for platform drivers to make use of shared
-resources in newer Qualcomm SoCs like SDM845. Resources that are shared between
-multiple processors in a SoC are generally controlled by a dedicated remote
-processor. The remote processor (Resource Power Manager or RPM in previous QCOM
-SoCs) receives requests for resource state from other processors using the
-shared resource, aggregates the request and applies the result on the shared
-resource. SDM845 advances this concept and uses h/w (hardened I/P) blocks for
-aggregating requests and applying the result on the resource. The resources
-could be clocks, regulators or bandwidth requests for buses. This new
-architecture is called RPM-hardened or RPMH in short.
-
-Since this communication mechanism is completely hardware driven without a
-processor intervention on the remote end, existing mechanisms like RPM-SMD are
-no longer useful. Also, there is no serialization of data or is data is written
-to a shared memory in this new format. The data used is different, unsigned 32
-bits are used for representing an address, data and header. Each resource's
-property is a unique u32 address and have pre-defined set of property specific
-valid values. A request that comprises of <header, addr, data> is sent by
-writing to a set of registers from Linux and transmitted to the remote slave
-through an internal bus. The remote end aggregates this request along with
-requests from other processors for the <addr> and applies the result.
-
-The hardware block that houses this functionality is called Resource State
-Coordinator or RSC. Inside the RSC are set of slots for sending RPMH requests
-called Trigger Commands Sets (TCS). The set of patches are for writing the
-requests into these TCSes and sending them to hardened IP blocks.
-
-The driver design is split into two components. The RSC driver housed in
-rpmh-rsc.c and the set of library functions in rpmh.c that frame the request and
-transmit it using the controller. This first set of patches allow a simple
-synchronous request to be made by the platform drivers. Future patches will add
-more functionality that cater to complex drivers and use cases.
-
-Please consider reviewing this patchset.
-
-v1: https://www.spinics.net/lists/devicetree/msg210980.html
-
-
-Lina Iyer (10):
-  drivers: qcom: rpmh-rsc: add RPMH controller for QCOM SoCs
-  dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
-  drivers: qcom: rpmh-rsc: log RPMH requests in FTRACE
-  drivers: qcom: rpmh: add RPMH helper functions
-  drivers: qcom: rpmh-rsc: write sleep/wake requests to TCS
-  drivers: qcom: rpmh-rsc: allow invalidation of sleep/wake TCS
-  drivers: qcom: rpmh: cache sleep/wake state requests
-  drivers: qcom: rpmh: allow requests to be sent asynchronously
-  drivers: qcom: rpmh: add support for batch RPMH request
-  drivers: qcom: rpmh-rsc: allow active requests from wake TCS
-
- .../devicetree/bindings/arm/msm/rpmh-rsc.txt       | 146 ++++
- drivers/soc/qcom/Kconfig                           |  10 +
- drivers/soc/qcom/Makefile                          |   4 +
- drivers/soc/qcom/rpmh-internal.h                   |  96 +++
- drivers/soc/qcom/rpmh-rsc.c                        | 794 +++++++++++++++++++++
- drivers/soc/qcom/rpmh.c                            | 670 +++++++++++++++++
- drivers/soc/qcom/trace-rpmh.h                      |  89 +++
- include/dt-bindings/soc/qcom,rpmh-rsc.h            |  14 +
- include/soc/qcom/rpmh.h                            |  60 ++
- include/soc/qcom/tcs.h                             |  56 ++
- 10 files changed, 1939 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/msm/rpmh-rsc.txt
- create mode 100644 drivers/soc/qcom/rpmh-internal.h
- create mode 100644 drivers/soc/qcom/rpmh-rsc.c
- create mode 100644 drivers/soc/qcom/rpmh.c
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+---
+ drivers/soc/qcom/Makefile     |  1 +
+ drivers/soc/qcom/rpmh-rsc.c   |  6 +++
+ drivers/soc/qcom/trace-rpmh.h | 89 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 96 insertions(+)
  create mode 100644 drivers/soc/qcom/trace-rpmh.h
- create mode 100644 include/dt-bindings/soc/qcom,rpmh-rsc.h
- create mode 100644 include/soc/qcom/rpmh.h
- create mode 100644 include/soc/qcom/tcs.h
 
---
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index 7426979ea9fb..094b639ece2f 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
++CFLAGS_trace-rpmh.o := -I$(src)
+ obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
+ obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
+ obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
+diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+index ceb8aea237d6..58a3c53d651e 100644
+--- a/drivers/soc/qcom/rpmh-rsc.c
++++ b/drivers/soc/qcom/rpmh-rsc.c
+@@ -24,6 +24,9 @@
+ 
+ #include "rpmh-internal.h"
+ 
++#define CREATE_TRACE_POINTS
++#include "trace-rpmh.h"
++
+ #define RSC_DRV_TCS_OFFSET		672
+ #define RSC_DRV_CMD_OFFSET		20
+ 
+@@ -239,6 +242,7 @@ static irqreturn_t tcs_irq_handler(int irq, void *p)
+ 		/* Reclaim the TCS */
+ 		write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, m, 0, 0);
+ 		write_tcs_reg(drv, RSC_DRV_IRQ_CLEAR, 0, 0, BIT(m));
++		trace_rpmh_notify_irq(drv, resp);
+ 		atomic_set(&drv->tcs_in_use[m], 0);
+ 		send_tcs_response(resp);
+ 	}
+@@ -270,6 +274,7 @@ static void tcs_notify_tx_done(unsigned long data)
+ 				       struct tcs_response, list);
+ 		list_del(&resp->list);
+ 		spin_unlock_irqrestore(&drv->drv_lock, flags);
++		trace_rpmh_notify_tx_done(drv, resp);
+ 		free_response(resp);
+ 	}
+ }
+@@ -298,6 +303,7 @@ static void __tcs_buffer_write(struct rsc_drv *drv, int m, int n,
+ 		write_tcs_reg(drv, RSC_DRV_CMD_MSGID, m, n + i, msgid);
+ 		write_tcs_reg(drv, RSC_DRV_CMD_ADDR, m, n + i, cmd->addr);
+ 		write_tcs_reg(drv, RSC_DRV_CMD_DATA, m, n + i, cmd->data);
++		trace_rpmh_send_msg(drv, m, n + i, msgid, cmd);
+ 	}
+ 
+ 	write_tcs_reg(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, m, 0, cmd_complete);
+diff --git a/drivers/soc/qcom/trace-rpmh.h b/drivers/soc/qcom/trace-rpmh.h
+new file mode 100644
+index 000000000000..734de0d54a9f
+--- /dev/null
++++ b/drivers/soc/qcom/trace-rpmh.h
+@@ -0,0 +1,89 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
++ */
++
++#if !defined(_TRACE_RPMH_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_RPMH_H
++
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM rpmh
++
++#include <linux/tracepoint.h>
++#include "rpmh-internal.h"
++
++DECLARE_EVENT_CLASS(rpmh_notify,
++
++	TP_PROTO(struct rsc_drv *d, struct tcs_response *r),
++
++	TP_ARGS(d, r),
++
++	TP_STRUCT__entry(
++		__field(const char *, d->name)
++		__field(int, m)
++		__field(u32, addr)
++		__field(int, errno)
++	),
++
++	TP_fast_assign(
++		__entry->name = d->name;
++		__entry->m = r->m;
++		__entry->addr = r->msg->payload[0].addr;
++		__entry->errno = r->err;
++	),
++
++	TP_printk("%s: ack: tcs-m:%d addr: 0x%08x errno: %d",
++		 __entry->name, __entry->m, __entry->addr, __entry->errno)
++);
++
++DEFINE_EVENT(rpmh_notify, rpmh_notify_irq,
++	TP_PROTO(struct rsc_drv *d, struct tcs_response *r),
++	TP_ARGS(d, r)
++);
++
++DEFINE_EVENT(rpmh_notify, rpmh_notify_tx_done,
++	TP_PROTO(struct rsc_drv *d, struct tcs_response *r),
++	TP_ARGS(d, r)
++);
++
++
++TRACE_EVENT(rpmh_send_msg,
++
++	TP_PROTO(struct rsc_drv *d, int m, int n, u32 h, struct tcs_cmd *c),
++
++	TP_ARGS(d, m, n, h, c),
++
++	TP_STRUCT__entry(
++		__field(const char*, d->name)
++		__field(int, m)
++		__field(int, n)
++		__field(u32, hdr)
++		__field(u32, addr)
++		__field(u32, data)
++		__field(bool, complete)
++	),
++
++	TP_fast_assign(
++		__entry->name = s;
++		__entry->m = m;
++		__entry->n = n;
++		__entry->hdr = h;
++		__entry->addr = c->addr;
++		__entry->data = c->data;
++		__entry->complete = c->complete;
++	),
++
++	TP_printk("%s: send-msg: tcs(m): %d cmd(n): %d msgid: 0x%08x addr: 0x%08x data: 0x%08x complete: %d",
++			__entry->name, __entry->m, __entry->n, __entry->hdr,
++			__entry->addr, __entry->data, __entry->complete)
++);
++
++#endif /* _TRACE_RPMH_H */
++
++#undef TRACE_INCLUDE_PATH
++#define TRACE_INCLUDE_PATH ../../drivers/soc/qcom
++
++#undef TRACE_INCLUDE_FILE
++#define TRACE_INCLUDE_FILE trace-rpmh
++
++#include <trace/define_trace.h>
+-- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
