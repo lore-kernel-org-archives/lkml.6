@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227gxBKss2ve3llkMZRXmMWsTBbSJuvRePbw/MnBmw+C1l7nps2NtsNFabTirVhlElZ1Po32
-ARC-Seal: i=1; a=rsa-sha256; t=1518708558; cv=none;
+X-Google-Smtp-Source: AH8x226Wi1SlKWKVq3NbB5IDkyu5zQoy++Jm/BgDWGJiq3cj864tem6BoB2+/Jd4pb121DZU17Wi
+ARC-Seal: i=1; a=rsa-sha256; t=1518708556; cv=none;
         d=google.com; s=arc-20160816;
-        b=uPpnnzNcQ5onVs4NDMN8wh5+IyYxHCvQe8wCY8bGdiotWMgIlzAr9BvjEkVK6b12bj
-         3Dw1x8OJwftI9dT752BRWKkjZqn+RXoHrIBcu7EkO8zzth6KOFaqjNMRm5nJ1hTQ0qLQ
-         sbZUVjDlS/BPMUfkvalXyT3uoZlKixLMezyKl7i9ElwMJYzvOtFwNsese+jSNNro+RwU
-         ikh/b8iMtSfJERtx2Gcwku/3zxwgyFW6NQFTk4YWQ0Lao3dD6qel0gHy622UR8uOfVcA
-         oz+rrZ4tQ4GNNiWMKic19CfFIwhmBkWaYWnaU5A8wORtF6795pdBpOV/G+/LBkUg43/c
-         EOwA==
+        b=WRqDBjsh2PSi0R4UQHjO0PAyazNnHbjdAHIEXvZl7Rg63+a1IsRVQf8nX03nhy6t/a
+         I07VFu3hREGic27JMugvlpRHh9wbyMmwn7udDgCWgtTUnpHeVZ2XLF6iTgFgUSa90Nlu
+         m1Nq0lBapd2DTlXnLP7ZhEcSUDaOfs/UDZB9ukp570bR4COy9OZc1G+Y9bAupg8mfacZ
+         lLVZOqQBZDoAy4Sn+rsnyGNLLlNtkI38QyCp3PTI1zPqtj06iG9exOmTvCGFEDyHZUkx
+         4kFVCIooumwlcuLEEreychKKucCQBB97m5wEr1PxRC7ITqoBur3w4UaaAPU6u+ZhvQY8
+         SX9w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+bNL1gLM0RTZ61VGFTWF5fQP9ya5uIr+gWeHKNULyG4=;
-        b=Z+LFQR9hLkVXKni5+bHKB4bX/OfVItk3EGlhmJNbD2QdGw16HTAIOPEp9pxzKx+/EC
-         3OVLOZdRUECeSV64xXApeMBeG7jjNI7I0M2yn21K/drHHZkoPrHhqmOCcr5LG9Luplhz
-         Zkti+J6/100X8TMDpaeGMsbyqLr0GAgboPwTo2QEzT56c99m/PEzbOt1zWKiwfdncx5L
-         FGBppzElKTsWK4TtkOvsE9ivw+nS8LQSCNbzDfsTkJFPsWrEQvL7AKCSnYP9FNFs9wWI
-         7vz21NSCZnk1GJ8GmfBAE/d9cAKToILI0ztP8LL0JzkwLJs/PHWX4iyQ5uJCX3fqXzOm
-         tiRA==
+        bh=0jQ8JQVBZUHvlt5Ot6I8KbHhGq60uLoH3L66zDgwjeY=;
+        b=HH6aJCBS7rzM6yxXYRYVGitOH2KqubOE0MSNng37FtUDeVubgMoX39YPtK7lIs8Z4e
+         clpg9YrEcuYuo51eJ8dVJeGqCXRDH+Y4OmJ78qc+ZY0nss+zW33x+7iawSGbRp9js3/1
+         U2FSeOfuqWaIGf6I8K6EaYrfK1/RNENWi9fu9PxW13eI7Ac244KveEkqV8QBLwuBIX6/
+         ZY0s3Y8R1CIvRZUlhoqGUOZ0SkIBjlwlmtxxAK437QBlZzj7E18jMCKbSctB4b3PI8tW
+         8UnfpIhINAZHvp4MDsXhE721G+nxy6u726OK84QhI2k2504Cj5XNbfm/hiyFO8bUdr6P
+         Pkgw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Toshi Kani <toshi.kani@hpe.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.9 85/88] acpi, nfit: fix register dimm error handling
-Date: Thu, 15 Feb 2018 16:17:52 +0100
-Message-Id: <20180215151234.232466114@linuxfoundation.org>
+	Wang Qize <wang_qize@venustech.com.cn>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.9 84/88] ACPI: sbshc: remove raw pointer from printk() message
+Date: Thu, 15 Feb 2018 16:17:51 +0100
+Message-Id: <20180215151234.118597794@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481345316957816?=
-X-GMAIL-MSGID: =?utf-8?q?1592481345316957816?=
+X-GMAIL-THRID: =?utf-8?q?1592480780987314959?=
+X-GMAIL-MSGID: =?utf-8?q?1592481342710229325?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,35 +48,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Toshi Kani <toshi.kani@hpe.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 23fbd7c70aec7600e3227eb24259fc55bf6e4881 upstream.
+commit 43cdd1b716b26f6af16da4e145b6578f98798bf6 upstream.
 
-A NULL pointer reference kernel bug was observed when
-acpi_nfit_add_dimm() called in acpi_nfit_register_dimms() failed. This
-error path does not set nfit_mem->nvdimm, but the 2nd
-list_for_each_entry() loop in the function assumes it's always set. Add
-a check to nfit_mem->nvdimm.
+There's no need to be printing a raw kernel pointer to the kernel log at
+every boot.  So just remove it, and change the whole message to use the
+correct dev_info() call at the same time.
 
-Fixes: ba9c8dd3c222 ("acpi, nfit: add dimm device notification support")
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Reported-by: Wang Qize <wang_qize@venustech.com.cn>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/nfit/core.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/acpi/sbshc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -1535,6 +1535,9 @@ static int acpi_nfit_register_dimms(stru
- 		struct kernfs_node *nfit_kernfs;
+--- a/drivers/acpi/sbshc.c
++++ b/drivers/acpi/sbshc.c
+@@ -275,8 +275,8 @@ static int acpi_smbus_hc_add(struct acpi
+ 	device->driver_data = hc;
  
- 		nvdimm = nfit_mem->nvdimm;
-+		if (!nvdimm)
-+			continue;
-+
- 		nfit_kernfs = sysfs_get_dirent(nvdimm_kobj(nvdimm)->sd, "nfit");
- 		if (nfit_kernfs)
- 			nfit_mem->flags_attr = sysfs_get_dirent(nfit_kernfs,
+ 	acpi_ec_add_query_handler(hc->ec, hc->query_bit, NULL, smbus_alarm, hc);
+-	printk(KERN_INFO PREFIX "SBS HC: EC = 0x%p, offset = 0x%0x, query_bit = 0x%0x\n",
+-		hc->ec, hc->offset, hc->query_bit);
++	dev_info(&device->dev, "SBS HC: offset = 0x%0x, query_bit = 0x%0x\n",
++		 hc->offset, hc->query_bit);
+ 
+ 	return 0;
+ }
