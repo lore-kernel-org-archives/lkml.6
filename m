@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224nHBu2D29FkNPBhxeIrLW6EoKgZxbX38XUHXc9Zl8xhmBuq9XbXBIP4W7YmUtn6sfqAemD
-ARC-Seal: i=1; a=rsa-sha256; t=1518709208; cv=none;
+X-Google-Smtp-Source: AH8x225ichfKOgr3Oa6YvEjElFmsPWUigKiGsG4D6sbiAEntyLnBTL4fFdTfSi+hHbb4UcLUm2xo
+ARC-Seal: i=1; a=rsa-sha256; t=1518709206; cv=none;
         d=google.com; s=arc-20160816;
-        b=ehdef9E9QxfPgFvG/oYaspBHHxK/+567Tho3Jh1hdOXyHyg57kkn3TylgpUyOrc41F
-         tDRkmxI7kk5cPFXw822eddXc21NLHREUSApaRuGDoNrlhi3kiiSbZcF+ApuKeaCDs4YF
-         y9kdTJ225Ds/EmpHu+FSgPOmbhgO+bwO6NLXIOmMi54bEO4/33PQds4275/UKOWhwOWs
-         IM8tybXt5FkL4ImId75kB8CxPQEk3yDmrWvggQRw1c77As9R/AkzmnbmgPv6OOcb0aet
-         ImNrEMtGjGrWAwbutHzHR/1z2jXvwkLzBsvVcjlaX3LaunRBq1ArPo6IHF3pnnj25zOu
-         P1Sg==
+        b=B8/HpQlSLGpFtKXbjB5LbXasz9b4jciH7lr4CAJQRuWTzYsOpUcgQLM1R7EaSTq0of
+         wQvgxHV0TfbNOAEds54qrLE3V/aawY74zehTriTnoUFY5uIPk+Zuh3ovgPXjrUnJDAK2
+         C8Ysy5y+DwTEbQy01yWHtgpF0ozODHUdzPKJK87PesOf/Mi9cdrekQTrS+2J9hDA5KKZ
+         t1P+Rk3bnjANfa0zKbt5/9DmevWGh8z84Oe8lqBH5quNikvHa6zpfWVpf+qZaVepxRkS
+         K7BLt8Ta2PMwfLLGIBLvTBG4f0ld4lb8Osk0fAe3R6UbfzPjmKWnNJjhAxSuyRocIx+q
+         3x+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=KWAt648QBbR3zieAPJlGJNp7QzjQcQCxyoP25UO47sA=;
-        b=Vv55FyRVuC7NQbFj3wRWbmRK6gw4P6Veweib5Iw71F3MujvB9Xl5zeTGYNixY4on07
-         Zf8TbKdBK8ntb0htj0KFZIrZ5dr2gYiFpog0kWbyItaLJkLTt5juAkFUBH8ke03Wf5Wh
-         Ocapff2tTzTXJxBO0bHEAnJ5GlS0xYqFWIN4sQYMXWvLftUw3uQwE8KGTM5lakt69hZv
-         XXWZJTNXp+NkhIWw34W1OFV2uhFYzEYSSJbt+ooPxqSeT8mVX7LVyDZ6gjobW5CyERv5
-         zDJOSDDAu6fFoMpnGkAnMIMWsvcrIKwjgVz157tLMR5RK5f6Anjwve5dHUxJJQdwJpA0
-         ElbQ==
+        bh=k9c8TUsIWfyRVVls/zINC0VdJhYmlY+Hf6EPf4MDeg8=;
+        b=A+dSqtSFcExe0Bmmt7c67plFexF4zm7XM0HysVoJ8EpAo23/eMo1e9epEe5MNSlmd3
+         FI/CbwIVQGGw6a2OK1Vc1N7tS5VmjvWuuNO7EAGhh5XSV7o4xBoPmSWUAGJ0s+p5meFQ
+         PV5KRsuZHNNE238MlIDD9OFmNQXyTHQZcUkRbJYBW8USlxDnlpR8OEVWYmgEmaO+T4bV
+         t4iSSZXwrcoChc3e3NNGvL8dokqG9hpc3s1iZi3ngHW8h7lIEDfelZUmDQcO3XDz8fAo
+         LdiGtvcYgK2UMJwsj129oTsrM2e7KHYVJkupj39+pRGEI82VlJiyMa9FJMD2V8eb2cLi
+         oQzw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Wim Van Sebroeck <wim@iguana.be>
-Subject: [PATCH 4.15 008/202] watchdog: gpio_wdt: set WDOG_HW_RUNNING in gpio_wdt_stop
-Date: Thu, 15 Feb 2018 16:15:08 +0100
-Message-Id: <20180215151713.242766975@linuxfoundation.org>
+	Mark Rutland <mark.rutland@arm.com>,
+	Laura Abbott <labbott@redhat.com>,
+	Shanker Donthineni <shankerd@codeaurora.org>,
+	Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.15 034/202] [Variant 3/Meltdown] arm64: Kconfig: Add CONFIG_UNMAP_KERNEL_AT_EL0
+Date: Thu, 15 Feb 2018 16:15:34 +0100
+Message-Id: <20180215151714.786408198@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481432327285756?=
-X-GMAIL-MSGID: =?utf-8?q?1592482027561542087?=
+X-GMAIL-THRID: =?utf-8?q?1592481480355530880?=
+X-GMAIL-MSGID: =?utf-8?q?1592482024636402463?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,55 +50,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+From: Will Deacon <will.deacon@arm.com>
 
-commit bc137dfdbec27c0ec5731a89002daded4a4aa1ea upstream.
 
-The first patch above (https://patchwork.kernel.org/patch/9970181/)
-makes the oops go away, but it just papers over the problem. The real
-problem is that the watchdog core clears WDOG_HW_RUNNING in
-watchdog_stop, and the gpio driver fails to set it in its stop
-function when it doesn't actually stop it. This means that the core
-doesn't know that it now has responsibility for petting the device, in
-turn causing the device to reset the system (I hadn't noticed this
-because the board I'm working on has that reset logic disabled).
+Commit 084eb77cd3a8 upstream.
 
-How about this (other drivers may of course have the same problem, I
-haven't checked). One might say that ->stop should return an error
-when the device can't be stopped, but OTOH this brings parity between
-a device without a ->stop method and a GPIO wd that has always-running
-set. IOW, I think ->stop should only return an error when an actual
-attempt to stop the hardware failed.
+Add a Kconfig entry to control use of the entry trampoline, which allows
+us to unmap the kernel whilst running in userspace and improve the
+robustness of KASLR.
 
-From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-
-The watchdog framework clears WDOG_HW_RUNNING before calling
-->stop. If the driver is unable to stop the device, it is supposed to
-set that bit again so that the watchdog core takes care of sending
-heart-beats while the device is not open from user-space. Update the
-gpio_wdt driver to honour that contract (and get rid of the redundant
-clearing of WDOG_HW_RUNNING).
-
-Fixes: 3c10bbde10 ("watchdog: core: Clear WDOG_HW_RUNNING before calling the stop function")
-Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Laura Abbott <labbott@redhat.com>
+Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/watchdog/gpio_wdt.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/Kconfig |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/drivers/watchdog/gpio_wdt.c
-+++ b/drivers/watchdog/gpio_wdt.c
-@@ -80,7 +80,8 @@ static int gpio_wdt_stop(struct watchdog
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -843,6 +843,19 @@ config FORCE_MAX_ZONEORDER
+ 	  However for 4K, we choose a higher default value, 11 as opposed to 10, giving us
+ 	  4M allocations matching the default size used by generic code.
  
- 	if (!priv->always_running) {
- 		gpio_wdt_disable(priv);
--		clear_bit(WDOG_HW_RUNNING, &wdd->status);
-+	} else {
-+		set_bit(WDOG_HW_RUNNING, &wdd->status);
- 	}
- 
- 	return 0;
++config UNMAP_KERNEL_AT_EL0
++	bool "Unmap kernel when running in userspace (aka \"KAISER\")"
++	default y
++	help
++	  Some attacks against KASLR make use of the timing difference between
++	  a permission fault which could arise from a page table entry that is
++	  present in the TLB, and a translation fault which always requires a
++	  page table walk. This option defends against these attacks by unmapping
++	  the kernel whilst running in userspace, therefore forcing translation
++	  faults for all of kernel space.
++
++	  If unsure, say Y.
++
+ menuconfig ARMV8_DEPRECATED
+ 	bool "Emulate deprecated/obsolete ARMv8 instructions"
+ 	depends on COMPAT
