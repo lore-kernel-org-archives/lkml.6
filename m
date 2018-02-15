@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227aHM+Wn1hgkeUMELtdEDASDnH3oYDWVMaGXKAB8hOLlgDWbkEenMlrpu3r9OEB73hNgh8o
-ARC-Seal: i=1; a=rsa-sha256; t=1518708725; cv=none;
+X-Google-Smtp-Source: AH8x225ctyBrCTRhbBr7IiXqIPe6eJYHRg8eUjtYH2kMyGM5uMi5BT0haglQpj72JNQ57QC6Fg/5
+ARC-Seal: i=1; a=rsa-sha256; t=1518708719; cv=none;
         d=google.com; s=arc-20160816;
-        b=AhUO0hRJL9QZZi0cwvaB8YsCHsAw9AL5EgXsgD9tgjriqWyYKc1ncovlFHFMfCMDiH
-         jt8J2uV+Kl84B+MfLcB9oRZYZB/HhsVmnsbzAhpYmBKDTubTm7yEZqQBQOPYnqG78JcX
-         z7oULFUQaI4raFpVodLUXaVNBmxGWM+rTGT+D9BW1fcLlhpuZ7EdS0cXbpUD4ynlC8db
-         UC51m4GMsuGAEG/H8SLTgDazKf3MaZiip7aGf0VweBSPsOmRQKOfZ1V8PdfGLegBvASZ
-         Bks54Yig4Myp5fvoZLiOdtjO8aPUMKzrF2/e+1ezFA3eOHzaqWzfi0+m22rUwhbI/y8z
-         nc1A==
+        b=q/4SRmMfqvBBAXAnUsWEQWXlbwLz+bQ7ClCjbq7d+Sq/jawQLS/fV5Stmv7OrF68OL
+         /tvqiUILvyVCTlPmX780SDzMc5rUN4u9JiPJLSRryQDhsAI8nujuHty4QpSyxcOqfG1F
+         zkkkfVe0rC1774SchKYyjstCaecWFiD596+7iCaxZwS+9Y3DULGxaOUO3mw0mMQNLxcv
+         gIIpDyWU2ouem/gjHVYgNvYa/l4fxWEEWNo32F1VWB0rZamcMKcpaJ2MS3uIZ8azK4G1
+         KPWbuEDjLwk1lqKik5kfgXHCmv24MsMJJNLdMAexSLkiR9mS3nQpIsif1xzssfgx1fmH
+         YunA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Yq1xwpYqKg9ZEDiqRfzx72s3UAdZzwPo2Wsg8r4RNsQ=;
-        b=VHPuocBEfUtlsjizkyB5btaPeQDlaY36xvblG8mPb3U39ddm1OJBE+vtaNDmUM+Fqo
-         uZWYfU9Ro7yne3V5H3tsknmz5GS035eKPf89YJW13DWcG8+T1KLRxTlhCFx/YOm/o2Af
-         K+Vk2AtnNBPJu5VqnAiQgf/dNdhugqdCvgICDLFL3K4Gmbqg3qOnRMWotw+klEDBZtzd
-         h6Kv0QlFEngVVJpR6+jt5Kze+MhxOZIbQl0Q9uOu9LeGaoTR1hQZjFuQhhfRX6dQPD0K
-         iXQxw2ECem9525pNBN5kYmJX1DKFTKeeEiwFR4OrOvan+3Ec95cnjcC/VSRQGUSEvVsS
-         fbPg==
+        bh=UerAKAiHtYecZSlLe+6AVyhsLsFNUs36FgwB5yKQQ8c=;
+        b=A+TGWokshTJAgbpkOjYu6z9KZZ4s2VASBjhtDL8P42s55NeHtevNKbXmo8VlWpaHBG
+         s7kyaM42d9GQSzFFLZ6uaWibbHSp9I48z/8d0ch/6FM64961e0ri3m8juM+qvo6OaFoc
+         bIDDnZXZS6ib9KICjoLiJm4fSjR2n/CBA3nurLhqhS9yqxz8S1pm5qNVLmshzXsq3roa
+         rbnuQ2oF/j9rps31+b0pHiI40pbVSdQhngNtIQEHCbWC84+34H1t7PfDMN6gWHA4sXmA
+         Kq3LdvYXzVYl4/R/sht03ByTJl3Cr+KVbHhFaDzJdaF2Q+0txw1f8dHeFsk6uNGuhhro
+         Y/Eg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Robin Murphy <robin.murphy@arm.com>,
+	Jayachandran C <jnair@caviumnetworks.com>,
 	Will Deacon <will.deacon@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 058/195] [Variant 1/Spectre-v1] arm64: Make USER_DS an inclusive limit
-Date: Thu, 15 Feb 2018 16:15:49 +0100
-Message-Id: <20180215151708.627245239@linuxfoundation.org>
+Subject: [PATCH 4.14 048/195] [Variant 3/Meltdown] arm64: cputype: Add MIDR values for Cavium ThunderX2 CPUs
+Date: Thu, 15 Feb 2018 16:15:39 +0100
+Message-Id: <20180215151708.133706586@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481521134091247?=
-X-GMAIL-MSGID: =?utf-8?q?1592481521134091247?=
+X-GMAIL-THRID: =?utf-8?q?1592481514543992610?=
+X-GMAIL-MSGID: =?utf-8?q?1592481514543992610?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,149 +50,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Robin Murphy <robin.murphy@arm.com>
+From: Jayachandran C <jnair@caviumnetworks.com>
 
 
-Commit 51369e398d0d upstream.
+Commit 0d90718871fe upstream.
 
-Currently, USER_DS represents an exclusive limit while KERNEL_DS is
-inclusive. In order to do some clever trickery for speculation-safe
-masking, we need them both to behave equivalently - there aren't enough
-bits to make KERNEL_DS exclusive, so we have precisely one option. This
-also happens to correct a longstanding false negative for a range
-ending on the very top byte of kernel memory.
+Add the older Broadcom ID as well as the new Cavium ID for ThunderX2
+CPUs.
 
-Mark Rutland points out that we've actually got the semantics of
-addresses vs. segments muddled up in most of the places we need to
-amend, so shuffle the {USER,KERNEL}_DS definitions around such that we
-can correct those properly instead of just pasting "-1"s everywhere.
-
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Jayachandran C <jnair@caviumnetworks.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/processor.h |    3 ++
- arch/arm64/include/asm/uaccess.h   |   45 +++++++++++++++++++++----------------
- arch/arm64/kernel/entry.S          |    4 +--
- arch/arm64/mm/fault.c              |    4 +--
- 4 files changed, 33 insertions(+), 23 deletions(-)
+ arch/arm64/include/asm/cputype.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -21,6 +21,9 @@
+--- a/arch/arm64/include/asm/cputype.h
++++ b/arch/arm64/include/asm/cputype.h
+@@ -87,6 +87,7 @@
+ #define CAVIUM_CPU_PART_THUNDERX	0x0A1
+ #define CAVIUM_CPU_PART_THUNDERX_81XX	0x0A2
+ #define CAVIUM_CPU_PART_THUNDERX_83XX	0x0A3
++#define CAVIUM_CPU_PART_THUNDERX2	0x0AF
  
- #define TASK_SIZE_64		(UL(1) << VA_BITS)
+ #define BRCM_CPU_PART_VULCAN		0x516
  
-+#define KERNEL_DS	UL(-1)
-+#define USER_DS		(TASK_SIZE_64 - 1)
-+
- #ifndef __ASSEMBLY__
- 
- /*
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -35,10 +35,7 @@
- #include <asm/compiler.h>
- #include <asm/extable.h>
- 
--#define KERNEL_DS	(-1UL)
- #define get_ds()	(KERNEL_DS)
--
--#define USER_DS		TASK_SIZE_64
- #define get_fs()	(current_thread_info()->addr_limit)
- 
- static inline void set_fs(mm_segment_t fs)
-@@ -66,22 +63,32 @@ static inline void set_fs(mm_segment_t f
-  * Returns 1 if the range is valid, 0 otherwise.
-  *
-  * This is equivalent to the following test:
-- * (u65)addr + (u65)size <= current->addr_limit
-- *
-- * This needs 65-bit arithmetic.
-+ * (u65)addr + (u65)size <= (u65)current->addr_limit + 1
-  */
--#define __range_ok(addr, size)						\
--({									\
--	unsigned long __addr = (unsigned long)(addr);			\
--	unsigned long flag, roksum;					\
--	__chk_user_ptr(addr);						\
--	asm("adds %1, %1, %3; ccmp %1, %4, #2, cc; cset %0, ls"		\
--		: "=&r" (flag), "=&r" (roksum)				\
--		: "1" (__addr), "Ir" (size),				\
--		  "r" (current_thread_info()->addr_limit)		\
--		: "cc");						\
--	flag;								\
--})
-+static inline unsigned long __range_ok(unsigned long addr, unsigned long size)
-+{
-+	unsigned long limit = current_thread_info()->addr_limit;
-+
-+	__chk_user_ptr(addr);
-+	asm volatile(
-+	// A + B <= C + 1 for all A,B,C, in four easy steps:
-+	// 1: X = A + B; X' = X % 2^64
-+	"	adds	%0, %0, %2\n"
-+	// 2: Set C = 0 if X > 2^64, to guarantee X' > C in step 4
-+	"	csel	%1, xzr, %1, hi\n"
-+	// 3: Set X' = ~0 if X >= 2^64. For X == 2^64, this decrements X'
-+	//    to compensate for the carry flag being set in step 4. For
-+	//    X > 2^64, X' merely has to remain nonzero, which it does.
-+	"	csinv	%0, %0, xzr, cc\n"
-+	// 4: For X < 2^64, this gives us X' - C - 1 <= 0, where the -1
-+	//    comes from the carry in being clear. Otherwise, we are
-+	//    testing X' - C == 0, subject to the previous adjustments.
-+	"	sbcs	xzr, %0, %1\n"
-+	"	cset	%0, ls\n"
-+	: "+r" (addr), "+r" (limit) : "Ir" (size) : "cc");
-+
-+	return addr;
-+}
- 
- /*
-  * When dealing with data aborts, watchpoints, or instruction traps we may end
-@@ -90,7 +97,7 @@ static inline void set_fs(mm_segment_t f
-  */
- #define untagged_addr(addr)		sign_extend64(addr, 55)
- 
--#define access_ok(type, addr, size)	__range_ok(addr, size)
-+#define access_ok(type, addr, size)	__range_ok((unsigned long)(addr), size)
- #define user_addr_max			get_fs
- 
- #define _ASM_EXTABLE(from, to)						\
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -167,10 +167,10 @@ alternative_else_nop_endif
- 	.else
- 	add	x21, sp, #S_FRAME_SIZE
- 	get_thread_info tsk
--	/* Save the task's original addr_limit and set USER_DS (TASK_SIZE_64) */
-+	/* Save the task's original addr_limit and set USER_DS */
- 	ldr	x20, [tsk, #TSK_TI_ADDR_LIMIT]
- 	str	x20, [sp, #S_ORIG_ADDR_LIMIT]
--	mov	x20, #TASK_SIZE_64
-+	mov	x20, #USER_DS
- 	str	x20, [tsk, #TSK_TI_ADDR_LIMIT]
- 	/* No need to reset PSTATE.UAO, hardware's already set it to 0 for us */
- 	.endif /* \el == 0 */
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -242,7 +242,7 @@ static inline bool is_permission_fault(u
- 	if (fsc_type == ESR_ELx_FSC_PERM)
- 		return true;
- 
--	if (addr < USER_DS && system_uses_ttbr0_pan())
-+	if (addr < TASK_SIZE && system_uses_ttbr0_pan())
- 		return fsc_type == ESR_ELx_FSC_FAULT &&
- 			(regs->pstate & PSR_PAN_BIT);
- 
-@@ -426,7 +426,7 @@ static int __kprobes do_page_fault(unsig
- 		mm_flags |= FAULT_FLAG_WRITE;
- 	}
- 
--	if (addr < USER_DS && is_permission_fault(esr, regs, addr)) {
-+	if (addr < TASK_SIZE && is_permission_fault(esr, regs, addr)) {
- 		/* regs->orig_addr_limit may be 0 if we entered from EL0 */
- 		if (regs->orig_addr_limit == KERNEL_DS)
- 			die("Accessing user space memory with fs=KERNEL_DS", regs, esr);
+@@ -100,6 +101,8 @@
+ #define MIDR_THUNDERX	MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX)
+ #define MIDR_THUNDERX_81XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_81XX)
+ #define MIDR_THUNDERX_83XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_83XX)
++#define MIDR_CAVIUM_THUNDERX2 MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX2)
++#define MIDR_BRCM_VULCAN MIDR_CPU_MODEL(ARM_CPU_IMP_BRCM, BRCM_CPU_PART_VULCAN)
+ #define MIDR_QCOM_FALKOR_V1 MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR_V1)
+ #define MIDR_QCOM_FALKOR MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR)
+ #define MIDR_QCOM_KRYO MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO)
