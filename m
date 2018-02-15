@@ -1,31 +1,31 @@
 Return-Path: <prvs=57756532b=stanislav.nijnikov@wdc.com>
-X-Google-Smtp-Source: AH8x224jjUpCj3+fRZ2WIgknK2kDx/Pl57tcsxrdJmpyDBKIBaMNoMK/Ok9yh/XAkKAxxJydF8ma
-ARC-Seal: i=1; a=rsa-sha256; t=1518696881; cv=none;
+X-Google-Smtp-Source: AH8x224K7AKcKOwkDfBrq8trAbVz2zvGRXWHh9n/GHK8h5moakHAUN5DNwclnb/MBGEP2EpFmmn+
+ARC-Seal: i=1; a=rsa-sha256; t=1518696879; cv=none;
         d=google.com; s=arc-20160816;
-        b=sYp0OXSU4vJ3SBB6QylIxBnhKYUrqXTApqagROQs3T6cMcemlolFDuASFweUP13Scy
-         WbAkW8ITzdht1AZhfzxxXVsosvH/gbivWWBKz7x0EAjJAWpVEhrihJ1fMO29zNaf3q37
-         n3D/2Kqiu6cT+k+MoDU4+ByHC/UDIYM7Iph3AjQFhYMMZdmGwnI+ufoT+2fFjzG2gmoS
-         8n9Hix6CLobYA7NLjqs6QYEZsW+BSXCJ4Ov5qa7CAT1P3A6it25ca8gx8BmeS1a3o0Dc
-         CtCs07NJZ0A2I7NwXYbA+dRyAQpj7yCle+WBJz8jZtttOt8SoBLrieasE80NzMIaBX7L
-         fTZQ==
+        b=Ko2YyW1BhYRgFsQpXbzlQoEIjCVwOMtFcheVnnFwnzE4Zi+t/6YR6PGD2ocl1FFYpa
+         kCIL/WD8Vcd0/GXoEyR852JKIXkItOjXVaQNSQE2/yYOWdHuWoXIIT37sneu0VeKC5Xe
+         t1j0RXpDWZfec18iUCJOufRBCFuV8J/KFw2WEdOwJZTb7LK5/DMjxS5R6QY0MqtvCMeO
+         QHK/hxg41LnYnf1ioSXYZzr+x4awq1GbIJymBuig7t4Wy7X5uUW+ifJP6dEp/ahbJo5f
+         ea2LxqsQNeNlJaM6IwRGs+snly8363Q1cp+s1uhGF3hGRilphORjHQvkLWptLMY830Qq
+         FOhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=JLCfqQ44NCs41Or+YSEivq/BM0IP8UlatbWKPlUK2tM=;
-        b=DOnSDpEgRquw/lAlkGfXB/Q4O1AayaOfXqnuDom03wnSQs49Lrdg4CiwLEGTBoIW7p
-         eoaMUs8TXM/9KGNP/VsKlCpZqVjdJ/rsIHRtmnYWJYm2T468JBgRkQCLcnXKheK2CP7y
-         zwvntVL4cD0mnJZQRb0nW243om+tqUiRpo7un8Uj5qgHQmS+7vuGZm0cT+bBwbnxWeJV
-         VNQ4M1nlo7N3ZCp3DNBXRetmHO9G+0VDZnlz3UEBl2ZURb0kXhMSQxCRGSv7ShT4KukK
-         24tSx/7SzqzLR5iAwJdU3Vw2Gq2+M9TjZmLS/+RjSqqHF4uARnTqorQImrBE6AKsZOpI
-         rKow==
+        bh=wwPbozUDJ0Yu9mhG4D4KXWL9HCOBYCUM6q5L4TaEgCI=;
+        b=FwbIMHiAOuLPFAPgMkxwJCJNuNokqiAX6OoG4XKrL8nci7n/2OBKZJzwJogy+GHySu
+         wGjockE+LNWoycPgZXyes4g2hhOsiIy4hTRDb8iYl9ZTT0ICXu6Y7uQKnZEsFJKktvU2
+         qVz5gAzMvf6qtreDXOQslp2NA4751CdchuorymSHGbsNFjm2wxJRhQcEQkLl3BD4mVJQ
+         3FcHC46CwgFvXO6G1D4BEQQ5RUIcxXnh320Ta0uK031hGS8gFiBGo2ccBToAwlxW/zqv
+         KXTxF89zUH+Z9T2tqShI29oWdT3r6PEY1TssuWwkBcBfXdhDnFR/joqyBar4mhRZ20Ey
+         tt/Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=O2F3fNs8;
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=PRNnUFQ2;
        spf=pass (google.com: domain of prvs=57756532b=stanislav.nijnikov@wdc.com designates 216.71.154.45 as permitted sender) smtp.mailfrom=prvs=57756532b=stanislav.nijnikov@wdc.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=O2F3fNs8;
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=PRNnUFQ2;
        spf=pass (google.com: domain of prvs=57756532b=stanislav.nijnikov@wdc.com designates 216.71.154.45 as permitted sender) smtp.mailfrom=prvs=57756532b=stanislav.nijnikov@wdc.com
 X-IronPort-AV: E=Sophos;i="5.46,517,1511798400";
-   d="scan'208";a="71975474"
+   d="scan'208";a="71975471"
 From: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
 To: linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -34,186 +34,331 @@ To: linux-scsi@vger.kernel.org,
 	Bart.VanAssche@wdc.com
 Cc: alex.lemberg@wdc.com,
 	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-Subject: [PATCH v6 10/11] scsi: ufs: sysfs: flags
-Date: Thu, 15 Feb 2018 14:14:10 +0200
-Message-Id: <1518696851-6730-11-git-send-email-stanislav.nijnikov@wdc.com>
+Subject: [PATCH v6 09/11] scsi: ufs: sysfs: unit descriptor
+Date: Thu, 15 Feb 2018 14:14:09 +0200
+Message-Id: <1518696851-6730-10-git-send-email-stanislav.nijnikov@wdc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518696851-6730-1-git-send-email-stanislav.nijnikov@wdc.com>
 References: <1518696851-6730-1-git-send-email-stanislav.nijnikov@wdc.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592469101604788326?=
-X-GMAIL-MSGID: =?utf-8?q?1592469101604788326?=
+X-GMAIL-THRID: =?utf-8?q?1592469099346192152?=
+X-GMAIL-MSGID: =?utf-8?q?1592469099346192152?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch introduces a sysfs group entry for the UFS flags. The group adds
-"flags" folder under the UFS driver sysfs entry
-(/sys/bus/platform/drivers/ufshcd/*). The flags are shown as boolean value
-("true" or "false"). The full information about the UFS flags could be
-found at UFS specifications 2.1.
+This patch introduces a sysfs group entry for the UFS unit descriptor
+parameters. The group adds "unit_descriptor" folder under the corresponding
+SCSI device sysfs entry (/sys/class/scsi_device/*/device/). The parameters
+are shown as hexadecimal numbers. The full information about the parameters
+could be found at UFS specifications 2.1.
 
 Signed-off-by: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/ABI/testing/sysfs-driver-ufs | 65 ++++++++++++++++++++++++++++++
- drivers/scsi/ufs/ufs-sysfs.c               | 39 ++++++++++++++++++
- drivers/scsi/ufs/ufs.h                     | 14 +++++--
- 3 files changed, 115 insertions(+), 3 deletions(-)
+ Documentation/ABI/testing/sysfs-driver-ufs | 108 +++++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufs-sysfs.c               |  53 ++++++++++++++
+ drivers/scsi/ufs/ufs-sysfs.h               |   2 +
+ drivers/scsi/ufs/ufs.h                     |  11 +++
+ drivers/scsi/ufs/ufshcd.c                  |  23 ++----
+ drivers/scsi/ufs/ufshcd.h                  |  15 ++++
+ 6 files changed, 196 insertions(+), 16 deletions(-)
 
 diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
-index 57c6a90..f4f49e2 100644
+index c17a968..57c6a90 100644
 --- a/Documentation/ABI/testing/sysfs-driver-ufs
 +++ b/Documentation/ABI/testing/sysfs-driver-ufs
-@@ -598,3 +598,68 @@ Description:	This file shows the granularity of the LUN. This is one of
- 		the UFS unit descriptor parameters. The full information
- 		about the descriptor could be found at UFS specifications 2.1.
+@@ -490,3 +490,111 @@ Description:	This file contains a product revision string. The full
+ 		information about the descriptor could be found at
+ 		UFS specifications 2.1.
  		The file is read only.
 +
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/flags/device_init
++What:		/sys/class/scsi_device/*/device/unit_descriptor/boot_lun_id
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows the device init status. The full information
-+		about the flag could be found at UFS specifications 2.1.
++Description:	This file shows boot LUN information. This is one of
++		the UFS unit descriptor parameters. The full information
++		about the descriptor could be found at UFS specifications 2.1.
 +		The file is read only.
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/flags/permanent_wpe
++What:		/sys/class/scsi_device/*/device/unit_descriptor/lun_write_protect
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows whether permanent write protection is enabled.
-+		The full information about the flag could be found at
++Description:	This file shows LUN write protection status. This is one of
++		the UFS unit descriptor parameters. The full information
++		about the descriptor could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/class/scsi_device/*/device/unit_descriptor/lun_queue_depth
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows LUN queue depth. This is one of the UFS
++		unit descriptor parameters. The full information about
++		the descriptor could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/class/scsi_device/*/device/unit_descriptor/psa_sensitive
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows PSA sensitivity. This is one of the UFS
++		unit descriptor parameters. The full information about
++		the descriptor could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/class/scsi_device/*/device/unit_descriptor/lun_memory_type
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows LUN memory type. This is one of the UFS
++		unit descriptor parameters. The full information about
++		the descriptor could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/class/scsi_device/*/device/unit_descriptor/data_reliability
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file defines the device behavior when a power failure
++		occurs during a write operation. This is one of the UFS
++		unit descriptor parameters. The full information about
++		the descriptor could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/class/scsi_device/*/device/unit_descriptor/logical_block_size
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows the size of addressable logical blocks
++		(calculated as an exponent with base 2). This is one of
++		the UFS unit descriptor parameters. The full information about
++		the descriptor could be found at UFS specifications 2.1.
++		The file is read only.
++
++What:		/sys/class/scsi_device/*/device/unit_descriptor/logical_block_count
++Date:		February 2018
++Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
++Description:	This file shows total number of addressable logical blocks.
++		This is one of the UFS unit descriptor parameters. The full
++		information about the descriptor could be found at
 +		UFS specifications 2.1.
 +		The file is read only.
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/flags/power_on_wpe
++What:		/sys/class/scsi_device/*/device/unit_descriptor/erase_block_size
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows whether write protection is enabled on all
-+		logical units configured as power on write protected. The
-+		full information about the flag could be found at
-+		UFS specifications 2.1.
++Description:	This file shows the erase block size. This is one of
++		the UFS unit descriptor parameters. The full information
++		about the descriptor could be found at UFS specifications 2.1.
 +		The file is read only.
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/flags/bkops_enable
++What:		/sys/class/scsi_device/*/device/unit_descriptor/provisioning_type
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows whether the device background operations are
-+		enabled. The full information about the flag could be
-+		found at UFS specifications 2.1.
++Description:	This file shows the thin provisioning type. This is one of
++		the UFS unit descriptor parameters. The full information
++		about the descriptor could be found at UFS specifications 2.1.
 +		The file is read only.
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/flags/life_span_mode_enable
++What:		/sys/class/scsi_device/*/device/unit_descriptor/physical_memory_resourse_count
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows whether the device life span mode is enabled.
-+		The full information about the flag could be found at
-+		UFS specifications 2.1.
++Description:	This file shows the total physical memory resources. This is
++		one of the UFS unit descriptor parameters. The full information
++		about the descriptor could be found at UFS specifications 2.1.
 +		The file is read only.
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/flags/phy_resource_removal
++What:		/sys/class/scsi_device/*/device/unit_descriptor/context_capabilities
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows whether physical resource removal is enable.
-+		The full information about the flag could be found at
-+		UFS specifications 2.1.
++Description:	This file shows the context capabilities. This is one of
++		the UFS unit descriptor parameters. The full information
++		about the descriptor could be found at UFS specifications 2.1.
 +		The file is read only.
 +
-+What:		/sys/bus/platform/drivers/ufshcd/*/flags/busy_rtc
++What:		/sys/class/scsi_device/*/device/unit_descriptor/large_unit_granularity
 +Date:		February 2018
 +Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows whether the device is executing internal
-+		operation related to real time clock. The full information
-+		about the flag could be found at UFS specifications 2.1.
-+		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/flags/disable_fw_update
-+Date:		February 2018
-+Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Description:	This file shows whether the device FW update is permanently
-+		disabled. The full information about the flag could be found
-+		at UFS specifications 2.1.
++Description:	This file shows the granularity of the LUN. This is one of
++		the UFS unit descriptor parameters. The full information
++		about the descriptor could be found at UFS specifications 2.1.
 +		The file is read only.
 diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
-index cd4d9d0..a09a8a2e 100644
+index c1aeb8a..cd4d9d0 100644
 --- a/drivers/scsi/ufs/ufs-sysfs.c
 +++ b/drivers/scsi/ufs/ufs-sysfs.c
-@@ -538,6 +538,44 @@ static const struct attribute_group ufs_sysfs_string_descriptors_group = {
- 	.attrs = ufs_sysfs_string_descriptors,
- };
- 
-+#define UFS_FLAG(_name, _uname)						\
-+static ssize_t _name##_show(struct device *dev,				\
-+	struct device_attribute *attr, char *buf)			\
-+{									\
-+	bool flag;							\
-+	struct ufs_hba *hba = dev_get_drvdata(dev);			\
-+	if (ufshcd_query_flag(hba, UPIU_QUERY_OPCODE_READ_FLAG,		\
-+		QUERY_FLAG_IDN##_uname, &flag))				\
-+		return -EINVAL;						\
-+	return sprintf(buf, "%s\n", flag ? "true" : "false");		\
-+}									\
-+static DEVICE_ATTR_RO(_name)
-+
-+UFS_FLAG(device_init, _FDEVICEINIT);
-+UFS_FLAG(permanent_wpe, _PERMANENT_WPE);
-+UFS_FLAG(power_on_wpe, _PWR_ON_WPE);
-+UFS_FLAG(bkops_enable, _BKOPS_EN);
-+UFS_FLAG(life_span_mode_enable, _LIFE_SPAN_MODE_ENABLE);
-+UFS_FLAG(phy_resource_removal, _FPHYRESOURCEREMOVAL);
-+UFS_FLAG(busy_rtc, _BUSY_RTC);
-+UFS_FLAG(disable_fw_update, _PERMANENTLY_DISABLE_FW_UPDATE);
-+
-+static struct attribute *ufs_sysfs_device_flags[] = {
-+	&dev_attr_device_init.attr,
-+	&dev_attr_permanent_wpe.attr,
-+	&dev_attr_power_on_wpe.attr,
-+	&dev_attr_bkops_enable.attr,
-+	&dev_attr_life_span_mode_enable.attr,
-+	&dev_attr_phy_resource_removal.attr,
-+	&dev_attr_busy_rtc.attr,
-+	&dev_attr_disable_fw_update.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group ufs_sysfs_flags_group = {
-+	.name = "flags",
-+	.attrs = ufs_sysfs_device_flags,
-+};
- 
- static const struct attribute_group *ufs_sysfs_groups[] = {
- 	&ufs_sysfs_default_group,
-@@ -547,6 +585,7 @@ static const struct attribute_group *ufs_sysfs_groups[] = {
- 	&ufs_sysfs_health_descriptor_group,
- 	&ufs_sysfs_power_descriptor_group,
- 	&ufs_sysfs_string_descriptors_group,
-+	&ufs_sysfs_flags_group,
+@@ -550,6 +550,59 @@ static const struct attribute_group *ufs_sysfs_groups[] = {
  	NULL,
  };
  
++#define UFS_LUN_DESC_PARAM(_pname, _puname, _duname, _size)		\
++static ssize_t _pname##_show(struct device *dev,			\
++	struct device_attribute *attr, char *buf)			\
++{									\
++	struct scsi_device *sdev = to_scsi_device(dev);			\
++	struct ufs_hba *hba = shost_priv(sdev->host);			\
++	u8 lun = ufshcd_scsi_to_upiu_lun(sdev->lun);			\
++	if (!ufs_is_valid_unit_desc_lun(lun))				\
++		return -EINVAL;						\
++	return ufs_sysfs_read_desc_param(hba, QUERY_DESC_IDN_##_duname,	\
++		lun, _duname##_DESC_PARAM##_puname, buf, _size);	\
++}									\
++static DEVICE_ATTR_RO(_pname)
++
++#define UFS_UNIT_DESC_PARAM(_name, _uname, _size)			\
++	UFS_LUN_DESC_PARAM(_name, _uname, UNIT, _size)
++
++UFS_UNIT_DESC_PARAM(boot_lun_id, _BOOT_LUN_ID, 1);
++UFS_UNIT_DESC_PARAM(lun_write_protect, _LU_WR_PROTECT, 1);
++UFS_UNIT_DESC_PARAM(lun_queue_depth, _LU_Q_DEPTH, 1);
++UFS_UNIT_DESC_PARAM(psa_sensitive, _PSA_SENSITIVE, 1);
++UFS_UNIT_DESC_PARAM(lun_memory_type, _MEM_TYPE, 1);
++UFS_UNIT_DESC_PARAM(data_reliability, _DATA_RELIABILITY, 1);
++UFS_UNIT_DESC_PARAM(logical_block_size, _LOGICAL_BLK_SIZE, 1);
++UFS_UNIT_DESC_PARAM(logical_block_count, _LOGICAL_BLK_COUNT, 8);
++UFS_UNIT_DESC_PARAM(erase_block_size, _ERASE_BLK_SIZE, 4);
++UFS_UNIT_DESC_PARAM(provisioning_type, _PROVISIONING_TYPE, 1);
++UFS_UNIT_DESC_PARAM(physical_memory_resourse_count, _PHY_MEM_RSRC_CNT, 8);
++UFS_UNIT_DESC_PARAM(context_capabilities, _CTX_CAPABILITIES, 2);
++UFS_UNIT_DESC_PARAM(large_unit_granularity, _LARGE_UNIT_SIZE_M1, 1);
++
++static struct attribute *ufs_sysfs_unit_descriptor[] = {
++	&dev_attr_boot_lun_id.attr,
++	&dev_attr_lun_write_protect.attr,
++	&dev_attr_lun_queue_depth.attr,
++	&dev_attr_psa_sensitive.attr,
++	&dev_attr_lun_memory_type.attr,
++	&dev_attr_data_reliability.attr,
++	&dev_attr_logical_block_size.attr,
++	&dev_attr_logical_block_count.attr,
++	&dev_attr_erase_block_size.attr,
++	&dev_attr_provisioning_type.attr,
++	&dev_attr_physical_memory_resourse_count.attr,
++	&dev_attr_context_capabilities.attr,
++	&dev_attr_large_unit_granularity.attr,
++	NULL,
++};
++
++const struct attribute_group ufs_sysfs_unit_descriptor_group = {
++	.name = "unit_descriptor",
++	.attrs = ufs_sysfs_unit_descriptor,
++};
++
+ void ufs_sysfs_add_nodes(struct device *dev)
+ {
+ 	int ret;
+diff --git a/drivers/scsi/ufs/ufs-sysfs.h b/drivers/scsi/ufs/ufs-sysfs.h
+index ce58861..2afce16 100644
+--- a/drivers/scsi/ufs/ufs-sysfs.h
++++ b/drivers/scsi/ufs/ufs-sysfs.h
+@@ -11,4 +11,6 @@
+ 
+ void ufs_sysfs_add_nodes(struct device *dev);
+ void ufs_sysfs_remove_nodes(struct device *dev);
++
++extern const struct attribute_group ufs_sysfs_unit_descriptor_group;
+ #endif
 diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-index 7387059..df5e73e 100644
+index 6bfeedb..7387059 100644
 --- a/drivers/scsi/ufs/ufs.h
 +++ b/drivers/scsi/ufs/ufs.h
-@@ -130,9 +130,17 @@ enum {
- 
- /* Flag idn for Query Requests*/
- enum flag_idn {
--	QUERY_FLAG_IDN_FDEVICEINIT      = 0x01,
--	QUERY_FLAG_IDN_PWR_ON_WPE	= 0x03,
--	QUERY_FLAG_IDN_BKOPS_EN         = 0x04,
-+	QUERY_FLAG_IDN_FDEVICEINIT			= 0x01,
-+	QUERY_FLAG_IDN_PERMANENT_WPE			= 0x02,
-+	QUERY_FLAG_IDN_PWR_ON_WPE			= 0x03,
-+	QUERY_FLAG_IDN_BKOPS_EN				= 0x04,
-+	QUERY_FLAG_IDN_LIFE_SPAN_MODE_ENABLE		= 0x05,
-+	QUERY_FLAG_IDN_PURGE_ENABLE			= 0x06,
-+	QUERY_FLAG_IDN_RESERVED2			= 0x07,
-+	QUERY_FLAG_IDN_FPHYRESOURCEREMOVAL		= 0x08,
-+	QUERY_FLAG_IDN_BUSY_RTC				= 0x09,
-+	QUERY_FLAG_IDN_RESERVED3			= 0x0A,
-+	QUERY_FLAG_IDN_PERMANENTLY_DISABLE_FW_UPDATE	= 0x0B,
+@@ -182,6 +182,7 @@ enum unit_desc_param {
+ 	UNIT_DESC_PARAM_BOOT_LUN_ID		= 0x4,
+ 	UNIT_DESC_PARAM_LU_WR_PROTECT		= 0x5,
+ 	UNIT_DESC_PARAM_LU_Q_DEPTH		= 0x6,
++	UNIT_DESC_PARAM_PSA_SENSITIVE		= 0x7,
+ 	UNIT_DESC_PARAM_MEM_TYPE		= 0x8,
+ 	UNIT_DESC_PARAM_DATA_RELIABILITY	= 0x9,
+ 	UNIT_DESC_PARAM_LOGICAL_BLK_SIZE	= 0xA,
+@@ -592,4 +593,14 @@ struct ufs_dev_desc {
+ 	char model[MAX_MODEL_LEN + 1];
  };
  
- /* Attribute idn for Query requests */
++/**
++ * ufs_is_valid_unit_desc_lun - checks if the given LUN has a unit descriptor
++ * @lun: LU number to check
++ * @return: true if the lun has a matching unit descriptor, false otherwise
++ */
++static inline bool ufs_is_valid_unit_desc_lun(u8 lun)
++{
++	return lun == UFS_UPIU_RPMB_WLUN || (lun < UFS_UPIU_MAX_GENERAL_LUN);
++}
++
+ #endif /* End of Header */
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 9cfdd8e..ace3acd 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -2222,21 +2222,6 @@ static int ufshcd_comp_scsi_upiu(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
+ 	return ret;
+ }
+ 
+-/*
+- * ufshcd_scsi_to_upiu_lun - maps scsi LUN to UPIU LUN
+- * @scsi_lun: scsi LUN id
+- *
+- * Returns UPIU LUN id
+- */
+-static inline u8 ufshcd_scsi_to_upiu_lun(unsigned int scsi_lun)
+-{
+-	if (scsi_is_wlun(scsi_lun))
+-		return (scsi_lun & UFS_UPIU_MAX_UNIT_NUM_ID)
+-			| UFS_UPIU_WLUN_ID;
+-	else
+-		return scsi_lun & UFS_UPIU_MAX_UNIT_NUM_ID;
+-}
+-
+ /**
+  * ufshcd_upiu_wlun_to_scsi_wlun - maps UPIU W-LUN id to SCSI W-LUN ID
+  * @scsi_lun: UPIU W-LUN id
+@@ -3171,7 +3156,7 @@ static inline int ufshcd_read_unit_desc_param(struct ufs_hba *hba,
+ 	 * Unit descriptors are only available for general purpose LUs (LUN id
+ 	 * from 0 to 7) and RPMB Well known LU.
+ 	 */
+-	if (lun != UFS_UPIU_RPMB_WLUN && (lun >= UFS_UPIU_MAX_GENERAL_LUN))
++	if (!ufs_is_valid_unit_desc_lun(lun))
+ 		return -EOPNOTSUPP;
+ 
+ 	return ufshcd_read_desc_param(hba, QUERY_DESC_IDN_UNIT, lun,
+@@ -6481,6 +6466,11 @@ static enum blk_eh_timer_return ufshcd_eh_timed_out(struct scsi_cmnd *scmd)
+ 	return found ? BLK_EH_NOT_HANDLED : BLK_EH_RESET_TIMER;
+ }
+ 
++static const struct attribute_group *ufshcd_driver_groups[] = {
++	&ufs_sysfs_unit_descriptor_group,
++	NULL,
++};
++
+ static struct scsi_host_template ufshcd_driver_template = {
+ 	.module			= THIS_MODULE,
+ 	.name			= UFSHCD,
+@@ -6500,6 +6490,7 @@ static struct scsi_host_template ufshcd_driver_template = {
+ 	.can_queue		= UFSHCD_CAN_QUEUE,
+ 	.max_host_blocked	= 1,
+ 	.track_queue_depth	= 1,
++	.sdev_groups		= ufshcd_driver_groups,
+ };
+ 
+ static int ufshcd_config_vreg_load(struct device *dev, struct ufs_vreg *vreg,
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index 2dad9da..f4cb31b 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -1003,4 +1003,19 @@ static inline void ufshcd_vops_dbg_register_dump(struct ufs_hba *hba)
+ 
+ extern struct ufs_pm_lvl_states ufs_pm_lvl_states[];
+ 
++/*
++ * ufshcd_scsi_to_upiu_lun - maps scsi LUN to UPIU LUN
++ * @scsi_lun: scsi LUN id
++ *
++ * Returns UPIU LUN id
++ */
++static inline u8 ufshcd_scsi_to_upiu_lun(unsigned int scsi_lun)
++{
++	if (scsi_is_wlun(scsi_lun))
++		return (scsi_lun & UFS_UPIU_MAX_UNIT_NUM_ID)
++			| UFS_UPIU_WLUN_ID;
++	else
++		return scsi_lun & UFS_UPIU_MAX_UNIT_NUM_ID;
++}
++
+ #endif /* End of Header */
 -- 
 2.7.4
