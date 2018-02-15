@@ -1,86 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755409AbeBOKJS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 05:09:18 -0500
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:43446 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755240AbeBOKJP (ORCPT
+        id S1755373AbeBOKKk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 05:10:40 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40575 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755240AbeBOKKi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 05:09:15 -0500
-X-Google-Smtp-Source: AH8x224NL8HjjkIpv4vZOgoh8c2GoTdprjIobUc9vuEYcp5N6nnhSDwcuvu6zS+SOZxk9NpX8LApkGRxRp5tTQkTRGM=
-MIME-Version: 1.0
-In-Reply-To: <422e897f-4b65-10f6-4184-36b78b6ea274@embeddedor.com>
-References: <20180119003955.GA28885@embeddedor.com> <1fea2528-11a5-0210-6350-e916ebfebbdf@amd.com>
- <422e897f-4b65-10f6-4184-36b78b6ea274@embeddedor.com>
-From: Oded Gabbay <oded.gabbay@gmail.com>
-Date: Thu, 15 Feb 2018 12:08:44 +0200
-Message-ID: <CAFCwf13TGeBGiS_4KiTWwbY3T23JZkWod6DJE-Mi=RmYXRr54w@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdkfd: Use ARRAY_SIZE macro in kfd_build_sysfs_node_entry
-To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Cc: Felix Kuehling <felix.kuehling@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers
-        <dri-devel@lists.freedesktop.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 15 Feb 2018 05:10:38 -0500
+X-Google-Smtp-Source: AH8x226VCVnXbgBkDstuj99ydgrWDY+bpTxq9UPlAxMXnJDMWymEw3reaMui+LKf2Qw+rSaO3t1kfA==
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM64: dts: meson-axg: fix pwm_AO_cd compatible
+Date: Thu, 15 Feb 2018 11:10:31 +0100
+Message-Id: <20180215101031.18934-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
-The patch is queued for the merge window of kernel 4.17 (opens in
-about 7 weeks from now).
+The compatible in pwm_AO_cd is wrong and does not match anything.
+Correct this with the correct compatible string
 
-Oded
+Fixes: 4a81e5ddfb43 ("ARM64: dts: meson-axg: add PWM DT info for Meson-Axg SoC")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wed, Feb 14, 2018 at 11:30 PM, Gustavo A. R. Silva
-<garsilva@embeddedor.com> wrote:
-> Hi all,
->
-> I was just wondering about the status of this patch.
->
-> Thanks
-> --
-> Gustavo
->
->
-> On 01/19/2018 04:18 PM, Felix Kuehling wrote:
->>
->> Looks good. This change is Reviewed-by: Felix Kuehling
->> <Felix.Kuehling@amd.com>
->>
->> Regards,
->>    Felix
->>
->>
->> On 2018-01-18 07:39 PM, Gustavo A. R. Silva wrote:
->>>
->>> Use ARRAY_SIZE instead of dividing sizeof array with sizeof an element.
->>>
->>> This issue was detected with the help of Coccinelle.
->>>
->>> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
->>> ---
->>>   drivers/gpu/drm/amd/amdkfd/kfd_topology.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
->>> b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
->>> index c6a7609..7783250 100644
->>> --- a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
->>> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
->>> @@ -677,7 +677,7 @@ static int kfd_build_sysfs_node_entry(struct
->>> kfd_topology_device *dev,
->>>         }
->>>         /* All hardware blocks have the same number of attributes. */
->>> -       num_attrs = sizeof(perf_attr_iommu)/sizeof(struct kfd_perf_attr);
->>> +       num_attrs = ARRAY_SIZE(perf_attr_iommu);
->>>         list_for_each_entry(perf, &dev->perf_props, list) {
->>>                 perf->attr_group = kzalloc(sizeof(struct kfd_perf_attr)
->>>                         * num_attrs + sizeof(struct attribute_group),
->>
->>
->
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index a7cc9e401a92..880e25b113c1 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -844,7 +844,7 @@
+ 			};
+ 
+ 			pwm_AO_cd: pwm@2000 {
+-				compatible = "amlogic,axg-ao-pwm";
++				compatible = "amlogic,meson-axg-ao-pwm";
+ 				reg = <0x0 0x02000  0x0 0x20>;
+ 				#pwm-cells = <3>;
+ 				status = "disabled";
+-- 
+2.14.3
