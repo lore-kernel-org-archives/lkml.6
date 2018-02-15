@@ -1,71 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033023AbeBONqx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 08:46:53 -0500
-Received: from mail.micronovasrl.com ([212.103.203.10]:56090 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031806AbeBONqw (ORCPT
+        id S1032812AbeBONuT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 08:50:19 -0500
+Received: from mail-wr0-f180.google.com ([209.85.128.180]:33795 "EHLO
+        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031445AbeBONuS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 08:46:52 -0500
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: [PATCH] ARM: sun7i: dt: Add Mali node
-Date: Thu, 15 Feb 2018 14:46:02 +0100
-Message-Id: <1518702362-115625-1-git-send-email-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 15 Feb 2018 08:50:18 -0500
+X-Google-Smtp-Source: AH8x224+3X4WjxpYymx1/jp+KwbuPzr45ScpeOfvRSNzMXy/lrGABkSVk6Lsc29Y6aPcQGQLt5iSIuNWTR0aBjWqABQ=
+MIME-Version: 1.0
+From: Julien Durillon <julien@durillon.xyz>
+Date: Thu, 15 Feb 2018 14:49:56 +0100
+Message-ID: <CAPVZMnqi0dF1u=Q223trP=mtvYd80Ydp5wamtz3Vt3xhRY-FEQ@mail.gmail.com>
+Subject: [BUG? NVME Linux-4.15] Dracut loops indefinitely with 4.15
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The A20 has an ARM Mali 400 GPU, so add binding to our DT.
+Hi there,
 
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
----
- arch/arm/boot/dts/sun7i-a20.dtsi | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+I opened an issue here:
+https://github.com/dracutdevs/dracut/issues/373 for dracut. You can
+read there how dracuts enters an infinite loop.
 
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index c4ed153d..1524ccb 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -1225,6 +1225,31 @@
- 			#size-cells = <0>;
- 		};
- 
-+		mali: gpu@1c40000 {
-+			compatible = "allwinner,sun7i-a20-mali", "arm,mali-400";
-+			reg = <0x01c40000 0x10000>;
-+			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "gp",
-+					  "gpmmu",
-+					  "pp0",
-+					  "ppmmu0",
-+					  "pp1",
-+					  "ppmmu1",
-+					  "pmu";
-+			clocks = <&ccu CLK_AHB_GPU>, <&ccu CLK_GPU>;
-+			clock-names = "bus", "core";
-+			resets = <&ccu RST_GPU>;
-+
-+			assigned-clocks = <&ccu CLK_GPU>;
-+			assigned-clock-rates = <384000000>;
-+		};
-+
- 		gmac: ethernet@1c50000 {
- 			compatible = "allwinner,sun7i-a20-gmac";
- 			reg = <0x01c50000 0x10000>;
+TL;DR: in linux-4.14, trying to find the last "slave" of /dev/dm-0
+ends with a maj:min of "249:0" which does not exist in /sys/dev/block.
+In linux-4.15, the same thing loops as "249:0" exists.
+
+## My configuration
+
+I'm using a nvme ssd disk named "nvme0n1". It has two partitions: an
+EFI one and a luks encrypted btrfs volume. So in /dev I have /dev/dm-0
+that is referenced to by /dev/mapper/root.
+/dev/mapper/root -> /dev/dm-0 is the mapped un-encrypted
+"/dev/nvme0n1p2" volume used as a btrfs volume.
+
+## My problem
+
+*Before* linux-4.15, `stat /dev/dm-0` displays:
+
+  File: /dev/dm-0
+  Size: 0               Blocks: 0          IO Block: 4096   block special file
+Device: 6h/6d   Inode: 2768        Links: 1     Device type: fa,0
+Access: (0660/brw-rw----)  Uid: (    0/    root)   Gid: (    6/    disk)
+Access: 2018-02-12 17:49:46.020513274 +0100
+Modify: 2018-02-12 17:49:46.020513274 +0100
+Change: 2018-02-12 17:49:46.020513274 +0100
+Birth: -
+
+So the device type is "fa,0", which is translated by dracut as "250:0".
+
+*Starting at* linux-4.15, `stat /dev/dm-0` displays:
+
+  File: /dev/dm-0
+  Size: 0               Blocks: 0          IO Block: 4096   block special file
+Device: 6h/6d   Inode: 17795       Links: 1     Device type: f9,0
+Access: (0660/brw-rw----)  Uid: (    0/    root)   Gid: (    6/    disk)
+Access: 2018-02-15 14:38:56.570529189 +0100
+Modify: 2018-02-15 14:38:56.570529189 +0100
+Change: 2018-02-15 14:38:56.570529189 +0100
+ Birth: -
+
+So the device type is "f9,0", which is translated by dracut as "249:0".
+
+I'm posting it here because I don't understand why the kernel changed
+the device type. Is it intended?
+
+Regards,
 -- 
-2.7.4
+Julien Durillon
