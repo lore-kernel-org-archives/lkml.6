@@ -1,78 +1,48 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1825685-1518708727-2-16755309478956456905
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518708726; b=mQFdbJID6TG7rfYlnIIwFU8MYGV3apHKQScPyyXo9hMRCce
-    AWyE7Ux+fOwCyHNY5sSTlftDBD8KShSRkyrYGIh91IMUfeRFJd3QV9dBx+qOitPW
-    R3gnntEzHQVzx81g2JlKiGbNqq348r5Uun/zHc6jc+ggEe0CjyYSQ5aLZwDEOWVf
-    DdLmgjnwfqhZ1n9p92UdKc/CbZPNskpf3o18E+uiOBVJ8TFwTZfDXb50HawsQZ4l
-    qxXOPKdPAeU95cuLNfCUd0AbWwIaidkNfnMHhbJP3U6GbChy+gtF0krScjsf8aSZ
-    T2NHSDZPinQCExpfnep85hUQyu8Ue0xpjkbVJSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518708726; bh=hlTcVeXmQnZQ4dSSyRKSvVwX7T
-    fDkMkWx0GVwAl9YU0=; b=SBrnShKLyWAz+xivsWzPe4desEsPESt2I2UWb/3Kld
-    iJtTGMOUsaR7UsS9t4jge0SPTCnnXftbUrrid6MwN+Kr9AsW/oIdUJD3OQfsXw0m
-    YyFiryIAoxK9YdUsyWWHZ66XjHP/5VELTPrfGzc6/CNT72xjyPb2pSuVJMRQiS10
-    2IovnARS2VSZzuZ9B7g9JFcyUeruy4oSw1KpgWuTj4/7hSljeAfT11gHR69awqug
-    3cLQ47vQgc2/lMeJpD/h0jl04EgcjFt/x/ChF5efGFNb5aWx6DZk4Bpzt4AkJJY1
-    HEnVSll81UsIzOGhxkl+2bckeY+8GrIDQgfvwGuwAZZg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164537AbeBOPcE (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:32:04 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56222 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164491AbeBOPcC (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:32:02 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x227aHM+Wn1hgkeUMELtdEDASDnH3oYDWVMaGXKAB8hOLlgDWbkEenMlrpu3r9OEB73hNgh8o
+ARC-Seal: i=1; a=rsa-sha256; t=1518708725; cv=none;
+        d=google.com; s=arc-20160816;
+        b=AhUO0hRJL9QZZi0cwvaB8YsCHsAw9AL5EgXsgD9tgjriqWyYKc1ncovlFHFMfCMDiH
+         jt8J2uV+Kl84B+MfLcB9oRZYZB/HhsVmnsbzAhpYmBKDTubTm7yEZqQBQOPYnqG78JcX
+         z7oULFUQaI4raFpVodLUXaVNBmxGWM+rTGT+D9BW1fcLlhpuZ7EdS0cXbpUD4ynlC8db
+         UC51m4GMsuGAEG/H8SLTgDazKf3MaZiip7aGf0VweBSPsOmRQKOfZ1V8PdfGLegBvASZ
+         Bks54Yig4Myp5fvoZLiOdtjO8aPUMKzrF2/e+1ezFA3eOHzaqWzfi0+m22rUwhbI/y8z
+         nc1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=Yq1xwpYqKg9ZEDiqRfzx72s3UAdZzwPo2Wsg8r4RNsQ=;
+        b=VHPuocBEfUtlsjizkyB5btaPeQDlaY36xvblG8mPb3U39ddm1OJBE+vtaNDmUM+Fqo
+         uZWYfU9Ro7yne3V5H3tsknmz5GS035eKPf89YJW13DWcG8+T1KLRxTlhCFx/YOm/o2Af
+         K+Vk2AtnNBPJu5VqnAiQgf/dNdhugqdCvgICDLFL3K4Gmbqg3qOnRMWotw+klEDBZtzd
+         h6Kv0QlFEngVVJpR6+jt5Kze+MhxOZIbQl0Q9uOu9LeGaoTR1hQZjFuQhhfRX6dQPD0K
+         iXQxw2ECem9525pNBN5kYmJX1DKFTKeeEiwFR4OrOvan+3Ec95cnjcC/VSRQGUSEvVsS
+         fbPg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 057/195] [Variant 1/Spectre-v1] arm64: Implement array_index_mask_nospec()
-Date: Thu, 15 Feb 2018 16:15:48 +0100
-Message-Id: <20180215151708.585544778@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Robin Murphy <robin.murphy@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 4.14 058/195] [Variant 1/Spectre-v1] arm64: Make USER_DS an inclusive limit
+Date: Thu, 15 Feb 2018 16:15:49 +0100
+Message-Id: <20180215151708.627245239@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1592481521134091247?=
+X-GMAIL-MSGID: =?utf-8?q?1592481521134091247?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -83,53 +53,146 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Robin Murphy <robin.murphy@arm.com>
 
 
-Commit 022620eed3d0 upstream.
+Commit 51369e398d0d upstream.
 
-Provide an optimised, assembly implementation of array_index_mask_nospec()
-for arm64 so that the compiler is not in a position to transform the code
-in ways which affect its ability to inhibit speculation (e.g. by introducing
-conditional branches).
+Currently, USER_DS represents an exclusive limit while KERNEL_DS is
+inclusive. In order to do some clever trickery for speculation-safe
+masking, we need them both to behave equivalently - there aren't enough
+bits to make KERNEL_DS exclusive, so we have precisely one option. This
+also happens to correct a longstanding false negative for a range
+ending on the very top byte of kernel memory.
 
-This is similar to the sequence used by x86, modulo architectural differences
-in the carry/borrow flags.
+Mark Rutland points out that we've actually got the semantics of
+addresses vs. segments muddled up in most of the places we need to
+amend, so shuffle the {USER,KERNEL}_DS definitions around such that we
+can correct those properly instead of just pasting "-1"s everywhere.
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/barrier.h |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ arch/arm64/include/asm/processor.h |    3 ++
+ arch/arm64/include/asm/uaccess.h   |   45 +++++++++++++++++++++----------------
+ arch/arm64/kernel/entry.S          |    4 +--
+ arch/arm64/mm/fault.c              |    4 +--
+ 4 files changed, 33 insertions(+), 23 deletions(-)
 
---- a/arch/arm64/include/asm/barrier.h
-+++ b/arch/arm64/include/asm/barrier.h
-@@ -40,6 +40,27 @@
- #define dma_rmb()	dmb(oshld)
- #define dma_wmb()	dmb(oshst)
+--- a/arch/arm64/include/asm/processor.h
++++ b/arch/arm64/include/asm/processor.h
+@@ -21,6 +21,9 @@
  
-+/*
-+ * Generate a mask for array_index__nospec() that is ~0UL when 0 <= idx < sz
-+ * and 0 otherwise.
-+ */
-+#define array_index_mask_nospec array_index_mask_nospec
-+static inline unsigned long array_index_mask_nospec(unsigned long idx,
-+						    unsigned long sz)
+ #define TASK_SIZE_64		(UL(1) << VA_BITS)
+ 
++#define KERNEL_DS	UL(-1)
++#define USER_DS		(TASK_SIZE_64 - 1)
++
+ #ifndef __ASSEMBLY__
+ 
+ /*
+--- a/arch/arm64/include/asm/uaccess.h
++++ b/arch/arm64/include/asm/uaccess.h
+@@ -35,10 +35,7 @@
+ #include <asm/compiler.h>
+ #include <asm/extable.h>
+ 
+-#define KERNEL_DS	(-1UL)
+ #define get_ds()	(KERNEL_DS)
+-
+-#define USER_DS		TASK_SIZE_64
+ #define get_fs()	(current_thread_info()->addr_limit)
+ 
+ static inline void set_fs(mm_segment_t fs)
+@@ -66,22 +63,32 @@ static inline void set_fs(mm_segment_t f
+  * Returns 1 if the range is valid, 0 otherwise.
+  *
+  * This is equivalent to the following test:
+- * (u65)addr + (u65)size <= current->addr_limit
+- *
+- * This needs 65-bit arithmetic.
++ * (u65)addr + (u65)size <= (u65)current->addr_limit + 1
+  */
+-#define __range_ok(addr, size)						\
+-({									\
+-	unsigned long __addr = (unsigned long)(addr);			\
+-	unsigned long flag, roksum;					\
+-	__chk_user_ptr(addr);						\
+-	asm("adds %1, %1, %3; ccmp %1, %4, #2, cc; cset %0, ls"		\
+-		: "=&r" (flag), "=&r" (roksum)				\
+-		: "1" (__addr), "Ir" (size),				\
+-		  "r" (current_thread_info()->addr_limit)		\
+-		: "cc");						\
+-	flag;								\
+-})
++static inline unsigned long __range_ok(unsigned long addr, unsigned long size)
 +{
-+	unsigned long mask;
++	unsigned long limit = current_thread_info()->addr_limit;
 +
++	__chk_user_ptr(addr);
 +	asm volatile(
-+	"	cmp	%1, %2\n"
-+	"	sbc	%0, xzr, xzr\n"
-+	: "=r" (mask)
-+	: "r" (idx), "Ir" (sz)
-+	: "cc");
++	// A + B <= C + 1 for all A,B,C, in four easy steps:
++	// 1: X = A + B; X' = X % 2^64
++	"	adds	%0, %0, %2\n"
++	// 2: Set C = 0 if X > 2^64, to guarantee X' > C in step 4
++	"	csel	%1, xzr, %1, hi\n"
++	// 3: Set X' = ~0 if X >= 2^64. For X == 2^64, this decrements X'
++	//    to compensate for the carry flag being set in step 4. For
++	//    X > 2^64, X' merely has to remain nonzero, which it does.
++	"	csinv	%0, %0, xzr, cc\n"
++	// 4: For X < 2^64, this gives us X' - C - 1 <= 0, where the -1
++	//    comes from the carry in being clear. Otherwise, we are
++	//    testing X' - C == 0, subject to the previous adjustments.
++	"	sbcs	xzr, %0, %1\n"
++	"	cset	%0, ls\n"
++	: "+r" (addr), "+r" (limit) : "Ir" (size) : "cc");
 +
-+	csdb();
-+	return mask;
++	return addr;
 +}
-+
- #define __smp_mb()	dmb(ish)
- #define __smp_rmb()	dmb(ishld)
- #define __smp_wmb()	dmb(ishst)
+ 
+ /*
+  * When dealing with data aborts, watchpoints, or instruction traps we may end
+@@ -90,7 +97,7 @@ static inline void set_fs(mm_segment_t f
+  */
+ #define untagged_addr(addr)		sign_extend64(addr, 55)
+ 
+-#define access_ok(type, addr, size)	__range_ok(addr, size)
++#define access_ok(type, addr, size)	__range_ok((unsigned long)(addr), size)
+ #define user_addr_max			get_fs
+ 
+ #define _ASM_EXTABLE(from, to)						\
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -167,10 +167,10 @@ alternative_else_nop_endif
+ 	.else
+ 	add	x21, sp, #S_FRAME_SIZE
+ 	get_thread_info tsk
+-	/* Save the task's original addr_limit and set USER_DS (TASK_SIZE_64) */
++	/* Save the task's original addr_limit and set USER_DS */
+ 	ldr	x20, [tsk, #TSK_TI_ADDR_LIMIT]
+ 	str	x20, [sp, #S_ORIG_ADDR_LIMIT]
+-	mov	x20, #TASK_SIZE_64
++	mov	x20, #USER_DS
+ 	str	x20, [tsk, #TSK_TI_ADDR_LIMIT]
+ 	/* No need to reset PSTATE.UAO, hardware's already set it to 0 for us */
+ 	.endif /* \el == 0 */
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -242,7 +242,7 @@ static inline bool is_permission_fault(u
+ 	if (fsc_type == ESR_ELx_FSC_PERM)
+ 		return true;
+ 
+-	if (addr < USER_DS && system_uses_ttbr0_pan())
++	if (addr < TASK_SIZE && system_uses_ttbr0_pan())
+ 		return fsc_type == ESR_ELx_FSC_FAULT &&
+ 			(regs->pstate & PSR_PAN_BIT);
+ 
+@@ -426,7 +426,7 @@ static int __kprobes do_page_fault(unsig
+ 		mm_flags |= FAULT_FLAG_WRITE;
+ 	}
+ 
+-	if (addr < USER_DS && is_permission_fault(esr, regs, addr)) {
++	if (addr < TASK_SIZE && is_permission_fault(esr, regs, addr)) {
+ 		/* regs->orig_addr_limit may be 0 if we entered from EL0 */
+ 		if (regs->orig_addr_limit == KERNEL_DS)
+ 			die("Accessing user space memory with fs=KERNEL_DS", regs, esr);
