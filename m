@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227QZL/Gg1IEHgHk6hZiRiGlaCVoXOWxurSkh85PQVbOe3tcC9uGN8o5V/8HSwRlAnlFjsx9
-ARC-Seal: i=1; a=rsa-sha256; t=1518708495; cv=none;
+X-Google-Smtp-Source: AH8x225eHn0Pa/+zpOZOrXW70JgBZg6z7rGBuaiUIXv9esaeq7owdt5KTlrATWiyJQzteK8l6vKO
+ARC-Seal: i=1; a=rsa-sha256; t=1518708493; cv=none;
         d=google.com; s=arc-20160816;
-        b=CZ+fyQiQ4pVW+P5tBJoBg00YJXwfbOCVKqkY5CnztjyOuBIFxQk9uHCc2efkzMFebR
-         /l1/cx70jobi5EyGqhkcoxcq0JsNmR59XJT8CUnmgMSk0P8PHaEmq7H4wBMDNi8tFDt7
-         n9K1WheMEdrrybrf1XGTg+0Umnwg1PefT2d50z0boelBpg1MsXV1jKTHKYVyzLpgY8u3
-         Z2LtU4QlpXO0ZW6eZEodYDm+TseBO964K/lV2gMVs1Y017IxZpsM+JsAB84t/oRCdw6K
-         QZ4HMIbzEcZKDGH1/2/fn8OlcakHdgO4yQayYCGaLkjeE7l6aUutFYIObK992SKqbK9a
-         WxRA==
+        b=FI7vysBbynRizwATGbC94qBEclNc0TICIChcqNffB5dcKVqqRERFXD+8YiXOhtPBgz
+         JFCTZVwpmKG9quORAYBpTvbTg+AVWY5vzIfiChalk1Bm7M0T+P/BE/rjipieVVu9VX6z
+         6AxMHYon3tdimFOEsVb1ZRZMHcpnHQo2DPLEa5Z452VPWnFwLuwPkFPJIxGa9JxjNwer
+         SMRhQ5sV/F/h/Uhkb670Kmp9h3bNQ/svs8u5KYAR9iK3r1Trd1bKInZOOsRSYzAIlbMM
+         SnU80sOJ137Q2v0CtiE12/c5rOaKfozJrkqoh3CS+i64NP+5de5wDQzA5wHeVEH7n1oM
+         CORA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wHR42FEeuCFbKrhbn5cfVqSYlNQS9rRrty6z1lzw+J4=;
-        b=yFm+E90PSlQESk+O9GfqnvKETCwT2burl+nMH/WmcCM495j3ydu8o7P9OdcZs1/tDl
-         vZAKqfJVHny3BfZ6k77tSvBEt2sLDR+SQoVJ08NHOdyJPKTQDCGb2jmHtJVkQhq8MMOI
-         HJiftxGkzXbFVhVooPngAkala3lKggD2qJXeWxq8dm4mpBDtQkyKY5Zssz4taIphSkVd
-         S443SF2zGr2nncs9iy8qR6/B2vIqtHWBMHDbG8z2lenXe0w06yc1GzVuzltFL+kcoZEa
-         HLbmZVSRVT7kpdYqffdnvt1gfgqGLZkVLU9FOWQ5M40pMry8NaSs/mmDUlUhD/0o4QMk
-         /Jcw==
+        bh=FLqpZoeduAMfK3SRJg8Uj98AXqCrG25X4nTpFqc6CIw=;
+        b=poI/p6Wvuc21RaHnx6fKgwc65y5jpXyhjQ0JRS0j1VB/5UL9KwldKLD6qc8M+w6VwM
+         M/9J6tETID0mi0pfpeZ8ZRvdbOSvUAhabPHSLloqBXn2x8lJi1LNcuNyLi8pDcK+l52D
+         OKvCyYzebNuOC0WQCsESdXyOx1XKjgyPwDSgRSbeQvllWuPpGZq589E81a/e+o0Xy+lz
+         FzLhnMRYCe5FWvuwLiBwpYrLUbNa5YJpCFN+cZC2TAGvLxHrzb5GJ0UyFXmxg3iQKIPu
+         4qVkwm4zG0OWXga3Vt5OjkzQEcQQ671w2meYhjidRNegFOKvm3qTro35yvuCTedJ6WH+
+         Tw/w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Trond Myklebust <trond.myklebust@primarydata.com>
-Subject: [PATCH 4.9 26/88] NFS: Fix a race between mmap() and O_DIRECT
-Date: Thu, 15 Feb 2018 16:16:53 +0100
-Message-Id: <20180215151226.311791271@linuxfoundation.org>
+	syzbot+5dfdbcf7b3eb5912abbb@syzkaller.appspotmail.com,
+	Eric Biggers <ebiggers@google.com>,
+	Trond Myklebust <trondmy@gmail.com>
+Subject: [PATCH 4.9 25/88] NFS: reject request for id_legacy key without auxdata
+Date: Thu, 15 Feb 2018 16:16:52 +0100
+Message-Id: <20180215151226.151984706@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
@@ -38,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481280163816585?=
-X-GMAIL-MSGID: =?utf-8?q?1592481280163816585?=
+X-GMAIL-THRID: =?utf-8?q?1592480977954456519?=
+X-GMAIL-MSGID: =?utf-8?q?1592481276656452124?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -47,30 +49,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Trond Myklebust <trond.myklebust@primarydata.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit e231c6879cfd44e4fffd384bb6dd7d313249a523 upstream.
+commit 49686cbbb3ebafe42e63868222f269d8053ead00 upstream.
 
-When locking the file in order to do O_DIRECT on it, we must unmap
-any mmapped ranges on the pagecache so that we can flush out the
-dirty data.
+nfs_idmap_legacy_upcall() is supposed to be called with 'aux' pointing
+to a 'struct idmap', via the call to request_key_with_auxdata() in
+nfs_idmap_request_key().
 
-Fixes: a5864c999de67 ("NFS: Do not serialise O_DIRECT reads and writes")
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+However it can also be reached via the request_key() system call in
+which case 'aux' will be NULL, causing a NULL pointer dereference in
+nfs_idmap_prepare_pipe_upcall(), assuming that the key description is
+valid enough to get that far.
+
+Fix this by making nfs_idmap_legacy_upcall() negate the key if no
+auxdata is provided.
+
+As usual, this bug was found by syzkaller.  A simple reproducer using
+the command-line keyctl program is:
+
+    keyctl request2 id_legacy uid:0 '' @s
+
+Fixes: 57e62324e469 ("NFS: Store the legacy idmapper result in the keyring")
+Reported-by: syzbot+5dfdbcf7b3eb5912abbb@syzkaller.appspotmail.com
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Trond Myklebust <trondmy@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/io.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/nfs/nfs4idmap.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/fs/nfs/io.c
-+++ b/fs/nfs/io.c
-@@ -98,7 +98,7 @@ static void nfs_block_buffered(struct nf
- {
- 	if (!test_bit(NFS_INO_ODIRECT, &nfsi->flags)) {
- 		set_bit(NFS_INO_ODIRECT, &nfsi->flags);
--		nfs_wb_all(inode);
-+		nfs_sync_mapping(inode->i_mapping);
- 	}
- }
+--- a/fs/nfs/nfs4idmap.c
++++ b/fs/nfs/nfs4idmap.c
+@@ -567,9 +567,13 @@ static int nfs_idmap_legacy_upcall(struc
+ 	struct idmap_msg *im;
+ 	struct idmap *idmap = (struct idmap *)aux;
+ 	struct key *key = cons->key;
+-	int ret = -ENOMEM;
++	int ret = -ENOKEY;
++
++	if (!aux)
++		goto out1;
  
+ 	/* msg and im are freed in idmap_pipe_destroy_msg */
++	ret = -ENOMEM;
+ 	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		goto out1;
