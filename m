@@ -1,101 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755392AbeBOKTo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 05:19:44 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54576 "EHLO
+        id S1755439AbeBOKUH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 05:20:07 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35207 "EHLO
         mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755267AbeBOKTm (ORCPT
+        with ESMTP id S1755404AbeBOKUF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 05:19:42 -0500
-X-Google-Smtp-Source: AH8x2266K+vNSSYeORoz3Gj9BL6nNhPJsmA8/SAQy3ak8oziU85UOFGuBeaC4MuBei8MrGrUhMF6og==
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: airlied@linux.ie
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Michal Lazo <michal.lazo@gmail.com>
-Subject: [PATCH] drm/meson: fix vsync buffer update
-Date: Thu, 15 Feb 2018 11:19:36 +0100
-Message-Id: <1518689976-23292-1-git-send-email-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 15 Feb 2018 05:20:05 -0500
+X-Google-Smtp-Source: AH8x225dfJ0w6C26vwD7H8R5ikuSHSRBL7RzJuL9AHqhxkdHxMDmlBZ25y7sQSj4XtmKVMrCxfqLvA==
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: fix phase reported being zero
+Date: Thu, 15 Feb 2018 11:19:58 +0100
+Message-Id: <20180215101958.22676-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The plane buffer address/stride/height was incorrectly updated in the
-plane_atomic_update operation instead of the vsync irq.
-This patch delays this operation in the vsync irq along with the
-other plane delayed setup.
+While introducing clk_core_set_phase_nolock, assigning core->phase was
+mistakenly removed. Fixing this now
 
-This issue was masked using legacy framebuffer and X11 modesetting, but
-is clearly visible using gbm rendering when buffer is submitted late after
-vblank, like using software decoding and OpenGL rendering in Kodi.
-With this patch, tearing and other artifacts disappears completely.
-
-Cc: Michal Lazo <michal.lazo@gmail.com>
-Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Fixes: 9e4d04adeb1a ("clk: add clk_core_set_phase_nolock function")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/gpu/drm/meson/meson_crtc.c  | 6 ++++++
- drivers/gpu/drm/meson/meson_drv.h   | 3 +++
- drivers/gpu/drm/meson/meson_plane.c | 7 +++----
- 3 files changed, 12 insertions(+), 4 deletions(-)
+ drivers/clk/clk.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/meson/meson_crtc.c b/drivers/gpu/drm/meson/meson_crtc.c
-index 5155f01..0552020 100644
---- a/drivers/gpu/drm/meson/meson_crtc.c
-+++ b/drivers/gpu/drm/meson/meson_crtc.c
-@@ -36,6 +36,7 @@
- #include "meson_venc.h"
- #include "meson_vpp.h"
- #include "meson_viu.h"
-+#include "meson_canvas.h"
- #include "meson_registers.h"
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 9d56be6ead39..b33d362239e7 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2314,6 +2314,9 @@ static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
+ 	if (core->ops->set_phase)
+ 		ret = core->ops->set_phase(core->hw, degrees);
  
- /* CRTC definition */
-@@ -192,6 +193,11 @@ void meson_crtc_irq(struct meson_drm *priv)
- 		} else
- 			meson_vpp_disable_interlace_vscaler_osd1(priv);
- 
-+		meson_canvas_setup(priv, MESON_CANVAS_ID_OSD1,
-+			   priv->viu.osd1_addr, priv->viu.osd1_stride,
-+			   priv->viu.osd1_height, MESON_CANVAS_WRAP_NONE,
-+			   MESON_CANVAS_BLKMODE_LINEAR);
++	if (!ret)
++		core->phase = degrees;
 +
- 		/* Enable OSD1 */
- 		writel_bits_relaxed(VPP_OSD1_POSTBLEND, VPP_OSD1_POSTBLEND,
- 				    priv->io_base + _REG(VPP_MISC));
-diff --git a/drivers/gpu/drm/meson/meson_drv.h b/drivers/gpu/drm/meson/meson_drv.h
-index 5e8b392..8450d6ac 100644
---- a/drivers/gpu/drm/meson/meson_drv.h
-+++ b/drivers/gpu/drm/meson/meson_drv.h
-@@ -43,6 +43,9 @@ struct meson_drm {
- 		bool osd1_commit;
- 		uint32_t osd1_ctrl_stat;
- 		uint32_t osd1_blk0_cfg[5];
-+		uint32_t osd1_addr;
-+		uint32_t osd1_stride;
-+		uint32_t osd1_height;
- 	} viu;
+ 	trace_clk_set_phase_complete(core, degrees);
  
- 	struct {
-diff --git a/drivers/gpu/drm/meson/meson_plane.c b/drivers/gpu/drm/meson/meson_plane.c
-index d0a6ac8..27bd350 100644
---- a/drivers/gpu/drm/meson/meson_plane.c
-+++ b/drivers/gpu/drm/meson/meson_plane.c
-@@ -164,10 +164,9 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
- 	/* Update Canvas with buffer address */
- 	gem = drm_fb_cma_get_gem_obj(fb, 0);
- 
--	meson_canvas_setup(priv, MESON_CANVAS_ID_OSD1,
--			   gem->paddr, fb->pitches[0],
--			   fb->height, MESON_CANVAS_WRAP_NONE,
--			   MESON_CANVAS_BLKMODE_LINEAR);
-+	priv->viu.osd1_addr = gem->paddr;
-+	priv->viu.osd1_stride = fb->pitches[0];
-+	priv->viu.osd1_height = fb->height;
- 
- 	spin_unlock_irqrestore(&priv->drm->event_lock, flags);
- }
+ 	return ret;
 -- 
-2.7.4
+2.14.3
