@@ -1,148 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164276AbeBOVvT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 16:51:19 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:40901 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161926AbeBOVvR (ORCPT
+        id S1756120AbeBOV7V convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 16:59:21 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:47243 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755954AbeBOV7R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 16:51:17 -0500
-X-Google-Smtp-Source: AH8x226BKepW5kHo8OeC/WkQc9/o0P0wFMbr4rDh8LRl/mNdEbMYa3AR6cSwTNylAMM50Bedyg3omg==
-Subject: Re: Trial of conflict resolution of Alan's patch
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, parri.andrea@gmail.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, Patrick Bellasi <patrick.bellasi@arm.com>,
-        Akira Yokosawa <akiyks@gmail.com>
-References: <fa35db31-7a73-4865-1505-5378dcb2a0f8@gmail.com>
- <Pine.LNX.4.44L0.1802151246190.1286-100000@iolanthe.rowland.org>
- <20180215192914.GA3617@linux.vnet.ibm.com>
-From: Akira Yokosawa <akiyks@gmail.com>
-Message-ID: <fe361fba-d6ec-3a70-6ab9-e148bccb5833@gmail.com>
-Date: Fri, 16 Feb 2018 06:51:11 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 15 Feb 2018 16:59:17 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Bjorn Helgaas <helgaas@kernel.org>,
+        Mika Westeberg <mika.westerberg@linux.intel.com>
+Cc: George Cherian <gcherian@caviumnetworks.com>,
+        George Cherian <george.cherian@cavium.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bhelgaas@google.com,
+        Jayachandran.Nair@cavium.com, Robert.Richter@cavium.com,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH] PCI: Add quirk for Cavium Thunder-X2 PCIe erratum #173
+Date: Thu, 15 Feb 2018 22:57:25 +0100
+Message-ID: <26660034.hqiP3ND89J@aspire.rjw.lan>
+In-Reply-To: <20180214201653.GA62268@bhelgaas-glaptop.roam.corp.google.com>
+References: <1517554846-16703-1-git-send-email-george.cherian@cavium.com> <dd104986-81e2-e7a2-353c-91827078bc4c@caviumnetworks.com> <20180214201653.GA62268@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180215192914.GA3617@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/02/15 11:29:14 -0800, Paul E. McKenney wrote:
-> On Thu, Feb 15, 2018 at 12:51:56PM -0500, Alan Stern wrote:
->> On Fri, 16 Feb 2018, Akira Yokosawa wrote:
->>
->>> So, I attempted to rebase the patch to current (somewhat old) master of
->>> https://github.com/aparri/memory-model. Why? Because the lkmm branch
->>> in Paul's -rcu tree doesn't have linux-kernel-hardware.cat.
->>>
->>> However, after this change, Z6.0+pooncelock+pooncelock+pombonce still
->>> has the result "Sometimes". I must have done something wrong in the
->>> conflict resolution.
->>>
->>> Note: I have almost no idea what this patch is doing. I'm just hoping
->>> to give a starting point of a discussion.
->>
->> Yes, that litmus test gives "Sometimes" both with and without the 
->> patch.  But consider instead this slightly changed version of that 
->> test, in which P2 reads Z instead of writing it:
->>
->> C Z6.0-variant
->>
->> {}
->>
->> P0(int *x, int *y, spinlock_t *mylock)
->> {
->> 	spin_lock(mylock);
->> 	WRITE_ONCE(*x, 1);
->> 	WRITE_ONCE(*y, 1);
->> 	spin_unlock(mylock);
->> }
->>
->> P1(int *y, int *z, spinlock_t *mylock)
->> {
->> 	int r0;
->>
->> 	spin_lock(mylock);
->> 	r0 = READ_ONCE(*y);
->> 	WRITE_ONCE(*z, 1);
->> 	spin_unlock(mylock);
->> }
->>
->> P2(int *x, int *z)
->> {
->> 	int r1;
->> 	int r2;
->>
->> 	r2 = READ_ONCE(*z);
->> 	smp_mb();
->> 	r1 = READ_ONCE(*x);
->> }
->>
->> exists (1:r0=1 /\ 2:r2=1 /\ 2:r1=0)
->>
->> Without the patch, this test gives "Sometimes"; with the patch it gives 
->> "Never".  That is what I thought Paul was talking about originally.  
->>
->> Sorry if my misunderstanding caused too much confusion for other 
->> people.
-> 
-> Ah, I did indeed get confused.  I have changed the "Result:" for
-> Z6.0+pooncelock+pooncelock+pombonce.litmus back to "Never", as in
-> the patch below (which I merged into the patch adding all the
-> comments).
-> 
-> I have added the above test as ISA2+pooncelock+pooncelock+pombonce.litmus,
-> with the Result: of Sometimes with you (Alan) as author and with your
-> Signed-off-by -- please let me know if you would prefer some other
-> approach.
-> 
-> Please change the Result: when sending the proposed patch.  Or please let
-> me know if you would like me to apply the forward-port that Akira sent,
-> in which case I will add the Result: change to that patch.  Or for that
-> matter, Akira might repost his forward-port of your patch with this change.
-> 
+On Wednesday, February 14, 2018 9:16:53 PM CET Bjorn Helgaas wrote:
+> [+cc Rafael, PM question below]
 
-Hi,
++Mika
 
-My forward-port patch doesn't apply to the "lkmm" branch.
-It looks like "linux-kernel-hardware.cat" is intentionally omitted there.
-Am I guessing right?
+> On Wed, Feb 14, 2018 at 04:58:08PM +0530, George Cherian wrote:
+> > On 02/13/2018 08:39 PM, Bjorn Helgaas wrote:
+> > >On Fri, Feb 02, 2018 at 07:00:46AM +0000, George Cherian wrote:
+> > >>The PCIe Controller on Cavium ThunderX2 processors does not
+> > >>respond to downstream CFG/ECFG cycles when root port is
+> > >>in power management D3-hot state.
+> > >
+> > >I think you're talking about the CPU initiating a config cycle to
+> > >a device below the root port, right?
+> > Yes
+> 
+> If a bridge, e.g., a Root Port in your case, is in D3hot, we should be
+> able to access config space of the bridge itself, but the secondary
+> bus will be in B2 or B3 and we won't be able to access config space
+> for any devices below the bridge.  This is true for *all* bridges, not
+> just this Cavium Root Port.
 
-If this is the case, I can prepare a patch to be applied to "lkmm".
-But I can't compose a proper change log. So I'd like Alan to post
-a patch with my SOB appended. Does this approach sound reasonable?
+Right.
 
-      Thanks, Akira
+But AFAICS config space reads from devices that aren't there (which
+effectively is what happens if the bridge is in D3hot) are at least
+expected to return all ones.
 
-> 							Thanx, Paul
+> The PCIe r4.0, sec 5.3.1, implementation note seems relevant:
 > 
-> ------------------------------------------------------------------------
+>   When a Type 1 Function associated with a Switch/Root Port (a
+>   "virtual bridge") is in a non-D0 power state, it will emulate the
+>   behavior of a conventional PCI bridge in its handling of Memory,
+>   I/O, and Configuration Requests and Completions. ...  All Type 1
+>   Configuration Requests are terminated as Unsupported Requests, ...
 > 
-> commit b2950420e1154131c0667f1ac58666bad3a06a69
-> Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Date:   Thu Feb 15 10:35:25 2018 -0800
+> > >This erratum isn't published anywhere where we could include a URL,
+> > >is it?
+> > This erratum is available at support.cavium.com, You might need to
+> > register to the website to get hold of a copy.
 > 
->     fixup! EXP litmus_tests:  Add comments explaining tests' purposes
->     
->     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> That appears to require an NDA, so that doesn't work for me.  Can you
+> just include the erratum text in the changelog?
 > 
-> diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus
-> index fad47258a3e3..95890669859b 100644
-> --- a/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus
-> +++ b/tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus
-> @@ -1,7 +1,7 @@
->  C Z6.0+pooncelock+pooncelock+pombonce
->  
->  (*
-> - * Result: Never
-> + * Result: Somtimes
->   *
->   * This example demonstrates that a pair of accesses made by different
->   * processes each while holding a given lock will not necessarily be
+> > >>In our tests the above mentioned errata causes the following crash when
+> > >>the downstream endpoint config space is accessed, while root port is in
+> > >>D3 state.
+> > >>
+> > >>[   12.775202] Unhandled fault: synchronous external abort (0x96000610) at 0x0000000000000000
+> > >
+> > >This looks like another example of not being able to deal with error
+> > >responses to PCIe events, for example, the whole mess with drivers
+> > >checking whether the link is up before issuing a config access.
+> > >
+> > >In that sense, this looks like a band-aid that avoids the issue by
+> > >preventing the use of D3, but doesn't fix the underlying problem.  If
+> > >we *could* deal nicely with this error, maybe we could use D3 on these
+> > >root ports.
+> > >
+> > >So I'm not convinced yet that this is actually a PCIe erratum.  Does
+> > >the hardware actually violate the PCIe spec, or is this just a problem
+> > >with the kernel not knowing how to deal nicely with a PCIe error?
+> > >
+> > This is not an issue with the way kernel handles the PCIe error.
+> > 
+> > >If you could include the erratum text and reference to the relevant
+> > >section of the PCIe spec, that would be useful.
+> > >
+> > The relevant section of the PCIe Spec is the following Section 5.3
+> > on wards (subsection  5.3.1.4.1)
+> > 
+> > Configuration and Message requests are the only TLPs accepted by a
+> > Function in the D3hot state. All other received Requests must be
+> > handled as Unsupported Requests, and all received Completions may
+> > optionally be handled as Unexpected Completions.
 > 
+> This isn't exactly relevant because it says requests *other than*
+> config and message requests must be handled as Unsupported Requests,
+> and we're talking about a config request.  I think sec 5.3.1 is more
+> to the point: the Root Port sees a Type 1 Configuration Request that
+> would be forwarded to its secondary interface if the port were in D0,
+> and that request should be terminated as an Unsupported Request.
+> 
+> I think the question is how the Root Complex turns this Unsupported
+> Request into some signal to the CPU.  The implementation note in 2.3.2
+> might be relevant:
+> 
+>   Some system configuration software depends on reading a data value
+>   of all 1’s when a Configuration Read Request is terminated as an
+>   Unsupported Request, particularly when probing to determine the
+>   existence of a device in the system. A Root Complex intended for use
+>   with software that depends on a read-data value of all 1’s must
+>   synthesize this value when UR Completion Status is returned for a
+>   Configuration Read Request.
+> 
+> So maybe the erratum is that the RC was intended to synthesize all 1's
+> but it doesn't?
+> 
+> There are other cases that can result in Unsupported Request
+> completions, so my fear is that this change will take care of one such
+> case but leave others that will cause similar unhandled external
+> aborts.
+> 
+> > >>[   12.775202] Unhandled fault: synchronous external abort (0x96000610) at 0x0000000000000000
+> 
+> > >>[   12.813518] PC is at pci_generic_config_read+0x5c/0xf0
+> > >>[   12.818643] LR is at pci_generic_config_read+0x48/0xf0
+> > >> ...
+> > >>[   13.269819] [<ffff000008506f34>] pci_generic_config_read+0x5c/0xf0
+> > >>[   13.275987] [<ffff000008506e2c>] pci_bus_read_config_dword+0xb4/0xd8
+> > >>[   13.282328] [<ffff0000085089f4>] pcie_capability_read_dword+0x64/0xb8
+> > >>[   13.288757] [<ffff000008513d28>] __pci_dev_reset+0x90/0x328
+> > >>[   13.294317] [<ffff0000085142d4>] pci_probe_reset_function+0x24/0x30
+> > >>[   13.300571] [<ffff000008518754>] pci_create_sysfs_dev_files+0x18c/0x2a0
+> > >>[   13.307173] [<ffff000008d9a974>] pci_sysfs_init+0x38/0x60
+> > >>[   13.312560] [<ffff000008083b4c>] do_one_initcall+0x5c/0x170
+> > >>[   13.318122] [<ffff000008d60dfc>] kernel_init_freeable+0x1c0/0x27c
+> > >>[   13.324205] [<ffff000008980d90>] kernel_init+0x18/0x110
+> > >>[   13.329416] [<ffff000008083690>] ret_from_fork+0x10/0x40
+> 
+> I should have asked this before: why are we even trying to do this
+> config read to a device that's in D3?  I assume this root port started
+> out in D0 because we apparently enumerated it successfully, but it
+> must have been put into D3 later?
+> 
+> The pci_probe_reset_function() function comment says "the PCI device
+> must be responsive to PCI config space in order to use this function." 
+> So apparently the caller should make sure the device is in at least
+> D3hot and any bridges leading to it are in D0.
+> 
+> If we're missing whatever it is that makes sure the target device is
+> reachable and responsive to config space, we likely have issues on
+> other systems as well.  On Cavium this causes the external abort, but
+> on other systems, we'd probably just get all 1's data back from the
+> config read and silently do the wrong thing in
+> pci_probe_reset_function().
+> 
+> I don't know how this runtime PM works, but maybe Rafael can help us
+> out.
+
+I'm not sure what the question is to be honest.
+
+Unused ports are autosuspended after 100ms as per pcie_portdrv_probe().
+
+Now, it looks like they should be resumed in the code path in question,
+so this case seems to have been overlooked.
+
+Mika, what do you think?
