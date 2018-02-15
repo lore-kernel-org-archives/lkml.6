@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226xbFqQ1GgzNTIUDPeXQY22rFlX6Hc0eHJ6udr8FBK4xHhfWLrmlpgGxsMT0J5LkFplTLkN
-ARC-Seal: i=1; a=rsa-sha256; t=1518709129; cv=none;
+X-Google-Smtp-Source: AH8x226CggzDC9+LU7tByEKoEaUY/bD+TSeI+hWJgCbTZ35qi9SsjGKBPIjRnNmLRBNrFUlRLTqM
+ARC-Seal: i=1; a=rsa-sha256; t=1518709124; cv=none;
         d=google.com; s=arc-20160816;
-        b=dmKhPXh2WuwQmJ0Gtds9EOWlX4lYuE0j74URNYR7evyO7jgX7x06VN/21mcmlExEn/
-         a+488tF2nC3m0yKQIgqLIhIk9VlYS451fL5PTYa6P8CWSp1qERiapHtfTCdslgLDNPDr
-         UTgQ1fQVYFHypLWu+uoIsdv4wB9QFk3xyjIAjBMTsMaA19HLv2KnFByUL2OOr2QnfRP4
-         O0d5iwBfui+vAqLOvszCSQKhzEhRMnwl2ZY83oM6QuAAb5vfADkbbZkAGUkOO+v/1Y2m
-         YBjVIy8XWN+ZsHZZyy8m8o4Z2K9eVZwGBPP3WbUzV/TdkEXW/B3vWxg4k1jDFmcBAxGq
-         wl4Q==
+        b=sHchQj3DvLhwvW4tAl8ZQlYAFvcqqs5MqYKztLcedk02v/0+emRroLWduu1oxNs4X+
+         vu71fLCUI8+e8tbBsRuIwM8HK20xgDfs9D0vPhETP3Hiuj4X6uj7zmNvO69BtgjE7xc5
+         wc9ZH4vFlFaSJlCzVkxGSHUujH7e6B7ZUwA+fdKDzk6f1UJG++wDQN7kn6nWeNd6/oG+
+         ZGAwc4LRUZ4dQbrwdgJvlKDvgux4/7niZJkVkXyvZ5MnxwRA4kz+rvpEGG9eWDaMpZFK
+         j75WqB2MsML9pZRLQGF8V5PJoBfr3iaNbo41IvjnpLwnRrGfqmmnH0pNZebkEU+iu2Ek
+         cFEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WC95Ma9KsZaFNGqpX03fpEmWD1Jr0wDa2FmwVT+ouzI=;
-        b=Ry5SG+b/XEI7xFnbQKxYBke++j7ac2O2qXT/J+DhFgTcyO09HzDTs5H14DYdMFbRmZ
-         7TVsCPDYTUSvujthBQHzktt7l95n+WfVQXDBt7LF7LelGI8XJ46oDTUmbrdBFchdcYvq
-         9RqftRGKG+X+rEiKRN+KeaXdG2GuGVvqsrt29Dcz5g+Go9/ZogU8GCP13cMkMGvkNR8a
-         7mKAmlTtXndYcuV2Ouni+xeunF+Uwpg1P0by97KsFlOeQswxehH0BqNUeqnxUenm+q3q
-         DOVIiiA+mWMulsUlGnmxZSDIBIX9A0C9PaVHFqw7weg53I7lWsGtjr2EWBVPBIlAbB8p
-         UpYw==
+        bh=9UYiwiJENYqwviVdNhXatg4UdkHuGQ/8hg+DGINCF3w=;
+        b=EuUEZ0uYn7m0AJAu76lgLbG84vadC4F7pTjanKDuzZbf19GpVhVnTb0VI//yVZRIc2
+         9sA2PZsuUdfXUzBWNg9Xyz9u4fXyitk9fcqHToSYDBqUkX1g4SDPSyP5JI+zWsya+Xlg
+         Wwlk9g7BjmYcK6jaSDbVj5owSGsLYObOFlk2RMAwIbduJOxxaMaunnojA92o/wDTn6Iw
+         RsU9iIZ2ngDu29A2lcbNFhgKTF6rPVfgXbtNRJoPTMGodIqz8JqP4KZH6T9vzGDt3FyX
+         0SwI8++jsVzDqhXjvxjv2NBc0rroxS8FA8ded66DkCDRq9Qm6lC169o/ChSJFD16blx4
+         Tftw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Matt Turner <mattst88@gmail.com>
-Subject: [PATCH 4.14 167/195] alpha: fix reboot on Avanti platform
-Date: Thu, 15 Feb 2018 16:17:38 +0100
-Message-Id: <20180215151714.352697146@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.14 165/195] alpha: osf_sys.c: fix put_tv32 regression
+Date: Thu, 15 Feb 2018 16:17:36 +0100
+Message-Id: <20180215151714.224277923@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480766762352193?=
-X-GMAIL-MSGID: =?utf-8?q?1592481943970299936?=
+X-GMAIL-THRID: =?utf-8?q?1592481938695969135?=
+X-GMAIL-MSGID: =?utf-8?q?1592481938695969135?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,30 +48,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 55fc633c41a08ce9244ff5f528f420b16b1e04d6 upstream.
+commit 47669fb6b5951d0e09fc99719653e0ac92b50b99 upstream.
 
-We need to define NEED_SRM_SAVE_RESTORE on the Avanti, otherwise we get
-machine check exception when attempting to reboot the machine.
+There was a typo in the new version of put_tv32() that caused an unguarded
+access of a user space pointer, and failed to return the correct result in
+gettimeofday(), wait4(), usleep_thread() and old_adjtimex().
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Matt Turner <mattst88@gmail.com>
+This fixes it to give the correct behavior again.
+
+Fixes: 1cc6c4635e9f ("osf_sys.c: switch handling of timeval32/itimerval32 to copy_{to,from}_user()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/alpha/kernel/pci_impl.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/alpha/kernel/osf_sys.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/alpha/kernel/pci_impl.h
-+++ b/arch/alpha/kernel/pci_impl.h
-@@ -144,7 +144,8 @@ struct pci_iommu_arena
- };
+--- a/arch/alpha/kernel/osf_sys.c
++++ b/arch/alpha/kernel/osf_sys.c
+@@ -964,8 +964,8 @@ static inline long
+ put_tv32(struct timeval32 __user *o, struct timeval *i)
+ {
+ 	return copy_to_user(o, &(struct timeval32){
+-				.tv_sec = o->tv_sec,
+-				.tv_usec = o->tv_usec},
++				.tv_sec = i->tv_sec,
++				.tv_usec = i->tv_usec},
+ 			    sizeof(struct timeval32));
+ }
  
- #if defined(CONFIG_ALPHA_SRM) && \
--    (defined(CONFIG_ALPHA_CIA) || defined(CONFIG_ALPHA_LCA))
-+    (defined(CONFIG_ALPHA_CIA) || defined(CONFIG_ALPHA_LCA) || \
-+     defined(CONFIG_ALPHA_AVANTI))
- # define NEED_SRM_SAVE_RESTORE
- #else
- # undef NEED_SRM_SAVE_RESTORE
