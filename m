@@ -1,146 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754614AbeBODt7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 22:49:59 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52668 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752371AbeBODt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 22:49:58 -0500
-Date: Wed, 14 Feb 2018 22:46:06 -0500
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Steve Grubb <sgrubb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Paul Moore <paul@paul-moore.com>, Kees Cook <keescook@chromium.org>
-Subject: Re: [RFC PATCH ghak21 0/4] audit: address ANOM_LINK excess records
-Message-ID: <20180215034606.pfh4wbtrbo2u7en6@madcap2.tricolour.ca>
-References: <cover.1518603831.git.rgb@redhat.com>
- <2183890.x51U8tdCGl@x2>
+        id S966496AbeBOD7e (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 22:59:34 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:33087 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752371AbeBOD7b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 22:59:31 -0500
+X-Google-Smtp-Source: AH8x225Pp99FJi7rCsVMmmGoMX1plMkVMMEW3OtXwfprdQXMWkd5U8t8t6938ZMub/VIMWNrDsevaw==
+Date: Wed, 14 Feb 2018 19:59:25 -0800
+In-Reply-To: <CACPK8XeOUrrGinU_fmnmn4atYm3Bs-xSoB2MqT0Yr-LytHt78Q@mail.gmail.com>
+References: <20180205235757.246758-1-brendanhiggins@google.com> <20180205235757.246758-3-brendanhiggins@google.com> <CACPK8XdXOaPZ5i=qKns3=V87nhfY62PNr4kwH9xwVYxY0djo0g@mail.gmail.com> <CACPK8XeOUrrGinU_fmnmn4atYm3Bs-xSoB2MqT0Yr-LytHt78Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2183890.x51U8tdCGl@x2>
-User-Agent: NeoMutt/20171027
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH v9 2/3] arm: dts: add Nuvoton NPCM750 device tree
+To: Joel Stanley <joel@jms.id.au>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+CC: Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>, julien.thierry@arm.com,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <A86ACBBE-0825-482F-81BE-24B7CAED92CD@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1F3xdpQ014267
 
-On 2018-02-14 11:49, Steve Grubb wrote:
-> On Wednesday, February 14, 2018 11:18:20 AM EST Richard Guy Briggs wrote:
-> > Audit link denied events were being unexpectedly produced in a disjoint
-> > way when audit was disabled, and when they were expected, there were
-> > duplicate PATH records.  This patchset addresses both issues for
-> > symlinks and hardlinks.
-> > 
-> > This was introduced with
-> > 	commit b24a30a7305418ff138ff51776fc555ec57c011a
-> > 	("audit: fix event coverage of AUDIT_ANOM_LINK")
-> > 	commit a51d9eaa41866ab6b4b6ecad7b621f8b66ece0dc
-> > 	("fs: add link restriction audit reporting")
-> > 
-> > Here are the resulting events:
-> 
-> Have these been tested with ausearch-test?
+On February 14, 2018 6:28:51 PM PST, Joel Stanley <joel@jms.id.au> wrote:
+>On Tue, Feb 13, 2018 at 4:52 PM, Joel Stanley <joel@jms.id.au> wrote:
+>> Hi Brendan,
+>>
+>> On Tue, Feb 6, 2018 at 10:27 AM, Brendan Higgins
+>> <brendanhiggins@google.com> wrote:
+>>> Add a common device tree for all Nuvoton NPCM750 BMCs and a board
+>>> specific device tree for the NPCM750 (Poleg) evaluation board.
+>>>
+>>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+>>> Reviewed-by: Tomer Maimon <tmaimon77@gmail.com>
+>>> Reviewed-by: Avi Fishman <avifishman70@gmail.com>
+>>> Reviewed-by: Joel Stanley <joel@jms.id.au>
+>>> Reviewed-by: Rob Herring <robh@kernel.org>
+>>> Tested-by: Tomer Maimon <tmaimon77@gmail.com>
+>>> Tested-by: Avi Fishman <avifishman70@gmail.com>
+>>
+>> This looks well acked, reviewed and tested. How do you plan to have
+>> the ARM SoC maintainers merge your patches?
+>
+>Following up on an IRC conversation with Brendan:
+>
+>The process is normally to create a git branch based on on -rc1, apply
+>your patches, and send them to the ARM maintainers. You then push a
+>signed tag to a repository somewhere, send a pull request (a git
+>request-pull email, not a Github PR) and Arnd, Olof or one of the
+>other maintainers will pull your tree some time before the next merge
+>window opens.
+>
+>Arnd, do we have this documented somewhere for new maintainers to
+>follow?
 
-Not yet.
+I would add a few things that we had to go through before for Broadcom SoCs:
 
-> > symlink:
-> > type=PROCTITLE msg=audit(02/14/2018 04:40:21.635:238) : proctitle=cat
-> > my-passwd type=PATH msg=audit(02/14/2018 04:40:21.635:238) : item=1
-> > name=/tmp/my-passwd inode=17618 dev=00:27 mode=link,777 ouid=rgb ogid=rgb
-> > rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=NORMAL
-> > cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 type=PATH msg=audit(02/14/2018
-> > 04:40:21.635:238) : item=0 name=/tmp inode=13446 dev=00:27
-> > mode=dir,sticky,777 ouid=root ogid=root rdev=00:00
-> > obj=system_u:object_r:tmp_t:s0 nametype=PARENT cap_fp=none cap_fi=none
-> > cap_fe=0 cap_fver=0 type=CWD msg=audit(02/14/2018 04:40:21.635:238) :
-> > cwd=/tmp
-> > type=SYSCALL msg=audit(02/14/2018 04:40:21.635:238) : arch=x86_64
-> > syscall=openat success=no exit=EACCES(Permission denied) a0=0xffffff9c
-> > a1=0x7ffc6c1acdda a2=O_RDONLY a3=0x0 items=2 ppid=549 pid=606 auid=root
-> > uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root
-> > fsgid=root tty=ttyS0 ses=1 comm= cat exe=/usr/bin/cat
-> > subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=(null)
-> > type=ANOM_LINK msg=audit(02/14/2018 04:40:21.635:238) : op=follow_link
-> > ppid=549 pid=606 auid=root uid=root gid=root euid=root suid=root
-> > fsuid=root egid=roo t sgid=root fsgid=root tty=ttyS0 ses=1 comm=cat
-> > exe=/usr/bin/cat
-> > subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 res=no
-> 
-> This record duplicates the SYSCALL event except for the op field. I would 
-> suggest that is the only field needed.
+- send your pull requests to arm@kernel.org and copy Arnd, Olof and Kevin
 
-Agreed, but at the moment, removal of fields isn't possible unless there
-is a conflict, and even then the value should simply be corrected if
-possible.
+- you would want to get your PGP key signed by as many people as people as possible which should not be a problem if you are in an area with lots of kernel people like the Bay Area (which reminds me I should do that)
 
-> > ----
-> > hardlink:
-> > type=PROCTITLE msg=audit(02/14/2018 04:40:25.373:239) : proctitle=ln test
-> > test-ln type=PATH msg=audit(02/14/2018 04:40:25.373:239) : item=1
-> > name=/tmp inode=13446 dev=00:27 mode=dir,sticky,777 ouid=root ogid=root
-> > rdev=00:00 obj=system_u:object_r:tmp_t:s0 nametype=PARENT cap_fp=none
-> > cap_fi=none cap_fe=0 cap_fver=0 type=PATH msg=audit(02/14/2018
-> > 04:40:25.373:239) : item=0 name=test inode=17619 dev=00:27 mode=file,700
-> > ouid=root ogid=root rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0
-> > nametype=NORMAL cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 type=CWD
-> > msg=audit(02/14/2018 04:40:25.373:239) : cwd=/tmp
-> > type=SYSCALL msg=audit(02/14/2018 04:40:25.373:239) : arch=x86_64
-> > syscall=linkat success=no exit=EPERM(Operation not permitted)
-> > a0=0xffffff9c a1=0x7fffe6c3f628 a2=0xffffff9c a3=0x7fffe6c3f62d items=2
-> > ppid=578 pid=607 auid=rgb uid=rgb gid=rgb euid=rgb suid=rgb fsuid=rgb
-> > egid=rgb sgid=rgb fsgid=rgb tty=pts0 ses=3 comm=ln exe=/usr/bin/ln
-> > subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=(null)
-> > type=ANOM_LINK msg=audit(02/14/2018 04:40:25.373:239) : op=linkat ppid=578
-> > pid=607 auid=rgb uid=rgb gid=rgb euid=rgb suid=rgb fsuid=rgb egid=rgb
-> > sgid=rgb fsgid=rgb tty=pts0 ses=3 comm=ln exe=/usr/bin/ln
-> > subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 res=no
-> > 
-> > The remaining problem is how to address this when syscall logging is
-> > disabled since it needs a parent path record and/or a CWD record to
-> > complete it.  It could also use a proctitle record too.  In fact, it
-> > looks like we need a way to have multiple auxiliary records to support
-> > an arbitrary record.  Comments please.
-> 
-> Perhaps this can only be emitted correctly with SYSCALL auditing enabled. 
-> Otherwise, the event should stand completely on its own without syscall and 
-> path records. The information from them can be added, but it risks hitting 
-> the record size limit.
+- if you are going to be reasonably active every cycle consider getting a kernel.org account to host your tree (we are still not doing that...)
 
-As Paul just pointed out (which rang a bell...) in:
-	https://github.com/linux-audit/audit-kernel/issues/51#issuecomment-365759325
-CONFIG_AUDITSYSCALL is now forced on and if you sabbotage your
-audit.rules with -a task,never, your warranty is void.
+- for future pull requests, you might want to break them into e.g: DTS, board/Kconfig, drivers, defconfig, maintainers file, and have as little dependencies between each branch to minimize merge conflicts
 
-So now, the lurking questions in the back of my head about the
-availability of syscall records has been alleviated and we should always
-see a syscall record available unless an audit rule says we are not
-interested.
+- build test and run test your changes against at least one other platform, e.g: QEMU to check for multiplatform issues
 
-> -Steve
-> 
-> > See: https://github.com/linux-audit/audit-kernel/issues/21
-> > See also: https://github.com/linux-audit/audit-kernel/issues/51
-> > 
-> > Richard Guy Briggs (4):
-> >   audit: make ANOM_LINK obey audit_enabled and audit_dummy_context
-> >   audit: link denied should not directly generate PATH record
-> >   audit: add refused symlink to audit_names
-> >   audit: add parent of refused symlink to audit_names
-> > 
-> >  fs/namei.c     | 10 ++++++++++
-> >  kernel/audit.c | 13 ++-----------
-> >  2 files changed, 12 insertions(+), 11 deletions(-)
-> 
-> 
-> 
-> 
+In case this is of any value, there is a script here that will automatically generate pull requests emails for you based on branches matching what was mentioned above, it will also take care of CC'ing the people involved in the different patches:
 
-- RGB
+https://github.com/ffainelli/misc-scripts/blob/master/gen-pull.pl
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+It still requires you to create an appropriate tag for the pull requests, though I might semi-automate that in the future, at least spawn an editor and offer some guidance, based on commit messages as to what should be in the pull request email/tag.
+
+HTH
+
+-- 
+Florian
