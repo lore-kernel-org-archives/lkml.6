@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227bSofCHWW/TM1eUksXwAKkY29jFXNtlshpCBAZKQgUetSEypuAzVO6c7aFPZrbHuIPdbCD
-ARC-Seal: i=1; a=rsa-sha256; t=1518709115; cv=none;
+X-Google-Smtp-Source: AH8x224pzQ35tA823QDdFnI5ac8QoyX4ehfLbFl0rtvsM7m8jMO6WnvQU0bz8yrSVD2pgPFHscVw
+ARC-Seal: i=1; a=rsa-sha256; t=1518709118; cv=none;
         d=google.com; s=arc-20160816;
-        b=DMarQ0Po9xi7KoVxMwYkNJpXCg/qX86xAgXISacebBsitJSOPjZ0jt0JRISrAS4XmA
-         HBVckHdx+r7NYjlfC+phG2llnGXK2lN1jL0ObHKgzG08TwFwcaut4tu9sSZhMBdTNCAP
-         VBpnCK9gqV2xX9KW0X0Y2hDw/ETBHivpb+VKfTAo25NAfAkvNJP1pqdoAUYNfSBIpeFl
-         gmSXTeR3NURh/ioPJNrmI1DgHTUnZ8O/aKVsacDYBG1nEC8D5V6Smaeg+CkAoGXJJ+Wb
-         SXZj0FVFEfK53h2cMRheEEOxHayGkCIc8icgu+2/Qx0Yqlnh8CYgVS9Qd2SdxJV78qti
-         xXag==
+        b=DOdZbVTm7r093cRcLBE10lD7415ypCB0TM8rkFYYjI6kkFMNsST/bHfTdU3RBYkNAx
+         81+lGhbVmqftpLkZPgWDtxhKwRCVWB2a82EzKrflBcYLxErFgoDg1GQ6CqamWaWI3FnE
+         BhnMpvAfsEoLNLvpNExIhL7X2D6bWqnrt61K4j1i1Wju32I7Rxcale6Y6bAQnHzN/Nrt
+         Tw2wv/K20qwAGNj7whiWBbqpQat3giajMGSctBXgt430m78TwQiZMl3hVdNhi3BqBpSg
+         lo+mvH1hrJf+lzJA7SxtEhPriKMK5PKaEy0B3FeF3AjdVdCJZRd+/YGPsUVDxdmz1++d
+         YImQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5xEbT0uWLLjnjVaeIfjrX5YBWs/yMq3wfO8mrwS7CpQ=;
-        b=VYbNp8KTOwasB3uBgU1T3aCQxZx1Ki64QEslGvcxQoVpkOJ3D88PWJI0FQOctEbd8u
-         MXXAEaEOvX8cn2aJFReHkjTWXjijJSlW+0Z14Qu/6tpX/NOclvVWgnQPPh3hd2wOngjq
-         XGNgew2Lj77Tk9lDy0kU1n3oWwZtr1r5UhcX37HlEE+NxHzFB6TeqITlfvCf96ei5pPh
-         Tlg+MLUJZdQK1giQY9sPDu3lxauDGngfLydroi1Zvoni1PBnRDZCa/xbWyzCSBvEvwqm
-         EfwsCxPmJ4HxMvzEzSG2jcIlSEi6wVFOmPyqsJujSNobJB6SpkcE8dGQk/N+MOpN3LsF
-         TBeg==
+        bh=CWGayyDgTResX+vr5DavRNCP5TQ55m3f4X2riU7jXlQ=;
+        b=ld3LAeho7D0fkj/nYWD+eGZXULv1R//wPT+OlARRMRUYyijN1Aga1+0a4tnBvmAvkb
+         510hAtX6R9LDU8g6TRGGOE6L0kBYL/4OnrFsObcbV+chtgmKfA8Y0woYAO3zQ9wgSadc
+         cqeyImppEZIB1vcXUtpMUE1I62A86xurlIz1pqrMhzpKsXR1DBV1Lliihpw5IkwbAijw
+         OWkj2FplzGgWRKkOLBoqcI7vpPbPYhGnoOueTNR3GciOGVUTmfiz+6376s9x3vpJxlgy
+         ApU+3WPcVrrfEAY1KkH7nqoNxGNs3TTvmZobGGz3Pr/DTFBIbsHRKbQLlDN150zqFBE3
+         Jtvw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jonas Bonn <jonas@southpole.se>,
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	Stafford Horne <shorne@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	openrisc@lists.librecores.org,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	Paul Mundt <lethal@linux-sh.org>,
+	linux-sh@vger.kernel.org,
 	"Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.14 162/195] signal/openrisc: Fix do_unaligned_access to send the proper signal
-Date: Thu, 15 Feb 2018 16:17:33 +0100
-Message-Id: <20180215151714.057556782@linuxfoundation.org>
+Subject: [PATCH 4.14 163/195] signal/sh: Ensure si_signo is initialized in do_divide_error
+Date: Thu, 15 Feb 2018 16:17:34 +0100
+Message-Id: <20180215151714.112990371@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480756245594866?=
-X-GMAIL-MSGID: =?utf-8?q?1592481929710341078?=
+X-GMAIL-THRID: =?utf-8?q?1592480758766631562?=
+X-GMAIL-MSGID: =?utf-8?q?1592481932100659028?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,52 +53,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit 500d58300571b6602341b041f97c082a461ef994 upstream.
+commit 0e88bb002a9b2ee8cc3cc9478ce2dc126f849696 upstream.
 
-While reviewing the signal sending on openrisc the do_unaligned_access
-function stood out because it is obviously wrong.  A comment about an
-si_code set above when actually si_code is never set.  Leading to a
-random si_code being sent to userspace in the event of an unaligned
-access.
+Set si_signo.
 
-Looking further SIGBUS BUS_ADRALN is the proper pair of signal and
-si_code to send for an unaligned access. That is what other
-architectures do and what is required by posix.
-
-Given that do_unaligned_access is broken in a way that no one can be
-relying on it on openrisc fix the code to just do the right thing.
-
-Fixes: 769a8a96229e ("OpenRISC: Traps")
-Cc: Jonas Bonn <jonas@southpole.se>
-Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-Cc: Stafford Horne <shorne@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: openrisc@lists.librecores.org
-Acked-by: Stafford Horne <shorne@gmail.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Rich Felker <dalias@libc.org>
+Cc: Paul Mundt <lethal@linux-sh.org>
+Cc: linux-sh@vger.kernel.org
+Fixes: 0983b31849bb ("sh: Wire up division and address error exceptions on SH-2A.")
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/openrisc/kernel/traps.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/sh/kernel/traps_32.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/openrisc/kernel/traps.c
-+++ b/arch/openrisc/kernel/traps.c
-@@ -306,12 +306,12 @@ asmlinkage void do_unaligned_access(stru
- 	siginfo_t info;
+--- a/arch/sh/kernel/traps_32.c
++++ b/arch/sh/kernel/traps_32.c
+@@ -609,7 +609,8 @@ asmlinkage void do_divide_error(unsigned
+ 		break;
+ 	}
  
- 	if (user_mode(regs)) {
--		/* Send a SIGSEGV */
--		info.si_signo = SIGSEGV;
-+		/* Send a SIGBUS */
-+		info.si_signo = SIGBUS;
- 		info.si_errno = 0;
--		/* info.si_code has been set above */
--		info.si_addr = (void *)address;
--		force_sig_info(SIGSEGV, &info, current);
-+		info.si_code = BUS_ADRALN;
-+		info.si_addr = (void __user *)address;
-+		force_sig_info(SIGBUS, &info, current);
- 	} else {
- 		printk("KERNEL: Unaligned Access 0x%.8lx\n", address);
- 		show_registers(regs);
+-	force_sig_info(SIGFPE, &info, current);
++	info.si_signo = SIGFPE;
++	force_sig_info(info.si_signo, &info, current);
+ }
+ #endif
+ 
