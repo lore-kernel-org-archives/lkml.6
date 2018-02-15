@@ -1,151 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966790AbeBOE26 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 23:28:58 -0500
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:57148 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754214AbeBOE24 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 23:28:56 -0500
-Subject: Re: [PATCH 2/3] PCI: dwc: pci-dra7xx: Improve MSI IRQ handling
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC: Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        KISHON VIJAY ABRAHAM <kishon@ti.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Niklas Cassel <niklas.cassel@axis.com>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180209120415.17590-1-vigneshr@ti.com>
- <20180209120415.17590-3-vigneshr@ti.com>
- <20180212175801.GA29070@e107981-ln.cambridge.arm.com>
-From: Vignesh R <vigneshr@ti.com>
-Message-ID: <7cfa73af-09fa-d298-aaab-3e74ee7e1dd5@ti.com>
-Date: Thu, 15 Feb 2018 09:59:21 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751159AbeBOFFY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 00:05:24 -0500
+Received: from ozlabs.org ([103.22.144.67]:59359 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750713AbeBOFFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 00:05:23 -0500
+Date: Thu, 15 Feb 2018 16:05:20 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Progyan Bhattacharya <bprogyan@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        narmstrong@baylibre.com, akpm@linux-foundation.org,
+        Arnd Bergmann <arnd@arndb.de>, Daniel Golle <daniel@makrotopia.org>,
+        Joe Perches <joe@perches.com>
+Subject: Re: [PATCH] Build: Scripts/Makefile: Remove Repeated Lines
+Message-ID: <20180215160520.5828f900@canb.auug.org.au>
+In-Reply-To: <CAGyWO1-9scERtpPw5CCwQcUbCU0SpcqpNq2eiBWRtwpRC-kB-A@mail.gmail.com>
+References: <20180214092558.5846-1-progyanb@acm.org>
+        <20180214224937.3f2feb80@canb.auug.org.au>
+        <CAGyWO1-9scERtpPw5CCwQcUbCU0SpcqpNq2eiBWRtwpRC-kB-A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180212175801.GA29070@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Progyan,
 
-On Monday 12 February 2018 11:28 PM, Lorenzo Pieralisi wrote:
-> On Fri, Feb 09, 2018 at 05:34:14PM +0530, Vignesh R wrote:
->> We need to ensure that there are no pending MSI IRQ vector set (i.e
->> PCIE_MSI_INTR0_STATUS reads 0 at least once) before exiting
->> dra7xx_pcie_msi_irq_handler(). Else, the dra7xx PCIe wrapper will not
->> register new MSI IRQs even though PCIE_MSI_INTR0_STATUS shows IRQs are
->> pending. Therefore, keep calling dra7xx_pcie_msi_irq_handler() until it
->> returns IRQ_NONE, which suggests that PCIE_MSI_INTR0_STATUS is 0.
->> 
->> This fixes a bug, where PCIe wifi cards with 4 DMA queues like Intel
->> 8260 used to throw following error and stall during ping/iperf3 tests.
->> 
->> [   97.776310] iwlwifi 0000:01:00.0: Queue 9 stuck for 2500 ms.
->> 
->> Signed-off-by: Vignesh R <vigneshr@ti.com>
->> ---
->>  drivers/pci/dwc/pci-dra7xx.c | 21 ++++++++++++++++++---
->>  1 file changed, 18 insertions(+), 3 deletions(-)
->> 
->> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
->> index ed8558d638e5..3420cbf7b60a 100644
->> --- a/drivers/pci/dwc/pci-dra7xx.c
->> +++ b/drivers/pci/dwc/pci-dra7xx.c
->> @@ -254,14 +254,31 @@ static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
->>        struct dra7xx_pcie *dra7xx = arg;
->>        struct dw_pcie *pci = dra7xx->pci;
->>        struct pcie_port *pp = &pci->pp;
->> +     int count = 0;
->>        unsigned long reg;
->>        u32 virq, bit;
->>  
->>        reg = dra7xx_pcie_readl(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI);
->> +     dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
->>  
->>        switch (reg) {
->>        case MSI:
->> -             dw_handle_msi_irq(pp);
->> +             /*
->> +              * Need to make sure no MSI IRQs are pending before
->> +              * exiting handler, else the wrapper will not catch new
->> +              * IRQs. So loop around till dw_handle_msi_irq() returns
->> +              * IRQ_NONE
->> +              */
->> +             while (dw_handle_msi_irq(pp) != IRQ_NONE && count < 1000)
->> +                     count++;
->> +
->> +             if (count == 1000) {
->> +                     dev_err(pci->dev, "too much work in msi irq\n");
->> +                     dra7xx_pcie_writel(dra7xx,
->> +                                        PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI,
->> +                                        reg);
->> +                     return IRQ_HANDLED;
+On Thu, 15 Feb 2018 09:50:03 +0530 Progyan Bhattacharya <bprogyan@gmail.com> wrote:
+>
+> The last commit I have in here:
 > 
-> I am not merging any code patching this IRQ handling routine anymore
-> unless you thoroughly explain to me how this CONF_IRQSTATUS_MSI register
-> works (and how it is related to DW registers) and why this specific host
-> controller needs handling that is not required by any other host
-> controller relying on dw_handle_msi_irq().
+> 8396647363e1 (origin/next, next) Add linux-next specific files for 20180206
 
-Unlike other DW PCIe controllers, TI implementation has a wrapper on top
-of DW core. This wrapper latches the DW core level MSI and legacy
-interrupts and then propagates it to GIC.
-PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI register is present in this TI
-wrapper which aggregates all the MSI IRQs(PCIE_MSI_INTR0_STATUS) of DW
-level. They are mapped on the MSI interrupt line of PCIe controller,
-using a single status bit in the PCIECTRL_TI_CONF_IRQSTATUS_MSI register.
+I don't know where you got that from, as my copy of that commit has
+SHA1 417c85c22818aefd973fa957b62fb1fe081404dd (as does the copy on
+git.kernel.org).  So you do not have a clean copy of the linux-next tree.
 
-So, the irq handler, dra7xx_pcie_msi_irq_handler(), first needs to look
-at PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI[4] to know that its MSI IRQ and
-then call dw_handle_msi_irq() to handle individual MSI vectors.
-Driver has to make sure there are no pending vectors in DW core MSI
-status register before exiting handler. Otherwise next MSI IRQ will not
-be latched by the wrapper.
+> It was not building properly because of repeated lines in
+> scripts/Makefile.kasan
 
+That file is also correct in my next-20180206.
 
-> 
-> I suspect there is a code design flaw with the way this host handles
-> IRQs and we are going to find it and fix it the way it should, not with
-> any plaster like this patch.
-> 
+> PS: I have another question, Is use of range expression within case
+> statements allowed in Kernel? If not, are we using If-Else ladder for that?
 
-I agree there has been some churn wrt this wrapper level IRQ handler.
-But, that was because hardware documentation/TRM did not match
-actual behavior and so it took some time to understand how the
-hardware is working. I have extensively tested this series on multiple
-problematic PCIe USB cards and PCIe WiFi cards over week long stress
-tests. And also had some agreement with internal hardware designers.
-Hardware documentations will also be updated.
-
-
-> Lorenzo
-> 
->> +             }
->>                break;
->>        case INTA:
->>        case INTB:
->> @@ -275,8 +292,6 @@ static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
->>                break;
->>        }
->>  
->> -     dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
->> -
->>        return IRQ_HANDLED;
->>  }
->>  
->> -- 
->> 2.16.1
->> 
+I am not sure if we have a policy on ranges in case labels, but it is
+not standard C (well, C11 at least).  If-else ladders are certainly
+common.
 
 -- 
-Regards
-Vignesh
+Cheers,
+Stephen Rothwell
