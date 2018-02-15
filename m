@@ -1,94 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755194AbeBOJJg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 04:09:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34269 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755069AbeBOJJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 04:09:33 -0500
-X-Amavis-Alert: BAD HEADER SECTION, Header field occurs more than once: "Cc"
-        occurs 3 times
-From: NeilBrown <neilb@suse.com>
-To: Jens Axboe <axboe@kernel.dk>
-Date: Thu, 15 Feb 2018 20:09:24 +1100
-Cc: Milan Broz <gmazyland@gmail.com>, Mike Snitzer <snitzer@redhat.com>,
-        device-mapper development <dm-devel@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH] block: be more careful about status in __bio_chain_endio
-In-Reply-To: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
-References: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
-cc: linux-block@vger.kernel.org
-Message-ID: <87eflmpqkb.fsf@notabene.neil.brown.name>
+        id S1755185AbeBOJLP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 04:11:15 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:44390 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755069AbeBOJLL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 04:11:11 -0500
+X-Google-Smtp-Source: AH8x226/r+8wP/TipQ3KSUTc/suK0pikoJbZt2Tk9BYwn6muCssieiyNJPk9dfj1yRpYzb4Z5I80VEOEl0OvN4EjuPU=
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <20180209142318.14451-1-carlo@caione.org>
+References: <20180209142318.14451-1-carlo@caione.org>
+From: Carlo Caione <carlo@caione.org>
+Date: Thu, 15 Feb 2018 09:11:10 +0000
+X-Google-Sender-Auth: bryJDLTflxKILGzlrUMptk14_MI
+Message-ID: <CAOQ7t2ZHisZRPq6tKL3QNuKWQFNpVpJ-DoPdM80jMx8u7J=fBg@mail.gmail.com>
+Subject: Re: [PATCH v2] ASoC: rt5645: Introduce mapping for ACPI-defined GPIO
+To: open list <linux-kernel@vger.kernel.org>
+Cc: Linux Upstreaming Team <linux@endlessm.com>, bardliao@realtek.com,
+        oder_chiou@realtek.com, alsa-devel@alsa-project.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Carlo Caione <carlo@endlessm.com>, Hans De Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Fri, Feb 9, 2018 at 2:23 PM, Carlo Caione <carlo@caione.org> wrote:
+> From: Carlo Caione <carlo@endlessm.com>
+>
+> On at least one notebook (ECS EF20EA) the 'hp-detect' GPIO is defined in
+> the DSDT table by the ACPI GpioIo resources in _CRS. Add this mapping to
+> the rt5645 driver to enable the jack detection also on non-DT platforms.
 
+Please do not merge this yet, I'll submit a V3 soon.
+Hans pointed out that on some BayTrail there is indeed an extra GPIO
+but it is used to enable the external speaker amplifier. Better to
+guard this by a quirk.
 
-If two bios are chained under the one parent (with bio_chain())
-it is possible that one will succeed and the other will fail.
-__bio_chain_endio must ensure that the failure error status
-is reported for the whole, rather than the success.
+Cheers,
 
-It currently tries to be careful, but this test is racy.
-If both children finish at the same time, they might both see that
-parent->bi_status as zero, and so will assign their own status.
-If the assignment to parent->bi_status by the successful bio happens
-last, the error status will be lost which can lead to silent data
-corruption.
-
-Instead, __bio_chain_endio should only assign a non-zero status
-to parent->bi_status.  There is then no need to test the current
-value of parent->bi_status - a test that would be racy anyway.
-
-Note that this bug hasn't been seen in practice.  It was only discovered
-by examination after a similar bug was found in dm.c
-
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
- block/bio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/block/bio.c b/block/bio.c
-index e1708db48258..ad77140edc6f 100644
-=2D-- a/block/bio.c
-+++ b/block/bio.c
-@@ -312,7 +312,7 @@ static struct bio *__bio_chain_endio(struct bio *bio)
- {
- 	struct bio *parent =3D bio->bi_private;
-=20
-=2D	if (!parent->bi_status)
-+	if (bio->bi_status)
- 		parent->bi_status =3D bio->bi_status;
- 	bio_put(bio);
- 	return parent;
-=2D-=20
-2.14.0.rc0.dirty
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlqFTkQACgkQOeye3VZi
-gbl38hAAuH2ehzZRqSUECPVbVybMgFyXH9hu3wZUFXmHTAgE0+qtBFdNzQezHDc5
-QcjGXptF707jUFETG6v4mtGLRlRGTl6zZ++PSb8otV1ZNqAsLtO2XPpdezk7cwuz
-4NpRrHSgUX2oxbsgmEWenx09SlDl2HrD7KFl9eXBY1zDNGvol8c9jV07FAeqr2dG
-u6FaYoquornB9NS2nC1GXOvOpbs2NWkvj04H3NWvh0rvk4vxTzcb2avB9Jw60MQ/
-F2Y1V65ZrrnrGlqrfqxGWWJVu94N+mw9MPlGl+B+/6ObkPsFxKhTAUyoNQ+3yWnC
-fV3jDeVf2f4ZLKGbGb82NA1ZF7hJVqyf4ZRJNCf8A0Wlf3Lx0izpQE97wn2Qr4y8
-b/Ha3ZPcb7k7aMW2xlU+966j4duczGSGncszRCUodhdOETHsK24GTRJHb8rEBDKp
-9r4DSoEt/zj8wkWNluXAwow8OnIBI5WOkH5FoiZgdmGcTbaOl9dd5ZwVoEv425po
-vzqCqDJYAwIZ7PaLfgpfvrIhPXA/Hl6FwJv2PhJpilOViqhmaWxxXjl8BFL+Q5QL
-ISqW/3fmAi06YcKK82QQwBtlAGjvpbierPHAahu5s5Tor75LYRm36hmZ2DnQE61L
-/CgV5f0B1wB9TbOoJortlx7dKXol3zublH8p84+WlLZ15gBtnnw=
-=k8H1
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Carlo Caione
