@@ -1,57 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033789AbeBOPM7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 10:12:59 -0500
-Received: from agrajag.zerfleddert.de ([88.198.237.222]:40860 "EHLO
-        agrajag.zerfleddert.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033584AbeBOPM5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 10:12:57 -0500
-Date: Thu, 15 Feb 2018 16:12:55 +0100
-From: Tobias Jordan <Tobias.Jordan@elektrobit.com>
-To: Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: sil2reviews@lists.osadl.org
-Subject: [PATCH] remoteproc: qcom: Fix potential device node leaks
-Message-ID: <20180215151255.xhe7gzxnwippv3gp@agrajag.zerfleddert.de>
+        id S1033804AbeBOPSD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 10:18:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52056 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1033088AbeBOPSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 10:18:01 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C7182171F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Subject: [PATCH v1 0/2] PCI: Sparc 64-bit resource fixups
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Khalid Aziz <khalid.aziz@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: sparclinux@vger.kernel.org, linux-pci@vger.kernel.org,
+        Yinghai Lu <yinghai@kernel.org>, linux-kernel@vger.kernel.org
+Date: Thu, 15 Feb 2018 09:17:58 -0600
+Message-ID: <20180215151118.196756.99622.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing of_node_put()s at two places for device nodes returned by
-of_parse_phandle().
+I'm trying to make some progress on this old series from Yinghai [1].
+There's a lot more to do than just these first two patches, but maybe a
+tiny bit of incremental progress is better than none.
 
-Fixes: 051fb70fd4ea ("remoteproc: qcom: Driver for the self-authenticating
- Hexagon v5")
-Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+The first patch ("Support arbitrary host bridge address offset") is
+unchanged from Yinghai's posting except for the changelog.
+
+I'm interested in feedback about the second ("Reserve System ROM and Video
+ROM") patch because it changes something that *looks* wrong to me, but I
+don't know anything about the Sparc address map.
+
+If this is on the right track, I'd like to merge these via my PCI tree in
+the hope that I can include more of Yinghai's patches as well.
+
+[1] https://lkml.kernel.org/r/20170421050500.13957-1-yinghai@kernel.org
+
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 8e70a627e0bb..cbbafdcaaecb 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -1083,6 +1083,7 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
- 		dev_err(qproc->dev, "unable to resolve mba region\n");
- 		return ret;
- 	}
-+	of_node_put(node);
- 
- 	qproc->mba_phys = r.start;
- 	qproc->mba_size = resource_size(&r);
-@@ -1100,6 +1101,7 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
- 		dev_err(qproc->dev, "unable to resolve mpss region\n");
- 		return ret;
- 	}
-+	of_node_put(node);
- 
- 	qproc->mpss_phys = qproc->mpss_reloc = r.start;
- 	qproc->mpss_size = resource_size(&r);
--- 
-2.11.0
+Bjorn Helgaas (1):
+      sparc/PCI: Reserve System ROM and Video ROM outside of PCI space
+
+Yinghai Lu (1):
+      sparc/PCI: Support arbitrary host bridge address offset
+
+
+ arch/sparc/kernel/pci.c        |    6 ++--
+ arch/sparc/kernel/pci_common.c |   54 +++++++++++++++++++---------------------
+ arch/sparc/kernel/pci_impl.h   |    4 +++
+ arch/sparc/mm/init_64.c        |   17 +++++++++++++
+ 4 files changed, 50 insertions(+), 31 deletions(-)
