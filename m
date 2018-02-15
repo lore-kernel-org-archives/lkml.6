@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225Dri6f+yZpWLG4jTCXfrx6xHIKy3+5OudJiNX3Q1wHq5ybfpX75F0mT5jvBuL5IDKsSmhA
-ARC-Seal: i=1; a=rsa-sha256; t=1518707979; cv=none;
+X-Google-Smtp-Source: AH8x226xGxxbHP5BnZgDzZ4LSDey9V+skvmXHyP5eVMSNWcglWQVnw0JLh6ByVeJzyUGIHCIwdKi
+ARC-Seal: i=1; a=rsa-sha256; t=1518707977; cv=none;
         d=google.com; s=arc-20160816;
-        b=t/EIA5uwr+6uyOuZWunLkSlG3VjxFzueIiPYJjnyf5FZwJtCa3vtYmedIPMXdC5w6o
-         dpCYW4FBpl1oVA5LIT2/3l21nfAu06tXOBpeGbmWUj684Pg5GKYy6+amJp8p2xglr4JV
-         +opKSUPlcMV6xeE8rvcWluAJ6vLSYXdbIBE2opAz2QXoFp26LE+oXXxRJhF+tQBF1My0
-         Ln2oqNoytaWkEEwf80sf51ZUulXddWnHU5ZoQcpXP0iKd8GZdDP7pWrUejEWpVU+twg2
-         GC6BIqDaiDKCy8PA8+ytbl4HIZcLUJqbrDaRO+WGYW6EvlOPv8y6eUyzUJ4GDVmnj40X
-         4GuA==
+        b=a5oM5AyrC52jDU/5ZBN5SpmLXkqm6Q80b1wH6o364MdjLRZnQ83gTXHH6CqRPsSXyl
+         uF8ifQ21rE4V6UJ+Uy0feu+lB/VPsJkPTT3JuCMiXvg1+rGoZ4d4wF30phW1Gxg82mhp
+         Bkag+t/qgPb8CabKtnOpfPJrbqU6NEh6WokfPU0PPENjfyxyIIS4YP4Zy2FONzKaRF0V
+         fVRD5H+iooDsKRzAgVsjte2LKgtYi9ZD6MhZlZXDo5g5vW7pOaKXm1iZWKHBEARTjKtK
+         8FLO/M9u0wLNKiPrqLQ1oN+4lrrvog1tHVZpw491cFeSatus1qBD6iHN3JKxrvpWaqfz
+         eWFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AjYlxcs4qYI0hJGhy35933oZcTC+igBXTK6OjXTlja0=;
-        b=sTlArtFfIF1BUFjRzAIkaD/KWuEbE2FK7/tCZjZ/zxFdAaXOFUjgbmYc/HrrM2PRa+
-         F+7ITmciQLXydduu/08ShHTR1t8z9oJBSwCpbrD0mucNMxo88qFg5Ocy9rt548bii5Xw
-         Pf1UiA8bgndw/mFNF8piN7Z8OD7WfBiVw0Hqxe+LCbE2JhQDeZCWDGn3v1ruh8XIl4FO
-         rh3ezbrI8s+GQPetOgMxoZl6t6H8FOQnmRLQyZR6djvbh3HdFUV61VgkFq67pAh9e9XJ
-         UT9gY1fv/XzsWk2nzxHihBreyeuephPqxn6l56u+dzo6Ejr2ZAJJLdpHxJILfiBRI/oC
-         HedQ==
+        bh=+WavQRHdyMkzESrKvT0BvG3KADAdB+ti5fc8+58rYuQ=;
+        b=qsjNKrQcaVkdcsZjzxNaKlGPU2vf1d0QEY7T8hGPQqqIpIEk2h191IcwPD9xLPV+L2
+         aTgjpGFkxQJcyNdlmMTtzk0BWyqzVj++asBxsgvXnXzJbPQ63+pqPRqGXzZv66PDXU+6
+         5IbJKEm9iU7LXJGUnBgGr7ViL/k5iDyXz3DI3hEdw67E9dp1v0Gy8EP47aGirPuCYGKn
+         BtkClJo2ISz18oef3qMV6lJzHLdpAylpEpg2Pe2RkBR+thFaKWGzcgonmY3ozY0WnVAR
+         O3h14uXfYuqVb9zTZTKJUYz1dz6NhcgGFTBaG5zryWpqdIcn4NMDvxsjp6BdYPtOhsF2
+         zBHA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Biggers <ebiggers3@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	John Stultz <john.stultz@linaro.org>
-Subject: [PATCH 3.18 14/45] posix-timer: Properly check sigevent->sigev_notify
-Date: Thu, 15 Feb 2018 16:17:05 +0100
-Message-Id: <20180215144118.882107122@linuxfoundation.org>
+	Eric Biggers <ebiggers@google.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 3.18 31/45] crypto: hash - introduce crypto_hash_alg_has_setkey()
+Date: Thu, 15 Feb 2018 16:17:22 +0100
+Message-Id: <20180215144122.598907501@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215144115.863307741@linuxfoundation.org>
 References: <20180215144115.863307741@linuxfoundation.org>
@@ -42,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480739009494259?=
-X-GMAIL-MSGID: =?utf-8?q?1592480739009494259?=
+X-GMAIL-THRID: =?utf-8?q?1592480736419252893?=
+X-GMAIL-MSGID: =?utf-8?q?1592480736419252893?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,108 +48,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Eric Biggers <ebiggers@google.com>
 
-commit cef31d9af908243421258f1df35a4a644604efbe upstream.
+commit cd6ed77ad5d223dc6299fb58f62e0f5267f7e2ba upstream.
 
-timer_create() specifies via sigevent->sigev_notify the signal delivery for
-the new timer. The valid modes are SIGEV_NONE, SIGEV_SIGNAL, SIGEV_THREAD
-and (SIGEV_SIGNAL | SIGEV_THREAD_ID).
+Templates that use an shash spawn can use crypto_shash_alg_has_setkey()
+to determine whether the underlying algorithm requires a key or not.
+But there was no corresponding function for ahash spawns.  Add it.
 
-The sanity check in good_sigevent() is only checking the valid combination
-for the SIGEV_THREAD_ID bit, i.e. SIGEV_SIGNAL, but if SIGEV_THREAD_ID is
-not set it accepts any random value.
+Note that the new function actually has to support both shash and ahash
+algorithms, since the ahash API can be used with either.
 
-This has no real effects on the posix timer and signal delivery code, but
-it affects show_timer() which handles the output of /proc/$PID/timers. That
-function uses a string array to pretty print sigev_notify. The access to
-that array has no bound checks, so random sigev_notify cause access beyond
-the array bounds.
-
-Add proper checks for the valid notify modes and remove the SIGEV_THREAD_ID
-masking from various code pathes as SIGEV_NONE can never be set in
-combination with SIGEV_THREAD_ID.
-
-Reported-by: Eric Biggers <ebiggers3@gmail.com>
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: Alexey Dobriyan <adobriyan@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/time/posix-timers.c |   34 +++++++++++++++++++---------------
- 1 file changed, 19 insertions(+), 15 deletions(-)
+ crypto/ahash.c                 |   11 +++++++++++
+ include/crypto/internal/hash.h |    2 ++
+ 2 files changed, 13 insertions(+)
 
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -500,17 +500,22 @@ static struct pid *good_sigevent(sigeven
- {
- 	struct task_struct *rtn = current->group_leader;
+--- a/crypto/ahash.c
++++ b/crypto/ahash.c
+@@ -636,5 +636,16 @@ struct hash_alg_common *ahash_attr_alg(s
+ }
+ EXPORT_SYMBOL_GPL(ahash_attr_alg);
  
--	if ((event->sigev_notify & SIGEV_THREAD_ID ) &&
--		(!(rtn = find_task_by_vpid(event->sigev_notify_thread_id)) ||
--		 !same_thread_group(rtn, current) ||
--		 (event->sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_SIGNAL))
-+	switch (event->sigev_notify) {
-+	case SIGEV_SIGNAL | SIGEV_THREAD_ID:
-+		rtn = find_task_by_vpid(event->sigev_notify_thread_id);
-+		if (!rtn || !same_thread_group(rtn, current))
-+			return NULL;
-+		/* FALLTHRU */
-+	case SIGEV_SIGNAL:
-+	case SIGEV_THREAD:
-+		if (event->sigev_signo <= 0 || event->sigev_signo > SIGRTMAX)
-+			return NULL;
-+		/* FALLTHRU */
-+	case SIGEV_NONE:
-+		return task_pid(rtn);
-+	default:
- 		return NULL;
--
--	if (((event->sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_NONE) &&
--	    ((event->sigev_signo <= 0) || (event->sigev_signo > SIGRTMAX)))
--		return NULL;
--
--	return task_pid(rtn);
-+	}
++bool crypto_hash_alg_has_setkey(struct hash_alg_common *halg)
++{
++	struct crypto_alg *alg = &halg->base;
++
++	if (alg->cra_type != &crypto_ahash_type)
++		return crypto_shash_alg_has_setkey(__crypto_shash_alg(alg));
++
++	return __crypto_ahash_alg(alg)->setkey != NULL;
++}
++EXPORT_SYMBOL_GPL(crypto_hash_alg_has_setkey);
++
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("Asynchronous cryptographic hash type");
+--- a/include/crypto/internal/hash.h
++++ b/include/crypto/internal/hash.h
+@@ -91,6 +91,8 @@ static inline bool crypto_shash_alg_has_
+ 	return alg->setkey != shash_no_setkey;
  }
  
- void posix_timers_register_clock(const clockid_t clock_id,
-@@ -738,8 +743,7 @@ common_timer_get(struct k_itimer *timr,
- 	/* interval timer ? */
- 	if (iv.tv64)
- 		cur_setting->it_interval = ktime_to_timespec(iv);
--	else if (!hrtimer_active(timer) &&
--		 (timr->it_sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_NONE)
-+	else if (!hrtimer_active(timer) && timr->it_sigev_notify != SIGEV_NONE)
- 		return;
- 
- 	now = timer->base->get_time();
-@@ -750,7 +754,7 @@ common_timer_get(struct k_itimer *timr,
- 	 * expiry is > now.
- 	 */
- 	if (iv.tv64 && (timr->it_requeue_pending & REQUEUE_PENDING ||
--	    (timr->it_sigev_notify & ~SIGEV_THREAD_ID) == SIGEV_NONE))
-+			timr->it_sigev_notify == SIGEV_NONE))
- 		timr->it_overrun += (unsigned int) hrtimer_forward(timer, now, iv);
- 
- 	remaining = ktime_sub(hrtimer_get_expires(timer), now);
-@@ -760,7 +764,7 @@ common_timer_get(struct k_itimer *timr,
- 		 * A single shot SIGEV_NONE timer must return 0, when
- 		 * it is expired !
- 		 */
--		if ((timr->it_sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_NONE)
-+		if (timr->it_sigev_notify != SIGEV_NONE)
- 			cur_setting->it_value.tv_nsec = 1;
- 	} else
- 		cur_setting->it_value = ktime_to_timespec(remaining);
-@@ -858,7 +862,7 @@ common_timer_set(struct k_itimer *timr,
- 	timr->it.real.interval = timespec_to_ktime(new_setting->it_interval);
- 
- 	/* SIGEV_NONE timers are not queued ! See common_timer_get */
--	if (((timr->it_sigev_notify & ~SIGEV_THREAD_ID) == SIGEV_NONE)) {
-+	if (timr->it_sigev_notify == SIGEV_NONE) {
- 		/* Setup correct expiry time for relative timers */
- 		if (mode == HRTIMER_MODE_REL) {
- 			hrtimer_add_expires(timer, timer->base->get_time());
++bool crypto_hash_alg_has_setkey(struct hash_alg_common *halg);
++
+ int crypto_init_ahash_spawn(struct crypto_ahash_spawn *spawn,
+ 			    struct hash_alg_common *alg,
+ 			    struct crypto_instance *inst);
