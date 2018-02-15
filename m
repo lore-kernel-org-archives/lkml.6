@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226f6cUPBgCILv02jjUMRG1JlysM12Uo1HVHWj5HdBNv6OLrIFJNjy4Wrj8tjMjgQBqdLQqq
-ARC-Seal: i=1; a=rsa-sha256; t=1518709291; cv=none;
+X-Google-Smtp-Source: AH8x2262FcuEknF4eoZ6A/n5qFn1zczdXE1ciIo/cSzeyOPdD77Q87kwq8sm1ZyvxPG4BP8z5Ww1
+ARC-Seal: i=1; a=rsa-sha256; t=1518709289; cv=none;
         d=google.com; s=arc-20160816;
-        b=xKjzQg8VK8O/21OxE1q5rfs0RBT+VGDikXRUNDeB8EhkkJMki/ITUDtiXUxwAgJqSG
-         KDjk1p51qQ51DWHN8B7JpZO2q6ZrthRFyVEoha89GgVGx8Wla14/mb9bU0hR0GmPPlSB
-         qqHnpLVIsZtPZ6yc/BCZmPreRuCbuIOT8B9nE9yIwErsAukM1Iobl9UkNeKijNlJlVjP
-         o32Zktrn6Md1rdb6bEAUeIOs0UUvVqWKvT3jOxPtiF6ubvRpfxmlyzhpREHihJiEKMrj
-         hPdDlRElJgdVoB0ZjTEM/MTU/DFq0xRQg7MUPNyzA+IwVDtleUYeKianuqa+XR+DIy/Y
-         bxog==
+        b=PUPp4wW+Ar+X6rR17KOasbwM25Y/W1wthNBph2SVoebemw4aDBRoLZcZkiVSPKK7XV
+         cbu4Tuo/zwnFYEpCMin73Vsikr+bgz6MNk9JJzuSaBsmea3z2dnotSAyT/cZw9URMu57
+         sug65tYCzj7R0mKn+jwSSn8hJZlF3gYWmKadnIlJq6k4fLsCzIpnS1D6aFkJLZHBDfsV
+         7J6RXD8MEJGFmbJcWtNBra5/5Iv/UL1+qhmFGy4UV+TAag0m+YfOlKbUaTnMHyozfTp8
+         0wPpbs1irDBAhy/EhIgR9BfU0vU5oqOw5XQMc/q3a5kaQXwYOrzANnPuULlkdqrApjPa
+         Xfpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NNWGVpSD7BW7+CmsokL9uxojwFefVIEYgTwqqQSQ+NY=;
-        b=jrPHKFyruGOrNU7/hg76rjBgxWQYZK1mdPJ+6MeLkKCwtzSihsi48PG4aZNHkbuA3q
-         FKm6G+cUahH9k4odTju55y2Wu+G07leW335mpyQs7WjJ26E8tIELV/KACiY11gn2Bf/s
-         /AIwM6Jx1YuC7ciSSVwO5zjtSsw+jhWXld9q0e7IqGA1iPn7pD5ZjxFAIORfBTl1ffCA
-         PvCzGFZsceeGO0kA6Gl6K/9LVgk7MBM3rPyXpr7kU8EO2c7FkQD1jgcXLfIlRmygQmz7
-         aprUPadE+mc4kQJhlnTwhg5Tj9Cw0MbmUDXekkPY3wSz8JqG3CjVqt4nieoyU1gV5Qzj
-         +aow==
+        bh=LJJ30nVEMH2BQg5YJ5bQnA9AXzDlQfSUxFPIHcKspIk=;
+        b=pFqokDBrfBGnQWAJPVSP5JXlpEeIMdiHnTOn9nWQ6PzI3RPpjwn7Lu72tCtBI6yWIF
+         oo+ov+T6q2SZNrQECYTLByf5O5lJofn2Eq6YqUic58w5p1qcHUUKBIjBG4LL8zG3Cv7p
+         9H4ORaDT5yiYXymVSy6R0MdqF3PlyLDIwGcgPyabvBzJjQ/jBfykKJJPX7WWCG7Rds1J
+         ObMTD3kVyf1WvDP8NFMa2fKPZyH/t5XA/t3l930DKLsJ9Otq5v0QVGgBeRjeKx4lOZop
+         8eY/lbZ1S1omTbIZgOY0lI7Z0bN56K+MJtO7LNjzbwh5SMCrsXudpNzvAH7QTKkYsdKZ
+         xesQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Marc Zyngier <marc.zyngier@arm.com>,
 	Will Deacon <will.deacon@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.15 065/202] [Variant 2/Spectre-v2] arm64: KVM: Use per-CPU vector when BP hardening is enabled
-Date: Thu, 15 Feb 2018 16:16:05 +0100
-Message-Id: <20180215151716.856841630@linuxfoundation.org>
+Subject: [PATCH 4.15 047/202] [Variant 3/Meltdown] arm64: idmap: Use "awx" flags for .idmap.text .pushsection directives
+Date: Thu, 15 Feb 2018 16:15:47 +0100
+Message-Id: <20180215151715.665160566@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481562742963731?=
-X-GMAIL-MSGID: =?utf-8?q?1592482114275321484?=
+X-GMAIL-THRID: =?utf-8?q?1592481617965638958?=
+X-GMAIL-MSGID: =?utf-8?q?1592482111768385442?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,125 +49,95 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Will Deacon <will.deacon@arm.com>
 
 
-Commit 6840bdd73d07 upstream.
+Commit 439e70e27a51 upstream.
 
-Now that we have per-CPU vectors, let's plug then in the KVM/arm64 code.
+The identity map is mapped as both writeable and executable by the
+SWAPPER_MM_MMUFLAGS and this is relied upon by the kpti code to manage
+a synchronisation flag. Update the .pushsection flags to reflect the
+actual mapping attributes.
 
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Reported-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-
-Conflicts:
-	arch/arm/include/asm/kvm_mmu.h
-	arch/arm64/include/asm/kvm_mmu.h
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/include/asm/kvm_mmu.h   |   10 ++++++++++
- arch/arm64/include/asm/kvm_mmu.h |   38 ++++++++++++++++++++++++++++++++++++++
- arch/arm64/kvm/hyp/switch.c      |    2 +-
- virt/kvm/arm/arm.c               |    8 +++++++-
- 4 files changed, 56 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/cpu-reset.S |    2 +-
+ arch/arm64/kernel/head.S      |    2 +-
+ arch/arm64/kernel/sleep.S     |    2 +-
+ arch/arm64/mm/proc.S          |    8 ++++----
+ 4 files changed, 7 insertions(+), 7 deletions(-)
 
---- a/arch/arm/include/asm/kvm_mmu.h
-+++ b/arch/arm/include/asm/kvm_mmu.h
-@@ -221,6 +221,16 @@ static inline unsigned int kvm_get_vmid_
- 	return 8;
- }
+--- a/arch/arm64/kernel/cpu-reset.S
++++ b/arch/arm64/kernel/cpu-reset.S
+@@ -16,7 +16,7 @@
+ #include <asm/virt.h>
  
-+static inline void *kvm_get_hyp_vector(void)
-+{
-+	return kvm_ksym_ref(__kvm_hyp_vector);
-+}
-+
-+static inline int kvm_map_vectors(void)
-+{
-+	return 0;
-+}
-+
- #endif	/* !__ASSEMBLY__ */
+ .text
+-.pushsection    .idmap.text, "ax"
++.pushsection    .idmap.text, "awx"
  
- #endif /* __ARM_KVM_MMU_H__ */
---- a/arch/arm64/include/asm/kvm_mmu.h
-+++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -309,5 +309,43 @@ static inline unsigned int kvm_get_vmid_
- 	return (cpuid_feature_extract_unsigned_field(reg, ID_AA64MMFR1_VMIDBITS_SHIFT) == 2) ? 16 : 8;
- }
+ /*
+  * __cpu_soft_restart(el2_switch, entry, arg0, arg1, arg2) - Helper for
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -371,7 +371,7 @@ ENDPROC(__primary_switched)
+  * end early head section, begin head code that is also used for
+  * hotplug and needs to have the same protections as the text region
+  */
+-	.section ".idmap.text","ax"
++	.section ".idmap.text","awx"
  
-+#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
-+#include <asm/mmu.h>
-+
-+static inline void *kvm_get_hyp_vector(void)
-+{
-+	struct bp_hardening_data *data = arm64_get_bp_hardening_data();
-+	void *vect = kvm_ksym_ref(__kvm_hyp_vector);
-+
-+	if (data->fn) {
-+		vect = __bp_harden_hyp_vecs_start +
-+		       data->hyp_vectors_slot * SZ_2K;
-+
-+		if (!has_vhe())
-+			vect = lm_alias(vect);
-+	}
-+
-+	return vect;
-+}
-+
-+static inline int kvm_map_vectors(void)
-+{
-+	return create_hyp_mappings(kvm_ksym_ref(__bp_harden_hyp_vecs_start),
-+				   kvm_ksym_ref(__bp_harden_hyp_vecs_end),
-+				   PAGE_HYP_EXEC);
-+}
-+
-+#else
-+static inline void *kvm_get_hyp_vector(void)
-+{
-+	return kvm_ksym_ref(__kvm_hyp_vector);
-+}
-+
-+static inline int kvm_map_vectors(void)
-+{
-+	return 0;
-+}
-+#endif
-+
- #endif /* __ASSEMBLY__ */
- #endif /* __ARM64_KVM_MMU_H__ */
---- a/arch/arm64/kvm/hyp/switch.c
-+++ b/arch/arm64/kvm/hyp/switch.c
-@@ -52,7 +52,7 @@ static void __hyp_text __activate_traps_
- 	val &= ~(CPACR_EL1_FPEN | CPACR_EL1_ZEN);
- 	write_sysreg(val, cpacr_el1);
+ ENTRY(kimage_vaddr)
+ 	.quad		_text - TEXT_OFFSET
+--- a/arch/arm64/kernel/sleep.S
++++ b/arch/arm64/kernel/sleep.S
+@@ -96,7 +96,7 @@ ENTRY(__cpu_suspend_enter)
+ 	ret
+ ENDPROC(__cpu_suspend_enter)
  
--	write_sysreg(__kvm_hyp_vector, vbar_el1);
-+	write_sysreg(kvm_get_hyp_vector(), vbar_el1);
- }
+-	.pushsection ".idmap.text", "ax"
++	.pushsection ".idmap.text", "awx"
+ ENTRY(cpu_resume)
+ 	bl	el2_setup		// if in EL2 drop to EL1 cleanly
+ 	bl	__cpu_setup
+--- a/arch/arm64/mm/proc.S
++++ b/arch/arm64/mm/proc.S
+@@ -86,7 +86,7 @@ ENDPROC(cpu_do_suspend)
+  *
+  * x0: Address of context pointer
+  */
+-	.pushsection ".idmap.text", "ax"
++	.pushsection ".idmap.text", "awx"
+ ENTRY(cpu_do_resume)
+ 	ldp	x2, x3, [x0]
+ 	ldp	x4, x5, [x0, #16]
+@@ -152,7 +152,7 @@ ENTRY(cpu_do_switch_mm)
+ 	ret
+ ENDPROC(cpu_do_switch_mm)
  
- static void __hyp_text __activate_traps_nvhe(void)
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -1158,7 +1158,7 @@ static void cpu_init_hyp_mode(void *dumm
- 	pgd_ptr = kvm_mmu_get_httbr();
- 	stack_page = __this_cpu_read(kvm_arm_hyp_stack_page);
- 	hyp_stack_ptr = stack_page + PAGE_SIZE;
--	vector_ptr = (unsigned long)kvm_ksym_ref(__kvm_hyp_vector);
-+	vector_ptr = (unsigned long)kvm_get_hyp_vector();
+-	.pushsection ".idmap.text", "ax"
++	.pushsection ".idmap.text", "awx"
  
- 	__cpu_init_hyp_mode(pgd_ptr, hyp_stack_ptr, vector_ptr);
- 	__cpu_init_stage2();
-@@ -1403,6 +1403,12 @@ static int init_hyp_mode(void)
- 		goto out_err;
- 	}
+ .macro	__idmap_cpu_set_reserved_ttbr1, tmp1, tmp2
+ 	adrp	\tmp1, empty_zero_page
+@@ -184,7 +184,7 @@ ENDPROC(idmap_cpu_replace_ttbr1)
+ 	.popsection
  
-+	err = kvm_map_vectors();
-+	if (err) {
-+		kvm_err("Cannot map vectors\n");
-+		goto out_err;
-+	}
-+
- 	/*
- 	 * Map the Hyp stack pages
- 	 */
+ #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+-	.pushsection ".idmap.text", "ax"
++	.pushsection ".idmap.text", "awx"
+ 
+ 	.macro	__idmap_kpti_get_pgtable_ent, type
+ 	dc	cvac, cur_\()\type\()p		// Ensure any existing dirty
+@@ -373,7 +373,7 @@ ENDPROC(idmap_kpti_install_ng_mappings)
+  *	Initialise the processor for turning the MMU on.  Return in x0 the
+  *	value of the SCTLR_EL1 register.
+  */
+-	.pushsection ".idmap.text", "ax"
++	.pushsection ".idmap.text", "awx"
+ ENTRY(__cpu_setup)
+ 	tlbi	vmalle1				// Invalidate local TLB
+ 	dsb	nsh
