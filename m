@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226axw90w/cwK5AUW5dFHoPABPD7KMc0FVVvDdymPoGaIUVjAtjIj/Cvm4IR1eHPa3N3jhhE
-ARC-Seal: i=1; a=rsa-sha256; t=1518708655; cv=none;
+X-Google-Smtp-Source: AH8x2266nohpZxeGsCkjlUG51qkq93AANrvGKWUJf0YBv+1NW3xzPaf8oKELY4vZ/80/1rOWJ2dG
+ARC-Seal: i=1; a=rsa-sha256; t=1518708652; cv=none;
         d=google.com; s=arc-20160816;
-        b=dlWXn5+avrUVj0Q0SeAJ69WX2TAfEfMBZgNu5jZmd8zjImnjWYGNXpnoOPg3Z4ZyNo
-         MetT+z9mL6rXpme9pJWPCteJpC+4yK445c2HyhFAT6NrRAqubBLqSnuZLKkoHtA3Dizn
-         aPeotEsqVZ7pA8DOD0kavcuAYVjVwc8EDODBNHClEK/llz0rfI6hr0M59ucpQXEoAJFz
-         eExyHG0FyCr560gpb6PvFXjSztxlyRe8+ISuhoqfJzWO0Jubx84VWhVsuxmNFzuLPgmM
-         EpT1a0ZIQggGi6K6ZYUsbdjMSMPoUFvjm7OPV7zmK2r3Jox85V7v1nZLWMXoGFYK5BoJ
-         YcNA==
+        b=L4cAKjx+BLWUHTfUbPBldZ9Z8E+Zq7lCAgNaIAQ97MGhCc875F665gPmMpHWuDKZIe
+         933WmiUzV2xKSpDUhBCgC3TUXTJcvmPRj6vSf5qu+L9nHs1jU53tCjo1qppVtu9P+Wda
+         hduJ+HNb85nwLT3RDUqX2T3IeVBfnfyiWI/aGQiXy8F8QTqdSo+6n9ZmqIDAzV0CGPj9
+         hlhIRSh42xoGYBZVXosC5sQks2g9PakRHdBw/D3xuHsudapM8P+0JJ9PuLsy1BT5+4nU
+         WiwJnX9VUcB+YTEKCZ5z+ZaaX/+pRer+AQk1HRlolku/4q+Wdx1lk0kHsB4hbPNmo+5S
+         E7Wg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LNgAbbbd4rOoAwX2YvwiDaBOCxNvX2h5Ew4qS1461ec=;
-        b=dPSWYJ+HVcJu/Qm4vj3t4tp09sXrbr7TQ7u2Z+w5x/Zzwof0gijcwvf1L32AqB/ppv
-         hcOAOqsaO9LfgCVyvTOCAUi0bezzrJDuVtnIfDoj+LlrwJQXY+SsZ2cUs9+mSY+LL0Ap
-         KAZERsll34ZHd82S22vzszs8YgTG1WfA0v0PKDCRqjMFDl/6uZofne3xvekeh/mmeDx7
-         EXcUnKa/AaFNgYduykOuKGh6T8xA4sv7066BeOvOosEfaoJPzyGSiGaAuGkfIgwm/RB9
-         wHrBWS3QXrZQ8TdffR6JRhg/lknmz0FYC3enpkDSTEAJSKlGI/bFIau6KxR6pEbFu46q
-         6QLQ==
+        bh=4IO7XPB6p9zLYkEeU+cOBWJWLkcxKeqKo0KjuHw5Pjc=;
+        b=p88PVcXvwkvuj14aDgpH6dDB30OkwPVMvHvj4pC9fulFGf4fiupEX6y0xrJAJkVvn1
+         8mrkH1ZpGspUKCHHpfvG4TEooQOOBa7f4Xd2Vlxb3y+e91MDLwI7/Vx4z2LybgbyvkTG
+         q7/1H9pANqxkEYYmPRGiw4ZiwLmTqEf5tNBKNn3gQ7MEWrzfNwc91NcOXY3pG6F2hWqa
+         f5jvQod/YRqv5a0zr/dOAyYUajIT8B3uKeyaY3BMBFGNnpfhp1JMY/GNXX1JierTNmYx
+         jXXpi8TCBj8SLpoddHfPne+nI29FQDDYwcv+E1WzR2jUkiFse104qoXACVM/6hTyETY7
+         ubfQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Shanker Donthineni <shankerd@codeaurora.org>,
 	Will Deacon <will.deacon@arm.com>,
 	Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 031/195] [Variant 3/Meltdown] arm64: mm: Invalidate both kernel and user ASIDs when performing TLBI
-Date: Thu, 15 Feb 2018 16:15:22 +0100
-Message-Id: <20180215151707.308102857@linuxfoundation.org>
+Subject: [PATCH 4.14 030/195] [Variant 3/Meltdown] arm64: mm: Add arm64_kernel_unmapped_at_el0 helper
+Date: Thu, 15 Feb 2018 16:15:21 +0100
+Message-Id: <20180215151707.264336550@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481446371488395?=
-X-GMAIL-MSGID: =?utf-8?q?1592481446371488395?=
+X-GMAIL-THRID: =?utf-8?q?1592481443573794235?=
+X-GMAIL-MSGID: =?utf-8?q?1592481443573794235?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,11 +54,15 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Will Deacon <will.deacon@arm.com>
 
 
-Commit 9b0de864b5bc upstream.
+Commit fc0e1299da54 upstream.
 
-Since an mm has both a kernel and a user ASID, we need to ensure that
-broadcast TLB maintenance targets both address spaces so that things
-like CoW continue to work with the uaccess primitives in the kernel.
+In order for code such as TLB invalidation to operate efficiently when
+the decision to map the kernel at EL0 is determined at runtime, this
+patch introduces a helper function, arm64_kernel_unmapped_at_el0, to
+determine whether or not the kernel is mapped whilst running in userspace.
+
+Currently, this just reports the value of CONFIG_UNMAP_KERNEL_AT_EL0,
+but will later be hooked up to a fake CPU capability using a static key.
 
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Tested-by: Laura Abbott <labbott@redhat.com>
@@ -67,68 +71,35 @@ Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/tlbflush.h |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/mmu.h |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -23,6 +23,7 @@
+--- a/arch/arm64/include/asm/mmu.h
++++ b/arch/arm64/include/asm/mmu.h
+@@ -19,6 +19,8 @@
+ #define MMCF_AARCH32	0x1	/* mm context flag for AArch32 executables */
+ #define USER_ASID_FLAG	(UL(1) << 48)
  
- #include <linux/sched.h>
- #include <asm/cputype.h>
-+#include <asm/mmu.h>
- 
- /*
-  * Raw TLBI operations.
-@@ -54,6 +55,11 @@
- 
- #define __tlbi(op, ...)		__TLBI_N(op, ##__VA_ARGS__, 1, 0)
- 
-+#define __tlbi_user(op, arg) do {						\
-+	if (arm64_kernel_unmapped_at_el0())					\
-+		__tlbi(op, (arg) | USER_ASID_FLAG);				\
-+} while (0)
++#ifndef __ASSEMBLY__
 +
- /*
-  *	TLB Management
-  *	==============
-@@ -115,6 +121,7 @@ static inline void flush_tlb_mm(struct m
+ typedef struct {
+ 	atomic64_t	id;
+ 	void		*vdso;
+@@ -32,6 +34,11 @@ typedef struct {
+  */
+ #define ASID(mm)	((mm)->context.id.counter & 0xffff)
  
- 	dsb(ishst);
- 	__tlbi(aside1is, asid);
-+	__tlbi_user(aside1is, asid);
- 	dsb(ish);
- }
++static inline bool arm64_kernel_unmapped_at_el0(void)
++{
++	return IS_ENABLED(CONFIG_UNMAP_KERNEL_AT_EL0);
++}
++
+ extern void paging_init(void);
+ extern void bootmem_init(void);
+ extern void __iomem *early_io_map(phys_addr_t phys, unsigned long virt);
+@@ -42,4 +49,5 @@ extern void create_pgd_mapping(struct mm
+ extern void *fixmap_remap_fdt(phys_addr_t dt_phys);
+ extern void mark_linear_text_alias_ro(void);
  
-@@ -125,6 +132,7 @@ static inline void flush_tlb_page(struct
- 
- 	dsb(ishst);
- 	__tlbi(vale1is, addr);
-+	__tlbi_user(vale1is, addr);
- 	dsb(ish);
- }
- 
-@@ -151,10 +159,13 @@ static inline void __flush_tlb_range(str
- 
- 	dsb(ishst);
- 	for (addr = start; addr < end; addr += 1 << (PAGE_SHIFT - 12)) {
--		if (last_level)
-+		if (last_level) {
- 			__tlbi(vale1is, addr);
--		else
-+			__tlbi_user(vale1is, addr);
-+		} else {
- 			__tlbi(vae1is, addr);
-+			__tlbi_user(vae1is, addr);
-+		}
- 	}
- 	dsb(ish);
- }
-@@ -194,6 +205,7 @@ static inline void __flush_tlb_pgtable(s
- 	unsigned long addr = uaddr >> 12 | (ASID(mm) << 48);
- 
- 	__tlbi(vae1is, addr);
-+	__tlbi_user(vae1is, addr);
- 	dsb(ish);
- }
- 
++#endif	/* !__ASSEMBLY__ */
+ #endif
