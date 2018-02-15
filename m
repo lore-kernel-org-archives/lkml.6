@@ -1,85 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967877AbeBOL0T (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 06:26:19 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:37966 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966662AbeBOL0S (ORCPT
+        id S967905AbeBOLra (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 06:47:30 -0500
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:33599 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967814AbeBOLr1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 06:26:18 -0500
-X-Google-Smtp-Source: AH8x224tWSGWevoKQHBcCmstmnoyGEiHlcJ2LE34VBNXaZTmD7meii+979GwmWC+IH1BvYO23Ej9hPK9fxAquIbz5r0=
+        Thu, 15 Feb 2018 06:47:27 -0500
+X-Google-Smtp-Source: AH8x2269s1yiXUMBadBEwQafFSp8irngi22bEtoV7+40TXhnsu1LgBVHOWZfAJPnz6zBnp0ygCLQ04BUEccu/EAk/+s=
 MIME-Version: 1.0
-In-Reply-To: <20180215111423.96598-1-borntraeger@de.ibm.com>
-References: <2324e2cc-ff55-4d57-2807-c7f72f9ea0ca@de.ibm.com> <20180215111423.96598-1-borntraeger@de.ibm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 15 Feb 2018 12:26:16 +0100
-X-Google-Sender-Auth: IShv1NbgCOYlM4izngakURwsdhg
-Message-ID: <CAMuHMdWCK1V3PWXHMNZUmFVMCSqi5xhs72mT_M=gE96TSzMN9w@mail.gmail.com>
-Subject: Re: [PATCH] s390/console: enable dummy console for vt
-To: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Farhan Ali <alifm@linux.vnet.ibm.com>,
+In-Reply-To: <e3fb78b3-5f5c-fe96-9f02-e96092963c17@huawei.com>
+References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
+ <1518543933-22456-8-git-send-email-john.garry@huawei.com> <20180214161635.GA13849@e107981-ln.cambridge.arm.com>
+ <65185a4d-c712-4486-d713-3fa9de14e35d@huawei.com> <e3fb78b3-5f5c-fe96-9f02-e96092963c17@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 15 Feb 2018 12:47:25 +0100
+X-Google-Sender-Auth: SbY3KiVioADnvtIhW-J7kHHjuBQ
+Message-ID: <CAJZ5v0jGvo+cutmvi3WSe1JNvQ1UvZhJr1mQ76=8=1E5Gq+iRg@mail.gmail.com>
+Subject: Re: [PATCH v13 7/9] ACPI: Translate the I/O range of non-MMIO devices
+ before scanning
+To: John Garry <john.garry@huawei.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Hanjun Guo <hanjun.guo@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
+        Dann Frazier <dann.frazier@canonical.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Rob Herring <robh@kernel.org>, Joe Perches <joe@perches.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
-        Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        uml-devel <user-mode-linux-devel@lists.sourceforge.net>,
-        Thomas Huth <thuth@redhat.com>
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, Corey Minyard <minyard@acm.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christian,
-
-On Thu, Feb 15, 2018 at 12:14 PM, Christian Borntraeger
-<borntraeger@de.ibm.com> wrote:
-> To enable the virtual terminal layer with virtio-gpu, we need to
-> provide the dummy console. This console is hidden behind CONFIG_IOMEM
-> via the graphics support. Instead of fully enabling the graphic
-> drivers lets just provide a Kconfig option for the dummy console.
+On Thu, Feb 15, 2018 at 12:19 PM, John Garry <john.garry@huawei.com> wrote:
+>> Nothing apart from only being used by arm64 platforms today, which is
+>> circumstantial.
+>>
+>>>
+>>> I understand you need to find a place to add the:
+>>>
+>>> acpi_indirect_io_scan_init()
+>>>
+>>> to be called from core ACPI code because ACPI can't handle probe
+>>> dependencies in any other way but other than that this patch is
+>>> a Hisilicon ACPI driver - there is nothing generic in it (or at
+>>> least there are no standard bindings to make it so).
+>>>
+>>> Whether a callback from ACPI core code (acpi_scan_init()) to a driver
+>>> specific hook is sane or not that's the question and the only reason
+>>> why you want to add this in drivers/acpi/arm64 rather than, say,
+>>> drivers/bus (as you do for the DT driver).
+>>>
+>>> I do not know Rafael's opinion on the above, I would like to help
+>>> you make forward progress but please understand my concerns, mostly
+>>> on FW side.
+>>>
+>>
+>> I did mention an alternative in my "ping" in v12 patch 7/9 (Feb 1), but
+>> no response to this specific note so I kept on the same path.
+>>
+>> Here's what I then wrote:
+>> "I think another solution - which you may prefer - is to avoid adding
+>> this scan handler (and all this other scan code) and add a check like
+>> acpi_is_serial_bus_slave() [which checks the device parent versus a list
+>> of known indirectIO hosts] to not enumerate these children, and do it
+>> from the LLDD host probe instead (https://lkml.org/lkml/2017/6/16/250)"
+>>
 >
-> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> ---
-> New version: instead of moving around the graphic and console stuff,
-> let's just keep an s390 specific variant of CONFIG_DUMMY_CONSOLE
->  arch/s390/Kconfig | 5 +++++
->  1 file changed, 5 insertions(+)
+> Hi Rafael, Lorenzo,
 >
-> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-> index cbe1d978693a..a69690f616f3 100644
-> --- a/arch/s390/Kconfig
-> +++ b/arch/s390/Kconfig
-> @@ -952,6 +952,11 @@ config S390_HYPFS_FS
+> I can avoid adding the scan handler in acpi_indirectio.c by skipping the
+> child enumeration, like with this change in scan.c:
 >
->  source "arch/s390/kvm/Kconfig"
->
-> +config DUMMY_CONSOLE
-> +       bool
-> +       depends on VT
-> +       default y
+> +static const struct acpi_device_id indirect_io_hosts[] = {
+> +    {"HISI0191", 0},    /* HiSilicon LPC host */
+> +    {},
+> +};
 > +
->  config S390_GUEST
->         def_bool y
->         prompt "s390 support for virtio devices"
+> +static bool acpi_is_indirect_io_slave(struct acpi_device *device)
+> +{
 
-Really?
+Why don't you put the table definition here?
 
-You already have your own copy of HAS_IOMEM, which makes it hard for
-people to track which one applies where.
+> +    struct acpi_device *parent = dev->parent;
+> +
+> +    if (!parent || acpi_match_device_ids(parent, indirect_io_hosts))
+> +        return false;
+> +
+> +    return true;
 
-Gr{oetje,eeting}s,
+return parent && !acpi_match_device_ids(parent, indirect_io_hosts);
 
-                        Geert
+> +}
+> +
+>  static bool acpi_is_serial_bus_slave(struct acpi_device *device)
+>  {
+>      struct list_head resource_list;
+>      bool is_serial_bus_slave = false;
+>
+> +    if (acpi_is_indirect_io_slave(device))
+> +        return true;
+> +
+>      /* Macs use device properties in lieu of _CRS resources */
+>
+>
+> This means I can move all this scan code into the LLDD.
+>
+> What do you think? Please let me know.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+If Lorenzo agrees, that will be fine by me modulo the above remarks.
