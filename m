@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1936761-1518711457-2-1181129945522056947
+X-Cyrus-Session-Id: sloti22d1t05-1936761-1518711443-2-6092925134766172386
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensv,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518711456; b=HflMlXkDllfJ8r1ZEm7hQwfJxv3iZd9smnrSKbOMh7wFBQh
-    IesZLDBsmyglh/uhrllA4OKCfDkTtoU6q6bF6oERNzA9pabjgI7DouTtuefcQh4i
-    XdQXHzGXwbKFSuzq/SeY+/mYoeYz14EXAecEpb/F0MXzs1qIMsEcPuXVcbymbcp6
-    kZxSPkphDid3qX6S4W2fxnALa3m18SJd5fGmHWmeyU9VGZMYbs7d9QFCUa5OYzEI
-    1CX6Vk/i6zKU9nloinGK1Sa436nLDGhXs7/At7AFpXaBa/TIJ7ySfz8W2fuH9hIL
-    +fnNjfB03Z5QQnJU6JFK3FuytonFIXBcYTyvX3A==
+    t=1518711442; b=EJgjjZeahtypGXPq0nhbeVLfb1DIYoG70WQR84oIY+GKuwy
+    hG/Y0cucgupVR4fh5UnwLlfVv7HhOgPszaqJnhvkSVltvYjlKNDCJMK1e7OKKAQJ
+    iB0TIo2Syjuh3tTJEoFOPRSyvctA2RC0WJvLjvakwGhnMxbFhykq36r0dr+PIKfr
+    XRPkHZiqgpyCUK6Sc7nbNooooC+f050VyZt9izJfHEsnwimZVY2yeY3tnYhQAJmo
+    fcTPs7a/kIdftP8y9JN3n+NcbL/odEINsZZFsL1rtruRI3hJNRfuysEC3B5XHup3
+    gcD2Fh/12HveJT/4kHzuRCR+FI1wJe5XZ++23eA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518711456; bh=ltxBE9lNf+SEgdQfwVoPpj9abz
-    edas1EMTWjBX7wCyE=; b=v6UxT1HCj5Hx9+kIdHH/sDhfYIlM3OEBQbt7EY089e
-    2w0sNZ+h8CZhCS8Cp3i8/EgRsg7s8ryj1xvaUBRCPpoN12OKIop0VOSV4NpGYbFy
-    P79QYvSmjlU+pbugQd4O0xd6880CmsFyaemA2rkvckU0MOzpAChC74cADvz2gaMh
-    5zmBCAEyLoSzb/Y4CLM0SKByCm4SGoIJhOe9zntJLbR4RGWjgZ1v1YZyy/yu7WGj
-    VXojhEvd1kwsP7c56jm0xVs8wYMf1VT57hiMcAU29ULsKO73ByDmCZuDTlNrLpja
-    T/EJCpjmwdZIK+ITq+o5dxcR9BK46dr/5Fpqw5YSvFwQ==
+    :list-id; s=arctest; t=1518711442; bh=hgxU0TtHmIxszWxx0QcTN1OWjM
+    8vo4dDTSXUn+c4nrw=; b=s73H094mxJVXDJD5F8z5VOHAACNmDBF747OMewAdhF
+    l8YYWlMz9Lg44FblW6Q4ESkRq3Gv6A0T2sqNYPBr+5BLRzo0zrlElZXihc8Oydz6
+    3k80+NiH5ydmOumpSC/BdI8i6O8fLoXBv3f7MbB+eLbMlVYKQMkYfKzqOdHtVuba
+    TU9P7SnyHVOwmiqpxprlMKsyxH+0dwG8NILLEFDKw/wZmy6Ot8Ud6SleoL7I9z/T
+    5lnMjx2/jal2dwcPF+tgkjgPnSqK1mx8JlJeTVwBuUSKYmJD7TgPuXTiLOQmTwzT
+    JqvKRi1zeRE501hgCjqBX3fd3+XBUXYeTVh27RxSrMdg==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,21 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164917AbeBOQRU (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 11:17:20 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34296 "EHLO
+        id S1424324AbeBOQQ7 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 11:16:59 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34332 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1165424AbeBOPoL (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:44:11 -0500
+        with ESMTP id S1165442AbeBOPoR (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:44:17 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.15 121/202] media: v4l2-compat-ioctl32.c: fix ctrl_is_pointer
-Date: Thu, 15 Feb 2018 16:17:01 +0100
-Message-Id: <20180215151719.607488847@linuxfoundation.org>
+Subject: [PATCH 4.15 123/202] media: v4l2-compat-ioctl32.c: drop pr_info for unknown buffer type
+Date: Thu, 15 Feb 2018 16:17:03 +0100
+Message-Id: <20180215151719.692726426@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -80,18 +80,11 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit b8c601e8af2d08f733d74defa8465303391bb930 upstream.
+commit 169f24ca68bf0f247d111aef07af00dd3a02ae88 upstream.
 
-ctrl_is_pointer just hardcoded two known string controls, but that
-caused problems when using e.g. custom controls that use a pointer
-for the payload.
-
-Reimplement this function: it now finds the v4l2_ctrl (if the driver
-uses the control framework) or it calls vidioc_query_ext_ctrl (if the
-driver implements that directly).
-
-In both cases it can now check if the control is a pointer control
-or not.
+There is nothing wrong with using an unknown buffer type. So
+stop spamming the kernel log whenever this happens. The kernel
+will just return -EINVAL to signal this.
 
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
@@ -99,119 +92,26 @@ Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |   59 +++++++++++++++++---------
- 1 file changed, 39 insertions(+), 20 deletions(-)
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
 --- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
 +++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -18,6 +18,8 @@
- #include <linux/videodev2.h>
- #include <linux/v4l2-subdev.h>
- #include <media/v4l2-dev.h>
-+#include <media/v4l2-fh.h>
-+#include <media/v4l2-ctrls.h>
- #include <media/v4l2-ioctl.h>
- 
- static long native_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-@@ -601,24 +603,39 @@ struct v4l2_ext_control32 {
- 	};
- } __attribute__ ((packed));
- 
--/* The following function really belong in v4l2-common, but that causes
--   a circular dependency between modules. We need to think about this, but
--   for now this will do. */
--
--/* Return non-zero if this control is a pointer type. Currently only
--   type STRING is a pointer type. */
--static inline int ctrl_is_pointer(u32 id)
--{
--	switch (id) {
--	case V4L2_CID_RDS_TX_PS_NAME:
--	case V4L2_CID_RDS_TX_RADIO_TEXT:
--		return 1;
--	default:
--		return 0;
-+/* Return true if this control is a pointer type. */
-+static inline bool ctrl_is_pointer(struct file *file, u32 id)
-+{
-+	struct video_device *vdev = video_devdata(file);
-+	struct v4l2_fh *fh = NULL;
-+	struct v4l2_ctrl_handler *hdl = NULL;
-+	struct v4l2_query_ext_ctrl qec = { id };
-+	const struct v4l2_ioctl_ops *ops = vdev->ioctl_ops;
-+
-+	if (test_bit(V4L2_FL_USES_V4L2_FH, &vdev->flags))
-+		fh = file->private_data;
-+
-+	if (fh && fh->ctrl_handler)
-+		hdl = fh->ctrl_handler;
-+	else if (vdev->ctrl_handler)
-+		hdl = vdev->ctrl_handler;
-+
-+	if (hdl) {
-+		struct v4l2_ctrl *ctrl = v4l2_ctrl_find(hdl, id);
-+
-+		return ctrl && ctrl->is_ptr;
+@@ -179,8 +179,6 @@ static int __get_v4l2_format32(struct v4
+ 		return copy_from_user(&kp->fmt.meta, &up->fmt.meta,
+ 				      sizeof(kp->fmt.meta)) ? -EFAULT : 0;
+ 	default:
+-		pr_info("compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
+-			kp->type);
+ 		return -EINVAL;
  	}
-+
-+	if (!ops->vidioc_query_ext_ctrl)
-+		return false;
-+
-+	return !ops->vidioc_query_ext_ctrl(file, fh, &qec) &&
-+		(qec.flags & V4L2_CTRL_FLAG_HAS_PAYLOAD);
  }
- 
--static int get_v4l2_ext_controls32(struct v4l2_ext_controls *kp, struct v4l2_ext_controls32 __user *up)
-+static int get_v4l2_ext_controls32(struct file *file,
-+				   struct v4l2_ext_controls *kp,
-+				   struct v4l2_ext_controls32 __user *up)
- {
- 	struct v4l2_ext_control32 __user *ucontrols;
- 	struct v4l2_ext_control __user *kcontrols;
-@@ -651,7 +668,7 @@ static int get_v4l2_ext_controls32(struc
- 			return -EFAULT;
- 		if (get_user(id, &kcontrols->id))
- 			return -EFAULT;
--		if (ctrl_is_pointer(id)) {
-+		if (ctrl_is_pointer(file, id)) {
- 			void __user *s;
- 
- 			if (get_user(p, &ucontrols->string))
-@@ -666,7 +683,9 @@ static int get_v4l2_ext_controls32(struc
- 	return 0;
+@@ -233,8 +231,6 @@ static int __put_v4l2_format32(struct v4
+ 		return copy_to_user(&up->fmt.meta, &kp->fmt.meta,
+ 				    sizeof(kp->fmt.meta)) ? -EFAULT : 0;
+ 	default:
+-		pr_info("compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
+-			kp->type);
+ 		return -EINVAL;
+ 	}
  }
- 
--static int put_v4l2_ext_controls32(struct v4l2_ext_controls *kp, struct v4l2_ext_controls32 __user *up)
-+static int put_v4l2_ext_controls32(struct file *file,
-+				   struct v4l2_ext_controls *kp,
-+				   struct v4l2_ext_controls32 __user *up)
- {
- 	struct v4l2_ext_control32 __user *ucontrols;
- 	struct v4l2_ext_control __user *kcontrols =
-@@ -698,7 +717,7 @@ static int put_v4l2_ext_controls32(struc
- 		/* Do not modify the pointer when copying a pointer control.
- 		   The contents of the pointer was changed, not the pointer
- 		   itself. */
--		if (ctrl_is_pointer(id))
-+		if (ctrl_is_pointer(file, id))
- 			size -= sizeof(ucontrols->value64);
- 		if (copy_in_user(ucontrols, kcontrols, size))
- 			return -EFAULT;
-@@ -912,7 +931,7 @@ static long do_video_ioctl(struct file *
- 	case VIDIOC_G_EXT_CTRLS:
- 	case VIDIOC_S_EXT_CTRLS:
- 	case VIDIOC_TRY_EXT_CTRLS:
--		err = get_v4l2_ext_controls32(&karg.v2ecs, up);
-+		err = get_v4l2_ext_controls32(file, &karg.v2ecs, up);
- 		compatible_arg = 0;
- 		break;
- 	case VIDIOC_DQEVENT:
-@@ -939,7 +958,7 @@ static long do_video_ioctl(struct file *
- 	case VIDIOC_G_EXT_CTRLS:
- 	case VIDIOC_S_EXT_CTRLS:
- 	case VIDIOC_TRY_EXT_CTRLS:
--		if (put_v4l2_ext_controls32(&karg.v2ecs, up))
-+		if (put_v4l2_ext_controls32(file, &karg.v2ecs, up))
- 			err = -EFAULT;
- 		break;
- 	case VIDIOC_S_EDID:
