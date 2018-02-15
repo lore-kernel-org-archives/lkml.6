@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1883814-1518711236-2-4537304146987311251
+X-Cyrus-Session-Id: sloti22d1t05-1883814-1518711221-2-9877965733491660088
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518711235; b=VW9gdwZsoKcXSRNUUylgb2r20FAy8CvNZCWOtJyDdvrYwvr
-    YfpUBuKSwTt1j84qTQlmxRSPM0AY3i42mFBqIXTGou4F7PDWslZ6Vcxspyu3WFxZ
-    7sKS/Qw399d8JnxHM2OqT7K+HRnr3ol+8NhnzDYok6SWZ2ui3TVo99npmro18cx6
-    TNhNIdsfOJ4hsv/1FE74gsjZPz7AylsLIuaOKHKd1mceHq2lT5vlkQ+WEh7c7Q6g
-    T6AxmSMPFX2z1AqLj9SU3xt8FtJDwQYVpr2g/d4+dh6Absh0EnCkXTOnBOoMeeiw
-    pv+C0jLhSWIAec5yGuGTiz9yovtL1swi+Muj1TQ==
+    t=1518711220; b=CN2inNoPEu3AuFF7YHeNQJuZN3Ci117mU9CaQnWx/jswbtD
+    2QhSlVdQyncUSVRIMCZl6OgZMKlK1GHJvt2fn1POlk9SXZFnCw0WJPbZ1Zyvp6dm
+    662WUGhlOjW6omirPBTHKPISjkrnTR0B/najdAPpiFKKFqswanr5OPjD/UBXCfdY
+    G/LQF6XARkXuPjF+/Ml1VKva7pArZX7RS+HzdaIa2Q+fOuedCJIONU9j0exjvggG
+    LiQNIOKpCS1s8pbDX+YM0gMavCaznuIH6eXM9GeJ+ZluY4TWGTGLCQqTiWB57LAE
+    Tq+/V61EUFNXkI8XhBbfHbaI9JncvfzzbatgfzQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518711235; bh=rNmUSKzhKM2eiiUjxhO4l6mPkf
-    6NsrDu9zwzLwQWttw=; b=ZVHoF6us1fTCrkpGMtNzXvR87JR/RHF+86bKsCCeAE
-    RLTDsvQfYgLiP27+/gy0YR1GYuUx+yIvbrYL1HRGMQQPGNsirThKnXI1uGI6JAgP
-    8SmsTVbh2Gc0x0ApSn4/21Gj3209RUMg0KZXUNiS0bd+7oZFwkfYjowA2LcnfwLX
-    ofxXKWcQcV7U55rQgzTTyYZ+J4XA3jgW+MwfiWOx4HF4pqlvtYIJFh1L6CbI4bEm
-    3QpFWoSpA4/+aO4K5jvX4X3rOVPUBsdj4+RytSGNlZ6nS//SyEvdBLEgrnwYnQnz
-    dFdYvfVXqz9A7LvaMrNYCXkzgcqZdO+U7FucX7ofbNoA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518711220; bh=/rbA6UqYK5VFLAHauV+ImutjQV
+    roXz5q1WIOurcYhOU=; b=ZmL3GGmYMR3YCb9BN3rTndtPFlS3OjTPHzptK/AlIJ
+    PuEdi4+rCO8l0FQQFirZSggmwdHvHNeDd3oFnvSqANUAdrQ4e3YKryJGnuIveYVt
+    lDocktKDQRMlfNf64HbBKOPwI51O3TjdFtTG/f4URLgQ5AhNrh8RxOqbDUiOWswk
+    nuiYuw4IRVHFAxxHkONM8ACGL4IqhHtCqBnZs7K6G0WMDcuH4+7I2BW93gUqdo6c
+    n+OSrWb2nAtbe8UyjGHhVc87hk73aBDNCs7lhNlIDV4gM7Uz1iqq5s3JrdvSCOTA
+    ukF6U295LvAG1B4y7SIO+QhHxE5NUW7rw4WgnnqStjWw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,21 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424355AbeBOPo5 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:44:57 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34756 "EHLO
+        id S1424560AbeBOQNW (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 11:13:22 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34788 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033989AbeBOPo4 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:44:56 -0500
+        with ESMTP id S1424375AbeBOPpC (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:45:02 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.15 139/202] ASoC: skl: Fix kernel warning due to zero NHTL entry
-Date: Thu, 15 Feb 2018 16:17:19 +0100
-Message-Id: <20180215151720.365039969@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@iguana.be>
+Subject: [PATCH 4.15 141/202] watchdog: imx2_wdt: restore previous timeout after suspend+resume
+Date: Thu, 15 Feb 2018 16:17:21 +0100
+Message-Id: <20180215151720.454617405@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -77,40 +78,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Martin Kaiser <martin@kaiser.cx>
 
-commit 20a1ea2222e7cbf96e9bf8579362e971491e6aea upstream.
+commit 0be267255cef64e1c58475baa7b25568355a3816 upstream.
 
-I got the following kernel warning when loading snd-soc-skl module on
-Dell Latitude 7270 laptop:
- memremap attempted on mixed range 0x0000000000000000 size: 0x0
- WARNING: CPU: 0 PID: 484 at kernel/memremap.c:98 memremap+0x8a/0x180
- Call Trace:
-  skl_nhlt_init+0x82/0xf0 [snd_soc_skl]
-  skl_probe+0x2ee/0x7c0 [snd_soc_skl]
-  ....
+When the watchdog device is suspended, its timeout is set to the maximum
+value. During resume, the previously set timeout should be restored.
+This does not work at the moment.
 
-It seems that the machine doesn't support the SKL DSP gives the empty
-NHLT entry, and it triggers the warning.  For avoiding it, let do the
-zero check before calling memremap().
+The suspend function calls
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+imx2_wdt_set_timeout(wdog, IMX2_WDT_MAX_TIME);
+
+and resume reverts this by calling
+
+imx2_wdt_set_timeout(wdog, wdog->timeout);
+
+However, imx2_wdt_set_timeout() updates wdog->timeout. Therefore,
+wdog->timeout is set to IMX2_WDT_MAX_TIME when we enter the resume
+function.
+
+Fix this by adding a new function __imx2_wdt_set_timeout() which
+only updates the hardware settings. imx2_wdt_set_timeout() now calls
+__imx2_wdt_set_timeout() and then saves the new timeout to
+wdog->timeout.
+
+During suspend, we call __imx2_wdt_set_timeout() directly so that
+wdog->timeout won't be updated and we can restore the previous value
+during resume. This approach makes wdog->timeout different from the
+actual setting in the hardware which is usually not a good thing.
+However, the two differ only while we're suspended and no kernel code is
+running, so it should be ok in this case.
+
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/intel/skylake/skl-nhlt.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/watchdog/imx2_wdt.c |   20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
---- a/sound/soc/intel/skylake/skl-nhlt.c
-+++ b/sound/soc/intel/skylake/skl-nhlt.c
-@@ -43,7 +43,8 @@ struct nhlt_acpi_table *skl_nhlt_init(st
- 	obj = acpi_evaluate_dsm(handle, &osc_guid, 1, 1, NULL);
- 	if (obj && obj->type == ACPI_TYPE_BUFFER) {
- 		nhlt_ptr = (struct nhlt_resource_desc  *)obj->buffer.pointer;
--		nhlt_table = (struct nhlt_acpi_table *)
-+		if (nhlt_ptr->length)
-+			nhlt_table = (struct nhlt_acpi_table *)
- 				memremap(nhlt_ptr->min_addr, nhlt_ptr->length,
- 				MEMREMAP_WB);
- 		ACPI_FREE(obj);
+--- a/drivers/watchdog/imx2_wdt.c
++++ b/drivers/watchdog/imx2_wdt.c
+@@ -169,15 +169,21 @@ static int imx2_wdt_ping(struct watchdog
+ 	return 0;
+ }
+ 
+-static int imx2_wdt_set_timeout(struct watchdog_device *wdog,
+-				unsigned int new_timeout)
++static void __imx2_wdt_set_timeout(struct watchdog_device *wdog,
++				   unsigned int new_timeout)
+ {
+ 	struct imx2_wdt_device *wdev = watchdog_get_drvdata(wdog);
+ 
+-	wdog->timeout = new_timeout;
+-
+ 	regmap_update_bits(wdev->regmap, IMX2_WDT_WCR, IMX2_WDT_WCR_WT,
+ 			   WDOG_SEC_TO_COUNT(new_timeout));
++}
++
++static int imx2_wdt_set_timeout(struct watchdog_device *wdog,
++				unsigned int new_timeout)
++{
++	__imx2_wdt_set_timeout(wdog, new_timeout);
++
++	wdog->timeout = new_timeout;
+ 	return 0;
+ }
+ 
+@@ -371,7 +377,11 @@ static int imx2_wdt_suspend(struct devic
+ 
+ 	/* The watchdog IP block is running */
+ 	if (imx2_wdt_is_running(wdev)) {
+-		imx2_wdt_set_timeout(wdog, IMX2_WDT_MAX_TIME);
++		/*
++		 * Don't update wdog->timeout, we'll restore the current value
++		 * during resume.
++		 */
++		__imx2_wdt_set_timeout(wdog, IMX2_WDT_MAX_TIME);
+ 		imx2_wdt_ping(wdog);
+ 	}
+ 
