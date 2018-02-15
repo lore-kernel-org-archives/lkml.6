@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2179907-1518720212-2-9002192787945826297
+X-Cyrus-Session-Id: sloti22d1t05-2178418-1518720192-2-8412572821347079638
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720211; b=xBQVVVIaUrYYIGKemXrskLG7WOcokye369jFFU/GaVVCwZd
-    jjh+fMzjRz2fBmRQ6+vhcYV4z1dPj/86PYQvbruNy9lleJg9Dk1/pxraUNM+ECGJ
-    6Rn9s+GD7A25tUOO/vvDYvA/2FZ4eGD5Y510eBB9+UAMZEuyq2RUIu4nWA5maAhb
-    338+ZgU2C8e0fMkp/ptUyadvduYCMb7845LU1Hn5deUJv27scgGxCnsUHl+ghUoB
-    K2As1FvJTfRxLTcJwbk6IYtHR0huDWVw4j1jTFIeTKZVgqbcOpFGXI6DhOMgFWqs
-    sLo9Kq/ZxAG+6AJ+WbdmZlaFM27e568HAc2bcXA==
+    t=1518720191; b=a9UfpfNNcKG/llm27Fu2h7b3gizqUVTSXwjj181CUN2TRSX
+    lo6irkRqJ4lhLQIfKVemkmFJUWxGq5eqeqjZB7Pswu6SjlVfDoYbFfQa5IsaFZ6h
+    3msDYfQklkNavl/pOu/G7l8OjcLIwBVNijHJAo9MfR9GYBWmBOiq+2VFyl4rn40L
+    y79QB72zsv5gxeRc0TfQVDrD3+kozPFqsi5OXyiGkWTJxAQsPjwVIjsChmYkGYcq
+    s7rZaTmWvzkQTDe8bPoJAAhIPCR/yIZdsprl7Dg9bMfGqVamFsGQloYxdW30N1IO
+    /uLxLC4SeTHnIvwlihWfktsiQuNiVmp4ZxfWVNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720211; bh=e9Dp+XiPAIGIhUGKX9OreGrB25
-    gC6FfqO/ruiYtYQKw=; b=E/a2Wg26s5anFL95M2Js0paEFJdtb7WEbi70XDkkEj
-    849ZdE/EWWOQkaiBCBOtR2XF07GyhPp8QerXC0I6pFfgl/beYTc2xNw14genglAU
-    Rp/Jlq2IWVOBIluw0tZ/bOPV0MVhDcj7rZglVWnKzOgl4VgdXv+iczqZmJEF+65w
-    xDpvNu+vX1EmRanJ1mTuJlP07I3LVassGBIVySLMEaMQGvd++ycyYxmUGdXQCNSu
-    lcsB5BZ2ZUtUB01s/ItTa+12ZJb0AlBWZCZClHmY7XpQJ3McgqeH6ss7qPGk9mWx
-    4226BjGvQUXrywYtcMbq/Qy4Pj0+gahONHfJ3Y1ODtqA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518720191; bh=Wq1NMvKuNthfPgYzbcUkO4HQeg
+    VtKTmXTZYxvQHeRK0=; b=TnexiCgSxmwOjSTcQLQMIvDhhhrttPfqe4qT/ZZN+J
+    W5nCAAyZjB39gb7QfDmwLddMrAiCEm1su0AEOElM03NyuWAhtDS8SxdysXq6+9oN
+    ZEgRXFzxVwFtsHMINE2pkYuHBfm9krYrhSzHy2IN8uvsQkw2NVQ7m50rkplhBvbC
+    BHhmvts0K7VCfbMVMytRCemRyOCJ9LQRuoKvqQHDdBwy3uCy+PewY7mTAGGeWlVh
+    KM2bINwjtAKgkd6wwxkgZXUSEtEj8/GTy41irpJN3sw8Bpi1dyjUNpZxSknmDkT6
+    T0XXFy97ilObTIgF73zNUSc6m3O/vw7Db83+Ya/J7b5w==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162659AbeBOSnQ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 13:43:16 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51014 "EHLO
+        id S1162650AbeBOPX0 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:23:26 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51066 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162636AbeBOPXW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:22 -0500
+        with ESMTP id S1161910AbeBOPXZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:25 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Galbraith <efault@gmx.de>,
+        stable@vger.kernel.org, "J. Bruce Fields" <bfields@redhat.com>,
         Trond Myklebust <trond.myklebust@primarydata.com>
-Subject: [PATCH 4.4 060/108] NFS: Add a cond_resched() to nfs_commit_release_pages()
-Date: Thu, 15 Feb 2018 16:16:57 +0100
-Message-Id: <20180215151230.825319379@linuxfoundation.org>
+Subject: [PATCH 4.4 061/108] NFS: commit direct writes even if they fail partially
+Date: Thu, 15 Feb 2018 16:16:58 +0100
+Message-Id: <20180215151230.988630891@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -77,30 +77,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Trond Myklebust <trond.myklebust@primarydata.com>
+From: J. Bruce Fields <bfields@redhat.com>
 
-commit 7f1bda447c9bd48b415acedba6b830f61591601f upstream.
+commit 1b8d97b0a837beaf48a8449955b52c650a7114b4 upstream.
 
-The commit list can get very large, and so we need a cond_resched()
-in nfs_commit_release_pages() in order to ensure we don't hog the CPU
-for excessive periods of time.
+If some of the WRITE calls making up an O_DIRECT write syscall fail,
+we neglect to commit, even if some of the WRITEs succeed.
 
-Reported-by: Mike Galbraith <efault@gmx.de>
+We also depend on the commit code to free the reference count on the
+nfs_page taken in the "if (request_commit)" case at the end of
+nfs_direct_write_completion().  The problem was originally noticed
+because ENOSPC's encountered partway through a write would result in a
+closed file being sillyrenamed when it should have been unlinked.
+
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/write.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/nfs/direct.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/fs/nfs/write.c
-+++ b/fs/nfs/write.c
-@@ -1746,6 +1746,8 @@ static void nfs_commit_release_pages(str
- 		set_bit(NFS_CONTEXT_RESEND_WRITES, &req->wb_context->flags);
- 	next:
- 		nfs_unlock_and_release_request(req);
-+		/* Latency breaker */
-+		cond_resched();
- 	}
- 	nfss = NFS_SERVER(data->inode);
- 	if (atomic_long_read(&nfss->writeback) < NFS_CONGESTION_OFF_THRESH)
+--- a/fs/nfs/direct.c
++++ b/fs/nfs/direct.c
+@@ -787,10 +787,8 @@ static void nfs_direct_write_completion(
+ 
+ 	spin_lock(&dreq->lock);
+ 
+-	if (test_bit(NFS_IOHDR_ERROR, &hdr->flags)) {
+-		dreq->flags = 0;
++	if (test_bit(NFS_IOHDR_ERROR, &hdr->flags))
+ 		dreq->error = hdr->error;
+-	}
+ 	if (dreq->error == 0) {
+ 		nfs_direct_good_bytes(dreq, hdr);
+ 		if (nfs_write_need_commit(hdr)) {
