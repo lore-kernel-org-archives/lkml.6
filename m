@@ -1,71 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755161AbeBOIWH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 03:22:07 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:45066 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754906AbeBOIVO (ORCPT
+        id S1755065AbeBOIXY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 03:23:24 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:32921 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754950AbeBOIXW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 03:21:14 -0500
-From: Philippe Cornu <philippe.cornu@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        "Vincent Abriou" <vincent.abriou@st.com>
-Subject: [PATCH 2/3] ARM: dts: stm32: Add new stm32f469 dtsi file with mipi dsi
-Date: Thu, 15 Feb 2018 09:20:13 +0100
-Message-ID: <20180215082014.30383-3-philippe.cornu@st.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180215082014.30383-1-philippe.cornu@st.com>
-References: <20180215082014.30383-1-philippe.cornu@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.129.6.172]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-15_03:,,
- signatures=0
+        Thu, 15 Feb 2018 03:23:22 -0500
+X-Google-Smtp-Source: AH8x2240v5xsYHS5jCTQee5inETqtFFYBTH2Cr08VE/NxxxJ1TjvKxPUHBMlNePyzngRr49bQIbjsg==
+From: Corentin Labbe <clabbe@baylibre.com>
+To: airlied@linux.ie, inki.dae@samsung.com, jy0922.shim@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, kyungmin.park@samsung.com,
+        sw0312.kim@samsung.com, chulspro.kim@samsung.com, yj44.cho@samsung.com
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH] drm/exynos: remove exynos_drm_rotator.h
+Date: Thu, 15 Feb 2018 08:23:15 +0000
+Message-Id: <1518682995-10319-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the stm32f4 family, mipi dsi is only supported on stm32f469.
-So add a new stm32f469 dtsi file & add mipi dsi support inside.
+Since its inclusion in 2012 via commit bea8a429d91a ("drm/exynos: add rotator ipp driver")
+this header is not used by any source files and is empty.
+Lets just remove it.
 
-Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 ---
- arch/arm/boot/dts/stm32f469.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
- create mode 100644 arch/arm/boot/dts/stm32f469.dtsi
+ drivers/gpu/drm/exynos/exynos_drm_rotator.h | 19 -------------------
+ 1 file changed, 19 deletions(-)
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_rotator.h
 
-diff --git a/arch/arm/boot/dts/stm32f469.dtsi b/arch/arm/boot/dts/stm32f469.dtsi
-new file mode 100644
-index 000000000000..5ae5213f68cb
---- /dev/null
-+++ b/arch/arm/boot/dts/stm32f469.dtsi
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-+/* Copyright (C) STMicroelectronics 2017 - All Rights Reserved */
-+
-+#include "stm32f429.dtsi"
-+
-+/ {
-+	soc {
-+		dsi: dsi@40016c00 {
-+			compatible = "st,stm32-dsi";
-+			reg = <0x40016c00 0x800>;
-+			interrupts = <92>;
-+			resets = <&rcc STM32F4_APB2_RESET(DSI)>;
-+			reset-names = "apb";
-+			clocks = <&rcc 1 CLK_F469_DSI>, <&clk_hse>;
-+			clock-names = "pclk", "ref";
-+			status = "disabled";
-+		};
-+	};
-+};
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.h b/drivers/gpu/drm/exynos/exynos_drm_rotator.h
+deleted file mode 100644
+index 71a0b4c0c1e8..000000000000
+--- a/drivers/gpu/drm/exynos/exynos_drm_rotator.h
++++ /dev/null
+@@ -1,19 +0,0 @@
+-/*
+- * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+- *
+- * Authors:
+- *	YoungJun Cho <yj44.cho@samsung.com>
+- *	Eunchul Kim <chulspro.kim@samsung.com>
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- */
+-
+-#ifndef	_EXYNOS_DRM_ROTATOR_H_
+-#define	_EXYNOS_DRM_ROTATOR_H_
+-
+-/* TODO */
+-
+-#endif
 -- 
-2.15.1
+2.13.6
