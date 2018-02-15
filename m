@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031838AbeBONMU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 08:12:20 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36511 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030561AbeBONMT (ORCPT
+        id S1032430AbeBONMe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 08:12:34 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:38901 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031929AbeBONMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 08:12:19 -0500
-X-Google-Smtp-Source: AH8x224a5tG6S+vtkAG21davFhge4TTfPpLl8jzQj+v8wLmXAEwZ8Y9thTvRISXKqTlC2RPSoInLSw==
+        Thu, 15 Feb 2018 08:12:24 -0500
+X-Google-Smtp-Source: AH8x226QfQMEjq0nA9yN7ejjX3FfUoUylKIklfpTqhQDiTJI7NPSUpEw9Ja6xbrINSU+o7Mi4GU/2Q==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: linux-block@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
         javier@cnexlabs.com,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [PATCH v2 0/6] lightnvm: base 2.0 implementation
-Date: Thu, 15 Feb 2018 14:11:54 +0100
-Message-Id: <20180215131200.3354-1-mb@lightnvm.io>
+Subject: [PATCH v2 4/6] lightnvm: remove max_rq_size
+Date: Thu, 15 Feb 2018 14:11:58 +0100
+Message-Id: <20180215131200.3354-5-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180215131200.3354-1-mb@lightnvm.io>
+References: <20180215131200.3354-1-mb@lightnvm.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -24,53 +26,38 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A couple of patches for 2.0 support for the lightnvm subsystem. They
-form the foundation for the integration.
+The field is no longer used.
 
-The first two patches is preparation for the 2.0 work. The third patch
-implements the 2.0 data structures, the geometry command, and exposes
-the sysfs attributes that comes with the 2.0 specification. Note that
-the attributes between 1.2 and 2.0 are different, and it is expected
-that user-space shall use the version sysfs attribute to know which
-attributes will be available.
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+---
+ drivers/lightnvm/core.c  | 1 -
+ include/linux/lightnvm.h | 2 --
+ 2 files changed, 3 deletions(-)
 
-The next two patches removes max_phys_sect and max_rq_size, as they
-not used.
-
-The last patch implements support for using the nvme namespace logical
-block and metadata fields and sync it with the internal lightnvm
-identify structures.
-
-Changes since v2:
-
- - Removed blk_queue_block_size() setup in nvm_init and made sure
-   to only update csecs and sos in on the late setup path. No reason
-   to set it twice. From discussion with Javier.
- - Added two extra patches, that removes max_phys_sect and
-   max_rq_size.
-
-Changes since v1:
-
- - pr_err fix from Randy.
- - Address type fix from Javier.
- - Also CC the nvme mailing list.
-
-Matias Bjørling (6):
-  lightnvm: make 1.2 data structures explicit
-  lightnvm: flatten nvm_id_group into nvm_id
-  lightnvm: add 2.0 geometry identification
-  lightnvm: remove max_rq_size
-  lightnvm: remove nvm_dev_ops->max_phys_sect
-  nvme: lightnvm: add late setup of block size and metadata
-
- drivers/lightnvm/core.c          |  61 ++---
- drivers/lightnvm/pblk-init.c     |   9 +-
- drivers/lightnvm/pblk-recovery.c |   8 +-
- drivers/nvme/host/core.c         |   2 +
- drivers/nvme/host/lightnvm.c     | 513 ++++++++++++++++++++++++++++-----------
- drivers/nvme/host/nvme.h         |   2 +
- include/linux/lightnvm.h         |  71 +++---
- 7 files changed, 442 insertions(+), 224 deletions(-)
-
+diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+index 9b1255b3e05e..511c81c319ee 100644
+--- a/drivers/lightnvm/core.c
++++ b/drivers/lightnvm/core.c
+@@ -874,7 +874,6 @@ static int nvm_core_init(struct nvm_dev *dev)
+ 	geo->sec_size = id->csecs;
+ 	geo->oob_size = id->sos;
+ 	geo->mccap = id->mccap;
+-	geo->max_rq_size = dev->ops->max_phys_sect * geo->sec_size;
+ 
+ 	geo->sec_per_chk = id->clba;
+ 	geo->sec_per_lun = geo->sec_per_chk * geo->nr_chks;
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index b717c000b712..67b4fa8e4906 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -295,8 +295,6 @@ struct nvm_geo {
+ 	int ws_seq;
+ 	int ws_per_chk;
+ 
+-	int max_rq_size;
+-
+ 	int op;
+ 
+ 	struct nvm_addr_format ppaf;
 -- 
 2.11.0
