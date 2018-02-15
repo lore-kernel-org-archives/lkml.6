@@ -1,144 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033194AbeBOOPa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 09:15:30 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:48582 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032968AbeBOOP0 (ORCPT
+        id S1033163AbeBOOTs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 09:19:48 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:45648 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032879AbeBOOTr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 09:15:26 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kbingham@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>, geert@glider.be,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 7/8] arm64: dts: renesas: r8a77995-draak: Add HDMI Out through ADV7511
-Date: Thu, 15 Feb 2018 16:16:00 +0200
-Message-ID: <2517305.jdPBFiRQEk@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1518683903-10681-8-git-send-email-kbingham@kernel.org>
-References: <1518683903-10681-1-git-send-email-kbingham@kernel.org> <1518683903-10681-8-git-send-email-kbingham@kernel.org>
+        Thu, 15 Feb 2018 09:19:47 -0500
+X-Google-Smtp-Source: AH8x225gay02hhkjxgQb6uxwA77YJf5RJsv8X0kppA7H0UZ0NYbplNzotZnowFx1k7Rafl+INFXmyA==
+From: "=?UTF-8?q?Christian=20K=C3=B6nig?="
+        <ckoenig.leichtzumerken@gmail.com>
+X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+To: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] locking/ww_mutex: cleanup lock->ctx usage in amdgpu
+Date: Thu, 15 Feb 2018 15:19:42 +0100
+Message-Id: <20180215141944.4332-1-christian.koenig@amd.com>
+X-Mailer: git-send-email 2.14.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
+amdgpu needs to verify if userspace sends us valid addresses and the simplest
+way of doing this is to check if the buffer object is locked with the ticket
+of the current submission.
 
-Thank you for the patch.
+Clean up the access to the ww_mutex internals by providing a function
+for this and extend the check to the thread owning the underlying mutex.
 
-On Thursday, 15 February 2018 10:38:22 EET Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> 
-> Provide a device node for the ADV7511 as found on the Draak D3 platform.
-> 
-> The ADV7511 is connected to the DU through a parallel mux chip, and is
-> configurable in hardware whether it is connected to LVDS0 or LVDS1.
-> 
-> Connect through to LVDS0 as a default implementation.
+Signed-off-by: Christian König <christian.koenig@amd.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c |  3 ++-
+ include/linux/ww_mutex.h               | 17 +++++++++++++++++
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-You need to model the LVDS decoder in DT too. I know that no driver and no DT 
-bindings are available at the moment, and I'm aware that this patch enables 
-the HDMI output on the Draak board, but I don't think it's upstreamable as-is.
-
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> ---
->  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 56 +++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts index
-> 668e246dfc5d..df0c7773cb7d 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> @@ -27,6 +27,17 @@
->  		stdout-path = "serial0:115200n8";
->  	};
-> 
-> +	hdmi-out {
-> +		compatible = "hdmi-connector";
-> +		type = "a";
-> +
-> +		port {
-> +			hdmi_con_out: endpoint {
-> +				remote-endpoint = <&adv7511_out>;
-> +			};
-> +		};
-> +	};
-> +
->  	vga {
->  		compatible = "vga-connector";
-> 
-> @@ -124,6 +135,39 @@
->  		reg = <0x50>;
->  		pagesize = <8>;
->  	};
-> +
-> +	hdmi@39 {
-> +		compatible = "adi,adv7511w";
-> +		reg = <0x39>, <0x3f>, <0x38>, <0x3c>;
-> +		reg-names = "main", "edid", "packet", "cec";
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
-> +
-> +		adi,input-depth = <8>;
-> +		adi,input-colorspace = "rgb";
-> +		adi,input-clock = "1x";
-> +		adi,input-style = <1>;
-> +		adi,input-justification = "evenly";
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +				adv7511_in: endpoint {
-> +					remote-endpoint = <&lvds0_out>;
-> +				};
-> +			};
-> +
-> +			port@1 {
-> +				reg = <1>;
-> +				adv7511_out: endpoint {
-> +					remote-endpoint = <&hdmi_con_out>;
-> +				};
-> +			};
-> +		};
-> +	};
->  };
-> 
->  &i2c1 {
-> @@ -146,6 +190,18 @@
->  	};
->  };
-> 
-> +&lvds0 {
-> +	status = "okay";
-> +
-> +	ports {
-> +		port@1 {
-> +			endpoint {
-> +				remote-endpoint = <&adv7511_in>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
->  &ehci0 {
->  	status = "okay";
->  };
-
-
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+index eaa3cb0c3ad1..4c04b560e358 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+@@ -1594,7 +1594,8 @@ int amdgpu_cs_find_mapping(struct amdgpu_cs_parser *parser,
+ 	*map = mapping;
+ 
+ 	/* Double check that the BO is reserved by this CS */
+-	if (READ_ONCE((*bo)->tbo.resv->lock.ctx) != &parser->ticket)
++	if (!ww_mutex_is_owned_by(&(*bo)->tbo.resv->lock, current,
++				  &parser->ticket))
+ 		return -EINVAL;
+ 
+ 	if (!((*bo)->flags & AMDGPU_GEM_CREATE_VRAM_CONTIGUOUS)) {
+diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
+index 39fda195bf78..dd580db289e8 100644
+--- a/include/linux/ww_mutex.h
++++ b/include/linux/ww_mutex.h
+@@ -358,4 +358,21 @@ static inline bool ww_mutex_is_locked(struct ww_mutex *lock)
+ 	return mutex_is_locked(&lock->base);
+ }
+ 
++/**
++ * ww_mutex_is_owned_by - is the w/w mutex locked by this task in that context
++ * @lock: the mutex to be queried
++ * @task: the task structure to check
++ * @ctx: the w/w acquire context to test
++ *
++ * Returns true if the mutex is locked in the context by the given task, false
++ * otherwise.
++ */
++static inline bool ww_mutex_is_owned_by(struct ww_mutex *lock,
++					struct task_struct *task,
++					struct ww_acquire_ctx *ctx)
++{
++	return likely(__mutex_owner(&lock->base) == task) &&
++		READ_ONCE(lock->ctx) == ctx;
++}
++
+ #endif
 -- 
-Regards,
-
-Laurent Pinchart
+2.14.1
