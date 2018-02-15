@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1883814-1518711037-2-9979455074200649351
+X-Cyrus-Session-Id: sloti22d1t05-1906823-1518711029-2-7325881880200305532
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518711036; b=KmPPXL0EHul+LJKbffNbGwruzxrutEv1lp9eF1NQPzmibvV
-    EGp14IPhtf3bWUASTBUebfYTXc7ed8cfo0z83rmkeNVVO5RgrKXlgA/sKghiDFsj
-    u7FEKtPXZcU58AX96PjEdLtRt+UxnhIurRizU1ArYxUOgZdZ+xsCsGJcsvywiot8
-    /KJ1KMiHJ7p8gfPd+mh23/xqtn+l3lJWRFsTLqLJoeo438d+kveKVHgekRufGphh
-    h/mYuf6iDzFyYfqSKI2SjZ9ZYyXJ+dkTUm7XxFGMgq+gZiCeQVDeadJX8qhKIDD0
-    cGBRL9E25VEH3dOWfzmTy+7r1zNp5e/m+KDFDZw==
+    t=1518711028; b=DGeKIduf7U7zmTDThBNmp1g2PrfvNB1Gf0mApJL6mGQn+gy
+    9//tyH0dJtyzUGPULvFGK7YghXqtC0s1o4I7mrmtn9x+b4vppwJ/BTYyWUd+egv+
+    QhpSFQHPkoYeqtdEowfRpT+34UhVUIwzbo1Gb95iMKnICYw453hHBYgth9yAhdw1
+    sZITQ9hYVp2J2SdDx+uXeJCW7IRfZ4Xw6SEfsuHcnYZsCQfKAMszxD05nlC2BKvl
+    JHWuYfhOe5ODt13f21z10xlcbPXoz0r1knqKYrH3Q4F0Gqf06+4WJSw42cUSgi7X
+    3cSptZ8ULZLu+x4u695ftVxjjvpTsc/mQE5B2sw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518711036; bh=3052UsBYMhPEoUl2uelHgyrcWf
-    zB0DMGwcDA1ca2YLk=; b=JfchDjkWYWvVTJXoujspcscwhR4mLmAHHcIM1U9UyQ
-    nHg0vHzXXpOWYPkFqDR1+ohK/1burg9zAV7I7UtEseu43+kvAEqowJPcjnmoprBM
-    TtX3rxF9LL6xID8d/nWQvF6IQPbZoWX6vPI9swjvtczzGpIO7P3kzH6K4JR2mz4t
-    adyiAj0OC7jIEb5IxwU8Cxw9HBiMCD5qN2Is+bY3CG/nRevKX1ganGKiE4M0Fw5u
-    99XKhK+b3DRIDaAOsoQIA+ph5eibggKY6Y4S3YK6soQuUVuoh10XZ672lNgF+r/O
-    9F0/fmgJ4f+nsxCcV0rHJehNaLGXPa+Vqcn1KfVsmRMA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518711028; bh=I2uXivhqEB97Wmw9ksk6BXRGzr
+    ZEIlm1O8EAd9QV3qU=; b=oqszZKThXCxVpWMoKhoSpDk4R8UvcDZ/8S5XUZltUT
+    b9JsY2dP2zX/StHyiqZejkK1ziS724XPAQtxIIMrYGI5w50OXHdONwUFTb78pbID
+    x8Wm1iVSGZ9Eu5RJi/qDW2eDFFRdbesnLzatw99okeVEsB5ltIeryOojS/TxFR54
+    u0x9gzmcVHZFjNWtBux4vmaRaMa1mAtYZoQApP8cQh+vfhDqGAJTi+Vhc3F5DcfC
+    oBVzRdc4XmsfVQlNiYVCFkKVYQ5NTaiGgrDXFaYVCq6tyxaklPEFvxvbMLuzM2i3
+    GQZmuU22YvvGPjMl4iouYZDJ/EY2mi6e3gDq1qOlS/GA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,27 +47,26 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424474AbeBOQKd (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 11:10:33 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34930 "EHLO
+        id S1424476AbeBOPp2 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:45:28 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34958 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424461AbeBOPpX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:45:23 -0500
+        with ESMTP id S1424457AbeBOPp0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:45:26 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Alexander Potapenko <glider@google.com>,
         Dmitry Vyukov <dvyukov@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.15 148/202] kasan: dont emit builtin calls when sanitization is off
-Date: Thu, 15 Feb 2018 16:17:28 +0100
-Message-Id: <20180215151720.750037629@linuxfoundation.org>
+Subject: [PATCH 4.15 149/202] kasan: rework Kconfig settings
+Date: Thu, 15 Feb 2018 16:17:29 +0100
+Message-Id: <20180215151720.789558338@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -84,72 +83,146 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrey Konovalov <andreyknvl@google.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 0e410e158e5baa1300bdf678cea4f4e0cf9d8b94 upstream.
+commit e7c52b84fb18f08ce49b6067ae6285aca79084a8 upstream.
 
-With KASAN enabled the kernel has two different memset() functions, one
-with KASAN checks (memset) and one without (__memset).  KASAN uses some
-macro tricks to use the proper version where required.  For example
-memset() calls in mm/slub.c are without KASAN checks, since they operate
-on poisoned slab object metadata.
+We get a lot of very large stack frames using gcc-7.0.1 with the default
+-fsanitize-address-use-after-scope --param asan-stack=1 options, which can
+easily cause an overflow of the kernel stack, e.g.
 
-The issue is that clang emits memset() calls even when there is no
-memset() in the source code.  They get linked with improper memset()
-implementation and the kernel fails to boot due to a huge amount of KASAN
-reports during early boot stages.
+  drivers/gpu/drm/i915/gvt/handlers.c:2434:1: warning: the frame size of 46176 bytes is larger than 3072 bytes
+  drivers/net/wireless/ralink/rt2x00/rt2800lib.c:5650:1: warning: the frame size of 23632 bytes is larger than 3072 bytes
+  lib/atomic64_test.c:250:1: warning: the frame size of 11200 bytes is larger than 3072 bytes
+  drivers/gpu/drm/i915/gvt/handlers.c:2621:1: warning: the frame size of 9208 bytes is larger than 3072 bytes
+  drivers/media/dvb-frontends/stv090x.c:3431:1: warning: the frame size of 6816 bytes is larger than 3072 bytes
+  fs/fscache/stats.c:287:1: warning: the frame size of 6536 bytes is larger than 3072 bytes
 
-The solution is to add -fno-builtin flag for files with KASAN_SANITIZE :=
-n marker.
+To reduce this risk, -fsanitize-address-use-after-scope is now split out
+into a separate CONFIG_KASAN_EXTRA Kconfig option, leading to stack
+frames that are smaller than 2 kilobytes most of the time on x86_64.  An
+earlier version of this patch also prevented combining KASAN_EXTRA with
+KASAN_INLINE, but that is no longer necessary with gcc-7.0.1.
 
-Link: http://lkml.kernel.org/r/8ffecfffe04088c52c42b92739c2bd8a0bcb3f5e.1516384594.git.andreyknvl@google.com
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-Acked-by: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
+All patches to get the frame size below 2048 bytes with CONFIG_KASAN=y
+and CONFIG_KASAN_EXTRA=n have been merged by maintainers now, so we can
+bring back that default now.  KASAN_EXTRA=y still causes lots of
+warnings but now defaults to !COMPILE_TEST to disable it in
+allmodconfig, and it remains disabled in all other defconfigs since it
+is a new option.  I arbitrarily raise the warning limit for KASAN_EXTRA
+to 3072 to reduce the noise, but an allmodconfig kernel still has around
+50 warnings on gcc-7.
+
+I experimented a bit more with smaller stack frames and have another
+follow-up series that reduces the warning limit for 64-bit architectures
+to 1280 bytes (without CONFIG_KASAN).
+
+With earlier versions of this patch series, I also had patches to address
+the warnings we get with KASAN and/or KASAN_EXTRA, using a
+"noinline_if_stackbloat" annotation.
+
+That annotation now got replaced with a gcc-8 bugfix (see
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715) and a workaround for
+older compilers, which means that KASAN_EXTRA is now just as bad as
+before and will lead to an instant stack overflow in a few extreme
+cases.
+
+This reverts parts of commit 3f181b4d8652 ("lib/Kconfig.debug: disable
+-Wframe-larger-than warnings with KASAN=y").  Two patches in linux-next
+should be merged first to avoid introducing warnings in an allmodconfig
+build:
+  3cd890dbe2a4 ("media: dvb-frontends: fix i2c access helpers for KASAN")
+  16c3ada89cff ("media: r820t: fix r820t_write_reg for KASAN")
+
+Do we really need to backport this?
+
+I think we do: without this patch, enabling KASAN will lead to
+unavoidable kernel stack overflow in certain device drivers when built
+with gcc-7 or higher on linux-4.10+ or any version that contains a
+backport of commit c5caf21ab0cf8.  Most people are probably still on
+older compilers, but it will get worse over time as they upgrade their
+distros.
+
+The warnings we get on kernels older than this should all be for code
+that uses dangerously large stack frames, though most of them do not
+cause an actual stack overflow by themselves.The asan-stack option was
+added in linux-4.0, and commit 3f181b4d8652 ("lib/Kconfig.debug:
+disable -Wframe-larger-than warnings with KASAN=y") effectively turned
+off the warning for allmodconfig kernels, so I would like to see this
+fix backported to any kernels later than 4.0.
+
+I have done dozens of fixes for individual functions with stack frames
+larger than 2048 bytes with asan-stack, and I plan to make sure that
+all those fixes make it into the stable kernels as well (most are
+already there).
+
+Part of the complication here is that asan-stack (from 4.0) was
+originally assumed to always require much larger stacks, but that
+turned out to be a combination of multiple gcc bugs that we have now
+worked around and fixed, but sanitize-address-use-after-scope (from
+v4.10) has a much higher inherent stack usage and also suffers from at
+least three other problems that we have analyzed but not yet fixed
+upstream, each of them makes the stack usage more severe than it should
+be.
+
+Link: http://lkml.kernel.org/r/20171221134744.2295529-1-arnd@arndb.de
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
 Cc: Alexander Potapenko <glider@google.com>
 Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Andrey Konovalov <andreyknvl@google.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Makefile               |    3 ++-
- scripts/Makefile.kasan |    3 +++
- scripts/Makefile.lib   |    2 +-
- 3 files changed, 6 insertions(+), 2 deletions(-)
+ lib/Kconfig.debug      |    2 +-
+ lib/Kconfig.kasan      |   11 +++++++++++
+ scripts/Makefile.kasan |    2 ++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
---- a/Makefile
-+++ b/Makefile
-@@ -432,7 +432,8 @@ export MAKE AWK GENKSYMS INSTALLKERNEL P
- export HOSTCXX HOSTCXXFLAGS LDFLAGS_MODULE CHECK CHECKFLAGS
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -217,7 +217,7 @@ config ENABLE_MUST_CHECK
+ config FRAME_WARN
+ 	int "Warn for stack frames larger than (needs gcc 4.4)"
+ 	range 0 8192
+-	default 0 if KASAN
++	default 3072 if KASAN_EXTRA
+ 	default 2048 if GCC_PLUGIN_LATENT_ENTROPY
+ 	default 1280 if (!64BIT && PARISC)
+ 	default 1024 if (!64BIT && !PARISC)
+--- a/lib/Kconfig.kasan
++++ b/lib/Kconfig.kasan
+@@ -20,6 +20,17 @@ config KASAN
+ 	  Currently CONFIG_KASAN doesn't work with CONFIG_DEBUG_SLAB
+ 	  (the resulting kernel does not boot).
  
- export KBUILD_CPPFLAGS NOSTDINC_FLAGS LINUXINCLUDE OBJCOPYFLAGS LDFLAGS
--export KBUILD_CFLAGS CFLAGS_KERNEL CFLAGS_MODULE CFLAGS_KASAN CFLAGS_UBSAN
-+export KBUILD_CFLAGS CFLAGS_KERNEL CFLAGS_MODULE
-+export CFLAGS_KASAN CFLAGS_KASAN_NOSANITIZE CFLAGS_UBSAN
- export KBUILD_AFLAGS AFLAGS_KERNEL AFLAGS_MODULE
- export KBUILD_AFLAGS_MODULE KBUILD_CFLAGS_MODULE KBUILD_LDFLAGS_MODULE
- export KBUILD_AFLAGS_KERNEL KBUILD_CFLAGS_KERNEL
++config KASAN_EXTRA
++	bool "KAsan: extra checks"
++	depends on KASAN && DEBUG_KERNEL && !COMPILE_TEST
++	help
++	  This enables further checks in the kernel address sanitizer, for now
++	  it only includes the address-use-after-scope check that can lead
++	  to excessive kernel stack usage, frame size warnings and longer
++	  compile time.
++	  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715 has more
++
++
+ choice
+ 	prompt "Instrumentation type"
+ 	depends on KASAN
 --- a/scripts/Makefile.kasan
 +++ b/scripts/Makefile.kasan
-@@ -31,4 +31,7 @@ else
+@@ -30,7 +30,9 @@ else
+     endif
  endif
  
++ifdef CONFIG_KASAN_EXTRA
  CFLAGS_KASAN += $(call cc-option, -fsanitize-address-use-after-scope)
-+
-+CFLAGS_KASAN_NOSANITIZE := -fno-builtin
-+
- endif
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -121,7 +121,7 @@ endif
- ifeq ($(CONFIG_KASAN),y)
- _c_flags += $(if $(patsubst n%,, \
- 		$(KASAN_SANITIZE_$(basetarget).o)$(KASAN_SANITIZE)y), \
--		$(CFLAGS_KASAN))
-+		$(CFLAGS_KASAN), $(CFLAGS_KASAN_NOSANITIZE))
- endif
++endif
  
- ifeq ($(CONFIG_UBSAN),y)
+ CFLAGS_KASAN_NOSANITIZE := -fno-builtin
+ 
