@@ -1,64 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033495AbeBOOp3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 09:45:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48042 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033423AbeBOOp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 09:45:27 -0500
-Date: Thu, 15 Feb 2018 15:45:25 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org
-Subject: Re: [patch 1/2] mm, page_alloc: extend kernelcore and movablecore
- for percent
-Message-ID: <20180215144525.GG7275@dhcp22.suse.cz>
-References: <alpine.DEB.2.10.1802121622470.179479@chino.kir.corp.google.com>
- <20180214095911.GB28460@dhcp22.suse.cz>
- <alpine.DEB.2.10.1802140225290.261065@chino.kir.corp.google.com>
+        id S1033527AbeBOOtB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 09:49:01 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:33199 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033102AbeBOOs7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 09:48:59 -0500
+X-Google-Smtp-Source: AH8x227oKXV9wCCkbKi/Be7/i0F0PEQqmo9MbK1ZXOPF2vSjQgQzzeM4Q1ss+weUUr3rc7zHQin9Aw==
+Date: Thu, 15 Feb 2018 15:48:56 +0100
+From: Christian Brauner <christian.brauner@canonical.com>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Tom Hromatka <tom.hromatka@oracle.com>,
+        Sargun Dhillon <sargun@sargun.me>, Paul Moore <pmoore@redhat.com>
+Subject: Re: [RFC 1/3] seccomp: add a return code to trap to userspace
+Message-ID: <20180215144855.GA16088@gmail.com>
+References: <20180204104946.25559-1-tycho@tycho.ws>
+ <20180204104946.25559-2-tycho@tycho.ws>
+ <CAGXu5jLAAKY19a9iC1PmXRyuwdn1Zxr2Cb318zdzkqgYt8vtdg@mail.gmail.com>
+ <20180214152958.cjgwh2k52zji2jxk@cisco>
+ <CALCETrXeZZfVzXh7SwKhyB=+ySDk5fhrrdrXrcABsQ=JpQT7Tg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.10.1802140225290.261065@chino.kir.corp.google.com>
+In-Reply-To: <CALCETrXeZZfVzXh7SwKhyB=+ySDk5fhrrdrXrcABsQ=JpQT7Tg@mail.gmail.com>
 User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 14-02-18 02:28:38, David Rientjes wrote:
-> On Wed, 14 Feb 2018, Michal Hocko wrote:
+On Wed, Feb 14, 2018 at 05:19:52PM +0000, Andy Lutomirski wrote:
+> On Wed, Feb 14, 2018 at 3:29 PM, Tycho Andersen <tycho@tycho.ws> wrote:
+> > Hey Kees,
+> >
+> > Thanks for taking a look!
+> >
+> > On Tue, Feb 13, 2018 at 01:09:20PM -0800, Kees Cook wrote:
+> >> On Sun, Feb 4, 2018 at 2:49 AM, Tycho Andersen <tycho@tycho.ws> wrote:
+> >> > This patch introduces a means for syscalls matched in seccomp to notify
+> >> > some other task that a particular filter has been triggered.
+> >> >
+> >> > The motivation for this is primarily for use with containers. For example,
+> >> > if a container does an init_module(), we obviously don't want to load this
+> >> > untrusted code, which may be compiled for the wrong version of the kernel
+> >> > anyway. Instead, we could parse the module image, figure out which module
+> >> > the container is trying to load and load it on the host.
+> >> >
+> >> > As another example, containers cannot mknod(), since this checks
+> >> > capable(CAP_SYS_ADMIN). However, harmless devices like /dev/null or
+> >> > /dev/zero should be ok for containers to mknod, but we'd like to avoid hard
+> >> > coding some whitelist in the kernel. Another example is mount(), which has
+> >> > many security restrictions for good reason, but configuration or runtime
+> >> > knowledge could potentially be used to relax these restrictions.
+> >>
+> >> Related to the eBPF seccomp thread, can the logic for these things be
+> >> handled entirely by eBPF? My assumption is that you still need to stop
+> >> the process to do something (i.e. do a mknod, or a mount) before
+> >> letting it continue. Is there some "wait for notification" system in
+> >> eBPF?
+> >
+> > I replied in the other thread
+> > (https://patchwork.ozlabs.org/cover/872938/#1856642 for those
+> > following along at home), but no, at least not that I know of.
 > 
-> > I do not have any objections regarding the extension. What I am more
-> > interested in is _why_ people are still using this command line
-> > parameter at all these days. Why would anybody want to introduce lowmem
-> > issues from 32b days. I can see the CMA/Hotplug usecases for
-> > ZONE_MOVABLE but those have their own ways to define zone movable. I was
-> > tempted to simply remove the kernelcore already. Could you be more
-> > specific what is your usecase which triggered a need of an easier
-> > scaling of the size?
+> eBPF can call functions.  One of those functions could put the caller
+> to sleep.  In fact, I think I once proposed doing this for the seccomp
+> logging action as well.
 > 
-> Fragmentation of non-__GFP_MOVABLE pages due to low on memory situations 
-> can pollute most pageblocks on the system, as much as 1GB of slab being 
-> fragmented over 128GB of memory, for example.
-
-OK, I was assuming something like that.
-
-> When the amount of kernel 
-> memory is well bounded for certain systems, it is better to aggressively 
-> reclaim from existing MIGRATE_UNMOVABLE pageblocks rather than eagerly 
-> fallback to others.
+> >> I wonder if this communication should be netlink, which gives a more
+> >> well-structured way to describe what's on the wire? The reason I ask
+> >> is because if we ever change the seccomp_data structure, we'll now
+> >> have two places where we need to deal with it (the first being within
+> >> the BPF itself). My initial idea was to prefix the communication with
+> >> a size field, then send the structure, and then I had nightmares, and
+> >> realized this was basically netlink reinvented.
+> >
+> > I suggested netlink in LA, and everyone (especially Andy) groaned very
+> > loudly :). I'm happy to switch it to netlink if you like, although i
+> > think memcpy() of structs should be safe here, since the return value
+> > from read or write can indicate the size of things.
 > 
-> We have additional patches that help with this fragmentation if you're 
-> interested, specifically kcompactd compaction of MIGRATE_UNMOVABLE 
-> pageblocks triggered by fallback of non-__GFP_MOVABLE allocations and 
-> draining of pcp lists back to the zone free area to prevent stranding.
+> I could easily get on board with "netlink" (i.e. NLA) messages sent
+> over an fd.  I will object strongly to the use of netlink *sockets*.
 
-Yes, I think we need a proper fix. (Ab)using zone_movable for this
-usecase is just sad.
+I think sending netlink messages makes perfect sense here although we
+burden userspace with all those nice macros to parse these messages.
+Are there already other cases where userspace gets netlink messages on
+fds without having opened a netlink socket.
 
--- 
-Michal Hocko
-SUSE Labs
+> 
+> >
+> >> An ERRNO filter would block a USER_NOTIF because it's unconditional.
+> >> TRACE could be either, USER_NOTIF could be either.
+> >>
+> >> This means TRACE rules would be bumped by a USER_NOTIF... hmm.
+> >
+> > Yes, I didn't exactly know what to do here. ERRNO, TRAP, and KILL all
+> > seemed more important than USER_NOTIF, but TRACE didn't. I don't have
+> > a strong opinion about what to do here, because users can adjust their
+> > filters accordingly. Let me know what you prefer.
+> 
+> If we switched to eBPF functions, this whole issue goes away.
