@@ -1,89 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755182AbeBOJIo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 04:08:44 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:46269 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755069AbeBOJIk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 04:08:40 -0500
-Date: Thu, 15 Feb 2018 10:08:38 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Philipp Rossak <embed3d@gmail.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        wens@csie.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 0/2] Fix broken bananapi m2 devicetree/regulators
-Message-ID: <20180215090838.fnenymzrejs6vhcf@flea.home>
-References: <20180214141025.22171-1-embed3d@gmail.com>
+        id S1755194AbeBOJJg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 04:09:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34269 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755069AbeBOJJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 04:09:33 -0500
+X-Amavis-Alert: BAD HEADER SECTION, Header field occurs more than once: "Cc"
+        occurs 3 times
+From: NeilBrown <neilb@suse.com>
+To: Jens Axboe <axboe@kernel.dk>
+Date: Thu, 15 Feb 2018 20:09:24 +1100
+Cc: Milan Broz <gmazyland@gmail.com>, Mike Snitzer <snitzer@redhat.com>,
+        device-mapper development <dm-devel@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH] block: be more careful about status in __bio_chain_endio
+In-Reply-To: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
+References: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
+cc: linux-block@vger.kernel.org
+Message-ID: <87eflmpqkb.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pezhon6uik27e2hh"
-Content-Disposition: inline
-In-Reply-To: <20180214141025.22171-1-embed3d@gmail.com>
-User-Agent: NeoMutt/20171215
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---pezhon6uik27e2hh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-=-=
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 14, 2018 at 03:10:23PM +0100, Philipp Rossak wrote:
-> This patchseries fixes the bananapi m1 devicetree, to be able to boot aga=
-in.
-> The first two patches update/improve the devicetree and the last patch ad=
-ds
-> all missing regulators.
->=20
-> Regards,
-> Philipp
->=20
-> Changes since v1:
-> 	* squashed commit 1 and 3
-> 	* fix wrong mmc regulator
->=20
-> Philipp Rossak (2):
->   arm: dts: sun6i: a31s: bpi-m2: improve pmic properties
->   arm: dts: sun6i: a31s: fix: bpi-m2: add missing regulators
 
-Applied both.
+If two bios are chained under the one parent (with bio_chain())
+it is possible that one will succeed and the other will fail.
+__bio_chain_endio must ensure that the failure error status
+is reported for the whole, rather than the success.
 
-I had to make a couple of changes though, in the commit title arm
-should be uppercase, and the fix isn't needed.
+It currently tries to be careful, but this test is racy.
+If both children finish at the same time, they might both see that
+parent->bi_status as zero, and so will assign their own status.
+If the assignment to parent->bi_status by the successful bio happens
+last, the error status will be lost which can lead to silent data
+corruption.
 
-I also added stable in Cc, since these patches have been there for
-quite some time.
+Instead, __bio_chain_endio should only assign a non-zero status
+to parent->bi_status.  There is then no need to test the current
+value of parent->bi_status - a test that would be racy anyway.
 
-Maxime
+Note that this bug hasn't been seen in practice.  It was only discovered
+by examination after a similar bug was found in dm.c
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Signed-off-by: NeilBrown <neilb@suse.com>
+=2D--
+ block/bio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---pezhon6uik27e2hh
+diff --git a/block/bio.c b/block/bio.c
+index e1708db48258..ad77140edc6f 100644
+=2D-- a/block/bio.c
++++ b/block/bio.c
+@@ -312,7 +312,7 @@ static struct bio *__bio_chain_endio(struct bio *bio)
+ {
+ 	struct bio *parent =3D bio->bi_private;
+=20
+=2D	if (!parent->bi_status)
++	if (bio->bi_status)
+ 		parent->bi_status =3D bio->bi_status;
+ 	bio_put(bio);
+ 	return parent;
+=2D-=20
+2.14.0.rc0.dirty
+
+
+--=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqFThUACgkQ0rTAlCFN
-r3SYtA/+KYqTpkxcn4U+UE/F645lEn0rhrJt+dlSELrkIQ0dd2pZsW+FFloohSJb
-GRxM77uLy/uvfhLEocQoJujJJU3UBvLGkYyQGeXQmSiQGcGaB5YCkUQNeN91tJF9
-r5PTSPpE02qGQ7iU6PrvPpmoWTqZlkKe/59ouZoxA5/390ZcMgfwF6HZJ6KYbrAn
-pMfAMLmWRh66v+iFCVZXBOLi0GW7ui1RCpk0ZdBUv9Ojeufnjqf1v9Oy3onEHDFs
-xhNDtNita6gCNFL4Wt+uTi43ggNI7RUCSn54zSr3Fm6oPY6OQ338rYiLf4pg0cf3
-rgbGeK/FBG96wZEj7YzVu39GXWFB+eC+gJa8S4arYYkMkBYoOgaDSZ1H++cSIlwQ
-f+TNjD/2Z+VqCXPxlDm2wLHeqj33r06bb4kJKoXPqCIcoEoYeprTyNX8MS4BhCOi
-ksOl7XrjaRhtT12ly4tzvpyx7dBZggebwQkvPPEy+6Ubx4j2fMoHtpP1xpinK0Of
-jYm3msKTYvuejYAmqgM2zS/i6dzCYkilDpl5DQAu86ril8D3c/EylEaNUilnx9Bb
-FY1tgE+cOP4d2GNsxTfoxDfcaEBA7Ve8WQEjUBtD5Y+keNcy0+sYBFSa226iwmvQ
-krkdtqR2BsJODzZUkDKwyj2ExiVDtQLZUCg9pTC/dU81DigcIbQ=
-=VPxy
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlqFTkQACgkQOeye3VZi
+gbl38hAAuH2ehzZRqSUECPVbVybMgFyXH9hu3wZUFXmHTAgE0+qtBFdNzQezHDc5
+QcjGXptF707jUFETG6v4mtGLRlRGTl6zZ++PSb8otV1ZNqAsLtO2XPpdezk7cwuz
+4NpRrHSgUX2oxbsgmEWenx09SlDl2HrD7KFl9eXBY1zDNGvol8c9jV07FAeqr2dG
+u6FaYoquornB9NS2nC1GXOvOpbs2NWkvj04H3NWvh0rvk4vxTzcb2avB9Jw60MQ/
+F2Y1V65ZrrnrGlqrfqxGWWJVu94N+mw9MPlGl+B+/6ObkPsFxKhTAUyoNQ+3yWnC
+fV3jDeVf2f4ZLKGbGb82NA1ZF7hJVqyf4ZRJNCf8A0Wlf3Lx0izpQE97wn2Qr4y8
+b/Ha3ZPcb7k7aMW2xlU+966j4duczGSGncszRCUodhdOETHsK24GTRJHb8rEBDKp
+9r4DSoEt/zj8wkWNluXAwow8OnIBI5WOkH5FoiZgdmGcTbaOl9dd5ZwVoEv425po
+vzqCqDJYAwIZ7PaLfgpfvrIhPXA/Hl6FwJv2PhJpilOViqhmaWxxXjl8BFL+Q5QL
+ISqW/3fmAi06YcKK82QQwBtlAGjvpbierPHAahu5s5Tor75LYRm36hmZ2DnQE61L
+/CgV5f0B1wB9TbOoJortlx7dKXol3zublH8p84+WlLZ15gBtnnw=
+=k8H1
 -----END PGP SIGNATURE-----
-
---pezhon6uik27e2hh--
+--=-=-=--
