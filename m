@@ -1,75 +1,47 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1825685-1518708844-2-5036073517218575355
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518708843; b=lhSpaSKpwfuOCvInuk1IRuWzbifY8jkne79LviAKBi0GGT4
-    nW14xeY4I31Td0ZslWJSh26oWNUvznVFFIbMiFH3i1w3jr42ke/bNouuRuieWa7L
-    rNGxw4uWm3u1ktPhAJtPHxB1PU2njS8qU8DXiJSAVKrADssTUSS9ZyniJBgzwlsl
-    vQ2I5tOklMI+rnkHPh4rd23a1JbAVGgItHW+pTdCkhKVCCDo2JCJcVsFYlgn/jmF
-    bOWLY09I0tlCiOocajArwh85yJlErINkIdrgAXYS4psFsF8hXApjQoUm0Yc1/XJ/
-    xw4lFDo19lw/J6E7LkyA4kEeoM4vqht/LCzaIiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518708843; bh=H3FKGATp/xql+/aeBLLu9YTuQQ
-    5u9w2ouIyb5T0GSDw=; b=Mj8hx5pVIEbyHA3LUxveMvRGWCUtV7MRYAMWsmwetL
-    BiNIUa3s8YVBzslxmW4+o4x92wEzg7eL9bAOtjFtbI4f2cNyQg4/yIgSIWD7UiTI
-    ITuCkyllXO6JtRwdogixDK/kIpPf8YL8lCbIumdn66lpOYlS9o5DgnUb705AyNRm
-    uU5cbUK/oKAq6+IehRCUIEOtaenGBn1KiHZFvegBF8PhNGivK+3hKwUQqwJZabfh
-    0PJ30ncU2hC/UPGPJGRyiImoedThMd+YGaFBB9Q7WAB1SuzcZLlhCOh++VoO754G
-    JljfpMxspl9+l2x3Oj1CXxmMNJwWrl1qPXpjFqYEuaMA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164993AbeBOPeA (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:34:00 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56974 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1165004AbeBOPd6 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:33:58 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x226NAwFIA5RaV/St+MDUdQlvELrAI7VeumHkPgaA5hoJ2IoQJFcHvxB0CHExszZg/QQ2fCap
+ARC-Seal: i=1; a=rsa-sha256; t=1518708842; cv=none;
+        d=google.com; s=arc-20160816;
+        b=AohUwAqynNVHz9H04mIL+Qrtc2hZQaEN5nNGMgyTIKrtYoaLf0lygqWgyrQjbPYlHW
+         jQFXAHGJPIf2Bqaqzxd1IXK3y21BvrrZml3IvjTZTJlQzksKuRx5aICbm3enkelfwdy6
+         dAllVaxJ6gb+w67ucmSyYT+WDa/UG0cuDMENAr2DVC9VywJ8BACElIOPgFaY5mXUvCrS
+         /GUsgt5+E2IZ7zoxsmtDy0XRgmirrL429SpPaLwuqo64eS2uAWZ3v1mt3v9bYTH1ez9i
+         GIktrT/RNvFglrzMXImrGSFsYWfCQ2LrESlUJCak4VYUGbWf4oPjEOmFsr6MaInPmH5r
+         D/TQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=ar+JU5WhEMotKjvx6B1N9M4/4zX/XqfcXgZwmALeFc4=;
+        b=b/o6OZOVmb/TY7lbqwH7Qn03dWwY0oTt3s4fhGtaHuKB75mqXZ14G5L/+U7PjjKnDi
+         nk4friOFF/CA+Jzz6GQHEmPm7NMvJ2jx6kDV5CRzQKHqNXd6kufpwCzpeWZk34uslAlQ
+         otZkwoZmSeYB42bfculCA0H00/BfuT1Gz+4IBA/wchLuDoVP58PDmwo1HpMPbZBjBdTQ
+         i5ER8dauT/QPU78fVSWPtkLfyqjVNA5gDJVw58IlA3yjPyJPYS1GY6CTCxRCa6bRKHrT
+         0db1TBo4kW98LmqUjEFB96S6cNhjcSfaEgDOIS2+rMdV46DM9tpF2tsc2SpqN4OsqHbF
+         l8pw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.14 100/195] ubi: fastmap: Erase outdated anchor PEBs during attach
-Date: Thu, 15 Feb 2018 16:16:31 +0100
-Message-Id: <20180215151710.698553675@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Bradley Bolen <bradleybolen@gmail.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.14 101/195] ubi: block: Fix locking for idr_alloc/idr_remove
+Date: Thu, 15 Feb 2018 16:16:32 +0100
+Message-Id: <20180215151710.748564324@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1592480969135641331?=
+X-GMAIL-MSGID: =?utf-8?q?1592481643338470796?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -77,135 +49,186 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sascha Hauer <s.hauer@pengutronix.de>
+From: Bradley Bolen <bradleybolen@gmail.com>
 
-commit f78e5623f45bab2b726eec29dc5cefbbab2d0b1c upstream.
+commit 7f29ae9f977bcdc3654e68bc36d170223c52fd48 upstream.
 
-The fastmap update code might erase the current fastmap anchor PEB
-in case it doesn't find any new free PEB. When a power cut happens
-in this situation we must not have any outdated fastmap anchor PEB
-on the device, because that would be used to attach during next
-boot.
-The easiest way to make that sure is to erase all outdated fastmap
-anchor PEBs synchronously during attach.
+This fixes a race with idr_alloc where gd->first_minor can be set to the
+same value for two simultaneous calls to ubiblock_create.  Each instance
+calls device_add_disk with the same first_minor.  device_add_disk calls
+bdi_register_owner which generates several warnings.
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-Reviewed-by: Richard Weinberger <richard@nod.at>
-Fixes: dbb7d2a88d2a ("UBI: Add fastmap core")
+WARNING: CPU: 1 PID: 179 at kernel-source/fs/sysfs/dir.c:31
+sysfs_warn_dup+0x68/0x88
+sysfs: cannot create duplicate filename '/devices/virtual/bdi/252:2'
+
+WARNING: CPU: 1 PID: 179 at kernel-source/lib/kobject.c:240
+kobject_add_internal+0x1ec/0x2f8
+kobject_add_internal failed for 252:2 with -EEXIST, don't try to
+register things with the same name in the same directory
+
+WARNING: CPU: 1 PID: 179 at kernel-source/fs/sysfs/dir.c:31
+sysfs_warn_dup+0x68/0x88
+sysfs: cannot create duplicate filename '/dev/block/252:2'
+
+However, device_add_disk does not error out when bdi_register_owner
+returns an error.  Control continues until reaching blk_register_queue.
+It then BUGs.
+
+kernel BUG at kernel-source/fs/sysfs/group.c:113!
+[<c01e26cc>] (internal_create_group) from [<c01e2950>]
+(sysfs_create_group+0x20/0x24)
+[<c01e2950>] (sysfs_create_group) from [<c00e3d38>]
+(blk_trace_init_sysfs+0x18/0x20)
+[<c00e3d38>] (blk_trace_init_sysfs) from [<c02bdfbc>]
+(blk_register_queue+0xd8/0x154)
+[<c02bdfbc>] (blk_register_queue) from [<c02cec84>]
+(device_add_disk+0x194/0x44c)
+[<c02cec84>] (device_add_disk) from [<c0436ec8>]
+(ubiblock_create+0x284/0x2e0)
+[<c0436ec8>] (ubiblock_create) from [<c0427bb8>]
+(vol_cdev_ioctl+0x450/0x554)
+[<c0427bb8>] (vol_cdev_ioctl) from [<c0189110>] (vfs_ioctl+0x30/0x44)
+[<c0189110>] (vfs_ioctl) from [<c01892e0>] (do_vfs_ioctl+0xa0/0x790)
+[<c01892e0>] (do_vfs_ioctl) from [<c0189a14>] (SyS_ioctl+0x44/0x68)
+[<c0189a14>] (SyS_ioctl) from [<c0010640>] (ret_fast_syscall+0x0/0x34)
+
+Locking idr_alloc/idr_remove removes the race and keeps gd->first_minor
+unique.
+
+Fixes: 2bf50d42f3a4 ("UBI: block: Dynamically allocate minor numbers")
+Signed-off-by: Bradley Bolen <bradleybolen@gmail.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/ubi/wl.c |   77 +++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 57 insertions(+), 20 deletions(-)
+ drivers/mtd/ubi/block.c |   42 ++++++++++++++++++++++++++----------------
+ 1 file changed, 26 insertions(+), 16 deletions(-)
 
---- a/drivers/mtd/ubi/wl.c
-+++ b/drivers/mtd/ubi/wl.c
-@@ -1529,6 +1529,46 @@ static void shutdown_work(struct ubi_dev
+--- a/drivers/mtd/ubi/block.c
++++ b/drivers/mtd/ubi/block.c
+@@ -99,6 +99,8 @@ struct ubiblock {
+ 
+ /* Linked list of all ubiblock instances */
+ static LIST_HEAD(ubiblock_devices);
++static DEFINE_IDR(ubiblock_minor_idr);
++/* Protects ubiblock_devices and ubiblock_minor_idr */
+ static DEFINE_MUTEX(devices_mutex);
+ static int ubiblock_major;
+ 
+@@ -351,8 +353,6 @@ static const struct blk_mq_ops ubiblock_
+ 	.init_request	= ubiblock_init_request,
+ };
+ 
+-static DEFINE_IDR(ubiblock_minor_idr);
+-
+ int ubiblock_create(struct ubi_volume_info *vi)
+ {
+ 	struct ubiblock *dev;
+@@ -365,14 +365,15 @@ int ubiblock_create(struct ubi_volume_in
+ 	/* Check that the volume isn't already handled */
+ 	mutex_lock(&devices_mutex);
+ 	if (find_dev_nolock(vi->ubi_num, vi->vol_id)) {
+-		mutex_unlock(&devices_mutex);
+-		return -EEXIST;
++		ret = -EEXIST;
++		goto out_unlock;
+ 	}
+-	mutex_unlock(&devices_mutex);
+ 
+ 	dev = kzalloc(sizeof(struct ubiblock), GFP_KERNEL);
+-	if (!dev)
+-		return -ENOMEM;
++	if (!dev) {
++		ret = -ENOMEM;
++		goto out_unlock;
++	}
+ 
+ 	mutex_init(&dev->dev_mutex);
+ 
+@@ -437,14 +438,13 @@ int ubiblock_create(struct ubi_volume_in
+ 		goto out_free_queue;
+ 	}
+ 
+-	mutex_lock(&devices_mutex);
+ 	list_add_tail(&dev->list, &ubiblock_devices);
+-	mutex_unlock(&devices_mutex);
+ 
+ 	/* Must be the last step: anyone can call file ops from now on */
+ 	add_disk(dev->gd);
+ 	dev_info(disk_to_dev(dev->gd), "created from ubi%d:%d(%s)",
+ 		 dev->ubi_num, dev->vol_id, vi->name);
++	mutex_unlock(&devices_mutex);
+ 	return 0;
+ 
+ out_free_queue:
+@@ -457,6 +457,8 @@ out_put_disk:
+ 	put_disk(dev->gd);
+ out_free_dev:
+ 	kfree(dev);
++out_unlock:
++	mutex_unlock(&devices_mutex);
+ 
+ 	return ret;
+ }
+@@ -478,30 +480,36 @@ static void ubiblock_cleanup(struct ubib
+ int ubiblock_remove(struct ubi_volume_info *vi)
+ {
+ 	struct ubiblock *dev;
++	int ret;
+ 
+ 	mutex_lock(&devices_mutex);
+ 	dev = find_dev_nolock(vi->ubi_num, vi->vol_id);
+ 	if (!dev) {
+-		mutex_unlock(&devices_mutex);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out_unlock;
+ 	}
+ 
+ 	/* Found a device, let's lock it so we can check if it's busy */
+ 	mutex_lock(&dev->dev_mutex);
+ 	if (dev->refcnt > 0) {
+-		mutex_unlock(&dev->dev_mutex);
+-		mutex_unlock(&devices_mutex);
+-		return -EBUSY;
++		ret = -EBUSY;
++		goto out_unlock_dev;
+ 	}
+ 
+ 	/* Remove from device list */
+ 	list_del(&dev->list);
+-	mutex_unlock(&devices_mutex);
+-
+ 	ubiblock_cleanup(dev);
+ 	mutex_unlock(&dev->dev_mutex);
++	mutex_unlock(&devices_mutex);
++
+ 	kfree(dev);
+ 	return 0;
++
++out_unlock_dev:
++	mutex_unlock(&dev->dev_mutex);
++out_unlock:
++	mutex_unlock(&devices_mutex);
++	return ret;
  }
  
- /**
-+ * erase_aeb - erase a PEB given in UBI attach info PEB
-+ * @ubi: UBI device description object
-+ * @aeb: UBI attach info PEB
-+ * @sync: If true, erase synchronously. Otherwise schedule for erasure
-+ */
-+static int erase_aeb(struct ubi_device *ubi, struct ubi_ainf_peb *aeb, bool sync)
-+{
-+	struct ubi_wl_entry *e;
-+	int err;
-+
-+	e = kmem_cache_alloc(ubi_wl_entry_slab, GFP_KERNEL);
-+	if (!e)
-+		return -ENOMEM;
-+
-+	e->pnum = aeb->pnum;
-+	e->ec = aeb->ec;
-+	ubi->lookuptbl[e->pnum] = e;
-+
-+	if (sync) {
-+		err = sync_erase(ubi, e, false);
-+		if (err)
-+			goto out_free;
-+
-+		wl_tree_add(e, &ubi->free);
-+		ubi->free_count++;
-+	} else {
-+		err = schedule_erase(ubi, e, aeb->vol_id, aeb->lnum, 0, false);
-+		if (err)
-+			goto out_free;
-+	}
-+
-+	return 0;
-+
-+out_free:
-+	wl_entry_destroy(ubi, e);
-+
-+	return err;
-+}
-+
-+/**
-  * ubi_wl_init - initialize the WL sub-system using attaching information.
-  * @ubi: UBI device description object
-  * @ai: attaching information
-@@ -1566,17 +1606,9 @@ int ubi_wl_init(struct ubi_device *ubi,
- 	list_for_each_entry_safe(aeb, tmp, &ai->erase, u.list) {
- 		cond_resched();
+ static int ubiblock_resize(struct ubi_volume_info *vi)
+@@ -630,6 +638,7 @@ static void ubiblock_remove_all(void)
+ 	struct ubiblock *next;
+ 	struct ubiblock *dev;
  
--		e = kmem_cache_alloc(ubi_wl_entry_slab, GFP_KERNEL);
--		if (!e)
--			goto out_free;
--
--		e->pnum = aeb->pnum;
--		e->ec = aeb->ec;
--		ubi->lookuptbl[e->pnum] = e;
--		if (schedule_erase(ubi, e, aeb->vol_id, aeb->lnum, 0, false)) {
--			wl_entry_destroy(ubi, e);
-+		err = erase_aeb(ubi, aeb, false);
-+		if (err)
- 			goto out_free;
--		}
- 
- 		found_pebs++;
++	mutex_lock(&devices_mutex);
+ 	list_for_each_entry_safe(dev, next, &ubiblock_devices, list) {
+ 		/* The module is being forcefully removed */
+ 		WARN_ON(dev->desc);
+@@ -638,6 +647,7 @@ static void ubiblock_remove_all(void)
+ 		ubiblock_cleanup(dev);
+ 		kfree(dev);
  	}
-@@ -1635,6 +1667,8 @@ int ubi_wl_init(struct ubi_device *ubi,
- 			ubi_assert(!ubi->lookuptbl[e->pnum]);
- 			ubi->lookuptbl[e->pnum] = e;
- 		} else {
-+			bool sync = false;
-+
- 			/*
- 			 * Usually old Fastmap PEBs are scheduled for erasure
- 			 * and we don't have to care about them but if we face
-@@ -1644,18 +1678,21 @@ int ubi_wl_init(struct ubi_device *ubi,
- 			if (ubi->lookuptbl[aeb->pnum])
- 				continue;
++	mutex_unlock(&devices_mutex);
+ }
  
--			e = kmem_cache_alloc(ubi_wl_entry_slab, GFP_KERNEL);
--			if (!e)
--				goto out_free;
-+			/*
-+			 * The fastmap update code might not find a free PEB for
-+			 * writing the fastmap anchor to and then reuses the
-+			 * current fastmap anchor PEB. When this PEB gets erased
-+			 * and a power cut happens before it is written again we
-+			 * must make sure that the fastmap attach code doesn't
-+			 * find any outdated fastmap anchors, hence we erase the
-+			 * outdated fastmap anchor PEBs synchronously here.
-+			 */
-+			if (aeb->vol_id == UBI_FM_SB_VOLUME_ID)
-+				sync = true;
- 
--			e->pnum = aeb->pnum;
--			e->ec = aeb->ec;
--			ubi_assert(!ubi->lookuptbl[e->pnum]);
--			ubi->lookuptbl[e->pnum] = e;
--			if (schedule_erase(ubi, e, aeb->vol_id, aeb->lnum, 0, false)) {
--				wl_entry_destroy(ubi, e);
-+			err = erase_aeb(ubi, aeb, sync);
-+			if (err)
- 				goto out_free;
--			}
- 		}
- 
- 		found_pebs++;
+ int __init ubiblock_init(void)
