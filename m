@@ -1,37 +1,36 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227/EcmbvFxKAHxBclQ7iDrVmQrhvcmk+hLJbZzlUzRJScWH9A80MN8dGIvLitXr1STJSFWE
-ARC-Seal: i=1; a=rsa-sha256; t=1518709010; cv=none;
+X-Google-Smtp-Source: AH8x224HR22Z9UuirpxYie18WK65h09S8nxf5EcFhrL1y1n5vNdjhXsrY69Dw7QE3SNdRLbzTqZy
+ARC-Seal: i=1; a=rsa-sha256; t=1518709007; cv=none;
         d=google.com; s=arc-20160816;
-        b=ba4vi72bFwbZbxU9xSx2qhG/8Br5hE9C3R1YZSG1gyFGEnb4P/AfbJMwWCpU7b1Ql2
-         OJlcCdZB3E134qNmh9z15nHwPyFfkUc+pPH67Mb+Fr8CUxRe1xwC7t+gLXGqLEa0u+g9
-         wuxJIcop7eGgWuDIfy05WNJreRHqtyZKOMQ0KSeAFn7UfY1/hf/FVugMJj9wXMbF0dyJ
-         VqIA591/VLY844TmCeu8upAHSt7eeSncZsJifoBJ6ckQngRwXtVedycVXnGhQyna0aD/
-         tpFaQ3VFMAY74zoAv/WpTxApXIrNQ+K9WDvE1fDwBxgy/+wayxogGGNnmkPDXW8+QRVn
-         FZlA==
+        b=fyHCtFJRGJpWYa04sIGhIey2qxjDLdRetRF8qsiGJD/gMpONcMj8y9AFL34dka4n+G
+         HPsaUrac42WeLgJWd21Rwl8mFJ0oDew9X0C5XQberwnBXD5PH5WOklXG27a2vWnoEclI
+         B3FwP9fVwcsm9ohJTGZRKFrMLUgTZw8lHkAUh0mmEJ9pJ4DMcnPkV7FYJcFuUBsB2wpy
+         EW257HEed9f+3h1XVe41uORchNxLI/L38qdVvm3d/uVRwmYqrP4tADbHxcoP7uK+Td9c
+         hZ8qMxIIC60hV7KK6/BpG3GdplJ+PquKvXsHMLUcdXjNhShMCWI/xkl3ec6dF4u3RXGL
+         oGGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=58aH/mOZmB9bg9pKRqJMPj2uV7pwdZJyuECtViwFuT8=;
-        b=dXbzYG/JPJQuE/O1PKhHOEDRhzLQyKp8cHpunEP8oHv8AZD8mdo3AmUmtTh+8Yr/zd
-         6nRb7Pade/l6UKA045hb9FbyIZXIMc4WGEypNCa33cqYuGJjpgWvx39JJqql8YSmvJ15
-         aeV6LnzJfoHAc0ofkyoRw8NGnQm8nuBN/ecuSfI4ZWs4nFP+rfXCA9hXCcUZzFsX3/jK
-         qVfondD2pJy6u7mbtbUec8sJvBtAQb14TSbYUcvNQzV3mX0jc+mkUwUv4zmx8c38+raj
-         Cht1lcpT8eFuZwToi200PG87QT4E0/dGHhzsZWMcgJ58CfpMAxTxdiD4PuJmeAEf7M9d
-         Kb+Q==
+        bh=UJqSpKwBV1mxW9645cwrpRC53BsNIUAvIttwrF91Y2E=;
+        b=dp9x8qhd7MICWzN6iWWfGANlpz1kQs8U640iMcck4llxSPlMRXYaTy22N18ufyuhmR
+         tZQ9DEHvb/bKZ1qdVe9euUmWPpEoU5TVgrGvwHml6CfE5CF/F9e3dbBVEoUokrgcCjEu
+         LNToBhX2v1sBlbB9vVWiBVIg5sakdFnMgSnJJ2uSSL4Nkv9fxlnRgXeMLMAxplFCRhP/
+         ViY9VdGU0YZXjQ0dbZNVm7fJzNNcz334AY8XyorwKB03Ekdy6h04hB/HeR6FqZEQm+4x
+         uIxnA64xImpumxEYsCq6JuncRucdtW9tlTNn8gglW9bz4VGxyOXmq7avkKZr9FkSImFB
+         Gv7Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.14 125/195] media: v4l2-compat-ioctl32.c: avoid sizeof(type)
-Date: Thu, 15 Feb 2018 16:16:56 +0100
-Message-Id: <20180215151711.991565603@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.14 157/195] HID: quirks: Fix keyboard + touchpad on Toshiba Click Mini not working
+Date: Thu, 15 Feb 2018 16:17:28 +0100
+Message-Id: <20180215151713.766201930@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481003694315859?=
-X-GMAIL-MSGID: =?utf-8?q?1592481819839932983?=
+X-GMAIL-THRID: =?utf-8?q?1592481099537609475?=
+X-GMAIL-MSGID: =?utf-8?q?1592481816475222804?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,319 +48,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 333b1e9f96ce05f7498b581509bb30cde03018bf upstream.
+commit edfc3722cfef4217c7fe92b272cbe0288ba1ff57 upstream.
 
-Instead of doing sizeof(struct foo) use sizeof(*up). There even were
-cases where 4 * sizeof(__u32) was used instead of sizeof(kp->reserved),
-which is very dangerous when the size of the reserved array changes.
+The Toshiba Click Mini uses an i2c attached keyboard/touchpad combo
+(single i2c_hid device for both) which has a vid:pid of 04F3:0401,
+which is also used by a bunch of Elan touchpads which are handled by the
+drivers/input/mouse/elan_i2c driver, but that driver deals with pure
+touchpads and does not work for a combo device such as the one on the
+Toshiba Click Mini.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+The combo on the Mini has an ACPI id of ELAN0800, which is not claimed
+by the elan_i2c driver, so check for that and if it is found do not ignore
+the device. This fixes the keyboard/touchpad combo on the Mini not working
+(although with the touchpad in mouse emulation mode).
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |   79 +++++++++++---------------
- 1 file changed, 36 insertions(+), 43 deletions(-)
 
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -48,7 +48,7 @@ struct v4l2_window32 {
- 
- static int get_v4l2_window32(struct v4l2_window *kp, struct v4l2_window32 __user *up)
- {
--	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_window32)) ||
-+	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
- 	    copy_from_user(&kp->w, &up->w, sizeof(up->w)) ||
- 	    get_user(kp->field, &up->field) ||
- 	    get_user(kp->chromakey, &up->chromakey) ||
-@@ -66,7 +66,7 @@ static int get_v4l2_window32(struct v4l2
- 		if (get_user(p, &up->clips))
- 			return -EFAULT;
- 		uclips = compat_ptr(p);
--		kclips = compat_alloc_user_space(n * sizeof(struct v4l2_clip));
-+		kclips = compat_alloc_user_space(n * sizeof(*kclips));
- 		kp->clips = kclips;
- 		while (--n >= 0) {
- 			if (copy_in_user(&kclips->c, &uclips->c, sizeof(uclips->c)))
-@@ -164,14 +164,14 @@ static int __get_v4l2_format32(struct v4
- 
- static int get_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __user *up)
- {
--	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_format32)))
-+	if (!access_ok(VERIFY_READ, up, sizeof(*up)))
- 		return -EFAULT;
- 	return __get_v4l2_format32(kp, up);
- }
- 
- static int get_v4l2_create32(struct v4l2_create_buffers *kp, struct v4l2_create_buffers32 __user *up)
- {
--	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_create_buffers32)) ||
-+	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
- 	    copy_from_user(kp, up, offsetof(struct v4l2_create_buffers32, format)))
- 		return -EFAULT;
- 	return __get_v4l2_format32(&kp->format, &up->format);
-@@ -218,14 +218,14 @@ static int __put_v4l2_format32(struct v4
- 
- static int put_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __user *up)
- {
--	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_format32)))
-+	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)))
- 		return -EFAULT;
- 	return __put_v4l2_format32(kp, up);
- }
- 
- static int put_v4l2_create32(struct v4l2_create_buffers *kp, struct v4l2_create_buffers32 __user *up)
- {
--	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_create_buffers32)) ||
-+	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)) ||
- 	    copy_to_user(up, kp, offsetof(struct v4l2_create_buffers32, format)) ||
- 	    copy_to_user(up->reserved, kp->reserved, sizeof(kp->reserved)))
- 		return -EFAULT;
-@@ -244,7 +244,7 @@ struct v4l2_standard32 {
- static int get_v4l2_standard32(struct v4l2_standard *kp, struct v4l2_standard32 __user *up)
- {
- 	/* other fields are not set by the user, nor used by the driver */
--	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_standard32)) ||
-+	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
- 	    get_user(kp->index, &up->index))
- 		return -EFAULT;
- 	return 0;
-@@ -252,14 +252,14 @@ static int get_v4l2_standard32(struct v4
- 
- static int put_v4l2_standard32(struct v4l2_standard *kp, struct v4l2_standard32 __user *up)
- {
--	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_standard32)) ||
-+	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)) ||
- 	    put_user(kp->index, &up->index) ||
- 	    put_user(kp->id, &up->id) ||
--	    copy_to_user(up->name, kp->name, 24) ||
-+	    copy_to_user(up->name, kp->name, sizeof(up->name)) ||
- 	    copy_to_user(&up->frameperiod, &kp->frameperiod,
- 			 sizeof(kp->frameperiod)) ||
- 	    put_user(kp->framelines, &up->framelines) ||
--	    copy_to_user(up->reserved, kp->reserved, 4 * sizeof(__u32)))
-+	    copy_to_user(up->reserved, kp->reserved, sizeof(kp->reserved)))
- 		return -EFAULT;
- 	return 0;
- }
-@@ -307,7 +307,7 @@ static int get_v4l2_plane32(struct v4l2_
- 
- 	if (copy_in_user(up, up32, 2 * sizeof(__u32)) ||
- 	    copy_in_user(&up->data_offset, &up32->data_offset,
--			 sizeof(__u32)))
-+			 sizeof(up->data_offset)))
- 		return -EFAULT;
- 
- 	if (memory == V4L2_MEMORY_USERPTR) {
-@@ -317,11 +317,11 @@ static int get_v4l2_plane32(struct v4l2_
- 		if (put_user((unsigned long)up_pln, &up->m.userptr))
- 			return -EFAULT;
- 	} else if (memory == V4L2_MEMORY_DMABUF) {
--		if (copy_in_user(&up->m.fd, &up32->m.fd, sizeof(int)))
-+		if (copy_in_user(&up->m.fd, &up32->m.fd, sizeof(up32->m.fd)))
- 			return -EFAULT;
- 	} else {
- 		if (copy_in_user(&up->m.mem_offset, &up32->m.mem_offset,
--				 sizeof(__u32)))
-+				 sizeof(up32->m.mem_offset)))
- 			return -EFAULT;
+---
+ drivers/hid/hid-core.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -2638,7 +2638,6 @@ static const struct hid_device_id hid_ig
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_DELORME, USB_DEVICE_ID_DELORME_EARTHMATE) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_DELORME, USB_DEVICE_ID_DELORME_EM_LT20) },
+ 	{ HID_I2C_DEVICE(USB_VENDOR_ID_ELAN, 0x0400) },
+-	{ HID_I2C_DEVICE(USB_VENDOR_ID_ELAN, 0x0401) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_ESSENTIAL_REALITY, USB_DEVICE_ID_ESSENTIAL_REALITY_P5) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_ETT, USB_DEVICE_ID_TC5UH) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_ETT, USB_DEVICE_ID_TC4UM) },
+@@ -2908,6 +2907,17 @@ bool hid_ignore(struct hid_device *hdev)
+ 			strncmp(hdev->name, "www.masterkit.ru MA901", 22) == 0)
+ 			return true;
+ 		break;
++	case USB_VENDOR_ID_ELAN:
++		/*
++		 * Many Elan devices have a product id of 0x0401 and are handled
++		 * by the elan_i2c input driver. But the ACPI HID ELAN0800 dev
++		 * is not (and cannot be) handled by that driver ->
++		 * Ignore all 0x0401 devs except for the ELAN0800 dev.
++		 */
++		if (hdev->product == 0x0401 &&
++		    strncmp(hdev->name, "ELAN0800", 8) != 0)
++			return true;
++		break;
  	}
  
-@@ -333,19 +333,19 @@ static int put_v4l2_plane32(struct v4l2_
- {
- 	if (copy_in_user(up32, up, 2 * sizeof(__u32)) ||
- 	    copy_in_user(&up32->data_offset, &up->data_offset,
--			 sizeof(__u32)))
-+			 sizeof(up->data_offset)))
- 		return -EFAULT;
- 
- 	/* For MMAP, driver might've set up the offset, so copy it back.
- 	 * USERPTR stays the same (was userspace-provided), so no copying. */
- 	if (memory == V4L2_MEMORY_MMAP)
- 		if (copy_in_user(&up32->m.mem_offset, &up->m.mem_offset,
--				 sizeof(__u32)))
-+				 sizeof(up->m.mem_offset)))
- 			return -EFAULT;
- 	/* For DMABUF, driver might've set up the fd, so copy it back. */
- 	if (memory == V4L2_MEMORY_DMABUF)
- 		if (copy_in_user(&up32->m.fd, &up->m.fd,
--				 sizeof(int)))
-+				 sizeof(up->m.fd)))
- 			return -EFAULT;
- 
- 	return 0;
-@@ -358,7 +358,7 @@ static int get_v4l2_buffer32(struct v4l2
- 	compat_caddr_t p;
- 	int ret;
- 
--	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_buffer32)) ||
-+	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
- 	    get_user(kp->index, &up->index) ||
- 	    get_user(kp->type, &up->type) ||
- 	    get_user(kp->flags, &up->flags) ||
-@@ -370,8 +370,7 @@ static int get_v4l2_buffer32(struct v4l2
- 		if (get_user(kp->bytesused, &up->bytesused) ||
- 		    get_user(kp->field, &up->field) ||
- 		    get_user(kp->timestamp.tv_sec, &up->timestamp.tv_sec) ||
--		    get_user(kp->timestamp.tv_usec,
--			     &up->timestamp.tv_usec))
-+		    get_user(kp->timestamp.tv_usec, &up->timestamp.tv_usec))
- 			return -EFAULT;
- 
- 	if (V4L2_TYPE_IS_MULTIPLANAR(kp->type)) {
-@@ -391,13 +390,12 @@ static int get_v4l2_buffer32(struct v4l2
- 
- 		uplane32 = compat_ptr(p);
- 		if (!access_ok(VERIFY_READ, uplane32,
--			       kp->length * sizeof(struct v4l2_plane32)))
-+			       kp->length * sizeof(*uplane32)))
- 			return -EFAULT;
- 
- 		/* We don't really care if userspace decides to kill itself
- 		 * by passing a very big num_planes value */
--		uplane = compat_alloc_user_space(kp->length *
--						 sizeof(struct v4l2_plane));
-+		uplane = compat_alloc_user_space(kp->length * sizeof(*uplane));
- 		kp->m.planes = (__force struct v4l2_plane *)uplane;
- 
- 		for (num_planes = 0; num_planes < kp->length; num_planes++) {
-@@ -445,7 +443,7 @@ static int put_v4l2_buffer32(struct v4l2
- 	int num_planes;
- 	int ret;
- 
--	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_buffer32)) ||
-+	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)) ||
- 	    put_user(kp->index, &up->index) ||
- 	    put_user(kp->type, &up->type) ||
- 	    put_user(kp->flags, &up->flags) ||
-@@ -456,8 +454,7 @@ static int put_v4l2_buffer32(struct v4l2
- 	    put_user(kp->field, &up->field) ||
- 	    put_user(kp->timestamp.tv_sec, &up->timestamp.tv_sec) ||
- 	    put_user(kp->timestamp.tv_usec, &up->timestamp.tv_usec) ||
--	    copy_to_user(&up->timecode, &kp->timecode,
--			 sizeof(struct v4l2_timecode)) ||
-+	    copy_to_user(&up->timecode, &kp->timecode, sizeof(kp->timecode)) ||
- 	    put_user(kp->sequence, &up->sequence) ||
- 	    put_user(kp->reserved2, &up->reserved2) ||
- 	    put_user(kp->reserved, &up->reserved) ||
-@@ -525,7 +522,7 @@ static int get_v4l2_framebuffer32(struct
- {
- 	u32 tmp;
- 
--	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_framebuffer32)) ||
-+	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
- 	    get_user(tmp, &up->base) ||
- 	    get_user(kp->capability, &up->capability) ||
- 	    get_user(kp->flags, &up->flags) ||
-@@ -539,7 +536,7 @@ static int put_v4l2_framebuffer32(struct
- {
- 	u32 tmp = (u32)((unsigned long)kp->base);
- 
--	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_framebuffer32)) ||
-+	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)) ||
- 	    put_user(tmp, &up->base) ||
- 	    put_user(kp->capability, &up->capability) ||
- 	    put_user(kp->flags, &up->flags) ||
-@@ -564,14 +561,14 @@ struct v4l2_input32 {
-    Otherwise it is identical to the 32-bit version. */
- static inline int get_v4l2_input32(struct v4l2_input *kp, struct v4l2_input32 __user *up)
- {
--	if (copy_from_user(kp, up, sizeof(struct v4l2_input32)))
-+	if (copy_from_user(kp, up, sizeof(*up)))
- 		return -EFAULT;
- 	return 0;
- }
- 
- static inline int put_v4l2_input32(struct v4l2_input *kp, struct v4l2_input32 __user *up)
- {
--	if (copy_to_user(up, kp, sizeof(struct v4l2_input32)))
-+	if (copy_to_user(up, kp, sizeof(*up)))
- 		return -EFAULT;
- 	return 0;
- }
-@@ -619,12 +616,11 @@ static int get_v4l2_ext_controls32(struc
- 	unsigned int n;
- 	compat_caddr_t p;
- 
--	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_ext_controls32)) ||
-+	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
- 	    get_user(kp->which, &up->which) ||
- 	    get_user(kp->count, &up->count) ||
- 	    get_user(kp->error_idx, &up->error_idx) ||
--	    copy_from_user(kp->reserved, up->reserved,
--			   sizeof(kp->reserved)))
-+	    copy_from_user(kp->reserved, up->reserved, sizeof(kp->reserved)))
- 		return -EFAULT;
- 	if (kp->count == 0) {
- 		kp->controls = NULL;
-@@ -635,11 +631,9 @@ static int get_v4l2_ext_controls32(struc
- 	if (get_user(p, &up->controls))
- 		return -EFAULT;
- 	ucontrols = compat_ptr(p);
--	if (!access_ok(VERIFY_READ, ucontrols,
--		       kp->count * sizeof(struct v4l2_ext_control32)))
-+	if (!access_ok(VERIFY_READ, ucontrols, kp->count * sizeof(*ucontrols)))
- 		return -EFAULT;
--	kcontrols = compat_alloc_user_space(kp->count *
--					    sizeof(struct v4l2_ext_control));
-+	kcontrols = compat_alloc_user_space(kp->count * sizeof(*kcontrols));
- 	kp->controls = (__force struct v4l2_ext_control *)kcontrols;
- 	for (n = 0; n < kp->count; n++) {
- 		u32 id;
-@@ -671,7 +665,7 @@ static int put_v4l2_ext_controls32(struc
- 	int n = kp->count;
- 	compat_caddr_t p;
- 
--	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_ext_controls32)) ||
-+	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)) ||
- 	    put_user(kp->which, &up->which) ||
- 	    put_user(kp->count, &up->count) ||
- 	    put_user(kp->error_idx, &up->error_idx) ||
-@@ -683,8 +677,7 @@ static int put_v4l2_ext_controls32(struc
- 	if (get_user(p, &up->controls))
- 		return -EFAULT;
- 	ucontrols = compat_ptr(p);
--	if (!access_ok(VERIFY_WRITE, ucontrols,
--		       n * sizeof(struct v4l2_ext_control32)))
-+	if (!access_ok(VERIFY_WRITE, ucontrols, n * sizeof(*ucontrols)))
- 		return -EFAULT;
- 
- 	while (--n >= 0) {
-@@ -721,7 +714,7 @@ struct v4l2_event32 {
- 
- static int put_v4l2_event32(struct v4l2_event *kp, struct v4l2_event32 __user *up)
- {
--	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_event32)) ||
-+	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)) ||
- 	    put_user(kp->type, &up->type) ||
- 	    copy_to_user(&up->u, &kp->u, sizeof(kp->u)) ||
- 	    put_user(kp->pending, &up->pending) ||
-@@ -729,7 +722,7 @@ static int put_v4l2_event32(struct v4l2_
- 	    put_user(kp->timestamp.tv_sec, &up->timestamp.tv_sec) ||
- 	    put_user(kp->timestamp.tv_nsec, &up->timestamp.tv_nsec) ||
- 	    put_user(kp->id, &up->id) ||
--	    copy_to_user(up->reserved, kp->reserved, 8 * sizeof(__u32)))
-+	    copy_to_user(up->reserved, kp->reserved, sizeof(kp->reserved)))
- 		return -EFAULT;
- 	return 0;
- }
-@@ -746,7 +739,7 @@ static int get_v4l2_edid32(struct v4l2_e
- {
- 	u32 tmp;
- 
--	if (!access_ok(VERIFY_READ, up, sizeof(struct v4l2_edid32)) ||
-+	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
- 	    get_user(kp->pad, &up->pad) ||
- 	    get_user(kp->start_block, &up->start_block) ||
- 	    get_user(kp->blocks, &up->blocks) ||
-@@ -761,7 +754,7 @@ static int put_v4l2_edid32(struct v4l2_e
- {
- 	u32 tmp = (u32)((unsigned long)kp->edid);
- 
--	if (!access_ok(VERIFY_WRITE, up, sizeof(struct v4l2_edid32)) ||
-+	if (!access_ok(VERIFY_WRITE, up, sizeof(*up)) ||
- 	    put_user(kp->pad, &up->pad) ||
- 	    put_user(kp->start_block, &up->start_block) ||
- 	    put_user(kp->blocks, &up->blocks) ||
+ 	if (hdev->type == HID_TYPE_USBMOUSE &&
