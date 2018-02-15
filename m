@@ -1,35 +1,37 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226hxQs/sIKeX31U+i9LycrsA1g3nqI3MTFbmv4w7uimQZJjushz290XtnWCcwZiQWmBc87D
-ARC-Seal: i=1; a=rsa-sha256; t=1518707918; cv=none;
+X-Google-Smtp-Source: AH8x226vW5BzrkHZqG4ufQ8lIB3BZCvQxunteAPF/3YLVg3oLBk7WGQYfF5sq+lnx3gBxe9hIMlu
+ARC-Seal: i=1; a=rsa-sha256; t=1518707915; cv=none;
         d=google.com; s=arc-20160816;
-        b=mGRTJomFoi4GnxcO8jsR6+GsVgGn89n+oWOJb6hlA1UcmmxAHhyU9xwhcVf1cbnFsV
-         IAZJ7ngi6DRhg1p4ts82jmdiaKHLSMLdTEfS2Vn8xedMB/+6EvOE5BF/6Qa7X2upqnTT
-         0CJI84ObYmN+TCwwo+pCki9+/N3wsg++b9MBK0CiusS2Qy0TBC4mntbQJhWK6zVm/MVd
-         h/n1+5mBppUpv6DybfwlHsYEZFjUi+Vyetxm+mePpeM0tRrsSE2AH1RFJfiqR2JuY7Vi
-         H0FDuDSbZacAcphiDX5R913+eidKzYI1rDZYGT6Z4JLQVD9tDTotWkdwXy81GyN5uVdY
-         Qsqg==
+        b=WO4awu5r36o91gnY4XFumUxl+h2jW63jsA8uUFRX9p+EmU3DfI9dZ6yt6e/bZY3hCq
+         Cp85d+gFep7G08MNMCSi1vCTzlRytLrzWGI4IMiqw1jw9Y7DJRKx0sOwKZLrCI5guPCT
+         KFBYSrDBeiiL2X2gI1Ve4sz7IdQkvJT0aNxWgGYXwBDzq5IInIrzyxe+dh14lEKDDBGK
+         5CVOrEdvY7VRUFMqfD/aqzC+7HyOGwxgtJgvMID7v96hTIz5v0vF62FNUsDWZa0ZLEN2
+         hWUBwA2qW2DogFH+hIuDEabdSERhCjnx01UQODeSZgXh2BxjFL5fTHDQtH90wC1KwtYb
+         vgEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=A5qRu5O4XdLKAtLThe4keXjZHlOX9tznKgLQ2HWSaso=;
-        b=CFI3VKb3J1ZyYI8NOMHRm+x3sUkkOZdCs1JWyGwNfJZHnBFczlaGAWTZso0fQjBOtp
-         Drwp24SzUmTOASeWOMUFrSGIXJqTSooFE8HvbRqVLcsW0405KztW76JPvVUw69mALG1h
-         6U8vZ3hgi7hGLTnJU3HsAudjbnCA2EHtgePBdEtXGcByxZNenba2AhhzSaX5oEslZX36
-         iof7jWAL8q6iL54QapdVm9x3p+vdv4WoCrE83p/8TpNkgz8JgQ0Xb5HmAsNdmpmyouqV
-         uezZRPOG9dqltYjTXp7b/VOjt2GoxpHzYgUvvZ1IZVGoz5vSRcB3zRHLszQuI2wojR5c
-         3pSQ==
+        bh=Mn1aJaTHXrtGbHZzfY3FjdyCRR0uISVrb5pE9mL1fdY=;
+        b=npmR/ItX4GApgrSwXh4NTCB9yqPshQWdv8Fb1MH0LuHZq1VltfeyAFfQKdC0WKSgdx
+         VuxbOgWhaQ1lDpk1MpQ5cmW+NEYv/z+WaQyYr3RQD7Zt6rFR3ryiv/kGLsB1UEsK854H
+         9M7TXkYkh6roF7g/uFNFWDvCnVnVf7UEcIbd/zlWjicPcYi3huFbSsd/79b9ktnZrMF+
+         cm25US5whZ7DaPUyAEuoKhuHneLMl8jUo5N/5sA5XvvHAd1kR6EtFE90EZHAo7b/v9Sx
+         NQtGx7T4Mng2Go6FRXCZQjAbWPCFtOqgk1bX1ApJnMvrC4TB9roUKtUEKyc7WY9iZsoC
+         hG8Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Wang Han <wanghan1995315@gmail.com>
-Subject: [PATCH 3.18 10/45] ipv4: Map neigh lookup keys in __ipv4_neigh_lookup_noref()
-Date: Thu, 15 Feb 2018 16:17:01 +0100
-Message-Id: <20180215144118.045871977@linuxfoundation.org>
+	stable@vger.kernel.org,
+	syzbot+eb17c6162478cc50632c@syzkaller.appspotmail.com,
+	Jason Wang <jasowang@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 01/45] vhost_net: stop device during reset owner
+Date: Thu, 15 Feb 2018 16:16:52 +0100
+Message-Id: <20180215144116.162138244@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215144115.863307741@linuxfoundation.org>
 References: <20180215144115.863307741@linuxfoundation.org>
@@ -38,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480674237416402?=
-X-GMAIL-MSGID: =?utf-8?q?1592480674237416402?=
+X-GMAIL-THRID: =?utf-8?q?1592480671648397823?=
+X-GMAIL-MSGID: =?utf-8?q?1592480671648397823?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -47,43 +49,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wang Han <wanghan1995315@gmail.com>
+From: Jason Wang <jasowang@redhat.com>
 
-Commit 6c16fa957e84 is an incorrect backport as we map the keys in
-struct __ipv4_neigh_lookup(), but the correct place to add the
-code is struct __ipv4_neigh_lookup_noref(), compared to upstream.
 
-Fix it by moving the code, or fewer cases will be covered as
-__ipv4_neigh_lookup_noref() will be called unconditionally from
-__ipv4_neigh_lookup(), and it can be called from other places
-such as ip_output.c.
+[ Upstream commit 4cd879515d686849eec5f718aeac62a70b067d82 ]
 
-Fixes: 6c16fa957e84 (ipv4: Make neigh lookup keys for loopback/point-to-point devices be INADDR_ANY)
-Signed-off-by: Wang Han <wanghan1995315@gmail.com>
+We don't stop device before reset owner, this means we could try to
+serve any virtqueue kick before reset dev->worker. This will result a
+warn since the work was pending at llist during owner resetting. Fix
+this by stopping device during owner reset.
+
+Reported-by: syzbot+eb17c6162478cc50632c@syzkaller.appspotmail.com
+Fixes: 3a4d5c94e9593 ("vhost_net: a kernel-level virtio server")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/arp.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/vhost/net.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/net/arp.h
-+++ b/include/net/arp.h
-@@ -22,6 +22,9 @@ static inline struct neighbour *__ipv4_n
- 	struct neighbour *n;
- 	u32 hash_val;
- 
-+	if (dev->flags & (IFF_LOOPBACK | IFF_POINTOPOINT))
-+		key = INADDR_ANY;
-+
- 	hash_val = arp_hashfn(key, dev, nht->hash_rnd[0]) >> (32 - nht->hash_shift);
- 	for (n = rcu_dereference_bh(nht->hash_buckets[hash_val]);
- 	     n != NULL;
-@@ -37,9 +40,6 @@ static inline struct neighbour *__ipv4_n
- {
- 	struct neighbour *n;
- 
--	if (dev->flags & (IFF_LOOPBACK | IFF_POINTOPOINT))
--		key = INADDR_ANY;
--
- 	rcu_read_lock_bh();
- 	n = __ipv4_neigh_lookup_noref(dev, key);
- 	if (n && !atomic_inc_not_zero(&n->refcnt))
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -1009,6 +1009,7 @@ static long vhost_net_reset_owner(struct
+ 	}
+ 	vhost_net_stop(n, &tx_sock, &rx_sock);
+ 	vhost_net_flush(n);
++	vhost_dev_stop(&n->dev);
+ 	vhost_dev_reset_owner(&n->dev, memory);
+ 	vhost_net_vq_reset(n);
+ done:
