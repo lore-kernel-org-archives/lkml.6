@@ -1,64 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755176AbeBOJN2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 04:13:28 -0500
-Received: from mga06.intel.com ([134.134.136.31]:41468 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755069AbeBOJNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 04:13:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,516,1511856000";
-   d="scan'208";a="30944742"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>
-Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: Re: [PATCH] drm/i915/selftests: fix inconsistent IS_ERR and PTR_ERR
-In-Reply-To: <20180214211234.GA22341@embeddedgus>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180214211234.GA22341@embeddedgus>
-Date: Thu, 15 Feb 2018 11:13:15 +0200
-Message-ID: <87vaey4nv8.fsf@intel.com>
+        id S1755201AbeBOJOb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 04:14:31 -0500
+Received: from mail-wr0-f181.google.com ([209.85.128.181]:44104 "EHLO
+        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755155AbeBOJO3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 04:14:29 -0500
+X-Google-Smtp-Source: AH8x226cVSb9OULd5kJJZ5NOQBrhz1zZzgTb5t6YDDWA0Msr15BHd2C6LiFzJJ2Fsqr9sDz4e30jmqFCnKpxj9ALcOc=
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <7547a9ed-a2e7-e975-a3ba-f41abc16f4bc@metux.net>
+References: <7547a9ed-a2e7-e975-a3ba-f41abc16f4bc@metux.net>
+From: Richard Weinberger <richard.weinberger@gmail.com>
+Date: Thu, 15 Feb 2018 10:14:27 +0100
+Message-ID: <CAFLxGvz2t8rnEQh4VBJ8v3b66GKA5DY3iMk33jnMP664+RMubw@mail.gmail.com>
+Subject: Re: fs_struct refcounting: spinlock vs atomic
+To: Enrico Weigelt <lkml@metux.net>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Feb 2018, "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
-> Fix inconsistent IS_ERR and PTR_ERR in shrink_boom.
-> The proper pointer to use is _explode_ instead of _purge_.
+On Wed, Feb 14, 2018 at 10:13 PM, Enrico Weigelt <lkml@metux.net> wrote:
+> Hi folks,
 >
-> This issue was detected with the help of Coccinelle.
 >
-> Fixes: fe215c8bc426 ("drm/i915/selftests: add missing gtt shrinker test")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-
-(Having some issues with fdo connections, thus not pushing.)
-
-> ---
->  drivers/gpu/drm/i915/selftests/i915_gem_gtt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> in fork.c, a spinlock is held for fs_struct refcounting, while other
+> places - eg. switch_task_namespaces uses atomic_dec_and_test() on
+> the nsproxy.
 >
-> diff --git a/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c b/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
-> index d806427..89b6ca9 100644
-> --- a/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
-> +++ b/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
-> @@ -927,7 +927,7 @@ static int shrink_boom(struct drm_i915_private *i915,
->  
->  		explode = fake_dma_object(i915, size);
->  		if (IS_ERR(explode)) {
-> -			err = PTR_ERR(purge);
-> +			err = PTR_ERR(explode);
->  			goto err_purge;
->  		}
+> What's the exact difference here ? Could the atomic counting also used
+> for fs_struct ?
+
+Well, the spinlock protects more than just the counter. So atomic won't do it.
 
 -- 
-Jani Nikula, Intel Open Source Technology Center
+Thanks,
+//richard
