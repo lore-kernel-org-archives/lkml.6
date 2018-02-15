@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031489AbeBOM1V (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 07:27:21 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54498 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031169AbeBOM1R (ORCPT
+        id S1031661AbeBOM13 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 07:27:29 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34252 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031468AbeBOM1W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 07:27:17 -0500
-X-Google-Smtp-Source: AH8x225niF+tmBVP6jUvbY0ocZxicg/55N5KeVcou73yD5s/VwHIFoclnxXuPXgXJx6UG8Aunbv9cA==
+        Thu, 15 Feb 2018 07:27:22 -0500
+X-Google-Smtp-Source: AH8x225pCmok8Wk/i6odGKK22UDKsmsscB/Jwu+N4+l7qzdsboZhurfFcPEcAeBt4iw/ghTNE0yD3Q==
 From: srinivas.kandagatla@linaro.org
 To: vinod.koul@intel.com, andy.gross@linaro.org, dmaengine@vger.kernel.org
 Cc: robh+dt@kernel.org, mark.rutland@arm.com, david.brown@linaro.org,
@@ -16,43 +16,54 @@ Cc: robh+dt@kernel.org, mark.rutland@arm.com, david.brown@linaro.org,
         linux-soc@vger.kernel.org, yanhe@quicinc.com, ramkri@qti.qualcomm.com,
         sdharia@quicinc.com,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v3 0/5] dmaengine: qcom: bam_dma: fixes for remotely controlled bam
-Date: Thu, 15 Feb 2018 12:25:06 +0000
-Message-Id: <20180215122511.13517-1-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v3 4/5] dmaengine: qcom: bam_dma: do not write to global regs in remote mode
+Date: Thu, 15 Feb 2018 12:25:10 +0000
+Message-Id: <20180215122511.13517-5-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180215122511.13517-1-srinivas.kandagatla@linaro.org>
+References: <20180215122511.13517-1-srinivas.kandagatla@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Hi Andy,
+BAM_DESC_CNT_TRSHLD register is global register, which can only be written
+when BAM is in master mode, So check the mode of operation before writing
+it.
 
-I did hit few issues while trying out SLIMBus BAM on DB820c, this BAM instance
-is remotely controlled and powered up after ADSP is booted using QMI commands.
+Without this check SOC's xPU would catch such access and crash the system.
+First noticed on DB820c while testing SLIMBus BAM.
 
-Firstly some of the master registers are written even when the BAM is remotely
-controlled, and secondly reading registers when bam is not ready yet.
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ drivers/dma/qcom/bam_dma.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-These 4 patches address these issues, there are few more issues like doing PM
-in simillar usecase, these will be addressed soon.
-
-Thanks,
-Srini
-
-Changes since v2:
-	return clk error in default case, suggested by Bjorn
-
-Srinivas Kandagatla (5):
-  dmaengine: qcom: bam_dma: make bam clk optional
-  dt-bindings: dmaengine: bam_dma: add remote controlled bindings
-  dmaengine: qcom: bam_dma: get num-channels and num-ees from dt
-  dmaengine: qcom: bam_dma: do not write to global regs in remote mode
-  dmaengine: qcom: bam_dma: disable runtime pm on remote controlled
-
- .../devicetree/bindings/dma/qcom_bam_dma.txt       |  4 ++
- drivers/dma/qcom/bam_dma.c                         | 59 +++++++++++++++++-----
- 2 files changed, 49 insertions(+), 14 deletions(-)
-
+diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
+index 139e9f5e47a9..6919f501b9f3 100644
+--- a/drivers/dma/qcom/bam_dma.c
++++ b/drivers/dma/qcom/bam_dma.c
+@@ -935,12 +935,15 @@ static void bam_apply_new_config(struct bam_chan *bchan,
+ 	struct bam_device *bdev = bchan->bdev;
+ 	u32 maxburst;
+ 
+-	if (dir == DMA_DEV_TO_MEM)
+-		maxburst = bchan->slave.src_maxburst;
+-	else
+-		maxburst = bchan->slave.dst_maxburst;
++	if (!bdev->controlled_remotely) {
++		if (dir == DMA_DEV_TO_MEM)
++			maxburst = bchan->slave.src_maxburst;
++		else
++			maxburst = bchan->slave.dst_maxburst;
+ 
+-	writel_relaxed(maxburst, bam_addr(bdev, 0, BAM_DESC_CNT_TRSHLD));
++		writel_relaxed(maxburst,
++			       bam_addr(bdev, 0, BAM_DESC_CNT_TRSHLD));
++	}
+ 
+ 	bchan->reconfigure = 0;
+ }
 -- 
 2.15.1
