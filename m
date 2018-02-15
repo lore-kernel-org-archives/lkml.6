@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2241641-1518720446-2-17286714987213388529
+X-Cyrus-Session-Id: sloti22d1t05-2241641-1518720410-2-14568679442867393989
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720445; b=r/08gT15B7Zq8imaYbJypWjuxqb/UtMgmkG9roPsfq8oEWJ
-    KAjIT0Mcjsp5QSy0M3BEk7YlX7y18yE4vXL1+I4uY3ItKL3Yfi+dCQGKoJVcKoiU
-    c9Hhx0YuVefBPwLrZp3ywfFJwTga3eOiX632Ln+IXNiT8QmmrJU0Yyak5MEvYZzy
-    S7sYNiiobXCUVoHI4JuJKRsq4ib75GivwK4WlBAq5xoEaRtyF72stHL73vRYkit2
-    Leu0hUJnW3LbS6sqWcYPhWlbOoEsM7AspPujazW6RKPL8JjHEmLcDaVlH+1LsTsL
-    XRmjhVHbLXtJ52zbXkxlcbU+Bs0/ShziO3C091g==
+    t=1518720409; b=Tl/5tJVeVHOBtoKMjZFf4dyVdZRev7f7oDTBT9jH1pthG6s
+    3PBMjGwLSQtWHceEILXFFXc0jBlimG9sDlQrUNtZZuloxDYE5dos4zltEYlOHGTS
+    ETvHboqgyfMhrJChz/1qY2hfLgw65WBrevfhWCfZVLwxVglDATCXfffO1PofzX9F
+    4L+PFx1ETO0BA/4RaieH1xfO2YN/WE1WoGPjOiyDPu+wZ64gAEh/mg+h7Rk23DBe
+    WYTuUO4Is+H1I++sDM9ZtYcWoc22rRH9fMutx/MP4SqM4ADapeoVdeqdieHn6fQI
+    LimxzskJ/85/2W/zZgq1mG5Jv9qwn+kDU7FcigQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720445; bh=HgMrIi0KM3i7BGkPhHlhrcurUf
-    nVUtbwLfDtOK/qHxs=; b=tRv2oVzAc4I/nd+3N1f3ny9C07ujZMVg1lMYEGNNVt
-    t0i4FLz3l3G+5GNZUTRVYJKYYUcKPT0oa2EyybLrgKKipmhJsAyQ2/DGdvcnDpr5
-    7tPhAcNgHPCGNrRWPyTmT/nnKdKrs6W+retxKZkTJHl99iweZMzEwHCqbB/kbALx
-    exbH6Z/09qOLN/0QLSC3G7d8pU2ajZda1Hqw7nxQDUeex+/CI3hzrQf/mhBgHKA4
-    1qqrqV7eeMaUrnCyFL3NtOTykQPJcwRWnnH10gjYg3lokOAThiTaYUSQoqiirPJe
-    sPZAhVaBKROMqSpYtPPgbnOeSBw1PfPin9t49Qwyqydg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518720409; bh=2+7gX1VjT01cU+crkoxF/Xf/Iv
+    qrrpm1pD62+KrHBEs=; b=dzIkmgdDUKqu7uxUc8Mj4XMKM67KhaLNnezVLG2DBn
+    du5o2b2Ki4aTHEWnvSq7DXuYy/JelLiCqyWHTOdEKTusBhBYJL1XfWMsCr930NCK
+    xwdpFm3vguCwyY3pnVVO0mkfNFXfCkztJ+JTI7kFRbLlWlpjw1BRUCxpjCvKDZJs
+    pJgEs1cpdf+t6BHHIrPY4z6T+EGnrirTlHl6mbRH9bRxKTac5AAGUlpBmlGBGSNw
+    PXHq/+wqTldfqk3rdi0LfTdNAVs1kSKBAHkmnsHM0s5rtBXt/R5rfEQh/Ob5Q1VM
+    NFliASQmjEVqywTGoomkisCZUbYbI+084MJbHYLs5DAA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,22 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161760AbeBOPWX (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:22:23 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49500 "EHLO
+        id S1162397AbeBOSqp (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:46:45 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49622 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161525AbeBOPWV (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:22:21 -0500
+        with ESMTP id S1162398AbeBOPWY (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:22:24 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aurelien Aptel <aaptel@suse.com>,
-        Steve French <smfrench@gmail.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 4.4 042/108] CIFS: zero sensitive data when freeing
-Date: Thu, 15 Feb 2018 16:16:39 +0100
-Message-Id: <20180215151228.322447988@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Yang Shunyong <shunyong.yang@hxt-semitech.com>,
+        Adam Wallis <awallis@codeaurora.org>,
+        Vinod Koul <vinod.koul@intel.com>
+Subject: [PATCH 4.4 043/108] dmaengine: dmatest: fix container_of member in dmatest_callback
+Date: Thu, 15 Feb 2018 16:16:40 +0100
+Message-Id: <20180215151228.442042794@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -78,94 +79,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Aurelien Aptel <aaptel@suse.com>
+From: Yang Shunyong <shunyong.yang@hxt-semitech.com>
 
-commit 97f4b7276b829a8927ac903a119bef2f963ccc58 upstream.
+commit 66b3bd2356e0a1531c71a3dcf96944621e25c17c upstream.
 
-also replaces memset()+kfree() by kzfree().
+The type of arg passed to dmatest_callback is struct dmatest_done.
+It refers to test_done in struct dmatest_thread, not done_wait.
 
-Signed-off-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Steve French <smfrench@gmail.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Fixes: 6f6a23a213be ("dmaengine: dmatest: move callback wait ...")
+Signed-off-by: Yang Shunyong <shunyong.yang@hxt-semitech.com>
+Acked-by: Adam Wallis <awallis@codeaurora.org>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifsencrypt.c |    3 +--
- fs/cifs/connect.c     |    6 +++---
- fs/cifs/misc.c        |   14 ++++----------
- 3 files changed, 8 insertions(+), 15 deletions(-)
+ drivers/dma/dmatest.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/cifsencrypt.c
-+++ b/fs/cifs/cifsencrypt.c
-@@ -306,9 +306,8 @@ int calc_lanman_hash(const char *passwor
+--- a/drivers/dma/dmatest.c
++++ b/drivers/dma/dmatest.c
+@@ -329,7 +329,7 @@ static void dmatest_callback(void *arg)
  {
- 	int i;
- 	int rc;
--	char password_with_pad[CIFS_ENCPWD_SIZE];
-+	char password_with_pad[CIFS_ENCPWD_SIZE] = {0};
- 
--	memset(password_with_pad, 0, CIFS_ENCPWD_SIZE);
- 	if (password)
- 		strncpy(password_with_pad, password, CIFS_ENCPWD_SIZE);
- 
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -1695,7 +1695,7 @@ cifs_parse_mount_options(const char *mou
- 			tmp_end++;
- 			if (!(tmp_end < end && tmp_end[1] == delim)) {
- 				/* No it is not. Set the password to NULL */
--				kfree(vol->password);
-+				kzfree(vol->password);
- 				vol->password = NULL;
- 				break;
- 			}
-@@ -1733,7 +1733,7 @@ cifs_parse_mount_options(const char *mou
- 					options = end;
- 			}
- 
--			kfree(vol->password);
-+			kzfree(vol->password);
- 			/* Now build new password string */
- 			temp_len = strlen(value);
- 			vol->password = kzalloc(temp_len+1, GFP_KERNEL);
-@@ -4148,7 +4148,7 @@ cifs_construct_tcon(struct cifs_sb_info
- 		reset_cifs_unix_caps(0, tcon, NULL, vol_info);
- out:
- 	kfree(vol_info->username);
--	kfree(vol_info->password);
-+	kzfree(vol_info->password);
- 	kfree(vol_info);
- 
- 	return tcon;
---- a/fs/cifs/misc.c
-+++ b/fs/cifs/misc.c
-@@ -99,14 +99,11 @@ sesInfoFree(struct cifs_ses *buf_to_free
- 	kfree(buf_to_free->serverOS);
- 	kfree(buf_to_free->serverDomain);
- 	kfree(buf_to_free->serverNOS);
--	if (buf_to_free->password) {
--		memset(buf_to_free->password, 0, strlen(buf_to_free->password));
--		kfree(buf_to_free->password);
--	}
-+	kzfree(buf_to_free->password);
- 	kfree(buf_to_free->user_name);
- 	kfree(buf_to_free->domainName);
--	kfree(buf_to_free->auth_key.response);
--	kfree(buf_to_free);
-+	kzfree(buf_to_free->auth_key.response);
-+	kzfree(buf_to_free);
- }
- 
- struct cifs_tcon *
-@@ -137,10 +134,7 @@ tconInfoFree(struct cifs_tcon *buf_to_fr
- 	}
- 	atomic_dec(&tconInfoAllocCount);
- 	kfree(buf_to_free->nativeFileSystem);
--	if (buf_to_free->password) {
--		memset(buf_to_free->password, 0, strlen(buf_to_free->password));
--		kfree(buf_to_free->password);
--	}
-+	kzfree(buf_to_free->password);
- 	kfree(buf_to_free);
- }
- 
+ 	struct dmatest_done *done = arg;
+ 	struct dmatest_thread *thread =
+-		container_of(arg, struct dmatest_thread, done_wait);
++		container_of(done, struct dmatest_thread, test_done);
+ 	if (!thread->done) {
+ 		done->done = true;
+ 		wake_up_all(done->wait);
