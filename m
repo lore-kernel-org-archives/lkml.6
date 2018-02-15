@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754790AbeBOGDj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 01:03:39 -0500
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:38637 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751648AbeBOGDh (ORCPT
+        id S1754813AbeBOGDt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 01:03:49 -0500
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:60570 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751648AbeBOGDr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 01:03:37 -0500
+        Thu, 15 Feb 2018 01:03:47 -0500
 From: Keerthy <j-keerthy@ti.com>
 To: <daniel.lezcano@linaro.org>, <thierry.reding@gmail.com>,
         <tony@atomide.com>, <aaro.koskinen@iki.fi>
@@ -16,10 +16,12 @@ CC: <j-keerthy@ti.com>, <Claudiu.Beznea@microchip.com>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <sebastian.reichel@collabora.co.uk>, <linux-omap@vger.kernel.org>,
         <robh+dt@kernel.org>, <t-kristo@ti.com>, <grygorii.strashko@ti.com>
-Subject: [PATCH v11 00/10] omap: dmtimer: Move driver out of plat-omap
-Date: Thu, 15 Feb 2018 11:31:41 +0530
-Message-ID: <1518674511-26421-1-git-send-email-j-keerthy@ti.com>
+Subject: [PATCH v11 01/10] clocksource: dmtimer: Remove all the exports
+Date: Thu, 15 Feb 2018 11:31:42 +0530
+Message-ID: <1518674511-26421-2-git-send-email-j-keerthy@ti.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1518674511-26421-1-git-send-email-j-keerthy@ti.com>
+References: <1518674511-26421-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -27,90 +29,232 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The series moves dmtimer out of plat-omap to drivers/clocksource.
-The series also does a bunch of changes to pwm-omap-dmtimer code
-to adapt to the driver migration and clean up plat specific
-pdata-quirks and use the dmtimer platform data.
+Remove all the unwanted exports from the driver
 
-Boot tested on DRA7-EVM and AM437X-GP-EVM.
-Compile tested omap1_defconfig.
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Tested-by: Ladislav Michl <ladis@linux-mips.org>
+---
+ arch/arm/plat-omap/dmtimer.c | 27 ---------------------------
+ 1 file changed, 27 deletions(-)
 
-This is based on top of
-https://kernel.googlesource.com/pub/scm/linux/kernel/git/tmlind/linux-omap
-
-omap-for-v4.17/soc branch.
-
-Changes from V10:
-
-  * Rebased on top of
-https://kernel.googlesource.com/pub/scm/linux/kernel/git/tmlind/linux-omap
-omap-for-v4.17/soc branch.
-
-Changes from v9:
-
-  * Fixed a typo in patch 9/10
-Changes from v8:
-
-  * Reordered Patch 9/10 a bit.
-Changes from V7:
-
-  * Introduced of_node_put in Patch 9/10
-
-Changes from V6:
-
-  * Fixed error checking for pwm driver patch.
-  * Removed one of the fixes from Ladis as per request.
-
-Changes from V5:
-
-  * Added couple of fixes from Ladis for  pwm-dmtimer.
-
-Changes from v4:
-
-  * Made OMAP_DM_TIMER config option silent.
-  * Changed the driver name to timer-dm.c
-
-Changes from v3:
-
-  * Reverted to v2 approach of using dev_get_platdata to fetch dmtimer ops.
-
-Changes from V2:
-
-  * Wrapped the inline functions in header file under OMAP2PLUS
-  * Added a new of helper function to fetch plat_data from of node. 
-
-Keerthy (9):
-  clocksource: dmtimer: Remove all the exports
-  arm: omap: timer: Wrap the inline functions under OMAP2PLUS define
-  arm: omap: Move dmtimer.h out of plat-omap
-  clocksource: timer-ti-dm: Replace architecture specific guard with
-    clocksource
-  arm: OMAP: Move dmtimer driver out of plat-omap to drivers under
-    clocksource
-  dmtimer: Add timer ops to the platform data structure
-  clocksource: dmtimer: Populate the timer ops to the pdata
-  pwm: pwm-omap-dmtimer: Adapt driver to utilize dmtimer pdata ops
-  arm: omap: pdata-quirks: Remove unused timer pdata
-
-Ladislav Michl (1):
-  clocksource: timer-dm: Hook device platform data if not already
-    assigned
-
- arch/arm/mach-omap1/pm.c                           |  2 +-
- arch/arm/mach-omap1/timer.c                        |  2 +-
- arch/arm/mach-omap2/pdata-quirks.c                 | 32 ----------
- arch/arm/mach-omap2/timer.c                        |  2 +-
- arch/arm/plat-omap/Kconfig                         |  6 --
- arch/arm/plat-omap/Makefile                        |  1 -
- drivers/clocksource/Kconfig                        |  3 +
- drivers/clocksource/Makefile                       |  1 +
- .../dmtimer.c => drivers/clocksource/timer-ti-dm.c | 64 ++++++++++----------
- drivers/pwm/pwm-omap-dmtimer.c                     | 68 +++++++++++++---------
- .../dmtimer.h => include/clocksource/timer-ti-dm.h | 25 ++++++--
- include/linux/platform_data/dmtimer-omap.h         | 38 ++++++++++++
- 12 files changed, 138 insertions(+), 106 deletions(-)
- rename arch/arm/plat-omap/dmtimer.c => drivers/clocksource/timer-ti-dm.c (94%)
- rename arch/arm/plat-omap/include/plat/dmtimer.h => include/clocksource/timer-ti-dm.h (96%)
-
+diff --git a/arch/arm/plat-omap/dmtimer.c b/arch/arm/plat-omap/dmtimer.c
+index d443e48..72565fc 100644
+--- a/arch/arm/plat-omap/dmtimer.c
++++ b/arch/arm/plat-omap/dmtimer.c
+@@ -302,7 +302,6 @@ struct omap_dm_timer *omap_dm_timer_request(void)
+ {
+ 	return _omap_dm_timer_request(REQUEST_ANY, NULL);
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_request);
+ 
+ struct omap_dm_timer *omap_dm_timer_request_specific(int id)
+ {
+@@ -315,7 +314,6 @@ struct omap_dm_timer *omap_dm_timer_request_specific(int id)
+ 
+ 	return _omap_dm_timer_request(REQUEST_BY_ID, &id);
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_request_specific);
+ 
+ /**
+  * omap_dm_timer_request_by_cap - Request a timer by capability
+@@ -330,7 +328,6 @@ struct omap_dm_timer *omap_dm_timer_request_by_cap(u32 cap)
+ {
+ 	return _omap_dm_timer_request(REQUEST_BY_CAP, &cap);
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_request_by_cap);
+ 
+ /**
+  * omap_dm_timer_request_by_node - Request a timer by device-tree node
+@@ -346,7 +343,6 @@ struct omap_dm_timer *omap_dm_timer_request_by_node(struct device_node *np)
+ 
+ 	return _omap_dm_timer_request(REQUEST_BY_NODE, np);
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_request_by_node);
+ 
+ int omap_dm_timer_free(struct omap_dm_timer *timer)
+ {
+@@ -359,7 +355,6 @@ int omap_dm_timer_free(struct omap_dm_timer *timer)
+ 	timer->reserved = 0;
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_free);
+ 
+ void omap_dm_timer_enable(struct omap_dm_timer *timer)
+ {
+@@ -379,13 +374,11 @@ void omap_dm_timer_enable(struct omap_dm_timer *timer)
+ 		}
+ 	}
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_enable);
+ 
+ void omap_dm_timer_disable(struct omap_dm_timer *timer)
+ {
+ 	pm_runtime_put_sync(&timer->pdev->dev);
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_disable);
+ 
+ int omap_dm_timer_get_irq(struct omap_dm_timer *timer)
+ {
+@@ -393,7 +386,6 @@ int omap_dm_timer_get_irq(struct omap_dm_timer *timer)
+ 		return timer->irq;
+ 	return -EINVAL;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_get_irq);
+ 
+ #if defined(CONFIG_ARCH_OMAP1)
+ #include <mach/hardware.h>
+@@ -429,7 +421,6 @@ __u32 omap_dm_timer_modify_idlect_mask(__u32 inputmask)
+ 
+ 	return inputmask;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_modify_idlect_mask);
+ 
+ #else
+ 
+@@ -439,7 +430,6 @@ struct clk *omap_dm_timer_get_fclk(struct omap_dm_timer *timer)
+ 		return timer->fclk;
+ 	return NULL;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_get_fclk);
+ 
+ __u32 omap_dm_timer_modify_idlect_mask(__u32 inputmask)
+ {
+@@ -447,7 +437,6 @@ __u32 omap_dm_timer_modify_idlect_mask(__u32 inputmask)
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_modify_idlect_mask);
+ 
+ #endif
+ 
+@@ -461,7 +450,6 @@ int omap_dm_timer_trigger(struct omap_dm_timer *timer)
+ 	omap_dm_timer_write_reg(timer, OMAP_TIMER_TRIGGER_REG, 0);
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_trigger);
+ 
+ int omap_dm_timer_start(struct omap_dm_timer *timer)
+ {
+@@ -482,7 +470,6 @@ int omap_dm_timer_start(struct omap_dm_timer *timer)
+ 	timer->context.tclr = l;
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_start);
+ 
+ int omap_dm_timer_stop(struct omap_dm_timer *timer)
+ {
+@@ -506,7 +493,6 @@ int omap_dm_timer_stop(struct omap_dm_timer *timer)
+ 	omap_dm_timer_disable(timer);
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_stop);
+ 
+ int omap_dm_timer_set_source(struct omap_dm_timer *timer, int source)
+ {
+@@ -569,7 +555,6 @@ int omap_dm_timer_set_source(struct omap_dm_timer *timer, int source)
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_set_source);
+ 
+ int omap_dm_timer_set_load(struct omap_dm_timer *timer, int autoreload,
+ 			    unsigned int load)
+@@ -595,7 +580,6 @@ int omap_dm_timer_set_load(struct omap_dm_timer *timer, int autoreload,
+ 	omap_dm_timer_disable(timer);
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_set_load);
+ 
+ /* Optimized set_load which removes costly spin wait in timer_start */
+ int omap_dm_timer_set_load_start(struct omap_dm_timer *timer, int autoreload,
+@@ -625,7 +609,6 @@ int omap_dm_timer_set_load_start(struct omap_dm_timer *timer, int autoreload,
+ 	timer->context.tcrr = load;
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_set_load_start);
+ 
+ int omap_dm_timer_set_match(struct omap_dm_timer *timer, int enable,
+ 			     unsigned int match)
+@@ -650,7 +633,6 @@ int omap_dm_timer_set_match(struct omap_dm_timer *timer, int enable,
+ 	omap_dm_timer_disable(timer);
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_set_match);
+ 
+ int omap_dm_timer_set_pwm(struct omap_dm_timer *timer, int def_on,
+ 			   int toggle, int trigger)
+@@ -676,7 +658,6 @@ int omap_dm_timer_set_pwm(struct omap_dm_timer *timer, int def_on,
+ 	omap_dm_timer_disable(timer);
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_set_pwm);
+ 
+ int omap_dm_timer_set_prescaler(struct omap_dm_timer *timer, int prescaler)
+ {
+@@ -699,7 +680,6 @@ int omap_dm_timer_set_prescaler(struct omap_dm_timer *timer, int prescaler)
+ 	omap_dm_timer_disable(timer);
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_set_prescaler);
+ 
+ int omap_dm_timer_set_int_enable(struct omap_dm_timer *timer,
+ 				  unsigned int value)
+@@ -716,7 +696,6 @@ int omap_dm_timer_set_int_enable(struct omap_dm_timer *timer,
+ 	omap_dm_timer_disable(timer);
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_set_int_enable);
+ 
+ /**
+  * omap_dm_timer_set_int_disable - disable timer interrupts
+@@ -747,7 +726,6 @@ int omap_dm_timer_set_int_disable(struct omap_dm_timer *timer, u32 mask)
+ 	omap_dm_timer_disable(timer);
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_set_int_disable);
+ 
+ unsigned int omap_dm_timer_read_status(struct omap_dm_timer *timer)
+ {
+@@ -762,7 +740,6 @@ unsigned int omap_dm_timer_read_status(struct omap_dm_timer *timer)
+ 
+ 	return l;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_read_status);
+ 
+ int omap_dm_timer_write_status(struct omap_dm_timer *timer, unsigned int value)
+ {
+@@ -773,7 +750,6 @@ int omap_dm_timer_write_status(struct omap_dm_timer *timer, unsigned int value)
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_write_status);
+ 
+ unsigned int omap_dm_timer_read_counter(struct omap_dm_timer *timer)
+ {
+@@ -784,7 +760,6 @@ unsigned int omap_dm_timer_read_counter(struct omap_dm_timer *timer)
+ 
+ 	return __omap_dm_timer_read_counter(timer, timer->posted);
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_read_counter);
+ 
+ int omap_dm_timer_write_counter(struct omap_dm_timer *timer, unsigned int value)
+ {
+@@ -799,7 +774,6 @@ int omap_dm_timer_write_counter(struct omap_dm_timer *timer, unsigned int value)
+ 	timer->context.tcrr = value;
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timer_write_counter);
+ 
+ int omap_dm_timers_active(void)
+ {
+@@ -816,7 +790,6 @@ int omap_dm_timers_active(void)
+ 	}
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(omap_dm_timers_active);
+ 
+ static const struct of_device_id omap_timer_match[];
+ 
 -- 
 1.9.1
