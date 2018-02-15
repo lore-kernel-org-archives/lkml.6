@@ -1,47 +1,76 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224A18t74FGK9u0OPTWgOgzhI0hH1X2RfEG+LG3oszoFqwEQCQgLzMD2maOcRIhWeaBpMwoU
-ARC-Seal: i=1; a=rsa-sha256; t=1518709432; cv=none;
-        d=google.com; s=arc-20160816;
-        b=gbd01T3eIV/dua5yVBsGGbd+QfO42O+hrKq51S0aFQ5MMvM0QJoraTONEw15Pa3iKS
-         m3/kjc5aaPgq3HQjO4Gmfoy4Z41rlGKelCFzTVagvzh232I/yRmRFfexFFfN5pXHNUVl
-         z3c0tQDehK70XkC8qh6+RZoCcN9evFaPgCcqFkQ3gopgDr29grf7Mekkibt2AUxcz8C5
-         lQpux9dRE/Jvl2kEEsrGxVUMJUCVRbxjxHdJJbmb/ISYDljQPHzJZ0O0yW7P81Dk2nZv
-         GxhUUwqRUtHF7Xxv/ueEXW9HwgHkfX3w7LN4CC25ddXzZxFay579cR435h9nRf5PUmXQ
-         LKYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=IxaWOHNtRYotnuF6/ygqio7FI8yamv8PYGHgTzfIlrk=;
-        b=zlOa+oNI01+lACgIn8TEvlWzuSx2OTqgGuBrQKStVbzjjSyoSSxN9WJVRUOpzfivlv
-         VrT72HifLx1PDEkFmg0nnlrUy0TkkJIprCuAN2ODI9nTLR1sfE2V7qH2xQy90Emkdcvh
-         RO9Xr+VgvoSvfOaNJMBaPULOYN334SZBxJJMWrG6LjV7kcDMCWCmkX6WtSRYsna5ewds
-         ZDoSILqx7AHdMtcgO1Gx7uKdYHdyj9XmqRKN9y6kzTPvBDVAJHuzegT08Uf6Bnko2YOC
-         hW4Lq4URuicsruVeT/SH5KlxIrUXruVXI6Q2Q8OHYyYXNX1UkAVpKw73X4HSZOgeuTRJ
-         TiZw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1825685-1518709432-2-14277410281274024923
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518709431; b=ZSpG0IlJmqYVXxfTcEjKM1dsU9GcnnlosJKjbIi/zww99ze
+    YdWIgjLfv7lfiFZNT9aPE2xNCwH51E7nV9VNbx2LLkc1Q+VCyfnAWpRSWjJIXCjD
+    Nvp1j2lwmoYWBpKyrAS/6uvJFOPUn5xyUmEwdXynWXyRoUXoFUmS9Kpv4/Zks/Zn
+    zfOh6VpviZw6u67fZc926un/dEa1HAH/5mWszoWV1HnXZ5kRtdWL4bLiRg3Cm9/a
+    Dr/G1Gl0wHoC7ql4IstLqXLiVft+zSVGLi+DfgkBbgdFjk8EKZPk6JQErWRUUiPK
+    oweM0m2sJLxinJ2tfcZxK1DX0+BMNBJbzUUnJ4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1518709431; bh=vwYQ2qoce/SBdSVbhzHKjQ5gvi
+    wNI6v8biIhKx9HJkM=; b=mnkAVbReUEdiSY8axUaoWFY6ovDNPEVubiodCkeo+n
+    q3bk8g8YFG8D7eYeodVysVufJ8VHwuz0vVcX8oWlMIwL+yMbRsTfTxa1rYX2kVSL
+    XUcHpfPoVVJ1i8wnEfmRT21n/C9nyu0GdPUvWppJVYDWl+tz7MS1AO4QKaPtIZ0o
+    aNErERWpCtGz1E8IjfhxSzjiuYL7g/Fvvz4SQiXj37rGFAOoO8Crri/rdEd2xZqh
+    XW0Qj5mdBVUntktznwGV0ij3a94dhQ8no4NgH5Fh0kb4bSiQeyMdXtsmP9RKUaHv
+    yDafaPDgWrPTToPOLayMcUyDVBQ0Vh0lCBOPrUwR7bMA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1165315AbeBOPnr (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:43:47 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34060 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1165086AbeBOPnp (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:43:45 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.15 114/202] media: v4l2-ioctl.c: use check_fmt for enum/g/s/try_fmt
-Date: Thu, 15 Feb 2018 16:16:54 +0100
-Message-Id: <20180215151719.207579106@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.15 113/202] crypto: hash - prevent using keyed hashes without setting key
+Date: Thu, 15 Feb 2018 16:16:53 +0100
+Message-Id: <20180215151719.159753327@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481704594227240?=
-X-GMAIL-MSGID: =?utf-8?q?1592482261834635962?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,390 +78,366 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit b2469c814fbc8f1f19676dd4912717b798df511e upstream.
+commit 9fa68f620041be04720d0cbfb1bd3ddfc6310b24 upstream.
 
-Don't duplicate the buffer type checks in enum/g/s/try_fmt.
-The check_fmt function does that already.
+Currently, almost none of the keyed hash algorithms check whether a key
+has been set before proceeding.  Some algorithms are okay with this and
+will effectively just use a key of all 0's or some other bogus default.
+However, others will severely break, as demonstrated using
+"hmac(sha3-512-generic)", the unkeyed use of which causes a kernel crash
+via a (potentially exploitable) stack buffer overflow.
 
-It is hard to keep the checks in sync for all these functions and
-in fact the check for VBI was wrong in the _fmt functions as it
-allowed SDR types as well. This caused a v4l2-compliance failure
-for /dev/swradio0 using vivid.
+A while ago, this problem was solved for AF_ALG by pairing each hash
+transform with a 'has_key' bool.  However, there are still other places
+in the kernel where userspace can specify an arbitrary hash algorithm by
+name, and the kernel uses it as unkeyed hash without checking whether it
+is really unkeyed.  Examples of this include:
 
-This simplifies the code and keeps the check in one place and
-fixes the SDR/VBI bug.
+    - KEYCTL_DH_COMPUTE, via the KDF extension
+    - dm-verity
+    - dm-crypt, via the ESSIV support
+    - dm-integrity, via the "internal hash" mode with no key given
+    - drbd (Distributed Replicated Block Device)
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+This bug is especially bad for KEYCTL_DH_COMPUTE as that requires no
+privileges to call.
+
+Fix the bug for all users by adding a flag CRYPTO_TFM_NEED_KEY to the
+->crt_flags of each hash transform that indicates whether the transform
+still needs to be keyed or not.  Then, make the hash init, import, and
+digest functions return -ENOKEY if the key is still needed.
+
+The new flag also replaces the 'has_key' bool which algif_hash was
+previously using, thereby simplifying the algif_hash implementation.
+
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/v4l2-core/v4l2-ioctl.c |  140 +++++++++++++----------------------
- 1 file changed, 54 insertions(+), 86 deletions(-)
+ crypto/ahash.c         |   22 ++++++++++++++++----
+ crypto/algif_hash.c    |   52 ++++++++++---------------------------------------
+ crypto/shash.c         |   25 +++++++++++++++++++----
+ include/crypto/hash.h  |   34 ++++++++++++++++++++++----------
+ include/linux/crypto.h |    2 +
+ 5 files changed, 75 insertions(+), 60 deletions(-)
 
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1311,52 +1311,50 @@ static int v4l_enum_fmt(const struct v4l
- 				struct file *file, void *fh, void *arg)
+--- a/crypto/ahash.c
++++ b/crypto/ahash.c
+@@ -193,11 +193,18 @@ int crypto_ahash_setkey(struct crypto_ah
+ 			unsigned int keylen)
  {
- 	struct v4l2_fmtdesc *p = arg;
--	struct video_device *vfd = video_devdata(file);
--	bool is_vid = vfd->vfl_type == VFL_TYPE_GRABBER;
--	bool is_sdr = vfd->vfl_type == VFL_TYPE_SDR;
--	bool is_tch = vfd->vfl_type == VFL_TYPE_TOUCH;
--	bool is_rx = vfd->vfl_dir != VFL_DIR_TX;
--	bool is_tx = vfd->vfl_dir != VFL_DIR_RX;
--	int ret = -EINVAL;
-+	int ret = check_fmt(file, p->type);
-+
-+	if (ret)
-+		return ret;
-+	ret = -EINVAL;
+ 	unsigned long alignmask = crypto_ahash_alignmask(tfm);
++	int err;
  
- 	switch (p->type) {
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
--		if (unlikely(!is_rx || (!is_vid && !is_tch) || !ops->vidioc_enum_fmt_vid_cap))
-+		if (unlikely(!ops->vidioc_enum_fmt_vid_cap))
- 			break;
- 		ret = ops->vidioc_enum_fmt_vid_cap(file, fh, arg);
- 		break;
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
--		if (unlikely(!is_rx || !is_vid || !ops->vidioc_enum_fmt_vid_cap_mplane))
-+		if (unlikely(!ops->vidioc_enum_fmt_vid_cap_mplane))
- 			break;
- 		ret = ops->vidioc_enum_fmt_vid_cap_mplane(file, fh, arg);
- 		break;
- 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
--		if (unlikely(!is_rx || !is_vid || !ops->vidioc_enum_fmt_vid_overlay))
-+		if (unlikely(!ops->vidioc_enum_fmt_vid_overlay))
- 			break;
- 		ret = ops->vidioc_enum_fmt_vid_overlay(file, fh, arg);
- 		break;
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
--		if (unlikely(!is_tx || !is_vid || !ops->vidioc_enum_fmt_vid_out))
-+		if (unlikely(!ops->vidioc_enum_fmt_vid_out))
- 			break;
- 		ret = ops->vidioc_enum_fmt_vid_out(file, fh, arg);
- 		break;
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
--		if (unlikely(!is_tx || !is_vid || !ops->vidioc_enum_fmt_vid_out_mplane))
-+		if (unlikely(!ops->vidioc_enum_fmt_vid_out_mplane))
- 			break;
- 		ret = ops->vidioc_enum_fmt_vid_out_mplane(file, fh, arg);
- 		break;
- 	case V4L2_BUF_TYPE_SDR_CAPTURE:
--		if (unlikely(!is_rx || !is_sdr || !ops->vidioc_enum_fmt_sdr_cap))
-+		if (unlikely(!ops->vidioc_enum_fmt_sdr_cap))
- 			break;
- 		ret = ops->vidioc_enum_fmt_sdr_cap(file, fh, arg);
- 		break;
- 	case V4L2_BUF_TYPE_SDR_OUTPUT:
--		if (unlikely(!is_tx || !is_sdr || !ops->vidioc_enum_fmt_sdr_out))
-+		if (unlikely(!ops->vidioc_enum_fmt_sdr_out))
- 			break;
- 		ret = ops->vidioc_enum_fmt_sdr_out(file, fh, arg);
- 		break;
- 	case V4L2_BUF_TYPE_META_CAPTURE:
--		if (unlikely(!is_rx || !is_vid || !ops->vidioc_enum_fmt_meta_cap))
-+		if (unlikely(!ops->vidioc_enum_fmt_meta_cap))
- 			break;
- 		ret = ops->vidioc_enum_fmt_meta_cap(file, fh, arg);
- 		break;
-@@ -1370,13 +1368,10 @@ static int v4l_g_fmt(const struct v4l2_i
- 				struct file *file, void *fh, void *arg)
+ 	if ((unsigned long)key & alignmask)
+-		return ahash_setkey_unaligned(tfm, key, keylen);
++		err = ahash_setkey_unaligned(tfm, key, keylen);
++	else
++		err = tfm->setkey(tfm, key, keylen);
++
++	if (err)
++		return err;
+ 
+-	return tfm->setkey(tfm, key, keylen);
++	crypto_ahash_clear_flags(tfm, CRYPTO_TFM_NEED_KEY);
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(crypto_ahash_setkey);
+ 
+@@ -368,7 +375,12 @@ EXPORT_SYMBOL_GPL(crypto_ahash_finup);
+ 
+ int crypto_ahash_digest(struct ahash_request *req)
  {
- 	struct v4l2_format *p = arg;
--	struct video_device *vfd = video_devdata(file);
--	bool is_vid = vfd->vfl_type == VFL_TYPE_GRABBER;
--	bool is_sdr = vfd->vfl_type == VFL_TYPE_SDR;
--	bool is_tch = vfd->vfl_type == VFL_TYPE_TOUCH;
--	bool is_rx = vfd->vfl_dir != VFL_DIR_TX;
--	bool is_tx = vfd->vfl_dir != VFL_DIR_RX;
--	int ret;
-+	int ret = check_fmt(file, p->type);
+-	return crypto_ahash_op(req, crypto_ahash_reqtfm(req)->digest);
++	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
 +
-+	if (ret)
-+		return ret;
++	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
++		return -ENOKEY;
++
++	return crypto_ahash_op(req, tfm->digest);
+ }
+ EXPORT_SYMBOL_GPL(crypto_ahash_digest);
  
- 	/*
- 	 * fmt can't be cleared for these overlay types due to the 'clips'
-@@ -1404,7 +1399,7 @@ static int v4l_g_fmt(const struct v4l2_i
+@@ -450,7 +462,6 @@ static int crypto_ahash_init_tfm(struct
+ 	struct ahash_alg *alg = crypto_ahash_alg(hash);
  
- 	switch (p->type) {
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
--		if (unlikely(!is_rx || (!is_vid && !is_tch) || !ops->vidioc_g_fmt_vid_cap))
-+		if (unlikely(!ops->vidioc_g_fmt_vid_cap))
- 			break;
- 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
- 		ret = ops->vidioc_g_fmt_vid_cap(file, fh, arg);
-@@ -1412,23 +1407,15 @@ static int v4l_g_fmt(const struct v4l2_i
- 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
- 		return ret;
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
--		if (unlikely(!is_rx || !is_vid || !ops->vidioc_g_fmt_vid_cap_mplane))
--			break;
- 		return ops->vidioc_g_fmt_vid_cap_mplane(file, fh, arg);
- 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
--		if (unlikely(!is_rx || !is_vid || !ops->vidioc_g_fmt_vid_overlay))
--			break;
- 		return ops->vidioc_g_fmt_vid_overlay(file, fh, arg);
- 	case V4L2_BUF_TYPE_VBI_CAPTURE:
--		if (unlikely(!is_rx || is_vid || !ops->vidioc_g_fmt_vbi_cap))
--			break;
- 		return ops->vidioc_g_fmt_vbi_cap(file, fh, arg);
- 	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
--		if (unlikely(!is_rx || is_vid || !ops->vidioc_g_fmt_sliced_vbi_cap))
--			break;
- 		return ops->vidioc_g_fmt_sliced_vbi_cap(file, fh, arg);
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
--		if (unlikely(!is_tx || !is_vid || !ops->vidioc_g_fmt_vid_out))
-+		if (unlikely(!ops->vidioc_g_fmt_vid_out))
- 			break;
- 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
- 		ret = ops->vidioc_g_fmt_vid_out(file, fh, arg);
-@@ -1436,32 +1423,18 @@ static int v4l_g_fmt(const struct v4l2_i
- 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
- 		return ret;
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
--		if (unlikely(!is_tx || !is_vid || !ops->vidioc_g_fmt_vid_out_mplane))
--			break;
- 		return ops->vidioc_g_fmt_vid_out_mplane(file, fh, arg);
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
--		if (unlikely(!is_tx || !is_vid || !ops->vidioc_g_fmt_vid_out_overlay))
--			break;
- 		return ops->vidioc_g_fmt_vid_out_overlay(file, fh, arg);
- 	case V4L2_BUF_TYPE_VBI_OUTPUT:
--		if (unlikely(!is_tx || is_vid || !ops->vidioc_g_fmt_vbi_out))
--			break;
- 		return ops->vidioc_g_fmt_vbi_out(file, fh, arg);
- 	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
--		if (unlikely(!is_tx || is_vid || !ops->vidioc_g_fmt_sliced_vbi_out))
--			break;
- 		return ops->vidioc_g_fmt_sliced_vbi_out(file, fh, arg);
- 	case V4L2_BUF_TYPE_SDR_CAPTURE:
--		if (unlikely(!is_rx || !is_sdr || !ops->vidioc_g_fmt_sdr_cap))
--			break;
- 		return ops->vidioc_g_fmt_sdr_cap(file, fh, arg);
- 	case V4L2_BUF_TYPE_SDR_OUTPUT:
--		if (unlikely(!is_tx || !is_sdr || !ops->vidioc_g_fmt_sdr_out))
--			break;
- 		return ops->vidioc_g_fmt_sdr_out(file, fh, arg);
- 	case V4L2_BUF_TYPE_META_CAPTURE:
--		if (unlikely(!is_rx || !is_vid || !ops->vidioc_g_fmt_meta_cap))
--			break;
- 		return ops->vidioc_g_fmt_meta_cap(file, fh, arg);
+ 	hash->setkey = ahash_nosetkey;
+-	hash->has_setkey = false;
+ 	hash->export = ahash_no_export;
+ 	hash->import = ahash_no_import;
+ 
+@@ -465,7 +476,8 @@ static int crypto_ahash_init_tfm(struct
+ 
+ 	if (alg->setkey) {
+ 		hash->setkey = alg->setkey;
+-		hash->has_setkey = true;
++		if (!(alg->halg.base.cra_flags & CRYPTO_ALG_OPTIONAL_KEY))
++			crypto_ahash_set_flags(hash, CRYPTO_TFM_NEED_KEY);
  	}
- 	return -EINVAL;
-@@ -1487,12 +1460,10 @@ static int v4l_s_fmt(const struct v4l2_i
+ 	if (alg->export)
+ 		hash->export = alg->export;
+--- a/crypto/algif_hash.c
++++ b/crypto/algif_hash.c
+@@ -34,11 +34,6 @@ struct hash_ctx {
+ 	struct ahash_request req;
+ };
+ 
+-struct algif_hash_tfm {
+-	struct crypto_ahash *hash;
+-	bool has_key;
+-};
+-
+ static int hash_alloc_result(struct sock *sk, struct hash_ctx *ctx)
  {
- 	struct v4l2_format *p = arg;
- 	struct video_device *vfd = video_devdata(file);
--	bool is_vid = vfd->vfl_type == VFL_TYPE_GRABBER;
--	bool is_sdr = vfd->vfl_type == VFL_TYPE_SDR;
--	bool is_tch = vfd->vfl_type == VFL_TYPE_TOUCH;
--	bool is_rx = vfd->vfl_dir != VFL_DIR_TX;
--	bool is_tx = vfd->vfl_dir != VFL_DIR_RX;
--	int ret;
-+	int ret = check_fmt(file, p->type);
-+
-+	if (ret)
-+		return ret;
+ 	unsigned ds;
+@@ -307,7 +302,7 @@ static int hash_check_key(struct socket
+ 	int err = 0;
+ 	struct sock *psk;
+ 	struct alg_sock *pask;
+-	struct algif_hash_tfm *tfm;
++	struct crypto_ahash *tfm;
+ 	struct sock *sk = sock->sk;
+ 	struct alg_sock *ask = alg_sk(sk);
  
- 	ret = v4l_enable_media_source(vfd);
- 	if (ret)
-@@ -1501,37 +1472,37 @@ static int v4l_s_fmt(const struct v4l2_i
+@@ -321,7 +316,7 @@ static int hash_check_key(struct socket
  
- 	switch (p->type) {
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
--		if (unlikely(!is_rx || (!is_vid && !is_tch) || !ops->vidioc_s_fmt_vid_cap))
-+		if (unlikely(!ops->vidioc_s_fmt_vid_cap))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.pix);
- 		ret = ops->vidioc_s_fmt_vid_cap(file, fh, arg);
- 		/* just in case the driver zeroed it again */
- 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
--		if (is_tch)
-+		if (vfd->vfl_type == VFL_TYPE_TOUCH)
- 			v4l_pix_format_touch(&p->fmt.pix);
- 		return ret;
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
--		if (unlikely(!is_rx || !is_vid || !ops->vidioc_s_fmt_vid_cap_mplane))
-+		if (unlikely(!ops->vidioc_s_fmt_vid_cap_mplane))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.pix_mp.xfer_func);
- 		return ops->vidioc_s_fmt_vid_cap_mplane(file, fh, arg);
- 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
--		if (unlikely(!is_rx || !is_vid || !ops->vidioc_s_fmt_vid_overlay))
-+		if (unlikely(!ops->vidioc_s_fmt_vid_overlay))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.win);
- 		return ops->vidioc_s_fmt_vid_overlay(file, fh, arg);
- 	case V4L2_BUF_TYPE_VBI_CAPTURE:
--		if (unlikely(!is_rx || is_vid || !ops->vidioc_s_fmt_vbi_cap))
-+		if (unlikely(!ops->vidioc_s_fmt_vbi_cap))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.vbi);
- 		return ops->vidioc_s_fmt_vbi_cap(file, fh, arg);
- 	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
--		if (unlikely(!is_rx || is_vid || !ops->vidioc_s_fmt_sliced_vbi_cap))
-+		if (unlikely(!ops->vidioc_s_fmt_sliced_vbi_cap))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.sliced);
- 		return ops->vidioc_s_fmt_sliced_vbi_cap(file, fh, arg);
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
--		if (unlikely(!is_tx || !is_vid || !ops->vidioc_s_fmt_vid_out))
-+		if (unlikely(!ops->vidioc_s_fmt_vid_out))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.pix);
- 		ret = ops->vidioc_s_fmt_vid_out(file, fh, arg);
-@@ -1539,37 +1510,37 @@ static int v4l_s_fmt(const struct v4l2_i
- 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
- 		return ret;
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
--		if (unlikely(!is_tx || !is_vid || !ops->vidioc_s_fmt_vid_out_mplane))
-+		if (unlikely(!ops->vidioc_s_fmt_vid_out_mplane))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.pix_mp.xfer_func);
- 		return ops->vidioc_s_fmt_vid_out_mplane(file, fh, arg);
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
--		if (unlikely(!is_tx || !is_vid || !ops->vidioc_s_fmt_vid_out_overlay))
-+		if (unlikely(!ops->vidioc_s_fmt_vid_out_overlay))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.win);
- 		return ops->vidioc_s_fmt_vid_out_overlay(file, fh, arg);
- 	case V4L2_BUF_TYPE_VBI_OUTPUT:
--		if (unlikely(!is_tx || is_vid || !ops->vidioc_s_fmt_vbi_out))
-+		if (unlikely(!ops->vidioc_s_fmt_vbi_out))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.vbi);
- 		return ops->vidioc_s_fmt_vbi_out(file, fh, arg);
- 	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
--		if (unlikely(!is_tx || is_vid || !ops->vidioc_s_fmt_sliced_vbi_out))
-+		if (unlikely(!ops->vidioc_s_fmt_sliced_vbi_out))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.sliced);
- 		return ops->vidioc_s_fmt_sliced_vbi_out(file, fh, arg);
- 	case V4L2_BUF_TYPE_SDR_CAPTURE:
--		if (unlikely(!is_rx || !is_sdr || !ops->vidioc_s_fmt_sdr_cap))
-+		if (unlikely(!ops->vidioc_s_fmt_sdr_cap))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.sdr);
- 		return ops->vidioc_s_fmt_sdr_cap(file, fh, arg);
- 	case V4L2_BUF_TYPE_SDR_OUTPUT:
--		if (unlikely(!is_tx || !is_sdr || !ops->vidioc_s_fmt_sdr_out))
-+		if (unlikely(!ops->vidioc_s_fmt_sdr_out))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.sdr);
- 		return ops->vidioc_s_fmt_sdr_out(file, fh, arg);
- 	case V4L2_BUF_TYPE_META_CAPTURE:
--		if (unlikely(!is_rx || !is_vid || !ops->vidioc_s_fmt_meta_cap))
-+		if (unlikely(!ops->vidioc_s_fmt_meta_cap))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.meta);
- 		return ops->vidioc_s_fmt_meta_cap(file, fh, arg);
-@@ -1581,19 +1552,16 @@ static int v4l_try_fmt(const struct v4l2
- 				struct file *file, void *fh, void *arg)
+ 	err = -ENOKEY;
+ 	lock_sock_nested(psk, SINGLE_DEPTH_NESTING);
+-	if (!tfm->has_key)
++	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
+ 		goto unlock;
+ 
+ 	if (!pask->refcnt++)
+@@ -412,41 +407,17 @@ static struct proto_ops algif_hash_ops_n
+ 
+ static void *hash_bind(const char *name, u32 type, u32 mask)
  {
- 	struct v4l2_format *p = arg;
--	struct video_device *vfd = video_devdata(file);
--	bool is_vid = vfd->vfl_type == VFL_TYPE_GRABBER;
--	bool is_sdr = vfd->vfl_type == VFL_TYPE_SDR;
--	bool is_tch = vfd->vfl_type == VFL_TYPE_TOUCH;
--	bool is_rx = vfd->vfl_dir != VFL_DIR_TX;
--	bool is_tx = vfd->vfl_dir != VFL_DIR_RX;
--	int ret;
-+	int ret = check_fmt(file, p->type);
+-	struct algif_hash_tfm *tfm;
+-	struct crypto_ahash *hash;
+-
+-	tfm = kzalloc(sizeof(*tfm), GFP_KERNEL);
+-	if (!tfm)
+-		return ERR_PTR(-ENOMEM);
+-
+-	hash = crypto_alloc_ahash(name, type, mask);
+-	if (IS_ERR(hash)) {
+-		kfree(tfm);
+-		return ERR_CAST(hash);
+-	}
+-
+-	tfm->hash = hash;
+-
+-	return tfm;
++	return crypto_alloc_ahash(name, type, mask);
+ }
+ 
+ static void hash_release(void *private)
+ {
+-	struct algif_hash_tfm *tfm = private;
+-
+-	crypto_free_ahash(tfm->hash);
+-	kfree(tfm);
++	crypto_free_ahash(private);
+ }
+ 
+ static int hash_setkey(void *private, const u8 *key, unsigned int keylen)
+ {
+-	struct algif_hash_tfm *tfm = private;
+-	int err;
+-
+-	err = crypto_ahash_setkey(tfm->hash, key, keylen);
+-	tfm->has_key = !err;
+-
+-	return err;
++	return crypto_ahash_setkey(private, key, keylen);
+ }
+ 
+ static void hash_sock_destruct(struct sock *sk)
+@@ -461,11 +432,10 @@ static void hash_sock_destruct(struct so
+ 
+ static int hash_accept_parent_nokey(void *private, struct sock *sk)
+ {
+-	struct hash_ctx *ctx;
++	struct crypto_ahash *tfm = private;
+ 	struct alg_sock *ask = alg_sk(sk);
+-	struct algif_hash_tfm *tfm = private;
+-	struct crypto_ahash *hash = tfm->hash;
+-	unsigned len = sizeof(*ctx) + crypto_ahash_reqsize(hash);
++	struct hash_ctx *ctx;
++	unsigned int len = sizeof(*ctx) + crypto_ahash_reqsize(tfm);
+ 
+ 	ctx = sock_kmalloc(sk, len, GFP_KERNEL);
+ 	if (!ctx)
+@@ -478,7 +448,7 @@ static int hash_accept_parent_nokey(void
+ 
+ 	ask->private = ctx;
+ 
+-	ahash_request_set_tfm(&ctx->req, hash);
++	ahash_request_set_tfm(&ctx->req, tfm);
+ 	ahash_request_set_callback(&ctx->req, CRYPTO_TFM_REQ_MAY_BACKLOG,
+ 				   crypto_req_done, &ctx->wait);
+ 
+@@ -489,9 +459,9 @@ static int hash_accept_parent_nokey(void
+ 
+ static int hash_accept_parent(void *private, struct sock *sk)
+ {
+-	struct algif_hash_tfm *tfm = private;
++	struct crypto_ahash *tfm = private;
+ 
+-	if (!tfm->has_key && crypto_ahash_has_setkey(tfm->hash))
++	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
+ 		return -ENOKEY;
+ 
+ 	return hash_accept_parent_nokey(private, sk);
+--- a/crypto/shash.c
++++ b/crypto/shash.c
+@@ -58,11 +58,18 @@ int crypto_shash_setkey(struct crypto_sh
+ {
+ 	struct shash_alg *shash = crypto_shash_alg(tfm);
+ 	unsigned long alignmask = crypto_shash_alignmask(tfm);
++	int err;
+ 
+ 	if ((unsigned long)key & alignmask)
+-		return shash_setkey_unaligned(tfm, key, keylen);
++		err = shash_setkey_unaligned(tfm, key, keylen);
++	else
++		err = shash->setkey(tfm, key, keylen);
 +
-+	if (ret)
-+		return ret;
++	if (err)
++		return err;
  
- 	v4l_sanitize_format(p);
+-	return shash->setkey(tfm, key, keylen);
++	crypto_shash_clear_flags(tfm, CRYPTO_TFM_NEED_KEY);
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(crypto_shash_setkey);
  
- 	switch (p->type) {
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
--		if (unlikely(!is_rx || (!is_vid && !is_tch) || !ops->vidioc_try_fmt_vid_cap))
-+		if (unlikely(!ops->vidioc_try_fmt_vid_cap))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.pix);
- 		ret = ops->vidioc_try_fmt_vid_cap(file, fh, arg);
-@@ -1601,27 +1569,27 @@ static int v4l_try_fmt(const struct v4l2
- 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
- 		return ret;
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
--		if (unlikely(!is_rx || !is_vid || !ops->vidioc_try_fmt_vid_cap_mplane))
-+		if (unlikely(!ops->vidioc_try_fmt_vid_cap_mplane))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.pix_mp.xfer_func);
- 		return ops->vidioc_try_fmt_vid_cap_mplane(file, fh, arg);
- 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
--		if (unlikely(!is_rx || !is_vid || !ops->vidioc_try_fmt_vid_overlay))
-+		if (unlikely(!ops->vidioc_try_fmt_vid_overlay))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.win);
- 		return ops->vidioc_try_fmt_vid_overlay(file, fh, arg);
- 	case V4L2_BUF_TYPE_VBI_CAPTURE:
--		if (unlikely(!is_rx || is_vid || !ops->vidioc_try_fmt_vbi_cap))
-+		if (unlikely(!ops->vidioc_try_fmt_vbi_cap))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.vbi);
- 		return ops->vidioc_try_fmt_vbi_cap(file, fh, arg);
- 	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
--		if (unlikely(!is_rx || is_vid || !ops->vidioc_try_fmt_sliced_vbi_cap))
-+		if (unlikely(!ops->vidioc_try_fmt_sliced_vbi_cap))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.sliced);
- 		return ops->vidioc_try_fmt_sliced_vbi_cap(file, fh, arg);
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
--		if (unlikely(!is_tx || !is_vid || !ops->vidioc_try_fmt_vid_out))
-+		if (unlikely(!ops->vidioc_try_fmt_vid_out))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.pix);
- 		ret = ops->vidioc_try_fmt_vid_out(file, fh, arg);
-@@ -1629,37 +1597,37 @@ static int v4l_try_fmt(const struct v4l2
- 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
- 		return ret;
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
--		if (unlikely(!is_tx || !is_vid || !ops->vidioc_try_fmt_vid_out_mplane))
-+		if (unlikely(!ops->vidioc_try_fmt_vid_out_mplane))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.pix_mp.xfer_func);
- 		return ops->vidioc_try_fmt_vid_out_mplane(file, fh, arg);
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
--		if (unlikely(!is_tx || !is_vid || !ops->vidioc_try_fmt_vid_out_overlay))
-+		if (unlikely(!ops->vidioc_try_fmt_vid_out_overlay))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.win);
- 		return ops->vidioc_try_fmt_vid_out_overlay(file, fh, arg);
- 	case V4L2_BUF_TYPE_VBI_OUTPUT:
--		if (unlikely(!is_tx || is_vid || !ops->vidioc_try_fmt_vbi_out))
-+		if (unlikely(!ops->vidioc_try_fmt_vbi_out))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.vbi);
- 		return ops->vidioc_try_fmt_vbi_out(file, fh, arg);
- 	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
--		if (unlikely(!is_tx || is_vid || !ops->vidioc_try_fmt_sliced_vbi_out))
-+		if (unlikely(!ops->vidioc_try_fmt_sliced_vbi_out))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.sliced);
- 		return ops->vidioc_try_fmt_sliced_vbi_out(file, fh, arg);
- 	case V4L2_BUF_TYPE_SDR_CAPTURE:
--		if (unlikely(!is_rx || !is_sdr || !ops->vidioc_try_fmt_sdr_cap))
-+		if (unlikely(!ops->vidioc_try_fmt_sdr_cap))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.sdr);
- 		return ops->vidioc_try_fmt_sdr_cap(file, fh, arg);
- 	case V4L2_BUF_TYPE_SDR_OUTPUT:
--		if (unlikely(!is_tx || !is_sdr || !ops->vidioc_try_fmt_sdr_out))
-+		if (unlikely(!ops->vidioc_try_fmt_sdr_out))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.sdr);
- 		return ops->vidioc_try_fmt_sdr_out(file, fh, arg);
- 	case V4L2_BUF_TYPE_META_CAPTURE:
--		if (unlikely(!is_rx || !is_vid || !ops->vidioc_try_fmt_meta_cap))
-+		if (unlikely(!ops->vidioc_try_fmt_meta_cap))
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.meta);
- 		return ops->vidioc_try_fmt_meta_cap(file, fh, arg);
+@@ -181,6 +188,9 @@ int crypto_shash_digest(struct shash_des
+ 	struct shash_alg *shash = crypto_shash_alg(tfm);
+ 	unsigned long alignmask = crypto_shash_alignmask(tfm);
+ 
++	if (crypto_shash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
++		return -ENOKEY;
++
+ 	if (((unsigned long)data | (unsigned long)out) & alignmask)
+ 		return shash_digest_unaligned(desc, data, len, out);
+ 
+@@ -360,7 +370,8 @@ int crypto_init_shash_ops_async(struct c
+ 	crt->digest = shash_async_digest;
+ 	crt->setkey = shash_async_setkey;
+ 
+-	crt->has_setkey = alg->setkey != shash_no_setkey;
++	crypto_ahash_set_flags(crt, crypto_shash_get_flags(shash) &
++				    CRYPTO_TFM_NEED_KEY);
+ 
+ 	if (alg->export)
+ 		crt->export = shash_async_export;
+@@ -375,8 +386,14 @@ int crypto_init_shash_ops_async(struct c
+ static int crypto_shash_init_tfm(struct crypto_tfm *tfm)
+ {
+ 	struct crypto_shash *hash = __crypto_shash_cast(tfm);
++	struct shash_alg *alg = crypto_shash_alg(hash);
++
++	hash->descsize = alg->descsize;
++
++	if (crypto_shash_alg_has_setkey(alg) &&
++	    !(alg->base.cra_flags & CRYPTO_ALG_OPTIONAL_KEY))
++		crypto_shash_set_flags(hash, CRYPTO_TFM_NEED_KEY);
+ 
+-	hash->descsize = crypto_shash_alg(hash)->descsize;
+ 	return 0;
+ }
+ 
+--- a/include/crypto/hash.h
++++ b/include/crypto/hash.h
+@@ -210,7 +210,6 @@ struct crypto_ahash {
+ 		      unsigned int keylen);
+ 
+ 	unsigned int reqsize;
+-	bool has_setkey;
+ 	struct crypto_tfm base;
+ };
+ 
+@@ -410,11 +409,6 @@ static inline void *ahash_request_ctx(st
+ int crypto_ahash_setkey(struct crypto_ahash *tfm, const u8 *key,
+ 			unsigned int keylen);
+ 
+-static inline bool crypto_ahash_has_setkey(struct crypto_ahash *tfm)
+-{
+-	return tfm->has_setkey;
+-}
+-
+ /**
+  * crypto_ahash_finup() - update and finalize message digest
+  * @req: reference to the ahash_request handle that holds all information
+@@ -487,7 +481,12 @@ static inline int crypto_ahash_export(st
+  */
+ static inline int crypto_ahash_import(struct ahash_request *req, const void *in)
+ {
+-	return crypto_ahash_reqtfm(req)->import(req, in);
++	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
++
++	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
++		return -ENOKEY;
++
++	return tfm->import(req, in);
+ }
+ 
+ /**
+@@ -503,7 +502,12 @@ static inline int crypto_ahash_import(st
+  */
+ static inline int crypto_ahash_init(struct ahash_request *req)
+ {
+-	return crypto_ahash_reqtfm(req)->init(req);
++	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
++
++	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
++		return -ENOKEY;
++
++	return tfm->init(req);
+ }
+ 
+ /**
+@@ -855,7 +859,12 @@ static inline int crypto_shash_export(st
+  */
+ static inline int crypto_shash_import(struct shash_desc *desc, const void *in)
+ {
+-	return crypto_shash_alg(desc->tfm)->import(desc, in);
++	struct crypto_shash *tfm = desc->tfm;
++
++	if (crypto_shash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
++		return -ENOKEY;
++
++	return crypto_shash_alg(tfm)->import(desc, in);
+ }
+ 
+ /**
+@@ -871,7 +880,12 @@ static inline int crypto_shash_import(st
+  */
+ static inline int crypto_shash_init(struct shash_desc *desc)
+ {
+-	return crypto_shash_alg(desc->tfm)->init(desc);
++	struct crypto_shash *tfm = desc->tfm;
++
++	if (crypto_shash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
++		return -ENOKEY;
++
++	return crypto_shash_alg(tfm)->init(desc);
+ }
+ 
+ /**
+--- a/include/linux/crypto.h
++++ b/include/linux/crypto.h
+@@ -115,6 +115,8 @@
+ /*
+  * Transform masks and values (for crt_flags).
+  */
++#define CRYPTO_TFM_NEED_KEY		0x00000001
++
+ #define CRYPTO_TFM_REQ_MASK		0x000fff00
+ #define CRYPTO_TFM_RES_MASK		0xfff00000
+ 
