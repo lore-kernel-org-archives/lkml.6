@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224bp8VoZTplynb1myKt+N2G7Zc7xGNl56Wn+LV8HN4VDnn1eDIQYCz3nDdskoBIh/fnloLi
-ARC-Seal: i=1; a=rsa-sha256; t=1518708671; cv=none;
+X-Google-Smtp-Source: AH8x226WER2rlUiEVh8Oa76iYoJ2gBcLMD/kTmNWSitAFYfb6/8VMn28Y7DPjNVu5mCQH0J6U4Ac
+ARC-Seal: i=1; a=rsa-sha256; t=1518708668; cv=none;
         d=google.com; s=arc-20160816;
-        b=VmtBgXLDLkhVk4OntJR48ss8czpM7sKz0sTE0L48RMuriIv1ZCFoeBR4JnQ3f0ZlGa
-         BDLvBaBhcHPnoqMc3E5m0RYsCsVdO8382h4SBk7v7hRphDiJBYtiU1i7Os9rOm4r99UD
-         6qEgvb3fJTswCaD8xY11YMYmZTtKZSSwukNLhvTMXkxhvCUwpeMEvCbid25VugxhLBgM
-         TW1zK4Dl2GKBbYk4PYyY3gEx34Shd9Fj5WynYRferAcHvSaKBBqIXuJRHtAQL5fBge41
-         OabbsXgML95GRfUbGTU2Q08xm/0UsIeehjO+Cbjx9HUMNsegOTTMgyP40au463ocwnkp
-         Gc/w==
+        b=z+hgIZwylT9LbzneGrrVnLS5wKwZU1P83QteG/SgmmqEGPgmS1GGiC9dsg3hgA/mCC
+         TW3HjVcA+RAu9oGO2xgYo7NAdi7uIF9BLHAcjzwCuglSs3Uj4Xw2s2N4FpU+k6S+/xGt
+         58MbkW+NDDAqJ2ZvdcWaZL1HbawuFKLCP/FFQlIa3mpS8qC4coE/+fNIMnSOh+mHLq/+
+         AZJKTYu40yO81AVlu/2viakPdfSxrtJFmtpSIMrLRWucStmm8RxMXsz0w/uavM8cDzmd
+         9qq9L579cPcKjypCdyaeepqfqcJbf4/6ugb/wMJhAIHjfszzESiIe1qvRD6G7CWWkXtv
+         H48Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qNT09Q7PnG0TxpfKP02PcwY+HHjjst1N1GRJROGx4XM=;
-        b=vsTtQDt0N0ihT3G+sbFxTIrAXgOwbFe21aPpY+94Rgbg7MUROKqXjL0qMn1nhDJrAe
-         I9z9eI2E+V4uAAGNZ1zsry9Qwq/K2PYN8U1ArmjS1Fc6gQJGi6r8SlGKL3+hZ4MJmu0Y
-         zWizWQRnpYp368jOF/EtFleWsnVtjOIDpMhoVB1NGArjmQJcJso7hDpERJs7ldb/eDEt
-         Fq8G/H65+OMHy5evyXZkrV9zpqDH3/7/8up+iVcXp4h0WP530k0gL058sjulxWoh+XHf
-         qLAE6pKk5kCSi2nQ6c889vt6iEele/qkhDzfenmVodq4Yc2FNapQpfsAnxF8DkR8qm3W
-         oJOg==
+        bh=ra8AphYWeL84vxSIuY1Aryy/As3v66TDPaTfYjp50xc=;
+        b=oAyhsMU7FN4IgHKpLb4iNxYLn0Fa/uwPvzGtk7rwNkdWNqYXTxlz5xtbLe3sV2nHb4
+         wr/9lnzecClpfsng4nZ85BzhcxIppd6LvlnisRUKkgxO4gC4CjeGexEQ63LbtxrGeyij
+         ssd0RlWq39bfkWaVQo6+R/9LhxSHd4lPnc6G+1gHzPe0BgsjPeTVr6SkaNcel0tiyy7d
+         INh+hhGROmgYs52c+geaMl8u1rJ5O/zgvFeKmBZyzeBbTcJYN8ANxFYgOU7asgxEBeNj
+         A/AzA7p9qhWJBF1KZ5E/QKQH74f6kn5hENRs0kEU6cOs3jmZiWqugtkoE3K513D5Nfzz
+         VH4A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Laura Abbott <labbott@redhat.com>,
 	Shanker Donthineni <shankerd@codeaurora.org>,
 	Will Deacon <will.deacon@arm.com>,
-	Timur Tabi <timur@codeaurora.org>
-Subject: [PATCH 4.14 010/195] arm64: Define cputype macros for Falkor CPU
-Date: Thu, 15 Feb 2018 16:15:01 +0100
-Message-Id: <20180215151706.265085527@linuxfoundation.org>
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 4.14 036/195] [Variant 3/Meltdown] arm64: erratum: Work around Falkor erratum #E1003 in trampoline code
+Date: Thu, 15 Feb 2018 16:15:27 +0100
+Message-Id: <20180215151707.555503500@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481463849630108?=
-X-GMAIL-MSGID: =?utf-8?q?1592481463849630108?=
+X-GMAIL-THRID: =?utf-8?q?1592481460953332607?=
+X-GMAIL-MSGID: =?utf-8?q?1592481460953332607?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,40 +51,76 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shanker Donthineni <shankerd@codeaurora.org>
+From: Will Deacon <will.deacon@arm.com>
 
-commit c622cc013cece073722592cff1ac6643a33b1622 upstream.
 
-Add cputype definition macros for Qualcomm Datacenter Technologies
-Falkor CPU in cputype.h. It's unfortunate that the first revision
-of the Falkor CPU used the wrong part number 0x800, got fixed in v2
-chip with part number 0xC00, and would be used the same value for
-future revisions.
+Commit d1777e686ad1 upstream.
 
-Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+We rely on an atomic swizzling of TTBR1 when transitioning from the entry
+trampoline to the kernel proper on an exception. We can't rely on this
+atomicity in the face of Falkor erratum #E1003, so on affected cores we
+can issue a TLB invalidation to invalidate the walk cache prior to
+jumping into the kernel. There is still the possibility of a TLB conflict
+here due to conflicting walk cache entries prior to the invalidation, but
+this doesn't appear to be the case on these CPUs in practice.
+
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Laura Abbott <labbott@redhat.com>
+Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
-Cc: Timur Tabi <timur@codeaurora.org>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm64/include/asm/cputype.h |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/Kconfig        |   17 +++++------------
+ arch/arm64/kernel/entry.S |   12 ++++++++++++
+ 2 files changed, 17 insertions(+), 12 deletions(-)
 
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -91,6 +91,7 @@
- #define BRCM_CPU_PART_VULCAN		0x516
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -504,20 +504,13 @@ config CAVIUM_ERRATUM_30115
+ config QCOM_FALKOR_ERRATUM_1003
+ 	bool "Falkor E1003: Incorrect translation due to ASID change"
+ 	default y
+-	select ARM64_PAN if ARM64_SW_TTBR0_PAN
+ 	help
+ 	  On Falkor v1, an incorrect ASID may be cached in the TLB when ASID
+-	  and BADDR are changed together in TTBRx_EL1. The workaround for this
+-	  issue is to use a reserved ASID in cpu_do_switch_mm() before
+-	  switching to the new ASID. Saying Y here selects ARM64_PAN if
+-	  ARM64_SW_TTBR0_PAN is selected. This is done because implementing and
+-	  maintaining the E1003 workaround in the software PAN emulation code
+-	  would be an unnecessary complication. The affected Falkor v1 CPU
+-	  implements ARMv8.1 hardware PAN support and using hardware PAN
+-	  support versus software PAN emulation is mutually exclusive at
+-	  runtime.
+-
+-	  If unsure, say Y.
++	  and BADDR are changed together in TTBRx_EL1. Since we keep the ASID
++	  in TTBR1_EL1, this situation only occurs in the entry trampoline and
++	  then only for entries in the walk cache, since the leaf translation
++	  is unchanged. Work around the erratum by invalidating the walk cache
++	  entries for the trampoline before entering the kernel proper.
  
- #define QCOM_CPU_PART_FALKOR_V1		0x800
-+#define QCOM_CPU_PART_FALKOR		0xC00
+ config QCOM_FALKOR_ERRATUM_1009
+ 	bool "Falkor E1009: Prematurely complete a DSB after a TLBI"
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -941,6 +941,18 @@ __ni_sys_trace:
+ 	sub	\tmp, \tmp, #(SWAPPER_DIR_SIZE + RESERVED_TTBR0_SIZE)
+ 	bic	\tmp, \tmp, #USER_ASID_FLAG
+ 	msr	ttbr1_el1, \tmp
++#ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
++alternative_if ARM64_WORKAROUND_QCOM_FALKOR_E1003
++	/* ASID already in \tmp[63:48] */
++	movk	\tmp, #:abs_g2_nc:(TRAMP_VALIAS >> 12)
++	movk	\tmp, #:abs_g1_nc:(TRAMP_VALIAS >> 12)
++	/* 2MB boundary containing the vectors, so we nobble the walk cache */
++	movk	\tmp, #:abs_g0_nc:((TRAMP_VALIAS & ~(SZ_2M - 1)) >> 12)
++	isb
++	tlbi	vae1, \tmp
++	dsb	nsh
++alternative_else_nop_endif
++#endif /* CONFIG_QCOM_FALKOR_ERRATUM_1003 */
+ 	.endm
  
- #define MIDR_CORTEX_A53 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A53)
- #define MIDR_CORTEX_A57 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A57)
-@@ -99,6 +100,7 @@
- #define MIDR_THUNDERX_81XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_81XX)
- #define MIDR_THUNDERX_83XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_83XX)
- #define MIDR_QCOM_FALKOR_V1 MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR_V1)
-+#define MIDR_QCOM_FALKOR MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR)
- 
- #ifndef __ASSEMBLY__
- 
+ 	.macro tramp_unmap_kernel, tmp
