@@ -1,67 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427303AbeBORYm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 12:24:42 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54018 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1427286AbeBORYj (ORCPT
+        id S1427323AbeBORZd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 12:25:33 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:50496 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1165131AbeBOPel (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 12:24:39 -0500
-X-Google-Smtp-Source: AH8x227xkkzerjqRpczeeY4sCswiLnRejbkvole3oyIQXZ8jNuSv4oTqhQiAq0Cn+LnX/kuzxD7QzheiP2nO570neUo=
+        Thu, 15 Feb 2018 10:34:41 -0500
+Date: Thu, 15 Feb 2018 16:34:37 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 03/15] soc: renesas: Add R-Car M3-N support
+Message-ID: <20180215153436.77h46poeswto53lm@verge.net.au>
+References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1518515162-23663-4-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdU-pYNwjrXSR7j2kNkJSYsKd=0Kf0Tzq5LHpwA7p4_9MA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CANn89iK-7v=sR3oD3uwkC6qac=GrSDUfMGmvKo=DS6tQ6C1ZJQ@mail.gmail.com>
-References: <20180215170432.e4wue4osyv3vmdla@lakrids.cambridge.arm.com> <CANn89iK-7v=sR3oD3uwkC6qac=GrSDUfMGmvKo=DS6tQ6C1ZJQ@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 15 Feb 2018 09:24:36 -0800
-Message-ID: <CANn89iLvNjvUsjsqVN=3ZTPQvp6xChqYEu+cUASFXtTSQnA1aA@mail.gmail.com>
-Subject: Re: v4.16-rc1 misaligned atomics in skb__clone / __napi_alloc_skb
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Willem de Bruijn <willemb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU-pYNwjrXSR7j2kNkJSYsKd=0Kf0Tzq5LHpwA7p4_9MA@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 9:20 AM, Eric Dumazet <edumazet@google.com> wrote:
->
-> Yes, it seems tun.c breaks the assumptions.
->
-> If it really wants to provide arbitrary fragments and alignments, it
-> should use a separate
+On Wed, Feb 14, 2018 at 01:48:27PM +0100, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+> 
+> Thanks for your patch!
+> 
+> On Tue, Feb 13, 2018 at 10:45 AM, Jacopo Mondi
+> <jacopo+renesas@jmondi.org> wrote:
+> > Add support for R-Car M3-N (r8a77965) power areas and reset.
+> > M3-N power areas are identical to M3-W ones, so just copy and rename
+> > them.
+> 
+> They are not identical:
+>   - M3-N does not have the CA53-related areas,
+>   - M3-W does not have A3VP,
+>   - M3-N does not have A2VC0 (M3-W also doesn't, according to latest
+> datasheet?).
+> 
+> The datasheet also mentions A3SH, without further info about the register
+> block. I think we need to bring this up with Renesas.
+> 
+> >  .../bindings/power/renesas,rcar-sysc.txt           |  1 +
+> >  .../devicetree/bindings/reset/renesas,rst.txt      |  1 +
+> >  drivers/soc/renesas/Kconfig                        |  9 ++++--
+> >  drivers/soc/renesas/Makefile                       |  1 +
+> >  drivers/soc/renesas/r8a77965-sysc.c                | 37 ++++++++++++++++++++++
+> >  drivers/soc/renesas/rcar-rst.c                     |  1 +
+> >  drivers/soc/renesas/rcar-sysc.c                    |  3 ++
+> >  drivers/soc/renesas/rcar-sysc.h                    |  1 +
+> >  drivers/soc/renesas/renesas-soc.c                  |  8 +++++
+> >  include/dt-bindings/power/r8a77965-sysc.h          | 31 ++++++++++++++++++
+> >  10 files changed, 91 insertions(+), 2 deletions(-)
+> >  create mode 100644 drivers/soc/renesas/r8a77965-sysc.c
+> >  create mode 100644 include/dt-bindings/power/r8a77965-sysc.h
+> 
+> The maintainer may ask you to split this patch by functionality...
 
-Sorry, I have sent the message to soon.
+Yes, I would like this split up.
 
-tun.c should use a private 'struct page_frag_cache' to deliver
-arbitrary frags/alignments,
-so that syzkaller might catch interesting bugs in the stack.
-
-
->
-> Please try :
->
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index 81e6cc951e7fc7c983919365c34842c34bcaedcf..92c6b6d02f7c18b63c42ffe1d9cb7286975e1263
-> 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -1500,7 +1500,7 @@ static struct sk_buff
-> *tun_napi_alloc_frags(struct tun_file *tfile,
->                 }
->
->                 local_bh_disable();
-> -               data = napi_alloc_frag(fragsz);
-> +               data = napi_alloc_frag(SKB_DATA_ALIGN(fragsz));
->                 local_bh_enable();
->                 if (!data) {
->                         err = -ENOMEM;
-
-This patch should solve your immediate problem, but would lower fuzzer
-abilities to find bugs.
-
-I will send something more suited to original intent of these commits :
-
-90e33d45940793def6f773b2d528e9f3c84ffdc7 tun: enable napi_gro_frags()
-for TUN/TAP driver
-943170998b200190f99d3fe7e771437e2c51f319 tun: enable NAPI for TUN/TAP driver
+I think "[PATCH 00/11] Add R8A77980/Condor board support" provides
+a good example.
