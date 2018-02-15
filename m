@@ -1,61 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755463AbeBOLEZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 06:04:25 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:36608 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755323AbeBOLEX (ORCPT
+        id S1755479AbeBOLIu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 06:08:50 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:42767 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755389AbeBOLIs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 06:04:23 -0500
-X-Google-Smtp-Source: AH8x2250zSQg6n5WXcxedJZ3XdvhZTVC1Zn+dUavjeWhA09alXN7oKKF7c7ZEXnx/4fC0pH+uAa9rQ==
-Date: Thu, 15 Feb 2018 16:34:06 +0530
-From: Linu Cherian <linuc.decode@gmail.com>
-To: alex.williamson@redhat.com
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linu.cherian@cavium.com, Sunil.Goutham@cavium.com
-Subject: Handling active DMA during a VFIO application crash
-Message-ID: <20180215110406.GA15219@virtx40>
+        Thu, 15 Feb 2018 06:08:48 -0500
+X-Google-Smtp-Source: AH8x22781lxFeIfu0uJaVf+g+VhQx8lMmIn70fhNMH2YpVILW8ccD0Q2Ohf7VWOx3UVxWDwxuEY8cg==
+Date: Thu, 15 Feb 2018 12:08:44 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Li Zefan <lizefan@huawei.com>,
+        Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+        "luca.abeni" <luca.abeni@santannapisa.it>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 04/10] sched/core: Prevent race condition between
+ cpuset and __sched_setscheduler()
+Message-ID: <20180215110844.GY12979@localhost.localdomain>
+References: <1518553967-20656-1-git-send-email-mathieu.poirier@linaro.org>
+ <1518553967-20656-5-git-send-email-mathieu.poirier@linaro.org>
+ <20180214103639.GR12979@localhost.localdomain>
+ <20180214104935.GS12979@localhost.localdomain>
+ <20180214112721.GT12979@localhost.localdomain>
+ <CANLsYkwPo-uHOWwLZDdvhykx1EU2O--uphJ9KbZYAnD--nFoVg@mail.gmail.com>
+ <20180214163145.GV12979@localhost.localdomain>
+ <20180215103353.GX12979@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180215103353.GX12979@localhost.localdomain>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 15/02/18 11:33, Juri Lelli wrote:
+> On 14/02/18 17:31, Juri Lelli wrote:
+> 
+> [...]
+> 
+> > Still grabbing it is a no-go, as do_sched_setscheduler calls
+> > sched_setscheduler from inside an RCU read-side critical section.
+> 
+> I was then actually thinking that trylocking might do.. not sure however
+> if failing with -EBUSY in the contended case is feasible (and about the
+> general uglyness of the solution :/).
 
-Was exploring the implications of an application crash while DMA 
-is active from a vfio PCI device; the DMA being configured and 
-started by the application using vfio APIs.               
+Or, as suggested by Peter in IRC, the following (which still would
+require conditional locking for the sysrq case).
 
-The expectation is that, DMA is stopped/reset before we tear down the IOMMU mappings 
-and finally free the mmapped pages(on which DMA is happening).                                            
+--->8---
+ kernel/sched/core.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
->From the below stack trace(with dump_stack in vfio_pci_release),             
-[  201.564273] [<ffffff8008798b50>] vfio_pci_release+0x80/0x458
-[  201.564276] [<ffffff8008792b74>] vfio_device_fops_release+0x2c/0x50
-[  201.564279] [<ffffff8008269ef4>] __fput+0x9c/0x218
-[  201.564283] [<ffffff800826a0e8>] ____fput+0x20/0x30
-[  201.564286] [<ffffff80080e7fe0>] task_work_run+0xa0/0xc8
-[  201.564289] [<ffffff80080cbc7c>] do_exit+0x2bc/0x9c8
-[  201.564293] [<ffffff80080cd0ec>] do_group_exit+0x3c/0xa8
-[  201.564296] [<ffffff80080d94c4>] get_signal+0x3e4/0x538
-[  201.564299] [<ffffff80080892f0>] do_signal+0x70/0x660
-[  201.564302] [<ffffff8008089ce8>] do_notify_resume+0xe0/0x120
-                                                                                               
-
-PCI device is disabled/reset from vfio_pci_release invoked as part of 
-device fd release. The fd releases are in turn invoked from exit_files
-and exit_task_work.
-
-But exit_mm, gets called before exit_files/exit_task_work in do_exit.
-                                                                                               
-Assuming all pages allocated/mmaped to a process gets freed in exit_mm,                                                                                               
-is there is a possibility that user pages configured for DMA can get freed 
-to kernel before the vfio device is stopped/reset ? 
-
-Thanks.
-
--- 
-Linu cherian
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 0d8badcf1f0f..4e9405d50cbd 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4312,6 +4312,7 @@ static int __sched_setscheduler(struct task_struct *p,
+ 	/* Avoid rq from going away on us: */
+ 	preempt_disable();
+ 	task_rq_unlock(rq, p, &rf);
++	cpuset_unlock();
+ 
+ 	if (pi)
+ 		rt_mutex_adjust_pi(p);
+@@ -4409,10 +4410,16 @@ do_sched_setscheduler(pid_t pid, int policy, struct sched_param __user *param)
+ 	rcu_read_lock();
+ 	retval = -ESRCH;
+ 	p = find_process_by_pid(pid);
+-	if (p != NULL)
+-		retval = sched_setscheduler(p, policy, &lparam);
++	if (!p) {
++		rcu_read_unlock();
++		goto exit;
++	}
++	get_task_struct(p);
+ 	rcu_read_unlock();
++	retval = sched_setscheduler(p, policy, &lparam);
++	put_task_struct(p);
+ 
++exit:
+ 	return retval;
+ }
+ 
+@@ -4540,10 +4547,16 @@ SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr,
+ 	rcu_read_lock();
+ 	retval = -ESRCH;
+ 	p = find_process_by_pid(pid);
+-	if (p != NULL)
+-		retval = sched_setattr(p, &attr);
++	if (!p) {
++		rcu_read_unlock();
++		goto exit;
++	}
++	get_task_struct(p);
+ 	rcu_read_unlock();
++	retval = sched_setattr(p, &attr);
++	put_task_struct(p);
+ 
++exit:
+ 	return retval;
+ }
+ 
