@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427414AbeBORf2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 12:35:28 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:43254 "EHLO
+        id S1427445AbeBORfe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 12:35:34 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:43538 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1427384AbeBORfX (ORCPT
+        with ESMTP id S1427411AbeBORf2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 12:35:23 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2DFD66079C
+        Thu, 15 Feb 2018 12:35:28 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9A36F60585
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
 From: Lina Iyer <ilina@codeaurora.org>
 To: andy.gross@linaro.org, david.brown@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH v2 03/10] drivers: qcom: rpmh-rsc: log RPMH requests in FTRACE
-Date: Thu, 15 Feb 2018 10:35:00 -0700
-Message-Id: <20180215173507.10989-4-ilina@codeaurora.org>
+        linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH v2 09/10] drivers: qcom: rpmh: add support for batch RPMH request
+Date: Thu, 15 Feb 2018 10:35:06 -0700
+Message-Id: <20180215173507.10989-10-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215173507.10989-1-ilina@codeaurora.org>
 References: <20180215173507.10989-1-ilina@codeaurora.org>
@@ -26,160 +25,244 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Log sent RPMH requests and interrupt responses in FTRACE.
+Platform drivers need make a lot of resource state requests at the same
+time, say, at the start or end of an usecase. It can be quite
+inefficient to send each request separately. Instead they can give the
+RPMH library a batch of requests to be sent and wait on the whole
+transaction to be complete.
 
-Cc: Steven Rostedt <rostedt@goodmis.org>
+rpmh_write_batch() is a blocking call that can be used to send multiple
+RPMH command sets. Each RPMH command set is set asynchronously and the
+API blocks until all the command sets are complete and receive their
+tx_done callbacks.
+
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 ---
- drivers/soc/qcom/Makefile     |  1 +
- drivers/soc/qcom/rpmh-rsc.c   |  6 +++
- drivers/soc/qcom/trace-rpmh.h | 89 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 96 insertions(+)
- create mode 100644 drivers/soc/qcom/trace-rpmh.h
+ drivers/soc/qcom/rpmh.c | 150 ++++++++++++++++++++++++++++++++++++++++++++++++
+ include/soc/qcom/rpmh.h |   8 +++
+ 2 files changed, 158 insertions(+)
 
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index 7426979ea9fb..094b639ece2f 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
-+CFLAGS_trace-rpmh.o := -I$(src)
- obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
- obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
- obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index ceb8aea237d6..58a3c53d651e 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -24,6 +24,9 @@
+diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+index dff4c46be3af..6f60bb9a4dfa 100644
+--- a/drivers/soc/qcom/rpmh.c
++++ b/drivers/soc/qcom/rpmh.c
+@@ -22,6 +22,7 @@
  
- #include "rpmh-internal.h"
+ #define RPMH_MAX_MBOXES			2
+ #define RPMH_TIMEOUT			(10 * HZ)
++#define RPMH_MAX_REQ_IN_BATCH		10
  
-+#define CREATE_TRACE_POINTS
-+#include "trace-rpmh.h"
-+
- #define RSC_DRV_TCS_OFFSET		672
- #define RSC_DRV_CMD_OFFSET		20
+ #define DEFINE_RPMH_MSG_ONSTACK(rc, s, q, c, name)	\
+ 	struct rpmh_request name = {			\
+@@ -81,12 +82,14 @@ struct rpmh_request {
+  * @cache: the list of cached requests
+  * @lock: synchronize access to the controller data
+  * @dirty: was the cache updated since flush
++ * @batch_cache: Cache sleep and wake requests sent as batch
+  */
+ struct rpmh_ctrlr {
+ 	struct rsc_drv *drv;
+ 	struct list_head cache;
+ 	spinlock_t lock;
+ 	bool dirty;
++	struct rpmh_request *batch_cache[2 * RPMH_MAX_REQ_IN_BATCH];
+ };
  
-@@ -239,6 +242,7 @@ static irqreturn_t tcs_irq_handler(int irq, void *p)
- 		/* Reclaim the TCS */
- 		write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, m, 0, 0);
- 		write_tcs_reg(drv, RSC_DRV_IRQ_CLEAR, 0, 0, BIT(m));
-+		trace_rpmh_notify_irq(drv, resp);
- 		atomic_set(&drv->tcs_in_use[m], 0);
- 		send_tcs_response(resp);
- 	}
-@@ -270,6 +274,7 @@ static void tcs_notify_tx_done(unsigned long data)
- 				       struct tcs_response, list);
- 		list_del(&resp->list);
- 		spin_unlock_irqrestore(&drv->drv_lock, flags);
-+		trace_rpmh_notify_tx_done(drv, resp);
- 		free_response(resp);
- 	}
+ /**
+@@ -343,6 +346,146 @@ int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
  }
-@@ -298,6 +303,7 @@ static void __tcs_buffer_write(struct rsc_drv *drv, int m, int n,
- 		write_tcs_reg(drv, RSC_DRV_CMD_MSGID, m, n + i, msgid);
- 		write_tcs_reg(drv, RSC_DRV_CMD_ADDR, m, n + i, cmd->addr);
- 		write_tcs_reg(drv, RSC_DRV_CMD_DATA, m, n + i, cmd->data);
-+		trace_rpmh_send_msg(drv, m, n + i, msgid, cmd);
- 	}
+ EXPORT_SYMBOL(rpmh_write);
  
- 	write_tcs_reg(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, m, 0, cmd_complete);
-diff --git a/drivers/soc/qcom/trace-rpmh.h b/drivers/soc/qcom/trace-rpmh.h
-new file mode 100644
-index 000000000000..734de0d54a9f
---- /dev/null
-+++ b/drivers/soc/qcom/trace-rpmh.h
-@@ -0,0 +1,89 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
++static int cache_batch(struct rpmh_client *rc,
++		      struct rpmh_request **rpm_msg, int count)
++{
++	struct rpmh_ctrlr *rpm = rc->ctrlr;
++	unsigned long flags;
++	int ret = 0;
++	int index = 0;
++	int i;
++
++	spin_lock_irqsave(&rpm->lock, flags);
++	while (rpm->batch_cache[index])
++		index++;
++	if (index + count >=  2 * RPMH_MAX_REQ_IN_BATCH) {
++		ret = -ENOMEM;
++		goto fail;
++	}
++
++	for (i = 0; i < count; i++)
++		rpm->batch_cache[index + i] = rpm_msg[i];
++fail:
++	spin_unlock_irqrestore(&rpm->lock, flags);
++
++	return ret;
++}
++
++static int flush_batch(struct rpmh_client *rc)
++{
++	struct rpmh_ctrlr *rpm = rc->ctrlr;
++	struct rpmh_request *rpm_msg;
++	unsigned long flags;
++	int ret = 0;
++	int i;
++
++	/* Send Sleep/Wake requests to the controller, expect no response */
++	spin_lock_irqsave(&rpm->lock, flags);
++	for (i = 0; rpm->batch_cache[i]; i++) {
++		rpm_msg = rpm->batch_cache[i];
++		ret = rpmh_rsc_write_ctrl_data(rc->ctrlr->drv, &rpm_msg->msg);
++		if (ret)
++			break;
++	}
++	spin_unlock_irqrestore(&rpm->lock, flags);
++
++	return ret;
++}
++
++static void invalidate_batch(struct rpmh_client *rc)
++{
++	struct rpmh_ctrlr *rpm = rc->ctrlr;
++	unsigned long flags;
++	int index = 0;
++	int i;
++
++	spin_lock_irqsave(&rpm->lock, flags);
++	while (rpm->batch_cache[index])
++		index++;
++	for (i = 0; i < index; i++) {
++		kfree(rpm->batch_cache[i]->free);
++		rpm->batch_cache[i] = NULL;
++	}
++	spin_unlock_irqrestore(&rpm->lock, flags);
++}
++
++/**
++ * rpmh_write_batch: Write multiple sets of RPMH commands and wait for the
++ * batch to finish.
++ *
++ * @rc: The RPMh handle got from rpmh_get_dev_channel
++ * @state: Active/sleep set
++ * @cmd: The payload data
++ * @n: The array of count of elements in each batch, 0 terminated.
++ *
++ * Write a request to the mailbox controller without caching. If the request
++ * state is ACTIVE, then the requests are treated as completion request
++ * and sent to the controller immediately. The function waits until all the
++ * commands are complete. If the request was to SLEEP or WAKE_ONLY, then the
++ * request is sent as fire-n-forget and no ack is expected.
++ *
++ * May sleep. Do not call from atomic contexts for ACTIVE_ONLY requests.
 + */
++int rpmh_write_batch(struct rpmh_client *rc, enum rpmh_state state,
++		    struct tcs_cmd *cmd, int *n)
++{
++	struct rpmh_request *rpm_msg[RPMH_MAX_REQ_IN_BATCH] = { NULL };
++	DECLARE_COMPLETION_ONSTACK(compl);
++	atomic_t wait_count = ATOMIC_INIT(0); /* overwritten */
++	int count = 0;
++	int ret, i, j;
 +
-+#if !defined(_TRACE_RPMH_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_RPMH_H
++	if (IS_ERR_OR_NULL(rc) || !cmd || !n)
++		return -EINVAL;
 +
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM rpmh
++	while (n[count++] > 0)
++		;
++	count--;
++	if (!count || count > RPMH_MAX_REQ_IN_BATCH)
++		return -EINVAL;
 +
-+#include <linux/tracepoint.h>
-+#include "rpmh-internal.h"
++	/* Create async request batches */
++	for (i = 0; i < count; i++) {
++		rpm_msg[i] = __get_rpmh_msg_async(rc, state, cmd, n[i]);
++		if (IS_ERR_OR_NULL(rpm_msg[i])) {
++			for (j = 0 ; j < i; j++)
++				kfree(rpm_msg[j]->free);
++			return PTR_ERR(rpm_msg[i]);
++		}
++		cmd += n[i];
++	}
 +
-+DECLARE_EVENT_CLASS(rpmh_notify,
++	/* Send if Active and wait for the whole set to complete */
++	if (state == RPMH_ACTIVE_ONLY_STATE) {
++		might_sleep();
++		atomic_set(&wait_count, count);
++		for (i = 0; i < count; i++) {
++			rpm_msg[i]->completion = &compl;
++			rpm_msg[i]->wait_count = &wait_count;
++			/* Bypass caching and write to mailbox directly */
++			ret = rpmh_rsc_send_data(rc->ctrlr->drv,
++						&rpm_msg[i]->msg);
++			if (ret < 0) {
++				pr_err(
++				"Error(%d) sending RPMH message addr=0x%x\n",
++				ret, rpm_msg[i]->msg.payload[0].addr);
++				break;
++			}
++		}
++		/* For those unsent requests, spoof tx_done */
++		for (j = i; j < count; j++)
++			rpmh_tx_done(&rpm_msg[j]->msg, ret);
++		return wait_for_tx_done(rc, &compl, cmd[0].addr, cmd[0].data);
++	}
 +
-+	TP_PROTO(struct rsc_drv *d, struct tcs_response *r),
++	/*
++	 * Cache sleep/wake data in store.
++	 * But flush batch first before flushing all other data.
++	 */
++	return cache_batch(rc, rpm_msg, count);
++}
++EXPORT_SYMBOL(rpmh_write_batch);
 +
-+	TP_ARGS(d, r),
+ static int is_req_valid(struct cache_req *req)
+ {
+ 	return (req->sleep_val != UINT_MAX &&
+@@ -394,6 +537,11 @@ int rpmh_flush(struct rpmh_client *rc)
+ 	}
+ 	spin_unlock_irqrestore(&rpm->lock, flags);
+ 
++	/* First flush the cached batch requests */
++	ret = flush_batch(rc);
++	if (ret)
++		return ret;
 +
-+	TP_STRUCT__entry(
-+		__field(const char *, d->name)
-+		__field(int, m)
-+		__field(u32, addr)
-+		__field(int, errno)
-+	),
+ 	/*
+ 	 * Nobody else should be calling this function other than system PM,,
+ 	 * hence we can run without locks.
+@@ -438,6 +586,8 @@ int rpmh_invalidate(struct rpmh_client *rc)
+ 	if (IS_ERR_OR_NULL(rc))
+ 		return -EINVAL;
+ 
++	invalidate_batch(rc);
 +
-+	TP_fast_assign(
-+		__entry->name = d->name;
-+		__entry->m = r->m;
-+		__entry->addr = r->msg->payload[0].addr;
-+		__entry->errno = r->err;
-+	),
+ 	spin_lock_irqsave(&rpm->lock, flags);
+ 	rpm->dirty = true;
+ 	spin_unlock_irqrestore(&rpm->lock, flags);
+diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
+index 172a649f1a1c..6dc1042534d6 100644
+--- a/include/soc/qcom/rpmh.h
++++ b/include/soc/qcom/rpmh.h
+@@ -18,6 +18,9 @@ int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
+ int rpmh_write_async(struct rpmh_client *rc, enum rpmh_state state,
+ 		    struct tcs_cmd *cmd, int n);
+ 
++int rpmh_write_batch(struct rpmh_client *rc, enum rpmh_state state,
++		    struct tcs_cmd *cmd, int *n);
 +
-+	TP_printk("%s: ack: tcs-m:%d addr: 0x%08x errno: %d",
-+		 __entry->name, __entry->m, __entry->addr, __entry->errno)
-+);
+ struct rpmh_client *rpmh_get_client(struct platform_device *pdev);
+ 
+ int rpmh_flush(struct rpmh_client *rc);
+@@ -40,6 +43,11 @@ static inline int rpmh_write_async(struct rpmh_client *rc,
+ 				  struct tcs_cmd *cmd, int n)
+ { return -ENODEV; }
+ 
++static inline int rpmh_write_batch(struct rpmh_client *rc,
++				  enum rpmh_state state,
++				  struct tcs_cmd *cmd, int *n)
++{ return -ENODEV; }
 +
-+DEFINE_EVENT(rpmh_notify, rpmh_notify_irq,
-+	TP_PROTO(struct rsc_drv *d, struct tcs_response *r),
-+	TP_ARGS(d, r)
-+);
-+
-+DEFINE_EVENT(rpmh_notify, rpmh_notify_tx_done,
-+	TP_PROTO(struct rsc_drv *d, struct tcs_response *r),
-+	TP_ARGS(d, r)
-+);
-+
-+
-+TRACE_EVENT(rpmh_send_msg,
-+
-+	TP_PROTO(struct rsc_drv *d, int m, int n, u32 h, struct tcs_cmd *c),
-+
-+	TP_ARGS(d, m, n, h, c),
-+
-+	TP_STRUCT__entry(
-+		__field(const char*, d->name)
-+		__field(int, m)
-+		__field(int, n)
-+		__field(u32, hdr)
-+		__field(u32, addr)
-+		__field(u32, data)
-+		__field(bool, complete)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->name = s;
-+		__entry->m = m;
-+		__entry->n = n;
-+		__entry->hdr = h;
-+		__entry->addr = c->addr;
-+		__entry->data = c->data;
-+		__entry->complete = c->complete;
-+	),
-+
-+	TP_printk("%s: send-msg: tcs(m): %d cmd(n): %d msgid: 0x%08x addr: 0x%08x data: 0x%08x complete: %d",
-+			__entry->name, __entry->m, __entry->n, __entry->hdr,
-+			__entry->addr, __entry->data, __entry->complete)
-+);
-+
-+#endif /* _TRACE_RPMH_H */
-+
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH ../../drivers/soc/qcom
-+
-+#undef TRACE_INCLUDE_FILE
-+#define TRACE_INCLUDE_FILE trace-rpmh
-+
-+#include <trace/define_trace.h>
+ static inline int rpmh_flush(struct rpmh_client *rc)
+ { return -ENODEV; }
+ 
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
