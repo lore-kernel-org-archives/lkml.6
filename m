@@ -1,103 +1,325 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946200AbeBOR7W (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 12:59:22 -0500
-Received: from foss.arm.com ([217.140.101.70]:58766 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164177AbeBOR5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 12:57:31 -0500
-Message-ID: <5A85C974.70500@arm.com>
-Date: Thu, 15 Feb 2018 17:55:00 +0000
-From: James Morse <james.morse@arm.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Icedove/31.6.0
-MIME-Version: 1.0
-To: gengdongjiu <gengdongjiu@huawei.com>
-CC: "christoffer.dall@linaro.org" <christoffer.dall@linaro.org>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "bp@alien8.de" <bp@alien8.de>,
-        "robert.moore@intel.com" <robert.moore@intel.com>,
-        "lv.zheng@intel.com" <lv.zheng@intel.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "devel@acpica.org" <devel@acpica.org>,
-        Huangshaoyu <huangshaoyu@huawei.com>
-Subject: Re: [PATCH v9 5/7] arm64: kvm: Introduce KVM_ARM_SET_SERROR_ESR ioctl
-References: <0184EA26B2509940AA629AE1405DD7F201A9E8EA@DGGEMA503-MBS.china.huawei.com> <5A70C5A0.1050600@arm.com> <d1b17dae-9d9c-970a-d164-a41c618d449b@huawei.com> <5A7DDDEE.9050306@arm.com> <93d07d3e-8388-7814-d674-538071d84e2a@huawei.com>
-In-Reply-To: <93d07d3e-8388-7814-d674-538071d84e2a@huawei.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+        id S1946244AbeBOSAG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 13:00:06 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:38130 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1946189AbeBOR4T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 12:56:19 -0500
+X-Google-Smtp-Source: AH8x2245jkOHlH0ASHCKPad2a6cta+edY2VddPY0Ml0bF7t5zKvB1Q1LSHm73GwADzRKmyMjeXTjvQ==
+From: Tim Harvey <tharvey@gateworks.com>
+To: linux-media@vger.kernel.org, alsa-devel@alsa-project.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH v13 5/8] media: dt-bindings: Add bindings for TDA1997X
+Date: Thu, 15 Feb 2018 09:55:33 -0800
+Message-Id: <1518717336-6271-6-git-send-email-tharvey@gateworks.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518717336-6271-1-git-send-email-tharvey@gateworks.com>
+References: <1518717336-6271-1-git-send-email-tharvey@gateworks.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi gengdongjiu,
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Sakari Ailus <sakari.ailus@iki.fi>
+Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+---
+v6:
+ - replace copyright with SPDX tag
+ - added Rob's ack
 
-On 12/02/18 10:19, gengdongjiu wrote:
-> On 2018/2/10 1:44, James Morse wrote:
->> The point? We can't know what a CPU without the RAS extensions puts in there.
->>
->> Why Does this matter? When migrating a pending SError we have to know the
->> difference between 'use this 64bit value', and 'the CPU will generate it'.
->> If I make an SError pending with ESR=0 on a CPU with VSESR, I can't migrated to
->> a system that generates an impdef SError-ESR, because I can't know it will be 0.
+v5:
+ - added Sakari's ack
 
-> For the target system, before taking the SError, no one can know whether its syndrome value
-> is IMPLEMENTATION DEFINED or architecturally defined.
+v4:
+ - move include/dt-bindings/media/tda1997x.h to bindings patch
+ - clarify port node details
 
-For a virtual-SError, the hypervisor knows what it generated. (do I have
-VSESR_EL2? What did I put in there?).
+v3:
+ - fix typo
 
+v2:
+ - add vendor prefix and remove _ from vidout-portcfg
+ - remove _ from labels
+ - remove max-pixel-rate property
+ - describe and provide example for single output port
+ - update to new audio port bindings
 
-> when the virtual SError is taken, the ESR_ELx.IDS will be updated, then we can know
-> whether the ESR value is impdef or architecturally defined.
+ .../devicetree/bindings/media/i2c/tda1997x.txt     | 179 +++++++++++++++++++++
+ include/dt-bindings/media/tda1997x.h               |  74 +++++++++
+ 2 files changed, 253 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/tda1997x.txt
+ create mode 100644 include/dt-bindings/media/tda1997x.h
 
-True, the guest can't know anything about a pending virtual SError until it
-takes it. Why is this a problem?
-
-
-> It seems migration is only allowed only when target system and source system all support
-> RAS extension, because we do not know whether its syndrome is IMPLEMENTATION DEFINED or
-> architecturally defined.
-
-I don't think Qemu allows migration between hosts with differing guest-ID
-registers. But we shouldn't depend on this, and we may want to hide the v8.2 RAS
-features from the guest's ID register, but still use them from the host.
-
-The way I imagined it working was we would pack the following information into
-that events struct:
-{
-	bool serror_pending;
-	bool serror_has_esr;
-	u64  serror_esr;
-}
-
-The problem I was trying to describe is because there is no value of serror_esr
-we can use to mean 'Ignore this, I'm a v8.0 CPU'. VSESR_EL2 is a 64bit register,
-any bits we abuse may get a meaning we want to use in the future.
-
-When it comes to migration, v8.{0,1} systems can only GET/SET events where
-serror_has_esr == false, they can't use the serror_esr. On v8.2 systems we
-should require serror_has_esr to be true.
-
-If we need to support migration from v8.{0,1} to v8.2, we can make up an impdef
-serror_esr.
-
-We will need to decide what KVM does when SET is called but an SError was
-already pending. 2.5.3 "Multiple SError interrupts" of [0] has something to say.
-
-
-Happy new year,
-
-James
-
-
-[0]
-https://static.docs.arm.com/ddi0587/a/RAS%20Extension-release%20candidate_march_29.pdf
+diff --git a/Documentation/devicetree/bindings/media/i2c/tda1997x.txt b/Documentation/devicetree/bindings/media/i2c/tda1997x.txt
+new file mode 100644
+index 0000000..9ab53c3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/i2c/tda1997x.txt
+@@ -0,0 +1,179 @@
++Device-Tree bindings for the NXP TDA1997x HDMI receiver
++
++The TDA19971/73 are HDMI video receivers.
++
++The TDA19971 Video port output pins can be used as follows:
++ - RGB 8bit per color (24 bits total): R[11:4] B[11:4] G[11:4]
++ - YUV444 8bit per color (24 bits total): Y[11:4] Cr[11:4] Cb[11:4]
++ - YUV422 semi-planar 8bit per component (16 bits total): Y[11:4] CbCr[11:4]
++ - YUV422 semi-planar 10bit per component (20 bits total): Y[11:2] CbCr[11:2]
++ - YUV422 semi-planar 12bit per component (24 bits total): - Y[11:0] CbCr[11:0]
++ - YUV422 BT656 8bit per component (8 bits total): YCbCr[11:4] (2-cycles)
++ - YUV422 BT656 10bit per component (10 bits total): YCbCr[11:2] (2-cycles)
++ - YUV422 BT656 12bit per component (12 bits total): YCbCr[11:0] (2-cycles)
++
++The TDA19973 Video port output pins can be used as follows:
++ - RGB 12bit per color (36 bits total): R[11:0] B[11:0] G[11:0]
++ - YUV444 12bit per color (36 bits total): Y[11:0] Cb[11:0] Cr[11:0]
++ - YUV422 semi-planar 12bit per component (24 bits total): Y[11:0] CbCr[11:0]
++ - YUV422 BT656 12bit per component (12 bits total): YCbCr[11:0] (2-cycles)
++
++The Video port output pins are mapped via 4-bit 'pin groups' allowing
++for a variety of connection possibilities including swapping pin order within
++pin groups. The video_portcfg device-tree property consists of register mapping
++pairs which map a chip-specific VP output register to a 4-bit pin group. If
++the pin group needs to be bit-swapped you can use the *_S pin-group defines.
++
++Required Properties:
++ - compatible          :
++  - "nxp,tda19971" for the TDA19971
++  - "nxp,tda19973" for the TDA19973
++ - reg                 : I2C slave address
++ - interrupts          : The interrupt number
++ - DOVDD-supply        : Digital I/O supply
++ - DVDD-supply         : Digital Core supply
++ - AVDD-supply         : Analog supply
++ - nxp,vidout-portcfg  : array of pairs mapping VP output pins to pin groups.
++
++Optional Properties:
++ - nxp,audout-format   : DAI bus format: "i2s" or "spdif".
++ - nxp,audout-width    : width of audio output data bus (1-4).
++ - nxp,audout-layout   : data layout (0=AP0 used, 1=AP0/AP1/AP2/AP3 used).
++ - nxp,audout-mclk-fs  : Multiplication factor between stream rate and codec
++                         mclk.
++
++The port node shall contain one endpoint child node for its digital
++output video port, in accordance with the video interface bindings defined in
++Documentation/devicetree/bindings/media/video-interfaces.txt.
++
++Optional Endpoint Properties:
++  The following three properties are defined in video-interfaces.txt and
++  are valid for the output parallel bus endpoint:
++  - hsync-active: Horizontal synchronization polarity. Defaults to active high.
++  - vsync-active: Vertical synchronization polarity. Defaults to active high.
++  - data-active: Data polarity. Defaults to active high.
++
++Examples:
++ - VP[15:0] connected to IMX6 CSI_DATA[19:4] for 16bit YUV422
++   16bit I2S layout0 with a 128*fs clock (A_WS, AP0, A_CLK pins)
++	hdmi-receiver@48 {
++		compatible = "nxp,tda19971";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_tda1997x>;
++		reg = <0x48>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
++		DOVDD-supply = <&reg_3p3v>;
++		AVDD-supply = <&reg_1p8v>;
++		DVDD-supply = <&reg_1p8v>;
++		/* audio */
++		#sound-dai-cells = <0>;
++		nxp,audout-format = "i2s";
++		nxp,audout-layout = <0>;
++		nxp,audout-width = <16>;
++		nxp,audout-mclk-fs = <128>;
++		/*
++		 * The 8bpp YUV422 semi-planar mode outputs CbCr[11:4]
++		 * and Y[11:4] across 16bits in the same pixclk cycle.
++		 */
++		nxp,vidout-portcfg =
++			/* Y[11:8]<->VP[15:12]<->CSI_DATA[19:16] */
++			< TDA1997X_VP24_V15_12 TDA1997X_G_Y_11_8 >,
++			/* Y[7:4]<->VP[11:08]<->CSI_DATA[15:12] */
++			< TDA1997X_VP24_V11_08 TDA1997X_G_Y_7_4 >,
++			/* CbCc[11:8]<->VP[07:04]<->CSI_DATA[11:8] */
++			< TDA1997X_VP24_V07_04 TDA1997X_R_CR_CBCR_11_8 >,
++			/* CbCr[7:4]<->VP[03:00]<->CSI_DATA[7:4] */
++			< TDA1997X_VP24_V03_00 TDA1997X_R_CR_CBCR_7_4 >;
++
++		port {
++			tda1997x_to_ipu1_csi0_mux: endpoint {
++				remote-endpoint = <&ipu1_csi0_mux_from_parallel_sensor>;
++				bus-width = <16>;
++				hsync-active = <1>;
++				vsync-active = <1>;
++				data-active = <1>;
++			};
++		};
++	};
++ - VP[15:8] connected to IMX6 CSI_DATA[19:12] for 8bit BT656
++   16bit I2S layout0 with a 128*fs clock (A_WS, AP0, A_CLK pins)
++	hdmi-receiver@48 {
++		compatible = "nxp,tda19971";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_tda1997x>;
++		reg = <0x48>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
++		DOVDD-supply = <&reg_3p3v>;
++		AVDD-supply = <&reg_1p8v>;
++		DVDD-supply = <&reg_1p8v>;
++		/* audio */
++		#sound-dai-cells = <0>;
++		nxp,audout-format = "i2s";
++		nxp,audout-layout = <0>;
++		nxp,audout-width = <16>;
++		nxp,audout-mclk-fs = <128>;
++		/*
++		 * The 8bpp YUV422 semi-planar mode outputs CbCr[11:4]
++		 * and Y[11:4] across 16bits in the same pixclk cycle.
++		 */
++		nxp,vidout-portcfg =
++			/* Y[11:8]<->VP[15:12]<->CSI_DATA[19:16] */
++			< TDA1997X_VP24_V15_12 TDA1997X_G_Y_11_8 >,
++			/* Y[7:4]<->VP[11:08]<->CSI_DATA[15:12] */
++			< TDA1997X_VP24_V11_08 TDA1997X_G_Y_7_4 >,
++			/* CbCc[11:8]<->VP[07:04]<->CSI_DATA[11:8] */
++			< TDA1997X_VP24_V07_04 TDA1997X_R_CR_CBCR_11_8 >,
++			/* CbCr[7:4]<->VP[03:00]<->CSI_DATA[7:4] */
++			< TDA1997X_VP24_V03_00 TDA1997X_R_CR_CBCR_7_4 >;
++
++		port {
++			tda1997x_to_ipu1_csi0_mux: endpoint {
++				remote-endpoint = <&ipu1_csi0_mux_from_parallel_sensor>;
++				bus-width = <16>;
++				hsync-active = <1>;
++				vsync-active = <1>;
++				data-active = <1>;
++			};
++		};
++	};
++ - VP[15:8] connected to IMX6 CSI_DATA[19:12] for 8bit BT656
++   16bit I2S layout0 with a 128*fs clock (A_WS, AP0, A_CLK pins)
++	hdmi-receiver@48 {
++		compatible = "nxp,tda19971";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_tda1997x>;
++		reg = <0x48>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
++		DOVDD-supply = <&reg_3p3v>;
++		AVDD-supply = <&reg_1p8v>;
++		DVDD-supply = <&reg_1p8v>;
++		/* audio */
++		#sound-dai-cells = <0>;
++		nxp,audout-format = "i2s";
++		nxp,audout-layout = <0>;
++		nxp,audout-width = <16>;
++		nxp,audout-mclk-fs = <128>;
++		/*
++		 * The 8bpp BT656 mode outputs YCbCr[11:4] across 8bits over
++		 * 2 pixclk cycles.
++		 */
++		nxp,vidout-portcfg =
++			/* YCbCr[11:8]<->VP[15:12]<->CSI_DATA[19:16] */
++			< TDA1997X_VP24_V15_12 TDA1997X_R_CR_CBCR_11_8 >,
++			/* YCbCr[7:4]<->VP[11:08]<->CSI_DATA[15:12] */
++			< TDA1997X_VP24_V11_08 TDA1997X_R_CR_CBCR_7_4 >,
++
++		port {
++			tda1997x_to_ipu1_csi0_mux: endpoint {
++				remote-endpoint = <&ipu1_csi0_mux_from_parallel_sensor>;
++				bus-width = <16>;
++				hsync-active = <1>;
++				vsync-active = <1>;
++				data-active = <1>;
++			};
++		};
++	};
++
+diff --git a/include/dt-bindings/media/tda1997x.h b/include/dt-bindings/media/tda1997x.h
+new file mode 100644
+index 0000000..bd9fbd7
+--- /dev/null
++++ b/include/dt-bindings/media/tda1997x.h
+@@ -0,0 +1,74 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2017 Gateworks Corporation
++ */
++#ifndef _DT_BINDINGS_MEDIA_TDA1997X_H
++#define _DT_BINDINGS_MEDIA_TDA1997X_H
++
++/* TDA19973 36bit Video Port control registers */
++#define TDA1997X_VP36_35_32	0
++#define TDA1997X_VP36_31_28	1
++#define TDA1997X_VP36_27_24	2
++#define TDA1997X_VP36_23_20	3
++#define TDA1997X_VP36_19_16	4
++#define TDA1997X_VP36_15_12	5
++#define TDA1997X_VP36_11_08	6
++#define TDA1997X_VP36_07_04	7
++#define TDA1997X_VP36_03_00	8
++
++/* TDA19971 24bit Video Port control registers */
++#define TDA1997X_VP24_V23_20	0
++#define TDA1997X_VP24_V19_16	1
++#define TDA1997X_VP24_V15_12	3
++#define TDA1997X_VP24_V11_08	4
++#define TDA1997X_VP24_V07_04	6
++#define TDA1997X_VP24_V03_00	7
++
++/* Pin groups */
++#define TDA1997X_VP_OUT_EN        0x80	/* enable output group */
++#define TDA1997X_VP_HIZ           0x40	/* hi-Z output group when not used */
++#define TDA1997X_VP_SWP           0x10	/* pin-swap output group */
++#define TDA1997X_R_CR_CBCR_3_0    (0 | TDA1997X_VP_OUT_EN | TDA1997X_VP_HIZ)
++#define TDA1997X_R_CR_CBCR_7_4    (1 | TDA1997X_VP_OUT_EN | TDA1997X_VP_HIZ)
++#define TDA1997X_R_CR_CBCR_11_8   (2 | TDA1997X_VP_OUT_EN | TDA1997X_VP_HIZ)
++#define TDA1997X_B_CB_3_0         (3 | TDA1997X_VP_OUT_EN | TDA1997X_VP_HIZ)
++#define TDA1997X_B_CB_7_4         (4 | TDA1997X_VP_OUT_EN | TDA1997X_VP_HIZ)
++#define TDA1997X_B_CB_11_8        (5 | TDA1997X_VP_OUT_EN | TDA1997X_VP_HIZ)
++#define TDA1997X_G_Y_3_0          (6 | TDA1997X_VP_OUT_EN | TDA1997X_VP_HIZ)
++#define TDA1997X_G_Y_7_4          (7 | TDA1997X_VP_OUT_EN | TDA1997X_VP_HIZ)
++#define TDA1997X_G_Y_11_8         (8 | TDA1997X_VP_OUT_EN | TDA1997X_VP_HIZ)
++/* pinswapped groups */
++#define TDA1997X_R_CR_CBCR_3_0_S  (TDA1997X_R_CR_CBCR_3_0 | TDA1997X_VP_SWAP)
++#define TDA1997X_R_CR_CBCR_7_4_S  (TDA1997X_R_CR_CBCR_7_4 | TDA1997X_VP_SWAP)
++#define TDA1997X_R_CR_CBCR_11_8_S (TDA1997X_R_CR_CBCR_11_8 | TDA1997X_VP_SWAP)
++#define TDA1997X_B_CB_3_0_S       (TDA1997X_B_CB_3_0 | TDA1997X_VP_SWAP)
++#define TDA1997X_B_CB_7_4_S       (TDA1997X_B_CB_7_4 | TDA1997X_VP_SWAP)
++#define TDA1997X_B_CB_11_8_S      (TDA1997X_B_CB_11_8 | TDA1997X_VP_SWAP)
++#define TDA1997X_G_Y_3_0_S        (TDA1997X_G_Y_3_0 | TDA1997X_VP_SWAP)
++#define TDA1997X_G_Y_7_4_S        (TDA1997X_G_Y_7_4 | TDA1997X_VP_SWAP)
++#define TDA1997X_G_Y_11_8_S       (TDA1997X_G_Y_11_8 | TDA1997X_VP_SWAP)
++
++/* Audio bus DAI format */
++#define TDA1997X_I2S16			1 /* I2S 16bit */
++#define TDA1997X_I2S32			2 /* I2S 32bit */
++#define TDA1997X_SPDIF			3 /* SPDIF */
++#define TDA1997X_OBA			4 /* One Bit Audio */
++#define TDA1997X_DST			5 /* Direct Stream Transfer */
++#define TDA1997X_I2S16_HBR		6 /* HBR straight in I2S 16bit mode */
++#define TDA1997X_I2S16_HBR_DEMUX	7 /* HBR demux in I2S 16bit mode */
++#define TDA1997X_I2S32_HBR_DEMUX	8 /* HBR demux in I2S 32bit mode */
++#define TDA1997X_SPDIF_HBR_DEMUX	9 /* HBR demux in SPDIF mode */
++
++/* Audio bus channel layout */
++#define TDA1997X_LAYOUT0	0	/* 2-channel */
++#define TDA1997X_LAYOUT1	1	/* 8-channel */
++
++/* Audio bus clock */
++#define TDA1997X_ACLK_16FS	0
++#define TDA1997X_ACLK_32FS	1
++#define TDA1997X_ACLK_64FS	2
++#define TDA1997X_ACLK_128FS	3
++#define TDA1997X_ACLK_256FS	4
++#define TDA1997X_ACLK_512FS	5
++
++#endif /* _DT_BINDINGS_MEDIA_TDA1997X_H */
+-- 
+2.7.4
