@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1936761-1518712536-2-13539791482561448520
+X-Cyrus-Session-Id: sloti22d1t05-1936761-1518712507-2-581884242807436468
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518712535; b=OwAXRQuNW5eqS55VSQZeKyWgl+CEw/46c+bsRj60rMu1bFN
-    EwOiPS/801vfMghIkSQTnBhQnZaW235VfgfgjaXvTSB1nD6Nx/SiVYWtGiF8ncyw
-    +15j1J8rX60iL1O//yJwh4z6UigT0NSi7C60kVXpOtYW2m7XpDXdfVfPtxUg08/G
-    S8fZtBajyMX0wQt0euJPR/6NA7vjxOFlZPvcD8pF5DgMdI61sycm//FBpr+aTVce
-    UrYjt/WmhObyxs0a3SLRxhMVMu9CXUEuVXkgA0zeRzi8HDTVGVuLBEKuUhAjhZq3
-    4UVLPgSZApNCE4Qfum4lAqhLg15vGWxWhSPyfOg==
+    t=1518712507; b=uu2G9WBAsp1OOsV/W+qBYxFQv0s2ZlB5BuKAM+tq1Q8Cj2j
+    qThnksxgd7cNMi8PRLSiNSmy+wrnX8veUY9TDvegpAJIegzp8/5dongeFSsoWEaz
+    2kZ+NRk+lTrOiotpwsMKoqV3iBmwdIskkR2xPkRGXkQnb+0UsH1DW+AJhzsKHwrB
+    M72gmm9B7cOD3cm81grWC6x0RDCmSYIn7fpcC1ZBNVd3TZJR+DEvuFgwfeIcSz6a
+    4iWmBDK8MYpXsfC05fJO7UCuS/OVJZzgaDAqmDNT30UwBrx8V1fq4WQTOffdQcmG
+    IYe2P4Udx+cVvMu5qzBg+gI80p5QP/yTCXFkOxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1518712535;
-    bh=tK4PYXremrEA+4sPclg2vPS7LSvSw1VGNfscCZhIQsM=; b=dTo0d5YB0oDD
-    mE7Vy9n9fztymJIJHLLJAtNhQ56x3IqcO0Ak5DwwbYm+wOFUgH+4wd+NvCfgQ0hR
-    27lHsO8E4F8LI2T4hsSHivQwoA2Ddb4RlZXFw4IE3xuirk1DO5DJNZ/Iy5EkI9Ti
-    tpkZM30GV98RykgbMTYYlQfPIocrYe1BS78RHBk2QjIOVrJdM7NLqDUMibNTfkkE
-    x91hfi9bDYDTIROXWL5uEzkF//HD9mXwR8lt9qy9p+DcnFWbWxOpm3wJEEQ/md3Q
-    uP10abfwPtXQ5UBx0d1qxoVyqcB0a54P7qERhIWjRbjqvchliYf4ASADexra2lMU
-    4/m5bptTug==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=arctest; t=1518712507;
+    bh=7LyHDoH1+bbzgoGouY3n5pIQ4NuQlq03fcOQxe7ox3Q=; b=MXoCcb5D/ar8
+    w5o1yGRlQKzJJqikFWEJMJJqUx9A35NZ/fkbxXiOn6Zh2TMPwTIgxd/FxA/D4ZpY
+    Kb6HBwonW6yY8RkuCjTVCHNhbvIb4i+KfXk/orW7w7BLaRjg2UD1iJFpqivwtGT4
+    yelKUypiV+CmIGk1pOnaww1Z2Go2Vb5GBXiHTuN4oHT5CcKGJdfbc5aBYnujhEW1
+    zj+KuZDvS5wHfM0C6lOTUt2Rc9KrGoqnOzRqS+vN5RROcRpJCSK/5UcbehgbVPcn
+    I40r+JtO6opt8aH6WkfGA9cRL2AFGQFzvpRvlhgdhOfv1+sU1QdbinAAPgH3fckw
+    oTZnvH89aw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=stgolabs.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=stgolabs.net header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=stgolabs.net;
@@ -47,13 +47,13 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=stgolabs.net header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423426AbeBOQfP (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 11:35:15 -0500
-Received: from smtp2.provo.novell.com ([137.65.250.81]:49722 "EHLO
+        id S1426045AbeBOQeo (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 11:34:44 -0500
+Received: from smtp2.provo.novell.com ([137.65.250.81]:36085 "EHLO
         smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1426030AbeBOQef (ORCPT
+        with ESMTP id S1424084AbeBOQel (ORCPT
         <rfc822;groupwise-linux-api@vger.kernel.org:0:0>);
-        Thu, 15 Feb 2018 11:34:35 -0500
+        Thu, 15 Feb 2018 11:34:41 -0500
 From: Davidlohr Bueso <dave@stgolabs.net>
 To: akpm@linux-foundation.org
 Cc: mhocko@kernel.org, mtk.manpages@gmail.com,
@@ -61,9 +61,9 @@ Cc: mhocko@kernel.org, mtk.manpages@gmail.com,
         ebiederm@xmission.com, keescook@chromium.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
         dave@stgolabs.net, Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 2/3] ipc/sem: introduce semctl(SEM_STAT_ANY)
-Date: Thu, 15 Feb 2018 08:24:57 -0800
-Message-Id: <20180215162458.10059-3-dave@stgolabs.net>
+Subject: [PATCH 3/3] ipc/msg: introduce msgctl(MSG_STAT_ANY)
+Date: Thu, 15 Feb 2018 08:24:58 -0800
+Message-Id: <20180215162458.10059-4-dave@stgolabs.net>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180215162458.10059-1-dave@stgolabs.net>
 References: <20180215162458.10059-1-dave@stgolabs.net>
@@ -73,15 +73,15 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-There is a permission discrepancy when consulting shm ipc
-object metadata between /proc/sysvipc/sem (0444) and the
-SEM_STAT semctl command. The later does permission checks
+There is a permission discrepancy when consulting msq ipc
+object metadata between /proc/sysvipc/msg (0444) and the
+MSG_STAT shmctl command. The later does permission checks
 for the object vs S_IRUGO. As such there can be cases where
 EACCESS is returned via syscall but the info is displayed
 anyways in the procfs files.
 
 While this might have security implications via info leaking
-(albeit no writing to the sma metadata), this behavior goes
+(albeit no writing to the msq metadata), this behavior goes
 way back and showing all the objects regardless of the
 permissions was most likely an overlook - so we are stuck
 with it. Furthermore, modifying either the syscall or the
@@ -90,8 +90,8 @@ Some applications require getting the procfs info (without
 root privileges) and can be rather slow in comparison with
 a syscall -- up to 500x in some reported cases for shm.
 
-This patch introduces a new SEM_STAT_ANY command such that
-the sem ipc object permissions are ignored, and only audited
+This patch introduces a new MSG_STAT_ANY command such that
+the msq ipc object permissions are ignored, and only audited
 instead. In addition, I've left the lsm security hook checks
 in place, as if some policy can block the call, then the user
 has no other choice than just parsing the procfs file.
@@ -99,103 +99,103 @@ has no other choice than just parsing the procfs file.
 Reported-by: Robert Kettler <robert.kettler@outlook.com>
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- include/uapi/linux/sem.h   |  1 +
- ipc/sem.c                  | 17 ++++++++++++-----
+ include/uapi/linux/msg.h   |  1 +
+ ipc/msg.c                  | 17 ++++++++++++-----
  security/selinux/hooks.c   |  1 +
  security/smack/smack_lsm.c |  1 +
  4 files changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/include/uapi/linux/sem.h b/include/uapi/linux/sem.h
-index 9c3e745b0656..39a1876f039e 100644
---- a/include/uapi/linux/sem.h
-+++ b/include/uapi/linux/sem.h
-@@ -19,6 +19,7 @@
- /* ipcs ctl cmds */
- #define SEM_STAT 18
- #define SEM_INFO 19
-+#define SEM_STAT_ANY 20
+diff --git a/include/uapi/linux/msg.h b/include/uapi/linux/msg.h
+index 5d5ab81dc9be..e4a0d9a9a9e8 100644
+--- a/include/uapi/linux/msg.h
++++ b/include/uapi/linux/msg.h
+@@ -7,6 +7,7 @@
+ /* ipcs ctl commands */
+ #define MSG_STAT 11
+ #define MSG_INFO 12
++#define MSG_STAT_ANY 13
  
- /* Obsolete, used only for backwards compatibility and libc5 compiles */
- struct semid_ds {
-diff --git a/ipc/sem.c b/ipc/sem.c
-index a4af04979fd2..79acad0e0aa1 100644
---- a/ipc/sem.c
-+++ b/ipc/sem.c
-@@ -1190,14 +1190,14 @@ static int semctl_stat(struct ipc_namespace *ns, int semid,
- 	memset(semid64, 0, sizeof(*semid64));
+ /* msgrcv options */
+ #define MSG_NOERROR     010000  /* no error if message is too big */
+diff --git a/ipc/msg.c b/ipc/msg.c
+index 0dcc6699dc53..644032335921 100644
+--- a/ipc/msg.c
++++ b/ipc/msg.c
+@@ -483,14 +483,14 @@ static int msgctl_stat(struct ipc_namespace *ns, int msqid,
+ 	memset(p, 0, sizeof(*p));
  
  	rcu_read_lock();
--	if (cmd == SEM_STAT) {
-+	if (cmd == SEM_STAT || cmd == SEM_STAT_ANY) {
- 		sma = sem_obtain_object(ns, semid);
- 		if (IS_ERR(sma)) {
- 			err = PTR_ERR(sma);
+-	if (cmd == MSG_STAT) {
++	if (cmd == MSG_STAT || cmd == MSG_STAT_ANY) {
+ 		msq = msq_obtain_object(ns, msqid);
+ 		if (IS_ERR(msq)) {
+ 			err = PTR_ERR(msq);
  			goto out_unlock;
  		}
- 		id = sma->sem_perm.id;
+ 		id = msq->q_perm.id;
 -	} else {
 +	} else { /* IPC_STAT */
- 		sma = sem_obtain_object_check(ns, semid);
- 		if (IS_ERR(sma)) {
- 			err = PTR_ERR(sma);
-@@ -1205,9 +1205,14 @@ static int semctl_stat(struct ipc_namespace *ns, int semid,
+ 		msq = msq_obtain_object_check(ns, msqid);
+ 		if (IS_ERR(msq)) {
+ 			err = PTR_ERR(msq);
+@@ -498,9 +498,14 @@ static int msgctl_stat(struct ipc_namespace *ns, int msqid,
  		}
  	}
  
 -	err = -EACCES;
--	if (ipcperms(ns, &sma->sem_perm, S_IRUGO))
+-	if (ipcperms(ns, &msq->q_perm, S_IRUGO))
 -		goto out_unlock;
 +	/* see comment for SHM_STAT_ANY */
-+	if (cmd == SEM_STAT_ANY)
-+		audit_ipc_obj(&sma->sem_perm);
++	if (cmd == MSG_STAT_ANY)
++		audit_ipc_obj(&msq->q_perm);
 +	else {
 +		err = -EACCES;
-+		if (ipcperms(ns, &sma->sem_perm, S_IRUGO))
++		if (ipcperms(ns, &msq->q_perm, S_IRUGO))
 +			goto out_unlock;
 +	}
  
- 	err = security_sem_semctl(sma, cmd);
+ 	err = security_msg_queue_msgctl(msq, cmd);
  	if (err)
-@@ -1596,6 +1601,7 @@ SYSCALL_DEFINE4(semctl, int, semid, int, semnum, int, cmd, unsigned long, arg)
- 		return semctl_info(ns, semid, cmd, p);
+@@ -558,6 +563,7 @@ SYSCALL_DEFINE3(msgctl, int, msqid, int, cmd, struct msqid_ds __user *, buf)
+ 		return err;
+ 	}
+ 	case MSG_STAT:	/* msqid is an index rather than a msg queue id */
++	case MSG_STAT_ANY:
  	case IPC_STAT:
- 	case SEM_STAT:
-+	case SEM_STAT_ANY:
- 		err = semctl_stat(ns, semid, cmd, &semid64);
+ 		err = msgctl_stat(ns, msqid, cmd, &msqid64);
  		if (err < 0)
- 			return err;
-@@ -1697,6 +1703,7 @@ COMPAT_SYSCALL_DEFINE4(semctl, int, semid, int, semnum, int, cmd, int, arg)
- 		return semctl_info(ns, semid, cmd, p);
+@@ -671,6 +677,7 @@ COMPAT_SYSCALL_DEFINE3(msgctl, int, msqid, int, cmd, void __user *, uptr)
+ 	}
  	case IPC_STAT:
- 	case SEM_STAT:
-+	case SEM_STAT_ANY:
- 		err = semctl_stat(ns, semid, cmd, &semid64);
+ 	case MSG_STAT:
++	case MSG_STAT_ANY:
+ 		err = msgctl_stat(ns, msqid, cmd, &msqid64);
  		if (err < 0)
  			return err;
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 373dceede50d..38f71d12206a 100644
+index 38f71d12206a..f87f538c83a9 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
-@@ -5847,6 +5847,7 @@ static int selinux_sem_semctl(struct sem_array *sma, int cmd)
- 		break;
+@@ -5591,6 +5591,7 @@ static int selinux_msg_queue_msgctl(struct msg_queue *msq, int cmd)
+ 				    SECCLASS_SYSTEM, SYSTEM__IPC_INFO, NULL);
  	case IPC_STAT:
- 	case SEM_STAT:
-+	case SEM_STAT_ANY:
- 		perms = SEM__GETATTR | SEM__ASSOCIATE;
+ 	case MSG_STAT:
++	case MSG_STAT_ANY:
+ 		perms = MSGQ__GETATTR | MSGQ__ASSOCIATE;
  		break;
- 	default:
+ 	case IPC_SET:
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 51d22b03b0ae..d478c0940b00 100644
+index d478c0940b00..193159d5acf8 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -3167,6 +3167,7 @@ static int smack_sem_semctl(struct sem_array *sma, int cmd)
- 	case GETALL:
+@@ -3296,6 +3296,7 @@ static int smack_msg_queue_msgctl(struct msg_queue *msq, int cmd)
+ 	switch (cmd) {
  	case IPC_STAT:
- 	case SEM_STAT:
-+	case SEM_STAT_ANY:
+ 	case MSG_STAT:
++	case MSG_STAT_ANY:
  		may = MAY_READ;
  		break;
- 	case SETVAL:
+ 	case IPC_SET:
 -- 
 2.13.6
 
