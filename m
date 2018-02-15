@@ -1,37 +1,39 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224liLORR4zu2Qcudu9y39Nxy2xoVKKqM1PfC4jP4E0aEZ9raPDBCg3tzvroKEVWYlNYj0CN
-ARC-Seal: i=1; a=rsa-sha256; t=1518708926; cv=none;
+X-Google-Smtp-Source: AH8x22771Pm+Y01aTIWN6gknTGjTFvyBEcNGCYrmRuMPPiydKUYEO9kBIncDV6F4vC171k2crpeD
+ARC-Seal: i=1; a=rsa-sha256; t=1518708923; cv=none;
         d=google.com; s=arc-20160816;
-        b=jal6zfiD4P8QrQbJes5oE+Xbw/v1fsfyRKHhW+JQTGrJ9b2o5P0Ak82imf95JHdWKJ
-         jzs7vr7eRnuT5C0sMXmH50tbBMkPafwLTeo8GceGqocBzaYMQNrjzHNY1B+fINoPc30s
-         MOrVvmvMAuMBuUFN+JmaktN+bkexfG3t/yl1E+SUHjXkjH7WjLFltSTaJ2Z0zIEIoZC6
-         /ygdB3GvXfOiFLeLLEsFvHiO/1ULC7zvMnKft2apHZC6U/P9E1Ag6ekVdwJxMoifDY+m
-         1yzhSPC8sjg5imWJAx75esDklDuqb2dOJLQccykYf3Krcw3p8Go/ghjTMUCTEsOBoX5L
-         Bo1Q==
+        b=dLMbtkJlOtFr2eut+/lMRSs37YohQ3YAjbZOr+kLiWTccH1l4SfdPDRG1NN24F7y+9
+         oseI5PxxvKI15iWIgVCIelLhoQ/WOyMEPbKqJSjdZy8kLxMPagg8wpoaeGaHxgC8GMln
+         33/6aCuBRO6IdxzlJ1NQzQC7xuhjzWOhdKG6RVmtuV2HYzw+PkD28xzzgApE7BBZI638
+         vkAWLwpwgj7GG6P34TCMNEXgnufNsJ/HdJYwg/uDI2r62mpWwvMEt5IUJcSdxoGcoZ0h
+         htRyRUuxVJRH5Rap8Jazj4TEhyiu/sNSfFbkRCeJQD4gbnxrdgc2p5xN8YVaZdSoLV/B
+         aK5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=YTI67nk9DvH1vqElyZf0RyvMN8u5vxGdGSWWhba2Hp4=;
-        b=j0DoTzn58gX9SvfmR3ycxa51YIBpqmn6FOx7pcJ6ViCati8lJiaTWlXraJhy+gBlxp
-         5mYGyjHtID/vk6ilgIo5XAjsI06J5cNGCefB/1vLR0sKgq6AOBbJcyIUshWl+2DiiOmk
-         7SwmD2Gh6eq0N+ULYY7XRJYXvRjHeXG+6I8+CdVZsiX4HHPJT2l832JzueysJLCmj4Xe
-         c609yjjLlFJlfEIaWBOho29lmGxftEX6qP7Z74RIAi4K5odflgxXjk0QsyGchm4lST7e
-         tfXKHZkpUCm+LWxDmyIrCH67bywiDnS0v3p9mGAprdtLgQrg3jsEhlM2M00oCrdBa+s+
-         OUgQ==
+        bh=qM6V7sczBkVvAKZTCbc0Gy6Aem/aQSLQgBgD8Aaparc=;
+        b=wHQv+axXhXkRDKV3QV3VM9IToO/H5yCey46e8iunjHNXmdm6FLpdnduiMG5FpxODev
+         LViTPPgwDDJOCC49ApEQ4JVRLVTL7rDZwr9nrYtt0SS9+iomT+xdmK9NqDsZF1bHHJHn
+         NZRzbr5ouOoL67zxTOAppv5piW8PuYP1jrd9sgJoTGBhN7qWJd99/fyNiuf27iE3242E
+         fGsx1h5XAMVKSgvHJP15ZjFJWeiiPk/2C16OV7aDPSCblH/qENMqASx+lLQENrerXyG6
+         fQ3JtfxslORfzN6UuF/dwyArtYPLTrjmf0NHWzEvOXubYPqCURvUmgHfjgdP9eobdJA5
+         yhYw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.14 122/195] media: v4l2-compat-ioctl32.c: add missing VIDIOC_PREPARE_BUF
-Date: Thu, 15 Feb 2018 16:16:53 +0100
-Message-Id: <20180215151711.804144613@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Christoffer Dall <christoffer.dall@linaro.org>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.14 086/195] [Variant 2/Spectre-v2] arm/arm64: KVM: Turn kvm_psci_version into a static inline
+Date: Thu, 15 Feb 2018 16:16:17 +0100
+Message-Id: <20180215151710.006645086@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481000340552467?=
-X-GMAIL-MSGID: =?utf-8?q?1592481730766322394?=
+X-GMAIL-THRID: =?utf-8?q?1592481728071968329?=
+X-GMAIL-MSGID: =?utf-8?q?1592481728071968329?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,28 +51,132 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 3ee6d040719ae09110e5cdf24d5386abe5d1b776 upstream.
 
-The result of the VIDIOC_PREPARE_BUF ioctl was never copied back
-to userspace since it was missing in the switch.
+Commit a4097b351118 upstream.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+We're about to need kvm_psci_version in HYP too. So let's turn it
+into a static inline, and pass the kvm structure as a second
+parameter (so that HYP can do a kern_hyp_va on it).
+
+Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/kvm/hyp/switch.c |   18 +++++++++++-------
+ include/kvm/arm_psci.h      |   21 ++++++++++++++++++++-
+ virt/kvm/arm/psci.c         |   12 ++----------
+ 3 files changed, 33 insertions(+), 18 deletions(-)
 
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -1052,6 +1052,7 @@ static long do_video_ioctl(struct file *
- 		err = put_v4l2_create32(&karg.v2crt, up);
- 		break;
+--- a/arch/arm64/kvm/hyp/switch.c
++++ b/arch/arm64/kvm/hyp/switch.c
+@@ -19,6 +19,8 @@
+ #include <linux/jump_label.h>
+ #include <uapi/linux/psci.h>
  
-+	case VIDIOC_PREPARE_BUF:
- 	case VIDIOC_QUERYBUF:
- 	case VIDIOC_QBUF:
- 	case VIDIOC_DQBUF:
++#include <kvm/arm_psci.h>
++
+ #include <asm/kvm_asm.h>
+ #include <asm/kvm_emulate.h>
+ #include <asm/kvm_hyp.h>
+@@ -325,14 +327,16 @@ again:
+ 
+ 	if (exit_code == ARM_EXCEPTION_TRAP &&
+ 	    (kvm_vcpu_trap_get_class(vcpu) == ESR_ELx_EC_HVC64 ||
+-	     kvm_vcpu_trap_get_class(vcpu) == ESR_ELx_EC_HVC32) &&
+-	    vcpu_get_reg(vcpu, 0) == PSCI_0_2_FN_PSCI_VERSION) {
+-		u64 val = PSCI_RET_NOT_SUPPORTED;
+-		if (test_bit(KVM_ARM_VCPU_PSCI_0_2, vcpu->arch.features))
+-			val = 2;
++	     kvm_vcpu_trap_get_class(vcpu) == ESR_ELx_EC_HVC32)) {
++		u32 val = vcpu_get_reg(vcpu, 0);
+ 
+-		vcpu_set_reg(vcpu, 0, val);
+-		goto again;
++		if (val == PSCI_0_2_FN_PSCI_VERSION) {
++			val = kvm_psci_version(vcpu, kern_hyp_va(vcpu->kvm));
++			if (unlikely(val == KVM_ARM_PSCI_0_1))
++				val = PSCI_RET_NOT_SUPPORTED;
++			vcpu_set_reg(vcpu, 0, val);
++			goto again;
++		}
+ 	}
+ 
+ 	if (static_branch_unlikely(&vgic_v2_cpuif_trap) &&
+--- a/include/kvm/arm_psci.h
++++ b/include/kvm/arm_psci.h
+@@ -18,6 +18,7 @@
+ #ifndef __KVM_ARM_PSCI_H__
+ #define __KVM_ARM_PSCI_H__
+ 
++#include <linux/kvm_host.h>
+ #include <uapi/linux/psci.h>
+ 
+ #define KVM_ARM_PSCI_0_1	PSCI_VERSION(0, 1)
+@@ -26,7 +27,25 @@
+ 
+ #define KVM_ARM_PSCI_LATEST	KVM_ARM_PSCI_1_0
+ 
+-int kvm_psci_version(struct kvm_vcpu *vcpu);
++/*
++ * We need the KVM pointer independently from the vcpu as we can call
++ * this from HYP, and need to apply kern_hyp_va on it...
++ */
++static inline int kvm_psci_version(struct kvm_vcpu *vcpu, struct kvm *kvm)
++{
++	/*
++	 * Our PSCI implementation stays the same across versions from
++	 * v0.2 onward, only adding the few mandatory functions (such
++	 * as FEATURES with 1.0) that are required by newer
++	 * revisions. It is thus safe to return the latest.
++	 */
++	if (test_bit(KVM_ARM_VCPU_PSCI_0_2, vcpu->arch.features))
++		return KVM_ARM_PSCI_LATEST;
++
++	return KVM_ARM_PSCI_0_1;
++}
++
++
+ int kvm_hvc_call_handler(struct kvm_vcpu *vcpu);
+ 
+ #endif /* __KVM_ARM_PSCI_H__ */
+--- a/virt/kvm/arm/psci.c
++++ b/virt/kvm/arm/psci.c
+@@ -123,7 +123,7 @@ static unsigned long kvm_psci_vcpu_on(st
+ 	if (!vcpu)
+ 		return PSCI_RET_INVALID_PARAMS;
+ 	if (!vcpu->arch.power_off) {
+-		if (kvm_psci_version(source_vcpu) != KVM_ARM_PSCI_0_1)
++		if (kvm_psci_version(source_vcpu, kvm) != KVM_ARM_PSCI_0_1)
+ 			return PSCI_RET_ALREADY_ON;
+ 		else
+ 			return PSCI_RET_INVALID_PARAMS;
+@@ -232,14 +232,6 @@ static void kvm_psci_system_reset(struct
+ 	kvm_prepare_system_event(vcpu, KVM_SYSTEM_EVENT_RESET);
+ }
+ 
+-int kvm_psci_version(struct kvm_vcpu *vcpu)
+-{
+-	if (test_bit(KVM_ARM_VCPU_PSCI_0_2, vcpu->arch.features))
+-		return KVM_ARM_PSCI_LATEST;
+-
+-	return KVM_ARM_PSCI_0_1;
+-}
+-
+ static int kvm_psci_0_2_call(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm *kvm = vcpu->kvm;
+@@ -397,7 +389,7 @@ static int kvm_psci_0_1_call(struct kvm_
+  */
+ static int kvm_psci_call(struct kvm_vcpu *vcpu)
+ {
+-	switch (kvm_psci_version(vcpu)) {
++	switch (kvm_psci_version(vcpu, vcpu->kvm)) {
+ 	case KVM_ARM_PSCI_1_0:
+ 		return kvm_psci_1_0_call(vcpu);
+ 	case KVM_ARM_PSCI_0_2:
