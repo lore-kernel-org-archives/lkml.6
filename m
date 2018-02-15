@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226KoPUBCxLDazF4aE1GT10Rfvl5Qy0zM78YEao+5CLyYfWSptUzeUusba/R9splmRFH7jCG
-ARC-Seal: i=1; a=rsa-sha256; t=1518709505; cv=none;
+X-Google-Smtp-Source: AH8x225JvsrdWTIYxlDkk6PQGGnD4kNGVJHyT4spB3Vml2GgHndolMgzFGmHei99+mR6VD8gO0X7
+ARC-Seal: i=1; a=rsa-sha256; t=1518709500; cv=none;
         d=google.com; s=arc-20160816;
-        b=FNR+DX7RGQ3kQ3CDMyPIlQo8ztYQrKCfusunTPFAvr0DPmG72kU6y82by375Y7nqXi
-         rEF7vIK3l7i7QRS4kFvfzDRpsS9JANKCF45kZQMCa3FITrG5nEucJ9I0AP+XrOBBZirM
-         nUPPlJlwxToHC7torE2ZsaGI+SPtstfVUALTqnLnd4r7l2WzcRMG5FGyo3hjwhMo+/hR
-         ZDX08ucns0V25VEk/uybMKdH/JtW9UjXgXHwZ5PSyICAwUO2572oAB2MeLleAjEuGC54
-         8SKdn5S+ago482+YSulR8cpbNwD1vk/6fSFEOdSgedlHuFH1G2lVPMaW55ZoTUpFKPh/
-         MMog==
+        b=vhDHmoIzGFz2v7d3SSA7DZi8YNw+p04pusa/tkspf+KNj4gH+DGsXL5qMoZhnLpG6t
+         Kz+MPd4l+P6QR1zTZj1GEahMQBCSNYAOCU+H7E0aEFkKcb5H4T7AKz4hdbJcMER+HZkE
+         Iq1nQizGNnVYLimosrP5KNbjlbtxqGpPFiHCikBAxslhGV5R3XbcBmMrZF7Z7lyALz5J
+         lm4wFWxQVUa3df8c+Px4/LmqrRoeuuLHi+OsyerNk+ed/ZLDSVTeImnrjUGOiDfqHhOj
+         MDpnS9I0709XnFjv+nFrDCA0i+ektbDVBBFMO0NglDTN42ayyXr0fGmBtc9j7TkuiVWN
+         2G6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=VKt0Er5L2thT4qN2bIuEG2RxthSbZeNsydfKYNed9VI=;
-        b=jQCG3Ha89REgftz30G2R8piakg1DMYQ66s9B6zJaByEB0E84NhLafiksrUyXdL1vPW
-         TOu+eaiLvBIjKP+wWBkjd+FgrZTPZvv+0sgQ4MoMW3Jbtc95GJ9G5uKEOmQFQBtx4wxu
-         J+Fi/DFanh+aegr933YvYMB9beTmIAezPeP8XCUcPm30dcxL+qGeIWzsrZjoyNsCPqmP
-         Qps9CgeYemojtlsonowrn1XRhz+kvR3tA69BMPBEyXfXgnteY7t6MwHYeWMHJhB99oit
-         J3gfGMslvMd3EkColeBjQN8rz+TCttuDunU2b6TaAb9IB2Hkqzz2p5EGZfPyBGQ7HjQi
-         SnnA==
+        bh=/rHwnfegQDxwooiDjPkL3L3NpQqet5xELdzfPGOVQFk=;
+        b=BXQzo1Ovzip7a2qAF0xIhiacrDCaPM/H3WUE7VIwDT2QA9XaMvHd3h+1XX8OUMdR5j
+         ScS2X02fwFRoNFaabdvk4mHvPDLldB7RDkbI+1hhjMACr4bJsNC7EH9N7sza3tK/imRR
+         LEY6VZnOC7C33rdwkr9VekCjxRD+IDH66Wr1xW05Ffp8rdunik7j8PNQ9rgDkoz4Ows9
+         m7ZmRXeH1cLh33xOhiu0hWV+ps37IP6LU3ON0SuHIZJKoJeCrac+71knMuZzZkSRF7iT
+         J1kXdfGUidA17Llin0JVlnb1Hm7JHIkNmnFsfhWKsBwhhFgC8Omahe85tJIHlNlTA3QP
+         0ZhA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Howells <dhowells@redhat.com>
-Subject: [PATCH 4.15 142/202] afs: Add missing afs_put_cell()
-Date: Thu, 15 Feb 2018 16:17:22 +0100
-Message-Id: <20180215151720.494934181@linuxfoundation.org>
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.15 140/202] ASoC: compress: Correct handling of copy callback
+Date: Thu, 15 Feb 2018 16:17:20 +0100
+Message-Id: <20180215151720.407230886@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -38,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592482338994164880?=
-X-GMAIL-MSGID: =?utf-8?q?1592482338994164880?=
+X-GMAIL-THRID: =?utf-8?q?1592482333159672349?=
+X-GMAIL-MSGID: =?utf-8?q?1592482333159672349?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -47,33 +48,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-commit e44150157f42219fa5c074588efdb31ccfb197fc upstream.
+commit 290df4d3ab192821b66857c05346b23056ee9545 upstream.
 
-afs_alloc_volume() needs to release the cell ref it obtained in the case of
-an error.  Fix this by adding an afs_put_cell() call into the error path.
+The soc_compr_copy callback is currently broken. Since the
+changes to move the compr_ops over to the component the return
+value is not correctly propagated, always returning zero on
+success rather than the number of bytes copied. This causes
+user-space to stall continuously reading as it does not believe
+it has received any data.
 
-This can triggered when a lookup for a cell in a dynamic root or an
-autocell mount returns an error whilst trying to look up the server (such
-as ENOMEDIUM).  This results in an assertion failure oops when the module
-is unloaded due to outstanding refs on a cell record.
+Furthermore, the changes to move the compr_ops over to the
+component iterate through the list of components and will call
+the copy callback for any that have compressed ops. There isn't
+currently any consensus on the mechanism to combine the results
+of multiple copy callbacks.
 
-Fixes: d2ddc776a458 ("afs: Overhaul volume and server record caching and fileserver rotation")
-Signed-off-by: David Howells <dhowells@redhat.com>
+To fix this issue for now halt searching the component list when
+we locate a copy callback and return the result of that single
+callback. Additional work should probably be done to look at the
+other ops, tidy things up, and work out if we want to support
+multiple components on a single compressed, but this is the only
+fix required to get things working again.
+
+Fixes: 9e7e3738ab0e ("ASoC: snd_soc_component_driver has snd_compr_ops")
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/afs/volume.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/soc-compress.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/fs/afs/volume.c
-+++ b/fs/afs/volume.c
-@@ -102,6 +102,7 @@ static struct afs_volume *afs_alloc_volu
- error_2:
- 	afs_put_serverlist(params->net, slist);
- error_1:
-+	afs_put_cell(params->net, volume->cell);
- 	kfree(volume);
- error_0:
- 	return ERR_PTR(ret);
+--- a/sound/soc/soc-compress.c
++++ b/sound/soc/soc-compress.c
+@@ -944,7 +944,7 @@ static int soc_compr_copy(struct snd_com
+ 	struct snd_soc_platform *platform = rtd->platform;
+ 	struct snd_soc_component *component;
+ 	struct snd_soc_rtdcom_list *rtdcom;
+-	int ret = 0, __ret;
++	int ret = 0;
+ 
+ 	mutex_lock_nested(&rtd->pcm_mutex, rtd->pcm_subclass);
+ 
+@@ -965,10 +965,10 @@ static int soc_compr_copy(struct snd_com
+ 		    !component->driver->compr_ops->copy)
+ 			continue;
+ 
+-		__ret = component->driver->compr_ops->copy(cstream, buf, count);
+-		if (__ret < 0)
+-			ret = __ret;
++		ret = component->driver->compr_ops->copy(cstream, buf, count);
++		break;
+ 	}
++
+ err:
+ 	mutex_unlock(&rtd->pcm_mutex);
+ 	return ret;
