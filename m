@@ -1,110 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033727AbeBOPKE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 10:10:04 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:57364 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1033445AbeBOPKD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 10:10:03 -0500
-Date: Thu, 15 Feb 2018 10:10:02 -0500 (EST)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-cc: Akira Yokosawa <akiyks@gmail.com>, <linux-kernel@vger.kernel.org>,
-        <mingo@kernel.org>, <parri.andrea@gmail.com>, <will.deacon@arm.com>,
-        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
-        <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH v2] tools/memory-model: Make compat with herd7 7.47 ("-"
- -> "_")
-In-Reply-To: <20180214225238.GV3617@linux.vnet.ibm.com>
-Message-ID: <Pine.LNX.4.44L0.1802151007210.1883-100000@iolanthe.rowland.org>
+        id S1033740AbeBOPKW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 10:10:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50724 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1033445AbeBOPKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 10:10:21 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEC1F217B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Thu, 15 Feb 2018 12:10:18 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        David Ahern <dsahern@gmail.com>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>
+Subject: Re: [PATCH 9/9] perf tests: Use arch__compare_symbol_names to
+ compare symbols
+Message-ID: <20180215151018.GI30974@kernel.org>
+References: <20180215122635.24029-1-jolsa@kernel.org>
+ <20180215122635.24029-10-jolsa@kernel.org>
+ <20180215142711.GH22818@kernel.org>
+ <1518705799.8kkjgp6cbr.naveen@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518705799.8kkjgp6cbr.naveen@linux.ibm.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Feb 2018, Paul E. McKenney wrote:
-
-> Let's see, examining the Z6 litmus tests and running on herd7 version 7.48:
+Em Thu, Feb 15, 2018 at 08:18:51PM +0530, Naveen N. Rao escreveu:
+> Arnaldo Carvalho de Melo wrote:
+> > Em Thu, Feb 15, 2018 at 01:26:35PM +0100, Jiri Olsa escreveu:
+> > > The symbol search called by machine__find_kernel_symbol_by_name
+> > > is using internally arch__compare_symbol_names function to compare
+> > > 2 symbol names, because different archs have different ways of
+> > > comparing symbols. Mostly for skipping '.' prefixes and similar.
+> > > 
+> > > In test 1 when we try to find matching symbols in kallsyms and
+> > > vmlinux, by address and by symbol name. When either is found
+> > > we compare the pair symbol names  by simple strcmp, which is not
+> > > good enough for reasons explained in previous paragraph.
+> > > 
+> > > On powerpc this can cause lockup, because even thought we found
+> > > the pair, the compared names are different and don't match
+> > > simple strcmp. Following code path is executed, that leads
+> > > to lockup:
+> > 
+> > Added a:
+> > 
+> >     Fixes: 031b84c407c3 ("perf probe ppc: Enable matching against dot symbols automatically")
+> > 
+> > And CCed Naveen, the author of that patch, so that gets notified of this
+> > fix.
 > 
-> Z6.0+pooncelock+pooncelock+pombonce Sometimes 1 7
-> Z6.0+pooncelock+poonceLock+pombonce Never 0 7
-> Z6.0+pooncerelease+poacquirerelease+mbonceonce Sometimes 1 7
-> 
-> But Alan stated that the result of the test would be changed by one of
-> the patches in our "pending" list.  I ran with all the patches currently
-> applied, so I am guessing that Alan was refering to one of the changes
-> that we have discussed but not yet created.
-> 
-> Alan, enlightenment?
+> Thanks! This does fix the test on ppc64 BE. So:
+> Acked-and-Tested-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
 
-Here's the relevant patch.  It may need some manual adjustment, because 
-it was not made against the files currently in the repository.
+Thanks!
 
-Alan
-
-
-diff --git a/linux-kernel-hardware.cat b/linux-kernel-hardware.cat
-Index: memory-model/linux-kernel-hardware.cat
-===================================================================
---- memory-model.orig/linux-kernel-hardware.cat
-+++ memory-model/linux-kernel-hardware.cat
-@@ -31,7 +31,7 @@ let strong-fence = mb | gp
- (* Release Acquire *)
- let acq-po = [Acquire] ; po ; [M]
- let po-rel = [M] ; po ; [Release]
--let rfi-rel-acq = [Release] ; rfi ; [Acquire]
-+let rel-rf-acq-po = [Release] ; rf ; [Acquire] ; po
- 
- (**********************************)
- (* Fundamental coherence ordering *)
-@@ -57,13 +57,13 @@ let to-w = rwdep | addrpo | (overwrite &
- let rdw = po-loc & (fre ; rfe)
- let detour = po-loc & (coe ; rfe)
- let rrdep = addr | (dep ; rfi)
--let to-r = rrdep | rfi-rel-acq
--let fence = strong-fence | wmb | po-rel | rmb | acq-po
-+let to-r = rrdep
-+let fence = strong-fence | wmb | po-rel | rmb | acq-po | (rel-rf-acq-po & int)
- let ppo = to-r | to-w | fence | rdw | detour
- 
- (* Happens Before *)
- let A-cumul(r) = rfe? ; r
--let cumul-fence = A-cumul(strong-fence | po-rel) | wmb
-+let cumul-fence = A-cumul(strong-fence | po-rel) | wmb | rel-rf-acq-po
- 
- let rec prop = (overwrite & ext)? ; cumul-fence ; hb*
-     and hb = ppo | rfe | ((hb* ; prop) & int)
-Index: memory-model/linux-kernel.cat
-===================================================================
---- memory-model.orig/linux-kernel.cat
-+++ memory-model/linux-kernel.cat
-@@ -31,7 +31,7 @@ let strong-fence = mb | gp
- (* Release Acquire *)
- let acq-po = [Acquire] ; po ; [M]
- let po-rel = [M] ; po ; [Release]
--let rfi-rel-acq = [Release] ; rfi ; [Acquire]
-+let rel-rf-acq-po = [Release] ; rf ; [Acquire] ; po
- 
- (**********************************)
- (* Fundamental coherence ordering *)
-@@ -54,13 +54,13 @@ let rwdep = (dep | ctrl) ; [W]
- let overwrite = co | fr
- let to-w = rwdep | (overwrite & int)
- let rrdep = addr | (dep ; rfi)
--let to-r = rrdep | rfi-rel-acq
--let fence = strong-fence | wmb | po-rel | rmb | acq-po
-+let to-r = rrdep
-+let fence = strong-fence | wmb | po-rel | rmb | acq-po | (rel-rf-acq-po & int)
- let ppo = to-r | to-w | fence
- 
- (* Propagation: Ordering from release operations and strong fences. *)
- let A-cumul(r) = rfe? ; r
--let cumul-fence = A-cumul(strong-fence | po-rel) | wmb
-+let cumul-fence = A-cumul(strong-fence | po-rel) | wmb | rel-rf-acq-po
- let prop = (overwrite & ext)? ; cumul-fence* ; rfe?
- 
- (*
+- Arnaldo
