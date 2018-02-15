@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2178418-1518719342-2-8336780669896094163
+X-Cyrus-Session-Id: sloti22d1t05-2178418-1518719322-2-5859146388646965832
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518719342; b=WwA4VFCoL43rXYH4icZQGGaQqImR8pq9jV8F94kMJwuWqix
-    yB1/PDRZsln1b+NjH8S5qFvH3tiqtDfObf7fzn1mVc2IbJH521BiVMfafkncY1aL
-    leeK/LxDMRMbx9Vn7er+xpdazXbhXPYWpNtPPucWG0m8QxmbzNBn3ArBG6JMgbUz
-    sFZ/5WPQe+96nqSc6nllUpZ3W7qCIdJiKcdfJY9SvYGpApEUGicYJUvpD5fsJlw4
-    WvqZ7Jjf9twS0ODL7PFK9Gu7tbC0AwF0fkamXUijZF5v5HvTLSFp7oHy6RuufQlx
-    q9c7WVN8i4ZAM2YMdR1o7HdzAZnOZhaVkZZC8yQ==
+    t=1518719321; b=NRd/3OcmnXNfv3UQhFnqLD2f3foU2bI0f92Jd324cvON77H
+    R7bNmyYwNQJTnIPIHmzcBIdCoiw5ObupDOTlwAE0aGGYFuY0ov91VVWzdaJmx1mk
+    E/OaH9nKmKCNNOpiSOgB8xvhGmz8T7tOWmRnpKUznmVi61tapsgdKXhkLVTPa2Dh
+    4KMcFpg4q2pBos6zMKlOBTsCYNEyzK2Emph84/zECQFjDaNIJqSWlSycl/SHGDFI
+    0eaHq1lChQhgph6n+iw1tpeIE4LhDXFYxsQG4oiRhXXUgFnwXVtOYq9tWJFwgnJS
+    ixJSuy/KymAM4EsxyXDQPv0dicDHkSb62qwI7aQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518719342; bh=fynkW+AUswng/PApyRKOHx96e8
-    VzR2jggqwusgZonTs=; b=YWHSvMF0Kbq1evxjU9ZuNHh/g9eQvipaZwS6EZuaTi
-    Rf+eh6dm/+P8BI9mx1YG3wEnKYDlAidX2B5ynkBd9BLhlCHdA05nnL0CMudQN15c
-    STouXD4VUmtHqDrbOPEOnpCqMPTHWCJoJSPuE5/2yU7T9zXKpVYtV9OP6vNVu7l+
-    eJzebd704vBPHUeM8FIb04NCe0vJ21ZK+QJ2tKjcEc63oYSxpv1BRap9plV3eEOw
-    qU4ZN6ximfao+RgKSPSWAegZCh2YCJBFtlD245FB4PmUFGDoVYlZbJDQfGmkLjK0
-    s9LeCx7LQSCWSu7itw2E59apIJLhO6agRTZs81gizSrg==
+    :list-id; s=arctest; t=1518719321; bh=0jvdFlRDr6OiE7IsBx8eRWg9dL
+    C4sx92R9PjJ+CghwA=; b=UXhmdHlFMLVl2LY9b1dtZlL+/6tpn+9m9iB+4bnquL
+    oBftR1M9FyoU/k/XxT25zNcKmSb7FJD8bowpdxp7FI2CCAwOo7Qo69lnkvlZxkvn
+    pnScJS2aVB7Vq+9xYQSmd0JKidyI0P5EakdExOuwOvDoXqr0FH1MM6IPqMkyIrSM
+    kl0ZTKVWiUe0JdrbuJPsWZrg9AXZ+S0WXlVBcIxXqmwqESmlp82XlPvJH4RYImmk
+    PXTCWbL2tCp8rcRksAE8VIeZClheMPSN+WKTfHIzIi7A8xpFG9mISS8Mxu3/gdWT
+    bnq6J9RxeIc4XUyAQhNVhOBqSmdOYuyOsFWM5m+uZ9qA==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,24 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166467AbeBOS2o (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 13:28:44 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52212 "EHLO
+        id S1163191AbeBOS2Z (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:28:25 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52222 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163176AbeBOPZZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:25:25 -0500
+        with ESMTP id S1163184AbeBOPZ2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:25:28 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        stable@vger.kernel.org, Leif Liddy <leif.linux@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Daniel Drake <drake@endlessm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
         Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.4 093/108] Bluetooth: btsdio: Do not bind to non-removable BCM43341
-Date: Thu, 15 Feb 2018 16:17:30 +0100
-Message-Id: <20180215151235.362338659@linuxfoundation.org>
+Subject: [PATCH 4.4 094/108] Revert "Bluetooth: btusb: fix QCA Rome suspend/resume"
+Date: Thu, 15 Feb 2018 16:17:31 +0100
+Message-Id: <20180215151235.503138018@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -77,55 +81,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit b4cdaba274247c9c841c6a682c08fa91fb3aa549 upstream.
+commit 7d06d5895c159f64c46560dc258e553ad8670fe0 upstream.
 
-BCM43341 devices soldered onto the PCB (non-removable) always (AFAICT)
-use an UART connection for bluetooth. But they also advertise btsdio
-support on their 3th sdio function, this causes 2 problems:
+This reverts commit fd865802c66bc451dc515ed89360f84376ce1a56.
 
-1) A non functioning BT HCI getting registered
+This commit causes a regression on some QCA ROME chips. The USB device
+reset happens in btusb_open(), hence firmware loading gets interrupted.
 
-2) Since the btsdio driver does not have suspend/resume callbacks,
-mmc_sdio_pre_suspend will return -ENOSYS, causing mmc_pm_notify()
-to react as if the SDIO-card is removed and since the slot is
-marked as non-removable it will never get detected as inserted again.
-Which results in wifi no longer working after a suspend/resume.
+Furthermore, this commit stops working after commit
+("a0085f2510e8976614ad8f766b209448b385492f Bluetooth: btusb: driver to
+enable the usb-wakeup feature"). Reset-resume quirk only gets enabled in
+btusb_suspend() when it's not a wakeup source.
 
-This commit fixes both by making btsdio ignore BCM43341 devices
-when connected to a slot which is marked non-removable.
+If we really want to reset the USB device, we need to do it before
+btusb_open(). Let's handle it in drivers/usb/core/quirks.c.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Cc: Leif Liddy <leif.linux@gmail.com>
+Cc: Matthias Kaehlcke <mka@chromium.org>
+Cc: Brian Norris <briannorris@chromium.org>
+Cc: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Reviewed-by: Brian Norris <briannorris@chromium.org>
+Tested-by: Brian Norris <briannorris@chromium.org>
 Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/bluetooth/btsdio.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/bluetooth/btusb.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/drivers/bluetooth/btsdio.c
-+++ b/drivers/bluetooth/btsdio.c
-@@ -31,6 +31,7 @@
- #include <linux/errno.h>
- #include <linux/skbuff.h>
- 
-+#include <linux/mmc/host.h>
- #include <linux/mmc/sdio_ids.h>
- #include <linux/mmc/sdio_func.h>
- 
-@@ -291,6 +292,14 @@ static int btsdio_probe(struct sdio_func
- 		tuple = tuple->next;
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -2969,12 +2969,6 @@ static int btusb_probe(struct usb_interf
+ 	if (id->driver_info & BTUSB_QCA_ROME) {
+ 		data->setup_on_usb = btusb_setup_qca;
+ 		hdev->set_bdaddr = btusb_set_bdaddr_ath3012;
+-
+-		/* QCA Rome devices lose their updated firmware over suspend,
+-		 * but the USB hub doesn't notice any status change.
+-		 * Explicitly request a device reset on resume.
+-		 */
+-		set_bit(BTUSB_RESET_RESUME, &data->flags);
  	}
  
-+	/* BCM43341 devices soldered onto the PCB (non-removable) use an
-+	 * uart connection for bluetooth, ignore the BT SDIO interface.
-+	 */
-+	if (func->vendor == SDIO_VENDOR_ID_BROADCOM &&
-+	    func->device == SDIO_DEVICE_ID_BROADCOM_43341 &&
-+	    !mmc_card_is_removable(func->card->host))
-+		return -ENODEV;
-+
- 	data = devm_kzalloc(&func->dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
+ #ifdef CONFIG_BT_HCIBTUSB_RTL
