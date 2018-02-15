@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1883814-1518711135-2-925200806910245226
+X-Cyrus-Session-Id: sloti22d1t05-1883814-1518711130-2-10692059492045818293
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518711134; b=W9lbYFe3o0B5ym5Y86XI+QikkJA64rbAnp1mQiE2YrSosU0
-    Yvq5hPl63zp4j0eweP09/BrP6SRRzRWesDzzaE5fkFN6HhNpo+jg8eRW0z3c1uQ9
-    b/hsW93IhKACGLCjx+j0M34KHrHFBVIwVz68F2BJh0pYhv7gbQLrVqDCg5uCVLui
-    qTQewZATifZtcUt9PuPIkL+KBDkLTpJStarZ+qjVdY4tx1KDlbvsJPOqXxxxtveU
-    kw1QRYPRihY+4xvA+WdNoWQpsIv5OX9qOAbyvUZtBe0373p2Xkfi0DAmiu7Gzckx
-    AG0o5TQYca3RfkEwCHaJSobFyLe6LUXwg9HYfPg==
+    t=1518711129; b=Sqdo0jd8AoYHuIes0ENZs8MGI/o/CcHNpoHmTEJ4i9A+UMN
+    86hFSJ+UA0Add272gq112RdhBAVcNnn0R98ynjGuVAgM0k0WXQ5KI7QEHOrvnCtN
+    A8kZynZlCjGt6FlboN6mvujT/rfRIVimgOo5YdL4UETxA56IsJtgkDa2GMj8UEFU
+    JS7HkMcazd9qyIuFOzhJNlfghhWJdO9yO8Bvd+zMqfAJcuGUU4lDRnJrUZf46+AN
+    EWCRxBK5rLdHb24D2qUCgEM+6FhudGkdiL8d7rMzHtWm2u1KPtYn9tb5Mr/Y6k9y
+    lVg0evMK/nYlZV15XOZc+rE/QxU4j+4D7GH2j0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518711134; bh=EtIfRxTQ9PVoxhEBxrhrQM/meX
-    mF63a0PXluqmZSPVI=; b=m4Pg0ds9ygTUPfEd4JIS6l+9OccmYE2K6dML91CWjl
-    yPJC3FGmBwoPU6/uXdVR3Y2l9IOA9GAy+97jTAlPAexHRATKI4lRhwDW0tmJHEjD
-    39E9SipA+WgNLr5BTaaVCdweTzeH6c+EvS5RoZnqSmf9a1M4AvezqILo1Kzq+s0p
-    5VwHBaTSSocihQAi62U5L8xlvQ0O3Wh/6sByqtTHkLD41R/v0DiggzEjyInWV+MU
-    A3iio7R0CcZeDDsPIW60UL85rl3rFfCK/bUWmX+SBsF6j6hOOxYRk95oCcGIt9GA
-    UBB+Han1jIOVnNfG0z/pKRvIMQc4lHQtP9iwvna1H2aQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518711129; bh=kAcDUXlyj5uFqXnL/uYxEt3ZKb
+    14YH4KiSGRQehKIGo=; b=d252zPlt0QO6mjeB+fJ51U2cnTqNPD5MaTrmd0w9FM
+    PBRh/uIiru7OxfKij6s7Hm1Kb5530MaEX2z5KYGedGS9VMdqpkgjILjTIT0Q0sUB
+    4oAGzD24SwR/WbL/M/sLKfZIIs/QEyXy2AtsrkvuhB7pBzqVCNftHjTqFVA0JIk4
+    D4dwpGs4kVhj5JWoa4PYEqtEIUYPPJ0GuJ9afJ4gi8gd9KJI/dtt1RQsdWV+U/kV
+    Ue9mIpK9Ehee9bsbMNCs8bz1sNcTjoYpsZTyscGa4wQW14aMvMb/yCdMH7Ob1rJa
+    TEDlY0PPBzcAWpvbvl9wAQKvWCgWI/dzncK3m22DhzDg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,20 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424427AbeBOPpR (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:45:17 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34870 "EHLO
+        id S1424432AbeBOPpS (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:45:18 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34862 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424390AbeBOPpP (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:45:15 -0500
+        with ESMTP id S1424417AbeBOPpM (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:45:12 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jonathan Billings <jsbillings@jsbillings.org>,
+        stable@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
         David Howells <dhowells@redhat.com>
-Subject: [PATCH 4.15 145/202] afs: Fix server list handling
-Date: Thu, 15 Feb 2018 16:17:25 +0100
-Message-Id: <20180215151720.625144922@linuxfoundation.org>
+Subject: [PATCH 4.15 144/202] afs: Fix missing cursor clearance
+Date: Thu, 15 Feb 2018 16:17:24 +0100
+Message-Id: <20180215151720.588481731@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -80,162 +79,108 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: David Howells <dhowells@redhat.com>
 
-commit 45df8462730d2149834980d3db16e2d2b9daaf60 upstream.
+commit fe4d774c847398c2a45c10a780ccfde069840793 upstream.
 
-Fix server list handling in the following ways:
+afs_select_fileserver() ends the address cursor it is using in the case in
+which we get some sort of network error and run out of addresses to iterate
+through, before it jumps to try the next server.  This also needs to be
+done when the server aborts with some sort of error that means we should
+try the next server.
 
- (1) In afs_alloc_volume(), remove duplicate server list build code.  This
-     was already done by afs_alloc_server_list() which afs_alloc_volume()
-     previously called.  This just results in twice as many VL RPCs.
+Fix this by:
 
- (2) In afs_deliver_vl_get_entry_by_name_u(), use the number of server
-     records indicated by ->nServers in the UVLDB record returned by the
-     VL.GetEntryByNameU RPC call rather than scanning all NMAXNSERVERS
-     slots.  Unused slots may contain garbage.
+ (1) Move the iterate_address afs_end_cursor() call to the next_server
+     case.
 
- (3) In afs_alloc_server_list(), don't stop converting a UVLDB record into
-     a server list just because we can't look up one of the servers.  Just
-     skip that server and go on to the next.  If we can't look up any of
-     the servers then we'll fail at the end.
+ (2) End the cursor in the failed case.
 
-Without this patch, an attempt to view the umich.edu root cell using
-something like "ls /afs/umich.edu" on a dynamic root (future patch) mount
-or an autocell mount will result in ENOMEDIUM.  The failure is due to kafs
-not stopping after nServers'worth of records have been read, but then
-trying to access a server with a garbage UUID and getting an error, which
-aborts the server list build.
+ (3) Make afs_end_cursor() clear the ->begun flag and ->addr pointer in the
+     address cursor.
+
+ (4) Make afs_end_cursor() able to be called on an already cleared cursor.
+
+Without this, something like the following oops may occur:
+
+	AFS: Assertion failed
+	18446612134397189888 == 0 is false
+	0xffff88007c279f00 == 0x0 is false
+	------------[ cut here ]------------
+	kernel BUG at fs/afs/rotate.c:360!
+	RIP: 0010:afs_select_fileserver+0x79b/0xa30 [kafs]
+	Call Trace:
+	 afs_statfs+0xcc/0x180 [kafs]
+	 ? p9_client_statfs+0x9e/0x110 [9pnet]
+	 ? _cond_resched+0x19/0x40
+	 statfs_by_dentry+0x6d/0x90
+	 vfs_statfs+0x1b/0xc0
+	 user_statfs+0x4b/0x80
+	 SYSC_statfs+0x15/0x30
+	 SyS_statfs+0xe/0x10
+	 entry_SYSCALL_64_fastpath+0x20/0x83
 
 Fixes: d2ddc776a458 ("afs: Overhaul volume and server record caching and fileserver rotation")
-Reported-by: Jonathan Billings <jsbillings@jsbillings.org>
+Reported-by: Marc Dionne <marc.dionne@auristor.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/afs/server_list.c |    3 ++-
- fs/afs/vlclient.c    |   10 +++++++---
- fs/afs/volume.c      |   46 ++--------------------------------------------
- 3 files changed, 11 insertions(+), 48 deletions(-)
+ fs/afs/addr_list.c |   13 ++++++++++---
+ fs/afs/rotate.c    |   12 ++++++------
+ 2 files changed, 16 insertions(+), 9 deletions(-)
 
---- a/fs/afs/server_list.c
-+++ b/fs/afs/server_list.c
-@@ -58,7 +58,8 @@ struct afs_server_list *afs_alloc_server
- 		server = afs_lookup_server(cell, key, &vldb->fs_server[i]);
- 		if (IS_ERR(server)) {
- 			ret = PTR_ERR(server);
--			if (ret == -ENOENT)
-+			if (ret == -ENOENT ||
-+			    ret == -ENOMEDIUM)
- 				continue;
- 			goto error_2;
- 		}
---- a/fs/afs/vlclient.c
-+++ b/fs/afs/vlclient.c
-@@ -23,7 +23,7 @@ static int afs_deliver_vl_get_entry_by_n
- 	struct afs_uvldbentry__xdr *uvldb;
- 	struct afs_vldb_entry *entry;
- 	bool new_only = false;
--	u32 tmp;
-+	u32 tmp, nr_servers;
- 	int i, ret;
- 
- 	_enter("");
-@@ -36,6 +36,10 @@ static int afs_deliver_vl_get_entry_by_n
- 	uvldb = call->buffer;
- 	entry = call->reply[0];
- 
-+	nr_servers = ntohl(uvldb->nServers);
-+	if (nr_servers > AFS_NMAXNSERVERS)
-+		nr_servers = AFS_NMAXNSERVERS;
-+
- 	for (i = 0; i < ARRAY_SIZE(uvldb->name) - 1; i++)
- 		entry->name[i] = (u8)ntohl(uvldb->name[i]);
- 	entry->name[i] = 0;
-@@ -44,14 +48,14 @@ static int afs_deliver_vl_get_entry_by_n
- 	/* If there is a new replication site that we can use, ignore all the
- 	 * sites that aren't marked as new.
- 	 */
--	for (i = 0; i < AFS_NMAXNSERVERS; i++) {
-+	for (i = 0; i < nr_servers; i++) {
- 		tmp = ntohl(uvldb->serverFlags[i]);
- 		if (!(tmp & AFS_VLSF_DONTUSE) &&
- 		    (tmp & AFS_VLSF_NEWREPSITE))
- 			new_only = true;
- 	}
- 
--	for (i = 0; i < AFS_NMAXNSERVERS; i++) {
-+	for (i = 0; i < nr_servers; i++) {
- 		struct afs_uuid__xdr *xdr;
- 		struct afs_uuid *uuid;
- 		int j;
---- a/fs/afs/volume.c
-+++ b/fs/afs/volume.c
-@@ -26,9 +26,8 @@ static struct afs_volume *afs_alloc_volu
- 					   unsigned long type_mask)
+--- a/fs/afs/addr_list.c
++++ b/fs/afs/addr_list.c
+@@ -332,11 +332,18 @@ bool afs_iterate_addresses(struct afs_ad
+  */
+ int afs_end_cursor(struct afs_addr_cursor *ac)
  {
- 	struct afs_server_list *slist;
--	struct afs_server *server;
- 	struct afs_volume *volume;
--	int ret = -ENOMEM, nr_servers = 0, i, j;
-+	int ret = -ENOMEM, nr_servers = 0, i;
+-	if (ac->responded && ac->index != ac->start)
+-		WRITE_ONCE(ac->alist->index, ac->index);
++	struct afs_addr_list *alist;
  
- 	for (i = 0; i < vldb->nr_servers; i++)
- 		if (vldb->fs_mask[i] & type_mask)
-@@ -58,49 +57,8 @@ static struct afs_volume *afs_alloc_volu
+-	afs_put_addrlist(ac->alist);
++	alist = ac->alist;
++	if (alist) {
++		if (ac->responded && ac->index != ac->start)
++			WRITE_ONCE(alist->index, ac->index);
++		afs_put_addrlist(alist);
++	}
++
++	ac->addr = NULL;
+ 	ac->alist = NULL;
++	ac->begun = false;
+ 	return ac->error;
+ }
  
- 	refcount_set(&slist->usage, 1);
- 	volume->servers = slist;
--
--	/* Make sure a records exists for each server this volume occupies. */
--	for (i = 0; i < nr_servers; i++) {
--		if (!(vldb->fs_mask[i] & type_mask))
--			continue;
--
--		server = afs_lookup_server(params->cell, params->key,
--					   &vldb->fs_server[i]);
--		if (IS_ERR(server)) {
--			ret = PTR_ERR(server);
--			if (ret == -ENOENT)
--				continue;
--			goto error_2;
--		}
--
--		/* Insertion-sort by server pointer */
--		for (j = 0; j < slist->nr_servers; j++)
--			if (slist->servers[j].server >= server)
--				break;
--		if (j < slist->nr_servers) {
--			if (slist->servers[j].server == server) {
--				afs_put_server(params->net, server);
--				continue;
--			}
--
--			memmove(slist->servers + j + 1,
--				slist->servers + j,
--				(slist->nr_servers - j) * sizeof(struct afs_server_entry));
--		}
--
--		slist->servers[j].server = server;
--		slist->nr_servers++;
+--- a/fs/afs/rotate.c
++++ b/fs/afs/rotate.c
+@@ -334,6 +334,7 @@ start:
+ 
+ next_server:
+ 	_debug("next");
++	afs_end_cursor(&fc->ac);
+ 	afs_put_cb_interest(afs_v2net(vnode), fc->cbi);
+ 	fc->cbi = NULL;
+ 	fc->index++;
+@@ -408,16 +409,15 @@ iterate_address:
+ 	/* Iterate over the current server's address list to try and find an
+ 	 * address on which it will respond to us.
+ 	 */
+-	if (afs_iterate_addresses(&fc->ac)) {
+-		_leave(" = t");
+-		return true;
 -	}
--
--	if (slist->nr_servers == 0) {
--		ret = -EDESTADDRREQ;
--		goto error_2;
--	}
--
- 	return volume;
++	if (!afs_iterate_addresses(&fc->ac))
++		goto next_server;
  
--error_2:
--	afs_put_serverlist(params->net, slist);
- error_1:
- 	afs_put_cell(params->net, volume->cell);
- 	kfree(volume);
-@@ -328,7 +286,7 @@ static int afs_update_volume_status(stru
+-	afs_end_cursor(&fc->ac);
+-	goto next_server;
++	_leave(" = t");
++	return true;
  
- 	/* See if the volume's server list got updated. */
- 	new = afs_alloc_server_list(volume->cell, key,
--				      vldb, (1 << volume->type));
-+				    vldb, (1 << volume->type));
- 	if (IS_ERR(new)) {
- 		ret = PTR_ERR(new);
- 		goto error_vldb;
+ failed:
+ 	fc->flags |= AFS_FS_CURSOR_STOP;
++	afs_end_cursor(&fc->ac);
+ 	_leave(" = f [failed %d]", fc->ac.error);
+ 	return false;
+ }
