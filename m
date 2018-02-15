@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1883814-1518710766-2-7580633864632366084
+X-Cyrus-Session-Id: sloti22d1t05-1906823-1518710759-2-1228071316638049303
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518710765; b=q2ZUXEOXPdhirsm8qib4ZcseNqEN4LYFkqq9Z6XG5UBW7Vn
-    mseRGKf8Yjn81dJFiKm7DbJH1hPvrc3K+CrmPcmCqB5kQ1yTt6AF32taCGLrML0g
-    oEV8jUbfmO+pKogoAbEkiVtR14k6tujrq2yul7ZIxL+h/gtsTzV502v6tpFAEdy/
-    O+qc5PLfUnCNMh8RrCTJ8p9kgSMFuZohjLQuvGkupJVis+GUbNOlDjuz4vCFgbQV
-    ogcTch+KbJPiRpQyunQl9VIiWkBj/UFrwNvgaFGqAC8iK73d81T+7Mo6JIOQcG6N
-    W/19W4vB5ToyA/wl0Kr0HukWETezM3hGOnEhksA==
+    t=1518710758; b=Xn99qBlkKXmdzudxchjO+jY6ICJARfA7ctQJJrXoXcmPiUu
+    ZWOQnQivftiddRUDaG1nLKkmhnP6KpKelaUh7NjRfYQxrPCwD8a9jiY/4rlFLaSP
+    c3iIZR/vhFbqpkXBQL2ydj3bWT1E/ykV9TdgxNhsTaBsdRpL+KjreNhwLPf9l78U
+    e5wh+J7uFjk12lgIrar49iw/CJ5jT8eqLnd6y/l1lAfl8HRHc48uSLIdqvm+gIqX
+    ZS7DYiOt6nJfkxEM5lwH6fuj7GbzcNKZvcIQvTJBH66nhDp7u40lFRhQhKLdaKXP
+    rh90b0kb+/Z8t0wFpnrbSOTaHFuGgQQy6OfF4Mg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518710765; bh=VV8yCdFHA/XpPqGSnY1pmS8WQw
-    7dPf2+06rUoakpwFk=; b=l9pepbRF+b6JB6uQzwSKKTNX1NpUQEySTJU8dll8TH
-    bUM95yRwcCkE3ocZNUOKcGt7DZfHKOSEUwLVs9kVbxCqtIQ7EmZK5kvU8Rtd5+XU
-    rMDrbKzhgeX51kkI7Wtxnum6Qe0UndG0W0qtA7FU6zqSD9w6e5Na8uOif5jrxjHy
-    zRWTSPI/bJkcoWelax4p5PDqg+oW34Ax0H8AAtumdXlIqxYNuMM3qAhv0Talw4Og
-    7TIsYr2vmprUM4nn2fTEdJLA+M4oavEkVcapqbjp2/uB/MXM1DVJd8NOLFXOTXwg
-    uMFcnIOr6kcbDnFSv3dnyuhY/D5tnbWSr96XMaaxB/Zg==
+    :list-id; s=arctest; t=1518710758; bh=2tzE0IhnnohuF+eeV/W40BKIej
+    39AhzGhIrhAhCK6mg=; b=ZBUbJ1uRHKfBtTPzGuvdDYE+3nGcedvakR2y5mkW6L
+    jG1j7cyB/QL37sMydAkDhsrlu43q4NDm04KzL1ip4JlO2nALyuXGiSqGg4+JV1xR
+    FCNVJkEjFk86st5wxlloN6i4HtRsXGRCxJAybc2cfidK2MmhLd+32DMfe+4dqdeK
+    ZqPZV1LNxqrUoPyhMH7Wa/md1zJt2YnSM52KMKnhzRDnn2pDsLH4LCrMQbY7gbgU
+    /GwdXSRg+dCl7TxPtYmgxIeJCO1yTWdttVn6eFJaZdG2TKRf5pVarS8gAS6K0t0S
+    At4oEnmir9pp88UvDLM75qoN4PF2W1pprB2jz3tFDfJw==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,27 +47,20 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424589AbeBOPqD (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:46:03 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35212 "EHLO
+        id S1424605AbeBOPqI (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:46:08 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35252 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424588AbeBOPqB (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:46:01 -0500
+        with ESMTP id S1424250AbeBOPqH (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:46:07 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Willy Tarreau <w@1wt.eu>, Kees Cook <keescook@chromium.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.15 160/202] pipe: fix off-by-one error when checking buffer limits
-Date: Thu, 15 Feb 2018 16:17:40 +0100
-Message-Id: <20180215151721.258637616@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.15 162/202] Bluetooth: btsdio: Do not bind to non-removable BCM43341
+Date: Thu, 15 Feb 2018 16:17:42 +0100
+Message-Id: <20180215151721.352220231@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -84,47 +77,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 9903a91c763ecdae333a04a9d89d79d2b8966503 upstream.
+commit b4cdaba274247c9c841c6a682c08fa91fb3aa549 upstream.
 
-With pipe-user-pages-hard set to 'N', users were actually only allowed up
-to 'N - 1' buffers; and likewise for pipe-user-pages-soft.
+BCM43341 devices soldered onto the PCB (non-removable) always (AFAICT)
+use an UART connection for bluetooth. But they also advertise btsdio
+support on their 3th sdio function, this causes 2 problems:
 
-Fix this to allow up to 'N' buffers, as would be expected.
+1) A non functioning BT HCI getting registered
 
-Link: http://lkml.kernel.org/r/20180111052902.14409-5-ebiggers3@gmail.com
-Fixes: b0b91d18e2e9 ("pipe: fix limit checking in pipe_set_size()")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Acked-by: Willy Tarreau <w@1wt.eu>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: "Luis R . Rodriguez" <mcgrof@kernel.org>
-Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-Cc: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+2) Since the btsdio driver does not have suspend/resume callbacks,
+mmc_sdio_pre_suspend will return -ENOSYS, causing mmc_pm_notify()
+to react as if the SDIO-card is removed and since the slot is
+marked as non-removable it will never get detected as inserted again.
+Which results in wifi no longer working after a suspend/resume.
+
+This commit fixes both by making btsdio ignore BCM43341 devices
+when connected to a slot which is marked non-removable.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/pipe.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/bluetooth/btsdio.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -610,12 +610,12 @@ static unsigned long account_pipe_buffer
+--- a/drivers/bluetooth/btsdio.c
++++ b/drivers/bluetooth/btsdio.c
+@@ -31,6 +31,7 @@
+ #include <linux/errno.h>
+ #include <linux/skbuff.h>
  
- static bool too_many_pipe_buffers_soft(unsigned long user_bufs)
- {
--	return pipe_user_pages_soft && user_bufs >= pipe_user_pages_soft;
-+	return pipe_user_pages_soft && user_bufs > pipe_user_pages_soft;
- }
++#include <linux/mmc/host.h>
+ #include <linux/mmc/sdio_ids.h>
+ #include <linux/mmc/sdio_func.h>
  
- static bool too_many_pipe_buffers_hard(unsigned long user_bufs)
- {
--	return pipe_user_pages_hard && user_bufs >= pipe_user_pages_hard;
-+	return pipe_user_pages_hard && user_bufs > pipe_user_pages_hard;
- }
+@@ -292,6 +293,14 @@ static int btsdio_probe(struct sdio_func
+ 		tuple = tuple->next;
+ 	}
  
- static bool is_unprivileged_user(void)
++	/* BCM43341 devices soldered onto the PCB (non-removable) use an
++	 * uart connection for bluetooth, ignore the BT SDIO interface.
++	 */
++	if (func->vendor == SDIO_VENDOR_ID_BROADCOM &&
++	    func->device == SDIO_DEVICE_ID_BROADCOM_43341 &&
++	    !mmc_card_is_removable(func->card->host))
++		return -ENODEV;
++
+ 	data = devm_kzalloc(&func->dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
