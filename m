@@ -1,60 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033091AbeBOOH7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 09:07:59 -0500
-Received: from mail-qk0-f171.google.com ([209.85.220.171]:33522 "EHLO
-        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032283AbeBOOH5 (ORCPT
+        id S1033060AbeBOOK1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 09:10:27 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:48541 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032283AbeBOOKY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 09:07:57 -0500
-X-Google-Smtp-Source: AH8x224yiAKly67u2r5AkbplsRX6DxA479Hou6wc/qilQX/LdSYjvT7XU1Nyab7ZVMfhYreFsBM8accriLU0UkKoaf4=
+        Thu, 15 Feb 2018 09:10:24 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>, geert@glider.be,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/8] arm64: dts: renesas: r8a77995: Add LVDS support
+Date: Thu, 15 Feb 2018 16:10:58 +0200
+Message-ID: <1558036.KTdDODi8F6@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1518683903-10681-6-git-send-email-kbingham@kernel.org>
+References: <1518683903-10681-1-git-send-email-kbingham@kernel.org> <1518683903-10681-6-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CA+oDAx_gxc_=NOa9naEmHJHjs4t3OP2ef29-4-TP2e8S5p_cEg@mail.gmail.com>
-References: <CAMet4B62Ni3Q5OzNvxWVpSfiRkWu2K_20xX6sGBZbROK+9-ULg@mail.gmail.com>
- <CA+oDAx-OEk7q7TZ4k8s_q_OWmObCZEwm0irjPSh-a1W0uZwACQ@mail.gmail.com>
- <1C1B9BF4-56EE-473A-9E92-F7E6BD188C25@canonical.com> <CA+oDAx8Gu0g97ivQ2r1EiLQTYZxhnyL-n2Cx+4J9Sztwj8brrw@mail.gmail.com>
- <53F1AA2B-2049-4A7A-AEBC-4C1CA3C15F61@canonical.com> <9654fc1df0d4cc00cf88dbe10188fd0b@mail.gmail.com>
- <CA+oDAx9K31LJtiKvG2EP4As7t_HqXFiAuLCbaSTdrL1YQwO3Uw@mail.gmail.com>
- <781b8fed3ceaa133aa0e451d9bfbee26@mail.gmail.com> <CA+oDAx8A=VXx0nUXZxG7fJTvJzeWL6b1UYFHoB2Dw3h6yKgr3Q@mail.gmail.com>
- <01bf0c0f91e259dacde4c27f3f31c9e6@mail.gmail.com> <CA+oDAx9s1iT2OJRZ0i5FwmhQx9QtJs8qU70wbfP3rGWYERPL6w@mail.gmail.com>
- <CA+oDAx_gxc_=NOa9naEmHJHjs4t3OP2ef29-4-TP2e8S5p_cEg@mail.gmail.com>
-From: Siva Reddy Kallam <siva.kallam@broadcom.com>
-Date: Thu, 15 Feb 2018 19:37:56 +0530
-Message-ID: <CAMet4B5sE9DuUzRCCdkX=g8E4C0RtZTzDaPaHDz_N8rPNU9VOg@mail.gmail.com>
-Subject: Re: tg3 crashes under high load, when using 100Mbits
-To: Kai Heng Feng <kai.heng.feng@canonical.com>
-Cc: Prashant Sreedharan <prashant@broadcom.com>,
-        Michael Chan <mchan@broadcom.com>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanley Hsiao <stanley.hsiao@canonical.com>,
-        Tim Chen <tim.chen119@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1FE842u018360
 
-On Mon, Feb 12, 2018 at 10:59 AM, Siva Reddy Kallam
-<siva.kallam@broadcom.com> wrote:
-> On Fri, Feb 9, 2018 at 10:41 AM, Kai Heng Feng
-> <kai.heng.feng@canonical.com> wrote:
->> Hi Broadcom folks,
->>
->> We are now enabling a new platform with tg3 nic, unfortunately we observed
->> the bug [1] that dated back to 2015.
->> I tried commit 4419bb1cedcd ("tg3: Add workaround to restrict 5762 MRRS to
->> 2048”) but it does’t work.
->>
->> Do you have any idea how to solve the issue?
->>
->> [1] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1447664
->>
->> Kai-Heng
->>
-> Thank you for reporting. We will check and update you.
-With link aware mode, the clock speed could be slow and boot code does not
-complete within the expected time with lower link speeds. Need to override
-and the clock in driver. We are checking the feasibility of adding
-this in driver or firmware.
+Hi Kieran,
+
+Thank you for the patch.
+
+On Thursday, 15 February 2018 10:38:20 EET Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> The r8a77995 D3 platform has 2 LVDS channels connected to the DU.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 52 ++++++++++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> b/arch/arm64/boot/dts/renesas/r8a77995.dtsi index
+> a57d5fecf79c..7851e37cfff1 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> @@ -773,18 +773,70 @@
+>  				port@1 {
+>  					reg = <1>;
+>  					du_out_lvds0: endpoint {
+> +						remote-endpoint = <&du_out_lvds0>;
+>  					};
+>  				};
+> 
+>  				port@2 {
+>  					reg = <2>;
+>  					du_out_lvds1: endpoint {
+> +						remote-endpoint = <&du_out_lvds1>;
+
+It's interesting how the DU ports reference themselves :-)
+
+>  					};
+>  				};
+>  			};
+>  		};
+>  	};
+> 
+> +	lvds0: lvds@feb90000 {
+> +		compatible = "renesas,lvds-r8a77995";
+> +		reg = <0 0xfeb90000 0 0x20>;
+> +		clocks = <&cpg CPG_MOD 727>;
+> +		status = "disabled";
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				lvds0_in: endpoint {
+> +					remote-endpoint = <&du_out_lvds0>;
+> +				};
+> +			};
+> +
+> +			port@1 {
+> +				reg = <1>;
+> +				lvds0_out: endpoint {
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +	lvds1: lvds@feb90100 {
+> +		compatible = "renesas,lvds-r8a77995";
+> +		reg = <0 0xfeb90100 0 0x20>;
+> +		clocks = <&cpg CPG_MOD 727>;
+> +		status = "disabled";
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				lvds1_in: endpoint {
+> +					remote-endpoint = <&du_out_lvds1>;
+> +				};
+> +			};
+> +
+> +			port@1 {
+> +				reg = <1>;
+> +				lvds1_out: endpoint {
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+>  	timer {
+>  		compatible = "arm,armv8-timer";
+>  		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) |
+> IRQ_TYPE_LEVEL_LOW)>,
+
+-- 
+Regards,
+
+Laurent Pinchart
