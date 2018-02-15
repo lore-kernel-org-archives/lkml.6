@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425570AbeBOQJF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 11:09:05 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:39711 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424566AbeBOQJD (ORCPT
+        id S1425599AbeBOQJO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 11:09:14 -0500
+Received: from mail-it0-f51.google.com ([209.85.214.51]:36535 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424566AbeBOQJJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:09:03 -0500
-X-Google-Smtp-Source: AH8x226pSU0IJxJ4fsFRCaZ2tz1makS/xR7OT2MXkd4167RwPeyaGL4Vu1twOJ83yAbatk0kk6KNBQ==
+        Thu, 15 Feb 2018 11:09:09 -0500
+X-Google-Smtp-Source: AH8x224eF00bwnHx6FkyjgpcWqhQkljgdC9E5QhH1kEU55SlRpQTQHb/FNt4UuNs2bmNEt3+dPn2vA==
 From: Dennis Zhou <dennisszhou@gmail.com>
 To: Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>
 Cc: Daniel Borkmann <daniel@iogearbox.net>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Dennis Zhou <dennisszhou@gmail.com>
-Subject: [PATCH 1/3] percpu: match chunk allocator declarations with definitions
-Date: Thu, 15 Feb 2018 10:08:14 -0600
-Message-Id: <3865d86559d8499f9bbb12f578bf9e6aa8f8882e.1518668149.git.dennisszhou@gmail.com>
+Subject: [PATCH 3/3] percpu: allow select gfp to be passed to underlying allocators
+Date: Thu, 15 Feb 2018 10:08:16 -0600
+Message-Id: <a166972c727e3a1235a7ad17b9df94ca407a1548.1518668149.git.dennisszhou@gmail.com>
 X-Mailer: git-send-email 1.8.5.2 (Apple Git-48)
 In-Reply-To: <cover.1518668149.git.dennisszhou@gmail.com>
 References: <cover.1518668149.git.dennisszhou@gmail.com>
@@ -24,31 +24,124 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At some point the function declaration parameters got out of sync with
-the function definitions in percpu-vm.c and percpu-km.c. This patch
-makes them match again.
+The prior patch added support for passing gfp flags through to the
+underlying allocators. This patch allows users to pass along gfp flags
+(currently only __GFP_NORETRY and __GFP_NOWARN) to the underlying
+allocators. This should allow users to decide if they are ok with
+failing allocations recovering in a more graceful way.
+
+Additionally, the prior use of gfp was as additional gfp flags that were
+then combined with the base flags, namely GFP_KERNEL. gfp_percpu_mask is
+introduced to create the base of GFP_KERNEL and whitelist allowed gfp
+flags. Using this in the appropriate places changes gfp use from as
+additional flags to as a whole set in general removing the need to
+always or with the GFP_KERNEL.
 
 Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
+Suggested-by: Daniel Borkmann <daniel@iogearbox.net>
 ---
- mm/percpu.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ mm/percpu-km.c |  2 +-
+ mm/percpu-vm.c |  4 ++--
+ mm/percpu.c    | 16 ++++++++++------
+ 3 files changed, 13 insertions(+), 9 deletions(-)
 
+diff --git a/mm/percpu-km.c b/mm/percpu-km.c
+index 0d88d7b..38de70a 100644
+--- a/mm/percpu-km.c
++++ b/mm/percpu-km.c
+@@ -56,7 +56,7 @@ static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
+ 	if (!chunk)
+ 		return NULL;
+ 
+-	pages = alloc_pages(gfp | GFP_KERNEL, order_base_2(nr_pages));
++	pages = alloc_pages(gfp, order_base_2(nr_pages));
+ 	if (!pages) {
+ 		pcpu_free_chunk(chunk);
+ 		return NULL;
+diff --git a/mm/percpu-vm.c b/mm/percpu-vm.c
+index ea9906a..c771d86 100644
+--- a/mm/percpu-vm.c
++++ b/mm/percpu-vm.c
+@@ -37,7 +37,7 @@ static struct page **pcpu_get_pages(void)
+ 	lockdep_assert_held(&pcpu_alloc_mutex);
+ 
+ 	if (!pages)
+-		pages = pcpu_mem_zalloc(pages_size, 0);
++		pages = pcpu_mem_zalloc(pages_size, gfp_percpu_mask(0));
+ 	return pages;
+ }
+ 
+@@ -86,7 +86,7 @@ static int pcpu_alloc_pages(struct pcpu_chunk *chunk,
+ 	unsigned int cpu, tcpu;
+ 	int i;
+ 
+-	gfp |=  GFP_KERNEL | __GFP_HIGHMEM;
++	gfp |= __GFP_HIGHMEM;
+ 
+ 	for_each_possible_cpu(cpu) {
+ 		for (i = page_start; i < page_end; i++) {
 diff --git a/mm/percpu.c b/mm/percpu.c
-index 50e7fdf..e1ea410 100644
+index 2489b8b..e35a120 100644
 --- a/mm/percpu.c
 +++ b/mm/percpu.c
-@@ -1277,8 +1277,10 @@ static void pcpu_chunk_depopulated(struct pcpu_chunk *chunk,
-  * pcpu_addr_to_page		- translate address to physical address
-  * pcpu_verify_alloc_info	- check alloc_info is acceptable during init
-  */
--static int pcpu_populate_chunk(struct pcpu_chunk *chunk, int off, int size);
--static void pcpu_depopulate_chunk(struct pcpu_chunk *chunk, int off, int size);
-+static int pcpu_populate_chunk(struct pcpu_chunk *chunk,
-+			       int page_start, int page_end);
-+static void pcpu_depopulate_chunk(struct pcpu_chunk *chunk,
-+				  int page_start, int page_end);
- static struct pcpu_chunk *pcpu_create_chunk(void);
- static void pcpu_destroy_chunk(struct pcpu_chunk *chunk);
- static struct page *pcpu_addr_to_page(void *addr);
+@@ -91,6 +91,10 @@
+ 
+ #include "percpu-internal.h"
+ 
++/* the whitelisted flags that can be passed to the backing allocators */
++#define gfp_percpu_mask(gfp) (((gfp) & (__GFP_NORETRY | __GFP_NOWARN)) | \
++			      GFP_KERNEL)
++
+ /* the slots are sorted by free bytes left, 1-31 bytes share the same slot */
+ #define PCPU_SLOT_BASE_SHIFT		5
+ 
+@@ -466,10 +470,9 @@ static void *pcpu_mem_zalloc(size_t size, gfp_t gfp)
+ 		return NULL;
+ 
+ 	if (size <= PAGE_SIZE)
+-		return kzalloc(size, gfp | GFP_KERNEL);
++		return kzalloc(size, gfp);
+ 	else
+-		return __vmalloc(size, gfp | GFP_KERNEL | __GFP_ZERO,
+-				 PAGE_KERNEL);
++		return __vmalloc(size, gfp | __GFP_ZERO, PAGE_KERNEL);
+ }
+ 
+ /**
+@@ -1344,6 +1347,7 @@ static struct pcpu_chunk *pcpu_chunk_addr_search(void *addr)
+ static void __percpu *pcpu_alloc(size_t size, size_t align, bool reserved,
+ 				 gfp_t gfp)
+ {
++	gfp_t pcpu_gfp = gfp_percpu_mask(gfp);
+ 	bool is_atomic = (gfp & GFP_KERNEL) != GFP_KERNEL;
+ 	bool do_warn = !(gfp & __GFP_NOWARN);
+ 	static int warn_limit = 10;
+@@ -1426,7 +1430,7 @@ static void __percpu *pcpu_alloc(size_t size, size_t align, bool reserved,
+ 	}
+ 
+ 	if (list_empty(&pcpu_slot[pcpu_nr_slots - 1])) {
+-		chunk = pcpu_create_chunk(0);
++		chunk = pcpu_create_chunk(pcpu_gfp);
+ 		if (!chunk) {
+ 			err = "failed to allocate new chunk";
+ 			goto fail;
+@@ -1455,7 +1459,7 @@ static void __percpu *pcpu_alloc(size_t size, size_t align, bool reserved,
+ 					   page_start, page_end) {
+ 			WARN_ON(chunk->immutable);
+ 
+-			ret = pcpu_populate_chunk(chunk, rs, re, 0);
++			ret = pcpu_populate_chunk(chunk, rs, re, pcpu_gfp);
+ 
+ 			spin_lock_irqsave(&pcpu_lock, flags);
+ 			if (ret) {
+@@ -1576,7 +1580,7 @@ void __percpu *__alloc_reserved_percpu(size_t size, size_t align)
+ static void pcpu_balance_workfn(struct work_struct *work)
+ {
+ 	/* gfp flags passed to underlying allocators */
+-	gfp_t gfp = __GFP_NORETRY | __GFP_NOWARN;
++	gfp_t gfp = gfp_percpu_mask(__GFP_NORETRY | __GFP_NOWARN);
+ 	LIST_HEAD(to_free);
+ 	struct list_head *free_head = &pcpu_slot[pcpu_nr_slots - 1];
+ 	struct pcpu_chunk *chunk, *next;
 -- 
 1.8.3.1
