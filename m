@@ -1,82 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1825685-1518708983-2-17650000283347117351
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518708982; b=j7kjleGEYnp1alcAPizCp2jTJ+RY2hsRq5YPqun1YgHHWuT
-    Z/TkOmnhrzKNtj0IHRZahSRBC6Jypjqk0h1lmdhsi3ArAv6px3zJ5KcxJZI0G5AP
-    m7VQHqFl8Ysn0994uZ8tKRE0nfTeTvpEVWC2DaY46jKbmjkt5hRelTmLVu6Fm2ar
-    LxNifKPcep08yCk9tvp2Si+HKqlFmI8nM8itgtvDLqPGxgG6hpONP+zYg5Kzrx7W
-    LhhwJq/rQSOdtLeaZazfBCBeuA8ESy0U7fOYrn3ASOoNxptjq7mHniURmXzG3bKm
-    cjAsXcqkctjw4PcQWRhIYQM2pelrtgNPPqnchoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518708982; bh=giGQmluoN/YkEMMrM88drCdCXq
-    KbA4loyYtXV8UpETg=; b=ZZ8K/h4yDdx45gN+XTwvsjubLkIlVUsSR0E8NfwAmC
-    Mt+YdLjMJJhmQZFsetghDwrk45wNBRNRQv56U53sVzNvEipemnM4I52Y9GkqM7Af
-    t1PX9XzQICwN2Z46yuzZxRhA53aqhLvc+rvrmj4x9N3V0ygJ9QVdPCBeripeiE1h
-    fc1aQ26ILoYLqlfCfFFhLt3gA6gkQt/F+7f07UYbtrTO6bm1VvnC7KO1r/Vq/y83
-    vn/RwdvFQDKlXimshuP5iVKRN++qCL5ucJfWX5qED6Q2NREXZDcR7jS/4RLEsEgs
-    w86v7CTDlAeVWlShKFheFREt3ThmIaC5T2cOYPt5odZA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422859AbeBOPgR (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:36:17 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57806 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1422839AbeBOPgP (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:36:15 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x224X/db0RuoPNcOXervnY67mAfMGY8SqyCHFY+Ai8KOWZN/YsT/McXLur717esjH56Gz4sVv
+ARC-Seal: i=1; a=rsa-sha256; t=1518708973; cv=none;
+        d=google.com; s=arc-20160816;
+        b=L6XPSgsW2pgIxlK5h7zP4p6wGOnhdRAvr0YKa95f7eUj26QIUfkxjkL5x2ZWDio5A7
+         8e+xTi6tQtIWwu2JPn1ixedfIbUhrMrIrH8n0BkawINdmmv639TLW8up1EzKbaBGqoI6
+         lgJL3qB633KLlhkY6UjVOGW9S13TNHDyPkhnrdddTUQx+W8hYoI+7tfe3muHuD0ItcO3
+         v48U/GZ6UaJK1L8yVudN605rXr3boj8O14KX1ds4xCkMYbjsaaYIgkjB+TfNWul+497u
+         IgMaZ9Y+hgquvZDVSW3GGbhyS2iH7yZHqXAz5RSOZ4W+hZjadHWV/0ZfhhJ47fSe+gU7
+         pa9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=NEHWyKUy+A4yc/yn9c+viw8E0DL4Ftex3MlsHFwgTbw=;
+        b=S76+ckszifumQCpM4Bo3UXGfSH0cm8t64YUg8HRorwfuIQmww3A8JrRncVfbX99Qza
+         S/OGu72CgstGZQpDhWLLDAI9omOWni+51UA+ovs0XgEckI4v/h/JIpd2+M6jfC34VzsR
+         9psIhLSx53ms9XksVUzScCUTZN0wHX321BOUJSQDgJacnfQ5+YhLLY3oWd1wmJK6SOzA
+         RFcepHzI+8CForpOscxhQCTSxu8BNJDatMahTMpKwmMH16PSQ7s42KMdbZXtxqkrMCzQ
+         AwioChwwx378rtaohDEC3cTqeqQzjgKWyOzl0s4NxumFyb67CCELADCJD234VnaPSn2a
+         53VQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 147/195] kasan: dont emit builtin calls when sanitization is off
-Date: Thu, 15 Feb 2018 16:17:18 +0100
-Message-Id: <20180215151713.198514640@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Liu Bo <bo.li.liu@oracle.com>,
+	David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 146/195] Btrfs: raid56: iterate raid56 internal bio with bio_for_each_segment_all
+Date: Thu, 15 Feb 2018 16:17:17 +0100
+Message-Id: <20180215151713.140468440@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1592481780343747241?=
+X-GMAIL-MSGID: =?utf-8?q?1592481780343747241?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -84,72 +48,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrey Konovalov <andreyknvl@google.com>
+From: Liu Bo <bo.li.liu@oracle.com>
 
-commit 0e410e158e5baa1300bdf678cea4f4e0cf9d8b94 upstream.
+commit 0198e5b707cfeb5defbd1b71b1ec6e71580d7db9 upstream.
 
-With KASAN enabled the kernel has two different memset() functions, one
-with KASAN checks (memset) and one without (__memset).  KASAN uses some
-macro tricks to use the proper version where required.  For example
-memset() calls in mm/slub.c are without KASAN checks, since they operate
-on poisoned slab object metadata.
+Bio iterated by set_bio_pages_uptodate() is raid56 internal one, so it
+will never be a BIO_CLONED bio, and since this is called by end_io
+functions, bio->bi_iter.bi_size is zero, we mustn't use
+bio_for_each_segment() as that is a no-op if bi_size is zero.
 
-The issue is that clang emits memset() calls even when there is no
-memset() in the source code.  They get linked with improper memset()
-implementation and the kernel fails to boot due to a huge amount of KASAN
-reports during early boot stages.
-
-The solution is to add -fno-builtin flag for files with KASAN_SANITIZE :=
-n marker.
-
-Link: http://lkml.kernel.org/r/8ffecfffe04088c52c42b92739c2bd8a0bcb3f5e.1516384594.git.andreyknvl@google.com
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-Acked-by: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 6592e58c6b68e61f003a01ba29a3716e7e2e9484 ("Btrfs: fix write corruption due to bio cloning on raid5/6")
+Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Makefile               |    3 ++-
- scripts/Makefile.kasan |    3 +++
- scripts/Makefile.lib   |    2 +-
- 3 files changed, 6 insertions(+), 2 deletions(-)
+ fs/btrfs/raid56.c |   11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
---- a/Makefile
-+++ b/Makefile
-@@ -416,7 +416,8 @@ export MAKE AWK GENKSYMS INSTALLKERNEL P
- export HOSTCXX HOSTCXXFLAGS LDFLAGS_MODULE CHECK CHECKFLAGS
+--- a/fs/btrfs/raid56.c
++++ b/fs/btrfs/raid56.c
+@@ -1432,14 +1432,13 @@ static int fail_bio_stripe(struct btrfs_
+  */
+ static void set_bio_pages_uptodate(struct bio *bio)
+ {
+-	struct bio_vec bvec;
+-	struct bvec_iter iter;
++	struct bio_vec *bvec;
++	int i;
  
- export KBUILD_CPPFLAGS NOSTDINC_FLAGS LINUXINCLUDE OBJCOPYFLAGS LDFLAGS
--export KBUILD_CFLAGS CFLAGS_KERNEL CFLAGS_MODULE CFLAGS_KASAN CFLAGS_UBSAN
-+export KBUILD_CFLAGS CFLAGS_KERNEL CFLAGS_MODULE
-+export CFLAGS_KASAN CFLAGS_KASAN_NOSANITIZE CFLAGS_UBSAN
- export KBUILD_AFLAGS AFLAGS_KERNEL AFLAGS_MODULE
- export KBUILD_AFLAGS_MODULE KBUILD_CFLAGS_MODULE KBUILD_LDFLAGS_MODULE
- export KBUILD_AFLAGS_KERNEL KBUILD_CFLAGS_KERNEL
---- a/scripts/Makefile.kasan
-+++ b/scripts/Makefile.kasan
-@@ -31,4 +31,7 @@ else
- endif
+-	if (bio_flagged(bio, BIO_CLONED))
+-		bio->bi_iter = btrfs_io_bio(bio)->iter;
++	ASSERT(!bio_flagged(bio, BIO_CLONED));
  
- CFLAGS_KASAN += $(call cc-option, -fsanitize-address-use-after-scope)
-+
-+CFLAGS_KASAN_NOSANITIZE := -fno-builtin
-+
- endif
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -128,7 +128,7 @@ endif
- ifeq ($(CONFIG_KASAN),y)
- _c_flags += $(if $(patsubst n%,, \
- 		$(KASAN_SANITIZE_$(basetarget).o)$(KASAN_SANITIZE)y), \
--		$(CFLAGS_KASAN))
-+		$(CFLAGS_KASAN), $(CFLAGS_KASAN_NOSANITIZE))
- endif
+-	bio_for_each_segment(bvec, bio, iter)
+-		SetPageUptodate(bvec.bv_page);
++	bio_for_each_segment_all(bvec, bio, i)
++		SetPageUptodate(bvec->bv_page);
+ }
  
- ifeq ($(CONFIG_UBSAN),y)
+ /*
