@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1948104-1518712545-2-15531629942316358386
+X-Cyrus-Session-Id: sloti22d1t05-1946992-1518712537-2-216642642034896768
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,21 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518712545; b=TRIOv7wYgvB9YkkTwN8Uc+R4yZZDfnO5yG/+E7sw43RIFw0
-    eDbKKSTS4Nb4pzIHUUKgrNoc8MK3PlHC07gONwf5TqIViYUQ/DsB+WW4ZFIa+9+g
-    h2dC9LmUqeO3UkDgnAby/xKTfr7hqwDReXAN/aiEMjmqExrWaUkxuTZ16gzivoFX
-    bHaBqEFDy5dADupOqJHSpijDcGTJFbJhkSF88Xr08FymJPc5tjv3AOwohP10h7BC
-    M108sKfHhoOM/qE9ZGy9cwEZ56PE17QbHkZ3uhUr4rkhomz/YBvHyeEAy4iQt8eO
-    N94u8202tIVKjv59h5s/rZrwEG6f3r2Mk1M+rbw==
+    t=1518712537; b=uVOehpZ5hHPK1haAzSPaOrpx0C5v5qGKEsdQzIWzIzU4r+t
+    6rdR9WErRuQao3yjBA3PkoTiJKC/MK5lybkEXqudLIEnichDs7VYB1Mwa5mJTLnk
+    44q7zLq+cbYc3Gimevb2Ic25iYCoKKesj/pCjVHfWzSMhPPMh3xjudYcw6QcGUAB
+    DyPhoKBW71AclkeRkiSOnQVF14qsB6cGKdrf0bbWpRlFGh2m3ZbEgvE+mMmENSyu
+    It2dprWE4O40bqB/AVuEi9UC07o+7YT74bmZdsSxzHhqtjugE3wmjYd1WcttOTSR
+    6zRexNNI8nOX+zPWUArnNWOme6/WUufUmYeTTRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1518712545; bh=5BQw7SoSxxhYB0Q/cMOwICgm4r
-    3zg8sPUjYXFJIsKiA=; b=U+gRKo4B7b+WiRoA8uL0jvjkvNG22HsvucPywUJTif
-    Wl3Co31mGU/kXVgPpzEX7SS9+NpOzsT1LPg5MG7ctZ1VcktLi3ZjR995bkC55+om
-    HBQW0ZFlcUP+j3HiHPYHzuCl0HMcqmmyEVhYBFFxSOi+Imzap42mjRiF1DwvdMG5
-    0/fO4I+X124tI7mo36uLzYoYjRhChxQLg6SAllikumshrNBNvZ4DhfBA3sgnCClR
-    hhOgP6uRdLHYUthavazuaFaU18WKB5tV8QIYlHzTrTEb4egmKuWf6792lUhMOhZB
-    L0e0Zr7oV0zw1r6oHLFA1GvEe55j1Xv0KCjbG3zAeuxg==
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1518712537;
+    bh=Gsq3+GgqA5o+Pk30agDCpisxt+uDPkw0CwAZuNnD3/M=; b=qE8yFhNebJvg
+    6w1rKDvthDtp5Zsk6IOshufHkV+1EPpvRCJmvdyYhdzrf9VMUxnghCfImcIUX8wF
+    N4rK09v8YmPZhMy921t/0CTNZij8onYI9HD3iwa8U7sscr/CAYOlsl1G5XxfLlnm
+    y6NIOm+qtxH4MmDL911QALZNFwd9C75ogX+pes/C1S2lvVdKG+UpO7wawosMJ1yS
+    tkBOs/bF3SIdZCOxXC+xtm2AKEX+YaZqRN48e6D4iu4o02HutZiX4KUo0cN3BtBj
+    FP2s+drqQuNhYUIfB1kMOKleVXQhcQJMDyl9itgKCQgv7I7epMRkEf8zxFOR5JxV
+    ID5a1TXmgQ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=stgolabs.net;
@@ -46,120 +47,164 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=stgolabs.net header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424099AbeBOQeb (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 11:34:31 -0500
-Received: from smtp2.provo.novell.com ([137.65.250.81]:54071 "EHLO
+        id S1426022AbeBOQee (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 11:34:34 -0500
+Received: from smtp2.provo.novell.com ([137.65.250.81]:58178 "EHLO
         smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1425903AbeBOQe2 (ORCPT
+        with ESMTP id S1425903AbeBOQed (ORCPT
         <rfc822;groupwise-linux-api@vger.kernel.org:0:0>);
-        Thu, 15 Feb 2018 11:34:28 -0500
+        Thu, 15 Feb 2018 11:34:33 -0500
 From: Davidlohr Bueso <dave@stgolabs.net>
 To: akpm@linux-foundation.org
 Cc: mhocko@kernel.org, mtk.manpages@gmail.com,
         robert.kettler@outlook.com, manfred@colorfullife.com,
         ebiederm@xmission.com, keescook@chromium.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dave@stgolabs.net
-Subject: [PATCH -next v2 0/3] sysvipc: introduce STAT_ANY commands
-Date: Thu, 15 Feb 2018 08:24:55 -0800
-Message-Id: <20180215162458.10059-1-dave@stgolabs.net>
+        dave@stgolabs.net, Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH 1/3] ipc/shm: introduce shmctl(SHM_STAT_ANY)
+Date: Thu, 15 Feb 2018 08:24:56 -0800
+Message-Id: <20180215162458.10059-2-dave@stgolabs.net>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180215162458.10059-1-dave@stgolabs.net>
+References: <20180215162458.10059-1-dave@stgolabs.net>
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Changes from v1 (https://lwn.net/Articles/747225/):
-- Renamed cmds to STAT_ANY, instead of STAT_ALL (per Eric).
-- Added Robert's reported-by tag.
-- Added changes for smack lsm.
+There is a permission discrepancy when consulting shm ipc
+object metadata between /proc/sysvipc/shm (0444) and the
+SHM_STAT shmctl command. The later does permission checks
+for the object vs S_IRUGO. As such there can be cases where
+EACCESS is returned via syscall but the info is displayed
+anyways in the procfs files.
 
-Hi,
+While this might have security implications via info leaking
+(albeit no writing to the shm metadata), this behavior goes
+way back and showing all the objects regardless of the
+permissions was most likely an overlook - so we are stuck
+with it. Furthermore, modifying either the syscall or the
+procfs file can cause userspace programs to break (ie ipcs).
+Some applications require getting the procfs info (without
+root privileges) and can be rather slow in comparison with
+a syscall -- up to 500x in some reported cases.
 
-The following patches adds the discussed[1] new command for shm
-as well as for sems and msq as they are subject to the same discrepancies
-for ipc object permission checks between the syscall and via procfs.
-These new commands are justified in that (1) we are stuck with this
-semantics as changing syscall and procfs can break userland; and (2) some
-users can benefit from performance (for large amounts of shm segments,
-for example) from not having to parse the procfs interface.
+This patch introduces a new SHM_STAT_ANY command such that
+the shm ipc object permissions are ignored, and only audited
+instead. In addition, I've left the lsm security hook checks
+in place, as if some policy can block the call, then the user
+has no other choice than just parsing the procfs file.
 
-Once (if) merged, I will submit the necesary manpage updates. But I'm
-thinking something like:
-
-diff --git a/man2/shmctl.2 b/man2/shmctl.2
-index 7bb503999941..bb00bbe21a57 100644
---- a/man2/shmctl.2
-+++ b/man2/shmctl.2
-@@ -41,6 +41,7 @@
- .\" 2005-04-25, mtk -- noted aberrant Linux behavior w.r.t. new
- .\"	attaches to a segment that has already been marked for deletion.
- .\" 2005-08-02, mtk: Added IPC_INFO, SHM_INFO, SHM_STAT descriptions.
-+.\" 2018-02-13, dbueso: Added SHM_STAT_ANY description.
- .\"
- .TH SHMCTL 2 2017-09-15 "Linux" "Linux Programmer's Manual"
- .SH NAME
-@@ -242,6 +243,18 @@ However, the
- argument is not a segment identifier, but instead an index into
- the kernel's internal array that maintains information about
- all shared memory segments on the system.
-+.TP
-+.BR SHM_STAT_ANY " (Linux-specific)"
-+Return a
-+.I shmid_ds
-+structure as for
-+.BR SHM_STAT .
-+However, the
-+.I shm_perm.mode
-+is not checked for read access for
-+.IR shmid ,
-+resembing the behaviour of
-+/proc/sysvipc/shm.
- .PP
- The caller can prevent or allow swapping of a shared
- memory segment with the following \fIcmd\fP values:
-@@ -287,7 +300,7 @@ operation returns the index of the highest used entry in the
- kernel's internal array recording information about all
- shared memory segments.
- (This information can be used with repeated
--.B SHM_STAT
-+.B SHM_STAT/SHM_STAT_ANY
- operations to obtain information about all shared memory segments
- on the system.)
- A successful
-@@ -328,7 +341,7 @@ isn't accessible.
- \fIshmid\fP is not a valid identifier, or \fIcmd\fP
- is not a valid command.
- Or: for a
--.B SHM_STAT
-+.B SHM_STAT/SHM_STAT_ANY
- operation, the index value specified in
- .I shmid
- referred to an array slot that is currently unused.
-
-
-Thanks!
-
-[1] https://lkml.org/lkml/2017/12/19/220
-
-*** BLURB HERE ***
-
-Davidlohr Bueso (3):
-  ipc/shm: introduce shmctl(SHM_STAT_ANY)
-  ipc/sem: introduce semctl(SEM_STAT_ANY)
-  ipc/msg: introduce msgctl(MSG_STAT_ANY)
-
- include/uapi/linux/msg.h   |  1 +
- include/uapi/linux/sem.h   |  1 +
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+---
  include/uapi/linux/shm.h   |  5 +++--
- ipc/msg.c                  | 17 ++++++++++++-----
- ipc/sem.c                  | 17 ++++++++++++-----
  ipc/shm.c                  | 23 ++++++++++++++++++-----
- security/selinux/hooks.c   |  3 +++
- security/smack/smack_lsm.c |  3 +++
- 8 files changed, 53 insertions(+), 17 deletions(-)
+ security/selinux/hooks.c   |  1 +
+ security/smack/smack_lsm.c |  1 +
+ 4 files changed, 23 insertions(+), 7 deletions(-)
 
+diff --git a/include/uapi/linux/shm.h b/include/uapi/linux/shm.h
+index 4de12a39b075..dde1344f047c 100644
+--- a/include/uapi/linux/shm.h
++++ b/include/uapi/linux/shm.h
+@@ -83,8 +83,9 @@ struct shmid_ds {
+ #define SHM_UNLOCK 	12
+ 
+ /* ipcs ctl commands */
+-#define SHM_STAT 	13
+-#define SHM_INFO 	14
++#define SHM_STAT	13
++#define SHM_INFO	14
++#define SHM_STAT_ANY    15
+ 
+ /* Obsolete, used only for backwards compatibility */
+ struct	shminfo {
+diff --git a/ipc/shm.c b/ipc/shm.c
+index 4643865e9171..60827d9c3716 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -915,14 +915,14 @@ static int shmctl_stat(struct ipc_namespace *ns, int shmid,
+ 	memset(tbuf, 0, sizeof(*tbuf));
+ 
+ 	rcu_read_lock();
+-	if (cmd == SHM_STAT) {
++	if (cmd == SHM_STAT || cmd == SHM_STAT_ANY) {
+ 		shp = shm_obtain_object(ns, shmid);
+ 		if (IS_ERR(shp)) {
+ 			err = PTR_ERR(shp);
+ 			goto out_unlock;
+ 		}
+ 		id = shp->shm_perm.id;
+-	} else {
++	} else { /* IPC_STAT */
+ 		shp = shm_obtain_object_check(ns, shmid);
+ 		if (IS_ERR(shp)) {
+ 			err = PTR_ERR(shp);
+@@ -930,9 +930,20 @@ static int shmctl_stat(struct ipc_namespace *ns, int shmid,
+ 		}
+ 	}
+ 
+-	err = -EACCES;
+-	if (ipcperms(ns, &shp->shm_perm, S_IRUGO))
+-		goto out_unlock;
++	/*
++	 * Semantically SHM_STAT_ANY ought to be identical to
++	 * that functionality provided by the /proc/sysvipc/
++	 * interface. As such, only audit these calls and
++	 * do not do traditional S_IRUGO permission checks on
++	 * the ipc object.
++	 */
++	if (cmd == SHM_STAT_ANY)
++		audit_ipc_obj(&shp->shm_perm);
++	else {
++		err = -EACCES;
++		if (ipcperms(ns, &shp->shm_perm, S_IRUGO))
++			goto out_unlock;
++	}
+ 
+ 	err = security_shm_shmctl(shp, cmd);
+ 	if (err)
+@@ -1072,6 +1083,7 @@ SYSCALL_DEFINE3(shmctl, int, shmid, int, cmd, struct shmid_ds __user *, buf)
+ 		return err;
+ 	}
+ 	case SHM_STAT:
++	case SHM_STAT_ANY:
+ 	case IPC_STAT: {
+ 		err = shmctl_stat(ns, shmid, cmd, &sem64);
+ 		if (err < 0)
+@@ -1245,6 +1257,7 @@ COMPAT_SYSCALL_DEFINE3(shmctl, int, shmid, int, cmd, void __user *, uptr)
+ 		return err;
+ 	}
+ 	case IPC_STAT:
++	case SHM_STAT_ANY:
+ 	case SHM_STAT:
+ 		err = shmctl_stat(ns, shmid, cmd, &sem64);
+ 		if (err < 0)
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 35ef1e9045e8..373dceede50d 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -5734,6 +5734,7 @@ static int selinux_shm_shmctl(struct shmid_kernel *shp, int cmd)
+ 				    SECCLASS_SYSTEM, SYSTEM__IPC_INFO, NULL);
+ 	case IPC_STAT:
+ 	case SHM_STAT:
++	case SHM_STAT_ANY:
+ 		perms = SHM__GETATTR | SHM__ASSOCIATE;
+ 		break;
+ 	case IPC_SET:
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 03fdecba93bb..51d22b03b0ae 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -3034,6 +3034,7 @@ static int smack_shm_shmctl(struct shmid_kernel *shp, int cmd)
+ 	switch (cmd) {
+ 	case IPC_STAT:
+ 	case SHM_STAT:
++	case SHM_STAT_ANY:
+ 		may = MAY_READ;
+ 		break;
+ 	case IPC_SET:
 -- 
 2.13.6
 
