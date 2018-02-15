@@ -1,77 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165322AbeBOQ1l (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 11:27:41 -0500
-Received: from mail-out.m-online.net ([212.18.0.9]:58273 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033429AbeBOQ1i (ORCPT
+        id S1425885AbeBOQ23 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 11:28:29 -0500
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:39441 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424212AbeBOPmm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:27:38 -0500
-X-Auth-Info: iOSbD3puwW8ONnJwbvBVWxTVSPctXBVYzyCKiNntuH0=
-Subject: Re: [PATCH v3 0/5] crypto: ahash.c: Require export/import in ahash
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sonic Zhang <sonic.zhang@analog.com>,
-        Fabio Estevam <fabio.estevam@freescale.com>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Jan Engelhardt <jengelh@inai.de>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Joakim Bech <joakim.bech@linaro.org>, linux-kernel@vger.kernel.org
-References: <CGME20180118183438eucas1p2e2e7be8625ae0950c519e27424f9301a@eucas1p2.samsung.com>
- <20180118183404.12583-1-k.konieczny@partner.samsung.com>
- <20180215154132.GA7352@gondor.apana.org.au>
-From: Marek Vasut <marex@denx.de>
-Message-ID: <6b29116a-c39c-9813-34a0-d5c05bd30c9d@denx.de>
-Date: Thu, 15 Feb 2018 17:27:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 15 Feb 2018 10:42:42 -0500
+X-Google-Smtp-Source: AH8x227ho+sNw31VlcLtz0hCqjMUuzLoqIBMCVa+I15EUeaWIUASbl93dMpXzZfsrSAZSI40yXRl3xrSvQ8xwS7jnYg=
 MIME-Version: 1.0
-In-Reply-To: <20180215154132.GA7352@gondor.apana.org.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From: UNITED NATIONS <unitednationawardwinner@gmail.com>
+Date: Thu, 15 Feb 2018 15:42:41 +0000
+X-Google-Sender-Auth: gIJr8FJHjI5qlMTDf7qm777hoho
+Message-ID: <CAFJYe+eQBrRogo+7_AudMEdrqdeanDF7zpCW3QCLLetZz9+v2g@mail.gmail.com>
+Subject: Your long awaited part payment of $2.5.000.00Usd
+To: undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/15/2018 04:41 PM, Herbert Xu wrote:
-> On Thu, Jan 18, 2018 at 07:33:59PM +0100, Kamil Konieczny wrote:
->> First four patches add empty hash export and import functions to each driver,
->> with the same behaviour as in crypto framework. The last one drops them from
->> crypto framework. Last one for ahash.c depends on all previous.
->>
->> Changes in v3:
->> added change for bfin_crc.c
->> make this a patchset, instead of unreleated patches
->> make commit message more descriptive
->>
->> Kamil Konieczny (5):
->>   crypto: mxs-dcp: Add empty hash export and import
->>   crypto: n2_core: Add empty hash export and import
->>   crypto: ux500/hash: Add empty export and import
->>   crypto: bfin_crc: Add empty hash export and import
->>   crypto: ahash.c: Require export/import in ahash
->>
->>  crypto/ahash.c                        | 18 ++----------------
->>  drivers/crypto/bfin_crc.c             | 12 ++++++++++++
->>  drivers/crypto/mxs-dcp.c              | 14 ++++++++++++++
->>  drivers/crypto/n2_core.c              | 12 ++++++++++++
->>  drivers/crypto/ux500/hash/hash_core.c | 18 ++++++++++++++++++
->>  5 files changed, 58 insertions(+), 16 deletions(-)
-> 
-> All applied.  Thanks.
+Attention: Beneficiary,
 
-This makes no sense, cfr my comment on 5/5
+Your long awaited part payment of $2.5.000.00Usd (TWO MILLION FIVE
+Hundred Thousand United State Dollars)  is ready for immediate release
+to you, and it was electronically credited into an ATM Visa Card for
+easy delivery.
 
-Seems like if the driver doesn't implement those, the core can easily
-detect that and perform the necessary action. Moving the checks out of
-core seems like the wrong thing to do, rather you should enhance the
-checks in core if they're insufficient in my opinion.
+Your new Payment Reference No.- 6363836,
+Password No: 006786,
+Pin Code No: 1787
+Your Certificate of Merit Payment No: 05872,
+Released Code No: 1134;
+Immediate Telex confirmation No:- 043612;
+Secret Code No: TBKTA28
 
--- 
-Best regards,
-Marek Vasut
+
+Re-Confirm; Your Names:
+|Address:
+|Cell Phone:
+|Fax:
+| Amount:
+Your immediate response is needed UBA Bank
+
+Person to Contact:MR KELLY HALL  the Director of the International Audit
+unit ATM Payment Center,
+
+Email: ubabf_ubaplc@financier.com
+TELEPHONE: +226 68251393
+
+Note: Your file will expire after 14 days if there is no response, and
+then we will not have any option than to return your fund to IMF as
+unclaimed.
+
+Your swift response will enhance our service, thanks for your co-operation;
+
+Regards.
+Mr JOHN MARK.
