@@ -1,122 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967905AbeBOLra (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 06:47:30 -0500
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:33599 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967814AbeBOLr1 (ORCPT
+        id S967910AbeBOLtr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 06:49:47 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51472 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967814AbeBOLtp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 06:47:27 -0500
-X-Google-Smtp-Source: AH8x2269s1yiXUMBadBEwQafFSp8irngi22bEtoV7+40TXhnsu1LgBVHOWZfAJPnz6zBnp0ygCLQ04BUEccu/EAk/+s=
+        Thu, 15 Feb 2018 06:49:45 -0500
+Date: Thu, 15 Feb 2018 12:49:27 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: arm64/v4.16-rc1: KASAN: use-after-free Read in finish_task_switch
+Message-ID: <20180215114927.GV25201@hirez.programming.kicks-ass.net>
+References: <20180214120254.qq4w4s42ecxio7lu@lakrids.cambridge.arm.com>
+ <20180214150739.GH2992@arm.com>
+ <20180214165131.o25r3hhrtrjk3ejq@lakrids.cambridge.arm.com>
+ <254787533.21950.1518634424009.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
-In-Reply-To: <e3fb78b3-5f5c-fe96-9f02-e96092963c17@huawei.com>
-References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
- <1518543933-22456-8-git-send-email-john.garry@huawei.com> <20180214161635.GA13849@e107981-ln.cambridge.arm.com>
- <65185a4d-c712-4486-d713-3fa9de14e35d@huawei.com> <e3fb78b3-5f5c-fe96-9f02-e96092963c17@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 15 Feb 2018 12:47:25 +0100
-X-Google-Sender-Auth: SbY3KiVioADnvtIhW-J7kHHjuBQ
-Message-ID: <CAJZ5v0jGvo+cutmvi3WSe1JNvQ1UvZhJr1mQ76=8=1E5Gq+iRg@mail.gmail.com>
-Subject: Re: [PATCH v13 7/9] ACPI: Translate the I/O range of non-MMIO devices
- before scanning
-To: John Garry <john.garry@huawei.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Hanjun Guo <hanjun.guo@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
-        Dann Frazier <dann.frazier@canonical.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh@kernel.org>, Joe Perches <joe@perches.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, Corey Minyard <minyard@acm.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <254787533.21950.1518634424009.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 12:19 PM, John Garry <john.garry@huawei.com> wrote:
->> Nothing apart from only being used by arm64 platforms today, which is
->> circumstantial.
->>
->>>
->>> I understand you need to find a place to add the:
->>>
->>> acpi_indirect_io_scan_init()
->>>
->>> to be called from core ACPI code because ACPI can't handle probe
->>> dependencies in any other way but other than that this patch is
->>> a Hisilicon ACPI driver - there is nothing generic in it (or at
->>> least there are no standard bindings to make it so).
->>>
->>> Whether a callback from ACPI core code (acpi_scan_init()) to a driver
->>> specific hook is sane or not that's the question and the only reason
->>> why you want to add this in drivers/acpi/arm64 rather than, say,
->>> drivers/bus (as you do for the DT driver).
->>>
->>> I do not know Rafael's opinion on the above, I would like to help
->>> you make forward progress but please understand my concerns, mostly
->>> on FW side.
->>>
->>
->> I did mention an alternative in my "ping" in v12 patch 7/9 (Feb 1), but
->> no response to this specific note so I kept on the same path.
->>
->> Here's what I then wrote:
->> "I think another solution - which you may prefer - is to avoid adding
->> this scan handler (and all this other scan code) and add a check like
->> acpi_is_serial_bus_slave() [which checks the device parent versus a list
->> of known indirectIO hosts] to not enumerate these children, and do it
->> from the LLDD host probe instead (https://lkml.org/lkml/2017/6/16/250)"
->>
->
-> Hi Rafael, Lorenzo,
->
-> I can avoid adding the scan handler in acpi_indirectio.c by skipping the
-> child enumeration, like with this change in scan.c:
->
-> +static const struct acpi_device_id indirect_io_hosts[] = {
-> +    {"HISI0191", 0},    /* HiSilicon LPC host */
-> +    {},
-> +};
-> +
-> +static bool acpi_is_indirect_io_slave(struct acpi_device *device)
-> +{
+On Wed, Feb 14, 2018 at 06:53:44PM +0000, Mathieu Desnoyers wrote:
+> However, given the scenario involves multiples CPUs (one doing exit_mm(),
+> the other doing context switch), the actual order of perceived load/store
+> can be shuffled. And AFAIU nothing prevents the CPU from ordering the
+> atomic_inc() done by mmgrab(mm) _after_ the store to current->mm.
+> 
+> I wonder if we should not simply add a smp_mb__after_atomic() into
+> mmgrab() instead ? I see that e.g. futex.c does:
 
-Why don't you put the table definition here?
+Don't think so, the futex case is really rather special and I suspect
+this one is too. I would much rather have explicit comments rather than
+implicit works by magic.
 
-> +    struct acpi_device *parent = dev->parent;
-> +
-> +    if (!parent || acpi_match_device_ids(parent, indirect_io_hosts))
-> +        return false;
-> +
-> +    return true;
+As per the rationale used for refcount_t, increments should be
+unordered, because you ACQUIRE your object _before_ you can do the
+increment.
 
-return parent && !acpi_match_device_ids(parent, indirect_io_hosts);
+The futex thing is simply abusing a bunch of implied barriers and
+patching up the holes in paths that didn't already imply a barrier in
+order to avoid having to add explicit barriers (which had measurable
+performance issues).
 
-> +}
-> +
->  static bool acpi_is_serial_bus_slave(struct acpi_device *device)
->  {
->      struct list_head resource_list;
->      bool is_serial_bus_slave = false;
->
-> +    if (acpi_is_indirect_io_slave(device))
-> +        return true;
-> +
->      /* Macs use device properties in lieu of _CRS resources */
->
->
-> This means I can move all this scan code into the LLDD.
->
-> What do you think? Please let me know.
+And here we have explicit ordering outside of the reference counting
+too, we want to ensure the reference is incremented before we modify
+a second object.
 
-If Lorenzo agrees, that will be fine by me modulo the above remarks.
+This ordering is not at all related to acquiring the reference, so
+bunding it seems odd.
