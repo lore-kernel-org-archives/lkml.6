@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226MjBflEZbg/Zlopo/e467yayLA2tzhSXG3aqPU+aQ6iLV4zfvwDVgI+0bCc4TDYdeZMISG
-ARC-Seal: i=1; a=rsa-sha256; t=1518709405; cv=none;
+X-Google-Smtp-Source: AH8x227J3KB/i3IDDsLbFTC8Fi5+/SMGjzOeuRG8kO4arzie/yRpQ4qV27Ko1ia3UZ5iwy7xZJ98
+ARC-Seal: i=1; a=rsa-sha256; t=1518709402; cv=none;
         d=google.com; s=arc-20160816;
-        b=aef9u/TmYgNoQGa8+sNxg4SIKuUoue2c0tLwxy+ZSnWyMQTDilig0t7fWAR5gO+Cmc
-         aPLXPraplI5izh3ZzJUqeDKN85MYVhu5+i4v6ay4OIxn4PoSkYcOZlZ5SqAm2FmPxJPP
-         pnjvDKCjFymbGDSN1dQvAHdOf1mHNnT63xNBXEn9xcDpjejOM/hgWJ+h7Wb01TXQKVst
-         Vw4HP5BFEtgRwO2fCHxcbEiqFt2VVxxCrTg3N7U9FVMgij+FpHZ37bRzQN0WG5+c4QFF
-         RqRE4Y9cbFryjS9MTu7RyRon2PXM7CmdocuzyV8gkavBawUFKXLZExHI6SfZRbLwzfnW
-         vQnQ==
+        b=0HSoteaRsSqgC8PKAO9m7BL+yCrW1X6uZxC06mMMjVIFLt++nhUcckZKsMhSS5RE4t
+         yo7xYq8MY6fNO0OUn+OML/yw8CSdXvfwJra2IH4QTvnDeNlRe57Mg16IiX6+4TI8Vk40
+         smn8ETzEdTiutbVosszcKGOg1iq/S4KYgo7/zbgC0oe15jyGhgdKRwzzTuF3Wl8eN9Eu
+         NjoZ0AwwGsoh2NsE6e4VZ2gf0m+ok2dxrH9MTT2bYX/LJDq5GPBapMPvMqRdajM9MCL8
+         QH+9aOIeGsOa9Ekddme3hSfIDmVJEIRENmp2YXeDN2NjQ1hEwAQBumIlKZ0GlQpB8HJm
+         abxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=vlDDBymdWjG+U6o6Jn6t7RZQVRrqg/G/t7QwH3s+LHE=;
-        b=n0aK/7DCXSXP9RX5ffTU+7z9BgR8beoDWaPZH/Cq3rzVTvxeUO34Ep/sthaqtWH/So
-         6tFFc5Eoy7C3P9kAAafkvSxtC94LB8+57ggqawLbkT16XgWg88WFH6KVwPXq4vX4QpyO
-         S7x6Bn2Ylbxq+PXwqPIy3PxRSV408JOvug27gppqjmd9Aak+i53zwrjw7zMbl3IrxcRr
-         vfARgTM2J6+v3I7NX7kFoC2iex4/MdsGwXQv91VRop0+MVCHHy+aOFaP5lqagKNqn5Ip
-         U52FpaLUfV3EIAyUW8/XnFGZ4XJmLSI6dmr0Oh31XBEll0HCU5mUuOOseMRXeJL4Fvkr
-         1lfA==
+        bh=OdxgEVWn751qvsFvLhPu3sscrwpz8d0isO+U11BCxW0=;
+        b=0PFOtNkgPYG+tjPW9U6wYWJoSYR/o4no1Bffj24OMIsPo/O6rrN/K1w96qBZYg1g+Q
+         aDI7WIgwCvtu3z6/Yu+FSP2H7nrlXYodndqPTrbrZMrKkSAK9C2BFSYiWWI+VLnKO3TJ
+         FxRxRc6asZeibZQQ8wm/wlTflr+h4t34wxLLiJY/RSOl6Vq5806qF6RpEArlpXiDhg+u
+         8u3ioL63C9ollwHu2f4GPub4BmAEZjhL0Ds+j1py6YB8LXdVrtzovWxsomQ0qDnmIzHy
+         W2amW67nr/g0ifCXTS3YyO3layyoEN1bDUvh2Jj6Dac2mBu75+OJWTapKzm7qbPkkvaU
+         wZVw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.15 105/202] ahci: Annotate PCI ids for mobile Intel chipsets as such
-Date: Thu, 15 Feb 2018 16:16:45 +0100
-Message-Id: <20180215151718.759253020@linuxfoundation.org>
+	Tejun Heo <tj@kernel.org>,
+	Ivan Vecera <ivecera@redhat.com>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.15 104/202] kernfs: fix regression in kernfs_fop_write caused by wrong type
+Date: Thu, 15 Feb 2018 16:16:44 +0100
+Message-Id: <20180215151718.713009147@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480981385689388?=
-X-GMAIL-MSGID: =?utf-8?q?1592482233090449923?=
+X-GMAIL-THRID: =?utf-8?q?1592480732716912474?=
+X-GMAIL-MSGID: =?utf-8?q?1592482229554510039?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,106 +49,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Ivan Vecera <ivecera@redhat.com>
 
-commit ca1b4974bd237f2373b0e980b11957aac3499b56 upstream.
+commit ba87977a49913129962af8ac35b0e13e0fa4382d upstream.
 
-Intel uses different SATA PCI ids for the Desktop and Mobile SKUs of their
-chipsets. For older models the comment describing which chipset the PCI id
-is for, aksi indicates when we're dealing with a mobile SKU. Extend the
-comments for recent chipsets to also indicate mobile SKUs.
+Commit b7ce40cff0b9 ("kernfs: cache atomic_write_len in
+kernfs_open_file") changes type of local variable 'len' from ssize_t
+to size_t. This change caused that the *ppos value is updated also
+when the previous write callback failed.
 
-The information this commit adds comes from Intel's chipset datasheets.
+Mentioned snippet:
+...
+len = ops->write(...); <- return value can be negative
+...
+if (len > 0)           <- true here in this case
+        *ppos += len;
+...
 
-This commit is a preparation patch for allowing a different default
-sata link powermanagement policy for mobile chipsets.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: b7ce40cff0b9 ("kernfs: cache atomic_write_len in kernfs_open_file")
+Acked-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/ahci.c |   32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ fs/kernfs/file.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@ -268,9 +268,9 @@ static const struct pci_device_id ahci_p
- 	{ PCI_VDEVICE(INTEL, 0x3b23), board_ahci }, /* PCH AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x3b24), board_ahci }, /* PCH RAID */
- 	{ PCI_VDEVICE(INTEL, 0x3b25), board_ahci }, /* PCH RAID */
--	{ PCI_VDEVICE(INTEL, 0x3b29), board_ahci }, /* PCH AHCI */
-+	{ PCI_VDEVICE(INTEL, 0x3b29), board_ahci }, /* PCH M AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x3b2b), board_ahci }, /* PCH RAID */
--	{ PCI_VDEVICE(INTEL, 0x3b2c), board_ahci }, /* PCH RAID */
-+	{ PCI_VDEVICE(INTEL, 0x3b2c), board_ahci }, /* PCH M RAID */
- 	{ PCI_VDEVICE(INTEL, 0x3b2f), board_ahci }, /* PCH AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x19b0), board_ahci }, /* DNV AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x19b1), board_ahci }, /* DNV AHCI */
-@@ -293,9 +293,9 @@ static const struct pci_device_id ahci_p
- 	{ PCI_VDEVICE(INTEL, 0x19cE), board_ahci }, /* DNV AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x19cF), board_ahci }, /* DNV AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x1c02), board_ahci }, /* CPT AHCI */
--	{ PCI_VDEVICE(INTEL, 0x1c03), board_ahci }, /* CPT AHCI */
-+	{ PCI_VDEVICE(INTEL, 0x1c03), board_ahci }, /* CPT M AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x1c04), board_ahci }, /* CPT RAID */
--	{ PCI_VDEVICE(INTEL, 0x1c05), board_ahci }, /* CPT RAID */
-+	{ PCI_VDEVICE(INTEL, 0x1c05), board_ahci }, /* CPT M RAID */
- 	{ PCI_VDEVICE(INTEL, 0x1c06), board_ahci }, /* CPT RAID */
- 	{ PCI_VDEVICE(INTEL, 0x1c07), board_ahci }, /* CPT RAID */
- 	{ PCI_VDEVICE(INTEL, 0x1d02), board_ahci }, /* PBG AHCI */
-@@ -304,20 +304,20 @@ static const struct pci_device_id ahci_p
- 	{ PCI_VDEVICE(INTEL, 0x2826), board_ahci }, /* PBG RAID */
- 	{ PCI_VDEVICE(INTEL, 0x2323), board_ahci }, /* DH89xxCC AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x1e02), board_ahci }, /* Panther Point AHCI */
--	{ PCI_VDEVICE(INTEL, 0x1e03), board_ahci }, /* Panther Point AHCI */
-+	{ PCI_VDEVICE(INTEL, 0x1e03), board_ahci }, /* Panther Point M AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x1e04), board_ahci }, /* Panther Point RAID */
- 	{ PCI_VDEVICE(INTEL, 0x1e05), board_ahci }, /* Panther Point RAID */
- 	{ PCI_VDEVICE(INTEL, 0x1e06), board_ahci }, /* Panther Point RAID */
--	{ PCI_VDEVICE(INTEL, 0x1e07), board_ahci }, /* Panther Point RAID */
-+	{ PCI_VDEVICE(INTEL, 0x1e07), board_ahci }, /* Panther Point M RAID */
- 	{ PCI_VDEVICE(INTEL, 0x1e0e), board_ahci }, /* Panther Point RAID */
- 	{ PCI_VDEVICE(INTEL, 0x8c02), board_ahci }, /* Lynx Point AHCI */
--	{ PCI_VDEVICE(INTEL, 0x8c03), board_ahci }, /* Lynx Point AHCI */
-+	{ PCI_VDEVICE(INTEL, 0x8c03), board_ahci }, /* Lynx Point M AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x8c04), board_ahci }, /* Lynx Point RAID */
--	{ PCI_VDEVICE(INTEL, 0x8c05), board_ahci }, /* Lynx Point RAID */
-+	{ PCI_VDEVICE(INTEL, 0x8c05), board_ahci }, /* Lynx Point M RAID */
- 	{ PCI_VDEVICE(INTEL, 0x8c06), board_ahci }, /* Lynx Point RAID */
--	{ PCI_VDEVICE(INTEL, 0x8c07), board_ahci }, /* Lynx Point RAID */
-+	{ PCI_VDEVICE(INTEL, 0x8c07), board_ahci }, /* Lynx Point M RAID */
- 	{ PCI_VDEVICE(INTEL, 0x8c0e), board_ahci }, /* Lynx Point RAID */
--	{ PCI_VDEVICE(INTEL, 0x8c0f), board_ahci }, /* Lynx Point RAID */
-+	{ PCI_VDEVICE(INTEL, 0x8c0f), board_ahci }, /* Lynx Point M RAID */
- 	{ PCI_VDEVICE(INTEL, 0x9c02), board_ahci }, /* Lynx Point-LP AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x9c03), board_ahci }, /* Lynx Point-LP AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x9c04), board_ahci }, /* Lynx Point-LP RAID */
-@@ -358,21 +358,21 @@ static const struct pci_device_id ahci_p
- 	{ PCI_VDEVICE(INTEL, 0x9c87), board_ahci }, /* Wildcat Point-LP RAID */
- 	{ PCI_VDEVICE(INTEL, 0x9c8f), board_ahci }, /* Wildcat Point-LP RAID */
- 	{ PCI_VDEVICE(INTEL, 0x8c82), board_ahci }, /* 9 Series AHCI */
--	{ PCI_VDEVICE(INTEL, 0x8c83), board_ahci }, /* 9 Series AHCI */
-+	{ PCI_VDEVICE(INTEL, 0x8c83), board_ahci }, /* 9 Series M AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x8c84), board_ahci }, /* 9 Series RAID */
--	{ PCI_VDEVICE(INTEL, 0x8c85), board_ahci }, /* 9 Series RAID */
-+	{ PCI_VDEVICE(INTEL, 0x8c85), board_ahci }, /* 9 Series M RAID */
- 	{ PCI_VDEVICE(INTEL, 0x8c86), board_ahci }, /* 9 Series RAID */
--	{ PCI_VDEVICE(INTEL, 0x8c87), board_ahci }, /* 9 Series RAID */
-+	{ PCI_VDEVICE(INTEL, 0x8c87), board_ahci }, /* 9 Series M RAID */
- 	{ PCI_VDEVICE(INTEL, 0x8c8e), board_ahci }, /* 9 Series RAID */
--	{ PCI_VDEVICE(INTEL, 0x8c8f), board_ahci }, /* 9 Series RAID */
-+	{ PCI_VDEVICE(INTEL, 0x8c8f), board_ahci }, /* 9 Series M RAID */
- 	{ PCI_VDEVICE(INTEL, 0x9d03), board_ahci }, /* Sunrise Point-LP AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x9d05), board_ahci }, /* Sunrise Point-LP RAID */
- 	{ PCI_VDEVICE(INTEL, 0x9d07), board_ahci }, /* Sunrise Point-LP RAID */
- 	{ PCI_VDEVICE(INTEL, 0xa102), board_ahci }, /* Sunrise Point-H AHCI */
--	{ PCI_VDEVICE(INTEL, 0xa103), board_ahci }, /* Sunrise Point-H AHCI */
-+	{ PCI_VDEVICE(INTEL, 0xa103), board_ahci }, /* Sunrise Point-H M AHCI */
- 	{ PCI_VDEVICE(INTEL, 0xa105), board_ahci }, /* Sunrise Point-H RAID */
- 	{ PCI_VDEVICE(INTEL, 0xa106), board_ahci }, /* Sunrise Point-H RAID */
--	{ PCI_VDEVICE(INTEL, 0xa107), board_ahci }, /* Sunrise Point-H RAID */
-+	{ PCI_VDEVICE(INTEL, 0xa107), board_ahci }, /* Sunrise Point-H M RAID */
- 	{ PCI_VDEVICE(INTEL, 0xa10f), board_ahci }, /* Sunrise Point-H RAID */
- 	{ PCI_VDEVICE(INTEL, 0x2822), board_ahci }, /* Lewisburg RAID*/
- 	{ PCI_VDEVICE(INTEL, 0x2823), board_ahci }, /* Lewisburg AHCI*/
+--- a/fs/kernfs/file.c
++++ b/fs/kernfs/file.c
+@@ -275,7 +275,7 @@ static ssize_t kernfs_fop_write(struct f
+ {
+ 	struct kernfs_open_file *of = kernfs_of(file);
+ 	const struct kernfs_ops *ops;
+-	size_t len;
++	ssize_t len;
+ 	char *buf;
+ 
+ 	if (of->atomic_write_len) {
