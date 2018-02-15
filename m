@@ -1,221 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426251AbeBOQkZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 11:40:25 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:40002 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1426223AbeBOQkA (ORCPT
+        id S1426314AbeBOQmF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 11:42:05 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52065 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423914AbeBOQmE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:40:00 -0500
-X-Google-Smtp-Source: AH8x226NuHwNL+5a3upFUVRJvGjA89Wv+1liOu6+Oa4my0FZi62m9CH+L4cMvAJkt+14G46linGGMQ==
-From: Tim Harvey <tharvey@gateworks.com>
-To: linux-media@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawnguo@kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH v12 8/8] ARM: dts: imx: Add TDA19971 HDMI Receiver to GW551x
-Date: Thu, 15 Feb 2018 08:39:27 -0800
-Message-Id: <1518712767-21928-9-git-send-email-tharvey@gateworks.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518712767-21928-1-git-send-email-tharvey@gateworks.com>
-References: <1518712767-21928-1-git-send-email-tharvey@gateworks.com>
+        Thu, 15 Feb 2018 11:42:04 -0500
+Subject: Re: [PATCH v3 2/5] arm64: dts: renesas: r8a77995: add VSP instances
+To: Simon Horman <horms@verge.net.au>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1518602108-1724-1-git-send-email-kbingham@kernel.org>
+ <1518602108-1724-3-git-send-email-kbingham@kernel.org>
+ <20180215163342.4evihm3uts3lfu5c@verge.net.au>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <7db13491-f4f6-4c7c-e9e3-c1e91b0054b6@ideasonboard.com>
+Date: Thu, 15 Feb 2018 16:41:58 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <20180215163342.4evihm3uts3lfu5c@verge.net.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Tim Harvey <tharvey@gateworks.com>
----
-v5:
- - add missing audmux config
+Hi Simon,
 
- arch/arm/boot/dts/imx6qdl-gw551x.dtsi | 138 ++++++++++++++++++++++++++++++++++
- 1 file changed, 138 insertions(+)
+On 15/02/18 16:33, Simon Horman wrote:
+> On Wed, Feb 14, 2018 at 09:55:05AM +0000, Kieran Bingham wrote:
+>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> The r8a77995 has a VSPBS to support image processing such as blending of
+>> two input images, and has two VSPDs to handle display pipelines with a
+>> DU.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>>
+>> ---
+>> v2:
+>>  - Fix VSPD register map size
+>>  - Squash VSPBS and VSPD patches together
+>>
+>> v3:
+>>  - Fix VSPBS register map size too :-)
+>>
+>>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 30 ++++++++++++++++++++++++++++++
+>>  1 file changed, 30 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> index 196a917afea6..0db242114bc5 100644
+>> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> @@ -692,6 +692,16 @@
+>>  			status = "disabled";
+>>  		};
+>>  
+>> +		vspbs: vsp@fe960000 {
+>> +			compatible = "renesas,vsp2";
+>> +			reg = <0 0xfe960000 0 0x8000>;
+>> +			interrupts = <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&cpg CPG_MOD 627>;
+>> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+>> +			resets = <&cpg 627>;
+>> +			renesas,fcp = <&fcpvb0>;
+>> +		};
+>> +
+>>  		fcpvb0: fcp@fe96f000 {
+>>  			compatible = "renesas,fcpv";
+>>  			reg = <0 0xfe96f000 0 0x200>;
+>> @@ -701,6 +711,16 @@
+>>  			iommus = <&ipmmu_vp0 5>;
+>>  		};
+>>  
+>> +		vspd0: vsp@fea20000 {
+>> +			compatible = "renesas,vsp2";
+>> +			reg = <0 0xfea20000 0 0x8000>;
+>> +			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&cpg CPG_MOD 623>;
+>> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+>> +			resets = <&cpg 623>;
+>> +			renesas,fcp = <&fcpvd0>;
+>> +		};
+>> +
+>>  		fcpvd0: fcp@fea27000 {
+>>  			compatible = "renesas,fcpv";
+>>  			reg = <0 0xfea27000 0 0x200>;
+>> @@ -710,6 +730,16 @@
+>>  			iommus = <&ipmmu_vi0 8>;
+>>  		};
+>>  
+>> +		vspd1: vsp@fea80000 {
+> 
+> The above should be:
+> 
+> 		vspd1: vsp@fea28000 {
 
-diff --git a/arch/arm/boot/dts/imx6qdl-gw551x.dtsi b/arch/arm/boot/dts/imx6qdl-gw551x.dtsi
-index 30d4662..749548a 100644
---- a/arch/arm/boot/dts/imx6qdl-gw551x.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-gw551x.dtsi
-@@ -46,6 +46,8 @@
-  */
- 
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/media/tda1997x.h>
-+#include <dt-bindings/sound/fsl-imx-audmux.h>
- 
- / {
- 	/* these are used by bootloader for disabling nodes */
-@@ -98,6 +100,50 @@
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
- 	};
-+
-+	sound-digital {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "tda1997x-audio";
-+
-+		simple-audio-card,dai-link@0 {
-+			format = "i2s";
-+
-+			cpu {
-+				sound-dai = <&ssi2>;
-+			};
-+
-+			codec {
-+				bitclock-master;
-+				frame-master;
-+				sound-dai = <&tda1997x>;
-+			};
-+		};
-+	};
-+};
-+
-+&audmux {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_audmux>; /* AUD5<->tda1997x */
-+	status = "okay";
-+
-+	ssi1 {
-+		fsl,audmux-port = <0>;
-+		fsl,port-config = <
-+			(IMX_AUDMUX_V2_PTCR_TFSDIR |
-+			IMX_AUDMUX_V2_PTCR_TFSEL(4+8) | /* RXFS */
-+			IMX_AUDMUX_V2_PTCR_TCLKDIR |
-+			IMX_AUDMUX_V2_PTCR_TCSEL(4+8) | /* RXC */
-+			IMX_AUDMUX_V2_PTCR_SYN)
-+			IMX_AUDMUX_V2_PDCR_RXDSEL(4)
-+		>;
-+	};
-+
-+	aud5 {
-+		fsl,audmux-port = <4>;
-+		fsl,port-config = <
-+			IMX_AUDMUX_V2_PTCR_SYN
-+			IMX_AUDMUX_V2_PDCR_RXDSEL(0)>;
-+	};
- };
- 
- &can1 {
-@@ -263,6 +309,60 @@
- 		#gpio-cells = <2>;
- 	};
- 
-+	tda1997x: tda1997x@48 {
-+		compatible = "nxp,tda19971";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_tda1997x>;
-+		reg = <0x48>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
-+		DOVDD-supply = <&reg_3p3>;
-+		AVDD-supply = <&reg_1p8b>;
-+		DVDD-supply = <&reg_1p8a>;
-+		#sound-dai-cells = <0>;
-+		nxp,audout-format = "i2s";
-+		nxp,audout-layout = <0>;
-+		nxp,audout-width = <16>;
-+		nxp,audout-mclk-fs = <128>;
-+		/*
-+		 * The 8bpp YUV422 semi-planar mode outputs CbCr[11:4]
-+		 * and Y[11:4] across 16bits in the same cycle
-+		 * which we map to VP[15:08]<->CSI_DATA[19:12]
-+		 */
-+		nxp,vidout-portcfg =
-+			/*G_Y_11_8<->VP[15:12]<->CSI_DATA[19:16]*/
-+			< TDA1997X_VP24_V15_12 TDA1997X_G_Y_11_8 >,
-+			/*G_Y_7_4<->VP[11:08]<->CSI_DATA[15:12]*/
-+			< TDA1997X_VP24_V11_08 TDA1997X_G_Y_7_4 >,
-+			/*R_CR_CBCR_11_8<->VP[07:04]<->CSI_DATA[11:08]*/
-+			< TDA1997X_VP24_V07_04 TDA1997X_R_CR_CBCR_11_8 >,
-+			/*R_CR_CBCR_7_4<->VP[03:00]<->CSI_DATA[07:04]*/
-+			< TDA1997X_VP24_V03_00 TDA1997X_R_CR_CBCR_7_4 >;
-+
-+		port {
-+			tda1997x_to_ipu1_csi0_mux: endpoint {
-+				remote-endpoint = <&ipu1_csi0_mux_from_parallel_sensor>;
-+				bus-width = <16>;
-+				hsync-active = <1>;
-+				vsync-active = <1>;
-+				data-active = <1>;
-+			};
-+		};
-+	};
-+};
-+
-+&ipu1_csi0_from_ipu1_csi0_mux {
-+	bus-width = <16>;
-+};
-+
-+&ipu1_csi0_mux_from_parallel_sensor {
-+	remote-endpoint = <&tda1997x_to_ipu1_csi0_mux>;
-+	bus-width = <16>;
-+};
-+
-+&ipu1_csi0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ipu1_csi0>;
- };
- 
- &pcie {
-@@ -320,6 +420,14 @@
- };
- 
- &iomuxc {
-+	pinctrl_audmux: audmuxgrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_DISP0_DAT19__AUD5_RXD	0x130b0
-+			MX6QDL_PAD_DISP0_DAT14__AUD5_RXC	0x130b0
-+			MX6QDL_PAD_DISP0_DAT13__AUD5_RXFS	0x130b0
-+		>;
-+	};
-+
- 	pinctrl_flexcan1: flexcan1grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_KEY_ROW2__FLEXCAN1_RX	0x1b0b1
-@@ -375,6 +483,30 @@
- 		>;
- 	};
- 
-+	pinctrl_ipu1_csi0: ipu1_csi0grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_CSI0_DAT4__IPU1_CSI0_DATA04		0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT5__IPU1_CSI0_DATA05		0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT6__IPU1_CSI0_DATA06		0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT7__IPU1_CSI0_DATA07		0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT8__IPU1_CSI0_DATA08		0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT9__IPU1_CSI0_DATA09		0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT10__IPU1_CSI0_DATA10		0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT11__IPU1_CSI0_DATA11		0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT12__IPU1_CSI0_DATA12		0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT13__IPU1_CSI0_DATA13		0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT14__IPU1_CSI0_DATA14		0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT15__IPU1_CSI0_DATA15		0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT16__IPU1_CSI0_DATA16		0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT17__IPU1_CSI0_DATA17		0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT18__IPU1_CSI0_DATA18		0x1b0b0
-+			MX6QDL_PAD_CSI0_DAT19__IPU1_CSI0_DATA19		0x1b0b0
-+			MX6QDL_PAD_CSI0_MCLK__IPU1_CSI0_HSYNC		0x1b0b0
-+			MX6QDL_PAD_CSI0_PIXCLK__IPU1_CSI0_PIXCLK	0x1b0b0
-+			MX6QDL_PAD_CSI0_VSYNC__IPU1_CSI0_VSYNC		0x1b0b0
-+		>;
-+	};
-+
- 	pinctrl_pcie: pciegrp {
- 		fsl,pins = <
- 			MX6QDL_PAD_GPIO_0__GPIO1_IO00		0x1b0b0 /* PCIE RST */
-@@ -399,6 +531,12 @@
- 		>;
- 	};
- 
-+	pinctrl_tda1997x: tda1997xgrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_7__GPIO1_IO07		0x1b0b0
-+		>;
-+	};
-+
- 	pinctrl_uart2: uart2grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD4_DAT7__UART2_TX_DATA	0x1b0b1
--- 
-2.7.4
+Good spot.
+
+</me looks to datasheet> That is correct.
+
+Would you like me to resubmit this patch ? Or will you fix this up locally?
+
+--
+Regards
+
+Kieran
+
+
+> 
+>> +			compatible = "renesas,vsp2";
+>> +			reg = <0 0xfea28000 0 0x8000>;
+>> +			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&cpg CPG_MOD 622>;
+>> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+>> +			resets = <&cpg 622>;
+>> +			renesas,fcp = <&fcpvd1>;
+>> +		};
+>> +
+>>  		fcpvd1: fcp@fea2f000 {
+>>  			compatible = "renesas,fcpv";
+>>  			reg = <0 0xfea2f000 0 0x200>;
+>> -- 
+>> 2.7.4
+>>
