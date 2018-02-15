@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2179907-1518720215-2-9335443988441020530
+X-Cyrus-Session-Id: sloti22d1t05-2179907-1518720212-2-9002192787945826297
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720213; b=jhBKnVC7qAUiv7IrGTm7AbrcWcl36QRXWVzPFIjpU/SYGUT
-    vZfAzJpiU2oI9YMP3FHmN1URIRDalW+Y7tcN/qG7c/1wMbI/i5cEKSmOzJyzCl6A
-    Y/anLl5fiOUETvaNf8QTxE4NS8lSsqgXXORIN5FOvgW8l8JZks+oHPaY7l4lN02R
-    GYiMK/pStM6NpXXdURMhxqGpSqqUS7e1kBxsbSXTgfnBSRUKe2qfoeHeXrlIFVLV
-    ZpkJrb2ctcI2X9eJ2vBpqtNpEwZc7pD3nV/aQ/eIlwIBF7oT+pwlCxg7OxsAFllJ
-    4WUZO4L6c/7yxDo1WpbWleB7Zu8mN7VztlYz+qQ==
+    t=1518720211; b=xBQVVVIaUrYYIGKemXrskLG7WOcokye369jFFU/GaVVCwZd
+    jjh+fMzjRz2fBmRQ6+vhcYV4z1dPj/86PYQvbruNy9lleJg9Dk1/pxraUNM+ECGJ
+    6Rn9s+GD7A25tUOO/vvDYvA/2FZ4eGD5Y510eBB9+UAMZEuyq2RUIu4nWA5maAhb
+    338+ZgU2C8e0fMkp/ptUyadvduYCMb7845LU1Hn5deUJv27scgGxCnsUHl+ghUoB
+    K2As1FvJTfRxLTcJwbk6IYtHR0huDWVw4j1jTFIeTKZVgqbcOpFGXI6DhOMgFWqs
+    sLo9Kq/ZxAG+6AJ+WbdmZlaFM27e568HAc2bcXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720213; bh=IyJLi3SMvLt75YnkD/yt/jyERW
-    GCFDoR4cvpSuMk6kw=; b=CHs/ZN21rdsXOD2QZqLIr42zubTJSks5icngCgZIL3
-    Rg3Th6uvgEZQZTGJI4/wpPdtZDMg6Ts0x1DQY1+m01nYADck3u82KrtPUMkOQV4J
-    YJV905q0vGMx4IKleewc0blwJbP9GdkVwIcp813hnPRRb1iiAXyTAHEipIRM5zKg
-    MMhkGxP/yOZj0fJ9Aeoezt32k+KNi6DnWiT8RiCahZageKevfczPsWzKqC0H018W
-    hZQgWIYU/lck+EAhyrnynoEFycCOZ+7x4rWIUSij7njxRWhh5FOxAeLb0P2ZatLk
-    0VPGNHvRu/BgoziaE1JB/1/91UkLc6aISo1Razox/jag==
+    :list-id; s=arctest; t=1518720211; bh=e9Dp+XiPAIGIhUGKX9OreGrB25
+    gC6FfqO/ruiYtYQKw=; b=E/a2Wg26s5anFL95M2Js0paEFJdtb7WEbi70XDkkEj
+    849ZdE/EWWOQkaiBCBOtR2XF07GyhPp8QerXC0I6pFfgl/beYTc2xNw14genglAU
+    Rp/Jlq2IWVOBIluw0tZ/bOPV0MVhDcj7rZglVWnKzOgl4VgdXv+iczqZmJEF+65w
+    xDpvNu+vX1EmRanJ1mTuJlP07I3LVassGBIVySLMEaMQGvd++ycyYxmUGdXQCNSu
+    lcsB5BZ2ZUtUB01s/ItTa+12ZJb0AlBWZCZClHmY7XpQJ3McgqeH6ss7qPGk9mWx
+    4226BjGvQUXrywYtcMbq/Qy4Pj0+gahONHfJ3Y1ODtqA==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,20 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162628AbeBOPXU (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:23:20 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50864 "EHLO
+        id S1162659AbeBOSnQ (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:43:16 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51014 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161910AbeBOPXQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:16 -0500
+        with ESMTP id S1162636AbeBOPXW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:22 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Scott Mayhew <smayhew@redhat.com>
-Subject: [PATCH 4.4 059/108] nfs/pnfs: fix nfs_direct_req ref leak when i/o falls back to the mds
-Date: Thu, 15 Feb 2018 16:16:56 +0100
-Message-Id: <20180215151230.667868832@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Galbraith <efault@gmx.de>,
+        Trond Myklebust <trond.myklebust@primarydata.com>
+Subject: [PATCH 4.4 060/108] NFS: Add a cond_resched() to nfs_commit_release_pages()
+Date: Thu, 15 Feb 2018 16:16:57 +0100
+Message-Id: <20180215151230.825319379@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -78,60 +77,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Scott Mayhew <smayhew@redhat.com>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 
-commit ba4a76f703ab7eb72941fdaac848502073d6e9ee upstream.
+commit 7f1bda447c9bd48b415acedba6b830f61591601f upstream.
 
-Currently when falling back to doing I/O through the MDS (via
-pnfs_{read|write}_through_mds), the client frees the nfs_pgio_header
-without releasing the reference taken on the dreq
-via pnfs_generic_pg_{read|write}pages -> nfs_pgheader_init ->
-nfs_direct_pgio_init.  It then takes another reference on the dreq via
-nfs_generic_pg_pgios -> nfs_pgheader_init -> nfs_direct_pgio_init and
-as a result the requester will become stuck in inode_dio_wait.  Once
-that happens, other processes accessing the inode will become stuck as
-well.
+The commit list can get very large, and so we need a cond_resched()
+in nfs_commit_release_pages() in order to ensure we don't hog the CPU
+for excessive periods of time.
 
-Ensure that pnfs_read_through_mds() and pnfs_write_through_mds() clean
-up correctly by calling hdr->completion_ops->completion() instead of
-calling hdr->release() directly.
-
-This can be reproduced (sometimes) by performing "storage failover
-takeover" commands on NetApp filer while doing direct I/O from a client.
-
-This can also be reproduced using SystemTap to simulate a failure while
-doing direct I/O from a client (from Dave Wysochanski
-<dwysocha@redhat.com>):
-
-stap -v -g -e 'probe module("nfs_layout_nfsv41_files").function("nfs4_fl_prepare_ds").return { $return=NULL; exit(); }'
-
-Suggested-by: Trond Myklebust <trond.myklebust@primarydata.com>
-Signed-off-by: Scott Mayhew <smayhew@redhat.com>
-Fixes: 1ca018d28d ("pNFS: Fix a memory leak when attempted pnfs fails")
+Reported-by: Mike Galbraith <efault@gmx.de>
 Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/pnfs.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/nfs/write.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/nfs/pnfs.c
-+++ b/fs/nfs/pnfs.c
-@@ -1943,7 +1943,7 @@ pnfs_write_through_mds(struct nfs_pageio
- 		nfs_pageio_reset_write_mds(desc);
- 		mirror->pg_recoalesce = 1;
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -1746,6 +1746,8 @@ static void nfs_commit_release_pages(str
+ 		set_bit(NFS_CONTEXT_RESEND_WRITES, &req->wb_context->flags);
+ 	next:
+ 		nfs_unlock_and_release_request(req);
++		/* Latency breaker */
++		cond_resched();
  	}
--	hdr->release(hdr);
-+	hdr->completion_ops->completion(hdr);
- }
- 
- static enum pnfs_try_status
-@@ -2058,7 +2058,7 @@ pnfs_read_through_mds(struct nfs_pageio_
- 		nfs_pageio_reset_read_mds(desc);
- 		mirror->pg_recoalesce = 1;
- 	}
--	hdr->release(hdr);
-+	hdr->completion_ops->completion(hdr);
- }
- 
- /*
+ 	nfss = NFS_SERVER(data->inode);
+ 	if (atomic_long_read(&nfss->writeback) < NFS_CONGESTION_OFF_THRESH)
