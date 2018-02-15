@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224lQJPO2ciWW+LUEPp0SkQ92N4uHXcQc9V/BrbMO3vknflerJI9KN9jcO2KmXK5GBp9H3Y7
-ARC-Seal: i=1; a=rsa-sha256; t=1518707985; cv=none;
+X-Google-Smtp-Source: AH8x22775RXkwwMeonvj0+DiiE7kHNP7NPuGIycEe/wY1hi3VpBnMy0blwzFEihaWVdavg9PXVHS
+ARC-Seal: i=1; a=rsa-sha256; t=1518707982; cv=none;
         d=google.com; s=arc-20160816;
-        b=jqyYpdwdOH8ZB7S1afr7VcmBdZHv0k42lRovtSohLPrXLnEbTygOMHTVzOfy9BN4cb
-         YOzyFBB+p2JanXDLngGsNbaZVYhQo91mOZa3xrtpD8KN+dpPVc5QMRMjLTmk5uPNmm9c
-         g05PAFdF4U3/IIgxOkiJvTTgL8wSukI3AOJMm0heQdNvmCpYEyceLev/fopam69aF8In
-         DrzZ9XaXKR+Cwr4ASCLpIkpxBd0hgIc8nJSEKaEiHuY7lY/OuT/1zxxBvyYTRmrUA60J
-         2FRn4Ke66Apcu2/LgXe+S0vrtV53zbfx2dVMlDU1/RQRGX5HId56Fjv175CosJJ+GTzn
-         jsEQ==
+        b=nBWn5stE7ylCmFeWL5o0OSzeSzM4FbDLoXpDjO8DN0K7w0hdRSdiwucY6ue90bMPMM
+         jXSVrKjqL5oWVNVMA3XsgD5UuLVZO8HNeuu3XgPS/J9hljkZuP5dfim2yLb6klYAmaKL
+         3JIwgrH2wA8j/4I6OYZtzWVJTgbukqmYZzUhZ3FXfowiDlEIETXUwOiZ4gVbLorZ5ZiU
+         8j32NdSKL3iZFjfUU4SDRoMJutYNhsQ3ORYL0jnd9tLey2U32n+j49OiwjXwt8s6ws26
+         6V4fC6eP+/B3AycRa1pQ5IP4Gt/k2XVjiUcPKL4Vzw6F7tw3kWHCCe0s7KGOiw19TBFk
+         glgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=KSnLaeIYVJt0grlyMt7MuXkgRkpnUZ18Nt3zSGQDD8M=;
-        b=OdabHWT0EoiSlRMxDUJzFwpD7zbsyjhkhZJ9wEKJwWkiPr20+5wu+laE0dpOSvDBM/
-         VnoC9wBAkwqGU2cj3r84G+CE+JR7Uk0AIqKM9MrT3Xa+nSzgJOZywYSYaYRsiYSJcZN+
-         +7qZ+oouH65V6RnfkrUFxxtjQSz2yYRDvFbCT2gqrRoJnfInir5uV0Kp4UnJHdqgbQja
-         0dM83y015A44PlLxkXX8xCj/0wSzkwRzyYLiVrpM7BfTaxYIGB0Rc99xXaHf5HUowu2L
-         RfYvYpVrlVYAd326z0Gb57xERt0O1cnmTtva1eJ/LYwdwgfbrlHekIqRGnV8PO8LXFRU
-         aBHA==
+        bh=B4AIblebKZcPO4CVECv6UyfxEeTDra1sjuRxVA7NiJI=;
+        b=tTCnCdBqV2uo7UHLCYtMivKAmwskBvB/FQImXU+zQYDVpshr6UDcVvp3aogi1EVthq
+         pYBM0JVGxk8WpCgQMawpBLqM5xAo/X/my1BfMuVe37VXBVILCAExvKdyUNiI+4lS2Drh
+         xwQ1OGWWLcHhmii3iS+MeNbg6rCG1U1JvtMK7ouVAaHul97Brm2GlksbkntOMJv7nfYW
+         wqKFQgvm1+0xlnKkgLqcB2COu8Tp/HaM4hTmluFLpN4emjZr2sVQcMyWyfTx8Pp6nLMM
+         6Bxy8AxG3BfnDPaM2kLcv0xaJ08TB47s0WxlIgLJ74UbvveeIy5btwcYqSwxUPqM2bHG
+         WFdQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Bryan ODonoghue <pure.logic@nexus-software.ie>,
-	Auer Lukas <lukas.auer@aisec.fraunhofer.de>,
-	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+	Eric Biggers <ebiggers@google.com>,
 	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 3.18 33/45] crypto: caam - fix endless loop when DECO acquire fails
-Date: Thu, 15 Feb 2018 16:17:24 +0100
-Message-Id: <20180215144122.975431197@linuxfoundation.org>
+Subject: [PATCH 3.18 32/45] crypto: cryptd - pass through absence of ->setkey()
+Date: Thu, 15 Feb 2018 16:17:23 +0100
+Message-Id: <20180215144122.792567406@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215144115.863307741@linuxfoundation.org>
 References: <20180215144115.863307741@linuxfoundation.org>
@@ -41,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480744127321065?=
-X-GMAIL-MSGID: =?utf-8?q?1592480744127321065?=
+X-GMAIL-THRID: =?utf-8?q?1592480741570671700?=
+X-GMAIL-MSGID: =?utf-8?q?1592480741570671700?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,53 +48,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Horia Geantă <horia.geanta@nxp.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 225ece3e7dad4cfc44cca38ce7a3a80f255ea8f1 upstream.
+commit 841a3ff329713f796a63356fef6e2f72e4a3f6a3 upstream.
 
-In case DECO0 cannot be acquired - i.e. run_descriptor_deco0() fails
-with -ENODEV, caam_probe() enters an endless loop:
+When the cryptd template is used to wrap an unkeyed hash algorithm,
+don't install a ->setkey() method to the cryptd instance.  This change
+is necessary for cryptd to keep working with unkeyed hash algorithms
+once we start enforcing that ->setkey() is called when present.
 
-run_descriptor_deco0
-	ret -ENODEV
-	-> instantiate_rng
-		-ENODEV, overwritten by -EAGAIN
-		ret -EAGAIN
-		-> caam_probe
-			-EAGAIN results in endless loop
-
-It turns out the error path in instantiate_rng() is incorrect,
-the checks are done in the wrong order.
-
-Fixes: 1005bccd7a4a6 ("crypto: caam - enable instantiation of all RNG4 state handles")
-Reported-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Suggested-by: Auer Lukas <lukas.auer@aisec.fraunhofer.de>
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/caam/ctrl.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ crypto/cryptd.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/crypto/caam/ctrl.c
-+++ b/drivers/crypto/caam/ctrl.c
-@@ -209,12 +209,16 @@ static int instantiate_rng(struct device
- 		 * without any error (HW optimizations for later
- 		 * CAAM eras), then try again.
- 		 */
-+		if (ret)
-+			break;
-+
- 		rdsta_val =
- 			rd_reg32(&ctrl->r4tst[0].rdsta) & RDSTA_IFMASK;
--		if (status || !(rdsta_val & (1 << sh_idx)))
-+		if (status || !(rdsta_val & (1 << sh_idx))) {
- 			ret = -EAGAIN;
--		if (ret)
- 			break;
-+		}
-+
- 		dev_info(ctrldev, "Instantiated RNG4 SH%d\n", sh_idx);
- 		/* Clear the contents before recreating the descriptor */
- 		memset(desc, 0x00, CAAM_CMD_SZ * 7);
+--- a/crypto/cryptd.c
++++ b/crypto/cryptd.c
+@@ -618,7 +618,8 @@ static int cryptd_create_hash(struct cry
+ 	inst->alg.finup  = cryptd_hash_finup_enqueue;
+ 	inst->alg.export = cryptd_hash_export;
+ 	inst->alg.import = cryptd_hash_import;
+-	inst->alg.setkey = cryptd_hash_setkey;
++	if (crypto_shash_alg_has_setkey(salg))
++		inst->alg.setkey = cryptd_hash_setkey;
+ 	inst->alg.digest = cryptd_hash_digest_enqueue;
+ 
+ 	err = ahash_register_instance(tmpl, inst);
