@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1906823-1518710639-2-7913244421453573639
+X-Cyrus-Session-Id: sloti22d1t05-1883814-1518710620-2-13904800030596932451
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518710638; b=xF0J2gwemvuxIfxBwcrftZ+HfYzsNZRqe0mbVfpyWK1phO0
-    /qQpVFyVn2ZcBKpKVvaqSZRe+7tHco/5/+FbCF73jflQVkrdecWAkxJKajUMpKhP
-    UkwHLGMUWHm73bObT2wkscs2a7SxKwPEznAIabTIuSSNfcN+F+UmCbDdxyfTMi8D
-    xX2lzH24KHCX2oNLb+ZBuDgLfzPhSeKtCFeaz45krTM5ITxh4rkvckjda+6QftAF
-    0iUtdcQVAHtQuob0qfSDh1+SICqPxEFg4cIIZJLiukbLwDjsmKP95DghYLyMQsT4
-    z+ZxqZrlUI34Q/M9A1wLSxWUgp214lbLIEoI2Ig==
+    t=1518710620; b=C/B+psbn/MJ16dv+6XoQLTUK5mz7qI3LQOdOBQPScPec1AW
+    dDmK3yhWVELtGyRyr9/HLFbRD92bvZoY3Wf3FCR1pHFo8Ze6HxlMb21/CKUfMU6V
+    OFePrEjCx+Yo+fbWhshS4BrMxzPqZm5+yHMd2EAzN23R3PZNR8H4LTHnGSGuLiV3
+    BMQ1N+LqPFWPhgPGiKNQIf/3/b85aDhyBB/UHMwoqVa5hzo6eG7VhbNB1J0lMCMx
+    iUJwRD3j5Q+lahqSWpXdLR08Mh9xrPn6sR0ur4uTcfpmhbsDe6Ckr8QNAYjUm85+
+    RwmcsMlonQtnZgSIk0HvRmhPrW5KCAE9P8AL/4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518710638; bh=5J8Ee8RPpQhwuSNeVbyrZlK9CP
-    3rOOdmrvynWIbnkMI=; b=L/mARn0ggf+NJdmNhNzEQmn6xt0n3mp0zhpn4vVo6a
-    BL9fPlm+nXpinfsR6u9L6EawC1mCdB+oWWUZYnxEPvGHWHiAqDldIdyMETkkFN9U
-    rL42xcHl5fJ2rxVKib/Aib3CS5NKQ1WW6oby0/k3XbxqzemNGjmKB78KrPl1tkog
-    tcZmW5Q2FPmSGK6WVAMLRYrOET3dAvs0kGMikT2nrGhXVlfe248MFHA1+hMv82pZ
-    1M+viR4L7Su6gJGRcaDR7duXyRUeQzYlaMeadsZaEoSoHs4TL6XqNuaMTwYY6oZn
-    NyiYEZFoCWYre3cZPvhQjZCAk4M8aiWyUVsgJD1V8O+w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518710620; bh=kqZ7jxm9xXEoJSAbIWwowPulwE
+    Gc2IYKJH9zPYCgz7g=; b=Y/4gkBy0JuZnovDh2CaAjAgMJCMdUm1S3YMTS+KsKz
+    UI9WQ13jSqbZ2Y4ejAYjhoBaQSy6xUPSa/h0K5oJL8cQucL5D4RuLz4xA5kxAi2d
+    xrNOeFXeCOzdjKjLyN6e4D7WQP0RuOLu94wO9E7bo1cr/2GDPBV2EOFfxYZ4wGrI
+    dHd6eftI4l3TMn1a7m2FyqaSiOdnYwOolLRoGOGM0MrBoSqHvyMWcBA5M5oTQRWn
+    Hw2AkDd7VtTT3IWmX2NGV4GxDGTvb26lG4bW7zO7tiLkM/qtif8ifP4Ne+XR6qWd
+    Qs3QZajafyu2aMncAqJrFCK8W8Z9TfuP6um8kIswLcTQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,19 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424644AbeBOPqR (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:46:17 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35282 "EHLO
+        id S1424668AbeBOPq0 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:46:26 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35468 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424630AbeBOPqM (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:46:12 -0500
+        with ESMTP id S1424630AbeBOPqY (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:46:24 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.15 129/202] crypto: talitos - fix Kernel Oops on hashing an empty file
-Date: Thu, 15 Feb 2018 16:17:09 +0100
-Message-Id: <20180215151719.952976106@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>
+Subject: [PATCH 4.15 133/202] KVM: PPC: Book3S HV: Make sure we dont re-enter guest without XIVE loaded
+Date: Thu, 15 Feb 2018 16:17:13 +0100
+Message-Id: <20180215151720.117639469@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -77,59 +76,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: LEROY Christophe <christophe.leroy@c-s.fr>
+From: Paul Mackerras <paulus@ozlabs.org>
 
-commit 87a81dce53b1ea61acaeefa5191a0376a2d1d721 upstream.
+commit 43ff3f65234061e08d234bdef5a9aadc19832b74 upstream.
 
-Performing the hash of an empty file leads to a kernel Oops
+This fixes a bug where it is possible to enter a guest on a POWER9
+system without having the XIVE (interrupt controller) context loaded.
+This can happen because we unload the XIVE context from the CPU
+before doing the real-mode handling for machine checks.  After the
+real-mode handler runs, it is possible that we re-enter the guest
+via a fast path which does not load the XIVE context.
 
-[   44.504600] Unable to handle kernel paging request for data at address 0x0000000c
-[   44.512819] Faulting instruction address: 0xc02d2be8
-[   44.524088] Oops: Kernel access of bad area, sig: 11 [#1]
-[   44.529171] BE PREEMPT CMPC885
-[   44.532232] CPU: 0 PID: 491 Comm: md5sum Not tainted 4.15.0-rc8-00211-g3a968610b6ea #81
-[   44.540814] NIP:  c02d2be8 LR: c02d2984 CTR: 00000000
-[   44.545812] REGS: c6813c90 TRAP: 0300   Not tainted  (4.15.0-rc8-00211-g3a968610b6ea)
-[   44.554223] MSR:  00009032 <EE,ME,IR,DR,RI>  CR: 48222822  XER: 20000000
-[   44.560855] DAR: 0000000c DSISR: c0000000
-[   44.560855] GPR00: c02d28fc c6813d40 c6828000 c646fa40 00000001 00000001 00000001 00000000
-[   44.560855] GPR08: 0000004c 00000000 c000bfcc 00000000 28222822 100280d4 00000000 10020008
-[   44.560855] GPR16: 00000000 00000020 00000000 00000000 10024008 00000000 c646f9f0 c6179a10
-[   44.560855] GPR24: 00000000 00000001 c62f0018 c6179a10 00000000 c6367a30 c62f0000 c646f9c0
-[   44.598542] NIP [c02d2be8] ahash_process_req+0x448/0x700
-[   44.603751] LR [c02d2984] ahash_process_req+0x1e4/0x700
-[   44.608868] Call Trace:
-[   44.611329] [c6813d40] [c02d28fc] ahash_process_req+0x15c/0x700 (unreliable)
-[   44.618302] [c6813d90] [c02060c4] hash_recvmsg+0x11c/0x210
-[   44.623716] [c6813db0] [c0331354] ___sys_recvmsg+0x98/0x138
-[   44.629226] [c6813eb0] [c03332c0] __sys_recvmsg+0x40/0x84
-[   44.634562] [c6813f10] [c03336c0] SyS_socketcall+0xb8/0x1d4
-[   44.640073] [c6813f40] [c000d1ac] ret_from_syscall+0x0/0x38
-[   44.645530] Instruction dump:
-[   44.648465] 38c00001 7f63db78 4e800421 7c791b78 54690ffe 0f090000 80ff0190 2f870000
-[   44.656122] 40befe50 2f990001 409e0210 813f01bc <8129000c> b39e003a 7d29c214 913e003c
+To fix this, we move the unloading of the XIVE context to come after
+the real-mode machine check handler is called.
 
-This patch fixes that Oops by checking if src is NULL.
-
-Fixes: 6a1e8d14156d4 ("crypto: talitos - making mapping helpers more generic")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 5af50993850a ("KVM: PPC: Book3S HV: Native usage of the XIVE interrupt controller")
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/talitos.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/powerpc/kvm/book3s_hv_rmhandlers.S |   40 ++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -1138,6 +1138,10 @@ static int talitos_sg_map(struct device
- 	struct talitos_private *priv = dev_get_drvdata(dev);
- 	bool is_sec1 = has_ftr_sec1(priv);
+--- a/arch/powerpc/kvm/book3s_hv_rmhandlers.S
++++ b/arch/powerpc/kvm/book3s_hv_rmhandlers.S
+@@ -1423,6 +1423,26 @@ END_FTR_SECTION_IFSET(CPU_FTR_ARCH_300)
+ 	blt	deliver_guest_interrupt
  
-+	if (!src) {
-+		to_talitos_ptr(ptr, 0, 0, is_sec1);
-+		return 1;
-+	}
- 	if (sg_count == 1) {
- 		to_talitos_ptr(ptr, sg_dma_address(src) + offset, len, is_sec1);
- 		return sg_count;
+ guest_exit_cont:		/* r9 = vcpu, r12 = trap, r13 = paca */
++	/* Save more register state  */
++	mfdar	r6
++	mfdsisr	r7
++	std	r6, VCPU_DAR(r9)
++	stw	r7, VCPU_DSISR(r9)
++	/* don't overwrite fault_dar/fault_dsisr if HDSI */
++	cmpwi	r12,BOOK3S_INTERRUPT_H_DATA_STORAGE
++	beq	mc_cont
++	std	r6, VCPU_FAULT_DAR(r9)
++	stw	r7, VCPU_FAULT_DSISR(r9)
++
++	/* See if it is a machine check */
++	cmpwi	r12, BOOK3S_INTERRUPT_MACHINE_CHECK
++	beq	machine_check_realmode
++mc_cont:
++#ifdef CONFIG_KVM_BOOK3S_HV_EXIT_TIMING
++	addi	r3, r9, VCPU_TB_RMEXIT
++	mr	r4, r9
++	bl	kvmhv_accumulate_time
++#endif
+ #ifdef CONFIG_KVM_XICS
+ 	/* We are exiting, pull the VP from the XIVE */
+ 	lwz	r0, VCPU_XIVE_PUSHED(r9)
+@@ -1460,26 +1480,6 @@ guest_exit_cont:		/* r9 = vcpu, r12 = tr
+ 	eieio
+ 1:
+ #endif /* CONFIG_KVM_XICS */
+-	/* Save more register state  */
+-	mfdar	r6
+-	mfdsisr	r7
+-	std	r6, VCPU_DAR(r9)
+-	stw	r7, VCPU_DSISR(r9)
+-	/* don't overwrite fault_dar/fault_dsisr if HDSI */
+-	cmpwi	r12,BOOK3S_INTERRUPT_H_DATA_STORAGE
+-	beq	mc_cont
+-	std	r6, VCPU_FAULT_DAR(r9)
+-	stw	r7, VCPU_FAULT_DSISR(r9)
+-
+-	/* See if it is a machine check */
+-	cmpwi	r12, BOOK3S_INTERRUPT_MACHINE_CHECK
+-	beq	machine_check_realmode
+-mc_cont:
+-#ifdef CONFIG_KVM_BOOK3S_HV_EXIT_TIMING
+-	addi	r3, r9, VCPU_TB_RMEXIT
+-	mr	r4, r9
+-	bl	kvmhv_accumulate_time
+-#endif
+ 
+ 	mr 	r3, r12
+ 	/* Increment exit count, poke other threads to exit */
