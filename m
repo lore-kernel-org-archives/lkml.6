@@ -1,40 +1,37 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226+t04Ir0963kfcivf4e/Dr1DsRpF1++fimmW10TUXYFvm7EPKvc2T8eZSrqK2V++kTbdq9
-ARC-Seal: i=1; a=rsa-sha256; t=1518708905; cv=none;
+X-Google-Smtp-Source: AH8x224SW7DYUDyczeSLNPWncrtoEZDXAXKit1lKvnf+c/I9Q2/CCLzjITxMLm96j4EDpALzu61l
+ARC-Seal: i=1; a=rsa-sha256; t=1518708901; cv=none;
         d=google.com; s=arc-20160816;
-        b=xIkPixEOz/ccjAKPTzLJeZgJiOjohDvTzVc5zC+59kcar1hkLIXJ9lYIlI0iQlXsrZ
-         S/4yhBQvUGluKb41eBGDqeAQxhr4rT7dl5RMNpHSKbydgsWYzsDrcvF82MfON05gBwtg
-         36MSiIwmdux4KlsmrFq63mYck+GWjF2tyQ8WBLATnOrttVeuX9yDqHXyrWwajZtHke2c
-         pwn//hOfdlx48rVDiuJjchBwJWscu/6Nr+elzuv7f7BDH1pinQi7dvej1S/D6wQhUZkN
-         NDjO4dKZwtt/fzvOn0bvNXNsVygoJesM5rX7Ianh5Vah5DJga5+2HdCIQrYvwMNeVCS6
-         alWQ==
+        b=YoM3txH8x24BrT1N4WRpSxXSQIpGJXmdgVar3xYuH/xnkUVexKly8ywTAvQr+T6YxS
+         JivPJi/z+957q4d3ZJbbU0u2RY2U1tkP3ZvdqYQOVJcgGO/HYbow55nLYuKEmCNKCRFX
+         8+/EF/AXLspqYs+om1sYsbDZWZffJO9QjuTgWHfQViNU9RqJDVbA0RUmmz2xpWtrY6UH
+         Zi+1xFfnUpSEbkHVToJ8mrhL6vEfLhzkqtlLEj0+F0iEa5uDvogYghWF7B5qK+Acz4jP
+         RJ/G34LAaV+5W6cACL0K4xoX75xORu0DpLXYoY5RMumU3jsVCSAWjvLqUiPXspCrsyXs
+         BZfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gtgNAJybfmZa4D10vOmQzYl88A3wWImGJ8+ZmnISQVE=;
-        b=RTlzVbLzQNCm/scM1LJVsMc9uUkqt8VlKjWmCqy1DJCek6cn/UyNT8fQD1nEK43YwT
-         aeztsG1fjB7HywkfsJLfuUtXxKQake/TGJjg8n1bdFa8gcJoo2Ve6Zbtp3FCptsRHP/1
-         +ifzOzd1ZbNvsk5D2emUhBGaWJGvuMH5o0theeaZslYkBqjlH843BG2DQ4ycp6n1ANZG
-         5re4twZMdDXF8nyqtNMuHgLvL/YQcCZRBS6Mfo3SWb3hAP8wTHB9DFBLNjdNAbce7puL
-         uzseZZjVamC+4/sIP6Lgg041sZ/ppOyWjR3dGSBhc46/DxO7SW8p3LsxPkLh3IPed4bb
-         uKaQ==
+        bh=fuZxvS+q1x/hHYcvjt6N9I1xtI1qOzvZb34QJuUD6Fs=;
+        b=hXgZoQd3FbhTi2JEDSZItswsNl1pV1/DwCEcbvtvp22maJBm327VlvVxQU5iM5P8Od
+         HeV64mdloO4DI581AsPeh1LVW7oJ75HQ/U5cPbuRU6KvdGKXBex9tGvDjkKtYelzULqV
+         kVLa3VqgI5cvrnV7JVcuXjBdOZmsFd2DlOVFkq48/wo0AD5B+9j3Le/QGjuuj37Iq33T
+         mQKxojirYNZ/632DK32FSKUxjgGAvPAiaw0D0QhdNek2cMsaxqVuH8o1mRjFR/yeFcfE
+         HWNwlThHwKkSOr/1KJ1RYee/nwrn9TYDq7JOCZkmho4NyQPEB+PDefiTzJtNXod/6bUV
+         7Emw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.14 090/195] [Variant 2/Spectre-v2] firmware/psci: Expose SMCCC version through psci_ops
-Date: Thu, 15 Feb 2018 16:16:21 +0100
-Message-Id: <20180215151710.204919867@linuxfoundation.org>
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.14 120/195] media: v4l2-ioctl.c: use check_fmt for enum/g/s/try_fmt
+Date: Thu, 15 Feb 2018 16:16:51 +0100
+Message-Id: <20180215151711.688165964@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481708878297459?=
-X-GMAIL-MSGID: =?utf-8?q?1592481708878297459?=
+X-GMAIL-THRID: =?utf-8?q?1592481704594227240?=
+X-GMAIL-MSGID: =?utf-8?q?1592481704594227240?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,97 +49,389 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
+commit b2469c814fbc8f1f19676dd4912717b798df511e upstream.
 
-Commit e78eef554a91 upstream.
+Don't duplicate the buffer type checks in enum/g/s/try_fmt.
+The check_fmt function does that already.
 
-Since PSCI 1.0 allows the SMCCC version to be (indirectly) probed,
-let's do that at boot time, and expose the version of the calling
-convention as part of the psci_ops structure.
+It is hard to keep the checks in sync for all these functions and
+in fact the check for VBI was wrong in the _fmt functions as it
+allowed SDR types as well. This caused a v4l2-compliance failure
+for /dev/swradio0 using vivid.
 
-Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+This simplifies the code and keeps the check in one place and
+fixes the SDR/VBI bug.
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/firmware/psci.c |   27 +++++++++++++++++++++++++++
- include/linux/psci.h    |    6 ++++++
- 2 files changed, 33 insertions(+)
+ drivers/media/v4l2-core/v4l2-ioctl.c |  140 +++++++++++++----------------------
+ 1 file changed, 54 insertions(+), 86 deletions(-)
 
---- a/drivers/firmware/psci.c
-+++ b/drivers/firmware/psci.c
-@@ -61,6 +61,7 @@ bool psci_tos_resident_on(int cpu)
- 
- struct psci_operations psci_ops = {
- 	.conduit = PSCI_CONDUIT_NONE,
-+	.smccc_version = SMCCC_VERSION_1_0,
- };
- 
- typedef unsigned long (psci_fn)(unsigned long, unsigned long,
-@@ -511,6 +512,31 @@ static void __init psci_init_migrate(voi
- 	pr_info("Trusted OS resident on physical CPU 0x%lx\n", cpuid);
- }
- 
-+static void __init psci_init_smccc(void)
-+{
-+	u32 ver = ARM_SMCCC_VERSION_1_0;
-+	int feature;
-+
-+	feature = psci_features(ARM_SMCCC_VERSION_FUNC_ID);
-+
-+	if (feature != PSCI_RET_NOT_SUPPORTED) {
-+		u32 ret;
-+		ret = invoke_psci_fn(ARM_SMCCC_VERSION_FUNC_ID, 0, 0, 0);
-+		if (ret == ARM_SMCCC_VERSION_1_1) {
-+			psci_ops.smccc_version = SMCCC_VERSION_1_1;
-+			ver = ret;
-+		}
-+	}
-+
-+	/*
-+	 * Conveniently, the SMCCC and PSCI versions are encoded the
-+	 * same way. No, this isn't accidental.
-+	 */
-+	pr_info("SMC Calling Convention v%d.%d\n",
-+		PSCI_VERSION_MAJOR(ver), PSCI_VERSION_MINOR(ver));
-+
-+}
-+
- static void __init psci_0_2_set_functions(void)
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1308,52 +1308,50 @@ static int v4l_enum_fmt(const struct v4l
+ 				struct file *file, void *fh, void *arg)
  {
- 	pr_info("Using standard PSCI v0.2 function IDs\n");
-@@ -559,6 +585,7 @@ static int __init psci_probe(void)
- 	psci_init_migrate();
- 
- 	if (PSCI_VERSION_MAJOR(ver) >= 1) {
-+		psci_init_smccc();
- 		psci_init_cpu_suspend();
- 		psci_init_system_suspend();
- 	}
---- a/include/linux/psci.h
-+++ b/include/linux/psci.h
-@@ -31,6 +31,11 @@ enum psci_conduit {
- 	PSCI_CONDUIT_HVC,
- };
- 
-+enum smccc_version {
-+	SMCCC_VERSION_1_0,
-+	SMCCC_VERSION_1_1,
-+};
+ 	struct v4l2_fmtdesc *p = arg;
+-	struct video_device *vfd = video_devdata(file);
+-	bool is_vid = vfd->vfl_type == VFL_TYPE_GRABBER;
+-	bool is_sdr = vfd->vfl_type == VFL_TYPE_SDR;
+-	bool is_tch = vfd->vfl_type == VFL_TYPE_TOUCH;
+-	bool is_rx = vfd->vfl_dir != VFL_DIR_TX;
+-	bool is_tx = vfd->vfl_dir != VFL_DIR_RX;
+-	int ret = -EINVAL;
++	int ret = check_fmt(file, p->type);
 +
- struct psci_operations {
- 	u32 (*get_version)(void);
- 	int (*cpu_suspend)(u32 state, unsigned long entry_point);
-@@ -41,6 +46,7 @@ struct psci_operations {
- 			unsigned long lowest_affinity_level);
- 	int (*migrate_info_type)(void);
- 	enum psci_conduit conduit;
-+	enum smccc_version smccc_version;
- };
++	if (ret)
++		return ret;
++	ret = -EINVAL;
  
- extern struct psci_operations psci_ops;
+ 	switch (p->type) {
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+-		if (unlikely(!is_rx || (!is_vid && !is_tch) || !ops->vidioc_enum_fmt_vid_cap))
++		if (unlikely(!ops->vidioc_enum_fmt_vid_cap))
+ 			break;
+ 		ret = ops->vidioc_enum_fmt_vid_cap(file, fh, arg);
+ 		break;
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+-		if (unlikely(!is_rx || !is_vid || !ops->vidioc_enum_fmt_vid_cap_mplane))
++		if (unlikely(!ops->vidioc_enum_fmt_vid_cap_mplane))
+ 			break;
+ 		ret = ops->vidioc_enum_fmt_vid_cap_mplane(file, fh, arg);
+ 		break;
+ 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
+-		if (unlikely(!is_rx || !is_vid || !ops->vidioc_enum_fmt_vid_overlay))
++		if (unlikely(!ops->vidioc_enum_fmt_vid_overlay))
+ 			break;
+ 		ret = ops->vidioc_enum_fmt_vid_overlay(file, fh, arg);
+ 		break;
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
+-		if (unlikely(!is_tx || !is_vid || !ops->vidioc_enum_fmt_vid_out))
++		if (unlikely(!ops->vidioc_enum_fmt_vid_out))
+ 			break;
+ 		ret = ops->vidioc_enum_fmt_vid_out(file, fh, arg);
+ 		break;
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+-		if (unlikely(!is_tx || !is_vid || !ops->vidioc_enum_fmt_vid_out_mplane))
++		if (unlikely(!ops->vidioc_enum_fmt_vid_out_mplane))
+ 			break;
+ 		ret = ops->vidioc_enum_fmt_vid_out_mplane(file, fh, arg);
+ 		break;
+ 	case V4L2_BUF_TYPE_SDR_CAPTURE:
+-		if (unlikely(!is_rx || !is_sdr || !ops->vidioc_enum_fmt_sdr_cap))
++		if (unlikely(!ops->vidioc_enum_fmt_sdr_cap))
+ 			break;
+ 		ret = ops->vidioc_enum_fmt_sdr_cap(file, fh, arg);
+ 		break;
+ 	case V4L2_BUF_TYPE_SDR_OUTPUT:
+-		if (unlikely(!is_tx || !is_sdr || !ops->vidioc_enum_fmt_sdr_out))
++		if (unlikely(!ops->vidioc_enum_fmt_sdr_out))
+ 			break;
+ 		ret = ops->vidioc_enum_fmt_sdr_out(file, fh, arg);
+ 		break;
+ 	case V4L2_BUF_TYPE_META_CAPTURE:
+-		if (unlikely(!is_rx || !is_vid || !ops->vidioc_enum_fmt_meta_cap))
++		if (unlikely(!ops->vidioc_enum_fmt_meta_cap))
+ 			break;
+ 		ret = ops->vidioc_enum_fmt_meta_cap(file, fh, arg);
+ 		break;
+@@ -1367,13 +1365,10 @@ static int v4l_g_fmt(const struct v4l2_i
+ 				struct file *file, void *fh, void *arg)
+ {
+ 	struct v4l2_format *p = arg;
+-	struct video_device *vfd = video_devdata(file);
+-	bool is_vid = vfd->vfl_type == VFL_TYPE_GRABBER;
+-	bool is_sdr = vfd->vfl_type == VFL_TYPE_SDR;
+-	bool is_tch = vfd->vfl_type == VFL_TYPE_TOUCH;
+-	bool is_rx = vfd->vfl_dir != VFL_DIR_TX;
+-	bool is_tx = vfd->vfl_dir != VFL_DIR_RX;
+-	int ret;
++	int ret = check_fmt(file, p->type);
++
++	if (ret)
++		return ret;
+ 
+ 	/*
+ 	 * fmt can't be cleared for these overlay types due to the 'clips'
+@@ -1401,7 +1396,7 @@ static int v4l_g_fmt(const struct v4l2_i
+ 
+ 	switch (p->type) {
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+-		if (unlikely(!is_rx || (!is_vid && !is_tch) || !ops->vidioc_g_fmt_vid_cap))
++		if (unlikely(!ops->vidioc_g_fmt_vid_cap))
+ 			break;
+ 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
+ 		ret = ops->vidioc_g_fmt_vid_cap(file, fh, arg);
+@@ -1409,23 +1404,15 @@ static int v4l_g_fmt(const struct v4l2_i
+ 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
+ 		return ret;
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+-		if (unlikely(!is_rx || !is_vid || !ops->vidioc_g_fmt_vid_cap_mplane))
+-			break;
+ 		return ops->vidioc_g_fmt_vid_cap_mplane(file, fh, arg);
+ 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
+-		if (unlikely(!is_rx || !is_vid || !ops->vidioc_g_fmt_vid_overlay))
+-			break;
+ 		return ops->vidioc_g_fmt_vid_overlay(file, fh, arg);
+ 	case V4L2_BUF_TYPE_VBI_CAPTURE:
+-		if (unlikely(!is_rx || is_vid || !ops->vidioc_g_fmt_vbi_cap))
+-			break;
+ 		return ops->vidioc_g_fmt_vbi_cap(file, fh, arg);
+ 	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
+-		if (unlikely(!is_rx || is_vid || !ops->vidioc_g_fmt_sliced_vbi_cap))
+-			break;
+ 		return ops->vidioc_g_fmt_sliced_vbi_cap(file, fh, arg);
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
+-		if (unlikely(!is_tx || !is_vid || !ops->vidioc_g_fmt_vid_out))
++		if (unlikely(!ops->vidioc_g_fmt_vid_out))
+ 			break;
+ 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
+ 		ret = ops->vidioc_g_fmt_vid_out(file, fh, arg);
+@@ -1433,32 +1420,18 @@ static int v4l_g_fmt(const struct v4l2_i
+ 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
+ 		return ret;
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+-		if (unlikely(!is_tx || !is_vid || !ops->vidioc_g_fmt_vid_out_mplane))
+-			break;
+ 		return ops->vidioc_g_fmt_vid_out_mplane(file, fh, arg);
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
+-		if (unlikely(!is_tx || !is_vid || !ops->vidioc_g_fmt_vid_out_overlay))
+-			break;
+ 		return ops->vidioc_g_fmt_vid_out_overlay(file, fh, arg);
+ 	case V4L2_BUF_TYPE_VBI_OUTPUT:
+-		if (unlikely(!is_tx || is_vid || !ops->vidioc_g_fmt_vbi_out))
+-			break;
+ 		return ops->vidioc_g_fmt_vbi_out(file, fh, arg);
+ 	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
+-		if (unlikely(!is_tx || is_vid || !ops->vidioc_g_fmt_sliced_vbi_out))
+-			break;
+ 		return ops->vidioc_g_fmt_sliced_vbi_out(file, fh, arg);
+ 	case V4L2_BUF_TYPE_SDR_CAPTURE:
+-		if (unlikely(!is_rx || !is_sdr || !ops->vidioc_g_fmt_sdr_cap))
+-			break;
+ 		return ops->vidioc_g_fmt_sdr_cap(file, fh, arg);
+ 	case V4L2_BUF_TYPE_SDR_OUTPUT:
+-		if (unlikely(!is_tx || !is_sdr || !ops->vidioc_g_fmt_sdr_out))
+-			break;
+ 		return ops->vidioc_g_fmt_sdr_out(file, fh, arg);
+ 	case V4L2_BUF_TYPE_META_CAPTURE:
+-		if (unlikely(!is_rx || !is_vid || !ops->vidioc_g_fmt_meta_cap))
+-			break;
+ 		return ops->vidioc_g_fmt_meta_cap(file, fh, arg);
+ 	}
+ 	return -EINVAL;
+@@ -1484,12 +1457,10 @@ static int v4l_s_fmt(const struct v4l2_i
+ {
+ 	struct v4l2_format *p = arg;
+ 	struct video_device *vfd = video_devdata(file);
+-	bool is_vid = vfd->vfl_type == VFL_TYPE_GRABBER;
+-	bool is_sdr = vfd->vfl_type == VFL_TYPE_SDR;
+-	bool is_tch = vfd->vfl_type == VFL_TYPE_TOUCH;
+-	bool is_rx = vfd->vfl_dir != VFL_DIR_TX;
+-	bool is_tx = vfd->vfl_dir != VFL_DIR_RX;
+-	int ret;
++	int ret = check_fmt(file, p->type);
++
++	if (ret)
++		return ret;
+ 
+ 	ret = v4l_enable_media_source(vfd);
+ 	if (ret)
+@@ -1498,37 +1469,37 @@ static int v4l_s_fmt(const struct v4l2_i
+ 
+ 	switch (p->type) {
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+-		if (unlikely(!is_rx || (!is_vid && !is_tch) || !ops->vidioc_s_fmt_vid_cap))
++		if (unlikely(!ops->vidioc_s_fmt_vid_cap))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.pix);
+ 		ret = ops->vidioc_s_fmt_vid_cap(file, fh, arg);
+ 		/* just in case the driver zeroed it again */
+ 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
+-		if (is_tch)
++		if (vfd->vfl_type == VFL_TYPE_TOUCH)
+ 			v4l_pix_format_touch(&p->fmt.pix);
+ 		return ret;
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+-		if (unlikely(!is_rx || !is_vid || !ops->vidioc_s_fmt_vid_cap_mplane))
++		if (unlikely(!ops->vidioc_s_fmt_vid_cap_mplane))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.pix_mp.xfer_func);
+ 		return ops->vidioc_s_fmt_vid_cap_mplane(file, fh, arg);
+ 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
+-		if (unlikely(!is_rx || !is_vid || !ops->vidioc_s_fmt_vid_overlay))
++		if (unlikely(!ops->vidioc_s_fmt_vid_overlay))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.win);
+ 		return ops->vidioc_s_fmt_vid_overlay(file, fh, arg);
+ 	case V4L2_BUF_TYPE_VBI_CAPTURE:
+-		if (unlikely(!is_rx || is_vid || !ops->vidioc_s_fmt_vbi_cap))
++		if (unlikely(!ops->vidioc_s_fmt_vbi_cap))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.vbi);
+ 		return ops->vidioc_s_fmt_vbi_cap(file, fh, arg);
+ 	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
+-		if (unlikely(!is_rx || is_vid || !ops->vidioc_s_fmt_sliced_vbi_cap))
++		if (unlikely(!ops->vidioc_s_fmt_sliced_vbi_cap))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.sliced);
+ 		return ops->vidioc_s_fmt_sliced_vbi_cap(file, fh, arg);
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
+-		if (unlikely(!is_tx || !is_vid || !ops->vidioc_s_fmt_vid_out))
++		if (unlikely(!ops->vidioc_s_fmt_vid_out))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.pix);
+ 		ret = ops->vidioc_s_fmt_vid_out(file, fh, arg);
+@@ -1536,37 +1507,37 @@ static int v4l_s_fmt(const struct v4l2_i
+ 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
+ 		return ret;
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+-		if (unlikely(!is_tx || !is_vid || !ops->vidioc_s_fmt_vid_out_mplane))
++		if (unlikely(!ops->vidioc_s_fmt_vid_out_mplane))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.pix_mp.xfer_func);
+ 		return ops->vidioc_s_fmt_vid_out_mplane(file, fh, arg);
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
+-		if (unlikely(!is_tx || !is_vid || !ops->vidioc_s_fmt_vid_out_overlay))
++		if (unlikely(!ops->vidioc_s_fmt_vid_out_overlay))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.win);
+ 		return ops->vidioc_s_fmt_vid_out_overlay(file, fh, arg);
+ 	case V4L2_BUF_TYPE_VBI_OUTPUT:
+-		if (unlikely(!is_tx || is_vid || !ops->vidioc_s_fmt_vbi_out))
++		if (unlikely(!ops->vidioc_s_fmt_vbi_out))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.vbi);
+ 		return ops->vidioc_s_fmt_vbi_out(file, fh, arg);
+ 	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
+-		if (unlikely(!is_tx || is_vid || !ops->vidioc_s_fmt_sliced_vbi_out))
++		if (unlikely(!ops->vidioc_s_fmt_sliced_vbi_out))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.sliced);
+ 		return ops->vidioc_s_fmt_sliced_vbi_out(file, fh, arg);
+ 	case V4L2_BUF_TYPE_SDR_CAPTURE:
+-		if (unlikely(!is_rx || !is_sdr || !ops->vidioc_s_fmt_sdr_cap))
++		if (unlikely(!ops->vidioc_s_fmt_sdr_cap))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.sdr);
+ 		return ops->vidioc_s_fmt_sdr_cap(file, fh, arg);
+ 	case V4L2_BUF_TYPE_SDR_OUTPUT:
+-		if (unlikely(!is_tx || !is_sdr || !ops->vidioc_s_fmt_sdr_out))
++		if (unlikely(!ops->vidioc_s_fmt_sdr_out))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.sdr);
+ 		return ops->vidioc_s_fmt_sdr_out(file, fh, arg);
+ 	case V4L2_BUF_TYPE_META_CAPTURE:
+-		if (unlikely(!is_rx || !is_vid || !ops->vidioc_s_fmt_meta_cap))
++		if (unlikely(!ops->vidioc_s_fmt_meta_cap))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.meta);
+ 		return ops->vidioc_s_fmt_meta_cap(file, fh, arg);
+@@ -1578,19 +1549,16 @@ static int v4l_try_fmt(const struct v4l2
+ 				struct file *file, void *fh, void *arg)
+ {
+ 	struct v4l2_format *p = arg;
+-	struct video_device *vfd = video_devdata(file);
+-	bool is_vid = vfd->vfl_type == VFL_TYPE_GRABBER;
+-	bool is_sdr = vfd->vfl_type == VFL_TYPE_SDR;
+-	bool is_tch = vfd->vfl_type == VFL_TYPE_TOUCH;
+-	bool is_rx = vfd->vfl_dir != VFL_DIR_TX;
+-	bool is_tx = vfd->vfl_dir != VFL_DIR_RX;
+-	int ret;
++	int ret = check_fmt(file, p->type);
++
++	if (ret)
++		return ret;
+ 
+ 	v4l_sanitize_format(p);
+ 
+ 	switch (p->type) {
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+-		if (unlikely(!is_rx || (!is_vid && !is_tch) || !ops->vidioc_try_fmt_vid_cap))
++		if (unlikely(!ops->vidioc_try_fmt_vid_cap))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.pix);
+ 		ret = ops->vidioc_try_fmt_vid_cap(file, fh, arg);
+@@ -1598,27 +1566,27 @@ static int v4l_try_fmt(const struct v4l2
+ 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
+ 		return ret;
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+-		if (unlikely(!is_rx || !is_vid || !ops->vidioc_try_fmt_vid_cap_mplane))
++		if (unlikely(!ops->vidioc_try_fmt_vid_cap_mplane))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.pix_mp.xfer_func);
+ 		return ops->vidioc_try_fmt_vid_cap_mplane(file, fh, arg);
+ 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
+-		if (unlikely(!is_rx || !is_vid || !ops->vidioc_try_fmt_vid_overlay))
++		if (unlikely(!ops->vidioc_try_fmt_vid_overlay))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.win);
+ 		return ops->vidioc_try_fmt_vid_overlay(file, fh, arg);
+ 	case V4L2_BUF_TYPE_VBI_CAPTURE:
+-		if (unlikely(!is_rx || is_vid || !ops->vidioc_try_fmt_vbi_cap))
++		if (unlikely(!ops->vidioc_try_fmt_vbi_cap))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.vbi);
+ 		return ops->vidioc_try_fmt_vbi_cap(file, fh, arg);
+ 	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
+-		if (unlikely(!is_rx || is_vid || !ops->vidioc_try_fmt_sliced_vbi_cap))
++		if (unlikely(!ops->vidioc_try_fmt_sliced_vbi_cap))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.sliced);
+ 		return ops->vidioc_try_fmt_sliced_vbi_cap(file, fh, arg);
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
+-		if (unlikely(!is_tx || !is_vid || !ops->vidioc_try_fmt_vid_out))
++		if (unlikely(!ops->vidioc_try_fmt_vid_out))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.pix);
+ 		ret = ops->vidioc_try_fmt_vid_out(file, fh, arg);
+@@ -1626,37 +1594,37 @@ static int v4l_try_fmt(const struct v4l2
+ 		p->fmt.pix.priv = V4L2_PIX_FMT_PRIV_MAGIC;
+ 		return ret;
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+-		if (unlikely(!is_tx || !is_vid || !ops->vidioc_try_fmt_vid_out_mplane))
++		if (unlikely(!ops->vidioc_try_fmt_vid_out_mplane))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.pix_mp.xfer_func);
+ 		return ops->vidioc_try_fmt_vid_out_mplane(file, fh, arg);
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
+-		if (unlikely(!is_tx || !is_vid || !ops->vidioc_try_fmt_vid_out_overlay))
++		if (unlikely(!ops->vidioc_try_fmt_vid_out_overlay))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.win);
+ 		return ops->vidioc_try_fmt_vid_out_overlay(file, fh, arg);
+ 	case V4L2_BUF_TYPE_VBI_OUTPUT:
+-		if (unlikely(!is_tx || is_vid || !ops->vidioc_try_fmt_vbi_out))
++		if (unlikely(!ops->vidioc_try_fmt_vbi_out))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.vbi);
+ 		return ops->vidioc_try_fmt_vbi_out(file, fh, arg);
+ 	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
+-		if (unlikely(!is_tx || is_vid || !ops->vidioc_try_fmt_sliced_vbi_out))
++		if (unlikely(!ops->vidioc_try_fmt_sliced_vbi_out))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.sliced);
+ 		return ops->vidioc_try_fmt_sliced_vbi_out(file, fh, arg);
+ 	case V4L2_BUF_TYPE_SDR_CAPTURE:
+-		if (unlikely(!is_rx || !is_sdr || !ops->vidioc_try_fmt_sdr_cap))
++		if (unlikely(!ops->vidioc_try_fmt_sdr_cap))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.sdr);
+ 		return ops->vidioc_try_fmt_sdr_cap(file, fh, arg);
+ 	case V4L2_BUF_TYPE_SDR_OUTPUT:
+-		if (unlikely(!is_tx || !is_sdr || !ops->vidioc_try_fmt_sdr_out))
++		if (unlikely(!ops->vidioc_try_fmt_sdr_out))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.sdr);
+ 		return ops->vidioc_try_fmt_sdr_out(file, fh, arg);
+ 	case V4L2_BUF_TYPE_META_CAPTURE:
+-		if (unlikely(!is_rx || !is_vid || !ops->vidioc_try_fmt_meta_cap))
++		if (unlikely(!ops->vidioc_try_fmt_meta_cap))
+ 			break;
+ 		CLEAR_AFTER_FIELD(p, fmt.meta);
+ 		return ops->vidioc_try_fmt_meta_cap(file, fh, arg);
