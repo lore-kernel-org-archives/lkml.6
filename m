@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2262ZIg/QoTFC2RHm0Af1KEHDB5IicSl5LKaUZlusxM/hqAFZiatI3yY4+1o/0yh8MQP4Ec5
-ARC-Seal: i=1; a=rsa-sha256; t=1518708834; cv=none;
+X-Google-Smtp-Source: AH8x226Gj2Q8PFKW6wcf99wHKntOYxvXvwAOXwaKMjCoG1I9VfhUcF5lmwt3TOlI8uJCkLXpOhM+
+ARC-Seal: i=1; a=rsa-sha256; t=1518708831; cv=none;
         d=google.com; s=arc-20160816;
-        b=Wzo8fzfEbHG4Iz5l3FfBVFOxt4yc/SCHR3pK8J/BOew56/BB48htTXQzS9e5Bgweun
-         Tpra5/pEVQzyvcacmjEanGk/sxDmt0nxjQlPsVxJ0E7cxv2XUPXwaVM/SeSaTZwHQaQJ
-         ugW7b2DWuL6SDJinDOYvTL5DBVQ+DMctbgGLeFgUwC7LgtwA3+QlR+lPV2M4sW87DWIZ
-         2cr1fWDSQR+curTqGb9l+DdvjlOJ68GISu+8jSsGli5CI31VmjtQ+UOyd1m2+cZ6F5fP
-         ICwb4YTYhzK4FQlZ+OwJynSxUcElV+EefIaP40qftfmNpgiOL1loLnvTOjG1Ccm0tD1C
-         OnIw==
+        b=OMal6LHWoXnJz+2Fh4pRItXua7Bw9/gV4zlmi/lyNBymPLOOj7oMx6WeNEPiZh+9Mv
+         QSW20vFcq7l20ejmlxjl8J/wOYmIFZxF0RoytXNfTLn+Pwz2q3oVGIbqhbrnq4UpYst0
+         ONjcix7xh6MGMVBtUddhKkRU9xLe1/CA+vqJA+zjKrCCPenqyo69XzRa4XjhNF/QDGRl
+         EipumocvcT2pctzf7jjbSa8Epk+g2Vv8z6wM0zT7abUMgUoLDf3oZ82nJrJsn371if9c
+         S2nv+/221wdXcacHyLcZ3s+RhC0Jg2h+g4+42HqoMy9+/0h0o0nbcOd4mjUBpYnBsBgl
+         gZog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Pr6QFJ8Yu8mxlEnUPfnAvpfUx6kui/ozxUxw0fQwv3E=;
-        b=IT0UdDGtUBu3Co1y7J49HAoKbRJN9RBw7d5Ac9h2A3SsB7xfNRpaJBzHYqbRUfYexw
-         Fz7Or+XneMao00Z6/9AE1aGuVYMSwUZZNqAXYeuDaTubtA0Og97/CJQhzHdyPbARe6Ld
-         +qHF5EGEWrzl1aob+tm8zEP4Xqr9Y9wewlRJighsrQd2hWF9IAeMjdPMPUyXKklfvSvL
-         /SWDRKDR6xqAKQSibK5GtufWIE/jQbFTe660PWmnR8ZAFdrs5DpK9uoSSytY8/Q9wtnU
-         2/XwUQccKUcmQPjcyipE5ye5uZu1V/tt//iCSilMYJlgoF6YkVAp6ZkSOZuWnxL5KGxF
-         JFKQ==
+        bh=XBc7X4LJD37wOzH33nsMXaqbNBQDwoIhXihh4zgA4r0=;
+        b=UxLXuAK7OHQWpbW+FpbOkXeGpFltR5CrNfT+cMP/MW3wYaBk3y5MOskQ76gHC4Qaou
+         mS/jFwHjPl2WFLWizd6d32hilskMtPwNcsY7F9HN2XCjDUAXhP7c713xf+Eiq2cEDqdg
+         SLhDxwY+tnAO0ee4QNsugL5RSbUjnQCBUTzPYO+rQ3Ib4DjpBuVgcykFCMttWgF/yjOO
+         2D+0HjMAZ4nECuVQYZIGjem6XuEZ1IxEmH40NXnw/zZKmLMW7t04ctJPld7+XQM7413D
+         LdpWzpLIIqWnUidhhermqgLeIqHTnUd8QjJ9D2V667hqF5/r5rX87DUxI283aGh2xAND
+         T4BA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Miquel Raynal <miquel.raynal@free-electrons.com>
-Subject: [PATCH 4.14 098/195] mtd: nand: sunxi: Fix ECC strength choice
-Date: Thu, 15 Feb 2018 16:16:29 +0100
-Message-Id: <20180215151710.599351295@linuxfoundation.org>
+	Miquel Raynal <miquel.raynal@free-electrons.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 4.14 097/195] mtd: nand: Fix nand_do_read_oob() return value
+Date: Thu, 15 Feb 2018 16:16:28 +0100
+Message-Id: <20180215151710.545546721@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481054802877681?=
-X-GMAIL-MSGID: =?utf-8?q?1592481634867364433?=
+X-GMAIL-THRID: =?utf-8?q?1592480724418157633?=
+X-GMAIL-MSGID: =?utf-8?q?1592481632253626933?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,43 +50,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Miquel Raynal <miquel.raynal@free-electrons.com>
 
-commit f4c6cd1a7f2275d5bc0e494b21fff26f8dde80f0 upstream.
+commit 87e89ce8d0d14f573c068c61bec2117751fb5103 upstream.
 
-When the requested ECC strength does not exactly match the strengths
-supported by the ECC engine, the driver is selecting the closest
-strength meeting the 'selected_strength > requested_strength'
-constraint. Fix the fact that, in this particular case, ecc->strength
-value was not updated to match the 'selected_strength'.
+Starting from commit 041e4575f034 ("mtd: nand: handle ECC errors in
+OOB"), nand_do_read_oob() (from the NAND core) did return 0 or a
+negative error, and the MTD layer expected it.
 
-For instance, one can encounter this issue when no ECC requirement is
-filled in the device tree while the NAND chip minimum requirement is not
-a strength/step_size combo natively supported by the ECC engine.
+However, the trend for the NAND layer is now to return an error or a
+positive number of bitflips. Deciding which status to return to the user
+belongs to the MTD layer.
 
-Fixes: 1fef62c1423b ("mtd: nand: add sunxi NAND flash controller support")
-Suggested-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Commit e47f68587b82 ("mtd: check for max_bitflips in mtd_read_oob()")
+brought this logic to the mtd_read_oob() function while the return value
+coming from nand_do_read_oob() (called by the ->_read_oob() hook) was
+left unchanged.
+
+Fixes: e47f68587b82 ("mtd: check for max_bitflips in mtd_read_oob()")
 Signed-off-by: Miquel Raynal <miquel.raynal@free-electrons.com>
 Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/sunxi_nand.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/mtd/nand/nand_base.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/mtd/nand/sunxi_nand.c
-+++ b/drivers/mtd/nand/sunxi_nand.c
-@@ -1853,8 +1853,14 @@ static int sunxi_nand_hw_common_ecc_ctrl
+--- a/drivers/mtd/nand/nand_base.c
++++ b/drivers/mtd/nand/nand_base.c
+@@ -2201,6 +2201,7 @@ EXPORT_SYMBOL(nand_write_oob_syndrome);
+ static int nand_do_read_oob(struct mtd_info *mtd, loff_t from,
+ 			    struct mtd_oob_ops *ops)
+ {
++	unsigned int max_bitflips = 0;
+ 	int page, realpage, chipnr;
+ 	struct nand_chip *chip = mtd_to_nand(mtd);
+ 	struct mtd_ecc_stats stats;
+@@ -2258,6 +2259,8 @@ static int nand_do_read_oob(struct mtd_i
+ 				nand_wait_ready(mtd);
+ 		}
  
- 	/* Add ECC info retrieval from DT */
- 	for (i = 0; i < ARRAY_SIZE(strengths); i++) {
--		if (ecc->strength <= strengths[i])
-+		if (ecc->strength <= strengths[i]) {
-+			/*
-+			 * Update ecc->strength value with the actual strength
-+			 * that will be used by the ECC engine.
-+			 */
-+			ecc->strength = strengths[i];
++		max_bitflips = max_t(unsigned int, max_bitflips, ret);
++
+ 		readlen -= len;
+ 		if (!readlen)
  			break;
-+		}
- 	}
+@@ -2283,7 +2286,7 @@ static int nand_do_read_oob(struct mtd_i
+ 	if (mtd->ecc_stats.failed - stats.failed)
+ 		return -EBADMSG;
  
- 	if (i >= ARRAY_SIZE(strengths)) {
+-	return  mtd->ecc_stats.corrected - stats.corrected ? -EUCLEAN : 0;
++	return max_bitflips;
+ }
+ 
+ /**
