@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1906823-1518710898-5-4790253613351037441
+X-Cyrus-Session-Id: sloti22d1t05-1906823-1518710874-2-8279804873671976951
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518710898; b=FLVbCrnnyQweIMw0raEAL51lo+PA97Qf/j/n+POuwfKpbGU
-    +ZZC2me27jSLIfpqEDntyaw4YotVUI9tdkxFj4esbWgrvZxYQu9rHD1f9H3O+Brn
-    sii5132cv3yh07LLe9nz7fOtRIpL7J+LwDaByxypp3BM218ZHMqbJuVI2qI9Bykr
-    0BdhpeT+HBODRk9biofMavyOgvUt4MOudlRroxtuFT0NAiU403GgfUHlEv7gzuaw
-    ltrsSwWFRG9wGCI12m5hZGAvbsV6bj/LC+VsllVqRmB0zWn/XWCeLBS404FPox39
-    89i2XwRybDEL/2L1SbiHUIQqr5oGdo+uaH4gKww==
+    t=1518710873; b=hwFP/klcF26+a10qc8vtql2VyRZ6y3UaZWPf+kE9Cm1MWBO
+    wJvskk+31SSID7fA1h4sOie23A+j3m1A281+G8N0ODbyqqn+vHZRhfSu6oq+o96T
+    keJyeHoob5Bwohkktq3HC1aigINgDCXrvi8CnTKlpPb2LtnjO0/cDWadegvncjZm
+    WT6Hz/Fzatys91BdTzmKn/3wD8Foh2T8B/mJDzMiQFFiX45hIlP1cfSgxrxsjT5V
+    oxiN0RlNVEv2LFqemG0/2ZelvJ2UrfB4GlTN/Yd+X72yz3hHQH8P21HH5O2tuk76
+    dah4fCEnogeQ4WS5R65cci/8cpJP8BWRTmc46oQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518710898; bh=7BXcOCWnrE7NBfxr3gIzV/irzk
-    ypEqpaGcazBTq/4yU=; b=AlaTh+iWwKjLfs8XdK1n1ePhLmt0m1eEi5aGT7WeFd
-    5+ZW9f3dXFEzmA9tJORDadG3BQDlxIWy1IMrkRw6Qya3DAR/fdTVMplKl3q8OWTG
-    dDyAgUga/uH36V+nTWBdamz5UnvbZ6mnYPgxy7NtHaGBVvN8iHHHE/yqh80+RIM/
-    nnMyyfQiGaetV2dM321NNNf2nkIUrJr9YRT9ScXeXDyegDtQooW/JdUjfDRDLKA2
-    SC7N/185qu0TdQ2C3IWqzrfQqmixaUrVhYXSAhA29TmXMqVdjXyNFgn+OKMmTGBT
-    CLVLe37ZbFN4L88ad1QOQIYulWiXuEUzflQP/lr2OVjw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518710873; bh=XU8209RxCNHEvexlNBXx4e2aAX
+    FqXcYIR1JcQaWpbyg=; b=gNtjyMpoMdBCnPj5UhlXU0U184sFfeMQU2yuUke3+n
+    IQ2ZAvTrPGMFBHs8wUhn7+He+O7VVFXayHp/XAsmVZuM/N3ldJ7ZX9nb7fnqYWnm
+    WXMJT/JN/HvwrZjRHJOPLAlAE36rOEv3nLClndB6jVZYjjVo+UatgeZJrHlJCU1Q
+    E7Vl+UagoS5AmY/++LGYNq9wm0vaj47GMry8lMzXTd2ZgfhlXKGqvqZW4Rksib6q
+    c2ka50HRiEDAd+4+GS8FW2R0teJ/W8sjpuzxCP0ZfkR2OMJHX2h/8fPSuNHeIz4t
+    OvmP5umPaObSDEGlX43KpqW11uW7OnU2kkgcIb0bk0Fw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,20 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033898AbeBOQIO (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 11:08:14 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35010 "EHLO
+        id S1034018AbeBOPpk (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:45:40 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35034 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424492AbeBOPpe (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:45:34 -0500
+        with ESMTP id S1033898AbeBOPph (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:45:37 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
-        Rob Herring <robh@kernel.org>,
+        stable@vger.kernel.org,
         Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.15 152/202] media: dt-bindings/media/cec-gpio.txt: mention the CEC/HPD max voltages
-Date: Thu, 15 Feb 2018 16:17:32 +0100
-Message-Id: <20180215151720.914665776@linuxfoundation.org>
+Subject: [PATCH 4.15 153/202] media: ts2020: avoid integer overflows on 32 bit machines
+Date: Thu, 15 Feb 2018 16:17:33 +0100
+Message-Id: <20180215151720.959645374@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -78,44 +77,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-commit dac15ed62dc9d7898d3695a3c393d6f712d66185 upstream.
+commit 81742be14b6a90c9fd0ff6eb4218bdf696ad8e46 upstream.
 
-Mention the maximum voltages of the CEC and HPD lines. Since in the example
-these lines are connected to a Raspberry Pi and the Rpi GPIO lines are 3.3V
-it is a good idea to warn against directly connecting the HPD to the Raspberry
-Pi's GPIO line.
+Before this patch, when compiled for arm32, the signal strength
+were reported as:
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Lock   (0x1f) Signal= 4294908.66dBm C/N= 12.79dB
+
+Because of a 32 bit integer overflow. After it, it is properly
+reported as:
+
+	Lock   (0x1f) Signal= -58.64dBm C/N= 12.79dB
+
+Fixes: 0f91c9d6bab9 ("[media] TS2020: Calculate tuner gain correctly")
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/devicetree/bindings/media/cec-gpio.txt |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/media/dvb-frontends/ts2020.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/Documentation/devicetree/bindings/media/cec-gpio.txt
-+++ b/Documentation/devicetree/bindings/media/cec-gpio.txt
-@@ -4,6 +4,10 @@ The HDMI CEC GPIO module supports CEC im
- is hooked up to a pull-up GPIO line and - optionally - the HPD line is
- hooked up to another GPIO line.
+--- a/drivers/media/dvb-frontends/ts2020.c
++++ b/drivers/media/dvb-frontends/ts2020.c
+@@ -368,7 +368,7 @@ static int ts2020_read_tuner_gain(struct
+ 		gain2 = clamp_t(long, gain2, 0, 13);
+ 		v_agc = clamp_t(long, v_agc, 400, 1100);
  
-+Please note: the maximum voltage for the CEC line is 3.63V, for the HPD
-+line it is 5.3V. So you may need some sort of level conversion circuitry
-+when connecting them to a GPIO line.
-+
- Required properties:
-   - compatible: value must be "cec-gpio".
-   - cec-gpios: gpio that the CEC line is connected to. The line should be
-@@ -21,7 +25,7 @@ the following property is optional:
+-		*_gain = -(gain1 * 2330 +
++		*_gain = -((__s64)gain1 * 2330 +
+ 			   gain2 * 3500 +
+ 			   v_agc * 24 / 10 * 10 +
+ 			   10000);
+@@ -386,7 +386,7 @@ static int ts2020_read_tuner_gain(struct
+ 		gain3 = clamp_t(long, gain3, 0, 6);
+ 		v_agc = clamp_t(long, v_agc, 600, 1600);
  
- Example for the Raspberry Pi 3 where the CEC line is connected to
- pin 26 aka BCM7 aka CE1 on the GPIO pin header and the HPD line is
--connected to pin 11 aka BCM17:
-+connected to pin 11 aka BCM17 (some level shifter is needed for this!):
- 
- #include <dt-bindings/gpio/gpio.h>
- 
+-		*_gain = -(gain1 * 2650 +
++		*_gain = -((__s64)gain1 * 2650 +
+ 			   gain2 * 3380 +
+ 			   gain3 * 2850 +
+ 			   v_agc * 176 / 100 * 10 -
