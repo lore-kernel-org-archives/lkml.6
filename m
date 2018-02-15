@@ -1,111 +1,124 @@
-Return-Path: <dan.j.williams@intel.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518705554; cv=none;
-        d=google.com; s=arc-20160816;
-        b=gs6oHErvZs1fPEjj30qbBaUmM4ZKp5cz4lcTFPup1GvJKz78+LymVCKnVyesS7Aq06
-         J5O6nNIU73eHSAYwmr94YWWP41kEHPgVmxmbV3PkFJuX4SmzbpXTGkdE3r0yadw/wZsN
-         dVfCRj6E2jUJdI/JrH+cJCsa6U7QDGIz43d174l6CoL2+u5ZTZ+R9uEgBCVVOJ90HkVw
-         LW5n2E5TJAdESyHDsvfUOyjMKm5AoR56a9yHXvbuE8oTuAQ/dgqqtG3ikBE9lohV34e0
-         8euvNTNG/8tkeizvPJ11pbDnM+Ftjxdxo9X/s37VmFXTIijzNduFL+747j0p3nHigCVe
-         bg+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=VIN0lqIF8D0HC+3oORSavC1GNSgPZkQ5GYacyHGYcdA=;
-        b=yKptOXVt9PYwcc+Pef7WBYVvfhmBJrsYxc7ayUhh1M0MAC19JxGxEnUAsFh5EzHcV/
-         JrDTnQvCVw1Nv8NUvzuqVSmnpZrP1JVMkfwyvRfCzOtFrGb6oQSaWwMt4UrgsumUWXbq
-         lanNIaDGFYfxotuOen/irnRg9jhrnooe1rLbALNjsuE9uv9l3QeDabwYc1ofn+TAYU5X
-         9M5Lil4vHSYEiOfnYXnpu6+6euIvikgnJMwPoBJ9R3wOvi81SyHPxE3ZS9ukjMinJyga
-         HYmLDdlFOVucZiwEakOK2Gz2BBy8143s/LYXqxX/6NB4ZUVVyZi2rjPhvGKG9sP2nrad
-         Hv2g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@intel-com.20150623.gappssmtp.com header.s=20150623 header.b=CBQjQINo;
-       spf=pass (google.com: domain of dan.j.williams@intel.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dan.j.williams@intel.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@intel-com.20150623.gappssmtp.com header.s=20150623 header.b=CBQjQINo;
-       spf=pass (google.com: domain of dan.j.williams@intel.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dan.j.williams@intel.com
-X-Google-Smtp-Source: AH8x224QaVZZ3XjSPj1jEv81qpRhkXlqaS3yqluq4fPj1y08A2LMe/yHDuxsajhTOrbJrg83XUv9J90rlK7OnIV0Cn4=
-MIME-Version: 1.0
-In-Reply-To: <45f8dece-e235-0831-4fe5-89ee7d27b959@prevas.dk>
-References: <alpine.DEB.2.21.1802151424490.1296@nanos.tec.linutronix.de> <45f8dece-e235-0831-4fe5-89ee7d27b959@prevas.dk>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Thu, 15 Feb 2018 06:39:13 -0800
-Message-ID: <CAPcyv4i-bULZp1WTUgUVtdEY5i_fTGkFWKBsVLDu6dsuxUwoug@mail.gmail.com>
-Subject: Re: [PATCH] posix-timers: Protect posix clock array access against speculation
-To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>,
-	David Woodhouse <dwmw@amazon.co.uk>, Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2294769-1518724343-2-11602319357442241919
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='dk',
+  MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518724342; b=cAI7z+AJnwF55udrGFmufQl13dfFw/gtENQpqla9dpbnxsd
+    zm855a4ZGjBbmE7MiG2HAVp7/QqcMRdy/hhS0fe0FO2vNupMOYQrtpV8AKRuSQ9L
+    yPCnHUtAAKY76gwkIYFAPdY6sSoW2AoRUWj7PxVjeXIZGwcfFo0uLZiOmmL29ABr
+    xY4oueOxR2xBVAbf3Hg9BkbI3PI8tQvftxUhmECqSVQeKaAru4hDoxn27otTIN61
+    Oczv5cpXI236r6plDuMBvR59Pca/OMrFGNQSBX6BnQEUT/XY2p2FH5w3zDXBx2zW
+    V1gmfO2Bp9kr+gh8Y872fEBYV1mbDzP+LhLGt8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1518724342;
+    bh=2idyaWE5G/QhfDNkGSXewicSNkoUYYWZ1yx9A6IXOUk=; b=I5dr98+r0ph6
+    kgPGokMpFeainELKV4x4Sk/r/VMPlonWbWU32VN3vHj5B2N01cB+Y79TEUHb0Kt3
+    696rUEULvbgm3jNKQS1Zy4E+amT0NPqgNIDna30Y99aXa6ay5VSQjpfCklAHgrVR
+    EyjnCCqIevmYDVoZ6kurEXxJI/ebekTxZK9qPmamXMSl+bSlyn3aqC+fPi2ZspN/
+    gRbcQFYQlqaznlN0TYmMi8A+xXu5i5AFotBYkfqANTU3rVP+HeSpENyCWYTivDPk
+    bT3D9bgTfNxYr8VdIiJbiVEWxDSDxudiZeepjOqw3K1/0XiaDvn1S4eCpuJt21Ir
+    aJGnuXF/7g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=dRpulLUW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rasmusvillemoes.dk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=X+zZq9gC;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=rasmusvillemoes.dk header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=dRpulLUW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rasmusvillemoes.dk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=X+zZq9gC;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=rasmusvillemoes.dk header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1033824AbeBOTwQ (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 14:52:16 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53911 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033454AbeBOTwO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 14:52:14 -0500
+X-Google-Smtp-Source: AH8x227QRDKntZzIp5W+NIqj6bERvFYALcbQAWP3yI2hluK9Zpwd90FDEUFyyOx6J7QwtdiIi4JEMQ==
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] linux/nospec.h: allow index argument to have const-qualified type
+Date: Thu, 15 Feb 2018 20:52:07 +0100
+Message-Id: <20180215195209.15299-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <CAPcyv4i-bULZp1WTUgUVtdEY5i_fTGkFWKBsVLDu6dsuxUwoug@mail.gmail.com>
+References: <CAPcyv4i-bULZp1WTUgUVtdEY5i_fTGkFWKBsVLDu6dsuxUwoug@mail.gmail.com>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592473683460033132?=
-X-GMAIL-MSGID: =?utf-8?q?1592478195334066385?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 15, 2018 at 6:05 AM, Rasmus Villemoes
-<rasmus.villemoes@prevas.dk> wrote:
-> On 2018-02-15 14:27, Thomas Gleixner wrote:
->> The (clock) id argument of clockid_to_kclock() comes straight from user
->> space via various syscalls and is used as index into the posix_clocks
->> array.
->>
->> Protect it against spectre v1 array out of bounds speculation.
->>
->> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
->> Cc: stable@vger.kernel.org
->> ---
->>  kernel/time/posix-timers.c |    6 +++++-
->>  1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> --- a/kernel/time/posix-timers.c
->> +++ b/kernel/time/posix-timers.c
->> @@ -50,6 +50,7 @@
->>  #include <linux/export.h>
->>  #include <linux/hashtable.h>
->>  #include <linux/compat.h>
->> +#include <linux/nospec.h>
->>
->>  #include "timekeeping.h"
->>  #include "posix-timers.h"
->> @@ -1346,11 +1347,14 @@ static const struct k_clock * const posi
->>
->>  static const struct k_clock *clockid_to_kclock(const clockid_t id)
->>  {
->> +     clockid_t idx = id;
->> +
->>       if (id < 0)
->>               return (id & CLOCKFD_MASK) == CLOCKFD ?
->>                       &clock_posix_dynamic : &clock_posix_cpu;
->>
->>       if (id >= ARRAY_SIZE(posix_clocks) || !posix_clocks[id])
->>               return NULL;
->> -     return posix_clocks[id];
->> +
->> +     return posix_clocks[array_index_nospec(idx, ARRAY_SIZE(posix_clocks))];
->>  }
->>
->
-> Stupid questions from someone trying to learn what the rules for when
-> and how to apply these _nospec macros:
->
-> (1) why introduce the idx var? There's no assignment to it other than
-> the initialization. Is it some magic in array_index_nospec that prevents
-> the use of a const-qualified expression?
+The last expression in a statement expression need not be a bare
+variable, quoting gcc docs
 
-It does currently, but perhaps it can be fixed.
+  The last thing in the compound statement should be an expression
+  followed by a semicolon; the value of this subexpression serves as the
+  value of the entire construct.
 
->
-> (2) The line "if (id >= ARRAY_SIZE(posix_clocks) || !posix_clocks[id])"
-> still seems to allow speculatively accessing posix_clocks[id]. Is that
-> ok, and even if so, wouldn't it be cleaner to elide the
-> !posix_clocks[id] check and just return the NULL safely fetched from the
-> array in the following line?
+and we already use that in e.g. the min/max macros which end with a
+ternary expression.
 
-Right, this looks broken. I would expect:
+This way, we can allow index to have const-qualified type, which will in
+some cases avoid the need for introducing a local copy of index of
+non-const qualified type. That, in turn, can prevent readers not
+familiar with the internals of array_index_nospec from wondering about
+the seemingly redundant extra variable, and I think that's worthwhile
+considering how confusing the whole _nospec business is.
 
-        if (id >= ARRAY_SIZE(posix_clocks))
-                return NULL;
-        idx = array_index_nospec(idx, ARRAY_SIZE(posix_clocks));
-        if (!posix_clocks[idx])
-                return NULL;
-        return posix_clocks[idx];
+The expression _i&_mask has type unsigned long (since that is the type
+of _mask, and the BUILD_BUG_ONs guarantee that _i will get promoted to
+that), so in order not to change the type of the whole expression, add
+a cast back to typeof(_i).
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+cc stable because if this is ok, there will probably be future users
+relying on this which also get cc'ed to -stable.
+
+include/linux/nospec.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/include/linux/nospec.h b/include/linux/nospec.h
+index fbc98e2c8228..132e3f5a2e0d 100644
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -72,7 +72,6 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
+ 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
+ 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
+ 									\
+-	_i &= _mask;							\
+-	_i;								\
++	(typeof(_i)) (_i & _mask);					\
+ })
+ #endif /* _LINUX_NOSPEC_H */
+-- 
+2.15.1
