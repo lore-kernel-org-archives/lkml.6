@@ -1,65 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967851AbeBOLTW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 06:19:22 -0500
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:36209 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966589AbeBOLTU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 06:19:20 -0500
-X-Google-Smtp-Source: AH8x224lJGT9Lz8DgR7BW0/APE5nFNvi9e1+EulEehrk8Xk3X2TF7O0VQFU+MQJlYxeOz8mBhYAwyg==
-Subject: Re: [PATCH v2 0/2] Fix broken bananapi m2 devicetree/regulators
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        wens@csie.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-References: <20180214141025.22171-1-embed3d@gmail.com>
- <20180215090838.fnenymzrejs6vhcf@flea.home>
-From: Philipp Rossak <embed3d@gmail.com>
-Message-ID: <89d2da32-82c5-84d9-507e-aa17d782d766@gmail.com>
-Date: Thu, 15 Feb 2018 12:19:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S967895AbeBOLTf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 06:19:35 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5241 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966589AbeBOLTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 06:19:32 -0500
+Subject: Re: [PATCH v13 7/9] ACPI: Translate the I/O range of non-MMIO devices
+ before scanning
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, <rafael@kernel.org>
+References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
+ <1518543933-22456-8-git-send-email-john.garry@huawei.com>
+ <20180214161635.GA13849@e107981-ln.cambridge.arm.com>
+ <65185a4d-c712-4486-d713-3fa9de14e35d@huawei.com>
+CC: <mika.westerberg@linux.intel.com>, <rjw@rjwysocki.net>,
+        <hanjun.guo@linaro.org>, <robh+dt@kernel.org>, <bhelgaas@google.com>,
+        <arnd@arndb.de>, <mark.rutland@arm.com>, <olof@lixom.net>,
+        <dann.frazier@canonical.com>, <andy.shevchenko@gmail.com>,
+        <robh@kernel.org>, <joe@perches.com>, <benh@kernel.crashing.org>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-acpi@vger.kernel.org>, <linuxarm@huawei.com>, <minyard@acm.org>,
+        <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <rdunlap@infradead.org>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <e3fb78b3-5f5c-fe96-9f02-e96092963c17@huawei.com>
+Date: Thu, 15 Feb 2018 11:19:00 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <20180215090838.fnenymzrejs6vhcf@flea.home>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
+In-Reply-To: <65185a4d-c712-4486-d713-3fa9de14e35d@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 15.02.2018 10:08, Maxime Ripard wrote:
-> On Wed, Feb 14, 2018 at 03:10:23PM +0100, Philipp Rossak wrote:
->> This patchseries fixes the bananapi m1 devicetree, to be able to boot again.
->> The first two patches update/improve the devicetree and the last patch adds
->> all missing regulators.
+> Nothing apart from only being used by arm64 platforms today, which is
+> circumstantial.
+>
 >>
->> Regards,
->> Philipp
+>> I understand you need to find a place to add the:
 >>
->> Changes since v1:
->> 	* squashed commit 1 and 3
->> 	* fix wrong mmc regulator
+>> acpi_indirect_io_scan_init()
 >>
->> Philipp Rossak (2):
->>    arm: dts: sun6i: a31s: bpi-m2: improve pmic properties
->>    arm: dts: sun6i: a31s: fix: bpi-m2: add missing regulators
-> 
-> Applied both.
-> 
-> I had to make a couple of changes though, in the commit title arm
-> should be uppercase, and the fix isn't needed.
-> 
-> I also added stable in Cc, since these patches have been there for
-> quite some time.
-> 
-> Maxime
-> 
+>> to be called from core ACPI code because ACPI can't handle probe
+>> dependencies in any other way but other than that this patch is
+>> a Hisilicon ACPI driver - there is nothing generic in it (or at
+>> least there are no standard bindings to make it so).
+>>
+>> Whether a callback from ACPI core code (acpi_scan_init()) to a driver
+>> specific hook is sane or not that's the question and the only reason
+>> why you want to add this in drivers/acpi/arm64 rather than, say,
+>> drivers/bus (as you do for the DT driver).
+>>
+>> I do not know Rafael's opinion on the above, I would like to help
+>> you make forward progress but please understand my concerns, mostly
+>> on FW side.
+>>
+>
+> I did mention an alternative in my "ping" in v12 patch 7/9 (Feb 1), but
+> no response to this specific note so I kept on the same path.
+>
+> Here's what I then wrote:
+> "I think another solution - which you may prefer - is to avoid adding
+> this scan handler (and all this other scan code) and add a check like
+> acpi_is_serial_bus_slave() [which checks the device parent versus a list
+> of known indirectIO hosts] to not enumerate these children, and do it
+> from the LLDD host probe instead (https://lkml.org/lkml/2017/6/16/250)"
+>
 
-Thanks!
+Hi Rafael, Lorenzo,
 
-Philipp
+I can avoid adding the scan handler in acpi_indirectio.c by skipping the 
+child enumeration, like with this change in scan.c:
+
++static const struct acpi_device_id indirect_io_hosts[] = {
++    {"HISI0191", 0},    /* HiSilicon LPC host */
++    {},
++};
++
++static bool acpi_is_indirect_io_slave(struct acpi_device *device)
++{
++    struct acpi_device *parent = dev->parent;
++
++    if (!parent || acpi_match_device_ids(parent, indirect_io_hosts))
++        return false;
++
++    return true;
++}
++
+  static bool acpi_is_serial_bus_slave(struct acpi_device *device)
+  {
+      struct list_head resource_list;
+      bool is_serial_bus_slave = false;
+
++    if (acpi_is_indirect_io_slave(device))
++        return true;
++
+      /* Macs use device properties in lieu of _CRS resources */
+
+
+This means I can move all this scan code into the LLDD.
+
+What do you think? Please let me know.
+
+John
