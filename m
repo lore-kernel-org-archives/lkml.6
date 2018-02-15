@@ -1,76 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1825685-1518708885-2-5882645297053124178
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518708884; b=PlKhKC++yjdK8MGVMfE4kteQLb46IvjDypquOa25OIQJF2D
-    wn+ZcCUnhkd5kTGDyjxwNrx+NVFp4298dWWYdDAMO8Uf6u5D0Fd2x9FuQw/d56L4
-    A2xuuyH5pixjdVevdxUBh9KjQCryY52BnJ7QQL2JCPujcKwK05KT0Sovj8m1XW7a
-    WoSsOVQzkfSogCZ00S7h5ji3CBkoVCh/b2ff33SimjqMiJ06+58CCzi6EVv6rLXp
-    f1OpronbmWHgejv5YDmncD0g3OzBPjzzoSgzXVIbJevUsU4J+IpHhgJgaaFjdJor
-    ZTrDLEIW9a5Zn81sKPUEQVf2XRwRHC/0/JBmDIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518708884; bh=jm+Gq5DPlmZ5SBvZ0rZ2pQfxHy
-    OJNYkQ9jmYd3FL4WU=; b=HJPZnfSU92Rj2grpB4+CeKczzZxbnvIpXxeuE59Ti+
-    6LSExmuOHV356KJ7V7ExMmzNrCN2ZzmAWgWo3K6nIQaG98tdQg6EhmetdctLw8nD
-    TiXjPEyC4KCcJmHeYL0VfjRivcKix3NXe+rvA6teFkzMY9KO2kkUYiBLCE43hdEJ
-    6XUAja3IogGA2DqkYK/dooK7igLVfkURk/1l/cI4UAncus/ukRL27eCkmht1Tgnw
-    4LptYrhKoEHY6DLUGnbAeABdAoMHcyhSc1lnC5Wte+eYoTLlm5GmpLVOWWaL5CCb
-    ZIrZ/RJf8ORd4pYs9yAVlOfwtZWummwm8/UnYcM97ELg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164553AbeBOPej (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:34:39 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57226 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1165004AbeBOPei (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:34:38 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x227gmfFCQEFlKymv/TreIpGgDcfZeqJ5rP8XrdnSIBQdpfR8WvGvjHk1hAaxvrdcyQ+3GlnQ
+ARC-Seal: i=1; a=rsa-sha256; t=1518708881; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ulruPmFsWLZqngqFtgouhHt/mbNNmJYNsrdVlD7tIjHJH9Ypr3Iosrx0l7ciGxBOa6
+         RgXaou0yOc6e3g2SxVNlr1yIV6RLsD3iFVOzlNk4gA83CM5PotLx8A1Nxs6I2LfAuo3S
+         iC2Ns6WIkcVN39jNIbJrfU2bJ2qGSzKlenhmOp3RTlmdeFRMPKZpP9u6N5jS94abMMs1
+         zU88WjN8dkvLI1OcDOEhUS6LL+Fida0OrO6Jrco3kpK5zMzyUpI1KBy3B/j4bOPbTpsq
+         8ORaSi6il+9QWKYhuVNq9L93v/s+TZteS1LCU3Iawifsy5lcbNexm50Uo70vi3IZVX3F
+         vnkA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=OD3yHYxbbYvfac4O8aYU84SgoSh+hdeLVi5biWJF6L0=;
+        b=Wng54nx8168zz1SkTO3Spg03X/XqL+nkaCiWGjvFq55LDF5qhVR9tWmNBiq9hxaloD
+         1iu126GN0pRv8VnEz+TqK0wHWFWYZ2dr2f9M6dZYTQyJApAafhOh+Macxze1/q7kH0gu
+         dyEN5skiBc+AOiUpg9mAio6CQUVimGWwbePhO71zRIbYrelphAAd6ceaHXGDJy73U+hk
+         HrAiotIhCghEgdywjpIXBJtjGy438OF6/hLfVHSxycL3w1ei68PaC3AM95V5GAUKa34A
+         6fMclLgRRCQeNPxeWs5jK2xkUDuWY/Kv89wP9NYVr08h+wsJP2frUTLf4hnit9HI+6vD
+         /DdQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.14 113/195] ahci: Add Intel Cannon Lake PCH-H PCI ID
-Date: Thu, 15 Feb 2018 16:16:44 +0100
-Message-Id: <20180215151711.342987622@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Eric Biggers <ebiggers@google.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 114/195] crypto: hash - introduce crypto_hash_alg_has_setkey()
+Date: Thu, 15 Feb 2018 16:16:45 +0100
+Message-Id: <20180215151711.389219837@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1592480736419252893?=
+X-GMAIL-MSGID: =?utf-8?q?1592481684825087885?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -78,27 +48,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit f919dde0772a894c693a1eeabc77df69d6a9b937 upstream.
+commit cd6ed77ad5d223dc6299fb58f62e0f5267f7e2ba upstream.
 
-Add Intel Cannon Lake PCH-H PCI ID to the list of supported controllers.
+Templates that use an shash spawn can use crypto_shash_alg_has_setkey()
+to determine whether the underlying algorithm requires a key or not.
+But there was no corresponding function for ahash spawns.  Add it.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Note that the new function actually has to support both shash and ahash
+algorithms, since the ahash API can be used with either.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/ahci.c |    1 +
- 1 file changed, 1 insertion(+)
+ crypto/ahash.c                 |   11 +++++++++++
+ include/crypto/internal/hash.h |    2 ++
+ 2 files changed, 13 insertions(+)
 
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@ -385,6 +385,7 @@ static const struct pci_device_id ahci_p
- 	{ PCI_VDEVICE(INTEL, 0xa206), board_ahci }, /* Lewisburg RAID*/
- 	{ PCI_VDEVICE(INTEL, 0xa252), board_ahci }, /* Lewisburg RAID*/
- 	{ PCI_VDEVICE(INTEL, 0xa256), board_ahci }, /* Lewisburg RAID*/
-+	{ PCI_VDEVICE(INTEL, 0xa356), board_ahci }, /* Cannon Lake PCH-H RAID */
- 	{ PCI_VDEVICE(INTEL, 0x0f22), board_ahci }, /* Bay Trail AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x0f23), board_ahci }, /* Bay Trail AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x22a3), board_ahci }, /* Cherry Trail AHCI */
+--- a/crypto/ahash.c
++++ b/crypto/ahash.c
+@@ -655,5 +655,16 @@ struct hash_alg_common *ahash_attr_alg(s
+ }
+ EXPORT_SYMBOL_GPL(ahash_attr_alg);
+ 
++bool crypto_hash_alg_has_setkey(struct hash_alg_common *halg)
++{
++	struct crypto_alg *alg = &halg->base;
++
++	if (alg->cra_type != &crypto_ahash_type)
++		return crypto_shash_alg_has_setkey(__crypto_shash_alg(alg));
++
++	return __crypto_ahash_alg(alg)->setkey != NULL;
++}
++EXPORT_SYMBOL_GPL(crypto_hash_alg_has_setkey);
++
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("Asynchronous cryptographic hash type");
+--- a/include/crypto/internal/hash.h
++++ b/include/crypto/internal/hash.h
+@@ -90,6 +90,8 @@ static inline bool crypto_shash_alg_has_
+ 	return alg->setkey != shash_no_setkey;
+ }
+ 
++bool crypto_hash_alg_has_setkey(struct hash_alg_common *halg);
++
+ int crypto_init_ahash_spawn(struct crypto_ahash_spawn *spawn,
+ 			    struct hash_alg_common *alg,
+ 			    struct crypto_instance *inst);
