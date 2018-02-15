@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2178418-1518720094-2-6657272406450080148
+X-Cyrus-Session-Id: sloti22d1t05-2178418-1518720062-2-365866075416733612
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720093; b=DF86GHBmiNwezfr1RKhJK74/Ywmx3cZuUjQniLT4ANsMrz9
-    UfqnhYxWAeHQXTat2O2oIXLv5Vh+wW7pCIyEZjaylcqU19/8EkRY41cTbpRuquRq
-    sagNpcyAv9WCqMH1Fje0hwzI2R3Dc9+SsZgQ/S8H2xnOLHk38VAiWP/imNbO+Ojs
-    9CAEjrBUDNjFXm1ivn4IFC6son5z4NDq0TDYqIR/WPDGjjhKR/OGUsUAxx2WAe1M
-    TdoCgkZyuS030TTYHvHAMKXI2gRIczKo3vszXR+JE09XRjw+9qwd8LAImTyQ4rCU
-    I3ktBR/P5HxQQ9CN5s4GsIaj9dHMAKZli/pLwDw==
+    t=1518720061; b=NDLedqplNkzdNpUy8OKvPXPrf1KV+0JXxs+zgDCJLNroS/w
+    G5n55i48NkAljh9w20hc4wMbpOrmMa4ya08e5sEWYedZ287VhIsH7V++ISxV8RrY
+    r1PFdQA7Za39CAleLsqWgmvtiUqAmRJl/A5Jt3CcXWJZUxjZczluq5+UTkqAytRP
+    er7GTwqvcIbQhGjEh3a38FZpdYGm7LKLMjtmdSKWKJktB6nL8wauJafzc+arfvRi
+    6JtvuZEH1HUloE/Z2z4ArQEbkmNtzgD48CAlL09tRbzw7UPpfzE7VJPijyBqgD84
+    rkzmm3dvEJQIXQJ+QroNerCP53RVwPqSHw8Ifow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720093; bh=Ml3OnsOmnO2S0F7Iu75tTXOm70
-    zw119UW3lVp0p4P8k=; b=YgrCDlxPu95TgVif/EfLEYbjNBv8BvDNVsYmGPnlHk
-    fBGqOILlSs191kT5IHsbn9FPk7rCcQC7Thmyr5zxlK9VNFMk7bah1ai12ozC7PBp
-    SXy81zT9Kpvf8f50kfkLq1hU7uMToCdMV1HTv8qz1xMY7KNR0F4UnXiA58LoYpsa
-    osaHYTVmEfOhOKfOTjXaieuHiwCPSaiHDq4WVWlyJPawUUaoNb2Y9zDCKlim53kI
-    HF0zTCaVp+wbNuyuJ7EE9PXD1d7MFu4tfkW3PbicedDmkhvGLFoeHKj4tQND6GLs
-    0BSks3y1jqpJTF4iqhaMo4jnzSVPuuJnVdJXjNSXDZgQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518720061; bh=h33NF49W0ArvjsGglEWmh6a6YS
+    G/tEx6k+iWUpSQhdo=; b=HxaWzRNmkK5dEYpBn4T1GBlgF3MVxubHWW8Wpy8id7
+    iOqQITSlIcckJ6yNUu1if7MKi9CiASpi56fpMtjaIxIcaQg8ERl4UB4kGj70saxO
+    iJNg8nalQ6s5UxaiyYlTpVoFs5+ovE0ikFIfC5FToIhe0MJEx37m3uMNPFUPyyTU
+    ECIy2TJzgyg3XHTOMEx+V0ca73dmddeuhesOR2hYGaKIxL5Z+PjJmqI6iy08+pyB
+    lgOTpYCeBmH3Q+/PoVcZ8HojgUEWLF6fAKTccoGdc703VCUYQGfIx3af0GdXLw3A
+    LfwKXxJ5A0K0/WFo773OcPlRWPFXsVk8/HR2wTbG9mLQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,21 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162802AbeBOSlQ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 13:41:16 -0500
+        id S1162840AbeBOSk3 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:40:29 -0500
 Received: from mail.linuxfoundation.org ([140.211.169.12]:51584 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162745AbeBOPXr (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:47 -0500
+        with ESMTP id S1162755AbeBOPXs (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:48 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dimitrios Katsaros <patcherwork@gmail.com>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
         Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
         Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.4 072/108] vb2: V4L2_BUF_FLAG_DONE is set after DQBUF
-Date: Thu, 15 Feb 2018 16:17:09 +0100
-Message-Id: <20180215151232.377226916@linuxfoundation.org>
+Subject: [PATCH 4.4 075/108] media: v4l2-compat-ioctl32.c: move helper functions to __get/put_v4l2_format32
+Date: Thu, 15 Feb 2018 16:17:12 +0100
+Message-Id: <20180215151232.742005560@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -79,46 +78,167 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ricardo Ribalda <ricardo.ribalda@gmail.com>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit 3171cc2b4eb9831ab4df1d80d0410a945b8bc84e upstream.
+commit 486c521510c44a04cd756a9267e7d1e271c8a4ba upstream.
 
-According to the doc, V4L2_BUF_FLAG_DONE is cleared after DQBUF:
+These helper functions do not really help. Move the code to the
+__get/put_v4l2_format32 functions.
 
-V4L2_BUF_FLAG_DONE 0x00000004  ... After calling the VIDIOC_QBUF or
-VIDIOC_DQBUF it is always cleared ...
-
-Unfortunately, it seems that videobuf2 keeps it set after DQBUF. This
-can be tested with vivid and dev_debug:
-
-[257604.338082] video1: VIDIOC_DQBUF: 71:33:25.00260479 index=3,
-type=vid-cap, flags=0x00002004, field=none, sequence=163,
-memory=userptr, bytesused=460800, offset/userptr=0x344b000,
-length=460800
-
-This patch forces FLAG_DONE to 0 after calling DQBUF.
-
-Reported-by: Dimitrios Katsaros <patcherwork@gmail.com>
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/v4l2-core/videobuf2-v4l2.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |  104 +++++---------------------
+ 1 file changed, 20 insertions(+), 84 deletions(-)
 
---- a/drivers/media/v4l2-core/videobuf2-v4l2.c
-+++ b/drivers/media/v4l2-core/videobuf2-v4l2.c
-@@ -593,6 +593,12 @@ static int vb2_internal_dqbuf(struct vb2
- 			b->flags & V4L2_BUF_FLAG_LAST)
- 		q->last_buffer_dequeued = true;
- 
-+	/*
-+	 *  After calling the VIDIOC_DQBUF V4L2_BUF_FLAG_DONE must be
-+	 *  cleared.
-+	 */
-+	b->flags &= ~V4L2_BUF_FLAG_DONE;
-+
- 	return ret;
+--- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
++++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+@@ -89,78 +89,6 @@ static int put_v4l2_window32(struct v4l2
+ 	return 0;
  }
  
+-static inline int get_v4l2_pix_format(struct v4l2_pix_format *kp, struct v4l2_pix_format __user *up)
+-{
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_pix_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int get_v4l2_pix_format_mplane(struct v4l2_pix_format_mplane *kp,
+-					     struct v4l2_pix_format_mplane __user *up)
+-{
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_pix_format_mplane)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int put_v4l2_pix_format(struct v4l2_pix_format *kp, struct v4l2_pix_format __user *up)
+-{
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_pix_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int put_v4l2_pix_format_mplane(struct v4l2_pix_format_mplane *kp,
+-					     struct v4l2_pix_format_mplane __user *up)
+-{
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_pix_format_mplane)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int get_v4l2_vbi_format(struct v4l2_vbi_format *kp, struct v4l2_vbi_format __user *up)
+-{
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_vbi_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int put_v4l2_vbi_format(struct v4l2_vbi_format *kp, struct v4l2_vbi_format __user *up)
+-{
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_vbi_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int get_v4l2_sliced_vbi_format(struct v4l2_sliced_vbi_format *kp, struct v4l2_sliced_vbi_format __user *up)
+-{
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_sliced_vbi_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int put_v4l2_sliced_vbi_format(struct v4l2_sliced_vbi_format *kp, struct v4l2_sliced_vbi_format __user *up)
+-{
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_sliced_vbi_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int get_v4l2_sdr_format(struct v4l2_sdr_format *kp, struct v4l2_sdr_format __user *up)
+-{
+-	if (copy_from_user(kp, up, sizeof(struct v4l2_sdr_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+-static inline int put_v4l2_sdr_format(struct v4l2_sdr_format *kp, struct v4l2_sdr_format __user *up)
+-{
+-	if (copy_to_user(up, kp, sizeof(struct v4l2_sdr_format)))
+-		return -EFAULT;
+-	return 0;
+-}
+-
+ struct v4l2_format32 {
+ 	__u32	type;	/* enum v4l2_buf_type */
+ 	union {
+@@ -199,23 +127,27 @@ static int __get_v4l2_format32(struct v4
+ 	switch (kp->type) {
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
+-		return get_v4l2_pix_format(&kp->fmt.pix, &up->fmt.pix);
++		return copy_from_user(&kp->fmt.pix, &up->fmt.pix,
++				      sizeof(kp->fmt.pix)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+-		return get_v4l2_pix_format_mplane(&kp->fmt.pix_mp,
+-						  &up->fmt.pix_mp);
++		return copy_from_user(&kp->fmt.pix_mp, &up->fmt.pix_mp,
++				      sizeof(kp->fmt.pix_mp)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
+ 		return get_v4l2_window32(&kp->fmt.win, &up->fmt.win);
+ 	case V4L2_BUF_TYPE_VBI_CAPTURE:
+ 	case V4L2_BUF_TYPE_VBI_OUTPUT:
+-		return get_v4l2_vbi_format(&kp->fmt.vbi, &up->fmt.vbi);
++		return copy_from_user(&kp->fmt.vbi, &up->fmt.vbi,
++				      sizeof(kp->fmt.vbi)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
+ 	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
+-		return get_v4l2_sliced_vbi_format(&kp->fmt.sliced, &up->fmt.sliced);
++		return copy_from_user(&kp->fmt.sliced, &up->fmt.sliced,
++				      sizeof(kp->fmt.sliced)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_SDR_CAPTURE:
+ 	case V4L2_BUF_TYPE_SDR_OUTPUT:
+-		return get_v4l2_sdr_format(&kp->fmt.sdr, &up->fmt.sdr);
++		return copy_from_user(&kp->fmt.sdr, &up->fmt.sdr,
++				      sizeof(kp->fmt.sdr)) ? -EFAULT : 0;
+ 	default:
+ 		pr_info("compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
+ 			kp->type);
+@@ -246,23 +178,27 @@ static int __put_v4l2_format32(struct v4
+ 	switch (kp->type) {
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
+-		return put_v4l2_pix_format(&kp->fmt.pix, &up->fmt.pix);
++		return copy_to_user(&up->fmt.pix, &kp->fmt.pix,
++				    sizeof(kp->fmt.pix)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+-		return put_v4l2_pix_format_mplane(&kp->fmt.pix_mp,
+-						  &up->fmt.pix_mp);
++		return copy_to_user(&up->fmt.pix_mp, &kp->fmt.pix_mp,
++				    sizeof(kp->fmt.pix_mp)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
+ 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
+ 		return put_v4l2_window32(&kp->fmt.win, &up->fmt.win);
+ 	case V4L2_BUF_TYPE_VBI_CAPTURE:
+ 	case V4L2_BUF_TYPE_VBI_OUTPUT:
+-		return put_v4l2_vbi_format(&kp->fmt.vbi, &up->fmt.vbi);
++		return copy_to_user(&up->fmt.vbi, &kp->fmt.vbi,
++				    sizeof(kp->fmt.vbi)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
+ 	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
+-		return put_v4l2_sliced_vbi_format(&kp->fmt.sliced, &up->fmt.sliced);
++		return copy_to_user(&up->fmt.sliced, &kp->fmt.sliced,
++				    sizeof(kp->fmt.sliced)) ? -EFAULT : 0;
+ 	case V4L2_BUF_TYPE_SDR_CAPTURE:
+ 	case V4L2_BUF_TYPE_SDR_OUTPUT:
+-		return put_v4l2_sdr_format(&kp->fmt.sdr, &up->fmt.sdr);
++		return copy_to_user(&up->fmt.sdr, &kp->fmt.sdr,
++				    sizeof(kp->fmt.sdr)) ? -EFAULT : 0;
+ 	default:
+ 		pr_info("compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
+ 			kp->type);
