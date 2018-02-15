@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755931AbeBOVKQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 16:10:16 -0500
+        id S1422887AbeBOVLI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 16:11:08 -0500
 Received: from mail-bl2nam02on0077.outbound.protection.outlook.com ([104.47.38.77]:8944
         "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752361AbeBOVKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 16:10:11 -0500
+        id S1755877AbeBOVKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 16:10:09 -0500
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Yazen.Ghannam@amd.com;
 From: Yazen Ghannam <Yazen.Ghannam@amd.com>
 To: linux-edac@vger.kernel.org
 Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>, linux-kernel@vger.kernel.org,
         bp@suse.de, tony.luck@intel.com, x86@kernel.org
-Subject: [PATCH v2 3/4] x86/MCE/AMD: Get address from already initialized block
-Date: Thu, 15 Feb 2018 15:09:42 -0600
-Message-Id: <20180215210943.11530-3-Yazen.Ghannam@amd.com>
+Subject: [PATCH v2 2/4] x86/MCE/AMD, EDAC/mce_amd: Enumerate Reserved SMCA bank type
+Date: Thu, 15 Feb 2018 15:09:41 -0600
+Message-Id: <20180215210943.11530-2-Yazen.Ghannam@amd.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180215210943.11530-1-Yazen.Ghannam@amd.com>
 References: <20180215210943.11530-1-Yazen.Ghannam@amd.com>
@@ -27,45 +27,46 @@ X-ClientProxiedBy: BN6PR21CA0011.namprd21.prod.outlook.com
  (2603:10b6:300:114::11)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: a0693baf-26d7-408d-ba20-08d574b87dc2
+X-MS-Office365-Filtering-Correlation-Id: 29fd3f53-ccf7-46aa-76b5-08d574b87cdb
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:MWHPR12MB1917;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1917;3:dgG0SL/4kIHZIx0543EjpgM74n3JYs8c6uU5vsGiVHK7vt51tuAvS0tUS77BnMGcV13cqO+nAUlIiZIWxprjT1VLojH0NJb+VNFM+tuFQZ9MCAkPWq85TPzR8GXFlLClA7rHZlwyvieqpm1D42UdiZeRNcMaqXb+P2+VlTP2bmZMjXmDSywaCIkJ6ahBhScEOvxym6bXny3QduaLl378E4s5tOtz1zmZFcCLU+cATak4IDcvyD3HitW32FC1mliP;25:Y+XTdWb6kWToLIUtflQAS+9GqhTKld6Z9UXNJprnnJ+Fj34UozQpzwE8ipnw3i1hhyVbxQe1YCfXjLlhhjcWq6G62CtJuIkZDXNSUtXpfZXGQjLTFaf5sC4yj5ksNpJLlMkfB23ANM6x7EEa1/EKLRXUQ+gAp7XmZzntctNbPUfDfDWlrFwOFlcl3f/BIQnlF5AH1usOrlNGV3NSgNklOzWafwlbk8z4zu23P1oeLO+CdW/Hn/BbVmqetQ5dlo5UkO2tFglINqKhGnTmuf3TSpi3MkDx01mDVgYsSNGB1z5DhvBCBCH8C4/FjdKo3KTU0o9sRXAHfGuANILYOSMb/A==;31:3ZlO4sDI8CCcC4HDFmjTP1u00K/VYQgTiczjoy2PyO1WVR0xzId/U0rFwVz/bUPrC9tVbswhTZwpWfuZAaA+5DHECGG2HSXK+p0LmpUqB1PsA8tlNTGbI9iqh4rlKTdrvVnxlPfgcwHvG7Ivp6n5pSxtDoZtDgp5hCisunRP+l5moi/8y2mAujxIvJBwDZqFjb8slUK+ff5bEedssNPJa6b/cGxoUjuTgmjLsHakUmk=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1917;3:XYfCA0QllAHwzjsa876wT+a/bWvl4YGu4Yh7RB66QpNRjCvIRmSYtD4kguaQhWAVl1sJ2PzCHFBCQaFjWuZuqaNffw145+sFVaLLlqWR+8UOgEZJ5H6HSFrb2FUzTbqe82qIqZk4UmoNmdoTxIEUIfww/F1NWCbF/TnoblNoxTqGcKVTKkJSSRLp8TVu9NVXZJljJ/WSylGAx0hEo4yuMnWUc5bt1BLNZfyrInhh8xq55Se115Ns1Xau0QGbtnRD;25:vpnhab68Alc90ScqPgrwaB45g3ptbAmUfRWihyDagBwXWN9xUm8CgGJOXSCnLDBDhU0HqDnyAnJdsi67wtRG1f1KofNv5yjX6YNcLgitfLnK04HuW3AofTVQqVjyfD+9URcqSvYiuyXAXtTNfJzom37Wf/r6QBlMfx7XaxPiz1vAoLXC8Qp/qnoho2d3La0lxTnjDW9lsh7iNH/Q6llnZvJlzzPML9Ub1M0kA7oIxIWhYeX/MnxhEyd3EY/px5hip2SQij/Dp3Nk7uQntKN7EfJctc2xHPUxrCh/slmSWEe3R/rV9WT4ItnmiF4Sp9HsgMum3hEneeIJ8qYMtPbvLw==;31:3ZPuQBnYjagBX4y+ynhbcGoxLzGjG+B0LdjXovxEQB7m6gBLSD1NZRnz1TMJCbCGJEBGNTQa1ZSZCuCkK56/y0d9ThqfQY/YsSqY9Wv7vsGofCdSk6k4uL6F4vraQz3Qrtu4h3ez5TAdZe1RMd48tMz8pY0OLdbo86sND6rQfj0XC0Ohnk7u059Vdz2xiRGaLK6OWVX32NL03/KQWDTinf4+OoKBtl4I4cK/bjSL/pE=
 X-MS-TrafficTypeDiagnostic: MWHPR12MB1917:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1917;20:l754n6Yob2BZWhqcqRiR6TE4h/pTzqgFhCHCYpfPqp/HCcdHvpRBDEGtRx7B6vu9pPgM0wIsiTjqx/7yEvY8Y9R03WjACvL5tfxwvv/zfDtdJVhe5Iwk+q2cWZ3xcA81Vcfnki0O0s5B1mV+x/Gl+oqTs6VM9VkZGgKyIDjw9X3gFKkOgVSdL5ZR5Qu80GHtvHW+LCTvIWxc3tqj6/oYioJJPXrwDmfMFYAbm5OnYKa9mt6iBDu4AMFQnXN0BWIARJs71XdVzTqvYasOk3LuxPSgJax8UPFSXnYeWMTEa0oL8SoPEzGNWnSCWp8uoN3Pcp++cdP8bJUaE6YBh+idCVOTWrmOjSA4cOxqQVmb5TzTqu8/Z5yr10u8INEd76ZHhmyWT6D1GU9YKnEcsX4vLuZAskREcIuWmkP8uZEl011/2ZjNIGZEFTWfS5K7ZyRdadq6PquLVXkhSKiwBkiy4SGVnly418oWYHY7udOvhdRHVXnvHx46Y/QKAP+uQwdY;4:IDkepkZGdmh3TFxZKmsVav66u5nckHQyX1ajaEukSpRaA7oectvaLHHBj3e8ehRntfmJQ63dyYSkFAEsGtFHQ19BWtULdsZpLia3KMcNZNnWZEFNZ5Oht7F1Dz0ujUOk0w5dpSYZTUpVZKUZfH6sDvSq/arq5SKQ/OkNnWBC89lQcBuKcItFXbFBAGNJw/83W1oHmVO4aITPZQKdkG4sNfGNhk2bIdFJw+zGAhuNuY20U5kaBTfC3Jf9BOLmgmmU443LTCD/HBS7vxgVqz+wVM1myNmF0D7h9tSEOeAeknOsLkGP55kAx1wLGC22waoSpnNaW5slQNl5RN7vYKIS4k7GIdoDUI4CxXdxw0AtYhJ9oKN6Zldbz6vPeXp0M1Vb
-X-Microsoft-Antispam-PRVS: <MWHPR12MB1917C74826A257BF4138F1A3F8F40@MWHPR12MB1917.namprd12.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1917;20:C/9b9k7SHVtz0ml/KJWrLO/aj6OyjDHdoQOvCsivz5GzMg3/M6ahwdj3gea8ThG4ayiWPpUDv/gSzE0qrxsH4yk8ppNIClCZSDZi9iemgyoDx45Gzuc5CyseFRzXly1Ww0oCyN0MTqAD0Id+RMibCMXTS16voShpEnhNPSNJvdk24pB0L3vOF6gnca1yj/3QDxBxKnDzvA8wWHogojfI/XF4q/BilURhYXgw3kxX+6K1bY/LrEJG3rdXevDFcvlQzDB44kBImPVFpO1jlZNH94nEtrsA1iBpFXjprjyegyShr/ZmGK4cqe/nuizXfLco9SArHgagVSlqD0Romxmi/3Et9TdYq0N9Rq4P/iAAtkjStLap/mcMAhOxvecY7nsP3NWomkDQYhumeODVDSBCZSXBS101BuTwrpvOSjxmvYyDDCZ+ahl6jQnydp43YNtB8O21p5lA7Nx3YVI8Z9aWJCC+JB+pjELxvR625jnamd4/dOzGHs8jPj1MmKBLjxo3;4:tM6Obv47diirtuMXEtD8SQ03hiS3G/uDjlk5zgTFhDNWCiN/e5YIFpkLsCqIFADkpUoA080kLPfig788lEOanNSrhDUuY1VBFgFGNMib5+MEOUSau+eu/D5Nx0g/guWM9TZrKDWNBGWuRQMkw0kDIlX0zH0sC6HA0q69Kw9oIc5splYKJKKH+HdtjL6nRzjMKQpUdkxqRBHOj7+OVaXscuAQw/Ty9rKy7AiA5UVLtAteW+09nfH24D8yOQCMJaRECRY0nQqp+pic7aEKovbiqoB6B24nQT6zVlNAClH1QiNzGyIVP12OP/n8PN8QL3dWuf8vv/pqOIXZo6OAyMQHFkx4L450kkPUiUX52HN9/q7z8W85u5Ybkaqbs7IkAJFI
+X-Microsoft-Antispam-PRVS: <MWHPR12MB1917F77421EB2BE31C54694BF8F40@MWHPR12MB1917.namprd12.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(767451399110)(42068640409301);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3231101)(944501161)(93006095)(93001095)(3002001)(10201501046)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:MWHPR12MB1917;BCL:0;PCL:0;RULEID:;SRVR:MWHPR12MB1917;
 X-Forefront-PRVS: 058441C12A
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(396003)(346002)(376002)(39380400002)(39860400002)(189003)(199004)(76176011)(50466002)(5660300001)(2361001)(97736004)(6306002)(48376002)(53416004)(6666003)(305945005)(2950100002)(6486002)(2906002)(4326008)(1076002)(53936002)(966005)(6116002)(7736002)(3846002)(2351001)(106356001)(16586007)(66066001)(47776003)(86362001)(316002)(575784001)(478600001)(7696005)(51416003)(50226002)(386003)(72206003)(6916009)(105586002)(26005)(8936002)(8676002)(81166006)(186003)(52116002)(81156014)(68736007)(59450400001)(16526019)(25786009)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1917;H:yaz-diesel.amd.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR12MB1917;23:UZEtRTTGDxuJBUz2Zi6WPmkXrtvCL0MjZLh80ARKE?=
- =?us-ascii?Q?URIh5CBBG441YaKzf8qbOzDAHKNZVWcxd5A7ehOMp4RkHiet18ogd7a5Joti?=
- =?us-ascii?Q?SqQoiadeYwzo9mw7hFfmH9My7AAl0cdDbYBOfIm6ejPmBxhBP/DrxhmYd9mB?=
- =?us-ascii?Q?ExmSQjCgqT5qCw6fbekYdL2WKHFb8R95iwj2a9rayhBpDgMtu31pwGw67Qs3?=
- =?us-ascii?Q?Dh1Z9p/PiMPuEzeSMrDis/19/btPf+wd0fY286WLmYcGOFgTiwucE3DAtILl?=
- =?us-ascii?Q?B5NNbASuX+ve1f1+somU9QDDIr5FERxjR0vOQ/B+nFapXz49JwO0xf3C797a?=
- =?us-ascii?Q?iY2UQ57KpyY1Xixu5yvWo8e1FC6HBu9XMJXiqCtpgxYuF1SBNeyZQ7qZSNT1?=
- =?us-ascii?Q?hy4lQ5yTacAdvzmro7kxCAa0fDFbqNqAUugvCWRohj4WPpKcD0Xjj628UaxR?=
- =?us-ascii?Q?OyYtqxHnFb+gDXwj7obA5xtAFDC7yrnsrb9CUN3xscQgp5D2rsH8cA47Ff/p?=
- =?us-ascii?Q?cTsgEEfOF5O3EnFXO9MymOIHjaageVbjcsMl+zksBJYc9/3E1SX2l9mVV9XH?=
- =?us-ascii?Q?yHd/JNWbnQopXTG8MyftaeEWTVwcRPRArwWH1AV1p51f1EIM7FtQ6rmPuuT+?=
- =?us-ascii?Q?A/zwc+Z2mv0JS6JljVpEHS8zXobv+zcLTNBs6dLsSdLSCW88QPy1KSZZuJag?=
- =?us-ascii?Q?/B7+DZsoOQCOyUVnA5EiycS4ml0TCSpzPp/z9PS0WzIuan9VAqj33xnipqpM?=
- =?us-ascii?Q?9nuw2bcyiuCFGiwJKNdhPIcuu5E/CZ/lDgfvOhJ4BDqw1XS2o7bRoQvX0flb?=
- =?us-ascii?Q?MSMFmr8Yr3350CDZAWpzFb6xYZS/jj1eav5t88l0QT0fLBdkFVpDPZFoWkcn?=
- =?us-ascii?Q?Kb11Pq8bzdy/Ii22tBTn3RKdO2umjO66flI5s0Mhb2kgV7mWrAF0UnMU1h+U?=
- =?us-ascii?Q?jQntbYJ7ihTIya9nfyHXbkbC6X9PJG+QNUXpSncT7wCOs8toVRgiRy9GjfjS?=
- =?us-ascii?Q?/8blCqti6o9GFMBfMC0gsjqtnKnw6SN4zFSgFazFblyEq008iWqfjtvIgZBM?=
- =?us-ascii?Q?TVnsh/uaR+yHP37fwDFTYuxItHMRJPCjo4tOEfS5XH1Ko1RCISrWCagoO8BE?=
- =?us-ascii?Q?d9UvZOMC3mN1vPkqjtrQGSAiPR1sYK1Trj8t4EZVCnBgN9lSYGNafgW7+xAu?=
- =?us-ascii?Q?wUZ8gzbS5oLUpgwGzz6b/xq6E2MXIrWwBIKIzV2Y+Aw7GGHln95KuCcMwZTe?=
- =?us-ascii?Q?GfT4Cm2fhfd04nwqGbmtMv3U3Ru74O9nw8NOdj3?=
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1917;6:vo8h+2+ZrMtd141AqvnfFGWUZgkL2nElKP7e4MFYHNULNylZXE7CHtWoYQ45FkzEpdvBUuv9ATJh0OAo4zapmmsF5jR9KPfASUBpgCcqRDIFIIOd1vcQ3xWEBk1ODZGyh+ubyEaGq0nAdIe0xqoW3LqTqd/o6/+TEjYyKUItut7mpUBr2wXYXbM7tqfQwM92mS1Uknwt0lbMXGhjby1PUplkcnVyrRCoHgHrdRMmLAv//TxlNKxFeNm/k0cFa/zGK4y8fymLX4PrnQDOJx0CZvU76zYn1AE/JBKapNVJJk8OyT5kE2Pry3mcRSBwsN42GMcEdCgR/AbiPJgZ9GrHSkDmxdKDjCXEXo79ZBwsBhc=;5:J0mQAbUC42oGmfMPjEBLhd7WfGKiRMaungZhafXXO1pUd9sS1JCgabRayFKXaSmZZdaum1Rhwv8OBKtAE2jqDln9cnxaxiuJnIW1ZWAFM8Zqq9FgneoeOSLHH9e3sEp0elx3RzUx+uYir8u6Est8ZSvp1vD/FAQ0HUM6p7hgwAQ=;24:VctTInuXRH3CGigyGWaPQdCjxYDpfh0FHjWTN+BB0x+rVS2HYB6gY/O8hRxiG9dVFnWVGfQxs4s70aBrwi7FWGo9aeUGad98N4vdNqQZESQ=;7:hwLWLSqBCpaG0awbYdbYzdoZK9FKCnFVyMvmiFS7uMZheNGe/gJqJesOU/B+Mlvqi1BleS0nfYgj8KTgZkV1sly9FdidN5SwQfzfebICqzD8K1LHYG23Pq7Zp1I+JHs0DpFaam/nB1G8XsMKAlU05dH2qp22spurRuvRYoVDIUPGpAnSMNtpTgSSzV+YrXAOFw4QOT/tCoFEy/JYgh+3I9lTi/IDMj+xDeO2aORU4IWzuulQby/K8SYD0NG1JTCO
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(396003)(346002)(376002)(39380400002)(39860400002)(189003)(199004)(76176011)(50466002)(5660300001)(2361001)(97736004)(6306002)(48376002)(53416004)(6666003)(305945005)(2950100002)(6486002)(2906002)(4326008)(1076002)(53936002)(966005)(6116002)(7736002)(3846002)(2351001)(106356001)(16586007)(66066001)(47776003)(86362001)(316002)(575784001)(478600001)(7696005)(51416003)(50226002)(15650500001)(386003)(72206003)(6916009)(105586002)(26005)(8936002)(8676002)(81166006)(186003)(52116002)(81156014)(68736007)(59450400001)(16526019)(25786009)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1917;H:yaz-diesel.amd.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR12MB1917;23:OYSlIbUkV2i37/nN52VypkHBTKWVM0Ns3fpe7m/pm?=
+ =?us-ascii?Q?opj//K0LEQEpvZRTMohbLWBAbtALpmY4bgngyWUxLlCW4G1YDzGrXANPCSSP?=
+ =?us-ascii?Q?MEMBJzQgTfgLBknulzP3+6OGnzgNlKphmiP01i4hMWFeCQ8EDvZ/96/TRov4?=
+ =?us-ascii?Q?jsy7T5e+XpriR/Jx/i6tD5zNEftSy9Bt+9FPSNl01rr7pK8dcLCwGuoX/3s+?=
+ =?us-ascii?Q?lVrDD5DrD1gMj+PWWBkSkGaZWAthCIOpcBG1wmgt/0TCtmiD/+G+h4JxO2/b?=
+ =?us-ascii?Q?cV5I/DtAEai1dsSHTdmCqj9ol4vZuY56WBjetgw9A3Op6ruxH9ibNYDF3WDX?=
+ =?us-ascii?Q?VMVYhh6o9v8mLo4d8MaeYTNFHjDByaPgPYKvSZMbKIJm+fuMCF1TU7goX92k?=
+ =?us-ascii?Q?sN7R3zHmfqbtj+uNC8L8/Bjfw1AjFyuwn/YUzgosX2Rl+/GpntRruXvm/Wg+?=
+ =?us-ascii?Q?XH+pV6JhlOLnp0SuSKi61rn8EcVUDplY0zKztiLmRopMwroJVFKbRuxBMFaJ?=
+ =?us-ascii?Q?ReNxiltDgE5UFQa2IVRa5npUfLDImfMxcAZiLcFothHe/wn8q7bROq61EKJJ?=
+ =?us-ascii?Q?M0h3Je2KO6hmmWwOq3ZUns7Iwue1RA5SdKcto/wTmbVZhoaEnbihQeSVOZ+9?=
+ =?us-ascii?Q?mi4jU851V0uTJNtChHlBXNu1T0Nhd0bkICnwS3ToTdNP6DSQ4sJ5+/f4V6KK?=
+ =?us-ascii?Q?3Iw+0GM8oGOo6acM4nmT01rogcL6DamYo7k5c94hO/mjc+3V/tcA1FQ0Pi5p?=
+ =?us-ascii?Q?vuoelXYmhDKPrRvQj5C2LCxUdBq2j654OQk7XXFtn7oVzRGTd6Q6YUOEjOLA?=
+ =?us-ascii?Q?XZs/ziIr6IJcfDSodiFYjHTfU8MWx/VZHtVXJUaiLBfW51kxEbFBuj5Y5bg6?=
+ =?us-ascii?Q?OXbBGYVHjJl5T19t9FkA6rZTGtP1xBZMn17o/D9KV6gzREMXsJpL0SOKE5qy?=
+ =?us-ascii?Q?hTnltjp21J3xZXBebnGIHxPAOuUO2FGPY1QMTEko+zsq2Bx1r1FnqYfFvI+u?=
+ =?us-ascii?Q?c4CUlLgWk3j9nl4sLhfwVVeSr20KQ9/w3F8oMQEytNiZKzmmwSHx1LciaFSl?=
+ =?us-ascii?Q?juqUly0Q9LUJR3Mct+e+0O2C9FHO0ZVz5BgPfBGIL6IxAeixKd/FQCXGD15O?=
+ =?us-ascii?Q?rZqPAnxp2kKL5EjMPVIkmkMKWQxYw4ctIv8+q0Dfqaq8NZqC2ZoCHHDbwmit?=
+ =?us-ascii?Q?NOkbTWSrOpS35E/MmChhoT1NJVtD8J47pXg7REzYr0h3WWu8y7cBIEBhZcvO?=
+ =?us-ascii?Q?6vFZOCPN07XadMThA1GfAZuujXF6GyB6hnzUZ5BnfxuqqkkjSvEgyitb6Yqx?=
+ =?us-ascii?B?UT09?=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1917;6:9dhum1EfVa6oSc2833vhvobTwX2zE9yvxd7mIjV0qJ5RbbbPhJU/4lZr/agc/SjqpcofQwHT19SQ43RiYYWUh8oBZJ73hvOWorxlmLhSdifGCEeO5eABva1Ad+1QYB3jrUV2cE+do8Ae2H60chViPZgq2ZsSGb0UTGp3pFnXeFkoMuDqqoTvI4gOGE6e2QJVqNXMG7mxJ2eC1zADjpe/I3t3xkWL+MaAl/QVuKA5cNz+qgvXmxVBiKL5Xp6LfRpisVnN3DOUeJ/YWR9glGjb+sutE1ZfcOqqp8ILCzwvfbjTDC17pMLJD8ezxs0Uy+R6SwoAZqGyZzPZeQnpKhwFcUKhJKve08jBSdJ5zKMrM2A=;5:6GFzR0OcmlQ8yy+Mv/ohSq8kiiQxhno88/KUSr9fQlMrbHUfSYy/AzxvT1ZeGo/9uK5bHBgmp5dPPKdNj/HrpWsF/+PsKhFGBhn4KPaQ4LJE6DJqXLV0BSTZjfCS/nTUtfAONEM9Xjl6wuAHV2Br0QH8r7i/9qn82Jj4O9utpME=;24:e7nvgPjlcULchcyKt0ID8x7qiCUntMTUJa+6N45YG5+mt5Ri3bI3ynPVq65LRR6lpWBL80R/XUjWXra8Y/TJ4ySzyjg/9VRpUcJ8LmOjc2Q=;7:s801RjdN89d7YQRWOgsxYz6lMsXkJzRocYJj2fRCZgZJOt7sqaA2CT1xHTHVAsMQR0vTpIVC2slELxCG7p0b7B9Uj+iEJMun8zqDYty3Cn75feDnqwAR3wZwSH1M7ERTzjZlVfaBtvdVvNaUJA9joqW4NPm1LzuEbWmX219P3bM3djheqozC2mgTN3A4KWyZ7Oixcdx3ICPOEMJSq6zUTqlicrGD9iUaEA4wCIvUO1phhgqwXbMxzKRZivbqUh9z
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1917;20:cgklrYUtJDV/0Un17BarS8wamo50ZY1HbcTRFiIu2b/sWhrxSMt69VHibVf0vF4m0kWxMcTkoiiWDK6AC3O7kGNbweAC9FRL6g+3znGgYPPZIHHUnJEFY+lcEJVEqfrrfKMv9flstM/ZqvIMqoFBVctMRD4LSWwU/kuw7OGSTiCTyEHCkwmxIUeO4Zxd0A/Dwqg7Ajc6hUKzTIinkf1bTTITCfWWjjuPfFSpViYlIywmgZIm+FbD3o5yuHtlJjYF
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1917;20:BddNSU8uT5ed1BVqxyW3TGyz2GcyOmlUSUrQSu8cp320KsXffZyIwQH/zY92/yPhRGpZyjraw6lFvJsmCwoInN0D+PI8ywTAQJ38k77FZzOkkw6tB5J2dS1926F7Ck8TeQ1hYI5BDWxyuUPdBf4oClRyLjeJzbrSuKoVzmnnRDypLIsUgzbQ0DiA7zT4lGIY1uDqUnFwFCO6yZ5YdqcsCC7haTbKyim+HJ+Zu2azsswFAaqYFdHJmDdGsxdTGUrc
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Feb 2018 21:10:06.5511 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a0693baf-26d7-408d-ba20-08d574b87dc2
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Feb 2018 21:10:05.0199 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 29fd3f53-ccf7-46aa-76b5-08d574b87cdb
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1917
@@ -75,57 +76,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yazen Ghannam <yazen.ghannam@amd.com>
 
-The block address is saved after the block is initialized when
-threshold_init_device() is called.
+Currently, bank 4 is reserved on Fam17h, so we chose not to initialize
+bank 4 in the smca_banks array. This means that when we check if a bank
+is initialized, like during boot or resume, we will see that bank 4 is
+not initialized and try to initialize it.
 
-Use the saved block address, if available, rather than trying to
-rediscover it.
+This will cause a call trace, when resuming from suspend, due to
+rdmsr_*on_cpu() calls in the init path. The rdmsr_*on_cpu() calls issue
+an IPI but we're running with interrupts disabled. This triggers:
 
-This will avoid a call trace, when resuming from suspend, due to the
-rdmsr_safe_on_cpu() call in get_block_address(). The rdmsr_safe_on_cpu()
-call issues an IPI but we're running with interrupts disabled.
-This triggers:
+WARNING: CPU: 0 PID: 11523 at kernel/smp.c:291
+smp_call_function_single+0xdc/0xe0
 
-    WARNING: CPU: 0 PID: 11523 at kernel/smp.c:291
-    smp_call_function_single+0xdc/0xe0
+Reserved banks will be read-as-zero, so their MCA_IPID register will be
+zero. So, like the smca_banks array, the threshold_banks array will not
+have an entry for a reserved bank since all its MCA_MISC* registers will
+be zero.
+
+Enumerate a "Reserved" bank type that matches on a HWID_MCATYPE of 0,0.
+
+Use the "Reserved" type when checking if a bank is reserved. It's
+possible that other bank numbers may be reserved on future systems.
+
+Don't try to find the block address on reserved banks.
 
 Cc: <stable@vger.kernel.org> # 4.14.x
 Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
 ---
 Link:
-https://lkml.kernel.org/r/20180201184813.82253-3-Yazen.Ghannam@amd.com
+https://lkml.kernel.org/r/20180201184813.82253-2-Yazen.Ghannam@amd.com
 
 v1->v2:
 * Give more detail on call trace issue.
 
- arch/x86/kernel/cpu/mcheck/mce_amd.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/x86/include/asm/mce.h           |  1 +
+ arch/x86/kernel/cpu/mcheck/mce_amd.c |  7 +++++++
+ drivers/edac/mce_amd.c               | 11 +++++++----
+ 3 files changed, 15 insertions(+), 4 deletions(-)
 
+diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+index 96ea4b5ba658..340070415c2c 100644
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -346,6 +346,7 @@ enum smca_bank_types {
+ 	SMCA_IF,	/* Instruction Fetch */
+ 	SMCA_L2_CACHE,	/* L2 Cache */
+ 	SMCA_DE,	/* Decoder Unit */
++	SMCA_RESERVED,	/* Reserved */
+ 	SMCA_EX,	/* Execution Unit */
+ 	SMCA_FP,	/* Floating Point */
+ 	SMCA_L3_CACHE,	/* L3 Cache */
 diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-index d8ba9d0c3f01..12bc2863a4d6 100644
+index 7fbb19cb1859..d8ba9d0c3f01 100644
 --- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
 +++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-@@ -436,6 +436,21 @@ static u32 get_block_address(unsigned int cpu, u32 current_addr, u32 low, u32 hi
- {
+@@ -82,6 +82,7 @@ static struct smca_bank_name smca_names[] = {
+ 	[SMCA_IF]	= { "insn_fetch",	"Instruction Fetch Unit" },
+ 	[SMCA_L2_CACHE]	= { "l2_cache",		"L2 Cache" },
+ 	[SMCA_DE]	= { "decode_unit",	"Decode Unit" },
++	[SMCA_RESERVED]	= { "reserved",		"Reserved" },
+ 	[SMCA_EX]	= { "execution_unit",	"Execution Unit" },
+ 	[SMCA_FP]	= { "floating_point",	"Floating Point Unit" },
+ 	[SMCA_L3_CACHE]	= { "l3_cache",		"L3 Cache" },
+@@ -127,6 +128,9 @@ static enum smca_bank_types smca_get_bank_type(unsigned int bank)
+ static struct smca_hwid smca_hwid_mcatypes[] = {
+ 	/* { bank_type, hwid_mcatype, xec_bitmap } */
+ 
++	/* Reserved type */
++	{ SMCA_RESERVED, HWID_MCATYPE(0x00, 0x0), 0x0 },
++
+ 	/* ZN Core (HWID=0xB0) MCA types */
+ 	{ SMCA_LS,	 HWID_MCATYPE(0xB0, 0x0), 0x1FFFEF },
+ 	{ SMCA_IF,	 HWID_MCATYPE(0xB0, 0x1), 0x3FFF },
+@@ -433,6 +437,9 @@ static u32 get_block_address(unsigned int cpu, u32 current_addr, u32 low, u32 hi
  	u32 addr = 0, offset = 0;
  
-+	if ((bank >= mca_cfg.banks) || (block >= NR_BLOCKS))
-+		return addr;
+ 	if (mce_flags.smca) {
++		if (smca_get_bank_type(bank) == SMCA_RESERVED)
++			return addr;
 +
-+	/* Get address from already initialized block. */
-+	if (per_cpu(threshold_banks, cpu)) {
-+		struct threshold_bank *bankp = per_cpu(threshold_banks, cpu)[bank];
+ 		if (!block) {
+ 			addr = MSR_AMD64_SMCA_MCx_MISC(bank);
+ 		} else {
+diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
+index a11a671c7a38..2ab4d61ee47e 100644
+--- a/drivers/edac/mce_amd.c
++++ b/drivers/edac/mce_amd.c
+@@ -854,21 +854,24 @@ static void decode_mc6_mce(struct mce *m)
+ static void decode_smca_error(struct mce *m)
+ {
+ 	struct smca_hwid *hwid;
+-	unsigned int bank_type;
++	enum smca_bank_types bank_type;
+ 	const char *ip_name;
+ 	u8 xec = XEC(m->status, xec_mask);
+ 
+ 	if (m->bank >= ARRAY_SIZE(smca_banks))
+ 		return;
+ 
+-	if (x86_family(m->cpuid) >= 0x17 && m->bank == 4)
+-		pr_emerg(HW_ERR "Bank 4 is reserved on Fam17h.\n");
+-
+ 	hwid = smca_banks[m->bank].hwid;
+ 	if (!hwid)
+ 		return;
+ 
+ 	bank_type = hwid->bank_type;
 +
-+		if (bankp && bankp->blocks) {
-+			struct threshold_block *blockp = &bankp->blocks[block];
-+
-+			if (blockp)
-+				return blockp->address;
-+		}
++	if (bank_type == SMCA_RESERVED) {
++		pr_emerg(HW_ERR "Bank %d is reserved.\n", m->bank);
++		return;
 +	}
 +
- 	if (mce_flags.smca) {
- 		if (smca_get_bank_type(bank) == SMCA_RESERVED)
- 			return addr;
+ 	ip_name = smca_get_long_name(bank_type);
+ 
+ 	pr_emerg(HW_ERR "%s Extended Error Code: %d\n", ip_name, xec);
 -- 
 2.14.1
