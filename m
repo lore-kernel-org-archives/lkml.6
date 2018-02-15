@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224EIrgD+tiOlgKWyCoHCQvnJZjYHmNZk3LZkIOuXJrB8SwPyI3fMv3H8hDPdtYDcIQybhX8
-ARC-Seal: i=1; a=rsa-sha256; t=1518708967; cv=none;
+X-Google-Smtp-Source: AH8x224e7PUQAGFrmkWlb26RDIvA1cQqkmP5WlZ3GGkT33lmnEdavQmLryosWKkYQTSbnQjNLo7/
+ARC-Seal: i=1; a=rsa-sha256; t=1518708964; cv=none;
         d=google.com; s=arc-20160816;
-        b=WZ1Wp5ZUxthjAv/fBkZLZnBCfpqSZroFPCTA5rka7qqhZI0VMJo9u8bCE5F4TBZsKe
-         LgTeLVvPIcMmCOAKtKqJ4Qpc4MiJkBCxozyAc3CedsVnbb3KNn17lYy2i1Zj/G7stOxb
-         s4zgRmb/mBxoiMXBxp/CHNo5dhjkjDuZjIwwUwfymUxDRKv9LuxNxYWuMG1k1x6H3jtn
-         lRfL2jnhFf68dw4tIokplGCknTqhSa2C/2PJQ6Oi5y0FOzV1liONNxcod3LRZi8sBR49
-         JX9vy/nUrmgenRBm03bmW63nbaMz2uslmOm7GOaDe9IUoEx8FDojI25LsXD5jly01FoK
-         hnXA==
+        b=KwkFUoO76zbsbvfzd7DiB5FHVuqVNwxWFiB7va1aqLBzG3pSdBPY5le0FOAWslbKkN
+         PLW1wbqciHx1JUev1mckvKNYHgPDnjva4blnPHK8DlVV+VQIyT7ynW1oj9tn3zGCtzcV
+         CIjRrm0LYmyj1j37TWxsrlEyKFQVtCu5jMxXxjq4He56SzWSxgT/Z6jLqU+7SWHeqDnZ
+         RTiWZexQTGyveiNHGsOWAszGpMA6jIcIiMYWuAg8Ysvb0P4zqmZjdoyc9pe6W1pFyz/n
+         xIX3kVe3Z0HOVQVtLDl5BrtWMbdskzD6uInDBz0UhXIUK9ylu1ChAPNOQeMiwWmIOOBO
+         VBJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2lKVK1D63qNfS6773oS1DsUEMJCwCR66blJzW34wVe8=;
-        b=UFa0KYsyhN6aEaOwCgaNv2veM+ggwD3ViefXBRG6Tzb71qf5kdAFSQsLId+BvoMmxc
-         WT0wu6QPiP9clQ5206UHJM5JuhtJHEjZLcCvQzAas9b4BdaRy8O1bYKhs8c++QDjOMuJ
-         TEnhhPejr9Ob1Mcs+GUlsbBa/hXP7GWS12qxzi7VE6DE7k8VRHNx9Of239UkhJPhOl0b
-         xjqtcXDDa+otUiEOTlSnsLLp92v2/KOgqT2lgej9t4F9Rcu0C0mBfUkWBppIziJ9yqYE
-         /OmvLlXT/51dCLq7s5tofQxvArgJqiP9NyL3R8HgrzZNbeHSu/ldZmbouK27n6Ba3Cha
-         yeeg==
+        bh=jeVZY4Qihdy1U9bZrWz6P18df2rTGOLpGcO+Z9owADE=;
+        b=N40UZs1ECUdA9WoSFv9bYmNeeQv29OMBf8DwJcrrW/mRw5OcYCHeIxHNnJxUxKc03t
+         8uSCNLDFNfy2kAGWnIGVj1YWIpa9pFUEhmu8KIrqKENsLoqU7tIamljW3tL39Hqv02bP
+         2vTwbnTytbm2HBPUqyvk0yHjycnrr4oDRzOgb0mr0OmXBAhTPI75vr2XXvAe2X1vfmSP
+         11q0FEUYmoaPcGEPlP0JBqmNr1rZgNQcDofZWejFRtHc9WKzZzJvugX17Q/bkbmB7xN9
+         3cJ/cW+5gkj+Ew5rQw9I/DgYjKDCURQxCnvEsi7Y6E43IEuoDXU+2OMZg2f8ajKK6d2t
+         RUww==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>,
+	John Keeping <john@metanate.com>,
 	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 144/195] ASoC: skl: Fix kernel warning due to zero NHTL entry
-Date: Thu, 15 Feb 2018 16:17:15 +0100
-Message-Id: <20180215151713.006045366@linuxfoundation.org>
+Subject: [PATCH 4.14 143/195] ASoC: rockchip: i2s: fix playback after runtime resume
+Date: Thu, 15 Feb 2018 16:17:14 +0100
+Message-Id: <20180215151712.961615588@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481262920036706?=
-X-GMAIL-MSGID: =?utf-8?q?1592481774941078579?=
+X-GMAIL-THRID: =?utf-8?q?1592481260348588269?=
+X-GMAIL-MSGID: =?utf-8?q?1592481771550436947?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,40 +48,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: John Keeping <john@metanate.com>
 
-commit 20a1ea2222e7cbf96e9bf8579362e971491e6aea upstream.
+commit c66234cfedfc3e6e3b62563a5f2c1562be09a35d upstream.
 
-I got the following kernel warning when loading snd-soc-skl module on
-Dell Latitude 7270 laptop:
- memremap attempted on mixed range 0x0000000000000000 size: 0x0
- WARNING: CPU: 0 PID: 484 at kernel/memremap.c:98 memremap+0x8a/0x180
- Call Trace:
-  skl_nhlt_init+0x82/0xf0 [snd_soc_skl]
-  skl_probe+0x2ee/0x7c0 [snd_soc_skl]
-  ....
+When restoring registers during runtime resume, we must not write to
+I2S_TXDR which is the transmit FIFO as this queues up a sample to be
+output and pushes all of the output channels down by one.
 
-It seems that the machine doesn't support the SKL DSP gives the empty
-NHLT entry, and it triggers the warning.  For avoiding it, let do the
-zero check before calling memremap().
+This can be demonstrated with the speaker-test utility:
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+	for i in a b c; do speaker-test -c 2 -s 1; done
+
+which should play a test through the left speaker three times but if the
+I2S hardware starts runtime suspended the first sample will be played
+through the right speaker.
+
+Fix this by marking I2S_TXDR as volatile (which also requires marking it
+as readble, even though it technically isn't).  This seems to be the
+most robust fix, the alternative of giving I2S_TXDR a default value is
+more fragile since it does not prevent regcache writing to the register
+in all circumstances.
+
+While here, also fix the configuration of I2S_RXDR and I2S_FIFOLR; these
+are not writable so they do not suffer from the same problem as I2S_TXDR
+but reading from I2S_RXDR does suffer from a similar problem.
+
+Fixes: f0447f6cbb20 ("ASoC: rockchip: i2s: restore register during runtime_suspend/resume cycle", 2016-09-07)
+Signed-off-by: John Keeping <john@metanate.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/intel/skylake/skl-nhlt.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/rockchip/rockchip_i2s.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/sound/soc/intel/skylake/skl-nhlt.c
-+++ b/sound/soc/intel/skylake/skl-nhlt.c
-@@ -41,7 +41,8 @@ struct nhlt_acpi_table *skl_nhlt_init(st
- 	obj = acpi_evaluate_dsm(handle, &osc_guid, 1, 1, NULL);
- 	if (obj && obj->type == ACPI_TYPE_BUFFER) {
- 		nhlt_ptr = (struct nhlt_resource_desc  *)obj->buffer.pointer;
--		nhlt_table = (struct nhlt_acpi_table *)
-+		if (nhlt_ptr->length)
-+			nhlt_table = (struct nhlt_acpi_table *)
- 				memremap(nhlt_ptr->min_addr, nhlt_ptr->length,
- 				MEMREMAP_WB);
- 		ACPI_FREE(obj);
+--- a/sound/soc/rockchip/rockchip_i2s.c
++++ b/sound/soc/rockchip/rockchip_i2s.c
+@@ -504,6 +504,7 @@ static bool rockchip_i2s_rd_reg(struct d
+ 	case I2S_INTCR:
+ 	case I2S_XFER:
+ 	case I2S_CLR:
++	case I2S_TXDR:
+ 	case I2S_RXDR:
+ 	case I2S_FIFOLR:
+ 	case I2S_INTSR:
+@@ -518,6 +519,9 @@ static bool rockchip_i2s_volatile_reg(st
+ 	switch (reg) {
+ 	case I2S_INTSR:
+ 	case I2S_CLR:
++	case I2S_FIFOLR:
++	case I2S_TXDR:
++	case I2S_RXDR:
+ 		return true;
+ 	default:
+ 		return false;
+@@ -527,6 +531,8 @@ static bool rockchip_i2s_volatile_reg(st
+ static bool rockchip_i2s_precious_reg(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
++	case I2S_RXDR:
++		return true;
+ 	default:
+ 		return false;
+ 	}
