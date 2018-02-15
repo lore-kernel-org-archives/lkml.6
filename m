@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1936761-1518711462-2-4857218834215032805
+X-Cyrus-Session-Id: sloti22d1t05-1936761-1518711457-2-1181129945522056947
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518711462; b=F9tTWxcv9oOLUYccDERu6k9xv3ZaJ9FPfGnyc2nusUY3KJZ
-    qZCWQsYOxKMfSi474CJ0VXeM7G9AzAppNpFB67/Qb7vybBVFPGTIVjHgmUnambju
-    GIiZwHRg/UFESv0H2V7BPGyNI2+hm76WJ6TQzylzeOVnPrjFhahTR8akSTMJltbz
-    Ic9CvLeLmbfORyi0L59AC7ZpGjDmsm43+rIaQhzzkqhmyHy3kp/VCzKy3i4s6lc8
-    ynOkDW8UUyX1rDWKqavALGBJtavIxI+BazGJE+IgGIpKhfjYtp5FrrQRElAWTF8P
-    oEUTeXXdIZKstA4sISfj2PvhkthV4M6m2QMlCZw==
+    t=1518711456; b=HflMlXkDllfJ8r1ZEm7hQwfJxv3iZd9smnrSKbOMh7wFBQh
+    IesZLDBsmyglh/uhrllA4OKCfDkTtoU6q6bF6oERNzA9pabjgI7DouTtuefcQh4i
+    XdQXHzGXwbKFSuzq/SeY+/mYoeYz14EXAecEpb/F0MXzs1qIMsEcPuXVcbymbcp6
+    kZxSPkphDid3qX6S4W2fxnALa3m18SJd5fGmHWmeyU9VGZMYbs7d9QFCUa5OYzEI
+    1CX6Vk/i6zKU9nloinGK1Sa436nLDGhXs7/At7AFpXaBa/TIJ7ySfz8W2fuH9hIL
+    +fnNjfB03Z5QQnJU6JFK3FuytonFIXBcYTyvX3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518711462; bh=AL6XkgdOkulgksVlVbh+RMYKhr
-    poT3ryeZXmpGfMKI8=; b=RchWhHAEemxk6JPLYv2SG9OEis0GPWJJ1u4ogQGLoG
-    VLhlVLjEDOh41pBwvkENXVeaMCgjaQ+1x+qXNU9IccotJ79OxDoWFCXTisPE52gQ
-    4oabM1b2p7ftJPemsn1I+jfK9g30XsJnmwMGZmxHV7djxleADnL3XDBztFI97M+F
-    TaNClqmQpYmI9cbRWGW5roIlTLK5kQwLR5UB8QdDnS4gBj6DPH9oPM+KPHz8oXKN
-    ujIXIq1zlfPahSBOmMHNdLnVTgyQ1Gx+E8+2rhC0sAFMGj9gPpBp5iwoUMc2hFqt
-    ybd9aAz58wBSTBrpdEJdtxMIKmcFSCZKo3pqlD4ZWbuw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518711456; bh=ltxBE9lNf+SEgdQfwVoPpj9abz
+    edas1EMTWjBX7wCyE=; b=v6UxT1HCj5Hx9+kIdHH/sDhfYIlM3OEBQbt7EY089e
+    2w0sNZ+h8CZhCS8Cp3i8/EgRsg7s8ryj1xvaUBRCPpoN12OKIop0VOSV4NpGYbFy
+    P79QYvSmjlU+pbugQd4O0xd6880CmsFyaemA2rkvckU0MOzpAChC74cADvz2gaMh
+    5zmBCAEyLoSzb/Y4CLM0SKByCm4SGoIJhOe9zntJLbR4RGWjgZ1v1YZyy/yu7WGj
+    VXojhEvd1kwsP7c56jm0xVs8wYMf1VT57hiMcAU29ULsKO73ByDmCZuDTlNrLpja
+    T/EJCpjmwdZIK+ITq+o5dxcR9BK46dr/5Fpqw5YSvFwQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,21 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165423AbeBOPoL (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:44:11 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34250 "EHLO
+        id S1164917AbeBOQRU (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 11:17:20 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34296 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1165417AbeBOPoI (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:44:08 -0500
+        with ESMTP id S1165424AbeBOPoL (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:44:11 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.15 120/202] media: v4l2-compat-ioctl32.c: copy m.userptr in put_v4l2_plane32
-Date: Thu, 15 Feb 2018 16:17:00 +0100
-Message-Id: <20180215151719.558257517@linuxfoundation.org>
+Subject: [PATCH 4.15 121/202] media: v4l2-compat-ioctl32.c: fix ctrl_is_pointer
+Date: Thu, 15 Feb 2018 16:17:01 +0100
+Message-Id: <20180215151719.607488847@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -80,10 +80,18 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit 8ed5a59dcb47a6f76034ee760b36e089f3e82529 upstream.
+commit b8c601e8af2d08f733d74defa8465303391bb930 upstream.
 
-The struct v4l2_plane32 should set m.userptr as well. The same
-happens in v4l2_buffer32 and v4l2-compliance tests for this.
+ctrl_is_pointer just hardcoded two known string controls, but that
+caused problems when using e.g. custom controls that use a pointer
+for the payload.
+
+Reimplement this function: it now finds the v4l2_ctrl (if the driver
+uses the control framework) or it calls vidioc_query_ext_ctrl (if the
+driver implements that directly).
+
+In both cases it can now check if the control is a pointer control
+or not.
 
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
@@ -91,115 +99,119 @@ Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |   47 +++++++++++++++-----------
- 1 file changed, 28 insertions(+), 19 deletions(-)
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |   59 +++++++++++++++++---------
+ 1 file changed, 39 insertions(+), 20 deletions(-)
 
 --- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
 +++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -310,19 +310,24 @@ static int get_v4l2_plane32(struct v4l2_
- 			 sizeof(up->data_offset)))
- 		return -EFAULT;
+@@ -18,6 +18,8 @@
+ #include <linux/videodev2.h>
+ #include <linux/v4l2-subdev.h>
+ #include <media/v4l2-dev.h>
++#include <media/v4l2-fh.h>
++#include <media/v4l2-ctrls.h>
+ #include <media/v4l2-ioctl.h>
  
--	if (memory == V4L2_MEMORY_USERPTR) {
-+	switch (memory) {
-+	case V4L2_MEMORY_MMAP:
-+	case V4L2_MEMORY_OVERLAY:
-+		if (copy_in_user(&up->m.mem_offset, &up32->m.mem_offset,
-+				 sizeof(up32->m.mem_offset)))
-+			return -EFAULT;
-+		break;
-+	case V4L2_MEMORY_USERPTR:
- 		if (get_user(p, &up32->m.userptr))
- 			return -EFAULT;
- 		up_pln = compat_ptr(p);
- 		if (put_user((unsigned long)up_pln, &up->m.userptr))
- 			return -EFAULT;
--	} else if (memory == V4L2_MEMORY_DMABUF) {
-+		break;
-+	case V4L2_MEMORY_DMABUF:
- 		if (copy_in_user(&up->m.fd, &up32->m.fd, sizeof(up32->m.fd)))
- 			return -EFAULT;
--	} else {
--		if (copy_in_user(&up->m.mem_offset, &up32->m.mem_offset,
--				 sizeof(up32->m.mem_offset)))
--			return -EFAULT;
-+		break;
- 	}
+ static long native_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+@@ -601,24 +603,39 @@ struct v4l2_ext_control32 {
+ 	};
+ } __attribute__ ((packed));
  
- 	return 0;
-@@ -331,22 +336,32 @@ static int get_v4l2_plane32(struct v4l2_
- static int put_v4l2_plane32(struct v4l2_plane __user *up, struct v4l2_plane32 __user *up32,
- 			    enum v4l2_memory memory)
- {
-+	unsigned long p;
+-/* The following function really belong in v4l2-common, but that causes
+-   a circular dependency between modules. We need to think about this, but
+-   for now this will do. */
+-
+-/* Return non-zero if this control is a pointer type. Currently only
+-   type STRING is a pointer type. */
+-static inline int ctrl_is_pointer(u32 id)
+-{
+-	switch (id) {
+-	case V4L2_CID_RDS_TX_PS_NAME:
+-	case V4L2_CID_RDS_TX_RADIO_TEXT:
+-		return 1;
+-	default:
+-		return 0;
++/* Return true if this control is a pointer type. */
++static inline bool ctrl_is_pointer(struct file *file, u32 id)
++{
++	struct video_device *vdev = video_devdata(file);
++	struct v4l2_fh *fh = NULL;
++	struct v4l2_ctrl_handler *hdl = NULL;
++	struct v4l2_query_ext_ctrl qec = { id };
++	const struct v4l2_ioctl_ops *ops = vdev->ioctl_ops;
 +
- 	if (copy_in_user(up32, up, 2 * sizeof(__u32)) ||
- 	    copy_in_user(&up32->data_offset, &up->data_offset,
- 			 sizeof(up->data_offset)))
- 		return -EFAULT;
++	if (test_bit(V4L2_FL_USES_V4L2_FH, &vdev->flags))
++		fh = file->private_data;
++
++	if (fh && fh->ctrl_handler)
++		hdl = fh->ctrl_handler;
++	else if (vdev->ctrl_handler)
++		hdl = vdev->ctrl_handler;
++
++	if (hdl) {
++		struct v4l2_ctrl *ctrl = v4l2_ctrl_find(hdl, id);
++
++		return ctrl && ctrl->is_ptr;
+ 	}
++
++	if (!ops->vidioc_query_ext_ctrl)
++		return false;
++
++	return !ops->vidioc_query_ext_ctrl(file, fh, &qec) &&
++		(qec.flags & V4L2_CTRL_FLAG_HAS_PAYLOAD);
+ }
  
--	/* For MMAP, driver might've set up the offset, so copy it back.
--	 * USERPTR stays the same (was userspace-provided), so no copying. */
--	if (memory == V4L2_MEMORY_MMAP)
-+	switch (memory) {
-+	case V4L2_MEMORY_MMAP:
-+	case V4L2_MEMORY_OVERLAY:
- 		if (copy_in_user(&up32->m.mem_offset, &up->m.mem_offset,
- 				 sizeof(up->m.mem_offset)))
+-static int get_v4l2_ext_controls32(struct v4l2_ext_controls *kp, struct v4l2_ext_controls32 __user *up)
++static int get_v4l2_ext_controls32(struct file *file,
++				   struct v4l2_ext_controls *kp,
++				   struct v4l2_ext_controls32 __user *up)
+ {
+ 	struct v4l2_ext_control32 __user *ucontrols;
+ 	struct v4l2_ext_control __user *kcontrols;
+@@ -651,7 +668,7 @@ static int get_v4l2_ext_controls32(struc
  			return -EFAULT;
--	/* For DMABUF, driver might've set up the fd, so copy it back. */
--	if (memory == V4L2_MEMORY_DMABUF)
-+		break;
-+	case V4L2_MEMORY_USERPTR:
-+		if (get_user(p, &up->m.userptr) ||
-+		    put_user((compat_ulong_t)ptr_to_compat((__force void *)p),
-+			     &up32->m.userptr))
-+			return -EFAULT;
-+		break;
-+	case V4L2_MEMORY_DMABUF:
- 		if (copy_in_user(&up32->m.fd, &up->m.fd,
- 				 sizeof(up->m.fd)))
+ 		if (get_user(id, &kcontrols->id))
  			return -EFAULT;
-+		break;
-+	}
+-		if (ctrl_is_pointer(id)) {
++		if (ctrl_is_pointer(file, id)) {
+ 			void __user *s;
  
+ 			if (get_user(p, &ucontrols->string))
+@@ -666,7 +683,9 @@ static int get_v4l2_ext_controls32(struc
  	return 0;
  }
-@@ -408,6 +423,7 @@ static int get_v4l2_buffer32(struct v4l2
- 	} else {
- 		switch (kp->memory) {
- 		case V4L2_MEMORY_MMAP:
-+		case V4L2_MEMORY_OVERLAY:
- 			if (get_user(kp->m.offset, &up->m.offset))
- 				return -EFAULT;
- 			break;
-@@ -421,10 +437,6 @@ static int get_v4l2_buffer32(struct v4l2
- 				kp->m.userptr = (unsigned long)compat_ptr(tmp);
- 			}
- 			break;
--		case V4L2_MEMORY_OVERLAY:
--			if (get_user(kp->m.offset, &up->m.offset))
--				return -EFAULT;
--			break;
- 		case V4L2_MEMORY_DMABUF:
- 			if (get_user(kp->m.fd, &up->m.fd))
- 				return -EFAULT;
-@@ -481,6 +493,7 @@ static int put_v4l2_buffer32(struct v4l2
- 	} else {
- 		switch (kp->memory) {
- 		case V4L2_MEMORY_MMAP:
-+		case V4L2_MEMORY_OVERLAY:
- 			if (put_user(kp->m.offset, &up->m.offset))
- 				return -EFAULT;
- 			break;
-@@ -488,10 +501,6 @@ static int put_v4l2_buffer32(struct v4l2
- 			if (put_user(kp->m.userptr, &up->m.userptr))
- 				return -EFAULT;
- 			break;
--		case V4L2_MEMORY_OVERLAY:
--			if (put_user(kp->m.offset, &up->m.offset))
--				return -EFAULT;
--			break;
- 		case V4L2_MEMORY_DMABUF:
- 			if (put_user(kp->m.fd, &up->m.fd))
- 				return -EFAULT;
+ 
+-static int put_v4l2_ext_controls32(struct v4l2_ext_controls *kp, struct v4l2_ext_controls32 __user *up)
++static int put_v4l2_ext_controls32(struct file *file,
++				   struct v4l2_ext_controls *kp,
++				   struct v4l2_ext_controls32 __user *up)
+ {
+ 	struct v4l2_ext_control32 __user *ucontrols;
+ 	struct v4l2_ext_control __user *kcontrols =
+@@ -698,7 +717,7 @@ static int put_v4l2_ext_controls32(struc
+ 		/* Do not modify the pointer when copying a pointer control.
+ 		   The contents of the pointer was changed, not the pointer
+ 		   itself. */
+-		if (ctrl_is_pointer(id))
++		if (ctrl_is_pointer(file, id))
+ 			size -= sizeof(ucontrols->value64);
+ 		if (copy_in_user(ucontrols, kcontrols, size))
+ 			return -EFAULT;
+@@ -912,7 +931,7 @@ static long do_video_ioctl(struct file *
+ 	case VIDIOC_G_EXT_CTRLS:
+ 	case VIDIOC_S_EXT_CTRLS:
+ 	case VIDIOC_TRY_EXT_CTRLS:
+-		err = get_v4l2_ext_controls32(&karg.v2ecs, up);
++		err = get_v4l2_ext_controls32(file, &karg.v2ecs, up);
+ 		compatible_arg = 0;
+ 		break;
+ 	case VIDIOC_DQEVENT:
+@@ -939,7 +958,7 @@ static long do_video_ioctl(struct file *
+ 	case VIDIOC_G_EXT_CTRLS:
+ 	case VIDIOC_S_EXT_CTRLS:
+ 	case VIDIOC_TRY_EXT_CTRLS:
+-		if (put_v4l2_ext_controls32(&karg.v2ecs, up))
++		if (put_v4l2_ext_controls32(file, &karg.v2ecs, up))
+ 			err = -EFAULT;
+ 		break;
+ 	case VIDIOC_S_EDID:
