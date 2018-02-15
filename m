@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226qhG+I30/UN8eBAW/HRjOhlv8NNKaevLcsURsiJ2u4YAtf9+NDCj+jE8keQbuGb2S0cPJy
-ARC-Seal: i=1; a=rsa-sha256; t=1518709240; cv=none;
+X-Google-Smtp-Source: AH8x224k1QPeyugXClucg9RgS72iNajYbKTAisFV+Er+nvNDnE9FmJmjjFMCQsb7HR7fT1XDInZa
+ARC-Seal: i=1; a=rsa-sha256; t=1518709238; cv=none;
         d=google.com; s=arc-20160816;
-        b=E6HqKFHsk0HeNPPzn/35XnZkOCPcIohFhG7HrAoaP3GZomTMM2n3/edmwpd/ntOh4A
-         tLeG4yIRA2PuGXFMN0KckCBnoWnzeLmeyxvb19WO6TabbrBQZkv3HUehViG3gwdQiN8I
-         yBv8NYtbs9SC7b4bTjQM5I0PDlNIIYO4+h1HlF0D1tiwSkyikC+y/nqQJDkMxPHrWUdU
-         m7etIUSMEAgUg3dUIF9kk5nt/fKC+ubob5e7RQxbZirWzcyGDste+/q++ekIRhFgl/Ta
-         MfvTYQvqKjMF2cDOuRVETZ/wp3BLv98D9Py6YW/mxvL6vF9xR9RGmoHduFD24bsoAJIG
-         vlJg==
+        b=OdWBd8YYQk/Ktn8axpZ+X1h1EY7O7IaQ079PEaDJaNj6Ikdfd6DixCKBryNWvwe1Q/
+         4opD+Ng/SEkb8krrjDWkN0XLf/J5F9+N9Ykb6FVf0Z37gqctUaCHL4XOxWcu7paOlPhe
+         7Mk/VngPho+EL7pher5hHVM14NbaEoUcNDyvw7QBWdEF6iwhjS3kcOK8F/FHQuvVVMNo
+         DqVseA70lLf/YrT5oShRvEpATrt3ZCM4bEavHxMOKITkWHvZAQh0OXhua3OA1GOrqO5h
+         4jYzZIV81veGEDEdaIDoF9zfrLr+o+pqOWruKnri2BncUSN3AZXAzgRHFpXeNhw1Aphq
+         N+yw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=o38qThj6t3kt1iX4UVs9oUEbo91zpRnwCx9dRiQ+EtY=;
-        b=aguRDPOz9UO9BIjez1HSLm2clApxV5MEEdH88QwxFFJKjFnq1vIPxNDziO13Ih/+iY
-         jauUDpgxUJ6E5C82jE6dwK6kN6OoGd2hb+nTYiUxtCozLW3lusaXCPC9BrZbw+72ZmX+
-         MftJi3keDwy9TRw0iUQ8Y91aDP7HF9W9AbR3F3uASxj2ARxOjER+y97iw25xzcW+7T3l
-         KDXfepJWXECTNzttf17PavSjkGHm/M2nWZ4KFuatyGoZbNeP7jLb/U3VRiF1eB717DAG
-         PmIRpfD/sX5k6ZfMPeiuVld21w2ZfSF+/8IJ1GfwEv8K6FAUio2hVu9vhlfiNOuNgAYn
-         vJgQ==
+        bh=gGXmEz/RAnHyfK8LNdY41phSBUJV71Nlte4caBtf5Ys=;
+        b=kTDgZe8xGlM8l01/pbmZWYhyk7hgov8Xfu+8LxGIQooEs8fnE6fECXqLx1gZWBnjKV
+         BVXoHNt7/WxHZas9rQsCG+6O/WnSefz97566kuiCAm2F7bl18Z/vgVfLbsYaKltdNxpK
+         2Uj5+6/lFdvd3nOayck7OoZ9FZl1m1Pybujl4n1C/uJgfSKv9mULJTNfRNv9i0zo9NaA
+         iPxt0MEA7jzF9c4IJhjGtobGuiJBkllGkkqyhbSbv0Uaqei5fv6R8gg1q4R4Jf2Uvu9K
+         jB/z3eEUxiWo+hIPeJ1BXoDzRgCgKjHq7dH5Er4Mdgyfy8X1/FJRpQumXecZXj3BZKGQ
+         yoqA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Pavan Kondeti <pkondeti@codeaurora.org>,
-	"Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Mike Galbraith <efault@gmx.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 010/202] sched/rt: Use container_of() to get root domain in rto_push_irq_work_func()
-Date: Thu, 15 Feb 2018 16:15:10 +0100
-Message-Id: <20180215151713.352610375@linuxfoundation.org>
+	Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+	Chris Wilson <chris@chris-wilson.co.uk>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Ozkan Sezer <sezeroz@gmail.com>
+Subject: [PATCH 4.15 009/202] Revert "drm/i915: mark all device info struct with __initconst"
+Date: Thu, 15 Feb 2018 16:15:09 +0100
+Message-Id: <20180215151713.295801905@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -45,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480996908357247?=
-X-GMAIL-MSGID: =?utf-8?q?1592482061061511693?=
+X-GMAIL-THRID: =?utf-8?q?1592482058623726019?=
+X-GMAIL-MSGID: =?utf-8?q?1592482058623726019?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,92 +50,392 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
 
-commit ad0f1d9d65938aec72a698116cd73a980916895e upstream.
+commit b5a756a722286af9702d565501e1f690d075d16b upstream.
 
-When the rto_push_irq_work_func() is called, it looks at the RT overloaded
-bitmask in the root domain via the runqueue (rq->rd). The problem is that
-during CPU up and down, nothing here stops rq->rd from changing between
-taking the rq->rd->rto_lock and releasing it. That means the lock that is
-released is not the same lock that was taken.
+This reverts commit 5b54eddd3920e9f6f1a6d972454baf350cbae77e.
 
-Instead of using this_rq()->rd to get the root domain, as the irq work is
-part of the root domain, we can simply get the root domain from the irq work
-that is passed to the routine:
+ Conflicts:
+	drivers/gpu/drm/i915/i915_pci.c
 
- container_of(work, struct root_domain, rto_push_work)
-
-This keeps the root domain consistent.
-
-Reported-by: Pavan Kondeti <pkondeti@codeaurora.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 4bdced5c9a292 ("sched/rt: Simplify the IPI based RT balancing logic")
-Link: http://lkml.kernel.org/r/CAEU1=PkiHO35Dzna8EQqNSKW1fr1y1zRQ5y66X117MG06sQtNA@mail.gmail.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=104805
+Signed-off-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+Fixes: 5b54eddd3920 ("drm/i915: mark all device info struct with __initconst")
+Link: https://patchwork.freedesktop.org/patch/msgid/20180129083346.29173-1-lionel.g.landwerlin@intel.com
+(cherry picked from commit 5db47e37b38755c5e26e6b8fbc1a32ce73495940)
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Ozkan Sezer <sezeroz@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/sched/rt.c |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/i915/i915_pci.c |   94 ++++++++++++++++++++--------------------
+ 1 file changed, 47 insertions(+), 47 deletions(-)
 
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1907,9 +1907,8 @@ static void push_rt_tasks(struct rq *rq)
-  * the rt_loop_next will cause the iterator to perform another scan.
-  *
-  */
--static int rto_next_cpu(struct rq *rq)
-+static int rto_next_cpu(struct root_domain *rd)
- {
--	struct root_domain *rd = rq->rd;
- 	int next;
- 	int cpu;
+--- a/drivers/gpu/drm/i915/i915_pci.c
++++ b/drivers/gpu/drm/i915/i915_pci.c
+@@ -74,19 +74,19 @@
+ 	GEN_DEFAULT_PAGE_SIZES, \
+ 	CURSOR_OFFSETS
  
-@@ -1985,7 +1984,7 @@ static void tell_cpu_to_push(struct rq *
- 	 * Otherwise it is finishing up and an ipi needs to be sent.
+-static const struct intel_device_info intel_i830_info __initconst = {
++static const struct intel_device_info intel_i830_info = {
+ 	GEN2_FEATURES,
+ 	.platform = INTEL_I830,
+ 	.is_mobile = 1, .cursor_needs_physical = 1,
+ 	.num_pipes = 2, /* legal, last one wins */
+ };
+ 
+-static const struct intel_device_info intel_i845g_info __initconst = {
++static const struct intel_device_info intel_i845g_info = {
+ 	GEN2_FEATURES,
+ 	.platform = INTEL_I845G,
+ };
+ 
+-static const struct intel_device_info intel_i85x_info __initconst = {
++static const struct intel_device_info intel_i85x_info = {
+ 	GEN2_FEATURES,
+ 	.platform = INTEL_I85X, .is_mobile = 1,
+ 	.num_pipes = 2, /* legal, last one wins */
+@@ -94,7 +94,7 @@ static const struct intel_device_info in
+ 	.has_fbc = 1,
+ };
+ 
+-static const struct intel_device_info intel_i865g_info __initconst = {
++static const struct intel_device_info intel_i865g_info = {
+ 	GEN2_FEATURES,
+ 	.platform = INTEL_I865G,
+ };
+@@ -108,7 +108,7 @@ static const struct intel_device_info in
+ 	GEN_DEFAULT_PAGE_SIZES, \
+ 	CURSOR_OFFSETS
+ 
+-static const struct intel_device_info intel_i915g_info __initconst = {
++static const struct intel_device_info intel_i915g_info = {
+ 	GEN3_FEATURES,
+ 	.platform = INTEL_I915G, .cursor_needs_physical = 1,
+ 	.has_overlay = 1, .overlay_needs_physical = 1,
+@@ -116,7 +116,7 @@ static const struct intel_device_info in
+ 	.unfenced_needs_alignment = 1,
+ };
+ 
+-static const struct intel_device_info intel_i915gm_info __initconst = {
++static const struct intel_device_info intel_i915gm_info = {
+ 	GEN3_FEATURES,
+ 	.platform = INTEL_I915GM,
+ 	.is_mobile = 1,
+@@ -128,7 +128,7 @@ static const struct intel_device_info in
+ 	.unfenced_needs_alignment = 1,
+ };
+ 
+-static const struct intel_device_info intel_i945g_info __initconst = {
++static const struct intel_device_info intel_i945g_info = {
+ 	GEN3_FEATURES,
+ 	.platform = INTEL_I945G,
+ 	.has_hotplug = 1, .cursor_needs_physical = 1,
+@@ -137,7 +137,7 @@ static const struct intel_device_info in
+ 	.unfenced_needs_alignment = 1,
+ };
+ 
+-static const struct intel_device_info intel_i945gm_info __initconst = {
++static const struct intel_device_info intel_i945gm_info = {
+ 	GEN3_FEATURES,
+ 	.platform = INTEL_I945GM, .is_mobile = 1,
+ 	.has_hotplug = 1, .cursor_needs_physical = 1,
+@@ -148,14 +148,14 @@ static const struct intel_device_info in
+ 	.unfenced_needs_alignment = 1,
+ };
+ 
+-static const struct intel_device_info intel_g33_info __initconst = {
++static const struct intel_device_info intel_g33_info = {
+ 	GEN3_FEATURES,
+ 	.platform = INTEL_G33,
+ 	.has_hotplug = 1,
+ 	.has_overlay = 1,
+ };
+ 
+-static const struct intel_device_info intel_pineview_info __initconst = {
++static const struct intel_device_info intel_pineview_info = {
+ 	GEN3_FEATURES,
+ 	.platform = INTEL_PINEVIEW, .is_mobile = 1,
+ 	.has_hotplug = 1,
+@@ -172,7 +172,7 @@ static const struct intel_device_info in
+ 	GEN_DEFAULT_PAGE_SIZES, \
+ 	CURSOR_OFFSETS
+ 
+-static const struct intel_device_info intel_i965g_info __initconst = {
++static const struct intel_device_info intel_i965g_info = {
+ 	GEN4_FEATURES,
+ 	.platform = INTEL_I965G,
+ 	.has_overlay = 1,
+@@ -180,7 +180,7 @@ static const struct intel_device_info in
+ 	.has_snoop = false,
+ };
+ 
+-static const struct intel_device_info intel_i965gm_info __initconst = {
++static const struct intel_device_info intel_i965gm_info = {
+ 	GEN4_FEATURES,
+ 	.platform = INTEL_I965GM,
+ 	.is_mobile = 1, .has_fbc = 1,
+@@ -190,13 +190,13 @@ static const struct intel_device_info in
+ 	.has_snoop = false,
+ };
+ 
+-static const struct intel_device_info intel_g45_info __initconst = {
++static const struct intel_device_info intel_g45_info = {
+ 	GEN4_FEATURES,
+ 	.platform = INTEL_G45,
+ 	.ring_mask = RENDER_RING | BSD_RING,
+ };
+ 
+-static const struct intel_device_info intel_gm45_info __initconst = {
++static const struct intel_device_info intel_gm45_info = {
+ 	GEN4_FEATURES,
+ 	.platform = INTEL_GM45,
+ 	.is_mobile = 1, .has_fbc = 1,
+@@ -213,12 +213,12 @@ static const struct intel_device_info in
+ 	GEN_DEFAULT_PAGE_SIZES, \
+ 	CURSOR_OFFSETS
+ 
+-static const struct intel_device_info intel_ironlake_d_info __initconst = {
++static const struct intel_device_info intel_ironlake_d_info = {
+ 	GEN5_FEATURES,
+ 	.platform = INTEL_IRONLAKE,
+ };
+ 
+-static const struct intel_device_info intel_ironlake_m_info __initconst = {
++static const struct intel_device_info intel_ironlake_m_info = {
+ 	GEN5_FEATURES,
+ 	.platform = INTEL_IRONLAKE,
+ 	.is_mobile = 1, .has_fbc = 1,
+@@ -241,12 +241,12 @@ static const struct intel_device_info in
+ 	GEN6_FEATURES, \
+ 	.platform = INTEL_SANDYBRIDGE
+ 
+-static const struct intel_device_info intel_sandybridge_d_gt1_info __initconst = {
++static const struct intel_device_info intel_sandybridge_d_gt1_info = {
+ 	SNB_D_PLATFORM,
+ 	.gt = 1,
+ };
+ 
+-static const struct intel_device_info intel_sandybridge_d_gt2_info __initconst = {
++static const struct intel_device_info intel_sandybridge_d_gt2_info = {
+ 	SNB_D_PLATFORM,
+ 	.gt = 2,
+ };
+@@ -257,12 +257,12 @@ static const struct intel_device_info in
+ 	.is_mobile = 1
+ 
+ 
+-static const struct intel_device_info intel_sandybridge_m_gt1_info __initconst = {
++static const struct intel_device_info intel_sandybridge_m_gt1_info = {
+ 	SNB_M_PLATFORM,
+ 	.gt = 1,
+ };
+ 
+-static const struct intel_device_info intel_sandybridge_m_gt2_info __initconst = {
++static const struct intel_device_info intel_sandybridge_m_gt2_info = {
+ 	SNB_M_PLATFORM,
+ 	.gt = 2,
+ };
+@@ -286,12 +286,12 @@ static const struct intel_device_info in
+ 	.platform = INTEL_IVYBRIDGE, \
+ 	.has_l3_dpf = 1
+ 
+-static const struct intel_device_info intel_ivybridge_d_gt1_info __initconst = {
++static const struct intel_device_info intel_ivybridge_d_gt1_info = {
+ 	IVB_D_PLATFORM,
+ 	.gt = 1,
+ };
+ 
+-static const struct intel_device_info intel_ivybridge_d_gt2_info __initconst = {
++static const struct intel_device_info intel_ivybridge_d_gt2_info = {
+ 	IVB_D_PLATFORM,
+ 	.gt = 2,
+ };
+@@ -302,17 +302,17 @@ static const struct intel_device_info in
+ 	.is_mobile = 1, \
+ 	.has_l3_dpf = 1
+ 
+-static const struct intel_device_info intel_ivybridge_m_gt1_info __initconst = {
++static const struct intel_device_info intel_ivybridge_m_gt1_info = {
+ 	IVB_M_PLATFORM,
+ 	.gt = 1,
+ };
+ 
+-static const struct intel_device_info intel_ivybridge_m_gt2_info __initconst = {
++static const struct intel_device_info intel_ivybridge_m_gt2_info = {
+ 	IVB_M_PLATFORM,
+ 	.gt = 2,
+ };
+ 
+-static const struct intel_device_info intel_ivybridge_q_info __initconst = {
++static const struct intel_device_info intel_ivybridge_q_info = {
+ 	GEN7_FEATURES,
+ 	.platform = INTEL_IVYBRIDGE,
+ 	.gt = 2,
+@@ -320,7 +320,7 @@ static const struct intel_device_info in
+ 	.has_l3_dpf = 1,
+ };
+ 
+-static const struct intel_device_info intel_valleyview_info __initconst = {
++static const struct intel_device_info intel_valleyview_info = {
+ 	.platform = INTEL_VALLEYVIEW,
+ 	.gen = 7,
+ 	.is_lp = 1,
+@@ -356,17 +356,17 @@ static const struct intel_device_info in
+ 	.platform = INTEL_HASWELL, \
+ 	.has_l3_dpf = 1
+ 
+-static const struct intel_device_info intel_haswell_gt1_info __initconst = {
++static const struct intel_device_info intel_haswell_gt1_info = {
+ 	HSW_PLATFORM,
+ 	.gt = 1,
+ };
+ 
+-static const struct intel_device_info intel_haswell_gt2_info __initconst = {
++static const struct intel_device_info intel_haswell_gt2_info = {
+ 	HSW_PLATFORM,
+ 	.gt = 2,
+ };
+ 
+-static const struct intel_device_info intel_haswell_gt3_info __initconst = {
++static const struct intel_device_info intel_haswell_gt3_info = {
+ 	HSW_PLATFORM,
+ 	.gt = 3,
+ };
+@@ -386,17 +386,17 @@ static const struct intel_device_info in
+ 	.gen = 8, \
+ 	.platform = INTEL_BROADWELL
+ 
+-static const struct intel_device_info intel_broadwell_gt1_info __initconst = {
++static const struct intel_device_info intel_broadwell_gt1_info = {
+ 	BDW_PLATFORM,
+ 	.gt = 1,
+ };
+ 
+-static const struct intel_device_info intel_broadwell_gt2_info __initconst = {
++static const struct intel_device_info intel_broadwell_gt2_info = {
+ 	BDW_PLATFORM,
+ 	.gt = 2,
+ };
+ 
+-static const struct intel_device_info intel_broadwell_rsvd_info __initconst = {
++static const struct intel_device_info intel_broadwell_rsvd_info = {
+ 	BDW_PLATFORM,
+ 	.gt = 3,
+ 	/* According to the device ID those devices are GT3, they were
+@@ -404,13 +404,13 @@ static const struct intel_device_info in
  	 */
- 	if (rq->rd->rto_cpu < 0)
--		cpu = rto_next_cpu(rq);
-+		cpu = rto_next_cpu(rq->rd);
+ };
  
- 	raw_spin_unlock(&rq->rd->rto_lock);
+-static const struct intel_device_info intel_broadwell_gt3_info __initconst = {
++static const struct intel_device_info intel_broadwell_gt3_info = {
+ 	BDW_PLATFORM,
+ 	.gt = 3,
+ 	.ring_mask = RENDER_RING | BSD_RING | BLT_RING | VEBOX_RING | BSD2_RING,
+ };
  
-@@ -1998,6 +1997,8 @@ static void tell_cpu_to_push(struct rq *
- /* Called from hardirq context */
- void rto_push_irq_work_func(struct irq_work *work)
- {
-+	struct root_domain *rd =
-+		container_of(work, struct root_domain, rto_push_work);
- 	struct rq *rq;
- 	int cpu;
+-static const struct intel_device_info intel_cherryview_info __initconst = {
++static const struct intel_device_info intel_cherryview_info = {
+ 	.gen = 8, .num_pipes = 3,
+ 	.has_hotplug = 1,
+ 	.is_lp = 1,
+@@ -453,12 +453,12 @@ static const struct intel_device_info in
+ 	.gen = 9, \
+ 	.platform = INTEL_SKYLAKE
  
-@@ -2013,18 +2014,18 @@ void rto_push_irq_work_func(struct irq_w
- 		raw_spin_unlock(&rq->lock);
- 	}
+-static const struct intel_device_info intel_skylake_gt1_info __initconst = {
++static const struct intel_device_info intel_skylake_gt1_info = {
+ 	SKL_PLATFORM,
+ 	.gt = 1,
+ };
  
--	raw_spin_lock(&rq->rd->rto_lock);
-+	raw_spin_lock(&rd->rto_lock);
+-static const struct intel_device_info intel_skylake_gt2_info __initconst = {
++static const struct intel_device_info intel_skylake_gt2_info = {
+ 	SKL_PLATFORM,
+ 	.gt = 2,
+ };
+@@ -468,12 +468,12 @@ static const struct intel_device_info in
+ 	.ring_mask = RENDER_RING | BSD_RING | BLT_RING | VEBOX_RING | BSD2_RING
  
- 	/* Pass the IPI to the next rt overloaded queue */
--	cpu = rto_next_cpu(rq);
-+	cpu = rto_next_cpu(rd);
  
--	raw_spin_unlock(&rq->rd->rto_lock);
-+	raw_spin_unlock(&rd->rto_lock);
+-static const struct intel_device_info intel_skylake_gt3_info __initconst = {
++static const struct intel_device_info intel_skylake_gt3_info = {
+ 	SKL_GT3_PLUS_PLATFORM,
+ 	.gt = 3,
+ };
  
- 	if (cpu < 0)
- 		return;
+-static const struct intel_device_info intel_skylake_gt4_info __initconst = {
++static const struct intel_device_info intel_skylake_gt4_info = {
+ 	SKL_GT3_PLUS_PLATFORM,
+ 	.gt = 4,
+ };
+@@ -509,13 +509,13 @@ static const struct intel_device_info in
+ 	IVB_CURSOR_OFFSETS, \
+ 	BDW_COLORS
  
- 	/* Try the next RT overloaded CPU */
--	irq_work_queue_on(&rq->rd->rto_push_work, cpu);
-+	irq_work_queue_on(&rd->rto_push_work, cpu);
- }
- #endif /* HAVE_RT_PUSH_IPI */
+-static const struct intel_device_info intel_broxton_info __initconst = {
++static const struct intel_device_info intel_broxton_info = {
+ 	GEN9_LP_FEATURES,
+ 	.platform = INTEL_BROXTON,
+ 	.ddb_size = 512,
+ };
  
+-static const struct intel_device_info intel_geminilake_info __initconst = {
++static const struct intel_device_info intel_geminilake_info = {
+ 	GEN9_LP_FEATURES,
+ 	.platform = INTEL_GEMINILAKE,
+ 	.ddb_size = 1024,
+@@ -527,17 +527,17 @@ static const struct intel_device_info in
+ 	.gen = 9, \
+ 	.platform = INTEL_KABYLAKE
+ 
+-static const struct intel_device_info intel_kabylake_gt1_info __initconst = {
++static const struct intel_device_info intel_kabylake_gt1_info = {
+ 	KBL_PLATFORM,
+ 	.gt = 1,
+ };
+ 
+-static const struct intel_device_info intel_kabylake_gt2_info __initconst = {
++static const struct intel_device_info intel_kabylake_gt2_info = {
+ 	KBL_PLATFORM,
+ 	.gt = 2,
+ };
+ 
+-static const struct intel_device_info intel_kabylake_gt3_info __initconst = {
++static const struct intel_device_info intel_kabylake_gt3_info = {
+ 	KBL_PLATFORM,
+ 	.gt = 3,
+ 	.ring_mask = RENDER_RING | BSD_RING | BLT_RING | VEBOX_RING | BSD2_RING,
+@@ -548,17 +548,17 @@ static const struct intel_device_info in
+ 	.gen = 9, \
+ 	.platform = INTEL_COFFEELAKE
+ 
+-static const struct intel_device_info intel_coffeelake_gt1_info __initconst = {
++static const struct intel_device_info intel_coffeelake_gt1_info = {
+ 	CFL_PLATFORM,
+ 	.gt = 1,
+ };
+ 
+-static const struct intel_device_info intel_coffeelake_gt2_info __initconst = {
++static const struct intel_device_info intel_coffeelake_gt2_info = {
+ 	CFL_PLATFORM,
+ 	.gt = 2,
+ };
+ 
+-static const struct intel_device_info intel_coffeelake_gt3_info __initconst = {
++static const struct intel_device_info intel_coffeelake_gt3_info = {
+ 	CFL_PLATFORM,
+ 	.gt = 3,
+ 	.ring_mask = RENDER_RING | BSD_RING | BLT_RING | VEBOX_RING | BSD2_RING,
+@@ -569,7 +569,7 @@ static const struct intel_device_info in
+ 	.ddb_size = 1024, \
+ 	GLK_COLORS
+ 
+-static const struct intel_device_info intel_cannonlake_gt2_info __initconst = {
++static const struct intel_device_info intel_cannonlake_gt2_info = {
+ 	GEN10_FEATURES,
+ 	.is_alpha_support = 1,
+ 	.platform = INTEL_CANNONLAKE,
