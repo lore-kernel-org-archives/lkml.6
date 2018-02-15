@@ -1,119 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166899AbeBOSqX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 13:46:23 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57960 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162567AbeBOSqU (ORCPT
+        id S1166920AbeBOSqu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 13:46:50 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40387 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162390AbeBOPWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 13:46:20 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7BBB760558
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Thu, 15 Feb 2018 18:46:17 +0000
-From: Lina Iyer <ilina@codeaurora.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        sboyd@codeaurora.org, rnayak@codeaurora.org, msivasub@codeaurora.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt-bindings: introduce Command DB for QCOM SoCs
-Message-ID: <20180215184617.GB23714@codeaurora.org>
-References: <20180208195154.3580-1-ilina@codeaurora.org>
- <20180208195154.3580-3-ilina@codeaurora.org>
- <20180214193419.GE93895@bjorns-mbp-2.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180214193419.GE93895@bjorns-mbp-2.lan>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Thu, 15 Feb 2018 10:22:24 -0500
+X-Google-Smtp-Source: AH8x225FySU+1suX+nb5Aop9+J6xmK6JtEReSXeama3KGBZwrMPup0Q92LHlvYxZsvZOodx1g2Ur9Q==
+Message-ID: <1518708141.2883.94.camel@baylibre.com>
+Subject: Re: [PATCH] clk: use get_phase() if available
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 15 Feb 2018 16:22:21 +0100
+In-Reply-To: <20180215102822.7721-1-jbrunet@baylibre.com>
+References: <20180215102822.7721-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.4 (3.26.4-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14 2018 at 19:34 +0000, Bjorn Andersson wrote:
->On Thu 08 Feb 11:51 PST 2018, Lina Iyer wrote:
->
->> From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
->>
->> Command DB provides information on shared resources like clocks,
->> regulators etc., probed at boot by the remote subsytem and made
->> available in shared memory.
->>
->> Cc: devicetree@vger.kernel.org
->> Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
->> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
->> ---
->>  .../devicetree/bindings/arm/msm/cmd-db.txt         | 38 ++++++++++++++++++++++
->>  1 file changed, 38 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/arm/msm/cmd-db.txt
->>
->> diff --git a/Documentation/devicetree/bindings/arm/msm/cmd-db.txt b/Documentation/devicetree/bindings/arm/msm/cmd-db.txt
->> new file mode 100644
->> index 000000000000..e21666e40ebf
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/arm/msm/cmd-db.txt
->> @@ -0,0 +1,38 @@
->> +Command DB
->> +---------
->> +
->> +Command DB is a database that provides a mapping between resource key and the
->> +resource address for a system resource managed by a remote processor. The data
->> +is stored in a shared memory region and is loaded by the remote processor.
->> +
->> +Some of the Qualcomm Technologies Inc SoC's have hardware accelerators for
->> +controlling shared resources. Depending on the board configuration the shared
->> +resource properties may change. These properties are dynamically probed by the
->> +remote processor and made available in the shared memory.
->> +
->> +The devicetree representation of the command DB driver should be:
->> +
->> +PROPERTIES:
->> +- compatible:
->> +	Usage: required
->> +	Value type: <string>
->> +	Definition: Should be "qcom,cmd-db"
->> +
->> +- memory-region:
->> +	Usage: required
->> +	Value type: <phandle>
->> +	Definition: The phandle to the reserved memory region.
->> +
->> +Example:
->> +
->> +	reserved-memory {
->> +		[...]
->> +		cmd_db_mem: qcom,cmd-db@c3f000c {
->> +			reg = <0x0 0xc3f000c 0x0 0x8>;
->
->I was hoping that we can describe the actual memory here, as I got the
->impression that it will also be a chunk of memory carved out from System
->RAM.
->
-Yes, it can be described. But, the location should always be read from
-the address above. Generally, the CMD DB memory would not change, but it
-is not always guaranteed.
+On Thu, 2018-02-15 at 11:28 +0100, Jerome Brunet wrote:
+> When the get_phase() callback is available, we should use it
+> instead of just relying the values cached, and assumed un-rounded,
+> by the framework
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+> 
+> Hi Mike, Stephen,
+> 
+> This changes applies on top of the phase fix I've sent [0]
+> 
+> [0]: https://lkml.kernel.org/r/20180215101958.22676-1-jbrunet@baylibre.com
+> 
+>  drivers/clk/clk.c | 25 ++++++++++++++++++++++---
+>  1 file changed, 22 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index b33d362239e7..bcd6ec980903 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2297,6 +2297,21 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_set_parent);
+>  
+> +static int clk_core_get_phase_nolock(struct clk_core *core)
+> +{
+> +	int ret;
 
->If not it would seem unlikely that there's a 8 byte carveout in the
->middle of DDR, what else is here?
->
->> +		};
->> +	};
->> +
->> +	qcom,cmd-db@c3f000c {
->> +		compatible = "qcom,cmd-db";
->
->Add "qcom,cmd-db" to "reserved_mem_matches" in drivers/of/platform.c,
->use of_reserved_mem_lookup(pdev->dev.of_node) to get the reserved_mem
->and you can just put the compatible directly on the reserved-memory
->node.
->
->That way you don't need this separate node that doesn't really represent
->anything.
->
-Oh okay. I can take care of that.
++	if (!core)
++		return 0;
 
-Thanks,
-Lina
->> +		memory-region = <&cmd_db_mem>;
->> +	};
+Forgot this, will add it the v2
+
+> +
+> +	if (!core->ops->get_phase)
+> +		return core->phase;
+> +
+> +	/* Update the phase if the callback is available */
+> +	ret = core->ops->get_phase(core->hw);
+> +	if (ret >= 0)
+> +		core->phase = ret;
+> +
+> +	return ret;
+> +}
+> +
+>  static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
+>  {
+>  	int ret = -EINVAL;
+> @@ -2314,12 +2329,16 @@ static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
+>  	if (core->ops->set_phase)
+>  		ret = core->ops->set_phase(core->hw, degrees);
+>  
+> -	if (!ret)
+> +	if (!ret) {
+>  		core->phase = degrees;
+>  
+> +		/* Read back the phase in case it got rounded */
+> +		ret = clk_core_get_phase_nolock(core);
+> +	}
+> +
+>  	trace_clk_set_phase_complete(core, degrees);
+>  
+> -	return ret;
+> +	return ret > 0 ? 0 : ret;
+>  }
+>  
+>  /**
+> @@ -2375,7 +2394,7 @@ static int clk_core_get_phase(struct clk_core *core)
+>  	int ret;
+>  
+>  	clk_prepare_lock();
+> -	ret = core->phase;
+> +	ret = clk_core_get_phase_nolock(core);
+>  	clk_prepare_unlock();
+>  
+>  	return ret;
