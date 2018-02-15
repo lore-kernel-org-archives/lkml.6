@@ -1,211 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032105AbeBONMY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 08:12:24 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44528 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031273AbeBONMU (ORCPT
+        id S1032797AbeBONMq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 08:12:46 -0500
+Received: from mail.efficios.com ([167.114.142.141]:47051 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032780AbeBONMn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 08:12:20 -0500
-X-Google-Smtp-Source: AH8x225ieiGORPC+R94ZVy2Cc6xelyePZS7ndXyk3GkXRF5mKiEB5AknrosNzAKie9JisS/o1OKv5Q==
-From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-To: linux-block@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        javier@cnexlabs.com,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [PATCH v2 1/6] lightnvm: make 1.2 data structures explicit
-Date: Thu, 15 Feb 2018 14:11:55 +0100
-Message-Id: <20180215131200.3354-2-mb@lightnvm.io>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180215131200.3354-1-mb@lightnvm.io>
-References: <20180215131200.3354-1-mb@lightnvm.io>
+        Thu, 15 Feb 2018 08:12:43 -0500
+Date: Thu, 15 Feb 2018 13:13:39 +0000 (UTC)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Message-ID: <1626999028.22440.1518700419721.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180215114927.GV25201@hirez.programming.kicks-ass.net>
+References: <20180214120254.qq4w4s42ecxio7lu@lakrids.cambridge.arm.com> <20180214150739.GH2992@arm.com> <20180214165131.o25r3hhrtrjk3ejq@lakrids.cambridge.arm.com> <254787533.21950.1518634424009.JavaMail.zimbra@efficios.com> <20180215114927.GV25201@hirez.programming.kicks-ass.net>
+Subject: Re: arm64/v4.16-rc1: KASAN: use-after-free Read in
+ finish_task_switch
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.141]
+X-Mailer: Zimbra 8.7.11_GA_1854 (ZimbraWebClient - FF52 (Linux)/8.7.11_GA_1854)
+Thread-Topic: arm64/v4.16-rc1: KASAN: use-after-free Read in finish_task_switch
+Thread-Index: QsU4P0oDtP33RdDsS/KsoKBlz0yxfQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the 1.2 data structures explicit, so it will be easy to identify
-the 2.0 data structures. Also fix the order of which the nvme_nvm_*
-are declared, such that they follow the nvme_nvm_command order.
+----- On Feb 15, 2018, at 6:49 AM, Peter Zijlstra peterz@infradead.org wrote:
 
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
----
- drivers/nvme/host/lightnvm.c | 82 ++++++++++++++++++++++----------------------
- 1 file changed, 41 insertions(+), 41 deletions(-)
+> On Wed, Feb 14, 2018 at 06:53:44PM +0000, Mathieu Desnoyers wrote:
+>> However, given the scenario involves multiples CPUs (one doing exit_mm(),
+>> the other doing context switch), the actual order of perceived load/store
+>> can be shuffled. And AFAIU nothing prevents the CPU from ordering the
+>> atomic_inc() done by mmgrab(mm) _after_ the store to current->mm.
+>> 
+>> I wonder if we should not simply add a smp_mb__after_atomic() into
+>> mmgrab() instead ? I see that e.g. futex.c does:
+> 
+> Don't think so, the futex case is really rather special and I suspect
+> this one is too. I would much rather have explicit comments rather than
+> implicit works by magic.
+> 
+> As per the rationale used for refcount_t, increments should be
+> unordered, because you ACQUIRE your object _before_ you can do the
+> increment.
+> 
+> The futex thing is simply abusing a bunch of implied barriers and
+> patching up the holes in paths that didn't already imply a barrier in
+> order to avoid having to add explicit barriers (which had measurable
+> performance issues).
+> 
+> And here we have explicit ordering outside of the reference counting
+> too, we want to ensure the reference is incremented before we modify
+> a second object.
+> 
+> This ordering is not at all related to acquiring the reference, so
+> bunding it seems odd.
 
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index dc0b1335c7c6..60db3f1b59da 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -51,6 +51,21 @@ struct nvme_nvm_ph_rw {
- 	__le64			resv;
- };
- 
-+struct nvme_nvm_erase_blk {
-+	__u8			opcode;
-+	__u8			flags;
-+	__u16			command_id;
-+	__le32			nsid;
-+	__u64			rsvd[2];
-+	__le64			prp1;
-+	__le64			prp2;
-+	__le64			spba;
-+	__le16			length;
-+	__le16			control;
-+	__le32			dsmgmt;
-+	__le64			resv;
-+};
-+
- struct nvme_nvm_identity {
- 	__u8			opcode;
- 	__u8			flags;
-@@ -89,33 +104,18 @@ struct nvme_nvm_setbbtbl {
- 	__u32			rsvd4[3];
- };
- 
--struct nvme_nvm_erase_blk {
--	__u8			opcode;
--	__u8			flags;
--	__u16			command_id;
--	__le32			nsid;
--	__u64			rsvd[2];
--	__le64			prp1;
--	__le64			prp2;
--	__le64			spba;
--	__le16			length;
--	__le16			control;
--	__le32			dsmgmt;
--	__le64			resv;
--};
--
- struct nvme_nvm_command {
- 	union {
- 		struct nvme_common_command common;
--		struct nvme_nvm_identity identity;
- 		struct nvme_nvm_ph_rw ph_rw;
-+		struct nvme_nvm_erase_blk erase;
-+		struct nvme_nvm_identity identity;
- 		struct nvme_nvm_getbbtbl get_bb;
- 		struct nvme_nvm_setbbtbl set_bb;
--		struct nvme_nvm_erase_blk erase;
- 	};
- };
- 
--struct nvme_nvm_id_group {
-+struct nvme_nvm_id12_grp {
- 	__u8			mtype;
- 	__u8			fmtype;
- 	__le16			res16;
-@@ -141,7 +141,7 @@ struct nvme_nvm_id_group {
- 	__u8			reserved[906];
- } __packed;
- 
--struct nvme_nvm_addr_format {
-+struct nvme_nvm_id12_addrf {
- 	__u8			ch_offset;
- 	__u8			ch_len;
- 	__u8			lun_offset;
-@@ -157,16 +157,16 @@ struct nvme_nvm_addr_format {
- 	__u8			res[4];
- } __packed;
- 
--struct nvme_nvm_id {
-+struct nvme_nvm_id12 {
- 	__u8			ver_id;
- 	__u8			vmnt;
- 	__u8			cgrps;
- 	__u8			res;
- 	__le32			cap;
- 	__le32			dom;
--	struct nvme_nvm_addr_format ppaf;
-+	struct nvme_nvm_id12_addrf ppaf;
- 	__u8			resv[228];
--	struct nvme_nvm_id_group group;
-+	struct nvme_nvm_id12_grp grp;
- 	__u8			resv2[2880];
- } __packed;
- 
-@@ -191,25 +191,25 @@ static inline void _nvme_nvm_check_size(void)
- {
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_identity) != 64);
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_ph_rw) != 64);
-+	BUILD_BUG_ON(sizeof(struct nvme_nvm_erase_blk) != 64);
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_getbbtbl) != 64);
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_setbbtbl) != 64);
--	BUILD_BUG_ON(sizeof(struct nvme_nvm_erase_blk) != 64);
--	BUILD_BUG_ON(sizeof(struct nvme_nvm_id_group) != 960);
--	BUILD_BUG_ON(sizeof(struct nvme_nvm_addr_format) != 16);
--	BUILD_BUG_ON(sizeof(struct nvme_nvm_id) != NVME_IDENTIFY_DATA_SIZE);
-+	BUILD_BUG_ON(sizeof(struct nvme_nvm_id12_grp) != 960);
-+	BUILD_BUG_ON(sizeof(struct nvme_nvm_id12_addrf) != 16);
-+	BUILD_BUG_ON(sizeof(struct nvme_nvm_id12) != NVME_IDENTIFY_DATA_SIZE);
- 	BUILD_BUG_ON(sizeof(struct nvme_nvm_bb_tbl) != 64);
- }
- 
--static int init_grps(struct nvm_id *nvm_id, struct nvme_nvm_id *nvme_nvm_id)
-+static int init_grp(struct nvm_id *nvm_id, struct nvme_nvm_id12 *id12)
- {
--	struct nvme_nvm_id_group *src;
-+	struct nvme_nvm_id12_grp *src;
- 	struct nvm_id_group *grp;
- 	int sec_per_pg, sec_per_pl, pg_per_blk;
- 
--	if (nvme_nvm_id->cgrps != 1)
-+	if (id12->cgrps != 1)
- 		return -EINVAL;
- 
--	src = &nvme_nvm_id->group;
-+	src = &id12->grp;
- 	grp = &nvm_id->grp;
- 
- 	grp->mtype = src->mtype;
-@@ -261,34 +261,34 @@ static int init_grps(struct nvm_id *nvm_id, struct nvme_nvm_id *nvme_nvm_id)
- static int nvme_nvm_identity(struct nvm_dev *nvmdev, struct nvm_id *nvm_id)
- {
- 	struct nvme_ns *ns = nvmdev->q->queuedata;
--	struct nvme_nvm_id *nvme_nvm_id;
-+	struct nvme_nvm_id12 *id;
- 	struct nvme_nvm_command c = {};
- 	int ret;
- 
- 	c.identity.opcode = nvme_nvm_admin_identity;
- 	c.identity.nsid = cpu_to_le32(ns->head->ns_id);
- 
--	nvme_nvm_id = kmalloc(sizeof(struct nvme_nvm_id), GFP_KERNEL);
--	if (!nvme_nvm_id)
-+	id = kmalloc(sizeof(struct nvme_nvm_id12), GFP_KERNEL);
-+	if (!id)
- 		return -ENOMEM;
- 
- 	ret = nvme_submit_sync_cmd(ns->ctrl->admin_q, (struct nvme_command *)&c,
--				nvme_nvm_id, sizeof(struct nvme_nvm_id));
-+				id, sizeof(struct nvme_nvm_id12));
- 	if (ret) {
- 		ret = -EIO;
- 		goto out;
- 	}
- 
--	nvm_id->ver_id = nvme_nvm_id->ver_id;
--	nvm_id->vmnt = nvme_nvm_id->vmnt;
--	nvm_id->cap = le32_to_cpu(nvme_nvm_id->cap);
--	nvm_id->dom = le32_to_cpu(nvme_nvm_id->dom);
--	memcpy(&nvm_id->ppaf, &nvme_nvm_id->ppaf,
-+	nvm_id->ver_id = id->ver_id;
-+	nvm_id->vmnt = id->vmnt;
-+	nvm_id->cap = le32_to_cpu(id->cap);
-+	nvm_id->dom = le32_to_cpu(id->dom);
-+	memcpy(&nvm_id->ppaf, &id->ppaf,
- 					sizeof(struct nvm_addr_format));
- 
--	ret = init_grps(nvm_id, nvme_nvm_id);
-+	ret = init_grp(nvm_id, id);
- out:
--	kfree(nvme_nvm_id);
-+	kfree(id);
- 	return ret;
- }
- 
+I understand your point. Will's added barrier and comment is fine.
+
+Thanks,
+
+Mathieu
+
+
+
 -- 
-2.11.0
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
