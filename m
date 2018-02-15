@@ -1,56 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755180AbeBOJRv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 04:17:51 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54156 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755113AbeBOJRs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 04:17:48 -0500
-X-Google-Smtp-Source: AH8x225/NpQKqUbWRwCLtkVtARUIqa2Cqfc8P5ysPm6+eW/8fq5aOnQwCxaqv6b/yqhaiTY2g4GInA==
-Subject: Re: [PATCH v2] ASoC: rt5645: Introduce mapping for ACPI-defined GPIO
-To: Carlo Caione <carlo@caione.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc: Linux Upstreaming Team <linux@endlessm.com>, bardliao@realtek.com,
-        oder_chiou@realtek.com, alsa-devel@alsa-project.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Carlo Caione <carlo@endlessm.com>
-References: <20180209142318.14451-1-carlo@caione.org>
- <CAOQ7t2ZHisZRPq6tKL3QNuKWQFNpVpJ-DoPdM80jMx8u7J=fBg@mail.gmail.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <cb4736e2-bcc0-c8da-efd9-7d5ea7f23d25@redhat.com>
-Date: Thu, 15 Feb 2018 10:17:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1755213AbeBOJS2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 04:18:28 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34655 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755126AbeBOJSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 04:18:24 -0500
+Date: Thu, 15 Feb 2018 10:18:19 +0100
+From: Jan Kara <jack@suse.cz>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Mel Gorman <mgorman@techsingularity.net>,
+        Minchan Kim <minchan@kernel.org>, Jan Kara <jack@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH] mm: Fix races between address_space dereference and free
+ in page_evicatable
+Message-ID: <20180215091819.wnrbszbbbzrjlybc@quack2.suse.cz>
+References: <20180212081227.1940-1-ying.huang@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAOQ7t2ZHisZRPq6tKL3QNuKWQFNpVpJ-DoPdM80jMx8u7J=fBg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180212081227.1940-1-ying.huang@intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 15-02-18 10:11, Carlo Caione wrote:
-> On Fri, Feb 9, 2018 at 2:23 PM, Carlo Caione <carlo@caione.org> wrote:
->> From: Carlo Caione <carlo@endlessm.com>
->>
->> On at least one notebook (ECS EF20EA) the 'hp-detect' GPIO is defined in
->> the DSDT table by the ACPI GpioIo resources in _CRS. Add this mapping to
->> the rt5645 driver to enable the jack detection also on non-DT platforms.
+On Mon 12-02-18 16:12:27, Huang, Ying wrote:
+> From: Huang Ying <ying.huang@intel.com>
 > 
-> Please do not merge this yet, I'll submit a V3 soon.
-> Hans pointed out that on some BayTrail there is indeed an extra GPIO
-> but it is used to enable the external speaker amplifier. Better to
-> guard this by a quirk.
+> When page_mapping() is called and the mapping is dereferenced in
+> page_evicatable() through shrink_active_list(), it is possible for the
+> inode to be truncated and the embedded address space to be freed at
+> the same time.  This may lead to the following race.
+> 
+> CPU1                                                CPU2
+> 
+> truncate(inode)                                     shrink_active_list()
+>   ...                                                 page_evictable(page)
+>   truncate_inode_page(mapping, page);
+>     delete_from_page_cache(page)
+>       spin_lock_irqsave(&mapping->tree_lock, flags);
+>         __delete_from_page_cache(page, NULL)
+>           page_cache_tree_delete(..)
+>             ...                                         mapping = page_mapping(page);
+>             page->mapping = NULL;
+>             ...
+>       spin_unlock_irqrestore(&mapping->tree_lock, flags);
+>       page_cache_free_page(mapping, page)
+>         put_page(page)
+>           if (put_page_testzero(page)) -> false
+> - inode now has no pages and can be freed including embedded address_space
+> 
+>                                                         mapping_unevictable(mapping)
+> 							  test_bit(AS_UNEVICTABLE, &mapping->flags);
+> - we've dereferenced mapping which is potentially already free.
+> 
+> Similar race exists between swap cache freeing and page_evicatable() too.
+> 
+> The address_space in inode and swap cache will be freed after a RCU
+> grace period.  So the races are fixed via enclosing the page_mapping()
+> and address_space usage in rcu_read_lock/unlock().  Some comments are
+> added in code to make it clear what is protected by the RCU read lock.
+> 
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Mel Gorman <mgorman@techsingularity.net>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@suse.com>
 
-Thank you Carlo, note that the tablet I was talking about is a rt5651 based
-tablet, but yes you never know for what reasons someone will put an extra
-GPIO in the resources table, so guarding this with a quirk seems like a good
-idea.
+The race looks real (although very unlikely) and the patch looks good to me.
+You can add:
 
-Regards,
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Hans
+								Honza
+
+> ---
+>  mm/vmscan.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index d1c1e00b08bb..10a0f32a3f90 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -3886,7 +3886,13 @@ int node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned int order)
+>   */
+>  int page_evictable(struct page *page)
+>  {
+> -	return !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
+> +	int ret;
+> +
+> +	/* Prevent address_space of inode and swap cache from being freed */
+> +	rcu_read_lock();
+> +	ret = !mapping_unevictable(page_mapping(page)) && !PageMlocked(page);
+> +	rcu_read_unlock();
+> +	return ret;
+>  }
+>  
+>  #ifdef CONFIG_SHMEM
+> -- 
+> 2.15.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
