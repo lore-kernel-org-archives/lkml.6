@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226pNuvlHLK8zCByXOzRkY/Jyj7NQ2iHyE7ahlivCkAak9qlx2l+bpdmrkot/OV9wAPD9/O8
-ARC-Seal: i=1; a=rsa-sha256; t=1518709175; cv=none;
+X-Google-Smtp-Source: AH8x224FQdsWSJmRlXe8aegQR+VuH8uY3fkdxVL99Gb25unyDWdXdpxfVU1m3MsLIu3HaOC8NnvQ
+ARC-Seal: i=1; a=rsa-sha256; t=1518709172; cv=none;
         d=google.com; s=arc-20160816;
-        b=tPRlCfABnAa/7HgJ7E2ZAISiYPkuig7reEmxItyhpdBi/RGQd+BVwN1FqS6lhX/OyQ
-         2Xc2IHditKoq+YhPUXpeu6X9kmhAMzhnTv3mZbUDyRpSsKpIv+futd3FrYgY11b5gBL+
-         Yq3xjpmB08KyTZzK4KB+32bpvcKxJJZ7ty45Y2DMghStoJxvDEY+HnMTl8OJVqfSUfhP
-         +c4BNMjsgkqldxfp/oZTo1RwZ4d2Rbn8Y0vHaqu1EcDLsgnxNOzFENAMto61HTG5eg/a
-         sFtkj/zWVbaAmsgQlNPHOluDLYPeBH+g9yfihDrvf2gtGDgyjdVkY6zYjrdqwO4DUwdK
-         qnYA==
+        b=oxwXcAjD7nxnn/byKlP+YvvUUQf9dWJgHpHtx7Kz9hHtgs21TWMheMqeQ/5F38FVdK
+         XWp0VF8nGZ8Ifj8WJb9dadZJ7laaATPxpgV5LFwwE4RWtSaFUvZzqXpsJAs+mxEhgyMY
+         X12bx9qXHoUAsmQW61fZ38StsY92EoZgLcH/0nVou3VM/wSexmmFEgsKuXUWZNjW28ze
+         UwLgy0Mq5FdO0nniJ8I58s2bHEGxNN80KruEjDJ53ujQlXpINQ7+cX3rstSmqz8FD1AV
+         arHk5m79BfvbwAzmSbK8VIuOKt5X9+E4nrJx+Wfv6feRkiVk+WxBF2/NWGATlqv4VRaD
+         w/Vw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Brtxe/uhBEJXhdxMrqOEnHg1wj3yAqQb2gfSLbnujgw=;
-        b=srACl1mXEzYXbyQ8hf5nXnUBblMigm9YykRngJoPfvmB4DQ0zpeIPO1lEWxCmtEWCS
-         Gt9NFB8QZ0J7F26k+Z8SEu9AwXcOJSqOaSUT60TaAeswlKTN1dv3ppKG5ZpI5Y5XVg2W
-         fX8ICqWodd18kO+Ms4fTIjkGFLHYeJJDsKd62odB84cusYBclU24JcQIzEMTIC9hbTIT
-         7YJboXHR28QCGuEFU+4qSnV5v3hPqQ8kegINWLZcRIJe97QLeW1MxsgSgaT/crlN9cap
-         LJJjxRfpdrRGzOzo8cpN/oL5bzVC66d047386mKazTe7oafp9wXQW/gbcHueGCNBp/D8
-         7GUA==
+        bh=vBdJpuPR/PuBTrPBmCProtQdpKyCxAXO9bfyMp0SMEI=;
+        b=RkEQ6LM+qYpE5P6bH2sxkLvu4vlfeYdX0iMjUt31fiiOwTISoH81ZSEFgPDKJQxj36
+         5lgo9t4fsXCm/W/IZK1jtffxUIZxRgl/j6sZKADPb9AHACUW2cSW95jUW7j9N+bd3LLR
+         3WGjBcnEDpgeeCKfjXUdL+qtOeKcwSixDFLKMcohcCYD/bMM0e4QYJtHJmm1ZOzVHqdd
+         Oj6iBaT/SbxhdFB1PuuxPgrYNBs5Huo/neS3YBT27sypkzRwUkXLRljdKCMB1epGzAKQ
+         vslRjx2krsRHN0093qaPQCBizXEiY89A33b5PRzsNuXc0bagqR/WSoQD9JTOjx2dbuvf
+         x1lA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Laura Abbott <labbott@redhat.com>,
 	Shanker Donthineni <shankerd@codeaurora.org>,
 	Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.15 024/202] [Variant 3/Meltdown] arm64: entry: Add exception trampoline page for exceptions from EL0
-Date: Thu, 15 Feb 2018 16:15:24 +0100
-Message-Id: <20180215151714.180513022@linuxfoundation.org>
+Subject: [PATCH 4.15 023/202] [Variant 3/Meltdown] arm64: mm: Invalidate both kernel and user ASIDs when performing TLBI
+Date: Thu, 15 Feb 2018 16:15:23 +0100
+Message-Id: <20180215151714.135182487@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481449504188985?=
-X-GMAIL-MSGID: =?utf-8?q?1592481992700547809?=
+X-GMAIL-THRID: =?utf-8?q?1592481446371488395?=
+X-GMAIL-MSGID: =?utf-8?q?1592481989332619110?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,14 +53,11 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Will Deacon <will.deacon@arm.com>
 
 
-Commit c7b9adaf85f8 upstream.
+Commit 9b0de864b5bc upstream.
 
-To allow unmapping of the kernel whilst running at EL0, we need to
-point the exception vectors at an entry trampoline that can map/unmap
-the kernel on entry/exit respectively.
-
-This patch adds the trampoline page, although it is not yet plugged
-into the vector table and is therefore unused.
+Since an mm has both a kernel and a user ASID, we need to ensure that
+broadcast TLB maintenance targets both address spaces so that things
+like CoW continue to work with the uaccess primitives in the kernel.
 
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Tested-by: Laura Abbott <labbott@redhat.com>
@@ -68,149 +65,68 @@ Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/entry.S       |   86 ++++++++++++++++++++++++++++++++++++++++
- arch/arm64/kernel/vmlinux.lds.S |   17 +++++++
- 2 files changed, 103 insertions(+)
+ arch/arm64/include/asm/tlbflush.h |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -28,6 +28,8 @@
- #include <asm/errno.h>
- #include <asm/esr.h>
- #include <asm/irq.h>
-+#include <asm/memory.h>
+--- a/arch/arm64/include/asm/tlbflush.h
++++ b/arch/arm64/include/asm/tlbflush.h
+@@ -23,6 +23,7 @@
+ 
+ #include <linux/sched.h>
+ #include <asm/cputype.h>
 +#include <asm/mmu.h>
- #include <asm/processor.h>
- #include <asm/ptrace.h>
- #include <asm/thread_info.h>
-@@ -943,6 +945,90 @@ __ni_sys_trace:
  
- 	.popsection				// .entry.text
+ /*
+  * Raw TLBI operations.
+@@ -54,6 +55,11 @@
  
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+/*
-+ * Exception vectors trampoline.
-+ */
-+	.pushsection ".entry.tramp.text", "ax"
-+
-+	.macro tramp_map_kernel, tmp
-+	mrs	\tmp, ttbr1_el1
-+	sub	\tmp, \tmp, #(SWAPPER_DIR_SIZE + RESERVED_TTBR0_SIZE)
-+	bic	\tmp, \tmp, #USER_ASID_FLAG
-+	msr	ttbr1_el1, \tmp
-+	.endm
-+
-+	.macro tramp_unmap_kernel, tmp
-+	mrs	\tmp, ttbr1_el1
-+	add	\tmp, \tmp, #(SWAPPER_DIR_SIZE + RESERVED_TTBR0_SIZE)
-+	orr	\tmp, \tmp, #USER_ASID_FLAG
-+	msr	ttbr1_el1, \tmp
-+	/*
-+	 * We avoid running the post_ttbr_update_workaround here because the
-+	 * user and kernel ASIDs don't have conflicting mappings, so any
-+	 * "blessing" as described in:
-+	 *
-+	 *   http://lkml.kernel.org/r/56BB848A.6060603@caviumnetworks.com
-+	 *
-+	 * will not hurt correctness. Whilst this may partially defeat the
-+	 * point of using split ASIDs in the first place, it avoids
-+	 * the hit of invalidating the entire I-cache on every return to
-+	 * userspace.
-+	 */
-+	.endm
-+
-+	.macro tramp_ventry, regsize = 64
-+	.align	7
-+1:
-+	.if	\regsize == 64
-+	msr	tpidrro_el0, x30	// Restored in kernel_ventry
-+	.endif
-+	tramp_map_kernel	x30
-+	ldr	x30, =vectors
-+	prfm	plil1strm, [x30, #(1b - tramp_vectors)]
-+	msr	vbar_el1, x30
-+	add	x30, x30, #(1b - tramp_vectors)
-+	isb
-+	br	x30
-+	.endm
-+
-+	.macro tramp_exit, regsize = 64
-+	adr	x30, tramp_vectors
-+	msr	vbar_el1, x30
-+	tramp_unmap_kernel	x30
-+	.if	\regsize == 64
-+	mrs	x30, far_el1
-+	.endif
-+	eret
-+	.endm
-+
-+	.align	11
-+ENTRY(tramp_vectors)
-+	.space	0x400
-+
-+	tramp_ventry
-+	tramp_ventry
-+	tramp_ventry
-+	tramp_ventry
-+
-+	tramp_ventry	32
-+	tramp_ventry	32
-+	tramp_ventry	32
-+	tramp_ventry	32
-+END(tramp_vectors)
-+
-+ENTRY(tramp_exit_native)
-+	tramp_exit
-+END(tramp_exit_native)
-+
-+ENTRY(tramp_exit_compat)
-+	tramp_exit	32
-+END(tramp_exit_compat)
-+
-+	.ltorg
-+	.popsection				// .entry.tramp.text
-+#endif /* CONFIG_UNMAP_KERNEL_AT_EL0 */
+ #define __tlbi(op, ...)		__TLBI_N(op, ##__VA_ARGS__, 1, 0)
+ 
++#define __tlbi_user(op, arg) do {						\
++	if (arm64_kernel_unmapped_at_el0())					\
++		__tlbi(op, (arg) | USER_ASID_FLAG);				\
++} while (0)
 +
  /*
-  * Special system call wrappers.
-  */
---- a/arch/arm64/kernel/vmlinux.lds.S
-+++ b/arch/arm64/kernel/vmlinux.lds.S
-@@ -57,6 +57,17 @@ jiffies = jiffies_64;
- #define HIBERNATE_TEXT
- #endif
+  *	TLB Management
+  *	==============
+@@ -115,6 +121,7 @@ static inline void flush_tlb_mm(struct m
  
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+#define TRAMP_TEXT					\
-+	. = ALIGN(PAGE_SIZE);				\
-+	VMLINUX_SYMBOL(__entry_tramp_text_start) = .;	\
-+	*(.entry.tramp.text)				\
-+	. = ALIGN(PAGE_SIZE);				\
-+	VMLINUX_SYMBOL(__entry_tramp_text_end) = .;
-+#else
-+#define TRAMP_TEXT
-+#endif
-+
- /*
-  * The size of the PE/COFF section that covers the kernel image, which
-  * runs from stext to _edata, must be a round multiple of the PE/COFF
-@@ -113,6 +124,7 @@ SECTIONS
- 			HYPERVISOR_TEXT
- 			IDMAP_TEXT
- 			HIBERNATE_TEXT
-+			TRAMP_TEXT
- 			*(.fixup)
- 			*(.gnu.warning)
- 		. = ALIGN(16);
-@@ -214,6 +226,11 @@ SECTIONS
- 	. += RESERVED_TTBR0_SIZE;
- #endif
+ 	dsb(ishst);
+ 	__tlbi(aside1is, asid);
++	__tlbi_user(aside1is, asid);
+ 	dsb(ish);
+ }
  
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+	tramp_pg_dir = .;
-+	. += PAGE_SIZE;
-+#endif
-+
- 	__pecoff_data_size = ABSOLUTE(. - __initdata_begin);
- 	_end = .;
+@@ -125,6 +132,7 @@ static inline void flush_tlb_page(struct
+ 
+ 	dsb(ishst);
+ 	__tlbi(vale1is, addr);
++	__tlbi_user(vale1is, addr);
+ 	dsb(ish);
+ }
+ 
+@@ -151,10 +159,13 @@ static inline void __flush_tlb_range(str
+ 
+ 	dsb(ishst);
+ 	for (addr = start; addr < end; addr += 1 << (PAGE_SHIFT - 12)) {
+-		if (last_level)
++		if (last_level) {
+ 			__tlbi(vale1is, addr);
+-		else
++			__tlbi_user(vale1is, addr);
++		} else {
+ 			__tlbi(vae1is, addr);
++			__tlbi_user(vae1is, addr);
++		}
+ 	}
+ 	dsb(ish);
+ }
+@@ -194,6 +205,7 @@ static inline void __flush_tlb_pgtable(s
+ 	unsigned long addr = uaddr >> 12 | (ASID(mm) << 48);
+ 
+ 	__tlbi(vae1is, addr);
++	__tlbi_user(vae1is, addr);
+ 	dsb(ish);
+ }
  
