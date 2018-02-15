@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2179907-1518720295-2-6950305259897949571
+X-Cyrus-Session-Id: sloti22d1t05-2179907-1518720285-2-9873847124842886079
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720294; b=R45zw+ClhHlCKCu/s3RqQOXQKXmQFSmJhtyXz/uDGqzjFnD
-    Vlq3qrLIo78kibX9A5UCDedsXqbPiTxEUcx5k/b45TapXSs2k69ylhnSe+y3vrUS
-    0LIdeTqgKBkxzIAfkK+OTempn/Wieu7CvZDVuvJ4w7oPi3U4kww1f4Tc7JiI4Ixr
-    I6SiTR/LZ0QDWSyBJKakrim1a/3m8MPJxiUrAhuJtSG+yZzIzjfB2/IpuVIKQRUO
-    6E8z/KV/H9avrIalg9yAZvnhcKLBdbB4A7ly8PjDtQb6RMbtHaruLKVy/KbNS0F1
-    BArUJjC3Pua3Jt4jwZ8I28FXszh7f6/j24WxD5Q==
+    t=1518720284; b=jHsAtDLWcLulgka3G5oBGjlnZQkYZxJSiYdJIR/Vy1jlTrS
+    7nCPP2d44Sf2jVVcdsKlfyUYT1UNovYuI7oGH3rDYgo2GLJCqhV6meMO3xmycNIb
+    +QiSnoYGgnh//ZCNn6R1jcRSGzK7XLkzFD+eSg2qGg9wzXPrCKCzdCrPhmifC5Yo
+    O1yidz+TjGhQ7dVdcRSTiVG2SHhgurhx5Sd8ncYBZl48WX6/u4uYcury/57Ofd1y
+    0YqDI8diFqH9lHigitVADuEETb9TfcIbMwBHi6YyRPQOOCbmd1jneRG/rQUv4fl1
+    jdAqdKuDMSxNIGTySWfbmquCLFVIM/QaScGYfjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720294; bh=W434HqLNjxqYGO/9T3OiuXUo4H
-    6gC5DU3Bkh4lgG+XQ=; b=ZfYQoerbskUqjJgvoNLC5jx/28+31ix6Wzd8zhQsXx
-    cHqn+tIUAp/OsKaBV24DNMKK/uX9viZwWs+N8Qi1xWDNxsdpJW307/PW6DzQpPkJ
-    YeNZVjJvG3qBpr32/B/UNYS9z4k2nz1sYwUJtwsfZladIpSQU4IYWhP72FQUw1A7
-    UFG6yxLzv0HULs5iL/ytAXEQwTIUfw5xZwyv1SgI1Gqq3yX4dCzYTWyoqFCEUBKv
-    bRf6Ab7e4Kugvo4uyu+l0h1RGpCHGFS9egh7Uu2IJH/PTp0TrZl7kKrAA287gBny
-    S2XvCFLiizKkAy9HDzPXmqtLjPvM37iZlkq5I9QppxOw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518720284; bh=nbvXrHZLfDnT1HlWxz1U1Qq6rp
+    EGbd0bG/9ZpkjQb84=; b=nAWyMmCQWMmXnSXn9NbYiaB+hYIhu9DIOqfpdE8JDF
+    9yVfxNO3PmBpFxaSAOFhyJlx8EoIpY20NNvZOw+ZT0Z8cE9xxIRBkN33gFzK3S4s
+    QjpGzMIjJM/5VtWjz7OugHoO7U/leHv9VkFAt5b2EP9w5yMpwvZ7KnwPvDzUSTeD
+    pidtwI4pzWxQRofbMlj4eCb2urFSqyyhiTn51FDC0doMUoUtYOGp2IXS1C/yqG4a
+    DIbo1LH0WyNMQ7xOCKSzzP5Aj/c758zKioqnSy3oG7oqZKuoLKnAhNYOdMdU1CYt
+    xS+eeZrppeXDrjNRuKM7xZd7kfEtVJRAy7jCmvSmDtNA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,23 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162529AbeBOPXC (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:23:02 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50474 "EHLO
+        id S1162555AbeBOPXG (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:23:06 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50586 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161910AbeBOPXA (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:00 -0500
+        with ESMTP id S1161910AbeBOPXE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:04 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver OHalloran <oohall@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.4 014/108] powerpc/powernv: Check device-tree for RFI flush settings
-Date: Thu, 15 Feb 2018 16:16:11 +0100
-Message-Id: <20180215151224.462003315@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers3@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>
+Subject: [PATCH 4.4 047/108] posix-timer: Properly check sigevent->sigev_notify
+Date: Thu, 15 Feb 2018 16:16:44 +0100
+Message-Id: <20180215151228.997834157@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -77,86 +80,108 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Oliver O'Halloran <oohall@gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 6e032b350cd1fdb830f18f8320ef0e13b4e24094 upstream.
+commit cef31d9af908243421258f1df35a4a644604efbe upstream.
 
-New device-tree properties are available which tell the hypervisor
-settings related to the RFI flush. Use them to determine the
-appropriate flush instruction to use, and whether the flush is
-required.
+timer_create() specifies via sigevent->sigev_notify the signal delivery for
+the new timer. The valid modes are SIGEV_NONE, SIGEV_SIGNAL, SIGEV_THREAD
+and (SIGEV_SIGNAL | SIGEV_THREAD_ID).
 
-Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+The sanity check in good_sigevent() is only checking the valid combination
+for the SIGEV_THREAD_ID bit, i.e. SIGEV_SIGNAL, but if SIGEV_THREAD_ID is
+not set it accepts any random value.
+
+This has no real effects on the posix timer and signal delivery code, but
+it affects show_timer() which handles the output of /proc/$PID/timers. That
+function uses a string array to pretty print sigev_notify. The access to
+that array has no bound checks, so random sigev_notify cause access beyond
+the array bounds.
+
+Add proper checks for the valid notify modes and remove the SIGEV_THREAD_ID
+masking from various code pathes as SIGEV_NONE can never be set in
+combination with SIGEV_THREAD_ID.
+
+Reported-by: Eric Biggers <ebiggers3@gmail.com>
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Reported-by: Alexey Dobriyan <adobriyan@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/setup.c |   50 +++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+ kernel/time/posix-timers.c |   34 +++++++++++++++++++---------------
+ 1 file changed, 19 insertions(+), 15 deletions(-)
 
---- a/arch/powerpc/platforms/powernv/setup.c
-+++ b/arch/powerpc/platforms/powernv/setup.c
-@@ -35,13 +35,63 @@
- #include <asm/opal.h>
- #include <asm/kexec.h>
- #include <asm/smp.h>
-+#include <asm/tm.h>
-+#include <asm/setup.h>
- 
- #include "powernv.h"
- 
-+static void pnv_setup_rfi_flush(void)
-+{
-+	struct device_node *np, *fw_features;
-+	enum l1d_flush_type type;
-+	int enable;
-+
-+	/* Default to fallback in case fw-features are not available */
-+	type = L1D_FLUSH_FALLBACK;
-+	enable = 1;
-+
-+	np = of_find_node_by_name(NULL, "ibm,opal");
-+	fw_features = of_get_child_by_name(np, "fw-features");
-+	of_node_put(np);
-+
-+	if (fw_features) {
-+		np = of_get_child_by_name(fw_features, "inst-l1d-flush-trig2");
-+		if (np && of_property_read_bool(np, "enabled"))
-+			type = L1D_FLUSH_MTTRIG;
-+
-+		of_node_put(np);
-+
-+		np = of_get_child_by_name(fw_features, "inst-l1d-flush-ori30,30,0");
-+		if (np && of_property_read_bool(np, "enabled"))
-+			type = L1D_FLUSH_ORI;
-+
-+		of_node_put(np);
-+
-+		/* Enable unless firmware says NOT to */
-+		enable = 2;
-+		np = of_get_child_by_name(fw_features, "needs-l1d-flush-msr-hv-1-to-0");
-+		if (np && of_property_read_bool(np, "disabled"))
-+			enable--;
-+
-+		of_node_put(np);
-+
-+		np = of_get_child_by_name(fw_features, "needs-l1d-flush-msr-pr-0-to-1");
-+		if (np && of_property_read_bool(np, "disabled"))
-+			enable--;
-+
-+		of_node_put(np);
-+		of_node_put(fw_features);
-+	}
-+
-+	setup_rfi_flush(type, enable > 0);
-+}
-+
- static void __init pnv_setup_arch(void)
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -507,17 +507,22 @@ static struct pid *good_sigevent(sigeven
  {
- 	set_arch_panic_timeout(10, ARCH_PANIC_TIMEOUT);
+ 	struct task_struct *rtn = current->group_leader;
  
-+	pnv_setup_rfi_flush();
-+
- 	/* Initialize SMP */
- 	pnv_smp_init();
+-	if ((event->sigev_notify & SIGEV_THREAD_ID ) &&
+-		(!(rtn = find_task_by_vpid(event->sigev_notify_thread_id)) ||
+-		 !same_thread_group(rtn, current) ||
+-		 (event->sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_SIGNAL))
++	switch (event->sigev_notify) {
++	case SIGEV_SIGNAL | SIGEV_THREAD_ID:
++		rtn = find_task_by_vpid(event->sigev_notify_thread_id);
++		if (!rtn || !same_thread_group(rtn, current))
++			return NULL;
++		/* FALLTHRU */
++	case SIGEV_SIGNAL:
++	case SIGEV_THREAD:
++		if (event->sigev_signo <= 0 || event->sigev_signo > SIGRTMAX)
++			return NULL;
++		/* FALLTHRU */
++	case SIGEV_NONE:
++		return task_pid(rtn);
++	default:
+ 		return NULL;
+-
+-	if (((event->sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_NONE) &&
+-	    ((event->sigev_signo <= 0) || (event->sigev_signo > SIGRTMAX)))
+-		return NULL;
+-
+-	return task_pid(rtn);
++	}
+ }
  
+ void posix_timers_register_clock(const clockid_t clock_id,
+@@ -745,8 +750,7 @@ common_timer_get(struct k_itimer *timr,
+ 	/* interval timer ? */
+ 	if (iv.tv64)
+ 		cur_setting->it_interval = ktime_to_timespec(iv);
+-	else if (!hrtimer_active(timer) &&
+-		 (timr->it_sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_NONE)
++	else if (!hrtimer_active(timer) && timr->it_sigev_notify != SIGEV_NONE)
+ 		return;
+ 
+ 	now = timer->base->get_time();
+@@ -757,7 +761,7 @@ common_timer_get(struct k_itimer *timr,
+ 	 * expiry is > now.
+ 	 */
+ 	if (iv.tv64 && (timr->it_requeue_pending & REQUEUE_PENDING ||
+-	    (timr->it_sigev_notify & ~SIGEV_THREAD_ID) == SIGEV_NONE))
++			timr->it_sigev_notify == SIGEV_NONE))
+ 		timr->it_overrun += (unsigned int) hrtimer_forward(timer, now, iv);
+ 
+ 	remaining = __hrtimer_expires_remaining_adjusted(timer, now);
+@@ -767,7 +771,7 @@ common_timer_get(struct k_itimer *timr,
+ 		 * A single shot SIGEV_NONE timer must return 0, when
+ 		 * it is expired !
+ 		 */
+-		if ((timr->it_sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_NONE)
++		if (timr->it_sigev_notify != SIGEV_NONE)
+ 			cur_setting->it_value.tv_nsec = 1;
+ 	} else
+ 		cur_setting->it_value = ktime_to_timespec(remaining);
+@@ -865,7 +869,7 @@ common_timer_set(struct k_itimer *timr,
+ 	timr->it.real.interval = timespec_to_ktime(new_setting->it_interval);
+ 
+ 	/* SIGEV_NONE timers are not queued ! See common_timer_get */
+-	if (((timr->it_sigev_notify & ~SIGEV_THREAD_ID) == SIGEV_NONE)) {
++	if (timr->it_sigev_notify == SIGEV_NONE) {
+ 		/* Setup correct expiry time for relative timers */
+ 		if (mode == HRTIMER_MODE_REL) {
+ 			hrtimer_add_expires(timer, timer->base->get_time());
