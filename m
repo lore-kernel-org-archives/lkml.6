@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2250lSfk2cCiisWyNb++mrKX0+yvdfEzZx82aCtSYoQ3UfHtz9NFmXfUjIN8sAsYVJ+pw+bZ
-ARC-Seal: i=1; a=rsa-sha256; t=1518708598; cv=none;
+X-Google-Smtp-Source: AH8x226NCthtf9yDUpOtfhJKOwbW2RwY8NNBf97AP5rYYOK8yqTKc3WrNxKCR3jxb1yCQjLJDV/c
+ARC-Seal: i=1; a=rsa-sha256; t=1518708591; cv=none;
         d=google.com; s=arc-20160816;
-        b=MMPHzUQ3tCfEAKgwdyqwJlf0MrfDjvorjOxUZNwIAmyhJ4lBnuvifT5bssJ8C7kJQi
-         idQsulFw+YsqzHs4aw9ysFcQiCQlYHVeSsimAZ4A7OdxoevpuJhaW/0zetKPfEvSgZhO
-         OTIh07fopHeFusNYWomvAAqIbpe0TS6u3bwQJ5UXyR6CgxlXgmKDG3pBh+FaMcioLXNq
-         ezwci4n90hecIUlWNEexZfIw8EaWY3p7l3uKpq2sku0DWEcMhaHmwD57FClxspnTW/3t
-         6Imf06Gaa1tQHpzkMvjEh+MGPxVPWQx2PKhSAf8cboN2IOmhUn5Bu+4Coky0Hc5hNxYJ
-         u4GQ==
+        b=KbvMLaJSq9Mo9tr2734BfH1MsV7YJqIihj/KB5odPRZGsmsi7qQBD499Yw/qxkYpKD
+         rUpczUuPePyjCElAu506INbzxDg6bCnT2TI1hliy5Au2L0rQNJ0z4JeuuslUITGckvYs
+         b09GLaQ4f2ryThvIh8vJWNgEQMcYTngWV20OErzeeYG2Pnp2w+YFamAXmGhxMfQ+qsw5
+         QLwAh7CzSBvqA6p8RFlv3r9wKSkAYNUSqvs44jyrZh8a61UmbANYHTRu4HlN5sJXFkYC
+         Hu23bGQqtYXN6bPH5yqhRLIM8EgG/s09Qz4TyWxGybtmTFzoD+NbmglAnaOwVTE00n/3
+         Z+cA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=u402gGmaPaAfni0gPyvzMqQSf+oDXFd0Fzs8JCDMniw=;
-        b=xilNrQzaMJb3rn9tKwO7t7Z6Zp+wuS2CgZbaIM7aAPHg6hCTntGA8ItMrFPC/Ovzix
-         xtsRRVjvx45umjqpbQD/rE1oMaFYNNScygLe+SEKmR1sT7ENaUyc+/iOZ3cyUPzeQO9U
-         7oIK+5dGo4zFVYpgi9qF+GtxaG2Wdnea1emgUBIN/E4xY9lUyIV5IP8yOYOK0Bky5CD/
-         5Z83m4FtkOP2PtOaidGsShrXs5aACyN3/r4BMGZqlmv5ssuIDtJ+FUe51CyELGCp5v6D
-         NbytlzBHjAS5hMCMgReIa0hFkEZ2xNlM/+j2uiegtM2t6igwMGeVnNsZ43fGtFbj06Q7
-         YiBg==
+        bh=YRcbWduuinOGebg6MCgtKJPhgDHVXklWFcODhQjf0vE=;
+        b=IY6ir0l4ZblzW44uS4CSXqCxAnhjK9SxGUWHCbbhr4dZXMVSgP/PQ8tQgDMaIBXhBk
+         lt5vscZtk4w09QUySFhBSHwU+LB3yvBvmKe7dojMSYngUfuCQRWhhOH3b/2ANz83Uvpx
+         IZGAZORf7gIWYw2d8Zju57osIPoEFn7umaxJFeRNGo18a91IgZdVkyR2R0+25Arub0iF
+         Nci+swxzlEoJhqyJBzMBMgpJpkt6/Q2Bl3es0jFh+CwwT/EJC5iKkG8eVMWgooQoPsk9
+         d90KFqkothhlSog1vypxEcTh/icNd5rtvJX28I9iXNhq+oPFApg4jgCe4zmRiwnI0P+K
+         T42A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michal Suchanek <msuchanek@suse.de>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 002/195] powerpc/pseries: include linux/types.h in asm/hvcall.h
-Date: Thu, 15 Feb 2018 16:14:53 +0100
-Message-Id: <20180215151705.864138492@linuxfoundation.org>
+	Matt Redfearn <matt.redfearn@mips.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	James Hogan <james.hogan@mips.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Wim Van Sebroeck <wim@iguana.be>
+Subject: [PATCH 4.14 001/195] watchdog: indydog: Add dependency on SGI_HAS_INDYDOG
+Date: Thu, 15 Feb 2018 16:14:52 +0100
+Message-Id: <20180215151705.818993168@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -39,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480899715300330?=
-X-GMAIL-MSGID: =?utf-8?q?1592481386819607035?=
+X-GMAIL-THRID: =?utf-8?q?1592481380463922372?=
+X-GMAIL-MSGID: =?utf-8?q?1592481380463922372?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,31 +51,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michal Suchanek <msuchanek@suse.de>
+From: Matt Redfearn <matt.redfearn@mips.com>
 
-commit 1b689a95ce7427075f9ac9fb4aea1af530742b7f upstream.
+commit 24f8d233074badd4c18e4dafd2fb97d65838afed upstream.
 
-Commit 6e032b350cd1 ("powerpc/powernv: Check device-tree for RFI flush
-settings") uses u64 in asm/hvcall.h without including linux/types.h
+Commit da2a68b3eb47 ("watchdog: Enable COMPILE_TEST where possible")
+enabled building the Indy watchdog driver when COMPILE_TEST is enabled.
+However, the driver makes reference to symbols that are only defined for
+certain platforms are selected in the config. These platforms select
+SGI_HAS_INDYDOG. Without this, link time errors result, for example
+when building a MIPS allyesconfig.
 
-This breaks hvcall.h users that do not include the header themselves.
+drivers/watchdog/indydog.o: In function `indydog_write':
+indydog.c:(.text+0x18): undefined reference to `sgimc'
+indydog.c:(.text+0x1c): undefined reference to `sgimc'
+drivers/watchdog/indydog.o: In function `indydog_start':
+indydog.c:(.text+0x54): undefined reference to `sgimc'
+indydog.c:(.text+0x58): undefined reference to `sgimc'
+drivers/watchdog/indydog.o: In function `indydog_stop':
+indydog.c:(.text+0xa4): undefined reference to `sgimc'
+drivers/watchdog/indydog.o:indydog.c:(.text+0xa8): more undefined
+references to `sgimc' follow
+make: *** [Makefile:1005: vmlinux] Error 1
 
-Fixes: 6e032b350cd1 ("powerpc/powernv: Check device-tree for RFI flush settings")
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fix this by ensuring that CONFIG_INDIDOG can only be selected when the
+necessary dependent platform symbols are built in.
+
+Fixes: da2a68b3eb47 ("watchdog: Enable COMPILE_TEST where possible")
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+Suggested-by: James Hogan <james.hogan@mips.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/include/asm/hvcall.h |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/watchdog/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/include/asm/hvcall.h
-+++ b/arch/powerpc/include/asm/hvcall.h
-@@ -353,6 +353,7 @@
- #define PROC_TABLE_GTSE		0x01
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -1451,7 +1451,7 @@ config RC32434_WDT
  
- #ifndef __ASSEMBLY__
-+#include <linux/types.h>
- 
- /**
-  * plpar_hcall_norets: - Make a pseries hypervisor call with no return arguments
+ config INDYDOG
+ 	tristate "Indy/I2 Hardware Watchdog"
+-	depends on SGI_HAS_INDYDOG || (MIPS && COMPILE_TEST)
++	depends on SGI_HAS_INDYDOG
+ 	help
+ 	  Hardware driver for the Indy's/I2's watchdog. This is a
+ 	  watchdog timer that will reboot the machine after a 60 second
