@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426114AbeBOQgh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 11:36:37 -0500
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:37394 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1426090AbeBOQgU (ORCPT
+        id S1426131AbeBOQg7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 11:36:59 -0500
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:57791 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1426076AbeBOQgT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:36:20 -0500
+        Thu, 15 Feb 2018 11:36:19 -0500
 From: Nadav Amit <namit@vmware.com>
 To: Ingo Molnar <mingo@redhat.com>
 CC: Thomas Gleixner <tglx@linutronix.de>,
@@ -15,9 +15,9 @@ CC: Thomas Gleixner <tglx@linutronix.de>,
         Dave Hansen <dave.hansen@linux.intel.com>, Willy Tarreau <w@1wt.eu>,
         Nadav Amit <nadav.amit@gmail.com>, <x86@kernel.org>,
         <linux-kernel@vger.kernel.org>, Nadav Amit <namit@vmware.com>
-Subject: [PATCH RFC v2 5/6] x86: Use global pages when PTI is disabled
-Date: Thu, 15 Feb 2018 08:36:01 -0800
-Message-ID: <20180215163602.61162-6-namit@vmware.com>
+Subject: [PATCH RFC v2 6/6] selftest: x86: test using CS64 on compatibility-mode
+Date: Thu, 15 Feb 2018 08:36:02 -0800
+Message-ID: <20180215163602.61162-7-namit@vmware.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180215163602.61162-1-namit@vmware.com>
 References: <20180215163602.61162-1-namit@vmware.com>
@@ -27,86 +27,79 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As long as PTI is disabled, it is possible to use global pages, as long
-as we remove them once PTI is enabled again. To do so, return the global
-bit to __supported_pte_mask and disable global pages using CR4.
+As we mask the 64-bit code segment in compatibility-mode, and since
+applications, most notably CRIU, might still use it, add a test to
+ensure it does not break.
 
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/tlbflush.h |  6 ++++++
- arch/x86/mm/init.c              | 14 ++++++--------
- arch/x86/mm/tlb.c               |  3 ++-
- 3 files changed, 14 insertions(+), 9 deletions(-)
+ tools/testing/selftests/x86/ldt_gdt.c | 41 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index ea65cf951c49..3a44cb0a9f56 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -319,6 +319,12 @@ static inline void set_cpu_pti_disable(unsigned short disable)
- 	WARN_ON_ONCE(preemptible());
+diff --git a/tools/testing/selftests/x86/ldt_gdt.c b/tools/testing/selftests/x86/ldt_gdt.c
+index 1aef72df20a1..40b442e5c514 100644
+--- a/tools/testing/selftests/x86/ldt_gdt.c
++++ b/tools/testing/selftests/x86/ldt_gdt.c
+@@ -50,6 +50,11 @@
+ # define INT80_CLOBBERS "r8", "r9", "r10", "r11"
+ #else
+ # define INT80_CLOBBERS
++
++/* copied from asm/segment.h */
++#define GDT_ENTRY_DEFAULT_USER_CS	14
++#define GDT_ENTRY_DEFAULT_USER_DS	15
++
+ #endif
  
- 	pti_update_user_cs64(cpu_pti_disable(), disable);
-+	if (__supported_pte_mask & _PAGE_GLOBAL) {
-+		if (disable)
-+			cr4_set_bits(X86_CR4_PGE);
-+		else
-+			cr4_clear_bits(X86_CR4_PGE);
-+	}
- 	this_cpu_write(cpu_tlbstate.pti_disable, disable);
+ static int nerrs;
+@@ -907,6 +912,40 @@ static void test_gdt_invalidation(void)
+ #endif
  }
  
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index 82f5252c723a..7f918a59c536 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -161,12 +161,6 @@ struct map_range {
- 
- static int page_size_mask;
- 
--static void enable_global_pages(void)
--{
--	if (!static_cpu_has(X86_FEATURE_PTI))
--		__supported_pte_mask |= _PAGE_GLOBAL;
--}
--
- static void __init probe_page_size_mask(void)
- {
- 	/*
-@@ -186,8 +180,10 @@ static void __init probe_page_size_mask(void)
- 	/* Enable PGE if available */
- 	__supported_pte_mask &= ~_PAGE_GLOBAL;
- 	if (boot_cpu_has(X86_FEATURE_PGE)) {
--		cr4_set_bits_and_update_boot(X86_CR4_PGE);
--		enable_global_pages();
-+		__supported_pte_mask |= _PAGE_GLOBAL;
++struct far_jmp_addr {
++	unsigned long addr;
++	unsigned short seg;
++} __packed;
 +
-+		if (!static_cpu_has(X86_FEATURE_PTI))
-+			cr4_set_bits_and_update_boot(X86_CR4_PGE);
- 	}
++static void switch_to_cs64(void)
++{
++#ifdef __i386__
++	struct far_jmp_addr far_jmp_compat, far_jmp_64;
++	unsigned short ds;
++
++	/* Poor's man detection of compatibility mode;  */
++	asm volatile ("mov %%ds, %0" : [ds]"=r"(ds));
++	if (ds >> 3 != 5)
++		return;
++
++	far_jmp_64.seg = (6 << 3) | 3;		/* __USER_CS */
++	far_jmp_compat.seg = (4 << 3) | 3;	/* __USER32_CS */
++
++	asm volatile ("movl $.cs64_target, (%[target64])\n\t"
++		      "movl $.cs32_target, (%[target32])\n\t"
++		      "ljmp *%[jmp_addr_64]\n\t"
++		      ".cs64_target:\n\t"
++		      "ljmp *%[jmp_addr_32]\n\t"
++		      ".cs32_target:\n\t" : :
++		      [jmp_addr_64]"m"(far_jmp_64),
++		      [jmp_addr_32]"m"(far_jmp_compat),
++		      [target64]"r"(&far_jmp_64.addr),
++		      [target32]"r"(&far_jmp_compat.addr) : "memory");
++
++	printf("[OK]\tSwitching to CS64 and back\n");
++#endif
++}
++
+ int main(int argc, char **argv)
+ {
+ 	if (argc == 1 && !strcmp(argv[0], "ldt_gdt_test_exec"))
+@@ -923,5 +962,7 @@ int main(int argc, char **argv)
  
- 	/* Enable 1 GB linear kernel mappings if available: */
-@@ -683,6 +679,8 @@ void __init init_mem_mapping(void)
- #else
- 	early_ioremap_page_table_range_init();
- #endif
-+	if (static_cpu_has(X86_FEATURE_PTI))
-+		cr4_clear_bits(X86_CR4_PGE);
+ 	test_gdt_invalidation();
  
- 	load_cr3(swapper_pg_dir);
- 	__flush_tlb_all();
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index c67ef3fb4f35..979c7ec6baab 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -74,7 +74,8 @@ static void choose_new_asid(struct mm_struct *next, u64 next_tlb_gen,
- 		return;
- 	}
- 
--	if (this_cpu_read(cpu_tlbstate.invalidate_other))
-+	if (this_cpu_read(cpu_tlbstate.invalidate_other) &&
-+	    !mm_pti_disable(next))
- 		clear_asid_other();
- 
- 	for (asid = 0; asid < TLB_NR_DYN_ASIDS; asid++) {
++	switch_to_cs64();
++
+ 	return nerrs ? 1 : 0;
+ }
 -- 
 2.14.1
