@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226SjC9LngccMICATQNsqYL9dohVNBFuwa0+hZSOPtbgjpmXhvgiOuItR/GuNtCrqcgP00W4
-ARC-Seal: i=1; a=rsa-sha256; t=1518708152; cv=none;
+X-Google-Smtp-Source: AH8x227zOlK2mhJKaYh+5HJOMC06virX74eQFBt8sL7n6zjh3pzML3Yl+pqFEUpNEMo34q/SFJJZ
+ARC-Seal: i=1; a=rsa-sha256; t=1518708123; cv=none;
         d=google.com; s=arc-20160816;
-        b=gFEPVMHXHCyjeiTsk2ReEJs5bDQ1bRbCQNuNwhR5IUuv/UGvgbZviwW1GyFjpGcekf
-         dhjUJWCNc8oR7VrapAY0YHzM7NTzUB/+TzjuhNeBuhhn4XPTbLTlWFFdeY9FuLmIkULy
-         MLipEZC9JHdKGpZQaescRP9lKE1ZWq2A0sOU8uvJMibN3SZME3xGIL3bH9KfA9rm8JI2
-         02PVTXuV/nPNuV/A+5yUiYQw5xcp+PGVbM6F0FxTzdNN6K8ZV7dDvVhvDOFYN8JwWCUh
-         +anmuFNB0R4YFC+HF5IOiCRuutDQYhyWHRf2YmWZZgUytDTeVe/+VAIHMt4wfGMtrDju
-         c0kg==
+        b=RaxCBJ6iGlJc9Ihw/0kdzoTvIctVsm6Lj7Mpx4gBT06eht4dO9GYU4+Xp/wfmwFv8A
+         r1zpkJ93u6P2EDR1iH49sjxK35l4/hxiaKLYvR0y3+V0NZH6P+JKRouhKVud7ESjPIZL
+         cvDAB4zDourwSHor0hw3k2h8WkNez5wPNzL7K+4t7KMNt2G9tbGFOVVkdlAqyyPVhN3i
+         pZT6N1tKMwJezHWCoN1ILEokPDouwhmid9mQgGDkncXq/FGFdiwuU9YWY6kHWH+gCzyn
+         3dOxUeyp7WQt4utyyD3yS/WHkRphW/y2W6EXOzWggy3lqmvOThVhULF0Jc7gV+ufdKlk
+         cx+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=jK1SVSqlWJ3rsywLi0YF2Jvy9aeFlx+mYXvInwEfl8E=;
-        b=STO9o5APklX99CD4Su7MqT/n2rr4U2xDdDEXkembiWgMeGpRwYHOC/GtLKBAV1m3Ir
-         WV4hr/mIwrAkect4hrxiVBeY+uRrUu9AXAWN52fqnc7cUxspaFhfzTndu7EG2OX671qN
-         5Evb1zxbaHfLZfL9pP9SwQXBpSz7I9rmvLEHFEMtzQVUPRZ/RhZ4Wcrb2b0ESVX9EQf2
-         qSSCdjpTUIy+N+mBx4nK/gAxzyKIz7tI1nAxsXlfI3in1dx/ELHlhL46D7n6MGftneV+
-         lvDtFp2+MKIMCZ2z7n+9vzLOFAs0ubrN1Egy1gZ8AW5FNYIsvAPXrk0O3whdtKKsssnz
-         RDmw==
+        bh=OEz1fse0Ge4pIXHLbY85EBTPgfXc2mKuGde7Q3q/xm4=;
+        b=YKDgFrXHNT9yQXUTwYtxwc7QHW5cWfz9pwqWOKwuKYvQMIL8fCH5oEAcyeYMNA6NRm
+         FTGoZ7H5WZJSw5bMaxBgPsexTNp0/cT6Ylun2zDf2sXV9s0fdlRf9Vr61QXnMpqv94AF
+         +VywtRFd3tyMlxCMNsbnwiONTWw0qFkgbFhkDQlRmp+vgFczGyMdtfyjj3hk9/YPloBj
+         dw6hHIEw82U29JL4dFzXiNHfLVFCtlblG6lQQ2ycsDhuAmGfmj7e295UI3cguCiWCAkV
+         juK9+CiR0biPfRSFnVidXXtXsmi5wOc9jI5hqV07Ohy6ddWkuljWk6auczB1EMBpDVBR
+         qavA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Biggers <ebiggers@google.com>,
-	Hugh Dickins <hughd@google.com>
-Subject: [PATCH 4.4 044/108] x86/kaiser: fix build error with KASAN && !FUNCTION_GRAPH_TRACER
-Date: Thu, 15 Feb 2018 16:16:41 +0100
-Message-Id: <20180215151228.588670677@linuxfoundation.org>
+	Robert Baronescu <robert.baronescu@nxp.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
+Subject: [PATCH 4.4 036/108] crypto: tcrypt - fix S/G table for test_aead_speed()
+Date: Thu, 15 Feb 2018 16:16:33 +0100
+Message-Id: <20180215151227.455498108@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480920000477734?=
-X-GMAIL-MSGID: =?utf-8?q?1592480920000477734?=
+X-GMAIL-THRID: =?utf-8?q?1592480888459249398?=
+X-GMAIL-MSGID: =?utf-8?q?1592480888459249398?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,37 +49,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Robert Baronescu <robert.baronescu@nxp.com>
 
-This is a build fix for the 4.4 PTI backport.  4.4 kernels do not have
-commit be7635e7287e ("arch, ftrace: for KASAN put hard/soft IRQ entries
-into separate sections") which went into 4.6.  Consequently, the
-irqentry sections are only created when CONFIG_FUNCTION_GRAPH_TRACER is
-enabled, not also when CONFIG_KASAN is enabled.  Therefore, fix the
-condition for trying to add a user mapping for this section.
+commit 5c6ac1d4f8fbdbed65dbeb8cf149d736409d16a1 upstream.
 
-This fixes the following build error:
+In case buffer length is a multiple of PAGE_SIZE,
+the S/G table is incorrectly generated.
+Fix this by handling buflen = k * PAGE_SIZE separately.
 
-    arch/x86/mm/kaiser.c: In function ‘kaiser_init’:
-    arch/x86/mm/kaiser.c:367:33: error: ‘__irqentry_text_start’ undeclared (first use in this function)
-      kaiser_add_user_map_ptrs_early(__irqentry_text_start,
-    [...]
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Acked-by: Hugh Dickins <hughd@google.com>
+Signed-off-by: Robert Baronescu <robert.baronescu@nxp.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/mm/kaiser.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/mm/kaiser.c
-+++ b/arch/x86/mm/kaiser.c
-@@ -363,7 +363,7 @@ void __init kaiser_init(void)
- 	kaiser_add_user_map_ptrs_early(__entry_text_start, __entry_text_end,
- 				       __PAGE_KERNEL_RX);
+---
+ crypto/tcrypt.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- a/crypto/tcrypt.c
++++ b/crypto/tcrypt.c
+@@ -291,11 +291,13 @@ static void sg_init_aead(struct scatterl
+ 	}
  
--#if defined(CONFIG_FUNCTION_GRAPH_TRACER) || defined(CONFIG_KASAN)
-+#ifdef CONFIG_FUNCTION_GRAPH_TRACER
- 	kaiser_add_user_map_ptrs_early(__irqentry_text_start,
- 				       __irqentry_text_end,
- 				       __PAGE_KERNEL_RX);
+ 	sg_init_table(sg, np + 1);
+-	np--;
++	if (rem)
++		np--;
+ 	for (k = 0; k < np; k++)
+ 		sg_set_buf(&sg[k + 1], xbuf[k], PAGE_SIZE);
+ 
+-	sg_set_buf(&sg[k + 1], xbuf[k], rem);
++	if (rem)
++		sg_set_buf(&sg[k + 1], xbuf[k], rem);
+ }
+ 
+ static void test_aead_speed(const char *algo, int enc, unsigned int secs,
