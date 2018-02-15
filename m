@@ -1,127 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033762AbeBOPMi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 10:12:38 -0500
-Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:40078 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033584AbeBOPMg (ORCPT
+        id S1033776AbeBOPMx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 10:12:53 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:49353 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033584AbeBOPMv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 10:12:36 -0500
-From: Matt Redfearn <matt.redfearn@mips.com>
-To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
-CC: <linux-mips@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
-        Ed Blake <ed.blake@sondrel.com>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        Dengcheng Zhu <dengcheng.zhu@mips.com>, <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH] MIPS: pm-cps: Block system suspend when a JTAG probe is present
-Date: Thu, 15 Feb 2018 14:59:19 +0000
-Message-ID: <1518706759-9890-1-git-send-email-matt.redfearn@mips.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 15 Feb 2018 10:12:51 -0500
+Date: Thu, 15 Feb 2018 16:12:38 +0100
+From: Lukas Senger <lukas@fridolin.com>
+To: Rodolfo Giometti <giometti@enneenne.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] pps-gpio: Avoid flooding syslog
+Message-ID: <20180215161238.23e0c117@dinghy.localdomain>
+In-Reply-To: <6c424674-e8f0-eaf1-c056-889e354b43b7@enneenne.com>
+References: <ee4fdd16-0343-1a01-63a7-06046026659a@enneenne.com>
+        <20180215125921.29494-1-lukas@fridolin.com>
+        <20180215125921.29494-2-lukas@fridolin.com>
+        <6c424674-e8f0-eaf1-c056-889e354b43b7@enneenne.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.150.130.83]
-X-BESS-ID: 1518707531-321459-9889-6160-11
-X-BESS-VER: 2018.2-r1802142118
-X-BESS-Apparent-Source-IP: 12.201.5.28
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.190054
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:3IFnCtxuD3BcFN2kxiWMpjolSpDW1CrKL6AL3u3pmYpuW2NThrv
+ fQ1xzymUQy4pXj2ARLyrln7XVz/HXynNvvP3KTIFEGeWzwByovKuxmwRZg+HGdWhKdtsVbk
+ EGbKoVxCSFabOGP7Xpa8vVsLhEjW7Virj2jSSUOqXw8K59VXv0FStCCHDHGIraE9H3cIgiF
+ aZC5xHnRMXGWMTeUC5Pfg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:OsJAcW0Mj+M=:h6griMlQYs/gHWxiMwWIcX
+ 7F9yv4HKp6SwEwS60CO7IwGPct+NFS3WNfFX5fVCtdE1K6Wj9xk4SrE7DcyUuSbld9oS2LFqt
+ ASpaxlW9+4fLQMsWAMCRp9DAZ5C/FHELVU24tpBLuC6hvP+aoK2asXv3hnAGSVHcvM8iAM4EB
+ 2MbIU481XyI8fFsMJBGD1qho21s7dz9nyOYMIJk92RsWdz4mtAnI6OV9VyA9FeSahl++iYeHA
+ NJjBdG1V1JBnoPRzBk5kt7tf+AiC8PStNricmQnfY8eErQexoNFDtKyWthMUNaweoXUghNgyK
+ 3IXIzvCWdYujG+kESQ/gHrmSCzXC0Yx8TxAndbz+pqdcUDWK1Nn1DnRSsnwyKvuxe40WH1gvq
+ Spo9embXPhu3ht4ZD1HQLbHX/a5Edw4S00CKlT3E3uR4JXg14l3Cwo8dazW1ryQm17KQtwkPA
+ wW9mU44dIYTAYevlxhyPgEJfIUJAMkpev00S518E7CJpumXbphsLXFzN/ey84i43s5WVtdqNB
+ SZ9pjTDq4L7kkQwvfzxiBKC+jYrCtY/L/N5itjETk3ct0SvSd+0wl+fiyeqSX0YLDMym9+klB
+ RiD15Uwy/IjIggXKysiwjpFk3iv0fzBHl8WaOjQRPYXCGyDw/ssqmBQjKLcFNrLP/gXZ6syvG
+ 5MK2VGZKgJ3GMEyu9axBPVFJgplGJsXgsQRyBTSkssJlM2CJf5CJz2awRAEPKNAKPH06YTjN4
+ drH7tZ1Zmqjy5qVg0IzzBcS74jrmaCCAdZ4X6gc0JV69Q5pw6xMBVmWv99I=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a JTAG probe is connected to a MIPS cluster, then the CPC detects it
-and latches the CPC.STAT_CONF.EJTAG_PROBE bit to 1. While set,
-attempting to send a power-down command to a core will be blocked, and
-the CPC will instead send the core to clock-off state. This can
-interfere with systems fully entering a low power state where all
-cores, CM, GIC, etc are powered down.
 
-Detect that a JTAG probe is / has been connected to the cluster and
-block the suspend attempt.
+> Why a void function? You should use it to toggle echoing GPIO... =8-o
 
-Attempting to suspend the system while a JTAG probe is connected now
-yields:
- # echo mem > /sys/power/state
- [   11.654000] PM: Syncing filesystems ... done.
- [   11.658000] JTAG probe is connected - abort suspend
- -sh: echo: write error: Operation not permitted
- #
+RFC 2783 says to generate the echo pulse "as rapidly as possible" which
+is why I do the toggling in the irq handler. However this leaves the
+default echo function installed which just floods syslog.
 
-To restore suspend, the JTAG probe should be disconnected or put into
-quiescent state. Platform code can then clear the
-CPC.STAT_CONF.EJTAG_PROBE bit.
+Another problem with this patch is that it also is against my old one
+and not against current kernel code.
 
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-
----
-
- arch/mips/kernel/pm-cps.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/arch/mips/kernel/pm-cps.c b/arch/mips/kernel/pm-cps.c
-index 421e06dfee72..2e0f4bad72b9 100644
---- a/arch/mips/kernel/pm-cps.c
-+++ b/arch/mips/kernel/pm-cps.c
-@@ -12,6 +12,7 @@
- #include <linux/init.h>
- #include <linux/percpu.h>
- #include <linux/slab.h>
-+#include <linux/suspend.h>
- 
- #include <asm/asm-offsets.h>
- #include <asm/cacheflush.h>
-@@ -670,6 +671,36 @@ static int cps_pm_online_cpu(unsigned int cpu)
- 	return 0;
- }
- 
-+#if defined(CONFIG_PM_SLEEP)
-+static int cps_pm_power_notifier(struct notifier_block *this,
-+				 unsigned long event, void *ptr)
-+{
-+	unsigned int stat;
-+
-+	switch (event) {
-+	case PM_SUSPEND_PREPARE:
-+		stat = read_cpc_cl_stat_conf();
-+		/*
-+		 * If we're attempting to suspend the system and power down all
-+		 * of the cores, the JTAG detect bit indicates that the CPC will
-+		 * instead put the cores into clock-off state. In this state
-+		 * a connected debugger can cause the CPU to attempt
-+		 * interactions with the powered down system. At best this will
-+		 * fail. At worst, it can hang the NoC, requiring a hard reset.
-+		 * To avoid this, just block system suspend if a JTAG probe
-+		 * is detected.
-+		 */
-+		if (stat & CPC_Cx_STAT_CONF_EJTAG_PROBE_MSK) {
-+			pr_warn("JTAG probe is connected - abort suspend\n");
-+			return NOTIFY_BAD;
-+		}
-+		return NOTIFY_DONE;
-+	default:
-+		return NOTIFY_DONE;
-+	}
-+}
-+#endif /* CONFIG_PM_SLEEP */
-+
- static int __init cps_pm_init(void)
- {
- 	/* A CM is required for all non-coherent states */
-@@ -705,6 +736,8 @@ static int __init cps_pm_init(void)
- 		pr_warn("pm-cps: no CPC, clock & power gating unavailable\n");
- 	}
- 
-+	pm_notifier(cps_pm_power_notifier, 0);
-+
- 	return cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "mips/cps_pm:online",
- 				 cps_pm_online_cpu, NULL);
- }
--- 
-2.7.4
+Cheers,
+Lukas
