@@ -1,77 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2132656-1518717293-2-6166546881016732806
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518717293; b=wGGA5sOxsPzMN4YJU5IUH85569T8nGwQ87lSyRVXpvibvdr
-    CqadVzgbi66XHW4wAHahWEktdfMMHnS3GtM6Y532PLdDVyxPSRpsA2LkH+9W5yio
-    deG6qayPIlUKgkJWRvYANtIbtPR2HgcnVK4OKTUalmTAcVfVyNURl4TZZtcNCRTO
-    Pd5rwu3UiJv2VEg6GwvHcpCiu9OxzlCWDSDikg65oMoY8m/g75lps1g2CSa/kfxb
-    MDzylh5Mr5HyQx50c843b/BSmdzCCrPgFbFZrbpcgzZ9KZZYww4A3hz1E35QTeo1
-    H6svHFp+b3qzuh4Q26vZXImJ1BVmy3p9CIPXPvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518717293; bh=SvpnVEdWINhUbKhF293CXwIQj3
-    3hztb0IjJ2WsrDkM4=; b=crh2k+SDXhFzsCS1lAyXVTFZVJWPJqYRkRa0ykRoKE
-    vER1HAKS+uYYx1M3E+98ht3q5g8eSgGnuVmb3y3RRvqi4u/SHglJt7Q5NO93NxaZ
-    rUjjgSnc0c+uWRdd9MbN8Zucd7dB/D1m32fK3+YOG8PT2KDfX8eh/4Yhd2paexjl
-    VkBXR6VL19PTCfT2ETpJkfH5BLgmQNDF6iCD3iT+bcuvEKsZhgUcO1Yn9Pfm3GGc
-    +ptTk7u9HVEM26JBXybvV6eArYPXUbOji3U4gOi+PptyY63C2+Btj6CojhUmX/Id
-    hpFiA45VhxcVWtTZjHbCeoUqu85kfJdp2OWx6U5UEUTg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164208AbeBOPaV (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:30:21 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55000 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164166AbeBOPaS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:30:18 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x224zgYzapkdb+IcXB1GNVOhzFdE/vBVqBlKRotoly8hfw3gSZcxk08qOLCwCRlkyIOPphJ5f
+ARC-Seal: i=1; a=rsa-sha256; t=1518709132; cv=none;
+        d=google.com; s=arc-20160816;
+        b=NgQc+mWn8leFq24OA7bb7d+G0NBWTydJwJq/xdxRlk1oG1zv2Mcqi76CHGCwjFwyQR
+         6FLIXsy1iOmTGlVJBLjuVKWAmkEbiggxg7GmloEBUFV9pR9JxAYs7Y+yt+QP0r8fUh95
+         TS26sLRzFBItROaekFZLJNZefww87YDv/DKcVZZ5eCTRzGPl2b3Vbm+2oR3vKRSejxem
+         ribn/6AeWXDSsLIng8aWNdTQ1rvsyyDkvOz4XEWKNLTZWBROsjeNfTC6kCKCZJvVSuH+
+         Q2RcKweW10rqTc7EqMrgGkJKp67+EiIfMHElO/GUSQPt5HFz4alzc4RhzSH3fWG81T4E
+         zD3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=rVz2DvaABwaJx+xz3EwrimKfk4j0e/1QWEZye6ZXfmE=;
+        b=DfuePngzg+JvZMyTFjbA/0Ne2YBjIyvsazPc6TtuEUiCL7MGlcyQmFuzn/QBCQn2sm
+         CTh0jrXpvrMBqYRtwyvfiqkM27Mz3smg4v2n2DvmDYqUqpp1AMyPRzgtikMOi+Ak5vZb
+         nM+TUdPuOeC6LQAAkuFyrU5fy+4+eGX8oKFWQsl97tGLgc5WKFsHFGVu99Ykc40wyjBH
+         NDQpiQ8MMV0eBTRXVdW3I0tzxTdW1QOdg9icTGL9GurvjI1RMpqJ2hLiJpb+JpknwtNS
+         2UxOILuAvO0qMhxsphfIK0SxrTh7cszcZ184Kr1mVsZe/UqjSyeTFGUGc767us7Ac39m
+         PAjQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
-        Malcolm Priestley <tvboxspy@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.14 019/195] media: dvb-usb-v2: lmedm04: Improve logic checking of warm start
-Date: Thu, 15 Feb 2018 16:15:10 +0100
-Message-Id: <20180215151706.706099271@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.14 158/195] Bluetooth: btsdio: Do not bind to non-removable BCM43341
+Date: Thu, 15 Feb 2018 16:17:29 +0100
+Message-Id: <20180215151713.831864646@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1592481102414655693?=
+X-GMAIL-MSGID: =?utf-8?q?1592481946708865352?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -79,86 +48,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 3d932ee27e852e4904647f15b64dedca51187ad7 upstream.
+commit b4cdaba274247c9c841c6a682c08fa91fb3aa549 upstream.
 
-Warm start has no check as whether a genuine device has
-connected and proceeds to next execution path.
+BCM43341 devices soldered onto the PCB (non-removable) always (AFAICT)
+use an UART connection for bluetooth. But they also advertise btsdio
+support on their 3th sdio function, this causes 2 problems:
 
-Check device should read 0x47 at offset of 2 on USB descriptor read
-and it is the amount requested of 6 bytes.
+1) A non functioning BT HCI getting registered
 
-Fix for
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access as
+2) Since the btsdio driver does not have suspend/resume callbacks,
+mmc_sdio_pre_suspend will return -ENOSYS, causing mmc_pm_notify()
+to react as if the SDIO-card is removed and since the slot is
+marked as non-removable it will never get detected as inserted again.
+Which results in wifi no longer working after a suspend/resume.
 
-Reported-by: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+This commit fixes both by making btsdio ignore BCM43341 devices
+when connected to a slot which is marked non-removable.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/dvb-usb-v2/lmedm04.c |   26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+ drivers/bluetooth/btsdio.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
-+++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
-@@ -494,18 +494,23 @@ static int lme2510_pid_filter(struct dvb
+--- a/drivers/bluetooth/btsdio.c
++++ b/drivers/bluetooth/btsdio.c
+@@ -31,6 +31,7 @@
+ #include <linux/errno.h>
+ #include <linux/skbuff.h>
  
- static int lme2510_return_status(struct dvb_usb_device *d)
- {
--	int ret = 0;
-+	int ret;
- 	u8 *data;
++#include <linux/mmc/host.h>
+ #include <linux/mmc/sdio_ids.h>
+ #include <linux/mmc/sdio_func.h>
  
--	data = kzalloc(10, GFP_KERNEL);
-+	data = kzalloc(6, GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
--	ret |= usb_control_msg(d->udev, usb_rcvctrlpipe(d->udev, 0),
--			0x06, 0x80, 0x0302, 0x00, data, 0x0006, 200);
--	info("Firmware Status: %x (%x)", ret , data[2]);
-+	ret = usb_control_msg(d->udev, usb_rcvctrlpipe(d->udev, 0),
-+			      0x06, 0x80, 0x0302, 0x00,
-+			      data, 0x6, 200);
-+	if (ret != 6)
-+		ret = -EINVAL;
-+	else
-+		ret = data[2];
-+
-+	info("Firmware Status: %6ph", data);
- 
--	ret = (ret < 0) ? -ENODEV : data[2];
- 	kfree(data);
- 	return ret;
- }
-@@ -1189,6 +1194,7 @@ static int lme2510_get_adapter_count(str
- static int lme2510_identify_state(struct dvb_usb_device *d, const char **name)
- {
- 	struct lme2510_state *st = d->priv;
-+	int status;
- 
- 	usb_reset_configuration(d->udev);
- 
-@@ -1197,12 +1203,16 @@ static int lme2510_identify_state(struct
- 
- 	st->dvb_usb_lme2510_firmware = dvb_usb_lme2510_firmware;
- 
--	if (lme2510_return_status(d) == 0x44) {
-+	status = lme2510_return_status(d);
-+	if (status == 0x44) {
- 		*name = lme_firmware_switch(d, 0);
- 		return COLD;
+@@ -292,6 +293,14 @@ static int btsdio_probe(struct sdio_func
+ 		tuple = tuple->next;
  	}
  
--	return 0;
-+	if (status != 0x47)
-+		return -EINVAL;
++	/* BCM43341 devices soldered onto the PCB (non-removable) use an
++	 * uart connection for bluetooth, ignore the BT SDIO interface.
++	 */
++	if (func->vendor == SDIO_VENDOR_ID_BROADCOM &&
++	    func->device == SDIO_DEVICE_ID_BROADCOM_43341 &&
++	    !mmc_card_is_removable(func->card->host))
++		return -ENODEV;
 +
-+	return WARM;
- }
- 
- static int lme2510_get_stream_config(struct dvb_frontend *fe, u8 *ts_type,
+ 	data = devm_kzalloc(&func->dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
