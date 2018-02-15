@@ -1,79 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033704AbeBOPIv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 10:08:51 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:44481 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033445AbeBOPIu (ORCPT
+        id S1033727AbeBOPKE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 10:10:04 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:57364 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1033445AbeBOPKD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 10:08:50 -0500
-Date: Thu, 15 Feb 2018 16:08:45 +0100
-From: Lukas Senger <lukas@fridolin.com>
-To: Rodolfo Giometti <giometti@enneenne.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] pps-gpio: Set echo GPIO pin via devicetree
-Message-ID: <20180215160845.72da12c3@dinghy.localdomain>
-In-Reply-To: <eb34d5ef-2e99-5983-8bdd-bf6fd0dc8bd2@enneenne.com>
-References: <ee4fdd16-0343-1a01-63a7-06046026659a@enneenne.com>
-        <20180215125921.29494-1-lukas@fridolin.com>
-        <20180215125921.29494-3-lukas@fridolin.com>
-        <eb34d5ef-2e99-5983-8bdd-bf6fd0dc8bd2@enneenne.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 15 Feb 2018 10:10:03 -0500
+Date: Thu, 15 Feb 2018 10:10:02 -0500 (EST)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc: Akira Yokosawa <akiyks@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <mingo@kernel.org>, <parri.andrea@gmail.com>, <will.deacon@arm.com>,
+        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
+        <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH v2] tools/memory-model: Make compat with herd7 7.47 ("-"
+ -> "_")
+In-Reply-To: <20180214225238.GV3617@linux.vnet.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1802151007210.1883-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:CYr+lGsynp2hCkM4J/lKeDeuZIRxFDUhseUFMZiMzEBvPisZf8P
- 0NJgM6NeCeoC0TnDabf9CuN2XMfLUczJNtPDWenGY2LRPDqS3AF8IrUxYxOdmDoQafEcO29
- oSjZX4zi5QLAEn9D/Mf84fjK6MWbN//3i+7hF2txOGNaa/cX7ixCt3MvKs1GWHLgTLdBZnB
- 1GhyqXX2Rszw9GnsF8LVw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:d3+EZ7IB0Rw=:KwJsUOASAVYdlo4ReZwkiO
- z8y5t6uZCmJQpLOxnir4A5vougIs9nSaF+Jd/C73nIz7/CW5oRcIx30b75NdcQOjjLjJRKNZH
- HjMduWCBdyWjSAyX71cMOAgfe5Vz+u4j6sNi2rYeKJYFQ/CJ5DemcS5wkDkn1YvwxHGIP8P5G
- 1ytOuqNAxAlYb7PzmT8LJDpxrSVFIwkmK6J3MIJtaumydtJD4zoEVXivpB7kvOLz2RX0b6whH
- 5nAvm3Q08IEXzLQ/hfGgHF7LNzUFUNB0axbUEd2vcSBU6G4hcQs6ur20Y4xuYdMUyeUD6e8TS
- rURmzXdiR4SXVvyiVYJa0HU44u9o5jHkUwEkfyGZx/z9hyWJLliYPSMZPJ+0ViwsYk8luoSWv
- VzrHgvbJBi44yCByHTBNurINu+LjW4uM6wjqa7NAecAqeoBCd0hZ23OVNbcKins8zX6c0PJ/a
- acD/tEtMmdzuW/ODCRrRx/rexUd+koJYRJpmD+LmMiavSLEaAcVAK8bF3v6p26NoHPsmF4th1
- 9x0Q4Ob3NhcXb1z+BHq6M8wef+2US3c0/9Cmc2v5yWXVBufpBvTXJRWMNczS5dpfsrpVAQ3vg
- /Uzu0muVu4z4lUM7froGSuZOdwHfGEYhwdze6TWosnTqzcuK8ptuKGqfow7sewPvS/HxfQH+o
- LfexHOXprLOklbV+FfMDnGr0PFrDbt0Qe1TKtw0zrbVKeoqSSunzxz2wdvCQl4kwUlAYFFOBg
- NCehKEOJfjkhtKQ+ztSopADh4Tx/3uaICAy2KwB7bxIecJ1WWBTegsj+PYs=
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > @@ -20,18 +21,20 @@
-> >   		target = <&gpio>;
-> >   		__overlay__ {
-> >   			pps_pins: pps_pins@12 {
-> > -				brcm,pins =     <18>;
-> > -				brcm,function = <0>;    // in
-> > -				brcm,pull =     <0>;    // off
-> > +				brcm,pins =     <18 17>;
-> > +				brcm,function = <0 1>;    // in
-> > out
-> > +				brcm,pull =     <0 0>;    // off
-> > off  
-> 
-> These modifications are not PPS related.
-> 
-> >   			};
-> >   		};
-> >   	};
-> >   
-> >   	__overrides__ {
-> > -		gpiopin = <&pps>,"gpios:4",
-> > +		gpiopin = <&pps>,"in-gpios:4",
-> >   			  <&pps>,"reg:0",
-> >   			  <&pps_pins>,"brcm,pins:0",
-> >   			  <&pps_pins>,"reg:0";
-> > +		echopin = <&pps>,"out-gpios:4",
-> > +			  <&pps_pins>,"brcm,pins:4";  
-> 
-> Ditto.
+On Wed, 14 Feb 2018, Paul E. McKenney wrote:
 
-I don't understand why these modifications are unrelated. Especially
-the echopin-option should exist, shouldn't it?
+> Let's see, examining the Z6 litmus tests and running on herd7 version 7.48:
+> 
+> Z6.0+pooncelock+pooncelock+pombonce Sometimes 1 7
+> Z6.0+pooncelock+poonceLock+pombonce Never 0 7
+> Z6.0+pooncerelease+poacquirerelease+mbonceonce Sometimes 1 7
+> 
+> But Alan stated that the result of the test would be changed by one of
+> the patches in our "pending" list.  I ran with all the patches currently
+> applied, so I am guessing that Alan was refering to one of the changes
+> that we have discussed but not yet created.
+> 
+> Alan, enlightenment?
 
-Cheers,
-Lukas
+Here's the relevant patch.  It may need some manual adjustment, because 
+it was not made against the files currently in the repository.
+
+Alan
+
+
+diff --git a/linux-kernel-hardware.cat b/linux-kernel-hardware.cat
+Index: memory-model/linux-kernel-hardware.cat
+===================================================================
+--- memory-model.orig/linux-kernel-hardware.cat
++++ memory-model/linux-kernel-hardware.cat
+@@ -31,7 +31,7 @@ let strong-fence = mb | gp
+ (* Release Acquire *)
+ let acq-po = [Acquire] ; po ; [M]
+ let po-rel = [M] ; po ; [Release]
+-let rfi-rel-acq = [Release] ; rfi ; [Acquire]
++let rel-rf-acq-po = [Release] ; rf ; [Acquire] ; po
+ 
+ (**********************************)
+ (* Fundamental coherence ordering *)
+@@ -57,13 +57,13 @@ let to-w = rwdep | addrpo | (overwrite &
+ let rdw = po-loc & (fre ; rfe)
+ let detour = po-loc & (coe ; rfe)
+ let rrdep = addr | (dep ; rfi)
+-let to-r = rrdep | rfi-rel-acq
+-let fence = strong-fence | wmb | po-rel | rmb | acq-po
++let to-r = rrdep
++let fence = strong-fence | wmb | po-rel | rmb | acq-po | (rel-rf-acq-po & int)
+ let ppo = to-r | to-w | fence | rdw | detour
+ 
+ (* Happens Before *)
+ let A-cumul(r) = rfe? ; r
+-let cumul-fence = A-cumul(strong-fence | po-rel) | wmb
++let cumul-fence = A-cumul(strong-fence | po-rel) | wmb | rel-rf-acq-po
+ 
+ let rec prop = (overwrite & ext)? ; cumul-fence ; hb*
+     and hb = ppo | rfe | ((hb* ; prop) & int)
+Index: memory-model/linux-kernel.cat
+===================================================================
+--- memory-model.orig/linux-kernel.cat
++++ memory-model/linux-kernel.cat
+@@ -31,7 +31,7 @@ let strong-fence = mb | gp
+ (* Release Acquire *)
+ let acq-po = [Acquire] ; po ; [M]
+ let po-rel = [M] ; po ; [Release]
+-let rfi-rel-acq = [Release] ; rfi ; [Acquire]
++let rel-rf-acq-po = [Release] ; rf ; [Acquire] ; po
+ 
+ (**********************************)
+ (* Fundamental coherence ordering *)
+@@ -54,13 +54,13 @@ let rwdep = (dep | ctrl) ; [W]
+ let overwrite = co | fr
+ let to-w = rwdep | (overwrite & int)
+ let rrdep = addr | (dep ; rfi)
+-let to-r = rrdep | rfi-rel-acq
+-let fence = strong-fence | wmb | po-rel | rmb | acq-po
++let to-r = rrdep
++let fence = strong-fence | wmb | po-rel | rmb | acq-po | (rel-rf-acq-po & int)
+ let ppo = to-r | to-w | fence
+ 
+ (* Propagation: Ordering from release operations and strong fences. *)
+ let A-cumul(r) = rfe? ; r
+-let cumul-fence = A-cumul(strong-fence | po-rel) | wmb
++let cumul-fence = A-cumul(strong-fence | po-rel) | wmb | rel-rf-acq-po
+ let prop = (overwrite & ext)? ; cumul-fence* ; rfe?
+ 
+ (*
