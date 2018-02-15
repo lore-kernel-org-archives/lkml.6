@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2178418-1518719409-2-10487224464258597471
+X-Cyrus-Session-Id: sloti22d1t05-2179907-1518719400-2-1891109790661484264
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518719409; b=jC61pyQzb+Preix+qamJ0YtmiLPE9MX6Of5CjnI1nZWWUsd
-    fDfCl2wewcA9muHrKeZhqZV505z5iu2bu9+ZPC5x967AQQv7S5LGbY9Kh18vBFA0
-    hD1vCfZdTdnBB+CR94BIq2D3LQNxBmNRpeiEcTafYtKDD9NiDchq6PSBfMYwPTXF
-    abslkt/M2dj777RUJKlRs7lv/CHGJcaa6YQ1dZ2dHAdcfOUNHe1izs5thRkGQDE6
-    xjDrP0Nok8FrHmIm8LnwL8Q2Otd6rejIegRZAraeT0A21Gp3P272weM2csHVMwkr
-    yz2MNwwyvexU+kri20oeFn3HyM0JeLhg5hizoGQ==
+    t=1518719400; b=dbDGxD34/42n5UCfGC9ThrJwmROO97ZLUk3BDDnEfVGodND
+    yo90L/dNReDGqMf/wZPA1YDyIl9du40YVGH0fZUKq+04NgBSvpd1i4Ilshke00+B
+    F2d5rInbtpb1DDN/tWxRRqG/WUyNnNPwif/kdMR13M/Ju6kvcu99Oo8IXoI2tbXE
+    nhoMHIszgKu6qcHT1l9wI+sEA/3keUg//jVho4DWK8dwc1JH7J5vhbdPwTp6/h7C
+    suhbmhFpx+i13C2kqrDIaytdRLt0I1xt4uRXDQNeN+6zwZr7zqDYf3fwPbnnA9qY
+    h5tBbvf87Nt4w/O0seZlhav74e1zcy/IoElv5zw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518719409; bh=y79in4lEEQZdNQX4lJsba7+g65
-    Bke06XHUYodEyOZaM=; b=D7Yf4wNA9VXpa6tqEOu0wKOdMuJlisvFzgM4tQOzAN
-    ffBozv7zvbNvN//s8uXJgveybEGVm6JR4oLceo1dkeoAvFdu5WGhNvkkzKQAYRqA
-    P5dlBAzwdWy9YhLoWtDOB5Xx/6GmxkzXVEJUfnJSiiS+UBWKMgAu2jcQKEVJdnUW
-    tb9aTu3j8RPlodpZ8xok0gwiQcPrpFoVXT5hPCxWVaragvgGDd98ey7FNFmsZqP1
-    7CbykXiyT5tYosWv1iLprtF8Pm8AU+k/0yuH7+dZjH8KfiIuMgEgGqT4Inc5aTDU
-    H0l0wy96XvhkiXKeCiYRaKNDOk+ujtf4Pefy439l8UHw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518719400; bh=jQdZliIbuP1gT1U/oXQ8xOG9hS
+    4Tzh/zmmwp+eEeKOc=; b=ecXV6D+jHlYXqiI6SJNZGCOoCZD24y/u9KfuAiM5k3
+    Uh41yLgGzWRv5EploV7imhFtupu7LUHIjcsULiNZBGXDlMl5SLiZFCljSbf+kWvC
+    79OWvj5+OdV1aucTrzCRS4vOyhABNKYy8HU+oJnuhzvK8fKgk5Df67vZt3V/KqLk
+    J5nyhFMbmT9GEwq3pS8EfkoxynI7QqYGhKn1NfAzakY7XKbL/gA/UKbWuSb5nH22
+    aWg2BcXQpU8wWS5OwZLVgiYGVMb6XMV09n+Wv2LQIgXaprbLRdugW1jVyMgPtAeN
+    AQwTe54DLNa84mjnbW4xtelxKpitbSIQURMb5lU2iAAQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,26 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163141AbeBOPZT (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:25:19 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52168 "EHLO
+        id S1162407AbeBOS3l (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:29:41 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52190 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162399AbeBOPZR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:25:17 -0500
+        with ESMTP id S1163154AbeBOPZU (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:25:20 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Safonov <0x7f454c46@gmail.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.4 108/108] ftrace: Remove incorrect setting of glob search field
-Date: Thu, 15 Feb 2018 16:17:45 +0100
-Message-Id: <20180215151237.320675918@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Tejun Heo <tj@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Adam Wallis <awallis@codeaurora.org>,
+        Lai Jiangshan <laijs@cn.fujitsu.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 091/108] kernel/async.c: revert "async: simplify lowest_in_progress()"
+Date: Thu, 15 Feb 2018 16:17:28 +0100
+Message-Id: <20180215151235.075330399@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -79,50 +83,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-commit 7b6586562708d2b3a04fe49f217ddbadbbbb0546 upstream.
+commit 4f7e988e63e336827f4150de48163bed05d653bd upstream.
 
-__unregister_ftrace_function_probe() will incorrectly parse the glob filter
-because it resets the search variable that was setup by filter_parse_regex().
+This reverts commit 92266d6ef60c ("async: simplify lowest_in_progress()")
+which was simply wrong: In the case where domain is NULL, we now use the
+wrong offsetof() in the list_first_entry macro, so we don't actually
+fetch the ->cookie value, but rather the eight bytes located
+sizeof(struct list_head) further into the struct async_entry.
 
-Al Viro reported this:
+On 64 bit, that's the data member, while on 32 bit, that's a u64 built
+from func and data in some order.
 
-    After that call of filter_parse_regex() we could have func_g.search not
-    equal to glob only if glob started with '!' or '*'.  In the former case
-    we would've buggered off with -EINVAL (not = 1).  In the latter we
-    would've set func_g.search equal to glob + 1, calculated the length of
-    that thing in func_g.len and proceeded to reset func_g.search back to
-    glob.
+I think the bug happens to be harmless in practice: It obviously only
+affects callers which pass a NULL domain, and AFAICT the only such
+caller is
 
-    Suppose the glob is e.g. *foo*.  We end up with
-	    func_g.type = MATCH_MIDDLE_ONLY;
-	    func_g.len = 3;
-	    func_g.search = "*foo";
-    Feeding that to ftrace_match_record() will not do anything sane - we
-    will be looking for names containing "*foo" (->len is ignored for that
-    one).
+  async_synchronize_full() ->
+  async_synchronize_full_domain(NULL) ->
+  async_synchronize_cookie_domain(ASYNC_COOKIE_MAX, NULL)
 
-Link: http://lkml.kernel.org/r/20180127031706.GE13338@ZenIV.linux.org.uk
+and the ASYNC_COOKIE_MAX means that in practice we end up waiting for
+the async_global_pending list to be empty - but it would break if
+somebody happened to pass (void*)-1 as the data element to
+async_schedule, and of course also if somebody ever does a
+async_synchronize_cookie_domain(, NULL) with a "finite" cookie value.
 
-Fixes: 3ba009297149f ("ftrace: Introduce ftrace_glob structure")
-Reviewed-by: Dmitry Safonov <0x7f454c46@gmail.com>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Maybe the "harmless in practice" means this isn't -stable material.  But
+I'm not completely confident my quick git grep'ing is enough, and there
+might be affected code in one of the earlier kernels that has since been
+removed, so I'll leave the decision to the stable guys.
+
+Link: http://lkml.kernel.org/r/20171128104938.3921-1-linux@rasmusvillemoes.dk
+Fixes: 92266d6ef60c "async: simplify lowest_in_progress()"
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Acked-by: Tejun Heo <tj@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Adam Wallis <awallis@codeaurora.org>
+Cc: Lai Jiangshan <laijs@cn.fujitsu.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/ftrace.c |    1 -
- 1 file changed, 1 deletion(-)
+ kernel/async.c |   20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -3845,7 +3845,6 @@ __unregister_ftrace_function_probe(char
- 		func_g.type = filter_parse_regex(glob, strlen(glob),
- 						 &func_g.search, &not);
- 		func_g.len = strlen(func_g.search);
--		func_g.search = glob;
+--- a/kernel/async.c
++++ b/kernel/async.c
+@@ -84,20 +84,24 @@ static atomic_t entry_count;
  
- 		/* we do not support '!' for function probes */
- 		if (WARN_ON(not))
+ static async_cookie_t lowest_in_progress(struct async_domain *domain)
+ {
+-	struct list_head *pending;
++	struct async_entry *first = NULL;
+ 	async_cookie_t ret = ASYNC_COOKIE_MAX;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&async_lock, flags);
+ 
+-	if (domain)
+-		pending = &domain->pending;
+-	else
+-		pending = &async_global_pending;
++	if (domain) {
++		if (!list_empty(&domain->pending))
++			first = list_first_entry(&domain->pending,
++					struct async_entry, domain_list);
++	} else {
++		if (!list_empty(&async_global_pending))
++			first = list_first_entry(&async_global_pending,
++					struct async_entry, global_list);
++	}
+ 
+-	if (!list_empty(pending))
+-		ret = list_first_entry(pending, struct async_entry,
+-				       domain_list)->cookie;
++	if (first)
++		ret = first->cookie;
+ 
+ 	spin_unlock_irqrestore(&async_lock, flags);
+ 	return ret;
