@@ -1,37 +1,35 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2246CZ0F76GACir9WhuA3WZHNvl4i2XojKU1pVL0z07LIWI+9KCH3DJDSMKH79ejnfOS8xIC
-ARC-Seal: i=1; a=rsa-sha256; t=1518708997; cv=none;
+X-Google-Smtp-Source: AH8x226OKDSR2vFpIrv5Ds64+jyPKJx25QYddmBK4kO2ghoEG4n9/Xb5YYrA1IAeIn7acu+xuXbt
+ARC-Seal: i=1; a=rsa-sha256; t=1518708996; cv=none;
         d=google.com; s=arc-20160816;
-        b=WzNEX0Z5Bms+Wgipoy/NpkP2BuYDZe72RYgk8QN8S2HOppvEFm0djOSpQHVQttwr+q
-         0Bl6ExXsu/IQJ+xEg/PZ/a0q+i2Yl9dehZ2AzFs/6ly5k7IVQ/ykJ+HRmOQAsZAr5L3/
-         xxUnFI180aWtdgnHDNVl8fvXX9rObKobW6CnSAguPhW5u1KbfHxU1SsRB/4aDlpvN7Dx
-         LLS+8ayd30ak9ASN6BjT9auJ7vK3lQNTqAFMbV98A9fuz+48LDGxvxdQ0VGfaYsCt9wi
-         3n9PJ6pEHvfVC4BxWL2zWgz63oVMiSUgq6X48mwMTCSa/uLlJCY9ly60RezukyeKvqFe
-         vXOA==
+        b=FyQgskHVlMFxoiWJh50ByGC4RKu0qKKLKAGzi1WCsgAeUelBVvmvRB1AEyggZYM+Uz
+         p4sBZMlvCpjiawVqSi5GKXIZpPFejSRrVlXO+wpDInZz0dD6MPdofJcjSvPCyZ1E95o3
+         eSUlEfkS9VlHkBL2/HEXpeuRr5EHbDhOpnO7TCScnHeIDtU8EaZjelHjUlnRNdsuX/0+
+         If9z0kJKitYViIT3W7RgudiosBD20UqzUvDE2sbyQ2/IbFT3Xuw5D5tFcRdqlJuiMjRP
+         x/RRPf0U/eylspyoUTEhky5XcHBcWmbnbJbw5dtJztI63WouJYh7BjNXRSkqozuZEtX5
+         uh1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PTDhofjqRiU91jIEIbidsf8civMPqGNr8kUq+09u96U=;
-        b=hXNnBc5jb1S9W53E3jkDT/ochgYisjxlL9hzgRp72BwkNQhevRV4bVTGP3a0j5fWKc
-         n4gZvGp4fzg0OngO/gZSx1/suWc3qjm0CFvOfIlGIRv8QLzBihlFBsEN1sTtfxpM8zXj
-         ShK+Ue0fmJm3hyp2e3vKLt46LLsE59TEpYBFDabXmCOylTZvycNcgCqUxxypNSWKYK0R
-         PGPCzKxkZMUd4tv3sUTL4MFKfZoSByuEjyckbdGK/+wrc1repaHd9LkJnggQzjwtxTgH
-         /Mw1GQgxchTvjCf1C09ruPt1rbaCqkWTEsx/SrwC+F9XdlShFYoyygSEPvf8Vo9WYcOK
-         tAZQ==
+        bh=giGu7CRQM+ud6h5bug1ZabdUagIjA+J+bHeOZpMRyvU=;
+        b=mtNJ5z4TomnAWl3x7vpEJGhNnhiJ4fWhWi2zSHNJZX8HpkfVm0JVoLUbCn3vLmXbxn
+         owx/4NVjUAjiFItVxGLClY2z7J7NWefpJR2J0jw5lxm/Jyf3B96oyFiROaplm90C6+vf
+         JSw/ueH5HxZpKoikkBNisjSeST4ohzvm1PcNKSGLrYmyDfsqATZb+4cOwLH3L4fM3L3F
+         XMzRMtzqnld7gtEYe6538TYcnBW5yuZt291lywXDxfHNvNN6u5jxuS811ipYiwyTufux
+         P29xjS6WWHdjTvwkMEVn2KoXpxS3Si9R73Hl0f6d7S3QK6n//Dwn1mbH3/AgNXEe79gC
+         Rb6g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	stable@vger.kernel.org,
 	Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.14 124/195] media: v4l2-compat-ioctl32.c: move helper functions to __get/put_v4l2_format32
-Date: Thu, 15 Feb 2018 16:16:55 +0100
-Message-Id: <20180215151711.928637924@linuxfoundation.org>
+Subject: [PATCH 4.14 150/195] media: ts2020: avoid integer overflows on 32 bit machines
+Date: Thu, 15 Feb 2018 16:17:21 +0100
+Message-Id: <20180215151713.372569798@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -40,8 +38,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481000880482937?=
-X-GMAIL-MSGID: =?utf-8?q?1592481806342378869?=
+X-GMAIL-THRID: =?utf-8?q?1592481060573127199?=
+X-GMAIL-MSGID: =?utf-8?q?1592481804426082301?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,189 +47,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-commit 486c521510c44a04cd756a9267e7d1e271c8a4ba upstream.
+commit 81742be14b6a90c9fd0ff6eb4218bdf696ad8e46 upstream.
 
-These helper functions do not really help. Move the code to the
-__get/put_v4l2_format32 functions.
+Before this patch, when compiled for arm32, the signal strength
+were reported as:
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Lock   (0x1f) Signal= 4294908.66dBm C/N= 12.79dB
+
+Because of a 32 bit integer overflow. After it, it is properly
+reported as:
+
+	Lock   (0x1f) Signal= -58.64dBm C/N= 12.79dB
+
+Fixes: 0f91c9d6bab9 ("[media] TS2020: Calculate tuner gain correctly")
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |  124 +++++---------------------
- 1 file changed, 24 insertions(+), 100 deletions(-)
 
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -92,92 +92,6 @@ static int put_v4l2_window32(struct v4l2
- 	return 0;
- }
+---
+ drivers/media/dvb-frontends/ts2020.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/media/dvb-frontends/ts2020.c
++++ b/drivers/media/dvb-frontends/ts2020.c
+@@ -368,7 +368,7 @@ static int ts2020_read_tuner_gain(struct
+ 		gain2 = clamp_t(long, gain2, 0, 13);
+ 		v_agc = clamp_t(long, v_agc, 400, 1100);
  
--static inline int get_v4l2_pix_format(struct v4l2_pix_format *kp, struct v4l2_pix_format __user *up)
--{
--	if (copy_from_user(kp, up, sizeof(struct v4l2_pix_format)))
--		return -EFAULT;
--	return 0;
--}
--
--static inline int get_v4l2_pix_format_mplane(struct v4l2_pix_format_mplane *kp,
--					     struct v4l2_pix_format_mplane __user *up)
--{
--	if (copy_from_user(kp, up, sizeof(struct v4l2_pix_format_mplane)))
--		return -EFAULT;
--	return 0;
--}
--
--static inline int put_v4l2_pix_format(struct v4l2_pix_format *kp, struct v4l2_pix_format __user *up)
--{
--	if (copy_to_user(up, kp, sizeof(struct v4l2_pix_format)))
--		return -EFAULT;
--	return 0;
--}
--
--static inline int put_v4l2_pix_format_mplane(struct v4l2_pix_format_mplane *kp,
--					     struct v4l2_pix_format_mplane __user *up)
--{
--	if (copy_to_user(up, kp, sizeof(struct v4l2_pix_format_mplane)))
--		return -EFAULT;
--	return 0;
--}
--
--static inline int get_v4l2_vbi_format(struct v4l2_vbi_format *kp, struct v4l2_vbi_format __user *up)
--{
--	if (copy_from_user(kp, up, sizeof(struct v4l2_vbi_format)))
--		return -EFAULT;
--	return 0;
--}
--
--static inline int put_v4l2_vbi_format(struct v4l2_vbi_format *kp, struct v4l2_vbi_format __user *up)
--{
--	if (copy_to_user(up, kp, sizeof(struct v4l2_vbi_format)))
--		return -EFAULT;
--	return 0;
--}
--
--static inline int get_v4l2_sliced_vbi_format(struct v4l2_sliced_vbi_format *kp, struct v4l2_sliced_vbi_format __user *up)
--{
--	if (copy_from_user(kp, up, sizeof(struct v4l2_sliced_vbi_format)))
--		return -EFAULT;
--	return 0;
--}
--
--static inline int put_v4l2_sliced_vbi_format(struct v4l2_sliced_vbi_format *kp, struct v4l2_sliced_vbi_format __user *up)
--{
--	if (copy_to_user(up, kp, sizeof(struct v4l2_sliced_vbi_format)))
--		return -EFAULT;
--	return 0;
--}
--
--static inline int get_v4l2_sdr_format(struct v4l2_sdr_format *kp, struct v4l2_sdr_format __user *up)
--{
--	if (copy_from_user(kp, up, sizeof(struct v4l2_sdr_format)))
--		return -EFAULT;
--	return 0;
--}
--
--static inline int put_v4l2_sdr_format(struct v4l2_sdr_format *kp, struct v4l2_sdr_format __user *up)
--{
--	if (copy_to_user(up, kp, sizeof(struct v4l2_sdr_format)))
--		return -EFAULT;
--	return 0;
--}
--
--static inline int get_v4l2_meta_format(struct v4l2_meta_format *kp, struct v4l2_meta_format __user *up)
--{
--	if (copy_from_user(kp, up, sizeof(struct v4l2_meta_format)))
--		return -EFAULT;
--	return 0;
--}
--
--static inline int put_v4l2_meta_format(struct v4l2_meta_format *kp, struct v4l2_meta_format __user *up)
--{
--	if (copy_to_user(up, kp, sizeof(struct v4l2_meta_format)))
--		return -EFAULT;
--	return 0;
--}
--
- struct v4l2_format32 {
- 	__u32	type;	/* enum v4l2_buf_type */
- 	union {
-@@ -217,25 +131,30 @@ static int __get_v4l2_format32(struct v4
- 	switch (kp->type) {
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
--		return get_v4l2_pix_format(&kp->fmt.pix, &up->fmt.pix);
-+		return copy_from_user(&kp->fmt.pix, &up->fmt.pix,
-+				      sizeof(kp->fmt.pix)) ? -EFAULT : 0;
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
--		return get_v4l2_pix_format_mplane(&kp->fmt.pix_mp,
--						  &up->fmt.pix_mp);
-+		return copy_from_user(&kp->fmt.pix_mp, &up->fmt.pix_mp,
-+				      sizeof(kp->fmt.pix_mp)) ? -EFAULT : 0;
- 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
- 		return get_v4l2_window32(&kp->fmt.win, &up->fmt.win);
- 	case V4L2_BUF_TYPE_VBI_CAPTURE:
- 	case V4L2_BUF_TYPE_VBI_OUTPUT:
--		return get_v4l2_vbi_format(&kp->fmt.vbi, &up->fmt.vbi);
-+		return copy_from_user(&kp->fmt.vbi, &up->fmt.vbi,
-+				      sizeof(kp->fmt.vbi)) ? -EFAULT : 0;
- 	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
- 	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
--		return get_v4l2_sliced_vbi_format(&kp->fmt.sliced, &up->fmt.sliced);
-+		return copy_from_user(&kp->fmt.sliced, &up->fmt.sliced,
-+				      sizeof(kp->fmt.sliced)) ? -EFAULT : 0;
- 	case V4L2_BUF_TYPE_SDR_CAPTURE:
- 	case V4L2_BUF_TYPE_SDR_OUTPUT:
--		return get_v4l2_sdr_format(&kp->fmt.sdr, &up->fmt.sdr);
-+		return copy_from_user(&kp->fmt.sdr, &up->fmt.sdr,
-+				      sizeof(kp->fmt.sdr)) ? -EFAULT : 0;
- 	case V4L2_BUF_TYPE_META_CAPTURE:
--		return get_v4l2_meta_format(&kp->fmt.meta, &up->fmt.meta);
-+		return copy_from_user(&kp->fmt.meta, &up->fmt.meta,
-+				      sizeof(kp->fmt.meta)) ? -EFAULT : 0;
- 	default:
- 		pr_info("compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
- 			kp->type);
-@@ -266,25 +185,30 @@ static int __put_v4l2_format32(struct v4
- 	switch (kp->type) {
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
--		return put_v4l2_pix_format(&kp->fmt.pix, &up->fmt.pix);
-+		return copy_to_user(&up->fmt.pix, &kp->fmt.pix,
-+				    sizeof(kp->fmt.pix)) ? -EFAULT : 0;
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
--		return put_v4l2_pix_format_mplane(&kp->fmt.pix_mp,
--						  &up->fmt.pix_mp);
-+		return copy_to_user(&up->fmt.pix_mp, &kp->fmt.pix_mp,
-+				    sizeof(kp->fmt.pix_mp)) ? -EFAULT : 0;
- 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
- 		return put_v4l2_window32(&kp->fmt.win, &up->fmt.win);
- 	case V4L2_BUF_TYPE_VBI_CAPTURE:
- 	case V4L2_BUF_TYPE_VBI_OUTPUT:
--		return put_v4l2_vbi_format(&kp->fmt.vbi, &up->fmt.vbi);
-+		return copy_to_user(&up->fmt.vbi, &kp->fmt.vbi,
-+				    sizeof(kp->fmt.vbi)) ? -EFAULT : 0;
- 	case V4L2_BUF_TYPE_SLICED_VBI_CAPTURE:
- 	case V4L2_BUF_TYPE_SLICED_VBI_OUTPUT:
--		return put_v4l2_sliced_vbi_format(&kp->fmt.sliced, &up->fmt.sliced);
-+		return copy_to_user(&up->fmt.sliced, &kp->fmt.sliced,
-+				    sizeof(kp->fmt.sliced)) ? -EFAULT : 0;
- 	case V4L2_BUF_TYPE_SDR_CAPTURE:
- 	case V4L2_BUF_TYPE_SDR_OUTPUT:
--		return put_v4l2_sdr_format(&kp->fmt.sdr, &up->fmt.sdr);
-+		return copy_to_user(&up->fmt.sdr, &kp->fmt.sdr,
-+				    sizeof(kp->fmt.sdr)) ? -EFAULT : 0;
- 	case V4L2_BUF_TYPE_META_CAPTURE:
--		return put_v4l2_meta_format(&kp->fmt.meta, &up->fmt.meta);
-+		return copy_to_user(&up->fmt.meta, &kp->fmt.meta,
-+				    sizeof(kp->fmt.meta)) ? -EFAULT : 0;
- 	default:
- 		pr_info("compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
- 			kp->type);
+-		*_gain = -(gain1 * 2330 +
++		*_gain = -((__s64)gain1 * 2330 +
+ 			   gain2 * 3500 +
+ 			   v_agc * 24 / 10 * 10 +
+ 			   10000);
+@@ -386,7 +386,7 @@ static int ts2020_read_tuner_gain(struct
+ 		gain3 = clamp_t(long, gain3, 0, 6);
+ 		v_agc = clamp_t(long, v_agc, 600, 1600);
+ 
+-		*_gain = -(gain1 * 2650 +
++		*_gain = -((__s64)gain1 * 2650 +
+ 			   gain2 * 3380 +
+ 			   gain3 * 2850 +
+ 			   v_agc * 176 / 100 * 10 -
