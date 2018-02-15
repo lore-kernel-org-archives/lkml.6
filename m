@@ -1,89 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754796AbeBOFhF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 00:37:05 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36802 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754540AbeBOFgc (ORCPT
+        id S1754790AbeBOGDj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 01:03:39 -0500
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:38637 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751648AbeBOGDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 00:36:32 -0500
-X-Google-Smtp-Source: AH8x224PC0BlMOSt63CuppJn6PY9R3OqW3pj3FshsDoMk25DLvmBRA3ul8QhRhUnjd4fAH1btPRr1g==
-From: frowand.list@gmail.com
-To: Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
-        Pantelis Antoniou <panto@antoniou-consulting.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        geert@linux-m68k.org
-Subject: [PATCH v3 4/4] of: improve reporting invalid overlay target path
-Date: Wed, 14 Feb 2018 21:35:46 -0800
-Message-Id: <1518672946-7310-5-git-send-email-frowand.list@gmail.com>
+        Thu, 15 Feb 2018 01:03:37 -0500
+From: Keerthy <j-keerthy@ti.com>
+To: <daniel.lezcano@linaro.org>, <thierry.reding@gmail.com>,
+        <tony@atomide.com>, <aaro.koskinen@iki.fi>
+CC: <j-keerthy@ti.com>, <Claudiu.Beznea@microchip.com>,
+        <narmstrong@baylibre.com>, <linux-pwm@vger.kernel.org>,
+        <ladis@linux-mips.org>, <s-anna@ti.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <sebastian.reichel@collabora.co.uk>, <linux-omap@vger.kernel.org>,
+        <robh+dt@kernel.org>, <t-kristo@ti.com>, <grygorii.strashko@ti.com>
+Subject: [PATCH v11 00/10] omap: dmtimer: Move driver out of plat-omap
+Date: Thu, 15 Feb 2018 11:31:41 +0530
+Message-ID: <1518674511-26421-1-git-send-email-j-keerthy@ti.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1518672946-7310-1-git-send-email-frowand.list@gmail.com>
-References: <1518672946-7310-1-git-send-email-frowand.list@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
+The series moves dmtimer out of plat-omap to drivers/clocksource.
+The series also does a bunch of changes to pwm-omap-dmtimer code
+to adapt to the driver migration and clean up plat specific
+pdata-quirks and use the dmtimer platform data.
 
-Errors while developing the patch to create of_overlay_fdt_apply()
-exposed inadequate error messages to debug problems when overlay
-devicetree fragment nodes contain an invalid target path.  Improve
-the messages in find_target_node() to remedy this.
+Boot tested on DRA7-EVM and AM437X-GP-EVM.
+Compile tested omap1_defconfig.
 
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
----
+This is based on top of
+https://kernel.googlesource.com/pub/scm/linux/kernel/git/tmlind/linux-omap
 
-changes from v2:
-  - add fragment node name as suggested by Geert
-  - existing error message printed short node name, thus not
-    discriminating between fragments; change to full node name
-  - existing error message printed node address, which is devicetree
-    internal debugging, not useful in an overlay apply error message;
-    remove node address from message
+omap-for-v4.17/soc branch.
 
- drivers/of/overlay.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+Changes from V10:
 
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index 5f6c5569e97d..852e566d7744 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -488,20 +488,30 @@ static int build_changeset(struct overlay_changeset *ovcs)
-  */
- static struct device_node *find_target_node(struct device_node *info_node)
- {
-+	struct device_node *node;
- 	const char *path;
- 	u32 val;
- 	int ret;
- 
- 	ret = of_property_read_u32(info_node, "target", &val);
--	if (!ret)
--		return of_find_node_by_phandle(val);
-+	if (!ret) {
-+		node = of_find_node_by_phandle(val);
-+		if (!node)
-+			pr_err("find target, node: %pOF, phandle 0x%x not found\n",
-+			       info_node, val);
-+		return node;
-+	}
- 
- 	ret = of_property_read_string(info_node, "target-path", &path);
--	if (!ret)
--		return of_find_node_by_path(path);
-+	if (!ret) {
-+		node =  of_find_node_by_path(path);
-+		if (!node)
-+			pr_err("find target, node: %pOF, path '%s' not found\n",
-+			       info_node, path);
-+		return node;
-+	}
- 
--	pr_err("Failed to find target for node %p (%s)\n",
--		info_node, info_node->name);
-+	pr_err("find target, node: %pOF, no target property\n", info_node);
- 
- 	return NULL;
- }
+  * Rebased on top of
+https://kernel.googlesource.com/pub/scm/linux/kernel/git/tmlind/linux-omap
+omap-for-v4.17/soc branch.
+
+Changes from v9:
+
+  * Fixed a typo in patch 9/10
+Changes from v8:
+
+  * Reordered Patch 9/10 a bit.
+Changes from V7:
+
+  * Introduced of_node_put in Patch 9/10
+
+Changes from V6:
+
+  * Fixed error checking for pwm driver patch.
+  * Removed one of the fixes from Ladis as per request.
+
+Changes from V5:
+
+  * Added couple of fixes from Ladis for  pwm-dmtimer.
+
+Changes from v4:
+
+  * Made OMAP_DM_TIMER config option silent.
+  * Changed the driver name to timer-dm.c
+
+Changes from v3:
+
+  * Reverted to v2 approach of using dev_get_platdata to fetch dmtimer ops.
+
+Changes from V2:
+
+  * Wrapped the inline functions in header file under OMAP2PLUS
+  * Added a new of helper function to fetch plat_data from of node. 
+
+Keerthy (9):
+  clocksource: dmtimer: Remove all the exports
+  arm: omap: timer: Wrap the inline functions under OMAP2PLUS define
+  arm: omap: Move dmtimer.h out of plat-omap
+  clocksource: timer-ti-dm: Replace architecture specific guard with
+    clocksource
+  arm: OMAP: Move dmtimer driver out of plat-omap to drivers under
+    clocksource
+  dmtimer: Add timer ops to the platform data structure
+  clocksource: dmtimer: Populate the timer ops to the pdata
+  pwm: pwm-omap-dmtimer: Adapt driver to utilize dmtimer pdata ops
+  arm: omap: pdata-quirks: Remove unused timer pdata
+
+Ladislav Michl (1):
+  clocksource: timer-dm: Hook device platform data if not already
+    assigned
+
+ arch/arm/mach-omap1/pm.c                           |  2 +-
+ arch/arm/mach-omap1/timer.c                        |  2 +-
+ arch/arm/mach-omap2/pdata-quirks.c                 | 32 ----------
+ arch/arm/mach-omap2/timer.c                        |  2 +-
+ arch/arm/plat-omap/Kconfig                         |  6 --
+ arch/arm/plat-omap/Makefile                        |  1 -
+ drivers/clocksource/Kconfig                        |  3 +
+ drivers/clocksource/Makefile                       |  1 +
+ .../dmtimer.c => drivers/clocksource/timer-ti-dm.c | 64 ++++++++++----------
+ drivers/pwm/pwm-omap-dmtimer.c                     | 68 +++++++++++++---------
+ .../dmtimer.h => include/clocksource/timer-ti-dm.h | 25 ++++++--
+ include/linux/platform_data/dmtimer-omap.h         | 38 ++++++++++++
+ 12 files changed, 138 insertions(+), 106 deletions(-)
+ rename arch/arm/plat-omap/dmtimer.c => drivers/clocksource/timer-ti-dm.c (94%)
+ rename arch/arm/plat-omap/include/plat/dmtimer.h => include/clocksource/timer-ti-dm.h (96%)
+
 -- 
-Frank Rowand <frank.rowand@sony.com>
+1.9.1
