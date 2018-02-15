@@ -1,60 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422889AbeBOPg3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 10:36:29 -0500
-Received: from smtpweb130.aruba.it ([62.149.158.130]:50357 "EHLO
-        smtpweb130.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1422875AbeBOPg1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 10:36:27 -0500
-Subject: Re: [PATCH 1/2] pps-gpio: Avoid flooding syslog
-To: Lukas Senger <lukas@fridolin.com>
-Cc: linux-kernel@vger.kernel.org
-References: <ee4fdd16-0343-1a01-63a7-06046026659a@enneenne.com>
- <20180215125921.29494-1-lukas@fridolin.com>
- <20180215125921.29494-2-lukas@fridolin.com>
- <6c424674-e8f0-eaf1-c056-889e354b43b7@enneenne.com>
- <20180215161238.23e0c117@dinghy.localdomain>
-From: Rodolfo Giometti <giometti@enneenne.com>
-Message-ID: <a9b965fe-fee2-3aab-0f2c-681d2835070c@enneenne.com>
-Date: Thu, 15 Feb 2018 16:36:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180215161238.23e0c117@dinghy.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1165290AbeBOPnd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 10:43:33 -0500
+Received: from smtp.gentoo.org ([140.211.166.183]:49328 "EHLO smtp.gentoo.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1165086AbeBOPn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 10:43:28 -0500
+From: Christopher Diaz Riveros <chrisadr@gentoo.org>
+To: mingo@redhat.com, peterz@infradead.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH-next] sched/headers: Clean up <linux/sched.h>
+Date: Thu, 15 Feb 2018 10:43:18 -0500
+Message-Id: <20180215154318.15894-1-chrisadr@gentoo.org>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/02/18 16:12, Lukas Senger wrote:
-> 
->> Why a void function? You should use it to toggle echoing GPIO... =8-o
-> 
-> RFC 2783 says to generate the echo pulse "as rapidly as possible" which
-> is why I do the toggling in the irq handler. However this leaves the
-> default echo function installed which just floods syslog.
+Trivial clean up making  comments fit in 80 columns and keeping the same comment style.
 
-The pps_event() function does it for you in a beauty-and-clear way by using the 
-info.echo() function. :-D
+Signed-off-by: Christopher Diaz Riveros <chrisadr@gentoo.org>
+---
+ include/linux/sched.h | 54 +++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 35 insertions(+), 19 deletions(-)
 
-> Another problem with this patch is that it also is against my old one
-> and not against current kernel code.
-
-Yes, correct it please.
-
-Ciao,
-
-Rodolfo
-
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index b161ef8a902e..c752a0d48944 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -183,7 +183,7 @@ extern void io_schedule_finish(int token);
+ extern long io_schedule_timeout(long timeout);
+ extern void io_schedule(void);
+ 
+-/**
++/*
+  * struct prev_cputime - snapshot of system and user cputime
+  * @utime: time spent in user mode
+  * @stime: time spent in system mode
+@@ -200,7 +200,7 @@ struct prev_cputime {
+ #endif
+ };
+ 
+-/**
++/*
+  * struct task_cputime - collected CPU time counts
+  * @utime:		time spent in user mode, in nanoseconds
+  * @stime:		time spent in kernel mode, in nanoseconds
+@@ -437,20 +437,28 @@ struct sched_dl_entity {
+ 	 * during sched_setattr(), they will remain the same until
+ 	 * the next sched_setattr().
+ 	 */
+-	u64				dl_runtime;	/* Maximum runtime for each instance	*/
+-	u64				dl_deadline;	/* Relative deadline of each instance	*/
+-	u64				dl_period;	/* Separation of two instances (period) */
+-	u64				dl_bw;		/* dl_runtime / dl_period		*/
+-	u64				dl_density;	/* dl_runtime / dl_deadline		*/
++	/* Maximum runtime for each instance	*/
++	u64				dl_runtime;
++	/* Relative deadline of each instance	*/
++	u64				dl_deadline;
++	/* Separation of two instances (period) */
++	u64				dl_period;
++	/* dl_runtime / dl_period		*/
++	u64				dl_bw;
++	/* dl_runtime / dl_deadline		*/
++	u64				dl_density;
+ 
+ 	/*
+ 	 * Actual scheduling parameters. Initialized with the values above,
+ 	 * they are continously updated during task execution. Note that
+ 	 * the remaining runtime could be < 0 in case we are in overrun.
+ 	 */
+-	s64				runtime;	/* Remaining runtime for this instance	*/
+-	u64				deadline;	/* Absolute deadline for this instance	*/
+-	unsigned int			flags;		/* Specifying the scheduler behaviour	*/
++	/* Remaining runtime for this instance	*/
++	s64				runtime;
++	/* Absolute deadline for this instance	*/
++	u64				deadline;
++	/* Specifying the scheduler behaviour	*/
++	unsigned int			flags;	
+ 
+ 	/*
+ 	 * Some bool flags:
+@@ -666,7 +674,8 @@ struct task_struct {
+ 	unsigned			no_cgroup_migration:1;
+ #endif
+ 
+-	unsigned long			atomic_flags; /* Flags requiring atomic access. */
++	/* Flags requiring atomic access. */
++	unsigned long			atomic_flags;
+ 
+ 	struct restart_block		restart_block;
+ 
+@@ -678,8 +687,9 @@ struct task_struct {
+ 	unsigned long			stack_canary;
+ #endif
+ 	/*
+-	 * Pointers to the (original) parent process, youngest child, younger sibling,
+-	 * older sibling, respectively.  (p->father can be replaced with
++	 * Pointers to the (original) parent process, youngest child,
++	 * younger sibling, older sibling, respectively.
++	 * (p->father can be replaced with
+ 	 * p->real_parent->pid)
+ 	 */
+ 
+@@ -743,7 +753,10 @@ struct task_struct {
+ 	/* Boot based time in nsecs: */
+ 	u64				real_start_time;
+ 
+-	/* MM fault and swap info: this can arguably be seen as either mm-specific or thread-specific: */
++	/* 
++	 * MM fault and swap info: this can arguably be seen as either
++	 * mm-specific or thread-specific: 
++	 */
+ 	unsigned long			min_flt;
+ 	unsigned long			maj_flt;
+ 
+@@ -815,7 +828,10 @@ struct task_struct {
+ 	u32				parent_exec_id;
+ 	u32				self_exec_id;
+ 
+-	/* Protection against (de-)allocation: mm, files, fs, tty, keyrings, mems_allowed, mempolicy: */
++	/*
++	 * Protection against (de-)allocation: mm, files, fs, tty,
++	 * keyrings, mems_allowed, mempolicy: 
++	 */
+ 	spinlock_t			alloc_lock;
+ 
+ 	/* Protection of the PI data structures: */
+@@ -1176,7 +1192,7 @@ static inline pid_t task_tgid_nr(struct task_struct *tsk)
+ 	return tsk->tgid;
+ }
+ 
+-/**
++/*
+  * pid_alive - check that a task structure is not stale
+  * @p: Task structure to be checked.
+  *
+@@ -1275,7 +1291,7 @@ static inline char task_state_to_char(struct task_struct *tsk)
+ 	return task_index_to_char(task_state_index(tsk));
+ }
+ 
+-/**
++/*
+  * is_global_init - check if a task structure is init. Since init
+  * is free to have sub-threads we need to check tgid.
+  * @tsk: Task structure to be checked.
+@@ -1422,7 +1438,7 @@ extern int yield_to(struct task_struct *p, bool preempt);
+ extern void set_user_nice(struct task_struct *p, long nice);
+ extern int task_prio(const struct task_struct *p);
+ 
+-/**
++/*
+  * task_nice - return the nice value of a given task.
+  * @p: the task in question.
+  *
+@@ -1442,7 +1458,7 @@ extern int sched_setattr(struct task_struct *, const struct sched_attr *);
+ extern int sched_setattr_nocheck(struct task_struct *, const struct sched_attr *);
+ extern struct task_struct *idle_task(int cpu);
+ 
+-/**
++/*
+  * is_idle_task - is the specified task an idle task?
+  * @p: the task in question.
+  *
 -- 
-
-HCE Engineering                      e-mail: giometti@hce-engineering.it
-GNU/Linux Solutions                          giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming                     skype:  rodolfo.giometti
-Cosino Project - the quick prototyping embedded system - www.cosino.it
-Freelance ICT Italia - Consulente ICT Italia - www.consulenti-ict.it
+2.16.1
