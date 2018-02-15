@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224Bw3XOjsYLT8XSkltL75wGOQPgH3ZX/Rfqzu6tdnj65f2355jtjF1Acg8rJz3Kt5AI7J1/
-ARC-Seal: i=1; a=rsa-sha256; t=1518708695; cv=none;
+X-Google-Smtp-Source: AH8x225mWeW2HNtuHESwdme1AlGWIuTpAcHWbG2iX53i+1g9yQGj8gLY7jXiXoT8kQ9B8MhVyPIF
+ARC-Seal: i=1; a=rsa-sha256; t=1518708692; cv=none;
         d=google.com; s=arc-20160816;
-        b=lrQF7hPTb32s0V7XEDbu6sZDnK7f+iHO5YHPTum7RI52XXmtberDGma40njo4yenlV
-         ixu4AB5Mq9/6nktTh5eLqFneVmzx39M9CZOLNjDYXjO1DFRoVgTi9k0tiWhbwAFS6V0P
-         lUwbzC2hmgVBjyJpT49wIUqA9j1k7LhqdJu06rA1b2VaylIUvf4Y+Cjd/+C8tpvdIKdg
-         6hXxfUTQZomMaeunJ5gfdPeg03+/PmPl5YuCAplRfle+xVofBdRdmm8G+87MEYvp0slq
-         y81w07jgzMfeJGarJMTqNd1LmdhCae5uxM6zcHdzqMIOfYj3WHNnxGazoghnsEqdcF6h
-         II1A==
+        b=Yr8aD+9FjWEU5fpF4lgvVW7/NGTfhI6zseftNKPv/DUdqh/yG/zjjCU4FLdr+On5X0
+         Tdt3DicMFaLV9aCBitDLYVtS//f5vohwiyP3f8hRH01dZnJXPytuKKfvjavQp2LdX3gq
+         ovQZRUzOnDyuOO5z0NKzoiXijjjxnAfelZw2BqHv5AmFZEy7PdupUhcrGYlMxHHdKwn7
+         eS9RIwy1KNt+2E7FSk4N539PpPZTYv3L2aSCFI74Zr2yZKUGMCIJV6yseORBPISCLdGN
+         u/wmPb+ZoAJVRd+g547zJnS9Er13m/jeSBE87OI2lb9o3RtA0htOmmo3IHX1h7ryni2V
+         gk8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=0zcUhgodgae+/xqhbVM2sIZ81isZt8LVqm/Mn5SJzMA=;
-        b=aaoc4VUFXC05/BXTVsvyx3uXvwnaYApOA5G8kbXTUP2otLm0AA5b+s99hIHllCkVz2
-         SQJ5aNztUVk9P6t+6zPe4nSX1ox/oxMhk/owp7vB1ZbxZd68LjQUJV6uAhwVHGg6iFTS
-         MNUVDP/WlNxweQg5hUAY8vvbJFMrrOGvESQvy0DaQtltDEsQZtzTBbrbRGg4EklWOymK
-         vfmJzRWur9YfpXhmmrusP31o6Mw1RO2pK7LhODxBZHi1/V6RxhTP4FpRnZ6YQc7vBTL1
-         26yp8513UiKvW8G8o1rVWu/J2JiH31cT2hXbWfI21m421OB1RV3IyoNWE7AylioSdx2h
-         u6rg==
+        bh=ybDRaJKukXacpHceIHP4VQPUP76yhZxpH6A09GAVaMQ=;
+        b=wQ5dBG7EcRdlPaDiMTAiMryAsWH41a1vTyaOR6Lt36hAl9+aee9NdmYnUH4J8ZXmoI
+         k0SC6Uk237SLnahVnoE5hmUteaW3MTIA0XYsfgYUEZPGaF3Kz6fKlxyi7UFiyg+wOJNw
+         dQ5MmAvbs3eDVgaiHr1sI3Sudep8wlrbElKKG5qYkT9F3Kq2HgVGQRKq4pXGTwPulbXf
+         IyTs5GyXZC1hwE0e+8eNd1y18JlunllftZ4ZZIOhVydbvHD8n51frG6DA+rdnHJb9jvW
+         Aue0OYqOZlHcnGD4zcgUvty3XV1RVLe6oc3NeeiHe50dOCCz89TYtAqPOwm1Ef5d/4u0
+         oBGw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
 	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 045/195] [Variant 3/Meltdown] arm64: capabilities: Handle duplicate entries for a capability
-Date: Thu, 15 Feb 2018 16:15:36 +0100
-Message-Id: <20180215151707.993743572@linuxfoundation.org>
+Subject: [PATCH 4.14 044/195] [Variant 3/Meltdown] arm64: Take into account ID_AA64PFR0_EL1.CSV3
+Date: Thu, 15 Feb 2018 16:15:35 +0100
+Message-Id: <20180215151707.956436638@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481488921961437?=
-X-GMAIL-MSGID: =?utf-8?q?1592481488921961437?=
+X-GMAIL-THRID: =?utf-8?q?1592481486304015991?=
+X-GMAIL-MSGID: =?utf-8?q?1592481486304015991?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,105 +50,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Will Deacon <will.deacon@arm.com>
 
 
-Commit 67948af41f2e upstream.
+Commit 179a56f6f9fb upstream.
 
-Sometimes a single capability could be listed multiple times with
-differing matches(), e.g, CPU errata for different MIDR versions.
-This breaks verify_local_cpu_feature() and this_cpu_has_cap() as
-we stop checking for a capability on a CPU with the first
-entry in the given table, which is not sufficient. Make sure we
-run the checks for all entries of the same capability. We do
-this by fixing __this_cpu_has_cap() to run through all the
-entries in the given table for a match and reuse it for
-verify_local_cpu_feature().
+For non-KASLR kernels where the KPTI behaviour has not been overridden
+on the command line we can use ID_AA64PFR0_EL1.CSV3 to determine whether
+or not we should unmap the kernel whilst running at EL0.
 
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/cpufeature.c |   44 +++++++++++++++++++++--------------------
- 1 file changed, 23 insertions(+), 21 deletions(-)
+ arch/arm64/include/asm/sysreg.h |    1 +
+ arch/arm64/kernel/cpufeature.c  |    8 +++++++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -332,6 +332,7 @@
+ #define ID_AA64ISAR1_DPB_SHIFT		0
+ 
+ /* id_aa64pfr0 */
++#define ID_AA64PFR0_CSV3_SHIFT		60
+ #define ID_AA64PFR0_GIC_SHIFT		24
+ #define ID_AA64PFR0_ASIMD_SHIFT		20
+ #define ID_AA64PFR0_FP_SHIFT		16
 --- a/arch/arm64/kernel/cpufeature.c
 +++ b/arch/arm64/kernel/cpufeature.c
-@@ -1047,6 +1047,26 @@ static void __init setup_elf_hwcaps(cons
- 			cap_set_elf_hwcap(hwcaps);
- }
+@@ -125,6 +125,7 @@ static const struct arm64_ftr_bits ftr_i
+ };
  
-+/*
-+ * Check if the current CPU has a given feature capability.
-+ * Should be called from non-preemptible context.
-+ */
-+static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
-+			       unsigned int cap)
-+{
-+	const struct arm64_cpu_capabilities *caps;
-+
-+	if (WARN_ON(preemptible()))
-+		return false;
-+
-+	for (caps = cap_array; caps->desc; caps++)
-+		if (caps->capability == cap &&
-+		    caps->matches &&
-+		    caps->matches(caps, SCOPE_LOCAL_CPU))
-+			return true;
-+	return false;
-+}
-+
- void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
- 			    const char *info)
+ static const struct arm64_ftr_bits ftr_id_aa64pfr0[] = {
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV3_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64PFR0_GIC_SHIFT, 4, 0),
+ 	S_ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_ASIMD_SHIFT, 4, ID_AA64PFR0_ASIMD_NI),
+ 	S_ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_FP_SHIFT, 4, ID_AA64PFR0_FP_NI),
+@@ -802,6 +803,8 @@ static int __kpti_forced; /* 0: not forc
+ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+ 				int __unused)
  {
-@@ -1125,8 +1145,9 @@ verify_local_elf_hwcaps(const struct arm
- }
++	u64 pfr0 = read_sanitised_ftr_reg(SYS_ID_AA64PFR0_EL1);
++
+ 	/* Forced on command line? */
+ 	if (__kpti_forced) {
+ 		pr_info_once("kernel page table isolation forced %s by command line option\n",
+@@ -813,7 +816,9 @@ static bool unmap_kernel_at_el0(const st
+ 	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
+ 		return true;
  
- static void
--verify_local_cpu_features(const struct arm64_cpu_capabilities *caps)
-+verify_local_cpu_features(const struct arm64_cpu_capabilities *caps_list)
- {
-+	const struct arm64_cpu_capabilities *caps = caps_list;
- 	for (; caps->matches; caps++) {
- 		if (!cpus_have_cap(caps->capability))
- 			continue;
-@@ -1134,7 +1155,7 @@ verify_local_cpu_features(const struct a
- 		 * If the new CPU misses an advertised feature, we cannot proceed
- 		 * further, park the cpu.
- 		 */
--		if (!caps->matches(caps, SCOPE_LOCAL_CPU)) {
-+		if (!__this_cpu_has_cap(caps_list, caps->capability)) {
- 			pr_crit("CPU%d: missing feature: %s\n",
- 					smp_processor_id(), caps->desc);
- 			cpu_die_early();
-@@ -1195,25 +1216,6 @@ static void __init mark_const_caps_ready
- 	static_branch_enable(&arm64_const_caps_ready);
- }
- 
--/*
-- * Check if the current CPU has a given feature capability.
-- * Should be called from non-preemptible context.
-- */
--static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
--			       unsigned int cap)
--{
--	const struct arm64_cpu_capabilities *caps;
--
--	if (WARN_ON(preemptible()))
--		return false;
--
--	for (caps = cap_array; caps->desc; caps++)
--		if (caps->capability == cap && caps->matches)
--			return caps->matches(caps, SCOPE_LOCAL_CPU);
--
 -	return false;
--}
--
- extern const struct arm64_cpu_capabilities arm64_errata[];
++	/* Defer to CPU feature registers */
++	return !cpuid_feature_extract_unsigned_field(pfr0,
++						     ID_AA64PFR0_CSV3_SHIFT);
+ }
  
- bool this_cpu_has_cap(unsigned int cap)
+ static int __init parse_kpti(char *str)
+@@ -918,6 +923,7 @@ static const struct arm64_cpu_capabiliti
+ 	},
+ #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+ 	{
++		.desc = "Kernel page table isolation (KPTI)",
+ 		.capability = ARM64_UNMAP_KERNEL_AT_EL0,
+ 		.def_scope = SCOPE_SYSTEM,
+ 		.matches = unmap_kernel_at_el0,
