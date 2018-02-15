@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2258EW+mpOIKvLbOSi1GHIrrMN5lK77/+bpmP5l9EV4N+4JXsEUV9nLodxXRWak8BpqpWkgc
-ARC-Seal: i=1; a=rsa-sha256; t=1518708297; cv=none;
+X-Google-Smtp-Source: AH8x227y+bT3Yg5XiFsqLkcILPM9gd6JHxQ7GTizV8guVxh0sHl07QN62DVNCWnW0A0wMIUQr14a
+ARC-Seal: i=1; a=rsa-sha256; t=1518708265; cv=none;
         d=google.com; s=arc-20160816;
-        b=0Ti/edJxbzdh1MiZnnc25ojU81EWMZVlU/0C3FitBO0NYGumF/sGF8VdxDqcjQ4/6s
-         Pt4Kg4DbyH4lJLFZmG23SJ6KmTNeceRDIlQgJ0tG/sD3JD3W6f79LkkglRWsREN/AKkr
-         BMI6PM2DBx7JmNjQTCxN2M1iM9+fwBq06mulgXU31YCm3T/AjoHs4222loMQxTkMYkIm
-         LoDou97u7LVABeicM4uXxilgc3HfVFzlGpibyXfmByfcwBwgsYSdTPoMkk6hrfe+hBLr
-         EyNhW8KEHOHmAmg+9E7bvvHQKaHNjLuX8m+QVbhr7hBINkQS4VnHTPv7Z9tZowcjMYYb
-         pyxA==
+        b=ys4W4ZWm7CeexNJNNHjKRx1oGYB4eW8vtVv/sq7wpny8uVGzFrrtUAnvqBAh8j75CY
+         DFNvIgd23jXIicAZozghYsqM6fg7UCnhhNjEzHWzL1QeBb95arBwlxyLidikLMpQlpv8
+         p38v1wX2F83GG7KDBXYXjlY9K0PovYYUspeduQuoxX69kko1RQl92z44ww/c67BZFRUX
+         aucLZ6ZBN2h09pLBcTu+6jbX3WCBF/TKf8fmHESg1ZmSWk/gpeCFMAviOdLPyB7+GwEP
+         DlF2yPZaF+SQ8Kbe2SyH74buk0KcUOfGCjotjy77Wf24f3UYyQojkhtmA4i9i0mX8AEE
+         ZxXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=slkwwMUKEk3BIRP8ReEv5VMce8QFkEr2ounLq/IOWhg=;
-        b=Azz3sKnIJivbU5+IsGdoAHq1+m+MoQoqmPQtNP9f9gxSnRT8sbXik9EQ4XPPNIWhWR
-         NbMnMNXHAQ2KUcGGvxPvW1BcKq21JPDcpi4IriClF3PoKKHceDN+03nzj3bGd5boQTDO
-         llshlhf0wUIgHgz4cw9vtV/J+tFFr/3/c9XvIvurzZ2RxN/Sd2/m+cdDOwsO0uDxOAOO
-         tES84luCZxspM0+LtiJCxzPym/kMxDM8Vl/m5HUS38aD3uyrtLFaT33t/HMywlSL5AXE
-         ZC2Iy9QzkwzRoSjO1G/xSritiCUQBYUKiiqbJWcdut+rkiCX0d3YxJs/YzYP6iBYfEp7
-         tTJg==
+        bh=Iz5Dodk/d+A++5CIfZG25EPYaK4IBf8bV2tUkDXyejQ=;
+        b=XrRP0N135iKFYsErlN+aAgHZ/HwcGXM+WT1Rrktj89Pn63ogA9UqU57KEJhpVrA07l
+         RGEwcxVW28m59vS7j3yNvAblb7J9YJR8t4BxkbuxIW3mhPJicOUZpu6xKGRVNNnnYsJZ
+         2MuaPS9kobUP9/fxbtgDdE7ZX3K3cjsjXeBqpAAlw82BgexMYvSVKzsuVRYFBxc69wEi
+         MkmvcQ6dRXOKqqp4xpcu8z3iJhRFY+y+KLcYVb2sVbx4Dvtb7dZhq4LtV1xiOiCpMEkY
+         hEYUcNCoDpEzvFEnkyrdwhUnj0Xxc/bdyD/cy+/Q266QTx+rQ/XHGJG7h/AuZsNPbdbP
+         wVwg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Hogan <jhogan@kernel.org>,
-	David Daney <david.daney@cavium.com>,
-	linux-edac <linux-edac@vger.kernel.org>,
-	linux-mips@linux-mips.org,
-	Borislav Petkov <bp@suse.de>
-Subject: [PATCH 4.4 101/108] EDAC, octeon: Fix an uninitialized variable warning
-Date: Thu, 15 Feb 2018 16:17:38 +0100
-Message-Id: <20180215151236.402501789@linuxfoundation.org>
+	Liran Alon <liran.alon@oracle.com>,
+	Nikita Leshenko <nikita.leshchenko@oracle.com>,
+	Krish Sadhukhan <krish.sadhukhan@oracle.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH 4.4 087/108] KVM: nVMX: Fix races when sending nested PI while dest enters/leaves L2
+Date: Thu, 15 Feb 2018 16:17:24 +0100
+Message-Id: <20180215151234.465238851@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480775002082254?=
-X-GMAIL-MSGID: =?utf-8?q?1592481071915640610?=
+X-GMAIL-THRID: =?utf-8?q?1592481037885961253?=
+X-GMAIL-MSGID: =?utf-8?q?1592481037885961253?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,42 +51,92 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Hogan <jhogan@kernel.org>
+From: Liran Alon <liran.alon@oracle.com>
 
-commit 544e92581a2ac44607d7cc602c6b54d18656f56d upstream.
+commit 6b6977117f50d60455ace86b2d256f6fb4f3de05 upstream.
 
-Fix an uninitialized variable warning in the Octeon EDAC driver, as seen
-in MIPS cavium_octeon_defconfig builds since v4.14 with Codescape GNU
-Tools 2016.05-03:
+Consider the following scenario:
+1. CPU A calls vmx_deliver_nested_posted_interrupt() to send an IPI
+to CPU B via virtual posted-interrupt mechanism.
+2. CPU B is currently executing L2 guest.
+3. vmx_deliver_nested_posted_interrupt() calls
+kvm_vcpu_trigger_posted_interrupt() which will note that
+vcpu->mode == IN_GUEST_MODE.
+4. Assume that before CPU A sends the physical POSTED_INTR_NESTED_VECTOR
+IPI, CPU B exits from L2 to L0 during event-delivery
+(valid IDT-vectoring-info).
+5. CPU A now sends the physical IPI. The IPI is received in host and
+it's handler (smp_kvm_posted_intr_nested_ipi()) does nothing.
+6. Assume that before CPU A sets pi_pending=true and KVM_REQ_EVENT,
+CPU B continues to run in L0 and reach vcpu_enter_guest(). As
+KVM_REQ_EVENT is not set yet, vcpu_enter_guest() will continue and resume
+L2 guest.
+7. At this point, CPU A sets pi_pending=true and KVM_REQ_EVENT but
+it's too late! CPU B already entered L2 and KVM_REQ_EVENT will only be
+consumed at next L2 entry!
 
-  drivers/edac/octeon_edac-lmc.c In function ‘octeon_lmc_edac_poll_o2’:
-  drivers/edac/octeon_edac-lmc.c:87:24: warning: ‘((long unsigned int*)&int_reg)[1]’ may \
-    be used uninitialized in this function [-Wmaybe-uninitialized]
-    if (int_reg.s.sec_err || int_reg.s.ded_err) {
-                        ^
-Iinitialise the whole int_reg variable to zero before the conditional
-assignments in the error injection case.
+Another scenario to consider:
+1. CPU A calls vmx_deliver_nested_posted_interrupt() to send an IPI
+to CPU B via virtual posted-interrupt mechanism.
+2. Assume that before CPU A calls kvm_vcpu_trigger_posted_interrupt(),
+CPU B is at L0 and is about to resume into L2. Further assume that it is
+in vcpu_enter_guest() after check for KVM_REQ_EVENT.
+3. At this point, CPU A calls kvm_vcpu_trigger_posted_interrupt() which
+will note that vcpu->mode != IN_GUEST_MODE. Therefore, do nothing and
+return false. Then, will set pi_pending=true and KVM_REQ_EVENT.
+4. Now CPU B continue and resumes into L2 guest without processing
+the posted-interrupt until next L2 entry!
 
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Acked-by: David Daney <david.daney@cavium.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: linux-mips@linux-mips.org
-Fixes: 1bc021e81565 ("EDAC: Octeon: Add error injection support")
-Link: http://lkml.kernel.org/r/20171113161206.20990-1-james.hogan@mips.com
-Signed-off-by: Borislav Petkov <bp@suse.de>
+To fix both issues, we just need to change
+vmx_deliver_nested_posted_interrupt() to set pi_pending=true and
+KVM_REQ_EVENT before calling kvm_vcpu_trigger_posted_interrupt().
+
+It will fix the first scenario by chaging step (6) to note that
+KVM_REQ_EVENT and pi_pending=true and therefore process
+nested posted-interrupt.
+
+It will fix the second scenario by two possible ways:
+1. If kvm_vcpu_trigger_posted_interrupt() is called while CPU B has changed
+vcpu->mode to IN_GUEST_MODE, physical IPI will be sent and will be received
+when CPU resumes into L2.
+2. If kvm_vcpu_trigger_posted_interrupt() is called while CPU B hasn't yet
+changed vcpu->mode to IN_GUEST_MODE, then after CPU B will change
+vcpu->mode it will call kvm_request_pending() which will return true and
+therefore force another round of vcpu_enter_guest() which will note that
+KVM_REQ_EVENT and pi_pending=true and therefore process nested
+posted-interrupt.
+
+Fixes: 705699a13994 ("KVM: nVMX: Enable nested posted interrupt processing")
+Signed-off-by: Liran Alon <liran.alon@oracle.com>
+Reviewed-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
+Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+[Add kvm_vcpu_kick to also handle the case where L1 doesn't intercept L2 HLT
+ and L2 executes HLT instruction. - Paolo]
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/edac/octeon_edac-lmc.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/vmx.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/edac/octeon_edac-lmc.c
-+++ b/drivers/edac/octeon_edac-lmc.c
-@@ -79,6 +79,7 @@ static void octeon_lmc_edac_poll_o2(stru
- 	if (!pvt->inject)
- 		int_reg.u64 = cvmx_read_csr(CVMX_LMCX_INT(mci->mc_idx));
- 	else {
-+		int_reg.u64 = 0;
- 		if (pvt->error_type == 1)
- 			int_reg.s.sec_err = 1;
- 		if (pvt->error_type == 2)
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -4595,14 +4595,15 @@ static int vmx_deliver_nested_posted_int
+ 
+ 	if (is_guest_mode(vcpu) &&
+ 	    vector == vmx->nested.posted_intr_nv) {
+-		/* the PIR and ON have been set by L1. */
+-		kvm_vcpu_trigger_posted_interrupt(vcpu);
+ 		/*
+ 		 * If a posted intr is not recognized by hardware,
+ 		 * we will accomplish it in the next vmentry.
+ 		 */
+ 		vmx->nested.pi_pending = true;
+ 		kvm_make_request(KVM_REQ_EVENT, vcpu);
++		/* the PIR and ON have been set by L1. */
++		if (!kvm_vcpu_trigger_posted_interrupt(vcpu))
++			kvm_vcpu_kick(vcpu);
+ 		return 0;
+ 	}
+ 	return -1;
