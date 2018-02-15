@@ -1,95 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755001AbeBOIDk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 03:03:40 -0500
-Received: from mail-eopbgr10057.outbound.protection.outlook.com ([40.107.1.57]:11919
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754864AbeBOID3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 03:03:29 -0500
-From: =?iso-8859-2?Q?Horia_Geant=E3?= <horia.geanta@nxp.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-CC: LKML <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH 2/2] crypto: caam: Use common error handling code in four
- functions
-Thread-Topic: [PATCH 2/2] crypto: caam: Use common error handling code in four
- functions
-Thread-Index: AQHTpcI0b4HOP9UH+0eRDkH/e5usGw==
-Date: Thu, 15 Feb 2018 08:03:24 +0000
-Message-ID: <VI1PR0402MB3342F9E0700AA3A7CC20D8DC98F40@VI1PR0402MB3342.eurprd04.prod.outlook.com>
-References: <9a9a602d-93da-457d-c37d-2acbb4b7b5d5@users.sourceforge.net>
- <3c2905a1-b3a4-be87-618e-8562d3a5d8b4@users.sourceforge.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com;
-x-originating-ip: [192.88.166.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3486;7:WftbtBPkZWnSO1QL64hD5JE++emBT9pxu/8JfOCRSDhjE/ZQIf2r0kxUEcZl+Gk134Hkkw8tvSulacg/uRd8d74FyDTmyrEZfdD5tCq9rcxHZoiyM67+2anVamehm+nvTtJ5Ad5hQfcLZD/HDx3gn1DXP31qnNmcg4yHUVRlodtRusvcSTgXaV96GgVU6d+koVnXalZ/f4bQ/zbTpsEVEIarY3qospgo5y/RvlQ5jnMp5Ievv4nrrCvusUgVKQOe
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(39380400002)(39860400002)(376002)(366004)(346002)(189003)(199004)(81166006)(8676002)(74316002)(8936002)(99286004)(54906003)(76176011)(81156014)(105586002)(3846002)(6246003)(2900100001)(7696005)(106356001)(110136005)(4326008)(53936002)(86362001)(66066001)(9686003)(5660300001)(68736007)(53546011)(478600001)(305945005)(3280700002)(33656002)(6116002)(59450400001)(229853002)(6506007)(6436002)(3660700001)(7736002)(102836004)(2906002)(5250100002)(186003)(55016002)(316002)(97736004)(26005)(2501003)(25786009)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3486;H:VI1PR0402MB3342.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: ac49cadb-3cbb-4d18-46d9-08d5744a96db
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:VI1PR0402MB3486;
-x-ms-traffictypediagnostic: VI1PR0402MB3486:
-x-microsoft-antispam-prvs: <VI1PR0402MB34866D5958241041B1063D5198F40@VI1PR0402MB3486.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(42262312472803);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231101)(944501161)(10201501046)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(6072148)(201708071742011);SRVR:VI1PR0402MB3486;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB3486;
-x-forefront-prvs: 058441C12A
-x-microsoft-antispam-message-info: UocwO443bHnqcLPLPhJ/pJCCv3+m0SbDjSg4NA8Jl2myYvv08PecqhR/A+CsG5H/Zf3wawnOO0d7SckSli6Q6g==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-2"
+        id S1755058AbeBOIFD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 03:05:03 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:54790 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754981AbeBOIFB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 03:05:01 -0500
+X-Google-Smtp-Source: AH8x225UcMVBLTXnR9S2Z8AFoS6UZkCDjnpWqB6ono1qKt3gQJi8vAjgHu1QaRr7ReGGs6Alxa39+Q==
+Date: Thu, 15 Feb 2018 17:04:47 +0900
+From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+To: James Morse <james.morse@arm.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Al Stone <al.stone@linaro.org>,
+        Graeme Gregory <graeme.gregory@linaro.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: acpi,efi: fix alignment fault in accessing ACPI
+ tables at kdump
+Message-ID: <20180215080445.GC11463@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Dave Young <dyoung@redhat.com>, Al Stone <al.stone@linaro.org>,
+        Graeme Gregory <graeme.gregory@linaro.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180201090449.19514-1-takahiro.akashi@linaro.org>
+ <CAKv+Gu-2-cG3vse4briKPK0gpi5Zrg+pZHiiN7-4DSBPn0n_3A@mail.gmail.com>
+ <20180202043519.GD23847@linaro.org>
+ <5A7DC66C.10107@arm.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac49cadb-3cbb-4d18-46d9-08d5744a96db
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2018 08:03:24.8585
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3486
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5A7DC66C.10107@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1F83m55004971
 
-On 2/14/2018 8:32 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 14 Feb 2018 19:14:49 +0100
+To be clear, I refer to my patches as patch#1 for [1] and patch#2 for [2],
+respectively, hereafter.
+
+    [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-January/553098.html
+    [2] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-February/557248.html
+
+On Fri, Feb 09, 2018 at 04:03:56PM +0000, James Morse wrote:
+> Hi Akashi, Ard,
 > 
-> Add jump targets so that a bit of exception handling can be better reused
-> at the end of these functions.
+> On 02/02/18 04:35, AKASHI Takahiro wrote:
+> > On Thu, Feb 01, 2018 at 05:34:26PM +0000, Ard Biesheuvel wrote:
+> >> On 1 February 2018 at 09:04, AKASHI Takahiro <takahiro.akashi@linaro.org> wrote:
+> >>> * Initial ACPI tables are normally stored in system ram and marked as
+> >>>   "ACPI Reclaim memory" by the firmware.
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-[snip]
-> @@ -1096,6 +1092,7 @@ static int ahash_digest(struct ahash_request *req)
->  	if (!ret) {
->  		ret = -EINPROGRESS;
->  	} else {
-> +unmap_hash:
->  		ahash_unmap(jrdev, edesc, req, digestsize);
->  		kfree(edesc);
->  	}
+> >>> * After the commit f56ab9a5b73c ("efi/arm: Don't mark ACPI reclaim
+> >>>   memory as MEMBLOCK_NOMAP"), those regions are differently handled
+> >>>   as they are "memblock-reserved", without NOMAP bit.
 > 
-I understand jumps are a necessary evil for dealing with shortcomings of C,
-however please avoid jumping in an if/else branch.
+> I don't think I'd grasped the implications of this before... are we accessing
+> the acpi tables via the linear map now?
 
-Code could be rewritten as:
+Yes, on the current mainline
+yes, on crash dump kernel with patch#1
+no, on crash dump kernel with patch#2
 
-  	if (!ret)
-  		return -EINPROGRESS;
+> 
+> >>> * So they are now excluded from device tree's "usable-memory-range"
+> >>>   which kexec-tools determines based on a current view of /proc/iomem.
+> 
+> >> So this patch does fix the fallout of how this issue affects ACPI boot
+> >> in particular, but is it correct in the first place for the kexec
+> >> tools to disregard memory that has been memblock_reserved()?
+> 
+> I don't think kexec should be allowed to accidentally overwrite these regions as
+> they contain data needed to boot the system.
+> The reason to allow this would be booting a non-acpi OS and removing all the
+> ACPI gubbins from the DTB, (but I don't care if kexec can't do this).
+> 
+> Overwriting these regions used to be prevented because these regions were nomap,
+> but now they are showing up as 'System RAM', so they could be accidentally
+> overwritten.
 
-unmap_hash:
-  	ahash_unmap(jrdev, edesc, req, digestsize);
-  	kfree(edesc);
+No, please not be confused here.
+Usable memory for crash dump kernel will be carefully set aside so that
+it won't overlap any portion of currently used or reserved memory at the boot
+time of the first kernel. So kdump won't corrupt any data in those regions,
+including ACPI Reclaim region. The issue that I'm going to primarily address
+in patch#1 and patch#2 is a alignment fault, not data corruption.
+
+In the meantime, the only bug that I've noticed regarding memory allocation
+so far is the one reported by Poonam[3].
+   [3] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-January/551731.html
+
+> It looks like /proc/iomem doesn't see memblock_reserve()d regions
+> as they are in both memblock.memory and memblock.reserved.
+> 
+> 
+> > My previous patch[1] is just for this. It would work not only for
+> > the case here but also for any "reserved" memory regions.
+> > The only noticeable drawback that I see in this approach is that
+> > the meaning of "usable-memory-range" is now a bit obscure.
+> 
+> usable-memory-range is only for kdump. The usable-memory-range is the reserved
+> crash region of the previous kernel, it can't overlap with anything that is
+> reserved by firmware.
+> 
+> Have I understood the problem correctly?:
+> 1. ACPI reserved regions may be accidentally overwritten by kexec,
+
+No as I said.
+
+> 2. Kdump-kernel can't access the ACPI reserved regions via its linear map.
+
+Yes and no.
+It doesn't matter whether we have linear mapping for ACPI reserved regions,
+but does matter whether we can access them with unalignment support, that is,
+cacheability.
+
+> 
+> 
+> > Alternatively we may want to modify /proc/iomem, adding a specific
+> > resource entry for "ACPI Reclaim regions," 
+> 
+> This covers 1, nicely. kexec-tool's arm64:iomem_range_callback() looks like it
+> ignores regions it doesn't know about.
+> 
+> 
+> > and in turn kexec-tool so as to put them into "usable-memory-range",
+> > but it is rather a stopgap
+> > measure in my opinion. I don't like kexec relying heavily on userspace
+> > tool as exporting the reserved regions in /proc/iomem is also useless
+> > for most users.
+> 
+> Describing all the iomem:reserved regions in dt:usable-memory-range? Yes, that
+> sounds fragile.
+
+Not all, but only the regions to be included in "usable-memory-range."
+
+> 
+> 
+> For 1:
+> Changing /proc/iomem to report memblock_reserved() regions as reserved would fix
+> 1. (I assume its harder to find the ACPI reserved regions again to describe them
+> separately). This stops kexec overwriting them.
+> 
+> 
+> For 2:
+> This patch solves the problem, but we access the acpi tables via the linear map
+> in the first kernel, but ioremap() them in the kdump kernel.
+> 
+> The only way to avoid this would be for the kernel's efi code to check that the
+> ACPI regions are mapped by the linear map, and add them if they aren't...
+
+Do you think so? IMO, my patch#1 manages this nicely.
 
 Thanks,
-Horia
+-Takahiro AKASHI
+
+> which
+> is much scarier. So I prefer this patch for 2..
+> 
+> 
+> 
+> Thanks,
+> 
+> James
