@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225eKMEKj7G/6aWl3ugwd8abewpxH3VRcfcfA5AGo0l6eyXnn/PEwgBrpGIKRpvSsChMhRZP
-ARC-Seal: i=1; a=rsa-sha256; t=1518709120; cv=none;
+X-Google-Smtp-Source: AH8x227bSofCHWW/TM1eUksXwAKkY29jFXNtlshpCBAZKQgUetSEypuAzVO6c7aFPZrbHuIPdbCD
+ARC-Seal: i=1; a=rsa-sha256; t=1518709115; cv=none;
         d=google.com; s=arc-20160816;
-        b=G7EkR6r8lLqDif/5uv1xMBtO2XiIDaEMs/hUSn8MLo3RI6zuuko2HAsR43mohHYetd
-         1D5Tu6o62PxGkpymUw/QXdQ0JGrlgILve89651Xu7nNNW1F7isptJU3hEPwWXmk5ufW1
-         FjjxDmrbsQ7bgxu6+8J4/yqB1AlKhbXKQERBzSpr2a3VpMmVsrNE9OIkaQKLxE0uO+mN
-         +j1Y2jN2LPcGEzV5SmDhgOp0Zhd7b/yzY3BdKXMQtzh4EsWBwJrFY4tk2HQm0JRux3zL
-         hiA3NwnrCXmsrJzP2k3CyyfIkgJQ5d1LqvcXGI7izlXZTjyufxLuZUmpRzXdrEeojVhq
-         pk4w==
+        b=DMarQ0Po9xi7KoVxMwYkNJpXCg/qX86xAgXISacebBsitJSOPjZ0jt0JRISrAS4XmA
+         HBVckHdx+r7NYjlfC+phG2llnGXK2lN1jL0ObHKgzG08TwFwcaut4tu9sSZhMBdTNCAP
+         VBpnCK9gqV2xX9KW0X0Y2hDw/ETBHivpb+VKfTAo25NAfAkvNJP1pqdoAUYNfSBIpeFl
+         gmSXTeR3NURh/ioPJNrmI1DgHTUnZ8O/aKVsacDYBG1nEC8D5V6Smaeg+CkAoGXJJ+Wb
+         SXZj0FVFEfK53h2cMRheEEOxHayGkCIc8icgu+2/Qx0Yqlnh8CYgVS9Qd2SdxJV78qti
+         xXag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3nBQeZJPeITtwgmFzuOLRpZfe25t+gYPUspvMUwcKD8=;
-        b=Z4nTCucyxoDRRlg+B3+e1+F2Gyt3v9wTlwWcY1fOzLxfI3FxBoUBtJIWBE3JJkzS3C
-         bmGei7ct+8t+JuheKxydgrzIHa4i+che+hXs/lxoxkG7SYNUBj3TbMzLIkDKck4mzfAc
-         RtuCVwPxaVZYyTTc0HEN3geV5WynMT39O214BShy/WCG7Ohsc8f5DBGff8wXFE7hJjZ+
-         XDWIV08mtKnOwReBSWk20GxegAYjWlgVP2FBfqOxMJ9htBLE1uwhCg3FIin/HqmPKamm
-         8l0Gk/KgbIkZmiMoS+gTkStc9t5tDxRTLVcrqYGRDFTlITzmIRwtZXRIAktTGVu0RoDi
-         XeoA==
+        bh=5xEbT0uWLLjnjVaeIfjrX5YBWs/yMq3wfO8mrwS7CpQ=;
+        b=VYbNp8KTOwasB3uBgU1T3aCQxZx1Ki64QEslGvcxQoVpkOJ3D88PWJI0FQOctEbd8u
+         MXXAEaEOvX8cn2aJFReHkjTWXjijJSlW+0Z14Qu/6tpX/NOclvVWgnQPPh3hd2wOngjq
+         XGNgew2Lj77Tk9lDy0kU1n3oWwZtr1r5UhcX37HlEE+NxHzFB6TeqITlfvCf96ei5pPh
+         Tlg+MLUJZdQK1giQY9sPDu3lxauDGngfLydroi1Zvoni1PBnRDZCa/xbWyzCSBvEvwqm
+         EfwsCxPmJ4HxMvzEzSG2jcIlSEi6wVFOmPyqsJujSNobJB6SpkcE8dGQk/N+MOpN3LsF
+         TBeg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Matt Turner <mattst88@gmail.com>
-Subject: [PATCH 4.14 164/195] alpha: fix crash if pthread_create races with signal delivery
-Date: Thu, 15 Feb 2018 16:17:35 +0100
-Message-Id: <20180215151714.169728341@linuxfoundation.org>
+	Jonas Bonn <jonas@southpole.se>,
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+	Stafford Horne <shorne@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	openrisc@lists.librecores.org,
+	"Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 4.14 162/195] signal/openrisc: Fix do_unaligned_access to send the proper signal
+Date: Thu, 15 Feb 2018 16:17:33 +0100
+Message-Id: <20180215151714.057556782@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -39,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480761220325346?=
-X-GMAIL-MSGID: =?utf-8?q?1592481935022299727?=
+X-GMAIL-THRID: =?utf-8?q?1592480756245594866?=
+X-GMAIL-MSGID: =?utf-8?q?1592481929710341078?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,54 +52,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit 21ffceda1c8b3807615c40d440d7815e0c85d366 upstream.
+commit 500d58300571b6602341b041f97c082a461ef994 upstream.
 
-On alpha, a process will crash if it attempts to start a thread and a
-signal is delivered at the same time. The crash can be reproduced with
-this program: https://cygwin.com/ml/cygwin/2014-11/msg00473.html
+While reviewing the signal sending on openrisc the do_unaligned_access
+function stood out because it is obviously wrong.  A comment about an
+si_code set above when actually si_code is never set.  Leading to a
+random si_code being sent to userspace in the event of an unaligned
+access.
 
-The reason for the crash is this:
-* we call the clone syscall
-* we go to the function copy_process
-* copy process calls copy_thread_tls, it is a wrapper around copy_thread
-* copy_thread sets the tls pointer: childti->pcb.unique = regs->r20
-* copy_thread sets regs->r20 to zero
-* we go back to copy_process
-* copy process checks "if (signal_pending(current))" and returns
-  -ERESTARTNOINTR
-* the clone syscall is restarted, but this time, regs->r20 is zero, so
-  the new thread is created with zero tls pointer
-* the new thread crashes in start_thread when attempting to access tls
+Looking further SIGBUS BUS_ADRALN is the proper pair of signal and
+si_code to send for an unaligned access. That is what other
+architectures do and what is required by posix.
 
-The comment in the code says that setting the register r20 is some
-compatibility with OSF/1. But OSF/1 doesn't use the CLONE_SETTLS flag, so
-we don't have to zero r20 if CLONE_SETTLS is set. This patch fixes the bug
-by zeroing regs->r20 only if CLONE_SETTLS is not set.
+Given that do_unaligned_access is broken in a way that no one can be
+relying on it on openrisc fix the code to just do the right thing.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Matt Turner <mattst88@gmail.com>
+Fixes: 769a8a96229e ("OpenRISC: Traps")
+Cc: Jonas Bonn <jonas@southpole.se>
+Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
+Cc: Stafford Horne <shorne@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: openrisc@lists.librecores.org
+Acked-by: Stafford Horne <shorne@gmail.com>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/alpha/kernel/process.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/openrisc/kernel/traps.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/arch/alpha/kernel/process.c
-+++ b/arch/alpha/kernel/process.c
-@@ -269,12 +269,13 @@ copy_thread(unsigned long clone_flags, u
- 	   application calling fork.  */
- 	if (clone_flags & CLONE_SETTLS)
- 		childti->pcb.unique = regs->r20;
-+	else
-+		regs->r20 = 0;	/* OSF/1 has some strange fork() semantics.  */
- 	childti->pcb.usp = usp ?: rdusp();
- 	*childregs = *regs;
- 	childregs->r0 = 0;
- 	childregs->r19 = 0;
- 	childregs->r20 = 1;	/* OSF/1 has some strange fork() semantics.  */
--	regs->r20 = 0;
- 	stack = ((struct switch_stack *) regs) - 1;
- 	*childstack = *stack;
- 	childstack->r26 = (unsigned long) ret_from_fork;
+--- a/arch/openrisc/kernel/traps.c
++++ b/arch/openrisc/kernel/traps.c
+@@ -306,12 +306,12 @@ asmlinkage void do_unaligned_access(stru
+ 	siginfo_t info;
+ 
+ 	if (user_mode(regs)) {
+-		/* Send a SIGSEGV */
+-		info.si_signo = SIGSEGV;
++		/* Send a SIGBUS */
++		info.si_signo = SIGBUS;
+ 		info.si_errno = 0;
+-		/* info.si_code has been set above */
+-		info.si_addr = (void *)address;
+-		force_sig_info(SIGSEGV, &info, current);
++		info.si_code = BUS_ADRALN;
++		info.si_addr = (void __user *)address;
++		force_sig_info(SIGBUS, &info, current);
+ 	} else {
+ 		printk("KERNEL: Unaligned Access 0x%.8lx\n", address);
+ 		show_registers(regs);
