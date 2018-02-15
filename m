@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225oQtl0d8BVCbfltXTOa48KrWuxiw41iufbxTWM5bQZazmMe/RoD8L0+IGDAE3F/9hBX3cK
-ARC-Seal: i=1; a=rsa-sha256; t=1518709004; cv=none;
+X-Google-Smtp-Source: AH8x226hfFzvB+hfFF0WLJ8+d4ygleUFvlu7wPjJHoNeOAQ1JRH5kTaA2JqFt+wXJ8njznYaLVu0
+ARC-Seal: i=1; a=rsa-sha256; t=1518709003; cv=none;
         d=google.com; s=arc-20160816;
-        b=WB9fG65TWlaJ9IYLRTTVL/bdTescY5SbfVTYmIzbF8IDNgeppTptEC9dfNuY457mwM
-         CpalFWyInQhIeEqCFVxmVcURyUEJXm2XwnKLm3DbsDmY9GDKSvYLtjhmsYFGf09Y6Yv3
-         ZbOzyklQaw7X5j/BihFgf9FxxYIJCqy4zV32gOcknvgQ8qitxrDVJUm9dF2diq4o4jiv
-         y6+Kjw+ZsHA/Nv565+dhMbdbQ0E0PUGxbtTn1+hfowAKogX5U55qWpuD0t1d5ZVLPB6z
-         RTfeSPGOmB6FLYEMVaOk5/Z+xV/ka9MZANLsjlx82EASmPp3AzC2nMYBiY7YP0JcMFfm
-         muoQ==
+        b=Q1bGDQT67V9REWE63kCu/gRr7RPovBoNgEBZr4/LOKs0/QwRMSujye0PUrcjIceL2m
+         5neYH6Fqz3xbla1nXfIGOnT8vlBsjf3zv4eZRVQGyiWxGk5jjaZgo87G0i1I7pcT4QfM
+         5wQc+4Sbo8/zITyJnosxfFc+rn6qHg+z8Cfx3O4i67qrKhor960hvZaE/bhuT7/ctxiN
+         uZvBhOplj7Yx6sIJmLVdgpqCmVkNxMP8VZm71iqwIt9GWK9R4nwFLGwqQMUEm3dJ3ivc
+         cGLoyS/TvJEIcQV/zZeG05GSHo8hQAiqiG5AoIhACCtW8s19Lk3a/1iRdxl80YfTZA30
+         YUYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=vGD6cKEx6DsH9kxWs3ryGeEHhanbgZoCNcwveZgqq8M=;
-        b=gAMC2YVyybYTAiwzDxjHQDQQrt7HAbyDWQ+HcI1Mz7kiTzUlfVXKgx5eTE8Ra6/U/D
-         FPEEvwSQQ8FBuA8yqCJha5UkFpeKmpRBGGt1pRekMcL9TSFtNorf9QzBehSCLVHddPen
-         npeBb+jrci9BT4we+b4FJFP/Sqz8WzY6NCH3cxp5xMAAVhgPz9LkCgTXhmLQ0NW7zmaR
-         Fe1HCbzNgi4xdSKZ7CNvzY+psRvz+ehcWqjKEDr4c+ywpFjo2rnz8aKVOvsep5G88gf+
-         4GEG3Z+RSPrBCV2TEW5I9IUEjf0/zYVlJSgq+RLdrBouVUD1ivLN7J1m26KSVvh2Z3Qn
-         dOyA==
+        bh=okN+QU98medkO+7ihdt6c7Nu/+mp9r2jZybRO2E0Kzc=;
+        b=bi5uzlKj9LhdcZiY37qmdT6MDawih8AiYnA5A6WMHieI6IUgBBZ5pY448pACXGXVrt
+         k0QjfwsHnlRA0F49Qmci/es+JCNFXvtPihOeuNeZk+ao0tWPl8aNqQseBKvYcaBjzuNF
+         kCVvdQpXP0AuNIc1GfUz5w6ZfvYDbvHyOtYjpszCGbKB5QKkDcByn+tITpmt+0Zxc4LR
+         A3BKIEcIBz+ZLF/mxpRm5+GSxzUbkIyj6+2YTdaaOIr7q2MyQsFKxRiZm5ww26ZHWbfW
+         e2y4big27SEkxQnfHwzq3NY84yrQCD+yRImsTGwCqZY3k7NuT+D0xUVdrham4/HZtiDo
+         6viw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,18 +27,18 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Eric Biggers <ebiggers@google.com>,
-	Willy Tarreau <w@1wt.eu>,
 	Kees Cook <keescook@chromium.org>,
 	Joe Lawrence <joe.lawrence@redhat.com>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
 	"Luis R . Rodriguez" <mcgrof@kernel.org>,
 	Michael Kerrisk <mtk.manpages@gmail.com>,
 	Mikulas Patocka <mpatocka@redhat.com>,
+	Willy Tarreau <w@1wt.eu>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 156/195] pipe: fix off-by-one error when checking buffer limits
-Date: Thu, 15 Feb 2018 16:17:27 +0100
-Message-Id: <20180215151713.710184015@linuxfoundation.org>
+Subject: [PATCH 4.14 155/195] pipe: actually allow root to exceed the pipe buffer limits
+Date: Thu, 15 Feb 2018 16:17:26 +0100
+Message-Id: <20180215151713.664934489@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -47,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481371299527010?=
-X-GMAIL-MSGID: =?utf-8?q?1592481813315973229?=
+X-GMAIL-THRID: =?utf-8?q?1592481368765676021?=
+X-GMAIL-MSGID: =?utf-8?q?1592481811721513949?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,45 +58,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Eric Biggers <ebiggers@google.com>
 
-commit 9903a91c763ecdae333a04a9d89d79d2b8966503 upstream.
+commit 85c2dd5473b2718b4b63e74bfeb1ca876868e11f upstream.
 
-With pipe-user-pages-hard set to 'N', users were actually only allowed up
-to 'N - 1' buffers; and likewise for pipe-user-pages-soft.
+pipe-user-pages-hard and pipe-user-pages-soft are only supposed to apply
+to unprivileged users, as documented in both Documentation/sysctl/fs.txt
+and the pipe(7) man page.
 
-Fix this to allow up to 'N' buffers, as would be expected.
+However, the capabilities are actually only checked when increasing a
+pipe's size using F_SETPIPE_SZ, not when creating a new pipe.  Therefore,
+if pipe-user-pages-hard has been set, the root user can run into it and be
+unable to create pipes.  Similarly, if pipe-user-pages-soft has been set,
+the root user can run into it and have their pipes limited to 1 page each.
 
-Link: http://lkml.kernel.org/r/20180111052902.14409-5-ebiggers3@gmail.com
-Fixes: b0b91d18e2e9 ("pipe: fix limit checking in pipe_set_size()")
+Fix this by allowing the privileged override in both cases.
+
+Link: http://lkml.kernel.org/r/20180111052902.14409-4-ebiggers3@gmail.com
+Fixes: 759c01142a5d ("pipe: limit the per-user amount of pages allocated in pipes")
 Signed-off-by: Eric Biggers <ebiggers@google.com>
-Acked-by: Willy Tarreau <w@1wt.eu>
 Acked-by: Kees Cook <keescook@chromium.org>
 Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Cc: "Luis R . Rodriguez" <mcgrof@kernel.org>
 Cc: Michael Kerrisk <mtk.manpages@gmail.com>
 Cc: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Willy Tarreau <w@1wt.eu>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/pipe.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/pipe.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 --- a/fs/pipe.c
 +++ b/fs/pipe.c
-@@ -610,12 +610,12 @@ static unsigned long account_pipe_buffer
- 
- static bool too_many_pipe_buffers_soft(unsigned long user_bufs)
- {
--	return pipe_user_pages_soft && user_bufs >= pipe_user_pages_soft;
-+	return pipe_user_pages_soft && user_bufs > pipe_user_pages_soft;
+@@ -618,6 +618,11 @@ static bool too_many_pipe_buffers_hard(u
+ 	return pipe_user_pages_hard && user_bufs >= pipe_user_pages_hard;
  }
  
- static bool too_many_pipe_buffers_hard(unsigned long user_bufs)
++static bool is_unprivileged_user(void)
++{
++	return !capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN);
++}
++
+ struct pipe_inode_info *alloc_pipe_info(void)
  {
--	return pipe_user_pages_hard && user_bufs >= pipe_user_pages_hard;
-+	return pipe_user_pages_hard && user_bufs > pipe_user_pages_hard;
- }
+ 	struct pipe_inode_info *pipe;
+@@ -634,12 +639,12 @@ struct pipe_inode_info *alloc_pipe_info(
  
- static bool is_unprivileged_user(void)
+ 	user_bufs = account_pipe_buffers(user, 0, pipe_bufs);
+ 
+-	if (too_many_pipe_buffers_soft(user_bufs)) {
++	if (too_many_pipe_buffers_soft(user_bufs) && is_unprivileged_user()) {
+ 		user_bufs = account_pipe_buffers(user, pipe_bufs, 1);
+ 		pipe_bufs = 1;
+ 	}
+ 
+-	if (too_many_pipe_buffers_hard(user_bufs))
++	if (too_many_pipe_buffers_hard(user_bufs) && is_unprivileged_user())
+ 		goto out_revert_acct;
+ 
+ 	pipe->bufs = kcalloc(pipe_bufs, sizeof(struct pipe_buffer),
+@@ -1069,7 +1074,7 @@ static long pipe_set_size(struct pipe_in
+ 	if (nr_pages > pipe->buffers &&
+ 			(too_many_pipe_buffers_hard(user_bufs) ||
+ 			 too_many_pipe_buffers_soft(user_bufs)) &&
+-			!capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN)) {
++			is_unprivileged_user()) {
+ 		ret = -EPERM;
+ 		goto out_revert_acct;
+ 	}
