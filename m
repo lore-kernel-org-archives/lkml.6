@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225JvsrdWTIYxlDkk6PQGGnD4kNGVJHyT4spB3Vml2GgHndolMgzFGmHei99+mR6VD8gO0X7
-ARC-Seal: i=1; a=rsa-sha256; t=1518709500; cv=none;
+X-Google-Smtp-Source: AH8x2257whL0XcPb4XIWeiNJYXGmb+voxy7WEZYZ1bm5CvwWdBFOXce93Gp9pWxb6KjkaBTMRR7W
+ARC-Seal: i=1; a=rsa-sha256; t=1518709492; cv=none;
         d=google.com; s=arc-20160816;
-        b=vhDHmoIzGFz2v7d3SSA7DZi8YNw+p04pusa/tkspf+KNj4gH+DGsXL5qMoZhnLpG6t
-         Kz+MPd4l+P6QR1zTZj1GEahMQBCSNYAOCU+H7E0aEFkKcb5H4T7AKz4hdbJcMER+HZkE
-         Iq1nQizGNnVYLimosrP5KNbjlbtxqGpPFiHCikBAxslhGV5R3XbcBmMrZF7Z7lyALz5J
-         lm4wFWxQVUa3df8c+Px4/LmqrRoeuuLHi+OsyerNk+ed/ZLDSVTeImnrjUGOiDfqHhOj
-         MDpnS9I0709XnFjv+nFrDCA0i+ektbDVBBFMO0NglDTN42ayyXr0fGmBtc9j7TkuiVWN
-         2G6Q==
+        b=ZrQId484TZs7gPzJB861J5lKVbLnTeEDpFnEvydAhP2eO48Efzj5vdaGc6NNwY8Cvw
+         qzuh7cVIi/eVybDo1tF+BeRHAu0odBsZgJkZdawZRk6LX8d9OffprKySAFTrke/ZYrKD
+         14aRjodoV+Vv9v0+ccKh9P/nUaXsVGjyACKZzuWbqYGkZ1HBNg2KmjoTmjKx/io+tR9Z
+         DbfTlMx26hBz5+9EA+3l4YbvHRjpJ+/PxxvsR2WR+8KCQYv8Fyjug2SWdrSDB1C/gGMU
+         24j5lPn6oBZk2wOxCrbD4h+bGtS847r+1io0dWfiIJfqz2GG+SngBpM/L5p3t5ElNry0
+         Qndg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/rHwnfegQDxwooiDjPkL3L3NpQqet5xELdzfPGOVQFk=;
-        b=BXQzo1Ovzip7a2qAF0xIhiacrDCaPM/H3WUE7VIwDT2QA9XaMvHd3h+1XX8OUMdR5j
-         ScS2X02fwFRoNFaabdvk4mHvPDLldB7RDkbI+1hhjMACr4bJsNC7EH9N7sza3tK/imRR
-         LEY6VZnOC7C33rdwkr9VekCjxRD+IDH66Wr1xW05Ffp8rdunik7j8PNQ9rgDkoz4Ows9
-         m7ZmRXeH1cLh33xOhiu0hWV+ps37IP6LU3ON0SuHIZJKoJeCrac+71knMuZzZkSRF7iT
-         J1kXdfGUidA17Llin0JVlnb1Hm7JHIkNmnFsfhWKsBwhhFgC8Omahe85tJIHlNlTA3QP
-         0ZhA==
+        bh=oPr+3ppFEtYpZkDUtlewgcJVJn22lD4zNiQ/rp4+Msw=;
+        b=u+cAAcfCnwAZymmnVe19nEPkjGMKw7TRQjI3yJcr/UOTL85BVDuu7pb5v74f7+FyMx
+         vYMey5XpRrw2LYlXnGJ0WjU8SGfDwshJzmWwL3phNnaCAafeLUOXeMIlRpQCEqjy0Jwz
+         al5pr5Ja6rSgWCouCroMblb+wCc4s/oxQLVdRUWazue5oq9Zjs2XyGKogTTQ435Kkgb7
+         ESmdCp+XbTAu4A90C1v+L0Y1LpbbhWC0u0RnmyS1dH7KpiSbIuLUuqiD+QapjVsdbbtR
+         2isQVJMxfwsJglOCYNaw3TBQV0riunUTCP9TIY2fMcUP4XsX0kW83ibFqrrA3YsLHIDs
+         JcOg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	=?UTF-8?q?Nicole=20F=C3=A6rber?= <nicole.faerber@dpin.de>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
 	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.15 140/202] ASoC: compress: Correct handling of copy callback
-Date: Thu, 15 Feb 2018 16:17:20 +0100
-Message-Id: <20180215151720.407230886@linuxfoundation.org>
+Subject: [PATCH 4.15 137/202] ASoC: acpi: fix machine driver selection based on quirk
+Date: Thu, 15 Feb 2018 16:17:17 +0100
+Message-Id: <20180215151720.284959015@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592482333159672349?=
-X-GMAIL-MSGID: =?utf-8?q?1592482333159672349?=
+X-GMAIL-THRID: =?utf-8?q?1592482325242185815?=
+X-GMAIL-MSGID: =?utf-8?q?1592482325242185815?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,61 +49,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-commit 290df4d3ab192821b66857c05346b23056ee9545 upstream.
+commit 5c256045b87b8aa8e5bc9d2e2fdc0802351c1f99 upstream.
 
-The soc_compr_copy callback is currently broken. Since the
-changes to move the compr_ops over to the component the return
-value is not correctly propagated, always returning zero on
-success rather than the number of bytes copied. This causes
-user-space to stall continuously reading as it does not believe
-it has received any data.
+The ACPI/machine-driver code refactoring introduced in 4.13 introduced
+a regression for cases where we need a DMI-based quirk to select the
+machine driver (the BIOS reports an invalid HID). The fix is just to
+make sure the results of the quirk are actually used.
 
-Furthermore, the changes to move the compr_ops over to the
-component iterate through the list of components and will call
-the copy callback for any that have compressed ops. There isn't
-currently any consensus on the mechanism to combine the results
-of multiple copy callbacks.
-
-To fix this issue for now halt searching the component list when
-we locate a copy callback and return the result of that single
-callback. Additional work should probably be done to look at the
-other ops, tidy things up, and work out if we want to support
-multiple components on a single compressed, but this is the only
-fix required to get things working again.
-
-Fixes: 9e7e3738ab0e ("ASoC: snd_soc_component_driver has snd_compr_ops")
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Fixes: 54746dabf770 ('ASoC: Improve machine driver selection based on quirk data')
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=96691
+Tested-by: Nicole Færber <nicole.faerber@dpin.de>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/soc-compress.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/soc/soc-acpi.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
---- a/sound/soc/soc-compress.c
-+++ b/sound/soc/soc-compress.c
-@@ -944,7 +944,7 @@ static int soc_compr_copy(struct snd_com
- 	struct snd_soc_platform *platform = rtd->platform;
- 	struct snd_soc_component *component;
- 	struct snd_soc_rtdcom_list *rtdcom;
--	int ret = 0, __ret;
-+	int ret = 0;
+--- a/sound/soc/soc-acpi.c
++++ b/sound/soc/soc-acpi.c
+@@ -84,11 +84,9 @@ snd_soc_acpi_find_machine(struct snd_soc
  
- 	mutex_lock_nested(&rtd->pcm_mutex, rtd->pcm_subclass);
- 
-@@ -965,10 +965,10 @@ static int soc_compr_copy(struct snd_com
- 		    !component->driver->compr_ops->copy)
- 			continue;
- 
--		__ret = component->driver->compr_ops->copy(cstream, buf, count);
--		if (__ret < 0)
--			ret = __ret;
-+		ret = component->driver->compr_ops->copy(cstream, buf, count);
-+		break;
+ 	for (mach = machines; mach->id[0]; mach++) {
+ 		if (snd_soc_acpi_check_hid(mach->id) == true) {
+-			if (mach->machine_quirk == NULL)
+-				return mach;
+-
+-			if (mach->machine_quirk(mach) != NULL)
+-				return mach;
++			if (mach->machine_quirk)
++				mach = mach->machine_quirk(mach);
++			return mach;
+ 		}
  	}
-+
- err:
- 	mutex_unlock(&rtd->pcm_mutex);
- 	return ret;
+ 	return NULL;
