@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2240C/qqMa1wQlpgsllmeU2a8B8byIRMwCFYf/wjCfVjwIJAejC0h/RtfRGlEQNQjkrfanYE
-ARC-Seal: i=1; a=rsa-sha256; t=1518708630; cv=none;
+X-Google-Smtp-Source: AH8x226HLZQDY7ucvIhgnWmzjjZjXhkDc6JvFkeCLVY7KxqJNP4zPYmvflxMkQogQDMWZ4myJYIf
+ARC-Seal: i=1; a=rsa-sha256; t=1518708627; cv=none;
         d=google.com; s=arc-20160816;
-        b=STfOk+QbVJHDuJ1nVTnrm0i+RjH2oIKPh1zvKuJk3G1b2a0XZt2lF3c3u/mRPi0RD6
-         Mp1+tDeNc6rtp6Zbh5ocYMacy55l5Qoz21bRA8yhcEnLo/3QgN4Lli9/RpeCmpAlg9km
-         JtnpV57D4+hND2bIW7tVne7LSQWGwn4tjuVFJw7ixVbkZ1EP+iVo59ikP7PF+7RMX3+y
-         M+KHYlT3oFoi/qQ+m2rJlTIAoAu7Jm1b3N4frZS2ixMRAB0ROjCpAf/MIRVIQ6U6Hfft
-         MOT33aeZWHbX5amwvXGIAdTVnHYT7NdgJDlxGdbNnjffCG3JewVfSw046PCmLoqXNHTx
-         mERA==
+        b=WvxIkNpL0M6xECmia46X3OCF9GNdKiyfD6vzPuf03xI6vIxfBHWLOdBdBiG+FK/9qM
+         5RUlOIkg/Y9fggiepT3xAUkaLAGOWn9q+uEX+Ztp32XtFvKf2uptVAQRUodLtgbCsT04
+         WM7M9GSb++1OIXkTAKXNetGMKpw7baoumMISxKzoUaPN8CW6bKJwcdeeNYYt+3cefoGi
+         yXVink6ck79KqcwPCYClk1NHY8et8zN/t0lrJ41E7Q4ET37lqH23JfXoK/JpZYXiOAET
+         T0QbKKMpi9S1Venc0x281tb5LF8Xx+F8qMldb/kZLy0NaKRQThh1MbUhibN+XR8ETw7z
+         Bz5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=0e1UYKUxiHpjzi+UtjBImSBrRqGMo+Pk2g+Gc/lJ0f8=;
-        b=SkjtLRlkQuwEo5wHNslRvya1amd5cXvNNr61+y2j1uxKbpn80jgDf246lJ8taPUI9+
-         ccOx9Z+6+yzc71Wa7nbb6mTDbKE0AYHWv7mvtrAYyo1MNrnY0w1TTESOEJBpWncHoua9
-         zF2uf1weyCnbCFzlbrzARP+gfnNsrJHEc/1pKRthHW8BPftN36sD4bEaJqtjUhrgKTIj
-         /QTF/CZbHUrjSOdKpR6K6xTdHAkwEG4+oxIQCzM90LM28pSZubPoGAS629YTZ+xcvMrJ
-         r7fXJ8g1aOrLUOOgXNU6sWkKbY3t3vHqL4pSNfEbmyUBKmKVAEv4VFmGNKDB8BzGJpxE
-         fAdw==
+        bh=Fo8oTYBm9RvshqtZw0BhIVvFqLlYOEa+mwgfHXrc1pQ=;
+        b=CgC/MVlWElj82Q+OQ0L6zWLUsqFaMmLy+Kwp7ycndEKy5mI5JWsH2zuhQt8IxDQ321
+         x7EoU8ximzQZKymG8XoUJQpbSATMlQqiiKq/2apXgAOZu1t7/4g3QRsQMgulg9SSANLi
+         cuh4alJgs35NJdrolyYeF5vsKd1gWEs0di3TNzScRpVtJ8C9zMNgpUF0d6g0Sj8Tjdu2
+         dRuQwOxpN3GPMcl+JHqJILtKZgnQ5VXGwcAgCYF3emSlAUoeHuts77fSjL4pgCqjAoOZ
+         kaCMSEa31ROtcvmSvAVDEvz/NiaMmTpXDFbP09IdjAy1H5G4mN5Xhsj6sU+owZ6HESdp
+         fQLg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Laura Abbott <labbott@redhat.com>,
-	Shanker Donthineni <shankerd@codeaurora.org>,
 	Will Deacon <will.deacon@arm.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 023/195] [Variant 3/Meltdown] arm64: mm: Use non-global mappings for kernel space
-Date: Thu, 15 Feb 2018 16:15:14 +0100
-Message-Id: <20180215151706.909423992@linuxfoundation.org>
+	Laura Abbott <labbott@redhat.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	James Morse <james.morse@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Yury Norov <ynorov@caviumnetworks.com>
+Subject: [PATCH 4.14 022/195] arm64: move TASK_* definitions to <asm/processor.h>
+Date: Thu, 15 Feb 2018 16:15:13 +0100
+Message-Id: <20180215151706.863934153@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481420976317233?=
-X-GMAIL-MSGID: =?utf-8?q?1592481420976317233?=
+X-GMAIL-THRID: =?utf-8?q?1592481417775775971?=
+X-GMAIL-MSGID: =?utf-8?q?1592481417775775971?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,93 +53,120 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Yury Norov <ynorov@caviumnetworks.com>
 
 
-Commit e046eb0c9bf2 upstream.
+Commit eef94a3d09aa upstream.
 
-In preparation for unmapping the kernel whilst running in userspace,
-make the kernel mappings non-global so we can avoid expensive TLB
-invalidation on kernel exit to userspace.
+ILP32 series [1] introduces the dependency on <asm/is_compat.h> for
+TASK_SIZE macro. Which in turn requires <asm/thread_info.h>, and
+<asm/thread_info.h> include <asm/memory.h>, giving a circular dependency,
+because TASK_SIZE is currently located in <asm/memory.h>.
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Laura Abbott <labbott@redhat.com>
-Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
+In other architectures, TASK_SIZE is defined in <asm/processor.h>, and
+moving TASK_SIZE there fixes the problem.
+
+Discussion: https://patchwork.kernel.org/patch/9929107/
+
+[1] https://github.com/norov/linux/tree/ilp32-next
+
+CC: Will Deacon <will.deacon@arm.com>
+CC: Laura Abbott <labbott@redhat.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: James Morse <james.morse@arm.com>
+Suggested-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/kernel-pgtable.h |   12 ++++++++++--
- arch/arm64/include/asm/pgtable-prot.h   |   21 +++++++++++++++------
- 2 files changed, 25 insertions(+), 8 deletions(-)
+ arch/arm64/include/asm/memory.h    |   15 ---------------
+ arch/arm64/include/asm/processor.h |   21 +++++++++++++++++++++
+ arch/arm64/kernel/entry.S          |    2 +-
+ 3 files changed, 22 insertions(+), 16 deletions(-)
 
---- a/arch/arm64/include/asm/kernel-pgtable.h
-+++ b/arch/arm64/include/asm/kernel-pgtable.h
-@@ -78,8 +78,16 @@
- /*
-  * Initial memory map attributes.
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -61,8 +61,6 @@
+  * KIMAGE_VADDR - the virtual address of the start of the kernel image
+  * VA_BITS - the maximum number of bits for virtual addresses.
+  * VA_START - the first kernel virtual address.
+- * TASK_SIZE - the maximum size of a user space task.
+- * TASK_UNMAPPED_BASE - the lower boundary of the mmap VM area.
   */
--#define SWAPPER_PTE_FLAGS	(PTE_TYPE_PAGE | PTE_AF | PTE_SHARED)
--#define SWAPPER_PMD_FLAGS	(PMD_TYPE_SECT | PMD_SECT_AF | PMD_SECT_S)
-+#define _SWAPPER_PTE_FLAGS	(PTE_TYPE_PAGE | PTE_AF | PTE_SHARED)
-+#define _SWAPPER_PMD_FLAGS	(PMD_TYPE_SECT | PMD_SECT_AF | PMD_SECT_S)
+ #define VA_BITS			(CONFIG_ARM64_VA_BITS)
+ #define VA_START		(UL(0xffffffffffffffff) - \
+@@ -77,19 +75,6 @@
+ #define PCI_IO_END		(VMEMMAP_START - SZ_2M)
+ #define PCI_IO_START		(PCI_IO_END - PCI_IO_SIZE)
+ #define FIXADDR_TOP		(PCI_IO_START - SZ_2M)
+-#define TASK_SIZE_64		(UL(1) << VA_BITS)
+-
+-#ifdef CONFIG_COMPAT
+-#define TASK_SIZE_32		UL(0x100000000)
+-#define TASK_SIZE		(test_thread_flag(TIF_32BIT) ? \
+-				TASK_SIZE_32 : TASK_SIZE_64)
+-#define TASK_SIZE_OF(tsk)	(test_tsk_thread_flag(tsk, TIF_32BIT) ? \
+-				TASK_SIZE_32 : TASK_SIZE_64)
+-#else
+-#define TASK_SIZE		TASK_SIZE_64
+-#endif /* CONFIG_COMPAT */
+-
+-#define TASK_UNMAPPED_BASE	(PAGE_ALIGN(TASK_SIZE / 4))
+ 
+ #define KERNEL_START      _text
+ #define KERNEL_END        _end
+--- a/arch/arm64/include/asm/processor.h
++++ b/arch/arm64/include/asm/processor.h
+@@ -19,6 +19,10 @@
+ #ifndef __ASM_PROCESSOR_H
+ #define __ASM_PROCESSOR_H
+ 
++#define TASK_SIZE_64		(UL(1) << VA_BITS)
 +
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+#define SWAPPER_PTE_FLAGS	(_SWAPPER_PTE_FLAGS | PTE_NG)
-+#define SWAPPER_PMD_FLAGS	(_SWAPPER_PMD_FLAGS | PMD_SECT_NG)
-+#else
-+#define SWAPPER_PTE_FLAGS	_SWAPPER_PTE_FLAGS
-+#define SWAPPER_PMD_FLAGS	_SWAPPER_PMD_FLAGS
-+#endif
- 
- #if ARM64_SWAPPER_USES_SECTION_MAPS
- #define SWAPPER_MM_MMUFLAGS	(PMD_ATTRINDX(MT_NORMAL) | SWAPPER_PMD_FLAGS)
---- a/arch/arm64/include/asm/pgtable-prot.h
-+++ b/arch/arm64/include/asm/pgtable-prot.h
-@@ -34,8 +34,16 @@
- 
- #include <asm/pgtable-types.h>
- 
--#define PROT_DEFAULT		(PTE_TYPE_PAGE | PTE_AF | PTE_SHARED)
--#define PROT_SECT_DEFAULT	(PMD_TYPE_SECT | PMD_SECT_AF | PMD_SECT_S)
-+#define _PROT_DEFAULT		(PTE_TYPE_PAGE | PTE_AF | PTE_SHARED)
-+#define _PROT_SECT_DEFAULT	(PMD_TYPE_SECT | PMD_SECT_AF | PMD_SECT_S)
++#ifndef __ASSEMBLY__
 +
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+#define PROT_DEFAULT		(_PROT_DEFAULT | PTE_NG)
-+#define PROT_SECT_DEFAULT	(_PROT_SECT_DEFAULT | PMD_SECT_NG)
+ /*
+  * Default implementation of macro that returns current
+  * instruction pointer ("program counter").
+@@ -37,6 +41,22 @@
+ #include <asm/ptrace.h>
+ #include <asm/types.h>
+ 
++/*
++ * TASK_SIZE - the maximum size of a user space task.
++ * TASK_UNMAPPED_BASE - the lower boundary of the mmap VM area.
++ */
++#ifdef CONFIG_COMPAT
++#define TASK_SIZE_32		UL(0x100000000)
++#define TASK_SIZE		(test_thread_flag(TIF_32BIT) ? \
++				TASK_SIZE_32 : TASK_SIZE_64)
++#define TASK_SIZE_OF(tsk)	(test_tsk_thread_flag(tsk, TIF_32BIT) ? \
++				TASK_SIZE_32 : TASK_SIZE_64)
 +#else
-+#define PROT_DEFAULT		_PROT_DEFAULT
-+#define PROT_SECT_DEFAULT	_PROT_SECT_DEFAULT
-+#endif /* CONFIG_UNMAP_KERNEL_AT_EL0 */
++#define TASK_SIZE		TASK_SIZE_64
++#endif /* CONFIG_COMPAT */
++
++#define TASK_UNMAPPED_BASE	(PAGE_ALIGN(TASK_SIZE / 4))
++
+ #define STACK_TOP_MAX		TASK_SIZE_64
+ #ifdef CONFIG_COMPAT
+ #define AARCH32_VECTORS_BASE	0xffff0000
+@@ -194,4 +214,5 @@ static inline void spin_lock_prefetch(co
+ int cpu_enable_pan(void *__unused);
+ int cpu_enable_cache_maint_trap(void *__unused);
  
- #define PROT_DEVICE_nGnRnE	(PROT_DEFAULT | PTE_PXN | PTE_UXN | PTE_DIRTY | PTE_WRITE | PTE_ATTRINDX(MT_DEVICE_nGnRnE))
- #define PROT_DEVICE_nGnRE	(PROT_DEFAULT | PTE_PXN | PTE_UXN | PTE_DIRTY | PTE_WRITE | PTE_ATTRINDX(MT_DEVICE_nGnRE))
-@@ -48,6 +56,7 @@
- #define PROT_SECT_NORMAL_EXEC	(PROT_SECT_DEFAULT | PMD_SECT_UXN | PMD_ATTRINDX(MT_NORMAL))
- 
- #define _PAGE_DEFAULT		(PROT_DEFAULT | PTE_ATTRINDX(MT_NORMAL))
-+#define _HYP_PAGE_DEFAULT	(_PAGE_DEFAULT & ~PTE_NG)
- 
- #define PAGE_KERNEL		__pgprot(_PAGE_DEFAULT | PTE_PXN | PTE_UXN | PTE_DIRTY | PTE_WRITE)
- #define PAGE_KERNEL_RO		__pgprot(_PAGE_DEFAULT | PTE_PXN | PTE_UXN | PTE_DIRTY | PTE_RDONLY)
-@@ -55,15 +64,15 @@
- #define PAGE_KERNEL_EXEC	__pgprot(_PAGE_DEFAULT | PTE_UXN | PTE_DIRTY | PTE_WRITE)
- #define PAGE_KERNEL_EXEC_CONT	__pgprot(_PAGE_DEFAULT | PTE_UXN | PTE_DIRTY | PTE_WRITE | PTE_CONT)
- 
--#define PAGE_HYP		__pgprot(_PAGE_DEFAULT | PTE_HYP | PTE_HYP_XN)
--#define PAGE_HYP_EXEC		__pgprot(_PAGE_DEFAULT | PTE_HYP | PTE_RDONLY)
--#define PAGE_HYP_RO		__pgprot(_PAGE_DEFAULT | PTE_HYP | PTE_RDONLY | PTE_HYP_XN)
-+#define PAGE_HYP		__pgprot(_HYP_PAGE_DEFAULT | PTE_HYP | PTE_HYP_XN)
-+#define PAGE_HYP_EXEC		__pgprot(_HYP_PAGE_DEFAULT | PTE_HYP | PTE_RDONLY)
-+#define PAGE_HYP_RO		__pgprot(_HYP_PAGE_DEFAULT | PTE_HYP | PTE_RDONLY | PTE_HYP_XN)
- #define PAGE_HYP_DEVICE		__pgprot(PROT_DEVICE_nGnRE | PTE_HYP)
- 
- #define PAGE_S2			__pgprot(PROT_DEFAULT | PTE_S2_MEMATTR(MT_S2_NORMAL) | PTE_S2_RDONLY)
- #define PAGE_S2_DEVICE		__pgprot(PROT_DEFAULT | PTE_S2_MEMATTR(MT_S2_DEVICE_nGnRE) | PTE_S2_RDONLY | PTE_UXN)
- 
--#define PAGE_NONE		__pgprot(((_PAGE_DEFAULT) & ~PTE_VALID) | PTE_PROT_NONE | PTE_RDONLY | PTE_PXN | PTE_UXN)
-+#define PAGE_NONE		__pgprot(((_PAGE_DEFAULT) & ~PTE_VALID) | PTE_PROT_NONE | PTE_RDONLY | PTE_NG | PTE_PXN | PTE_UXN)
- #define PAGE_SHARED		__pgprot(_PAGE_DEFAULT | PTE_USER | PTE_NG | PTE_PXN | PTE_UXN | PTE_WRITE)
- #define PAGE_SHARED_EXEC	__pgprot(_PAGE_DEFAULT | PTE_USER | PTE_NG | PTE_PXN | PTE_WRITE)
- #define PAGE_READONLY		__pgprot(_PAGE_DEFAULT | PTE_USER | PTE_RDONLY | PTE_NG | PTE_PXN | PTE_UXN)
++#endif /* __ASSEMBLY__ */
+ #endif /* __ASM_PROCESSOR_H */
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -28,7 +28,7 @@
+ #include <asm/errno.h>
+ #include <asm/esr.h>
+ #include <asm/irq.h>
+-#include <asm/memory.h>
++#include <asm/processor.h>
+ #include <asm/ptrace.h>
+ #include <asm/thread_info.h>
+ #include <asm/asm-uaccess.h>
