@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2268eItZ457pa2iXH5ouxVqqcu4yYFjmWYtT0MXGboIyJ52NJPdfvSkm8iuDVPCCwexZ8ITk
-ARC-Seal: i=1; a=rsa-sha256; t=1518708807; cv=none;
+X-Google-Smtp-Source: AH8x226AbR1D7w7xc5Ra59Psf3v0FozqRFqDejaYupiQ691typfvJoKl5biPxZ7jLZvCHO1jERWb
+ARC-Seal: i=1; a=rsa-sha256; t=1518708804; cv=none;
         d=google.com; s=arc-20160816;
-        b=G1PwKEys9fxqPFq0dudmZaNAqbgnCW/tIGxuwJj48cGfsZ0ym2hNerkj9igRQkonYa
-         BMJCYZ31xnRzUw/ugdT7ekghmMv7T3XeTnF40UVCZYLK7ggFJUZT1sy3WkRXsY09/5aa
-         tIN9FubPfk/i3hHny6s0q1OW5wIV4fXsTy1MT3NILMoYE3okQ1SgFY9DgwVhw9EiJEj6
-         xJEX8ZKup73MoXbmgTiVDpxjmb/GUI30C5TIpUr8zBWwrxdQuNSbLM85OvogOjn/kMns
-         ZMjWOU/+kphbVXFhrMrhiCfvAOtggwrYSfghUcFMdZqTKBqq/N9s/BadN33OJgQM/clc
-         p14g==
+        b=Qf9OnVCejgdIzop641XdoJtkCb2lEajGEy23aaHThM5Qpi2gWDio38miXY8DqYS1CZ
+         pmoadCk/awgNnMR9v2wBzmesumNmv4Y3YWlal/hRJhZwbbOZ01FaBWSgkwr4jbTn8hvB
+         pFLVB+mpQvkRmPizjCOn29gFSdV5RbsIcAliNrLEK7N4+JeRziOM/oeVYkQpVRp7VJcf
+         KCeBsBgXbkZL4JqfRt/yZ5v32JETZdGUF7zRLqZ9tY7lyfNVNf8XEHv0HQYhZJUDeHvw
+         vUPoMtLB05uGB9Ab6L1eKqmCIk5g6K/AD+WBVQ0NFsaIH0Nw4ygCpQljgTVP6XaRIExo
+         upQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=t4RJJX0xGW6cTE+CAwsKnEKmhEwtuEKcwpoRdTRKQ9M=;
-        b=WpHVy/aj4yd3AePKKGk4NIl3kq4QAI3ZqOspCN54lbQRYlg+pZjBl93crDZo+ntc06
-         9uZ8WZ1Hh4OXTrXLPtW9IfxzX1ENxU44vIVOErYNmGd0Ok9X7LtN2KmXOSrbivSlDOp3
-         +5d4mFab9v5Q2jazD2S/lz/vyVd5PRzLzBSceYlBgkBMnIAe0tKtwBYTbIwMoFb7PH1/
-         8ViewBiU3ZY4w4F/MpP6/H9riF95r1f3L+6H5sS0cetCEgBs6/Mom0SWuj7nmYHbuR8Y
-         qGr31n9n26y7ZURboI+XwYX+SgXrspW6EM/I9FNdJuczUXYRGKWa/R5Y1brvMxS0hQOV
-         bowg==
+        bh=adhXuVbzqJL6JSSmsz9r2dz4X/bMorp917Lls/zxCnc=;
+        b=p49LVUO3wsJB5nGAj23Z60zkr+kqfW6XWEElCNVUlt7D9GSOlJxWoDX/lpxPd/Xjou
+         vkXjjqJhOY8B3Mv4JuxXR4zSGXlvvCXhueuYH/ekwoGBdfyOv9mIJP2iZ6KbcmzLwMHR
+         ld9Gs7bijFYjuHL7LiHHiN8lfXn+cZcFB1eiaPwfUmdk2xXe+70zpXPvqHgy8kObndjV
+         NJ+ftv4vJuQ/8GONHhQuFUHE/p8DeY5yU9Qh0qffd+L/FK0qQtZ/0e+9+5nN071mLB9w
+         5G3co1ZwxfKosQGfZEOYEaPjvfylkLp8GbN6cMptVHgVgwYXkCmOAak6G6q8h7zLUa2F
+         yPtw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Marc Zyngier <marc.zyngier@arm.com>,
 	Will Deacon <will.deacon@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 051/195] [Variant 3/Meltdown] arm64: mm: Permit transitioning from Global to Non-Global without BBM
-Date: Thu, 15 Feb 2018 16:15:42 +0100
-Message-Id: <20180215151708.289611212@linuxfoundation.org>
+Subject: [PATCH 4.14 085/195] [Variant 2/Spectre-v2] arm64: KVM: Make PSCI_VERSION a fast path
+Date: Thu, 15 Feb 2018 16:16:16 +0100
+Message-Id: <20180215151709.958840909@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481606997145686?=
-X-GMAIL-MSGID: =?utf-8?q?1592481606997145686?=
+X-GMAIL-THRID: =?utf-8?q?1592481604029553131?=
+X-GMAIL-MSGID: =?utf-8?q?1592481604029553131?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,32 +50,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
 
-Commit 4e6020565596 upstream.
+Commit 90348689d500 upstream.
 
-Break-before-make is not needed when transitioning from Global to
-Non-Global mappings, provided that the contiguous hint is not being used.
+For those CPUs that require PSCI to perform a BP invalidation,
+going all the way to the PSCI code for not much is a waste of
+precious cycles. Let's terminate that call as early as possible.
 
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/mm/mmu.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/kvm/hyp/switch.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -117,6 +117,10 @@ static bool pgattr_change_is_safe(u64 ol
- 	if ((old | new) & PTE_CONT)
- 		return false;
+--- a/arch/arm64/kvm/hyp/switch.c
++++ b/arch/arm64/kvm/hyp/switch.c
+@@ -17,6 +17,7 @@
  
-+	/* Transitioning from Global to Non-Global is safe */
-+	if (((old ^ new) == PTE_NG) && (new & PTE_NG))
-+		return true;
+ #include <linux/types.h>
+ #include <linux/jump_label.h>
++#include <uapi/linux/psci.h>
+ 
+ #include <asm/kvm_asm.h>
+ #include <asm/kvm_emulate.h>
+@@ -322,6 +323,18 @@ again:
+ 	if (exit_code == ARM_EXCEPTION_TRAP && !__populate_fault_info(vcpu))
+ 		goto again;
+ 
++	if (exit_code == ARM_EXCEPTION_TRAP &&
++	    (kvm_vcpu_trap_get_class(vcpu) == ESR_ELx_EC_HVC64 ||
++	     kvm_vcpu_trap_get_class(vcpu) == ESR_ELx_EC_HVC32) &&
++	    vcpu_get_reg(vcpu, 0) == PSCI_0_2_FN_PSCI_VERSION) {
++		u64 val = PSCI_RET_NOT_SUPPORTED;
++		if (test_bit(KVM_ARM_VCPU_PSCI_0_2, vcpu->arch.features))
++			val = 2;
 +
- 	return ((old ^ new) & ~mask) == 0;
- }
- 
++		vcpu_set_reg(vcpu, 0, val);
++		goto again;
++	}
++
+ 	if (static_branch_unlikely(&vgic_v2_cpuif_trap) &&
+ 	    exit_code == ARM_EXCEPTION_TRAP) {
+ 		bool valid;
