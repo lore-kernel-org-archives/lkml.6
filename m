@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2179907-1518720145-2-7110416264369030286
+X-Cyrus-Session-Id: sloti22d1t05-2178418-1518720139-2-7520050818960942640
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720144; b=JvEm/RI3BFcTSV0YvfEUoAsCEynlW1X0cxa0YJI1C55RnLp
-    hJM1QonoWzNct5QbYIVddVGxdL5Z+zu4c50Efm9tn2/6qILBdxIK+LLoLzE5utBO
-    o/ssXDiAa2d9LEtF73F36LROFj17ACNoeKJdPkMIY3F8tU/faHAk/SPHaebSHRrW
-    HUD+nbmA92sGXxe8hXPBct81hbiuZ79m9cPtWc/wNWJEmxi29aJuroUzLI8m72hr
-    hdrlbfDR9gtzE4yubcG1p3RfmUkYK0FzuV8q3w45Iq40Od4dgOoD4Pzfto5VwkX4
-    tcOEVV2q6k32Wntzt25n3CcDCLQ2P9mM1xOGHSw==
+    t=1518720139; b=R5JcFlea8SrRg5PVNU15ocwjE4OS84E+gZgrd9pEh0SiH0W
+    Ll5sqzNdVvH9o8YyZPlQy4xMEEGthfQ5BwktNCYk3E/sUT2aFNvkqvgV/fIPzdCr
+    HWKF4m5/wvtC1PySzGt762UMhS4dpvMvnRz4RqJZTc+Jx8d6HlCle/u0+bnGW+CK
+    cpeoQ+ml0wwr+/UZocV9Jr9UwhoQGBDFnOVLw1cuN6RKiymNlP/oRVUR70fZ/5b+
+    Xy+kwHza0mgfq4rVQOY2p/sxgdMREMwqmvzwWeF13nqaFpsof3vI4T1Z7gbXq8ck
+    FuvfsKDMZe7Y4wsdsCBpDrNp4uWc0Bqu/LcW/bQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720144; bh=E50h4MA41GT56MYs7sOz3dhHP8
-    wIOsuZR58+cf8zwp0=; b=LDHbONest9Wq2KOsoTF8aRqR2mjbs9dQYOFBelxcJK
-    jQ6rZpqFw9ZXV3xFbNsBTm6rjR1cUHVQN8/vo9GgwfcG+UbWc1sy56uLBwLlalJo
-    qF4G/I6TPQYt9TPr/bASqTNj2SgMWSsJVyTYfsIqn7d1jSt1DBH36hXcWcd7jjit
-    bl56RIC+WAJN3tLeaayM+X7jFVLmJ4KaSIm/M13Cg3XmutydImn2eoWMmEvA5m0Q
-    8V8/OBDFKsXduE/sp7K48Cvuef7DfJwKr4uodBYNKuXDBXxQ2cHfLAFAKOtFtJ+l
-    6kwHPqzeVpKGrrRetvNi2jny3CvyBAXqbGaZYKrCGiUg==
+    :list-id; s=arctest; t=1518720139; bh=r21UI0UVPHiIKEdbrQO4VgIsO5
+    ynKosgFrCTyVpLM/I=; b=di+xbYHOLF26FUz1QZu5DIEPk94YdK8DhuqJGD7Q7F
+    fGYFll4SBs8z/WZCw+Y+srBZo/J1t3+SIYnoHxHmFPBH0v6uI1818XEuiDpGLVFY
+    wmVJe4NPDMcNeuvwdQK+j+C/koExL1aVOFOvPpZKWq5X8FGKhIme4RVIHEGvZmFk
+    0fGoSwyQKD/gGNPXe2fF+5t0LpVNBOQtm48jfe2dkJoFXFMb+hOhPjWqdw7XTFRx
+    uVyMunqAHSM+7mWmS/3B3k4foyYOtk1dRNfsdieNKDuD8NkTpUiXo3vYrgOHLmQy
+    Q+RdpQSxQbS3E9vqTo4LqV1G3TeRj9cZFptyKNVepdvA==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,20 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161947AbeBOPXk (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:23:40 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51310 "EHLO
+        id S1162688AbeBOSl6 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:41:58 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51424 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162688AbeBOPXe (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:34 -0500
+        with ESMTP id S1162709AbeBOPXm (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:42 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Ivan Vecera <ivecera@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.4 063/108] kernfs: fix regression in kernfs_fop_write caused by wrong type
-Date: Thu, 15 Feb 2018 16:17:00 +0100
-Message-Id: <20180215151231.206819040@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.4 067/108] crypto: hash - introduce crypto_hash_alg_has_setkey()
+Date: Thu, 15 Feb 2018 16:17:04 +0100
+Message-Id: <20180215151231.745826608@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -78,41 +77,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ivan Vecera <ivecera@redhat.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit ba87977a49913129962af8ac35b0e13e0fa4382d upstream.
+commit cd6ed77ad5d223dc6299fb58f62e0f5267f7e2ba upstream.
 
-Commit b7ce40cff0b9 ("kernfs: cache atomic_write_len in
-kernfs_open_file") changes type of local variable 'len' from ssize_t
-to size_t. This change caused that the *ppos value is updated also
-when the previous write callback failed.
+Templates that use an shash spawn can use crypto_shash_alg_has_setkey()
+to determine whether the underlying algorithm requires a key or not.
+But there was no corresponding function for ahash spawns.  Add it.
 
-Mentioned snippet:
-...
-len = ops->write(...); <- return value can be negative
-...
-if (len > 0)           <- true here in this case
-        *ppos += len;
-...
+Note that the new function actually has to support both shash and ahash
+algorithms, since the ahash API can be used with either.
 
-Fixes: b7ce40cff0b9 ("kernfs: cache atomic_write_len in kernfs_open_file")
-Acked-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/kernfs/file.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ crypto/ahash.c                 |   11 +++++++++++
+ include/crypto/internal/hash.h |    2 ++
+ 2 files changed, 13 insertions(+)
 
---- a/fs/kernfs/file.c
-+++ b/fs/kernfs/file.c
-@@ -272,7 +272,7 @@ static ssize_t kernfs_fop_write(struct f
- {
- 	struct kernfs_open_file *of = kernfs_of(file);
- 	const struct kernfs_ops *ops;
--	size_t len;
-+	ssize_t len;
- 	char *buf;
+--- a/crypto/ahash.c
++++ b/crypto/ahash.c
+@@ -637,5 +637,16 @@ struct hash_alg_common *ahash_attr_alg(s
+ }
+ EXPORT_SYMBOL_GPL(ahash_attr_alg);
  
- 	if (of->atomic_write_len) {
++bool crypto_hash_alg_has_setkey(struct hash_alg_common *halg)
++{
++	struct crypto_alg *alg = &halg->base;
++
++	if (alg->cra_type != &crypto_ahash_type)
++		return crypto_shash_alg_has_setkey(__crypto_shash_alg(alg));
++
++	return __crypto_ahash_alg(alg)->setkey != NULL;
++}
++EXPORT_SYMBOL_GPL(crypto_hash_alg_has_setkey);
++
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("Asynchronous cryptographic hash type");
+--- a/include/crypto/internal/hash.h
++++ b/include/crypto/internal/hash.h
+@@ -91,6 +91,8 @@ static inline bool crypto_shash_alg_has_
+ 	return alg->setkey != shash_no_setkey;
+ }
+ 
++bool crypto_hash_alg_has_setkey(struct hash_alg_common *halg);
++
+ int crypto_init_ahash_spawn(struct crypto_ahash_spawn *spawn,
+ 			    struct hash_alg_common *alg,
+ 			    struct crypto_instance *inst);
