@@ -1,66 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752014AbeBOFJ0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 00:09:26 -0500
-Received: from ozlabs.org ([103.22.144.67]:37671 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750730AbeBOFJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 00:09:24 -0500
-Date: Thu, 15 Feb 2018 16:09:22 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Progyan Bhattacharya <bprogyan@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        narmstrong@baylibre.com, akpm@linux-foundation.org,
-        Arnd Bergmann <arnd@arndb.de>, Daniel Golle <daniel@makrotopia.org>,
-        Joe Perches <joe@perches.com>
-Subject: Re: [PATCH] Build: Scripts/Makefile: Remove Repeated Lines
-Message-ID: <20180215160922.39ea6c5d@canb.auug.org.au>
-In-Reply-To: <CAGyWO1-356ncU=122yrqCoL96pCVfaqJwdFvkmqfot3fzVF6pg@mail.gmail.com>
-References: <20180214092558.5846-1-progyanb@acm.org>
-        <20180214224937.3f2feb80@canb.auug.org.au>
-        <CAGyWO1-9scERtpPw5CCwQcUbCU0SpcqpNq2eiBWRtwpRC-kB-A@mail.gmail.com>
-        <CAGyWO1-356ncU=122yrqCoL96pCVfaqJwdFvkmqfot3fzVF6pg@mail.gmail.com>
+        id S1751507AbeBOFNP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 00:13:15 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:55782 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750713AbeBOFNN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 00:13:13 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 351D760585
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH v3 3/3] arm64: dts: sdm845: Add serial console support
+To: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Doug Anderson <dianders@chromium.org>
+Cc: Andy Gross <andy.gross@linaro.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, evgreen@chromium.org
+References: <20180212062832.2791-1-rnayak@codeaurora.org>
+ <20180212062832.2791-4-rnayak@codeaurora.org>
+ <CAD=FV=UXrmpsK3k+8yZCqVi6S+c_3icPUViDST+shnrQW1A6EA@mail.gmail.com>
+ <20180214191125.GD93895@bjorns-mbp-2.lan>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <a7008b8a-1c07-6a49-f586-cea88a6e9a18@codeaurora.org>
+Date: Thu, 15 Feb 2018 10:43:07 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180214191125.GD93895@bjorns-mbp-2.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Progyan,
 
-On Thu, 15 Feb 2018 10:04:18 +0530 Progyan Bhattacharya <bprogyan@gmail.com> wrote:
->
-> I did some ground work and found this particular commit that causing the
-> error.
-> 
-> Commit Hash: d96977a8c2266792397ed9814bb84b5129a278ad
 
-That hash does not appear in linux-next (or Linus' tree).
+On 02/15/2018 12:41 AM, Bjorn Andersson wrote:
+> [..]
+>>> +
+>>> +               qup_1: geni-se@ac0000 {
+>> Color me confused.  So you're saying here that this is "qup_1".
+>> ...but above you turn the pinmux for pins "GPIO4" and "GPIO5" to
+>> "qup9", right?  So UART2 is on "qup 1" and "qup 9"?
+>>
+>> ...OK, so I stared at manuals a bunch more, and _maybe_ I get it.
+>> Maybe there are 3 "QUP v3 modules" each of which handles up to 8
+>> "QUP"s.  So QUP 9 is on "QUP module 1", is that right?  If everyone
+>> understands this already and it's just me that's confused then I guess
+>> you can just ignore this comment.  However, if you can think of any
+>> better alias than "qup_1" that makes this less confusing then that
+>> would make me extra happy.  Like maybe "qupv3_id_1" to match the
+>> manual?
+> This is indeed a source of confusion, in particular since there tend to
+> be different numbering depending on what part of the puzzle you look at.
+> But you're right that each QUP has a number of engines, each one being a
+> UART/I2C/SPI controller.
+> 
+> I don't see a reason for labeling this particular node though, aliases
+> references individual engines, not the wrapper.
 
-> Commit Body:
-> 
-> kasan: rework Kconfig settings
-> 
-> We get a lot of very large stack frames using gcc-7.0.1 with the default
-> -fsanitize-address-use-after-scope --param asan-stack=1 options, which can
-> easily cause an overflow of the kernel stack, e.g....
-> 
-> Author(s):
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> Cc: Alexander Potapenko <glider@google.com>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Andrey Konovalov <andreyknvl@google.com>
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+makes sense, I'll just drop the label.
 
-That patch is in Linus' tree now (was in linux-next) but has SHA1 e7c52b84fb18
 
 -- 
-Cheers,
-Stephen Rothwell
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
