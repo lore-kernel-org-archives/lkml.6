@@ -1,40 +1,37 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225BWL2ULnNPpJtJRMJJ5k/kM26h7SzGdxOCWV98fGovowIOgmbuSJbQHscpdgtan6Rlz7HP
-ARC-Seal: i=1; a=rsa-sha256; t=1518709031; cv=none;
+X-Google-Smtp-Source: AH8x225HA47VWdVGoEOE/eRhcUUEqUjS81JR3VU7Po4IaRSmxX5fyCPxiiOCR+SK/IIpvpuDeU8a
+ARC-Seal: i=1; a=rsa-sha256; t=1518709028; cv=none;
         d=google.com; s=arc-20160816;
-        b=mwe1bn+XAKq5CyrqcNwE7VCw2eVP4pzlb5EhZ6p4y3Dn0zPs14dM4XGM1LnY6/OVhj
-         A+oZlpNfX6HxoJdUx5nmcruE4faVhbPd6r25ltlr2vBf2d8sspCcBaGU5//I6GR8G2Dj
-         9pfWZuflStAIv6GVXg+BfM8GMjeloIUcE9XeeRcp6ICpcSub0VdKsVK+jNrG+zmvCeid
-         9owctc5/axDDNnKacX/qe31VYpHAjd80rJfruWTP5abwQwSBadEwlmguS5dBZFUh/Id4
-         rmrxLzFt0rvY8oTxslkxvWAo4G9UuqCP5HXnu0fPwrxp4CoIikDlq87SA1162PWxhutC
-         4RUg==
+        b=0CmC+S98rvrFrAwbFcskXghBGVy/WgJSgaLvOhxen/ni8+5KFrKPAG/nKFEbMj1gSK
+         OBavhoryhLr9LpQXgDKfn+yet+o0Plv3GJ9lZNQeXquHlyAZNg8HGJTHZPigwNPX/6X6
+         rGHJ6fY4nHNBfA/6w7QorafyvFTgf/tMuuS9ZejFIF2F/fsv3u1wEbCzmyWTnFmg49V9
+         Ubm0+QSOUChNmxlOb/0E1rjrBI3CKOCgew0/McKtxYzn4VzvqhJ1beaWXGWFaWa3C/P/
+         0nfx1FTKoCjdk98rRs0z+EBSln+ReH4HDwlcu5DmxEX+TMPW8sBVZEDCsYvcLukFxsrU
+         r89Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rC+AZXzDSW5X84KXdzrzxXkxln0tRijlF9CxlQpkJPA=;
-        b=iCF4q3viUTw6U/afZZhsKe30XYPtoHKRotwokgnrYSjR3et8yQGa8grCr2skZPZMhe
-         T9mbHRPjEL8Q1auUSQ9XoUXSf8FNCbQKnUbDMr6DBERmxr7upWcXnhzGxOB7qzKaya0G
-         n8uv8XQYPVkXPTLVapK+CDFBVfXkfnjseOodQVCzGox+oxI6g1V3svf6++wxUGFWBvQU
-         CCt08ajrnpk0QeFwl+DpEM4KUmifi/KxEdo0D0HIele59B0xeVfY8Kz8o5Zb0ewMJnih
-         rXq/cdLYZ+Ipp3hYXUndk9iURgcNdNUvW3SASlucTjZMDXSvqYGhkoK03cX2ToKDRpnO
-         QhCA==
+        bh=oFfi7fIDgjWNOIOfuA+DuTv+xn548QXGmshoi7PYeT4=;
+        b=qstaLQl344w5A1wNTfbhTYhh7RdmjJR0DzyyoBTzA5kB/R74yXpDrAd66hZwu8LcOk
+         FE/v/Rg8jg7cOxALhFCdO5xMsU+KGJ++tGnssIv7Gh6enSExkBixYbaWzHgL4M5YZNqw
+         wDtHnav2gSJdzMvNnPX3fauDFpV5fM0k3r8fZUW3hFV1HJ528U6lBL0Hst6CUwX8TX/G
+         gZJkwMT6sNdBKlvqudj/nxf3RsObRH5P/8o9nOD4jUg7b8/Uvh4ShimtnT4J3cERa8Tm
+         tRX0XMxuykp13npd2ve9IwX9Fz2HqihOmhSS4AHs3NnkN/hud7leUgXy/wbq+OItpD38
+         K0zQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Leif Liddy <leif.linux@gmail.com>,
-	Matthias Kaehlcke <mka@chromium.org>,
-	Brian Norris <briannorris@chromium.org>,
-	Daniel Drake <drake@endlessm.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.14 159/195] Revert "Bluetooth: btusb: fix QCA Rome suspend/resume"
-Date: Thu, 15 Feb 2018 16:17:30 +0100
-Message-Id: <20180215151713.896685414@linuxfoundation.org>
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.14 121/195] media: v4l2-ioctl.c: dont copy back the result for -ENOTTY
+Date: Thu, 15 Feb 2018 16:16:52 +0100
+Message-Id: <20180215151711.759666809@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481105470680951?=
-X-GMAIL-MSGID: =?utf-8?q?1592481841747192878?=
+X-GMAIL-THRID: =?utf-8?q?1592480999261182610?=
+X-GMAIL-MSGID: =?utf-8?q?1592481838761210908?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,49 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit 7d06d5895c159f64c46560dc258e553ad8670fe0 upstream.
+commit 181a4a2d5a0a7b43cab08a70710d727e7764ccdd upstream.
 
-This reverts commit fd865802c66bc451dc515ed89360f84376ce1a56.
+If the ioctl returned -ENOTTY, then don't bother copying
+back the result as there is no point.
 
-This commit causes a regression on some QCA ROME chips. The USB device
-reset happens in btusb_open(), hence firmware loading gets interrupted.
-
-Furthermore, this commit stops working after commit
-("a0085f2510e8976614ad8f766b209448b385492f Bluetooth: btusb: driver to
-enable the usb-wakeup feature"). Reset-resume quirk only gets enabled in
-btusb_suspend() when it's not a wakeup source.
-
-If we really want to reset the USB device, we need to do it before
-btusb_open(). Let's handle it in drivers/usb/core/quirks.c.
-
-Cc: Leif Liddy <leif.linux@gmail.com>
-Cc: Matthias Kaehlcke <mka@chromium.org>
-Cc: Brian Norris <briannorris@chromium.org>
-Cc: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Reviewed-by: Brian Norris <briannorris@chromium.org>
-Tested-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/bluetooth/btusb.c |    6 ------
- 1 file changed, 6 deletions(-)
+ drivers/media/v4l2-core/v4l2-ioctl.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -3099,12 +3099,6 @@ static int btusb_probe(struct usb_interf
- 	if (id->driver_info & BTUSB_QCA_ROME) {
- 		data->setup_on_usb = btusb_setup_qca;
- 		hdev->set_bdaddr = btusb_set_bdaddr_ath3012;
--
--		/* QCA Rome devices lose their updated firmware over suspend,
--		 * but the USB hub doesn't notice any status change.
--		 * Explicitly request a device reset on resume.
--		 */
--		set_bit(BTUSB_RESET_RESUME, &data->flags);
- 	}
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -2892,8 +2892,11 @@ video_usercopy(struct file *file, unsign
  
- #ifdef CONFIG_BT_HCIBTUSB_RTL
+ 	/* Handles IOCTL */
+ 	err = func(file, cmd, parg);
+-	if (err == -ENOIOCTLCMD)
++	if (err == -ENOTTY || err == -ENOIOCTLCMD) {
+ 		err = -ENOTTY;
++		goto out;
++	}
++
+ 	if (err == 0) {
+ 		if (cmd == VIDIOC_DQBUF)
+ 			trace_v4l2_dqbuf(video_devdata(file)->minor, parg);
