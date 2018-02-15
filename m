@@ -1,60 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968060AbeBOM2i (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 07:28:38 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:45225 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031251AbeBOM1S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 07:27:18 -0500
-X-Google-Smtp-Source: AH8x226roAy6lQ+dY0h1pMVbS8BEgDU8tilXMyQ8lPnufK52YeuxseCA7qJ9bAarhV02qhV/e+vI5A==
-From: srinivas.kandagatla@linaro.org
-To: vinod.koul@intel.com, andy.gross@linaro.org, dmaengine@vger.kernel.org
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, david.brown@linaro.org,
-        dan.j.williams@intel.com, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-soc@vger.kernel.org, yanhe@quicinc.com, ramkri@qti.qualcomm.com,
-        sdharia@quicinc.com,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v3 1/5] dmaengine: qcom: bam_dma: make bam clk optional
-Date: Thu, 15 Feb 2018 12:25:07 +0000
-Message-Id: <20180215122511.13517-2-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180215122511.13517-1-srinivas.kandagatla@linaro.org>
-References: <20180215122511.13517-1-srinivas.kandagatla@linaro.org>
+        id S968082AbeBOM27 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 07:28:59 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35500 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S968029AbeBOM0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 07:26:50 -0500
+From: Jiri Olsa <jolsa@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH 8/9] perf tools: Do not create kernel maps in sample__resolve
+Date: Thu, 15 Feb 2018 13:26:34 +0100
+Message-Id: <20180215122635.24029-9-jolsa@kernel.org>
+In-Reply-To: <20180215122635.24029-1-jolsa@kernel.org>
+References: <20180215122635.24029-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+There's no need for kernel maps to be allocated at this
+point - sample processing.
 
-When BAM is remotely controlled it does not sound correct to control
-its clk on Linux side. Make it optional, so that its not mandatory
-for remote controlled BAM instances.
+We search for kernel maps using the kernel map_groups in
+machine::kmaps which is static. If vmlinux maps for any
+reason still don't exist, the search correctly fails
+because they are not in the map group.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Link: http://lkml.kernel.org/n/tip-f1swg55ooc3sihcvadgzkw1z@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- drivers/dma/qcom/bam_dma.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ tools/perf/util/event.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
-index d076940e0c69..b79691fcc82d 100644
---- a/drivers/dma/qcom/bam_dma.c
-+++ b/drivers/dma/qcom/bam_dma.c
-@@ -1233,8 +1233,12 @@ static int bam_dma_probe(struct platform_device *pdev)
- 						"qcom,controlled-remotely");
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index 4644e751a3e3..f0a6cbd033cc 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -1588,17 +1588,6 @@ int machine__resolve(struct machine *machine, struct addr_location *al,
+ 		return -1;
  
- 	bdev->bamclk = devm_clk_get(bdev->dev, "bam_clk");
--	if (IS_ERR(bdev->bamclk))
--		return PTR_ERR(bdev->bamclk);
-+	if (IS_ERR(bdev->bamclk)) {
-+		if (!bdev->controlled_remotely)
-+			return PTR_ERR(bdev->bamclk);
-+
-+		bdev->bamclk = NULL;
-+	}
- 
- 	ret = clk_prepare_enable(bdev->bamclk);
- 	if (ret) {
+ 	dump_printf(" ... thread: %s:%d\n", thread__comm_str(thread), thread->tid);
+-	/*
+-	 * Have we already created the kernel maps for this machine?
+-	 *
+-	 * This should have happened earlier, when we processed the kernel MMAP
+-	 * events, but for older perf.data files there was no such thing, so do
+-	 * it now.
+-	 */
+-	if (sample->cpumode == PERF_RECORD_MISC_KERNEL &&
+-	    machine__kernel_map(machine) == NULL)
+-		machine__create_kernel_maps(machine);
+-
+ 	thread__find_addr_map(thread, sample->cpumode, MAP__FUNCTION, sample->ip, al);
+ 	dump_printf(" ...... dso: %s\n",
+ 		    al->map ? al->map->dso->long_name :
 -- 
-2.15.1
+2.13.6
