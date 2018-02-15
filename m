@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425790AbeBOQWw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 11:22:52 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57100 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1425691AbeBOQV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:21:29 -0500
+        id S1425813AbeBOQXY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 11:23:24 -0500
+Received: from foss.arm.com ([217.140.101.70]:57078 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1424438AbeBOQV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 11:21:26 -0500
 From: Morten Rasmussen <morten.rasmussen@arm.com>
 To: peterz@infradead.org, mingo@redhat.com
 Cc: valentin.schneider@arm.com, dietmar.eggemann@arm.com,
         vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
         Morten Rasmussen <morten.rasmussen@arm.com>
-Subject: [PATCH 3/7] sched/fair: Consider misfit tasks when load-balancing
-Date: Thu, 15 Feb 2018 16:20:50 +0000
-Message-Id: <1518711654-23503-4-git-send-email-morten.rasmussen@arm.com>
+Subject: [PATCH 1/7] sched: Add static_key for asymmetric cpu capacity optimizations
+Date: Thu, 15 Feb 2018 16:20:48 +0000
+Message-Id: <1518711654-23503-2-git-send-email-morten.rasmussen@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518711654-23503-1-git-send-email-morten.rasmussen@arm.com>
 References: <1518711654-23503-1-git-send-email-morten.rasmussen@arm.com>
@@ -21,132 +21,81 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On asymmetric cpu capacity systems load intensive tasks can end up on
-cpus that don't suit their compute demand.  In this scenarios 'misfit'
-tasks should be migrated to cpus with higher compute capacity to ensure
-better throughput. group_misfit_task indicates this scenario, but tweaks
-to the load-balance code are needed to make the migrations happen.
-
-Misfit balancing only makes sense between a source group of lower
-per-cpu capacity and destination group of higher compute capacity.
-Otherwise, misfit balancing is ignored. group_misfit_task has lowest
-priority so any imbalance due to overload is dealt with first.
-
-The modifications are:
-
-1. Only pick a group containing misfit tasks as the busiest group if the
-   destination group has higher capacity and has spare capacity.
-2. When the busiest group is a 'misfit' group, skip the usual average
-   load and group capacity checks.
-3. Set the imbalance for 'misfit' balancing sufficiently high for a task
-   to be pulled ignoring average load.
-4. Pick the first cpu with the rq->misfit flag raised as the source cpu.
-5. If the misfit task is alone on the source cpu, go for active
-   balancing.
+The existing asymmetric cpu capacity code should cause minimal overhead
+for others. Putting it behind a static_key, it has been done for SMT
+optimizations, would make it easier to extend and improve without
+causing harm to others moving forward.
 
 cc: Ingo Molnar <mingo@redhat.com>
 cc: Peter Zijlstra <peterz@infradead.org>
 
 Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
 ---
- kernel/sched/fair.c | 36 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 34 insertions(+), 2 deletions(-)
+ kernel/sched/fair.c     |  3 +++
+ kernel/sched/sched.h    |  1 +
+ kernel/sched/topology.c | 10 ++++++++++
+ 3 files changed, 14 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index bdca97ea516e..0d70838ed711 100644
+index 1070803cb423..452ad2e6f1a0 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -7004,6 +7004,7 @@ struct lb_env {
- 	unsigned int		loop_max;
- 
- 	enum fbq_type		fbq_type;
-+	enum group_type		src_grp_type;
- 	struct list_head	tasks;
- };
- 
-@@ -7894,6 +7895,14 @@ static bool update_sd_pick_busiest(struct lb_env *env,
+@@ -6291,6 +6291,9 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
  {
- 	struct sg_lb_stats *busiest = &sds->busiest_stat;
+ 	long min_cap, max_cap;
  
-+	/*
-+	 * Don't try to pull misfit tasks we can't help.
-+	 */
-+	if (sgs->group_type == group_misfit_task &&
-+	    (!group_smaller_cpu_capacity(sg, sds->local) ||
-+	     !group_has_capacity(env, &sds->local_stat)))
-+		return false;
++	if (!static_branch_unlikely(&sched_asym_cpucapacity))
++		return 0;
 +
- 	if (sgs->group_type > busiest->group_type)
- 		return true;
+ 	min_cap = min(capacity_orig_of(prev_cpu), capacity_orig_of(cpu));
+ 	max_cap = cpu_rq(cpu)->rd->max_cpu_capacity;
  
-@@ -8199,8 +8208,9 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
- 	 * factors in sg capacity and sgs with smaller group_type are
- 	 * skipped when updating the busiest sg:
- 	 */
--	if (busiest->avg_load <= sds->avg_load ||
--	    local->avg_load >= sds->avg_load) {
-+	if (busiest->group_type != group_misfit_task &&
-+	    (busiest->avg_load <= sds->avg_load ||
-+	     local->avg_load >= sds->avg_load)) {
- 		env->imbalance = 0;
- 		return fix_small_imbalance(env, sds);
- 	}
-@@ -8234,6 +8244,12 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
- 		(sds->avg_load - local->avg_load) * local->group_capacity
- 	) / SCHED_CAPACITY_SCALE;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 2e95505e23c6..a06184906640 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1095,6 +1095,7 @@ DECLARE_PER_CPU(int, sd_llc_id);
+ DECLARE_PER_CPU(struct sched_domain_shared *, sd_llc_shared);
+ DECLARE_PER_CPU(struct sched_domain *, sd_numa);
+ DECLARE_PER_CPU(struct sched_domain *, sd_asym);
++extern struct static_key_false sched_asym_cpucapacity;
  
-+	/* Boost imbalance to allow misfit task to be balanced. */
-+	if (busiest->group_type == group_misfit_task) {
-+		env->imbalance = max_t(long, env->imbalance,
-+				       busiest->group_misfit_task_load);
-+	}
-+
- 	/*
- 	 * if *imbalance is less than the average load per runnable task
- 	 * there is no guarantee that any tasks will be moved so we'll have
-@@ -8300,6 +8316,10 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
- 	    busiest->group_no_capacity)
- 		goto force_balance;
+ struct sched_group_capacity {
+ 	atomic_t ref;
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 034cbed7f88b..517c57d312df 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -393,6 +393,7 @@ DEFINE_PER_CPU(int, sd_llc_id);
+ DEFINE_PER_CPU(struct sched_domain_shared *, sd_llc_shared);
+ DEFINE_PER_CPU(struct sched_domain *, sd_numa);
+ DEFINE_PER_CPU(struct sched_domain *, sd_asym);
++DEFINE_STATIC_KEY_FALSE(sched_asym_cpucapacity);
  
-+	/* Misfit tasks should be dealt with regardless of the avg load */
-+	if (busiest->group_type == group_misfit_task)
-+		goto force_balance;
-+
- 	/*
- 	 * If the local group is busier than the selected busiest group
- 	 * don't try and pull any tasks.
-@@ -8337,6 +8357,7 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
- 
- force_balance:
- 	/* Looks like there is an imbalance. Compute it */
-+	env->src_grp_type = busiest->group_type;
- 	calculate_imbalance(env, &sds);
- 	return sds.busiest;
- 
-@@ -8384,6 +8405,14 @@ static struct rq *find_busiest_queue(struct lb_env *env,
- 		if (rt > env->fbq_type)
- 			continue;
- 
-+		/*
-+		 * For ASYM_CPUCAPACITY domains with misfit tasks we ignore
-+		 * load.
-+		 */
-+		if (env->src_grp_type == group_misfit_task &&
-+		    rq->misfit_task_load)
-+			return rq;
-+
- 		capacity = capacity_of(i);
- 
- 		wl = weighted_cpuload(rq);
-@@ -8453,6 +8482,9 @@ static int need_active_balance(struct lb_env *env)
- 			return 1;
- 	}
- 
-+	if (env->src_grp_type == group_misfit_task)
-+		return 1;
-+
- 	return unlikely(sd->nr_balance_failed > sd->cache_nice_tries+2);
+ static void update_top_cache_domain(int cpu)
+ {
+@@ -420,6 +421,13 @@ static void update_top_cache_domain(int cpu)
+ 	rcu_assign_pointer(per_cpu(sd_asym, cpu), sd);
  }
  
++static void update_asym_cpucapacity(int cpu)
++{
++	if (!static_branch_unlikely(&sched_asym_cpucapacity) &&
++	    lowest_flag_domain(cpu, SD_ASYM_CPUCAPACITY))
++		static_branch_enable(&sched_asym_cpucapacity);
++}
++
+ /*
+  * Attach the domain 'sd' to 'cpu' as its base domain. Callers must
+  * hold the hotplug lock.
+@@ -1697,6 +1705,8 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
+ 
+ 		cpu_attach_domain(sd, d.rd, i);
+ 	}
++
++	update_asym_cpucapacity(cpumask_first(cpu_map));
+ 	rcu_read_unlock();
+ 
+ 	if (rq && sched_debug_enabled) {
 -- 
 2.7.4
