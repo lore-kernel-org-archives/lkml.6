@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225vmGq+Fyq4v5QETnike0YXK//Ecw/XWsHSJ/CV7lv6ykRdg7mLRsO6empHgvNWSzCN7cVT
-ARC-Seal: i=1; a=rsa-sha256; t=1518708545; cv=none;
+X-Google-Smtp-Source: AH8x225WBqovecGBJeNFAUgH65c23XNCMwY7kTD8t4kBnzFgr4jmYpt9pXase6OfEOQzYzXM5RMD
+ARC-Seal: i=1; a=rsa-sha256; t=1518708542; cv=none;
         d=google.com; s=arc-20160816;
-        b=x1rWVDMn/FAr9vBxKptq1p4C4fLsHBydCzRt/B0CPosGbAk/PzJgHtvN65v+5sDW3Z
-         7sNOQ78g6TaKYbWRiunpLTYdFR+aCXH+BOYPJtQfgiwc1kKA+Sd3VxVGQCE6lfAqFIk5
-         cYPPy7ynMbgoLn79I6E2QXh0bPokZIPtNW1u5fuVpNPkey51XE3lf/H+ZNcOTMMKD6OU
-         hlITD3WoAvgQfxul9lXg9T2t6mqMe+C8GnE/wAJHSqi04/z0uHhaP9I5a4mlsKQ1vWJZ
-         XYyvr524/IOl05wBmcM73mFWuPP1zXQ8+7t5OU9ohRoXYVLkU3j/tL9hPgXEuCvOKk+8
-         aXFw==
+        b=pHlybKg29cCfryPAJnhuEdRl3dw1sFlRsQMPBvBofRgaawtT6XRd+EuwSzh4kXl8Ac
+         FehKzD1NNKlGXnPn2EG9sBy8Vu6TxJIdoSR1DldjfWDXjuKXy6kwWM5DF6MDXuIAEPjJ
+         Ukximh1opONsNAeek4siW8+rSnxgEWRHLyQjd+tfeCz8Bh9br24B2eD3nnRe9FJW63Lo
+         WuDHu2ir4OGxt20+xVCWGCtBDTcIonc1CwtLyMqWUKTn0prbQEZu8IPzsJdcl0vyzr0V
+         7IVP1y0fVsU9hPWTTwRpULUCt1KoT+hBzRSsOoh49f7sPIQYyY71oKslgbcEcdQUj9vQ
+         lqyw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=lHA6axcQEO7/dp/tu9O6Hi/mEVqAKKZjSrj33/Xn6GM=;
-        b=SAH005IO86aPPVdleKZg+xVbKhW9ntROt75DfrJ2ARobz+TFRUpivuK93e1G0NWbJl
-         maYPt+k621o3iqYXbiuAjlaJOUUDhzyms1lEUNCMUYtRYrXmkgPPBd508Z6SOyaXu0oL
-         0U4wDOFaW/ZZdXkfoYxPimtwPwo7avLra2lYzooU4LyknBsG4RwBb/S8D8aH8u3TYRh+
-         7zgTr96r/R8/iNXguiBxsLQGsCOEeYdME3AePTDQiOZvgqMXmrnnwiTlQnOYD/x6iLfi
-         sqCk3P0JyMm/p3PK91M9vV4f6M3UXbbwEB6LD5FpKpvb8fbJpAAHTSVzxbJvcqY+hXxH
-         EgUw==
+        bh=rX4TrAITbric8WLnOHAyXG2oeUwM/qMus53sohZJrM8=;
+        b=ls/FmpAjP1Aj8KpwgZrjEfzDG6Jj3Uiro8eKWrKa6ytI7VBeB3gYSCZaDQpwuAgWQy
+         3Z3reN7aGqDHbV9jqjrDAZWNXEiNvKJIF9d5sJqUY+O0qjZoXveaEc7IJC5PYos2b+Rq
+         U04xila3hL8wfwTt9Dd/ifP7JbUwo3f14zZu11jdyVwpuOrZ/yv1t64NpV+5eHQ0RaxT
+         yWxGyrs++brNGzeigtQYr7heGprVw9sBSiWzvs5A+GMV3aIYPTe5AsC7gS/BThuVZQpN
+         X3pdxNS0DQ5ws3pB5V4WR0adK/96ulfqRmmAu0wp3XgdtwwgqaCgR2M4hMURq36wtKjY
+         uT3g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Laight <David.Laight@ACULAB.COM>,
-	Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 80/88] lib/ubsan.c: s/missaligned/misaligned/
-Date: Thu, 15 Feb 2018 16:17:47 +0100
-Message-Id: <20180215151233.530858313@linuxfoundation.org>
+	Benjamin Gaignard <benjamin.gaignard@st.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 79/88] clocksource/drivers/stm32: Fix kernel panic with multiple timers
+Date: Thu, 15 Feb 2018 16:17:46 +0100
+Message-Id: <20180215151233.379185763@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
@@ -41,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481331369811147?=
-X-GMAIL-MSGID: =?utf-8?q?1592481331369811147?=
+X-GMAIL-THRID: =?utf-8?q?1592481328881100726?=
+X-GMAIL-MSGID: =?utf-8?q?1592481328881100726?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,39 +54,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-commit b8fe1120b4ba342b4f156d24e952d6e686b20298 upstream.
+commit e0aeca3d8cbaea514eb98df1149faa918f9ec42d upstream.
 
-A vist from the spelling fairy.
+The current code hides a couple of bugs:
 
-Cc: David Laight <David.Laight@ACULAB.COM>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+ - The global variable 'clock_event_ddata' is overwritten each time the
+   init function is invoked.
+
+This is fixed with a kmemdup() instead of assigning the global variable. That
+prevents a memory corruption when several timers are defined in the DT.
+
+ - The clockevent's event_handler is NULL if the time framework does
+   not select the clockevent when registering it, this is fine but the init
+   code generates in any case an interrupt leading to dereference this
+   NULL pointer.
+
+The stm32 timer works with shadow registers, a mechanism to cache the
+registers. When a change is done in one buffered register, we need to
+artificially generate an event to force the timer to copy the content
+of the register to the shadowed register.
+
+The auto-reload register (ARR) is one of the shadowed register as well as
+the prescaler register (PSC), so in order to force the copy, we issue an
+event which in turn leads to an interrupt and the NULL dereference.
+
+This is fixed by inverting two lines where we clear the status register
+before enabling the update event interrupt.
+
+As this kernel crash is resulting from the combination of these two bugs,
+the fixes are grouped into a single patch.
+
+Tested-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Acked-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/1515418139-23276-11-git-send-email-daniel.lezcano@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/ubsan.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clocksource/timer-stm32.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/lib/ubsan.c
-+++ b/lib/ubsan.c
-@@ -281,7 +281,7 @@ static void handle_null_ptr_deref(struct
- 	ubsan_epilogue(&flags);
+--- a/drivers/clocksource/timer-stm32.c
++++ b/drivers/clocksource/timer-stm32.c
+@@ -106,6 +106,10 @@ static int __init stm32_clockevent_init(
+ 	unsigned long rate, max_delta;
+ 	int irq, ret, bits, prescaler = 1;
+ 
++	data = kmemdup(&clock_event_ddata, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
+ 	clk = of_clk_get(np, 0);
+ 	if (IS_ERR(clk)) {
+ 		ret = PTR_ERR(clk);
+@@ -156,8 +160,8 @@ static int __init stm32_clockevent_init(
+ 
+ 	writel_relaxed(prescaler - 1, data->base + TIM_PSC);
+ 	writel_relaxed(TIM_EGR_UG, data->base + TIM_EGR);
+-	writel_relaxed(TIM_DIER_UIE, data->base + TIM_DIER);
+ 	writel_relaxed(0, data->base + TIM_SR);
++	writel_relaxed(TIM_DIER_UIE, data->base + TIM_DIER);
+ 
+ 	data->periodic_top = DIV_ROUND_CLOSEST(rate, prescaler * HZ);
+ 
+@@ -184,6 +188,7 @@ err_iomap:
+ err_clk_enable:
+ 	clk_put(clk);
+ err_clk_get:
++	kfree(data);
+ 	return ret;
  }
  
--static void handle_missaligned_access(struct type_mismatch_data *data,
-+static void handle_misaligned_access(struct type_mismatch_data *data,
- 				unsigned long ptr)
- {
- 	unsigned long flags;
-@@ -322,7 +322,7 @@ void __ubsan_handle_type_mismatch(struct
- 	if (!ptr)
- 		handle_null_ptr_deref(data);
- 	else if (data->alignment && !IS_ALIGNED(ptr, data->alignment))
--		handle_missaligned_access(data, ptr);
-+		handle_misaligned_access(data, ptr);
- 	else
- 		handle_object_size_mismatch(data, ptr);
- }
