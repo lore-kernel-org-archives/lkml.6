@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225d3qDPrQYSWtbHOJpdshTCv75lqvdf/1/MVPOOt9OXnpRAVfGTd372hNa2f2wjV63jkZb4
-ARC-Seal: i=1; a=rsa-sha256; t=1518708954; cv=none;
+X-Google-Smtp-Source: AH8x225AhxAV0sUvmINdEtDAypwO8VVPLVM6+Xpa6tuV7UlRBXoarlYzvb8PBqyJizu+hbi5dmTZ
+ARC-Seal: i=1; a=rsa-sha256; t=1518708951; cv=none;
         d=google.com; s=arc-20160816;
-        b=rZyLWaEgTd74wIhKhADnNY1PfLD/10GjzXPDh7Pu/us0VQmdDk+shPAaEXQURmkElC
-         qAciOSs4Pi1+5pVB+6NaqjvoxILOM2+AxsgiiBwYxHuXCw30YOkP0Fne1tZ3aWZppBgh
-         9e4UGmykpzpAREhyCJfj4BrctYMzo8aJCddCAa+U7F/3SPFoia9C2NXoOBpyKR7sAmEV
-         bfwWgEG396nwxxp1cai/4av6WIG8UYLPdyj4YyBDDj2idgMAGmMlW3KwcMKAuHnuu00R
-         XDfGrxJbAhnqYbKLzhSOZgSxp0u0ObcjSdq2fP+81pRXp3aGrrdqshgD8Df6KP9u2Qeq
-         kOhA==
+        b=V6qNatJ7tiHsuboij1YmLAjE9AVEHlhsgcnP9573UN8iQvzPN+SqkDLzV6ca2pVdfw
+         t64NC7ZuUEe0RBqwqs5fJyRUe5X46o2D7Lv/pUR8nbF9v1Cpg2y8dPt7VteYd8kBSQQh
+         fcRCePepF3CLcTfXCAMN1L5Lyra13OjJ/1/Bn0ecCCKsMwlarndnloBIFEwPDL189l/t
+         Zy5WcbwLmmTSqOzbFwk3qnta8anbzFSMta2BUs06zoByz8p8WBl6TeF71wngYLmdnw99
+         8RvDc08BSNbuGnvS56sSQZfhLKznBGaXWIkU2G5H4uee9TZ6TPZpKxfoFt2RVE5CnsBD
+         LOeg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7BK7f1ul03aRgzqPimsH+ezci+QdHy+6jBEkE/OxoEI=;
-        b=LbGf6dDap2adDQJrgjrSIYlt/htFt+zOfdkVDHuIZAr/0lL06zHvdP9IXcWjhNtMNs
-         jFmUmoEXioASvpfZHRZgW2iTiW8JZ5uYrlLplvP+d6dbhasnYqVTjIvjVSl4F6rEgEqI
-         WAJvYc1caSK4S09OGDBgkq2eMCfzWwfJUn58i7ExDSufn9BJPedekoJvADM0HSQH+6qG
-         B0TghrUzlwztoImt+yPoijj4nChXOz9vDuJKhKJ4vvA2i0Ivepn2Met1+3GvnZLz96N2
-         OCwW0RDZffFT+S2BXlQMwqALLAxJF5OB2qZM6Gw2hZ5iLfFpP68jRndMU2fU82v6Je/8
-         r8+Q==
+        bh=WtfzdQ11VVM02uaznCl0gR1c0xCfq1MAdNS3Ofzu+hI=;
+        b=ym339QQKmGUePYr61Fiw5hElSwb5ZjNn19wtleIxHjXwNaq4VHGMS5CWcrz8fj/gNu
+         7fjLz7fEUgXaMhWmFmL89h7o6mv8qUxnOlzAJYp6EulwsRR3hYrc7s0fA2QbOBb10Yn1
+         lKiye8PCaq37DRvgzW9MIOo5YfnNNEqrpUCBEUUnQpIx1GYpCtv6RRm0DfFM595rruAp
+         vMPdwYfRV8dMTAlJ4Mu90uXbYr1beOkrAT7Jj1qUtIcKZXSYJ7+t0H3DLHqZKfJbR6Pb
+         LgvvjVBm42UefD0tbDPFNcv/kvNKTBwDmFpqlHnCnztPy1fZq26yoCkg1GeawG06DX8l
+         AOkg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,9 +27,9 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Paul Mackerras <paulus@ozlabs.org>
-Subject: [PATCH 4.14 140/195] KVM: PPC: Book3S HV: Drop locks before reading guest memory
-Date: Thu, 15 Feb 2018 16:17:11 +0100
-Message-Id: <20180215151712.792026657@linuxfoundation.org>
+Subject: [PATCH 4.14 139/195] KVM: PPC: Book3S HV: Make sure we dont re-enter guest without XIVE loaded
+Date: Thu, 15 Feb 2018 16:17:10 +0100
+Message-Id: <20180215151712.739402113@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -38,8 +38,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481759967364582?=
-X-GMAIL-MSGID: =?utf-8?q?1592481759967364582?=
+X-GMAIL-THRID: =?utf-8?q?1592481757453918742?=
+X-GMAIL-MSGID: =?utf-8?q?1592481757453918742?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,98 +49,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Paul Mackerras <paulus@ozlabs.org>
 
-commit 36ee41d161c67a6fcf696d4817a0da31f778938c upstream.
+commit 43ff3f65234061e08d234bdef5a9aadc19832b74 upstream.
 
-Running with CONFIG_DEBUG_ATOMIC_SLEEP reveals that HV KVM tries to
-read guest memory, in order to emulate guest instructions, while
-preempt is disabled and a vcore lock is held.  This occurs in
-kvmppc_handle_exit_hv(), called from post_guest_process(), when
-emulating guest doorbell instructions on POWER9 systems, and also
-when checking whether we have hit a hypervisor breakpoint.
-Reading guest memory can cause a page fault and thus cause the
-task to sleep, so we need to avoid reading guest memory while
-holding a spinlock or when preempt is disabled.
+This fixes a bug where it is possible to enter a guest on a POWER9
+system without having the XIVE (interrupt controller) context loaded.
+This can happen because we unload the XIVE context from the CPU
+before doing the real-mode handling for machine checks.  After the
+real-mode handler runs, it is possible that we re-enter the guest
+via a fast path which does not load the XIVE context.
 
-To fix this, we move the preempt_enable() in kvmppc_run_core() to
-before the loop that calls post_guest_process() for each vcore that
-has just run, and we drop and re-take the vcore lock around the calls
-to kvmppc_emulate_debug_inst() and kvmppc_emulate_doorbell_instr().
+To fix this, we move the unloading of the XIVE context to come after
+the real-mode machine check handler is called.
 
-Dropping the lock is safe with respect to the iteration over the
-runnable vcpus in post_guest_process(); for_each_runnable_thread
-is actually safe to use locklessly.  It is possible for a vcpu
-to become runnable and add itself to the runnable_threads array
-(code near the beginning of kvmppc_run_vcpu()) and then get included
-in the iteration in post_guest_process despite the fact that it
-has not just run.  This is benign because vcpu->arch.trap and
-vcpu->arch.ceded will be zero.
-
-Fixes: 579006944e0d ("KVM: PPC: Book3S HV: Virtualize doorbell facility on POWER9")
+Fixes: 5af50993850a ("KVM: PPC: Book3S HV: Native usage of the XIVE interrupt controller")
 Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kvm/book3s_hv.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ arch/powerpc/kvm/book3s_hv_rmhandlers.S |   40 ++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
---- a/arch/powerpc/kvm/book3s_hv.c
-+++ b/arch/powerpc/kvm/book3s_hv.c
-@@ -999,8 +999,6 @@ static int kvmppc_emulate_doorbell_instr
- 	struct kvm *kvm = vcpu->kvm;
- 	struct kvm_vcpu *tvcpu;
+--- a/arch/powerpc/kvm/book3s_hv_rmhandlers.S
++++ b/arch/powerpc/kvm/book3s_hv_rmhandlers.S
+@@ -1387,6 +1387,26 @@ END_FTR_SECTION_IFSET(CPU_FTR_ARCH_300)
+ 	blt	deliver_guest_interrupt
  
--	if (!cpu_has_feature(CPU_FTR_ARCH_300))
--		return EMULATE_FAIL;
- 	if (kvmppc_get_last_inst(vcpu, INST_GENERIC, &inst) != EMULATE_DONE)
- 		return RESUME_GUEST;
- 	if (get_op(inst) != 31)
-@@ -1050,6 +1048,7 @@ static int kvmppc_emulate_doorbell_instr
- 	return RESUME_GUEST;
- }
- 
-+/* Called with vcpu->arch.vcore->lock held */
- static int kvmppc_handle_exit_hv(struct kvm_run *run, struct kvm_vcpu *vcpu,
- 				 struct task_struct *tsk)
- {
-@@ -1169,7 +1168,10 @@ static int kvmppc_handle_exit_hv(struct
- 				swab32(vcpu->arch.emul_inst) :
- 				vcpu->arch.emul_inst;
- 		if (vcpu->guest_debug & KVM_GUESTDBG_USE_SW_BP) {
-+			/* Need vcore unlocked to call kvmppc_get_last_inst */
-+			spin_unlock(&vcpu->arch.vcore->lock);
- 			r = kvmppc_emulate_debug_inst(run, vcpu);
-+			spin_lock(&vcpu->arch.vcore->lock);
- 		} else {
- 			kvmppc_core_queue_program(vcpu, SRR1_PROGILL);
- 			r = RESUME_GUEST;
-@@ -1184,8 +1186,13 @@ static int kvmppc_handle_exit_hv(struct
- 	 */
- 	case BOOK3S_INTERRUPT_H_FAC_UNAVAIL:
- 		r = EMULATE_FAIL;
--		if ((vcpu->arch.hfscr >> 56) == FSCR_MSGP_LG)
-+		if (((vcpu->arch.hfscr >> 56) == FSCR_MSGP_LG) &&
-+		    cpu_has_feature(CPU_FTR_ARCH_300)) {
-+			/* Need vcore unlocked to call kvmppc_get_last_inst */
-+			spin_unlock(&vcpu->arch.vcore->lock);
- 			r = kvmppc_emulate_doorbell_instr(vcpu);
-+			spin_lock(&vcpu->arch.vcore->lock);
-+		}
- 		if (r == EMULATE_FAIL) {
- 			kvmppc_core_queue_program(vcpu, SRR1_PROGILL);
- 			r = RESUME_GUEST;
-@@ -2889,13 +2896,14 @@ static noinline void kvmppc_run_core(str
- 	/* make sure updates to secondary vcpu structs are visible now */
- 	smp_mb();
- 
-+	preempt_enable();
+ guest_exit_cont:		/* r9 = vcpu, r12 = trap, r13 = paca */
++	/* Save more register state  */
++	mfdar	r6
++	mfdsisr	r7
++	std	r6, VCPU_DAR(r9)
++	stw	r7, VCPU_DSISR(r9)
++	/* don't overwrite fault_dar/fault_dsisr if HDSI */
++	cmpwi	r12,BOOK3S_INTERRUPT_H_DATA_STORAGE
++	beq	mc_cont
++	std	r6, VCPU_FAULT_DAR(r9)
++	stw	r7, VCPU_FAULT_DSISR(r9)
 +
- 	for (sub = 0; sub < core_info.n_subcores; ++sub) {
- 		pvc = core_info.vc[sub];
- 		post_guest_process(pvc, pvc == vc);
- 	}
++	/* See if it is a machine check */
++	cmpwi	r12, BOOK3S_INTERRUPT_MACHINE_CHECK
++	beq	machine_check_realmode
++mc_cont:
++#ifdef CONFIG_KVM_BOOK3S_HV_EXIT_TIMING
++	addi	r3, r9, VCPU_TB_RMEXIT
++	mr	r4, r9
++	bl	kvmhv_accumulate_time
++#endif
+ #ifdef CONFIG_KVM_XICS
+ 	/* We are exiting, pull the VP from the XIVE */
+ 	lwz	r0, VCPU_XIVE_PUSHED(r9)
+@@ -1424,26 +1444,6 @@ guest_exit_cont:		/* r9 = vcpu, r12 = tr
+ 	eieio
+ 1:
+ #endif /* CONFIG_KVM_XICS */
+-	/* Save more register state  */
+-	mfdar	r6
+-	mfdsisr	r7
+-	std	r6, VCPU_DAR(r9)
+-	stw	r7, VCPU_DSISR(r9)
+-	/* don't overwrite fault_dar/fault_dsisr if HDSI */
+-	cmpwi	r12,BOOK3S_INTERRUPT_H_DATA_STORAGE
+-	beq	mc_cont
+-	std	r6, VCPU_FAULT_DAR(r9)
+-	stw	r7, VCPU_FAULT_DSISR(r9)
+-
+-	/* See if it is a machine check */
+-	cmpwi	r12, BOOK3S_INTERRUPT_MACHINE_CHECK
+-	beq	machine_check_realmode
+-mc_cont:
+-#ifdef CONFIG_KVM_BOOK3S_HV_EXIT_TIMING
+-	addi	r3, r9, VCPU_TB_RMEXIT
+-	mr	r4, r9
+-	bl	kvmhv_accumulate_time
+-#endif
  
- 	spin_lock(&vc->lock);
--	preempt_enable();
- 
-  out:
- 	vc->vcore_state = VCORE_INACTIVE;
+ 	mr 	r3, r12
+ 	/* Increment exit count, poke other threads to exit */
