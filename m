@@ -1,119 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424728AbeBOQNA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 11:13:00 -0500
-Received: from gateway23.websitewelcome.com ([192.185.50.119]:15492 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1425587AbeBOQM4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:12:56 -0500
-Subject: Re: [PATCH] drm/amdkfd: Use ARRAY_SIZE macro in
- kfd_build_sysfs_node_entry
-To: Oded Gabbay <oded.gabbay@gmail.com>
-Cc: Felix Kuehling <felix.kuehling@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers
-        <dri-devel@lists.freedesktop.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-References: <20180119003955.GA28885@embeddedor.com>
- <1fea2528-11a5-0210-6350-e916ebfebbdf@amd.com>
- <422e897f-4b65-10f6-4184-36b78b6ea274@embeddedor.com>
- <CAFCwf13TGeBGiS_4KiTWwbY3T23JZkWod6DJE-Mi=RmYXRr54w@mail.gmail.com>
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Message-ID: <ea676cf7-622e-1ba7-18ff-3510410261e8@embeddedor.com>
-Date: Thu, 15 Feb 2018 10:10:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1425551AbeBOQN7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 11:13:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1424375AbeBOQN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 11:13:57 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A304217D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+Date: Thu, 15 Feb 2018 17:13:52 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Levin Alexander <alexander.levin@verizon.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Hannes Frederic Sowa <hannes@stressinduktion.org>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>, Dmitry Safonov <dima@arista.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paolo Abeni <pabeni@redhat.com>, Radu Rendec <rrendec@arista.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Stanislaw Gruszka <sgruszka@redhat.com>,
+        Rik van Riel <riel@redhat.com>, Eric Dumazet <edumazet@google.com>,
+        David Miller <davem@davemloft.net>
+Subject: Re: [RFC PATCH 2/4] softirq: Per vector deferment to workqueue
+Message-ID: <20180215161349.GA6956@lerouge>
+References: <1516376774-24076-1-git-send-email-frederic@kernel.org>
+ <1516376774-24076-3-git-send-email-frederic@kernel.org>
+ <20180208174450.qjvjy752jf4ngt2g@breakpoint.cc>
 MIME-Version: 1.0
-In-Reply-To: <CAFCwf13TGeBGiS_4KiTWwbY3T23JZkWod6DJE-Mi=RmYXRr54w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.4.238
-X-Source-L: No
-X-Exim-ID: 1emM7e-003t8A-E7
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.66]) [189.175.4.238]:45678
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 15
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180208174450.qjvjy752jf4ngt2g@breakpoint.cc>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Oded,
-
-On 02/15/2018 04:08 AM, Oded Gabbay wrote:
-> Hi Gustavo,
-> The patch is queued for the merge window of kernel 4.17 (opens in
-> about 7 weeks from now).
+On Thu, Feb 08, 2018 at 06:44:52PM +0100, Sebastian Andrzej Siewior wrote:
+> On 2018-01-19 16:46:12 [+0100], Frederic Weisbecker wrote:
+> > diff --git a/kernel/softirq.c b/kernel/softirq.c
+> > index c8c6841..becb1d9 100644
+> > --- a/kernel/softirq.c
+> > +++ b/kernel/softirq.c
+> > @@ -62,6 +62,19 @@ const char * const softirq_to_name[NR_SOFTIRQS] = {
+> …
+> > +static void vector_work_func(struct work_struct *work)
+> > +{
+> > +	struct vector *vector = container_of(work, struct vector, work);
+> > +	struct softirq *softirq = this_cpu_ptr(&softirq_cpu);
+> > +	int vec_nr = vector->nr;
+> > +	int vec_bit = BIT(vec_nr);
+> > +	u32 pending;
+> > +
+> > +	local_irq_disable();
+> > +	pending = local_softirq_pending();
+> > +	account_irq_enter_time(current);
+> > +	__local_bh_disable_ip(_RET_IP_, SOFTIRQ_OFFSET);
+> > +	lockdep_softirq_enter();
+> > +	set_softirq_pending(pending & ~vec_bit);
+> > +	local_irq_enable();
+> > +
+> > +	if (pending & vec_bit) {
+> > +		struct softirq_action *sa = &softirq_vec[vec_nr];
+> > +
+> > +		kstat_incr_softirqs_this_cpu(vec_nr);
+> > +		softirq->work_running = 1;
+> > +		trace_softirq_entry(vec_nr);
+> > +		sa->action(sa);
 > 
+> You invoke the softirq handler while BH is disabled (not wrong, I just
+> state the obvious). That means, the scheduler can't preempt/interrupt
+> the workqueue/BH-handler while it is invoked so it has to wait until it
+> completes its doing.
+> In do_softirq_workqueue() you schedule multiple workqueue items (one for
+> each softirq vector) which is unnecessary because they can't preempt one
+> another and should be invoked the order they were enqueued. So it would
+> be enough to enqueue one item because it is serialized after all. So one
+> work_struct per CPU with a cond_resched_rcu_qs() while switching from one
+> vector to another should accomplish that what you have now here (not
+> sure if that cond_resched after each vector is needed). But…
 
-Awesome.
+Makes sense.
 
-Thanks for the info.
---
-Gustavo
-
-> Oded
 > 
-> On Wed, Feb 14, 2018 at 11:30 PM, Gustavo A. R. Silva
-> <garsilva@embeddedor.com> wrote:
->> Hi all,
->>
->> I was just wondering about the status of this patch.
->>
->> Thanks
->> --
->> Gustavo
->>
->>
->> On 01/19/2018 04:18 PM, Felix Kuehling wrote:
->>>
->>> Looks good. This change is Reviewed-by: Felix Kuehling
->>> <Felix.Kuehling@amd.com>
->>>
->>> Regards,
->>>     Felix
->>>
->>>
->>> On 2018-01-18 07:39 PM, Gustavo A. R. Silva wrote:
->>>>
->>>> Use ARRAY_SIZE instead of dividing sizeof array with sizeof an element.
->>>>
->>>> This issue was detected with the help of Coccinelle.
->>>>
->>>> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
->>>> ---
->>>>    drivers/gpu/drm/amd/amdkfd/kfd_topology.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
->>>> b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
->>>> index c6a7609..7783250 100644
->>>> --- a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
->>>> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
->>>> @@ -677,7 +677,7 @@ static int kfd_build_sysfs_node_entry(struct
->>>> kfd_topology_device *dev,
->>>>          }
->>>>          /* All hardware blocks have the same number of attributes. */
->>>> -       num_attrs = sizeof(perf_attr_iommu)/sizeof(struct kfd_perf_attr);
->>>> +       num_attrs = ARRAY_SIZE(perf_attr_iommu);
->>>>          list_for_each_entry(perf, &dev->perf_props, list) {
->>>>                  perf->attr_group = kzalloc(sizeof(struct kfd_perf_attr)
->>>>                          * num_attrs + sizeof(struct attribute_group),
->>>
->>>
->>
+> > +		trace_softirq_exit(vec_nr);
+> > +		softirq->work_running = 0;
+> > +	}
+> > +
+> > +	local_irq_disable();
+> > +
+> > +	pending = local_softirq_pending();
+> > +	if (pending & vec_bit)
+> > +		schedule_work_on(smp_processor_id(), &vector->work);
+> 
+> … on a system that is using system_wq a lot, it might introduced a certain
+> latency until your softirq-worker gets its turn. The workqueue will
+> spawn new workers if the current worker schedules out but until that
+> happens you have to wait. I am not sure if this is intended or whether
+> this might be a problem. I think you could argue either way depending on
+> what you currently think is more important.
+
+Indeed :)
+
+> Further, schedule_work_on(x, ) does not guarentee that the work item is
+> invoked on CPU x. It tries that but if CPU x goes down due to
+> CPU-hotplug then the workitem will be moved to random CPU. For that
+> reason we have work_on_cpu_safe() but you don't want to use that / flush
+> that workqueue while in here.
+
+Yeah, someone also reported me that hotplug issue. I didn't think workqueue
+would break the affinity but here it does. So we would need a hotplug hook
+indeed.
+
+> 
+> May I instead suggest to stick to ksoftirqd? So you run in softirq
+> context (after return from IRQ) and if takes too long, you offload the
+> vector to ksoftirqd instead. You may want to play with the metric on
+> which you decide when you want switch to ksoftirqd / account how long a
+> vector runs.
+
+Yeah that makes sense. These workqueues are too much headaches eventually.
+I'm going to try that ksoftirqd thing.
+
+Thanks.
