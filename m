@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755362AbeBOIi7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 03:38:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58016 "EHLO mail.kernel.org"
+        id S966636AbeBOIjS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 03:39:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755345AbeBOIi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 03:38:56 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8232217BB
+        id S1755353AbeBOIi7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 03:38:59 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B55AE2177F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=kbingham@kernel.org
 From: Kieran Bingham <kbingham@kernel.org>
@@ -20,9 +20,9 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 7/8] arm64: dts: renesas: r8a77995-draak: Add HDMI Out through ADV7511
-Date: Thu, 15 Feb 2018 08:38:22 +0000
-Message-Id: <1518683903-10681-8-git-send-email-kbingham@kernel.org>
+Subject: [PATCH 8/8] [PoC] arm64: dts: renesas: r8a77995-draak: Add ADV7612
+Date: Thu, 15 Feb 2018 08:38:23 +0000
+Message-Id: <1518683903-10681-9-git-send-email-kbingham@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
 References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
@@ -32,57 +32,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-Provide a device node for the ADV7511 as found on the Draak D3 platform.
-
-The ADV7511 is connected to the DU through a parallel mux chip, and is
-configurable in hardware whether it is connected to LVDS0 or LVDS1.
-
-Connect through to LVDS0 as a default implementation.
+Provide a node for the ADV7612. There is no VIN support yet, so this
+node will only instantiate the device on the I2C bus for I2C address
+testing.
 
 Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 56 ++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 43 ++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 668e246dfc5d..df0c7773cb7d 100644
+index df0c7773cb7d..d7dd471c9fde 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
 +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
 @@ -27,6 +27,17 @@
  		stdout-path = "serial0:115200n8";
  	};
  
-+	hdmi-out {
++	hdmi-in {
 +		compatible = "hdmi-connector";
 +		type = "a";
 +
 +		port {
-+			hdmi_con_out: endpoint {
-+				remote-endpoint = <&adv7511_out>;
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&adv7612_in>;
 +			};
 +		};
 +	};
 +
- 	vga {
- 		compatible = "vga-connector";
- 
-@@ -124,6 +135,39 @@
- 		reg = <0x50>;
- 		pagesize = <8>;
+ 	hdmi-out {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
+@@ -168,6 +179,38 @@
+ 			};
+ 		};
  	};
 +
-+	hdmi@39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>, <0x3f>, <0x38>, <0x3c>;
-+		reg-names = "main", "edid", "packet", "cec";
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
++	hdmi-in@4c {
++		compatible = "adi,adv7612";
++		reg = <0x4c>, <0x5a>, <0x5b>, <0x5c>, <0x5d>, <0x5e>, <0x5f>,
++		      <0x6a>, <0x6b>, <0x6c>, <0x6d>, <0x6e>, <0x6f>;
++		reg-names = "main", "avlink", "cec", "infoframe", "esdp",
++			    "dpp", "afe", "rep", "edid", "hdmi", "test",
++			    "cp", "vdp";
 +
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
++		/* ADV7612_INTn connected only to test point CP56. */
++
++		default-input = <0>;
 +
 +		ports {
 +			#address-cells = <1>;
@@ -90,15 +86,15 @@ index 668e246dfc5d..df0c7773cb7d 100644
 +
 +			port@0 {
 +				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
++				adv7612_in: endpoint {
++					remote-endpoint = <&hdmi_con_in>;
 +				};
 +			};
 +
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con_out>;
++			port@2 {
++				reg = <2>;
++				adv7612_out: endpoint {
++					// remote-endpoint = <&vin0ep2>;
 +				};
 +			};
 +		};
@@ -106,24 +102,5 @@ index 668e246dfc5d..df0c7773cb7d 100644
  };
  
  &i2c1 {
-@@ -146,6 +190,18 @@
- 	};
- };
- 
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			endpoint {
-+				remote-endpoint = <&adv7511_in>;
-+			};
-+		};
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
 -- 
 2.7.4
