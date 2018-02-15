@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1841884-1518709759-5-13325920016487716060
+X-Cyrus-Session-Id: sloti22d1t05-1841884-1518709686-2-5386180227891748845
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518709759; b=eaeiOI9jDmlGK5g6WHKEOk+Zp4vJUKo89lGWv7OosKvxQhJ
-    Fr1YSekFQTbtxim6QE2oRGE3dRcBvcbVEco4eW3bsSjwLYvcKhBeCQQMuH04RGsw
-    bNy2btLZSxh+i6EjaV6RV153H2yasAqb9bsv/vd7O2zsVF6bpATMndep4K5VEX8N
-    LDN5xim5D9ho91N3oMZhcj7XxKKQjZM/18XOywU7cfyeyNBkF8raF4VCNCTFBu5h
-    SFoDPLW5qVAvtBcnutdrnUq4eX8LbJuIKzECVvvFWTIetEY3L8td0RUyqkxY4WMg
-    tHvBYLe+3gT2KMW4sofhsxRtznzyamh6JE8Uvaw==
+    t=1518709685; b=VYDc6EfS9dZ0PfSkvvO6ikeWH7GlWDSDL2KqxzSqgOdPZN9
+    w+DaMBtmcRxQ4mpgquRZdzSVzW9dEm9WEWkDplcrtXhOiZLvjsAlZLF11lUqKnNq
+    Ae2qF15BqTyAF21Hg7FYQTRJEQPIhY3duh6y+ba7Z5K8Ey9bCp5NbVfwMSY2URlx
+    41H6t5urN8wNXpvq4Xqfdvo76/81rm1BY7B1JQckr8VCFYwWPLsYN0I5qPajd3iG
+    BTNzJ1WfQ2N6eE8EF+vTTUyGtxl1BQpz30ky1YUUwvitNpJTjtA4OGIDyfnJ18OS
+    G6VvGrN7g02e0TE4Y9HW0IrESPXdbKYuEZPDbLA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518709759; bh=o3swicdNpwaq3XLuJQ6OzuZEcc
-    Bnw0l0vqPcGE3HYzQ=; b=sptY7fs23XNHfmzRRffD5BXaqeKPDPJYFf3fBO2Xvi
-    SdTmVZ3FIhogoPrqiiQxD0OLbkxGNKbIGKGMpd25X5yQG5mVaG/Xp/3lUiGyLW4K
-    eZXR/Ay8+tIvIi1Nd8kPwQon7iNqWtPHJHCgD1Kd53nkTIIiG4u3blFPUBpShGP6
-    XTBXzOzmiN1y3nT1NhMMxWieiZ2AjVKnPHFIbfi7LxXDE/NFyj5eOUCNfOkQTySM
-    GLsUo4s6+HuSQ9+Y4CfuVd+1o5eoaB5qTuOhFYW3nkFl3ZLX/rpPXkVDB0tf7LQc
-    LIFC8yg7lDxtKzwv6hgUPM1Ti75RMfzcTJ9E7m3EfPVA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518709685; bh=7MjV7CmF9j/weCNRcn0fI4D9fB
+    fUusRbERoubk/z9ro=; b=q9JypGYdvOKXG3KrJSSwDbfZ5smx2KTxd1+xV3oree
+    qCUC7ZAv7dPhOLoLvl22vFdt4KNixlwizBE7zZtYDgrixpAUQ0oBOblVZls3Ppaw
+    emI6ENaDf8hRArfgrJTPcVUgIoXGgZOv9mY00KXrzDHJjQLfJIO3MJc7Gw+PgEY4
+    Vm+AktW/Rb13GhaabKgqc+WJrrsK370u5xUE+wpk6dNFAf+DqLIYWIgBQZL/zVBx
+    Pys8ij0vQs78CDGd+EI5+n3jGs1nraexZxI0XsZZzdw0aX3ZZJ+a716oQ9CAlvKb
+    nCgJDtkwdsBMP3fIaV6wpRlHnSiY2VY2GnfTPGzatnrQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,20 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424715AbeBOPsu (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:48:50 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36496 "EHLO
+        id S1424974AbeBOPsA (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:48:00 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36398 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424663AbeBOPsP (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:48:15 -0500
+        with ESMTP id S1424419AbeBOPr7 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:47:59 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.15 202/202] scsi: cxlflash: Reset command ioasc
-Date: Thu, 15 Feb 2018 16:18:22 +0100
-Message-Id: <20180215151723.228605143@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Matt Turner <mattst88@gmail.com>
+Subject: [PATCH 4.15 168/202] alpha: fix crash if pthread_create races with signal delivery
+Date: Thu, 15 Feb 2018 16:17:48 +0100
+Message-Id: <20180215151721.658590860@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -78,39 +77,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Uma Krishnan <ukrishn@linux.vnet.ibm.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 96cf727fe8f102bf92150b741db71ee39fb8c521 upstream.
+commit 21ffceda1c8b3807615c40d440d7815e0c85d366 upstream.
 
-In the event of a command failure, cxlflash returns the failure to the upper
-layers to process. After processing the error, when the command is queued
-again, the private command structure will not be zeroed and the ioasc could be
-stale. Per the SISLite specification, the AFU only sets the ioasc in the
-presence of a failure. Thus, even though the original command succeeds the
-second time, the command is considered a failure due to stale ioasc. This
-cycle repeats indefinitely and can cause a hang or IO failure.
+On alpha, a process will crash if it attempts to start a thread and a
+signal is delivered at the same time. The crash can be reproduced with
+this program: https://cygwin.com/ml/cygwin/2014-11/msg00473.html
 
-To fix the issue, clear the ioasc before queuing any command.
+The reason for the crash is this:
+* we call the clone syscall
+* we go to the function copy_process
+* copy process calls copy_thread_tls, it is a wrapper around copy_thread
+* copy_thread sets the tls pointer: childti->pcb.unique = regs->r20
+* copy_thread sets regs->r20 to zero
+* we go back to copy_process
+* copy process checks "if (signal_pending(current))" and returns
+  -ERESTARTNOINTR
+* the clone syscall is restarted, but this time, regs->r20 is zero, so
+  the new thread is created with zero tls pointer
+* the new thread crashes in start_thread when attempting to access tls
 
-[mkp: added Cc: stable per request]
+The comment in the code says that setting the register r20 is some
+compatibility with OSF/1. But OSF/1 doesn't use the CLONE_SETTLS flag, so
+we don't have to zero r20 if CLONE_SETTLS is set. This patch fixes the bug
+by zeroing regs->r20 only if CLONE_SETTLS is not set.
 
-Fixes: 479ad8e9d48c ("scsi: cxlflash: Remove zeroing of private command data")
-Signed-off-by: Uma Krishnan <ukrishn@linux.vnet.ibm.com>
-Acked-by: Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Matt Turner <mattst88@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/cxlflash/main.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/alpha/kernel/process.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/cxlflash/main.c
-+++ b/drivers/scsi/cxlflash/main.c
-@@ -620,6 +620,7 @@ static int cxlflash_queuecommand(struct
- 	cmd->parent = afu;
- 	cmd->hwq_index = hwq_index;
- 
-+	cmd->sa.ioasc = 0;
- 	cmd->rcb.ctx_id = hwq->ctx_hndl;
- 	cmd->rcb.msi = SISL_MSI_RRQ_UPDATED;
- 	cmd->rcb.port_sel = CHAN2PORTMASK(scp->device->channel);
+--- a/arch/alpha/kernel/process.c
++++ b/arch/alpha/kernel/process.c
+@@ -269,12 +269,13 @@ copy_thread(unsigned long clone_flags, u
+ 	   application calling fork.  */
+ 	if (clone_flags & CLONE_SETTLS)
+ 		childti->pcb.unique = regs->r20;
++	else
++		regs->r20 = 0;	/* OSF/1 has some strange fork() semantics.  */
+ 	childti->pcb.usp = usp ?: rdusp();
+ 	*childregs = *regs;
+ 	childregs->r0 = 0;
+ 	childregs->r19 = 0;
+ 	childregs->r20 = 1;	/* OSF/1 has some strange fork() semantics.  */
+-	regs->r20 = 0;
+ 	stack = ((struct switch_stack *) regs) - 1;
+ 	*childstack = *stack;
+ 	childstack->r26 = (unsigned long) ret_from_fork;
