@@ -1,77 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165173AbeBOXeh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 18:34:37 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:41089 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163785AbeBOXef (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 18:34:35 -0500
-X-Google-Smtp-Source: AH8x224FbBCM0b7qLTILY+D8C/Mf+nb6A2X2GRafIojkzyUHGE+Gl+tdvJTlqqUWdmDSg+UUJYM0+V57iawaIZRRJjI=
+        id S1164710AbeBOXgE convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 18:36:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58392 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1163785AbeBOXgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 18:36:03 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEFA521775
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AH8x227DwnkbadDf5Vsf04iYlDmtCa3CKyFCSdSbAOo0xvmuUb2BzWCxnLWEq35Si784GwsGfniUIpksW2zuzlwivxs=
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <1c5184985e422774329484153b0147c2861e91a7.1518603831.git.rgb@redhat.com>
-References: <cover.1518603831.git.rgb@redhat.com> <1c5184985e422774329484153b0147c2861e91a7.1518603831.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 15 Feb 2018 18:34:33 -0500
-Message-ID: <CAHC9VhR3u0n9ZSLHYcf0aJR=X=PLkSFPnYffz+=5v669QyasHg@mail.gmail.com>
-Subject: Re: [RFC PATCH ghak21 4/4] audit: add parent of refused symlink to audit_names
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>
+In-Reply-To: <EA6A7DA4-77FB-4A01-A1FF-AD1F0B2D7F62@gmail.com>
+References: <20180215163602.61162-1-namit@vmware.com> <20180215163602.61162-2-namit@vmware.com>
+ <CALCETrXXJ7QYtexGd56+VDGOiJvmHmes7L9tKPg7dBdJnd7zeQ@mail.gmail.com> <EA6A7DA4-77FB-4A01-A1FF-AD1F0B2D7F62@gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 15 Feb 2018 23:35:41 +0000
+X-Gmail-Original-Message-ID: <CALCETrWo6wqrm4UP=tb4ogfnkaGmVmtFG7NKmAutagm70aA1jg@mail.gmail.com>
+Message-ID: <CALCETrWo6wqrm4UP=tb4ogfnkaGmVmtFG7NKmAutagm70aA1jg@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 1/6] x86: Skip PTI when disable indication is set
+To: Nadav Amit <nadav.amit@gmail.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>, Willy Tarreau <w@1wt.eu>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 11:18 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Audit link denied events for symlinks were missing the parent PATH
-> record.  Add it.  Since the full pathname may not be available,
-> reconstruct it from the path in the nameidata supplied.
+On Thu, Feb 15, 2018 at 8:51 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
+> Andy Lutomirski <luto@kernel.org> wrote:
 >
-> See: https://github.com/linux-audit/audit-kernel/issues/21
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  fs/namei.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>> On Thu, Feb 15, 2018 at 4:35 PM, Nadav Amit <namit@vmware.com> wrote:
+>>> If PTI is disabled, we do not want to switch page-tables. On entry to
+>>> the kernel, this is done based on CR3 value. On return, do it according
+>>> to per core indication.
+>>>
+>>> To be on the safe side, avoid speculative skipping of page-tables
+>>> switching when returning the userspace. This can be avoided if the CPU
+>>> cannot execute speculatively code without the proper permissions. When
+>>> switching to the kernel page-tables, this is anyhow not an issue: if PTI
+>>> is enabled and page-tables were not switched, the kernel part of the
+>>> user page-tables would not be set.
+>>>
+>>> Signed-off-by: Nadav Amit <namit@vmware.com>
+>>> ---
+>>> arch/x86/entry/calling.h        | 33 +++++++++++++++++++++++++++++++++
+>>> arch/x86/include/asm/tlbflush.h | 17 +++++++++++++++--
+>>> arch/x86/kernel/asm-offsets.c   |  1 +
+>>> 3 files changed, 49 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+>>> index 3f48f695d5e6..5e9895f44d11 100644
+>>> --- a/arch/x86/entry/calling.h
+>>> +++ b/arch/x86/entry/calling.h
+>>> @@ -216,7 +216,14 @@ For 32-bit we have the following conventions - kernel is built with
+>>>
+>>> .macro SWITCH_TO_KERNEL_CR3 scratch_reg:req
+>>>        ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
+>>> +
+>>> +       /*
+>>> +        * Do not switch on compatibility mode.
+>>> +        */
+>>
+>> That comment should just say "if we're already using kernel CR3, don't
+>> switch" or something like that.
 >
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 0edf133..bf1c046b 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -923,6 +923,7 @@ static inline int may_follow_link(struct nameidata *nd)
->         const struct inode *inode;
->         const struct inode *parent;
->         kuid_t puid;
-> +       char *pathname;
+> ok.
 >
->         if (!sysctl_protected_symlinks)
->                 return 0;
-> @@ -945,6 +946,14 @@ static inline int may_follow_link(struct nameidata *nd)
->         if (nd->flags & LOOKUP_RCU)
->                 return -ECHILD;
+>>
+>>>        mov     %cr3, \scratch_reg
+>>> +       testq   $PTI_USER_PGTABLE_MASK, \scratch_reg
+>>> +       jz      .Lend_\@
+>>> +
+>>>        ADJUST_KERNEL_CR3 \scratch_reg
+>>>        mov     \scratch_reg, %cr3
+>>> .Lend_\@:
+>>> @@ -225,8 +232,20 @@ For 32-bit we have the following conventions - kernel is built with
+>>> #define THIS_CPU_user_pcid_flush_mask   \
+>>>        PER_CPU_VAR(cpu_tlbstate) + TLB_STATE_user_pcid_flush_mask
+>>>
+>>> +#define THIS_CPU_pti_disable \
+>>> +       PER_CPU_VAR(cpu_tlbstate) + TLB_STATE_pti_disable
+>>> +
+>>> .macro SWITCH_TO_USER_CR3_NOSTACK scratch_reg:req scratch_reg2:req
+>>>        ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
+>>> +
+>>> +       /*
+>>> +        * Do not switch on compatibility mode. If there is no need for a
+>>> +        * flush, run lfence to avoid speculative execution returning to user
+>>> +        * with the wrong CR3.
+>>> +        */
+>>
+>> Nix the "compatibility mode" stuff please.  Also, can someone confirm
+>> whether the affected CPUs actually speculate through SYSRET?  Because
+>> your LFENCE might be so expensive that it negates a decent chunk of
+>> the benefit.
 >
-> +       pathname = kmalloc(PATH_MAX + 1, GFP_KERNEL);
-> +       if (!pathname)
-> +               return -ENOMEM;
-> +       audit_inode(getname_kernel(d_absolute_path(&nd->stack[0].link, pathname,
-> +                                                  PATH_MAX + 1)),
-> +                   nd->stack[0].link.dentry, 0);
+> I will send performance numbers with in the next iteration. The LFENCE did
+> not introduce high overheads. Anyhow, it would surely be nice to remove it.
+>
+>>> +       /*
+>>> +        * Cached value of mm.pti_enable to simplify and speed up kernel entry
+>>> +        * code.
+>>> +        */
+>>> +       unsigned short pti_disable;
+>>
+>> Why unsigned short?
+>>
+>> IIRC a lot of CPUs use a slow path when decoding instructions with
+>> 16-bit operands like cmpw, so u8 or u32 could be waaaay faster than
+>> u16.
+>
+> Will do.
+>
+>>
+>>> +/* Return whether page-table isolation is disabled on this CPU */
+>>> +static inline unsigned short cpu_pti_disable(void)
+>>> +{
+>>> +       return this_cpu_read(cpu_tlbstate.pti_disable);
+>>> +}
+>>
+>> This should return bool regardless of what type lives in the struct.
+>
+> Ok. I think that it was so because I tried to support both CS64 and CS32.
+>
+>>
+>>> -       invalidate_user_asid(this_cpu_read(cpu_tlbstate.loaded_mm_asid));
+>>> +       if (!cpu_pti_disable())
+>>> +               invalidate_user_asid(this_cpu_read(cpu_tlbstate.loaded_mm_asid));
+>>
+>> This will go badly wrong if pti_disable becomes dynamic.  Can you just
+>> leave the code as it was?
+>
+> Will do.
+>
+>>
+>>>        /* If current->mm == NULL then the read_cr3() "borrows" an mm */
+>>>        native_write_cr3(__native_read_cr3());
+>>> @@ -404,7 +417,7 @@ static inline void __native_flush_tlb_single(unsigned long addr)
+>>>
+>>>        asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
+>>>
+>>> -       if (!static_cpu_has(X86_FEATURE_PTI))
+>>> +       if (!static_cpu_has(X86_FEATURE_PTI) || cpu_pti_disable())
+>>>                return;
+>>
+>> Ditto.
+>
+> As for this last one - I don’t see why. Can you please explain? If you are
+> only worried about enabling/disabling PTI dynamically, I can address this
+> specific issue by flushing the TLB when it happens.
+>
 
-Hmm, it's been a while since I've looked at the audit vfs/inode code,
-but isn't the audit_inode() call directly above effectively a
-duplicate of the audit_inode(nd->name, nd->stack[0].link.dentry, 0)
-call you added in patch 3/4?
+Simplicity.  But if the code is careful to get all the flushing right
+when the mode switches, I'm okay with keeping the optimization.
 
-> +       audit_inode(nd->name, nd->stack[0].link.dentry->d_parent, LOOKUP_PARENT);
-> +
->         audit_inode(nd->name, nd->stack[0].link.dentry, 0);
->         audit_log_link_denied("follow_link", &nd->stack[0].link);
->         return -EACCES;
-> --
-> 1.8.3.1
-
--- 
-paul moore
-www.paul-moore.com
+--Andy
