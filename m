@@ -1,75 +1,73 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2316417-1518470762-2-14057601458195312010
+X-Cyrus-Session-Id: sloti22d1t05-2662951-1518737502-2-15064397799525773296
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='iso8859-7'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518470762; b=ts9WgLgFuLVm5Vp3Bd6iq2i3PieE+Ln1PaGbNbpi4vTRXax
-    QDvjs/oBOySC8HqPizVZmLkwFqPsfgUDyAHp/q6nNnzF9GRCuB6D//PyPvRoAZy1
-    AVhRoP2BIFhX8b6W684VzFIW2A6ugLN7nfVCaTZ3KJd1gmb/fXwRgfJLtRCK/KdC
-    XqhMwV8WdCuxJwsZ794lialJWjeBbKneswuGyqnZRmCzWLLBm4jW4sqXvS1LpRdB
-    VB2YgE2IKG2CwtN9+7uUCRuveh+ZtUK9Fe1/T4yMeM/EWTLDTCyTFbIR+2O3YXs7
-    V0t685Z43aCxtJWsc3hDcZ/6A4bpcjPXoAYF3Rw==
+    t=1518737501; b=FoccrsPYMzmxxqC+qllzZcYrcg9IdmuBAU9bZjqEEkvTBRN
+    GElVxcFsZBgsHHHBMDqT2dpKbHbHFJ0JzBWzMi3DRLfPSRhP6BjljVRxbD1d6+pY
+    +LsrWscracEJ22XHMezyXGkHObl8fp78pa41NAhq5j2OZQCbhmBHY8B1sh7JEOh1
+    kG19EBij6e6x9XH8Lp66gyO/Cfa9i8Aslkiisw+w8GfZaZFQHIVirYStit69jPDJ
+    bQnJbzYPhwPcNPiqa6JNDUDDMkFbZ1ZLZ5bgkQwucU1Bg8SIxZ3gIyNNcqvfWz81
+    04wm5kW9bHKO07AG0WlhkW4OWlCasITK7nhSq7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:in-reply-to
-    :message-id:references:mime-version:content-type:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:sender; s=arctest; t=1518470762; bh=RTTpG3YnU
-    jt8lQzHKnoC98yDqttHQRatBqlw4APuFK8=; b=CiXjxA5O8LsBcyLErDndSGOCD
-    uVhBub08WwM3vUnDboQqdwvpXaKXyhBZkCiu1mZGwCQ0O8wmNkaDsfyVie4dF7Q1
-    L4qmITsp9SAYv0OSEF9nYZiY6PptBJbYYzNbrHVVLgm/FOj1gZhOlgSOcmzGymf9
-    4t3pQGZE5J5RIbiANvSxrlI60WUKJbwsxUmmxiKGIpgTKMxc4pS/akY9GtvoAp4H
-    SL31d/JtpweEaG5F5cABQl4lamHIotHXops506H7T6CGrABsmzvz8ulHq66gpjMJ
-    /waFXeAOLEjzIVosPmzSfFNhhJnhQleY4ENOrBOtLj79+SMz+ikevMe7jmbXg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=jaZ5CUNN x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=jaZ5CUNN x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    messagingengine.com; h=subject:to:references:from:message-id
+    :date:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc
+    :content-transfer-encoding:content-type:sender; s=arctest; t=
+    1518737501; bh=RcTKGMCN7tAac3YXRaYuaPJnR+hRlYoKtcWnudmY3Jk=; b=u
+    4HZcGN9Qc2Yjjh68nDVCCUGIBqlUNx/mksPNxujOAqZYE09CuTwuxgm7KQ4AZPcB
+    q5zm8hb+KAVSZQ1R9+Wp0xUTf0n8EorX1UJWLdVwJc9SW8Vu0RzYuC2OuTtQJx5j
+    fS+3F5Eirx23unocuxHmdbXIu9bpLMb8pzZf9bmBfrgTDnmKdznuav9W+x3/HLbI
+    zRwqsjwcsZDGhzXQp1NE4/6IsmDAYLCX4UsfERGNeNvd7QhPVdKa0lzDSOLszKAZ
+    c3cPUEV13cpgXn5FSflDLG8vLfwP4af6vPL1dSfuBbwVg1UcxfSqKDjtMYWaPcvj
+    Y54bAX0XH/p38pQiXngow==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=codeaurora.org header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=i0wKH3Ln;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=jaZ5CUNN x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=jaZ5CUNN x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=codeaurora.org header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=i0wKH3Ln;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 31F59607C7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org;
- dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org;
- spf=none smtp.mailfrom=lmark@codeaurora.org
-Date: Mon, 12 Feb 2018 13:25:53 -0800 (PST)
-From: Liam Mark <lmark@codeaurora.org>
-X-X-Sender: lmark@lmark-linux.qualcomm.com
-To: Dan Carpenter <dan.carpenter@oracle.com>
+X-Google-Smtp-Source: AH8x2248cxKfFTHx5uUISP6n5F8lWLJtV9eQEqBkuNr1Wt8jzG2bCLtK+fdY1RXX4JjxPsuAGhPOuQ==
 Subject: Re: [PATCH] staging: android: ion: Initialize dma_address of new sg
  list
-In-Reply-To: <20180212065620.iqlzczhqzlrmel5n@mwanda>
-Message-ID: <alpine.DEB.2.02.1802121319370.2345@lmark-linux.qualcomm.com>
+To: Liam Mark <lmark@codeaurora.org>, Dan Carpenter <dan.carpenter@oracle.com>
 References: <alpine.DEB.2.02.1802092203150.2846@lmark-linux.qualcomm.com>
  <20180212065620.iqlzczhqzlrmel5n@mwanda>
-User-Agent: Alpine 2.02 (DEB 1266 2009-07-14)
+ <alpine.DEB.2.02.1802121319370.2345@lmark-linux.qualcomm.com>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <9aa626cf-c122-55af-0c95-a9e9c12c6f19@redhat.com>
+Date: Thu, 15 Feb 2018 15:31:31 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED;
- BOUNDARY="-2046127808-1346162756-1518470754=:2345"
+In-Reply-To: <alpine.DEB.2.02.1802121319370.2345@lmark-linux.qualcomm.com>
+Content-Language: en-US
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -82,52 +80,33 @@ List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driver
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Cc: devel@driverdev.osuosl.org, linaro-mm-sig@lists.linaro.org,
  Sumit Semwal <sumit.semwal@linaro.org>, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso8859-7"; Format="flowed"
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
 Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
----2046127808-1346162756-1518470754=:2345
-Content-Type: TEXT/PLAIN; charset=ISO-8859-7
-Content-Transfer-Encoding: 8BIT
-
-
-On Mon, 12 Feb 2018, Dan Carpenter wrote:
-
-> On Fri, Feb 09, 2018 at 10:16:56PM -0800, Liam Mark wrote:
-> > Fix the dup_sg_table function to initialize the dma_address of the new
-> > sg list entries instead of the source dma_address entries.
-> > 
-> > Fixes: 17fd283f3870 ("staging: android: ion: Duplicate sg_table")
-> > Signed-off-by: Liam Mark <lmark@codeaurora.org>
-> 
-> How did you find this bug?  What are the user visible effects of this
-> bug?  I'm probably going to ask you to send a v2 patch with a new
-> changelog depending on the answers to these questions.
-
-I noticed the bug when reading through the code, I haven¢t seen any 
-visible effects of this bug.
-
->From looking at the code I don¢t see any obvious ways that this bug would 
-introduce any issues with the current code base.
-
-Liam
-
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
----2046127808-1346162756-1518470754=:2345
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
-
----2046127808-1346162756-1518470754=:2345--
+T24gMDIvMTIvMjAxOCAwMToyNSBQTSwgTGlhbSBNYXJrIHdyb3RlOgo+IAo+IE9uIE1vbiwgMTIg
+RmViIDIwMTgsIERhbiBDYXJwZW50ZXIgd3JvdGU6Cj4gCj4+IE9uIEZyaSwgRmViIDA5LCAyMDE4
+IGF0IDEwOjE2OjU2UE0gLTA4MDAsIExpYW0gTWFyayB3cm90ZToKPj4+IEZpeCB0aGUgZHVwX3Nn
+X3RhYmxlIGZ1bmN0aW9uIHRvIGluaXRpYWxpemUgdGhlIGRtYV9hZGRyZXNzIG9mIHRoZSBuZXcK
+Pj4+IHNnIGxpc3QgZW50cmllcyBpbnN0ZWFkIG9mIHRoZSBzb3VyY2UgZG1hX2FkZHJlc3MgZW50
+cmllcy4KPj4+Cj4+PiBGaXhlczogMTdmZDI4M2YzODcwICgic3RhZ2luZzogYW5kcm9pZDogaW9u
+OiBEdXBsaWNhdGUgc2dfdGFibGUiKQo+Pj4gU2lnbmVkLW9mZi1ieTogTGlhbSBNYXJrIDxsbWFy
+a0Bjb2RlYXVyb3JhLm9yZz4KPj4KPj4gSG93IGRpZCB5b3UgZmluZCB0aGlzIGJ1Zz8gIFdoYXQg
+YXJlIHRoZSB1c2VyIHZpc2libGUgZWZmZWN0cyBvZiB0aGlzCj4+IGJ1Zz8gIEknbSBwcm9iYWJs
+eSBnb2luZyB0byBhc2sgeW91IHRvIHNlbmQgYSB2MiBwYXRjaCB3aXRoIGEgbmV3Cj4+IGNoYW5n
+ZWxvZyBkZXBlbmRpbmcgb24gdGhlIGFuc3dlcnMgdG8gdGhlc2UgcXVlc3Rpb25zLgo+IAo+IEkg
+bm90aWNlZCB0aGUgYnVnIHdoZW4gcmVhZGluZyB0aHJvdWdoIHRoZSBjb2RlLCBJIGhhdmVuonQg
+c2VlbiBhbnkKPiB2aXNpYmxlIGVmZmVjdHMgb2YgdGhpcyBidWcuCj4gCj4gIEZyb20gbG9va2lu
+ZyBhdCB0aGUgY29kZSBJIGRvbqJ0IHNlZSBhbnkgb2J2aW91cyB3YXlzIHRoYXQgdGhpcyBidWcg
+d291bGQKPiBpbnRyb2R1Y2UgYW55IGlzc3VlcyB3aXRoIHRoZSBjdXJyZW50IGNvZGUgYmFzZS4K
+PiAKPiBMaWFtCj4gCgpHaXZlbiB0aGUgd2F5IHdlIGR1cGxpY2F0ZSB0aGUgc2dfbGlzdCB0aGlz
+IHNob3VsZCBiZSBoYXJtbGVzcyBidXQgeW91CmFyZSByaWdodCBpdCdzIGNsZWFuZXIgaWYgd2Ug
+aW5pdGlhbGl6ZSB0aGUgbmV3IGxpc3QuIFlvdSBjYW4gYWRkIG15CkFjayB3aGVuIHlvdSB1cGRh
+dGUgd2l0aCBhIG5ldyBjaGFuZ2UgbG9nIGNsYXJpZnlpbmcgdGhpcy4KClRoYW5rcywKTGF1cmEK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZGV2ZWwgbWFp
+bGluZyBsaXN0CmRldmVsQGxpbnV4ZHJpdmVycHJvamVjdC5vcmcKaHR0cDovL2RyaXZlcmRldi5s
+aW51eGRyaXZlcnByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vZHJpdmVyZGV2LWRldmVsCg==
