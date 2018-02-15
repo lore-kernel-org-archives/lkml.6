@@ -1,99 +1,136 @@
-Return-Path: <mingo.kernel.org@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518682609; cv=none;
-        d=google.com; s=arc-20160816;
-        b=nsLCXvTZC2zcBS8j13WiBGLz9jpI8NpEys6defa/hEM0DTnHs6ZkOzNehCHxfzJROj
-         zO/Ozj/MBqkUgfn49y1jTm95TilWn8OKBlnhqCYk5In8mgwDycp+vV1xjYRqQanhNJfU
-         RhF7pBLlj1+U9oroEWTfnNkv1F6rRrMuJ1WMTMRhn9foWN6N6AwK2ITbxlfI3d5WnPHI
-         7XebN4Vo5Ubq8YDu+Q5HddsUB8xeNEiqMAaqqcoCNb1+oicxlXEonl3DBFPGxZoYzqXn
-         l7TWBSLZLZKz22ocjcvOOLudy+Atrz+8XSpH3cTJUrXnZoj6r8mzvTC1BvN00P2IA4Cv
-         biHA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
-         :arc-authentication-results;
-        bh=eexLhqQGFfGT3CD+t7ZZWoQ/O2DgjcZQti0Jz+2tswA=;
-        b=A5vUn73htRoWtkza6lEwyjRqjEbx7eCNcVTCaPdae1wV0Jkutj8sGuLD6emhWwh6ZO
-         9BOMSDvINXoR/KvoL+JfgP4jaJJM5I5oNTVZcNrR8At3XeGFawxa6GWl3BDYxzrPA5vl
-         V9epH4ClirkJRPEQsABx58rCF/lzWqr+IOQWH7tK8LL96+h+4FLiDBTWqqo5Uvj48KMy
-         6ngHWmYoRtRAzszUROtPvlnDoz5McgBt3LdMFSO6lAnJreAdeLzwHXTMJ3gMnUbZuOXo
-         71rYUYwF6MGCSZI6wrx5jOEBpJ7H/0J+yKDWqPnLS8uQR1i7H+bJsMKqgAmmtvprXw8F
-         SFOQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DEDZJuga;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DEDZJuga;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
-X-Google-Smtp-Source: AH8x225qpFHw3FA8utS2pqWlHAv9uaw0DO4cotwbrVcowCpSPtJR3yutRCUJm8FJ8ZizAcKUQyKLJQ==
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Thu, 15 Feb 2018 09:16:46 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <a.p.zijlstra@chello.nl>,
-	Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Arjan van de Ven <arjan@linux.intel.com>
-Subject: Re: [GIT PULL] x86 PTI and Spectre related fixes and updates
-Message-ID: <20180215081646.px477klttsj6axgp@gmail.com>
-References: <20180215003832.pzi7zbze5vlovp6l@gmail.com>
- <CA+55aFy-TRt++ujpxdq3U5mmXaKLW+jXuB=eD=KWY_Lsz+ox5w@mail.gmail.com>
- <20180215054836.GA9861@kroah.com>
- <20180215080324.3reffabx76w7ujyy@gmail.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1883814-1518710301-2-7182714724114950146
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='au', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518710300; b=hiSaiC6FrzOObnN3f0Pk546G40YeGiDn2qcK/K9/E8XTFV9
+    GW8ZwNYxvGFFKYbfX8Jqmp5+KkdknFi1E7U/yX6gTWJmtENWsOXQA3xTU4v77H1h
+    JwVLQ/ad5z3lEINSuNFDpa6xE3GLmadfPYbh1QR6TPg2mdiqk5T6Ao8DmmzwZx+b
+    HX7/XRPAHUSMAynRdAh6dgGwPNdzIiEvEpSqFMKNT+WhxY9DjvkTq25RWx4m3uJ9
+    VUCR27K7Y/kU4w/LXgRBeBw3ajGhuJFkvgdaNPIwFYwpdeQyRU2RM5IEDbFK6vEW
+    5sbjTwF0ge8Iv8WHglCuM6ttt132wTETxsuEBIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518710300; bh=p
+    IFhRkFZ/D7ISjtYWvxAd9mKAghR8C5wZPjFc16JZ+0=; b=JrlriflEUTaqONUA8
+    VR19DSMvPSbHvIMO7ZQvXpHpAEtMy9CrEbT8EgJJpMoxeczq7rFCbJRE6nM3uNE7
+    2sXkHN8nNJ4ediRFmSjbR4qcOwHpaBo1vZhCW/UM6IxBSv+SUIPXVK8IWA++NdLk
+    rMXbPRcT9gM4uTuvycv0z6zfLYPK4Z/Uxip2zSiKXw3Y0GNl1YZ4A8Vz2jNlGSLq
+    rz9TM8AgKKbIiIiqG68l2G6F+87m1nAPtTfbC8sJ+/XIGmEJhDGKNQASeKCJaghf
+    dF4B3R2FgrVNrD4hX23aPhYX6C802sywNLp6Uk2wDVIQBwi/644/FXpk+mOk8f9C
+    vT0qA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=gondor.apana.org.au;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gondor.apana.org.au header.result=pass header_org.domain=apana.org.au header_org.result=pass header_is_org_domain=no;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=gondor.apana.org.au;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gondor.apana.org.au header.result=pass header_org.domain=apana.org.au header_org.result=pass header_is_org_domain=no;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Date: Thu, 15 Feb 2018 23:41:50 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Subject: Re: [PATCH v2 0/7] crypto: ccree: Introduce Arm TrustZone CryptoCell
+Message-ID: <20180215154150.GB7352@gondor.apana.org.au>
+References: <1516613230-4524-1-git-send-email-gilad@benyossef.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180215080324.3reffabx76w7ujyy@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1516613230-4524-1-git-send-email-gilad@benyossef.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592425307928838978?=
-X-GMAIL-MSGID: =?utf-8?q?1592454135857616716?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
-* Ingo Molnar <mingo@kernel.org> wrote:
-
-> > > This is not a complaint so much as a "is it worth it?" question..
-> > 
-> > So far, I think this is the first conflict it's generated in a long
-> > time, so previously it was worth it from my point of view.  As long as
-> > it doesn't cause more work for the TIP maintainers, or for you, I
-> > appreciate it.  But if it does cause more work, don't worry about it, I
-> > can handle backporting things as needed.
+On Mon, Jan 22, 2018 at 09:26:58AM +0000, Gilad Ben-Yossef wrote:
+> Arm TrustZone CryptoCell is a security hardware IP that
+> includes support for hardware based hash, digest, cipher
+> and AEAD operations. This driver provides support for
+> these as part of the Linux Crypto sub-system.
 > 
-> Note that the role of x86/pti is not just to identify backporting commits for 
-> -stable, but to allow us on the x86 tree side to see how current upstream work 
-> interacts, and proactively allow us to group commits in a low-friction fashion.
+> The driver spent some time now in the staging tree being
+> cleaned up and is now submitted for review for the
+> purpose of moving into the crypto tree. The first patch
+> therefore renames its copy in the staging directory
+> Kconfig define and marks it broken, otherwise there is a
+> build failure due to global symbols collisions.
 > 
-> So even if you didn't follow the x86/pti branch at all, -stable would _still_ 
-> benefit from the tip:x86/pti approach and the inherent backportability of all the 
-> PTI and Spectre commits.
+> Please note that the driver include stubs for yet
+> unexposed functionality (ivgen and secure HW keys),
+> which will be added later.
+> 
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+> 
+> Changes from v1:
+> - Use KConfig directive to stop staging tree version to not
+>   collide during link time as opposed to deleting it as indicated
+>   by Greg KH.
+> - Switched from legacy ablkcipher to skcipher interface as
+>   indicated by Corentin Labbe.
+> - Removed unused zero_buff struct as indicated by Corentin Labbe.
+> - Moved to kzfree for all IV/key buffers as indicated by
+>   Corentin Labbe.
+> - Moved to using __des3_ede_setkey() in lieu of home grown
+>   version as indicated by Stephan Mueller.
+> - Fixed multiple small coding style from Dan Carpenter and others.
+> - Fixed pointer signedness sparse warnings as indicated by Jeremy
+>   Sowden.
+> - Rename all registered algs driver name to -ccree prefix
+> 
+> Gilad Ben-Yossef (7):
+>   staging: ccree: rename staging ver and mark as broken
+>   crypto: ccree: introduce CryptoCell driver
+>   crypto: ccree: add skcipher support
+>   crypto: ccree: add ahash support
+>   crypto: ccree: add AEAD support
+>   crypto: ccree: add FIPS support
+>   MAINTAINERS: update ccree entry
 
-Put differently: this approach isn't a zero-sum game of 'upstream conflicts versus 
--stable conflicts', where if we don't resolve a conflict upstream then -stable has 
-to do it and vice versa.
-
-The tip:x86/pti approach actively avoided literally _dozens_ of nasty conflicts in 
-the -stable space, at an (IMHO) much lower cost to upstream. It also IMHO 
-successfully avoided the destabilizing effect that otherwise the backporting of 
-most of ~300 these commits would have caused on the widely deployed v4.14 and 
-v4.15 base kernels ....
-
-Had I done this latest pull request a bit smarter Linus would not have seen these 
-two conflicts either, so I still think this is the right approach and the cost to 
-upstream is very low.
-
-The x86 tree maintenance overhead was obviously higher due to all this, but right 
-now I'm reasonably happy about the backporting aspect/overhead, because the v4.14 
-and v4.15 stable kernels are now essentially using and testing our latest upstream 
-code, which allows it to stabilize a lot faster.
-
-Thanks,
-
-	Ingo
+All applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
