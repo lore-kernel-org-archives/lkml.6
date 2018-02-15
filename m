@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227IAZhvYC8UkSV/9bH1DC+0BG4F4EBX7t3+CSHEo12nmBgR77ThNFQcdSVMytMic5K+guS4
-ARC-Seal: i=1; a=rsa-sha256; t=1518709235; cv=none;
+X-Google-Smtp-Source: AH8x225Qp6Yfs8ZIOUZQK6s+VhV5+oMycw1e63AuUI5E8Q76I//oR8HL0YLoVLYvzboleCyJNYI7
+ARC-Seal: i=1; a=rsa-sha256; t=1518709232; cv=none;
         d=google.com; s=arc-20160816;
-        b=MFuvg2Y77nG1CYr/ZkhMJzij7IKRDkbq0yXqWgBg20G/+Le/6RhwldtUv2hS1NViKu
-         hjsmb5YmLoaS8HkmgbIpjJKvJMaSPo/cSYoDMRgfltPXSPEhSYEa1Z82L4dxbs3lLopA
-         EJOYpKeMJP1Yut/qOQ2Hd5c1UMScSb6t8dstbK2tEjE/IMC4GYIDAM3tuOCenbhKpnUI
-         gYO4tVNinjGIiekmBvEvGu+Io02CL1lYJ5MbeVHROfmDt+J3NuaTAlIW6JeryZTPn9D+
-         crOxErqbSmSZf0MU4/+oqx7XNXJgMW26TiUWxzIvwefH8Lj/3iAGrUz34Kr7enBxvgIq
-         dAng==
+        b=0YlU+HylRFcrxj+LBgpLTEKsFYh+v/cVxw1iF7Hu4C+yLPbOFQa0gyYQOXxGmwNbU1
+         3gCg3p7wbtrE23GdO3dG52P0vz3saGQwbcDM6KwPqhSQSQe4Hf3CrqPT8KYq5mfy7YzR
+         fNzLMdy+eLsk0czA5IwQ6Wpmf5WK9wZxPgaXUBmQttOj7Ig3j97I3RNgGQg/FCQ95jvk
+         d4phgB2wbvtuddwApIKVnZ1yHG+uJCJHbtxrq+eGkOvaVktIXi1nF8bll0m/bV6ZvC1K
+         NIGdot1b7cU27bxXQkh5/0W8BxQJwgnZB11BoarRJBbITx+GtA7xC3ZeKod6z7MT+Jdn
+         lxKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=mY4pQTt5b7dnAnBaXBc8mVOgFWq+frDponjbPKNXdlc=;
-        b=V/JKgVM0zZqM8W/XJSzNxPc3PgN2Q9bDFBkzYDBmSXjHdC3AJnRT+/R8sOV+j67gKu
-         EE27y3oK0IfXmVmCdtDZoZrbL/wIvTIQYsPWZLhusThOCSqD13LdHWza8BXwUHyGgFi6
-         IvvAgHrJsLGA9D+dAzpphVaq179e98Lj/bSSfkMzUC+rofYwAh48TVEr6tFbQCDGHZ+2
-         sBg5MtLrzs9hIEv0hNWUMD3aq9NH9cq70OMAinWMeAZ0bt2xeXwXBxO0Vha6BlOcxb/I
-         6OjD92F+/l0cdNYVR74RczuOD/0/TVrEYyCR/AwPYYR0Q+TvAAWYPVmoC9isjGcvUXsH
-         OPoA==
+        bh=zGG0GJXcj7JiiRsf+pyd0s1Z65Xgi/bRFsLrhV9mkmQ=;
+        b=M9oLY2i7YIBi0HVSh6K4JRmEaGdTqoHss8eOngrYEcYCmnw2vENYTzX77DnU6swQEq
+         gRVatbPN/okYG7ETLnWF1GfDu3Lhmck7G6+D8b5Gon7fNvLSZwPkio1I3XmFSFD/gumP
+         DjiRYZmdIBZ6OlCq6jPxMfhT1WGMaQB3G9cJ6Bs4JZvTc6/ihKAt0jdB0YcECr3abs/O
+         l7JRoFveRVNIJEMsJ70sp8LU1c6s1DaZt7+n2SaYqsVEdlgDYc3l9aXtGOJbXVmdIbad
+         WyeG0ABwH8qUYLKWX5G00bqso1Vo/agsovpDPFL1IMTgcxStQsTQHLsJf0Mh5+/Kh0dz
+         MvSg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Marc Zyngier <marc.zyngier@arm.com>,
 	Will Deacon <will.deacon@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.15 044/202] [Variant 3/Meltdown] arm64: kpti: Add ->enable callback to remap swapper using nG mappings
-Date: Thu, 15 Feb 2018 16:15:44 +0100
-Message-Id: <20180215151715.485348890@linuxfoundation.org>
+Subject: [PATCH 4.15 043/202] [Variant 3/Meltdown] arm64: mm: Permit transitioning from Global to Non-Global without BBM
+Date: Thu, 15 Feb 2018 16:15:43 +0100
+Message-Id: <20180215151715.431836869@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481609583456068?=
-X-GMAIL-MSGID: =?utf-8?q?1592482055430612825?=
+X-GMAIL-THRID: =?utf-8?q?1592481606997145686?=
+X-GMAIL-MSGID: =?utf-8?q?1592482052422038558?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,309 +51,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Will Deacon <will.deacon@arm.com>
 
 
-Commit f992b4dfd58b upstream.
+Commit 4e6020565596 upstream.
 
-Defaulting to global mappings for kernel space is generally good for
-performance and appears to be necessary for Cavium ThunderX. If we
-subsequently decide that we need to enable kpti, then we need to rewrite
-our existing page table entries to be non-global. This is fiddly, and
-made worse by the possible use of contiguous mappings, which require
-a strict break-before-make sequence.
+Break-before-make is not needed when transitioning from Global to
+Non-Global mappings, provided that the contiguous hint is not being used.
 
-Since the enable callback runs on each online CPU from stop_machine
-context, we can have all CPUs enter the idmap, where secondaries can
-wait for the primary CPU to rewrite swapper with its MMU off. It's all
-fairly horrible, but at least it only runs once.
-
-Tested-by: Marc Zyngier <marc.zyngier@arm.com>
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Conflicts:
-	arch/arm64/mm/proc.S
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/assembler.h |    4 
- arch/arm64/kernel/cpufeature.c     |   25 ++++
- arch/arm64/mm/proc.S               |  202 +++++++++++++++++++++++++++++++++++--
- 3 files changed, 224 insertions(+), 7 deletions(-)
+ arch/arm64/mm/mmu.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -489,6 +489,10 @@ alternative_else_nop_endif
- #endif
- 	.endm
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -117,6 +117,10 @@ static bool pgattr_change_is_safe(u64 ol
+ 	if ((old | new) & PTE_CONT)
+ 		return false;
  
-+	.macro	pte_to_phys, phys, pte
-+	and	\phys, \pte, #(((1 << (48 - PAGE_SHIFT)) - 1) << PAGE_SHIFT)
-+	.endm
++	/* Transitioning from Global to Non-Global is safe */
++	if (((old ^ new) == PTE_NG) && (new & PTE_NG))
++		return true;
 +
- /**
-  * Errata workaround prior to disable MMU. Insert an ISB immediately prior
-  * to executing the MSR that will change SCTLR_ELn[M] from a value of 1 to 0.
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -878,6 +878,30 @@ static bool unmap_kernel_at_el0(const st
- 						     ID_AA64PFR0_CSV3_SHIFT);
+ 	return ((old ^ new) & ~mask) == 0;
  }
  
-+static int kpti_install_ng_mappings(void *__unused)
-+{
-+	typedef void (kpti_remap_fn)(int, int, phys_addr_t);
-+	extern kpti_remap_fn idmap_kpti_install_ng_mappings;
-+	kpti_remap_fn *remap_fn;
-+
-+	static bool kpti_applied = false;
-+	int cpu = smp_processor_id();
-+
-+	if (kpti_applied)
-+		return 0;
-+
-+	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
-+
-+	cpu_install_idmap();
-+	remap_fn(cpu, num_online_cpus(), __pa_symbol(swapper_pg_dir));
-+	cpu_uninstall_idmap();
-+
-+	if (!cpu)
-+		kpti_applied = true;
-+
-+	return 0;
-+}
-+
- static int __init parse_kpti(char *str)
- {
- 	bool enabled;
-@@ -984,6 +1008,7 @@ static const struct arm64_cpu_capabiliti
- 		.capability = ARM64_UNMAP_KERNEL_AT_EL0,
- 		.def_scope = SCOPE_SYSTEM,
- 		.matches = unmap_kernel_at_el0,
-+		.enable = kpti_install_ng_mappings,
- 	},
- #endif
- 	{
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -153,6 +153,16 @@ ENTRY(cpu_do_switch_mm)
- ENDPROC(cpu_do_switch_mm)
- 
- 	.pushsection ".idmap.text", "ax"
-+
-+.macro	__idmap_cpu_set_reserved_ttbr1, tmp1, tmp2
-+	adrp	\tmp1, empty_zero_page
-+	msr	ttbr1_el1, \tmp2
-+	isb
-+	tlbi	vmalle1
-+	dsb	nsh
-+	isb
-+.endm
-+
- /*
-  * void idmap_cpu_replace_ttbr1(phys_addr_t new_pgd)
-  *
-@@ -162,13 +172,7 @@ ENDPROC(cpu_do_switch_mm)
- ENTRY(idmap_cpu_replace_ttbr1)
- 	save_and_disable_daif flags=x2
- 
--	adrp	x1, empty_zero_page
--	msr	ttbr1_el1, x1
--	isb
--
--	tlbi	vmalle1
--	dsb	nsh
--	isb
-+	__idmap_cpu_set_reserved_ttbr1 x1, x3
- 
- 	msr	ttbr1_el1, x0
- 	isb
-@@ -179,6 +183,190 @@ ENTRY(idmap_cpu_replace_ttbr1)
- ENDPROC(idmap_cpu_replace_ttbr1)
- 	.popsection
- 
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+	.pushsection ".idmap.text", "ax"
-+
-+	.macro	__idmap_kpti_get_pgtable_ent, type
-+	dc	cvac, cur_\()\type\()p		// Ensure any existing dirty
-+	dmb	sy				// lines are written back before
-+	ldr	\type, [cur_\()\type\()p]	// loading the entry
-+	tbz	\type, #0, next_\()\type	// Skip invalid entries
-+	.endm
-+
-+	.macro __idmap_kpti_put_pgtable_ent_ng, type
-+	orr	\type, \type, #PTE_NG		// Same bit for blocks and pages
-+	str	\type, [cur_\()\type\()p]	// Update the entry and ensure it
-+	dc	civac, cur_\()\type\()p		// is visible to all CPUs.
-+	.endm
-+
-+/*
-+ * void __kpti_install_ng_mappings(int cpu, int num_cpus, phys_addr_t swapper)
-+ *
-+ * Called exactly once from stop_machine context by each CPU found during boot.
-+ */
-+__idmap_kpti_flag:
-+	.long	1
-+ENTRY(idmap_kpti_install_ng_mappings)
-+	cpu		.req	w0
-+	num_cpus	.req	w1
-+	swapper_pa	.req	x2
-+	swapper_ttb	.req	x3
-+	flag_ptr	.req	x4
-+	cur_pgdp	.req	x5
-+	end_pgdp	.req	x6
-+	pgd		.req	x7
-+	cur_pudp	.req	x8
-+	end_pudp	.req	x9
-+	pud		.req	x10
-+	cur_pmdp	.req	x11
-+	end_pmdp	.req	x12
-+	pmd		.req	x13
-+	cur_ptep	.req	x14
-+	end_ptep	.req	x15
-+	pte		.req	x16
-+
-+	mrs	swapper_ttb, ttbr1_el1
-+	adr	flag_ptr, __idmap_kpti_flag
-+
-+	cbnz	cpu, __idmap_kpti_secondary
-+
-+	/* We're the boot CPU. Wait for the others to catch up */
-+	sevl
-+1:	wfe
-+	ldaxr	w18, [flag_ptr]
-+	eor	w18, w18, num_cpus
-+	cbnz	w18, 1b
-+
-+	/* We need to walk swapper, so turn off the MMU. */
-+	pre_disable_mmu_workaround
-+	mrs	x18, sctlr_el1
-+	bic	x18, x18, #SCTLR_ELx_M
-+	msr	sctlr_el1, x18
-+	isb
-+
-+	/* Everybody is enjoying the idmap, so we can rewrite swapper. */
-+	/* PGD */
-+	mov	cur_pgdp, swapper_pa
-+	add	end_pgdp, cur_pgdp, #(PTRS_PER_PGD * 8)
-+do_pgd:	__idmap_kpti_get_pgtable_ent	pgd
-+	tbnz	pgd, #1, walk_puds
-+	__idmap_kpti_put_pgtable_ent_ng	pgd
-+next_pgd:
-+	add	cur_pgdp, cur_pgdp, #8
-+	cmp	cur_pgdp, end_pgdp
-+	b.ne	do_pgd
-+
-+	/* Publish the updated tables and nuke all the TLBs */
-+	dsb	sy
-+	tlbi	vmalle1is
-+	dsb	ish
-+	isb
-+
-+	/* We're done: fire up the MMU again */
-+	mrs	x18, sctlr_el1
-+	orr	x18, x18, #SCTLR_ELx_M
-+	msr	sctlr_el1, x18
-+	isb
-+
-+	/* Set the flag to zero to indicate that we're all done */
-+	str	wzr, [flag_ptr]
-+	ret
-+
-+	/* PUD */
-+walk_puds:
-+	.if CONFIG_PGTABLE_LEVELS > 3
-+	pte_to_phys	cur_pudp, pgd
-+	add	end_pudp, cur_pudp, #(PTRS_PER_PUD * 8)
-+do_pud:	__idmap_kpti_get_pgtable_ent	pud
-+	tbnz	pud, #1, walk_pmds
-+	__idmap_kpti_put_pgtable_ent_ng	pud
-+next_pud:
-+	add	cur_pudp, cur_pudp, 8
-+	cmp	cur_pudp, end_pudp
-+	b.ne	do_pud
-+	b	next_pgd
-+	.else /* CONFIG_PGTABLE_LEVELS <= 3 */
-+	mov	pud, pgd
-+	b	walk_pmds
-+next_pud:
-+	b	next_pgd
-+	.endif
-+
-+	/* PMD */
-+walk_pmds:
-+	.if CONFIG_PGTABLE_LEVELS > 2
-+	pte_to_phys	cur_pmdp, pud
-+	add	end_pmdp, cur_pmdp, #(PTRS_PER_PMD * 8)
-+do_pmd:	__idmap_kpti_get_pgtable_ent	pmd
-+	tbnz	pmd, #1, walk_ptes
-+	__idmap_kpti_put_pgtable_ent_ng	pmd
-+next_pmd:
-+	add	cur_pmdp, cur_pmdp, #8
-+	cmp	cur_pmdp, end_pmdp
-+	b.ne	do_pmd
-+	b	next_pud
-+	.else /* CONFIG_PGTABLE_LEVELS <= 2 */
-+	mov	pmd, pud
-+	b	walk_ptes
-+next_pmd:
-+	b	next_pud
-+	.endif
-+
-+	/* PTE */
-+walk_ptes:
-+	pte_to_phys	cur_ptep, pmd
-+	add	end_ptep, cur_ptep, #(PTRS_PER_PTE * 8)
-+do_pte:	__idmap_kpti_get_pgtable_ent	pte
-+	__idmap_kpti_put_pgtable_ent_ng	pte
-+next_pte:
-+	add	cur_ptep, cur_ptep, #8
-+	cmp	cur_ptep, end_ptep
-+	b.ne	do_pte
-+	b	next_pmd
-+
-+	/* Secondary CPUs end up here */
-+__idmap_kpti_secondary:
-+	/* Uninstall swapper before surgery begins */
-+	__idmap_cpu_set_reserved_ttbr1 x18, x17
-+
-+	/* Increment the flag to let the boot CPU we're ready */
-+1:	ldxr	w18, [flag_ptr]
-+	add	w18, w18, #1
-+	stxr	w17, w18, [flag_ptr]
-+	cbnz	w17, 1b
-+
-+	/* Wait for the boot CPU to finish messing around with swapper */
-+	sevl
-+1:	wfe
-+	ldxr	w18, [flag_ptr]
-+	cbnz	w18, 1b
-+
-+	/* All done, act like nothing happened */
-+	msr	ttbr1_el1, swapper_ttb
-+	isb
-+	ret
-+
-+	.unreq	cpu
-+	.unreq	num_cpus
-+	.unreq	swapper_pa
-+	.unreq	swapper_ttb
-+	.unreq	flag_ptr
-+	.unreq	cur_pgdp
-+	.unreq	end_pgdp
-+	.unreq	pgd
-+	.unreq	cur_pudp
-+	.unreq	end_pudp
-+	.unreq	pud
-+	.unreq	cur_pmdp
-+	.unreq	end_pmdp
-+	.unreq	pmd
-+	.unreq	cur_ptep
-+	.unreq	end_ptep
-+	.unreq	pte
-+ENDPROC(idmap_kpti_install_ng_mappings)
-+	.popsection
-+#endif
-+
- /*
-  *	__cpu_setup
-  *
