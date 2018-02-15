@@ -1,83 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033048AbeBOOEY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 09:04:24 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:48505 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032283AbeBOOEW (ORCPT
+        id S1033097AbeBOOEx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 09:04:53 -0500
+Received: from mail.micronovasrl.com ([212.103.203.10]:56834 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032283AbeBOOEv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 09:04:22 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Kieran Bingham <kbingham@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Simon Horman <horms@verge.net.au>, geert@glider.be,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/8] dt-bindings: display: renesas,lvds: Add LVDS binding for D3
-Date: Thu, 15 Feb 2018 16:04:55 +0200
-Message-ID: <3242490.rUUU4MHlpR@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <ad5ea103-b039-7a2e-01c8-2cb16324115d@ideasonboard.com>
-References: <1518683903-10681-1-git-send-email-kbingham@kernel.org> <1518683903-10681-4-git-send-email-kbingham@kernel.org> <ad5ea103-b039-7a2e-01c8-2cb16324115d@ideasonboard.com>
+        Thu, 15 Feb 2018 09:04:51 -0500
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+Subject: Re: [PATCH] ARM: sun7i: dt: Add Mali node
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <1518702362-115625-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180215135840.vt4ujoecvirpidbr@flea.lan>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <1dd9f126-b209-a6f6-2159-6727744a6c6e@micronovasrl.com>
+Date: Thu, 15 Feb 2018 15:04:48 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180215135840.vt4ujoecvirpidbr@flea.lan>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: it
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
+Il 15/02/2018 14:58, Maxime Ripard ha scritto:
+> On Thu, Feb 15, 2018 at 02:46:02PM +0100, Giulio Benetti wrote:
+>> The A20 has an ARM Mali 400 GPU, so add binding to our DT.
+>>
+>> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+> 
+> The prefix should have been ARM: dts: sun7i. Fixed and applied, thanks!
+> Maxime
+> 
 
-On Thursday, 15 February 2018 10:45:33 EET Kieran Bingham wrote:
-> On 15/02/18 08:38, Kieran Bingham wrote:
-> > From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> > 
-> > The D3 supports two LVDS channels. Extend the binding to support them.
-> > 
-> > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> > ---
-> > 
-> >  Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git
-> > a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-> > b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt index
-> > 79860f58a7ad..0dcf488b70df 100644
-> > --- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-> > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-> > 
-> > @@ -14,6 +14,7 @@ Required properties:
-> >  - compatible : Shall contain one of
-> >    - "renesas,lvds-r8a7795" for R8A7795 (R-Car H3) compatible LVDS
-> >    encoders
-> >    - "renesas,lvds-r8a7796" for R8A7796 (R-Car M3-W) compatible LVDS
-> >    encoders
-> > +  - "renesas,lvds-r8a77995" for R8A77995 (R-Car D3) compatible LVDS
-> > encoders
-> 
-> Hi Laurent,
-> 
-> Are we unable to have a generic lvds-gen3 here?
-> 
-> (Although to perhaps answer my own question I see that the D3/E3 have extra
-> registers)
-> 
-> Also "lets pretend" that I intentionally separated out the LVDS updates to
-> the rcar_lvds_of_table :)
-
-We could for H3 and M3-W, but as you've noticed D3/E3 differ, and so does V3M.
-
-> >  - reg: Base address and length for the memory-mapped registers
-> >  - clocks: A phandle + clock-specifier pair for the functional clock
+Oh, right.
+Thank you!
 
 -- 
-Regards,
+Giulio Benetti
+R&D Manager &
+Advanced Research
 
-Laurent Pinchart
+MICRONOVA SRL
+Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
+Tel. 049/8931563 - Fax 049/8931346
+Cod.Fiscale - P.IVA 02663420285
+Capitale Sociale € 26.000 i.v.
+Iscritta al Reg. Imprese di Padova N. 02663420285
+Numero R.E.A. 258642
