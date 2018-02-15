@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2274oL4AtNtUAjyLltjP1YOIze/PmUbtpMC7fQKYC4xu7tDxHDr224UocLnKQyc5jBsusp50
-ARC-Seal: i=1; a=rsa-sha256; t=1518709000; cv=none;
+X-Google-Smtp-Source: AH8x227fUSt2vknC/RkJTRBfWb1lfza9Cer3IqAJGv7ck44s4JN2ZnuvR546po+Aa+q33FiBdvKE
+ARC-Seal: i=1; a=rsa-sha256; t=1518708999; cv=none;
         d=google.com; s=arc-20160816;
-        b=nf/kUvQWqsoxlOjeymlWzbZhnTKkaR5pBIxX+s4SIC6dsatITBQdlrCGECb5hwbn6M
-         9yl+jy2beMpNg8UPtMXZVUyjfkudqM7IY2wQM34dUzemmx3VXSH4dGDiLDOHy3ix6Y+k
-         3rPt9WliLfh1dBEx0zloquM/s00x69I+Rb1r1KFEI5ZmWL93UqMxHUy6cjas7YeHc6Z9
-         wutSkIEaX13CmOqGMdY8f4QpaFaUQWcT1/wjDnFJFXYnvjkzxlLOx195Lp14YpYep6UU
-         tjK1g6IfbfuU8zmV+S9UlJjxkJXETC4fCrlUKXSkZbrEWZwDt51aMKgbxw9LF0apJCDI
-         HVqQ==
+        b=laasF3PIxykSfTn695EXq6Qdto17zJxxbHFVB46+dHh9mzUneTyTmhFA9rCvNBEllv
+         nUSobPzNTnocEUR1jeSR4JW1bUH5DVGmUVn20HRcM/5tLkBIEk94Up+iwQ3tfuW/Jdpg
+         vgjvKY++dLkq2/Z4EW0UXzLaLdTeRayUMHCcMPlItHWpLwcpA8dqh1N/7R9mNMj/J1S9
+         ve/g18SZNrNjuPXzySf0JkL0Tnc4KuU3A+mjO/Z9J50NoKp3M2eedMbbcgvrs2pV2dvN
+         LODgef4bX9yynCdx47Q2HQRtwGM9R5VM9rN1F1h9p9cbudbFWx3qAW1dn+tdRRDVQr78
+         +KAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gn8mKJGFP1pNVzDC9xf/gHG2YEGQhraoeBqHJuk1GOU=;
-        b=ItNRtCjhU/Hdk8WU5dGqSt/4sPOfwRqN50M3lRWqAQZF2AQxmy6AMDvwkCdnY2euAQ
-         6zGNJSBeLAMHeicwxhEZypHGyq5fcJIdhEXrfgdhLO/WkprLrp1QoFJz2REnwSkt8mdB
-         rfKhAOyZ+gxp/vstjAuZDmZYgOi/B3PHmt3SnUC7js2bitqPInbmoeWxOFS884n4r4Ue
-         y0w4fFfb+IqvNuv58eOB9bBnSgGBbhXdxyIBSnCYGMPN1ludKu1PAZWeJu8zR0eszXcv
-         jrhYIeD3/eqWsXcuCqkuq8w6wK5iyYjPWinj4O+JJI7+8w+fZGHK0gl4i77gZKataKaY
-         kIIA==
+        bh=49U26Y0H5A3Aos0hHMMf1H1ml7B7Ukusu5Tf4HHDGVo=;
+        b=WKXgt/iyoj+RUTskpviJ9JfXtlCqg3qxAy7XVnH8LbtXj9e9SoAMHcV4tO4qF4sq8n
+         g1gJqETMJRntZZvbUS5JERL9omsHXdBgZktEZmQTnfQs7jdHq7defuo9LsRvS4h1AEwA
+         mVJ1tIc4nlJ4GfogpQqrTR4JUIXmZGFTOC76ZeZZe/1Ex/vt9i8hpIDc+ABSDyw1Aq7t
+         RX9/sqykQQ5VvcWjIKMy4vaqV0En0cE7wSNRC/42ZfqO5YC3iBqMB0D+0KdKMoKmrOFf
+         Ecy63e90QRAjVjuYWVYSLo/Q56K6sqbb/86zOfhqthZ9xSn5TYVgQqbzmUfmhYWm4DYW
+         5qLQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Tejun Heo <tj@kernel.org>,
-	Arjan van de Ven <arjan@linux.intel.com>,
-	Adam Wallis <awallis@codeaurora.org>,
-	Lai Jiangshan <laijs@cn.fujitsu.com>,
+	Heiko Carstens <heiko.carstens@de.ibm.com>,
+	Kees Cook <keescook@chromium.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Al Viro <viro@ZenIV.linux.org.uk>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 153/195] kernel/async.c: revert "async: simplify lowest_in_progress()"
-Date: Thu, 15 Feb 2018 16:17:24 +0100
-Message-Id: <20180215151713.534400158@linuxfoundation.org>
+Subject: [PATCH 4.14 152/195] fs/proc/kcore.c: use probe_kernel_read() instead of memcpy()
+Date: Thu, 15 Feb 2018 16:17:23 +0100
+Message-Id: <20180215151713.480540866@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480752826931669?=
-X-GMAIL-MSGID: =?utf-8?q?1592481809339120969?=
+X-GMAIL-THRID: =?utf-8?q?1592481359907139719?=
+X-GMAIL-MSGID: =?utf-8?q?1592481807263596235?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,85 +52,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
 
-commit 4f7e988e63e336827f4150de48163bed05d653bd upstream.
+commit d0290bc20d4739b7a900ae37eb5d4cc3be2b393f upstream.
 
-This reverts commit 92266d6ef60c ("async: simplify lowest_in_progress()")
-which was simply wrong: In the case where domain is NULL, we now use the
-wrong offsetof() in the list_first_entry macro, so we don't actually
-fetch the ->cookie value, but rather the eight bytes located
-sizeof(struct list_head) further into the struct async_entry.
+Commit df04abfd181a ("fs/proc/kcore.c: Add bounce buffer for ktext
+data") added a bounce buffer to avoid hardened usercopy checks.  Copying
+to the bounce buffer was implemented with a simple memcpy() assuming
+that it is always valid to read from kernel memory iff the
+kern_addr_valid() check passed.
 
-On 64 bit, that's the data member, while on 32 bit, that's a u64 built
-from func and data in some order.
+A simple, but pointless, test case like "dd if=/proc/kcore of=/dev/null"
+now can easily crash the kernel, since the former execption handling on
+invalid kernel addresses now doesn't work anymore.
 
-I think the bug happens to be harmless in practice: It obviously only
-affects callers which pass a NULL domain, and AFAICT the only such
-caller is
+Also adding a kern_addr_valid() implementation wouldn't help here.  Most
+architectures simply return 1 here, while a couple implemented a page
+table walk to figure out if something is mapped at the address in
+question.
 
-  async_synchronize_full() ->
-  async_synchronize_full_domain(NULL) ->
-  async_synchronize_cookie_domain(ASYNC_COOKIE_MAX, NULL)
+With DEBUG_PAGEALLOC active mappings are established and removed all the
+time, so that relying on the result of kern_addr_valid() before
+executing the memcpy() also doesn't work.
 
-and the ASYNC_COOKIE_MAX means that in practice we end up waiting for
-the async_global_pending list to be empty - but it would break if
-somebody happened to pass (void*)-1 as the data element to
-async_schedule, and of course also if somebody ever does a
-async_synchronize_cookie_domain(, NULL) with a "finite" cookie value.
+Therefore simply use probe_kernel_read() to copy to the bounce buffer.
+This also allows to simplify read_kcore().
 
-Maybe the "harmless in practice" means this isn't -stable material.  But
-I'm not completely confident my quick git grep'ing is enough, and there
-might be affected code in one of the earlier kernels that has since been
-removed, so I'll leave the decision to the stable guys.
+At least on s390 this fixes the observed crashes and doesn't introduce
+warnings that were removed with df04abfd181a ("fs/proc/kcore.c: Add
+bounce buffer for ktext data"), even though the generic
+probe_kernel_read() implementation uses uaccess functions.
 
-Link: http://lkml.kernel.org/r/20171128104938.3921-1-linux@rasmusvillemoes.dk
-Fixes: 92266d6ef60c "async: simplify lowest_in_progress()"
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Acked-by: Tejun Heo <tj@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Adam Wallis <awallis@codeaurora.org>
-Cc: Lai Jiangshan <laijs@cn.fujitsu.com>
+While looking into this I'm also wondering if kern_addr_valid() could be
+completely removed...(?)
+
+Link: http://lkml.kernel.org/r/20171202132739.99971-1-heiko.carstens@de.ibm.com
+Fixes: df04abfd181a ("fs/proc/kcore.c: Add bounce buffer for ktext data")
+Fixes: f5509cc18daa ("mm: Hardened usercopy")
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/async.c |   20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ fs/proc/kcore.c |   18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
---- a/kernel/async.c
-+++ b/kernel/async.c
-@@ -84,20 +84,24 @@ static atomic_t entry_count;
- 
- static async_cookie_t lowest_in_progress(struct async_domain *domain)
- {
--	struct list_head *pending;
-+	struct async_entry *first = NULL;
- 	async_cookie_t ret = ASYNC_COOKIE_MAX;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&async_lock, flags);
- 
--	if (domain)
--		pending = &domain->pending;
--	else
--		pending = &async_global_pending;
-+	if (domain) {
-+		if (!list_empty(&domain->pending))
-+			first = list_first_entry(&domain->pending,
-+					struct async_entry, domain_list);
-+	} else {
-+		if (!list_empty(&async_global_pending))
-+			first = list_first_entry(&async_global_pending,
-+					struct async_entry, global_list);
-+	}
- 
--	if (!list_empty(pending))
--		ret = list_first_entry(pending, struct async_entry,
--				       domain_list)->cookie;
-+	if (first)
-+		ret = first->cookie;
- 
- 	spin_unlock_irqrestore(&async_lock, flags);
- 	return ret;
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -512,23 +512,15 @@ read_kcore(struct file *file, char __use
+ 				return -EFAULT;
+ 		} else {
+ 			if (kern_addr_valid(start)) {
+-				unsigned long n;
+-
+ 				/*
+ 				 * Using bounce buffer to bypass the
+ 				 * hardened user copy kernel text checks.
+ 				 */
+-				memcpy(buf, (char *) start, tsz);
+-				n = copy_to_user(buffer, buf, tsz);
+-				/*
+-				 * We cannot distinguish between fault on source
+-				 * and fault on destination. When this happens
+-				 * we clear too and hope it will trigger the
+-				 * EFAULT again.
+-				 */
+-				if (n) { 
+-					if (clear_user(buffer + tsz - n,
+-								n))
++				if (probe_kernel_read(buf, (void *) start, tsz)) {
++					if (clear_user(buffer, tsz))
++						return -EFAULT;
++				} else {
++					if (copy_to_user(buffer, buf, tsz))
+ 						return -EFAULT;
+ 				}
+ 			} else {
