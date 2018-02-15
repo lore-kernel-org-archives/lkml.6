@@ -1,43 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755678AbeBOU2F (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 15:28:05 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:57037 "EHLO vps0.lunn.ch"
+        id S1755720AbeBOU30 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 15:29:26 -0500
+Received: from ozlabs.org ([103.22.144.67]:34185 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755653AbeBOU2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 15:28:03 -0500
-Date: Thu, 15 Feb 2018 21:27:57 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: richardcochran@gmail.com
-Cc: Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] net: dsa: mv88e6xxx: avoid unintended sign
- extension on a 16 bit shift
-Message-ID: <20180215202757.GB3080@lunn.ch>
-References: <20180215191218.27936-1-colin.king@canonical.com>
+        id S1751998AbeBOU3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 15:29:24 -0500
+Date: Fri, 16 Feb 2018 07:28:39 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: change contact address for the sunxi tree?
+Message-ID: <20180216072839.62261e43@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180215191218.27936-1-colin.king@canonical.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/7fvRF5k707dZyWiTRE79zw7"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> diff --git a/drivers/net/dsa/mv88e6xxx/hwtstamp.c b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
-> index b251d534b70d..758e35fa69ab 100644
-> --- a/drivers/net/dsa/mv88e6xxx/hwtstamp.c
-> +++ b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
-> @@ -321,7 +321,7 @@ static void mv88e6xxx_get_rxts(struct mv88e6xxx_chip *chip,
->  	 */
->  	for ( ; skb; skb = skb_dequeue(rxq)) {
->  		if (mv88e6xxx_ts_valid(status) && seq_match(skb, seq_id)) {
-> -			u64 ns = timehi << 16 | timelo;
-> +			u64 ns = (u64)timehi << 16 | timelo;
+--Sig_/7fvRF5k707dZyWiTRE79zw7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Richard
+Hi all,
 
-Do you prefer this, or making timehi and timelo a u64?
+I noticed commit
 
-   Andrew
+  0a815fc929e6 ("MAINTAINERS: update email address for Maxime Ripard")
+
+Should I change the contact address I have for Maxime as well?
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/7fvRF5k707dZyWiTRE79zw7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqF7XcACgkQAVBC80lX
+0Gy34wf/ZBqaa7TYyxcbCMnGgG0TBUEGNslenvZGvzw8KX0YdNQNgajNdXgVFbYz
+bhWQBGyszET3WdEU5zMXAiNExzuxx5Q3pab7thOekJytFTek4UHgoZ/6yqqUsYgE
+zvd3pnow+9Dx6tnt0K/bFvnTqfYttL1hfUPRg+wAuiURZufnDpDTqy4WW3HNZes8
+xwXuLE99zZqwUc0A/J9CrcqY/fXsNLhjmCZgiLQG2HDxD9XizAmFngM3kUPpUesJ
+nuu3XQ9YN2wOvycvXX/CeX/REprFkPG/DWWS2nHs3YhtENyXqpsaExIUDHPvRGhx
+NPhbEE4etFsKcmbVEmRGBMyRrb6Znw==
+=rd+S
+-----END PGP SIGNATURE-----
+
+--Sig_/7fvRF5k707dZyWiTRE79zw7--
