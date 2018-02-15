@@ -1,47 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426321AbeBOQmf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 11:42:35 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:43288 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1426189AbeBOQjt (ORCPT
+        id S1426484AbeBOQsI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 11:48:08 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:49722 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423789AbeBOQsF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:39:49 -0500
-X-Google-Smtp-Source: AH8x224NL37p4/BDSw4QsmFysq3h9K2OWaRMy854s9pbFFc7ckR3RoTZQIxJnV0nRUJhK0CjxA9YKQ==
-From: Tim Harvey <tharvey@gateworks.com>
-To: linux-media@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawnguo@kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH v12 2/8] media: v4l-ioctl: fix clearing pad for VIDIOC_DV_TIMIGNS_CAP
-Date: Thu, 15 Feb 2018 08:39:21 -0800
-Message-Id: <1518712767-21928-3-git-send-email-tharvey@gateworks.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518712767-21928-1-git-send-email-tharvey@gateworks.com>
-References: <1518712767-21928-1-git-send-email-tharvey@gateworks.com>
+        Thu, 15 Feb 2018 11:48:05 -0500
+Date: Thu, 15 Feb 2018 17:47:54 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Will Deacon <will.deacon@arm.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: arm64/v4.16-rc1: KASAN: use-after-free Read in finish_task_switch
+Message-ID: <20180215164754.GW25201@hirez.programming.kicks-ass.net>
+References: <20180214120254.qq4w4s42ecxio7lu@lakrids.cambridge.arm.com>
+ <20180214150739.GH2992@arm.com>
+ <20180214165131.o25r3hhrtrjk3ejq@lakrids.cambridge.arm.com>
+ <254787533.21950.1518634424009.JavaMail.zimbra@efficios.com>
+ <20180215142239.GF16623@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180215142239.GF16623@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Tim Harvey <tharvey@gateworks.com>
----
- drivers/media/v4l2-core/v4l2-ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Feb 15, 2018 at 02:22:39PM +0000, Will Deacon wrote:
+> Instead, we've come up with a more plausible sequence that can in theory
+> happen on a single CPU:
+> 
+> <task foo calls exit()>
+> 
+> do_exit
+> 	exit_mm
 
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 7961499..5f3670d 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -2638,7 +2638,7 @@ static struct v4l2_ioctl_info v4l2_ioctls[] = {
- 	IOCTL_INFO_FNC(VIDIOC_PREPARE_BUF, v4l_prepare_buf, v4l_print_buffer, INFO_FL_QUEUE),
- 	IOCTL_INFO_STD(VIDIOC_ENUM_DV_TIMINGS, vidioc_enum_dv_timings, v4l_print_enum_dv_timings, INFO_FL_CLEAR(v4l2_enum_dv_timings, pad)),
- 	IOCTL_INFO_STD(VIDIOC_QUERY_DV_TIMINGS, vidioc_query_dv_timings, v4l_print_dv_timings, INFO_FL_ALWAYS_COPY),
--	IOCTL_INFO_STD(VIDIOC_DV_TIMINGS_CAP, vidioc_dv_timings_cap, v4l_print_dv_timings_cap, INFO_FL_CLEAR(v4l2_dv_timings_cap, type)),
-+	IOCTL_INFO_STD(VIDIOC_DV_TIMINGS_CAP, vidioc_dv_timings_cap, v4l_print_dv_timings_cap, INFO_FL_CLEAR(v4l2_dv_timings_cap, pad)),
- 	IOCTL_INFO_FNC(VIDIOC_ENUM_FREQ_BANDS, v4l_enum_freq_bands, v4l_print_freq_band, 0),
- 	IOCTL_INFO_FNC(VIDIOC_DBG_G_CHIP_INFO, v4l_dbg_g_chip_info, v4l_print_dbg_chip_info, INFO_FL_CLEAR(v4l2_dbg_chip_info, match)),
- 	IOCTL_INFO_FNC(VIDIOC_QUERY_EXT_CTRL, v4l_query_ext_ctrl, v4l_print_query_ext_ctrl, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_query_ext_ctrl, id)),
--- 
-2.7.4
+If this is the last task of the process, we would expect:
+
+  mm_count == 1
+  mm_users == 1
+
+at this point.
+
+> 		mmgrab(mm);			// foo's mm has count +1
+> 		BUG_ON(mm != current->active_mm);
+> 		task_lock(current);
+> 		current->mm = NULL;
+> 		task_unlock(current);
+
+So the whole active_mm is basically the last 'real' mm, and its purpose
+is to avoid switch_mm() between user tasks and kernel tasks.
+
+A kernel task has !->mm. We do this by incrementing mm_count when
+switching from user to kernel task and decrementing when switching from
+kernel to user.
+
+What exit_mm() does is change a user task into a 'kernel' task. So it
+should increment mm_count to mirror the context switch. I suspect this
+is what the mmgrab() in exit_mm() is for.
+
+> <irq and ctxsw to kthread>
+> 
+> context_switch(prev=foo, next=kthread)
+> 	mm = next->mm;
+> 	oldmm = prev->active_mm;
+> 
+> 	if (!mm) {				// True for kthread
+> 		next->active_mm = oldmm;
+> 		mmgrab(oldmm);			// foo's mm has count +2
+> 	}
+> 
+> 	if (!prev->mm) {			// True for foo
+> 		rq->prev_mm = oldmm;
+> 	}
+> 
+> 	finish_task_switch
+> 		mm = rq->prev_mm;
+> 		if (mm) {			// True (foo's mm)
+> 			mmdrop(mm);		// foo's mm has count +1
+> 		}
+> 
+> 	[...]
+> 
+> <ctxsw to task bar>
+> 
+> context_switch(prev=kthread, next=bar)
+> 	mm = next->mm;
+> 	oldmm = prev->active_mm;		// foo's mm!
+> 
+> 	if (!prev->mm) {			// True for kthread
+> 		rq->prev_mm = oldmm;
+> 	}
+> 
+> 	finish_task_switch
+> 		mm = rq->prev_mm;
+> 		if (mm) {			// True (foo's mm)
+> 			mmdrop(mm);		// foo's mm has count +0
+
+The context switch into the next user task will then decrement. At this
+point foo no longer has a reference to its mm, except on the stack.
+
+> 		}
+> 
+> 	[...]
+> 
+> <ctxsw back to task foo>
+> 
+> context_switch(prev=bar, next=foo)
+> 	mm = next->mm;
+> 	oldmm = prev->active_mm;
+> 
+> 	if (!mm) {				// True for foo
+> 		next->active_mm = oldmm;	// This is bar's mm
+> 		mmgrab(oldmm);			// bar's mm has count +1
+> 	}
+> 
+> 
+> 	[return back to exit_mm]
+
+Enter mm_users, this counts the number of tasks associated with the mm.
+We start with 1 in mm_init(), and when it drops to 0, we decrement
+mm_count. Since we also start with mm_count == 1, this would appear
+consistent.
+
+  mmput() // --mm_users == 0, which then results in:
+
+> mmdrop(mm);					// foo's mm has count -1
+
+In the above case, that's the very last reference to the mm, and since
+we started out with mm_count == 1, this -1 makes 0 and we do the actual
+free.
+
+> At this point, we've got an imbalanced count on the mm and could free it
+> prematurely as seen in the KASAN log.
+
+I'm not sure I see premature. At this point mm_users==0, mm_count==0 and
+we freed mm and there is no further use of the on-stack mm pointer and
+foo no longer has a pointer to it in either ->mm or ->active_mm. It's
+well and proper dead.
+
+> A subsequent context-switch away from foo would therefore result in a
+> use-after-free.
+
+At the above point, foo no longer has a reference to mm, we cleared ->mm
+early, and the context switch to bar cleared ->active_mm. The switch
+back into foo then results with foo->active_mm == bar->mm, which is
+fine.
