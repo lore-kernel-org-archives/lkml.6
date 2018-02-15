@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1906823-1518711329-2-2306368710494452383
+X-Cyrus-Session-Id: sloti22d1t05-1906823-1518711308-2-9550326507751063084
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518711328; b=cpkM6FgigxVwvV1L6tHlHbTBQyDpZiyiGwIY41g3wguPjQG
-    SYNCZmhATML2M6eOBBQ+7Wvp/2F6jM6lxX4kCkBaqXutSszHj0VtpZTb/AM7TNYi
-    2c86zvGq6AvhB6bvsClfkkjzAk42FCCDd71OPzCoZESn8dBO9WfaaoKGj8b8VJk0
-    aLHWIlpmiGCoKY6RgLJ6ClI+W7T+H1EePONpZC/RT3emPaFUEc9kEGaOVJR+TViH
-    23zPJbCyVyW1p4xRBpeewF2ywn0y1mftGviLuZPxaRBQ0yhvCh4ZYdYvMLd7Sdda
-    y7FmHvncb0it0ZROYN3Uc/JjMIyT0l6MpQQr3+A==
+    t=1518711308; b=AHgFW7h5VByiKS4TKQ3IT5T/VSVDtnszueO3g0x2fEjAzOa
+    KmP/nMu7/Rkj9PHc3oEhKOiwU+ZNuysEwItIj4Pqr9XzJ5nv7smm3iBWzYJIUZBG
+    y0JeoXvujdNk7iW+pqw8Kgc4o9gZpS0IpoSQ66efMhTsAfZdTd/FrPZ4TfM+Aq25
+    iTV6vXwYnggDgEYwgU3Rt0P2mTm71RC4t4ykXxuPtguV0Kea6Ll+RzwggN5SXBeW
+    48XmxE4HthJJIXQwDBE5WoRReBLej6XfDR8gV+VBWQ0cBvs1Ip2fZ56NKd3vlb3H
+    U97pJ6zyjuJqx4hYPy5Uv+Uyl41aJKQZUA9G9jQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518711328; bh=OFuEkDtMaVoBS23I8OMq2CMwnU
-    hW+6/tzyebb43u+30=; b=mR7/hhQmwcfycgT6FByL7kAwQBuVAtbd9igO7LJDFk
-    Qdx3D8KD5sJHKXQItx5kB80ITriVtKxK3/bshajefnZYFw7L1SOVhg+Ay3sCDoze
-    /Udz1mx6RUaj74rz/xpQcGXuyHE+3QFAcsmyWpZpJsgdonAoMj3jiiJB0rJcdw4N
-    4k/WugB/f3bLMiYg94tBoCHTTbzeuHHiXNulrevpDOA1/EqOyzVwsTmIWd0Vvh/C
-    k7hKScJeI/g3vMUOK6TxHOP4KjvhFVPX3R+l0yhdIdbDPTfI6atIXhFoOSi9+mKW
-    z/hR7YexrgpqQyNk3CuwOE/o6gRG+ad7xoF/b6wLkBPQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518711308; bh=GtbiYsPAUwcL/0lRb2XDxhtbGG
+    r+McaWjqTp3Tu/ICc=; b=YyekmFKsi0vNsro8msAdpJcm+HPs6bUrWKW0pvXKpO
+    Vb2gPvvxb2kkWRrLwoqFJ26VePL2P42178OqFwV0zVEz0QQuHQOvWQ/+AlOvYkjD
+    pc8+5bSaTzCB5/VPNC4ZI2AN5x0j7KvC07CRwP1tjbBqwxI61LQFCK+qKyWS0lE5
+    auc6bQT8qWbWmKvClIdJrthlyJauZvpoxDeJWTotRUor17XdmlQsKaQYu8NmlIuj
+    xkEDaigXAZi5W/Qeg8VKZmCMud7PugSEeTRlzxrwH2jaGm1ytUHg1rerTXjSuTKA
+    IguZW0T8e3K2KzCb1tuLQaVFrfHA6sIltY2vrW5OftPQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,23 +47,19 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165512AbeBOPoj (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:44:39 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34404 "EHLO
+        id S1424281AbeBOPon (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:44:43 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34434 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1165417AbeBOPoh (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:44:37 -0500
+        with ESMTP id S1423899AbeBOPom (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:44:42 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.15 084/202] [Variant 2/Spectre-v2] arm/arm64: smccc: Make function identifiers an unsigned quantity
-Date: Thu, 15 Feb 2018 16:16:24 +0100
-Message-Id: <20180215151717.855351532@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>
+Subject: [PATCH 4.15 134/202] KVM: PPC: Book3S HV: Drop locks before reading guest memory
+Date: Thu, 15 Feb 2018 16:17:14 +0100
+Message-Id: <20180215151720.160232830@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -80,50 +76,100 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Paul Mackerras <paulus@ozlabs.org>
 
+commit 36ee41d161c67a6fcf696d4817a0da31f778938c upstream.
 
-Commit ded4c39e93f3 upstream.
+Running with CONFIG_DEBUG_ATOMIC_SLEEP reveals that HV KVM tries to
+read guest memory, in order to emulate guest instructions, while
+preempt is disabled and a vcore lock is held.  This occurs in
+kvmppc_handle_exit_hv(), called from post_guest_process(), when
+emulating guest doorbell instructions on POWER9 systems, and also
+when checking whether we have hit a hypervisor breakpoint.
+Reading guest memory can cause a page fault and thus cause the
+task to sleep, so we need to avoid reading guest memory while
+holding a spinlock or when preempt is disabled.
 
-Function identifiers are a 32bit, unsigned quantity. But we never
-tell so to the compiler, resulting in the following:
+To fix this, we move the preempt_enable() in kvmppc_run_core() to
+before the loop that calls post_guest_process() for each vcore that
+has just run, and we drop and re-take the vcore lock around the calls
+to kvmppc_emulate_debug_inst() and kvmppc_emulate_doorbell_instr().
 
- 4ac:   b26187e0        mov     x0, #0xffffffff80000001
+Dropping the lock is safe with respect to the iteration over the
+runnable vcpus in post_guest_process(); for_each_runnable_thread
+is actually safe to use locklessly.  It is possible for a vcpu
+to become runnable and add itself to the runnable_threads array
+(code near the beginning of kvmppc_run_vcpu()) and then get included
+in the iteration in post_guest_process despite the fact that it
+has not just run.  This is benign because vcpu->arch.trap and
+vcpu->arch.ceded will be zero.
 
-We thus rely on the firmware narrowing it for us, which is not
-always a reasonable expectation.
-
-Cc: stable@vger.kernel.org
-Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Fixes: 579006944e0d ("KVM: PPC: Book3S HV: Virtualize doorbell facility on POWER9")
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/arm-smccc.h |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/include/linux/arm-smccc.h
-+++ b/include/linux/arm-smccc.h
-@@ -14,14 +14,16 @@
- #ifndef __LINUX_ARM_SMCCC_H
- #define __LINUX_ARM_SMCCC_H
+---
+ arch/powerpc/kvm/book3s_hv.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+--- a/arch/powerpc/kvm/book3s_hv.c
++++ b/arch/powerpc/kvm/book3s_hv.c
+@@ -1005,8 +1005,6 @@ static int kvmppc_emulate_doorbell_instr
+ 	struct kvm *kvm = vcpu->kvm;
+ 	struct kvm_vcpu *tvcpu;
  
-+#include <uapi/linux/const.h>
+-	if (!cpu_has_feature(CPU_FTR_ARCH_300))
+-		return EMULATE_FAIL;
+ 	if (kvmppc_get_last_inst(vcpu, INST_GENERIC, &inst) != EMULATE_DONE)
+ 		return RESUME_GUEST;
+ 	if (get_op(inst) != 31)
+@@ -1056,6 +1054,7 @@ static int kvmppc_emulate_doorbell_instr
+ 	return RESUME_GUEST;
+ }
+ 
++/* Called with vcpu->arch.vcore->lock held */
+ static int kvmppc_handle_exit_hv(struct kvm_run *run, struct kvm_vcpu *vcpu,
+ 				 struct task_struct *tsk)
+ {
+@@ -1176,7 +1175,10 @@ static int kvmppc_handle_exit_hv(struct
+ 				swab32(vcpu->arch.emul_inst) :
+ 				vcpu->arch.emul_inst;
+ 		if (vcpu->guest_debug & KVM_GUESTDBG_USE_SW_BP) {
++			/* Need vcore unlocked to call kvmppc_get_last_inst */
++			spin_unlock(&vcpu->arch.vcore->lock);
+ 			r = kvmppc_emulate_debug_inst(run, vcpu);
++			spin_lock(&vcpu->arch.vcore->lock);
+ 		} else {
+ 			kvmppc_core_queue_program(vcpu, SRR1_PROGILL);
+ 			r = RESUME_GUEST;
+@@ -1191,8 +1193,13 @@ static int kvmppc_handle_exit_hv(struct
+ 	 */
+ 	case BOOK3S_INTERRUPT_H_FAC_UNAVAIL:
+ 		r = EMULATE_FAIL;
+-		if ((vcpu->arch.hfscr >> 56) == FSCR_MSGP_LG)
++		if (((vcpu->arch.hfscr >> 56) == FSCR_MSGP_LG) &&
++		    cpu_has_feature(CPU_FTR_ARCH_300)) {
++			/* Need vcore unlocked to call kvmppc_get_last_inst */
++			spin_unlock(&vcpu->arch.vcore->lock);
+ 			r = kvmppc_emulate_doorbell_instr(vcpu);
++			spin_lock(&vcpu->arch.vcore->lock);
++		}
+ 		if (r == EMULATE_FAIL) {
+ 			kvmppc_core_queue_program(vcpu, SRR1_PROGILL);
+ 			r = RESUME_GUEST;
+@@ -2934,13 +2941,14 @@ static noinline void kvmppc_run_core(str
+ 	/* make sure updates to secondary vcpu structs are visible now */
+ 	smp_mb();
+ 
++	preempt_enable();
 +
- /*
-  * This file provides common defines for ARM SMC Calling Convention as
-  * specified in
-  * http://infocenter.arm.com/help/topic/com.arm.doc.den0028a/index.html
-  */
+ 	for (sub = 0; sub < core_info.n_subcores; ++sub) {
+ 		pvc = core_info.vc[sub];
+ 		post_guest_process(pvc, pvc == vc);
+ 	}
  
--#define ARM_SMCCC_STD_CALL		0
--#define ARM_SMCCC_FAST_CALL		1
-+#define ARM_SMCCC_STD_CALL	        _AC(0,U)
-+#define ARM_SMCCC_FAST_CALL	        _AC(1,U)
- #define ARM_SMCCC_TYPE_SHIFT		31
+ 	spin_lock(&vc->lock);
+-	preempt_enable();
  
- #define ARM_SMCCC_SMC_32		0
+  out:
+ 	vc->vcore_state = VCORE_INACTIVE;
