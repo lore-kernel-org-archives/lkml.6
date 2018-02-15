@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2179907-1518720285-2-9873847124842886079
+X-Cyrus-Session-Id: sloti22d1t05-2179907-1518720273-2-4604954846694627485
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720284; b=jHsAtDLWcLulgka3G5oBGjlnZQkYZxJSiYdJIR/Vy1jlTrS
-    7nCPP2d44Sf2jVVcdsKlfyUYT1UNovYuI7oGH3rDYgo2GLJCqhV6meMO3xmycNIb
-    +QiSnoYGgnh//ZCNn6R1jcRSGzK7XLkzFD+eSg2qGg9wzXPrCKCzdCrPhmifC5Yo
-    O1yidz+TjGhQ7dVdcRSTiVG2SHhgurhx5Sd8ncYBZl48WX6/u4uYcury/57Ofd1y
-    0YqDI8diFqH9lHigitVADuEETb9TfcIbMwBHi6YyRPQOOCbmd1jneRG/rQUv4fl1
-    jdAqdKuDMSxNIGTySWfbmquCLFVIM/QaScGYfjQ==
+    t=1518720273; b=G0hq06ek8Ur/GWGuMYBMGV4u8mWCqVyDjCYvhY4jtzw1+/A
+    9DMzEVETEuAtXYxHx9Dj9A9dMXVkwVlCvNwjqAI+hCodXhdruwzNe7OIhmVQCX4Z
+    B73qZWdzsPPL8TcveKb1D+y6Ghq2prrWUxx5mw2wObbn0R/Hle3XimAuNRtNRyZH
+    AtT6fWdEx9Fqb6ucPrK7P/LYU0Fn2THcbFDXISXSSMnyaXnpc7Ybk36MmgeHH2IX
+    VQajGQPv+fqeOQkobxh0xKgWmHtUZuBwXVOAINnc24XJhRtGgPNz0PQweIsTe5Pt
+    YRQHo0h/EiFUZcCOp3QxtH6nN/sBoOpuL+sJ0qQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720284; bh=nbvXrHZLfDnT1HlWxz1U1Qq6rp
-    EGbd0bG/9ZpkjQb84=; b=nAWyMmCQWMmXnSXn9NbYiaB+hYIhu9DIOqfpdE8JDF
-    9yVfxNO3PmBpFxaSAOFhyJlx8EoIpY20NNvZOw+ZT0Z8cE9xxIRBkN33gFzK3S4s
-    QjpGzMIjJM/5VtWjz7OugHoO7U/leHv9VkFAt5b2EP9w5yMpwvZ7KnwPvDzUSTeD
-    pidtwI4pzWxQRofbMlj4eCb2urFSqyyhiTn51FDC0doMUoUtYOGp2IXS1C/yqG4a
-    DIbo1LH0WyNMQ7xOCKSzzP5Aj/c758zKioqnSy3oG7oqZKuoLKnAhNYOdMdU1CYt
-    xS+eeZrppeXDrjNRuKM7xZd7kfEtVJRAy7jCmvSmDtNA==
+    :list-id; s=arctest; t=1518720273; bh=A5BBLVF+Vc9hZxPJA9CTh0egou
+    pCU5gU9pLpegXf44M=; b=AGP1AMxzjTlldWGvweaBD6tpmi51bHifLScDgQj6co
+    wqhZ+HkYtnFcpxf6iTq4QyoXF0qkvlTNnAWRBUYJRaMITsCxeWogMHRbsU5FyFah
+    Fwc9CPOxcnc9KLm7bC05RqSezSkOC5AVoR4AKWC13bUas8Egqa627sELRaySYYyh
+    N4rnLHCrIuog81rM1qSVUlEjJH1gOWdtZXilg5vRkCB9ZVJGpy5L6G0ZQBpu3lkp
+    6tVntSc1QdWC3l7l63AaI8WNN+I979R41IdIq+51MAhrMZ2YVuXy9aekPEFi9qPA
+    lbM2KScVjB4x22ozD7hpBLb9H267gxPrGZ2YeC2C9btw==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,23 +47,20 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162555AbeBOPXG (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:23:06 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50586 "EHLO
+        id S1166713AbeBOSoU (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:44:20 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50724 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161910AbeBOPXE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:04 -0500
+        with ESMTP id S1162580AbeBOPXM (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:23:12 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers3@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>
-Subject: [PATCH 4.4 047/108] posix-timer: Properly check sigevent->sigev_notify
-Date: Thu, 15 Feb 2018 16:16:44 +0100
-Message-Id: <20180215151228.997834157@linuxfoundation.org>
+        stable@vger.kernel.org, Jesse Chan <jc@linux.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.4 017/108] ASoC: pcm512x: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+Date: Thu, 15 Feb 2018 16:16:14 +0100
+Message-Id: <20180215151224.976749285@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -80,108 +77,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Jesse Chan <jc@linux.com>
 
-commit cef31d9af908243421258f1df35a4a644604efbe upstream.
+commit 0cab20cec0b663b7be8e2be5998d5a4113647f86 upstream.
 
-timer_create() specifies via sigevent->sigev_notify the signal delivery for
-the new timer. The valid modes are SIGEV_NONE, SIGEV_SIGNAL, SIGEV_THREAD
-and (SIGEV_SIGNAL | SIGEV_THREAD_ID).
+This change resolves a new compile-time warning
+when built as a loadable module:
 
-The sanity check in good_sigevent() is only checking the valid combination
-for the SIGEV_THREAD_ID bit, i.e. SIGEV_SIGNAL, but if SIGEV_THREAD_ID is
-not set it accepts any random value.
+WARNING: modpost: missing MODULE_LICENSE() in sound/soc/codecs/snd-soc-pcm512x-spi.o
+see include/linux/module.h for more information
 
-This has no real effects on the posix timer and signal delivery code, but
-it affects show_timer() which handles the output of /proc/$PID/timers. That
-function uses a string array to pretty print sigev_notify. The access to
-that array has no bound checks, so random sigev_notify cause access beyond
-the array bounds.
+This adds the license as "GPL v2", which matches the header of the file.
 
-Add proper checks for the valid notify modes and remove the SIGEV_THREAD_ID
-masking from various code pathes as SIGEV_NONE can never be set in
-combination with SIGEV_THREAD_ID.
+MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
 
-Reported-by: Eric Biggers <ebiggers3@gmail.com>
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: Alexey Dobriyan <adobriyan@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Jesse Chan <jc@linux.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/time/posix-timers.c |   34 +++++++++++++++++++---------------
- 1 file changed, 19 insertions(+), 15 deletions(-)
+ sound/soc/codecs/pcm512x-spi.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -507,17 +507,22 @@ static struct pid *good_sigevent(sigeven
- {
- 	struct task_struct *rtn = current->group_leader;
+--- a/sound/soc/codecs/pcm512x-spi.c
++++ b/sound/soc/codecs/pcm512x-spi.c
+@@ -70,3 +70,7 @@ static struct spi_driver pcm512x_spi_dri
+ };
  
--	if ((event->sigev_notify & SIGEV_THREAD_ID ) &&
--		(!(rtn = find_task_by_vpid(event->sigev_notify_thread_id)) ||
--		 !same_thread_group(rtn, current) ||
--		 (event->sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_SIGNAL))
-+	switch (event->sigev_notify) {
-+	case SIGEV_SIGNAL | SIGEV_THREAD_ID:
-+		rtn = find_task_by_vpid(event->sigev_notify_thread_id);
-+		if (!rtn || !same_thread_group(rtn, current))
-+			return NULL;
-+		/* FALLTHRU */
-+	case SIGEV_SIGNAL:
-+	case SIGEV_THREAD:
-+		if (event->sigev_signo <= 0 || event->sigev_signo > SIGRTMAX)
-+			return NULL;
-+		/* FALLTHRU */
-+	case SIGEV_NONE:
-+		return task_pid(rtn);
-+	default:
- 		return NULL;
--
--	if (((event->sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_NONE) &&
--	    ((event->sigev_signo <= 0) || (event->sigev_signo > SIGRTMAX)))
--		return NULL;
--
--	return task_pid(rtn);
-+	}
- }
- 
- void posix_timers_register_clock(const clockid_t clock_id,
-@@ -745,8 +750,7 @@ common_timer_get(struct k_itimer *timr,
- 	/* interval timer ? */
- 	if (iv.tv64)
- 		cur_setting->it_interval = ktime_to_timespec(iv);
--	else if (!hrtimer_active(timer) &&
--		 (timr->it_sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_NONE)
-+	else if (!hrtimer_active(timer) && timr->it_sigev_notify != SIGEV_NONE)
- 		return;
- 
- 	now = timer->base->get_time();
-@@ -757,7 +761,7 @@ common_timer_get(struct k_itimer *timr,
- 	 * expiry is > now.
- 	 */
- 	if (iv.tv64 && (timr->it_requeue_pending & REQUEUE_PENDING ||
--	    (timr->it_sigev_notify & ~SIGEV_THREAD_ID) == SIGEV_NONE))
-+			timr->it_sigev_notify == SIGEV_NONE))
- 		timr->it_overrun += (unsigned int) hrtimer_forward(timer, now, iv);
- 
- 	remaining = __hrtimer_expires_remaining_adjusted(timer, now);
-@@ -767,7 +771,7 @@ common_timer_get(struct k_itimer *timr,
- 		 * A single shot SIGEV_NONE timer must return 0, when
- 		 * it is expired !
- 		 */
--		if ((timr->it_sigev_notify & ~SIGEV_THREAD_ID) != SIGEV_NONE)
-+		if (timr->it_sigev_notify != SIGEV_NONE)
- 			cur_setting->it_value.tv_nsec = 1;
- 	} else
- 		cur_setting->it_value = ktime_to_timespec(remaining);
-@@ -865,7 +869,7 @@ common_timer_set(struct k_itimer *timr,
- 	timr->it.real.interval = timespec_to_ktime(new_setting->it_interval);
- 
- 	/* SIGEV_NONE timers are not queued ! See common_timer_get */
--	if (((timr->it_sigev_notify & ~SIGEV_THREAD_ID) == SIGEV_NONE)) {
-+	if (timr->it_sigev_notify == SIGEV_NONE) {
- 		/* Setup correct expiry time for relative timers */
- 		if (mode == HRTIMER_MODE_REL) {
- 			hrtimer_add_expires(timer, timer->base->get_time());
+ module_spi_driver(pcm512x_spi_driver);
++
++MODULE_DESCRIPTION("ASoC PCM512x codec driver - SPI");
++MODULE_AUTHOR("Mark Brown <broonie@kernel.org>");
++MODULE_LICENSE("GPL v2");
