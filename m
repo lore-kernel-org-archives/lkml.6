@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1883814-1518711221-2-9877965733491660088
+X-Cyrus-Session-Id: sloti22d1t05-1906823-1518711164-2-11049704001932962197
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518711220; b=CN2inNoPEu3AuFF7YHeNQJuZN3Ci117mU9CaQnWx/jswbtD
-    2QhSlVdQyncUSVRIMCZl6OgZMKlK1GHJvt2fn1POlk9SXZFnCw0WJPbZ1Zyvp6dm
-    662WUGhlOjW6omirPBTHKPISjkrnTR0B/najdAPpiFKKFqswanr5OPjD/UBXCfdY
-    G/LQF6XARkXuPjF+/Ml1VKva7pArZX7RS+HzdaIa2Q+fOuedCJIONU9j0exjvggG
-    LiQNIOKpCS1s8pbDX+YM0gMavCaznuIH6eXM9GeJ+ZluY4TWGTGLCQqTiWB57LAE
-    Tq+/V61EUFNXkI8XhBbfHbaI9JncvfzzbatgfzQ==
+    t=1518711164; b=hedGpmeh4p2CqLl3oSX4FP+dLiqGQb9jpClH5aC82f+W3a7
+    PPbMMMwb+bTYb86UOSr8sglKnwXBjiJsbj/11Ouo+XRBD09tDgpwxELTZzv9rruV
+    YiMuMUMK43/+ojKOHpqwLJpCnEqhLOGCZy5ouPRDRnEVD1a334gnDA28FArKWHLv
+    9GvJUNMY6t6w4jNWNkNqeq7LSG5MjYkxM97K53Hm5uCwud30CtVQMgLslTC12kVW
+    i0ZMcGssa4D3fLGbh/P9X7EECSfJJgGfwKnalPZY9XjqTDYlV2JR3KUDr+X2mNOb
+    DxhCvVcqwwZPUYoCTG8U5wXywZAdf9JmP4GFU9w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518711220; bh=/rbA6UqYK5VFLAHauV+ImutjQV
-    roXz5q1WIOurcYhOU=; b=ZmL3GGmYMR3YCb9BN3rTndtPFlS3OjTPHzptK/AlIJ
-    PuEdi4+rCO8l0FQQFirZSggmwdHvHNeDd3oFnvSqANUAdrQ4e3YKryJGnuIveYVt
-    lDocktKDQRMlfNf64HbBKOPwI51O3TjdFtTG/f4URLgQ5AhNrh8RxOqbDUiOWswk
-    nuiYuw4IRVHFAxxHkONM8ACGL4IqhHtCqBnZs7K6G0WMDcuH4+7I2BW93gUqdo6c
-    n+OSrWb2nAtbe8UyjGHhVc87hk73aBDNCs7lhNlIDV4gM7Uz1iqq5s3JrdvSCOTA
-    ukF6U295LvAG1B4y7SIO+QhHxE5NUW7rw4WgnnqStjWw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518711164; bh=iT5wO5iPnALTCuTpQyIjB8BCH1
+    RoVCtEoUjbUBBY5J4=; b=S1/FIVnOgeiuldcmShm1MW6rUxkacroirapDJavzkO
+    yzhvZT9GPZeL6z1hcmGYVvUB51klO9GoUSkAq1XoxZVkQPButvvpKfc9dUJk4gSD
+    sXE3VYGnglAgqpVupEc2kMqYjFfegvVhqH6QE6waaxh4074UJtk3FmxqyIAI8ziV
+    pD2SK9m7nSNn8Fpw2jmXmUeQ3tqUvPkv+9USGZQD5dGkZ4xbLLDEq/Dvl/+X1mOe
+    PQdsBjpqBM60oHre+97BJWctr4pa5oYYYs3elnHmX11/FXmyL6+rbQyitfDPMIuC
+    j744qEdzHTxjRb4/IlC/9ViwjLF1JYMNjuEHQ84R9/vA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424560AbeBOQNW (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 11:13:22 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34788 "EHLO
+        id S1424529AbeBOQMa (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 11:12:30 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34838 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424375AbeBOPpC (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:45:02 -0500
+        with ESMTP id S1424395AbeBOPpK (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:45:10 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@iguana.be>
-Subject: [PATCH 4.15 141/202] watchdog: imx2_wdt: restore previous timeout after suspend+resume
-Date: Thu, 15 Feb 2018 16:17:21 +0100
-Message-Id: <20180215151720.454617405@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.15 126/202] media: v4l2-compat-ioctl32.c: make ctrl_is_pointer work for subdevs
+Date: Thu, 15 Feb 2018 16:17:06 +0100
+Message-Id: <20180215151719.815489578@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -78,86 +79,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Kaiser <martin@kaiser.cx>
+From: Hans Verkuil <hansverk@cisco.com>
 
-commit 0be267255cef64e1c58475baa7b25568355a3816 upstream.
+commit 273caa260035c03d89ad63d72d8cd3d9e5c5e3f1 upstream.
 
-When the watchdog device is suspended, its timeout is set to the maximum
-value. During resume, the previously set timeout should be restored.
-This does not work at the moment.
+If the device is of type VFL_TYPE_SUBDEV then vdev->ioctl_ops
+is NULL so the 'if (!ops->vidioc_query_ext_ctrl)' check would crash.
+Add a test for !ops to the condition.
 
-The suspend function calls
+All sub-devices that have controls will use the control framework,
+so they do not have an equivalent to ops->vidioc_query_ext_ctrl.
+Returning false if ops is NULL is the correct thing to do here.
 
-imx2_wdt_set_timeout(wdog, IMX2_WDT_MAX_TIME);
+Fixes: b8c601e8af ("v4l2-compat-ioctl32.c: fix ctrl_is_pointer")
 
-and resume reverts this by calling
-
-imx2_wdt_set_timeout(wdog, wdog->timeout);
-
-However, imx2_wdt_set_timeout() updates wdog->timeout. Therefore,
-wdog->timeout is set to IMX2_WDT_MAX_TIME when we enter the resume
-function.
-
-Fix this by adding a new function __imx2_wdt_set_timeout() which
-only updates the hardware settings. imx2_wdt_set_timeout() now calls
-__imx2_wdt_set_timeout() and then saves the new timeout to
-wdog->timeout.
-
-During suspend, we call __imx2_wdt_set_timeout() directly so that
-wdog->timeout won't be updated and we can restore the previous value
-during resume. This approach makes wdog->timeout different from the
-actual setting in the hardware which is usually not a good thing.
-However, the two differ only while we're suspended and no kernel code is
-running, so it should be ok in this case.
-
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/watchdog/imx2_wdt.c |   20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/watchdog/imx2_wdt.c
-+++ b/drivers/watchdog/imx2_wdt.c
-@@ -169,15 +169,21 @@ static int imx2_wdt_ping(struct watchdog
- 	return 0;
- }
- 
--static int imx2_wdt_set_timeout(struct watchdog_device *wdog,
--				unsigned int new_timeout)
-+static void __imx2_wdt_set_timeout(struct watchdog_device *wdog,
-+				   unsigned int new_timeout)
- {
- 	struct imx2_wdt_device *wdev = watchdog_get_drvdata(wdog);
- 
--	wdog->timeout = new_timeout;
--
- 	regmap_update_bits(wdev->regmap, IMX2_WDT_WCR, IMX2_WDT_WCR_WT,
- 			   WDOG_SEC_TO_COUNT(new_timeout));
-+}
-+
-+static int imx2_wdt_set_timeout(struct watchdog_device *wdog,
-+				unsigned int new_timeout)
-+{
-+	__imx2_wdt_set_timeout(wdog, new_timeout);
-+
-+	wdog->timeout = new_timeout;
- 	return 0;
- }
- 
-@@ -371,7 +377,11 @@ static int imx2_wdt_suspend(struct devic
- 
- 	/* The watchdog IP block is running */
- 	if (imx2_wdt_is_running(wdev)) {
--		imx2_wdt_set_timeout(wdog, IMX2_WDT_MAX_TIME);
-+		/*
-+		 * Don't update wdog->timeout, we'll restore the current value
-+		 * during resume.
-+		 */
-+		__imx2_wdt_set_timeout(wdog, IMX2_WDT_MAX_TIME);
- 		imx2_wdt_ping(wdog);
+--- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
++++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+@@ -770,7 +770,7 @@ static inline bool ctrl_is_pointer(struc
+ 		return ctrl && ctrl->is_ptr;
  	}
  
+-	if (!ops->vidioc_query_ext_ctrl)
++	if (!ops || !ops->vidioc_query_ext_ctrl)
+ 		return false;
+ 
+ 	return !ops->vidioc_query_ext_ctrl(file, fh, &qec) &&
