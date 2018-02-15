@@ -1,36 +1,35 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224/3Z08dyaM48ZEbdIUFPgekJoZf2aixo1t6vLF7sSEpjPI5/RGcBxtLbeqxvbk/MHc0Czu
-ARC-Seal: i=1; a=rsa-sha256; t=1518707921; cv=none;
+X-Google-Smtp-Source: AH8x226hxQs/sIKeX31U+i9LycrsA1g3nqI3MTFbmv4w7uimQZJjushz290XtnWCcwZiQWmBc87D
+ARC-Seal: i=1; a=rsa-sha256; t=1518707918; cv=none;
         d=google.com; s=arc-20160816;
-        b=i7hrmMdKn86RY854o6Be9zlcX0AcrcupcEiB8X+bIjJNjRLGJVQNjDWrgNR6ATUPPM
-         +N581IpUSFyNiQNiIplAHa/9gI679itWTGajQKWen3Uq2+PSu3HHT6AeppDfB2+YB2+c
-         m0KwIpFOzPqRmBVBP7BTW8rivlYy0wK7yEh+TfTTWm8QOWToZwkXNjEILpvPZP4touog
-         +BzPdjHuVbzpu8xzchpBd0gK6Fowb/EeIavnwLV1T84gPOpzSevdvABHhBqIvT1xMIhs
-         ob7/Lt+pVBFBIT24Jxe0jVBDYJfdWVxzj3MHXKkkr9D0Ijquhk2WOnbwUyyQLhHN4WJ7
-         iYzw==
+        b=mGRTJomFoi4GnxcO8jsR6+GsVgGn89n+oWOJb6hlA1UcmmxAHhyU9xwhcVf1cbnFsV
+         IAZJ7ngi6DRhg1p4ts82jmdiaKHLSMLdTEfS2Vn8xedMB/+6EvOE5BF/6Qa7X2upqnTT
+         0CJI84ObYmN+TCwwo+pCki9+/N3wsg++b9MBK0CiusS2Qy0TBC4mntbQJhWK6zVm/MVd
+         h/n1+5mBppUpv6DybfwlHsYEZFjUi+Vyetxm+mePpeM0tRrsSE2AH1RFJfiqR2JuY7Vi
+         H0FDuDSbZacAcphiDX5R913+eidKzYI1rDZYGT6Z4JLQVD9tDTotWkdwXy81GyN5uVdY
+         Qsqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AV5EAT+15a/FjtzF/IGutP9TVW4mIE0BW/2G8B/Y6l0=;
-        b=uXu+t69i3S1MDYKWMQW6uPrat69U5ktq3jeJuKMXGemRDXbI7tjOq8LntP2180cTK/
-         dKdOs9AZo8N7rXdcnZBeOebROCgz1TC8a3i0hL/yt4YLp74ZGc/D3MpWl8yTD2pnnnNN
-         7gHJrhmIdgK+Sdn1kr1i8qXgx2/T2G7Jav0jru+UoM524rDoofvAGz/1oECg0VpwyVu8
-         RCG7oVesboZBwG3kn7JUNsGvxckdKlovjHDElzRqhJnmWvt1S/mAtMuZn2U2HnumbGzH
-         dDQcAvq7HcGkOnO1rjLJyVNSAvAJx7FTgawKzErmK4awuPPYjxgExS9qXwcktm+2QN8W
-         6U+Q==
+        bh=A5qRu5O4XdLKAtLThe4keXjZHlOX9tznKgLQ2HWSaso=;
+        b=CFI3VKb3J1ZyYI8NOMHRm+x3sUkkOZdCs1JWyGwNfJZHnBFczlaGAWTZso0fQjBOtp
+         Drwp24SzUmTOASeWOMUFrSGIXJqTSooFE8HvbRqVLcsW0405KztW76JPvVUw69mALG1h
+         6U8vZ3hgi7hGLTnJU3HsAudjbnCA2EHtgePBdEtXGcByxZNenba2AhhzSaX5oEslZX36
+         iof7jWAL8q6iL54QapdVm9x3p+vdv4WoCrE83p/8TpNkgz8JgQ0Xb5HmAsNdmpmyouqV
+         uezZRPOG9dqltYjTXp7b/VOjt2GoxpHzYgUvvZ1IZVGoz5vSRcB3zRHLszQuI2wojR5c
+         3pSQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Matthew Wilcox <mawilcox@microsoft.com>,
-	Steve French <smfrench@gmail.com>
-Subject: [PATCH 3.18 11/45] cifs: Fix missing put_xid in cifs_file_strict_mmap
-Date: Thu, 15 Feb 2018 16:17:02 +0100
-Message-Id: <20180215144118.213061765@linuxfoundation.org>
+	Wang Han <wanghan1995315@gmail.com>
+Subject: [PATCH 3.18 10/45] ipv4: Map neigh lookup keys in __ipv4_neigh_lookup_noref()
+Date: Thu, 15 Feb 2018 16:17:01 +0100
+Message-Id: <20180215144118.045871977@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215144115.863307741@linuxfoundation.org>
 References: <20180215144115.863307741@linuxfoundation.org>
@@ -39,8 +38,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480676888603545?=
-X-GMAIL-MSGID: =?utf-8?q?1592480676888603545?=
+X-GMAIL-THRID: =?utf-8?q?1592480674237416402?=
+X-GMAIL-MSGID: =?utf-8?q?1592480674237416402?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,72 +47,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+From: Wang Han <wanghan1995315@gmail.com>
 
-commit f04a703c3d613845ae3141bfaf223489de8ab3eb upstream.
+Commit 6c16fa957e84 is an incorrect backport as we map the keys in
+struct __ipv4_neigh_lookup(), but the correct place to add the
+code is struct __ipv4_neigh_lookup_noref(), compared to upstream.
 
-If cifs_zap_mapping() returned an error, we would return without putting
-the xid that we got earlier.  Restructure cifs_file_strict_mmap() and
-cifs_file_mmap() to be more similar to each other and have a single
-point of return that always puts the xid.
+Fix it by moving the code, or fewer cases will be covered as
+__ipv4_neigh_lookup_noref() will be called unconditionally from
+__ipv4_neigh_lookup(), and it can be called from other places
+such as ip_output.c.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Signed-off-by: Steve French <smfrench@gmail.com>
+Fixes: 6c16fa957e84 (ipv4: Make neigh lookup keys for loopback/point-to-point devices be INADDR_ANY)
+Signed-off-by: Wang Han <wanghan1995315@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/cifs/file.c |   26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+ include/net/arp.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -3261,20 +3261,18 @@ static struct vm_operations_struct cifs_
+--- a/include/net/arp.h
++++ b/include/net/arp.h
+@@ -22,6 +22,9 @@ static inline struct neighbour *__ipv4_n
+ 	struct neighbour *n;
+ 	u32 hash_val;
  
- int cifs_file_strict_mmap(struct file *file, struct vm_area_struct *vma)
++	if (dev->flags & (IFF_LOOPBACK | IFF_POINTOPOINT))
++		key = INADDR_ANY;
++
+ 	hash_val = arp_hashfn(key, dev, nht->hash_rnd[0]) >> (32 - nht->hash_shift);
+ 	for (n = rcu_dereference_bh(nht->hash_buckets[hash_val]);
+ 	     n != NULL;
+@@ -37,9 +40,6 @@ static inline struct neighbour *__ipv4_n
  {
--	int rc, xid;
-+	int xid, rc = 0;
- 	struct inode *inode = file_inode(file);
+ 	struct neighbour *n;
  
- 	xid = get_xid();
- 
--	if (!CIFS_CACHE_READ(CIFS_I(inode))) {
-+	if (!CIFS_CACHE_READ(CIFS_I(inode)))
- 		rc = cifs_zap_mapping(inode);
--		if (rc)
--			return rc;
--	}
+-	if (dev->flags & (IFF_LOOPBACK | IFF_POINTOPOINT))
+-		key = INADDR_ANY;
 -
--	rc = generic_file_mmap(file, vma);
--	if (rc == 0)
-+	if (!rc)
-+		rc = generic_file_mmap(file, vma);
-+	if (!rc)
- 		vma->vm_ops = &cifs_file_vm_ops;
-+
- 	free_xid(xid);
- 	return rc;
- }
-@@ -3284,16 +3282,16 @@ int cifs_file_mmap(struct file *file, st
- 	int rc, xid;
- 
- 	xid = get_xid();
-+
- 	rc = cifs_revalidate_file(file);
--	if (rc) {
-+	if (rc)
- 		cifs_dbg(FYI, "Validation prior to mmap failed, error=%d\n",
- 			 rc);
--		free_xid(xid);
--		return rc;
--	}
--	rc = generic_file_mmap(file, vma);
--	if (rc == 0)
-+	if (!rc)
-+		rc = generic_file_mmap(file, vma);
-+	if (!rc)
- 		vma->vm_ops = &cifs_file_vm_ops;
-+
- 	free_xid(xid);
- 	return rc;
- }
+ 	rcu_read_lock_bh();
+ 	n = __ipv4_neigh_lookup_noref(dev, key);
+ 	if (n && !atomic_inc_not_zero(&n->refcnt))
