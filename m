@@ -1,66 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754862AbeBOTZF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 14:25:05 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:38889 "EHLO
+        id S1033420AbeBOT0O (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 14:26:14 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:38904 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750832AbeBOTZD (ORCPT
+        with ESMTP id S1750961AbeBOT0N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 14:25:03 -0500
-Subject: NACK: [PATCH] rtc: tx4939: avoid unintended sign extension on a 24
- bit shift
-From: Colin Ian King <colin.king@canonical.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-rtc@vger.kernel.org
+        Thu, 15 Feb 2018 14:26:13 -0500
+From: Colin King <colin.king@canonical.com>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180215185941.27547-1-colin.king@canonical.com>
-Message-ID: <39b61428-be04-7233-edd8-ab7b37b469d0@canonical.com>
-Date: Thu, 15 Feb 2018 19:25:01 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Subject: [PATCH] i40evf: pass struct virtchnl_filter by reference rather than by value
+Date: Thu, 15 Feb 2018 19:26:05 +0000
+Message-Id: <20180215192605.28350-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <20180215185941.27547-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/02/18 18:59, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The shifting of buf[5] by 24 bits to the left will be promoted to
-> a 32 bit signed int and then sign-extended to an unsigned long. If
-> the top bit of buf[5] is set then all then all the upper bits sec
-> end up as also being set because of the sign-extension. Fix this by
-> casting buf[5] to an unsigned long before the shift.
-> 
-> Detected by CoverityScan, CID#1465292 ("Unintended sign extension")
-> 
-> Fixes: 0e1492330cd2 ("rtc: add rtc-tx4939 driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/rtc/rtc-tx4939.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rtc/rtc-tx4939.c b/drivers/rtc/rtc-tx4939.c
-> index feededce3ded..b8a066cbcc42 100644
-> --- a/drivers/rtc/rtc-tx4939.c
-> +++ b/drivers/rtc/rtc-tx4939.c
-> @@ -170,7 +170,8 @@ static int tx4939_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
->  	alrm->enabled = (ctl & TX4939_RTCCTL_ALME) ? 1 : 0;
->  	alrm->pending = (ctl & TX4939_RTCCTL_ALMD) ? 1 : 0;
->  	spin_unlock_irq(&pdata->lock);
-> -	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
-> +	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
-> +		(buf[3] << 8) | buf[2];
->  	rtc_time_to_tm(sec, &alrm->time);
->  	return rtc_valid_tm(&alrm->time);
->  }
-> 
-Nack, there are two occurrences of this sign extension, I missed the
-other one. I'll re-send a fix.
+From: Colin Ian King <colin.king@canonical.com>
 
-Colin
+Passing struct virtchnl_filter f by value requires a 272 byte copy
+on x86_64, so instead pass it by reference is much more efficient. Also
+adjust some lines that are over 80 chars.
+
+Detected by CoverityScan, CID#1465285 ("Big parameter passed by value")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ .../net/ethernet/intel/i40evf/i40evf_virtchnl.c    | 32 ++++++++++++----------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/i40evf/i40evf_virtchnl.c b/drivers/net/ethernet/intel/i40evf/i40evf_virtchnl.c
+index 6134b61e0938..3c76c817ca1a 100644
+--- a/drivers/net/ethernet/intel/i40evf/i40evf_virtchnl.c
++++ b/drivers/net/ethernet/intel/i40evf/i40evf_virtchnl.c
+@@ -1048,24 +1048,28 @@ void i40evf_disable_channels(struct i40evf_adapter *adapter)
+  * Print the cloud filter
+  **/
+ static void i40evf_print_cloud_filter(struct i40evf_adapter *adapter,
+-				      struct virtchnl_filter f)
++				      struct virtchnl_filter *f)
+ {
+-	switch (f.flow_type) {
++	switch (f->flow_type) {
+ 	case VIRTCHNL_TCP_V4_FLOW:
+ 		dev_info(&adapter->pdev->dev, "dst_mac: %pM src_mac: %pM vlan_id: %hu dst_ip: %pI4 src_ip %pI4 dst_port %hu src_port %hu\n",
+-			 &f.data.tcp_spec.dst_mac, &f.data.tcp_spec.src_mac,
+-			 ntohs(f.data.tcp_spec.vlan_id),
+-			 &f.data.tcp_spec.dst_ip[0], &f.data.tcp_spec.src_ip[0],
+-			 ntohs(f.data.tcp_spec.dst_port),
+-			 ntohs(f.data.tcp_spec.src_port));
++			 &f->data.tcp_spec.dst_mac,
++			 &f->data.tcp_spec.src_mac,
++			 ntohs(f->data.tcp_spec.vlan_id),
++			 &f->data.tcp_spec.dst_ip[0],
++			 &f->data.tcp_spec.src_ip[0],
++			 ntohs(f->data.tcp_spec.dst_port),
++			 ntohs(f->data.tcp_spec.src_port));
+ 		break;
+ 	case VIRTCHNL_TCP_V6_FLOW:
+ 		dev_info(&adapter->pdev->dev, "dst_mac: %pM src_mac: %pM vlan_id: %hu dst_ip: %pI6 src_ip %pI6 dst_port %hu src_port %hu\n",
+-			 &f.data.tcp_spec.dst_mac, &f.data.tcp_spec.src_mac,
+-			 ntohs(f.data.tcp_spec.vlan_id),
+-			 &f.data.tcp_spec.dst_ip, &f.data.tcp_spec.src_ip,
+-			 ntohs(f.data.tcp_spec.dst_port),
+-			 ntohs(f.data.tcp_spec.src_port));
++			 &f->data.tcp_spec.dst_mac,
++			 &f->data.tcp_spec.src_mac,
++			 ntohs(f->data.tcp_spec.vlan_id),
++			 &f->data.tcp_spec.dst_ip,
++			 &f->data.tcp_spec.src_ip,
++			 ntohs(f->data.tcp_spec.dst_port),
++			 ntohs(f->data.tcp_spec.src_port));
+ 		break;
+ 	}
+ }
+@@ -1303,7 +1307,7 @@ void i40evf_virtchnl_completion(struct i40evf_adapter *adapter,
+ 						 i40evf_stat_str(&adapter->hw,
+ 								 v_retval));
+ 					i40evf_print_cloud_filter(adapter,
+-								  cf->f);
++								  &cf->f);
+ 					list_del(&cf->list);
+ 					kfree(cf);
+ 					adapter->num_cloud_filters--;
+@@ -1322,7 +1326,7 @@ void i40evf_virtchnl_completion(struct i40evf_adapter *adapter,
+ 						 i40evf_stat_str(&adapter->hw,
+ 								 v_retval));
+ 					i40evf_print_cloud_filter(adapter,
+-								  cf->f);
++								  &cf->f);
+ 				}
+ 			}
+ 			}
+-- 
+2.15.1
