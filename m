@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2241641-1518720581-2-5667996552302162482
+X-Cyrus-Session-Id: sloti22d1t05-2241641-1518720573-2-3819306494722952133
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518720580; b=bVRCchDgeW30OnGG/rbY/5kgsa7D59HYF4F9exaJVXEcadT
-    PybjAN8dWNbUxzhoQyz3zwZjxmEBuIeIdg+ksMntNlxVw0AEyFwi4qQgchavv1g3
-    Bvw74Ml6sj99x2E+sN43Lf2zz1ve7WR6InHgJ6ZVUJOZUQeAIpJHKARbLRfA0caL
-    WaVx7nFsHxsFvU8r5zaSypinBiJMPYIZznP5bfsAVYGwGUveFJy9Pv/Gp4MyAqVz
-    SrjFSTdr57TDB/tIUUqedXtzPVhSWqwRxGTw5PNbw1W86qjuCmL9FC5/A8/J4B6x
-    Mvv0AN50QERwOCAd5EPUZYtlOlI17EqDVu4yWBw==
+    t=1518720572; b=jayWnvxpANwtXLj7bB0PxPsV16CbMu/uBA/+/twGywzVfUO
+    ASkkh7oad+GBZ+uZv3WWxGdeYzpob9uom2FtMsKGYsgX+3aeENsDL9BCuQzkCJKT
+    O8Z12m4acCdhMW7y5tUUrK/mwfQtKtu0WrN3lgYmKnpG9CMkFFhXpENN0nAUsQPi
+    50NzGcUvI4ruU1wDFKIXf2xjBIuFllVXmr9uS/j9N2ZJmknefKx7B/K/2GKkrqDf
+    sz2XcVr/EBYAWGe8cV21ElzJK0MggTR33U0ZW1WnDWK528F6x7WC/ltdewnzeDd/
+    j1Dj4y74DHOku9XxgX1Sl0eaEkuFWzGfBrnQ0OQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518720580; bh=7tMwnhqgUsqDq6FBHsgKqDXm5a
-    qxllz+nRJOEusGzaQ=; b=o0JPpJTGA6aH4WeNQESEPe5HhFKSj/8/5TkJ9iF3ab
-    z0H9RLC3g8/enWaRn3ifCM/oZfMkzPzftdRFX6iq4vVQ5oMAgr3ge2w5tq+YLkHR
-    BySADqRuiC6v30vaws+e9//SCz6zkTv3kCBql8drVqMQdLEMEGR6GtQmyQ9Lk3Yz
-    VBWZOj6KAzwDKGC7bJu/VazskqDP1r/vnDSyJBv73ckspqspF6KbdQ4C1MYza0NL
-    B7r3fHln2wwBRNnMuuV/2XUJiaruNMDtdZBp9BYnlofnRrtEhvBDj+Ti5wtmnnqU
-    lyC3gDuHT708aydgIJElRt+mGkQ4N0wxegTAv8Th6b4A==
+    :list-id; s=arctest; t=1518720572; bh=jC+ztDaLgUWElPUXjWA8TyzU90
+    7eysEaIWhwXeH3diY=; b=Jw08b7629L8z64Ayt+KJB0wcbMWdppK8BD/t76Wg3n
+    CBh/+SMX5k8pgQYC05MR0jUdijvQ37+FBOY4WxYG2BXMkQvU5LJSOCoEMQC82zBc
+    N1R1NgY5LgXpQuZUFJhNtBnDKGlSYPij4WUwHc7+P35anrYK7zUpRPl7VP/30ZXI
+    sIeF0KRBhMbMFDxEoZDK5eRWi+y+tzJlF/IwRq70PbBiADBanimUpDQ7lMEll/yV
+    QOSUZewnFK75V+Zc471dr9LGJE3ng6o8C/tuBM+JSldtDl4WtmJzkq9OKMenm6ub
+    0V10X47rlVXVF25FP+PPfkonMYzZBkeRTWsZWcgVkZKg==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,21 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162164AbeBOPVs (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:21:48 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49226 "EHLO
+        id S1162294AbeBOStP (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 13:49:15 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49284 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162138AbeBOPVr (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:21:47 -0500
+        with ESMTP id S1162201AbeBOPVx (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:21:53 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 031/108] tcp: release sk_frag.page in tcp_disconnect
-Date: Thu, 15 Feb 2018 16:16:28 +0100
-Message-Id: <20180215151226.765366399@linuxfoundation.org>
+        stable@vger.kernel.org, Jesse Chan <jc@linux.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.4 033/108] media: soc_camera: soc_scale_crop: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+Date: Thu, 15 Feb 2018 16:16:30 +0100
+Message-Id: <20180215151227.045243423@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -78,36 +78,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Li RongQing <lirongqing@baidu.com>
+From: Jesse Chan <jc@linux.com>
 
+commit 5331aec1bf9c9da557668174e0a4bfcee39f1121 upstream.
 
-[ Upstream commit 9b42d55a66d388e4dd5550107df051a9637564fc ]
+This change resolves a new compile-time warning
+when built as a loadable module:
 
-socket can be disconnected and gets transformed back to a listening
-socket, if sk_frag.page is not released, which will be cloned into
-a new socket by sk_clone_lock, but the reference count of this page
-is increased, lead to a use after free or double free issue
+WARNING: modpost: missing MODULE_LICENSE() in drivers/media/platform/soc_camera/soc_scale_crop.o
+see include/linux/module.h for more information
 
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This adds the license as "GPL", which matches the header of the file.
+
+MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
+
+Signed-off-by: Jesse Chan <jc@linux.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/tcp.c |    6 ++++++
- 1 file changed, 6 insertions(+)
 
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2276,6 +2276,12 @@ int tcp_disconnect(struct sock *sk, int
- 
- 	WARN_ON(inet->inet_num && !icsk->icsk_bind_hash);
- 
-+	if (sk->sk_frag.page) {
-+		put_page(sk->sk_frag.page);
-+		sk->sk_frag.page = NULL;
-+		sk->sk_frag.offset = 0;
-+	}
-+
- 	sk->sk_error_report(sk);
- 	return err;
+---
+ drivers/media/platform/soc_camera/soc_scale_crop.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/media/platform/soc_camera/soc_scale_crop.c
++++ b/drivers/media/platform/soc_camera/soc_scale_crop.c
+@@ -405,3 +405,7 @@ void soc_camera_calc_client_output(struc
+ 	mf->height = soc_camera_shift_scale(rect->height, shift, scale_v);
  }
+ EXPORT_SYMBOL(soc_camera_calc_client_output);
++
++MODULE_DESCRIPTION("soc-camera scaling-cropping functions");
++MODULE_AUTHOR("Guennadi Liakhovetski <kernel@pengutronix.de>");
++MODULE_LICENSE("GPL");
