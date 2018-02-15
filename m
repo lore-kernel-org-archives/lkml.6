@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227KvUkwUik2XJ2B5cv6M8FXdpJ3el0WYFdB0PNK9p433YhaJb0jh140dB3+inXjmqKvkfBS
-ARC-Seal: i=1; a=rsa-sha256; t=1518708773; cv=none;
+X-Google-Smtp-Source: AH8x2265U8zZykc10mOeSn4oDBsbpqTZZZ2x0xznvUuzb/yx5ZMkDyDAyNUr+mGcJv2dVWeYC4bv
+ARC-Seal: i=1; a=rsa-sha256; t=1518708771; cv=none;
         d=google.com; s=arc-20160816;
-        b=ppMSXuIJwJYujNLiszy/Pnv8MOl2wse1IgdU/THgozu1sbic/XM/shTNTcvZbH3RBa
-         +hIjyYrGUzROTQTnqCeFr4rCZTS3u7B8gAxdUxD4/rkywl96Dx0zeVQOcmBiiVNaNM4H
-         mvx8BVZinyxkJjWb53viX9dBBxTo4WQbZTyOuXCqt/WNJS/XgbfY4NpC7D2DRBbuOCq+
-         MQnA2cGaYiQ60K/0ujiUNhPbuYWIeS5fSdX2iSQqO97g8NGjKmtepocMfiOVBmKq5KmO
-         pIjc3gPRq7HSaEkSfdTvYuVXntQy09UTdD8lM5G5w5Rrc3uOxk8k+vD+BEsCxUlyE2PK
-         npSg==
+        b=bWn4xMkNqoVL/R1/LkEgxDIy132J4C9IB10PVuKVcIjFsdnJ5rpTiG8s4Gi1k2H9tg
+         n/jZbgKp/1gXrM34dfAOoMY1dH6FC4FKSWo3cJASdVp0tGjJnoz/742PQtZaJv+weYFQ
+         TjPKR5eCP+sl9/vCIZZ1LtVqHsEwYiiXQVIC25nSko5nUPckKOrS8UFkBzrEBu7X48LJ
+         zIHuDJMGle3ikYlciUQ3lXxBA2hQf6LlezjvqOOnMnfVln4svXJm6Cua3pwInDqs2d+c
+         0O1+Aygc6vnL3PcSwzwEUX05896jnSsupmqV1w1xmXgIXkDU1aG45ULi9z8yM4QjfXtK
+         NCAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fUu2rpCJ5eybf6B3/3is0kSOqNZ8nMky7P6baL7Y2/Y=;
-        b=n4BAk214Y9ZMHkgID/RW5zHlzXx2HwENtQ9iDFrz7ZG+ON3FgcvPwxI4ynlq9QFb9n
-         MraYCavDcT5zD+cHjfxQE+9zGht2MD9dd4lVA1XUXd17pDszyJCBWCMbl82WNsfbusCt
-         dmK8OZDp4k7YqnZL+BnWa5i5K0rVADLo6yXqhbqr0k1VXKHZIJ6+sTfZtYtjl5j3Ra+a
-         eESCQvZN63zk/v7wbrkAKOBnriX8ZkKpwEZsWS4GcLip6qe09dbOwMhYAoh+9dOgd0px
-         DJukqhwEKgYWHLbFcdOCYbjud2qI5sYMuLPjQO35c8phftyrleB5/4jpoz29FiVSHnXf
-         bexQ==
+        bh=+fm0dQdB5EhReBNDdrUCHiMKjd2C4m+l5zPvxCtfc2U=;
+        b=fKm9sq0a9psDk05cTlPQnax3H3x66++nJNXSgXVIiYsXfLGE/LvtuLjjNMloPi/HpX
+         0CgnIv0vnV1DFyJWxo6VdpoirUbE5A8vZt7jvRdoIr7ADpY7toZQxga3aPNSaL1z7j7L
+         EwnzK9DS3hI6jbOihevKCfKuQIYdibGa7AOpu/Z1vD8L7Y+phMyJA3mcphuXOakWuB36
+         kGF4XYSV8jnoGbuxR2xF/RkZaJ1GDRntM9Z/w6YsHPr8NmugClabFQUYnPmDpb4vVT83
+         tr6Vcf1EsvwqZAidHHnICMd5l6vzSQyb1YrZM3/aF8NHBmpQcOdYB+xaZs7q5iR04D0H
+         hDSA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Dan Hettena <dhettena@nvidia.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
 	Will Deacon <will.deacon@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 075/195] [Variant 2/Spectre-v2] arm64: cputype: Add missing MIDR values for Cortex-A72 and Cortex-A75
-Date: Thu, 15 Feb 2018 16:16:06 +0100
-Message-Id: <20180215151709.455947320@linuxfoundation.org>
+Subject: [PATCH 4.14 074/195] [Variant 2/Spectre-v2] arm64: entry: Apply BP hardening for suspicious interrupts from EL0
+Date: Thu, 15 Feb 2018 16:16:05 +0100
+Message-Id: <20180215151709.395680184@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481570981857704?=
-X-GMAIL-MSGID: =?utf-8?q?1592481570981857704?=
+X-GMAIL-THRID: =?utf-8?q?1592481568334464792?=
+X-GMAIL-MSGID: =?utf-8?q?1592481568334464792?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,39 +54,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Will Deacon <will.deacon@arm.com>
 
 
-Commit a65d219fe5dc upstream.
+Commit 30d88c0e3ace upstream.
 
-Hook up MIDR values for the Cortex-A72 and Cortex-A75 CPUs, since they
-will soon need MIDR matches for hardening the branch predictor.
+It is possible to take an IRQ from EL0 following a branch to a kernel
+address in such a way that the IRQ is prioritised over the instruction
+abort. Whilst an attacker would need to get the stars to align here,
+it might be sufficient with enough calibration so perform BP hardening
+in the rare case that we see a kernel address in the ELR when handling
+an IRQ from EL0.
 
+Reported-by: Dan Hettena <dhettena@nvidia.com>
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/cputype.h |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/kernel/entry.S |    5 +++++
+ arch/arm64/mm/fault.c     |    6 ++++++
+ 2 files changed, 11 insertions(+)
 
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -79,8 +79,10 @@
- #define ARM_CPU_PART_AEM_V8		0xD0F
- #define ARM_CPU_PART_FOUNDATION		0xD00
- #define ARM_CPU_PART_CORTEX_A57		0xD07
-+#define ARM_CPU_PART_CORTEX_A72		0xD08
- #define ARM_CPU_PART_CORTEX_A53		0xD03
- #define ARM_CPU_PART_CORTEX_A73		0xD09
-+#define ARM_CPU_PART_CORTEX_A75		0xD0A
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -821,6 +821,11 @@ el0_irq_naked:
+ #endif
  
- #define APM_CPU_PART_POTENZA		0x000
+ 	ct_user_exit
++#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
++	tbz	x22, #55, 1f
++	bl	do_el0_irq_bp_hardening
++1:
++#endif
+ 	irq_handler
  
-@@ -97,7 +99,9 @@
+ #ifdef CONFIG_TRACE_IRQFLAGS
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -751,6 +751,12 @@ asmlinkage void __exception do_mem_abort
+ 	arm64_notify_die("", regs, &info, esr);
+ }
  
- #define MIDR_CORTEX_A53 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A53)
- #define MIDR_CORTEX_A57 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A57)
-+#define MIDR_CORTEX_A72 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A72)
- #define MIDR_CORTEX_A73 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A73)
-+#define MIDR_CORTEX_A75 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A75)
- #define MIDR_THUNDERX	MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX)
- #define MIDR_THUNDERX_81XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_81XX)
- #define MIDR_THUNDERX_83XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_83XX)
++asmlinkage void __exception do_el0_irq_bp_hardening(void)
++{
++	/* PC has already been checked in entry.S */
++	arm64_apply_bp_hardening();
++}
++
+ asmlinkage void __exception do_el0_ia_bp_hardening(unsigned long addr,
+ 						   unsigned int esr,
+ 						   struct pt_regs *regs)
