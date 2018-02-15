@@ -1,27 +1,27 @@
 Return-Path: <lionel.debieve@st.com>
-X-Google-Smtp-Source: AH8x224Eqf+bVDuHNT3/UxfZsaXpiDxS1ePJnx/MlsL86NXQSIdxyFJWCGT+Ji9dLUsFuzYLX99L
-ARC-Seal: i=1; a=rsa-sha256; t=1518699814; cv=none;
+X-Google-Smtp-Source: AH8x225nC7FtbdlB8dyrpyF3E2ETLWb6Wv8QmtKnWYtYygc+8IgvvycOPL/0qleW/hyv69nGMcgQ
+ARC-Seal: i=1; a=rsa-sha256; t=1518699812; cv=none;
         d=google.com; s=arc-20160816;
-        b=blCFuesskYmxyhjtJQcpq8bhvuWCz5sqiFEcbQLo0o5KWTFQViBY0SZar9KDKR5u7P
-         F0J7W6O8z8Jke0SwyFSqkcSn6qY8Op8WwRjO2kVRfwiJAF6i4/uSYk4cGdINFdGhE7FU
-         wFyYgSWEwKyUga9GEczoiuizuQU+nwmTWDwKqCQVBQ+mMDQQaT6gHNhNZUE2KDS5z350
-         u6gDQdx/QkoO/xaI6+bd7KpmTL0fOqRFRcl6lQWGkHS0qEe3Q9fqiHf9xmPZ2Y+zpzR+
-         hvZqV4Q4FXgDesNusVybx4IcDrVicsPviLbpVSugLGGfIY88/zCkpulD4jerSyH5/9jl
-         NLmw==
+        b=PmrFSMG4D4NUJnvR7vBL0k2RVZAfgtQ3ZajQSn0gkV2mUwSiFGb713DfWTMEBHE0b4
+         nOBtAao3n4aE0W3OELBa5VPykw869lrXJWKuB7S+yYV6xRblYXOjiwZBLGcdDXepTo/T
+         +/P3tnxK+dpSJ4rXDTajsL7wsnqkQqKdMSlVSIMtfhsd5/VQgVm51ZjC7uBst80TqN+2
+         l1Ah+VDP+7V3RXKa2u6zx4Iu8XC+SZH1GAad1hpThpK+gn6O3IWF/5szSJWH1TrvpdZR
+         jXMfgiIhPqGajyR4bZ8NvA162h0IdyWEt+xZ6SZB6ryOYRMyk4EpACUL9yvEsURbk7hV
+         7u4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
          :from:arc-authentication-results;
-        bh=PGFcC4Jom+Z8b7sJLRkQfnaKgsostsSTCmLlw4rbVdk=;
-        b=Mgdb9LNhX0cxwsY/FwC9MzJ3a9YBSnAykpfX6lGYPGTDDt3psIR1E5VXag65kSq/gY
-         pr1RvE9O4vtowvvHb/R7u6RY8QGGdGQjufju62I62TL2EH6qSzmr/Rj4hpwlpoOEOmar
-         onelzLrtfJHEb0vk9Sf8Ztw8lDHbNFFtINl9ECIWuUlT6Vpmd+LHhoG2IvhFDFEaaeMz
-         Xm7WqLjrbs7PhGob5SMwMqDlylnVsh2QYn4WS7GhM9s1aVB9mXmy1qq14OIOX8K17Lo1
-         wrDvNPMIlfdODKuZt1EsdSnNBvRpvyXJ1B/MHogMr/oMIBOVcu5Zg8lsn6hZzgZcZHnV
-         FR1A==
+        bh=Q+avL/3/Ae/cJ2cfnXYHRi6MCDDRA5D23aYHii/qYPM=;
+        b=cbS4zZH5Z5q60pHNrf4QfaR7FkUxO0PQLqVMnzlZUYYAlVxpziRbpRt/lBWQwOgJSn
+         l7YRGLyi5ta2Qlqpr0VmddCtNPEjUIdV1NyxVnIYUdP+dZFcQwMq3dMmy+0hhcPeXY96
+         UPDiz+ZzJW6yFo192lBuGxJjDPIaV8P8dvtakz3SiuRuYEmtdAMR/Z5tExP6aFAar7c6
+         970V8KM+zUWXEENpNEwRqNS1hp+YnBLNqXCRZnGgyL2TfcHVxYlWlqLM/udrYho9CKpa
+         fiduPgjltGqYrQAiwYIDYpXEUnKzW7X+yqgPQ+6HEGc3ofxNlwvuoINFzElP4OnZod4o
+         N24g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of lionel.debieve@st.com designates 91.207.212.93 as permitted sender) smtp.mailfrom=lionel.debieve@st.com
+       spf=pass (google.com: domain of lionel.debieve@st.com designates 62.209.51.94 as permitted sender) smtp.mailfrom=lionel.debieve@st.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of lionel.debieve@st.com designates 91.207.212.93 as permitted sender) smtp.mailfrom=lionel.debieve@st.com
+       spf=pass (google.com: domain of lionel.debieve@st.com designates 62.209.51.94 as permitted sender) smtp.mailfrom=lionel.debieve@st.com
 From: Lionel Debieve <lionel.debieve@st.com>
 To: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -35,9 +35,9 @@ To: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>,
 CC: Benjamin Gaignard <benjamin.gaignard@st.com>,
         Ludovic Barre
 	<ludovic.barre@st.com>
-Subject: [PATCH Resend 4/5] dt-bindings: rng: add clock detection error for stm32
-Date: Thu, 15 Feb 2018 14:03:11 +0100
-Message-ID: <20180215130312.23612-5-lionel.debieve@st.com>
+Subject: [PATCH Resend 1/5] hwrng: stm32 - add reset during probe
+Date: Thu, 15 Feb 2018 14:03:08 +0100
+Message-ID: <20180215130312.23612-2-lionel.debieve@st.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180215130312.23612-1-lionel.debieve@st.com>
 References: <20180215130312.23612-1-lionel.debieve@st.com>
@@ -47,31 +47,52 @@ X-Originating-IP: [10.201.23.65]
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-15_05:,,
  signatures=0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592472176946703345?=
-X-GMAIL-MSGID: =?utf-8?q?1592472176946703345?=
+X-GMAIL-THRID: =?utf-8?q?1592472174661924426?=
+X-GMAIL-MSGID: =?utf-8?q?1592472174661924426?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add optional property to enable the clock detection error
-on rng block. It is used to allow slow clock source which
-give correct entropy for rng.
+Avoid issue when probing the RNG without
+reset if bad status has been detected previously
 
 Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
 ---
- Documentation/devicetree/bindings/rng/st,stm32-rng.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/char/hw_random/stm32-rng.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/rng/st,stm32-rng.txt b/Documentation/devicetree/bindings/rng/st,stm32-rng.txt
-index cb7ca78135ff..1dfa7d51e006 100644
---- a/Documentation/devicetree/bindings/rng/st,stm32-rng.txt
-+++ b/Documentation/devicetree/bindings/rng/st,stm32-rng.txt
-@@ -13,6 +13,7 @@ Required properties:
+diff --git a/drivers/char/hw_random/stm32-rng.c b/drivers/char/hw_random/stm32-rng.c
+index 63d84e6f1891..83c695938a2d 100644
+--- a/drivers/char/hw_random/stm32-rng.c
++++ b/drivers/char/hw_random/stm32-rng.c
+@@ -21,6 +21,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
  
- Optional properties:
- - resets : The reset to properly start RNG
-+- clock-error-detect : Enable the clock detection management
+ #define RNG_CR 0x00
+@@ -46,6 +47,7 @@ struct stm32_rng_private {
+ 	struct hwrng rng;
+ 	void __iomem *base;
+ 	struct clk *clk;
++	struct reset_control *rst;
+ };
  
- Example:
+ static int stm32_rng_read(struct hwrng *rng, void *data, size_t max, bool wait)
+@@ -140,6 +142,13 @@ static int stm32_rng_probe(struct platform_device *ofdev)
+ 	if (IS_ERR(priv->clk))
+ 		return PTR_ERR(priv->clk);
  
++	priv->rst = devm_reset_control_get(&ofdev->dev, NULL);
++	if (!IS_ERR(priv->rst)) {
++		reset_control_assert(priv->rst);
++		udelay(2);
++		reset_control_deassert(priv->rst);
++	}
++
+ 	dev_set_drvdata(dev, priv);
+ 
+ 	priv->rng.name = dev_driver_string(dev),
 -- 
 2.15.1
