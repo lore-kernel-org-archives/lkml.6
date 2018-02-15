@@ -1,67 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755531AbeBOTgR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 14:36:17 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:39086 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751157AbeBOTgQ (ORCPT
+        id S1755547AbeBOTg7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 14:36:59 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:41531 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755533AbeBOTg5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 14:36:16 -0500
-From: Colin King <colin.king@canonical.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-rtc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] rtc: tx4939: avoid unintended sign extension on a 24 bit shift
-Date: Thu, 15 Feb 2018 19:36:14 +0000
-Message-Id: <20180215193614.28684-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Thu, 15 Feb 2018 14:36:57 -0500
+X-Google-Smtp-Source: AH8x224d09ps3WRCZKpSsDbJ0ueM0VHx3vyz+kjcG5NE908asUULkZa8PIAE2wRCdf1DWyiOo3ytfAuhyjUlX1IbnI0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20170807195027.13192-1-mjg59@google.com> <CACdnJus-X533K0Bgqjc-MoZ2NbLz0ac9x+rryHUtnjrnmJ+Kmg@mail.gmail.com>
+ <20180215152514.rxmh7webdg2i2fct@redbean>
+In-Reply-To: <20180215152514.rxmh7webdg2i2fct@redbean>
+From: Matthew Garrett <mjg59@google.com>
+Date: Thu, 15 Feb 2018 19:36:45 +0000
+Message-ID: <CACdnJutL7rJE=1bsh45RmvunU-GZJCYaejyznENrAgFB6nbCLA@mail.gmail.com>
+Subject: Re: [PATCH] Make kernel taint on invalid module signatures configurable
+To: Jessica Yu <jeyu@kernel.org>
+Cc: Ben Hutchings <ben@decadent.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Feb 15, 2018 at 7:25 AM Jessica Yu <jeyu@kernel.org> wrote:
+> I'm still unclear on why a distro would enable CONFIG_MODULE_SIG and
+> then _not_ want to know about unsigned modules.
 
-The shifting of buf[5] by 24 bits to the left will be promoted to
-a 32 bit signed int and then sign-extended to an unsigned long. If
-the top bit of buf[5] is set then all then all the upper bits sec
-end up as also being set because of the sign-extension. Fix this by
-casting buf[5] to an unsigned long before the shift.
+The same kernel image may be used in situations where the use case benefits
+from enforcement of module signatures and cases where it doesn't -
+distributions don't generally have the resources to ship multiple kernel
+packages with lightly modified configurations.
 
-Detected by CoverityScan, CID#1465292 ("Unintended sign extension")
+>  From what I understand from Ben's post from last year
+> (http://lkml.kernel.org/r/1504044122.4448.24.camel@decadent.org.uk),
+> it sounds like the main issue is that Debian doesn't support their own
+> centralised module signing yet, causing all of their modules to be
+> automatically tainted if they enable CONFIG_MODULE_SIG, and that a new
+> option like this would likely be used as a temporary "fix". Am I
+> understanding correctly?
 
-Fixes: 0e1492330cd2 ("rtc: add rtc-tx4939 driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/rtc/rtc-tx4939.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Not entirely. There's two cases where the current situation causes problems:
 
-diff --git a/drivers/rtc/rtc-tx4939.c b/drivers/rtc/rtc-tx4939.c
-index feededce3ded..1f351308afdc 100644
---- a/drivers/rtc/rtc-tx4939.c
-+++ b/drivers/rtc/rtc-tx4939.c
-@@ -109,7 +109,8 @@ static int tx4939_rtc_read_time(struct device *dev, struct rtc_time *tm)
- 	for (i = 2; i < 6; i++)
- 		buf[i] = __raw_readl(&rtcreg->dat);
- 	spin_unlock_irq(&pdata->lock);
--	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
-+	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
-+		(buf[3] << 8) | buf[2];
- 	rtc_time_to_tm(sec, tm);
- 	return rtc_valid_tm(tm);
- }
-@@ -170,7 +171,8 @@ static int tx4939_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
- 	alrm->enabled = (ctl & TX4939_RTCCTL_ALME) ? 1 : 0;
- 	alrm->pending = (ctl & TX4939_RTCCTL_ALMD) ? 1 : 0;
- 	spin_unlock_irq(&pdata->lock);
--	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
-+	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
-+		(buf[3] << 8) | buf[2];
- 	rtc_time_to_tm(sec, &alrm->time);
- 	return rtc_valid_tm(&alrm->time);
- }
--- 
-2.15.1
+1) Distributions that build out of tree kernel modules and don't have
+infrastructure to sign them will end up with kernel taint. That's something
+that can be resolved by implementing that infrastructure.
+2) End-users who build out of tree kernel modules will end up with kernel
+taint and will file bugs. This cannot be fixed but will increase
+distribution load anyway.
+
+> I understand this predicament, but it seems like adding a new set of
+> options/parameters like this is just hiding the symptoms of the
+> problem (modules distributed by Debian getting tainted by default)
+> instead of fixing what seems to be the heart of the issue (Debian
+> doesn't support their own module signing yet), if that makes sense.
+> I am hesitant about merging something that would only serve as a
+> temporary solution until Debian supports their own module signing. In
+> that case, I would prefer the Debian folks to maintain their own patch
+> removing the taint until they support module signing for their own
+> modules, especially if - and please correct me if I'm wrong - the
+> new option is not going to see long-term usage.
+
+I'd expect this option to be used by distributions for as long as
+distributions need to support use-cases that don't need signed modules, so
+probably forever.
