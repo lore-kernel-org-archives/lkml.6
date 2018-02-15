@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1906823-1518711122-2-10684312462998984150
+X-Cyrus-Session-Id: sloti22d1t05-1906823-1518711078-2-5023222986167830767
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518711122; b=LnLmVLVEwrHa5f6CmsvMkxJS/K7KVL6LE/+PWHkFH188m3m
-    yP+TugAvc++hr0/jGJZfi6V/hka8nP71bp6/AtbFD0axjwpLjfPUjJmg+LtIM5Xv
-    o4xyrHLUuKKR3nMo00NnmrkQCrZK72GfMiJzINpZ111jmET1tKMNe/OskcSoylT0
-    Pg3+pqOaOOSjVN0TGztunU2lv36/l92sFY8Z9u/j+XcSp2FtsoFx5CUgIQiuZd6/
-    BQF6FJ0z8ZC8ZvppzS0vSzJcyuWpzFqzFhg/e0OqOjwGZ1xldeqKR3zXjTAgxDbE
-    DKduA1X2w2rQ0pdp9SXYxXv9SGM/oVF4YWVgJXA==
+    t=1518711078; b=j5hpef7jMjJpaUVe6LxxdhdktDdP8Vxx35fQfErORJd2oEP
+    xVpEk6sh7wsd2aubWnLK/bNM1ruhEP9uTzIq/W9rU8d1jnkswQTQgGOq1rXcmcld
+    WJkolgq+TeUfq+TytVl1UmCKlh6x1AC3KXO+gghAChOgnpioLZb2N7yteMRIUeaM
+    fHVVv8KBjmVv18uA6sKk9yawgny/Rxs2UuShTUIdosdCs71kQozoDXSbUBMBK140
+    rtcM/KJ4lkIaYhP1IfoGY/zWK3qLO+KuSW/W/QLRr5+HMt+n8D+oAViZpX4HfzGq
+    J4ITKe0pyw//T3AYrBQ9nkFR8PeCVrklT3e0USw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518711122; bh=I+0/ZHKDCH/A3penlwhp5kXEuS
-    fYDrvOQJglVeDvWMk=; b=wVDlvGubT/Eo+31hsfyxn6cVwEv4yDUP0jZ4BSEj1L
-    PxAHk1bBn+SvmsZMd9tNqGH/Tkti2KgB/hHTt4OpbbKU0NCWrV2J075O7OBcCI3e
-    uQ6OWk86oTaPFWUMLbuX8tWQ7+M+JHxaqJNmV0kBr3a2fufEZ9fDxbGaZZPor6zz
-    blfamqSyAz2xXNJ7TRdfM/XzWxt1KXxWBFPHsj6kjielSlLin3T/EzrV6/Qd3ZjH
-    g/+DD2rpVuF9HPZVhsOD9FwHUhXOuXFSS4mUu9wCdqZG3bBhnUrTEar+nuZf4xMN
-    KeFx8IOvnnlMMC/SRsvOlfZT+8pRQSs0OEplWI428VlA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518711078; bh=tD+uVOejeHY8yVUeROfRx1ObQL
+    wBvzRsIIycHiCbDLM=; b=TStNpT5fnJsgC37Aiy1Zh/HB0YIdJo/S+McJLxWUzS
+    MfNw2u0Qn2CwCK5Aeovlv0bLTYNVfTwrpondN++QufAACJX5LBuENxh8UtiOJb3M
+    l2nqmxqhuX48TqKNtik7QsvOXpeBanI801rzOyzYTlWie6O2Y0YNoZhQ/Dx2aKPm
+    XcZyu+HDWgydrdl8pQyU5uxgSSFA3eh86q5KCRAVNT1nHVZkVBQCdXRbkQGJVFOy
+    2FQE8DlppI9iY7AtUI9yIFTi7eGCV2bqBN8Bpox+d4jRH/Wf9WSs3LtiPeJwyh5n
+    SxlS1ZIRUWkwkJVDzJhlf6xVozMcIDV9ibMEIeTmMNDw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,20 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424806AbeBOQLg (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 11:11:36 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34890 "EHLO
+        id S1424417AbeBOPpW (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:45:22 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34906 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424433AbeBOPpS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:45:18 -0500
+        with ESMTP id S1424457AbeBOPpV (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:45:21 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.15 146/202] btrfs: Handle btrfs_set_extent_delalloc failure in fixup worker
-Date: Thu, 15 Feb 2018 16:17:26 +0100
-Message-Id: <20180215151720.664579239@linuxfoundation.org>
+        stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.15 147/202] Btrfs: raid56: iterate raid56 internal bio with bio_for_each_segment_all
+Date: Thu, 15 Feb 2018 16:17:27 +0100
+Message-Id: <20180215151720.708394341@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -77,43 +77,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Liu Bo <bo.li.liu@oracle.com>
 
-commit f3038ee3a3f1017a1cbe9907e31fa12d366c5dcb upstream.
+commit 0198e5b707cfeb5defbd1b71b1ec6e71580d7db9 upstream.
 
-This function was introduced by 247e743cbe6e ("Btrfs: Use async helpers
-to deal with pages that have been improperly dirtied") and it didn't do
-any error handling then. This function might very well fail in ENOMEM
-situation, yet it's not handled, this could lead to inconsistent state.
-So let's handle the failure by setting the mapping error bit.
+Bio iterated by set_bio_pages_uptodate() is raid56 internal one, so it
+will never be a BIO_CLONED bio, and since this is called by end_io
+functions, bio->bi_iter.bi_size is zero, we mustn't use
+bio_for_each_segment() as that is a no-op if bi_size is zero.
 
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
+Fixes: 6592e58c6b68e61f003a01ba29a3716e7e2e9484 ("Btrfs: fix write corruption due to bio cloning on raid5/6")
+Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ fs/btrfs/raid56.c |   11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -2098,8 +2098,15 @@ again:
- 		goto out;
- 	 }
+--- a/fs/btrfs/raid56.c
++++ b/fs/btrfs/raid56.c
+@@ -1435,14 +1435,13 @@ static int fail_bio_stripe(struct btrfs_
+  */
+ static void set_bio_pages_uptodate(struct bio *bio)
+ {
+-	struct bio_vec bvec;
+-	struct bvec_iter iter;
++	struct bio_vec *bvec;
++	int i;
  
--	btrfs_set_extent_delalloc(inode, page_start, page_end, 0, &cached_state,
--				  0);
-+	ret = btrfs_set_extent_delalloc(inode, page_start, page_end, 0,
-+					&cached_state, 0);
-+	if (ret) {
-+		mapping_set_error(page->mapping, ret);
-+		end_extent_writepage(page, ret, page_start, page_end);
-+		ClearPageChecked(page);
-+		goto out;
-+	}
-+
- 	ClearPageChecked(page);
- 	set_page_dirty(page);
- 	btrfs_delalloc_release_extents(BTRFS_I(inode), PAGE_SIZE);
+-	if (bio_flagged(bio, BIO_CLONED))
+-		bio->bi_iter = btrfs_io_bio(bio)->iter;
++	ASSERT(!bio_flagged(bio, BIO_CLONED));
+ 
+-	bio_for_each_segment(bvec, bio, iter)
+-		SetPageUptodate(bvec.bv_page);
++	bio_for_each_segment_all(bvec, bio, i)
++		SetPageUptodate(bvec->bv_page);
+ }
+ 
+ /*
