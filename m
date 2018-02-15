@@ -1,38 +1,38 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227tmXj90gWBnmlsH0pLYLevnN3/GVehxQsS8uVo9iN2Mwj1o1rrb3clVPJnfssCAFuMG7Ts
-ARC-Seal: i=1; a=rsa-sha256; t=1518708934; cv=none;
+X-Google-Smtp-Source: AH8x225x/sQPKIbeHnALRn1WkHGZbDZR8xhTOl6xJCIFOJGRFLKaEyKYZwzoECh+d1FWd4SqbV8v
+ARC-Seal: i=1; a=rsa-sha256; t=1518708932; cv=none;
         d=google.com; s=arc-20160816;
-        b=ThKNRNKqkw+kAaoENh/ZgQKTzwKAdaR8zl+qlV2Hpl5vWqCcwkMv7xSIe6/Kq4xyv/
-         TaVQ4jW6nMzJDoEnoQ/QJzsEaKMDnooylc62KQnHV9BBGpj9bTIr/GQQam5IBMDO4MMH
-         lLSeYLHpsdLe3RAWSnMC6WE4H9+wWGHGH/3a0FT3X0Pl1DX7XGhMdlSqek3GiSLNjYUR
-         fJFS66DLojhfnWYNiLZrNckMO43zyIol1/hVdlysaX97DeV2FEptWhIZgb4dYx8UvYAg
-         K3tnDkabCKL0dfmkxDjvZpwjaCsmtlYqZyi+ULRRVA0m2uUsritQ81XOtNpZHuMv4z3P
-         ycdg==
+        b=sTbB5uSRxwsUINA48JYdG5kGjx4dtraiQRuRQdOhVslWvkCEoKTTOfn7Alh8s02Kh3
+         4zs/CiGjVTin8C+7jmE0zqdcUmTBuC54QXTQ3MDrpZcGbaRPD0M3kKSjStn0+80MlCCX
+         WFs2S27kh4KubxniWylDPBIJe5bb5QW2Auddk8g11e/NrLCfQg8Y39+7d5/LKevJyuWh
+         R6u370q0UGD9B+6HeMAEB4mP+y8GEV2H5WZt3he0DxvPOuOdBXYcEt5+yv/axMdqJioP
+         JV/ePgLvcgdSUPq0rs5CwSR5C7PXwhnwDQqGbLMob9vF+vwyHBo2EURORNvZ007CodTA
+         asvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XhVdhJrJshlQslUkZpvEyozgYI0BZSJbQwEKWzYdAFM=;
-        b=hyzPYv5PGQHhAy0mlQcSnF8wtKkmatEQIukqjVUy7y+fan4quUP/tvA+pyFlLYh7/S
-         qRoQlfdDow6Oljx3qFNV84tTRGwAYno3/hkR66olP4EGW7ZUe/n3pxi4z7FCV2wKAhEl
-         ywiL8RI0x5CldxEmclAeqI8ETMkb4WpzR6g8X6sHCQEXeDwQZQCGIiklxH19F16s9aX0
-         K2PnvO8ZXz2bhdu9j7rIz48aGl534TlQ4KSTO1EC9vHBG2cJkUfZzW0FBdaUPmLntITt
-         g5UdcGgr7mnrPDdMEBr3MLkg7VEs0eo3h5Kj741Uzvh2qIp+zvSpFP9v+DqhuZOnA6J2
-         SR8A==
+        bh=yiM4eXOvSTkDAA9YC7x4dO3wNeI0MYDu1qCWpLtBfUI=;
+        b=LA/h7KUXETD0hDwOcUuqUvYC5oAmL46iJ2viJAwYFAIQS2KsCbfP6Nor0qiHcjWACp
+         ENibGMQk06PY0wSFH8KdQSsmiDaK39q9/1a6EmEqBnXzRkCUFAQ8eVx/7VHgekqOsfkt
+         D96SdQbRAxwbTnRCtM2f8syhuMO3psNxCLEAD+zGn9yon+Q1brfhLkqHhU2M4xhMaMFV
+         hVIkyDSmFv7bJxoOYj3kQwyzIzH4UnClXIFldsTJgJB/gklKWSjsYWFjV9wJp7a12R5N
+         AAPHlB01/7pqRu08nG9bhD8yUgu+lc47VEY2/Qam0hbZDF0jDcTzHlTH3jA6iVpDJsRY
+         EbBQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Bryan ODonoghue <pure.logic@nexus-software.ie>,
-	Auer Lukas <lukas.auer@aisec.fraunhofer.de>,
-	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 133/195] crypto: caam - fix endless loop when DECO acquire fails
-Date: Thu, 15 Feb 2018 16:17:04 +0100
-Message-Id: <20180215151712.419038767@linuxfoundation.org>
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.14 132/195] media: v4l2-compat-ioctl32.c: make ctrl_is_pointer work for subdevs
+Date: Thu, 15 Feb 2018 16:17:03 +0100
+Message-Id: <20180215151712.365601797@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480744127321065?=
-X-GMAIL-MSGID: =?utf-8?q?1592481739974970721?=
+X-GMAIL-THRID: =?utf-8?q?1592481014708077345?=
+X-GMAIL-MSGID: =?utf-8?q?1592481737357236780?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,53 +50,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Horia Geantă <horia.geanta@nxp.com>
+From: Hans Verkuil <hansverk@cisco.com>
 
-commit 225ece3e7dad4cfc44cca38ce7a3a80f255ea8f1 upstream.
+commit 273caa260035c03d89ad63d72d8cd3d9e5c5e3f1 upstream.
 
-In case DECO0 cannot be acquired - i.e. run_descriptor_deco0() fails
-with -ENODEV, caam_probe() enters an endless loop:
+If the device is of type VFL_TYPE_SUBDEV then vdev->ioctl_ops
+is NULL so the 'if (!ops->vidioc_query_ext_ctrl)' check would crash.
+Add a test for !ops to the condition.
 
-run_descriptor_deco0
-	ret -ENODEV
-	-> instantiate_rng
-		-ENODEV, overwritten by -EAGAIN
-		ret -EAGAIN
-		-> caam_probe
-			-EAGAIN results in endless loop
+All sub-devices that have controls will use the control framework,
+so they do not have an equivalent to ops->vidioc_query_ext_ctrl.
+Returning false if ops is NULL is the correct thing to do here.
 
-It turns out the error path in instantiate_rng() is incorrect,
-the checks are done in the wrong order.
+Fixes: b8c601e8af ("v4l2-compat-ioctl32.c: fix ctrl_is_pointer")
 
-Fixes: 1005bccd7a4a6 ("crypto: caam - enable instantiation of all RNG4 state handles")
-Reported-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Suggested-by: Auer Lukas <lukas.auer@aisec.fraunhofer.de>
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/crypto/caam/ctrl.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/crypto/caam/ctrl.c
-+++ b/drivers/crypto/caam/ctrl.c
-@@ -228,12 +228,16 @@ static int instantiate_rng(struct device
- 		 * without any error (HW optimizations for later
- 		 * CAAM eras), then try again.
- 		 */
-+		if (ret)
-+			break;
-+
- 		rdsta_val = rd_reg32(&ctrl->r4tst[0].rdsta) & RDSTA_IFMASK;
- 		if ((status && status != JRSTA_SSRC_JUMP_HALT_CC) ||
--		    !(rdsta_val & (1 << sh_idx)))
-+		    !(rdsta_val & (1 << sh_idx))) {
- 			ret = -EAGAIN;
--		if (ret)
- 			break;
-+		}
-+
- 		dev_info(ctrldev, "Instantiated RNG4 SH%d\n", sh_idx);
- 		/* Clear the contents before recreating the descriptor */
- 		memset(desc, 0x00, CAAM_CMD_SZ * 7);
+--- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
++++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+@@ -770,7 +770,7 @@ static inline bool ctrl_is_pointer(struc
+ 		return ctrl && ctrl->is_ptr;
+ 	}
+ 
+-	if (!ops->vidioc_query_ext_ctrl)
++	if (!ops || !ops->vidioc_query_ext_ctrl)
+ 		return false;
+ 
+ 	return !ops->vidioc_query_ext_ctrl(file, fh, &qec) &&
