@@ -1,64 +1,258 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166354AbeBOSWn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 13:22:43 -0500
-Received: from mga14.intel.com ([192.55.52.115]:3049 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1166306AbeBOSWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 13:22:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,517,1511856000";
-   d="scan'208";a="35068989"
-From: Joe Konno <joe.konno@linux.intel.com>
-To: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: ard.biesheuvel@linaro.org, matthew.garrett@nebula.com, jk@ozlabs.org,
-        ak@linux.intel.com, tony.luck@intel.com
-Subject: [PATCH 2/2] efi: restrict top-level attribute permissions
-Date: Thu, 15 Feb 2018 10:22:08 -0800
-Message-Id: <20180215182208.35003-3-joe.konno@linux.intel.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180215182208.35003-1-joe.konno@linux.intel.com>
-References: <20180215182208.35003-1-joe.konno@linux.intel.com>
+        id S1166403AbeBOSYi convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 13:24:38 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:37646 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163301AbeBOSYg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 13:24:36 -0500
+X-Google-Smtp-Source: AH8x226Gr54as7jdYpusbZXCgtHNr2Xxk/OrDYCjQij0uNYikehucz/m3YAPTQWuPykwbC1J0VaAPJ1fD5sS6OZ73ZM=
+MIME-Version: 1.0
+In-Reply-To: <20180214214105-mutt-send-email-mst@kernel.org>
+References: <20180214141850.4017-1-marcandre.lureau@redhat.com>
+ <20180214141850.4017-9-marcandre.lureau@redhat.com> <20180214214105-mutt-send-email-mst@kernel.org>
+From: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>
+Date: Thu, 15 Feb 2018 19:24:34 +0100
+Message-ID: <CAMxuvawaNA_yWE86Rv5abgLrdduYeJrc5Ezf63-F0HRhRjO=3Q@mail.gmail.com>
+Subject: Re: [PATCH v14 8/9] fw_cfg: write vmcoreinfo details
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Baoquan He <bhe@redhat.com>, Sergio Lopez Pascual <slp@redhat.com>,
+        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joe Konno <joe.konno@intel.com>
+Hi
 
-Restrict four top-level (/sys/firmware/efi) attributes to match systab.
-This is for consistency's sake, as well as hygiene.
+On Thu, Feb 15, 2018 at 7:09 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> On Wed, Feb 14, 2018 at 03:18:49PM +0100, Marc-André Lureau wrote:
+>> If the "etc/vmcoreinfo" fw_cfg file is present and we are not running
+>> the kdump kernel, write the addr/size of the vmcoreinfo ELF note.
+>>
+>> The DMA operation is expected to run synchronously with today qemu,
+>> but the specification states that it may become async, so we run
+>> "control" field check in a loop for eventual changes.
+>>
+>> Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+>> ---
+>>  drivers/firmware/qemu_fw_cfg.c | 144 ++++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 141 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+>> index 37638b95cb45..69939e2529f2 100644
+>> --- a/drivers/firmware/qemu_fw_cfg.c
+>> +++ b/drivers/firmware/qemu_fw_cfg.c
+>> @@ -34,11 +34,17 @@
+>>  #include <linux/io.h>
+>>  #include <linux/ioport.h>
+>>  #include <linux/fw_cfg.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/crash_dump.h>
+>> +#include <linux/crash_core.h>
+>>
+>>  MODULE_AUTHOR("Gabriel L. Somlo <somlo@cmu.edu>");
+>>  MODULE_DESCRIPTION("QEMU fw_cfg sysfs support");
+>>  MODULE_LICENSE("GPL");
+>>
+>> +/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
+>> +static u32 fw_cfg_rev;
+>> +
+>>  /* fw_cfg device i/o register addresses */
+>>  static bool fw_cfg_is_mmio;
+>>  static phys_addr_t fw_cfg_p_base;
+>> @@ -59,6 +65,65 @@ static inline u16 fw_cfg_sel_endianness(u16 key)
+>>               (u16 __force)cpu_to_le16(key);
+>>  }
+>>
+>> +static inline bool fw_cfg_dma_enabled(void)
+>> +{
+>> +     return (fw_cfg_rev & FW_CFG_VERSION_DMA) && fw_cfg_reg_dma;
+>> +}
+>> +
+>> +/* qemu fw_cfg device is sync today, but spec says it may become async */
+>> +static void fw_cfg_wait_for_control(struct fw_cfg_dma_access *d)
+>> +{
+>> +     do {
+>> +             u32 ctrl = be32_to_cpu(READ_ONCE(d->control));
+>> +
+>> +             if ((ctrl & ~FW_CFG_DMA_CTL_ERROR) == 0)
+>> +                     return;
+>> +
+>> +             usleep_range(50, 100);
+>
+> I would just do cpu_relax() here.
 
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-efi@vger.kernel.org
-Cc: stable@vger.kernel.org
-Signed-off-by: Joe Konno <joe.konno@intel.com>
----
- drivers/firmware/efi/efi.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ok, I didn't know that one.
 
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index cd42f66a7c85..9a1f6c85c8c7 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -167,11 +167,13 @@ static ssize_t fw_platform_size_show(struct kobject *kobj,
- 	return sprintf(buf, "%d\n", efi_enabled(EFI_64BIT) ? 64 : 32);
- }
- 
--static struct kobj_attribute efi_attr_fw_vendor = __ATTR_RO(fw_vendor);
--static struct kobj_attribute efi_attr_runtime = __ATTR_RO(runtime);
--static struct kobj_attribute efi_attr_config_table = __ATTR_RO(config_table);
-+static struct kobj_attribute efi_attr_fw_vendor =
-+	__ATTR_RO_MODE(fw_vendor, 0400);
-+static struct kobj_attribute efi_attr_runtime = __ATTR_RO_MODE(runtime, 0400);
-+static struct kobj_attribute efi_attr_config_table =
-+	__ATTR_RO_MODE(config_table, 0400);
- static struct kobj_attribute efi_attr_fw_platform_size =
--	__ATTR_RO(fw_platform_size);
-+	__ATTR_RO_MODE(fw_platform_size, 0400);
- 
- static struct attribute *efi_subsys_attrs[] = {
- 	&efi_attr_systab.attr,
--- 
-2.14.1
+>
+>> +     } while (true);
+>> +
+>> +     /* do not reorder the read to d->control */
+>> +     rmb();
+>
+> Hmm. I don't really understand the comment.
+> Is this code ever reacheable? How does it help?
+
+I thought that's what you suggested in v13 review, but true, I should
+replace the return with a break to reach it. Is that what you expect
+too? (my understanding is to make sure the READ_ONCE(control) in
+wait_for_control happens before READ_ONCE(control) after in
+dma_transfer)
+
+>
+>> +}
+>> +
+>> +static ssize_t fw_cfg_dma_transfer(void *address, u32 length, u32 control)
+>> +{
+>> +     phys_addr_t dma;
+>> +     struct fw_cfg_dma_access *d = NULL;
+>> +     ssize_t ret = length;
+>> +
+>> +     d = kmalloc(sizeof(*d), GFP_KERNEL);
+>> +     if (!d) {
+>> +             ret = -ENOMEM;
+>> +             goto end;
+>> +     }
+>> +
+>> +     /* fw_cfg device does not need IOMMU protection, so use physical addresses */
+>> +     *d = (struct fw_cfg_dma_access) {
+>> +             .address = cpu_to_be64(address ? virt_to_phys(address) : 0),
+>> +             .length = cpu_to_be32(length),
+>> +             .control = cpu_to_be32(control)
+>> +     };
+>> +
+>> +     dma = virt_to_phys(d);
+>> +
+>> +     iowrite32be((u64)dma >> 32, fw_cfg_reg_dma);
+>> +     /* force memory to sync before notifying device via MMIO */
+>> +     wmb();
+>> +     iowrite32be(dma, fw_cfg_reg_dma + 4);
+>> +
+>> +     fw_cfg_wait_for_control(d);
+>> +
+>> +     if (be32_to_cpu(READ_ONCE(d->control)) & FW_CFG_DMA_CTL_ERROR) {
+>> +             ret = -EIO;
+>> +     }
+>> +
+>> +end:
+>> +     kfree(d);
+>> +
+>> +     return ret;
+>> +}
+>> +
+>>  /* read chunk of given fw_cfg blob (caller responsible for sanity-check) */
+>>  static inline void fw_cfg_read_blob(u16 key,
+>>                                   void *buf, loff_t pos, size_t count)
+>> @@ -87,6 +152,47 @@ static inline void fw_cfg_read_blob(u16 key,
+>>       acpi_release_global_lock(glk);
+>>  }
+>>
+>> +#ifdef CONFIG_CRASH_CORE
+>> +/* write chunk of given fw_cfg blob (caller responsible for sanity-check) */
+>> +static ssize_t fw_cfg_write_blob(u16 key,
+>> +                              void *buf, loff_t pos, size_t count)
+>> +{
+>> +     u32 glk = -1U;
+>> +     acpi_status status;
+>> +     ssize_t ret = count;
+>> +
+>> +     /* If we have ACPI, ensure mutual exclusion against any potential
+>> +      * device access by the firmware, e.g. via AML methods:
+>> +      */
+>> +     status = acpi_acquire_global_lock(ACPI_WAIT_FOREVER, &glk);
+>> +     if (ACPI_FAILURE(status) && status != AE_NOT_CONFIGURED) {
+>> +             /* Should never get here */
+>> +             WARN(1, "%s: Failed to lock ACPI!\n", __func__);
+>> +             return -EINVAL;
+>> +     }
+>> +
+>> +     mutex_lock(&fw_cfg_dev_lock);
+>> +     if (pos == 0) {
+>> +             ret = fw_cfg_dma_transfer(buf, count, key << 16
+>> +                                       | FW_CFG_DMA_CTL_SELECT
+>> +                                       | FW_CFG_DMA_CTL_WRITE);
+>> +     } else {
+>> +             iowrite16(fw_cfg_sel_endianness(key), fw_cfg_reg_ctrl);
+>> +             ret = fw_cfg_dma_transfer(NULL, pos, FW_CFG_DMA_CTL_SKIP);
+>> +             if (ret < 0)
+>> +                     goto end;
+>> +             ret = fw_cfg_dma_transfer(buf, count, FW_CFG_DMA_CTL_WRITE);
+>> +     }
+>> +
+>> +end:
+>> +     mutex_unlock(&fw_cfg_dev_lock);
+>> +
+>> +     acpi_release_global_lock(glk);
+>> +
+>> +     return ret;
+>> +}
+>> +#endif /* CONFIG_CRASH_CORE */
+>> +
+>>  /* clean up fw_cfg device i/o */
+>>  static void fw_cfg_io_cleanup(void)
+>>  {
+>> @@ -185,9 +291,6 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
+>>       return 0;
+>>  }
+>>
+>> -/* fw_cfg revision attribute, in /sys/firmware/qemu_fw_cfg top-level dir. */
+>> -static u32 fw_cfg_rev;
+>> -
+>>  static ssize_t fw_cfg_showrev(struct kobject *k, struct attribute *a, char *buf)
+>>  {
+>>       return sprintf(buf, "%u\n", fw_cfg_rev);
+>> @@ -210,6 +313,32 @@ struct fw_cfg_sysfs_entry {
+>>       struct list_head list;
+>>  };
+>>
+>> +#ifdef CONFIG_CRASH_CORE
+>> +static ssize_t fw_cfg_write_vmcoreinfo(const struct fw_cfg_file *f)
+>> +{
+>> +     static struct fw_cfg_vmcoreinfo *data;
+>> +     ssize_t ret;
+>> +
+>> +     data = kmalloc(sizeof(struct fw_cfg_vmcoreinfo), GFP_KERNEL);
+>> +     if (!data)
+>> +             return -ENOMEM;
+>> +
+>> +     *data = (struct fw_cfg_vmcoreinfo) {
+>> +             .guest_format = cpu_to_le16(FW_CFG_VMCOREINFO_FORMAT_ELF),
+>> +             .size = cpu_to_le32(VMCOREINFO_NOTE_SIZE),
+>> +             .paddr = cpu_to_le64(paddr_vmcoreinfo_note())
+>> +     };
+>> +     /* spare ourself reading host format support for now since we
+>> +      * don't know what else to format - host may ignore ours
+>> +      */
+>> +     ret = fw_cfg_write_blob(be16_to_cpu(f->select), data,
+>> +                             0, sizeof(struct fw_cfg_vmcoreinfo));
+>> +
+>> +     kfree(data);
+>> +     return ret;
+>> +}
+>> +#endif /* CONFIG_CRASH_CORE */
+>> +
+>>  /* get fw_cfg_sysfs_entry from kobject member */
+>>  static inline struct fw_cfg_sysfs_entry *to_entry(struct kobject *kobj)
+>>  {
+>> @@ -450,6 +579,15 @@ static int fw_cfg_register_file(const struct fw_cfg_file *f)
+>>       int err;
+>>       struct fw_cfg_sysfs_entry *entry;
+>>
+>> +#ifdef CONFIG_CRASH_CORE
+>> +     if (fw_cfg_dma_enabled() &&
+>> +             strcmp(f->name, FW_CFG_VMCOREINFO_FILENAME) == 0 &&
+>> +             !is_kdump_kernel()) {
+>> +             if (fw_cfg_write_vmcoreinfo(f) < 0)
+>> +                     pr_warn("fw_cfg: failed to write vmcoreinfo");
+>> +     }
+>> +#endif
+>> +
+>>       /* allocate new entry */
+>>       entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+>>       if (!entry)
+>> --
+>> 2.16.1.73.g5832b7e9f2
