@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226jdyxzCBNaDGAdPBA70nMvavtNZGz3bDDnrECtjCwZ7LUo3+btQaQzvdtTXPowPbUxM3zt
-ARC-Seal: i=1; a=rsa-sha256; t=1518708474; cv=none;
+X-Google-Smtp-Source: AH8x227D9/hvDb453Pf8TvcZHxS7O8SP1mACjTfCDocnYhrirppzMhFp5hUHs/KFiJ6MqhFcSPi1
+ARC-Seal: i=1; a=rsa-sha256; t=1518708471; cv=none;
         d=google.com; s=arc-20160816;
-        b=qMT7c7P0tnF2MHskv8IAsTVxIu4wDChMc5A62bFQ0IsA2byUZ8wfXV8cqhtvK+odv1
-         rAMtG63hc7O4XzZZ+WYFTNwGPcV8YOovLe9qaU8dj7CvIHeL/mxIONVSO2Yb9+rTcBAT
-         ZUPlRRe4veP+tg/5NGPnAakJWWIG9R0m+MkXuxWOyiMdCiZdjF76tc7fF0goGh8PNqBo
-         DlALBi2tEuYQ8jUiVYflzA+65N48Is3ul8cRMwc5kVR5RClFpN+4OQuerAb2QNSpMfa+
-         LALUhp4rM0NKStB8q0MNVseqmSWOQXXL5Os3BCmaiUBkswV3JzMiGH5M+UAcCFwQdWJ1
-         +y6w==
+        b=om1o/QXTrXEoAMIXDhcQlaVIodwebDpxrreQCcfdsJ3EKIXD2sLI+u2UKcw5VpjYbU
+         rcAX9fRqao+bzqcpweeJ/coeaoc7phPNeqlKSyo7EUwC6Yow4DiN09QrEunuReA1FF0w
+         o5aevSJiT8N/TV5TfhZQo3GzSurkxcWGooX5gtgvl4+F/6l4Yj3izB4rb+z88gF0SoyR
+         qq1XBKlFuYaleNAN/pOGlSlb9eWO4Ppr+FRMMqSyCWZs/uaGwIVZsZvWCdyygRNaQR4y
+         TemAVDnpMNMTIaJ85o7LhP6pLpjbIi3BHCHKn+wgOdyZO2zW9nW1cX2zdiEwttUQIpyC
+         IxMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=HYWMdzSanIFsv7keTFA6r5XSDCWnRRxr0piC4Kx6dh4=;
-        b=Pqdp7C7WEPfI6lJFY6F5XqDAhPZN/gLtTWb+qD4J7WWEO9ocefsR4/X/iwhNeC7MOv
-         ctt0KZLWRdOjyrgad7mhKyBLU31nDsNVbo+x8MUX0s0SDqno0Utgj9O+aDcOXWMO/TJI
-         a02Ddj4zFUekMdS1lhmKULAwW7Vzw3Ftg4yAWrirqR4EaXQYApqYxVZhTI5NHTKZ1nxT
-         +JcQrq1UxPGZDptw+ytyms2vn7i8Vj5//zNWmqTsAPK076NDhx3aNKLFsyA8iPmS6SE/
-         vKzV3c0cDJiu7fmNy31FSK/6CYSuad9R4TCjzrO1EL6Ifapd3IDKKoNWqqZfTAWyzOHQ
-         F0yA==
+        bh=++2aohsnEFTqlKZG2S/mNUqW4FUh8PHVGJ2QYTLwps4=;
+        b=ei/+7WTk5tN/yKjN8/i92AfQpk3Ys+AosZFOc807wia8yUClnO7bksYzYS6Q7El2Ck
+         j3JgoS36m/1BHkc3Gq/+uEx3DXBL8sQjMdV/RjjMEpXb77+EEKXO3oEAg5IHTjU9Lv/F
+         AZkVmAbHQ9AdJAFTbVhHv8ZpJiD+8nzZQmU/qsOkR5gnlttpqfsDqGVmD0qC4gD6deNY
+         /KhURjlhUEuINg6B7RPOS8J71SifszzkTjTokdIjN+ZDNTSLroRGnTZILUE0vqIbgbrX
+         VsDJnR8Fv57JXzU9lUY7h9+Z5YFHmGptdlrFkL6ruAWgY9UtNt+svGbCXYq9Dt90ty+P
+         nxPA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Christoffer Dall <christoffer.dall@linaro.org>,
-	James Morse <james.morse@arm.com>
-Subject: [PATCH 4.9 54/88] KVM: arm/arm64: Handle CPU_PM_ENTER_FAILED
-Date: Thu, 15 Feb 2018 16:17:21 +0100
-Message-Id: <20180215151230.198638766@linuxfoundation.org>
+	Liran Alon <liran.alon@oracle.com>,
+	Nikita Leshenko <nikita.leshchenko@oracle.com>,
+	Krish Sadhukhan <krish.sadhukhan@oracle.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH 4.9 53/88] KVM: nVMX: Fix races when sending nested PI while dest enters/leaves L2
+Date: Thu, 15 Feb 2018 16:17:20 +0100
+Message-Id: <20180215151230.035324762@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481257354306127?=
-X-GMAIL-MSGID: =?utf-8?q?1592481257354306127?=
+X-GMAIL-THRID: =?utf-8?q?1592481037885961253?=
+X-GMAIL-MSGID: =?utf-8?q?1592481254978594775?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,41 +51,92 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Morse <james.morse@arm.com>
+From: Liran Alon <liran.alon@oracle.com>
 
-commit 58d6b15e9da5042a99c9c30ad725792e4569150e upstream.
+commit 6b6977117f50d60455ace86b2d256f6fb4f3de05 upstream.
 
-cpu_pm_enter() calls the pm notifier chain with CPU_PM_ENTER, then if
-there is a failure: CPU_PM_ENTER_FAILED.
+Consider the following scenario:
+1. CPU A calls vmx_deliver_nested_posted_interrupt() to send an IPI
+to CPU B via virtual posted-interrupt mechanism.
+2. CPU B is currently executing L2 guest.
+3. vmx_deliver_nested_posted_interrupt() calls
+kvm_vcpu_trigger_posted_interrupt() which will note that
+vcpu->mode == IN_GUEST_MODE.
+4. Assume that before CPU A sends the physical POSTED_INTR_NESTED_VECTOR
+IPI, CPU B exits from L2 to L0 during event-delivery
+(valid IDT-vectoring-info).
+5. CPU A now sends the physical IPI. The IPI is received in host and
+it's handler (smp_kvm_posted_intr_nested_ipi()) does nothing.
+6. Assume that before CPU A sets pi_pending=true and KVM_REQ_EVENT,
+CPU B continues to run in L0 and reach vcpu_enter_guest(). As
+KVM_REQ_EVENT is not set yet, vcpu_enter_guest() will continue and resume
+L2 guest.
+7. At this point, CPU A sets pi_pending=true and KVM_REQ_EVENT but
+it's too late! CPU B already entered L2 and KVM_REQ_EVENT will only be
+consumed at next L2 entry!
 
-When KVM receives CPU_PM_ENTER it calls cpu_hyp_reset() which will
-return us to the hyp-stub. If we subsequently get a CPU_PM_ENTER_FAILED,
-KVM does nothing, leaving the CPU running with the hyp-stub, at odds
-with kvm_arm_hardware_enabled.
+Another scenario to consider:
+1. CPU A calls vmx_deliver_nested_posted_interrupt() to send an IPI
+to CPU B via virtual posted-interrupt mechanism.
+2. Assume that before CPU A calls kvm_vcpu_trigger_posted_interrupt(),
+CPU B is at L0 and is about to resume into L2. Further assume that it is
+in vcpu_enter_guest() after check for KVM_REQ_EVENT.
+3. At this point, CPU A calls kvm_vcpu_trigger_posted_interrupt() which
+will note that vcpu->mode != IN_GUEST_MODE. Therefore, do nothing and
+return false. Then, will set pi_pending=true and KVM_REQ_EVENT.
+4. Now CPU B continue and resumes into L2 guest without processing
+the posted-interrupt until next L2 entry!
 
-Add CPU_PM_ENTER_FAILED as a fallthrough for CPU_PM_EXIT, this reloads
-KVM based on kvm_arm_hardware_enabled. This is safe even if CPU_PM_ENTER
-never gets as far as KVM, as cpu_hyp_reinit() calls cpu_hyp_reset()
-to make sure the hyp-stub is loaded before reloading KVM.
+To fix both issues, we just need to change
+vmx_deliver_nested_posted_interrupt() to set pi_pending=true and
+KVM_REQ_EVENT before calling kvm_vcpu_trigger_posted_interrupt().
 
-Fixes: 67f691976662 ("arm64: kvm: allows kvm cpu hotplug")
-CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
-Signed-off-by: James Morse <james.morse@arm.com>
-Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
+It will fix the first scenario by chaging step (6) to note that
+KVM_REQ_EVENT and pi_pending=true and therefore process
+nested posted-interrupt.
+
+It will fix the second scenario by two possible ways:
+1. If kvm_vcpu_trigger_posted_interrupt() is called while CPU B has changed
+vcpu->mode to IN_GUEST_MODE, physical IPI will be sent and will be received
+when CPU resumes into L2.
+2. If kvm_vcpu_trigger_posted_interrupt() is called while CPU B hasn't yet
+changed vcpu->mode to IN_GUEST_MODE, then after CPU B will change
+vcpu->mode it will call kvm_request_pending() which will return true and
+therefore force another round of vcpu_enter_guest() which will note that
+KVM_REQ_EVENT and pi_pending=true and therefore process nested
+posted-interrupt.
+
+Fixes: 705699a13994 ("KVM: nVMX: Enable nested posted interrupt processing")
+Signed-off-by: Liran Alon <liran.alon@oracle.com>
+Reviewed-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
+Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+[Add kvm_vcpu_kick to also handle the case where L1 doesn't intercept L2 HLT
+ and L2 executes HLT instruction. - Paolo]
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/kvm/arm.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/vmx.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/arm/kvm/arm.c
-+++ b/arch/arm/kvm/arm.c
-@@ -1165,6 +1165,7 @@ static int hyp_init_cpu_pm_notifier(stru
- 			cpu_hyp_reset();
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -4967,14 +4967,15 @@ static int vmx_deliver_nested_posted_int
  
- 		return NOTIFY_OK;
-+	case CPU_PM_ENTER_FAILED:
- 	case CPU_PM_EXIT:
- 		if (__this_cpu_read(kvm_arm_hardware_enabled))
- 			/* The hardware was enabled before suspend. */
+ 	if (is_guest_mode(vcpu) &&
+ 	    vector == vmx->nested.posted_intr_nv) {
+-		/* the PIR and ON have been set by L1. */
+-		kvm_vcpu_trigger_posted_interrupt(vcpu);
+ 		/*
+ 		 * If a posted intr is not recognized by hardware,
+ 		 * we will accomplish it in the next vmentry.
+ 		 */
+ 		vmx->nested.pi_pending = true;
+ 		kvm_make_request(KVM_REQ_EVENT, vcpu);
++		/* the PIR and ON have been set by L1. */
++		if (!kvm_vcpu_trigger_posted_interrupt(vcpu))
++			kvm_vcpu_kick(vcpu);
+ 		return 0;
+ 	}
+ 	return -1;
