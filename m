@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225T6fU+ZqTUvRLuigzHcX2mjY4gDYey+AIZRuxiqJLMADFiMpjYchJ7LsyeArE4uxWf0g+I
-ARC-Seal: i=1; a=rsa-sha256; t=1518707934; cv=none;
+X-Google-Smtp-Source: AH8x226IlwsHo9mz9kfv169/gIOyZHF/6zQAjpE/1WDZWgcZoYrQuXOCzX6xgoSlrWu4jMM6IwtM
+ARC-Seal: i=1; a=rsa-sha256; t=1518707932; cv=none;
         d=google.com; s=arc-20160816;
-        b=UxupzVc4AxGXzKUrt9M1ly3+NpVkkq4zjV9zVf37V4aA52ePGVjhYN7CuCi9KsKtD4
-         xKa1U3mT8iggbWCzQUdgfvGqtStyqCQdkp1VHxbT9XQJwAqQpa3ID9JOx+uCtaEzyNL8
-         owclc/4yE+0YoYm9IaYM7y4WZXWbIfEge2ypkwfX+y0RXPSTqFRTL6c+fM64ifQQ32H/
-         Y+O3Bpz+qeoa1EJqujjNmaCf+vX+dsvO+tsl0YPs0ADAoWfSTSU4wW64g7K1wSWQt8f3
-         nkfDN/CNzIStfYZQdHvJ85uyFuYqHM5R5jH1MIZWH6+rygAIGke72xSO+c3X912oDeEh
-         zg7w==
+        b=cjBuwtxF/mXZgJtRq1eP1G+tL8gc8qNrHR51mT76R4cByR1cz535tJUHWHjjiKWWCI
+         KwcfmQm42ht6rQTfj99Lp+mzA9CCSeOq/1hB8CJTvVzVGBlronxnO1NFGr1W+bFgNdVd
+         yFaaXR7XszoQpP33/qNyXu/jSLmdgW5Vap71Cn2ye2f+E1g9Zeiee/SiCH06wf0b6UB7
+         JBqvWmS4QcLR/rymtyBrSEsF0SzvP/32cCEKLoXDSbGITlyCNsHGpJCoDdd4gnNuq89Y
+         F4IoBjkvaLjx2wjv+Ek0iQzeycYZOok/EAP2XjWfqDN43Q1pe2GV0RSqDXR2J3JKwPoX
+         JcBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gzAhokbhuWDr747imKSRauLjoZYx1OBz+h9mzPhRpQM=;
-        b=iQ97+sZPg/E6oxuVSvJ2mLqRk15UGT9Zxf8ZdkTrmkJ8+JmNkR8J+lSlNW9aV9r0Mo
-         dYKZ+qGHvJDvEZoSj3XIS/kRBexFOgcWVermAXUYjkXTWkqjA7wzAvQil1bo/va358y6
-         rIVh/E0wdlbKafi07RN7e4JX3VI81RD0swoOGmh4g99UxWclsrfli9SqmA8gOJIJGs1G
-         0UlMYSn8XtqXVeTpCAvzf52e6rPUIyGDzNMK4fdq9TMJin7oqM0eDOawuWZxtB6XI660
-         sLnvH5zYnWfOhZ/Xhh60/G5ndvzS5pvqIiqBK/l/yFjH6/cRLRXbuJDLnXDDUmw8kU0C
-         2AkA==
+        bh=v8zi7me87yVuRIrp+W0V9bB3mF2h5X1X5airx6IFBUE=;
+        b=Oasow3Oc3Iqw2VmY9cI6vCmsx7CNW9Mgvjo6gCVTZ17xHI5no0bdy9T1VtrqqJy+fr
+         FVzFCb7sUc7/KJ8Z/akyXfDf/4HeSleFcz3fpEP+DOHVZW7nUoPKYlvE7/5ZMo27XulR
+         28SxYp2BeNvcGpVQVStXuKg7durBZpVT353rCRi395DZNkDQLuX+7W9gRUzxFxAf9Uly
+         Djdu4d9ySLoI4Mgay2vt9OILpmIktIvf8cyixQhCc348Xjjixh1Hhp+J6NNrS0eRly6D
+         haQgmuhJcXPWz7kzzoyLz3BRF/g1LltLCd4Wp6mROZ19Nv5muO5IIFUwL5yEMXa1SIdF
+         Btww==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Li RongQing <lirongqing@baidu.com>,
-	Eric Dumazet <edumazet@google.com>,
+	Chunhao Lin <hau@realtek.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 06/45] tcp: release sk_frag.page in tcp_disconnect
-Date: Thu, 15 Feb 2018 16:16:57 +0100
-Message-Id: <20180215144117.241653341@linuxfoundation.org>
+Subject: [PATCH 3.18 05/45] r8169: fix RTL8168EP take too long to complete driver initialization.
+Date: Thu, 15 Feb 2018 16:16:56 +0100
+Message-Id: <20180215144117.023077476@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215144115.863307741@linuxfoundation.org>
 References: <20180215144115.863307741@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480691683989629?=
-X-GMAIL-MSGID: =?utf-8?q?1592480691683989629?=
+X-GMAIL-THRID: =?utf-8?q?1592480688468300089?=
+X-GMAIL-MSGID: =?utf-8?q?1592480688468300089?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,36 +48,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Li RongQing <lirongqing@baidu.com>
+From: Chunhao Lin <hau@realtek.com>
 
 
-[ Upstream commit 9b42d55a66d388e4dd5550107df051a9637564fc ]
+[ Upstream commit 086ca23d03c0d2f4088f472386778d293e15c5f6 ]
 
-socket can be disconnected and gets transformed back to a listening
-socket, if sk_frag.page is not released, which will be cloned into
-a new socket by sk_clone_lock, but the reference count of this page
-is increased, lead to a use after free or double free issue
+Driver check the wrong register bit in rtl_ocp_tx_cond() that keep driver
+waiting until timeout.
 
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Cc: Eric Dumazet <edumazet@google.com>
+Fix this by waiting for the right register bit.
+
+Signed-off-by: Chunhao Lin <hau@realtek.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/realtek/r8169.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2280,6 +2280,12 @@ int tcp_disconnect(struct sock *sk, int
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -1375,7 +1375,7 @@ DECLARE_RTL_COND(rtl_ocp_tx_cond)
+ {
+ 	void __iomem *ioaddr = tp->mmio_addr;
  
- 	WARN_ON(inet->inet_num && !icsk->icsk_bind_hash);
- 
-+	if (sk->sk_frag.page) {
-+		put_page(sk->sk_frag.page);
-+		sk->sk_frag.page = NULL;
-+		sk->sk_frag.offset = 0;
-+	}
-+
- 	sk->sk_error_report(sk);
- 	return err;
+-	return RTL_R8(IBISR0) & 0x02;
++	return RTL_R8(IBISR0) & 0x20;
  }
+ 
+ static void rtl8168dp_driver_start(struct rtl8169_private *tp)
+@@ -1421,7 +1421,7 @@ static void rtl8168ep_driver_stop(struct
+ 	void __iomem *ioaddr = tp->mmio_addr;
+ 
+ 	RTL_W8(IBCR2, RTL_R8(IBCR2) & ~0x01);
+-	rtl_msleep_loop_wait_low(tp, &rtl_ocp_tx_cond, 50, 2000);
++	rtl_msleep_loop_wait_high(tp, &rtl_ocp_tx_cond, 50, 2000);
+ 	RTL_W8(IBISR0, RTL_R8(IBISR0) | 0x20);
+ 	RTL_W8(IBCR0, RTL_R8(IBCR0) & ~0x01);
+ 	ocp_write(tp, 0x01, 0x180, OOB_CMD_DRIVER_STOP);
