@@ -1,97 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164280AbeBOWSP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 17:18:15 -0500
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:41716 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163612AbeBOWSN (ORCPT
+        id S1756217AbeBOWaT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 17:30:19 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:35114 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756203AbeBOWaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 17:18:13 -0500
-X-Google-Smtp-Source: AH8x225MxUkhOKq1tiXyEUCvHDkWjkcdi95otaJkGU1XhVaL8edv6vh3weg6PZMDmybpwCiBGFcDZWTNrKxyzwEXzT4=
+        Thu, 15 Feb 2018 17:30:18 -0500
+X-Google-Smtp-Source: AH8x225HGN0whLbfZWtjQBDTi1VLvhGy10atHbuA3Q7GApu+FSlqSIBnJ6M7KALEPlOLzjByvpYH6g==
+Date: Thu, 15 Feb 2018 23:30:09 +0100
+From: Andrea Parri <parri.andrea@gmail.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org,
+        stern@rowland.harvard.edu, will.deacon@arm.com, peterz@infradead.org,
+        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com
+Subject: Re: [PATCH RFC tip/lkmm 08/10] EXP Remove understore from
+ smp_mb__before_atomic() workings
+Message-ID: <20180215223009.GA5460@andrea>
+References: <20180209141832.GA17505@linux.vnet.ibm.com>
+ <1518186031-17997-8-git-send-email-paulmck@linux.vnet.ibm.com>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 15 Feb 2018 23:18:12 +0100
-X-Google-Sender-Auth: QoIy35cKdIb1l-EtMeSSW9HzG4g
-Message-ID: <CAJZ5v0gvN5hGZMt4kceyAJhbpJdyJdbCArWgWO2F07d02zN0Ug@mail.gmail.com>
-Subject: [GIT PULL] ACPI updates for v4.16-rc2
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518186031-17997-8-git-send-email-paulmck@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, Feb 09, 2018 at 06:20:29AM -0800, Paul E. McKenney wrote:
+> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 
-Please pull from the tag
+nit: s/understore/underscore  (a very understandable lapsus, BTW ;-)
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-4.16-rc2
+According to the cover letter, patches 8-10 of this series are intended
+to be squashed together;  it could be useful to add a description then:
+the motivation for these changes might appear "trivial" today;  months/
+years from now?  mmh, I can't put my finger on it ;-)
 
-with top-most commit 31a3be353fc21f13e2ccdc661cda253f78b16661
+IMO,  this descrition should also mention why this solution "is the way
+to go" (e.g., compare with the solution recently implemented by Akira).
 
- Merge branches 'acpi-ec', 'acpi-tables' and 'acpi-doc'
-
-on top of commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2
-
- Linux 4.16-rc1
-
-to receive ACPI updates for 4.16-rc2.
-
-These fix a system resume regression from the 4.13 cycle, clean up
-device table handling in the ACPI core, update sysfs ABI documentation
-of a couple of drivers and add an expected switch fall-through marker
-to the SPCR table parsing code.
-
-Specifics:
-
- - Revert a problematic EC driver change from the 4.13 cycle that
-   introduced a system resume regression on Thinkpad X240 (Rafael
-   Wysocki).
-
- - Clean up device tables handling in the ACPI core and the related
-   part of the device properties framework (Andy Shevchenko).
-
- - Update the sysfs ABI documentatio of the dock and the INT3407
-   special device drivers (Aishwarya Pant).
-
- - Add an expected switch fall-through marker to the SPCR table
-   parsing code (Gustavo Silva).
-
-Thanks!
+  Andrea
 
 
----------------
-
-Aishwarya Pant (2):
-      ACPI / DPTF: Document dptf_power sysfs atttributes
-      ACPI: dock: document sysfs interface
-
-Andy Shevchenko (4):
-      ACPI / bus: Do not traverse through non-existed device table
-      ACPI / bus: Remove checks in acpi_get_match_data()
-      ACPI / bus: Rename acpi_get_match_data() to acpi_device_get_match_data()
-      device property: Constify device_get_match_data()
-
-Gustavo A. R. Silva (1):
-      ACPI: SPCR: Mark expected switch fall-through in acpi_parse_spcr
-
-Rafael J. Wysocki (1):
-      ACPI / EC: Restore polling during noirq suspend/resume phases
-
----------------
-
- .../ABI/testing/sysfs-devices-platform-dock        | 39 +++++++++++
- Documentation/ABI/testing/sysfs-platform-dptf      | 40 ++++++++++++
- drivers/acpi/bus.c                                 | 75 ++++++++++++----------
- drivers/acpi/ec.c                                  |  6 ++
- drivers/acpi/property.c                            |  4 +-
- drivers/acpi/spcr.c                                |  1 +
- drivers/base/property.c                            |  5 +-
- drivers/of/property.c                              |  4 +-
- include/linux/acpi.h                               |  4 +-
- include/linux/fwnode.h                             |  4 +-
- include/linux/property.h                           |  2 +-
- 11 files changed, 138 insertions(+), 46 deletions(-)
+> ---
+>  tools/memory-model/linux-kernel.bell | 2 +-
+>  tools/memory-model/linux-kernel.cat  | 2 +-
+>  tools/memory-model/linux-kernel.def  | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
+> index b984bbda01a5..558bbef9e08a 100644
+> --- a/tools/memory-model/linux-kernel.bell
+> +++ b/tools/memory-model/linux-kernel.bell
+> @@ -28,7 +28,7 @@ enum Barriers = 'wmb (*smp_wmb*) ||
+>  		'rcu-lock (*rcu_read_lock*)  ||
+>  		'rcu-unlock (*rcu_read_unlock*) ||
+>  		'sync-rcu (*synchronize_rcu*) ||
+> -		'before_atomic (*smp_mb__before_atomic*) ||
+> +		'before-atomic (*smp_mb__before_atomic*) ||
+>  		'after_atomic (*smp_mb__after_atomic*) ||
+>  		'after_spinlock (*smp_mb__after_spinlock*)
+>  instructions F[Barriers]
+> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+> index babe2b3b0bb3..31c08a44c088 100644
+> --- a/tools/memory-model/linux-kernel.cat
+> +++ b/tools/memory-model/linux-kernel.cat
+> @@ -29,7 +29,7 @@ let rb-dep = [R] ; fencerel(Rb_dep) ; [R]
+>  let rmb = [R \ Noreturn] ; fencerel(Rmb) ; [R \ Noreturn]
+>  let wmb = [W] ; fencerel(Wmb) ; [W]
+>  let mb = ([M] ; fencerel(Mb) ; [M]) |
+> -	([M] ; fencerel(Before_atomic) ; [RMW] ; po? ; [M]) |
+> +	([M] ; fencerel(Before-atomic) ; [RMW] ; po? ; [M]) |
+>  	([M] ; po? ; [RMW] ; fencerel(After_atomic) ; [M]) |
+>  	([M] ; po? ; [LKW] ; fencerel(After_spinlock) ; [M])
+>  let gp = po ; [Sync-rcu] ; po?
+> diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
+> index a397387f77cc..ff4b756f4a44 100644
+> --- a/tools/memory-model/linux-kernel.def
+> +++ b/tools/memory-model/linux-kernel.def
+> @@ -21,7 +21,7 @@ smp_mb() { __fence{mb} ; }
+>  smp_rmb() { __fence{rmb} ; }
+>  smp_wmb() { __fence{wmb} ; }
+>  smp_read_barrier_depends() { __fence{rb_dep}; }
+> -smp_mb__before_atomic() { __fence{before_atomic} ; }
+> +smp_mb__before_atomic() { __fence{before-atomic} ; }
+>  smp_mb__after_atomic() { __fence{after_atomic} ; }
+>  smp_mb__after_spinlock() { __fence{after_spinlock} ; }
+>  
+> -- 
+> 2.5.2
+> 
