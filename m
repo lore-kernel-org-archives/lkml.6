@@ -1,85 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166822AbeBOUpO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 15:45:14 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:37775 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161844AbeBOUpN (ORCPT
+        id S1166993AbeBOUpV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 15:45:21 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:36448 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161844AbeBOUpR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 15:45:13 -0500
-Date: Thu, 15 Feb 2018 21:44:53 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][V2] rtc: tx4939: avoid unintended sign extension on a 24
- bit shift
-Message-ID: <20180215204453.GE14177@piout.net>
-References: <20180215193614.28684-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180215193614.28684-1-colin.king@canonical.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Thu, 15 Feb 2018 15:45:17 -0500
+X-Google-Smtp-Source: AH8x226K7NQ1z5xKMKmcabJf+HdHu/wXuDeTrNXlBoT9pIKZZ7cvcDV9fguCfXsExDzHpIloPpTM6w==
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH RFC v2 5/6] x86: Use global pages when PTI is disabled
+From: Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <3f69237a-ee32-3d06-dacd-a7f7897f6251@linux.intel.com>
+Date: Thu, 15 Feb 2018 12:45:11 -0800
+Cc: Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>, Willy Tarreau <w@1wt.eu>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Message-Id: <7B00EFC7-7BF2-4A17-981E-01EC69AEADA8@gmail.com>
+References: <20180215163602.61162-1-namit@vmware.com>
+ <20180215163602.61162-6-namit@vmware.com>
+ <CALCETrX+F5apPenXGBf9oAc+aJieQYDA81zigPk6q6q6pa_i5A@mail.gmail.com>
+ <3f69237a-ee32-3d06-dacd-a7f7897f6251@linux.intel.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1FKjPoh025342
 
-On 15/02/2018 at 19:36:14 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The shifting of buf[5] by 24 bits to the left will be promoted to
-> a 32 bit signed int and then sign-extended to an unsigned long. If
-> the top bit of buf[5] is set then all then all the upper bits sec
-> end up as also being set because of the sign-extension. Fix this by
-> casting buf[5] to an unsigned long before the shift.
-> 
+Dave Hansen <dave.hansen@linux.intel.com> wrote:
 
-The timing of the discovery of this issue is suspicious. I believe it is
-because I just enabled COMPILE_TEST on that driver and now this gets
-compiled on a 64bit architecture.
-
-Can I ask on which architecture this is an issue? I don't think (and a
-small test program confirms) x86 does the sign extension because both
-sec and buf are unsigned.
-
-> Detected by CoverityScan, CID#1465292 ("Unintended sign extension")
+> On 02/15/2018 11:53 AM, Andy Lutomirski wrote:
+>>> --- a/arch/x86/include/asm/tlbflush.h
+>>> +++ b/arch/x86/include/asm/tlbflush.h
+>>> @@ -319,6 +319,12 @@ static inline void set_cpu_pti_disable(unsigned short disable)
+>>>        WARN_ON_ONCE(preemptible());
+>>> 
+>>>        pti_update_user_cs64(cpu_pti_disable(), disable);
+>>> +       if (__supported_pte_mask & _PAGE_GLOBAL) {
+>>> +               if (disable)
+>>> +                       cr4_set_bits(X86_CR4_PGE);
+>>> +               else
+>>> +                       cr4_clear_bits(X86_CR4_PGE);
+>>> +       }
+>> This will be *extremely* slow, and I don't see the point at all.  What
+>> are you accomplishing here?
 > 
-> Fixes: 0e1492330cd2 ("rtc: add rtc-tx4939 driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/rtc/rtc-tx4939.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> It won't be slow if you always run compat processes, I guess.
 > 
-> diff --git a/drivers/rtc/rtc-tx4939.c b/drivers/rtc/rtc-tx4939.c
-> index feededce3ded..1f351308afdc 100644
-> --- a/drivers/rtc/rtc-tx4939.c
-> +++ b/drivers/rtc/rtc-tx4939.c
-> @@ -109,7 +109,8 @@ static int tx4939_rtc_read_time(struct device *dev, struct rtc_time *tm)
->  	for (i = 2; i < 6; i++)
->  		buf[i] = __raw_readl(&rtcreg->dat);
->  	spin_unlock_irq(&pdata->lock);
-> -	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
-> +	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
-> +		(buf[3] << 8) | buf[2];
->  	rtc_time_to_tm(sec, tm);
->  	return rtc_valid_tm(tm);
->  }
-> @@ -170,7 +171,8 @@ static int tx4939_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
->  	alrm->enabled = (ctl & TX4939_RTCCTL_ALME) ? 1 : 0;
->  	alrm->pending = (ctl & TX4939_RTCCTL_ALMD) ? 1 : 0;
->  	spin_unlock_irq(&pdata->lock);
-> -	sec = (buf[5] << 24) | (buf[4] << 16) | (buf[3] << 8) | buf[2];
-> +	sec = ((unsigned long)buf[5] << 24) | (buf[4] << 16) |
-> +		(buf[3] << 8) | buf[2];
->  	rtc_time_to_tm(sec, &alrm->time);
->  	return rtc_valid_tm(&alrm->time);
->  }
-> -- 
-> 2.15.1
-> 
+> But mixing these in here will eat a big chunk of the benefit of having
+> global pages (or PCIDs for that matter) in the first place.
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+These are all good points. The idea was to allow workloads like Apache, that
+spawn multiple processes that frequently perform context-switches to incur
+TLB misses on kernel pages. 
+
+The double-flushing was not intentional - I missed it. Anyhow, based on your
+comments, and because I don’t see an easy way to make the global
+cpu_entry_area (your recent patches) to work with this patch, I think I will
+drop this patch.
