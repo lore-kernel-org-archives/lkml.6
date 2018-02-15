@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x2266PzaG5dV67yzimmaVlpPi1azhwKVGh2+JwcR4ArxpSrGqXBuUU2Opp+0zoUygE2xO7YXc
-ARC-Seal: i=1; a=rsa-sha256; t=1518709595; cv=none;
+X-Google-Smtp-Source: AH8x225/+ImSBUgFIRr40Yuj7sW59eL+0TLMsAqxdje0bAukUccmwNEcHSebGFtXFA0Hipv9K4vO
+ARC-Seal: i=1; a=rsa-sha256; t=1518709582; cv=none;
         d=google.com; s=arc-20160816;
-        b=us077z7/1hNFtFCb8Qu1u1S9axh8EPkILvQqja7LaiPtRqduxzZlKydZaaiein23ZB
-         QkebuMva21ofyowegzUeUAfnRkC7cSHaMKkVgg3BMgQ4AsWWBUkRfgiuGmUKnejSz/Rf
-         nz1BRCmsYFu9wpSdm13DJkVrUgVcxzP70HVEFwLr9kl2ZUe6nbbiEQ/UiCwENEy6Vcub
-         4I2q+ojZDyxlxYn+ZBn1IXrTxn2EtIo6n906tEE+KzGpG2vfSHfLXM0BmZYsCsXO3HFo
-         DTSa+qqUNRLVAp4JYd8MoIW456Ecux0DiB+ccgez3317E6L/GZolT9xONCxiRUEImKsn
-         lisA==
+        b=BzVBqR8LiAboLsp/YVdCFCvX43+L9Hb+oLh4XhWvnydQk8x82juDL2cuYsbqFzPl9t
+         tfvgST0vc1jISLEQZZ6JAqbdNymuFBRqGQXyMghS6pLQJ46Z5NgTwGw81SnsGTQRsUi6
+         FAfIuc5IsWkMrv7JxmORh2DSpsPQhrJmcMhw6gcaTHJG2A4sX75EhtsTbD1oRiqNulrq
+         55R1wM9SOMO0FXUupkiVjl4yfKC+623tjUWD5rhBOYjoDYnJvWIEUez6CYIDVUwY9W9G
+         KuLI8YjOAYEvACFeQHDbz3h4iS1Qme5Omj8Y5vAxqUxuPgxPayoRqjwmGRkoIg8QMf1Q
+         /Q7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Bm8TCIP8hTsKD6GLYWf9+isdbfvIjJNA5AtJEjIKesE=;
-        b=G24GFf6jzVgafrf/9AR9UZl1SvnCKZX12Adja6fhdEOrtWyDjFOfVkVlx+O7/SBd2S
-         16nBzJbNBZAzw0Sryi+w13yZVWHqE3FDw1va/0k1LexJh2xMtjfZr+ayLuzq4OYEJuhd
-         hEjndU6b2Eaps1VJNN3FEU2pQvfmXW9oDsJzJ0+fBtfMM+JfIT9BJQx8IGeFRMYwY5rx
-         NeNxJPqJI6gXOvabj83AaV+bB7dqLveHdJHtRheh/gjsDVHHgf6Zl2H111LRqk3kLtqK
-         A/gZnwXSfPrV5FimSMfFW28efSf3I4zTl435Pzc+0IAuK3uXCGXZWtNdvc458QO1SifB
-         CM9w==
+        bh=rKIY/eTvEaNJVUyBZ2Wci66kW7w57itZs4pyvHZgv8A=;
+        b=YGiWIHozV4gB3X1Tvefh/0346G1HoZ4jbM1YXzsy5NkXTAfszrc5Qx2j5zItj3Cm9M
+         tmUZaZQjBXh08soGpz4Lomh6sq3M5jNdLQE2d7hucRnJ4/3MuA4urdbokN5NhaxUjQnf
+         qoPMQjHDFPqWA0HcLLvfnUxgKifYhNTl/xuQRzs3vqTmnNWE3Pi4Jt8IcnxzrobvoQJ9
+         4vrrSbx5v5fZ1tz8KJGFZvJSnouafXQCinLBnv49OtUsJd3GJqncW/7ZyTpHFlV2rlws
+         k7l6jGeyPpJbWH/iqnDQSWqt0EBq0AO2ZNpQltI8a5PX/ZuMCwfPh5mP2+S0zY7DdvOv
+         diQQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Hogan <jhogan@kernel.org>,
-	David Daney <david.daney@cavium.com>,
-	linux-edac <linux-edac@vger.kernel.org>,
-	linux-mips@linux-mips.org,
-	Borislav Petkov <bp@suse.de>
-Subject: [PATCH 4.15 174/202] EDAC, octeon: Fix an uninitialized variable warning
-Date: Thu, 15 Feb 2018 16:17:54 +0100
-Message-Id: <20180215151721.968525779@linuxfoundation.org>
+	Liran Alon <liran.alon@oracle.com>,
+	Nikita Leshenko <nikita.leshchenko@oracle.com>,
+	Krish Sadhukhan <krish.sadhukhan@oracle.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH 4.15 132/202] KVM: nVMX: Fix bug of injecting L2 exception into L1
+Date: Thu, 15 Feb 2018 16:17:12 +0100
+Message-Id: <20180215151720.080557703@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480775002082254?=
-X-GMAIL-MSGID: =?utf-8?q?1592482433357820852?=
+X-GMAIL-THRID: =?utf-8?q?1592481754467882981?=
+X-GMAIL-MSGID: =?utf-8?q?1592482419421147373?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,42 +51,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Hogan <jhogan@kernel.org>
+From: Liran Alon <liran.alon@oracle.com>
 
-commit 544e92581a2ac44607d7cc602c6b54d18656f56d upstream.
+commit 5c7d4f9ad39d980728b39752304ce10bb2960cbf upstream.
 
-Fix an uninitialized variable warning in the Octeon EDAC driver, as seen
-in MIPS cavium_octeon_defconfig builds since v4.14 with Codescape GNU
-Tools 2016.05-03:
+kvm_clear_exception_queue() should clear pending exception.
+This also includes exceptions which were only marked pending but not
+yet injected. This is because exception.pending is used for both L1
+and L2 to determine if an exception should be raised to guest.
+Note that an exception which is pending but not yet injected will
+be raised again once the guest will be resumed.
 
-  drivers/edac/octeon_edac-lmc.c In function ‘octeon_lmc_edac_poll_o2’:
-  drivers/edac/octeon_edac-lmc.c:87:24: warning: ‘((long unsigned int*)&int_reg)[1]’ may \
-    be used uninitialized in this function [-Wmaybe-uninitialized]
-    if (int_reg.s.sec_err || int_reg.s.ded_err) {
-                        ^
-Iinitialise the whole int_reg variable to zero before the conditional
-assignments in the error injection case.
+Consider the following scenario:
+1) L0 KVM with ignore_msrs=false.
+2) L1 prepare vmcs12 with the following:
+    a) No intercepts on MSR (MSR_BITMAP exist and is filled with 0).
+    b) No intercept for #GP.
+    c) vmx-preemption-timer is configured.
+3) L1 enters into L2.
+4) L2 reads an unhandled MSR that exists in MSR_BITMAP
+(such as 0x1fff).
 
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Acked-by: David Daney <david.daney@cavium.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: linux-mips@linux-mips.org
-Fixes: 1bc021e81565 ("EDAC: Octeon: Add error injection support")
-Link: http://lkml.kernel.org/r/20171113161206.20990-1-james.hogan@mips.com
-Signed-off-by: Borislav Petkov <bp@suse.de>
+L2 RDMSR could be handled as described below:
+1) L2 exits to L0 on RDMSR and calls handle_rdmsr().
+2) handle_rdmsr() calls kvm_inject_gp() which sets
+KVM_REQ_EVENT, exception.pending=true and exception.injected=false.
+3) vcpu_enter_guest() consumes KVM_REQ_EVENT and calls
+inject_pending_event() which calls vmx_check_nested_events()
+which sees that exception.pending=true but
+nested_vmx_check_exception() returns 0 and therefore does nothing at
+this point. However let's assume it later sees vmx-preemption-timer
+expired and therefore exits from L2 to L1 by calling
+nested_vmx_vmexit().
+4) nested_vmx_vmexit() calls prepare_vmcs12()
+which calls vmcs12_save_pending_event() but it does nothing as
+exception.injected is false. Also prepare_vmcs12() calls
+kvm_clear_exception_queue() which does nothing as
+exception.injected is already false.
+5) We now return from vmx_check_nested_events() with 0 while still
+having exception.pending=true!
+6) Therefore inject_pending_event() continues
+and we inject L2 exception to L1!...
+
+This commit will fix above issue by changing step (4) to
+clear exception.pending in kvm_clear_exception_queue().
+
+Fixes: 664f8e26b00c ("KVM: X86: Fix loss of exception which has not yet been injected")
+Signed-off-by: Liran Alon <liran.alon@oracle.com>
+Reviewed-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
+Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Signed-off-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/edac/octeon_edac-lmc.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/vmx.c |    1 -
+ arch/x86/kvm/x86.h |    1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/edac/octeon_edac-lmc.c
-+++ b/drivers/edac/octeon_edac-lmc.c
-@@ -78,6 +78,7 @@ static void octeon_lmc_edac_poll_o2(stru
- 	if (!pvt->inject)
- 		int_reg.u64 = cvmx_read_csr(CVMX_LMCX_INT(mci->mc_idx));
- 	else {
-+		int_reg.u64 = 0;
- 		if (pvt->error_type == 1)
- 			int_reg.s.sec_err = 1;
- 		if (pvt->error_type == 2)
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -11255,7 +11255,6 @@ static int vmx_check_nested_events(struc
+ 		if (block_nested_events)
+ 			return -EBUSY;
+ 		nested_vmx_inject_exception_vmexit(vcpu, exit_qual);
+-		vcpu->arch.exception.pending = false;
+ 		return 0;
+ 	}
+ 
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -12,6 +12,7 @@
+ 
+ static inline void kvm_clear_exception_queue(struct kvm_vcpu *vcpu)
+ {
++	vcpu->arch.exception.pending = false;
+ 	vcpu->arch.exception.injected = false;
+ }
+ 
