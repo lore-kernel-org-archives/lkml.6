@@ -1,85 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755013AbeBOGFx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 01:05:53 -0500
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:63814 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754816AbeBOGD6 (ORCPT
+        id S1754798AbeBOGQ4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 01:16:56 -0500
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:45133 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754747AbeBOGQy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 01:03:58 -0500
-From: Keerthy <j-keerthy@ti.com>
-To: <daniel.lezcano@linaro.org>, <thierry.reding@gmail.com>,
-        <tony@atomide.com>, <aaro.koskinen@iki.fi>
-CC: <j-keerthy@ti.com>, <Claudiu.Beznea@microchip.com>,
-        <narmstrong@baylibre.com>, <linux-pwm@vger.kernel.org>,
-        <ladis@linux-mips.org>, <s-anna@ti.com>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <sebastian.reichel@collabora.co.uk>, <linux-omap@vger.kernel.org>,
-        <robh+dt@kernel.org>, <t-kristo@ti.com>, <grygorii.strashko@ti.com>
-Subject: [PATCH v11 02/10] arm: omap: timer: Wrap the inline functions under OMAP2PLUS define
-Date: Thu, 15 Feb 2018 11:31:43 +0530
-Message-ID: <1518674511-26421-3-git-send-email-j-keerthy@ti.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1518674511-26421-1-git-send-email-j-keerthy@ti.com>
-References: <1518674511-26421-1-git-send-email-j-keerthy@ti.com>
+        Thu, 15 Feb 2018 01:16:54 -0500
+X-Google-Smtp-Source: AH8x224rMCW5D2A7vly79Y5llrYzEwdzoTQDL8fTeBo9rJjpHrGGlr1DvZ2d3BeHoFNRbwpS4MfZ/ZOa11EBjh+hYfY=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180215023327.tt2s2pbcrblz5a7u@madcap2.tricolour.ca>
+References: <cover.1518603831.git.rgb@redhat.com> <3a9542b261d93bc4eaecfaf359affbba152cf965.1518603831.git.rgb@redhat.com>
+ <CAGXu5jKtEv-W3R-uakY9S9=OFmjY3ZqxQJFa3YxGd4RWyUEGgQ@mail.gmail.com> <20180215023327.tt2s2pbcrblz5a7u@madcap2.tricolour.ca>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 14 Feb 2018 22:16:52 -0800
+X-Google-Sender-Auth: Z8V6xKTvN3UVPpt6qBFVE9Oulbs
+Message-ID: <CAGXu5jLTEa7sPxOnrWj8SNi-crEPQpTBXtdqdfppOE_vf9GriQ@mail.gmail.com>
+Subject: Re: [RFC PATCH ghak21 1/4] audit: make ANOM_LINK obey audit_enabled
+ and audit_dummy_context
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, Steve Grubb <sgrubb@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wrap the inline functions under OMAP2PLUS/OMAP1 defines.
-This patch also inlines omap_dm_timer_get_fclk function
-for non OMAP1 Config.
+On Wed, Feb 14, 2018 at 6:33 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2018-02-14 09:51, Kees Cook wrote:
+>> On Wed, Feb 14, 2018 at 8:18 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+>> > Audit link denied events emit disjointed records when audit is disabled.
+>> > No records should be emitted when audit is disabled.
+>> >
+>> > See: https://github.com/linux-audit/audit-kernel/issues/21
+>> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+>> > ---
+>> >  kernel/audit.c | 3 +++
+>> >  1 file changed, 3 insertions(+)
+>> >
+>> > diff --git a/kernel/audit.c b/kernel/audit.c
+>> > index 227db99..4c3fd24 100644
+>> > --- a/kernel/audit.c
+>> > +++ b/kernel/audit.c
+>> > @@ -2261,6 +2261,9 @@ void audit_log_link_denied(const char *operation, const struct path *link)
+>> >         struct audit_buffer *ab;
+>> >         struct audit_names *name;
+>> >
+>> > +       if (!audit_enabled || audit_dummy_context())
+>> > +               return;
+>> > +
+>> >         name = kzalloc(sizeof(*name), GFP_NOFS);
+>> >         if (!name)
+>> >                 return;
+>>
+>> Doesn't this means errors here would be silent if audit isn't enabled?
+>> I don't that; sysadmins should see this notification regardless of the
+>> audit state...
+>
+> This is a user error and not a system error, so I would think if system
+> auditing is disabled, they don't care about this kind of error.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Tested-by: Ladislav Michl <ladis@linux-mips.org>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
----
- arch/arm/plat-omap/include/plat/dmtimer.h | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+It could indicate an attack attempt...
 
-diff --git a/arch/arm/plat-omap/include/plat/dmtimer.h b/arch/arm/plat-omap/include/plat/dmtimer.h
-index 8b7d8a6..831174f 100644
---- a/arch/arm/plat-omap/include/plat/dmtimer.h
-+++ b/arch/arm/plat-omap/include/plat/dmtimer.h
-@@ -132,7 +132,16 @@ struct omap_dm_timer {
- int omap_dm_timer_get_irq(struct omap_dm_timer *timer);
- 
- u32 omap_dm_timer_modify_idlect_mask(u32 inputmask);
-+
-+#ifndef CONFIG_ARCH_OMAP1
- struct clk *omap_dm_timer_get_fclk(struct omap_dm_timer *timer);
-+#else
-+static inline
-+struct clk *omap_dm_timer_get_fclk(struct omap_dm_timer *timer)
-+{
-+	return NULL;
-+}
-+#endif
- 
- int omap_dm_timer_trigger(struct omap_dm_timer *timer);
- int omap_dm_timer_start(struct omap_dm_timer *timer);
-@@ -272,6 +281,12 @@ struct omap_dm_timer {
- #define OMAP_TIMER_TICK_INT_MASK_COUNT_REG				\
- 		(_OMAP_TIMER_TICK_INT_MASK_COUNT_OFFSET | (WP_TOWR << WPSHIFT))
- 
-+/*
-+ * The below are inlined to optimize code size for system timers. Other code
-+ * should not need these at all, see
-+ * include/linux/platform_data/pwm_omap_dmtimer.h
-+ */
-+#if defined(CONFIG_ARCH_OMAP1) || defined(CONFIG_ARCH_OMAP2PLUS)
- static inline u32 __omap_dm_timer_read(struct omap_dm_timer *timer, u32 reg,
- 						int posted)
- {
-@@ -410,5 +425,5 @@ static inline void __omap_dm_timer_write_status(struct omap_dm_timer *timer,
- {
- 	writel_relaxed(value, timer->irq_stat);
- }
--
-+#endif /* CONFIG_ARCH_OMAP1 || CONFIG_ARCH_OMAP2PLUS */
- #endif /* __ASM_ARCH_DMTIMER_H */
+-Kees
+
+>
+> Steve?
+>
+>> -Kees
+>
+> - RGB
+>
+> --
+> Richard Guy Briggs <rgb@redhat.com>
+> Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> Remote, Ottawa, Red Hat Canada
+> IRC: rgb, SunRaycer
+> Voice: +1.647.777.2635, Internal: (81) 32635
+
+
+
 -- 
-1.9.1
+Kees Cook
+Pixel Security
