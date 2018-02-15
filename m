@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x22640s5dYCtDyDb905DtJNep2bBCMcp+m/FTSIcDHl/NsowuobFeEDLWh/mE2t0VypsRJx4c
-ARC-Seal: i=1; a=rsa-sha256; t=1518708477; cv=none;
+X-Google-Smtp-Source: AH8x226jdyxzCBNaDGAdPBA70nMvavtNZGz3bDDnrECtjCwZ7LUo3+btQaQzvdtTXPowPbUxM3zt
+ARC-Seal: i=1; a=rsa-sha256; t=1518708474; cv=none;
         d=google.com; s=arc-20160816;
-        b=L3y5LwrQ6aDLEs5RxOMLn483+V16HZpU1D7c8PRsQ34y93ATfj2jjouzxizWstcDjw
-         7IiMYmE1qvvP58fdEtfk3oYzBywg7SIZbNDxsZUuteAvmpiuTLsB5AFpaVOh7Dw4P7vY
-         jZRn/eoNNBTwuBoUmL5/PlCH7poneZiW+veUGdREWJH5seH6ovcSLJwgqJ6gW/XDohzX
-         0vhLBnn0hW4b6ac4QuagPN1Y+2ph41SSa638d3msLF0LV0eVLXiIUS1cXgxYVJYqOLob
-         IKFY+a781afRIbfuPJ0Ub3YUA6/mp/ggnWgJOcNx6ld83J7Zmpm6A9AXPiu6F3WD9Gwz
-         QdQw==
+        b=qMT7c7P0tnF2MHskv8IAsTVxIu4wDChMc5A62bFQ0IsA2byUZ8wfXV8cqhtvK+odv1
+         rAMtG63hc7O4XzZZ+WYFTNwGPcV8YOovLe9qaU8dj7CvIHeL/mxIONVSO2Yb9+rTcBAT
+         ZUPlRRe4veP+tg/5NGPnAakJWWIG9R0m+MkXuxWOyiMdCiZdjF76tc7fF0goGh8PNqBo
+         DlALBi2tEuYQ8jUiVYflzA+65N48Is3ul8cRMwc5kVR5RClFpN+4OQuerAb2QNSpMfa+
+         LALUhp4rM0NKStB8q0MNVseqmSWOQXXL5Os3BCmaiUBkswV3JzMiGH5M+UAcCFwQdWJ1
+         +y6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1a4HLX3OWDhTRVEXRtJ7+uTdAImBP/pdsYOWsDp7inY=;
-        b=bq+tAYieZ7ltM99mLYYAjbMVi2e9Hx02fwY06Rk0npJUS/76h0muOVOE9FvC9Kt75n
-         xbk9RcQfmRayJjzxeTtRu6XSumXVhmGbfMOkzfSBwgMPLMAY4KWfKPa5HwFyAJvyZoot
-         ARRDBN7aUNuhEq8juSP6/99by59XdcN5/oEP7gvixCmKWNUbfKg35CMBZkuukXtHpcWY
-         eODVQyA7hSJ9fjssIRI3i/VdEwQduseyWGjrTb+IEhLX7qyBodVMoj1YPWAdl22VTQao
-         5kZj0co1r1hsXi8DqQwlwUqgCMda1LLY59jBuT2IzgI24xk56vZ9x/7GH9uL6KcOqy/a
-         EbTA==
+        bh=HYWMdzSanIFsv7keTFA6r5XSDCWnRRxr0piC4Kx6dh4=;
+        b=Pqdp7C7WEPfI6lJFY6F5XqDAhPZN/gLtTWb+qD4J7WWEO9ocefsR4/X/iwhNeC7MOv
+         ctt0KZLWRdOjyrgad7mhKyBLU31nDsNVbo+x8MUX0s0SDqno0Utgj9O+aDcOXWMO/TJI
+         a02Ddj4zFUekMdS1lhmKULAwW7Vzw3Ftg4yAWrirqR4EaXQYApqYxVZhTI5NHTKZ1nxT
+         +JcQrq1UxPGZDptw+ytyms2vn7i8Vj5//zNWmqTsAPK076NDhx3aNKLFsyA8iPmS6SE/
+         vKzV3c0cDJiu7fmNy31FSK/6CYSuad9R4TCjzrO1EL6Ifapd3IDKKoNWqqZfTAWyzOHQ
+         F0yA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	John Keeping <john@metanate.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.9 55/88] ASoC: rockchip: i2s: fix playback after runtime resume
-Date: Thu, 15 Feb 2018 16:17:22 +0100
-Message-Id: <20180215151230.342425962@linuxfoundation.org>
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Christoffer Dall <christoffer.dall@linaro.org>,
+	James Morse <james.morse@arm.com>
+Subject: [PATCH 4.9 54/88] KVM: arm/arm64: Handle CPU_PM_ENTER_FAILED
+Date: Thu, 15 Feb 2018 16:17:21 +0100
+Message-Id: <20180215151230.198638766@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481260348588269?=
-X-GMAIL-MSGID: =?utf-8?q?1592481260348588269?=
+X-GMAIL-THRID: =?utf-8?q?1592481257354306127?=
+X-GMAIL-MSGID: =?utf-8?q?1592481257354306127?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,67 +49,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: John Keeping <john@metanate.com>
+From: James Morse <james.morse@arm.com>
 
-commit c66234cfedfc3e6e3b62563a5f2c1562be09a35d upstream.
+commit 58d6b15e9da5042a99c9c30ad725792e4569150e upstream.
 
-When restoring registers during runtime resume, we must not write to
-I2S_TXDR which is the transmit FIFO as this queues up a sample to be
-output and pushes all of the output channels down by one.
+cpu_pm_enter() calls the pm notifier chain with CPU_PM_ENTER, then if
+there is a failure: CPU_PM_ENTER_FAILED.
 
-This can be demonstrated with the speaker-test utility:
+When KVM receives CPU_PM_ENTER it calls cpu_hyp_reset() which will
+return us to the hyp-stub. If we subsequently get a CPU_PM_ENTER_FAILED,
+KVM does nothing, leaving the CPU running with the hyp-stub, at odds
+with kvm_arm_hardware_enabled.
 
-	for i in a b c; do speaker-test -c 2 -s 1; done
+Add CPU_PM_ENTER_FAILED as a fallthrough for CPU_PM_EXIT, this reloads
+KVM based on kvm_arm_hardware_enabled. This is safe even if CPU_PM_ENTER
+never gets as far as KVM, as cpu_hyp_reinit() calls cpu_hyp_reset()
+to make sure the hyp-stub is loaded before reloading KVM.
 
-which should play a test through the left speaker three times but if the
-I2S hardware starts runtime suspended the first sample will be played
-through the right speaker.
-
-Fix this by marking I2S_TXDR as volatile (which also requires marking it
-as readble, even though it technically isn't).  This seems to be the
-most robust fix, the alternative of giving I2S_TXDR a default value is
-more fragile since it does not prevent regcache writing to the register
-in all circumstances.
-
-While here, also fix the configuration of I2S_RXDR and I2S_FIFOLR; these
-are not writable so they do not suffer from the same problem as I2S_TXDR
-but reading from I2S_RXDR does suffer from a similar problem.
-
-Fixes: f0447f6cbb20 ("ASoC: rockchip: i2s: restore register during runtime_suspend/resume cycle", 2016-09-07)
-Signed-off-by: John Keeping <john@metanate.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 67f691976662 ("arm64: kvm: allows kvm cpu hotplug")
+CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
+Signed-off-by: James Morse <james.morse@arm.com>
+Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/rockchip/rockchip_i2s.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/kvm/arm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/soc/rockchip/rockchip_i2s.c
-+++ b/sound/soc/rockchip/rockchip_i2s.c
-@@ -476,6 +476,7 @@ static bool rockchip_i2s_rd_reg(struct d
- 	case I2S_INTCR:
- 	case I2S_XFER:
- 	case I2S_CLR:
-+	case I2S_TXDR:
- 	case I2S_RXDR:
- 	case I2S_FIFOLR:
- 	case I2S_INTSR:
-@@ -490,6 +491,9 @@ static bool rockchip_i2s_volatile_reg(st
- 	switch (reg) {
- 	case I2S_INTSR:
- 	case I2S_CLR:
-+	case I2S_FIFOLR:
-+	case I2S_TXDR:
-+	case I2S_RXDR:
- 		return true;
- 	default:
- 		return false;
-@@ -499,6 +503,8 @@ static bool rockchip_i2s_volatile_reg(st
- static bool rockchip_i2s_precious_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
-+	case I2S_RXDR:
-+		return true;
- 	default:
- 		return false;
- 	}
+--- a/arch/arm/kvm/arm.c
++++ b/arch/arm/kvm/arm.c
+@@ -1165,6 +1165,7 @@ static int hyp_init_cpu_pm_notifier(stru
+ 			cpu_hyp_reset();
+ 
+ 		return NOTIFY_OK;
++	case CPU_PM_ENTER_FAILED:
+ 	case CPU_PM_EXIT:
+ 		if (__this_cpu_read(kvm_arm_hardware_enabled))
+ 			/* The hardware was enabled before suspend. */
