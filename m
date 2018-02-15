@@ -1,67 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755547AbeBOTg7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 14:36:59 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:41531 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755533AbeBOTg5 (ORCPT
+        id S1755569AbeBOTmy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 14:42:54 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:39184 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751512AbeBOTmw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 14:36:57 -0500
-X-Google-Smtp-Source: AH8x224d09ps3WRCZKpSsDbJ0ueM0VHx3vyz+kjcG5NE908asUULkZa8PIAE2wRCdf1DWyiOo3ytfAuhyjUlX1IbnI0=
+        Thu, 15 Feb 2018 14:42:52 -0500
+From: Colin King <colin.king@canonical.com>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] i40evf: remove redundant array comparisons to 0 checks
+Date: Thu, 15 Feb 2018 19:42:45 +0000
+Message-Id: <20180215194245.28860-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-References: <20170807195027.13192-1-mjg59@google.com> <CACdnJus-X533K0Bgqjc-MoZ2NbLz0ac9x+rryHUtnjrnmJ+Kmg@mail.gmail.com>
- <20180215152514.rxmh7webdg2i2fct@redbean>
-In-Reply-To: <20180215152514.rxmh7webdg2i2fct@redbean>
-From: Matthew Garrett <mjg59@google.com>
-Date: Thu, 15 Feb 2018 19:36:45 +0000
-Message-ID: <CACdnJutL7rJE=1bsh45RmvunU-GZJCYaejyznENrAgFB6nbCLA@mail.gmail.com>
-Subject: Re: [PATCH] Make kernel taint on invalid module signatures configurable
-To: Jessica Yu <jeyu@kernel.org>
-Cc: Ben Hutchings <ben@decadent.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 7:25 AM Jessica Yu <jeyu@kernel.org> wrote:
-> I'm still unclear on why a distro would enable CONFIG_MODULE_SIG and
-> then _not_ want to know about unsigned modules.
+From: Colin Ian King <colin.king@canonical.com>
 
-The same kernel image may be used in situations where the use case benefits
-from enforcement of module signatures and cases where it doesn't -
-distributions don't generally have the resources to ship multiple kernel
-packages with lightly modified configurations.
+The checks to see if key->dst.s6_addr and key->src.s6_addr are null
+pointers are redundant because these are constant size arrays and
+so the checks always return true.  Fix this by removing the redundant
+checks.
 
->  From what I understand from Ben's post from last year
-> (http://lkml.kernel.org/r/1504044122.4448.24.camel@decadent.org.uk),
-> it sounds like the main issue is that Debian doesn't support their own
-> centralised module signing yet, causing all of their modules to be
-> automatically tainted if they enable CONFIG_MODULE_SIG, and that a new
-> option like this would likely be used as a temporary "fix". Am I
-> understanding correctly?
+Detected by CoverityScan, CID#1465279 ("Array compared to 0")
 
-Not entirely. There's two cases where the current situation causes problems:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/intel/i40evf/i40evf_main.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
-1) Distributions that build out of tree kernel modules and don't have
-infrastructure to sign them will end up with kernel taint. That's something
-that can be resolved by implementing that infrastructure.
-2) End-users who build out of tree kernel modules will end up with kernel
-taint and will file bugs. This cannot be fixed but will increase
-distribution load anyway.
-
-> I understand this predicament, but it seems like adding a new set of
-> options/parameters like this is just hiding the symptoms of the
-> problem (modules distributed by Debian getting tainted by default)
-> instead of fixing what seems to be the heart of the issue (Debian
-> doesn't support their own module signing yet), if that makes sense.
-> I am hesitant about merging something that would only serve as a
-> temporary solution until Debian supports their own module signing. In
-> that case, I would prefer the Debian folks to maintain their own patch
-> removing the taint until they support module signing for their own
-> modules, especially if - and please correct me if I'm wrong - the
-> new option is not going to see long-term usage.
-
-I'd expect this option to be used by distributions for as long as
-distributions need to support use-cases that don't need signed modules, so
-probably forever.
+diff --git a/drivers/net/ethernet/intel/i40evf/i40evf_main.c b/drivers/net/ethernet/intel/i40evf/i40evf_main.c
+index 4955ce3ab6a2..63e4169828ea 100644
+--- a/drivers/net/ethernet/intel/i40evf/i40evf_main.c
++++ b/drivers/net/ethernet/intel/i40evf/i40evf_main.c
+@@ -2710,22 +2710,19 @@ static int i40evf_parse_cls_flower(struct i40evf_adapter *adapter,
+ 		if (!ipv6_addr_any(&mask->dst) || !ipv6_addr_any(&mask->src))
+ 			field_flags |= I40EVF_CLOUD_FIELD_IIP;
+ 
+-		if (key->dst.s6_addr) {
+-			for (i = 0; i < 4; i++)
+-				filter->f.mask.tcp_spec.dst_ip[i] |=
++		for (i = 0; i < 4; i++)
++			filter->f.mask.tcp_spec.dst_ip[i] |=
+ 							cpu_to_be32(0xffffffff);
+-			memcpy(&filter->f.data.tcp_spec.dst_ip,
+-			       &key->dst.s6_addr32,
+-			       sizeof(filter->f.data.tcp_spec.dst_ip));
+-		}
+-		if (key->src.s6_addr) {
+-			for (i = 0; i < 4; i++)
+-				filter->f.mask.tcp_spec.src_ip[i] |=
++		memcpy(&filter->f.data.tcp_spec.dst_ip,
++		       &key->dst.s6_addr32,
++		       sizeof(filter->f.data.tcp_spec.dst_ip));
++
++		for (i = 0; i < 4; i++)
++			filter->f.mask.tcp_spec.src_ip[i] |=
+ 							cpu_to_be32(0xffffffff);
+-			memcpy(&filter->f.data.tcp_spec.src_ip,
+-			       &key->src.s6_addr32,
+-			       sizeof(filter->f.data.tcp_spec.src_ip));
+-		}
++		memcpy(&filter->f.data.tcp_spec.src_ip,
++		       &key->src.s6_addr32,
++		       sizeof(filter->f.data.tcp_spec.src_ip));
+ 	}
+ 	if (dissector_uses_key(f->dissector, FLOW_DISSECTOR_KEY_PORTS)) {
+ 		struct flow_dissector_key_ports *key =
+-- 
+2.15.1
