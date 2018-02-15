@@ -1,117 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033838AbeBOPSQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 10:18:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52164 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033088AbeBOPSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 10:18:14 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E907A2171F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v1 2/2] sparc/PCI: Reserve System ROM and Video ROM outside
- of PCI space
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Khalid Aziz <khalid.aziz@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: sparclinux@vger.kernel.org, linux-pci@vger.kernel.org,
-        Yinghai Lu <yinghai@kernel.org>, linux-kernel@vger.kernel.org
-Date: Thu, 15 Feb 2018 09:18:11 -0600
-Message-ID: <20180215151811.196756.2750.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20180215151118.196756.99622.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180215151118.196756.99622.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
+        id S1162421AbeBOPWe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 10:22:34 -0500
+Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:29845 "EHLO
+        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1162407AbeBOPW3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 10:22:29 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GtCQBbpIVah8uZ6ERdGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYQoEHAoCoNbmCkxgVGBF2sxhmOOW4IDChuBE4QNAhqCKFgUAQI?=
+ =?us-ascii?q?BAQEBAQECAQIQAQEBCgsJCCgiDYI4IoE0WzsBAQEEIxFFDAQCAQgRBAEBAQICI?=
+ =?us-ascii?q?wMCAgIfJQEICAIEAQ0FCIoVAxWuRoInhz4NgTKCEwEBAQEBAQEBAQEBAQEBAQE?=
+ =?us-ascii?q?BAQEBAR2BD4N0gieGbYJrgX8EOxAjgl2CZQWKZYlgjzg1CYgghAiEUoUCgihnh?=
+ =?us-ascii?q?UOLfY5NhVABg36BPDaBdHCDGAmCTBAMggZ4i3AqgQqBGQEBAQ?=
+X-IPAS-Result: =?us-ascii?q?A2GtCQBbpIVah8uZ6ERdGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
+ =?us-ascii?q?oEHAoCoNbmCkxgVGBF2sxhmOOW4IDChuBE4QNAhqCKFgUAQIBAQEBAQECAQIQA?=
+ =?us-ascii?q?QEBCgsJCCgiDYI4IoE0WzsBAQEEIxFFDAQCAQgRBAEBAQICIwMCAgIfJQEICAI?=
+ =?us-ascii?q?EAQ0FCIoVAxWuRoInhz4NgTKCEwEBAQEBAQEBAQEBAQEBAQEBAQEBAR2BD4N0g?=
+ =?us-ascii?q?ieGbYJrgX8EOxAjgl2CZQWKZYlgjzg1CYgghAiEUoUCgihnhUOLfY5NhVABg36?=
+ =?us-ascii?q?BPDaBdHCDGAmCTBAMggZ4i3AqgQqBGQEBAQ?=
+From: <Mario.Limonciello@dell.com>
+X-LoopCount0: from 10.166.132.198
+X-IronPort-AV: E=Sophos;i="5.46,517,1511848800";
+   d="scan'208";a="214953993"
+X-DLP: DLP_GlobalPCIDSS
+To: <pmenzel+linux-input@molgen.mpg.de>, <dmitry.torokhov@gmail.com>
+CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <it+linux-input@molgen.mpg.de>, <linux@leemhuis.info>
+Subject: RE: i8042 AUX port [serio1] suspend takes a second on Dell XPS 13
+ 9360
+Thread-Topic: i8042 AUX port [serio1] suspend takes a second on Dell XPS 13
+ 9360
+Thread-Index: AQHTpbKybUmpckaH40yGvHCktg4tlqOkIKZggAFl4wCAAA1goA==
+Date: Thu, 15 Feb 2018 15:22:25 +0000
+Message-ID: <33355407b8d74575bab0c36e442141ea@ausx13mpc120.AMER.DELL.COM>
+References: <5a74e1a7-2083-c6b2-f51a-f44908ac8bc4@molgen.mpg.de>
+ <20180130175017.72inurhk5l7tcvae@dtor-ws>
+ <20180130180736.ehucqywbz7zdl4v7@dtor-ws>
+ <f02b699d-b130-c09f-3e09-db62ecf2df2c@molgen.mpg.de>
+ <609c1f35df7346da8ac1d12c35e04cf7@ausx13mpc120.AMER.DELL.COM>
+ <b9223169-2282-4ada-999a-7f50d205ca7d@molgen.mpg.de>
+In-Reply-To: <b9223169-2282-4ada-999a-7f50d205ca7d@molgen.mpg.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.242.75]
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1FFMjjx015521
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+> -----Original Message-----
+> From: Paul Menzel [mailto:pmenzel+linux-input@molgen.mpg.de]
+> Sent: Thursday, February 15, 2018 2:26 AM
+> To: Limonciello, Mario <Mario_Limonciello@Dell.com>; Dmitry Torokhov
+> <dmitry.torokhov@gmail.com>
+> Cc: linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; it+linux-
+> input@molgen.mpg.de; linux@leemhuis.info
+> Subject: Re: i8042 AUX port [serio1] suspend takes a second on Dell XPS 13 9360
+> 
+> Dear Mario, dear Dmitry,
+> 
+> 
+> On 02/14/18 18:11, Mario.Limonciello@dell.com wrote:
+> >
+> >
+> >> -----Original Message-----
+> >> From: Paul Menzel [mailto:pmenzel+linux-input@molgen.mpg.de]
+> >> Sent: Wednesday, February 14, 2018 10:41 AM
+> >> To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> >> Cc: linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; it+linux-
+> >> input@molgen.mpg.de; Limonciello, Mario <Mario_Limonciello@Dell.com>;
+> >> Thorsten Leemhuis <linux@leemhuis.info>
+> >> Subject: Re: i8042 AUX port [serio1] suspend takes a second on Dell XPS 13 9360
+> 
+> >> On 01/30/18 19:07, Dmitry Torokhov wrote:
+> >>> On Tue, Jan 30, 2018 at 09:52:45AM -0800, Dmitry Torokhov wrote:
+> >>
+> >>>> On Tue, Jan 30, 2018 at 06:36:34PM +0100, Paul Menzel wrote:
+> >>
+> >>>>> I do not know, when it started, but with Linux 4.14-rc8 and 4.15,
+> >>>>> benchmarking suspend and resume time with `sleepgraph.py` [1][2], there is
+> a
+> >>>>> regression, that i8042 AUX port [serio1] suspend takes a second on Dell XPS
+> >>>>> 13 9360 and TUXEDO Book 1406.
+> >>>>
+> >>>> It would be really helpful to know when the regression started.
+> >>>
+> >>> So the reason it takes longer is because the touchpad does not want to
+> >>> talk to us for some reason and we wait until commands time out:
+> >>>
+> >>> [   94.591636] calling  serio1+ @ 2299, parent: i8042
+> >>> [   94.794292] psmouse serio1: Failed to disable mouse on isa0060/serio1
+> >>> [   95.593303] call serio1+ returned 0 after 974280 usecs
+> >>>
+> >>> but it is not clear why it happens, I do not think we changed anything
+> >>> in that path for a while, so it might be some other change affecting
+> >>> things indirectly. I'm afraid you'll have to narrow the scope, and
+> >>> ideally bisect.
+> >
+> > Please keep in mind the XPS 9360 has a touchpad that can operate in I2C
+> > or PS2 modes.  It's connected to both buses and with the right initialization
+> > sequence will come up in I2C mode.
+> >
+> > Assuming Paul M. has compiled and used hid-multitouch and i2c-hid the
+> > touchpad should be operating in I2C mode.
+> >
+> > When this happens I expect that the touchpad shouldn't be responding
+> > to PS2 commands.
+> >
+> > As a debugging tactic, you may consider to unload psmouse before
+> > suspend and still see the touchpad operational.
+> 
+> Thank you! Unloading *psmouse* with `sudo modprobe -r psmouse` indeed
+> worked on the Dell XPS 13 9360, that means, the cursor is still functioning.
+> 
+> >> Thank you for your replies. First of all, it looks like *only* the Dell
+> >> system is effected as I was unable to reproduce it on the TUXEDO Book
+> >> 1406. I have to verify that by finding old log files.
+> >
+> > Does this other laptop you are drawing a comparison to also have a
+> > touchpad that can operate in multiple modes?
+> >
+> > To make an accurate comparison you should determine what mode it's in.
+> 
+> Yeah, removing the module *psmouse*, the cursor didn’t work there
+> anymore. I was really sure, that I saw that problem once on the TUXEDO
+> device too, but must have been mistaken, that’s why I corrected it.
+> Sorry for the misunderstanding.
+> 
+> So, why does *psmouse* get loaded on the Dell XPS 13 9360 since at least
+> Linux 4.13? Or where the modules added causing the touchpad to operate
+> in I2C mode, which causes PS2 to stop to work?
+> 
 
-Previously, pci_register_legacy_regions() reserved PCI address space under
-every PCI host bridge for the System ROM and the Video ROM, but these
-regions are not part of PCI address space.
+It was like that before this laptop even launched to the market.
+It's been like that since way before 4.13.  I want to say maybe 3.13ish is when
+I2C mode would come up instead.
 
-PCI address space usage is discoverable via PCI device BARs, PCI bridge
-window registers, or legacy IDE or VGA devices that use the hardwired
-legacy resources, e.g., memory 0xa0000-0xbffff, io 0x3c0-0x3df, etc.
+The order of events goes something like this:
+1) Touchpad is initially in PS2 mode
+2) psmouse loads
+3) It reports that it may be supportable by a different bus
+4) The sequence to switch to I2C mode happens
+5) i2c-hid and hid-multitouch get loaded
+6) psmouse is no longer functional
 
-The System ROM and Video ROM areas are none of these, so they should be
-reserved as part of the system address space, not the PCI address space.
-
-Reserve the System ROM and Video ROM areas once per system.
-
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- arch/sparc/kernel/pci_common.c |   20 --------------------
- arch/sparc/mm/init_64.c        |   17 +++++++++++++++++
- 2 files changed, 17 insertions(+), 20 deletions(-)
-
-diff --git a/arch/sparc/kernel/pci_common.c b/arch/sparc/kernel/pci_common.c
-index 14fa74f90fdb..38d46bcc8634 100644
---- a/arch/sparc/kernel/pci_common.c
-+++ b/arch/sparc/kernel/pci_common.c
-@@ -344,26 +344,6 @@ static void pci_register_legacy_regions(struct resource *io_res,
- 	p->end = p->start + 0x1ffffUL;
- 	p->flags = IORESOURCE_BUSY;
- 	request_resource(mem_res, p);
--
--	p = kzalloc(sizeof(*p), GFP_KERNEL);
--	if (!p)
--		return;
--
--	p->name = "System ROM";
--	p->start = mem_res->start + 0xf0000UL;
--	p->end = p->start + 0xffffUL;
--	p->flags = IORESOURCE_BUSY;
--	request_resource(mem_res, p);
--
--	p = kzalloc(sizeof(*p), GFP_KERNEL);
--	if (!p)
--		return;
--
--	p->name = "Video ROM";
--	p->start = mem_res->start + 0xc0000UL;
--	p->end = p->start + 0x7fffUL;
--	p->flags = IORESOURCE_BUSY;
--	request_resource(mem_res, p);
- }
- 
- static void pci_register_iommu_region(struct pci_pbm_info *pbm)
-diff --git a/arch/sparc/mm/init_64.c b/arch/sparc/mm/init_64.c
-index 995f9490334d..a9f94e911e0a 100644
---- a/arch/sparc/mm/init_64.c
-+++ b/arch/sparc/mm/init_64.c
-@@ -3089,6 +3089,20 @@ static struct resource bss_resource = {
- 	.flags	= IORESOURCE_BUSY | IORESOURCE_SYSTEM_RAM
- };
- 
-+static struct resource system_rom_resource = {
-+	.name	= "System ROM",
-+	.start  = 0xf0000,
-+	.end    = 0xfffff,
-+	.flags	= IORESOURCE_BUSY | IORESOURCE_MEM,
-+};
-+
-+static struct resource video_rom_resource = {
-+	.name	= "Video ROM",
-+	.start  = 0xc0000,
-+	.end    = 0xc7fff,
-+	.flags	= IORESOURCE_BUSY | IORESOURCE_MEM,
-+};
-+
- static inline resource_size_t compute_kern_paddr(void *addr)
- {
- 	return (resource_size_t) (addr - KERNBASE + kern_base);
-@@ -3134,6 +3148,9 @@ static int __init report_memory(void)
- 		insert_resource(res, &bss_resource);
- 	}
- 
-+	request_resource(&iomem_resource, &system_rom_resource);
-+	request_resource(&iomem_resource, &video_rom_resource);
-+
- 	return 0;
- }
- arch_initcall(report_memory);
+Dmitry is there a way that we can connect the two events?  When i2c-hid finds
+the touchpad notify psmouse to unload or at least stop trying to access it to prevent
+the problem Paul is talking about with suspend?
