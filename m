@@ -1,75 +1,49 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1841884-1518709617-2-18041737936879848260
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518709616; b=guX7apOsBf644T/L/eR130FY5f2HNntcOp84g4oAwtS7gh0
-    7BP/OOUwt9b4eUf/k/nEPNt73OAudeETYdHSrbbvrvV+puGMW69TOttuJRQpKYHo
-    8UOClUROzmPP3E6+tgRxDLZ+7DQGJXeIU8zh5qyD35nsy6OstHbk2AnH66oZPm5d
-    UEydeACgmrSHomPZV0YyiuByW7j5nRc3ua9pirYXQt1qjfEe0OSvoqILWpmdzm+j
-    aZ9M+Oah9CfNvJcV1qlDrKhGBreBbLScMmsKisjXY5UTkNMuPO/u2eERvfCSj5AW
-    sKsKhXhAZon7SBiZS1ZtfX0Pg3uh9XFYagJJN7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518709616; bh=3q0/9ThgcQmtX2lv2Ue1NyzcD1
-    AbznGC3Sk4XznoDr0=; b=DN4KZJGsTz0HebmVcBAmVjLq+2a7cyuhJoqHcYUFpK
-    ng8Od39ubJjzEqvf5TZ8To9glXKfNIzMLw7I3BDMaWLzmUr9o+hzkP95BSx0oASf
-    VXV+DQxl2TEJt7Tlw+Bqejz+mwJobbZOaXwQTJ7H8+tBCMWW5ByclVvZa6VmTWHG
-    PmK29AQ7BhMkC5yGHDrUgfojIoJCqlJf5jt848dH3x4laWKMa1iasB8u5m8u3YCA
-    3NB3o5yBfbqv2Eq+vjYnxXuszOrQosvFy2PoFvcktvegF97ckyxOED0FI/56l2JE
-    oEKvOtDEtyAYXsV1ioTUH2MxIbRkVMwCQPUrKAlrTQqw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424752AbeBOPqw (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:46:52 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35960 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424685AbeBOPqv (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:46:51 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x2266PzaG5dV67yzimmaVlpPi1azhwKVGh2+JwcR4ArxpSrGqXBuUU2Opp+0zoUygE2xO7YXc
+ARC-Seal: i=1; a=rsa-sha256; t=1518709595; cv=none;
+        d=google.com; s=arc-20160816;
+        b=us077z7/1hNFtFCb8Qu1u1S9axh8EPkILvQqja7LaiPtRqduxzZlKydZaaiein23ZB
+         QkebuMva21ofyowegzUeUAfnRkC7cSHaMKkVgg3BMgQ4AsWWBUkRfgiuGmUKnejSz/Rf
+         nz1BRCmsYFu9wpSdm13DJkVrUgVcxzP70HVEFwLr9kl2ZUe6nbbiEQ/UiCwENEy6Vcub
+         4I2q+ojZDyxlxYn+ZBn1IXrTxn2EtIo6n906tEE+KzGpG2vfSHfLXM0BmZYsCsXO3HFo
+         DTSa+qqUNRLVAp4JYd8MoIW456Ecux0DiB+ccgez3317E6L/GZolT9xONCxiRUEImKsn
+         lisA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=Bm8TCIP8hTsKD6GLYWf9+isdbfvIjJNA5AtJEjIKesE=;
+        b=G24GFf6jzVgafrf/9AR9UZl1SvnCKZX12Adja6fhdEOrtWyDjFOfVkVlx+O7/SBd2S
+         16nBzJbNBZAzw0Sryi+w13yZVWHqE3FDw1va/0k1LexJh2xMtjfZr+ayLuzq4OYEJuhd
+         hEjndU6b2Eaps1VJNN3FEU2pQvfmXW9oDsJzJ0+fBtfMM+JfIT9BJQx8IGeFRMYwY5rx
+         NeNxJPqJI6gXOvabj83AaV+bB7dqLveHdJHtRheh/gjsDVHHgf6Zl2H111LRqk3kLtqK
+         A/gZnwXSfPrV5FimSMfFW28efSf3I4zTl435Pzc+0IAuK3uXCGXZWtNdvc458QO1SifB
+         CM9w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Peter Rosin <peda@axentia.se>
-Subject: [PATCH 4.15 180/202] pinctrl: sx150x: Add a static gpio/pinctrl pin range mapping
-Date: Thu, 15 Feb 2018 16:18:00 +0100
-Message-Id: <20180215151722.282779075@linuxfoundation.org>
+	stable@vger.kernel.org,
+	James Hogan <jhogan@kernel.org>,
+	David Daney <david.daney@cavium.com>,
+	linux-edac <linux-edac@vger.kernel.org>,
+	linux-mips@linux-mips.org,
+	Borislav Petkov <bp@suse.de>
+Subject: [PATCH 4.15 174/202] EDAC, octeon: Fix an uninitialized variable warning
+Date: Thu, 15 Feb 2018 16:17:54 +0100
+Message-Id: <20180215151721.968525779@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1592480775002082254?=
+X-GMAIL-MSGID: =?utf-8?q?1592482433357820852?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -77,36 +51,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Peter Rosin <peda@axentia.se>
+From: James Hogan <jhogan@kernel.org>
 
-commit b930151e5b55a0e62a3aad06876de891ac980471 upstream.
+commit 544e92581a2ac44607d7cc602c6b54d18656f56d upstream.
 
-Without such a range, gpiolib fails with -EPROBE_DEFER, pending the
-addition of the range. So, without a range, gpiolib will keep
-deferring indefinitely.
+Fix an uninitialized variable warning in the Octeon EDAC driver, as seen
+in MIPS cavium_octeon_defconfig builds since v4.14 with Codescape GNU
+Tools 2016.05-03:
 
-Fixes: 9e80f9064e73 ("pinctrl: Add SX150X GPIO Extender Pinctrl Driver")
-Fixes: e10f72bf4b3e ("gpio: gpiolib: Generalise state persistence beyond sleep")
-Suggested-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+  drivers/edac/octeon_edac-lmc.c In function ‘octeon_lmc_edac_poll_o2’:
+  drivers/edac/octeon_edac-lmc.c:87:24: warning: ‘((long unsigned int*)&int_reg)[1]’ may \
+    be used uninitialized in this function [-Wmaybe-uninitialized]
+    if (int_reg.s.sec_err || int_reg.s.ded_err) {
+                        ^
+Iinitialise the whole int_reg variable to zero before the conditional
+assignments in the error injection case.
+
+Signed-off-by: James Hogan <jhogan@kernel.org>
+Acked-by: David Daney <david.daney@cavium.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: linux-mips@linux-mips.org
+Fixes: 1bc021e81565 ("EDAC: Octeon: Add error injection support")
+Link: http://lkml.kernel.org/r/20171113161206.20990-1-james.hogan@mips.com
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/pinctrl-sx150x.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/edac/octeon_edac-lmc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/pinctrl/pinctrl-sx150x.c
-+++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -1193,6 +1193,11 @@ static int sx150x_probe(struct i2c_clien
- 	if (ret)
- 		return ret;
- 
-+	ret = gpiochip_add_pin_range(&pctl->gpio, dev_name(dev),
-+				     0, 0, pctl->data->npins);
-+	if (ret)
-+		return ret;
-+
- 	/* Add Interrupt support if an irq is specified */
- 	if (client->irq > 0) {
- 		pctl->irq_chip.name = devm_kstrdup(dev, client->name,
+--- a/drivers/edac/octeon_edac-lmc.c
++++ b/drivers/edac/octeon_edac-lmc.c
+@@ -78,6 +78,7 @@ static void octeon_lmc_edac_poll_o2(stru
+ 	if (!pvt->inject)
+ 		int_reg.u64 = cvmx_read_csr(CVMX_LMCX_INT(mci->mc_idx));
+ 	else {
++		int_reg.u64 = 0;
+ 		if (pvt->error_type == 1)
+ 			int_reg.s.sec_err = 1;
+ 		if (pvt->error_type == 2)
