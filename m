@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1883814-1518709760-3-17396967191457230717
+X-Cyrus-Session-Id: sloti22d1t05-1841884-1518709759-5-13325920016487716060
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518709760; b=YRHrppRQXzWTNcnrHwsC0KEw34bgkBWfEcO2OUNw5F194ck
-    BBi/mEkW5VlSQ/nJtt12shGxF/1JRg23WSit84xjEe55K4IQBwUvHnW/TqK+yzcf
-    OFR1r3ZhQJPyJ6Qkl1l6O1MA7Q4yIbJ612KfxLzWhkhg6N9IrqVG4gbWahAESEv8
-    mFXeuBZ0KBtB6MqV+QOYfcc61XkMch2s/E3afvF3gQ2IugB4TVgTZqVABnZpe0DK
-    HKjkf5T2NaPH0CeqJeb9EWxJakkyklu/VDYp/JUxwqIbkWrEaNpVZwUMEEGBDudU
-    iRjhvpVZbDt1Hloe9I3cbml2H5Z06MhxsEyXiQQ==
+    t=1518709759; b=eaeiOI9jDmlGK5g6WHKEOk+Zp4vJUKo89lGWv7OosKvxQhJ
+    Fr1YSekFQTbtxim6QE2oRGE3dRcBvcbVEco4eW3bsSjwLYvcKhBeCQQMuH04RGsw
+    bNy2btLZSxh+i6EjaV6RV153H2yasAqb9bsv/vd7O2zsVF6bpATMndep4K5VEX8N
+    LDN5xim5D9ho91N3oMZhcj7XxKKQjZM/18XOywU7cfyeyNBkF8raF4VCNCTFBu5h
+    SFoDPLW5qVAvtBcnutdrnUq4eX8LbJuIKzECVvvFWTIetEY3L8td0RUyqkxY4WMg
+    tHvBYLe+3gT2KMW4sofhsxRtznzyamh6JE8Uvaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518709760; bh=/1n3hFyI9gKC91/OSHBMRR/Qep
-    w23/LCVn3kc51PWkk=; b=EwpSGYAHUqtN85RZsFON2lNZszOLMuM9NWmeKQhLTP
-    BG4uHqvq6Eor4kqJj2nDKLGEGLlmIvnV6+QtfnZZqbkJJNaoS8G5Ri8B77WHN/G8
-    VhiWN9E9IyUYyqlbtwUIKsyXu2VhakDRq+NOP+U313mDEPh9h/+LZxQ1A/ty6d+C
-    DORzQAJg4SflkisWVcqCBYwimT9xgd4A6iQXOT5ZGEgUSgzzaEd9Ecnu+ZO9aSPC
-    aehBPn+zXm0DRvRuMZIxS5nJfElTYZris2Zr5hvPGL0tIK9X7M+77WJbauH7B2Yw
-    Vw3LEqDtupYOse6Vatg18yKsE9F2pNui0nyvYs5lzqIQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1518709759; bh=o3swicdNpwaq3XLuJQ6OzuZEcc
+    Bnw0l0vqPcGE3HYzQ=; b=sptY7fs23XNHfmzRRffD5BXaqeKPDPJYFf3fBO2Xvi
+    SdTmVZ3FIhogoPrqiiQxD0OLbkxGNKbIGKGMpd25X5yQG5mVaG/Xp/3lUiGyLW4K
+    eZXR/Ay8+tIvIi1Nd8kPwQon7iNqWtPHJHCgD1Kd53nkTIIiG4u3blFPUBpShGP6
+    XTBXzOzmiN1y3nT1NhMMxWieiZ2AjVKnPHFIbfi7LxXDE/NFyj5eOUCNfOkQTySM
+    GLsUo4s6+HuSQ9+Y4CfuVd+1o5eoaB5qTuOhFYW3nkFl3ZLX/rpPXkVDB0tf7LQc
+    LIFC8yg7lDxtKzwv6hgUPM1Ti75RMfzcTJ9E7m3EfPVA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,24 +47,21 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424639AbeBOPsO (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:48:14 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36468 "EHLO
+        id S1424715AbeBOPsu (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:48:50 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36496 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424409AbeBOPsN (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:48:13 -0500
+        with ESMTP id S1424663AbeBOPsP (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:48:15 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leif Liddy <leif.linux@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Daniel Drake <drake@endlessm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.15 163/202] Revert "Bluetooth: btusb: fix QCA Rome suspend/resume"
-Date: Thu, 15 Feb 2018 16:17:43 +0100
-Message-Id: <20180215151721.407934519@linuxfoundation.org>
+        stable@vger.kernel.org, Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.15 202/202] scsi: cxlflash: Reset command ioasc
+Date: Thu, 15 Feb 2018 16:18:22 +0100
+Message-Id: <20180215151723.228605143@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -81,49 +78,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Uma Krishnan <ukrishn@linux.vnet.ibm.com>
 
-commit 7d06d5895c159f64c46560dc258e553ad8670fe0 upstream.
+commit 96cf727fe8f102bf92150b741db71ee39fb8c521 upstream.
 
-This reverts commit fd865802c66bc451dc515ed89360f84376ce1a56.
+In the event of a command failure, cxlflash returns the failure to the upper
+layers to process. After processing the error, when the command is queued
+again, the private command structure will not be zeroed and the ioasc could be
+stale. Per the SISLite specification, the AFU only sets the ioasc in the
+presence of a failure. Thus, even though the original command succeeds the
+second time, the command is considered a failure due to stale ioasc. This
+cycle repeats indefinitely and can cause a hang or IO failure.
 
-This commit causes a regression on some QCA ROME chips. The USB device
-reset happens in btusb_open(), hence firmware loading gets interrupted.
+To fix the issue, clear the ioasc before queuing any command.
 
-Furthermore, this commit stops working after commit
-("a0085f2510e8976614ad8f766b209448b385492f Bluetooth: btusb: driver to
-enable the usb-wakeup feature"). Reset-resume quirk only gets enabled in
-btusb_suspend() when it's not a wakeup source.
+[mkp: added Cc: stable per request]
 
-If we really want to reset the USB device, we need to do it before
-btusb_open(). Let's handle it in drivers/usb/core/quirks.c.
-
-Cc: Leif Liddy <leif.linux@gmail.com>
-Cc: Matthias Kaehlcke <mka@chromium.org>
-Cc: Brian Norris <briannorris@chromium.org>
-Cc: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Reviewed-by: Brian Norris <briannorris@chromium.org>
-Tested-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Fixes: 479ad8e9d48c ("scsi: cxlflash: Remove zeroing of private command data")
+Signed-off-by: Uma Krishnan <ukrishn@linux.vnet.ibm.com>
+Acked-by: Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/bluetooth/btusb.c |    6 ------
- 1 file changed, 6 deletions(-)
+ drivers/scsi/cxlflash/main.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -3117,12 +3117,6 @@ static int btusb_probe(struct usb_interf
- 	if (id->driver_info & BTUSB_QCA_ROME) {
- 		data->setup_on_usb = btusb_setup_qca;
- 		hdev->set_bdaddr = btusb_set_bdaddr_ath3012;
--
--		/* QCA Rome devices lose their updated firmware over suspend,
--		 * but the USB hub doesn't notice any status change.
--		 * Explicitly request a device reset on resume.
--		 */
--		set_bit(BTUSB_RESET_RESUME, &data->flags);
- 	}
+--- a/drivers/scsi/cxlflash/main.c
++++ b/drivers/scsi/cxlflash/main.c
+@@ -620,6 +620,7 @@ static int cxlflash_queuecommand(struct
+ 	cmd->parent = afu;
+ 	cmd->hwq_index = hwq_index;
  
- #ifdef CONFIG_BT_HCIBTUSB_RTL
++	cmd->sa.ioasc = 0;
+ 	cmd->rcb.ctx_id = hwq->ctx_hndl;
+ 	cmd->rcb.msi = SISL_MSI_RRQ_UPDATED;
+ 	cmd->rcb.port_sel = CHAN2PORTMASK(scp->device->channel);
