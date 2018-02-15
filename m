@@ -1,109 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967895AbeBOLTf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 06:19:35 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5241 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966589AbeBOLTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 06:19:32 -0500
-Subject: Re: [PATCH v13 7/9] ACPI: Translate the I/O range of non-MMIO devices
- before scanning
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, <rafael@kernel.org>
-References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
- <1518543933-22456-8-git-send-email-john.garry@huawei.com>
- <20180214161635.GA13849@e107981-ln.cambridge.arm.com>
- <65185a4d-c712-4486-d713-3fa9de14e35d@huawei.com>
-CC: <mika.westerberg@linux.intel.com>, <rjw@rjwysocki.net>,
-        <hanjun.guo@linaro.org>, <robh+dt@kernel.org>, <bhelgaas@google.com>,
-        <arnd@arndb.de>, <mark.rutland@arm.com>, <olof@lixom.net>,
-        <dann.frazier@canonical.com>, <andy.shevchenko@gmail.com>,
-        <robh@kernel.org>, <joe@perches.com>, <benh@kernel.crashing.org>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linuxarm@huawei.com>, <minyard@acm.org>,
-        <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <rdunlap@infradead.org>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <e3fb78b3-5f5c-fe96-9f02-e96092963c17@huawei.com>
-Date: Thu, 15 Feb 2018 11:19:00 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S967898AbeBOLVC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 06:21:02 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34310 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966697AbeBOLVA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 06:21:00 -0500
+Date: Thu, 15 Feb 2018 11:20:41 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: kbuild test robot <fengguang.wu@intel.com>, kbuild-all@01.org,
+        linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: ERROR: "sst_context_init"
+ [sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
+Message-ID: <20180215112041.GB8374@sirena.org.uk>
+References: <201802150332.ujDzQYVH%fengguang.wu@intel.com>
+ <bc8a4057-f666-30a4-9144-3bd01db1b6ba@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <65185a4d-c712-4486-d713-3fa9de14e35d@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="R3G7APHDIzY6R/pk"
+Content-Disposition: inline
+In-Reply-To: <bc8a4057-f666-30a4-9144-3bd01db1b6ba@linux.intel.com>
+X-Cookie: Stay on the trail.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Nothing apart from only being used by arm64 platforms today, which is
-> circumstantial.
->
->>
->> I understand you need to find a place to add the:
->>
->> acpi_indirect_io_scan_init()
->>
->> to be called from core ACPI code because ACPI can't handle probe
->> dependencies in any other way but other than that this patch is
->> a Hisilicon ACPI driver - there is nothing generic in it (or at
->> least there are no standard bindings to make it so).
->>
->> Whether a callback from ACPI core code (acpi_scan_init()) to a driver
->> specific hook is sane or not that's the question and the only reason
->> why you want to add this in drivers/acpi/arm64 rather than, say,
->> drivers/bus (as you do for the DT driver).
->>
->> I do not know Rafael's opinion on the above, I would like to help
->> you make forward progress but please understand my concerns, mostly
->> on FW side.
->>
->
-> I did mention an alternative in my "ping" in v12 patch 7/9 (Feb 1), but
-> no response to this specific note so I kept on the same path.
->
-> Here's what I then wrote:
-> "I think another solution - which you may prefer - is to avoid adding
-> this scan handler (and all this other scan code) and add a check like
-> acpi_is_serial_bus_slave() [which checks the device parent versus a list
-> of known indirectIO hosts] to not enumerate these children, and do it
-> from the LLDD host probe instead (https://lkml.org/lkml/2017/6/16/250)"
->
 
-Hi Rafael, Lorenzo,
+--R3G7APHDIzY6R/pk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I can avoid adding the scan handler in acpi_indirectio.c by skipping the 
-child enumeration, like with this change in scan.c:
+On Wed, Feb 14, 2018 at 03:41:22PM -0600, Pierre-Louis Bossart wrote:
+> On 02/14/2018 01:23 PM, kbuild test robot wrote:
 
-+static const struct acpi_device_id indirect_io_hosts[] = {
-+    {"HISI0191", 0},    /* HiSilicon LPC host */
-+    {},
-+};
-+
-+static bool acpi_is_indirect_io_slave(struct acpi_device *device)
-+{
-+    struct acpi_device *parent = dev->parent;
-+
-+    if (!parent || acpi_match_device_ids(parent, indirect_io_hosts))
-+        return false;
-+
-+    return true;
-+}
-+
-  static bool acpi_is_serial_bus_slave(struct acpi_device *device)
-  {
-      struct list_head resource_list;
-      bool is_serial_bus_slave = false;
+> This was reported by Arnd Bergman and fixed with a patch sent on January 24
+> to alsa-devel ("ASoC: Intel: atom: fix ACPI/PCI Kconfig"), but I don't see
+> it in Mark's tree?
 
-+    if (acpi_is_indirect_io_slave(device))
-+        return true;
-+
-      /* Macs use device properties in lieu of _CRS resources */
+> http://mailman.alsa-project.org/pipermail/alsa-devel/2018-January/130979.html
 
+Sending content free pings adds to the mail volume (if they are seen at
+all) which is often the problem and since they can't be reviewed
+directly if something has gone wrong you'll have to resend the patches
+anyway, though there are some other maintainers who like them - if in
+doubt look at how patches for the subsystem are normally handled.
 
-This means I can move all this scan code into the LLDD.
+--R3G7APHDIzY6R/pk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-What do you think? Please let me know.
+-----BEGIN PGP SIGNATURE-----
 
-John
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqFbQkACgkQJNaLcl1U
+h9D+dQf/fdRb7YTitoXBQMjfPlJQgjDSiNoD2UzRmzmAp4S/m7k8MHk2ug+A+u0J
+z9gzLeul9z31++q3XR0qakORG1IPze575xltCg0FSEfLUA8vMCNVclDxJOMdfC3O
+QDpZrwntL0PVPKYUlsrTGey5MyE1L+MXtd2YJ29ZPD1BGzqAatXeLcGVQsb+Z6jQ
+RrGBKLLvRDj7MyrRJ+Pt/X1iZy7TDBmyxG1XTV5/0fZHhvGFT2jUBTp3yJA1W50i
+w+NLPu9tdG+rQvrbYk8rfMo9NJwzxqXWWiJ33rcekHOgrow3ca2LsiwO5yO/90OP
+gbAWTlH53QiwD2S8XDeaybVvMxi4Zw==
+=StDF
+-----END PGP SIGNATURE-----
+
+--R3G7APHDIzY6R/pk--
