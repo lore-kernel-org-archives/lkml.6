@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226j3Rmr2+CPY24dqWNeiF34yL/ARvhHXwE0QJrBqJ9s5va1fSBrxEVbxLcF0Xyl/J9poEBq
-ARC-Seal: i=1; a=rsa-sha256; t=1518708946; cv=none;
+X-Google-Smtp-Source: AH8x2256xntsdgJRJXka0oenLjZ2qv6abDfFTazE65sg1Rq5SkTyVsHPrZ4i35z260A4xbvhpGow
+ARC-Seal: i=1; a=rsa-sha256; t=1518708943; cv=none;
         d=google.com; s=arc-20160816;
-        b=eKg9XV1ZuzaZY4oo9KXSTBS30Ph58V6547gDU/WhTuBfetunHudJwZ4uoBLRCoVyaN
-         t3qwHrMu/SBihQ2Qt8O7vQtQCXf+Hz6nVbQD/b6eAsTWsYezb+w5pZ+s//9nwu0zKdiP
-         BojYvaz0T+iR6BEp7ag+lDzEKy6z2OMBhhVsknk0Lc1f4GSaama0qZHQAiEETtZxIS3X
-         Z2F+USOy44w7OWcMBhaZsg8XDTAYF6BM84Q9FIK5GneCy4hu4SG2nx9OwG4OsggvaMDj
-         lSEuUxV6jqaN8NN6q31rqLE7Ti+Oh79GEX8jtqnvz6vmBiAbUTEBkCVdBUeApPmhCMta
-         KjHw==
+        b=RPma3bBvf2XilT/XD+6CydDDvMLO1zFyRBi5DTXqzP5XgT3dqcHjooAqD0QjmSF+da
+         tSaQyOewKvIRfSsVrIv4dizpXDzbpsqTGZtSgJuTNxCFckQalZviFDtwd2CG59CfNbuC
+         lmzOo4n/A7Bv3NwxBB8v7tlz/13MoTOc7Sl1O8BO+XtdVq/HL6Pn+S/jjOKSqKURLGDV
+         QpPGFkkx72cioYG8Kx5fRRbaY94OUZebFBXTghLihGM8W8Cnv1oOmoXtMogBZ1Mu5Dbg
+         s63KWQAVwx/QiZA8OHCf6NMwKA88ZGPaD4qPn0GK+Hj/2ZVZopR7ULf1KjT/FoBSBiQf
+         tumg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=hcrd+riL62XJkcE1A+BuT2ky0QmH3mkspwtLb43WDU4=;
-        b=DYm0h3bAiWAwikr6MY5OZCSMb3+UnSadoV2dVgAIam+1FmEI+GUGfHAJ8PIn1AHU2P
-         I5NsBbJ3y+NF4XptUjGU6yJGbxqP7w5gmKr1dXtvQqa0rpCEM3PJA6LhHKwYBeBY2vee
-         5piZ1ShhF4c9jo5QDrl3QKLTwOOjswHHEPRoPlaBXSPDwND1cvya7kaPEUrN8/HKi3jL
-         dhH27Rp1seEoPE6VZC+wvktxlTAiA5XI8f5aF5NJ60XTgQFOPUgu0a0yOGNuSntF5qgf
-         7Gj1fH1DXScsEnJpqzSQtX2lMMpwJNb5p8Tm/H0wB/f2hAbU6+Q8Jzo3bYtlZe60Vj+3
-         SzqQ==
+        bh=FKXSJvDgKWVYWZIyD+ULJP65wrLZSRJMC2DYORRldNg=;
+        b=IY+0qLDHOMWE0icAnGR90X7DQ4fK0RXVO+4X+hXFxr00ERj0tfZb4vR36jDNtNH1bN
+         0cGtYtmtVuFNTw2/2WV5HVrq5fJ8kHXOAMJqoAV119HuXKoOSTmKJVZiV0M+mnq4QHGP
+         dINWexHWaujNDLUiW1jYnQdVGS6AX1V749gDJZ/IBJWpQD3CpQa3oz7rK7csj6WFxWI+
+         tz42teDc5LoCl8vRXoCHipP6Cjgdm7HLWz70rmQbKz50jRiLdXbEB2/gyo46coKmutml
+         s4sOK4o+hBYmoj4xL5SMdnek7kqXvQzDVht+ohDVR3LKavNLOKgtZoJ+ZkItf5UmFWwC
+         C+5Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Liran Alon <liran.alon@oracle.com>,
-	Nikita Leshenko <nikita.leshchenko@oracle.com>,
-	Krish Sadhukhan <krish.sadhukhan@oracle.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH 4.14 137/195] KVM: nVMX: Fix races when sending nested PI while dest enters/leaves L2
-Date: Thu, 15 Feb 2018 16:17:08 +0100
-Message-Id: <20180215151712.646290595@linuxfoundation.org>
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.14 136/195] arm: KVM: Fix SMCCC handling of unimplemented SMC/HVC calls
+Date: Thu, 15 Feb 2018 16:17:07 +0100
+Message-Id: <20180215151712.591016767@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481037885961253?=
-X-GMAIL-MSGID: =?utf-8?q?1592481751930368802?=
+X-GMAIL-THRID: =?utf-8?q?1592480746848288808?=
+X-GMAIL-MSGID: =?utf-8?q?1592481748974856458?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,92 +49,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liran Alon <liran.alon@oracle.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 6b6977117f50d60455ace86b2d256f6fb4f3de05 upstream.
+commit 20e8175d246e9f9deb377f2784b3e7dfb2ad3e86 upstream.
 
-Consider the following scenario:
-1. CPU A calls vmx_deliver_nested_posted_interrupt() to send an IPI
-to CPU B via virtual posted-interrupt mechanism.
-2. CPU B is currently executing L2 guest.
-3. vmx_deliver_nested_posted_interrupt() calls
-kvm_vcpu_trigger_posted_interrupt() which will note that
-vcpu->mode == IN_GUEST_MODE.
-4. Assume that before CPU A sends the physical POSTED_INTR_NESTED_VECTOR
-IPI, CPU B exits from L2 to L0 during event-delivery
-(valid IDT-vectoring-info).
-5. CPU A now sends the physical IPI. The IPI is received in host and
-it's handler (smp_kvm_posted_intr_nested_ipi()) does nothing.
-6. Assume that before CPU A sets pi_pending=true and KVM_REQ_EVENT,
-CPU B continues to run in L0 and reach vcpu_enter_guest(). As
-KVM_REQ_EVENT is not set yet, vcpu_enter_guest() will continue and resume
-L2 guest.
-7. At this point, CPU A sets pi_pending=true and KVM_REQ_EVENT but
-it's too late! CPU B already entered L2 and KVM_REQ_EVENT will only be
-consumed at next L2 entry!
+KVM doesn't follow the SMCCC when it comes to unimplemented calls,
+and inject an UNDEF instead of returning an error. Since firmware
+calls are now used for security mitigation, they are becoming more
+common, and the undef is counter productive.
 
-Another scenario to consider:
-1. CPU A calls vmx_deliver_nested_posted_interrupt() to send an IPI
-to CPU B via virtual posted-interrupt mechanism.
-2. Assume that before CPU A calls kvm_vcpu_trigger_posted_interrupt(),
-CPU B is at L0 and is about to resume into L2. Further assume that it is
-in vcpu_enter_guest() after check for KVM_REQ_EVENT.
-3. At this point, CPU A calls kvm_vcpu_trigger_posted_interrupt() which
-will note that vcpu->mode != IN_GUEST_MODE. Therefore, do nothing and
-return false. Then, will set pi_pending=true and KVM_REQ_EVENT.
-4. Now CPU B continue and resumes into L2 guest without processing
-the posted-interrupt until next L2 entry!
+Instead, let's follow the SMCCC which states that -1 must be returned
+to the caller when getting an unknown function number.
 
-To fix both issues, we just need to change
-vmx_deliver_nested_posted_interrupt() to set pi_pending=true and
-KVM_REQ_EVENT before calling kvm_vcpu_trigger_posted_interrupt().
-
-It will fix the first scenario by chaging step (6) to note that
-KVM_REQ_EVENT and pi_pending=true and therefore process
-nested posted-interrupt.
-
-It will fix the second scenario by two possible ways:
-1. If kvm_vcpu_trigger_posted_interrupt() is called while CPU B has changed
-vcpu->mode to IN_GUEST_MODE, physical IPI will be sent and will be received
-when CPU resumes into L2.
-2. If kvm_vcpu_trigger_posted_interrupt() is called while CPU B hasn't yet
-changed vcpu->mode to IN_GUEST_MODE, then after CPU B will change
-vcpu->mode it will call kvm_request_pending() which will return true and
-therefore force another round of vcpu_enter_guest() which will note that
-KVM_REQ_EVENT and pi_pending=true and therefore process nested
-posted-interrupt.
-
-Fixes: 705699a13994 ("KVM: nVMX: Enable nested posted interrupt processing")
-Signed-off-by: Liran Alon <liran.alon@oracle.com>
-Reviewed-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
-Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
-[Add kvm_vcpu_kick to also handle the case where L1 doesn't intercept L2 HLT
- and L2 executes HLT instruction. - Paolo]
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/kvm/handle_exit.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -5322,14 +5322,15 @@ static int vmx_deliver_nested_posted_int
+--- a/arch/arm/kvm/handle_exit.c
++++ b/arch/arm/kvm/handle_exit.c
+@@ -38,7 +38,7 @@ static int handle_hvc(struct kvm_vcpu *v
  
- 	if (is_guest_mode(vcpu) &&
- 	    vector == vmx->nested.posted_intr_nv) {
--		/* the PIR and ON have been set by L1. */
--		kvm_vcpu_trigger_posted_interrupt(vcpu, true);
- 		/*
- 		 * If a posted intr is not recognized by hardware,
- 		 * we will accomplish it in the next vmentry.
- 		 */
- 		vmx->nested.pi_pending = true;
- 		kvm_make_request(KVM_REQ_EVENT, vcpu);
-+		/* the PIR and ON have been set by L1. */
-+		if (!kvm_vcpu_trigger_posted_interrupt(vcpu, true))
-+			kvm_vcpu_kick(vcpu);
- 		return 0;
+ 	ret = kvm_hvc_call_handler(vcpu);
+ 	if (ret < 0) {
+-		kvm_inject_undefined(vcpu);
++		vcpu_set_reg(vcpu, 0, ~0UL);
+ 		return 1;
  	}
- 	return -1;
+ 
+@@ -47,7 +47,16 @@ static int handle_hvc(struct kvm_vcpu *v
+ 
+ static int handle_smc(struct kvm_vcpu *vcpu, struct kvm_run *run)
+ {
+-	kvm_inject_undefined(vcpu);
++	/*
++	 * "If an SMC instruction executed at Non-secure EL1 is
++	 * trapped to EL2 because HCR_EL2.TSC is 1, the exception is a
++	 * Trap exception, not a Secure Monitor Call exception [...]"
++	 *
++	 * We need to advance the PC after the trap, as it would
++	 * otherwise return to the same address...
++	 */
++	vcpu_set_reg(vcpu, 0, ~0UL);
++	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
+ 	return 1;
+ }
+ 
