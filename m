@@ -1,187 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946142AbeBORtl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 12:49:41 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43390 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164321AbeBORtj (ORCPT
+        id S1165778AbeBORwA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 12:52:00 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:51774 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1164231AbeBORv5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 12:49:39 -0500
-Subject: Re: [PATCH-next] sched/headers: Clean up <linux/sched.h>
-To: Christopher Diaz Riveros <chrisadr@gentoo.org>, mingo@redhat.com,
-        peterz@infradead.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20180215154318.15894-1-chrisadr@gentoo.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <7badd1c7-8d7d-02e9-1299-2d0e83754a66@infradead.org>
-Date: Thu, 15 Feb 2018 09:49:36 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 15 Feb 2018 12:51:57 -0500
+Date: Thu, 15 Feb 2018 12:51:56 -0500 (EST)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: Akira Yokosawa <akiyks@gmail.com>
+cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        <linux-kernel@vger.kernel.org>, <mingo@kernel.org>,
+        <parri.andrea@gmail.com>, <will.deacon@arm.com>,
+        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
+        <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: Trial of conflict resolution of Alan's patch
+In-Reply-To: <fa35db31-7a73-4865-1505-5378dcb2a0f8@gmail.com>
+Message-ID: <Pine.LNX.4.44L0.1802151246190.1286-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <20180215154318.15894-1-chrisadr@gentoo.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/15/2018 07:43 AM, Christopher Diaz Riveros wrote:
-> Trivial clean up making  comments fit in 80 columns and keeping the same comment style.
+On Fri, 16 Feb 2018, Akira Yokosawa wrote:
 
-Why change the /** (indicates kernel-doc notation) to just /* ?
-
-Is scripts/kernel-doc complaining with warnings or errors?
-
-
-> Signed-off-by: Christopher Diaz Riveros <chrisadr@gentoo.org>
-> ---
->  include/linux/sched.h | 54 +++++++++++++++++++++++++++++++++------------------
->  1 file changed, 35 insertions(+), 19 deletions(-)
+> So, I attempted to rebase the patch to current (somewhat old) master of
+> https://github.com/aparri/memory-model. Why? Because the lkmm branch
+> in Paul's -rcu tree doesn't have linux-kernel-hardware.cat.
 > 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index b161ef8a902e..c752a0d48944 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -183,7 +183,7 @@ extern void io_schedule_finish(int token);
->  extern long io_schedule_timeout(long timeout);
->  extern void io_schedule(void);
->  
-> -/**
-> +/*
->   * struct prev_cputime - snapshot of system and user cputime
->   * @utime: time spent in user mode
->   * @stime: time spent in system mode
-> @@ -200,7 +200,7 @@ struct prev_cputime {
->  #endif
->  };
->  
-> -/**
-> +/*
->   * struct task_cputime - collected CPU time counts
->   * @utime:		time spent in user mode, in nanoseconds
->   * @stime:		time spent in kernel mode, in nanoseconds
-> @@ -437,20 +437,28 @@ struct sched_dl_entity {
->  	 * during sched_setattr(), they will remain the same until
->  	 * the next sched_setattr().
->  	 */
-> -	u64				dl_runtime;	/* Maximum runtime for each instance	*/
-> -	u64				dl_deadline;	/* Relative deadline of each instance	*/
-> -	u64				dl_period;	/* Separation of two instances (period) */
-> -	u64				dl_bw;		/* dl_runtime / dl_period		*/
-> -	u64				dl_density;	/* dl_runtime / dl_deadline		*/
-> +	/* Maximum runtime for each instance	*/
-> +	u64				dl_runtime;
-> +	/* Relative deadline of each instance	*/
-> +	u64				dl_deadline;
-> +	/* Separation of two instances (period) */
-> +	u64				dl_period;
-> +	/* dl_runtime / dl_period		*/
-> +	u64				dl_bw;
-> +	/* dl_runtime / dl_deadline		*/
-> +	u64				dl_density;
->  
->  	/*
->  	 * Actual scheduling parameters. Initialized with the values above,
->  	 * they are continously updated during task execution. Note that
->  	 * the remaining runtime could be < 0 in case we are in overrun.
->  	 */
-> -	s64				runtime;	/* Remaining runtime for this instance	*/
-> -	u64				deadline;	/* Absolute deadline for this instance	*/
-> -	unsigned int			flags;		/* Specifying the scheduler behaviour	*/
-> +	/* Remaining runtime for this instance	*/
-> +	s64				runtime;
-> +	/* Absolute deadline for this instance	*/
-> +	u64				deadline;
-> +	/* Specifying the scheduler behaviour	*/
-> +	unsigned int			flags;	
->  
->  	/*
->  	 * Some bool flags:
-> @@ -666,7 +674,8 @@ struct task_struct {
->  	unsigned			no_cgroup_migration:1;
->  #endif
->  
-> -	unsigned long			atomic_flags; /* Flags requiring atomic access. */
-> +	/* Flags requiring atomic access. */
-> +	unsigned long			atomic_flags;
->  
->  	struct restart_block		restart_block;
->  
-> @@ -678,8 +687,9 @@ struct task_struct {
->  	unsigned long			stack_canary;
->  #endif
->  	/*
-> -	 * Pointers to the (original) parent process, youngest child, younger sibling,
-> -	 * older sibling, respectively.  (p->father can be replaced with
-> +	 * Pointers to the (original) parent process, youngest child,
-> +	 * younger sibling, older sibling, respectively.
-> +	 * (p->father can be replaced with
->  	 * p->real_parent->pid)
->  	 */
->  
-> @@ -743,7 +753,10 @@ struct task_struct {
->  	/* Boot based time in nsecs: */
->  	u64				real_start_time;
->  
-> -	/* MM fault and swap info: this can arguably be seen as either mm-specific or thread-specific: */
-> +	/* 
-> +	 * MM fault and swap info: this can arguably be seen as either
-> +	 * mm-specific or thread-specific: 
-> +	 */
->  	unsigned long			min_flt;
->  	unsigned long			maj_flt;
->  
-> @@ -815,7 +828,10 @@ struct task_struct {
->  	u32				parent_exec_id;
->  	u32				self_exec_id;
->  
-> -	/* Protection against (de-)allocation: mm, files, fs, tty, keyrings, mems_allowed, mempolicy: */
-> +	/*
-> +	 * Protection against (de-)allocation: mm, files, fs, tty,
-> +	 * keyrings, mems_allowed, mempolicy: 
-> +	 */
->  	spinlock_t			alloc_lock;
->  
->  	/* Protection of the PI data structures: */
-> @@ -1176,7 +1192,7 @@ static inline pid_t task_tgid_nr(struct task_struct *tsk)
->  	return tsk->tgid;
->  }
->  
-> -/**
-> +/*
->   * pid_alive - check that a task structure is not stale
->   * @p: Task structure to be checked.
->   *
-> @@ -1275,7 +1291,7 @@ static inline char task_state_to_char(struct task_struct *tsk)
->  	return task_index_to_char(task_state_index(tsk));
->  }
->  
-> -/**
-> +/*
->   * is_global_init - check if a task structure is init. Since init
->   * is free to have sub-threads we need to check tgid.
->   * @tsk: Task structure to be checked.
-> @@ -1422,7 +1438,7 @@ extern int yield_to(struct task_struct *p, bool preempt);
->  extern void set_user_nice(struct task_struct *p, long nice);
->  extern int task_prio(const struct task_struct *p);
->  
-> -/**
-> +/*
->   * task_nice - return the nice value of a given task.
->   * @p: the task in question.
->   *
-> @@ -1442,7 +1458,7 @@ extern int sched_setattr(struct task_struct *, const struct sched_attr *);
->  extern int sched_setattr_nocheck(struct task_struct *, const struct sched_attr *);
->  extern struct task_struct *idle_task(int cpu);
->  
-> -/**
-> +/*
->   * is_idle_task - is the specified task an idle task?
->   * @p: the task in question.
->   *
+> However, after this change, Z6.0+pooncelock+pooncelock+pombonce still
+> has the result "Sometimes". I must have done something wrong in the
+> conflict resolution.
 > 
+> Note: I have almost no idea what this patch is doing. I'm just hoping
+> to give a starting point of a discussion.
 
+Yes, that litmus test gives "Sometimes" both with and without the 
+patch.  But consider instead this slightly changed version of that 
+test, in which P2 reads Z instead of writing it:
 
--- 
-~Randy
+C Z6.0-variant
+
+{}
+
+P0(int *x, int *y, spinlock_t *mylock)
+{
+	spin_lock(mylock);
+	WRITE_ONCE(*x, 1);
+	WRITE_ONCE(*y, 1);
+	spin_unlock(mylock);
+}
+
+P1(int *y, int *z, spinlock_t *mylock)
+{
+	int r0;
+
+	spin_lock(mylock);
+	r0 = READ_ONCE(*y);
+	WRITE_ONCE(*z, 1);
+	spin_unlock(mylock);
+}
+
+P2(int *x, int *z)
+{
+	int r1;
+	int r2;
+
+	r2 = READ_ONCE(*z);
+	smp_mb();
+	r1 = READ_ONCE(*x);
+}
+
+exists (1:r0=1 /\ 2:r2=1 /\ 2:r1=0)
+
+Without the patch, this test gives "Sometimes"; with the patch it gives 
+"Never".  That is what I thought Paul was talking about originally.  
+
+Sorry if my misunderstanding caused too much confusion for other 
+people.
+
+Alan
