@@ -1,73 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1166085AbeBOSIu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 13:08:50 -0500
-Received: from mga04.intel.com ([192.55.52.120]:54428 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163994AbeBOSIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 13:08:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,517,1511856000";
-   d="scan'208";a="18780963"
-Subject: Re: [PATCH RFC v2 5/6] x86: Use global pages when PTI is disabled
-To: Nadav Amit <namit@vmware.com>
-References: <20180215163602.61162-1-namit@vmware.com>
- <20180215163602.61162-6-namit@vmware.com>
- <10c21933-fe93-ccad-b315-2a7ca1e917a4@linux.intel.com>
- <E2528628-52A6-444F-BE02-0C69D5E52726@vmware.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Willy Tarreau <w@1wt.eu>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <7b48990b-0a56-a26d-5d98-fe305331caec@linux.intel.com>
-Date: Thu, 15 Feb 2018 10:08:47 -0800
+        id S1163894AbeBOP2u (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 10:28:50 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56374 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163874AbeBOP2r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 10:28:47 -0500
+Subject: Re: [PATCH v3 1/2] drm/virtio: Add window server support
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Zach Reizner <zachr@google.com>,
+        kernel@collabora.com, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        "Michael S. Tsirkin" <mst@redhat.com>, David Airlie <airlied@linux.ie>,
+        Jason Wang <jasowang@redhat.com>, Stefan Hajnoczi <stefanha@gmail.com>
+References: <20180126135803.29781-1-tomeu.vizoso@collabora.com>
+ <20180126135803.29781-2-tomeu.vizoso@collabora.com>
+ <20180201163623.5cs2ysykg5wgulf4@sirius.home.kraxel.org>
+ <49785e0d-936a-c3b4-62dd-aafc7083a942@collabora.com>
+ <20180205122017.4vb5nlpodkq2uhxa@sirius.home.kraxel.org>
+ <f07a5347-13fe-76c2-f971-3f02abebd3c9@collabora.com>
+ <20180205160322.sntv5uoqp5o7flnh@sirius.home.kraxel.org>
+ <fd557eb7-f539-2ecf-142c-8313b9f7ddb3@collabora.com>
+ <20180206142302.vdjyqmnoypydci4t@sirius.home.kraxel.org>
+ <04687943-847b-25a7-42ef-a21b4c7ef0cf@collabora.com>
+ <20180212114540.iygbha554busy4ip@sirius.home.kraxel.org>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Message-ID: <5ca446c7-582c-6871-c13f-9fc44c535ebc@collabora.com>
+Date: Thu, 15 Feb 2018 16:28:41 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <E2528628-52A6-444F-BE02-0C69D5E52726@vmware.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180212114540.iygbha554busy4ip@sirius.home.kraxel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/15/2018 09:47 AM, Nadav Amit wrote:
-> Dave Hansen <dave.hansen@linux.intel.com> wrote:
->>> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
->>> index c67ef3fb4f35..979c7ec6baab 100644
->>> --- a/arch/x86/mm/tlb.c
->>> +++ b/arch/x86/mm/tlb.c
->>> @@ -74,7 +74,8 @@ static void choose_new_asid(struct mm_struct *next, u64 next_tlb_gen,
->>> 		return;
->>> 	}
->>>
->>> -	if (this_cpu_read(cpu_tlbstate.invalidate_other))
->>> +	if (this_cpu_read(cpu_tlbstate.invalidate_other) &&
->>> +	    !mm_pti_disable(next))
->>> 		clear_asid_other();
->>
->> This isn't obviously correct.  Don't we still need to invalidate other
->> user asids?
-> 
-> I forgot to regard this question: When you reenable PTI (after switching back
-> to 64-bit process), you flush the global pages, so no kernel mappings for the
-> 32-bit process are left.
+On 02/12/2018 12:45 PM, Gerd Hoffmann wrote:>>>> 4. QEMU pops 
+data+buffers from the virtqueue, looks up shmem FD for each
+ >>>> resource, sends data + FDs to the compositor with SCM_RIGHTS
+ >>>
+ >>> BTW: Is there a 1:1 relationship between buffers and shmem blocks?  Or
+ >>> does the wayland protocol allow for offsets in buffer meta data, so you
+ >>> can place multiple buffers in a single shmem block?
+ >>
+ >> The latter:
+ >> 
+https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_shm_pool
+ >
+ > Ah, good, that makes it alot easier.
+ >
+ > So, yes, using ivshmem would be one option.  Tricky part here is the
+ > buffer management though.  It's just a raw piece of memory.  The guest
+ > proxy could mmap the pci bar and manage it.  But then it is again either
+ > unmodified guest + copying the data, or modified client (which requests
+ > buffers from guest proxy) for zero-copy.
 
-Can you please write up a proper description for this?  It's horribly
-complicated, intertwined with global pages, and sets up a dependency
-that *ALL* TLB entries invalidated via __flush_tlb_one_kernel() must be
-_PAGE_GLOBAL.
+What if at VIRTIO_GPU_CMD_RESOURCE_CREATE_2D time we created a ivshmem 
+device to back that resource. The ivshmem device would in turn be backed 
+by a hostmem device that wraps a shmem FD.
 
-How about you actually clear cpu_tlbstate.invalidate_other when you do
-the CR4.PGE switching?  That seems a much more direct way and is much
-more self-documenting.
+The guest client can then export that resource/BO and pass the FD to the 
+guest proxy. The guest proxy would import it and put the resource_id in 
+the equivalent message in our protocol extension.
 
-That brings up another point: these patches rather ignore cpu_tlbstate.
-That leads to confusing code (this) and the double-flushing on context
-switch I brought up earlier.  Was this intentional, or is it something
-you can reconsider going forward?
+QEMU would get that resource id from vsock, look up which hostmem device 
+is associated with that resource, and pass its FD to the compositor.
+
+ > We also need a solution for the keymap shmem block.  I guess the keymap
+ > doesn't change all that often, so maybe it is easiest to just copy it
+ > over (host proxy -> guest proxy) instead of trying to map the host shmem
+ > into the guest?
+
+Not sure if that would be much simpler than creating a ivshmem+hostmem 
+combo that wraps the incoming shmem FD and then having virtio-gpu create 
+a BO that imports it.
+
+Regards,
+
+Tomeu
