@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x227+zpgzzKQuJlw6DFuFBDxtR3/1NXeVa+DvruoTo+ytwEP4Ln8fMgvcV/edja7yHdaLhWFa
-ARC-Seal: i=1; a=rsa-sha256; t=1518709170; cv=none;
+X-Google-Smtp-Source: AH8x224TUJeCWsqI+/YYvgJN/9i4ex68ghsNNvulvr093DOLllFJOUSCNH+4L9j8rzf6OutC4IiE
+ARC-Seal: i=1; a=rsa-sha256; t=1518709167; cv=none;
         d=google.com; s=arc-20160816;
-        b=lLsVkXBecweo8zxbTw19DqyPWzedkqCl1T5rMUq1gAUr5uekeTtb8FMnhpapUVcv9w
-         S7qrhA7l2NVWB6FFiEqCMuXRf19pj9d1Ve4Sb1jEzpkDSrR1RJjWszYPzLvPPMbtXuUr
-         TavOvZcBmo6i8fo84MO98wVjCu4B4FEf7BxiP7v7dzpz9EGrymz02gXYWsQy64rgjqTq
-         nKEJd4k5YkQrn+qpR3ofwuqvLeozHYLKyzJQJwWWgEWrGB2S0X+b/9PiR7cnaodDiLEM
-         6FO5wZJBDI73BN/WOrQ9Quz7rR3EXlgasL4cHl0+xQbWAmJ/c0OTrBQDrS6c1xzb2wmu
-         LSyQ==
+        b=iZpZ5h1Kfy3ag5fA7RSMudGupkG/8aO/B2HOJaKqQgoeHkXammhGOH4IwCDtxwr9DU
+         YKusy0pT6kYExNmVo8OsAVg7vdmMvAVf7bbNc3XobSzygYTNCtnUDkxO2zFrjEQLGINm
+         XI+Awa1hemff/UIMhkRJTPY4dn8mt98BON/ZgXXc0SqUEZh4IXn5KDR3rC02rSrIWYHT
+         AS3jDzKb/NkdVl6baygvuY6kKEnkUbCEkIIr+TJeDGwQOoYL1NsYPW43hQxn2DWDf7zf
+         J3X7fZifAkoAFqyNO95QIxtTC3ioGLSRWFkXNslwP+xjYF5+KbYVBq4Ej9XCYu0DLkJ3
+         phKg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rMPH2i7DuX8+uT21mEDoezp0o2wH46f/sEUnnoEyxHk=;
-        b=ymEIb9iAdjFek+3GsbYAbfG126rncIXpWuLAeV+LXhB9CNuQTxUY36e86PEr1szBBs
-         eoX56vgsJFFC6OZEq45lCfvJWcI8hZaCP1zAZRV83Uy9oxyKq7s/GGlRIX9YrvMKkfcX
-         mRa7uaQa2t14tgj3wCbk4vG4+njFNKFaQdTnU+zOe5YitTQ3is+SPc08FE3XgP3j7bNz
-         oIQhpWFISh1eFfWc4vmbVLjfM4HhTuEH0rcuu8cqTop3q4jnNFgEPNz4Ih0Ruv8SP7pS
-         OQP78hAjhBOJhFceoADLjJDrjxmybAndwtp0ow1TOq+PtWJYpH4t+NH/GWPqqNK1xxEt
-         4zyQ==
+        bh=L1/uF7OCkwsNUSmSkVTPjUieZ3VBzdboCYHvkI9r20s=;
+        b=ZWPb1woxQ+fEyJOlivB3yPS60ABvIsH9E5nMaWODai9RXvd7lw/5j05NAV+poybxbc
+         ZRfGUkpx9YqAf8/zEVnRGOja4kQSKwD573nV5iRVX8wsxFRDpHTpqox29n4L+OCoUH8H
+         xd1vwBrf3gWySoa31iYWoVUOVaDfpa56LZSPOdSZT80R2EKdgdSCFnJE8Zgb3+RhO0/4
+         dpV7D0f1y90mw65+0XovULLJh4g2mK5pWMeZq0U9XPL3PO3Cskr2EtLRzb2++jLD2JpW
+         GbRsrc0SDp2Du3lMf1TS8upx+XeEpdiX+P56Xx+TnhPUrasS0hi4Plh0+LwskqHIochN
+         kkcg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Laura Abbott <labbott@redhat.com>,
 	Shanker Donthineni <shankerd@codeaurora.org>,
 	Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.15 022/202] [Variant 3/Meltdown] arm64: mm: Add arm64_kernel_unmapped_at_el0 helper
-Date: Thu, 15 Feb 2018 16:15:22 +0100
-Message-Id: <20180215151714.063533844@linuxfoundation.org>
+Subject: [PATCH 4.15 021/202] [Variant 3/Meltdown] arm64: mm: Allocate ASIDs in pairs
+Date: Thu, 15 Feb 2018 16:15:21 +0100
+Message-Id: <20180215151713.996965074@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481443573794235?=
-X-GMAIL-MSGID: =?utf-8?q?1592481986785862744?=
+X-GMAIL-THRID: =?utf-8?q?1592481441200588566?=
+X-GMAIL-MSGID: =?utf-8?q?1592481983648806616?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,15 +53,11 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Will Deacon <will.deacon@arm.com>
 
 
-Commit fc0e1299da54 upstream.
+Commit 0c8ea531b774 upstream.
 
-In order for code such as TLB invalidation to operate efficiently when
-the decision to map the kernel at EL0 is determined at runtime, this
-patch introduces a helper function, arm64_kernel_unmapped_at_el0, to
-determine whether or not the kernel is mapped whilst running in userspace.
-
-Currently, this just reports the value of CONFIG_UNMAP_KERNEL_AT_EL0,
-but will later be hooked up to a fake CPU capability using a static key.
+In preparation for separate kernel/user ASIDs, allocate them in pairs
+for each mm_struct. The bottom bit distinguishes the two: if it is set,
+then the ASID will map only userspace.
 
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Tested-by: Laura Abbott <labbott@redhat.com>
@@ -69,35 +65,77 @@ Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/mmu.h |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/include/asm/mmu.h |    1 +
+ arch/arm64/mm/context.c      |   25 +++++++++++++++++--------
+ 2 files changed, 18 insertions(+), 8 deletions(-)
 
 --- a/arch/arm64/include/asm/mmu.h
 +++ b/arch/arm64/include/asm/mmu.h
-@@ -19,6 +19,8 @@
- #define MMCF_AARCH32	0x1	/* mm context flag for AArch32 executables */
- #define USER_ASID_FLAG	(UL(1) << 48)
+@@ -17,6 +17,7 @@
+ #define __ASM_MMU_H
  
-+#ifndef __ASSEMBLY__
-+
+ #define MMCF_AARCH32	0x1	/* mm context flag for AArch32 executables */
++#define USER_ASID_FLAG	(UL(1) << 48)
+ 
  typedef struct {
  	atomic64_t	id;
- 	void		*vdso;
-@@ -32,6 +34,11 @@ typedef struct {
-  */
- #define ASID(mm)	((mm)->context.id.counter & 0xffff)
+--- a/arch/arm64/mm/context.c
++++ b/arch/arm64/mm/context.c
+@@ -39,7 +39,16 @@ static cpumask_t tlb_flush_pending;
  
-+static inline bool arm64_kernel_unmapped_at_el0(void)
-+{
-+	return IS_ENABLED(CONFIG_UNMAP_KERNEL_AT_EL0);
-+}
+ #define ASID_MASK		(~GENMASK(asid_bits - 1, 0))
+ #define ASID_FIRST_VERSION	(1UL << asid_bits)
+-#define NUM_USER_ASIDS		ASID_FIRST_VERSION
 +
- extern void paging_init(void);
- extern void bootmem_init(void);
- extern void __iomem *early_io_map(phys_addr_t phys, unsigned long virt);
-@@ -42,4 +49,5 @@ extern void create_pgd_mapping(struct mm
- extern void *fixmap_remap_fdt(phys_addr_t dt_phys);
- extern void mark_linear_text_alias_ro(void);
++#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
++#define NUM_USER_ASIDS		(ASID_FIRST_VERSION >> 1)
++#define asid2idx(asid)		(((asid) & ~ASID_MASK) >> 1)
++#define idx2asid(idx)		(((idx) << 1) & ~ASID_MASK)
++#else
++#define NUM_USER_ASIDS		(ASID_FIRST_VERSION)
++#define asid2idx(asid)		((asid) & ~ASID_MASK)
++#define idx2asid(idx)		asid2idx(idx)
++#endif
  
-+#endif	/* !__ASSEMBLY__ */
- #endif
+ /* Get the ASIDBits supported by the current CPU */
+ static u32 get_cpu_asid_bits(void)
+@@ -98,7 +107,7 @@ static void flush_context(unsigned int c
+ 		 */
+ 		if (asid == 0)
+ 			asid = per_cpu(reserved_asids, i);
+-		__set_bit(asid & ~ASID_MASK, asid_map);
++		__set_bit(asid2idx(asid), asid_map);
+ 		per_cpu(reserved_asids, i) = asid;
+ 	}
+ 
+@@ -153,16 +162,16 @@ static u64 new_context(struct mm_struct
+ 		 * We had a valid ASID in a previous life, so try to re-use
+ 		 * it if possible.
+ 		 */
+-		asid &= ~ASID_MASK;
+-		if (!__test_and_set_bit(asid, asid_map))
++		if (!__test_and_set_bit(asid2idx(asid), asid_map))
+ 			return newasid;
+ 	}
+ 
+ 	/*
+ 	 * Allocate a free ASID. If we can't find one, take a note of the
+-	 * currently active ASIDs and mark the TLBs as requiring flushes.
+-	 * We always count from ASID #1, as we use ASID #0 when setting a
+-	 * reserved TTBR0 for the init_mm.
++	 * currently active ASIDs and mark the TLBs as requiring flushes.  We
++	 * always count from ASID #2 (index 1), as we use ASID #0 when setting
++	 * a reserved TTBR0 for the init_mm and we allocate ASIDs in even/odd
++	 * pairs.
+ 	 */
+ 	asid = find_next_zero_bit(asid_map, NUM_USER_ASIDS, cur_idx);
+ 	if (asid != NUM_USER_ASIDS)
+@@ -179,7 +188,7 @@ static u64 new_context(struct mm_struct
+ set_asid:
+ 	__set_bit(asid, asid_map);
+ 	cur_idx = asid;
+-	return asid | generation;
++	return idx2asid(asid) | generation;
+ }
+ 
+ void check_and_switch_context(struct mm_struct *mm, unsigned int cpu)
