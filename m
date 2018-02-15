@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226a5VszPdMWxrV1nRL9HerammhfyhepYAmzJLd13Hd/l8btwl88Rik4Y75ps/rjChQKXgu9
-ARC-Seal: i=1; a=rsa-sha256; t=1518707963; cv=none;
+X-Google-Smtp-Source: AH8x226T8Sf/mCFNURG9/omMrkvHv31M/pA5Wy5npkLcb7IOrF+eY9xTlvIKwB4TwUooZQ8Iu7uJ
+ARC-Seal: i=1; a=rsa-sha256; t=1518707960; cv=none;
         d=google.com; s=arc-20160816;
-        b=o1IKH4GjIPuSAddB/zfW3XTFrIcV21wo4vXD4sN/t4+BR0OE3ouEhjD5uUjvYVwrJJ
-         SCPlxNDXQiKkPJFGg2FIp/e1uCM2bTw063u3/bqhWcHH+iEjpbMtCTKOwo6qasgu5EeH
-         ISFeJRtNOcntcVtP/6Cv0mj33Q6FmlufFsahcobCiZX5lH/31j31UoY3hrTZjnbMqctY
-         KpniYawj6t+Tb5DmAWS9AdEiGfZo9XGRY3wNFeConSbXxdRA1xiiiB+xZHLJY1GRm2Lp
-         rS7w/Nv8bHfAaoL9jdxESHX5D265NheDbxQeXn0DduHAslx83HKjxTh8XC5lQZ3TTsuy
-         7PNQ==
+        b=06VVhNRJ/0VQK10AyG8dD4ifD4WXw+B1YJRPInIKLT4/qNPCOoXfLtZyGmteUczhVp
+         IdiIqoAIVBpyzaKAs6R7Q2rxbEHLiYXlG+4GC0oXjG3sBQNrPG8+oE+v0b+75vU8cI2X
+         VHC358S7/kxk35iHNjwBbRxde4br7bhCoJhTo/oikCkiaEkle0E9AVnudh1g0PCGKOqw
+         HS2bdXG61OB6waO3LAJ1W5oxmLH25PnahYAtUIt5Xe5458/Ik5QPCfSW9fN6YUMZXte7
+         IfWSYPTT+/bZH4zGooE4jK6RfTbSajUy+FkJH6uWZFvrPdhL8USnM2TifPkzLKw7y5+a
+         Y1LA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZMN8+dstt6+VB1pWj1KAQdnKONofB6D8y/wvB8RyRU4=;
-        b=k5wVr+uq9sNY4sfgX+8LAuhPz+VJXzSfxeVhVkdB75Jry9oztiuIaFNzI0xa3Vs++j
-         TXXbWiuaBuD+LIPFbw1u2dBL8KuW1E4Fc9DpT7OvhWNNjkel0Y9tdc9Dm++KXYlOKUpr
-         11DUgCBIkIpLv9Vxr6UAAz8KPiEiaiTb1vXswCcpqMf7D+YgDv/46NZb9VwDrpENd/pa
-         Bkd01EhRPScw/NRonttPxhUhvlUJJUIRv1mBYOJ/GvN7GlPnHKoS5AquuG0NrFNdW93G
-         DMOtm/RHkZT/q/F6ReMPTg2TXJw5XihY6+70uDW6TAu8I9cJa6Ov0Hi9ncungcs+YfIr
-         8jkg==
+        bh=MA8prFooXN6k7+M4RoBcM1j2+fzquOKELXIC6/+EhXg=;
+        b=eBJucCXSGfaU1HfGTKWQKIGvQeOQ0HlPRbUX2uc0NWf2UrAaxOv+j/4Ob9qseauraV
+         q0SJ1Swup7oSYCKD82NvE3txUAqeVvhBQRpM9WQBbLZrjtmksgwrvnun7YlrdYzguTZa
+         P0wDNEd/CB7xPSGSSKEa4lHLpyBubx+9tiqdjJiroDXrgmr/s3JL48ysg+P2Oz198rnl
+         BwCuwocMsmF7zs2J/fODjUOtIiqYa9ZIVhrwU2kxCnAVtjV51rzwmhNaHlce1hrZEnjk
+         nsP0esCoUWy4nWor5M1JG/hTCg54xR9b3r//rzNQq5bPsnRO9O7VRjWCVWJpIESEJKrl
+         sCdg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Malcolm Priestley <tvboxspy@gmail.com>,
 	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
 	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 3.18 26/45] media: dvb-usb-v2: lmedm04: move ts2020 attach to dm04_lme2510_tuner
-Date: Thu, 15 Feb 2018 16:17:17 +0100
-Message-Id: <20180215144121.516153135@linuxfoundation.org>
+Subject: [PATCH 3.18 25/45] media: dvb-usb-v2: lmedm04: Improve logic checking of warm start
+Date: Thu, 15 Feb 2018 16:17:16 +0100
+Message-Id: <20180215144121.289765596@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215144115.863307741@linuxfoundation.org>
 References: <20180215144115.863307741@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480721810490491?=
-X-GMAIL-MSGID: =?utf-8?q?1592480721810490491?=
+X-GMAIL-THRID: =?utf-8?q?1592480718416650893?=
+X-GMAIL-MSGID: =?utf-8?q?1592480718416650893?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,68 +52,84 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Malcolm Priestley <tvboxspy@gmail.com>
 
-commit 7bf7a7116ed313c601307f7e585419369926ab05 upstream.
+commit 3d932ee27e852e4904647f15b64dedca51187ad7 upstream.
 
-When the tuner was split from m88rs2000 the attach function is in wrong
-place.
+Warm start has no check as whether a genuine device has
+connected and proceeds to next execution path.
 
-Move to dm04_lme2510_tuner to trap errors on failure and removing
-a call to lme_coldreset.
+Check device should read 0x47 at offset of 2 on USB descriptor read
+and it is the amount requested of 6 bytes.
 
-Prevents driver starting up without any tuner connected.
-
-Fixes to trap for ts2020 fail.
-LME2510(C): FE Found M88RS2000
-ts2020: probe of 0-0060 failed with error -11
-...
-LME2510(C): TUN Found RS2000 tuner
+Fix for
 kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
+kasan: GPF could be caused by NULL-ptr deref or user memory access as
 
 Reported-by: Andrey Konovalov <andreyknvl@google.com>
 Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Tested-by: Andrey Konovalov <andreyknvl@google.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/dvb-usb-v2/lmedm04.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/media/usb/dvb-usb-v2/lmedm04.c |   26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
 --- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
 +++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
-@@ -1118,8 +1118,6 @@ static int dm04_lme2510_frontend_attach(
+@@ -438,18 +438,23 @@ static int lme2510_pid_filter(struct dvb
  
- 		if (adap->fe[0]) {
- 			info("FE Found M88RS2000");
--			dvb_attach(ts2020_attach, adap->fe[0], &ts2020_config,
--					&d->i2c_adap);
- 			st->i2c_tuner_gate_w = 5;
- 			st->i2c_tuner_gate_r = 5;
- 			st->i2c_tuner_addr = 0x60;
-@@ -1182,17 +1180,18 @@ static int dm04_lme2510_tuner(struct dvb
- 			ret = st->tuner_config;
- 		break;
- 	case TUNER_RS2000:
--		ret = st->tuner_config;
-+		if (dvb_attach(ts2020_attach, adap->fe[0],
-+			       &ts2020_config, &d->i2c_adap))
-+			ret = st->tuner_config;
- 		break;
- 	default:
- 		break;
+ static int lme2510_return_status(struct dvb_usb_device *d)
+ {
+-	int ret = 0;
++	int ret;
+ 	u8 *data;
+ 
+-	data = kzalloc(10, GFP_KERNEL);
++	data = kzalloc(6, GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	ret |= usb_control_msg(d->udev, usb_rcvctrlpipe(d->udev, 0),
+-			0x06, 0x80, 0x0302, 0x00, data, 0x0006, 200);
+-	info("Firmware Status: %x (%x)", ret , data[2]);
++	ret = usb_control_msg(d->udev, usb_rcvctrlpipe(d->udev, 0),
++			      0x06, 0x80, 0x0302, 0x00,
++			      data, 0x6, 200);
++	if (ret != 6)
++		ret = -EINVAL;
++	else
++		ret = data[2];
++
++	info("Firmware Status: %6ph", data);
+ 
+-	ret = (ret < 0) ? -ENODEV : data[2];
+ 	kfree(data);
+ 	return ret;
+ }
+@@ -1231,6 +1236,7 @@ static int lme2510_get_adapter_count(str
+ static int lme2510_identify_state(struct dvb_usb_device *d, const char **name)
+ {
+ 	struct lme2510_state *st = d->priv;
++	int status;
+ 
+ 	usb_reset_configuration(d->udev);
+ 
+@@ -1239,12 +1245,16 @@ static int lme2510_identify_state(struct
+ 
+ 	st->dvb_usb_lme2510_firmware = dvb_usb_lme2510_firmware;
+ 
+-	if (lme2510_return_status(d) == 0x44) {
++	status = lme2510_return_status(d);
++	if (status == 0x44) {
+ 		*name = lme_firmware_switch(d, 0);
+ 		return COLD;
  	}
  
--	if (ret)
-+	if (ret) {
- 		info("TUN Found %s tuner", tun_msg[ret]);
--	else {
--		info("TUN No tuner found --- resetting device");
--		lme_coldreset(d);
-+	} else {
-+		info("TUN No tuner found");
- 		return -ENODEV;
- 	}
+-	return 0;
++	if (status != 0x47)
++		return -EINVAL;
++
++	return WARM;
+ }
  
+ static int lme2510_get_stream_config(struct dvb_frontend *fe, u8 *ts_type,
