@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224MkTQeNl+y3dXhmIiAmDqlYyvF1zfBcJ3vzDTgkf66V5KVbyMFMea6MjjTI21qz+Efrgyc
-ARC-Seal: i=1; a=rsa-sha256; t=1518709156; cv=none;
+X-Google-Smtp-Source: AH8x225KP83NX59S8Y/t38/OSwsmKemxMZnjZfHGiFXsq/8eKT3KcmRTjmgy15FHDXpl94/xkfRF
+ARC-Seal: i=1; a=rsa-sha256; t=1518709153; cv=none;
         d=google.com; s=arc-20160816;
-        b=lJcHt+GV/ElwdO3vndmvHaqo6xbZBa30y4MBsKEniY129hpyDBhrI+mQGRzbkS7jRJ
-         OWACqMK4FIu3AfRjslzPMiKtV7wE1nEWGSnzg4CdvoPV9eNkeqTRBygtBsdFRgTvj3/Q
-         OdWR2Undtm0dkNljFWmkHjxDBOqV20vmxkyM8plz26aX904wjX28kK4W7KUGdQjHbh72
-         Mcejpq7omtyoiIRlCqXduR4p/5JvX9b5il0w0gV6Mm9ARmtGzPRPP/5zEi1S8V1BjJqx
-         AaxC6/g88z7NhWoILqmpsoqs1ornCZb+J1WuzdUPEr55m+OSYKR0amv1MCDdJD/mLUDE
-         o1AA==
+        b=K286J8SFbuyU5+9J9Zii5a4CmW0CUFoYzSBn2NnUsV1zrY0XURNhayCNwOF6oyn1ju
+         ZqkT0UChElFC7xEtnkAETL51AWI5wDPRINqBfLxr2jugbTuIc7RhUdgFg+Uka9ENtrCF
+         HwkNIbzczwbuGt9BxVj9M32ACGA18Hnx4EIGm7Xz6I3PsEiciZ4ZdflYz+gfWtngcHWt
+         MHjoaxio5dXEt1sih+JQR24wpcu1SjREZGVheO77ecPSE6VgRLjNDTKwp2fOxmQhSxsM
+         T2iNge7hbf9sk26AmSKkuSqNwPDK9+WR0Y9kPhm7zwkZ8mKe3Uh4z8LK1GxvxhEXHnvO
+         G65Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RIwyDXiV0cLso8daOKujI4C5zHV+1aDzto+lwaWKTYA=;
-        b=SGWKH6UsXLZfR7rwcux4LK/LZy40KQkobBRGn8uW+pYbECcHvC2Wwh6xAFEmXatz15
-         rRWnvLOGAQaDHasiUJ00Ijlze4zYFSW32z0Z75H3u89rZBTrJOddzTZxBr0+lwjmZgvT
-         Cg2VwmykxHnlyaKvQZai5/r0a1/ZMwMLiwyKSe0vr5eLPNk44QXz6BZ17IH1RYepdxPc
-         LALi4VHNsjFh6Q1T4TErl7rNL5YmDdPie87KIHJ/EQcqAQ/1rPlk++ykDNpR6PAthM4z
-         Ez2Vx0mqkgu5vexDrzAMZ3j7OZ2DPWvIXuQ5dKR32EcJmRpO92/qnC09Savek8yPWcBR
-         J2LQ==
+        bh=93SoG/E3saCvT920AAhOu5tKUnwUlbCMcY8XFut1h0Q=;
+        b=djgsAV59a91k6KoKfBgNQImECE1Qosy/oNH21n28TtSt5PX/FpAXM7qunB7G3+7A1m
+         8j4dZrE6L6JIStx+EEUsYZOBPEarUljy2XghJ8NHqWZrP5PQ/isvAcoR7Zj/RPsEta6l
+         5RPUPPGBM/jNfYDpYV/DFxoQf/6cu2wkEve4fE21XljiTy1k/QjBhM8cV1H40RmRxkUs
+         ECo5UtyYyT6CQ41zQj+Nyz5IKK/Vuqn0XKvBGS7MvR3NBpFB6D2rOL+P6ep+Wr2G8ZLk
+         ZdulmFKUF/ofjqkyo9YH/nlFSLgL1K9L9IzignBVQlXKuZ9S1BO+nzaMIXdLKEBrr1Fz
+         NRYA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Laura Abbott <labbott@redhat.com>,
 	Shanker Donthineni <shankerd@codeaurora.org>,
 	Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.15 017/202] [Variant 3/Meltdown] arm64: mm: Move ASID from TTBR0 to TTBR1
-Date: Thu, 15 Feb 2018 16:15:17 +0100
-Message-Id: <20180215151713.758586695@linuxfoundation.org>
+Subject: [PATCH 4.15 016/202] [Variant 3/Meltdown] arm64: mm: Temporarily disable ARM64_SW_TTBR0_PAN
+Date: Thu, 15 Feb 2018 16:15:16 +0100
+Message-Id: <20180215151713.700527466@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481426646741341?=
-X-GMAIL-MSGID: =?utf-8?q?1592481971891756526?=
+X-GMAIL-THRID: =?utf-8?q?1592481423799436656?=
+X-GMAIL-MSGID: =?utf-8?q?1592481969539744948?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,11 +53,13 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Will Deacon <will.deacon@arm.com>
 
 
-Commit 7655abb95386 upstream.
+Commit 376133b7edc2 upstream.
 
-In preparation for mapping kernelspace and userspace with different
-ASIDs, move the ASID to TTBR1 and update switch_mm to context-switch
-TTBR0 via an invalid mapping (the zero page).
+We're about to rework the way ASIDs are allocated, switch_mm is
+implemented and low-level kernel entry/exit is handled, so keep the
+ARM64_SW_TTBR0_PAN code out of the way whilst we do the heavy lifting.
+
+It will be re-enabled in a subsequent patch.
 
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Tested-by: Laura Abbott <labbott@redhat.com>
@@ -65,76 +67,16 @@ Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/mmu_context.h   |    7 +++++++
- arch/arm64/include/asm/pgtable-hwdef.h |    1 +
- arch/arm64/include/asm/proc-fns.h      |    6 ------
- arch/arm64/mm/proc.S                   |    9 ++++++---
- 4 files changed, 14 insertions(+), 9 deletions(-)
+ arch/arm64/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm64/include/asm/mmu_context.h
-+++ b/arch/arm64/include/asm/mmu_context.h
-@@ -57,6 +57,13 @@ static inline void cpu_set_reserved_ttbr
- 	isb();
- }
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -920,6 +920,7 @@ endif
  
-+static inline void cpu_switch_mm(pgd_t *pgd, struct mm_struct *mm)
-+{
-+	BUG_ON(pgd == swapper_pg_dir);
-+	cpu_set_reserved_ttbr0();
-+	cpu_do_switch_mm(virt_to_phys(pgd),mm);
-+}
-+
- /*
-  * TCR.T0SZ value to use when the ID map is active. Usually equals
-  * TCR_T0SZ(VA_BITS), unless system RAM is positioned very high in
---- a/arch/arm64/include/asm/pgtable-hwdef.h
-+++ b/arch/arm64/include/asm/pgtable-hwdef.h
-@@ -272,6 +272,7 @@
- #define TCR_TG1_4K		(UL(2) << TCR_TG1_SHIFT)
- #define TCR_TG1_64K		(UL(3) << TCR_TG1_SHIFT)
- 
-+#define TCR_A1			(UL(1) << 22)
- #define TCR_ASID16		(UL(1) << 36)
- #define TCR_TBI0		(UL(1) << 37)
- #define TCR_HA			(UL(1) << 39)
---- a/arch/arm64/include/asm/proc-fns.h
-+++ b/arch/arm64/include/asm/proc-fns.h
-@@ -35,12 +35,6 @@ extern u64 cpu_do_resume(phys_addr_t ptr
- 
- #include <asm/memory.h>
- 
--#define cpu_switch_mm(pgd,mm)				\
--do {							\
--	BUG_ON(pgd == swapper_pg_dir);			\
--	cpu_do_switch_mm(virt_to_phys(pgd),mm);		\
--} while (0)
--
- #endif /* __ASSEMBLY__ */
- #endif /* __KERNEL__ */
- #endif /* __ASM_PROCFNS_H */
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -139,9 +139,12 @@ ENDPROC(cpu_do_resume)
-  */
- ENTRY(cpu_do_switch_mm)
- 	pre_ttbr0_update_workaround x0, x2, x3
-+	mrs	x2, ttbr1_el1
- 	mmid	x1, x1				// get mm->context.id
--	bfi	x0, x1, #48, #16		// set the ASID
--	msr	ttbr0_el1, x0			// set TTBR0
-+	bfi	x2, x1, #48, #16		// set the ASID
-+	msr	ttbr1_el1, x2			// in TTBR1 (since TCR.A1 is set)
-+	isb
-+	msr	ttbr0_el1, x0			// now update TTBR0
- 	isb
- 	post_ttbr0_update_workaround
- 	ret
-@@ -224,7 +227,7 @@ ENTRY(__cpu_setup)
- 	 * both user and kernel.
- 	 */
- 	ldr	x10, =TCR_TxSZ(VA_BITS) | TCR_CACHE_FLAGS | TCR_SMP_FLAGS | \
--			TCR_TG_FLAGS | TCR_ASID16 | TCR_TBI0
-+			TCR_TG_FLAGS | TCR_ASID16 | TCR_TBI0 | TCR_A1
- 	tcr_set_idmap_t0sz	x10, x9
- 
- 	/*
+ config ARM64_SW_TTBR0_PAN
+ 	bool "Emulate Privileged Access Never using TTBR0_EL1 switching"
++	depends on BROKEN       # Temporary while switch_mm is reworked
+ 	help
+ 	  Enabling this option prevents the kernel from accessing
+ 	  user-space memory directly by pointing TTBR0_EL1 to a reserved
