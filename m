@@ -1,96 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032693AbeBOCwM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 14 Feb 2018 21:52:12 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48092 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1032660AbeBOCwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Feb 2018 21:52:07 -0500
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>, Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH V3 1/2] audit: deprecate the AUDIT_FILTER_ENTRY filter
-Date: Wed, 14 Feb 2018 21:47:43 -0500
-Message-Id: <cb76d12aecaa60dc9137655098ec1716bf43088a.1518662391.git.rgb@redhat.com>
-In-Reply-To: <cover.1518662391.git.rgb@redhat.com>
-References: <cover.1518662391.git.rgb@redhat.com>
-In-Reply-To: <cover.1518662391.git.rgb@redhat.com>
-References: <cover.1518662391.git.rgb@redhat.com>
+        id S1032679AbeBODLn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 14 Feb 2018 22:11:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55170 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032563AbeBODLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Feb 2018 22:11:42 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF16A217C0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AH8x224r5cXhftRAQTZL9VlrZTaD29xT78UWA8LWTgGB+FehZVVsY0lhTpZB8JWzu22osfFiFL6szvxsRioeM9JYxE8=
+MIME-Version: 1.0
+In-Reply-To: <CAMzpN2iA6N7hq8zYBAiMq48emWnidDHvnOPg3h5pYGtBOZOm6Q@mail.gmail.com>
+References: <20180214182113.27247-1-linux@dominikbrodowski.net>
+ <20180214182113.27247-3-linux@dominikbrodowski.net> <CALCETrXvD7ZwtXnABT3XW7as4ogdSiyBsRUTY3t_LWtm7KiZeA@mail.gmail.com>
+ <CAMzpN2iA6N7hq8zYBAiMq48emWnidDHvnOPg3h5pYGtBOZOm6Q@mail.gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 15 Feb 2018 03:11:20 +0000
+X-Gmail-Original-Message-ID: <CALCETrXB+520uESCFVX2rH7NKkmr20+8YmmBONWUBmB1Cq97mQ@mail.gmail.com>
+Message-ID: <CALCETrXB+520uESCFVX2rH7NKkmr20+8YmmBONWUBmB1Cq97mQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/4] x86/entry/64: move ENTER_IRQ_STACK from interrupt
+ macro to helper function
+To: Brian Gerst <brgerst@gmail.com>
+Cc: Andy Lutomirski <luto@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        X86 ML <x86@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andi Kleen <ak@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The audit entry filter has been long deprecated with userspace support
-finally removed in audit-v2.6.7 and plans to remove kernel support have
-existed since kernel-v2.6.31.
-Remove it.
+On Thu, Feb 15, 2018 at 12:48 AM, Brian Gerst <brgerst@gmail.com> wrote:
+> On Wed, Feb 14, 2018 at 7:17 PM, Andy Lutomirski <luto@kernel.org> wrote:
+>> On Wed, Feb 14, 2018 at 6:21 PM, Dominik Brodowski
+>> <linux@dominikbrodowski.net> wrote:
+>>> Moving the switch to IRQ stack from the interrupt macro to the helper
+>>> function requires some trickery: All ENTER_IRQ_STACK really cares about
+>>> is where the "original" stack -- meaning the GP registers etc. -- is
+>>> stored. Therefore, we need to offset the stored RSP value by 8 whenever
+>>> ENTER_IRQ_STACK is called from within a function. In such cases, and
+>>> after switching to the IRQ stack, we need to push the "original" return
+>>> address (i.e. the return address from the call to the interrupt entry
+>>> function) to the IRQ stack.
+>>>
+>>> This trickery allows us to carve another 1k from the text size:
+>>>
+>>>    text    data     bss     dec     hex filename
+>>>   17905       0       0   17905    45f1 entry_64.o-orig
+>>>   16897       0       0   16897    4201 entry_64.o
+>>>
+>>> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+>>> ---
+>>>  arch/x86/entry/entry_64.S | 53 +++++++++++++++++++++++++++++++----------------
+>>>  1 file changed, 35 insertions(+), 18 deletions(-)
+>>>
+>>> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+>>> index de8a0da0d347..3046b12a1acb 100644
+>>> --- a/arch/x86/entry/entry_64.S
+>>> +++ b/arch/x86/entry/entry_64.S
+>>> @@ -449,10 +449,18 @@ END(irq_entries_start)
+>>>   *
+>>>   * The invariant is that, if irq_count != -1, then the IRQ stack is in use.
+>>>   */
+>>> -.macro ENTER_IRQ_STACK regs=1 old_rsp
+>>> +.macro ENTER_IRQ_STACK regs=1 old_rsp save_ret=0
+>>>         DEBUG_ENTRY_ASSERT_IRQS_OFF
+>>>         movq    %rsp, \old_rsp
+>>>
+>>> +       .if \save_ret
+>>> +       /*
+>>> +        * If save_ret is set, the original stack contains one additional
+>>> +        * entry -- the return address.
+>>> +        */
+>>> +       addq    $8, \old_rsp
+>>> +       .endif
+>>> +
+>>
+>> This is a bit alarming in that you now have live data below RSP.  For
+>> x86_32, this would be a big no-no due to NMI.  For x86_64, it might
+>> still be bad if there are code paths where NMI is switched to non-IST
+>> temporarily, which was the case at some point and might still be the
+>> case.  (I think it is.)  Remember that the x86_64 *kernel* ABI has no
+>> red zone.
+>>
+>> It also means that, if you manage to hit vmalloc_fault() in here when
+>> you touch the IRQ stack, you're dead.  IOW you hit:
+>>
+>>         movq    \old_rsp, PER_CPU_VAR(irq_stack_union + IRQ_STACK_SIZE - 8)
+>>
+>> which gets #PF and eats your return pointer.  Debugging this will be
+>> quite nasty because you'll only hit it on really huge systems after a
+>> thread gets migrated, and even then only if you get unlucky on your
+>> stack alignment.
+>>
+>> So can you find another way to do this?
+>
+> It's adding 8 to the temp register, not %rsp.
 
-Since removing the audit entry filter, test for early return before
-setting up any context state.
-
-Passes audit-testsuite.
-
-See: https://github.com/linux-audit/audit-kernel/issues/6
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- kernel/auditfilter.c |  4 ++--
- kernel/auditsc.c     | 21 +++++++++++----------
- 2 files changed, 13 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-index 4a1758a..1bbf5de 100644
---- a/kernel/auditfilter.c
-+++ b/kernel/auditfilter.c
-@@ -258,8 +258,8 @@ static inline struct audit_entry *audit_to_entry_common(struct audit_rule_data *
- 		goto exit_err;
- #ifdef CONFIG_AUDITSYSCALL
- 	case AUDIT_FILTER_ENTRY:
--		if (rule->action == AUDIT_ALWAYS)
--			goto exit_err;
-+		pr_err("AUDIT_FILTER_ENTRY is deprecated\n");
-+		goto exit_err;
- 	case AUDIT_FILTER_EXIT:
- 	case AUDIT_FILTER_TASK:
- #endif
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index e80459f..bc534bf 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -1519,22 +1519,23 @@ void __audit_syscall_entry(int major, unsigned long a1, unsigned long a2,
- 	if (!audit_enabled)
- 		return;
- 
--	context->arch	    = syscall_get_arch();
--	context->major      = major;
--	context->argv[0]    = a1;
--	context->argv[1]    = a2;
--	context->argv[2]    = a3;
--	context->argv[3]    = a4;
--
- 	state = context->state;
-+	if (state == AUDIT_DISABLED)
-+		return;
-+
- 	context->dummy = !audit_n_rules;
- 	if (!context->dummy && state == AUDIT_BUILD_CONTEXT) {
- 		context->prio = 0;
--		state = audit_filter_syscall(tsk, context, &audit_filter_list[AUDIT_FILTER_ENTRY]);
-+		if (auditd_test_task(tsk))
-+			return;
- 	}
--	if (state == AUDIT_DISABLED)
--		return;
- 
-+	context->arch	    = syscall_get_arch();
-+	context->major      = major;
-+	context->argv[0]    = a1;
-+	context->argv[1]    = a2;
-+	context->argv[2]    = a3;
-+	context->argv[3]    = a4;
- 	context->serial     = 0;
- 	context->ctime = current_kernel_time64();
- 	context->in_syscall = 1;
--- 
-1.8.3.1
+Duh.
