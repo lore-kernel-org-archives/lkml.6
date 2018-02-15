@@ -1,99 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967953AbeBOL4r (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 06:56:47 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35249 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967907AbeBOL4p (ORCPT
+        id S967965AbeBOL44 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 06:56:56 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52516 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S967902AbeBOL4x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 06:56:45 -0500
-X-Google-Smtp-Source: AH8x227H7H4mWLZnNONdYzmgSP3GC9e37nXO/w1HdlMAUMHGVHf49ZW/zSLwe/yCLFjypiT0jvyUuA==
-Subject: Re: [PATCH v2] ARM64: dts: meson-axg: enable IR controller
-To: Yixun Lan <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>, Carlo Caione <carlo@caione.org>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20171204053858.1697-1-yixun.lan@amlogic.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Organization: Baylibre
-Message-ID: <faa30eb9-9872-bd78-6f25-d6425651887e@baylibre.com>
-Date: Thu, 15 Feb 2018 12:56:41 +0100
+        Thu, 15 Feb 2018 06:56:53 -0500
+Subject: Re: [PATCH] s390/console: enable dummy console for vt
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Farhan Ali <alifm@linux.vnet.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
+        Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        uml-devel <user-mode-linux-devel@lists.sourceforge.net>,
+        Thomas Huth <thuth@redhat.com>
+References: <2324e2cc-ff55-4d57-2807-c7f72f9ea0ca@de.ibm.com>
+ <20180215111423.96598-1-borntraeger@de.ibm.com>
+ <CAMuHMdWCK1V3PWXHMNZUmFVMCSqi5xhs72mT_M=gE96TSzMN9w@mail.gmail.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Date: Thu, 15 Feb 2018 12:56:44 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20171204053858.1697-1-yixun.lan@amlogic.com>
+In-Reply-To: <CAMuHMdWCK1V3PWXHMNZUmFVMCSqi5xhs72mT_M=gE96TSzMN9w@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18021511-0020-0000-0000-000003F5F019
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18021511-0021-0000-0000-0000428882D3
+Message-Id: <13a674d4-68d5-6fb4-5902-26c6b631b596@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-15_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802150149
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/12/2017 06:38, Yixun Lan wrote:
-> Enable IR remote controller which find in Amlogic's Meson-AXG SoC.
+On 02/15/2018 12:26 PM, Geert Uytterhoeven wrote:
+> Hi Christian,
 > 
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> On Thu, Feb 15, 2018 at 12:14 PM, Christian Borntraeger
+> <borntraeger@de.ibm.com> wrote:
+>> To enable the virtual terminal layer with virtio-gpu, we need to
+>> provide the dummy console. This console is hidden behind CONFIG_IOMEM
+>> via the graphics support. Instead of fully enabling the graphic
+>> drivers lets just provide a Kconfig option for the dummy console.
+>>
+>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> ---
+>> New version: instead of moving around the graphic and console stuff,
+>> let's just keep an s390 specific variant of CONFIG_DUMMY_CONSOLE
+>>  arch/s390/Kconfig | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+>> index cbe1d978693a..a69690f616f3 100644
+>> --- a/arch/s390/Kconfig
+>> +++ b/arch/s390/Kconfig
+>> @@ -952,6 +952,11 @@ config S390_HYPFS_FS
+>>
+>>  source "arch/s390/kvm/Kconfig"
+>>
+>> +config DUMMY_CONSOLE
+>> +       bool
+>> +       depends on VT
+>> +       default y
+>> +
+>>  config S390_GUEST
+>>         def_bool y
+>>         prompt "s390 support for virtio devices"
 > 
-> ---
+> Really?
 > 
-> Changes since v1 at [1]:
->  - drop the compatbile 'amlogic,meson-gx-ir'
-> 
-> [1]
->  http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005527.html
-> ---
->  arch/arm64/boot/dts/amlogic/meson-axg-s400.dts |  6 ++++++
->  arch/arm64/boot/dts/amlogic/meson-axg.dtsi     | 14 ++++++++++++++
->  2 files changed, 20 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-> index 0864d1ff2d9b..ca676cafdbb3 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-> @@ -34,3 +34,9 @@
->  	pinctrl-0 = <&i2c1_z_pins>;
->  	pinctrl-names = "default";
->  };
-> +
-> +&ir {
-> +	status = "okay";
-> +	pinctrl-0 = <&remote_input_ao_pins>;
-> +	pinctrl-names = "default";
-> +};
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> index 9bb85893c1b7..f68f709762dd 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> @@ -616,6 +616,13 @@
->  					#gpio-cells = <2>;
->  					gpio-ranges = <&pinctrl_aobus 0 0 15>;
->  				};
-> +
-> +				remote_input_ao_pins: remote_input_ao {
-> +					mux {
-> +						groups = "remote_input_ao";
-> +						function = "remote_input_ao";
-> +					};
-> +				};
->  			};
->  
->  			i2c_AO: i2c@5000 {
-> @@ -664,6 +671,13 @@
->  				clock-names = "xtal", "pclk", "baud";
->  				status = "disabled";
->  			};
-> +
-> +			ir: ir@8000 {
-> +				compatible = "amlogic,meson-gxbb-ir";
-> +				reg = <0x0 0x8000 0x0 0x20>;
-> +				interrupts = <GIC_SPI 196 IRQ_TYPE_EDGE_RISING>;
-> +				status = "disabled";
-> +			};
->  		};
->  	};
->  };
+> You already have your own copy of HAS_IOMEM, which makes it hard for
+> people to track which one applies where.
 > 
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+I am open for better suggestions. One idea that I had was to reverse
+the logic in s390 (and use the common code HAS_IOMEM)
+
+like
+
+
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index cbe1d978693a..123dd593ea20 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -715,8 +715,8 @@ endif       # PCI
+ config PCI_DOMAINS
+        def_bool PCI
+ 
+-config HAS_IOMEM
+-       def_bool PCI
++config NO_IOMEM
++       def_bool y if !PCI
+ 
+ config IOMMU_HELPER
+        def_bool PCI
+
+
+This would enable CONFIG_VT and also CONFIG_DUMMY_CONSOLE as long as
+PCI is enabled. If DUMMY_CONSOLE is not enabled (e.g. due to missing PCI),
+we get a crash in the VT layer as conswitchp is then null.
+
+Somewhat tricky.
