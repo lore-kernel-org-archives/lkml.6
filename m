@@ -1,48 +1,78 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225QnB2etlh64zWpC2sZHtXkxnBL4Lvor60X+MxkrYPeQkeDhOC0n1lyo+8ccg2SZZTTmkIQ
-ARC-Seal: i=1; a=rsa-sha256; t=1518709222; cv=none;
-        d=google.com; s=arc-20160816;
-        b=wCKT2gNkQMmUgifry0Idd+5x/0wTM3I/JtEVHbLa/pBp+PdyLx9PDlLmxCEms4ZD6s
-         eiw7fAEimoF4d/ScC+b3XVVoyEE3j9g7b7gnszSyvcZ4XEUw0NPWIbbv/oIefWvO6zfG
-         qIEW3QblgJitEx9d/p08AVj3EFf3xoSvFjpNbPxPSnrHRZ1PtxaR/sgHBOnb/1paqJ7G
-         17gDF3KsJXEDEWBC0uHFOuFjrlXY9Fhcf84JIGY+a9pVvdu+knIGWB6ymab0AIeN9vOP
-         Pq7aJ40VEbvv/NYWOL6ocYRlFSwjJz25P+Y6vp7LjOy/V4Jjx/4diWijmwV9HfdEkrNc
-         exhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=VZX9MZPmbrjULn/es2wEwbyu8zMbvxU8EcstdBqKzCM=;
-        b=oe70ECulWFUroCquQVYFTxusj8oCfd33pbNcZnEcZHxH34WtDtch8E9JhH1xIswOah
-         u1+ByPRr99RRiovwItKSiNlqV6pRPuoz4A2wOUF3Ntrt9EMcIxGnva8Q3/ZUum1/1IIi
-         D0czG4cVBvAC7TfduFi05eT0LJcrMd41pJWsGlRQK7ZNsW810RJgizfgOM3dGoCmBYoT
-         pZ7me8r2yybIw0Id7d/JKBly8Tql4i4t4Fn5Y9O87hZEHN2H9hSdy2TjRrhKA/enXXSw
-         SgrR3YLyJelCVFagnuWbutyo0sc6WpoloGcUhtUMUOArvpIX881YJW/tW5uWXOQk3fab
-         rH+g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1841884-1518709222-2-4370722684113488079
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518709222; b=j54KdYe/oO/Uf/kBSG7/MRDLeqBH3gbIGGtIcAMs9aKCYCe
+    gOjFdZGE5EMvGKUbZZVobyPapNlVhytpBYhTaf4e3IRfy3RO6Av/QyCGfs/p0S/W
+    8r9trOnOeW+3qQNf5xPwxQFfzr963rNVp9DKDgvLOtvabnfO4zoWcZ0drtSPJviZ
+    yujZXdW8cd4o761afsanNXfzUN6g1pDbDJTMJpJism/Icrp3uanVUA6fQGuGXlKX
+    6i/2/B71XBPo3VNpQp1MBDddzWfjehsRCflQyaJUfBSPThmvh2X/tYQJCwdVZJdm
+    OEaqXPC2YN5cj1XT2XItkwOxISIWdo9EaBaENtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1518709222; bh=V/wfB22QHuq2mq9SPS5mNW1r2Z
+    fgXiGBsIefq3xJFg8=; b=U6cPz7poSU8fzmYGlXJ1xTA6hkz0hB+rTXupLTNMcu
+    0bx524mMYBmo4j+5TZM9MDR41Dh/9r3W6YFW8Fr6pFaGt2Hhr8guxO3EULqA+jg4
+    qDgd26ud7eZt+T08lnwffjbC5P1bMQaMPJihUUq7wW5VweLqJXyL1xIKAn33CxfL
+    hripB4HKk4HGK3GhPhQ0DuAY+bj+JZprU7qWTF82/XnENTCR94+KQgHJHcpu4Kaq
+    qytp/7l157CkUlEWdtUlrS+jrSTZWC9C4QXo1KtWzb4f6fXJXnsmYL2vJuA2aSiG
+    JE/riQEBizbErfww5uNlecO+nNpg2H3Jp7/IekHpGH4g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1423689AbeBOPkR (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:40:17 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60042 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423276AbeBOPkP (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:40:15 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Will Deacon <will.deacon@arm.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	James Morse <james.morse@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.15 039/202] [Variant 3/Meltdown] arm64: kpti: Fix the interaction between ASID switching and software PAN
-Date: Thu, 15 Feb 2018 16:15:39 +0100
-Message-Id: <20180215151715.168926036@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.15 037/202] [Variant 3/Meltdown] arm64: capabilities: Handle duplicate entries for a capability
+Date: Thu, 15 Feb 2018 16:15:37 +0100
+Message-Id: <20180215151714.969419389@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151712.768794354@linuxfoundation.org>
 References: <20180215151712.768794354@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481623760290774?=
-X-GMAIL-MSGID: =?utf-8?q?1592482041429044221?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,285 +80,104 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Catalin Marinas <catalin.marinas@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
 
-Commit 6b88a32c7af6 upstream.
+Commit 67948af41f2e upstream.
 
-With ARM64_SW_TTBR0_PAN enabled, the exception entry code checks the
-active ASID to decide whether user access was enabled (non-zero ASID)
-when the exception was taken. On return from exception, if user access
-was previously disabled, it re-instates TTBR0_EL1 from the per-thread
-saved value (updated in switch_mm() or efi_set_pgd()).
+Sometimes a single capability could be listed multiple times with
+differing matches(), e.g, CPU errata for different MIDR versions.
+This breaks verify_local_cpu_feature() and this_cpu_has_cap() as
+we stop checking for a capability on a CPU with the first
+entry in the given table, which is not sufficient. Make sure we
+run the checks for all entries of the same capability. We do
+this by fixing __this_cpu_has_cap() to run through all the
+entries in the given table for a match and reuse it for
+verify_local_cpu_feature().
 
-Commit 7655abb95386 ("arm64: mm: Move ASID from TTBR0 to TTBR1") makes a
-TTBR0_EL1 + ASID switching non-atomic. Subsequently, commit 27a921e75711
-("arm64: mm: Fix and re-enable ARM64_SW_TTBR0_PAN") changes the
-__uaccess_ttbr0_disable() function and asm macro to first write the
-reserved TTBR0_EL1 followed by the ASID=0 update in TTBR1_EL1. If an
-exception occurs between these two, the exception return code will
-re-instate a valid TTBR0_EL1. Similar scenario can happen in
-cpu_switch_mm() between setting the reserved TTBR0_EL1 and the ASID
-update in cpu_do_switch_mm().
-
-This patch reverts the entry.S check for ASID == 0 to TTBR0_EL1 and
-disables the interrupts around the TTBR0_EL1 and ASID switching code in
-__uaccess_ttbr0_disable(). It also ensures that, when returning from the
-EFI runtime services, efi_set_pgd() doesn't leave a non-zero ASID in
-TTBR1_EL1 by using uaccess_ttbr0_{enable,disable}.
-
-The accesses to current_thread_info()->ttbr0 are updated to use
-READ_ONCE/WRITE_ONCE.
-
-As a safety measure, __uaccess_ttbr0_enable() always masks out any
-existing non-zero ASID TTBR1_EL1 before writing in the new ASID.
-
-Fixes: 27a921e75711 ("arm64: mm: Fix and re-enable ARM64_SW_TTBR0_PAN")
-Acked-by: Will Deacon <will.deacon@arm.com>
-Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: James Morse <james.morse@arm.com>
-Tested-by: James Morse <james.morse@arm.com>
-Co-developed-by: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
-
-Conflicts:
-	arch/arm64/include/asm/asm-uaccess.h
-	arch/arm64/include/asm/uaccess.h
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/asm-uaccess.h |   12 +++++++-----
- arch/arm64/include/asm/efi.h         |   12 +++++++-----
- arch/arm64/include/asm/mmu_context.h |    3 ++-
- arch/arm64/include/asm/uaccess.h     |    9 ++++++---
- arch/arm64/kernel/entry.S            |    2 +-
- arch/arm64/lib/clear_user.S          |    2 +-
- arch/arm64/lib/copy_from_user.S      |    2 +-
- arch/arm64/lib/copy_in_user.S        |    2 +-
- arch/arm64/lib/copy_to_user.S        |    2 +-
- arch/arm64/mm/cache.S                |    2 +-
- arch/arm64/mm/proc.S                 |    3 +++
- arch/arm64/xen/hypercall.S           |    2 +-
- 12 files changed, 32 insertions(+), 21 deletions(-)
+ arch/arm64/kernel/cpufeature.c |   44 +++++++++++++++++++++--------------------
+ 1 file changed, 23 insertions(+), 21 deletions(-)
 
---- a/arch/arm64/include/asm/asm-uaccess.h
-+++ b/arch/arm64/include/asm/asm-uaccess.h
-@@ -14,11 +14,11 @@
- #ifdef CONFIG_ARM64_SW_TTBR0_PAN
- 	.macro	__uaccess_ttbr0_disable, tmp1
- 	mrs	\tmp1, ttbr1_el1		// swapper_pg_dir
-+	bic	\tmp1, \tmp1, #TTBR_ASID_MASK
- 	add	\tmp1, \tmp1, #SWAPPER_DIR_SIZE	// reserved_ttbr0 at the end of swapper_pg_dir
- 	msr	ttbr0_el1, \tmp1		// set reserved TTBR0_EL1
- 	isb
- 	sub	\tmp1, \tmp1, #SWAPPER_DIR_SIZE
--	bic	\tmp1, \tmp1, #TTBR_ASID_MASK
- 	msr	ttbr1_el1, \tmp1		// set reserved ASID
- 	isb
- 	.endm
-@@ -35,9 +35,11 @@
- 	isb
- 	.endm
- 
--	.macro	uaccess_ttbr0_disable, tmp1
-+	.macro	uaccess_ttbr0_disable, tmp1, tmp2
- alternative_if_not ARM64_HAS_PAN
-+	save_and_disable_irq \tmp2		// avoid preemption
- 	__uaccess_ttbr0_disable \tmp1
-+	restore_irq \tmp2
- alternative_else_nop_endif
- 	.endm
- 
-@@ -49,7 +51,7 @@ alternative_if_not ARM64_HAS_PAN
- alternative_else_nop_endif
- 	.endm
- #else
--	.macro	uaccess_ttbr0_disable, tmp1
-+	.macro	uaccess_ttbr0_disable, tmp1, tmp2
- 	.endm
- 
- 	.macro	uaccess_ttbr0_enable, tmp1, tmp2, tmp3
-@@ -59,8 +61,8 @@ alternative_else_nop_endif
- /*
-  * These macros are no-ops when UAO is present.
-  */
--	.macro	uaccess_disable_not_uao, tmp1
--	uaccess_ttbr0_disable \tmp1
-+	.macro	uaccess_disable_not_uao, tmp1, tmp2
-+	uaccess_ttbr0_disable \tmp1, \tmp2
- alternative_if ARM64_ALT_PAN_NOT_UAO
- 	SET_PSTATE_PAN(1)
- alternative_else_nop_endif
---- a/arch/arm64/include/asm/efi.h
-+++ b/arch/arm64/include/asm/efi.h
-@@ -121,19 +121,21 @@ static inline void efi_set_pgd(struct mm
- 		if (mm != current->active_mm) {
- 			/*
- 			 * Update the current thread's saved ttbr0 since it is
--			 * restored as part of a return from exception. Set
--			 * the hardware TTBR0_EL1 using cpu_switch_mm()
--			 * directly to enable potential errata workarounds.
-+			 * restored as part of a return from exception. Enable
-+			 * access to the valid TTBR0_EL1 and invoke the errata
-+			 * workaround directly since there is no return from
-+			 * exception when invoking the EFI run-time services.
- 			 */
- 			update_saved_ttbr0(current, mm);
--			cpu_switch_mm(mm->pgd, mm);
-+			uaccess_ttbr0_enable();
-+			post_ttbr_update_workaround();
- 		} else {
- 			/*
- 			 * Defer the switch to the current thread's TTBR0_EL1
- 			 * until uaccess_enable(). Restore the current
- 			 * thread's saved ttbr0 corresponding to its active_mm
- 			 */
--			cpu_set_reserved_ttbr0();
-+			uaccess_ttbr0_disable();
- 			update_saved_ttbr0(current, current->active_mm);
- 		}
- 	}
---- a/arch/arm64/include/asm/mmu_context.h
-+++ b/arch/arm64/include/asm/mmu_context.h
-@@ -175,7 +175,7 @@ static inline void update_saved_ttbr0(st
- 	else
- 		ttbr = virt_to_phys(mm->pgd) | ASID(mm) << 48;
- 
--	task_thread_info(tsk)->ttbr0 = ttbr;
-+	WRITE_ONCE(task_thread_info(tsk)->ttbr0, ttbr);
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1118,6 +1118,26 @@ static void __init setup_elf_hwcaps(cons
+ 			cap_set_elf_hwcap(hwcaps);
  }
- #else
- static inline void update_saved_ttbr0(struct task_struct *tsk,
-@@ -230,6 +230,7 @@ switch_mm(struct mm_struct *prev, struct
- #define activate_mm(prev,next)	switch_mm(prev, next, current)
  
- void verify_cpu_asid_bits(void);
-+void post_ttbr_update_workaround(void);
- 
- #endif /* !__ASSEMBLY__ */
- 
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -105,16 +105,18 @@ static inline void set_fs(mm_segment_t f
- #ifdef CONFIG_ARM64_SW_TTBR0_PAN
- static inline void __uaccess_ttbr0_disable(void)
++/*
++ * Check if the current CPU has a given feature capability.
++ * Should be called from non-preemptible context.
++ */
++static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
++			       unsigned int cap)
++{
++	const struct arm64_cpu_capabilities *caps;
++
++	if (WARN_ON(preemptible()))
++		return false;
++
++	for (caps = cap_array; caps->desc; caps++)
++		if (caps->capability == cap &&
++		    caps->matches &&
++		    caps->matches(caps, SCOPE_LOCAL_CPU))
++			return true;
++	return false;
++}
++
+ void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
+ 			    const char *info)
  {
--	unsigned long ttbr;
-+	unsigned long flags, ttbr;
- 
-+	local_irq_save(flags);
- 	ttbr = read_sysreg(ttbr1_el1);
-+	ttbr &= ~TTBR_ASID_MASK;
- 	/* reserved_ttbr0 placed at the end of swapper_pg_dir */
- 	write_sysreg(ttbr + SWAPPER_DIR_SIZE, ttbr0_el1);
- 	isb();
- 	/* Set reserved ASID */
--	ttbr &= ~TTBR_ASID_MASK;
- 	write_sysreg(ttbr, ttbr1_el1);
- 	isb();
-+	local_irq_restore(flags);
+@@ -1181,8 +1201,9 @@ verify_local_elf_hwcaps(const struct arm
  }
  
- static inline void __uaccess_ttbr0_enable(void)
-@@ -127,10 +129,11 @@ static inline void __uaccess_ttbr0_enabl
- 	 * roll-over and an update of 'ttbr0'.
- 	 */
- 	local_irq_save(flags);
--	ttbr0 = current_thread_info()->ttbr0;
-+	ttbr0 = READ_ONCE(current_thread_info()->ttbr0);
+ static void
+-verify_local_cpu_features(const struct arm64_cpu_capabilities *caps)
++verify_local_cpu_features(const struct arm64_cpu_capabilities *caps_list)
+ {
++	const struct arm64_cpu_capabilities *caps = caps_list;
+ 	for (; caps->matches; caps++) {
+ 		if (!cpus_have_cap(caps->capability))
+ 			continue;
+@@ -1190,7 +1211,7 @@ verify_local_cpu_features(const struct a
+ 		 * If the new CPU misses an advertised feature, we cannot proceed
+ 		 * further, park the cpu.
+ 		 */
+-		if (!caps->matches(caps, SCOPE_LOCAL_CPU)) {
++		if (!__this_cpu_has_cap(caps_list, caps->capability)) {
+ 			pr_crit("CPU%d: missing feature: %s\n",
+ 					smp_processor_id(), caps->desc);
+ 			cpu_die_early();
+@@ -1272,25 +1293,6 @@ static void __init mark_const_caps_ready
+ 	static_branch_enable(&arm64_const_caps_ready);
+ }
  
- 	/* Restore active ASID */
- 	ttbr1 = read_sysreg(ttbr1_el1);
-+	ttbr1 &= ~TTBR_ASID_MASK;		/* safety measure */
- 	ttbr1 |= ttbr0 & TTBR_ASID_MASK;
- 	write_sysreg(ttbr1, ttbr1_el1);
- 	isb();
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -204,7 +204,7 @@ alternative_if ARM64_HAS_PAN
- alternative_else_nop_endif
+-/*
+- * Check if the current CPU has a given feature capability.
+- * Should be called from non-preemptible context.
+- */
+-static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
+-			       unsigned int cap)
+-{
+-	const struct arm64_cpu_capabilities *caps;
+-
+-	if (WARN_ON(preemptible()))
+-		return false;
+-
+-	for (caps = cap_array; caps->desc; caps++)
+-		if (caps->capability == cap && caps->matches)
+-			return caps->matches(caps, SCOPE_LOCAL_CPU);
+-
+-	return false;
+-}
+-
+ extern const struct arm64_cpu_capabilities arm64_errata[];
  
- 	.if	\el != 0
--	mrs	x21, ttbr1_el1
-+	mrs	x21, ttbr0_el1
- 	tst	x21, #TTBR_ASID_MASK		// Check for the reserved ASID
- 	orr	x23, x23, #PSR_PAN_BIT		// Set the emulated PAN in the saved SPSR
- 	b.eq	1f				// TTBR0 access already disabled
---- a/arch/arm64/lib/clear_user.S
-+++ b/arch/arm64/lib/clear_user.S
-@@ -50,7 +50,7 @@ uao_user_alternative 9f, strh, sttrh, wz
- 	b.mi	5f
- uao_user_alternative 9f, strb, sttrb, wzr, x0, 0
- 5:	mov	x0, #0
--	uaccess_disable_not_uao x2
-+	uaccess_disable_not_uao x2, x3
- 	ret
- ENDPROC(__clear_user)
- 
---- a/arch/arm64/lib/copy_from_user.S
-+++ b/arch/arm64/lib/copy_from_user.S
-@@ -67,7 +67,7 @@ ENTRY(__arch_copy_from_user)
- 	uaccess_enable_not_uao x3, x4, x5
- 	add	end, x0, x2
- #include "copy_template.S"
--	uaccess_disable_not_uao x3
-+	uaccess_disable_not_uao x3, x4
- 	mov	x0, #0				// Nothing to copy
- 	ret
- ENDPROC(__arch_copy_from_user)
---- a/arch/arm64/lib/copy_in_user.S
-+++ b/arch/arm64/lib/copy_in_user.S
-@@ -68,7 +68,7 @@ ENTRY(raw_copy_in_user)
- 	uaccess_enable_not_uao x3, x4, x5
- 	add	end, x0, x2
- #include "copy_template.S"
--	uaccess_disable_not_uao x3
-+	uaccess_disable_not_uao x3, x4
- 	mov	x0, #0
- 	ret
- ENDPROC(raw_copy_in_user)
---- a/arch/arm64/lib/copy_to_user.S
-+++ b/arch/arm64/lib/copy_to_user.S
-@@ -66,7 +66,7 @@ ENTRY(__arch_copy_to_user)
- 	uaccess_enable_not_uao x3, x4, x5
- 	add	end, x0, x2
- #include "copy_template.S"
--	uaccess_disable_not_uao x3
-+	uaccess_disable_not_uao x3, x4
- 	mov	x0, #0
- 	ret
- ENDPROC(__arch_copy_to_user)
---- a/arch/arm64/mm/cache.S
-+++ b/arch/arm64/mm/cache.S
-@@ -72,7 +72,7 @@ USER(9f, ic	ivau, x4	)		// invalidate I
- 	isb
- 	mov	x0, #0
- 1:
--	uaccess_ttbr0_disable x1
-+	uaccess_ttbr0_disable x1, x2
- 	ret
- 9:
- 	mov	x0, #-EFAULT
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -140,6 +140,9 @@ ENDPROC(cpu_do_resume)
- ENTRY(cpu_do_switch_mm)
- 	mrs	x2, ttbr1_el1
- 	mmid	x1, x1				// get mm->context.id
-+#ifdef CONFIG_ARM64_SW_TTBR0_PAN
-+	bfi	x0, x1, #48, #16		// set the ASID field in TTBR0
-+#endif
- 	bfi	x2, x1, #48, #16		// set the ASID
- 	msr	ttbr1_el1, x2			// in TTBR1 (since TCR.A1 is set)
- 	isb
---- a/arch/arm64/xen/hypercall.S
-+++ b/arch/arm64/xen/hypercall.S
-@@ -107,6 +107,6 @@ ENTRY(privcmd_call)
- 	/*
- 	 * Disable userspace access from kernel once the hyp call completed.
- 	 */
--	uaccess_ttbr0_disable x6
-+	uaccess_ttbr0_disable x6, x7
- 	ret
- ENDPROC(privcmd_call);
+ bool this_cpu_has_cap(unsigned int cap)
