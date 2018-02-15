@@ -1,42 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426555AbeBOQui (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 11:50:38 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:49748 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423727AbeBOQue (ORCPT
+        id S1426564AbeBOQv2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 11:51:28 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:51696 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423796AbeBOQv0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:50:34 -0500
-Date: Thu, 15 Feb 2018 17:50:28 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, valentin.schneider@arm.com,
-        morten.rasmussen@foss.arm.com, brendan.jackman@arm.com,
-        dietmar.eggemann@arm.com
-Subject: Re: [PATCH v5 1/3] sched: Stop nohz stats when decayed
-Message-ID: <20180215165028.GA25181@hirez.programming.kicks-ass.net>
-References: <1518622006-16089-1-git-send-email-vincent.guittot@linaro.org>
- <1518622006-16089-2-git-send-email-vincent.guittot@linaro.org>
- <20180215152247.GA25247@e110439-lin>
+        Thu, 15 Feb 2018 11:51:26 -0500
+Date: Thu, 15 Feb 2018 17:51:22 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>, geert@glider.be,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/8] arm64: dts: renesas: r8a77995: Add LVDS support
+Message-ID: <20180215165122.jhcmfkxc2u33b4i2@verge.net.au>
+References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
+ <1518683903-10681-6-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180215152247.GA25247@e110439-lin>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1518683903-10681-6-git-send-email-kbingham@kernel.org>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 03:22:47PM +0000, Patrick Bellasi wrote:
-> > >  static struct {
-> > >  	cpumask_var_t idle_cpus_mask;
-> > >  	atomic_t nr_cpus;
-> > > +	int has_blocked;		/* Idle CPUS has blocked load */
+On Thu, Feb 15, 2018 at 08:38:20AM +0000, Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > 
-> Why not "bool"?
+> The r8a77995 D3 platform has 2 LVDS channels connected to the DU.
 > 
-Because then he gets me yelling that sizeof(_Bool) is undefined and the
-whole structure layout goes out the window :-)
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Never use bool in a composite type.
+It looks like there has been some review of this patch that needs
+addressing, I've marked it as "Changes Requested".
