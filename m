@@ -1,81 +1,51 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1841884-1518709001-2-14896914071740663896
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518709000; b=aGCk6bToSoELWVm0+Tu0HE+oU5kMryJ2TejhnbF/kbhgy+4
-    FHuAg0m9LDBFFqtXk93YFqlPQqKc5vfTBsCRuBy/OEPjbYS8QR02aiXdMsmf0bnJ
-    xWgAaFme1QmhkJUFlu4525Kyi6pAP1uUhVAV061EsqwuMNfWBG0STHHZBJDQPGh3
-    eX1ptcAsEcha8aoWERSZmPZL/8FnMzZBfkva5a61LyHt5bKuN+jtb5sqQBt7jOQI
-    jRde+iY8p11zLyS7i9bbxvU0PdOfXDls9iLHR2ZHCQZ1Gk2pwJS8nvmYK14W3XFd
-    YOOlC2tSKMv/yJL6TeA1BcPLdTHTEoEFczuq9FA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518709000; bh=r46EXPvMYIi+5K9UARW+4YbXE+
-    2JoocfPNKxP9lo/sI=; b=WdWfUbIK2ppPkvCn7uNStALbvpa8MBFoSfXrbneFBQ
-    6jt8IrUBG9dqSmF4hYq3lLggPuBvxavii2bt4/0Di24Ch7ZnnWMXshSMSefs1lFs
-    LKZKdaXL7Xo7hy6OSo1tGE9MyrGSMfmxBPVbNLm9RoS9psIJnq5RbyvUzpr3p2hG
-    S2uapQB7V+ifJGFFsnmdLe4hRiYXOUCNyPP6MGdB77NIPAXLTVWjNQHXvH70uFMR
-    MbJC7OnxSJRMhM1xKFkInPHh7sYZABjjnnKKcS78n3fpT3s+hLpKUl+0tmvi2RZC
-    gccjeYcw2xGjdCQxgrCIVsN1xvhXnSyetNcyqkictfrQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422895AbeBOPgg (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:36:36 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58388 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1422875AbeBOPge (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:36:34 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AH8x2274oL4AtNtUAjyLltjP1YOIze/PmUbtpMC7fQKYC4xu7tDxHDr224UocLnKQyc5jBsusp50
+ARC-Seal: i=1; a=rsa-sha256; t=1518709000; cv=none;
+        d=google.com; s=arc-20160816;
+        b=nf/kUvQWqsoxlOjeymlWzbZhnTKkaR5pBIxX+s4SIC6dsatITBQdlrCGECb5hwbn6M
+         9yl+jy2beMpNg8UPtMXZVUyjfkudqM7IY2wQM34dUzemmx3VXSH4dGDiLDOHy3ix6Y+k
+         3rPt9WliLfh1dBEx0zloquM/s00x69I+Rb1r1KFEI5ZmWL93UqMxHUy6cjas7YeHc6Z9
+         wutSkIEaX13CmOqGMdY8f4QpaFaUQWcT1/wjDnFJFXYnvjkzxlLOx195Lp14YpYep6UU
+         tjK1g6IfbfuU8zmV+S9UlJjxkJXETC4fCrlUKXSkZbrEWZwDt51aMKgbxw9LF0apJCDI
+         HVqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=gn8mKJGFP1pNVzDC9xf/gHG2YEGQhraoeBqHJuk1GOU=;
+        b=ItNRtCjhU/Hdk8WU5dGqSt/4sPOfwRqN50M3lRWqAQZF2AQxmy6AMDvwkCdnY2euAQ
+         6zGNJSBeLAMHeicwxhEZypHGyq5fcJIdhEXrfgdhLO/WkprLrp1QoFJz2REnwSkt8mdB
+         rfKhAOyZ+gxp/vstjAuZDmZYgOi/B3PHmt3SnUC7js2bitqPInbmoeWxOFS884n4r4Ue
+         y0w4fFfb+IqvNuv58eOB9bBnSgGBbhXdxyIBSnCYGMPN1ludKu1PAZWeJu8zR0eszXcv
+         jrhYIeD3/eqWsXcuCqkuq8w6wK5iyYjPWinj4O+JJI7+8w+fZGHK0gl4i77gZKataKaY
+         kIIA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 148/195] kasan: rework Kconfig settings
-Date: Thu, 15 Feb 2018 16:17:19 +0100
-Message-Id: <20180215151713.258262900@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Tejun Heo <tj@kernel.org>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Adam Wallis <awallis@codeaurora.org>,
+	Lai Jiangshan <laijs@cn.fujitsu.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 153/195] kernel/async.c: revert "async: simplify lowest_in_progress()"
+Date: Thu, 15 Feb 2018 16:17:24 +0100
+Message-Id: <20180215151713.534400158@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
 User-Agent: quilt/0.65
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1592480752826931669?=
+X-GMAIL-MSGID: =?utf-8?q?1592481809339120969?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -83,146 +53,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-commit e7c52b84fb18f08ce49b6067ae6285aca79084a8 upstream.
+commit 4f7e988e63e336827f4150de48163bed05d653bd upstream.
 
-We get a lot of very large stack frames using gcc-7.0.1 with the default
--fsanitize-address-use-after-scope --param asan-stack=1 options, which can
-easily cause an overflow of the kernel stack, e.g.
+This reverts commit 92266d6ef60c ("async: simplify lowest_in_progress()")
+which was simply wrong: In the case where domain is NULL, we now use the
+wrong offsetof() in the list_first_entry macro, so we don't actually
+fetch the ->cookie value, but rather the eight bytes located
+sizeof(struct list_head) further into the struct async_entry.
 
-  drivers/gpu/drm/i915/gvt/handlers.c:2434:1: warning: the frame size of 46176 bytes is larger than 3072 bytes
-  drivers/net/wireless/ralink/rt2x00/rt2800lib.c:5650:1: warning: the frame size of 23632 bytes is larger than 3072 bytes
-  lib/atomic64_test.c:250:1: warning: the frame size of 11200 bytes is larger than 3072 bytes
-  drivers/gpu/drm/i915/gvt/handlers.c:2621:1: warning: the frame size of 9208 bytes is larger than 3072 bytes
-  drivers/media/dvb-frontends/stv090x.c:3431:1: warning: the frame size of 6816 bytes is larger than 3072 bytes
-  fs/fscache/stats.c:287:1: warning: the frame size of 6536 bytes is larger than 3072 bytes
+On 64 bit, that's the data member, while on 32 bit, that's a u64 built
+from func and data in some order.
 
-To reduce this risk, -fsanitize-address-use-after-scope is now split out
-into a separate CONFIG_KASAN_EXTRA Kconfig option, leading to stack
-frames that are smaller than 2 kilobytes most of the time on x86_64.  An
-earlier version of this patch also prevented combining KASAN_EXTRA with
-KASAN_INLINE, but that is no longer necessary with gcc-7.0.1.
+I think the bug happens to be harmless in practice: It obviously only
+affects callers which pass a NULL domain, and AFAICT the only such
+caller is
 
-All patches to get the frame size below 2048 bytes with CONFIG_KASAN=y
-and CONFIG_KASAN_EXTRA=n have been merged by maintainers now, so we can
-bring back that default now.  KASAN_EXTRA=y still causes lots of
-warnings but now defaults to !COMPILE_TEST to disable it in
-allmodconfig, and it remains disabled in all other defconfigs since it
-is a new option.  I arbitrarily raise the warning limit for KASAN_EXTRA
-to 3072 to reduce the noise, but an allmodconfig kernel still has around
-50 warnings on gcc-7.
+  async_synchronize_full() ->
+  async_synchronize_full_domain(NULL) ->
+  async_synchronize_cookie_domain(ASYNC_COOKIE_MAX, NULL)
 
-I experimented a bit more with smaller stack frames and have another
-follow-up series that reduces the warning limit for 64-bit architectures
-to 1280 bytes (without CONFIG_KASAN).
+and the ASYNC_COOKIE_MAX means that in practice we end up waiting for
+the async_global_pending list to be empty - but it would break if
+somebody happened to pass (void*)-1 as the data element to
+async_schedule, and of course also if somebody ever does a
+async_synchronize_cookie_domain(, NULL) with a "finite" cookie value.
 
-With earlier versions of this patch series, I also had patches to address
-the warnings we get with KASAN and/or KASAN_EXTRA, using a
-"noinline_if_stackbloat" annotation.
+Maybe the "harmless in practice" means this isn't -stable material.  But
+I'm not completely confident my quick git grep'ing is enough, and there
+might be affected code in one of the earlier kernels that has since been
+removed, so I'll leave the decision to the stable guys.
 
-That annotation now got replaced with a gcc-8 bugfix (see
-https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715) and a workaround for
-older compilers, which means that KASAN_EXTRA is now just as bad as
-before and will lead to an instant stack overflow in a few extreme
-cases.
-
-This reverts parts of commit 3f181b4d8652 ("lib/Kconfig.debug: disable
--Wframe-larger-than warnings with KASAN=y").  Two patches in linux-next
-should be merged first to avoid introducing warnings in an allmodconfig
-build:
-  3cd890dbe2a4 ("media: dvb-frontends: fix i2c access helpers for KASAN")
-  16c3ada89cff ("media: r820t: fix r820t_write_reg for KASAN")
-
-Do we really need to backport this?
-
-I think we do: without this patch, enabling KASAN will lead to
-unavoidable kernel stack overflow in certain device drivers when built
-with gcc-7 or higher on linux-4.10+ or any version that contains a
-backport of commit c5caf21ab0cf8.  Most people are probably still on
-older compilers, but it will get worse over time as they upgrade their
-distros.
-
-The warnings we get on kernels older than this should all be for code
-that uses dangerously large stack frames, though most of them do not
-cause an actual stack overflow by themselves.The asan-stack option was
-added in linux-4.0, and commit 3f181b4d8652 ("lib/Kconfig.debug:
-disable -Wframe-larger-than warnings with KASAN=y") effectively turned
-off the warning for allmodconfig kernels, so I would like to see this
-fix backported to any kernels later than 4.0.
-
-I have done dozens of fixes for individual functions with stack frames
-larger than 2048 bytes with asan-stack, and I plan to make sure that
-all those fixes make it into the stable kernels as well (most are
-already there).
-
-Part of the complication here is that asan-stack (from 4.0) was
-originally assumed to always require much larger stacks, but that
-turned out to be a combination of multiple gcc bugs that we have now
-worked around and fixed, but sanitize-address-use-after-scope (from
-v4.10) has a much higher inherent stack usage and also suffers from at
-least three other problems that we have analyzed but not yet fixed
-upstream, each of them makes the stack usage more severe than it should
-be.
-
-Link: http://lkml.kernel.org/r/20171221134744.2295529-1-arnd@arndb.de
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Andrey Konovalov <andreyknvl@google.com>
+Link: http://lkml.kernel.org/r/20171128104938.3921-1-linux@rasmusvillemoes.dk
+Fixes: 92266d6ef60c "async: simplify lowest_in_progress()"
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Acked-by: Tejun Heo <tj@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Adam Wallis <awallis@codeaurora.org>
+Cc: Lai Jiangshan <laijs@cn.fujitsu.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/Kconfig.debug      |    2 +-
- lib/Kconfig.kasan      |   11 +++++++++++
- scripts/Makefile.kasan |    2 ++
- 3 files changed, 14 insertions(+), 1 deletion(-)
+ kernel/async.c |   20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -217,7 +217,7 @@ config ENABLE_MUST_CHECK
- config FRAME_WARN
- 	int "Warn for stack frames larger than (needs gcc 4.4)"
- 	range 0 8192
--	default 0 if KASAN
-+	default 3072 if KASAN_EXTRA
- 	default 2048 if GCC_PLUGIN_LATENT_ENTROPY
- 	default 1280 if (!64BIT && PARISC)
- 	default 1024 if (!64BIT && !PARISC)
---- a/lib/Kconfig.kasan
-+++ b/lib/Kconfig.kasan
-@@ -20,6 +20,17 @@ config KASAN
- 	  Currently CONFIG_KASAN doesn't work with CONFIG_DEBUG_SLAB
- 	  (the resulting kernel does not boot).
+--- a/kernel/async.c
++++ b/kernel/async.c
+@@ -84,20 +84,24 @@ static atomic_t entry_count;
  
-+config KASAN_EXTRA
-+	bool "KAsan: extra checks"
-+	depends on KASAN && DEBUG_KERNEL && !COMPILE_TEST
-+	help
-+	  This enables further checks in the kernel address sanitizer, for now
-+	  it only includes the address-use-after-scope check that can lead
-+	  to excessive kernel stack usage, frame size warnings and longer
-+	  compile time.
-+	  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715 has more
-+
-+
- choice
- 	prompt "Instrumentation type"
- 	depends on KASAN
---- a/scripts/Makefile.kasan
-+++ b/scripts/Makefile.kasan
-@@ -30,7 +30,9 @@ else
-     endif
- endif
+ static async_cookie_t lowest_in_progress(struct async_domain *domain)
+ {
+-	struct list_head *pending;
++	struct async_entry *first = NULL;
+ 	async_cookie_t ret = ASYNC_COOKIE_MAX;
+ 	unsigned long flags;
  
-+ifdef CONFIG_KASAN_EXTRA
- CFLAGS_KASAN += $(call cc-option, -fsanitize-address-use-after-scope)
-+endif
+ 	spin_lock_irqsave(&async_lock, flags);
  
- CFLAGS_KASAN_NOSANITIZE := -fno-builtin
+-	if (domain)
+-		pending = &domain->pending;
+-	else
+-		pending = &async_global_pending;
++	if (domain) {
++		if (!list_empty(&domain->pending))
++			first = list_first_entry(&domain->pending,
++					struct async_entry, domain_list);
++	} else {
++		if (!list_empty(&async_global_pending))
++			first = list_first_entry(&async_global_pending,
++					struct async_entry, global_list);
++	}
  
+-	if (!list_empty(pending))
+-		ret = list_first_entry(pending, struct async_entry,
+-				       domain_list)->cookie;
++	if (first)
++		ret = first->cookie;
+ 
+ 	spin_unlock_irqrestore(&async_lock, flags);
+ 	return ret;
