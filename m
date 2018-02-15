@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x224OXpq5QOrJu99T82i76y5o5cy6W9tB1YQWumCLMgZCJgF/R7S/iR5r5IeQTEcwdWjcc/gM
-ARC-Seal: i=1; a=rsa-sha256; t=1518708763; cv=none;
+X-Google-Smtp-Source: AH8x225pIXoOhd04vl9pHO1BPXDJrMJrsb2nU+4jOd5P5xErcsbL+Zss8JuS6I/SxfXEG4DhMy0+
+ARC-Seal: i=1; a=rsa-sha256; t=1518708760; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZhM5y5ZTw6nBiDKYBav7Iz7dgSFjYTWvQrikwlSV0zTciw5S0lgoYtugGKGYoNTSw+
-         kEtXtxXo2YR2vU36VSrZMRkocDVxJ/67J7pTuZEAMyK6E8Sqg/sShqJJaflEegJwPUrR
-         t8kaaJ9eb7bIu2BQv4xGuyGSfbe6WhFDXqTe7SuqqcNlO2rBrBdXSnRzHRzA4wYWpKcN
-         saGpX/UB/cYwkvAw3KBPyb8Xy02jXlu95L9xwEyZreFXY5NH0tqqS9pI3CRRge1JqAgd
-         KM/9WGgyJplOjR5gJ68cTiyR8juCMXsw3ZtZbpt3225vvc5IcCpEjgZDw8GxwMMWNK3w
-         dF0w==
+        b=If7EZ/YeqU5FJxUViBcJfofQyYbPpxoZEgrWHORYqm3XtK6t8JUvOBmW6HS65LlaF0
+         MDgE+5CdatZ0TjOkctbifI+ALCebKdjM9t8BkQ7+mHdlGVATMLOOJyzqKlXJSHomB4Pd
+         iaj+t5/gJKqgnW3kOKvPSJ6PefCqx4r9rAFiNyuY7yGbdU85WAh40fd1GwxyoWEsnzjn
+         +7+p8GnTzH2OojA+Hi+nGOEfxjaI7rtA6PLXZpe6/ZyQyXzNARYlLsBHilA068JMIMGb
+         5jeL3OxQHEHgcSiqLAOkpb29MOUBu6LUVsQB+hOou2HcLvXRm6IU0QCAeOhoBMQxK4oL
+         aeig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=JglXPR99GwD/CtNGRA8KQMnh5M5iLF5IrrjKTJAY6+s=;
-        b=akmHrlK4BMTgnKMFpDdKKNvTm6B0atUknnonA2K22pRZtnE8fUg2im+0klc8nrB2pk
-         sfC3bOYTDSru3QYUVWKZFDO3UT0VX5MP00Xl65FDmSRG8IJ790mSDogwyOOrSzNJtXM5
-         LFN0zgxPgngsPERol49rg6+KJT8i0lT3F78576Y0GV4aghJ1gaTanx9v6spCovAQBuuH
-         7I+h845z3+BAiVfBWKXf8l7KnYP41Fd7Su3G50eMvYXxlTYeUl85FGXxJ+sM5Jd94UlU
-         +4Jt4eGJ/RQJY7VXVzdYCqZWfkfsnqz0PkWzwZWktb+cvysGLUgXzEiI2HSDOA+EsABC
-         19eg==
+        bh=f5asVocLC2QyxNQ1DajaSfQJ2EAXGYZWSkvaneLsTnA=;
+        b=UojH/muEAAsxBhprif626BngMofuO0D348n//cwi8f+Rfm8Qe/t0CYoJ9Uxz6amfaK
+         0c3X79yNUsWU/1HUZzPLl9bgHFwZyF1zOC1WjclZSrsIl/Ab/LNOunYC+00QMinLo3W/
+         vdXieFQuKz2rfEyD6v48gW/Id1OFne/VElHdnDqg1nXXA3lqI2FM5OhVLMprPJzNztPb
+         7yyXpFFfBpW+NanyQ1d8vZxP72LtwOGonF2b8lEDksptqKlWOWUZ1rc7U5KY3OOtcOQ6
+         bxWf0EDNwdFFCeHDM/vwXTz7Km7uT654VzJCKsolxBP7YrnyI3HUzKl7CESQ2Qy/dSG2
+         zG3A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,12 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Will Deacon <will.deacon@arm.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 4.14 071/195] [Variant 2/Spectre-v2] arm64: Move BP hardening to check_and_switch_context
-Date: Thu, 15 Feb 2018 16:16:02 +0100
-Message-Id: <20180215151709.252824917@linuxfoundation.org>
+Subject: [PATCH 4.14 070/195] [Variant 2/Spectre-v2] arm64: Add skeleton to harden the branch predictor against aliasing attacks
+Date: Thu, 15 Feb 2018 16:16:01 +0100
+Message-Id: <20180215151709.209627403@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481559754840687?=
-X-GMAIL-MSGID: =?utf-8?q?1592481559754840687?=
+X-GMAIL-THRID: =?utf-8?q?1592481557110554163?=
+X-GMAIL-MSGID: =?utf-8?q?1592481557110554163?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,52 +49,352 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Will Deacon <will.deacon@arm.com>
 
 
-Commit a8e4c0a919ae upstream.
+Commit 0f15adbb2861 upstream.
 
-We call arm64_apply_bp_hardening() from post_ttbr_update_workaround,
-which has the unexpected consequence of being triggered on every
-exception return to userspace when ARM64_SW_TTBR0_PAN is selected,
-even if no context switch actually occured.
+Aliasing attacks against CPU branch predictors can allow an attacker to
+redirect speculative control flow on some CPUs and potentially divulge
+information from one context to another.
 
-This is a bit suboptimal, and it would be more logical to only
-invalidate the branch predictor when we actually switch to
-a different mm.
+This patch adds initial skeleton code behind a new Kconfig option to
+enable implementation-specific mitigations against these attacks for
+CPUs that are affected.
 
-In order to solve this, move the call to arm64_apply_bp_hardening()
-into check_and_switch_context(), where we're guaranteed to pick
-a different mm context.
-
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Co-developed-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/mm/context.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm64/Kconfig               |   17 ++++++++
+ arch/arm64/include/asm/cpucaps.h |    3 +
+ arch/arm64/include/asm/mmu.h     |   37 +++++++++++++++++++
+ arch/arm64/include/asm/sysreg.h  |    1 
+ arch/arm64/kernel/Makefile       |    4 ++
+ arch/arm64/kernel/bpi.S          |   55 ++++++++++++++++++++++++++++
+ arch/arm64/kernel/cpu_errata.c   |   74 +++++++++++++++++++++++++++++++++++++++
+ arch/arm64/kernel/cpufeature.c   |    1 
+ arch/arm64/kernel/entry.S        |    8 ++--
+ arch/arm64/mm/context.c          |    2 +
+ arch/arm64/mm/fault.c            |   17 ++++++++
+ 11 files changed, 215 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm64/kernel/bpi.S
 
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -818,6 +818,23 @@ config UNMAP_KERNEL_AT_EL0
+ 
+ 	  If unsure, say Y.
+ 
++config HARDEN_BRANCH_PREDICTOR
++	bool "Harden the branch predictor against aliasing attacks" if EXPERT
++	default y
++	help
++	  Speculation attacks against some high-performance processors rely on
++	  being able to manipulate the branch predictor for a victim context by
++	  executing aliasing branches in the attacker context.  Such attacks
++	  can be partially mitigated against by clearing internal branch
++	  predictor state and limiting the prediction logic in some situations.
++
++	  This config option will take CPU-specific actions to harden the
++	  branch predictor against aliasing attacks and may rely on specific
++	  instruction sequences or control bits being set by the system
++	  firmware.
++
++	  If unsure, say Y.
++
+ menuconfig ARMV8_DEPRECATED
+ 	bool "Emulate deprecated/obsolete ARMv8 instructions"
+ 	depends on COMPAT
+--- a/arch/arm64/include/asm/cpucaps.h
++++ b/arch/arm64/include/asm/cpucaps.h
+@@ -41,7 +41,8 @@
+ #define ARM64_WORKAROUND_CAVIUM_30115		20
+ #define ARM64_HAS_DCPOP				21
+ #define ARM64_UNMAP_KERNEL_AT_EL0		23
++#define ARM64_HARDEN_BRANCH_PREDICTOR		24
+ 
+-#define ARM64_NCAPS				24
++#define ARM64_NCAPS				25
+ 
+ #endif /* __ASM_CPUCAPS_H */
+--- a/arch/arm64/include/asm/mmu.h
++++ b/arch/arm64/include/asm/mmu.h
+@@ -41,6 +41,43 @@ static inline bool arm64_kernel_unmapped
+ 	       cpus_have_const_cap(ARM64_UNMAP_KERNEL_AT_EL0);
+ }
+ 
++typedef void (*bp_hardening_cb_t)(void);
++
++struct bp_hardening_data {
++	int			hyp_vectors_slot;
++	bp_hardening_cb_t	fn;
++};
++
++#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
++extern char __bp_harden_hyp_vecs_start[], __bp_harden_hyp_vecs_end[];
++
++DECLARE_PER_CPU_READ_MOSTLY(struct bp_hardening_data, bp_hardening_data);
++
++static inline struct bp_hardening_data *arm64_get_bp_hardening_data(void)
++{
++	return this_cpu_ptr(&bp_hardening_data);
++}
++
++static inline void arm64_apply_bp_hardening(void)
++{
++	struct bp_hardening_data *d;
++
++	if (!cpus_have_const_cap(ARM64_HARDEN_BRANCH_PREDICTOR))
++		return;
++
++	d = arm64_get_bp_hardening_data();
++	if (d->fn)
++		d->fn();
++}
++#else
++static inline struct bp_hardening_data *arm64_get_bp_hardening_data(void)
++{
++	return NULL;
++}
++
++static inline void arm64_apply_bp_hardening(void)	{ }
++#endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
++
+ extern void paging_init(void);
+ extern void bootmem_init(void);
+ extern void __iomem *early_io_map(phys_addr_t phys, unsigned long virt);
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -333,6 +333,7 @@
+ 
+ /* id_aa64pfr0 */
+ #define ID_AA64PFR0_CSV3_SHIFT		60
++#define ID_AA64PFR0_CSV2_SHIFT		56
+ #define ID_AA64PFR0_GIC_SHIFT		24
+ #define ID_AA64PFR0_ASIMD_SHIFT		20
+ #define ID_AA64PFR0_FP_SHIFT		16
+--- a/arch/arm64/kernel/Makefile
++++ b/arch/arm64/kernel/Makefile
+@@ -55,6 +55,10 @@ arm64-obj-$(CONFIG_ARM64_RELOC_TEST)	+=
+ arm64-reloc-test-y := reloc_test_core.o reloc_test_syms.o
+ arm64-obj-$(CONFIG_CRASH_DUMP)		+= crash_dump.o
+ 
++ifeq ($(CONFIG_KVM),y)
++arm64-obj-$(CONFIG_HARDEN_BRANCH_PREDICTOR)	+= bpi.o
++endif
++
+ obj-y					+= $(arm64-obj-y) vdso/ probes/
+ obj-m					+= $(arm64-obj-m)
+ head-y					:= head.o
+--- /dev/null
++++ b/arch/arm64/kernel/bpi.S
+@@ -0,0 +1,55 @@
++/*
++ * Contains CPU specific branch predictor invalidation sequences
++ *
++ * Copyright (C) 2018 ARM Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/linkage.h>
++
++.macro ventry target
++	.rept 31
++	nop
++	.endr
++	b	\target
++.endm
++
++.macro vectors target
++	ventry \target + 0x000
++	ventry \target + 0x080
++	ventry \target + 0x100
++	ventry \target + 0x180
++
++	ventry \target + 0x200
++	ventry \target + 0x280
++	ventry \target + 0x300
++	ventry \target + 0x380
++
++	ventry \target + 0x400
++	ventry \target + 0x480
++	ventry \target + 0x500
++	ventry \target + 0x580
++
++	ventry \target + 0x600
++	ventry \target + 0x680
++	ventry \target + 0x700
++	ventry \target + 0x780
++.endm
++
++	.align	11
++ENTRY(__bp_harden_hyp_vecs_start)
++	.rept 4
++	vectors __kvm_hyp_vector
++	.endr
++ENTRY(__bp_harden_hyp_vecs_end)
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -60,6 +60,80 @@ static int cpu_enable_trap_ctr_access(vo
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
++#include <asm/mmu_context.h>
++#include <asm/cacheflush.h>
++
++DEFINE_PER_CPU_READ_MOSTLY(struct bp_hardening_data, bp_hardening_data);
++
++#ifdef CONFIG_KVM
++static void __copy_hyp_vect_bpi(int slot, const char *hyp_vecs_start,
++				const char *hyp_vecs_end)
++{
++	void *dst = lm_alias(__bp_harden_hyp_vecs_start + slot * SZ_2K);
++	int i;
++
++	for (i = 0; i < SZ_2K; i += 0x80)
++		memcpy(dst + i, hyp_vecs_start, hyp_vecs_end - hyp_vecs_start);
++
++	flush_icache_range((uintptr_t)dst, (uintptr_t)dst + SZ_2K);
++}
++
++static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
++				      const char *hyp_vecs_start,
++				      const char *hyp_vecs_end)
++{
++	static int last_slot = -1;
++	static DEFINE_SPINLOCK(bp_lock);
++	int cpu, slot = -1;
++
++	spin_lock(&bp_lock);
++	for_each_possible_cpu(cpu) {
++		if (per_cpu(bp_hardening_data.fn, cpu) == fn) {
++			slot = per_cpu(bp_hardening_data.hyp_vectors_slot, cpu);
++			break;
++		}
++	}
++
++	if (slot == -1) {
++		last_slot++;
++		BUG_ON(((__bp_harden_hyp_vecs_end - __bp_harden_hyp_vecs_start)
++			/ SZ_2K) <= last_slot);
++		slot = last_slot;
++		__copy_hyp_vect_bpi(slot, hyp_vecs_start, hyp_vecs_end);
++	}
++
++	__this_cpu_write(bp_hardening_data.hyp_vectors_slot, slot);
++	__this_cpu_write(bp_hardening_data.fn, fn);
++	spin_unlock(&bp_lock);
++}
++#else
++static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
++				      const char *hyp_vecs_start,
++				      const char *hyp_vecs_end)
++{
++	__this_cpu_write(bp_hardening_data.fn, fn);
++}
++#endif	/* CONFIG_KVM */
++
++static void  install_bp_hardening_cb(const struct arm64_cpu_capabilities *entry,
++				     bp_hardening_cb_t fn,
++				     const char *hyp_vecs_start,
++				     const char *hyp_vecs_end)
++{
++	u64 pfr0;
++
++	if (!entry->matches(entry, SCOPE_LOCAL_CPU))
++		return;
++
++	pfr0 = read_cpuid(ID_AA64PFR0_EL1);
++	if (cpuid_feature_extract_unsigned_field(pfr0, ID_AA64PFR0_CSV2_SHIFT))
++		return;
++
++	__install_bp_hardening_cb(fn, hyp_vecs_start, hyp_vecs_end);
++}
++#endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
++
+ #define MIDR_RANGE(model, min, max) \
+ 	.def_scope = SCOPE_LOCAL_CPU, \
+ 	.matches = is_affected_midr_range, \
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -126,6 +126,7 @@ static const struct arm64_ftr_bits ftr_i
+ 
+ static const struct arm64_ftr_bits ftr_id_aa64pfr0[] = {
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV3_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV2_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64PFR0_GIC_SHIFT, 4, 0),
+ 	S_ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_ASIMD_SHIFT, 4, ID_AA64PFR0_ASIMD_NI),
+ 	S_ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_FP_SHIFT, 4, ID_AA64PFR0_FP_NI),
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -724,13 +724,15 @@ el0_ia:
+ 	 * Instruction abort handling
+ 	 */
+ 	mrs	x26, far_el1
+-	// enable interrupts before calling the main handler
+-	enable_dbg_and_irq
++	enable_dbg
++#ifdef CONFIG_TRACE_IRQFLAGS
++	bl	trace_hardirqs_off
++#endif
+ 	ct_user_exit
+ 	mov	x0, x26
+ 	mov	x1, x25
+ 	mov	x2, sp
+-	bl	do_mem_abort
++	bl	do_el0_ia_bp_hardening
+ 	b	ret_to_user
+ el0_fpsimd_acc:
+ 	/*
 --- a/arch/arm64/mm/context.c
 +++ b/arch/arm64/mm/context.c
-@@ -227,6 +227,9 @@ void check_and_switch_context(struct mm_
- 	raw_spin_unlock_irqrestore(&cpu_asid_lock, flags);
- 
- switch_mm_fastpath:
-+
-+	arm64_apply_bp_hardening();
-+
- 	/*
- 	 * Defer TTBR0_EL1 setting for user threads to uaccess_enable() when
- 	 * emulating PAN.
-@@ -242,8 +245,6 @@ asmlinkage void post_ttbr_update_workaro
+@@ -242,6 +242,8 @@ asmlinkage void post_ttbr_update_workaro
  			"ic iallu; dsb nsh; isb",
  			ARM64_WORKAROUND_CAVIUM_27456,
  			CONFIG_CAVIUM_ERRATUM_27456));
--
--	arm64_apply_bp_hardening();
++
++	arm64_apply_bp_hardening();
  }
  
  static int asids_init(void)
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -751,6 +751,23 @@ asmlinkage void __exception do_mem_abort
+ 	arm64_notify_die("", regs, &info, esr);
+ }
+ 
++asmlinkage void __exception do_el0_ia_bp_hardening(unsigned long addr,
++						   unsigned int esr,
++						   struct pt_regs *regs)
++{
++	/*
++	 * We've taken an instruction abort from userspace and not yet
++	 * re-enabled IRQs. If the address is a kernel address, apply
++	 * BP hardening prior to enabling IRQs and pre-emption.
++	 */
++	if (addr > TASK_SIZE)
++		arm64_apply_bp_hardening();
++
++	local_irq_enable();
++	do_mem_abort(addr, esr, regs);
++}
++
++
+ /*
+  * Handle stack alignment exceptions.
+  */
