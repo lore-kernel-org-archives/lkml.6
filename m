@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2178418-1518719413-2-17588084977547362285
+X-Cyrus-Session-Id: sloti22d1t05-2178418-1518719409-2-10487224464258597471
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enca,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518719412; b=P+zfcsGltUzfqNNtDJ4XtO1MX8QC4UssFUdPHDesb58udyh
-    Wgv+K37NKyGawTIbLTstLf7/CGhuuGPSIr+qaT0TpKlj0c/ihEROpmqBbjoXwE8M
-    hHvzndikwScW3AUXQlSJShEgvBU7hFm3a6T8q8Y6tjRzKoZkBPkPSbOYmtoPI1ag
-    TFmoMOmShTv1AZJVt7gSpKcmavZ7pROfGj3uE+u4zp+uEPMFcpRM32V4mhCUc2dp
-    SEE8rq3xPO8rWVPbUA2IzZIyOEXrLxtHyC9VeD0gMS/TwI3OUmtnL/cGJun28IGW
-    NS/aIao6ZM6flbJjA8ejsOWu2hpxUNyNuQj8rjA==
+    t=1518719409; b=jC61pyQzb+Preix+qamJ0YtmiLPE9MX6Of5CjnI1nZWWUsd
+    fDfCl2wewcA9muHrKeZhqZV505z5iu2bu9+ZPC5x967AQQv7S5LGbY9Kh18vBFA0
+    hD1vCfZdTdnBB+CR94BIq2D3LQNxBmNRpeiEcTafYtKDD9NiDchq6PSBfMYwPTXF
+    abslkt/M2dj777RUJKlRs7lv/CHGJcaa6YQ1dZ2dHAdcfOUNHe1izs5thRkGQDE6
+    xjDrP0Nok8FrHmIm8LnwL8Q2Otd6rejIegRZAraeT0A21Gp3P272weM2csHVMwkr
+    yz2MNwwyvexU+kri20oeFn3HyM0JeLhg5hizoGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518719412; bh=lUE4hfiGP/Psx+yIx2NlkbD3Oj
-    9H4vEAewcnZKBXDdw=; b=M05U4WQKc3981DMDW6wOwqSRNmijfQ9CHVuOmkv//9
-    WkmTucbD3zwx/ybd+1mFq8dhOijVfiVL8MztdstwRDsk6WWoESkG4Cn1waThPlGN
-    rd7BzRHXL2jED8EaTOZU9pDLCjIIbJt9Olt7Vnpi2su7QiDurCDjZXdnxPX4ZmnP
-    2ZkwLs2poH+9V1G3I7Hazj1qKuX2cwhUYSCentszSYTCr08P9tcaf6aTT4Ov2/X3
-    7reAbkaeXlBre+24CXVv6aXx8nt5/QPhGU+0RKS5OldUh4A3/3E1GMR13Hfows6O
-    VHbKig7xYN9OH1vtcsnhW236Iuol6s0h4V2I9hoXyn/w==
+    :list-id; s=arctest; t=1518719409; bh=y79in4lEEQZdNQX4lJsba7+g65
+    Bke06XHUYodEyOZaM=; b=D7Yf4wNA9VXpa6tqEOu0wKOdMuJlisvFzgM4tQOzAN
+    ffBozv7zvbNvN//s8uXJgveybEGVm6JR4oLceo1dkeoAvFdu5WGhNvkkzKQAYRqA
+    P5dlBAzwdWy9YhLoWtDOB5Xx/6GmxkzXVEJUfnJSiiS+UBWKMgAu2jcQKEVJdnUW
+    tb9aTu3j8RPlodpZ8xok0gwiQcPrpFoVXT5hPCxWVaragvgGDd98ey7FNFmsZqP1
+    7CbykXiyT5tYosWv1iLprtF8Pm8AU+k/0yuH7+dZjH8KfiIuMgEgGqT4Inc5aTDU
+    H0l0wy96XvhkiXKeCiYRaKNDOk+ujtf4Pefy439l8UHw==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,22 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162777AbeBOSaL (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 13:30:11 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52152 "EHLO
+        id S1163141AbeBOPZT (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 15 Feb 2018 10:25:19 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52168 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163126AbeBOPZP (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:25:15 -0500
+        with ESMTP id S1162399AbeBOPZR (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 15 Feb 2018 10:25:17 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Enrico Mioso <mrkiko.rs@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: [PATCH 4.4 090/108] media: cxusb, dib0700: ignore XC2028_I2C_FLUSH
-Date: Thu, 15 Feb 2018 16:17:27 +0100
-Message-Id: <20180215151234.949851260@linuxfoundation.org>
+        stable@vger.kernel.org, Dmitry Safonov <0x7f454c46@gmail.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.4 108/108] ftrace: Remove incorrect setting of glob search field
+Date: Thu, 15 Feb 2018 16:17:45 +0100
+Message-Id: <20180215151237.320675918@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.267507937@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
@@ -77,45 +79,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 9893b905e743ded332575ca04486bd586c0772f7 upstream.
+commit 7b6586562708d2b3a04fe49f217ddbadbbbb0546 upstream.
 
-The XC2028_I2C_FLUSH only needs to be implemented on a few
-devices. Others can safely ignore it.
+__unregister_ftrace_function_probe() will incorrectly parse the glob filter
+because it resets the search variable that was setup by filter_parse_regex().
 
-That prevents filling the dmesg with lots of messages like:
+Al Viro reported this:
 
-	dib0700: stk7700ph_xc3028_callback: unknown command 2, arg 0
+    After that call of filter_parse_regex() we could have func_g.search not
+    equal to glob only if glob started with '!' or '*'.  In the former case
+    we would've buggered off with -EINVAL (not = 1).  In the latter we
+    would've set func_g.search equal to glob + 1, calculated the length of
+    that thing in func_g.len and proceeded to reset func_g.search back to
+    glob.
 
-Fixes: 4d37ece757a8 ("[media] tuner/xc2028: Add I2C flush callback")
-Reported-by: Enrico Mioso <mrkiko.rs@gmail.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+    Suppose the glob is e.g. *foo*.  We end up with
+	    func_g.type = MATCH_MIDDLE_ONLY;
+	    func_g.len = 3;
+	    func_g.search = "*foo";
+    Feeding that to ftrace_match_record() will not do anything sane - we
+    will be looking for names containing "*foo" (->len is ignored for that
+    one).
+
+Link: http://lkml.kernel.org/r/20180127031706.GE13338@ZenIV.linux.org.uk
+
+Fixes: 3ba009297149f ("ftrace: Introduce ftrace_glob structure")
+Reviewed-by: Dmitry Safonov <0x7f454c46@gmail.com>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/dvb-usb/cxusb.c           |    2 ++
- drivers/media/usb/dvb-usb/dib0700_devices.c |    1 +
- 2 files changed, 3 insertions(+)
+ kernel/trace/ftrace.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/media/usb/dvb-usb/cxusb.c
-+++ b/drivers/media/usb/dvb-usb/cxusb.c
-@@ -818,6 +818,8 @@ static int dvico_bluebird_xc2028_callbac
- 	case XC2028_RESET_CLK:
- 		deb_info("%s: XC2028_RESET_CLK %d\n", __func__, arg);
- 		break;
-+	case XC2028_I2C_FLUSH:
-+		break;
- 	default:
- 		deb_info("%s: unknown command %d, arg %d\n", __func__,
- 			 command, arg);
---- a/drivers/media/usb/dvb-usb/dib0700_devices.c
-+++ b/drivers/media/usb/dvb-usb/dib0700_devices.c
-@@ -431,6 +431,7 @@ static int stk7700ph_xc3028_callback(voi
- 		state->dib7000p_ops.set_gpio(adap->fe_adap[0].fe, 8, 0, 1);
- 		break;
- 	case XC2028_RESET_CLK:
-+	case XC2028_I2C_FLUSH:
- 		break;
- 	default:
- 		err("%s: unknown command %d, arg %d\n", __func__,
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -3845,7 +3845,6 @@ __unregister_ftrace_function_probe(char
+ 		func_g.type = filter_parse_regex(glob, strlen(glob),
+ 						 &func_g.search, &not);
+ 		func_g.len = strlen(func_g.search);
+-		func_g.search = glob;
+ 
+ 		/* we do not support '!' for function probes */
+ 		if (WARN_ON(not))
