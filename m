@@ -1,35 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755386AbeBOKIB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 05:08:01 -0500
-Received: from parrot.pmhahn.de ([88.198.50.102]:41444 "EHLO parrot.pmhahn.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755240AbeBOKH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 05:07:59 -0500
-Subject: Re: [PATCH] namei: fix hardlink speeling error
-To: Richard Guy Briggs <rgb@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
-Cc: viro@zeniv.linux.org.uk, Paul Moore <paul@paul-moore.com>
-References: <68d4b8c4ad6b85d4336f2a2893e3ea04ffdc7794.1518661649.git.rgb@redhat.com>
-From: Philipp Hahn <pmhahn@pmhahn.de>
-Message-ID: <4ed8e95b-0aa8-ae26-7ec4-e01235583e8f@pmhahn.de>
-Date: Thu, 15 Feb 2018 10:57:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1755409AbeBOKJS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 05:09:18 -0500
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:43446 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755240AbeBOKJP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 05:09:15 -0500
+X-Google-Smtp-Source: AH8x224NL8HjjkIpv4vZOgoh8c2GoTdprjIobUc9vuEYcp5N6nnhSDwcuvu6zS+SOZxk9NpX8LApkGRxRp5tTQkTRGM=
 MIME-Version: 1.0
-In-Reply-To: <68d4b8c4ad6b85d4336f2a2893e3ea04ffdc7794.1518661649.git.rgb@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <422e897f-4b65-10f6-4184-36b78b6ea274@embeddedor.com>
+References: <20180119003955.GA28885@embeddedor.com> <1fea2528-11a5-0210-6350-e916ebfebbdf@amd.com>
+ <422e897f-4b65-10f6-4184-36b78b6ea274@embeddedor.com>
+From: Oded Gabbay <oded.gabbay@gmail.com>
+Date: Thu, 15 Feb 2018 12:08:44 +0200
+Message-ID: <CAFCwf13TGeBGiS_4KiTWwbY3T23JZkWod6DJE-Mi=RmYXRr54w@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdkfd: Use ARRAY_SIZE macro in kfd_build_sysfs_node_entry
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Cc: Felix Kuehling <felix.kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Gustavo,
+The patch is queued for the merge window of kernel 4.17 (opens in
+about 7 weeks from now).
 
-Am 15.02.2018 um 03:28 schrieb Richard Guy Briggs:
-> Fix handlink to hardlink.
+Oded
 
-and introduce a new sp*el*ling error in the subject line ;-)
-
-Philipp
+On Wed, Feb 14, 2018 at 11:30 PM, Gustavo A. R. Silva
+<garsilva@embeddedor.com> wrote:
+> Hi all,
+>
+> I was just wondering about the status of this patch.
+>
+> Thanks
+> --
+> Gustavo
+>
+>
+> On 01/19/2018 04:18 PM, Felix Kuehling wrote:
+>>
+>> Looks good. This change is Reviewed-by: Felix Kuehling
+>> <Felix.Kuehling@amd.com>
+>>
+>> Regards,
+>>    Felix
+>>
+>>
+>> On 2018-01-18 07:39 PM, Gustavo A. R. Silva wrote:
+>>>
+>>> Use ARRAY_SIZE instead of dividing sizeof array with sizeof an element.
+>>>
+>>> This issue was detected with the help of Coccinelle.
+>>>
+>>> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+>>> ---
+>>>   drivers/gpu/drm/amd/amdkfd/kfd_topology.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
+>>> b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
+>>> index c6a7609..7783250 100644
+>>> --- a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
+>>> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
+>>> @@ -677,7 +677,7 @@ static int kfd_build_sysfs_node_entry(struct
+>>> kfd_topology_device *dev,
+>>>         }
+>>>         /* All hardware blocks have the same number of attributes. */
+>>> -       num_attrs = sizeof(perf_attr_iommu)/sizeof(struct kfd_perf_attr);
+>>> +       num_attrs = ARRAY_SIZE(perf_attr_iommu);
+>>>         list_for_each_entry(perf, &dev->perf_props, list) {
+>>>                 perf->attr_group = kzalloc(sizeof(struct kfd_perf_attr)
+>>>                         * num_attrs + sizeof(struct attribute_group),
+>>
+>>
+>
