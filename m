@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x225XTZ0a7hMAfsV9YVAJlIivozrUUuwEwAtqa330e7q1bz/CcK8mdJukKCkdJmsg3Bguf8DT
-ARC-Seal: i=1; a=rsa-sha256; t=1518709045; cv=none;
+X-Google-Smtp-Source: AH8x227hgTE0mxn2iVOGsZrW+0MoTB57LbyXZAwB3nTzOJ9XkJPzK06bsyx66RxUcRnT1weUHi1k
+ARC-Seal: i=1; a=rsa-sha256; t=1518709042; cv=none;
         d=google.com; s=arc-20160816;
-        b=Tz5+H8OIXz+g/ioLiO4HFIbYeWyRdSeCGB5pujLHHHHHxgFF8QF/pqctEUOOw33I4l
-         6UNNVvRQxRs8NHoqQwvQFfgr+BQkLZeB+c+PBS4eNLTzsQdo3zldO/MKzyyvKnxvAXvk
-         x0Ymt1fuMk0xDcuTrI+k3onAjEBnH6V6B26EVzADVTrnqF4nyp2TpcIEy3g4mDPEI9bU
-         HzW51f+n3YOXsIO3t2jmdu0NMEpEVWVMNKBu71haJEW1/NaC+B9bt5vlnh4BoWo3YWxJ
-         iwJ51j2UT8ImwHrMXZoWuxT1tKvh1RefBldUP9DVO9sftATTpMilFLA3DZAdob4zxZ32
-         RgxA==
+        b=MqLb0MlV1yu6+pju0Ub1ymmUsthM4XJ2AzcUVxhBCbVKRa29AMcIGji3SgVODJyWZr
+         /ZGcy8DKNzUXeR1M4uJHnYwLhJkDT/gfxKZXpxG+OROglEup97Q70WQinNDLYngoMoOW
+         cHEeKyjlPabzCCV4Sqaic4J6gXhTJoYHjC3CjDDbIstMfzMYZsgKr0wmwisBfe8MrRo+
+         /jPFAwpX2QDhcoOymxyPYxx10MAgduX8eJnheKWD4DGMjmqUeRawmFD+FyECUEJLY9aG
+         teUp4YPMHeUDrV4jeuTFobQaICVastLXMdi0dbbZ218dPPOJ6aQnxCplShiu+Y099unh
+         cz8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6qjiO/5qc8Pq/nsgFOjQMYrtLuGz2kui0tL0c2Py/Nw=;
-        b=EC0sL6O7gpePmjnY/LZ8TBFxqvA8+bcTwz6Hg6qIjwhRGbZSbTRIVpvQjjptgTvDhj
-         q9MxInc4TJ3GWfmsePWKe9BaiEiX8357rzDS9ToirF8dmF8gRv/f4TkGiWL8ioFbh3Lt
-         lRi4Bv8luOE5MZbQL3ub+G3cXNaMw5PYl4VzCgyetc8p3L9A6PuSNUZua6bQIrV+YvWR
-         FSQe0e0xI156FJNUM/9D0cbWUplQLZKQGLE9MMaE6Ya0f7HY26r3j0HGddM4V/oFFM8n
-         eJVUzBPb28id5AGMgGmJl4c7WEDFIaVYQFEtHf18uJETmEikUvW/2WIwY9StJ93ktn3Q
-         NBEg==
+        bh=pvQkkWCzCXcrFjdcxq947znp9n9+4zxZ+7327LtJQLk=;
+        b=jVrKNk/wQBsbNEUQMIN6z/c411N6fEEWT3zc8eEEfrVSWzMXNyO575eEuAxqWyzpFc
+         yd6bbxct9nRc/GzDIPUzFMmZ3yeqAWI3e1tHiazgNPfNSB+cMZp2VIn9Scw0eeHIkgtg
+         Zq+W2rkXKKPItgaqX6QVJioqRBDV7Vy+G+MyIwelCtjzj1Yq8zhRPuPCYMBHfiB4vut9
+         C3fUnUs5lxctbG6/x1aQ0keHlNqEk7FD1QWCKkvAXo0INRTrvGDupWWmPvtwZVP5mzn+
+         BXPI4h8V2FzCUPSWNcLnzm/Mvg95BWnm7D+4KfP1mAudrTNYY6PoWREJDzRXZ94HDG0Q
+         yQvw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dmitry Mastykin <mastichi@gmail.com>,
+	Daniel Drake <drake@endlessm.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.14 172/195] pinctrl: mcp23s08: fix irq setup order
-Date: Thu, 15 Feb 2018 16:17:43 +0100
-Message-Id: <20180215151714.663835340@linuxfoundation.org>
+Subject: [PATCH 4.14 171/195] pinctrl: intel: Initialize GPIO properly when used through irqchip
+Date: Thu, 15 Feb 2018 16:17:42 +0100
+Message-Id: <20180215151714.605266810@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151705.738773577@linuxfoundation.org>
 References: <20180215151705.738773577@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592481856301862398?=
-X-GMAIL-MSGID: =?utf-8?q?1592481856301862398?=
+X-GMAIL-THRID: =?utf-8?q?1592481323206045109?=
+X-GMAIL-MSGID: =?utf-8?q?1592481853194005169?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,43 +49,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry Mastykin <mastichi@gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-commit 02e389e63e3523828fc3832f27e0341885f60f6f upstream.
+commit f5a26acf0162477af6ee4c11b4fb9cffe5d3e257 upstream.
 
-When using mcp23s08 module with gpio-keys, often (50% of boots)
-it fails to get irq numbers with message:
-"gpio-keys keys: Unable to get irq number for GPIO 0, error -6".
-Seems that irqs must be setup before devm_gpiochip_add_data().
+When a GPIO is requested using gpiod_get_* APIs the intel pinctrl driver
+switches the pin to GPIO mode and makes sure interrupts are routed to
+the GPIO hardware instead of IOAPIC. However, if the GPIO is used
+directly through irqchip, as is the case with many I2C-HID devices where
+I2C core automatically configures interrupt for the device, the pin is
+not initialized as GPIO. Instead we rely that the BIOS configures the
+pin accordingly which seems not to be the case at least in Asus X540NA
+SKU3 with Focaltech touchpad.
 
-Signed-off-by: Dmitry Mastykin <mastichi@gmail.com>
+When the pin is not properly configured it might result weird behaviour
+like interrupts suddenly stop firing completely and the touchpad stops
+responding to user input.
+
+Fix this by properly initializing the pin to GPIO mode also when it is
+used directly through irqchip.
+
+Fixes: 7981c0015af2 ("pinctrl: intel: Add Intel Sunrisepoint pin controller and GPIO support")
+Reported-by: Daniel Drake <drake@endlessm.com>
+Reported-and-tested-by: Chris Chiu <chiu@endlessm.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/pinctrl-mcp23s08.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pinctrl/intel/pinctrl-intel.c |   23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -891,16 +891,16 @@ static int mcp23s08_probe_one(struct mcp
- 			goto fail;
- 	}
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -427,6 +427,18 @@ static void __intel_gpio_set_direction(v
+ 	writel(value, padcfg0);
+ }
  
--	ret = devm_gpiochip_add_data(dev, &mcp->chip, mcp);
--	if (ret < 0)
--		goto fail;
--
- 	if (mcp->irq && mcp->irq_controller) {
- 		ret = mcp23s08_irq_setup(mcp);
- 		if (ret)
- 			goto fail;
- 	}
- 
-+	ret = devm_gpiochip_add_data(dev, &mcp->chip, mcp);
-+	if (ret < 0)
-+		goto fail;
++static void intel_gpio_set_gpio_mode(void __iomem *padcfg0)
++{
++	u32 value;
 +
- 	mcp->pinctrl_desc.name = "mcp23xxx-pinctrl";
- 	mcp->pinctrl_desc.pctlops = &mcp_pinctrl_ops;
- 	mcp->pinctrl_desc.confops = &mcp_pinconf_ops;
++	/* Put the pad into GPIO mode */
++	value = readl(padcfg0) & ~PADCFG0_PMODE_MASK;
++	/* Disable SCI/SMI/NMI generation */
++	value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
++	value &= ~(PADCFG0_GPIROUTSMI | PADCFG0_GPIROUTNMI);
++	writel(value, padcfg0);
++}
++
+ static int intel_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 				     struct pinctrl_gpio_range *range,
+ 				     unsigned pin)
+@@ -434,7 +446,6 @@ static int intel_gpio_request_enable(str
+ 	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+ 	void __iomem *padcfg0;
+ 	unsigned long flags;
+-	u32 value;
+ 
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
+@@ -444,13 +455,7 @@ static int intel_gpio_request_enable(str
+ 	}
+ 
+ 	padcfg0 = intel_get_padcfg(pctrl, pin, PADCFG0);
+-	/* Put the pad into GPIO mode */
+-	value = readl(padcfg0) & ~PADCFG0_PMODE_MASK;
+-	/* Disable SCI/SMI/NMI generation */
+-	value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
+-	value &= ~(PADCFG0_GPIROUTSMI | PADCFG0_GPIROUTNMI);
+-	writel(value, padcfg0);
+-
++	intel_gpio_set_gpio_mode(padcfg0);
+ 	/* Disable TX buffer and enable RX (this will be input) */
+ 	__intel_gpio_set_direction(padcfg0, true);
+ 
+@@ -935,6 +940,8 @@ static int intel_gpio_irq_type(struct ir
+ 
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
++	intel_gpio_set_gpio_mode(reg);
++
+ 	value = readl(reg);
+ 
+ 	value &= ~(PADCFG0_RXEVCFG_MASK | PADCFG0_RXINV);
