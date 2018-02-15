@@ -1,46 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033286AbeBOOfl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 09:35:41 -0500
-Received: from mail-qk0-f180.google.com ([209.85.220.180]:37894 "EHLO
-        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033263AbeBOOfj (ORCPT
+        id S1033478AbeBOOog (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 09:44:36 -0500
+Received: from agrajag.zerfleddert.de ([88.198.237.222]:40282 "EHLO
+        agrajag.zerfleddert.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033256AbeBOOof (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 09:35:39 -0500
-X-Google-Smtp-Source: AH8x227MAd89M0l12wkKPyq9yhxGovt9hrIfiTOmeUNHQ+Wrwnqkxlzf4kiG+PgkyUxccokfaB2ktd+G/Cct4nLPTeE=
+        Thu, 15 Feb 2018 09:44:35 -0500
+Date: Thu, 15 Feb 2018 15:34:55 +0100
+From: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: sil2review@lists.osadl.org
+Subject: [PATCH] gpu: ipu-v3: pre: fix device node leak in
+ ipu_pre_lookup_by_phandle
+Message-ID: <20180215143454.xfgpdximc4yrcd4x@agrajag.zerfleddert.de>
 MIME-Version: 1.0
-In-Reply-To: <20180215131533.GL8219@piout.net>
-References: <20180214005536.22739-1-david.daney@cavium.com>
- <CAHp75VcQm-gr0GRszBSRJSZOpdSutRyhVkw-BN_YAwhjaPM4yg@mail.gmail.com> <20180215131533.GL8219@piout.net>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 15 Feb 2018 16:35:38 +0200
-Message-ID: <CAHp75VcnR2U3DgSCv5Lpj=UBQnzX7YCbvbxzv__cZmW_+VcidQ@mail.gmail.com>
-Subject: Re: [PATCH v2] rtc: isl12026: Add driver.
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: David Daney <david.daney@cavium.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-rtc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 3:15 PM, Alexandre Belloni
-<alexandre.belloni@free-electrons.com> wrote:
-> On 15/02/2018 at 14:45:11 +0200, Andy Shevchenko wrote:
->> On Wed, Feb 14, 2018 at 2:55 AM, David Daney <david.daney@cavium.com> wrote:
+Before returning, call of_node_put() for the device node returned by
+of_parse_phandle().
 
->> > +#ifdef CONFIG_OF
->>
->> Remove this ugly #ifdef. Your driver OF only one.
->>
->
-> Well, it is DT only because you asked for that on v1.
+Fixes: d2a34232580a ("gpu: ipu-v3: add driver for Prefetch Resolve Engine")
+Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+---
+ drivers/gpu/ipu-v3/ipu-pre.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Yes, and I asked to remove these #ifdef:s there as well.
-
+diff --git a/drivers/gpu/ipu-v3/ipu-pre.c b/drivers/gpu/ipu-v3/ipu-pre.c
+index f1cec3d70498..0f70e8847540 100644
+--- a/drivers/gpu/ipu-v3/ipu-pre.c
++++ b/drivers/gpu/ipu-v3/ipu-pre.c
+@@ -129,11 +129,14 @@ ipu_pre_lookup_by_phandle(struct device *dev, const char *name, int index)
+ 		if (pre_node == pre->dev->of_node) {
+ 			mutex_unlock(&ipu_pre_list_mutex);
+ 			device_link_add(dev, pre->dev, DL_FLAG_AUTOREMOVE);
++			of_node_put(pre_node);
+ 			return pre;
+ 		}
+ 	}
+ 	mutex_unlock(&ipu_pre_list_mutex);
+ 
++	of_node_put(pre_node);
++
+ 	return NULL;
+ }
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.11.0
