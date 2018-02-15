@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AH8x226bm4434+aKxn0XhRMc8t7psp1rtxtp0LNh5+2anPtPOnsPLEIrzRtOo9TdNh+GsjUjr2DS
-ARC-Seal: i=1; a=rsa-sha256; t=1518708531; cv=none;
+X-Google-Smtp-Source: AH8x227zimGyIeyU9e0VnP4Jajzfikweur4yN5OoFSlYWcnjhf06zZSH20hz6dDu3rMG8NFHB0Sf
+ARC-Seal: i=1; a=rsa-sha256; t=1518708529; cv=none;
         d=google.com; s=arc-20160816;
-        b=sEIy6ofMd4h95t8MsaFWHJszPjiqVezchxFUa0RpJdPtFlTOZ4TrmrrI8zRKUOWHRp
-         Cbp7KFUR3T26kVB01YxMrwwBb8Jx0ZuVwST1pG93RQtorCnkAaY8/ISg0BHDjqLHR7oT
-         wupmZoAvbOt841H0YchHUD7b9dcQvmeoofVTyu35BOmukyHQf3XYuttGKffTKSG8Dyol
-         a1Ur3bcnEomTYkd5aaJrvIv5BrlGJSJYFhPk2m5FStYlZ5vyVOuwmPSNCfIRZRRXL8tZ
-         3Rbu4ddB9+tEOZjjiiR25XrYMsKKWjZ2Xo7nLSTYAcjnCTchkv8t+enWpFWMdagHUOrJ
-         creg==
+        b=AUVaj9rczoYb7iom7ZSkgoNfrUDXTWbUUU2bw+D9+UwdBAH85yuR3WKt5cL8QlhJGK
+         lyTZOe3AxAvO94dLVNn0P87ZDsBKm5kVX6glhDQ0To1Htqub59K0s81XiUyatU/KMqaU
+         uFautdjgzD0jib1oNRYkmCYSETy5YRotWF0HeN32734pamZShxzo5ztlqlaesIbN9Akg
+         3IVBM4HF+PjNDaafZ0sY5oZRiUv/nAXMP/Mk8d1Uj8aKXYUPhqHavCKnFpY96F36DNs8
+         FHcOmSZuDLRl7QmPa+teg9Me0dAl0gbnGf5+WyrutDpuA4wxpsAM0BnfKc/ixHtmIe+/
+         yQ0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rGUVvII661eYj9iiEIlXaubBCV8wDMpDmIqCs6gToPw=;
-        b=uDU+zBw4O7O5O4TQxmTifEyT1qtJzgPIKvlTjpUE0sNRhhBr8pzqRavcOjXVbq3xSy
-         lDSRtfyUrhzL+VcUTnfMZgOYXHz1COfH9k0SBXfXyVRtRUB6ZEoWiclrJ5Hvme2kh3PO
-         sNYsbf2cRjC0YT9BMTzaIVA/w0Jfni4dP6hBTNgOo8MakRr3+oc8Bo7nA6o7joYMPwMB
-         BrvJcF7LhpQbQdl7lwa3ytkhJl923Tg9az73tRPEvWmI2hfbFyUiS800IaWBiQnAVbVg
-         HKonUtcCWXl9Pb6QCnfFD60GOSwhx6C3TvQOqypvBXX6iw9q4mi46DzC0yO4i1jO/9Hr
-         nYuA==
+        bh=0WD61r2GtsgbY/fhR/l4/+g6eXpc0kLGJD9XBr9XCv0=;
+        b=yxwUw75fF1F5258FpcZRTaee5RdWn3WoPQI29E0onstIgIfdJg+nx0x/lWQryGEDn1
+         qbYom5kuhVyDb2AM8BIVvIV6yZvhyCIC1ktG1Cd2k+sa9lnJ9dwx4PzJz3ftIP1pEO1M
+         uXzRj2ywFQXJrLLtcJgZFr4BMdNOh+3YaIOGW3FpOoM/gpnH/hIAnewKggHREwJpZGBe
+         lwZigCywQjuNZ+h4Ac3wryQZ9au7AtubE2+Sfk+RH4R4/ugZu0x2xU+6LUqhrBJnd0q2
+         IlzcRZY7SFuRlkfdVHZXMTpsdTdD9i6RUZdaLgSwgZjjYjQa7RjzXZMlFGFBZg+HbGwV
+         9+qQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.71.90 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Hogan <jhogan@kernel.org>,
-	David Daney <david.daney@cavium.com>,
-	linux-edac <linux-edac@vger.kernel.org>,
-	linux-mips@linux-mips.org,
-	Borislav Petkov <bp@suse.de>
-Subject: [PATCH 4.9 76/88] EDAC, octeon: Fix an uninitialized variable warning
-Date: Thu, 15 Feb 2018 16:17:43 +0100
-Message-Id: <20180215151233.025520828@linuxfoundation.org>
+	Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 4.9 75/88] xtensa: fix futex_atomic_cmpxchg_inatomic
+Date: Thu, 15 Feb 2018 16:17:42 +0100
+Message-Id: <20180215151232.895236769@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180215151222.437136975@linuxfoundation.org>
 References: <20180215151222.437136975@linuxfoundation.org>
@@ -42,8 +38,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1592480775002082254?=
-X-GMAIL-MSGID: =?utf-8?q?1592481317798577687?=
+X-GMAIL-THRID: =?utf-8?q?1592480769217450134?=
+X-GMAIL-MSGID: =?utf-8?q?1592481314148546601?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,42 +47,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Hogan <jhogan@kernel.org>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 544e92581a2ac44607d7cc602c6b54d18656f56d upstream.
+commit ca47480921587ae30417dd234a9f79af188e3666 upstream.
 
-Fix an uninitialized variable warning in the Octeon EDAC driver, as seen
-in MIPS cavium_octeon_defconfig builds since v4.14 with Codescape GNU
-Tools 2016.05-03:
+Return 0 if the operation was successful, not the userspace memory
+value. Check that userspace value equals passed oldval, not itself.
+Don't update *uval if the value wasn't read from userspace memory.
 
-  drivers/edac/octeon_edac-lmc.c In function ‘octeon_lmc_edac_poll_o2’:
-  drivers/edac/octeon_edac-lmc.c:87:24: warning: ‘((long unsigned int*)&int_reg)[1]’ may \
-    be used uninitialized in this function [-Wmaybe-uninitialized]
-    if (int_reg.s.sec_err || int_reg.s.ded_err) {
-                        ^
-Iinitialise the whole int_reg variable to zero before the conditional
-assignments in the error injection case.
+This fixes process hang due to infinite loop in futex_lock_pi.
+It also fixes a bunch of glibc tests nptl/tst-mutexpi*.
 
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Acked-by: David Daney <david.daney@cavium.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: linux-mips@linux-mips.org
-Fixes: 1bc021e81565 ("EDAC: Octeon: Add error injection support")
-Link: http://lkml.kernel.org/r/20171113161206.20990-1-james.hogan@mips.com
-Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/edac/octeon_edac-lmc.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/xtensa/include/asm/futex.h |   23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
 
---- a/drivers/edac/octeon_edac-lmc.c
-+++ b/drivers/edac/octeon_edac-lmc.c
-@@ -79,6 +79,7 @@ static void octeon_lmc_edac_poll_o2(stru
- 	if (!pvt->inject)
- 		int_reg.u64 = cvmx_read_csr(CVMX_LMCX_INT(mci->mc_idx));
- 	else {
-+		int_reg.u64 = 0;
- 		if (pvt->error_type == 1)
- 			int_reg.s.sec_err = 1;
- 		if (pvt->error_type == 2)
+--- a/arch/xtensa/include/asm/futex.h
++++ b/arch/xtensa/include/asm/futex.h
+@@ -109,7 +109,6 @@ futex_atomic_cmpxchg_inatomic(u32 *uval,
+ 			      u32 oldval, u32 newval)
+ {
+ 	int ret = 0;
+-	u32 prev;
+ 
+ 	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
+ 		return -EFAULT;
+@@ -120,26 +119,24 @@ futex_atomic_cmpxchg_inatomic(u32 *uval,
+ 
+ 	__asm__ __volatile__ (
+ 	"	# futex_atomic_cmpxchg_inatomic\n"
+-	"1:	l32i	%1, %3, 0\n"
+-	"	mov	%0, %5\n"
+-	"	wsr	%1, scompare1\n"
+-	"2:	s32c1i	%0, %3, 0\n"
+-	"3:\n"
++	"	wsr	%5, scompare1\n"
++	"1:	s32c1i	%1, %4, 0\n"
++	"	s32i	%1, %6, 0\n"
++	"2:\n"
+ 	"	.section .fixup,\"ax\"\n"
+ 	"	.align 4\n"
+-	"4:	.long	3b\n"
+-	"5:	l32r	%1, 4b\n"
+-	"	movi	%0, %6\n"
++	"3:	.long	2b\n"
++	"4:	l32r	%1, 3b\n"
++	"	movi	%0, %7\n"
+ 	"	jx	%1\n"
+ 	"	.previous\n"
+ 	"	.section __ex_table,\"a\"\n"
+-	"	.long 1b,5b,2b,5b\n"
++	"	.long 1b,4b\n"
+ 	"	.previous\n"
+-	: "+r" (ret), "=&r" (prev), "+m" (*uaddr)
+-	: "r" (uaddr), "r" (oldval), "r" (newval), "I" (-EFAULT)
++	: "+r" (ret), "+r" (newval), "+m" (*uaddr), "+m" (*uval)
++	: "r" (uaddr), "r" (oldval), "r" (uval), "I" (-EFAULT)
+ 	: "memory");
+ 
+-	*uval = prev;
+ 	return ret;
+ }
+ 
