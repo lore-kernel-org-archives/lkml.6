@@ -1,122 +1,83 @@
-Return-Path: <pavel@ucw.cz>
-X-Google-Smtp-Source: AH8x224mlTcbAjI0pqDLE2KmCIBMbW1rYgAeZSW5KVQjjqQ8/gm8d61i5IkqhW1azvFMdQ+5TtbO
-ARC-Seal: i=1; a=rsa-sha256; t=1518688399; cv=none;
+Return-Path: <tedheadster@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518700630; cv=none;
         d=google.com; s=arc-20160816;
-        b=Zq/QzEWMUjcvFqi0+xvQxXaGXIJ7bzP4ywAlnld3x69gDFOyUXw8acHP+aSpTDu9kD
-         KoZPYCqkXot/hZk0Fmev5iR2CbqAXfHdKGTT+nu612CZu/Hy+hwgd7FR0xzD06UxHtiL
-         mAldKvHf07vPbv7Dg8cn87vLNvbz5o3EP/sfOYLhC5kaaPwRVh3VLXl7ItUZT4nlgLDG
-         xE7TWD/izTG1EN22a5e/WUpnZAiaS6PGyY1W28dDbGJcgDRI4diApMqIgFQDSx/+sr2Z
-         CaVaHvEiqDfl5J2xWboNX3XeR5IlUismksklUDKQFWXRV4nzDavcxFFApqaHhIGDfvMi
-         ZCRA==
+        b=WVbL6+6DvguuN12Mr89nHRzwB6lVF5GqVTBbgKNTq2MfGgqkURc1hmySpcBSR7y9oC
+         8+0F1e/kkFDX6at83XbvuGFwkjqB6wdCao0mrAtde0lX/S+lVGzvePhLvzdWZMNiXEtT
+         xCOkTJxf7b21i0KQe1UspDXdCofaw8dqiQDk7E03NgO63wsGPfTWoHtw9VGpNmfPQTVo
+         rXZ0KS3iQFBXeIuSq2t/2B9wG4CPM/n6QJgNw4L3RtLcu+0W9nUdcP7jLqaqEtEZ38uX
+         Ekox3dhvvgYSM6IF9qqHluiyywLRgzipzba7e84b352A9HgUpO4djtEM4yCXEvNZzygn
+         q/ig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=ehIpdg09faqhdX7TNAoAkJRS2d5ugv0bi34Bf7FfFdQ=;
-        b=sRVDl8G5rgMEUftNhoDDstz/VuGJavhIwysjVEeU8ste1rxzkY1stGhRb6HT3rjqzD
-         kwnKVfCi9nBnbj2OknkWdq3P1ej+Ie7tx8mS2NZ2YLPNBiweTGfCt0bTYahD1tIcVoN0
-         eJhkL8pbgev9wgY0JwgSQ2rewbYsPgY88M5u70iDD2tpmML+yoZcYhIU1CsAsr4ykqfo
-         7uY6oK+4gwu0hGGFZQzMFJAMbtjfXFMi2sLPOpWsv/WjLL5n2WRWqICdUeKxhOXybaCZ
-         y2ahpD4IRF3eHfjQmczpQroLQaiUnZUstU17d0CLf7fVGn6qH4VZinDLbgjOxNmT+4fd
-         WNBg==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=Q5sW8U87JpT4Q9pM+x4lacU5LpLNNY6RwsWFKu0Gi44=;
+        b=OB8h1I3A76tM+G4XVbLnJqjW7JyA2Tb6ybu4sSF6srHUR3Btyk47zxw6EakL+96Gjr
+         GK9d7MM64N6Nctf69rDgjY9+xlO+5o+wXjvwzzLhwRMn6b+ZwaiWAyU3UlzMV9hvlWST
+         U1xR327n/PlGPgFawU8kXJoP3ERU9xH6Gmr6aaIOOkntoOzBtaBsKFfXIxc0rpL10mvr
+         aTcRfWvjsMpo2pQ+BX9toEgqkm5eXXoI5wEl9m9ZOLy4Njx0uL6Ra9kzqvMVEKPxl8ol
+         TTJBtbZTbFnMGJXKlXK74/OBuJ1eadJ6pas7sst+E6BrlT/+iyXT44/TNLOVh7yzZ9xY
+         Nx0Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Y3t7/w/S;
+       spf=pass (google.com: domain of tedheadster@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=tedheadster@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
-Date: Thu, 15 Feb 2018 10:53:21 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Ondrej Zary <linux@rainbow-software.org>
-Cc: whiteheadm@acm.org, David Laight <David.Laight@aculab.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hugh Dickins <hughd@google.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Jiri Kosina <jikos@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	Kees Cook <keescook@chromium.org>, Jamie Iles <jamie@jamieiles.com>,
-	Eduardo Valentin <eduval@amazon.com>,
-	Laura Abbott <labbott@redhat.com>, Rik van Riel <riel@surriel.com>,
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Y3t7/w/S;
+       spf=pass (google.com: domain of tedheadster@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=tedheadster@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x225zKV1Rk7MN/e1QdaA40piiE7y8rKibM3lH4kwf+L4zaigxFFMMF8USZIK5FUAdC6PUvilZT6+oNmWDfhVITQ0=
+MIME-Version: 1.0
+Reply-To: whiteheadm@acm.org
+In-Reply-To: <20180215095320.GA2112@amd>
+References: <CAP8WD_YnJnQW9o+t2jn6HRrY3kKQMRD44joP=thPYO5vS4ev7Q@mail.gmail.com>
+ <63ca28c5acb64de5ba33a81b6da5c507@AcuMS.aculab.com> <CAP8WD_YujTxLjMD_iXMzmC0V=JVPZQtXfqD7aEEr-+SVaUaaLg@mail.gmail.com>
+ <201802090941.41782.linux@rainbow-software.org> <20180213210438.GA6569@amd> <20180215095320.GA2112@amd>
+From: tedheadster <tedheadster@gmail.com>
+Date: Thu, 15 Feb 2018 08:16:49 -0500
+Message-ID: <CAP8WD_ZuYCZW42DXeunS8NvKdSA739Sdrr_oBaxJn7MxfzrNAQ@mail.gmail.com>
+Subject: Re: What was last kernel that booted on hardware XY? database was Re:
+ [BUG] x86 : i486 reporting to be vulnerable to Meltdown/Spectre_V1/Spectre_V2A
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Ondrej Zary <linux@rainbow-software.org>, David Laight <David.Laight@aculab.com>,
+	Arnd Bergmann <arnd@arndb.de>, Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+	David Woodhouse <dwmw2@infradead.org>, Guenter Roeck <linux@roeck-us.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hugh Dickins <hughd@google.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, Jiri Kosina <jikos@kernel.org>,
+	Borislav Petkov <bp@alien8.de>, Kees Cook <keescook@chromium.org>, Jamie Iles <jamie@jamieiles.com>,
+	Eduardo Valentin <eduval@amazon.com>, Laura Abbott <labbott@redhat.com>, Rik van Riel <riel@surriel.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: What was last kernel that booted on hardware XY? database was Re:
- [BUG] x86 : i486 reporting to be vulnerable to
- Meltdown/Spectre_V1/Spectre_V2A
-Message-ID: <20180215095320.GA2112@amd>
-References: <CAP8WD_YnJnQW9o+t2jn6HRrY3kKQMRD44joP=thPYO5vS4ev7Q@mail.gmail.com>
- <63ca28c5acb64de5ba33a81b6da5c507@AcuMS.aculab.com>
- <CAP8WD_YujTxLjMD_iXMzmC0V=JVPZQtXfqD7aEEr-+SVaUaaLg@mail.gmail.com>
- <201802090941.41782.linux@rainbow-software.org>
- <20180213210438.GA6569@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
-Content-Disposition: inline
-In-Reply-To: <20180213210438.GA6569@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592460207317318961?=
-X-GMAIL-MSGID: =?utf-8?q?1592460207317318961?=
+X-GMAIL-MSGID: =?utf-8?q?1592473032122220886?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+>
+> BTW... I'd really like to have a database of machine, kernel version,
+> cpuinfo, config... So that questions like "what is the latest kernel
+> that is known to be running on this hardware" and "what config should
+> I start from".
+>
+> For example, I have nokia N810 here. It was supported by Linux at some
+> point, but then we moved to dts, and stuff changed, and I can no
+> longer figure how to boot it.
+>
+> I guess "what was last kernel that worked on Cyrix MII" is also
+> relevant question.
+>
+> Is there such database? If not, would people be interested in
+> contributing if I create one?
+>
 
---uAKRQypu60I7Lcqm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I am interested and will help. I have i486/i586/Pentium Pro/Pentium
+II/Pentium II Xeon/Pentium 4 systems to test on. Oddly, I don't yet
+have Pentium III systems.
 
-Hi!
+I think an associated goal would be to fix those broken versions.
 
-> > > You might think this absolutely crazy, but I would be willing to test
-> > > such systems if I can get my hands on the needed hardware that I lack.
-> > > I am already doing sanity testing on Intel
-> > > i486/i586/i586-MMX/i686-PentiumPro systems, I just don't have the
-> > > clone cpus (Cyrix, etc).
-> > >
-> > > While few people are using the 32bit kernel, I don't think we want to
-> > > kill it completely just yet.
-> >=20
-> > I have a working Cyrix MII (was actively using it last year, now upgrad=
-ed to a=20
-> > P3-based Celeron). Some AMD CPUs too - K6(maybe -2 or -3?), not sure ab=
-out K5=20
-> > and also a Rise mP6. But never got a WinChip.
->=20
-> I'm using Core Duo daily (backup machine, web browsing), and use
-> Pentium M as an ssh client say once in month.
+I think this is a great project for college students to get experience
+with. Who else is interested?
 
-BTW... I'd really like to have a database of machine, kernel version,
-cpuinfo, config... So that questions like "what is the latest kernel
-that is known to be running on this hardware" and "what config should
-I start from".
-
-For example, I have nokia N810 here. It was supported by Linux at some
-point, but then we moved to dts, and stuff changed, and I can no
-longer figure how to boot it.
-
-I guess "what was last kernel that worked on Cyrix MII" is also
-relevant question.
-
-Is there such database? If not, would people be interested in
-contributing if I create one?
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---uAKRQypu60I7Lcqm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlqFWJAACgkQMOfwapXb+vITKgCfVyLbktox8K5aYyR76eM6TQcF
-JNIAoLHlaajmhIKq4h/rahKDs63cac+g
-=ZAXA
------END PGP SIGNATURE-----
-
---uAKRQypu60I7Lcqm--
+- Matthew Whitehead
