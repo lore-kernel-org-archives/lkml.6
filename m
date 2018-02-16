@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964845AbeBPLYb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 06:24:31 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:47757 "EHLO
+        id S935612AbeBPLY3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 06:24:29 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47768 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935544AbeBPLX3 (ORCPT
+        with ESMTP id S935546AbeBPLXa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 06:23:29 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180216112327euoutp021ca74b11a1703b59d8358609333181ba~Tyo0vsdNq2415924159euoutp02g
-X-AuditID: cbfec7f5-f95739c0000028a9-62-5a86bf2c20a5
+        Fri, 16 Feb 2018 06:23:30 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180216112327euoutp0254635a192336bdf09e928099be8523f2~Tyo1kfIK22418824188euoutp02c
+X-AuditID: cbfec7f4-713ff700000043e4-e3-5a86bf2dd353
 From: Maciej Slodczyk <m.slodczyk2@partner.samsung.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc: linux@armlinux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
@@ -17,102 +17,252 @@ Cc: linux@armlinux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
         namhyung@kernel.org, b.zolnierkie@samsung.com,
         m.szyprowski@samsung.com, k.lewandowsk@samsung.com,
         m.slodczyk2@partner.samsung.com
-Subject: [PATCH 3/7 RESEND] arm64: introduce get_swbp_insn() instead of
- static assignment
-Date: Fri, 16 Feb 2018 12:23:07 +0100
-Message-id: <1518780191-31094-4-git-send-email-m.slodczyk2@partner.samsung.com>
+Subject: [PATCH 4/7 RESEND] arm64: change arm64 probes handler prototype
+Date: Fri, 16 Feb 2018 12:23:08 +0100
+Message-id: <1518780191-31094-5-git-send-email-m.slodczyk2@partner.samsung.com>
 X-Mailer: git-send-email 2.7.4
 In-reply-to: <1518780191-31094-1-git-send-email-m.slodczyk2@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0hTURzHO/de766j2W0beHxgMArCSssKT08qRC5YmNBfK6trXlR0U3ad
-        thDTUNmWZgrlAxXNUvOBOd9p0w1tiqioZJamqFDkHz4yEZ/ldfrf55zP9/c9h8OhcOka4UpF
-        qGM5jZqNUpBiounz2sCpkx1pytOGCRkyTraQSG/Kc0B1ubUOaKEsHaDu/i0MJf8pxJFpdtQB
-        jXwsIJH11SeA2jOrSFTT9UOEhjuLMfSsrJFAjR2pANkyOjH0e6mHuEYz1UXVgBkZHcKZ+gpP
-        xlRpIJmi3iCm/u1TxjLfjjEL5i8k86KhEjDLJo/bYqX4cigXFRHHabyvPhSHd5Zn4zHWw48H
-        Z6rxJDDtZASOFKTPwZ6padwIxJSUrgBQb/wnsi+WAZwb3gT7qe1mC2kXZQCm5+eIBCGllwDs
-        1ocITNK+sLk7hRBYTvvDsWQ9Jgzg9AgGR3qeY4KQ0XfhWn0rKTBBH4NFq4u7RRI6ENo6+/dO
-        84DfBgy4wI70bTjV0EAIRZBeIOFqQfFeyA+2jVXhdpbBOVuDyM7u0KC3YHbOBNAy7mYfzgWw
-        cWGGsItLcLMya/cWOO0Es5tydoqonX0J1KdJ7REGTr3O3uu5Dt8MWPceqRTAtiYz8RK4FoMD
-        lcCZ0/KqMI4/q+bivXhWxWvVYV6PolUmsPMh+rZtKy3AvBliBTQFFAclHzJSlVIHNo7XqawA
-        UrhCLvmek6aUSkJZ3RNOE/1Ao43ieCtwowiFs+T+8USllA5jY7lIjovhNPsWoxxdk8B5HzFR
-        AWbHCtflNf7qON3KUZ8VND4YMB7896LOkHJiMSTjPRM98e5WJhsc2eq+ofUtCdD9xC+4fC25
-        2bcZnlV6xc+FYhs3FPJJH+f53myRHzRsNf/qmcsrvxMaZF5PTJiPmXOSxdTWDd1T4d6H4o1M
-        1/z0kfb8QFuC9kbrtILgw9kznriGZ/8DhnNpmAwDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsVy+t/xy7pa+9uiDLp2GFh03dvBZtGxaSar
-        xcYZ61kt3i/rYbQ4evYvk0Xjp7nMFpseX2O1uLxrDpvFoal7GS329K9ms1h75C67xaUDC5gs
-        mpZtZbHYur+V0eJ47wEmi5cfT7A4CHismbeG0ePytYvMHptXaHlsWtXJ5jHvZKDH5iX1Hgff
-        7WHyeL/vKptH35ZVjB6fN8kFcEVx2aSk5mSWpRbp2yVwZRxYPom54JBgxflHa5gbGB/ydTFy
-        ckgImEj8236QrYuRi0NIYAmjxPnNm1ggnM+MEhd27mMHqWITMJfYfrSFBcQWEXCTuNHYwQRS
-        xCxwmUni84K9rCAJYYFoifYpf5lAbBYBVYl53z+ANfMK+EscP3CWEWKdnMTNc53MIDanQIDE
-        /S1bwIYKAdWsXfSLZQIjzwJGhlWMIqmlxbnpucWGesWJucWleel6yfm5mxiBQbzt2M/NOxgv
-        bQw+xCjAwajEw7uhtzVKiDWxrLgy9xCjBAezkghv8L62KCHelMTKqtSi/Pii0pzU4kOM0hws
-        SuK85w0qo4QE0hNLUrNTUwtSi2CyTBycUg2Msod/P3dQYiz+eVPjFEONiIXXpetRi9c9Cu6+
-        GDCPz1RZ9Z/s87iLa3df/1E4/dLCZVmLWJsebnmtvL3rht61Z8/+da5bP4/L5NbcI8Xv3vy7
-        OlmbfbaNrJS+Qh9z3IKzh69f+/qAf5plxqnlT12m63kvO7A64Hs0c/Nu5e8C4pd4VWR2FE/I
-        uKXEUpyRaKjFXFScCAD6R18fXgIAAA==
-X-CMS-MailID: 20180216112322eucas1p2b170bbf0687ebbc03110e42ff807342f
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOIsWRmVeSWpSXmKPExsWy7djP87q6+9uiDJa+5bToureDzaJj00xW
+        i40z1rNavF/Ww2hx9OxfJovGT3OZLTY9vsZqcXnXHDaLQ1P3Mlrs6V/NZrH2yF12i0sHFjBZ
+        NC3bymKxdX8ro8Xx3gNMFi8/nmBxEPBYM28No8flaxeZPTav0PLYtKqTzWPeyUCPzUvqPQ6+
+        28Pk8X7fVTaPvi2rGD0+b5IL4IrisklJzcksSy3St0vgypj55AdLwX2bihf9b1kbGD8adTFy
+        ckgImEhMW3GRtYuRi0NIYAWjROelf8wQzmdGiVMPVzHCVE1unsIEkVjGKLHv0V82COcjo8TG
+        HYdZQarYBMwlth9tYQGxRQTcJG40doB1MAtcZpK4fKKbCSQhLOAhsb55LzuIzSKgKrH+7m2g
+        ZnYOXgF/ibOiEMvkJG6e62QGsTkFAiTub9nCAjJGQuA1m8S317/YIIpcJHYc3g9lC0u8Or6F
+        HcKWkbg8uZsFwu5nlDh4WxqieQajxNb3j6AS1hJ/Vk0Ea2YW4JOYtG060DYOoDivREebEESJ
+        h8Sal89ZIWxHibXtd8DOFxJYzCix7ofUBEapBYwMqxjFU0uLc9NTi43yUsv1ihNzi0vz0vWS
+        83M3MQKTw+l/x7/sYNz1J+kQowAHoxIP74be1igh1sSy4srcQ4wSHMxKIrzB+9qihHhTEiur
+        Uovy44tKc1KLDzFKc7AoifPGadRFCQmkJ5akZqemFqQWwWSZODilGhh5ef0E1zA8qM8we2z7
+        86N7jAR/Wr+escbFnXf1G1ht78w8GV1q+a2z6MrKh8tTXb2VXvDz7tHUc3dVs34ybdJhuWP3
+        2oP05jNaHQlfW/3z8GVF4YLfbn+uFF/m7Hx3qMRoxcHsi6EmDWXLZU8z7Db6ExGldaFqWZnS
+        dQ6Gkv4Kp7NXNWMOnFRiKc5INNRiLipOBADpRmbkCgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsVy+t/xq7ra+9uiDJ6e07boureDzaJj00xW
+        i40z1rNavF/Ww2hx9OxfJovGT3OZLTY9vsZqcXnXHDaLQ1P3Mlrs6V/NZrH2yF12i0sHFjBZ
+        NC3bymKxdX8ro8Xx3gNMFi8/nmBxEPBYM28No8flaxeZPTav0PLYtKqTzWPeyUCPzUvqPQ6+
+        28Pk8X7fVTaPvi2rGD0+b5IL4IrisklJzcksSy3St0vgypj55AdLwX2bihf9b1kbGD8adTFy
+        ckgImEhMbp7CBGILCSxhlJi60bOLkQvI/swo8WPCQ2aQBJuAucT2oy0sILaIgJvEjcYOJpAi
+        ZoHLTBKfF+xlBUkIC3hIrG/eyw5iswioSqy/exsozs7BK+AvcVYUYpecxM1znWAjOQUCJO5v
+        2cICsddfYu2iXywTGHkWMDKsYhRJLS3OTc8tNtIrTswtLs1L10vOz93ECAzfbcd+btnB2PUu
+        +BCjAAejEg/vht7WKCHWxLLiytxDjBIczEoivMH72qKEeFMSK6tSi/Lji0pzUosPMUpzsCiJ
+        8543qIwSEkhPLEnNTk0tSC2CyTJxcEo1MG6bfFLlW45rxa3MBxu2MGi1r9Ty7uj7KCbotSPp
+        9jXNSd5vnK9cn7jtTlW5TKrNlXDGk0mKl5bPl/7bM1l4Xwrz02w52+u+atNtLO2n917isDxr
+        8Py7U4ls0c0GNz+BM32lFVsn93I23Du24siNgzumPvb8+fFB2JxcuyiP5wy/VtTZ19vJRSix
+        FGckGmoxFxUnAgAkjRTfWwIAAA==
+X-CMS-MailID: 20180216112323eucas1p1fd0302348ff3c5f47f0aa8ef52b39401
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180216112322eucas1p2b170bbf0687ebbc03110e42ff807342f
-X-RootMTR: 20180216112322eucas1p2b170bbf0687ebbc03110e42ff807342f
+X-CMS-RootMailID: 20180216112323eucas1p1fd0302348ff3c5f47f0aa8ef52b39401
+X-RootMTR: 20180216112323eucas1p1fd0302348ff3c5f47f0aa8ef52b39401
 References: <1518780191-31094-1-git-send-email-m.slodczyk2@partner.samsung.com>
-        <CGME20180216112322eucas1p2b170bbf0687ebbc03110e42ff807342f@eucas1p2.samsung.com>
+        <CGME20180216112323eucas1p1fd0302348ff3c5f47f0aa8ef52b39401@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In uprobes generic code, an arch specific software breakpoint instruction
-is statically assigned with a #define statement. It does not allow to examine
-the context and set the proper arch on runtime, which is the case of uprobing
-either a 32 or 64 bit app on a 64-bit kernel. Introduce get_swbp_insn() with
-weak attribute that will allow to be redefined in ARM64 uprobes code.
+A probes_handler_t() handler function prototype differ between ARM32 and ARM64
+arch subtrees. Make ARM64 prototype the same as ARM32 prototype and adjust the
+ARM64 code to work with the new prototype.
 
 Signed-off-by: Maciej Slodczyk <m.slodczyk2@partner.samsung.com>
 ---
- include/linux/uprobes.h |  1 +
- kernel/events/uprobes.c | 12 +++++++++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/probes.h          |  6 +++++-
+ arch/arm64/kernel/probes/kprobes.c       |  2 +-
+ arch/arm64/kernel/probes/simulate-insn.c | 32 ++++++++++++++++++++++++--------
+ arch/arm64/kernel/probes/simulate-insn.h | 24 ++++++++++++++++--------
+ arch/arm64/kernel/probes/uprobes.c       |  3 +--
+ 5 files changed, 47 insertions(+), 20 deletions(-)
 
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index 0a294e9..ef61d79 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -117,6 +117,7 @@ struct uprobes_state {
+diff --git a/arch/arm64/include/asm/probes.h b/arch/arm64/include/asm/probes.h
+index 6a5b289..1747e9a 100644
+--- a/arch/arm64/include/asm/probes.h
++++ b/arch/arm64/include/asm/probes.h
+@@ -16,7 +16,11 @@
+ #define _ARM_PROBES_H
  
- extern int set_swbp(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
- extern int set_orig_insn(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
-+extern uprobe_opcode_t get_swbp_insn(void);
- extern bool is_swbp_insn(uprobe_opcode_t *insn);
- extern bool is_trap_insn(uprobe_opcode_t *insn);
- extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 267f6ef..cb7a573 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -216,6 +216,16 @@ static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
+ typedef u32 probe_opcode_t;
+-typedef void (probes_handler_t) (u32 opcode, long addr, struct pt_regs *);
++struct arch_probe_insn;
++
++typedef void (probes_handler_t) (u32 opcode,
++			   struct arch_probe_insn *api,
++			   struct pt_regs *);
+ 
+ /* architecture specific copy of original instruction */
+ struct arch_probe_insn {
+diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
+index d849d98..fc9f67c 100644
+--- a/arch/arm64/kernel/probes/kprobes.c
++++ b/arch/arm64/kernel/probes/kprobes.c
+@@ -69,7 +69,7 @@ static void __kprobes arch_simulate_insn(struct kprobe *p, struct pt_regs *regs)
+ 	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
+ 
+ 	if (p->ainsn.api.handler)
+-		p->ainsn.api.handler((u32)p->opcode, (long)p->addr, regs);
++		p->ainsn.api.handler((u32)p->opcode, &p->ainsn.api, regs);
+ 
+ 	/* single step simulated, now go for post processing */
+ 	post_kprobe_handler(kcb, regs);
+diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel/probes/simulate-insn.c
+index be05868..22dc7a7 100644
+--- a/arch/arm64/kernel/probes/simulate-insn.c
++++ b/arch/arm64/kernel/probes/simulate-insn.c
+@@ -92,9 +92,11 @@ static bool __kprobes check_tbnz(u32 opcode, struct pt_regs *regs)
+  * instruction simulation functions
+  */
+ void __kprobes
+-simulate_adr_adrp(u32 opcode, long addr, struct pt_regs *regs)
++simulate_adr_adrp(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs)
+ {
+ 	long imm, xn, val;
++	long addr = instruction_pointer(regs);
+ 
+ 	xn = opcode & 0x1f;
+ 	imm = ((opcode >> 3) & 0x1ffffc) | ((opcode >> 29) & 0x3);
+@@ -110,9 +112,11 @@ simulate_adr_adrp(u32 opcode, long addr, struct pt_regs *regs)
  }
  
- /**
-+ * get_swbp_insn - return breakpoint instruction.
-+ * Default implementation of get_swbp_insn
-+ * Returns architecture-dependent breakpoint instruction opcode
-+ */
-+uprobe_opcode_t __weak get_swbp_insn(void)
-+{
-+	return UPROBE_SWBP_INSN;
-+}
-+
-+/**
-  * is_swbp_insn - check if instruction is breakpoint instruction.
-  * @insn: instruction to be checked.
-  * Default implementation of is_swbp_insn
-@@ -1178,7 +1188,7 @@ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
- static struct xol_area *__create_xol_area(unsigned long vaddr)
+ void __kprobes
+-simulate_b_bl(u32 opcode, long addr, struct pt_regs *regs)
++simulate_b_bl(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs)
  {
- 	struct mm_struct *mm = current->mm;
--	uprobe_opcode_t insn = UPROBE_SWBP_INSN;
-+	uprobe_opcode_t insn = get_swbp_insn();
- 	struct xol_area *area;
+ 	int disp = bbl_displacement(opcode);
++	long addr = instruction_pointer(regs);
  
- 	area = kmalloc(sizeof(*area), GFP_KERNEL);
+ 	/* Link register is x30 */
+ 	if (opcode & (1 << 31))
+@@ -122,9 +126,11 @@ simulate_b_bl(u32 opcode, long addr, struct pt_regs *regs)
+ }
+ 
+ void __kprobes
+-simulate_b_cond(u32 opcode, long addr, struct pt_regs *regs)
++simulate_b_cond(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs)
+ {
+ 	int disp = 4;
++	long addr = instruction_pointer(regs);
+ 
+ 	if (aarch32_opcode_cond_checks[opcode & 0xf](regs->pstate & 0xffffffff))
+ 		disp = bcond_displacement(opcode);
+@@ -133,9 +139,11 @@ simulate_b_cond(u32 opcode, long addr, struct pt_regs *regs)
+ }
+ 
+ void __kprobes
+-simulate_br_blr_ret(u32 opcode, long addr, struct pt_regs *regs)
++simulate_br_blr_ret(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs)
+ {
+ 	int xn = (opcode >> 5) & 0x1f;
++	long addr = instruction_pointer(regs);
+ 
+ 	/* update pc first in case we're doing a "blr lr" */
+ 	instruction_pointer_set(regs, get_x_reg(regs, xn));
+@@ -146,9 +154,11 @@ simulate_br_blr_ret(u32 opcode, long addr, struct pt_regs *regs)
+ }
+ 
+ void __kprobes
+-simulate_cbz_cbnz(u32 opcode, long addr, struct pt_regs *regs)
++simulate_cbz_cbnz(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs)
+ {
+ 	int disp = 4;
++	long addr = instruction_pointer(regs);
+ 
+ 	if (opcode & (1 << 24)) {
+ 		if (check_cbnz(opcode, regs))
+@@ -161,9 +171,11 @@ simulate_cbz_cbnz(u32 opcode, long addr, struct pt_regs *regs)
+ }
+ 
+ void __kprobes
+-simulate_tbz_tbnz(u32 opcode, long addr, struct pt_regs *regs)
++simulate_tbz_tbnz(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs)
+ {
+ 	int disp = 4;
++	long addr = instruction_pointer(regs);
+ 
+ 	if (opcode & (1 << 24)) {
+ 		if (check_tbnz(opcode, regs))
+@@ -176,11 +188,13 @@ simulate_tbz_tbnz(u32 opcode, long addr, struct pt_regs *regs)
+ }
+ 
+ void __kprobes
+-simulate_ldr_literal(u32 opcode, long addr, struct pt_regs *regs)
++simulate_ldr_literal(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs)
+ {
+ 	u64 *load_addr;
+ 	int xn = opcode & 0x1f;
+ 	int disp;
++	long addr = instruction_pointer(regs);
+ 
+ 	disp = ldr_displacement(opcode);
+ 	load_addr = (u64 *) (addr + disp);
+@@ -194,11 +208,13 @@ simulate_ldr_literal(u32 opcode, long addr, struct pt_regs *regs)
+ }
+ 
+ void __kprobes
+-simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs)
++simulate_ldrsw_literal(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs)
+ {
+ 	s32 *load_addr;
+ 	int xn = opcode & 0x1f;
+ 	int disp;
++	long addr = instruction_pointer(regs);
+ 
+ 	disp = ldr_displacement(opcode);
+ 	load_addr = (s32 *) (addr + disp);
+diff --git a/arch/arm64/kernel/probes/simulate-insn.h b/arch/arm64/kernel/probes/simulate-insn.h
+index 050bde6..31b3840 100644
+--- a/arch/arm64/kernel/probes/simulate-insn.h
++++ b/arch/arm64/kernel/probes/simulate-insn.h
+@@ -16,13 +16,21 @@
+ #ifndef _ARM_KERNEL_KPROBES_SIMULATE_INSN_H
+ #define _ARM_KERNEL_KPROBES_SIMULATE_INSN_H
+ 
+-void simulate_adr_adrp(u32 opcode, long addr, struct pt_regs *regs);
+-void simulate_b_bl(u32 opcode, long addr, struct pt_regs *regs);
+-void simulate_b_cond(u32 opcode, long addr, struct pt_regs *regs);
+-void simulate_br_blr_ret(u32 opcode, long addr, struct pt_regs *regs);
+-void simulate_cbz_cbnz(u32 opcode, long addr, struct pt_regs *regs);
+-void simulate_tbz_tbnz(u32 opcode, long addr, struct pt_regs *regs);
+-void simulate_ldr_literal(u32 opcode, long addr, struct pt_regs *regs);
+-void simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs);
++void simulate_adr_adrp(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs);
++void simulate_b_bl(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs);
++void simulate_b_cond(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs);
++void simulate_br_blr_ret(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs);
++void simulate_cbz_cbnz(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs);
++void simulate_tbz_tbnz(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs);
++void simulate_ldr_literal(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs);
++void simulate_ldrsw_literal(u32 opcode, struct arch_probe_insn *api,
++		struct pt_regs *regs);
+ 
+ #endif /* _ARM_KERNEL_KPROBES_SIMULATE_INSN_H */
+diff --git a/arch/arm64/kernel/probes/uprobes.c b/arch/arm64/kernel/probes/uprobes.c
+index 636ca01..a83642c 100644
+--- a/arch/arm64/kernel/probes/uprobes.c
++++ b/arch/arm64/kernel/probes/uprobes.c
+@@ -112,10 +112,9 @@ bool arch_uprobe_skip_sstep(struct arch_uprobe *auprobe, struct pt_regs *regs)
+ 		return false;
+ 
+ 	insn = *(probe_opcode_t *)(&auprobe->insn[0]);
+-	addr = instruction_pointer(regs);
+ 
+ 	if (auprobe->api.handler)
+-		auprobe->api.handler(insn, addr, regs);
++		auprobe->api.handler(insn, &auprobe->api, regs);
+ 
+ 	return true;
+ }
 -- 
 2.7.4
