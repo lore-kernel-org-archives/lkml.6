@@ -1,192 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750970AbeBPXqU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 18:46:20 -0500
-Received: from g2t2353.austin.hpe.com ([15.233.44.26]:44875 "EHLO
-        g2t2353.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750727AbeBPXqT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 18:46:19 -0500
-Date: Fri, 16 Feb 2018 16:46:17 -0700
-From: Jerry Hoemann <jerry.hoemann@hpe.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rwright@hpe.com,
-        maurice.a.saldivar@hpe.com, mingo@kernel.org,
-        marcus.folkesson@gmail.com
-Subject: Re: [PATCH v3 08/11] watchdog/hpwdt: Programable Pretimeout NMI
-Message-ID: <20180216234617.GA675@anatevka.americas.hpqcorp.net>
-Reply-To: Jerry.Hoemann@hpe.com
-References: <20180215234400.5022-1-jerry.hoemann@hpe.com>
- <20180215234400.5022-9-jerry.hoemann@hpe.com>
- <20180216203440.GA31849@roeck-us.net>
+        id S1751033AbeBPXq6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 18:46:58 -0500
+Received: from mga02.intel.com ([134.134.136.20]:51140 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750836AbeBPXq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 18:46:56 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,522,1511856000";
+   d="scan'208";a="204946236"
+Subject: Re: [tip:x86/pti] x86/speculation: Use IBRS if available before
+ calling into firmware
+To: David Woodhouse <dwmw2@infradead.org>, mingo@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        linux-tip-commits@vger.kernel.org
+References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
+ <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
+ <c77b3da9-136d-9988-119f-e94c86fd34a3@linux.intel.com>
+ <1518808600.7876.49.camel@infradead.org>
+From: Tim Chen <tim.c.chen@linux.intel.com>
+Message-ID: <66f94cb1-8160-56e0-680c-2e847ae05893@linux.intel.com>
+Date: Fri, 16 Feb 2018 15:46:55 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180216203440.GA31849@roeck-us.net>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1518808600.7876.49.camel@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 12:34:40PM -0800, Guenter Roeck wrote:
-> On Thu, Feb 15, 2018 at 04:43:57PM -0700, Jerry Hoemann wrote:
-> > Make whether or not the hpwdt watchdog delivers a pretimeout NMI
-> > programable by the user.
-> > 
-> > The underlying iLO hardware is programmable as to whether or not
-> > a pre-timeout NMI is delivered to the system before the iLO resets
-> > the system.  However, the iLO does not allow for programming the
-> > length of time that NMI is delivered before the system is reset.
-> > 
-> > Hence, in hpwdt_set_pretimeout, val == 0 disables the NMI. Any
-> > non-zero value sets the pretimeout length to what the hardware
-> > supports.
-> > 
-> > Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
-> > ---
-> >  drivers/watchdog/hpwdt.c | 42 ++++++++++++++++++++++++++++++++++++------
-> >  1 file changed, 36 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
-> > index da9a04101814..dc0ad20738ed 100644
-> > --- a/drivers/watchdog/hpwdt.c
-> > +++ b/drivers/watchdog/hpwdt.c
-> > @@ -28,12 +28,15 @@
-> >  #define TICKS_TO_SECS(ticks)		((ticks) * 128 / 1000)
-> >  #define HPWDT_MAX_TIMER			TICKS_TO_SECS(65535)
-> >  #define DEFAULT_MARGIN			30
-> > +#define PRETIMEOUT_SEC			9
-> >  
-> >  static unsigned int soft_margin = DEFAULT_MARGIN;	/* in seconds */
-> > -static unsigned int reload;			/* the computed soft_margin */
-> >  static bool nowayout = WATCHDOG_NOWAYOUT;
-> >  #ifdef CONFIG_HPWDT_NMI_DECODING
-> >  static unsigned int allow_kdump = 1;
-> > +static bool pretimeout = 1;
-> > +#else
-> > +static bool pretimeout;
-> >  #endif
-> >  
-> static bool pretimeout = IS_ENABLED(CONFIG_HPWDT_NMI_DECODING);
-
-ack. will do.
-
+On 02/16/2018 11:16 AM, David Woodhouse wrote:
+> On Fri, 2018-02-16 at 10:44 -0800, Tim Chen wrote:
+>>
+>> I encountered hang on a machine but not others when using the above
+>> macro.  It is probably an alignment thing with ALTERNATIVE as the
+>> problem went
+>> away after I made the change below:
+>>
+>> Tim
+>>
+>> diff --git a/arch/x86/include/asm/nospec-branch.h
+>> b/arch/x86/include/asm/nospec-branch.h
+>> index 8f2ff74..0f65bd2 100644
+>> --- a/arch/x86/include/asm/nospec-branch.h
+>> +++ b/arch/x86/include/asm/nospec-branch.h
+>> @@ -148,6 +148,7 @@ extern char __indirect_thunk_end[];
+>>  
+>>  #define alternative_msr_write(_msr, _val, _feature)            \
+>>         asm volatile(ALTERNATIVE("",                            \
+>> +                               ".align 16\n\t"                \
+>>                                 "movl %[msr], %%ecx\n\t"       \
+>>                                 "movl %[val], %%eax\n\t"       \
+>>                                 "movl $0, %%edx\n\t"           \
 > 
-> >  static void __iomem *pci_mem_addr;		/* the PCI-memory address */
-> > @@ -55,10 +58,12 @@ static struct watchdog_device hpwdt_dev;
-> >   */
-> >  static int hpwdt_start(struct watchdog_device *dev)
-> >  {
-> > -	reload = SECS_TO_TICKS(dev->timeout);
-> > +	int control = 0x81 | (pretimeout ? 0x4 : 0);
-> > +	int reload = SECS_TO_TICKS(dev->timeout);
-> >  
-> > +	dev_dbg(dev->parent, "start watchdog 0x%08x:0x%02x\n", reload, control);
-> >  	iowrite16(reload, hpwdt_timer_reg);
-> > -	iowrite8(0x85, hpwdt_timer_con);
-> > +	iowrite8(control, hpwdt_timer_con);
-> >  
-> >  	return 0;
-> >  }
-> > @@ -67,6 +72,8 @@ static int hpwdt_stop(struct watchdog_device *dev)
-> >  {
-> >  	unsigned long data;
-> >  
-> > +	dev_dbg(dev->parent, "stop  watchdog\n");
-> > +
-> Unrelated.
+> That's weird. Note that .align in an altinstr section isn't actually
+> going to do what you'd expect; the oldinstr and altinstr sections
+> aren't necessarily aligned the same, so however many NOPs it inserts
+> into the alternative, might be deliberately *misaligning* it in the
+> code that actually gets executed.
 > 
-> >  	data = ioread8(hpwdt_timer_con);
-> >  	data &= 0xFE;
-> >  	iowrite8(data, hpwdt_timer_con);
-> > @@ -75,8 +82,9 @@ static int hpwdt_stop(struct watchdog_device *dev)
-> >  
-> >  static int hpwdt_ping(struct watchdog_device *dev)
-> >  {
-> > -	reload = SECS_TO_TICKS(dev->timeout);
-> > +	int reload = SECS_TO_TICKS(dev->timeout);
-> >  
-> > +	dev_dbg(dev->parent, "ping  watchdog 0x%08x\n", reload);
-> 
-> Unrelated. If you want to add debug messages, please do it
-> in a separate patch.
-
-
-Different patch, but same set?  I'll move these (and ones from earlier
-patch to a new separate patch later in set.)
-
-> 
-> >  	iowrite16(reload, hpwdt_timer_reg);
-> >  
-> >  	return 0;
-> > @@ -98,12 +106,21 @@ static int hpwdt_settimeout(struct watchdog_device *dev, unsigned int val)
-> >  }
-> >  
-> >  #ifdef CONFIG_HPWDT_NMI_DECODING	/* { */
-> > +static int hpwdt_set_pretimeout(struct watchdog_device *dev, unsigned int val)
-> > +{
-> > +	if (val && (val != PRETIMEOUT_SEC)) {
-> 
-> Unnecessary ( )
-
-
-There are several things going on here. I'm not sure which one the above
-comment is intended.
-
-While a pretimeout NMI isn't required by the HW to be enabled, if enabled the
-length of pretimeout is fixed by HW.
-
-I didn't see anything in the API that would allow us to communicate to
-the user this "feature."  timeout at leasst has both min_timeout and max_timeout, but
-I didn't see similar for pretimeout.  I also don't think its reasonable to fail
-here if the requested value is not 9 as the user really has no way of knowing what
-the valid range of pretimeout values are.  So I accept, any non-zero value
-for pretimeout, but then set pretimeout to be 9.
-
-But at the same time, I don't like to siliently change a human request
-w/o at least warning.
-
-
-
-> 
-> The actual timeout can be a value smaller than 9 seconds.
-> Minimum is 1 second. What happens if the user configures
-> a timeout of less than 9 seconds as well as a pretimeout ?
-> Will it fire immediately ? 
-
-The architecture is silient on this issue.  My experience with
-this is that if timeout < 9 seconds, the NMI is not issued.
-System resets when the timeout expires.  This could be implementation
-dependent.
-
-Note, this is not a new issue.
-
-I thought about setting the min timeout to ten seconds to avoid this situation.
-
-I haven't dug into the various user level clients of watchdog so I'm not sure 
-what the impact of making this change would be to them.
-
-
-> 
-> > +		dev_info(dev->parent, "Setting pretimeout to %d\n", PRETIMEOUT_SEC);
-> 
-> Please no ongoing logging noise. This can easily be abused to clog
-> the kernel log.
-
-Good point.  I will look at WARN_ONCE or something similar.
-
-> 
-> > +		val = PRETIMEOUT_SEC;
-> > +	}
-> > +	dev->pretimeout = val;
-> > +	pretimeout = val ? 1 : 0;
-> 
-> 	pretimeout = !!val;
+> Are you sure you're not running a kernel where the alternatives code
+> would turn that alternative which *starts* with a NOP, into *all* NOPs?
 > 
 
--- 
+I rebuild the kernel again without the align. I'm no longer
+seeing the issue again on that machine that had an issue earlier.  
+So let's ignore this for now as I can't reproduce the problem.
 
------------------------------------------------------------------------------
-Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
------------------------------------------------------------------------------
+It should be other issues causing the hang I saw earlier.
+
+Thanks.
+
+Tim
