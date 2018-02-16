@@ -1,66 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935378AbeBPLN7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 06:13:59 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:35790 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934388AbeBPLN5 (ORCPT
+        id S935433AbeBPLSP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 06:18:15 -0500
+Received: from mail-it0-f45.google.com ([209.85.214.45]:52816 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935394AbeBPLSO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 06:13:57 -0500
-Subject: Re: [RESEND] phy: sun4i-usb: add support for R40 USB PHY
-To: Chen-Yu Tsai <wens@csie.org>
-References: <20180103084944.3145-1-icenowy@aosc.io>
- <20180115150656.bibc4draok4i4oae@lemon.iwr.uni-heidelberg.de>
- <CAGb2v64DuqTv49CfOMhovdikc9iUGCfLRSmJ+FEeF5ct+-YzEw@mail.gmail.com>
- <993f82ad-befe-05fb-351d-8fd31d8bc132@ti.com>
-CC: Icenowy Zheng <icenowy@aosc.io>,
-        Hermann Lauer <Hermann.Lauer@iwr.uni-heidelberg.de>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <e5bcd7dd-1545-189f-82b1-efb77422b936@ti.com>
-Date: Fri, 16 Feb 2018 16:43:19 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
+        Fri, 16 Feb 2018 06:18:14 -0500
+X-Google-Smtp-Source: AH8x227uZ5TqbDmv6qTtZvUo+h9S+eA36S5yUnVXCUiekqUXbfVf4f8Gy1cNIRDG9rk8ygfqqTVbKLpu16oW6MV9VAk=
 MIME-Version: 1.0
-In-Reply-To: <993f82ad-befe-05fb-351d-8fd31d8bc132@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180216110821.GB29042@pd.tnic>
+References: <20180215182208.35003-1-joe.konno@linux.intel.com>
+ <CAKv+Gu80pJ5tbGoJqBm8CCKrEZXdkE83c944383KbQ5jREUC0Q@mail.gmail.com>
+ <20180216105548.GA29042@pd.tnic> <CAKv+Gu8qm2wFxY56-eRLkLZB6fRUCmZbZo=4cvo5e4JDFh01Gg@mail.gmail.com>
+ <20180216110821.GB29042@pd.tnic>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Fri, 16 Feb 2018 11:18:12 +0000
+Message-ID: <CAKv+Gu_SD6yWJMGbTwGUWXtrgZKPkpANNaGe1PUruTG9j0yhcg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] efivars: reading variables can generate SMIs
+To: Borislav Petkov <bp@alien8.de>
+Cc: Joe Konno <joe.konno@linux.intel.com>,
+        Matthew Garrett <mjg59@google.com>, Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>, linux-efi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeremy Kerr <jk@ozlabs.org>, Andi Kleen <ak@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Benjamin Drung <benjamin.drung@profitbricks.com>,
+        Peter Jones <pjones@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 16 February 2018 at 11:08, Borislav Petkov <bp@alien8.de> wrote:
+> On Fri, Feb 16, 2018 at 10:58:47AM +0000, Ard Biesheuvel wrote:
+>> By your own reasoning above, that's a no-no as well.
+>
+> I'm sure we can come up with some emulation - the same way we did the
+> BIOS emulation.
+>
+>> But thanks for your input. Anyone else got something constructive to contribute?
+>
+> The not-breaking userspace is constructive contribution. The last
+> paragraph is my usual rant.
+>
 
+Fair enough. And I am not disagreeing with you either.
 
-On Friday 19 January 2018 01:43 PM, Kishon Vijay Abraham I wrote:
-> Hi,
-> 
-> On Friday 19 January 2018 11:55 AM, Chen-Yu Tsai wrote:
->> Hi Kishon,
->>
->> On Mon, Jan 15, 2018 at 11:06 PM, Hermann Lauer
->> <Hermann.Lauer@iwr.uni-heidelberg.de> wrote:
->>> On Wed, Jan 03, 2018 at 04:49:44PM +0800, Icenowy Zheng wrote:
->>>> Allwinner R40 features a USB PHY like the one in A64, but with 3 PHYs.
->>>>
->>>> Add support for it.
->>>>
->>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>>> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->>>> Acked-by: Rob Herring <robh@kernel.org>
->>>
->>> You may add
->>>
->>> Tested-by: Hermann.Lauer@iwr.uni-heidelberg.de
->>
->> Gentle ping for this patch to be included in 4.16
-> 
-> Sent the pull request for 4.16 to Greg on Jan 2nd. So this can't be included in
-> 4.16. Sorry.
-
-merged now, thanks!
-
--Kishon
+So question to Joe: is it well defined which variables may exhibit
+this behavior? Given that UEFI variables are GUID scoped, would
+whitelisting certain GUIDs (the ones userland currently relies on to
+be readable my non-privileged users) and making everything else
+user-only solve this problem as well?
