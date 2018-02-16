@@ -1,204 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751138AbeBPWM3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 17:12:29 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34040 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751054AbeBPWM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 17:12:27 -0500
-Date: Fri, 16 Feb 2018 15:12:23 -0700
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Cc: <eric.auger@redhat.com>, <pmorel@linux.vnet.ibm.com>,
-        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <john.garry@huawei.com>, <xuwei5@hisilicon.com>
-Subject: Re: [PATCH v3 5/6] vfio/type1: Add IOVA range capability support
-Message-ID: <20180216151223.381bfcf9@w520.home>
-In-Reply-To: <20180215094504.4972-6-shameerali.kolothum.thodi@huawei.com>
-References: <20180215094504.4972-1-shameerali.kolothum.thodi@huawei.com>
-        <20180215094504.4972-6-shameerali.kolothum.thodi@huawei.com>
+        id S1750824AbeBPWU0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 17:20:26 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:33272 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750727AbeBPWUY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 17:20:24 -0500
+X-Google-Smtp-Source: AH8x224SYTAn1LUmj8VbVFx+2iEZyQ7XAJ9iGAxkXSuogDwX6vconSERmdSePIiQMKG0Omy7q/oAcw==
+Subject: Re: [PATCH v3] of: cache phandle nodes to reduce cost of
+ of_find_node_by_phandle()
+To: Chintan Pandya <cpandya@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1518655979-10910-1-git-send-email-frowand.list@gmail.com>
+ <207e055e-1074-9010-e719-2a4c13ede9f9@codeaurora.org>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <46d5fc76-33e3-d54a-26b8-e9bb8332924d@gmail.com>
+Date: Fri, 16 Feb 2018 14:20:22 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <207e055e-1074-9010-e719-2a4c13ede9f9@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Feb 2018 09:45:03 +0000
-Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
-
-> This  allows the user-space to retrieve the supported IOVA
-> range(s), excluding any reserved regions. The implementation
-> is based on capability chains, added to VFIO_IOMMU_GET_INFO ioctl.
+On 02/16/18 01:04, Chintan Pandya wrote:
 > 
-> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> ---
->  drivers/vfio/vfio_iommu_type1.c | 92 +++++++++++++++++++++++++++++++++++++++++
->  include/uapi/linux/vfio.h       | 23 +++++++++++
->  2 files changed, 115 insertions(+)
 > 
-> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> index dae01c5..21e575c 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -1925,6 +1925,68 @@ static int vfio_domains_have_iommu_cache(struct vfio_iommu *iommu)
->  	return ret;
->  }
->  
-> +static int vfio_add_iova_cap(struct vfio_info_cap *caps,
-> +		 struct vfio_iommu_type1_info_cap_iova_range *cap_iovas,
-> +		 size_t size)
-> +{
-> +	struct vfio_info_cap_header *header;
-> +	struct vfio_iommu_type1_info_cap_iova_range *iova_cap;
-> +
-> +	header = vfio_info_cap_add(caps, size,
-> +				VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE, 1);
-> +	if (IS_ERR(header))
-> +		return PTR_ERR(header);
-> +
-> +	iova_cap = container_of(header,
-> +			struct vfio_iommu_type1_info_cap_iova_range, header);
-> +	iova_cap->nr_iovas = cap_iovas->nr_iovas;
-> +	memcpy(iova_cap->iova_ranges, cap_iovas->iova_ranges,
-> +		cap_iovas->nr_iovas * sizeof(*cap_iovas->iova_ranges));
-> +	return 0;
-> +}
-> +
-> +static int vfio_build_iommu_iova_caps(struct vfio_iommu *iommu,
-> +				struct vfio_info_cap *caps)
-> +{
-> +	struct vfio_iommu_type1_info_cap_iova_range *cap_iovas;
-> +	struct vfio_iova *iova;
-> +	size_t size;
-> +	int iovas = 0, i = 0, ret;
-> +
-> +	mutex_lock(&iommu->lock);
-> +
-> +	list_for_each_entry(iova, &iommu->iova_list, list)
-> +		iovas++;
-> +
-> +	if (!iovas) {
-> +		ret = -EINVAL;
-> +		goto out_unlock;
-> +	}
-> +
-> +	size = sizeof(*cap_iovas) + (iovas * sizeof(*cap_iovas->iova_ranges));
-> +
-> +	cap_iovas = kzalloc(size, GFP_KERNEL);
-> +	if (!cap_iovas) {
-> +		ret = -ENOMEM;
-> +		goto out_unlock;
-> +	}
-> +
-> +	cap_iovas->nr_iovas = iovas;
-> +
-> +	list_for_each_entry(iova, &iommu->iova_list, list) {
-> +		cap_iovas->iova_ranges[i].start = iova->start;
-> +		cap_iovas->iova_ranges[i].end = iova->end;
-> +		i++;
-> +	}
-> +
-> +	ret = vfio_add_iova_cap(caps, cap_iovas, size);
-> +
-> +	kfree(cap_iovas);
-> +out_unlock:
-> +	mutex_unlock(&iommu->lock);
-> +	return ret;
-> +}
-> +
->  static long vfio_iommu_type1_ioctl(void *iommu_data,
->  				   unsigned int cmd, unsigned long arg)
->  {
-> @@ -1946,6 +2008,8 @@ static long vfio_iommu_type1_ioctl(void *iommu_data,
->  		}
->  	} else if (cmd == VFIO_IOMMU_GET_INFO) {
->  		struct vfio_iommu_type1_info info;
-> +		struct vfio_info_cap caps = { .buf = NULL, .size = 0 };
-> +		int ret;
->  
->  		minsz = offsetofend(struct vfio_iommu_type1_info, iova_pgsizes);
->  
-> @@ -1959,6 +2023,34 @@ static long vfio_iommu_type1_ioctl(void *iommu_data,
->  
->  		info.iova_pgsizes = vfio_pgsize_bitmap(iommu);
->  
-> +		if (info.argsz == minsz)
-> +			goto done;
+> On 2/15/2018 6:22 AM, frowand.list@gmail.com wrote:
+>> From: Frank Rowand <frank.rowand@sony.com>
+>>
+>> Create a cache of the nodes that contain a phandle property.  Use this
+>> cache to find the node for a given phandle value instead of scanning
+>> the devicetree to find the node.  If the phandle value is not found
+>> in the cache, of_find_node_by_phandle() will fall back to the tree
+>> scan algorithm.
+>>
 
-I don't think the above branch should exist, we want to tell the user
-via argsz and flags that capabilities exist even if they only passed
-the previous structure size through.
+< snip >
 
-> +
-> +		ret = vfio_build_iommu_iova_caps(iommu, &caps);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if (caps.size) {
-> +			info.flags |= VFIO_IOMMU_INFO_CAPS;
-> +			minsz = offsetofend(struct vfio_iommu_type1_info,
-> +							 cap_offset);
+>> diff --git a/drivers/of/base.c b/drivers/of/base.c
+>> index ad28de96e13f..ab545dfa9173 100644
+>> --- a/drivers/of/base.c
+>> +++ b/drivers/of/base.c
+>> @@ -91,10 +91,69 @@ int __weak of_node_to_nid(struct device_node *np)
+>>   }
+>>   #endif
+>>   +static struct device_node **phandle_cache;
+>> +static u32 phandle_cache_mask;
+>> +
+>> +/*
+>> + * Assumptions behind phandle_cache implementation:
+>> + *   - phandle property values are in a contiguous range of 1..n
+>> + *
+>> + * If the assumptions do not hold, then
+>> + *   - the phandle lookup overhead reduction provided by the cache
+>> + *     will likely be less
+>> + */
+>> +static void of_populate_phandle_cache(void)
+>> +{
+>> +    unsigned long flags;
+>> +    u32 cache_entries;
+>> +    struct device_node *np;
+>> +    u32 phandles = 0;
+>> +
+>> +    raw_spin_lock_irqsave(&devtree_lock, flags);
+>> +
+>> +    kfree(phandle_cache);
+> 
+> I couldn't understood this. Everything else looks good to me.
 
-Only update minsz if this is within the provided argsz.
+I will be adding a call to of_populate_phandle_cache() from the
+devicetree overlay code.  I put the kfree here so that the previous
+cache memory is freed when a new cache is created.
 
-> +			if (info.argsz < sizeof(info) + caps.size) {
-> +				info.argsz = sizeof(info) + caps.size;
-> +				info.cap_offset = 0;
+Adding the call from the overlay code is not done in this
+series because I have a patch series modifying overlays and
+I do not want to create a conflict or ordering between that
+series and that patch.  The lack of the call from overlay
+code means that overlay code will gain some of the overhead
+reduction from this patch, but possibly not the entire reduction.
 
-IOW, if cap_offset doesn't get copied to the user, that's ok, we've
-provided them the flag and argsz they need to recognize it's there and
-call with a sufficient buffer next time.
 
-> +			} else {
-> +				vfio_info_cap_shift(&caps, sizeof(info));
-> +				if (copy_to_user((void __user *)arg +
-> +						sizeof(info), caps.buf,
-> +						caps.size)) {
-> +					kfree(caps.buf);
-> +					return -EFAULT;
-> +				}
-> +				info.cap_offset = sizeof(info);
-> +			}
-> +
-> +			kfree(caps.buf);
-> +		}
-> +done:
->  		return copy_to_user((void __user *)arg, &info, minsz) ?
->  			-EFAULT : 0;
->  
-> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> index c743721..46b49e9 100644
-> --- a/include/uapi/linux/vfio.h
-> +++ b/include/uapi/linux/vfio.h
-> @@ -589,7 +589,30 @@ struct vfio_iommu_type1_info {
->  	__u32	argsz;
->  	__u32	flags;
->  #define VFIO_IOMMU_INFO_PGSIZES (1 << 0)	/* supported page sizes info */
-> +#define VFIO_IOMMU_INFO_CAPS	(1 << 1)	/* Info supports caps */
->  	__u64	iova_pgsizes;		/* Bitmap of supported page sizes */
-> +	__u32   cap_offset;	/* Offset within info struct of first cap */
-> +};
-> +
-> +/*
-> + * The IOVA capability allows to report the valid IOVA range(s)
-> + * excluding any reserved regions associated with dev group. Any dma
-> + * map attempt outside the valid iova range will return error.
-> + *
-> + * The structures below define version 1 of this capability.
-> + */
-> +#define VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE  1
-> +
-> +struct vfio_iova_range {
-> +	__u64	start;
-> +	__u64	end;
-> +};
-> +
-> +struct vfio_iommu_type1_info_cap_iova_range {
-> +	struct vfio_info_cap_header header;
-> +	__u32	nr_iovas;
-> +	__u32	reserved;
-> +	struct vfio_iova_range iova_ranges[];
->  };
->  
->  #define VFIO_IOMMU_GET_INFO _IO(VFIO_TYPE, VFIO_BASE + 12)
+> 
+>> +    phandle_cache = NULL;
+>> +
+>> +    for_each_of_allnodes(np)
+
+< snip >
