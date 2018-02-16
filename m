@@ -1,124 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967079AbeBPPP5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:15:57 -0500
-Received: from vulcan.natalenko.name ([104.207.131.136]:38616 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752192AbeBPPPz (ORCPT
+        id S967133AbeBPPQZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:16:25 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51360 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967234AbeBPPQW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:15:55 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 88D1A2F8C77
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Yuchung Cheng <ycheng@google.com>, Van Jacobson <vanj@google.com>,
-        Jerry Chu <hkchu@google.com>
-Subject: Re: TCP and BBR: reproducibly low cwnd and bandwidth
-Date: Fri, 16 Feb 2018 16:15:51 +0100
-Message-ID: <2189487.nPhU5NAnbi@natalenko.name>
-In-Reply-To: <1697118.nv5eASg0nx@natalenko.name>
-References: <1697118.nv5eASg0nx@natalenko.name>
+        Fri, 16 Feb 2018 10:16:22 -0500
+Date: Fri, 16 Feb 2018 15:16:09 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 1/4] dt-bindings: sound: add motorola,cpcap-audio-codec
+Message-ID: <20180216151609.GK5886@sirena.org.uk>
+References: <20180214220741.28306-1-sebastian.reichel@collabora.co.uk>
+ <20180214220741.28306-2-sebastian.reichel@collabora.co.uk>
+ <20180216113008.GB5886@sirena.org.uk>
+ <20180216132537.lkd4wzfg7uuoyx7k@earth.universe>
+ <20180216134448.GI5886@sirena.org.uk>
+ <20180216141237.rd75sbix7bopi7zu@earth.universe>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1518794152;
-        h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:in-reply-to:references;
-        bh=aXWm3PoC35jSDJ09cLzbO9l3BqzGTa1DSwhNF6GUhAg=;
-        b=0RelFhp9kE7M95tpPwQY5GI+QajuLqhFbFKkEt5sWD9Y2pvlRacZFoKhnwVOWNjxOP7B/W
-        v3N7/xhltV3ziZuRQ/xOruUmFqdfGFwuXAxCVAhHAWO6OHxZoOYQ7/Ga6gzAOePdYWYLjC
-        ZwIfpvnb10MwxNHApFS+Mtemfmo2Xk0=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1518794152; a=rsa-sha256;
-        cv=none;
-        b=bEw5NvLEQUqGv8Jci7Q0LwgEm2Jw1NL9CSxkPHRTvDVYF8iQA3Groyy7ToeimUWdkHa+YtiJsU60wIsipdnGijbiTVThCvw7HF9DNc8xBW2gGcLn0XGYMakkeu9/7mLCXA7+nS794RSPIPmlz6danj2FMze9ZHXQHeD5nqNYtbc=
-ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
-        smtp.mailfrom=oleksandr@natalenko.name
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rnP2AJ7yb1j09OW/"
+Content-Disposition: inline
+In-Reply-To: <20180216141237.rd75sbix7bopi7zu@earth.universe>
+X-Cookie: To order, call toll-free.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1GFG1Oi002304
 
-Hi, David, Eric, Neal et al.
 
-On čtvrtek 15. února 2018 21:42:26 CET Oleksandr Natalenko wrote:
-> I've faced an issue with a limited TCP bandwidth between my laptop and a
-> server in my 1 Gbps LAN while using BBR as a congestion control mechanism.
-> To verify my observations, I've set up 2 KVM VMs with the following
-> parameters:
-> 
-> 1) Linux v4.15.3
-> 2) virtio NICs
-> 3) 128 MiB of RAM
-> 4) 2 vCPUs
-> 5) tested on both non-PREEMPT/100 Hz and PREEMPT/1000 Hz
-> 
-> The VMs are interconnected via host bridge (-netdev bridge). I was running
-> iperf3 in the default and reverse mode. Here are the results:
-> 
-> 1) BBR on both VMs
-> 
-> upload: 3.42 Gbits/sec, cwnd ~ 320 KBytes
-> download: 3.39 Gbits/sec, cwnd ~ 320 KBytes
-> 
-> 2) Reno on both VMs
-> 
-> upload: 5.50 Gbits/sec, cwnd = 976 KBytes (constant)
-> download: 5.22 Gbits/sec, cwnd = 1.20 MBytes (constant)
-> 
-> 3) Reno on client, BBR on server
-> 
-> upload: 5.29 Gbits/sec, cwnd = 952 KBytes (constant)
-> download: 3.45 Gbits/sec, cwnd ~ 320 KBytes
-> 
-> 4) BBR on client, Reno on server
-> 
-> upload: 3.36 Gbits/sec, cwnd ~ 370 KBytes
-> download: 5.21 Gbits/sec, cwnd = 887 KBytes (constant)
-> 
-> So, as you may see, when BBR is in use, upload rate is bad and cwnd is low.
-> If using real HW (1 Gbps LAN, laptop and server), BBR limits the throughput
-> to ~100 Mbps (verifiable not only by iperf3, but also by scp while
-> transferring some files between hosts).
-> 
-> Also, I've tried to use YeAH instead of Reno, and it gives me the same
-> results as Reno (IOW, YeAH works fine too).
-> 
-> Questions:
-> 
-> 1) is this expected?
-> 2) or am I missing some extra BBR tuneable?
-> 3) if it is not a regression (I don't have any previous data to compare
-> with), how can I fix this?
-> 4) if it is a bug in BBR, what else should I provide or check for a proper
-> investigation?
+--rnP2AJ7yb1j09OW/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I've played with BBR a little bit more and managed to narrow the issue down to 
-the changes between v4.12 and v4.13. Here are my observations:
+On Fri, Feb 16, 2018 at 03:12:37PM +0100, Sebastian Reichel wrote:
+> On Fri, Feb 16, 2018 at 01:44:48PM +0000, Mark Brown wrote:
+> > On Fri, Feb 16, 2018 at 02:25:38PM +0100, Sebastian Reichel wrote:
 
-v4.12 + BBR + fq_codel == OK
-v4.12 + BBR + fq       == OK
-v4.13 + BBR + fq_codel == Not OK
-v4.13 + BBR + fq       == OK
+> > > While it looks empty in the DT binding file, it's actually not empty
+> > > once some standard properties are added to support audio-graph-card.
 
-I think this has something to do with an internal TCP implementation for 
-pacing, that was introduced in v4.13 (commit 218af599fa63) specifically to 
-allow using BBR together with non-fq qdiscs. Once BBR relies on fq, the 
-throughput is high and saturates the link, but if another qdisc is in use, for 
-instance, fq_codel, the throughput drops. Just to be sure, I've also tried 
-pfifo_fast instead of fq_codel with the same outcome resulting in the low 
-throughput.
+> > This tells me you're missing something in the binding defining the
+> > DAIs and...
 
-Unfortunately, I do not know if this is something expected or should be 
-considered as a regression. Thus, asking for an advice.
+> Well it is described by the following document:
 
-Ideas?
+> Documentation/devicetree/bindings/sound/audio-graph-card.txt
 
-Thanks.
+You still need to say which DAIs exist on the device and how they are
+identified - if there's only one DAI it's obviously easy but if a device
+has multiple DAIs then there's some naming to do.
 
-Regards,
-  Oleksandr
+> > ...that still doesn't require a compatible here.
+
+> I agree, that it's not required. Also the node is not required.
+> Everything could be dumped into the main node. Many things are
+> not required, but they make implementations easier and help in
+> regards to DT readability and consistency. Having the compatible
+> means, that all sub-functions _can_ be handled equally by the
+> operating system. Not having the compatible means you _always_
+> need special handling for the audio codec. This basically makes
+> the codec node different for the simple purpose of "because it is
+> not strictly required". If we have a compatible node, other
+> operating systems can still decide to ignore it, right?
+
+It's not just other operating systems, it's also other versions of
+Linux we have to think about here.  The most obvious issue with audio is
+the clocking where the division between ASoC and clock APIs is not super
+obvious and could easily change in the future.
+
+--rnP2AJ7yb1j09OW/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqG9bgACgkQJNaLcl1U
+h9DNMAf9H7GcnGs/G4OlpnokwAudl2Uu5fmmOrtocEShD2M27kg7Xy+yFHxw/hP5
+NFntlCoM7ctaz3qW49nmcD7mgvXOVNiTRXvJGnH5j1n3iSHiBk2PRLt6OG4UdYod
+5iGTyz65gpUXEbeQ7iJEGhQJd9gYsiMQMGiWGe0eiVGiqiCvfclFlBkP7mILBvTu
+pdn2FGvD/BpYQ5LH538ocQLVJCSpXK/tyqJAC/fTTw1WPCBpLGuEJ0RqbUUny6F/
++jfYvCq6RhtiOnxrAQKyByblZ7vmbVx0cgirvEDIC5qDDQ328VQJkWm5qzvwtlFe
+6CfbmZaqLpkt0At0H9yQ+ZQdn4iKFA==
+=xZoD
+-----END PGP SIGNATURE-----
+
+--rnP2AJ7yb1j09OW/--
