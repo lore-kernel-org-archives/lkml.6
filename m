@@ -1,119 +1,317 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162810AbeBPSGd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 13:06:33 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:34506 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161668AbeBPSGb (ORCPT
+        id S1162842AbeBPSHa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 13:07:30 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:35271 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162821AbeBPSH3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 13:06:31 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00AA460558
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rananta@codeaurora.org
-Subject: Re: [PATCH 1/1] perf: Add CPU hotplug support for events
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, mingo@redhat.com, cme@kernel.org,
-        linux-kernel@vger.kernel.org, psodagud@codeaurora.org,
-        tsoni@codeaurora.org, skannan@codeaurora.org
-References: <1518735701-7014-1-git-send-email-rananta@codeaurora.org>
- <1518735701-7014-2-git-send-email-rananta@codeaurora.org>
- <20180216082139.GF25181@hirez.programming.kicks-ass.net>
-From: Raghavendra Rao Ananta <rananta@codeaurora.org>
-Message-ID: <361ffd6f-3eec-4be6-de2f-40beb588c65e@codeaurora.org>
-Date: Fri, 16 Feb 2018 10:06:29 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Fri, 16 Feb 2018 13:07:29 -0500
+X-Google-Smtp-Source: AH8x227xGCpB48YrpW0W1wwswc2tQ3eUWe0YuLQ9aPAoylLAXWwTiQ5mUjUrIg03acccwSfQyd8o7g==
+Date: Fri, 16 Feb 2018 12:07:19 -0600
+From: Dennis Zhou <dennisszhou@gmail.com>
+To: Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/3] percpu: add __GFP_NORETRY semantics to the percpu
+ balancing path
+Message-ID: <20180216180719.GA81034@localhost>
+References: <cover.1518668149.git.dennisszhou@gmail.com>
+ <d51c5dc100f0d7423bbf5bb32760f91646097b9f.1518668149.git.dennisszhou@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180216082139.GF25181@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d51c5dc100f0d7423bbf5bb32760f91646097b9f.1518668149.git.dennisszhou@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Percpu memory using the vmalloc area based chunk allocator lazily
+populates chunks by first requesting the full virtual address space
+required for the chunk and subsequently adding pages as allocations come
+through. To ensure atomic allocations can succeed, a workqueue item is
+used to maintain a minimum number of empty pages. In certain scenarios,
+such as reported in [1], it is possible that physical memory becomes
+quite scarce which can result in either a rather long time spent trying
+to find free pages or worse, a kernel panic.
 
+This patch adds support for __GFP_NORETRY and __GFP_NOWARN passing them
+through to the underlying allocators. This should prevent any
+unnecessary panics potentially caused by the workqueue item. The passing
+of gfp around is as additional flags rather than a full set of flags.
+The next patch will change these to caller passed semantics.
 
-On 02/16/2018 12:21 AM, Peter Zijlstra wrote:
-> On Thu, Feb 15, 2018 at 03:01:41PM -0800, Raghavendra Rao Ananta wrote:
->> Perf framework doesn't allow prevserving CPU events across
->> CPU hotplugs. The events are scheduled out as and when the
->> CPU walks offline. Moreover, the framework also doesn't
->> allow the clients to create events on an offline CPU. As
->> a result, the clients have to keep on monitoring the CPU
->> state until it comes back online.
->>
->> Therefore, introducing the perf framework to support creation
->> and preserving of (CPU) events for offline CPUs. Through
->> this, the CPU's online state would be transparent to the
->> client and it not have to worry about monitoring the CPU's
->> state. Success would be returned to the client even while
->> creating the event on an offline CPU. If during the lifetime
->> of the event the CPU walks offline, the event would be
->> preserved and would continue to count as soon as (and if) the
->> CPU comes back online.
->>
->> Signed-off-by: Raghavendra Rao Ananta <rananta@codeaurora.org>
->> ---
->>   include/linux/perf_event.h |   7 +++
->>   kernel/events/core.c       | 123 +++++++++++++++++++++++++++++++++------------
->>   2 files changed, 97 insertions(+), 33 deletions(-)
->>
->> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
->> index 7546822..bc07f16 100644
->> --- a/include/linux/perf_event.h
->> +++ b/include/linux/perf_event.h
->> @@ -489,6 +489,7 @@ struct perf_addr_filters_head {
->>    * enum perf_event_state - the states of a event
->>    */
->>   enum perf_event_state {
->> +	PERF_EVENT_STATE_DORMANT	= -5,
->>   	PERF_EVENT_STATE_DEAD		= -4,
->>   	PERF_EVENT_STATE_EXIT		= -3,
->>   	PERF_EVENT_STATE_ERROR		= -2,
->> @@ -687,6 +688,12 @@ struct perf_event {
->>   #endif
->>   
->>   	struct list_head		sb_list;
->> +
->> +	/* Entry into the list that holds the events whose CPUs
->> +	 * are offline. These events will be removed from the
->> +	 * list and installed once the CPU wakes up.
->> +	 */
->> +	struct list_head		dormant_entry;
-> 
-> No this is absolutely disguisting. You can simply keep the events in the
-> dead CPU's context. It's really not that hard.
-Keeping the events in the dead CPU's context was also an idea that we 
-had. However, detaching that event from the PMU when the CPU is offline 
-would be a pain. Consider the scenario in which an event is about to be 
-destroyed when the CPU is offline (yet still attached to the CPU). 
-During it's destruction, a cross-cpu call is made (from 
-perf_remove_from_context()) to the offlined CPU to detach the event from 
-the CPU's PMU. As the CPU is offline, that would not be possible, and 
-again a separate logic has to be written for cleaning up the events 
-whose CPUs are offlined. Hence, I thought it would be a cleaner way to 
-maintain the events.
-> 
-> Also, you _still_ don't explain why you care about dead CPUs.
-> 
+V2:
+Added const modifier to gfp flags in the balance path.
+Removed an extra whitespace.
 
-It's just not only about dead CPUs. It's the fact that the CPUs can come 
-and go online. The embedded world, specifically Android mobile SoCs, 
-rely on CPU hotplugs to manage power and thermal constraints. These 
-hotplugs can happen at a very rapid pace. Adjacently, they also rely on 
-many perf event counters for its management. Therefore, there is
-a need to preserve these events across hotplugs.
-In such a scenario, a perf client (kernel or user-space) can create
-events even when the CPU is offline. If the CPU comes online during
-the lifetime of the event, the registered event can start counting
-spontaneously. As an extension to this, the events' count can also
-be preserved across CPU hotplugs. This takes the burden off of the
-clients to monitor the state of the CPU.
+[1] https://lkml.org/lkml/2018/2/12/551
 
--- Raghavendra
+Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
+Suggested-by: Daniel Borkmann <daniel@iogearbox.net>
+Reported-by: syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com
+---
+ mm/percpu-km.c |  8 ++++----
+ mm/percpu-vm.c | 18 +++++++++++-------
+ mm/percpu.c    | 44 +++++++++++++++++++++++++++-----------------
+ 3 files changed, 42 insertions(+), 28 deletions(-)
 
+diff --git a/mm/percpu-km.c b/mm/percpu-km.c
+index d2a7664..0d88d7b 100644
+--- a/mm/percpu-km.c
++++ b/mm/percpu-km.c
+@@ -34,7 +34,7 @@
+ #include <linux/log2.h>
+ 
+ static int pcpu_populate_chunk(struct pcpu_chunk *chunk,
+-			       int page_start, int page_end)
++			       int page_start, int page_end, gfp_t gfp)
+ {
+ 	return 0;
+ }
+@@ -45,18 +45,18 @@ static void pcpu_depopulate_chunk(struct pcpu_chunk *chunk,
+ 	/* nada */
+ }
+ 
+-static struct pcpu_chunk *pcpu_create_chunk(void)
++static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
+ {
+ 	const int nr_pages = pcpu_group_sizes[0] >> PAGE_SHIFT;
+ 	struct pcpu_chunk *chunk;
+ 	struct page *pages;
+ 	int i;
+ 
+-	chunk = pcpu_alloc_chunk();
++	chunk = pcpu_alloc_chunk(gfp);
+ 	if (!chunk)
+ 		return NULL;
+ 
+-	pages = alloc_pages(GFP_KERNEL, order_base_2(nr_pages));
++	pages = alloc_pages(gfp | GFP_KERNEL, order_base_2(nr_pages));
+ 	if (!pages) {
+ 		pcpu_free_chunk(chunk);
+ 		return NULL;
+diff --git a/mm/percpu-vm.c b/mm/percpu-vm.c
+index 9158e5a..0af71eb 100644
+--- a/mm/percpu-vm.c
++++ b/mm/percpu-vm.c
+@@ -37,7 +37,7 @@ static struct page **pcpu_get_pages(void)
+ 	lockdep_assert_held(&pcpu_alloc_mutex);
+ 
+ 	if (!pages)
+-		pages = pcpu_mem_zalloc(pages_size);
++		pages = pcpu_mem_zalloc(pages_size, 0);
+ 	return pages;
+ }
+ 
+@@ -73,18 +73,21 @@ static void pcpu_free_pages(struct pcpu_chunk *chunk,
+  * @pages: array to put the allocated pages into, indexed by pcpu_page_idx()
+  * @page_start: page index of the first page to be allocated
+  * @page_end: page index of the last page to be allocated + 1
++ * @gfp: allocation flags passed to the underlying allocator
+  *
+  * Allocate pages [@page_start,@page_end) into @pages for all units.
+  * The allocation is for @chunk.  Percpu core doesn't care about the
+  * content of @pages and will pass it verbatim to pcpu_map_pages().
+  */
+ static int pcpu_alloc_pages(struct pcpu_chunk *chunk,
+-			    struct page **pages, int page_start, int page_end)
++			    struct page **pages, int page_start, int page_end,
++			    gfp_t gfp)
+ {
+-	const gfp_t gfp = GFP_KERNEL | __GFP_HIGHMEM;
+ 	unsigned int cpu, tcpu;
+ 	int i;
+ 
++	gfp |= GFP_KERNEL | __GFP_HIGHMEM;
++
+ 	for_each_possible_cpu(cpu) {
+ 		for (i = page_start; i < page_end; i++) {
+ 			struct page **pagep = &pages[pcpu_page_idx(cpu, i)];
+@@ -262,6 +265,7 @@ static void pcpu_post_map_flush(struct pcpu_chunk *chunk,
+  * @chunk: chunk of interest
+  * @page_start: the start page
+  * @page_end: the end page
++ * @gfp: allocation flags passed to the underlying memory allocator
+  *
+  * For each cpu, populate and map pages [@page_start,@page_end) into
+  * @chunk.
+@@ -270,7 +274,7 @@ static void pcpu_post_map_flush(struct pcpu_chunk *chunk,
+  * pcpu_alloc_mutex, does GFP_KERNEL allocation.
+  */
+ static int pcpu_populate_chunk(struct pcpu_chunk *chunk,
+-			       int page_start, int page_end)
++			       int page_start, int page_end, gfp_t gfp)
+ {
+ 	struct page **pages;
+ 
+@@ -278,7 +282,7 @@ static int pcpu_populate_chunk(struct pcpu_chunk *chunk,
+ 	if (!pages)
+ 		return -ENOMEM;
+ 
+-	if (pcpu_alloc_pages(chunk, pages, page_start, page_end))
++	if (pcpu_alloc_pages(chunk, pages, page_start, page_end, gfp))
+ 		return -ENOMEM;
+ 
+ 	if (pcpu_map_pages(chunk, pages, page_start, page_end)) {
+@@ -325,12 +329,12 @@ static void pcpu_depopulate_chunk(struct pcpu_chunk *chunk,
+ 	pcpu_free_pages(chunk, pages, page_start, page_end);
+ }
+ 
+-static struct pcpu_chunk *pcpu_create_chunk(void)
++static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
+ {
+ 	struct pcpu_chunk *chunk;
+ 	struct vm_struct **vms;
+ 
+-	chunk = pcpu_alloc_chunk();
++	chunk = pcpu_alloc_chunk(gfp);
+ 	if (!chunk)
+ 		return NULL;
+ 
+diff --git a/mm/percpu.c b/mm/percpu.c
+index e1ea410..f97443d 100644
+--- a/mm/percpu.c
++++ b/mm/percpu.c
+@@ -447,10 +447,12 @@ static void pcpu_next_fit_region(struct pcpu_chunk *chunk, int alloc_bits,
+ /**
+  * pcpu_mem_zalloc - allocate memory
+  * @size: bytes to allocate
++ * @gfp: allocation flags
+  *
+  * Allocate @size bytes.  If @size is smaller than PAGE_SIZE,
+- * kzalloc() is used; otherwise, vzalloc() is used.  The returned
+- * memory is always zeroed.
++ * kzalloc() is used; otherwise, the equivalent of vzalloc() is used.
++ * This is to facilitate passing through whitelisted flags.  The
++ * returned memory is always zeroed.
+  *
+  * CONTEXT:
+  * Does GFP_KERNEL allocation.
+@@ -458,15 +460,16 @@ static void pcpu_next_fit_region(struct pcpu_chunk *chunk, int alloc_bits,
+  * RETURNS:
+  * Pointer to the allocated area on success, NULL on failure.
+  */
+-static void *pcpu_mem_zalloc(size_t size)
++static void *pcpu_mem_zalloc(size_t size, gfp_t gfp)
+ {
+ 	if (WARN_ON_ONCE(!slab_is_available()))
+ 		return NULL;
+ 
+ 	if (size <= PAGE_SIZE)
+-		return kzalloc(size, GFP_KERNEL);
++		return kzalloc(size, gfp | GFP_KERNEL);
+ 	else
+-		return vzalloc(size);
++		return __vmalloc(size, gfp | GFP_KERNEL | __GFP_ZERO,
++				 PAGE_KERNEL);
+ }
+ 
+ /**
+@@ -1154,12 +1157,12 @@ static struct pcpu_chunk * __init pcpu_alloc_first_chunk(unsigned long tmp_addr,
+ 	return chunk;
+ }
+ 
+-static struct pcpu_chunk *pcpu_alloc_chunk(void)
++static struct pcpu_chunk *pcpu_alloc_chunk(gfp_t gfp)
+ {
+ 	struct pcpu_chunk *chunk;
+ 	int region_bits;
+ 
+-	chunk = pcpu_mem_zalloc(pcpu_chunk_struct_size);
++	chunk = pcpu_mem_zalloc(pcpu_chunk_struct_size, gfp);
+ 	if (!chunk)
+ 		return NULL;
+ 
+@@ -1168,17 +1171,17 @@ static struct pcpu_chunk *pcpu_alloc_chunk(void)
+ 	region_bits = pcpu_chunk_map_bits(chunk);
+ 
+ 	chunk->alloc_map = pcpu_mem_zalloc(BITS_TO_LONGS(region_bits) *
+-					   sizeof(chunk->alloc_map[0]));
++					   sizeof(chunk->alloc_map[0]), gfp);
+ 	if (!chunk->alloc_map)
+ 		goto alloc_map_fail;
+ 
+ 	chunk->bound_map = pcpu_mem_zalloc(BITS_TO_LONGS(region_bits + 1) *
+-					   sizeof(chunk->bound_map[0]));
++					   sizeof(chunk->bound_map[0]), gfp);
+ 	if (!chunk->bound_map)
+ 		goto bound_map_fail;
+ 
+ 	chunk->md_blocks = pcpu_mem_zalloc(pcpu_chunk_nr_blocks(chunk) *
+-					   sizeof(chunk->md_blocks[0]));
++					   sizeof(chunk->md_blocks[0]), gfp);
+ 	if (!chunk->md_blocks)
+ 		goto md_blocks_fail;
+ 
+@@ -1278,10 +1281,10 @@ static void pcpu_chunk_depopulated(struct pcpu_chunk *chunk,
+  * pcpu_verify_alloc_info	- check alloc_info is acceptable during init
+  */
+ static int pcpu_populate_chunk(struct pcpu_chunk *chunk,
+-			       int page_start, int page_end);
++			       int page_start, int page_end, gfp_t gfp);
+ static void pcpu_depopulate_chunk(struct pcpu_chunk *chunk,
+ 				  int page_start, int page_end);
+-static struct pcpu_chunk *pcpu_create_chunk(void);
++static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp);
+ static void pcpu_destroy_chunk(struct pcpu_chunk *chunk);
+ static struct page *pcpu_addr_to_page(void *addr);
+ static int __init pcpu_verify_alloc_info(const struct pcpu_alloc_info *ai);
+@@ -1423,7 +1426,7 @@ static void __percpu *pcpu_alloc(size_t size, size_t align, bool reserved,
+ 	}
+ 
+ 	if (list_empty(&pcpu_slot[pcpu_nr_slots - 1])) {
+-		chunk = pcpu_create_chunk();
++		chunk = pcpu_create_chunk(0);
+ 		if (!chunk) {
+ 			err = "failed to allocate new chunk";
+ 			goto fail;
+@@ -1452,7 +1455,7 @@ static void __percpu *pcpu_alloc(size_t size, size_t align, bool reserved,
+ 					   page_start, page_end) {
+ 			WARN_ON(chunk->immutable);
+ 
+-			ret = pcpu_populate_chunk(chunk, rs, re);
++			ret = pcpu_populate_chunk(chunk, rs, re, 0);
+ 
+ 			spin_lock_irqsave(&pcpu_lock, flags);
+ 			if (ret) {
+@@ -1563,10 +1566,17 @@ void __percpu *__alloc_reserved_percpu(size_t size, size_t align)
+  * pcpu_balance_workfn - manage the amount of free chunks and populated pages
+  * @work: unused
+  *
+- * Reclaim all fully free chunks except for the first one.
++ * Reclaim all fully free chunks except for the first one.  This is also
++ * responsible for maintaining the pool of empty populated pages.  However,
++ * it is possible that this is called when physical memory is scarce causing
++ * OOM killer to be triggered.  We should avoid doing so until an actual
++ * allocation causes the failure as it is possible that requests can be
++ * serviced from already backed regions.
+  */
+ static void pcpu_balance_workfn(struct work_struct *work)
+ {
++	/* gfp flags passed to underlying allocators */
++	const gfp_t gfp = __GFP_NORETRY | __GFP_NOWARN;
+ 	LIST_HEAD(to_free);
+ 	struct list_head *free_head = &pcpu_slot[pcpu_nr_slots - 1];
+ 	struct pcpu_chunk *chunk, *next;
+@@ -1647,7 +1657,7 @@ static void pcpu_balance_workfn(struct work_struct *work)
+ 					   chunk->nr_pages) {
+ 			int nr = min(re - rs, nr_to_pop);
+ 
+-			ret = pcpu_populate_chunk(chunk, rs, rs + nr);
++			ret = pcpu_populate_chunk(chunk, rs, rs + nr, gfp);
+ 			if (!ret) {
+ 				nr_to_pop -= nr;
+ 				spin_lock_irq(&pcpu_lock);
+@@ -1664,7 +1674,7 @@ static void pcpu_balance_workfn(struct work_struct *work)
+ 
+ 	if (nr_to_pop) {
+ 		/* ran out of chunks to populate, create a new one and retry */
+-		chunk = pcpu_create_chunk();
++		chunk = pcpu_create_chunk(gfp);
+ 		if (chunk) {
+ 			spin_lock_irq(&pcpu_lock);
+ 			pcpu_chunk_relocate(chunk, -1);
 -- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.8.3.1
