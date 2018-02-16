@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934009AbeBPKqk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 05:46:40 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34776 "EHLO mx1.redhat.com"
+        id S934030AbeBPKrH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 05:47:07 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56220 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933706AbeBPKn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 05:43:28 -0500
+        id S933685AbeBPKnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 05:43:25 -0500
 From: Hans de Goede <hdegoede@redhat.com>
 To: Tejun Heo <tj@kernel.org>
 Cc: Hans de Goede <hdegoede@redhat.com>, linux-ide@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: [PATCH 04/12] usb: common: Small class for USB role switches
-Date: Fri, 16 Feb 2018 11:43:13 +0100
-Message-Id: <20180216104321.8259-5-hdegoede@redhat.com>
+Subject: [PATCH 01/12] drivers: base: Unified device connection lookup
+Date: Fri, 16 Feb 2018 11:43:10 +0100
+Message-Id: <20180216104321.8259-2-hdegoede@redhat.com>
 In-Reply-To: <20180216104321.8259-1-hdegoede@redhat.com>
 References: <20180216104321.8259-1-hdegoede@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -22,453 +22,276 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-USB role switch is a device that can be used to choose the
-data role for USB connector. With dual-role capable USB
-controllers, the controller itself will be the switch, but
-on some platforms the USB host and device controllers are
-separate IPs and there is a mux between them and the
-connector. On those platforms the mux driver will need to
-register the switch.
+Several frameworks - clk, gpio, phy, pmw, etc. - maintain
+lookup tables for describing connections and provide custom
+API for handling them. This introduces a single generic
+lookup table and API for the connections.
 
-With USB Type-C connectors, the host-to-device relationship
-is negotiated over the Configuration Channel (CC). That
-means the USB Type-C drivers need to be in control of the
-role switch. The class provides a simple API for the USB
-Type-C drivers for the control.
-
-For other types of USB connectors (mainly microAB) the class
-provides user space control via sysfs attribute file that
-can be used to request role swapping from the switch.
+The motivation for this commit is centralizing the
+connection lookup, but the goal is to ultimately extract the
+connection descriptions also from firmware by using the
+fwnode_graph_* functions and other mechanisms that are
+available.
 
 Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- Documentation/ABI/testing/sysfs-class-usb_role |  21 ++
- drivers/usb/Kconfig                            |   3 +
- drivers/usb/common/Makefile                    |   1 +
- drivers/usb/common/roles.c                     | 305 +++++++++++++++++++++++++
- include/linux/usb/role.h                       |  51 +++++
- 5 files changed, 381 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-usb_role
- create mode 100644 drivers/usb/common/roles.c
- create mode 100644 include/linux/usb/role.h
+ Documentation/driver-api/device_connection.rst |  43 ++++++++
+ drivers/base/Makefile                          |   3 +-
+ drivers/base/devcon.c                          | 139 +++++++++++++++++++++++++
+ include/linux/connection.h                     |  33 ++++++
+ 4 files changed, 217 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/driver-api/device_connection.rst
+ create mode 100644 drivers/base/devcon.c
+ create mode 100644 include/linux/connection.h
 
-diff --git a/Documentation/ABI/testing/sysfs-class-usb_role b/Documentation/ABI/testing/sysfs-class-usb_role
+diff --git a/Documentation/driver-api/device_connection.rst b/Documentation/driver-api/device_connection.rst
 new file mode 100644
-index 000000000000..3b810a425a52
+index 000000000000..d52604448356
 --- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-usb_role
-@@ -0,0 +1,21 @@
-+What:		/sys/class/usb_role/
-+Date:		Jan 2018
-+Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-+Description:
-+		Place in sysfs for USB Role Switches. USB Role Switch is a
-+		device that can select the data role (host or device) for USB
-+		port.
++++ b/Documentation/driver-api/device_connection.rst
+@@ -0,0 +1,43 @@
++==================
++Device connections
++==================
 +
-+What:		/sys/class/usb_role/<switch>/role
-+Date:		Jan 2018
-+Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-+Description:
-+		The current role of the switch. This attribute can be used for
-+		requesting role swapping with non-USB Type-C ports. With USB
-+		Type-C ports, the ABI defined for USB Type-C connector class
-+		must be used.
++Introduction
++------------
 +
-+		Valid values:
-+		- none
-+		- host
-+		- device
-diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
-index f699abab1787..a79198f5f1a6 100644
---- a/drivers/usb/Kconfig
-+++ b/drivers/usb/Kconfig
-@@ -197,4 +197,7 @@ config USB_ULPI_BUS
- 	  To compile this driver as a module, choose M here: the module will
- 	  be called ulpi.
- 
-+config USB_ROLE_SWITCH
-+	tristate
++Devices have often connections to other devices that are out side of the direct
++child/parent relationship. A serial or network communication controller, which
++could be a PCI device, may need to be able to get a reference to its PHY
++component, which could be attached to for example the I2C bus. Some device
++drivers need to be able to control the clocks or the GPIOs for their devices,
++and so on.
 +
- endif # USB_SUPPORT
-diff --git a/drivers/usb/common/Makefile b/drivers/usb/common/Makefile
-index 0a7c45e85481..fb4d5ef4165c 100644
---- a/drivers/usb/common/Makefile
-+++ b/drivers/usb/common/Makefile
-@@ -9,3 +9,4 @@ usb-common-$(CONFIG_USB_LED_TRIG) += led.o
- 
- obj-$(CONFIG_USB_OTG_FSM) += usb-otg-fsm.o
- obj-$(CONFIG_USB_ULPI_BUS)	+= ulpi.o
-+obj-$(CONFIG_USB_ROLE_SWITCH)	+= roles.o
-diff --git a/drivers/usb/common/roles.c b/drivers/usb/common/roles.c
++Device connections are generic descriptions of any type of connection between
++two separate devices.
++
++Device connections alone do not create a dependency between the two devices.
++They are only descriptions which are not tied to either of devices directly.
++A dependency between the two devices exists only if one of the two endpoint
++devices requests a reference to the other. The descriptions themselves can be
++defined in firmware (not yet supported) or they can be build-in.
++
++Usage
++-----
++
++Device connections should exist before device ``->probe`` callback is called for
++either endpoint devices in the description. If the connections are defined in
++firmware, this is not a problem. It should be considered if the connection
++descriptions are "build-in", and need to be added separately.
++
++The connection description consist of the names of the two devices with the
++connection, i.e. the endpoints, and unique identifier for the connection which
++is needed if there are multiple connections between the two devices.
++
++After a descriptions exist, the devices in it can request reference to the other
++endpoint device, or they can request the description itself.
++
++API
++---
++
++.. kernel-doc:: drivers/base/devcon.c
++   : functions: __device_find_connection device_find_connection add_device_connection remove_device_connection
+diff --git a/drivers/base/Makefile b/drivers/base/Makefile
+index e32a52490051..12a7f64d35a9 100644
+--- a/drivers/base/Makefile
++++ b/drivers/base/Makefile
+@@ -5,7 +5,8 @@ obj-y			:= component.o core.o bus.o dd.o syscore.o \
+ 			   driver.o class.o platform.o \
+ 			   cpu.o firmware.o init.o map.o devres.o \
+ 			   attribute_container.o transport_class.o \
+-			   topology.o container.o property.o cacheinfo.o
++			   topology.o container.o property.o cacheinfo.o \
++			   devcon.o
+ obj-$(CONFIG_DEVTMPFS)	+= devtmpfs.o
+ obj-$(CONFIG_DMA_CMA) += dma-contiguous.o
+ obj-y			+= power/
+diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
 new file mode 100644
-index 000000000000..923e3721d183
+index 000000000000..6f9e4f7280a5
 --- /dev/null
-+++ b/drivers/usb/common/roles.c
-@@ -0,0 +1,305 @@
++++ b/drivers/base/devcon.c
+@@ -0,0 +1,139 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/**
-+ * USB Role Switch Support
++ * Device connections
 + *
 + * Copyright (C) 2018 Intel Corporation
 + * Author: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-+ *         Hans de Goede <hdegoede@redhat.com>
 + */
 +
 +#include <linux/connection.h>
-+#include <linux/usb/role.h>
 +#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/slab.h>
 +
-+static struct class *role_class;
-+
-+struct usb_role_switch {
-+	struct device dev;
-+	struct mutex lock; /* device lock*/
-+	enum usb_role role;
-+
-+	/* From descriptor */
-+	struct device *usb2_port;
-+	struct device *usb3_port;
-+	struct device *udc;
-+	usb_role_switch_set_t set;
-+	usb_role_switch_get_t get;
-+	bool allow_userspace_control;
-+};
-+
-+#define to_role_switch(d)	container_of(d, struct usb_role_switch, dev)
++static DEFINE_MUTEX(devcon_lock);
++static LIST_HEAD(devcon_list);
 +
 +/**
-+ * usb_role_switch_set_role - Set USB role for a switch
-+ * @sw: USB role switch
-+ * @role: USB role to be switched to
++ * __device_find_connection - Find physical connection to a device
++ * @dev: Device with the connection
++ * @con_id: Identifier for the connection
++ * @data: Data for the match function
++ * @match: Function to check and convert the connection description
 + *
-+ * Set USB role @role for @sw.
++ * Find a connection with unique identifier @con_id between @dev and an other
++ * device. @match will be used to convert the connection description to data the
++ * caller is expecting to be returned.
 + */
-+int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role)
++void *__device_find_connection(struct device *dev, const char *con_id,
++			       void *data,
++			       void *(*match)(struct devcon *con, int ep,
++					      void *data))
 +{
-+	int ret;
++	const char *devname = dev_name(dev);
++	struct devcon *con;
++	void *ret = NULL;
++	int ep;
 +
-+	if (!sw || IS_ERR(sw))
-+		return 0;
++	if (!match)
++		return NULL;
 +
-+	mutex_lock(&sw->lock);
++	rcu_read_lock();
 +
-+	ret = sw->set(sw->dev.parent, role);
-+	if (!ret)
-+		sw->role = role;
++	list_for_each_entry_rcu(con, &devcon_list, list) {
++		ep = match_string(con->endpoint, 2, devname);
++		if (ep < 0)
++			continue;
 +
-+	mutex_unlock(&sw->lock);
++		if (con_id && strcmp(con->id, con_id))
++			continue;
++
++		ret = match(con, !ep, data);
++		if (ret)
++			break;
++	}
++
++	rcu_read_unlock();
 +
 +	return ret;
 +}
-+EXPORT_SYMBOL_GPL(usb_role_switch_set_role);
++EXPORT_SYMBOL_GPL(__device_find_connection);
 +
-+/**
-+ * usb_role_switch_get_role - Get the USB role for a switch
-+ * @sw: USB role switch
-+ *
-+ * Depending on the role-switch-driver this function returns either a cached
-+ * value of the last set role, or reads back the actual value from the hardware.
-+ */
-+enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw)
++#include <linux/platform_device.h>
++#include <linux/spi/spi.h>
++#include <linux/i2c.h>
++#include <linux/pci.h>
++
++static struct bus_type *generic_match_buses[] = {
++	&platform_bus_type,
++#ifdef CONFIG_PCI
++	&pci_bus_type,
++#endif
++#ifdef CONFIG_I2C
++	&i2c_bus_type,
++#endif
++#ifdef CONFIG_SPI_MASTER
++	&spi_bus_type,
++#endif
++	NULL,
++};
++
++/* This tries to find the device from the most common bus types by name. */
++static void *generic_match(struct devcon *con, int ep, void *data)
 +{
-+	enum usb_role role;
-+
-+	if (IS_ERR_OR_NULL(sw))
-+		return USB_ROLE_NONE;
-+
-+	mutex_lock(&sw->lock);
-+
-+	if (sw->get)
-+		role = sw->get(sw->dev.parent);
-+	else
-+		role = sw->role;
-+
-+	mutex_unlock(&sw->lock);
-+
-+	return role;
-+}
-+EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
-+
-+static int __switch_match(struct device *dev, const void *name)
-+{
-+	return !strcmp((const char *)name, dev_name(dev));
-+}
-+
-+static void *usb_role_switch_match(struct devcon *con, int ep, void *data)
-+{
++	struct bus_type *bus;
 +	struct device *dev;
 +
-+	dev = class_find_device(role_class, NULL, con->endpoint[ep],
-+				__switch_match);
-+
-+	return dev ? to_role_switch(dev) : ERR_PTR(-EPROBE_DEFER);
-+}
-+
-+/**
-+ * usb_role_switch_get - Find USB role switch linked with the caller
-+ * @dev: The caller device
-+ *
-+ * Finds and returns role switch linked with @dev. The reference count for the
-+ * found switch is incremented.
-+ */
-+struct usb_role_switch *usb_role_switch_get(struct device *dev)
-+{
-+	return __device_find_connection(dev, "usb-role-switch", NULL,
-+					usb_role_switch_match);
-+}
-+EXPORT_SYMBOL_GPL(usb_role_switch_get);
-+
-+/**
-+ * usb_role_switch_put - Release handle to a switch
-+ * @sw: USB Role Switch
-+ *
-+ * Decrement reference count for @sw.
-+ */
-+void usb_role_switch_put(struct usb_role_switch *sw)
-+{
-+	if (!IS_ERR_OR_NULL(sw))
-+		put_device(&sw->dev);
-+}
-+EXPORT_SYMBOL_GPL(usb_role_switch_put);
-+
-+static umode_t
-+usb_role_switch_is_visible(struct kobject *kobj, struct attribute *attr, int n)
-+{
-+	struct device *dev = container_of(kobj, typeof(*dev), kobj);
-+	struct usb_role_switch *sw = to_role_switch(dev);
-+
-+	if (sw->allow_userspace_control)
-+		return attr->mode;
-+
-+	return 0;
-+}
-+
-+static const char * const usb_roles[] = {
-+	[USB_ROLE_NONE]		= "none",
-+	[USB_ROLE_HOST]		= "host",
-+	[USB_ROLE_DEVICE]	= "device",
-+};
-+
-+static ssize_t
-+role_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	struct usb_role_switch *sw = to_role_switch(dev);
-+	enum usb_role role = usb_role_switch_get_role(sw);
-+
-+	return sprintf(buf, "%s\n", usb_roles[role]);
-+}
-+
-+static ssize_t role_store(struct device *dev, struct device_attribute *attr,
-+			  const char *buf, size_t size)
-+{
-+	struct usb_role_switch *sw = to_role_switch(dev);
-+	int ret;
-+
-+	ret = sysfs_match_string(usb_roles, buf);
-+	if (ret < 0) {
-+		bool res;
-+
-+		/* Extra check if the user wants to disable the switch */
-+		ret = kstrtobool(buf, &res);
-+		if (ret || res)
-+			return -EINVAL;
++	for (bus = generic_match_buses[0]; bus; bus++) {
++		dev = bus_find_device_by_name(bus, NULL, con->endpoint[ep]);
++		if (dev)
++			return dev;
 +	}
 +
-+	ret = usb_role_switch_set_role(sw, ret);
-+	if (!ret)
-+		ret = size;
-+
-+	return ret;
++	/*
++	 * We only get called if a connection was found, tell the caller to
++	 * wait for the other device to show-up.
++	 */
++	return ERR_PTR(-EPROBE_DEFER);
 +}
-+static DEVICE_ATTR_RW(role);
-+
-+static struct attribute *usb_role_switch_attrs[] = {
-+	&dev_attr_role.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group usb_role_switch_group = {
-+	.is_visible = usb_role_switch_is_visible,
-+	.attrs = usb_role_switch_attrs,
-+};
-+
-+static const struct attribute_group *usb_role_switch_groups[] = {
-+	&usb_role_switch_group,
-+	NULL,
-+};
-+
-+static int
-+usb_role_switch_uevent(struct device *dev, struct kobj_uevent_env *env)
-+{
-+	int ret;
-+
-+	ret = add_uevent_var(env, "USB_ROLE_SWITCH=%s", dev_name(dev));
-+	if (ret)
-+		dev_err(dev, "failed to add uevent USB_ROLE_SWITCH\n");
-+
-+	return ret;
-+}
-+
-+static void usb_role_switch_release(struct device *dev)
-+{
-+	struct usb_role_switch *sw = to_role_switch(dev);
-+
-+	kfree(sw);
-+}
-+
-+static const struct device_type usb_role_dev_type = {
-+	.name = "usb_role_switch",
-+	.groups = usb_role_switch_groups,
-+	.uevent = usb_role_switch_uevent,
-+	.release = usb_role_switch_release,
-+};
 +
 +/**
-+ * usb_role_switch_register - Register USB Role Switch
-+ * @parent: Parent device for the switch
-+ * @desc: Description of the switch
++ * device_find_connection - Find two devices connected together
++ * @dev: Device with the connection
++ * @con_id: Identifier for the connection
 + *
-+ * USB Role Switch is a device capable or choosing the role for USB connector.
-+ * On platforms where the USB controller is dual-role capable, the controller
-+ * driver will need to register the switch. On platforms where the USB host and
-+ * USB device controllers behind the connector are separate, there will be a
-+ * mux, and the driver for that mux will need to register the switch.
-+ *
-+ * Returns handle to a new role switch or ERR_PTR. The content of @desc is
-+ * copied.
++ * Find a connection with unique identifier @con_id between @dev and an
++ * other device. On success returns handle to the device that is connected
++ * to @dev, with the reference count for the found device incremented. Returns
++ * NULL if no matching connection was found, or ERR_PTR(-EPROBE_DEFER) when a
++ * connection was found but the other device has not been enumerated yet.
 + */
-+struct usb_role_switch *
-+usb_role_switch_register(struct device *parent,
-+			 const struct usb_role_switch_desc *desc)
++struct device *device_find_connection(struct device *dev, const char *con_id)
 +{
-+	struct usb_role_switch *sw;
-+	int ret;
-+
-+	if (!desc || !desc->set)
-+		return ERR_PTR(-EINVAL);
-+
-+	sw = kzalloc(sizeof(*sw), GFP_KERNEL);
-+	if (!sw)
-+		return ERR_PTR(-ENOMEM);
-+
-+	mutex_init(&sw->lock);
-+
-+	sw->allow_userspace_control = desc->allow_userspace_control;
-+	sw->usb2_port = desc->usb2_port;
-+	sw->usb3_port = desc->usb3_port;
-+	sw->udc = desc->udc;
-+	sw->set = desc->set;
-+	sw->get = desc->get;
-+
-+	sw->dev.parent = parent;
-+	sw->dev.class = role_class;
-+	sw->dev.type = &usb_role_dev_type;
-+	dev_set_name(&sw->dev, "%s-role-switch", dev_name(parent));
-+
-+	ret = device_register(&sw->dev);
-+	if (ret) {
-+		put_device(&sw->dev);
-+		return ERR_PTR(ret);
-+	}
-+
-+	/* TODO: Symlinks for the host port and the device controller. */
-+
-+	return sw;
++	return __device_find_connection(dev, con_id, generic_match, NULL);
 +}
-+EXPORT_SYMBOL_GPL(usb_role_switch_register);
++EXPORT_SYMBOL_GPL(device_find_connection);
 +
 +/**
-+ * usb_role_switch_unregister - Unregsiter USB Role Switch
-+ * @sw: USB Role Switch
-+ *
-+ * Unregister switch that was registered with usb_role_switch_register().
++ * add_device_connection - Register a collection of connection descriptions
++ * @con: Collection of connection descriptions to be registered
 + */
-+void usb_role_switch_unregister(struct usb_role_switch *sw)
++void add_device_connection(struct devcon *con)
 +{
-+	if (sw && !IS_ERR(sw))
-+		device_unregister(&sw->dev);
++	mutex_lock(&devcon_lock);
++	list_add_tail_rcu(&con->list, &devcon_list);
++	mutex_unlock(&devcon_lock);
 +}
-+EXPORT_SYMBOL_GPL(usb_role_switch_unregister);
++EXPORT_SYMBOL_GPL(add_device_connection);
 +
-+static int __init usb_roles_init(void)
++/**
++ * remove_device_connections - Unregister collection of connection descriptions
++ * @con: Collection of connection descriptions to be unregistered
++ */
++void remove_device_connection(struct devcon *con)
 +{
-+	role_class = class_create(THIS_MODULE, "usb_role");
-+	return PTR_ERR_OR_ZERO(role_class);
++	mutex_lock(&devcon_lock);
++	list_del_rcu(&con->list);
++	mutex_unlock(&devcon_lock);
++	/* The caller may free the devcon struct immediately afterwards. */
++	synchronize_rcu();
 +}
-+subsys_initcall(usb_roles_init);
-+
-+static void __exit usb_roles_exit(void)
-+{
-+	class_destroy(role_class);
-+}
-+module_exit(usb_roles_exit);
-+
-+MODULE_AUTHOR("Heikki Krogerus <heikki.krogerus@linux.intel.com>");
-+MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("USB Role Class");
-diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
++EXPORT_SYMBOL_GPL(remove_device_connection);
+diff --git a/include/linux/connection.h b/include/linux/connection.h
 new file mode 100644
-index 000000000000..2ef347bd1fdb
+index 000000000000..1aed6f3d3d6f
 --- /dev/null
-+++ b/include/linux/usb/role.h
-@@ -0,0 +1,51 @@
++++ b/include/linux/connection.h
+@@ -0,0 +1,33 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+#ifndef __LINUX_USB_ROLE_H
-+#define __LINUX_USB_ROLE_H
++#ifndef _LINUX_CONNECTION_H_
++#define _LINUX_CONNECTION_H_
 +
-+struct usb_role_switch;
++#include <linux/list.h>
 +
-+enum usb_role {
-+	USB_ROLE_NONE,
-+	USB_ROLE_HOST,
-+	USB_ROLE_DEVICE,
-+};
-+
-+typedef int (*usb_role_switch_set_t)(struct device *dev, enum usb_role role);
-+typedef enum usb_role (*usb_role_switch_get_t)(struct device *dev);
++struct device;
 +
 +/**
-+ * struct usb_role_switch_desc - USB Role Switch Descriptor
-+ * @usb2_port: Optional reference to the host controller port device (USB2)
-+ * @usb3_port: Optional reference to the host controller port device (USB3)
-+ * @udc: Optional reference to the peripheral controller device
-+ * @set: Callback for setting the role
-+ * @get: Callback for getting the role (optional)
-+ * @allow_userspace_control: If true userspace may change the role through sysfs
-+ *
-+ * @usb2_port and @usb3_port will point to the USB host port and @udc to the USB
-+ * device controller behind the USB connector with the role switch. If
-+ * @usb2_port, @usb3_port and @udc are included in the description, the
-+ * reference count for them should be incremented by the caller of
-+ * usb_role_switch_register() before registering the switch.
++ * struct devcon - Device Connection Descriptor
++ * @endpoint: The names of the two devices connected together
++ * @id: Unique identifier for the connection
 + */
-+struct usb_role_switch_desc {
-+	struct device *usb2_port;
-+	struct device *usb3_port;
-+	struct device *udc;
-+	usb_role_switch_set_t set;
-+	usb_role_switch_get_t get;
-+	bool allow_userspace_control;
++struct devcon {
++	const char		*endpoint[2];
++	const char		*id;
++	struct list_head	list;
 +};
 +
-+int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role);
-+enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw);
-+struct usb_role_switch *usb_role_switch_get(struct device *dev);
-+void usb_role_switch_put(struct usb_role_switch *sw);
++void *__device_find_connection(struct device *dev, const char *con_id,
++			       void *data,
++			       void *(*match)(struct devcon *con, int ep,
++					      void *data));
 +
-+struct usb_role_switch *
-+usb_role_switch_register(struct device *parent,
-+			 const struct usb_role_switch_desc *desc);
-+void usb_role_switch_unregister(struct usb_role_switch *sw);
++struct device *device_find_connection(struct device *dev, const char *con_id);
 +
-+#endif /* __LINUX_USB_ROLE_H */
++#define DEVCON(_ep0, _ep1, _id)		{ { _ep0, _ep1 }, _id, }
++
++void add_device_connection(struct devcon *con);
++void remove_device_connection(struct devcon *con);
++
++#endif /* _LINUX_CONNECTION_H_ */
 -- 
 2.14.3
