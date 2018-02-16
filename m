@@ -1,42 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034005AbeBPOR3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 09:17:29 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:37242 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033893AbeBPOR2 (ORCPT
+        id S1034035AbeBPOS0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 09:18:26 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:56426 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033893AbeBPOSZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:17:28 -0500
-X-Google-Smtp-Source: AH8x226CxK0/rQnCGgZa9KYDpWqL5RdtADCh7YBC90wHI+DLgQ6Y/fQL0tNJS7OdM5aaecHI2huakd478M1ysn783Qk=
+        Fri, 16 Feb 2018 09:18:25 -0500
+Date: Fri, 16 Feb 2018 15:16:18 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Randy Dunlap <rdunlap@infradead.org>
+cc: LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: CONFIG_IRQ_TIMINGS?
+In-Reply-To: <8ae9d59b-7499-87cd-702f-c722b9a77939@infradead.org>
+Message-ID: <alpine.DEB.2.21.1802161515020.1294@nanos.tec.linutronix.de>
+References: <8ae9d59b-7499-87cd-702f-c722b9a77939@infradead.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <1518713696-11360-1-git-send-email-tedheadster@gmail.com>
-References: <1518713696-11360-1-git-send-email-tedheadster@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 16 Feb 2018 16:17:27 +0200
-Message-ID: <CAHp75Vec015tw-n-cc-anZ9unFEGhF=Lj55SNwDUDK8dvOdYOg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] x86/Kconfig : Add missing i586-class cpus to
- X86_CMPXCHG64 Kconfig group
-To: Matthew Whitehead <tedheadster@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 6:54 PM, Matthew Whitehead
-<tedheadster@gmail.com> wrote:
-> Several i586-class cpus supporting this instruction are missing from
-> the X86_CMPXCHG64 config group.
+On Thu, 15 Feb 2018, Randy Dunlap wrote:
 
-What about Intel Quark? MinuteIA core which is currently set as M586TSC.
+> Hi,
+> 
+> Is this a dead kconfig symbol?  I don't see any Kconfig file that
+> sets/enables it.
+> 
+> ./kernel/irq/Makefile:4:obj-$(CONFIG_IRQ_TIMINGS) += timings.o
+> ./kernel/irq/internals.h:#ifdef CONFIG_IRQ_TIMINGS
+> ./kernel/irq/internals.h:#endif /* CONFIG_IRQ_TIMINGS */
+> ./include/linux/interrupt.h:#ifdef CONFIG_IRQ_TIMINGS
 
-> Using a configuration with either M586TSC or M586MMX currently sets
-> X86_MINIMUM_CPU_FAMILY=4 instead of the correct value 5.
+The actual use case is stil being worked on. Took a bit longer than
+expected, but Daniel might have a more accurate answer.
 
-Are you sure about this? See above.
+Thanks,
 
--- 
-With Best Regards,
-Andy Shevchenko
+	tglx
