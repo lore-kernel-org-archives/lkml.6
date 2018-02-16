@@ -1,30 +1,30 @@
 Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x2250gvomXg+yT06yn8T7sPLquCz3YkDTc4M2lSfoY6hM5GOiL0UNBwTo56jsRjiAl5ZoZERz
+X-Google-Smtp-Source: AH8x226SiTSRpl1yn+36LpBufGCX5BZTl2ViQPyAoqagmfYmJYqkQdMwJmdtMvllczw4d7ClagxC
 ARC-Seal: i=1; a=rsa-sha256; t=1518806395; cv=none;
         d=google.com; s=arc-20160816;
-        b=aQdzqNQAH4crpF0F7hXtWMxHbEd/lKbn5yxkvZXX1yzbU57EP/LZAhT8WvDRyq4I3H
-         rqJyvtbJEcBl2gLU8DuPdIUafMbz9Ai9UAr9l4lqEe1RTQCoQYLTo8RRqLT7mFGLgG9s
-         nWrAQxQt/qKOAdmdzNml1SSZ621No2PPwg0ByQhQXTWD2gWgIycC/gNt7ULTpCh3jbn8
-         MI9HKSXKr1M2y0IFU3c+1jPqzIROen4MQAL+3jfDItOXR6zvhG0mwA95wW+lYjUdTnje
-         bwR62GLxO34+br6yJoFHmalXe3KV7bK8Zw6WVg3r6H1AaIbjOvETyU0wMen3Ij41bfGt
-         BGSQ==
+        b=WO6E1GwQ/sIVyEAZN16isb81AoKIm+fJGJeDZn5h2YP49snSV4UzV6xACMS1Mjxh8Z
+         lQdp8AmGrjIkNn2JDkyBANcj1Iif01mDeNotM1jWmQnFeNP5hgtsnlOk1uqHsFrs7bNw
+         nBKIoOI2uoyqvNQC8iIPhb2rpxyC+OQM1lbylgWwQQ0NCkZd9DZBmR2+Pqcsf/SjMB2x
+         nZYwasxMUMCdjLQQFiPWINvSddWPR/bvmahuXdm2jspNDFdUKx+1fsEdhHHcmT3M4PMK
+         fTqeune7QQTV8o9/I+flvhsTC5nJCioqhCeH6N09DUUE6Zj9EMlrfrvtC13Tx8E2RNB0
+         ki8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=5E3V+lniGkXthizHMXYirjjRQ8c47R+TtsbPm2hC14Y=;
-        b=SsM5WHVpG/Srxzz5+SaCG0JG90pv0lioCppDA5rnCEQ1+M1KuZ2f1G7eX0quzUy+ch
-         1z6QWJK/ckpYHe0hW+IJsEudkJkrNUrYM8Wv1+Gptazw3iA3u6JXB0JWIU8Zh4HpmfCo
-         PbE2J8skVNrGNwTL9O7hp4fSHtYs63b/NbO5uqxUcQE2OX24QMnK8j/f3UH2cbEfI9AP
-         ss+J7mFP/q4wHSE1+KL+57NJwQ+xkMcDcgxIK3Gu1DRqMEJ7DGmBOtbtCGvYMvYcNRxS
-         vOqT8zBuDbELdG7z9s1SXksV1s9innL1lbwhnPwB+oibska+I3wHc7cligQjQLGLc1f+
-         6FgQ==
+        bh=NNUronc0b0DxbhAtpAXfRP7LuUaytEfPMCerNrVvsRI=;
+        b=IsF5Vqh83KTEBR8GzpiPIP0yxeMvlxL7dUOcRObsxXzHLvmjLPLhOPICjvcQ9sQCXI
+         MXxOpfHLp5EL4a2gGzdgZf8vw7nZ9oqcv7/VROiwSkqPVHCD0zaIq/NwBqo/xNlWr4Dx
+         BysJFWrUz4TTDQ4UEThHQl3gUaM73QLP78VQECywul0gHounv8BT/ci9f3cGeEtMYmL3
+         hatERDY0MZMH6v3NtRwe+lDyRBn7lXjCEMyOBw2JatjHorV3dZtZAwgavZtxXGwotHch
+         m0rj8p5N5awPJ6tY2IKiUy8afbdwGxpfYecKjVxDLgMbPbf8jGCNa2bZPfgNdYTMiv5I
+         Vgxg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=oJRN23ux;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=c1puTWxM;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=oJRN23ux;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=c1puTWxM;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBTL013418
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBTM013418
 X-Nifty-SrcIP: [125.199.20.195]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org,
@@ -35,75 +35,67 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
         Michal Marek <michal.lkml@markovi.net>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Peter Oberparleiter <oberpar@linux.vnet.ibm.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 18/23] gcov: remove CONFIG_GCOV_FORMAT_AUTODETECT
-Date: Sat, 17 Feb 2018 03:38:46 +0900
-Message-Id: <1518806331-7101-19-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 19/23] kcov: imply GCC_PLUGINS and GCC_PLUGIN_SANCOV instead of select'ing them
+Date: Sat, 17 Feb 2018 03:38:47 +0900
+Message-Id: <1518806331-7101-20-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592583935598072219?=
-X-GMAIL-MSGID: =?utf-8?q?1592583935598072219?=
+X-GMAIL-THRID: =?utf-8?q?1592583935677866437?=
+X-GMAIL-MSGID: =?utf-8?q?1592583935677866437?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-CONFIG_GCOV_FORMAT_AUTODETECT compiles either gcc_3_4.c or gcc_4_7.c
-according to your GCC version.
+As Documentation/kbuild/kconfig-language.txt notes, 'select' should be
+used with care - it forces a lower limit of another symbol, ignoring
+the dependency.  In this case, KCOV can select GCC_PLUGINS even if
+'depends on HAVE_GCC_PLUGINS' is unmet.
 
-We can achieve the equivalent behavior by setting reasonable default
-in the 'choice' with the knowledge of the compiler version.
+'imply' is modest enough to observe the dependency, and this makes
+sense.  If you enable KCOV, you will probably want to enable
+GCC_PLUGIN_SANCOV, but it should not break the dependency.
 
-Users are still allowed to change it if they need to do so.
+I also remove unneeded code, I just happened to notice.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- kernel/gcov/Kconfig  | 18 ++++++------------
- kernel/gcov/Makefile |  2 --
- 2 files changed, 6 insertions(+), 14 deletions(-)
+ lib/Kconfig.debug | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/gcov/Kconfig b/kernel/gcov/Kconfig
-index 1276aab..c56bee7 100644
---- a/kernel/gcov/Kconfig
-+++ b/kernel/gcov/Kconfig
-@@ -53,20 +53,14 @@ config GCOV_PROFILE_ALL
- choice
- 	prompt "Specify GCOV format"
- 	depends on GCOV_KERNEL
--	default GCOV_FORMAT_AUTODETECT
-+	default GCOV_FORMAT_3_4 if CC_IS_GCC && GCC_VERSION < 40700
-+	default GCOV_FORMAT_4_7
- 	---help---
--	The gcov format is usually determined by the GCC version, but there are
-+	The gcov format is usually determined by the GCC version, and the
-+	default is chosen according to your GCC version. However, there are
- 	exceptions where format changes are integrated in lower-version GCCs.
--	In such a case use this option to adjust the format used in the kernel
--	accordingly.
--
--	If unsure, choose "Autodetect".
--
--config GCOV_FORMAT_AUTODETECT
--	bool "Autodetect"
--	---help---
--	Select this option to use the format that corresponds to your GCC
--	version.
-+	In such a case, change this option to adjust the format used in the
-+	kernel accordingly.
- 
- config GCOV_FORMAT_3_4
- 	bool "GCC 3.4 format"
-diff --git a/kernel/gcov/Makefile b/kernel/gcov/Makefile
-index c6c50e5..ff06d64 100644
---- a/kernel/gcov/Makefile
-+++ b/kernel/gcov/Makefile
-@@ -4,5 +4,3 @@ ccflags-y := -DSRCTREE='"$(srctree)"' -DOBJTREE='"$(objtree)"'
- obj-y := base.o fs.o
- obj-$(CONFIG_GCOV_FORMAT_3_4) += gcc_3_4.o
- obj-$(CONFIG_GCOV_FORMAT_4_7) += gcc_4_7.o
--obj-$(CONFIG_GCOV_FORMAT_AUTODETECT) += $(call cc-ifversion, -lt, 0407, \
--							gcc_3_4.o, gcc_4_7.o)
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 6088408..1216ce6 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -743,8 +743,8 @@ config KCOV
+ 	bool "Code coverage for fuzzing"
+ 	depends on ARCH_HAS_KCOV
+ 	select DEBUG_FS
+-	select GCC_PLUGINS if !COMPILE_TEST
+-	select GCC_PLUGIN_SANCOV if !COMPILE_TEST
++	imply GCC_PLUGINS
++	imply GCC_PLUGIN_SANCOV
+ 	help
+ 	  KCOV exposes kernel code coverage information in a form suitable
+ 	  for coverage-guided fuzzing (randomized testing).
+@@ -758,7 +758,6 @@ config KCOV
+ config KCOV_ENABLE_COMPARISONS
+ 	bool "Enable comparison operands collection by KCOV"
+ 	depends on KCOV
+-	default n
+ 	help
+ 	  KCOV also exposes operands of every comparison in the instrumented
+ 	  code along with operand sizes and PCs of the comparison instructions.
+@@ -768,7 +767,7 @@ config KCOV_ENABLE_COMPARISONS
+ config KCOV_INSTRUMENT_ALL
+ 	bool "Instrument all code by default"
+ 	depends on KCOV
+-	default y if KCOV
++	default y
+ 	help
+ 	  If you are doing generic system call fuzzing (like e.g. syzkaller),
+ 	  then you will want to instrument the whole kernel and you should
 -- 
 2.7.4
