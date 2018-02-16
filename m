@@ -1,119 +1,160 @@
-Return-Path: <arend.vanspriel@broadcom.com>
-X-Google-Smtp-Source: AH8x225DHC4yPJSWiSHUkH7hUf+cmO7ggVJNEBkU1McrZkJDZYSoBQyJ8w5VbGtXPAAl419BTfXU
-ARC-Seal: i=1; a=rsa-sha256; t=1519210242; cv=none;
-        d=google.com; s=arc-20160816;
-        b=HvUfXsTRvZQQv7J3HVisXfr7oL2jTJeDDp25bNQS6Y2fNO2YrZj5tALSkIn60bkBS9
-         t07tQLK5LouyzBMHxgFFzQ5iDL/9ToK/RK0MsSpPiZRLnwGBwKaUabmBOowYYl64bH9Y
-         VlWyAVTMRL3qO3vcODsz5CVvc87QMNeDbcUxGRaTaSbTexWm+T/DpYtZVRRcPJco5Z8I
-         7xA8DU0hC0wSh76fnP78WrVDD9EzyYs8B5PMlTy+/hSnqo0EQKUZMfmDnSurFIujgOnW
-         ebeVwb+G+znWeRuVdz2XfFXNPmIetJ+oJJnAdU8G/CQmlN7satGD40B42TXxAqdaJf3j
-         3U1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=6kVdI4Uxjn5eoVLsc654fr9tVIKQmmSJ9cLL6CQePKs=;
-        b=OUN8nxXubSluW6il6FiKgmr8/jf5UcWK6t8l60vtlhJ38UA3NvOcoCdVecR1lQH2RT
-         eDqHzu942qBJ9hA1mUa1w9ZQKRZFokP/rKvN1Ojqh6ahXWJZbSRmO5Fk0nrgtetBzDyK
-         UV/H6ntJTIgaVIjKbJFfDzzAAcuKBFd+qqxPkrhtwcJ1stvgYT4BB8oHiNEBovefLw8y
-         B86d2dYfGi1z+BSosn4YeyctjEYbiLa/J+uLWtoP1VEFVKy+Ylhgvtpbj+lNvY/OeUw6
-         iPrDd0w+06SwqLKeSlr8Nu7kXmfvfsvXSCk37HgMQT96kbJjmYrkSCfVvPhFpJvy+dJG
-         S4UA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of arend.vanspriel@broadcom.com designates 192.19.229.170 as permitted sender) smtp.mailfrom=arend.vanspriel@broadcom.com;
-       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=broadcom.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of arend.vanspriel@broadcom.com designates 192.19.229.170 as permitted sender) smtp.mailfrom=arend.vanspriel@broadcom.com;
-       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=broadcom.com
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-To: Kalle Valo <kvalo@codeaurora.org>,
-	Marcel Holtmann <marcel@holtmann.org>
-Cc: linux-wireless@vger.kernel.org,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arend van Spriel <arend.vanspriel@broadcom.com>
-Subject: [PATCH 1/3] brcmfmac: add support for sysfs initiated coredump
-Date: Wed, 21 Feb 2018 11:50:18 +0100
-Message-Id: <1519210220-22437-2-git-send-email-arend.vanspriel@broadcom.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1519210220-22437-1-git-send-email-arend.vanspriel@broadcom.com>
-References: <1519210220-22437-1-git-send-email-arend.vanspriel@broadcom.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-817742-1518807737-2-18081671059560423544
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518807737; b=iqlT6uujfbG6shFX5FIauIfkpvA0kUt38iWlKEeHop/zuHi
+    GrZhp5P++e8y/pnTxtgEl5L9B0Q3dpRnqxI08ncgjNfAc+NqnQQ+LKeb96Xl5xKH
+    BwcYAMP4iXR0n03j7qra82ByfC1RA6qiq2gTeK//G0RsatzAC9POgt0ntogl43JM
+    c/BxpFM5FdwNtcvwIDybKdPxDPVHxAznwXRIdkHl+JQ3InfpppYpjP/5Eav9/rDA
+    WeEU8SuOt/gzFg66qQDWvEwIycMwO/GDp1+J0+iwdEnd+S5rdhYRCDmHdizrvtUL
+    cbGehdmL0cXP11SmygQSRt+Ga9RROUzvJwqc1Pg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1518807737; bh=+rnonRjScOnova6YSyUbdCD2tt
+    K8HEFFfQI18AG4dkc=; b=AY76P26akJaw7eku+YE6C6I/+/5Jku+FJ+zJ0NMVVE
+    3Ay4kCvUkAHcACaw4sRNqzB0amF4UuUaLs7iAUYdqIW2Y7Zon+ZVIjIr9aUK8/w2
+    DAa6ZdtaPyQedK6CD5lIAJdGe8VmoZX8vfhzE0TRxTR+nJHPklO5N4XSfWxu9+Dl
+    J++oH7OVPPCwiAmKptTRfWXSqyXfL24qsAie/5jYtQeMCcT3R1ZUZYn3uCvTzRm0
+    WuPXRFxKdgPhkeCz9l3GoaMIUJPd7Su8jIVnZtXPhtYfCT+iLrN1XkXgyNteZANq
+    t+1O8xCGmaKOnMZ0TthnHFA6xIv228pYS2tKDZGwOjhg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=MnLJ6ULT x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=jfV60LHZ;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=MnLJ6ULT x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=jfV60LHZ;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752429AbeBPTCO (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Feb 2018 14:02:14 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44073 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750858AbeBPTCM (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Feb 2018 14:02:12 -0500
+X-Google-Smtp-Source: AH8x226Q6FPug6Sj6Jp76H7xNg4r7bTDBGsM+EYOVFCRlUvMmfq/ZrC+E1BA3vjNXIOjhhKnI/Fv2Q==
+From: Joel Fernandes <joelaf@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: Joel Fernandes <joelaf@google.com>, Todd Kjos <tkjos@google.com>,
+        Arve Hjonnevag <arve@android.com>,
+        Greg Hackmann <ghackmann@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org
+Subject: [PATCH v2] staging: android: ashmem: Fix lockdep issue during llseek
+Date: Fri, 16 Feb 2018 11:02:01 -0800
+Message-Id: <20180216190201.59572-1-joelaf@google.com>
+X-Mailer: git-send-email 2.16.1.291.g4437f3f132-goog
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593007399359542327?=
-X-GMAIL-MSGID: =?utf-8?q?1593007399359542327?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The driver already supports device coredump initiated by firmware
-event. Since commit 3c47d19ff4dc ("drivers: base: add coredump driver
-ops") it is also possible to initiate it from user-space through
-sysfs. This patch adds support for SDIO and PCIe devices.
+ashmem_mutex create a chain of dependencies like so:
 
-Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
-Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
-Reviewed-by: Franky Lin <franky.lin@broadcom.com>
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+(1)
+mmap syscall ->
+  mmap_sem ->  (acquired)
+  ashmem_mmap
+  ashmem_mutex (try to acquire)
+  (block)
+
+(2)
+llseek syscall ->
+  ashmem_llseek ->
+  ashmem_mutex ->  (acquired)
+  inode_lock ->
+  inode->i_rwsem (try to acquire)
+  (block)
+
+(3)
+getdents ->
+  iterate_dir ->
+  inode_lock ->
+  inode->i_rwsem   (acquired)
+  copy_to_user ->
+  mmap_sem         (try to acquire)
+
+There is a lock ordering created between mmap_sem and inode->i_rwsem
+causing a lockdep splat [2] during a syzcaller test, this patch fixes
+the issue by unlocking the mutex earlier. Functionally that's Ok since
+we don't need to protect vfs_llseek.
+
+[1] https://patchwork.kernel.org/patch/10185031/
+[2] https://lkml.org/lkml/2018/1/10/48
+
+Acked-by: Todd Kjos <tkjos@google.com>
+Cc: Arve Hjonnevag <arve@android.com>
+Cc: stable@vger.kernel.org
+Reported-by: syzbot+8ec30bb7bf1a981a2012@syzkaller.appspotmail.com
+Signed-off-by: Joel Fernandes <joelaf@google.com>
+Acked-by: Greg Hackmann <ghackmann@google.com>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c | 1 +
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/bus.h    | 2 ++
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c   | 7 +++++++
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c   | 1 +
- 4 files changed, 11 insertions(+)
+Changes since first version:
+Don't relock after vfs call since its not needed. Only reason we lock is
+to protect races with asma->file.
+https://patchwork.kernel.org/patch/10185031/
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-index 0b68240..3220b69 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-@@ -1164,6 +1164,7 @@ static int brcmf_ops_sdio_resume(struct device *dev)
- #ifdef CONFIG_PM_SLEEP
- 		.pm = &brcmf_sdio_pm_ops,
- #endif	/* CONFIG_PM_SLEEP */
-+		.coredump = brcmf_dev_coredump,
- 	},
- };
+ drivers/staging/android/ashmem.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
+index bbdc53b686dd..b330e86b3a49 100644
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -326,24 +326,23 @@ static loff_t ashmem_llseek(struct file *file, loff_t offset, int origin)
+ 	mutex_lock(&ashmem_mutex);
  
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bus.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bus.h
-index 0b76a61..77d1f34 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bus.h
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bus.h
-@@ -249,6 +249,8 @@ int brcmf_bus_get_fwname(struct brcmf_bus *bus, uint chip, uint chiprev,
- void brcmf_detach(struct device *dev);
- /* Indication from bus module that dongle should be reset */
- void brcmf_dev_reset(struct device *dev);
-+/* Request from bus module to initiate a coredump */
-+int brcmf_dev_coredump(struct device *dev);
+ 	if (asma->size == 0) {
+-		ret = -EINVAL;
+-		goto out;
++		mutex_unlock(&ashmem_mutex);
++		return -EINVAL;
+ 	}
  
- /* Configure the "global" bus state used by upper layers */
- void brcmf_bus_change_state(struct brcmf_bus *bus, enum brcmf_bus_state state);
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
-index 930e423..d06ffe0 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
-@@ -1110,6 +1110,13 @@ void brcmf_dev_reset(struct device *dev)
- 		brcmf_fil_cmd_int_set(drvr->iflist[0], BRCMF_C_TERMINATED, 1);
+ 	if (!asma->file) {
+-		ret = -EBADF;
+-		goto out;
++		mutex_unlock(&ashmem_mutex);
++		return -EBADF;
+ 	}
+ 
++	mutex_unlock(&ashmem_mutex);
++
+ 	ret = vfs_llseek(asma->file, offset, origin);
+ 	if (ret < 0)
+-		goto out;
++		return ret;
+ 
+ 	/** Copy f_pos from backing file, since f_ops->llseek() sets it */
+ 	file->f_pos = asma->file->f_pos;
+-
+-out:
+-	mutex_unlock(&ashmem_mutex);
+ 	return ret;
  }
  
-+int brcmf_dev_coredump(struct device *dev)
-+{
-+	struct brcmf_bus *bus_if = dev_get_drvdata(dev);
-+
-+	return brcmf_debug_create_memdump(bus_if, NULL, 0);
-+}
-+
- void brcmf_detach(struct device *dev)
- {
- 	s32 i;
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-index 8752707..502dd7b 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-@@ -2005,6 +2005,7 @@ static int brcmf_pcie_pm_leave_D3(struct device *dev)
- #ifdef CONFIG_PM
- 	.driver.pm = &brcmf_pciedrvr_pm,
- #endif
-+	.driver.coredump = brcmf_dev_coredump,
- };
- 
- 
 -- 
-1.9.1
+2.16.1.291.g4437f3f132-goog
