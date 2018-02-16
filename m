@@ -1,48 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753907AbeBPIED (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 03:04:03 -0500
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:37238 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753742AbeBPIEB (ORCPT
+        id S1753951AbeBPIJb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 03:09:31 -0500
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:55287 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753922AbeBPIJ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 03:04:01 -0500
-X-Google-Smtp-Source: AH8x225usmS2dFkx3Sblu6KKg8dcKugy4kvH8+yW8Bg436xu85awfAWqFgYbaioWZlAsnXm5mbWAyg==
-Subject: Re: [PATCH] ARM: cpuidle: Delete an error message for a failed memory
- allocation in arm_idle_init_cpu()
-To: SF Markus Elfring <elfring@users.sourceforge.net>,
-        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <7f419639-edfc-adb8-1dd2-d16b0dbfe19d@users.sourceforge.net>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <582de86a-d0bd-3f2d-0cbd-cf0a7ca924d8@linaro.org>
-Date: Fri, 16 Feb 2018 09:03:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 16 Feb 2018 03:09:29 -0500
+Subject: Re: [PATCH v2 08/16] mmc: sdhci-omap: Add support to override f_max
+ and iodelay from pdata
+To: Tony Lindgren <tony@atomide.com>, Ulf Hansson <ulf.hansson@linaro.org>
+References: <20180205125029.21570-1-kishon@ti.com>
+ <20180205125029.21570-9-kishon@ti.com>
+ <CAPDyKFrhpry40TCjmQ_-WO-EWa2BCL0eNXLZB_UobGaYbsBiHA@mail.gmail.com>
+ <20180214172455.GO6364@atomide.com>
+CC: Adrian Hunter <adrian.hunter@intel.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <d381abaf-8968-ae0f-7dd3-8c10e7220648@ti.com>
+Date: Fri, 16 Feb 2018 13:38:51 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
 MIME-Version: 1.0
-In-Reply-To: <7f419639-edfc-adb8-1dd2-d16b0dbfe19d@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180214172455.GO6364@atomide.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/02/2018 16:46, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 15 Feb 2018 16:40:38 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+Hi,
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+On Wednesday 14 February 2018 10:54 PM, Tony Lindgren wrote:
+> * Ulf Hansson <ulf.hansson@linaro.org> [180214 09:53]:
+>> On 5 February 2018 at 13:50, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>>> DRA74x EVM Rev H EVM comes with revision 2.0 silicon. However, earlier
+>>> versions of EVM can come with either revision 1.1 or revision 1.0 of
+>>> silicon.
+>>>
+>>> The device-tree file is written to support rev 2.0 of silicon.
+>>> pdata-quirks are used to then override the settings needed for
+>>> PG 1.1 silicon.
+>>>
+>>> PG 1.1 silicon has limitations w.r.t frequencies at which MMC1/2/3
+>>> can operate as well as different IOdelay numbers.
+>>
+>> I fail to understand the need for platform data. Why can't DT be used
+>> for the older revisions as well?
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+It was decided to have dt file for a single soc revision. So the default dts
+corresponds to rev 2.0.
+> 
+> Maybe the silicon revision is not available via soc_device_match()?
+
+hmm.. looks like we can get rid of pdata if we use soc_device_match. Thanks for
+the hint.
+
+Regards
+Kishon
