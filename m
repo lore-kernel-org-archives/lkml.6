@@ -1,94 +1,75 @@
-Return-Path: <jmattson@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518752666; cv=none;
+Return-Path: <ak@linux.intel.com>
+X-Google-Smtp-Source: AH8x225IwUfemmiJreI3ATdB8KApgnKj0b/VuckxqLGG+Wt+atTbhC4ybMQ+4oJr8Y2wtjRzjQY2
+ARC-Seal: i=1; a=rsa-sha256; t=1518754945; cv=none;
         d=google.com; s=arc-20160816;
-        b=BVV0E/kNVME/z70L3+g67dqhIT5it0tS2EDIsO1qcLBvBhFEOI+SzG2G042tza6pqu
-         nNKamB9W6p8tmbkJixdCDK1OdGXpA6RKNrJZ/kArbwGBmlKbzqyuN0Z1G5/X33CQNgAm
-         xdjlhiBXUcfEoanR3e3Jd2M9nAGBZ8ZpZKE+2SUt8Ohc2awitoP5WiOdzbTn5KBf4NKz
-         w9X/40nI2kCaXVxPydWUqp2J0oetn6yl6BeuOoENB9knjV50qvq+GodJz+vTqRGUXvZZ
-         q9mNQf0JJjB86JQu5RGu8U13TVKfsxr+nzih3UGUfsuBlEbMOs0b4UdIJ6+gbrpDyaJw
-         FhRw==
+        b=Hv27ku2VsnSljghE7L2lfA6U24XmZ62EGkWKGybRGQ0xAwIn3I77eMFwXlbXhgtspO
+         /z+Yq8PIEJyLiKwlZnKq70NuyQez2gipN95INFewS0B4pMksgHSfw1Xqq4nRYSS4k2eV
+         o8xf5Hm0JCpte53EnYp4CGeyJNiQONqPOyPJ6MN7tq296anTN3v1HaemK338ojSSKYZd
+         yisoggq/OX92KHwOygvkvvIUagiVBuXtzYAIS9cQnrSG4YFqJYDhRgX/9vUjL/Zgr6s5
+         DTIMkbjBTsjtd9RPCg6L5KTwzdedzH7+U2SNDG/2srFvXRkc4L0lqEjs9ig1/TsBvLh8
+         MuHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=cdjXba4UFcFe11E08OGZ7ic9p58PMQNAcUu7XClCMwg=;
-        b=ICExN18qIBBEWaJx/ny2M05sf2Lm2TWgbFpzXsOoRNws7/roL8EkO4n5RcLbyp8JR6
-         F5l8o6EcZ0OCbEtuiB0QaukyivGaeafhXaJCFrRe92IVlXbfihakpJT6Ll2fo4gZvdcf
-         BkAgwTAh4airk7S2Wq/Y4SzeX24XKIj7Gx9LKpPMDDAUnF+X7+Z/n+704/J74ITf9l/a
-         zi3d85vFHbTpulScLOGzQTbWxGRxWLex7fgjmRnOYrjiWsjE4iXeI+EQc9C1ES+3Jshq
-         hJYqZRZqin3PDncFDBl32ZAD0v0AO4V4KUX/vuO9ZeamCDhQenfYxtkQP+ArOXO3U36m
-         Lkww==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=R55c5WrXh3A+ehGDUdHqNzhrCYmQ6h5LGHKhuuULZQc=;
+        b=PHTP8gaTWDzTviS/R+0/+L+8OkrRyEvxA8+o+PpJoOLS7m3Qt3nzzKM4ylW6Rla6p3
+         RSQnYT0bcpRBBMBMAtQLJ6rYqh7+xMoquNl06nNIDEhY1R3lnNtrxtJy/CxMiYq130dw
+         wGKfjBCQiv+ePRR/6azeUGnG3e0ok4bfyGmdD/XbqsaiwSiLJ558OjVTawFQa2fdRj8d
+         xZRxXU/XwvfSsQmf0iMPGt9V/7DEbLqB+7p4V3rG7EEro9U6SRRBvwCjaNFR0WuK5dTq
+         0gJo1j4nul6qfzovWx9pcpAZw+wZT+yF/Xn2aTcltj+eJ2kTbVFHQuky+XE/SX2j3YtH
+         Yu6A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=r76kCtOi;
-       spf=pass (google.com: domain of jmattson@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jmattson@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+       spf=pass (google.com: best guess record for domain of ak@linux.intel.com designates 192.55.52.120 as permitted sender) smtp.mailfrom=ak@linux.intel.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=r76kCtOi;
-       spf=pass (google.com: domain of jmattson@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jmattson@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AH8x224XKiTtYILXlGzkgr46F8JEiALi9ddr9B6jiUKpvEHEZXm9YD+CbAZIY+RAh+oVhn+JTdZZU9jT/Bi1YzalYWI=
-MIME-Version: 1.0
-In-Reply-To: <1517522386-18410-3-git-send-email-karahmed@amazon.de>
-References: <1517522386-18410-1-git-send-email-karahmed@amazon.de> <1517522386-18410-3-git-send-email-karahmed@amazon.de>
-From: Jim Mattson <jmattson@google.com>
-Date: Thu, 15 Feb 2018 19:44:25 -0800
-Message-ID: <CALMp9eQEjaaK=RDZ3OFL5+fq78nWRrpVO-KJ8ruosV9vWjfW6g@mail.gmail.com>
-Subject: Re: [PATCH v6 2/5] KVM: x86: Add IBPB support
-To: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	"the arch/x86 maintainers" <x86@kernel.org>, Ashok Raj <ashok.raj@intel.com>,
-	Asit Mallick <asit.k.mallick@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-	Arjan Van De Ven <arjan.van.de.ven@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Andrea Arcangeli <aarcange@redhat.com>,
-	Andi Kleen <ak@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Dan Williams <dan.j.williams@intel.com>, Jun Nakajima <jun.nakajima@intel.com>,
-	Andy Lutomirski <luto@kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
-	Paolo Bonzini <pbonzini@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+       spf=pass (google.com: best guess record for domain of ak@linux.intel.com designates 192.55.52.120 as permitted sender) smtp.mailfrom=ak@linux.intel.com
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,519,1511856000";
+   d="scan'208";a="35208577"
+Date: Thu, 15 Feb 2018 20:22:09 -0800
+From: Andi Kleen <ak@linux.intel.com>
+To: Jim Mattson <jmattson@google.com>
+Cc: KarimAllah Ahmed <karahmed@amazon.de>, kvm list <kvm@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	the arch/x86 maintainers <x86@kernel.org>,
+	Ashok Raj <ashok.raj@intel.com>,
+	Asit Mallick <asit.k.mallick@intel.com>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Arjan Van De Ven <arjan.van.de.ven@intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jun Nakajima <jun.nakajima@intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
 	David Woodhouse <dwmw@amazon.co.uk>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v6 2/5] KVM: x86: Add IBPB support
+Message-ID: <20180216042209.GB3231@tassilo.jf.intel.com>
+References: <1517522386-18410-1-git-send-email-karahmed@amazon.de>
+ <1517522386-18410-3-git-send-email-karahmed@amazon.de>
+ <CALMp9eQEjaaK=RDZ3OFL5+fq78nWRrpVO-KJ8ruosV9vWjfW6g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALMp9eQEjaaK=RDZ3OFL5+fq78nWRrpVO-KJ8ruosV9vWjfW6g@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591237582659331850?=
-X-GMAIL-MSGID: =?utf-8?q?1592527595864021020?=
+X-GMAIL-MSGID: =?utf-8?q?1592529985611442686?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 1, 2018 at 1:59 PM, KarimAllah Ahmed <karahmed@amazon.de> wrote:
+> > +               wrmsrl(MSR_IA32_PRED_CMD, PRED_CMD_IBPB);
+> 
+> Should this be wrmsrl_safe? I don't see where we've verified host
+> support of this MSR.
 
-> @@ -3684,6 +3696,22 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
->         case MSR_IA32_TSC:
->                 kvm_write_tsc(vcpu, msr);
->                 break;
-> +       case MSR_IA32_PRED_CMD:
-> +               if (!msr->host_initiated &&
-> +                   !guest_cpuid_has(vcpu, X86_FEATURE_IBPB))
-> +                       return 1;
-> +
-> +               if (data & ~PRED_CMD_IBPB)
-> +                       return 1;
-> +
-> +               if (!data)
-> +                       break;
-> +
-> +               wrmsrl(MSR_IA32_PRED_CMD, PRED_CMD_IBPB);
+In mainline all wrmsr are wrmsrl_safe now.
 
-Should this be wrmsrl_safe? I don't see where we've verified host
-support of this MSR.
-
-> @@ -3342,6 +3369,34 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->         case MSR_IA32_TSC:
->                 kvm_write_tsc(vcpu, msr_info);
->                 break;
-> +       case MSR_IA32_PRED_CMD:
-> +               if (!msr_info->host_initiated &&
-> +                   !guest_cpuid_has(vcpu, X86_FEATURE_IBPB) &&
-> +                   !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL))
-> +                       return 1;
-> +
-> +               if (data & ~PRED_CMD_IBPB)
-> +                       return 1;
-> +
-> +               if (!data)
-> +                       break;
-> +
-> +               wrmsrl(MSR_IA32_PRED_CMD, PRED_CMD_IBPB);
-
-And here too...wrmsrl_safe?
+-Andi
