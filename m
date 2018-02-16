@@ -1,80 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752089AbeBPTeh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 14:34:37 -0500
-Received: from mga11.intel.com ([192.55.52.93]:17845 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752024AbeBPTef (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752028AbeBPTef (ORCPT <rfc822;w@1wt.eu>);
         Fri, 16 Feb 2018 14:34:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,520,1511856000";
-   d="scan'208";a="18472146"
-From: Ashok Raj <ashok.raj@intel.com>
-To: bp@suse.de
-Cc: ashok.raj@intel.com, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] x86/microcode/intel: Check microcode revision before updating sibling threads
-Date: Fri, 16 Feb 2018 11:34:29 -0800
-Message-Id: <1518809669-3651-1-git-send-email-ashok.raj@intel.com>
-X-Mailer: git-send-email 2.7.4
+Received: from mail.free-electrons.com ([62.4.15.54]:60211 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753722AbeBPTT0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 14:19:26 -0500
+Date: Fri, 16 Feb 2018 20:19:23 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, David Lechner <david@lechnology.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 1/6] nand: davinci: rename the platform driver
+Message-ID: <20180216201923.16bfca7f@bbrezillon>
+In-Reply-To: <20180216164712.25898-2-brgl@bgdev.pl>
+References: <20180216164712.25898-1-brgl@bgdev.pl>
+        <20180216164712.25898-2-brgl@bgdev.pl>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After updating microcode on one of the threads in the core, the
-thread sibling automatically gets the update since the microcode
-resources are shared. Check the ucode revision on the cpu before
-performing a ucode update.
+On Fri, 16 Feb 2018 17:47:07 +0100
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-Cc: X86 ML <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
----
- arch/x86/kernel/cpu/microcode/intel.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Commit d8e22fb4ccac ("ARM: da850: add the nand dev_id to the clock
+> lookup table") broke the nand support in board file mode for
+> da850-based boards. Instead of reverting it and breaking the DT users
+> in the process (due to clock lookup), rename the driver to match the
+> clock table before renaming the users.
+> 
+> Fixes: d8e22fb4ccac ("ARM: da850: add the nand dev_id to the clock lookup table")
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/mtd/nand/davinci_nand.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/nand/davinci_nand.c b/drivers/mtd/nand/davinci_nand.c
+> index ccc8c43abcff..4fb143bf1872 100644
+> --- a/drivers/mtd/nand/davinci_nand.c
+> +++ b/drivers/mtd/nand/davinci_nand.c
+> @@ -865,7 +865,7 @@ static struct platform_driver nand_davinci_driver = {
+>  	.probe		= nand_davinci_probe,
+>  	.remove		= nand_davinci_remove,
+>  	.driver		= {
+> -		.name	= "davinci_nand",
+> +		.name	= "davinci-nand",
 
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index 09b95a7..036d1db 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -776,7 +776,7 @@ static enum ucode_state apply_microcode_intel(int cpu)
- {
- 	struct microcode_intel *mc;
- 	struct ucode_cpu_info *uci;
--	struct cpuinfo_x86 *c;
-+	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 	static int prev_rev;
- 	u32 rev;
- 
-@@ -793,6 +793,18 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 			return UCODE_NFOUND;
- 	}
- 
-+	rev = intel_get_microcode_revision();
-+	/*
-+	 * Its possible the microcode got udpated
-+	 * because its sibling update was done earlier.
-+	 * Skip the udpate in that case.
-+	 */
-+	if (rev >= mc->hdr.rev) {
-+		uci->cpu_sig.rev = rev;
-+		c->microcode = rev;
-+		return UCODE_OK;
-+	}
-+
- 	/* write microcode via MSR 0x79 */
- 	wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
- 
-@@ -813,8 +825,6 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 		prev_rev = rev;
- 	}
- 
--	c = &cpu_data(cpu);
--
- 	uci->cpu_sig.rev = rev;
- 	c->microcode = rev;
- 
+Another side-effect of this change you should be aware of: by doing
+that you also break all users that were defining partitions through the
+cmdline using mtdparts=davinci_nand.0:<part-layout>.
+
+Not sure this is a good idea ;-).
+
+>  		.of_match_table = of_match_ptr(davinci_nand_of_match),
+>  	},
+>  };
+
+
+
 -- 
-2.7.4
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
