@@ -1,46 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757938AbeBPNCm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 08:02:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57298 "EHLO mail.kernel.org"
+        id S968049AbeBPNFf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 08:05:35 -0500
+Received: from gloria.sntech.de ([95.129.55.99]:45096 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752691AbeBPNCl (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 08:02:41 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D95072175C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Fri, 16 Feb 2018 10:02:36 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: "Jin, Yao" <yao.jin@linux.intel.com>, jolsa@kernel.org,
-        peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
-        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH] perf report: Fix memory corruption in --branch-history
- mode --branch-history
-Message-ID: <20180216130236.GA24436@kernel.org>
-References: <1518511468-32737-1-git-send-email-yao.jin@linux.intel.com>
- <20180213094551.GA26936@krava>
- <2bfe35a5-f671-90dc-4753-75c8b2215f30@linux.intel.com>
- <9b3483ae-a612-9d69-9671-4ddfea2c440e@linux.intel.com>
- <20180216075303.GD14831@krava>
- <20180216123619.GA9945@krava>
+        id S967920AbeBPNFe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 08:05:34 -0500
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Chris Zhong <zyw@rock-chips.com>, dri-devel@lists.freedesktop.org,
+        robh@kernel.org, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mark.yao@rock-chips.com,
+        groeck@chromium.org, seanpaul@chromium.org,
+        William wu <wulf@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>, Shawn Lin <shawn.lin@rock-chips.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        David Wu <david.wu@rock-chips.com>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Jianqun Xu <jay.xu@rock-chips.com>, Caesar Wang <wxt@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 0/4] Move DP phy switch to PHY driver
+Date: Fri, 16 Feb 2018 14:05:22 +0100
+Message-ID: <1752563.I66u68YxnT@diego>
+In-Reply-To: <a9eac594-33d5-6171-51ca-66204008fc1f@ti.com>
+References: <1486712654-15431-1-git-send-email-zyw@rock-chips.com> <a9eac594-33d5-6171-51ca-66204008fc1f@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180216123619.GA9945@krava>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Feb 16, 2018 at 01:36:19PM +0100, Jiri Olsa escreveu:
+Hi Kishon,
+
+Am Freitag, 16. Februar 2018, 12:04:42 CET schrieb Kishon Vijay Abraham I:
+> On Friday 10 February 2017 01:14 PM, Chris Zhong wrote:
+> > There are 2 Type-c PHYs in RK3399, but only one DP controller. Hence
+> > only one PHY can connect to DP controller at one time, the other should
+> > be disconnected. The GRF_SOC_CON26 register has a switch bit to do it,
+> > set this bit means enable PHY 1, clear this bit means enable PHY 0.
+> > 
+> > If the board has 2 Type-C ports, the DP driver get the phy id from
+> > devm_of_phy_get_by_index, and then control this switch according to
+> > this id. But some others board only has one Type-C port, it may be PHY 0
+> > or PHY 1. The dts node id can not tell us the correct PHY id. Hence move
+> > this switch to PHY driver, the PHY driver can distinguish between PHY 0
+> > and PHY 1, and then write the correct register bit.
 > 
-> here it is.. I think we want this change now to fix the crash, and
-> some more fixes later to ensure that the branch stack code follows
-> properly the logic of --max-stack, which is not the case now
+> Changed subject of "Documentation: bindings: add uphy-dp-sel for Rockchip
+> USB Type-C PHY" as suggested by Rob, rebased "phy: rockchip-typec: support
+> DP phy switch" to the latest kernel and merged.
 
-Thanks, applied.
+I'm not sure how far along you are with your merging, but you might want to 
+revert this one.
 
-- Arnaldo
+In your inbox you should find more recent threads about the type-c phy
+where Rob strongly suggested moving the whole grf registers out of the
+dt and into the driver.
+
+Enric Balletbo did just that and posted a series (including the dp-move)
+yesterday (refined in a v2 from today).
+
+Alternatively Enric could rebase his series on top of that recent change.
+
+
+Heiko
