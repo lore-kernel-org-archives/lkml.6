@@ -1,46 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034035AbeBPOS0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 09:18:26 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:56426 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033893AbeBPOSZ (ORCPT
+        id S1034060AbeBPOSh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 09:18:37 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:55104 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033893AbeBPOSe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:18:25 -0500
-Date: Fri, 16 Feb 2018 15:16:18 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Randy Dunlap <rdunlap@infradead.org>
-cc: LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: CONFIG_IRQ_TIMINGS?
-In-Reply-To: <8ae9d59b-7499-87cd-702f-c722b9a77939@infradead.org>
-Message-ID: <alpine.DEB.2.21.1802161515020.1294@nanos.tec.linutronix.de>
-References: <8ae9d59b-7499-87cd-702f-c722b9a77939@infradead.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 16 Feb 2018 09:18:34 -0500
+Date: Fri, 16 Feb 2018 15:18:29 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Will Deacon <will.deacon@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mingo@kernel.org
+Subject: Re: [RFC PATCH 3/5] asm-generic/bitops/atomic.h: Rewrite using
+ atomic_fetch_*
+Message-ID: <20180216141829.GK25235@hirez.programming.kicks-ass.net>
+References: <1518708575-12284-1-git-send-email-will.deacon@arm.com>
+ <1518708575-12284-4-git-send-email-will.deacon@arm.com>
+ <20180215170847.GD25181@hirez.programming.kicks-ass.net>
+ <20180215182049.GC15274@arm.com>
+ <20180216103520.GC25201@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180216103520.GC25201@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Feb 2018, Randy Dunlap wrote:
+On Fri, Feb 16, 2018 at 11:35:20AM +0100, Peter Zijlstra wrote:
 
-> Hi,
-> 
-> Is this a dead kconfig symbol?  I don't see any Kconfig file that
-> sets/enables it.
-> 
-> ./kernel/irq/Makefile:4:obj-$(CONFIG_IRQ_TIMINGS) += timings.o
-> ./kernel/irq/internals.h:#ifdef CONFIG_IRQ_TIMINGS
-> ./kernel/irq/internals.h:#endif /* CONFIG_IRQ_TIMINGS */
-> ./include/linux/interrupt.h:#ifdef CONFIG_IRQ_TIMINGS
+> #define BIT_U32_MASK(nr)	(1UL << ((nr) % 32))
+> #define BIT_U32_WORD(nr)	(((nr) / 32) ^ (4 * __BIG_ENDIAN__))
 
-The actual use case is stil being worked on. Took a bit longer than
-expected, but Daniel might have a more accurate answer.
+s/4 *//
 
-Thanks,
-
-	tglx
+it's already a 4 byte offset.
