@@ -1,99 +1,80 @@
-Return-Path: <mingo.kernel.org@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518772762; cv=none;
+Return-Path: <pasha.tatashin@oracle.com>
+X-Google-Smtp-Source: AH8x2277Zwugja/DV5v2yTs0AGE+HB7Dnf66bZ2Nhqwx6XZkMSpcZojXCsl/1564dKyiG+mWpmV6
+ARC-Seal: i=1; a=rsa-sha256; t=1518786640; cv=none;
         d=google.com; s=arc-20160816;
-        b=XvvaenoRK9tgQHQQ7JDeHxXgoVi7RidntloYYplkxAw90DBySpL7oGcUfnbz82gbU1
-         uI8pzZmOqRwNlJng3448zXFaC6DSSMWvOdfD1cEW5w+hOOj2veAEYILuD/dcQH9eyEgy
-         Wg8kpcf6ykLE6falJW0JD1jzYHbgudDdQ3HvOgW7MkxFul8LX2GBnTepNNseMMI8D9LC
-         4jOzZObmuSnnaIexTrTSGe3qPurqgACP3gFrIR9CU48jRFU6gP590k2ELlD3TD0Q8+FG
-         nrxdHEv/JKLBKKWEmBumiYcaItzJG+EXJl/ag90kC1XmzOC2Um27bgDWHtDpT6c6QV4F
-         ZZDA==
+        b=mxCglX4oPPRXnuf1rNMIszZVJ/aVVl+dk7XZeLAl4wS4q4mJHEllay0IetD2W0xxXD
+         TdXHMW++gX0xZ95E2xobivr+FH9CNIaohClkhWP7zQuvxTrVzoAX2x9Yvp4Z4xFKVUrm
+         6//099oyRB3g+jM9GA4veSt/TaNKeBNTnNYHtx5Ihhx/wa3KgprdkPfoNI3BjXb7YSGi
+         8hhXjRrNLZqaNnc8vQGxwKW1vNCLBWSiV2AfZ+AO5YC1c1ipxV0KhI/GDQULoLRoqHq1
+         SkTVK2Xjk4QMpwWuHAKoF47T4Ci/EmaTSp/8v55O9vurAZLjlM6hsruvBs4E/6VcUFTW
+         Hgww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
-         :arc-authentication-results;
-        bh=fyZi/Le+65izgN68fNC98H/yWECnzzgwfJDYAddcA8Y=;
-        b=QB0kthgr7kFwtV8YS7IVxURnVl2DVlQTb9iTVzZ7mn1mdhyr0iL88ZnaP5OGMDNUBx
-         ePB2hvht/35iEG8hXKVJ9F/EEuy4+H3MlQ3xuDoRYfqr+vKe4f8SGUfCYUi+AXOm5Rwb
-         mkCaDFzmPgcaYwu2GEQgJuYbzBG3F8hHd2z5cJw8LTJPu9RH/X1UYeFvxutX2FPlV3XA
-         l7utAtVwh615GJhMns41ieri15DeewLbdoWKCdU3mrVDfPCKGfqU2AIylh7ri/pTbwat
-         Zw1AC8GN4NRZfZ+1PkIu58sUrvm2QCZgj4+Ii4Xl1AN7KosWLHDLSw446TTBM6TBSrge
-         FA2w==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=gcgj2W6v6ItGeKu+hAOC+bfjmCbez858fdOi1gQ1OYM=;
+        b=To/Lyb0wbLwZCmI3b/eZw8/NrKVn0my0hdCcsBdDr3I2XjHyucnkAc0DSwZbwsdWRb
+         48KUYRcdClEts/s0YgkEKthSGgdF5VgT6y2DkjnmOdBF/oNueHiD+VOGAJle0If+lBzd
+         2o+jY0xCtv9BnEJkYQdcUmw+5QWPirsiCzEbPscELcwne4hmCansCeAKxJGjJzjOOhmM
+         I4XRo0DydLBcU7O/rm5N+EWr/j5MUdnsGC/x0ZsHRy9vIZxtUe2PKqOQDujSsTaPbJ4+
+         ao5NOwRc+9mcYwfVo/NkNU76SI0NgumaGfiuxygDQUe/AMKUPK9fCVZJPWgEywpe/XU4
+         jaBg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=UjwZIdFn;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=YBSCf41q;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=UjwZIdFn;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
-X-Google-Smtp-Source: AH8x225UAJvaDyclBC0dgdHF8r+LKBgD2hQ0+2hApfBRacEXrzQ61j0QVH4u1rf9HvzwU7vZjuq59A==
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Fri, 16 Feb 2018 10:19:18 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-	akpm@linux-foundation.org, mgorman@techsingularity.net,
-	mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org, vbabka@suse.cz,
-	bharata@linux.vnet.ibm.com, tglx@linutronix.de, mingo@redhat.com,
-	hpa@zytor.com, x86@kernel.org, dan.j.williams@intel.com,
-	kirill.shutemov@linux.intel.com, bhe@redhat.com
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=YBSCf41q;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+MIME-Version: 1.0
+In-Reply-To: <20180216091918.axu57tfsezzybeoa@gmail.com>
+References: <20180215165920.8570-1-pasha.tatashin@oracle.com>
+ <20180215165920.8570-6-pasha.tatashin@oracle.com> <20180216091918.axu57tfsezzybeoa@gmail.com>
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+Date: Fri, 16 Feb 2018 08:09:15 -0500
+X-Gmail-Original-Message-ID: <CAOAebxuwVqjbKuHfpNn9=YBR397pjK-QfF-Akh7UuoEfkW0PWw@mail.gmail.com>
+Message-ID: <CAOAebxuwVqjbKuHfpNn9=YBR397pjK-QfF-Akh7UuoEfkW0PWw@mail.gmail.com>
 Subject: Re: [v4 5/6] mm/memory_hotplug: don't read nid from struct page
  during hotplug
-Message-ID: <20180216091918.axu57tfsezzybeoa@gmail.com>
-References: <20180215165920.8570-1-pasha.tatashin@oracle.com>
- <20180215165920.8570-6-pasha.tatashin@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180215165920.8570-6-pasha.tatashin@oracle.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Steve Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@suse.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Bharata B Rao <bharata@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, dan.j.williams@intel.com,
+        kirill.shutemov@linux.intel.com, bhe@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8806 signatures=668672
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=372
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1802160158
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592487103505854531?=
-X-GMAIL-MSGID: =?utf-8?q?1592548668765565864?=
+X-GMAIL-MSGID: =?utf-8?q?1592563221176281220?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+> The namespace of all these memory range handling functions is horribly random,
+> and I think now it got worse: we add an assumption that register_new_memory() is
+> implicitly called as part of hotplugged memory (where things are pre-cleared) -
+> but nothing in its naming suggests so.
+>
+> How about renaming it to hotplug_memory_register() or so?
 
-* Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
+Sure, I will rename it.
 
-> During memory hotplugging the probe routine will leave struct pages
-> uninitialized, the same as it is currently done during boot. Therefore, we
-> do not want to access the inside of struct pages before
-> __init_single_page() is called during onlining.
-> 
-> Because during hotplug we know that pages in one memory block belong to
-> the same numa node, we can skip the checking. We should keep checking for
-> the boot case.
-> 
-> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-> ---
->  drivers/base/memory.c |  2 +-
->  drivers/base/node.c   | 22 +++++++++++++++-------
->  include/linux/node.h  |  4 ++--
->  3 files changed, 18 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-> index deb3f029b451..a14fb0cd424a 100644
-> --- a/drivers/base/memory.c
-> +++ b/drivers/base/memory.c
-> @@ -731,7 +731,7 @@ int register_new_memory(int nid, struct mem_section *section)
->  	}
->  
->  	if (mem->section_count == sections_per_block)
-> -		ret = register_mem_sect_under_node(mem, nid);
-> +		ret = register_mem_sect_under_node(mem, nid, false);
->  out:
+>
+> With that change you can add:
+>
+>   Reviewed-by: Ingo Molnar <mingo@kernel.org>
 
-The namespace of all these memory range handling functions is horribly random,
-and I think now it got worse: we add an assumption that register_new_memory() is 
-implicitly called as part of hotplugged memory (where things are pre-cleared) - 
-but nothing in its naming suggests so.
-
-How about renaming it to hotplug_memory_register() or so?
-
-With that change you can add:
-
-  Reviewed-by: Ingo Molnar <mingo@kernel.org>
-
-Thanks,
-
-	Ingo
+Thank you,
+Pavel
