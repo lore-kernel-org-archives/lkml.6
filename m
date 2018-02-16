@@ -1,110 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966718AbeBPMew (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 07:34:52 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:44701 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966628AbeBPMeu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 07:34:50 -0500
-X-Google-Smtp-Source: AH8x226ZVTIksR/gT9S9QnwXwqBnWpLjpITS3wKxfg22kHTxPpnpP+IZ0pe+x5z2ZPpSG7wBBL6WI4qPGqpa0+3yd3Q=
+        id S966764AbeBPMfN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 07:35:13 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50409 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966628AbeBPMfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 07:35:12 -0500
+Date: Fri, 16 Feb 2018 13:35:10 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: Colin King <colin.king@canonical.com>
+cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] HID: asus: make array 'buf' static const, shrinks
+ object size
+In-Reply-To: <20180106155027.17561-1-colin.king@canonical.com>
+Message-ID: <nycvar.YFH.7.76.1802161335000.13621@cbobk.fhfr.pm>
+References: <20180106155027.17561-1-colin.king@canonical.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=UB+ovYFSi2aB_qe3igX3K7BxMWaEEoNPx1UMdscKwQtQ@mail.gmail.com>
-References: <20180130202913.28724-1-thierry.escande@collabora.com>
- <20180130202913.28724-34-thierry.escande@collabora.com> <1517403243.14302.1.camel@pengutronix.de>
- <CAOw6vbKsG=B7vV5_NcwgeAc-=guRN1Xh-dCxKytkDeOjayatLw@mail.gmail.com> <CAD=FV=UB+ovYFSi2aB_qe3igX3K7BxMWaEEoNPx1UMdscKwQtQ@mail.gmail.com>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Fri, 16 Feb 2018 13:34:49 +0100
-Message-ID: <CAFqH_50OxDDfXjGPyNgtyu-qFn3zGqrLYprLtPJyHDYRDEczGQ@mail.gmail.com>
-Subject: Re: [PATCH v3 33/43] drm/panel: simple: Change mode for Sharp lq123p1jx31
-To: Doug Anderson <dianders@chromium.org>
-Cc: Sean Paul <seanpaul@chromium.org>, Haixia Shi <hshi@chromium.org>,
-        Thierry Escande <thierry.escande@collabora.com>,
-        Lin Huang <hl@rock-chips.com>, David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Yakir Yang <ykk@rock-chips.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        =?UTF-8?Q?=C3=98rjan_Eide?= <orjan.eide@arm.com>,
-        Mark Yao <mark.yao@rock-chips.com>, Zain Wang <wzz@rock-chips.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Sat, 6 Jan 2018, Colin King wrote:
 
-2018-01-31 17:52 GMT+01:00 Doug Anderson <dianders@chromium.org>:
-> Hi,
->
->
-> On Wed, Jan 31, 2018 at 7:16 AM, Sean Paul <seanpaul@chromium.org> wrote:
->> On Wed, Jan 31, 2018 at 7:54 AM, Lucas Stach <l.stach@pengutronix.de> wrote:
->>> Am Dienstag, den 30.01.2018, 21:29 +0100 schrieb Thierry Escande:
->>>> From: Sean Paul <seanpaul@chromium.org>
->>>>
->>>> Change the mode for Sharp lq123p1jx31 panel to something more
->>>> rockchip-friendly such that we can use the fixed PLLs to
->>>> generate the pixel clock
->>>
->>> This should really switch to a display timing instead of exposing a
->>> single mode. The display timing has min, typical, max tuples for all
->>> the timings values, which would allow the attached driver to vary the
->>> timings inside the allowed bounds if it makes sense.
->>>
->>> Trying to hit a specific pixel clock to free up a PLL is exactly one of
->>> the use cases envisioned for the display timings stuff.
->>>
->>
->> Agreed, I think we had this discussion the first time around. We
->> should drop this patch.
->>
->> Thanks for catching this!
->
-> Are you sure we should drop this?  In order for things to work
-> properly (not generate noise on the digitizer or other EMI), this
-> needs to run at a very specific pixel clock with very specific
-> blanking times.  I know that earlier we had slightly different
-> blanking times and Samsung came back and said that there was noise on
-> the digitizer.  I could be wrong, but I don't think there's any way
-> currently to be able to specify exactly what timings should be used on
-> a particular board.
->
-> Don't get be wrong--I think a patch such as this one that claims a
-> single board's timings as the "right" ones for a generic panel is a
-> bit of a hack.  ...but at the same time there are no other users of
-> this panel (that I know of) in mainline and the timings presented here
-> are certainly sane timings for this panel.
->
-> In any case, previous discussion at: https://patchwork.kernel.org/patch/9614603/
->
->
-> ...oh, and looking at the previous discussion reminds me that the
-> timings presented in this here patch are actually not the right ones
-> (they have the right PLL, but the wrong blankings to avoid the noise
-> issues).  See <//chromium-review.googlesource.com/381015>
->
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the const read-only array 'buf' on the stack but instead
+> make it stati. Makes the object code smaller by 26 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>   14378	   2384	     64	  16826	   41ba	linux/drivers/hid/hid-asus.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>   14296	   2440	     64	  16800	   41a0	linux/drivers/hid/hid-asus.o
+> 
+> (gcc version 7.2.0 x86_64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-As Thierry no longer has the hardware to test these patch series, I'll
-take care of these and follow the upstreaming process. I think that
-doesn't make sense send a v4 version of all 43 patches for this
-change. Right now, only this patch received comments so I'll wait a
-bit more for if we can get the other patches reviewed. If the others
-are fine just and I don't need to send a new version just don't apply
-this one and I will send a second version of that specific patch. Or
-even better, is really trivial what needs to be changed, so maybe the
-maintainer can do it? ;)
+Applied to for-4.17/upstream.
 
-Regards,
- Enric
-
->
->
-> -Doug
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+-- 
+Jiri Kosina
+SUSE Labs
