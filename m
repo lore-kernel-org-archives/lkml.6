@@ -1,79 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030582AbeBPNSU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 08:18:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58536 "EHLO mail.kernel.org"
+        id S1030859AbeBPNZ1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 08:25:27 -0500
+Received: from smtp.gentoo.org ([140.211.166.183]:42018 "EHLO smtp.gentoo.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030435AbeBPNST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 08:18:19 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FBF21726
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Fri, 16 Feb 2018 10:18:15 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: ufo19890607 <ufo19890607@gmail.com>
-Cc: peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        dsahern@gmail.com, namhyung@kernel.org, milian.wolff@kdab.com,
-        arnaldo.melo@gmail.com, yuzhoujian@didichuxing.com,
-        adrian.hunter@intel.com, wangnan0@huawei.com, Kan.liang@intel.com,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        acme@redhat.com
-Subject: Re: [PATCH v4 2/2] perf stat: Add support to print counts after a
- period of time
-Message-ID: <20180216131815.GB24436@kernel.org>
-References: <1517217923-8302-1-git-send-email-ufo19890607@gmail.com>
- <1517217923-8302-3-git-send-email-ufo19890607@gmail.com>
- <20180215133921.GC22818@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180215133921.GC22818@kernel.org>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1030766AbeBPNZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 08:25:26 -0500
+Message-ID: <1518787521.2464.20.camel@gentoo.org>
+Subject: Re: [PATCH-next] sched/headers: Clean up <linux/sched.h>
+From: Christopher =?ISO-8859-1?Q?D=EDaz?= Riveros <chrisadr@gentoo.org>
+To: Juri Lelli <juri.lelli@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Date: Fri, 16 Feb 2018 08:25:21 -0500
+In-Reply-To: <20180216094432.GG8032@localhost.localdomain>
+References: <20180215154318.15894-1-chrisadr@gentoo.org>
+         <20180215165212.GB25181@hirez.programming.kicks-ass.net>
+         <20180216094432.GG8032@localhost.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.24.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Feb 15, 2018 at 10:39:21AM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Mon, Jan 29, 2018 at 10:25:23AM +0100, ufo19890607 escreveu:
-> > From: yuzhoujian <yuzhoujian@didichuxing.com>
+El vie, 16-02-2018 a las 10:44 +0100, Juri Lelli escribió:
+> On 15/02/18 17:52, Peter Zijlstra wrote:
+> > On Thu, Feb 15, 2018 at 10:43:18AM -0500, Christopher Diaz Riveros
+> > wrote:
+> 
+> [...]
+> 
+> > > @@ -437,20 +437,28 @@ struct sched_dl_entity {
+> > >  	 * during sched_setattr(), they will remain the same
+> > > until
+> > >  	 * the next sched_setattr().
+> > >  	 */
+> > > -	u64				dl_runtime;	/*
+> > > Maximum runtime for each instance	*/
+> > > -	u64				dl_deadline;	/
+> > > * Relative deadline of each instance	*/
+> > > -	u64				dl_period;	/*
+> > > Separation of two instances (period) */
+> > > -	u64				dl_bw;		
+> > > /* dl_runtime / dl_period		*/
+> > > -	u64				dl_density;	/*
+> > > dl_runtime / dl_deadline		*/
+> > > +	/* Maximum runtime for each instance	*/
+> > > +	u64				dl_runtime;
+> > > +	/* Relative deadline of each instance	*/
+> > > +	u64				dl_deadline;
+> > > +	/* Separation of two instances (period) */
+> > > +	u64				dl_period;
+> > > +	/* dl_runtime / dl_period		*/
+> > > +	u64				dl_bw;
+> > > +	/* dl_runtime / dl_deadline		*/
+> > > +	u64				dl_density;
 > > 
-> > Introduce a new option to print counts after N milliseconds
+> > That's a whole lot less readable :/
 > 
-> This doesn't just print counts after N ms, it _stops_ the workload after
-> that time _and_ prints the counts, right?
-> 
-> Can you please send a followup patch fixing the description and
-> documentation?
-> 
-> I've applied this already, but clarifying what this option does is in
-> demand.
+> Yep. :(
 
-So, this fails to build on centos:5 and centos:6 and similar systems
-where the use of 'time' for a variable name breaks the build:
+Thank you all for the feedback, I'll consider this patch as NACK. Sorry
+ for wasting time in a low quality patch. I'll prepare a better one
+next time :)
 
-  CC       /tmp/build/perf/builtin-stat.o
-cc1: warnings being treated as errors
-builtin-stat.c: In function '__run_perf_stat':
-builtin-stat.c:576: warning: declaration of 'time' shadows a global declaration
-/usr/include/time.h:187: warning: shadowed declaration is here
-builtin-stat.c: In function 'cmd_stat':
-builtin-stat.c:2710: warning: declaration of 'time' shadows a global declaration
-/usr/include/time.h:187: warning: shadowed declaration is here
-mv: cannot stat `/tmp/build/perf/.builtin-stat.o.tmp': No such file or directory
-make[3]: *** [/tmp/build/perf/builtin-stat.o] Error 1
-make[3]: *** Waiting for unfinished jobs....
-  MKDIR    /tmp/build/perf/util/
-  CC       /tmp/build/perf/util/evsel_fprintf.o
-make[2]: *** [/tmp/build/perf/perf-in.o] Error 2
-make[2]: *** Waiting for unfinished jobs....
-
-So since I had to rename that I replaced it with 'timeout', so that it
-gets clear that when you specify this option you are setting a timeout
-period that if hit will stop the 'perf stat' session and then print the
-specified counters.
-
-Please let us know if you have any strong objection to this,
-
-- Arnaldo
+Regards,
+-- 
+Christopher Díaz Riveros
+Gentoo Linux Developer
+GPG Fingerprint: E517 5ECB 8152 98E4 FEBC  2BAA 4DBB D10F 0FDD 2547
