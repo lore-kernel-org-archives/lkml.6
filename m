@@ -1,44 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161604AbeBPRJJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 12:09:09 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45688 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032362AbeBPRJG (ORCPT
+        id S1161672AbeBPRKA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 12:10:00 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41958 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161066AbeBPRJ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 12:09:06 -0500
-X-Google-Smtp-Source: AH8x224H0bfPUNadaOluqpvZOjjV+zzUqBLAoSuHEpxIgvm2BLBTUw6yBoaZ9wgTgOrUUWC/0mt/uA==
-Date: Fri, 16 Feb 2018 09:09:05 -0800
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Dylan Reid <dgreid@chromium.org>, huang lin <hl@rock-chips.com>
-Subject: Re: [PATCH v2] ASoC: dmic: Add optional wakeup delay
-Message-ID: <20180216170905.GD99727@google.com>
-References: <20180216022416.208265-1-mka@chromium.org>
- <20180216112801.GA5886@sirena.org.uk>
+        Fri, 16 Feb 2018 12:09:58 -0500
+Date: Fri, 16 Feb 2018 09:09:55 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Christopher Lameter <cl@linux.com>
+Cc: Michal Hocko <mhocko@kernel.org>, David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org
+Subject: Re: [patch 1/2] mm, page_alloc: extend kernelcore and movablecore
+ for percent
+Message-ID: <20180216170955.GA17591@bombadil.infradead.org>
+References: <alpine.DEB.2.10.1802121622470.179479@chino.kir.corp.google.com>
+ <20180214095911.GB28460@dhcp22.suse.cz>
+ <alpine.DEB.2.10.1802140225290.261065@chino.kir.corp.google.com>
+ <20180215144525.GG7275@dhcp22.suse.cz>
+ <20180215151129.GB12360@bombadil.infradead.org>
+ <alpine.DEB.2.20.1802150947240.1902@nuc-kabylake>
+ <20180215204817.GB22948@bombadil.infradead.org>
+ <alpine.DEB.2.20.1802160941500.9660@nuc-kabylake>
+ <20180216160116.GA24395@bombadil.infradead.org>
+ <alpine.DEB.2.20.1802161002260.10336@nuc-kabylake>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180216112801.GA5886@sirena.org.uk>
+In-Reply-To: <alpine.DEB.2.20.1802161002260.10336@nuc-kabylake>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-El Fri, Feb 16, 2018 at 11:28:01AM +0000 Mark Brown ha dit:
-
-> On Thu, Feb 15, 2018 at 06:24:16PM -0800, Matthias Kaehlcke wrote:
-> > On some systems a delay is needed after switching on the clocks, to allow
-> > the output to stabilize and avoid a popping noise at the beginning of
-> > the recording. Add the optional device tree property 'wakeup-delay-ms'
+On Fri, Feb 16, 2018 at 10:08:28AM -0600, Christopher Lameter wrote:
+> On Fri, 16 Feb 2018, Matthew Wilcox wrote:
+> > I don't understand this response.  I'm not suggesting mixing objects
+> > of different sizes within the same page.  The vast majority of slabs
+> > use order-0 pages, a few use order-1 pages and larger sizes are almost
+> > unheard of.  I'm suggesting the slab have it's own private arena of pages
+> > that it uses for allocating pages to slabs; when an entire page comes
+> > free in a slab, it is returned to the arena.  When the arena is empty,
+> > slab requests another arena from the page allocator.
 > 
-> This doesn't apply against current code, please check and resend.
+> This just shifts the fragmentation problem because the 2M page cannot be
+> released until all 4k or 8k pages within that 2M page are freed. How is
+> that different from the page allocator which cannot coalesce an 2M page
+> until all fragments have been released?
 
-Sorry about that, apparently 6d6c3946d877 ("ASoC: dmic: replace codec
-to component") was merged just after syncing my tree. Will rebase and
-resend.
+I'm not proposing releasing this 2MB page, unless it naturally frees up.
+I'm saying that by restricting allocations to be within this 2MB page,
+we prevent allocating from the adjacent 2MB page.
+
+The workload I'm thinking of looks like this ... maybe the result of
+running 'file' on every inode in a directory:
+
+do {
+	Allocate an inode
+	Allocate a page of pagecache
+} while (lots of times);
+
+naively, we allocate a page for the inode slab, then 3-6 pages for page
+cache (depending on the filesystem), then we allocate another page for
+the inode slab, then another 3-6 pages of page cache, and so on.  So the
+pages end up looking like this:
+
+IPPPPPIP|PPPPIPPP|PPIPPPPP|IPPPPPIP|...
+
+Now we need an order-3 allocation.  We can't get there just by releasing
+page cache pages because there's inode slab pages in there, so we need to
+shrink the inode caches as well.  I'm proposing:
+
+IIIIII00|PPPPPPPP|PPPPPPPP|PPPPPPPP|PP...
+
+and we can get our order-3 allocation just by releasing page cache pages.
+
+> The kernelcore already does something similar by limiting the
+> general unmovable allocs to a section of memory.
+
+Right!  But Michal's unhappy about kernelcore (see the beginning of this
+thread), and so I'm proposing an alternative.
+
+> Maybe what we should do is raise the lowest allocation size instead and
+> allocate 2^x groups of pages to certain purposes?
+> 
+> I.e. have a base allocation size of 16k and if the alloc was a page cache
+> page then use the remainder for the neigboring pages.
+
+Yes, there are a lot of ideas like this floating around; I know Kirill's
+interested in this kind of thing not just for THP but also for faultaround.
