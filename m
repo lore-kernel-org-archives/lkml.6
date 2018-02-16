@@ -1,59 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030882AbeBPP4d (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:56:33 -0500
-Received: from mout.web.de ([212.227.17.12]:47453 "EHLO mout.web.de"
+        id S1030952AbeBPP5M (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:57:12 -0500
+Received: from muru.com ([72.249.23.125]:57236 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030613AbeBPP4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:56:31 -0500
-To: linux-ide@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tejun Heo <tj@kernel.org>, Viresh Kumar <vireshk@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/3] PATA-Arasan CF: Adjustments for arasan_cf_probe()
-Message-ID: <d492f9d2-ed64-e858-441a-fa554369032c@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 16:56:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1030613AbeBPP5L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 10:57:11 -0500
+Date: Fri, 16 Feb 2018 07:57:07 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 1/4] dt-bindings: sound: add motorola,cpcap-audio-codec
+Message-ID: <20180216155706.GS6364@atomide.com>
+References: <20180214220741.28306-1-sebastian.reichel@collabora.co.uk>
+ <20180214220741.28306-2-sebastian.reichel@collabora.co.uk>
+ <20180216113008.GB5886@sirena.org.uk>
+ <20180216132537.lkd4wzfg7uuoyx7k@earth.universe>
+ <20180216134448.GI5886@sirena.org.uk>
+ <20180216141237.rd75sbix7bopi7zu@earth.universe>
+ <20180216151609.GK5886@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:uoBcl91jlXMpquX3keb4jfBExv+CcOmVjNebc8EBpo9vHoRTtDT
- 9aD50UP2pTBCuBjawpRoZHroKgwpJz0+TNlohWDvtFcWC1iIwcbsb0sYX9pURRPncKdLuGb
- me9m9QBjrhdIp8ESSQQXUtJgWBOTt2vbnNd2fRUcpPaMcCET9bmn3jjBmo9wozu38MAmZyf
- FOrCd9lwKjE7Jq91esssQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:NRP7QoE624M=:p0yQg1Jdk2TmlZzh/7kuyC
- re/AUQUT8rgSpgjBpIk9SXi6kLFSGpV+qrMyALhbOuoe/h6KW6whEmkhgTaW82f9+QJezqUzx
- uHGDnpD7T6oXnrvz2nlk3ROssWqFq4IB3/qfqSOZ2OibVG0OjM1Ltlyjaw8l0ta1OV01/asfH
- iuut0+zzLfM/8rWqVgx7ZRdHLywIdkn34F1KZ+lMOHwDrpUklE7GqWg/86KdDIUn/cCISwUqW
- c3JTUeftYsiDn4UI4L2OHYhxTK6wfEq4Wzcb7xbgSKU3m1ZDAsXmYwasXZ26WWXGvmVwqoPkq
- OX6drRaEzjHMICS4KUQQSl9MlyI+XP3kfLKLxItCaNHbF+EJVRgiGiyR+79j04mOz4ekUuJUX
- NJw6QqWtpxaBxNzaOd6PSoz24QeqkK/FSuh3EvmKrJY8dMbt/Tg89A0EmFHguN0Gl15F68u0l
- jhNPTjg4/ujWJLmJSJqVh/CPth96Qepnr8tU4xI8NUOuyVzev33ew3QT+a3bEN9jtPwk1rC/t
- nDQTM/oAfJM4yLXaQUWPuVU/T8jY3x4UeO1Fkl1jXiU9HUpXcE4KAdmb36Tdgo7mqfqK/1a5m
- uyNf+ddLc/yegGYaamMlggk5Kz8B576bz20x7YEktVIljGapE1ncyqpN1CG542dC8TmAnMIiv
- ShGj573MU+/7hq9BT9Fu3jh5hPRtg5740KHVILhSMz19/Ew1DxmjahTR4x017IysGAxrSZbyb
- 4hRMGnMsxBkUuXUxfv3ENwhxuQlZx6brQ1kWqAy/OmnEmP+iSUd1tmDwBu68MNPQY5aZnTc8I
- BaP3Mghwh3xFXXVa/wLO5eBagfn7u7GjDNzkw6ZhUkijZBvTV8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180216151609.GK5886@sirena.org.uk>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 16:51:23 +0100
+* Mark Brown <broonie@kernel.org> [180216 15:17]:
+> On Fri, Feb 16, 2018 at 03:12:37PM +0100, Sebastian Reichel wrote:
+> > On Fri, Feb 16, 2018 at 01:44:48PM +0000, Mark Brown wrote:
+> > > On Fri, Feb 16, 2018 at 02:25:38PM +0100, Sebastian Reichel wrote:
+> 
+> > > > While it looks empty in the DT binding file, it's actually not empty
+> > > > once some standard properties are added to support audio-graph-card.
+> 
+> > > This tells me you're missing something in the binding defining the
+> > > DAIs and...
+> 
+> > Well it is described by the following document:
+> 
+> > Documentation/devicetree/bindings/sound/audio-graph-card.txt
+> 
+> You still need to say which DAIs exist on the device and how they are
+> identified - if there's only one DAI it's obviously easy but if a device
+> has multiple DAIs then there's some naming to do.
+> 
+> > > ...that still doesn't require a compatible here.
+> 
+> > I agree, that it's not required. Also the node is not required.
+> > Everything could be dumped into the main node. Many things are
+> > not required, but they make implementations easier and help in
+> > regards to DT readability and consistency. Having the compatible
+> > means, that all sub-functions _can_ be handled equally by the
+> > operating system. Not having the compatible means you _always_
+> > need special handling for the audio codec. This basically makes
+> > the codec node different for the simple purpose of "because it is
+> > not strictly required". If we have a compatible node, other
+> > operating systems can still decide to ignore it, right?
+> 
+> It's not just other operating systems, it's also other versions of
+> Linux we have to think about here.  The most obvious issue with audio is
+> the clocking where the division between ASoC and clock APIs is not super
+> obvious and could easily change in the future.
 
-Three update suggestions were taken into account
-from static source code analysis.
+Yeah let's stick to describing how the hardware is wired in the
+dts files. In this case it's really only the routing to the SoC,
+right?
 
-Markus Elfring (3):
-  Delete an error message for a failed memory allocation
-  Delete an unnecessary variable initialisation
-  Move two variable assignments
+One advantage of using a compatible property for the pmic subdevices
+though is that it leaves out a dependency between various device
+drivers things happen automagically. The mfd core driver can be
+minimal and just implement interrupt handling and regmap. So no need
+to to parse the child nodes in the pmic mfd driver :)
 
- drivers/ata/pata_arasan_cf.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+So personally I'd prefer the option that requires least amount
+of custom code if compatible vs no compatible property is the
+only issue here.
 
--- 
-2.16.1
+Regards,
+
+Tony
