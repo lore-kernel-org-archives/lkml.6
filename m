@@ -1,76 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031023AbeBPP5q (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:57:46 -0500
-Received: from mout.web.de ([217.72.192.78]:33185 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030613AbeBPP5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:57:44 -0500
-Subject: [PATCH 1/3] pata_arasan_cf: Delete an error message for a failed
- memory allocation in arasan_cf_probe()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-ide@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tejun Heo <tj@kernel.org>, Viresh Kumar <vireshk@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <d492f9d2-ed64-e858-441a-fa554369032c@users.sourceforge.net>
-Message-ID: <05b48a33-81ae-b1b1-428c-4a9a0c9a4fe8@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 16:57:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1031078AbeBPP6n (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:58:43 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:33988 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753068AbeBPP6l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 10:58:41 -0500
+Date: Fri, 16 Feb 2018 16:58:37 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 1/4] dt-bindings: sound: add motorola,cpcap-audio-codec
+Message-ID: <20180216155837.e57lt4dhc7wlryq6@earth.universe>
+References: <20180214220741.28306-1-sebastian.reichel@collabora.co.uk>
+ <20180214220741.28306-2-sebastian.reichel@collabora.co.uk>
+ <20180216113008.GB5886@sirena.org.uk>
+ <20180216132537.lkd4wzfg7uuoyx7k@earth.universe>
+ <20180216134448.GI5886@sirena.org.uk>
+ <20180216141237.rd75sbix7bopi7zu@earth.universe>
+ <20180216151609.GK5886@sirena.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <d492f9d2-ed64-e858-441a-fa554369032c@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:4PRvHQI2yQrzzB6WbojX22Ju+MhJ0Vt5eLtYALPJlIeBUjDiFK0
- 598j8fnnUMgiEDKRqcjFtKvK2d/JzdU0YEa18h68NNqOQvfhYxUTX6edoHtwMxhoNkr8a6x
- 9qAM5647y6qWNvGqw8MlYoah5ZYDg3G8qKkQGRh9Dsqpcu6irsFfQIKKolGF+6jdp1/AIXQ
- 1eKVIz6joDYSfTIzg9SbA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:00V2dxCnpZo=:Cn7L5SxC99vopeEDycDVUO
- EVaT281BZNzNbfmjk+zHsgsdt5ixZiDndtKfVSS0d5QqtwqBJE4HG+aBJJa227AYMcMLBCaF6
- ePBwpCTUryrTBI+8gFJs/fSexaPVDBtI71MmKayjDpP0rpoAGQd5OQB20Kbj7l2p7qV+785Xt
- 5Jn+Zcl+SnVqiVGCoAzCWwTaX6VDeh6Fca+0pbPGpjHsQSQmWiArWvsd2S38FRbkdoyBdMVAO
- Wnk7EbnvaTlYgTuG5vfbVlfVKAp4Vg1g2o2xlkQB0kaxKeeKLFpgw4wnqLfMnxRGg+FLTSUON
- cgZtxLOyChRgDzmxHRPxVUGBNOZ6eCpthMK7WHsoAI3wGe+ViWqtLNlOSGFFuWrnbdpu9W3eS
- fSvpB8pZ6Vpp1ypFgJtIbdTOjpY/Sly+F6LMo14E6fDCW1Cs+IGumF0f+i29bbZQLbHeNtJSh
- JKbVkjx3XIGs34oZfe6ALyCILUwrkFJs7ksYM5ZBXWyyAUqqyGTn+5YG8y0YfDKy5Q0mfh2Nv
- pfMuDYzys1+vAxjLljMJHUQGbgP78JXOKoksmmsH/8haHrKPO8cDTrvQ2iM3mmlNj8pUe/m16
- Hp2gaiTpzFi1CKTVRDpyctZZ5qv9ASuoRBTAcEvt3AIytN1kjw2U64VgQsVZWIhlNvzweBvB+
- Yn62zd4YqE3i+RpE99DpZtX/s5Np2QcFD2SIV5O37z5vty47yvEEi/wF0KIhajLQkBEIArh+7
- XvdJP/8Jgprhtv9DNme32aY/3bZ9pYtvLrYbLFe1wuneT/vvEdGMCp36F4OcLgBCT007EoaJh
- jlWlVNPgEJy3Ng9P/TcJgkxNTC7mB0hVRQWEo+Y9lQKDbCAZHM=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dtydjqporgovqia7"
+Content-Disposition: inline
+In-Reply-To: <20180216151609.GK5886@sirena.org.uk>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 16:01:12 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+--dtydjqporgovqia7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This issue was detected by using the Coccinelle software.
+Hi,
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/ata/pata_arasan_cf.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+On Fri, Feb 16, 2018 at 03:16:09PM +0000, Mark Brown wrote:
+> On Fri, Feb 16, 2018 at 03:12:37PM +0100, Sebastian Reichel wrote:
+> > On Fri, Feb 16, 2018 at 01:44:48PM +0000, Mark Brown wrote:
+> > > On Fri, Feb 16, 2018 at 02:25:38PM +0100, Sebastian Reichel wrote:
+>=20
+> > > > While it looks empty in the DT binding file, it's actually not empty
+> > > > once some standard properties are added to support audio-graph-card.
+>=20
+> > > This tells me you're missing something in the binding defining the
+> > > DAIs and...
+>=20
+> > Well it is described by the following document:
+>=20
+> > Documentation/devicetree/bindings/sound/audio-graph-card.txt
+>=20
+> You still need to say which DAIs exist on the device and how they are
+> identified - if there's only one DAI it's obviously easy but if a device
+> has multiple DAIs then there's some naming to do.
 
-diff --git a/drivers/ata/pata_arasan_cf.c b/drivers/ata/pata_arasan_cf.c
-index b4d54771c9fe..be5fbcedecbf 100644
---- a/drivers/ata/pata_arasan_cf.c
-+++ b/drivers/ata/pata_arasan_cf.c
-@@ -809,10 +809,8 @@ static int arasan_cf_probe(struct platform_device *pdev)
- 	}
- 
- 	acdev = devm_kzalloc(&pdev->dev, sizeof(*acdev), GFP_KERNEL);
--	if (!acdev) {
--		dev_warn(&pdev->dev, "kzalloc fail\n");
-+	if (!acdev)
- 		return -ENOMEM;
--	}
- 
- 	if (pdata)
- 		quirk = pdata->quirk;
--- 
-2.16.1
+Ok, I will add some more description of the codec's capabilities.
+
+> > > ...that still doesn't require a compatible here.
+>=20
+> > I agree, that it's not required. Also the node is not required.
+> > Everything could be dumped into the main node. Many things are
+> > not required, but they make implementations easier and help in
+> > regards to DT readability and consistency. Having the compatible
+> > means, that all sub-functions _can_ be handled equally by the
+> > operating system. Not having the compatible means you _always_
+> > need special handling for the audio codec. This basically makes
+> > the codec node different for the simple purpose of "because it is
+> > not strictly required". If we have a compatible node, other
+> > operating systems can still decide to ignore it, right?
+>=20
+> It's not just other operating systems, it's also other versions of
+> Linux we have to think about here. The most obvious issue with audio is
+> the clocking where the division between ASoC and clock APIs is not super
+> obvious and could easily change in the future.
+
+Which does not change my argument. Other handling in Linux is
+basically equal to other operating system. We don't loose anything
+by having a compatible available.
+
+-- Sebastian
+
+--dtydjqporgovqia7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqG/6gACgkQ2O7X88g7
++ppy9w/+KxWpLExUDVnnFYwRUUsI6Owg6sDV567BqUMqbigA7Zbl3CfS346iOlnh
+cSGfLQQgTQIoR0oEeyb9eQPqQu9QBPW8KY2jdxc+4zfNInpZ0YmRKeAbDQaZGF2r
+Zqk/y7ZRgpIRw7IXmS7BxiS2WTLS8dmGOGxzA+StJZb8MmqNteAuZ5c/7S/IPD5H
+Ro315xkQct9oirM7ljRjRrumaEgagVmSJpmznQ4Ta0KGJ3ftm/eUrSjLYpYsQMAq
+ODqDTCfVqJlPlEZP024HUORXSQtkUyA060RNrX/NAk1YkaEm/gKuKdoyAQDIBaqo
+mEAhN6cqwC5DbFtVxk5sr7Y9nEAUYzb2ZzV4s1Bo2fITJdiPiaI3AqfP7R825F2r
+U0JFAd7PUhu3j7mm/RYXstFROrtwAhiwUjsKJOnC29tpJdtU5/jFQ3eCLDlBhRBp
+cVoArGV7nnDBECk6iKu4NwZYAHOpeGclY38cqy2gyTvLl3WnUjZd5cF0PSOUjaZT
+fmJmfzgKb6bxL9BNc5O5kfbepApMwvDDS/61YYVrrUGA+OYv96e3BLflQ0AY5ASJ
+l6Ovra3QJJRNE/aviYOmgURzW7p5D/7auY0c7I73Qto2/SQRsLtv+S7Y6eI7/0cp
+Kd99yMNCa4obhsAYmLgiIIlJIuCrPS8g5Mc2tS/uU5kl5IcOJxk=
+=ulJl
+-----END PGP SIGNATURE-----
+
+--dtydjqporgovqia7--
