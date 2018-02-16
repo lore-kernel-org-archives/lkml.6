@@ -1,90 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751090AbeBPWuZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 17:50:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56168 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751056AbeBPWuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 17:50:22 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BE60217C7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v1 2/2] PCI: Remove redundant probes for device reset support
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Jayachandran Nair <Jayachandran.Nair@cavium.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Tom Vaden <tom.vaden@hpe.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        George Cherian <george.cherian@cavium.com>
-Date: Fri, 16 Feb 2018 16:50:18 -0600
-Message-ID: <20180216225018.67295.36860.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20180216224213.67295.2251.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180216224213.67295.2251.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.17.1-dirty
+        id S1750960AbeBPXFw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 18:05:52 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:57381 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750743AbeBPXFv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 18:05:51 -0500
+From: John Ogness <john.ogness@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] fs/dcache: Avoid the try_lock loops in dentry_kill()
+References: <20180216150933.971-1-john.ogness@linutronix.de>
+        <20180216150933.971-5-john.ogness@linutronix.de>
+        <CA+55aFyo6jrvU62DiwKJZaTnmwLYQe4krNJCbAUui8R+=bDVdQ@mail.gmail.com>
+        <87y3js36s7.fsf@linutronix.de>
+        <CA+55aFxku7bB9BEBrqgREc5ac4MK9CGLir1c7ZA-7bjp-Q2tAg@mail.gmail.com>
+Date: Sat, 17 Feb 2018 00:05:35 +0100
+In-Reply-To: <CA+55aFxku7bB9BEBrqgREc5ac4MK9CGLir1c7ZA-7bjp-Q2tAg@mail.gmail.com>
+        (Linus Torvalds's message of "Fri, 16 Feb 2018 14:42:36 -0800")
+Message-ID: <87r2pk358g.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On 2018-02-16, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>> lock_parent() already has the problem you are referring to. Callers
+>> are required to recheck the dentry contents and check the returned
+>> parent because they do not know if the trylock succeeded. See
+>> d_prune_aliases(), for example.
+>
+> What are you talking about?
+>
+> lock_parent() does the nice "spin_trylock succeeded" special case.
+>
+> Yes, it will then do the "unlock dentry, do the parent first, then
+> re-check" too, and callers may need to worry about it.
+>
+> But that's not what I'm complaining about in your patch. You remove
+> the simple case, and make dentry_kill() do the "recheck in case I
+> dropped" every single time.
 
-We probe every device for whether it supports reset so we can tell whether
-to create a sysfs "reset" file for it.  We do that probe in
-pci_init_capabilities() during enumeration and save the result in
-dev->reset_fn.  The result doesn't depend on any other devices on the bus
-and shouldn't change after boot, so we don't need to do the probe again.
+dentry_lock_inode() uses the same semantics as lock_parent(). The caller
+does not know if the trylock succeeded. Any caller using lock_parent()
+must "recheck in case I dropped", just as with dentry_lock_inode(). This
+is what you have pointed out.
 
-Remove the pci_probe_reset_function() calls and rely on the dev->reset_fn
-we found during enumeration.  No functional change intended.
+> The fact that there are _other_ complex cases doesn't make it any
+> better. The whole "but Bobby does it too" thing is not a defense.
+> Would you jump off a bridge just because your friend did it?
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/pci.c |   15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+dentry_kill() calls both dentry_lock_inode() and lock_parent() in the
+common case. So by changing the semantics of lock_parent(), I am
+removing two "recheck in case I dropped" in the common case rather than
+just the one you pointed out.
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index f6a4dd10d9b0..4db740e4f50a 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -4450,9 +4450,8 @@ int pci_reset_function(struct pci_dev *dev)
- {
- 	int rc;
- 
--	rc = pci_probe_reset_function(dev);
--	if (rc)
--		return rc;
-+	if (!dev->reset_fn)
-+		return -ENOTTY;
- 
- 	pci_dev_lock(dev);
- 	pci_dev_save_and_disable(dev);
-@@ -4487,9 +4486,8 @@ int pci_reset_function_locked(struct pci_dev *dev)
- {
- 	int rc;
- 
--	rc = pci_probe_reset_function(dev);
--	if (rc)
--		return rc;
-+	if (!dev->reset_fn)
-+		return -ENOTTY;
- 
- 	pci_dev_save_and_disable(dev);
- 
-@@ -4511,9 +4509,8 @@ int pci_try_reset_function(struct pci_dev *dev)
- {
- 	int rc;
- 
--	rc = pci_probe_reset_function(dev);
--	if (rc)
--		return rc;
-+	if (!dev->reset_fn)
-+		return -ENOTTY;
- 
- 	if (!pci_dev_trylock(dev))
- 		return -EAGAIN;
+John Ogness
