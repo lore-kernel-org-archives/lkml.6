@@ -1,104 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034328AbeBPO1A (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 09:27:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40072 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034273AbeBPO06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:26:58 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA2FF217C7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
-Date: Fri, 16 Feb 2018 15:26:55 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: Carlo Caione <carlo@caione.org>
-Cc: linux@endlessm.com, hdegoede@redhat.com, rjw@rjwysocki.net,
-        lenb@kernel.org, wens@csie.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Carlo Caione <carlo@endlessm.com>
-Subject: Re: [PATCH v2 3/3] power: supply: axp288_fuel_gauge: Do not register
- FG on ECS EF20EA
-Message-ID: <20180216142655.heommid67q3g22qt@earth.universe>
-References: <20180216082616.25084-1-carlo@caione.org>
- <20180216082616.25084-4-carlo@caione.org>
+        id S1034363AbeBPO1a (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 09:27:30 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53966 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034273AbeBPO12 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 09:27:28 -0500
+Date: Fri, 16 Feb 2018 14:27:16 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 2/4] ASoC: codec: cpcap: new codec
+Message-ID: <20180216142716.GJ5886@sirena.org.uk>
+References: <20180214220741.28306-1-sebastian.reichel@collabora.co.uk>
+ <20180214220741.28306-3-sebastian.reichel@collabora.co.uk>
+ <20180216113901.GC5886@sirena.org.uk>
+ <20180216135113.akicejkodhbjpp2w@earth.universe>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wshm6zzqjg7sveev"
+        protocol="application/pgp-signature"; boundary="cN519qCC4CN1mUcX"
 Content-Disposition: inline
-In-Reply-To: <20180216082616.25084-4-carlo@caione.org>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180216135113.akicejkodhbjpp2w@earth.universe>
+X-Cookie: To order, call toll-free.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---wshm6zzqjg7sveev
+--cN519qCC4CN1mUcX
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Feb 16, 2018 at 02:51:13PM +0100, Sebastian Reichel wrote:
+> On Fri, Feb 16, 2018 at 11:39:01AM +0000, Mark Brown wrote:
 
-On Fri, Feb 16, 2018 at 08:26:16AM +0000, Carlo Caione wrote:
-> From: Carlo Caione <carlo@endlessm.com>
->=20
-> The ECS EF20EA laptop ships an AXP288 but it is actually using a
-> different, separate FG chip for AC and battery monitoring. On this
-> laptop we need to keep using the regular ACPI driver and disable the
-> AXP288 FG to avoid reporting two batteries to userspace.
->=20
-> Signed-off-by: Carlo Caione <carlo@endlessm.com>
-> ---
+> > We don't have default lines like this for other MFDs...
 
-It looks like this could be applied independently of the ACPI
-patches to the power-supply tree?
+> Is there a reason not to add them? It looks very useful to me:
 
--- Sebastian
+Consistency.  It's a lot easier to apply a single rule to everything
+than it is to have to individually think through and discuss the
+decisions on every individual driver, especially when there will
+inevitably be some cases where there are conflicting requirements from
+different users.  As you said in the rest of your mail hand configuring
+kernels is already a very specialist thing at the best of times.
 
->  drivers/power/supply/axp288_fuel_gauge.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/drivers/power/supply/axp288_fuel_gauge.c b/drivers/power/sup=
-ply/axp288_fuel_gauge.c
-> index 4cc6e038dfdd..903891a9bcf0 100644
-> --- a/drivers/power/supply/axp288_fuel_gauge.c
-> +++ b/drivers/power/supply/axp288_fuel_gauge.c
-> @@ -708,6 +708,12 @@ static const struct dmi_system_id axp288_fuel_gauge_=
-blacklist[] =3D {
->  			DMI_MATCH(DMI_BOARD_VERSION, "V1.1"),
->  		},
->  	},
-> +	{
-> +		/* ECS EF20EA */
-> +		.matches =3D {
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "EF20EA"),
-> +		},
-> +	},
->  	{}
->  };
-> =20
-> --=20
-> 2.14.1
->=20
-
---wshm6zzqjg7sveev
+--cN519qCC4CN1mUcX
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqG6i8ACgkQ2O7X88g7
-+poL4g/+OPnzr2lxPcaXb2Q+dNqRgWMa69O+3rKWZRGnUnYxToNTdCBvNFfKj6zJ
-7kZeVYmTotevZatUiV6mDpmLxQ4JvtuwfFOsOucSXktfNIzEx50ByK3lvoLWSsxt
-bAVDPXXZ6vHQ/Wx3wCQ8Jgr7QvuMC05YK5YtY/KTALoWRcD1/Pn+/rDpCsAtzxKz
-aHuVQmT/fbZV42vInm49yW65NXRlLgWjgh1h0jf6o5DhA9Aya8ahHOBO92k7zmmw
-4/stjP871xt80YoLl29derLI+l5UGcTTsQdxpZyCz04lZWodwVr5SbPo+nXDzXYA
-zvPU3vb/EiSTL0H8UJCPZ03ZNIKtOMQQi1iokWuDzYCSZZ5qpFAM7TnzXoYULSQh
-kshiT7lbRip1dSapqlJaIEFew4Z7MLMkCPlfa0n8IkBtu57hDgO3tJZ2i56nAcLo
-uuU2m1Y/iWPgCl+2Awe+yeb196+7eIOH4ASBCnIx+UeGSMm8h7SaQVgnMJn6lPvc
-lqR0T2af89PBGhjb/rgxLUelmK5xIpaFFNKHlMLSscTkqV/dzDsgcR4Pp4rS1gNg
-XJ+sZJ2K4pLtCV5BbcQnHZ6FXpqVMB3n8MuheUJAjLL4WUxHz5Ki2MAOlI90/k/m
-MGmy+Sj8aTpo+PK/ui0BZ9yf3hNKEMbbDEXO4nVSpqq1xOaRgG4=
-=2r8q
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqG6kQACgkQJNaLcl1U
+h9AoCgf8CQYEgUAvlLn8toKeaZlwqe64eR8eKRYIUVGLT6JyPh9GGPFh3I7JhPgV
+fMakHQyW/Vw6OGthmS76ziyoAifgwww89o07qxjoOvJfnuVy2M1/wdaIcCOFfQZN
+hcLxYd6NnsoXBbIXuDWPSUWaxEUc9N7uH6fNeZFppv6DjEYaI+bunj/dTCJxvVnC
+5Q3R/+dVEoEEdK1Q41N3sjPypgjZc7D8xP+wXcmix9CBN7yZsBmJJMSCnfK214VD
+MXv8u0ahaR4SVTq7LeBUeQtFp7cW1y72BeAAZ+uQSb6iPxuE58OlInneT6uLc+B8
+MYWeCW5cs79YSTGAQuxomCRerXUAOw==
+=qpom
 -----END PGP SIGNATURE-----
 
---wshm6zzqjg7sveev--
+--cN519qCC4CN1mUcX--
