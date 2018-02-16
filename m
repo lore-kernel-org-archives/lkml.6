@@ -1,97 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756301AbeBPPhE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:37:04 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55993 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752865AbeBPPhB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:37:01 -0500
-X-Google-Smtp-Source: AH8x226b0O5KPUWLyxpeB+0tbrYkJBPo3rdDnO+lwo8U+qM9sWO99Ag8Lxex4wWVrNzaBqy+kL98wA==
-Date: Fri, 16 Feb 2018 16:36:56 +0100
-From: Corentin Labbe <clabbe.montjoie@gmail.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: alexandre.torgue@st.com, arei.gonglei@huawei.com, corbet@lwn.net,
-        davem@davemloft.net, jasowang@redhat.com, mcoquelin.stm32@gmail.com,
-        mst@redhat.com, fabien.dessenne@st.com,
-        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 0/6] crypto: engine - Permit to enqueue all async
- requests
-Message-ID: <20180216153656.GA22492@Red>
-References: <20180126191534.17569-1-clabbe.montjoie@gmail.com>
- <20180215155100.GJ7352@gondor.apana.org.au>
+        id S1756348AbeBPPh7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:37:59 -0500
+Received: from mga18.intel.com ([134.134.136.126]:38436 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756320AbeBPPh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 10:37:58 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,519,1511856000";
+   d="scan'208";a="18687440"
+Date: Fri, 16 Feb 2018 17:37:55 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Subject: [GIT PULL] platform-drivers-x86 for 4.16-4
+Message-ID: <20180216153755.GA32624@smile.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180215155100.GJ7352@gondor.apana.org.au>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 11:51:00PM +0800, Herbert Xu wrote:
-> On Fri, Jan 26, 2018 at 08:15:28PM +0100, Corentin Labbe wrote:
-> > Hello
-> > 
-> > The current crypto_engine support only ahash and ablkcipher request.
-> > My first patch which try to add skcipher was Nacked, it will add too many functions
-> > and adding other algs(aead, asymetric_key) will make the situation worst.
-> > 
-> > This patchset remove all algs specific stuff and now only process generic crypto_async_request.
-> > 
-> > The requests handler function pointer are now moved out of struct engine and
-> > are now stored directly in a crypto_engine_reqctx.
-> > 
-> > The original proposal of Herbert [1] cannot be done completly since the crypto_engine
-> > could only dequeue crypto_async_request and it is impossible to access any request_ctx
-> > without knowing the underlying request type.
-> > 
-> > So I do something near that was requested: adding crypto_engine_reqctx in TFM context.
-> > Note that the current implementation expect that crypto_engine_reqctx
-> > is the first member of the context.
-> > 
-> > The first patch is a try to document the crypto engine API.
-> > The second patch convert the crypto engine with the new way,
-> > while the following patchs convert the 4 existing users of crypto_engine.
-> > Note that this split break bisection, so probably the final commit will be all merged.
-> > 
-> > Appart from virtio, all 4 latest patch were compile tested only.
-> > But the crypto engine is tested with my new sun8i-ce driver.
-> > 
-> > Regards
-> > 
-> > [1] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1474434.html
-> > 
-> > Changes since V1:
-> > - renamed crypto_engine_reqctx to crypto_engine_ctx
-> > - indentation fix in function parameter
-> > - do not export crypto_transfer_request
-> > - Add aead support
-> > - crypto_finalize_request is now static
-> > 
-> > Changes since RFC:
-> > - Added a documentation patch
-> > - Added patch for stm32-cryp
-> > - Changed parameter of all crypto_engine_op functions from
-> > 	crypto_async_request to void*
-> > - Reintroduced crypto_transfer_xxx_request_to_engine functions
-> > 
-> > Corentin Labbe (6):
-> >   Documentation: crypto: document crypto engine API
-> >   crypto: engine - Permit to enqueue all async requests
-> >   crypto: omap: convert to new crypto engine API
-> >   crypto: virtio: convert to new crypto engine API
-> >   crypto: stm32-hash: convert to the new crypto engine API
-> >   crypto: stm32-cryp: convert to the new crypto engine API
-> 
-> All applied.  Thanks.
+Hi Linus,
 
-Hello
+Couple of regressions were found, so, this PR to fix them.
 
-As mentionned in the cover letter, all patchs (except documentation one) should be squashed.
-A kbuild robot reported a build error on cryptodev due to this.
+Thanks,
 
-Regards
+With Best Regards,
+Andy Shevchenko
+
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/linux-platform-drivers-x86.git tags/platform-drivers-x86-v4.16-4
+
+for you to fetch changes up to c8ba9db2a790c0fcf2f6c4cafd45ff3a0751800e:
+
+  platform/x86: dell-laptop: Removed duplicates in DMI whitelist (2018-02-15 12:18:33 +0200)
+
+----------------------------------------------------------------
+platform-drivers-x86 for v4.16-4
+
+Regression fix in keyboard support for Dell laptops.
+Prevent out-of-boundary write in WMI bus driver.
+Increase timeout to read functional key status on Lenovo laptops.
+
+The following is an automated git shortlog grouped by driver:
+
+dell-laptop:
+ -  Removed duplicates in DMI whitelist
+ -  fix kbd_get_state's request value
+
+ideapad-laptop:
+ -  Increase timeout to wait for EC answer
+
+wmi:
+ -  fix off-by-one write in wmi_dev_probe()
+
+----------------------------------------------------------------
+Aaron Ma (1):
+      platform/x86: ideapad-laptop: Increase timeout to wait for EC answer
+
+Alexander Abrosimov (1):
+      platform/x86: dell-laptop: Removed duplicates in DMI whitelist
+
+Andrey Ryabinin (1):
+      platform/x86: wmi: fix off-by-one write in wmi_dev_probe()
+
+Laszlo Toth (1):
+      platform/x86: dell-laptop: fix kbd_get_state's request value
+
+ drivers/platform/x86/dell-laptop.c    | 20 +-------------------
+ drivers/platform/x86/ideapad-laptop.c |  2 +-
+ drivers/platform/x86/wmi.c            |  2 +-
+ 3 files changed, 3 insertions(+), 21 deletions(-)
+
+-- 
+With Best Regards,
+Andy Shevchenko
