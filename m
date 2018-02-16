@@ -1,72 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933466AbeBPKYo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 05:24:44 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34458 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933129AbeBPKYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 05:24:43 -0500
-Date: Fri, 16 Feb 2018 18:24:37 +0800
-From: Baoquan He <bhe@redhat.com>
-To: ebiederm@xmission.com, Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, x86@kernel.org,
-        douly.fnst@cn.fujitsu.com, joro@8bytes.org, uobergfe@redhat.com,
-        prarit@redhat.com
-Subject: Re: [PATCH v5 0/6] x86/apic: Fix restoring boot irq mode in reboot
- and kexec/kdump
-Message-ID: <20180216102437.GA28912@localhost.localdomain>
-References: <20180214054656.3780-1-bhe@redhat.com>
- <20180216093836.v6iq32jycy7sxwln@gmail.com>
+        id S933487AbeBPKZA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 05:25:00 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:28160 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933469AbeBPKY6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 05:24:58 -0500
+X-IronPort-AV: E=Sophos;i="5.46,519,1511852400";
+   d="scan'208";a="11215974"
+Subject: Re: [PATCH] MAINTAINERS: ARM: at91: update my email address
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20180216100301.21928-1-alexandre.belloni@bootlin.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+Message-ID: <118501bc-23cc-f604-fe29-1d2838baec24@microchip.com>
+Date: Fri, 16 Feb 2018 11:22:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180216093836.v6iq32jycy7sxwln@gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180216100301.21928-1-alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ingo, Eric,
-
-On 02/16/18 at 10:38am, Ingo Molnar wrote:
+On 16/02/2018 at 11:03, Alexandre Belloni wrote:
+> Free Electrons is now Bootlin.
 > 
-> * Baoquan He <bhe@redhat.com> wrote:
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+
+Sure! Welcome Bootlin!
+
+Regards,
+   Nicolas
+
+> ---
+>   MAINTAINERS | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> > This is v5 post. Newly added patch 0002 includes the change
-> > related to KEXEC_JUMP path. Patch 0003 only includes the
-> > regression fix.
-> > 
-> > A regression bug was introduced in below commit.
-> > commit 522e66464467 ("x86/apic: Disable I/O APIC before shutdown of the local APIC")
-> > 
-> > It caused the action to fail that we try to restore boot irq mode
-> > in reboot and kexec/kdump. Details can be seen in patch 0003.
-> > 
-> > Warning can always be seen during kdump kernel boot on qemu/kvm
-> > platform. Our customer even saw casual kdump kernel hang once in
-> > ~30 attempts during stress testing of kdump on KVM machine.
-> > 
-> > v4->v5:
-> >   Take out the change related to KEXEC_JUMP to a new patch 0002
-> >   according to Eric's suggestion.
-> >   Patch 0003 in this series only includes the regression fix.
-> > 
-> > v3->v4:
-> >   Eric pointed out that in patch 0002 the change related to
-> >   KEXEC_JUMP is not right.
-> >   Correct it.
-> > 
-> >   Add Fixes tag and Cc to stable.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3bdc260e36b7..99038a885ba6 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1238,7 +1238,7 @@ F:	drivers/clk/at91
+>   
+>   ARM/ATMEL AT91RM9200, AT91SAM9 AND SAMA5 SOC SUPPORT
+>   M:	Nicolas Ferre <nicolas.ferre@microchip.com>
+> -M:	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> +M:	Alexandre Belloni <alexandre.belloni@bootlin.com>
+>   L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>   W:	http://www.linux4sam.org
+>   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nferre/linux-at91.git
 > 
-> Eric, are these patches looking good to you now?
 
-Thanks for checking this!
 
-I got warning message from kbuild test robot on previous v3 and v4. I
-guess this v5 post also has the issue since the code is the same, just
-patch format is changed.
-
-Will report status after investigation.
-
-Thanks
-Baoquan
+-- 
+Nicolas Ferre
