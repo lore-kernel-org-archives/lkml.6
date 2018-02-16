@@ -1,108 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034306AbeBPOZW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 09:25:22 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:38565 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034292AbeBPOZU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:25:20 -0500
-X-Google-Smtp-Source: AH8x227CozIOVTVLh8MDiuQ0yoK++s7EnwRsAKKTyMy4d5uKluo3zSn5MHo9OooSk+K5VX4OgYg7+A==
-From: Progyan Bhattacharya <bprogyan@gmail.com>
-X-Google-Original-From: Progyan Bhattacharya <progyanb@acm.org>
-To: linux-kernel@vger.kernel.org
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Nicholas Mc Guire <der.herr@hofr.at>
-Subject: [PATCH] objtool/x86: Replace Non-standard Range Expression in Case
-Date: Fri, 16 Feb 2018 19:55:13 +0530
-Message-Id: <20180216142513.9520-1-progyanb@acm.org>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180216141947.9324-1-progyanb@acm.org>
-References: <20180216141947.9324-1-progyanb@acm.org>
+        id S1034328AbeBPO1A (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 09:27:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40072 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1034273AbeBPO06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 09:26:58 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA2FF217C7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
+Date: Fri, 16 Feb 2018 15:26:55 +0100
+From: Sebastian Reichel <sre@kernel.org>
+To: Carlo Caione <carlo@caione.org>
+Cc: linux@endlessm.com, hdegoede@redhat.com, rjw@rjwysocki.net,
+        lenb@kernel.org, wens@csie.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Carlo Caione <carlo@endlessm.com>
+Subject: Re: [PATCH v2 3/3] power: supply: axp288_fuel_gauge: Do not register
+ FG on ECS EF20EA
+Message-ID: <20180216142655.heommid67q3g22qt@earth.universe>
+References: <20180216082616.25084-1-carlo@caione.org>
+ <20180216082616.25084-4-carlo@caione.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wshm6zzqjg7sveev"
+Content-Disposition: inline
+In-Reply-To: <20180216082616.25084-4-carlo@caione.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace range expressions with seperate individual cases, i.e. convert case 1...3: to case 1: case 2: case 3
-Range expression within case statements are non-standard C code and can create issues over compiler and platform variety.
 
-While compiling with gcc 4.8 (RHEL) I encountered this error on range expression in case statements:
-error: range expressions in switch statements are non-standard [-Werror=pedantic]
+--wshm6zzqjg7sveev
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Progyan Bhattacharya <progyanb@acm.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Nick Desaulniers <nick.desaulniers@gmail.com>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Nicholas Mc Guire <der.herr@hofr.at>
-Cc: linux-kernel@vger.kernel.org
----
- tools/objtool/arch/x86/decode.c | 35 ++++++++++++++++++++++++++++++++---
- 1 file changed, 32 insertions(+), 3 deletions(-)
+Hi,
 
-diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
-index 540a209b78ab..4fb9b1307598 100644
---- a/tools/objtool/arch/x86/decode.c
-+++ b/tools/objtool/arch/x86/decode.c
-@@ -143,7 +143,14 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
- 		}
- 		break;
- 
--	case 0x50 ... 0x57:
-+	case 0x50:
-+        case 0x51:
-+        case 0x52:
-+        case 0x53:
-+        case 0x54:
-+        case 0x55:
-+        case 0x56:
-+        case 0x57:
- 
- 		/* push reg */
- 		*type = INSN_STACK;
-@@ -153,7 +160,14 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
- 
- 		break;
- 
--	case 0x58 ... 0x5f:
-+	case 0x58:
-+        case 0x59:
-+        case 0x5a:
-+        case 0x5b:
-+        case 0x5c:
-+        case 0x5d:
-+        case 0x5e:
-+        case 0x5f:
- 
- 		/* pop reg */
- 		*type = INSN_STACK;
-@@ -171,7 +185,22 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
- 		op->dest.type = OP_DEST_PUSH;
- 		break;
- 
--	case 0x70 ... 0x7f:
-+	case 0x70:
-+        case 0x71:
-+        case 0x72:
-+        case 0x73:
-+        case 0x74:
-+        case 0x75:
-+        case 0x76:
-+        case 0x77:
-+        case 0x78:
-+        case 0x79:
-+        case 0x7a:
-+        case 0x7b:
-+        case 0x7c:
-+        case 0x7d:
-+        case 0x7e:
-+        case 0x7f:
- 		*type = INSN_JUMP_CONDITIONAL;
- 		break;
- 
--- 
-2.16.1
+On Fri, Feb 16, 2018 at 08:26:16AM +0000, Carlo Caione wrote:
+> From: Carlo Caione <carlo@endlessm.com>
+>=20
+> The ECS EF20EA laptop ships an AXP288 but it is actually using a
+> different, separate FG chip for AC and battery monitoring. On this
+> laptop we need to keep using the regular ACPI driver and disable the
+> AXP288 FG to avoid reporting two batteries to userspace.
+>=20
+> Signed-off-by: Carlo Caione <carlo@endlessm.com>
+> ---
+
+It looks like this could be applied independently of the ACPI
+patches to the power-supply tree?
+
+-- Sebastian
+
+>  drivers/power/supply/axp288_fuel_gauge.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/drivers/power/supply/axp288_fuel_gauge.c b/drivers/power/sup=
+ply/axp288_fuel_gauge.c
+> index 4cc6e038dfdd..903891a9bcf0 100644
+> --- a/drivers/power/supply/axp288_fuel_gauge.c
+> +++ b/drivers/power/supply/axp288_fuel_gauge.c
+> @@ -708,6 +708,12 @@ static const struct dmi_system_id axp288_fuel_gauge_=
+blacklist[] =3D {
+>  			DMI_MATCH(DMI_BOARD_VERSION, "V1.1"),
+>  		},
+>  	},
+> +	{
+> +		/* ECS EF20EA */
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "EF20EA"),
+> +		},
+> +	},
+>  	{}
+>  };
+> =20
+> --=20
+> 2.14.1
+>=20
+
+--wshm6zzqjg7sveev
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqG6i8ACgkQ2O7X88g7
++poL4g/+OPnzr2lxPcaXb2Q+dNqRgWMa69O+3rKWZRGnUnYxToNTdCBvNFfKj6zJ
+7kZeVYmTotevZatUiV6mDpmLxQ4JvtuwfFOsOucSXktfNIzEx50ByK3lvoLWSsxt
+bAVDPXXZ6vHQ/Wx3wCQ8Jgr7QvuMC05YK5YtY/KTALoWRcD1/Pn+/rDpCsAtzxKz
+aHuVQmT/fbZV42vInm49yW65NXRlLgWjgh1h0jf6o5DhA9Aya8ahHOBO92k7zmmw
+4/stjP871xt80YoLl29derLI+l5UGcTTsQdxpZyCz04lZWodwVr5SbPo+nXDzXYA
+zvPU3vb/EiSTL0H8UJCPZ03ZNIKtOMQQi1iokWuDzYCSZZ5qpFAM7TnzXoYULSQh
+kshiT7lbRip1dSapqlJaIEFew4Z7MLMkCPlfa0n8IkBtu57hDgO3tJZ2i56nAcLo
+uuU2m1Y/iWPgCl+2Awe+yeb196+7eIOH4ASBCnIx+UeGSMm8h7SaQVgnMJn6lPvc
+lqR0T2af89PBGhjb/rgxLUelmK5xIpaFFNKHlMLSscTkqV/dzDsgcR4Pp4rS1gNg
+XJ+sZJ2K4pLtCV5BbcQnHZ6FXpqVMB3n8MuheUJAjLL4WUxHz5Ki2MAOlI90/k/m
+MGmy+Sj8aTpo+PK/ui0BZ9yf3hNKEMbbDEXO4nVSpqq1xOaRgG4=
+=2r8q
+-----END PGP SIGNATURE-----
+
+--wshm6zzqjg7sveev--
