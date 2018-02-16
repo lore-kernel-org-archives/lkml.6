@@ -1,81 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757579AbeBPJJ3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 04:09:29 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:46319 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757564AbeBPJJ1 (ORCPT
+        id S1757593AbeBPJKZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 04:10:25 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39878 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757563AbeBPJKY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 04:09:27 -0500
-Date: Fri, 16 Feb 2018 10:09:25 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-        architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com,
-        Jose.Abreu@synopsys.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v5 00/12] drm/sun4i: Add A83T HDMI support
-Message-ID: <20180216090925.bct4u3rfdg4epmpa@flea.lan>
-References: <20180214200906.31509-1-jernej.skrabec@siol.net>
+        Fri, 16 Feb 2018 04:10:24 -0500
+X-Google-Smtp-Source: AH8x227ftbzGds3bE0auaJLB2A/DMP8C7bHbLJjwMPBDUqOFQisGUa1UEs3TeyRQEGydJfCXDa5DAA==
+Date: Fri, 16 Feb 2018 10:10:20 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] x86/platform/atom: Re-use DEFINE_SHOW_ATTRIBUTE()
+ macro
+Message-ID: <20180216091020.wyjgsihl25tereeu@gmail.com>
+References: <20180214154317.52290-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="v7eapcxguafrbstv"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180214200906.31509-1-jernej.skrabec@siol.net>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180214154317.52290-1-andriy.shevchenko@linux.intel.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---v7eapcxguafrbstv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+* Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-On Wed, Feb 14, 2018 at 09:08:54PM +0100, Jernej Skrabec wrote:
-> This patch series implements support for A83T DW HDMI and PHY. Contrary to
-> v1 series, this one is based on latest linux-next, since all needed patch=
-es
-> were merged.
->=20
-> While exactly this combination of HDMI controller and PHY is not common in
-> Allwinner SoCs, this patch series nevertheless makes groundwork for other
-> SoCs, which have same DW HDMI IP block, but different PHYs, like H3 and H=
-5.
->=20
-> Please take a look.
+> ...instead of open coding file operations followed by custom ->open()
+> callbacks per each attribute.
+> 
+> While here, replace permissions by explicit octal value.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  arch/x86/platform/atom/punit_atom_debug.c | 13 +------------
+>  1 file changed, 1 insertion(+), 12 deletions(-)
+> 
+> diff --git a/arch/x86/platform/atom/punit_atom_debug.c b/arch/x86/platform/atom/punit_atom_debug.c
+> index d49d3be81953..156b445bcf4d 100644
+> --- a/arch/x86/platform/atom/punit_atom_debug.c
+> +++ b/arch/x86/platform/atom/punit_atom_debug.c
+> @@ -109,18 +109,7 @@ static int punit_dev_state_show(struct seq_file *seq_file, void *unused)
+>  
+>  	return 0;
+>  }
+> -
+> -static int punit_dev_state_open(struct inode *inode, struct file *file)
+> -{
+> -	return single_open(file, punit_dev_state_show, inode->i_private);
+> -}
+> -
+> -static const struct file_operations punit_dev_state_ops = {
+> -	.open		= punit_dev_state_open,
+> -	.read		= seq_read,
+> -	.llseek		= seq_lseek,
+> -	.release	= single_release,
+> -};
+> +DEFINE_SHOW_ATTRIBUTE(punit_dev_state);
+>  
+>  static struct dentry *punit_dbg_file;
 
-Applied and pushed everything, thanks!
-Maxime
+Hm, that octal value replacement does not seem to be part of this patch, only the 
+next patch.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Also, the debugfs_create_file() call still uses the old &punit_dev_state_ops 
+callback array.
 
---v7eapcxguafrbstv
-Content-Type: application/pgp-signature; name="signature.asc"
+Did a patch hunk go missing?
 
------BEGIN PGP SIGNATURE-----
+I've added the fixes below to the patch.
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqGn8QACgkQ0rTAlCFN
-r3RXPw/9GDjBOi4+Nv9x+jhnrPNiddQ1dIuAA4seBO1Hg6/GanA6niQnTF0FhYmS
-wWn6iC8ZHYfmtinO3kSAiqHGHVO4J6LBL682+ycoy8Su2XzUsAo7X76nZxI5m7Kw
-rSqByCmPgCXfiXmcHvizK9axkwNlHyNRy9fWDUR1CSyD45YgkaQrpGdecvbQ4JY/
-Lj+wU+2zq6cqIZ4xnESOH+qshWyL988gIGWcR8VtF+SCv/9dgdpJge/T6EnYzj7K
-aDayrsmJGEqng/GAWT90fCEYt4XzLGEMAqbXU2whTR2rT4LKJUgTwvc+sITpM8/I
-6wCP3ChT2ZYZ0h/YGGiKgFsYU3aSD5JldDAhLqVG7/6Q206zblBI+21XZ7L88Vv4
-aTBizZXFbIsuMFTqMZD+Y1RkfrW2xw0dtblcqwjTBRvW3pk0ufJhdIwFZSkHc4N4
-wZu/gTRFASGz+wr3DzKa+qHerRI9xU6Ycm7748fSeMp/RV7JcqXTjAQF5Zej5COT
-JuVKw2Xrt5dbWApHNdTMdQbV2Zs4x5fsjjKJTg4vrcC3HulPcqEADRHN1CxAv2fh
-ALMN3FWz/rUdHMs4FGAK5HmsPHxMyEDpvs3Nk3ydEZn0syDqQIVo4zNVfXzfL2xE
-VJL82vp9OeUwbUjDj2jpKU9mrWrmxsxM7RtjVuKbuJ4WHK/SpNo=
-=fIM/
------END PGP SIGNATURE-----
+Thanks,
 
---v7eapcxguafrbstv--
+	Ingo
+
+--- tip.orig/arch/x86/platform/atom/punit_atom_debug.c
++++ tip/arch/x86/platform/atom/punit_atom_debug.c
+@@ -132,9 +121,9 @@ static int punit_dbgfs_register(struct p
+ 	if (!punit_dbg_file)
+ 		return -ENXIO;
+ 
+-	dev_state = debugfs_create_file("dev_power_state", S_IFREG | S_IRUGO,
++	dev_state = debugfs_create_file("dev_power_state", 0444,
+ 					punit_dbg_file, punit_device,
+-					&punit_dev_state_ops);
++					&punit_dev_state_fops);
+ 	if (!dev_state) {
+ 		pr_err("punit_dev_state register failed\n");
+ 		debugfs_remove(punit_dbg_file);
