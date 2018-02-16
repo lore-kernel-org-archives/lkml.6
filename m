@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750944AbeBPDh4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 22:37:56 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:40415 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750848AbeBPDhw (ORCPT
+        id S1750902AbeBPDhz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 22:37:55 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:46935 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750792AbeBPDhv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 22:37:52 -0500
-X-Google-Smtp-Source: AH8x224f4DU62Q2EZk/gGhWwU800VEUy1/wGiG0/MADI7afIgOhTM16xyi8I+BjGCADfgkRS2rJ2kA==
+        Thu, 15 Feb 2018 22:37:51 -0500
+X-Google-Smtp-Source: AH8x225ndL064Mcum2NCifMGKdjTtkPRbwQ/IuzCsNhb7ivtDDSTrZp10nmL7pdqVPKuCUMSEVjqiw==
 From: Kees Cook <keescook@chromium.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Kees Cook <keescook@chromium.org>, Al Viro <viro@zeniv.linux.org.uk>,
         Alexey Dobriyan <adobriyan@gmail.com>,
         Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
         linux-doc@vger.kernel.org
-Subject: [PATCH 1/3] taint: Convert to enum and indexed initialization
-Date: Thu, 15 Feb 2018 19:37:42 -0800
-Message-Id: <1518752264-47238-2-git-send-email-keescook@chromium.org>
+Subject: [PATCH 2/3] taint: Consolidate documentation
+Date: Thu, 15 Feb 2018 19:37:43 -0800
+Message-Id: <1518752264-47238-3-git-send-email-keescook@chromium.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518752264-47238-1-git-send-email-keescook@chromium.org>
 References: <1518752264-47238-1-git-send-email-keescook@chromium.org>
@@ -24,120 +24,115 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This converts the taint bit defines to an enum, uses indexed initializers
-instead of comments, and make sure that no one forgets to update the
-taint_flags when adding new bits.
+This consolidates the taint bit documentation into a single place with
+both numeric and letter values. Additionally adds the missing TAINT_AUX
+documentation.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/kernel.h | 40 ++++++++++++++++++++++------------------
- kernel/panic.c         | 36 +++++++++++++++++++-----------------
- 2 files changed, 41 insertions(+), 35 deletions(-)
+ Documentation/sysctl/kernel.txt | 53 +++++++++++++++++++++--------------------
+ kernel/panic.c                  | 23 ++++--------------
+ 2 files changed, 31 insertions(+), 45 deletions(-)
 
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index ce51455e2adf..0d2a2dd507b7 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -533,24 +533,28 @@ extern enum system_states {
- 	SYSTEM_RESTART,
- } system_state;
+diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
+index 412314eebda6..4a890c7fb6c3 100644
+--- a/Documentation/sysctl/kernel.txt
++++ b/Documentation/sysctl/kernel.txt
+@@ -964,32 +964,33 @@ detect a hard lockup condition.
  
--#define TAINT_PROPRIETARY_MODULE	0
--#define TAINT_FORCED_MODULE		1
--#define TAINT_CPU_OUT_OF_SPEC		2
--#define TAINT_FORCED_RMMOD		3
--#define TAINT_MACHINE_CHECK		4
--#define TAINT_BAD_PAGE			5
--#define TAINT_USER			6
--#define TAINT_DIE			7
--#define TAINT_OVERRIDDEN_ACPI_TABLE	8
--#define TAINT_WARN			9
--#define TAINT_CRAP			10
--#define TAINT_FIRMWARE_WORKAROUND	11
--#define TAINT_OOT_MODULE		12
--#define TAINT_UNSIGNED_MODULE		13
--#define TAINT_SOFTLOCKUP		14
--#define TAINT_LIVEPATCH			15
--#define TAINT_AUX			16
--#define TAINT_FLAGS_COUNT		17
-+enum taint_enum {
-+	TAINT_PROPRIETARY_MODULE = 0,
-+	TAINT_FORCED_MODULE,
-+	TAINT_CPU_OUT_OF_SPEC,
-+	TAINT_FORCED_RMMOD,
-+	TAINT_MACHINE_CHECK,
-+	TAINT_BAD_PAGE,
-+	TAINT_USER,
-+	TAINT_DIE,
-+	TAINT_OVERRIDDEN_ACPI_TABLE,
-+	TAINT_WARN,
-+	TAINT_CRAP,
-+	TAINT_FIRMWARE_WORKAROUND,
-+	TAINT_OOT_MODULE,
-+	TAINT_UNSIGNED_MODULE,
-+	TAINT_SOFTLOCKUP,
-+	TAINT_LIVEPATCH,
-+	TAINT_AUX,
+ tainted:
+ 
+-Non-zero if the kernel has been tainted.  Numeric values, which
+-can be ORed together:
+-
+-   1 - A module with a non-GPL license has been loaded, this
+-       includes modules with no license.
+-       Set by modutils >= 2.4.9 and module-init-tools.
+-   2 - A module was force loaded by insmod -f.
+-       Set by modutils >= 2.4.9 and module-init-tools.
+-   4 - Unsafe SMP processors: SMP with CPUs not designed for SMP.
+-   8 - A module was forcibly unloaded from the system by rmmod -f.
+-  16 - A hardware machine check error occurred on the system.
+-  32 - A bad page was discovered on the system.
+-  64 - The user has asked that the system be marked "tainted".  This
+-       could be because they are running software that directly modifies
+-       the hardware, or for other reasons.
+- 128 - The system has died.
+- 256 - The ACPI DSDT has been overridden with one supplied by the user
+-        instead of using the one provided by the hardware.
+- 512 - A kernel warning has occurred.
+-1024 - A module from drivers/staging was loaded.
+-2048 - The system is working around a severe firmware bug.
+-4096 - An out-of-tree module has been loaded.
+-8192 - An unsigned module has been loaded in a kernel supporting module
+-       signature.
+-16384 - A soft lockup has previously occurred on the system.
+-32768 - The kernel has been live patched.
++Non-zero if the kernel has been tainted. Numeric values, which can be
++ORed together. The letters are seen in "Tainted" line of Oops reports.
 +
-+	/* End of taint bits */
-+	TAINT_FLAGS_COUNT
-+};
++     1 (P):  A module with a non-GPL license has been loaded, this
++             includes modules with no license.
++             Set by modutils >= 2.4.9 and module-init-tools.
++     2 (F): A module was force loaded by insmod -f.
++            Set by modutils >= 2.4.9 and module-init-tools.
++     4 (S): Unsafe SMP processors: SMP with CPUs not designed for SMP.
++     8 (R): A module was forcibly unloaded from the system by rmmod -f.
++    16 (M): A hardware machine check error occurred on the system.
++    32 (B): A bad page was discovered on the system.
++    64 (U): The user has asked that the system be marked "tainted". This
++            could be because they are running software that directly modifies
++            the hardware, or for other reasons.
++   128 (D): The system has died.
++   256 (A): The ACPI DSDT has been overridden with one supplied by the user
++            instead of using the one provided by the hardware.
++   512 (W): A kernel warning has occurred.
++  1024 (C): A module from drivers/staging was loaded.
++  2048 (I): The system is working around a severe firmware bug.
++  4096 (O): An out-of-tree module has been loaded.
++  8192 (E): An unsigned module has been loaded in a kernel supporting module
++            signature.
++ 16384 (L): A soft lockup has previously occurred on the system.
++ 32768 (K): The kernel has been live patched.
++ 65536 (X): Auxiliary taint, defined and used by for distros.
  
- struct taint_flag {
- 	char c_true;	/* character printed when tainted */
+ ==============================================================
+ 
 diff --git a/kernel/panic.c b/kernel/panic.c
-index 2cfef408fec9..c5e0fd5a188e 100644
+index c5e0fd5a188e..15d333a54ece 100644
 --- a/kernel/panic.c
 +++ b/kernel/panic.c
-@@ -308,23 +308,23 @@ EXPORT_SYMBOL(panic);
-  * is being removed anyway.
-  */
- const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
--	{ 'P', 'G', true },	/* TAINT_PROPRIETARY_MODULE */
--	{ 'F', ' ', true },	/* TAINT_FORCED_MODULE */
--	{ 'S', ' ', false },	/* TAINT_CPU_OUT_OF_SPEC */
--	{ 'R', ' ', false },	/* TAINT_FORCED_RMMOD */
--	{ 'M', ' ', false },	/* TAINT_MACHINE_CHECK */
--	{ 'B', ' ', false },	/* TAINT_BAD_PAGE */
--	{ 'U', ' ', false },	/* TAINT_USER */
--	{ 'D', ' ', false },	/* TAINT_DIE */
--	{ 'A', ' ', false },	/* TAINT_OVERRIDDEN_ACPI_TABLE */
--	{ 'W', ' ', false },	/* TAINT_WARN */
--	{ 'C', ' ', true },	/* TAINT_CRAP */
--	{ 'I', ' ', false },	/* TAINT_FIRMWARE_WORKAROUND */
--	{ 'O', ' ', true },	/* TAINT_OOT_MODULE */
--	{ 'E', ' ', true },	/* TAINT_UNSIGNED_MODULE */
--	{ 'L', ' ', false },	/* TAINT_SOFTLOCKUP */
--	{ 'K', ' ', true },	/* TAINT_LIVEPATCH */
--	{ 'X', ' ', true },	/* TAINT_AUX */
-+	[ TAINT_PROPRIETARY_MODULE ]	= { 'P', 'G', true },
-+	[ TAINT_FORCED_MODULE ]		= { 'F', ' ', true },
-+	[ TAINT_CPU_OUT_OF_SPEC ]	= { 'S', ' ', false },
-+	[ TAINT_FORCED_RMMOD ]		= { 'R', ' ', false },
-+	[ TAINT_MACHINE_CHECK ]		= { 'M', ' ', false },
-+	[ TAINT_BAD_PAGE ]		= { 'B', ' ', false },
-+	[ TAINT_USER ]			= { 'U', ' ', false },
-+	[ TAINT_DIE ]			= { 'D', ' ', false },
-+	[ TAINT_OVERRIDDEN_ACPI_TABLE ]	= { 'A', ' ', false },
-+	[ TAINT_WARN ]			= { 'W', ' ', false },
-+	[ TAINT_CRAP ]			= { 'C', ' ', true },
-+	[ TAINT_FIRMWARE_WORKAROUND ]	= { 'I', ' ', false },
-+	[ TAINT_OOT_MODULE ]		= { 'O', ' ', true },
-+	[ TAINT_UNSIGNED_MODULE ]	= { 'E', ' ', true },
-+	[ TAINT_SOFTLOCKUP ]		= { 'L', ' ', false },
-+	[ TAINT_LIVEPATCH ]		= { 'K', ' ', true },
-+	[ TAINT_AUX ]			= { 'X', ' ', true },
+@@ -328,27 +328,12 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
  };
  
  /**
-@@ -354,6 +354,8 @@ const char *print_tainted(void)
+- *	print_tainted - return a string to represent the kernel taint state.
++ * print_tainted - return a string to represent the kernel taint state.
+  *
+- *  'P' - Proprietary module has been loaded.
+- *  'F' - Module has been forcibly loaded.
+- *  'S' - SMP with CPUs not designed for SMP.
+- *  'R' - User forced a module unload.
+- *  'M' - System experienced a machine check exception.
+- *  'B' - System has hit bad_page.
+- *  'U' - Userspace-defined naughtiness.
+- *  'D' - Kernel has oopsed before
+- *  'A' - ACPI table overridden.
+- *  'W' - Taint on warning.
+- *  'C' - modules from drivers/staging are loaded.
+- *  'I' - Working around severe firmware bug.
+- *  'O' - Out-of-tree module has been loaded.
+- *  'E' - Unsigned module has been loaded.
+- *  'L' - A soft lockup has previously occurred.
+- *  'K' - Kernel has been live patched.
+- *  'X' - Auxiliary taint, for distros' use.
++ * For individual taint flag meanings, see Documentation/sysctl/kernel.txt
+  *
+- *	The string is overwritten by the next call to print_tainted().
++ * The string is overwritten by the next call to print_tainted(),
++ * but is always NULL terminated.
+  */
+ const char *print_tainted(void)
  {
- 	static char buf[TAINT_FLAGS_COUNT + sizeof("Tainted: ")];
- 
-+	BUILD_BUG_ON(ARRAY_SIZE(taint_flags) != TAINT_FLAGS_COUNT);
-+
- 	if (tainted_mask) {
- 		char *s;
- 		int i;
 -- 
 2.7.4
