@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758100AbeBPP0r (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:26:47 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37036 "EHLO
+        id S1758115AbeBPP0y (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:26:54 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43292 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755925AbeBPP0m (ORCPT
+        by vger.kernel.org with ESMTP id S1758096AbeBPP0q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:26:42 -0500
+        Fri, 16 Feb 2018 10:26:46 -0500
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
@@ -25,125 +25,155 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         npiggin@gmail.com, bsingharora@gmail.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: [PATCH v8 15/24] mm: Introduce __vm_normal_page()
-Date: Fri, 16 Feb 2018 16:25:29 +0100
+Subject: [PATCH v8 16/24] mm: Introduce __page_add_new_anon_rmap()
+Date: Fri, 16 Feb 2018 16:25:30 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18021615-0040-0000-0000-000004348089
+x-cbid: 18021615-0012-0000-0000-000005B1801A
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021615-0041-0000-0000-000020D6853F
-Message-Id: <1518794738-4186-16-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18021615-0013-0000-0000-0000192D84B4
+Message-Id: <1518794738-4186-17-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-16_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1802160183
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When dealing with the speculative fault path we should use the VMA's field
-cached value stored in the vm_fault structure.
+When dealing with speculative page fault handler, we may race with VMA
+being split or merged. In this case the vma->vm_start and vm->vm_end
+fields may not match the address the page fault is occurring.
 
-Currently vm_normal_page() is using the pointer to the VMA to fetch the
-vm_flags value. This patch provides a new __vm_normal_page() which is
-receiving the vm_flags flags value as parameter.
+This can only happens when the VMA is split but in that case, the
+anon_vma pointer of the new VMA will be the same as the original one,
+because in __split_vma the new->anon_vma is set to src->anon_vma when
+*new = *vma.
 
-Note: The speculative path is turned on for architecture providing support
-for special PTE flag. So only the first block of vm_normal_page is used
-during the speculative path.
+So even if the VMA boundaries are not correct, the anon_vma pointer is
+still valid.
+
+If the VMA has been merged, then the VMA in which it has been merged
+must have the same anon_vma pointer otherwise the merge can't be done.
+
+So in all the case we know that the anon_vma is valid, since we have
+checked before starting the speculative page fault that the anon_vma
+pointer is valid for this VMA and since there is an anon_vma this
+means that at one time a page has been backed and that before the VMA
+is cleaned, the page table lock would have to be grab to clean the
+PTE, and the anon_vma field is checked once the PTE is locked.
+
+This patch introduce a new __page_add_new_anon_rmap() service which
+doesn't check for the VMA boundaries, and create a new inline one
+which do the check.
+
+When called from a page fault handler, if this is not a speculative one,
+there is a guarantee that vm_start and vm_end match the faulting address,
+so this check is useless. In the context of the speculative page fault
+handler, this check may be wrong but anon_vma is still valid as explained
+above.
 
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- include/linux/mm.h |  7 +++++--
- mm/memory.c        | 18 ++++++++++--------
- 2 files changed, 15 insertions(+), 10 deletions(-)
+ include/linux/rmap.h | 12 ++++++++++--
+ mm/memory.c          |  8 ++++----
+ mm/rmap.c            |  5 ++---
+ 3 files changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 49f160e56a0f..d5f17fcd2c32 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1261,8 +1261,11 @@ struct zap_details {
- 	pgoff_t last_index;			/* Highest page->index to unmap */
- };
+diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+index 988d176472df..a5d282573093 100644
+--- a/include/linux/rmap.h
++++ b/include/linux/rmap.h
+@@ -174,8 +174,16 @@ void page_add_anon_rmap(struct page *, struct vm_area_struct *,
+ 		unsigned long, bool);
+ void do_page_add_anon_rmap(struct page *, struct vm_area_struct *,
+ 			   unsigned long, int);
+-void page_add_new_anon_rmap(struct page *, struct vm_area_struct *,
+-		unsigned long, bool);
++void __page_add_new_anon_rmap(struct page *, struct vm_area_struct *,
++			      unsigned long, bool);
++static inline void page_add_new_anon_rmap(struct page *page,
++					  struct vm_area_struct *vma,
++					  unsigned long address, bool compound)
++{
++	VM_BUG_ON_VMA(address < vma->vm_start || address >= vma->vm_end, vma);
++	__page_add_new_anon_rmap(page, vma, address, compound);
++}
++
+ void page_add_file_rmap(struct page *, bool);
+ void page_remove_rmap(struct page *, bool);
  
--struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
--			     pte_t pte, bool with_public_device);
-+struct page *__vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
-+			      pte_t pte, bool with_public_device,
-+			      unsigned long vma_flags);
-+#define _vm_normal_page(vma, addr, pte, with_public_device) \
-+	__vm_normal_page(vma, addr, pte, with_public_device, (vma)->vm_flags)
- #define vm_normal_page(vma, addr, pte) _vm_normal_page(vma, addr, pte, false)
- 
- struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
 diff --git a/mm/memory.c b/mm/memory.c
-index 8fd33d05ef1e..d2e441aaa96b 100644
+index d2e441aaa96b..67de327c7262 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -826,8 +826,9 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
- #else
- # define HAVE_PTE_SPECIAL 0
- #endif
--struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
--			     pte_t pte, bool with_public_device)
-+struct page *__vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
-+			      pte_t pte, bool with_public_device,
-+			      unsigned long vma_flags)
- {
- 	unsigned long pfn = pte_pfn(pte);
- 
-@@ -836,7 +837,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
- 			goto check_pfn;
- 		if (vma->vm_ops && vma->vm_ops->find_special_page)
- 			return vma->vm_ops->find_special_page(vma, addr);
--		if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
-+		if (vma_flags & (VM_PFNMAP | VM_MIXEDMAP))
- 			return NULL;
- 		if (is_zero_pfn(pfn))
- 			return NULL;
-@@ -868,8 +869,8 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
- 
- 	/* !HAVE_PTE_SPECIAL case follows: */
- 
--	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
--		if (vma->vm_flags & VM_MIXEDMAP) {
-+	if (unlikely(vma_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
-+		if (vma_flags & VM_MIXEDMAP) {
- 			if (!pfn_valid(pfn))
- 				return NULL;
- 			goto out;
-@@ -878,7 +879,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
- 			off = (addr - vma->vm_start) >> PAGE_SHIFT;
- 			if (pfn == vma->vm_pgoff + off)
- 				return NULL;
--			if (!is_cow_mapping(vma->vm_flags))
-+			if (!is_cow_mapping(vma_flags))
- 				return NULL;
- 		}
- 	}
-@@ -2742,7 +2743,8 @@ static int do_wp_page(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 
--	vmf->page = vm_normal_page(vma, vmf->address, vmf->orig_pte);
-+	vmf->page = __vm_normal_page(vma, vmf->address, vmf->orig_pte, false,
-+				     vmf->vma_flags);
- 	if (!vmf->page) {
+@@ -2559,7 +2559,7 @@ static int wp_page_copy(struct vm_fault *vmf)
+ 		 * thread doing COW.
+ 		 */
+ 		ptep_clear_flush_notify(vma, vmf->address, vmf->pte);
+-		page_add_new_anon_rmap(new_page, vma, vmf->address, false);
++		__page_add_new_anon_rmap(new_page, vma, vmf->address, false);
+ 		mem_cgroup_commit_charge(new_page, memcg, false, false);
+ 		__lru_cache_add_active_or_unevictable(new_page, vmf->vma_flags);
  		/*
- 		 * VM_MIXEDMAP !pfn_valid() case, or VM_SOFTDIRTY clear on a
-@@ -3862,7 +3864,7 @@ static int do_numa_page(struct vm_fault *vmf)
- 	ptep_modify_prot_commit(vma->vm_mm, vmf->address, vmf->pte, pte);
- 	update_mmu_cache(vma, vmf->address, vmf->pte);
+@@ -3106,7 +3106,7 @@ int do_swap_page(struct vm_fault *vmf)
  
--	page = vm_normal_page(vma, vmf->address, pte);
-+	page = __vm_normal_page(vma, vmf->address, pte, false, vmf->vma_flags);
- 	if (!page) {
- 		pte_unmap_unlock(vmf->pte, vmf->ptl);
- 		return 0;
+ 	/* ksm created a completely new copy */
+ 	if (unlikely(page != swapcache && swapcache)) {
+-		page_add_new_anon_rmap(page, vma, vmf->address, false);
++		__page_add_new_anon_rmap(page, vma, vmf->address, false);
+ 		mem_cgroup_commit_charge(page, memcg, false, false);
+ 		__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
+ 	} else {
+@@ -3257,7 +3257,7 @@ static int do_anonymous_page(struct vm_fault *vmf)
+ 	}
+ 
+ 	inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
+-	page_add_new_anon_rmap(page, vma, vmf->address, false);
++	__page_add_new_anon_rmap(page, vma, vmf->address, false);
+ 	mem_cgroup_commit_charge(page, memcg, false, false);
+ 	__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
+ setpte:
+@@ -3509,7 +3509,7 @@ int alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
+ 	/* copy-on-write page */
+ 	if (write && !(vmf->vma_flags & VM_SHARED)) {
+ 		inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
+-		page_add_new_anon_rmap(page, vma, vmf->address, false);
++		__page_add_new_anon_rmap(page, vma, vmf->address, false);
+ 		mem_cgroup_commit_charge(page, memcg, false, false);
+ 		__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
+ 	} else {
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 47db27f8049e..6ec168ba5f73 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1136,7 +1136,7 @@ void do_page_add_anon_rmap(struct page *page,
+ }
+ 
+ /**
+- * page_add_new_anon_rmap - add pte mapping to a new anonymous page
++ * __page_add_new_anon_rmap - add pte mapping to a new anonymous page
+  * @page:	the page to add the mapping to
+  * @vma:	the vm area in which the mapping is added
+  * @address:	the user virtual address mapped
+@@ -1146,12 +1146,11 @@ void do_page_add_anon_rmap(struct page *page,
+  * This means the inc-and-test can be bypassed.
+  * Page does not have to be locked.
+  */
+-void page_add_new_anon_rmap(struct page *page,
++void __page_add_new_anon_rmap(struct page *page,
+ 	struct vm_area_struct *vma, unsigned long address, bool compound)
+ {
+ 	int nr = compound ? hpage_nr_pages(page) : 1;
+ 
+-	VM_BUG_ON_VMA(address < vma->vm_start || address >= vma->vm_end, vma);
+ 	__SetPageSwapBacked(page);
+ 	if (compound) {
+ 		VM_BUG_ON_PAGE(!PageTransHuge(page), page);
 -- 
 2.7.4
