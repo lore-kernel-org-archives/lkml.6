@@ -1,55 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758283AbeBPPsw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:48:52 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36667 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756578AbeBPPsu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:48:50 -0500
-X-Google-Smtp-Source: AH8x227Xx6WBnExdId1dYNtzDR/L4VQ1MMQoGqu5/9bmbgM5LelCoZEYw+eDQ33rrYWADWbn3oG9RA==
-Date: Fri, 16 Feb 2018 07:48:46 -0800
-From: Richard Cochran <richardcochran@gmail.com>
-To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Cc: Brandon Streiff <brandon.streiff@ni.com>, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] net: dsa: mv88e6xxx: hwtstamp: fix potential negative
- array index read
-Message-ID: <20180216154846.7ge6seynwxjkopmp@localhost>
-References: <20180215183139.GA23076@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180215183139.GA23076@embeddedor.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1758309AbeBPPtj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:49:39 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35489 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758247AbeBPPth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 10:49:37 -0500
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>, clm@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fixes for 4.16-rc1
+Date: Fri, 16 Feb 2018 16:47:16 +0100
+Message-Id: <cover.1518793408.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 12:31:39PM -0600, Gustavo A. R. Silva wrote:
-> _port_ is being used as index to array port_hwtstamp before verifying
-> it is a non-negative number and a valid index at line 209 and 258:
-> 
-> if (port < 0 || port >= mv88e6xxx_num_ports(chip))
-> 
-> Fix this by checking _port_ before using it as index to array
-> port_hwtstamp.
+Hi,
 
-NAK.   Port is already known to be valid in the callers.
+we have a few assorted fixes, some of them show up during fstests so
+I gave them more testing. Please pull, thanks.
 
-See:
+----------------------------------------------------------------
+The following changes since commit 3acbcbfc8f06d4ade2aab2ebba0a2542a05ce90c:
 
-*** net/dsa/slave.c:  dsa_slave_ioctl[266]
-*** net/dsa/slave.c:  dsa_skb_tx_timestamp[416]
-*** net/dsa/dsa.c:    dsa_skb_defer_rx_timestamp[152]
- 
-> Addresses-Coverity-ID: 1465287 ("Negative array index read")
-> Addresses-Coverity-ID: 1465291 ("Negative array index read")
+  btrfs: drop devid as device_list_add() arg (2018-01-29 19:31:16 +0100)
 
-Please check the code before posting.  These false positives are
-really annoying.
+are available in the Git repository at:
 
-Thanks,
-Richard
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-4.16-rc1-tag
+
+for you to fetch changes up to fd649f10c3d21ee9d7542c609f29978bdf73ab94:
+
+  btrfs: Fix use-after-free when cleaning up fs_devs with a single stale device (2018-02-05 17:15:14 +0100)
+
+----------------------------------------------------------------
+Filipe Manana (1):
+      Btrfs: fix null pointer dereference when replacing missing device
+
+Liu Bo (6):
+      Btrfs: fix deadlock in run_delalloc_nocow
+      Btrfs: fix crash due to not cleaning up tree log block's dirty bits
+      Btrfs: fix extent state leak from tree log
+      Btrfs: fix btrfs_evict_inode to handle abnormal inodes correctly
+      Btrfs: fix use-after-free on root->orphan_block_rsv
+      Btrfs: fix unexpected -EEXIST when creating new inode
+
+Nikolay Borisov (2):
+      btrfs: Ignore errors from btrfs_qgroup_trace_extent_post
+      btrfs: Fix use-after-free when cleaning up fs_devs with a single stale device
+
+Zygo Blaxell (1):
+      btrfs: remove spurious WARN_ON(ref->count < 0) in find_parent_nodes
+
+ fs/btrfs/backref.c     | 11 ++++++++++-
+ fs/btrfs/delayed-ref.c |  3 ++-
+ fs/btrfs/extent-tree.c |  4 ++++
+ fs/btrfs/inode.c       | 41 ++++++++++++++++++++++++++---------------
+ fs/btrfs/qgroup.c      |  9 +++++++--
+ fs/btrfs/tree-log.c    | 32 ++++++++++++++++++++++++++++++--
+ fs/btrfs/volumes.c     |  1 +
+ 7 files changed, 80 insertions(+), 21 deletions(-)
