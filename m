@@ -1,94 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161060AbeBPQqj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 11:46:39 -0500
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:56273 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755487AbeBPQqX (ORCPT
+        id S1161096AbeBPQrV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 11:47:21 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34041 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161063AbeBPQrT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 11:46:23 -0500
-X-Google-Smtp-Source: AH8x227dagXojDzBziIPGdX3iqhNsqewcDk1hvqj20GPg07yYxxaBhJlS0ok2g+zeHXOvK47jsFHUxkgtshE6+B8T74=
-MIME-Version: 1.0
-In-Reply-To: <20180206012027.GF46524@dtor-ws>
-References: <1493295756-17812-1-git-send-email-martin.kepplinger@ginzinger.com>
- <CAH9NwWeom2H89D5hUixxSL28YgDna_WS26boayzUBAPyVFUvTA@mail.gmail.com> <20180206012027.GF46524@dtor-ws>
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Date: Fri, 16 Feb 2018 17:46:01 +0100
-Message-ID: <CAH9NwWdLqQCrsFtmYC5wHy2hZ38MZfPexF4QuJ0z56dyXYf7ZQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] input: touchscreen: ar1021_i2c: enable touch mode
- during open
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Martin Kepplinger <martin.kepplinger@ginzinger.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 16 Feb 2018 11:47:19 -0500
+X-Google-Smtp-Source: AH8x224YkpaAH0zW4CBVYVnCYe7cUjNvyclBG6/nCZ174oee+XyIe+kRkZTAsxt9B65mVgBmkY5ObQ==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, David Lechner <david@lechnology.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 0/6] ARM: davinci: remove the mach-specific aemif driver - part 1
+Date: Fri, 16 Feb 2018 17:47:06 +0100
+Message-Id: <20180216164712.25898-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-06 2:20 GMT+01:00 Dmitry Torokhov <dmitry.torokhov@gmail.com>:
-> On Mon, Feb 05, 2018 at 11:07:08AM +0100, Christian Gmeiner wrote:
->> Hi all.
->>
->> 2017-04-27 14:22 GMT+02:00 Martin Kepplinger <martin.kepplinger@ginzinger.com>:
->> > The device could as well be in command mode, in which this driver cannot
->> > handle the device. When opening the device, let's make sure the device
->> > will be in the mode we expect it to be for this driver.
->> >
->>
->> I run into issues caused by this change. It turns out that the device
->> is non-functional
->> after some warm-reboots and as a result I am not able to use xorg's
->> evdev driver.
->> So I have some questions about this change:
->>
->> * Should we enable irq before calling i2c_master_send(..) as the chip raises an
->>   irq if the command was processed?
->
-> Well, we do not care about the response... However, what is your
-> interrupt trigger settings? Are you using edge by chance? If so, please
-> try switching to level.
->
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We may should take care of the response. I have seen strange responses
-after the third open of the device.
+Hi Sekhar,
 
-&i2c2 {
-       ar1021@4d {
-               compatible = "microchip,ar1021-i2c";
-               reg = <0x4d>;
-               interrupt-parent = <&gpio3>;
-               interrupts = <26 IRQ_TYPE_EDGE_RISING>;
-       };
-};
+while waiting for David's updated series I prepared the first part of
+changes required to remove duplicate aemif support from mach-davinci.
 
-I am not sure if this is really the cause of the problem! As without this commit
-my device survives one week of a automated touch-press-test done with some
-mechanical gear and with the help of an SPS.
+I actually noticed that one of my previous changes from 2017 broke nand
+in legacy mode - the clock lookup no longer works. This series addresses
+it as well.
 
->>
->> * Would it be enough to send this command only once during driver
->> lifetime? I can
->>   see that on my system open gets called 3 times during boot-up.
->>
->> * What are the circumstances the touch device would be in an other state? In the
->>   official kernel driver the userspace can send commands via sysfs.
->> Also the driver
->>   does set the touch enable mode as this patch does.
->
-> What is "the official kernel driver"?
->
+The first two patches fix the issue introduced in commit d8e22fb4ccac
+("ARM: da850: add the nand dev_id to the clock lookup table").
 
-http://ww1.microchip.com/downloads/en/DeviceDoc/AR1020-AR1021-LINUX-SPI-I2C-V102.tar.gz
+Next two add support for board files to the aemif driver.
 
-As it is release time at my company I had to stop finding the root
-cause but will look into the issue
-again in 2-3 weeks.
+Last two add nand support to da850-lcdk in legacy mode and make
+da850-evm use the platform driver instead of the mach-specific one.
 
+If this series gets accepted, I'll prepere a follow-up moving all
+other boards to the new platform driver.
+
+Bartosz Golaszewski (6):
+  nand: davinci: rename the platform driver
+  ARM: davinci: update the nand driver names
+  memory: aemif: don't rely on kbuild for driver's name
+  memory: aemif: add support for board files
+  ARM: davinci: add aemif & nand support to da850-lcdk in legacy mode
+  ARM: davinci: use aemif platform driver in legacy mode for da850-evm
+
+ arch/arm/mach-davinci/board-da830-evm.c     |   2 +-
+ arch/arm/mach-davinci/board-da850-evm.c     |  93 +++++++++++---------
+ arch/arm/mach-davinci/board-dm355-evm.c     |   2 +-
+ arch/arm/mach-davinci/board-dm355-leopard.c |   2 +-
+ arch/arm/mach-davinci/board-dm365-evm.c     |   2 +-
+ arch/arm/mach-davinci/board-dm644x-evm.c    |   2 +-
+ arch/arm/mach-davinci/board-dm646x-evm.c    |   2 +-
+ arch/arm/mach-davinci/board-mityomapl138.c  |   2 +-
+ arch/arm/mach-davinci/board-neuros-osd2.c   |   2 +-
+ arch/arm/mach-davinci/board-omapl138-hawk.c | 132 ++++++++++++++++++++++++++++
+ arch/arm/mach-davinci/board-sffsdr.c        |   2 +-
+ drivers/memory/ti-aemif.c                   |  59 ++++++++-----
+ drivers/mtd/nand/davinci_nand.c             |   2 +-
+ include/linux/platform_data/ti-aemif.h      |   9 ++
+ 14 files changed, 240 insertions(+), 73 deletions(-)
 
 -- 
-greets
---
-Christian Gmeiner, MSc
-
-https://christian-gmeiner.info
+2.16.1
