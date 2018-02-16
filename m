@@ -1,65 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753616AbeBPHWw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 02:22:52 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:56259 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753594AbeBPHWu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 02:22:50 -0500
-X-Google-Smtp-Source: AH8x227Xt84UvuIWAWB5zp+utSKpGgA7xBkkW1M/V9NqcFtrFtt6ZWJ/CJUyaGJHrwQbaV74bTjfUg==
-Date: Fri, 16 Feb 2018 08:22:46 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Jerry Hoemann <jerry.hoemann@hpe.com>
-Cc: wim@linux-watchdog.org, linux@roeck-us.net,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rwright@hpe.com, maurice.a.saldivar@hpe.com,
-        marcus.folkesson@gmail.com
-Subject: Re: [PATCH v3 01/11] watchdog/hpwdt: Remove legacy NMI sourcing.
-Message-ID: <20180216072246.uifaj22wvqevc7er@gmail.com>
-References: <20180215234400.5022-1-jerry.hoemann@hpe.com>
- <20180215234400.5022-2-jerry.hoemann@hpe.com>
+        id S1753725AbeBPHlJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 02:41:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46952 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753697AbeBPHlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 02:41:07 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC333217B4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=mst@redhat.com
+Date: Fri, 16 Feb 2018 09:40:54 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+        Jason Wang <jasowang@redhat.com>, David Miller <davem@davemloft.net>
+Subject: [RFC PATCH] ptr_ring: linked list fallback
+Message-ID: <20180216094054-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180215234400.5022-2-jerry.hoemann@hpe.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+X-Mailer: git-send-email 2.8.0.287.g0deeb61
+X-Mutt-Fcc: =sent
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+So pointer rings work fine, but they have a problem:
+make them too small and not enough entries fit.
+Make them too large and you start flushing your cache
+and running out of memory.
 
-* Jerry Hoemann <jerry.hoemann@hpe.com> wrote:
+This is a new idea of mine: a ring backed by a
+linked list. Once you run out of rin entries,
+instead of a drop you fall back on a list with
+a common lock.
 
-> Gen8 and prior Proliant systems supported the "CRU" interface
-> to firmware.  This interfaces allows linux to "call back" into firmware
-> to source the cause of an NMI.  This feature isn't fully utilized
-> as the actual source of the NMI isn't printed, the driver only
-> indicates that the source couldn't be determined when the call
-> fails.
-> 
-> With the advent of Gen9, iCRU replaces the CRU. The call back
-> feature is no longer available in firmware.  To be compatible and
-> not attempt to call back into firmware on system not supporting CRU,
-> the SMBIOS table is consulted to determine if it is safe to
-> make the call back or not.
-> 
-> This results in about half of the driver code being devoted
-> to either making CRU calls or determing if it is safe to make
-> CRU calls.  As noted, the driver isn't really using the results of
-> the CRU calls.
-> 
-> As the CRU sourcing of the NMI isn't required for handling the
-> NMI, remove the legacy (pre Gen9) NMI sourcing and the DMI code to
-> determine if the system had the CRU interface.
-> 
-> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
-> ---
->  drivers/watchdog/hpwdt.c | 490 +----------------------------------------------
->  1 file changed, 8 insertions(+), 482 deletions(-)
+Should work well for the case where the ring is typically sized
+correctly, but will help address the fact that some user try to set e.g.
+tx queue length to 1000000.
 
-Acked-by: Ingo Molnar <mingo@kernel.org>
+My hope this will move us closer to direction where e.g. fw codel can
+use ptr rings without locking at all.
+The API is still very rough, and I really need to take a hard look
+at lock nesting.
 
-Thanks,
+Completely untested, sending for early feedback/flames.
 
-	Ingo
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+---
+ include/linux/ptr_ring.h | 64 +++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 61 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
+index d72b2e7..7bf2b7b 100644
+--- a/include/linux/ptr_ring.h
++++ b/include/linux/ptr_ring.h
+@@ -31,11 +31,18 @@
+ #include <asm/errno.h>
+ #endif
+ 
++/* entries must start with the following structure */
++struct plist {
++	struct plist *next;
++	struct plist *last; /* only valid in the 1st entry */
++};
++
+ struct ptr_ring {
+ 	int producer ____cacheline_aligned_in_smp;
+ 	spinlock_t producer_lock;
+ 	int consumer_head ____cacheline_aligned_in_smp; /* next valid entry */
+ 	int consumer_tail; /* next entry to invalidate */
++	struct plist *consumer_list;
+ 	spinlock_t consumer_lock;
+ 	/* Shared consumer/producer data */
+ 	/* Read-only by both the producer and the consumer */
+@@ -120,10 +127,40 @@ static inline int __ptr_ring_produce(struct ptr_ring *r, void *ptr)
+ }
+ 
+ /*
+- * Note: resize (below) nests producer lock within consumer lock, so if you
+- * consume in interrupt or BH context, you must disable interrupts/BH when
+- * calling this.
++ * Note: resize API with the _fallback should be used when calling this.
+  */
++static inline int ptr_ring_produce_fallback(struct ptr_ring *r, void *ptr)
++{
++	int ret;
++	unsigned long flags;
++	plit *p = ptr;
++
++	p->next = NULL;
++	p->last = p;
++
++	spin_lock_irqsave(&r->producer_lock, flags);
++	ret = __ptr_ring_produce(r, ptr);
++	if (ret) {
++		spin_lock(&r->consumer_lock);
++		ret = __ptr_ring_produce(r, ptr);
++		if (ret) {
++			int producer = r->producer ? r->producer - 1 :
++				r->size - 1;
++			plist *first = r->queue[producer];
++
++			BUG_ON(!first);
++
++			first->last->next = p;
++			first->last = p;
++		}
++		spin_unlock(&r->consumer_lock);
++	}
++
++	spin_unlock_irqrestore(&r->producer_lock, flags);
++
++	return ret;
++}
++
+ static inline int ptr_ring_produce(struct ptr_ring *r, void *ptr)
+ {
+ 	int ret;
+@@ -135,6 +172,7 @@ static inline int ptr_ring_produce(struct ptr_ring *r, void *ptr)
+ 	return ret;
+ }
+ 
++
+ static inline int ptr_ring_produce_irq(struct ptr_ring *r, void *ptr)
+ {
+ 	int ret;
+@@ -359,6 +397,26 @@ static inline void *ptr_ring_consume_bh(struct ptr_ring *r)
+ 	return ptr;
+ }
+ 
++static inline void *ptr_ring_consume_fallback(struct ptr_ring *r)
++{
++	unsigned long flags;
++	struct plist *ptr;
++
++	spin_lock_irqsave(&r->consumer_lock, flags);
++	if (r->consumer_list) {
++		ptr = r->consumer_list;
++		r->consumer_list = ptr->next;
++	} else {
++		ptr = __ptr_ring_consume(r);
++		if (ptr) {
++			r->consumer_list = ptr->next;
++		}
++	}
++	spin_unlock_irqrestore(&r->consumer_lock, flags);
++
++	return ptr;
++}
++
+ static inline int ptr_ring_consume_batched(struct ptr_ring *r,
+ 					   void **array, int n)
+ {
+-- 
+MST
