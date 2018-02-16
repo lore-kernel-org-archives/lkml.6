@@ -1,64 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758263AbeBPPrP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:47:15 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39026 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756578AbeBPPrN (ORCPT
+        id S1758283AbeBPPsw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:48:52 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:36667 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756578AbeBPPsu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:47:13 -0500
-X-Google-Smtp-Source: AH8x2263Lnha64jLlFBmuSJPDkZwd5bXKJ37jTcNYUu+hwFSnhPaiHVsTpW5j0kzDqYqIUPo7zY3Xw==
-Date: Fri, 16 Feb 2018 16:47:04 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Akira Yokosawa <akiyks@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, will.deacon@arm.com,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: Trial of conflict resolution of Alan's patch
-Message-ID: <20180216154704.GA29493@andrea>
-References: <fe361fba-d6ec-3a70-6ab9-e148bccb5833@gmail.com>
- <Pine.LNX.4.44L0.1802161015010.1402-100000@iolanthe.rowland.org>
+        Fri, 16 Feb 2018 10:48:50 -0500
+X-Google-Smtp-Source: AH8x227Xx6WBnExdId1dYNtzDR/L4VQ1MMQoGqu5/9bmbgM5LelCoZEYw+eDQ33rrYWADWbn3oG9RA==
+Date: Fri, 16 Feb 2018 07:48:46 -0800
+From: Richard Cochran <richardcochran@gmail.com>
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Cc: Brandon Streiff <brandon.streiff@ni.com>, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] net: dsa: mv88e6xxx: hwtstamp: fix potential negative
+ array index read
+Message-ID: <20180216154846.7ge6seynwxjkopmp@localhost>
+References: <20180215183139.GA23076@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1802161015010.1402-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180215183139.GA23076@embeddedor.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 10:18:34AM -0500, Alan Stern wrote:
-> On Fri, 16 Feb 2018, Akira Yokosawa wrote:
+On Thu, Feb 15, 2018 at 12:31:39PM -0600, Gustavo A. R. Silva wrote:
+> _port_ is being used as index to array port_hwtstamp before verifying
+> it is a non-negative number and a valid index at line 209 and 258:
 > 
-> > Hi,
-> > 
-> > My forward-port patch doesn't apply to the "lkmm" branch.
-> > It looks like "linux-kernel-hardware.cat" is intentionally omitted there.
-> > Am I guessing right?
-> > 
-> > If this is the case, I can prepare a patch to be applied to "lkmm".
-> > But I can't compose a proper change log. So I'd like Alan to post
-> > a patch with my SOB appended. Does this approach sound reasonable?
+> if (port < 0 || port >= mv88e6xxx_num_ports(chip))
 > 
-> The patch is not yet ready to be merged.  At the very least, I need to
-> include an update to explanation.txt along with it.  When it is all 
-> ready, I will rebase it on Paul's repository and post it.
-> 
-> Which reminds me: Now that the material has been accepted into the 
-> kernel, do we need to keep the github repository?  It has the 
-> linux-kernel-hardware.cat file, but otherwise it seems to be redundant.
+> Fix this by checking _port_ before using it as index to array
+> port_hwtstamp.
 
-If you mean "to keep up-to-date", I'd say "No, we don't..."  ;-)
+NAK.   Port is already known to be valid in the callers.
 
-My plan/hope is to add such a disclaimer together with a pointer
-to Linus's tree ASAP...
+See:
 
-  Andrea
+*** net/dsa/slave.c:  dsa_slave_ioctl[266]
+*** net/dsa/slave.c:  dsa_skb_tx_timestamp[416]
+*** net/dsa/dsa.c:    dsa_skb_defer_rx_timestamp[152]
+ 
+> Addresses-Coverity-ID: 1465287 ("Negative array index read")
+> Addresses-Coverity-ID: 1465291 ("Negative array index read")
 
+Please check the code before posting.  These false positives are
+really annoying.
 
-> 
-> Alan
-> 
+Thanks,
+Richard
