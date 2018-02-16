@@ -1,97 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757929AbeBPJbi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 04:31:38 -0500
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:43961 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757914AbeBPJbg (ORCPT
+        id S932097AbeBPJg0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 04:36:26 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:35581 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932071AbeBPJgY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 04:31:36 -0500
-X-Google-Smtp-Source: AH8x226sN4XxqU0duVGt3YMVVoNR0Bo0R7XHf0u+K7ULPvM2HWIi7J1tigu5IejywCV2eqW29L6oY++0Dlfu7qi9sP0=
+        Fri, 16 Feb 2018 04:36:24 -0500
+X-Google-Smtp-Source: AH8x225wVIQtlO0pwAvUuGVLVopV8VyICP+RgYGPEglYNI2U+9JiP5Rql1llLcwwN+xx53oWIuveTUKmC0l3EqaSAbo=
 MIME-Version: 1.0
-In-Reply-To: <20180216090243.GB18755@casa>
-References: <20180213120308.23879-1-rodrigorivascosta@gmail.com>
- <20180213120308.23879-2-rodrigorivascosta@gmail.com> <CAO-hwJK5sos9=RDajS_cXBzfePqf6TJs3Z-jk568sumR-zjqdw@mail.gmail.com>
- <20180215221633.GA18755@casa> <CAO-hwJLjFaP3ZLoM+EDbruoRhOyPPFXmo7FWGoXESc9XgkD4Kg@mail.gmail.com>
- <20180216090243.GB18755@casa>
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date: Fri, 16 Feb 2018 10:31:35 +0100
-Message-ID: <CAO-hwJKuWWiNX63=X1GSEQQ1cPhi35g6NuX7gsFNGj_s0UdM+Q@mail.gmail.com>
-Subject: Re: [PATCH 2/3] HID: steam: add serial number information.
-To: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        linux-input@vger.kernel.org
+In-Reply-To: <1518515162-23663-6-git-send-email-jacopo+renesas@jmondi.org>
+References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org> <1518515162-23663-6-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 16 Feb 2018 10:36:23 +0100
+X-Google-Sender-Auth: JWXj0bu2iNv5BCPpb718W80SaLk
+Message-ID: <CAMuHMdXQQqRTir-3wgorh_QX060K_CyQNStA46Ph+hnrikqCaw@mail.gmail.com>
+Subject: Re: [PATCH 05/15] ARM64: dts: Add R-Car Salvator-x M3-N support
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 10:02 AM, Rodrigo Rivas Costa
-<rodrigorivascosta@gmail.com> wrote:
-> On Fri, Feb 16, 2018 at 09:44:34AM +0100, Benjamin Tissoires wrote:
->> > I have an issue with this one. The problem is that using
->> > hid_report_len() on the feature report returns 64. But I must call
->> > hid_hw_raw_request() with 65 or it will fail with EOVERFLOW.
->> >
->> > Currently I'm allocating a buffer of 65 bytes and all is well.
->> > If I change to hid_alloc_report_buf(), the current implementation
->> > allocates (64+7), so I'm still safe. But I'm worried that the extra
->> > bytes are not guaranteed and a future implementation could return
->> > exactly 64 bytes, leaving me 1 byte short.
->> >
->> > About why an array of 65 is required for a report of size 64, I think it
->> > is related to hid_report->id == 0 (so hid_report_enum->numbered == 0).
->>
->> That's the other way around actually. If you are just using the output
->> of hid_report_len(), it will take into account the extra byte for the
->> report ID.
->> *But*, given the way implement() is working (see the comment in the
->> implementation of hid_alloc_report()), you need to have up to 7 extra
->> bytes to not have the EOVERFLOW.
->>
->> So if we ever change the implement() function (which is *really*
->> unlikely), we will have to make sure hid_alloc_report() still works,
->> so you are on the safe side if you use hid_alloc_report().
->
-> Ok, I'll do that. The weird thing, however, is that:
->
->         hid_hw_raw_request(steam->hid_dev, 0x00,
->                 buf, hid_report_len(r), /* 64 */
->                 HID_FEATURE_REPORT, HID_REQ_GET_REPORT);
->
-> fails with EOVERFLOW. I have to use:
->
->         hid_hw_raw_request(steam->hid_dev, 0x00,
->                 buf, 65
->                 HID_FEATURE_REPORT, HID_REQ_GET_REPORT);
->
-> which just feels wrong to me.
+Hi Jacopo,
 
-Indeed
-
+On Tue, Feb 13, 2018 at 10:45 AM, Jacopo Mondi
+<jacopo+renesas@jmondi.org> wrote:
+> Add initial support for R-Car M3-N Salvator-x and r8a77965 SoC in
+> device tree with cpg-mssr, reset and clock nodes.
 >
-> And looking around drivers/hid/*.c I see that most calls to
-> hid_hw_raw_request(..., HID_REQ_GET_REPORT) use a buffer allocated with
-> {devm_,}kzalloc() and a constant length, never using
-> hid_alloc_report_buf() or hid_report_len().
-
-well, hid-input.c and hid-multitouch.c are using
-hid_alloc_report_buf() and these two are the most generic ones. We
-haven't converted everybody to use hid_alloc_report_buf(), but it's
-not a reason to not use it for new drivers :)
-
+> Add place-holder device nodes for all nodes referred by
+> "salvator-common.dtsi"
 >
-> Maybe there is a bug in hid_hw_raw_request() and it should add 1 to the
-> given buffer len? But then, custom buffer allocations will overflow by
-> one!
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-No, it's unlikely that there is a bug. Can you forward to me the
-report descriptors of the Steam controller (ideally with the tool
-hid-recorder from http://bentiss.github.io/hid-replay-docs/, so I can
-get a few events too)?
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
 
-Cheers,
-Benjamin
+> +               gic: interrupt-controller@f1010000 {
+> +                       compatible = "arm,gic-400";
+> +                       #interrupt-cells = <3>;
+> +                       #address-cells = <0>;
+> +                       interrupt-controller;
+> +                       reg = <0x0 0xf1010000 0 0x1000>,
+> +                             <0x0 0xf1020000 0 0x20000>,
+> +                             <0x0 0xf1040000 0 0x20000>,
+> +                             <0x0 0xf1060000 0 0x20000>;
+> +                       interrupts = <GIC_PPI 9
+> +                                       (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
 
->
-> Rodrigo.
+Given you have 2 CPU cores, it should say GIC_CPU_MASK_SIMPLE(2).
+
+> +                       clocks = <&cpg CPG_MOD 408>;
+> +                       clock-names = "clk";
+> +                       power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
+> +                       resets = <&cpg 408>;
+> +               };
+> +
+> +               timer {
+> +                       compatible = "arm,armv8-timer";
+> +                       interrupts = <GIC_PPI 13
+> +                                       (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+> +                                    <GIC_PPI 14
+> +                                       (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+> +                                    <GIC_PPI 11
+> +                                       (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+> +                                    <GIC_PPI 10
+> +                                       (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
+
+This one is correct.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
