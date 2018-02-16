@@ -1,71 +1,65 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1220810-1518820828-2-8478023573173854061
+X-Cyrus-Session-Id: sloti22d1t05-1225332-1518821458-2-17339627717838097351
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='US-ASCII'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518820828; b=MyVLNzPzGh6u6roaepGeBsMlawTftJhnB3PrfXPtVo3Ip3J
-    Xz8AUOVvgiO63RXz5D4SGNSC0AiflmsxSa10xq/9x8DzOGukYZEtO+dYfFUK5PkJ
-    5l+cHAGq8CTfaGTeiCfhn4cUQhIt2owk/QYiNundHiDICPTK82m3TH0ikKBjvtS3
-    Tf5G9LF6rQu+aWGXVUhobQkBJXW1OzP0Uwu6wP1v6UilvPKAahs2ZnI408yLaG+q
-    u71nUvVJz0SplU4hsCp0/YYPAlYfkFiWD2iI31sfWo6A2EaPBSSCOecFfoCV7gcU
-    U3WUUyY/ITGPsaoWRUykMHhBnQTrsSget77yYWw==
+    t=1518821458; b=uaJ/fnAuOy3nFsM8epTlQ9Sn9D6QWnLpJ/reRjo9eFErc/I
+    7p8qRdIwBsQl2Wt5YbBLNWeCRzniHi6HACeKADsS5l4gS0bKOp49++BkK/maXL7v
+    IfbPfMH8CRJa6eVCjZbuEFgNEJeIEvlOd2f8Y93Fyajy/DU8Ldzb9TULwY/n/7WM
+    t/nk20GxHPmOX9Ndf1bC4zR4MvgrRIa8XmRl6g5ab13uBtds7ym8mL2TccaNTb9q
+    JFY/zwqyTg9rhdrGy2PpXZgoIff0benVutPgD3rlZ3kyMYsaP25M7+Fa60CPHa7n
+    8/Uchy8w+7QAi3D8vF7KZ7gIL1UODCnYlbqBFXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1518820828; bh=jyDWcfVwhsz3QCaMPDeyGYIPpjTsJnXmsOPvei
-    hr7d8=; b=d2vAFN0r5dgXqKZ/u008RanQq6No4GUTvxv3pDRrBfTPts+L+RQew6
-    njLd8lLenbxUHhVPY2EnKznmws5VofiEkOxyv3Ei95/Tu5xhNDIyaVSc385pn0wd
-    WS+7d+wA+9qNgKO0ergE04hNHaG4liz8YAAyxjwW1P0ac/v2i1ATLqqXwRyki5Tu
-    iZhX1DxbxESvLM47knLk7TcareWfB9vwp4gB17K31Ipe5Xb4ieRshbTyQtDX6AQt
-    iRXuSAFreLe64lLZ8r7j5opoYzk1xP8dyQjfGa3HI0blHU2vuBzsb8gJPxYY5v5J
-    q4Zl9jieyMCeUIpLtjZn5QOGUGZgTV8w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=UKb7ClCN x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :in-reply-to:references:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1518821458; bh=42DxU1+33FZK85clJ2J0bRhOdqYFbRfJXfYMnJZ+cbg=; b=G
+    u6P07IAYWe+h2JhbPguZGbP1PTvsBhALp4l3hYgROUTNq6EmBWbo8AZhKx6Mb/gU
+    6W/58IGp8WZ1JoCOrxfdf17NTLdmgFe4NrUhqwDFw9kyz4vDsWg8uhkcsfzjQgXN
+    Tcl9qjhlq3eWRJWkQrfDKc9shi92FoFBhYVGCpDUP6LKjzq2h9w3YgOol7Yvlcf8
+    xmYo5qaH6X+aDk41x7JOnhgsYl2Dhrkmu5NRgbMFDW5ae5V/eOI8sJlPgNhOo5dk
+    lUf8BZJ/xXwVewgNTU7zeC2eNiCTMRRHHp7T7gETwBwXUh9twkn6dpJnwb0+gfWU
+    BmKsxjqRpKTMJnKU5jAkQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NeOitxRD;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=UKb7ClCN x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NeOitxRD;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750837AbeBPWkZ (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Feb 2018 17:40:25 -0500
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:38780 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750817AbeBPWkX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Feb 2018 17:40:23 -0500
-X-Google-Smtp-Source: AH8x225+DvQpxGYoqc8SAEtxMhIQBpghlYWu6NnS1Su8L0krxvAtDSwOUbhAovs8bWfuWJOqPKuDuDllV9Q47M/1vWw=
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1ZvA3dk8qRXaF_yjirYTYkvuCggh8x7QU_p+vMxpTPNA@mail.gmail.com>
-References: <20180216214117.1947175-1-arnd@arndb.de> <20180216214117.1947175-2-arnd@arndb.de>
- <20180216170346.497114b3@gandalf.local.home> <CAK8P3a1ZvA3dk8qRXaF_yjirYTYkvuCggh8x7QU_p+vMxpTPNA@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 16 Feb 2018 23:40:22 +0100
-X-Google-Sender-Auth: jBvT3Kjd9yPaRbl0h0z7-uEIXxk
-Message-ID: <CAK8P3a1U-FWXOAut9322BoK3H8drRvHh8E8CcsEq7HG2cv635Q@mail.gmail.com>
-Subject: Re: [PATCH 1/3] Kconfig: disable PROFILE_ALL_BRANCHES for compile testing
-To: Steven Rostedt <rostedt@goodmis.org>
+        id S1750994AbeBPWuR (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Feb 2018 17:50:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750940AbeBPWuO (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 16 Feb 2018 17:50:14 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA14217B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 16 Feb 2018 17:50:11 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Arnd Bergmann <arnd@arndb.de>
 Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
         "Yann E . MORIN" <yann.morin.1998@free.fr>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
@@ -75,75 +69,45 @@ Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
         Ingo Molnar <mingo@redhat.com>,
         Randy Dunlap <rdunlap@infradead.org>,
         stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 1/3] Kconfig: disable PROFILE_ALL_BRANCHES for compile
+ testing
+Message-ID: <20180216175011.2f18dfd6@gandalf.local.home>
+In-Reply-To: <CAK8P3a1U-FWXOAut9322BoK3H8drRvHh8E8CcsEq7HG2cv635Q@mail.gmail.com>
+References: <20180216214117.1947175-1-arnd@arndb.de>
+        <20180216214117.1947175-2-arnd@arndb.de>
+        <20180216170346.497114b3@gandalf.local.home>
+        <CAK8P3a1ZvA3dk8qRXaF_yjirYTYkvuCggh8x7QU_p+vMxpTPNA@mail.gmail.com>
+        <CAK8P3a1U-FWXOAut9322BoK3H8drRvHh8E8CcsEq7HG2cv635Q@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 16, 2018 at 11:14 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Fri, Feb 16, 2018 at 11:03 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
->> On Fri, 16 Feb 2018 22:41:11 +0100
->> Arnd Bergmann <arnd@arndb.de> wrote:
->>
->>> This can easily double the time for compiling a driver but does not
->>> provide any benefit for the compile tester, so it's better left disabled.
->>>
->>> In addition, any 'inline' function that is not also 'static' and that
->>> contains an 'if' causes a warning like
->>>
->>> include/linux/string.h:212:2: note: in expansion of macro 'if'
->>>   if (strscpy(p, q, p_size < q_size ? p_size : q_size) < 0)
->>>   ^~
->>> include/linux/compiler.h:162:4: warning: '______f' is static but declared in inline function 'strcpy' which is not static
->>>
->>> without this patch, and I could not come up with a nice fix for that.
->>> In combination with my patch to always enable 'CONFIG_COMPILE_TEST'
->>> during 'randconfig' builds, we can at least hide these warnings for
->>> most users.
->>
->> This looks like it fixes the same issue that was already fixed and is
->> in Linus's tree.
->>
->>  http://lkml.kernel.org/r/9199446b-a141-c0c3-9678-a3f9107f2750@infradead.org
->>
->> See commit 68e76e034b6b1 ("tracing: Prevent PROFILE_ALL_BRANCHES when
->> FORTIFY_SOURCE=y")
->
-> Ah, right. I missed that when I wrote the new changelog text for this old
-> patch of mine. It also means I should rebase the patch so it applies
-> on mainline, as I still want PROFILE_ALL_BRANCHES to be disabled
-> in COMPILE_TEST kernels for the build speed aspect.
+On Fri, 16 Feb 2018 23:40:22 +0100
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-I retested on top of that patch and found a couple of other warnings show up
-in an allmodconfig build with PROFILE_ALL_BRANCHES:
+>      ((CAPI_MSG *) msg)->info.facility_req.structs[1] =
+> LI_REQ_SILENT_UPDATE & 0xff;
+>      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/isdn/hardware/eicon/message.c:11163:54: error: array subscript
+> is above array bounds [-Werror=array-bounds]
+>      ((CAPI_MSG *) msg)->info.facility_req.structs[2] =
+> LI_REQ_SILENT_UPDATE >> 8;
+>      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/isdn/hardware/eicon/message.c:11164:54: error: array subscript
+> is above array bounds [-Werror=array-bounds]
+>      ((CAPI_MSG *) msg)->info.facility_req.structs[3] = 0;
+> 
+> All those are nonsense AFAICT, and we see them only because the "if()" override
+> ends up confusing gcc's value-range tracking in the same way it used to cause
+> lots of -Wmaybe-uninitialized warnings (which we just disable these days
+> with PROFILE_ALL_BRANCHES).
 
-lib/zstd/decompress.c: In function 'ZSTD_decompressStream':
-lib/zstd/decompress.c:416:2: error: argument 1 null where non-null
-expected [-Werror=nonnull]
-drivers/crypto/qat/qat_common/qat_algs.c: In function 'qat_alg_do_precomputes':
-drivers/crypto/qat/qat_common/qat_algs.c:156:7: error: argument 1
-range [18446744071562067968, 18446744073709551615] exceeds maximum
-object size 9223372036854775807 [-Werror=alloc-size-larger-than=]
-drivers/isdn/hardware/eicon/message.c: In function 'mixer_notify_update':
-drivers/isdn/hardware/eicon/message.c:11162:54: error: array subscript
-is above array bounds [-Werror=array-bounds]
-     ((CAPI_MSG *) msg)->info.facility_req.structs[1] =
-LI_REQ_SILENT_UPDATE & 0xff;
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/isdn/hardware/eicon/message.c:11163:54: error: array subscript
-is above array bounds [-Werror=array-bounds]
-     ((CAPI_MSG *) msg)->info.facility_req.structs[2] =
-LI_REQ_SILENT_UPDATE >> 8;
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/isdn/hardware/eicon/message.c:11164:54: error: array subscript
-is above array bounds [-Werror=array-bounds]
-     ((CAPI_MSG *) msg)->info.facility_req.structs[3] = 0;
+I'm fine with your patch then.
 
-All those are nonsense AFAICT, and we see them only because the "if()" override
-ends up confusing gcc's value-range tracking in the same way it used to cause
-lots of -Wmaybe-uninitialized warnings (which we just disable these days
-with PROFILE_ALL_BRANCHES).
-
-        Arnd
+-- Steve
