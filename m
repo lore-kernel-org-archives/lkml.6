@@ -1,59 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751120AbeBPTyS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 14:54:18 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37258 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750727AbeBPTyQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 14:54:16 -0500
-Date: Fri, 16 Feb 2018 11:54:10 -0800
-From: Darren Hart <dvhart@infradead.org>
-To: David Laight <David.Laight@ACULAB.COM>
-Cc: "'Andy Shevchenko'" <andriy.shevchenko@linux.intel.com>,
-        "platform-driver-x86@vger.kernel.org"
-        <platform-driver-x86@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] platform/x86: wmi: Replace kmalloc + sprintf() with
- kasprintf()
-Message-ID: <20180216195410.GF5786@fury>
-References: <20180216154024.389-1-andriy.shevchenko@linux.intel.com>
- <829ccf8330b7418a976205665e0ab4bd@AcuMS.aculab.com>
+        id S1751167AbeBPTy5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 14:54:57 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41612 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750763AbeBPTyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 14:54:54 -0500
+Date: Fri, 16 Feb 2018 14:54:51 -0500
+From: Peter Jones <pjones@redhat.com>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Joe Konno <joe.konno@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Borislav Petkov <bp@alien8.de>, Matthew Garrett <mjg59@google.com>,
+        Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeremy Kerr <jk@ozlabs.org>, Andi Kleen <ak@linux.intel.com>,
+        Benjamin Drung <benjamin.drung@profitbricks.com>
+Subject: Re: [PATCH 0/2] efivars: reading variables can generate SMIs
+Message-ID: <20180216195450.apea25yhxzrfhkjm@redhat.com>
+References: <20180215182208.35003-1-joe.konno@linux.intel.com>
+ <CAKv+Gu80pJ5tbGoJqBm8CCKrEZXdkE83c944383KbQ5jREUC0Q@mail.gmail.com>
+ <20180216105548.GA29042@pd.tnic>
+ <CAKv+Gu8qm2wFxY56-eRLkLZB6fRUCmZbZo=4cvo5e4JDFh01Gg@mail.gmail.com>
+ <20180216110821.GB29042@pd.tnic>
+ <CAKv+Gu_SD6yWJMGbTwGUWXtrgZKPkpANNaGe1PUruTG9j0yhcg@mail.gmail.com>
+ <20180216184832.sqreq5zhar3jqdae@jbkonno-saint14>
+ <20180216192220.wljl23g533sc3oxg@redhat.com>
+ <3908561D78D1C84285E8C5FCA982C28F7B37917B@ORSMSX110.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <829ccf8330b7418a976205665e0ab4bd@AcuMS.aculab.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7B37917B@ORSMSX110.amr.corp.intel.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 03:55:24PM +0000, David Laight wrote:
-> From: Andy Shevchenko
-> > Sent: 16 February 2018 15:40
-> >
-> > kasprintf() does the job of two: kmalloc() and sprintf().
-> > Replace two calls with one.
-> ...
-> > -		buf = kmalloc(strlen(wdriver->driver.name) + 5, GFP_KERNEL);
-> > +		buf = kasprintf(GFP_KERNEL, "wmi/%s", wdriver->driver.name);
-> ...
+On Fri, Feb 16, 2018 at 07:32:17PM +0000, Luck, Tony wrote:
+> > tl;dr: I think changing everything to 0600 is probably completely fine,
+> > and whitelisting is probably pointless.  
 > 
-> Except that kasprintf() has no idea how long a buffer is needed.
-> It might even do the printf twice just to get the length.
+> But do you speak for all users?
 
-Sure, but this is one-time and non-critical path. Unfortunately there
-isn't any guidance in Documentation here. Of the 520 or so instances of
-kasprintf usages in the kernel, device name or similar is a very common
-pattern. Eliminating manual counting of characters for buffer allocation
-seems like a good plan to me.
+No, I just write their tools :)
 
-So unless we want to argue that all those use cases are wrong, this
-would appear to be at least common practice, if not best practice for
-this particular pattern.
+> It will just take one person complaining that efibootmgr no longer
+> shows them what it used to show to bring down the wrath of Linus on
+> our (specifically Joe's) head for breaking user space.
 
-Reviewed-by: Darren Hart (VMware) <dvhart@infradead.org>
+The userland use case is gazing idly at the values without intending to
+do anything about them.  And most of this is firmware config and
+firmware/OS interaction.  Honestly it should never have been user
+readable to begin with.
+
+But also, we had a bug for quite some time where efibootmgr created
+everything as 0600, and as a result non-root users couldn't do e.g.
+"efibootmgr -v" and see the paths of new entries until a reboot
+occurred.  Nobody ever reported it in bugzilla.redhat.com or efibootmgr
+or efivar's github issues pages.  One person noticed it while commenting
+about another issue, but didn't see it as related to his actual issue or
+being a bug so much as "weird" that listing worked as non-root before
+changing something but not after.
+
+Another user asked about getting permission denied while setting the
+boot order on askubuntu here:
+https://askubuntu.com/questions/688317/getting-permission-denied-errors-from-efibootmgr
+The response was exactly that you have to run it as root.  I think it's
+telling that nobody said anything about reading vs writing.
+
+> I've got someone about to start looking at making efivarfs read and save
+> the values during mount, so all the read-only options can continue to work
+> without making EFI calls.
+> 
+> This will cost some memory (say 20-30 variables at up to 1K each).
+
+71 variables on my laptop, and the 1K restriction went away a *loooong*
+time ago.  It was fully excised from the userland tools in 2013.  On my
+laptop, 4 of those 71 variables are >5000 bytes.  The total storage of
+all of the data in the variables is 38kB.
+
+I still think changing it to 0600 and calling this done is the right
+thing to do.
 
 -- 
-Darren Hart
-VMware Open Source Technology Center
+  Peter
