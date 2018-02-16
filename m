@@ -1,102 +1,178 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-169531-1518787265-2-3349240467456383913
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518787264; b=vIPGpmmGQraLIspCBRQe6hfw4PaNYYqCFUZiccMyY0kRz2S
-    icCQ3aWCgsQQi1pRRoha0QiZh+Jysj1PpVkLS9M1aB/4rDrc5f5X66ng6JQXXpG5
-    9hMLsjN9z4ClovfQNkW5aBTTTtpz9VJTH77I+7rl27DkK2quUTSEnZLi8ec5ht5x
-    oU065BR0AlF4o8Twyrmz72Rf8US67qNc1/F4xdICcMgBRJFi8BkEZiXvo3yVt4Pt
-    9uTNcc3D0G1SIOyfogk+0yniYzUlGc737VnYyHl9eZZSr/ze+SNj23oOigG9r6F1
-    OnxQ7i6jvMmgJz8M1siF53M7jV8iB5Bzyu22RnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1518787264; bh=fg7y9getNYeX9K3M0ctoJPQOXG
-    5VDrFtWTQHBnyvkWw=; b=rau/uvpxzr3nQsRjAniRWoWEbUQkPUT+SXO53Cie1n
-    Ccjz73EzhyjPujq5LGeuZFY7KuLxGuj1DNZ0iZbREaWde8dh7VUAFGgNj65f9OQ5
-    6fj+gzQ/qZaC7UcEwfzDslajzzf09ksoZYZ3AQvCEHdLTGI16YG2Njq+FXUCemit
-    dMChDxCpFuyMW636fxUSxCWTCory4OZUcKlfXqur7M5JXl2JVfzYn53S/jOXweXO
-    Yki0Zz/EWoSlOXLWRIURr4ZU8L/qtNZuDddjTZlaLEhHpjTGGMwQemxj8lV8lMSU
-    3ReCrPMgBaDP7O+DpMGA0MOanqftJnr7IbNL7xzpTaBg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030722AbeBPNUt (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Feb 2018 08:20:49 -0500
-Received: from mga05.intel.com ([192.55.52.43]:27663 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030435AbeBPNUs (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Fri, 16 Feb 2018 08:20:48 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,519,1511856000";
-   d="scan'208";a="31363985"
-Date: Fri, 16 Feb 2018 15:20:43 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH 06/12] usb: typec: tcpm: Use new Type-C switch/mux and
- usb-role-switch functions
-Message-ID: <20180216132043.GL1480@kuha.fi.intel.com>
+Return-Path: <hdegoede@redhat.com>
+X-Google-Smtp-Source: AH8x227kxil/pMscBQLG4Mu5rKH6zBnBMcxG+eJw4pVnlOsvdoNhN5XaT01qervWwkM4Q1/XzGl9
+ARC-Seal: i=1; a=rsa-sha256; t=1518778083; cv=none;
+        d=google.com; s=arc-20160816;
+        b=pHmcuQr5Ck8gt7u0PqVbSAavDnFR645Mfttqxy13uGipH2ZgPm14xA5Am8IBnUA+4w
+         P+jJJuEw8yBlDDONOWKlwvUuRPgTTGC6Hpv5X/gsIUuwhJzlxXOq6ETT4lXX6RU51cZw
+         6WAwR5T/FANUi00cGnSGUnZq72TyxRK592hsDQOlC3Hm7/WQVza74mje+kgjeRS2ulD2
+         1lWWAGD0LZ1jOGRhg3ufreC2PWTIdVWIZJwV/vzTXBvM2CKldsCHmIlNu7Qy3AZ3oPv2
+         IHe28sbkS/ZIclIA4XDB515vGEmGEuuMpj9iH4PnnNVypVrPcFDHnLIwu5t5vWMx45xC
+         YqVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=whfFK+oYq2ijJFHvRMRG7cFk362O85q5UdAORihM4c8=;
+        b=YfkGB1aW60xenZ1colbPaY+ZqtPfOV8kG0ZjQ2VphdvSWBopAbvmMOcHQfLC807kUR
+         rmMMIDod1vaPLbXc8vzcjGdLVfWs4ihOyKDwYDu3RewJKHrBvhITmBgeFObiqp25Aqt+
+         h9gO9CQ3aL3uXO+DmYrJeVpK7gNH8ugxyzciDnu9qCh1LG9Dp7gAJTFcNWcJncrochD0
+         AWJSiDn6cwh449FyZTTqCdFYVlJsCyWTSmNf8n6+zfcEbeBcCK3c54t6L+bIK8jSejfG
+         Qotl0WJJ1Bqj6P3wF0eMOiq/DFtLfuMP8JdkgXm+uTOlkRI3V4ZhE/wMqCQGBxCiDBP+
+         GXzg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+From: Hans de Goede <hdegoede@redhat.com>
+To: Darren Hart <dvhart@infradead.org>,
+	Andy Shevchenko <andy@infradead.org>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH 05/12] usb: typec: tcpm: Set USB role switch to device mode when configured as such
+Date: Fri, 16 Feb 2018 11:47:44 +0100
+Message-Id: <20180216104751.8371-6-hdegoede@redhat.com>
+In-Reply-To: <20180216104751.8371-1-hdegoede@redhat.com>
 References: <20180216104751.8371-1-hdegoede@redhat.com>
- <20180216104751.8371-7-hdegoede@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180216104751.8371-7-hdegoede@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592554247058605060?=
+X-GMAIL-MSGID: =?utf-8?q?1592554247058605060?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 16, 2018 at 11:47:45AM +0100, Hans de Goede wrote:
-> Remove the unused (not implemented anywhere) tcpc_mux_dev abstraction
-> and replace it with calling the new typec_set_orientation,
-> usb_role_switch_set and typec_set_mode functions.
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Setting the mux to MUX_NONE and the switch to USB_SWITCH_DISCONNECT when
+the data-role is device is not correct. Plenty of devices support
+operating as USB device through a (separate) USB device controller.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+We really need 2 different versions of USB_SWITCH_CONNECT,
+USB_SWITCH_CONNECT_HOST and USB_SWITCH_DEVICE. Rather then modifying the
+tcpc_usb_switch enum for this, simply remove it and switch to the
+usb_role enum which provides exactly this, this will save use needing to
+convert betweent the 2 enums when calling an usb-role-switch driver later.
 
+Besides switching to the usb_role type, this commit also actually sets the
+mux to TYPEC_MUX_USB and the switch to USB_ROLE_DEVICE instead of setting
+both to none when the data-role is device.
 
-Thanks,
+This commit also makes tcpm_reset_port() call tcpm_mux_set(port,
+TYPEC_MUX_NONE, USB_ROLE_NONE) so that the mux and switch
+do _not_ stay in their last mode after a detach.
 
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/usb/typec/tcpm.c | 22 +++++++++++-----------
+ include/linux/usb/tcpm.h |  8 ++------
+ 2 files changed, 13 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
+index 7cd28b700a7f..00ca2822432f 100644
+--- a/drivers/usb/typec/tcpm.c
++++ b/drivers/usb/typec/tcpm.c
+@@ -618,15 +618,15 @@ void tcpm_pd_transmit_complete(struct tcpm_port *port,
+ EXPORT_SYMBOL_GPL(tcpm_pd_transmit_complete);
+ 
+ static int tcpm_mux_set(struct tcpm_port *port, enum tcpc_mux_mode mode,
+-			enum tcpc_usb_switch config)
++			enum usb_role usb_role)
+ {
+ 	int ret = 0;
+ 
+-	tcpm_log(port, "Requesting mux mode %d, config %d, polarity %d",
+-		 mode, config, port->polarity);
++	tcpm_log(port, "Requesting mux mode %d, usb-role %d, polarity %d",
++		 mode, usb_role, port->polarity);
+ 
+ 	if (port->tcpc->mux)
+-		ret = port->tcpc->mux->set(port->tcpc->mux, mode, config,
++		ret = port->tcpc->mux->set(port->tcpc->mux, mode, usb_role,
+ 					   port->polarity);
+ 
+ 	return ret;
+@@ -742,14 +742,15 @@ static int tcpm_set_attached_state(struct tcpm_port *port, bool attached)
+ static int tcpm_set_roles(struct tcpm_port *port, bool attached,
+ 			  enum typec_role role, enum typec_data_role data)
+ {
++	enum usb_role usb_role;
+ 	int ret;
+ 
+ 	if (data == TYPEC_HOST)
+-		ret = tcpm_mux_set(port, TYPEC_MUX_USB,
+-				   TCPC_USB_SWITCH_CONNECT);
++		usb_role = USB_ROLE_HOST;
+ 	else
+-		ret = tcpm_mux_set(port, TYPEC_MUX_NONE,
+-				   TCPC_USB_SWITCH_DISCONNECT);
++		usb_role = USB_ROLE_DEVICE;
++
++	ret = tcpm_mux_set(port, TYPEC_MUX_USB, usb_role);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -2096,7 +2097,7 @@ static int tcpm_src_attach(struct tcpm_port *port)
+ out_disable_pd:
+ 	port->tcpc->set_pd_rx(port->tcpc, false);
+ out_disable_mux:
+-	tcpm_mux_set(port, TYPEC_MUX_NONE, TCPC_USB_SWITCH_DISCONNECT);
++	tcpm_mux_set(port, TYPEC_MUX_NONE, USB_ROLE_NONE);
+ 	return ret;
+ }
+ 
+@@ -2140,6 +2141,7 @@ static void tcpm_reset_port(struct tcpm_port *port)
+ 	tcpm_init_vconn(port);
+ 	tcpm_set_current_limit(port, 0, 0);
+ 	tcpm_set_polarity(port, TYPEC_POLARITY_CC1);
++	tcpm_mux_set(port, TYPEC_MUX_NONE, USB_ROLE_NONE);
+ 	tcpm_set_attached_state(port, false);
+ 	port->try_src_count = 0;
+ 	port->try_snk_count = 0;
+@@ -2190,8 +2192,6 @@ static int tcpm_snk_attach(struct tcpm_port *port)
+ static void tcpm_snk_detach(struct tcpm_port *port)
+ {
+ 	tcpm_detach(port);
+-
+-	/* XXX: (Dis)connect SuperSpeed mux? */
+ }
+ 
+ static int tcpm_acc_attach(struct tcpm_port *port)
+diff --git a/include/linux/usb/tcpm.h b/include/linux/usb/tcpm.h
+index ca1c0b57f03f..268721bff2c1 100644
+--- a/include/linux/usb/tcpm.h
++++ b/include/linux/usb/tcpm.h
+@@ -16,6 +16,7 @@
+ #define __LINUX_USB_TCPM_H
+ 
+ #include <linux/bitops.h>
++#include <linux/usb/role.h>
+ #include <linux/usb/typec.h>
+ #include "pd.h"
+ 
+@@ -97,11 +98,6 @@ struct tcpc_config {
+ 	const struct typec_altmode_desc *alt_modes;
+ };
+ 
+-enum tcpc_usb_switch {
+-	TCPC_USB_SWITCH_CONNECT,
+-	TCPC_USB_SWITCH_DISCONNECT,
+-};
+-
+ /* Mux state attributes */
+ #define TCPC_MUX_USB_ENABLED		BIT(0)	/* USB enabled */
+ #define TCPC_MUX_DP_ENABLED		BIT(1)	/* DP enabled */
+@@ -118,7 +114,7 @@ enum tcpc_mux_mode {
+ 
+ struct tcpc_mux_dev {
+ 	int (*set)(struct tcpc_mux_dev *dev, enum tcpc_mux_mode mux_mode,
+-		   enum tcpc_usb_switch usb_config,
++		   enum usb_role usb_role,
+ 		   enum typec_cc_polarity polarity);
+ 	bool dfp_only;
+ 	void *priv_data;
 -- 
-heikki
+2.14.3
