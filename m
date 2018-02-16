@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964932AbeBPL1N (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 06:27:13 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:50346 "EHLO mail.skyhub.de"
+        id S964954AbeBPL12 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 06:27:28 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:50326 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964872AbeBPL0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 06:26:53 -0500
+        id S964876AbeBPL0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 06:26:52 -0500
 From: Borislav Petkov <bp@alien8.de>
 To: Ashok Raj <ashok.raj@intel.com>
 Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] x86/CPU: Check CPU feature bits after microcode upgrade
-Date: Fri, 16 Feb 2018 12:26:40 +0100
-Message-Id: <20180216112640.11554-4-bp@alien8.de>
+Subject: [PATCH 1/3] x86/microcode: Propagate return value from updating functions
+Date: Fri, 16 Feb 2018 12:26:38 +0100
+Message-Id: <20180216112640.11554-2-bp@alien8.de>
 X-Mailer: git-send-email 2.13.0
 In-Reply-To: <20180216112640.11554-1-bp@alien8.de>
 References: <20180216112640.11554-1-bp@alien8.de>
@@ -21,46 +21,216 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Borislav Petkov <bp@suse.de>
 
-With some microcode upgrades, new CPUID features can become visible on
-the CPU. Check what the kernel has mirrored now and issue a warning
-hinting at possible things the user/admin can do to make use of the
-newly visible features.
+... so that callers can know when microcode was updated and act
+accordingly.
 
-Originally-by: Ashok Raj <ashok.raj@intel.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/kernel/cpu/common.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/x86/include/asm/microcode.h      |  9 +++++++--
+ arch/x86/kernel/cpu/microcode/amd.c   | 10 +++++-----
+ arch/x86/kernel/cpu/microcode/core.c  | 33 +++++++++++++++++----------------
+ arch/x86/kernel/cpu/microcode/intel.c | 10 +++++-----
+ 4 files changed, 34 insertions(+), 28 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 82c142b33bf3..768eb680db8d 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1757,5 +1757,25 @@ core_initcall(init_cpu_syscore);
-  */
- void microcode_check(void)
- {
-+	struct cpuinfo_x86 info;
-+
- 	perf_check_microcode();
-+
-+	/* Reload CPUID max function as it might've changed. */
-+	info.cpuid_level = cpuid_eax(0);
-+
-+	/*
-+	 * Copy all capability leafs to pick up the synthetic ones so that
-+	 * memcmp() below doesn't fail on that. The ones coming from CPUID will
-+	 * get overwritten in get_cpu_cap().
-+	 */
-+	memcpy(&info.x86_capability, &boot_cpu_data.x86_capability, sizeof(info.x86_capability));
-+
-+	get_cpu_cap(&info);
-+
-+	if (!memcmp(&info.x86_capability, &boot_cpu_data.x86_capability, sizeof(info.x86_capability)))
-+		return;
-+
-+	pr_warn("x86/CPU: CPU features have changed after loading microcode, but might not take effect.\n");
-+	pr_warn("x86/CPU: Please consider either early loading through initrd/built-in or a potential BIOS update.\n");
+diff --git a/arch/x86/include/asm/microcode.h b/arch/x86/include/asm/microcode.h
+index 55520cec8b27..7fb1047d61c7 100644
+--- a/arch/x86/include/asm/microcode.h
++++ b/arch/x86/include/asm/microcode.h
+@@ -37,7 +37,12 @@ struct cpu_signature {
+ 
+ struct device;
+ 
+-enum ucode_state { UCODE_ERROR, UCODE_OK, UCODE_NFOUND };
++enum ucode_state {
++	UCODE_OK	= 0,
++	UCODE_UPDATED,
++	UCODE_NFOUND,
++	UCODE_ERROR,
++};
+ 
+ struct microcode_ops {
+ 	enum ucode_state (*request_microcode_user) (int cpu,
+@@ -54,7 +59,7 @@ struct microcode_ops {
+ 	 * are being called.
+ 	 * See also the "Synchronization" section in microcode_core.c.
+ 	 */
+-	int (*apply_microcode) (int cpu);
++	enum ucode_state (*apply_microcode) (int cpu);
+ 	int (*collect_cpu_info) (int cpu, struct cpu_signature *csig);
+ };
+ 
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index 330b8462d426..a998e1a7d46f 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -498,7 +498,7 @@ static unsigned int verify_patch_size(u8 family, u32 patch_size,
+ 	return patch_size;
  }
+ 
+-static int apply_microcode_amd(int cpu)
++static enum ucode_state apply_microcode_amd(int cpu)
+ {
+ 	struct cpuinfo_x86 *c = &cpu_data(cpu);
+ 	struct microcode_amd *mc_amd;
+@@ -512,7 +512,7 @@ static int apply_microcode_amd(int cpu)
+ 
+ 	p = find_patch(cpu);
+ 	if (!p)
+-		return 0;
++		return UCODE_NFOUND;
+ 
+ 	mc_amd  = p->data;
+ 	uci->mc = p->data;
+@@ -523,13 +523,13 @@ static int apply_microcode_amd(int cpu)
+ 	if (rev >= mc_amd->hdr.patch_id) {
+ 		c->microcode = rev;
+ 		uci->cpu_sig.rev = rev;
+-		return 0;
++		return UCODE_OK;
+ 	}
+ 
+ 	if (__apply_microcode_amd(mc_amd)) {
+ 		pr_err("CPU%d: update failed for patch_level=0x%08x\n",
+ 			cpu, mc_amd->hdr.patch_id);
+-		return -1;
++		return UCODE_ERROR;
+ 	}
+ 	pr_info("CPU%d: new patch_level=0x%08x\n", cpu,
+ 		mc_amd->hdr.patch_id);
+@@ -537,7 +537,7 @@ static int apply_microcode_amd(int cpu)
+ 	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
+ 	c->microcode = mc_amd->hdr.patch_id;
+ 
+-	return 0;
++	return UCODE_UPDATED;
+ }
+ 
+ static int install_equiv_cpu_table(const u8 *buf)
+diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+index 319dd65f98a2..6fdaf7cf3182 100644
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -374,7 +374,7 @@ static int collect_cpu_info(int cpu)
+ }
+ 
+ struct apply_microcode_ctx {
+-	int err;
++	enum ucode_state err;
+ };
+ 
+ static void apply_microcode_local(void *arg)
+@@ -489,31 +489,29 @@ static void __exit microcode_dev_exit(void)
+ /* fake device for request_firmware */
+ static struct platform_device	*microcode_pdev;
+ 
+-static int reload_for_cpu(int cpu)
++static enum ucode_state reload_for_cpu(int cpu)
+ {
+ 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
+ 	enum ucode_state ustate;
+-	int err = 0;
+ 
+ 	if (!uci->valid)
+-		return err;
++		return UCODE_OK;
+ 
+ 	ustate = microcode_ops->request_microcode_fw(cpu, &microcode_pdev->dev, true);
+-	if (ustate == UCODE_OK)
+-		apply_microcode_on_target(cpu);
+-	else
+-		if (ustate == UCODE_ERROR)
+-			err = -EINVAL;
+-	return err;
++	if (ustate != UCODE_OK)
++		return ustate;
++
++	return apply_microcode_on_target(cpu);
+ }
+ 
+ static ssize_t reload_store(struct device *dev,
+ 			    struct device_attribute *attr,
+ 			    const char *buf, size_t size)
+ {
++	enum ucode_state tmp_ret = UCODE_OK;
+ 	unsigned long val;
++	ssize_t ret = 0;
+ 	int cpu;
+-	ssize_t ret = 0, tmp_ret;
+ 
+ 	ret = kstrtoul(buf, 0, &val);
+ 	if (ret)
+@@ -526,15 +524,18 @@ static ssize_t reload_store(struct device *dev,
+ 	mutex_lock(&microcode_mutex);
+ 	for_each_online_cpu(cpu) {
+ 		tmp_ret = reload_for_cpu(cpu);
+-		if (tmp_ret != 0)
++		if (tmp_ret > UCODE_NFOUND) {
+ 			pr_warn("Error reloading microcode on CPU %d\n", cpu);
+ 
+-		/* save retval of the first encountered reload error */
+-		if (!ret)
+-			ret = tmp_ret;
++			/* set retval for the first encountered reload error */
++			if (!ret)
++				ret = -EINVAL;
++		}
+ 	}
+-	if (!ret)
++
++	if (!ret && tmp_ret == UCODE_UPDATED)
+ 		perf_check_microcode();
++
+ 	mutex_unlock(&microcode_mutex);
+ 	put_online_cpus();
+ 
+diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+index f7c55b0e753a..09b95a7b5dff 100644
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -772,7 +772,7 @@ static int collect_cpu_info(int cpu_num, struct cpu_signature *csig)
+ 	return 0;
+ }
+ 
+-static int apply_microcode_intel(int cpu)
++static enum ucode_state apply_microcode_intel(int cpu)
+ {
+ 	struct microcode_intel *mc;
+ 	struct ucode_cpu_info *uci;
+@@ -782,7 +782,7 @@ static int apply_microcode_intel(int cpu)
+ 
+ 	/* We should bind the task to the CPU */
+ 	if (WARN_ON(raw_smp_processor_id() != cpu))
+-		return -1;
++		return UCODE_ERROR;
+ 
+ 	uci = ucode_cpu_info + cpu;
+ 	mc = uci->mc;
+@@ -790,7 +790,7 @@ static int apply_microcode_intel(int cpu)
+ 		/* Look for a newer patch in our cache: */
+ 		mc = find_patch(uci);
+ 		if (!mc)
+-			return 0;
++			return UCODE_NFOUND;
+ 	}
+ 
+ 	/* write microcode via MSR 0x79 */
+@@ -801,7 +801,7 @@ static int apply_microcode_intel(int cpu)
+ 	if (rev != mc->hdr.rev) {
+ 		pr_err("CPU%d update to revision 0x%x failed\n",
+ 		       cpu, mc->hdr.rev);
+-		return -1;
++		return UCODE_ERROR;
+ 	}
+ 
+ 	if (rev != prev_rev) {
+@@ -818,7 +818,7 @@ static int apply_microcode_intel(int cpu)
+ 	uci->cpu_sig.rev = rev;
+ 	c->microcode = rev;
+ 
+-	return 0;
++	return UCODE_UPDATED;
+ }
+ 
+ static enum ucode_state generic_load_microcode(int cpu, void *data, size_t size,
 -- 
 2.13.0
