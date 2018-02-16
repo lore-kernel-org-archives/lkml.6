@@ -1,81 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752028AbeBPTef (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 14:34:35 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:60211 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753722AbeBPTT0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751988AbeBPTed (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 14:34:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56586 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753721AbeBPTT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 16 Feb 2018 14:19:26 -0500
-Date: Fri, 16 Feb 2018 20:19:23 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, David Lechner <david@lechnology.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 1/6] nand: davinci: rename the platform driver
-Message-ID: <20180216201923.16bfca7f@bbrezillon>
-In-Reply-To: <20180216164712.25898-2-brgl@bgdev.pl>
-References: <20180216164712.25898-1-brgl@bgdev.pl>
-        <20180216164712.25898-2-brgl@bgdev.pl>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BA87217CC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Jaecheol Shin <jcgod413@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Taeung Song <treeze.taeung@gmail.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 24/41] perf annotate: Add missing arguments in Man page
+Date: Fri, 16 Feb 2018 16:17:29 -0300
+Message-Id: <20180216191746.11095-25-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180216191746.11095-1-acme@kernel.org>
+References: <20180216191746.11095-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Feb 2018 17:47:07 +0100
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+From: Jaecheol Shin <jcgod413@gmail.com>
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Commit d8e22fb4ccac ("ARM: da850: add the nand dev_id to the clock
-> lookup table") broke the nand support in board file mode for
-> da850-based boards. Instead of reverting it and breaking the DT users
-> in the process (due to clock lookup), rename the driver to match the
-> clock table before renaming the users.
-> 
-> Fixes: d8e22fb4ccac ("ARM: da850: add the nand dev_id to the clock lookup table")
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/mtd/nand/davinci_nand.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/nand/davinci_nand.c b/drivers/mtd/nand/davinci_nand.c
-> index ccc8c43abcff..4fb143bf1872 100644
-> --- a/drivers/mtd/nand/davinci_nand.c
-> +++ b/drivers/mtd/nand/davinci_nand.c
-> @@ -865,7 +865,7 @@ static struct platform_driver nand_davinci_driver = {
->  	.probe		= nand_davinci_probe,
->  	.remove		= nand_davinci_remove,
->  	.driver		= {
-> -		.name	= "davinci_nand",
-> +		.name	= "davinci-nand",
+Some options must require an argument. But input, stdio-color, cpu have
+no them.  So I added it.
 
-Another side-effect of this change you should be aware of: by doing
-that you also break all users that were defining partitions through the
-cmdline using mtdparts=davinci_nand.0:<part-layout>.
+Signed-off-by: Jaecheol Shin <jcgod413@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Taeung Song <treeze.taeung@gmail.com>
+Link: http://lkml.kernel.org/r/20180207095205.62715-1-jcgod413@gmail.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/Documentation/perf-annotate.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Not sure this is a good idea ;-).
-
->  		.of_match_table = of_match_ptr(davinci_nand_of_match),
->  	},
->  };
-
-
-
+diff --git a/tools/perf/Documentation/perf-annotate.txt b/tools/perf/Documentation/perf-annotate.txt
+index c635eab6af54..292809c3c0ca 100644
+--- a/tools/perf/Documentation/perf-annotate.txt
++++ b/tools/perf/Documentation/perf-annotate.txt
+@@ -21,7 +21,7 @@ If there is no debug info in the object, then annotated assembly is displayed.
+ OPTIONS
+ -------
+ -i::
+---input=::
++--input=<file>::
+         Input file name. (default: perf.data unless stdin is a fifo)
+ 
+ -d::
+@@ -69,7 +69,7 @@ OPTIONS
+ 
+ --stdio:: Use the stdio interface.
+ 
+---stdio-color::
++--stdio-color=<mode>::
+ 	'always', 'never' or 'auto', allowing configuring color output
+ 	via the command line, in addition to via "color.ui" .perfconfig.
+ 	Use '--stdio-color always' to generate color even when redirecting
+@@ -84,7 +84,7 @@ OPTIONS
+ --gtk:: Use the GTK interface.
+ 
+ -C::
+---cpu:: Only report samples for the list of CPUs provided. Multiple CPUs can
++--cpu=<cpu>:: Only report samples for the list of CPUs provided. Multiple CPUs can
+ 	be provided as a comma-separated list with no space: 0,1. Ranges of
+ 	CPUs are specified with -: 0-2. Default is to report samples on all
+ 	CPUs.
 -- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.14.3
