@@ -1,30 +1,30 @@
 Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x225TgExb2WBdNYqM6axNoznPxtErIMojfMj+EvZ1FBsynsOIYQWC9CkGZA5vo1KWBfYGn8P9
+X-Google-Smtp-Source: AH8x225pZNKL7oazda5MNMkyN/qZZKO5Jopzt857aK8OFQh7rVBCvAteKAgUBlfXzuaeksgPnm9n
 ARC-Seal: i=1; a=rsa-sha256; t=1518806386; cv=none;
         d=google.com; s=arc-20160816;
-        b=EPGexqt8QboxOWIhRTxb6gWL0n8X67MUkO942h5uDBdCR8hQLC8qLmZmJVLdpP1Tgf
-         EWNNdpEzEGjEb8glX5yB8QtbsMZc109wKXVIk0Lm660JQwiT7fhRvezw9VGn+89RxTeA
-         O2KN/bwKVCOY3AkjhF+RhqABkbfdj2GwoulAkZxpnSInS0IvHADec48rrp6EWCAWv6ZB
-         Wg4cGBmFuJ/ly1W3wLJi1TrTSyPTpoQNLziD06Pjl6OUmjpY1/CNIqzcDADBANfqDfnt
-         uWPKKXIUqfbuB8LlDtr5hO5x6HXiX/JQb0kLJ8Ha5xzgeXSlSJGrw752PlKC1GPtxTbN
-         tRsA==
+        b=Vth8pqy8DpHQuBV0gTwRQxDmw8T/Ku4hwKw2ivAvcn81zmfFjlYU+KtKhvZR9QEaCV
+         R5jFORo0amShvdQB9Ch88r/KSn3WilCwuHP5q2yE3Gw8wbHIb7+HmZyTKeaQLWBS0jKS
+         CD256AaqL/f9r0LfoOTL41wp3VZN+OveiPWoqFxU9RdptpEi1aDFFuRGauqGz8BbtSyP
+         oe0cwV0F6pVGDR7KySRhWWvrhFHUVnsepuvm5990iBOjGEPwMwX68FBsd+yeNFjAo4V/
+         yHVDNsb1oSFroB/N1eAZURwKAb0K/VtV7td/ua47rYpNv1slZBg67flpJI35+oRg4SqU
+         qcvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=x37G/JrybxXhVfsvSRijeqSjd9Vmal2cBfU3vCqzxWI=;
-        b=lnACF9k4OtMbvHVPp4yvp4Q54TOMYLfy4cDOjW15ECc1eSI53XOThDRfmdpa8AnySq
-         0yH49KNO20TGsaeOuxMDtR6boRzkMsMjr11WMUWydNvbBQlD/lDprKgC8ZsNSL0xVIXH
-         xET4Mps/sbtANTQcdU2ddBPhkn++B6S0YzPb7uvaVi0J2wfoWHIvcQQQIuqW6/imGGzw
-         smb6didosu0O6uNjPH7tO1QQq9JiGNAFbE4Ut5GiQ3KPrrhYvvln92R4jZ6yXS9vm3sn
-         cDqkP+dK6zE7QI+A+brFSShWEHMVfVZe4eIkyWTmnk0aK4My/040dp/uM47Mwq/Wocx3
-         9IOQ==
+        bh=5v0/HrzAJlD9iSgCxrOCACm9vCZI9W7j1VzmKYbwL2Y=;
+        b=s4fl0fE7vVrZoqW7Tg/UI1DEnrYO5ou/LDltyfXpv+h4hlNITk4pSkpmbVh+/pQjiu
+         TEfXfQ9eUrvN0q3i3zIs4fPtPY0ZDYgzSRqRgu+3D8Q9pV3O3Xj83N5vvyqYe2RB2DBS
+         ftfv8fvt34ZwuK/vBvpP205q2GIbxI+DlgGpC4MOec1eNZc2z0pKCTxC2c7rxvc1rNRc
+         SeBk1T+e7FyiRLOWXt/ESr1mhDWbHEYdN4VBcYinluX+m7Y1HkNI2/cgYLZiVNnsJElo
+         WNWAxao+sQYu0q6/mzIzH39fY3PD6zHEwTcLTYEBvJ7UjNP/phN8D9Q5jE4QjrnSVIjC
+         KgNw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=ZAEzv6Vt;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=jgNgpdo1;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=ZAEzv6Vt;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=jgNgpdo1;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBT6013418
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBT7013418
 X-Nifty-SrcIP: [125.199.20.195]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org,
@@ -36,123 +36,88 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michal Marek <michal.lkml@markovi.net>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 03/23] kconfig: add xstrdup() helper
-Date: Sat, 17 Feb 2018 03:38:31 +0900
-Message-Id: <1518806331-7101-4-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 04/23] kconfig: set SYMBOL_AUTO to the symbol marked with defconfig_list
+Date: Sat, 17 Feb 2018 03:38:32 +0900
+Message-Id: <1518806331-7101-5-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592583925439348866?=
-X-GMAIL-MSGID: =?utf-8?q?1592583925439348866?=
+X-GMAIL-THRID: =?utf-8?q?1592583925561685060?=
+X-GMAIL-MSGID: =?utf-8?q?1592583925561685060?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-We already have xmalloc(), xcalloc(), and xrealloc(().  Add xstrdup()
-as well to save tedious error handling.
+The 'defconfig_list' is a weird attribute.  If the '.config' is
+missing, conf_read_simple() iterates over all visible defaults,
+then it uses the first one for which fopen() succeeds.
+
+config DEFCONFIG_LIST
+	string
+	depends on !UML
+	option defconfig_list
+	default "/lib/modules/$UNAME_RELEASE/.config"
+	default "/etc/kernel-config"
+	default "/boot/config-$UNAME_RELEASE"
+	default "$ARCH_DEFCONFIG"
+	default "arch/$ARCH/defconfig"
+
+However, like other symbols, the first visible default is always
+written out to the .config file.  This might be different from what
+has been actually used.
+
+For example, on my machine, the third one "/boot/config-$UNAME_RELEASE"
+is opened, like follows:
+
+  $ rm .config
+  $ make oldconfig 2>/dev/null
+  scripts/kconfig/conf  --oldconfig Kconfig
+  #
+  # using defaults found in /boot/config-4.4.0-112-generic
+  #
+  *
+  * Restart config...
+  *
+  *
+  * IRQ subsystem
+  *
+  Expose irq internals in debugfs (GENERIC_IRQ_DEBUGFS) [N/y/?] (NEW)
+
+However, the resulted .config file contains the first one since it is
+visible:
+
+  $ grep CONFIG_DEFCONFIG_LIST .config
+  CONFIG_DEFCONFIG_LIST="/lib/modules/$UNAME_RELEASE/.config"
+
+In order to stop confusing people, prevent this CONFIG option from
+being written to the .config file.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- scripts/kconfig/confdata.c  |  2 +-
- scripts/kconfig/kxgettext.c |  2 +-
- scripts/kconfig/lkc.h       |  1 +
- scripts/kconfig/symbol.c    |  4 ++--
- scripts/kconfig/util.c      | 11 +++++++++++
- scripts/kconfig/zconf.y     |  2 +-
- 6 files changed, 17 insertions(+), 5 deletions(-)
+I'd like to fix the root case of this weirdness later.
+(and other 'option' attributes as well)
 
-diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-index 5c12dc9..df26c7b 100644
---- a/scripts/kconfig/confdata.c
-+++ b/scripts/kconfig/confdata.c
-@@ -178,7 +178,7 @@ static int conf_set_sym_val(struct symbol *sym, int def, int def_flags, char *p)
- 	case S_HEX:
- 	done:
- 		if (sym_string_valid(sym, p)) {
--			sym->def[def].val = strdup(p);
-+			sym->def[def].val = xstrdup(p);
- 			sym->flags |= def_flags;
- 		} else {
- 			if (def != S_DEF_AUTO)
-diff --git a/scripts/kconfig/kxgettext.c b/scripts/kconfig/kxgettext.c
-index 2858738..240880a 100644
---- a/scripts/kconfig/kxgettext.c
-+++ b/scripts/kconfig/kxgettext.c
-@@ -101,7 +101,7 @@ static struct message *message__new(const char *msg, char *option,
- 	if (self->files == NULL)
- 		goto out_fail;
- 
--	self->msg = strdup(msg);
-+	self->msg = xstrdup(msg);
- 	if (self->msg == NULL)
- 		goto out_fail_msg;
- 
-diff --git a/scripts/kconfig/lkc.h b/scripts/kconfig/lkc.h
-index 4e23feb..2d5ec2d 100644
---- a/scripts/kconfig/lkc.h
-+++ b/scripts/kconfig/lkc.h
-@@ -115,6 +115,7 @@ int file_write_dep(const char *name);
- void *xmalloc(size_t size);
- void *xcalloc(size_t nmemb, size_t size);
- void *xrealloc(void *p, size_t size);
-+char *xstrdup(const char *s);
- 
- struct gstr {
- 	size_t len;
-diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
-index cca9663..2220bc4 100644
---- a/scripts/kconfig/symbol.c
-+++ b/scripts/kconfig/symbol.c
-@@ -183,7 +183,7 @@ static void sym_validate_range(struct symbol *sym)
- 		sprintf(str, "%lld", val2);
- 	else
- 		sprintf(str, "0x%llx", val2);
--	sym->curr.val = strdup(str);
-+	sym->curr.val = xstrdup(str);
- }
- 
- static void sym_set_changed(struct symbol *sym)
-@@ -849,7 +849,7 @@ struct symbol *sym_lookup(const char *name, int flags)
- 				   : !(symbol->flags & (SYMBOL_CONST|SYMBOL_CHOICE))))
- 				return symbol;
- 		}
--		new_name = strdup(name);
-+		new_name = xstrdup(name);
- 	} else {
- 		new_name = NULL;
- 		hash = 0;
-diff --git a/scripts/kconfig/util.c b/scripts/kconfig/util.c
-index b98a79e..c6f6e21 100644
---- a/scripts/kconfig/util.c
-+++ b/scripts/kconfig/util.c
-@@ -154,3 +154,14 @@ void *xrealloc(void *p, size_t size)
- 	fprintf(stderr, "Out of memory.\n");
- 	exit(1);
- }
-+
-+char *xstrdup(const char *s)
-+{
-+	char *p;
-+
-+	p = strdup(s);
-+	if (p)
-+		return p;
-+	fprintf(stderr, "Out of memory.\n");
-+	exit(1);
-+}
-diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
-index 4893676..ad6305b 100644
---- a/scripts/kconfig/zconf.y
-+++ b/scripts/kconfig/zconf.y
-@@ -127,7 +127,7 @@ no_mainmenu_stmt: /* empty */
- 	 * later regardless of whether it comes from the 'prompt' in
- 	 * mainmenu_stmt or here
- 	 */
--	menu_add_prompt(P_MENU, strdup("Linux Kernel Configuration"), NULL);
-+	menu_add_prompt(P_MENU, xstrdup("Linux Kernel Configuration"), NULL);
- };
- 
- 
+But, this series is focusing a more important work in a bigger picture.
+
+For now, I decided to just hide CONFIG_DEFCONFIG_LIST
+from the .config file.
+
+
+ scripts/kconfig/menu.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
+index 9922285..36cd3e1 100644
+--- a/scripts/kconfig/menu.c
++++ b/scripts/kconfig/menu.c
+@@ -212,6 +212,7 @@ void menu_add_option(int token, char *arg)
+ 			sym_defconfig_list = current_entry->sym;
+ 		else if (sym_defconfig_list != current_entry->sym)
+ 			zconf_error("trying to redefine defconfig symbol");
++		sym_defconfig_list->flags |= SYMBOL_AUTO;
+ 		break;
+ 	case T_OPT_ENV:
+ 		prop_add_env(arg);
 -- 
 2.7.4
