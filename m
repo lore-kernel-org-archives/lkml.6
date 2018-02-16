@@ -1,83 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755305AbeBPIxJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 03:53:09 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:55689 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755229AbeBPIxI (ORCPT
+        id S1754971AbeBPIoh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 03:44:37 -0500
+Received: from mail-qk0-f169.google.com ([209.85.220.169]:41385 "EHLO
+        mail-qk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754869AbeBPIof (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 03:53:08 -0500
-Date: Fri, 16 Feb 2018 09:53:03 +0100
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH 1/2] kernel/sofirq: consolidate common code in
- __tasklet_schedule() + _hi_
-Message-ID: <20180216085302.ptzq5yspmdq3zlh6@linutronix.de>
-References: <20180215172042.31573-1-bigeasy@linutronix.de>
- <20180215172042.31573-2-bigeasy@linutronix.de>
- <20180215150707.49cc2332@gandalf.local.home>
+        Fri, 16 Feb 2018 03:44:35 -0500
+X-Google-Smtp-Source: AH8x227ZpAZV0/T6I/uNUQ0FR3QwzECa3167rIRD5n0+F0V7jkBO1ss1sgqMZzQMPexE8Obj1Jm0zLHhG1rgKHHWzkA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180215150707.49cc2332@gandalf.local.home>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180215221633.GA18755@casa>
+References: <20180213120308.23879-1-rodrigorivascosta@gmail.com>
+ <20180213120308.23879-2-rodrigorivascosta@gmail.com> <CAO-hwJK5sos9=RDajS_cXBzfePqf6TJs3Z-jk568sumR-zjqdw@mail.gmail.com>
+ <20180215221633.GA18755@casa>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date: Fri, 16 Feb 2018 09:44:34 +0100
+Message-ID: <CAO-hwJLjFaP3ZLoM+EDbruoRhOyPPFXmo7FWGoXESc9XgkD4Kg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] HID: steam: add serial number information.
+To: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-15 15:07:07 [-0500], Steven Rostedt wrote:
-> On Thu, 15 Feb 2018 18:20:41 +0100
-> Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
-> 
-> > -void __tasklet_schedule(struct tasklet_struct *t)
-> > +static void __tasklet_schedule_common(struct tasklet_struct *t,
-> > +				      struct tasklet_head *head,
-> > +				      unsigned int softirq_nr)
-> >  {
-> >  	unsigned long flags;
-> >  
-> >  	local_irq_save(flags);
-> 
-> If you look at the original patch, it did not move local_irq_save()
-> into the common function.
-correct but…
+On Thu, Feb 15, 2018 at 11:16 PM, Rodrigo Rivas Costa
+<rodrigorivascosta@gmail.com> wrote:
+> On Wed, Feb 14, 2018 at 03:51:31PM +0100, Benjamin Tissoires wrote:
+>> On Tue, Feb 13, 2018 at 1:03 PM, Rodrigo Rivas Costa
+>> > +#define STEAM_FEATURE_REPORT_SIZE 65
+>> > +
+>> > +static int steam_send_report(struct steam_device *steam,
+>> > +               u8 *cmd, int size)
+>> > +{
+>> > +       int retry;
+>> > +       int ret;
+>> > +       u8 *buf = kzalloc(STEAM_FEATURE_REPORT_SIZE, GFP_KERNEL);
+>>
+>> Please use hid_alloc_report_buf() as sometimes we need to allocate a
+>> slightly bigger report.
+>
+> I have an issue with this one. The problem is that using
+> hid_report_len() on the feature report returns 64. But I must call
+> hid_hw_raw_request() with 65 or it will fail with EOVERFLOW.
+>
+> Currently I'm allocating a buffer of 65 bytes and all is well.
+> If I change to hid_alloc_report_buf(), the current implementation
+> allocates (64+7), so I'm still safe. But I'm worried that the extra
+> bytes are not guaranteed and a future implementation could return
+> exactly 64 bytes, leaving me 1 byte short.
+>
+> About why an array of 65 is required for a report of size 64, I think it
+> is related to hid_report->id == 0 (so hid_report_enum->numbered == 0).
 
-> >  	t->next = NULL;
-> > -	*__this_cpu_read(tasklet_vec.tail) = t;
-> > -	__this_cpu_write(tasklet_vec.tail, &(t->next));
-> > -	raise_softirq_irqoff(TASKLET_SOFTIRQ);
-> > +	*head->tail = t;
-> > +	head->tail = &(t->next);
-> > +	raise_softirq_irqoff(softirq_nr);
-> >  	local_irq_restore(flags);
-> >  }
-> > +
-> > +void __tasklet_schedule(struct tasklet_struct *t)
-> > +{
-> > +	__tasklet_schedule_common(t, this_cpu_ptr(&tasklet_vec),
-> 
-> What can happen is, we reference (tasklet_vec) on one CPU, get
-> preempted (running in ksoftirqd), scheduled on another CPU, then when
-> inside the common code, we are executing on a different CPU than the
-> tasklet is for. The rasise_softirq() is happening on the wrong CPU.
-> 
-> The local_irq_save() can't be moved to the common function. It must be
-> done by each individual function.
+That's the other way around actually. If you are just using the output
+of hid_report_len(), it will take into account the extra byte for the
+report ID.
+*But*, given the way implement() is working (see the comment in the
+implementation of hid_alloc_report()), you need to have up to 7 extra
+bytes to not have the EOVERFLOW.
 
-That __tasklet_schedule_common() part is usually invoked from an
-interrupt context which attempts to schedule the tasklet so it should
-with invoked with interrupts off. However there was one warn_on()
-because something early in the boot managed to invoke it without
-interrupts disabled (which I missed). Okay, granted, fixed.
+So if we ever change the implement() function (which is *really*
+unlikely), we will have to make sure hid_alloc_report() still works,
+so you are on the safe side if you use hid_alloc_report().
 
-As for the second invocation (tasklet_action_common() part) is always
-invoked in BH-disabled context (even if called from ksoftirqd) so you
-are never preemptible() and can't switch CPUs.
-So I am going to correct this patch as you suggested but I don't see the
-reason to do the same in the second one.
+>
+> So what would be the proper solution?
 
-> -- Steve
-Sebastian
+hid_alloc_report() is the one you want :)
+And generally speaking, using the internal API to deal with reports
+and others is the safe bet, as you are guaranteed to not being broken
+if the API changes (or it'll be a regression and we will have to take
+this as high priority).
+
+Cheers,
+Benjamin
+
+>
+> Thanks.
+> Rodrigo.
