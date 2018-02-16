@@ -1,63 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932135AbeBPJim (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 04:38:42 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:42414 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932081AbeBPJik (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 04:38:40 -0500
-X-Google-Smtp-Source: AH8x2259GDe0bNkqUjIC10Pmt4gOnGdWSD6AoauOXu/kszPD6R/0xMBrTJe/CARWWi5GlbqIu0GCSg==
-Date: Fri, 16 Feb 2018 10:38:36 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Baoquan He <bhe@redhat.com>, ebiederm@xmission.com
-Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
-        tglx@linutronix.de, x86@kernel.org, douly.fnst@cn.fujitsu.com,
-        joro@8bytes.org, uobergfe@redhat.com, prarit@redhat.com
-Subject: Re: [PATCH v5 0/6] x86/apic: Fix restoring boot irq mode in reboot
- and kexec/kdump
-Message-ID: <20180216093836.v6iq32jycy7sxwln@gmail.com>
-References: <20180214054656.3780-1-bhe@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180214054656.3780-1-bhe@redhat.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        id S932161AbeBPJjT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 04:39:19 -0500
+Received: from mga12.intel.com ([192.55.52.136]:5145 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932139AbeBPJjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 04:39:17 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,519,1511856000";
+   d="scan'208";a="35253992"
+Message-ID: <1518773953.22495.366.camel@linux.intel.com>
+Subject: Re: [PATCH] sata_dwc_460ex: Delete an error message for a failed
+ memory allocation in sata_dwc_port_start()
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>,
+        linux-ide@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Date: Fri, 16 Feb 2018 11:39:13 +0200
+In-Reply-To: <3ba388af-286a-df63-e78f-c82c1d084439@users.sourceforge.net>
+References: <3ba388af-286a-df63-e78f-c82c1d084439@users.sourceforge.net>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.3-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 2018-02-15 at 22:22 +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 15 Feb 2018 22:15:25 +0100
+> 
+> Omit an extra message for a memory allocation failure in this
+> function.
+> 
+> This issue was detected by using the Coccinelle software.
 
-* Baoquan He <bhe@redhat.com> wrote:
+Tejun, it's up to you. In case you are fine with the change,
 
-> This is v5 post. Newly added patch 0002 includes the change
-> related to KEXEC_JUMP path. Patch 0003 only includes the
-> regression fix.
-> 
-> A regression bug was introduced in below commit.
-> commit 522e66464467 ("x86/apic: Disable I/O APIC before shutdown of the local APIC")
-> 
-> It caused the action to fail that we try to restore boot irq mode
-> in reboot and kexec/kdump. Details can be seen in patch 0003.
-> 
-> Warning can always be seen during kdump kernel boot on qemu/kvm
-> platform. Our customer even saw casual kdump kernel hang once in
-> ~30 attempts during stress testing of kdump on KVM machine.
-> 
-> v4->v5:
->   Take out the change related to KEXEC_JUMP to a new patch 0002
->   according to Eric's suggestion.
->   Patch 0003 in this series only includes the regression fix.
-> 
-> v3->v4:
->   Eric pointed out that in patch 0002 the change related to
->   KEXEC_JUMP is not right.
->   Correct it.
-> 
->   Add Fixes tag and Cc to stable.
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Eric, are these patches looking good to you now?
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/ata/sata_dwc_460ex.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/ata/sata_dwc_460ex.c
+> b/drivers/ata/sata_dwc_460ex.c
+> index 6af4ec3c88c3..ce3d6674ef80 100644
+> --- a/drivers/ata/sata_dwc_460ex.c
+> +++ b/drivers/ata/sata_dwc_460ex.c
+> @@ -901,7 +901,6 @@ static int sata_dwc_port_start(struct ata_port
+> *ap)
+>  	/* Allocate Port Struct */
+>  	hsdevp = kzalloc(sizeof(*hsdevp), GFP_KERNEL);
+>  	if (!hsdevp) {
+> -		dev_err(ap->dev, "%s: kmalloc failed for hsdevp\n",
+> __func__);
+>  		err = -ENOMEM;
+>  		goto CLEANUP;
+>  	}
 
-Thanks,
-
-	Ingo
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
