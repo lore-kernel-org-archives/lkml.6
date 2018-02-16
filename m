@@ -1,30 +1,30 @@
 Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x225/r2QeWdNlFpOnJQu+OkB4VqIfRRH+6llC8s8q8mVNK+GgZzm7MfFzhmCPSpg8uc8ItTc1
-ARC-Seal: i=1; a=rsa-sha256; t=1518806390; cv=none;
+X-Google-Smtp-Source: AH8x227HuXSSyu7zpvWMnx1Mueot2BCBj1P7Zl+TGtHcOgrjwkIgfAKtay4yluoWhM8Ns8pRl2e3
+ARC-Seal: i=1; a=rsa-sha256; t=1518806395; cv=none;
         d=google.com; s=arc-20160816;
-        b=FEk/iS73NESueKZ89BuV2rjW6z9xY+4yNUSGneWozi8bY/U/yp81QYBxZd9Q5ibveZ
-         D1w0vDwrBcUMJDOGQB4Injwbn2G1Tw4Wl/VkDS+mlpE5UazJvaucmemfd9avjXvVO7DX
-         pVmHfiV3svyfNNGMTqftPl9rSwf43rRr7GDaFzbWjI+5kf+hl6TvDvmdn1U3mqk9PwTM
-         9IMHHSDVjZl3M5c0kV35jfGUA9Np+cl9NQUKlEB4pbl04s12JbZQTD1DiAYdVpSx8qwg
-         HEsV6RAsuEjdHZiGpHLbQ28FYGOH4yXi4qPk9LP5cQvc97/d47OsKQY+NdUyJx30Vi4S
-         jjGw==
+        b=wnrR/AXCUwDGfxfSvCIiLDeYWXFNiTq6N9VswZXfnrhdsRYMME2f8lOVgsrK0tfpNR
+         zv7zayapg+CjnAEXhekaqfd3Fg3zKlZm6Exb38sbxwSFy4Gsu6q4SGYQ2676rbq3fNg8
+         Gaq9imalli3cGrHM196dctl0h054MWFYQ8AXfmTGk3VLLEsZjCya/H3XzY8QqOlj3bWb
+         qD3kb8HG5FFcmMjDPqGGn2fwmPDQDK1QPyaSlNQ69945BRMhp+lQ7ExU8DfucbWpO9vE
+         hnyt7dfq2fzgZF4a2TwcanTFHCl85RuPaOxJykUBnrakKQx+K+F1sc+kc1O8AA7GXS+F
+         m5iw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature:dkim-filter
-         :arc-authentication-results;
-        bh=079cRTw+jGFXeq0pb+mxnY6zuhGGWvR5yrFHJc3DdNU=;
-        b=uasrto7GBAGQ4celvGPJTWhEtDdfIkZkI2T/T2+T4VtL050M/EcOS70GjPiyB0aOc2
-         sWatYY4SStfVU1UBGAtebTY5RNrMbzQnRJiqvf8Ke8mO7jySMNaiXmXlM86X0O1sQa+A
-         1upa+YylOpwCycguCrE4JpTaQUjqJIlkpnt9Qb7pTLfLnlhLCUw00W6RQF0KLEIt8RXA
-         mvt8q0koV+Gm3oOApWgXVANIlmIfSb3PhZlMJjZztIQH0jZiu/BszGo66eLvfOr4afhy
-         6y/KgnvjqpDx6mgSrctuRchmfEyirw0LzMSBkiWJnqb7vjbPOi8/E2lNcikLHYVaRx96
-         idJQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-filter:arc-authentication-results;
+        bh=BPc6z7jaBi5hs6EsHJx7v6rdWK5aF1kXWi0zXb2tz0w=;
+        b=t2+u9kHhYe2RYkn5FAhXT6/JUZXQIH70xkK67bFK83S3BM4L+bFWPtkiy66xQ36Ym9
+         K0IO7eV8vxM8+h8p3HwZ6fCiGSLrPXt6gXENVcVO1BPbRSUxj5raGPZohNZjTGGFjWyj
+         Qd2YjdUeD0VWkVb/thgEe17WbMdV/TL3byLBnz/VwfjTm4MwcT3UKTf64UpwvaouuxhL
+         FTlXGDp3OMX4SqE9uxdlkyObfYv6DV28yFiSTPGta9JEd+I8+qUnSAh2e8vL1OpbGhWl
+         2ck7zWaZqCHx+AiUcflplIhWZ79dQxOcZ/XZEXdbRkD0t3knPE/IEZUN9/EUcve1cxdk
+         YdzQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=LNWb7/mc;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=QiTU1ykl;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=LNWb7/mc;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=QiTU1ykl;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBT3013418
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBTN013418
 X-Nifty-SrcIP: [125.199.20.195]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org,
@@ -35,149 +35,163 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
         Michal Marek <michal.lkml@markovi.net>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Peter Oberparleiter <oberpar@linux.vnet.ibm.com>,
-        kernel-hardening@lists.openwall.com, Jonathan Corbet <corbet@lwn.net>,
-        sparclinux@vger.kernel.org, linux-sh@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, Rich Felker <dalias@libc.org>,
-        Jeff Dike <jdike@addtoit.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        user-mode-linux-devel@lists.sourceforge.net,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@samba.org>,
-        user-mode-linux-user@lists.sourceforge.net,
-        Ingo Molnar <mingo@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Michael Ellerman <mpe@ellerman.id.au>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
         Emese Revfy <re.emese@gmail.com>
-Subject: [PATCH 00/23] kconfig: move compiler capability tests to Kconfig
-Date: Sat, 17 Feb 2018 03:38:28 +0900
-Message-Id: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 20/23] gcc-plugins: always build plugins with C++
+Date: Sat, 17 Feb 2018 03:38:48 +0900
+Message-Id: <1518806331-7101-21-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592583929666456907?=
-X-GMAIL-MSGID: =?utf-8?q?1592583929666456907?=
+X-GMAIL-THRID: =?utf-8?q?1592583935376722462?=
+X-GMAIL-MSGID: =?utf-8?q?1592583935376722462?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-I brushed up the implementation in this version.
+If the target compiler is GCC 4.8 or newer, plugins are compiled with
+HOSTCXX.  Otherwise, gcc-plugin.sh will select HOSTCC or HOSTCXX.
 
-In the previous RFC, CC_HAS_ was described by using 'option shell=',
-like this:
+To simpily things, let's decide GCC 4.8 is the requirement for GCC
+pulgins.  With this, plugins are always built with HOSTCXX.  This is a
+feature of advanced users, so this requirement whould not be not a big
+issue.
 
-config CC_HAS_STACKPROTECTOR
-        bool
-        option shell="$CC -Werror -fstack-protector -c -x c /dev/null"
+Add 'depends on GCC_VERSION >= 40800' to GCC_PLUGINS, and remove the
+code that was needed to build plugins with HOSTCC.
 
-After I thought a bit more, the following syntax is more grammatical,
-and flexible.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-config CC_HAS_STACKPROTECTOR
-        bool
-        default $(shell $CC -Werror -fstack-protector -c -x c /dev/null)
+ arch/Kconfig                 |  1 +
+ scripts/Makefile.gcc-plugins | 11 +++--------
+ scripts/gcc-plugin.sh        | 38 +++-----------------------------------
+ scripts/gcc-plugins/Makefile | 15 ++++-----------
+ 4 files changed, 11 insertions(+), 54 deletions(-)
 
-This version supports cc-option, so it can be written as:
-
-config CC_HAS_STACKPROTECTOR
-        bool
-        default $(cc-option -fstack-protector)
-
-To support this in a clean way, I introduced a new concept 'function'
-like we see in Makefiles.
-
-$(shell ...) is a built-in function.  $(cc-option ...) is implemented
-as macro (user-defined function).
-
-I also try cleaning of stack-protector, gcc-plugins since the Makefile
-is so dirty.
-
-Current limitations:
-
-Dependency on outside scripts.
-  For example, scripts/gcc-x86_64-has-stack-protecter.sh is run from
-  Kconfig.  When the shell script is updated, should Kconfig be re-run
-  automatically?
-
-Inter-option dependency:
-  $(call cc-option,...) in Makefile accumulates added options to
-  KBUILD_CFLAGS, but it is difficult to do it in Kconfig.
-  If a compiler option check is dependent on another option,
-  this is a difficult case.  Let's see how significant it is.
-
-Functions are evaluated statically:
-  Functions are only expanded when parsing the Kconfig.  So, it can
-  not refelect user configuration.  If this is required, $(shell )
-  must be dynamically re-calculated depending on other symbols.
-  But, this is difficult, and may cause performance issue.
-
-
-
-Masahiro Yamada (22):
-  kbuild: remove kbuild cache
-  kbuild: remove CONFIG_CROSS_COMPILE support
-  kconfig: add xstrdup() helper
-  kconfig: set SYMBOL_AUTO to the symbol marked with defconfig_list
-  kconfig: move and rename sym_expand_string_value()
-  kconfig: reference environments directly and remove 'option env='
-    syntax
-  kconfig: add function support and implement 'shell' function
-  kconfig: add 'macro' keyword to support user-defined function
-  kconfig: add 'cc-option' macro
-  stack-protector: test compiler capability in Kconfig and drop AUTO
-    mode
-  kconfig: add 'shell-stdout' function
-  kconfig: replace $UNAME_RELEASE with function call
-  kconfig: expand environments/functions in (main)menu, comment, prompt
-  kconfig: show compiler version text in the top comment
-  kconfig: add CC_IS_GCC and GCC_VERSION
-  kconfig: add CC_IS_CLANG and CLANG_VERSION
-  gcov: remove CONFIG_GCOV_FORMAT_AUTODETECT
-  kcov: imply GCC_PLUGINS and GCC_PLUGIN_SANCOV instead of select'ing
-    them
-  gcc-plugins: always build plugins with C++
-  gcc-plugins: move GCC version check for PowerPC to Kconfig
-  gcc-plugins: test GCC plugin support in Kconfig
-  gcc-plugins: enable GCC_PLUGINS for COMPILE_TEST
-
-Sami Tolvanen (1):
-  kbuild: add clang-version.sh
-
- Documentation/kbuild/kconfig-language.txt |   8 -
- Kconfig                                   |   4 +-
- Makefile                                  | 103 ++----------
- arch/Kconfig                              |  43 +++--
- arch/powerpc/Kconfig                      |   2 +-
- arch/sh/Kconfig                           |   4 +-
- arch/sparc/Kconfig                        |   4 +-
- arch/tile/Kconfig                         |   2 +-
- arch/um/Kconfig.common                    |   4 -
- arch/x86/Kconfig                          |  12 +-
- arch/x86/um/Kconfig                       |   4 +-
- init/Kconfig                              |  44 +++---
- kernel/gcov/Kconfig                       |  18 +--
- kernel/gcov/Makefile                      |   2 -
- lib/Kconfig.debug                         |   7 +-
- scripts/Kbuild.include                    | 101 ++----------
- scripts/Makefile.gcc-plugins              |  95 ++++-------
- scripts/clang-version.sh                  |  31 ++++
- scripts/gcc-plugin.sh                     |  37 +----
- scripts/gcc-plugins/Makefile              |  15 +-
- scripts/gcc-x86_32-has-stack-protector.sh |   7 +-
- scripts/gcc-x86_64-has-stack-protector.sh |   5 -
- scripts/kconfig/confdata.c                |  33 +---
- scripts/kconfig/function.c                | 251 ++++++++++++++++++++++++++++++
- scripts/kconfig/kconf_id.c                |   2 +-
- scripts/kconfig/kxgettext.c               |   2 +-
- scripts/kconfig/lkc.h                     |   6 +-
- scripts/kconfig/lkc_proto.h               |   7 +-
- scripts/kconfig/menu.c                    |   6 +-
- scripts/kconfig/symbol.c                  | 139 +++--------------
- scripts/kconfig/util.c                    | 186 ++++++++++++++++++++--
- scripts/kconfig/zconf.l                   |  40 ++++-
- scripts/kconfig/zconf.y                   |  48 +++---
- 33 files changed, 687 insertions(+), 585 deletions(-)
- create mode 100755 scripts/clang-version.sh
- create mode 100644 scripts/kconfig/function.c
-
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 9b7a628..9bd4e1f 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -410,6 +410,7 @@ config HAVE_GCC_PLUGINS
+ menuconfig GCC_PLUGINS
+ 	bool "GCC plugins"
+ 	depends on HAVE_GCC_PLUGINS
++	depends on GCC_VERSION >= 40800
+ 	depends on !COMPILE_TEST
+ 	help
+ 	  GCC plugins are loadable modules that provide extra features to the
+diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
+index b2a95af..b0f9108 100644
+--- a/scripts/Makefile.gcc-plugins
++++ b/scripts/Makefile.gcc-plugins
+@@ -1,7 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ ifdef CONFIG_GCC_PLUGINS
+-  __PLUGINCC := $(call cc-ifversion, -ge, 0408, $(HOSTCXX), $(HOSTCC))
+-  PLUGINCC := $(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-plugin.sh "$(__PLUGINCC)" "$(HOSTCXX)" "$(CC)")
++  PLUGINCC := $(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-plugin.sh $(HOSTCXX) $(CC))
+ 
+   SANCOV_PLUGIN := -fplugin=$(objtree)/scripts/gcc-plugins/sancov_plugin.so
+ 
+@@ -65,12 +64,8 @@ ifdef CONFIG_GCC_PLUGINS
+ 	  @echo "Cannot use CONFIG_GCC_PLUGINS: plugin support on gcc <= 5.1 is buggy on powerpc, please upgrade to gcc 5.2 or newer" >&2 && exit 1
+         endif
+       endif
+-      ifeq ($(call cc-ifversion, -ge, 0405, y), y)
+-	$(Q)$(srctree)/scripts/gcc-plugin.sh --show-error "$(__PLUGINCC)" "$(HOSTCXX)" "$(CC)" || true
+-	@echo "Cannot use CONFIG_GCC_PLUGINS: your gcc installation does not support plugins, perhaps the necessary headers are missing?" >&2 && exit 1
+-      else
+-	@echo "Cannot use CONFIG_GCC_PLUGINS: your gcc version does not support plugins, you should upgrade it to at least gcc 4.5" >&2 && exit 1
+-      endif
++      $(Q)$(srctree)/scripts/gcc-plugin.sh --show-error $(HOSTCXX) $(CC) || true
++      @echo "Cannot use CONFIG_GCC_PLUGINS: your gcc installation does not support plugins, perhaps the necessary headers are missing?" >&2 && exit 1
+     endif
+   endif
+ endif
+diff --git a/scripts/gcc-plugin.sh b/scripts/gcc-plugin.sh
+index d3caefe..0edbdae 100755
+--- a/scripts/gcc-plugin.sh
++++ b/scripts/gcc-plugin.sh
+@@ -8,42 +8,10 @@ if [ "$1" = "--show-error" ] ; then
+ 	shift || true
+ fi
+ 
+-gccplugins_dir=$($3 -print-file-name=plugin)
+-plugincc=$($1 -E -x c++ - -o /dev/null -I"${srctree}"/gcc-plugins -I"${gccplugins_dir}"/include 2>&1 <<EOF
+-#include "gcc-common.h"
+-#if BUILDING_GCC_VERSION >= 4008 || defined(ENABLE_BUILD_WITH_CXX)
+-#warning $2 CXX
+-#else
+-#warning $1 CC
+-#endif
+-EOF
+-)
+-
+-if [ $? -ne 0 ]
+-then
+-	if [ -n "$SHOW_ERROR" ] ; then
+-		echo "${plugincc}" >&2
+-	fi
+-	exit 1
+-fi
+-
+-case "$plugincc" in
+-	*"$1 CC"*)
+-		echo "$1"
+-		exit 0
+-		;;
+-
+-	*"$2 CXX"*)
+-		# the c++ compiler needs another test, see below
+-		;;
+-
+-	*)
+-		exit 1
+-		;;
+-esac
++gccplugins_dir=$($2 -print-file-name=plugin)
+ 
+ # we need a c++ compiler that supports the designated initializer GNU extension
+-plugincc=$($2 -c -x c++ -std=gnu++98 - -fsyntax-only -I"${srctree}"/gcc-plugins -I"${gccplugins_dir}"/include 2>&1 <<EOF
++plugincc=$($1 -c -x c++ -std=gnu++98 - -fsyntax-only -I"${srctree}"/gcc-plugins -I"${gccplugins_dir}"/include 2>&1 <<EOF
+ #include "gcc-common.h"
+ class test {
+ public:
+@@ -56,7 +24,7 @@ EOF
+ 
+ if [ $? -eq 0 ]
+ then
+-	echo "$2"
++	echo "$1"
+ 	exit 0
+ fi
+ 
+diff --git a/scripts/gcc-plugins/Makefile b/scripts/gcc-plugins/Makefile
+index e2ff425..47d5f69 100644
+--- a/scripts/gcc-plugins/Makefile
++++ b/scripts/gcc-plugins/Makefile
+@@ -1,17 +1,10 @@
+ # SPDX-License-Identifier: GPL-2.0
+ GCC_PLUGINS_DIR := $(shell $(CC) -print-file-name=plugin)
+ 
+-ifeq ($(PLUGINCC),$(HOSTCC))
+-  HOSTLIBS := hostlibs
+-  HOST_EXTRACFLAGS += -I$(GCC_PLUGINS_DIR)/include -I$(src) -std=gnu99 -ggdb
+-  export HOST_EXTRACFLAGS
+-else
+-  HOSTLIBS := hostcxxlibs
+-  HOST_EXTRACXXFLAGS += -I$(GCC_PLUGINS_DIR)/include -I$(src) -std=gnu++98 -fno-rtti
+-  HOST_EXTRACXXFLAGS += -fno-exceptions -fasynchronous-unwind-tables -ggdb
+-  HOST_EXTRACXXFLAGS += -Wno-narrowing -Wno-unused-variable
+-  export HOST_EXTRACXXFLAGS
+-endif
++HOSTLIBS := hostcxxlibs
++HOST_EXTRACXXFLAGS += -I$(GCC_PLUGINS_DIR)/include -I$(src) -std=gnu++98 -fno-rtti
++HOST_EXTRACXXFLAGS += -fno-exceptions -fasynchronous-unwind-tables -ggdb
++HOST_EXTRACXXFLAGS += -Wno-narrowing -Wno-unused-variable
+ 
+ ifneq ($(CFLAGS_KCOV), $(SANCOV_PLUGIN))
+   GCC_PLUGIN := $(filter-out $(SANCOV_PLUGIN), $(GCC_PLUGIN))
 -- 
 2.7.4
