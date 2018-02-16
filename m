@@ -1,58 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750880AbeBPVpm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 16:45:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750763AbeBPVpk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 16:45:40 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 493F7217D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AH8x2271FfNU1aGVuHdWRQt4urbHkp2t7YFAhyjH2khUOBInmUD+vQKYFmUXDR8wIbwIEcDHCG6GmRwkvrbI8UKFhm8=
+        id S1750946AbeBPVpz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 16:45:55 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:40038 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750785AbeBPVpx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 16:45:53 -0500
+X-Google-Smtp-Source: AH8x226V883AZowph5bcKM/pHQVK91DsuLq+npb3aoNGhyyfxsXPGsLoBtTPPdY6QxL+IwdhC0y37akWgTDlz3By0Bc=
 MIME-Version: 1.0
-In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7B37942B@ORSMSX110.amr.corp.intel.com>
-References: <20180215182208.35003-1-joe.konno@linux.intel.com>
- <CAKv+Gu80pJ5tbGoJqBm8CCKrEZXdkE83c944383KbQ5jREUC0Q@mail.gmail.com>
- <1518814319.4419.10.camel@HansenPartnership.com> <3908561D78D1C84285E8C5FCA982C28F7B37942B@ORSMSX110.amr.corp.intel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Fri, 16 Feb 2018 21:45:19 +0000
-X-Gmail-Original-Message-ID: <CALCETrXD4qCwgnDcwnybUXzVk7zyJtzHC2xzLfcZvzrXvAB8PQ@mail.gmail.com>
-Message-ID: <CALCETrXD4qCwgnDcwnybUXzVk7zyJtzHC2xzLfcZvzrXvAB8PQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] efivars: reading variables can generate SMIs
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Joe Konno <joe.konno@linux.intel.com>,
-        Matthew Garrett <mjg59@google.com>, Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+In-Reply-To: <20180216183032.GA7439@bombadil.infradead.org>
+References: <1515496262-7533-1-git-send-email-wei.w.wang@intel.com>
+ <1515496262-7533-2-git-send-email-wei.w.wang@intel.com> <CAHp75Ve-1-TOVJUZ4anhwkkeq-RhpSg3EmN3N0r09rj6sFrQZQ@mail.gmail.com>
+ <20180216183032.GA7439@bombadil.infradead.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 16 Feb 2018 23:45:51 +0200
+Message-ID: <CAHp75Vd_tt0bV_OqAOwc=_uWrsF2zP9pMSbxPw_AxF_s9zj-pw@mail.gmail.com>
+Subject: Re: [PATCH v21 1/5] xbitmap: Introduce xbitmap
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Wei Wang <wei.w.wang@intel.com>, virtio-dev@lists.oasis-open.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeremy Kerr <jk@ozlabs.org>, Andi Kleen <ak@linux.intel.com>,
-        Benjamin Drung <benjamin.drung@profitbricks.com>,
-        Peter Jones <pjones@redhat.com>
+        qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>, mhocko@kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>, david@redhat.com,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        cornelia.huck@de.ibm.com, mgorman@techsingularity.net,
+        aarcange@redhat.com, amit.shah@redhat.com,
+        Paolo Bonzini <pbonzini@redhat.com>, liliang.opensource@gmail.com,
+        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
+        riel@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 9:09 PM, Luck, Tony <tony.luck@intel.com> wrote:
->> That said, I'm not sure how many non-root users run the toolkit to
->> extract their EFI certificates or check on the secure boot status of
->> the system, but I suspect it might be non-zero: I can see the tinfoil
->> hat people wanting at least to check the secure boot status when they
->> log in.
+On Fri, Feb 16, 2018 at 8:30 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Fri, Feb 16, 2018 at 07:44:50PM +0200, Andy Shevchenko wrote:
+>> On Tue, Jan 9, 2018 at 1:10 PM, Wei Wang <wei.w.wang@intel.com> wrote:
+>> > From: Matthew Wilcox <mawilcox@microsoft.com>
+>> >
+>> > The eXtensible Bitmap is a sparse bitmap representation which is
+>> > efficient for set bits which tend to cluster. It supports up to
+>> > 'unsigned long' worth of bits.
+>>
+>> >  lib/xbitmap.c                            | 444 +++++++++++++++++++++++++++++++
+>>
+>> Please, split tests to a separate module.
 >
-> Another fix option might be to rate limit EFI calls for non-root users (on X86
-> since only we have the SMI problem). That would:
+> Hah, I just did this two days ago!  I didn't publish it yet, but I also made
+> it compile both in userspace and as a kernel module.
 >
-> 1) Avoid using memory to cache all the variables
-> 2) Catch any other places where non-root users can call EFI
+> It's the top two commits here:
+>
+> http://git.infradead.org/users/willy/linux-dax.git/shortlog/refs/heads/xarray-2018-02-12
+>
 
-I'm going to go out on a limb and suggest that the fact that
-unprivileged users can read efi variables at all is a mistake
-regardless of SMI issues.
+Thanks!
 
-Also, chmod() just shouldn't work on efi variables, and the mode
-passed to creat() should be ignored.  After all, there's no backing
-store for the mode.
+> Note this is a complete rewrite compared to the version presented here; it
+> sits on top of the XArray and no longer has a preload interface.  It has a
+> superset of the IDA functionality.
+
+Noted.
+
+Now, the question about test case. Why do you heavily use BUG_ON?
+Isn't resulting statistics enough?
+
+See how other lib/test_* modules do.
+
+-- 
+With Best Regards,
+Andy Shevchenko
