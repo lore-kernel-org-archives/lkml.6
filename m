@@ -1,74 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933241AbeBPKIl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 05:08:41 -0500
-Received: from mout.web.de ([212.227.17.12]:56831 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933129AbeBPKIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 05:08:37 -0500
-To: linux-ide@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tejun Heo <tj@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] pata_samsung_cf: Delete an error message for a failed memory
- allocation in pata_s3c_probe()
-Message-ID: <b757fb06-dde6-b1f6-77fa-f5301fb6fec1@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 11:08:18 +0100
+        id S933279AbeBPKIz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 05:08:55 -0500
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:55298 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933129AbeBPKIw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 05:08:52 -0500
+X-Google-Smtp-Source: AH8x226Ey9Q0aXEmPPHD9JEBMRfwEB8a4M8HdpAH9iD4+DW1EQNl9nlw4bo2Y5RbwNIoRE69Bz3kbw==
+Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
+ CPUs
+To: David Woodhouse <dwmw2@infradead.org>, tglx@linutronix.de,
+        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, arjan.van.de.ven@intel.com,
+        dave.hansen@intel.com
+Cc: Ingo Molnar <mingo@kernel.org>
+References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
+ <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
+ <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
+ <1518509708.12890.33.camel@infradead.org>
+ <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com>
+ <1518517262.12890.43.camel@infradead.org>
+ <1518518198.12890.48.camel@infradead.org>
+ <02bd3fdd-1b73-6cab-fb09-38ba933396bd@redhat.com>
+ <1518775136.7876.13.camel@infradead.org>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <75287047-77a0-e0ff-c2e8-61c81641251e@redhat.com>
+Date: Fri, 16 Feb 2018 11:08:49 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.5.2
 MIME-Version: 1.0
+In-Reply-To: <1518775136.7876.13.camel@infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:+Z4jMm81e+j42T8U+BHczGAqXMwmB+4lyu/Vxiel1O1wyD5GH1q
- yjixXdQR/96HQDxo/ITyGw2IuOC4rXumY040BeTFkpQQZwB56YsEjItzvBNJo20PkAWbG3C
- I7tKFJl2/oJz7RwrExqwoZs2aVepZyGF87sXyoL8hRPqcbLpv4Oj401/bpP3RIkYWDBg6qa
- 7kSjY9x9ejrOx6pNeCHrA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:9/XEzPljOqw=:8c2EtUrYOECkL41R42W6XE
- 0F3qELBMnVgoXezxQsRz92c86DK1r1cUU6A5FF6cEXvEqFm3kEthLgft/5Kl8KsjK2SuFjqOA
- eacO3nm6wBHAce/vujVMWZSCcW87luGf+skN9Qzv0GcaORvaA6J/y05/2b6zCYIDTc+Wq4nrf
- apE1qyI6UDF+JyQy/OsrNYZjEYhpIWcG30Rc/4acRGsL8bbWoIXfWajl7gCKqgdUaxJGKhHHH
- P5ZAFworMLke3e39Vog6cnSHaLY2zUx67V/A7J0DRcny9u+JAu4N0ZnpKocP1X62QuKQAdEoc
- Iav8G6LODLw6veuPjl+5gG2MOYgEIaS9JIt0y2bbW7VSbs6QCYfpK82hYphVppVL1zaxcasnN
- QkeK84oAoqxqCWOCuMkzug2IFJfJU/2j0I1itCXMxF2Sz3VQA7xYg/lmKaL2j6SbUYpOSROpF
- dYNnrGzi4amgzjwxGlVeMlR/ksIZFLPGgKpWbgC/uYweKSjJHwx+ewUh1ySXLm/J0J25PAeIC
- IRlKPXNYvf4mibOskNC9m9YnK3tIMUEUgYLHcUgHzBVm/4IzsQBzvc5AnHBWSJkX9jjVpghb/
- QxIMWYw7zL9sXt/q0X3fyfmPXWaawTlpMjU9RpSxZqE14CMabjsOaUHxN54PChXupSuvevE1g
- qDR7WC66r9rxxLZ+A+JqiiJLx3TrD8GNXhmEsaslWrjqwhgbYTMwO35DjyhxW2CEsV7RSKt+t
- tB9zOF78YvkM2QdQy2JNqpXCA2hRq7U5TGzGiAnw6K/LTtFjes5BmuCWb2pPGoyZn5B3wKT1S
- a6iyKZpcV1EeQTsx6KDC+xhevOXF033CceKjD0op3S/ibw48Hg=
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 10:55:51 +0100
+On 16/02/2018 10:58, David Woodhouse wrote:
+> On Tue, 2018-02-13 at 11:41 +0100, Paolo Bonzini wrote:
+> 
+>> On 13/02/2018 11:36, David Woodhouse wrote:
+>>>>> - if the VM has IBRS_ALL, pass through the MSR when it is zero and
+>>>>> intercept writes when it is one (no writes should happen)
+>>>>>  
+>>>>> - if the VM doesn't have IBRS_ALL, do as we are doing now, independent
+>>>>> of what the host spectre_v2_ibrs_all() setting is.
+>>>>
+>>>> We end up having to turn IBRS on again on vmexit then, taking care that
+>>>> no conditional branch can go round it. So that becomes an
+>>>> *unconditional* wrmsr or lfence in the vmexit path. We really don't
+>>>> want that.
+>>>>
+>>> Note that being able to keep it simple in KVM was basically what made
+>>> the difference between me tolerating IBRS_ALL as Intel currently define
+>>> it, and throwing my toys out of the pram (as I had done in the first
+>>> iterations of this patch).
+>>  
+>> You have my vote. :) 
+> 
+> I was taking that as assent to the patch... could I trouble you for an
+> explicit ack, please?
 
-Omit an extra message for a memory allocation failure in this function.
+No, it's a vote for throwing the toys out of the pram (or running away
+with the ball, if you prefer).
 
-This issue was detected by using the Coccinelle software.
+Unfortunately, if you want to have a higher-performance mode for
+IBRS_ALL that avoids rdmsr on vmexit, you have to do it as sketched above.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/ata/pata_samsung_cf.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Alternatively, if IBRS_ALL is 1, and you don't care about migration
+between machines that have IBRS_ALL and those that don't, the host can
+simply not enable the SPEC_CTRL CPUID bit in the guest, and instead use
+the AMD IBPB flag only.  Need to check if Windows obeys the AMD flag on
+Intel machines (or in general) though.
 
-diff --git a/drivers/ata/pata_samsung_cf.c b/drivers/ata/pata_samsung_cf.c
-index 50801c40b029..bb96dc35950d 100644
---- a/drivers/ata/pata_samsung_cf.c
-+++ b/drivers/ata/pata_samsung_cf.c
-@@ -505,10 +505,8 @@ static int __init pata_s3c_probe(struct platform_device *pdev)
- 	cpu_type = platform_get_device_id(pdev)->driver_data;
- 
- 	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
--	if (!info) {
--		dev_err(dev, "failed to allocate memory for device data\n");
-+	if (!info)
- 		return -ENOMEM;
--	}
- 
- 	info->irq = platform_get_irq(pdev, 0);
- 
--- 
-2.16.1
+Paolo
