@@ -1,114 +1,70 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-268172-1518791854-2-18030047904046007946
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518791854; b=QZNTyKgprWFFXFA6OE9XwOUv/yLcqMkMMp8FEIZlG5wnd/d
-    krXL1Iz4Eq6Yi9N+Crk1alAZHHpaBbYO6PU06ZNjME0jOX00vmClAX35w//ULp1c
-    Marg7z4dc20DdFsvPveuQqMq1nw7TOnkUaQHj8lFzzkEQRlofc+GPzMPXTXvw9cl
-    mM4uQH70MTcRa97B2NUJndXsAiUDFloPyi/gyUaE1A5zpDL/Vdi5SL/jI3pKpN35
-    FckXc8obZZtWdD9xLFAsnTQNmaBciFRVSSbloVX2HWMfSM0ISJf8scuohcQapsfd
-    QevyWXn6jxzhKl7on9SpgbBi1kTEuLjSKJUp3yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1518791854; bh=8
-    9iv/m2smh6fAk9Ryqov+bFhI1AQma/lZzxHVkUvjTs=; b=EEr28AKH+VxksPJYK
-    i0SL5OMTTxT2TS724O9Hyp34bcnqR0lxQ14CwYzKgpYJr2Rim/ZFkHM8k5ADO45S
-    HMB1lLUdEzF667jQb/ZqE2S5xNDEP9sdHIWvP0m74yV9vqBPwgXiLrxm88Ari8oT
-    j9S138D9/tH5/yZTvr39eWLxZzrEG4vJrevjRMpEkcypUHMvJATx57m8g92i6J86
-    P6HGRGvKOaktKITTkjLyn9LpA/OzMydgDHEmEUtH1on8jsLYRSJvnojxMTTbnEK+
-    j9dWZtv8oAG1GxGP+q6HJJfJLhS5VGG0+zXZxG8G6NSClC2L2pFJQRajYT8Hr3o1
-    +WL5A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Fri, 16 Feb 2018 15:36:06 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Yash Omer <yashomer0007@gmail.com>
+Return-Path: <joe@perches.com>
+X-Google-Smtp-Source: AH8x226gkUvEUNK61NntHyyNXYAjOudN8QXCHqg0AwM4FpsVs3NcM92Ok0nCFfP9Mpolnup/Tgrc
+ARC-Seal: i=1; a=rsa-sha256; t=1518799580; cv=none;
+        d=google.com; s=arc-20160816;
+        b=yJ68KpjNPm+SplLUadm0zFQp1mHh+4Y1rLPgCkFCb1io3xLNUETlf6KSEewZHXANV8
+         oOUbX4HXzbVlekwD8rbV4h1RC5JKKdKa2GqEDyic7A7k9yB1p5AdskP8z9Z69pcuy0rp
+         1+hZUeiYAJ2povcg17WeCl6Hs1ojywSnGc2KT+foX9MOV9+WIePq7ZIuPIkj8MIh8Lja
+         u+dp/4NG6uy3WqDZx5178Vbb+Ssby6hWqm+MRKMQv1PljrwTRzNbeYJxDQVaV2QD6dhx
+         ORgVRElPBTjEQ9ih/GerpFyeNLY1oa1uTH0SvgMU6Pd+B9dgdkkvIjq2Vux2YDKHSe97
+         GNkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:arc-authentication-results;
+        bh=A3IvSx5ZhFJNFVDdvtNRIOpaQdUSx7tE4qxOv1E/WfA=;
+        b=bM7JGnpiMHPy/3UnqN5u1VHwNkJUsFVxUx/C1kohTrUGPzn/Dfu1URRRvgqwT9ZxYI
+         iuFKXqYf1XEZJwekfx9mlPsTMIoqmfqlOb/XTGWKFIsQDWj1l3bpTcb/RQJI5NSxQpiv
+         dB3i9lfdpLXoTl9XGzpss1MhDm0Y8DXylaSAf1rkudj747zYZc93HukmfABmiXIeHb3C
+         YjGojplu3D+7155hvSSI//TQCMGo5udpzblvH2Do9Ba6i1wGTdGWpWETcd/VjYZL8xsk
+         0IhfxlQt7DpHVONaHeFiyJU2wxn9YAPazTsTEBntvKvZY4G+/6Pyvef9pVqI+6Ws2czn
+         E7OA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 216.40.44.104 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 216.40.44.104 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:541:599:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3870:3871:4250:4321:5007:6119:7903:10004:10400:10848:11232:11473:11658:11914:12043:12438:12740:12760:12895:13069:13255:13311:13357:13439:14181:14659:21080:21212:21611:21627:30012:30054:30062:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: soap60_5418a958cda3b
+X-Filterd-Recvd-Size: 1712
+Message-ID: <1518799576.13169.10.camel@perches.com>
 Subject: Re: [PATCH] Staging: wlan-ng: Fix Alignment should match open
  paranthesis in prism2mgmt.c
-Message-ID: <20180216143606.GA28713@kroah.com>
-References: <20180215184836.14897-1-yashomer0007@gmail.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180215184836.14897-1-yashomer0007@gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+From: Joe Perches <joe@perches.com>
+To: Greg KH <gregkh@linuxfoundation.org>, Yash Omer <yashomer0007@gmail.com>
 Cc: devel@driverdev.osuosl.org, driverdev-devel@linuxdriverproject.org,
- linux-kernel@vger.kernel.org, dan.carpenter@oracle.com
-Content-Type: text/plain; charset="us-ascii"
+	linux-kernel@vger.kernel.org, dan.carpenter@oracle.com
+Date: Fri, 16 Feb 2018 08:46:16 -0800
+In-Reply-To: <20180216143606.GA28713@kroah.com>
+References: <20180215184836.14897-1-yashomer0007@gmail.com>
+	 <20180216143606.GA28713@kroah.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592493897702519482?=
+X-GMAIL-MSGID: =?utf-8?q?1592576788823634311?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 16, 2018 at 12:18:36AM +0530, Yash Omer wrote:
-> This is patch fixes up a matching paranthesis alignment issue found by checkpatch.pl script.
+On Fri, 2018-02-16 at 15:36 +0100, Greg KH wrote:
+> On Fri, Feb 16, 2018 at 12:18:36AM +0530, Yash Omer wrote:
+> > This is patch fixes up a matching paranthesis alignment issue found by checkpatch.pl script.
+[]
+> > diff --git a/drivers/staging/wlan-ng/prism2mgmt.c b/drivers/staging/wlan-ng/prism2mgmt.c
+[]
+> > @@ -264,8 +264,8 @@ int prism2mgmt_scan(struct wlandevice *wlandev, void *msgp)
+> >  			goto exit;
+> >  		}
+> >  		/* ibss options */
+> > -		result = hfa384x_drvr_setconfig16(hw,
+> > -					HFA384x_RID_CREATEIBSS,
+> > +		result = hfa384x_drvr_setconfig16
+> > +					(hw, HFA384x_RID_CREATEIBSS,
 > 
-> Signed-off-by: Yash Omer <yashomer0007@gmail.com>
-> ---
->  drivers/staging/wlan-ng/prism2mgmt.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/wlan-ng/prism2mgmt.c b/drivers/staging/wlan-ng/prism2mgmt.c
-> index 5be1af20d2d4..974a7572fafc 100644
-> --- a/drivers/staging/wlan-ng/prism2mgmt.c
-> +++ b/drivers/staging/wlan-ng/prism2mgmt.c
-> @@ -264,8 +264,8 @@ int prism2mgmt_scan(struct wlandevice *wlandev, void *msgp)
->  			goto exit;
->  		}
->  		/* ibss options */
-> -		result = hfa384x_drvr_setconfig16(hw,
-> -					HFA384x_RID_CREATEIBSS,
-> +		result = hfa384x_drvr_setconfig16
-> +					(hw, HFA384x_RID_CREATEIBSS,
+> The original code is just fine, why is checkpatch complaining about
+> this?
 
-The original code is just fine, why is checkpatch complaining about
-this?
+lack of argument alignment to parentheses.
 
-thanks,
-
-greg k-h
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Maybe wlan-ng should be marked obsolete in MAINTAINERS.
