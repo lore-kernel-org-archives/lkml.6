@@ -1,120 +1,489 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932366AbeBPJpb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 04:45:31 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:51536 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932349AbeBPJp2 (ORCPT
+        id S932388AbeBPJpl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 04:45:41 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:54465 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932349AbeBPJpj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 04:45:28 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180216094526epoutp02695374cc7eaa68523753bfe40320dc74~TxTQYICUz0556605566epoutp027
-X-AuditID: b6c32a49-00dff70000001122-d0-5a86a83532c5
-From: t.vivek@samsung.com
-To: jack@suse.cz, amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: pankaj.m@samsung.com, Vivek Trivedi <t.vivek@samsung.com>,
-        Kunal Shubham <k.shubham@samsung.com>
-Subject: [PATCH] fanotify: allow freeze on suspend when waiting for response
- from userspace
-Date: Fri, 16 Feb 2018 15:14:40 +0530
-Message-Id: <1518774280-38090-1-git-send-email-t.vivek@samsung.com>
-X-Mailer: git-send-email 1.9.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHKsWRmVeSWpSXmKPExsWy7bCmuq7pirYog/WPzS0urFvNaDF7ejOT
-        xcFlM5kt9uw9yWJxedccNot7b7YyWbzs28jmwO6xc9Zddo++LasYPc4sOMLu8XmTXABLVKpN
-        RmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtAFSgpliTml
-        QKGAxOJiJX07m6L80pJUhYz84hJbpWhDQyM9QwNzPSMjIz0T01grI1OgkoTUjO8L9jAWvBaq
-        OHn4P2sD4waBLkZODgkBE4lF8y4zdjFycQgJ7GaU2LX9LxuE84lR4uTdH1CZb4wST++tYYRp
-        mf6lgwkisZdRYs7f50wgCSGBL4wS70FsDg42AUmJO7cVQMIiAskSl65/ZwGxmQXSJH6cmQI2
-        R1ggVuLjjGOsIDaLgKrEw/872EBsXgFniZsvv7FA7JKTOHlsMivILgmBv6wS+649ZIJIuEic
-        ftjBDmELS7w6vgXKlpL4/G4vG0TDZEaJiZM+sEM46xklll59wAxRZS/x4MZRdpBLmQU0Jdbv
-        0gcxJQRsJQ70SEMcyifR+/sJE0SYV6KjTQiiUVFi4d4prBBhcYmepUEQpodE66NUiApHifbH
-        EN8KAX34qucM0wRGuVkImxYwMq5ilEwtKM5NTy02LTDMSy3XK07MLS7NS9dLzs/dxAhOW1qe
-        OxhnnfM5xCjAwajEw7uhtzVKiDWxrLgy9xCjBAezkgjvreltUUK8KYmVValF+fFFpTmpxYcY
-        TYFBOZFZSjQ5H5hS80riDU0sDUzMzMwNDQwsTZTEeR0DXaKEBNITS1KzU1MLUotg+pg4OKUa
-        GPmqNs/+kJTZu9M7KGaCWOR55eVv558zFX60+MckwdCc3H/Rz5qXSB3YbzQrcmvejTtKpsv/
-        OMauvPxA1mBL34XpX3msOx4fe7E2PS6Z+R7Xv49tW31522b59qyuu7XZMe3BN/cNlkc/Z/pG
-        xDIqzdIos/5S9NFQYfknwxXiSd+Ew4On2q552KHEUpyRaKjFXFScCADl68kYcQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphluLIzCtJLcpLzFFi42LZdlhJTtd0RVuUwZ9+EYsL61YzWsye3sxk
-        cXDZTGaLPXtPslhc3jWHzeLem61MFi/7NrI5sHvsnHWX3aNvyypGjzMLjrB7fN4kF8ASxWWT
-        kpqTWZZapG+XwJXxfcEexoLXQhUnD/9nbWDcINDFyMkhIWAiMf1LB1MXIxeHkMBuRonrhzcy
-        QyTEJe7OvsgOYQtLrPz3nB2i6BOjxPm/C9m6GDk42AQkJe7cVgCpERFIlzhyuw0szCyQIbF0
-        cyKIKSwQLXHzQzBIBYuAqsTD/zvYQGxeAWeJmy+/sUBMl5M4eWwy6wRGngWMDKsYJVMLinPT
-        c4sNCwzzUsv1ihNzi0vz0vWS83M3MYLDRktzB+PlJfGHGAU4GJV4eDf0tkYJsSaWFVfmHmKU
-        4GBWEuG9Nb0tSog3JbGyKrUoP76oNCe1+BCjNAeLkjjv07xjkUIC6YklqdmpqQWpRTBZJg5O
-        qQZGqeZ1P1cb6j35tH9SiQu/9pVLUxj6xMRLO35IdKefnV/lbxb6qqxq4Xzz/++KfzUqWAr2
-        /17n0FtX21N06VR+7Ppzuq1Zq+4/3G32Y8rLsF1pByUYK/p1PLy2dD/VNpynPcHx39sZmdYL
-        50rt65h0tGtxwROfFI6enfffTBGLuTFXR3naUe4eJZbijERDLeai4kQASUIsAhcCAAA=
-X-CMS-MailID: 20180216094525epcas5p1e52ea815ed7dfb7516578384dedcf5ae
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180216094525epcas5p1e52ea815ed7dfb7516578384dedcf5ae
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180216094525epcas5p1e52ea815ed7dfb7516578384dedcf5ae
-X-RootMTR: 20180216094525epcas5p1e52ea815ed7dfb7516578384dedcf5ae
-References: <CGME20180216094525epcas5p1e52ea815ed7dfb7516578384dedcf5ae@epcas5p1.samsung.com>
+        Fri, 16 Feb 2018 04:45:39 -0500
+Date: Fri, 16 Feb 2018 01:45:29 -0800
+From: tip-bot for Hendrik Brueckner <tipbot@zytor.com>
+Message-ID: <tip-q1lg0nvhha1tk39ri9aqalcb@git.kernel.org>
+Cc: acme@redhat.com, hpa@zytor.com, brueckner@linux.vnet.ibm.com,
+        mingo@kernel.org, tmricht@linux.vnet.ibm.com, jolsa@redhat.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, mpetlan@redhat.com
+Reply-To: acme@redhat.com, brueckner@linux.vnet.ibm.com, hpa@zytor.com,
+        mpetlan@redhat.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        jolsa@redhat.com, tmricht@linux.vnet.ibm.com, mingo@kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] Revert "tools include s390: Grab a copy of
+ arch/s390/include/uapi/asm/unistd.h"
+Git-Commit-ID: f1d0b4cde922863004ce3f5f39e8662cc0686c96
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vivek Trivedi <t.vivek@samsung.com>
+Commit-ID:  f1d0b4cde922863004ce3f5f39e8662cc0686c96
+Gitweb:     https://git.kernel.org/tip/f1d0b4cde922863004ce3f5f39e8662cc0686c96
+Author:     Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+AuthorDate: Thu, 8 Feb 2018 12:47:48 +0100
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 15 Feb 2018 10:06:15 -0300
 
-If fanotify userspace response server thread is frozen first,
-it may fail to send response from userspace to kernel space listener.
-In this scenario, fanotify response listener will never get response
-from userepace and fail to suspend.
+Revert "tools include s390: Grab a copy of arch/s390/include/uapi/asm/unistd.h"
 
-Use freeze-friendly wait API to handle this issue.
+This reverts commit f120c7b187e6c418238710b48723ce141f467543 which is no
+longer required with the introduction of a syscall.tbl on s390.
 
-Same problem was reported here:
-https://bbs.archlinux.org/viewtopic.php?id=232270
-
-Freezing of tasks failed after 20.005 seconds
-(1 tasks refusing to freeze, wq_busy=0)
-
-Backtrace:
-[<c0582f80>] (__schedule) from [<c05835d0>] (schedule+0x4c/0xa4)
-[<c0583584>] (schedule) from [<c01cb648>] (fanotify_handle_event+0x1c8/0x218)
-[<c01cb480>] (fanotify_handle_event) from [<c01c8238>] (fsnotify+0x17c/0x38c)
-[<c01c80bc>] (fsnotify) from [<c02676dc>] (security_file_open+0x88/0x8c)
-[<c0267654>] (security_file_open) from [<c01854b0>] (do_dentry_open+0xc0/0x338)
-[<c01853f0>] (do_dentry_open) from [<c0185a38>] (vfs_open+0x54/0x58)
-[<c01859e4>] (vfs_open) from [<c0195480>] (do_last.isra.10+0x45c/0xcf8)
-[<c0195024>] (do_last.isra.10) from [<c0196140>] (path_openat+0x424/0x600)
-[<c0195d1c>] (path_openat) from [<c0197498>] (do_filp_open+0x3c/0x98)
-[<c019745c>] (do_filp_open) from [<c0186b44>] (do_sys_open+0x120/0x1e4)
-[<c0186a24>] (do_sys_open) from [<c0186c30>] (SyS_open+0x28/0x2c)
-[<c0186c08>] (SyS_open) from [<c0010200>] (__sys_trace_return+0x0/0x20)
-
-Signed-off-by: Kunal Shubham <k.shubham@samsung.com>
-Signed-off-by: Vivek Trivedi <t.vivek@samsung.com>
+Signed-off-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: linux-s390@vger.kernel.org
+LPU-Reference: 1518090470-2899-2-git-send-email-brueckner@linux.vnet.ibm.com
+Link: https://lkml.kernel.org/n/tip-q1lg0nvhha1tk39ri9aqalcb@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- fs/notify/fanotify/fanotify.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/arch/s390/include/uapi/asm/unistd.h | 412 ------------------------------
+ tools/perf/check-headers.sh               |   1 -
+ 2 files changed, 413 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 6702a6a..1d65899 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -11,6 +11,7 @@
- #include <linux/types.h>
- #include <linux/wait.h>
- #include <linux/audit.h>
-+#include <linux/freezer.h>
- 
- #include "fanotify.h"
- 
-@@ -63,7 +64,9 @@ static int fanotify_get_response(struct fsnotify_group *group,
- 
- 	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
- 
--	wait_event(group->fanotify_data.access_waitq, event->response);
-+	while (!event->response)
-+		wait_event_freezable(group->fanotify_data.access_waitq,
-+				     event->response);
- 
- 	/* userspace responded, convert to something usable */
- 	switch (event->response & ~FAN_AUDIT) {
--- 
-1.9.1
+diff --git a/tools/arch/s390/include/uapi/asm/unistd.h b/tools/arch/s390/include/uapi/asm/unistd.h
+deleted file mode 100644
+index 7251209..0000000
+--- a/tools/arch/s390/include/uapi/asm/unistd.h
++++ /dev/null
+@@ -1,412 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-/*
+- *  S390 version
+- *
+- *  Derived from "include/asm-i386/unistd.h"
+- */
+-
+-#ifndef _UAPI_ASM_S390_UNISTD_H_
+-#define _UAPI_ASM_S390_UNISTD_H_
+-
+-/*
+- * This file contains the system call numbers.
+- */
+-
+-#define __NR_exit                 1
+-#define __NR_fork                 2
+-#define __NR_read                 3
+-#define __NR_write                4
+-#define __NR_open                 5
+-#define __NR_close                6
+-#define __NR_restart_syscall	  7
+-#define __NR_creat                8
+-#define __NR_link                 9
+-#define __NR_unlink              10
+-#define __NR_execve              11
+-#define __NR_chdir               12
+-#define __NR_mknod               14
+-#define __NR_chmod               15
+-#define __NR_lseek               19
+-#define __NR_getpid              20
+-#define __NR_mount               21
+-#define __NR_umount              22
+-#define __NR_ptrace              26
+-#define __NR_alarm               27
+-#define __NR_pause               29
+-#define __NR_utime               30
+-#define __NR_access              33
+-#define __NR_nice                34
+-#define __NR_sync                36
+-#define __NR_kill                37
+-#define __NR_rename              38
+-#define __NR_mkdir               39
+-#define __NR_rmdir               40
+-#define __NR_dup                 41
+-#define __NR_pipe                42
+-#define __NR_times               43
+-#define __NR_brk                 45
+-#define __NR_signal              48
+-#define __NR_acct                51
+-#define __NR_umount2             52
+-#define __NR_ioctl               54
+-#define __NR_fcntl               55
+-#define __NR_setpgid             57
+-#define __NR_umask               60
+-#define __NR_chroot              61
+-#define __NR_ustat               62
+-#define __NR_dup2                63
+-#define __NR_getppid             64
+-#define __NR_getpgrp             65
+-#define __NR_setsid              66
+-#define __NR_sigaction           67
+-#define __NR_sigsuspend          72
+-#define __NR_sigpending          73
+-#define __NR_sethostname         74
+-#define __NR_setrlimit           75
+-#define __NR_getrusage           77
+-#define __NR_gettimeofday        78
+-#define __NR_settimeofday        79
+-#define __NR_symlink             83
+-#define __NR_readlink            85
+-#define __NR_uselib              86
+-#define __NR_swapon              87
+-#define __NR_reboot              88
+-#define __NR_readdir             89
+-#define __NR_mmap                90
+-#define __NR_munmap              91
+-#define __NR_truncate            92
+-#define __NR_ftruncate           93
+-#define __NR_fchmod              94
+-#define __NR_getpriority         96
+-#define __NR_setpriority         97
+-#define __NR_statfs              99
+-#define __NR_fstatfs            100
+-#define __NR_socketcall         102
+-#define __NR_syslog             103
+-#define __NR_setitimer          104
+-#define __NR_getitimer          105
+-#define __NR_stat               106
+-#define __NR_lstat              107
+-#define __NR_fstat              108
+-#define __NR_lookup_dcookie     110
+-#define __NR_vhangup            111
+-#define __NR_idle               112
+-#define __NR_wait4              114
+-#define __NR_swapoff            115
+-#define __NR_sysinfo            116
+-#define __NR_ipc                117
+-#define __NR_fsync              118
+-#define __NR_sigreturn          119
+-#define __NR_clone              120
+-#define __NR_setdomainname      121
+-#define __NR_uname              122
+-#define __NR_adjtimex           124
+-#define __NR_mprotect           125
+-#define __NR_sigprocmask        126
+-#define __NR_create_module      127
+-#define __NR_init_module        128
+-#define __NR_delete_module      129
+-#define __NR_get_kernel_syms    130
+-#define __NR_quotactl           131
+-#define __NR_getpgid            132
+-#define __NR_fchdir             133
+-#define __NR_bdflush            134
+-#define __NR_sysfs              135
+-#define __NR_personality        136
+-#define __NR_afs_syscall        137 /* Syscall for Andrew File System */
+-#define __NR_getdents           141
+-#define __NR_flock              143
+-#define __NR_msync              144
+-#define __NR_readv              145
+-#define __NR_writev             146
+-#define __NR_getsid             147
+-#define __NR_fdatasync          148
+-#define __NR__sysctl            149
+-#define __NR_mlock              150
+-#define __NR_munlock            151
+-#define __NR_mlockall           152
+-#define __NR_munlockall         153
+-#define __NR_sched_setparam             154
+-#define __NR_sched_getparam             155
+-#define __NR_sched_setscheduler         156
+-#define __NR_sched_getscheduler         157
+-#define __NR_sched_yield                158
+-#define __NR_sched_get_priority_max     159
+-#define __NR_sched_get_priority_min     160
+-#define __NR_sched_rr_get_interval      161
+-#define __NR_nanosleep          162
+-#define __NR_mremap             163
+-#define __NR_query_module       167
+-#define __NR_poll               168
+-#define __NR_nfsservctl         169
+-#define __NR_prctl              172
+-#define __NR_rt_sigreturn       173
+-#define __NR_rt_sigaction       174
+-#define __NR_rt_sigprocmask     175
+-#define __NR_rt_sigpending      176
+-#define __NR_rt_sigtimedwait    177
+-#define __NR_rt_sigqueueinfo    178
+-#define __NR_rt_sigsuspend      179
+-#define __NR_pread64            180
+-#define __NR_pwrite64           181
+-#define __NR_getcwd             183
+-#define __NR_capget             184
+-#define __NR_capset             185
+-#define __NR_sigaltstack        186
+-#define __NR_sendfile           187
+-#define __NR_getpmsg		188
+-#define __NR_putpmsg		189
+-#define __NR_vfork		190
+-#define __NR_pivot_root         217
+-#define __NR_mincore            218
+-#define __NR_madvise            219
+-#define __NR_getdents64		220
+-#define __NR_readahead		222
+-#define __NR_setxattr		224
+-#define __NR_lsetxattr		225
+-#define __NR_fsetxattr		226
+-#define __NR_getxattr		227
+-#define __NR_lgetxattr		228
+-#define __NR_fgetxattr		229
+-#define __NR_listxattr		230
+-#define __NR_llistxattr		231
+-#define __NR_flistxattr		232
+-#define __NR_removexattr	233
+-#define __NR_lremovexattr	234
+-#define __NR_fremovexattr	235
+-#define __NR_gettid		236
+-#define __NR_tkill		237
+-#define __NR_futex		238
+-#define __NR_sched_setaffinity	239
+-#define __NR_sched_getaffinity	240
+-#define __NR_tgkill		241
+-/* Number 242 is reserved for tux */
+-#define __NR_io_setup		243
+-#define __NR_io_destroy		244
+-#define __NR_io_getevents	245
+-#define __NR_io_submit		246
+-#define __NR_io_cancel		247
+-#define __NR_exit_group		248
+-#define __NR_epoll_create	249
+-#define __NR_epoll_ctl		250
+-#define __NR_epoll_wait		251
+-#define __NR_set_tid_address	252
+-#define __NR_fadvise64		253
+-#define __NR_timer_create	254
+-#define __NR_timer_settime	255
+-#define __NR_timer_gettime	256
+-#define __NR_timer_getoverrun	257
+-#define __NR_timer_delete	258
+-#define __NR_clock_settime	259
+-#define __NR_clock_gettime	260
+-#define __NR_clock_getres	261
+-#define __NR_clock_nanosleep	262
+-/* Number 263 is reserved for vserver */
+-#define __NR_statfs64		265
+-#define __NR_fstatfs64		266
+-#define __NR_remap_file_pages	267
+-#define __NR_mbind		268
+-#define __NR_get_mempolicy	269
+-#define __NR_set_mempolicy	270
+-#define __NR_mq_open		271
+-#define __NR_mq_unlink		272
+-#define __NR_mq_timedsend	273
+-#define __NR_mq_timedreceive	274
+-#define __NR_mq_notify		275
+-#define __NR_mq_getsetattr	276
+-#define __NR_kexec_load		277
+-#define __NR_add_key		278
+-#define __NR_request_key	279
+-#define __NR_keyctl		280
+-#define __NR_waitid		281
+-#define __NR_ioprio_set		282
+-#define __NR_ioprio_get		283
+-#define __NR_inotify_init	284
+-#define __NR_inotify_add_watch	285
+-#define __NR_inotify_rm_watch	286
+-#define __NR_migrate_pages	287
+-#define __NR_openat		288
+-#define __NR_mkdirat		289
+-#define __NR_mknodat		290
+-#define __NR_fchownat		291
+-#define __NR_futimesat		292
+-#define __NR_unlinkat		294
+-#define __NR_renameat		295
+-#define __NR_linkat		296
+-#define __NR_symlinkat		297
+-#define __NR_readlinkat		298
+-#define __NR_fchmodat		299
+-#define __NR_faccessat		300
+-#define __NR_pselect6		301
+-#define __NR_ppoll		302
+-#define __NR_unshare		303
+-#define __NR_set_robust_list	304
+-#define __NR_get_robust_list	305
+-#define __NR_splice		306
+-#define __NR_sync_file_range	307
+-#define __NR_tee		308
+-#define __NR_vmsplice		309
+-#define __NR_move_pages		310
+-#define __NR_getcpu		311
+-#define __NR_epoll_pwait	312
+-#define __NR_utimes		313
+-#define __NR_fallocate		314
+-#define __NR_utimensat		315
+-#define __NR_signalfd		316
+-#define __NR_timerfd		317
+-#define __NR_eventfd		318
+-#define __NR_timerfd_create	319
+-#define __NR_timerfd_settime	320
+-#define __NR_timerfd_gettime	321
+-#define __NR_signalfd4		322
+-#define __NR_eventfd2		323
+-#define __NR_inotify_init1	324
+-#define __NR_pipe2		325
+-#define __NR_dup3		326
+-#define __NR_epoll_create1	327
+-#define	__NR_preadv		328
+-#define	__NR_pwritev		329
+-#define __NR_rt_tgsigqueueinfo	330
+-#define __NR_perf_event_open	331
+-#define __NR_fanotify_init	332
+-#define __NR_fanotify_mark	333
+-#define __NR_prlimit64		334
+-#define __NR_name_to_handle_at	335
+-#define __NR_open_by_handle_at	336
+-#define __NR_clock_adjtime	337
+-#define __NR_syncfs		338
+-#define __NR_setns		339
+-#define __NR_process_vm_readv	340
+-#define __NR_process_vm_writev	341
+-#define __NR_s390_runtime_instr 342
+-#define __NR_kcmp		343
+-#define __NR_finit_module	344
+-#define __NR_sched_setattr	345
+-#define __NR_sched_getattr	346
+-#define __NR_renameat2		347
+-#define __NR_seccomp		348
+-#define __NR_getrandom		349
+-#define __NR_memfd_create	350
+-#define __NR_bpf		351
+-#define __NR_s390_pci_mmio_write	352
+-#define __NR_s390_pci_mmio_read		353
+-#define __NR_execveat		354
+-#define __NR_userfaultfd	355
+-#define __NR_membarrier		356
+-#define __NR_recvmmsg		357
+-#define __NR_sendmmsg		358
+-#define __NR_socket		359
+-#define __NR_socketpair		360
+-#define __NR_bind		361
+-#define __NR_connect		362
+-#define __NR_listen		363
+-#define __NR_accept4		364
+-#define __NR_getsockopt		365
+-#define __NR_setsockopt		366
+-#define __NR_getsockname	367
+-#define __NR_getpeername	368
+-#define __NR_sendto		369
+-#define __NR_sendmsg		370
+-#define __NR_recvfrom		371
+-#define __NR_recvmsg		372
+-#define __NR_shutdown		373
+-#define __NR_mlock2		374
+-#define __NR_copy_file_range	375
+-#define __NR_preadv2		376
+-#define __NR_pwritev2		377
+-#define __NR_s390_guarded_storage	378
+-#define __NR_statx		379
+-#define __NR_s390_sthyi		380
+-#define NR_syscalls 381
+-
+-/* 
+- * There are some system calls that are not present on 64 bit, some
+- * have a different name although they do the same (e.g. __NR_chown32
+- * is __NR_chown on 64 bit).
+- */
+-#ifndef __s390x__
+-
+-#define __NR_time		 13
+-#define __NR_lchown		 16
+-#define __NR_setuid		 23
+-#define __NR_getuid		 24
+-#define __NR_stime		 25
+-#define __NR_setgid		 46
+-#define __NR_getgid		 47
+-#define __NR_geteuid		 49
+-#define __NR_getegid		 50
+-#define __NR_setreuid		 70
+-#define __NR_setregid		 71
+-#define __NR_getrlimit		 76
+-#define __NR_getgroups		 80
+-#define __NR_setgroups		 81
+-#define __NR_fchown		 95
+-#define __NR_ioperm		101
+-#define __NR_setfsuid		138
+-#define __NR_setfsgid		139
+-#define __NR__llseek		140
+-#define __NR__newselect 	142
+-#define __NR_setresuid		164
+-#define __NR_getresuid		165
+-#define __NR_setresgid		170
+-#define __NR_getresgid		171
+-#define __NR_chown		182
+-#define __NR_ugetrlimit		191	/* SuS compliant getrlimit */
+-#define __NR_mmap2		192
+-#define __NR_truncate64		193
+-#define __NR_ftruncate64	194
+-#define __NR_stat64		195
+-#define __NR_lstat64		196
+-#define __NR_fstat64		197
+-#define __NR_lchown32		198
+-#define __NR_getuid32		199
+-#define __NR_getgid32		200
+-#define __NR_geteuid32		201
+-#define __NR_getegid32		202
+-#define __NR_setreuid32		203
+-#define __NR_setregid32		204
+-#define __NR_getgroups32	205
+-#define __NR_setgroups32	206
+-#define __NR_fchown32		207
+-#define __NR_setresuid32	208
+-#define __NR_getresuid32	209
+-#define __NR_setresgid32	210
+-#define __NR_getresgid32	211
+-#define __NR_chown32		212
+-#define __NR_setuid32		213
+-#define __NR_setgid32		214
+-#define __NR_setfsuid32		215
+-#define __NR_setfsgid32		216
+-#define __NR_fcntl64		221
+-#define __NR_sendfile64		223
+-#define __NR_fadvise64_64	264
+-#define __NR_fstatat64		293
+-
+-#else
+-
+-#define __NR_select		142
+-#define __NR_getrlimit		191	/* SuS compliant getrlimit */
+-#define __NR_lchown  		198
+-#define __NR_getuid  		199
+-#define __NR_getgid  		200
+-#define __NR_geteuid  		201
+-#define __NR_getegid  		202
+-#define __NR_setreuid  		203
+-#define __NR_setregid  		204
+-#define __NR_getgroups  	205
+-#define __NR_setgroups  	206
+-#define __NR_fchown  		207
+-#define __NR_setresuid  	208
+-#define __NR_getresuid  	209
+-#define __NR_setresgid  	210
+-#define __NR_getresgid  	211
+-#define __NR_chown  		212
+-#define __NR_setuid  		213
+-#define __NR_setgid  		214
+-#define __NR_setfsuid  		215
+-#define __NR_setfsgid  		216
+-#define __NR_newfstatat		293
+-
+-#endif
+-
+-#endif /* _UAPI_ASM_S390_UNISTD_H_ */
+diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+index 51abdb0..790ec25 100755
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -33,7 +33,6 @@ arch/s390/include/uapi/asm/kvm.h
+ arch/s390/include/uapi/asm/kvm_perf.h
+ arch/s390/include/uapi/asm/ptrace.h
+ arch/s390/include/uapi/asm/sie.h
+-arch/s390/include/uapi/asm/unistd.h
+ arch/arm/include/uapi/asm/kvm.h
+ arch/arm64/include/uapi/asm/kvm.h
+ arch/alpha/include/uapi/asm/errno.h
