@@ -1,118 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934965AbeBPLEf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 06:04:35 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:54439 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934609AbeBPLEd (ORCPT
+        id S935004AbeBPLEo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 06:04:44 -0500
+Received: from mail-wr0-f173.google.com ([209.85.128.173]:40853 "EHLO
+        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934609AbeBPLEl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 06:04:33 -0500
-Date: Fri, 16 Feb 2018 02:54:04 -0800
-From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
-Message-ID: <tip-9b46a051e43461a9afda2bdd50e0e0ae349341df@git.kernel.org>
-Cc: hpa@zytor.com, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, arjan@linux.intel.com, mingo@kernel.org,
-        dwmw2@infradead.org, bp@suse.de, kirill.shutemov@linux.intel.com,
-        dan.j.williams@intel.com, tglx@linutronix.de, luto@kernel.org,
-        peterz@infradead.org, jpoimboe@redhat.com, dave.hansen@linux.intel.com
-Reply-To: jpoimboe@redhat.com, dave.hansen@linux.intel.com, tglx@linutronix.de,
-        peterz@infradead.org, luto@kernel.org, torvalds@linux-foundation.org,
-        hpa@zytor.com, linux-kernel@vger.kernel.org,
-        kirill.shutemov@linux.intel.com, mingo@kernel.org, bp@suse.de,
-        dwmw2@infradead.org, dan.j.williams@intel.com, arjan@linux.intel.com
-In-Reply-To: <20180214182542.69302-6-kirill.shutemov@linux.intel.com>
-References: <20180214182542.69302-6-kirill.shutemov@linux.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm: Initialize vmemmap_base at boot-time
-Git-Commit-ID: 9b46a051e43461a9afda2bdd50e0e0ae349341df
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 16 Feb 2018 06:04:41 -0500
+X-Google-Smtp-Source: AH8x224CQI6KWMlQDKGpjdlViW0XzvKRS9KbeL9VWypdyzoFGXekrAps4QL3CfexJYKAXPa1gSF0YQ==
+Subject: Re: [PATCH 2/2] x86/speculation: Support "Enhanced IBRS" on future
+ CPUs
+To: David Woodhouse <dwmw2@infradead.org>, tglx@linutronix.de,
+        x86@kernel.org, kvm@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, arjan.van.de.ven@intel.com,
+        dave.hansen@intel.com
+Cc: Ingo Molnar <mingo@kernel.org>
+References: <1518449255-2182-1-git-send-email-dwmw@amazon.co.uk>
+ <1518449255-2182-2-git-send-email-dwmw@amazon.co.uk>
+ <7e2e5ad1-49b6-1fdb-4a62-8ad6aefc30a0@redhat.com>
+ <1518509708.12890.33.camel@infradead.org>
+ <27c85759-e662-d281-f8a0-0a80ca8ee18f@redhat.com>
+ <1518517262.12890.43.camel@infradead.org>
+ <1518518198.12890.48.camel@infradead.org>
+ <02bd3fdd-1b73-6cab-fb09-38ba933396bd@redhat.com>
+ <1518775136.7876.13.camel@infradead.org>
+ <75287047-77a0-e0ff-c2e8-61c81641251e@redhat.com>
+ <1518776517.7876.21.camel@infradead.org>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <d61edc94-8a51-62bd-65ed-8068451ca5b5@redhat.com>
+Date: Fri, 16 Feb 2018 12:04:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <1518776517.7876.21.camel@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9b46a051e43461a9afda2bdd50e0e0ae349341df
-Gitweb:     https://git.kernel.org/tip/9b46a051e43461a9afda2bdd50e0e0ae349341df
-Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate: Wed, 14 Feb 2018 21:25:38 +0300
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 16 Feb 2018 10:48:48 +0100
+On 16/02/2018 11:21, David Woodhouse wrote:
+> Why? With IBRS_ALL the guest *never* gets to affect the actual hardware
+> MSR, which is always on. The MSR is purely an emulated no-op. Why does
+> that affect migration?
 
-x86/mm: Initialize vmemmap_base at boot-time
+Because even if the host has IBRS_ALL, as long as you want to migrate to
+a system without IBRS_ALL the guest will likely not have it.  You can
+fake IBRS_ALL on the older system after migration, and forcing the guest
+to always run with IBRS=1 even when in user mode; that is slow.  Or...
 
-vmemmap area has different placement depending on paging mode.
-Let's adjust it during early boot accodring to machine capability.
+> Even if the guest doesn't have/support IBRS_ALL, and is frobbing the
+> (now emulated) MSR on every kernel entry/exit, that's *still* going to
+> be a metric shitload faster than what it *thought* it was doing.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180214182542.69302-6-kirill.shutemov@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/include/asm/pgtable_64_types.h | 9 +++------
- arch/x86/kernel/head64.c                | 3 ++-
- 2 files changed, 5 insertions(+), 7 deletions(-)
+... you are making every kernel entry/exit 3 times slower by adding two
+KVM exits (both hypervisor traps and syscalls are in the 1000-1500 clock
+cycles ballpark).  That cannot be fast at all.
 
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 6863299..68909a6 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -108,11 +108,8 @@ extern unsigned int ptrs_per_p4d;
- #define VMALLOC_SIZE_TB_L4	32UL
- #define VMALLOC_SIZE_TB_L5	12800UL
- 
--#ifdef CONFIG_X86_5LEVEL
--# define __VMEMMAP_BASE		_AC(0xffd4000000000000, UL)
--#else
--# define __VMEMMAP_BASE		_AC(0xffffea0000000000, UL)
--#endif
-+#define __VMEMMAP_BASE_L4	0xffffea0000000000
-+#define __VMEMMAP_BASE_L5	0xffd4000000000000
- 
- #ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
- # define VMALLOC_START		vmalloc_base
-@@ -121,7 +118,7 @@ extern unsigned int ptrs_per_p4d;
- #else
- # define VMALLOC_START		__VMALLOC_BASE_L4
- # define VMALLOC_SIZE_TB	VMALLOC_SIZE_TB_L4
--# define VMEMMAP_START		__VMEMMAP_BASE
-+# define VMEMMAP_START		__VMEMMAP_BASE_L4
- #endif /* CONFIG_DYNAMIC_MEMORY_LAYOUT */
- 
- #define VMALLOC_END		(VMALLOC_START + (VMALLOC_SIZE_TB << 40) - 1)
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 22bf201..795e762 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -53,7 +53,7 @@ unsigned long page_offset_base __ro_after_init = __PAGE_OFFSET_BASE_L4;
- EXPORT_SYMBOL(page_offset_base);
- unsigned long vmalloc_base __ro_after_init = __VMALLOC_BASE_L4;
- EXPORT_SYMBOL(vmalloc_base);
--unsigned long vmemmap_base __ro_after_init = __VMEMMAP_BASE;
-+unsigned long vmemmap_base __ro_after_init = __VMEMMAP_BASE_L4;
- EXPORT_SYMBOL(vmemmap_base);
- #endif
- 
-@@ -88,6 +88,7 @@ static void __head check_la57_support(unsigned long physaddr)
- 	*fixup_int(&ptrs_per_p4d, physaddr) = 512;
- 	*fixup_long(&page_offset_base, physaddr) = __PAGE_OFFSET_BASE_L5;
- 	*fixup_long(&vmalloc_base, physaddr) = __VMALLOC_BASE_L5;
-+	*fixup_long(&vmemmap_base, physaddr) = __VMEMMAP_BASE_L5;
- }
- #else
- static void __head check_la57_support(unsigned long physaddr) {}
+Paolo
