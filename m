@@ -1,113 +1,588 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753361AbeBPGs2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 01:48:28 -0500
-Received: from mail-bn3nam01on0074.outbound.protection.outlook.com ([104.47.33.74]:34371
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753313AbeBPGs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 01:48:26 -0500
-From: Javier Gonzalez <javier@cnexlabs.com>
-To: =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
-CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
-Subject: Re: [PATCH v2 5/6] lightnvm: remove nvm_dev_ops->max_phys_sect
-Thread-Topic: [PATCH v2 5/6] lightnvm: remove nvm_dev_ops->max_phys_sect
-Thread-Index: AQHTpl6hYkpXdBKtg0aoHleBBn4AMaOml4eA
-Date: Fri, 16 Feb 2018 06:48:23 +0000
-Message-ID: <918E7340-05D7-4E2F-BC43-2B81D435C3C6@cnexlabs.com>
-References: <20180215131200.3354-1-mb@lightnvm.io>
- <20180215131200.3354-6-mb@lightnvm.io>
-In-Reply-To: <20180215131200.3354-6-mb@lightnvm.io>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-originating-ip: [24.5.37.211]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR06MB2801;6:TMTAPXelllYNjYXCgf6Uoey7lJtzb/uZwrlm34beKtt1Gktl9d0WkrrPf1SeFAMSL0nVLMp6r77pNAFCrYtNMkD+MdRNYJwy2atpfDNhvMd3HpAdQhFVaPrn0e1YJeELWZkQfgJ39bUGsk5ZIdVe3S9NEVg11q1rGRyHqK7Eh5k+Uet3qYpMHAiasqG0RXiCxjRBzWNPM+cdlrd8vEVx4V7O9PB2lnHTlMvl93h+pviGu2a+oDi0BPGds6lpsP+qYrlkyqwn1OgpwP3TOdtDsyZOF1b6679sQj//fP/7Ogl0RoBXxfOAc48SxLncq8TWcXSDpYfdwNFDDNlLq50Wfb8l9V86UBwMJpF0ZW3ujhCApuH7bYbxExLX35OwMntg;5:seQJZOGsAN/aS/u3QqAfwNdjRmG95FyN5QyUIaeQFnN0Ov6PI9UUeth06dwg702tZ0vc82vVk3zm/q2NBwGwZzFGpeTx/ugaOaYBVTNwZvN/PTL4/+4SiZv5Iym1MtUhu3RgfK0W9qLZSdy899pdEQC5ouihacTyprZp/QU4sd4=;24:NvcnSlMBxWVxug+zcFEV2wny2YerRo5V05Xhi8mxVX8xqdiiXI3RWlS8tqxMv1Wq5/ZtZ6dv3WHtE0JWML7Y64WWs+KTqFAiEg/CtfEtaZk=;7:CIku4YnhOXp3srWzp9B3qnTWvtyHSKjepQBCrYm8ItyM/u0K869g2cYhMaHhYXKhRt7L5nADtIbZ3Y36d4fLyZn1yWuBUZ7sXMxm86rTf1fzSEL0+cotsPePxqYuxw9hu3vxmUElGcKJTgatnEyYptmdLUe1IPrKDTHKz8Ctar+WZU86A4AriwJEId2RXEciBPPTYrfguIOjA8lPppreSr+0Of7FRxeO2lwmoftuo3vLl4Bae0RGFNqPolHASBez
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-correlation-id: f53282fa-b7b7-47d4-b2b8-08d57509463d
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(49563074)(7193020);SRVR:BN6PR06MB2801;
-x-ms-traffictypediagnostic: BN6PR06MB2801:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=javier@cnexlabs.com;
-x-microsoft-antispam-prvs: <BN6PR06MB2801077C3539F2D59C6741C2BACB0@BN6PR06MB2801.namprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001036)(102415395)(6040501)(2401047)(8121501046)(5005006)(10201501046)(3231101)(944501161)(93006095)(93001095)(3002001)(6041288)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:BN6PR06MB2801;BCL:0;PCL:0;RULEID:;SRVR:BN6PR06MB2801;
-x-forefront-prvs: 0585417D7B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39840400004)(396003)(39380400002)(366004)(189003)(199004)(66066001)(316002)(6506007)(8936002)(54906003)(6486002)(6116002)(81166006)(81156014)(82746002)(8676002)(3846002)(3280700002)(77096007)(6436002)(68736007)(26005)(14454004)(229853002)(186003)(99936001)(33656002)(478600001)(106356001)(102836004)(97736004)(4326008)(86362001)(105586002)(5660300001)(2950100002)(6916009)(83716003)(76176011)(2900100001)(25786009)(36756003)(7736002)(2906002)(6246003)(99286004)(3660700001)(53936002)(305945005)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR06MB2801;H:BN6PR06MB2626.namprd06.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: MEa1tkbG3u+982M4rxJMHaHrvzf8FEb78y+CE8jczQ2xodD0D6nSV1yAmSNRanxfhkGC4e/sUlpvBhl81myISA==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
+        id S1753451AbeBPHEI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 02:04:08 -0500
+Received: from mail-io0-f195.google.com ([209.85.223.195]:37275 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753428AbeBPHEE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 02:04:04 -0500
+X-Google-Smtp-Source: AH8x224LyGesZSW4aueauDw00ZUbIYDvhkFyjaNtNbLOvsUMNxIYur960lKBd20wfC52zeGmy4EupQ==
+From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <jg@lightnvm.io>
+Message-Id: <90A1D465-2D68-4B5F-9059-C9D50EF018C3@lightnvm.io>
 Content-Type: multipart/signed;
-        boundary="Apple-Mail=_4786F3EA-DA27-459F-9A97-E71A9CB717A5";
-        protocol="application/pgp-signature"; micalg=pgp-sha512
-MIME-Version: 1.0
-X-OriginatorOrg: cnexlabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f53282fa-b7b7-47d4-b2b8-08d57509463d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Feb 2018 06:48:23.5772
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR06MB2801
+        boundary="Apple-Mail=_E611500C-7992-4B3F-977E-3687367C06CC";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH 5/8] lightnvm: implement get log report chunk helpers
+Date: Thu, 15 Feb 2018 23:03:53 -0800
+In-Reply-To: <866a9dcc-7e8a-c547-cd53-7e1577f02da0@lightnvm.io>
+Cc: linux-block@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org
+To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
+References: <1518530768-20956-1-git-send-email-javier@cnexlabs.com>
+ <1518530768-20956-6-git-send-email-javier@cnexlabs.com>
+ <866a9dcc-7e8a-c547-cd53-7e1577f02da0@lightnvm.io>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_4786F3EA-DA27-459F-9A97-E71A9CB717A5
+
+--Apple-Mail=_E611500C-7992-4B3F-977E-3687367C06CC
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain;
 	charset=utf-8
 
-
-> On 15 Feb 2018, at 05.11, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+> On 15 Feb 2018, at 04.51, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
 >=20
-> The value of max_phys_sect is always static. Instead of
-> defining it in the nvm_dev_ops structure, declare it as a global
-> value.
+> On 02/13/2018 03:06 PM, Javier Gonz=C3=A1lez wrote:
+>> From: Javier Gonz=C3=A1lez <javier@javigon.com>
+>> The 2.0 spec provides a report chunk log page that can be retrieved
+>> using the stangard nvme get log page. This replaces the dedicated
+>> get/put bad block table in 1.2.
+>> This patch implements the helper functions to allow targets retrieve =
+the
+>> chunk metadata using get log page
+>> Signed-off-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
+>> ---
+>>  drivers/lightnvm/core.c      | 28 +++++++++++++++++++++++++
+>>  drivers/nvme/host/lightnvm.c | 50 =
+++++++++++++++++++++++++++++++++++++++++++++
+>>  include/linux/lightnvm.h     | 32 ++++++++++++++++++++++++++++
+>>  3 files changed, 110 insertions(+)
+>> diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+>> index 80492fa6ee76..6857a888544a 100644
+>> --- a/drivers/lightnvm/core.c
+>> +++ b/drivers/lightnvm/core.c
+>> @@ -43,6 +43,8 @@ struct nvm_ch_map {
+>>  struct nvm_dev_map {
+>>  	struct nvm_ch_map *chnls;
+>>  	int nr_chnls;
+>> +	int bch;
+>> +	int blun;
+>>  };
 >=20
-> Signed-off-by: Matias Bj=C3=B8rling <mb@lightnvm.io>
-> ---
-> drivers/lightnvm/core.c          | 28 +++++++---------------------
-> drivers/lightnvm/pblk-init.c     |  9 ++++-----
-> drivers/lightnvm/pblk-recovery.c |  8 ++------
-> drivers/nvme/host/lightnvm.c     |  5 +----
-> include/linux/lightnvm.h         |  5 ++---
-> 5 files changed, 16 insertions(+), 39 deletions(-)
+> bch/blun should be unnecessary if the map_to_dev / map_to_tgt
+> functions are implemented correctly (they can with the ppa_addr order
+> update as far as I can see)
+>=20
+> What is the reason they can't be used? I might be missing something.
+
+This is a precalculated value used for the offset on
+nvm_get_chunk_log_page() actually, not on map_to_dev and map_to_tgt in
+the fast path.
+
+The problem is that since we offset to always start at ch:0,lun:0 on
+target creation, we need this value. How would you get the offset =
+otherwise?
+
+>=20
+>>    static struct nvm_target *nvm_find_target(struct nvm_dev *dev, =
+const char *name)
+>> @@ -171,6 +173,9 @@ static struct nvm_tgt_dev =
+*nvm_create_tgt_dev(struct nvm_dev *dev,
+>>  	if (!dev_map->chnls)
+>>  		goto err_chnls;
+>>  +	dev_map->bch =3D bch;
+>> +	dev_map->blun =3D blun;
+>> +
+>>  	luns =3D kcalloc(nr_luns, sizeof(struct ppa_addr), GFP_KERNEL);
+>>  	if (!luns)
+>>  		goto err_luns;
+>> @@ -561,6 +566,19 @@ static void nvm_unregister_map(struct nvm_dev =
+*dev)
+>>  	kfree(rmap);
+>>  }
+>>  +static unsigned long nvm_log_off_tgt_to_dev(struct nvm_tgt_dev =
+*tgt_dev)
+>> +{
+>> +	struct nvm_dev_map *dev_map =3D tgt_dev->map;
+>> +	struct nvm_geo *geo =3D &tgt_dev->geo;
+>> +	int lun_off;
+>> +	unsigned long off;
+>> +
+>> +	lun_off =3D dev_map->blun + dev_map->bch * geo->num_lun;
+>> +	off =3D lun_off * geo->c.num_chk * sizeof(struct =
+nvm_chunk_log_page);
+>> +
+>> +	return off;
+>> +}
+>> +
+>>  static void nvm_map_to_dev(struct nvm_tgt_dev *tgt_dev, struct =
+ppa_addr *p)
+>>  {
+>>  	struct nvm_dev_map *dev_map =3D tgt_dev->map;
+>> @@ -720,6 +738,16 @@ static void nvm_free_rqd_ppalist(struct =
+nvm_tgt_dev *tgt_dev,
+>>  	nvm_dev_dma_free(tgt_dev->parent, rqd->ppa_list, =
+rqd->dma_ppa_list);
+>>  }
+>>  +int nvm_get_chunk_log_page(struct nvm_tgt_dev *tgt_dev,
+>> +			   struct nvm_chunk_log_page *log,
+>> +			   unsigned long off, unsigned long len)
+>> +{
+>> +	struct nvm_dev *dev =3D tgt_dev->parent;
+>> +
+>> +	off +=3D nvm_log_off_tgt_to_dev(tgt_dev);
+>> +
+>> +	return dev->ops->get_chunk_log_page(tgt_dev->parent, log, off, =
+len);
+>> +}
+>=20
+> I think that this should be exported as get_bb and set_bb. Else
+> linking fails if pblk is compiled as a module.
 >=20
 
-The patch looks good, but I have a question. If a target implements the
-scalar interface, then it will not be limited to 64 lbas/ppas and it
-will not make sense to split the bio base don this value. In fact, it
-looks like in time, we will move to a scalar interface in the 2.0 path
-to align with the zoned interface, so this value will be dependent on
-whether the target is using the scalar or vector interface.
+It is implemented as get_bb and set_bb. Am I missing anything here?
 
-Javier
+>>    int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *tgt_dev, struct =
+ppa_addr *ppas,
+>>  		       int nr_ppas, int type)
+>> diff --git a/drivers/nvme/host/lightnvm.c =
+b/drivers/nvme/host/lightnvm.c
+>> index 7bc75182c723..355d9b0cf084 100644
+>> --- a/drivers/nvme/host/lightnvm.c
+>> +++ b/drivers/nvme/host/lightnvm.c
+>> @@ -35,6 +35,10 @@ enum nvme_nvm_admin_opcode {
+>>  	nvme_nvm_admin_set_bb_tbl	=3D 0xf1,
+>>  };
+>>  +enum nvme_nvm_log_page {
+>> +	NVME_NVM_LOG_REPORT_CHUNK	=3D 0xCA,
+>> +};
+>> +
+>=20
+> The convention is to have it as lower-case.
 
---Apple-Mail=_4786F3EA-DA27-459F-9A97-E71A9CB717A5
+Ok.
+
+>=20
+>>  struct nvme_nvm_ph_rw {
+>>  	__u8			opcode;
+>>  	__u8			flags;
+>> @@ -553,6 +557,50 @@ static int nvme_nvm_set_bb_tbl(struct nvm_dev =
+*nvmdev, struct ppa_addr *ppas,
+>>  	return ret;
+>>  }
+>>  +static int nvme_nvm_get_chunk_log_page(struct nvm_dev *nvmdev,
+>> +				       struct nvm_chunk_log_page *log,
+>> +				       unsigned long off,
+>> +				       unsigned long total_len)
+>=20
+> The chunk_log_page interface are both to be used by targets and the =
+block layer code. Therefore, it is not convenient to have a =
+byte-addressible interface exposed all the way up to a target. Instead, =
+use slba and nlb. That simplifies what a target has to implement, and =
+also allows the offset check to be removed.
+>=20
+> Chunk log page should be defined in the nvme implementation, such that =
+it can be accessed through the traditional LBA path.
+>=20
+> struct nvme_nvm_chk_meta {
+>       __u8    state;
+>      __u8    type;
+>       __u8    wli;
+>       __u8    rsvd[5];
+>       __le64  slba;
+>       __le64  cnlb;
+>       __le64  wp;
+> };
+
+It makes sense to have this way, yes.
+
+>=20
+>> +{
+>> +	struct nvme_ns *ns =3D nvmdev->q->queuedata;
+>> +	struct nvme_command c =3D { };
+>> +	unsigned long offset =3D off, left =3D total_len;
+>> +	unsigned long len, len_dwords;
+>> +	void *buf =3D log;
+>> +	int ret;
+>> +
+>> +	/* The offset needs to be dword-aligned */
+>> +	if (offset & 0x3)
+>> +		return -EINVAL;
+>=20
+> No need to check for this with the above interface changes.
+
+ok.
+
+>=20
+>> +
+>> +	do {
+>> +		/* Send 256KB at a time */
+>> +		len =3D (1 << 18) > left ? left : (1 << 18);
+>> +		len_dwords =3D (len >> 2) - 1;
+>=20
+> This is namespace dependent. Use ctrl->max_hw_sectors << 9 instead.
+
+ok.
+
+>=20
+>> +
+>> +		c.get_log_page.opcode =3D nvme_admin_get_log_page;
+>> +		c.get_log_page.nsid =3D cpu_to_le32(ns->head->ns_id);
+>> +		c.get_log_page.lid =3D NVME_NVM_LOG_REPORT_CHUNK;
+>> +		c.get_log_page.lpol =3D cpu_to_le32(offset & =
+0xffffffff);
+>> +		c.get_log_page.lpou =3D cpu_to_le32(offset >> 32);
+>> +		c.get_log_page.numdl =3D cpu_to_le16(len_dwords & =
+0xffff);
+>> +		c.get_log_page.numdu =3D cpu_to_le16(len_dwords >> 16);
+>> +
+>> +		ret =3D nvme_submit_sync_cmd(ns->ctrl->admin_q, &c, buf, =
+len);
+>> +		if (ret) {
+>> +			dev_err(ns->ctrl->device,
+>> +				"get chunk log page failed (%d)\n", =
+ret);
+>> +			break;
+>> +		}
+>> +
+>> +		buf +=3D len;
+>> +		offset +=3D len;
+>> +		left -=3D len;
+>> +	} while (left);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>  static inline void nvme_nvm_rqtocmd(struct nvm_rq *rqd, struct =
+nvme_ns *ns,
+>>  				    struct nvme_nvm_command *c)
+>>  {
+>> @@ -684,6 +732,8 @@ static struct nvm_dev_ops nvme_nvm_dev_ops =3D {
+>>  	.get_bb_tbl		=3D nvme_nvm_get_bb_tbl,
+>>  	.set_bb_tbl		=3D nvme_nvm_set_bb_tbl,
+>>  +	.get_chunk_log_page	=3D nvme_nvm_get_chunk_log_page,
+>> +
+>>  	.submit_io		=3D nvme_nvm_submit_io,
+>>  	.submit_io_sync		=3D nvme_nvm_submit_io_sync,
+>>  diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+>> index 1148b3f22b27..eb2900a18160 100644
+>> --- a/include/linux/lightnvm.h
+>> +++ b/include/linux/lightnvm.h
+>> @@ -73,10 +73,13 @@ struct nvm_rq;
+>>  struct nvm_id;
+>>  struct nvm_dev;
+>>  struct nvm_tgt_dev;
+>> +struct nvm_chunk_log_page;
+>>    typedef int (nvm_id_fn)(struct nvm_dev *);
+>>  typedef int (nvm_op_bb_tbl_fn)(struct nvm_dev *, struct ppa_addr, u8 =
+*);
+>>  typedef int (nvm_op_set_bb_fn)(struct nvm_dev *, struct ppa_addr *, =
+int, int);
+>> +typedef int (nvm_get_chunk_lp_fn)(struct nvm_dev *, struct =
+nvm_chunk_log_page *,
+>> +				  unsigned long, unsigned long);
+>>  typedef int (nvm_submit_io_fn)(struct nvm_dev *, struct nvm_rq *);
+>>  typedef int (nvm_submit_io_sync_fn)(struct nvm_dev *, struct nvm_rq =
+*);
+>>  typedef void *(nvm_create_dma_pool_fn)(struct nvm_dev *, char *);
+>> @@ -90,6 +93,8 @@ struct nvm_dev_ops {
+>>  	nvm_op_bb_tbl_fn	*get_bb_tbl;
+>>  	nvm_op_set_bb_fn	*set_bb_tbl;
+>>  +	nvm_get_chunk_lp_fn	*get_chunk_log_page;
+>> +
+>>  	nvm_submit_io_fn	*submit_io;
+>>  	nvm_submit_io_sync_fn	*submit_io_sync;
+>>  @@ -286,6 +291,30 @@ struct nvm_dev_geo {
+>>  	struct nvm_common_geo c;
+>>  };
+>>  +enum {
+>> +	/* Chunk states */
+>> +	NVM_CHK_ST_FREE =3D	1 << 0,
+>> +	NVM_CHK_ST_CLOSED =3D	1 << 1,
+>> +	NVM_CHK_ST_OPEN =3D	1 << 2,
+>> +	NVM_CHK_ST_OFFLINE =3D	1 << 3,
+>> +	NVM_CHK_ST_HOST_USE =3D	1 << 7,
+>> +
+>> +	/* Chunk types */
+>> +	NVM_CHK_TP_W_SEQ =3D	1 << 0,
+>> +	NVM_CHK_TP_W_RAN =3D	1 << 2,
+>=20
+> The RAN bit is the second bit (1 << 1)
+>=20
+
+Yes, my bad...
+
+>> +	NVM_CHK_TP_SZ_SPEC =3D	1 << 4,
+>> +};
+>> +
+>> +struct nvm_chunk_log_page {
+>> +	__u8	state;
+>> +	__u8	type;
+>> +	__u8	wear_index;
+>> +	__u8	rsvd[5];
+>> +	__u64	slba;
+>> +	__u64	cnlb;
+>> +	__u64	wp;
+>> +};
+>=20
+> Should be represented both within the device driver and the lightnvm =
+header file.
+
+ok.
+
+>> +
+>>  struct nvm_target {
+>>  	struct list_head list;
+>>  	struct nvm_tgt_dev *dev;
+>> @@ -505,6 +534,9 @@ extern struct nvm_dev *nvm_alloc_dev(int);
+>>  extern int nvm_register(struct nvm_dev *);
+>>  extern void nvm_unregister(struct nvm_dev *);
+>>  +extern int nvm_get_chunk_log_page(struct nvm_tgt_dev *,
+>> +				  struct nvm_chunk_log_page *,
+>> +				  unsigned long, unsigned long);
+>>  extern int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *, struct ppa_addr =
+*,
+>>  			      int, int);
+>>  extern int nvm_max_phys_sects(struct nvm_tgt_dev *);
+>=20
+> Here is a compile tested and lightly tested patch with the fixes =
+above. Note that the chunk state definition has been taken out, as it =
+properly shall go into the next patch. Also note that it uses the get =
+log page patch I sent that wires up the 1.2.1 get log page support.
+
+Cool! Yes, after seeing your patch generalizing get log page I was
+planning on rebasing either way - just wanted to get this out for
+review and avoid rebasing too many times. I can put it together with the
+rest of the patches to fit it on the series. You can sign it when you
+pick it up if you want.
+
+>=20
+> diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+> index 689c97b97775..cc22bf48fd13 100644
+> --- a/drivers/lightnvm/core.c
+> +++ b/drivers/lightnvm/core.c
+> @@ -841,6 +841,19 @@ int nvm_get_tgt_bb_tbl(struct nvm_tgt_dev =
+*tgt_dev, struct ppa_addr ppa,
+> }
+> EXPORT_SYMBOL(nvm_get_tgt_bb_tbl);
+>=20
+> +int nvm_get_chunk_meta(struct nvm_tgt_dev *tgt_dev, struct =
+nvm_chk_meta *meta,
+> +		struct ppa_addr ppa, int nchks)
+> +{
+> +	struct nvm_dev *dev =3D tgt_dev->parent;
+> +
+> +	nvm_map_to_dev(tgt_dev, &ppa);
+> +	ppa =3D generic_to_dev_addr(tgt_dev, ppa);
+> +
+> +	return dev->ops->get_chk_meta(tgt_dev->parent, meta,
+> +			(sector_t)ppa.ppa, nchks);
+> +}
+> +EXPORT_SYMBOL(nvm_get_chunk_meta);
+> +
+> static int nvm_core_init(struct nvm_dev *dev)
+> {
+> 	struct nvm_id *id =3D &dev->identity;
+> diff --git a/drivers/nvme/host/lightnvm.c =
+b/drivers/nvme/host/lightnvm.c
+> index 839c0b96466a..8f81f41a504c 100644
+> --- a/drivers/nvme/host/lightnvm.c
+> +++ b/drivers/nvme/host/lightnvm.c
+> @@ -35,6 +35,10 @@ enum nvme_nvm_admin_opcode {
+> 	nvme_nvm_admin_set_bb_tbl	=3D 0xf1,
+> };
+>=20
+> +enum nvme_nvm_log_page {
+> +	NVME_NVM_LOG_REPORT_CHUNK	=3D 0xca,
+> +};
+> +
+> struct nvme_nvm_ph_rw {
+> 	__u8			opcode;
+> 	__u8			flags;
+> @@ -236,6 +240,16 @@ struct nvme_nvm_id20 {
+> 	__u8			vs[1024];
+> };
+>=20
+> +struct nvme_nvm_chk_meta {
+> +	__u8	state;
+> +	__u8	type;
+> +	__u8	wli;
+> +	__u8	rsvd[5];
+> +	__le64	slba;
+> +	__le64	cnlb;
+> +	__le64	wp;
+> +};
+> +
+> /*
+>  * Check we didn't inadvertently grow the command struct
+>  */
+> @@ -252,6 +266,9 @@ static inline void _nvme_nvm_check_size(void)
+> 	BUILD_BUG_ON(sizeof(struct nvme_nvm_bb_tbl) !=3D 64);
+> 	BUILD_BUG_ON(sizeof(struct nvme_nvm_id20_addrf) !=3D 8);
+> 	BUILD_BUG_ON(sizeof(struct nvme_nvm_id20) !=3D =
+NVME_IDENTIFY_DATA_SIZE);
+> +	BUILD_BUG_ON(sizeof(struct nvme_nvm_chk_meta) !=3D 32);
+> +	BUILD_BUG_ON(sizeof(struct nvme_nvm_chk_meta) !=3D
+> +						sizeof(struct =
+nvm_chk_meta));
+> }
+>=20
+> static int init_grp(struct nvm_id *nvm_id, struct nvme_nvm_id12 *id12)
+> @@ -474,6 +491,48 @@ static int nvme_nvm_set_bb_tbl(struct nvm_dev =
+*nvmdev, struct ppa_addr *ppas,
+> 	return ret;
+> }
+>=20
+> +static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
+> +				 struct nvm_chk_meta *meta,
+> +				 sector_t slba, int nchks)
+> +{
+> +	struct nvme_ns *ns =3D ndev->q->queuedata;
+> +	struct nvme_ctrl *ctrl =3D ns->ctrl;
+> +	struct nvme_nvm_chk_meta *dev_meta =3D (struct nvme_nvm_chk_meta =
+*)meta;
+> +	size_t left =3D nchks * sizeof(struct nvme_nvm_chk_meta);
+> +	size_t offset, len;
+> +	int ret, i;
+> +
+> +	offset =3D slba * sizeof(struct nvme_nvm_chk_meta);
+> +
+> +	while (left) {
+> +		len =3D min_t(unsigned, left, ctrl->max_hw_sectors << =
+9);
+> +
+> +		ret =3D nvme_get_log_ext(ctrl, ns, =
+NVME_NVM_LOG_REPORT_CHUNK,
+> +				dev_meta, len, offset);
+> +		if (ret) {
+> +			dev_err(ctrl->device, "Get REPORT CHUNK log =
+error\n");
+> +			break;
+> +		}
+> +
+> +		for (i =3D 0; i < len; i +=3D sizeof(struct =
+nvme_nvm_chk_meta)) {
+> +			meta->state =3D dev_meta->state;
+> +			meta->type =3D dev_meta->type;
+> +			meta->wli =3D dev_meta->wli;
+> +			meta->slba =3D le64_to_cpu(dev_meta->slba);
+> +			meta->cnlb =3D le64_to_cpu(dev_meta->cnlb);
+> +			meta->wp =3D le64_to_cpu(dev_meta->wp);
+> +
+> +			meta++;
+> +			dev_meta++;
+> +		}
+> +
+> +		offset +=3D len;
+> +		left -=3D len;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> static inline void nvme_nvm_rqtocmd(struct nvm_rq *rqd, struct nvme_ns =
+*ns,
+> 				    struct nvme_nvm_command *c)
+> {
+> @@ -605,6 +664,8 @@ static struct nvm_dev_ops nvme_nvm_dev_ops =3D {
+> 	.get_bb_tbl		=3D nvme_nvm_get_bb_tbl,
+> 	.set_bb_tbl		=3D nvme_nvm_set_bb_tbl,
+>=20
+> +	.get_chk_meta		=3D nvme_nvm_get_chk_meta,
+> +
+> 	.submit_io		=3D nvme_nvm_submit_io,
+> 	.submit_io_sync		=3D nvme_nvm_submit_io_sync,
+>=20
+> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+> index 1ca08f4993ba..12abe16d6e64 100644
+> --- a/drivers/nvme/host/nvme.h
+> +++ b/drivers/nvme/host/nvme.h
+> @@ -396,6 +396,10 @@ int nvme_reset_ctrl(struct nvme_ctrl *ctrl);
+> int nvme_delete_ctrl(struct nvme_ctrl *ctrl);
+> int nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl);
+>=20
+> +int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+> +		u8 log_page, void *log,
+> +		size_t size, size_t offset);
+> +
+> extern const struct attribute_group nvme_ns_id_attr_group;
+> extern const struct block_device_operations nvme_ns_head_ops;
+>=20
+> diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+> index e55b10573c99..f056cf72144f 100644
+> --- a/include/linux/lightnvm.h
+> +++ b/include/linux/lightnvm.h
+> @@ -49,10 +49,13 @@ struct nvm_rq;
+> struct nvm_id;
+> struct nvm_dev;
+> struct nvm_tgt_dev;
+> +struct nvm_chk_meta;
+>=20
+> typedef int (nvm_id_fn)(struct nvm_dev *, struct nvm_id *);
+> typedef int (nvm_op_bb_tbl_fn)(struct nvm_dev *, struct ppa_addr, u8 =
+*);
+> typedef int (nvm_op_set_bb_fn)(struct nvm_dev *, struct ppa_addr *, =
+int, int);
+> +typedef int (nvm_get_chk_meta_fn)(struct nvm_dev *, struct =
+nvm_chk_meta *,
+> +								=
+sector_t, int);
+> typedef int (nvm_submit_io_fn)(struct nvm_dev *, struct nvm_rq *);
+> typedef int (nvm_submit_io_sync_fn)(struct nvm_dev *, struct nvm_rq =
+*);
+> typedef void *(nvm_create_dma_pool_fn)(struct nvm_dev *, char *);
+> @@ -66,6 +69,8 @@ struct nvm_dev_ops {
+> 	nvm_op_bb_tbl_fn	*get_bb_tbl;
+> 	nvm_op_set_bb_fn	*set_bb_tbl;
+>=20
+> +	nvm_get_chk_meta_fn	*get_chk_meta;
+> +
+> 	nvm_submit_io_fn	*submit_io;
+> 	nvm_submit_io_sync_fn	*submit_io_sync;
+>=20
+> @@ -353,6 +358,20 @@ struct nvm_dev {
+> 	struct list_head targets;
+> };
+>=20
+> +/*
+> + * Note: The structure size is linked to nvme_nvm_chk_meta such that =
+the same
+> + * buffer can be used when converting from little endian to cpu =
+addressing.
+> + */
+> +struct nvm_chk_meta {
+> +	u8	state;
+> +	u8	type;
+> +	u8	wli;
+> +	u8	rsvd[5];
+> +	u64	slba;
+> +	u64	cnlb;
+> +	u64	wp;
+> +};
+> +
+> static inline struct ppa_addr generic_to_dev_addr(struct nvm_tgt_dev =
+*tgt_dev,
+> 						  struct ppa_addr r)
+> {
+
+--Apple-Mail=_E611500C-7992-4B3F-977E-3687367C06CC
 Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
 Content-Description: Message signed with OpenPGP
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAlqGfrUACgkQIX4xUKFR
-nnR4qhAApHPsuY+VDzpeKEgVr40k1slDSVta6dG4h3ZuEiYKf5Sf+IQdi2EGg970
-R8g9HvBNucDHETNxTksojcOmJM9SDRLMnMFxwOS1BI39YWYHu3ira3qjJEZea7CZ
-5ZKGY/qERt/wxyLPEIbZ7CbF6GVICfgMfOvL4xMQLJQc+F2V/INZkmek0NO9Sjvu
-vi3qDHTlJhQRpUdHmOSDaPrQ+fvohNYb3o5JHS/NvMX6Mm/qLOskbY3658Zp0tHH
-oqs26nWRgz878ns6zCdfFCgUrCofQkZiTD6UMkY3hVpuspZU/MIslsjhj04hpNS1
-MSjOV0Djp0XaSXlWZN5AggpOXymnh/NxmojgP2eEBS7bn/R9CuN2+OKmtx5OEvO9
-o0Lhq+INzDD8p3E1MnyCssf9IezdcG+6C6Ap1EOQIkky0t1jiYEQd3uArMJTiRFN
-NP4M2DAw/jCFtWNdLumapSbWdqEfEkldAlrzkjfYG4Ccp4LH8VYBA4f4I9S+9pOu
-qr/F1U+5b/i4jwDEBSPPMdgHHgPXbAZYwWqfKV62IftVnSBi9Wz1gzi+SlQ1fLaN
-aSmIotRtmo0gsdczKYy1TzFmuf4bLNltdO+eD1Bqlc1j41cDmGBawy7NwL3LPhh9
-O+vI8iu/D7Lcmgj8TO2HV20WKDy+o4l+MkubzLaaGBAGO5AdYhY=
-=qVlh
+iQIzBAEBCgAdFiEEm1mT7zen+vs9+T8kYx8FO3WZGMoFAlqGglkACgkQYx8FO3WZ
+GMp64A/7BHdJC8m0+dUFLJ7MpREoZAq1MUw2oTEhBOOdegtxnX24UFL9pBJ3rr0L
+bJCplJ8xcPWqwM+uUZpqc6Aql51hZmOySNMH4i1Q8Y80iM0CJYtneQnS3U2Df+AX
+XTASORNxO3u8QCLquiABak0XhuMyknH9MccHwA3ALI27Xbw/7aKByj0QDxG2KIDf
+9yA+xRA3sV2f4e0pfY3ROTMPEj15Ut+b5JBlNUjw0wkW3oZ+y36YDlRasxmu6sN/
+rwhUbqvnBdwLVV8w0iueVYG9ZEkV88KNT3o020dVFQWgHLeiYZ4tK0fQJSaKxXwR
+kWdCsN6Hqw/17K9ryxo8LEz1WUrcT4/xZhsvlA4hL+/TX+LLJPiHrOTxOxzlSWaz
+BRvV7D2TkO47hWdlB8FshCYOY7x5Gn+/9SCkafEdPza3mBjP5qzdXhP76RRnZG/u
++J8GwdC/DE+grzR6OV1saK3ka/JjNIWEziAMMe5f3BbWWnt7zARbDQ1D8z2og9QH
+GrvJzo267IbuuFso0STNe9jKx+7AUcpeus+LhQ7vp5Uz4zBBZ6s3tivgTWOExMmm
+++AeL/DvKfishMezpW35GzvwArmhrMQVHFF6OtU/zRohQCrWO2gq5WsunTcSPIIU
+knq2aitJni5Dy3a6gqFTPpo9WieEm2oSGtx++RjrQiSxysRLUpg=
+=YLEE
 -----END PGP SIGNATURE-----
 
---Apple-Mail=_4786F3EA-DA27-459F-9A97-E71A9CB717A5--
+--Apple-Mail=_E611500C-7992-4B3F-977E-3687367C06CC--
