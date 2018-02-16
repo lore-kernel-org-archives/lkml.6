@@ -1,107 +1,150 @@
-Return-Path: <kvalo@codeaurora.org>
-X-Google-Smtp-Source: AH8x225I2+qQuYNrll3hHbThhkSZm1Vo+WpHfHi56JRojnwsm5RTGU3NM6NKrZKleWlG7dWoV9Xd
-ARC-Seal: i=1; a=rsa-sha256; t=1519028878; cv=none;
-        d=google.com; s=arc-20160816;
-        b=iXYvxS9MwqgxJYAE/tmVdKOIWet+862eQYpNm3Ezwzg92FBi+NNO8GOygFmZ/gTCo+
-         1MYY/hB8yn2rZ4vx0S/S/Zvo17pXZjzb+fcuZw0KaX+mRLFoSRwBJRzQOmj0li/T4QEk
-         MHWU56Y7ZOr4cc3mZc2g4WzHgH0U1gE5QkpsIaE1zwRS4NGMt+faD62VG9qHaXcmv86h
-         o2htkLYDkEuYBSqdCsbZvsUDlIRbd4VnqYSUcRwPgkNpOUbiRDiIf0tCNb6zDgTtKTuC
-         Yj+4BaREsx7d/sOpyFJVTGDxYCA6RiUdtWA54s4YLb9yj7kGnxKq+GkPnTlEl7svqQka
-         /WRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:user-agent:message-id
-         :in-reply-to:date:references:subject:cc:to:from:dmarc-filter
-         :dkim-signature:dkim-signature:arc-authentication-results;
-        bh=XQ95ysDOL2Qy42P05pXq6d7iBU2176fticvDlxJOYtc=;
-        b=QjT2dnIsiEtt5ZFOQX9Q31xX3I6wtGJxRguvctFgWxhzUbT24qdCVcyhWe8HUdGYrm
-         QV7alRYkrZoqzHOQgFKpg46Mmsy5ZtYbaujTr/OiO+IF3q4BoVH0gEebqmgq8H16K5yH
-         /kK+2LecJLrr2cVsDtwnnoYjEv9aFtp0dZmZm/8MPAhRxO4qRsPYscFRFjcsFFQEX8kO
-         IbFhPDIBMMnENazvRxc3v/poXEgfiSrXZUGSQzSUZy+2UPB4GXJoBciKHzT+1ThnFVI5
-         Yyb7wwhJNQzLtvSZKxQBAf0Fd6RgjsXE408Vn++Ta1wXZs808gOthT1ntFqD4zCaCYRT
-         +hQg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=bIhQx7jK;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=bIhQx7jK;
-       spf=pass (google.com: domain of kvalo@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=kvalo@codeaurora.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=bIhQx7jK;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=bIhQx7jK;
-       spf=pass (google.com: domain of kvalo@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=kvalo@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B23296055B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: Pali =?utf-8?Q?Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  David Gnedt <david.gnedt@davizone.at>,  Daniel Wagner <wagi@monom.org>,  Tony Lindgren <tony@atomide.com>,  Sebastian Reichel <sre@kernel.org>,  Pavel Machek <pavel@ucw.cz>,  Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,  Aaro Koskinen <aaro.koskinen@iki.fi>,  Grazvydas Ignotas <notasas@gmail.com>,  linux-kernel@vger.kernel.org,  linux-wireless@vger.kernel.org,  netdev@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] wl1251: Fix MAC address for Nokia N900
-References: <1482598381-16513-1-git-send-email-pali.rohar@gmail.com>
-	<1510270708-14377-1-git-send-email-pali.rohar@gmail.com>
-	<20180102192345.dnywuv4sapltrfrl@pali>
-	<20180105014510.GB22430@wotan.suse.de>
-	<20180127141459.lym2mhd5md22co4q@pali>
-Date: Mon, 19 Feb 2018 10:27:50 +0200
-In-Reply-To: <20180127141459.lym2mhd5md22co4q@pali> ("Pali \=\?utf-8\?Q\?Roh\?\=
- \=\?utf-8\?Q\?\=C3\=A1r\=22's\?\= message of
-	"Sat, 27 Jan 2018 15:14:59 +0100")
-Message-ID: <87tvud2xkp.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-399776-1518794915-5-10635128387653813616
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518794915; b=s4EmqVnjD2kldYWtl2EcBwVQTxR3ohPvz/EVJJ/AdLZMGu8
+    s0RzrRayMNaksj7PZ3rhyLlZ8CYa5y3CvEE6Oy3zWdlMuepWnQCnJMdNjrNwAUxX
+    wa69sXHVdMr222C1KtKOXyGXVtj60kJDTuIddXcelEACOYPniXxhYZSO7a4rH+Sh
+    s/DoDjmAjCjqVKHiBguoGU7ADVxrWJe6q9ibhENGs6lDPJs+MTj2goEX7JCgUGXt
+    xx5cAigu5mZc96h/peYrXxaCA6Q84RFPK4iPzroxM6KhD1WQiJ7dvpK0XiBGt8e6
+    F33ed60HZwX38DB2zal9Qzmivws88KT9MscZluw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1518794915; bh=4/82fOTzvgyAaCDpFwIp3PFX3p
+    9i0yon9pl9Gd+y+Jc=; b=MJ8gqiCU8OdQzirqW73txjvUtNVw/SrWwrW9yVyR3R
+    Tq4LJUSDP5mPly46JoZA2xPL2niKRuxepU7xyVsDIKNTX7ZMNa/mDReDu2cRdzRK
+    0m3MNR1CEDtUytEdOZL5v88QCbcb19eLEpAGzCZKywxit49Xgafjydt7HXc1VRnX
+    kOhk6aXr6xo7AQS63x2MY5bkshJvX/01xcrX8iMELF54DLkHKkXJJH3MnmTBC7QD
+    HOyr3++QT35RnkigygCJZ10TRtv14e7e1SmexgMt20xbHvklIcbXpv5Y8wLYm67t
+    gr8SwQtWxUg4+V3sDTvS7Z8ZX56jrS4FXBi5sZ6oHffg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1030285AbeBPP2T (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Feb 2018 10:28:19 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:38491 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030266AbeBPP2R (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Feb 2018 10:28:17 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: fix false-positive Wmaybe-uninitialized warning
+Date: Fri, 16 Feb 2018 16:27:47 +0100
+Message-Id: <20180216152807.1629038-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:iyeRScIsRZi3vjs/r63vmKfKEw2frPNzKJNNqp7CYyFbeikwvaQ
+ AeLiS+KmOY6f2us7oV8cgCj7vJvSylqLgMzWIKE/82az7OoVNZIaAopfxVyW0C544QsuzVR
+ PkrB7ydPw33c1VCuSrVjIhp/qnzArdzl9epu8KU24PHMagNOG10oSnUpVpQcKZxkICkiAcy
+ 5p2HxkvDxTCbSo0w2ZfQQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:14G+KML9F6A=:s0AfaDwiN+uxF0LriP3hiy
+ RfaAU/mzWR4FvjDFU6cbZxdqWDnbTfEBr6Zz/51EyknUy1ymU6HkzFzyQj8DdMme6bxPniGvA
+ Jp0WklubgX8BX5O2Yk2rTNy8cd00BsN5oC6fLPwqyyWSRuJkNFNiFoJztC+5UCvb6uXI3aPTV
+ n/mz282oDzkDmsjx1pZUJnNfyGQ/y/ZSOipd7313z8+EYk0Ivhx/XUg1X7eC0tV4DM8NFE0kR
+ VSdNN0bcRLDHXR12A3Gu2B2c2uhbBtG9fvzWtY/JriUmOh7tKdSEyTBs1l0PijYXpuBqOIVq9
+ bGlRdpDpmqQxZZ8VtmRv/6q4jIXnNEfw6jYli6W3diiBKFg9mrZgdW+aa1GWen0A34VYhTQNx
+ 1gQKO/nP5tKhx2wljpAOw68tXDQfSe6pL+LZlhqtZxH+z3qght+KHvP0ifyEEAcPsPA5UI6vh
+ lKtK2fMDKaiARJukvJJeleWeveSjX8Vv9Js86+OuiYO/Au4LErtLyefTpuOVdD3bpmAlEb2ng
+ 5wr/0j7+bWBgAMHqcDAM+he1P0kTnOWOM1JLLifWFa+qiBgxQxqdx/a4KpOgRYoF4SQFkbkfK
+ uAnv+5quTSqp0cLgzCIoa15LpImeZxZyZ9kx0ty1oe7HQWMWODTl5188Gh+3nyFtzn18S4q+Q
+ m8dHoG5L/Fvcc8TQMYa4OMRRe+7JwgBWBIWtBox1UdCuroa/3ayPUH5NK1e5aK/fYou2Q35a0
+ j3Jxotfw5kr6jxbDhbWGUOlwW01dsosXexAVmg==
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1554617146502445782?=
-X-GMAIL-MSGID: =?utf-8?q?1592817224601578108?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Pali Roh=C3=A1r <pali.rohar@gmail.com> writes:
+When we build this driver with on x86-32, gcc produces a false-positive warning:
 
-> On Friday 05 January 2018 02:45:10 Luis R. Rodriguez wrote:
->> On Tue, Jan 02, 2018 at 08:23:45PM +0100, Pali Roh=C3=A1r wrote:
->> > On Friday 10 November 2017 00:38:22 Pali Roh=C3=A1r wrote:
->> > > This patch series fix processing MAC address for wl1251 chip found i=
-n Nokia N900.
->> > >=20
->> > > Changes since v1:
->> > > * Added Acked-by for Pavel Machek
->> > > * Fixed grammar
->> > > * Magic numbers for NVS offsets are replaced by defines
->> > > * Check for validity of mac address NVS data is moved into function
->> > > * Changed order of patches as Pavel requested
->> > >=20
->> > > Pali Roh=C3=A1r (6):
->> > >   wl1251: Update wl->nvs_len after wl->nvs is valid
->> > >   wl1251: Generate random MAC address only if driver does not have
->> > >     valid
->> > >   wl1251: Parse and use MAC address from supplied NVS data
->> > >   wl1251: Set generated MAC address back to NVS data
->> > >   firmware: Add request_firmware_prefer_user() function
->> > >   wl1251: Use request_firmware_prefer_user() for loading NVS
->> > >     calibration data
->> > >=20
->> > >  drivers/base/firmware_class.c          |   45 +++++++++++++-
->> > >  drivers/net/wireless/ti/wl1251/Kconfig |    1 +
->> > >  drivers/net/wireless/ti/wl1251/main.c  |  104 +++++++++++++++++++++=
-+++++------
->> > >  include/linux/firmware.h               |    9 +++
->> > >  4 files changed, 138 insertions(+), 21 deletions(-)
->> >=20
->> > Hi! Are there any comments for first 4 patches? If not, could they be
->> > accepted and merged?
->>=20
->> Since the first 4 patches do not touch the firmware API they seem fine t=
-o me so
->> long as the maintainer accepts them. Maybe resend and clarify you have d=
-ropped
->> the other ones and amend with the new tags.
->
-> According to get_maintainer.pl, Kalle Valo is maintainer.
->
-> Kalle Valo, if you do not have any other comments, can you accept first
-> 4 patches? Or do you really need to resent first 4 patches again?
+drivers/clk/renesas/clk-sh73a0.c: In function 'sh73a0_cpg_clocks_init':
+drivers/clk/renesas/clk-sh73a0.c:155:10: error: 'parent_name' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+   return clk_register_fixed_factor(NULL, name, parent_name, 0,
 
-The first 4 patches are now in my queue, I should get to them in the
-next few days.
+We can work around that warning by adding a fake initialization, I tried
+and failed to come up with any better workaround. This is currently one
+of few remaining warnings for a 4.14.y randconfig build, so it would be
+good to also have it backported at least to that version. Older versions
+have more randconfig warnings, so we might not care.
 
---=20
-Kalle Valo
+I had not noticed this earlier, because one patch in my randconfig test
+tree removes the '-ffreestanding' option on x86-32, and that avoids
+the warning. The -ffreestanding flag was originally global but moved
+into arch/i386 by Andi Kleen in commit 6edfba1b33c7 ("[PATCH] x86_64:
+Don't define string functions to builtin") as a 'temporary workaround'.
+
+Like many temporary hacks, this turned out to be rather long-lived, from
+all I can tell we still need a simple fix to asm/string_32.h before it
+can be removed, but I'm not sure about how to best do that.
+
+Cc: stable@vger.kernel.org
+Cc: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/renesas/clk-sh73a0.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/renesas/clk-sh73a0.c b/drivers/clk/renesas/clk-sh73a0.c
+index eea38f6ea77e..3892346c4fcc 100644
+--- a/drivers/clk/renesas/clk-sh73a0.c
++++ b/drivers/clk/renesas/clk-sh73a0.c
+@@ -46,7 +46,7 @@ struct div4_clk {
+ 	unsigned int shift;
+ };
+ 
+-static struct div4_clk div4_clks[] = {
++static const struct div4_clk div4_clks[] = {
+ 	{ "zg", "pll0", CPG_FRQCRA, 16 },
+ 	{ "m3", "pll1", CPG_FRQCRA, 12 },
+ 	{ "b",  "pll1", CPG_FRQCRA,  8 },
+@@ -79,7 +79,7 @@ sh73a0_cpg_register_clock(struct device_node *np, struct sh73a0_cpg *cpg,
+ {
+ 	const struct clk_div_table *table = NULL;
+ 	unsigned int shift, reg, width;
+-	const char *parent_name;
++	const char *parent_name = NULL;
+ 	unsigned int mult = 1;
+ 	unsigned int div = 1;
+ 
+@@ -135,7 +135,7 @@ sh73a0_cpg_register_clock(struct device_node *np, struct sh73a0_cpg *cpg,
+ 		shift = 24;
+ 		width = 5;
+ 	} else {
+-		struct div4_clk *c;
++		const struct div4_clk *c;
+ 
+ 		for (c = div4_clks; c->name; c++) {
+ 			if (!strcmp(name, c->name)) {
+-- 
+2.9.0
