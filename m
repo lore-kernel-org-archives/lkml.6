@@ -1,140 +1,123 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-647902-1518803136-2-5001577737794407976
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-399776-1518794898-2-17626464584312977908
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: cc='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518803136; b=efeVfOqwm9nmG1U4neAqHrRJpxZmv2mWg+oBNnpcyqd29rg
-    00rqftxo7Yq+pLIcCd/WuOY9Z4O1X1/LzeOvFzTYTRHhnK45QLRqvxvkGczxOQc3
-    c9V/Olkm2R3UAhb9M52rJEtM5ToSlnMyNek/2+cl1v+sCciORelueAWk4XiX27KD
-    j2QX0xCfegwXcCGU1LSJKVLRobBeaRugI7Hb1UyROuHrdw+/Xz2/tDMeNABEuypP
-    4JxgclSIusiazYBK6KSFupqVn9phdhGcHXiBSsnIpVhvLzxq9JE8KZdCGQm+T8L2
-    I+mp27DsQDN1IdmTBqAZaBFN6JklQqcdYwoKhMg==
+    t=1518794898; b=dQ+Ry0c6QSgXWmccGB9N6t5L9JDsAiAgrnIGxo7MPgxpAWi
+    38jVvMAS3xonFXU69oOtups6pdTYeSjwSzlE8NU/dP1uIHlazNQgztaqfWkujzo5
+    YL4jQayempnfKLOAUXQ5rvcs1HeH+ymWYlyzkpqlIxwrq2Z6L8bUDJ+IDnghpoGx
+    VReqB9Kt41zSOeBjuPBRNpeJCwxEmur+nqv2zrJONu8uRhOt3QVEUVZq45B8wT0a
+    IrOy+c75nIZUkwQ2CYBdiIN4grCN45ac6xpp/mWFmovvvU3nkF7VR/ak+r/d6O77
+    g2XROt8ps+IRbyfvJ5VKFno7rT8fa8x1a7WJc2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:in-reply-to
-    :message-id:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1518803136; bh=d
-    cTEOLeXNKEZGw2Jl+Vkm9sxyaGLT7e001WZOm25RtU=; b=p4uFYhZILKaDvoOUA
-    mUF9CyH54FH8COT41geLzgY6QTAsqHj9z9lYv/iiAn6+EeG2d87o4ITBItaIIV6Z
-    qqeaOOoPtjEM5yGROfDiPndWLBJJ1XgVVit1W+QUdvYXGSiSY4izaRCFWxvSDEn0
-    BwBx9xlrXRAjw9G3S1P1ht7+srvcvBUkuUFqR+c08bOjj+x9yeRJ+Fft6tGHgZX+
-    M1Ux+vcojIU2lOgkbvUblWHuuc2wmk2vbIwgmyFsFCen6L4V0s5j7KfLjee0bQPk
-    cZHjyiU+Qf1Nc3RYufpV7vrEmBHh+2UB6jRN3uadk/eIbYGWw7GmG5zp1YioR+4f
-    /GzUw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=JmS4RTbk x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=Qdab+Ibj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1518794898; bh=51cAjeMyYDmcAhz8+dnbMU9YsV
+    uJq6UG9VKGNSWkcrI=; b=Qxj8yDvKDFz8Up+tE57eG/khB3SRIlQZbyN/egvOLr
+    hIqL5TSPBWfWDHlfFo7BsOAtPY75w2+RpmIyAjknxEovBwKferqLy9K6NLd/B2xM
+    lFqAjG30sa6t4XCB9C++ps6cttQipL+cNK3i8Q3wBCkPaa0Vt39ftGx6zZAfLVL0
+    d6pfsmmDlgB1B/ecgJFKgqs1trHtdsgSKeo4lTSmknfl5S2786uP19S+fvwHsDYa
+    oR+oOWxJIJYNIPqLYF7K33Cl9AU3NIPjkFkcnej1rJPCpxWc0wpgBbJ2T9LebMBy
+    l2z3MNUywdTOoatwjeoZsQquuD7shndbWsuyyOvlLlWQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=codeaurora.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx6.messagingengine.com;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=JmS4RTbk x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=Qdab+Ibj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=codeaurora.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 53E3F60817
-Authentication-Results: pdx-caf-mail.web.codeaurora.org;
- dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org;
- spf=none smtp.mailfrom=lmark@codeaurora.org
-Date: Fri, 16 Feb 2018 09:45:28 -0800 (PST)
-From: Liam Mark <lmark@codeaurora.org>
-X-X-Sender: lmark@lmark-linux.qualcomm.com
-To: Laura Abbott <labbott@redhat.com>
-Subject: Re: [PATCH] staging: android: ion: Initialize dma_address of new sg
- list
-In-Reply-To: <9aa626cf-c122-55af-0c95-a9e9c12c6f19@redhat.com>
-Message-ID: <alpine.DEB.2.02.1802160945020.20374@lmark-linux.qualcomm.com>
-References: <alpine.DEB.2.02.1802092203150.2846@lmark-linux.qualcomm.com>
- <20180212065620.iqlzczhqzlrmel5n@mwanda>
- <alpine.DEB.2.02.1802121319370.2345@lmark-linux.qualcomm.com>
- <9aa626cf-c122-55af-0c95-a9e9c12c6f19@redhat.com>
-User-Agent: Alpine 2.02 (DEB 1266 2009-07-14)
-MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, linaro-mm-sig@lists.linaro.org,
- Sumit Semwal <sumit.semwal@linaro.org>,
- Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S966894AbeBPP1T (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Feb 2018 10:27:19 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:52127 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966777AbeBPP1Q (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Feb 2018 10:27:16 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, Jan Kara <jack@suse.cz>,
+        Ingo Molnar <mingo@kernel.org>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Matthew Wilcox <willy@linux.intel.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Hugh Dickins <hughd@google.com>, Tobin C Harding <me@tobin.cc>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mm: hide a #warning for COMPILE_TEST
+Date: Fri, 16 Feb 2018 16:25:53 +0100
+Message-Id: <20180216152608.1626885-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:yb5R5+63usM4B6KEamRGCh5tRuPeo+GH1DZj5yGyVp3KyXYUEoC
+ /skDIhiHCvysV3TgLa6XdffS/o0i4lqhFYYOlfNNo31br7rnnHNnuHVd+5LZ8nDN/x/mqNQ
+ Tfu1dXgqHpDVGcYPTpBUklZILd+Cp44qH4b4HLGd00NNBg4iQGgUB+m4ipA0LB3Ft5lABve
+ jNRk4+USCqYp9m4oz+vpA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:DGst4t+wn/g=:zu7CAG9xor2VIeKiU1DhgD
+ ikoNVI2efljRjaLgVfCZ6mRf9R4eLzNyGQi7tthkBxZzq+N0awC0zr75iLNLYj31YNid+1qhc
+ As69gmYB9prL+QFcf/0tqMUDgsZNWVCiLkFEKUe2NW/NZ1sRw/YY9Z8OnCeHeoUI8yphMU1AT
+ wAKOHCoHTCcOOlcgafMPNT8llQy9MF4WZKxt+NsvBJxZIwvFE2AszW/z+24pIKwyV9l/6R0E4
+ 04yglI+REVr5ac10Mzz44M6vQJCmCS5fAL56lDXRG7V6CTJehYKKjptWupSWgn9PMOp7wyhpw
+ WB7XxFF2v/+w7ZFOi+IFgNZsNJ6j9+ZDC9c+ogR5INPDK2jHOhO8Dk+FiqaJWLlhIy5PLsDgQ
+ HYrFGpdVAt5Qx0d8Jh36YtGoMb41ECYTOtZ1PSqQhLVhK/paRYgytijDdon5rFyN7OuXH7yDr
+ EdexvQQYWCVNAbFcbAfCzBbuJQsjHOlZhxfprFQPfzPbVLxoloS6ec/0xBSJmCAmzHEuQRwJ4
+ nbd0cnl+A4Xe3r4TlQ3CErw9XLVB+6IOHBCz1AlgQkHyxkTKZ6N/Z4ccQ1LFK084K1F9F385Q
+ rl+0TgE2dK7oP2KUhxOem3YsHCrCTmEeXtaAxh2IyXwhKIv+7VskBLefMhmd+gFo7nEF9KTdf
+ yMZodcDATQ0JZhnumWnGMt+GKEZCKgjv399gldDH/TnsL46WrclihEGBe9Br6JtV4KJ3FKHWB
+ mPLWj+6xKcO24wLjML3Cg2AXKGB6GFxYAv05+g==
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 15 Feb 2018, Laura Abbott wrote:
+We get a warning about some slow configurations in randconfig kernels:
 
-> On 02/12/2018 01:25 PM, Liam Mark wrote:
-> > 
-> > On Mon, 12 Feb 2018, Dan Carpenter wrote:
-> > 
-> > > On Fri, Feb 09, 2018 at 10:16:56PM -0800, Liam Mark wrote:
-> > > > Fix the dup_sg_table function to initialize the dma_address of the new
-> > > > sg list entries instead of the source dma_address entries.
-> > > > 
-> > > > Fixes: 17fd283f3870 ("staging: android: ion: Duplicate sg_table")
-> > > > Signed-off-by: Liam Mark <lmark@codeaurora.org>
-> > > 
-> > > How did you find this bug?  What are the user visible effects of this
-> > > bug?  I'm probably going to ask you to send a v2 patch with a new
-> > > changelog depending on the answers to these questions.
-> > 
-> > I noticed the bug when reading through the code, I haven?t seen any
-> > visible effects of this bug.
-> > 
-> >  From looking at the code I don?t see any obvious ways that this bug
-> would
-> > introduce any issues with the current code base.
-> > 
-> > Liam
-> > 
-> 
-> Given the way we duplicate the sg_list this should be harmless but you
-> are right it's cleaner if we initialize the new list. You can add my
-> Ack when you update with a new change log clarifying this.
-> 
-> Thanks,
-> Laura
-> 
+mm/memory.c:83:2: error: #warning Unfortunate NUMA and NUMA Balancing config, growing page-frame for last_cpupid. [-Werror=cpp]
 
-Will do.
+The warning is reasonable by itself, but gets in the way of
+randconfig build testing, so I'm hiding it whenever CONFIG_COMPILE_TEST
+is set. The warning was added in 2013 in commit 75980e97dacc ("mm: fold
+page->_last_nid into page->flags where possible").
 
-Thanks,
-Liam
+Cc: stable@vger.kernel.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ mm/memory.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/mm/memory.c b/mm/memory.c
+index a728bed16c20..fc7779165dcf 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -81,7 +81,7 @@
+ 
+ #include "internal.h"
+ 
+-#ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
++#if defined(LAST_CPUPID_NOT_IN_PAGE_FLAGS) && !defined(CONFIG_COMPILE_TEST)
+ #warning Unfortunate NUMA and NUMA Balancing config, growing page-frame for last_cpupid.
+ #endif
+ 
+-- 
+2.9.0
