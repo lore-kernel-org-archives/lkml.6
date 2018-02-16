@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751303AbeBPUik (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 15:38:40 -0500
-Received: from rcdn-iport-2.cisco.com ([173.37.86.73]:35645 "EHLO
-        rcdn-iport-2.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750928AbeBPUeB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1750939AbeBPUeB (ORCPT <rfc822;w@1wt.eu>);
         Fri, 16 Feb 2018 15:34:01 -0500
+Received: from rcdn-iport-5.cisco.com ([173.37.86.76]:37473 "EHLO
+        rcdn-iport-5.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750734AbeBPUd4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 15:33:56 -0500
 X-IronPort-AV: E=Sophos;i="5.46,520,1511827200";
-   d="scan'208";a="359949663"
+   d="scan'208";a="139025476"
 From: Taras Kondratiuk <takondra@cisco.com>
 To: "H. Peter Anvin" <hpa@zytor.com>, Al Viro <viro@zeniv.linux.org.uk>,
         Arnd Bergmann <arnd@arndb.de>, Rob Landley <rob@landley.net>,
@@ -18,133 +18,167 @@ To: "H. Peter Anvin" <hpa@zytor.com>, Al Viro <viro@zeniv.linux.org.uk>,
 Cc: initramfs@vger.kernel.org, Victor Kamensky <kamensky@cisco.com>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, xe-linux-external@cisco.com
-Subject: [PATCH v3 05/15] initramfs: move files creation into separate state
-Date: Fri, 16 Feb 2018 20:33:41 +0000
-Message-Id: <1518813234-5874-6-git-send-email-takondra@cisco.com>
+Subject: [PATCH v3 00/15] extend initramfs archive format to support xattrs
+Date: Fri, 16 Feb 2018 20:33:36 +0000
+Message-Id: <1518813234-5874-1-git-send-email-takondra@cisco.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518813234-5874-1-git-send-email-takondra@cisco.com>
-References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
 X-Auto-Response-Suppress: DR, OOF, AutoReply
 X-Authenticated-User: takondra@cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move most of the file creation logic into a separate state. This splits
-collection of data stage from data processing and makes it easier to add
-additional states for a new archive format.
+Many of the Linux security/integrity features are dependent on file
+metadata, stored as extended attributes (xattrs), for making decisions.
+These features need to be initialized during initcall and enabled as
+early as possible for complete security coverage. 
 
-Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
----
- init/initramfs.c | 52 ++++++++++++++++++++++++++++++----------------------
- 1 file changed, 30 insertions(+), 22 deletions(-)
+Initramfs (tmpfs) supports xattrs, but newc CPIO archive format does not
+support including them into the archive.
 
-diff --git a/init/initramfs.c b/init/initramfs.c
-index d0ab7ad6ac05..2d5920c094e0 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -192,6 +192,7 @@ static int __init do_collect(void);
- static int __init do_header(void);
- static int __init do_skip(void);
- static int __init do_name(void);
-+static int __init do_create(void);
- static int __init do_copy(void);
- static int __init do_symlink(void);
- static int __init do_reset(void);
-@@ -292,12 +293,12 @@ static int __init do_reset(void)
- 	return 1;
- }
- 
--static int __init maybe_link(void)
-+static int __init maybe_link(char *name)
- {
- 	if (nlink >= 2) {
--		char *old = find_link(major, minor, ino, mode, collected);
-+		char *old = find_link(major, minor, ino, mode, name);
- 		if (old)
--			return (sys_link(old, collected) < 0) ? -1 : 1;
-+			return (sys_link(old, name) < 0) ? -1 : 1;
- 	}
- 	return 0;
- }
-@@ -321,52 +322,59 @@ static void *memcpy_optional(void *dest, const void *src, size_t n)
- 	return dest;
- }
- 
--static __initdata int wfd;
--
- static int __init do_name(void)
- {
--	state = do_skip;
--	next_state = do_reset;
- 	if (strcmp(collected, "TRAILER!!!") == 0) {
-+		state = do_skip;
-+		next_state = do_reset;
- 		free_hash();
- 		return 0;
- 	}
--	clean_path(collected, mode);
-+	memcpy_optional(name_buf, collected, N_ALIGN(name_len));
-+	state = do_create;
-+	return 0;
-+}
-+
-+
-+static __initdata int wfd;
-+
-+static int __init do_create(void)
-+{
-+	state = do_skip;
-+	next_state = do_reset;
-+	clean_path(name_buf, mode);
- 	if (S_ISREG(mode)) {
--		int ml = maybe_link();
-+		int ml = maybe_link(name_buf);
- 		if (ml >= 0) {
- 			int openflags = O_WRONLY|O_CREAT;
- 			if (ml != 1)
- 				openflags |= O_TRUNC;
--			wfd = sys_open(collected, openflags, mode);
-+			wfd = sys_open(name_buf, openflags, mode);
- 
- 			if (wfd >= 0) {
- 				sys_fchown(wfd, uid, gid);
- 				sys_fchmod(wfd, mode);
- 				if (body_len)
- 					sys_ftruncate(wfd, body_len);
--				memcpy_optional(name_buf, collected,
--						N_ALIGN(name_len));
- 				state = do_copy;
- 			}
- 		}
- 	} else if (S_ISDIR(mode)) {
--		sys_mkdir(collected, mode);
--		sys_chown(collected, uid, gid);
--		sys_chmod(collected, mode);
--		dir_add(collected, mtime);
-+		sys_mkdir(name_buf, mode);
-+		sys_chown(name_buf, uid, gid);
-+		sys_chmod(name_buf, mode);
-+		dir_add(name_buf, mtime);
- 	} else if (S_ISBLK(mode) || S_ISCHR(mode) ||
- 		   S_ISFIFO(mode) || S_ISSOCK(mode)) {
--		if (maybe_link() == 0) {
--			sys_mknod(collected, mode, rdev);
--			sys_chown(collected, uid, gid);
--			sys_chmod(collected, mode);
--			do_utime(collected, mtime);
-+		if (maybe_link(name_buf) == 0) {
-+			sys_mknod(name_buf, mode, rdev);
-+			sys_chown(name_buf, uid, gid);
-+			sys_chmod(name_buf, mode);
-+			do_utime(name_buf, mtime);
- 		}
- 	} else if (S_ISLNK(mode)) {
- 		if (body_len > PATH_MAX)
- 			return 0;
--		memcpy_optional(name_buf, collected, N_ALIGN(name_len));
- 		read_into(symlink_buf, body_len, do_symlink);
- 	}
- 	return 0;
+There are several ways to include xattrs for initramfs:
+
+- Add TAR support. Complicated format and big headers looks like too
+  much overhead.
+
+- Include a file manifest containing the xattrs in the CPIO. Should be
+  easy for initramfs because we can set xattrs at the end when all files
+  are extracted, but extracting such archive in userspace will be more
+  complicated. For example it may be necessary to set SELinux labels for
+  directories before extracting files into them, so manifest has to be
+  extracted first and then searched during each file extraction.
+
+- Extend CPIO header to support xattrs. This seem to be the most
+  straight forward way. It also allows to do other useful changes
+  to CPIO format at the same time. E.g. increase filesize field to
+  support files >4GB.
+
+This patch set extends the existing newc CPIO archive format to include
+xattrs in the initramfs.
+
+The series is based on v4.16-rc1. cpio_xattr branch is available here:
+https://github.com/kontar/linux/commits/cpio_xattr
+
+=== Patch summary ===
+
+Documentation:
+[PATCH 01/15] Documentation: add newcx initramfs format description
+
+Refactoring to simplify adding the new format:
+[PATCH 02/15] initramfs: replace states with function pointers
+[PATCH 03/15] initramfs: store file name in name_buf
+[PATCH 04/15] initramfs: remove unnecessary symlinks processing shortcut
+[PATCH 05/15] initramfs: move files creation into separate state
+[PATCH 06/15] initramfs: separate reading cpio method from header
+[PATCH 07/15] initramfs: split header layout information from parsing
+function
+
+Parse newxc format:
+[PATCH 08/15] initramfs: add newcx format
+[PATCH 09/15] initramfs: set extended attributes
+
+Generate newcx cpio archive:
+[PATCH 10/15] gen_init_cpio: move header formatting into function
+[PATCH 11/15] gen_init_cpio: add newcx format
+[PATCH 12/15] gen_init_cpio: set extended attributes for newcx
+[PATCH 13/15] gen_initramfs_list.sh: add -x option to enable newcx
+
+SELinux patches used for testing. They will be sent to SELinux
+maintainers separately.
+[PATCH 14/15] selinux: allow setxattr on rootfs so initramfs code can
+set them
+[PATCH 15/15] selinux: delay sid population for rootfs till init is
+complete
+
+=== Testing ===
+
+gen_initramfs_list.sh can be used to generate newcx CPIO archive: if
+CONFIG_INITRAMFS_NEWCX is enabled CONFIG_INITRAMFS_SOURCE will be packed
+into newcx archive. It is enough for basic testing, but it is not
+convenient for more complex setup.
+
+Victor have prepared a test setup with SELinux-labeled initramfs based
+on Poky(Yocto) with meta-selinux layer.
+
+Repo manifest and build instructions:
+https://github.com/victorkamensky/initramfs-xattrs-manifest
+
+Reference cpio utility patch to support newcx format could be
+found as part of poky/meta-selinux testing environment at
+
+https://raw.githubusercontent.com/victorkamensky/initramfs-xattrs-poky/rocko/meta/recipes-extended/cpio/cpio-2.12/cpio-xattrs.patch
+
+=== History ===
+
+The patch set is based on Mimi's series from Jan 2015:
+https://www.mail-archive.com/initramfs@vger.kernel.org/msg03971.html
+Latest discussion I was able to find is from Dec 2015:
+https://www.mail-archive.com/initramfs@vger.kernel.org/msg04198.html
+
+Format changes:
+- increased size of filesize to 64 bits to support files >4GB.
+- increased mtime field size to have 64 bits of seconds and added a
+  field for nanoseconds
+- checksum field is replaced by xattrs_size field.
+
+Other fields are left unchanged. See patch format description in the
+patch #1.
+
+v3 changes:
+- added separate mtime nanosecond field
+
+v2 changes:
+- added documentation
+- made format more consistent. In previous version a sequence of fields
+  in newcx header was different for symlinks and regular files (for
+  symlinks data field was before xattrs). It was caused by a flow
+  shortcut during symlink entry parsing.
+- removed unused checksum field in newcx header
+- removed redundant xattrcount at the beginning of xattr section
+  (xattrs_size is enough to determine the end of section).
+- size of xattr entry in xattr section includes both name and value.
+  This makes format more consistent and allows to jump over an entry
+  without scanning for the end of name string first.
+- streamlined the state machine to address the previous issue and make
+  it easier to add the new format
+- made header parsing data-driven to remove magic numbers and make it
+  easier to add the new format
+- eliminated unnecessary buffer allocation for every file name
+- pass xattrs to gen_init_cpio via cpio_list file instead of reading
+  them from files during packaging. This allows to set xattrs in CPIO
+  even if they can't be set on a build machine.
+- incorporated several bug fixes from Victor Kamensky for v1 series
+
+Mimi Zohar (3):
+  initramfs: separate reading cpio method from header
+  initramfs: set extended attributes
+  gen_initramfs_list.sh: add -x option to enable newcx format
+
+Taras Kondratiuk (10):
+  Documentation: add newcx initramfs format description
+  initramfs: replace states with function pointers
+  initramfs: store file name in name_buf
+  initramfs: remove unnecessary symlinks processing shortcut
+  initramfs: move files creation into separate state
+  initramfs: split header layout information from parsing function
+  initramfs: add newcx format
+  gen_init_cpio: move header formatting into function
+  gen_init_cpio: add newcx format
+  gen_init_cpio: set extended attributes for newcx format
+
+Victor Kamensky (2):
+  selinux: allow setxattr on rootfs so initramfs code can set them
+  selinux: delay sid population for rootfs till init is complete
+
+ Documentation/early-userspace/buffer-format.txt |  46 ++-
+ init/initramfs.c                                | 415 +++++++++++++++++-------
+ scripts/gen_initramfs_list.sh                   |  13 +-
+ security/selinux/hooks.c                        |  19 ++
+ security/selinux/include/security.h             |   1 +
+ usr/Kconfig                                     |  11 +
+ usr/Makefile                                    |   3 +-
+ usr/gen_init_cpio.c                             | 365 ++++++++++++++-------
+ 8 files changed, 632 insertions(+), 241 deletions(-)
+
 -- 
 2.10.3.dirty
