@@ -1,70 +1,226 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750836AbeBPUSW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 15:18:22 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:33109 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750727AbeBPUSU (ORCPT
+        id S1750824AbeBPUX2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 15:23:28 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:41933 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750713AbeBPUX0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 15:18:20 -0500
-Date: Fri, 16 Feb 2018 21:18:18 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/sun4i: fix HSYNC and VSYNC polarity
-Message-ID: <20180216201818.j5gunpkkebq35b4n@flea.lan>
-References: <1518717288-123578-1-git-send-email-giulio.benetti@micronovasrl.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kxyinf54766plvzj"
-Content-Disposition: inline
-In-Reply-To: <1518717288-123578-1-git-send-email-giulio.benetti@micronovasrl.com>
-User-Agent: NeoMutt/20171215
+        Fri, 16 Feb 2018 15:23:26 -0500
+X-Google-Smtp-Source: AH8x227jFX/2dDdocUv3ZAjVVtoFGv7cIYKw35TTObwiGpz96TPovlD2Kbv/kqrcynEa6lJax7MKjg==
+From: Ulf Magnusson <ulfalizer@gmail.com>
+To: apw@canonical.com, joe@perches.com
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        Ulf Magnusson <ulfalizer@gmail.com>
+Subject: [PATCH 0/3] Improve and extend checkpatch.pl Kconfig help text checks
+Date: Fri, 16 Feb 2018 21:22:52 +0100
+Message-Id: <20180216202255.25307-1-ulfalizer@gmail.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
---kxyinf54766plvzj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patchset contains some improvements for the Kconfig help text check in
+scripts/checkconfig.pl:
 
-On Thu, Feb 15, 2018 at 06:54:48PM +0100, Giulio Benetti wrote:
-> Differently from other Lcd signals, HSYNC and VSYNC signals
-> result inverted if their bits are cleared to 0.
->=20
-> Invert their settings of IO_POL register.
->=20
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+ - Commits 1 and 2 make the check more robust by checking menuconfig symbols
+   and choices as well as symbols defined with 'config', and by making the
+   detection of definition boundaries more reliable.
 
-Applied, thanks!
-Maxime
+ - Commit 3 adds a check for new '---help---'s being introduced. IMO, 'help'
+   should be encouraged in new code.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+All three commits can be applied independently.
 
---kxyinf54766plvzj
-Content-Type: application/pgp-signature; name="signature.asc"
+The existing code is a bit weird in that it doesn't require symbols with "long"
+definitions (e.g., many selects) to have help texts. Fixing that is outside the
+scope of this patchset. I couldn't tell if it was deliberate.
 
------BEGIN PGP SIGNATURE-----
+I'm a Perl noob, so check for bad practices. :)
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqHPIkACgkQ0rTAlCFN
-r3QMQg/+OV3q9HrUT8zsozxJwMsVMGHmzlW3T2oS5k8dUWgaXRgeCqSMUotbiV4M
-SMRvY1HEr6gwQIDQBblzEi81k/ztXHIxyD2hT6RRgNoeE4jMf9g8Yg22xkBaG52Q
-8/YVBAeI84p+R+oE07K234p9PJJxG+FzaiUmJaDGJ4I8/tfubEBt21Ht52ER6Lc/
-CrnC8Y8W1k2SPWEP/8dwRu//0ZhWe54p6fCi4b4iT9SNvYjIYTags+nJvkWbhmMR
-Rlpal3DQVl4wu6y0zK8ccitw0niXYKv27NqOm9/WlZd/CtprZ0xdsdx4orfskFH3
-Y5wd+2+q3meQEcwtmXxZNEHfKrAYKnYFAOACCKnaddlFQ2cXMzH5Y6T/z1fclDqL
-9QCwcuNdF2i3fNodP/CmPdq+6PVu+YTqs+cPGr8sQ5ytDg+fzfo7avUHHjCBMTsD
-T/NvTV8VzKqK241BifBbNY3VLbIPhXl+UY42RdyTQGF3+Kv6MMQSjOkNM8QPbhjB
-EeTcmQndH7v9GiXTuErMafKoGcdS7FzqTcPfD0ZPe59HWQac7+4W7vzyBVONQXxU
-KckuQQ9U6wCwvzpyT4MWcbCiWrbo8mvxEYNsMLFHE0BWQqlhliueQFwDu+B6jRNq
-BkBiRwEuTXlu/kPHF3/UDzFO0utQKuSrM92ajPZxw+IbAPTD8ek=
-=oied
------END PGP SIGNATURE-----
+The changes were tested by running 'checkpatch.pl -f' on some large existing
+Kconfig files in the kernel and looking for false positives (e.g.
+arch/{x86,arm}/Kconfig).
 
---kxyinf54766plvzj--
+This test file was also used, which contains some cases that confused the old
+code:
+
+	config BAD_1
+		bool "bad 1"
+	
+	config BAD_2
+		bool 'bad 2'
+	
+	config BAD_3
+		bool "bad 3"
+		help
+		  1
+		  2
+		  3
+	
+	menuconfig BAD_4
+		bool "bad 4"
+		help
+		  1
+		  2
+		  3
+	
+	config BAD_5
+		bool
+		prompt "bad 5"
+		help
+		  1
+		  2
+		  3
+	
+	config BAD_6
+		bool "bad 6"
+		help
+		  1
+		  2
+		  3
+	
+	if FOO
+	
+	config BAD_7
+		bool "bad 7"
+		help
+		  1
+		  2
+		  3
+	
+	endif
+	
+	config BAD_8
+		bool "bad 8"
+		help
+		  1
+		  2
+		  3
+	
+	source "foo"
+	
+	config BAD_9
+		bool "bad 9"
+		---help---
+		  1
+		  2
+		  3
+		  4
+	
+	choice
+		bool "bad choice"
+		help
+		  1
+		  2
+		  3
+	
+	endchoice
+	
+	config OK_1
+		bool
+	
+	config OK_2
+		bool "ok 2"
+		help
+		  1
+		  2
+		  3
+		  4
+	
+	config OK_3
+		tristate "ok 3"
+		help
+		  1
+		  2
+		  3
+		  4
+	
+	config OK_4
+		tristate
+		prompt "ok 4"
+		help
+		  1
+		  2
+		  3
+		  4
+	
+	choice
+		bool "ok choice"
+		help
+		  1
+		  2
+		  3
+		  4
+	
+	endchoice
+
+
+This now produces the following warnings:
+
+	WARNING: please write a paragraph that describes the config symbol fully
+	#9: FILE: Kconfig.test_help_check:9:
+	+config BAD_1
+	
+	WARNING: please write a paragraph that describes the config symbol fully
+	#12: FILE: Kconfig.test_help_check:12:
+	+config BAD_2
+	
+	WARNING: please write a paragraph that describes the config symbol fully
+	#15: FILE: Kconfig.test_help_check:15:
+	+config BAD_3
+	
+	WARNING: please write a paragraph that describes the config symbol fully
+	#22: FILE: Kconfig.test_help_check:22:
+	+menuconfig BAD_4
+	
+	WARNING: please write a paragraph that describes the config symbol fully
+	#29: FILE: Kconfig.test_help_check:29:
+	+config BAD_5
+	
+	WARNING: please write a paragraph that describes the config symbol fully
+	#37: FILE: Kconfig.test_help_check:37:
+	+config BAD_6
+	
+	WARNING: please write a paragraph that describes the config symbol fully
+	#46: FILE: Kconfig.test_help_check:46:
+	+config BAD_7
+	
+	WARNING: please write a paragraph that describes the config symbol fully
+	#55: FILE: Kconfig.test_help_check:55:
+	+config BAD_8
+	
+	WARNING: prefer 'help' over '---help---' for new help texts
+	#64: FILE: Kconfig.test_help_check:64:
+	+config BAD_9
+	
+	WARNING: please write a paragraph that describes the config symbol fully
+	#72: FILE: Kconfig.test_help_check:72:
+	+choice
+	
+	total: 0 errors, 10 warnings, 117 lines checked
+	
+	NOTE: For some of the reported defects, checkpatch may be able to
+	      mechanically convert to the typical style using --fix or --fix-inplace.
+	
+	Kconfig.test_help_check has style problems, please review.
+	
+	NOTE: If any of the errors are false positives, please report
+	      them to the maintainer, see CHECKPATCH in MAINTAINERS.
+
+
+Cheers,
+Ulf
+
+Ulf Magnusson (3):
+  checkpatch: kconfig: recognize more prompts when checking help texts
+  checkpatch: kconfig: check help texts for menuconfig and choice
+  checkpatch: kconfig: prefer 'help' over '---help---'
+
+ scripts/checkpatch.pl | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
+
+-- 
+2.14.1
