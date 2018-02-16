@@ -1,49 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034436AbeBPOfN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 09:35:13 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34430 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1033770AbeBPOfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:35:12 -0500
-Date: Fri, 16 Feb 2018 08:35:11 -0600
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Progyan Bhattacharya <bprogyan@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Nicholas Mc Guire <der.herr@hofr.at>
-Subject: Re: [PATCH] objtool/x86: Replace Non-standard Range Expression in
- Case
-Message-ID: <20180216143511.fo4emxz6webqk7qn@treble>
-References: <20180216141947.9324-1-progyanb@acm.org>
- <20180216142513.9520-1-progyanb@acm.org>
+        id S1757953AbeBPOga (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 09:36:30 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:50974 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750942AbeBPOg3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 09:36:29 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=rf@opensource.cirrus.com
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: <broonie@kernel.org>
+CC: <patches@opensource.cirrus.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>
+Subject: [PATCH] ASoC: wm_adsp: Fix some signedness errors in register access
+Date: Fri, 16 Feb 2018 14:36:10 +0000
+Message-ID: <20180216143610.12048-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180216142513.9520-1-progyanb@acm.org>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=625 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1802160175
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 07:55:13PM +0530, Progyan Bhattacharya wrote:
-> Replace range expressions with seperate individual cases, i.e. convert case 1...3: to case 1: case 2: case 3
-> Range expression within case statements are non-standard C code and can create issues over compiler and platform variety.
-> 
-> While compiling with gcc 4.8 (RHEL) I encountered this error on range expression in case statements:
-> error: range expressions in switch statements are non-standard [-Werror=pedantic]
-> 
-> Signed-off-by: Progyan Bhattacharya <progyanb@acm.org>
+base and sysclk_reg should be unsigned int, as that is what
+regmap takes as a register address.
 
-Hi Progyan,
+sysclk_mask is used to mask unsigned register values so
+should be unsigned.
 
-Thank you for the patch.
+sysclk_shift is a shift value so is not allowed to be negative.
 
-I think this makes the code unnecessarily verbose and less readable.  We
-rely on many such GCC extensions, and we don't aim to comply with
-standard C.  And AFAIK, we don't use -Werror=pedantic in the kernel.
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+---
+ sound/soc/codecs/wm_adsp.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/sound/soc/codecs/wm_adsp.h b/sound/soc/codecs/wm_adsp.h
+index 41cc11c19b83..d4042c95315e 100644
+--- a/sound/soc/codecs/wm_adsp.h
++++ b/sound/soc/codecs/wm_adsp.h
+@@ -64,10 +64,10 @@ struct wm_adsp {
+ 	struct regmap *regmap;
+ 	struct snd_soc_codec *codec;
+ 
+-	int base;
+-	int sysclk_reg;
+-	int sysclk_mask;
+-	int sysclk_shift;
++	unsigned int base;
++	unsigned int sysclk_reg;
++	unsigned int sysclk_mask;
++	unsigned int sysclk_shift;
+ 
+ 	struct list_head alg_regions;
+ 
 -- 
-Josh
+2.11.0
