@@ -1,58 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756810AbeBPAnB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 19:43:01 -0500
-Received: from mail-io0-f182.google.com ([209.85.223.182]:42851 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752984AbeBPAm5 (ORCPT
+        id S1756827AbeBPApH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 19:45:07 -0500
+Received: from mail-io0-f179.google.com ([209.85.223.179]:40791 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752984AbeBPApF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 19:42:57 -0500
-X-Google-Smtp-Source: AH8x2257I+w80Ov31a4ler90bW1cqwtvjE/SgCfX+ORdQPO9JJCQtM8QBu4i+KA9vkuHAN7VcSWyHKVQDBoKKRHAm4Q=
+        Thu, 15 Feb 2018 19:45:05 -0500
+X-Google-Smtp-Source: AH8x2264x12wH9UwAwRHF4idCMeNPPKTXnmW6/rcSdo+viQIQEexytcvJbvOgzb6sSlnAc+Mpkbrog==
+Date: Thu, 15 Feb 2018 16:45:02 -0800 (PST)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Matthew Wilcox <willy@infradead.org>
+cc: Christopher Lameter <cl@linux.com>, Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org
+Subject: Re: [patch 1/2] mm, page_alloc: extend kernelcore and movablecore
+ for percent
+In-Reply-To: <20180215204817.GB22948@bombadil.infradead.org>
+Message-ID: <alpine.DEB.2.10.1802151638510.50948@chino.kir.corp.google.com>
+References: <alpine.DEB.2.10.1802121622470.179479@chino.kir.corp.google.com> <20180214095911.GB28460@dhcp22.suse.cz> <alpine.DEB.2.10.1802140225290.261065@chino.kir.corp.google.com> <20180215144525.GG7275@dhcp22.suse.cz> <20180215151129.GB12360@bombadil.infradead.org>
+ <alpine.DEB.2.20.1802150947240.1902@nuc-kabylake> <20180215204817.GB22948@bombadil.infradead.org>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <B723A40E-EFA4-4CCE-80F6-65960213761F@gmail.com>
-References: <20180215163602.61162-1-namit@vmware.com> <20180215163602.61162-5-namit@vmware.com>
- <CALCETrUY4uZeG2fz=OQWGuyCOcBBNbep6TaJz82CZSP89=g3-A@mail.gmail.com>
- <9EB804CA-0EC9-4CBB-965A-F3C8520201E7@gmail.com> <CALCETrVP3BaOapL3eS8Tf=KFeM8VFPqvMoECGRkFa7WPLq=Asw@mail.gmail.com>
- <CA+55aFypED6i6pESAnk_RPUon_cyvdP3g-QZg2gspEBNAQWvmQ@mail.gmail.com> <B723A40E-EFA4-4CCE-80F6-65960213761F@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 15 Feb 2018 16:42:55 -0800
-X-Google-Sender-Auth: 7B3Y2pll6IrVRvoqPvZiUNg7WOc
-Message-ID: <CA+55aFzNcbCxwimCokH2BPihc=vrusbz0NqCnHK3s4aUSLwe-A@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 4/6] x86: Disable PTI on compatibility mode
-To: Nadav Amit <nadav.amit@gmail.com>
-Cc: Andy Lutomirski <luto@kernel.org>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>, Willy Tarreau <w@1wt.eu>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 4:22 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
->
-> It is not too pretty, I agree, but it should do the work. There is only one
-> problematic descriptor that can be used to switch from compatibility-mode to
-> long-mode in the GDT (LDT descriptors always have the L-bit cleared).
-> Changing the descriptor's present bit on context switch when needed can do
-> the work.
+On Thu, 15 Feb 2018, Matthew Wilcox wrote:
 
-Sure, I can see it working, but it's some really shady stuff, and now
-the scheduler needs to save/restore/check one more subtle bit.
+> What I was proposing was an intermediate page allocator where slab would
+> request 2MB for its own uses all at once, then allocate pages from that to
+> individual slabs, so allocating a kmalloc-32 object and a dentry object
+> would result in 510 pages of memory still being available for any slab
+> that needed it.
+> 
 
-And if you get it wrong, things will happily work, except you've now
-defeated PTI. But you'll never notice, because you won't be testing
-for it, and the only people who will are the black hats.
+A type of memory arena built between the page allocator and slab 
+allocator.
 
-This is exactly the "security depends on it being in sync" thing that
-makes me go "eww" about the whole model. Get one thing wrong, and
-you'll blow all the PTI code out of the water.
+The issue that I see with this is eventually there's going to be low on 
+memory situations where memory needs to be reclaimed from these arena 
+pages.  We can free individual pages back to the buddy allocator, but have 
+no control over whether an entire pageblock can be freed back.  So now we 
+have MIGRATE_MOVABLE or MIGRATE_UNMOVABLE pageblocks with some user pages 
+and some slab pages, and we've reached the same fragmentation issue in a 
+different way.  After that, it will become more difficult for the slab 
+allocator to request a page of pageblock_order.
 
-So now you tried to optimize one small case that most people won't
-use, but the downside is that you may make all our PTI work (and all
-the overhead for all the _normal_ cases) pointless.
-
-                 Linus
+Other than the stranding issue of MIGRATE_UNMOVABLE pages on pcps, the 
+page allocator currently does well in falling back to other migratetypes 
+but there isn't any type of slab reclaim or defragmentation done in the 
+background to try to free up as much memory from that 
+now-MIGRATE_UNMOVABLE pageblock as possible.  We have patches that do 
+that, but as I mentioned before it can affect the performance of the page 
+allocator because it drains pcps on fallback and it does kcompactd 
+compaction in the background even if you don't need order-9 memory later 
+(or you've defragmented needlessly when more slab is just going to be 
+allocated anyway).
