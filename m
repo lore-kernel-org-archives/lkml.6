@@ -1,88 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161949AbeBPR3G (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 12:29:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38766 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752381AbeBPR3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 12:29:05 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0417217CA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Fri, 16 Feb 2018 14:29:01 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, tmricht@linux.vnet.ibm.com,
-        linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au
-Subject: Re: [PATCH 1/3] tools include powerpc: Grab a copy of
- arch/powerpc/include/uapi/asm/unistd.h
-Message-ID: <20180216172901.GB16919@kernel.org>
-References: <20180129083417.31240-1-ravi.bangoria@linux.vnet.ibm.com>
- <20180129083417.31240-2-ravi.bangoria@linux.vnet.ibm.com>
- <20180216165245.GD24436@kernel.org>
- <20180216165616.GF24436@kernel.org>
- <20180216170336.GG24436@kernel.org>
- <20180216170812.GA16919@kernel.org>
+        id S1755745AbeBPRao (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 12:30:44 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:56466 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755645AbeBPRan (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 12:30:43 -0500
+Date: Fri, 16 Feb 2018 18:30:33 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>
+Subject: Re: [PATCH 3/4] fs/dcache: Avoid the try_lock loop in d_delete()
+Message-ID: <20180216173033.GJ25201@hirez.programming.kicks-ass.net>
+References: <20180216150933.971-1-john.ogness@linutronix.de>
+ <20180216150933.971-4-john.ogness@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180216170812.GA16919@kernel.org>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180216150933.971-4-john.ogness@linutronix.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Feb 16, 2018 at 02:08:12PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Fri, Feb 16, 2018 at 02:03:36PM -0300, Arnaldo Carvalho de Melo escreveu:
-> > Em Fri, Feb 16, 2018 at 01:56:16PM -0300, Arnaldo Carvalho de Melo escreveu:
-> > > Em Fri, Feb 16, 2018 at 01:52:45PM -0300, Arnaldo Carvalho de Melo escreveu:
-> > > > Em Mon, Jan 29, 2018 at 02:04:15PM +0530, Ravi Bangoria escreveu:
-> > > > > Will be used for generating the syscall id/string translation table.
-> > > > > 
-> > > > > Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-> > > > > ---
-> > > > >  tools/arch/powerpc/include/uapi/asm/unistd.h | 399 +++++++++++++++++++++++++++
-> > > > >  tools/perf/check-headers.sh                  |   1 +
-> > > > >  2 files changed, 400 insertions(+)
-> > > > >  create mode 100644 tools/arch/powerpc/include/uapi/asm/unistd.h
-> > > > 
-> > > > Not building on a cross-compiling environment (ubuntu 16.04), I'm checking...
-> > > 
-> > > BTW, details about that environment:
-> > > 
-> > >   46    29.83 ubuntu:16.04-x-powerpc        : FAIL powerpc-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.4) 5.4.0 20160609
-> > 
-> > So, you did it just for ppc64? Because...
-> > 
-> >   46    29.83 ubuntu:16.04-x-powerpc        : FAIL powerpc-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.4) 5.4.0 20160609
-> >   47    69.81 ubuntu:16.04-x-powerpc64      : Ok   powerpc64-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.1) 5.4.0 20160609
-> >   48    68.35 ubuntu:16.04-x-powerpc64el    : Ok   powerpc64le-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.4) 5.4.0 20160609
-> > 
-> > Its just on ppc32 that his is falling apart.
+On Fri, Feb 16, 2018 at 04:09:32PM +0100, John Ogness wrote:
 > 
-> So, $(SRCARCH) maps to both powerpc and powerpc64m which will set
-> NO_SYSCALL_TABLE to zero, thus linking against
-> tools/perf/util/syscalltbl.o, which will include the generated
-> syscalls_64.c only for ppc64, b00m.
+>    inode = dentry->d_inode;
+>    rcu_read_lock();         <- Protects d_inode from being freed,
+>                                i.e. dentry->d_inode is a valid pointer
+>                                even after dentry->d_lock is dropped
+>    unlock(dentry->d_lock);
+>    lock(inode->i_lock);
+>    lock(dentry->d_lock);
+>    rcu_read_unlock();
 
-Ok, so after looking at:
+So that is entirely tricky, typically we have to have a lookup _after_
+rcu_read_lock().
 
-commit eef289f79c03ba5ca197e2ac1e33906175f01c39
-Author: Paul Mackerras <paulus@samba.org>
-Date:   Mon Oct 10 22:56:11 2005 +1000
+Here, we rely on not being able to call dentry_free() while we hold
+d_lock, which ensure dentry must be valid in the freshly started
+rcu-section.
 
-    powerpc: Merge asm/unistd.h
-    
-    Signed-off-by: Paul Mackerras <paulus@samba.org>
-
-----
-
-Humm, we need to create two tables, one for 32-bit and another for 64,
-even with ppc not having (AFAIK) clashes in syscall numbers for 32/64...
-
-Trying to do it now.
-
-- Arnaldo
+And I suppose that same ensures dentry->d_ionde stays alive. But this
+needs a comment at least.
