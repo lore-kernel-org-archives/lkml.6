@@ -1,68 +1,82 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1017188-1518813920-2-17707093888756544761
+X-Cyrus-Session-Id: sloti22d1t05-28875-1518781527-3-2709675038437520362
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='COM', MailFrom='org', XOriginatingCountry='UNK'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518813920; b=VU1VXzFGmXDrt7OfGhA9ZvLccOZvLKkW05Xz/hhAnwXZZMV
-    fZjtC+SlVHeDW4PCkKedeuSUrN5UzSYrzhydmgaeZpPQda9UYAz+ab4tm2u3sSTS
-    Tc3M/UbyZcOmuUyY0v/Fwj1G4vbz/y+HIqww3aWK9AutWygt+VofmTbTNcukgciE
-    TPvl/vOcIE3uP4AaGVRbRb28BnjDY/n27RH+KG3yxg7UUSCS2YYGsOGjZowTuJ0w
-    VjHQ9S5jaFcn8eg7PC3Q/zq7m7Pf50hareRnji1e4ofD6oCpbMurVvGCGc7g6MXg
-    6J0SZKKAybKBjMgVD1xUR5qFVG452A3yfw7Z2HA==
+    t=1518781527; b=ipTFWgQP7dDsMhwtv4wHO2hJN7KQ6+xLBvBHM/ET/HKEWsL
+    hcghqOz0l0/UKg3GPK8wURBCB1z0s/tUW/WTL57Ue9KLRdpqnrpyMpBe5P2Z6DBo
+    A5ycaPqag/8LfChtnPZ25TqIQa6CSqa886v+j+YffrDj27HQziKuR8Dkqlap1S5A
+    b1zgRvXCqFq9xnaQo/NSVZ89GreqN3mqCpyrgZD0SU+MMT2AjytNhM2fgq0s+E49
+    rOC137j1BUu7oFKDA5nzeM5FRHSLRvOGMJ0dzh0p1Deg3W+YhAy3WKsY0/Ng9UuM
+    9hDB3kEn7Z015/cLjFMXppWpnYUSdLD47s6NTtw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    messagingengine.com; h=from:to:subject:date:message-id
+    :references:in-reply-to:mime-version:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1518813920; bh=H
-    S812fq5URDvenXdSZHkiz1DFwTct+rhNCckHhjLKfQ=; b=KRcjqkGJ8X988UfYa
-    skwilPHNqhrv1wMCuxWVlhKipCqz05/rf6Wds7VAAh9SKeOnhGNSfm43RaOxritz
-    prmw+WFbc0/uKvKGlTs7TUXwDY+HzPXD1foxuKBHy8ST5cnx566aCmehqW0LCTCC
-    bSg45XUSLX863eJd2ZDLkYs/T/xUbdTE+ATjRxl++JcsxGX83DKhsvLDHVeYMIIk
-    D6/8uOw9NyHvSljJHq5hmqCm1lFXxO+eh3ij5sc4aO0ZBlEj24Yz7E2XOX5Hfo0p
-    teaaLuGLokuBRendiM5OKBGcNemlyJ7PdnQDLcMXaIRGN9O5Ya2f94k4fOtexJdM
-    8pndQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=arctest; t=1518781527; bh=2
+    S6dCXphOsp2e6Xjul9N9me003O9DIvFSgHAirZ1UVQ=; b=dMVuoVRhtuRwhZDLW
+    z3vWlIr2ziA8vjxYL7JPc/rF9/eILkZB0wo+APsnDTor+uuLa7bfrgeHofBgwfpC
+    rFu3G1fqOvsOvd+Ny4fgUqy7tN5do6XT1QVQ75JOI4lpbc9q2ofSd7r1ymWUdBFI
+    as43MCE/73OqcMkQ1u95yGn+yhuP9Vexw8j+QL2adKl7cwiHynTlX2FGTAdHc4RI
+    Th2KAR/Et6j2jyu18hZmuHnb5lZ4Bzo5AxFiPew2qzEy8mF1IcH2o19tvsXjzfBr
+    8MMkL/iNFS/bDJ+9WxyoQAayvAkkT0KoOa56ywLSry6cC5KIneUcFgsIbD4DuljO
+    vHlxA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=aculab.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=aculab.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=aculab.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=aculab.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Fri, 16 Feb 2018 21:44:59 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC patch] checkpatch: test identifier lengths
-Message-ID: <20180216204459.GB1800@kroah.com>
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Yash Omer' <yashomer0007@gmail.com>, "gregkh@linuxfoundation.org"
+ <gregkh@linuxfoundation.org>
+Subject: RE: [PATCH] Staging: nvec: fix line should not end with a open
+ parenthesis.
+Thread-Topic: [PATCH] Staging: nvec: fix line should not end with a open
+ parenthesis.
+Thread-Index: AQHTpxqNx5zJcGoU9EybSXRCoznvPKOm5x/w
+Date: Fri, 16 Feb 2018 11:39:51 +0000
+Message-ID: <dddd86a92a424906a37a36df239fb975@AcuMS.aculab.com>
 References: <20180216113634.12848-1-yashomer0007@gmail.com>
- <20180216125519.odsteynuaielxpet@mwanda>
- <1518801207.13169.15.camel@perches.com>
- <20180216123139.84c4efe02dc40ed333d886e7@linux-foundation.org>
+In-Reply-To: <20180216113634.12848-1-yashomer0007@gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180216123139.84c4efe02dc40ed333d886e7@linux-foundation.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -73,10 +87,12 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Yash Omer <yashomer0007@gmail.com>,
- driverdev-devel@linuxdriverproject.org, linux-kernel@vger.kernel.org,
- Joe Perches <joe@perches.com>, Dan Carpenter <dan.carpenter@oracle.com>,
- Larry.Finger@lwfinger.net
+Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+ "driverdev-devel@linuxdriverproject.org"
+ <driverdev-devel@linuxdriverproject.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
+ "Larry.Finger@lwfinger.net" <Larry.Finger@lwfinger.net>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -85,49 +101,33 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 16, 2018 at 12:31:39PM -0800, Andrew Morton wrote:
-> On Fri, 16 Feb 2018 09:13:27 -0800 Joe Perches <joe@perches.com> wrote:
+From: Yash Omer
+> Sent: 16 February 2018 11:37
+> This patch fix line should not end with open parenthesis found by checkpatch.plscript.
 > 
-> > On Fri, 2018-02-16 at 15:55 +0300, Dan Carpenter wrote:
-> > > On Fri, Feb 16, 2018 at 05:06:34PM +0530, Yash Omer wrote:
-> > > > This patch fix line should not end with open parenthesis found by checkpatch.plscript.
-> > > > 
-> > > > Signed-off-by: Yash Omer <yashomer0007@gmail.com>
-> > > > ---
-> > > >  drivers/staging/nvec/nvec.c | 4 ++--
-> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> > > > index 52054a528723..39fb737543b5 100644
-> > > > --- a/drivers/staging/nvec/nvec.c
-> > > > +++ b/drivers/staging/nvec/nvec.c
-> > > > @@ -383,8 +383,8 @@ static void nvec_request_master(struct work_struct *work)
-> > > >  		msg = list_first_entry(&nvec->tx_data, struct nvec_msg, node);
-> > > >  		spin_unlock_irqrestore(&nvec->tx_lock, flags);
-> > > >  		nvec_gpio_set_value(nvec, 0);
-> > > > -		err = wait_for_completion_interruptible_timeout(
-> > > > -				&nvec->ec_transfer, msecs_to_jiffies(5000));
-> > > > +		err = wait_for_completion_interruptible_timeout
-> > > > +			(&nvec->ec_transfer, msecs_to_jiffies(5000));
-> > > 
-> > > The original code is basically fine...  It's OK to ignore checkpatch in
-> > > this situation.
-> > 
-> > Right.
+> Signed-off-by: Yash Omer <yashomer0007@gmail.com>
+> ---
+>  drivers/staging/nvec/nvec.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Yes, I'd say that checkpatch is simply wrong here.  I'd prefer that a
-> function call always have the opening paren hard up against the
-> function name.  Because I often search for "foo(" to find the callsites
-> of foo() and I expect that some code-parsing tools do the same thing. 
-> The "(" is the application of an operator to an identifier.
-> 
-> So I'd vote for simply nuking that checkpatch warning altogether. 
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> index 52054a528723..39fb737543b5 100644
+> --- a/drivers/staging/nvec/nvec.c
+> +++ b/drivers/staging/nvec/nvec.c
+> @@ -383,8 +383,8 @@ static void nvec_request_master(struct work_struct *work)
+>  		msg = list_first_entry(&nvec->tx_data, struct nvec_msg, node);
+>  		spin_unlock_irqrestore(&nvec->tx_lock, flags);
+>  		nvec_gpio_set_value(nvec, 0);
+> -		err = wait_for_completion_interruptible_timeout(
+> -				&nvec->ec_transfer, msecs_to_jiffies(5000));
+> +		err = wait_for_completion_interruptible_timeout
+> +			(&nvec->ec_transfer, msecs_to_jiffies(5000));
 
-That's my vote as well, I do that same type of search.
+Ugg...
+Isn't the correct fix to reduce the length of the function name?
 
-thanks,
+	David
 
-greg k-h
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
