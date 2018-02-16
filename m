@@ -1,87 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753878AbeBPH7s (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 02:59:48 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42813 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753847AbeBPH7q (ORCPT
+        id S1753907AbeBPIED (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 03:04:03 -0500
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:37238 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753742AbeBPIEB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 02:59:46 -0500
-X-Google-Smtp-Source: AH8x2254eZEzKB7OYaz4TFzKDvXzxnJwgwfxf/4tKAiYd4PONHseoo94OGM35L8iooeZ2Q+1Diaapg==
-Date: Fri, 16 Feb 2018 08:59:42 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH/RFC] headers: drop 2 #included headers from
- <linux/interrupt.h>
-Message-ID: <20180216075942.kmgdyvmluke2s5vg@gmail.com>
-References: <b24b9ec8-4970-65f5-759a-911d4ba2fcf0@infradead.org>
+        Fri, 16 Feb 2018 03:04:01 -0500
+X-Google-Smtp-Source: AH8x225usmS2dFkx3Sblu6KKg8dcKugy4kvH8+yW8Bg436xu85awfAWqFgYbaioWZlAsnXm5mbWAyg==
+Subject: Re: [PATCH] ARM: cpuidle: Delete an error message for a failed memory
+ allocation in arm_idle_init_cpu()
+To: SF Markus Elfring <elfring@users.sourceforge.net>,
+        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <7f419639-edfc-adb8-1dd2-d16b0dbfe19d@users.sourceforge.net>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <582de86a-d0bd-3f2d-0cbd-cf0a7ca924d8@linaro.org>
+Date: Fri, 16 Feb 2018 09:03:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b24b9ec8-4970-65f5-759a-911d4ba2fcf0@infradead.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <7f419639-edfc-adb8-1dd2-d16b0dbfe19d@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 15/02/2018 16:46, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 15 Feb 2018 16:40:38 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-* Randy Dunlap <rdunlap@infradead.org> wrote:
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-> Does anyone know or see why <linux/interrupt.h> needs <linux/linkage.h> or
-> <linux/preempt.h>?  There are no direct uses in <linux/interrupt.h> AFAICT.
-
-These are likely historical, plus it's a classic 'tragedy of the commons' 
-scenario: it's easy to take away from the "public good" of "clean header 
-dependencies" and very hard to add to it:
-
- - it's very easy to add a new #include line
-
- - it's very hard to remove one, not just due to the 2^10000 complex Kconfig
-   space, but due to 99% of the developers not testing cross-arch builds
-   (and we don't want to require them to do it)
-
- - the cost of getting the removal wrong is high (the build breaks for many 
-   people who will be unhappy at the person removing the header), while the 
-   benefit of the removal is low in isolation
-
-Then apply this dynamic for more than 20 years and we get a spaghetti:
-
- triton:~/tip> grep -c '#include <' include/linux/*.h | sort -n -t: -k +2  | tail -20
-
- include/linux/device.h:15
- include/linux/ide.h:16
- include/linux/module.h:16
- include/linux/acpi.h:17
- include/linux/filter.h:17
- include/linux/init_task.h:17
- include/linux/mmzone.h:17
- include/linux/cgroup.h:18
- include/linux/nfs_fs.h:18
- include/linux/sched.h:18
- include/linux/irq.h:19
- include/linux/pci.h:19
- include/linux/perf_event.h:23
- include/linux/blkdev.h:25
- include/linux/kvm_host.h:26
- include/linux/mm.h:26
- include/linux/netdevice.h:26
- include/linux/skbuff.h:26
- include/linux/isdn.h:27
- include/linux/fs.h:39
-
-Plus there's collateral damage as well: there's countless primitives that were 
-forced into the CPP macro space because the header dependencies were too hard. 
-Such code is not just harder to read and maintain, it's more fragile to macro 
-substitution bugs and it's less type safe as well.
-
-I'd argue that due to the basic human dynamics here this calls for tooling help.
-
-In the meanwhile I've applied your patch to tip:core/headers and will do full 
-build testing + fixing, should anything break.
-
-Thanks,
-
-	Ingo
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
