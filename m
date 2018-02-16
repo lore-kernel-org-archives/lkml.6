@@ -1,29 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161777AbeBPRM2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 12:12:28 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48344 "EHLO
+        id S1161807AbeBPRMm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 12:12:42 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48408 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161066AbeBPRMX (ORCPT
+        with ESMTP id S1161754AbeBPRM0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 12:12:23 -0500
+        Fri, 16 Feb 2018 12:12:26 -0500
 From: Mark Brown <broonie@kernel.org>
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: da9055: Pass descriptor instead of GPIO number" to the regulator tree
-In-Reply-To: <20180212131717.27193-5-linus.walleij@linaro.org>
-Message-Id: <E1emjYb-00084h-2t@debutante>
-Date: Fri, 16 Feb 2018 17:12:21 +0000
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: core: Support passing an initialized GPIO enable descriptor" to the regulator tree
+In-Reply-To: <20180212131717.27193-2-linus.walleij@linaro.org>
+Message-Id: <E1emjYe-00085Z-7c@debutante>
+Date: Fri, 16 Feb 2018 17:12:24 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: da9055: Pass descriptor instead of GPIO number
+   regulator: core: Support passing an initialized GPIO enable descriptor
 
 has been applied to the regulator tree at
 
@@ -48,67 +47,114 @@ to this mail.
 Thanks,
 Mark
 
->From 8d05560d1d011e5a842556efdbd70cc8a21499bb Mon Sep 17 00:00:00 2001
+>From e45e290a882e2c0dc8ebb7dd21c66a8209d8e3a5 Mon Sep 17 00:00:00 2001
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 12 Feb 2018 14:17:00 +0100
-Subject: [PATCH] regulator: da9055: Pass descriptor instead of GPIO number
+Date: Mon, 12 Feb 2018 14:16:57 +0100
+Subject: [PATCH] regulator: core: Support passing an initialized GPIO enable
+ descriptor
 
-When setting up a fixed regulator on the DA9055, pass a descriptor
-instead of a global GPIO number. This facility is not used in the
-kernel so we can easily just say that this should be a descriptor
-if/when put to use.
+We are currently passing a GPIO number from the global GPIO numberspace
+into the regulator core for handling enable GPIOs. This is not good
+since it ties into the global GPIO numberspace and uses gpio_to_desc()
+to overcome this.
+
+Start supporting passing an already initialized GPIO descriptor to the
+core instead: leaf drivers pick their descriptors, associated directly
+with the device node (or from ACPI or from a board descriptor table)
+and use that directly without any roundtrip over the global GPIO
+numberspace.
+
+This looks messy since it adds a bunch of extra code in the core, but
+at the end of the patch series we will delete the handling of the GPIO
+number and only deal with descriptors so things end up neat.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/da9055-regulator.c | 4 ++--
- include/linux/mfd/da9055/pdata.h     | 5 +++--
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ drivers/regulator/core.c         | 25 ++++++++++++++++---------
+ include/linux/regulator/driver.h |  3 +++
+ 2 files changed, 19 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/regulator/da9055-regulator.c b/drivers/regulator/da9055-regulator.c
-index d029c941a1e1..f40c3b8644ae 100644
---- a/drivers/regulator/da9055-regulator.c
-+++ b/drivers/regulator/da9055-regulator.c
-@@ -16,6 +16,7 @@
- #include <linux/init.h>
- #include <linux/err.h>
- #include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
-@@ -455,8 +456,7 @@ static int da9055_gpio_init(struct da9055_regulator *regulator,
- 		char name[18];
- 		int gpio_mux = pdata->gpio_ren[id];
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index dd4708c58480..4549b93b0ff9 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -1937,7 +1937,10 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
+ 	struct gpio_desc *gpiod;
+ 	int ret;
  
--		config->ena_gpio = pdata->ena_gpio[id];
--		config->ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
-+		config->ena_gpiod = pdata->ena_gpiods[id];
- 		config->ena_gpio_invert = 1;
+-	gpiod = gpio_to_desc(config->ena_gpio);
++	if (config->ena_gpiod)
++		gpiod = config->ena_gpiod;
++	else
++		gpiod = gpio_to_desc(config->ena_gpio);
  
- 		/*
-diff --git a/include/linux/mfd/da9055/pdata.h b/include/linux/mfd/da9055/pdata.h
-index 04e092be4b07..1a94fa2ac309 100644
---- a/include/linux/mfd/da9055/pdata.h
-+++ b/include/linux/mfd/da9055/pdata.h
-@@ -12,6 +12,7 @@
- #define DA9055_MAX_REGULATORS	8
+ 	list_for_each_entry(pin, &regulator_ena_gpio_list, list) {
+ 		if (pin->gpiod == gpiod) {
+@@ -1947,15 +1950,18 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
+ 		}
+ 	}
  
- struct da9055;
+-	ret = gpio_request_one(config->ena_gpio,
+-				GPIOF_DIR_OUT | config->ena_gpio_flags,
+-				rdev_get_name(rdev));
+-	if (ret)
+-		return ret;
++	if (!config->ena_gpiod) {
++		ret = gpio_request_one(config->ena_gpio,
++				       GPIOF_DIR_OUT | config->ena_gpio_flags,
++				       rdev_get_name(rdev));
++		if (ret)
++			return ret;
++	}
+ 
+ 	pin = kzalloc(sizeof(struct regulator_enable_gpio), GFP_KERNEL);
+ 	if (pin == NULL) {
+-		gpio_free(config->ena_gpio);
++		if (!config->ena_gpiod)
++			gpio_free(config->ena_gpio);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -4154,8 +4160,9 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 			goto clean;
+ 	}
+ 
+-	if ((config->ena_gpio || config->ena_gpio_initialized) &&
+-	    gpio_is_valid(config->ena_gpio)) {
++	if (config->ena_gpiod ||
++	    ((config->ena_gpio || config->ena_gpio_initialized) &&
++	     gpio_is_valid(config->ena_gpio))) {
+ 		mutex_lock(&regulator_list_mutex);
+ 		ret = regulator_ena_gpio_request(rdev, config);
+ 		mutex_unlock(&regulator_list_mutex);
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index 4c00486b7a78..4fc96cb8e5d7 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -19,6 +19,7 @@
+ #include <linux/notifier.h>
+ #include <linux/regulator/consumer.h>
+ 
 +struct gpio_desc;
+ struct regmap;
+ struct regulator_dev;
+ struct regulator_config;
+@@ -387,6 +388,7 @@ struct regulator_desc {
+  *                        initialized, meaning that >= 0 is a valid gpio
+  *                        identifier and < 0 is a non existent gpio.
+  * @ena_gpio: GPIO controlling regulator enable.
++ * @ena_gpiod: GPIO descriptor controlling regulator enable.
+  * @ena_gpio_invert: Sense for GPIO enable control.
+  * @ena_gpio_flags: Flags to use when calling gpio_request_one()
+  */
+@@ -399,6 +401,7 @@ struct regulator_config {
  
- enum gpio_select {
- 	NO_GPIO = 0,
-@@ -47,7 +48,7 @@ struct da9055_pdata {
- 	 * controls the regulator set A/B, 0 if  not available.
- 	 */
- 	enum gpio_select *reg_rsel;
--	/* GPIOs to enable regulator, 0 if not available */
--	int *ena_gpio;
-+	/* GPIO descriptors to enable regulator, NULL if not available */
-+	struct gpio_desc **ena_gpiods;
+ 	bool ena_gpio_initialized;
+ 	int ena_gpio;
++	struct gpio_desc *ena_gpiod;
+ 	unsigned int ena_gpio_invert:1;
+ 	unsigned int ena_gpio_flags;
  };
- #endif /* __DA9055_PDATA_H */
 -- 
 2.16.1
