@@ -1,63 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756827AbeBPApH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 19:45:07 -0500
-Received: from mail-io0-f179.google.com ([209.85.223.179]:40791 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752984AbeBPApF (ORCPT
+        id S1756842AbeBPAph (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 19:45:37 -0500
+Received: from ppsw-40.csi.cam.ac.uk ([131.111.8.140]:39076 "EHLO
+        ppsw-40.csi.cam.ac.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756813AbeBPApf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 19:45:05 -0500
-X-Google-Smtp-Source: AH8x2264x12wH9UwAwRHF4idCMeNPPKTXnmW6/rcSdo+viQIQEexytcvJbvOgzb6sSlnAc+Mpkbrog==
-Date: Thu, 15 Feb 2018 16:45:02 -0800 (PST)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Matthew Wilcox <willy@infradead.org>
-cc: Christopher Lameter <cl@linux.com>, Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org
-Subject: Re: [patch 1/2] mm, page_alloc: extend kernelcore and movablecore
- for percent
-In-Reply-To: <20180215204817.GB22948@bombadil.infradead.org>
-Message-ID: <alpine.DEB.2.10.1802151638510.50948@chino.kir.corp.google.com>
-References: <alpine.DEB.2.10.1802121622470.179479@chino.kir.corp.google.com> <20180214095911.GB28460@dhcp22.suse.cz> <alpine.DEB.2.10.1802140225290.261065@chino.kir.corp.google.com> <20180215144525.GG7275@dhcp22.suse.cz> <20180215151129.GB12360@bombadil.infradead.org>
- <alpine.DEB.2.20.1802150947240.1902@nuc-kabylake> <20180215204817.GB22948@bombadil.infradead.org>
-User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+        Thu, 15 Feb 2018 19:45:35 -0500
+X-Cam-AntiVirus: no malware found
+X-Cam-ScannerInfo: http://help.uis.cam.ac.uk/email-scanner-virus
+Subject: Re: [PATCH RFC v2 0/6] x86: Disabling PTI in compatibility mode
+To: Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Willy Tarreau <w@1wt.eu>,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+References: <20180215163602.61162-1-namit@vmware.com>
+ <27a0082c-fadb-792a-740e-70932d51f1b5@linux.intel.com>
+ <91CEEFA7-86C8-4731-BC7E-6AF5CC3A1BA4@gmail.com>
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Message-ID: <f0fc93ca-ba1d-2570-5d79-0c02ee388f9d@citrix.com>
+Date: Fri, 16 Feb 2018 00:45:35 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <91CEEFA7-86C8-4731-BC7E-6AF5CC3A1BA4@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Feb 2018, Matthew Wilcox wrote:
+On 16/02/2018 00:25, Nadav Amit wrote:
+> Dave Hansen <dave.hansen@linux.intel.com> wrote:
+>
+>> On 02/15/2018 08:35 AM, Nadav Amit wrote:
+>>> I removed the PTI disabling while SMEP is unsupported, although I
+>>> must admit I did not fully understand why it is required.
+>> Do you mean you don't fully understand how PTI gives SMEP-like behavior
+>> on non-SMEP hardware?
+> No. I understand how it provide SMEP-like behavior, and I understand the value
+> of SMEP by itself.
+>
+> However, I do not understand why SMEP-like protection is required to protect
+> processes that run in compatibility-mode from Meltdown/Spectre attacks. As
+> far as I understand, the process should not be able to manipulate the kernel
+> to execute code in the low 4GB.
 
-> What I was proposing was an intermediate page allocator where slab would
-> request 2MB for its own uses all at once, then allocate pages from that to
-> individual slabs, so allocating a kmalloc-32 object and a dentry object
-> would result in 510 pages of memory still being available for any slab
-> that needed it.
-> 
+Being 32bit is itself sufficient protection against Meltdown (as long as
+there nothing interesting of the kernels mapped below the 4G boundary).
 
-A type of memory arena built between the page allocator and slab 
-allocator.
+However, a 32bit compatibility process try to attack with Spectre/SP2 to
+redirect speculation back into userspace, at which point (if successful)
+the pipeline will be speculating in 64bit mode, and Meltdown is back on
+the table.  SMEP will block this attack vector, irrespective of other
+SP2 defences the kernel may employ, but a fully SP2-defended kernel
+doesn't require SMEP to be safe in this case.
 
-The issue that I see with this is eventually there's going to be low on 
-memory situations where memory needs to be reclaimed from these arena 
-pages.  We can free individual pages back to the buddy allocator, but have 
-no control over whether an entire pageblock can be freed back.  So now we 
-have MIGRATE_MOVABLE or MIGRATE_UNMOVABLE pageblocks with some user pages 
-and some slab pages, and we've reached the same fragmentation issue in a 
-different way.  After that, it will become more difficult for the slab 
-allocator to request a page of pageblock_order.
-
-Other than the stranding issue of MIGRATE_UNMOVABLE pages on pcps, the 
-page allocator currently does well in falling back to other migratetypes 
-but there isn't any type of slab reclaim or defragmentation done in the 
-background to try to free up as much memory from that 
-now-MIGRATE_UNMOVABLE pageblock as possible.  We have patches that do 
-that, but as I mentioned before it can affect the performance of the page 
-allocator because it drains pcps on fallback and it does kcompactd 
-compaction in the background even if you don't need order-9 memory later 
-(or you've defragmented needlessly when more slab is just going to be 
-allocated anyway).
+~Andrew
