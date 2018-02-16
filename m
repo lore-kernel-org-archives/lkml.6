@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755923AbeBPP0m (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:26:42 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42158 "EHLO
+        id S1758100AbeBPP0r (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:26:47 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37036 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755826AbeBPP0g (ORCPT
+        by vger.kernel.org with ESMTP id S1755925AbeBPP0m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:26:36 -0500
+        Fri, 16 Feb 2018 10:26:42 -0500
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
@@ -25,16 +25,16 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         npiggin@gmail.com, bsingharora@gmail.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: [PATCH v8 13/24] mm: Introduce __lru_cache_add_active_or_unevictable
-Date: Fri, 16 Feb 2018 16:25:27 +0100
+Subject: [PATCH v8 15/24] mm: Introduce __vm_normal_page()
+Date: Fri, 16 Feb 2018 16:25:29 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18021615-0040-0000-0000-000004348085
+x-cbid: 18021615-0040-0000-0000-000004348089
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021615-0041-0000-0000-000020D6853E
-Message-Id: <1518794738-4186-14-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18021615-0041-0000-0000-000020D6853F
+Message-Id: <1518794738-4186-16-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-16_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -46,99 +46,104 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The speculative page fault handler which is run without holding the
-mmap_sem is calling lru_cache_add_active_or_unevictable() but the vm_flags
-is not guaranteed to remain constant.
-Introducing __lru_cache_add_active_or_unevictable() which has the vma flags
-value parameter instead of the vma pointer.
+When dealing with the speculative fault path we should use the VMA's field
+cached value stored in the vm_fault structure.
+
+Currently vm_normal_page() is using the pointer to the VMA to fetch the
+vm_flags value. This patch provides a new __vm_normal_page() which is
+receiving the vm_flags flags value as parameter.
+
+Note: The speculative path is turned on for architecture providing support
+for special PTE flag. So only the first block of vm_normal_page is used
+during the speculative path.
 
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- include/linux/swap.h | 10 ++++++++--
- mm/memory.c          |  8 ++++----
- mm/swap.c            |  6 +++---
- 3 files changed, 15 insertions(+), 9 deletions(-)
+ include/linux/mm.h |  7 +++++--
+ mm/memory.c        | 18 ++++++++++--------
+ 2 files changed, 15 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index a1a3f4ed94ce..99377b66ea93 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -337,8 +337,14 @@ extern void deactivate_file_page(struct page *page);
- extern void mark_page_lazyfree(struct page *page);
- extern void swap_setup(void);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 49f160e56a0f..d5f17fcd2c32 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1261,8 +1261,11 @@ struct zap_details {
+ 	pgoff_t last_index;			/* Highest page->index to unmap */
+ };
  
--extern void lru_cache_add_active_or_unevictable(struct page *page,
--						struct vm_area_struct *vma);
-+extern void __lru_cache_add_active_or_unevictable(struct page *page,
-+						unsigned long vma_flags);
-+
-+static inline void lru_cache_add_active_or_unevictable(struct page *page,
-+						struct vm_area_struct *vma)
-+{
-+	return __lru_cache_add_active_or_unevictable(page, vma->vm_flags);
-+}
+-struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+-			     pte_t pte, bool with_public_device);
++struct page *__vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
++			      pte_t pte, bool with_public_device,
++			      unsigned long vma_flags);
++#define _vm_normal_page(vma, addr, pte, with_public_device) \
++	__vm_normal_page(vma, addr, pte, with_public_device, (vma)->vm_flags)
+ #define vm_normal_page(vma, addr, pte) _vm_normal_page(vma, addr, pte, false)
  
- /* linux/mm/vmscan.c */
- extern unsigned long zone_reclaimable_pages(struct zone *zone);
+ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
 diff --git a/mm/memory.c b/mm/memory.c
-index bd5de1aa3f7a..bc14973b4eba 100644
+index 8fd33d05ef1e..d2e441aaa96b 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -2560,7 +2560,7 @@ static int wp_page_copy(struct vm_fault *vmf)
- 		ptep_clear_flush_notify(vma, vmf->address, vmf->pte);
- 		page_add_new_anon_rmap(new_page, vma, vmf->address, false);
- 		mem_cgroup_commit_charge(new_page, memcg, false, false);
--		lru_cache_add_active_or_unevictable(new_page, vma);
-+		__lru_cache_add_active_or_unevictable(new_page, vmf->vma_flags);
- 		/*
- 		 * We call the notify macro here because, when using secondary
- 		 * mmu page tables (such as kvm shadow page tables), we want the
-@@ -3106,7 +3106,7 @@ int do_swap_page(struct vm_fault *vmf)
- 	if (unlikely(page != swapcache && swapcache)) {
- 		page_add_new_anon_rmap(page, vma, vmf->address, false);
- 		mem_cgroup_commit_charge(page, memcg, false, false);
--		lru_cache_add_active_or_unevictable(page, vma);
-+		__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
- 	} else {
- 		do_page_add_anon_rmap(page, vma, vmf->address, exclusive);
- 		mem_cgroup_commit_charge(page, memcg, true, false);
-@@ -3257,7 +3257,7 @@ static int do_anonymous_page(struct vm_fault *vmf)
- 	inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
- 	page_add_new_anon_rmap(page, vma, vmf->address, false);
- 	mem_cgroup_commit_charge(page, memcg, false, false);
--	lru_cache_add_active_or_unevictable(page, vma);
-+	__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
- setpte:
- 	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, entry);
- 
-@@ -3509,7 +3509,7 @@ int alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
- 		inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
- 		page_add_new_anon_rmap(page, vma, vmf->address, false);
- 		mem_cgroup_commit_charge(page, memcg, false, false);
--		lru_cache_add_active_or_unevictable(page, vma);
-+		__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
- 	} else {
- 		inc_mm_counter_fast(vma->vm_mm, mm_counter_file(page));
- 		page_add_file_rmap(page, false);
-diff --git a/mm/swap.c b/mm/swap.c
-index 2d337710218f..85fc6e78ca99 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -455,12 +455,12 @@ void lru_cache_add(struct page *page)
-  * directly back onto it's zone's unevictable list, it does NOT use a
-  * per cpu pagevec.
-  */
--void lru_cache_add_active_or_unevictable(struct page *page,
--					 struct vm_area_struct *vma)
-+void __lru_cache_add_active_or_unevictable(struct page *page,
-+					   unsigned long vma_flags)
+@@ -826,8 +826,9 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
+ #else
+ # define HAVE_PTE_SPECIAL 0
+ #endif
+-struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+-			     pte_t pte, bool with_public_device)
++struct page *__vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
++			      pte_t pte, bool with_public_device,
++			      unsigned long vma_flags)
  {
- 	VM_BUG_ON_PAGE(PageLRU(page), page);
+ 	unsigned long pfn = pte_pfn(pte);
  
--	if (likely((vma->vm_flags & (VM_LOCKED | VM_SPECIAL)) != VM_LOCKED))
-+	if (likely((vma_flags & (VM_LOCKED | VM_SPECIAL)) != VM_LOCKED))
- 		SetPageActive(page);
- 	else if (!TestSetPageMlocked(page)) {
+@@ -836,7 +837,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+ 			goto check_pfn;
+ 		if (vma->vm_ops && vma->vm_ops->find_special_page)
+ 			return vma->vm_ops->find_special_page(vma, addr);
+-		if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
++		if (vma_flags & (VM_PFNMAP | VM_MIXEDMAP))
+ 			return NULL;
+ 		if (is_zero_pfn(pfn))
+ 			return NULL;
+@@ -868,8 +869,8 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+ 
+ 	/* !HAVE_PTE_SPECIAL case follows: */
+ 
+-	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
+-		if (vma->vm_flags & VM_MIXEDMAP) {
++	if (unlikely(vma_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
++		if (vma_flags & VM_MIXEDMAP) {
+ 			if (!pfn_valid(pfn))
+ 				return NULL;
+ 			goto out;
+@@ -878,7 +879,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+ 			off = (addr - vma->vm_start) >> PAGE_SHIFT;
+ 			if (pfn == vma->vm_pgoff + off)
+ 				return NULL;
+-			if (!is_cow_mapping(vma->vm_flags))
++			if (!is_cow_mapping(vma_flags))
+ 				return NULL;
+ 		}
+ 	}
+@@ -2742,7 +2743,8 @@ static int do_wp_page(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 
+-	vmf->page = vm_normal_page(vma, vmf->address, vmf->orig_pte);
++	vmf->page = __vm_normal_page(vma, vmf->address, vmf->orig_pte, false,
++				     vmf->vma_flags);
+ 	if (!vmf->page) {
  		/*
+ 		 * VM_MIXEDMAP !pfn_valid() case, or VM_SOFTDIRTY clear on a
+@@ -3862,7 +3864,7 @@ static int do_numa_page(struct vm_fault *vmf)
+ 	ptep_modify_prot_commit(vma->vm_mm, vmf->address, vmf->pte, pte);
+ 	update_mmu_cache(vma, vmf->address, vmf->pte);
+ 
+-	page = vm_normal_page(vma, vmf->address, pte);
++	page = __vm_normal_page(vma, vmf->address, pte, false, vmf->vma_flags);
+ 	if (!page) {
+ 		pte_unmap_unlock(vmf->pte, vmf->ptl);
+ 		return 0;
 -- 
 2.7.4
