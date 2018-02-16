@@ -1,135 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751160AbeBPUeQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 15:34:16 -0500
-Received: from alln-iport-1.cisco.com ([173.37.142.88]:6710 "EHLO
-        alln-iport-1.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751058AbeBPUeH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 15:34:07 -0500
-X-IronPort-AV: E=Sophos;i="5.46,520,1511827200";
-   d="scan'208";a="71904794"
-From: Taras Kondratiuk <takondra@cisco.com>
-To: "H. Peter Anvin" <hpa@zytor.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, Rob Landley <rob@landley.net>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James McMechan <james.w.mcmechan@gmail.com>
-Cc: initramfs@vger.kernel.org, Victor Kamensky <kamensky@cisco.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, xe-linux-external@cisco.com
-Subject: [PATCH v3 12/14] gen_initramfs_list.sh: add -x option to enable newcx format
-Date: Fri, 16 Feb 2018 20:33:49 +0000
-Message-Id: <1518813234-5874-14-git-send-email-takondra@cisco.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518813234-5874-1-git-send-email-takondra@cisco.com>
-References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Authenticated-User: takondra@cisco.com
+        id S1751189AbeBPUej (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 15:34:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42164 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750801AbeBPUeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 15:34:36 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2CB4217A0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Fri, 16 Feb 2018 14:34:34 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+        George Cherian <gcherian@caviumnetworks.com>,
+        George Cherian <george.cherian@cavium.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bhelgaas@google.com,
+        Jayachandran.Nair@cavium.com, Robert.Richter@cavium.com,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH] PCI: Add quirk for Cavium Thunder-X2 PCIe erratum #173
+Message-ID: <20180216203434.GC11014@bhelgaas-glaptop.roam.corp.google.com>
+References: <1517554846-16703-1-git-send-email-george.cherian@cavium.com>
+ <26660034.hqiP3ND89J@aspire.rjw.lan>
+ <20180215233900.GA195653@bhelgaas-glaptop.roam.corp.google.com>
+ <2323301.ORZpb3hFRe@aspire.rjw.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2323301.ORZpb3hFRe@aspire.rjw.lan>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+On Fri, Feb 16, 2018 at 01:40:37PM +0100, Rafael J. Wysocki wrote:
+> On Friday, February 16, 2018 12:39:00 AM CET Bjorn Helgaas wrote:
+> > On Thu, Feb 15, 2018 at 10:57:25PM +0100, Rafael J. Wysocki wrote:
+> > > On Wednesday, February 14, 2018 9:16:53 PM CET Bjorn Helgaas wrote:
+> > > > On Wed, Feb 14, 2018 at 04:58:08PM +0530, George Cherian wrote:
+> > > > > On 02/13/2018 08:39 PM, Bjorn Helgaas wrote:
+> > > > > >On Fri, Feb 02, 2018 at 07:00:46AM +0000, George Cherian wrote:
 
--x option populates extended attributes in cpio_list file passed to
-get_init_cpio and selects newcx CPIO format.
+<snip>
+> > > > > >>[   12.775202] Unhandled fault: synchronous external abort (0x96000610) at 0x0000000000000000
+> > > > 
+> > > > > >>[   12.813518] PC is at pci_generic_config_read+0x5c/0xf0
+> > > > > >>[   12.818643] LR is at pci_generic_config_read+0x48/0xf0
+> > > > > >> ...
+> > > > > >>[   13.269819] [<ffff000008506f34>] pci_generic_config_read+0x5c/0xf0
+> > > > > >>[   13.275987] [<ffff000008506e2c>] pci_bus_read_config_dword+0xb4/0xd8
+> > > > > >>[   13.282328] [<ffff0000085089f4>] pcie_capability_read_dword+0x64/0xb8
+> > > > > >>[   13.288757] [<ffff000008513d28>] __pci_dev_reset+0x90/0x328
+> > > > > >>[   13.294317] [<ffff0000085142d4>] pci_probe_reset_function+0x24/0x30
+> > > > > >>[   13.300571] [<ffff000008518754>] pci_create_sysfs_dev_files+0x18c/0x2a0
+> > > > > >>[   13.307173] [<ffff000008d9a974>] pci_sysfs_init+0x38/0x60
+> > > > > >>[   13.312560] [<ffff000008083b4c>] do_one_initcall+0x5c/0x170
+> > > > > >>[   13.318122] [<ffff000008d60dfc>] kernel_init_freeable+0x1c0/0x27c
+> > > > > >>[   13.324205] [<ffff000008980d90>] kernel_init+0x18/0x110
+> > > > > >>[   13.329416] [<ffff000008083690>] ret_from_fork+0x10/0x40
+> > > > 
+> > > > I should have asked this before: why are we even trying to do this
+> > > > config read to a device that's in D3?  I assume this root port started
+> > > > out in D0 because we apparently enumerated it successfully, but it
+> > > > must have been put into D3 later?
+> > > > 
+> > > > The pci_probe_reset_function() function comment says "the PCI device
+> > > > must be responsive to PCI config space in order to use this function." 
+> > > > So apparently the caller should make sure the device is in at least
+> > > > D3hot and any bridges leading to it are in D0.
+> > > > 
+> > > > If we're missing whatever it is that makes sure the target device is
+> > > > reachable and responsive to config space, we likely have issues on
+> > > > other systems as well.  On Cavium this causes the external abort, but
+> > > > on other systems, we'd probably just get all 1's data back from the
+> > > > config read and silently do the wrong thing in
+> > > > pci_probe_reset_function().
+> > > > 
+> > > > I don't know how this runtime PM works, but maybe Rafael can help us
+> > > > out.
+> > > 
+> > > I'm not sure what the question is to be honest.
+> > 
+> > My questions are basically "What does the PCI core need to do to make
+> > sure a device is in D0 before it operates on it?  And where do we need
+> > to do that?"
+> > 
+> > > Unused ports are autosuspended after 100ms as per pcie_portdrv_probe().
+> > 
+> > So I guess this is only done for PCIe bridges, not for conventional
+> > PCI bridges.  Is this because autosuspend depends on a PCIe-only
+> > feature?
+> 
+> Yes, that's PCIe-only.
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
----
- scripts/gen_initramfs_list.sh | 13 ++++++++++++-
- usr/Kconfig                   | 11 +++++++++++
- usr/Makefile                  |  3 ++-
- 3 files changed, 25 insertions(+), 2 deletions(-)
+What PCIe feature does this depend on?
 
-diff --git a/scripts/gen_initramfs_list.sh b/scripts/gen_initramfs_list.sh
-index 86a3c0e5cfbc..cddb82f093d9 100755
---- a/scripts/gen_initramfs_list.sh
-+++ b/scripts/gen_initramfs_list.sh
-@@ -24,6 +24,7 @@ $0 [-o <file>] [-u <uid>] [-g <gid>] {-d | <cpio_source>} ...
- 	-g <gid>       Group ID to map to group ID 0 (root).
- 		       <gid> is only meaningful if <cpio_source> is a
- 		       directory.  "squash" forces all files to gid 0.
-+	-x             include file extended attributes in cpio archive.
- 	<cpio_source>  File list or directory for cpio archive.
- 		       If <cpio_source> is a .cpio file it will be used
- 		       as direct input to initramfs.
-@@ -146,6 +147,9 @@ parse() {
- 			;;
- 	esac
- 
-+	$include_xattrs && \
-+		getfattr -h -d -m - -e hex --absolute-names ${location} | \
-+		sed -e '/^#/d' -e '/^$/d' -e 's/^/xattr /' >> ${output}
- 	echo "${str}" >> ${output}
- 
- 	return 0
-@@ -226,6 +230,8 @@ root_gid=0
- dep_list=
- cpio_file=
- cpio_list=
-+cpio_opts=
-+include_xattrs=false
- output="/dev/stdout"
- output_file=""
- is_cpio_compressed=
-@@ -283,6 +289,10 @@ while [ $# -gt 0 ]; do
- 			default_list="$arg"
- 			${dep_list}default_initramfs
- 			;;
-+		"-x")   # include extended attributers
-+			cpio_opts="-x"
-+			include_xattrs=true
-+			;;
- 		"-h")
- 			usage
- 			exit 0
-@@ -312,7 +322,8 @@ if [ ! -z ${output_file} ]; then
- 			fi
- 		fi
- 		cpio_tfile="$(mktemp ${TMPDIR:-/tmp}/cpiofile.XXXXXX)"
--		usr/gen_init_cpio $timestamp ${cpio_list} > ${cpio_tfile}
-+		usr/gen_init_cpio $timestamp ${cpio_opts} ${cpio_list} \
-+			> ${cpio_tfile}
- 	else
- 		cpio_tfile=${cpio_file}
- 	fi
-diff --git a/usr/Kconfig b/usr/Kconfig
-index 43658b8a975e..0cc03bc4614c 100644
---- a/usr/Kconfig
-+++ b/usr/Kconfig
-@@ -52,6 +52,17 @@ config INITRAMFS_ROOT_GID
- 
- 	  If you are not sure, leave it set to "0".
- 
-+config INITRAMFS_NEWCX
-+	bool "Use newcx CPIO format for initramfs"
-+	depends on INITRAMFS_SOURCE!=""
-+	default n
-+	help
-+	  If selected "usr/gen_init_cpio" will generate newcx CPIO archive
-+	  format that supports extended attributes.
-+
-+	  See <file:Documentation/early-userspace/buffer-format.txt> for
-+	  more details.
-+
- config RD_GZIP
- 	bool "Support initial ramdisk/ramfs compressed using gzip"
- 	depends on BLK_DEV_INITRD
-diff --git a/usr/Makefile b/usr/Makefile
-index 237a028693ce..1106bfd61475 100644
---- a/usr/Makefile
-+++ b/usr/Makefile
-@@ -29,7 +29,8 @@ ramfs-input := $(if $(filter-out "",$(CONFIG_INITRAMFS_SOURCE)), \
- 			$(shell echo $(CONFIG_INITRAMFS_SOURCE)),-d)
- ramfs-args  := \
-         $(if $(CONFIG_INITRAMFS_ROOT_UID), -u $(CONFIG_INITRAMFS_ROOT_UID)) \
--        $(if $(CONFIG_INITRAMFS_ROOT_GID), -g $(CONFIG_INITRAMFS_ROOT_GID))
-+        $(if $(CONFIG_INITRAMFS_ROOT_GID), -g $(CONFIG_INITRAMFS_ROOT_GID)) \
-+        $(if $(CONFIG_INITRAMFS_NEWCX), -x)
- 
- # $(datafile_d_y) is used to identify all files included
- # in initramfs and to detect if any files are added/removed.
--- 
-2.10.3.dirty
+I see the PCIe test in pci_bridge_d3_possible(), added by 9d26d3a8f1b0
+("PCI: Put PCIe ports into D3 during suspend"), but unfortunately that
+commit doesn't say *why* we only do this for PCIe, or only for BIOS
+dates of 2015 or newer.
+
+> > Here's the path we're in now:
+> > 
+> >   pcie_portdrv_init                        # device_initcall (level 6)
+> >     pci_register_driver(&pcie_portdriver)
+> >       ...
+> >         pcie_portdrv_probe                 # pcie_portdriver.probe
+> >           pm_runtime_set_autosuspend_delay(&dev->dev, 100)
+> > 
+> >   pci_sysfs_init                           # late_initcall (level 7)
+> >     for_each_pci_dev(dev)
+> >       pci_create_sysfs_dev_files(dev)
+> >         pci_create_capabilities_sysfs(dev)
+> >           pci_probe_reset_function(dev)
+> >             ...
+> >               pcie_capability_read_dword   <-- config read causing abort
+> > 
+> > I guess it's conceivable that more than 100ms elapsed between
+> > pcie_portdrv_probe() and pci_probe_reset_function(), and obviously we
+> > can't depend on any particular timing.
+> 
+> Right.
+
+George, can you find out which specific devices are involved here?
+
+My working assumption is that as for_each_pci_dev() iterates through
+all the devices, we call pci_probe_reset_function() for a root port
+that happens to be in D3hot (this should work fine because the root
+port's config space should be accessible), then we call
+pci_probe_reset_function() for a device *below* the root port.  That
+doesn't work because the root port's link is down and and devices
+below it are not accessible.  The root port should treat this as an
+Unsupported Request.
+
+> > > Now, it looks like they should be resumed in the code path in question,
+> > > so this case seems to have been overlooked.
+> > 
+> > How do we identify which code paths need to resume the device, and
+> > what do we need to do to resume it?
+> 
+> The "suspended" metastate is generally defined as "the device may not be
+> accessible now" and for the majority of bus types it is unsafe to attempt
+> to access suspended devices.
+> 
+> That's not strictly the case for PCI, but IMO PCI devices should be resumed
+> before accessing them too because of the below. :-)
+> 
+> pm_runtime_get_sync() resumes the device and prevents it from suspending
+> again until pm_runtime_put() (or equivalent) is called on it.
+
+How do we identify the places that need to call pm_runtime_get_sync()?
+
+PCI devices will respond to config accesses while in D3hot, but not to
+memory or I/O accesses.  I think that distinction is probably too
+detailed and the general rule should be "the device must be in D0
+before you access it."
+
+I guess generally the driver is in control, and if it suspends the
+device, it has to be smart enough to resume it before touching it.
+
+This particular pci_probe_reset_function() case is a problem because
+it's the PCI *core* doing the access while the device may already be
+claimed by a driver.  I think it's generally taboo for the core to do
+this, and I have a patch to move this access so it happens before a
+driver can claim the device.
+
+We also have the case where userspace accesses a device via sysfs.  I
+guess all those cases probably need to wake up the device.  It looks
+like pci_config_pm_runtime_get() already does that for config
+accesses.
+
+But I think other entry points, e.g., the following, should have the
+same problem and I don't see anything there:
+
+  pci_read_legacy_io()
+  pci_write_legacy_io()
+  pci_mmap_legacy_mem()
+  pci_mmap_legacy_io()
+  pci_mmap_resource()
+  pci_resource_io()
+  pci_read_rom()
+  reset_store()
+
+Plus probably the ASPM control files, VPD, maybe others?
+
+Bjorn
