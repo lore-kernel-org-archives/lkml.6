@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162344AbeBPRks (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 12:40:48 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34404 "EHLO
+        id S1162379AbeBPRku (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 12:40:50 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34464 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162279AbeBPRkp (ORCPT
+        with ESMTP id S1162279AbeBPRkt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 12:40:45 -0500
+        Fri, 16 Feb 2018 12:40:49 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: Lee Jones <lee.jones@linaro.org>,
         Daniel Thompson <daniel.thompson@linaro.org>,
@@ -19,9 +19,9 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
         linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, groeck@chromium.org,
         linux-rockchip@lists.infradead.org, kernel@collabora.com
-Subject: [RESEND PATCH v5 2/5] dt-bindings: pwm-backlight: add PWM delay proprieties.
-Date: Fri, 16 Feb 2018 18:40:31 +0100
-Message-Id: <20180216174034.15936-2-enric.balletbo@collabora.com>
+Subject: [RESEND PATCH v5 5/5] ARM: dts: rockchip: set PWM delay backlight settings for Minnie
+Date: Fri, 16 Feb 2018 18:40:34 +0100
+Message-Id: <20180216174034.15936-5-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180216174034.15936-1-enric.balletbo@collabora.com>
 References: <20180216174034.15936-1-enric.balletbo@collabora.com>
@@ -29,52 +29,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hardware needs a delay between setting an initial (non-zero) PWM and
-enabling the backlight using GPIO. The post-pwm-on-delay-ms specifies
-this delay in milli seconds. Hardware also needs a delay between disabing
-the backlight using GPIO and setting PWM value to 0. The pwm-off-delay-ms
-is this delay in milli seconds.
+The minnie devices comes with an AUO B101EAN01 panel which is different
+from default veyron devices, thus the power on/off timing sequence is
+slightly different. The datasheet specifies a pwm delay of 200 ms, so
+update the PMW delay proprieties accordingly.
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
-Based on the original Huang Lin <hl@rock-chips.com> work.
-
 Changes since v4:
  - Rebase on top of mainline.
 Changes since v3:
- - Replace us for ms.
- - Add Acked-by: Pavel Machek <pavel@ucw.cz>
+ - Use new -ms names for proprieties.
+ - Fix the delay, should be 200ms instead of 20ms (Pavel)
 Changes since v2:
- - Use separate properties (Rob Herring)
+ - Use new names for proprieties.
 Changes since v1:
- - As suggested by Daniel Thompson
-   - Do not assume power-on delay and power-off delay will be the same
+ - Add this new patch as minnie has differents timings
 
- Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/rk3288-veyron-minnie.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-index 764db86d441a..310810906613 100644
---- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-+++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-@@ -17,6 +17,10 @@ Optional properties:
-                "pwms" property (see PWM binding[0])
-   - enable-gpios: contains a single GPIO specifier for the GPIO which enables
-                   and disables the backlight (see GPIO binding[1])
-+  - post-pwm-on-delay-ms: Delay in ms between setting an initial (non-zero) PWM
-+                          and enabling the backlight using GPIO.
-+  - pwm-off-delay-ms: Delay in ms between disabling the backlight using GPIO
-+                      and setting PWM value to 0.
+diff --git a/arch/arm/boot/dts/rk3288-veyron-minnie.dts b/arch/arm/boot/dts/rk3288-veyron-minnie.dts
+index 544de6027aaa..4c5307e62001 100644
+--- a/arch/arm/boot/dts/rk3288-veyron-minnie.dts
++++ b/arch/arm/boot/dts/rk3288-veyron-minnie.dts
+@@ -123,6 +123,8 @@
+ 			240 241 242 243 244 245 246 247
+ 			248 249 250 251 252 253 254 255>;
+ 	power-supply = <&backlight_regulator>;
++	post-pwm-on-delay-ms = <200>;
++	pwm-off-delay-ms = <200>;
+ };
  
- [0]: Documentation/devicetree/bindings/pwm/pwm.txt
- [1]: Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -32,4 +36,6 @@ Example:
- 
- 		power-supply = <&vdd_bl_reg>;
- 		enable-gpios = <&gpio 58 0>;
-+		post-pwm-on-delay-ms = <10>;
-+		pwm-off-delay-ms = <10>;
- 	};
+ &emmc {
 -- 
 2.15.1
