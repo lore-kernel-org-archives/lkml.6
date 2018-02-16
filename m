@@ -1,51 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032660AbeBPNtj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 08:49:39 -0500
-Received: from osg.samsung.com ([64.30.133.232]:40593 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032303AbeBPNsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 08:48:30 -0500
-X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH 4/6] scripts: kernel-doc: support in-line comments on nested structs/unions
-Date: Fri, 16 Feb 2018 11:48:18 -0200
-Message-Id: <a4f7680bf956e6c98f612bcfc7aa817c344ebdab.1518788761.git.mchehab@s-opensource.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <cover.1518788761.git.mchehab@s-opensource.com>
-References: <cover.1518788761.git.mchehab@s-opensource.com>
-In-Reply-To: <cover.1518788761.git.mchehab@s-opensource.com>
-References: <cover.1518788761.git.mchehab@s-opensource.com>
+        id S1032786AbeBPNvU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 08:51:20 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:33474 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032300AbeBPNvR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 08:51:17 -0500
+Date: Fri, 16 Feb 2018 14:51:13 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 2/4] ASoC: codec: cpcap: new codec
+Message-ID: <20180216135113.akicejkodhbjpp2w@earth.universe>
+References: <20180214220741.28306-1-sebastian.reichel@collabora.co.uk>
+ <20180214220741.28306-3-sebastian.reichel@collabora.co.uk>
+ <20180216113901.GC5886@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qnpszhyifoopthl6"
+Content-Disposition: inline
+In-Reply-To: <20180216113901.GC5886@sirena.org.uk>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The parser at kernel-doc rejects names with dots in the middle.
-Fix it, in order to support nested structs/unions.
 
-Tested-by: Jani Nikula <jani.nikula@intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
----
- scripts/kernel-doc | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--qnpszhyifoopthl6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-index fee8952037b1..06d7f3f2c094 100755
---- a/scripts/kernel-doc
-+++ b/scripts/kernel-doc
-@@ -363,7 +363,7 @@ my $doc_sect = $doc_com .
- my $doc_content = $doc_com_body . '(.*)';
- my $doc_block = $doc_com . 'DOC:\s*(.*)?';
- my $doc_inline_start = '^\s*/\*\*\s*$';
--my $doc_inline_sect = '\s*\*\s*(@[\w\s]+):(.*)';
-+my $doc_inline_sect = '\s*\*\s*(@\s*[\w][\w\.]*\s*):(.*)';
- my $doc_inline_end = '^\s*\*/\s*$';
- my $doc_inline_oneline = '^\s*/\*\*\s*(@[\w\s]+):\s*(.*)\s*\*/\s*$';
- my $export_symbol = '^\s*EXPORT_SYMBOL(_GPL)?\s*\(\s*(\w+)\s*\)\s*;';
--- 
-2.14.3
+Hi Mark,
+
+On Fri, Feb 16, 2018 at 11:39:01AM +0000, Mark Brown wrote:
+> On Wed, Feb 14, 2018 at 11:07:39PM +0100, Sebastian Reichel wrote:
+>=20
+> > +config SND_SOC_CPCAP
+> > +	tristate "Motorola CPCAP codec"
+> > +	depends on MFD_CPCAP
+> > +	default MFD_CPCAP
+> > +
+>=20
+> We don't have default lines like this for other MFDs...
+
+Is there a reason not to add them? It looks very useful to me:
+
+99% of people are not interested in the MFD. They don't enable
+it and are not affected at all. They do not even see extra
+configuration entry due to the dependency.
+
+0.9% of people have the MFD in their system and want their
+hardware to 'just work'. With this line it's enough to enable
+the MFD and the audio subsystem, so less knowledge and configuration
+is required.
+
+0.1% of people have special requirements and want the MFD
+and generic audio support, but no support for the MFD audio
+codec. There is a high chance, that they know how to configure
+it properly :)
+
+> > +	SOC_ENUM("Hifi Left Phase Playback Switch",
+> > +		cpcap_hifi_l_phase_inv_enum),
+> > +	SOC_ENUM("Ext Left Phase Playback Switch",
+> > +		cpcap_ext_l_phase_inv_enum),
+>=20
+> If this is a Switch control it should be a simple on/off binary control.
+> If it's an enumeration it shouldn't have Switch at the end of the name
+> since that's a keyword interpreted by userspace.  Either option seems
+> fine in this case, if it's a switch it should be "Foo Invert Switch" or
+> similar.
+
+Ok.
+
+-- Sebastian
+
+--qnpszhyifoopthl6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqG4c8ACgkQ2O7X88g7
++prytxAApQfU9evuavpOT0hbpERznCy64y2UYXCdwCBq8vG900eNN/Cxcepl5Sln
+eq9HNjceGrYgLb83ynHNL9I4enp7Rf7wMIAu6NLPRYzuNgoABLWWOlLoiEf+dWzE
+kojXaxu9uFdi50+kGy723cxXFzXGddUhEHic5L9GOKt/BawV76ZWX7DkGa5HKgO3
+L2UPSv68U1GdOV1zYYFvAa5TBu+klr8OHwG1v/EQ4H3F+8R59QiFRhotfRjah8d6
++z+xRA1wLlyh+h8nbVRM5Q1V9964n79zkE67U3LsZ9j8xdeO8njW2L0Fwdkcl+G4
++7o7VZSRTWP5FftXacvFQ9LqxYLi7G84CG/1XU0+630kdfdNUpYz7rIBlhjBU52u
+qJJkVIHsSCeJwMoRGhkrlsIxjiYQa6JgNS9cqdEWerJv33q6wyhMcRWC79VIcYB8
+Y5nSPjym8Ph+brG0B5TApUtm/2/yMTZLp0rG8s8x+7BjSAXqF19SVhVux6XzE6BG
+haStiWk9V+lpWaxM3gcyVcPYgcsRn2FDmjw9jRHQ5LCFUlAwEw9nB+V8qnJhDHo2
+lpTas0MFwOs5yM2tUerhivD7MttWNXfdrvlE6A4SDOlFBy0u3kwGTcu3T0mjgCyt
+aAuSo828I/3GLQY3I6EwdS+e0LrjRls6vtBP70s+pwa9JgnA8qo=
+=Swer
+-----END PGP SIGNATURE-----
+
+--qnpszhyifoopthl6--
