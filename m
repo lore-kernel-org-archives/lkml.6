@@ -1,84 +1,260 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757521AbeBPJDt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 04:03:49 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:37466 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757437AbeBPJDr (ORCPT
+        id S1757537AbeBPJEl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 04:04:41 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:48982 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757507AbeBPJEi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 04:03:47 -0500
-X-Google-Smtp-Source: AH8x224bwRidI1J2N4JTPS5yvPThKTpfoGlnwit8jImSYRxq4YNOOjXAfzeoEqGtLtrcLveY/kC6E7boLIgEbs0ySaI=
+        Fri, 16 Feb 2018 04:04:38 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E0A3060386
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
+Subject: Re: [PATCH v3] of: cache phandle nodes to reduce cost of
+ of_find_node_by_phandle()
+To: frowand.list@gmail.com, Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1518655979-10910-1-git-send-email-frowand.list@gmail.com>
+From: Chintan Pandya <cpandya@codeaurora.org>
+Message-ID: <207e055e-1074-9010-e719-2a4c13ede9f9@codeaurora.org>
+Date: Fri, 16 Feb 2018 14:34:33 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180215153110.zq2zosepbxmpa3kb@verge.net.au>
-References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
- <1518515162-23663-3-git-send-email-jacopo+renesas@jmondi.org> <20180215153110.zq2zosepbxmpa3kb@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 16 Feb 2018 10:03:45 +0100
-X-Google-Sender-Auth: c9OQImZoAGda03Y0UOgBkVqDeIA
-Message-ID: <CAMuHMdUJ8p99MF4sh5OGHbKc-Pz-fhpTx=gr1UvhYLTWHn53DA@mail.gmail.com>
-Subject: Re: [PATCH 02/15] clk: renesas: cpg-msr: Add support for R-Car M3-N
-To: Simon Horman <horms@verge.net.au>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1518655979-10910-1-git-send-email-frowand.list@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Simon,
 
-On Thu, Feb 15, 2018 at 4:31 PM, Simon Horman <horms@verge.net.au> wrote:
-> On Tue, Feb 13, 2018 at 10:45:49AM +0100, Jacopo Mondi wrote:
->> Initial support for R-Car M3-N (r8a77965), including core and module
->> clocks.
->>
->> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->> ---
->>  .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   1 +
->>  drivers/clk/renesas/Kconfig                        |   5 +
->>  drivers/clk/renesas/Makefile                       |   1 +
->>  drivers/clk/renesas/r8a77965-cpg-mssr.c            | 333 +++++++++++++++++++++
->>  drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
->>  drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
->>  include/dt-bindings/clock/r8a77965-cpg-mssr.h      |  62 ++++
->>  7 files changed, 409 insertions(+)
->>  create mode 100644 drivers/clk/renesas/r8a77965-cpg-mssr.c
->>  create mode 100644 include/dt-bindings/clock/r8a77965-cpg-mssr.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
->> index f1890d0..246ab63 100644
->> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
->> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
->> @@ -22,6 +22,7 @@ Required Properties:
->>        - "renesas,r8a7794-cpg-mssr" for the r8a7794 SoC (R-Car E2)
->>        - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
->>        - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
->> +      - "renesas,r8a77965-cpg-mssr" for the r8a77965 SoC (R-Car M3-N)
->>        - "renesas,r8a77970-cpg-mssr" for the r8a77970 SoC (R-Car V3M)
->>        - "renesas,r8a77995-cpg-mssr" for the r8a77995 SoC (R-Car D3)
->>
->
-> Its up to Geert, but would it be better if the bindings documentation
-> and driver changes where in separate patches?
 
-I don't care that much anymore.
-It used to be a good idea when the bindings header went in separately,
-as it was a dependency for both driver and DTS. But now we use hardcoded
-constants in the first version of the DTS, so it doesn't matter anymore.
+On 2/15/2018 6:22 AM, frowand.list@gmail.com wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
+> 
+> Create a cache of the nodes that contain a phandle property.  Use this
+> cache to find the node for a given phandle value instead of scanning
+> the devicetree to find the node.  If the phandle value is not found
+> in the cache, of_find_node_by_phandle() will fall back to the tree
+> scan algorithm.
+> 
+> The cache is initialized in of_core_init().
+> 
+> The cache is freed via a late_initcall_sync() if modules are not
+> enabled.
+> 
+> If the devicetree is created by the dtc compiler, with all phandle
+> property values auto generated, then the size required by the cache
+> could be 4 * (1 + number of phandles) bytes.  This results in an O(1)
+> node lookup cost for a given phandle value.  Due to a concern that the
+> phandle property values might not be consistent with what is generated
+> by the dtc compiler, a mask has been added to the cache lookup algorithm.
+> To maintain the O(1) node lookup cost, the size of the cache has been
+> increased by rounding the number of entries up to the next power of
+> two.
+> 
+> The overhead of finding the devicetree node containing a given phandle
+> value has been noted by several people in the recent past, in some cases
+> with a patch to add a hashed index of devicetree nodes, based on the
+> phandle value of the node.  One concern with this approach is the extra
+> space added to each node.  This patch takes advantage of the phandle
+> property values auto generated by the dtc compiler, which begin with
+> one and monotonically increase by one, resulting in a range of 1..n
+> for n phandle values.  This implementation should also provide a good
+> reduction of overhead for any range of phandle values that are mostly
+> in a monotonic range.
+> 
+> Performance measurements by Chintan Pandya <cpandya@codeaurora.org>
+> of several implementations of patches that are similar to this one
+> suggest an expected reduction of boot time by ~400ms for his test
+> system.  If the cache size was decreased to 64 entries, the boot
+> time was reduced by ~340 ms.  The measurements were on a 4.9.73 kernel
+> for arch/arm64/boot/dts/qcom/sda670-mtp.dts, contains 2371 nodes and
+> 814 phandle values.
+> 
+> Reported-by: Chintan Pandya <cpandya@codeaurora.org>
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> ---
+> 
+> A follow on patch will add an early boot allocation of the cache.
+> 
+> Changes since v2:
+>    - add mask to calculation of phandle cache entry
+>    - which results in better overhead reduction for devicetrees with
+>      phandle properties not allocated in the monotonically increasing
+>      range of 1..n
+>    - due to mask, number of entries in cache potentially increased to
+>      next power of two
+>    - minor fixes as suggested by reviewers
+>    - no longer using live_tree_max_phandle() so do not move it from
+>      drivers/of/resolver.c to drivers/of/base.c
+> 
+> Changes since v1:
+>    - change short description from
+>      of: cache phandle nodes to reduce cost of of_find_node_by_phandle()
+>    - rebase on v4.16-rc1
+>    - reorder new functions in base.c to avoid forward declaration
+>    - add locking around kfree(phandle_cache) for memory ordering
+>    - add explicit check for non-null of phandle_cache in
+>      of_find_node_by_phandle().  There is already a check for !handle,
+>      which prevents accessing a null phandle_cache, but that dependency
+>      is not obvious, so this check makes it more apparent.
+>    - do not free phandle_cache if modules are enabled, so that
+>      cached phandles will be available when modules are loaded
+> 
+>   drivers/of/base.c       | 83 ++++++++++++++++++++++++++++++++++++++++++++++---
+>   drivers/of/of_private.h |  3 ++
+>   drivers/of/resolver.c   |  3 --
+>   3 files changed, 82 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index ad28de96e13f..ab545dfa9173 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -91,10 +91,69 @@ int __weak of_node_to_nid(struct device_node *np)
+>   }
+>   #endif
+>   
+> +static struct device_node **phandle_cache;
+> +static u32 phandle_cache_mask;
+> +
+> +/*
+> + * Assumptions behind phandle_cache implementation:
+> + *   - phandle property values are in a contiguous range of 1..n
+> + *
+> + * If the assumptions do not hold, then
+> + *   - the phandle lookup overhead reduction provided by the cache
+> + *     will likely be less
+> + */
+> +static void of_populate_phandle_cache(void)
+> +{
+> +	unsigned long flags;
+> +	u32 cache_entries;
+> +	struct device_node *np;
+> +	u32 phandles = 0;
+> +
+> +	raw_spin_lock_irqsave(&devtree_lock, flags);
+> +
+> +	kfree(phandle_cache);
 
-Gr{oetje,eeting}s,
+I couldn't understood this. Everything else looks good to me.
 
-                        Geert
+> +	phandle_cache = NULL;
+> +
+> +	for_each_of_allnodes(np)
+> +		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
+> +			phandles++;
+> +
+> +	cache_entries = roundup_pow_of_two(phandles);
+> +	phandle_cache_mask = cache_entries - 1;
+> +
+> +	phandle_cache = kcalloc(cache_entries, sizeof(*phandle_cache),
+> +				GFP_ATOMIC);
+> +
+> +	for_each_of_allnodes(np)
+> +		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
+> +			phandle_cache[np->phandle & phandle_cache_mask] = np;
+> +
+> +	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+> +}
+> +
+> +#ifndef CONFIG_MODULES
+> +static int __init of_free_phandle_cache(void)
+> +{
+> +	unsigned long flags;
+> +
+> +	raw_spin_lock_irqsave(&devtree_lock, flags);
+> +
+> +	kfree(phandle_cache);
+> +	phandle_cache = NULL;
+> +
+> +	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+> +
+> +	return 0;
+> +}
+> +late_initcall_sync(of_free_phandle_cache);
+> +#endif
+> +
+>   void __init of_core_init(void)
+>   {
+>   	struct device_node *np;
+>   
+> +	of_populate_phandle_cache();
+> +
+>   	/* Create the kset, and register existing nodes */
+>   	mutex_lock(&of_mutex);
+>   	of_kset = kset_create_and_add("devicetree", NULL, firmware_kobj);
+> @@ -1021,16 +1080,32 @@ int of_modalias_node(struct device_node *node, char *modalias, int len)
+>    */
+>   struct device_node *of_find_node_by_phandle(phandle handle)
+>   {
+> -	struct device_node *np;
+> +	struct device_node *np = NULL;
+>   	unsigned long flags;
+> +	phandle masked_handle;
+>   
+>   	if (!handle)
+>   		return NULL;
+>   
+>   	raw_spin_lock_irqsave(&devtree_lock, flags);
+> -	for_each_of_allnodes(np)
+> -		if (np->phandle == handle)
+> -			break;
+> +
+> +	masked_handle = handle & phandle_cache_mask;
+> +
+> +	if (phandle_cache) {
+> +		if (phandle_cache[masked_handle] &&
+> +		    handle == phandle_cache[masked_handle]->phandle)
+> +			np = phandle_cache[masked_handle];
+> +	}
+> +
+> +	if (!np) {
+> +		for_each_of_allnodes(np)
+> +			if (np->phandle == handle) {
+> +				if (phandle_cache)
+> +					phandle_cache[masked_handle] = np;
+> +				break;
+> +			}
+> +	}
+> +
+>   	of_node_get(np);
+>   	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+>   	return np;
+> diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
+> index 0c609e7d0334..fa70650136b4 100644
+> --- a/drivers/of/of_private.h
+> +++ b/drivers/of/of_private.h
+> @@ -131,6 +131,9 @@ extern void __of_update_property_sysfs(struct device_node *np,
+>   extern void __of_sysfs_remove_bin_file(struct device_node *np,
+>   				       struct property *prop);
+>   
+> +/* illegal phandle value (set when unresolved) */
+> +#define OF_PHANDLE_ILLEGAL	0xdeadbeef
+> +
+>   /* iterators for transactions, used for overlays */
+>   /* forward iterator */
+>   #define for_each_transaction_entry(_oft, _te) \
+> diff --git a/drivers/of/resolver.c b/drivers/of/resolver.c
+> index 740d19bde601..b2ca8185c8c6 100644
+> --- a/drivers/of/resolver.c
+> +++ b/drivers/of/resolver.c
+> @@ -19,9 +19,6 @@
+>   
+>   #include "of_private.h"
+>   
+> -/* illegal phandle value (set when unresolved) */
+> -#define OF_PHANDLE_ILLEGAL	0xdeadbeef
+> -
+>   static phandle live_tree_max_phandle(void)
+>   {
+>   	struct device_node *node;
+> 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Chintan
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+Inc. is a member of the Code Aurora Forum, a Linux Foundation
+Collaborative Project
