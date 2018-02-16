@@ -1,164 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932091AbeBPTWH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 14:22:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56894 "EHLO mail.kernel.org"
+        id S1753970AbeBPTWT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 14:22:19 -0500
+Received: from vern.gendns.com ([206.190.152.46]:37654 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753413AbeBPTUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 14:20:10 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A579B217D2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 38/41] perf cpuid: Introduce a platform specific cpuid compare function
-Date: Fri, 16 Feb 2018 16:17:43 -0300
-Message-Id: <20180216191746.11095-39-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180216191746.11095-1-acme@kernel.org>
-References: <20180216191746.11095-1-acme@kernel.org>
+        id S932093AbeBPTWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 14:22:11 -0500
+Subject: Re: [PATCH 1/6] nand: davinci: rename the platform driver
+To: Boris Brezillon <boris.brezillon@bootlin.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180216164712.25898-1-brgl@bgdev.pl>
+ <20180216164712.25898-2-brgl@bgdev.pl> <20180216201923.16bfca7f@bbrezillon>
+From: David Lechner <david@lechnology.com>
+Message-ID: <93fd5120-28c6-96c7-4a0d-a4bd065f5ae6@lechnology.com>
+Date: Fri, 16 Feb 2018 13:22:20 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <20180216201923.16bfca7f@bbrezillon>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Richter <tmricht@linux.vnet.ibm.com>
+On 02/16/2018 01:19 PM, Boris Brezillon wrote:
+> On Fri, 16 Feb 2018 17:47:07 +0100
+> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> 
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> Commit d8e22fb4ccac ("ARM: da850: add the nand dev_id to the clock
+>> lookup table") broke the nand support in board file mode for
+>> da850-based boards. Instead of reverting it and breaking the DT users
+>> in the process (due to clock lookup), rename the driver to match the
+>> clock table before renaming the users.
+>>
+>> Fixes: d8e22fb4ccac ("ARM: da850: add the nand dev_id to the clock lookup table")
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> ---
+>>   drivers/mtd/nand/davinci_nand.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mtd/nand/davinci_nand.c b/drivers/mtd/nand/davinci_nand.c
+>> index ccc8c43abcff..4fb143bf1872 100644
+>> --- a/drivers/mtd/nand/davinci_nand.c
+>> +++ b/drivers/mtd/nand/davinci_nand.c
+>> @@ -865,7 +865,7 @@ static struct platform_driver nand_davinci_driver = {
+>>   	.probe		= nand_davinci_probe,
+>>   	.remove		= nand_davinci_remove,
+>>   	.driver		= {
+>> -		.name	= "davinci_nand",
+>> +		.name	= "davinci-nand",
+> 
+> Another side-effect of this change you should be aware of: by doing
+> that you also break all users that were defining partitions through the
+> cmdline using mtdparts=davinci_nand.0:<part-layout>.
+> 
+> Not sure this is a good idea ;-).
 
-The function get_cpuid_str() is called by perf_pmu__getcpuid() and on
-s390 returns a complete description of the CPU and its capabilities,
-which is a comma separated list.
-
-To map the CPU type with the value defined in the
-pmu-events/arch/s390/mapfile.csv, introduce an architecture specific
-cpuid compare function named strcmp_cpuid_str()
-
-The currently used regex algorithm is defined as the weak default and
-will be used if no platform specific one is defined. This matches the
-current behavior.
-
-Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Link: http://lkml.kernel.org/r/20180213151419.80737-3-tmricht@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/arch/s390/util/header.c | 18 +++++++++++++++
- tools/perf/util/header.h           |  1 +
- tools/perf/util/pmu.c              | 47 +++++++++++++++++++++++---------------
- 3 files changed, 48 insertions(+), 18 deletions(-)
-
-diff --git a/tools/perf/arch/s390/util/header.c b/tools/perf/arch/s390/util/header.c
-index a78064c25ced..231294b80dc4 100644
---- a/tools/perf/arch/s390/util/header.c
-+++ b/tools/perf/arch/s390/util/header.c
-@@ -146,3 +146,21 @@ char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
- 		zfree(&buf);
- 	return buf;
- }
-+
-+/*
-+ * Compare the cpuid string returned by get_cpuid() function
-+ * with the name generated by the jevents file read from
-+ * pmu-events/arch/s390/mapfile.csv.
-+ *
-+ * Parameter mapcpuid is the cpuid as stored in the
-+ * pmu-events/arch/s390/mapfile.csv. This is just the type number.
-+ * Parameter cpuid is the cpuid returned by function get_cpuid().
-+ */
-+int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
-+{
-+	char *cp = strchr(cpuid, ',');
-+
-+	if (cp == NULL)
-+		return -1;
-+	return strncmp(cp + 1, mapcpuid, strlen(mapcpuid));
-+}
-diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
-index f28aaaa3a440..942bdec6d70d 100644
---- a/tools/perf/util/header.h
-+++ b/tools/perf/util/header.h
-@@ -174,4 +174,5 @@ int write_padded(struct feat_fd *fd, const void *bf,
- int get_cpuid(char *buffer, size_t sz);
- 
- char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused);
-+int strcmp_cpuid_str(const char *s1, const char *s2);
- #endif /* __PERF_HEADER_H */
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 57e38fdf0b34..1111d5bf15ca 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -576,6 +576,34 @@ char * __weak get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
- 	return NULL;
- }
- 
-+/* Return zero when the cpuid from the mapfile.csv matches the
-+ * cpuid string generated on this platform.
-+ * Otherwise return non-zero.
-+ */
-+int __weak strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
-+{
-+	regex_t re;
-+	regmatch_t pmatch[1];
-+	int match;
-+
-+	if (regcomp(&re, mapcpuid, REG_EXTENDED) != 0) {
-+		/* Warn unable to generate match particular string. */
-+		pr_info("Invalid regular expression %s\n", mapcpuid);
-+		return 1;
-+	}
-+
-+	match = !regexec(&re, cpuid, 1, pmatch, 0);
-+	regfree(&re);
-+	if (match) {
-+		size_t match_len = (pmatch[0].rm_eo - pmatch[0].rm_so);
-+
-+		/* Verify the entire string matched. */
-+		if (match_len == strlen(cpuid))
-+			return 0;
-+	}
-+	return 1;
-+}
-+
- static char *perf_pmu__getcpuid(struct perf_pmu *pmu)
- {
- 	char *cpuid;
-@@ -610,31 +638,14 @@ struct pmu_events_map *perf_pmu__find_map(struct perf_pmu *pmu)
- 
- 	i = 0;
- 	for (;;) {
--		regex_t re;
--		regmatch_t pmatch[1];
--		int match;
--
- 		map = &pmu_events_map[i++];
- 		if (!map->table) {
- 			map = NULL;
- 			break;
- 		}
- 
--		if (regcomp(&re, map->cpuid, REG_EXTENDED) != 0) {
--			/* Warn unable to generate match particular string. */
--			pr_info("Invalid regular expression %s\n", map->cpuid);
-+		if (!strcmp_cpuid_str(map->cpuid, cpuid))
- 			break;
--		}
--
--		match = !regexec(&re, cpuid, 1, pmatch, 0);
--		regfree(&re);
--		if (match) {
--			size_t match_len = (pmatch[0].rm_eo - pmatch[0].rm_so);
--
--			/* Verify the entire string matched. */
--			if (match_len == strlen(cpuid))
--				break;
--		}
- 	}
- 	free(cpuid);
- 	return map;
--- 
-2.14.3
+Also, once we move to the common clock framework, the AUXDATA that causes
+the DT clock lookup breakage you are trying to avoid will go away, so that
+won't be a reason for changing this either.
