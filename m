@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758115AbeBPP0y (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:26:54 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43292 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1758096AbeBPP0q (ORCPT
+        id S1758130AbeBPP1A (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:27:00 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48648 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1758096AbeBPP0z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:26:46 -0500
+        Fri, 16 Feb 2018 10:26:55 -0500
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
@@ -25,155 +25,326 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         npiggin@gmail.com, bsingharora@gmail.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: [PATCH v8 16/24] mm: Introduce __page_add_new_anon_rmap()
-Date: Fri, 16 Feb 2018 16:25:30 +0100
+Subject: [PATCH v8 19/24] mm: Adding speculative page fault failure trace events
+Date: Fri, 16 Feb 2018 16:25:33 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18021615-0012-0000-0000-000005B1801A
+x-cbid: 18021615-0020-0000-0000-000003F88158
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021615-0013-0000-0000-0000192D84B4
-Message-Id: <1518794738-4186-17-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18021615-0021-0000-0000-0000428C8553
+Message-Id: <1518794738-4186-20-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-16_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1802160183
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When dealing with speculative page fault handler, we may race with VMA
-being split or merged. In this case the vma->vm_start and vm->vm_end
-fields may not match the address the page fault is occurring.
-
-This can only happens when the VMA is split but in that case, the
-anon_vma pointer of the new VMA will be the same as the original one,
-because in __split_vma the new->anon_vma is set to src->anon_vma when
-*new = *vma.
-
-So even if the VMA boundaries are not correct, the anon_vma pointer is
-still valid.
-
-If the VMA has been merged, then the VMA in which it has been merged
-must have the same anon_vma pointer otherwise the merge can't be done.
-
-So in all the case we know that the anon_vma is valid, since we have
-checked before starting the speculative page fault that the anon_vma
-pointer is valid for this VMA and since there is an anon_vma this
-means that at one time a page has been backed and that before the VMA
-is cleaned, the page table lock would have to be grab to clean the
-PTE, and the anon_vma field is checked once the PTE is locked.
-
-This patch introduce a new __page_add_new_anon_rmap() service which
-doesn't check for the VMA boundaries, and create a new inline one
-which do the check.
-
-When called from a page fault handler, if this is not a speculative one,
-there is a guarantee that vm_start and vm_end match the faulting address,
-so this check is useless. In the context of the speculative page fault
-handler, this check may be wrong but anon_vma is still valid as explained
-above.
+This patch a set of new trace events to collect the speculative page fault
+event failures.
 
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- include/linux/rmap.h | 12 ++++++++++--
- mm/memory.c          |  8 ++++----
- mm/rmap.c            |  5 ++---
- 3 files changed, 16 insertions(+), 9 deletions(-)
+ include/trace/events/pagefault.h | 87 ++++++++++++++++++++++++++++++++++++++++
+ mm/memory.c                      | 62 ++++++++++++++++++++++------
+ 2 files changed, 136 insertions(+), 13 deletions(-)
+ create mode 100644 include/trace/events/pagefault.h
 
-diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-index 988d176472df..a5d282573093 100644
---- a/include/linux/rmap.h
-+++ b/include/linux/rmap.h
-@@ -174,8 +174,16 @@ void page_add_anon_rmap(struct page *, struct vm_area_struct *,
- 		unsigned long, bool);
- void do_page_add_anon_rmap(struct page *, struct vm_area_struct *,
- 			   unsigned long, int);
--void page_add_new_anon_rmap(struct page *, struct vm_area_struct *,
--		unsigned long, bool);
-+void __page_add_new_anon_rmap(struct page *, struct vm_area_struct *,
-+			      unsigned long, bool);
-+static inline void page_add_new_anon_rmap(struct page *page,
-+					  struct vm_area_struct *vma,
-+					  unsigned long address, bool compound)
-+{
-+	VM_BUG_ON_VMA(address < vma->vm_start || address >= vma->vm_end, vma);
-+	__page_add_new_anon_rmap(page, vma, address, compound);
-+}
+diff --git a/include/trace/events/pagefault.h b/include/trace/events/pagefault.h
+new file mode 100644
+index 000000000000..1d793f8c739b
+--- /dev/null
++++ b/include/trace/events/pagefault.h
+@@ -0,0 +1,87 @@
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM pagefault
 +
- void page_add_file_rmap(struct page *, bool);
- void page_remove_rmap(struct page *, bool);
- 
++#if !defined(_TRACE_PAGEFAULT_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_PAGEFAULT_H
++
++#include <linux/tracepoint.h>
++#include <linux/mm.h>
++
++DECLARE_EVENT_CLASS(spf,
++
++	TP_PROTO(unsigned long caller,
++		 struct vm_area_struct *vma, unsigned long address),
++
++	TP_ARGS(caller, vma, address),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, caller)
++		__field(unsigned long, vm_start)
++		__field(unsigned long, vm_end)
++		__field(unsigned long, address)
++	),
++
++	TP_fast_assign(
++		__entry->caller		= caller;
++		__entry->vm_start	= vma->vm_start;
++		__entry->vm_end		= vma->vm_end;
++		__entry->address	= address;
++	),
++
++	TP_printk("ip:%lx vma:%lx-%lx address:%lx",
++		  __entry->caller, __entry->vm_start, __entry->vm_end,
++		  __entry->address)
++);
++
++DEFINE_EVENT(spf, spf_pte_lock,
++
++	TP_PROTO(unsigned long caller,
++		 struct vm_area_struct *vma, unsigned long address),
++
++	TP_ARGS(caller, vma, address)
++);
++
++DEFINE_EVENT(spf, spf_vma_changed,
++
++	TP_PROTO(unsigned long caller,
++		 struct vm_area_struct *vma, unsigned long address),
++
++	TP_ARGS(caller, vma, address)
++);
++
++DEFINE_EVENT(spf, spf_vma_noanon,
++
++	TP_PROTO(unsigned long caller,
++		 struct vm_area_struct *vma, unsigned long address),
++
++	TP_ARGS(caller, vma, address)
++);
++
++DEFINE_EVENT(spf, spf_vma_notsup,
++
++	TP_PROTO(unsigned long caller,
++		 struct vm_area_struct *vma, unsigned long address),
++
++	TP_ARGS(caller, vma, address)
++);
++
++DEFINE_EVENT(spf, spf_vma_access,
++
++	TP_PROTO(unsigned long caller,
++		 struct vm_area_struct *vma, unsigned long address),
++
++	TP_ARGS(caller, vma, address)
++);
++
++DEFINE_EVENT(spf, spf_pmd_changed,
++
++	TP_PROTO(unsigned long caller,
++		 struct vm_area_struct *vma, unsigned long address),
++
++	TP_ARGS(caller, vma, address)
++);
++
++#endif /* _TRACE_PAGEFAULT_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
 diff --git a/mm/memory.c b/mm/memory.c
-index d2e441aaa96b..67de327c7262 100644
+index efc32173264e..2ef686405154 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -2559,7 +2559,7 @@ static int wp_page_copy(struct vm_fault *vmf)
- 		 * thread doing COW.
- 		 */
- 		ptep_clear_flush_notify(vma, vmf->address, vmf->pte);
--		page_add_new_anon_rmap(new_page, vma, vmf->address, false);
-+		__page_add_new_anon_rmap(new_page, vma, vmf->address, false);
- 		mem_cgroup_commit_charge(new_page, memcg, false, false);
- 		__lru_cache_add_active_or_unevictable(new_page, vmf->vma_flags);
- 		/*
-@@ -3106,7 +3106,7 @@ int do_swap_page(struct vm_fault *vmf)
+@@ -80,6 +80,9 @@
  
- 	/* ksm created a completely new copy */
- 	if (unlikely(page != swapcache && swapcache)) {
--		page_add_new_anon_rmap(page, vma, vmf->address, false);
-+		__page_add_new_anon_rmap(page, vma, vmf->address, false);
- 		mem_cgroup_commit_charge(page, memcg, false, false);
- 		__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
- 	} else {
-@@ -3257,7 +3257,7 @@ static int do_anonymous_page(struct vm_fault *vmf)
+ #include "internal.h"
+ 
++#define CREATE_TRACE_POINTS
++#include <trace/events/pagefault.h>
++
+ #ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
+ #warning Unfortunate NUMA and NUMA Balancing config, growing page-frame for last_cpupid.
+ #endif
+@@ -2310,23 +2313,30 @@ static bool pte_spinlock(struct vm_fault *vmf)
  	}
  
- 	inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
--	page_add_new_anon_rmap(page, vma, vmf->address, false);
-+	__page_add_new_anon_rmap(page, vma, vmf->address, false);
- 	mem_cgroup_commit_charge(page, memcg, false, false);
- 	__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
- setpte:
-@@ -3509,7 +3509,7 @@ int alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
- 	/* copy-on-write page */
- 	if (write && !(vmf->vma_flags & VM_SHARED)) {
- 		inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
--		page_add_new_anon_rmap(page, vma, vmf->address, false);
-+		__page_add_new_anon_rmap(page, vma, vmf->address, false);
- 		mem_cgroup_commit_charge(page, memcg, false, false);
- 		__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
- 	} else {
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 47db27f8049e..6ec168ba5f73 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1136,7 +1136,7 @@ void do_page_add_anon_rmap(struct page *page,
- }
+ 	local_irq_disable();
+-	if (vma_has_changed(vmf))
++	if (vma_has_changed(vmf)) {
++		trace_spf_vma_changed(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
++	}
  
- /**
-- * page_add_new_anon_rmap - add pte mapping to a new anonymous page
-+ * __page_add_new_anon_rmap - add pte mapping to a new anonymous page
-  * @page:	the page to add the mapping to
-  * @vma:	the vm area in which the mapping is added
-  * @address:	the user virtual address mapped
-@@ -1146,12 +1146,11 @@ void do_page_add_anon_rmap(struct page *page,
-  * This means the inc-and-test can be bypassed.
-  * Page does not have to be locked.
-  */
--void page_add_new_anon_rmap(struct page *page,
-+void __page_add_new_anon_rmap(struct page *page,
- 	struct vm_area_struct *vma, unsigned long address, bool compound)
- {
- 	int nr = compound ? hpage_nr_pages(page) : 1;
+ 	/*
+ 	 * We check if the pmd value is still the same to ensure that there
+ 	 * is a huge collapse operation in progress in our back.
+ 	 */
+ 	pmdval = READ_ONCE(*vmf->pmd);
+-	if (!pmd_same(pmdval, vmf->orig_pmd))
++	if (!pmd_same(pmdval, vmf->orig_pmd)) {
++		trace_spf_pmd_changed(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
++	}
  
--	VM_BUG_ON_VMA(address < vma->vm_start || address >= vma->vm_end, vma);
- 	__SetPageSwapBacked(page);
- 	if (compound) {
- 		VM_BUG_ON_PAGE(!PageTransHuge(page), page);
+ 	vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
+-	if (unlikely(!spin_trylock(vmf->ptl)))
++	if (unlikely(!spin_trylock(vmf->ptl))) {
++		trace_spf_pte_lock(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
++	}
+ 
+ 	if (vma_has_changed(vmf)) {
+ 		spin_unlock(vmf->ptl);
++		trace_spf_vma_changed(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
+ 	}
+ 
+@@ -2357,16 +2367,20 @@ static bool pte_map_lock(struct vm_fault *vmf)
+ 	 * block on the PTL and thus we're safe.
+ 	 */
+ 	local_irq_disable();
+-	if (vma_has_changed(vmf))
++	if (vma_has_changed(vmf)) {
++		trace_spf_vma_changed(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
++	}
+ 
+ 	/*
+ 	 * We check if the pmd value is still the same to ensure that there
+ 	 * is a huge collapse operation in progress in our back.
+ 	 */
+ 	pmdval = READ_ONCE(*vmf->pmd);
+-	if (!pmd_same(pmdval, vmf->orig_pmd))
++	if (!pmd_same(pmdval, vmf->orig_pmd)) {
++		trace_spf_pmd_changed(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
++	}
+ 
+ 	/*
+ 	 * Same as pte_offset_map_lock() except that we call
+@@ -2379,11 +2393,13 @@ static bool pte_map_lock(struct vm_fault *vmf)
+ 	pte = pte_offset_map(vmf->pmd, vmf->address);
+ 	if (unlikely(!spin_trylock(ptl))) {
+ 		pte_unmap(pte);
++		trace_spf_pte_lock(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
+ 	}
+ 
+ 	if (vma_has_changed(vmf)) {
+ 		pte_unmap_unlock(pte, ptl);
++		trace_spf_vma_changed(_RET_IP_, vmf->vma, vmf->address);
+ 		goto out;
+ 	}
+ 
+@@ -4320,47 +4336,60 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
+ 		return ret;
+ 
+ 	seq = raw_read_seqcount(&vma->vm_sequence); /* rmb <-> seqlock,vma_rb_erase() */
+-	if (seq & 1)
++	if (seq & 1) {
++		trace_spf_vma_changed(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ 
+ 	/*
+ 	 * Can't call vm_ops service has we don't know what they would do
+ 	 * with the VMA.
+ 	 * This include huge page from hugetlbfs.
+ 	 */
+-	if (vma->vm_ops)
++	if (vma->vm_ops) {
++		trace_spf_vma_notsup(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ 
+ 	/*
+ 	 * __anon_vma_prepare() requires the mmap_sem to be held
+ 	 * because vm_next and vm_prev must be safe. This can't be guaranteed
+ 	 * in the speculative path.
+ 	 */
+-	if (unlikely(!vma->anon_vma))
++	if (unlikely(!vma->anon_vma)) {
++		trace_spf_vma_notsup(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ 
+ 	vmf.vma_flags = READ_ONCE(vma->vm_flags);
+ 	vmf.vma_page_prot = READ_ONCE(vma->vm_page_prot);
+ 
+ 	/* Can't call userland page fault handler in the speculative path */
+-	if (unlikely(vmf.vma_flags & VM_UFFD_MISSING))
++	if (unlikely(vmf.vma_flags & VM_UFFD_MISSING)) {
++		trace_spf_vma_notsup(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ 
+-	if (vmf.vma_flags & VM_GROWSDOWN || vmf.vma_flags & VM_GROWSUP)
++	if (vmf.vma_flags & VM_GROWSDOWN || vmf.vma_flags & VM_GROWSUP) {
+ 		/*
+ 		 * This could be detected by the check address against VMA's
+ 		 * boundaries but we want to trace it as not supported instead
+ 		 * of changed.
+ 		 */
++		trace_spf_vma_notsup(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ 
+ 	if (address < READ_ONCE(vma->vm_start)
+-	    || READ_ONCE(vma->vm_end) <= address)
++	    || READ_ONCE(vma->vm_end) <= address) {
++		trace_spf_vma_changed(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ 
+ 	if (!arch_vma_access_permitted(vma, flags & FAULT_FLAG_WRITE,
+ 				       flags & FAULT_FLAG_INSTRUCTION,
+ 				       flags & FAULT_FLAG_REMOTE)) {
++		trace_spf_vma_access(_RET_IP_, vma, address);
+ 		ret = VM_FAULT_SIGSEGV;
+ 		goto out_put;
+ 	}
+@@ -4368,10 +4397,12 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
+ 	/* This is one is required to check that the VMA has write access set */
+ 	if (flags & FAULT_FLAG_WRITE) {
+ 		if (unlikely(!(vmf.vma_flags & VM_WRITE))) {
++			trace_spf_vma_access(_RET_IP_, vma, address);
+ 			ret = VM_FAULT_SIGSEGV;
+ 			goto out_put;
+ 		}
+ 	} else if (unlikely(!(vmf.vma_flags & (VM_READ|VM_EXEC|VM_WRITE)))) {
++		trace_spf_vma_access(_RET_IP_, vma, address);
+ 		ret = VM_FAULT_SIGSEGV;
+ 		goto out_put;
+ 	}
+@@ -4384,8 +4415,10 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
+ 	pol = __get_vma_policy(vma, address);
+ 	if (!pol)
+ 		pol = get_task_policy(current);
+-	if (pol && pol->mode == MPOL_INTERLEAVE)
++	if (pol && pol->mode == MPOL_INTERLEAVE) {
++		trace_spf_vma_notsup(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ #endif
+ 
+ 	/*
+@@ -4458,8 +4491,10 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
+ 	 * We need to re-validate the VMA after checking the bounds, otherwise
+ 	 * we might have a false positive on the bounds.
+ 	 */
+-	if (read_seqcount_retry(&vma->vm_sequence, seq))
++	if (read_seqcount_retry(&vma->vm_sequence, seq)) {
++		trace_spf_vma_changed(_RET_IP_, vma, address);
+ 		goto out_put;
++	}
+ 
+ 	mem_cgroup_oom_enable();
+ 	ret = handle_pte_fault(&vmf);
+@@ -4478,6 +4513,7 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
+ 	return ret;
+ 
+ out_walk:
++	trace_spf_vma_notsup(_RET_IP_, vma, address);
+ 	local_irq_enable();
+ out_put:
+ 	put_vma(vma);
 -- 
 2.7.4
