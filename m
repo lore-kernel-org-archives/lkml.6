@@ -1,56 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751293AbeBPTpP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 14:45:15 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:36382 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751229AbeBPToq (ORCPT
+        id S1750940AbeBPTvl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 14:51:41 -0500
+Received: from mail-io0-f181.google.com ([209.85.223.181]:39205 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750782AbeBPTvj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 14:44:46 -0500
-X-Google-Smtp-Source: AH8x2263VR9HxefLu/B9yKMeZ2OliPonZBciYZOjoR+gmd5tEKBa2McI+m8MaiXtButNPu/qEiHwvg==
-Date: Fri, 16 Feb 2018 17:44:41 -0200
-From: rodrigosiqueira <rodrigosiqueiramelo@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: daniel.baluta@nxp.com, linux-iio@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] iio:pressure:ms5611: Fix coding style in probe function
-Message-ID: <20180216194441.nep5zbb5sjf53cj6@smtp.gmail.com>
+        Fri, 16 Feb 2018 14:51:39 -0500
+X-Google-Smtp-Source: AH8x226kyIY3dfCDZ/Fu98v5syRuD3OWgZ6oP/f7o4I9sp3sEcEVeaVoTf8gI/dknqCuiRNaCvL72gdrUdCrLa8JXyA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20171215
+References: <20180215182208.35003-1-joe.konno@linux.intel.com>
+ <CAKv+Gu80pJ5tbGoJqBm8CCKrEZXdkE83c944383KbQ5jREUC0Q@mail.gmail.com>
+ <20180216105548.GA29042@pd.tnic> <CAKv+Gu8qm2wFxY56-eRLkLZB6fRUCmZbZo=4cvo5e4JDFh01Gg@mail.gmail.com>
+ <20180216110821.GB29042@pd.tnic> <CAKv+Gu_SD6yWJMGbTwGUWXtrgZKPkpANNaGe1PUruTG9j0yhcg@mail.gmail.com>
+ <20180216184832.sqreq5zhar3jqdae@jbkonno-saint14> <20180216192220.wljl23g533sc3oxg@redhat.com>
+ <CAKv+Gu9=wny1J+-tZCdoGYUSZjfWgbiB9b_MdgpssdcTVXtKkA@mail.gmail.com>
+In-Reply-To: <CAKv+Gu9=wny1J+-tZCdoGYUSZjfWgbiB9b_MdgpssdcTVXtKkA@mail.gmail.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Fri, 16 Feb 2018 19:51:27 +0000
+Message-ID: <CACdnJutpJa3nnH0Cs=x-=+GYp+9R5ZJkREhd7DvwDcmyjufSHA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] efivars: reading variables can generate SMIs
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: pjones@redhat.com, joe.konno@linux.intel.com, bp@alien8.de,
+        mingo@kernel.org, luto@kernel.org,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jk@ozlabs.org, ak@linux.intel.com, tony.luck@intel.com,
+        benjamin.drung@profitbricks.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the checkpatch.pl warning and error:
+On Fri, Feb 16, 2018 at 11:31 AM Ard Biesheuvel <ard.biesheuvel@linaro.org>
+wrote:
+> This is why I was leaning towards applying these patches: not breaking
+> userland is an important rule, but it does not imply every aspect of
+> behavior observable by userland is set in stone. In other words, I
+> agree with Peter that making this change does not *break* userland in
+> a way anyone is likely to care deeply about.
 
-iio/pressure/ms5611.h:66: ERROR: code indent should use tabs where possible
-iio/pressure/ms5611.h:66: WARNING: please, no spaces at the start of a line
-iio/pressure/ms5611.h:66: ERROR: "foo* bar" should be "foo *bar"
-
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
----
-Changes in v2:
-  - Make the commit message more clearer.
-
- drivers/iio/pressure/ms5611.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iio/pressure/ms5611.h b/drivers/iio/pressure/ms5611.h
-index ccda63c5b3c3..ead9e9f85894 100644
---- a/drivers/iio/pressure/ms5611.h
-+++ b/drivers/iio/pressure/ms5611.h
-@@ -63,7 +63,7 @@ struct ms5611_state {
- };
- 
- int ms5611_probe(struct iio_dev *indio_dev, struct device *dev,
--                 const char* name, int type);
-+		 const char *name, int type);
- int ms5611_remove(struct iio_dev *indio_dev);
- 
- #endif /* _MS5611_H */
--- 
-2.16.1
+In some modes tpmtotp will run as non-root and expect to be able to read an
+EFI variable.
