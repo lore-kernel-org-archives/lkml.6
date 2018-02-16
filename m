@@ -1,70 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752985AbeBPTGd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 14:06:33 -0500
-Received: from mga17.intel.com ([192.55.52.151]:31627 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752922AbeBPTGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 14:06:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,520,1511856000";
-   d="scan'208";a="18730809"
-Subject: Re: [PATCH 2/3] x86/mm: introduce __PAGE_KERNEL_GLOBAL
-To: Nadav Amit <nadav.amit@gmail.com>
-References: <20180215132053.6C9B48C8@viggo.jf.intel.com>
- <20180215132055.F341C31E@viggo.jf.intel.com>
- <E0AB2852-C4E0-43D3-ABA7-34117A5516C1@gmail.com>
- <a3dd1676-a2dc-aa02-77ad-51cd3b7a78d5@linux.intel.com>
- <DF43D1DD-42EE-4545-9F54-4BC2395D66EA@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org,
-        torvalds@linux-foundation.org, keescook@google.com, hughd@google.com,
-        jgross@suse.com, x86@kernel.org
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <0f8abc68-1092-1bae-d244-1adbbee455f9@linux.intel.com>
-Date: Fri, 16 Feb 2018 11:06:30 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753037AbeBPTJh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 14:09:37 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:59954 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750884AbeBPTJe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 14:09:34 -0500
+Date: Fri, 16 Feb 2018 20:09:32 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Stefan Monnier <monnier@IRO.UMontreal.CA>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: sun7i: Enable HDMI support on the Banana Pi
+Message-ID: <20180216190932.a3cs4bm3z2ctqd7z@flea.lan>
+References: <jwvbmgoapat.fsf-monnier@gnu.org>
 MIME-Version: 1.0
-In-Reply-To: <DF43D1DD-42EE-4545-9F54-4BC2395D66EA@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ahwl5kio3orgx5zf"
+Content-Disposition: inline
+In-Reply-To: <jwvbmgoapat.fsf-monnier@gnu.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/16/2018 10:25 AM, Nadav Amit wrote:
->> +#ifdef CONFIG_PAGE_TABLE_ISOLATION
->> +#define __PAGE_KERNEL_GLOBAL		0
->> +#else
->> +#define __PAGE_KERNEL_GLOBAL		_PAGE_GLOBAL
->> +#endif
-> ...
->> --- a/arch/x86/mm/pageattr.c~kpti-no-global-for-kernel-mappings	2018-02-13 15:17:56.148210060 -0800
->> +++ b/arch/x86/mm/pageattr.c	2018-02-13 15:17:56.153210060 -0800
->> @@ -593,7 +593,8 @@ try_preserve_large_page(pte_t *kpte, uns
->> 	 * different bit positions in the two formats.
->> 	 */
->> 	req_prot = pgprot_4k_2_large(req_prot);
->> -	req_prot = pgprot_set_on_present(req_prot, _PAGE_GLOBAL | _PAGE_PSE);
->> +	req_prot = pgprot_set_on_present(req_prot,
->> +			__PAGE_KERNEL_GLOBAL | _PAGE_PSE);
->> 	req_prot = canon_pgprot(req_prot);
-> From these chunks, it seems to me as req_prot will not have the global bit
-> on when “nopti” parameter is provided. What am I missing?
 
-That's a good point.  The current patch does not allow the use of
-_PAGE_GLOBAL via _PAGE_KERNEL_GLOBAL when CONFIG_PAGE_TABLE_ISOLATION=y,
-but booted with nopti.  It's a simple enough fix.  Logically:
+--ahwl5kio3orgx5zf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-#ifdef CONFIG_PAGE_TABLE_ISOLATION
-#define __PAGE_KERNEL_GLOBAL	static_cpu_has(X86_FEATURE_PTI) ?
-					0 : _PAGE_GLOBAL
-#else
-#define __PAGE_KERNEL_GLOBAL	_PAGE_GLOBAL
-#endif
+On Fri, Feb 16, 2018 at 11:16:04AM -0500, Stefan Monnier wrote:
+> From: Stefan Monnier <monnier@iro.umontreal.ca>
+>=20
+> Enable the display pipeline and HDMI output
+>=20
+> Signed-off-by: Stefan Monnier <monnier@iro.umontreal.ca>
 
-But I don't really want to hide that gunk in a macro like that.  It
-might make more sense as a static inline.  I'll give that a shot and resent.
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
+
+--ahwl5kio3orgx5zf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqHLGwACgkQ0rTAlCFN
+r3Rz9g/6AzCBJ3ywAbOrIgis++yg5WGK46C8/YXYIb9ZKqOPUDJYg8UOpEObA0zO
+OtHJF/y8kje7AGgAEyNT9LZAUnksQiSxhcjW/y8rnuqFBg7VZfMNcRzcY/168eTn
+rbxT9cT+e61B9lepOaq+eScDPIlDUJNz9ucS8Rd51IONz411YPWN6JD1rjWzHSCK
+7xow2CkdFbruD9HWyV+LPPD48JEMoqKbjStFPdrrsyXR+w3DCU/X3OtOpRUTDwAK
+SI/x5ue1jIwqIhNk1YBl0P5KO3GQSBsuOF3KNCeIO06jOo1IozvCY8C40DZJtLXc
+/LSO3SoPbUHlDOg8lQlk+ahJiJnwRZdiok0Ueq5s8z8YJB/caXT56MtIcONl/V29
+4i9je2S8UAMEOKf3c/aErWwP25iiXiJEJ3LbqDzZF6ZV1YPP0Q3dnampuSAjz0xM
+M+ntN/+ySst4+SjGFzNQigjLCtasfvva5Hdz7jHbcD0BOy+LA5U9FRf+ttWJDz3S
+G1qJKarh9aoUyHMrhqtrec6NwHiDE47y+VoOqklkyKYC6MW+/Dhruw/h6KHg1L1R
+udINSDg9KKUF9EPG3HLvZ6Xh57HckmMI2YgKu00wLfwyNqostN2SpWBlFIcHW7qV
+AFIpeJkgokXcBW7A+IzY2S88DmfvG7MGjD6MkY+xZvD+z3+KwFw=
+=i9d5
+-----END PGP SIGNATURE-----
+
+--ahwl5kio3orgx5zf--
