@@ -1,73 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751426AbeBPSrE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 13:47:04 -0500
-Received: from mga05.intel.com ([192.55.52.43]:42870 "EHLO mga05.intel.com"
+        id S1752580AbeBPSsk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 13:48:40 -0500
+Received: from mga11.intel.com ([192.55.52.93]:15264 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750913AbeBPSrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 13:47:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1751282AbeBPSsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 13:48:33 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,520,1511856000";
-   d="scan'208";a="204831562"
-From: Ashok Raj <ashok.raj@intel.com>
-To: bp@suse.de
-Cc: ashok.raj@intel.com, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] x86/microcode: Check microcode revision before updating sibling threads
-Date: Fri, 16 Feb 2018 10:46:48 -0800
-Message-Id: <1518806808-4074-1-git-send-email-ashok.raj@intel.com>
-X-Mailer: git-send-email 2.7.4
+   d="asc'?scan'208";a="175920115"
+Date: Fri, 16 Feb 2018 10:48:32 -0800
+From: Joe Konno <joe.konno@linux.intel.com>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Borislav Petkov <bp@alien8.de>, Matthew Garrett <mjg59@google.com>,
+        Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        linux-efi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeremy Kerr <jk@ozlabs.org>, Andi Kleen <ak@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Benjamin Drung <benjamin.drung@profitbricks.com>,
+        Peter Jones <pjones@redhat.com>
+Subject: Re: [PATCH 0/2] efivars: reading variables can generate SMIs
+Message-ID: <20180216184832.sqreq5zhar3jqdae@jbkonno-saint14>
+References: <20180215182208.35003-1-joe.konno@linux.intel.com>
+ <CAKv+Gu80pJ5tbGoJqBm8CCKrEZXdkE83c944383KbQ5jREUC0Q@mail.gmail.com>
+ <20180216105548.GA29042@pd.tnic>
+ <CAKv+Gu8qm2wFxY56-eRLkLZB6fRUCmZbZo=4cvo5e4JDFh01Gg@mail.gmail.com>
+ <20180216110821.GB29042@pd.tnic>
+ <CAKv+Gu_SD6yWJMGbTwGUWXtrgZKPkpANNaGe1PUruTG9j0yhcg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xshtw7avu7dmxdg5"
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu_SD6yWJMGbTwGUWXtrgZKPkpANNaGe1PUruTG9j0yhcg@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After updating microcode on one of the threads in the core, the
-thread sibling automatically gets the update since the microcode
-resources are shared. Check the ucode revision on the cpu before
-performing a ucode update.
 
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-Cc: X86 ML <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
----
- arch/x86/kernel/cpu/microcode/intel.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+--xshtw7avu7dmxdg5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index 09b95a7..5802c2f 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -786,11 +786,21 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 
- 	uci = ucode_cpu_info + cpu;
- 	mc = uci->mc;
-+
- 	if (!mc) {
- 		/* Look for a newer patch in our cache: */
- 		mc = find_patch(uci);
- 		if (!mc)
- 			return UCODE_NFOUND;
-+	} else {
-+		rev = intel_get_microcode_revision();
-+		/*
-+		 * Its possible the microcode got udpated
-+		 * because its sibling update was done earlier.
-+		 * Skip the udpate in that case.
-+		 */
-+		if (rev == mc->hdr.rev)
-+			goto done;
- 	}
- 
- 	/* write microcode via MSR 0x79 */
-@@ -813,6 +823,7 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 		prev_rev = rev;
- 	}
- 
-+done:
- 	c = &cpu_data(cpu);
- 
- 	uci->cpu_sig.rev = rev;
--- 
-2.7.4
+On Fri, Feb 16, 2018 at 11:18:12AM +0000, Ard Biesheuvel wrote:
+> On 16 February 2018 at 11:08, Borislav Petkov <bp@alien8.de> wrote:
+> > On Fri, Feb 16, 2018 at 10:58:47AM +0000, Ard Biesheuvel wrote:
+> >> By your own reasoning above, that's a no-no as well.
+> >
+> > I'm sure we can come up with some emulation - the same way we did the
+> > BIOS emulation.
+> >
+> >> But thanks for your input. Anyone else got something constructive to c=
+ontribute?
+> >
+> > The not-breaking userspace is constructive contribution. The last
+> > paragraph is my usual rant.
+> >
+>=20
+> Fair enough. And I am not disagreeing with you either.
+>=20
+> So question to Joe: is it well defined which variables may exhibit
+> this behavior?
+
+For brevity's sake, "not yet." Folks-- e.g. firmware writers and
+equipment makers-- may use SMIs more (or less) than others. So, how many
+SMIs generated by the reference shell script can, and will, vary
+platform to platform. I and my colleagues are digging into this.
+
+> Given that UEFI variables are GUID scoped, would whitelisting certain
+> GUIDs (the ones userland currently relies on to be readable my
+> non-privileged users) and making everything else user-only solve this
+> problem as well?
+
+Perhaps. I don't want us chasing white rabbits just yet, but the
+whitelist is but one approach under consideration. We may see some other
+patches or RFCs about caching and/or shadowing variable values in
+efivarfs to reduce the number of direct EFI reads, with the goal of
+reducing how many SMIs are generated.
+
+Any obvious EFI variables that userspace tools have come to depend on--
+those which normal, unprivileged users need to read-- are helpful inputs
+to this discussion.
+
+The discussion is double-ended: asking the "which variables almost
+always cause SMIs?" at the front and "which variables do normal,
+unprivileged tools need for standard operation?" at the back.
+
+
+Cheers, thanks for the feedback and consideration
+
+--xshtw7avu7dmxdg5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJahyd6AAoJEI2IR9UvSqpmYF4P+gI6oe1l8WJIsfLDjokgjTsF
++JcfSZcqHHFZUopYn3QcHMQZNc4vrVkMkV5wZRTEkVp3QU1x9fKeNeQxLRbkAIW8
+mpjf4ksGCsPrKwVyYVB0AJTaluabSladzCrzzSh7kGlKW2UgYR5bdGox4KnXjNGM
+WSqPhIqSeK/Ojt5PCIlj5JNaEhjC3J+vEIOLwPs7FeLHMlaNiE1lLRqabGbZPLv/
+JSfwStJ0Gu3WvjXgo8b7fy4tMwC14h1/ZVlj4xaX/2S3xtmZhccOBCD0iKxgXk2S
+RAxVBP+y9czJ8u91Y5ePLkOPQs4/B8LVhRmy+azrQDmBn2v8YWnj4kfQPRFqISz6
+bJKdQLWpzgpcpPXeftzViEQLttVzERKZTdfjNao4H2i8S3pYcO6KT++hNEljVBQ0
+rNJBcavfawk1bD3/5B869XJ0f5Noql2iqLvLH5iSS+bSU3f/hlpM2Pqpexqa3Pcj
+XJA4S+zlKQU9LJW3KhC5VzsBf+yik5hVW/JAF6ceNQ19DhDBVnrAP0VjS9TXQSuA
++8X59VzCSnBs4FqSLn0kFHrmEQar83RFLBRD3I58YHgnNWcsS+eBmuwMr0+LxWrq
+aPXaTIuWfOXGFVq1cgZtKq5zJfoKz4qY88bL49+iQonx8y90AKRnGmUbASLXpXuX
+l7nWydx1DGw7nuLrK/TL
+=HYZS
+-----END PGP SIGNATURE-----
+
+--xshtw7avu7dmxdg5--
