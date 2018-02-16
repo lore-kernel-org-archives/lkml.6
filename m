@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754413AbeBPI1H (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 03:27:07 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37199 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754230AbeBPI07 (ORCPT
+        id S1754388AbeBPI1G (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 03:27:06 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39684 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754229AbeBPI06 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 03:26:59 -0500
-X-Google-Smtp-Source: AH8x225IO/D7X66o5KBDGzbQwqjZd8y3VvE3sm7ViPW/4BCtaRf4VPvGpc4WnhpYkIIKboPDH8wsOw==
+        Fri, 16 Feb 2018 03:26:58 -0500
+X-Google-Smtp-Source: AH8x224bSTHDw5kFP0LjLJZp4+y6ka8YcibQyJfN1lFzWtDdjWh5oLwJcU6bltkht5dAMx+8EafqJQ==
 From: Carlo Caione <carlo@caione.org>
 To: linux@endlessm.com, hdegoede@redhat.com, rjw@rjwysocki.net,
         lenb@kernel.org, sre@kernel.org, wens@csie.org,
         linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-pm@vger.kernel.org
 Cc: Carlo Caione <carlo@endlessm.com>
-Subject: [PATCH v2 2/3] ACPI: AC/battery: Add quirks for ECS EF20EA
-Date: Fri, 16 Feb 2018 08:26:15 +0000
-Message-Id: <20180216082616.25084-3-carlo@caione.org>
+Subject: [PATCH v2 1/3] ACPI: AC/battery: Add quirk to avoid using PMIC
+Date: Fri, 16 Feb 2018 08:26:14 +0000
+Message-Id: <20180216082616.25084-2-carlo@caione.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180216082616.25084-1-carlo@caione.org>
 References: <20180216082616.25084-1-carlo@caione.org>
@@ -26,52 +26,139 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Carlo Caione <carlo@endlessm.com>
 
-On the ECS EF20EA laptop we need to move away from the AXP288 FG driver
-and enable again the ACPI AC/battery drivers. Add the required quirks to
-do that. We rely only on the product name because all the other DMI
-entries are dummy or not filled in on this platform.
+With commits af3ec837 and dccfae6d a blacklist was introduced to avoid
+using the ACPI drivers for AC and battery when a native PMIC driver was
+already present. While this is in general a good idea (because of broken
+DSDT or proprietary and undocumented ACPI opregions for the ACPI
+AC/battery devices) we have come across at least one CherryTrail laptop
+(ECS EF20EA) shipping the AXP288 together with a separate FG controller
+(a MAX17047) instead of the one embedded in the AXP288.
+
+The net effect of blacklisting the ACPI drivers is that on this platform
+the AC/battery reporting is broken since the information is coming from
+the AXP288 FG driver, not actually used in hardware.
+
+In this case we want to keep using the ACPI AC/battery driver that is
+able to interface correctly with the real FG controller.
+
+We introduce therefore a new quirk to avoid the blacklist.
 
 Signed-off-by: Carlo Caione <carlo@endlessm.com>
 ---
- drivers/acpi/ac.c      | 7 +++++++
- drivers/acpi/battery.c | 7 +++++++
- 2 files changed, 14 insertions(+)
+ drivers/acpi/ac.c      | 26 ++++++++++++++++++--------
+ drivers/acpi/battery.c | 26 ++++++++++++++++++--------
+ 2 files changed, 36 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/acpi/ac.c b/drivers/acpi/ac.c
-index b9a4ca720309..39f778f954f5 100644
+index 47a7ed557bd6..b9a4ca720309 100644
 --- a/drivers/acpi/ac.c
 +++ b/drivers/acpi/ac.c
-@@ -332,6 +332,13 @@ static const struct dmi_system_id ac_dmi_table[] = {
- 		DMI_MATCH(DMI_PRODUCT_NAME, "32597CG"),
- 		},
- 	},
-+	{
-+	.callback = ac_not_use_pmic_quirk,
-+	.ident = "ECS EF20EA",
-+	.matches = {
-+		DMI_MATCH(DMI_PRODUCT_NAME, "EF20EA"),
-+		},
-+	},
- 	{},
- };
+@@ -87,6 +87,7 @@ static int acpi_ac_open_fs(struct inode *inode, struct file *file);
  
+ 
+ static int ac_sleep_before_get_state_ms;
++static bool ac_not_use_pmic;
+ 
+ static struct acpi_driver acpi_ac_driver = {
+ 	.name = "ac",
+@@ -316,6 +317,12 @@ static int thinkpad_e530_quirk(const struct dmi_system_id *d)
+ 	return 0;
+ }
+ 
++static int ac_not_use_pmic_quirk(const struct dmi_system_id *d)
++{
++	ac_not_use_pmic = true;
++	return 0;
++}
++
+ static const struct dmi_system_id ac_dmi_table[] = {
+ 	{
+ 	.callback = thinkpad_e530_quirk,
+@@ -384,7 +391,6 @@ static int acpi_ac_add(struct acpi_device *device)
+ 		kfree(ac);
+ 	}
+ 
+-	dmi_check_system(ac_dmi_table);
+ 	return result;
+ }
+ 
+@@ -442,13 +448,17 @@ static int __init acpi_ac_init(void)
+ 	if (acpi_disabled)
+ 		return -ENODEV;
+ 
+-	for (i = 0; i < ARRAY_SIZE(acpi_ac_blacklist); i++)
+-		if (acpi_dev_present(acpi_ac_blacklist[i].hid, "1",
+-				     acpi_ac_blacklist[i].hrv)) {
+-			pr_info(PREFIX "AC: found native %s PMIC, not loading\n",
+-				acpi_ac_blacklist[i].hid);
+-			return -ENODEV;
+-		}
++	dmi_check_system(ac_dmi_table);
++
++	if (!ac_not_use_pmic) {
++		for (i = 0; i < ARRAY_SIZE(acpi_ac_blacklist); i++)
++			if (acpi_dev_present(acpi_ac_blacklist[i].hid, "1",
++					     acpi_ac_blacklist[i].hrv)) {
++				pr_info(PREFIX "AC: found native %s PMIC, not loading\n",
++					acpi_ac_blacklist[i].hid);
++				return -ENODEV;
++			}
++	}
+ 
+ #ifdef CONFIG_ACPI_PROCFS_POWER
+ 	acpi_ac_dir = acpi_lock_ac_dir();
 diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
-index 258d2e66f230..fe024f1a8ad5 100644
+index 7128488a3a72..258d2e66f230 100644
 --- a/drivers/acpi/battery.c
 +++ b/drivers/acpi/battery.c
-@@ -1233,6 +1233,13 @@ static const struct dmi_system_id bat_dmi_table[] __initconst = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "UX410UAK"),
- 		},
- 	},
-+	{
-+		.callback = battery_not_use_pmic_quirk,
-+		.ident = "ECS EF20EA",
-+		.matches = {
-+			DMI_MATCH(DMI_PRODUCT_NAME, "EF20EA"),
-+		},
-+	},
- 	{},
- };
+@@ -71,6 +71,7 @@ static bool battery_driver_registered;
+ static int battery_bix_broken_package;
+ static int battery_notification_delay_ms;
+ static int battery_full_discharging;
++static bool battery_not_use_pmic;
+ static unsigned int cache_time = 1000;
+ module_param(cache_time, uint, 0644);
+ MODULE_PARM_DESC(cache_time, "cache time in milliseconds");
+@@ -1176,6 +1177,13 @@ static int __init battery_full_discharging_quirk(const struct dmi_system_id *d)
+ 	return 0;
+ }
  
++static int __init
++battery_not_use_pmic_quirk(const struct dmi_system_id *d)
++{
++	battery_not_use_pmic = true;
++	return 0;
++}
++
+ static const struct dmi_system_id bat_dmi_table[] __initconst = {
+ 	{
+ 		.callback = battery_bix_broken_package_quirk,
+@@ -1364,16 +1372,18 @@ static void __init acpi_battery_init_async(void *unused, async_cookie_t cookie)
+ 	unsigned int i;
+ 	int result;
+ 
+-	for (i = 0; i < ARRAY_SIZE(acpi_battery_blacklist); i++)
+-		if (acpi_dev_present(acpi_battery_blacklist[i], "1", -1)) {
+-			pr_info(PREFIX ACPI_BATTERY_DEVICE_NAME
+-				": found native %s PMIC, not loading\n",
+-				acpi_battery_blacklist[i]);
+-			return;
+-		}
+-
+ 	dmi_check_system(bat_dmi_table);
+ 
++	if (!battery_not_use_pmic) {
++		for (i = 0; i < ARRAY_SIZE(acpi_battery_blacklist); i++)
++			if (acpi_dev_present(acpi_battery_blacklist[i], "1", -1)) {
++				pr_info(PREFIX ACPI_BATTERY_DEVICE_NAME
++					": found native %s PMIC, not loading\n",
++					acpi_battery_blacklist[i]);
++				return;
++			}
++	}
++
+ #ifdef CONFIG_ACPI_PROCFS_POWER
+ 	acpi_battery_dir = acpi_lock_battery_dir();
+ 	if (!acpi_battery_dir)
 -- 
 2.14.1
