@@ -1,64 +1,239 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751042AbeBPVJd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 16:09:33 -0500
-Received: from mga02.intel.com ([134.134.136.20]:36926 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750899AbeBPVJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 16:09:32 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,520,1511856000";
-   d="scan'208";a="28657194"
-From: "Luck, Tony" <tony.luck@intel.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Joe Konno <joe.konno@linux.intel.com>,
-        "Matthew Garrett" <mjg59@google.com>, Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>
-CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Jeremy Kerr <jk@ozlabs.org>, Andi Kleen <ak@linux.intel.com>,
-        Benjamin Drung <benjamin.drung@profitbricks.com>,
-        Peter Jones <pjones@redhat.com>
-Subject: RE: [PATCH 0/2] efivars: reading variables can generate SMIs
-Thread-Topic: [PATCH 0/2] efivars: reading variables can generate SMIs
-Thread-Index: AQHTpon7j1fhMwo5i0OsVK07IpAnmqOnXoKAgACqgID//3z6QA==
-Date: Fri, 16 Feb 2018 21:09:30 +0000
-Message-ID: <3908561D78D1C84285E8C5FCA982C28F7B37942B@ORSMSX110.amr.corp.intel.com>
-References: <20180215182208.35003-1-joe.konno@linux.intel.com>
-         <CAKv+Gu80pJ5tbGoJqBm8CCKrEZXdkE83c944383KbQ5jREUC0Q@mail.gmail.com>
- <1518814319.4419.10.camel@HansenPartnership.com>
-In-Reply-To: <1518814319.4419.10.camel@HansenPartnership.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNGU4OWM5NDUtZThkMS00ZDU3LThlYTktNTA3ZTMxNTFlZWRkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJcL29HKzRBZ3krc3RjSE5WRnNzSjgxTktjVUk5RXpWeHVGVXA5SlY1Y08zbzA1SDNzR1dkZ05Pc1VkbitWM2szTiJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        id S1750832AbeBPVO2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 16:14:28 -0500
+Received: from smtprelay0224.hostedemail.com ([216.40.44.224]:49337 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750727AbeBPVO0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 16:14:26 -0500
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:334:355:368:369:379:541:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1535:1544:1593:1594:1605:1711:1730:1747:1777:1792:2110:2376:2393:2553:2559:2562:2828:2908:2911:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3871:3872:3874:4250:4321:4425:4605:5007:6609:7875:7903:7974:8531:10004:10848:11026:11232:11658:11914:12663:12740:12760:12895:13439:14096:14097:14180:14181:14659:14721:21080:21324:21433:21451:21611:21627:30012:30054:30070:30089:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: apple90_60abaa8b8ce61
+X-Filterd-Recvd-Size: 5514
+Message-ID: <1518815662.13169.27.camel@perches.com>
+Subject: Re: [PATCH 0/3] Improve and extend checkpatch.pl Kconfig help text
+ checks
+From: Joe Perches <joe@perches.com>
+To: Ulf Magnusson <ulfalizer@gmail.com>, apw@canonical.com,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Date: Fri, 16 Feb 2018 13:14:22 -0800
+In-Reply-To: <20180216202255.25307-1-ulfalizer@gmail.com>
+References: <20180216202255.25307-1-ulfalizer@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1GL9b2M027539
 
-> That said, I'm not sure how many non-root users run the toolkit to
-> extract their EFI certificates or check on the secure boot status of
-> the system, but I suspect it might be non-zero: I can see the tinfoil
-> hat people wanting at least to check the secure boot status when they
-> log in.
+On Fri, 2018-02-16 at 21:22 +0100, Ulf Magnusson wrote:
+> Hello,
+> 
+> This patchset contains some improvements for the Kconfig help text check in
+> scripts/checkconfig.pl:
 
-Another fix option might be to rate limit EFI calls for non-root users (on X86
-since only we have the SMI problem). That would:
+Seems sensible enough to me.
+Signed-off-by: Joe Perches <joe@perches.com>
 
-1) Avoid using memory to cache all the variables
-2) Catch any other places where non-root users can call EFI
+>  - Commits 1 and 2 make the check more robust by checking menuconfig symbols
+>    and choices as well as symbols defined with 'config', and by making the
+>    detection of definition boundaries more reliable.
+> 
+>  - Commit 3 adds a check for new '---help---'s being introduced. IMO, 'help'
+>    should be encouraged in new code.
+> 
+> All three commits can be applied independently.
+> 
+> The existing code is a bit weird in that it doesn't require symbols with "long"
+> definitions (e.g., many selects) to have help texts. Fixing that is outside the
+> scope of this patchset. I couldn't tell if it was deliberate.
+> 
+> I'm a Perl noob, so check for bad practices. :)
 
--Tony
+Everyone is.  Seems fine.
+
+> The changes were tested by running 'checkpatch.pl -f' on some large existing
+> Kconfig files in the kernel and looking for false positives (e.g.
+> arch/{x86,arm}/Kconfig).
+> 
+> This test file was also used, which contains some cases that confused the old
+> code:
+> 
+> 	config BAD_1
+> 		bool "bad 1"
+> 	
+> 	config BAD_2
+> 		bool 'bad 2'
+> 	
+> 	config BAD_3
+> 		bool "bad 3"
+> 		help
+> 		  1
+> 		  2
+> 		  3
+> 	
+> 	menuconfig BAD_4
+> 		bool "bad 4"
+> 		help
+> 		  1
+> 		  2
+> 		  3
+> 	
+> 	config BAD_5
+> 		bool
+> 		prompt "bad 5"
+> 		help
+> 		  1
+> 		  2
+> 		  3
+> 	
+> 	config BAD_6
+> 		bool "bad 6"
+> 		help
+> 		  1
+> 		  2
+> 		  3
+> 	
+> 	if FOO
+> 	
+> 	config BAD_7
+> 		bool "bad 7"
+> 		help
+> 		  1
+> 		  2
+> 		  3
+> 	
+> 	endif
+> 	
+> 	config BAD_8
+> 		bool "bad 8"
+> 		help
+> 		  1
+> 		  2
+> 		  3
+> 	
+> 	source "foo"
+> 	
+> 	config BAD_9
+> 		bool "bad 9"
+> 		---help---
+> 		  1
+> 		  2
+> 		  3
+> 		  4
+> 	
+> 	choice
+> 		bool "bad choice"
+> 		help
+> 		  1
+> 		  2
+> 		  3
+> 	
+> 	endchoice
+> 	
+> 	config OK_1
+> 		bool
+> 	
+> 	config OK_2
+> 		bool "ok 2"
+> 		help
+> 		  1
+> 		  2
+> 		  3
+> 		  4
+> 	
+> 	config OK_3
+> 		tristate "ok 3"
+> 		help
+> 		  1
+> 		  2
+> 		  3
+> 		  4
+> 	
+> 	config OK_4
+> 		tristate
+> 		prompt "ok 4"
+> 		help
+> 		  1
+> 		  2
+> 		  3
+> 		  4
+> 	
+> 	choice
+> 		bool "ok choice"
+> 		help
+> 		  1
+> 		  2
+> 		  3
+> 		  4
+> 	
+> 	endchoice
+> 
+> 
+> This now produces the following warnings:
+> 
+> 	WARNING: please write a paragraph that describes the config symbol fully
+> 	#9: FILE: Kconfig.test_help_check:9:
+> 	+config BAD_1
+> 	
+> 	WARNING: please write a paragraph that describes the config symbol fully
+> 	#12: FILE: Kconfig.test_help_check:12:
+> 	+config BAD_2
+> 	
+> 	WARNING: please write a paragraph that describes the config symbol fully
+> 	#15: FILE: Kconfig.test_help_check:15:
+> 	+config BAD_3
+> 	
+> 	WARNING: please write a paragraph that describes the config symbol fully
+> 	#22: FILE: Kconfig.test_help_check:22:
+> 	+menuconfig BAD_4
+> 	
+> 	WARNING: please write a paragraph that describes the config symbol fully
+> 	#29: FILE: Kconfig.test_help_check:29:
+> 	+config BAD_5
+> 	
+> 	WARNING: please write a paragraph that describes the config symbol fully
+> 	#37: FILE: Kconfig.test_help_check:37:
+> 	+config BAD_6
+> 	
+> 	WARNING: please write a paragraph that describes the config symbol fully
+> 	#46: FILE: Kconfig.test_help_check:46:
+> 	+config BAD_7
+> 	
+> 	WARNING: please write a paragraph that describes the config symbol fully
+> 	#55: FILE: Kconfig.test_help_check:55:
+> 	+config BAD_8
+> 	
+> 	WARNING: prefer 'help' over '---help---' for new help texts
+> 	#64: FILE: Kconfig.test_help_check:64:
+> 	+config BAD_9
+> 	
+> 	WARNING: please write a paragraph that describes the config symbol fully
+> 	#72: FILE: Kconfig.test_help_check:72:
+> 	+choice
+> 	
+> 	total: 0 errors, 10 warnings, 117 lines checked
+> 	
+> 	NOTE: For some of the reported defects, checkpatch may be able to
+> 	      mechanically convert to the typical style using --fix or --fix-inplace.
+> 	
+> 	Kconfig.test_help_check has style problems, please review.
+> 	
+> 	NOTE: If any of the errors are false positives, please report
+> 	      them to the maintainer, see CHECKPATCH in MAINTAINERS.
+> 
+> 
+> Cheers,
+> Ulf
+> 
+> Ulf Magnusson (3):
+>   checkpatch: kconfig: recognize more prompts when checking help texts
+>   checkpatch: kconfig: check help texts for menuconfig and choice
+>   checkpatch: kconfig: prefer 'help' over '---help---'
+> 
+>  scripts/checkpatch.pl | 21 +++++++++++++++++----
+>  1 file changed, 17 insertions(+), 4 deletions(-)
+> 
