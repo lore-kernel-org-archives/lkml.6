@@ -1,30 +1,30 @@
 Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x2253DQyVUzPDGgXEVWxkHK7H283lHtdQpWzzLeWunyW1S+zbcbdIA0t190gdzECDKgZQX9rb
-ARC-Seal: i=1; a=rsa-sha256; t=1518806426; cv=none;
+X-Google-Smtp-Source: AH8x22436MwG4rx8iV0OSuKdl8opyHLPL/hF6JGJrDMg/97NVeI+ua4sJaeZa2Oxbs3FwmOvrF0/
+ARC-Seal: i=1; a=rsa-sha256; t=1518806414; cv=none;
         d=google.com; s=arc-20160816;
-        b=m23PzB8aflFzAJbopvVoLtN3bUlnkKIlOra7sTbRT515pCyvfTi/jrCgKsHxPqbmTI
-         EOcX1dO/kVwFYP0CRiIFBE0iI44z2rV5tTw7NADqaxJsIaKfE2LqVMLpaXLraxf0YNpN
-         ERUM72JGueCL7UzqJUMTw7UPYIqwU+EavBGHtxepaVHSPRDMpJoCiNYIYA+n23QqGyf3
-         ZxHl7caaOTO+um731lSC50zjAdD4xACKUTAP+PRqXptft8sVMiJHGPPnAa/fQDmrbEhd
-         xapALerGsBosXsXQFuDycptS4wyT3w0qY6IFJYa+jccLXcWL7u7VLxhknheAuz8qPQud
-         ZjuA==
+        b=WtU3lI77HAFjphGWr9zOdTxGQK2XarKph6yW+RivQ3aYwldjL+HjaCWozTtvERcAvs
+         yHGO1RSsXHm0OaWixwMQcR9hk8r7D/2y2fsxIB1lDQvHDGaqOhyzBe2NRQVAUX2iw72R
+         6ZAkcozgRYBkIqmvlk9nqzw9ubQ0yg4DMlhIc42sa0ae6jp40zDK60SA85t+rvvi2XGl
+         75D/qG55qOZwkCjoSjyItxXpp+UZ1V8GSFDxWCX9+3qp0zlxMASxECgPYVXSPz0U4bcW
+         VJwK3BuVDhiKu1n7bTojKp8yHCRBZKkuZoQ9onABPvbc8qpnWeqgAmPh5ALYCuiOUNJ2
+         pCNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=F/qDuC0sT0NIAbx2z1/ZZbN6D538cPMbWTiUtETtWrE=;
-        b=JKrXzjXp2LYKvx4Hx40VNAmE4qrneJBJJp+gH+a+233t/FhQiX1NbFL5BrsvU8xYjN
-         5/qKgbts9C6DTDq+UdNBOCaKdzY33PR45CmnWbO571e1pck3TNxgSMpVhDN9ZpfbaLSC
-         VcEj2Brdbw8+Rz5IdIvGtxn3qvWSPKZh9rk2k3kht0+0N8wjiqTS0qYCZqvklUlh0+0N
-         PnIzAICY9EWyMnR46eocpMA10+/dWUSyWt2YxfTWu9BN/JYyUSCCEOZShMRtDfXUtEIr
-         8nksjVm/hU7uk1OSB+N2m1UWWJ3lfR/Wquypw6u3Ne+jDNQsh+rNfDjzmN96JIGvpZqw
-         7STA==
+        bh=Lau+sX5Xfd97pBT4xPSqZK1OIR5DgA12mp5Ps116g7M=;
+        b=xb+Tdo56f7l8VTu+w/5XoQDc0xj0v/IUDSCD/wdDrgDFhiOiHq/5KA4Clmxr6qa2Pv
+         G1hvZYzDGG/KRk0voDAJNh9Xvc0qpBcfAoGYtq0rr7MX4F54pT4P6nrdhWKYbzHID5ON
+         6KEWSaLXYPwmkjetkx0VT2wtoZCnZvqPWjChCU/3ywGmpdWDOEBnQE7sSzhxWj9ElxU5
+         gpTAnHqHQArwHlIHGemaqJkbgFVUAlXtuWdksPdBYoVfUhXLcKZl9QHrhMwEARU6XD90
+         jQU/r6UXzN91OJPIgwy7OR/SCHI3ZGvrWltRdHX/EUb4X8qYikL71T0kPP5SMgsho/GB
+         SXhQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=y9fPigkA;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=YxRw0GLl;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=y9fPigkA;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=YxRw0GLl;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBTP013418
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBTQ013418
 X-Nifty-SrcIP: [125.199.20.195]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org,
@@ -35,170 +35,39 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
         Michal Marek <michal.lkml@markovi.net>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
-        Emese Revfy <re.emese@gmail.com>
-Subject: [PATCH 22/23] gcc-plugins: test GCC plugin support in Kconfig
-Date: Sat, 17 Feb 2018 03:38:50 +0900
-Message-Id: <1518806331-7101-23-git-send-email-yamada.masahiro@socionext.com>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 23/23] gcc-plugins: enable GCC_PLUGINS for COMPILE_TEST
+Date: Sat, 17 Feb 2018 03:38:51 +0900
+Message-Id: <1518806331-7101-24-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592583966552047561?=
-X-GMAIL-MSGID: =?utf-8?q?1592583966552047561?=
+X-GMAIL-THRID: =?utf-8?q?1592583954792488725?=
+X-GMAIL-MSGID: =?utf-8?q?1592583954792488725?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Run scripts/gcc-plugin.sh from Kconfig.  Users can enable GCC_PLUGINS
-only when it is supported.
-
-I dropped 'depends on GCC_VERSION >= 40800'.  I guess gcc-plugin.sh
-will not pass with GCC 4.7 or older.
+The plugin availability is checked in Kconfig, so all{yes,mod}config
+will not be bothered.  Remove 'depends on !COMPILE_TEST'.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- arch/Kconfig                 |  6 +++-
- scripts/Makefile.gcc-plugins | 82 ++++++++++++++++----------------------------
- scripts/gcc-plugin.sh        |  1 -
- 3 files changed, 34 insertions(+), 55 deletions(-)
+ arch/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/arch/Kconfig b/arch/Kconfig
-index 9bd4e1f..d567bd1 100644
+index d567bd1..5b5610b 100644
 --- a/arch/Kconfig
 +++ b/arch/Kconfig
-@@ -407,10 +407,14 @@ config HAVE_GCC_PLUGINS
- 	  An arch should select this symbol if it supports building with
- 	  GCC plugins.
- 
-+config CC_HAS_GCC_PLUGINS
-+	bool
-+	default $(shell $srctree/scripts/gcc-plugin.sh $HOSTCXX $CC)
-+
- menuconfig GCC_PLUGINS
+@@ -415,7 +415,6 @@ menuconfig GCC_PLUGINS
  	bool "GCC plugins"
  	depends on HAVE_GCC_PLUGINS
--	depends on GCC_VERSION >= 40800
-+	depends on CC_HAS_GCC_PLUGINS
- 	depends on !COMPILE_TEST
+ 	depends on CC_HAS_GCC_PLUGINS
+-	depends on !COMPILE_TEST
  	help
  	  GCC plugins are loadable modules that provide extra features to the
-diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
-index 25da4c0..19d0d5b 100644
---- a/scripts/Makefile.gcc-plugins
-+++ b/scripts/Makefile.gcc-plugins
-@@ -1,71 +1,47 @@
- # SPDX-License-Identifier: GPL-2.0
--ifdef CONFIG_GCC_PLUGINS
--  PLUGINCC := $(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-plugin.sh $(HOSTCXX) $(CC))
--
--  SANCOV_PLUGIN := -fplugin=$(objtree)/scripts/gcc-plugins/sancov_plugin.so
-+SANCOV_PLUGIN := -fplugin=$(objtree)/scripts/gcc-plugins/sancov_plugin.so
- 
--  gcc-plugin-$(CONFIG_GCC_PLUGIN_CYC_COMPLEXITY)	+= cyc_complexity_plugin.so
-+gcc-plugin-$(CONFIG_GCC_PLUGIN_CYC_COMPLEXITY)	+= cyc_complexity_plugin.so
- 
--  gcc-plugin-$(CONFIG_GCC_PLUGIN_LATENT_ENTROPY)	+= latent_entropy_plugin.so
--  gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_LATENT_ENTROPY)	+= -DLATENT_ENTROPY_PLUGIN
--  ifdef CONFIG_GCC_PLUGIN_LATENT_ENTROPY
--    DISABLE_LATENT_ENTROPY_PLUGIN			+= -fplugin-arg-latent_entropy_plugin-disable
--  endif
-+gcc-plugin-$(CONFIG_GCC_PLUGIN_LATENT_ENTROPY)	+= latent_entropy_plugin.so
-+gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_LATENT_ENTROPY)	+= -DLATENT_ENTROPY_PLUGIN
-+ifdef CONFIG_GCC_PLUGIN_LATENT_ENTROPY
-+  DISABLE_LATENT_ENTROPY_PLUGIN			+= -fplugin-arg-latent_entropy_plugin-disable
-+endif
- 
--  ifdef CONFIG_GCC_PLUGIN_SANCOV
--    ifeq ($(CFLAGS_KCOV),)
--      # It is needed because of the gcc-plugin.sh and gcc version checks.
--      gcc-plugin-$(CONFIG_GCC_PLUGIN_SANCOV)           += sancov_plugin.so
-+ifdef CONFIG_GCC_PLUGIN_SANCOV
-+  ifeq ($(CFLAGS_KCOV),)
-+    # It is needed because of the gcc-plugin.sh and gcc version checks.
-+    gcc-plugin-$(CONFIG_GCC_PLUGIN_SANCOV)           += sancov_plugin.so
- 
--      ifneq ($(PLUGINCC),)
--        CFLAGS_KCOV := $(SANCOV_PLUGIN)
--      else
--        $(warning warning: cannot use CONFIG_KCOV: -fsanitize-coverage=trace-pc is not supported by compiler)
--      endif
--    endif
-+    CFLAGS_KCOV := $(SANCOV_PLUGIN)
-   endif
-+endif
- 
--  gcc-plugin-$(CONFIG_GCC_PLUGIN_STRUCTLEAK)	+= structleak_plugin.so
--  gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STRUCTLEAK_VERBOSE)	+= -fplugin-arg-structleak_plugin-verbose
--  gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL)	+= -fplugin-arg-structleak_plugin-byref-all
--  gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STRUCTLEAK)	+= -DSTRUCTLEAK_PLUGIN
--
--  gcc-plugin-$(CONFIG_GCC_PLUGIN_RANDSTRUCT)	+= randomize_layout_plugin.so
--  gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_RANDSTRUCT)	+= -DRANDSTRUCT_PLUGIN
--  gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_RANDSTRUCT_PERFORMANCE)	+= -fplugin-arg-randomize_layout_plugin-performance-mode
-+gcc-plugin-$(CONFIG_GCC_PLUGIN_STRUCTLEAK)	+= structleak_plugin.so
-+gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STRUCTLEAK_VERBOSE)	+= -fplugin-arg-structleak_plugin-verbose
-+gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL)	+= -fplugin-arg-structleak_plugin-byref-all
-+gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STRUCTLEAK)	+= -DSTRUCTLEAK_PLUGIN
- 
--  GCC_PLUGINS_CFLAGS := $(strip $(addprefix -fplugin=$(objtree)/scripts/gcc-plugins/, $(gcc-plugin-y)) $(gcc-plugin-cflags-y))
-+gcc-plugin-$(CONFIG_GCC_PLUGIN_RANDSTRUCT)	+= randomize_layout_plugin.so
-+gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_RANDSTRUCT)	+= -DRANDSTRUCT_PLUGIN
-+gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_RANDSTRUCT_PERFORMANCE)	+= -fplugin-arg-randomize_layout_plugin-performance-mode
- 
--  export PLUGINCC GCC_PLUGINS_CFLAGS GCC_PLUGIN GCC_PLUGIN_SUBDIR
--  export SANCOV_PLUGIN DISABLE_LATENT_ENTROPY_PLUGIN
-+GCC_PLUGINS_CFLAGS := $(strip $(addprefix -fplugin=$(objtree)/scripts/gcc-plugins/, $(gcc-plugin-y)) $(gcc-plugin-cflags-y))
- 
--  ifneq ($(PLUGINCC),)
--    # SANCOV_PLUGIN can be only in CFLAGS_KCOV because avoid duplication.
--    GCC_PLUGINS_CFLAGS := $(filter-out $(SANCOV_PLUGIN), $(GCC_PLUGINS_CFLAGS))
--  endif
-+export GCC_PLUGINS_CFLAGS GCC_PLUGIN GCC_PLUGIN_SUBDIR
-+export SANCOV_PLUGIN DISABLE_LATENT_ENTROPY_PLUGIN
- 
--  KBUILD_CFLAGS += $(GCC_PLUGINS_CFLAGS)
--  GCC_PLUGIN := $(gcc-plugin-y)
--  GCC_PLUGIN_SUBDIR := $(gcc-plugin-subdir-y)
--endif
-+# SANCOV_PLUGIN can be only in CFLAGS_KCOV because avoid duplication.
-+GCC_PLUGINS_CFLAGS := $(filter-out $(SANCOV_PLUGIN), $(GCC_PLUGINS_CFLAGS))
- 
--# If plugins aren't supported, abort the build before hard-to-read compiler
--# errors start getting spewed by the main build.
--PHONY += gcc-plugins-check
--gcc-plugins-check: FORCE
--ifdef CONFIG_GCC_PLUGINS
--  ifeq ($(PLUGINCC),)
--    ifneq ($(GCC_PLUGINS_CFLAGS),)
--      $(Q)$(srctree)/scripts/gcc-plugin.sh --show-error $(HOSTCXX) $(CC) || true
--      @echo "Cannot use CONFIG_GCC_PLUGINS: your gcc installation does not support plugins, perhaps the necessary headers are missing?" >&2 && exit 1
--    endif
--  endif
--endif
--	@:
-+KBUILD_CFLAGS += $(GCC_PLUGINS_CFLAGS)
-+GCC_PLUGIN := $(gcc-plugin-y)
-+GCC_PLUGIN_SUBDIR := $(gcc-plugin-subdir-y)
- 
- # Actually do the build, if requested.
- PHONY += gcc-plugins
--gcc-plugins: scripts_basic gcc-plugins-check
-+gcc-plugins: scripts_basic
- ifdef CONFIG_GCC_PLUGINS
- 	$(Q)$(MAKE) $(build)=scripts/gcc-plugins
- endif
-diff --git a/scripts/gcc-plugin.sh b/scripts/gcc-plugin.sh
-index 0edbdae..b18c69c 100755
---- a/scripts/gcc-plugin.sh
-+++ b/scripts/gcc-plugin.sh
-@@ -24,7 +24,6 @@ EOF
- 
- if [ $? -eq 0 ]
- then
--	echo "$1"
- 	exit 0
- fi
- 
+ 	  compiler. They are useful for runtime instrumentation and static analysis.
 -- 
 2.7.4
