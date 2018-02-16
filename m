@@ -1,68 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751145AbeBPTcz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 14:32:55 -0500
-Received: from mga18.intel.com ([134.134.136.126]:50902 "EHLO mga18.intel.com"
+        id S1751087AbeBPTcx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 14:32:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750788AbeBPTcT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 14:32:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,520,1511856000";
-   d="scan'208";a="28637911"
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Peter Jones <pjones@redhat.com>, Joe Konno <joe.konno@linux.intel.com>
-CC: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Borislav Petkov <bp@alien8.de>, Matthew Garrett <mjg59@google.com>,
-        Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Jeremy Kerr <jk@ozlabs.org>, Andi Kleen <ak@linux.intel.com>,
-        Benjamin Drung <benjamin.drung@profitbricks.com>
-Subject: RE: [PATCH 0/2] efivars: reading variables can generate SMIs
-Thread-Topic: [PATCH 0/2] efivars: reading variables can generate SMIs
-Thread-Index: AQHTpon7j1fhMwo5i0OsVK07IpAnmqOnXoKAgAAD7QCAAADWgIAAAqyAgAACwACAAH3TAIAACXOA//96zpA=
-Date: Fri, 16 Feb 2018 19:32:17 +0000
-Message-ID: <3908561D78D1C84285E8C5FCA982C28F7B37917B@ORSMSX110.amr.corp.intel.com>
-References: <20180215182208.35003-1-joe.konno@linux.intel.com>
- <CAKv+Gu80pJ5tbGoJqBm8CCKrEZXdkE83c944383KbQ5jREUC0Q@mail.gmail.com>
- <20180216105548.GA29042@pd.tnic>
- <CAKv+Gu8qm2wFxY56-eRLkLZB6fRUCmZbZo=4cvo5e4JDFh01Gg@mail.gmail.com>
- <20180216110821.GB29042@pd.tnic>
- <CAKv+Gu_SD6yWJMGbTwGUWXtrgZKPkpANNaGe1PUruTG9j0yhcg@mail.gmail.com>
- <20180216184832.sqreq5zhar3jqdae@jbkonno-saint14>
- <20180216192220.wljl23g533sc3oxg@redhat.com>
-In-Reply-To: <20180216192220.wljl23g533sc3oxg@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzE4MThkM2QtZDMyMi00MjlkLWEyMWEtMmFjYWQ5YjIwYTVlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiIyblNtdFpcL2w2TnE0SU1mclRlMGZJRnBpenIreDI2T1lyeEg5UVlVUTEyNE5XU0M4RjY1OUM3a2duWFZuMkpMMSJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        id S1753744AbeBPTTv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 14:19:51 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1AC2217CC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Kan Liang <kan.liang@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 32/41] perf report: Fix memory corruption in --branch-history mode --branch-history
+Date: Fri, 16 Feb 2018 16:17:37 -0300
+Message-Id: <20180216191746.11095-33-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180216191746.11095-1-acme@kernel.org>
+References: <20180216191746.11095-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1GJX3Gw018563
 
-> tl;dr: I think changing everything to 0600 is probably completely fine,
-> and whitelisting is probably pointless.  
+From: Jiri Olsa <jolsa@redhat.com>
 
-But do you speak for all users? It will just take one person complaining
-that efibootmgr no longer shows them what it used to show to bring down
-the wrath of Linus on our (specifically Joe's) head for breaking user space.
+Jin Yao reported memory corrupton in perf report with
+branch info used for stack trace:
 
-I've got someone about to start looking at making efivarfs read and save
-the values during mount, so all the read-only options can continue to work
-without making EFI calls.
+  > Following command lines will cause perf crash.
 
-This will cost some memory (say 20-30 variables at up to 1K each).
+  > perf record -j call -g -a <application>
+  > perf report --branch-history
+  >
+  > *** Error in `perf': double free or corruption (!prev): 0x00000000104aa040 ***
+  > ======= Backtrace: =========
+  > /lib/x86_64-linux-gnu/libc.so.6(+0x77725)[0x7f6b37254725]
+  > /lib/x86_64-linux-gnu/libc.so.6(+0x7ff4a)[0x7f6b3725cf4a]
+  > /lib/x86_64-linux-gnu/libc.so.6(cfree+0x4c)[0x7f6b37260abc]
+  > perf[0x51b914]
+  > perf(hist_entry_iter__add+0x1e5)[0x51f305]
+  > perf[0x43cf01]
+  > perf[0x4fa3bf]
+  > perf[0x4fa923]
+  > perf[0x4fd396]
+  > perf[0x4f9614]
+  > perf(perf_session__process_events+0x89e)[0x4fc38e]
+  > perf(cmd_report+0x15d2)[0x43f202]
+  > perf[0x4a059f]
+  > perf(main+0x631)[0x427b71]
+  > /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0)[0x7f6b371fd830]
+  > perf(_start+0x29)[0x427d89]
 
--Tony
+For the cumulative output, we allocate the he_cache array based on the
+--max-stack option value and populate it with data from 'callchain_cursor'.
+
+The --max-stack option value does not ensure now the limit for number of
+callchain_cursor nodes, so the cumulative iter code will allocate smaller array
+than it's actually needed and cause above corruption.
+
+I think the --max-stack limit does not apply here anyway, because we add
+callchain data as normal hist entries, while the --max-stack control the limit
+of single entry callchain depth.
+
+Using the callchain_cursor.nr as he_cache array count to fix this. Also
+removing struct hist_entry_iter::max_stack, because there's no longer any use
+for it.
+
+We need more fixes to ensure that the branch stack code follows properly the
+logic of --max-stack, which is not the case at the moment.
+
+Original-patch-by: Jin Yao <yao.jin@linux.intel.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Reported-by: Jin Yao <yao.jin@linux.intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180216123619.GA9945@krava
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/hist.c | 4 +---
+ tools/perf/util/hist.h | 1 -
+ 2 files changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+index b6140950301e..44a8456cea10 100644
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -879,7 +879,7 @@ iter_prepare_cumulative_entry(struct hist_entry_iter *iter,
+ 	 * cumulated only one time to prevent entries more than 100%
+ 	 * overhead.
+ 	 */
+-	he_cache = malloc(sizeof(*he_cache) * (iter->max_stack + 1));
++	he_cache = malloc(sizeof(*he_cache) * (callchain_cursor.nr + 1));
+ 	if (he_cache == NULL)
+ 		return -ENOMEM;
+ 
+@@ -1045,8 +1045,6 @@ int hist_entry_iter__add(struct hist_entry_iter *iter, struct addr_location *al,
+ 	if (err)
+ 		return err;
+ 
+-	iter->max_stack = max_stack_depth;
+-
+ 	err = iter->ops->prepare_entry(iter, al);
+ 	if (err)
+ 		goto out;
+diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+index 02721b579746..e869cad4d89f 100644
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -107,7 +107,6 @@ struct hist_entry_iter {
+ 	int curr;
+ 
+ 	bool hide_unresolved;
+-	int max_stack;
+ 
+ 	struct perf_evsel *evsel;
+ 	struct perf_sample *sample;
+-- 
+2.14.3
