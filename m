@@ -1,185 +1,122 @@
-Return-Path: <borntraeger@de.ibm.com>
-X-Google-Smtp-Source: AH8x2266D1yFjTcpOFigovOGbnd42FwecZvixjCZLaTJpejPkDybcyqfUdRi0KBwf1IN00Xz1GH4
-ARC-Seal: i=1; a=rsa-sha256; t=1518771316; cv=none;
-        d=google.com; s=arc-20160816;
-        b=d/G3f6uIZvWauhRxHRBd/HRDFUUxZ3Dg6Ru2+gF/V98ONE2Yxh/5XAuSQalWp9jpCJ
-         Ve0I0bkj4wFich+fSoQm/mtv9pvqBqoFjHbCFRGo+uyiGCnkugrqznv75omtuaIfQax+
-         GerEubC0T1EXTNiiWvmjDqXbf+cKYydv4uf0EQmT6jG3I/06Or8a+gkszKzbk4v1Z4xC
-         nnUIr0qQZDQOc8Xym3oTUedSIgT/18XIgr1IQMclG7YebDuQQB6mOzjKT8NrctUl5g5w
-         dFq9Qpzc5n+PoPpCABSHp3pNiioO20sKz4NtF+hkdWekw+yO/M2eLW74q2HmKPS751Op
-         KlaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:content-transfer-encoding:content-language:in-reply-to
-         :mime-version:user-agent:date:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=n60i4FxhGFDkIn/JNKibTsqBnfmR+Mynj3ULW7HpAYw=;
-        b=MRSUAKHrz7lb8prQeihTm8IortoCc6VFn6z1RZVtqeuxqIECcQV0GwLVNUZE7auqSa
-         YL26y1S83EiI9Y+FWNYSDzsx961BM1Q19XimzQYmgPPkPXmtfY0ZNjx3do+UZoI4ZKNW
-         1Xs2/o2/HGM3a+hL0veMVe0RcMYdsBPcdzf+qmxlNgZWTeG2kAUIRTUk6clmLDVKe7w7
-         zd1Xf8VVBcvHu4iwGqpXl7u8egltK9RHu6+rNuNL31/V8A/6o7cIqQh/90lGGTuwI56l
-         P6g499ljkVOwHyMoGi3s6/P8tRri0cYFb24KVxFUjErEyhfULOrhSoBa7dEsoA6guBb9
-         kEkw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of borntraeger@de.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=borntraeger@de.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of borntraeger@de.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=borntraeger@de.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Subject: Re: [PATCH v6 02/13] array_index_nospec: sanitize speculative array
- de-references
-To: Dan Williams <dan.j.williams@intel.com>, tglx@linutronix.de,
-        mingo@kernel.org
-Cc: linux-arch@vger.kernel.org, Cyril Novikov <cnovikov@lynx.com>,
-        kernel-hardening@lists.openwall.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, gregkh@linuxfoundation.org,
-        "H. Peter Anvin" <hpa@zytor.com>, torvalds@linux-foundation.org,
-        alan@linux.intel.com
-References: <151727412964.33451.17213780323040673404.stgit@dwillia2-desk3.amr.corp.intel.com>
- <151727414229.33451.18411580953862676575.stgit@dwillia2-desk3.amr.corp.intel.com>
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Fri, 16 Feb 2018 09:55:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3849420-1518770862-2-6870921923384359900
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518770861; b=ckPZwx3cgIDIA9bNaFzBJzR6tUpFAHD/U9ZyVa5w2UlMPUE
+    N9rRfB0WLRnVQ7ci8BhMV8gKdQG38kJ5bzlhTs0ImsHXVY4oy+bYwvxCHo/v1cB7
+    qUiDhfaUOeAkX5ExoZVOpzX00GCXyzH52pavuswNiS306c1uwOVNrAtiSEvBYjGt
+    9x7Jpew1/BDdgdI3Ps0oOluJ5GygZeFLtkrJ5WBI771F4Lu3/8My4CAd4TrzUR6E
+    HkWphTmG8bkipIr8zCpoBmyhtcyLzRHWoY63dGW9QM8G5Y9YzQxCPdUzI+NcGjZ6
+    zT+l66Wy3PA4eWnMsntr0g1bLtsPBxsDw2ZnnvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518770861; bh=r
+    GaQA9n0RAiCGvpo9xb1EkGLnQkXVIVOnGAOqxvNyFw=; b=BLv9OxXaocAG1jLBb
+    oIttvO4FzlbvTXYykJPfdkvdYcEoAC6vFrjZcsaloz51tKstgjepJizCfOCe0Wxf
+    K8IbHIuMtRqltYStnMCe14iASFJeTz9EuJf0rzCs2/G2G6zX8qCGJnrX0WJENLGI
+    prjgnxP7I3NIPnWIhLMBa5dxOIxz0vU5TZ7/799gr0lfc5XDHeGPzm1owbBC+RXU
+    7cvGUxF7LgdVDLWYIVg3KQ+oTGUYZ3li2fEWUy3FBsHxxIUZejdRcilZ8taxH25L
+    2inJxKcaCFSNSdmLZ71qNj/b1hFE5IYeH4zg8EUW+7l0AwAsT8LczGPekvYuP7BI
+    p8uww==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=android.com header.i=@android.com header.b=buMAlJeS x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=android.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=kOBmHFA3;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=android.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=android.com header.i=@android.com header.b=buMAlJeS x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=android.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=kOBmHFA3;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=android.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AH8x225hBGc/ZEQ7j+zGd030QW2TJxD9fCTjRXvxJTv6iibreOPfeRzRwWZX2YMPbCdseQoigpvY+g==
+From: Martijn Coenen <maco@android.com>
+To: gregkh@linuxfoundation.org, john.stultz@linaro.org, tkjos@google.com,
+ arve@android.com
+Subject: [PATCH] ANDROID: binder: synchronize_rcu() when using POLLFREE.
+Date: Fri, 16 Feb 2018 09:47:15 +0100
+Message-Id: <20180216084715.14969-1-maco@android.com>
+X-Mailer: git-send-email 2.16.1.291.g4437f3f132-goog
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, ebiggers@google.com,
+ linux-kernel@vger.kernel.org, maco@google.com,
+ Martijn Coenen <maco@android.com>, dvyukov@google.com
 MIME-Version: 1.0
-In-Reply-To: <151727414229.33451.18411580953862676575.stgit@dwillia2-desk3.amr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18021608-0008-0000-0000-000004D0543F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021608-0009-0000-0000-00001E635789
-Message-Id: <366bb116-e375-458c-2b63-1b26b4c8bdac@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-16_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802160107
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1590977823995808037?=
-X-GMAIL-MSGID: =?utf-8?q?1592547152638022143?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+To prevent races with ep_remove_waitqueue() removing the
+waitqueue at the same time.
 
+Reported-by: syzbot+a2a3c4909716e271487e@syzkaller.appspotmail.com
+Signed-off-by: Martijn Coenen <maco@android.com>
+Cc: stable <stable@vger.kernel.org> # 4.14+
+---
+ drivers/android/binder.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-On 01/30/2018 02:02 AM, Dan Williams wrote:
-> array_index_nospec() is proposed as a generic mechanism to mitigate
-> against Spectre-variant-1 attacks, i.e. an attack that bypasses boundary
-> checks via speculative execution. The array_index_nospec()
-> implementation is expected to be safe for current generation CPUs across
-> multiple architectures (ARM, x86).
-> 
-> Based on an original implementation by Linus Torvalds, tweaked to remove
-> speculative flows by Alexei Starovoitov, and tweaked again by Linus to
-> introduce an x86 assembly implementation for the mask generation.
-> 
-> Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Co-developed-by: Alexei Starovoitov <ast@kernel.org>
-> Suggested-by: Cyril Novikov <cnovikov@lynx.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: x86@kernel.org
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  include/linux/nospec.h |   72 ++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 72 insertions(+)
->  create mode 100644 include/linux/nospec.h
-> 
-> diff --git a/include/linux/nospec.h b/include/linux/nospec.h
-> new file mode 100644
-> index 000000000000..cf7be4bbcf17
-> --- /dev/null
-> +++ b/include/linux/nospec.h
-> @@ -0,0 +1,72 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright(c) 2018 Linus Torvalds. All rights reserved.
-> +// Copyright(c) 2018 Alexei Starovoitov. All rights reserved.
-> +// Copyright(c) 2018 Intel Corporation. All rights reserved.
-> +
-> +#ifndef _LINUX_NOSPEC_H
-> +#define _LINUX_NOSPEC_H
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 15e3d3c2260d..359220f87e1d 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -4376,6 +4376,15 @@ static int binder_thread_release(struct binder_proc *proc,
+ 
+ 	binder_inner_proc_unlock(thread->proc);
+ 
++	/*
++	 * This is needed to avoid races between wake_up_poll() above and
++	 * and ep_remove_waitqueue() called for other reasons (eg the epoll file
++	 * descriptor being closed); ep_remove_waitqueue() holds an RCU read
++	 * lock, so we can be sure it's done after calling synchronize_rcu().
++	 */
++	if (thread->looper & BINDER_LOOPER_STATE_POLL)
++		synchronize_rcu();
++
+ 	if (send_reply)
+ 		binder_send_failed_reply(send_reply, BR_DEAD_REPLY);
+ 	binder_release_work(proc, &thread->todo);
+-- 
+2.16.1.291.g4437f3f132-goog
 
-
-Hmmm, shouldn't we include asm/barrier.h here? Otherwise users might or might not
-use the optimized variant depending on which headers are included by the users
-of array_index_nospec.
-
-
-> +
-> +/**
-> + * array_index_mask_nospec() - generate a ~0 mask when index < size, 0 otherwise
-> + * @index: array element index
-> + * @size: number of elements in array
-> + *
-> + * When @index is out of bounds (@index >= @size), the sign bit will be
-> + * set.  Extend the sign bit to all bits and invert, giving a result of
-> + * zero for an out of bounds index, or ~0 if within bounds [0, @size).
-> + */
-> +#ifndef array_index_mask_nospec
-> +static inline unsigned long array_index_mask_nospec(unsigned long index,
-> +		unsigned long size)
-> +{
-> +	/*
-> +	 * Warn developers about inappropriate array_index_nospec() usage.
-> +	 *
-> +	 * Even if the CPU speculates past the WARN_ONCE branch, the
-> +	 * sign bit of @index is taken into account when generating the
-> +	 * mask.
-> +	 *
-> +	 * This warning is compiled out when the compiler can infer that
-> +	 * @index and @size are less than LONG_MAX.
-> +	 */
-> +	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,
-> +			"array_index_nospec() limited to range of [0, LONG_MAX]\n"))
-> +		return 0;
-> +
-> +	/*
-> +	 * Always calculate and emit the mask even if the compiler
-> +	 * thinks the mask is not needed. The compiler does not take
-> +	 * into account the value of @index under speculation.
-> +	 */
-> +	OPTIMIZER_HIDE_VAR(index);
-> +	return ~(long)(index | (size - 1UL - index)) >> (BITS_PER_LONG - 1);
-> +}
-> +#endif
-> +
-> +/*
-> + * array_index_nospec - sanitize an array index after a bounds check
-> + *
-> + * For a code sequence like:
-> + *
-> + *     if (index < size) {
-> + *         index = array_index_nospec(index, size);
-> + *         val = array[index];
-> + *     }
-> + *
-> + * ...if the CPU speculates past the bounds check then
-> + * array_index_nospec() will clamp the index within the range of [0,
-> + * size).
-> + */
-> +#define array_index_nospec(index, size)					\
-> +({									\
-> +	typeof(index) _i = (index);					\
-> +	typeof(size) _s = (size);					\
-> +	unsigned long _mask = array_index_mask_nospec(_i, _s);		\
-> +									\
-> +	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
-> +	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
-> +									\
-> +	_i &= _mask;							\
-> +	_i;								\
-> +})
-> +#endif /* _LINUX_NOSPEC_H */
-> 
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
