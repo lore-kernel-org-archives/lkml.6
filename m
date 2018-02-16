@@ -1,54 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750881AbeBPUNo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 15:13:44 -0500
-Received: from mail-qk0-f175.google.com ([209.85.220.175]:39838 "EHLO
-        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750713AbeBPUNm (ORCPT
+        id S1750836AbeBPUSW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 15:18:22 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:33109 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750727AbeBPUSU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 15:13:42 -0500
-X-Google-Smtp-Source: AH8x2240BlpCt/J7Ua37q9qTJTTJWlQtjdrEf8L28a+YvK3NvR/7Ja0Obbjq/Amb+58ipLavSHUXjKL5PkG+G1q1JhY=
+        Fri, 16 Feb 2018 15:18:20 -0500
+Date: Fri, 16 Feb 2018 21:18:18 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/sun4i: fix HSYNC and VSYNC polarity
+Message-ID: <20180216201818.j5gunpkkebq35b4n@flea.lan>
+References: <1518717288-123578-1-git-send-email-giulio.benetti@micronovasrl.com>
 MIME-Version: 1.0
-In-Reply-To: <20180216194415.6103-1-david.daney@cavium.com>
-References: <20180216194415.6103-1-david.daney@cavium.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 16 Feb 2018 22:13:40 +0200
-Message-ID: <CAHp75VfRDWC1DAhHK-B_2rGLdLGG_FjHmYAmRS5ucspaUoJygA@mail.gmail.com>
-Subject: Re: [PATCH v4] rtc: isl12026: Add driver.
-To: David Daney <david.daney@cavium.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-rtc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kxyinf54766plvzj"
+Content-Disposition: inline
+In-Reply-To: <1518717288-123578-1-git-send-email-giulio.benetti@micronovasrl.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 9:44 PM, David Daney <david.daney@cavium.com> wrote:
-> The ISL12026 is a combination RTC and EEPROM device with I2C
-> interface.  The standard RTC driver interface is provided.  The EEPROM
-> is accessed via the NVMEM interface via the "eeprom0" directory in the
-> sysfs entry for the device.
 
-> +config RTC_DRV_ISL12026
-> +       tristate "Intersil ISL12026"
+--kxyinf54766plvzj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-depends on OF
+On Thu, Feb 15, 2018 at 06:54:48PM +0100, Giulio Benetti wrote:
+> Differently from other Lcd signals, HSYNC and VSYNC signals
+> result inverted if their bits are cleared to 0.
+>=20
+> Invert their settings of IO_POL register.
+>=20
+> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
 
-> +static struct i2c_driver isl12026_driver = {
-> +       .driver         = {
-> +               .name   = "rtc-isl12026",
-> +               .of_match_table = of_match_ptr(isl12026_dt_match),
+Applied, thanks!
+Maxime
 
-/of_match_ptr//
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
 
-> +       },
-> +       .probe_new      = isl12026_probe_new,
-> +       .remove         = isl12026_remove,
-> +};
+--kxyinf54766plvzj
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-With Best Regards,
-Andy Shevchenko
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqHPIkACgkQ0rTAlCFN
+r3QMQg/+OV3q9HrUT8zsozxJwMsVMGHmzlW3T2oS5k8dUWgaXRgeCqSMUotbiV4M
+SMRvY1HEr6gwQIDQBblzEi81k/ztXHIxyD2hT6RRgNoeE4jMf9g8Yg22xkBaG52Q
+8/YVBAeI84p+R+oE07K234p9PJJxG+FzaiUmJaDGJ4I8/tfubEBt21Ht52ER6Lc/
+CrnC8Y8W1k2SPWEP/8dwRu//0ZhWe54p6fCi4b4iT9SNvYjIYTags+nJvkWbhmMR
+Rlpal3DQVl4wu6y0zK8ccitw0niXYKv27NqOm9/WlZd/CtprZ0xdsdx4orfskFH3
+Y5wd+2+q3meQEcwtmXxZNEHfKrAYKnYFAOACCKnaddlFQ2cXMzH5Y6T/z1fclDqL
+9QCwcuNdF2i3fNodP/CmPdq+6PVu+YTqs+cPGr8sQ5ytDg+fzfo7avUHHjCBMTsD
+T/NvTV8VzKqK241BifBbNY3VLbIPhXl+UY42RdyTQGF3+Kv6MMQSjOkNM8QPbhjB
+EeTcmQndH7v9GiXTuErMafKoGcdS7FzqTcPfD0ZPe59HWQac7+4W7vzyBVONQXxU
+KckuQQ9U6wCwvzpyT4MWcbCiWrbo8mvxEYNsMLFHE0BWQqlhliueQFwDu+B6jRNq
+BkBiRwEuTXlu/kPHF3/UDzFO0utQKuSrM92ajPZxw+IbAPTD8ek=
+=oied
+-----END PGP SIGNATURE-----
+
+--kxyinf54766plvzj--
