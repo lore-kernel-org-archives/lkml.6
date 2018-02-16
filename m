@@ -1,67 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965440AbeBPLxo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 06:53:44 -0500
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:61037 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965036AbeBPLxn (ORCPT
+        id S965474AbeBPLyn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 06:54:43 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51658 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965036AbeBPLyl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 06:53:43 -0500
-Subject: Re: [PATCH 15/20] phy: Remove SOC_EXYNOS4212 dep. from
- PHY_EXYNOS4X12_USB
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>
-References: <20180205012146.23981-1-ulfalizer@gmail.com>
- <20180205012146.23981-16-ulfalizer@gmail.com>
- <CAJKOXPecaWOgThH6YJ6bNG7u=OZtM+61QyVWD_JyV=8EkHf-gw@mail.gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-kbuild@vger.kernel.org>,
-        <tfiga@chromium.org>, <paul.burton@mips.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>, <egtvedt@samfundet.no>,
-        <linus.walleij@linaro.org>, <vgupta@synopsys.com>,
-        <mgorman@techsingularity.net>, <hch@lst.de>, <mina86@mina86.com>,
-        <robh@kernel.org>, <sboyd@codeaurora.org>, <paulus@ozlabs.org>,
-        <will.deacon@arm.com>, <tony@atomide.com>, <npiggin@gmail.com>,
-        <yamada.masahiro@socionext.com>, Heiko Stuebner <heiko@sntech.de>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <5e73b911-b509-cc82-46dc-1dacba732e41@ti.com>
-Date: Fri, 16 Feb 2018 17:22:40 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
+        Fri, 16 Feb 2018 06:54:41 -0500
+Date: Fri, 16 Feb 2018 11:54:36 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
+Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        robh@kernel.org, mihai.serban@gmail.com, linux-imx@nxp.com,
+        shegjiu.wang@nxp.com, daniel.baluta@nxp.com,
+        linux-kernel@vger.kernel.org,
+        Junichi Wakasugi <wakasugi.jb@om.asahi-kasei.co.jp>,
+        Mihai Serban <mihai.serban@nxp.com>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>
+Subject: Re: [PATCH v3 1/2] ASoC: codecs: Add support for AK4458 DAC driver
+Message-ID: <20180216115436.GF5886@sirena.org.uk>
+References: <1518614467-20613-1-git-send-email-cosmin.samoila@nxp.com>
+ <1518614467-20613-2-git-send-email-cosmin.samoila@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJKOXPecaWOgThH6YJ6bNG7u=OZtM+61QyVWD_JyV=8EkHf-gw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="V4b9U9vrdWczvw78"
+Content-Disposition: inline
+In-Reply-To: <1518614467-20613-2-git-send-email-cosmin.samoila@nxp.com>
+X-Cookie: To order, call toll-free.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--V4b9U9vrdWczvw78
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Monday 05 February 2018 01:30 PM, Krzysztof Kozlowski wrote:
-> On Mon, Feb 5, 2018 at 2:21 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
->> Exynos4212 support was removed by commit bca9085e0ae9 ("ARM: dts:
->> exynos: remove Exynos4212 support (dead code)").
->>
->> Remove the SOC_EXYNOS4212 dependency from PHY_EXYNOS4X12_USB.
->>
->> Discovered with the
->> https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
->> script.
->>
->> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
->> ---
->>  drivers/phy/samsung/Kconfig | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+On Wed, Feb 14, 2018 at 03:21:06PM +0200, Cosmin-Gabriel Samoila wrote:
 
-merged, thanks!
+> --- /dev/null
+> +++ b/sound/soc/codecs/ak4458.c
+> @@ -0,0 +1,659 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Audio driver for AK4458 DAC
+> + *
 
--Kishon
-> 
-> Best regards,
-> Krzysztof
-> 
+Please don't mix C and C++ comments line this, just make the entire
+block a C++ comment.  Since this looks otherwise good I'll apply this,
+please send a followup patch fixing the above.
+
+--V4b9U9vrdWczvw78
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqGxnsACgkQJNaLcl1U
+h9A0cwf+M273FLdr5luerf/pSFQ8Ill9TfoBPOaPdnMWysZTvUhHiCrx5/okTE4C
+m8gS2iBV7pF09JiC5+NjJu8n8mAdQQQ6ISTJewZVsRMEuDoBE022DIXVrCTzaCZO
+WtaT+nemH/7RA6E4gzHaY17Rl00+xlKER6PdM6jj8sTwNJ2Z3dsUq64Q6wEOJzrZ
+6fxcGkWdrfrwqvmmI6U8ipqXThDII4SCfIm5TDtmhsOTnzYcCM5NYNQlGbsDoseI
+rHK02ILoHYXDUQQodHJSmm/7/8bD+CuIcFVoI1eyWPr6n/M4cwWutTi5tYrDzQGz
+ybJthCJww6lsxe6vWy4xkfq3+BSOcQ==
+=YIZA
+-----END PGP SIGNATURE-----
+
+--V4b9U9vrdWczvw78--
