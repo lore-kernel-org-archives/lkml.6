@@ -1,91 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034246AbeBPOXb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 09:23:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39576 "EHLO mail.kernel.org"
+        id S1034263AbeBPOYF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 09:24:05 -0500
+Received: from mout.web.de ([212.227.17.11]:57379 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034176AbeBPOX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:23:29 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A51032175C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
-Date: Fri, 16 Feb 2018 15:23:26 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: "James A. MacInnes" <james.a.macinnes@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power:sbs-manager: Fix double shift of select reg
-Message-ID: <20180216142326.aoml5ht2bix7mrkq@earth.universe>
-References: <1518736413-4797-1-git-send-email-james.a.macinnes@gmail.com>
+        id S1034154AbeBPOYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 09:24:03 -0500
+Subject: [PATCH 2/2] pata_it821x: Use common error handling code in
+ it821x_firmware_command()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-ide@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tejun Heo <tj@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <6cdadc5e-bfbd-9866-a69f-d225e68c3b22@users.sourceforge.net>
+Message-ID: <6fc4ab6f-1168-d362-6a92-7d79b90489a2@users.sourceforge.net>
+Date: Fri, 16 Feb 2018 15:23:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gme5smxso7c6bfsq"
-Content-Disposition: inline
-In-Reply-To: <1518736413-4797-1-git-send-email-james.a.macinnes@gmail.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <6cdadc5e-bfbd-9866-a69f-d225e68c3b22@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:AEf4/ib3GV6cEGCQ+nyZH1U75cDvZMhzB4doBBmiOxwLHGfMpj1
+ MvMNCTiQBXVJCYGghXsvZdcUe1rAA5Cq3FZ/eldlFCmIKDOL4qRjsifXhNdPb8mNM8qcnN7
+ FA5B70k4bOqbcN0xAuAzdN5DTTn9Zf30D+upyJ1o/8v2lSOg2j63wRoTer7P4JLIwy+qT4/
+ YPpHYdjsRvL1SMzf+YXRg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:RRPtHZ1FzkA=:zZLPFnrOfjHaJ3am/nHKSj
+ hlvIsu4V3xqbf/lLS3ZniYM77y92z0vmwx8gohFbgCEIifd2sxnzC2rn4zYjbkUXpXTbcPjs6
+ Pb99LxSkOSojhuGFpb5MP4Y1ycrvYUsw44wRMiSvPnpkMZ+zTGrXzBwXioumaeMNZqg6NYC8R
+ /B12GUFpvqoDQKku78DhC/2gv34gxTYxd9AIUBoQnlOtMz0PTQSVmDYEMnz8L4L07xNJ/IKB4
+ cZe80m21gNESkkKDMSeEb10QQcuvZ7YFdi5S0eRLy4k0vCvVHJbeI6+iR69kulg0fTUDMSBBq
+ 5H5eS3Np0BZ+DaVNjY0dCiMsD/WHyQk2vF/54PJo7M/eVZ6mVpR1ekpbnRpEMQehg1q3kQvCz
+ HwPsE11Qi3sj3px9Rl29OBA/BvERUfweSUcBK9O3+SacKN2NdL5jwYuEyKb41vkPhyW8O7px6
+ w+F7r0TE8LGJHyIuGnyNE06t1bbwgVzl0/R4wbTV04eGOJ/RdmPPFH1/ztNrtHfHgxNApZ5tt
+ rzPxythSZezCxooZ+LEsDSoefg4PBh1bSkBDOYFDFxVhpTgVSk1oXyPNJGDbnrTcvR2BE3RVz
+ ImAZib1ep4pBtD/yQ8G4qhz0s+3b8U/mLxESvM0U7xjpRld7ky9QBrAxVH9+fCGQdvQsgsLka
+ tvEZjRHggem8V1aE11T7PFcnAT61NonfMqxM8+jCl6yGR6MZZqYvhI1QsW+Yw72tcY6AChaAr
+ wsrtw4AqdBaRmJENXcSMWB0PEFKcmiLrz3pB/RrJIaPlR4+RSC6kwBHWorCDrB0JWISKCqssr
+ 8TImfR1AXQg2WJ/2JIFtV5C0BEO4IX3mEd59kF8k99WMUQcRHQ=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 16 Feb 2018 14:40:42 +0100
 
---gme5smxso7c6bfsq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-Hi James,
+Reorder three function calls.
 
-On Thu, Feb 15, 2018 at 03:13:33PM -0800, James A. MacInnes wrote:
-> 1 << BIT() causes double shift when the macro is unwrapped
-> removed extra "1 <<"
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/ata/pata_it821x.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-No Signed-off-by... But this is already fixed:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3D7d54d0d38ec42559c891526f079f1e035cd4b3ae
-
--- Sebastian
-
-> ---
->  drivers/power/supply/sbs-manager.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/supply/sbs-manager.c b/drivers/power/supply/sb=
-s-manager.c
-> index ccb4217..cb6e8f6 100644
-> --- a/drivers/power/supply/sbs-manager.c
-> +++ b/drivers/power/supply/sbs-manager.c
-> @@ -183,7 +183,7 @@ static int sbsm_select(struct i2c_mux_core *muxc, u32=
- chan)
->  		return ret;
-> =20
->  	/* chan goes from 1 ... 4 */
-> -	reg =3D 1 << BIT(SBSM_SMB_BAT_OFFSET + chan);
-> +	reg =3D BIT(SBSM_SMB_BAT_OFFSET + chan);
->  	ret =3D sbsm_write_word(data->client, SBSM_CMD_BATSYSSTATE, reg);
->  	if (ret)
->  		dev_err(dev, "Failed to select channel %i\n", chan);
-> --=20
-> 2.7.4
->=20
-
---gme5smxso7c6bfsq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqG6VsACgkQ2O7X88g7
-+ppNJg//dpnkS/zGTBl3sizCaHGouP9tkA+QBqDgvqIStfhEj6B9rAKTHD9y9JUl
-UP9iShs2Wvsrjsb1BJnfQ180CaZXB6Xo9qJ5BNS8HiWvEzlA9BsWmC70JtQyml0K
-X8TjM4TFZPySnPiSWDxxVn1oUbjvxwGdA2NEn0qxbw18so/6sGF/Da/jawfM8Bsq
-/c3gNLC+K0qaEowaqBIkQdFj9SxN8dVNoNxQgwJxK1tj9OCqZgIQ/ppJG7UKEUMC
-B6CjIwTwm7AOxhn7EUidx7RiiD+zfFT16ieCXK1tag9OhmZdEVqXev8iiSjWtH2c
-luah2SlsuTVUuz4hvmR9sDYBYjXtre6RWj+CtlqpYhV/8z6jO61mQgmnXv2hqOa+
-SxuubciAd0hyWBKGxkbw/KuHRCdDapI2p/CjWClG89nLClLq9MOO6PqC6iPywQQk
-E6Wv4CgDuO2+f/2ySmDcjAOzIeurBd/B40tcRPE8qQUr+EFvAEf8aiTCHZ2VI5Ty
-csGDsiUHBfZX49v0H67I7vxvLP+NsmQKJsPu1OWaNqHzlBIjwxByg4isHbPJcbaF
-EUFjDMzjEvRkXlbjoci/+YcfIxxTnlmZAXddbk/7PUZfxZA2sBOlVsE71DLWBJ4X
-9w2Cw/lBMh7LTis8JreAS5FJQcl0fe220X7NmOegN7vuPEt23xs=
-=b1Zi
------END PGP SIGNATURE-----
-
---gme5smxso7c6bfsq--
+diff --git a/drivers/ata/pata_it821x.c b/drivers/ata/pata_it821x.c
+index 46eacb6b93dd..6470112e5b48 100644
+--- a/drivers/ata/pata_it821x.c
++++ b/drivers/ata/pata_it821x.c
+@@ -675,9 +675,8 @@ static u8 *it821x_firmware_command(struct ata_port *ap, u8 cmd, int len)
+ 	while(n++ < 10) {
+ 		status = ioread8(ap->ioaddr.status_addr);
+ 		if (status & ATA_ERR) {
+-			kfree(buf);
+ 			printk(KERN_ERR "it821x_firmware_command: rejected\n");
+-			return NULL;
++			goto free_buffer;
+ 		}
+ 		if (status & ATA_DRQ) {
+ 			ioread16_rep(ap->ioaddr.data_addr, buf, len/2);
+@@ -687,6 +686,8 @@ static u8 *it821x_firmware_command(struct ata_port *ap, u8 cmd, int len)
+ 	}
+-	kfree(buf);
++
+ 	printk(KERN_ERR "it821x_firmware_command: timeout\n");
++free_buffer:
++	kfree(buf);
+ 	return NULL;
+ }
+ 
+-- 
+2.16.1
