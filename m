@@ -1,87 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758740AbeBPQ5f (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 11:57:35 -0500
-Received: from mail-wr0-f181.google.com ([209.85.128.181]:41255 "EHLO
-        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758690AbeBPQ46 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 11:56:58 -0500
-X-Google-Smtp-Source: AH8x2261n8cUOIaUMyLE8QhgGu54GpEHcnjGsyqFMG5U61zkn6bLyla+za+FVnUjTgkyDFbiOf7Zr9f/V8xBhksj37M=
-MIME-Version: 1.0
-In-Reply-To: <061740d0-9876-c905-7466-ef225ec3cdc5@applied-asynchrony.com>
-References: <1697118.nv5eASg0nx@natalenko.name> <2189487.nPhU5NAnbi@natalenko.name>
- <061740d0-9876-c905-7466-ef225ec3cdc5@applied-asynchrony.com>
-From: Neal Cardwell <ncardwell@google.com>
-Date: Fri, 16 Feb 2018 11:56:35 -0500
-Message-ID: <CADVnQy=9veR6ee7Hn2dp7g7-0Tmw_7Cggpyh=krOiNizdjEr8w@mail.gmail.com>
-Subject: Re: TCP and BBR: reproducibly low cwnd and bandwidth
-To: =?UTF-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>
-Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Yuchung Cheng <ycheng@google.com>, Van Jacobson <vanj@google.com>,
-        Jerry Chu <hkchu@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1758754AbeBPQ6D (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 11:58:03 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41902 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755597AbeBPQ6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 11:58:02 -0500
+From: Robin Murphy <robin.murphy@arm.com>
+To: tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] irqchip/gic-v3-its: Fix misplaced __iomem annotations
+Date: Fri, 16 Feb 2018 16:57:56 +0000
+Message-Id: <af3a8a44f6693f6293de49a1c2910a57ba12e208.1518800276.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.16.1.dirty
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1GGvdXB010272
 
-On Fri, Feb 16, 2018 at 11:26 AM, Holger Hoffstätte
-<holger@applied-asynchrony.com> wrote:
->
-> BBR in general will run with lower cwnd than e.g. Cubic or others.
-> That's a feature and necessary for WAN transfers.
+Save 26 lines worth of Sparse complaints by fixing up this minor
+mishap. The pointee lies in the __iomem space; the pointer does not.
 
-Please note that there's no general rule about whether BBR will run
-with a lower or higher cwnd than CUBIC, Reno, or other loss-based
-congestion control algorithms. Whether BBR's cwnd will be lower or
-higher depends on the BDP of the path, the amount of buffering in the
-bottleneck, and the number of flows. BBR tries to match the amount of
-in-flight data to the BDP based on the available bandwidth and the
-two-way propagation delay. This will usually produce an amount of data
-in flight that is smaller than CUBIC/Reno (yielding lower latency) if
-the path has deep buffers (bufferbloat), but can be larger than
-CUBIC/Reno (yielding higher throughput) if the buffers are shallow and
-the traffic is suffering burst losses.
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+---
+ drivers/irqchip/irq-gic-v3-its.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->
->>> If using real HW (1 Gbps LAN, laptop and server), BBR limits the throughput
->>> to ~100 Mbps (verifiable not only by iperf3, but also by scp while
->>> transferring some files between hosts).
->
-> Something seems really wrong with your setup. I get completely
-> expected throughput on wired 1Gb between two hosts:
->
-> Connecting to host tux, port 5201
-> [  5] local 192.168.100.223 port 48718 connected to 192.168.100.222 port 5201
-> [ ID] Interval           Transfer     Bitrate         Retr  Cwnd
-> [  5]   0.00-1.00   sec   113 MBytes   948 Mbits/sec    0    204 KBytes
-> [  5]   1.00-2.00   sec   112 MBytes   941 Mbits/sec    0    204 KBytes
-> [  5]   2.00-3.00   sec   112 MBytes   941 Mbits/sec    0    204 KBytes
-> [...]
->
-> Running it locally gives the more or less expected results as well:
->
-> Connecting to host ragnarok, port 5201
-> [  5] local 192.168.100.223 port 54090 connected to 192.168.100.223 port 5201
-> [ ID] Interval           Transfer     Bitrate         Retr  Cwnd
-> [  5]   0.00-1.00   sec  8.09 GBytes  69.5 Gbits/sec    0    512 KBytes
-> [  5]   1.00-2.00   sec  8.14 GBytes  69.9 Gbits/sec    0    512 KBytes
-> [  5]   2.00-3.00   sec  8.43 GBytes  72.4 Gbits/sec    0    512 KBytes
-> [...]
->
-> Both hosts running 4.14.x with bbr and fq_codel (default qdisc everywhere).
-
-Can you please clarify if this is over bare metal or between VM
-guests? It sounds like Oleksandr's initial report was between KVM VMs,
-so the virtualization may be an ingredient here.
-
-thanks,
-neal
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 06f025fd5726..3a38b4e8685e 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -2495,7 +2495,7 @@ static int its_vpe_set_affinity(struct irq_data *d,
+ 
+ static void its_vpe_schedule(struct its_vpe *vpe)
+ {
+-	void * __iomem vlpi_base = gic_data_rdist_vlpi_base();
++	void __iomem *vlpi_base = gic_data_rdist_vlpi_base();
+ 	u64 val;
+ 
+ 	/* Schedule the VPE */
+@@ -2527,7 +2527,7 @@ static void its_vpe_schedule(struct its_vpe *vpe)
+ 
+ static void its_vpe_deschedule(struct its_vpe *vpe)
+ {
+-	void * __iomem vlpi_base = gic_data_rdist_vlpi_base();
++	void __iomem *vlpi_base = gic_data_rdist_vlpi_base();
+ 	u32 count = 1000000;	/* 1s! */
+ 	bool clean;
+ 	u64 val;
+-- 
+2.16.1.dirty
