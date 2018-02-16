@@ -1,27 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753909AbeBPTUZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 14:20:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56942 "EHLO mail.kernel.org"
+        id S1753801AbeBPTUz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 14:20:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752240AbeBPTUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 14:20:19 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9820217C9
+        id S1752522AbeBPTUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 14:20:16 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E5FB217C8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
         Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 41/41] perf tests shell lib: Use a wildcard to remove the vfs_getname probe
-Date: Fri, 16 Feb 2018 16:17:46 -0300
-Message-Id: <20180216191746.11095-42-acme@kernel.org>
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 40/41] perf test: Fix test case inet_pton to accept inlines.
+Date: Fri, 16 Feb 2018 16:17:45 -0300
+Message-Id: <20180216191746.11095-41-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180216191746.11095-1-acme@kernel.org>
 References: <20180216191746.11095-1-acme@kernel.org>
@@ -29,60 +27,60 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Thomas Richter <tmricht@linux.vnet.ibm.com>
 
-In some situations the vfs_getname is being added both as requested and
-with a _1 suffix (inlines?):
+Using Fedora 27 and latest Linux kernel the test case
+trace+probe_libc_inet_pton.sh fails again on s390.  This time is the
+inlining of functions which does not match.  After an update of the
+glibc (from 2.26-16 to 2.26-24) the output is different
 
-  probe:vfs_getname_1  (on getname_flags:63@acme/git/linux/fs/namei.c with pathname)
+The expected output is:
 
-This ends up making the cleanup to miss that one, as it removes just
-'probe:vfs_getname', which makes the second test to use this probe point
-to fail, since it finds that leftover from the first test, use a
-wildcard to remove both.
+             __inet_pton (/usr/lib64/libc-2.26.so)
+             gaih_inet (inlined)
+             ....
 
-Before:
+The actual output is:
 
-  # perf test 60 61 62 63
-  60: Use vfs_getname probe to get syscall args filenames   : FAILED!
-  61: probe libc's inet_pton & backtrace it with ping       : Ok
-  62: Check open filename arg using perf trace + vfs_getname: FAILED!
-  63: Add vfs_getname probe to get syscall args filenames   : Ok
+  1 packets transmitted, 1 received, 0% packet loss, time 0ms
+  rtt min/avg/max/mdev = 0.061/0.061/0.061/0.000 ms
+       0.000 probe_libc:inet_pton:(3ffb2140448))
+             __inet_pton (inlined)
+             gaih_inet.constprop.7 (/usr/lib64/libc-2.26.so)
+             ...
 
-After:
+Fix this by being less strict on 'inlined' verses library name and
+accept both
 
-  # perf test 60 61 62 63
-  60: Use vfs_getname probe to get syscall args filenames   : Ok
-  61: probe libc's inet_pton & backtrace it with ping       : Ok
-  62: Check open filename arg using perf trace + vfs_getname: Ok
-  63: Add vfs_getname probe to get syscall args filenames   : Ok
-  #
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-2k5kutwr4ds36adiakyb4yvy@git.kernel.org
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180214070303.55757-1-tmricht@linux.vnet.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/shell/lib/probe_vfs_getname.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/tests/shell/trace+probe_libc_inet_pton.sh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-index 30a950c9d407..1c16e56cd93e 100644
---- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-@@ -5,7 +5,7 @@ had_vfs_getname=$?
- 
- cleanup_probe_vfs_getname() {
- 	if [ $had_vfs_getname -eq 1 ] ; then
--		perf probe -q -d probe:vfs_getname
-+		perf probe -q -d probe:vfs_getname*
- 	fi
- }
- 
+diff --git a/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh b/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
+index c446c894b297..8c4ab0b390c0 100755
+--- a/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
+@@ -21,12 +21,12 @@ trace_libc_inet_pton_backtrace() {
+ 	expected[3]=".*packets transmitted.*"
+ 	expected[4]="rtt min.*"
+ 	expected[5]="[0-9]+\.[0-9]+[[:space:]]+probe_libc:inet_pton:\([[:xdigit:]]+\)"
+-	expected[6]=".*inet_pton[[:space:]]\($libc\)$"
++	expected[6]=".*inet_pton[[:space:]]\($libc|inlined\)$"
+ 	case "$(uname -m)" in
+ 	s390x)
+ 		eventattr='call-graph=dwarf'
+-		expected[7]="gaih_inet[[:space:]]\(inlined\)$"
+-		expected[8]="__GI_getaddrinfo[[:space:]]\(inlined\)$"
++		expected[7]="gaih_inet.*[[:space:]]\($libc|inlined\)$"
++		expected[8]="__GI_getaddrinfo[[:space:]]\($libc|inlined\)$"
+ 		expected[9]="main[[:space:]]\(.*/bin/ping.*\)$"
+ 		expected[10]="__libc_start_main[[:space:]]\($libc\)$"
+ 		expected[11]="_start[[:space:]]\(.*/bin/ping.*\)$"
 -- 
 2.14.3
