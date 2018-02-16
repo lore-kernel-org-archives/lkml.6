@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-497716-1518797182-2-8761853403514160777
+X-Cyrus-Session-Id: sloti22d1t05-431449-1518795396-2-17382871650564911538
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
   MailFrom='org'
@@ -13,21 +13,21 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518797181; b=Imo19rz4Vn1VvijaPkOZ8inizhJgGaBx3NXhBmpR6vLHqzy
-    HFnQla+lVnDb4hpTSUYFDMhbjDbGOxFEi4hGIijSuwqwk2InqV3OzQpG5XkbzhN3
-    gvZQXzcTelcw1l6ha9viuqzUsRwEx3w2w2sfBXxagXuhKoCVEM5bhn5sqhvWhdA2
-    dIkF8fb6MlbfMSTIED5wcFv1D0H0D4VYO36b8i4sZYMYmNpZAsEVvkygqA7Byw/T
-    0avjLjz8KG+QluM57bJs2W+hNoAqt1IDNARP+5GNpokUqJ6t2iksv2chSRFuy9MF
-    xCJyzGQSXl4XHhwuOr7R0ulQpKx96PrOzvInJJA==
+    t=1518795395; b=bnCuFJzpM66f/9hI/kYnOm6wrA1N4/23+X0EPYEW5zqyycX
+    b/UyWBjoWQ4H0/95iLXPfDFH2GamdheIc1zUcYEmaxxYdtbJ8nOFqL/AtPFRRPmf
+    Jj+aPLISw+he1BvwA/aiWagFlmpBpZm1SEPKSFF4VeUY7pyk49m1d+RxRawR+w6T
+    +1Ki+akZXvBPBVd0/R9+VQKce0pyzqiWyp0P91YWKEWpvEN/Fs+Ljn9tfeygyj+X
+    BcRzqSHjqKlMu7MKwttRc4MdrWWfdQI5tbqKfmtcuFFkO0Kbaeoq4DVJY+kl921/
+    rR2N/9L4BPxEw1p5KXlUh2Otepw7Z2P2UNQR7KA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1518797181; bh=taxLW7Yx71qsBdiMC8ahUYY8op
-    uWW3jJ2UafcSH7efE=; b=SdyrbipPi3f4DEFYwD8b7RkZ5EYHErqQipVCimTDDg
-    SwvfQWgwexLWk/DAjSVGSC998b7tldfmjclihIMbkHZHsIYsilTWyGVpqtn2XFup
-    JHVeie2kC5sWBRmitiz9i6hcJ6wz6WtD/YF+dz6jki4+wq4hvMTob/n8CAhzn897
-    SNF0qUIOfsZ5C8uaKGQSyklz871+4djGk/1Qwo+ki8gkYy01uEPwrdWWVPZiAgVo
-    NHiuR8LFT39giyG6TvDp9RmxaFvOg01cSe6M+45h5q12+3uO6KCzcq0Meor6iKyr
-    webc/9DwuCfOhbwdQFTjJA0vopc7Xb09ePwUnKhCrjkA==
+    :list-id; s=arctest; t=1518795395; bh=TE4we2vt1aCBqSv3levjeSoKfP
+    9Ywa4y16v0Oe5iJZc=; b=dlppkNIPeskoGwDcQdhjSoJYSzWj321MC9UFPVkOB/
+    Y+4jk+xKJg8WySF6o+8ukoDb4RuTD9ULr+vwwuN6jzhrF55KDTEUtpa/N8bRruZZ
+    kYgqLMJ/vzJJ5EaAE69BC6z27IbuE6Q3GZ7SvBqr14WTy02UZFoTREgSWF2+CB3l
+    7mu21g7rBHxymJ2vJ2Tpqg7DeU2rfBsWm56tWL6sT6NtZ1JlXD24nrLuNvhowpV7
+    ack5j+lUzncFfHljNv6lFI7GNn+ZqBYxGqPETfwgPntg/ndxVNb9IYiQ5ww1PWIg
+    qdAupw/mlQbEkqhz8g+6d7k6xBVnCLiRpmZ3mj8tllaw==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
@@ -46,91 +46,72 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753000AbeBPQGS (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Feb 2018 11:06:18 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:34937 "EHLO
+        id S1756191AbeBPPgc (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Feb 2018 10:36:32 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:47535 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752932AbeBPQGR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Feb 2018 11:06:17 -0500
+        with ESMTP id S1752865AbeBPPgb (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Feb 2018 10:36:31 -0500
 From: Arnd Bergmann <arnd@arndb.de>
-To: stable@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Tobias Regnery <tobias.regnery@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [4.14 only backport] Bluetooth: BT_HCIUART now depends on SERIAL_DEV_BUS
-Date: Fri, 16 Feb 2018 17:05:35 +0100
-Message-Id: <20180216160556.1634805-1-arnd@arndb.de>
+To: Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org,
+        Roy Pledge <roy.pledge@nxp.com>,
+        Ioana Radulescu <ruxandra.radulescu@nxp.com>,
+        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
+Subject: [PATCH] staging: fsl-mc: fix build testing on x86
+Date: Fri, 16 Feb 2018 16:36:04 +0100
+Message-Id: <20180216153621.1632630-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:oS85TbQgBSE1cnm5h+VkdE8M6sgsOp2DD98NKXRkAsphTvg789j
- E9Mr5oQ/5ABK3doJv+dLCqGAMjiRqbCxO0cgTuWRRfDl8zwvpGZY3aq3EEShIftTCpK+coO
- HA5ohQOifxfxR1bcxxj6Uguiwl4rrgWcNk/Qv4TcTuC5kNiANhOtRcGbNwzP6zt5YNchbR1
- A7VFU8vRkUpg2YDTH62wA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:3xWgtkG3LVc=:NtPGYXF7mJtDk9HqHMDs1Z
- EuM8ycn505gJfT4R5ftJY3ub/f6NUzPD98dDh9nu8z6bOKRWPL/a7NqNDWiEAqOcepHf5cIKj
- OVEbS3wH3spm36Frf9n48esZ8YL10qZc18mP93jrgEfD4gJCPBm2aXO3v5DKW/IsZjrspPovc
- ze0ehcNgbLT63vc/WWeCuuIazRUEEGD94Z2XFwzhxxiTOiGHrNkDyfPRk0lCf+s2ftQnr2Lz4
- AxzIo7KjXseJ3g+RhVFUcVlWl6v9iitxZCocb3gbaOIKpaqch8sSbV/t2kyaf2BhZWanlVur1
- ScKlhfQ3wIQe+Yayy157JsD3RVYzyrp2aOb0600p8vDX/Ksr6szUtU0o2/eeUExXTWrd45Qkm
- ehFA4amO0fHOUr2NQYj4mtTf4sehzdhGaI2tR+UiEc0CzI29zMZIdJU19W8RRz1v2pFkJbVFp
- 1y5mxuUXkzUdkHnCpTqr7LXQyLcGsMyXc6zbBnYmxZXw0sznPubpgx5hnhMqLYQ9ZLVva9wFv
- 88mSElBfuZY5aOkhfws6Q8r5+Wxyg4DQF/cIbqFujaGwJ5tqF1R7fUldg3lHQiV89sAAEKFyc
- Cn2uCghusBfvUMwoOVf9bwxH9iw+he6hLoUV2ItGUl0QX4+ygWli/Exc6yj9c38mFqyl/SzbM
- 8fFJKHaWT11yccJNJUovh7/kkGGqquuz1F8fEuEM6L9Ia7rxuC7C2rlCdFKHKEMu6IfJGiwnA
- VgjiGEsnQrRyq2SxN2x33n2awBYLqA05p9eQ3g==
+X-Provags-ID: V03:K0:vOFOYvKQedDoV0J66f+YRVfqvYu0rRpE+B7GNSL5bGpVP8GjmEF
+ tzqVpUKIegdRKScprViIuP7HO1Jm6qCkmt4Pv4raP58wXFhpQC1SJoMVKG0P72kUPsF4TXE
+ oydTlVseGihCaQmYYS8TJIfI7A657UBd3PGVBoKVcfYqF0XrHV1jgVOz3fZRcY5iHWRakRm
+ hOXpfE8zR52QFmHqtWzFg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Y2rNLQv91Js=:vSEkLS4+9rqcS/r+T/H/pg
+ 3b2nPwDeTdfcTU6mOPvFbIiRJGRywZa5qyAqPWWmsWMM9tootVgW3M6Aujv5IBLEJSWLbVlLz
+ ShNnZ0aTSc3n/cLGLUskByEs68otjgPCWi82f1cK4eLmEMRE9Nw9w+W+9y4Kvz6oD9pRyRDmw
+ p87pjfg39EG/PlIOLjwd0OpH7qxFiQiN4HO+Cl/IfDJYtO4KGPhdgYHvBLTB49nEMtUSH/Ebk
+ pTgkJXVYeu+Hwh6BNzYPcrkwGd69kyv3MyrKx7acSNeneZZjmfAbUQXOwuIKyvDNPgPm3afCh
+ jvQBxR7i2zgu8TA12o6we17tVSIYOL/nDNyY07rHcyycGtf89GuS6JSUD/xqOS0QcvHMzXTI3
+ HweNTOmHxCEBrDZZqL6JE3N5ser6Q0FQXQyNAYjs2JFRF/hUf9FVAY0vhaVLIXhBXYjC0dFHm
+ Ms/bR0AHlg/8F7O5rE/6GT5UolPWs2lG6Jz5iV1FpPSMELH1Pfc1+5UGSvKE2K3Y6h7X8Mc3J
+ j+8YalsUMW5j+sY2mRLQ+kUNOotgHZ3INatZt/TrjmphJ7noLHQwhyVmOe2smhSiIebyt1jW1
+ QQterQHqzeIhW+Rf4EUoZwYpNJP9HK1/BBseK1KBbGkUtH2o7hP+7yg7I0hbD+eQQQKgoM3qd
+ HxpyvMelLZCVL2kErN9e1unbLWdh+janjj/qPwX4gm7+rA3NZ+hpOG1U5e7oTIHF81cwV/4rT
+ r2vXgq0eAqxsm3sSNmZaun2Zeq7SqqU0+lWOWA==
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-commit 05e89fb576f580ac95e7a5d00bdb34830b09671a upstream.
+Selecting GENERIC_MSI_IRQ_DOMAIN on x86 causes a compile-time error in
+some configurations:
 
-It is no longer possible to build BT_HCIUART into the kernel
-when SERIAL_DEV_BUS is a loadable module, even if none of the
-SERIAL_DEV_BUS based implementations are selected:
+drivers/base/platform-msi.c:37:19: error: field 'arg' has incomplete type
 
-drivers/bluetooth/hci_ldisc.o: In function `hci_uart_set_flow_control':
-hci_ldisc.c:(.text+0xb40): undefined reference to `serdev_device_set_flow_control'
-hci_ldisc.c:(.text+0xb5c): undefined reference to `serdev_device_set_tiocm'
+On the other architectures, we are fine, but here we should have an additional
+dependency on X86_LOCAL_APIC so we can get the PCI_MSI_IRQ_DOMAIN symbol.
 
-This adds a dependency to avoid the broken configuration.
-
-Fixes: 7841d554809b ("Bluetooth: hci_uart_set_flow_control: Fix NULL deref when using serdev")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Cc: stable@vger.kernel.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/bluetooth/Kconfig | 2 +-
+ drivers/staging/fsl-mc/bus/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
-index 98a60db8e5d1..b33c8d6eb8c7 100644
---- a/drivers/bluetooth/Kconfig
-+++ b/drivers/bluetooth/Kconfig
-@@ -66,6 +66,7 @@ config BT_HCIBTSDIO
+diff --git a/drivers/staging/fsl-mc/bus/Kconfig b/drivers/staging/fsl-mc/bus/Kconfig
+index 504c987447f2..eee1c1b277fa 100644
+--- a/drivers/staging/fsl-mc/bus/Kconfig
++++ b/drivers/staging/fsl-mc/bus/Kconfig
+@@ -8,7 +8,7 @@
  
- config BT_HCIUART
- 	tristate "HCI UART driver"
-+	depends on SERIAL_DEV_BUS || !SERIAL_DEV_BUS
- 	depends on TTY
+ config FSL_MC_BUS
+ 	bool "QorIQ DPAA2 fsl-mc bus driver"
+-	depends on OF && (ARCH_LAYERSCAPE || (COMPILE_TEST && (ARM || ARM64 || X86 || PPC)))
++	depends on OF && (ARCH_LAYERSCAPE || (COMPILE_TEST && (ARM || ARM64 || X86_LOCAL_APIC || PPC)))
+ 	select GENERIC_MSI_IRQ_DOMAIN
  	help
- 	  Bluetooth HCI UART driver.
-@@ -80,7 +81,6 @@ config BT_HCIUART
- config BT_HCIUART_SERDEV
- 	bool
- 	depends on SERIAL_DEV_BUS && BT_HCIUART
--	depends on SERIAL_DEV_BUS=y || SERIAL_DEV_BUS=BT_HCIUART
- 	default y
- 
- config BT_HCIUART_H4
+ 	  Driver to enable the bus infrastructure for the QorIQ DPAA2
 -- 
 2.9.0
