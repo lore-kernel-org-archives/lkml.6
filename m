@@ -1,91 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034452AbeBPOhP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 09:37:15 -0500
-Received: from foss.arm.com ([217.140.101.70]:40444 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750942AbeBPOhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:37:14 -0500
-From: Marc Zyngier <marc.zyngier@arm.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jaedon Shin <jaedon.shin@gmail.com>, Mark Salter <msalter@redhat.com>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Shanker Donthineni <shankerd@codeaurora.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, Will Deacon <will.deacon@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] irqchip updates for 4.16-rc2
-Date: Fri, 16 Feb 2018 14:37:01 +0000
-Message-Id: <20180216143701.20003-1-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.14.2
+        id S1757987AbeBPOjb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 09:39:31 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:45527 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754785AbeBPOja (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 09:39:30 -0500
+X-Google-Smtp-Source: AH8x225mtNaaaPRpB7JRQIGcsK75VaxLHs9R7kc6FZFdQBpGbjes1KfCPAa29TQQgIIudm8ID40Mrw==
+From: Progyan Bhattacharya <bprogyan@gmail.com>
+X-Google-Original-From: Progyan Bhattacharya <progyanb@acm.org>
+To: linux-kernel@vger.kernel.org
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Nicholas Mc Guire <der.herr@hofr.at>
+Subject: [PATCH] objtool/x86: Replace Non-standard Range Expression in Case
+Date: Fri, 16 Feb 2018 20:09:24 +0530
+Message-Id: <20180216143924.9918-1-progyanb@acm.org>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180216142513.9520-1-progyanb@acm.org>
+References: <20180216142513.9520-1-progyanb@acm.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+Replace range expressions with seperate individual cases, i.e. convert case 1...3: to case 1: case 2: case 3
+Range expression within case statements are non-standard C code and can create issues over compiler and platform variety.
 
-Here's the few updates I've collected for the irq department. Nothing
-major (always a good thing), the biggest update being GICv2m now being
-able to use Multi-MSI, and resulting in a negative diffstat...
+While compiling with gcc 4.8 (RHEL) I encountered this error on range expression in case statements:
+error: range expressions in switch statements are non-standard [-Werror=pedantic]
 
-Please pull.
+Signed-off-by: Progyan Bhattacharya <progyanb@acm.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Nick Desaulniers <nick.desaulniers@gmail.com>
+Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Nicholas Mc Guire <der.herr@hofr.at>
+Cc: linux-kernel@vger.kernel.org
+---
+ tools/objtool/arch/x86/decode.c | 35 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 32 insertions(+), 3 deletions(-)
 
-	M.
-
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
-
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git tags/irqchip-4.16-2
-
-for you to fetch changes up to 0b24a0bbe2147815d982d9335c41bb10c04f40bc:
-
-  irqdomain: Re-use DEFINE_SHOW_ATTRIBUTE() macro (2018-02-16 14:22:34 +0000)
-
-----------------------------------------------------------------
-irqchip updates for 4.16-rc2
-
-- a MIPS GIC fix for spurious, masked interrupts
-- a fix for a subtle IPI bug in GICv3
-- do no probe GICv3 ITSs that are marked as disabled
-- multi-MSI support for GICv2m
-- various cleanups
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      irqdomain: Re-use DEFINE_SHOW_ATTRIBUTE() macro
-
-Jaedon Shin (1):
-      irqchip/bcm: Remove hashed address printing
-
-Marc Zyngier (1):
-      irqchip/gic-v2m: Add PCI Multi-MSI support
-
-Mark Salter (1):
-      irqchip/gic-v3: Change pr_debug message to pr_devel
-
-Matt Redfearn (1):
-      irqchip/mips-gic: Avoid spuriously handling masked interrupts
-
-Shanker Donthineni (1):
-      irqchip/gic-v3: Use wmb() instead of smb_wmb() in gic_raise_softirq()
-
-Stephen Boyd (1):
-      irqchip/gic-v3: Ignore disabled ITS nodes
-
- drivers/irqchip/irq-bcm7038-l1.c                   |  3 --
- drivers/irqchip/irq-bcm7120-l2.c                   |  3 --
- drivers/irqchip/irq-brcmstb-l2.c                   |  3 --
- drivers/irqchip/irq-gic-v2m.c                      | 46 +++++++++++-----------
- drivers/irqchip/irq-gic-v3-its-pci-msi.c           |  2 +
- drivers/irqchip/irq-gic-v3-its-platform-msi.c      |  2 +
- drivers/irqchip/irq-gic-v3-its.c                   |  2 +
- drivers/irqchip/irq-gic-v3.c                       |  4 +-
- drivers/irqchip/irq-mips-gic.c                     |  2 -
- .../staging/fsl-mc/bus/irq-gic-v3-its-fsl-mc-msi.c |  2 +
- kernel/irq/irqdomain.c                             | 18 ++-------
- 11 files changed, 36 insertions(+), 51 deletions(-)
+diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
+index 540a209b78ab..e6803dd79958 100644
+--- a/tools/objtool/arch/x86/decode.c
++++ b/tools/objtool/arch/x86/decode.c
+@@ -143,7 +143,14 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
+ 		}
+ 		break;
+ 
+-	case 0x50 ... 0x57:
++	case 0x50:
++	case 0x51:
++	case 0x52:
++	case 0x53:
++	case 0x54:
++	case 0x55:
++	case 0x56:
++	case 0x57:
+ 
+ 		/* push reg */
+ 		*type = INSN_STACK;
+@@ -153,7 +160,14 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
+ 
+ 		break;
+ 
+-	case 0x58 ... 0x5f:
++	case 0x58:
++	case 0x59:
++	case 0x5a:
++	case 0x5b:
++	case 0x5c:
++	case 0x5d:
++	case 0x5e:
++	case 0x5f:
+ 
+ 		/* pop reg */
+ 		*type = INSN_STACK;
+@@ -171,7 +185,22 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
+ 		op->dest.type = OP_DEST_PUSH;
+ 		break;
+ 
+-	case 0x70 ... 0x7f:
++	case 0x70:
++	case 0x71:
++	case 0x72:
++	case 0x73:
++	case 0x74:
++	case 0x75:
++	case 0x76:
++	case 0x77:
++	case 0x78:
++	case 0x79:
++	case 0x7a:
++	case 0x7b:
++	case 0x7c:
++	case 0x7d:
++	case 0x7e:
++	case 0x7f:
+ 		*type = INSN_JUMP_CONDITIONAL;
+ 		break;
+ 
+-- 
+Regards,
+Progyan Bhattacharya
+http://codeprogyan.me
+2.16.1
