@@ -1,112 +1,80 @@
-Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x2277ere0S++C4Xh79JIsCNQvyJy/Ir3Li9wgLG10ddkhTeeKKZLWsjho16hfl2ZX0RfmEKMA
-ARC-Seal: i=1; a=rsa-sha256; t=1519119222; cv=none;
+Return-Path: <SRS0=nskh=FK=goodmis.org=rostedt@kernel.org>
+X-Google-Smtp-Source: AH8x227WbcU1WHQQCGr3PP7nQPVjHfvUXr0+ln60kbGWq1MLXhUjknYo73sFM4dZHhGiXBLzUsr9
+ARC-Seal: i=1; a=rsa-sha256; t=1518818629; cv=none;
         d=google.com; s=arc-20160816;
-        b=uRuH+I6v5kGx0w2XMtRGCcW2NeLtCP1k0EuDI72ipH+EC3RJZEyjec3Q1VjxtbOpEE
-         ZmSmC+UYaehqd+nwa5OAfJ2Le55bsSsKdBqOqaaV10AQ/i67lX1KPAE3YVHXbN0UHAyr
-         T/gdNzDRug2JM9boeAhCtv83INGOl4sP2yAY5lX+tNXi8dKmaX2IPKcjOQCDoHxe2FUA
-         4tCxj/Hn6gmi2sf8grI+q0JjmQYQkSDuTbYmg5U2f1l/PJllG4C1fwRitD978TnqAPY3
-         jPs9dUWV2ioA3zH13+twVbrnNw/m4mIFB6Fih8Vb8mG218GV1dDbl3hpqNQKWuZEMb5R
-         U/AQ==
+        b=rpSuteoK9L5YIvtrcizT3zyoP4qGu7JFVxo1j+1yVMlhhdA34BWH33W+EtpQTBMPU6
+         uEovP40MD0T4fC2hk9OLMa0a7mISGvYZ7W9GS0F2xJUvbWqnu0UyEjBBc6mDi4EcySwe
+         ua0CReSylLt6XohhvzAoGadsrjh9mjncrlBRVJElMqxw7FR0OG2Pt9YbpYXt0gkuYbMM
+         FQdCqZZjabDg1FfYdmnIWv4+O4bmaG9fwmHCujzq3kGs4Dh7ZUV1HLMy8lOO9BW2WVMY
+         KmOS40J0zrp7MoFkK13RN2euKN56LRtbzXGsOr4JjPVcx2jKGz/0yWebD/VbF2laJLlC
+         COpA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:dkim-filter:arc-authentication-results;
-        bh=DTBsovxgyhka0TtlrhsWY/9JG6dyNPcM3+AQrTpMTEE=;
-        b=xG1gMnss/9QOwwf0yGNAUqCXuisJLgv49nu44X56gR0GfOeo0rOfYG6NiL+fcpaynb
-         4k4EE4ODPZaLD1exYfANBa06Kg0zGkMc3OOnZrWFcIYe1aFRtUe+en8wn/wBxKyO7NwO
-         2Volbpb+Ffci9kYtd/XBUdhxx/DiRfDqW7ow9+d/0QTaC7SHe384krsW06gV26ikYmUc
-         gkWBpb7e3eaQ/olWM4KvUsOI6qOqj4E18WH5Y6Ovso1QyI19o5AoOMUemcJ2PZ+0tZfx
-         piEVsNGxsea8tOf9ZXEsWN4I0h+cBkkmdxjICT/fkujekYMTcRnoBPUKRO3na9BHDP9i
-         gWhg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:dmarc-filter
+         :arc-authentication-results;
+        bh=3TAI1Xqd8qEMwM4wZLoIND8AR8hKpIEguxTIhtxZG2M=;
+        b=wJ24mNYjyMJ7ODjAjqmTEiAu8WdJEMpODdSNLmn+Y+aFS6IEwIhrdwZ0Lf36+IIjRa
+         TMVEcICdT6pWTK56lUARed4CXr1ToqI+Igt3GihNfrvsWraMBpK8cJ06VbfMO4hoN00N
+         TYe+3per2At5PwCu4CV9cnbOiH0M6hatx7xJjThroKP1gqNNd14JAH44vpCsbKRtrhrL
+         f8Pfkfu8aGhrgxrtZZ6V55RPDaicfenFetTi/wsesoiv8RiF6mPokJq49s4RwGMwknw3
+         ZcfqWuan4s8/5AYq6viPiDLVmwSmx5EwNFRheFgqyorzyYNk8+QF9YZz0LgCgw6KCUio
+         nTRQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=kdBDSJDA;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.83 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+       spf=pass (google.com: best guess record for domain of srs0=nskh=fk=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nskh=FK=goodmis.org=rostedt@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=kdBDSJDA;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.83 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w1K9XC1e016412
-X-Nifty-SrcIP: [209.85.217.170]
-MIME-Version: 1.0
-In-Reply-To: <20180216214117.1947175-2-arnd@arndb.de>
-References: <20180216214117.1947175-1-arnd@arndb.de> <20180216214117.1947175-2-arnd@arndb.de>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 20 Feb 2018 18:32:31 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASG34OhzKbMLUdTU_hjcD4598m9k01cVEGPjTeJO5YLgA@mail.gmail.com>
-Message-ID: <CAK7LNASG34OhzKbMLUdTU_hjcD4598m9k01cVEGPjTeJO5YLgA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] Kconfig: disable PROFILE_ALL_BRANCHES for compile testing
+       spf=pass (google.com: best guess record for domain of srs0=nskh=fk=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=nskh=FK=goodmis.org=rostedt@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65116217A0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 16 Feb 2018 17:03:46 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
 To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        "Yann E . MORIN" <yann.morin.1998@free.fr>,
-        Michal Marek <mmarek@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc: linux-kbuild@vger.kernel.org, "Yann E . MORIN"
+ <yann.morin.1998@free.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>,
+ Michal Marek <mmarek@suse.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Ingo Molnar
+ <mingo@redhat.com>, Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH 1/3] Kconfig: disable PROFILE_ALL_BRANCHES for compile
+ testing
+Message-ID: <20180216170346.497114b3@gandalf.local.home>
+In-Reply-To: <20180216214117.1947175-2-arnd@arndb.de>
+References: <20180216214117.1947175-1-arnd@arndb.de>
+	<20180216214117.1947175-2-arnd@arndb.de>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592595400950841912?=
-X-GMAIL-MSGID: =?utf-8?q?1592911957851075936?=
+X-GMAIL-MSGID: =?utf-8?q?1592596763710596422?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-02-17 6:41 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
+On Fri, 16 Feb 2018 22:41:11 +0100
+Arnd Bergmann <arnd@arndb.de> wrote:
+
 > This can easily double the time for compiling a driver but does not
 > provide any benefit for the compile tester, so it's better left disabled.
->
+> 
 > In addition, any 'inline' function that is not also 'static' and that
 > contains an 'if' causes a warning like
->
+> 
 > include/linux/string.h:212:2: note: in expansion of macro 'if'
 >   if (strscpy(p, q, p_size < q_size ? p_size : q_size) < 0)
 >   ^~
 > include/linux/compiler.h:162:4: warning: '______f' is static but declared in inline function 'strcpy' which is not static
->
+> 
 > without this patch, and I could not come up with a nice fix for that.
 > In combination with my patch to always enable 'CONFIG_COMPILE_TEST'
 > during 'randconfig' builds, we can at least hide these warnings for
 > most users.
->
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+This looks like it fixes the same issue that was already fixed and is
+in Linus's tree.
 
-I took a look at this just in case
-because the subject is prefixed with "Kconfig:",
-but it is actually "trace:".
+ http://lkml.kernel.org/r/9199446b-a141-c0c3-9678-a3f9107f2750@infradead.org
 
-I expect "Kconfig:" for core changes of Kconfig.
+See commit 68e76e034b6b1 ("tracing: Prevent PROFILE_ALL_BRANCHES when
+FORTIFY_SOURCE=y")
 
-Using precise patch prefix would get more attention from
-right people.
-
-
-
-
-> ---
->  kernel/trace/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-> index 434c840e2d82..faaf687b13b1 100644
-> --- a/kernel/trace/Kconfig
-> +++ b/kernel/trace/Kconfig
-> @@ -345,6 +345,7 @@ config PROFILE_ANNOTATED_BRANCHES
->  config PROFILE_ALL_BRANCHES
->         bool "Profile all if conditionals"
->         select TRACE_BRANCH_PROFILING
-> +       depends on !COMPILE_TEST
->         help
->           This tracer profiles all branch conditions. Every if ()
->           taken in the kernel is recorded whether it hit or miss.
-> --
-> 2.9.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+-- Steve
