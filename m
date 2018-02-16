@@ -1,93 +1,133 @@
 Return-Path: <arnd@arndb.de>
-X-Google-Smtp-Source: AH8x224ypOuUSYIKCeWIIcKOvUxOjl1WrRbptZgo0bE/Msg5TqZ/Zx/aJHICQH9U51eBPwbJi7k7
-ARC-Seal: i=1; a=rsa-sha256; t=1518817291; cv=none;
+X-Google-Smtp-Source: AH8x225mhM/4r/lBlpQctZD86CKhkWnEt2Uwbfp53Fhgmcce0jAy9WTQv+DFyolcdnFKMHcESfx0
+ARC-Seal: i=1; a=rsa-sha256; t=1518817338; cv=none;
         d=google.com; s=arc-20160816;
-        b=IU/3bTweTTUauva/ZsZAVA5hIk8VlB3C+L2AaTGacZf0kBNxZ/GTlUpPqlypH2VKiZ
-         NyE8OPpufTbjAEaiNWwkU9fjZX3E5Ri4vjH9KLOajwML+qPDue6OuO1jKBa80TvKbVFu
-         w/EeuZ2jWD6vPJAt/svmp8feDlAW3Yv7kAUTdNus+UuguRCSBggNSHa4t2Uii/EZf7ih
-         r1zxls7LBNr8QLpZs2/gS5a7PR5QlDWOb8qJoOD87zeUozn2aBtIEMnhUSXn4HbptOnQ
-         Ff/DwHIEZqHx09wmT0HLpQML/8LXOVGvi5AYhVLfhoR6TSVqKhMbElIYbnhA2/3D//dX
-         zYHQ==
+        b=lMb35ozTPMRkNRu0sHL8oBzguSVor3gniqJH1vrpzFW6794Ys+AtOilB7eVg27zwVu
+         1JXS/myxJeh8kTkBev7538gzzfmzRn92DxpIseU3Ix1TyZTIjT6PuimW2bIHHEKURAPV
+         +mkVXCvv9AgiI6rhN1MKK6OUjVH0zwgR65nv4gpWBDHi1XbgPO3xHTgUE+IyhdZ8yrOJ
+         0XKuiUqoVdhjijM9jpJalhqie1Ne3r+Rop1oS28mx8JZXwDP+vcc5NYqrhAnLOnO0Dbs
+         y0sjGHbmnLBsANXOXVPcoaybaOPi/Lgfp/QyUcgEhsY4IwXqXT5NVHbDEVtcG98XeRI3
+         3MJg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=la0EpflOax1GvXPywbQaQCJ7trG2HHSnQfyiPOo672w=;
-        b=Fb2ZnTHcB3BKeRNVV2/Sv0rNwgN2eWvBtUxGEP1/X2R+NFqy9Auvpb0IymbGa7A9Xh
-         FpYGoSn7MI2y6Ta8nTCI+wrX8RJcBzKYre9HtZnFQ6GXHMGuPgowO/nNgW0KEv8Fxz12
-         +wtH2MXd/DYaq3WbC17azdATT9zom7dkVBRC5QVg8zoDx3HfM558VCZNA07jD/t7NlrX
-         LwoHqzo/Ysb1CF/agFaKozZXb/WZp4Y8321Hth2C0g9lnX4w9Be0cKK/s42RarYXQFGP
-         Teut0YinlWUpp8ObTqifQnYWtRgQ0B95p6eWIz59LGQ6JA+kiVBo9uT5UQwnNQbnI6/C
-         XkQg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=NdiXOwE3+fPNEtWzey9w1q7yNkPM+KPTEhOrGKhZWDY=;
+        b=WVoNae44dWm+6Fm3qKpsk4zm++FuE/J4Iogph6pGfxOFUA+XPGZBQ27ps6NUv4Jo3D
+         M4tBhvKjal7kIA7a68NkPhaLOndvW6HjZvRF406kAHzAByU673cvtQggqn1NhoNghg0K
+         gAbnbkz/HYInoF70msKF27n72AvAODptoE0gy1P7mPuozywK2yiDjAawoAMNgx4GxuHa
+         4L0cf59RVhRJcw7f/kuKohkSgu5m+wIycJ/tl5BSiQjSqy7k06N5Vunvb1wpycnRoR77
+         x9tgbEfOvd05+T6uDoI0dayqcxcpssS+s2NY2iwhN90oktLuOtZ+UqHXmxfMQg56btpM
+         0sDQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 212.227.17.10 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
+       spf=neutral (google.com: 212.227.17.24 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 212.227.17.10 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
+       spf=neutral (google.com: 212.227.17.24 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
 From: Arnd Bergmann <arnd@arndb.de>
-To: linux-kbuild@vger.kernel.org
-Cc: "Yann E . MORIN" <yann.morin.1998@free.fr>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
+To: linux-kbuild@vger.kernel.org,
+	"Yann E. MORIN" <yann.morin.1998@free.fr>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
 	Michal Marek <mmarek@suse.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
 	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 0/3] fixing the last failures in randconfig builds
-Date: Fri, 16 Feb 2018 22:41:10 +0100
-Message-Id: <20180216214117.1947175-1-arnd@arndb.de>
+Subject: [PATCH 2/3] Kconfig: improve handling for all{rand,yes,no,}.config fragments
+Date: Fri, 16 Feb 2018 22:41:12 +0100
+Message-Id: <20180216214117.1947175-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:OTtfIdLi0xl8elqh13/nStc/R7vyC4uUPHVTzOnG+hah7cBIxnS
- +0sa36ffhLaUjGMlDWn9IaDHNQyNl85A9QdirCN4LGmBdRSE5II05kSvXfA+9hwfxrHKNnO
- VtBE3O+EW/smeDaR7QWVTmajRmhwyKqBnnVDeCiFrAHTPH/oFpAZb/zIoOAJvMH+NY3B23v
- XMHHGyneiWqsmRIkQpPAg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:MxZT5Y+YpbQ=:i2wLFtbvIZ8Mf4Ow4O5paq
- 2Pk3hzCrUGPQJoYWlgQk/Z3XB+y4bsTkyDdWvon82xbARnuL3o1YkNYrMbOs/uzjFTeNBaDfJ
- YreWOSwHUCIRkOtYHQ/iY/RwNbzT53uqGgex1NqrSczvxR7Qs9uVlEb5AZK1N2kjZavvxekn1
- WEgMDJT63ynJNA63A0yiOV+mqeLPEx8+DCtajcIRpRBNBHKyNySjvhPZ2mSy55qeap8T2SFHK
- B3sUs7WFvp90KC+UUIrZdbx8+8SabENZgeN/ARYinP694C3G3iPtxUyfk87mH6qtwrddrv99E
- Q2cg5yAslCa2Y2Enb1fZGZBkVFxvIGUdhcEKFS9/f/SIKQRAUd3iGEa0svNA4DPQZWjoxpsOl
- VvaHfR2wZeAWFuCncDFoEZ7wz9c6axD8v29M3bZmy4h5DoOQ00Kth6S8B61VChyLBxeB99Ixh
- RvB8yRUO2glZHRzPOHxaBCR6kyweQKRMVDN5YVn8n3U5s8OIhqc91wkkCMa1FB33KmK72VEX0
- saErM1h1mzeKHfxax8IkB7CkHS4jSkuuTt+2hy/3GR5nPyKoh2ROqX/sMRfRtYj21gXZTsQTg
- hzJq6dWEGy4E7QxypmIBujyVRN2CtszZ35/ZoNcLP6LttyQwpW1OUbzTOP831etFQ28nAJKR4
- PnmVuQAQ50YBHaeQFFDBjI0h1deyEQqs1O6+VWKBYU02pLQ3RDt+Nav8P8s/LfQx6dj5HEKul
- k/6BDnEmBNC/V6k7cuf/3MeOad9zHkt9xCfWAQ==
+In-Reply-To: <20180216214117.1947175-1-arnd@arndb.de>
+References: <20180216214117.1947175-1-arnd@arndb.de>
+X-Provags-ID: V03:K0:DsySdBUpNFt+e/nzmYwfqzjYZjpj13re5X7xnJx5gyI1Eeyc/8O
+ bvSkfnghSQX638gGp1PkFzOa8i6l8rZvtOekkUkm1aaURKIKb0py02Wfc7Dok9JVN4WJqbD
+ 0SaUzZwHPEVI5+wagKrKHx9y0gdbrZ8M+lGGMHuK6Ejpeg2UAaiyYla/BwdyCY26nNbxjTl
+ 61spnBBv+c9zB3bUKcaZQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:7V4FJictevY=:MRXOYVnDOsHw/syrtJvLz5
+ xH+99PCW/BbtlcdQB8gIbbMFI0VNPbAITFuTovVKfhL0oUgZbB7L9BHHsPo+rdXny+FZAW4Bv
+ s9jSQRsStEMj/Y8/3+FDPUoBGNNMCk/NXO8ltMLGNTmis+WA1JaG7g2MEEpPu3CE11m+l28h6
+ ECkJQfaBKgG/uMuXYkKn+UTy+TPONESYjb6vwwINYh2bcpq+1AcCv9nTM+n6J+injfx3CzMot
+ KpYK2r9WNlNIitPlpPTSigwqfa+tSLnk4kQTOpENteXZwxx7lFt7zjQKp/1mtaAoWQLvX3Ffw
+ K7JLV/NehWkd9jGDt3vefPV+J16e4JkN9yOqhRUk/zqX1pOhUZMe1qWrhwDVlPQZxpJ4pKQ77
+ 4O0qapEQjuqCWot40KXVTsUmmmw7P68REVVvwFNagkZ1CQRUbwofsfvZvzpy6B4t59DhYKL9o
+ tXhRh22PqRbEmX1UYkmePzQ62lDtE5UCFdVv4eX4U1enf6EF5afVg18KqYLh9HZKQu1ZDsjxX
+ PROUbAxNVoHrENZqNQCg2592TQElwVrLKbCzPOgscJWXFWgZmOlv2AfoA5IaAmG0qtOpTgz1s
+ EZjvbZn1O/Cq379oGZYMO4piSQK1g+Gxl7GgCUuLXivBeV1bWL8QdPfvUHH1M8MdzsdbMLRU7
+ MYDtldFcfoHfjKoXrX+O1E5ZYyOsbI4ThWjizDyyZ3e+2d3xJL6YlMxkt01zRwdvzROflqYAd
+ iQy7rFga0BAcJHX4ZOmdN+5Mcz5YuoyWGytcKQ==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592595360993287886?=
-X-GMAIL-MSGID: =?utf-8?q?1592595360993287886?=
+X-GMAIL-THRID: =?utf-8?q?1592595410017482900?=
+X-GMAIL-MSGID: =?utf-8?q?1592595410017482900?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-I've recently done some build testing on 4.14-stable and to my surprise
-found only a handful of bugfixes were required to build all x86 and arm64
-randconfig output without any warnings using gcc-7.2.1. I have submitted
-the remaining trivial patches now, and this is the non-trivial remaining
-part, where we turn off some options that are known to cause problems in
-randconfig builds.
+The kernel currently supports two methods of dealing with config
+fragments in the tree:
 
-While I've carried the same patches in my randconfig test tree for a long
-time, I wasn't entirely sure about my approach and never submitted them
-for inclusion. Now that this is literally all that is remains, I'd like
-to propose all three for inclusion.
+a) Running "make foo.config" looks for arch/$(ARCH)/configs/foo.config
+   and kernel/configs/foo.config, and applies the defaults from those
+   files on top of the current configuration.
 
-If someone has another idea for how to address these, that's fine with
-me as well, as long as we can make sure at least COMPILE_TEST is enabled
-for randconfig builds by default (everything else can be derived from that
-if necessary).
+b) Running "KCONFIG_ALLCONFIG=1 make randconfig" (or the equivalent
+   allmodconfig/allnoconfig/allyesconfig/alldefconfig) will look
+   for a "allrandconfig.config" file in the current directory or the
+   top of the $(srctree). These are used as defaults before we generate
+   the remaining options.
 
-Note that the 4.15 release has a couple of build-time regressions that I
-have sent bugfixes for but that so far have not made it in, and 4.16-rc
-still has a number of other issues without patches.
+This is rather inconsistent, and prevents us from easily shipping
+good defaults for "randconfig". I'm extending the logic here so that
+the second case also looks for the hardcoded file names in the standard
+directories (first arch/$(ARCH)/configs/, then kernel/configs) in the
+source tree.
 
-       Arnd
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ scripts/kconfig/conf.c | 27 +++++++++++++++++++--------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
 
-Arnd Bergmann (3):
-  Kconfig: disable PROFILE_ALL_BRANCHES for compile testing
-  Kconfig: improve handling for all{rand,yes,no,}.config fragments
-  Kconfig: add a default allrandom.config
-
- kernel/configs/allrandom.config |  6 ++++++
- kernel/trace/Kconfig            |  1 +
- scripts/kconfig/conf.c          | 27 +++++++++++++++++++--------
- 3 files changed, 26 insertions(+), 8 deletions(-)
- create mode 100644 kernel/configs/allrandom.config
-
+diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
+index 866369f10ff8..848bf4d15e9a 100644
+--- a/scripts/kconfig/conf.c
++++ b/scripts/kconfig/conf.c
+@@ -493,8 +493,9 @@ int main(int ac, char **av)
+ {
+ 	const char *progname = av[0];
+ 	int opt;
+-	const char *name, *defconfig_file = NULL /* gcc uninit */;
++	const char *arch, *name, *defconfig_file = NULL /* gcc uninit */;
+ 	struct stat tmpstat;
++	char fullname[PATH_MAX+1];
+ 
+ 	setlocale(LC_ALL, "");
+ 	bindtextdomain(PACKAGE, LOCALEDIR);
+@@ -621,14 +622,24 @@ int main(int ac, char **av)
+ 		case randconfig:	name = "allrandom.config"; break;
+ 		default: break;
+ 		}
+-		if (conf_read_simple(name, S_DEF_USER) &&
+-		    conf_read_simple("all.config", S_DEF_USER)) {
+-			fprintf(stderr,
+-				_("*** KCONFIG_ALLCONFIG set, but no \"%s\" or \"all.config\" file found\n"),
+-				name);
+-			exit(1);
++		/* try ./name, arch/$(ARCH)/configs/name and kernel/config/name */
++		if (!conf_read_simple(name, S_DEF_USER))
++			break;
++		arch = getenv("ARCH");
++		if (arch) {
++			snprintf(fullname, sizeof(fullname), "arch/%s/configs/%s",
++				 arch, name);
++			if (!conf_read_simple(fullname, S_DEF_USER))
++				break;
+ 		}
+-		break;
++		snprintf(fullname, sizeof(fullname), "kernel/configs/%s", name);
++		if (!conf_read_simple(fullname, S_DEF_USER))
++			break;
++
++		fprintf(stderr,
++			_("*** KCONFIG_ALLCONFIG set, but no \"%s\" or \"all.config\" file found\n"),
++				name);
++		exit(1);
+ 	default:
+ 		break;
+ 	}
 -- 
 2.9.0
