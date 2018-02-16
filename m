@@ -1,73 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752622AbeBPEzd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 23:55:33 -0500
-Received: from mail-pg0-f43.google.com ([74.125.83.43]:39376 "EHLO
-        mail-pg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752450AbeBPEzb (ORCPT
+        id S1751298AbeBPFBV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 00:01:21 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59840 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750723AbeBPFBQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 23:55:31 -0500
-X-Google-Smtp-Source: AH8x225l63kQabZ17gkm7xY+7nIFTd5JAbYziMZUK6wDLlx9VRQehL75IA0hhxltdQxBU5A/zClJsg==
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH RFC v2 4/6] x86: Disable PTI on compatibility mode
-From: Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <CALCETrVF8kjEUhgMQh=BT483dzQ0amfo0ruim4MOSD7DMnEVBw@mail.gmail.com>
-Date: Thu, 15 Feb 2018 20:55:16 -0800
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>, Willy Tarreau <w@1wt.eu>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Message-Id: <F6703B5D-19B6-4A29-B2D5-1DAD14435934@gmail.com>
-References: <20180215163602.61162-1-namit@vmware.com>
- <20180215163602.61162-5-namit@vmware.com>
- <CALCETrUY4uZeG2fz=OQWGuyCOcBBNbep6TaJz82CZSP89=g3-A@mail.gmail.com>
- <9EB804CA-0EC9-4CBB-965A-F3C8520201E7@gmail.com>
- <CALCETrVP3BaOapL3eS8Tf=KFeM8VFPqvMoECGRkFa7WPLq=Asw@mail.gmail.com>
- <CA+55aFypED6i6pESAnk_RPUon_cyvdP3g-QZg2gspEBNAQWvmQ@mail.gmail.com>
- <B723A40E-EFA4-4CCE-80F6-65960213761F@gmail.com>
- <CA+55aFzNcbCxwimCokH2BPihc=vrusbz0NqCnHK3s4aUSLwe-A@mail.gmail.com>
- <CALCETrVF8kjEUhgMQh=BT483dzQ0amfo0ruim4MOSD7DMnEVBw@mail.gmail.com>
-To: Andy Lutomirski <luto@kernel.org>
-X-Mailer: Apple Mail (2.3273)
+        Fri, 16 Feb 2018 00:01:16 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0A22B60385
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
+Subject: Re: [PATCH v5 03/12] drm/bridge/synopsys: dw-hdmi: Enable workaround
+ for v1.32a
+To: Jernej Skrabec <jernej.skrabec@siol.net>,
+        maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
+        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@kernel.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com,
+        Jose.Abreu@synopsys.com
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+References: <20180214200906.31509-1-jernej.skrabec@siol.net>
+ <20180214200906.31509-4-jernej.skrabec@siol.net>
+From: Archit Taneja <architt@codeaurora.org>
+Message-ID: <859c9f7b-8be9-d53b-e8d5-aa04e6b5ca7b@codeaurora.org>
+Date: Fri, 16 Feb 2018 10:31:03 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180214200906.31509-4-jernej.skrabec@siol.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1G4tbwM007895
 
-Andy Lutomirski <luto@kernel.org> wrote:
 
-> On Fri, Feb 16, 2018 at 12:42 AM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->> On Thu, Feb 15, 2018 at 4:22 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
->>> It is not too pretty, I agree, but it should do the work. There is only one
->>> problematic descriptor that can be used to switch from compatibility-mode to
->>> long-mode in the GDT (LDT descriptors always have the L-bit cleared).
->>> Changing the descriptor's present bit on context switch when needed can do
->>> the work.
->> 
->> Sure, I can see it working, but it's some really shady stuff, and now
->> the scheduler needs to save/restore/check one more subtle bit.
->> 
->> And if you get it wrong, things will happily work, except you've now
->> defeated PTI. But you'll never notice, because you won't be testing
->> for it, and the only people who will are the black hats.
->> 
->> This is exactly the "security depends on it being in sync" thing that
->> makes me go "eww" about the whole model. Get one thing wrong, and
->> you'll blow all the PTI code out of the water.
->> 
->> So now you tried to optimize one small case that most people won't
->> use, but the downside is that you may make all our PTI work (and all
->> the overhead for all the _normal_ cases) pointless.
+
+On Thursday 15 February 2018 01:38 AM, Jernej Skrabec wrote:
+> Allwinner SoCs have dw hdmi controller v1.32a which exhibits same
+> magenta line issue as i.MX6Q and i.MX6DL. Enable workaround for it.
 > 
-> There's also the fact that, if this stuff goes in, we'll be
-> encouraging people to deploy 32-bit binaries.  Then they'll buy
-> Meltdown-fixed CPUs (or AMD CPUs!) and they may well continue running
-> 32-bit binaries.  Sigh.  I'm not totally a fan of this.
+> Tests show that one iteration is enough.
+> 
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Ok, ok. Stop kicking the dead body...
+Reviewed-by: Archit Taneja <architt@codeaurora.org>
+
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 8 +++++---
+>   1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> index a38db40ce990..7ca14d7325b5 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> @@ -1634,9 +1634,10 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
+>   	 * then write one of the FC registers several times.
+>   	 *
+>   	 * The number of iterations matters and depends on the HDMI TX revision
+> -	 * (and possibly on the platform). So far only i.MX6Q (v1.30a) and
+> -	 * i.MX6DL (v1.31a) have been identified as needing the workaround, with
+> -	 * 4 and 1 iterations respectively.
+> +	 * (and possibly on the platform). So far i.MX6Q (v1.30a), i.MX6DL
+> +	 * (v1.31a) and multiple Allwinner SoCs (v1.32a) have been identified
+> +	 * as needing the workaround, with 4 iterations for v1.30a and 1
+> +	 * iteration for others.
+>   	 */
+>   
+>   	switch (hdmi->version) {
+> @@ -1644,6 +1645,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
+>   		count = 4;
+>   		break;
+>   	case 0x131a:
+> +	case 0x132a:
+>   		count = 1;
+>   		break;
+>   	default:
+> 
