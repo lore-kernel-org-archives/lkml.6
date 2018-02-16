@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758167AbeBPPaK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:30:10 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42644 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755852AbeBPP0i (ORCPT
+        id S1758180AbeBPPai (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:30:38 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34136 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755388AbeBPP0a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:26:38 -0500
+        Fri, 16 Feb 2018 10:26:30 -0500
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
@@ -25,16 +25,16 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         npiggin@gmail.com, bsingharora@gmail.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: [PATCH v8 14/24] mm: Introduce __maybe_mkwrite()
-Date: Fri, 16 Feb 2018 16:25:28 +0100
+Subject: [PATCH v8 11/24] mm: Cache some VMA fields in the vm_fault structure
+Date: Fri, 16 Feb 2018 16:25:25 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18021615-0020-0000-0000-000003F88152
+x-cbid: 18021615-0040-0000-0000-000004348084
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021615-0021-0000-0000-0000428C854B
-Message-Id: <1518794738-4186-15-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18021615-0041-0000-0000-000020D6853B
+Message-Id: <1518794738-4186-12-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-16_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -46,72 +46,229 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current maybe_mkwrite() is getting passed the pointer to the vma
-structure to fetch the vm_flags field.
+When handling speculative page fault, the vma->vm_flags and
+vma->vm_page_prot fields are read once the page table lock is released. So
+there is no more guarantee that these fields would not change in our back.
+They will be saved in the vm_fault structure before the VMA is checked for
+changes.
 
-When dealing with the speculative page fault handler, it will be better to
-rely on the cached vm_flags value stored in the vm_fault structure.
-
-This patch introduce a __maybe_mkwrite() service which can be called by
-passing the value of the vm_flags field.
-
-There is no change functional changes expected for the other callers of
-maybe_mkwrite().
+This patch also set the fields in hugetlb_no_page() and
+__collapse_huge_page_swapin even if it is not need for the callee.
 
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- include/linux/mm.h | 9 +++++++--
- mm/memory.c        | 6 +++---
- 2 files changed, 10 insertions(+), 5 deletions(-)
+ include/linux/mm.h |  6 ++++++
+ mm/hugetlb.c       |  2 ++
+ mm/khugepaged.c    |  2 ++
+ mm/memory.c        | 38 ++++++++++++++++++++------------------
+ 4 files changed, 30 insertions(+), 18 deletions(-)
 
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index fd4eda5195b9..49f160e56a0f 100644
+index dcc2a6db8419..fd4eda5195b9 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -685,13 +685,18 @@ void free_compound_page(struct page *page);
-  * pte_mkwrite.  But get_user_pages can cause write faults for mappings
-  * that do not have writing enabled, when used by access_process_vm.
-  */
--static inline pte_t maybe_mkwrite(pte_t pte, struct vm_area_struct *vma)
-+static inline pte_t __maybe_mkwrite(pte_t pte, unsigned long vma_flags)
- {
--	if (likely(vma->vm_flags & VM_WRITE))
-+	if (likely(vma_flags & VM_WRITE))
- 		pte = pte_mkwrite(pte);
- 	return pte;
- }
+@@ -361,6 +361,12 @@ struct vm_fault {
+ 					 * page table to avoid allocation from
+ 					 * atomic context.
+ 					 */
++	/*
++	 * These entries are required when handling speculative page fault.
++	 * This way the page handling is done using consistent field values.
++	 */
++	unsigned long vma_flags;
++	pgprot_t vma_page_prot;
+ };
  
-+static inline pte_t maybe_mkwrite(pte_t pte, struct vm_area_struct *vma)
-+{
-+	return __maybe_mkwrite(pte, vma->vm_flags);
-+}
-+
- int alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
- 		struct page *page);
- int finish_fault(struct vm_fault *vmf);
+ /* page entry size for vm->huge_fault() */
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 7c204e3d132b..22a818c7a6de 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3716,6 +3716,8 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
+ 				.vma = vma,
+ 				.address = address,
+ 				.flags = flags,
++				.vma_flags = vma->vm_flags,
++				.vma_page_prot = vma->vm_page_prot,
+ 				/*
+ 				 * Hard to debug if it ends up being
+ 				 * used by a callee that assumes
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 32314e9e48dd..a946d5306160 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -882,6 +882,8 @@ static bool __collapse_huge_page_swapin(struct mm_struct *mm,
+ 		.flags = FAULT_FLAG_ALLOW_RETRY,
+ 		.pmd = pmd,
+ 		.pgoff = linear_page_index(vma, address),
++		.vma_flags = vma->vm_flags,
++		.vma_page_prot = vma->vm_page_prot,
+ 	};
+ 
+ 	/* we only decide to swapin, if there is enough young ptes */
 diff --git a/mm/memory.c b/mm/memory.c
-index bc14973b4eba..8fd33d05ef1e 100644
+index e37af9af4202..66a79f44f303 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -2472,7 +2472,7 @@ static inline void wp_page_reuse(struct vm_fault *vmf)
+@@ -2615,7 +2615,7 @@ static int wp_page_copy(struct vm_fault *vmf)
+ 		 * Don't let another task, with possibly unlocked vma,
+ 		 * keep the mlocked page.
+ 		 */
+-		if (page_copied && (vma->vm_flags & VM_LOCKED)) {
++		if (page_copied && (vmf->vma_flags & VM_LOCKED)) {
+ 			lock_page(old_page);	/* LRU manipulation */
+ 			if (PageMlocked(old_page))
+ 				munlock_vma_page(old_page);
+@@ -2649,7 +2649,7 @@ static int wp_page_copy(struct vm_fault *vmf)
+  */
+ int finish_mkwrite_fault(struct vm_fault *vmf)
+ {
+-	WARN_ON_ONCE(!(vmf->vma->vm_flags & VM_SHARED));
++	WARN_ON_ONCE(!(vmf->vma_flags & VM_SHARED));
+ 	if (!pte_map_lock(vmf))
+ 		return VM_FAULT_RETRY;
+ 	/*
+@@ -2751,7 +2751,7 @@ static int do_wp_page(struct vm_fault *vmf)
+ 		 * We should not cow pages in a shared writeable mapping.
+ 		 * Just mark the pages writable and/or call ops->pfn_mkwrite.
+ 		 */
+-		if ((vma->vm_flags & (VM_WRITE|VM_SHARED)) ==
++		if ((vmf->vma_flags & (VM_WRITE|VM_SHARED)) ==
+ 				     (VM_WRITE|VM_SHARED))
+ 			return wp_pfn_shared(vmf);
  
- 	flush_cache_page(vma, vmf->address, pte_pfn(vmf->orig_pte));
- 	entry = pte_mkyoung(vmf->orig_pte);
--	entry = maybe_mkwrite(pte_mkdirty(entry), vma);
-+	entry = __maybe_mkwrite(pte_mkdirty(entry), vmf->vma_flags);
- 	if (ptep_set_access_flags(vma, vmf->address, vmf->pte, entry, 1))
- 		update_mmu_cache(vma, vmf->address, vmf->pte);
- 	pte_unmap_unlock(vmf->pte, vmf->ptl);
-@@ -2549,8 +2549,8 @@ static int wp_page_copy(struct vm_fault *vmf)
- 			inc_mm_counter_fast(mm, MM_ANONPAGES);
+@@ -2798,7 +2798,7 @@ static int do_wp_page(struct vm_fault *vmf)
+ 			return VM_FAULT_WRITE;
  		}
- 		flush_cache_page(vma, vmf->address, pte_pfn(vmf->orig_pte));
--		entry = mk_pte(new_page, vma->vm_page_prot);
--		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
-+		entry = mk_pte(new_page, vmf->vma_page_prot);
-+		entry = __maybe_mkwrite(pte_mkdirty(entry), vmf->vma_flags);
- 		/*
- 		 * Clear the pte entry and flush it first, before updating the
- 		 * pte with the new entry. This will avoid a race condition
+ 		unlock_page(vmf->page);
+-	} else if (unlikely((vma->vm_flags & (VM_WRITE|VM_SHARED)) ==
++	} else if (unlikely((vmf->vma_flags & (VM_WRITE|VM_SHARED)) ==
+ 					(VM_WRITE|VM_SHARED))) {
+ 		return wp_page_shared(vmf);
+ 	}
+@@ -3090,7 +3090,7 @@ int do_swap_page(struct vm_fault *vmf)
+ 
+ 	inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
+ 	dec_mm_counter_fast(vma->vm_mm, MM_SWAPENTS);
+-	pte = mk_pte(page, vma->vm_page_prot);
++	pte = mk_pte(page, vmf->vma_page_prot);
+ 	if ((vmf->flags & FAULT_FLAG_WRITE) && reuse_swap_page(page, NULL)) {
+ 		pte = maybe_mkwrite(pte_mkdirty(pte), vma);
+ 		vmf->flags &= ~FAULT_FLAG_WRITE;
+@@ -3116,7 +3116,7 @@ int do_swap_page(struct vm_fault *vmf)
+ 
+ 	swap_free(entry);
+ 	if (mem_cgroup_swap_full(page) ||
+-	    (vma->vm_flags & VM_LOCKED) || PageMlocked(page))
++	    (vmf->vma_flags & VM_LOCKED) || PageMlocked(page))
+ 		try_to_free_swap(page);
+ 	unlock_page(page);
+ 	if (page != swapcache && swapcache) {
+@@ -3173,7 +3173,7 @@ static int do_anonymous_page(struct vm_fault *vmf)
+ 	pte_t entry;
+ 
+ 	/* File mapping without ->vm_ops ? */
+-	if (vma->vm_flags & VM_SHARED)
++	if (vmf->vma_flags & VM_SHARED)
+ 		return VM_FAULT_SIGBUS;
+ 
+ 	/*
+@@ -3197,7 +3197,7 @@ static int do_anonymous_page(struct vm_fault *vmf)
+ 	if (!(vmf->flags & FAULT_FLAG_WRITE) &&
+ 			!mm_forbids_zeropage(vma->vm_mm)) {
+ 		entry = pte_mkspecial(pfn_pte(my_zero_pfn(vmf->address),
+-						vma->vm_page_prot));
++						vmf->vma_page_prot));
+ 		if (!pte_map_lock(vmf))
+ 			return VM_FAULT_RETRY;
+ 		if (!pte_none(*vmf->pte))
+@@ -3230,8 +3230,8 @@ static int do_anonymous_page(struct vm_fault *vmf)
+ 	 */
+ 	__SetPageUptodate(page);
+ 
+-	entry = mk_pte(page, vma->vm_page_prot);
+-	if (vma->vm_flags & VM_WRITE)
++	entry = mk_pte(page, vmf->vma_page_prot);
++	if (vmf->vma_flags & VM_WRITE)
+ 		entry = pte_mkwrite(pte_mkdirty(entry));
+ 
+ 	if (!pte_map_lock(vmf)) {
+@@ -3427,7 +3427,7 @@ static int do_set_pmd(struct vm_fault *vmf, struct page *page)
+ 	for (i = 0; i < HPAGE_PMD_NR; i++)
+ 		flush_icache_page(vma, page + i);
+ 
+-	entry = mk_huge_pmd(page, vma->vm_page_prot);
++	entry = mk_huge_pmd(page, vmf->vma_page_prot);
+ 	if (write)
+ 		entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
+ 
+@@ -3501,11 +3501,11 @@ int alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
+ 		return VM_FAULT_NOPAGE;
+ 
+ 	flush_icache_page(vma, page);
+-	entry = mk_pte(page, vma->vm_page_prot);
++	entry = mk_pte(page, vmf->vma_page_prot);
+ 	if (write)
+ 		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
+ 	/* copy-on-write page */
+-	if (write && !(vma->vm_flags & VM_SHARED)) {
++	if (write && !(vmf->vma_flags & VM_SHARED)) {
+ 		inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
+ 		page_add_new_anon_rmap(page, vma, vmf->address, false);
+ 		mem_cgroup_commit_charge(page, memcg, false, false);
+@@ -3544,7 +3544,7 @@ int finish_fault(struct vm_fault *vmf)
+ 
+ 	/* Did we COW the page? */
+ 	if ((vmf->flags & FAULT_FLAG_WRITE) &&
+-	    !(vmf->vma->vm_flags & VM_SHARED))
++	    !(vmf->vma_flags & VM_SHARED))
+ 		page = vmf->cow_page;
+ 	else
+ 		page = vmf->page;
+@@ -3798,7 +3798,7 @@ static int do_fault(struct vm_fault *vmf)
+ 		ret = VM_FAULT_SIGBUS;
+ 	else if (!(vmf->flags & FAULT_FLAG_WRITE))
+ 		ret = do_read_fault(vmf);
+-	else if (!(vma->vm_flags & VM_SHARED))
++	else if (!(vmf->vma_flags & VM_SHARED))
+ 		ret = do_cow_fault(vmf);
+ 	else
+ 		ret = do_shared_fault(vmf);
+@@ -3855,7 +3855,7 @@ static int do_numa_page(struct vm_fault *vmf)
+ 	 * accessible ptes, some can allow access by kernel mode.
+ 	 */
+ 	pte = ptep_modify_prot_start(vma->vm_mm, vmf->address, vmf->pte);
+-	pte = pte_modify(pte, vma->vm_page_prot);
++	pte = pte_modify(pte, vmf->vma_page_prot);
+ 	pte = pte_mkyoung(pte);
+ 	if (was_writable)
+ 		pte = pte_mkwrite(pte);
+@@ -3889,7 +3889,7 @@ static int do_numa_page(struct vm_fault *vmf)
+ 	 * Flag if the page is shared between multiple address spaces. This
+ 	 * is later used when determining whether to group tasks together
+ 	 */
+-	if (page_mapcount(page) > 1 && (vma->vm_flags & VM_SHARED))
++	if (page_mapcount(page) > 1 && (vmf->vma_flags & VM_SHARED))
+ 		flags |= TNF_SHARED;
+ 
+ 	last_cpupid = page_cpupid_last(page);
+@@ -3934,7 +3934,7 @@ static inline int wp_huge_pmd(struct vm_fault *vmf, pmd_t orig_pmd)
+ 		return vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
+ 
+ 	/* COW handled on pte level: split pmd */
+-	VM_BUG_ON_VMA(vmf->vma->vm_flags & VM_SHARED, vmf->vma);
++	VM_BUG_ON_VMA(vmf->vma_flags & VM_SHARED, vmf->vma);
+ 	__split_huge_pmd(vmf->vma, vmf->pmd, vmf->address, false, NULL);
+ 
+ 	return VM_FAULT_FALLBACK;
+@@ -4081,6 +4081,8 @@ static int __handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+ 		.flags = flags,
+ 		.pgoff = linear_page_index(vma, address),
+ 		.gfp_mask = __get_fault_gfp_mask(vma),
++		.vma_flags = vma->vm_flags,
++		.vma_page_prot = vma->vm_page_prot,
+ 	};
+ 	unsigned int dirty = flags & FAULT_FLAG_WRITE;
+ 	struct mm_struct *mm = vma->vm_mm;
 -- 
 2.7.4
