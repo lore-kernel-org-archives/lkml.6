@@ -1,47 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032248AbeBPNrL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 08:47:11 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:40276 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032212AbeBPNrJ (ORCPT
+        id S1032294AbeBPNrs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 08:47:48 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:64767 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1032212AbeBPNrq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 08:47:09 -0500
-Date: Fri, 16 Feb 2018 14:47:04 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Morten Rasmussen <morten.rasmussen@arm.com>
-Cc: mingo@redhat.com, valentin.schneider@arm.com, dietmar.eggemann@arm.com,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] sched: Add static_key for asymmetric cpu capacity
- optimizations
-Message-ID: <20180216134704.GE25201@hirez.programming.kicks-ass.net>
-References: <1518711654-23503-1-git-send-email-morten.rasmussen@arm.com>
- <1518711654-23503-2-git-send-email-morten.rasmussen@arm.com>
+        Fri, 16 Feb 2018 08:47:46 -0500
+From: Amelie Delaunay <amelie.delaunay@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH] ARM: dts: stm32: enable RTC on stm32f769-disco
+Date: Fri, 16 Feb 2018 14:47:12 +0100
+Message-ID: <1518788832-21714-1-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518711654-23503-2-git-send-email-morten.rasmussen@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-16_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 04:20:48PM +0000, Morten Rasmussen wrote:
-> +static void update_asym_cpucapacity(int cpu)
-> +{
-> +	if (!static_branch_unlikely(&sched_asym_cpucapacity) &&
-> +	    lowest_flag_domain(cpu, SD_ASYM_CPUCAPACITY))
-> +		static_branch_enable(&sched_asym_cpucapacity);
-> +}
+This patch enables RTC on stm32f769-disco.
 
-That looks odd, why not just:
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+---
+ arch/arm/boot/dts/stm32f769-disco.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-	if (lowest_flag_domain(cpu, SD_ASYM_CPUCAPACITY))
-		static_branch_enable(&sched_asym_cpucapacity);
-
-? possibly with:
-
-	else
-		static_branch_disable(&sched_asym_cpucapacity);
-
-if you want to play funny games :-)
+diff --git a/arch/arm/boot/dts/stm32f769-disco.dts b/arch/arm/boot/dts/stm32f769-disco.dts
+index 4463ca1..48cb47f 100644
+--- a/arch/arm/boot/dts/stm32f769-disco.dts
++++ b/arch/arm/boot/dts/stm32f769-disco.dts
+@@ -73,6 +73,10 @@
+ 	clock-frequency = <25000000>;
+ };
+ 
++&rtc {
++	status = "okay";
++};
++
+ &usart1 {
+ 	pinctrl-0 = <&usart1_pins_a>;
+ 	pinctrl-names = "default";
+-- 
+2.7.4
