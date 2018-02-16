@@ -1,32 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935037AbeBPLE7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 06:04:59 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:57269 "EHLO
+        id S935158AbeBPLG0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 06:06:26 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:50439 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935010AbeBPLE5 (ORCPT
+        with ESMTP id S934998AbeBPLGY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 06:04:57 -0500
-Date: Fri, 16 Feb 2018 02:54:33 -0800
+        Fri, 16 Feb 2018 06:06:24 -0500
+Date: Fri, 16 Feb 2018 02:55:57 -0800
 From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
-Message-ID: <tip-6f9dd329717f696f578347c0781a0247db957596@git.kernel.org>
-Cc: bp@suse.de, hpa@zytor.com, tglx@linutronix.de, jpoimboe@redhat.com,
-        peterz@infradead.org, kirill.shutemov@linux.intel.com,
-        linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
-        dwmw2@infradead.org, arjan@linux.intel.com, dan.j.williams@intel.com,
-        torvalds@linux-foundation.org, mingo@kernel.org, luto@kernel.org
-Reply-To: arjan@linux.intel.com, torvalds@linux-foundation.org,
-        dan.j.williams@intel.com, dwmw2@infradead.org, luto@kernel.org,
-        mingo@kernel.org, tglx@linutronix.de, jpoimboe@redhat.com,
-        peterz@infradead.org, bp@suse.de, hpa@zytor.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        dave.hansen@linux.intel.com
-In-Reply-To: <20180214182542.69302-7-kirill.shutemov@linux.intel.com>
-References: <20180214182542.69302-7-kirill.shutemov@linux.intel.com>
+Message-ID: <tip-6657fca06e3ffab8d0b3f9d8b397f5ee498952d7@git.kernel.org>
+Cc: jpoimboe@redhat.com, kirill.shutemov@linux.intel.com,
+        peterz@infradead.org, arjan@linux.intel.com, hpa@zytor.com, bp@suse.de,
+        torvalds@linux-foundation.org, luto@kernel.org, dwmw2@infradead.org,
+        mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        dave.hansen@linux.intel.com, dan.j.williams@intel.com
+Reply-To: dan.j.williams@intel.com, luto@kernel.org, dwmw2@infradead.org,
+        mingo@kernel.org, tglx@linutronix.de, dave.hansen@linux.intel.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, arjan@linux.intel.com,
+        peterz@infradead.org, bp@suse.de, torvalds@linux-foundation.org,
+        jpoimboe@redhat.com, kirill.shutemov@linux.intel.com
+In-Reply-To: <20180214182542.69302-10-kirill.shutemov@linux.intel.com>
+References: <20180214182542.69302-10-kirill.shutemov@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm: Support boot-time switching of paging modes in
- the early boot code
-Git-Commit-ID: 6f9dd329717f696f578347c0781a0247db957596
+Subject: [tip:x86/mm] x86/mm: Allow to boot without LA57 if
+ CONFIG_X86_5LEVEL=y
+Git-Commit-ID: 6657fca06e3ffab8d0b3f9d8b397f5ee498952d7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -39,17 +38,22 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6f9dd329717f696f578347c0781a0247db957596
-Gitweb:     https://git.kernel.org/tip/6f9dd329717f696f578347c0781a0247db957596
+Commit-ID:  6657fca06e3ffab8d0b3f9d8b397f5ee498952d7
+Gitweb:     https://git.kernel.org/tip/6657fca06e3ffab8d0b3f9d8b397f5ee498952d7
 Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate: Wed, 14 Feb 2018 21:25:39 +0300
+AuthorDate: Wed, 14 Feb 2018 21:25:42 +0300
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 16 Feb 2018 10:48:48 +0100
+CommitDate: Fri, 16 Feb 2018 10:48:49 +0100
 
-x86/mm: Support boot-time switching of paging modes in the early boot code
+x86/mm: Allow to boot without LA57 if CONFIG_X86_5LEVEL=y
 
-Early boot code should be able to initialize page tables for both 4- and
-5-level paging modes.
+All pieces of the puzzle are in place and we can now allow to boot with
+CONFIG_X86_5LEVEL=y on a machine without LA57 support.
+
+Kernel will detect that LA57 is missing and fold p4d at runtime.
+
+Update the documentation and the Kconfig option description to reflect the
+change.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -63,130 +67,107 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180214182542.69302-7-kirill.shutemov@linux.intel.com
+Link: http://lkml.kernel.org/r/20180214182542.69302-10-kirill.shutemov@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/head64.c  | 33 ++++++++++++++++++++++-----------
- arch/x86/kernel/head_64.S | 10 ++++------
- 2 files changed, 26 insertions(+), 17 deletions(-)
+ Documentation/x86/x86_64/5level-paging.txt |  9 +++------
+ arch/x86/Kconfig                           |  4 ++--
+ arch/x86/boot/compressed/misc.c            | 16 ----------------
+ arch/x86/include/asm/required-features.h   |  8 +-------
+ 4 files changed, 6 insertions(+), 31 deletions(-)
 
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 795e762..8161e71 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -75,13 +75,13 @@ static unsigned int __head *fixup_int(void *ptr, unsigned long physaddr)
- 	return fixup_pointer(ptr, physaddr);
- }
+diff --git a/Documentation/x86/x86_64/5level-paging.txt b/Documentation/x86/x86_64/5level-paging.txt
+index 087251a..2432a5e 100644
+--- a/Documentation/x86/x86_64/5level-paging.txt
++++ b/Documentation/x86/x86_64/5level-paging.txt
+@@ -20,12 +20,9 @@ Documentation/x86/x86_64/mm.txt
  
--static void __head check_la57_support(unsigned long physaddr)
-+static bool __head check_la57_support(unsigned long physaddr)
- {
- 	if (native_cpuid_eax(0) < 7)
--		return;
-+		return false;
+ CONFIG_X86_5LEVEL=y enables the feature.
  
- 	if (!(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31))))
--		return;
-+		return false;
- 
- 	*fixup_int(&pgtable_l5_enabled, physaddr) = 1;
- 	*fixup_int(&pgdir_shift, physaddr) = 48;
-@@ -89,24 +89,30 @@ static void __head check_la57_support(unsigned long physaddr)
- 	*fixup_long(&page_offset_base, physaddr) = __PAGE_OFFSET_BASE_L5;
- 	*fixup_long(&vmalloc_base, physaddr) = __VMALLOC_BASE_L5;
- 	*fixup_long(&vmemmap_base, physaddr) = __VMEMMAP_BASE_L5;
-+
-+	return true;
- }
- #else
--static void __head check_la57_support(unsigned long physaddr) {}
-+static bool __head check_la57_support(unsigned long physaddr)
-+{
-+	return false;
-+}
- #endif
- 
- unsigned long __head __startup_64(unsigned long physaddr,
- 				  struct boot_params *bp)
- {
--	unsigned long load_delta;
-+	unsigned long load_delta, *p;
- 	unsigned long pgtable_flags;
- 	pgdval_t *pgd;
- 	p4dval_t *p4d;
- 	pudval_t *pud;
- 	pmdval_t *pmd, pmd_entry;
-+	bool la57;
- 	int i;
- 	unsigned int *next_pgt_ptr;
- 
--	check_la57_support(physaddr);
-+	la57 = check_la57_support(physaddr);
- 
- 	/* Is the address too large? */
- 	if (physaddr >> MAX_PHYSMEM_BITS)
-@@ -131,9 +137,14 @@ unsigned long __head __startup_64(unsigned long physaddr,
- 	/* Fixup the physical addresses in the page table */
- 
- 	pgd = fixup_pointer(&early_top_pgt, physaddr);
--	pgd[pgd_index(__START_KERNEL_map)] += load_delta;
+-So far, a kernel compiled with the option enabled will be able to boot
+-only on machines that supports the feature -- see for 'la57' flag in
+-/proc/cpuinfo.
 -
--	if (IS_ENABLED(CONFIG_X86_5LEVEL)) {
-+	p = pgd + pgd_index(__START_KERNEL_map);
-+	if (la57)
-+		*p = (unsigned long)level4_kernel_pgt;
-+	else
-+		*p = (unsigned long)level3_kernel_pgt;
-+	*p += _PAGE_TABLE_NOENC - __START_KERNEL_map + load_delta;
-+
-+	if (la57) {
- 		p4d = fixup_pointer(&level4_kernel_pgt, physaddr);
- 		p4d[511] += load_delta;
+-The plan is to implement boot-time switching between 4- and 5-level paging
+-in the future.
++Kernel with CONFIG_X86_5LEVEL=y still able to boot on 4-level hardware.
++In this case additional page table level -- p4d -- will be folded at
++runtime.
+ 
+ == User-space and large virtual address space ==
+ 
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index fcc3f88..1c4f7b6 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1440,8 +1440,8 @@ config X86_5LEVEL
+ 
+ 	  It will be supported by future Intel CPUs.
+ 
+-	  Note: a kernel with this option enabled can only be booted
+-	  on machines that support the feature.
++	  A kernel with the option enabled can be booted on machines that
++	  support 4- or 5-level paging.
+ 
+ 	  See Documentation/x86/x86_64/5level-paging.txt for more
+ 	  information.
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+index 98761a1..b50c424 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -169,16 +169,6 @@ void __puthex(unsigned long value)
  	}
-@@ -158,7 +169,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
+ }
  
- 	pgtable_flags = _KERNPG_TABLE_NOENC + sme_get_me_mask();
+-static bool l5_supported(void)
+-{
+-	/* Check if leaf 7 is supported. */
+-	if (native_cpuid_eax(0) < 7)
+-		return 0;
+-
+-	/* Check if la57 is supported. */
+-	return native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31));
+-}
+-
+ #if CONFIG_X86_NEED_RELOCS
+ static void handle_relocations(void *output, unsigned long output_len,
+ 			       unsigned long virt_addr)
+@@ -372,12 +362,6 @@ asmlinkage __visible void *extract_kernel(void *rmode, memptr heap,
+ 	console_init();
+ 	debug_putstr("early console in extract_kernel\n");
  
--	if (IS_ENABLED(CONFIG_X86_5LEVEL)) {
-+	if (la57) {
- 		p4d = fixup_pointer(early_dynamic_pgts[next_early_pgt++], physaddr);
+-	if (IS_ENABLED(CONFIG_X86_5LEVEL) && !l5_supported()) {
+-		error("This linux kernel as configured requires 5-level paging\n"
+-			"This CPU does not support the required 'cr4.la57' feature\n"
+-			"Unable to boot - please use a kernel appropriate for your CPU\n");
+-	}
+-
+ 	free_mem_ptr     = heap;	/* Heap */
+ 	free_mem_end_ptr = heap + BOOT_HEAP_SIZE;
  
- 		i = (physaddr >> PGDIR_SHIFT) % PTRS_PER_PGD;
-@@ -255,7 +266,7 @@ again:
- 	 * critical -- __PAGE_OFFSET would point us back into the dynamic
- 	 * range and we might end up looping forever...
- 	 */
--	if (!IS_ENABLED(CONFIG_X86_5LEVEL))
-+	if (!pgtable_l5_enabled)
- 		p4d_p = pgd_p;
- 	else if (pgd)
- 		p4d_p = (p4dval_t *)((pgd & PTE_PFN_MASK) + __START_KERNEL_map - phys_base);
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index d3f8b43..145d7b9 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -124,7 +124,10 @@ ENTRY(secondary_startup_64)
- 	/* Enable PAE mode, PGE and LA57 */
- 	movl	$(X86_CR4_PAE | X86_CR4_PGE), %ecx
- #ifdef CONFIG_X86_5LEVEL
-+	testl	$1, pgtable_l5_enabled(%rip)
-+	jz	1f
- 	orl	$X86_CR4_LA57, %ecx
-+1:
+diff --git a/arch/x86/include/asm/required-features.h b/arch/x86/include/asm/required-features.h
+index fb3a6de..6847d85 100644
+--- a/arch/x86/include/asm/required-features.h
++++ b/arch/x86/include/asm/required-features.h
+@@ -53,12 +53,6 @@
+ # define NEED_MOVBE	0
  #endif
- 	movq	%rcx, %cr4
  
-@@ -372,12 +375,7 @@ GLOBAL(name)
- 
- 	__INITDATA
- NEXT_PGD_PAGE(early_top_pgt)
--	.fill	511,8,0
 -#ifdef CONFIG_X86_5LEVEL
--	.quad	level4_kernel_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
+-# define NEED_LA57	(1<<(X86_FEATURE_LA57 & 31))
 -#else
--	.quad	level3_kernel_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
+-# define NEED_LA57	0
 -#endif
-+	.fill	512,8,0
- 	.fill	PTI_USER_PGD_FILL,8,0
- 
- NEXT_PAGE(early_dynamic_pgts)
+-
+ #ifdef CONFIG_X86_64
+ #ifdef CONFIG_PARAVIRT
+ /* Paravirtualized systems may not have PSE or PGE available */
+@@ -104,7 +98,7 @@
+ #define REQUIRED_MASK13	0
+ #define REQUIRED_MASK14	0
+ #define REQUIRED_MASK15	0
+-#define REQUIRED_MASK16	(NEED_LA57)
++#define REQUIRED_MASK16	0
+ #define REQUIRED_MASK17	0
+ #define REQUIRED_MASK18	0
+ #define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
