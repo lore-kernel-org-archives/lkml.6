@@ -1,85 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758473AbeBPQIc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 11:08:32 -0500
-Received: from resqmta-ch2-07v.sys.comcast.net ([69.252.207.39]:58370 "EHLO
-        resqmta-ch2-07v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753022AbeBPQIb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 11:08:31 -0500
-Date: Fri, 16 Feb 2018 10:08:28 -0600 (CST)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Matthew Wilcox <willy@infradead.org>
-cc: Michal Hocko <mhocko@kernel.org>, David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org
-Subject: Re: [patch 1/2] mm, page_alloc: extend kernelcore and movablecore
- for percent
-In-Reply-To: <20180216160116.GA24395@bombadil.infradead.org>
-Message-ID: <alpine.DEB.2.20.1802161002260.10336@nuc-kabylake>
-References: <alpine.DEB.2.10.1802121622470.179479@chino.kir.corp.google.com> <20180214095911.GB28460@dhcp22.suse.cz> <alpine.DEB.2.10.1802140225290.261065@chino.kir.corp.google.com> <20180215144525.GG7275@dhcp22.suse.cz> <20180215151129.GB12360@bombadil.infradead.org>
- <alpine.DEB.2.20.1802150947240.1902@nuc-kabylake> <20180215204817.GB22948@bombadil.infradead.org> <alpine.DEB.2.20.1802160941500.9660@nuc-kabylake> <20180216160116.GA24395@bombadil.infradead.org>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfA1HohpbdGwXDNuubu8knmIZcSTwByIihj4g2ceJeD50UtW0F+Cd9HpAC+ZYsJ8BZEkJxUYU9flHK6pR0GrOBlX/tAJA3JvJspfNDDFkG1bWLyn633lD
- lXdq8xHmXnPtoaNDZ1WCoJyHT9pPxKTw93fzP5j6R/AwNw4MkCvoL3Je8XggKHe+qd5l3q0pltzGAvjvkAqN2gXT28MQbDYd3bWxlWicmbbKLQxALVRTXq5+
- PnMSxNYOxtmZmgVkjZA9kMuYoLUHu/flwXG3Yc8sav7F/NATy8V+RhfFh4hXwZRIqG7k2DGk7NPPY7B/nrT24Wnixnz7mgq/QbnSKS2pRhqgEeB7lhQAtgIS
- Y6ELE9aat8xjIIAxJfHYMEGpmSSTyJbZ7JRIk7RAKcJK8VfpfWuURpXBdk4MxF/q24OI477GrKak1ahxxGKY6/Q0xRTUgw==
+        id S1758503AbeBPQLG convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 11:11:06 -0500
+Received: from smtp2.goneo.de ([85.220.129.33]:47538 "EHLO smtp2.goneo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756775AbeBPQLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 11:11:04 -0500
+X-Spam-Flag: NO
+X-Spam-Score: -2.767
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH 4/6] scripts: kernel-doc: support in-line comments on
+ nested structs/unions
+From: Markus Heiser <markus.heiser@darmarit.de>
+In-Reply-To: <20180216125651.45401575@vento.lan>
+Date: Fri, 16 Feb 2018 17:11:00 +0100
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Jani Nikula <jani.nikula@intel.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <0BE9A02B-4870-4AA0-9165-44B98295EC07@darmarit.de>
+References: <cover.1518788761.git.mchehab@s-opensource.com>
+ <cover.1518788761.git.mchehab@s-opensource.com>
+ <a4f7680bf956e6c98f612bcfc7aa817c344ebdab.1518788761.git.mchehab@s-opensource.com>
+ <54EF06CB-C31F-476D-B674-579E9385D635@darmarit.de>
+ <20180216125651.45401575@vento.lan>
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Feb 2018, Matthew Wilcox wrote:
 
-> On Fri, Feb 16, 2018 at 09:44:25AM -0600, Christopher Lameter wrote:
-> > On Thu, 15 Feb 2018, Matthew Wilcox wrote:
-> > > What I was proposing was an intermediate page allocator where slab would
-> > > request 2MB for its own uses all at once, then allocate pages from that to
-> > > individual slabs, so allocating a kmalloc-32 object and a dentry object
-> > > would result in 510 pages of memory still being available for any slab
-> > > that needed it.
-> >
-> > Well thats not really going to work since you would be mixing objects of
-> > different sizes which may present more fragmentation problems within the
-> > 2M later if they are freed and more objects are allocated.
->
-> I don't understand this response.  I'm not suggesting mixing objects
-> of different sizes within the same page.  The vast majority of slabs
-> use order-0 pages, a few use order-1 pages and larger sizes are almost
-> unheard of.  I'm suggesting the slab have it's own private arena of pages
-> that it uses for allocating pages to slabs; when an entire page comes
-> free in a slab, it is returned to the arena.  When the arena is empty,
-> slab requests another arena from the page allocator.
+> Am 16.02.2018 um 15:56 schrieb Mauro Carvalho Chehab <mchehab@s-opensource.com>:
+> 
+> Em Fri, 16 Feb 2018 15:52:33 +0100
+> Markus Heiser <markus.heiser@darmarit.de> escreveu:
+> 
+>>> Am 16.02.2018 um 14:48 schrieb Mauro Carvalho Chehab <mchehab@s-opensource.com>:
+>>> 
+>>> The parser at kernel-doc rejects names with dots in the middle.
+>>> Fix it, in order to support nested structs/unions.
+>>> 
+>>> Tested-by: Jani Nikula <jani.nikula@intel.com>
+>>> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+>>> ---
+>>> scripts/kernel-doc | 2 +-
+>>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>>> 
+>>> diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+>>> index fee8952037b1..06d7f3f2c094 100755
+>>> --- a/scripts/kernel-doc
+>>> +++ b/scripts/kernel-doc
+>>> @@ -363,7 +363,7 @@ my $doc_sect = $doc_com .
+>>> my $doc_content = $doc_com_body . '(.*)';
+>>> my $doc_block = $doc_com . 'DOC:\s*(.*)?';
+>>> my $doc_inline_start = '^\s*/\*\*\s*$';
+>>> -my $doc_inline_sect = '\s*\*\s*(@[\w\s]+):(.*)';
+>>> +my $doc_inline_sect = '\s*\*\s*(@\s*[\w][\w\.]*\s*):(.*)';  
+>> 
+>> Thanks!
+>> 
+>> FWIW: added similar patch to python variant of kernel-doc:
+>> 
+>> https://github.com/return42/linuxdoc/commit/5c5da9a
+>> 
+>> rendered example:
+>> 
+>>  https://return42.github.io/linuxdoc/linuxdoc-howto/all-in-a-tumble.html#struct-my-long-struct
+> 
+> On a quick look, on your example, bar2.barbar description looks different
+> than what we get from the perl version.
+> 
+> There, it generates it as:
+> 
+> ``bar2.barbar``
+>  Description for **barbar** inside **foo.bar2**
 
-This just shifts the fragmentation problem because the 2M page cannot be
-released until all 4k or 8k pages within that 2M page are freed. How is
-that different from the page allocator which cannot coalesce an 2M page
-until all fragments have been released?
+very attentive, thanks a lot!
 
-The kernelcore already does something similar by limiting the
-general unmovable allocs to a section of memory.
+When I implemented support for nested data types, I missed
+to fix the highlighting pattern of those.
 
-> If you're concerned about order-0 allocations fragmenting the arena
-> for order-1 slabs, then we could have separate arenas for order-0 and
-> order-1.  But there should be no more fragmentation caused by sticking
-> within an arena for page allocations than there would be by spreading
-> slab allocations across all memory.
+  https://github.com/return42/linuxdoc/commit/4b43f419
 
-We avoid large frames at this point but they are beneficial to pack
-objects tighter and also increase performance.
+rendered: https://return42.github.io/linuxdoc/linuxdoc-howto/all-in-a-tumble.html#struct-my-long-struct
 
-Maybe what we should do is raise the lowest allocation size instead and
-allocate 2^x groups of pages to certain purposes?
-
-I.e. have a base allocation size of 16k and if the alloc was a page cache
-page then use the remainder for the neigboring pages.
-
-Similar things could be done for the page allocator.
-
-Raising the minimum allocation size may allow us to reduce the sizes
-necessary to be allocated at the price of loosing some memory. On large
-systems this may not matter much.
+-- Markus --
