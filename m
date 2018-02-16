@@ -1,62 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161699AbeBPRKU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 12:10:20 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42434 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161066AbeBPRKT (ORCPT
+        id S1161726AbeBPRMO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 12:12:14 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48018 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161066AbeBPRMN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 12:10:19 -0500
-Date: Fri, 16 Feb 2018 18:10:13 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] fs/dcache: Avoid the try_lock loop in d_delete()
-Message-ID: <20180216171013.GI25201@hirez.programming.kicks-ass.net>
-References: <20180216150933.971-1-john.ogness@linutronix.de>
- <20180216150933.971-4-john.ogness@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180216150933.971-4-john.ogness@linutronix.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 16 Feb 2018 12:12:13 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: wm_adsp: Fix some signedness errors in register access" to the asoc tree
+In-Reply-To: <20180216143610.12048-1-rf@opensource.cirrus.com>
+Message-Id: <E1emjYP-00080g-7U@debutante>
+Date: Fri, 16 Feb 2018 17:12:09 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 04:09:32PM +0100, John Ogness wrote:
-> +static bool dentry_lock_inode(struct dentry *dentry)
-> +{
-> +	struct inode *inode = dentry->d_inode;
-> +
-> +	lockdep_assert_held(&dentry->d_lock);
-> +
-> +	if (unlikely(!spin_trylock(&inode->i_lock))) {
+The patch
 
-	if (likely(spin_trylock(&inode->i_lock)))
-		return true;
+   ASoC: wm_adsp: Fix some signedness errors in register access
 
-and then unindent by 1 stop the below code:
+has been applied to the asoc tree at
 
-> +		rcu_read_lock();
-> +		spin_unlock(&dentry->d_lock);
-> +		spin_lock(&inode->i_lock);
-> +		spin_lock(&dentry->d_lock);
-> +		rcu_read_unlock();
-> +
-> +		/*
-> +		 * @dentry->d_inode might have changed after dropping
-> +		 * @dentry->d_lock. If so, release @inode->i_lock and
-> +		 * signal the caller to restart the operation.
-> +		 */
-> +		if (unlikely(inode != dentry->d_inode)) {
-> +			spin_unlock(&inode->i_lock);
-> +			return false;
-> +		}
-> +	}
-> +	return true;
-> +}
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From e21a5acfab2f13eeffe50d5d5f87c099540a3bf3 Mon Sep 17 00:00:00 2001
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+Date: Fri, 16 Feb 2018 14:36:10 +0000
+Subject: [PATCH] ASoC: wm_adsp: Fix some signedness errors in register access
+
+base and sysclk_reg should be unsigned int, as that is what
+regmap takes as a register address.
+
+sysclk_mask is used to mask unsigned register values so
+should be unsigned.
+
+sysclk_shift is a shift value so is not allowed to be negative.
+
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/wm_adsp.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/codecs/wm_adsp.h b/sound/soc/codecs/wm_adsp.h
+index 41cc11c19b83..d4042c95315e 100644
+--- a/sound/soc/codecs/wm_adsp.h
++++ b/sound/soc/codecs/wm_adsp.h
+@@ -64,10 +64,10 @@ struct wm_adsp {
+ 	struct regmap *regmap;
+ 	struct snd_soc_codec *codec;
+ 
+-	int base;
+-	int sysclk_reg;
+-	int sysclk_mask;
+-	int sysclk_shift;
++	unsigned int base;
++	unsigned int sysclk_reg;
++	unsigned int sysclk_mask;
++	unsigned int sysclk_shift;
+ 
+ 	struct list_head alg_regions;
+ 
+-- 
+2.16.1
