@@ -1,30 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932683AbeBPJui (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 04:50:38 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38829 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932662AbeBPJug (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S932664AbeBPJug (ORCPT <rfc822;w@1wt.eu>);
         Fri, 16 Feb 2018 04:50:36 -0500
-Date: Fri, 16 Feb 2018 01:35:54 -0800
+Received: from terminus.zytor.com ([198.137.202.136]:38015 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932420AbeBPJue (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 04:50:34 -0500
+Date: Fri, 16 Feb 2018 01:40:12 -0800
 From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-8872481bd04850b19e053dc579de5a11b83b16fc@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        yao.jin@linux.intel.com, namhyung@kernel.org, jolsa@kernel.org,
-        hpa@zytor.com, acme@redhat.com, tglx@linutronix.de,
-        kan.liang@intel.com, mingo@kernel.org, wangnan0@huawei.com,
-        peterz@infradead.org
-Reply-To: hpa@zytor.com, jolsa@kernel.org, namhyung@kernel.org,
-        yao.jin@linux.intel.com, linux-kernel@vger.kernel.org,
-        ak@linux.intel.com, peterz@infradead.org, wangnan0@huawei.com,
-        kan.liang@intel.com, mingo@kernel.org, acme@redhat.com,
-        tglx@linutronix.de
-In-Reply-To: <1516310792-208685-5-git-send-email-kan.liang@intel.com>
-References: <1516310792-208685-5-git-send-email-kan.liang@intel.com>
+Message-ID: <tip-204721d7eabe6ee98aafce791ce3efdbc4715834@git.kernel.org>
+Cc: peterz@infradead.org, namhyung@kernel.org, tglx@linutronix.de,
+        mingo@kernel.org, yao.jin@linux.intel.com, acme@redhat.com,
+        linux-kernel@vger.kernel.org, ak@linux.intel.com, wangnan0@huawei.com,
+        jolsa@kernel.org, kan.liang@intel.com, hpa@zytor.com
+Reply-To: wangnan0@huawei.com, jolsa@kernel.org, kan.liang@intel.com,
+        hpa@zytor.com, peterz@infradead.org, tglx@linutronix.de,
+        namhyung@kernel.org, mingo@kernel.org, yao.jin@linux.intel.com,
+        acme@redhat.com, linux-kernel@vger.kernel.org, ak@linux.intel.com
+In-Reply-To: <1516310792-208685-14-git-send-email-kan.liang@intel.com>
+References: <1516310792-208685-14-git-send-email-kan.liang@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf mmap: Introduce perf_mmap__read_init()
-Git-Commit-ID: 8872481bd04850b19e053dc579de5a11b83b16fc
+Subject: [tip:perf/urgent] perf top: Add overwrite fall back
+Git-Commit-ID: 204721d7eabe6ee98aafce791ce3efdbc4715834
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -37,22 +35,20 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8872481bd04850b19e053dc579de5a11b83b16fc
-Gitweb:     https://git.kernel.org/tip/8872481bd04850b19e053dc579de5a11b83b16fc
+Commit-ID:  204721d7eabe6ee98aafce791ce3efdbc4715834
+Gitweb:     https://git.kernel.org/tip/204721d7eabe6ee98aafce791ce3efdbc4715834
 Author:     Kan Liang <kan.liang@intel.com>
-AuthorDate: Thu, 18 Jan 2018 13:26:19 -0800
+AuthorDate: Thu, 18 Jan 2018 13:26:28 -0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 15 Feb 2018 09:52:22 -0300
+CommitDate: Thu, 15 Feb 2018 09:56:14 -0300
 
-perf mmap: Introduce perf_mmap__read_init()
+perf top: Add overwrite fall back
 
-The new function perf_mmap__read_init() is factored out from
-perf_mmap__push().
-
-It is to calculate the 'start' and 'end' of the available data in
+Switch to non-overwrite mode if kernel doesnot support overwrite
 ringbuffer.
 
-No functional change.
+It's only effect when overwrite mode is supported.  No change to current
+behavior.
 
 Signed-off-by: Kan Liang <kan.liang@intel.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
@@ -61,88 +57,64 @@ Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/1516310792-208685-5-git-send-email-kan.liang@intel.com
+Link: http://lkml.kernel.org/r/1516310792-208685-14-git-send-email-kan.liang@intel.com
+[ Use perf_missing_features.write_backward instead of the non merged is_write_backward_fail() ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/mmap.c | 37 +++++++++++++++++++++++++++----------
- tools/perf/util/mmap.h |  2 ++
- 2 files changed, 29 insertions(+), 10 deletions(-)
+ tools/perf/builtin-top.c | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index fbbbe87..c19a4e6 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -267,24 +267,24 @@ static int overwrite_rb_find_range(void *buf, int mask, u64 head, u64 *start, u6
- 	return -1;
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 1778379..ee4bba1 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -943,6 +943,27 @@ static int perf_top__overwrite_check(struct perf_top *top)
+ 	return 0;
  }
  
--int perf_mmap__push(struct perf_mmap *md, bool overwrite,
--		    void *to, int push(void *to, void *buf, size_t size))
-+/*
-+ * Report the start and end of the available data in ringbuffer
-+ */
-+int perf_mmap__read_init(struct perf_mmap *md, bool overwrite,
-+			 u64 *startp, u64 *endp)
- {
- 	u64 head = perf_mmap__read_head(md);
- 	u64 old = md->prev;
--	u64 end, start;
- 	unsigned char *data = md->base + page_size;
- 	unsigned long size;
--	void *buf;
--	int rc = 0;
- 
--	start = overwrite ? head : old;
--	end = overwrite ? old : head;
-+	*startp = overwrite ? head : old;
-+	*endp = overwrite ? old : head;
- 
--	if (start == end)
-+	if (*startp == *endp)
- 		return 0;
- 
--	size = end - start;
-+	size = *endp - *startp;
- 	if (size > (unsigned long)(md->mask) + 1) {
- 		if (!overwrite) {
- 			WARN_ONCE(1, "failed to keep up with mmap data. (warn only once)\n");
-@@ -298,10 +298,27 @@ int perf_mmap__push(struct perf_mmap *md, bool overwrite,
- 		 * Backward ring buffer is full. We still have a chance to read
- 		 * most of data from it.
- 		 */
--		if (overwrite_rb_find_range(data, md->mask, head, &start, &end))
-+		if (overwrite_rb_find_range(data, md->mask, head, startp, endp))
- 			return -1;
- 	}
- 
++static int perf_top_overwrite_fallback(struct perf_top *top,
++				       struct perf_evsel *evsel)
++{
++	struct record_opts *opts = &top->record_opts;
++	struct perf_evlist *evlist = top->evlist;
++	struct perf_evsel *counter;
++
++	if (!opts->overwrite)
++		return 0;
++
++	/* only fall back when first event fails */
++	if (evsel != perf_evlist__first(evlist))
++		return 0;
++
++	evlist__for_each_entry(evlist, counter)
++		counter->attr.write_backward = false;
++	opts->overwrite = false;
++	ui__warning("fall back to non-overwrite mode\n");
 +	return 1;
 +}
 +
-+int perf_mmap__push(struct perf_mmap *md, bool overwrite,
-+		    void *to, int push(void *to, void *buf, size_t size))
-+{
-+	u64 head = perf_mmap__read_head(md);
-+	u64 end, start;
-+	unsigned char *data = md->base + page_size;
-+	unsigned long size;
-+	void *buf;
-+	int rc = 0;
+ static int perf_top__start_counters(struct perf_top *top)
+ {
+ 	char msg[BUFSIZ];
+@@ -967,6 +988,21 @@ static int perf_top__start_counters(struct perf_top *top)
+ try_again:
+ 		if (perf_evsel__open(counter, top->evlist->cpus,
+ 				     top->evlist->threads) < 0) {
 +
-+	rc = perf_mmap__read_init(md, overwrite, &start, &end);
-+	if (rc < 1)
-+		return rc;
++			/*
++			 * Specially handle overwrite fall back.
++			 * Because perf top is the only tool which has
++			 * overwrite mode by default, support
++			 * both overwrite and non-overwrite mode, and
++			 * require consistent mode for all events.
++			 *
++			 * May move it to generic code with more tools
++			 * have similar attribute.
++			 */
++			if (perf_missing_features.write_backward &&
++			    perf_top_overwrite_fallback(top, counter))
++				goto try_again;
 +
- 	size = end - start;
- 
- 	if ((start & md->mask) + size != (end & md->mask)) {
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index e43d7b5..9ab2b48 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -94,4 +94,6 @@ int perf_mmap__push(struct perf_mmap *md, bool backward,
- 
- size_t perf_mmap__mmap_len(struct perf_mmap *map);
- 
-+int perf_mmap__read_init(struct perf_mmap *md, bool overwrite,
-+			 u64 *startp, u64 *endp);
- #endif /*__PERF_MMAP_H */
+ 			if (perf_evsel__fallback(counter, errno, msg, sizeof(msg))) {
+ 				if (verbose > 0)
+ 					ui__warning("%s\n", msg);
