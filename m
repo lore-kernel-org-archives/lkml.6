@@ -1,168 +1,193 @@
-Return-Path: <andy.shevchenko@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519051760; cv=none;
+Return-Path: <dave.hansen@linux.intel.com>
+X-Google-Smtp-Source: AH8x227lUcKAPwQSaHTH4liyqlNOIreXHsNerq9OzGD6jamk08F0VQLavXbTjGaG22M4YI+C0llF
+ARC-Seal: i=1; a=rsa-sha256; t=1518808945; cv=none;
         d=google.com; s=arc-20160816;
-        b=px7oOpyLCiJuh7qSXo5okBOzAWkpa5IttSLY8buhqmTG/h9hVMel1oXpXydGRFNjpD
-         jVNaC22g0qlXYc6+pJzYfLai+BA4KRDkEJWC9/AreSq7gTDXAPEekwyU3OBF8sU9Sc8e
-         9Zcof3RaDrpa1oiM9hiIBNXiw2p0NyzyR6BRUmsSKVy5qivEhqO1jiFyQ9s2mZOW7aCs
-         APv9fFnfz2ZqV3ZW2WgGBWLLMANeXiAZW0NQeZKFPqME7ERJNeJyqbhaJifoGtoNYKkZ
-         QSV6DDBz9zljp7iT1E9rZpZo6Zgk3PjsiC9rJ/j7Q7BdwUr1RM6OfxVIYyVHN9JFaMLf
-         zrPQ==
+        b=y0T7vk2VQ3oPBCAaeRIurVCa3bJ993DUNw6hFbqpoEKMVI75jKwFpxsnYCIoHfPm8u
+         D+AaUqjPIm2szkpt4XG0e9cBOx4UYazXYrBDHe1Q9AFzWy01CMt1rncel9ie77qKTjKr
+         GDPfKHqOXmgdIK/qRdWQDkFqPVZ+NaDfTG2uQFu1DiF1YyTX6AmCWRMy6BKJSRJAfnjV
+         ZlH1G2p2+RrzJSl44V/k9FEAS0CnR8E19ppLAVjrlLy2HVii4XM52YQUkDfl1vUOezFl
+         NQMzepgh6YCXmyos3awMMu9fu6gXhUZDq4eLOHsMdJhYohjPEDjlj1FLVl6eqe4oxCHO
+         Rrrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=Qy1zTE5MfIrqvJS2dgM4kpef0XZmVrSIbZZQ2IXwa3Q=;
-        b=LL1iHrmkXZYuvfqn8VTPtHdENy23ZI6gkAVm0c2XTr71MKc1+qOKex54RtNtNJLp0m
-         Xau3mDbQ1V+ZuRfvRSZBY03UuBxTQuOSWJvsaALdpsYaC0uma+tT8/vKn72rLBlRLRUY
-         A5dGD1ipip/k0OPYf/6fHfUUkULE4UzhdjEEZDx2Y+Vjqj0jC4hPF+nGDF/npbGVf5Yk
-         jqHNNyOfmZE68JBlSBcYcCEAlHdmUgAGmMMpd4j68WhLDF7wUhtcvDUc4HuFwtOs49dJ
-         VdTNhWsAa+NF7eRBuG0ap3nwZk/uAbATeEB2EQolcwHpVseu7X5jb4E4tYdpMojrnDAF
-         vkMQ==
+        h=message-id:date:from:cc:to:subject:arc-authentication-results;
+        bh=ozjfbPJ1P+Eelr66hGEPmaO9BZfdZBHI5YAP+FK/FYM=;
+        b=kiXTZfTO9vDhB/Ro7XNXDLKA5A9eDylygj1HZdjN1WEYTFRkGZLxf17iuFftAU3qGD
+         pq2/yq76JJH7HwV41erXPJVpYfCDk0j7zSlo8gZAVB2rSsGM9bHSkXgkf56MbAzizA8i
+         ZkcJc0zVFxp5gaRhOed5sUyTwLn/5cKb7NFX/5UlDefjjriYRDcTpy5rKzdDGiCAoGIH
+         3B0MwxCfl5dhUgHMXlsBXQEBcnBcKSNV4XNfuAzUV8ump+/0a2uizmb8DjDbOgjc6+oB
+         jXfbmkw/NAZ0iY0qBcX7eAof3u9JlgnUZxE9HPlBg1dAAExj+8A0OD5nN6auZV7J3SOo
+         JE2w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cGlAsNyb;
-       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 134.134.136.100 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cGlAsNyb;
-       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x227aZtrOWYPTTCa7Hk4tL4E3qavouPcdR1/p+OOdCl9bYAwKWNUaMKLcGZ4943KbeqXAjrmBbpv7nmJ5zgxgrT4=
-MIME-Version: 1.0
-In-Reply-To: <20180219140739.24383-1-khandual@linux.vnet.ibm.com>
-References: <20180219140739.24383-1-khandual@linux.vnet.ibm.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 19 Feb 2018 16:49:19 +0200
-Message-ID: <CAHp75VeUB_ZB2-7NNK7WCQ62HrSe2WVarS8Bcm1mpyBoVd2FqA@mail.gmail.com>
-Subject: Re: [PATCH V3] lib/scatterlist: Add SG_CHAIN and SG_LAST macros for
- LSB encodings
-To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bart Van Assche <bart.vanassche@wdc.com>,
-	Johannes Thumshirn <jthumshirn@suse.de>, Jens Axboe <axboe@kernel.dk>,
-	Chris Wilson <chris@chris-wilson.co.uk>, Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 134.134.136.100 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,520,1511856000";
+   d="scan'208";a="18470001"
+Subject: [RFC][PATCH] x86: proposed new ARCH_CAPABILITIES MSR bit for RSB-underflow
+To: linux-kernel@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,torvalds@linux-foundation.org,tglx@linutronix.de,gnomes@lxorguk.ukuu.org.uk,riel@redhat.com,jpoimboe@redhat.com,thomas.lendacky@amd.com,peterz@infradead.org,jikos@kernel.org,luto@amacapital.net,keescook@google.com,gregkh@linux-foundation.org,pjt@google.com,dwmw@amazon.co.uk,x86@kernel.org,ak@linux.intel.com,tim.c.chen@linux.intel.com,arjan@linux.intel.com,dan.j.williams@intel.com,asit.k.mallick@intel.com
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Fri, 16 Feb 2018 11:17:55 -0800
+Message-Id: <20180216191755.6F62DDEA@viggo.jf.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592838612913137336?=
-X-GMAIL-MSGID: =?utf-8?q?1592841219016323175?=
+X-GMAIL-THRID: =?utf-8?q?1592586608850569551?=
+X-GMAIL-MSGID: =?utf-8?q?1592586608850569551?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 19, 2018 at 4:07 PM, Anshuman Khandual
-<khandual@linux.vnet.ibm.com> wrote:
-> This replaces scatterlist->page_link LSB encodings with SG_CHAIN and
-> SG_LAST definitions without any functional change. While here also
-> add macro definitions SG_PAGE_BITS and SG_PAGE_MASK.
->
 
-A nit below, in any case
+Intel is considering adding a new bit to the IA32_ARCH_CAPABILITIES
+MSR to tell when RSB underflow might be happen.  Feedback on this
+would be greatly appreciated before the specification is finalized.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
 
-> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-> ---
-> Changes in V3:
-> - Changed SG_END as SG_LAST due to a build failure
-> - Added SG_PAGE_BITS and SG_PAGE_MASK as per Tvrtko
-> - Used BIT() macro as per Chris
->
-> Changes in V2:
-> - Changed SG_EMARK as SG_END as per Johannes and Tvrtko
-> - Added 'UL' to the constants as per Bart
->
->  include/linux/scatterlist.h | 26 ++++++++++++++++----------
->  1 file changed, 16 insertions(+), 10 deletions(-)
->
-> diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
-> index 22b2131bcdcd..494b84c7f3c8 100644
-> --- a/include/linux/scatterlist.h
-> +++ b/include/linux/scatterlist.h
-> @@ -66,15 +66,20 @@ struct sg_table {
->
->  #define SG_MAGIC       0x87654321
->
-> +#define SG_CHAIN       BIT(0)
-> +#define SG_LAST                BIT(1)
-> +#define SG_PAGE_BITS   (SG_CHAIN | SG_LAST)
-> +#define SG_PAGE_MASK   (~SG_PAGE_BITS)
-> +
->  /*
->   * We overload the LSB of the page pointer to indicate whether it's
->   * a valid sg entry, or whether it points to the start of a new scatterlist.
->   * Those low bits are there for everyone! (thanks mason :-)
->   */
-> -#define sg_is_chain(sg)                ((sg)->page_link & 0x01)
-> -#define sg_is_last(sg)         ((sg)->page_link & 0x02)
-> +#define sg_is_chain(sg)                ((sg)->page_link & SG_CHAIN)
-> +#define sg_is_last(sg)         ((sg)->page_link & SG_LAST)
->  #define sg_chain_ptr(sg)       \
-> -       ((struct scatterlist *) ((sg)->page_link & ~0x03))
-> +       ((struct scatterlist *) ((sg)->page_link & SG_PAGE_MASK))
->
->  /**
->   * sg_assign_page - Assign a given page to an SG entry
-> @@ -88,13 +93,13 @@ struct sg_table {
->   **/
->  static inline void sg_assign_page(struct scatterlist *sg, struct page *page)
->  {
-> -       unsigned long page_link = sg->page_link & 0x3;
-> +       unsigned long page_link = sg->page_link & SG_PAGE_BITS;
->
->         /*
->          * In order for the low bit stealing approach to work, pages
->          * must be aligned at a 32-bit boundary as a minimum.
->          */
-> -       BUG_ON((unsigned long) page & 0x03);
-> +       BUG_ON((unsigned long) page & SG_PAGE_BITS);
->  #ifdef CONFIG_DEBUG_SG
->         BUG_ON(sg->sg_magic != SG_MAGIC);
->         BUG_ON(sg_is_chain(sg));
-> @@ -130,7 +135,7 @@ static inline struct page *sg_page(struct scatterlist *sg)
->         BUG_ON(sg->sg_magic != SG_MAGIC);
->         BUG_ON(sg_is_chain(sg));
->  #endif
-> -       return (struct page *)((sg)->page_link & ~0x3);
-> +       return (struct page *)((sg)->page_link & SG_PAGE_MASK);
->  }
->
->  /**
-> @@ -178,7 +183,8 @@ static inline void sg_chain(struct scatterlist *prv, unsigned int prv_nents,
->          * Set lowest bit to indicate a link pointer, and make sure to clear
->          * the termination bit if it happens to be set.
->          */
-> -       prv[prv_nents - 1].page_link = ((unsigned long) sgl | 0x01) & ~0x02;
-> +       prv[prv_nents - 1].page_link = ((unsigned long) sgl | SG_CHAIN)
-> +                                       & ~SG_LAST;
+Background:
 
-If it's ~2-3 characters over 80, I would rather still keep on the same line.
+The RSB is a microarchitectural structure that attempts to help
+predict the branch target of RET instructions.  It is implemented as a
+stack that is pushed on CALL and popped on RET.  Being a stack, it can
+become empty.  On some processors, an empty condition leads to use of
+the other indirect branch predictors which have been targeted by
+Spectre variant 2 (branch target injection) exploits.
 
->  }
->
->  /**
-> @@ -198,8 +204,8 @@ static inline void sg_mark_end(struct scatterlist *sg)
->         /*
->          * Set termination bit, clear potential chain bit
->          */
-> -       sg->page_link |= 0x02;
-> -       sg->page_link &= ~0x01;
-> +       sg->page_link |= SG_LAST;
-> +       sg->page_link &= ~SG_CHAIN;
->  }
->
->  /**
-> @@ -215,7 +221,7 @@ static inline void sg_unmark_end(struct scatterlist *sg)
->  #ifdef CONFIG_DEBUG_SG
->         BUG_ON(sg->sg_magic != SG_MAGIC);
->  #endif
-> -       sg->page_link &= ~0x02;
-> +       sg->page_link &= ~SG_LAST;
->  }
->
->  /**
-> --
-> 2.11.0
->
+Processors based on Skylake and its close derivatives have this
+fallback behavior and need additional mitigation to avoid RSB-empty
+conditions.  Right now, the only place we do this "RSB stuffing"
+operation is at context switch.  We currently have a model/family list
+to decide where to deploy this.
 
+Problem:
 
+However, that causes a problem in virtualization environments.  They
+routinely expose a different model/family to guests than what the
+bare-metal hardware has.  This, among other things, makes it easy to
+migrate guests between different bare-metal systems with different
+capabilities.  However, this defeats the Skylake-generation
+model/family detection.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Solution:
+
+To help address this issue, Intel is proposing a new bit in the
+IA32_ARCH_CAPABILITIES MSR.  This bit, "RSB Override" (RSBO) would
+indicate:
+
+	The CPU may predict the target of RET instructions with a
+	predictor other than the RSB when the RSB is 'empty'.
+
+Hardware implementations may choose to set this, but it can also be
+set by a hypervisor that traps RDMSR and simply wants to indicate to a
+guest that it should deploy RSB-underflow mitigations.
+
+An OS should assume that RSB-underflow mitigations are needed both
+when RSBO=1 or when running on Skylake-generation processors with
+RSBO=0.
+
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: gnomes@lxorguk.ukuu.org.uk
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: thomas.lendacky@amd.com
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Kees Cook <keescook@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
+Cc: Paul Turner <pjt@google.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: x86@kernel.org
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+
+---
+
+ b/arch/x86/include/asm/msr-index.h |    1 
+ b/arch/x86/kernel/cpu/bugs.c       |   47 +++++++++++++++++++++++++++++++++----
+ 2 files changed, 43 insertions(+), 5 deletions(-)
+
+diff -puN arch/x86/kernel/cpu/bugs.c~need-rsb-stuffing arch/x86/kernel/cpu/bugs.c
+--- a/arch/x86/kernel/cpu/bugs.c~need-rsb-stuffing	2018-02-16 10:06:56.807610157 -0800
++++ b/arch/x86/kernel/cpu/bugs.c	2018-02-16 10:43:24.281604702 -0800
+@@ -218,6 +218,43 @@ static bool __init is_skylake_era(void)
+ 	return false;
+ }
+ 
++/*
++ * This MSR has a bit to indicate whether the processor might fall back to
++ * the BTB.  Hypervisors might lie about the model/family, breaking the
++ * is_skylake_era() check.  They might also want the OS to deploy
++ * mitigations because it *might* get migrated to other hardware that has
++ * this behavior, even if current bare-metal hardware is not exposed.
++ */
++static bool cpu_has_rsb_override(void)
++{
++	u64 ia32_cap = 0;
++
++        if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES))
++		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
++
++        /* RSBO == RSB Override */
++        if (ia32_cap & ARCH_CAP_RSBO)
++		return true;
++
++	return false;
++}
++
++/*
++ * Can a RET instruction on this CPU fall back to the BTB?
++ */
++static bool __init cpu_ret_uses_btb(void)
++{
++	/* All Skylake-era processors fall back to BTB */
++	if (is_skylake_era())
++		return true;
++
++	/* Does the ARCH_CAPABILITIES override the model/family we see? */
++	if (cpu_has_rsb_override())
++		return true;
++
++	return false;
++}
++
+ static void __init spectre_v2_select_mitigation(void)
+ {
+ 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
+@@ -283,14 +320,14 @@ retpoline_auto:
+ 	 * from a shallow call stack to a deeper one. To prevent this fill
+ 	 * the entire RSB, even when using IBRS.
+ 	 *
+-	 * Skylake era CPUs have a separate issue with *underflow* of the
+-	 * RSB, when they will predict 'ret' targets from the generic BTB.
+-	 * The proper mitigation for this is IBRS. If IBRS is not supported
+-	 * or deactivated in favour of retpolines the RSB fill on context
++	 * Some CPUs have a separate issue with *underflow* of the RSB,
++	 * when they will predict 'ret' targets from the generic BTB.  The
++	 * proper mitigation for this is IBRS. If IBRS is not supported or
++	 * deactivated in favour of retpolines the RSB fill on context
+ 	 * switch is required.
+ 	 */
+ 	if ((!boot_cpu_has(X86_FEATURE_PTI) &&
+-	     !boot_cpu_has(X86_FEATURE_SMEP)) || is_skylake_era()) {
++	     !boot_cpu_has(X86_FEATURE_SMEP)) || cpu_ret_uses_btb()) {
+ 		setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
+ 		pr_info("Spectre v2 mitigation: Filling RSB on context switch\n");
+ 	}
+diff -puN arch/x86/include/asm/msr-index.h~need-rsb-stuffing arch/x86/include/asm/msr-index.h
+--- a/arch/x86/include/asm/msr-index.h~need-rsb-stuffing	2018-02-16 10:10:25.738609636 -0800
++++ b/arch/x86/include/asm/msr-index.h	2018-02-16 10:12:22.880609344 -0800
+@@ -68,6 +68,7 @@
+ #define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
+ #define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
+ #define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
++#define ARCH_CAP_RSBO			(1 << 2)   /* Needs RSB Stuffing */
+ 
+ #define MSR_IA32_BBL_CR_CTL		0x00000119
+ #define MSR_IA32_BBL_CR_CTL3		0x0000011e
+_
