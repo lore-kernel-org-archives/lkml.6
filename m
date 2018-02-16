@@ -1,92 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034486AbeBPOt3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 09:49:29 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5244 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1033440AbeBPOt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:49:27 -0500
-Subject: Re: [PATCH v13 7/9] ACPI: Translate the I/O range of non-MMIO devices
- before scanning
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <1518543933-22456-1-git-send-email-john.garry@huawei.com>
- <1518543933-22456-8-git-send-email-john.garry@huawei.com>
- <CAHp75Ve7C4AJYK6AC=o-jzw6b2p8c8GBRd70Zjv+vYWbfytufg@mail.gmail.com>
- <adfa2009-476b-8c25-c661-b0eeb48a6c43@huawei.com>
- <CAHp75VfOa5pN4MKT-aQmWBwPGWsOaQupyfrN-weWwfR3vMLtuA@mail.gmail.com>
- <59e5293f-0ea5-12f4-27db-b13bbcf0918b@huawei.com>
- <CAHp75VeTQg+A9o5Ox-k_9Qx8=JPEnqg1taVjcd8Zd2rfj_TMog@mail.gmail.com>
-CC: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Hanjun Guo <hanjun.guo@linaro.org>, "Rob Herring" <robh+dt@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, "Arnd Bergmann" <arnd@arndb.de>,
-        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
-        Dann Frazier <dann.frazier@canonical.com>,
-        Rob Herring <robh@kernel.org>, Joe Perches <joe@perches.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        <linux-pci@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, Corey Minyard <minyard@acm.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <fa1cadea-6127-2526-449c-3eed3d4c3041@huawei.com>
-Date: Fri, 16 Feb 2018 14:48:46 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1034500AbeBPOui (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 09:50:38 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:41716 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033381AbeBPOug (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 09:50:36 -0500
+X-Google-Smtp-Source: AH8x224AC8PxnxIvJw6xXGFnWS0kttj+yl3SMgBlCvlgtUfWeG8YFZemid3qK466BfOPUHBFsJXF4YpVSNFnGx+IFE0=
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VeTQg+A9o5Ox-k_9Qx8=JPEnqg1taVjcd8Zd2rfj_TMog@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CADXBfmsJPv9Q6W+j=RdzUAHJ9Ya-6zrV9Ns7KMNBHOAnn_BZuA@mail.gmail.com>
+References: <010001602cf53153-39ad69f1-1b39-4e6d-a748-9455a16c2fbd-000000@email.amazonses.com>
+ <20171210182152.70ad8fbf@archlinux> <01000160dccefcb4-25edfd89-56f3-486f-88a4-cb8c07253974-000000@email.amazonses.com>
+ <20180114104330.2aa7c1fd@archlinux> <20180128094021.572ab366@archlinux>
+ <CAHp75VenBEYSZ9okZfGZUmBX+ikL236a9_qjtn-DJtSihw5X+g@mail.gmail.com>
+ <20180130160107.000006df@huawei.com> <CAHp75VchRJzp1CM33q18e9x8Uq7bNrPZykz-GdpRgB3=y2C+KQ@mail.gmail.com>
+ <CAHp75Vf==OQ=Cx4Nzrd+vAOJshT-oL6L8Y54aWt0cGyJJuacjg@mail.gmail.com>
+ <CADXBfmvKF_doLv0Vg0TY4cH_rDBEP5NvJ4jHJf85iuOjJB6TzA@mail.gmail.com>
+ <CAHp75VdsDAbgJ1XmhaxA5C8FTcYX7tBa4x_Y4ZYk6Sub510nqw@mail.gmail.com>
+ <f42f6acc-cb30-e36d-0c98-42b7e3d40457@pressers.name> <CAHp75VfmH5aNPzBLvm-GrQ-49uyJNNwdjbte3uh_kmaC91bz6A@mail.gmail.com>
+ <197f448e-322f-dae4-aa4b-3cc2bd5b16bb@pressers.name> <CAHp75VeVuS51Z7U2P+t3YnfitUtVVAa_8oSbnXCHTY7rqrJUEQ@mail.gmail.com>
+ <CAHp75VfPBP0TVt-==0wjcK6Oxg1kVN4mQf5Ji50RBy=SXf6yFw@mail.gmail.com>
+ <eed11463-a2f6-0b4d-6138-f5082f97dd5e@pressers.name> <CAHp75Ve=B_=s5cHqcPqaAnQ3bPj+4aHpudwsfX89YqS0-M37xw@mail.gmail.com>
+ <CADXBfmsJPv9Q6W+j=RdzUAHJ9Ya-6zrV9Ns7KMNBHOAnn_BZuA@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 16 Feb 2018 16:50:34 +0200
+Message-ID: <CAHp75Vd2sDgsv6kOpx7T6PrQ1cwi9Xqxzw+8bh_rYJr=RScmQA@mail.gmail.com>
+Subject: Re: [PATCH v2] iio: accel: bmc150: Check for a second ACPI device for BOSC0200
+To: Steve Presser <steve@pressers.name>
+Cc: Hans de Goede <hdegoede@redhat.com>, Hartmut Knaack <knaack.h@gmx.de>,
+        Jeremy Cline <jeremy@jcline.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Jonathan Cameron <jic23@jic23.retrosnub.co.uk>,
+        Lars Kellogg-Stedman <lars@oddbit.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-iio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/02/2018 14:42, Andy Shevchenko wrote:
-> On Thu, Feb 15, 2018 at 7:07 PM, John Garry <john.garry@huawei.com> wrote:
->> On 14/02/2018 16:16, Andy Shevchenko wrote:
+On Thu, Feb 15, 2018 at 8:06 PM, Steve Presser <steve@pressers.name> wrote:
+> Hi Andy,
 >
->>>>>>>>> +       list_for_each_entry(rentry, &resource_list, node)
->>>>>>>>> +               resources[count++] = *rentry->res;
->>>>>
->>>>>>> It has similarities with acpi_create_platform_device().
->>>>>>> I guess we can utilize existing code.
->>>>
->>>>> For sure, this particular segment is effectively same as part of
->>>>> acpi_create_platform_device():
->>>
->>> Not the same, acpi_create_platform_device() does a bit more than
->>> copying the resources. If it indeed makes no hurt...
->>>
->>>>>         list_for_each_entry(rentry, &resource_list, node)
->>>>>             acpi_platform_fill_resource(adev, rentry->res,
->>>>>                             &resources[count++]);
->>>>> So is your idea to refactor this common segment into a helper function?
->>>
->>> ...I would go with helper.
->>>
->>
->> Hi Andy,
->>
->> Since the plan now is that this code is no longer going to be added to
->> drivers/acpi, but instead pushed to the LLDD, I am pondering whether we
->> should still factor out of this common code. Opinion?
->
-> I would still go with a common helper. Though, as first step, we can
-> make it lazy, i.e. put a comment in your code, like a todo notice (w/o
-> TODO word :-) ) to consider a common helper.
+> No good news. It looks like the vanilla 4.15 series doesn't boot on this
+> system. Still working on tracking down why/when it broke/if this is due to a
+> Debian patch.
 
-Fine, I was also thinking that I don't want to do this now as it could 
-make merging the patchset more complex. For now, the ACPI change I plan 
-creates no dependencies.
+Just in case: you may cherry-pick necessary patches (4 or 5 from the
+tip of mentioned branch) to whatever kernel you are using. Though I'm
+not sure how far v4.15 from v4.12 in a sense of the code it touches.
 
-Cheers,
-John
+> Would it still be an effective test if I backported the changes to 4.12 (or
+> 4.12-debian)? I know that series boots.
 
->
+OK, continue waiting for your testing.
+
+>> >> Here [1] is the branch with another approach. Can you test it and tell
+>> >> if it fixes the issue?
+>> >>
+>> >> [1]: https://bitbucket.org/andy-shev/linux/branch/topic/iio-acpi
+>> >> It's based on linux-next + compiletest branch of IIO subsystem.
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
