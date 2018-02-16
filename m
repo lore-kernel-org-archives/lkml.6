@@ -1,95 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162308AbeBPRkp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 12:40:45 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34374 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162052AbeBPRkn (ORCPT
+        id S1758732AbeBPRmh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 12:42:37 -0500
+Received: from mail-pg0-f50.google.com ([74.125.83.50]:32855 "EHLO
+        mail-pg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756035AbeBPRmf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 12:40:43 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Heiko Stuebner <heiko@sntech.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        linux-rockchip@lists.infradead.org, kernel@collabora.com
-Subject: [RESEND PATCH v5 1/5] pwm-backlight: enable/disable the PWM before/after LCD enable toggle.
-Date: Fri, 16 Feb 2018 18:40:30 +0100
-Message-Id: <20180216174034.15936-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.15.1
+        Fri, 16 Feb 2018 12:42:35 -0500
+X-Google-Smtp-Source: AH8x226wXpC2ybPVh886U9YDlUku5gG1lOUQ7VNfl1BR2vXCwV2XH08IUqn/5TmNX9DgV6Mhsv7Hgg==
+Subject: Re: [PATCH] nvme-pci: quiesce IO queues prior to disabling device HMB
+ accesses
+To: Sagi Grimberg <sagi@grimberg.me>,
+        Jianchao Wang <jianchao.w.wang@oracle.com>, keith.busch@intel.com,
+        axboe@fb.com, hch@lst.de
+Cc: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+References: <1518440244-696-1-git-send-email-jianchao.w.wang@oracle.com>
+ <22af82dd-0f20-f68b-2725-59b0da259e69@grimberg.me>
+From: James Smart <james.smart@broadcom.com>
+Message-ID: <60dcb8f0-7139-3c3e-1838-2347ce67dbcc@broadcom.com>
+Date: Fri, 16 Feb 2018 09:42:08 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <22af82dd-0f20-f68b-2725-59b0da259e69@grimberg.me>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before this patch the enable signal was set before the PWM signal and
-vice-versa on power off. This sequence is wrong, at least, it is on
-the different panels datasheets that I checked, so I inverted the sequence
-to follow the specs.
+On 2/12/2018 10:40 AM, Sagi Grimberg wrote:
+> Thanks, I picked this up for 4.17 (unless someone thinks
+> this is 4.16-rc material?)
+>
+> _______________________________________________
+> Linux-nvme mailing list
+> Linux-nvme@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-nvme
 
-For reference the following panels have the mentioned sequence:
-  - N133HSE-EA1 (Innolux)
-  - N116BGE (Innolux)
-  - N156BGE-L21 (Innolux)
-  - B101EAN0 (Auo)
-  - B101AW03 (Auo)
-  - LTN101NT05 (Samsung)
-  - CLAA101WA01A (Chunghwa)
+Note: I really hope that we can eventually commonize all the 
+quiesce/unquiesce logic and points relative to controller state.  We 
+have just enough differences to be interesting.
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
----
-Changes since v4:
- - Rebase on top of mainline.
- - Add the acks from Daniel Thompson and Jingoo Han.
-Changes since v3:
- - List the part numbers for the panel checked (Daniel Thompson)
-Changes since v2:
- - Add this as a separate patch (Thierry Reding)
-Changes since v1:
- - None
-
- drivers/video/backlight/pwm_bl.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index 1c2289ddd555..698ec68bcdc9 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -54,10 +54,11 @@ static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
- 	if (err < 0)
- 		dev_err(pb->dev, "failed to enable power supply\n");
- 
-+	pwm_enable(pb->pwm);
-+
- 	if (pb->enable_gpio)
- 		gpiod_set_value_cansleep(pb->enable_gpio, 1);
- 
--	pwm_enable(pb->pwm);
- 	pb->enabled = true;
- }
- 
-@@ -66,12 +67,12 @@ static void pwm_backlight_power_off(struct pwm_bl_data *pb)
- 	if (!pb->enabled)
- 		return;
- 
--	pwm_config(pb->pwm, 0, pb->period);
--	pwm_disable(pb->pwm);
--
- 	if (pb->enable_gpio)
- 		gpiod_set_value_cansleep(pb->enable_gpio, 0);
- 
-+	pwm_config(pb->pwm, 0, pb->period);
-+	pwm_disable(pb->pwm);
-+
- 	regulator_disable(pb->power_supply);
- 	pb->enabled = false;
- }
--- 
-2.15.1
+-- james
