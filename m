@@ -1,28 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932664AbeBPJug (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 04:50:36 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38015 "EHLO
+        id S932712AbeBPJvA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 04:51:00 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:50721 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932420AbeBPJue (ORCPT
+        with ESMTP id S932677AbeBPJuz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 04:50:34 -0500
-Date: Fri, 16 Feb 2018 01:40:12 -0800
-From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-204721d7eabe6ee98aafce791ce3efdbc4715834@git.kernel.org>
-Cc: peterz@infradead.org, namhyung@kernel.org, tglx@linutronix.de,
-        mingo@kernel.org, yao.jin@linux.intel.com, acme@redhat.com,
-        linux-kernel@vger.kernel.org, ak@linux.intel.com, wangnan0@huawei.com,
-        jolsa@kernel.org, kan.liang@intel.com, hpa@zytor.com
-Reply-To: wangnan0@huawei.com, jolsa@kernel.org, kan.liang@intel.com,
-        hpa@zytor.com, peterz@infradead.org, tglx@linutronix.de,
-        namhyung@kernel.org, mingo@kernel.org, yao.jin@linux.intel.com,
-        acme@redhat.com, linux-kernel@vger.kernel.org, ak@linux.intel.com
-In-Reply-To: <1516310792-208685-14-git-send-email-kan.liang@intel.com>
-References: <1516310792-208685-14-git-send-email-kan.liang@intel.com>
+        Fri, 16 Feb 2018 04:50:55 -0500
+Date: Fri, 16 Feb 2018 01:33:58 -0800
+From: tip-bot for William Cohen <tipbot@zytor.com>
+Message-ID: <tip-0b7c1528fb741803396da68a9d8d285ff7db731c@git.kernel.org>
+Cc: hpa@zytor.com, wcohen@redhat.com, mingo@kernel.org,
+        namhyung@kernel.org, acme@redhat.com, tglx@linutronix.de,
+        jolsa@redhat.com, linux-kernel@vger.kernel.org,
+        alexander.shishkin@linux.intel.com, peterz@infradead.org
+Reply-To: peterz@infradead.org, jolsa@redhat.com, linux-kernel@vger.kernel.org,
+        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+        wcohen@redhat.com, mingo@kernel.org, hpa@zytor.com,
+        namhyung@kernel.org, acme@redhat.com
+In-Reply-To: <20180131032813.9564-1-wcohen@redhat.com>
+References: <20180131032813.9564-1-wcohen@redhat.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf top: Add overwrite fall back
-Git-Commit-ID: 204721d7eabe6ee98aafce791ce3efdbc4715834
+Subject: [tip:perf/urgent] perf vendor events aarch64: Add JSON metrics for
+ ARM Cortex-A53 Processor
+Git-Commit-ID: 0b7c1528fb741803396da68a9d8d285ff7db731c
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,86 +36,273 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  204721d7eabe6ee98aafce791ce3efdbc4715834
-Gitweb:     https://git.kernel.org/tip/204721d7eabe6ee98aafce791ce3efdbc4715834
-Author:     Kan Liang <kan.liang@intel.com>
-AuthorDate: Thu, 18 Jan 2018 13:26:28 -0800
+Commit-ID:  0b7c1528fb741803396da68a9d8d285ff7db731c
+Gitweb:     https://git.kernel.org/tip/0b7c1528fb741803396da68a9d8d285ff7db731c
+Author:     William Cohen <wcohen@redhat.com>
+AuthorDate: Tue, 30 Jan 2018 22:28:13 -0500
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 15 Feb 2018 09:56:14 -0300
+CommitDate: Thu, 15 Feb 2018 09:49:44 -0300
 
-perf top: Add overwrite fall back
+perf vendor events aarch64: Add JSON metrics for ARM Cortex-A53 Processor
 
-Switch to non-overwrite mode if kernel doesnot support overwrite
-ringbuffer.
+Add JSON metrics for ARM Cortex-A53 Processor.
 
-It's only effect when overwrite mode is supported.  No change to current
-behavior.
+Unlike the Intel processors there isn't a script that automatically
+generated these files. The patch was manually generated from the
+documentation and the previous oprofile ARM Cortex ac53 event file patch
+I made.
 
-Signed-off-by: Kan Liang <kan.liang@intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
+The relevant documentation is in the "12.9 Events" section of the ARM
+Cortex A53 MPCore Processor Revision: r0p4 Technical Reference Manual.
+
+The ARM Cortex A53 manual is available at:
+
+  http://infocenter.arm.com/help/topic/com.arm.doc.ddi0500g/DDI0500G_cortex_a53_trm.pdf
+
+Use that to look for additional information about the events.
+
+Signed-off-by: William Cohen <wcohen@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/1516310792-208685-14-git-send-email-kan.liang@intel.com
-[ Use perf_missing_features.write_backward instead of the non merged is_write_backward_fail() ]
+Link: http://lkml.kernel.org/r/20180131032813.9564-1-wcohen@redhat.com
+[ Added references provided by William Cohen ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-top.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ .../pmu-events/arch/arm64/cortex-a53/branch.json   | 27 +++++++++++
+ .../perf/pmu-events/arch/arm64/cortex-a53/bus.json | 22 +++++++++
+ .../pmu-events/arch/arm64/cortex-a53/cache.json    | 27 +++++++++++
+ .../pmu-events/arch/arm64/cortex-a53/memory.json   | 22 +++++++++
+ .../pmu-events/arch/arm64/cortex-a53/other.json    | 32 +++++++++++++
+ .../pmu-events/arch/arm64/cortex-a53/pipeline.json | 52 ++++++++++++++++++++++
+ tools/perf/pmu-events/arch/arm64/mapfile.csv       |  1 +
+ 7 files changed, 183 insertions(+)
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 1778379..ee4bba1 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -943,6 +943,27 @@ static int perf_top__overwrite_check(struct perf_top *top)
- 	return 0;
- }
- 
-+static int perf_top_overwrite_fallback(struct perf_top *top,
-+				       struct perf_evsel *evsel)
-+{
-+	struct record_opts *opts = &top->record_opts;
-+	struct perf_evlist *evlist = top->evlist;
-+	struct perf_evsel *counter;
-+
-+	if (!opts->overwrite)
-+		return 0;
-+
-+	/* only fall back when first event fails */
-+	if (evsel != perf_evlist__first(evlist))
-+		return 0;
-+
-+	evlist__for_each_entry(evlist, counter)
-+		counter->attr.write_backward = false;
-+	opts->overwrite = false;
-+	ui__warning("fall back to non-overwrite mode\n");
-+	return 1;
-+}
-+
- static int perf_top__start_counters(struct perf_top *top)
- {
- 	char msg[BUFSIZ];
-@@ -967,6 +988,21 @@ static int perf_top__start_counters(struct perf_top *top)
- try_again:
- 		if (perf_evsel__open(counter, top->evlist->cpus,
- 				     top->evlist->threads) < 0) {
-+
-+			/*
-+			 * Specially handle overwrite fall back.
-+			 * Because perf top is the only tool which has
-+			 * overwrite mode by default, support
-+			 * both overwrite and non-overwrite mode, and
-+			 * require consistent mode for all events.
-+			 *
-+			 * May move it to generic code with more tools
-+			 * have similar attribute.
-+			 */
-+			if (perf_missing_features.write_backward &&
-+			    perf_top_overwrite_fallback(top, counter))
-+				goto try_again;
-+
- 			if (perf_evsel__fallback(counter, errno, msg, sizeof(msg))) {
- 				if (verbose > 0)
- 					ui__warning("%s\n", msg);
+diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
+new file mode 100644
+index 0000000..3b62087
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
+@@ -0,0 +1,27 @@
++[
++  {,
++    "EventCode": "0x7A",
++    "EventName": "BR_INDIRECT_SPEC",
++    "BriefDescription": "Branch speculatively executed - Indirect branch"
++  },
++  {,
++    "EventCode": "0xC9",
++    "EventName": "BR_COND",
++    "BriefDescription": "Conditional branch executed"
++  },
++  {,
++    "EventCode": "0xCA",
++    "EventName": "BR_INDIRECT_MISPRED",
++    "BriefDescription": "Indirect branch mispredicted"
++  },
++  {,
++    "EventCode": "0xCB",
++    "EventName": "BR_INDIRECT_MISPRED_ADDR",
++    "BriefDescription": "Indirect branch mispredicted because of address miscompare"
++  },
++  {,
++    "EventCode": "0xCC",
++    "EventName": "BR_COND_MISPRED",
++    "BriefDescription": "Conditional branch mispredicted"
++  }
++]
+diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
+new file mode 100644
+index 0000000..480d9f7
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
+@@ -0,0 +1,22 @@
++[
++  {,
++    "EventCode": "0x60",
++    "EventName": "BUS_ACCESS_LD",
++    "BriefDescription": "Bus access - Read"
++  },
++  {,
++    "EventCode": "0x61",
++    "EventName": "BUS_ACCESS_ST",
++    "BriefDescription": "Bus access - Write"
++  },
++  {,
++    "EventCode": "0xC0",
++    "EventName": "EXT_MEM_REQ",
++    "BriefDescription": "External memory request"
++  },
++  {,
++    "EventCode": "0xC1",
++    "EventName": "EXT_MEM_REQ_NC",
++    "BriefDescription": "Non-cacheable external memory request"
++  }
++]
+diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
+new file mode 100644
+index 0000000..11baad6
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
+@@ -0,0 +1,27 @@
++[
++  {,
++    "EventCode": "0xC2",
++    "EventName": "PREFETCH_LINEFILL",
++    "BriefDescription": "Linefill because of prefetch"
++  },
++  {,
++    "EventCode": "0xC3",
++    "EventName": "PREFETCH_LINEFILL_DROP",
++    "BriefDescription": "Instruction Cache Throttle occurred"
++  },
++  {,
++    "EventCode": "0xC4",
++    "EventName": "READ_ALLOC_ENTER",
++    "BriefDescription": "Entering read allocate mode"
++  },
++  {,
++    "EventCode": "0xC5",
++    "EventName": "READ_ALLOC",
++    "BriefDescription": "Read allocate mode"
++  },
++  {,
++    "EventCode": "0xC8",
++    "EventName": "EXT_SNOOP",
++    "BriefDescription": "SCU Snooped data from another CPU for this CPU"
++  }
++]
+diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
+new file mode 100644
+index 0000000..480d9f7
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
+@@ -0,0 +1,22 @@
++[
++  {,
++    "EventCode": "0x60",
++    "EventName": "BUS_ACCESS_LD",
++    "BriefDescription": "Bus access - Read"
++  },
++  {,
++    "EventCode": "0x61",
++    "EventName": "BUS_ACCESS_ST",
++    "BriefDescription": "Bus access - Write"
++  },
++  {,
++    "EventCode": "0xC0",
++    "EventName": "EXT_MEM_REQ",
++    "BriefDescription": "External memory request"
++  },
++  {,
++    "EventCode": "0xC1",
++    "EventName": "EXT_MEM_REQ_NC",
++    "BriefDescription": "Non-cacheable external memory request"
++  }
++]
+diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
+new file mode 100644
+index 0000000..73a2240
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
+@@ -0,0 +1,32 @@
++[
++  {,
++    "EventCode": "0x86",
++    "EventName": "EXC_IRQ",
++    "BriefDescription": "Exception taken, IRQ"
++  },
++  {,
++    "EventCode": "0x87",
++    "EventName": "EXC_FIQ",
++    "BriefDescription": "Exception taken, FIQ"
++  },
++  {,
++    "EventCode": "0xC6",
++    "EventName": "PRE_DECODE_ERR",
++    "BriefDescription": "Pre-decode error"
++  },
++  {,
++    "EventCode": "0xD0",
++    "EventName": "L1I_CACHE_ERR",
++    "BriefDescription": "L1 Instruction Cache (data or tag) memory error"
++  },
++  {,
++    "EventCode": "0xD1",
++    "EventName": "L1D_CACHE_ERR",
++    "BriefDescription": "L1 Data Cache (data, tag or dirty) memory error, correctable or non-correctable"
++  },
++  {,
++    "EventCode": "0xD2",
++    "EventName": "TLB_ERR",
++    "BriefDescription": "TLB memory error"
++  }
++]
+diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
+new file mode 100644
+index 0000000..3149fb9
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
+@@ -0,0 +1,52 @@
++[
++  {,
++    "EventCode": "0xC7",
++    "EventName": "STALL_SB_FULL",
++    "BriefDescription": "Data Write operation that stalls the pipeline because the store buffer is full"
++  },
++  {,
++    "EventCode": "0xE0",
++    "EventName": "OTHER_IQ_DEP_STALL",
++    "BriefDescription": "Cycles that the DPU IQ is empty and that is not because of a recent micro-TLB miss, instruction cache miss or pre-decode error"
++  },
++  {,
++    "EventCode": "0xE1",
++    "EventName": "IC_DEP_STALL",
++    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction cache miss being processed"
++  },
++  {,
++    "EventCode": "0xE2",
++    "EventName": "IUTLB_DEP_STALL",
++    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction micro-TLB miss being processed"
++  },
++  {,
++    "EventCode": "0xE3",
++    "EventName": "DECODE_DEP_STALL",
++    "BriefDescription": "Cycles the DPU IQ is empty and there is a pre-decode error being processed"
++  },
++  {,
++    "EventCode": "0xE4",
++    "EventName": "OTHER_INTERLOCK_STALL",
++    "BriefDescription": "Cycles there is an interlock other than  Advanced SIMD/Floating-point instructions or load/store instruction"
++  },
++  {,
++    "EventCode": "0xE5",
++    "EventName": "AGU_DEP_STALL",
++    "BriefDescription": "Cycles there is an interlock for a load/store instruction waiting for data to calculate the address in the AGU"
++  },
++  {,
++    "EventCode": "0xE6",
++    "EventName": "SIMD_DEP_STALL",
++    "BriefDescription": "Cycles there is an interlock for an Advanced SIMD/Floating-point operation."
++  },
++  {,
++    "EventCode": "0xE7",
++    "EventName": "LD_DEP_STALL",
++    "BriefDescription": "Cycles there is a stall in the Wr stage because of a load miss"
++  },
++  {,
++    "EventCode": "0xE8",
++    "EventName": "ST_DEP_STALL",
++    "BriefDescription": "Cycles there is a stall in the Wr stage because of a store"
++  }
++]
+diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+index 219d675..e61c9ca 100644
+--- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
++++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+@@ -13,3 +13,4 @@
+ #
+ #Family-model,Version,Filename,EventType
+ 0x00000000420f5160,v1,cavium,core
++0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
