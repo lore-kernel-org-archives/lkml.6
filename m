@@ -1,157 +1,100 @@
-Return-Path: <stefano.manni@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1517512501; cv=none;
-        d=google.com; s=arc-20160816;
-        b=t7e6uTeXPA6S44sAFm+i84de5ozw+kUXb4mU365MPWO5qh3rXZG8Waee16OiHdJIc4
-         Qkgl40I7JgHYCTY6/aM94dkfiyK/yyaGH/Kz4pUL34UBAONsiM0tSlCLOwEGVKU7xRkx
-         usaS0KxBTs4mga4pp5SyY5hTE8KQ+btlkXq7GKvCNRyJCStTnvk02wpGV2quDYYBNYjJ
-         SRs/ENyL1XlIzpJISYG93U7qUQWWBCMgCu/x+Xf85gpsCmoupcJAu0hMql7zUjR8NWcC
-         XOzmY+I9K+A7ka7KBTUMGIO/sfWqeMywR5uX2DiwtNL+x25lR4Do8tKklAxJwjqrbebM
-         ousQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=z+tzD0hKFUQz3KfcIOZgY/KMQ94UPTZ4Qj+XC7e8Svs=;
-        b=d+lKMyOBwSrRRYyYPTTQk+jb12ZTMazRNHncHd4rNrZ7VpuRZhNvwUIq8fBVH8a5Pz
-         7w9wI6LCpk75FaL55v0SyWXfHIxgJ0BxdNLPyAn3TV6tl2wWSc1TvL9sq5jh1afKN2Pp
-         6WSb04nMJ3cg59LHCmzw3bb/9fc/aGYhjC6iEuqXW0XQFT4lvIjBoB1GUv+n4PIDKZG8
-         Y99Y3Ujo/79cKxl16d2asOdHZwcomc5xsM7CNy9E4xJNuQh4PMmsGlm97+OHTfha4YuH
-         LjXKuGQhunivCQgi3xPVkBdYto6RUoZJ1H+3CLdRtW+n+m84nhUFHozeomrza4o7cJtT
-         ycmw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=dbGvuh5L;
-       spf=pass (google.com: domain of stefano.manni@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=stefano.manni@gmail.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=dbGvuh5L;
-       spf=pass (google.com: domain of stefano.manni@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=stefano.manni@gmail.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x224QBOtrL7C7EVW60duR/hEqJCSzVgPcxLCp7crQ/P/FZr/baNHmQ9TGZsy+DQJ5BU5TnVrthw==
-From: Stefano Manni <stefano.manni@gmail.com>
-To: Larry.Finger@lwfinger.net,
-	florian.c.schilhabel@googlemail.com
-Cc: gregkh@linuxfoundation.org,
-	devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org,
-	Stefano Manni <stefano.manni@gmail.com>
-Subject: [PATCH 1/2] staging: rtl8712: make unsigned length for rtl8717_get{_wpa_,_wpa2_,_}ie
-Date: Thu,  1 Feb 2018 20:14:52 +0100
-Message-Id: <20180201191453.4611-1-stefano.manni@gmail.com>
-X-Mailer: git-send-email 2.9.4
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-340991-1518792518-2-11147160878357163944
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518792517; b=ja3Zxs958+Z1rKBtMcTuDgAGC1KnfRhY+piE35NMd5VDmDS
+    Zow0TiA/FYxHJMdzQNoBLSgjANJSCdqnbbwd8tVBXCcKGoHtzgQIHh9oNCaGTWoE
+    uyyslX/ZMprE1IuMcy3TsUZndSDTYsn9GXKN0aPZVMPiPtP/tuqkNutMO4N8lkD+
+    o4cKZ5hBMWyCPD3ks9NFK6ZvuigtNnrLD3nxB8Oc302eFtdNfAUJzYqVSqlqEswF
+    aIe697kzb6CroeFWvIvq6lQLa5i0Iq9i2wFxBpHjnuwml3bLpBP9rqFiNE2pte2U
+    PDYc+4WXy/KCh31FYY5CGvwTqK8RI6QMqFP1FBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518792517; bh=1
+    MqCk8NlYYhtr9UccU9WgcIKklf4Zkg5OLes5+LUJ2c=; b=kGik+2VWrnvNgNvbT
+    22bvU36OaO+p0EwN32NFgyeuBpzNzGrzHpuuO8mu5/ePypeyY1oY3wcir6ByYPuY
+    pmON3rBAGJXBpaSZ/+JiT7aF16PcWjWnyMlF0KdKbdWkJ9+Wm00sKT7mWuBM527s
+    b233EAIQsO1fY0aWvZWhggDJ2vhOvM4zFwfsRSds50wyFU8V3SemYsoNjyEAevKO
+    gP6SN8QlJaM5Z9rzYH6gukhk5PojHHwcunot+/ufWajhuVUpM+63U+k3dclx1BJI
+    8I6GtsV4FNApm3bRaD0TB+msMABqVAFuYxY0QyuF88xIyc3At2u1+sAta6IrsW/m
+    VpwCA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Date: Fri, 16 Feb 2018 15:48:19 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Stefano Manni <stefano.manni@gmail.com>
+Subject: Re: [PATCH 1/2] staging: rtl8712: make unsigned length for
+ rtl8717_get{_wpa_,_wpa2_,_}ie
+Message-ID: <20180216144819.GA10052@kroah.com>
+References: <20180201191453.4611-1-stefano.manni@gmail.com>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <20180201191453.4611-1-stefano.manni@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com,
+ linux-kernel@vger.kernel.org, Larry.Finger@lwfinger.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591227189556789119?=
-X-GMAIL-MSGID: =?utf-8?q?1591227189556789119?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fixed r8712_get_ie, r8712_get_wpa_ie, r8712_get_wpa2_ie
-to have a length as unsigned int pointer instead of signed.
+On Thu, Feb 01, 2018 at 08:14:52PM +0100, Stefano Manni wrote:
+> Fixed r8712_get_ie, r8712_get_wpa_ie, r8712_get_wpa2_ie
+> to have a length as unsigned int pointer instead of signed.
 
-Sparse warnings:
+<snip>
 
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:173:27: warning: incorrect type in argument 3 (different signedness)
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:173:27:    expected signed int *len
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:173:27:    got unsigned int *<noident>
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:613:35: warning: incorrect type in argument 3 (different signedness)
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:613:35:    expected signed int *len
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:613:35:    got unsigned int *<noident>
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:1411:67: warning: incorrect type in argument 3 (different signedness)
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:1411:67:    expected signed int *len
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:1411:67:    got unsigned int *<noident>
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:1992:33: warning: incorrect type in argument 2 (different signedness)
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:1992:33:    expected int *rsn_ie_len
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:1992:33:    got unsigned int *<noident>
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:1998:33: warning: incorrect type in argument 2 (different signedness)
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:1998:33:    expected int *rsn_ie_len
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:1998:33:    got unsigned int *<noident>
-drivers/staging/rtl8712/rtl871x_mlme.c:1701:59: warning: incorrect type in argument 3 (different signedness)
-drivers/staging/rtl8712/rtl871x_mlme.c:1701:59:    expected signed int *len
-drivers/staging/rtl8712/rtl871x_mlme.c:1701:59:    got unsigned int *<noident>
+Can you rebase both of these patches on the staging-testing branch of
+the staging.git tree so that I can apply them?  Right now they have too
+many conflicts.
 
-Signed-off-by: Stefano Manni <stefano.manni@gmail.com>
----
- drivers/staging/rtl8712/ieee80211.c    | 8 ++++----
- drivers/staging/rtl8712/ieee80211.h    | 6 +++---
- drivers/staging/rtl8712/rtl871x_mlme.c | 3 ++-
- drivers/staging/rtl8712/rtl871x_xmit.c | 2 +-
- 4 files changed, 10 insertions(+), 9 deletions(-)
+thanks,
 
-diff --git a/drivers/staging/rtl8712/ieee80211.c b/drivers/staging/rtl8712/ieee80211.c
-index 33e82a9dd462..35e29112006b 100644
---- a/drivers/staging/rtl8712/ieee80211.c
-+++ b/drivers/staging/rtl8712/ieee80211.c
-@@ -107,7 +107,7 @@ u8 *r8712_set_ie(u8 *pbuf, sint index, uint len, u8 *source, uint *frlen)
-  * index: the information element id index, limit is the limit for search
-  * ---------------------------------------------------------------------------
-  */
--u8 *r8712_get_ie(u8 *pbuf, sint index, sint *len, sint limit)
-+u8 *r8712_get_ie(u8 *pbuf, sint index, uint *len, sint limit)
- {
- 	sint tmp, i;
- 	u8 *p;
-@@ -210,9 +210,9 @@ int r8712_generate_ie(struct registry_priv *pregistrypriv)
- 	return sz;
- }
- 
--unsigned char *r8712_get_wpa_ie(unsigned char *pie, int *wpa_ie_len, int limit)
-+unsigned char *r8712_get_wpa_ie(unsigned char *pie, uint *wpa_ie_len, int limit)
- {
--	int len;
-+	u32 len;
- 	u16 val16;
- 	unsigned char wpa_oui_type[] = {0x00, 0x50, 0xf2, 0x01};
- 	u8 *pbuf = pie;
-@@ -243,7 +243,7 @@ unsigned char *r8712_get_wpa_ie(unsigned char *pie, int *wpa_ie_len, int limit)
- 	return NULL;
- }
- 
--unsigned char *r8712_get_wpa2_ie(unsigned char *pie, int *rsn_ie_len, int limit)
-+unsigned char *r8712_get_wpa2_ie(unsigned char *pie, uint *rsn_ie_len, int limit)
- {
- 	return r8712_get_ie(pie, _WPA2_IE_ID_, rsn_ie_len, limit);
- }
-diff --git a/drivers/staging/rtl8712/ieee80211.h b/drivers/staging/rtl8712/ieee80211.h
-index 68fd65e80906..d605dfd02200 100644
---- a/drivers/staging/rtl8712/ieee80211.h
-+++ b/drivers/staging/rtl8712/ieee80211.h
-@@ -738,9 +738,9 @@ static inline int ieee80211_get_hdrlen(u16 fc)
- struct registry_priv;
- 
- u8 *r8712_set_ie(u8 *pbuf, sint index, uint len, u8 *source, uint *frlen);
--u8 *r8712_get_ie(u8 *pbuf, sint index, sint *len, sint limit);
--unsigned char *r8712_get_wpa_ie(unsigned char *pie, int *rsn_ie_len, int limit);
--unsigned char *r8712_get_wpa2_ie(unsigned char *pie, int *rsn_ie_len,
-+u8 *r8712_get_ie(u8 *pbuf, sint index, uint *len, sint limit);
-+unsigned char *r8712_get_wpa_ie(unsigned char *pie, uint *rsn_ie_len, int limit);
-+unsigned char *r8712_get_wpa2_ie(unsigned char *pie, uint *rsn_ie_len,
- 				 int limit);
- int r8712_parse_wpa_ie(u8 *wpa_ie, int wpa_ie_len, int *group_cipher,
- 		       int *pairwise_cipher);
-diff --git a/drivers/staging/rtl8712/rtl871x_mlme.c b/drivers/staging/rtl8712/rtl871x_mlme.c
-index 111c809afc51..215fa8999a80 100644
---- a/drivers/staging/rtl8712/rtl871x_mlme.c
-+++ b/drivers/staging/rtl8712/rtl871x_mlme.c
-@@ -1728,7 +1728,8 @@ unsigned int r8712_restructure_ht_ie(struct _adapter *padapter, u8 *in_ie,
- static void update_ht_cap(struct _adapter *padapter, u8 *pie, uint ie_len)
- {
- 	u8 *p, max_ampdu_sz;
--	int i, len;
-+	int i;
-+	uint len;
- 	struct sta_info *bmc_sta, *psta;
- 	struct ieee80211_ht_cap *pht_capie;
- 	struct recv_reorder_ctrl *preorder_ctrl;
-diff --git a/drivers/staging/rtl8712/rtl871x_xmit.c b/drivers/staging/rtl8712/rtl871x_xmit.c
-index eda2aee02ff8..a8ae14ce6613 100644
---- a/drivers/staging/rtl8712/rtl871x_xmit.c
-+++ b/drivers/staging/rtl8712/rtl871x_xmit.c
-@@ -717,7 +717,7 @@ void r8712_update_protection(struct _adapter *padapter, u8 *ie, uint ie_len)
- {
- 	uint	protection;
- 	u8	*perp;
--	sint	 erp_len;
-+	uint	erp_len;
- 	struct	xmit_priv *pxmitpriv = &padapter->xmitpriv;
- 	struct	registry_priv *pregistrypriv = &padapter->registrypriv;
- 
--- 
-2.14.3
+greg k-h
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
