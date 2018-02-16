@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966643AbeBPP1N (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:27:13 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45378 "EHLO
+        id S1030192AbeBPP10 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:27:26 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40622 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1758158AbeBPP1K (ORCPT
+        by vger.kernel.org with ESMTP id S966891AbeBPP1T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:27:10 -0500
+        Fri, 16 Feb 2018 10:27:19 -0500
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
@@ -25,16 +25,16 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         npiggin@gmail.com, bsingharora@gmail.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: [PATCH v8 23/24] x86/mm: Add speculative pagefault handling
-Date: Fri, 16 Feb 2018 16:25:37 +0100
+Subject: [PATCH v8 20/24] perf: Add a speculative page fault sw event
+Date: Fri, 16 Feb 2018 16:25:34 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18021615-0020-0000-0000-000003F8815D
+x-cbid: 18021615-0012-0000-0000-000005B1801B
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021615-0021-0000-0000-0000428C8557
-Message-Id: <1518794738-4186-24-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18021615-0013-0000-0000-0000192D84B7
+Message-Id: <1518794738-4186-21-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-16_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -46,95 +46,24 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+Add a new software event to count succeeded speculative page faults.
 
-Try a speculative fault before acquiring mmap_sem, if it returns with
-VM_FAULT_RETRY continue with the mmap_sem acquisition and do the
-traditional fault.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-
-[Clearing of FAULT_FLAG_ALLOW_RETRY is now done in
- handle_speculative_fault()]
-[Retry with usual fault path in the case VM_ERROR is returned by
- handle_speculative_fault(). This allows signal to be delivered]
-[Don't build SPF call if !CONFIG_SPECULATIVE_PAGE_FAULT]
-[Try speculative fault path only for multi threaded processes]
-[Try to the VMA fetch during the speculative path in case of retry]
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- arch/x86/mm/fault.c | 38 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
+ include/uapi/linux/perf_event.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 800de815519c..d9f9236ccb9a 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -1239,6 +1239,9 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
- 		unsigned long address)
- {
- 	struct vm_area_struct *vma;
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+	struct vm_area_struct *spf_vma = NULL;
-+#endif
- 	struct task_struct *tsk;
- 	struct mm_struct *mm;
- 	int fault, major = 0;
-@@ -1336,6 +1339,27 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
- 	if (error_code & X86_PF_INSTR)
- 		flags |= FAULT_FLAG_INSTRUCTION;
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index e0739a1aa4b2..164383273147 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -112,6 +112,7 @@ enum perf_sw_ids {
+ 	PERF_COUNT_SW_EMULATION_FAULTS		= 8,
+ 	PERF_COUNT_SW_DUMMY			= 9,
+ 	PERF_COUNT_SW_BPF_OUTPUT		= 10,
++	PERF_COUNT_SW_SPF			= 11,
  
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+	if ((error_code & X86_PF_USER) && (atomic_read(&mm->mm_users) > 1)) {
-+		fault = handle_speculative_fault(mm, address, flags,
-+						 &spf_vma);
-+
-+		if (!(fault & VM_FAULT_RETRY)) {
-+			if (!(fault & VM_FAULT_ERROR)) {
-+				perf_sw_event(PERF_COUNT_SW_SPF, 1,
-+					      regs, address);
-+				goto done;
-+			}
-+			/*
-+			 * In case of error we need the pkey value, but
-+			 * can't get it from the spf_vma as it is only returned
-+			 * when VM_FAULT_RETRY is returned. So we have to
-+			 * retry the page fault with the mmap_sem grabbed.
-+			 */
-+		}
-+	}
-+#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
-+
- 	/*
- 	 * When running in the kernel we expect faults to occur only to
- 	 * addresses in user space.  All other faults represent errors in
-@@ -1369,7 +1393,16 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
- 		might_sleep();
- 	}
- 
--	vma = find_vma(mm, address);
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+	if (spf_vma) {
-+		if (can_reuse_spf_vma(spf_vma, address))
-+			vma = spf_vma;
-+		else
-+			vma = find_vma(mm, address);
-+		spf_vma = NULL;
-+	} else
-+#endif
-+		vma = find_vma(mm, address);
- 	if (unlikely(!vma)) {
- 		bad_area(regs, error_code, address);
- 		return;
-@@ -1455,6 +1488,9 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
- 		return;
- 	}
- 
-+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-+done:
-+#endif
- 	/*
- 	 * Major/minor page fault accounting. If any of the events
- 	 * returned VM_FAULT_MAJOR, we account it as a major fault.
+ 	PERF_COUNT_SW_MAX,			/* non-ABI */
+ };
 -- 
 2.7.4
