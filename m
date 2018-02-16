@@ -1,798 +1,754 @@
-Return-Path: <ulfalizer@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519077993; cv=none;
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AH8x225fpoAeFCoP/GVw7iGXEhukjLcJenUQnFR1/zyt6CiA8T40HwrtH6IiHsxEmBtwucF5Kk1E
+ARC-Seal: i=1; a=rsa-sha256; t=1518806390; cv=none;
         d=google.com; s=arc-20160816;
-        b=VO0tMKgy5/bHPXa0UpGfS4yCrHw+10Koj2Yc0/4VW4UO8WAYz458E2RFSNvBHtaK7l
-         MchxorVzVDAQ2GdItta4Fh/tku7jTdNTrG7DLe2EKGnNvaUd9aDCky+hDwVHaLuP8trH
-         qFkwRuV25V+7WPq5JB2QIFfPRzG1EwXzdzIdj27pGR8KNDdHJ/jTOAYL7zd2aKH4B0W7
-         Wzm/xB70RNZf+aolqJ6iqmYHzhfZau+TNf4q2OEYwcL8kW9pilPAgDQ9KRXifsKytP7r
-         +no6hFfa1i6V9jtPCu6lCIvESSPLG9mUUkfZ9BlhLVlYcD6Hc6YgltfjE4kprTpgUQmu
-         q+uA==
+        b=J1BigV6v0aXFxuLN2uwpkOfWIXFwOibbFgLhCYnTnnHp+TDCMwEc6UdczBrX0K2BhR
+         WODCFm6Y2aXfq0eSDVirhy7TRGoyd/Z+b5NV9ZLpxb2V4TdHTBizWnPPKz+HtbM95mny
+         DpyFNr9oAlWDQs/JikRQ5gtDgL2SqY7y9iMTDQLzUMTE3XEkXct70nQwg1ClH3E4sG2r
+         NyuKXC7caN7CaF7xHsDEdgA1Et0qlINo7cAoZUwnwrEv80L+WgyqgbkaHK/h3Tr+2VCx
+         PFpFJXnZ+7008LOG36DTgY3RX9JvsQaqPwZ3LQduDMdJCj0XQXcPXUej/EKvAv2dvw71
+         SncQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=WkqQFyZcsgXm0F5TPw9IqKJ1OvvwPdhz3jrIIm65DW8=;
-        b=uOhJS1HRoFM0x8Dx/WVgOguKGj62N1wkAHmKnHgLaRbjP5yihFcD4jmGy7rx7oltBu
-         PeUphswyATyK6pUCQ3CiL7R+KGm/coAazhMpDLyR0seVkkyEDpB6AdlngBBpNB/GwTbr
-         06KHhcFzIv3gQTBTfw3Sg4+roPaZU+LrUBQ1gHVlYPf8ZPGtn+EMdrm0roD7foJ2kfJN
-         3EoPE8GEM80GLYWm8gK6hYLsN1DkEwBeQNx6FVrQxPE3rMWrjPQXJ5VmVSuiZOoFcM6i
-         cGZRHfn/hxFTfSyldopI6hwaodNXoc65h+PgD1d9At5o/QlK1JQuojmaiESN2duqZoUD
-         RVpQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-filter:arc-authentication-results;
+        bh=v/ny6VJzm2Ll1c4GNuLdzJpeFvQuhQcfHoQxEj3r8ng=;
+        b=vK8Dt3uQhO+1nYNEtydacz0/lTelLm6yc2fw5SlkKvt5dnmS8cbZyDu0psACRLUp3z
+         h5oxHOU5jclCm8VJP0zMo/clij0YtdfSE/JEUrvm0hOOC6WG6psUREDEOjFHQq61+IpK
+         Q6Kok370Cd7V+3Y06w0w6N3uvO7ZdMfU1ugP8nD3AdAGKTzNv2cVFqe7btluTX9QTRGZ
+         2dLWFnk9cLTOTUXgYnT65Z/aTqdIeWWsWh7m19Wveqov3ttXtL1q8i0vzOyp0/2rMpWZ
+         m/tooXT7FPn116sCFBC+QN3BD9rIq82ajfXSzWfiWXBWrNRZrghP838527/msPf/+zZA
+         G84A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=n+AjsDMs;
-       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=s3DRY770;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=n+AjsDMs;
-       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x227JKUVvjELztkHsF2kPqnOba/f9nZBTHf6hTIH/rWCIvmdmPj/DqSGtRi0DRk7xh/5LtoAJgw==
-Date: Mon, 19 Feb 2018 23:06:18 +0100
-From: Ulf Magnusson <ulfalizer@gmail.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Michal Marek <michal.lkml@markovi.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 07/23] kconfig: add function support and implement
- 'shell' function
-Message-ID: <20180219220618.5efvutflvfjsxpss@huvuddator>
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=s3DRY770;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBT9013418
+X-Nifty-SrcIP: [125.199.20.195]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>, x86@kernel.org,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-sh@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        user-mode-linux-user@lists.sourceforge.net,
+        user-mode-linux-devel@lists.sourceforge.net,
+        Rich Felker <dalias@libc.org>, Ingo Molnar <mingo@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>
+Subject: [PATCH 06/23] kconfig: reference environments directly and remove 'option env=' syntax
+Date: Sat, 17 Feb 2018 03:38:34 +0900
+Message-Id: <1518806331-7101-7-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
- <1518806331-7101-8-git-send-email-yamada.masahiro@socionext.com>
- <20180217161636.h6miw4xhu2mfjzvd@huvuddator>
- <CAK7LNAQDwqW8UMaXXKtbg9YUVRitobe9RraUQ3mmYQdxDgqYpA@mail.gmail.com>
- <20180219175059.iirtcd2pugmbje7f@huvuddator>
- <CAFkk2KQL_cU2YPpgkw2TZnmQ6nUgpawYizW+JLQn7WOBwDThGQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAFkk2KQL_cU2YPpgkw2TZnmQ6nUgpawYizW+JLQn7WOBwDThGQ@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592583925672243095?=
-X-GMAIL-MSGID: =?utf-8?q?1592868726218034393?=
+X-GMAIL-THRID: =?utf-8?q?1592583930453085051?=
+X-GMAIL-MSGID: =?utf-8?q?1592583930453085051?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 19, 2018 at 09:06:55PM +0100, Ulf Magnusson wrote:
-> On Mon, Feb 19, 2018 at 6:50 PM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
-> > On Tue, Feb 20, 2018 at 12:57:13AM +0900, Masahiro Yamada wrote:
-> >> 2018-02-18 1:16 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
-> >> > On Sat, Feb 17, 2018 at 03:38:35AM +0900, Masahiro Yamada wrote:
-> >> >> This commit adds a new concept 'function' to Kconfig.  A function call
-> >> >> resembles a variable reference with arguments, and looks like this:
-> >> >>
-> >> >>   $(function arg1, arg2, arg3, ...)
-> >> >>
-> >> >> (Actually, this syntax was inspired by Makefile.)
-> >> >>
-> >> >> Real examples will look like this:
-> >> >>
-> >> >>   $(shell true)
-> >> >>   $(cc-option -fstackprotector)
-> >> >>
-> >> >> This commit adds the basic infrastructure to add, delete, evaluate
-> >> >> functions.
-> >> >>
-> >> >> Also, add the first built-in function $(shell ...).  This evaluates
-> >> >> to 'y' if the given command exits with 0, 'n' otherwise.
-> >> >>
-> >> >> I am also planning to support user-defined functions (a.k.a 'macro')
-> >> >> for cases where hard-coding is not preferred.
-> >> >>
-> >> >> If you want to try this feature, the hello-world code is someting below.
-> >> >>
-> >> >> Example code:
-> >> >>
-> >> >>   config CC_IS_GCC
-> >> >>           bool
-> >> >>           default $(shell $CC --version | grep -q gcc)
-> >> >>
-> >> >>   config CC_IS_CLANG
-> >> >>           bool
-> >> >>           default $(shell $CC --version | grep -q clang)
-> >> >>
-> >> >>   config CC_HAS_OZ
-> >> >>           bool
-> >> >>           default $(shell $CC -Werror -Oz -c -x c /dev/null -o /dev/null)
-> >> >>
-> >> >> Result:
-> >> >>
-> >> >>   $ make -s alldefconfig && tail -n 3 .config
-> >> >>   CONFIG_CC_IS_GCC=y
-> >> >>   # CONFIG_CC_IS_CLANG is not set
-> >> >>   # CONFIG_CC_HAS_OZ is not set
-> >> >>
-> >> >>   $ make CC=clang -s alldefconfig && tail -n 3 .config
-> >> >>   # CONFIG_CC_IS_GCC is not set
-> >> >>   CONFIG_CC_IS_CLANG=y
-> >> >>   CONFIG_CC_HAS_OZ=y
-> >> >>
-> >> >> A function call can appear anywhere a symbol reference can appear.
-> >> >> So, the following code is possible.
-> >> >>
-> >> >> Example code:
-> >> >>
-> >> >>   config CC_NAME
-> >> >>           string
-> >> >>           default "gcc" if $(shell $CC --version | grep -q gcc)
-> >> >>           default "clang" if $(shell $CC --version | grep -q clang)
-> >> >>           default "unknown compiler"
-> >> >>
-> >> >> Result:
-> >> >>
-> >> >>   $ make -s alldefconfig && tail -n 1 .config
-> >> >>   CONFIG_CC_NAME="gcc"
-> >> >>
-> >> >>   $ make CC=clang -s alldefconfig && tail -n 1 .config
-> >> >>   CONFIG_CC_NAME="clang"
-> >> >>
-> >> >> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> >> >> ---
-> >> >>
-> >> >> Reminder for myself:
-> >> >> Update Documentation/kbuild/kconfig-language.txt
-> >> >>
-> >> >>
-> >> >>  scripts/kconfig/function.c  | 149 ++++++++++++++++++++++++++++++++++++++++++++
-> >> >>  scripts/kconfig/lkc_proto.h |   5 ++
-> >> >>  scripts/kconfig/util.c      |  46 +++++++++++---
-> >> >>  scripts/kconfig/zconf.l     |  38 ++++++++++-
-> >> >>  scripts/kconfig/zconf.y     |   9 +++
-> >> >>  5 files changed, 238 insertions(+), 9 deletions(-)
-> >> >>  create mode 100644 scripts/kconfig/function.c
-> >> >>
-> >> >> diff --git a/scripts/kconfig/function.c b/scripts/kconfig/function.c
-> >> >> new file mode 100644
-> >> >> index 0000000..60e59be
-> >> >> --- /dev/null
-> >> >> +++ b/scripts/kconfig/function.c
-> >> >> @@ -0,0 +1,149 @@
-> >> >> +// SPDX-License-Identifier: GPL-2.0
-> >> >> +//
-> >> >> +// Copyright (C) 2018 Masahiro Yamada <yamada.masahiro@socionext.com>
-> >> >> +
-> >> >> +#include <stdio.h>
-> >> >> +#include <stdlib.h>
-> >> >> +#include <string.h>
-> >> >> +
-> >> >> +#include "list.h"
-> >> >> +
-> >> >> +#define FUNCTION_MAX_ARGS            10
-> >> >> +
-> >> >> +static LIST_HEAD(function_list);
-> >> >> +
-> >> >> +struct function {
-> >> >> +     const char *name;
-> >> >> +     char *(*func)(int argc, char *argv[]);
-> >> >> +     struct list_head node;
-> >> >> +};
-> >> >> +
-> >> >> +static struct function *func_lookup(const char *name)
-> >> >> +{
-> >> >> +     struct function *f;
-> >> >> +
-> >> >> +     list_for_each_entry(f, &function_list, node) {
-> >> >> +             if (!strcmp(name, f->name))
-> >> >> +                     return f;
-> >> >> +     }
-> >> >> +
-> >> >> +     return NULL;
-> >> >> +}
-> >> >> +
-> >> >> +static void func_add(const char *name, char *(*func)(int argc, char *argv[]))
-> >> >> +{
-> >> >> +     struct function *f;
-> >> >> +
-> >> >> +     f = func_lookup(name);
-> >> >> +     if (f) {
-> >> >> +             fprintf(stderr, "%s: function already exists. ignored.\n", name);
-> >> >> +             return;
-> >> >> +     }
-> >> >> +
-> >> >> +     f = xmalloc(sizeof(*f));
-> >> >> +     f->name = name;
-> >> >> +     f->func = func;
-> >> >> +
-> >> >> +     list_add_tail(&f->node, &function_list);
-> >> >> +}
-> >> >> +
-> >> >> +static void func_del(struct function *f)
-> >> >> +{
-> >> >> +     list_del(&f->node);
-> >> >> +     free(f);
-> >> >> +}
-> >> >> +
-> >> >> +static char *func_call(int argc, char *argv[])
-> >> >> +{
-> >> >> +     struct function *f;
-> >> >> +
-> >> >> +     f = func_lookup(argv[0]);
-> >> >> +     if (!f) {
-> >> >> +             fprintf(stderr, "%s: function not found\n", argv[0]);
-> >> >> +             return NULL;
-> >> >> +     }
-> >> >> +
-> >> >> +     return f->func(argc, argv);
-> >> >> +}
-> >> >> +
-> >> >> +static char *func_eval(const char *func)
-> >> >> +{
-> >> >> +     char *expanded, *saveptr, *str, *token, *res;
-> >> >> +     const char *delim;
-> >> >> +     int argc = 0;
-> >> >> +     char *argv[FUNCTION_MAX_ARGS];
-> >> >> +
-> >> >> +     expanded = expand_string_value(func);
-> >> >> +
-> >> >> +     str = expanded;
-> >> >> +     delim = " ";
-> >> >> +
-> >> >> +     while ((token = strtok_r(str, delim, &saveptr))) {
-> >> >> +             argv[argc++] = token;
-> >> >> +             str = NULL;
-> >> >> +             delim = ",";
-> >> >> +     }
-> >> >> +
-> >> >> +     res = func_call(argc, argv);
-> >> >> +
-> >> >> +     free(expanded);
-> >> >> +
-> >> >> +     return res ?: xstrdup("");
-> >> >> +}
-> >> >> +
-> >> >> +char *func_eval_n(const char *func, size_t n)
-> >> >> +{
-> >> >> +     char *tmp, *res;
-> >> >> +
-> >> >> +     tmp = xmalloc(n + 1);
-> >> >> +     memcpy(tmp, func, n);
-> >> >> +     *(tmp + n) = '\0';
-> >> >> +
-> >> >> +     res = func_eval(tmp);
-> >> >> +
-> >> >> +     free(tmp);
-> >> >> +
-> >> >> +     return res;
-> >> >> +}
-> >> >> +
-> >> >> +/* built-in functions */
-> >> >> +static char *do_shell(int argc, char *argv[])
-> >> >> +{
-> >> >> +     static const char *pre = "(";
-> >> >> +     static const char *post = ") >/dev/null 2>&1";
-> >> >> +     char *cmd;
-> >> >> +     int ret;
-> >> >> +
-> >> >> +     if (argc != 2)
-> >> >> +             return NULL;
-> >> >> +
-> >> >> +     /*
-> >> >> +      * Surround the command with ( ) in case it is piped commands.
-> >> >> +      * Also, redirect stdout and stderr to /dev/null.
-> >> >> +      */
-> >> >> +     cmd = xmalloc(strlen(pre) + strlen(argv[1]) + strlen(post) + 1);
-> >> >> +     strcpy(cmd, pre);
-> >> >> +     strcat(cmd, argv[1]);
-> >> >> +     strcat(cmd, post);
-> >> >> +
-> >> >> +     ret = system(cmd);
-> >> >> +
-> >> >> +     free(cmd);
-> >> >> +
-> >> >> +     return xstrdup(ret == 0 ? "y" : "n");
-> >> >> +}
-> >> >> +
-> >> >> +void func_init(void)
-> >> >> +{
-> >> >> +     /* register built-in functions */
-> >> >> +     func_add("shell", do_shell);
-> >> >> +}
-> >> >> +
-> >> >> +void func_exit(void)
-> >> >> +{
-> >> >> +     struct function *f, *tmp;
-> >> >> +
-> >> >> +     /* unregister all functions */
-> >> >> +     list_for_each_entry_safe(f, tmp, &function_list, node)
-> >> >> +             func_del(f);
-> >> >> +}
-> >> >> diff --git a/scripts/kconfig/lkc_proto.h b/scripts/kconfig/lkc_proto.h
-> >> >> index 9884adc..09a4f53 100644
-> >> >> --- a/scripts/kconfig/lkc_proto.h
-> >> >> +++ b/scripts/kconfig/lkc_proto.h
-> >> >> @@ -48,5 +48,10 @@ const char * sym_get_string_value(struct symbol *sym);
-> >> >>
-> >> >>  const char * prop_get_type_name(enum prop_type type);
-> >> >>
-> >> >> +/* function.c */
-> >> >> +char *func_eval_n(const char *func, size_t n);
-> >> >> +void func_init(void);
-> >> >> +void func_exit(void);
-> >> >> +
-> >> >>  /* expr.c */
-> >> >>  void expr_print(struct expr *e, void (*fn)(void *, struct symbol *, const char *), void *data, int prevtoken);
-> >> >> diff --git a/scripts/kconfig/util.c b/scripts/kconfig/util.c
-> >> >> index dddf85b..ed89fb9 100644
-> >> >> --- a/scripts/kconfig/util.c
-> >> >> +++ b/scripts/kconfig/util.c
-> >> >> @@ -93,9 +93,10 @@ static char *env_expand_n(const char *name, size_t n)
-> >> >>  }
-> >> >>
-> >> >>  /*
-> >> >> - * Expand environments embedded in the string given in argument. Environments
-> >> >> - * to be expanded shall be prefixed by a '$'. Unknown environment expands to
-> >> >> - * the empty string.
-> >> >> + * Expand environments and functions embedded in the string given in argument.
-> >> >> + * Environments to be expanded shall be prefixed by a '$'. Functions to be
-> >> >> + * evaluated shall be surrounded by $(). Unknown environment/function expands
-> >> >> + * to the empty string.
-> >> >>   */
-> >> >>  char *expand_string_value(const char *in)
-> >> >>  {
-> >> >> @@ -113,11 +114,40 @@ char *expand_string_value(const char *in)
-> >> >>       while ((p = strchr(in, '$'))) {
-> >> >>               char *new;
-> >> >>
-> >> >> -             q = p + 1;
-> >> >> -             while (isalnum(*q) || *q == '_')
-> >> >> -                     q++;
-> >> >> -
-> >> >> -             new = env_expand_n(p + 1, q - p - 1);
-> >> >> +             /*
-> >> >> +              * If the next character is '(', it is a function.
-> >> >> +              * Otherwise, environment.
-> >> >> +              */
-> >> >> +             if (*(p + 1) == '(') {
-> >> >> +                     int nest = 0;
-> >> >> +
-> >> >> +                     q = p + 2;
-> >> >> +                     while (1) {
-> >> >> +                             if (*q == '\0') {
-> >> >> +                                     fprintf(stderr,
-> >> >> +                                             "unterminated function: %s\n",
-> >> >> +                                             p);
-> >> >> +                                     new = xstrdup("");
-> >> >> +                                     break;
-> >> >> +                             } else if (*q == '(') {
-> >> >> +                                     nest++;
-> >> >> +                             } else if (*q == ')') {
-> >> >> +                                     if (nest-- == 0) {
-> >> >> +                                             new = func_eval_n(p + 2,
-> >> >> +                                                               q - p - 2);
-> >> >> +                                             q++;
-> >> >> +                                             break;
-> >> >> +                                     }
-> >> >> +                             }
-> >> >> +                             q++;
-> >> >> +                     }
-> >> >> +             } else {
-> >> >> +                     q = p + 1;
-> >> >> +                     while (isalnum(*q) || *q == '_')
-> >> >> +                             q++;
-> >> >> +
-> >> >> +                     new = env_expand_n(p + 1, q - p - 1);
-> >> >> +             }
-> >> >>
-> >> >>               reslen = strlen(res) + (p - in) + strlen(new) + 1;
-> >> >>               res = xrealloc(res, reslen);
-> >> >> diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
-> >> >> index 0d89ea6..f433ab0 100644
-> >> >> --- a/scripts/kconfig/zconf.l
-> >> >> +++ b/scripts/kconfig/zconf.l
-> >> >> @@ -1,7 +1,7 @@
-> >> >>  %option nostdinit noyywrap never-interactive full ecs
-> >> >>  %option 8bit nodefault perf-report perf-report
-> >> >>  %option noinput
-> >> >> -%x COMMAND HELP STRING PARAM
-> >> >> +%x COMMAND HELP STRING PARAM FUNCTION
-> >> >>  %{
-> >> >>  /*
-> >> >>   * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
-> >> >> @@ -25,6 +25,7 @@ static struct {
-> >> >>
-> >> >>  static char *text;
-> >> >>  static int text_size, text_asize;
-> >> >> +static int function_nest;
-> >> >>
-> >> >>  struct buffer {
-> >> >>       struct buffer *parent;
-> >> >> @@ -138,6 +139,12 @@ n        [$A-Za-z0-9_-]
-> >> >>               new_string();
-> >> >>               BEGIN(STRING);
-> >> >>       }
-> >> >> +     "$("    {
-> >> >> +             new_string();
-> >> >> +             append_string(yytext, yyleng);
-> >> >> +             function_nest = 0;
-> >> >> +             BEGIN(FUNCTION);
-> >> >> +     }
-> >> >>       \n      BEGIN(INITIAL); current_file->lineno++; return T_EOL;
-> >> >>       ({n}|[/.])+     {
-> >> >>               const struct kconf_id *id = kconf_id_lookup(yytext, yyleng);
-> >> >> @@ -196,6 +203,35 @@ n        [$A-Za-z0-9_-]
-> >> >>       }
-> >> >>  }
-> >> >>
-> >> >> +<FUNCTION>{
-> >> >> +     [^()\n]* {
-> >> >> +             append_string(yytext, yyleng);
-> >> >> +     }
-> >> >> +     "(" {
-> >> >> +             append_string(yytext, yyleng);
-> >> >> +             function_nest++;
-> >> >> +     }
-> >> >> +     ")" {
-> >> >> +             append_string(yytext, yyleng);
-> >> >> +             if (function_nest-- == 0) {
-> >> >> +                     BEGIN(PARAM);
-> >> >> +                     yylval.string = text;
-> >> >> +                     return T_WORD;
-> >> >
-> >> > T_WORD_QUOTE (which would turn into a constant symbol in most contexts)
-> >> > would be better here, IMO. That would turn $(foo) into just an alias for
-> >> > "$(foo)".
-> >> >
-> >> > See below.
-> >> >
-> >> >> +             }
-> >> >> +     }
-> >> >> +     \n {
-> >> >> +             fprintf(stderr,
-> >> >> +                     "%s:%d:warning: multi-line function not supported\n",
-> >> >> +                     zconf_curname(), zconf_lineno());
-> >> >> +             current_file->lineno++;
-> >> >> +             BEGIN(INITIAL);
-> >> >> +             return T_EOL;
-> >> >> +     }
-> >> >> +     <<EOF>> {
-> >> >> +             BEGIN(INITIAL);
-> >> >> +     }
-> >> >> +}
-> >> >> +
-> >> >>  <HELP>{
-> >> >>       [ \t]+  {
-> >> >>               ts = 0;
-> >> >> diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
-> >> >> index 784083d..d9977de 100644
-> >> >> --- a/scripts/kconfig/zconf.y
-> >> >> +++ b/scripts/kconfig/zconf.y
-> >> >> @@ -534,11 +534,19 @@ void conf_parse(const char *name)
-> >> >>
-> >> >>       zconf_initscan(name);
-> >> >>
-> >> >> +     func_init();
-> >> >>       _menu_init();
-> >> >>
-> >> >>       if (getenv("ZCONF_DEBUG"))
-> >> >>               yydebug = 1;
-> >> >>       yyparse();
-> >> >> +
-> >> >> +     /*
-> >> >> +      * Currently, functions are evaluated only when Kconfig files are
-> >> >> +      * parsed. We can free functions here.
-> >> >> +      */
-> >> >> +     func_exit();
-> >> >> +
-> >> >>       if (yynerrs)
-> >> >>               exit(1);
-> >> >>       if (!modules_sym)
-> >> >> @@ -778,4 +786,5 @@ void zconfdump(FILE *out)
-> >> >>  #include "confdata.c"
-> >> >>  #include "expr.c"
-> >> >>  #include "symbol.c"
-> >> >> +#include "function.c"
-> >> >>  #include "menu.c"
-> >> >> --
-> >> >> 2.7.4
-> >> >>
-> >> >
-> >> > Here's a simplification idea I'm throwing out there:
-> >> >
-> >> > What about only allowing $ENV and $() within quotes, and just having
-> >> > them always do simple text substitution (so that they'd indirectly
-> >> > always generate T_WORD_QUOTE tokens)?
-> >>
-> >>
-> >> I ended up with a new state <FUNCTION>,
-> >> but the real problem is the lexer is too ugly.
-> >>
-> >> So, maybe, the solution is not to make it into a string,
-> >> but to re-write the lexer.
-> >>
-> >>
-> >> <STRING> and <FUNCTION> are almost the same in the sense
-> >> that whitespaces do not split tokens.
-> >>
-> >> The difference is the characters to start/end with.
-> >>
-> >>   ' ... '
-> >>   " ... "
-> >>   ( ... )
-> >>
-> >> If we encounter with the 3 special characters,  ' , '', (,
-> >> then we enter into <STRING> state,
-> >> then it ends with ', ", ), respectively.
-> >> (but we need to take care of nesting, escaping)
-> >>
-> >> Double-surrounding like  "$(cc-option -Oz)"
-> >> looks ugly to me.
-> >
-> > It makes it clear that all we're doing is string interpolation, which is
-> > the important thing.
-> >
-> > The simplest and to me sanest way to implement $(cc-option -Oz) is as
-> > "$(cc-option -Oz)" (a SYMBOL_CONST symbol, which lives in a separate
-> > namespace -- see below), and at that point $(cc-option -Oz) would just
-> > be syntactic sugar for "$(cc-option -Oz)".
-> >
-> > IMO, that syntactic sugar just hides how simple the behavior really is
-> > and makes Kconfig more confusing. Plus it complicates the
-> > implementation.
-> >
-> >>
-> >>
-> >>
-> >>
-> >>
-> >> > Pros:
-> >> >
-> >> >  - Zero new syntax outside of strings (until the macro stuff).
-> >> >
-> >> >  - Makes the behavior and limitations of the syntax obvious: You can't
-> >> >    have $(foo) expand to a full expression, only to (possibly part of) a
-> >> >    value. This is a good limitation, IMO, and it's already there.
-> >> >
-> >> >  - Super simple and straightforward Kconfig implementation. All the new
-> >> >    magic would happen in expand_string_value().
-> >> >
-> >> > Neutral:
-> >> >
-> >> >  - Just as general where it matters. Take something like
-> >> >
-> >> >      default "$(foo)"
-> >> >
-> >> >    If $(foo) happens to expand to "y", then that will do its usual thing
-> >> >    for a bool/tristate symbol. Same for string symbols, etc. It'd just
-> >> >    be a thin preprocessing step on constant symbol values.
-> >> >
-> >> >  - The only loss in generality would be that you can no longer have
-> >> >    a function expand to the name of non-constant symbol. For example,
-> >> >    take the following:
-> >> >
-> >> >         default $(foo)
-> >> >
-> >> >    If $(foo) expands to MY_SYMBOL, then that would work as
-> >> >
-> >> >         default MY_SYMBOL
-> >>
-> >>
-> >> Probably, this is a "do not do this".
-> >>
-> >>
-> >> If the symbol is 'int' type,
-> >> and  $MY_NUMBER is expanded to 1,
-> >> it is our intention.
-> >
-> > Just to summarize the tradeoffs in each approach:
-> >
-> > Approach 1:
-> > Let $(fn ...) expand to FOO and reference the symbol FOO if it exists
-> >
-> > Approach 2:
-> > Let $(fn ...) expand to "FOO", which could never reference existing
-> > symbols
-> >
-> >
-> > Pros of approach 1:
-> >
-> >   - If someone legitimately wants to do indirection by generating
-> >     Kconfig symbol names, they can.
-> >
-> > Cons of approach 1:
-> >
-> >   - If $(fn ...) happens to expand to the name of an existing symbol, it
-> >     will reference it, even if it wasn't intended. This might get really
-> >     tricky to debug, as it probably won't be obvious that this is how it
-> >     works.
-> >
-> >
-> > Pros of approach 2:
-> >
-> >   - You can never accidentally reference an existing symbol when it
-> >     wasn't intended. You always generate a "value". Constant symbols
-> >     live in a separate namespace.
-> >
-> >   - The behavior is simpler to understand, IMO. $(fn ...) and $FOO
-> >     consistently deal with values and just do string interpolation. You
-> >     don't get "either a symbol or a value" depending on what's already
-> >     defined.
-> >
-> > Cons of approach 2:
-> >
-> >   - You can't do indirection by generating Kconfig symbol names. I
-> >     suspect there'd always be cleaner ways to do that in practice, but
-> >     I'm showing my bias here.
-> >
-> >
-> > Approach 2 seems much simpler and less magical to me.
-> >
-> >>
-> >>
-> >>
-> >>
-> >>
-> >> >   (I.e., it would default to the value of the symbol MY_SYMBOL.)
-> >> >
-> >> >   With the quotes, it would instead work as
-> >> >
-> >> >      default "MY_SYMBOL"
-> >> >
-> >> >   IMO, the second version is less confusing, and deliberately using the
-> >> >   first version seems like a bad idea (there's likely to be cleaner ways
-> >> >   to do the indirection in plain Kconfig).
-> >> >
-> >> >   This is also why I think T_WORD_QUOTE is better in the code above. It
-> >> >   would make $(foo) work more like a shorthand for "$(foo)".
-> >> >
-> >> >
-> >> > Cons:
-> >> >
-> >> >  - Bit more typing to add the quotes
-> >> >
-> >> >  - Maybe it isn't widely known that "n", "m", "y" work just like n, m, y
-> >> >    for bool and tristate symbols (the latter automatically get converted
-> >> >    to the former), though you see them quite a lot in Kconfig files.
-> >>
-> >> Not only bool/tristate, but also int/hex.
-> >> "1" is equivalent to 1.
-> >>
-> >>
-> >> Kconfig is screwed up in handling of literals.
-> >
-> > I don't actually think the design is horrible here (though it has
-> > flaws). The biggest problem is that it's poorly documented and
-> > understood.
-> >
-> > Expressions are composed of symbols and operators. You have ordinary
-> > symbols and constant symbols (quoted stuff, "values" if you will). All
-> > symbols have a tristate value and a string value. Which value gets used,
-> > and how, depends on the operator.
-> >
-> > Note that constant symbols are actually stored separately from
-> > nonconstant symbols internally (see SYMBOL_CONST). 1 and "1" are not the
-> > same symbol (this is easy to miss unless you've spent too much
-> > deciphering Kconfig's code). The reason a plain 1 works is that
-> > undefined symbols share many behaviors with constant symbols.
-> >
-> > The biggest mess-up in Kconfig I think is not making the constant vs.
-> > undefined distinction clear. It would have been neater if references to
-> > undefined symbols simply threw an error, though that gets a bit icky
-> > with shared Kconfig files, like in the kernel (would need to make sure
-> > that referenced symbols are always defined or predeclare them as
-> > undefined).
-> >
-> > Some people might object to "1" as well, but it would've been a lesser
-> > evil I think, once the symbol/value distinction would be clear.
-> >
-> > The other option would be to tack some kind of complicated type system
-> > on top of Kconfig's evaluation semantics. That's overkilling it, IMO.
-> >
-> >>
-> >>
-> >> >    ("n", "foo bar", etc., are all just constant symbols. Kconfig keeps
-> >> >    track of them separately from non-constant symbols. The constant
-> >> >    symbols "n", "m", and "y" are predefined.)
-> >> >
-> >> >    If we go with obligatory quotes, I volunteer to explain things in
-> >> >    kconfig-language.txt at least, to make it clear why you'd see quotes
-> >> >    in bool/tristate symbols using $(shell). I suspect it wouldn't be
-> >> >    that tricky to figure out anyway.
-> >>
-> >>
-> >> I think the right thing to do is
-> >> to fix the code instead of advertising it.
-> >
-> > I don't think the behavior is all bad, just obscure. It could easily be
-> > explained.
-> 
-> Some unrelated rambling on how Kconfig could've done it differently:
-> 
-> Currently, "n"/"m"/"y" are the canonical predefined tristate symbols.
-> n/m/y just get transformed into those whenever they're looked up, as a
-> syntactic shorthand (which has probably confused a lot of people).
-> 
-> Another option would've been to have three predefined ordinary symbols
-> n/m/y, and get rid of "n"/"m"/"y". Then none of the constant (quoted)
-> symbols would be "magic".
-> 
-> In practice, I think that'd just lead to breaking a different set of
-> invariants though. You'd get three magic ordinary symbols instead of
-> three magic constant symbols, and you'd end up with slightly iffy
-> stuff like defined symbols that have no define location (and probably
-> other stuff I haven't thought of). Conceptually, it makes sense to
-> group n/m/y among the constant symbols.
-> 
-> So, I'm not sure changing things there would be an improvement.
-> Strange as Kconfig is, some parts do actually kinda make sense at some
-> level.
-> 
-> And if you're aware of how quotes and "n"/"m"/"y" work, and think that
-> $() stuff ought to produce constant values (like I do... I'll stop
-> nagging about it soon), then it makes to limit it to within "".
-> 
-> Cheers,
-> Ulf
+To get an environment value, Kconfig needs to define a symbol using
+"option env=" syntax.  It is tedious to add a config entry for each
+environment given that we need more environments such as 'CC', 'AS',
+'srctree' etc. to evaluate the compiler capability in Kconfig.
 
-Here's how the description in kconfig-language.txt might look by the
-way. It might clarify why I think it would be really simple:
+Adding '$' to symbols is weird.  Kconfig can reference symbols directly
+like this:
 
-	Within quotes, some simple forms of string interpolation are
-	supported:
-	
-	  - $ENV is replaced by the value of the environment variable
-	    ENV.
+  config FOO
+          string
+          default BAR
 
-	  - $(success cmd) is replaced by "y" if the exit status of cmd
-	    is 0, and with "n" otherwise. cmd is passed as-is to the
-	    shell and may contain e.g. spaces or pipes.
+So, I want to use the following syntax to get environment 'BAR' from
+the system:
 
-	  - $(stdout cmd) is replaced by the first line cmd writes to
-	    stdout. Like for $(success), cmd is passed as-is to the
-	    shell.
+  config FOO
+          string
+          default $BAR
 
-	  - To avoid repetition, a custom macro can be defined as
-	    follows:
+Looking at the code, the symbols prefixed with 'S' are expanded by:
+ - conf_expand_value()
+   This is used to expand 'arch/$ARCH/defconfig' and 'defconfig_list'
+ - expand_string_value()
+   This is used to expand strings in 'source' and 'mainmenu'
 
-	        macro my-macro "$(success cmd $(1) --flag $(2))"
+All of them are independent of user configuration, i.e. fixed values.
+So, this kind of syntax should be moved to simply take the environment.
 
-	    $(my-macro foo bar) is then be replaced by
-	    $(success cmd foo --flag bar), which is in turn replaced
-	    by either "n" or "y".
+This change makes the code much cleaner.  The bounce symbols 'SRCARCH',
+'ARCH', 'SUBARCH', 'KERNELVERSION' are gone.
 
-	For bool and tristate symbols, note that "n", "m", and "y" are
-	synonymous with n, m, and y (the latter are a syntactic
-	shorthand for the former). This allows tests to be implemented
-	as follows:
+sym_init() hard-coding 'UNAME_RELEASE' is also gone.  'UNAME_RELEASE'
+should be be given from the environment.
 
-	    config CC_IS_GCC
-	        def_bool "$(success $CC --version | grep -q gcc)"
+ARCH_DEFCONFIG is a normal symbol, so it should be simply referenced
+by 'default ARCH_DEFCONFIG'.
 
-	Assuming that CC is GCC, this would turn into
+An environment can appear anywhere a symbol reference can appear.
+(It is expanded by sym_lookup().)  If an expression (which is derived
+from symbols) is a string, environments in the string are also expanded.
 
-	    config CC_IS_GCC
-		def_bool "y"
+For example, the following code works.
 
-	Here's an example that makes use of $(stdout):
+Example code:
 
-	    config DEFCONFIG_LIST
-	        ...
-		default "/boot/config-$(stdout uname --release)"
-		...
+  config TOOLCHAIN_LIST
+          string
+          default "My tools: CC=$CC, AS=$AS, CPP=$CPP"
 
-	After expansion, this might turn into
+Result:
 
-	    config DEFCONFIG_LIST
-	        ...
-		default "/boot/config-4.13.0-32-generic"
-	
-	Note that this syntax also works for other contexts where
-	quoted strings appear, e.g.
+  $ make -s alldefconfig && tail -n 1 .config
+  CONFIG_TOOLCHAIN_LIST="My tools: CC=gcc, AS=as, CPP=gcc -E"
 
-	    source "arch/$SRCARCH/Kconfig"
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+I tested all 'make *config' for arch architectures.
+I confirmed this commit still produced the same result.
 
 
-	String expansion is done during parsing, meaning you can't look
-	up values of config symbols inside strings. Macros must be
-	defined before the point where they are used.
+ Documentation/kbuild/kconfig-language.txt |   8 --
+ Kconfig                                   |   4 -
+ Makefile                                  |   3 +-
+ arch/sh/Kconfig                           |   4 +-
+ arch/sparc/Kconfig                        |   4 +-
+ arch/tile/Kconfig                         |   2 +-
+ arch/um/Kconfig.common                    |   4 -
+ arch/x86/Kconfig                          |   4 +-
+ arch/x86/um/Kconfig                       |   4 +-
+ init/Kconfig                              |  10 +-
+ scripts/kconfig/confdata.c                |  31 +-----
+ scripts/kconfig/kconf_id.c                |   1 -
+ scripts/kconfig/lkc.h                     |   4 -
+ scripts/kconfig/menu.c                    |   3 -
+ scripts/kconfig/symbol.c                  |  84 ++++------------
+ scripts/kconfig/util.c                    | 156 +++++++++++++++++++++---------
+ scripts/kconfig/zconf.l                   |   2 +-
+ scripts/kconfig/zconf.y                   |   1 -
+ 18 files changed, 144 insertions(+), 185 deletions(-)
 
-
-It seems simple and gotcha-free to me. All the expansion got could be
-done during tokenization.
-
-Cheers,
-Ulf
+diff --git a/Documentation/kbuild/kconfig-language.txt b/Documentation/kbuild/kconfig-language.txt
+index f5b9493..0e966e8 100644
+--- a/Documentation/kbuild/kconfig-language.txt
++++ b/Documentation/kbuild/kconfig-language.txt
+@@ -198,14 +198,6 @@ applicable everywhere (see syntax).
+     enables the third modular state for all config symbols.
+     At most one symbol may have the "modules" option set.
+ 
+-  - "env"=<value>
+-    This imports the environment variable into Kconfig. It behaves like
+-    a default, except that the value comes from the environment, this
+-    also means that the behaviour when mixing it with normal defaults is
+-    undefined at this point. The symbol is currently not exported back
+-    to the build environment (if this is desired, it can be done via
+-    another symbol).
+-
+   - "allnoconfig_y"
+     This declares the symbol as one that should have the value y when
+     using "allnoconfig". Used for symbols that hide other symbols.
+diff --git a/Kconfig b/Kconfig
+index 8c4c1cb..e6ece5b 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -5,8 +5,4 @@
+ #
+ mainmenu "Linux/$ARCH $KERNELVERSION Kernel Configuration"
+ 
+-config SRCARCH
+-	string
+-	option env="SRCARCH"
+-
+ source "arch/$SRCARCH/Kconfig"
+diff --git a/Makefile b/Makefile
+index 94a957e..9a8c689 100644
+--- a/Makefile
++++ b/Makefile
+@@ -275,7 +275,8 @@ include scripts/Kbuild.include
+ # Read KERNELRELEASE from include/config/kernel.release (if it exists)
+ KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
+ KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
+-export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION
++UNAME_RELEASE := $(shell uname --release)
++export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION UNAME_RELEASE
+ 
+ # SUBARCH tells the usermode build what the underlying arch is.  That is set
+ # first, and if a usermode build is happening, the "ARCH=um" on the command
+diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+index 97fe293..89fc2f6 100644
+--- a/arch/sh/Kconfig
++++ b/arch/sh/Kconfig
+@@ -57,7 +57,7 @@ config SUPERH
+ 	  <http://www.linux-sh.org/>.
+ 
+ config SUPERH32
+-	def_bool ARCH = "sh"
++	def_bool $ARCH = "sh"
+ 	select HAVE_KPROBES
+ 	select HAVE_KRETPROBES
+ 	select HAVE_IOREMAP_PROT if MMU && !X2TLB
+@@ -76,7 +76,7 @@ config SUPERH32
+ 	select HAVE_CC_STACKPROTECTOR
+ 
+ config SUPERH64
+-	def_bool ARCH = "sh64"
++	def_bool $ARCH = "sh64"
+ 	select HAVE_EXIT_THREAD
+ 	select KALLSYMS
+ 
+diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
+index 6bf594a..fed3d82 100644
+--- a/arch/sparc/Kconfig
++++ b/arch/sparc/Kconfig
+@@ -1,6 +1,6 @@
+ config 64BIT
+-	bool "64-bit kernel" if ARCH = "sparc"
+-	default ARCH = "sparc64"
++	bool "64-bit kernel" if $ARCH = "sparc"
++	default $ARCH = "sparc64"
+ 	help
+ 	  SPARC is a family of RISC microprocessors designed and marketed by
+ 	  Sun Microsystems, incorporated.  They are very widely found in Sun
+diff --git a/arch/tile/Kconfig b/arch/tile/Kconfig
+index ef9d403..fed372e 100644
+--- a/arch/tile/Kconfig
++++ b/arch/tile/Kconfig
+@@ -119,7 +119,7 @@ config HVC_TILE
+ # Building with ARCH=tilegx (or ARCH=tile) implies using the
+ # 64-bit TILE-Gx toolchain, so force CONFIG_TILEGX on.
+ config TILEGX
+-	def_bool ARCH != "tilepro"
++	def_bool $ARCH != "tilepro"
+ 	select ARCH_SUPPORTS_ATOMIC_RMW
+ 	select GENERIC_IRQ_LEGACY_ALLOC_HWIRQ
+ 	select HAVE_ARCH_JUMP_LABEL
+diff --git a/arch/um/Kconfig.common b/arch/um/Kconfig.common
+index c68add8..07f84c8 100644
+--- a/arch/um/Kconfig.common
++++ b/arch/um/Kconfig.common
+@@ -54,10 +54,6 @@ config HZ
+ 	int
+ 	default 100
+ 
+-config SUBARCH
+-	string
+-	option env="SUBARCH"
+-
+ config NR_CPUS
+ 	int
+ 	range 1 1
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index a528c14..54d943a 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # Select 32 or 64 bit
+ config 64BIT
+-	bool "64-bit kernel" if ARCH = "x86"
+-	default ARCH != "i386"
++	bool "64-bit kernel" if $ARCH = "x86"
++	default $ARCH != "i386"
+ 	---help---
+ 	  Say yes to build a 64-bit kernel - formerly known as x86_64
+ 	  Say no to build a 32-bit kernel - formerly known as i386
+diff --git a/arch/x86/um/Kconfig b/arch/x86/um/Kconfig
+index 13ed827..d355413 100644
+--- a/arch/x86/um/Kconfig
++++ b/arch/x86/um/Kconfig
+@@ -16,8 +16,8 @@ config UML_X86
+ 	select GENERIC_FIND_FIRST_BIT
+ 
+ config 64BIT
+-	bool "64-bit kernel" if SUBARCH = "x86"
+-	default SUBARCH != "i386"
++	bool "64-bit kernel" if $SUBARCH = "x86"
++	default $SUBARCH != "i386"
+ 
+ config X86_32
+ 	def_bool !64BIT
+diff --git a/init/Kconfig b/init/Kconfig
+index df18492..b4814e6 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1,11 +1,3 @@
+-config ARCH
+-	string
+-	option env="ARCH"
+-
+-config KERNELVERSION
+-	string
+-	option env="KERNELVERSION"
+-
+ config DEFCONFIG_LIST
+ 	string
+ 	depends on !UML
+@@ -13,7 +5,7 @@ config DEFCONFIG_LIST
+ 	default "/lib/modules/$UNAME_RELEASE/.config"
+ 	default "/etc/kernel-config"
+ 	default "/boot/config-$UNAME_RELEASE"
+-	default "$ARCH_DEFCONFIG"
++	default ARCH_DEFCONFIG
+ 	default "arch/$ARCH/defconfig"
+ 
+ config CONSTRUCTORS
+diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+index df26c7b..98c2014 100644
+--- a/scripts/kconfig/confdata.c
++++ b/scripts/kconfig/confdata.c
+@@ -81,39 +81,13 @@ const char *conf_get_autoconfig_name(void)
+ 	return name ? name : "include/config/auto.conf";
+ }
+ 
+-static char *conf_expand_value(const char *in)
+-{
+-	struct symbol *sym;
+-	const char *src;
+-	static char res_value[SYMBOL_MAXLENGTH];
+-	char *dst, name[SYMBOL_MAXLENGTH];
+-
+-	res_value[0] = 0;
+-	dst = name;
+-	while ((src = strchr(in, '$'))) {
+-		strncat(res_value, in, src - in);
+-		src++;
+-		dst = name;
+-		while (isalnum(*src) || *src == '_')
+-			*dst++ = *src++;
+-		*dst = 0;
+-		sym = sym_lookup(name, 0);
+-		sym_calc_value(sym);
+-		strcat(res_value, sym_get_string_value(sym));
+-		in = src;
+-	}
+-	strcat(res_value, in);
+-
+-	return res_value;
+-}
+-
+ char *conf_get_default_confname(void)
+ {
+ 	struct stat buf;
+ 	static char fullname[PATH_MAX+1];
+ 	char *env, *name;
+ 
+-	name = conf_expand_value(conf_defname);
++	name = expand_string_value(conf_defname);
+ 	env = getenv(SRCTREE);
+ 	if (env) {
+ 		sprintf(fullname, "%s/%s", env, name);
+@@ -274,7 +248,8 @@ int conf_read_simple(const char *name, int def)
+ 			if (expr_calc_value(prop->visible.expr) == no ||
+ 			    prop->expr->type != E_SYMBOL)
+ 				continue;
+-			name = conf_expand_value(prop->expr->left.sym->name);
++			sym_calc_value(prop->expr->left.sym);
++			name = sym_get_string_value(prop->expr->left.sym);
+ 			in = zconf_fopen(name);
+ 			if (in) {
+ 				conf_message(_("using defaults found in %s"),
+diff --git a/scripts/kconfig/kconf_id.c b/scripts/kconfig/kconf_id.c
+index 3ea9c5f..b3e0ea0 100644
+--- a/scripts/kconfig/kconf_id.c
++++ b/scripts/kconfig/kconf_id.c
+@@ -32,7 +32,6 @@ static struct kconf_id kconf_id_array[] = {
+ 	{ "on",			T_ON,			TF_PARAM },
+ 	{ "modules",		T_OPT_MODULES,		TF_OPTION },
+ 	{ "defconfig_list",	T_OPT_DEFCONFIG_LIST,	TF_OPTION },
+-	{ "env",		T_OPT_ENV,		TF_OPTION },
+ 	{ "allnoconfig_y",	T_OPT_ALLNOCONFIG_Y,	TF_OPTION },
+ };
+ 
+diff --git a/scripts/kconfig/lkc.h b/scripts/kconfig/lkc.h
+index fb2503a..0ff3256 100644
+--- a/scripts/kconfig/lkc.h
++++ b/scripts/kconfig/lkc.h
+@@ -58,7 +58,6 @@ enum conf_def_mode {
+ 
+ #define T_OPT_MODULES		1
+ #define T_OPT_DEFCONFIG_LIST	2
+-#define T_OPT_ENV		3
+ #define T_OPT_ALLNOCONFIG_Y	4
+ 
+ struct kconf_id {
+@@ -134,9 +133,6 @@ void str_printf(struct gstr *gs, const char *fmt, ...);
+ const char *str_get(struct gstr *gs);
+ 
+ /* symbol.c */
+-extern struct expr *sym_env_list;
+-
+-void sym_init(void);
+ void sym_clear_all_valid(void);
+ struct symbol *sym_choice_default(struct symbol *sym);
+ const char *sym_get_string_default(struct symbol *sym);
+diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
+index 36cd3e1..a9d0ccc 100644
+--- a/scripts/kconfig/menu.c
++++ b/scripts/kconfig/menu.c
+@@ -214,9 +214,6 @@ void menu_add_option(int token, char *arg)
+ 			zconf_error("trying to redefine defconfig symbol");
+ 		sym_defconfig_list->flags |= SYMBOL_AUTO;
+ 		break;
+-	case T_OPT_ENV:
+-		prop_add_env(arg);
+-		break;
+ 	case T_OPT_ALLNOCONFIG_Y:
+ 		current_entry->sym->flags |= SYMBOL_ALLNOCONFIG_Y;
+ 		break;
+diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+index e4ccf56..96ea8a9 100644
+--- a/scripts/kconfig/symbol.c
++++ b/scripts/kconfig/symbol.c
+@@ -33,33 +33,6 @@ struct symbol *sym_defconfig_list;
+ struct symbol *modules_sym;
+ tristate modules_val;
+ 
+-struct expr *sym_env_list;
+-
+-static void sym_add_default(struct symbol *sym, const char *def)
+-{
+-	struct property *prop = prop_alloc(P_DEFAULT, sym);
+-
+-	prop->expr = expr_alloc_symbol(sym_lookup(def, SYMBOL_CONST));
+-}
+-
+-void sym_init(void)
+-{
+-	struct symbol *sym;
+-	struct utsname uts;
+-	static bool inited = false;
+-
+-	if (inited)
+-		return;
+-	inited = true;
+-
+-	uname(&uts);
+-
+-	sym = sym_lookup("UNAME_RELEASE", 0);
+-	sym->type = S_STRING;
+-	sym->flags |= SYMBOL_AUTO;
+-	sym_add_default(sym, uts.release);
+-}
+-
+ enum symbol_type sym_get_type(struct symbol *sym)
+ {
+ 	enum symbol_type type = sym->type;
+@@ -828,28 +801,38 @@ static unsigned strhash(const char *s)
+ 
+ struct symbol *sym_lookup(const char *name, int flags)
+ {
+-	struct symbol *symbol;
++	struct symbol *symbol = NULL;
+ 	char *new_name;
+ 	int hash;
+ 
+ 	if (name) {
+-		if (name[0] && !name[1]) {
+-			switch (name[0]) {
+-			case 'y': return &symbol_yes;
+-			case 'm': return &symbol_mod;
+-			case 'n': return &symbol_no;
++		new_name = expand_string_value(name);
++		if (new_name[0] && !new_name[1]) {
++			switch (new_name[0]) {
++			case 'y':
++				symbol = &symbol_yes;
++				break;
++			case 'm':
++				symbol = &symbol_mod;
++				break;
++			case 'n':
++				symbol = &symbol_no;
++				break;
++			}
++			if (symbol) {
++				free(new_name);
++				return symbol;
+ 			}
+ 		}
+-		hash = strhash(name) % SYMBOL_HASHSIZE;
++		hash = strhash(new_name) % SYMBOL_HASHSIZE;
+ 
+ 		for (symbol = symbol_hash[hash]; symbol; symbol = symbol->next) {
+ 			if (symbol->name &&
+-			    !strcmp(symbol->name, name) &&
++			    !strcmp(symbol->name, new_name) &&
+ 			    (flags ? symbol->flags & flags
+ 				   : !(symbol->flags & (SYMBOL_CONST|SYMBOL_CHOICE))))
+ 				return symbol;
+ 		}
+-		new_name = xstrdup(name);
+ 	} else {
+ 		new_name = NULL;
+ 		hash = 0;
+@@ -1336,32 +1319,3 @@ const char *prop_get_type_name(enum prop_type type)
+ 	}
+ 	return "unknown";
+ }
+-
+-static void prop_add_env(const char *env)
+-{
+-	struct symbol *sym, *sym2;
+-	struct property *prop;
+-	char *p;
+-
+-	sym = current_entry->sym;
+-	sym->flags |= SYMBOL_AUTO;
+-	for_all_properties(sym, prop, P_ENV) {
+-		sym2 = prop_get_symbol(prop);
+-		if (strcmp(sym2->name, env))
+-			menu_warn(current_entry, "redefining environment symbol from %s",
+-				  sym2->name);
+-		return;
+-	}
+-
+-	prop = prop_alloc(P_ENV, sym);
+-	prop->expr = expr_alloc_symbol(sym_lookup(env, SYMBOL_CONST));
+-
+-	sym_env_list = expr_alloc_one(E_LIST, sym_env_list);
+-	sym_env_list->right.sym = sym;
+-
+-	p = getenv(env);
+-	if (p)
+-		sym_add_default(sym, p);
+-	else
+-		menu_warn(current_entry, "environment variable %s undefined", env);
+-}
+diff --git a/scripts/kconfig/util.c b/scripts/kconfig/util.c
+index 22201a4..dddf85b 100644
+--- a/scripts/kconfig/util.c
++++ b/scripts/kconfig/util.c
+@@ -8,16 +8,98 @@
+ #include <stdarg.h>
+ #include <stdlib.h>
+ #include <string.h>
++
++#include "list.h"
+ #include "lkc.h"
+ 
++static LIST_HEAD(env_list);
++
++struct env {
++	char *name;
++	char *value;
++	struct list_head node;
++};
++
++static struct env *env_list_lookup(const char *name)
++{
++	struct env *e;
++
++	list_for_each_entry(e, &env_list, node) {
++		if (!strcmp(name, e->name))
++			return e;
++	}
++
++	return NULL;
++}
++
++static void env_list_add(const char *name, const char *value)
++{
++	struct env *e;
++
++	e = xmalloc(sizeof(*e));
++	e->name = xstrdup(name);
++	e->value = xstrdup(value);
++
++	list_add_tail(&e->node, &env_list);
++}
++
++static void env_list_del(struct env *e)
++{
++	list_del(&e->node);
++	free(e->name);
++	free(e->value);
++	free(e);
++}
++
++/* the returned pointer must be freed when done */
++static char *env_expand(const char *name)
++{
++	struct env *e;
++	const char *value;
++
++	e = env_list_lookup(name);
++	if (e)
++		return xstrdup(e->value);
++
++	value = getenv(name);
++	if (!value) {
++		fprintf(stderr, "environment variable \"%s\" undefined\n", name);
++		value = "";
++	}
++
++	/*
++	 * we need to remember all referenced environments.
++	 * They will be written out to include/config/auto.conf.cmd
++	 */
++	env_list_add(name, value);
++
++	return xstrdup(value);
++}
++
++/* works like env_expand, but 'name' does not need to be null-terminated */
++static char *env_expand_n(const char *name, size_t n)
++{
++	char *tmp, *res;
++
++	tmp = xmalloc(n + 1);
++	memcpy(tmp, name, n);
++	*(tmp + n) = '\0';
++
++	res = env_expand(tmp);
++
++	free(tmp);
++
++	return res;
++}
++
+ /*
+- * Expand symbol's names embedded in the string given in argument. Symbols'
+- * name to be expanded shall be prefixed by a '$'. Unknown symbol expands to
++ * Expand environments embedded in the string given in argument. Environments
++ * to be expanded shall be prefixed by a '$'. Unknown environment expands to
+  * the empty string.
+  */
+ char *expand_string_value(const char *in)
+ {
+-	const char *src;
++	const char *p, *q;
+ 	char *res;
+ 	size_t reslen;
+ 
+@@ -25,39 +107,28 @@ char *expand_string_value(const char *in)
+ 	 * Note: 'in' might come from a token that's about to be
+ 	 * freed, so make sure to always allocate a new string
+ 	 */
+-	reslen = strlen(in) + 1;
+-	res = xmalloc(reslen);
+-	res[0] = '\0';
+-
+-	while ((src = strchr(in, '$'))) {
+-		char *p, name[SYMBOL_MAXLENGTH];
+-		const char *symval = "";
+-		struct symbol *sym;
+-		size_t newlen;
+-
+-		strncat(res, in, src - in);
+-		src++;
+-
+-		p = name;
+-		while (isalnum(*src) || *src == '_')
+-			*p++ = *src++;
+-		*p = '\0';
+-
+-		sym = sym_find(name);
+-		if (sym != NULL) {
+-			sym_calc_value(sym);
+-			symval = sym_get_string_value(sym);
+-		}
++	res = xmalloc(1);
++	*res = '\0';
+ 
+-		newlen = strlen(res) + strlen(symval) + strlen(src) + 1;
+-		if (newlen > reslen) {
+-			reslen = newlen;
+-			res = xrealloc(res, reslen);
+-		}
++	while ((p = strchr(in, '$'))) {
++		char *new;
++
++		q = p + 1;
++		while (isalnum(*q) || *q == '_')
++			q++;
+ 
+-		strcat(res, symval);
+-		in = src;
++		new = env_expand_n(p + 1, q - p - 1);
++
++		reslen = strlen(res) + (p - in) + strlen(new) + 1;
++		res = xrealloc(res, reslen);
++		strncat(res, in, p - in);
++		strcat(res, new);
++		free(new);
++		in = q;
+ 	}
++
++	reslen = strlen(res) + strlen(in) + 1;
++	res = xrealloc(res, reslen);
+ 	strcat(res, in);
+ 
+ 	return res;
+@@ -87,8 +158,7 @@ struct file *file_lookup(const char *name)
+ /* write a dependency file as used by kbuild to track dependencies */
+ int file_write_dep(const char *name)
+ {
+-	struct symbol *sym, *env_sym;
+-	struct expr *e;
++	struct env *env, *tmp;
+ 	struct file *file;
+ 	FILE *out;
+ 
+@@ -107,20 +177,12 @@ int file_write_dep(const char *name)
+ 	fprintf(out, "\n%s: \\\n"
+ 		     "\t$(deps_config)\n\n", conf_get_autoconfig_name());
+ 
+-	expr_list_for_each_sym(sym_env_list, e, sym) {
+-		struct property *prop;
+-		const char *value;
+-
+-		prop = sym_get_env_prop(sym);
+-		env_sym = prop_get_symbol(prop);
+-		if (!env_sym)
+-			continue;
+-		value = getenv(env_sym->name);
+-		if (!value)
+-			value = "";
+-		fprintf(out, "ifneq \"$(%s)\" \"%s\"\n", env_sym->name, value);
++	list_for_each_entry_safe(env, tmp, &env_list, node) {
++		fprintf(out, "ifneq \"$(%s)\" \"%s\"\n",
++			env->name, getenv(env->name) ?: "");
+ 		fprintf(out, "%s: FORCE\n", conf_get_autoconfig_name());
+ 		fprintf(out, "endif\n");
++		env_list_del(env);
+ 	}
+ 
+ 	fprintf(out, "\n$(deps_config): ;\n");
+diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
+index 02de6fe..0d89ea6 100644
+--- a/scripts/kconfig/zconf.l
++++ b/scripts/kconfig/zconf.l
+@@ -75,7 +75,7 @@ static void warn_ignored_character(char chr)
+ }
+ %}
+ 
+-n	[A-Za-z0-9_-]
++n	[$A-Za-z0-9_-]
+ 
+ %%
+ 	int str = 0;
+diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
+index 262c464..784083d 100644
+--- a/scripts/kconfig/zconf.y
++++ b/scripts/kconfig/zconf.y
+@@ -534,7 +534,6 @@ void conf_parse(const char *name)
+ 
+ 	zconf_initscan(name);
+ 
+-	sym_init();
+ 	_menu_init();
+ 
+ 	if (getenv("ZCONF_DEBUG"))
+-- 
+2.7.4
