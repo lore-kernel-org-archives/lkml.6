@@ -1,237 +1,234 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967409AbeBPMmb convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 07:42:31 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:45996 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967151AbeBPMm3 (ORCPT
+        id S967487AbeBPMtl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 07:49:41 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:40245 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966411AbeBPMtj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 07:42:29 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        George Cherian <gcherian@caviumnetworks.com>,
-        George Cherian <george.cherian@cavium.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bhelgaas@google.com,
-        Jayachandran.Nair@cavium.com, Robert.Richter@cavium.com,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH] PCI: Add quirk for Cavium Thunder-X2 PCIe erratum #173
-Date: Fri, 16 Feb 2018 13:40:37 +0100
-Message-ID: <2323301.ORZpb3hFRe@aspire.rjw.lan>
-In-Reply-To: <20180215233900.GA195653@bhelgaas-glaptop.roam.corp.google.com>
-References: <1517554846-16703-1-git-send-email-george.cherian@cavium.com> <26660034.hqiP3ND89J@aspire.rjw.lan> <20180215233900.GA195653@bhelgaas-glaptop.roam.corp.google.com>
+        Fri, 16 Feb 2018 07:49:39 -0500
+X-Google-Smtp-Source: AH8x224pfw8W9z4YdBlZWeeoWO/egYIotYlWfe/ep9SzGobKEdbxxfJ1FeSIPO75a0Gno6Ixf+aowQ==
+Subject: Re: [PATCH v3] rtc: ac100: Fix ac100 determine rate bug
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>, alexandre.belloni@bootlin.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>, linux-rtc@vger.kernel.org,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20180214135612.21356-1-embed3d@gmail.com>
+ <20180215141154.monvwx25awwetqrc@flea.lan>
+ <00ece3d8-52ac-c51d-1867-97f7fd84dadf@gmail.com>
+ <CAGb2v67fP4-xxAAPWAa0+YtWY3xvQX=5XX7koq-h8USvT+YA-A@mail.gmail.com>
+From: Philipp Rossak <embed3d@gmail.com>
+Message-ID: <0af79515-ed4f-a4c6-6358-2053e8fd1745@gmail.com>
+Date: Fri, 16 Feb 2018 13:49:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAGb2v67fP4-xxAAPWAa0+YtWY3xvQX=5XX7koq-h8USvT+YA-A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, February 16, 2018 12:39:00 AM CET Bjorn Helgaas wrote:
-> On Thu, Feb 15, 2018 at 10:57:25PM +0100, Rafael J. Wysocki wrote:
-> > On Wednesday, February 14, 2018 9:16:53 PM CET Bjorn Helgaas wrote:
-> > > On Wed, Feb 14, 2018 at 04:58:08PM +0530, George Cherian wrote:
-> > > > On 02/13/2018 08:39 PM, Bjorn Helgaas wrote:
-> > > > >On Fri, Feb 02, 2018 at 07:00:46AM +0000, George Cherian wrote:
-> > > > >>The PCIe Controller on Cavium ThunderX2 processors does not
-> > > > >>respond to downstream CFG/ECFG cycles when root port is
-> > > > >>in power management D3-hot state.
-> > > > >
-> > > > >I think you're talking about the CPU initiating a config cycle to
-> > > > >a device below the root port, right?
-> > > > Yes
-> > > 
-> > > If a bridge, e.g., a Root Port in your case, is in D3hot, we should be
-> > > able to access config space of the bridge itself, but the secondary
-> > > bus will be in B2 or B3 and we won't be able to access config space
-> > > for any devices below the bridge.  This is true for *all* bridges, not
-> > > just this Cavium Root Port.
-> > 
-> > Right.
-> > 
-> > But AFAICS config space reads from devices that aren't there (which
-> > effectively is what happens if the bridge is in D3hot) are at least
-> > expected to return all ones.
-> 
-> Yes.  AIUI, the PCIe spec doesn't actually *require* all ones in this
-> case, but the sec 2.3.2 implementation note says hardware intended for
-> use with software (like Linux) that assumes the all ones behavior
-> should synthesize all ones.  So I'm speculating that this Cavium
-> device is supposed to synthesize all ones, but does not.
-> 
-> But from the discussion below, it sounds like this may have helped
-> uncover a more serious Linux bug, i.e., we don't resume a device
-> before trying to use it.
-> 
-> > > The PCIe r4.0, sec 5.3.1, implementation note seems relevant:
-> > > 
-> > >   When a Type 1 Function associated with a Switch/Root Port (a
-> > >   "virtual bridge") is in a non-D0 power state, it will emulate the
-> > >   behavior of a conventional PCI bridge in its handling of Memory,
-> > >   I/O, and Configuration Requests and Completions. ...  All Type 1
-> > >   Configuration Requests are terminated as Unsupported Requests, ...
-> > > 
-> > > > >This erratum isn't published anywhere where we could include a URL,
-> > > > >is it?
-> > > > This erratum is available at support.cavium.com, You might need to
-> > > > register to the website to get hold of a copy.
-> > > 
-> > > That appears to require an NDA, so that doesn't work for me.  Can you
-> > > just include the erratum text in the changelog?
-> > > 
-> > > > >>In our tests the above mentioned errata causes the following crash when
-> > > > >>the downstream endpoint config space is accessed, while root port is in
-> > > > >>D3 state.
-> > > > >>
-> > > > >>[   12.775202] Unhandled fault: synchronous external abort (0x96000610) at 0x0000000000000000
-> > > > >
-> > > > >This looks like another example of not being able to deal with error
-> > > > >responses to PCIe events, for example, the whole mess with drivers
-> > > > >checking whether the link is up before issuing a config access.
-> > > > >
-> > > > >In that sense, this looks like a band-aid that avoids the issue by
-> > > > >preventing the use of D3, but doesn't fix the underlying problem.  If
-> > > > >we *could* deal nicely with this error, maybe we could use D3 on these
-> > > > >root ports.
-> > > > >
-> > > > >So I'm not convinced yet that this is actually a PCIe erratum.  Does
-> > > > >the hardware actually violate the PCIe spec, or is this just a problem
-> > > > >with the kernel not knowing how to deal nicely with a PCIe error?
-> > > > >
-> > > > This is not an issue with the way kernel handles the PCIe error.
-> > > > 
-> > > > >If you could include the erratum text and reference to the relevant
-> > > > >section of the PCIe spec, that would be useful.
-> > > > >
-> > > > The relevant section of the PCIe Spec is the following Section 5.3
-> > > > on wards (subsection  5.3.1.4.1)
-> > > > 
-> > > > Configuration and Message requests are the only TLPs accepted by a
-> > > > Function in the D3hot state. All other received Requests must be
-> > > > handled as Unsupported Requests, and all received Completions may
-> > > > optionally be handled as Unexpected Completions.
-> > > 
-> > > This isn't exactly relevant because it says requests *other than*
-> > > config and message requests must be handled as Unsupported Requests,
-> > > and we're talking about a config request.  I think sec 5.3.1 is more
-> > > to the point: the Root Port sees a Type 1 Configuration Request that
-> > > would be forwarded to its secondary interface if the port were in D0,
-> > > and that request should be terminated as an Unsupported Request.
-> > > 
-> > > I think the question is how the Root Complex turns this Unsupported
-> > > Request into some signal to the CPU.  The implementation note in 2.3.2
-> > > might be relevant:
-> > > 
-> > >   Some system configuration software depends on reading a data value
-> > >   of all 1’s when a Configuration Read Request is terminated as an
-> > >   Unsupported Request, particularly when probing to determine the
-> > >   existence of a device in the system. A Root Complex intended for use
-> > >   with software that depends on a read-data value of all 1’s must
-> > >   synthesize this value when UR Completion Status is returned for a
-> > >   Configuration Read Request.
-> > > 
-> > > So maybe the erratum is that the RC was intended to synthesize all 1's
-> > > but it doesn't?
-> > > 
-> > > There are other cases that can result in Unsupported Request
-> > > completions, so my fear is that this change will take care of one such
-> > > case but leave others that will cause similar unhandled external
-> > > aborts.
-> > > 
-> > > > >>[   12.775202] Unhandled fault: synchronous external abort (0x96000610) at 0x0000000000000000
-> > > 
-> > > > >>[   12.813518] PC is at pci_generic_config_read+0x5c/0xf0
-> > > > >>[   12.818643] LR is at pci_generic_config_read+0x48/0xf0
-> > > > >> ...
-> > > > >>[   13.269819] [<ffff000008506f34>] pci_generic_config_read+0x5c/0xf0
-> > > > >>[   13.275987] [<ffff000008506e2c>] pci_bus_read_config_dword+0xb4/0xd8
-> > > > >>[   13.282328] [<ffff0000085089f4>] pcie_capability_read_dword+0x64/0xb8
-> > > > >>[   13.288757] [<ffff000008513d28>] __pci_dev_reset+0x90/0x328
-> > > > >>[   13.294317] [<ffff0000085142d4>] pci_probe_reset_function+0x24/0x30
-> > > > >>[   13.300571] [<ffff000008518754>] pci_create_sysfs_dev_files+0x18c/0x2a0
-> > > > >>[   13.307173] [<ffff000008d9a974>] pci_sysfs_init+0x38/0x60
-> > > > >>[   13.312560] [<ffff000008083b4c>] do_one_initcall+0x5c/0x170
-> > > > >>[   13.318122] [<ffff000008d60dfc>] kernel_init_freeable+0x1c0/0x27c
-> > > > >>[   13.324205] [<ffff000008980d90>] kernel_init+0x18/0x110
-> > > > >>[   13.329416] [<ffff000008083690>] ret_from_fork+0x10/0x40
-> > > 
-> > > I should have asked this before: why are we even trying to do this
-> > > config read to a device that's in D3?  I assume this root port started
-> > > out in D0 because we apparently enumerated it successfully, but it
-> > > must have been put into D3 later?
-> > > 
-> > > The pci_probe_reset_function() function comment says "the PCI device
-> > > must be responsive to PCI config space in order to use this function." 
-> > > So apparently the caller should make sure the device is in at least
-> > > D3hot and any bridges leading to it are in D0.
-> > > 
-> > > If we're missing whatever it is that makes sure the target device is
-> > > reachable and responsive to config space, we likely have issues on
-> > > other systems as well.  On Cavium this causes the external abort, but
-> > > on other systems, we'd probably just get all 1's data back from the
-> > > config read and silently do the wrong thing in
-> > > pci_probe_reset_function().
-> > > 
-> > > I don't know how this runtime PM works, but maybe Rafael can help us
-> > > out.
-> > 
-> > I'm not sure what the question is to be honest.
-> 
-> My questions are basically "What does the PCI core need to do to make
-> sure a device is in D0 before it operates on it?  And where do we need
-> to do that?"
-> 
-> > Unused ports are autosuspended after 100ms as per pcie_portdrv_probe().
-> 
-> So I guess this is only done for PCIe bridges, not for conventional
-> PCI bridges.  Is this because autosuspend depends on a PCIe-only
-> feature?
 
-Yes, that's PCIe-only.
 
-> Here's the path we're in now:
+On 16.02.2018 05:10, Chen-Yu Tsai wrote:
+> On Fri, Feb 16, 2018 at 1:53 AM, Philipp Rossak <embed3d@gmail.com> wrote:
+>>
+>>
+>> On 15.02.2018 15:11, Maxime Ripard wrote:
+>>>
+>>> On Wed, Feb 14, 2018 at 02:56:12PM +0100, Philipp Rossak wrote:
+>>>>
+>>>> This patch fixes a bug, that prevents the Allwinner A83T and the A80
+>>>> from a successful boot.
+>>>>
+>>>> The bug is there since v4.16-rc1 and appeared after the clk branch was
+>>>> merged.
+>>>
+>>>
+>>> Out of curiosity, which patch has introduced this? I couldn't find any
+>>> obvious match.
+>>>
+>>
+>> I wasn't also n
 > 
->   pcie_portdrv_init                        # device_initcall (level 6)
->     pci_register_driver(&pcie_portdriver)
->       ...
->         pcie_portdrv_probe                 # pcie_portdriver.probe
->           pm_runtime_set_autosuspend_delay(&dev->dev, 100)
+> To be honest, I'm not sure why this is hitting you and not me.
+> I have both A83T boards that have assigned-clock-rates set for
+> the ac100 clock outputs for WiFi. I have them running 4.16-rc1
+> and have not seen this. The device tree patches that add these
+> are in 4.15.
 > 
->   pci_sysfs_init                           # late_initcall (level 7)
->     for_each_pci_dev(dev)
->       pci_create_sysfs_dev_files(dev)
->         pci_create_capabilities_sysfs(dev)
->           pci_probe_reset_function(dev)
->             ...
->               pcie_capability_read_dword   <-- config read causing abort
+
+Now it is getting curious ... .
+I already mentioned that bug in the sunxi-irc and someone else was 
+hitting that problem also...
+I tested it also with the same toolchain you are using (gcc 7.3.0-1 
+Debian), but that didn't made any difference.
+
+I don't think that issue is related with the Hardware, but to be on the 
+save side: Which Hardware version of the BPI-M3 do you have? I have 
+version 1.2.
+
+Can someone else can confirm this bug?
+
+>>
+>>>> You can find the shortend trace below:
+>>>>
+>>>> Unable to handle kernel NULL pointer dereference at virtual address
+>>>> 00000000
+>>>> pgd = (ptrval)
+>>>> [00000000] *pgd=00000000
+>>>> Internal error: Oops: 5 [#1] SMP ARM
+>>>> Modules linked in:
+>>>> CPU: 0 PID: 49 Comm: kworker/0:1 Not tainted 4.15.0-10190-gb89e32ccd1be
+>>>> #2
+>>>> Hardware name: Allwinner sun8i Family
+>>>> Workqueue: events deferred_probe_work_func
+>>>> PC is at clk_hw_get_rate+0x0/0x34
+>>>> LR is at ac100_clkout_determine_rate+0x48/0x19c
+>>>>
+>>>> [ ... ]
+>>>>
+>>>> (clk_hw_get_rate) from (ac100_clkout_determine_rate+0x48/0x19c)
+>>>> (ac100_clkout_determine_rate) from  (clk_core_set_rate_nolock+0x3c/0x1a0)
+>>>> (clk_core_set_rate_nolock) from (clk_set_rate+0x30/0x88)
+>>>> (clk_set_rate) from (of_clk_set_defaults+0x200/0x364)
+>>>> (of_clk_set_defaults) from (platform_drv_probe+0x18/0xb0)
+>>>>
+>>>> To fix that bug, we first check if the return of the
+>>>> clk_hw_get_parent_by_index is non zero. If it is zero we skip that
+>>>> clock parent.
+>>>>
+>>>> The BUG report could be found here: https://lkml.org/lkml/2018/2/10/198
+>>>>
+>>>> Fixes: 04940631b8d2 ("rtc: ac100: Add clk output support")
+>>>>
+>>>> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
+>>>> ---
+>>>>
+>>>> Changes in v3:
+>>>>          * add information when the bug appeared
+>>>>          * make the comment more clear
+>>>> Changes in v2:
+>>>>          * add tag Fixes: ... to commit message
+>>>>          * add comment to if statement why we are doing this check
+>>>>
+>>>>    drivers/rtc/rtc-ac100.c | 19 ++++++++++++++++++-
+>>>>    1 file changed, 18 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
+>>>> index 8ff9dc3fe5bf..2412aa2e8399 100644
+>>>> --- a/drivers/rtc/rtc-ac100.c
+>>>> +++ b/drivers/rtc/rtc-ac100.c
+>>>> @@ -183,7 +183,24 @@ static int ac100_clkout_determine_rate(struct clk_hw
+>>>> *hw,
+>>>>          for (i = 0; i < num_parents; i++) {
+>>>>                  struct clk_hw *parent = clk_hw_get_parent_by_index(hw,
+>>>> i);
+>>>> -               unsigned long tmp, prate = clk_hw_get_rate(parent);
+>>>> +               unsigned long tmp, prate;
+>>>> +
+>>>> +               /*
+>>>> +                * The clock has two parents, one is a fixed clock which
+>>>> is
+>>>> +                * internally registered by the ac100 driver. The other
+>>>> parent
+>>>> +                * is a clock from the codec side of the chip, which we
+>>>> +                * properly declare and reference in the devicetree and
+>>>> is
+>>>> +                * not implemented in any driver right now.
+>>>> +                * If the clock core looks for the parent of that second
+>>>> +                * missing clock, it can't one that is registered and
+>>>> +                * returns NULL.
+>>>> +                * Thus we need to check if the parent exists before
+>>>> +                * we get the parent rate.
+>>>> +                */
+>>>> +               if (!parent)
+>>>> +                       continue;
+>>>
+>>>
+>>> I'm sorry, but I still don't get it. When you register that clock, you
+>>> will give it two parents. Why would that change during the life of the
+>>> clock?
+>>>
+>>> This really looks like a workaround rather than an actual fix.
+>>>
+>>> Maxime
+>>>
+>> I agree this is more a workaround!
+>> A proper solution/fix would be to define the devicetree correct like this:
+>>
+>> diff --git a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+>> b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+>> index 6550bf0e594b..6f56d429f17e 100644
+>> --- a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+>> +++ b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+>> @@ -175,11 +175,18 @@
+>>                          compatible = "x-powers,ac100-rtc";
+>>                          interrupt-parent = <&r_intc>;
+>>                          interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+>> -                       clocks = <&ac100_codec>;
+>> +                       clocks = <&ac100_rtc_32k>;
+>>                          #clock-cells = <1>;
+>>                          clock-output-names = "cko1_rtc",
+>>                                               "cko2_rtc",
+>>                                               "cko3_rtc";
+>> +
+>> +                       ac100_rtc_32k: rtc-32k-oscillator {
+>> +                               compatible = "fixed-clock";
+>> +                               #clock-cells = <0>;
+>> +                               clock-frequency  = <32768>;
+>> +                               clock-output-names = "ac100-rtc-32k";
+>> +                       };
+>>                  };
+>>          };
+>>   };
+>>
+>> What do you think about that solution?
 > 
-> I guess it's conceivable that more than 100ms elapsed between
-> pcie_portdrv_probe() and pci_probe_reset_function(), and obviously we
-> can't depend on any particular timing.
-
-Right.
-
-> > Now, it looks like they should be resumed in the code path in question,
-> > so this case seems to have been overlooked.
+> That's not quite right either. As I mentioned before, the
+> RTC block has two clock inputs, one 4MHz signal from the
+> codec block, and one 32.768 kHz signal from an external
+> crystal. The original device tree binding describes the
+> first one, and the 32.768 kHz clock was registered by
+> the RTC driver internally.
 > 
-> How do we identify which code paths need to resume the device, and
-> what do we need to do to resume it?
+> If you're going to add the crystal clock, you still need
+> to keep the codec one. Note that this does not fix what
+> Maxime is asking you. I've already provided an explanation:
+> 
+> The clock core allows registering clocks with not-yet-existing
+> clock parents. Parents are matches by string names. If no
+> clock by that name is registered yet, the clock core simply
+> orphans the new clock if the unregistered parent is its
+> current parent or simply ignores that parent if its not the
+> current parent. This is entirely valid and is what we are
+> counting on here, as we haven't implemented the codec-side
+> driver.
+> 
+> Note we also sort of depend on this behavior for sunxi-ng
+> clocks, where in some cases we get circular dependencies
+> between clock blocks.
+> 
+> BTW, since this is mostly related to the clk subsystem,
+> please CC the clk maintainers as well.
+> 
 
-The "suspended" metastate is generally defined as "the device may not be
-accessible now" and for the majority of bus types it is unsafe to attempt
-to access suspended devices.
+Ok, I added also now the clk mailing list and maintainers.
+As reference this here is the boot log [1].
 
-That's not strictly the case for PCI, but IMO PCI devices should be resumed
-before accessing them too because of the below. :-)
+Im not sure if this in relation to this bug:
+But, already with the 4.15 kernel I get from time to time some oops 
+during runtime on the a31s (bpi-m2) and all are clock related and causes 
+a crash of the system.
 
-pm_runtime_get_sync() resumes the device and prevents it from suspending
-again until pm_runtime_put() (or equivalent) is called on it.
+Philipp
 
-And, of course, resuming the target device itself will cause all of the
-bridges above it to resume (at least that should happen by design).
 
-> I'm kind of scared about this because most hardware just returns all
-> ones in this case and we might never notice.
 
-That's a valid concern and not just related to bridges.  Devices in D3cold
-look like they were not present.
+[1]: https://pastebin.com/5c7hxjsS
