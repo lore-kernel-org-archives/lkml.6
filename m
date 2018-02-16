@@ -1,34 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932446AbeBPJrd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 04:47:33 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:34815 "EHLO
+        id S932466AbeBPJrm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 04:47:42 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:52377 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932325AbeBPJrb (ORCPT
+        with ESMTP id S932325AbeBPJrj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 04:47:31 -0500
-Date: Fri, 16 Feb 2018 01:46:30 -0800
+        Fri, 16 Feb 2018 04:47:39 -0500
+Date: Fri, 16 Feb 2018 01:47:01 -0800
 From: tip-bot for Jessica Yu <tipbot@zytor.com>
-Message-ID: <tip-12310e3437554328bcd75186cf331bc712cb30b2@git.kernel.org>
-Cc: peterz@infradead.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, jikos@kernel.org, davem@davemloft.net,
-        mingo@kernel.org, jpoimboe@redhat.com, mhiramat@kernel.org,
-        ananth@linux.vnet.ibm.com, jeyu@kernel.org,
-        anil.s.keshavamurthy@intel.com, joe.lawrence@redhat.com, hpa@zytor.com,
-        rostedt@goodmis.org, mbenes@suse.cz, pmladek@suse.com,
+Message-ID: <tip-297f9233b53a08fd457815e19f1d6f2c3389857b@git.kernel.org>
+Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
+        joe.lawrence@redhat.com, mhiramat@kernel.org, tglx@linutronix.de,
+        ananth@linux.vnet.ibm.com, jikos@kernel.org,
+        anil.s.keshavamurthy@intel.com, rostedt@goodmis.org, mingo@kernel.org,
+        torvalds@linux-foundation.org, jeyu@kernel.org, hpa@zytor.com,
+        jpoimboe@redhat.com, pmladek@suse.com, peterz@infradead.org,
+        mbenes@suse.cz
+Reply-To: hpa@zytor.com, mingo@kernel.org, jeyu@kernel.org,
+        torvalds@linux-foundation.org, jpoimboe@redhat.com, jikos@kernel.org,
+        anil.s.keshavamurthy@intel.com, rostedt@goodmis.org,
+        peterz@infradead.org, mbenes@suse.cz, pmladek@suse.com,
+        mhiramat@kernel.org, joe.lawrence@redhat.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, ananth@linux.vnet.ibm.com,
         tglx@linutronix.de
-Reply-To: mbenes@suse.cz, rostedt@goodmis.org, hpa@zytor.com,
-        joe.lawrence@redhat.com, anil.s.keshavamurthy@intel.com,
-        tglx@linutronix.de, pmladek@suse.com, davem@davemloft.net,
-        jikos@kernel.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org, jeyu@kernel.org,
-        ananth@linux.vnet.ibm.com, mhiramat@kernel.org, jpoimboe@redhat.com,
-        mingo@kernel.org
-In-Reply-To: <20180109235124.30886-2-jeyu@kernel.org>
-References: <20180109235124.30886-2-jeyu@kernel.org>
+In-Reply-To: <20180109235124.30886-3-jeyu@kernel.org>
+References: <20180109235124.30886-3-jeyu@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] kprobes: Propagate error from arm_kprobe_ftrace()
-Git-Commit-ID: 12310e3437554328bcd75186cf331bc712cb30b2
+Subject: [tip:perf/urgent] kprobes: Propagate error from
+ disarm_kprobe_ftrace()
+Git-Commit-ID: 297f9233b53a08fd457815e19f1d6f2c3389857b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -41,30 +42,24 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  12310e3437554328bcd75186cf331bc712cb30b2
-Gitweb:     https://git.kernel.org/tip/12310e3437554328bcd75186cf331bc712cb30b2
+Commit-ID:  297f9233b53a08fd457815e19f1d6f2c3389857b
+Gitweb:     https://git.kernel.org/tip/297f9233b53a08fd457815e19f1d6f2c3389857b
 Author:     Jessica Yu <jeyu@kernel.org>
-AuthorDate: Wed, 10 Jan 2018 00:51:23 +0100
+AuthorDate: Wed, 10 Jan 2018 00:51:24 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 16 Feb 2018 09:12:52 +0100
+CommitDate: Fri, 16 Feb 2018 09:12:58 +0100
 
-kprobes: Propagate error from arm_kprobe_ftrace()
+kprobes: Propagate error from disarm_kprobe_ftrace()
 
-Improve error handling when arming ftrace-based kprobes. Specifically, if
-we fail to arm a ftrace-based kprobe, register_kprobe()/enable_kprobe()
-should report an error instead of success. Previously, this has lead to
-confusing situations where register_kprobe() would return 0 indicating
-success, but the kprobe would not be functional if ftrace registration
-during the kprobe arming process had failed. We should therefore take any
-errors returned by ftrace into account and propagate this error so that we
-do not register/enable kprobes that cannot be armed. This can happen if,
-for example, register_ftrace_function() finds an IPMODIFY conflict (since
-kprobe_ftrace_ops has this flag set) and returns an error. Such a conflict
-is possible since livepatches also set the IPMODIFY flag for their ftrace_ops.
+Improve error handling when disarming ftrace-based kprobes. Like with
+arm_kprobe_ftrace(), propagate any errors from disarm_kprobe_ftrace() so
+that we do not disable/unregister kprobes that are still armed. In other
+words, unregister_kprobe() and disable_kprobe() should not report success
+if the kprobe could not be disarmed.
 
-arm_all_kprobes() keeps its current behavior and attempts to arm all
-kprobes. It returns the last encountered error and gives a warning if
-not all probes could be armed.
+disarm_all_kprobes() keeps its current behavior and attempts to
+disarm all kprobes. It returns the last encountered error and gives a
+warning if not all probes could be disarmed.
 
 This patch is based on Petr Mladek's original patchset (patches 2 and 3)
 back in 2015, which improved kprobes error handling, found here:
@@ -90,141 +85,138 @@ Cc: Petr Mladek <pmladek@suse.com>
 Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: live-patching@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180109235124.30886-2-jeyu@kernel.org
+Link: http://lkml.kernel.org/r/20180109235124.30886-3-jeyu@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/kprobes.c | 100 +++++++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 75 insertions(+), 25 deletions(-)
+ kernel/kprobes.c | 78 ++++++++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 53 insertions(+), 25 deletions(-)
 
 diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index da2ccf1..2d98814 100644
+index 2d98814..102160f 100644
 --- a/kernel/kprobes.c
 +++ b/kernel/kprobes.c
-@@ -978,18 +978,36 @@ static int prepare_kprobe(struct kprobe *p)
+@@ -1011,23 +1011,27 @@ err_ftrace:
  }
  
  /* Caller must lock kprobe_mutex */
--static void arm_kprobe_ftrace(struct kprobe *p)
-+static int arm_kprobe_ftrace(struct kprobe *p)
+-static void disarm_kprobe_ftrace(struct kprobe *p)
++static int disarm_kprobe_ftrace(struct kprobe *p)
  {
 -	int ret;
 +	int ret = 0;
  
- 	ret = ftrace_set_filter_ip(&kprobe_ftrace_ops,
- 				   (unsigned long)p->addr, 0, 0);
--	WARN(ret < 0, "Failed to arm kprobe-ftrace at %p (%d)\n", p->addr, ret);
--	kprobe_ftrace_enabled++;
--	if (kprobe_ftrace_enabled == 1) {
-+	if (ret) {
-+		pr_debug("Failed to arm kprobe-ftrace at %p (%d)\n", p->addr, ret);
-+		return ret;
-+	}
-+
-+	if (kprobe_ftrace_enabled == 0) {
- 		ret = register_ftrace_function(&kprobe_ftrace_ops);
+-	kprobe_ftrace_enabled--;
+-	if (kprobe_ftrace_enabled == 0) {
++	if (kprobe_ftrace_enabled == 1) {
+ 		ret = unregister_ftrace_function(&kprobe_ftrace_ops);
 -		WARN(ret < 0, "Failed to init kprobe-ftrace (%d)\n", ret);
-+		if (ret) {
-+			pr_debug("Failed to init kprobe-ftrace (%d)\n", ret);
-+			goto err_ftrace;
-+		}
++		if (WARN(ret < 0, "Failed to unregister kprobe-ftrace (%d)\n", ret))
++			return ret;
  	}
 +
-+	kprobe_ftrace_enabled++;
-+	return ret;
++	kprobe_ftrace_enabled--;
 +
-+err_ftrace:
-+	/*
-+	 * Note: Since kprobe_ftrace_ops has IPMODIFY set, and ftrace requires a
-+	 * non-empty filter_hash for IPMODIFY ops, we're safe from an accidental
-+	 * empty filter_hash which would undesirably trace all functions.
-+	 */
-+	ftrace_set_filter_ip(&kprobe_ftrace_ops, (unsigned long)p->addr, 1, 0);
+ 	ret = ftrace_set_filter_ip(&kprobe_ftrace_ops,
+ 			   (unsigned long)p->addr, 1, 0);
+ 	WARN(ret < 0, "Failed to disarm kprobe-ftrace at %p (%d)\n", p->addr, ret);
 +	return ret;
- }
- 
- /* Caller must lock kprobe_mutex */
-@@ -1008,22 +1026,23 @@ static void disarm_kprobe_ftrace(struct kprobe *p)
  }
  #else	/* !CONFIG_KPROBES_ON_FTRACE */
  #define prepare_kprobe(p)	arch_prepare_kprobe(p)
--#define arm_kprobe_ftrace(p)	do {} while (0)
-+#define arm_kprobe_ftrace(p)	(-ENODEV)
- #define disarm_kprobe_ftrace(p)	do {} while (0)
+ #define arm_kprobe_ftrace(p)	(-ENODEV)
+-#define disarm_kprobe_ftrace(p)	do {} while (0)
++#define disarm_kprobe_ftrace(p)	(-ENODEV)
  #endif
  
  /* Arm a kprobe with text_mutex */
--static void arm_kprobe(struct kprobe *kp)
-+static int arm_kprobe(struct kprobe *kp)
+@@ -1046,18 +1050,18 @@ static int arm_kprobe(struct kprobe *kp)
+ }
+ 
+ /* Disarm a kprobe with text_mutex */
+-static void disarm_kprobe(struct kprobe *kp, bool reopt)
++static int disarm_kprobe(struct kprobe *kp, bool reopt)
  {
 -	if (unlikely(kprobe_ftrace(kp))) {
--		arm_kprobe_ftrace(kp);
+-		disarm_kprobe_ftrace(kp);
 -		return;
 -	}
 +	if (unlikely(kprobe_ftrace(kp)))
-+		return arm_kprobe_ftrace(kp);
-+
++		return disarm_kprobe_ftrace(kp);
+ 
  	cpus_read_lock();
  	mutex_lock(&text_mutex);
- 	__arm_kprobe(kp);
+ 	__disarm_kprobe(kp, reopt);
  	mutex_unlock(&text_mutex);
  	cpus_read_unlock();
 +
 +	return 0;
  }
  
- /* Disarm a kprobe with text_mutex */
-@@ -1362,9 +1381,15 @@ out:
+ /*
+@@ -1639,11 +1643,12 @@ static int aggr_kprobe_disabled(struct kprobe *ap)
+ static struct kprobe *__disable_kprobe(struct kprobe *p)
+ {
+ 	struct kprobe *orig_p;
++	int ret;
  
- 	if (ret == 0 && kprobe_disabled(ap) && !kprobe_disabled(p)) {
- 		ap->flags &= ~KPROBE_FLAG_DISABLED;
--		if (!kprobes_all_disarmed)
-+		if (!kprobes_all_disarmed) {
- 			/* Arm the breakpoint again. */
--			arm_kprobe(ap);
-+			ret = arm_kprobe(ap);
-+			if (ret) {
-+				ap->flags |= KPROBE_FLAG_DISABLED;
-+				list_del_rcu(&p->list);
-+				synchronize_sched();
+ 	/* Get an original kprobe for return */
+ 	orig_p = __get_valid_kprobe(p);
+ 	if (unlikely(orig_p == NULL))
+-		return NULL;
++		return ERR_PTR(-EINVAL);
+ 
+ 	if (!kprobe_disabled(p)) {
+ 		/* Disable probe if it is a child probe */
+@@ -1657,8 +1662,13 @@ static struct kprobe *__disable_kprobe(struct kprobe *p)
+ 			 * should have already been disarmed, so
+ 			 * skip unneed disarming process.
+ 			 */
+-			if (!kprobes_all_disarmed)
+-				disarm_kprobe(orig_p, true);
++			if (!kprobes_all_disarmed) {
++				ret = disarm_kprobe(orig_p, true);
++				if (ret) {
++					p->flags &= ~KPROBE_FLAG_DISABLED;
++					return ERR_PTR(ret);
++				}
 +			}
-+		}
+ 			orig_p->flags |= KPROBE_FLAG_DISABLED;
+ 		}
  	}
+@@ -1675,8 +1685,8 @@ static int __unregister_kprobe_top(struct kprobe *p)
+ 
+ 	/* Disable kprobe. This will disarm it if needed. */
+ 	ap = __disable_kprobe(p);
+-	if (ap == NULL)
+-		return -EINVAL;
++	if (IS_ERR(ap))
++		return PTR_ERR(ap);
+ 
+ 	if (ap == p)
+ 		/*
+@@ -2109,12 +2119,14 @@ static void kill_kprobe(struct kprobe *p)
+ int disable_kprobe(struct kprobe *kp)
+ {
+ 	int ret = 0;
++	struct kprobe *p;
+ 
+ 	mutex_lock(&kprobe_mutex);
+ 
+ 	/* Disable this kprobe */
+-	if (__disable_kprobe(kp) == NULL)
+-		ret = -EINVAL;
++	p = __disable_kprobe(kp);
++	if (IS_ERR(p))
++		ret = PTR_ERR(p);
+ 
+ 	mutex_unlock(&kprobe_mutex);
+ 	return ret;
+@@ -2486,34 +2498,50 @@ already_enabled:
  	return ret;
  }
-@@ -1573,8 +1598,14 @@ int register_kprobe(struct kprobe *p)
- 	hlist_add_head_rcu(&p->hlist,
- 		       &kprobe_table[hash_ptr(p->addr, KPROBE_HASH_BITS)]);
  
--	if (!kprobes_all_disarmed && !kprobe_disabled(p))
--		arm_kprobe(p);
-+	if (!kprobes_all_disarmed && !kprobe_disabled(p)) {
-+		ret = arm_kprobe(p);
-+		if (ret) {
-+			hlist_del_rcu(&p->hlist);
-+			synchronize_sched();
-+			goto out;
-+		}
-+	}
- 
- 	/* Try to optimize kprobe */
- 	try_to_optimize_kprobe(p);
-@@ -2116,7 +2147,9 @@ int enable_kprobe(struct kprobe *kp)
- 
- 	if (!kprobes_all_disarmed && kprobe_disabled(p)) {
- 		p->flags &= ~KPROBE_FLAG_DISABLED;
--		arm_kprobe(p);
-+		ret = arm_kprobe(p);
-+		if (ret)
-+			p->flags |= KPROBE_FLAG_DISABLED;
- 	}
- out:
- 	mutex_unlock(&kprobe_mutex);
-@@ -2407,11 +2440,12 @@ static const struct file_operations debugfs_kprobe_blacklist_ops = {
- 	.release        = seq_release,
- };
- 
--static void arm_all_kprobes(void)
-+static int arm_all_kprobes(void)
+-static void disarm_all_kprobes(void)
++static int disarm_all_kprobes(void)
  {
  	struct hlist_head *head;
  	struct kprobe *p;
@@ -234,64 +226,54 @@ index da2ccf1..2d98814 100644
  
  	mutex_lock(&kprobe_mutex);
  
-@@ -2428,16 +2462,28 @@ static void arm_all_kprobes(void)
- 	/* Arming kprobes doesn't optimize kprobe itself */
+ 	/* If kprobes are already disarmed, just return */
+ 	if (kprobes_all_disarmed) {
+ 		mutex_unlock(&kprobe_mutex);
+-		return;
++		return 0;
+ 	}
+ 
+ 	kprobes_all_disarmed = true;
+-	printk(KERN_INFO "Kprobes globally disabled\n");
+ 
  	for (i = 0; i < KPROBE_TABLE_SIZE; i++) {
  		head = &kprobe_table[i];
--		hlist_for_each_entry_rcu(p, head, hlist)
--			if (!kprobe_disabled(p))
--				arm_kprobe(p);
-+		/* Arm all kprobes on a best-effort basis */
-+		hlist_for_each_entry_rcu(p, head, hlist) {
-+			if (!kprobe_disabled(p)) {
-+				err = arm_kprobe(p);
-+				if (err)  {
++		/* Disarm all kprobes on a best-effort basis */
+ 		hlist_for_each_entry_rcu(p, head, hlist) {
+-			if (!arch_trampoline_kprobe(p) && !kprobe_disabled(p))
+-				disarm_kprobe(p, false);
++			if (!arch_trampoline_kprobe(p) && !kprobe_disabled(p)) {
++				err = disarm_kprobe(p, false);
++				if (err) {
 +					errors++;
 +					ret = err;
 +				}
 +				total++;
 +			}
-+		}
+ 		}
  	}
- 
--	printk(KERN_INFO "Kprobes globally enabled\n");
++
 +	if (errors)
-+		pr_warn("Kprobes globally enabled, but failed to arm %d out of %d probes\n",
++		pr_warn("Kprobes globally disabled, but failed to disarm %d out of %d probes\n",
 +			errors, total);
 +	else
-+		pr_info("Kprobes globally enabled\n");
- 
- already_enabled:
++		pr_info("Kprobes globally disabled\n");
++
  	mutex_unlock(&kprobe_mutex);
--	return;
+ 
+ 	/* Wait for disarming all kprobes by optimizer */
+ 	wait_for_kprobe_optimizer();
++
 +	return ret;
  }
  
- static void disarm_all_kprobes(void)
-@@ -2494,6 +2540,7 @@ static ssize_t write_enabled_file_bool(struct file *file,
- {
- 	char buf[32];
- 	size_t buf_size;
-+	int ret = 0;
- 
- 	buf_size = min(count, (sizeof(buf)-1));
- 	if (copy_from_user(buf, user_buf, buf_size))
-@@ -2504,7 +2551,7 @@ static ssize_t write_enabled_file_bool(struct file *file,
- 	case 'y':
- 	case 'Y':
- 	case '1':
--		arm_all_kprobes();
-+		ret = arm_all_kprobes();
- 		break;
+ /*
+@@ -2556,7 +2584,7 @@ static ssize_t write_enabled_file_bool(struct file *file,
  	case 'n':
  	case 'N':
-@@ -2515,6 +2562,9 @@ static ssize_t write_enabled_file_bool(struct file *file,
+ 	case '0':
+-		disarm_all_kprobes();
++		ret = disarm_all_kprobes();
+ 		break;
+ 	default:
  		return -EINVAL;
- 	}
- 
-+	if (ret)
-+		return ret;
-+
- 	return count;
- }
- 
