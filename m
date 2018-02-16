@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751276AbeBPUhS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 15:37:18 -0500
-Received: from alln-iport-3.cisco.com ([173.37.142.90]:11980 "EHLO
-        alln-iport-3.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750984AbeBPUeE (ORCPT
+        id S1750994AbeBPUeD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 15:34:03 -0500
+Received: from rcdn-iport-6.cisco.com ([173.37.86.77]:1571 "EHLO
+        rcdn-iport-6.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750780AbeBPUd6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 15:34:04 -0500
+        Fri, 16 Feb 2018 15:33:58 -0500
 X-IronPort-AV: E=Sophos;i="5.46,520,1511827200";
-   d="scan'208";a="72038407"
+   d="scan'208";a="357044583"
 From: Taras Kondratiuk <takondra@cisco.com>
 To: "H. Peter Anvin" <hpa@zytor.com>, Al Viro <viro@zeniv.linux.org.uk>,
         Arnd Bergmann <arnd@arndb.de>, Rob Landley <rob@landley.net>,
@@ -18,9 +18,9 @@ To: "H. Peter Anvin" <hpa@zytor.com>, Al Viro <viro@zeniv.linux.org.uk>,
 Cc: initramfs@vger.kernel.org, Victor Kamensky <kamensky@cisco.com>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, xe-linux-external@cisco.com
-Subject: [PATCH v3 09/15] initramfs: set extended attributes
-Date: Fri, 16 Feb 2018 20:33:45 +0000
-Message-Id: <1518813234-5874-10-git-send-email-takondra@cisco.com>
+Subject: [PATCH v3 01/15] Documentation: add newcx initramfs format description
+Date: Fri, 16 Feb 2018 20:33:37 +0000
+Message-Id: <1518813234-5874-2-git-send-email-takondra@cisco.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518813234-5874-1-git-send-email-takondra@cisco.com>
 References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
@@ -30,128 +30,108 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Many of the Linux security/integrity features are dependent on file
+metadata, stored as extended attributes (xattrs), for making decisions.
+These features need to be initialized during initcall and enabled as
+early as possible for complete security coverage.
 
-This patch writes out the extended attributes included in the cpio file.
-As the "security.ima" xattr needs to be written after the file data.
-this patch separates extracting and setting the xattrs by defining new
-do_setxattrs state.
+Initramfs (tmpfs) supports xattrs, but newc CPIO archive format does not
+support including them into the archive.
 
-[kamensky: fixed restoring of xattrs for symbolic links by using
-           sys_lsetxattr() instead of sys_setxattr()]
+This patch describes "extended" newc format (newcx) that is based on
+newc and has following changes:
+- extended attributes support
+- increased size of filesize to support files >4GB
+- increased mtime field size to have 64 bits of seconds and added a
+  field for nanoseconds
+- removed unused checksum field
 
+Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Victor Kamensky <kamensky@cisco.com>
-Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
 ---
- init/initramfs.c | 57 +++++++++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 52 insertions(+), 5 deletions(-)
+ Documentation/early-userspace/buffer-format.txt | 46 ++++++++++++++++++++++---
+ 1 file changed, 41 insertions(+), 5 deletions(-)
 
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 0407e199352e..ac636097aee5 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -306,6 +306,7 @@ static int __init do_xattrs(void);
- static int __init do_create(void);
- static int __init do_copy(void);
- static int __init do_symlink(void);
-+static int __init do_setxattrs(void);
- static int __init do_reset(void);
+diff --git a/Documentation/early-userspace/buffer-format.txt b/Documentation/early-userspace/buffer-format.txt
+index e1fd7f9dad16..8349b2f28b4b 100644
+--- a/Documentation/early-userspace/buffer-format.txt
++++ b/Documentation/early-userspace/buffer-format.txt
+@@ -24,6 +24,7 @@ grammar, where:
+ 	+	indicates concatenation
+ 	GZIP()	indicates the gzip(1) of the operand
+ 	ALGN(n)	means padding with null bytes to an n-byte boundary
++	[n]	means size of field is n bytes
  
- typedef int (*fsm_state_t)(void);
-@@ -468,7 +469,7 @@ static int __init do_name(void)
+ 	initramfs  := ("\0" | cpio_archive | cpio_gzip_archive)*
  
- static int __init do_xattrs(void)
- {
--	/* Do nothing for now */
-+	memcpy_optional(xattr_buf, collected, xattr_len);
- 	state = do_create;
- 	return 0;
- }
-@@ -477,8 +478,7 @@ static __initdata int wfd;
+@@ -31,20 +32,33 @@ grammar, where:
  
- static int __init do_create(void)
- {
--	state = do_skip;
--	next_state = do_reset;
-+	state = do_setxattrs;
- 	clean_path(name_buf, mode);
- 	if (S_ISREG(mode)) {
- 		int ml = maybe_link(name_buf);
-@@ -511,8 +511,11 @@ static int __init do_create(void)
- 			do_utime(name_buf, &mtime);
- 		}
- 	} else if (S_ISLNK(mode)) {
--		if (body_len > PATH_MAX)
-+		if (body_len > PATH_MAX) {
-+			state = do_skip;
-+			next_state = do_reset;
- 			return 0;
-+		}
- 		read_into(symlink_buf, body_len, do_symlink);
- 	}
- 	return 0;
-@@ -526,7 +529,7 @@ static int __init do_copy(void)
- 		sys_close(wfd);
- 		do_utime(name_buf, &mtime);
- 		eat(body_len);
--		state = do_skip;
-+		state = do_setxattrs;
- 		return 0;
- 	} else {
- 		if (xwrite(wfd, victim, byte_count) != byte_count)
-@@ -545,8 +548,52 @@ static int __init do_symlink(void)
- 	sys_symlink(symlink_buf, name_buf);
- 	sys_lchown(name_buf, uid, gid);
- 	do_utime(name_buf, &mtime);
-+	state = do_setxattrs;
-+	return 0;
-+}
+ 	cpio_archive := cpio_file* + (<nothing> | cpio_trailer)
+ 
+-	cpio_file := ALGN(4) + cpio_header + filename + "\0" + ALGN(4) + data
++	cpio_file := (cpio_newc_file | cpio_newcx_file)
 +
-+struct xattr_hdr {
-+	char c_size[8]; /* total size including c_size field */
-+	char c_data[];  /* <name>\0<value> */
-+};
++	cpio_newc_file := ALGN(4) + cpio_newc_header + filename + "\0" + \
++			  ALGN(4) + data
 +
-+static int __init do_setxattrs(void)
-+{
-+	char *buf = xattr_buf;
-+	char *bufend = buf + xattr_len;
-+	struct xattr_hdr *hdr;
-+	char str[sizeof(hdr->c_size) + 1];
++	cpio_newcx_file := ALGN(4) + cpio_newcx_header + filename + "\0" + \
++			   ALGN(4) + xattrs + ALGN(4) + data
 +
- 	state = do_skip;
- 	next_state = do_reset;
-+	if (!xattr_len)
-+		return 0;
++	xattrs := xattr_entry*
 +
-+	str[sizeof(hdr->c_size)] = 0;
++	xattr_entry := xattr_size[8] + xattr_name + "\0" + xattr_value
+ 
+ 	cpio_trailer := ALGN(4) + cpio_header + "TRAILER!!!\0" + ALGN(4)
+ 
+ 
+ In human terms, the initramfs buffer contains a collection of
+-compressed and/or uncompressed cpio archives (in the "newc" or "crc"
+-formats); arbitrary amounts zero bytes (for padding) can be added
+-between members.
++compressed and/or uncompressed cpio archives; arbitrary amounts
++zero bytes (for padding) can be added between members.
+ 
+ The cpio "TRAILER!!!" entry (cpio end-of-archive) is optional, but is
+ not ignored; see "handling of hard links" below.
+ 
+-The structure of the cpio_header is as follows (all fields contain
++xattr_size is a total size of xattr_entry including 8 bytes of
++xattr_size. xattr_size has the same hexadecimal ASCII encoding as other
++fields of cpio header (see below).
 +
-+	while (buf < bufend) {
-+		char *xattr_name, *xattr_value;
-+		unsigned long xattr_entry_size, xattr_value_size;
-+		int ret;
++The structure of the cpio_newc_header is as follows (all fields contain
+ hexadecimal ASCII numbers fully padded with '0' on the left to the
+ full width of the field, for example, the integer 4780 is represented
+ by the ASCII string "000012ac"):
+@@ -81,6 +95,28 @@ algorithm used.
+ If the filename is "TRAILER!!!" this is actually an end-of-archive
+ marker; the c_filesize for an end-of-archive marker must be zero.
+ 
++"Extended" newc format (newcx)
++"newcx" cpio format extends "newc" by increasing size of some fields
++and adding extended attributes support. cpio_newcx_header structure:
 +
-+		hdr = (struct xattr_hdr *)buf;
-+		memcpy(str, hdr->c_size, sizeof(hdr->c_size));
-+		ret = kstrtoul(str, 16, &xattr_entry_size);
-+		buf += xattr_entry_size;
-+		if (ret || buf > bufend) {
-+			error("malformed xattrs");
-+			break;
-+		}
++Field name    Field size	 Meaning
++c_magic	       6 bytes		 The string "070703"
++c_ino	       8 bytes		 File inode number
++c_mode	       8 bytes		 File mode and permissions
++c_uid	       8 bytes		 File uid
++c_gid	       8 bytes		 File gid
++c_nlink	       8 bytes		 Number of links
++c_mtime	      16 bytes		 Modification time (seconds)
++c_mtime_nsec   8 bytes		 Modification time (nanoseconds)
++c_filesize    16 bytes		 Size of data field
++c_maj	       8 bytes		 Major part of file device number
++c_min	       8 bytes		 Minor part of file device number
++c_rmaj	       8 bytes		 Major part of device node reference
++c_rmin	       8 bytes		 Minor part of device node reference
++c_namesize     8 bytes		 Length of filename, including final \0
++c_xattrs_size  8 bytes		 Size of xattrs field
 +
-+		xattr_name = hdr->c_data;
-+		xattr_value = xattr_name + strlen(xattr_name) + 1;
-+		xattr_value_size = buf - xattr_value;
-+
-+		ret = sys_lsetxattr(name_buf, xattr_name, xattr_value,
-+				xattr_value_size, 0);
-+		pr_debug("%s: %s size: %lu val: %s (ret: %d)\n", name_buf,
-+				xattr_name, xattr_value_size, xattr_value, ret);
-+	}
- 	return 0;
- }
++Most of the fields match cpio_newc_header. c_chksum field is dropped.
+ 
+ *** Handling of hard links
  
 -- 
 2.10.3.dirty
