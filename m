@@ -1,116 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751493AbeBPTXw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 14:23:52 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43812 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750873AbeBPTXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 14:23:48 -0500
-Subject: Re: [PATCH v5 1/3] sched: Stop nohz stats when decayed
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
-        Brendan Jackman <brendan.jackman@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>
-References: <1518622006-16089-1-git-send-email-vincent.guittot@linaro.org>
- <1518622006-16089-2-git-send-email-vincent.guittot@linaro.org>
- <c4909c7e-e11b-8886-db15-ba82a331b89e@arm.com>
- <CAKfTPtBKPvmDCJtK4yRhtV-qNcOea63Vz2gDy7RK+k9EV35QOw@mail.gmail.com>
-From: Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <dbe46747-355d-a0b1-7794-8f511ca54c88@arm.com>
-Date: Fri, 16 Feb 2018 19:23:45 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAKfTPtBKPvmDCJtK4yRhtV-qNcOea63Vz2gDy7RK+k9EV35QOw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1751083AbeBPT03 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 14:26:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56828 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753860AbeBPTUC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 14:20:02 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E2EF217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 35/41] perf trace powerpc: Use generated syscall table
+Date: Fri, 16 Feb 2018 16:17:40 -0300
+Message-Id: <20180216191746.11095-36-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180216191746.11095-1-acme@kernel.org>
+References: <20180216191746.11095-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/16/2018 05:02 PM, Vincent Guittot wrote:
-> On 16 February 2018 at 13:53, Valentin Schneider
-> <valentin.schneider@arm.com> wrote:
->> On 02/14/2018 03:26 PM, Vincent Guittot wrote:
->>> Stopped the periodic update of blocked load when all idle CPUs have fully
->>> decayed. We introduce a new nohz.has_blocked that reflect if some idle
->>> CPUs has blocked load that have to be periodiccally updated. nohz.has_blocked
->>> is set everytime that a Idle CPU can have blocked load and it is then clear
->>> when no more blocked load has been detected during an update. We don't need
->>> atomic operation but only to make cure of the right ordering when updating
->>> nohz.idle_cpus_mask and nohz.has_blocked.
->>>
->>> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->>> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->>> ---
->>>  kernel/sched/fair.c  | 122 ++++++++++++++++++++++++++++++++++++++++++---------
->>>  kernel/sched/sched.h |   1 +
->>>  2 files changed, 102 insertions(+), 21 deletions(-)
->>>
->>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>> index 7af1fa9..5a6835e 100644
->>> --- a/kernel/sched/fair.c
->>> +++ b/kernel/sched/fair.c
->>>
->>> [...]
->>>
->>> -static void update_nohz_stats(struct rq *rq)
->>> +static bool update_nohz_stats(struct rq *rq)
->>>  {
->>>  #ifdef CONFIG_NO_HZ_COMMON
->>>       unsigned int cpu = rq->cpu;
->>>
->>> +     if (!rq->has_blocked_load)
->>> +             return false;
->>> +
->>>       if (!cpumask_test_cpu(cpu, nohz.idle_cpus_mask))
->>> -             return;
->>> +             return false;
->>>
->>>       if (!time_after(jiffies, rq->last_blocked_load_update_tick))
->>> -             return;
->>> +             return true;
->>>
->>>       update_blocked_averages(cpu);
->>> +
->>> +     return rq->has_blocked_load;
->>> +#else
->>> +     return false;
->>>  #endif
->>>  }
->>>
->>
->> (Wrongly thought that this bit was in a different patch, comment should have
->> been squashed in previous reply...)
->>
->> I've been thinking about this, and it's a messy one if we want to
->> skip CPUs in idle_balance() / clear the nohz.has_blocked_flag.
->>
->> AFAICT, the rq->has_blocked_load flag can be wrongly cleared: if we're
->> calling update_nohz_stats() for CPU A, but CPU A got out/in of
->> idle really quickly in that same timeframe, I'm not sure you can guarantee
->> the clearing of rq->has_blocked_load done in update_blocked_averages() will
->> always end up in memory before the setting of the flag in
->> nohz_balance_enter_idle().
-> 
-> Not sure it's a problem in this case because the clear done in
-> update_blocked_averages() only happens if there is no load on the rq
-> and new load can't be added in the mean time
-> 
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 
-You're right, and that's why there's that comment:
->>         /*
->>          * Can be set safely without rq->lock held
->>          * If a clear happens, it will have evaluated last additions because
->>          * rq->lock is held during the check and the clear
->>          */
->>         rq->has_blocked_load = 1;
+This should speed up accessing new system calls introduced with the
+kernel rather than waiting for libaudit updates to include them.
 
-Even though it's clearly written there my brain wouldn't process the fact
-that the flag is cleared with the rq lock held. So yeah, we can't wrongly
-clear rq->has_blocked_load. The only mishap that can happen is that it is
-re-raised even though we just went though an update_nohz_stats(), which would
-lead to a useless stats update in the future, but that's not as bad.
+It also enables users to specify wildcards, for example, perf trace -e
+'open*', just like was already possible on x86 and s390.
+
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org
+Link: http://lkml.kernel.org/r/20180129083417.31240-4-ravi.bangoria@linux.vnet.ibm.com
+[ Do it for ppc32 as well ]
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/Makefile.config   | 2 ++
+ tools/perf/util/syscalltbl.c | 8 ++++++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 0dfdaa9fa81e..577a5d2988fe 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -27,6 +27,8 @@ NO_SYSCALL_TABLE := 1
+ # Additional ARCH settings for ppc
+ ifeq ($(SRCARCH),powerpc)
+   NO_PERF_REGS := 0
++  NO_SYSCALL_TABLE := 0
++  CFLAGS += -I$(OUTPUT)arch/powerpc/include/generated
+   LIBUNWIND_LIBS := -lunwind -lunwind-ppc64
+ endif
+ 
+diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
+index 303bdb84ab5a..895122d638dd 100644
+--- a/tools/perf/util/syscalltbl.c
++++ b/tools/perf/util/syscalltbl.c
+@@ -30,6 +30,14 @@ static const char **syscalltbl_native = syscalltbl_x86_64;
+ #include <asm/syscalls_64.c>
+ const int syscalltbl_native_max_id = SYSCALLTBL_S390_64_MAX_ID;
+ static const char **syscalltbl_native = syscalltbl_s390_64;
++#elif defined(__powerpc64__)
++#include <asm/syscalls_64.c>
++const int syscalltbl_native_max_id = SYSCALLTBL_POWERPC_64_MAX_ID;
++static const char **syscalltbl_native = syscalltbl_powerpc_64;
++#elif defined(__powerpc__)
++#include <asm/syscalls_32.c>
++const int syscalltbl_native_max_id = SYSCALLTBL_POWERPC_32_MAX_ID;
++static const char **syscalltbl_native = syscalltbl_powerpc_32;
+ #endif
+ 
+ struct syscall {
+-- 
+2.14.3
