@@ -1,299 +1,454 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753280AbeBPGeR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 01:34:17 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44060 "EHLO mx1.redhat.com"
+        id S1753308AbeBPGfR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 01:35:17 -0500
+Received: from mail-bn3nam01on0069.outbound.protection.outlook.com ([104.47.33.69]:9584
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753254AbeBPGeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 01:34:16 -0500
-Date: Fri, 16 Feb 2018 01:30:23 -0500
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Steve Grubb <sgrubb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>
-Subject: Re: [PATCH ghak8 ALT4 V4 1/3] audit: show partial pathname for
- entries with anonymous parents
-Message-ID: <20180216063023.j7mwgelw6mh2sre7@madcap2.tricolour.ca>
-References: <cover.1518411444.git.rgb@redhat.com>
- <9a249968b7c994eaec1da8ae6d5bb48e385acf5c.1518411444.git.rgb@redhat.com>
- <2739042.dBRvusNJAk@x2>
- <20180215231907.m47ecthfq5n6sr2a@madcap2.tricolour.ca>
+        id S1753285AbeBPGfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 01:35:14 -0500
+From: Javier Gonzalez <javier@cnexlabs.com>
+To: =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
+CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
+Subject: Re: [PATCH 2/8] lightnvm: show generic geometry in sysfs
+Thread-Topic: [PATCH 2/8] lightnvm: show generic geometry in sysfs
+Thread-Index: AQHTpNPU3FKDI09zP0eaYA7c4W0rPKOlQ2wAgAFTiwA=
+Date: Fri, 16 Feb 2018 06:35:12 +0000
+Message-ID: <E53B65E9-3D1A-49BB-AA5D-F3D2C4032484@cnexlabs.com>
+References: <1518530768-20956-1-git-send-email-javier@cnexlabs.com>
+ <1518530768-20956-3-git-send-email-javier@cnexlabs.com>
+ <caa2634b-63bf-3a35-ed53-220aab2bd05a@lightnvm.io>
+In-Reply-To: <caa2634b-63bf-3a35-ed53-220aab2bd05a@lightnvm.io>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=javier@cnexlabs.com;
+x-originating-ip: [24.5.37.211]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR06MB3042;7:TedAc6L/4APPVgTxuI+ugCAglBCY7KDiCQ7E3WKgP5hzCZXQCwEE9hpO2zCg6b+Rno6IKXZEKWhVWv7T1U86Yz7ZP9snAqtOjzGETsHeVIcndudMU1Ddvnw3WUocBF2C+ZC8Il40obmF4XZfxGLqa5/WGL4Tpigohd++DGpYMkkr4Ni6zEB/yXhqYCMHgg2UoLwiayAFUxa4vHqG6a7L52arIFlllyJjPPhjLCZaTqGaKltvbJwY9YAmHlaBLQz7
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-correlation-id: 44247b2d-08b6-46e7-2276-08d575076e8a
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(49563074)(7193020);SRVR:BN6PR06MB3042;
+x-ms-traffictypediagnostic: BN6PR06MB3042:
+x-microsoft-antispam-prvs: <BN6PR06MB3042484CCDD0378220F3C4A8BACB0@BN6PR06MB3042.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(102415395)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231101)(2400082)(944501161)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:BN6PR06MB3042;BCL:0;PCL:0;RULEID:;SRVR:BN6PR06MB3042;
+x-forefront-prvs: 0585417D7B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(39830400003)(396003)(39380400002)(346002)(189003)(199004)(25786009)(4326008)(3846002)(6116002)(6246003)(82746002)(6916009)(2950100002)(6512007)(6436002)(229853002)(186003)(66066001)(97736004)(14454004)(99286004)(478600001)(99936001)(83716003)(86362001)(6486002)(8936002)(33656002)(36756003)(105586002)(81156014)(316002)(2900100001)(7736002)(305945005)(68736007)(2906002)(8676002)(81166006)(54906003)(76176011)(77096007)(26005)(5660300001)(53936002)(102836004)(6506007)(53546011)(3660700001)(3280700002)(106356001)(41533002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR06MB3042;H:BN6PR06MB2626.namprd06.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: Q2fP4HALzc+hbGhQwbs4LCrPtFSGAtmJ70CzYbJ+lfiqYVvMY73TzprWOiWTadfjod0yoEGEDopDnfe11DOuNw==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_28767525-53A2-41D6-B123-869EC5AB4AF1";
+        protocol="application/pgp-signature"; micalg=pgp-sha512
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180215231907.m47ecthfq5n6sr2a@madcap2.tricolour.ca>
-User-Agent: NeoMutt/20171027
+X-OriginatorOrg: cnexlabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44247b2d-08b6-46e7-2276-08d575076e8a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Feb 2018 06:35:12.1779
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR06MB3042
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-15 18:19, Richard Guy Briggs wrote:
-> On 2018-02-15 18:07, Steve Grubb wrote:
-> > On Monday, February 12, 2018 12:02:21 AM EST Richard Guy Briggs wrote:
-> > > Tracefs or debugfs were causing hundreds to thousands of null PATH
-> > > records to be associated with the init_module and finit_module SYSCALL
-> > > records on a few modules when the following rule was in place for
-> > > startup:
-> > >         -a always,exit -F arch=x86_64 -S init_module -F key=mod-load
-> > > 
-> > > This happens because the parent inode is not found in the task's
-> > > audit_names list and hence treats it as anonymous.  This gives us no
-> > > information other than a numerical device number for a device that may
-> > > no longer be visible upon log inspeciton, and an inode number.
-> > > 
-> > > Fill in the partial known pathname from the filesystem mount point to
-> > > the leaf node on previously null PATH records from entries that have an
-> > > anonymous parent from the child dentry using dentry_path_raw().
-> > > 
-> > > Make the dentry argument of __audit_inode_child() non-const so that we
-> > > can take a reference to it in the case of an anonymous parent with
-> > > dget() and dget_parent() to be able to later print a partial path from
-> > > the host filesystem rather than null.
-> > > 
-> > > Since all we are given is an inode of the parent and the dentry of the
-> > > child, finding the path from the mount point to the root of the
-> > > filesystem is more challenging that would involve searching all
-> > > vfsmounts from "/" until a matching dentry is found for that
-> > > filesystem's root dentry.  Even if one is found, there may be more than
-> > > one mount point.  At this point the gain seems marginal since
-> > > knowing the filesystem type and path are a significant help in tracking
-> > > down the source of the PATH records and being able to address them.
-> > > 
-> > > Sample output:
-> > > type=PROCTITLE msg=audit(1488317694.446:143):
-> > > proctitle=2F7362696E2F6D6F6470726F6265002D71002D2D006E66737634 type=PATH
-> > > msg=audit(1488317694.446:143): item=797
-> > > name=events/nfs4/nfs4_setclientid/format inode=15969 dev=00:09
-> > > mode=0100444 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:tracefs_t:s0
-> > > nametype=CREATE cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0
-> > > cap_fver=0 type=PATH msg=audit(1488317694.446:143): item=796
-> > > name=events/nfs4/nfs4_setclientid inode=15964 dev=00:09 mode=040755 ouid=0
-> > > ogid=0 rdev=00:00 obj=system_u:object_r:tracefs_t:s0 nametype=PARENT
-> > > cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0 cap_fver=0 ...
-> > > type=PATH msg=audit(1488317694.446:143): item=1 name=events/nfs4
-> > > inode=15571 dev=00:09 mode=040755 ouid=0 ogid=0 rdev=00:00
-> > > obj=system_u:object_r:tracefs_t:s0 nametype=CREATE cap_fp=0000000000000000
-> > > cap_fi=0000000000000000 cap_fe=0 cap_fver=0 type=PATH
-> > > msg=audit(1488317694.446:143): item=0 name=events inode=119 dev=00:09
-> > > mode=040755 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:tracefs_t:s0
-> > > nametype=PARENT cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0
-> > > cap_fver=0 type=KERN_MODULE msg=audit(1488317694.446:143): name="nfsv4"
-> > > type=SYSCALL msg=audit(1488317694.446:143): arch=c000003e syscall=313
-> > > success=yes exit=0 a0=1 a1=55d5a35ce106 a2=0 a3=1 items=798 ppid=6 pid=528
-> > > auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0
-> > > tty=(none) ses=4294967295 comm="modprobe" exe="/usr/bin/kmod"
-> > > subj=system_u:system_r:insmod_t:s0 key="mod-load"
+--Apple-Mail=_28767525-53A2-41D6-B123-869EC5AB4AF1
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-So, updated sample output is:
-type=SYSCALL msg=audit(1518738520.800:264): arch=c000003e syscall=313 success=yes exit=0 a0=8 a1=55c51f395fc6 a2=0 a3=8 items=834 ppid=579 pid=608 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=ttyS0 ses=1 comm="modprobe" exe="/usr/bin/kmod" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="mod-load"
-type=KERN_MODULE msg=audit(1518738520.800:264): name="nfsv4"
-type=PATH msg=audit(1518738520.800:264): item=0 name="events" inode=127 dev=00:0b mode=040755 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:tracefs_t:s0 nametype=PARENT_ANON cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0 cap_fver=0 fstype=0x74726163
-type=PATH msg=audit(1518738520.800:264): item=1 name="events/nfs4" inode=17795 dev=00:0b mode=040755 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:tracefs_t:s0 nametype=CREATE_ANON cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0 cap_fver=0 fstype=0x74726163
-...
-type=PATH msg=audit(1518738520.800:264): item=832 name="events/nfs4/nfs4_setclientid" inode=18206 dev=00:0b mode=040755 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:tracefs_t:s0 nametype=PARENT_ANON cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0 cap_fver=0 fstype=0x74726163
-type=PATH msg=audit(1518738520.800:264): item=833 name="events/nfs4/nfs4_setclientid/format" inode=18211 dev=00:0b mode=0100444 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:tracefs_t:s0 nametype=CREATE_ANON cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0 cap_fver=0 fstype=0x74726163
-type=PROCTITLE msg=audit(1518738520.800:264): proctitle=6D6F6470726F6265006E66737634
 
-> > Thanks for the samples, but the event above fails the ausearch-test test 
-> > suite. The "name" field in the PATH record is not properly escaped.
-> 
-> Let me re-run the ausearch-test on the log file from the machine in
-> question...  I don't remember if I copied the above from a recent run,
-> or just hand-edited the output to update it.  It should be fine since it
-> was updated to now run through audit_log_untrustedstring().
+> On 15 Feb 2018, at 02.20, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>=20
+> On 02/13/2018 03:06 PM, Javier Gonz=C3=A1lez wrote:
+>> From: Javier Gonz=C3=A1lez <javier@javigon.com>
+>> Apart from showing the geometry returned by the different identify
+>> commands, provide the generic geometry too, as this is the geometry =
+that
+>> targets will use to describe the device.
+>> Signed-off-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
+>> ---
+>>  drivers/nvme/host/lightnvm.c | 146 =
+++++++++++++++++++++++++++++---------------
+>>  1 file changed, 97 insertions(+), 49 deletions(-)
+>> diff --git a/drivers/nvme/host/lightnvm.c =
+b/drivers/nvme/host/lightnvm.c
+>> index 97739e668602..7bc75182c723 100644
+>> --- a/drivers/nvme/host/lightnvm.c
+>> +++ b/drivers/nvme/host/lightnvm.c
+>> @@ -944,8 +944,27 @@ static ssize_t nvm_dev_attr_show(struct device =
+*dev,
+>>  		return scnprintf(page, PAGE_SIZE, "%u.%u\n",
+>>  						dev_geo->major_ver_id,
+>>  						dev_geo->minor_ver_id);
+>> -	} else if (strcmp(attr->name, "capabilities") =3D=3D 0) {
+>> -		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.cap);
+>> +	} else if (strcmp(attr->name, "clba") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.clba);
+>> +	} else if (strcmp(attr->name, "csecs") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.csecs);
+>> +	} else if (strcmp(attr->name, "sos") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.sos);
+>> +	} else if (strcmp(attr->name, "ws_min") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.ws_min);
+>> +	} else if (strcmp(attr->name, "ws_opt") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.ws_opt);
+>> +	} else if (strcmp(attr->name, "maxoc") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.maxoc);
+>> +	} else if (strcmp(attr->name, "maxocpu") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.maxocpu);
+>> +	} else if (strcmp(attr->name, "mw_cunits") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.mw_cunits);
+>> +	} else if (strcmp(attr->name, "media_capabilities") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.mccap);
+>> +	} else if (strcmp(attr->name, "max_phys_secs") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n",
+>> +				ndev->ops->max_phys_sect);
+>>  	} else if (strcmp(attr->name, "read_typ") =3D=3D 0) {
+>>  		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.trdt);
+>>  	} else if (strcmp(attr->name, "read_max") =3D=3D 0) {
+>> @@ -984,19 +1003,8 @@ static ssize_t nvm_dev_attr_show_12(struct =
+device *dev,
+>>    	attr =3D &dattr->attr;
+>>  -	if (strcmp(attr->name, "vendor_opcode") =3D=3D 0) {
+>> -		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.vmnt);
+>> -	} else if (strcmp(attr->name, "device_mode") =3D=3D 0) {
+>> -		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.dom);
+>> -	/* kept for compatibility */
+>> -	} else if (strcmp(attr->name, "media_manager") =3D=3D 0) {
+>> -		return scnprintf(page, PAGE_SIZE, "%s\n", "gennvm");
+>> -	} else if (strcmp(attr->name, "ppa_format") =3D=3D 0) {
+>> +	if (strcmp(attr->name, "ppa_format") =3D=3D 0) {
+>>  		return nvm_dev_attr_show_ppaf((void *)&dev_geo->c.addrf, =
+page);
+>> -	} else if (strcmp(attr->name, "media_type") =3D=3D 0) {	/* u8 */
+>> -		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.mtype);
+>> -	} else if (strcmp(attr->name, "flash_media_type") =3D=3D 0) {
+>> -		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.fmtype);
+>>  	} else if (strcmp(attr->name, "num_channels") =3D=3D 0) {
+>>  		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->num_ch);
+>>  	} else if (strcmp(attr->name, "num_luns") =3D=3D 0) {
+>> @@ -1011,8 +1019,6 @@ static ssize_t nvm_dev_attr_show_12(struct =
+device *dev,
+>>  		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.fpg_sz);
+>>  	} else if (strcmp(attr->name, "hw_sector_size") =3D=3D 0) {
+>>  		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.csecs);
+>> -	} else if (strcmp(attr->name, "oob_sector_size") =3D=3D 0) {/* =
+u32 */
+>> -		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.sos);
+>>  	} else if (strcmp(attr->name, "prog_typ") =3D=3D 0) {
+>>  		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.tprt);
+>>  	} else if (strcmp(attr->name, "prog_max") =3D=3D 0) {
+>> @@ -1021,13 +1027,21 @@ static ssize_t nvm_dev_attr_show_12(struct =
+device *dev,
+>>  		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.tbet);
+>>  	} else if (strcmp(attr->name, "erase_max") =3D=3D 0) {
+>>  		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.tbem);
+>> +	} else if (strcmp(attr->name, "vendor_opcode") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.vmnt);
+>> +	} else if (strcmp(attr->name, "device_mode") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.dom);
+>> +	/* kept for compatibility */
+>> +	} else if (strcmp(attr->name, "media_manager") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%s\n", "gennvm");
+>> +	} else if (strcmp(attr->name, "capabilities") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.cap);
+>> +	} else if (strcmp(attr->name, "media_type") =3D=3D 0) {	/* u8 */
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.mtype);
+>> +	} else if (strcmp(attr->name, "flash_media_type") =3D=3D 0) {
+>> +		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.fmtype);
+>>  	} else if (strcmp(attr->name, "multiplane_modes") =3D=3D 0) {
+>>  		return scnprintf(page, PAGE_SIZE, "0x%08x\n", =
+dev_geo->c.mpos);
+>> -	} else if (strcmp(attr->name, "media_capabilities") =3D=3D 0) {
+>> -		return scnprintf(page, PAGE_SIZE, "0x%08x\n", =
+dev_geo->c.mccap);
+>> -	} else if (strcmp(attr->name, "max_phys_secs") =3D=3D 0) {
+>> -		return scnprintf(page, PAGE_SIZE, "%u\n",
+>> -				ndev->ops->max_phys_sect);
+>>  	} else {
+>>  		return scnprintf(page, PAGE_SIZE,
+>>  			"Unhandled attr(%s) in =
+`nvm_dev_attr_show_12`\n",
+>> @@ -1035,6 +1049,17 @@ static ssize_t nvm_dev_attr_show_12(struct =
+device *dev,
+>>  	}
+>>  }
+>>  +static ssize_t nvm_dev_attr_show_lbaf(struct nvm_addr_format *lbaf,
+>> +					 char *page)
+>> +{
+>> +	return scnprintf(page, PAGE_SIZE,
+>> +		"0x%02x%02x%02x%02x%02x%02x%02x%02x\n",
+>> +				lbaf->ch_offset, lbaf->ch_len,
+>> +				lbaf->lun_offset, lbaf->lun_len,
+>> +				lbaf->chk_offset, lbaf->chk_len,
+>> +				lbaf->sec_offset, lbaf->sec_len);
+>> +}
+>> +
+>>  static ssize_t nvm_dev_attr_show_20(struct device *dev,
+>>  		struct device_attribute *dattr, char *page)
+>>  {
+>> @@ -1048,20 +1073,14 @@ static ssize_t nvm_dev_attr_show_20(struct =
+device *dev,
+>>    	attr =3D &dattr->attr;
+>>  -	if (strcmp(attr->name, "groups") =3D=3D 0) {
+>> +	if (strcmp(attr->name, "lba_format") =3D=3D 0) {
+>> +		return nvm_dev_attr_show_lbaf((void *)&dev_geo->c.addrf, =
+page);
+>> +	} else if (strcmp(attr->name, "groups") =3D=3D 0) {
+>>  		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->num_ch);
+>>  	} else if (strcmp(attr->name, "punits") =3D=3D 0) {
+>>  		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->num_lun);
+>>  	} else if (strcmp(attr->name, "chunks") =3D=3D 0) {
+>>  		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.num_chk);
+>> -	} else if (strcmp(attr->name, "clba") =3D=3D 0) {
+>> -		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.clba);
+>> -	} else if (strcmp(attr->name, "ws_min") =3D=3D 0) {
+>> -		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.ws_min);
+>> -	} else if (strcmp(attr->name, "ws_opt") =3D=3D 0) {
+>> -		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.ws_opt);
+>> -	} else if (strcmp(attr->name, "mw_cunits") =3D=3D 0) {
+>> -		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.mw_cunits);
+>>  	} else if (strcmp(attr->name, "write_typ") =3D=3D 0) {
+>>  		return scnprintf(page, PAGE_SIZE, "%u\n", =
+dev_geo->c.tprt);
+>>  	} else if (strcmp(attr->name, "write_max") =3D=3D 0) {
+>> @@ -1086,7 +1105,19 @@ static ssize_t nvm_dev_attr_show_20(struct =
+device *dev,
+>>    /* general attributes */
+>>  static NVM_DEV_ATTR_RO(version);
+>> -static NVM_DEV_ATTR_RO(capabilities);
+>> +
+>> +static NVM_DEV_ATTR_RO(ws_min);
+>> +static NVM_DEV_ATTR_RO(ws_opt);
+>> +static NVM_DEV_ATTR_RO(mw_cunits);
+>> +static NVM_DEV_ATTR_RO(maxoc);
+>> +static NVM_DEV_ATTR_RO(maxocpu);
+>> +
+>> +static NVM_DEV_ATTR_RO(media_capabilities);
+>> +static NVM_DEV_ATTR_RO(max_phys_secs);
+>> +
+>> +static NVM_DEV_ATTR_RO(clba);
+>> +static NVM_DEV_ATTR_RO(csecs);
+>> +static NVM_DEV_ATTR_RO(sos);
+>>    static NVM_DEV_ATTR_RO(read_typ);
+>>  static NVM_DEV_ATTR_RO(read_max);
+>> @@ -1105,42 +1136,53 @@ static NVM_DEV_ATTR_12_RO(num_blocks);
+>>  static NVM_DEV_ATTR_12_RO(num_pages);
+>>  static NVM_DEV_ATTR_12_RO(page_size);
+>>  static NVM_DEV_ATTR_12_RO(hw_sector_size);
+>> -static NVM_DEV_ATTR_12_RO(oob_sector_size);
+>>  static NVM_DEV_ATTR_12_RO(prog_typ);
+>>  static NVM_DEV_ATTR_12_RO(prog_max);
+>>  static NVM_DEV_ATTR_12_RO(erase_typ);
+>>  static NVM_DEV_ATTR_12_RO(erase_max);
+>>  static NVM_DEV_ATTR_12_RO(multiplane_modes);
+>> -static NVM_DEV_ATTR_12_RO(media_capabilities);
+>> -static NVM_DEV_ATTR_12_RO(max_phys_secs);
+>> +static NVM_DEV_ATTR_12_RO(capabilities);
+>>    static struct attribute *nvm_dev_attrs_12[] =3D {
+>>  	&dev_attr_version.attr,
+>> -	&dev_attr_capabilities.attr,
+>> -
+>> -	&dev_attr_vendor_opcode.attr,
+>> -	&dev_attr_device_mode.attr,
+>> -	&dev_attr_media_manager.attr,
+>>  	&dev_attr_ppa_format.attr,
+>> -	&dev_attr_media_type.attr,
+>> -	&dev_attr_flash_media_type.attr,
+>> +
+>>  	&dev_attr_num_channels.attr,
+>>  	&dev_attr_num_luns.attr,
+>>  	&dev_attr_num_planes.attr,
+>>  	&dev_attr_num_blocks.attr,
+>>  	&dev_attr_num_pages.attr,
+>>  	&dev_attr_page_size.attr,
+>> +
+>>  	&dev_attr_hw_sector_size.attr,
+>> -	&dev_attr_oob_sector_size.attr,
+>> +
+>> +	&dev_attr_clba.attr,
+>> +	&dev_attr_csecs.attr,
+>> +	&dev_attr_sos.attr,
+>> +
+>> +	&dev_attr_ws_min.attr,
+>> +	&dev_attr_ws_opt.attr,
+>> +	&dev_attr_maxoc.attr,
+>> +	&dev_attr_maxocpu.attr,
+>> +	&dev_attr_mw_cunits.attr,
+>> +
+>> +	&dev_attr_media_capabilities.attr,
+>> +	&dev_attr_max_phys_secs.attr,
+>> +
+>=20
+> This breaks user-space. The intention is for user-space to decide
+> based on version id. Then it can either retrieve the 1.2 or 2.0
+> attributes. The 2.0 attributes should not be available when a device
+> is 1.2.
+>=20
 
-It is fine, as expected.  The only errors I get are expected ones
-already documented in ghak70 for the KERN_MODULE record, complaints
-about the name= field.
+Why does it break it? I'm only adding new entries.
 
-> > -Steve
-> > 
-> > > See: https://github.com/linux-audit/audit-kernel/issues/8
-> > > Test case: https://github.com/linux-audit/audit-testsuite/issues/42
-> > > 
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > 
-> > > ---
-> > > v4:
-> > >   fix fullpath memleak
-> > >   switch from log_format() to audit_log_untrustedstring()
-> > >   remove leading / from pathname relative to unknown mount point
-> > > 
-> > > v3:
-> > >   fix audit_buffer leak and dname error allocation leak audit_log_name
-> > >   only put audit_name->dentry if it is being replaced
-> > > 
-> > > v2:
-> > >   deconstify struct dentry*
-> > >   add hex prefix to fstype
-> > > ---
-> > >  include/linux/audit.h |  8 ++++----
-> > >  kernel/audit.c        | 28 +++++++++++++++++++++++++++-
-> > >  kernel/audit.h        |  1 +
-> > >  kernel/auditsc.c      |  8 +++++++-
-> > >  4 files changed, 39 insertions(+), 6 deletions(-)
-> > > 
-> > > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > > index af410d9..2020f1d 100644
-> > > --- a/include/linux/audit.h
-> > > +++ b/include/linux/audit.h
-> > > @@ -232,7 +232,7 @@ extern void __audit_inode(struct filename *name, const
-> > > struct dentry *dentry, unsigned int flags);
-> > >  extern void __audit_file(const struct file *);
-> > >  extern void __audit_inode_child(struct inode *parent,
-> > > -				const struct dentry *dentry,
-> > > +				struct dentry *dentry,
-> > >  				const unsigned char type);
-> > >  extern void __audit_seccomp(unsigned long syscall, long signr, int code);
-> > >  extern void __audit_ptrace(struct task_struct *t);
-> > > @@ -297,7 +297,7 @@ static inline void audit_inode_parent_hidden(struct
-> > > filename *name, AUDIT_INODE_PARENT | AUDIT_INODE_HIDDEN);
-> > >  }
-> > >  static inline void audit_inode_child(struct inode *parent,
-> > > -				     const struct dentry *dentry,
-> > > +				     struct dentry *dentry,
-> > >  				     const unsigned char type) {
-> > >  	if (unlikely(!audit_dummy_context()))
-> > >  		__audit_inode_child(parent, dentry, type);
-> > > @@ -481,7 +481,7 @@ static inline void __audit_inode(struct filename *name,
-> > > unsigned int flags)
-> > >  { }
-> > >  static inline void __audit_inode_child(struct inode *parent,
-> > > -					const struct dentry *dentry,
-> > > +					struct dentry *dentry,
-> > >  					const unsigned char type)
-> > >  { }
-> > >  static inline void audit_inode(struct filename *name,
-> > > @@ -495,7 +495,7 @@ static inline void audit_inode_parent_hidden(struct
-> > > filename *name, const struct dentry *dentry)
-> > >  { }
-> > >  static inline void audit_inode_child(struct inode *parent,
-> > > -				     const struct dentry *dentry,
-> > > +				     struct dentry *dentry,
-> > >  				     const unsigned char type)
-> > >  { }
-> > >  static inline void audit_core_dumps(long signr)
-> > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > index 227db99..0c8d5a8 100644
-> > > --- a/kernel/audit.c
-> > > +++ b/kernel/audit.c
-> > > @@ -72,6 +72,7 @@
-> > >  #include <linux/freezer.h>
-> > >  #include <linux/pid_namespace.h>
-> > >  #include <net/netns/generic.h>
-> > > +#include <linux/dcache.h>
-> > > 
-> > >  #include "audit.h"
-> > > 
-> > > @@ -2056,6 +2057,10 @@ void audit_copy_inode(struct audit_names *name,
-> > > const struct dentry *dentry, name->gid   = inode->i_gid;
-> > >  	name->rdev  = inode->i_rdev;
-> > >  	security_inode_getsecid(inode, &name->osid);
-> > > +	if (name->dentry) {
-> > > +		dput(name->dentry);
-> > > +		name->dentry = NULL;
-> > > +	}
-> > >  	audit_copy_fcaps(name, dentry);
-> > >  }
-> > > 
-> > > @@ -2097,8 +2102,29 @@ void audit_log_name(struct audit_context *context,
-> > > struct audit_names *n, audit_log_n_untrustedstring(ab, n->name->name,
-> > >  						    n->name_len);
-> > >  		}
-> > > -	} else
-> > > +	} else if (n->dentry) {
-> > > +		char *fullpath;
-> > > +		const char *fullpathp = NULL;
-> > > +
-> > > +		fullpath = kmalloc(PATH_MAX, GFP_KERNEL);
-> > > +		if (fullpath) {
-> > > +			fullpathp = dentry_path_raw(n->dentry, fullpath, PATH_MAX);
-> > > +			if (IS_ERR(fullpathp)) {
-> > > +				fullpathp = NULL;
-> > > +			} else {
-> > > +				while (*fullpathp == '/')
-> > > +					fullpathp++;
-> > > +				if (*fullpathp == 0)
-> > > +					fullpathp = NULL;
-> > > +			}
-> > > +		}
-> > > +		audit_log_format(ab, " name=");
-> > > +		audit_log_untrustedstring(ab, fullpathp ?: "?");
-> > > +		if (fullpath)
-> > > +			kfree(fullpath);
-> > > +	} else {
-> > >  		audit_log_format(ab, " name=(null)");
-> > > +	}
-> > > 
-> > >  	if (n->ino != AUDIT_INO_UNSET)
-> > >  		audit_log_format(ab, " inode=%lu"
-> > > diff --git a/kernel/audit.h b/kernel/audit.h
-> > > index af5bc59..81f6865 100644
-> > > --- a/kernel/audit.h
-> > > +++ b/kernel/audit.h
-> > > @@ -85,6 +85,7 @@ struct audit_names {
-> > > 
-> > >  	unsigned long		ino;
-> > >  	dev_t			dev;
-> > > +	struct dentry		*dentry;
-> > >  	umode_t			mode;
-> > >  	kuid_t			uid;
-> > >  	kgid_t			gid;
-> > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > > index e80459f..b73ede0 100644
-> > > --- a/kernel/auditsc.c
-> > > +++ b/kernel/auditsc.c
-> > > @@ -75,6 +75,7 @@
-> > >  #include <linux/uaccess.h>
-> > >  #include <linux/fsnotify_backend.h>
-> > >  #include <uapi/linux/limits.h>
-> > > +#include <linux/dcache.h>
-> > > 
-> > >  #include "audit.h"
-> > > 
-> > > @@ -882,6 +883,8 @@ static inline void audit_free_names(struct
-> > > audit_context *context) list_del(&n->list);
-> > >  		if (n->name)
-> > >  			putname(n->name);
-> > > +		if (n->dentry)
-> > > +			dput(n->dentry);
-> > >  		if (n->should_free)
-> > >  			kfree(n);
-> > >  	}
-> > > @@ -1862,7 +1865,7 @@ void __audit_file(const struct file *file)
-> > >   * unsuccessful attempts.
-> > >   */
-> > >  void __audit_inode_child(struct inode *parent,
-> > > -			 const struct dentry *dentry,
-> > > +			 struct dentry *dentry,
-> > >  			 const unsigned char type)
-> > >  {
-> > >  	struct audit_context *context = current->audit_context;
-> > > @@ -1941,6 +1944,7 @@ void __audit_inode_child(struct inode *parent,
-> > >  		if (!n)
-> > >  			return;
-> > >  		audit_copy_inode(n, NULL, parent);
-> > > +		n->dentry = dget_parent(dentry);
-> > >  	}
-> > > 
-> > >  	if (!found_child) {
-> > > @@ -1962,6 +1966,8 @@ void __audit_inode_child(struct inode *parent,
-> > >  		audit_copy_inode(found_child, dentry, inode);
-> > >  	else
-> > >  		found_child->ino = AUDIT_INO_UNSET;
-> > > +	if (!found_parent)
-> > > +		found_child->dentry = dget(dentry);
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(__audit_inode_child);
-> 
-> - RGB
+The objective is to expose the genneric geometry, since this is the
+structure that is passed on to the targets. Since some of the values are
+calculated, there is value on exposing this information, I believe.
 
-- RGB
+Another way of doing it, is adding the generic geometry at the target
+level, showing what base values it is getting, including the real number
+of channels/groups and luns/pus.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Would this be better in your opinion?
+
+
+>>  	&dev_attr_read_typ.attr,
+>>  	&dev_attr_read_max.attr,
+>>  	&dev_attr_prog_typ.attr,
+>>  	&dev_attr_prog_max.attr,
+>>  	&dev_attr_erase_typ.attr,
+>>  	&dev_attr_erase_max.attr,
+>> +
+>> +	&dev_attr_vendor_opcode.attr,
+>> +	&dev_attr_device_mode.attr,
+>> +	&dev_attr_media_manager.attr,
+>> +	&dev_attr_capabilities.attr,
+>> +	&dev_attr_media_type.attr,
+>> +	&dev_attr_flash_media_type.attr,
+>>  	&dev_attr_multiplane_modes.attr,
+>> -	&dev_attr_media_capabilities.attr,
+>> -	&dev_attr_max_phys_secs.attr,
+>>    	NULL,
+>>  };
+>> @@ -1152,12 +1194,9 @@ static const struct attribute_group =
+nvm_dev_attr_group_12 =3D {
+>>    /* 2.0 values */
+>>  static NVM_DEV_ATTR_20_RO(groups);
+>> +static NVM_DEV_ATTR_20_RO(lba_format);
+>>  static NVM_DEV_ATTR_20_RO(punits);
+>>  static NVM_DEV_ATTR_20_RO(chunks);
+>> -static NVM_DEV_ATTR_20_RO(clba);
+>> -static NVM_DEV_ATTR_20_RO(ws_min);
+>> -static NVM_DEV_ATTR_20_RO(ws_opt);
+>> -static NVM_DEV_ATTR_20_RO(mw_cunits);
+>>  static NVM_DEV_ATTR_20_RO(write_typ);
+>>  static NVM_DEV_ATTR_20_RO(write_max);
+>>  static NVM_DEV_ATTR_20_RO(reset_typ);
+>> @@ -1165,16 +1204,25 @@ static NVM_DEV_ATTR_20_RO(reset_max);
+>>    static struct attribute *nvm_dev_attrs_20[] =3D {
+>>  	&dev_attr_version.attr,
+>> -	&dev_attr_capabilities.attr,
+>> +	&dev_attr_lba_format.attr,
+>>    	&dev_attr_groups.attr,
+>>  	&dev_attr_punits.attr,
+>>  	&dev_attr_chunks.attr,
+>> +
+>>  	&dev_attr_clba.attr,
+>> +	&dev_attr_csecs.attr,
+>> +	&dev_attr_sos.attr,
+>=20
+> csecs and sos are derived from the the generic block device data =
+structures.
+
+As mentioned above, it is to represent the generic geometry.
+
+>=20
+>> +
+>>  	&dev_attr_ws_min.attr,
+>>  	&dev_attr_ws_opt.attr,
+>> +	&dev_attr_maxoc.attr,
+>> +	&dev_attr_maxocpu.attr,
+>=20
+> When the maxoc/maxocpu are in another patch, these changes can be =
+included.
+
+ok.
+
+>=20
+>>  	&dev_attr_mw_cunits.attr,
+>>  +	&dev_attr_media_capabilities.attr,
+>=20
+> What is the meaning of media in this context? The 2.0 spec defines
+> vector copy and double resets in its capabilities, it does not have
+> media in mind.
+>=20
+
+It refers to the mcap (vector copy and double resets for now, as you
+mention). I kept the name, name, but I can rename it if it is better...
+
+>> +	&dev_attr_max_phys_secs.attr,
+>> +
+>=20
+> I kill max_phys_secs in another patch. It has been made redundant
+> after null_blk has been removed.
+
+I'll answer this on the patch - I have a questions here.
+
+>>  	&dev_attr_read_typ.attr,
+>>  	&dev_attr_read_max.attr,
+>>  	&dev_attr_write_typ.attr,
+
+Javier
+
+
+--Apple-Mail=_28767525-53A2-41D6-B123-869EC5AB4AF1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="signature.asc"
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAlqGe6YACgkQIX4xUKFR
+nnTMOxAAqjkhlEQMPQk+2c2wTUMthNpxK1blyCyHDkQX/u1SDE1JAC+4frTYCZnF
+HI4WGcuofgEmJsGNscQgU8sJSpZzjYVTNyPxNzHbOK5FSzJqtppw79qhJ38HSyiD
+Part1AoHuiRR47hX78Vn5Kq6kwegaD/uwKUqxKKoaII1huLIqaWva8XV7PPwl0p4
+XOF6N3BUVxAtnK7vyNH9ikpwSiHGyLmEsmpE17ShVff8bwpUI6psL9OZPB+RSgs9
+dxSlBLWkJmWW8FXJvm0tGsm+rXzgdaa18eZA+trhIV9faXmfo+nHNg+wNvkfE3Rr
+lKePApPBz223wjaOdUb7cL3Nx7HlkNEPN30LZ0BaK758ZEosNMAIIIWprIicKSoA
+qfWdNzXxM/o6j03xwXNlrz2vRy5foKiMcH+kJTJC52Rr3dC/FJyTOvRkUV17RwzJ
+2GFHMlNzBpgDQjE81TmlvVMdckzlmPEj2iWpt5jKDdAbKHcq81PwyMkMw0SCJCl9
+VPdjWymf3ENVKPSmVvBjQALgrIuinUmmqmpkpVxlfVyR1FCJS4hL97OFRN9DReBY
+0HYyw9qXskFjx6dHDBNzxguvGlXmoCqLUS4JUEDb5aZ02SgqCNzIMYgrUlcufMQ3
+cGYYdHcU+CsBrvmQbas3b6xYh2bINCaXalXIHbDdoWiVey6bIjA=
+=HeOZ
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_28767525-53A2-41D6-B123-869EC5AB4AF1--
