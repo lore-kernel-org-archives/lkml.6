@@ -1,428 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753341AbeBPGk0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 01:40:26 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:46304 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753313AbeBPGkY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 01:40:24 -0500
-X-Google-Smtp-Source: AH8x227hZzD7YQ9jCseHYA7eT/Qov7vtlhaKBJdNgOr24SQUmoPRiqtfCFBAasv8ClJ6XHCu01yIDQ==
-From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <jg@lightnvm.io>
-Message-Id: <ADD0E58F-DBA5-4A53-9666-0B046F5DAE8E@lightnvm.io>
+        id S1753361AbeBPGs2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 01:48:28 -0500
+Received: from mail-bn3nam01on0074.outbound.protection.outlook.com ([104.47.33.74]:34371
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753313AbeBPGs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 01:48:26 -0500
+From: Javier Gonzalez <javier@cnexlabs.com>
+To: =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
+CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
+Subject: Re: [PATCH v2 5/6] lightnvm: remove nvm_dev_ops->max_phys_sect
+Thread-Topic: [PATCH v2 5/6] lightnvm: remove nvm_dev_ops->max_phys_sect
+Thread-Index: AQHTpl6hYkpXdBKtg0aoHleBBn4AMaOml4eA
+Date: Fri, 16 Feb 2018 06:48:23 +0000
+Message-ID: <918E7340-05D7-4E2F-BC43-2B81D435C3C6@cnexlabs.com>
+References: <20180215131200.3354-1-mb@lightnvm.io>
+ <20180215131200.3354-6-mb@lightnvm.io>
+In-Reply-To: <20180215131200.3354-6-mb@lightnvm.io>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-originating-ip: [24.5.37.211]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR06MB2801;6:TMTAPXelllYNjYXCgf6Uoey7lJtzb/uZwrlm34beKtt1Gktl9d0WkrrPf1SeFAMSL0nVLMp6r77pNAFCrYtNMkD+MdRNYJwy2atpfDNhvMd3HpAdQhFVaPrn0e1YJeELWZkQfgJ39bUGsk5ZIdVe3S9NEVg11q1rGRyHqK7Eh5k+Uet3qYpMHAiasqG0RXiCxjRBzWNPM+cdlrd8vEVx4V7O9PB2lnHTlMvl93h+pviGu2a+oDi0BPGds6lpsP+qYrlkyqwn1OgpwP3TOdtDsyZOF1b6679sQj//fP/7Ogl0RoBXxfOAc48SxLncq8TWcXSDpYfdwNFDDNlLq50Wfb8l9V86UBwMJpF0ZW3ujhCApuH7bYbxExLX35OwMntg;5:seQJZOGsAN/aS/u3QqAfwNdjRmG95FyN5QyUIaeQFnN0Ov6PI9UUeth06dwg702tZ0vc82vVk3zm/q2NBwGwZzFGpeTx/ugaOaYBVTNwZvN/PTL4/+4SiZv5Iym1MtUhu3RgfK0W9qLZSdy899pdEQC5ouihacTyprZp/QU4sd4=;24:NvcnSlMBxWVxug+zcFEV2wny2YerRo5V05Xhi8mxVX8xqdiiXI3RWlS8tqxMv1Wq5/ZtZ6dv3WHtE0JWML7Y64WWs+KTqFAiEg/CtfEtaZk=;7:CIku4YnhOXp3srWzp9B3qnTWvtyHSKjepQBCrYm8ItyM/u0K869g2cYhMaHhYXKhRt7L5nADtIbZ3Y36d4fLyZn1yWuBUZ7sXMxm86rTf1fzSEL0+cotsPePxqYuxw9hu3vxmUElGcKJTgatnEyYptmdLUe1IPrKDTHKz8Ctar+WZU86A4AriwJEId2RXEciBPPTYrfguIOjA8lPppreSr+0Of7FRxeO2lwmoftuo3vLl4Bae0RGFNqPolHASBez
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-correlation-id: f53282fa-b7b7-47d4-b2b8-08d57509463d
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(49563074)(7193020);SRVR:BN6PR06MB2801;
+x-ms-traffictypediagnostic: BN6PR06MB2801:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=javier@cnexlabs.com;
+x-microsoft-antispam-prvs: <BN6PR06MB2801077C3539F2D59C6741C2BACB0@BN6PR06MB2801.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001036)(102415395)(6040501)(2401047)(8121501046)(5005006)(10201501046)(3231101)(944501161)(93006095)(93001095)(3002001)(6041288)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:BN6PR06MB2801;BCL:0;PCL:0;RULEID:;SRVR:BN6PR06MB2801;
+x-forefront-prvs: 0585417D7B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39840400004)(396003)(39380400002)(366004)(189003)(199004)(66066001)(316002)(6506007)(8936002)(54906003)(6486002)(6116002)(81166006)(81156014)(82746002)(8676002)(3846002)(3280700002)(77096007)(6436002)(68736007)(26005)(14454004)(229853002)(186003)(99936001)(33656002)(478600001)(106356001)(102836004)(97736004)(4326008)(86362001)(105586002)(5660300001)(2950100002)(6916009)(83716003)(76176011)(2900100001)(25786009)(36756003)(7736002)(2906002)(6246003)(99286004)(3660700001)(53936002)(305945005)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR06MB2801;H:BN6PR06MB2626.namprd06.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: MEa1tkbG3u+982M4rxJMHaHrvzf8FEb78y+CE8jczQ2xodD0D6nSV1yAmSNRanxfhkGC4e/sUlpvBhl81myISA==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 Content-Type: multipart/signed;
-        boundary="Apple-Mail=_7085E976-BDA0-4187-A9A6-E5013718E758";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH 6/8] lightnvm: pblk: implement get log report chunk
-Date: Thu, 15 Feb 2018 22:38:56 -0800
-In-Reply-To: <0287b2a1-34b3-d069-04ef-79170def571f@lightnvm.io>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
-References: <1518530768-20956-1-git-send-email-javier@cnexlabs.com>
- <1518530768-20956-7-git-send-email-javier@cnexlabs.com>
- <0287b2a1-34b3-d069-04ef-79170def571f@lightnvm.io>
-X-Mailer: Apple Mail (2.3445.5.20)
+        boundary="Apple-Mail=_4786F3EA-DA27-459F-9A97-E71A9CB717A5";
+        protocol="application/pgp-signature"; micalg=pgp-sha512
+MIME-Version: 1.0
+X-OriginatorOrg: cnexlabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f53282fa-b7b7-47d4-b2b8-08d57509463d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Feb 2018 06:48:23.5772
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR06MB2801
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---Apple-Mail=_7085E976-BDA0-4187-A9A6-E5013718E758
+--Apple-Mail=_4786F3EA-DA27-459F-9A97-E71A9CB717A5
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain;
 	charset=utf-8
 
 
-> On 15 Feb 2018, at 02.59, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+> On 15 Feb 2018, at 05.11, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
 >=20
-> On 02/13/2018 03:06 PM, Javier Gonz=C3=A1lez wrote:
->> From: Javier Gonz=C3=A1lez <javier@javigon.com>
->> In preparation of pblk supporting 2.0, implement the get log report
->> chunk in pblk.
->> This patch only replicates de bad block functionality as the rest of =
-the
->> metadata requires new pblk functionality (e.g., wear-index to =
-implement
->> wear-leveling). This functionality will come in future patches.
->> Signed-off-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
->> ---
->>  drivers/lightnvm/pblk-core.c  | 118 +++++++++++++++++++++++----
->>  drivers/lightnvm/pblk-init.c  | 186 =
-+++++++++++++++++++++++++++++++-----------
->>  drivers/lightnvm/pblk-sysfs.c |  67 +++++++++++++++
->>  drivers/lightnvm/pblk.h       |  20 +++++
->>  4 files changed, 327 insertions(+), 64 deletions(-)
->> diff --git a/drivers/lightnvm/pblk-core.c =
-b/drivers/lightnvm/pblk-core.c
->> index 519af8b9eab7..01b78ee5c0e0 100644
->> --- a/drivers/lightnvm/pblk-core.c
->> +++ b/drivers/lightnvm/pblk-core.c
->> @@ -44,11 +44,12 @@ static void pblk_line_mark_bb(struct work_struct =
-*work)
->>  }
->>    static void pblk_mark_bb(struct pblk *pblk, struct pblk_line =
-*line,
->> -			 struct ppa_addr *ppa)
->> +			 struct ppa_addr ppa_addr)
->>  {
->>  	struct nvm_tgt_dev *dev =3D pblk->dev;
->>  	struct nvm_geo *geo =3D &dev->geo;
->> -	int pos =3D pblk_ppa_to_pos(geo, *ppa);
->> +	struct ppa_addr *ppa;
->> +	int pos =3D pblk_ppa_to_pos(geo, ppa_addr);
->>    	pr_debug("pblk: erase failed: line:%d, pos:%d\n", line->id, =
-pos);
->>  	atomic_long_inc(&pblk->erase_failed);
->> @@ -58,6 +59,15 @@ static void pblk_mark_bb(struct pblk *pblk, struct =
-pblk_line *line,
->>  		pr_err("pblk: attempted to erase bb: line:%d, pos:%d\n",
->>  							line->id, pos);
->>  +	/* Not necessary to mark bad blocks on 2.0 spec. */
->> +	if (geo->c.version =3D=3D NVM_OCSSD_SPEC_20)
->> +		return;
->> +
->> +	ppa =3D kmalloc(sizeof(struct ppa_addr), GFP_ATOMIC);
->> +	if (!ppa)
->> +		return;
->> +
->> +	*ppa =3D ppa_addr;
->>  	pblk_gen_run_ws(pblk, NULL, ppa, pblk_line_mark_bb,
->>  						GFP_ATOMIC, =
-pblk->bb_wq);
->>  }
->> @@ -69,16 +79,8 @@ static void __pblk_end_io_erase(struct pblk *pblk, =
-struct nvm_rq *rqd)
->>  	line =3D &pblk->lines[pblk_ppa_to_line(rqd->ppa_addr)];
->>  	atomic_dec(&line->left_seblks);
->>  -	if (rqd->error) {
->> -		struct ppa_addr *ppa;
->> -
->> -		ppa =3D kmalloc(sizeof(struct ppa_addr), GFP_ATOMIC);
->> -		if (!ppa)
->> -			return;
->> -
->> -		*ppa =3D rqd->ppa_addr;
->> -		pblk_mark_bb(pblk, line, ppa);
->> -	}
->> +	if (rqd->error)
->> +		pblk_mark_bb(pblk, line, rqd->ppa_addr);
->>    	atomic_dec(&pblk->inflight_io);
->>  }
->> @@ -92,6 +94,47 @@ static void pblk_end_io_erase(struct nvm_rq *rqd)
->>  	mempool_free(rqd, pblk->e_rq_pool);
->>  }
->>  +/*
->> + * Get information for all chunks from the device.
->> + *
->> + * The caller is responsible for freeing the returned structure
->> + */
->> +struct nvm_chunk_log_page *pblk_chunk_get_info(struct pblk *pblk)
->> +{
->> +	struct nvm_tgt_dev *dev =3D pblk->dev;
->> +	struct nvm_geo *geo =3D &dev->geo;
->> +	struct nvm_chunk_log_page *log;
->> +	unsigned long len;
->> +	int ret;
->> +
->> +	len =3D geo->all_chunks * sizeof(*log);
->> +	log =3D kzalloc(len, GFP_KERNEL);
->> +	if (!log)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	ret =3D nvm_get_chunk_log_page(dev, log, 0, len);
->> +	if (ret) {
->> +		pr_err("pblk: could not get chunk log page (%d)\n", =
-ret);
->> +		kfree(log);
->> +		return ERR_PTR(-EIO);
->> +	}
->> +
->> +	return log;
->> +}
->> +
->> +struct nvm_chunk_log_page *pblk_chunk_get_off(struct pblk *pblk,
->> +					      struct nvm_chunk_log_page =
-*lp,
->> +					      struct ppa_addr ppa)
->> +{
->> +	struct nvm_tgt_dev *dev =3D pblk->dev;
->> +	struct nvm_geo *geo =3D &dev->geo;
->> +	int ch_off =3D ppa.m.ch * geo->c.num_chk * geo->num_lun;
->> +	int lun_off =3D ppa.m.lun * geo->c.num_chk;
->> +	int chk_off =3D ppa.m.chk;
->> +
->> +	return lp + ch_off + lun_off + chk_off;
->> +}
->> +
->>  void __pblk_map_invalidate(struct pblk *pblk, struct pblk_line =
-*line,
->>  			   u64 paddr)
->>  {
->> @@ -1094,10 +1137,38 @@ static int pblk_line_init_bb(struct pblk =
-*pblk, struct pblk_line *line,
->>  	return 1;
->>  }
->>  +static int pblk_prepare_new_line(struct pblk *pblk, struct =
-pblk_line *line)
->> +{
->> +	struct pblk_line_meta *lm =3D &pblk->lm;
->> +	struct nvm_tgt_dev *dev =3D pblk->dev;
->> +	struct nvm_geo *geo =3D &dev->geo;
->> +	int blk_to_erase =3D atomic_read(&line->blk_in_line);
->> +	int i;
->> +
->> +	for (i =3D 0; i < lm->blk_per_line; i++) {
->> +		int state =3D line->chks[i].state;
->> +		struct pblk_lun *rlun =3D &pblk->luns[i];
->> +
->> +		/* Free chunks should not be erased */
->> +		if (state & NVM_CHK_ST_FREE) {
->> +			set_bit(pblk_ppa_to_pos(geo, rlun->chunk_bppa),
->> +					line->erase_bitmap);
->> +			blk_to_erase--;
->> +			line->chks[i].state =3D NVM_CHK_ST_HOST_USE;
->> +		}
->> +
->> +		WARN_ONCE(state & NVM_CHK_ST_OPEN,
->> +				"pblk: open chunk in new line: %d\n",
->> +				line->id);
->> +	}
->> +
->> +	return blk_to_erase;
->> +}
->> +
->>  static int pblk_line_prepare(struct pblk *pblk, struct pblk_line =
-*line)
->>  {
->>  	struct pblk_line_meta *lm =3D &pblk->lm;
->> -	int blk_in_line =3D atomic_read(&line->blk_in_line);
->> +	int blk_to_erase;
->>    	line->map_bitmap =3D kzalloc(lm->sec_bitmap_len, GFP_ATOMIC);
->>  	if (!line->map_bitmap)
->> @@ -1110,7 +1181,21 @@ static int pblk_line_prepare(struct pblk =
-*pblk, struct pblk_line *line)
->>  		return -ENOMEM;
->>  	}
->>  +	/* Bad blocks do not need to be erased */
->> +	bitmap_copy(line->erase_bitmap, line->blk_bitmap, =
-lm->blk_per_line);
->> +
->>  	spin_lock(&line->lock);
->> +
->> +	/* If we have not written to this line, we need to mark up free =
-chunks
->> +	 * as already erased
->> +	 */
->> +	if (line->state =3D=3D PBLK_LINESTATE_NEW) {
->> +		blk_to_erase =3D pblk_prepare_new_line(pblk, line);
->> +		line->state =3D PBLK_LINESTATE_FREE;
->> +	} else {
->> +		blk_to_erase =3D atomic_read(&line->blk_in_line);
->> +	}
->> +
->>  	if (line->state !=3D PBLK_LINESTATE_FREE) {
->>  		kfree(line->map_bitmap);
->>  		kfree(line->invalid_bitmap);
->> @@ -1122,15 +1207,12 @@ static int pblk_line_prepare(struct pblk =
-*pblk, struct pblk_line *line)
->>    	line->state =3D PBLK_LINESTATE_OPEN;
->>  -	atomic_set(&line->left_eblks, blk_in_line);
->> -	atomic_set(&line->left_seblks, blk_in_line);
->> +	atomic_set(&line->left_eblks, blk_to_erase);
->> +	atomic_set(&line->left_seblks, blk_to_erase);
->>    	line->meta_distance =3D lm->meta_distance;
->>  	spin_unlock(&line->lock);
->>  -	/* Bad blocks do not need to be erased */
->> -	bitmap_copy(line->erase_bitmap, line->blk_bitmap, =
-lm->blk_per_line);
->> -
->>  	kref_init(&line->ref);
->>    	return 0;
->> diff --git a/drivers/lightnvm/pblk-init.c =
-b/drivers/lightnvm/pblk-init.c
->> index 72b7902e5d1c..dfc68718e27e 100644
->> --- a/drivers/lightnvm/pblk-init.c
->> +++ b/drivers/lightnvm/pblk-init.c
->> @@ -402,6 +402,7 @@ static void pblk_line_meta_free(struct pblk_line =
-*line)
->>  {
->>  	kfree(line->blk_bitmap);
->>  	kfree(line->erase_bitmap);
->> +	kfree(line->chks);
->>  }
->>    static void pblk_lines_free(struct pblk *pblk)
->> @@ -470,25 +471,15 @@ static void *pblk_bb_get_log(struct pblk *pblk)
->>  	return log;
->>  }
->>  -static int pblk_bb_line(struct pblk *pblk, struct pblk_line *line,
->> -			u8 *bb_log, int blk_per_line)
->> +static void *pblk_chunk_get_log(struct pblk *pblk)
->>  {
->>  	struct nvm_tgt_dev *dev =3D pblk->dev;
->>  	struct nvm_geo *geo =3D &dev->geo;
->> -	int i, bb_cnt =3D 0;
->>  -	for (i =3D 0; i < blk_per_line; i++) {
->> -		struct pblk_lun *rlun =3D &pblk->luns[i];
->> -		u8 *lun_bb_log =3D bb_log + i * blk_per_line;
->> -
->> -		if (lun_bb_log[line->id] =3D=3D NVM_BLK_T_FREE)
->> -			continue;
->> -
->> -		set_bit(pblk_ppa_to_pos(geo, rlun->bppa), =
-line->blk_bitmap);
->> -		bb_cnt++;
->> -	}
->> -
->> -	return bb_cnt;
->> +	if (geo->c.version =3D=3D NVM_OCSSD_SPEC_12)
->> +		return pblk_bb_get_log(pblk);
->> +	else
->> +		return pblk_chunk_get_info(pblk);
->>  }
->>    static int pblk_luns_init(struct pblk *pblk, struct ppa_addr =
-*luns)
->> @@ -517,6 +508,7 @@ static int pblk_luns_init(struct pblk *pblk, =
-struct ppa_addr *luns)
->>    		rlun =3D &pblk->luns[i];
->>  		rlun->bppa =3D luns[lunid];
->> +		rlun->chunk_bppa =3D luns[i];
->>    		sema_init(&rlun->wr_sem, 1);
->>  	}
->> @@ -696,8 +688,125 @@ static int pblk_lines_alloc_metadata(struct =
-pblk *pblk)
->>  	return -ENOMEM;
->>  }
->>  -static int pblk_setup_line_meta(struct pblk *pblk, struct pblk_line =
-*line,
->> -				void *chunk_log, long *nr_bad_blks)
->> +static int pblk_setup_line_meta_12(struct pblk *pblk, struct =
-pblk_line *line,
->> +				   void *chunk_log)
->> +{
->> +	struct nvm_tgt_dev *dev =3D pblk->dev;
->> +	struct nvm_geo *geo =3D &dev->geo;
->> +	struct pblk_line_meta *lm =3D &pblk->lm;
->> +	int i, chk_per_lun, nr_bad_chks =3D 0;
->> +
->> +	chk_per_lun =3D geo->c.num_chk * geo->c.pln_mode;
->> +
->> +	for (i =3D 0; i < lm->blk_per_line; i++) {
->> +		struct pblk_chunk *chunk =3D &line->chks[i];
->> +		struct pblk_lun *rlun =3D &pblk->luns[i];
->> +		u8 *lun_bb_log =3D chunk_log + i * chk_per_lun;
->> +
->> +		/*
->> +		 * In 1.2 spec. chunk state is not persisted by the =
-device. Thus
->> +		 * some of the values are reset each time pblk is =
-instantiated.
->> +		 */
->> +		if (lun_bb_log[line->id] =3D=3D NVM_BLK_T_FREE)
->> +			chunk->state =3D  NVM_CHK_ST_HOST_USE;
->> +		else
->> +			chunk->state =3D NVM_CHK_ST_OFFLINE;
->> +
->> +		chunk->type =3D NVM_CHK_TP_W_SEQ;
->> +		chunk->wi =3D 0;
->> +		chunk->slba =3D -1;
->> +		chunk->cnlb =3D geo->c.clba;
->> +		chunk->wp =3D 0;
->> +
->> +		if (!(chunk->state & NVM_CHK_ST_OFFLINE))
->> +			continue;
->> +
->> +		set_bit(pblk_ppa_to_pos(geo, rlun->bppa), =
-line->blk_bitmap);
->> +		nr_bad_chks++;
->> +	}
->> +
->> +	return nr_bad_chks;
->> +}
->> +
->> +static int pblk_setup_line_meta_20(struct pblk *pblk, struct =
-pblk_line *line,
->> +				   struct nvm_chunk_log_page *log_page)
->> +{
->> +	struct nvm_tgt_dev *dev =3D pblk->dev;
->> +	struct nvm_geo *geo =3D &dev->geo;
->> +	struct pblk_line_meta *lm =3D &pblk->lm;
->> +	int i, nr_bad_chks =3D 0;
->> +
->> +	for (i =3D 0; i < lm->blk_per_line; i++) {
->> +		struct pblk_chunk *chunk =3D &line->chks[i];
->> +		struct pblk_lun *rlun =3D &pblk->luns[i];
->> +		struct nvm_chunk_log_page *chunk_log_page;
->> +		struct ppa_addr ppa;
->> +
->> +		ppa =3D rlun->chunk_bppa;
->> +		ppa.m.chk =3D line->id;
->> +		chunk_log_page =3D pblk_chunk_get_off(pblk, log_page, =
-ppa);
->> +
->> +		chunk->state =3D chunk_log_page->state;
->> +		chunk->type =3D chunk_log_page->type;
->> +		chunk->wi =3D chunk_log_page->wear_index;
->> +		chunk->slba =3D le64_to_cpu(chunk_log_page->slba);
->> +		chunk->cnlb =3D le64_to_cpu(chunk_log_page->cnlb);
->> +		chunk->wp =3D le64_to_cpu(chunk_log_page->wp);
->> +
->> +		if (!(chunk->state & NVM_CHK_ST_OFFLINE))
->> +			continue;
->> +
->> +		if (chunk->type & NVM_CHK_TP_SZ_SPEC) {
->> +			WARN_ONCE(1, "pblk: custom-sized chunks =
-unsupported\n");
->> +			continue;
->> +		}
->> +
->> +		set_bit(pblk_ppa_to_pos(geo, rlun->chunk_bppa),
->> +							=
-line->blk_bitmap);
->> +		nr_bad_chks++;
->> +	}
->> +
->> +	return nr_bad_chks;
->> +}
->> +
+> The value of max_phys_sect is always static. Instead of
+> defining it in the nvm_dev_ops structure, declare it as a global
+> value.
 >=20
-> The device chunk to nvm_chunk logic belongs in the lightnvm core. A
-> target should preferably not handle the case between 1.2 and 2.0
-> interface.
+> Signed-off-by: Matias Bj=C3=B8rling <mb@lightnvm.io>
+> ---
+> drivers/lightnvm/core.c          | 28 +++++++---------------------
+> drivers/lightnvm/pblk-init.c     |  9 ++++-----
+> drivers/lightnvm/pblk-recovery.c |  8 ++------
+> drivers/nvme/host/lightnvm.c     |  5 +----
+> include/linux/lightnvm.h         |  5 ++---
+> 5 files changed, 16 insertions(+), 39 deletions(-)
 >=20
 
-I thought about this and it is cleaner, the problem is that the return
-values from these two interfaces are completely different. My other
-approach was asking only for report chunk and then create the log page
-format for 1.2 I can see this working good. I'll give it another spin.
+The patch looks good, but I have a question. If a target implements the
+scalar interface, then it will not be limited to 64 lbas/ppas and it
+will not make sense to split the bio base don this value. In fact, it
+looks like in time, we will move to a scalar interface in the 2.0 path
+to align with the zoned interface, so this value will be dependent on
+whether the target is using the scalar or vector interface.
 
 Javier
 
---Apple-Mail=_7085E976-BDA0-4187-A9A6-E5013718E758
+--Apple-Mail=_4786F3EA-DA27-459F-9A97-E71A9CB717A5
 Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
+Content-Disposition: attachment; filename="signature.asc"
+Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Message signed with OpenPGP
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEm1mT7zen+vs9+T8kYx8FO3WZGMoFAlqGfIAACgkQYx8FO3WZ
-GMreuBAAkj+g60wRH3o1kYMF4o2ecYy+ZjetbFxOILG915eF8qL2Ti2YzCSAX4Km
-c+BFhkzTw7pAI/R9IvHLV53QDRXQT6yKPa43mVNHhdYYHuZyhYes3D4pWhYEmvTd
-p030xlb28jmTwN6vGumBn92Qo+4FxJjk6LA93IUgbnVzRg5C6uVO4lOF6aZSwfsr
-JBnA5xoNGENX5AMTzMiPGqp46ntTaWxrfQ2g2KZwI1NqRdGM0hea2eUgQB2Jga+P
-NfFLPXAouWj8xcy+1rodi1oG0MUFqhzIYgS6K7HyMuI5IAJILWQoDP0+1Bo9Uz89
-cdaRiAI9+u8MprMy+t676d6mD0jpZC0W+hskURVac3zUxjEDbVNPXcOZfCISLT9o
-uXmhFXVLU9KKA1c/Al8uptitpCkreLsvf/Q2KgWXhakfsYGUUvha7sudtcxrqHkY
-UcDRDukNr4e1Hrs7fkiXYxbn1c9B6tnnF+jgCyn+9ESsM3G6XUIL+5eiRTBCm/cg
-aHRYTRzlaGJvCAfaWF15rrqlCl5FsuB7VEgBCCAaH9H1eZiagIlg3RvRMO6wpWF8
-1aQth6yy+9uI/kLG4lyN+4whLM7ggzZLI9SZpmCqMvKVDGydvsQF2w8AxWfHQAeH
-lg9uTFCsPLbWa09bdATOd6zh0obNuAks+etIokB5ywQ7xdvUzCY=
-=NmRG
+iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAlqGfrUACgkQIX4xUKFR
+nnR4qhAApHPsuY+VDzpeKEgVr40k1slDSVta6dG4h3ZuEiYKf5Sf+IQdi2EGg970
+R8g9HvBNucDHETNxTksojcOmJM9SDRLMnMFxwOS1BI39YWYHu3ira3qjJEZea7CZ
+5ZKGY/qERt/wxyLPEIbZ7CbF6GVICfgMfOvL4xMQLJQc+F2V/INZkmek0NO9Sjvu
+vi3qDHTlJhQRpUdHmOSDaPrQ+fvohNYb3o5JHS/NvMX6Mm/qLOskbY3658Zp0tHH
+oqs26nWRgz878ns6zCdfFCgUrCofQkZiTD6UMkY3hVpuspZU/MIslsjhj04hpNS1
+MSjOV0Djp0XaSXlWZN5AggpOXymnh/NxmojgP2eEBS7bn/R9CuN2+OKmtx5OEvO9
+o0Lhq+INzDD8p3E1MnyCssf9IezdcG+6C6Ap1EOQIkky0t1jiYEQd3uArMJTiRFN
+NP4M2DAw/jCFtWNdLumapSbWdqEfEkldAlrzkjfYG4Ccp4LH8VYBA4f4I9S+9pOu
+qr/F1U+5b/i4jwDEBSPPMdgHHgPXbAZYwWqfKV62IftVnSBi9Wz1gzi+SlQ1fLaN
+aSmIotRtmo0gsdczKYy1TzFmuf4bLNltdO+eD1Bqlc1j41cDmGBawy7NwL3LPhh9
+O+vI8iu/D7Lcmgj8TO2HV20WKDy+o4l+MkubzLaaGBAGO5AdYhY=
+=qVlh
 -----END PGP SIGNATURE-----
 
---Apple-Mail=_7085E976-BDA0-4187-A9A6-E5013718E758--
+--Apple-Mail=_4786F3EA-DA27-459F-9A97-E71A9CB717A5--
