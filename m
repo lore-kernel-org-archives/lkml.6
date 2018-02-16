@@ -1,102 +1,157 @@
-Return-Path: <arndbergmann@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519229006; cv=none;
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AH8x224QDFLkxnJVEChedRWExUvZaeNEUnKu6siPrnXvrxzyy4VFTLS3PbqgnhkR0lFlw3GNEUg/
+ARC-Seal: i=1; a=rsa-sha256; t=1518806395; cv=none;
         d=google.com; s=arc-20160816;
-        b=Tm/kAQA39/OZTdgZQQKssxaP6UIWWCjOqC2b+rRaqTuyluujlwsgQwp6xbbmvVEmfm
-         8SbOCbAPQWFGceWZVR3A0nkPovUgpXaTW0048RAKzY7rUBQAhQpODJjQGhYmqPDmAAxr
-         2+nz7sCoTBkszXSKBMUqcWaosDVtTko375PocOTQ/M7h6fLU4ag9Hm82+lbg6AOtAZ/r
-         U+U9NktgVBLvIB/mepOgapEV7odLxKO2jo2MfJuU8CXcakjnfLOyLIbvJYoo4jGSyT4y
-         6uCzrI7dNpC+ky6lTYuNBoOFiW4hhLhekaGW4PlNnrkH966lMQoRV2yGkWpmguLq3iIV
-         e/uQ==
+        b=bIxbaMz/Ht3qbhzQw8vzT3rSMMamufR3iA+RbDNwPALWF9d3IsVNrtt+LqqYIIkLDi
+         9HuR58uvCoAWvJZmRUkZYNqJo1kkLa+XfBo21o4LGa5V7UFCqKNClepiLY5E1HE9+oFf
+         dPgBSoWs8VESyAyPWbY4G7rRYkSj1sYud4yBU+5X4WMhsD+wmhWshWQTYoaswukUxy/6
+         OHfaoBu3j3RQMbc6+1utHIR8PVXjk/SxK/ZVkNvulJAkzENrW3GKQa0xLUxd6tfqS4Md
+         0aSOaYz+/Rv13Tx1n0OpE4GePtAxLLGoEOwt/7I9C8X2aiDkdzw3BWs8wXpY1orgE0i2
+         5nUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=R+M9dDvFHBmW6sK0W/a45XHD/0qAZawn0vb2Z4wDHoY=;
-        b=p9ijzfw9sFmTOIhTDa46RMpIAZviQgjMglday101aB/p2/SjQefbzMEQ7Vt1r/Tug9
-         lbM+j8Z2bu90g3MJ0ljBvD1CR806d+CrXVDBOGlMi50yObwdEj978ZYNusLc5rz/sGC4
-         iw9IuKQWJiGw4IPrz4GgTcIIiR2ScGKtgnwFrDOeURyGbFSPclLS88gc8pNfx9IuyAoZ
-         6J6HyhCeioclUCDBOgFhTGb38ju88WCz6+sbtsajj4PdfkXdLg6ftU1YPboPkrzWw5bb
-         aLv+fKviDUvAIUj/fotjmkGoTCHzPBxyy9wTy1gVamCcv3Xd53nO8hhlWeCcTjN9N8ra
-         q61w==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-filter:arc-authentication-results;
+        bh=6/IoqUTGHai0Czf36phhQJ7Uyzpz6vT0GEH8DaNw/3g=;
+        b=HQsSo6FMOImeOK5BtnWyMb2Je4r4Wpx8zHjjce2E8V7iKQQvutdKRCeJZ2SF3mjf83
+         zbNOvULIdVicQsX6qmtKLMDv6cdWRrKxkq6Ga7jT546Cjv3+yEg/Lejze7Q9cYn/C1Y8
+         6jYI9tLchcMAQj5s66UR1WMP+1cIosI5UzI8KuBgh6c42DN/ooV4830WNVxYeZcBq1vr
+         bZg5Qx4ZV1rD9OAlwRQTgRDRUXsIrT3Gv7XtWS+E/4HWqzzq8ZZDVyFLLg1WUnhNS4al
+         7IJbUmNxhZh5Gd991ohF9Nu3xK1Jx5u2fcJ0mQSaPnb3DSbfTdS5e9RqCO8t8NgrfaRr
+         hGOQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=holoYr4t;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=QV6T0K0+;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=holoYr4t;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
-X-Google-Smtp-Source: AH8x227hnOn5KaU1/RFB5elKhk/e6w3VxzJSKMMeNVAa62P4SwSNxp17RBR/cdnih3IfGMCQB5aLEypJprs3iaq7Fio=
-MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <CAK7LNAR3OMh9Q9ZfaBq=FpSJ-+DT5-RH_20ohV-iu34pX9hFKw@mail.gmail.com>
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=QV6T0K0+;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBTE013418
+X-Nifty-SrcIP: [125.199.20.195]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 11/23] kconfig: add 'shell-stdout' function
+Date: Sat, 17 Feb 2018 03:38:39 +0900
+Message-Id: <1518806331-7101-12-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
- <20180218221352.GA6651@ravnborg.org> <CAFkk2KT1krKuDkWt0eHcasfC61fTVQNf-1kqw7icLP9OYGYkXQ@mail.gmail.com>
- <CAK7LNAQH0WD3A3T97gce0xmZpMy0zWxTO2StfNWaDbiqjQg8gg@mail.gmail.com>
- <CAK8P3a2BOQt5Y0B4271WqaJvvWqfxHxD3S6r1i1xONvb+CJ5Dg@mail.gmail.com>
- <CAK7LNARtZcW1v53ridFJK1MULmj8tQT4s+DoRhKj9PrbMri5rQ@mail.gmail.com>
- <CAK8P3a1DrhxWXaEs6E85W5HEhvFr23E-GDsu=0X-sG0pX+PLag@mail.gmail.com> <CAK7LNAR3OMh9Q9ZfaBq=FpSJ-+DT5-RH_20ohV-iu34pX9hFKw@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 21 Feb 2018 17:03:25 +0100
-X-Google-Sender-Auth: jDM0EIwjd-fBzCHaTGUJDFFIbO4
-Message-ID: <CAK8P3a3-eufj=HM4Mi+KaSLxuoPwtw0P4EfmtYfVcbnR0mVwAw@mail.gmail.com>
-Subject: Re: [PATCH 00/23] kconfig: move compiler capability tests to Kconfig
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Rich Felker <dalias@libc.org>, Kernel Hardening <kernel-hardening@lists.openwall.com>,
-	X86 ML <x86@kernel.org>, Paul Mackerras <paulus@samba.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	sparclinux <sparclinux@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Jonathan Corbet <corbet@lwn.net>,
-	Richard Weinberger <richard@nod.at>, Linux-sh list <linux-sh@vger.kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Emese Revfy <re.emese@gmail.com>, Kees Cook <keescook@chromium.org>,
-	uml-devel <user-mode-linux-devel@lists.sourceforge.net>,
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-	Peter Oberparleiter <oberpar@linux.vnet.ibm.com>, Jeff Dike <jdike@addtoit.com>,
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, user-mode-linux-user@lists.sourceforge.net,
-	Thomas Gleixner <tglx@linutronix.de>, Michal Marek <michal.lkml@markovi.net>,
-	Ulf Magnusson <ulfalizer@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592583929666456907?=
-X-GMAIL-MSGID: =?utf-8?q?1593027074039396162?=
+X-GMAIL-THRID: =?utf-8?q?1592583935341216706?=
+X-GMAIL-MSGID: =?utf-8?q?1592583935341216706?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 21, 2018 at 1:57 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> 2018-02-21 19:52 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
->> On Wed, Feb 21, 2018 at 11:20 AM, Masahiro Yamada
->> <yamada.masahiro@socionext.com> wrote:
->>> 2018-02-21 18:56 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
->>>> On Wed, Feb 21, 2018 at 8:38 AM, Masahiro Yamada
->>>> <yamada.masahiro@socionext.com> wrote:
->>>>> 2018-02-20 0:18 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
->
-> Hmm, I think I can implement those somehow.
-> But, I hope we do not have many instances like this...
->
->
-> If you know more naive cases, please share your knowledge.
->
+This is the second built-in function, which retrieves the first line
+of stdout from the given shell command.
 
-One case that comes to mind would be architecture level selection on 32-bit
-ARM, which is roughly this (I probably have some details wrong, but you
-get the idea):
+Example code:
 
-- older compilers don't support the latest architecture setting (-march=armv8
-  or -march=armv7ve)
-- newer compilers no longer support really old architectures (-march=armv4)
-- setting -mthumb requires setting one of  -march=armv7-a, armv7ve, armv7-m or
-  armv8 if the compiler doesn't default to those
-- on a compiler that defaults to -marm, setting -march=armv7-m requires
-  setting -mthumb (IIRC)
-- really old compilers only support OABI, but not EABI
-- newer compilers no longer support OABI
-- mthumb requires EABI
-- armv6 and higher are subtly broken with OABI, but only when using
-  certain inline assembly with 64-bit arguments in register pairs.
+  config CC_IS_GCC
+          bool
+          default $(shell $CC --version | grep -q gcc)
 
-I think we just shouldn't try to capture all of the above correctly in Kconfig
-conditionals.
+  config GCC_VERSION
+          int
+          default $(shell-stdout $srctree/scripts/gcc-version.sh $CC | sed 's/^0*//') if CC_IS_GCC
+          default 0
 
-       Arnd
+Result:
+
+  $ make -s alldefconfig && tail -n 2 .config
+  CONFIG_CC_IS_GCC=y
+  CONFIG_GCC_VERSION=504
+
+  $ make CC=clang -s alldefconfig && tail -n 2 .config
+  # CONFIG_CC_IS_GCC is not set
+  CONFIG_GCC_VERSION=0
+
+By the way, function calls can be nested, so the following works.
+
+Example code:
+
+  config FOO
+          bool
+          default $(shell $(shell-stdout echo $COMMAND_IN_CAPITAL | tr [A-Z] [a-z]))
+
+Result:
+  $ make -s COMMAND=TRUE alldefconfig && tail -n 1 .config
+  CONFIG_FOO=y
+  $ make -s COMMAND=FALSE alldefconfig && tail -n 1 .config
+  # CONFIG_FOO is not set
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ scripts/kconfig/function.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+
+diff --git a/scripts/kconfig/function.c b/scripts/kconfig/function.c
+index f7f154d..266f4ec 100644
+--- a/scripts/kconfig/function.c
++++ b/scripts/kconfig/function.c
+@@ -189,10 +189,56 @@ static char *do_shell(struct function *f, int argc, char *argv[])
+ 	return xstrdup(ret == 0 ? "y" : "n");
+ }
+ 
++static char *do_shell_stdout(struct function *f, int argc, char *argv[])
++{
++	static const char *pre = "(";
++	static const char *post = ") 2>/dev/null";
++	FILE *p;
++	char buf[256];
++	char *cmd;
++	int ret;
++
++	if (argc != 2)
++		return NULL;
++
++	/*
++	 * Surround the command with ( ) in case it is piped commands.
++	 * Also, redirect stderr to /dev/null.
++	 */
++	cmd = xmalloc(strlen(pre) + strlen(argv[1]) + strlen(post) + 1);
++	strcpy(cmd, pre);
++	strcat(cmd, argv[1]);
++	strcat(cmd, post);
++
++	p = popen(cmd, "r");
++	if (!p) {
++		perror(cmd);
++		goto free;
++	}
++	if (fgets(buf, sizeof(buf), p)) {
++		size_t len = strlen(buf);
++
++		if (buf[len - 1] == '\n')
++			buf[len - 1] = '\0';
++	} else {
++		buf[0] = '\0';
++	}
++
++	ret = pclose(p);
++	if (ret == -1)
++		perror(cmd);
++
++free:
++	free(cmd);
++
++	return xstrdup(buf);
++}
++
+ void func_init(void)
+ {
+ 	/* register built-in functions */
+ 	func_add("shell", do_shell, NULL);
++	func_add("shell-stdout", do_shell_stdout, NULL);
+ }
+ 
+ void func_exit(void)
+-- 
+2.7.4
