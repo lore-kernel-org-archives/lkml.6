@@ -1,116 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162534AbeBPRzg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 12:55:36 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35450 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162497AbeBPRz0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 12:55:26 -0500
-X-Google-Smtp-Source: AH8x224RQDYr5rI1i2Dr5wlYNrUFoGDgL/p8CgtioVR7V+mWccn0zYh8WiqOqpgdQGj7pjBIIoaZUw==
-From: Junio C Hamano <gitster@pobox.com>
-To: git@vger.kernel.org
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
-        git-packagers@googlegroups.com
-Subject: [ANNOUNCE] Git v2.16.2
-Date: Fri, 16 Feb 2018 09:55:22 -0800
-Message-ID: <xmqqinaw7rat.fsf@gitster-ct.c.googlers.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2.50 (gnu/linux)
+        id S1162589AbeBPR5r (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 12:57:47 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60962 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1161522AbeBPR5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 12:57:46 -0500
+Date: Fri, 16 Feb 2018 11:57:44 -0600
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Jason Baron <jbaron@akamai.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@suse.de>
+Subject: [PATCH] extable: Make init_kernel_text() global
+Message-ID: <20180216175744.2towvw7lja7dpkn7@treble>
+References: <cover.1518798288.git.jpoimboe@redhat.com>
+ <eccf3cf668635c9b46acd6a4e3f57c05dbd8aa93.1518798288.git.jpoimboe@redhat.com>
+ <cabcf423-2214-f175-a3fc-a9756eabd247@akamai.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <cabcf423-2214-f175-a3fc-a9756eabd247@akamai.com>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The latest maintenance release Git v2.16.2 is now available at
-the usual places, with small fixes that are already in the 
-'master' front.
+On Fri, Feb 16, 2018 at 11:55:54AM -0500, Jason Baron wrote:
+> > +/* Disable any jump label entries in __init code */
+> > +void __init jump_label_invalidate_init(void)
+> > +{
+> > +	struct jump_entry *iter_start = __start___jump_table;
+> > +	struct jump_entry *iter_stop = __stop___jump_table;
+> > +	struct jump_entry *iter;
+> > +
+> > +	for (iter = iter_start; iter < iter_stop; iter++)
+> > +		if (iter->code >= (unsigned long)_sinittext &&
+> > +		    iter->code < (unsigned long)_einittext)
+> > +			iter->code = 0;
+> > +}
+> 
+> Seems like this wants to use init_kernel_text() but i see its marked
+> 'static', perhaps it can be moved to a header?
 
-The tarballs are found at:
+How about this patch on top?
 
-    https://www.kernel.org/pub/software/scm/git/
+---------
 
-The following public repositories all have a copy of the 'v2.16.2'
-tag and the 'maint' branch that the tag points at:
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH] extable: Make init_kernel_text() global
 
-  url = https://kernel.googlesource.com/pub/scm/git/git
-  url = git://repo.or.cz/alt-git.git
-  url = https://github.com/gitster/git
+Convert init_kernel_text() to a global function and use it in a few
+places instead of manually comparing _sinittext and _einittext.
 
-----------------------------------------------------------------
+Note that kallsyms.h has a very similar function called
+is_kernel_inittext(), but its end check is inclusive.  I'm not sure
+whether that's intentional behavior, so I didn't touch it.
 
-Git v2.16.2 Release Notes
-=========================
+Suggested-by: Jason Baron <jbaron@akamai.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+---
+ arch/x86/kernel/unwind_orc.c | 3 +--
+ include/linux/kernel.h       | 1 +
+ kernel/extable.c             | 2 +-
+ kernel/jump_label.c          | 4 +---
+ 4 files changed, 4 insertions(+), 6 deletions(-)
 
-Fixes since v2.16.1
--------------------
-
- * An old regression in "git describe --all $annotated_tag^0" has been
-   fixed.
-
- * "git svn dcommit" did not take into account the fact that a
-   svn+ssh:// URL with a username@ (typically used for pushing) refers
-   to the same SVN repository without the username@ and failed when
-   svn.pushmergeinfo option is set.
-
- * "git merge -Xours/-Xtheirs" learned to use our/their version when
-   resolving a conflicting updates to a symbolic link.
-
- * "git clone $there $here" is allowed even when here directory exists
-   as long as it is an empty directory, but the command incorrectly
-   removed it upon a failure of the operation.
-
- * "git stash -- <pathspec>" incorrectly blew away untracked files in
-   the directory that matched the pathspec, which has been corrected.
-
- * "git add -p" was taught to ignore local changes to submodules as
-   they do not interfere with the partial addition of regular changes
-   anyway.
-
-
-Also contains various documentation updates and code clean-ups.
-
-----------------------------------------------------------------
-
-Changes since v2.16.1 are as follows:
-
-Andreas G. Schacker (1):
-      doc/read-tree: remove obsolete remark
-
-Daniel Knittl-Frank (1):
-      describe: prepend "tags/" when describing tags with embedded name
-
-Jason Merrill (1):
-      git-svn: fix svn.pushmergeinfo handling of svn+ssh usernames.
-
-Jeff King (4):
-      t5600: fix outdated comment about unborn HEAD
-      t5600: modernize style
-      clone: factor out dir_exists() helper
-      clone: do not clean up directories we didn't create
-
-Junio C Hamano (2):
-      merge: teach -Xours/-Xtheirs to symbolic link merge
-      Git 2.16.2
-
-Nguyễn Thái Ngọc Duy (1):
-      add--interactive: ignore submodule changes except HEAD
-
-René Scharfe (9):
-      commit: avoid allocation in clear_commit_marks_many()
-      commit: use clear_commit_marks_many() in remove_redundant()
-      ref-filter: use clear_commit_marks_many() in do_merge_filter()
-      object: add clear_commit_marks_all()
-      bisect: avoid using the rev_info flag leak_pending
-      bundle: avoid using the rev_info flag leak_pending
-      checkout: avoid using the rev_info flag leak_pending
-      revision: remove the unused flag leak_pending
-      commit: remove unused function clear_commit_marks_for_object_array()
-
-Thomas Gummerer (1):
-      stash: don't delete untracked files that match pathspec
-
-Ævar Arnfjörð Bjarmason (2):
-      perf: amend the grep tests to test grep.threads
-      cat-file doc: document that -e will return some output
+diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
+index 1f9188f5357c..feb28fee6cea 100644
+--- a/arch/x86/kernel/unwind_orc.c
++++ b/arch/x86/kernel/unwind_orc.c
+@@ -5,7 +5,6 @@
+ #include <asm/unwind.h>
+ #include <asm/orc_types.h>
+ #include <asm/orc_lookup.h>
+-#include <asm/sections.h>
+ 
+ #define orc_warn(fmt, ...) \
+ 	printk_deferred_once(KERN_WARNING pr_fmt("WARNING: " fmt), ##__VA_ARGS__)
+@@ -148,7 +147,7 @@ static struct orc_entry *orc_find(unsigned long ip)
+ 	}
+ 
+ 	/* vmlinux .init slow lookup: */
+-	if (ip >= (unsigned long)_sinittext && ip < (unsigned long)_einittext)
++	if (init_kernel_text(ip))
+ 		return __orc_find(__start_orc_unwind_ip, __start_orc_unwind,
+ 				  __stop_orc_unwind_ip - __start_orc_unwind_ip, ip);
+ 
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index ce51455e2adf..3fd291503576 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -472,6 +472,7 @@ extern bool parse_option_str(const char *str, const char *option);
+ extern char *next_arg(char *args, char **param, char **val);
+ 
+ extern int core_kernel_text(unsigned long addr);
++extern int init_kernel_text(unsigned long addr);
+ extern int core_kernel_data(unsigned long addr);
+ extern int __kernel_text_address(unsigned long addr);
+ extern int kernel_text_address(unsigned long addr);
+diff --git a/kernel/extable.c b/kernel/extable.c
+index a17fdb63dc3e..6a5b61ebc66c 100644
+--- a/kernel/extable.c
++++ b/kernel/extable.c
+@@ -64,7 +64,7 @@ const struct exception_table_entry *search_exception_tables(unsigned long addr)
+ 	return e;
+ }
+ 
+-static inline int init_kernel_text(unsigned long addr)
++int init_kernel_text(unsigned long addr)
+ {
+ 	if (addr >= (unsigned long)_sinittext &&
+ 	    addr < (unsigned long)_einittext)
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index 08a02ae54997..6cd43460cadc 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -16,7 +16,6 @@
+ #include <linux/jump_label_ratelimit.h>
+ #include <linux/bug.h>
+ #include <linux/cpu.h>
+-#include <asm/sections.h>
+ 
+ #ifdef HAVE_JUMP_LABEL
+ 
+@@ -645,8 +644,7 @@ void __init jump_label_invalidate_init(void)
+ 	struct jump_entry *iter;
+ 
+ 	for (iter = iter_start; iter < iter_stop; iter++)
+-		if (iter->code >= (unsigned long)_sinittext &&
+-		    iter->code < (unsigned long)_einittext)
++		if (init_kernel_text(iter->code))
+ 			iter->code = 0;
+ }
+ 
+-- 
+2.14.3
