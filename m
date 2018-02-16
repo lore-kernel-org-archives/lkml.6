@@ -1,26 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932954AbeBPJwl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 04:52:41 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:48353 "EHLO
+        id S932913AbeBPJwe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 04:52:34 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:55091 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932851AbeBPJwi (ORCPT
+        with ESMTP id S932677AbeBPJw3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 04:52:38 -0500
-Date: Fri, 16 Feb 2018 01:42:33 -0800
-From: tip-bot for Andy Shevchenko <tipbot@zytor.com>
-Message-ID: <tip-6677d26c8befa462eab9be6c5335a939011e7e65@git.kernel.org>
-Cc: jolsa@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        acme@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-        andriy.shevchenko@linux.intel.com
-Reply-To: mingo@kernel.org, jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de, acme@redhat.com,
-        hpa@zytor.com
-In-Reply-To: <20180129130359.1490-1-andriy.shevchenko@linux.intel.com>
-References: <20180129130359.1490-1-andriy.shevchenko@linux.intel.com>
+        Fri, 16 Feb 2018 04:52:29 -0500
+Date: Fri, 16 Feb 2018 01:37:47 -0800
+From: tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-7bb45972952db9298fe5cc440160dcad1a66bfbc@git.kernel.org>
+Cc: jolsa@kernel.org, mingo@kernel.org, ak@linux.intel.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org, kan.liang@intel.com,
+        wangnan0@huawei.com, hpa@zytor.com, yao.jin@linux.intel.com,
+        peterz@infradead.org, acme@redhat.com, tglx@linutronix.de
+Reply-To: yao.jin@linux.intel.com, hpa@zytor.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, wangnan0@huawei.com, kan.liang@intel.com,
+        acme@redhat.com, tglx@linutronix.de, peterz@infradead.org,
+        jolsa@kernel.org, ak@linux.intel.com, mingo@kernel.org
+In-Reply-To: <1516310792-208685-9-git-send-email-kan.liang@intel.com>
+References: <1516310792-208685-9-git-send-email-kan.liang@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf tools: Substitute yet another strtoull()
-Git-Commit-ID: 6677d26c8befa462eab9be6c5335a939011e7e65
+Subject: [tip:perf/urgent] perf mmap: Introduce perf_mmap__read_event()
+Git-Commit-ID: 7bb45972952db9298fe5cc440160dcad1a66bfbc
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -33,64 +35,111 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6677d26c8befa462eab9be6c5335a939011e7e65
-Gitweb:     https://git.kernel.org/tip/6677d26c8befa462eab9be6c5335a939011e7e65
-Author:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-AuthorDate: Mon, 29 Jan 2018 15:03:59 +0200
+Commit-ID:  7bb45972952db9298fe5cc440160dcad1a66bfbc
+Gitweb:     https://git.kernel.org/tip/7bb45972952db9298fe5cc440160dcad1a66bfbc
+Author:     Kan Liang <kan.liang@intel.com>
+AuthorDate: Thu, 18 Jan 2018 13:26:23 -0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 15 Feb 2018 09:57:19 -0300
+CommitDate: Thu, 15 Feb 2018 09:53:40 -0300
 
-perf tools: Substitute yet another strtoull()
+perf mmap: Introduce perf_mmap__read_event()
 
-Instead of home grown function let's use what library provides us.
+Except for 'perf record', the other perf tools read events one by one
+from the ring buffer using perf_mmap__read_forward(). But it only
+supports non-overwrite mode.
 
-Signed-off-by: Andriy Shevchenko <andriy.shevchenko@linux.intel.com>
+Introduce perf_mmap__read_event() to support both non-overwrite and
+overwrite mode.
+
+Usage:
+perf_mmap__read_init()
+while(event = perf_mmap__read_event()) {
+        //process the event
+        perf_mmap__consume()
+}
+perf_mmap__read_done()
+
+It cannot use perf_mmap__read_backward(). Because it always reads the
+stale buffer which is already processed. Furthermore, the forward and
+backward concepts have been removed. The perf_mmap__read_backward() will
+be replaced and discarded later.
+
+Signed-off-by: Kan Liang <kan.liang@intel.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20180129130359.1490-1-andriy.shevchenko@linux.intel.com
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/r/1516310792-208685-9-git-send-email-kan.liang@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/util.c | 24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
+ tools/perf/util/mmap.c | 39 +++++++++++++++++++++++++++++++++++++++
+ tools/perf/util/mmap.h |  4 ++++
+ 2 files changed, 43 insertions(+)
 
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index 443892d..1019bbc 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -340,35 +340,15 @@ size_t hex_width(u64 v)
- 	return n;
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index 4f59eae..f804926 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -113,6 +113,45 @@ union perf_event *perf_mmap__read_backward(struct perf_mmap *map)
+ 	return perf_mmap__read(map, &map->prev, end);
  }
  
--static int hex(char ch)
--{
--	if ((ch >= '0') && (ch <= '9'))
--		return ch - '0';
--	if ((ch >= 'a') && (ch <= 'f'))
--		return ch - 'a' + 10;
--	if ((ch >= 'A') && (ch <= 'F'))
--		return ch - 'A' + 10;
--	return -1;
--}
--
- /*
-  * While we find nice hex chars, build a long_val.
-  * Return number of chars processed.
-  */
- int hex2u64(const char *ptr, u64 *long_val)
++/*
++ * Read event from ring buffer one by one.
++ * Return one event for each call.
++ *
++ * Usage:
++ * perf_mmap__read_init()
++ * while(event = perf_mmap__read_event()) {
++ *	//process the event
++ *	perf_mmap__consume()
++ * }
++ * perf_mmap__read_done()
++ */
++union perf_event *perf_mmap__read_event(struct perf_mmap *map,
++					bool overwrite,
++					u64 *startp, u64 end)
++{
++	union perf_event *event;
++
++	/*
++	 * Check if event was unmapped due to a POLLHUP/POLLERR.
++	 */
++	if (!refcount_read(&map->refcnt))
++		return NULL;
++
++	if (startp == NULL)
++		return NULL;
++
++	/* non-overwirte doesn't pause the ringbuffer */
++	if (!overwrite)
++		end = perf_mmap__read_head(map);
++
++	event = perf_mmap__read(map, startp, end);
++
++	if (!overwrite)
++		map->prev = *startp;
++
++	return event;
++}
++
+ void perf_mmap__read_catchup(struct perf_mmap *map)
  {
--	const char *p = ptr;
--	*long_val = 0;
--
--	while (*p) {
--		const int hex_val = hex(*p);
-+	char *p;
+ 	u64 head;
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index 95549d4..2871854 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -89,6 +89,10 @@ static inline void perf_mmap__write_tail(struct perf_mmap *md, u64 tail)
+ union perf_event *perf_mmap__read_forward(struct perf_mmap *map);
+ union perf_event *perf_mmap__read_backward(struct perf_mmap *map);
  
--		if (hex_val < 0)
--			break;
--
--		*long_val = (*long_val << 4) | hex_val;
--		p++;
--	}
-+	*long_val = strtoull(ptr, &p, 16);
++union perf_event *perf_mmap__read_event(struct perf_mmap *map,
++					bool overwrite,
++					u64 *startp, u64 end);
++
+ int perf_mmap__push(struct perf_mmap *md, bool backward,
+ 		    void *to, int push(void *to, void *buf, size_t size));
  
- 	return p - ptr;
- }
