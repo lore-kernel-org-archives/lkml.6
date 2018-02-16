@@ -1,99 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750899AbeBPUw7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 15:52:59 -0500
-Received: from chene.dit.umontreal.ca ([132.204.246.20]:45024 "EHLO
-        chene.dit.umontreal.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750723AbeBPUw5 (ORCPT
+        id S1750869AbeBPUys (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 15:54:48 -0500
+Received: from mail-vk0-f51.google.com ([209.85.213.51]:33300 "EHLO
+        mail-vk0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750723AbeBPUyq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 15:52:57 -0500
-From: Stefan Monnier <monnier@IRO.UMontreal.CA>
-To: Maxime Ripard <maxime.ripard@free-electrons.com> (maintainer:ARM/Allwinner
-        sunXi SoC support)
-Cc: Rob Herring <robh+dt@kernel.org> (maintainer:OPEN FIRMWARE AND
-        FLATTENED DEVICE TREE BINDINGS),
-        Mark Rutland <mark.rutland@arm.com> (maintainer:OPEN FIRMWARE AND
-        FLATTENED DEVICE TREE BINDINGS),
-        Russell King <linux@armlinux.org.uk> (maintainer:ARM PORT),
-        Chen-Yu Tsai <wens@csie.org> (maintainer:ARM/Allwinner sunXi SoC
-        support),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ARM: dts: sun7i: Enable HDMI support on the Orange Pi mini
-Message-ID: <jwvr2pk8xrb.fsf-monnier+diro@gnu.org>
-Date: Fri, 16 Feb 2018 15:52:09 -0500
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
+        Fri, 16 Feb 2018 15:54:46 -0500
+X-Google-Smtp-Source: AH8x224FD3vMT7ZoNdtrEXDu1n/RgNrVwOI55lAGacqqQyajj0MkcaZngaa0MqLI05obmFqCAMb/oMcrqCdH69Sd45o=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NAI-Spam-Flag: NO
-X-NAI-Spam-Threshold: 5
-X-NAI-Spam-Score: 0
-X-NAI-Spam-Rules: 2 Rules triggered
-        EDT_SA_DN_PASS=0, RV6224=0
-X-NAI-Spam-Version: 2.3.0.9418 : core <6224> : inlines <6405> : streams
- <1779177> : uri <2594061>
+In-Reply-To: <CAFqH_50OxDDfXjGPyNgtyu-qFn3zGqrLYprLtPJyHDYRDEczGQ@mail.gmail.com>
+References: <20180130202913.28724-1-thierry.escande@collabora.com>
+ <20180130202913.28724-34-thierry.escande@collabora.com> <1517403243.14302.1.camel@pengutronix.de>
+ <CAOw6vbKsG=B7vV5_NcwgeAc-=guRN1Xh-dCxKytkDeOjayatLw@mail.gmail.com>
+ <CAD=FV=UB+ovYFSi2aB_qe3igX3K7BxMWaEEoNPx1UMdscKwQtQ@mail.gmail.com> <CAFqH_50OxDDfXjGPyNgtyu-qFn3zGqrLYprLtPJyHDYRDEczGQ@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 16 Feb 2018 12:54:44 -0800
+X-Google-Sender-Auth: PA6DQPsaDCVRdfb1ymI966yVgbQ
+Message-ID: <CAD=FV=UqPt5d=Kw4JBFZVgSNwvDZDCNd_ORV66MwWMxMJpW-eQ@mail.gmail.com>
+Subject: Re: [PATCH v3 33/43] drm/panel: simple: Change mode for Sharp lq123p1jx31
+To: Enric Balletbo Serra <eballetbo@gmail.com>
+Cc: Sean Paul <seanpaul@chromium.org>, Haixia Shi <hshi@chromium.org>,
+        Thierry Escande <thierry.escande@collabora.com>,
+        Lin Huang <hl@rock-chips.com>, David Airlie <airlied@linux.ie>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Yakir Yang <ykk@rock-chips.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        =?UTF-8?Q?=C3=98rjan_Eide?= <orjan.eide@arm.com>,
+        Mark Yao <mark.yao@rock-chips.com>, Zain Wang <wzz@rock-chips.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Monnier <monnier@iro.umontreal.ca>
+Hi,
 
-Enable the display pipeline and HDMI output for the Orange Pi mini
+On Fri, Feb 16, 2018 at 4:34 AM, Enric Balletbo Serra
+<eballetbo@gmail.com> wrote:
+> Hi,
+>
+> 2018-01-31 17:52 GMT+01:00 Doug Anderson <dianders@chromium.org>:
+>> Hi,
+>>
+>>
+>> On Wed, Jan 31, 2018 at 7:16 AM, Sean Paul <seanpaul@chromium.org> wrote:
+>>> On Wed, Jan 31, 2018 at 7:54 AM, Lucas Stach <l.stach@pengutronix.de> wrote:
+>>>> Am Dienstag, den 30.01.2018, 21:29 +0100 schrieb Thierry Escande:
+>>>>> From: Sean Paul <seanpaul@chromium.org>
+>>>>>
+>>>>> Change the mode for Sharp lq123p1jx31 panel to something more
+>>>>> rockchip-friendly such that we can use the fixed PLLs to
+>>>>> generate the pixel clock
+>>>>
+>>>> This should really switch to a display timing instead of exposing a
+>>>> single mode. The display timing has min, typical, max tuples for all
+>>>> the timings values, which would allow the attached driver to vary the
+>>>> timings inside the allowed bounds if it makes sense.
+>>>>
+>>>> Trying to hit a specific pixel clock to free up a PLL is exactly one of
+>>>> the use cases envisioned for the display timings stuff.
+>>>>
+>>>
+>>> Agreed, I think we had this discussion the first time around. We
+>>> should drop this patch.
+>>>
+>>> Thanks for catching this!
+>>
+>> Are you sure we should drop this?  In order for things to work
+>> properly (not generate noise on the digitizer or other EMI), this
+>> needs to run at a very specific pixel clock with very specific
+>> blanking times.  I know that earlier we had slightly different
+>> blanking times and Samsung came back and said that there was noise on
+>> the digitizer.  I could be wrong, but I don't think there's any way
+>> currently to be able to specify exactly what timings should be used on
+>> a particular board.
+>>
+>> Don't get be wrong--I think a patch such as this one that claims a
+>> single board's timings as the "right" ones for a generic panel is a
+>> bit of a hack.  ...but at the same time there are no other users of
+>> this panel (that I know of) in mainline and the timings presented here
+>> are certainly sane timings for this panel.
+>>
+>> In any case, previous discussion at: https://patchwork.kernel.org/patch/9614603/
+>>
+>>
+>> ...oh, and looking at the previous discussion reminds me that the
+>> timings presented in this here patch are actually not the right ones
+>> (they have the right PLL, but the wrong blankings to avoid the noise
+>> issues).  See <//chromium-review.googlesource.com/381015>
+>>
+>
+> As Thierry no longer has the hardware to test these patch series, I'll
+> take care of these and follow the upstreaming process. I think that
+> doesn't make sense send a v4 version of all 43 patches for this
+> change. Right now, only this patch received comments so I'll wait a
+> bit more for if we can get the other patches reviewed. If the others
+> are fine just and I don't need to send a new version just don't apply
+> this one and I will send a second version of that specific patch. Or
+> even better, is really trivial what needs to be changed, so maybe the
+> maintainer can do it? ;)
 
-Signed-off-by: Stefan Monnier <monnier@iro.umontreal.ca>
----
- arch/arm/boot/dts/sun7i-a20-orangepi-mini.dts | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Just as a heads up, Sean Paul has a series of patches to replace this
+patch.  The following are IDs from patchwork.kernel.org:
 
-diff --git a/arch/arm/boot/dts/sun7i-a20-orangepi-mini.dts b/arch/arm/boot/dts/sun7i-a20-orangepi-mini.dts
-index 7af4c8fc1865..ce02ab532bc8 100644
---- a/arch/arm/boot/dts/sun7i-a20-orangepi-mini.dts
-+++ b/arch/arm/boot/dts/sun7i-a20-orangepi-mini.dts
-@@ -61,6 +61,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -98,6 +109,10 @@
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -119,6 +134,16 @@
- 	};
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &i2c0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c0_pins_a>;
+10207583 New          [v3,1/6] dt-bindings: Clarify timing subnode use
+as panel-timing
+10207585 New          [v3,2/6] dt-bindings: Add headings to
+simple-panel bindings
+10207591 New          [v3,3/6] dt-bindings: Add panel-timing subnode
+to simple-panel
+10207593 New          [v3,4/6] drm/panel: simple: Add ability to
+override typical timing
+10207595 New          [v3,5/6] drm/panel: simple: Use display_timing
+for lq123p1jx31
+10207603 New          [v3,6/6] arm64: dts: rockchip: Specify override
+mode for kevin panel
+
+-Doug
