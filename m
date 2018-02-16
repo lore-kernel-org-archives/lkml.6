@@ -1,27 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751099AbeBPVHx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 16:07:53 -0500
-Received: from mga12.intel.com ([192.55.52.136]:28372 "EHLO mga12.intel.com"
+        id S1751076AbeBPVHw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 16:07:52 -0500
+Received: from mga06.intel.com ([134.134.136.31]:23771 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750899AbeBPVHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1750897AbeBPVHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 16 Feb 2018 16:07:19 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,520,1511856000";
-   d="scan'208";a="35372234"
+   d="scan'208";a="18754917"
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: "Tobin C . Harding" <me@tobin.cc>, linux@rasmusvillemoes.dk,
         Petr Mladek <pmladek@suse.com>, Joe Perches <joe@perches.com>,
         linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>
-Cc: Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        Joey Zheng <yu.zheng@hxt-semitech.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 7/9] lib/vsprintf: Replace space with '_' before crng is ready
-Date: Fri, 16 Feb 2018 23:07:09 +0200
-Message-Id: <20180216210711.79901-7-andriy.shevchenko@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 6/9] lib/vsprintf: Deduplicate pointer_string()
+Date: Fri, 16 Feb 2018 23:07:08 +0200
+Message-Id: <20180216210711.79901-6-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
 References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
@@ -29,65 +27,86 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+There is an exact code at the end of ptr_to_id().
+Replace it by calling pointer_string() directly.
 
-Before crng is ready, output of "%p" composes of "(ptrval)" and
-left padding spaces for alignment as no random address can be
-generated. This seems a little strange when default string width
-is larger than strlen("(ptrval)").
+This is followup to the commit
+  ad67b74d2469 ("printk: hash addresses printed with %p").
 
-For example, when irq domain names are built with "%p", the nodes
-under /sys/kernel/debug/irq/domains like this on AArch64 system,
-
-[root@y irq]# ls domains/
-default                   irqchip@        (ptrval)-2
-irqchip@        (ptrval)-4  \_SB_.TCS0.QIC1  \_SB_.TCS0.QIC3
-irqchip@        (ptrval)  irqchip@        (ptrval)-3
-\_SB_.TCS0.QIC0             \_SB_.TCS0.QIC2
-
-The name "irqchip@        (ptrval)-2" is not so readable in console
-output.
-
-This patch replaces space with readable "_" when output needs padding.
-Following is the output after applying the patch,
-
-[root@y domains]# ls
-default                   irqchip@(____ptrval____)-2
-irqchip@(____ptrval____)-4  \_SB_.TCS0.QIC1  \_SB_.TCS0.QIC3
-irqchip@(____ptrval____)  irqchip@(____ptrval____)-3  \_SB_.TCS0.QIC0
-\_SB_.TCS0.QIC2
-
-There is same problem in some subsystem's dmesg output. Moreover,
-someone may call "%p" in a similar case. In addition, the timing of
-crng initialization done may vary on different system. So, the change
-is made in vsprintf.c.
-
-Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+Cc: Tobin C. Harding <me@tobin.cc>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- lib/vsprintf.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ lib/vsprintf.c | 27 +++++++--------------------
+ 1 file changed, 7 insertions(+), 20 deletions(-)
 
 diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 9004bbb3d84d..97be2d07297a 100644
+index 87dbced51b1a..9004bbb3d84d 100644
 --- a/lib/vsprintf.c
 +++ b/lib/vsprintf.c
-@@ -1681,12 +1681,13 @@ early_initcall(initialize_ptr_random);
- /* Maps a pointer to a 32 bit unique identifier. */
- static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
+@@ -1367,13 +1367,6 @@ static noinline_for_stack
+ char *restricted_pointer(char *buf, char *end, const void *ptr,
+ 			 struct printf_spec spec)
  {
-+	const char *str = sizeof(ptr) == 8 ? "(____ptrval____)" : "(ptrval)";
- 	unsigned long hashval;
+-	spec.base = 16;
+-	spec.flags |= SMALL;
+-	if (spec.field_width == -1) {
+-		spec.field_width = 2 * sizeof(ptr);
+-		spec.flags |= ZEROPAD;
+-	}
+-
+ 	switch (kptr_restrict) {
+ 	case 0:
+ 		/* Always print %pK values */
+@@ -1385,8 +1378,11 @@ char *restricted_pointer(char *buf, char *end, const void *ptr,
+ 		 * kptr_restrict==1 cannot be used in IRQ context
+ 		 * because its test for CAP_SYSLOG would be meaningless.
+ 		 */
+-		if (in_irq() || in_serving_softirq() || in_nmi())
++		if (in_irq() || in_serving_softirq() || in_nmi()) {
++			if (spec.field_width == -1)
++				spec.field_width = 2 * sizeof(ptr);
+ 			return string(buf, end, "pK-error", spec);
++		}
  
- 	if (unlikely(!have_filled_random_ptr_key)) {
- 		spec.field_width = 2 * sizeof(ptr);
- 		/* string length must be less than default_width */
--		return string(buf, end, "(ptrval)", spec);
-+		return string(buf, end, str, spec);
+ 		/*
+ 		 * Only print the real pointer value if the current
+@@ -1411,7 +1407,7 @@ char *restricted_pointer(char *buf, char *end, const void *ptr,
+ 		break;
  	}
  
- #ifdef CONFIG_64BIT
+-	return number(buf, end, (unsigned long)ptr, spec);
++	return pointer_string(buf, end, ptr, spec);
+ }
+ 
+ static noinline_for_stack
+@@ -1686,10 +1682,9 @@ early_initcall(initialize_ptr_random);
+ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
+ {
+ 	unsigned long hashval;
+-	const int default_width = 2 * sizeof(ptr);
+ 
+ 	if (unlikely(!have_filled_random_ptr_key)) {
+-		spec.field_width = default_width;
++		spec.field_width = 2 * sizeof(ptr);
+ 		/* string length must be less than default_width */
+ 		return string(buf, end, "(ptrval)", spec);
+ 	}
+@@ -1704,15 +1699,7 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
+ #else
+ 	hashval = (unsigned long)siphash_1u32((u32)ptr, &ptr_key);
+ #endif
+-
+-	spec.flags |= SMALL;
+-	if (spec.field_width == -1) {
+-		spec.field_width = default_width;
+-		spec.flags |= ZEROPAD;
+-	}
+-	spec.base = 16;
+-
+-	return number(buf, end, hashval, spec);
++	return pointer_string(buf, end, (const void *)hashval, spec);
+ }
+ 
+ /*
 -- 
 2.15.1
