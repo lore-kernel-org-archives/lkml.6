@@ -1,74 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030859AbeBPNZ1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 08:25:27 -0500
-Received: from smtp.gentoo.org ([140.211.166.183]:42018 "EHLO smtp.gentoo.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030766AbeBPNZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 08:25:26 -0500
-Message-ID: <1518787521.2464.20.camel@gentoo.org>
-Subject: Re: [PATCH-next] sched/headers: Clean up <linux/sched.h>
-From: Christopher =?ISO-8859-1?Q?D=EDaz?= Riveros <chrisadr@gentoo.org>
-To: Juri Lelli <juri.lelli@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Date: Fri, 16 Feb 2018 08:25:21 -0500
-In-Reply-To: <20180216094432.GG8032@localhost.localdomain>
-References: <20180215154318.15894-1-chrisadr@gentoo.org>
-         <20180215165212.GB25181@hirez.programming.kicks-ass.net>
-         <20180216094432.GG8032@localhost.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1030931AbeBPNZn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 08:25:43 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:33300 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030766AbeBPNZl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 08:25:41 -0500
+Date: Fri, 16 Feb 2018 14:25:38 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 1/4] dt-bindings: sound: add motorola,cpcap-audio-codec
+Message-ID: <20180216132537.lkd4wzfg7uuoyx7k@earth.universe>
+References: <20180214220741.28306-1-sebastian.reichel@collabora.co.uk>
+ <20180214220741.28306-2-sebastian.reichel@collabora.co.uk>
+ <20180216113008.GB5886@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4wgqgt55vm2fopkt"
+Content-Disposition: inline
+In-Reply-To: <20180216113008.GB5886@sirena.org.uk>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-El vie, 16-02-2018 a las 10:44 +0100, Juri Lelli escribió:
-> On 15/02/18 17:52, Peter Zijlstra wrote:
-> > On Thu, Feb 15, 2018 at 10:43:18AM -0500, Christopher Diaz Riveros
-> > wrote:
-> 
-> [...]
-> 
-> > > @@ -437,20 +437,28 @@ struct sched_dl_entity {
-> > >  	 * during sched_setattr(), they will remain the same
-> > > until
-> > >  	 * the next sched_setattr().
-> > >  	 */
-> > > -	u64				dl_runtime;	/*
-> > > Maximum runtime for each instance	*/
-> > > -	u64				dl_deadline;	/
-> > > * Relative deadline of each instance	*/
-> > > -	u64				dl_period;	/*
-> > > Separation of two instances (period) */
-> > > -	u64				dl_bw;		
-> > > /* dl_runtime / dl_period		*/
-> > > -	u64				dl_density;	/*
-> > > dl_runtime / dl_deadline		*/
-> > > +	/* Maximum runtime for each instance	*/
-> > > +	u64				dl_runtime;
-> > > +	/* Relative deadline of each instance	*/
-> > > +	u64				dl_deadline;
-> > > +	/* Separation of two instances (period) */
-> > > +	u64				dl_period;
-> > > +	/* dl_runtime / dl_period		*/
-> > > +	u64				dl_bw;
-> > > +	/* dl_runtime / dl_deadline		*/
-> > > +	u64				dl_density;
-> > 
-> > That's a whole lot less readable :/
-> 
-> Yep. :(
 
-Thank you all for the feedback, I'll consider this patch as NACK. Sorry
- for wasting time in a low quality patch. I'll prepare a better one
-next time :)
+--4wgqgt55vm2fopkt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
--- 
-Christopher Díaz Riveros
-Gentoo Linux Developer
-GPG Fingerprint: E517 5ECB 8152 98E4 FEBC  2BAA 4DBB D10F 0FDD 2547
+Hi Mark,
+
+On Fri, Feb 16, 2018 at 11:30:08AM +0000, Mark Brown wrote:
+> On Wed, Feb 14, 2018 at 11:07:38PM +0100, Sebastian Reichel wrote:
+>=20
+> > +&cpcap {
+> > +	audio-codec {
+> > +		compatible =3D "motorola,cpcap-audio-codec";
+> > +	};
+>=20
+> Why are we adding a separate DT node with no content for this?  This is
+> a single chip, we already know that the CODEC part is there from the DT
+> telling us that the chip is there and what we decide is part of the
+> CODEC is going to depend on what the OS running on the system is doing.
+
+While it looks empty in the DT binding file, it's actually not empty
+once some standard properties are added to support audio-graph-card.
+A real world example looks like this:
+
+&cpcap {
+    audio-codec {
+        compatible =3D "motorola,cpcap-audio-codec";
+        #sound-dai-cells =3D <1>;
+
+        port@0 {
+            cpcap_audio_codec0: endpoint {
+                remote-endpoint =3D <&cpu_dai2>;
+            };
+        };
+
+        port@1 {
+            cpcap_audio_codec1: endpoint {
+                remote-endpoint =3D <&cpu_dai3>;
+            };
+       };
+    };
+};
+
+Having all of this directly in the cpcap node doesn't look like
+an improvement for any OS. Once there is a node it makes sense
+to add a compatible IMHO. As a side effect this also avoids having
+special handling for the audio codec. This is the last missing
+sub-component, see arch/arm/boot/dts/motorola-cpcap-mapphone.dtsi
+
+-- Sebastian
+
+--4wgqgt55vm2fopkt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqG288ACgkQ2O7X88g7
++pq/YQ/5AeXjVP0rUKWE/VZHRZnyxD1lwAtgMODqFJ93v5TulzMIHghoCHRlngXY
+czWjZ/kXQn9Y8ZciuV07005OjBY6mJdC22gtvZuq/Ufk4luGTdAK/P/KFKcoEsLB
+yKLph76WcHSUAEXFpN0Hp0jnbOkiXxDPQHW7VJM6AILAQR3u4jKHU923m0ibNjyi
+WG3i6C1ykXOpPX0Pdj4XmPeNZA8P2ZHt3Sk60fHG+ePyxXOZB9IJ5Nny98Qxh3gY
+ldYOcmIbXWtlf7G7bD/vlXMoc600jYN/CT7seLrWjDrn9e2pxRMrGbbSLJeiL6Km
+3unsXXNY99sDBdoHXyESfWF+F/90bz24pU6C+i0PgISv/LlSkx9Z63/6uMNmi6DV
+Qm1nelOxDjNlNCgjRU+R90jG3aFEwnJunTywtQNrJcBOgFgmhVag9fGH+HoDX4gB
+EbTxruuSfKwMaCV6/sWtLj1LgsZCRC0Q+Zvjx8SOvF9iwi3euzHWrovlZo9Yn6+Z
+DPVQ0+Ns6Pq/pWVN7Xl5HLh00AQAR/FQP1eJdsBas60tNmbPRlMPN6MoV31okRcd
+uXPhQfIU5vwsRC6fPdzPadbVAnTfS4FhZHLULFjEuWSZyPVVqK9/xlRBQgBkxHvk
+K43NPiu7MM6fZkOxpTCkR4PPtADCyz4OdVOhxHdR6fJbmAJt2qo=
+=2OjM
+-----END PGP SIGNATURE-----
+
+--4wgqgt55vm2fopkt--
