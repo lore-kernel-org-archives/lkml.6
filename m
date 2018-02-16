@@ -1,344 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933824AbeBPKoB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 05:44:01 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49664 "EHLO mx1.redhat.com"
+        id S933844AbeBPKoR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 05:44:17 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56234 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933766AbeBPKnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 05:43:35 -0500
+        id S933759AbeBPKne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 05:43:34 -0500
 From: Hans de Goede <hdegoede@redhat.com>
 To: Tejun Heo <tj@kernel.org>
 Cc: Hans de Goede <hdegoede@redhat.com>, linux-ide@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 12/12] extcon: axp288: Set USB role where necessary
-Date: Fri, 16 Feb 2018 11:43:21 +0100
-Message-Id: <20180216104321.8259-13-hdegoede@redhat.com>
+Subject: [PATCH 11/12] platform/x86: intel_cht_int33fe: Add device connections for the Type-C port
+Date: Fri, 16 Feb 2018 11:43:20 +0100
+Message-Id: <20180216104321.8259-12-hdegoede@redhat.com>
 In-Reply-To: <20180216104321.8259-1-hdegoede@redhat.com>
 References: <20180216104321.8259-1-hdegoede@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The AXP288 BC1.2 charger detection / extcon code may seem like a strange
-place to add code to control the USB role-switch on devices with an AXP288,
-but there are 2 reasons to do this inside the axp288 extcon code:
-
-1) On many devices the USB role is controlled by ACPI AML code, but the AML
-   code only switches between the host and none roles, because of Windows
-   not really using device mode. To make device mode work we need to toggle
-   between the none/device roles based on VBus presence, and the axp288
-   extcon gets interrupts on VBus insertion / removal.
-
-2) In order for our BC1.2 charger detection to work properly the role
-   mux must be properly set to device mode before we do the detection.
-
-Also note the Kconfig help-text / obsolete depends on USB_PHY which are
-remnants from older never upstreamed code also controlling the mux from
-the axp288 extcon code.
-
-This commit also adds code to get notifications from the INT3496 extcon
-device, which is used on some devices to notify the kernel about id-pin
-changes instead of them being handled through AML code.
-
-This fixes:
--Device mode not working on most CHT devices with an AXP288
--Host mode not working on devices with an INT3496 ACPI device
--Charger-type misdetection (always SDP) on devices with an INT3496 when the
- USB role (always) gets initialized as host
+We need to add device-connections for the TYPE-C mux/switch and usb-role
+code to be able to find the PI3USB30532 Type-C cross-switch and the
+device/host switch integrated in the CHT SoC.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/extcon/Kconfig         |   3 +-
- drivers/extcon/extcon-axp288.c | 175 +++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 169 insertions(+), 9 deletions(-)
+ drivers/platform/x86/intel_cht_int33fe.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/drivers/extcon/Kconfig b/drivers/extcon/Kconfig
-index a7bca4207f44..0dc2d5441c3b 100644
---- a/drivers/extcon/Kconfig
-+++ b/drivers/extcon/Kconfig
-@@ -30,7 +30,8 @@ config EXTCON_ARIZONA
- 
- config EXTCON_AXP288
- 	tristate "X-Power AXP288 EXTCON support"
--	depends on MFD_AXP20X && USB_PHY
-+	depends on MFD_AXP20X && USB_SUPPORT
-+	select USB_ROLE_SWITCH
- 	help
- 	  Say Y here to enable support for USB peripheral detection
- 	  and USB MUX switching by X-Power AXP288 PMIC.
-diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
-index 3ec4c715e240..1a707bc35e03 100644
---- a/drivers/extcon/extcon-axp288.c
-+++ b/drivers/extcon/extcon-axp288.c
-@@ -1,6 +1,7 @@
- /*
-  * extcon-axp288.c - X-Power AXP288 PMIC extcon cable detection driver
-  *
-+ * Copyright (c) 2017-2018 Hans de Goede <hdegoede@redhat.com>
-  * Copyright (C) 2015 Intel Corporation
-  * Author: Ramakrishna Pallala <ramakrishna.pallala@intel.com>
-  *
-@@ -14,6 +15,8 @@
-  * GNU General Public License for more details.
+diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
+index 380ef7ec094f..a3f8674f14da 100644
+--- a/drivers/platform/x86/intel_cht_int33fe.c
++++ b/drivers/platform/x86/intel_cht_int33fe.c
+@@ -21,6 +21,7 @@
   */
  
-+#include <linux/acpi.h>
+ #include <linux/acpi.h>
 +#include <linux/connection.h>
+ #include <linux/i2c.h>
+ #include <linux/interrupt.h>
  #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/io.h>
-@@ -25,6 +28,11 @@
- #include <linux/extcon-provider.h>
- #include <linux/regmap.h>
- #include <linux/mfd/axp20x.h>
-+#include <linux/usb/role.h>
-+#include <linux/workqueue.h>
-+
-+#include <asm/cpu_device_id.h>
-+#include <asm/intel-family.h>
- 
- /* Power source status register */
- #define PS_STAT_VBUS_TRIGGER		BIT(0)
-@@ -97,9 +105,19 @@ struct axp288_extcon_info {
- 	struct device *dev;
- 	struct regmap *regmap;
- 	struct regmap_irq_chip_data *regmap_irqc;
-+	struct usb_role_switch *role_sw;
-+	struct work_struct role_work;
- 	int irq[EXTCON_IRQ_END];
- 	struct extcon_dev *edev;
-+	struct extcon_dev *id_extcon;
-+	struct notifier_block id_nb;
- 	unsigned int previous_cable;
-+	bool vbus_attach;
-+};
-+
-+static const struct x86_cpu_id cherry_trail_cpu_ids[] = {
-+	{ X86_VENDOR_INTEL, 6, INTEL_FAM6_ATOM_AIRMONT, X86_FEATURE_ANY },
-+	{}
+@@ -33,6 +34,8 @@ struct cht_int33fe_data {
+ 	struct i2c_client *max17047;
+ 	struct i2c_client *fusb302;
+ 	struct i2c_client *pi3usb30532;
++	/* Contain a list-head must be per device */
++	struct devcon connections[3];
  };
  
- /* Power up/down reason string array */
-@@ -137,20 +155,74 @@ static void axp288_extcon_log_rsi(struct axp288_extcon_info *info)
- 	regmap_write(info->regmap, AXP288_PS_BOOT_REASON_REG, clear_mask);
+ /*
+@@ -172,6 +175,20 @@ static int cht_int33fe_probe(struct i2c_client *client)
+ 			return -EPROBE_DEFER; /* Wait for i2c-adapter to load */
+ 	}
+ 
++	data->connections[0].endpoint[0] = "i2c-fusb302";
++	data->connections[0].endpoint[1] = "i2c-pi3usb30532";
++	data->connections[0].id = "typec-switch";
++	data->connections[1].endpoint[0] = "i2c-fusb302";
++	data->connections[1].endpoint[1] = "i2c-pi3usb30532";
++	data->connections[1].id = "typec-mux";
++	data->connections[2].endpoint[0] = "i2c-fusb302";
++	data->connections[2].endpoint[1] = "intel_xhci_usb_sw-role-switch";
++	data->connections[2].id = "usb-role-switch";
++
++	add_device_connection(&data->connections[0]);
++	add_device_connection(&data->connections[1]);
++	add_device_connection(&data->connections[2]);
++
+ 	memset(&board_info, 0, sizeof(board_info));
+ 	strlcpy(board_info.type, "typec_fusb302", I2C_NAME_SIZE);
+ 	board_info.dev_name = "fusb302";
+@@ -201,6 +218,10 @@ static int cht_int33fe_probe(struct i2c_client *client)
+ 	if (data->max17047)
+ 		i2c_unregister_device(data->max17047);
+ 
++	remove_device_connection(&data->connections[2]);
++	remove_device_connection(&data->connections[1]);
++	remove_device_connection(&data->connections[0]);
++
+ 	return -EPROBE_DEFER; /* Wait for the i2c-adapter to load */
  }
  
--static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
-+/*
-+ * The below code to control the USB role-switch on devices with an AXP288
-+ * may seem out of place, but there are 2 reasons why this is the best place
-+ * to control the USB role-switch on such devices:
-+ * 1) On many devices the USB role is controlled by AML code, but the AML code
-+ *    only switches between the host and none roles, because of Windows not
-+ *    really using device mode. To make device mode work we need to toggle
-+ *    between the none/device roles based on VBus presence, and this driver
-+ *    gets interrupts on VBus insertion / removal.
-+ * 2) In order for our BC1.2 charger detection to work properly the role
-+ *    mux must be properly set to device mode before we do the detection.
-+ */
-+
-+/* Returns the id-pin value, note pulled low / false == host-mode */
-+static bool axp288_get_id_pin(struct axp288_extcon_info *info)
- {
--	int ret, stat, cfg, pwr_stat;
--	u8 chrg_type;
--	unsigned int cable = info->previous_cable;
--	bool vbus_attach = false;
-+	enum usb_role role;
-+
-+	if (info->id_extcon)
-+		return extcon_get_state(info->id_extcon, EXTCON_USB_HOST) <= 0;
-+
-+	/* We cannot access the id-pin, see what mode the AML code has set */
-+	role = usb_role_switch_get_role(info->role_sw);
-+	return role != USB_ROLE_HOST;
-+}
-+
-+static void axp288_usb_role_work(struct work_struct *work)
-+{
-+	struct axp288_extcon_info *info =
-+		container_of(work, struct axp288_extcon_info, role_work);
-+	enum usb_role role;
-+	bool id_pin;
-+	int ret;
-+
-+	id_pin = axp288_get_id_pin(info);
-+	if (!id_pin)
-+		role = USB_ROLE_HOST;
-+	else if (info->vbus_attach)
-+		role = USB_ROLE_DEVICE;
-+	else
-+		role = USB_ROLE_NONE;
-+
-+	ret = usb_role_switch_set_role(info->role_sw, role);
-+	if (ret)
-+		dev_err(info->dev, "failed to set role: %d\n", ret);
-+}
-+
-+static bool axp288_get_vbus_attach(struct axp288_extcon_info *info)
-+{
-+	int ret, pwr_stat;
+@@ -213,6 +234,10 @@ static int cht_int33fe_remove(struct i2c_client *i2c)
+ 	if (data->max17047)
+ 		i2c_unregister_device(data->max17047);
  
- 	ret = regmap_read(info->regmap, AXP288_PS_STAT_REG, &pwr_stat);
- 	if (ret < 0) {
- 		dev_err(info->dev, "failed to read vbus status\n");
--		return ret;
-+		return false;
- 	}
- 
--	vbus_attach = (pwr_stat & PS_STAT_VBUS_VALID);
-+	return !!(pwr_stat & PS_STAT_VBUS_VALID);
-+}
-+
-+static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
-+{
-+	int ret, stat, cfg;
-+	u8 chrg_type;
-+	unsigned int cable = info->previous_cable;
-+	bool vbus_attach = false;
-+
-+	vbus_attach = axp288_get_vbus_attach(info);
- 	if (!vbus_attach)
- 		goto no_vbus;
- 
-@@ -201,6 +273,12 @@ static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
- 		info->previous_cable = cable;
- 	}
- 
-+	if (info->role_sw && info->vbus_attach != vbus_attach) {
-+		info->vbus_attach = vbus_attach;
-+		/* Setting the role can take a while */
-+		queue_work(system_long_wq, &info->role_work);
-+	}
++	remove_device_connection(&data->connections[2]);
++	remove_device_connection(&data->connections[1]);
++	remove_device_connection(&data->connections[0]);
 +
  	return 0;
- 
- dev_det_ret:
-@@ -210,6 +288,18 @@ static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
- 	return ret;
  }
  
-+static int axp288_extcon_id_evt(struct notifier_block *nb,
-+				unsigned long event, void *param)
-+{
-+	struct axp288_extcon_info *info =
-+		container_of(nb, struct axp288_extcon_info, id_nb);
-+
-+	/* We may not sleep and setting the role can take a while */
-+	queue_work(system_long_wq, &info->role_work);
-+
-+	return NOTIFY_OK;
-+}
-+
- static irqreturn_t axp288_extcon_isr(int irq, void *data)
- {
- 	struct axp288_extcon_info *info = data;
-@@ -231,10 +321,19 @@ static void axp288_extcon_enable(struct axp288_extcon_info *info)
- 					BC_GLOBAL_RUN, BC_GLOBAL_RUN);
- }
- 
-+static void axp288_put_role_sw(void *data)
-+{
-+	struct axp288_extcon_info *info = data;
-+
-+	cancel_work_sync(&info->role_work);
-+	usb_role_switch_put(info->role_sw);
-+}
-+
- static int axp288_extcon_probe(struct platform_device *pdev)
- {
- 	struct axp288_extcon_info *info;
- 	struct axp20x_dev *axp20x = dev_get_drvdata(pdev->dev.parent);
-+	struct device *dev = &pdev->dev;
- 	int ret, i, pirq;
- 
- 	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
-@@ -245,9 +344,32 @@ static int axp288_extcon_probe(struct platform_device *pdev)
- 	info->regmap = axp20x->regmap;
- 	info->regmap_irqc = axp20x->regmap_irqc;
- 	info->previous_cable = EXTCON_NONE;
-+	INIT_WORK(&info->role_work, axp288_usb_role_work);
-+	info->id_nb.notifier_call = axp288_extcon_id_evt;
- 
- 	platform_set_drvdata(pdev, info);
- 
-+	info->role_sw = usb_role_switch_get(dev);
-+	if (IS_ERR(info->role_sw))
-+		return PTR_ERR(info->role_sw);
-+	if (info->role_sw) {
-+		ret = devm_add_action_or_reset(dev, axp288_put_role_sw, info);
-+		if (ret)
-+			return ret;
-+
-+		if (acpi_dev_present("INT3496", NULL, -1)) {
-+			info->id_extcon = extcon_get_extcon_dev("INT3496:00");
-+			if (!info->id_extcon)
-+				return -EPROBE_DEFER;
-+
-+			dev_info(dev, "controlling USB role\n");
-+		} else {
-+			dev_info(dev, "controlling USB role based on vbus presence\n");
-+		}
-+	}
-+
-+	info->vbus_attach = axp288_get_vbus_attach(info);
-+
- 	axp288_extcon_log_rsi(info);
- 
- 	/* Initialize extcon device */
-@@ -289,6 +411,19 @@ static int axp288_extcon_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	if (info->id_extcon) {
-+		ret = devm_extcon_register_notifier_all(dev, info->id_extcon,
-+							&info->id_nb);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	/* Make sure the role-sw is set correctly before doing BC detection */
-+	if (info->role_sw) {
-+		queue_work(system_long_wq, &info->role_work);
-+		flush_work(&info->role_work);
-+	}
-+
- 	/* Start charger cable type detection */
- 	axp288_extcon_enable(info);
- 
-@@ -308,8 +443,32 @@ static struct platform_driver axp288_extcon_driver = {
- 		.name = "axp288_extcon",
- 	},
- };
--module_platform_driver(axp288_extcon_driver);
-+
-+static struct devcon axp288_extcon_role_sw_conn = {
-+	.endpoint[0] = "axp288_extcon",
-+	.endpoint[1] = "intel_xhci_usb_sw-role-switch",
-+	.id = "usb-role-switch",
-+};
-+
-+static int __init axp288_extcon_init(void)
-+{
-+	if (x86_match_cpu(cherry_trail_cpu_ids))
-+		add_device_connection(&axp288_extcon_role_sw_conn);
-+
-+	return platform_driver_register(&axp288_extcon_driver);
-+}
-+module_init(axp288_extcon_init);
-+
-+static void __exit axp288_extcon_exit(void)
-+{
-+	if (x86_match_cpu(cherry_trail_cpu_ids))
-+		remove_device_connection(&axp288_extcon_role_sw_conn);
-+
-+	platform_driver_unregister(&axp288_extcon_driver);
-+}
-+module_exit(axp288_extcon_exit);
- 
- MODULE_AUTHOR("Ramakrishna Pallala <ramakrishna.pallala@intel.com>");
-+MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
- MODULE_DESCRIPTION("X-Powers AXP288 extcon driver");
- MODULE_LICENSE("GPL v2");
 -- 
 2.14.3
