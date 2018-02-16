@@ -1,62 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161137AbeBPQrY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 11:47:24 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36314 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161071AbeBPQrU (ORCPT
+        id S1161203AbeBPQri (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 11:47:38 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:56120 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161071AbeBPQrf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 11:47:20 -0500
-X-Google-Smtp-Source: AH8x225IE4pLO/mlltxrqRV8tOYy3FRoUIz2SK3a4U6sl4rBX+SoUFycT+K7SaBxZiWO+6astyk/hA==
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, David Lechner <david@lechnology.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 1/6] nand: davinci: rename the platform driver
-Date: Fri, 16 Feb 2018 17:47:07 +0100
-Message-Id: <20180216164712.25898-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180216164712.25898-1-brgl@bgdev.pl>
-References: <20180216164712.25898-1-brgl@bgdev.pl>
+        Fri, 16 Feb 2018 11:47:35 -0500
+Date: Fri, 16 Feb 2018 17:47:22 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Progyan Bhattacharya <bprogyan@gmail.com>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Nicholas Mc Guire <der.herr@hofr.at>
+Subject: Re: [PATCH] objtool/x86: Replace Non-standard Range Expression in
+ Case
+Message-ID: <20180216164722.GF25201@hirez.programming.kicks-ass.net>
+References: <20180216141947.9324-1-progyanb@acm.org>
+ <20180216142513.9520-1-progyanb@acm.org>
+ <20180216143511.fo4emxz6webqk7qn@treble>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180216143511.fo4emxz6webqk7qn@treble>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Fri, Feb 16, 2018 at 08:35:11AM -0600, Josh Poimboeuf wrote:
+> On Fri, Feb 16, 2018 at 07:55:13PM +0530, Progyan Bhattacharya wrote:
+> > Replace range expressions with seperate individual cases, i.e. convert case 1...3: to case 1: case 2: case 3
+> > Range expression within case statements are non-standard C code and can create issues over compiler and platform variety.
+> > 
+> > While compiling with gcc 4.8 (RHEL) I encountered this error on range expression in case statements:
+> > error: range expressions in switch statements are non-standard [-Werror=pedantic]
+> > 
+> > Signed-off-by: Progyan Bhattacharya <progyanb@acm.org>
+> 
+> Hi Progyan,
+> 
+> Thank you for the patch.
+> 
+> I think this makes the code unnecessarily verbose and less readable.  We
+> rely on many such GCC extensions, and we don't aim to comply with
+> standard C.  And AFAIK, we don't use -Werror=pedantic in the kernel.
 
-Commit d8e22fb4ccac ("ARM: da850: add the nand dev_id to the clock
-lookup table") broke the nand support in board file mode for
-da850-based boards. Instead of reverting it and breaking the DT users
-in the process (due to clock lookup), rename the driver to match the
-clock table before renaming the users.
-
-Fixes: d8e22fb4ccac ("ARM: da850: add the nand dev_id to the clock lookup table")
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/mtd/nand/davinci_nand.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mtd/nand/davinci_nand.c b/drivers/mtd/nand/davinci_nand.c
-index ccc8c43abcff..4fb143bf1872 100644
---- a/drivers/mtd/nand/davinci_nand.c
-+++ b/drivers/mtd/nand/davinci_nand.c
-@@ -865,7 +865,7 @@ static struct platform_driver nand_davinci_driver = {
- 	.probe		= nand_davinci_probe,
- 	.remove		= nand_davinci_remove,
- 	.driver		= {
--		.name	= "davinci_nand",
-+		.name	= "davinci-nand",
- 		.of_match_table = of_match_ptr(davinci_nand_of_match),
- 	},
- };
--- 
-2.16.1
+Agreed, it makes the code actively worse. Just don't use error=pedantic.
