@@ -1,152 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162876AbeBPSKI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 13:10:08 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:34991 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162415AbeBPSKG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 13:10:06 -0500
-X-Google-Smtp-Source: AH8x226fDFZYdxgjKsCbINRntY7GyYsCAzc+dwGg+BWq4ZExyKsepAXogtrWlqdP5kRBz/oF8940sg==
-Date: Fri, 16 Feb 2018 12:09:58 -0600
-From: Dennis Zhou <dennisszhou@gmail.com>
-To: Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] percpu: allow select gfp to be passed to underlying
- allocators
-Message-ID: <20180216180958.GB81034@localhost>
-References: <cover.1518668149.git.dennisszhou@gmail.com>
- <a166972c727e3a1235a7ad17b9df94ca407a1548.1518668149.git.dennisszhou@gmail.com>
+        id S1754991AbeBPSRI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 13:17:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49666 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751030AbeBPSRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 13:17:06 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BEFE217C8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Fri, 16 Feb 2018 15:17:02 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+Subject: Re: [PATCH 1/4] perf record: Provide detailed information on s390 CPU
+Message-ID: <20180216181702.GD16919@kernel.org>
+References: <20180213151419.80737-1-tmricht@linux.vnet.ibm.com>
+ <20180216165543.GE24436@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a166972c727e3a1235a7ad17b9df94ca407a1548.1518668149.git.dennisszhou@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180216165543.GE24436@kernel.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The prior patch added support for passing gfp flags through to the
-underlying allocators. This patch allows users to pass along gfp flags
-(currently only __GFP_NORETRY and __GFP_NOWARN) to the underlying
-allocators. This should allow users to decide if they are ok with
-failing allocations recovering in a more graceful way.
+Em Fri, Feb 16, 2018 at 01:55:43PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Tue, Feb 13, 2018 at 04:14:16PM +0100, Thomas Richter escreveu:
+> 
+> 
+>   49    38.13 ubuntu:16.04-x-s390           : FAIL s390x-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.4) 5.4.0 20160609
+> 
+> 
+> Humm, this seems to be the one causing this:
+> 
+>   LINK     /tmp/build/perf/plugin_hrtimer.so
+>   LINK     /tmp/build/perf/plugin_kmem.so
+> In file included from /usr/s390x-linux-gnu/include/string.h:635:0,
+>                  from arch/s390/util/header.c:16:
+> In function 'strncat',
+>     inlined from 'get_cpuid' at arch/s390/util/header.c:65:5:
+> /usr/s390x-linux-gnu/include/bits/string3.h:156:10: error: call to __builtin___strncat_chk might overflow destination buffer [-Werror]
+>    return __builtin___strncat_chk (__dest, __src, __len, __bos (__dest));
 
-Additionally, gfp passing was done as additional flags in the previous
-patch. Instead, change this to caller passed semantics. GFP_KERNEL is
-also removed as the default flag. It continues to be used for internally
-caused underlying percpu allocations.
+Ok, now I can build it:
 
-V2:
-Removed gfp_percpu_mask in favor of doing it inline.
-Removed GFP_KERNEL as a default flag for __alloc_percpu_gfp.
+[acme@seventh perf]$ file ../tmp/perf
+../tmp/perf: ELF 64-bit MSB shared object, IBM S/390, version 1 (SYSV), dynamically linked, interpreter /lib/ld64.so.1, for GNU/Linux 3.2.0, BuildID[sha1]=82a8ff9eb04082acd1630a0f4ff3816d68982eb7, with debug_info, not stripped
+[acme@seventh perf]$
 
-Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
-Suggested-by: Daniel Borkmann <daniel@iogearbox.net>
----
- mm/percpu-km.c |  2 +-
- mm/percpu-vm.c |  4 ++--
- mm/percpu.c    | 16 +++++++---------
- 3 files changed, 10 insertions(+), 12 deletions(-)
+With the following patch, using scnprintf (snprintf also has issues),
+please try applying this on top of yours and checking that the end
+result is sane.
 
-diff --git a/mm/percpu-km.c b/mm/percpu-km.c
-index 0d88d7b..38de70a 100644
---- a/mm/percpu-km.c
-+++ b/mm/percpu-km.c
-@@ -56,7 +56,7 @@ static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
- 	if (!chunk)
- 		return NULL;
- 
--	pages = alloc_pages(gfp | GFP_KERNEL, order_base_2(nr_pages));
-+	pages = alloc_pages(gfp, order_base_2(nr_pages));
- 	if (!pages) {
- 		pcpu_free_chunk(chunk);
- 		return NULL;
-diff --git a/mm/percpu-vm.c b/mm/percpu-vm.c
-index 0af71eb..d8078de 100644
---- a/mm/percpu-vm.c
-+++ b/mm/percpu-vm.c
-@@ -37,7 +37,7 @@ static struct page **pcpu_get_pages(void)
- 	lockdep_assert_held(&pcpu_alloc_mutex);
- 
- 	if (!pages)
--		pages = pcpu_mem_zalloc(pages_size, 0);
-+		pages = pcpu_mem_zalloc(pages_size, GFP_KERNEL);
- 	return pages;
- }
- 
-@@ -86,7 +86,7 @@ static int pcpu_alloc_pages(struct pcpu_chunk *chunk,
- 	unsigned int cpu, tcpu;
- 	int i;
- 
--	gfp |= GFP_KERNEL | __GFP_HIGHMEM;
-+	gfp |= __GFP_HIGHMEM;
- 
- 	for_each_possible_cpu(cpu) {
- 		for (i = page_start; i < page_end; i++) {
-diff --git a/mm/percpu.c b/mm/percpu.c
-index f97443d..fa3f854 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -454,9 +454,6 @@ static void pcpu_next_fit_region(struct pcpu_chunk *chunk, int alloc_bits,
-  * This is to facilitate passing through whitelisted flags.  The
-  * returned memory is always zeroed.
-  *
-- * CONTEXT:
-- * Does GFP_KERNEL allocation.
-- *
-  * RETURNS:
-  * Pointer to the allocated area on success, NULL on failure.
-  */
-@@ -466,10 +463,9 @@ static void *pcpu_mem_zalloc(size_t size, gfp_t gfp)
- 		return NULL;
- 
- 	if (size <= PAGE_SIZE)
--		return kzalloc(size, gfp | GFP_KERNEL);
-+		return kzalloc(size, gfp);
- 	else
--		return __vmalloc(size, gfp | GFP_KERNEL | __GFP_ZERO,
--				 PAGE_KERNEL);
-+		return __vmalloc(size, gfp | __GFP_ZERO, PAGE_KERNEL);
- }
- 
- /**
-@@ -1344,6 +1340,8 @@ static struct pcpu_chunk *pcpu_chunk_addr_search(void *addr)
- static void __percpu *pcpu_alloc(size_t size, size_t align, bool reserved,
- 				 gfp_t gfp)
+- Arnaldo
+
+diff --git a/tools/perf/arch/s390/util/header.c b/tools/perf/arch/s390/util/header.c
+index 3d29ba47edce..a78064c25ced 100644
+--- a/tools/perf/arch/s390/util/header.c
++++ b/tools/perf/arch/s390/util/header.c
+@@ -32,6 +32,7 @@ int get_cpuid(char *buffer, size_t sz)
  {
-+	/* whitelisted flags that can be passed to the backing allocators */
-+	gfp_t pcpu_gfp = gfp & (GFP_KERNEL | __GFP_NORETRY | __GFP_NOWARN);
- 	bool is_atomic = (gfp & GFP_KERNEL) != GFP_KERNEL;
- 	bool do_warn = !(gfp & __GFP_NOWARN);
- 	static int warn_limit = 10;
-@@ -1426,7 +1424,7 @@ static void __percpu *pcpu_alloc(size_t size, size_t align, bool reserved,
+ 	char *cp, *line = NULL, *line2;
+ 	char type[8], model[33], version[8], manufacturer[32], authorization[8];
++	int tpsize = 0, mdsize = 0, vssize = 0, mfsize = 0, atsize = 0;
+ 	int read;
+ 	unsigned long line_sz;
+ 	size_t nbytes;
+@@ -61,25 +62,27 @@ int get_cpuid(char *buffer, size_t sz)
+ 		if (!strncmp(line, SYSINFO_MANU, strlen(SYSINFO_MANU))) {
+ 			line2 = line + strlen(SYSINFO_MANU);
+ 
+-			while ((cp = strtok_r(line2, "\n ", &line2)))
+-				strncat(manufacturer, cp, sizeof(manufacturer));
++			while ((cp = strtok_r(line2, "\n ", &line2))) {
++				mfsize += scnprintf(manufacturer + mfsize,
++						    sizeof(manufacturer) - mfsize, "%s", cp);
++			}
+ 		}
+ 
+ 		if (!strncmp(line, SYSINFO_TYPE, strlen(SYSINFO_TYPE))) {
+ 			line2 = line + strlen(SYSINFO_TYPE);
+ 
+-			while ((cp = strtok_r(line2, "\n ", &line2)))
+-				strncat(type, cp, sizeof(type));
++			while ((cp = strtok_r(line2, "\n ", &line2))) {
++				tpsize += scnprintf(type + tpsize,
++						    sizeof(type) - tpsize, "%s", cp);
++			}
+ 		}
+ 
+ 		if (!strncmp(line, SYSINFO_MODEL, strlen(SYSINFO_MODEL))) {
+ 			line2 = line + strlen(SYSINFO_MODEL);
+ 
+ 			while ((cp = strtok_r(line2, "\n ", &line2))) {
+-				if (model[0])
+-					strcat(model, ",");
+-				if (strlen(model) + strlen(cp) < sizeof(model))
+-					strncat(model, cp, strlen(cp));
++				mdsize += scnprintf(model + mdsize, sizeof(type) - mdsize,
++						    "%s%s", model[0] ? "," : "", cp);
+ 			}
+ 			break;
+ 		}
+@@ -108,14 +111,15 @@ int get_cpuid(char *buffer, size_t sz)
+ 				     strlen(SRVLVL_VERSION))) {
+ 				char *sep = strchr(cp, '=');
+ 
+-				strncat(version, sep + 1, sizeof(version));
++				vssize += scnprintf(version + vssize,
++						    sizeof(version) - vssize, "%s", sep + 1);
+ 			}
+ 			if (!strncmp(cp, SRVLVL_AUTHORIZATION,
+ 				     strlen(SRVLVL_AUTHORIZATION))) {
+ 				char *sep = strchr(cp, '=');
+ 
+-				strncat(authorization, sep + 1,
+-					sizeof(authorization));
++				atsize += scnprintf(authorization + atsize,
++						    sizeof(authorization) - atsize, "%s", sep + 1);
+ 			}
+ 		}
  	}
- 
- 	if (list_empty(&pcpu_slot[pcpu_nr_slots - 1])) {
--		chunk = pcpu_create_chunk(0);
-+		chunk = pcpu_create_chunk(pcpu_gfp);
- 		if (!chunk) {
- 			err = "failed to allocate new chunk";
- 			goto fail;
-@@ -1455,7 +1453,7 @@ static void __percpu *pcpu_alloc(size_t size, size_t align, bool reserved,
- 					   page_start, page_end) {
- 			WARN_ON(chunk->immutable);
- 
--			ret = pcpu_populate_chunk(chunk, rs, re, 0);
-+			ret = pcpu_populate_chunk(chunk, rs, re, pcpu_gfp);
- 
- 			spin_lock_irqsave(&pcpu_lock, flags);
- 			if (ret) {
-@@ -1576,7 +1574,7 @@ void __percpu *__alloc_reserved_percpu(size_t size, size_t align)
- static void pcpu_balance_workfn(struct work_struct *work)
- {
- 	/* gfp flags passed to underlying allocators */
--	const gfp_t gfp = __GFP_NORETRY | __GFP_NOWARN;
-+	const gfp_t gfp = GFP_KERNEL | __GFP_NORETRY | __GFP_NOWARN;
- 	LIST_HEAD(to_free);
- 	struct list_head *free_head = &pcpu_slot[pcpu_nr_slots - 1];
- 	struct pcpu_chunk *chunk, *next;
--- 
-1.8.3.1
