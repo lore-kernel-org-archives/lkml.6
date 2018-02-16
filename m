@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758610AbeBPQo5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 11:44:57 -0500
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:33576 "EHLO
-        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750897AbeBPQoz (ORCPT
+        id S1758626AbeBPQp0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 11:45:26 -0500
+Received: from mail-qk0-f177.google.com ([209.85.220.177]:32782 "EHLO
+        mail-qk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752172AbeBPQpW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 11:44:55 -0500
-X-Google-Smtp-Source: AH8x225fv4M4FpQg8/wVKxY++FK/+dXhZG9HOs5wHGIc7fQd9JtjN4e9ps0rr4BK1IWAljjLTuaWTbYrPgXlg3WJK2U=
+        Fri, 16 Feb 2018 11:45:22 -0500
+X-Google-Smtp-Source: AH8x226mnxC3qG8+9KWPZpFtb/sIhSz4in6k/jC3Z93IsJom1/syiLefptTdrizWQ/2rnsQqm6EXQTMa5BXu8XJnCS0=
 MIME-Version: 1.0
 In-Reply-To: <63d05833-a0ba-7fff-4514-5234d43a82fe@molgen.mpg.de>
 References: <63d05833-a0ba-7fff-4514-5234d43a82fe@molgen.mpg.de>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 16 Feb 2018 18:44:53 +0200
-Message-ID: <CAHp75Vc7NO=N_Wb4w9gdip3Pa4zUQw1nipt9iPvK-5_GtcP6Rg@mail.gmail.com>
+Date: Fri, 16 Feb 2018 18:45:20 +0200
+Message-ID: <CAHp75VfOi=UHc_F-SMeMcqqYY7qF1Cc14Qb7EVvBrBF2wz2+VA@mail.gmail.com>
 Subject: Re: eeepc-wmi loaded on Asus desktop board
-To: Paul Menzel <pmenzel+linux-platform-driver-x86@molgen.mpg.de>
+To: Paul Menzel <pmenzel+linux-platform-driver-x86@molgen.mpg.de>,
+        Darren Hart <dvhart@infradead.org>
 Cc: Corentin Chary <corentin.chary@gmail.com>,
         acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
         Platform Driver <platform-driver-x86@vger.kernel.org>,
@@ -25,7 +26,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Cc: Darren.
++Cc: Darren (for sure)
 
 On Fri, Feb 16, 2018 at 12:42 AM, Paul Menzel
 <pmenzel+linux-platform-driver-x86@molgen.mpg.de> wrote:
