@@ -1,91 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753528AbeBPHLo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 02:11:44 -0500
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:41052 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753481AbeBPHLn (ORCPT
+        id S1753568AbeBPHSa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 02:18:30 -0500
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:53993 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753545AbeBPHS1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 02:11:43 -0500
-X-Google-Smtp-Source: AH8x224LcOtuR6MOBxEL7PgEbV6gKWOpv7y+wWrGxYZjSL1XjHmuq9VEFWJfplfHvi7BVKFkX8uDjQ==
-Date: Fri, 16 Feb 2018 10:11:39 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Andy Lutomirski <luto@kernel.org>, Andrey Vagin <avagin@virtuozzo.com>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>
-Cc: Nadav Amit <nadav.amit@gmail.com>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>, Willy Tarreau <w@1wt.eu>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC v2 4/6] x86: Disable PTI on compatibility mode
-Message-ID: <20180216071139.GC32767@uranus>
-References: <20180215163602.61162-1-namit@vmware.com>
- <20180215163602.61162-5-namit@vmware.com>
- <CALCETrUY4uZeG2fz=OQWGuyCOcBBNbep6TaJz82CZSP89=g3-A@mail.gmail.com>
- <9EB804CA-0EC9-4CBB-965A-F3C8520201E7@gmail.com>
- <CALCETrVP3BaOapL3eS8Tf=KFeM8VFPqvMoECGRkFa7WPLq=Asw@mail.gmail.com>
+        Fri, 16 Feb 2018 02:18:27 -0500
+Subject: Re: [PATCH v2 11/16] mmc: sdhci: Program a relatively accurate SW
+ timeout value
+To: Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+References: <20180205125029.21570-1-kishon@ti.com>
+ <20180205125029.21570-12-kishon@ti.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, <linux-mmc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <aa30bb13-7271-a426-f606-59f21961806f@ti.com>
+Date: Fri, 16 Feb 2018 12:47:41 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrVP3BaOapL3eS8Tf=KFeM8VFPqvMoECGRkFa7WPLq=Asw@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180205125029.21570-12-kishon@ti.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 11:29:42PM +0000, Andy Lutomirski wrote:
-...
-> >>> +bool pti_handle_segment_not_present(long error_code)
-> >>> +{
-> >>> +       if (!static_cpu_has(X86_FEATURE_PTI))
-> >>> +               return false;
-> >>> +
-> >>> +       if ((unsigned short)error_code != GDT_ENTRY_DEFAULT_USER_CS << 3)
-> >>> +               return false;
-> >>> +
-> >>> +       pti_reenable();
-> >>> +       return true;
-> >>> +}
-> >>
-> >> Please don't.  You're trying to emulate the old behavior here, but
-> >> you're emulating it wrong.  In particular, you won't trap on LAR.
-> >
-> > Yes, I thought I’ll manage to address LAR, but failed. I thought you said
-> > this is not a “show-stopper”. I’ll adapt your approach of using prctl, although
-> > it really limits the benefit of this mechanism.
-> >
-> 
-> It's possible we could get away with adding the prctl but making the
-> default be that only the bitness that matches the program being run is
-> allowed.  After all, it's possible that CRIU is literally the only
-> program that switches bitness using the GDT.  (DOSEMU2 definitely does
-> cross-bitness stuff, but it uses the LDT as far as I know.)  And I've
-> never been entirely sure that CRIU fully counts toward the Linux
-> "don't break ABI" guarantee.
-> 
-> Linus, how would you feel about, by default, preventing 64-bit
-> programs from long-jumping to __USER32_CS and vice versa?  I think it
-> has some value as a hardening measure.  I've certainly engaged in some
-> exploit shenanigans myself that took advantage of the ability to long
-> jump/ret to change bitness at will.  This wouldn't affect users of
-> modify_ldt() -- 64-bit programs could still create and use their own
-> private 32-bit segments with modify_ldt(), and seccomp can (and
-> should!) prevent that in sandboxed programs.
-> 
-> In general, I prefer an approach where everything is explicit to an
-> approach where we almost, but not quite, emulate the weird historical
-> behavior.
-> 
-> Pavel and Cyrill, how annoying would it be if CRIU had to do an extra
-> arch_prctl() to enable its cross-bitness shenanigans when
-> checkpointing and restoring a 32-bit program?
 
-I think this should not be a problem for criu (CC'ing Dima, who has
-been working on compat mode support in criu). As far as I remember
-we initiate restoring of 32 bit tasks in native 64 bit mode (well,
-ia32e to be precise :) mode and then, once everything is ready,
-we changing the mode by doing a return to __USER32_CS descriptor.
-So this won't be painful to add additional prctl call here.
+
+On Monday 05 February 2018 06:20 PM, Kishon Vijay Abraham I wrote:
+> sdhci has a 10 second timeout to catch devices that stop responding.
+> Instead of programming 10 second arbitrary value, calculate the total time
+> it would take for the entire transfer to happen and program the timeout
+> value accordingly.
+> 
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/mmc/host/sdhci.c | 46 +++++++++++++++++++++++++++++++++++++++-------
+>  drivers/mmc/host/sdhci.h | 10 ++++++++++
+>  2 files changed, 49 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 0489572d1892..d52f9e7eabe2 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -673,6 +673,37 @@ static void sdhci_adma_table_post(struct sdhci_host *host,
+>  	}
+>  }
+>  
+> +static void sdhci_calc_sw_timeout(struct sdhci_host *host,
+> +				  struct mmc_command *cmd,
+> +				  unsigned int target_timeout)
+> +{
+> +	struct mmc_data *data = cmd->data;
+> +	struct mmc_host *mmc = host->mmc;
+> +	unsigned long long transfer_time;
+> +	struct mmc_ios *ios = &mmc->ios;
+> +	unsigned char bus_width = ios->bus_width;
+
+This should have been 1 << ios->bus_width.
+
+-Kishon
