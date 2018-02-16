@@ -1,114 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750837AbeBPVCc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 16:02:32 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57002 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750713AbeBPVCb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 16:02:31 -0500
-Date: Fri, 16 Feb 2018 13:02:29 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH 3/3] taint: Add taint for randstruct
-Message-Id: <20180216130229.f3de3aced0c87fe31ad92000@linux-foundation.org>
-In-Reply-To: <1518752264-47238-4-git-send-email-keescook@chromium.org>
-References: <1518752264-47238-1-git-send-email-keescook@chromium.org>
-        <1518752264-47238-4-git-send-email-keescook@chromium.org>
-X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.23; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1750984AbeBPVHW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 16:07:22 -0500
+Received: from mga05.intel.com ([192.55.52.43]:50074 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750881AbeBPVHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 16:07:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,520,1511856000";
+   d="scan'208";a="27884879"
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Tobin C . Harding" <me@tobin.cc>, linux@rasmusvillemoes.dk,
+        Petr Mladek <pmladek@suse.com>, Joe Perches <joe@perches.com>,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 8/9] lib/vsprintf: Remove useless NULL checks
+Date: Fri, 16 Feb 2018 23:07:10 +0200
+Message-Id: <20180216210711.79901-8-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
+References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Feb 2018 19:37:44 -0800 Kees Cook <keescook@chromium.org> wrote:
+The pointer can't be NULL since it's first what has been done in the
+pointer().
 
-> --- a/Documentation/sysctl/kernel.txt
-> +++ b/Documentation/sysctl/kernel.txt
-> @@ -991,6 +991,7 @@ ORed together. The letters are seen in "Tainted" line of Oops reports.
->   16384 (L): A soft lockup has previously occurred on the system.
->   32768 (K): The kernel has been live patched.
->   65536 (X): Auxiliary taint, defined and used by for distros.
-> +131072 (T): The kernel was built with the struct randomization plugin.
+Remove useless checks.
 
-Uncle.
+Note we leave check for !CONFIG_HAVE_CLK to make compiler
+to optimize code away when possible.
 
-
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Documentation/sysctl/kernel.txt: show taint codes in hex
-
-The decimal representation is getting a bit hard to follow.
-
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
+ lib/vsprintf.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
- Documentation/sysctl/kernel.txt |   50 +++++++++++++++---------------
- 1 file changed, 25 insertions(+), 25 deletions(-)
-
-diff -puN Documentation/sysctl/kernel.txt~a Documentation/sysctl/kernel.txt
---- a/Documentation/sysctl/kernel.txt~a
-+++ a/Documentation/sysctl/kernel.txt
-@@ -967,31 +967,31 @@ tainted:
- Non-zero if the kernel has been tainted. Numeric values, which can be
- ORed together. The letters are seen in "Tainted" line of Oops reports.
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 97be2d07297a..a49da00b79e7 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -819,10 +819,6 @@ char *hex_string(char *buf, char *end, u8 *addr, struct printf_spec spec,
+ 		/* nothing to print */
+ 		return buf;
  
--     1 (P):  A module with a non-GPL license has been loaded, this
--             includes modules with no license.
--             Set by modutils >= 2.4.9 and module-init-tools.
--     2 (F): A module was force loaded by insmod -f.
--            Set by modutils >= 2.4.9 and module-init-tools.
--     4 (S): Unsafe SMP processors: SMP with CPUs not designed for SMP.
--     8 (R): A module was forcibly unloaded from the system by rmmod -f.
--    16 (M): A hardware machine check error occurred on the system.
--    32 (B): A bad page was discovered on the system.
--    64 (U): The user has asked that the system be marked "tainted". This
--            could be because they are running software that directly modifies
--            the hardware, or for other reasons.
--   128 (D): The system has died.
--   256 (A): The ACPI DSDT has been overridden with one supplied by the user
--            instead of using the one provided by the hardware.
--   512 (W): A kernel warning has occurred.
--  1024 (C): A module from drivers/staging was loaded.
--  2048 (I): The system is working around a severe firmware bug.
--  4096 (O): An out-of-tree module has been loaded.
--  8192 (E): An unsigned module has been loaded in a kernel supporting module
--            signature.
-- 16384 (L): A soft lockup has previously occurred on the system.
-- 32768 (K): The kernel has been live patched.
-- 65536 (X): Auxiliary taint, defined and used by for distros.
--131072 (T): The kernel was built with the struct randomization plugin.
-+0x00000001 (P):  A module with a non-GPL license has been loaded, this
-+                 includes modules with no license.
-+                 Set by modutils >= 2.4.9 and module-init-tools.
-+0x00000002 (F): A module was force loaded by insmod -f.
-+                Set by modutils >= 2.4.9 and module-init-tools.
-+0x00000004 (S): Unsafe SMP processors: SMP with CPUs not designed for SMP.
-+0x00000008 (R): A module was forcibly unloaded from the system by rmmod -f.
-+0x00000010 (M): A hardware machine check error occurred on the system.
-+0x00000020 (B): A bad page was discovered on the system.
-+0x00000040 (U): The user has asked that the system be marked "tainted". This
-+                could be because they are running software that directly
-+                modifies the hardware, or for other reasons.
-+0x00000080 (D): The system has died.
-+0x00000100 (A): The ACPI DSDT has been overridden with one supplied by the user
-+                instead of using the one provided by the hardware.
-+0x00000200 (W): A kernel warning has occurred.
-+0x00000400 (C): A module from drivers/staging was loaded.
-+0x00000400 (I): The system is working around a severe firmware bug.
-+0x00000800 (O): An out-of-tree module has been loaded.
-+0x00020000 (E): An unsigned module has been loaded in a kernel supporting module
-+                signature.
-+0x00040000 (L): A soft lockup has previously occurred on the system.
-+0x00080000 (K): The kernel has been live patched.
-+0x00100000 (X): Auxiliary taint, defined and used by for distros.
-+0x00200000 (T): The kernel was built with the struct randomization plugin.
+-	if (ZERO_OR_NULL_PTR(addr))
+-		/* NULL pointer */
+-		return string(buf, end, NULL, spec);
+-
+ 	switch (fmt[1]) {
+ 	case 'C':
+ 		separator = ':';
+@@ -1258,10 +1254,6 @@ char *escaped_string(char *buf, char *end, u8 *addr, struct printf_spec spec,
+ 	if (spec.field_width == 0)
+ 		return buf;				/* nothing to print */
  
- ==============================================================
+-	if (ZERO_OR_NULL_PTR(addr))
+-		return string(buf, end, NULL, spec);	/* NULL pointer */
+-
+-
+ 	do {
+ 		switch (fmt[count++]) {
+ 		case 'a':
+@@ -1455,7 +1447,7 @@ static noinline_for_stack
+ char *clock(char *buf, char *end, struct clk *clk, struct printf_spec spec,
+ 	    const char *fmt)
+ {
+-	if (!IS_ENABLED(CONFIG_HAVE_CLK) || !clk)
++	if (!IS_ENABLED(CONFIG_HAVE_CLK))
+ 		return string(buf, end, NULL, spec);
  
-_
+ 	switch (fmt[1]) {
+@@ -1580,9 +1572,6 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
+ 	if (!IS_ENABLED(CONFIG_OF))
+ 		return string(buf, end, "(!OF)", spec);
+ 
+-	if ((unsigned long)dn < PAGE_SIZE)
+-		return string(buf, end, "(null)", spec);
+-
+ 	/* simple case without anything any more format specifiers */
+ 	fmt++;
+ 	if (fmt[0] == '\0' || strcspn(fmt,"fnpPFcC") > 0)
+-- 
+2.15.1
