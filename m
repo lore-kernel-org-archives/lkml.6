@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751075AbeBPTiF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 14:38:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56354 "EHLO mail.kernel.org"
+        id S1750937AbeBPTiy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 14:38:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753552AbeBPTSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 14:18:55 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F83217CB
+        id S1753469AbeBPTSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 14:18:44 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E16A9217CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -17,9 +17,9 @@ Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 15/41] perf machine: Generalize machine__set_kernel_mmap()
-Date: Fri, 16 Feb 2018 16:17:20 -0300
-Message-Id: <20180216191746.11095-16-acme@kernel.org>
+Subject: [PATCH 12/41] perf symbols: Check if we read regular file in dso__load()
+Date: Fri, 16 Feb 2018 16:17:17 -0300
+Message-Id: <20180216191746.11095-13-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180216191746.11095-1-acme@kernel.org>
 References: <20180216191746.11095-1-acme@kernel.org>
@@ -29,54 +29,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-So it could be called without event object, just with start and end
-values. It will be used in following patch.
+The current code in dso__load() calls is_regular_file(), but it checks
+its return value only after calling symsrc__init().
+
+That can make symsrc__init() block in elf_* functions on reading
+the file if the file happens to be device and not regular one.
+
+Call symsrc__init() only for regular files. Also remove the
+symsrc__destroy() cleanup, which is not needed now, because we call
+symsrc__init() only for regular files.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180215122635.24029-6-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180215122635.24029-3-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/machine.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ tools/perf/util/symbol.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index b1f1961b13f4..292e70c774bd 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1262,15 +1262,15 @@ int machine__create_kernel_maps(struct machine *machine)
- 	return 0;
- }
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index cc065d4bfafc..e366e3060e6b 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -1582,7 +1582,7 @@ int dso__load(struct dso *dso, struct map *map)
+ 		bool next_slot = false;
+ 		bool is_reg;
+ 		bool nsexit;
+-		int sirc;
++		int sirc = -1;
  
--static void machine__set_kernel_mmap_len(struct machine *machine,
--					 union perf_event *event)
-+static void machine__set_kernel_mmap(struct machine *machine,
-+				     u64 start, u64 end)
- {
- 	int i;
+ 		enum dso_binary_type symtab_type = binary_type_symtab[i];
  
- 	for (i = 0; i < MAP__NR_TYPES; i++) {
--		machine->vmlinux_maps[i]->start = event->mmap.start;
--		machine->vmlinux_maps[i]->end   = (event->mmap.start +
--						   event->mmap.len);
-+		machine->vmlinux_maps[i]->start = start;
-+		machine->vmlinux_maps[i]->end   = end;
-+
- 		/*
- 		 * Be a bit paranoid here, some perf.data file came with
- 		 * a zero sized synthesized MMAP event for the kernel.
-@@ -1375,7 +1375,8 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
- 		if (strstr(kernel->long_name, "vmlinux"))
- 			dso__set_short_name(kernel, "[kernel.vmlinux]", false);
+@@ -1600,16 +1600,14 @@ int dso__load(struct dso *dso, struct map *map)
+ 			nsinfo__mountns_exit(&nsc);
  
--		machine__set_kernel_mmap_len(machine, event);
-+		machine__set_kernel_mmap(machine, event->mmap.start,
-+					 event->mmap.start + event->mmap.len);
+ 		is_reg = is_regular_file(name);
+-		sirc = symsrc__init(ss, dso, name, symtab_type);
++		if (is_reg)
++			sirc = symsrc__init(ss, dso, name, symtab_type);
  
- 		/*
- 		 * Avoid using a zero address (kptr_restrict) for the ref reloc
+ 		if (nsexit)
+ 			nsinfo__mountns_enter(dso->nsinfo, &nsc);
+ 
+-		if (!is_reg || sirc < 0) {
+-			if (sirc >= 0)
+-				symsrc__destroy(ss);
++		if (!is_reg || sirc < 0)
+ 			continue;
+-		}
+ 
+ 		if (!syms_ss && symsrc__has_symtab(ss)) {
+ 			syms_ss = ss;
 -- 
 2.14.3
