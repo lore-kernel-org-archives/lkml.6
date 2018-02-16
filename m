@@ -1,115 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966682AbeBPMeh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 07:34:37 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:35030 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966628AbeBPMef (ORCPT
+        id S966718AbeBPMew (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 07:34:52 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:44701 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966628AbeBPMeu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 07:34:35 -0500
-X-Google-Smtp-Source: AH8x226X4cUxHeCtEA5h9dyf/8hCy9RsQadS8tpVtYMaIf/gK9rLRLBUzeEKV5U35GG5F/hymb1ICHWFJadExGMUcC4=
+        Fri, 16 Feb 2018 07:34:50 -0500
+X-Google-Smtp-Source: AH8x226ZVTIksR/gT9S9QnwXwqBnWpLjpITS3wKxfg22kHTxPpnpP+IZ0pe+x5z2ZPpSG7wBBL6WI4qPGqpa0+3yd3Q=
 MIME-Version: 1.0
-In-Reply-To: <20180215145206.24775-7-mperttunen@nvidia.com>
-References: <20180215145206.24775-1-mperttunen@nvidia.com> <20180215145206.24775-7-mperttunen@nvidia.com>
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Date: Fri, 16 Feb 2018 13:33:53 +0100
-Message-ID: <CAOFm3uHvbut7w5eBuggNg0NnW-UvBsRjifsJxGuj3L34vCjEHA@mail.gmail.com>
-Subject: Re: [PATCH v3 6/7] arm64: tegra: Add Tegra194 chip device tree
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        talho@nvidia.com, linux-tegra@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>
+In-Reply-To: <CAD=FV=UB+ovYFSi2aB_qe3igX3K7BxMWaEEoNPx1UMdscKwQtQ@mail.gmail.com>
+References: <20180130202913.28724-1-thierry.escande@collabora.com>
+ <20180130202913.28724-34-thierry.escande@collabora.com> <1517403243.14302.1.camel@pengutronix.de>
+ <CAOw6vbKsG=B7vV5_NcwgeAc-=guRN1Xh-dCxKytkDeOjayatLw@mail.gmail.com> <CAD=FV=UB+ovYFSi2aB_qe3igX3K7BxMWaEEoNPx1UMdscKwQtQ@mail.gmail.com>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Date: Fri, 16 Feb 2018 13:34:49 +0100
+Message-ID: <CAFqH_50OxDDfXjGPyNgtyu-qFn3zGqrLYprLtPJyHDYRDEczGQ@mail.gmail.com>
+Subject: Re: [PATCH v3 33/43] drm/panel: simple: Change mode for Sharp lq123p1jx31
+To: Doug Anderson <dianders@chromium.org>
+Cc: Sean Paul <seanpaul@chromium.org>, Haixia Shi <hshi@chromium.org>,
+        Thierry Escande <thierry.escande@collabora.com>,
+        Lin Huang <hl@rock-chips.com>, David Airlie <airlied@linux.ie>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Yakir Yang <ykk@rock-chips.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        =?UTF-8?Q?=C3=98rjan_Eide?= <orjan.eide@arm.com>,
+        Mark Yao <mark.yao@rock-chips.com>, Zain Wang <wzz@rock-chips.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mikko,
+Hi,
 
-On Thu, Feb 15, 2018 at 3:52 PM, Mikko Perttunen <mperttunen@nvidia.com> wrote:
-> Add the chip-level device tree, including binding headers, for the
-> NVIDIA Tegra194 "Xavier" system-on-chip. Only a small subset of devices
-> are initially available, enough to boot to UART console.
+2018-01-31 17:52 GMT+01:00 Doug Anderson <dianders@chromium.org>:
+> Hi,
 >
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
 >
-> Notes:
->     v3:
->     - added hypervisor-related apertures to GIC node
->     - removed GPL boilerplate in favor of SPDX and harmonized
->       copyright headers
+> On Wed, Jan 31, 2018 at 7:16 AM, Sean Paul <seanpaul@chromium.org> wrote:
+>> On Wed, Jan 31, 2018 at 7:54 AM, Lucas Stach <l.stach@pengutronix.de> wrote:
+>>> Am Dienstag, den 30.01.2018, 21:29 +0100 schrieb Thierry Escande:
+>>>> From: Sean Paul <seanpaul@chromium.org>
+>>>>
+>>>> Change the mode for Sharp lq123p1jx31 panel to something more
+>>>> rockchip-friendly such that we can use the fixed PLLs to
+>>>> generate the pixel clock
+>>>
+>>> This should really switch to a display timing instead of exposing a
+>>> single mode. The display timing has min, typical, max tuples for all
+>>> the timings values, which would allow the attached driver to vary the
+>>> timings inside the allowed bounds if it makes sense.
+>>>
+>>> Trying to hit a specific pixel clock to free up a PLL is exactly one of
+>>> the use cases envisioned for the display timings stuff.
+>>>
+>>
+>> Agreed, I think we had this discussion the first time around. We
+>> should drop this patch.
+>>
+>> Thanks for catching this!
+>
+> Are you sure we should drop this?  In order for things to work
+> properly (not generate noise on the digitizer or other EMI), this
+> needs to run at a very specific pixel clock with very specific
+> blanking times.  I know that earlier we had slightly different
+> blanking times and Samsung came back and said that there was noise on
+> the digitizer.  I could be wrong, but I don't think there's any way
+> currently to be able to specify exactly what timings should be used on
+> a particular board.
+>
+> Don't get be wrong--I think a patch such as this one that claims a
+> single board's timings as the "right" ones for a generic panel is a
+> bit of a hack.  ...but at the same time there are no other users of
+> this panel (that I know of) in mainline and the timings presented here
+> are certainly sane timings for this panel.
+>
+> In any case, previous discussion at: https://patchwork.kernel.org/patch/9614603/
+>
+>
+> ...oh, and looking at the previous discussion reminds me that the
+> timings presented in this here patch are actually not the right ones
+> (they have the right PLL, but the wrong blankings to avoid the noise
+> issues).  See <//chromium-review.googlesource.com/381015>
+>
 
-Thanks for this boilerplate removal! but see a few nits below.
+As Thierry no longer has the hardware to test these patch series, I'll
+take care of these and follow the upstreaming process. I think that
+doesn't make sense send a v4 version of all 43 patches for this
+change. Right now, only this patch received comments so I'll wait a
+bit more for if we can get the other patches reviewed. If the others
+are fine just and I don't need to send a new version just don't apply
+this one and I will send a second version of that specific patch. Or
+even better, is really trivial what needs to be changed, so maybe the
+maintainer can do it? ;)
 
-<snip>
+Regards,
+ Enric
 
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/tegra194-clock.h
-> @@ -0,0 +1,653 @@
-> +/*
-> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
-> + *
-> + * SPDX-License-Identifier: GPL-2.0
-> + */
-
-The proper style should be this for a .h header on the first line per [1]
-
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
-> + *
-> + */
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
-
-<snip>
-
-> --- /dev/null
-> +++ b/include/dt-bindings/gpio/tegra194-gpio.h
-> @@ -0,0 +1,64 @@
-> +/*
-> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
-> + *
-> + * SPDX-License-Identifier: GPL-2.0
-> + */
-> +
-
-<snip>
-
-Same as above
-
-> --- /dev/null
-> +++ b/include/dt-bindings/power/tegra194-powergate.h
-> @@ -0,0 +1,38 @@
-> +/*
-> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
-> + *
-> + * SPDX-License-Identifier: GPL-2.0
-> + */
-
-<snip>
-
-Same as above
-
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/tegra194-reset.h
-> @@ -0,0 +1,155 @@
-> +/*
-> + * Copyright (c) 2018, NVIDIA CORPORATION. All rights reserved.
-> + *
-> + * SPDX-License-Identifier: GPL-2.0
-> + */
-
-<snip>
-
-Same as above
--- 
-Cordially
-Philippe Ombredanne
+>
+>
+> -Doug
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
