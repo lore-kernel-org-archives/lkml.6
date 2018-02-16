@@ -1,28 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753868AbeBPTUG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 14:20:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56806 "EHLO mail.kernel.org"
+        id S1753883AbeBPTUR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 14:20:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752240AbeBPTT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 14:19:58 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9A35217D2
+        id S1752240AbeBPTUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 14:20:07 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D797217CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        Namhyung Kim <namhyung@kernel.org>,
         Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 34/41] perf powerpc: Generate system call table from asm/unistd.h
-Date: Fri, 16 Feb 2018 16:17:39 -0300
-Message-Id: <20180216191746.11095-35-acme@kernel.org>
+Subject: [PATCH 37/41] perf annotate: Scan cpuid for s390 and save machine type
+Date: Fri, 16 Feb 2018 16:17:42 -0300
+Message-Id: <20180216191746.11095-38-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180216191746.11095-1-acme@kernel.org>
 References: <20180216191746.11095-1-acme@kernel.org>
@@ -30,103 +26,62 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+From: Thomas Richter <tmricht@linux.vnet.ibm.com>
 
-This should speed up accessing new system calls introduced with the
-kernel rather than waiting for libaudit updates to include them.
+Scan the cpuid string and extract the type number for later use.
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: linuxppc-dev@lists.ozlabs.org
-Link: http://lkml.kernel.org/r/20180129083417.31240-3-ravi.bangoria@linux.vnet.ibm.com
-[ Made it generate syscall_32.c as well to fix the build on 32-bit ppc ]
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180213151419.80737-2-tmricht@linux.vnet.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/powerpc/Makefile                   | 25 +++++++++++++++
- .../perf/arch/powerpc/entry/syscalls/mksyscalltbl  | 37 ++++++++++++++++++++++
- 2 files changed, 62 insertions(+)
- create mode 100755 tools/perf/arch/powerpc/entry/syscalls/mksyscalltbl
+ tools/perf/arch/s390/annotate/instructions.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/arch/powerpc/Makefile b/tools/perf/arch/powerpc/Makefile
-index 42dab7c8f508..a111239df182 100644
---- a/tools/perf/arch/powerpc/Makefile
-+++ b/tools/perf/arch/powerpc/Makefile
-@@ -6,3 +6,28 @@ endif
- HAVE_KVM_STAT_SUPPORT := 1
- PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET := 1
- PERF_HAVE_JITDUMP := 1
-+
-+#
-+# Syscall table generation for perf
-+#
-+
-+out    := $(OUTPUT)arch/powerpc/include/generated/asm
-+header32 := $(out)/syscalls_32.c
-+header64 := $(out)/syscalls_64.c
-+sysdef := $(srctree)/tools/arch/powerpc/include/uapi/asm/unistd.h
-+sysprf := $(srctree)/tools/perf/arch/powerpc/entry/syscalls/
-+systbl := $(sysprf)/mksyscalltbl
-+
-+# Create output directory if not already present
-+_dummy := $(shell [ -d '$(out)' ] || mkdir -p '$(out)')
-+
-+$(header64): $(sysdef) $(systbl)
-+	$(Q)$(SHELL) '$(systbl)' '64' '$(CC)' $(sysdef) > $@
-+
-+$(header32): $(sysdef) $(systbl)
-+	$(Q)$(SHELL) '$(systbl)' '32' '$(CC)' $(sysdef) > $@
-+
-+clean::
-+	$(call QUIET_CLEAN, powerpc) $(RM) $(header32) $(header64)
-+
-+archheaders: $(header32) $(header64)
-diff --git a/tools/perf/arch/powerpc/entry/syscalls/mksyscalltbl b/tools/perf/arch/powerpc/entry/syscalls/mksyscalltbl
-new file mode 100755
-index 000000000000..ef52e1dd694b
---- /dev/null
-+++ b/tools/perf/arch/powerpc/entry/syscalls/mksyscalltbl
-@@ -0,0 +1,37 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Generate system call table for perf. Derived from
-+# s390 script.
-+#
-+# Copyright IBM Corp. 2017
-+# Author(s):  Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-+# Changed by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-+
-+wordsize=$1
-+gcc=$2
-+input=$3
-+
-+if ! test -r $input; then
-+	echo "Could not read input file" >&2
-+	exit 1
-+fi
-+
-+create_table()
+diff --git a/tools/perf/arch/s390/annotate/instructions.c b/tools/perf/arch/s390/annotate/instructions.c
+index 8c72b44444cb..01df9d8303e1 100644
+--- a/tools/perf/arch/s390/annotate/instructions.c
++++ b/tools/perf/arch/s390/annotate/instructions.c
+@@ -23,12 +23,37 @@ static struct ins_ops *s390__associate_ins_ops(struct arch *arch, const char *na
+ 	return ops;
+ }
+ 
++static int s390__cpuid_parse(struct arch *arch, char *cpuid)
 +{
-+	local wordsize=$1
-+	local max_nr
++	unsigned int family;
++	char model[16], model_c[16], cpumf_v[16], cpumf_a[16];
++	int ret;
 +
-+	echo "static const char *syscalltbl_powerpc_${wordsize}[] = {"
-+	while read sc nr; do
-+		printf '\t[%d] = "%s",\n' $nr $sc
-+		max_nr=$nr
-+	done
-+	echo '};'
-+	echo "#define SYSCALLTBL_POWERPC_${wordsize}_MAX_ID $max_nr"
++	/*
++	 * cpuid string format:
++	 * "IBM,family,model-capacity,model[,cpum_cf-version,cpum_cf-authorization]"
++	 */
++	ret = sscanf(cpuid, "%*[^,],%u,%[^,],%[^,],%[^,],%s", &family, model_c,
++		     model, cpumf_v, cpumf_a);
++	if (ret >= 2) {
++		arch->family = family;
++		arch->model = 0;
++		return 0;
++	}
++
++	return -1;
 +}
 +
-+$gcc -m${wordsize} -E -dM -x c  $input	       \
-+	|sed -ne 's/^#define __NR_//p' \
-+	|sort -t' ' -k2 -nu	       \
-+	|create_table ${wordsize}
+ static int s390__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
+ {
++	int err = 0;
++
+ 	if (!arch->initialized) {
+ 		arch->initialized = true;
+ 		arch->associate_instruction_ops = s390__associate_ins_ops;
++		if (cpuid)
++			err = s390__cpuid_parse(arch, cpuid);
+ 	}
+ 
+-	return 0;
++	return err;
+ }
 -- 
 2.14.3
