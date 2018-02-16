@@ -1,42 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033827AbeBPOLW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 09:11:22 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42974 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033729AbeBPOLU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:11:20 -0500
-Date: Fri, 16 Feb 2018 06:11:10 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>, Borislav Petkov <bp@suse.de>,
-        Andi Kleen <ak@linux.intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] x86/xen: Allow XEN_PV and XEN_PVH to be enabled with
- X86_5LEVEL
-Message-ID: <20180216141110.GA10501@bombadil.infradead.org>
-References: <20180216114948.68868-1-kirill.shutemov@linux.intel.com>
- <20180216114948.68868-2-kirill.shutemov@linux.intel.com>
+        id S1033936AbeBPOMQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 09:12:16 -0500
+Received: from ns.mm-sol.com ([37.157.136.199]:43859 "EHLO extserv.mm-sol.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1033893AbeBPOMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 09:12:13 -0500
+Subject: Re: [PATCH v2] PCI: qcom: use regulator bulk api for apq8064 supplies
+To: srinivas.kandagatla@linaro.org, stanimir.varbanov@linaro.org,
+        linux-pci@vger.kernel.org, bhelgaas@google.com
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org
+References: <20180215132637.5673-1-srinivas.kandagatla@linaro.org>
+From: Stanimir Varbanov <svarbanov@mm-sol.com>
+Message-ID: <9a1d3bba-6777-ff90-4af5-9a4e6a73b3c7@mm-sol.com>
+Date: Fri, 16 Feb 2018 16:12:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180216114948.68868-2-kirill.shutemov@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180215132637.5673-1-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 02:49:46PM +0300, Kirill A. Shutemov wrote:
-> @@ -38,12 +38,12 @@
->   *
->   */
->  
-> +#define l4_index(x)	(((x) >> 39) & 511)
->  #define pud_index(x)	(((x) >> PUD_SHIFT) & (PTRS_PER_PUD-1))
+Thanks for the patch!
 
-Shouldn't that be
-+#define p4d_index(x)	(((x) >> P4D_SHIFT) & (PTRS_PER_P4D-1))
+On 02/15/2018 03:26 PM, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> This patch converts existing regulators to use regulator bulk apis,
+> to make it consistent with msm8996 changes also cut down some redundant code.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+> Changes since v1:
+> 	updated index correctly and use ARRAY_SIZE
+> 
+>  drivers/pci/dwc/pcie-qcom.c | 52 +++++++++++++--------------------------------
+>  1 file changed, 15 insertions(+), 37 deletions(-)
+> 
+
+Acked-by: Stanimir Varbanov <svarbanov@mm-sol.com>
+
+-- 
+regards,
+Stan
