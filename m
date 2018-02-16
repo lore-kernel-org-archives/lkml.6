@@ -1,30 +1,30 @@
 Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x225zRwG+pqu9v6lRtyS/maDxPSJdMFUG/J2M9riy+XrglusShLJBPyxUE0kybgBK+h2iSLaM
+X-Google-Smtp-Source: AH8x225TgExb2WBdNYqM6axNoznPxtErIMojfMj+EvZ1FBsynsOIYQWC9CkGZA5vo1KWBfYGn8P9
 ARC-Seal: i=1; a=rsa-sha256; t=1518806386; cv=none;
         d=google.com; s=arc-20160816;
-        b=rPgJU3Y+r1hYjXiOC8Wcd1XE3syXBymeqGPxntDkumHSLcham42B/1aZgopr+ZlaTy
-         rvGM3fxXYPdbpJrERdBpb3s1Hb52a/usr2YXiwLUAkoAO+1mrVXJxSzGGxE3CkdVaDi7
-         5krtr5yUbxzejReLIq3z5b2AY2go6WxQXcWp3OMI+NsSGTr0dkhAsV4GtxNTcLnpD9a9
-         pDQWl9wfqmpdGIVQKwAn6MgVN6Ix7BWrF/HeCx4N4sbVPcpR1/QJ1nLttpNyRem0Eqan
-         cY21G0jsczLbDivHjARz/lebjzfwpsNJDsAoL6gvcM9nYcJIbnXzEaExNpFwGeVoX6eO
-         kPog==
+        b=EPGexqt8QboxOWIhRTxb6gWL0n8X67MUkO942h5uDBdCR8hQLC8qLmZmJVLdpP1Tgf
+         EWNNdpEzEGjEb8glX5yB8QtbsMZc109wKXVIk0Lm660JQwiT7fhRvezw9VGn+89RxTeA
+         O2KN/bwKVCOY3AkjhF+RhqABkbfdj2GwoulAkZxpnSInS0IvHADec48rrp6EWCAWv6ZB
+         Wg4cGBmFuJ/ly1W3wLJi1TrTSyPTpoQNLziD06Pjl6OUmjpY1/CNIqzcDADBANfqDfnt
+         uWPKKXIUqfbuB8LlDtr5hO5x6HXiX/JQb0kLJ8Ha5xzgeXSlSJGrw752PlKC1GPtxTbN
+         tRsA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=6bDWmuezbI5Hm+gjpVvP4x2GJkY1+VLq+ILtVxXeZbM=;
-        b=KvGVGZhU0nCIssD/SRDzhCHyWFz7MmZRKmVbnObExTjKvelJOWL8lOkAEGw3DaYW0O
-         8R3rpgSISspQMt3T9sPH5ordPWOTbr989NMr9pkx5lnkNbW0zwmoBK6e9j/cOexo6G8L
-         0pX0gN1BbU+GAwryx9ytcTXjYggEcLCx+QZmoSN9GtaksdZbeINK9uvPiurYv1s9dZ36
-         5KGWKj0yz6XgK5uWwLwvLGYtCTRbY3xK6ugVzeeajz/MshrEtIB4F+ywGSdbx/oMqdwQ
-         R4TzHAB/wrNpVdEC9upypX848MCo0XFc9XXgkDe/Y4MftYOwEhJ3IYoeUkhPq3QZheeX
-         vH+Q==
+        bh=x37G/JrybxXhVfsvSRijeqSjd9Vmal2cBfU3vCqzxWI=;
+        b=lnACF9k4OtMbvHVPp4yvp4Q54TOMYLfy4cDOjW15ECc1eSI53XOThDRfmdpa8AnySq
+         0yH49KNO20TGsaeOuxMDtR6boRzkMsMjr11WMUWydNvbBQlD/lDprKgC8ZsNSL0xVIXH
+         xET4Mps/sbtANTQcdU2ddBPhkn++B6S0YzPb7uvaVi0J2wfoWHIvcQQQIuqW6/imGGzw
+         smb6didosu0O6uNjPH7tO1QQq9JiGNAFbE4Ut5GiQ3KPrrhYvvln92R4jZ6yXS9vm3sn
+         cDqkP+dK6zE7QI+A+brFSShWEHMVfVZe4eIkyWTmnk0aK4My/040dp/uM47Mwq/Wocx3
+         9IOQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=2nv9Jg/J;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=ZAEzv6Vt;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=2nv9Jg/J;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=ZAEzv6Vt;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBT8013418
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBT6013418
 X-Nifty-SrcIP: [125.199.20.195]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org,
@@ -36,205 +36,123 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michal Marek <michal.lkml@markovi.net>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 05/23] kconfig: move and rename sym_expand_string_value()
-Date: Sat, 17 Feb 2018 03:38:33 +0900
-Message-Id: <1518806331-7101-6-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 03/23] kconfig: add xstrdup() helper
+Date: Sat, 17 Feb 2018 03:38:31 +0900
+Message-Id: <1518806331-7101-4-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592583924957446413?=
-X-GMAIL-MSGID: =?utf-8?q?1592583924957446413?=
+X-GMAIL-THRID: =?utf-8?q?1592583925439348866?=
+X-GMAIL-MSGID: =?utf-8?q?1592583925439348866?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This helper expands symbols contained in a string.  I am about to
-change it to expand environments instead of symbols.  Also, I will
-add function expansion later.
-
-Rename it to expand_string_value(), and move it to util.c, which is
-a more suitable place.
+We already have xmalloc(), xcalloc(), and xrealloc(().  Add xstrdup()
+as well to save tedious error handling.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
+ scripts/kconfig/confdata.c  |  2 +-
+ scripts/kconfig/kxgettext.c |  2 +-
  scripts/kconfig/lkc.h       |  1 +
- scripts/kconfig/lkc_proto.h |  1 -
- scripts/kconfig/symbol.c    | 53 -------------------------------------------
- scripts/kconfig/util.c      | 55 ++++++++++++++++++++++++++++++++++++++++++++-
+ scripts/kconfig/symbol.c    |  4 ++--
+ scripts/kconfig/util.c      | 11 +++++++++++
  scripts/kconfig/zconf.y     |  2 +-
- 5 files changed, 56 insertions(+), 56 deletions(-)
+ 6 files changed, 17 insertions(+), 5 deletions(-)
 
+diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+index 5c12dc9..df26c7b 100644
+--- a/scripts/kconfig/confdata.c
++++ b/scripts/kconfig/confdata.c
+@@ -178,7 +178,7 @@ static int conf_set_sym_val(struct symbol *sym, int def, int def_flags, char *p)
+ 	case S_HEX:
+ 	done:
+ 		if (sym_string_valid(sym, p)) {
+-			sym->def[def].val = strdup(p);
++			sym->def[def].val = xstrdup(p);
+ 			sym->flags |= def_flags;
+ 		} else {
+ 			if (def != S_DEF_AUTO)
+diff --git a/scripts/kconfig/kxgettext.c b/scripts/kconfig/kxgettext.c
+index 2858738..240880a 100644
+--- a/scripts/kconfig/kxgettext.c
++++ b/scripts/kconfig/kxgettext.c
+@@ -101,7 +101,7 @@ static struct message *message__new(const char *msg, char *option,
+ 	if (self->files == NULL)
+ 		goto out_fail;
+ 
+-	self->msg = strdup(msg);
++	self->msg = xstrdup(msg);
+ 	if (self->msg == NULL)
+ 		goto out_fail_msg;
+ 
 diff --git a/scripts/kconfig/lkc.h b/scripts/kconfig/lkc.h
-index 2d5ec2d..fb2503a 100644
+index 4e23feb..2d5ec2d 100644
 --- a/scripts/kconfig/lkc.h
 +++ b/scripts/kconfig/lkc.h
-@@ -110,6 +110,7 @@ void menu_finalize(struct menu *parent);
- void menu_set_type(int type);
- 
- /* util.c */
-+char *expand_string_value(const char *in);
- struct file *file_lookup(const char *name);
- int file_write_dep(const char *name);
+@@ -115,6 +115,7 @@ int file_write_dep(const char *name);
  void *xmalloc(size_t size);
-diff --git a/scripts/kconfig/lkc_proto.h b/scripts/kconfig/lkc_proto.h
-index 9dc8abf..9884adc 100644
---- a/scripts/kconfig/lkc_proto.h
-+++ b/scripts/kconfig/lkc_proto.h
-@@ -31,7 +31,6 @@ extern struct symbol * symbol_hash[SYMBOL_HASHSIZE];
+ void *xcalloc(size_t nmemb, size_t size);
+ void *xrealloc(void *p, size_t size);
++char *xstrdup(const char *s);
  
- struct symbol * sym_lookup(const char *name, int flags);
- struct symbol * sym_find(const char *name);
--char *sym_expand_string_value(const char *in);
- const char * sym_escape_string_value(const char *in);
- struct symbol ** sym_re_search(const char *pattern);
- const char * sym_type_name(enum symbol_type type);
+ struct gstr {
+ 	size_t len;
 diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
-index 2220bc4..e4ccf56 100644
+index cca9663..2220bc4 100644
 --- a/scripts/kconfig/symbol.c
 +++ b/scripts/kconfig/symbol.c
-@@ -894,59 +894,6 @@ struct symbol *sym_find(const char *name)
- 	return symbol;
+@@ -183,7 +183,7 @@ static void sym_validate_range(struct symbol *sym)
+ 		sprintf(str, "%lld", val2);
+ 	else
+ 		sprintf(str, "0x%llx", val2);
+-	sym->curr.val = strdup(str);
++	sym->curr.val = xstrdup(str);
  }
  
--/*
-- * Expand symbol's names embedded in the string given in argument. Symbols'
-- * name to be expanded shall be prefixed by a '$'. Unknown symbol expands to
-- * the empty string.
-- */
--char *sym_expand_string_value(const char *in)
--{
--	const char *src;
--	char *res;
--	size_t reslen;
--
--	/*
--	 * Note: 'in' might come from a token that's about to be
--	 * freed, so make sure to always allocate a new string
--	 */
--	reslen = strlen(in) + 1;
--	res = xmalloc(reslen);
--	res[0] = '\0';
--
--	while ((src = strchr(in, '$'))) {
--		char *p, name[SYMBOL_MAXLENGTH];
--		const char *symval = "";
--		struct symbol *sym;
--		size_t newlen;
--
--		strncat(res, in, src - in);
--		src++;
--
--		p = name;
--		while (isalnum(*src) || *src == '_')
--			*p++ = *src++;
--		*p = '\0';
--
--		sym = sym_find(name);
--		if (sym != NULL) {
--			sym_calc_value(sym);
--			symval = sym_get_string_value(sym);
--		}
--
--		newlen = strlen(res) + strlen(symval) + strlen(src) + 1;
--		if (newlen > reslen) {
--			reslen = newlen;
--			res = xrealloc(res, reslen);
--		}
--
--		strcat(res, symval);
--		in = src;
--	}
--	strcat(res, in);
--
--	return res;
--}
--
- const char *sym_escape_string_value(const char *in)
- {
- 	const char *p;
+ static void sym_set_changed(struct symbol *sym)
+@@ -849,7 +849,7 @@ struct symbol *sym_lookup(const char *name, int flags)
+ 				   : !(symbol->flags & (SYMBOL_CONST|SYMBOL_CHOICE))))
+ 				return symbol;
+ 		}
+-		new_name = strdup(name);
++		new_name = xstrdup(name);
+ 	} else {
+ 		new_name = NULL;
+ 		hash = 0;
 diff --git a/scripts/kconfig/util.c b/scripts/kconfig/util.c
-index c6f6e21..22201a4 100644
+index b98a79e..c6f6e21 100644
 --- a/scripts/kconfig/util.c
 +++ b/scripts/kconfig/util.c
-@@ -10,11 +10,64 @@
- #include <string.h>
- #include "lkc.h"
- 
-+/*
-+ * Expand symbol's names embedded in the string given in argument. Symbols'
-+ * name to be expanded shall be prefixed by a '$'. Unknown symbol expands to
-+ * the empty string.
-+ */
-+char *expand_string_value(const char *in)
+@@ -154,3 +154,14 @@ void *xrealloc(void *p, size_t size)
+ 	fprintf(stderr, "Out of memory.\n");
+ 	exit(1);
+ }
++
++char *xstrdup(const char *s)
 +{
-+	const char *src;
-+	char *res;
-+	size_t reslen;
++	char *p;
 +
-+	/*
-+	 * Note: 'in' might come from a token that's about to be
-+	 * freed, so make sure to always allocate a new string
-+	 */
-+	reslen = strlen(in) + 1;
-+	res = xmalloc(reslen);
-+	res[0] = '\0';
-+
-+	while ((src = strchr(in, '$'))) {
-+		char *p, name[SYMBOL_MAXLENGTH];
-+		const char *symval = "";
-+		struct symbol *sym;
-+		size_t newlen;
-+
-+		strncat(res, in, src - in);
-+		src++;
-+
-+		p = name;
-+		while (isalnum(*src) || *src == '_')
-+			*p++ = *src++;
-+		*p = '\0';
-+
-+		sym = sym_find(name);
-+		if (sym != NULL) {
-+			sym_calc_value(sym);
-+			symval = sym_get_string_value(sym);
-+		}
-+
-+		newlen = strlen(res) + strlen(symval) + strlen(src) + 1;
-+		if (newlen > reslen) {
-+			reslen = newlen;
-+			res = xrealloc(res, reslen);
-+		}
-+
-+		strcat(res, symval);
-+		in = src;
-+	}
-+	strcat(res, in);
-+
-+	return res;
++	p = strdup(s);
++	if (p)
++		return p;
++	fprintf(stderr, "Out of memory.\n");
++	exit(1);
 +}
-+
- /* file already present in list? If not add it */
- struct file *file_lookup(const char *name)
- {
- 	struct file *file;
--	char *file_name = sym_expand_string_value(name);
-+	char *file_name = expand_string_value(name);
- 
- 	for (file = file_list; file; file = file->next) {
- 		if (!strcmp(name, file->name)) {
 diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
-index ad6305b..262c464 100644
+index 4893676..ad6305b 100644
 --- a/scripts/kconfig/zconf.y
 +++ b/scripts/kconfig/zconf.y
-@@ -547,7 +547,7 @@ void conf_parse(const char *name)
+@@ -127,7 +127,7 @@ no_mainmenu_stmt: /* empty */
+ 	 * later regardless of whether it comes from the 'prompt' in
+ 	 * mainmenu_stmt or here
+ 	 */
+-	menu_add_prompt(P_MENU, strdup("Linux Kernel Configuration"), NULL);
++	menu_add_prompt(P_MENU, xstrdup("Linux Kernel Configuration"), NULL);
+ };
  
- 	tmp = rootmenu.prompt->text;
- 	rootmenu.prompt->text = _(rootmenu.prompt->text);
--	rootmenu.prompt->text = sym_expand_string_value(rootmenu.prompt->text);
-+	rootmenu.prompt->text = expand_string_value(rootmenu.prompt->text);
- 	free((char*)tmp);
  
- 	menu_finalize(&rootmenu);
 -- 
 2.7.4
