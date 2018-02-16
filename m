@@ -1,94 +1,185 @@
-Return-Path: <pavel@ucw.cz>
-X-Google-Smtp-Source: AH8x226qEhF3HWPShFPlS/wcsPpIfQ5dQ0yNrjJaluV9lUaS9kKyAzq2Pjlo/24egrULZicR9YxK
-ARC-Seal: i=1; a=rsa-sha256; t=1518771481; cv=none;
+Return-Path: <borntraeger@de.ibm.com>
+X-Google-Smtp-Source: AH8x2266D1yFjTcpOFigovOGbnd42FwecZvixjCZLaTJpejPkDybcyqfUdRi0KBwf1IN00Xz1GH4
+ARC-Seal: i=1; a=rsa-sha256; t=1518771316; cv=none;
         d=google.com; s=arc-20160816;
-        b=OzbUmyKJ/RGf21FB+hbkQSQiZGFV/rZE5McHgHJYErR/FcrhAAZR3I5d1z4NvdQycJ
-         mLX3KrlPUVH1B5zVELWyfj6o+NAwcT6Xrwb6juf91v0K3d3nJLtKB+2LSWUA2HKy1lIv
-         BP5+XJ6HA+7mFqETyBt/sO/Xoon84zze2Uc03S0eNdABfNKNTJRsacDey/wp6GefMdah
-         7OxEHUdr+QDmvxDD8lMP+b9Xh/apWTL3HgwgmemrazhaNdKqK3Xe0vSrEeF3ywSJ+COz
-         cOyrHD7S+6MNjWAxGc/lE2tiTdP2XV6HNkP3y5OND/W9XJj0jCNMb4+J+H3UwS4j6FuH
-         OTDw==
+        b=d/G3f6uIZvWauhRxHRBd/HRDFUUxZ3Dg6Ru2+gF/V98ONE2Yxh/5XAuSQalWp9jpCJ
+         Ve0I0bkj4wFich+fSoQm/mtv9pvqBqoFjHbCFRGo+uyiGCnkugrqznv75omtuaIfQax+
+         GerEubC0T1EXTNiiWvmjDqXbf+cKYydv4uf0EQmT6jG3I/06Or8a+gkszKzbk4v1Z4xC
+         nnUIr0qQZDQOc8Xym3oTUedSIgT/18XIgr1IQMclG7YebDuQQB6mOzjKT8NrctUl5g5w
+         dFq9Qpzc5n+PoPpCABSHp3pNiioO20sKz4NtF+hkdWekw+yO/M2eLW74q2HmKPS751Op
+         KlaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:arc-authentication-results;
-        bh=Q5LVtdY4y82x/VYKYZGdizsWaAXSplJRerx7YEUT6iE=;
-        b=hjpJG6TCyAkEP+KSm6Me7KHBHCex/ZpbZLCHrNy1o+iPqhG76SriIsnOsYvnfueMs+
-         i3Z7NoXgruFIMIeEWI9S3AgFzWBbppDHTLwqGAYrIRS/ysH7qYW8EHpjTu1A6guu5tr2
-         XHxF/RXXBvvJFt4h8xzHkW7ovSw2qJdpk1jt7w1hvHag4yFWVm8utGL5rkBjrKULifRg
-         cnxkf0Xonm243JtnggT5wp0d8ZbJr3/7wjkBDkqEOh5KgJr4bS1+HX88FW/wfQ/TcSP4
-         Ey81SBo+eMoaejPj0zA4RFYOFFliUrcI6jyxPpL7s7fXWTGc8+jL5AmlzJipMotW0vlv
-         Wryg==
+        h=message-id:content-transfer-encoding:content-language:in-reply-to
+         :mime-version:user-agent:date:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=n60i4FxhGFDkIn/JNKibTsqBnfmR+Mynj3ULW7HpAYw=;
+        b=MRSUAKHrz7lb8prQeihTm8IortoCc6VFn6z1RZVtqeuxqIECcQV0GwLVNUZE7auqSa
+         YL26y1S83EiI9Y+FWNYSDzsx961BM1Q19XimzQYmgPPkPXmtfY0ZNjx3do+UZoI4ZKNW
+         1Xs2/o2/HGM3a+hL0veMVe0RcMYdsBPcdzf+qmxlNgZWTeG2kAUIRTUk6clmLDVKe7w7
+         zd1Xf8VVBcvHu4iwGqpXl7u8egltK9RHu6+rNuNL31/V8A/6o7cIqQh/90lGGTuwI56l
+         P6g499ljkVOwHyMoGi3s6/P8tRri0cYFb24KVxFUjErEyhfULOrhSoBa7dEsoA6guBb9
+         kEkw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
+       spf=pass (google.com: domain of borntraeger@de.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=borntraeger@de.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
-Date: Fri, 16 Feb 2018 09:58:00 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Andy Lutomirski <luto@amacapital.net>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andi Kleen <ak@linux.intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"riel@redhat.com" <riel@redhat.com>,
-	"keescook@google.com" <keescook@google.com>,
-	"gnomes@lxorguk.ukuu.org.uk" <gnomes@lxorguk.ukuu.org.uk>,
-	"pjt@google.com" <pjt@google.com>,
-	"dave.hansen@intel.com" <dave.hansen@intel.com>,
-	"jikos@kernel.org" <jikos@kernel.org>,
-	"gregkh@linux-foundation.org" <gregkh@linux-foundation.org>
-Subject: Re: [PATCH v6 11/10] x86/retpoline: Avoid return buffer underflows
- on context switch
-Message-ID: <20180216085800.GA7616@amd>
-References: <1515363085-4219-1-git-send-email-dwmw@amazon.co.uk>
- <1515455051.15588.7.camel@infradead.org>
- <CA+55aFwJLjNTDXBo-OkBhJ7ddrY+30MZY_HiY6TAc_tJNaL9-A@mail.gmail.com>
- <1515455902.4423.59.camel@amazon.co.uk>
- <CA+55aFztN+nGBnb1Wjvygvgkg2MfN9m88egsostaNJ5LoSQx7A@mail.gmail.com>
- <20180109004415.GG6718@tassilo.jf.intel.com>
- <CA+55aFy3sCY5xUwZtOYL1MLhRwYe1sU=5d8sWPZqAnEZ71u8-w@mail.gmail.com>
- <3aadb8a0-08c8-bdf9-7b91-0fa774a9e1ab@citrix.com>
- <FC895787-D674-4BC5-B660-DD946EA9825A@amacapital.net>
- <1515503060.22302.19.camel@infradead.org>
+       spf=pass (google.com: domain of borntraeger@de.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=borntraeger@de.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+Subject: Re: [PATCH v6 02/13] array_index_nospec: sanitize speculative array
+ de-references
+To: Dan Williams <dan.j.williams@intel.com>, tglx@linutronix.de,
+        mingo@kernel.org
+Cc: linux-arch@vger.kernel.org, Cyril Novikov <cnovikov@lynx.com>,
+        kernel-hardening@lists.openwall.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, gregkh@linuxfoundation.org,
+        "H. Peter Anvin" <hpa@zytor.com>, torvalds@linux-foundation.org,
+        alan@linux.intel.com
+References: <151727412964.33451.17213780323040673404.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <151727414229.33451.18411580953862676575.stgit@dwillia2-desk3.amr.corp.intel.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Date: Fri, 16 Feb 2018 09:55:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1515503060.22302.19.camel@infradead.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <151727414229.33451.18411580953862676575.stgit@dwillia2-desk3.amr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18021608-0008-0000-0000-000004D0543F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18021608-0009-0000-0000-00001E635789
+Message-Id: <366bb116-e375-458c-2b63-1b26b4c8bdac@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-16_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802160107
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1589069808671539027?=
-X-GMAIL-MSGID: =?utf-8?q?1592547324782689501?=
+X-GMAIL-THRID: =?utf-8?q?1590977823995808037?=
+X-GMAIL-MSGID: =?utf-8?q?1592547152638022143?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue 2018-01-09 13:04:20, David Woodhouse wrote:
-> On Mon, 2018-01-08 at 19:27 -0800, Andy Lutomirski wrote:
-> > > 
-> > > If SMEP is not active, speculation can go anywhere, including to a user
-> > > controlled gadget which can reload any registers it needs, including
-> > > with immediate constants.
-> > 
-> > I thought that, even on pre-SMEP hardware, the CPU wouldn't
-> > speculatively execute from NX pages.  And PTI marks user memory NX
-> > in kernel mode.
+
+
+On 01/30/2018 02:02 AM, Dan Williams wrote:
+> array_index_nospec() is proposed as a generic mechanism to mitigate
+> against Spectre-variant-1 attacks, i.e. an attack that bypasses boundary
+> checks via speculative execution. The array_index_nospec()
+> implementation is expected to be safe for current generation CPUs across
+> multiple architectures (ARM, x86).
 > 
-> Hm, now that could be useful. 
+> Based on an original implementation by Linus Torvalds, tweaked to remove
+> speculative flows by Alexei Starovoitov, and tweaked again by Linus to
+> introduce an x86 assembly implementation for the mask generation.
 > 
-> Do *all* the KPTI backports (some of which are reimplementations rather
-> than strictly backports) mark user memory NX?
+> Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Co-developed-by: Alexei Starovoitov <ast@kernel.org>
+> Suggested-by: Cyril Novikov <cnovikov@lynx.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: x86@kernel.org
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  include/linux/nospec.h |   72 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+>  create mode 100644 include/linux/nospec.h
+> 
+> diff --git a/include/linux/nospec.h b/include/linux/nospec.h
+> new file mode 100644
+> index 000000000000..cf7be4bbcf17
+> --- /dev/null
+> +++ b/include/linux/nospec.h
+> @@ -0,0 +1,72 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright(c) 2018 Linus Torvalds. All rights reserved.
+> +// Copyright(c) 2018 Alexei Starovoitov. All rights reserved.
+> +// Copyright(c) 2018 Intel Corporation. All rights reserved.
+> +
+> +#ifndef _LINUX_NOSPEC_H
+> +#define _LINUX_NOSPEC_H
 
-Hmm. We'd still want to do something on 32-bit, and those might not
-even have NX support in hardware.
 
-Pentium 4 (and such) is probably advanced enough to be vulnerable to
-spectre, but not new enough to support NX...
+Hmmm, shouldn't we include asm/barrier.h here? Otherwise users might or might not
+use the optimized variant depending on which headers are included by the users
+of array_index_nospec.
 
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+
+> +
+> +/**
+> + * array_index_mask_nospec() - generate a ~0 mask when index < size, 0 otherwise
+> + * @index: array element index
+> + * @size: number of elements in array
+> + *
+> + * When @index is out of bounds (@index >= @size), the sign bit will be
+> + * set.  Extend the sign bit to all bits and invert, giving a result of
+> + * zero for an out of bounds index, or ~0 if within bounds [0, @size).
+> + */
+> +#ifndef array_index_mask_nospec
+> +static inline unsigned long array_index_mask_nospec(unsigned long index,
+> +		unsigned long size)
+> +{
+> +	/*
+> +	 * Warn developers about inappropriate array_index_nospec() usage.
+> +	 *
+> +	 * Even if the CPU speculates past the WARN_ONCE branch, the
+> +	 * sign bit of @index is taken into account when generating the
+> +	 * mask.
+> +	 *
+> +	 * This warning is compiled out when the compiler can infer that
+> +	 * @index and @size are less than LONG_MAX.
+> +	 */
+> +	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,
+> +			"array_index_nospec() limited to range of [0, LONG_MAX]\n"))
+> +		return 0;
+> +
+> +	/*
+> +	 * Always calculate and emit the mask even if the compiler
+> +	 * thinks the mask is not needed. The compiler does not take
+> +	 * into account the value of @index under speculation.
+> +	 */
+> +	OPTIMIZER_HIDE_VAR(index);
+> +	return ~(long)(index | (size - 1UL - index)) >> (BITS_PER_LONG - 1);
+> +}
+> +#endif
+> +
+> +/*
+> + * array_index_nospec - sanitize an array index after a bounds check
+> + *
+> + * For a code sequence like:
+> + *
+> + *     if (index < size) {
+> + *         index = array_index_nospec(index, size);
+> + *         val = array[index];
+> + *     }
+> + *
+> + * ...if the CPU speculates past the bounds check then
+> + * array_index_nospec() will clamp the index within the range of [0,
+> + * size).
+> + */
+> +#define array_index_nospec(index, size)					\
+> +({									\
+> +	typeof(index) _i = (index);					\
+> +	typeof(size) _s = (size);					\
+> +	unsigned long _mask = array_index_mask_nospec(_i, _s);		\
+> +									\
+> +	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
+> +	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
+> +									\
+> +	_i &= _mask;							\
+> +	_i;								\
+> +})
+> +#endif /* _LINUX_NOSPEC_H */
+> 
