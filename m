@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751145AbeBPUeO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 15:34:14 -0500
-Received: from alln-iport-4.cisco.com ([173.37.142.91]:4022 "EHLO
+        id S1751228AbeBPUf0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 15:35:26 -0500
+Received: from alln-iport-4.cisco.com ([173.37.142.91]:4040 "EHLO
         alln-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751073AbeBPUeI (ORCPT
+        with ESMTP id S1751092AbeBPUeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 15:34:08 -0500
+        Fri, 16 Feb 2018 15:34:11 -0500
 X-IronPort-AV: E=Sophos;i="5.46,520,1511827200";
-   d="scan'208";a="71929439"
+   d="scan'208";a="71929476"
 From: Taras Kondratiuk <takondra@cisco.com>
 To: "H. Peter Anvin" <hpa@zytor.com>, Al Viro <viro@zeniv.linux.org.uk>,
         Arnd Bergmann <arnd@arndb.de>, Rob Landley <rob@landley.net>,
@@ -18,9 +18,9 @@ To: "H. Peter Anvin" <hpa@zytor.com>, Al Viro <viro@zeniv.linux.org.uk>,
 Cc: initramfs@vger.kernel.org, Victor Kamensky <kamensky@cisco.com>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, xe-linux-external@cisco.com
-Subject: [PATCH v3 13/15] gen_initramfs_list.sh: add -x option to enable newcx format
-Date: Fri, 16 Feb 2018 20:33:50 +0000
-Message-Id: <1518813234-5874-15-git-send-email-takondra@cisco.com>
+Subject: [PATCH v3 15/15] selinux: delay sid population for rootfs till init is complete
+Date: Fri, 16 Feb 2018 20:33:54 +0000
+Message-Id: <1518813234-5874-19-git-send-email-takondra@cisco.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518813234-5874-1-git-send-email-takondra@cisco.com>
 References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
@@ -30,106 +30,78 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+From: Victor Kamensky <kamensky@cisco.com>
 
--x option populates extended attributes in cpio_list file passed to
-get_init_cpio and selects newcx CPIO format.
+With initramfs cpio format that supports extended attributes
+we need to skip sid population on sys_lsetxattr call from
+initramfs for rootfs if security server is not initialized yet.
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
+Otherwise callback in selinux_inode_post_setxattr will try to
+translate give security.selinux label into sid context and since
+security server is not available yet inode will receive default
+sid (typically kernel_t). Note that in the same time proper
+label will be stored in inode xattrs. Later, since inode sid
+would be already populated system will never look back at
+actual xattrs. But if we skip sid population for rootfs and
+we have policy that direct use of xattrs for rootfs, proper
+sid will be filled in from extended attributes one node is
+accessed and server is initialized.
+
+Note new DELAYAFTERINIT_MNT super block flag is introduced
+to only mark rootfs for such behavior. For other types of
+tmpfs original logic is still used.
+
+Signed-off-by: Victor Kamensky <kamensky@cisco.com>
 ---
- scripts/gen_initramfs_list.sh | 13 ++++++++++++-
- usr/Kconfig                   | 11 +++++++++++
- usr/Makefile                  |  3 ++-
- 3 files changed, 25 insertions(+), 2 deletions(-)
+ security/selinux/hooks.c            | 9 ++++++++-
+ security/selinux/include/security.h | 1 +
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/scripts/gen_initramfs_list.sh b/scripts/gen_initramfs_list.sh
-index 86a3c0e5cfbc..cddb82f093d9 100755
---- a/scripts/gen_initramfs_list.sh
-+++ b/scripts/gen_initramfs_list.sh
-@@ -24,6 +24,7 @@ $0 [-o <file>] [-u <uid>] [-g <gid>] {-d | <cpio_source>} ...
- 	-g <gid>       Group ID to map to group ID 0 (root).
- 		       <gid> is only meaningful if <cpio_source> is a
- 		       directory.  "squash" forces all files to gid 0.
-+	-x             include file extended attributes in cpio archive.
- 	<cpio_source>  File list or directory for cpio archive.
- 		       If <cpio_source> is a .cpio file it will be used
- 		       as direct input to initramfs.
-@@ -146,6 +147,9 @@ parse() {
- 			;;
- 	esac
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index f3fe65589f02..bb25268f734e 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -716,7 +716,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+ 			 */
+ 			if (!strncmp(sb->s_type->name, "rootfs",
+ 				     sizeof("rootfs")))
+-				sbsec->flags |= SBLABEL_MNT;
++				sbsec->flags |= SBLABEL_MNT|DELAYAFTERINIT_MNT;
  
-+	$include_xattrs && \
-+		getfattr -h -d -m - -e hex --absolute-names ${location} | \
-+		sed -e '/^#/d' -e '/^$/d' -e 's/^/xattr /' >> ${output}
- 	echo "${str}" >> ${output}
+ 			/* Defer initialization until selinux_complete_init,
+ 			   after the initial policy is loaded and the security
+@@ -3253,6 +3253,7 @@ static void selinux_inode_post_setxattr(struct dentry *dentry, const char *name,
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
+ 	struct inode_security_struct *isec;
++	struct superblock_security_struct *sbsec;
+ 	u32 newsid;
+ 	int rc;
  
- 	return 0
-@@ -226,6 +230,8 @@ root_gid=0
- dep_list=
- cpio_file=
- cpio_list=
-+cpio_opts=
-+include_xattrs=false
- output="/dev/stdout"
- output_file=""
- is_cpio_compressed=
-@@ -283,6 +289,10 @@ while [ $# -gt 0 ]; do
- 			default_list="$arg"
- 			${dep_list}default_initramfs
- 			;;
-+		"-x")   # include extended attributers
-+			cpio_opts="-x"
-+			include_xattrs=true
-+			;;
- 		"-h")
- 			usage
- 			exit 0
-@@ -312,7 +322,8 @@ if [ ! -z ${output_file} ]; then
- 			fi
- 		fi
- 		cpio_tfile="$(mktemp ${TMPDIR:-/tmp}/cpiofile.XXXXXX)"
--		usr/gen_init_cpio $timestamp ${cpio_list} > ${cpio_tfile}
-+		usr/gen_init_cpio $timestamp ${cpio_opts} ${cpio_list} \
-+			> ${cpio_tfile}
- 	else
- 		cpio_tfile=${cpio_file}
- 	fi
-diff --git a/usr/Kconfig b/usr/Kconfig
-index 43658b8a975e..0cc03bc4614c 100644
---- a/usr/Kconfig
-+++ b/usr/Kconfig
-@@ -52,6 +52,17 @@ config INITRAMFS_ROOT_GID
+@@ -3261,6 +3262,12 @@ static void selinux_inode_post_setxattr(struct dentry *dentry, const char *name,
+ 		return;
+ 	}
  
- 	  If you are not sure, leave it set to "0".
- 
-+config INITRAMFS_NEWCX
-+	bool "Use newcx CPIO format for initramfs"
-+	depends on INITRAMFS_SOURCE!=""
-+	default n
-+	help
-+	  If selected "usr/gen_init_cpio" will generate newcx CPIO archive
-+	  format that supports extended attributes.
++	if (!ss_initialized) {
++		sbsec = inode->i_sb->s_security;
++		if (sbsec->flags & DELAYAFTERINIT_MNT)
++			return;
++	}
 +
-+	  See <file:Documentation/early-userspace/buffer-format.txt> for
-+	  more details.
-+
- config RD_GZIP
- 	bool "Support initial ramdisk/ramfs compressed using gzip"
- 	depends on BLK_DEV_INITRD
-diff --git a/usr/Makefile b/usr/Makefile
-index 237a028693ce..1106bfd61475 100644
---- a/usr/Makefile
-+++ b/usr/Makefile
-@@ -29,7 +29,8 @@ ramfs-input := $(if $(filter-out "",$(CONFIG_INITRAMFS_SOURCE)), \
- 			$(shell echo $(CONFIG_INITRAMFS_SOURCE)),-d)
- ramfs-args  := \
-         $(if $(CONFIG_INITRAMFS_ROOT_UID), -u $(CONFIG_INITRAMFS_ROOT_UID)) \
--        $(if $(CONFIG_INITRAMFS_ROOT_GID), -g $(CONFIG_INITRAMFS_ROOT_GID))
-+        $(if $(CONFIG_INITRAMFS_ROOT_GID), -g $(CONFIG_INITRAMFS_ROOT_GID)) \
-+        $(if $(CONFIG_INITRAMFS_NEWCX), -x)
- 
- # $(datafile_d_y) is used to identify all files included
- # in initramfs and to detect if any files are added/removed.
+ 	rc = security_context_to_sid_force(value, size, &newsid);
+ 	if (rc) {
+ 		printk(KERN_ERR "SELinux:  unable to map context to SID"
+diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
+index 02f0412d42f2..585acfd6cbcf 100644
+--- a/security/selinux/include/security.h
++++ b/security/selinux/include/security.h
+@@ -52,6 +52,7 @@
+ #define ROOTCONTEXT_MNT	0x04
+ #define DEFCONTEXT_MNT	0x08
+ #define SBLABEL_MNT	0x10
++#define DELAYAFTERINIT_MNT 0x20
+ /* Non-mount related flags */
+ #define SE_SBINITIALIZED	0x0100
+ #define SE_SBPROC		0x0200
 -- 
 2.10.3.dirty
