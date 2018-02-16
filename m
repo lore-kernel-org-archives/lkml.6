@@ -1,69 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034363AbeBPO1a (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 09:27:30 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53966 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034273AbeBPO12 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:27:28 -0500
-Date: Fri, 16 Feb 2018 14:27:16 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Tony Lindgren <tony@atomide.com>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 2/4] ASoC: codec: cpcap: new codec
-Message-ID: <20180216142716.GJ5886@sirena.org.uk>
-References: <20180214220741.28306-1-sebastian.reichel@collabora.co.uk>
- <20180214220741.28306-3-sebastian.reichel@collabora.co.uk>
- <20180216113901.GC5886@sirena.org.uk>
- <20180216135113.akicejkodhbjpp2w@earth.universe>
+        id S1034436AbeBPOfN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 09:35:13 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34430 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1033770AbeBPOfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 09:35:12 -0500
+Date: Fri, 16 Feb 2018 08:35:11 -0600
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Progyan Bhattacharya <bprogyan@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Nicholas Mc Guire <der.herr@hofr.at>
+Subject: Re: [PATCH] objtool/x86: Replace Non-standard Range Expression in
+ Case
+Message-ID: <20180216143511.fo4emxz6webqk7qn@treble>
+References: <20180216141947.9324-1-progyanb@acm.org>
+ <20180216142513.9520-1-progyanb@acm.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cN519qCC4CN1mUcX"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180216135113.akicejkodhbjpp2w@earth.universe>
-X-Cookie: To order, call toll-free.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180216142513.9520-1-progyanb@acm.org>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 16, 2018 at 07:55:13PM +0530, Progyan Bhattacharya wrote:
+> Replace range expressions with seperate individual cases, i.e. convert case 1...3: to case 1: case 2: case 3
+> Range expression within case statements are non-standard C code and can create issues over compiler and platform variety.
+> 
+> While compiling with gcc 4.8 (RHEL) I encountered this error on range expression in case statements:
+> error: range expressions in switch statements are non-standard [-Werror=pedantic]
+> 
+> Signed-off-by: Progyan Bhattacharya <progyanb@acm.org>
 
---cN519qCC4CN1mUcX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Progyan,
 
-On Fri, Feb 16, 2018 at 02:51:13PM +0100, Sebastian Reichel wrote:
-> On Fri, Feb 16, 2018 at 11:39:01AM +0000, Mark Brown wrote:
+Thank you for the patch.
 
-> > We don't have default lines like this for other MFDs...
+I think this makes the code unnecessarily verbose and less readable.  We
+rely on many such GCC extensions, and we don't aim to comply with
+standard C.  And AFAIK, we don't use -Werror=pedantic in the kernel.
 
-> Is there a reason not to add them? It looks very useful to me:
-
-Consistency.  It's a lot easier to apply a single rule to everything
-than it is to have to individually think through and discuss the
-decisions on every individual driver, especially when there will
-inevitably be some cases where there are conflicting requirements from
-different users.  As you said in the rest of your mail hand configuring
-kernels is already a very specialist thing at the best of times.
-
---cN519qCC4CN1mUcX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqG6kQACgkQJNaLcl1U
-h9AoCgf8CQYEgUAvlLn8toKeaZlwqe64eR8eKRYIUVGLT6JyPh9GGPFh3I7JhPgV
-fMakHQyW/Vw6OGthmS76ziyoAifgwww89o07qxjoOvJfnuVy2M1/wdaIcCOFfQZN
-hcLxYd6NnsoXBbIXuDWPSUWaxEUc9N7uH6fNeZFppv6DjEYaI+bunj/dTCJxvVnC
-5Q3R/+dVEoEEdK1Q41N3sjPypgjZc7D8xP+wXcmix9CBN7yZsBmJJMSCnfK214VD
-MXv8u0ahaR4SVTq7LeBUeQtFp7cW1y72BeAAZ+uQSb6iPxuE58OlInneT6uLc+B8
-MYWeCW5cs79YSTGAQuxomCRerXUAOw==
-=qpom
------END PGP SIGNATURE-----
-
---cN519qCC4CN1mUcX--
+-- 
+Josh
