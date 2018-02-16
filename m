@@ -1,121 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758785AbeBPRDW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 12:03:22 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:50978 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755857AbeBPRDV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 12:03:21 -0500
-X-Google-Smtp-Source: AH8x226mDeyEjqOqdK341sKevwhtXYohgUdvCQ6NqJeXZ2Oi5kMNzIa2LuX95YVdX2v8Jc0UelnAOxy41kqu/a7V+U4=
+        id S1758802AbeBPRDk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 12:03:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33584 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758787AbeBPRDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 12:03:39 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB6E2217C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Fri, 16 Feb 2018 14:03:36 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com, tmricht@linux.vnet.ibm.com,
+        linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au
+Subject: Re: [PATCH 1/3] tools include powerpc: Grab a copy of
+ arch/powerpc/include/uapi/asm/unistd.h
+Message-ID: <20180216170336.GG24436@kernel.org>
+References: <20180129083417.31240-1-ravi.bangoria@linux.vnet.ibm.com>
+ <20180129083417.31240-2-ravi.bangoria@linux.vnet.ibm.com>
+ <20180216165245.GD24436@kernel.org>
+ <20180216165616.GF24436@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <c4909c7e-e11b-8886-db15-ba82a331b89e@arm.com>
-References: <1518622006-16089-1-git-send-email-vincent.guittot@linaro.org>
- <1518622006-16089-2-git-send-email-vincent.guittot@linaro.org> <c4909c7e-e11b-8886-db15-ba82a331b89e@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Fri, 16 Feb 2018 18:02:59 +0100
-Message-ID: <CAKfTPtBKPvmDCJtK4yRhtV-qNcOea63Vz2gDy7RK+k9EV35QOw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] sched: Stop nohz stats when decayed
-To: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Morten Rasmussen <morten.rasmussen@foss.arm.com>,
-        Brendan Jackman <brendan.jackman@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180216165616.GF24436@kernel.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16 February 2018 at 13:53, Valentin Schneider
-<valentin.schneider@arm.com> wrote:
-> On 02/14/2018 03:26 PM, Vincent Guittot wrote:
->> Stopped the periodic update of blocked load when all idle CPUs have fully
->> decayed. We introduce a new nohz.has_blocked that reflect if some idle
->> CPUs has blocked load that have to be periodiccally updated. nohz.has_blocked
->> is set everytime that a Idle CPU can have blocked load and it is then clear
->> when no more blocked load has been detected during an update. We don't need
->> atomic operation but only to make cure of the right ordering when updating
->> nohz.idle_cpus_mask and nohz.has_blocked.
->>
->> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->> ---
->>  kernel/sched/fair.c  | 122 ++++++++++++++++++++++++++++++++++++++++++---------
->>  kernel/sched/sched.h |   1 +
->>  2 files changed, 102 insertions(+), 21 deletions(-)
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 7af1fa9..5a6835e 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->>
->> [...]
->>
->> -static void update_nohz_stats(struct rq *rq)
->> +static bool update_nohz_stats(struct rq *rq)
->>  {
->>  #ifdef CONFIG_NO_HZ_COMMON
->>       unsigned int cpu = rq->cpu;
->>
->> +     if (!rq->has_blocked_load)
->> +             return false;
->> +
->>       if (!cpumask_test_cpu(cpu, nohz.idle_cpus_mask))
->> -             return;
->> +             return false;
->>
->>       if (!time_after(jiffies, rq->last_blocked_load_update_tick))
->> -             return;
->> +             return true;
->>
->>       update_blocked_averages(cpu);
->> +
->> +     return rq->has_blocked_load;
->> +#else
->> +     return false;
->>  #endif
->>  }
->>
->
-> (Wrongly thought that this bit was in a different patch, comment should have
-> been squashed in previous reply...)
->
-> I've been thinking about this, and it's a messy one if we want to
-> skip CPUs in idle_balance() / clear the nohz.has_blocked_flag.
->
-> AFAICT, the rq->has_blocked_load flag can be wrongly cleared: if we're
-> calling update_nohz_stats() for CPU A, but CPU A got out/in of
-> idle really quickly in that same timeframe, I'm not sure you can guarantee
-> the clearing of rq->has_blocked_load done in update_blocked_averages() will
-> always end up in memory before the setting of the flag in
-> nohz_balance_enter_idle().
+Em Fri, Feb 16, 2018 at 01:56:16PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Fri, Feb 16, 2018 at 01:52:45PM -0300, Arnaldo Carvalho de Melo escreveu:
+> > Em Mon, Jan 29, 2018 at 02:04:15PM +0530, Ravi Bangoria escreveu:
+> > > Will be used for generating the syscall id/string translation table.
+> > > 
+> > > Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+> > > ---
+> > >  tools/arch/powerpc/include/uapi/asm/unistd.h | 399 +++++++++++++++++++++++++++
+> > >  tools/perf/check-headers.sh                  |   1 +
+> > >  2 files changed, 400 insertions(+)
+> > >  create mode 100644 tools/arch/powerpc/include/uapi/asm/unistd.h
+> > 
+> > Not building on a cross-compiling environment (ubuntu 16.04), I'm checking...
+> 
+> BTW, details about that environment:
+> 
+>   46    29.83 ubuntu:16.04-x-powerpc        : FAIL powerpc-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.4) 5.4.0 20160609
 
-Not sure it's a problem in this case because the clear done in
-update_blocked_averages() only happens if there is no load on the rq
-and new load can't be added in the mean time
+So, you did it just for ppc64? Because...
 
->
-> I was going to say we don't have this problem in _nohz_idle_balance() but
-> actually I think we do. We have the checking of nohz.idle_cpus_mask after the
-> smp_mb(), which makes sure the clear of nohz.has_blocked will never
-> overwrite the set in nohz_balance_enter_idle(), but it doesn't
-> guarantee the same for the rq flag. So we can have nohz CPUs with blocked
-> load but with rq->has_blocked_load set to false. Which isn't a problem now
+  46    29.83 ubuntu:16.04-x-powerpc        : FAIL powerpc-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.4) 5.4.0 20160609
+  47    69.81 ubuntu:16.04-x-powerpc64      : Ok   powerpc64-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.1) 5.4.0 20160609
+  48    68.35 ubuntu:16.04-x-powerpc64el    : Ok   powerpc64le-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.4) 5.4.0 20160609
 
-I don't think that we can have this case. Or at least I can't find a
-sequence leading to this state.
-
-Have you got a particular sequence in mind ?
-
-> but it is if we want to use the flag to skip CPUs.
->
-> Am I correct or am I going crazy ? There's a comment about this in
-> nohz_balance_enter_idle() but I'm confused now:
->
->         /*
->          * Can be set safely without rq->lock held
->          * If a clear happens, it will have evaluated last additions because
->          * rq->lock is held during the check and the clear
->          */
->         rq->has_blocked_load = 1;
+Its just on ppc32 that his is falling apart.
+ 
+>  
+> >   CC       /tmp/build/perf/util/syscalltbl.o
+> > util/syscalltbl.c: In function 'syscalltbl__init_native':
+> > util/syscalltbl.c:64:19: error: 'syscalltbl_native_max_id' undeclared (first use in this function)
+> >   for (i = 0; i <= syscalltbl_native_max_id; ++i)
+> >                    ^
+> > util/syscalltbl.c:64:19: note: each undeclared identifier is reported only once for each function it appears in
+> > util/syscalltbl.c:65:7: error: 'syscalltbl_native' undeclared (first use in this function)
+> >    if (syscalltbl_native[i])
+> >        ^
+> > util/syscalltbl.c: In function 'syscalltbl__name':
+> > util/syscalltbl.c:105:15: error: 'syscalltbl_native_max_id' undeclared (first use in this function)
+> >   return id <= syscalltbl_native_max_id ? syscalltbl_native[id]: NULL;
+> >                ^
+> > util/syscalltbl.c:105:42: error: 'syscalltbl_native' undeclared (first use in this function)
+> >   return id <= syscalltbl_native_max_id ? syscalltbl_native[id]: NULL;
+> >                                           ^
+> > util/syscalltbl.c:106:1: error: control reaches end of non-void function [-Werror=return-type]
+> >  }
+> >  ^
+> > cc1: all warnings being treated as errors
+> > mv: cannot stat '/tmp/build/perf/util/.syscalltbl.o.tmp': No such file or directory
+> > /git/linux/tools/build/Makefile.build:96: recipe for target '/tmp/build/perf/util/syscalltbl.o' failed
+> > make[4]: *** [/tmp/build/perf/util/syscalltbl.o] Error 1
+> > make[4]: *** Waiting for unfinished jobs....
+> >   CC       /tmp/build/perf/tests/sample-parsing.o
+> >   CC       /tmp/build/perf/tests/parse-no-sample-id-all.o
+> >   CC       /tmp/build/perf/tests/kmod-path.o
+> >   CC       /tmp/build/perf/tests/thread-map.o
+> >   CC       /tmp/build/perf/tests/llvm.o
+> >   CC       /tmp/build/perf/tests/bpf.o
+> >   CC       /tmp/build/perf/tests/topology.o
+> >   CC       /tmp/build/perf/tests/mem.o
+> >   CC       /tmp/build/perf/tests/cpumap.o
+> >   CC       /tmp/build/perf/tests/stat.o
+> > /git/linux/tools/build/Makefile.build:139: recipe for target 'util' failed
+> > make[3]: *** [util] Error 2
+> > Makefile.perf:629: recipe for target '/tmp/build/perf/libperf-in.o' failed
+> > make[2]: *** [/tmp/build/perf/libperf-in.o] Error 2
+> > make[2]: *** Waiting for unfinished jobs....
+> >   CC       /tmp/build/perf/tests/event_update.o
