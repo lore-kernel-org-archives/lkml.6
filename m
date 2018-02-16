@@ -1,325 +1,344 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933790AbeBPKng (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 05:43:36 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34792 "EHLO mx1.redhat.com"
+        id S933824AbeBPKoB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 05:44:01 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49664 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933757AbeBPKnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 05:43:33 -0500
+        id S933766AbeBPKnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 05:43:35 -0500
 From: Hans de Goede <hdegoede@redhat.com>
 To: Tejun Heo <tj@kernel.org>
 Cc: Hans de Goede <hdegoede@redhat.com>, linux-ide@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 09/12] usb: roles: Add Intel XHCI USB role switch driver
-Date: Fri, 16 Feb 2018 11:43:18 +0100
-Message-Id: <20180216104321.8259-10-hdegoede@redhat.com>
+Subject: [PATCH 12/12] extcon: axp288: Set USB role where necessary
+Date: Fri, 16 Feb 2018 11:43:21 +0100
+Message-Id: <20180216104321.8259-13-hdegoede@redhat.com>
 In-Reply-To: <20180216104321.8259-1-hdegoede@redhat.com>
 References: <20180216104321.8259-1-hdegoede@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Various Intel SoCs (Cherry Trail, Broxton and others) have an internal USB
-role switch for swiching the OTG USB data lines between the xHCI host
-controller and the dwc3 gadget controller.
+The AXP288 BC1.2 charger detection / extcon code may seem like a strange
+place to add code to control the USB role-switch on devices with an AXP288,
+but there are 2 reasons to do this inside the axp288 extcon code:
 
-Note on some Cherry Trail systems there is ACPI/AML code listening to
-edge interrupts on the id-pin (through an _AIE ACPI method) and switching
-the role between ROLE_HOST and ROLE_NONE based on the id-pin. Note it does
-not set the role to ROLE_DEVICE, because device-mode is usually not used
-under Windows.
+1) On many devices the USB role is controlled by ACPI AML code, but the AML
+   code only switches between the host and none roles, because of Windows
+   not really using device mode. To make device mode work we need to toggle
+   between the none/device roles based on VBus presence, and the axp288
+   extcon gets interrupts on VBus insertion / removal.
 
-The presence of AML code which modifies the cfg0 reg (on some systems)
-means that we our read/write/modify of cfg0 may race with the AML code
-doing the same to avoid this we take the global ACPI lock while doing
-the read/write/modify.
+2) In order for our BC1.2 charger detection to work properly the role
+   mux must be properly set to device mode before we do the detection.
+
+Also note the Kconfig help-text / obsolete depends on USB_PHY which are
+remnants from older never upstreamed code also controlling the mux from
+the axp288 extcon code.
+
+This commit also adds code to get notifications from the INT3496 extcon
+device, which is used on some devices to notify the kernel about id-pin
+changes instead of them being handled through AML code.
+
+This fixes:
+-Device mode not working on most CHT devices with an AXP288
+-Host mode not working on devices with an INT3496 ACPI device
+-Charger-type misdetection (always SDP) on devices with an INT3496 when the
+ USB role (always) gets initialized as host
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- MAINTAINERS                                    |   6 +
- drivers/usb/Kconfig                            |   2 +
- drivers/usb/Makefile                           |   2 +
- drivers/usb/roles/Kconfig                      |  14 ++
- drivers/usb/roles/Makefile                     |   1 +
- drivers/usb/roles/intel-xhci-usb-role-switch.c | 201 +++++++++++++++++++++++++
- 6 files changed, 226 insertions(+)
- create mode 100644 drivers/usb/roles/Kconfig
- create mode 100644 drivers/usb/roles/Makefile
- create mode 100644 drivers/usb/roles/intel-xhci-usb-role-switch.c
+ drivers/extcon/Kconfig         |   3 +-
+ drivers/extcon/extcon-axp288.c | 175 +++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 169 insertions(+), 9 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3a6334da07d1..385ef9080287 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14385,6 +14385,12 @@ S:	Maintained
- F:	Documentation/hid/hiddev.txt
- F:	drivers/hid/usbhid/
+diff --git a/drivers/extcon/Kconfig b/drivers/extcon/Kconfig
+index a7bca4207f44..0dc2d5441c3b 100644
+--- a/drivers/extcon/Kconfig
++++ b/drivers/extcon/Kconfig
+@@ -30,7 +30,8 @@ config EXTCON_ARIZONA
  
-+USB INTEL XHCI ROLE MUX DRIVER
-+M:	Hans de Goede <hdegoede@redhat.com>
-+L:	linux-usb@vger.kernel.org
-+S:	Maintained
-+F:	drivers/usb/roles/intel-xhci-usb-role-switch.c
-+
- USB ISP116X DRIVER
- M:	Olav Kongas <ok@artecdesign.ee>
- L:	linux-usb@vger.kernel.org
-diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
-index a79198f5f1a6..3f123edba6e8 100644
---- a/drivers/usb/Kconfig
-+++ b/drivers/usb/Kconfig
-@@ -165,6 +165,8 @@ source "drivers/usb/gadget/Kconfig"
+ config EXTCON_AXP288
+ 	tristate "X-Power AXP288 EXTCON support"
+-	depends on MFD_AXP20X && USB_PHY
++	depends on MFD_AXP20X && USB_SUPPORT
++	select USB_ROLE_SWITCH
+ 	help
+ 	  Say Y here to enable support for USB peripheral detection
+ 	  and USB MUX switching by X-Power AXP288 PMIC.
+diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
+index 3ec4c715e240..1a707bc35e03 100644
+--- a/drivers/extcon/extcon-axp288.c
++++ b/drivers/extcon/extcon-axp288.c
+@@ -1,6 +1,7 @@
+ /*
+  * extcon-axp288.c - X-Power AXP288 PMIC extcon cable detection driver
+  *
++ * Copyright (c) 2017-2018 Hans de Goede <hdegoede@redhat.com>
+  * Copyright (C) 2015 Intel Corporation
+  * Author: Ramakrishna Pallala <ramakrishna.pallala@intel.com>
+  *
+@@ -14,6 +15,8 @@
+  * GNU General Public License for more details.
+  */
  
- source "drivers/usb/typec/Kconfig"
- 
-+source "drivers/usb/roles/Kconfig"
-+
- config USB_LED_TRIG
- 	bool "USB LED Triggers"
- 	depends on LEDS_CLASS && LEDS_TRIGGERS
-diff --git a/drivers/usb/Makefile b/drivers/usb/Makefile
-index 060643a1b5c8..7d1b8c82b208 100644
---- a/drivers/usb/Makefile
-+++ b/drivers/usb/Makefile
-@@ -65,3 +65,5 @@ obj-$(CONFIG_USB_COMMON)	+= common/
- obj-$(CONFIG_USBIP_CORE)	+= usbip/
- 
- obj-$(CONFIG_TYPEC)		+= typec/
-+
-+obj-$(CONFIG_USB_ROLE_SWITCH)	+= roles/
-diff --git a/drivers/usb/roles/Kconfig b/drivers/usb/roles/Kconfig
-new file mode 100644
-index 000000000000..e5c2bfaf8ba5
---- /dev/null
-+++ b/drivers/usb/roles/Kconfig
-@@ -0,0 +1,14 @@
-+if USB_ROLE_SWITCH
-+
-+config USB_ROLES_INTEL_XHCI
-+	tristate "Intel XHCI USB Role Switch"
-+	depends on ACPI && X86 && EXTCON
-+	help
-+	  Driver for the internal USB role switch for switching the USB data
-+	  lines between the xHCI host controller and the dwc3 gadget controller
-+	  found on various Intel SoCs.
-+
-+	  To compile the driver as a module, choose M here: the module will
-+	  be called intel-xhci-usb-role-switch.
-+
-+endif # USB_ROLE_SWITCH
-diff --git a/drivers/usb/roles/Makefile b/drivers/usb/roles/Makefile
-new file mode 100644
-index 000000000000..e44b179ba275
---- /dev/null
-+++ b/drivers/usb/roles/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_USB_ROLES_INTEL_XHCI) += intel-xhci-usb-role-switch.o
-diff --git a/drivers/usb/roles/intel-xhci-usb-role-switch.c b/drivers/usb/roles/intel-xhci-usb-role-switch.c
-new file mode 100644
-index 000000000000..b46c44b0e028
---- /dev/null
-+++ b/drivers/usb/roles/intel-xhci-usb-role-switch.c
-@@ -0,0 +1,201 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Intel XHCI (Cherry Trail, Broxton and others) USB OTG role switch driver
-+ *
-+ * Copyright (c) 2016-2017 Hans de Goede <hdegoede@redhat.com>
-+ *
-+ * Loosely based on android x86 kernel code which is:
-+ *
-+ * Copyright (C) 2014 Intel Corp.
-+ *
-+ * Author: Wu, Hao
-+ */
-+
 +#include <linux/acpi.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
++#include <linux/connection.h>
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/io.h>
+@@ -25,6 +28,11 @@
+ #include <linux/extcon-provider.h>
+ #include <linux/regmap.h>
+ #include <linux/mfd/axp20x.h>
 +#include <linux/usb/role.h>
++#include <linux/workqueue.h>
 +
-+/* register definition */
-+#define DUAL_ROLE_CFG0			0x68
-+#define SW_VBUS_VALID			(1 << 24)
-+#define SW_IDPIN_EN			(1 << 21)
-+#define SW_IDPIN			(1 << 20)
-+
-+#define DUAL_ROLE_CFG1			0x6c
-+#define HOST_MODE			(1 << 29)
-+
-+#define DUAL_ROLE_CFG1_POLL_TIMEOUT	1000
-+
-+#define DRV_NAME			"intel_xhci_usb_sw"
-+
-+struct intel_xhci_usb_data {
++#include <asm/cpu_device_id.h>
++#include <asm/intel-family.h>
+ 
+ /* Power source status register */
+ #define PS_STAT_VBUS_TRIGGER		BIT(0)
+@@ -97,9 +105,19 @@ struct axp288_extcon_info {
+ 	struct device *dev;
+ 	struct regmap *regmap;
+ 	struct regmap_irq_chip_data *regmap_irqc;
 +	struct usb_role_switch *role_sw;
-+	void __iomem *base;
++	struct work_struct role_work;
+ 	int irq[EXTCON_IRQ_END];
+ 	struct extcon_dev *edev;
++	struct extcon_dev *id_extcon;
++	struct notifier_block id_nb;
+ 	unsigned int previous_cable;
++	bool vbus_attach;
 +};
 +
-+struct intel_xhci_acpi_match {
-+	const char *hid;
-+	int hrv;
-+};
-+
++static const struct x86_cpu_id cherry_trail_cpu_ids[] = {
++	{ X86_VENDOR_INTEL, 6, INTEL_FAM6_ATOM_AIRMONT, X86_FEATURE_ANY },
++	{}
+ };
+ 
+ /* Power up/down reason string array */
+@@ -137,20 +155,74 @@ static void axp288_extcon_log_rsi(struct axp288_extcon_info *info)
+ 	regmap_write(info->regmap, AXP288_PS_BOOT_REASON_REG, clear_mask);
+ }
+ 
+-static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
 +/*
-+ * ACPI IDs for PMICs which do not support separate data and power role
-+ * detection (USB ACA detection for micro USB OTG), we allow userspace to
-+ * change the role manually on these.
++ * The below code to control the USB role-switch on devices with an AXP288
++ * may seem out of place, but there are 2 reasons why this is the best place
++ * to control the USB role-switch on such devices:
++ * 1) On many devices the USB role is controlled by AML code, but the AML code
++ *    only switches between the host and none roles, because of Windows not
++ *    really using device mode. To make device mode work we need to toggle
++ *    between the none/device roles based on VBus presence, and this driver
++ *    gets interrupts on VBus insertion / removal.
++ * 2) In order for our BC1.2 charger detection to work properly the role
++ *    mux must be properly set to device mode before we do the detection.
 + */
-+static const struct intel_xhci_acpi_match allow_userspace_ctrl_ids[] = {
-+	{ "INT33F4",  3 }, /* X-Powers AXP288 PMIC */
-+};
 +
-+static int intel_xhci_usb_set_role(struct device *dev, enum usb_role role)
-+{
-+	struct intel_xhci_usb_data *data = dev_get_drvdata(dev);
-+	unsigned long timeout;
-+	acpi_status status;
-+	u32 glk = -1U;
-+	u32 val;
++/* Returns the id-pin value, note pulled low / false == host-mode */
++static bool axp288_get_id_pin(struct axp288_extcon_info *info)
+ {
+-	int ret, stat, cfg, pwr_stat;
+-	u8 chrg_type;
+-	unsigned int cable = info->previous_cable;
+-	bool vbus_attach = false;
++	enum usb_role role;
 +
-+	/*
-+	 * On many CHT devices ACPI event (_AEI) handlers read / modify /
-+	 * write the cfg0 register, just like we do. Take the ACPI lock
-+	 * to avoid us racing with the AML code.
-+	 */
-+	status = acpi_acquire_global_lock(ACPI_WAIT_FOREVER, &glk);
-+	if (ACPI_FAILURE(status) && status != AE_NOT_CONFIGURED) {
-+		dev_err(dev, "Error could not acquire lock\n");
-+		return -EIO;
-+	}
++	if (info->id_extcon)
++		return extcon_get_state(info->id_extcon, EXTCON_USB_HOST) <= 0;
 +
-+	/* Set idpin value as requested */
-+	val = readl(data->base + DUAL_ROLE_CFG0);
-+	switch (role) {
-+	case USB_ROLE_NONE:
-+		val |= SW_IDPIN;
-+		val &= ~SW_VBUS_VALID;
-+		break;
-+	case USB_ROLE_HOST:
-+		val &= ~SW_IDPIN;
-+		val &= ~SW_VBUS_VALID;
-+		break;
-+	case USB_ROLE_DEVICE:
-+		val |= SW_IDPIN;
-+		val |= SW_VBUS_VALID;
-+		break;
-+	}
-+	val |= SW_IDPIN_EN;
-+
-+	writel(val, data->base + DUAL_ROLE_CFG0);
-+
-+	acpi_release_global_lock(glk);
-+
-+	/* In most case it takes about 600ms to finish mode switching */
-+	timeout = jiffies + msecs_to_jiffies(DUAL_ROLE_CFG1_POLL_TIMEOUT);
-+
-+	/* Polling on CFG1 register to confirm mode switch.*/
-+	do {
-+		val = readl(data->base + DUAL_ROLE_CFG1);
-+		if (!!(val & HOST_MODE) == (role == USB_ROLE_HOST))
-+			return 0;
-+
-+		/* Interval for polling is set to about 5 - 10 ms */
-+		usleep_range(5000, 10000);
-+	} while (time_before(jiffies, timeout));
-+
-+	dev_warn(dev, "Timeout waiting for role-switch\n");
-+	return -ETIMEDOUT;
++	/* We cannot access the id-pin, see what mode the AML code has set */
++	role = usb_role_switch_get_role(info->role_sw);
++	return role != USB_ROLE_HOST;
 +}
 +
-+static enum usb_role intel_xhci_usb_get_role(struct device *dev)
++static void axp288_usb_role_work(struct work_struct *work)
 +{
-+	struct intel_xhci_usb_data *data = dev_get_drvdata(dev);
++	struct axp288_extcon_info *info =
++		container_of(work, struct axp288_extcon_info, role_work);
 +	enum usb_role role;
-+	u32 val;
++	bool id_pin;
++	int ret;
 +
-+	val = readl(data->base + DUAL_ROLE_CFG0);
-+
-+	if (!(val & SW_IDPIN))
++	id_pin = axp288_get_id_pin(info);
++	if (!id_pin)
 +		role = USB_ROLE_HOST;
-+	else if (val & SW_VBUS_VALID)
++	else if (info->vbus_attach)
 +		role = USB_ROLE_DEVICE;
 +	else
 +		role = USB_ROLE_NONE;
 +
-+	return role;
++	ret = usb_role_switch_set_role(info->role_sw, role);
++	if (ret)
++		dev_err(info->dev, "failed to set role: %d\n", ret);
 +}
 +
-+static struct usb_role_switch_desc sw_desc = {
-+	.set = intel_xhci_usb_set_role,
-+	.get = intel_xhci_usb_get_role,
-+};
-+
-+static int intel_xhci_usb_probe(struct platform_device *pdev)
++static bool axp288_get_vbus_attach(struct axp288_extcon_info *info)
 +{
++	int ret, pwr_stat;
+ 
+ 	ret = regmap_read(info->regmap, AXP288_PS_STAT_REG, &pwr_stat);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "failed to read vbus status\n");
+-		return ret;
++		return false;
+ 	}
+ 
+-	vbus_attach = (pwr_stat & PS_STAT_VBUS_VALID);
++	return !!(pwr_stat & PS_STAT_VBUS_VALID);
++}
++
++static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
++{
++	int ret, stat, cfg;
++	u8 chrg_type;
++	unsigned int cable = info->previous_cable;
++	bool vbus_attach = false;
++
++	vbus_attach = axp288_get_vbus_attach(info);
+ 	if (!vbus_attach)
+ 		goto no_vbus;
+ 
+@@ -201,6 +273,12 @@ static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
+ 		info->previous_cable = cable;
+ 	}
+ 
++	if (info->role_sw && info->vbus_attach != vbus_attach) {
++		info->vbus_attach = vbus_attach;
++		/* Setting the role can take a while */
++		queue_work(system_long_wq, &info->role_work);
++	}
++
+ 	return 0;
+ 
+ dev_det_ret:
+@@ -210,6 +288,18 @@ static int axp288_handle_chrg_det_event(struct axp288_extcon_info *info)
+ 	return ret;
+ }
+ 
++static int axp288_extcon_id_evt(struct notifier_block *nb,
++				unsigned long event, void *param)
++{
++	struct axp288_extcon_info *info =
++		container_of(nb, struct axp288_extcon_info, id_nb);
++
++	/* We may not sleep and setting the role can take a while */
++	queue_work(system_long_wq, &info->role_work);
++
++	return NOTIFY_OK;
++}
++
+ static irqreturn_t axp288_extcon_isr(int irq, void *data)
+ {
+ 	struct axp288_extcon_info *info = data;
+@@ -231,10 +321,19 @@ static void axp288_extcon_enable(struct axp288_extcon_info *info)
+ 					BC_GLOBAL_RUN, BC_GLOBAL_RUN);
+ }
+ 
++static void axp288_put_role_sw(void *data)
++{
++	struct axp288_extcon_info *info = data;
++
++	cancel_work_sync(&info->role_work);
++	usb_role_switch_put(info->role_sw);
++}
++
+ static int axp288_extcon_probe(struct platform_device *pdev)
+ {
+ 	struct axp288_extcon_info *info;
+ 	struct axp20x_dev *axp20x = dev_get_drvdata(pdev->dev.parent);
 +	struct device *dev = &pdev->dev;
-+	struct intel_xhci_usb_data *data;
-+	struct resource *res;
-+	resource_size_t size;
-+	int i, ret;
+ 	int ret, i, pirq;
+ 
+ 	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+@@ -245,9 +344,32 @@ static int axp288_extcon_probe(struct platform_device *pdev)
+ 	info->regmap = axp20x->regmap;
+ 	info->regmap_irqc = axp20x->regmap_irqc;
+ 	info->previous_cable = EXTCON_NONE;
++	INIT_WORK(&info->role_work, axp288_usb_role_work);
++	info->id_nb.notifier_call = axp288_extcon_id_evt;
+ 
+ 	platform_set_drvdata(pdev, info);
+ 
++	info->role_sw = usb_role_switch_get(dev);
++	if (IS_ERR(info->role_sw))
++		return PTR_ERR(info->role_sw);
++	if (info->role_sw) {
++		ret = devm_add_action_or_reset(dev, axp288_put_role_sw, info);
++		if (ret)
++			return ret;
 +
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
++		if (acpi_dev_present("INT3496", NULL, -1)) {
++			info->id_extcon = extcon_get_extcon_dev("INT3496:00");
++			if (!info->id_extcon)
++				return -EPROBE_DEFER;
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	size = (res->end + 1) - res->start;
-+	data->base = devm_ioremap_nocache(dev, res->start, size);
-+	if (IS_ERR(data->base)) {
-+		ret = PTR_ERR(data->base);
-+		dev_err(dev, "Error iomaping registers: %d\n", ret);
-+		return ret;
++			dev_info(dev, "controlling USB role\n");
++		} else {
++			dev_info(dev, "controlling USB role based on vbus presence\n");
++		}
 +	}
 +
-+	for (i = 0; i < ARRAY_SIZE(allow_userspace_ctrl_ids); i++)
-+		if (acpi_dev_present(allow_userspace_ctrl_ids[i].hid, "1",
-+				     allow_userspace_ctrl_ids[i].hrv))
-+			sw_desc.allow_userspace_control = true;
++	info->vbus_attach = axp288_get_vbus_attach(info);
 +
-+	platform_set_drvdata(pdev, data);
-+
-+	data->role_sw = usb_role_switch_register(dev, &sw_desc);
-+	if (IS_ERR(data->role_sw)) {
-+		ret = PTR_ERR(data->role_sw);
-+		dev_err(dev, "Error registering role-switch: %d\n", ret);
-+		return ret;
+ 	axp288_extcon_log_rsi(info);
+ 
+ 	/* Initialize extcon device */
+@@ -289,6 +411,19 @@ static int axp288_extcon_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	if (info->id_extcon) {
++		ret = devm_extcon_register_notifier_all(dev, info->id_extcon,
++							&info->id_nb);
++		if (ret)
++			return ret;
 +	}
 +
-+	return 0;
-+}
++	/* Make sure the role-sw is set correctly before doing BC detection */
++	if (info->role_sw) {
++		queue_work(system_long_wq, &info->role_work);
++		flush_work(&info->role_work);
++	}
 +
-+int intel_xhci_usb_remove(struct platform_device *pdev)
+ 	/* Start charger cable type detection */
+ 	axp288_extcon_enable(info);
+ 
+@@ -308,8 +443,32 @@ static struct platform_driver axp288_extcon_driver = {
+ 		.name = "axp288_extcon",
+ 	},
+ };
+-module_platform_driver(axp288_extcon_driver);
++
++static struct devcon axp288_extcon_role_sw_conn = {
++	.endpoint[0] = "axp288_extcon",
++	.endpoint[1] = "intel_xhci_usb_sw-role-switch",
++	.id = "usb-role-switch",
++};
++
++static int __init axp288_extcon_init(void)
 +{
-+	struct intel_xhci_usb_data *data = platform_get_drvdata(pdev);
++	if (x86_match_cpu(cherry_trail_cpu_ids))
++		add_device_connection(&axp288_extcon_role_sw_conn);
 +
-+	usb_role_switch_unregister(data->role_sw);
-+	return 0;
++	return platform_driver_register(&axp288_extcon_driver);
 +}
++module_init(axp288_extcon_init);
 +
-+static const struct platform_device_id intel_xhci_usb_table[] = {
-+	{ .name = DRV_NAME },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(platform, intel_xhci_usb_table);
++static void __exit axp288_extcon_exit(void)
++{
++	if (x86_match_cpu(cherry_trail_cpu_ids))
++		remove_device_connection(&axp288_extcon_role_sw_conn);
 +
-+static struct platform_driver intel_xhci_usb_driver = {
-+	.driver = {
-+		.name = DRV_NAME,
-+	},
-+	.id_table = intel_xhci_usb_table,
-+	.probe = intel_xhci_usb_probe,
-+	.remove = intel_xhci_usb_remove,
-+};
-+
-+module_platform_driver(intel_xhci_usb_driver);
-+
++	platform_driver_unregister(&axp288_extcon_driver);
++}
++module_exit(axp288_extcon_exit);
+ 
+ MODULE_AUTHOR("Ramakrishna Pallala <ramakrishna.pallala@intel.com>");
 +MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
-+MODULE_DESCRIPTION("Intel XHCI USB role switch driver");
-+MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("X-Powers AXP288 extcon driver");
+ MODULE_LICENSE("GPL v2");
 -- 
 2.14.3
