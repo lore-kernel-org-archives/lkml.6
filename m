@@ -1,99 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751111AbeBPSot (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 13:44:49 -0500
-Received: from chicot.dit.umontreal.ca ([132.204.13.19]:51662 "EHLO
-        chicot.dit.umontreal.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750817AbeBPSob (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 13:44:31 -0500
-From: Stefan Monnier <monnier@IRO.UMontreal.CA>
-To: Maxime Ripard <maxime.ripard@free-electrons.com> (maintainer:ARM/Allwinner
-        sunXi SoC support)
-Cc: Rob Herring <robh+dt@kernel.org> (maintainer:OPEN FIRMWARE AND
-        FLATTENED DEVICE TREE BINDINGS),
-        Mark Rutland <mark.rutland@arm.com> (maintainer:OPEN FIRMWARE AND
-        FLATTENED DEVICE TREE BINDINGS),
-        Russell King <linux@armlinux.org.uk> (maintainer:ARM PORT),
-        Chen-Yu Tsai <wens@csie.org> (maintainer:ARM/Allwinner sunXi SoC
-        support),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ARM: dts: sun7i: Enable HDMI support on the Banana Pi
-Message-ID: <jwvbmgoapat.fsf-monnier@gnu.org>
-Date: Fri, 16 Feb 2018 11:16:04 -0500
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-NAI-Spam-Flag: NO
-X-NAI-Spam-Threshold: 5
-X-NAI-Spam-Score: 0
-X-NAI-Spam-Rules: 2 Rules triggered
-        EDT_SA_DN_PASS=0, RV6224=0
-X-NAI-Spam-Version: 2.3.0.9418 : core <6224> : inlines <6404> : streams
- <1779159> : uri <2593957>
+        id S1751426AbeBPSrE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 13:47:04 -0500
+Received: from mga05.intel.com ([192.55.52.43]:42870 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750913AbeBPSrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 13:47:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,520,1511856000";
+   d="scan'208";a="204831562"
+From: Ashok Raj <ashok.raj@intel.com>
+To: bp@suse.de
+Cc: ashok.raj@intel.com, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] x86/microcode: Check microcode revision before updating sibling threads
+Date: Fri, 16 Feb 2018 10:46:48 -0800
+Message-Id: <1518806808-4074-1-git-send-email-ashok.raj@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Monnier <monnier@iro.umontreal.ca>
+After updating microcode on one of the threads in the core, the
+thread sibling automatically gets the update since the microcode
+resources are shared. Check the ucode revision on the cpu before
+performing a ucode update.
 
-Enable the display pipeline and HDMI output
-
-Signed-off-by: Stefan Monnier <monnier@iro.umontreal.ca>
+Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+Cc: X86 ML <x86@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 ---
- arch/arm/boot/dts/sun7i-a20-bananapi.dts | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ arch/x86/kernel/cpu/microcode/intel.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun7i-a20-bananapi.dts b/arch/arm/boot/dts/sun7i-a20-bananapi.dts
-index 88a1c2363c6c..45da8a282288 100644
---- a/arch/arm/boot/dts/sun7i-a20-bananapi.dts
-+++ b/arch/arm/boot/dts/sun7i-a20-bananapi.dts
-@@ -63,6 +63,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
+diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+index 09b95a7..5802c2f 100644
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -786,11 +786,21 @@ static enum ucode_state apply_microcode_intel(int cpu)
  
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
+ 	uci = ucode_cpu_info + cpu;
+ 	mc = uci->mc;
 +
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -109,6 +120,10 @@
- 		>;
- };
+ 	if (!mc) {
+ 		/* Look for a newer patch in our cache: */
+ 		mc = find_patch(uci);
+ 		if (!mc)
+ 			return UCODE_NFOUND;
++	} else {
++		rev = intel_get_microcode_revision();
++		/*
++		 * Its possible the microcode got udpated
++		 * because its sibling update was done earlier.
++		 * Skip the udpate in that case.
++		 */
++		if (rev == mc->hdr.rev)
++			goto done;
+ 	}
  
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -130,6 +145,16 @@
- 	};
- };
+ 	/* write microcode via MSR 0x79 */
+@@ -813,6 +823,7 @@ static enum ucode_state apply_microcode_intel(int cpu)
+ 		prev_rev = rev;
+ 	}
  
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &i2c0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c0_pins_a>;
++done:
+ 	c = &cpu_data(cpu);
+ 
+ 	uci->cpu_sig.rev = rev;
+-- 
+2.7.4
