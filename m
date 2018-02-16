@@ -1,49 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759040AbeBPRsx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 12:48:53 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:39762 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759025AbeBPRsw (ORCPT
+        id S1759068AbeBPRtv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 12:49:51 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.171]:20173 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1756576AbeBPRtt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 12:48:52 -0500
-X-Google-Smtp-Source: AH8x2244GpYuczweKLgL+HP5wXvXu4vNRyx2jaYzim4IteKGedUnb7bcSM2AivrDqOECvELwrnn9mg==
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH 2/3] x86/mm: introduce __PAGE_KERNEL_GLOBAL
-From: Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20180215132055.F341C31E@viggo.jf.intel.com>
-Date: Fri, 16 Feb 2018 09:47:49 -0800
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org,
-        torvalds@linux-foundation.org, keescook@google.com, hughd@google.com,
-        jgross@suse.com, x86@kernel.org
-Message-Id: <E0AB2852-C4E0-43D3-ABA7-34117A5516C1@gmail.com>
-References: <20180215132053.6C9B48C8@viggo.jf.intel.com>
- <20180215132055.F341C31E@viggo.jf.intel.com>
-To: Dave Hansen <dave.hansen@linux.intel.com>
-X-Mailer: Apple Mail (2.3273)
+        Fri, 16 Feb 2018 12:49:49 -0500
+Subject: Re: [PATCH v2] net: dsa: mv88e6xxx: hwtstamp: fix potential negative
+ array index read
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: Brandon Streiff <brandon.streiff@ni.com>, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180215183139.GA23076@embeddedor.com>
+ <20180216154846.7ge6seynwxjkopmp@localhost>
+ <20180216155617.ykf77vq45bxejfg3@localhost>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Message-ID: <bbfc4bb1-0fc3-daaa-1416-d60a370e6802@embeddedor.com>
+Date: Fri, 16 Feb 2018 11:49:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180216155617.ykf77vq45bxejfg3@localhost>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.4.238
+X-Source-L: No
+X-Exim-ID: 1emk8q-001VGv-Cv
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.66]) [189.175.4.238]:32838
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 13
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1GHn0VN002950
-
-Dave Hansen <dave.hansen@linux.intel.com> wrote:
-
-> 
-> From: Dave Hansen <dave.hansen@linux.intel.com>
-> 
-> Kernel mappings are historically _PAGE_GLOBAL.  But, with PTI, we do not
-> want them to be _PAGE_GLOBAL.  We currently accomplish this by simply
-> clearing _PAGE_GLOBAL from the suppotred mask which ensures it is
-> cleansed from many of our PTE construction sites:
-> 
->        if (!static_cpu_has(X86_FEATURE_PTI))
-> 	                __supported_pte_mask |= _PAGE_GLOBAL;
-> 
-> But, this also means that we now get *no* opportunity to use global
-> pages with PTI, even for data which is shared such as the cpu_entry_area
-> and entry/exit text.
 
 
-Doesn’t this patch change the kernel behavior when the “nopti” parameter is used?
+
+On 02/16/2018 09:56 AM, Richard Cochran wrote:
+> On Fri, Feb 16, 2018 at 07:48:46AM -0800, Richard Cochran wrote:
+>> On Thu, Feb 15, 2018 at 12:31:39PM -0600, Gustavo A. R. Silva wrote:
+>>> _port_ is being used as index to array port_hwtstamp before verifying
+>>> it is a non-negative number and a valid index at line 209 and 258:
+>>>
+>>> if (port < 0 || port >= mv88e6xxx_num_ports(chip))
+>>>
+>>> Fix this by checking _port_ before using it as index to array
+>>> port_hwtstamp.
+>>
+>> NAK.   Port is already known to be valid in the callers.
+> 
+> And so the real bug is the pointless range checking tests.  I would
+> welcome patches to remove those.
+> 
+
+I just sent a patch for this.
+
+Thank you both, Andrew and Richard for the feedback.
+--
+Gustavo
