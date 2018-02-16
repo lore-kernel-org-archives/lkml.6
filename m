@@ -1,71 +1,72 @@
-Date: Thu, 15 Feb 2018 18:37:20 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: sathyanarayan.kuppuswamy@linux.intel.com
-Cc: oneukum@suse.com, felipe.balbi@intel.com, heikki.krogerus@intel.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dominik Bozek <dominikx.bozek@intel.com>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>
+Return-Path: <sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Google-Smtp-Source: AH8x227av0HBK2C23tMBfIfbwoPwauIfN13OcmLAM5RSSROmVrKgdsAadzmy8enRDmt13mDVVl5l
+ARC-Seal: i=1; a=rsa-sha256; t=1518739381; cv=none;
+        d=google.com; s=arc-20160816;
+        b=zc45RAl9NQ1z/fhe165UVGmXNdneT9EFeXebtD+/bujoexLsQI/vg8eiNdvM43TRWu
+         FsvrQ2/osH3snHMC9/9E6Ya/wFVt0zOMfC1zYFaMyat3HR86U+WC/depxfpDU6wuaDP7
+         TFaDFJp8o5oOoafQlAKEtziem3Oz70Yq9EDVSsVpc/Ho0VVlzGuEmREM/xIvSIfbcm9z
+         UJj6XIT1aPld7a4YLOZIi1rv59fy+o+eS2iuRXoQPoWrWIRSsiYh/MwX8uZx3pKavCKw
+         Ew5pvzjxI+KwA8cu5fz+Du7l1cuf1lc5Uvi5Jfv9iuVZv7VesvHG2Kinf1t5qOs+sJ0d
+         LiBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:organization:from:references:cc:to
+         :subject:reply-to:arc-authentication-results;
+        bh=EloUTmZj49l/BhxnsntZwqB7s+irW6z+m8IZ8Pf/6ng=;
+        b=p7QXKqvqVj5LC2EByyjrMd+Vb1oUi9FlbbjCU0fSkf1xg8Ld6Dxp6ck2pXJ8LmI9tn
+         MoKjKDlS9CGtJr2jP2i/hHBOdpkbBGUWeKhnbbogiCxzrEuTrObRJG3OEc/yx2WzwFCB
+         3m+jTmcCSxdO+jj5t5vj+/eYZW8mcLSYqrkCVFCDUDWVa0HCTxM9op43MIB2V9c8dKaa
+         Z0+j3kcadmtfYe6pQrQnCBc9Yir4QdiLHVGnHpUrqxkJJt3YQrYUjJDKBjoI3nkvmKHr
+         EYqB1Bsxr23f5dQHat5/yB+nQKqkVmWbK0DUCDUdnTDA/hc+AgaePLIp6EXtEWbDBH3C
+         QJ9Q==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of sathyanarayanan.kuppuswamy@linux.intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=sathyanarayanan.kuppuswamy@linux.intel.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of sathyanarayanan.kuppuswamy@linux.intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=sathyanarayanan.kuppuswamy@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,518,1511856000";
+   d="scan'208";a="204644247"
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
 Subject: Re: [PATCH v1 1/1] usb: cdc_acm: prevent race at write to acm while
  system resumes
-Message-ID: <20180215173720.GA12311@kroah.com>
+To: Greg KH <gregkh@linuxfoundation.org>,
+ sathyanarayanan.kuppuswamy@linux.intel.com
+Cc: oneukum@suse.com, felipe.balbi@intel.com, heikki.krogerus@intel.com,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dominik Bozek <dominikx.bozek@intel.com>,
+ Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>
 References: <1518466503-36918-1-git-send-email-sathyanarayan.kuppuswamy@linux.intel.com>
+ <20180215173720.GA12311@kroah.com>
+From: sathyanarayanan kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <4d036ab4-1239-8afb-4eff-b4884006c326@linux.intel.com>
+Date: Thu, 15 Feb 2018 16:03:04 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518466503-36918-1-git-send-email-sathyanarayan.kuppuswamy@linux.intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180215173720.GA12311@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592227538406824462?=
+X-GMAIL-MSGID: =?utf-8?q?1592513666258626379?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 12:15:03PM -0800, sathyanarayan.kuppuswamy@linux.intel.com wrote:
-> From: Dominik Bozek <dominikx.bozek@intel.com>
-> 
-> ACM driver may accept data to transmit while system is not fully
-> resumed. In this case ACM driver buffers data and prepare URBs
-> on usb anchor list.
-> There is a little chance that two tasks put a char and initiate
-> acm_tty_flush_chars(). In such a case, driver will put one URB
-> twice on usb anchor list.
-> This patch also reset length of data before resue of a buffer.
-> This not only prevent sending rubbish, but also lower risc of race.
-> 
-> Without this patch we hit following kernel panic in one of our
-> stabilty/stress tests.
-> 
-> [   46.884442] *list_add double add*: new=ffff9b2ab7289330, prev=ffff9b2ab7289330, next=ffff9b2ab81e28e0.
-> [   46.884476] Modules linked in: hci_uart btbcm bluetooth rfkill_gpio igb_avb(O) cfg80211 snd_soc_sst_bxt_tdf8532 snd_soc_skl snd_soc_skl_ipc snd_soc_sst_ipc snd_soc_sst_dsp snd_soc_sst_acpi snd_soc_sst_match snd_hda_ext_core snd_hda_core trusty_timer trusty_wall trusty_log trusty_virtio trusty_ipc trusty_mem trusty_irq trusty virtio_ring virtio intel_ipu4_mmu_bxtB0 lib2600_mod_bxtB0 intel_ipu4_isys_mod_bxtB0 lib2600psys_mod_bxtB0 intel_ipu4_psys_mod_bxtB0 intel_ipu4_mod_bxtB0 intel_ipu4_wrapper_bxtB0 intel_ipu4_acpi videobuf2_dma_contig as3638 dw9714 lm3643 crlmodule smiapp smiapp_pll
-> [   46.884480] CPU: 1 PID: 33 Comm: kworker/u8:1 Tainted: G     U  W  O    4.9.56-quilt-2e5dc0ac-g618ed69ced6e-dirty #4
-> [   46.884489] Workqueue: events_unbound flush_to_ldisc
-> [   46.884494]  ffffb98ac012bb08 ffffffffad3e82e5 ffffb98ac012bb58 0000000000000000
-> [   46.884497]  ffffb98ac012bb48 ffffffffad0a23d1 00000024ad6374dd ffff9b2ab7289330
-> [   46.884500]  ffff9b2ab81e28e0 ffff9b2ab7289330 0000000000000002 0000000000000000
-> [   46.884501] Call Trace:
-> [   46.884507]  [<ffffffffad3e82e5>] dump_stack+0x67/0x92
-> [   46.884511]  [<ffffffffad0a23d1>] __warn+0xd1/0xf0
-> [   46.884513]  [<ffffffffad0a244f>] warn_slowpath_fmt+0x5f/0x80
-> [   46.884516]  [<ffffffffad407443>] __list_add+0xb3/0xc0
-> [   46.884521]  [<ffffffffad71133c>] *usb_anchor_urb*+0x4c/0xa0
-> [   46.884524]  [<ffffffffad782c6f>] *acm_tty_flush_chars*+0x8f/0xb0
-> [   46.884527]  [<ffffffffad782cd1>] *acm_tty_put_char*+0x41/0x100
-> [   46.884530]  [<ffffffffad4ced34>] tty_put_char+0x24/0x40
-> [   46.884533]  [<ffffffffad4d3bf5>] do_output_char+0xa5/0x200
-> [   46.884535]  [<ffffffffad4d3e98>] __process_echoes+0x148/0x290
-> [   46.884538]  [<ffffffffad4d654c>] n_tty_receive_buf_common+0x57c/0xb00
-> [   46.884541]  [<ffffffffad4d6ae4>] n_tty_receive_buf2+0x14/0x20
-> [   46.884543]  [<ffffffffad4d9662>] tty_ldisc_receive_buf+0x22/0x50
-> [   46.884545]  [<ffffffffad4d9c05>] flush_to_ldisc+0xc5/0xe0
-> [   46.884549]  [<ffffffffad0bcfe8>] process_one_work+0x148/0x440
-> [   46.884551]  [<ffffffffad0bdc19>] worker_thread+0x69/0x4a0
-> [   46.884554]  [<ffffffffad0bdbb0>] ? max_active_store+0x80/0x80
-> [   46.884556]  [<ffffffffad0c2e10>] kthread+0x110/0x130
-> [   46.884559]  [<ffffffffad0c2d00>] ? kthread_park+0x60/0x60
-> [   46.884563]  [<ffffffffadad9917>] ret_from_fork+0x27/0x40
-> [   46.884566] ---[ end trace 3bd599058b8a9eb3 ]---
-> 
-> Signed-off-by: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>
+Hi Greg,
 
-Why hasn't the author of this patch signed off on it?
 
-thanks,
+On 02/15/2018 09:37 AM, Greg KH wrote:
+> Why hasn't the author of this patch signed off on it?
+This patch has been initially submitted with Gerrit-ID and some custom 
+tags. During the scrubbing process of this unrelated details, I think 
+the automated script accidentally deleted the signed-off tag. Let me 
+confirm it with author and get back to you. Mostly I will submit a v2 
+with proper sign-off info.
 
-greg k-h
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
