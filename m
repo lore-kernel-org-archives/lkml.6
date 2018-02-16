@@ -1,73 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034517AbeBPOw0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 09:52:26 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:33190 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033381AbeBPOwX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:52:23 -0500
-X-Google-Smtp-Source: AH8x224BVfT95g/IWK20AvMKyTR6JGYP/F07Da7/j8g0bXPtAaNVp7Gb/G0OlBhqHmJbHdWcIBVtwk3OhlsYtF1fuaQ=
-MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0gowD179tVaAc_8Wy-pV=mAwsO1egs0DfCnA-eEWayJdw@mail.gmail.com>
-References: <20180209161456.18951-1-tony@atomide.com> <CAHp75VcSRxLZJxmqXWpAGypvZa6W2cEAiTF2muJWqdaOYu_TpA@mail.gmail.com>
- <CAJZ5v0gRtkBf7uu4C_k7ivNGo=JM0bB1PAdr_6Nbbs39OPevHw@mail.gmail.com>
- <CAHp75VcVNDV9FmPFTBHsJRoiHtOviwC68Wk+aCqhqteZw41ZzQ@mail.gmail.com> <CAJZ5v0gowD179tVaAc_8Wy-pV=mAwsO1egs0DfCnA-eEWayJdw@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 16 Feb 2018 16:52:22 +0200
-Message-ID: <CAHp75VdxsDiwi8uux3Q4vYhEO1P3w0sePVBcm38RvimKez8XAg@mail.gmail.com>
-Subject: Re: [PATCH] PM / wakeirq: Add wakeup name to dedicated wake irqs
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Tony Lindgren <tony@atomide.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1034538AbeBPOwn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 09:52:43 -0500
+Received: from smtp3-1.goneo.de ([85.220.129.38]:42656 "EHLO smtp3-1.goneo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1034503AbeBPOwk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 09:52:40 -0500
+X-Spam-Flag: NO
+X-Spam-Score: -2.801
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH 4/6] scripts: kernel-doc: support in-line comments on
+ nested structs/unions
+From: Markus Heiser <markus.heiser@darmarit.de>
+In-Reply-To: <a4f7680bf956e6c98f612bcfc7aa817c344ebdab.1518788761.git.mchehab@s-opensource.com>
+Date: Fri, 16 Feb 2018 15:52:33 +0100
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Jani Nikula <jani.nikula@intel.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <54EF06CB-C31F-476D-B674-579E9385D635@darmarit.de>
+References: <cover.1518788761.git.mchehab@s-opensource.com>
+ <cover.1518788761.git.mchehab@s-opensource.com>
+ <a4f7680bf956e6c98f612bcfc7aa817c344ebdab.1518788761.git.mchehab@s-opensource.com>
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 12:54 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Fri, Feb 16, 2018 at 11:39 AM, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->> On Fri, Feb 16, 2018 at 11:14 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
->>> On Wed, Feb 14, 2018 at 12:23 PM, Andy Shevchenko
->>> <andy.shevchenko@gmail.com> wrote:
 
->>> IMO it is somewhat excessive to put the entire sprintf() under a raw
->>> spinlock and it's not even necessary.
->>
->> It's a copy'n'paste of from the rest of functions there.
->
-> Fair enough. :-)
+> Am 16.02.2018 um 14:48 schrieb Mauro Carvalho Chehab <mchehab@s-opensource.com>:
+> 
+> The parser at kernel-doc rejects names with dots in the middle.
+> Fix it, in order to support nested structs/unions.
+> 
+> Tested-by: Jani Nikula <jani.nikula@intel.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+> ---
+> scripts/kernel-doc | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+> index fee8952037b1..06d7f3f2c094 100755
+> --- a/scripts/kernel-doc
+> +++ b/scripts/kernel-doc
+> @@ -363,7 +363,7 @@ my $doc_sect = $doc_com .
+> my $doc_content = $doc_com_body . '(.*)';
+> my $doc_block = $doc_com . 'DOC:\s*(.*)?';
+> my $doc_inline_start = '^\s*/\*\*\s*$';
+> -my $doc_inline_sect = '\s*\*\s*(@[\w\s]+):(.*)';
+> +my $doc_inline_sect = '\s*\*\s*(@\s*[\w][\w\.]*\s*):(.*)';
 
->>> The value can change any time after you've dropped the lock and in
->>> particular before the function returns, so why bother with locking?
->>> desc will not go away from under you at that point anyway.
->>
->> IIRC descriptor's content might be changed, or descriptor itself might
->> be gone (potential crash).
->
-> No, desc cannot go away at this point AFAICS due to the kernfs
-> refcounting.  And the lock is *inside* of the desc object anyway, so
-> it doesn't help really against that.
+Thanks!
 
-Oh, indeed.
+FWIW: added similar patch to python variant of kernel-doc:
 
-> The contents may change, but so what?
->
-> Effectively, you read an int and reading an int is atomic.  It may
-> change after that, but the lock doesn't prevent it from changing.  It
-> only prevents the change from being applied to it before you drop the
-> lock, but why do you care?
+https://github.com/return42/linuxdoc/commit/5c5da9a
 
-So, with explanations above, perhaps we can produce the patch to
-remove those locks from the rest?
+rendered example:
 
--- 
-With Best Regards,
-Andy Shevchenko
+  https://return42.github.io/linuxdoc/linuxdoc-howto/all-in-a-tumble.html#struct-my-long-struct
+
+-- Markus --
