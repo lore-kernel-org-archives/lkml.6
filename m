@@ -1,119 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966189AbeBPMLz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 07:11:55 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:32956 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965852AbeBPMKG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 07:10:06 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Brian Norris <briannorris@chromium.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, dianders@chromium.org,
-        Chris Zhong <zyw@rock-chips.com>, William wu <wulf@rock-chips.com>,
-        hl@rock-chips.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: [PATCH v3 2/6] dt-bindings: phy-rockchip-typec: deprecate some register properties.
-Date: Fri, 16 Feb 2018 13:09:52 +0100
-Message-Id: <20180216120956.19034-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180216120956.19034-1-enric.balletbo@collabora.com>
-References: <20180216120956.19034-1-enric.balletbo@collabora.com>
+        id S966213AbeBPMNN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 07:13:13 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39044 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965852AbeBPMNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 07:13:12 -0500
+Subject: Re: [PATCH v5 1/3] sched: Stop nohz stats when decayed
+To: Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org
+Cc: morten.rasmussen@foss.arm.com, brendan.jackman@arm.com,
+        dietmar.eggemann@arm.com
+References: <1518622006-16089-1-git-send-email-vincent.guittot@linaro.org>
+ <1518622006-16089-2-git-send-email-vincent.guittot@linaro.org>
+From: Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <44a7d9dc-f6f3-e003-44d6-b0c4aa7dc046@arm.com>
+Date: Fri, 16 Feb 2018 12:13:10 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1518622006-16089-2-git-send-email-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As now the following register properties are in the driver, document as
-deprecated these properties and recommend to not use them on new bindings.
+On 02/14/2018 03:26 PM, Vincent Guittot wrote:
+> Stopped the periodic update of blocked load when all idle CPUs have fully
+> decayed. We introduce a new nohz.has_blocked that reflect if some idle
+> CPUs has blocked load that have to be periodiccally updated. nohz.has_blocked
+> is set everytime that a Idle CPU can have blocked load and it is then clear
+> when no more blocked load has been detected during an update. We don't need
+> atomic operation but only to make cure of the right ordering when updating
+> nohz.idle_cpus_mask and nohz.has_blocked.
+> 
+> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> ---
+>  kernel/sched/fair.c  | 122 ++++++++++++++++++++++++++++++++++++++++++---------
+>  kernel/sched/sched.h |   1 +
+>  2 files changed, 102 insertions(+), 21 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 7af1fa9..5a6835e 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+>
+> [...]
+>> @@ -9374,6 +9427,22 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>  
+>  	SCHED_WARN_ON((flags & NOHZ_KICK_MASK) == NOHZ_BALANCE_KICK);
+>  
+> +	/*
+> +	 * We assume there will be no idle load after this update and clear
+> +	 * the has_blocked flag. If a cpu enters idle in the mean time, it will
+> +	 * set the has_blocked flag and trig another update of idle load.
+> +	 * Because a cpu that becomes idle, is added to idle_cpus_mask before
+> +	 * setting the flag, we are sure to not clear the state and not
+> +	 * check the load of an idle cpu.
+> +	 */
+> +	WRITE_ONCE(nohz.has_blocked, 0);
+> +
+> +	/*
+> +	 * Ensures that if we miss the CPU, we must see the has_blocked
+> +	 * store from nohz_balance_enter_idle().
+> +	 */
+> +	smp_mb();
+> +
+>  	for_each_cpu(balance_cpu, nohz.idle_cpus_mask) {
+>  		if (balance_cpu == this_cpu || !idle_cpu(balance_cpu))
+>  			continue;
+> @@ -9383,11 +9452,16 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>  		 * work being done for other cpus. Next load
+>  		 * balancing owner will pick it up.
+>  		 */
+> -		if (need_resched())
+> -			break;
+> +		if (need_resched()) {
+> +			has_blocked_load = true;
+> +			goto abort;
+> +		}
+>  
+>  		rq = cpu_rq(balance_cpu);
+>  
 
-The deprecated properties are:
+I'd say it's safe to do the following here. The flag is raised in
+nohz_balance_enter_idle() before the smp_mb(), so we won't skip a CPU
+that just got added to nohz.idle_cpus_mask.
 
-- rockchip,typec-conn-dir : the register of type-c connector direction
-- rockchip,usb3tousb2-en : the register of type-c force usb3 to usb2
-                           enable control.
-- rockchip,external-psm : the register of type-c phy external psm clock
-                          selection.
-- rockchip,pipe-status : the register of type-c phy pipe status.
+		/*
+		 * This cpu doesn't have any remaining blocked load, skip it.
+		 * It's sane to do this because this flag is raised in
+		 * nohz_balance_enter_idle()
+		 */
+		if ((flags & NOHZ_KICK_MASK) == NOHZ_STATS_KICK &&
+		    !rq->has_blocked_load)
+			continue;
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
-Changes since v2:
-- Apply the nit suggested by Heiko Stuebner.
-Changes since v1:
-- This patch is new on these series and is just a documentation update
-  due patch [1/6]
-
- .../devicetree/bindings/phy/phy-rockchip-typec.txt | 33 +++++-----------------
- 1 file changed, 7 insertions(+), 26 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt b/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
-index 6ea867e3176f..f95cd492d6fc 100644
---- a/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
-+++ b/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
-@@ -16,24 +16,6 @@ Required properties:
- 		 "uphy", "uphy-pipe", "uphy-tcphy"
-  - extcon : extcon specifier for the Power Delivery
- 
--Note, there are 2 type-c phys for RK3399, and they are almost identical, except
--these registers(description below), every register node contains 3 sections:
--offset, enable bit, write mask bit.
-- - rockchip,typec-conn-dir : the register of type-c connector direction,
--   for type-c phy0, it must be <0xe580 0 16>;
--   for type-c phy1, it must be <0xe58c 0 16>;
-- - rockchip,usb3tousb2-en : the register of type-c force usb3 to usb2 enable
--   control.
--   for type-c phy0, it must be <0xe580 3 19>;
--   for type-c phy1, it must be <0xe58c 3 19>;
-- - rockchip,external-psm : the register of type-c phy external psm clock
--   selection.
--   for type-c phy0, it must be <0xe588 14 30>;
--   for type-c phy1, it must be <0xe594 14 30>;
-- - rockchip,pipe-status : the register of type-c phy pipe status.
--   for type-c phy0, it must be <0xe5c0 0 0>;
--   for type-c phy1, it must be <0xe5c0 16 16>;
--
- Required nodes : a sub-node is required for each port the phy provides.
- 		 The sub-node name is used to identify dp or usb3 port,
- 		 and shall be the following entries:
-@@ -43,6 +25,13 @@ Required nodes : a sub-node is required for each port the phy provides.
- Required properties (port (child) node):
- - #phy-cells : must be 0, See ./phy-bindings.txt for details.
- 
-+Deprecated properties, do not use in new device tree sources, these
-+properties are determined by the compatible value:
-+ - rockchip,typec-conn-dir
-+ - rockchip,usb3tousb2-en
-+ - rockchip,external-psm
-+ - rockchip,pipe-status
-+
- Example:
- 	tcphy0: phy@ff7c0000 {
- 		compatible = "rockchip,rk3399-typec-phy";
-@@ -58,10 +47,6 @@ Example:
- 			 <&cru SRST_UPHY0_PIPE_L00>,
- 			 <&cru SRST_P_UPHY0_TCPHY>;
- 		reset-names = "uphy", "uphy-pipe", "uphy-tcphy";
--		rockchip,typec-conn-dir = <0xe580 0 16>;
--		rockchip,usb3tousb2-en = <0xe580 3 19>;
--		rockchip,external-psm = <0xe588 14 30>;
--		rockchip,pipe-status = <0xe5c0 0 0>;
- 
- 		tcphy0_dp: dp-port {
- 			#phy-cells = <0>;
-@@ -86,10 +71,6 @@ Example:
- 			 <&cru SRST_UPHY1_PIPE_L00>,
- 			 <&cru SRST_P_UPHY1_TCPHY>;
- 		reset-names = "uphy", "uphy-pipe", "uphy-tcphy";
--		rockchip,typec-conn-dir = <0xe58c 0 16>;
--		rockchip,usb3tousb2-en = <0xe58c 3 19>;
--		rockchip,external-psm = <0xe594 14 30>;
--		rockchip,pipe-status = <0xe5c0 16 16>;
- 
- 		tcphy1_dp: dp-port {
- 			#phy-cells = <0>;
--- 
-2.15.1
+> +		update_blocked_averages(rq->cpu);
+> +		has_blocked_load |= rq->has_blocked_load;
+> +
+>  		/*
+>  		 * If time for next balance is due,
+>  		 * do the balance.
+> @@ -9400,7 +9474,6 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>  			cpu_load_update_idle(rq);
+>  			rq_unlock_irq(rq, &rf);
+>  
+> -			update_blocked_averages(rq->cpu);
+>  			if (flags & NOHZ_BALANCE_KICK)
+>  				rebalance_domains(rq, CPU_IDLE);
+>  		}
+> @@ -9415,7 +9488,13 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>  	if (flags & NOHZ_BALANCE_KICK)
+>  		rebalance_domains(this_rq, CPU_IDLE);
+>  
+> -	nohz.next_stats = next_stats;
+> +	WRITE_ONCE(nohz.next_blocked,
+> +		now + msecs_to_jiffies(LOAD_AVG_PERIOD));
+> +
+> +abort:
+> +	/* There is still blocked load, enable periodic update */
+> +	if (has_blocked_load)
+> +		WRITE_ONCE(nohz.has_blocked, 1);
+>  
+>  	/*
+>  	 * next_balance will be updated only when there is a need.
