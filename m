@@ -1,110 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031078AbeBPP6n (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:58:43 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:33988 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753068AbeBPP6l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:58:41 -0500
-Date: Fri, 16 Feb 2018 16:58:37 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Tony Lindgren <tony@atomide.com>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 1/4] dt-bindings: sound: add motorola,cpcap-audio-codec
-Message-ID: <20180216155837.e57lt4dhc7wlryq6@earth.universe>
-References: <20180214220741.28306-1-sebastian.reichel@collabora.co.uk>
- <20180214220741.28306-2-sebastian.reichel@collabora.co.uk>
- <20180216113008.GB5886@sirena.org.uk>
- <20180216132537.lkd4wzfg7uuoyx7k@earth.universe>
- <20180216134448.GI5886@sirena.org.uk>
- <20180216141237.rd75sbix7bopi7zu@earth.universe>
- <20180216151609.GK5886@sirena.org.uk>
+        id S1031133AbeBPP7O (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:59:14 -0500
+Received: from mout.web.de ([212.227.17.12]:43723 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030647AbeBPP7M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 10:59:12 -0500
+Subject: [PATCH 2/3] pata_arasan_cf: Delete an unnecessary variable
+ initialisation in arasan_cf_probe()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-ide@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tejun Heo <tj@kernel.org>, Viresh Kumar <vireshk@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <d492f9d2-ed64-e858-441a-fa554369032c@users.sourceforge.net>
+Message-ID: <3b6bfa0f-3356-2fb9-07ae-bf52c1ccc47e@users.sourceforge.net>
+Date: Fri, 16 Feb 2018 16:59:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="dtydjqporgovqia7"
-Content-Disposition: inline
-In-Reply-To: <20180216151609.GK5886@sirena.org.uk>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <d492f9d2-ed64-e858-441a-fa554369032c@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:Sd0e6KrfF5fEHrCbbbetVXPkiH1eXf5GyGVGVOxpUwJ/E1W8TRz
+ HPE3ReSIzkYAnfC9gf7y659A9drTXb6IQr2YeZ+6taDnCqXCd4Lb/P3MvbsLq8OL6t0ivdE
+ GUujBYocNfrQYWm6vnd1CQ0o19LOPGuv2cyHdLWeqvIVJyhmDGrO98FtbLvseWVzQEUa183
+ J+MHuIqR0Gqd+UyPv/C1w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:RPtHQoKdhKw=:PzHTUALg45fn55dzSJiADv
+ M0wYblOoQSMsHA2xc4FgF1L4oNmivfLYHEEq1QcxRUBTa+53cL3xayFe0xKPKhVfCcQZhc0Eh
+ L70foyUKqEeHmv1JqQ64TCfNUX3d0khqi0gt00G1la21uvRxVfCz+WtTXEsh6PQAn6vuWU1nK
+ h7wQQCDFKYYbs8E916HoZb+NTLTTUp5xfGCoaNiJyzWoGRfPuDmGLDWT80qSuzGGzKhZ3XJTM
+ Cf+Tnbxird13hus+7PCKbVYug3jo6Bk9iRRjCIjnkHvhkkjyusn1qorK6OKQIqlkzxXLUcZBF
+ NTSzOsIIOFlcmFOpUqTWafq41ypF59rnsHm6f2hoybnyvsNE8srZx0fwT7p+y3Q0mEVjfrC4z
+ 3av54loiJQpOE2+WUqX6OdPnd4zvL0j15kpx5LDZ5A2KgCbXJXKTO+i+z1jn9pUz4BhT1sMcS
+ ZiGMaFv/o4X18MnGCt2S/rOLZUB0ciI36QtXSGswScNxB03QXsR54ree5UBH6TaVULU5nrIsm
+ ynsYrWbygy6HuG9lYTML85Hdvyh4mlsyAbmrG6L4tzh5I6UlKtZs+P0yVCcTrzu5HbDyZ/jZV
+ 72IQqnVtkkci2eDJVfVvxG88eEDbKBB2jPG5zG54AJO47XtGUSm5XGZaq/ErgXbhRNu1b36Ns
+ q/BltwI4SFopjpAJGv35DN7qGYxdFBaAGYvOjZW/3labum0hgCsq4Dg9AdsAVta3jTxR3HTHA
+ Dmcodk/fy/0YYjH4jxdkw26BRQWsRFVAa45d2CcQ6y17RWWuZiQiKg5Y/zOXf2Rgy5IU5QMYt
+ v5n/LP3jIcjxO3CmcX6So0INIPJ9oj+CWAIlxlKy3TfhzILg9A=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 16 Feb 2018 16:28:23 +0100
 
---dtydjqporgovqia7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The local variable "ret" will eventually be set to an appropriate value
+a bit later. Thus omit the explicit initialisation at the beginning.
 
-Hi,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/ata/pata_arasan_cf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Fri, Feb 16, 2018 at 03:16:09PM +0000, Mark Brown wrote:
-> On Fri, Feb 16, 2018 at 03:12:37PM +0100, Sebastian Reichel wrote:
-> > On Fri, Feb 16, 2018 at 01:44:48PM +0000, Mark Brown wrote:
-> > > On Fri, Feb 16, 2018 at 02:25:38PM +0100, Sebastian Reichel wrote:
->=20
-> > > > While it looks empty in the DT binding file, it's actually not empty
-> > > > once some standard properties are added to support audio-graph-card.
->=20
-> > > This tells me you're missing something in the binding defining the
-> > > DAIs and...
->=20
-> > Well it is described by the following document:
->=20
-> > Documentation/devicetree/bindings/sound/audio-graph-card.txt
->=20
-> You still need to say which DAIs exist on the device and how they are
-> identified - if there's only one DAI it's obviously easy but if a device
-> has multiple DAIs then there's some naming to do.
-
-Ok, I will add some more description of the codec's capabilities.
-
-> > > ...that still doesn't require a compatible here.
->=20
-> > I agree, that it's not required. Also the node is not required.
-> > Everything could be dumped into the main node. Many things are
-> > not required, but they make implementations easier and help in
-> > regards to DT readability and consistency. Having the compatible
-> > means, that all sub-functions _can_ be handled equally by the
-> > operating system. Not having the compatible means you _always_
-> > need special handling for the audio codec. This basically makes
-> > the codec node different for the simple purpose of "because it is
-> > not strictly required". If we have a compatible node, other
-> > operating systems can still decide to ignore it, right?
->=20
-> It's not just other operating systems, it's also other versions of
-> Linux we have to think about here. The most obvious issue with audio is
-> the clocking where the division between ASoC and clock APIs is not super
-> obvious and could easily change in the future.
-
-Which does not change my argument. Other handling in Linux is
-basically equal to other operating system. We don't loose anything
-by having a compatible available.
-
--- Sebastian
-
---dtydjqporgovqia7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqG/6gACgkQ2O7X88g7
-+ppy9w/+KxWpLExUDVnnFYwRUUsI6Owg6sDV567BqUMqbigA7Zbl3CfS346iOlnh
-cSGfLQQgTQIoR0oEeyb9eQPqQu9QBPW8KY2jdxc+4zfNInpZ0YmRKeAbDQaZGF2r
-Zqk/y7ZRgpIRw7IXmS7BxiS2WTLS8dmGOGxzA+StJZb8MmqNteAuZ5c/7S/IPD5H
-Ro315xkQct9oirM7ljRjRrumaEgagVmSJpmznQ4Ta0KGJ3ftm/eUrSjLYpYsQMAq
-ODqDTCfVqJlPlEZP024HUORXSQtkUyA060RNrX/NAk1YkaEm/gKuKdoyAQDIBaqo
-mEAhN6cqwC5DbFtVxk5sr7Y9nEAUYzb2ZzV4s1Bo2fITJdiPiaI3AqfP7R825F2r
-U0JFAd7PUhu3j7mm/RYXstFROrtwAhiwUjsKJOnC29tpJdtU5/jFQ3eCLDlBhRBp
-cVoArGV7nnDBECk6iKu4NwZYAHOpeGclY38cqy2gyTvLl3WnUjZd5cF0PSOUjaZT
-fmJmfzgKb6bxL9BNc5O5kfbepApMwvDDS/61YYVrrUGA+OYv96e3BLflQ0AY5ASJ
-l6Ovra3QJJRNE/aviYOmgURzW7p5D/7auY0c7I73Qto2/SQRsLtv+S7Y6eI7/0cp
-Kd99yMNCa4obhsAYmLgiIIlJIuCrPS8g5Mc2tS/uU5kl5IcOJxk=
-=ulJl
------END PGP SIGNATURE-----
-
---dtydjqporgovqia7--
+diff --git a/drivers/ata/pata_arasan_cf.c b/drivers/ata/pata_arasan_cf.c
+index be5fbcedecbf..ebecab8c3f36 100644
+--- a/drivers/ata/pata_arasan_cf.c
++++ b/drivers/ata/pata_arasan_cf.c
+@@ -796,7 +796,7 @@ static int arasan_cf_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	u32 quirk;
+ 	irq_handler_t irq_handler = NULL;
+-	int ret = 0;
++	int ret;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res)
+-- 
+2.16.1
