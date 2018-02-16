@@ -1,25 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753411AbeBPTS1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 14:18:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56020 "EHLO mail.kernel.org"
+        id S1753448AbeBPTSf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 14:18:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751008AbeBPTSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 14:18:17 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81422217CC
+        id S1753413AbeBPTS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 14:18:29 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1F8C217CA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Jiri Olsa <jolsa@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>, David Ahern <dsahern@gmail.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 05/41] perf tests: Fix dwarf unwind for stripped binaries
-Date: Fri, 16 Feb 2018 16:17:10 -0300
-Message-Id: <20180216191746.11095-6-acme@kernel.org>
+Subject: [PATCH 08/41] perf report: Add support to display group output for non group events
+Date: Fri, 16 Feb 2018 16:17:13 -0300
+Message-Id: <20180216191746.11095-9-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180216191746.11095-1-acme@kernel.org>
 References: <20180216191746.11095-1-acme@kernel.org>
@@ -27,207 +28,94 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Jiri Olsa <jolsa@redhat.com>
 
-When we strip the perf binary, dwarf unwind test stop
-to work. The reason is that strip will remove static
-function symbols, which we need to check for unwind.
+Add support to display group output for if non grouped events are
+detected and user forces --group option. Now for non-group events
+recorded like:
 
-This change will keep this test working in cases where
-the global symbols are put into dynamic symbol table,
-which is the case on x86. It still won't work on powerpc.
+  $ perf record -e 'cycles,instructions' ls
 
-Making those 5 local functions global, and adding
-'test_dwarf_unwind__' to their names.
+you can still get group output by using --group option
+in report:
 
-Committer testing:
-
-Before:
-
-  # perf test dwarf
-  58: DWARF unwind                               : Ok
-  # strip ~/bin/perf
-  # perf test dwarf
-  58: DWARF unwind                               : FAILED!
-  # perf test -v dwarf
-  58: DWARF unwind                               :
-  --- start ---
-  test child forked, pid 6590
-  unwind: thread map already set, dso=/home/acme/bin/perf
-  <SNIP>
-  unwind: access_mem addr 0x7ffce6c48098 val 48563f, offset 1144
-  unwind: test__dwarf_unwind:ip = 0x4a54e5 (0xa54e5)
-  got: test__dwarf_unwind 0xa54e5, expecting test__dwarf_unwind
-  unwind: '':ip = 0x4a50bb (0xa50bb)
-  failed: got unresolved address 0xa50bb
-  unwind failed
-  test child finished with -1
-  ---- end ----
-  DWARF unwind: FAILED!
+  $ perf report --group --stdio
+  ...
+  #         Overhead  Command  Shared Object     Symbol
+  # ................  .......  ................  ......................
   #
+      17.67%   0.00%  ls       libc-2.25.so      [.] _IO_do_write@@GLIB
+      15.59%  25.94%  ls       ls                [.] calculate_columns
+      15.41%  31.35%  ls       libc-2.25.so      [.] __strcoll_l
+  ...
 
-After:
+Committer note:
 
-  # perf test dwarf
-  58: DWARF unwind                               : Ok
-  # strip ~/bin/perf
-  # perf test dwarf
-  58: DWARF unwind                               : Ok
-  #
-  # perf test -v dwarf
-  58: DWARF unwind                               :
-  --- start ---
-  test child forked, pid 7219
-  unwind: thread map already set, dso=/home/acme/bin/perf
-  <SNIP>
-  unwind: access_mem addr 0x7fff007da2c8 val 48575f, offset 1144
-  unwind: test__arch_unwind_sample:ip = 0x589044 (0x189044)
-  got: test__arch_unwind_sample 0x189044, expecting test__arch_unwind_sample
-  unwind: test_dwarf_unwind__thread:ip = 0x4a52f7 (0xa52f7)
-  got: test_dwarf_unwind__thread 0xa52f7, expecting test_dwarf_unwind__thread
-  unwind: test_dwarf_unwind__compare:ip = 0x4a5468 (0xa5468)
-  got: test_dwarf_unwind__compare 0xa5468, expecting test_dwarf_unwind__compare
-  unwind: bsearch:ip = 0x7f6608ae94d8 (0x394d8)
-  got: bsearch 0x394d8, expecting bsearch
-  unwind: test_dwarf_unwind__krava_3:ip = 0x4a54d1 (0xa54d1)
-  got: test_dwarf_unwind__krava_3 0xa54d1, expecting test_dwarf_unwind__krava_3
-  unwind: test_dwarf_unwind__krava_2:ip = 0x4a550b (0xa550b)
-  got: test_dwarf_unwind__krava_2 0xa550b, expecting test_dwarf_unwind__krava_2
-  unwind: test_dwarf_unwind__krava_1:ip = 0x4a554b (0xa554b)
-  got: test_dwarf_unwind__krava_1 0xa554b, expecting test_dwarf_unwind__krava_1
-  unwind: test__dwarf_unwind:ip = 0x4a5605 (0xa5605)
-  got: test__dwarf_unwind 0xa5605, expecting test__dwarf_unwind
-  test child finished with 0
-  ---- end ----
-  DWARF unwind: Ok
-  #
+We should improve on this by making sure that the first line states that
+this is not a group, but since the user doesn't have to force group view
+when really using grouped events (e.g. '{cycles,instructions}'), the
+user better know what is being done...
 
+Requested-by: Stephane Eranian <eranian@google.com>
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Stephane Eranian <eranian@google.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180206181813.10943-17-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180209092734.GB20449@krava
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/dwarf-unwind.c | 46 +++++++++++++++++++++++++++--------------
- 1 file changed, 30 insertions(+), 16 deletions(-)
+ tools/perf/Documentation/perf-report.txt | 3 ++-
+ tools/perf/builtin-report.c              | 6 +++++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/tests/dwarf-unwind.c b/tools/perf/tests/dwarf-unwind.c
-index 260418969120..2f008067d989 100644
---- a/tools/perf/tests/dwarf-unwind.c
-+++ b/tools/perf/tests/dwarf-unwind.c
-@@ -37,6 +37,19 @@ static int init_live_machine(struct machine *machine)
- 						  mmap_handler, machine, true, 500);
- }
+diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
+index 907e505b6309..a76b871f78a6 100644
+--- a/tools/perf/Documentation/perf-report.txt
++++ b/tools/perf/Documentation/perf-report.txt
+@@ -354,7 +354,8 @@ OPTIONS
+         Path to objdump binary.
  
-+/*
-+ * We need to keep these functions global, despite the
-+ * fact that they are used only locally in this object,
-+ * in order to keep them around even if the binary is
-+ * stripped. If they are gone, the unwind check for
-+ * symbol fails.
-+ */
-+int test_dwarf_unwind__thread(struct thread *thread);
-+int test_dwarf_unwind__compare(void *p1, void *p2);
-+int test_dwarf_unwind__krava_3(struct thread *thread);
-+int test_dwarf_unwind__krava_2(struct thread *thread);
-+int test_dwarf_unwind__krava_1(struct thread *thread);
-+
- #define MAX_STACK 8
+ --group::
+-	Show event group information together.
++	Show event group information together. It forces group output also
++	if there are no groups defined in data file.
  
- static int unwind_entry(struct unwind_entry *entry, void *arg)
-@@ -45,12 +58,12 @@ static int unwind_entry(struct unwind_entry *entry, void *arg)
- 	char *symbol = entry->sym ? entry->sym->name : NULL;
- 	static const char *funcs[MAX_STACK] = {
- 		"test__arch_unwind_sample",
--		"unwind_thread",
--		"compare",
-+		"test_dwarf_unwind__thread",
-+		"test_dwarf_unwind__compare",
- 		"bsearch",
--		"krava_3",
--		"krava_2",
--		"krava_1",
-+		"test_dwarf_unwind__krava_3",
-+		"test_dwarf_unwind__krava_2",
-+		"test_dwarf_unwind__krava_1",
- 		"test__dwarf_unwind"
+ --demangle::
+ 	Demangle symbol names to human readable form. It's enabled by default,
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 8ef71669e7a0..1eedb1815c4c 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -938,6 +938,7 @@ int cmd_report(int argc, const char **argv)
+ 		"perf report [<options>]",
+ 		NULL
  	};
- 	/*
-@@ -77,7 +90,7 @@ static int unwind_entry(struct unwind_entry *entry, void *arg)
- 	return strcmp((const char *) symbol, funcs[idx]);
- }
++	bool group_set = false;
+ 	struct report report = {
+ 		.tool = {
+ 			.sample		 = process_sample_event,
+@@ -1057,7 +1058,7 @@ int cmd_report(int argc, const char **argv)
+ 		   "Specify disassembler style (e.g. -M intel for intel syntax)"),
+ 	OPT_BOOLEAN(0, "show-total-period", &symbol_conf.show_total_period,
+ 		    "Show a column with the sum of periods"),
+-	OPT_BOOLEAN(0, "group", &symbol_conf.event_group,
++	OPT_BOOLEAN_SET(0, "group", &symbol_conf.event_group, &group_set,
+ 		    "Show event group information together"),
+ 	OPT_CALLBACK_NOOPT('b', "branch-stack", &branch_mode, "",
+ 		    "use branch records for per branch histogram filling",
+@@ -1174,6 +1175,9 @@ int cmd_report(int argc, const char **argv)
+ 	has_br_stack = perf_header__has_feat(&session->header,
+ 					     HEADER_BRANCH_STACK);
  
--static noinline int unwind_thread(struct thread *thread)
-+noinline int test_dwarf_unwind__thread(struct thread *thread)
- {
- 	struct perf_sample sample;
- 	unsigned long cnt = 0;
-@@ -108,7 +121,7 @@ static noinline int unwind_thread(struct thread *thread)
++	if (group_set && !session->evlist->nr_groups)
++		perf_evlist__set_leader(session->evlist);
++
+ 	if (itrace_synth_opts.last_branch)
+ 		has_br_stack = true;
  
- static int global_unwind_retval = -INT_MAX;
- 
--static noinline int compare(void *p1, void *p2)
-+noinline int test_dwarf_unwind__compare(void *p1, void *p2)
- {
- 	/* Any possible value should be 'thread' */
- 	struct thread *thread = *(struct thread **)p1;
-@@ -117,17 +130,17 @@ static noinline int compare(void *p1, void *p2)
- 		/* Call unwinder twice for both callchain orders. */
- 		callchain_param.order = ORDER_CALLER;
- 
--		global_unwind_retval = unwind_thread(thread);
-+		global_unwind_retval = test_dwarf_unwind__thread(thread);
- 		if (!global_unwind_retval) {
- 			callchain_param.order = ORDER_CALLEE;
--			global_unwind_retval = unwind_thread(thread);
-+			global_unwind_retval = test_dwarf_unwind__thread(thread);
- 		}
- 	}
- 
- 	return p1 - p2;
- }
- 
--static noinline int krava_3(struct thread *thread)
-+noinline int test_dwarf_unwind__krava_3(struct thread *thread)
- {
- 	struct thread *array[2] = {thread, thread};
- 	void *fp = &bsearch;
-@@ -141,18 +154,19 @@ static noinline int krava_3(struct thread *thread)
- 			size_t, int (*)(void *, void *));
- 
- 	_bsearch = fp;
--	_bsearch(array, &thread, 2, sizeof(struct thread **), compare);
-+	_bsearch(array, &thread, 2, sizeof(struct thread **),
-+		 test_dwarf_unwind__compare);
- 	return global_unwind_retval;
- }
- 
--static noinline int krava_2(struct thread *thread)
-+noinline int test_dwarf_unwind__krava_2(struct thread *thread)
- {
--	return krava_3(thread);
-+	return test_dwarf_unwind__krava_3(thread);
- }
- 
--static noinline int krava_1(struct thread *thread)
-+noinline int test_dwarf_unwind__krava_1(struct thread *thread)
- {
--	return krava_2(thread);
-+	return test_dwarf_unwind__krava_2(thread);
- }
- 
- int test__dwarf_unwind(struct test *test __maybe_unused, int subtest __maybe_unused)
-@@ -189,7 +203,7 @@ int test__dwarf_unwind(struct test *test __maybe_unused, int subtest __maybe_unu
- 		goto out;
- 	}
- 
--	err = krava_1(thread);
-+	err = test_dwarf_unwind__krava_1(thread);
- 	thread__put(thread);
- 
-  out:
 -- 
 2.14.3
