@@ -1,411 +1,212 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933733AbeBPKna (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 05:43:30 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49654 "EHLO mx1.redhat.com"
+        id S933967AbeBPKqA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 05:46:00 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34782 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933696AbeBPKn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 05:43:26 -0500
+        id S933734AbeBPKna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 05:43:30 -0500
 From: Hans de Goede <hdegoede@redhat.com>
 To: Tejun Heo <tj@kernel.org>
 Cc: Hans de Goede <hdegoede@redhat.com>, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: [PATCH 02/12] usb: typec: Start using ERR_PTR
-Date: Fri, 16 Feb 2018 11:43:11 +0100
-Message-Id: <20180216104321.8259-3-hdegoede@redhat.com>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 06/12] usb: typec: tcpm: Use new Type-C switch/mux and usb-role-switch functions
+Date: Fri, 16 Feb 2018 11:43:15 +0100
+Message-Id: <20180216104321.8259-7-hdegoede@redhat.com>
 In-Reply-To: <20180216104321.8259-1-hdegoede@redhat.com>
 References: <20180216104321.8259-1-hdegoede@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Remove the unused (not implemented anywhere) tcpc_mux_dev abstraction
+and replace it with calling the new typec_set_orientation,
+usb_role_switch_set and typec_set_mode functions.
 
-In order to allow the USB Type-C Class driver take care of
-things like muxes and other possible dependencies for the
-port drivers, returning ERR_PTR instead of NULL from the
-registration functions in case of failure.
-
-The reason for taking over control of the muxes for example
-is because handling them in the port drivers would be just
-boilerplate.
-
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/usb/typec/tcpm.c      | 16 +++++++-------
- drivers/usb/typec/tps6598x.c  | 15 ++++++-------
- drivers/usb/typec/typec.c     | 49 +++++++++++++++++++------------------------
- drivers/usb/typec/ucsi/ucsi.c | 31 ++++++++++++++++-----------
- 4 files changed, 58 insertions(+), 53 deletions(-)
+ drivers/usb/typec/Kconfig           |  1 +
+ drivers/usb/typec/fusb302/fusb302.c |  1 -
+ drivers/usb/typec/tcpm.c            | 46 ++++++++++++++++++++++++++++---------
+ include/linux/usb/tcpm.h            | 10 --------
+ 4 files changed, 36 insertions(+), 22 deletions(-)
 
+diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
+index bcb2744c5977..a2a0684e7c82 100644
+--- a/drivers/usb/typec/Kconfig
++++ b/drivers/usb/typec/Kconfig
+@@ -48,6 +48,7 @@ if TYPEC
+ config TYPEC_TCPM
+ 	tristate "USB Type-C Port Controller Manager"
+ 	depends on USB
++	select USB_ROLE_SWITCH
+ 	help
+ 	  The Type-C Port Controller Manager provides a USB PD and USB Type-C
+ 	  state machine for use with Type-C Port Controllers.
+diff --git a/drivers/usb/typec/fusb302/fusb302.c b/drivers/usb/typec/fusb302/fusb302.c
+index 9ce4756adad6..b267b907bf24 100644
+--- a/drivers/usb/typec/fusb302/fusb302.c
++++ b/drivers/usb/typec/fusb302/fusb302.c
+@@ -1249,7 +1249,6 @@ static void init_tcpc_dev(struct tcpc_dev *fusb302_tcpc_dev)
+ 	fusb302_tcpc_dev->set_roles = tcpm_set_roles;
+ 	fusb302_tcpc_dev->start_drp_toggling = tcpm_start_drp_toggling;
+ 	fusb302_tcpc_dev->pd_transmit = tcpm_pd_transmit;
+-	fusb302_tcpc_dev->mux = NULL;
+ }
+ 
+ static const char * const cc_polarity_name[] = {
 diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-index f4d563ee7690..7cd28b700a7f 100644
+index 00ca2822432f..bfcaf6618a1f 100644
 --- a/drivers/usb/typec/tcpm.c
 +++ b/drivers/usb/typec/tcpm.c
-@@ -1044,7 +1044,7 @@ static int tcpm_pd_svdm(struct tcpm_port *port, const __le32 *payload, int cnt,
- 		break;
- 	case CMDT_RSP_ACK:
- 		/* silently drop message if we are not connected */
--		if (!port->partner)
-+		if (IS_ERR_OR_NULL(port->partner))
- 			break;
+@@ -20,6 +20,7 @@
+ #include <linux/usb/pd.h>
+ #include <linux/usb/pd_bdo.h>
+ #include <linux/usb/pd_vdo.h>
++#include <linux/usb/role.h>
+ #include <linux/usb/tcpm.h>
+ #include <linux/usb/typec.h>
+ #include <linux/workqueue.h>
+@@ -176,6 +177,7 @@ struct tcpm_port {
+ 	struct typec_port *typec_port;
  
- 		switch (cmd) {
-@@ -3743,8 +3743,8 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
+ 	struct tcpc_dev	*tcpc;
++	struct usb_role_switch *role_sw;
+ 
+ 	enum typec_role vconn_role;
+ 	enum typec_role pwr_role;
+@@ -618,18 +620,25 @@ void tcpm_pd_transmit_complete(struct tcpm_port *port,
+ EXPORT_SYMBOL_GPL(tcpm_pd_transmit_complete);
+ 
+ static int tcpm_mux_set(struct tcpm_port *port, enum tcpc_mux_mode mode,
+-			enum usb_role usb_role)
++			enum usb_role usb_role,
++			enum typec_orientation orientation)
+ {
+-	int ret = 0;
++	int ret;
+ 
+-	tcpm_log(port, "Requesting mux mode %d, usb-role %d, polarity %d",
+-		 mode, usb_role, port->polarity);
++	tcpm_log(port, "Requesting mux mode %d, usb-role %d, orientation %d",
++		 mode, usb_role, orientation);
+ 
+-	if (port->tcpc->mux)
+-		ret = port->tcpc->mux->set(port->tcpc->mux, mode, usb_role,
+-					   port->polarity);
++	ret = typec_set_orientation(port->typec_port, orientation);
++	if (ret)
++		return ret;
+ 
+-	return ret;
++	if (port->role_sw) {
++		ret = usb_role_switch_set_role(port->role_sw, usb_role);
++		if (ret)
++			return ret;
++	}
++
++	return typec_set_mode(port->typec_port, mode);
+ }
+ 
+ static int tcpm_set_polarity(struct tcpm_port *port,
+@@ -742,15 +751,21 @@ static int tcpm_set_attached_state(struct tcpm_port *port, bool attached)
+ static int tcpm_set_roles(struct tcpm_port *port, bool attached,
+ 			  enum typec_role role, enum typec_data_role data)
+ {
++	enum typec_orientation orientation;
+ 	enum usb_role usb_role;
+ 	int ret;
+ 
++	if (port->polarity == TYPEC_POLARITY_CC1)
++		orientation = TYPEC_ORIENTATION_NORMAL;
++	else
++		orientation = TYPEC_ORIENTATION_REVERSE;
++
+ 	if (data == TYPEC_HOST)
+ 		usb_role = USB_ROLE_HOST;
+ 	else
+ 		usb_role = USB_ROLE_DEVICE;
+ 
+-	ret = tcpm_mux_set(port, TYPEC_MUX_USB, usb_role);
++	ret = tcpm_mux_set(port, TYPEC_MUX_USB, usb_role, orientation);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -2097,7 +2112,8 @@ static int tcpm_src_attach(struct tcpm_port *port)
+ out_disable_pd:
+ 	port->tcpc->set_pd_rx(port->tcpc, false);
+ out_disable_mux:
+-	tcpm_mux_set(port, TYPEC_MUX_NONE, USB_ROLE_NONE);
++	tcpm_mux_set(port, TYPEC_MUX_NONE, USB_ROLE_NONE,
++		     TYPEC_ORIENTATION_NONE);
+ 	return ret;
+ }
+ 
+@@ -2141,7 +2157,8 @@ static void tcpm_reset_port(struct tcpm_port *port)
+ 	tcpm_init_vconn(port);
+ 	tcpm_set_current_limit(port, 0, 0);
+ 	tcpm_set_polarity(port, TYPEC_POLARITY_CC1);
+-	tcpm_mux_set(port, TYPEC_MUX_NONE, USB_ROLE_NONE);
++	tcpm_mux_set(port, TYPEC_MUX_NONE, USB_ROLE_NONE,
++		     TYPEC_ORIENTATION_NONE);
+ 	tcpm_set_attached_state(port, false);
+ 	port->try_src_count = 0;
+ 	port->try_snk_count = 0;
+@@ -3742,6 +3759,12 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
+ 	port->partner_desc.identity = &port->partner_ident;
  	port->port_type = tcpc->config->type;
  
++	port->role_sw = usb_role_switch_get(port->dev);
++	if (IS_ERR(port->role_sw)) {
++		err = PTR_ERR(port->role_sw);
++		goto out_destroy_wq;
++	}
++
  	port->typec_port = typec_register_port(port->dev, &port->typec_caps);
--	if (!port->typec_port) {
--		err = -ENOMEM;
-+	if (IS_ERR(port->typec_port)) {
-+		err = PTR_ERR(port->typec_port);
- 		goto out_destroy_wq;
- 	}
- 
-@@ -3753,15 +3753,17 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
- 
- 		i = 0;
- 		while (paltmode->svid && i < ARRAY_SIZE(port->port_altmode)) {
--			port->port_altmode[i] =
--			  typec_port_register_altmode(port->typec_port,
--						      paltmode);
--			if (!port->port_altmode[i]) {
-+			struct typec_altmode *alt;
-+
-+			alt = typec_port_register_altmode(port->typec_port,
-+							  paltmode);
-+			if (IS_ERR(alt)) {
- 				tcpm_log(port,
- 					 "%s: failed to register port alternate mode 0x%x",
- 					 dev_name(dev), paltmode->svid);
- 				break;
- 			}
-+			port->port_altmode[i] = alt;
- 			i++;
- 			paltmode++;
- 		}
-diff --git a/drivers/usb/typec/tps6598x.c b/drivers/usb/typec/tps6598x.c
-index 2719f5d382f7..37a15c14a6c6 100644
---- a/drivers/usb/typec/tps6598x.c
-+++ b/drivers/usb/typec/tps6598x.c
-@@ -158,15 +158,15 @@ static int tps6598x_connect(struct tps6598x *tps, u32 status)
- 		desc.identity = &tps->partner_identity;
- 	}
- 
--	tps->partner = typec_register_partner(tps->port, &desc);
--	if (!tps->partner)
--		return -ENODEV;
--
- 	typec_set_pwr_opmode(tps->port, mode);
- 	typec_set_pwr_role(tps->port, TPS_STATUS_PORTROLE(status));
- 	typec_set_vconn_role(tps->port, TPS_STATUS_VCONN(status));
- 	typec_set_data_role(tps->port, TPS_STATUS_DATAROLE(status));
- 
-+	tps->partner = typec_register_partner(tps->port, &desc);
-+	if (IS_ERR(tps->partner))
-+		return PTR_ERR(tps->partner);
-+
- 	if (desc.identity)
- 		typec_partner_set_identity(tps->partner);
- 
-@@ -175,7 +175,8 @@ static int tps6598x_connect(struct tps6598x *tps, u32 status)
- 
- static void tps6598x_disconnect(struct tps6598x *tps, u32 status)
- {
--	typec_unregister_partner(tps->partner);
-+	if (!IS_ERR(tps->partner))
-+		typec_unregister_partner(tps->partner);
- 	tps->partner = NULL;
- 	typec_set_pwr_opmode(tps->port, TYPEC_PWR_MODE_USB);
- 	typec_set_pwr_role(tps->port, TPS_STATUS_PORTROLE(status));
-@@ -418,8 +419,8 @@ static int tps6598x_probe(struct i2c_client *client)
- 	tps->typec_cap.prefer_role = TYPEC_NO_PREFERRED_ROLE;
- 
- 	tps->port = typec_register_port(&client->dev, &tps->typec_cap);
--	if (!tps->port)
--		return -ENODEV;
-+	if (IS_ERR(tps->port))
-+		return PTR_ERR(tps->port);
- 
- 	if (status & TPS_STATUS_PLUG_PRESENT) {
- 		ret = tps6598x_connect(tps, status);
-diff --git a/drivers/usb/typec/typec.c b/drivers/usb/typec/typec.c
-index 735726ced602..61214bdc185f 100644
---- a/drivers/usb/typec/typec.c
-+++ b/drivers/usb/typec/typec.c
-@@ -386,7 +386,7 @@ typec_register_altmode(struct device *parent,
- 
- 	alt = kzalloc(sizeof(*alt), GFP_KERNEL);
- 	if (!alt)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	alt->svid = desc->svid;
- 	alt->n_modes = desc->n_modes;
-@@ -402,7 +402,7 @@ typec_register_altmode(struct device *parent,
- 		dev_err(parent, "failed to register alternate mode (%d)\n",
- 			ret);
- 		put_device(&alt->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return alt;
-@@ -417,8 +417,7 @@ typec_register_altmode(struct device *parent,
-  */
- void typec_unregister_altmode(struct typec_altmode *alt)
- {
--	if (alt)
--		device_unregister(&alt->dev);
-+	device_unregister(&alt->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_altmode);
- 
-@@ -509,7 +508,7 @@ EXPORT_SYMBOL_GPL(typec_partner_register_altmode);
-  *
-  * Registers a device for USB Type-C Partner described in @desc.
-  *
-- * Returns handle to the partner on success or NULL on failure.
-+ * Returns handle to the partner on success or ERR_PTR on failure.
-  */
- struct typec_partner *typec_register_partner(struct typec_port *port,
- 					     struct typec_partner_desc *desc)
-@@ -519,7 +518,7 @@ struct typec_partner *typec_register_partner(struct typec_port *port,
- 
- 	partner = kzalloc(sizeof(*partner), GFP_KERNEL);
- 	if (!partner)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	partner->usb_pd = desc->usb_pd;
- 	partner->accessory = desc->accessory;
-@@ -542,7 +541,7 @@ struct typec_partner *typec_register_partner(struct typec_port *port,
- 	if (ret) {
- 		dev_err(&port->dev, "failed to register partner (%d)\n", ret);
- 		put_device(&partner->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return partner;
-@@ -557,8 +556,7 @@ EXPORT_SYMBOL_GPL(typec_register_partner);
-  */
- void typec_unregister_partner(struct typec_partner *partner)
- {
--	if (partner)
--		device_unregister(&partner->dev);
-+	device_unregister(&partner->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_partner);
- 
-@@ -587,7 +585,7 @@ static const struct device_type typec_plug_dev_type = {
-  * the plug lists in response to Discover Modes command need to be listed in an
-  * array in @desc.
-  *
-- * Returns handle to the alternate mode on success or NULL on failure.
-+ * Returns handle to the alternate mode on success or ERR_PTR on failure.
-  */
- struct typec_altmode *
- typec_plug_register_altmode(struct typec_plug *plug,
-@@ -606,7 +604,7 @@ EXPORT_SYMBOL_GPL(typec_plug_register_altmode);
-  * Cable Plug represents a plug with electronics in it that can response to USB
-  * Power Delivery SOP Prime or SOP Double Prime packages.
-  *
-- * Returns handle to the cable plug on success or NULL on failure.
-+ * Returns handle to the cable plug on success or ERR_PTR on failure.
-  */
- struct typec_plug *typec_register_plug(struct typec_cable *cable,
- 				       struct typec_plug_desc *desc)
-@@ -617,7 +615,7 @@ struct typec_plug *typec_register_plug(struct typec_cable *cable,
- 
- 	plug = kzalloc(sizeof(*plug), GFP_KERNEL);
- 	if (!plug)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	sprintf(name, "plug%d", desc->index);
- 
-@@ -631,7 +629,7 @@ struct typec_plug *typec_register_plug(struct typec_cable *cable,
- 	if (ret) {
- 		dev_err(&cable->dev, "failed to register plug (%d)\n", ret);
- 		put_device(&plug->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return plug;
-@@ -646,8 +644,7 @@ EXPORT_SYMBOL_GPL(typec_register_plug);
-  */
- void typec_unregister_plug(struct typec_plug *plug)
- {
--	if (plug)
--		device_unregister(&plug->dev);
-+	device_unregister(&plug->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_plug);
- 
-@@ -724,7 +721,7 @@ EXPORT_SYMBOL_GPL(typec_cable_set_identity);
-  * Registers a device for USB Type-C Cable described in @desc. The cable will be
-  * parent for the optional cable plug devises.
-  *
-- * Returns handle to the cable on success or NULL on failure.
-+ * Returns handle to the cable on success or ERR_PTR on failure.
-  */
- struct typec_cable *typec_register_cable(struct typec_port *port,
- 					 struct typec_cable_desc *desc)
-@@ -734,7 +731,7 @@ struct typec_cable *typec_register_cable(struct typec_port *port,
- 
- 	cable = kzalloc(sizeof(*cable), GFP_KERNEL);
- 	if (!cable)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	cable->type = desc->type;
- 	cable->active = desc->active;
-@@ -757,7 +754,7 @@ struct typec_cable *typec_register_cable(struct typec_port *port,
- 	if (ret) {
- 		dev_err(&port->dev, "failed to register cable (%d)\n", ret);
- 		put_device(&cable->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
- 	return cable;
-@@ -772,8 +769,7 @@ EXPORT_SYMBOL_GPL(typec_register_cable);
-  */
- void typec_unregister_cable(struct typec_cable *cable)
- {
--	if (cable)
--		device_unregister(&cable->dev);
-+	device_unregister(&cable->dev);
- }
- EXPORT_SYMBOL_GPL(typec_unregister_cable);
- 
-@@ -1256,7 +1252,7 @@ EXPORT_SYMBOL_GPL(typec_set_pwr_opmode);
-  * This routine is used to register an alternate mode that @port is capable of
-  * supporting.
-  *
-- * Returns handle to the alternate mode on success or NULL on failure.
-+ * Returns handle to the alternate mode on success or ERR_PTR on failure.
-  */
- struct typec_altmode *
- typec_port_register_altmode(struct typec_port *port,
-@@ -1273,7 +1269,7 @@ EXPORT_SYMBOL_GPL(typec_port_register_altmode);
-  *
-  * Registers a device for USB Type-C Port described in @cap.
-  *
-- * Returns handle to the port on success or NULL on failure.
-+ * Returns handle to the port on success or ERR_PTR on failure.
-  */
- struct typec_port *typec_register_port(struct device *parent,
- 				       const struct typec_capability *cap)
-@@ -1285,12 +1281,12 @@ struct typec_port *typec_register_port(struct device *parent,
- 
- 	port = kzalloc(sizeof(*port), GFP_KERNEL);
- 	if (!port)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	id = ida_simple_get(&typec_index_ida, 0, 0, GFP_KERNEL);
- 	if (id < 0) {
- 		kfree(port);
--		return NULL;
-+		return ERR_PTR(id);
- 	}
- 
- 	if (cap->type == TYPEC_PORT_DFP)
-@@ -1326,7 +1322,7 @@ struct typec_port *typec_register_port(struct device *parent,
- 	if (ret) {
- 		dev_err(parent, "failed to register port (%d)\n", ret);
- 		put_device(&port->dev);
--		return NULL;
-+		return ERR_PTR(ret);
- 	}
- 
+ 	if (IS_ERR(port->typec_port)) {
+ 		err = PTR_ERR(port->typec_port);
+@@ -3777,6 +3800,7 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
  	return port;
-@@ -1341,8 +1337,7 @@ EXPORT_SYMBOL_GPL(typec_register_port);
-  */
- void typec_unregister_port(struct typec_port *port)
- {
--	if (port)
--		device_unregister(&port->dev);
-+	device_unregister(&port->dev);
+ 
+ out_destroy_wq:
++	usb_role_switch_put(port->role_sw);
+ 	destroy_workqueue(port->wq);
+ 	return ERR_PTR(err);
  }
- EXPORT_SYMBOL_GPL(typec_unregister_port);
+diff --git a/include/linux/usb/tcpm.h b/include/linux/usb/tcpm.h
+index 268721bff2c1..fe3508e6e1df 100644
+--- a/include/linux/usb/tcpm.h
++++ b/include/linux/usb/tcpm.h
+@@ -16,7 +16,6 @@
+ #define __LINUX_USB_TCPM_H
  
-diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index 79046fe66426..69d544cfcd45 100644
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -260,38 +260,45 @@ static void ucsi_pwr_opmode_change(struct ucsi_connector *con)
+ #include <linux/bitops.h>
+-#include <linux/usb/role.h>
+ #include <linux/usb/typec.h>
+ #include "pd.h"
  
- static int ucsi_register_partner(struct ucsi_connector *con)
- {
--	struct typec_partner_desc partner;
-+	struct typec_partner_desc desc;
-+	struct typec_partner *partner;
+@@ -112,14 +111,6 @@ enum tcpc_mux_mode {
+ 			  TCPC_MUX_DP_ENABLED,
+ };
  
- 	if (con->partner)
- 		return 0;
+-struct tcpc_mux_dev {
+-	int (*set)(struct tcpc_mux_dev *dev, enum tcpc_mux_mode mux_mode,
+-		   enum usb_role usb_role,
+-		   enum typec_cc_polarity polarity);
+-	bool dfp_only;
+-	void *priv_data;
+-};
+-
+ /**
+  * struct tcpc_dev - Port configuration and callback functions
+  * @config:	Pointer to port configuration
+@@ -171,7 +162,6 @@ struct tcpc_dev {
+ 	int (*try_role)(struct tcpc_dev *dev, int role);
+ 	int (*pd_transmit)(struct tcpc_dev *dev, enum tcpm_transmit_type type,
+ 			   const struct pd_message *msg);
+-	struct tcpc_mux_dev *mux;
+ };
  
--	memset(&partner, 0, sizeof(partner));
-+	memset(&desc, 0, sizeof(desc));
- 
- 	switch (con->status.partner_type) {
- 	case UCSI_CONSTAT_PARTNER_TYPE_DEBUG:
--		partner.accessory = TYPEC_ACCESSORY_DEBUG;
-+		desc.accessory = TYPEC_ACCESSORY_DEBUG;
- 		break;
- 	case UCSI_CONSTAT_PARTNER_TYPE_AUDIO:
--		partner.accessory = TYPEC_ACCESSORY_AUDIO;
-+		desc.accessory = TYPEC_ACCESSORY_AUDIO;
- 		break;
- 	default:
- 		break;
- 	}
- 
--	partner.usb_pd = con->status.pwr_op_mode == UCSI_CONSTAT_PWR_OPMODE_PD;
-+	desc.usb_pd = con->status.pwr_op_mode == UCSI_CONSTAT_PWR_OPMODE_PD;
- 
--	con->partner = typec_register_partner(con->port, &partner);
--	if (!con->partner) {
--		dev_err(con->ucsi->dev, "con%d: failed to register partner\n",
--			con->num);
--		return -ENODEV;
-+	partner = typec_register_partner(con->port, &desc);
-+	if (IS_ERR(partner)) {
-+		dev_err(con->ucsi->dev,
-+			"con%d: failed to register partner (%ld)\n", con->num,
-+			PTR_ERR(partner));
-+		return PTR_ERR(partner);
- 	}
- 
-+	con->partner = partner;
-+
- 	return 0;
- }
- 
- static void ucsi_unregister_partner(struct ucsi_connector *con)
- {
-+	if (!con->partner)
-+		return;
-+
- 	typec_unregister_partner(con->partner);
- 	con->partner = NULL;
- }
-@@ -606,8 +613,8 @@ static int ucsi_register_port(struct ucsi *ucsi, int index)
- 
- 	/* Register the connector */
- 	con->port = typec_register_port(ucsi->dev, cap);
--	if (!con->port)
--		return -ENODEV;
-+	if (IS_ERR(con->port))
-+		return PTR_ERR(con->port);
- 
- 	/* Get the status */
- 	UCSI_CMD_GET_CONNECTOR_STATUS(ctrl, con->num);
+ struct tcpm_port;
 -- 
 2.14.3
