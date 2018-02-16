@@ -1,114 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933929AbeBPKpG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 05:45:06 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:47969 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933633AbeBPKpD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 05:45:03 -0500
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: linux-kernel@vger.kernel.org
-Cc: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-mtd@lists.infradead.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH] Update Boris Brezillon email address
-Date: Fri, 16 Feb 2018 11:44:49 +0100
-Message-Id: <20180216104449.15546-1-boris.brezillon@bootlin.com>
-X-Mailer: git-send-email 2.14.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S933949AbeBPKpm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 05:45:42 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54224 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933737AbeBPKnb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 05:43:31 -0500
+From: Hans de Goede <hdegoede@redhat.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 07/12] xhci: Add option to get next extended capability in list by passing id = 0
+Date: Fri, 16 Feb 2018 11:43:16 +0100
+Message-Id: <20180216104321.8259-8-hdegoede@redhat.com>
+In-Reply-To: <20180216104321.8259-1-hdegoede@redhat.com>
+References: <20180216104321.8259-1-hdegoede@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Free Electrons is now Bootlin.
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
----
-Note that I'm planning to take this patch through the MTD tree.
----
- .mailmap    |  7 ++++---
- MAINTAINERS | 10 +++++-----
- 2 files changed, 9 insertions(+), 8 deletions(-)
+Modify xhci_find_next_ext_cap(base, offset, id) to return the next
+capability offset if 0 is passed for id. Otherwise it will behave as
+previously and return the offset of the next capability with matching id
 
-diff --git a/.mailmap b/.mailmap
-index e18cab73e209..50c1d6bf36b2 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -33,9 +33,10 @@ Axel Lin <axel.lin@gmail.com>
- Ben Gardner <bgardner@wabtec.com>
- Ben M Cahill <ben.m.cahill@intel.com>
- Björn Steinbrink <B.Steinbrink@gmx.de>
--Boris Brezillon <boris.brezillon@free-electrons.com>
--Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon.dev@gmail.com>
--Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon@overkiz.com>
-+Boris Brezillon <boris.brezillon@bootlin.com>
-+Boris Brezillon <boris.brezillon@bootlin.com> <boris.brezillon@free-electrons.com>
-+Boris Brezillon <boris.brezillon@bootlin.com> <b.brezillon.dev@gmail.com>
-+Boris Brezillon <boris.brezillon@bootlin.com> <b.brezillon@overkiz.com>
- Brian Avery <b.avery@hp.com>
- Brian King <brking@us.ibm.com>
- Christoph Hellwig <hch@lst.de>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 34b2e9ed6d3d..38fcbabbc55b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1232,7 +1232,7 @@ F:	arch/arm/boot/dts/aspeed-*
- F:	drivers/*/*aspeed*
+capability id 0 is not used by xhci (reserved)
+
+This is useful when we want to loop through all capabilities.
+
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/usb/host/xhci-ext-caps.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-ext-caps.h b/drivers/usb/host/xhci-ext-caps.h
+index bf7316e130d3..631e7cc62604 100644
+--- a/drivers/usb/host/xhci-ext-caps.h
++++ b/drivers/usb/host/xhci-ext-caps.h
+@@ -84,7 +84,8 @@
+  * @base	PCI MMIO registers base address.
+  * @start	address at which to start looking, (0 or HCC_PARAMS to start at
+  *		beginning of list)
+- * @id		Extended capability ID to search for.
++ * @id		Extended capability ID to search for, or 0 for the next
++ *		capability
+  *
+  * Returns the offset of the next matching extended capability structure.
+  * Some capabilities can occur several times, e.g., the XHCI_EXT_CAPS_PROTOCOL,
+@@ -110,7 +111,7 @@ static inline int xhci_find_next_ext_cap(void __iomem *base, u32 start, int id)
+ 		val = readl(base + offset);
+ 		if (val == ~0)
+ 			return 0;
+-		if (XHCI_EXT_CAPS_ID(val) == id && offset != start)
++		if (offset != start && (id == 0 || XHCI_EXT_CAPS_ID(val) == id))
+ 			return offset;
  
- ARM/ATMEL AT91 Clock Support
--M:	Boris Brezillon <boris.brezillon@free-electrons.com>
-+M:	Boris Brezillon <boris.brezillon@bootlin.com>
- S:	Maintained
- F:	drivers/clk/at91
- 
-@@ -4644,7 +4644,7 @@ F:	Documentation/gpu/meson.rst
- T:	git git://anongit.freedesktop.org/drm/drm-misc
- 
- DRM DRIVERS FOR ATMEL HLCDC
--M:	Boris Brezillon <boris.brezillon@free-electrons.com>
-+M:	Boris Brezillon <boris.brezillon@bootlin.com>
- L:	dri-devel@lists.freedesktop.org
- S:	Supported
- F:	drivers/gpu/drm/atmel-hlcdc/
-@@ -8412,7 +8412,7 @@ F:	include/uapi/drm/armada_drm.h
- F:	Documentation/devicetree/bindings/display/armada/
- 
- MARVELL CRYPTO DRIVER
--M:	Boris Brezillon <boris.brezillon@free-electrons.com>
-+M:	Boris Brezillon <boris.brezillon@bootlin.com>
- M:	Arnaud Ebalard <arno@natisbad.org>
- F:	drivers/crypto/marvell/
- S:	Maintained
-@@ -9034,7 +9034,7 @@ F:	mm/
- MEMORY TECHNOLOGY DEVICES (MTD)
- M:	David Woodhouse <dwmw2@infradead.org>
- M:	Brian Norris <computersforpeace@gmail.com>
--M:	Boris Brezillon <boris.brezillon@free-electrons.com>
-+M:	Boris Brezillon <boris.brezillon@bootlin.com>
- M:	Marek Vasut <marek.vasut@gmail.com>
- M:	Richard Weinberger <richard@nod.at>
- M:	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-@@ -9452,7 +9452,7 @@ S:	Supported
- F:	drivers/net/ethernet/myricom/myri10ge/
- 
- NAND FLASH SUBSYSTEM
--M:	Boris Brezillon <boris.brezillon@free-electrons.com>
-+M:	Boris Brezillon <boris.brezillon@bootlin.com>
- R:	Richard Weinberger <richard@nod.at>
- L:	linux-mtd@lists.infradead.org
- W:	http://www.linux-mtd.infradead.org/
+ 		next = XHCI_EXT_CAPS_NEXT(val);
 -- 
-2.14.1
+2.14.3
