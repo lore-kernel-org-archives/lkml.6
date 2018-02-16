@@ -1,346 +1,126 @@
-Return-Path: <rdunlap@infradead.org>
-X-Google-Smtp-Source: AH8x227RA5DH5OQDnfk6khkBkC/ZgVGa4SeAu7ko6shpEqs+GQms7pj6TsHY+crGFw6ZSf9VqFRa
-ARC-Seal: i=1; a=rsa-sha256; t=1518826705; cv=none;
-        d=google.com; s=arc-20160816;
-        b=OQMNB95/94UAWC9blq+IO8Az3e70SDF539jfaePHbSP8qYami5on6JA28EH/GkRFIA
-         LyrH/Ngb6/QoaGYGhp75kk/mjfxLd6CpAKHjNB7uN2mSa5cwnd9o2nBMW6+Bv4XNe805
-         xxQs425CnS14AOLdgdF0Lk8lACOyyMUQvV8QlR+fu86hIVAdEenfk+9n9dmzggS6KIoP
-         Y4m8exC/IOBkOHuH6wwnfbRGJP+hWSuSuvqBNe74kidrcEi6lmOpb/Q6Ngx+aJ7vAZpO
-         U5bnqN46cEMDss7wdRQPU7NFWvrsn+/tax9rj179wxpAEbNthFIhN2RpMqEjUhyt5fXL
-         1yVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:mime-version:user-agent
-         :date:message-id:subject:from:cc:to:dkim-signature
-         :arc-authentication-results;
-        bh=NJ1tY1rRJxw4JBTC7JL2bZ3B7jOMKzXvDmO903Os4zg=;
-        b=WbZA4712sHL5KxvAxDTOflhm/n7iHNJ/ZTZMyb/UHd658Bx3P6gTnxKpn3WCfIiwZr
-         on8uoxW+BL9FMPwMMdNUFkQLNxltUWzNmnTZrVI3PicoADZkaWafgeZ7iF/zCDNSWgcR
-         sJ9h2EdfmU2AJI+e68AHg/Hvp+DFf4w4iYlr+eQ2ZYs3hlTzsZ7CRuuCDZfAOXkqVR86
-         GmyWGoQGBvzwj5mn4h1N8UyeTMKlUiwrIKbWbbGJGLxXSVSghVjE4U1DLENZx4FwJJHb
-         BrrwCXTsYjwJQhv95h1OFll17kJ/m1HTvRSL3dKMzAexM5+pR0woQNZTFzE9B4nNgfLF
-         S2Ig==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=j19iYUxB;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2001:8b0:10b:1231::1 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=j19iYUxB;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2001:8b0:10b:1231::1 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
-To: Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Michael Ellerman <mpe@ellerman.id.au>, Fengguang Wu
- <fengguang.wu@intel.com>, Ingo Molnar <mingo@redhat.com>,
- Wei Yongjun <weiyongjun1@huawei.com>, Luis Rodriguez <mcgrof@kernel.org>,
- Mimi Zohar <zohar@linux.vnet.ibm.com>,
- John Johansen <john.johansen@canonical.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v2/rollup] headers: untangle kmemleak.h from mm.h
-Message-ID: <e4309f98-3749-93e1-4bb7-d9501a39d015@infradead.org>
-Date: Fri, 16 Feb 2018 16:17:59 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1149420-1518817618-2-8480232399102450741
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES daensv, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518817617; b=kBIqbuGG0Q6aequVJp4qiRBSVtlCRylofE/iDdUffBL4uHv
+    +agYG7+KAV6gpaIV1Nw6tYUQ+GTlfKG3MeETBo9kAPfEYzTIoAcIV+NA5ezD9cTf
+    KGSHVKcWim1juNEb1K5vfl4pK1bI98Tib3zFrVY3GDv6vVwzRZvl3LHFYfro7h8N
+    dd46WRdmImvmuS3bNeUCFMxXfWDG5ttbSs/4UeqZgN3TakRMI3LxouvG9qLrgWr5
+    7G3z8HR7fy9rBPp6jV3L4Opjnz/Yj+2JstM5FbBMMeQwDz4lDETgTZnqMTcZXpSM
+    2Kf28y/lPWTZlQc3YuY2AEIqn6XBM6pz9wEOxug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518817617; bh=t
+    YL1KEXFLudodbExqC3cXfjoqM1tqCKcyAYPcEPGnJ4=; b=r9dKYFQaf4mml/x3O
+    UqN+na70x9DjNOFFyOcQmHg+AA8faRXM9GajrquVHh/PcKEGFrDI910wL7yCnc9T
+    6HoIoXd5aJmarx4fvth2oPFgfX0iVsVMCI4/6dcJG4H0vm/BdUCYd6ZAbdDBhVQZ
+    GJJNkfwROVuqOJJWuKFWd2vmjjF7i4EDY9jGPy5icvggs/wQBGBkSjZlRnPRqj9w
+    0+3bFt3/zb4mbFtO9qFGmbt7011Sc9Av4XUYZyUkQnmpylqdIuAogAOaLNYlsex1
+    MXMZ0QdLnp/ghphlg+iXgX56jPdWO8cjvKbjb8d6/sio3ELdyHJKu98Us/3QdqeO
+    7R+Ng==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Quytelda Kahja <quytelda@tamalin.org>
+To: gregkh@linuxfoundation.org,
+	tulup@mail.ru,
+	stephen@networkplumber.org
+Subject: [PATCH 2/2] Staging: gdm724x: LTE: Fix argument list not aligned with
+ parenthesis.
+Date: Fri, 16 Feb 2018 13:46:23 -0800
+Message-Id: <20180216214623.17656-1-quytelda@tamalin.org>
+X-Mailer: git-send-email 2.16.1
+X-Provags-ID: V03:K0:pDCpJ2brZQkXpYX6icVrbyDfejNvWGaKFVKMqAHgLkYIhZrHEty
+ Yu+3+r0BdiQQW+bVFkt2BakRZ+PKsTc8z8QbBRCFMKdaWc9xSX9e9n7PkczzO7kiZfm+zFi
+ XYzu6ma6OjHyNipNQcsx8eXl0/9MlEBwazfREfxGcHF3FNM+HHgfSkZQIGV98YMw4zc4yXg
+ QvC8vd0SwwSEOHWjdT0Tg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:mPs8JDmIYB4=:O4hFAi0WhoegjssYE7/H2R
+ 2XogwntiHBrUTZfGD5QOycWj9NGqlR+REaEsgF2qQRGq4iQkFgTyL+VayyMM7usq19C896jo6
+ aMrTbbZIStPd26ZKO2ABUw3YeiAVV0b+C/y9xleBwwukZZ6idI/R17w1tn9E17l1HxzTlS1is
+ WfHaeJ9GOmD+QTOD3N+cPVQAodRYNBQ0v676ENY1bvTRvK640ouh/KnFQ2Taalot5O3HQyz+A
+ iHfteF+E1BoPGiIk9zpaH0Tk94BWFCO5cicitQt5XHO08/9bW5U06DN1k8J0XwIQnyRXBx62i
+ I0lNnu4Gw2Lc63Li11nM7hD2NiatYbqJ97w/ckpHmOiARc31lgMM1ZVz2QPjTJ9/G2xSdLahy
+ mNE43tcZSmcDf3s52CXLOBqcJP6Qa+Kz2wYuX2+IAjy/UJ7+kXwWsLIsxlpb4oxFVkrLY1FoN
+ tLo678nqD5oskBAME9jOPYKNEcxHLBJXgyPl0z3FJ5HC/6teecUDHdkNt1iZScdFlr5SSHsim
+ Y5YNIc4rJDesXPkZbk/NSHr2eZr5094B8jLkLHAg+iDMNg5yUqSzjR3pCt9YB9bKuvVatBGqQ
+ /dj5rhTDdmpUNqLGbtmEcQt4pbKK8yfhKNp17/Bvt7fsCvWD4u1FD9Eeg3OjrP7+5fZk7RH5G
+ hG/RbIbyG6gXPOItkfYBP+VMh/AmzJ/Gwe839UgAliaflGPQ0mELj6KGa649Zteff3k4Ok4KU
+ m7GDcX1vzakHAufE3DRTd/IlNuU88bdJthvWjg==
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Quytelda Kahja <quytelda@tamalin.org>,
+ linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592605231408079621?=
-X-GMAIL-MSGID: =?utf-8?q?1592605231408079621?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Fix coding style warning from checkpatch.pl.
 
-Currently <linux/slab.h> #includes <linux/kmemleak.h> for no obvious
-reason. It looks like it's only a convenience, so remove kmemleak.h
-from slab.h and add <linux/kmemleak.h> to any users of kmemleak_*
-that don't already #include it.
-Also remove <linux/kmemleak.h> from source files that do not use it.
-
-This is tested on i386 allmodconfig and x86_64 allmodconfig. It
-would be good to run it through the 0day bot for other $ARCHes.
-I have neither the horsepower nor the storage space for the other
-$ARCHes.
-
-Update: This patch has been extensively build-tested by both the 0day
-bot & kisskb/ozlabs build farms. Both of them reported 2 build failures
-for which patches are included here (in v2).
-
-[slab.h is the second most used header file after module.h; kernel.h
-is right there with slab.h. There could be some minor error in the
-counting due to some #includes having comments after them and I
-didn't combine all of those.]
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Luis R. Rodriguez <mcgrof@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: John Johansen <john.johansen@canonical.com>
-Link: http://kisskb.ellerman.id.au/kisskb/head/13396/
-Reported-by: Michael Ellerman <mpe@ellerman.id.au> # 2 build failures
-Reported-by: Fengguang Wu <fengguang.wu@intel.com> # 2 build failures
+Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
+ drivers/staging/gdm724x/gdm_lte.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-v2: add patches for build failures in lib/test_firmware.c and
-    security/integrity/digsig.c.
-  + add Ingo's Reviewed-by: tag.
+diff --git a/drivers/staging/gdm724x/gdm_lte.c b/drivers/staging/gdm724x/gdm_lte.c
+index ff3fed9c4a81..26a81fdd0044 100644
+--- a/drivers/staging/gdm724x/gdm_lte.c
++++ b/drivers/staging/gdm724x/gdm_lte.c
+@@ -311,7 +311,8 @@ static int gdm_lte_emulate_ndp(struct sk_buff *skb_in, u32 nic_type)
+ 		       sizeof(struct neighbour_advertisement));
+ 
+ 		icmp6_out.icmp6_cksum = icmp6_checksum(&ipv6_out,
+-					(u16 *)icmp_na, sizeof(icmp_na));
++						       (u16 *)icmp_na,
++						       sizeof(icmp_na));
+ 	} else {
+ 		return -EINVAL;
+ 	}
+-- 
+2.16.1
 
- arch/powerpc/sysdev/dart_iommu.c                          |    1 +
- arch/powerpc/sysdev/msi_bitmap.c                          |    1 +
- arch/s390/kernel/nmi.c                                    |    2 +-
- arch/s390/kernel/smp.c                                    |    1 -
- arch/sparc/kernel/irq_64.c                                |    1 -
- arch/x86/kernel/pci-dma.c                                 |    1 -
- drivers/iommu/exynos-iommu.c                              |    1 +
- drivers/iommu/mtk_iommu_v1.c                              |    1 -
- drivers/net/ethernet/ti/cpsw.c                            |    1 +
- drivers/net/wireless/realtek/rtlwifi/pci.c                |    1 -
- drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c |    1 -
- drivers/staging/rtl8188eu/hal/fw.c                        |    2 +-
- drivers/staging/rtlwifi/pci.c                             |    1 -
- drivers/virtio/virtio_ring.c                              |    1 -
- include/linux/slab.h                                      |    1 -
- kernel/ucount.c                                           |    1 +
- lib/test_firmware.c                                       |    1 +
- mm/cma.c                                                  |    1 +
- mm/memblock.c                                             |    1 +
- net/core/sysctl_net_core.c                                |    1 -
- net/ipv4/route.c                                          |    1 -
- security/apparmor/lsm.c                                   |    1 -
- security/integrity/digsig.c                               |    1 +
- 23 files changed, 11 insertions(+), 14 deletions(-)
-
---- lnx-416-rc1.orig/include/linux/slab.h
-+++ lnx-416-rc1/include/linux/slab.h
-@@ -125,7 +125,6 @@
- #define ZERO_OR_NULL_PTR(x) ((unsigned long)(x) <= \
- 				(unsigned long)ZERO_SIZE_PTR)
- 
--#include <linux/kmemleak.h>
- #include <linux/kasan.h>
- 
- struct mem_cgroup;
---- lnx-416-rc1.orig/kernel/ucount.c
-+++ lnx-416-rc1/kernel/ucount.c
-@@ -10,6 +10,7 @@
- #include <linux/slab.h>
- #include <linux/cred.h>
- #include <linux/hash.h>
-+#include <linux/kmemleak.h>
- #include <linux/user_namespace.h>
- 
- #define UCOUNTS_HASHTABLE_BITS 10
---- lnx-416-rc1.orig/mm/memblock.c
-+++ lnx-416-rc1/mm/memblock.c
-@@ -17,6 +17,7 @@
- #include <linux/poison.h>
- #include <linux/pfn.h>
- #include <linux/debugfs.h>
-+#include <linux/kmemleak.h>
- #include <linux/seq_file.h>
- #include <linux/memblock.h>
- 
---- lnx-416-rc1.orig/mm/cma.c
-+++ lnx-416-rc1/mm/cma.c
-@@ -35,6 +35,7 @@
- #include <linux/cma.h>
- #include <linux/highmem.h>
- #include <linux/io.h>
-+#include <linux/kmemleak.h>
- #include <trace/events/cma.h>
- 
- #include "cma.h"
---- lnx-416-rc1.orig/drivers/staging/rtl8188eu/hal/fw.c
-+++ lnx-416-rc1/drivers/staging/rtl8188eu/hal/fw.c
-@@ -30,7 +30,7 @@
- #include "rtl8188e_hal.h"
- 
- #include <linux/firmware.h>
--#include <linux/kmemleak.h>
-+#include <linux/slab.h>
- 
- static void _rtl88e_enable_fw_download(struct adapter *adapt, bool enable)
- {
---- lnx-416-rc1.orig/drivers/iommu/exynos-iommu.c
-+++ lnx-416-rc1/drivers/iommu/exynos-iommu.c
-@@ -17,6 +17,7 @@
- #include <linux/io.h>
- #include <linux/iommu.h>
- #include <linux/interrupt.h>
-+#include <linux/kmemleak.h>
- #include <linux/list.h>
- #include <linux/of.h>
- #include <linux/of_iommu.h>
---- lnx-416-rc1.orig/arch/s390/kernel/nmi.c
-+++ lnx-416-rc1/arch/s390/kernel/nmi.c
-@@ -15,7 +15,7 @@
- #include <linux/hardirq.h>
- #include <linux/log2.h>
- #include <linux/kprobes.h>
--#include <linux/slab.h>
-+#include <linux/kmemleak.h>
- #include <linux/time.h>
- #include <linux/module.h>
- #include <linux/sched/signal.h>
---- lnx-416-rc1.orig/arch/powerpc/sysdev/dart_iommu.c
-+++ lnx-416-rc1/arch/powerpc/sysdev/dart_iommu.c
-@@ -38,6 +38,7 @@
- #include <linux/suspend.h>
- #include <linux/memblock.h>
- #include <linux/gfp.h>
-+#include <linux/kmemleak.h>
- #include <asm/io.h>
- #include <asm/prom.h>
- #include <asm/iommu.h>
---- lnx-416-rc1.orig/arch/powerpc/sysdev/msi_bitmap.c
-+++ lnx-416-rc1/arch/powerpc/sysdev/msi_bitmap.c
-@@ -10,6 +10,7 @@
- 
- #include <linux/slab.h>
- #include <linux/kernel.h>
-+#include <linux/kmemleak.h>
- #include <linux/bitmap.h>
- #include <linux/bootmem.h>
- #include <asm/msi_bitmap.h>
---- lnx-416-rc1.orig/drivers/net/ethernet/ti/cpsw.c
-+++ lnx-416-rc1/drivers/net/ethernet/ti/cpsw.c
-@@ -35,6 +35,7 @@
- #include <linux/of_net.h>
- #include <linux/of_device.h>
- #include <linux/if_vlan.h>
-+#include <linux/kmemleak.h>
- 
- #include <linux/pinctrl/consumer.h>
- 
---- lnx-416-rc1.orig/drivers/virtio/virtio_ring.c
-+++ lnx-416-rc1/drivers/virtio/virtio_ring.c
-@@ -23,7 +23,6 @@
- #include <linux/slab.h>
- #include <linux/module.h>
- #include <linux/hrtimer.h>
--#include <linux/kmemleak.h>
- #include <linux/dma-mapping.h>
- #include <xen/xen.h>
- 
---- lnx-416-rc1.orig/security/apparmor/lsm.c
-+++ lnx-416-rc1/security/apparmor/lsm.c
-@@ -23,7 +23,6 @@
- #include <linux/sysctl.h>
- #include <linux/audit.h>
- #include <linux/user_namespace.h>
--#include <linux/kmemleak.h>
- #include <net/sock.h>
- 
- #include "include/apparmor.h"
---- lnx-416-rc1.orig/drivers/iommu/mtk_iommu_v1.c
-+++ lnx-416-rc1/drivers/iommu/mtk_iommu_v1.c
-@@ -25,7 +25,6 @@
- #include <linux/io.h>
- #include <linux/iommu.h>
- #include <linux/iopoll.h>
--#include <linux/kmemleak.h>
- #include <linux/list.h>
- #include <linux/of_address.h>
- #include <linux/of_iommu.h>
---- lnx-416-rc1.orig/drivers/staging/rtlwifi/pci.c
-+++ lnx-416-rc1/drivers/staging/rtlwifi/pci.c
-@@ -31,7 +31,6 @@
- #include "efuse.h"
- #include <linux/interrupt.h>
- #include <linux/export.h>
--#include <linux/kmemleak.h>
- #include <linux/module.h>
- 
- MODULE_AUTHOR("lizhaoming	<chaoming_li@realsil.com.cn>");
---- lnx-416-rc1.orig/drivers/net/wireless/realtek/rtlwifi/pci.c
-+++ lnx-416-rc1/drivers/net/wireless/realtek/rtlwifi/pci.c
-@@ -31,7 +31,6 @@
- #include "efuse.h"
- #include <linux/interrupt.h>
- #include <linux/export.h>
--#include <linux/kmemleak.h>
- #include <linux/module.h>
- 
- MODULE_AUTHOR("lizhaoming	<chaoming_li@realsil.com.cn>");
---- lnx-416-rc1.orig/drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c
-+++ lnx-416-rc1/drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c
-@@ -32,7 +32,6 @@
- #include "../rtl8192ce/def.h"
- #include "fw_common.h"
- #include <linux/export.h>
--#include <linux/kmemleak.h>
- 
- static void _rtl92c_enable_fw_download(struct ieee80211_hw *hw, bool enable)
- {
---- lnx-416-rc1.orig/arch/s390/kernel/smp.c
-+++ lnx-416-rc1/arch/s390/kernel/smp.c
-@@ -27,7 +27,6 @@
- #include <linux/err.h>
- #include <linux/spinlock.h>
- #include <linux/kernel_stat.h>
--#include <linux/kmemleak.h>
- #include <linux/delay.h>
- #include <linux/interrupt.h>
- #include <linux/irqflags.h>
---- lnx-416-rc1.orig/arch/sparc/kernel/irq_64.c
-+++ lnx-416-rc1/arch/sparc/kernel/irq_64.c
-@@ -22,7 +22,6 @@
- #include <linux/seq_file.h>
- #include <linux/ftrace.h>
- #include <linux/irq.h>
--#include <linux/kmemleak.h>
- 
- #include <asm/ptrace.h>
- #include <asm/processor.h>
---- lnx-416-rc1.orig/arch/x86/kernel/pci-dma.c
-+++ lnx-416-rc1/arch/x86/kernel/pci-dma.c
-@@ -6,7 +6,6 @@
- #include <linux/bootmem.h>
- #include <linux/gfp.h>
- #include <linux/pci.h>
--#include <linux/kmemleak.h>
- 
- #include <asm/proto.h>
- #include <asm/dma.h>
---- lnx-416-rc1.orig/net/core/sysctl_net_core.c
-+++ lnx-416-rc1/net/core/sysctl_net_core.c
-@@ -15,7 +15,6 @@
- #include <linux/vmalloc.h>
- #include <linux/init.h>
- #include <linux/slab.h>
--#include <linux/kmemleak.h>
- 
- #include <net/ip.h>
- #include <net/sock.h>
---- lnx-416-rc1.orig/net/ipv4/route.c
-+++ lnx-416-rc1/net/ipv4/route.c
-@@ -108,7 +108,6 @@
- #include <net/rtnetlink.h>
- #ifdef CONFIG_SYSCTL
- #include <linux/sysctl.h>
--#include <linux/kmemleak.h>
- #endif
- #include <net/secure_seq.h>
- #include <net/ip_tunnels.h>
---- lnx-416-rc1.orig/lib/test_firmware.c
-+++ lnx-416-rc1/lib/test_firmware.c
-@@ -21,6 +21,7 @@
- #include <linux/uaccess.h>
- #include <linux/delay.h>
- #include <linux/kthread.h>
-+#include <linux/vmalloc.h>
- 
- #define TEST_FIRMWARE_NAME	"test-firmware.bin"
- #define TEST_FIRMWARE_NUM_REQS	4
---- lnx-416-rc1.orig/security/integrity/digsig.c
-+++ lnx-416-rc1/security/integrity/digsig.c
-@@ -18,6 +18,7 @@
- #include <linux/cred.h>
- #include <linux/key-type.h>
- #include <linux/digsig.h>
-+#include <linux/vmalloc.h>
- #include <crypto/public_key.h>
- #include <keys/system_keyring.h>
- 
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
