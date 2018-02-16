@@ -1,54 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032294AbeBPNrs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 08:47:48 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:64767 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1032212AbeBPNrq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 08:47:46 -0500
-From: Amelie Delaunay <amelie.delaunay@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH] ARM: dts: stm32: enable RTC on stm32f769-disco
-Date: Fri, 16 Feb 2018 14:47:12 +0100
-Message-ID: <1518788832-21714-1-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-16_05:,,
- signatures=0
+        id S1032565AbeBPNsh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 08:48:37 -0500
+Received: from osg.samsung.com ([64.30.133.232]:59041 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032341AbeBPNsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 08:48:30 -0500
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Tom Saeger <tom.saeger@oracle.com>
+Subject: [PATCH 3/6] doc-guide: kernel-doc: move in-line section to be after nested struct
+Date: Fri, 16 Feb 2018 11:48:17 -0200
+Message-Id: <fd5a2d5195256a658708820563b9849ac8ae6c59.1518788761.git.mchehab@s-opensource.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <cover.1518788761.git.mchehab@s-opensource.com>
+References: <cover.1518788761.git.mchehab@s-opensource.com>
+In-Reply-To: <cover.1518788761.git.mchehab@s-opensource.com>
+References: <cover.1518788761.git.mchehab@s-opensource.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables RTC on stm32f769-disco.
+We want to give some examples about how to do in-line comments
+for nested structs. So, move it to be after nested structs/unions
+chapter.
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+The section content was not changed on this patch.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 ---
- arch/arm/boot/dts/stm32f769-disco.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/doc-guide/kernel-doc.rst | 56 +++++++++++++++++-----------------
+ 1 file changed, 28 insertions(+), 28 deletions(-)
 
-diff --git a/arch/arm/boot/dts/stm32f769-disco.dts b/arch/arm/boot/dts/stm32f769-disco.dts
-index 4463ca1..48cb47f 100644
---- a/arch/arm/boot/dts/stm32f769-disco.dts
-+++ b/arch/arm/boot/dts/stm32f769-disco.dts
-@@ -73,6 +73,10 @@
- 	clock-frequency = <25000000>;
- };
+diff --git a/Documentation/doc-guide/kernel-doc.rst b/Documentation/doc-guide/kernel-doc.rst
+index 3c00ce0c84e5..1ddfe35c0e78 100644
+--- a/Documentation/doc-guide/kernel-doc.rst
++++ b/Documentation/doc-guide/kernel-doc.rst
+@@ -211,34 +211,6 @@ Example::
+       int d;
+   };
  
-+&rtc {
-+	status = "okay";
-+};
+-In-line member documentation comments
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-
+-The structure members may also be documented in-line within the definition.
+-There are two styles, single-line comments where both the opening ``/**`` and
+-closing ``*/`` are on the same line, and multi-line comments where they are each
+-on a line of their own, like all other kernel-doc comments::
+-
+-  /**
+-   * struct foo - Brief description.
+-   * @foo: The Foo member.
+-   */
+-  struct foo {
+-        int foo;
+-        /**
+-         * @bar: The Bar member.
+-         */
+-        int bar;
+-        /**
+-         * @baz: The Baz member.
+-         *
+-         * Here, the member description may contain several paragraphs.
+-         */
+-        int baz;
+-        /** @foobar: Single line description. */
+-        int foobar;
+-  };
+-
+ Nested structs/unions
+ ~~~~~~~~~~~~~~~~~~~~~
+ 
+@@ -290,6 +262,34 @@ It is possible to document nested structs and unions, like::
+    #) When the nested struct/union is anonymous, the member ``bar`` in it
+       should be documented as ``@bar:``
+ 
++In-line member documentation comments
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +
- &usart1 {
- 	pinctrl-0 = <&usart1_pins_a>;
- 	pinctrl-names = "default";
++The structure members may also be documented in-line within the definition.
++There are two styles, single-line comments where both the opening ``/**`` and
++closing ``*/`` are on the same line, and multi-line comments where they are each
++on a line of their own, like all other kernel-doc comments::
++
++  /**
++   * struct foo - Brief description.
++   * @foo: The Foo member.
++   */
++  struct foo {
++        int foo;
++        /**
++         * @bar: The Bar member.
++         */
++        int bar;
++        /**
++         * @baz: The Baz member.
++         *
++         * Here, the member description may contain several paragraphs.
++         */
++        int baz;
++        /** @foobar: Single line description. */
++        int foobar;
++  };
++
+ Typedef documentation
+ ---------------------
+ 
 -- 
-2.7.4
+2.14.3
