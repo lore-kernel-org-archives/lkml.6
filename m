@@ -1,95 +1,133 @@
-Return-Path: <christophe.leroy@c-s.fr>
-X-Google-Smtp-Source: AH8x224GzfYXKaIakyzu3Sf90cRAOWVipur6bpjeQ+8gxGxELSzVWDtcLwWj7F1z1RR1rKzjXgS/
-ARC-Seal: i=1; a=rsa-sha256; t=1519235625; cv=none;
-        d=google.com; s=arc-20160816;
-        b=PKM9iBLNU0e/iYviTW4M+SNuM2e6KCU0qDO/DXkC5INn4sSdIvffnWxQSG6e/gnCs0
-         /BYgjvP1BUItx4kMtbWQMkiBIvvu+BQvL/e2zQI9adNjDIdi1egyQw7ldbaJ5TaIb61X
-         FhGWcTifTd9cw/rJaDKe9B1UrUsNeeOW/jei0ykTd4bxJKSF6mPhaWA4WOeteJ62Q9le
-         YwjZRdxOxpZbWegbk1I+Y8wpW1kSsjpB9ulJLEhgfNkJ9CKhI4PIN10W2INxPrtym/T5
-         kdNphZwrefr5sBnlUDElLOifFwV9vTPm46CH3ENPp4b/5JLd2eHmEuaAjWh3lxXMAmXr
-         5JzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=r6X3xrmkLKnzMiSllkRzsNCcuSuwM8L6rsg6tASQLHg=;
-        b=0uyWkoA9KfbA3ZymrAdavTOvB//9g3xJZF9jd+QL1PfAuTxlhLdZyAuqVxL1ZOsm50
-         20+jZ0EhjP/NC9+EbOQHRvVTURX4HRsoGieMOCiVyt7z7nJAqAVBF95nGu0LvcezN5Ax
-         +bWOMkePIC/QPU8BR4ZjPAVWgpAq6eU8utxOvEVhWlFn3gIq2C4gGzUsawm6g1F4R2ND
-         ToJ6kOPAtXqVHi/4dXPLJbd9z5tLygvO3S6qDhdQh22voNZJPiNX2L0yc0adfetgNW3q
-         ws8FKRy4LiE+o8EH+EU3QYIARntsn2RsEQDtpsVwhEfdrN7vuhueNUm8dX2m3yQFfZ7E
-         qjAA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of christophe.leroy@c-s.fr designates 93.17.236.30 as permitted sender) smtp.mailfrom=christophe.leroy@c-s.fr
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of christophe.leroy@c-s.fr designates 93.17.236.30 as permitted sender) smtp.mailfrom=christophe.leroy@c-s.fr
-Subject: Re: [PATCH 5/6] powerpc: Implement DISCONTIGMEM and allow selection
- on PPC32
-To: =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>,
- Kees Cook <keescook@chromium.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Philippe Ombredanne <pombredanne@nexb.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Michael Bringmann <mwb@linux.vnet.ibm.com>,
- Paul Mackerras <paulus@samba.org>, kbuild-all@01.org,
- Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
- Nathan Fontenot <nfont@linux.vnet.ibm.com>,
- Thomas Gleixner <tglx@linutronix.de>, linuxppc-dev@lists.ozlabs.org,
- Joel Stanley <joel@jms.id.au>
-References: <20180220161424.5421-6-j.neuschaefer@gmx.net>
- <201802210756.OZokd64C%fengguang.wu@intel.com>
- <20180221160815.dxhpsejt74zeqqjd@latitude>
-From: christophe leroy <christophe.leroy@c-s.fr>
-Message-ID: <a0c7806e-e06e-eb6c-416b-022bdc36d757@c-s.fr>
-Date: Wed, 21 Feb 2018 18:53:43 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180221160815.dxhpsejt74zeqqjd@latitude>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-399776-1518794873-2-12163378346196741677
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: to='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518794873; b=se3kZVxv8uoQVq9CDLyW4mY49u4mLiWWOruyvJgLy8/rc9O
+    1Sv3LvWozikKhyJXE1jlqiq9hN6Ja6HYiXReIFYNb/OX2W/UKx1lotM+QsKObcbh
+    toilT/BS4mcmfxI447LhNnuhrrS483eYbjt9WRjUDLso5QnTz0QsQxK4LInFU7EA
+    f2xrIVTCwvNoPZYYzEH/MQOP9h6361frBtKGLYncQtK6PWzh5Rb5QxdrwSa0+q8l
+    0X5dulrQH05KY+uSCpMe4/sZmOZ9uJcIO8EVU4hxKvq/ghmYg3vJHN3mfmTebq4y
+    Eeka3qx5Uu7q7gwFMyJWKiAfW8D0upcnzUJ9DVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1518794873; bh=sROmB3ZIAYDAHsGl2oWRjKn5KG
+    NQO14FSbILvGwIWGQ=; b=RETQlFRtc/gBZiHH1uwPw7CXHU+/jDodYTkQxf/QBu
+    a0O47AQl8dQcV1W/L5c67K0sHq/pKkYdGwemQSbG1o++M0CcCWr1m9MRUUKtj+EZ
+    s9wu0XPjBsBRwoHNu/1wT0BYaYAdZfJQQaWozCAD0hP3c/KMXfJNXjcHq8LQjXTc
+    sVfdOqqU56unz+b1+wZNKfiRdU13sPUe0zuXZ/IRevePsBtzSF03uwWqJgEBhSpb
+    rtKOIhIpKit7f9KTStu9As0/QJK/1lwb/zWs45bDAkWZose0xMo6OuIh7aaY8vJ5
+    TML5P+VopnTOqfAwTOjKtz20kaYovlwFXQx3Iri+V1CA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1030205AbeBPP1j (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Feb 2018 10:27:39 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:37925 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966777AbeBPP1Y (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Feb 2018 10:27:24 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Julien Isorce <julien.isorce@gmail.com>,
+        Kent Russell <kent.russell@amd.com>,
+        Christopher James Halse Rogers
+        <christopher.halse.rogers@canonical.com>,
+        Cihangir Akturk <cakturk@gmail.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] radeon: hide pointless #warning when compile testing
+Date: Fri, 16 Feb 2018 16:26:57 +0100
+Message-Id: <20180216152713.1628013-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:7HIl8TMjfbgARLpOfK0R9jPulB0f9eguU+5e7NN1qU5XEsZBcR7
+ CGgH/PNAQ6hYTe5aR4xs0O8c0ivSW1VMWmG0BAJrac2ePGzsBxaw0x9ZXzouV1rFZBiyutm
+ POf32Bke4bq8KQDwFoJMbcCFbgcIF7M8SOTXuOseOeEa1V3EZ4gwr2o6SUzMj6TVlIjmKR4
+ da7SqVIGm6NUScrZwx3Ag==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:p6W9yiGQQ/c=:tOLfvxmvKStKUjx94JXEjx
+ nptsFhHupBmncCZrR1V1bJCBYyXBR3QBs5MsPL7fipd+NJ2FF6XzHrnicJ0ZYU6IPVU7Mwynn
+ zcSukgAC0qF0/2mXn3SJnnFC+ZjBNi7Ol7cg87EyzDxcblfTNTPQ1CEFRQ+67kdqxOli6JuTC
+ w6lrlN+pdAgTOdUkfkgDnLO95jV7x0B9MRERofe3ZteGgC0JoHTVkBq7fj2yBX8BgDhY2wfV8
+ 808kUC9FGBcQdXogwhqoAcrWqTQ8zbtSQyL41BYaiHGCJvYqIJrn6Txb6wtWyEy6mL1gMo8C7
+ /dCh35bVSXr0+io3LgdxxUzAvxibN5mFGT3apSgXvzArQvqglz/nxUBDu7eOvELc5DdJEvogf
+ fWUSkdfPlsWG71kdnzzvMgB6C9nSvlCJx8T/tADueLDKtBuTzGHUcN+hL673j3ea97RkO/VIf
+ 2pIwoWkKPPnZla9/qeqiWej0JgE5j66rkx+wDsz8zd8ZqW5t2VHf3reWcPLumB3eKEKAkV4sa
+ pcOsvaQxPHL+oMuYtxhuO9MkGx/DL6S2dRDHbgxHkTVcbgnaSjLuAsb93XssrFayx2y4AKLMJ
+ sR8MbJ8AqF0WUj7BkvhgM2iUbeh5A4gV479BytX/Py8Zv6h/XG//2DhZGNSR9g6bj3u0K4HRk
+ 5fo35uzG0JKB4NPpwou0MtXhulL0C78TniPstk0tmVWZS605UktwSsT3bAs0y7MzPIzrsdeaN
+ v6TbM0qZq/yn3NgcPDINjlvuEGKD6ccq2PxKDQ==
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592937314761110102?=
-X-GMAIL-MSGID: =?utf-8?q?1593034015717742443?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+In randconfig testing, we sometimes get this warning:
 
+drivers/gpu/drm/radeon/radeon_object.c: In function 'radeon_bo_create':
+drivers/gpu/drm/radeon/radeon_object.c:242:2: error: #warning Please enable CONFIG_MTRR and CONFIG_X86_PAT for better performance thanks to write-combining [-Werror=cpp]
+ #warning Please enable CONFIG_MTRR and CONFIG_X86_PAT for better performance \
 
-Le 21/02/2018 à 17:08, Jonathan Neuschäfer a écrit :
-> On Wed, Feb 21, 2018 at 07:46:28AM +0800, kbuild test robot wrote:
-> [...]
->>>> include/linux/mmzone.h:1239:19: error: conflicting types for 'pfn_valid'
->>      static inline int pfn_valid(unsigned long pfn)
->>                        ^~~~~~~~~
->>     In file included from include/linux/mmzone.h:912:0,
->>                      from include/linux/gfp.h:6,
->>                      from include/linux/mm.h:10,
->>                      from include/linux/mman.h:5,
->>                      from arch/powerpc/kernel/asm-offsets.c:22:
->>     arch/powerpc/include/asm/mmzone.h:40:19: note: previous definition of 'pfn_valid' was here
->>      static inline int pfn_valid(int pfn)
->>                        ^~~~~~~~~
->>     make[2]: *** [arch/powerpc/kernel/asm-offsets.s] Error 1
->>     make[2]: Target '__build' not remade because of errors.
->>     make[1]: *** [prepare0] Error 2
->>     make[1]: Target 'prepare' not remade because of errors.
->>     make: *** [sub-make] Error 2
-> 
-> Oops, I'll fix this in the next version (and compile-test on ppc64...).
-> 
-> Weirdly enough, x86-32 and parisc define pfn_valid with an int
-> parameter, too (both of them since the Beginning Of Time, aka.
-> v2.6.12-rc2).
-> 
+This is rather annoying since almost all other code produces no build-time
+output unless we have found a real bug. We already fixed this in the
+amdgpu driver in commit 31bb90f1cd08 ("drm/amdgpu: shut up #warning for
+compile testing") by adding a CONFIG_COMPILE_TEST check last year and
+agreed to do the same here, but both Michel and I then forgot about it
+until I came across the issue again now.
 
-Behind the fact that the pfn type is different, my understanding is that 
-you have to define CONFIG_HAVE_ARCH_PFN_VALID in the Kconfig in order to 
-avoid it being included in include/linux/mmzone.h
+For stable kernels, as this is one of very few remaining randconfig
+warnings in 4.14.
 
-Christophe
-
+Cc: stable@vger.kernel.org
+Link: https://patchwork.kernel.org/patch/9550009/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+ drivers/gpu/drm/radeon/radeon_object.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/radeon/radeon_object.c b/drivers/gpu/drm/radeon/radeon_object.c
+index 093594976126..54c2b4fc5ead 100644
+--- a/drivers/gpu/drm/radeon/radeon_object.c
++++ b/drivers/gpu/drm/radeon/radeon_object.c
+@@ -238,9 +238,10 @@ int radeon_bo_create(struct radeon_device *rdev,
+ 	 * may be slow
+ 	 * See https://bugs.freedesktop.org/show_bug.cgi?id=88758
+ 	 */
+-
++#ifndef CONFIG_COMPILE_TEST
+ #warning Please enable CONFIG_MTRR and CONFIG_X86_PAT for better performance \
+ 	 thanks to write-combining
++#endif
+ 
+ 	if (bo->flags & RADEON_GEM_GTT_WC)
+ 		DRM_INFO_ONCE("Please enable CONFIG_MTRR and CONFIG_X86_PAT for "
+-- 
+2.9.0
