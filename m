@@ -1,185 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965838AbeBPMGX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 07:06:23 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42614 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965781AbeBPMGF (ORCPT
+        id S965961AbeBPMKK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 07:10:10 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:32968 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965864AbeBPMKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 07:06:05 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org, jic23@kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com, linux-kernel@vger.kernel.org
-Subject: Applied "regmap: Move the handling for max_raw_read into regmap_raw_read" to the regmap tree
-In-Reply-To: <20180215175220.2691-1-ckeepax@opensource.cirrus.com>
-Message-Id: <E1emem0-0005C9-T9@debutante>
-Date: Fri, 16 Feb 2018 12:05:52 +0000
+        Fri, 16 Feb 2018 07:10:07 -0500
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Brian Norris <briannorris@chromium.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, dianders@chromium.org,
+        Chris Zhong <zyw@rock-chips.com>, William wu <wulf@rock-chips.com>,
+        hl@rock-chips.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: [PATCH v3 3/6] phy: rockchip-typec: enable usb3 host during usb3 phy power on
+Date: Fri, 16 Feb 2018 13:09:53 +0100
+Message-Id: <20180216120956.19034-3-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180216120956.19034-1-enric.balletbo@collabora.com>
+References: <20180216120956.19034-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+From: William wu <wulf@rock-chips.com>
 
-   regmap: Move the handling for max_raw_read into regmap_raw_read
+We have forced usb3 to work in usb2 only mode in firmware by setting
+usb3tousb2_en (bit3 of GRF_USB3PHY0/1_CON0) to 1, and setting
+host_u3_port_disable (bit0 of GRF_USB3OTG0/1_CON1) to 1 and host_u3_port
+(bit15~12 of GRF_USB3OTG0/1_CON1) to 0. So we need to re-enable usb3
+host.
 
-has been applied to the regmap tree at
+Note that the RK3399 TRM suggests that we should keep the whole usb3
+controller in reset for the duration of the Type-C PHY initialization.
+However, it's hard to assert the reset in the current framework of
+reset. And according to the TRM, it doesn't require that we should
+clear the usb3tousb2 bit before pipe ready. So let's enable the usb3
+host after pipe ready to avoid the Type-C PHY initialization failure.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 0645ba4331c2b02ba9907b1591ba722535890e9f Mon Sep 17 00:00:00 2001
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Thu, 15 Feb 2018 17:52:16 +0000
-Subject: [PATCH] regmap: Move the handling for max_raw_read into
- regmap_raw_read
-
-Currently regmap_bulk_read will split a read into chunks before
-calling regmap_raw_read if max_raw_read is set. It is more logical for
-this handling to be inside regmap_raw_read itself, as this removes the
-need to keep re-implementing the chunking code, which would be the
-same for all users of regmap_raw_read.
-
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: William wu <wulf@rock-chips.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
- drivers/base/regmap/regmap.c | 90 +++++++++++++++++---------------------------
- 1 file changed, 35 insertions(+), 55 deletions(-)
+Changes since v2:
+- None.
+Changes since v1:
+- Use the registers offsets from the driver not the DT.
 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index f075c05859b0..0cc7387008c9 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -2542,18 +2542,45 @@ int regmap_raw_read(struct regmap *map, unsigned int reg, void *val,
+ drivers/phy/rockchip/phy-rockchip-typec.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/phy/rockchip/phy-rockchip-typec.c b/drivers/phy/rockchip/phy-rockchip-typec.c
+index 5f660f6b9f95..54dc52a948ef 100644
+--- a/drivers/phy/rockchip/phy-rockchip-typec.c
++++ b/drivers/phy/rockchip/phy-rockchip-typec.c
+@@ -362,6 +362,8 @@ struct usb3phy_reg {
+  * @usb3tousb2_en: the register of type-c force usb2 to usb2 enable.
+  * @external_psm: the register of type-c phy external psm clock.
+  * @pipe_status: the register of type-c phy pipe status.
++ * @usb3_host_disable: the register of type-c usb3 host disable.
++ * @usb3_host_port: the register of type-c usb3 host port.
+  */
+ struct rockchip_usb3phy_port_cfg {
+ 	unsigned int reg;
+@@ -369,6 +371,8 @@ struct rockchip_usb3phy_port_cfg {
+ 	struct usb3phy_reg usb3tousb2_en;
+ 	struct usb3phy_reg external_psm;
+ 	struct usb3phy_reg pipe_status;
++	struct usb3phy_reg usb3_host_disable;
++	struct usb3phy_reg usb3_host_port;
+ };
  
- 	if (regmap_volatile_range(map, reg, val_count) || map->cache_bypass ||
- 	    map->cache_type == REGCACHE_NONE) {
-+		int chunk_stride = map->reg_stride;
-+		size_t chunk_size = val_bytes;
-+		size_t chunk_count = val_count;
-+
- 		if (!map->bus->read) {
- 			ret = -ENOTSUPP;
- 			goto out;
+ struct rockchip_typec_phy {
+@@ -440,6 +444,8 @@ static const struct rockchip_usb3phy_port_cfg rk3399_usb3phy_port_cfgs[] = {
+ 		.usb3tousb2_en	= { 0xe580, 3, 19 },
+ 		.external_psm	= { 0xe588, 14, 30 },
+ 		.pipe_status	= { 0xe5c0, 0, 0 },
++		.usb3_host_disable = { 0x2434, 0, 16 },
++		.usb3_host_port = { 0x2434, 12, 28 },
+ 	},
+ 	{
+ 		.reg = 0xff800000,
+@@ -447,6 +453,8 @@ static const struct rockchip_usb3phy_port_cfg rk3399_usb3phy_port_cfgs[] = {
+ 		.usb3tousb2_en	= { 0xe58c, 3, 19 },
+ 		.external_psm	= { 0xe594, 14, 30 },
+ 		.pipe_status	= { 0xe5c0, 16, 16 },
++		.usb3_host_disable = { 0x2444, 0, 16 },
++		.usb3_host_port = { 0x2444, 12, 28 },
+ 	},
+ 	{ /* sentinel */ }
+ };
+@@ -879,6 +887,9 @@ static int rockchip_usb3_phy_power_on(struct phy *phy)
+ 		regmap_read(tcphy->grf_regs, reg->offset, &val);
+ 		if (!(val & BIT(reg->enable_bit))) {
+ 			tcphy->mode |= new_mode & (MODE_DFP_USB | MODE_UFP_USB);
++			/* enable usb3 host */
++			property_enable(tcphy, &cfg->usb3_host_disable, 0);
++			property_enable(tcphy, &cfg->usb3_host_port, 1);
+ 			goto unlock_ret;
  		}
--		if (map->max_raw_read && map->max_raw_read < val_len) {
--			ret = -E2BIG;
--			goto out;
-+
-+		if (!map->use_single_read) {
-+			if (map->max_raw_read)
-+				chunk_size = map->max_raw_read;
-+			else
-+				chunk_size = val_len;
-+			if (chunk_size % val_bytes)
-+				chunk_size -= chunk_size % val_bytes;
-+			chunk_count = val_len / chunk_size;
-+			chunk_stride *= chunk_size / val_bytes;
- 		}
- 
--		/* Physical block read if there's no cache involved */
--		ret = _regmap_raw_read(map, reg, val, val_len);
-+		/* Read bytes that fit into a multiple of chunk_size */
-+		for (i = 0; i < chunk_count; i++) {
-+			ret = _regmap_raw_read(map,
-+					       reg + (i * chunk_stride),
-+					       val + (i * chunk_size),
-+					       chunk_size);
-+			if (ret != 0)
-+				return ret;
-+		}
- 
-+		/* Read remaining bytes */
-+		if (chunk_size * i < val_len) {
-+			ret = _regmap_raw_read(map,
-+					       reg + (i * chunk_stride),
-+					       val + (i * chunk_size),
-+					       val_len - i * chunk_size);
-+			if (ret != 0)
-+				return ret;
-+		}
- 	} else {
- 		/* Otherwise go word by word for the cache; should be low
- 		 * cost as we expect to hit the cache.
-@@ -2655,56 +2682,9 @@ int regmap_bulk_read(struct regmap *map, unsigned int reg, void *val,
- 		return -EINVAL;
- 
- 	if (map->bus && map->format.parse_inplace && (vol || map->cache_type == REGCACHE_NONE)) {
--		/*
--		 * Some devices does not support bulk read, for
--		 * them we have a series of single read operations.
--		 */
--		size_t total_size = val_bytes * val_count;
--
--		if (!map->use_single_read &&
--		    (!map->max_raw_read || map->max_raw_read > total_size)) {
--			ret = regmap_raw_read(map, reg, val,
--					      val_bytes * val_count);
--			if (ret != 0)
--				return ret;
--		} else {
--			/*
--			 * Some devices do not support bulk read or do not
--			 * support large bulk reads, for them we have a series
--			 * of read operations.
--			 */
--			int chunk_stride = map->reg_stride;
--			size_t chunk_size = val_bytes;
--			size_t chunk_count = val_count;
--
--			if (!map->use_single_read) {
--				chunk_size = map->max_raw_read;
--				if (chunk_size % val_bytes)
--					chunk_size -= chunk_size % val_bytes;
--				chunk_count = total_size / chunk_size;
--				chunk_stride *= chunk_size / val_bytes;
--			}
--
--			/* Read bytes that fit into a multiple of chunk_size */
--			for (i = 0; i < chunk_count; i++) {
--				ret = regmap_raw_read(map,
--						      reg + (i * chunk_stride),
--						      val + (i * chunk_size),
--						      chunk_size);
--				if (ret != 0)
--					return ret;
--			}
--
--			/* Read remaining bytes */
--			if (chunk_size * i < total_size) {
--				ret = regmap_raw_read(map,
--						      reg + (i * chunk_stride),
--						      val + (i * chunk_size),
--						      total_size - i * chunk_size);
--				if (ret != 0)
--					return ret;
--			}
--		}
-+		ret = regmap_raw_read(map, reg, val, val_bytes * val_count);
-+		if (ret != 0)
-+			return ret;
- 
- 		for (i = 0; i < val_count * val_bytes; i += val_bytes)
- 			map->format.parse_inplace(val + i);
+ 		usleep_range(10, 20);
 -- 
-2.16.1
+2.15.1
