@@ -1,71 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161519AbeBPQx1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 11:53:27 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:57149 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161415AbeBPQxZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 11:53:25 -0500
-Subject: Re: [PATCH] i40evf: remove redundant array comparisons to 0 checks
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan@lists.osuosl.org, netdev <netdev@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180215194245.28860-1-colin.king@canonical.com>
- <CAHp75Vcxt0kkzRaF1Zzkt4hVqcPt0VG61yTLgB7HvG1xwhPUbg@mail.gmail.com>
-From: Colin Ian King <colin.king@canonical.com>
-Message-ID: <eb8a38bd-73a0-5f44-5e89-d9ded5be1800@canonical.com>
-Date: Fri, 16 Feb 2018 16:53:21 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1161563AbeBPQxh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 11:53:37 -0500
+Received: from foss.arm.com ([217.140.101.70]:41790 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161415AbeBPQxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 11:53:34 -0500
+Date: Fri, 16 Feb 2018 16:53:30 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: arm64/v4.16-rc1: KASAN: use-after-free Read in finish_task_switch
+Message-ID: <20180216165330.65rjxjw7qwkei2ob@lakrids.cambridge.arm.com>
+References: <20180214120254.qq4w4s42ecxio7lu@lakrids.cambridge.arm.com>
+ <20180214150739.GH2992@arm.com>
+ <20180214165131.o25r3hhrtrjk3ejq@lakrids.cambridge.arm.com>
+ <254787533.21950.1518634424009.JavaMail.zimbra@efficios.com>
+ <20180215142239.GF16623@arm.com>
+ <20180215164754.GW25201@hirez.programming.kicks-ass.net>
+ <20180215182154.GD15274@arm.com>
+ <1144433342.22716.1518732536600.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vcxt0kkzRaF1Zzkt4hVqcPt0VG61yTLgB7HvG1xwhPUbg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1144433342.22716.1518732536600.JavaMail.zimbra@efficios.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/02/18 16:51, Andy Shevchenko wrote:
-> On Thu, Feb 15, 2018 at 9:42 PM, Colin King <colin.king@canonical.com> wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The checks to see if key->dst.s6_addr and key->src.s6_addr are null
->> pointers are redundant because these are constant size arrays and
->> so the checks always return true.  Fix this by removing the redundant
->> checks.
-> 
->> +               for (i = 0; i < 4; i++)
-> 
->> +                       filter->f.mask.tcp_spec.dst_ip[i] |=
->>                                                         cpu_to_be32(0xffffffff);
-> 
-> Can it be one line then?
+Hi,
 
-I re-adjusted the text because checkpatch was complaining.
+On Thu, Feb 15, 2018 at 10:08:56PM +0000, Mathieu Desnoyers wrote:
+> My current theory: do_exit() gets preempted after having set current->mm
+> to NULL, and after having issued mmput(), which brings the mm_count down
+> to 0.
+>
+> Unfortunately, if the scheduler switches from a userspace thread
+> to a kernel thread, context_switch() loads prev->active_mm which still
+> points to the now-freed mm, mmgrab the mm, and eventually does mmdrop
+> in finish_task_switch().
 
-> 
->> +               memcpy(&filter->f.data.tcp_spec.dst_ip,
->> +                      &key->dst.s6_addr32,
-> 
-> Ditto.
-> 
->> +                      sizeof(filter->f.data.tcp_spec.dst_ip));
->> +
->> +               for (i = 0; i < 4; i++)
-> 
->> +                       filter->f.mask.tcp_spec.src_ip[i] |=
->>                                                         cpu_to_be32(0xffffffff);
-> 
-> Ditto.
-> 
->> +               memcpy(&filter->f.data.tcp_spec.src_ip,
->> +                      &key->src.s6_addr32,
-> 
-> Ditto.
-> 
->> +                      sizeof(filter->f.data.tcp_spec.src_ip));
-> 
+For this to happen, we need to get to the mmput() in exit_mm() with:
+
+  mm->mm_count == 1
+  mm->mm_users == 1
+  mm == active_mm
+
+... but AFAICT, this cannot happen.
+
+If there's no context_switch between clearing current->mm and the
+mmput(), then mm->mm_count >= 2, thanks to the prior mmgrab() and the
+active_mm reference (in mm_count) that context_switch+finish_task_switch
+manage.
+
+If there is a context_switch between the two, then AFAICT, either:
+
+a) The task re-inherits its old mm as active_mm, and mm_count >= 2. In
+   context_switch we mmgrab() the active_mm to inherit it, and in
+   finish_task_switch() we drop the oldmm, balancing the mmgrab() with
+   an mmput().
+
+   e.g we go task -> kernel_task -> task
+
+b) At some point, another user task is scheduled, and we switch to its
+   mm. We don't mmgrab() the active_mm, but we mmdrop() the oldmm, which
+   means mm_count >= 1. Since we witched to a new mm, if we switch back
+   to the first task, it cannot have its own mm as active_mm.
+
+   e.g. we go task -> other_task -> task
+
+I suspect we have a bogus mmdrop or mmput elsewhere, and do_exit() and
+finish_task_switch() aren't to blame.
+
+Thanks,
+Mark.
