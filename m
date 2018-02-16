@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964821AbeBPLXy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 06:23:54 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:47788 "EHLO
+        id S964801AbeBPLXw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 06:23:52 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47793 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935464AbeBPLXc (ORCPT
+        with ESMTP id S935551AbeBPLXc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 16 Feb 2018 06:23:32 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180216112330euoutp020c29c0c9263f69e3b6d845af66ffa6d1~Tyo3wSfpS2418824188euoutp02d
-X-AuditID: cbfec7f4-b4fc79c0000043e4-eb-5a86bf2e5aa6
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180216112331euoutp0251ff67b4117242d6a191beb6df957054~Tyo4j5FU32415924159euoutp02i
+X-AuditID: cbfec7f4-b4fc79c0000043e4-ef-5a86bf2f3691
 From: Maciej Slodczyk <m.slodczyk2@partner.samsung.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc: linux@armlinux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
@@ -17,108 +17,358 @@ Cc: linux@armlinux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
         namhyung@kernel.org, b.zolnierkie@samsung.com,
         m.szyprowski@samsung.com, k.lewandowsk@samsung.com,
         m.slodczyk2@partner.samsung.com
-Subject: [PATCH 6/7 RESEND] arm64: change arm_probe_decode_insn() function
- name
-Date: Fri, 16 Feb 2018 12:23:10 +0100
-Message-id: <1518780191-31094-7-git-send-email-m.slodczyk2@partner.samsung.com>
+Subject: [PATCH 7/7 RESEND] arm64: uprobes - ARM32 instruction probing
+Date: Fri, 16 Feb 2018 12:23:11 +0100
+Message-id: <1518780191-31094-8-git-send-email-m.slodczyk2@partner.samsung.com>
 X-Mailer: git-send-email 2.7.4
 In-reply-to: <1518780191-31094-1-git-send-email-m.slodczyk2@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0hTcRjG+59zdnZcLk7T8I+3D4NKhOxC0YlUNDXON5WIcFQ29TQtp7Lj
-        NItKTWXe0hTzUukqkbEp5pyXzPsltXuuphHN0pha4DKtTExzHv32e3meh/fCS6CiRcyZiIlL
-        ZBRx0lgxLsCan/59vcerK0uy706xN5VjbsUplb6cRzWU1fMoa00eoAZe/kOotJ/3UEo/aeJR
-        xra7ONVb0gGo9gIdTtX1f+JTI91qhEqvacKopq5MQA3mdyPUzNwQ5kfStZW1gDaa3qJ0o8aT
-        1muzcbpyOJRurL5O98y2I7S18z1O3zRoAT2vdw8RSATeUUxsTBKj2Ot7ThD9p0THS9DsuNQy
-        moengg5RDrAjIHkQfs6f5dtYRGoArBr2yQGCNZ4HsLCvAmyaTA+mMU6oAbBvVbdRzAFofjbG
-        s7lw8jBsGcjAbOxIHodjaSrEZkJJIwKNQ7mITXAgQ2HPonk9gJE74Qvd8FqAIIRkMCzKVHDd
-        3OGHV9moje3IEDhuMKw3g+QUDmtvjKOcKRBaVVN8jh3gt0HDBrtCY3EuxnEBgD0fXbhwGYBN
-        1okN4Shc1t7CbYyS22BRcylqGwKSQqjK2rgLDZtHV3gc+8Px/EI+t/FDADMHjGghcFaDLVrg
-        xChZuYxhD8QxyV6sVM4q42RekfFyPVj7h+crgwutoG05oheQBBDbCx/lZ0pEPGkSmyLvBZBA
-        xY7CE51ZEpEwSppymVHEhyuUsQzbC1wITOwkPOtxTSIiZdJE5iLDJDCKTRUh7JxTwRW327ky
-        i/+xvIA3urqrqY/NSs8jFfervvtGBK9uPRTW4rr7ywi/fqi/9Pc9069qdcZJy64Od6dU+5WG
-        0tMp4RMZIXBJiZ7RpG23BPnQaV2BGu9J3VIA6af72n3eXP5EnZwezFzwXfCyRKoqPWYcaW2Y
-        YTrZ7cep6fIgS4LbOwcxxkZL93uiClb6H4+uU08LAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsVy+t/xa7q6+9uiDO41KVp03dvBZtGxaSar
-        xcYZ61kt3i/rYbQ4evYvk0Xjp7nMFpseX2O1uLxrDpvFoal7GS329K9ms1h75C67xaUDC5gs
-        mpZtZbHYur+V0eJ47wEmi5cfT7A4CHismbeG0ePytYvMHptXaHlsWtXJ5jHvZKDH5iX1Hgff
-        7WHyeL/vKptH35ZVjB6fN8kFcEVx2aSk5mSWpRbp2yVwZXyfupq1YIVoxfbrPWwNjHuFuhg5
-        OSQETCSuLXrB0sXIxSEksIRRYsL5t1DOZ0aJ7uNb2UGq2ATMJbYfbWEBsUUE3CRuNHYwgRQx
-        C1xmkvi8YC8rSEJYwF/i9qxZzCA2i4CqxJnVJ4EaODh4geKTWosgtslJ3DzXCVbCKRAgcX/L
-        FrCZQkAlaxf9YpnAyLOAkWEVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYAhvO/Zzyw7GrnfB
-        hxgFOBiVeHg39LZGCbEmlhVX5h5ilOBgVhLhDd7XFiXEm5JYWZValB9fVJqTWnyIUZqDRUmc
-        97xBZZSQQHpiSWp2ampBahFMlomDU6qBMenKPN0TBef9F0svV4pZursqyq0n5kdUuu9m+yVX
-        JWdZfav2lnzo9ueDiJxMnph+6/T8A1L/itOzP980ZjgRs8T9dlDbrnvlMzs3fuix3tJkmdx8
-        W86iIOdRo2ZVUDLrLXPVzxfvV4QstQ6wjfneMl/W4PC1L48EQle5P5Rvn+DCdyXaUq5biaU4
-        I9FQi7moOBEAqeyQWV0CAAA=
-X-CMS-MailID: 20180216112325eucas1p1e6c73b9b55db778aac0bbb9ad1b10fae
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJIsWRmVeSWpSXmKPExsWy7djP87r6+9uiDLb+MbfoureDzaJj00xW
+        i40z1rNavF/Ww2hx9OxfJovGT3OZLTY9vsZqcXnXHDaLQ1P3Mlrs6V/NZrH2yF12i0sHFjBZ
+        NC3bymKxdX8ro8Xx3gNMFi8/nmBxEPBYM28No8flaxeZPTav0PLYtKqTzWPeyUCPzUvqPQ6+
+        28Pk8X7fVTaPvi2rGD0+b5IL4IrisklJzcksSy3St0vgylj5aTtrwT3fitubjzE2MK526GLk
+        5JAQMJFY2vuXuYuRi0NIYAWjxJkrW9kgnM9AzqEpLDBVLw+2MEEkljFKXHq7Hsr5yCix7M4e
+        dpAqNgFzie1HW8A6RATcJG40doAVMQtcZpK4fKIbyOHgEAZKPFpdC1LDIqAqcebcKbB6XgF/
+        iUnr/rFCbJOTuHmukxnE5hQIkLi/ZQsLyBwJgedsEv+u7oI6yUXi7KETUA3CEq+Ob2GHsGUk
+        Lk/uhqrpZ5Q4eFsaonkGo8TW94+gEtYSf1ZNZAOxmQX4JCZtm84McpyEAK9ER5sQRImHxI7+
+        i0wQtqPE7R8vWCA+XswoMW9RO/sERqkFjAyrGMVTS4tz01OLjfJSy/WKE3OLS/PS9ZLzczcx
+        AhPE6X/Hv+xg3PUn6RCjAAejEg/vht7WKCHWxLLiytxDjBIczEoivMH72qKEeFMSK6tSi/Lj
+        i0pzUosPMUpzsCiJ88Zp1EUJCaQnlqRmp6YWpBbBZJk4OKUaGMUco7eWMUTt7da8a69w7dzn
+        BOnpBpw+R/Tumt85vmnVp7iYqZ+Xi/JLZErEZ1b07pmntbx1bTKb+r4U1yu/fNOyXCTDy1tm
+        6rNvuqkjdk2g3bvRYZbHIumjbm9PG1i1zGGXW9IZGM1quS/Fj9/NfNmkstrtYT9TPT7H/mP2
+        tFV15dWOFfmvxFKckWioxVxUnAgAk+sgSQwDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsVy+t/xy7p6+9uiDOYvkbHoureDzaJj00xW
+        i40z1rNavF/Ww2hx9OxfJovGT3OZLTY9vsZqcXnXHDaLQ1P3Mlrs6V/NZrH2yF12i0sHFjBZ
+        NC3bymKxdX8ro8Xx3gNMFi8/nmBxEPBYM28No8flaxeZPTav0PLYtKqTzWPeyUCPzUvqPQ6+
+        28Pk8X7fVTaPvi2rGD0+b5IL4IrisklJzcksSy3St0vgylj5aTtrwT3fitubjzE2MK526GLk
+        5JAQMJF4ebCFqYuRi0NIYAmjxL5/z1kgnM+MEhM2/GQGqWITMJfYfrSFBcQWEXCTuNHYAdbB
+        LHCZSeLzgr2sXYwcHMJAiUera0FqWARUJc6cOwVWzyvgLzFp3T9WiG1yEjfPdYLN5BQIkLi/
+        ZQtYjRBQzdpFv1gmMPIsYGRYxSiSWlqcm55bbKRXnJhbXJqXrpecn7uJERjC24793LKDsetd
+        8CFGAQ5GJR7eDb2tUUKsiWXFlbmHGCU4mJVEeIP3tUUJ8aYkVlalFuXHF5XmpBYfYpTmYFES
+        5z1vUBklJJCeWJKanZpakFoEk2Xi4JRqYIyJn1FtIVL4aY/HA/Ml5RccLSd9l1n41KxVJYXv
+        7f4kFs6jzeaftxx7/Sp8Y9hOnZDUrpjXmScSjLQ8dDK6oxVYNc90KIQsU758dPe9n2fX3Npv
+        9spxjcn9cIHz30U1N5lrGU32bbjxWbN2YWVx9P2OPboqH7+2r9RbvF2exd2pUUvBUGPjXCWW
+        4oxEQy3mouJEAEQKK/tdAgAA
+X-CMS-MailID: 20180216112326eucas1p10c07384e9a01ab6102b7dba62d9fc315
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180216112325eucas1p1e6c73b9b55db778aac0bbb9ad1b10fae
-X-RootMTR: 20180216112325eucas1p1e6c73b9b55db778aac0bbb9ad1b10fae
+X-CMS-RootMailID: 20180216112326eucas1p10c07384e9a01ab6102b7dba62d9fc315
+X-RootMTR: 20180216112326eucas1p10c07384e9a01ab6102b7dba62d9fc315
 References: <1518780191-31094-1-git-send-email-m.slodczyk2@partner.samsung.com>
-        <CGME20180216112325eucas1p1e6c73b9b55db778aac0bbb9ad1b10fae@eucas1p1.samsung.com>
+        <CGME20180216112326eucas1p10c07384e9a01ab6102b7dba62d9fc315@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ARM probe decoding function has similar name in arm32 -
-arm_probes_decode_insn(), and arm64 - arm_probe_decode_insn(). Change arm64
-probes decoding function name from arm_probe_decode_insn() to
-arm64_probes_decode_insn() to minimize the risk of confusion.
+Detect what kind of instruction is being probed and depending on the result:
+- if an A64 instruction handle it the old way, using existing A64 instructions
+probing code,
+- if an A32 instruction decode it and handle using the new code, moved from
+32 bit arm kernel tree.
 
 Signed-off-by: Maciej Slodczyk <m.slodczyk2@partner.samsung.com>
 ---
- arch/arm64/kernel/probes/decode-insn.c | 4 ++--
- arch/arm64/kernel/probes/decode-insn.h | 2 +-
- arch/arm64/kernel/probes/uprobes.c     | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ arch/arm64/kernel/debug-monitors.c |   8 +++
+ arch/arm64/kernel/probes/uprobes.c | 110 ++++++++++++++++++++++++++++++++++---
+ lib/probes/arm/actions-arm.c       |  35 ++++++++----
+ lib/probes/arm/decode-arm.c        |  15 ++++-
+ 4 files changed, 146 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm64/kernel/probes/decode-insn.c b/arch/arm64/kernel/probes/decode-insn.c
-index a0597a2..37be1a9 100644
---- a/arch/arm64/kernel/probes/decode-insn.c
-+++ b/arch/arm64/kernel/probes/decode-insn.c
-@@ -78,7 +78,7 @@ static bool __kprobes aarch64_insn_is_steppable(u32 insn)
-  *   INSN_GOOD_NO_SLOT If instruction is supported but doesn't use its slot.
-  */
- enum probes_insn __kprobes
--arm_probe_decode_insn(probes_opcode_t insn, struct arch_probes_insn *api)
-+arm64_probes_decode_insn(probes_opcode_t insn, struct arch_probes_insn *api)
- {
- 	/*
- 	 * Instructions reading or modifying the PC won't work from the XOL
-@@ -162,7 +162,7 @@ arm_kprobe_decode_insn(kprobe_opcode_t *addr, struct arch_specific_insn *asi)
- 		else
- 			scan_end = addr - MAX_ATOMIC_CONTEXT_SIZE;
- 	}
--	decoded = arm_probe_decode_insn(insn, &asi->api);
-+	decoded = arm64_probes_decode_insn(insn, &asi->api);
+diff --git a/arch/arm64/kernel/debug-monitors.c b/arch/arm64/kernel/debug-monitors.c
+index a88b6cc..bd1c78c 100644
+--- a/arch/arm64/kernel/debug-monitors.c
++++ b/arch/arm64/kernel/debug-monitors.c
+@@ -364,6 +364,14 @@ int aarch32_break_handler(struct pt_regs *regs)
+ 	if (!bp)
+ 		return -EFAULT;
  
- 	if (decoded != INSN_REJECTED && scan_end)
- 		if (is_probed_address_atomic(addr - 1, scan_end))
-diff --git a/arch/arm64/kernel/probes/decode-insn.h b/arch/arm64/kernel/probes/decode-insn.h
-index 93e021f..e6c7b9e 100644
---- a/arch/arm64/kernel/probes/decode-insn.h
-+++ b/arch/arm64/kernel/probes/decode-insn.h
-@@ -32,7 +32,7 @@ enum probes_insn __kprobes
- arm_kprobe_decode_insn(kprobe_opcode_t *addr, struct arch_specific_insn *asi);
- #endif
- enum probes_insn __kprobes
--arm_probe_decode_insn(probes_opcode_t insn, struct arch_probes_insn *asi);
-+arm64_probes_decode_insn(probes_opcode_t insn, struct arch_probes_insn *asi);
- 
- extern const union decode_action uprobes_probes_actions[];
- #endif /* _ARM_KERNEL_KPROBES_ARM64_H */
++	/*
++	 * Since bp != false, a sofware breakpoint instruction is being handled.
++	 * If in user mode (compat_user_mode() few lines above),
++	 * try to handle it by an uprobe handler, if registered.
++	 */
++	if (!brk_handler((unsigned long)pc, BRK64_ESR_UPROBES, regs))
++		return 0;
++
+ 	send_user_sigtrap(TRAP_BRKPT);
+ 	return 0;
+ }
 diff --git a/arch/arm64/kernel/probes/uprobes.c b/arch/arm64/kernel/probes/uprobes.c
-index f99b50b..e7b8912 100644
+index e7b8912..9632379 100644
 --- a/arch/arm64/kernel/probes/uprobes.c
 +++ b/arch/arm64/kernel/probes/uprobes.c
-@@ -47,7 +47,7 @@ int arch_uprobe_analyze_insn(struct arch_uprobe *auprobe, struct mm_struct *mm,
+@@ -11,9 +11,47 @@
+ #include <asm/cacheflush.h>
  
- 	insn = *(probes_opcode_t *)(&auprobe->insn[0]);
+ #include "decode-insn.h"
++#include "decode.h"
++#include "decode-arm.h"
++#include <../../../arm/include/asm/opcodes.h>
  
--	switch (arm_probe_decode_insn(insn, &auprobe->api)) {
-+	switch (arm64_probes_decode_insn(insn, &auprobe->api)) {
+ #define UPROBE_INV_FAULT_CODE	UINT_MAX
+ 
++uprobe_opcode_t get_swbp_insn(void)
++{
++	if (is_compat_task())
++		return AARCH32_BREAK_ARM;
++	else
++		return UPROBE_SWBP_INSN;
++}
++
++bool is_swbp_insn(uprobe_opcode_t *insn)
++{
++	return ((__mem_to_opcode_arm(*insn) & 0x0fffffff) ==
++				(AARCH32_BREAK_ARM & 0x0fffffff)) ||
++				*insn == UPROBE_SWBP_INSN;
++}
++
++int set_swbp(struct arch_uprobe *auprobe, struct mm_struct *mm,
++	     unsigned long vaddr)
++{
++	if (auprobe->arch == UPROBE_AARCH32)
++		return uprobe_write_opcode(mm, vaddr,
++				__opcode_to_mem_arm(auprobe->bp_insn));
++	else
++		return uprobe_write_opcode(mm, vaddr, UPROBE_SWBP_INSN);
++}
++
++int set_orig_insn(struct arch_uprobe *auprobe, struct mm_struct *mm,
++		unsigned long vaddr)
++{
++	if (auprobe->arch == UPROBE_AARCH32)
++		return uprobe_write_opcode(mm, vaddr, auprobe->orig_insn);
++	else
++		return uprobe_write_opcode(mm, vaddr,
++				*(uprobe_opcode_t *)&auprobe->insn);
++}
++
+ void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
+ 		void *src, unsigned long len)
+ {
+@@ -38,16 +76,45 @@ int arch_uprobe_analyze_insn(struct arch_uprobe *auprobe, struct mm_struct *mm,
+ 		unsigned long addr)
+ {
+ 	probes_opcode_t insn;
++	enum probes_insn retval;
++	unsigned int bpinsn;
+ 
+-	/* TODO: Currently we do not support AARCH32 instruction probing */
+-	if (mm->context.flags & MMCF_AARCH32)
+-		return -ENOTSUPP;
+-	else if (!IS_ALIGNED(addr, AARCH64_INSN_SIZE))
++	insn = *(probes_opcode_t *)(&auprobe->insn[0]);
++
++	if (!IS_ALIGNED(addr, AARCH64_INSN_SIZE))
+ 		return -EINVAL;
+ 
+-	insn = *(probes_opcode_t *)(&auprobe->insn[0]);
++	/* check if AARCH32 */
++	if (is_compat_task()) {
++
++		/* Thumb is not supported yet */
++		if (addr & 0x3)
++			return -EINVAL;
++
++		retval = arm_probes_decode_insn(insn, &auprobe->api, false,
++					     uprobes_probes_actions, NULL);
++		auprobe->arch = UPROBE_AARCH32;
++
++		/*
++		 * original instruction could have been modified
++		 * when preparing for xol on AArch32
++		 */
++		auprobe->orig_insn = insn;
++
++		bpinsn = AARCH32_BREAK_ARM & 0x0fffffff;
++		if (insn >= 0xe0000000) /* Unconditional instruction */
++			bpinsn |= 0xe0000000;
++		else /* Copy condition from insn */
++			bpinsn |= insn & 0xf0000000;
++
++		auprobe->bp_insn = bpinsn;
++	} else {
++		insn = *(probes_opcode_t *)(&auprobe->insn[0]);
++		retval = arm64_probes_decode_insn(insn, &auprobe->api);
++		auprobe->arch = UPROBE_AARCH64;
++	}
+ 
+-	switch (arm64_probes_decode_insn(insn, &auprobe->api)) {
++	switch (retval) {
  	case INSN_REJECTED:
  		return -EINVAL;
  
+@@ -66,6 +133,9 @@ int arch_uprobe_pre_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
+ {
+ 	struct uprobe_task *utask = current->utask;
+ 
++	if (auprobe->prehandler)
++		auprobe->prehandler(auprobe, &utask->autask, regs);
++
+ 	/* Initialize with an invalid fault code to detect if ol insn trapped */
+ 	current->thread.fault_code = UPROBE_INV_FAULT_CODE;
+ 
+@@ -88,6 +158,9 @@ int arch_uprobe_post_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
+ 
+ 	user_disable_single_step(current);
+ 
++	if (auprobe->posthandler)
++		auprobe->posthandler(auprobe, &utask->autask, regs);
++
+ 	return 0;
+ }
+ bool arch_uprobe_xol_was_trapped(struct task_struct *t)
+@@ -103,10 +176,24 @@ bool arch_uprobe_xol_was_trapped(struct task_struct *t)
+ 	return false;
+ }
+ 
++bool arch_uprobe_ignore(struct arch_uprobe *auprobe, struct pt_regs *regs)
++{
++	probes_opcode_t insn = *(probes_opcode_t *)(&auprobe->insn[0]);
++	pstate_check_t *check = (*aarch32_opcode_cond_checks[insn >> 28]);
++
++	if (auprobe->arch == UPROBE_AARCH64)
++		return false;
++
++	if (!check(regs->pstate & 0xffffffff)) {
++		instruction_pointer_set(regs, instruction_pointer(regs) + 4);
++		return true;
++	}
++	return false;
++}
++
+ bool arch_uprobe_skip_sstep(struct arch_uprobe *auprobe, struct pt_regs *regs)
+ {
+ 	probes_opcode_t insn;
+-	unsigned long addr;
+ 
+ 	if (!auprobe->simulate)
+ 		return false;
+@@ -154,9 +241,14 @@ arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr,
+ {
+ 	unsigned long orig_ret_vaddr;
+ 
+-	orig_ret_vaddr = procedure_link_pointer(regs);
+ 	/* Replace the return addr with trampoline addr */
+-	procedure_link_pointer_set(regs, trampoline_vaddr);
++	if (is_compat_task()) {
++		orig_ret_vaddr = link_register(regs);
++		link_register_set(regs, trampoline_vaddr);
++	} else {
++		orig_ret_vaddr = procedure_link_pointer(regs);
++		procedure_link_pointer_set(regs, trampoline_vaddr);
++	}
+ 
+ 	return orig_ret_vaddr;
+ }
+diff --git a/lib/probes/arm/actions-arm.c b/lib/probes/arm/actions-arm.c
+index 2393573..cee1496 100644
+--- a/lib/probes/arm/actions-arm.c
++++ b/lib/probes/arm/actions-arm.c
+@@ -15,10 +15,7 @@
+ 
+ #include "decode.h"
+ #include "decode-arm.h"
+-
+-#ifdef CONFIG_ARM64
+ #include <../../../arm/include/asm/opcodes.h>
+-#endif /* CONFIG_ARM64  */
+ 
+ static int uprobes_substitute_pc(unsigned long *pinsn, u32 oregs)
+ {
+@@ -75,8 +72,13 @@ static void uprobe_set_pc(struct arch_uprobe *auprobe,
+ {
+ 	u32 pcreg = auprobe->pcreg;
+ 
+-	autask->backup = pt_regs_read_reg(regs, pcreg);
+-	pt_regs_write_reg(regs, pcreg, instruction_pointer(regs) + 8);
++	if (pcreg == 15) {
++		autask->backup = instruction_pointer(regs);
++		instruction_pointer_set(regs, instruction_pointer(regs) + 8);
++	} else {
++		autask->backup = pt_regs_read_reg(regs, pcreg);
++		pt_regs_write_reg(regs, pcreg, instruction_pointer(regs) + 8);
++	}
+ }
+ 
+ static void uprobe_unset_pc(struct arch_uprobe *auprobe,
+@@ -84,7 +86,10 @@ static void uprobe_unset_pc(struct arch_uprobe *auprobe,
+ 			    struct pt_regs *regs)
+ {
+ 	/* PC will be taken care of by common code */
+-	pt_regs_write_reg(regs, auprobe->pcreg, autask->backup);
++	if (auprobe->pcreg == 15)
++		instruction_pointer_set(regs, autask->backup);
++	else
++		pt_regs_write_reg(regs, auprobe->pcreg, autask->backup);
+ }
+ 
+ static void uprobe_aluwrite_pc(struct arch_uprobe *auprobe,
+@@ -93,8 +98,13 @@ static void uprobe_aluwrite_pc(struct arch_uprobe *auprobe,
+ {
+ 	u32 pcreg = auprobe->pcreg;
+ 
+-	alu_write_pc(pt_regs_read_reg(regs, pcreg), regs);
+-	pt_regs_write_reg(regs, pcreg, autask->backup);
++	if (pcreg == 15) {
++		alu_write_pc(instruction_pointer(regs), regs);
++		instruction_pointer_set(regs, autask->backup);
++	} else {
++		alu_write_pc(pt_regs_read_reg(regs, pcreg), regs);
++		pt_regs_write_reg(regs, pcreg, autask->backup);
++	}
+ }
+ 
+ static void uprobe_write_pc(struct arch_uprobe *auprobe,
+@@ -103,8 +113,13 @@ static void uprobe_write_pc(struct arch_uprobe *auprobe,
+ {
+ 	u32 pcreg = auprobe->pcreg;
+ 
+-	load_write_pc(pt_regs_read_reg(regs, pcreg), regs);
+-	pt_regs_write_reg(regs, pcreg, autask->backup);
++	if (pcreg == 15) {
++		load_write_pc(instruction_pointer(regs), regs);
++		instruction_pointer_set(regs, autask->backup);
++	} else {
++		load_write_pc(pt_regs_read_reg(regs, pcreg), regs);
++		pt_regs_write_reg(regs, pcreg, autask->backup);
++	}
+ }
+ 
+ enum probes_insn
+diff --git a/lib/probes/arm/decode-arm.c b/lib/probes/arm/decode-arm.c
+index 36eb939..8bb338c 100644
+--- a/lib/probes/arm/decode-arm.c
++++ b/lib/probes/arm/decode-arm.c
+@@ -87,11 +87,17 @@ void __kprobes simulate_blx2bx(probes_opcode_t insn,
+ 		struct arch_probes_insn *asi, struct pt_regs *regs)
+ {
+ 	int rm = insn & 0xf;
+-	long rmv = pt_regs_read_reg(regs, rm);
++	long rmv;
+ 	long cpsr;
+ 
++	if (rm == 15)
++		rmv = (long) instruction_pointer(regs);
++	else
++		rmv = pt_regs_read_reg(regs, rm);
++
+ 	if (insn & (1 << 5))
+-		link_register_set(regs, (long) instruction_pointer(regs));
++		link_register_set(regs,
++				(long) instruction_pointer(regs) + ARM_COMPAT_LR_OFFSET);
+ 
+ 	instruction_pointer_set(regs, rmv & ~0x1);
+ 	cpsr = state_register(regs) & ~PSR_T_BIT;
+@@ -108,7 +114,10 @@ void __kprobes simulate_mrs(probes_opcode_t insn,
+ 	int rd = (insn >> 12) & 0xf;
+ 	unsigned long mask = 0xf8ff03df; /* Mask out execution state */
+ 
+-	pt_regs_write_reg(regs, rd, state_register(regs) & mask);
++	if (rd == 15)
++		instruction_pointer_set(regs, state_register(regs) & mask);
++	else
++		pt_regs_write_reg(regs, rd, state_register(regs) & mask);
+ }
+ 
+ void __kprobes simulate_mov_ipsp(probes_opcode_t insn,
 -- 
 2.7.4
