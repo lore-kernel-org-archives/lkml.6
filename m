@@ -1,190 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161325AbeBPQs6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 11:48:58 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53805 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161063AbeBPQrW (ORCPT
+        id S1755657AbeBPQvg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 11:51:36 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53136 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755551AbeBPQve (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 11:47:22 -0500
-X-Google-Smtp-Source: AH8x226buVv80phYd9vazO8xxMEQy/k+4DC0JTth3VMBK1T79nXutm4jynbwG9f/6sldkm0rmuLSKA==
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, David Lechner <david@lechnology.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 2/6] ARM: davinci: update the nand driver names
-Date: Fri, 16 Feb 2018 17:47:08 +0100
-Message-Id: <20180216164712.25898-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180216164712.25898-1-brgl@bgdev.pl>
-References: <20180216164712.25898-1-brgl@bgdev.pl>
+        Fri, 16 Feb 2018 11:51:34 -0500
+Date: Fri, 16 Feb 2018 17:51:23 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Morten Rasmussen <morten.rasmussen@foss.arm.com>
+Cc: Morten Rasmussen <morten.rasmussen@arm.com>, mingo@redhat.com,
+        valentin.schneider@arm.com, dietmar.eggemann@arm.com,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] sched: Add static_key for asymmetric cpu capacity
+ optimizations
+Message-ID: <20180216165123.GH25201@hirez.programming.kicks-ass.net>
+References: <1518711654-23503-1-git-send-email-morten.rasmussen@arm.com>
+ <1518711654-23503-2-git-send-email-morten.rasmussen@arm.com>
+ <20180216134704.GE25201@hirez.programming.kicks-ass.net>
+ <20180216154101.GE28799@e105550-lin.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180216154101.GE28799@e105550-lin.cambridge.arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Fri, Feb 16, 2018 at 03:41:01PM +0000, Morten Rasmussen wrote:
+> On Fri, Feb 16, 2018 at 02:47:04PM +0100, Peter Zijlstra wrote:
+> > On Thu, Feb 15, 2018 at 04:20:48PM +0000, Morten Rasmussen wrote:
+> > > +static void update_asym_cpucapacity(int cpu)
+> > > +{
+> > > +	if (!static_branch_unlikely(&sched_asym_cpucapacity) &&
+> > > +	    lowest_flag_domain(cpu, SD_ASYM_CPUCAPACITY))
+> > > +		static_branch_enable(&sched_asym_cpucapacity);
+> > > +}
+> > 
+> > That looks odd, why not just:
+> > 
+> > 	if (lowest_flag_domain(cpu, SD_ASYM_CPUCAPACITY))
+> > 		static_branch_enable(&sched_asym_cpucapacity);
+> 
+> I actually had that initially and then I misread the implementation of
+> static_key_enable() as if it trigger the WARN_ON_ONCE() condition if I
+> enable an already enabled static key. But I see now that it should be
+> safe to do. 
 
-Since commit d8e22fb4ccac ("ARM: da850: add the nand dev_id to the clock
-lookup table") we can no longer correctly lookup the nand clock when
-booting in legacy mode. Said commit added a dev_id to the nand clock
-which must match and it doesn't correspond with the device name which
-is "davinci_nand" instead of "davinci-nand".
+Right, that WARN is there for when we use enable/disable on a key with a
+value outside of [0,1].
 
-The driver name has been changed. Update the board files.
+> > ? possibly with:
+> > 
+> > 	else
+> > 		static_branch_disable(&sched_asym_cpucapacity);
+> > 
+> > if you want to play funny games :-)
+> 
+> I thought about that too. It could make certain hotplug scenarios even
+> more expensive. I think we want the sched_asym_cpucapacity code to behave
+> even if SD_ASYM_CPUCAPACITY isn't set anywhere, so the static key would
+> be permanently from the point we detect asymmetry and leave it set. This
+> would be in line with how the smt static key works.
 
-Fixes: d8e22fb4ccac ("ARM: da850: add the nand dev_id to the clock lookup table")
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/board-da830-evm.c     | 2 +-
- arch/arm/mach-davinci/board-da850-evm.c     | 2 +-
- arch/arm/mach-davinci/board-dm355-evm.c     | 2 +-
- arch/arm/mach-davinci/board-dm355-leopard.c | 2 +-
- arch/arm/mach-davinci/board-dm365-evm.c     | 2 +-
- arch/arm/mach-davinci/board-dm644x-evm.c    | 2 +-
- arch/arm/mach-davinci/board-dm646x-evm.c    | 2 +-
- arch/arm/mach-davinci/board-mityomapl138.c  | 2 +-
- arch/arm/mach-davinci/board-neuros-osd2.c   | 2 +-
- arch/arm/mach-davinci/board-sffsdr.c        | 2 +-
- 10 files changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
-index f673cd7a6766..f8838c7b174b 100644
---- a/arch/arm/mach-davinci/board-da830-evm.c
-+++ b/arch/arm/mach-davinci/board-da830-evm.c
-@@ -348,7 +348,7 @@ static struct resource da830_evm_nand_resources[] = {
- };
- 
- static struct platform_device da830_evm_nand_device = {
--	.name		= "davinci_nand",
-+	.name		= "davinci-nand",
- 	.id		= 1,
- 	.dev		= {
- 		.platform_data	= &da830_evm_nand_pdata,
-diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
-index d898a94f6eae..828194045a2b 100644
---- a/arch/arm/mach-davinci/board-da850-evm.c
-+++ b/arch/arm/mach-davinci/board-da850-evm.c
-@@ -266,7 +266,7 @@ static struct resource da850_evm_nandflash_resource[] = {
- };
- 
- static struct platform_device da850_evm_nandflash_device = {
--	.name		= "davinci_nand",
-+	.name		= "davinci-nand",
- 	.id		= 1,
- 	.dev		= {
- 		.platform_data	= &da850_evm_nandflash_data,
-diff --git a/arch/arm/mach-davinci/board-dm355-evm.c b/arch/arm/mach-davinci/board-dm355-evm.c
-index e457f299cd44..58ca7f56e112 100644
---- a/arch/arm/mach-davinci/board-dm355-evm.c
-+++ b/arch/arm/mach-davinci/board-dm355-evm.c
-@@ -98,7 +98,7 @@ static struct resource davinci_nand_resources[] = {
- };
- 
- static struct platform_device davinci_nand_device = {
--	.name			= "davinci_nand",
-+	.name			= "davinci-nand",
- 	.id			= 0,
- 
- 	.num_resources		= ARRAY_SIZE(davinci_nand_resources),
-diff --git a/arch/arm/mach-davinci/board-dm355-leopard.c b/arch/arm/mach-davinci/board-dm355-leopard.c
-index be997243447b..196238117f9a 100644
---- a/arch/arm/mach-davinci/board-dm355-leopard.c
-+++ b/arch/arm/mach-davinci/board-dm355-leopard.c
-@@ -93,7 +93,7 @@ static struct resource davinci_nand_resources[] = {
- };
- 
- static struct platform_device davinci_nand_device = {
--	.name			= "davinci_nand",
-+	.name			= "davinci-nand",
- 	.id			= 0,
- 
- 	.num_resources		= ARRAY_SIZE(davinci_nand_resources),
-diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
-index e75741fb2c1d..563d66df480b 100644
---- a/arch/arm/mach-davinci/board-dm365-evm.c
-+++ b/arch/arm/mach-davinci/board-dm365-evm.c
-@@ -159,7 +159,7 @@ static struct resource davinci_nand_resources[] = {
- };
- 
- static struct platform_device davinci_nand_device = {
--	.name			= "davinci_nand",
-+	.name			= "davinci-nand",
- 	.id			= 0,
- 	.num_resources		= ARRAY_SIZE(davinci_nand_resources),
- 	.resource		= davinci_nand_resources,
-diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
-index 85e6fb33b1ee..e42ae2163c75 100644
---- a/arch/arm/mach-davinci/board-dm644x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm644x-evm.c
-@@ -173,7 +173,7 @@ static struct resource davinci_evm_nandflash_resource[] = {
- };
- 
- static struct platform_device davinci_evm_nandflash_device = {
--	.name		= "davinci_nand",
-+	.name		= "davinci-nand",
- 	.id		= 0,
- 	.dev		= {
- 		.platform_data	= &davinci_evm_nandflash_data,
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index cb0a41e83582..614dd211e6fc 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -108,7 +108,7 @@ static struct resource davinci_nand_resources[] = {
- };
- 
- static struct platform_device davinci_nand_device = {
--	.name			= "davinci_nand",
-+	.name			= "davinci-nand",
- 	.id			= 0,
- 
- 	.num_resources		= ARRAY_SIZE(davinci_nand_resources),
-diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
-index b73ce7bae81f..bf3659a21897 100644
---- a/arch/arm/mach-davinci/board-mityomapl138.c
-+++ b/arch/arm/mach-davinci/board-mityomapl138.c
-@@ -422,7 +422,7 @@ static struct resource mityomapl138_nandflash_resource[] = {
- };
- 
- static struct platform_device mityomapl138_nandflash_device = {
--	.name		= "davinci_nand",
-+	.name		= "davinci-nand",
- 	.id		= 1,
- 	.dev		= {
- 		.platform_data	= &mityomapl138_nandflash_data,
-diff --git a/arch/arm/mach-davinci/board-neuros-osd2.c b/arch/arm/mach-davinci/board-neuros-osd2.c
-index 4da210a1a110..04132494a7c9 100644
---- a/arch/arm/mach-davinci/board-neuros-osd2.c
-+++ b/arch/arm/mach-davinci/board-neuros-osd2.c
-@@ -107,7 +107,7 @@ static struct resource davinci_ntosd2_nandflash_resource[] = {
- };
- 
- static struct platform_device davinci_ntosd2_nandflash_device = {
--	.name		= "davinci_nand",
-+	.name		= "davinci-nand",
- 	.id		= 0,
- 	.dev		= {
- 		.platform_data	= &davinci_ntosd2_nandflash_data,
-diff --git a/arch/arm/mach-davinci/board-sffsdr.c b/arch/arm/mach-davinci/board-sffsdr.c
-index d85accf7f760..c8569c8aa6e3 100644
---- a/arch/arm/mach-davinci/board-sffsdr.c
-+++ b/arch/arm/mach-davinci/board-sffsdr.c
-@@ -83,7 +83,7 @@ static struct resource davinci_sffsdr_nandflash_resource[] = {
- };
- 
- static struct platform_device davinci_sffsdr_nandflash_device = {
--	.name		= "davinci_nand", /* Name of driver */
-+	.name		= "davinci-nand", /* Name of driver */
- 	.id		= 0,
- 	.dev		= {
- 		.platform_data	= &davinci_sffsdr_nandflash_data,
--- 
-2.16.1
+Fair enough..
