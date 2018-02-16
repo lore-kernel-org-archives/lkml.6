@@ -1,75 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162241AbeBPRjg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 12:39:36 -0500
-Received: from foss.arm.com ([217.140.101.70]:42430 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162052AbeBPRjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 12:39:35 -0500
-Date: Fri, 16 Feb 2018 17:39:27 +0000
-From: Quentin Perret <quentin.perret@arm.com>
-To: Morten Rasmussen <morten.rasmussen@foss.arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>, mingo@redhat.com,
-        valentin.schneider@arm.com, dietmar.eggemann@arm.com,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] sched: Add static_key for asymmetric cpu capacity
- optimizations
-Message-ID: <20180216173927.GA5352@e108498-lin.cambridge.arm.com>
-References: <1518711654-23503-1-git-send-email-morten.rasmussen@arm.com>
- <1518711654-23503-2-git-send-email-morten.rasmussen@arm.com>
- <20180216134704.GE25201@hirez.programming.kicks-ass.net>
- <20180216154101.GE28799@e105550-lin.cambridge.arm.com>
+        id S1162273AbeBPRjn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 12:39:43 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35404 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162052AbeBPRjj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 12:39:39 -0500
+X-Google-Smtp-Source: AH8x224+r/0ejp92neRf1YySVR0BmpHhUgmwwz2xce/VAuLRKZwnK9HnrOH1RoSA+fDwa4MOqZR7pA==
+Subject: Re: [PATCH 5/8] thermal/drivers/cpu_cooling: Introduce the cpu idle
+ cooling driver
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
+        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
+        linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>
+References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
+ <1516721671-16360-6-git-send-email-daniel.lezcano@linaro.org>
+ <20180207091231.GQ28462@vireshk-i7>
+ <54759b82-29e9-f376-bbe8-dcf683ed0cce@linaro.org>
+ <20180209094100.GM28462@vireshk-i7>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <71c94b53-5945-bc91-18ce-b5ef7ba9ec3c@linaro.org>
+Date: Fri, 16 Feb 2018 18:39:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180216154101.GE28799@e105550-lin.cambridge.arm.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <20180209094100.GM28462@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Morten,
 
-On Friday 16 Feb 2018 at 15:41:01 (+0000), Morten Rasmussen wrote:
-> On Fri, Feb 16, 2018 at 02:47:04PM +0100, Peter Zijlstra wrote:
-> > On Thu, Feb 15, 2018 at 04:20:48PM +0000, Morten Rasmussen wrote:
-> > > +static void update_asym_cpucapacity(int cpu)
-> > > +{
-> > > +	if (!static_branch_unlikely(&sched_asym_cpucapacity) &&
-> > > +	    lowest_flag_domain(cpu, SD_ASYM_CPUCAPACITY))
-> > > +		static_branch_enable(&sched_asym_cpucapacity);
-> > > +}
-> > 
-> > That looks odd, why not just:
-> > 
-> > 	if (lowest_flag_domain(cpu, SD_ASYM_CPUCAPACITY))
-> > 		static_branch_enable(&sched_asym_cpucapacity);
+Hi Viresh,
+
+sorry for the late reply.
+
+
+On 09/02/2018 10:41, Viresh Kumar wrote:
+> On 07-02-18, 11:34, Daniel Lezcano wrote:
+>> On 07/02/2018 10:12, Viresh Kumar wrote:
+>>> What about cpuidle_cooling_unregister() ?
+>>
+>> The unregister function is not needed because cpuidle can't be unloaded.
+>> The cpuidle cooling device is registered after the cpuidle successfully
+>> initialized itself, there is no error path.
 > 
-> I actually had that initially and then I misread the implementation of
-> static_key_enable() as if it trigger the WARN_ON_ONCE() condition if I
-> enable an already enabled static key. But I see now that it should be
-> safe to do.
-
-AFAIU it should be safe, but without your check you'll have to go through
-cpus_read_lock()/unlock() every time a CPU is hotplugged. There is probably
-no good reason to re-do that again and again if the state of the key
-never changes. I don't know how expensive those lock/unlock operations are,
-but I bet they are more expensive than testing static_branch_unlikely() :)
-
+> Okay, then there are two more things here.
 > 
-> > ? possibly with:
-> > 
-> > 	else
-> > 		static_branch_disable(&sched_asym_cpucapacity);
-> > 
-> > if you want to play funny games :-)
-> 
-> I thought about that too. It could make certain hotplug scenarios even
-> more expensive. I think we want the sched_asym_cpucapacity code to behave
-> even if SD_ASYM_CPUCAPACITY isn't set anywhere, so the static key would
-> be permanently from the point we detect asymmetry and leave it set. This
-> would be in line with how the smt static key works.
+> First, you don't need a kref in your patch and simple counter should
+> be used instead, as kref is obviously more heavy to be used for the
+> single error path here.
 
-Thanks !
-Quentin
+I prefer to keep the kref for its API.
+
+And I disagree about the heavy aspect :)
+
+struct kref {
+        refcount_t refcount;
+};
+
+
+> Secondly, what about CPU hotplug ? For example, the cpu-freq cooling
+> device gets removed currently if all CPUs of a cluster are
+> hotplugged-out. But with your code, even if the CPUs are gone, their
+> cpu-idle cooling device will stay.
+
+Yes and it will continue to compute the state, so if new CPUs are
+inserted the cooling device automatically uses the cooling state.
+I don't see a problem with that.
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
