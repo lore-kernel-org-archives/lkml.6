@@ -1,66 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933600AbeBPKf0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 05:35:26 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:53988 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933559AbeBPKfZ (ORCPT
+        id S933628AbeBPKiO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 05:38:14 -0500
+Received: from mail-qk0-f175.google.com ([209.85.220.175]:39064 "EHLO
+        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933559AbeBPKiM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 05:35:25 -0500
-Date: Fri, 16 Feb 2018 11:35:20 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Will Deacon <will.deacon@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mingo@kernel.org
-Subject: Re: [RFC PATCH 3/5] asm-generic/bitops/atomic.h: Rewrite using
- atomic_fetch_*
-Message-ID: <20180216103520.GC25201@hirez.programming.kicks-ass.net>
-References: <1518708575-12284-1-git-send-email-will.deacon@arm.com>
- <1518708575-12284-4-git-send-email-will.deacon@arm.com>
- <20180215170847.GD25181@hirez.programming.kicks-ass.net>
- <20180215182049.GC15274@arm.com>
+        Fri, 16 Feb 2018 05:38:12 -0500
+X-Google-Smtp-Source: AH8x224YvxB3AzIgqOxuVcLcWx797Ei4c5z3qJ0UZWgvpHhqOuCwJi5EOzNZZNzbYY6sVUyhwYxRz4YITmvxZNqp/S4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180215182049.GC15274@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180216095722.GC18755@casa>
+References: <20180213120308.23879-1-rodrigorivascosta@gmail.com>
+ <20180213120308.23879-2-rodrigorivascosta@gmail.com> <CAO-hwJK5sos9=RDajS_cXBzfePqf6TJs3Z-jk568sumR-zjqdw@mail.gmail.com>
+ <20180215221633.GA18755@casa> <CAO-hwJLjFaP3ZLoM+EDbruoRhOyPPFXmo7FWGoXESc9XgkD4Kg@mail.gmail.com>
+ <20180216090243.GB18755@casa> <CAO-hwJKuWWiNX63=X1GSEQQ1cPhi35g6NuX7gsFNGj_s0UdM+Q@mail.gmail.com>
+ <20180216095722.GC18755@casa>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date: Fri, 16 Feb 2018 11:38:11 +0100
+Message-ID: <CAO-hwJ+9Jvd8x5dRaerstzeNNgY4_mUar77BB1k2ctxaOCJLtQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] HID: steam: add serial number information.
+To: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 06:20:49PM +0000, Will Deacon wrote:
+On Fri, Feb 16, 2018 at 10:57 AM, Rodrigo Rivas Costa
+<rodrigorivascosta@gmail.com> wrote:
+> On Fri, Feb 16, 2018 at 10:31:35AM +0100, Benjamin Tissoires wrote:
+>> > Ok, I'll do that. The weird thing, however, is that:
+>> >
+>> >         hid_hw_raw_request(steam->hid_dev, 0x00,
+>> >                 buf, hid_report_len(r), /* 64 */
+>> >                 HID_FEATURE_REPORT, HID_REQ_GET_REPORT);
+>> >
+>> > fails with EOVERFLOW. I have to use:
+>> >
+>> >         hid_hw_raw_request(steam->hid_dev, 0x00,
+>> >                 buf, 65
+>> >                 HID_FEATURE_REPORT, HID_REQ_GET_REPORT);
+>> >
+>> > which just feels wrong to me.
+>>
+>> Indeed
+>>
+>> >
+>> > And looking around drivers/hid/*.c I see that most calls to
+>> > hid_hw_raw_request(..., HID_REQ_GET_REPORT) use a buffer allocated with
+>> > {devm_,}kzalloc() and a constant length, never using
+>> > hid_alloc_report_buf() or hid_report_len().
+>>
+>> well, hid-input.c and hid-multitouch.c are using
+>> hid_alloc_report_buf() and these two are the most generic ones. We
+>> haven't converted everybody to use hid_alloc_report_buf(), but it's
+>> not a reason to not use it for new drivers :)
+>
+> Agreed. And they use hid_report_len() on the hid_hw_raw_request().
+>
+> Now my guess is that hid_report_len() should return 65 instead of 64.
+> And it would do that if the report.id would be >0, but, alas, it is =0.
+> Maybe feature reports should add 1 without checking id>0? Or maybe
+> the Steam report descriptor is wrong and I should use report_fixup or
+> something?
+>
+>> No, it's unlikely that there is a bug. Can you forward to me the
+>> report descriptors of the Steam controller (ideally with the tool
+>> hid-recorder from http://bentiss.github.io/hid-replay-docs/, so I can
+>> get a few events too)?
+>
+> Sure, see the attached file. It is the wired one, I opened jstest and
+> moved the joystick around to get a few events. Unfortunately the
+> HID_REQ_GET_REPORT are not recorded.
+>
+> For the casual reader, here is the decoded report descriptor [1]:
+>
+> 0x06, 0x00, 0xFF,  // Usage Page (Vendor Defined 0xFF00)
+> 0x09, 0x01,        // Usage (0x01)
+> 0xA1, 0x01,        // Collection (Application)
+> 0x15, 0x00,        //   Logical Minimum (0)
+> 0x26, 0xFF, 0x00,  //   Logical Maximum (255)
+> 0x75, 0x08,        //   Report Size (8)
+> 0x95, 0x40,        //   Report Count (64)
+> 0x09, 0x01,        //   Usage (0x01)
+> 0x81, 0x02,        //   Input (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
+> 0x95, 0x40,        //   Report Count (64)
+> 0x09, 0x01,        //   Usage (0x01)
+> 0x91, 0x02,        //   Output (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position,Non-volatile)
+> 0x95, 0x40,        //   Report Count (64)
+> 0x09, 0x01,        //   Usage (0x01)
+> 0xB1, 0x02,        //   Feature (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position,Non-volatile)
+> 0xC0,              // End Collection
+>
 
-> > The only other comment is that I think it would be better if you use
-> > atomic_t instead of atomic_long_t. It would just mean changing
-> > BIT_WORD() and BIT_MASK().
-> 
-> It would make it pretty messy for big-endian architectures, I think...
+>
+> [1]: http://eleccelerator.com/usbdescreqparser/
 
-Urgh, the big.little indians strike again.. Bah I always forget about
-that.
 
-#define BIT_U32_MASK(nr)	(1UL << ((nr) % 32))
-#define BIT_U32_WORD(nr)	(((nr) / 32) ^ (4 * __BIG_ENDIAN__))
+Thanks.
 
-Or something like that might work, but I always get these things wrong.
+Arf, looks like usbhid expects the buffer to start with 0x00 when the
+report is not numbered, thus adding one to the report length.
 
-> > The reason is that we generate a pretty sane set of atomic_t primitives
-> > as long as the architecture supplies cmpxchg, but atomic64 defaults to
-> > utter crap, even on 64bit platforms.
-> 
-> I think all the architectures using this today are 32-bit:
-> 
-> blackfin
-> c6x
-> cris
-> metag
-> openrisc
-> sh
-> xtensa
-> 
-> and I don't know how much we should care about optimising the generic atomic
-> bitops for 64-bit architectures that rely on spinlocks for 64-bit atomics!
+I guess that nobody tried to recently set/get reports on a device
+without a report ID. And hidraw matches this behavior too, which means
+it's hard to change.
 
-You're probably right, but it just bugs me that we default to such
-horrible crap. Arguably we should do a better default for atomic64_t on
-64bit archs. But that's for another time.
+One thing I'd like to try to change is the result of hid_report_len.
+If everybody expects the size to be of one more when the report is
+unnumbered, maybe we could simply add this placeholder in the report
+size from the beginning.
+
+We'd need more testing though that just my gut feeling that it's the
+right thing to do.
+
+Cheers,
+Benjamin
