@@ -1,30 +1,30 @@
 Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x226SiTSRpl1yn+36LpBufGCX5BZTl2ViQPyAoqagmfYmJYqkQdMwJmdtMvllczw4d7ClagxC
+X-Google-Smtp-Source: AH8x225+hKp6d7OxeetNTsBr0u15zPy3d/3cu7hjWVX0DSXOIoCnCCxyb57tYQqLCJli4576+DgA
 ARC-Seal: i=1; a=rsa-sha256; t=1518806395; cv=none;
         d=google.com; s=arc-20160816;
-        b=WO6E1GwQ/sIVyEAZN16isb81AoKIm+fJGJeDZn5h2YP49snSV4UzV6xACMS1Mjxh8Z
-         lQdp8AmGrjIkNn2JDkyBANcj1Iif01mDeNotM1jWmQnFeNP5hgtsnlOk1uqHsFrs7bNw
-         nBKIoOI2uoyqvNQC8iIPhb2rpxyC+OQM1lbylgWwQQ0NCkZd9DZBmR2+Pqcsf/SjMB2x
-         nZYwasxMUMCdjLQQFiPWINvSddWPR/bvmahuXdm2jspNDFdUKx+1fsEdhHHcmT3M4PMK
-         fTqeune7QQTV8o9/I+flvhsTC5nJCioqhCeH6N09DUUE6Zj9EMlrfrvtC13Tx8E2RNB0
-         ki8Q==
+        b=VVoC2xhT/SnlfZEUEMLbAAuodrkSe6Q2pi5ZNdilK5gNH1RntsZ/pxL5r6QT8jwlKw
+         5rd4A7MeBCva3+aOZUT8hZRiPFBVSZBdNHD2ur96qiIHz6H+77k7LBVKp7BU5j/kbOxj
+         xw/23ILT1EZl53sSZPZiLuI/cY56Qd/UUXiac3kCtMgJPCDhvg1MEwBxlRGIjYDis2zP
+         f4v+HvaFIy485s5axMKZ7tzO4ubc2EMR3Fk8qWJcwFeCqsEYUL/rwAOvl0qF5ZlIRYbi
+         TOHDWXAd3OLL/LE2mo+ETlqdyecEiL06ld5FUdE+62smLJXpkmK6cGtSjlzLdvo5mKdO
+         85ZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=NNUronc0b0DxbhAtpAXfRP7LuUaytEfPMCerNrVvsRI=;
-        b=IsF5Vqh83KTEBR8GzpiPIP0yxeMvlxL7dUOcRObsxXzHLvmjLPLhOPICjvcQ9sQCXI
-         MXxOpfHLp5EL4a2gGzdgZf8vw7nZ9oqcv7/VROiwSkqPVHCD0zaIq/NwBqo/xNlWr4Dx
-         BysJFWrUz4TTDQ4UEThHQl3gUaM73QLP78VQECywul0gHounv8BT/ci9f3cGeEtMYmL3
-         hatERDY0MZMH6v3NtRwe+lDyRBn7lXjCEMyOBw2JatjHorV3dZtZAwgavZtxXGwotHch
-         m0rj8p5N5awPJ6tY2IKiUy8afbdwGxpfYecKjVxDLgMbPbf8jGCNa2bZPfgNdYTMiv5I
-         Vgxg==
+        bh=D0SFCGOFIy+/Nth0+l6GLQfAxw29uEAyFnvGWq1jc7A=;
+        b=Ljeez9BfL8KaFPXFolnR6AYBzFF7T75X9aMilSYghUlOt1fbbmEkm4TUdibOUAj3gd
+         VYz9Y4tPkzD2+yRx5E5PkIim0CA2d2zpE3imgXWylWrYrl9596HCQ0HCuToQLVo9Envl
+         2754Mq+BnQfI7YinY1bKG5tlypzlUXOrN/ZTTwjrr4lkciaz3VOtzHwmWMhwaIylAihA
+         veE29d7qCRIGeilnZ4l5eV39iNaUQNhEfPmcwvoygE1fo2sZbX9YsiQCmVipWZMBfBnq
+         lMDX8ZcDr+0/wD3GDVJuMleekCQ2KamD4f6cIghZIAfDDCQXfsylf+HBxlsIAOIFCV+u
+         mklg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=c1puTWxM;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=Yt/IrWbd;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=c1puTWxM;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=Yt/IrWbd;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBTM013418
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBTK013418
 X-Nifty-SrcIP: [125.199.20.195]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org,
@@ -36,66 +36,85 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michal Marek <michal.lkml@markovi.net>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 19/23] kcov: imply GCC_PLUGINS and GCC_PLUGIN_SANCOV instead of select'ing them
-Date: Sat, 17 Feb 2018 03:38:47 +0900
-Message-Id: <1518806331-7101-20-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 17/23] kconfig: add CC_IS_CLANG and CLANG_VERSION
+Date: Sat, 17 Feb 2018 03:38:45 +0900
+Message-Id: <1518806331-7101-18-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592583935677866437?=
-X-GMAIL-MSGID: =?utf-8?q?1592583935677866437?=
+X-GMAIL-THRID: =?utf-8?q?1592583934887028081?=
+X-GMAIL-MSGID: =?utf-8?q?1592583934887028081?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-As Documentation/kbuild/kconfig-language.txt notes, 'select' should be
-used with care - it forces a lower limit of another symbol, ignoring
-the dependency.  In this case, KCOV can select GCC_PLUGINS even if
-'depends on HAVE_GCC_PLUGINS' is unmet.
-
-'imply' is modest enough to observe the dependency, and this makes
-sense.  If you enable KCOV, you will probably want to enable
-GCC_PLUGIN_SANCOV, but it should not break the dependency.
-
-I also remove unneeded code, I just happened to notice.
+This will be useful to describe the clang version dependency.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- lib/Kconfig.debug | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ init/Kconfig             |  8 ++++++++
+ scripts/clang-version.sh | 24 +++++++++++-------------
+ 2 files changed, 19 insertions(+), 13 deletions(-)
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 6088408..1216ce6 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -743,8 +743,8 @@ config KCOV
- 	bool "Code coverage for fuzzing"
- 	depends on ARCH_HAS_KCOV
- 	select DEBUG_FS
--	select GCC_PLUGINS if !COMPILE_TEST
--	select GCC_PLUGIN_SANCOV if !COMPILE_TEST
-+	imply GCC_PLUGINS
-+	imply GCC_PLUGIN_SANCOV
- 	help
- 	  KCOV exposes kernel code coverage information in a form suitable
- 	  for coverage-guided fuzzing (randomized testing).
-@@ -758,7 +758,6 @@ config KCOV
- config KCOV_ENABLE_COMPARISONS
- 	bool "Enable comparison operands collection by KCOV"
- 	depends on KCOV
--	default n
- 	help
- 	  KCOV also exposes operands of every comparison in the instrumented
- 	  code along with operand sizes and PCs of the comparison instructions.
-@@ -768,7 +767,7 @@ config KCOV_ENABLE_COMPARISONS
- config KCOV_INSTRUMENT_ALL
- 	bool "Instrument all code by default"
- 	depends on KCOV
--	default y if KCOV
-+	default y
- 	help
- 	  If you are doing generic system call fuzzing (like e.g. syzkaller),
- 	  then you will want to instrument the whole kernel and you should
+diff --git a/init/Kconfig b/init/Kconfig
+index f2da5e9..1b751bc 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -21,6 +21,14 @@ config GCC_VERSION
+ 	default $(shell-stdout $srctree/scripts/gcc-version.sh -p $CC | sed 's/^0*//') if CC_IS_GCC
+ 	default 0
+ 
++config CC_IS_CLANG
++	bool
++	default $(shell $CC --version | grep -q clang)
++
++config CLANG_VERSION
++	int
++	default $(shell-stdout $srctree/scripts/clang-version.sh $CC)
++
+ config CONSTRUCTORS
+ 	bool
+ 	depends on !UML
+diff --git a/scripts/clang-version.sh b/scripts/clang-version.sh
+index 9780efa..d8002d2 100755
+--- a/scripts/clang-version.sh
++++ b/scripts/clang-version.sh
+@@ -10,24 +10,22 @@
+ # clang-5.0.1 etc.
+ #
+ 
+-if [ "$1" = "-p" ] ; then
+-	with_patchlevel=1;
+-	shift;
+-fi
+-
+ compiler="$*"
+ 
+ if [ ${#compiler} -eq 0 ]; then
+-	echo "Error: No compiler specified."
+-	printf "Usage:\n\t$0 <clang-command>\n"
++	echo "Error: No compiler specified." >&2
++	printf "Usage:\n\t$0 <clang-command>\n" >&2
++	echo 0
++	exit 1
++fi
++
++if !( $compiler --version | grep -q clang) ; then
++	echo "This is not clang." >&2
++	echo 0
+ 	exit 1
+ fi
+ 
+ MAJOR=$(echo __clang_major__ | $compiler -E -x c - | tail -n 1)
+ MINOR=$(echo __clang_minor__ | $compiler -E -x c - | tail -n 1)
+-if [ "x$with_patchlevel" != "x" ] ; then
+-	PATCHLEVEL=$(echo __clang_patchlevel__ | $compiler -E -x c - | tail -n 1)
+-	printf "%02d%02d%02d\\n" $MAJOR $MINOR $PATCHLEVEL
+-else
+-	printf "%02d%02d\\n" $MAJOR $MINOR
+-fi
++PATCHLEVEL=$(echo __clang_patchlevel__ | $compiler -E -x c - | tail -n 1)
++printf "%d%02d%02d\\n" $MAJOR $MINOR $PATCHLEVEL
 -- 
 2.7.4
