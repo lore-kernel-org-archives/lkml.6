@@ -1,123 +1,255 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3839317-1519560715-2-3754543391063159337
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519560714; b=nGOqeRPwCkdKUBwz4tb+at9LJGXVQzqGuDrVAYyjTsogMsS
-    PiKYO+ojc3473lhqYqqzssR1vwPc6wJ8j1+HGf5PYkzVAFtMrnaV6+DpwzsVglgL
-    0GjTbUaEhDuD5ukdvCrEICe5SkjWC5pB11R5j4tSGAQ7aEAAij3L2gAJvQwsrox6
-    h9L9jiKDY7RRJ5HVJ8OjLVcR36/VWU/3txBQvfGxY087sEsFYMm1Px8OxjsPgHMx
-    I1/6dGIoqm+wKKK6hEQExus13LPSGU88B4OygU39zHzSR+bSIj9DLMsRdau9Q9CV
-    I7DVXEe7ZTF1YGwbKKlXFkEiOwR6SdsI+Vy1t7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519560714; bh=SD67quJyk2HLU6KWZEXTcsQsLkS7kjIDdcIzJN+E91o=; b=M
-    dc3iOCZzUGBr9b9pFVgQL4t8avnUVJm2HDGysRGVqg6V0jyoXdarqhDP5hsSewxg
-    9xV/q8fxrXsoPkrQNvYBs8iZ2aeivKUXkoh0m6+a7VqWGNAnm1vGW4wJR3oLRi4+
-    s6jQxwZP0pCxjEa0V2tYZ1iOpodipFPMUPhMC1nawoPSpC+Dp7F5Aj1FBuw0ks7l
-    rVkWQ8xu0iO86VuUSpNhtNEi7X1y855ongZnVF5opsjGKxxNNB9gv7xB7DxLy9zO
-    pOGBGIiRmrbqJeyuooX6qJW4hFZ0dcK4yUZjfybpT1hALDcxS0cOaLhUsAE87VKW
-    qFEsQk+GPIhaXgEPKsyQQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=pI1qkN7b;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=pI1qkN7b;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751659AbeBYMLo (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 25 Feb 2018 07:11:44 -0500
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:35366 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751585AbeBYMLm (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Sun, 25 Feb 2018 07:11:42 -0500
-X-Google-Smtp-Source: AG47ELsFaZQ+iSB1EJbGDY+FepyMnB9oL0Gg/M2I85alOEe4pri+GmRZHU4s7PyKdowQYvrAxMyW9g==
-Subject: Re: [PATCH 09/12] usb: roles: Add Intel XHCI USB role switch driver
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org
-References: <20180216104751.8371-1-hdegoede@redhat.com>
- <20180216104751.8371-10-hdegoede@redhat.com>
- <20180216133850.GO1480@kuha.fi.intel.com>
+Return-Path: <hdegoede@redhat.com>
+X-Google-Smtp-Source: AH8x227+ftr51LkzRoFH71YTfr+lFyHP9gqVUM6J7bp+j5FQDz+58dc/dZsqSdH5oSJqCWd67nG8
+ARC-Seal: i=1; a=rsa-sha256; t=1518778088; cv=none;
+        d=google.com; s=arc-20160816;
+        b=CUKP3kkC51TLDrQyfhGQ5IxewUE+PUTv7t7jaNKE5GhJSHUE8HFvqBt8j85Bci6ggU
+         T9RnUV6IGabQwMbcvSYkNqNzu1t0xGEPpiLjq7fk0hCQDpBKrPq/004OAXMmUHOl/F/r
+         U27kzEwDRJrKcrVEDcsYuGPrmufJrmkcNu5e5+LI6wz15ldD0hHSAYz+sf10RAhJ96fN
+         aSJ8sGmT//6YPkur0azYNoXr7CDdhI52Rjhs7ngHjdvQPlntqZtiEDKXOaCCJnh2RFE3
+         U+Sn0eGCsam/kBatRvf1SLdwbe/Buz/KDCzJzJ/163938KbsyQeJpVlfRYxAz8oV7+SL
+         eXow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=Hlawz2eO/XO0QqlMp59eXhvUNNc5zpaMpj4RT5/wwWo=;
+        b=N6Cb6bcgcjSobaynJcF1Z/DpGSwnwuWaPld91Z+5/DC97dKhfdM/S7c6IBf6lP5ElT
+         lBfYX1iZvnYpd/+TGOglL0d3rJiIjKrTp261R+BkgAtzrf0Hf3naLVrflt6nmPMo0ElA
+         OnEcAcJwspix7MmKOPsxeSl4W9RRTMIOKMcym6ecGVqj0af0jxcxeeo1KX+0NQXsaeHV
+         rbDliBcDFkSQrMemkAfmpnkvQNpvAxXat8OAj3b/PXkrIpWOiTztDtgeMDYi5Qsrtz7z
+         AM0uwRQnRBHNeZDKoyDc5tuRT7CsLShbKjoUi0qL8G9Kj5vj+e/ikdjQjQchr9VouXRg
+         cLoQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <5a5d758f-643d-7159-162d-50f053d99c17@redhat.com>
-Date: Sun, 25 Feb 2018 13:11:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180216133850.GO1480@kuha.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+To: Darren Hart <dvhart@infradead.org>,
+	Andy Shevchenko <andy@infradead.org>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH 08/12] xhci: Add Intel extended cap / otg phy mux handling
+Date: Fri, 16 Feb 2018 11:47:47 +0100
+Message-Id: <20180216104751.8371-9-hdegoede@redhat.com>
+In-Reply-To: <20180216104751.8371-1-hdegoede@redhat.com>
+References: <20180216104751.8371-1-hdegoede@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592554252355342442?=
+X-GMAIL-MSGID: =?utf-8?q?1592554252355342442?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+The xHCI controller on various Intel SoCs has an extended cap mmio-range
+which contains registers to control the muxing to the xHCI (host mode)
+or the dwc3 (device mode) and vbus-detection for the otg usb-phy.
 
-On 16-02-18 14:38, Heikki Krogerus wrote:
-> On Fri, Feb 16, 2018 at 11:47:48AM +0100, Hans de Goede wrote:
->> diff --git a/drivers/usb/Makefile b/drivers/usb/Makefile
->> index 060643a1b5c8..7d1b8c82b208 100644
->> --- a/drivers/usb/Makefile
->> +++ b/drivers/usb/Makefile
->> @@ -65,3 +65,5 @@ obj-$(CONFIG_USB_COMMON)	+= common/
->>   obj-$(CONFIG_USBIP_CORE)	+= usbip/
->>   
->>   obj-$(CONFIG_TYPEC)		+= typec/
->> +
->> +obj-$(CONFIG_USB_ROLE_SWITCH)	+= roles/
->> diff --git a/drivers/usb/roles/Kconfig b/drivers/usb/roles/Kconfig
->> new file mode 100644
->> index 000000000000..e5c2bfaf8ba5
->> --- /dev/null
->> +++ b/drivers/usb/roles/Kconfig
->> @@ -0,0 +1,14 @@
->> +if USB_ROLE_SWITCH
->> +
->> +config USB_ROLES_INTEL_XHCI
->> +	tristate "Intel XHCI USB Role Switch"
->> +	depends on ACPI && X86 && EXTCON
-> 
-> Hold on... There is no dependency on extcon, or is there?
+Having a role-sw driver included in the xhci code (under drivers/usb/host)
+is not desirable. So this commit adds a simple handler for this extended
+capability, which creates a platform device with the caps mmio region as
+resource, this allows us to write a separate platform role-sw driver for
+the role-switch.
 
-You are right, this is an old leftover, removed for v2
-of this patchset which I'm preparing atm.
+Note this commit adds a call to the new xhci_ext_cap_init() function
+to xhci_pci_probe(), it is added here because xhci_ext_cap_init() must
+be called only once. If in the future we also want to handle ext-caps
+on non pci xHCI HCDs from xhci_ext_cap_init() a call to it should also
+be added to other bus probe paths.
 
-Regards,
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+---
+Changes in v2:
+-Check xHCI controller PCI device-id instead of only checking for the
+ Intel Extended capability ID, as the Extended capability ID is used on
+ other model Intel xHCI controllers too
 
-Hans
+Changes in v3:
+-Add a new generic xhci_ext_cap_init() function and handle the new
+ XHCI_INTEL_CHT_USB_MUX quirk there.
+
+Changes in v4:
+-Stop using Cherry Trail / CHT in various places as other Intel SoCs
+ (e.g. Broxton / Apollo Lake) also have this
+---
+ drivers/usb/host/Makefile        |  2 +-
+ drivers/usb/host/xhci-ext-caps.c | 89 ++++++++++++++++++++++++++++++++++++++++
+ drivers/usb/host/xhci-ext-caps.h |  2 +
+ drivers/usb/host/xhci-pci.c      |  5 +++
+ drivers/usb/host/xhci.h          |  2 +
+ 5 files changed, 99 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/usb/host/xhci-ext-caps.c
+
+diff --git a/drivers/usb/host/Makefile b/drivers/usb/host/Makefile
+index 4ede4ce12366..8a8cffe0b445 100644
+--- a/drivers/usb/host/Makefile
++++ b/drivers/usb/host/Makefile
+@@ -11,7 +11,7 @@ fhci-y += fhci-mem.o fhci-tds.o fhci-sched.o
+ 
+ fhci-$(CONFIG_FHCI_DEBUG) += fhci-dbg.o
+ 
+-xhci-hcd-y := xhci.o xhci-mem.o
++xhci-hcd-y := xhci.o xhci-mem.o xhci-ext-caps.o
+ xhci-hcd-y += xhci-ring.o xhci-hub.o xhci-dbg.o
+ xhci-hcd-y += xhci-trace.o
+ 
+diff --git a/drivers/usb/host/xhci-ext-caps.c b/drivers/usb/host/xhci-ext-caps.c
+new file mode 100644
+index 000000000000..8622d1e95ae7
+--- /dev/null
++++ b/drivers/usb/host/xhci-ext-caps.c
+@@ -0,0 +1,89 @@
++/*
++ * XHCI extended capability handling
++ *
++ * Copyright (c) 2017 Hans de Goede <hdegoede@redhat.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/platform_device.h>
++#include "xhci.h"
++
++static void xhci_intel_unregister_pdev(void *arg)
++{
++	platform_device_unregister(arg);
++}
++
++static int xhci_create_intel_xhci_sw_pdev(struct xhci_hcd *xhci, u32 cap_offset)
++{
++	struct usb_hcd *hcd = xhci_to_hcd(xhci);
++	struct device *dev = hcd->self.controller;
++	struct platform_device *pdev;
++	struct resource	res = { 0, };
++	int ret;
++
++	pdev = platform_device_alloc("intel_xhci_usb_sw", PLATFORM_DEVID_NONE);
++	if (!pdev) {
++		xhci_err(xhci, "couldn't allocate intel_xhci_usb_sw pdev\n");
++		return -ENOMEM;
++	}
++
++	res.start = hcd->rsrc_start + cap_offset;
++	res.end	  = res.start + 0x3ff;
++	res.name  = "intel_xhci_usb_sw";
++	res.flags = IORESOURCE_MEM;
++
++	ret = platform_device_add_resources(pdev, &res, 1);
++	if (ret) {
++		dev_err(dev, "couldn't add resources to intel_xhci_usb_sw pdev\n");
++		platform_device_put(pdev);
++		return ret;
++	}
++
++	pdev->dev.parent = dev;
++
++	ret = platform_device_add(pdev);
++	if (ret) {
++		dev_err(dev, "couldn't register intel_xhci_usb_sw pdev\n");
++		platform_device_put(pdev);
++		return ret;
++	}
++
++	ret = devm_add_action_or_reset(dev, xhci_intel_unregister_pdev, pdev);
++	if (ret) {
++		dev_err(dev, "couldn't add unregister action for intel_xhci_usb_sw pdev\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++int xhci_ext_cap_init(struct xhci_hcd *xhci)
++{
++	void __iomem *base = &xhci->cap_regs->hc_capbase;
++	u32 cap_offset, val;
++	int ret;
++
++	cap_offset = xhci_find_next_ext_cap(base, 0, 0);
++
++	while (cap_offset) {
++		val = readl(base + cap_offset);
++
++		switch (XHCI_EXT_CAPS_ID(val)) {
++		case XHCI_EXT_CAPS_VENDOR_INTEL:
++			if (xhci->quirks & XHCI_INTEL_USB_ROLE_SW) {
++				ret = xhci_create_intel_xhci_sw_pdev(
++							    xhci, cap_offset);
++				if (ret)
++					return ret;
++			}
++			break;
++		}
++		cap_offset = xhci_find_next_ext_cap(base, cap_offset, 0);
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(xhci_ext_cap_init);
+diff --git a/drivers/usb/host/xhci-ext-caps.h b/drivers/usb/host/xhci-ext-caps.h
+index 631e7cc62604..268328c20681 100644
+--- a/drivers/usb/host/xhci-ext-caps.h
++++ b/drivers/usb/host/xhci-ext-caps.h
+@@ -39,6 +39,8 @@
+ #define XHCI_EXT_CAPS_ROUTE	5
+ /* IDs 6-9 reserved */
+ #define XHCI_EXT_CAPS_DEBUG	10
++/* Vendor caps */
++#define XHCI_EXT_CAPS_VENDOR_INTEL	192
+ /* USB Legacy Support Capability - section 7.1.1 */
+ #define XHCI_HC_BIOS_OWNED	(1 << 16)
+ #define XHCI_HC_OS_OWNED	(1 << 24)
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index 6c79037876db..4486640d925c 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -164,6 +164,7 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+ 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
+ 		 pdev->device == PCI_DEVICE_ID_INTEL_CHERRYVIEW_XHCI) {
+ 		xhci->quirks |= XHCI_SSIC_PORT_UNUSED;
++		xhci->quirks |= XHCI_INTEL_USB_ROLE_SW;
+ 	}
+ 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
+ 	    (pdev->device == PCI_DEVICE_ID_INTEL_CHERRYVIEW_XHCI ||
+@@ -297,6 +298,10 @@ static int xhci_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 		goto dealloc_usb2_hcd;
+ 	}
+ 
++	retval = xhci_ext_cap_init(xhci);
++	if (retval)
++		goto put_usb3_hcd;
++
+ 	retval = usb_add_hcd(xhci->shared_hcd, dev->irq,
+ 			IRQF_SHARED);
+ 	if (retval)
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 96099a245c69..5917e3095e2a 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -1825,6 +1825,7 @@ struct xhci_hcd {
+ /* Reserved. It was XHCI_U2_DISABLE_WAKE */
+ #define XHCI_ASMEDIA_MODIFY_FLOWCONTROL	(1 << 28)
+ #define XHCI_HW_LPM_DISABLE	(1 << 29)
++#define XHCI_INTEL_USB_ROLE_SW	(1 << 30)
+ 
+ 	unsigned int		num_active_eps;
+ 	unsigned int		limit_active_eps;
+@@ -2020,6 +2021,7 @@ int xhci_gen_setup(struct usb_hcd *hcd, xhci_get_quirks_t get_quirks);
+ void xhci_init_driver(struct hc_driver *drv,
+ 		      const struct xhci_driver_overrides *over);
+ int xhci_disable_slot(struct xhci_hcd *xhci, u32 slot_id);
++int xhci_ext_cap_init(struct xhci_hcd *xhci);
+ 
+ int xhci_suspend(struct xhci_hcd *xhci, bool do_wakeup);
+ int xhci_resume(struct xhci_hcd *xhci, bool hibernated);
+-- 
+2.14.3
