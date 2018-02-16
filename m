@@ -1,30 +1,30 @@
 Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x227+fNpThpxFPxqz9BicRY8sijkC12fIS56w3OlQsswhC8T3Di71vYezBWPMit4ckAcFUir8
+X-Google-Smtp-Source: AH8x225zRwG+pqu9v6lRtyS/maDxPSJdMFUG/J2M9riy+XrglusShLJBPyxUE0kybgBK+h2iSLaM
 ARC-Seal: i=1; a=rsa-sha256; t=1518806386; cv=none;
         d=google.com; s=arc-20160816;
-        b=Oe6t8cyV1UzVivI4BtkOhW9BcWzNRbfG7H8nxIXtXcH8vDB9WRtRjd2spv33R/2T6L
-         vvvGa8V040045swra74EGEnbZ+qk2MRgoySI0WiTjrAawGYa1LCNOzPPpuyBqeYK7TdW
-         loFs/9gkMNb1nQr7Epu+ORtHqon3xkWf7O9rfdhgOA0rXOhUeVkPMG+w63xcKIegmMX7
-         BDG0oZgZOsiZspvDZj+Roxgu53H1C5yG2NIGI05b/JQjYXWVyeJ3EMSjUjgFwJFXcMCx
-         2dX5sTMOAmFk3kt/LQcP2f4SK5sVqiOqmhP/ro0YBnj16dLdJOAjriYIvwaGAMJVw454
-         ZSIg==
+        b=rPgJU3Y+r1hYjXiOC8Wcd1XE3syXBymeqGPxntDkumHSLcham42B/1aZgopr+ZlaTy
+         rvGM3fxXYPdbpJrERdBpb3s1Hb52a/usr2YXiwLUAkoAO+1mrVXJxSzGGxE3CkdVaDi7
+         5krtr5yUbxzejReLIq3z5b2AY2go6WxQXcWp3OMI+NsSGTr0dkhAsV4GtxNTcLnpD9a9
+         pDQWl9wfqmpdGIVQKwAn6MgVN6Ix7BWrF/HeCx4N4sbVPcpR1/QJ1nLttpNyRem0Eqan
+         cY21G0jsczLbDivHjARz/lebjzfwpsNJDsAoL6gvcM9nYcJIbnXzEaExNpFwGeVoX6eO
+         kPog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=TcwbpsyunP2zGuqv8JQctkwE0xC6/BHmB73ouAOs6XY=;
-        b=vOHzg2Lj5zL5CHpZ45m6PCwP/lrfQLXPi4NBFyoE5s4ZwEctBJa42TS7oK4eollOAS
-         clJNrRYx9DjmP0RJfKLFFDQJFtXt+ve6XeVVjAk/xaXqCaY8UpoM9bw7+bHaoczKuqLV
-         23w1akcV2akDULb1GJOww6HgXWndcTO9stVCcHYOdQ6g6ES/vJpajhEuVJ4mTkPpg9lr
-         ELOJYh1uQDnCrdNkd1Zju2E/306iQHJBlmTO2zt2KRVU/lv7+7uaorONFiHH4O5wA0aQ
-         5aUqrbr69d2GjQhh2PmAF1UnFWfLBiQ0CodFcbr1S822lR/YV7l/AxxdfqZ5szSAklJ8
-         cTqA==
+        bh=6bDWmuezbI5Hm+gjpVvP4x2GJkY1+VLq+ILtVxXeZbM=;
+        b=KvGVGZhU0nCIssD/SRDzhCHyWFz7MmZRKmVbnObExTjKvelJOWL8lOkAEGw3DaYW0O
+         8R3rpgSISspQMt3T9sPH5ordPWOTbr989NMr9pkx5lnkNbW0zwmoBK6e9j/cOexo6G8L
+         0pX0gN1BbU+GAwryx9ytcTXjYggEcLCx+QZmoSN9GtaksdZbeINK9uvPiurYv1s9dZ36
+         5KGWKj0yz6XgK5uWwLwvLGYtCTRbY3xK6ugVzeeajz/MshrEtIB4F+ywGSdbx/oMqdwQ
+         R4TzHAB/wrNpVdEC9upypX848MCo0XFc9XXgkDe/Y4MftYOwEhJ3IYoeUkhPq3QZheeX
+         vH+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=lDEQnHgg;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=2nv9Jg/J;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=lDEQnHgg;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=2nv9Jg/J;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBT5013418
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBT8013418
 X-Nifty-SrcIP: [125.199.20.195]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org,
@@ -36,83 +36,205 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michal Marek <michal.lkml@markovi.net>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 02/23] kbuild: remove CONFIG_CROSS_COMPILE support
-Date: Sat, 17 Feb 2018 03:38:30 +0900
-Message-Id: <1518806331-7101-3-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 05/23] kconfig: move and rename sym_expand_string_value()
+Date: Sat, 17 Feb 2018 03:38:33 +0900
+Message-Id: <1518806331-7101-6-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592583924954666942?=
-X-GMAIL-MSGID: =?utf-8?q?1592583924954666942?=
+X-GMAIL-THRID: =?utf-8?q?1592583924957446413?=
+X-GMAIL-MSGID: =?utf-8?q?1592583924957446413?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Kbuild provides a couple of ways to specify CROSS_COMPILE:
+This helper expands symbols contained in a string.  I am about to
+change it to expand environments instead of symbols.  Also, I will
+add function expansion later.
 
-[1] Command line
-[2] Environment
-[3] arch/*/Makefile (only some architectures)
-[4] CONFIG_CROSS_COMPILE
-
-[4] is problematic for the compiler capability tests in Kconfig.
-CONFIG_CROSS_COMPILE allows users to change the compiler prefix from
-'make menuconfig', etc.  It means, the compiler options would have
-to be all re-calculated everytime CONFIG_CROSS_COMPILE is changed.
-
-To avoid complexity and performance issues, I'd like to evaluate
-the shell commands statically, i.e. only parsing Kconfig files.
-
-I guess the majority is [1] or [2].  Currently, there are only
-4 defconfig files that specify CONFIG_CROSS_COMPILE.
-  arch/arm/configs/lpc18xx_defconfig
-  arch/hexagon/configs/comet_defconfig
-  arch/openrisc/configs/or1ksim_defconfig
-  arch/openrisc/configs/simple_smp_defconfig
+Rename it to expand_string_value(), and move it to util.c, which is
+a more suitable place.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- Makefile     | 3 ---
- init/Kconfig | 9 ---------
- 2 files changed, 12 deletions(-)
+ scripts/kconfig/lkc.h       |  1 +
+ scripts/kconfig/lkc_proto.h |  1 -
+ scripts/kconfig/symbol.c    | 53 -------------------------------------------
+ scripts/kconfig/util.c      | 55 ++++++++++++++++++++++++++++++++++++++++++++-
+ scripts/kconfig/zconf.y     |  2 +-
+ 5 files changed, 56 insertions(+), 56 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index a27e6d8..94a957e 100644
---- a/Makefile
-+++ b/Makefile
-@@ -307,12 +307,9 @@ SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
- # CROSS_COMPILE can be set on the command line
- # make CROSS_COMPILE=ia64-linux-
- # Alternatively CROSS_COMPILE can be set in the environment.
--# A third alternative is to store a setting in .config so that plain
--# "make" in the configured kernel build directory always uses that.
- # Default value for CROSS_COMPILE is not to prefix executables
- # Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile
- ARCH		?= $(SUBARCH)
--CROSS_COMPILE	?= $(CONFIG_CROSS_COMPILE:"%"=%)
+diff --git a/scripts/kconfig/lkc.h b/scripts/kconfig/lkc.h
+index 2d5ec2d..fb2503a 100644
+--- a/scripts/kconfig/lkc.h
++++ b/scripts/kconfig/lkc.h
+@@ -110,6 +110,7 @@ void menu_finalize(struct menu *parent);
+ void menu_set_type(int type);
  
- # Architecture as present in compile.h
- UTS_MACHINE 	:= $(ARCH)
-diff --git a/init/Kconfig b/init/Kconfig
-index e37f4b2..df18492 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -54,15 +54,6 @@ config INIT_ENV_ARG_LIMIT
- 	  Maximum of each of the number of arguments and environment
- 	  variables passed to init from the kernel command line.
+ /* util.c */
++char *expand_string_value(const char *in);
+ struct file *file_lookup(const char *name);
+ int file_write_dep(const char *name);
+ void *xmalloc(size_t size);
+diff --git a/scripts/kconfig/lkc_proto.h b/scripts/kconfig/lkc_proto.h
+index 9dc8abf..9884adc 100644
+--- a/scripts/kconfig/lkc_proto.h
++++ b/scripts/kconfig/lkc_proto.h
+@@ -31,7 +31,6 @@ extern struct symbol * symbol_hash[SYMBOL_HASHSIZE];
  
+ struct symbol * sym_lookup(const char *name, int flags);
+ struct symbol * sym_find(const char *name);
+-char *sym_expand_string_value(const char *in);
+ const char * sym_escape_string_value(const char *in);
+ struct symbol ** sym_re_search(const char *pattern);
+ const char * sym_type_name(enum symbol_type type);
+diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+index 2220bc4..e4ccf56 100644
+--- a/scripts/kconfig/symbol.c
++++ b/scripts/kconfig/symbol.c
+@@ -894,59 +894,6 @@ struct symbol *sym_find(const char *name)
+ 	return symbol;
+ }
+ 
+-/*
+- * Expand symbol's names embedded in the string given in argument. Symbols'
+- * name to be expanded shall be prefixed by a '$'. Unknown symbol expands to
+- * the empty string.
+- */
+-char *sym_expand_string_value(const char *in)
+-{
+-	const char *src;
+-	char *res;
+-	size_t reslen;
 -
--config CROSS_COMPILE
--	string "Cross-compiler tool prefix"
--	help
--	  Same as running 'make CROSS_COMPILE=prefix-' but stored for
--	  default make runs in this kernel build directory.  You don't
--	  need to set this unless you want the configured kernel build
--	  directory to select the cross-compiler automatically.
+-	/*
+-	 * Note: 'in' might come from a token that's about to be
+-	 * freed, so make sure to always allocate a new string
+-	 */
+-	reslen = strlen(in) + 1;
+-	res = xmalloc(reslen);
+-	res[0] = '\0';
 -
- config COMPILE_TEST
- 	bool "Compile also drivers which will not load"
- 	depends on !UML
+-	while ((src = strchr(in, '$'))) {
+-		char *p, name[SYMBOL_MAXLENGTH];
+-		const char *symval = "";
+-		struct symbol *sym;
+-		size_t newlen;
+-
+-		strncat(res, in, src - in);
+-		src++;
+-
+-		p = name;
+-		while (isalnum(*src) || *src == '_')
+-			*p++ = *src++;
+-		*p = '\0';
+-
+-		sym = sym_find(name);
+-		if (sym != NULL) {
+-			sym_calc_value(sym);
+-			symval = sym_get_string_value(sym);
+-		}
+-
+-		newlen = strlen(res) + strlen(symval) + strlen(src) + 1;
+-		if (newlen > reslen) {
+-			reslen = newlen;
+-			res = xrealloc(res, reslen);
+-		}
+-
+-		strcat(res, symval);
+-		in = src;
+-	}
+-	strcat(res, in);
+-
+-	return res;
+-}
+-
+ const char *sym_escape_string_value(const char *in)
+ {
+ 	const char *p;
+diff --git a/scripts/kconfig/util.c b/scripts/kconfig/util.c
+index c6f6e21..22201a4 100644
+--- a/scripts/kconfig/util.c
++++ b/scripts/kconfig/util.c
+@@ -10,11 +10,64 @@
+ #include <string.h>
+ #include "lkc.h"
+ 
++/*
++ * Expand symbol's names embedded in the string given in argument. Symbols'
++ * name to be expanded shall be prefixed by a '$'. Unknown symbol expands to
++ * the empty string.
++ */
++char *expand_string_value(const char *in)
++{
++	const char *src;
++	char *res;
++	size_t reslen;
++
++	/*
++	 * Note: 'in' might come from a token that's about to be
++	 * freed, so make sure to always allocate a new string
++	 */
++	reslen = strlen(in) + 1;
++	res = xmalloc(reslen);
++	res[0] = '\0';
++
++	while ((src = strchr(in, '$'))) {
++		char *p, name[SYMBOL_MAXLENGTH];
++		const char *symval = "";
++		struct symbol *sym;
++		size_t newlen;
++
++		strncat(res, in, src - in);
++		src++;
++
++		p = name;
++		while (isalnum(*src) || *src == '_')
++			*p++ = *src++;
++		*p = '\0';
++
++		sym = sym_find(name);
++		if (sym != NULL) {
++			sym_calc_value(sym);
++			symval = sym_get_string_value(sym);
++		}
++
++		newlen = strlen(res) + strlen(symval) + strlen(src) + 1;
++		if (newlen > reslen) {
++			reslen = newlen;
++			res = xrealloc(res, reslen);
++		}
++
++		strcat(res, symval);
++		in = src;
++	}
++	strcat(res, in);
++
++	return res;
++}
++
+ /* file already present in list? If not add it */
+ struct file *file_lookup(const char *name)
+ {
+ 	struct file *file;
+-	char *file_name = sym_expand_string_value(name);
++	char *file_name = expand_string_value(name);
+ 
+ 	for (file = file_list; file; file = file->next) {
+ 		if (!strcmp(name, file->name)) {
+diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
+index ad6305b..262c464 100644
+--- a/scripts/kconfig/zconf.y
++++ b/scripts/kconfig/zconf.y
+@@ -547,7 +547,7 @@ void conf_parse(const char *name)
+ 
+ 	tmp = rootmenu.prompt->text;
+ 	rootmenu.prompt->text = _(rootmenu.prompt->text);
+-	rootmenu.prompt->text = sym_expand_string_value(rootmenu.prompt->text);
++	rootmenu.prompt->text = expand_string_value(rootmenu.prompt->text);
+ 	free((char*)tmp);
+ 
+ 	menu_finalize(&rootmenu);
 -- 
 2.7.4
