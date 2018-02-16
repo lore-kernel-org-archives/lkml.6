@@ -1,30 +1,30 @@
 Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x225+hKp6d7OxeetNTsBr0u15zPy3d/3cu7hjWVX0DSXOIoCnCCxyb57tYQqLCJli4576+DgA
+X-Google-Smtp-Source: AH8x227PzhqstoKe4CD/uifu6Olqs8khmofvxJ/lLFPUUL7flthgudeVbxQVKkPvKW+VP106DDOB
 ARC-Seal: i=1; a=rsa-sha256; t=1518806395; cv=none;
         d=google.com; s=arc-20160816;
-        b=VVoC2xhT/SnlfZEUEMLbAAuodrkSe6Q2pi5ZNdilK5gNH1RntsZ/pxL5r6QT8jwlKw
-         5rd4A7MeBCva3+aOZUT8hZRiPFBVSZBdNHD2ur96qiIHz6H+77k7LBVKp7BU5j/kbOxj
-         xw/23ILT1EZl53sSZPZiLuI/cY56Qd/UUXiac3kCtMgJPCDhvg1MEwBxlRGIjYDis2zP
-         f4v+HvaFIy485s5axMKZ7tzO4ubc2EMR3Fk8qWJcwFeCqsEYUL/rwAOvl0qF5ZlIRYbi
-         TOHDWXAd3OLL/LE2mo+ETlqdyecEiL06ld5FUdE+62smLJXpkmK6cGtSjlzLdvo5mKdO
-         85ZQ==
+        b=J8/X5PYDqadZY+DexbVjMsVNEzTVHi8G4by/AirN2aYvq4/g6Kn//g2qYIMJuauSpX
+         L680wWwFyQWRqqOwwEG137FQfRPG2s4anGJfwS0ArSGsZ2nCKj25B1K2LJxPQfp3jZIU
+         aOiDYQP3N99RHdV951QH7QNkdArJskexfAG4NwJbAsT7PsNeekh1vZs9c+MlT0HTklNu
+         zpYKXWjwTBZkAxqCDpHkeE1PF/qQIM96AAki8yAjqD5HCHKgwl+vDrsoUdcTJc2LvS1N
+         QFcPFqjgfJZ6/g9JkmpgjzqKkCstFFdajRdoajv/ePettDbkspFxLI0sp/e3A61YhgzY
+         Hx0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=D0SFCGOFIy+/Nth0+l6GLQfAxw29uEAyFnvGWq1jc7A=;
-        b=Ljeez9BfL8KaFPXFolnR6AYBzFF7T75X9aMilSYghUlOt1fbbmEkm4TUdibOUAj3gd
-         VYz9Y4tPkzD2+yRx5E5PkIim0CA2d2zpE3imgXWylWrYrl9596HCQ0HCuToQLVo9Envl
-         2754Mq+BnQfI7YinY1bKG5tlypzlUXOrN/ZTTwjrr4lkciaz3VOtzHwmWMhwaIylAihA
-         veE29d7qCRIGeilnZ4l5eV39iNaUQNhEfPmcwvoygE1fo2sZbX9YsiQCmVipWZMBfBnq
-         lMDX8ZcDr+0/wD3GDVJuMleekCQ2KamD4f6cIghZIAfDDCQXfsylf+HBxlsIAOIFCV+u
-         mklg==
+        bh=uohe4JbWTsHxXCz7M2tIVXCUW+oWNRx1k6t+Og+uw9s=;
+        b=F4dwpHHXc49NgENbonbenLwOm7DwKSCa2k6caV+g2HSX8pZilg9I7tvYGGUB/RFwie
+         I7ZSJ7UPu13FsdIgoI0aq0ZMMk8K2/g8pYKcA33nJHbIEXHeydSDX8MuP59TTb0S9OTL
+         rGx59/kOQdRdVbVEVHCLvcw77dKSjoQvo7A6GFyPtkjTiF3oP3tCCvWeHAnDChkmo5s3
+         G+KgJmNsU/JmQZUADi8WbVhIaT5kFgmMDbnAJ2+5yvX9+DB14B0KMYleYAWG8TbQv7uV
+         0uQ+ZwE7IB7DvS/3VKzyVWAsPmgzI1VWC4Qmdvo3KhhYwGtRMrX4Tat2mgoFKCdFqtSC
+         hybw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=Yt/IrWbd;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=xEiTufgI;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=Yt/IrWbd;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=xEiTufgI;
        spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBTK013418
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBTF013418
 X-Nifty-SrcIP: [125.199.20.195]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org,
@@ -36,85 +36,57 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michal Marek <michal.lkml@markovi.net>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 17/23] kconfig: add CC_IS_CLANG and CLANG_VERSION
-Date: Sat, 17 Feb 2018 03:38:45 +0900
-Message-Id: <1518806331-7101-18-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 12/23] kconfig: replace $UNAME_RELEASE with function call
+Date: Sat, 17 Feb 2018 03:38:40 +0900
+Message-Id: <1518806331-7101-13-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592583934887028081?=
-X-GMAIL-MSGID: =?utf-8?q?1592583934887028081?=
+X-GMAIL-THRID: =?utf-8?q?1592583935111958656?=
+X-GMAIL-MSGID: =?utf-8?q?1592583935111958656?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This will be useful to describe the clang version dependency.
+With 'shell-stdout' supported, we can make it self-contained in
+Kconfig.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- init/Kconfig             |  8 ++++++++
- scripts/clang-version.sh | 24 +++++++++++-------------
- 2 files changed, 19 insertions(+), 13 deletions(-)
+ Makefile     | 3 +--
+ init/Kconfig | 4 ++--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
+diff --git a/Makefile b/Makefile
+index e9fc7c9..6491404 100644
+--- a/Makefile
++++ b/Makefile
+@@ -275,8 +275,7 @@ include scripts/Kbuild.include
+ # Read KERNELRELEASE from include/config/kernel.release (if it exists)
+ KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
+ KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
+-UNAME_RELEASE := $(shell uname --release)
+-export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION UNAME_RELEASE
++export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION
+ 
+ # SUBARCH tells the usermode build what the underlying arch is.  That is set
+ # first, and if a usermode build is happening, the "ARCH=um" on the command
 diff --git a/init/Kconfig b/init/Kconfig
-index f2da5e9..1b751bc 100644
+index f026a62..837a584 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
-@@ -21,6 +21,14 @@ config GCC_VERSION
- 	default $(shell-stdout $srctree/scripts/gcc-version.sh -p $CC | sed 's/^0*//') if CC_IS_GCC
- 	default 0
- 
-+config CC_IS_CLANG
-+	bool
-+	default $(shell $CC --version | grep -q clang)
-+
-+config CLANG_VERSION
-+	int
-+	default $(shell-stdout $srctree/scripts/clang-version.sh $CC)
-+
- config CONSTRUCTORS
- 	bool
+@@ -2,9 +2,9 @@ config DEFCONFIG_LIST
+ 	string
  	depends on !UML
-diff --git a/scripts/clang-version.sh b/scripts/clang-version.sh
-index 9780efa..d8002d2 100755
---- a/scripts/clang-version.sh
-+++ b/scripts/clang-version.sh
-@@ -10,24 +10,22 @@
- # clang-5.0.1 etc.
- #
+ 	option defconfig_list
+-	default "/lib/modules/$UNAME_RELEASE/.config"
++	default "/lib/modules/$(shell-stdout uname --release)/.config"
+ 	default "/etc/kernel-config"
+-	default "/boot/config-$UNAME_RELEASE"
++	default "/boot/config-$(shell-stdout uname --release)"
+ 	default ARCH_DEFCONFIG
+ 	default "arch/$ARCH/defconfig"
  
--if [ "$1" = "-p" ] ; then
--	with_patchlevel=1;
--	shift;
--fi
--
- compiler="$*"
- 
- if [ ${#compiler} -eq 0 ]; then
--	echo "Error: No compiler specified."
--	printf "Usage:\n\t$0 <clang-command>\n"
-+	echo "Error: No compiler specified." >&2
-+	printf "Usage:\n\t$0 <clang-command>\n" >&2
-+	echo 0
-+	exit 1
-+fi
-+
-+if !( $compiler --version | grep -q clang) ; then
-+	echo "This is not clang." >&2
-+	echo 0
- 	exit 1
- fi
- 
- MAJOR=$(echo __clang_major__ | $compiler -E -x c - | tail -n 1)
- MINOR=$(echo __clang_minor__ | $compiler -E -x c - | tail -n 1)
--if [ "x$with_patchlevel" != "x" ] ; then
--	PATCHLEVEL=$(echo __clang_patchlevel__ | $compiler -E -x c - | tail -n 1)
--	printf "%02d%02d%02d\\n" $MAJOR $MINOR $PATCHLEVEL
--else
--	printf "%02d%02d\\n" $MAJOR $MINOR
--fi
-+PATCHLEVEL=$(echo __clang_patchlevel__ | $compiler -E -x c - | tail -n 1)
-+printf "%d%02d%02d\\n" $MAJOR $MINOR $PATCHLEVEL
 -- 
 2.7.4
