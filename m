@@ -1,61 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeBPSak (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 13:30:40 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54956 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751146AbeBPSai (ORCPT
+        id S1752224AbeBPSb4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 13:31:56 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:59145 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752025AbeBPSby (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 13:30:38 -0500
-Date: Fri, 16 Feb 2018 10:30:32 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Wei Wang <wei.w.wang@intel.com>, virtio-dev@lists.oasis-open.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org,
-        kvm@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>, mhocko@kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>, david@redhat.com,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        cornelia.huck@de.ibm.com, mgorman@techsingularity.net,
-        aarcange@redhat.com, amit.shah@redhat.com,
-        Paolo Bonzini <pbonzini@redhat.com>, liliang.opensource@gmail.com,
-        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
-        riel@redhat.com
-Subject: Re: [PATCH v21 1/5] xbitmap: Introduce xbitmap
-Message-ID: <20180216183032.GA7439@bombadil.infradead.org>
-References: <1515496262-7533-1-git-send-email-wei.w.wang@intel.com>
- <1515496262-7533-2-git-send-email-wei.w.wang@intel.com>
- <CAHp75Ve-1-TOVJUZ4anhwkkeq-RhpSg3EmN3N0r09rj6sFrQZQ@mail.gmail.com>
+        Fri, 16 Feb 2018 13:31:54 -0500
+Date: Fri, 16 Feb 2018 19:31:52 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, David Lechner <david@lechnology.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 1/6] nand: davinci: rename the platform driver
+Message-ID: <20180216193152.7dc34d1b@bbrezillon>
+In-Reply-To: <20180216164712.25898-2-brgl@bgdev.pl>
+References: <20180216164712.25898-1-brgl@bgdev.pl>
+        <20180216164712.25898-2-brgl@bgdev.pl>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75Ve-1-TOVJUZ4anhwkkeq-RhpSg3EmN3N0r09rj6sFrQZQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 07:44:50PM +0200, Andy Shevchenko wrote:
-> On Tue, Jan 9, 2018 at 1:10 PM, Wei Wang <wei.w.wang@intel.com> wrote:
-> > From: Matthew Wilcox <mawilcox@microsoft.com>
-> >
-> > The eXtensible Bitmap is a sparse bitmap representation which is
-> > efficient for set bits which tend to cluster. It supports up to
-> > 'unsigned long' worth of bits.
+Hi Bartosz
+
+Prefix should be "mtd: nand: davinci:"
+
+On Fri, 16 Feb 2018 17:47:07 +0100
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> >  lib/xbitmap.c                            | 444 +++++++++++++++++++++++++++++++
+> Commit d8e22fb4ccac ("ARM: da850: add the nand dev_id to the clock
+> lookup table") broke the nand support in board file mode for
+> da850-based boards. Instead of reverting it and breaking the DT users
+> in the process (due to clock lookup), rename the driver to match the
+> clock table before renaming the users.
 > 
-> Please, split tests to a separate module.
+> Fixes: d8e22fb4ccac ("ARM: da850: add the nand dev_id to the clock lookup table")
 
-Hah, I just did this two days ago!  I didn't publish it yet, but I also made
-it compile both in userspace and as a kernel module.  
+You probably want Cc: <stable@vger.kernel.org> here.
 
-It's the top two commits here:
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/mtd/nand/davinci_nand.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/nand/davinci_nand.c b/drivers/mtd/nand/davinci_nand.c
+> index ccc8c43abcff..4fb143bf1872 100644
+> --- a/drivers/mtd/nand/davinci_nand.c
+> +++ b/drivers/mtd/nand/davinci_nand.c
+> @@ -865,7 +865,7 @@ static struct platform_driver nand_davinci_driver = {
+>  	.probe		= nand_davinci_probe,
+>  	.remove		= nand_davinci_remove,
+>  	.driver		= {
+> -		.name	= "davinci_nand",
+> +		.name	= "davinci-nand",
 
-http://git.infradead.org/users/willy/linux-dax.git/shortlog/refs/heads/xarray-2018-02-12
+And by doing that you're breaking C board files which are using the
+name with an underscore.
 
-Note this is a complete rewrite compared to the version presented here; it
-sits on top of the XArray and no longer has a preload interface.  It has a
-superset of the IDA functionality.
+>  		.of_match_table = of_match_ptr(davinci_nand_of_match),
+>  	},
+>  };
+
+Regards,
+
+Boris
+
+-- 
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
