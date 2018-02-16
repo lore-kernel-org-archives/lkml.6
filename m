@@ -1,29 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932937AbeBPJwg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 04:52:36 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:39171 "EHLO
+        id S932954AbeBPJwl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 04:52:41 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:48353 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932851AbeBPJwa (ORCPT
+        with ESMTP id S932851AbeBPJwi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 04:52:30 -0500
-Date: Fri, 16 Feb 2018 01:41:09 -0800
-From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-a1ff5b05e988ca3620027148cd61013408ea4194@git.kernel.org>
-Cc: yao.jin@linux.intel.com, acme@redhat.com, tglx@linutronix.de,
-        ak@linux.intel.com, hpa@zytor.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, wangnan0@huawei.com, namhyung@kernel.org,
-        kan.liang@intel.com, jolsa@kernel.org, peterz@infradead.org
-Reply-To: ak@linux.intel.com, mingo@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        yao.jin@linux.intel.com, acme@redhat.com, jolsa@kernel.org,
-        peterz@infradead.org, wangnan0@huawei.com, namhyung@kernel.org,
-        kan.liang@intel.com
-In-Reply-To: <1516310792-208685-16-git-send-email-kan.liang@intel.com>
-References: <1516310792-208685-16-git-send-email-kan.liang@intel.com>
+        Fri, 16 Feb 2018 04:52:38 -0500
+Date: Fri, 16 Feb 2018 01:42:33 -0800
+From: tip-bot for Andy Shevchenko <tipbot@zytor.com>
+Message-ID: <tip-6677d26c8befa462eab9be6c5335a939011e7e65@git.kernel.org>
+Cc: jolsa@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        acme@redhat.com, tglx@linutronix.de, hpa@zytor.com,
+        andriy.shevchenko@linux.intel.com
+Reply-To: mingo@kernel.org, jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de, acme@redhat.com,
+        hpa@zytor.com
+In-Reply-To: <20180129130359.1490-1-andriy.shevchenko@linux.intel.com>
+References: <20180129130359.1490-1-andriy.shevchenko@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf top: Remove lost events checking
-Git-Commit-ID: a1ff5b05e988ca3620027148cd61013408ea4194
+Subject: [tip:perf/urgent] perf tools: Substitute yet another strtoull()
+Git-Commit-ID: 6677d26c8befa462eab9be6c5335a939011e7e65
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,57 +33,64 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a1ff5b05e988ca3620027148cd61013408ea4194
-Gitweb:     https://git.kernel.org/tip/a1ff5b05e988ca3620027148cd61013408ea4194
-Author:     Kan Liang <kan.liang@intel.com>
-AuthorDate: Thu, 18 Jan 2018 13:26:30 -0800
+Commit-ID:  6677d26c8befa462eab9be6c5335a939011e7e65
+Gitweb:     https://git.kernel.org/tip/6677d26c8befa462eab9be6c5335a939011e7e65
+Author:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+AuthorDate: Mon, 29 Jan 2018 15:03:59 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 15 Feb 2018 09:56:43 -0300
+CommitDate: Thu, 15 Feb 2018 09:57:19 -0300
 
-perf top: Remove lost events checking
+perf tools: Substitute yet another strtoull()
 
-There would be some records lost in overwrite mode because of pausing
-the ringbuffer. It has little impact for the accuracy of the snapshot
-and could be tolerated by 'perf top'.
+Instead of home grown function let's use what library provides us.
 
-Remove the lost events checking.
-
-Signed-off-by: Kan Liang <kan.liang@intel.com>
+Signed-off-by: Andriy Shevchenko <andriy.shevchenko@linux.intel.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/1516310792-208685-16-git-send-email-kan.liang@intel.com
+Link: http://lkml.kernel.org/r/20180129130359.1490-1-andriy.shevchenko@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-top.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ tools/perf/util/util.c | 24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 7def861..5965306 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -283,8 +283,9 @@ static void perf_top__print_sym_table(struct perf_top *top)
+diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+index 443892d..1019bbc 100644
+--- a/tools/perf/util/util.c
++++ b/tools/perf/util/util.c
+@@ -340,35 +340,15 @@ size_t hex_width(u64 v)
+ 	return n;
+ }
  
- 	printf("%-*.*s\n", win_width, win_width, graph_dotted_line);
+-static int hex(char ch)
+-{
+-	if ((ch >= '0') && (ch <= '9'))
+-		return ch - '0';
+-	if ((ch >= 'a') && (ch <= 'f'))
+-		return ch - 'a' + 10;
+-	if ((ch >= 'A') && (ch <= 'F'))
+-		return ch - 'A' + 10;
+-	return -1;
+-}
+-
+ /*
+  * While we find nice hex chars, build a long_val.
+  * Return number of chars processed.
+  */
+ int hex2u64(const char *ptr, u64 *long_val)
+ {
+-	const char *p = ptr;
+-	*long_val = 0;
+-
+-	while (*p) {
+-		const int hex_val = hex(*p);
++	char *p;
  
--	if (hists->stats.nr_lost_warned !=
--	    hists->stats.nr_events[PERF_RECORD_LOST]) {
-+	if (!top->record_opts.overwrite &&
-+	    (hists->stats.nr_lost_warned !=
-+	    hists->stats.nr_events[PERF_RECORD_LOST])) {
- 		hists->stats.nr_lost_warned =
- 			      hists->stats.nr_events[PERF_RECORD_LOST];
- 		color_fprintf(stdout, PERF_COLOR_RED,
-@@ -611,7 +612,8 @@ static void *display_thread_tui(void *arg)
+-		if (hex_val < 0)
+-			break;
+-
+-		*long_val = (*long_val << 4) | hex_val;
+-		p++;
+-	}
++	*long_val = strtoull(ptr, &p, 16);
  
- 	perf_evlist__tui_browse_hists(top->evlist, help, &hbt,
- 				      top->min_percent,
--				      &top->session->header.env, true);
-+				      &top->session->header.env,
-+				      !top->record_opts.overwrite);
- 
- 	done = 1;
- 	return NULL;
+ 	return p - ptr;
+ }
