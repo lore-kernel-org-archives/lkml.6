@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423215AbeBPDVd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 22:21:33 -0500
+        id S1757416AbeBPDV2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 22:21:28 -0500
 Received: from mga18.intel.com ([134.134.136.126]:1689 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757384AbeBPDVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 22:21:14 -0500
+        id S1757382AbeBPDVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Feb 2018 22:21:10 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,519,1511856000";
-   d="scan'208";a="18576212"
+   d="scan'208";a="18576198"
 From: changbin.du@intel.com
 To: corbet@lwn.net, rostedt@goodmis.org, mingo@kernel.org
 Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Changbin Du <changbin.du@intel.com>
-Subject: [PATCH 3/3] Documentation: add ftrace-uses.rst to doc tree
-Date: Fri, 16 Feb 2018 11:12:19 +0800
-Message-Id: <1518750739-12514-4-git-send-email-changbin.du@intel.com>
+Subject: [PATCH 1/3] Documentation: add tracing to Sphinx TOC tree
+Date: Fri, 16 Feb 2018 11:12:17 +0800
+Message-Id: <1518750739-12514-2-git-send-email-changbin.du@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518750739-12514-1-git-send-email-changbin.du@intel.com>
 References: <1518750739-12514-1-git-send-email-changbin.du@intel.com>
@@ -29,80 +29,34 @@ From: Changbin Du <changbin.du@intel.com>
 
 Signed-off-by: Changbin Du <changbin.du@intel.com>
 ---
- Documentation/trace/ftrace-uses.rst | 23 ++++++++++++-----------
- Documentation/trace/index.rst       |  1 +
- 2 files changed, 13 insertions(+), 11 deletions(-)
+ Documentation/index.rst       | 1 +
+ Documentation/trace/index.rst | 6 ++++++
+ 2 files changed, 7 insertions(+)
+ create mode 100644 Documentation/trace/index.rst
 
-diff --git a/Documentation/trace/ftrace-uses.rst b/Documentation/trace/ftrace-uses.rst
-index 3aed560..998a60a 100644
---- a/Documentation/trace/ftrace-uses.rst
-+++ b/Documentation/trace/ftrace-uses.rst
-@@ -21,13 +21,14 @@ how to use ftrace to implement your own function callbacks.
+diff --git a/Documentation/index.rst b/Documentation/index.rst
+index ef5080c..3b99ab9 100644
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@ -64,6 +64,7 @@ merged much easier.
+    dev-tools/index
+    doc-guide/index
+    kernel-hacking/index
++   trace/index
+    maintainer/index
  
- The ftrace context
- ==================
-+.. warning::
- 
--WARNING: The ability to add a callback to almost any function within the
--kernel comes with risks. A callback can be called from any context
--(normal, softirq, irq, and NMI). Callbacks can also be called just before
--going to idle, during CPU bring up and takedown, or going to user space.
--This requires extra care to what can be done inside a callback. A callback
--can be called outside the protective scope of RCU.
-+  The ability to add a callback to almost any function within the
-+  kernel comes with risks. A callback can be called from any context
-+  (normal, softirq, irq, and NMI). Callbacks can also be called just before
-+  going to idle, during CPU bring up and takedown, or going to user space.
-+  This requires extra care to what can be done inside a callback. A callback
-+  can be called outside the protective scope of RCU.
- 
- The ftrace infrastructure has some protections agains recursions and RCU
- but one must still be very careful how they use the callbacks.
-@@ -54,15 +55,15 @@ an ftrace_ops with ftrace:
- 
- Both .flags and .private are optional. Only .func is required.
- 
--To enable tracing call::
-+To enable tracing call:
- 
- .. c:function::  register_ftrace_function(&ops);
- 
--To disable tracing call::
-+To disable tracing call:
- 
- .. c:function::  unregister_ftrace_function(&ops);
- 
--The above is defined by including the header::
-+The above is defined by including the header:
- 
- .. c:function:: #include <linux/ftrace.h>
- 
-@@ -200,7 +201,7 @@ match a specific pattern.
- 
- See Filter Commands in :file:`Documentation/trace/ftrace.txt`.
- 
--To just trace the schedule function::
-+To just trace the schedule function:
- 
- .. code-block:: c
- 
-@@ -210,7 +211,7 @@ To add more functions, call the ftrace_set_filter() more than once with the
- @reset parameter set to zero. To remove the current filter set and replace it
- with new functions defined by @buf, have @reset be non-zero.
- 
--To remove all the filtered functions and trace all functions::
-+To remove all the filtered functions and trace all functions:
- 
- .. code-block:: c
- 
+ Kernel API documentation
 diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-index c8000ba..aa2baad 100644
---- a/Documentation/trace/index.rst
+new file mode 100644
+index 0000000..d986ead
+--- /dev/null
 +++ b/Documentation/trace/index.rst
-@@ -6,3 +6,4 @@ Linux Tracing Technologies
-    :maxdepth: 2
- 
-    ftrace-design
-+   ftrace-uses
+@@ -0,0 +1,6 @@
++==========================
++Linux Tracing Technologies
++==========================
++
++.. toctree::
++   :maxdepth: 2
 -- 
 2.7.4
