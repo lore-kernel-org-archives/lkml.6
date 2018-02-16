@@ -1,34 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162000AbeBPRcE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 12:32:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39162 "EHLO mail.kernel.org"
+        id S1162040AbeBPRc6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 12:32:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161052AbeBPRcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 12:32:03 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E177217CA
+        id S1161052AbeBPRc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 12:32:57 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DBC7217CA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 16 Feb 2018 12:31:58 -0500
+Date: Fri, 16 Feb 2018 12:32:54 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Jason Baron <jbaron@akamai.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@suse.de>,
-        Juergen Gross <jgross@suse.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 1/3] jump_label: Warn on failed jump_label patch
-Message-ID: <20180216123158.2ab0c159@gandalf.local.home>
-In-Reply-To: <20180215223558.poirr2e6wxs2jhzb@treble>
-References: <cover.1518626149.git.jpoimboe@redhat.com>
-        <b8f1b55f17c346fba39d3f59a01251185e09e151.1518626149.git.jpoimboe@redhat.com>
-        <20180214120112.43821b5e@gandalf.local.home>
-        <a4ad6f69-8836-779b-f7e7-0e303885c7f5@akamai.com>
-        <20180214173407.guhytdurv4pmhzvk@treble>
-        <20180214124034.13d7d833@gandalf.local.home>
-        <20180214211707.hivwfwemghgy62mh@treble>
-        <20180215223558.poirr2e6wxs2jhzb@treble>
+To: "Du, Changbin" <changbin.du@intel.com>
+Cc: corbet@lwn.net, mingo@kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] Documentation: convert trace/ftrace-design.txt to
+ rst format
+Message-ID: <20180216123254.408a93a0@gandalf.local.home>
+In-Reply-To: <20180216090726.hcwaq6zxa65c4pk5@intel.com>
+References: <1518750739-12514-1-git-send-email-changbin.du@intel.com>
+        <1518750739-12514-3-git-send-email-changbin.du@intel.com>
+        <20180215225705.58984492@vmware.local.home>
+        <20180216090726.hcwaq6zxa65c4pk5@intel.com>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -37,22 +30,21 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Feb 2018 16:35:58 -0600
-Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+On Fri, 16 Feb 2018 17:07:26 +0800
+"Du, Changbin" <changbin.du@intel.com> wrote:
 
 
-> > Interesting idea.  The static key's entries (i.e. tracepoint sites) are
-> > in a static array.  Maybe we could rewrite the affected arrays when init
-> > memory is freed.  I'm not sure whether that would be overkill though.  I
-> > can tinker with it and see how it compares to the current solution.  
+> > This document is out of date, and I rather have it updated before we
+> > make it more "available" elsewhere.
+> >  
+> Got you. I plan to convert below docs. Are they out of date, too?
 > 
-> It turns out that something like this is already done for module init
-> code.  It doesn't *remove* the entry, but it does disable it by setting
-> entry->code to zero.  I'll just do the same thing right before initmem
-> is freed.
+> events-msr.txt, events.txt, mmiotrace.txt, stm.txt, uprobetracer.txt
+> events-nmi.txt, intel_th.txt, tracepoint-analysis.txt, events-kmem.txt,
+> events-power.txt, ftrace.txt, hwlat_detector.txt, kprobetrace.txt,
+> tracepoints.txt.
 
-Yes, I was actually going to mention to do it like the module code does.
-
-Thanks!
+I'm sure some of them are. I don't have time now to investigate which
+ones though.
 
 -- Steve
