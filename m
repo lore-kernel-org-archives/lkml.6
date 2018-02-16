@@ -1,59 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751053AbeBPXtx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 18:49:53 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:57415 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750859AbeBPXtv (ORCPT
+        id S1751026AbeBPXvP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 18:51:15 -0500
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:39841 "EHLO
+        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750934AbeBPXvN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 18:49:51 -0500
-From: John Ogness <john.ogness@linutronix.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] fs/dcache: Avoid the try_lock loops in dentry_kill()
-References: <20180216150933.971-1-john.ogness@linutronix.de>
-        <20180216150933.971-5-john.ogness@linutronix.de>
-        <CA+55aFyo6jrvU62DiwKJZaTnmwLYQe4krNJCbAUui8R+=bDVdQ@mail.gmail.com>
-        <87y3js36s7.fsf@linutronix.de>
-        <CA+55aFxku7bB9BEBrqgREc5ac4MK9CGLir1c7ZA-7bjp-Q2tAg@mail.gmail.com>
-        <87r2pk358g.fsf@linutronix.de>
-        <CA+55aFzfug3S_dRrHDh=Zdat0KZVar13NQVzyqXd3-xHLzeSjA@mail.gmail.com>
-Date: Sat, 17 Feb 2018 00:49:35 +0100
-In-Reply-To: <CA+55aFzfug3S_dRrHDh=Zdat0KZVar13NQVzyqXd3-xHLzeSjA@mail.gmail.com>
-        (Linus Torvalds's message of "Fri, 16 Feb 2018 15:31:22 -0800")
-Message-ID: <87lgfs3374.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        Fri, 16 Feb 2018 18:51:13 -0500
+X-Google-Smtp-Source: AH8x224aajKCdbedBTcp643vpqAcR1NI1Zxco1rbbBFc+2wcgcr+EDFs4WW7oS5gexfAYm+4ezddAQ==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180215173507.10989-6-ilina@codeaurora.org>
+References: <20180215173507.10989-1-ilina@codeaurora.org> <20180215173507.10989-6-ilina@codeaurora.org>
+From: Evan Green <evgreen@chromium.org>
+Date: Fri, 16 Feb 2018 15:50:29 -0800
+X-Gmail-Original-Message-ID: <CAE=gft5vEa69ML7mu=-=dg8Djb5dGdbs01PnwAYcJmSPioNasg@mail.gmail.com>
+Message-ID: <CAE=gft5vEa69ML7mu=-=dg8Djb5dGdbs01PnwAYcJmSPioNasg@mail.gmail.com>
+Subject: Re: [PATCH v2 05/10] drivers: qcom: rpmh-rsc: write sleep/wake
+ requests to TCS
+To: Lina Iyer <ilina@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-17, Linus Torvalds <torvalds@linux-foundation.org> wrote:
->> dentry_kill() calls both dentry_lock_inode() and lock_parent() in the
->> common case. So by changing the semantics of lock_parent(), I am
->> removing two "recheck in case I dropped" in the common case rather
->> than just the one you pointed out.
+Hello Lina,
+
+On Thu, Feb 15, 2018 at 9:35 AM, Lina Iyer <ilina@codeaurora.org> wrote:
+> Sleep and wake requests are sent when the application processor
+> subsystem of the SoC is entering deep sleep states like in suspend.
+> These requests help lower the system power requirements when the
+> resources are not in use.
 >
-> Ok, that would be lovely, but doesn't that end up being a nasty patch?
+> Sleep and wake requests are written to the TCS slots but are not
+> triggered at the time of writing. The TCS are triggered by the firmware
+> after the last of the CPUs has executed its WFI. Since these requests
+> may come in different batches of requests, it is job of this controller
+> driver to find arrange the requests into the available TCSes.
+>
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> ---
+>  drivers/soc/qcom/rpmh-internal.h |   7 +++
+>  drivers/soc/qcom/rpmh-rsc.c      | 126 +++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 133 insertions(+)
+>
+[...]
+> +static int find_slots(struct tcs_group *tcs, struct tcs_request *msg,
+> +                    int *m, int *n)
+> +{
+> +       int slot, offset;
+> +       int i = 0;
+> +
+> +       /* Find if we already have the msg in our TCS */
+> +       slot = find_match(tcs, msg->payload, msg->num_payload);
+> +       if (slot >= 0)
+> +               goto copy_data;
+> +
+> +       /* Do over, until we can fit the full payload in a TCS */
+> +       do {
+> +               slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
+> +                                                i, msg->num_payload, 0);
+> +               if (slot == MAX_TCS_SLOTS)
+> +                       break;
+> +               i += tcs->ncpt;
+> +       } while (slot + msg->num_payload - 1 >= i);
+> +
+> +       if (slot == MAX_TCS_SLOTS)
+> +               return -ENOMEM;
+> +
+> +copy_data:
+> +       bitmap_set(tcs->slots, slot, msg->num_payload);
+> +       /* Copy the addresses of the resources over to the slots */
+> +       for (i = 0; tcs->cmd_addr && i < msg->num_payload; i++)
 
-After reading your initial feedback my idea was to change both
-lock_parent() and dentry_lock_inode() to not only communicate _if_ the
-lock was successful, but also if d_lock was dropped in the process. (For
-example, with a tristate rather than boolean return value.) Then callers
-would know if they needed to recheck the dentry contents.
+I don't think tcs->cmd_addr can be null, can it? Above, find_match()
+is already reaching through cmd_addr with enthusiasm. If kept, it
+could at least be moved outside of the loop.
 
-> So it may be that my dislike of the "re-check after possibly dropping
-> the lock" is not really about the re-checking, but about just how it
-> made that function look much more complicated.
-
-I understand what you are saying and I appreciate the comments. I will
-code up some variations for myself and try to pick the one that is the
-least complicated for my v2.
-
-John Ogness
+Evan
