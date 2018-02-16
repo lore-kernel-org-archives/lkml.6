@@ -1,44 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758648AbeBPQzD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 11:55:03 -0500
-Received: from muru.com ([72.249.23.125]:57304 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755519AbeBPQzB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 11:55:01 -0500
-Date: Fri, 16 Feb 2018 08:54:57 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] PM / wakeirq: Add wakeup name to dedicated wake irqs
-Message-ID: <20180216165456.GV6364@atomide.com>
-References: <20180209161456.18951-1-tony@atomide.com>
- <CAHp75VcSRxLZJxmqXWpAGypvZa6W2cEAiTF2muJWqdaOYu_TpA@mail.gmail.com>
- <CAJZ5v0gRtkBf7uu4C_k7ivNGo=JM0bB1PAdr_6Nbbs39OPevHw@mail.gmail.com>
- <CAHp75VcVNDV9FmPFTBHsJRoiHtOviwC68Wk+aCqhqteZw41ZzQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcVNDV9FmPFTBHsJRoiHtOviwC68Wk+aCqhqteZw41ZzQ@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1161623AbeBPQzQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 11:55:16 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:57187 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161570AbeBPQzM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 11:55:12 -0500
+From: Colin King <colin.king@canonical.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] net: dsa: mv88e6xxx: avoid unintended sign extension on a 16 bit shift
+Date: Fri, 16 Feb 2018 16:55:05 +0000
+Message-Id: <20180216165505.20058-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Andy Shevchenko <andy.shevchenko@gmail.com> [180216 10:40]:
-> Sorry, I was thinking that Tony may test it first to see if it does
-> what he wants.
+From: Colin Ian King <colin.king@canonical.com>
 
-Well using dev_name() for the wakeirq name might still conflict
-with the device IO interrupt. But yeah I'll give it a try.
+The shifting of timehi by 16 bits to the left will be promoted to
+a 32 bit signed int and then sign-extended to an u64. If the top bit
+of timehi is set then all then all the upper bits of ns end up as also
+being set because of the sign-extension. Fix this by making timehi and
+timelo u64.  Also move the declaration of ns.
 
-Regards,
+Detected by CoverityScan, CID#1465288 ("Unintended sign extension")
 
-Tony
+Fixes: c6fe0ad2c349 ("net: dsa: mv88e6xxx: add rx/tx timestamping support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/dsa/mv88e6xxx/hwtstamp.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/dsa/mv88e6xxx/hwtstamp.c b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
+index b251d534b70d..2149d332dea0 100644
+--- a/drivers/net/dsa/mv88e6xxx/hwtstamp.c
++++ b/drivers/net/dsa/mv88e6xxx/hwtstamp.c
+@@ -293,7 +293,8 @@ static void mv88e6xxx_get_rxts(struct mv88e6xxx_chip *chip,
+ 			       struct sk_buff *skb, u16 reg,
+ 			       struct sk_buff_head *rxq)
+ {
+-	u16 buf[4] = { 0 }, status, timelo, timehi, seq_id;
++	u16 buf[4] = { 0 }, status, seq_id;
++	u64 ns, timelo, timehi;
+ 	struct skb_shared_hwtstamps *shwt;
+ 	int err;
+ 
+@@ -321,7 +322,7 @@ static void mv88e6xxx_get_rxts(struct mv88e6xxx_chip *chip,
+ 	 */
+ 	for ( ; skb; skb = skb_dequeue(rxq)) {
+ 		if (mv88e6xxx_ts_valid(status) && seq_match(skb, seq_id)) {
+-			u64 ns = timehi << 16 | timelo;
++			ns = timehi << 16 | timelo;
+ 
+ 			mutex_lock(&chip->reg_lock);
+ 			ns = timecounter_cyc2time(&chip->tstamp_tc, ns);
+-- 
+2.15.1
