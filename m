@@ -1,94 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757593AbeBPJKZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 04:10:25 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:39878 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757563AbeBPJKY (ORCPT
+        id S1757609AbeBPJLY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 04:11:24 -0500
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:54872 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757595AbeBPJLW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 04:10:24 -0500
-X-Google-Smtp-Source: AH8x227ftbzGds3bE0auaJLB2A/DMP8C7bHbLJjwMPBDUqOFQisGUa1UEs3TeyRQEGydJfCXDa5DAA==
-Date: Fri, 16 Feb 2018 10:10:20 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] x86/platform/atom: Re-use DEFINE_SHOW_ATTRIBUTE()
- macro
-Message-ID: <20180216091020.wyjgsihl25tereeu@gmail.com>
-References: <20180214154317.52290-1-andriy.shevchenko@linux.intel.com>
+        Fri, 16 Feb 2018 04:11:22 -0500
+X-Google-Smtp-Source: AH8x224oc6jgvQhX1NtqShRt39S4VT/fLbeF2pfccpJ0KzJuQFGsueq9KpkMlyAbH25CGLgYcwjhng==
+Subject: Re: [PATCH 8/8] thermal/drivers/cpu_cooling: Add the combo cpu
+ cooling device
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
+        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
+        linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        daniel.thompson@linaro.org
+References: <1516721671-16360-1-git-send-email-daniel.lezcano@linaro.org>
+ <1516721671-16360-9-git-send-email-daniel.lezcano@linaro.org>
+ <20180202104259.GA28462@vireshk-i7>
+ <8dadd854-25ac-68aa-aa9f-33ba76a137a4@linaro.org>
+ <20180209094419.GN28462@vireshk-i7>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <f3d05cc2-265f-d0ba-5221-362114abe82d@linaro.org>
+Date: Fri, 16 Feb 2018 10:11:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180214154317.52290-1-andriy.shevchenko@linux.intel.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180209094419.GN28462@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-
-> ...instead of open coding file operations followed by custom ->open()
-> callbacks per each attribute.
+On 09/02/2018 10:44, Viresh Kumar wrote:
+> On 02-02-18, 15:30, Daniel Lezcano wrote:
+>> Agree the cpufreq driver can be unloaded and this part needs some
+>> adjustments.
 > 
-> While here, replace permissions by explicit octal value.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  arch/x86/platform/atom/punit_atom_debug.c | 13 +------------
->  1 file changed, 1 insertion(+), 12 deletions(-)
-> 
-> diff --git a/arch/x86/platform/atom/punit_atom_debug.c b/arch/x86/platform/atom/punit_atom_debug.c
-> index d49d3be81953..156b445bcf4d 100644
-> --- a/arch/x86/platform/atom/punit_atom_debug.c
-> +++ b/arch/x86/platform/atom/punit_atom_debug.c
-> @@ -109,18 +109,7 @@ static int punit_dev_state_show(struct seq_file *seq_file, void *unused)
->  
->  	return 0;
->  }
-> -
-> -static int punit_dev_state_open(struct inode *inode, struct file *file)
-> -{
-> -	return single_open(file, punit_dev_state_show, inode->i_private);
-> -}
-> -
-> -static const struct file_operations punit_dev_state_ops = {
-> -	.open		= punit_dev_state_open,
-> -	.read		= seq_read,
-> -	.llseek		= seq_lseek,
-> -	.release	= single_release,
-> -};
-> +DEFINE_SHOW_ATTRIBUTE(punit_dev_state);
->  
->  static struct dentry *punit_dbg_file;
+> Also note that the cpufreq cooling device has two separate set of
+> callbacks, one for the power-specific callbacks. You haven't taken
+> care of them in the combo thing.
 
-Hm, that octal value replacement does not seem to be part of this patch, only the 
-next patch.
+The plan is add them after.
 
-Also, the debugfs_create_file() call still uses the old &punit_dev_state_ops 
-callback array.
 
-Did a patch hunk go missing?
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-I've added the fixes below to the patch.
-
-Thanks,
-
-	Ingo
-
---- tip.orig/arch/x86/platform/atom/punit_atom_debug.c
-+++ tip/arch/x86/platform/atom/punit_atom_debug.c
-@@ -132,9 +121,9 @@ static int punit_dbgfs_register(struct p
- 	if (!punit_dbg_file)
- 		return -ENXIO;
- 
--	dev_state = debugfs_create_file("dev_power_state", S_IFREG | S_IRUGO,
-+	dev_state = debugfs_create_file("dev_power_state", 0444,
- 					punit_dbg_file, punit_device,
--					&punit_dev_state_ops);
-+					&punit_dev_state_fops);
- 	if (!dev_state) {
- 		pr_err("punit_dev_state register failed\n");
- 		debugfs_remove(punit_dbg_file);
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
