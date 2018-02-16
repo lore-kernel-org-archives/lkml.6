@@ -1,53 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031560AbeBPNis (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 08:38:48 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:40463 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031458AbeBPNiq (ORCPT
+        id S1031694AbeBPNjR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 08:39:17 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:54876 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031458AbeBPNjP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 08:38:46 -0500
-X-Google-Smtp-Source: AH8x225iHrHw5FIJ4NBR0xXNq9ufRMCxqmOcH85I3WToVQ5fpeO6D0+XeaF3AcHVrUBL6swkS4tq7A==
-Date: Fri, 16 Feb 2018 11:38:41 -0200
-From: rodrigosiqueira <rodrigosiqueiramelo@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: daniel.baluta@nxp.com, linux-iio@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: apply coding-style into ms5611_probe function
-Message-ID: <20180216133841.3yt4ip3tbck7ihdm@smtp.gmail.com>
+        Fri, 16 Feb 2018 08:39:15 -0500
+Date: Fri, 16 Feb 2018 14:38:58 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Luiz Capitulino <lcapitulino@redhat.com>,
+        Christoph Lameter <cl@linux.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Wanpeng Li <kernellwp@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Rik van Riel <riel@redhat.com>
+Subject: Re: [PATCH 0/6] isolation: 1Hz residual tick offloading v6
+Message-ID: <20180216133858.GD25201@hirez.programming.kicks-ass.net>
+References: <1518655694-8057-1-git-send-email-frederic@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20171215
+In-Reply-To: <1518655694-8057-1-git-send-email-frederic@kernel.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the checkpatch.pl warning and error:
+On Thu, Feb 15, 2018 at 01:48:08AM +0100, Frederic Weisbecker wrote:
+> The version addresses the reviews from Ingo on v5:
+> 
+> * Start changelog titles with verbs.
+> * Improve/reword several comments.
+> * Improve/reword documentation.
+> * Various cosmetic changes.
+> * Use BUG_ON() on boot allocation failure.
+> 
 
-iio/pressure/ms5611.h:66: ERROR: code indent should use tabs where possible
-iio/pressure/ms5611.h:66: WARNING: please, no spaces at the start of a line
-iio/pressure/ms5611.h:66: ERROR: "foo* bar" should be "foo *bar"
-
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
----
- drivers/iio/pressure/ms5611.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iio/pressure/ms5611.h b/drivers/iio/pressure/ms5611.h
-index ccda63c5b3c3..ead9e9f85894 100644
---- a/drivers/iio/pressure/ms5611.h
-+++ b/drivers/iio/pressure/ms5611.h
-@@ -63,7 +63,7 @@ struct ms5611_state {
- };
- 
- int ms5611_probe(struct iio_dev *indio_dev, struct device *dev,
--                 const char* name, int type);
-+		 const char *name, int type);
- int ms5611_remove(struct iio_dev *indio_dev);
- 
- #endif /* _MS5611_H */
--- 
-2.16.1
+Thanks!
