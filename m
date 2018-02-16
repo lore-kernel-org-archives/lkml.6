@@ -1,127 +1,156 @@
-Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AH8x227884cz9s0dvvJUzonEEU6U/Sh2AY3JP+lKqZc4+xFfaSKccSYLLtXan7cazM2bataoSsXl
-ARC-Seal: i=1; a=rsa-sha256; t=1518863592; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ynjZMB4/cXFCtwElO7P1yRpiYw1NemK287q0goyC+Da7+3prnvzCZTnvIsPn9E7eRW
-         Y6hkqPYdAICuCYenp9wGYM6z4clTdeZcRZGsjw/9aXPXxdMRnawqIoFYtVOkvqug4xNn
-         frtkDmoKmrNgrmCX8otGMFZQydovDWBug4KjurTE4GxUJaDZl2THxj6hyQdw/x1XeMMQ
-         49xtCf63mLvt/M4FQonvDcJRg0/xiXWBAC75E31ezEQnl2srB1zgp93o8FBG+KtOQSVP
-         xaYt10eujmvq8F/IleQ/IzHnE17RlMYIbVRbJy1LlX7Aa8DFjmhUzFmGRNDbnZQkp+f4
-         QObQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=precedence:content-disposition:content-transfer-encoding
-         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
-         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
-         :arc-authentication-results;
-        bh=npa8zYN0xrs35jlO6x7l1Dh0uSaYh4zX/5mqZB1DmE0=;
-        b=jMVqkbbIxvQzH1f7JS3qoLxx7prMJjVplRW8hSwBumd7bjzMrMG+2WK5q2DpU4wF5K
-         0pwTK+ke/6CMoENwQVT/ib0NvSUpDxJ1JBrvbE1h8orvSUW84S5Nn1lyYy2y44NdwbAX
-         Z0Z4wATZyQCcm4hMdr8Yp7MUKczVEuOaZNjyGK11F3bmWtkmF/G0/JnCarJfvtjh/N3d
-         ly/sBPDtNdPfNwIKBR22NUBq7JmvD/Q08yhuL8Via85STdW/2WCqM/Fd42UI/vgqFFYG
-         /6dn+70jzvduyFBoXKrwrRDFUNol1TdVHC6RdvKpuuYnHHhywPoQDeUB2AhkwEBQjgoN
-         EykA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Sat, 17 Feb 2018 02:13:02 -0800
-Sender: tip tree robot <tipbot@zytor.com>
-From: tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-42ca8082e260dcfd8afa2afa6ec1940b9d41724c@git.kernel.org>
-Cc: arjan@linux.intel.com, dan.j.williams@intel.com, mingo@kernel.org,
-        luto@kernel.org, bp@alien8.de, gregkh@linuxfoundation.org,
-        hpa@zytor.com, dwmw2@infradead.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, ashok.raj@intel.com,
-        dave.hansen@linux.intel.com, bp@suse.de, peterz@infradead.org,
-        jpoimboe@redhat.com, tglx@linutronix.de
-Reply-To: bp@suse.de, peterz@infradead.org, jpoimboe@redhat.com,
-        tglx@linutronix.de, gregkh@linuxfoundation.org, dwmw2@infradead.org,
-        hpa@zytor.com, torvalds@linux-foundation.org, ashok.raj@intel.com,
-        linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
-        mingo@kernel.org, luto@kernel.org, bp@alien8.de, arjan@linux.intel.com,
-        dan.j.williams@intel.com
-In-Reply-To: <20180216112640.11554-4-bp@alien8.de>
-References: <20180216112640.11554-4-bp@alien8.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/CPU: Check CPU feature bits after microcode
- upgrade
-Git-Commit-ID: 42ca8082e260dcfd8afa2afa6ec1940b9d41724c
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1110653-1518816587-2-13315660829077263607
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518816586; b=OJt+9LWeKkJIR0rkLwZmrH+m9YdFxKXMdKgWntw5ZdWYOtc
+    QdDeXuK/D7wWrfflGghEL9tu5aJXdlNLeGLOk3LC2xungDKIIAmWv9kB+a4gZxjn
+    lynSWmSk7imRUOdix9UeQivVjzk8TVqt68ATumXxdPG8exhTtExhUG4Jb8Wqr4Mk
+    QZJgtCVrgSumcLifjdVxvz2T4ReLwqlWZnEJj4CtEb/bWGnf0D+GB1EG0FxAuDAp
+    2UpEyNTJK5cMP1WKlRgtS+2cqNRUkaGu0DZEWcpXDc5Sr/LVDgTwR01u0P+UVt6B
+    of+WV6aXREuvLm+rNQItFBREfvehMud4DutXrzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:from:to:cc:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=arctest; t=1518816586; bh=wwRi0iHHinWl18N3WGBZs+4Gxx
+    kaEbx/p/lA8Dpjrfs=; b=cNyIz+z57SpWBiLOmG2M/YRgkAClHQe0uwJQ2Y+Bb/
+    6sBCjQVuE5+UbrtiUGmUGUJOh+72/LZXKa4XSBNPgombyPtfNLmFn7YBkkHQbNok
+    UPuQCjvhlYedCrh2qoqxG8u80KQFegOv5X0h/Sx6XP2EYai/tA+SzFbcuY/Zx9dU
+    eGYoaUUTz8cYyhamsqoGwbmQxVsg2PF24CiX6Av4IvxWqhhppUCie64V6hTNXoHj
+    b+RSGHIA/7JtOjJCspUIyUNxmaM5SbIUR2tCjkKM//uD9ERD5qPORS+3lmC9416f
+    nUfLNQ8PIRseVsfWPba8jQy4WEkDHOroLMUWGIU7qc7g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1750730AbeBPV3n (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Feb 2018 16:29:43 -0500
+Received: from mga14.intel.com ([192.55.52.115]:40080 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750727AbeBPV3n (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 16 Feb 2018 16:29:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,520,1511856000";
+   d="scan'208";a="20783037"
+Subject: [PATCH 0/3] nospec: Various fix-ups for include/linux/nospec.h
+From: Dan Williams <dan.j.williams@intel.com>
+To: mingo@kernel.org
+Cc: linux-arch@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 16 Feb 2018 13:20:37 -0800
+Message-ID: <151881603700.17395.6474595347527003884.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.17.1-9-g687f
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592643910631502341?=
-X-GMAIL-MSGID: =?utf-8?q?1592643910631502341?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  42ca8082e260dcfd8afa2afa6ec1940b9d41724c
-Gitweb:     https://git.kernel.org/tip/42ca8082e260dcfd8afa2afa6ec1940b9d41724c
-Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Fri, 16 Feb 2018 12:26:40 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sat, 17 Feb 2018 08:43:55 +0100
+Hi Ingo,
 
-x86/CPU: Check CPU feature bits after microcode upgrade
+Here is a small pile of cleanups and fixes for nospec.h after inspection
+from Linus, Rasmus, and Christian. Full changelogs below:
 
-With some microcode upgrades, new CPUID features can become visible on
-the CPU. Check what the kernel has mirrored now and issue a warning
-hinting at possible things the user/admin can do to make use of the
-newly visible features.
+These have received a build success notification from 0day across 126
+configs.
 
-Originally-by: Ashok Raj <ashok.raj@intel.com>
-Tested-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Ashok Raj <ashok.raj@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180216112640.11554-4-bp@alien8.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/cpu/common.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 84f1cd8..348cf48 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1757,5 +1757,25 @@ core_initcall(init_cpu_syscore);
-  */
- void microcode_check(void)
- {
-+	struct cpuinfo_x86 info;
-+
- 	perf_check_microcode();
-+
-+	/* Reload CPUID max function as it might've changed. */
-+	info.cpuid_level = cpuid_eax(0);
-+
-+	/*
-+	 * Copy all capability leafs to pick up the synthetic ones so that
-+	 * memcmp() below doesn't fail on that. The ones coming from CPUID will
-+	 * get overwritten in get_cpu_cap().
-+	 */
-+	memcpy(&info.x86_capability, &boot_cpu_data.x86_capability, sizeof(info.x86_capability));
-+
-+	get_cpu_cap(&info);
-+
-+	if (!memcmp(&info.x86_capability, &boot_cpu_data.x86_capability, sizeof(info.x86_capability)))
-+		return;
-+
-+	pr_warn("x86/CPU: CPU features have changed after loading microcode, but might not take effect.\n");
-+	pr_warn("x86/CPU: Please consider either early loading through initrd/built-in or a potential BIOS update.\n");
- }
+Dan Williams (2):
+      nospec: Kill array_index_nospec_mask_check()
+      nospec: Include asm/barrier.h dependency
+
+Rasmus Villemoes (1):
+      nospec: Allow index argument to have const-qualified type
+
+
+ include/linux/nospec.h |   26 +++-----------------------
+ 1 file changed, 3 insertions(+), 23 deletions(-)
+
+--
+    nospec: Kill array_index_nospec_mask_check()
+    
+    There are multiple problems with the dynamic sanity checking in
+    array_index_nospec_mask_check():
+    
+    * It causes unnecessary overhead in the 32-bit case since integer sized
+      @index values will no longer cause the check to be compiled away like
+      in the 64-bit case.
+    
+    * In the 32-bit case it may trigger with user controllable input when
+      the expectation is that should only trigger during development of new
+      kernel enabling.
+    
+    * The macro reuses the input parameter in multiple locations which is
+      broken if someone passes an expression like 'index++' to
+      array_index_nospec().
+
+
+    
+    nospec: Allow index argument to have const-qualified type
+    
+    The last expression in a statement expression need not be a bare
+    variable, quoting gcc docs
+    
+      The last thing in the compound statement should be an expression
+      followed by a semicolon; the value of this subexpression serves as the
+      value of the entire construct.
+    
+    and we already use that in e.g. the min/max macros which end with a
+    ternary expression.
+    
+    This way, we can allow index to have const-qualified type, which will in
+    some cases avoid the need for introducing a local copy of index of
+    non-const qualified type. That, in turn, can prevent readers not
+    familiar with the internals of array_index_nospec from wondering about
+    the seemingly redundant extra variable, and I think that's worthwhile
+    considering how confusing the whole _nospec business is.
+    
+    The expression _i&_mask has type unsigned long (since that is the type
+    of _mask, and the BUILD_BUG_ONs guarantee that _i will get promoted to
+    that), so in order not to change the type of the whole expression, add
+    a cast back to typeof(_i).
+
+    
+    nospec: Include asm/barrier.h dependency
+    
+    The nospec.h header expects the per-architecture header file
+    asm/barrier.h to optionally define array_index_mask_nospec(). Include
+    that dependency to prevent inadvertent fallback to the default
+    array_index_mask_nospec() implementation. The default implementation may
+    not provide a full mitigation on architectures that perform data value
+    speculation.
