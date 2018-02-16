@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935580AbeBPLXf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 06:23:35 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:44767 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935541AbeBPLX1 (ORCPT
+        id S935564AbeBPLXd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 06:23:33 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47729 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935542AbeBPLX1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 16 Feb 2018 06:23:27 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180216112325euoutp013300ceff22aa863c16d3e123e9d61711~TyozKoCXK2298222982euoutp01C
-X-AuditID: cbfec7f2-5ffe19c000011644-d9-5a86bf298e59
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180216112325euoutp02b430ba6ca8a746e8c80920ebd3e9e3c3~TyozKK9Gr2463224632euoutp02B
+X-AuditID: cbfec7f5-b45ff700000028a9-5e-5a86bf2a434f
 From: Maciej Slodczyk <m.slodczyk2@partner.samsung.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc: linux@armlinux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
@@ -17,123 +17,281 @@ Cc: linux@armlinux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
         namhyung@kernel.org, b.zolnierkie@samsung.com,
         m.szyprowski@samsung.com, k.lewandowsk@samsung.com,
         m.slodczyk2@partner.samsung.com
-Subject: [PATCH 0/7 RESEND] arm64: uprobes - ARM32 instruction probing
-Date: Fri, 16 Feb 2018 12:23:04 +0100
-Message-id: <1518780191-31094-1-git-send-email-m.slodczyk2@partner.samsung.com>
+Subject: [PATCH 1/7 RESEND] arm64: move arm uprobes code to be reused by
+ arm64
+Date: Fri, 16 Feb 2018 12:23:05 +0100
+Message-id: <1518780191-31094-2-git-send-email-m.slodczyk2@partner.samsung.com>
 X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDIsWRmVeSWpSXmKPExsWy7djP87qa+9uiDL49lbfoureDzaJj00xW
+In-reply-to: <1518780191-31094-1-git-send-email-m.slodczyk2@partner.samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJIsWRmVeSWpSXmKPExsWy7djPc7pa+9uiDDp+CFp03dvBZtGxaSar
+        xcYZ61kt3i/rYbQ4evYvk0Xjp7nMFpseX2O1uLxrDpvFoal7GS329K9ms1h75C67xaUDC5gs
+        mpZtZbHYur+V0eJ47wEmi5cfT7A4CHismbeG0ePytYvMHptXaHlsWtXJ5jHvZKDH5iX1Hgff
+        7WHyeL/vKptH35ZVjB6fN8kFcEVx2aSk5mSWpRbp2yVwZSzZtYG54K1jxYkre5gbGF+bdTFy
+        ckgImEjM7Wlm6WLk4hASWMEo8WzFcWYI5zOjxIJF3xlhqm7NmsIEkVjGKPF4wwkWkISQwEdG
+        iYmHi0FsNgFzie1HW8DiIgJuEjcaO8AamAUuM0lcPtHNBJIQFgiQmH1rITuIzSKgKrFi61yw
+        Bl4Bf4lrLfuYILbJSdw818kMYnMC1d/fsgXsPgmB52wS+z/dgzrJRWLhia1QtrDEq+Nb2CFs
+        GYnLk7tZIOx+RomDt6UhmmcwSmx9/wgqYS3xZ9VENhCbWYBPYtK26UDbOIDivBIdbUIQJR4S
+        Nw8cZoWwHSV6NsyHhstiRok7X+czTmCUWsDIsIpRPLW0ODc9tdg4L7Vcrzgxt7g0L10vOT93
+        EyMwQZz+d/zrDsZ9f5IOMQpwMCrx8G7obY0SYk0sK67MPcQowcGsJMJ7a3pblBBvSmJlVWpR
+        fnxRaU5q8SFGaQ4WJXHeOI26KCGB9MSS1OzU1ILUIpgsEwenVAPjtdctWx9vSGv1vvnpd7aG
+        ptfBF9N7fjUdf2NTqp7yQ//QOr8XrXWOzJYW77xNgsw32lx1Ltt/zHfqReaqZzPaH24rUZkj
+        vcm0L1PxyEPXadKhltPmbPqgHW7nkJK0vGTf5rg14XtP9+hIeWXkLzprH7r3yr6DC5j3ME0S
+        e5m75qhF2f9rFwWWKrEUZyQaajEXFScCAODIcpEMAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsVy+t/xy7oa+9uiDBbcNbfoureDzaJj00xW
         i40z1rNavF/Ww2hx9OxfJovGT3OZLTY9vsZqcXnXHDaLQ1P3Mlrs6V/NZrH2yF12i0sHFjBZ
         NC3bymKxdX8ro8Xx3gNMFi8/nmBxEPBYM28No8flaxeZPTav0PLYtKqTzWPeyUCPzUvqPQ6+
-        28Pk8X7fVTaPvi2rGD0+b5IL4IrisklJzcksSy3St0vgyni6pomp4JVCRc+rPawNjCfFuxg5
-        OCQETCQm/3fsYuTiEBJYwSgxefpCdgjnM6PExQU32LoYOcGKbpyYxASRWMYo0f9sMyuE85FR
-        Yu6NxSwgVWwC5hLbj7aA2SICbhI3GjvAOpgFLjNJXD7RzQSSEAZKrPzbBmazCKhKvHvaCbaC
-        V8BfYvW0fSwQ6+Qkbp7rZAZplhA4wSbx68hZVoiEi8TaC41QNwlLvDq+hR3ClpG4PLkbqrmf
-        UeLgbWmI5hmMElvfP4JKWEv8WTURrJlZgE9i0rbpzJAQ4JXoaBOCKPGQeHJ/HiOE7SixZPpZ
-        sFYhgViJ/49b2SYwSi5gZFjFKJ5aWpybnlpsmJdarlecmFtcmpeul5yfu4kRmAZO/zv+aQfj
-        10tJhxgFOBiVeHg39LZGCbEmlhVX5h5ilOBgVhLhvTW9LUqINyWxsiq1KD++qDQntfgQozQH
-        i5I4b5xGXZSQQHpiSWp2ampBahFMlomDU6qBUXuZ2aI/Uh+4Xb8f4RKPXn/nw5wLXkc3fli/
-        KSZVP9h08umAx/+yDS97bsn1N+OX+s5s11jC+WdbxBlv7/qFPjz6X22nvS1PCeBZqeSW8fTh
-        zgtXz4WUbtlhfdHnzQ6bVUIRlzYsyCvPTLdZKx+erTPnQ2LzQWcTVseXj2zvcvD6nl7SX+qQ
-        qsRSnJFoqMVcVJwIAMpHo/H/AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrELMWRmVeSWpSXmKPExsVy+t/xq7oa+9uiDL6rWHTd28Fm0bFpJqvF
-        xhnrWS3eL+thtDh69i+TReOnucwWmx5fY7W4vGsOm8WhqXsZLfb0r2azWHvkLrvFpQMLmCya
-        lm1lsdi6v5XR4njvASaLlx9PsDgIeKyZt4bR4/K1i8wem1doeWxa1cnmMe9koMfmJfUeB9/t
-        YfJ4v+8qm0ffllWMHp83yQVwRXHZpKTmZJalFunbJXBlPF3TxFTwSqGi59Ue1gbGk+JdjJwc
-        EgImEjdOTGLqYuTiEBJYwijxf8dyKOczo8TSB1uZQKrYBMwlth9tYQGxRQTcJG40doAVMQtc
-        ZpL4vGAvK0hCGCix8m8bWAOLgKrEu6edbCA2r4C/xOpp+1gg1slJ3DzXyTyBkWsBI8MqRpHU
-        0uLc9NxiI73ixNzi0rx0veT83E2MwJDcduznlh2MXe+CDzEKcDAq8fBu6G2NEmJNLCuuzD3E
-        KMHBrCTCG7yvLUqINyWxsiq1KD++qDQntfgQozQHi5I473mDyighgfTEktTs1NSC1CKYLBMH
-        p1QDo5+324uo/T95ux2iot73LJ0v943z6Ip/fbFF9T8eTFRauSrLvvfp1nX7n96tXbrLLPNg
-        vkJNYMK1enGeZdbveNbmVIi2347MD9p0krlW4Rsr366V9VPUXvCwBsYoOS31PqbRMSnNuON6
-        FMPJQq9K/s+STNdT1mv1LWOfW1yjIP+30u1xeaqwEktxRqKhFnNRcSIATThY0UUCAAA=
-X-CMS-MailID: 20180216112320eucas1p104a5cca53f8ee7d9b727479b2a362e93
+        28Pk8X7fVTaPvi2rGD0+b5IL4IrisklJzcksSy3St0vgyliyawNzwVvHihNX9jA3ML4262Lk
+        5JAQMJG4NWsKUxcjF4eQwBJGibbVz9ghnM+MEscWzWIFqWITMJfYfrSFBcQWEXCTuNHYAdbB
+        LHCZSeLzgr1ARRwcwgJ+EpfngtWwCKhKrNgKYfMK+Etca9nHBLFNTuLmuU5mEJtTIEDi/pYt
+        YDVCQDVrF/1imcDIs4CRYRWjSGppcW56brGRXnFibnFpXrpecn7uJkZgCG879nPLDsaud8GH
+        GAU4GJV4eDf0tkYJsSaWFVfmHmKU4GBWEuEN3tcWJcSbklhZlVqUH19UmpNafIhRmoNFSZz3
+        vEFllJBAemJJanZqakFqEUyWiYNTqoFRJ+JJTu+/hXk8x0xENe5Yst84+CfQsvqVw3qBcvee
+        aVuuPBTouGv3LO+d+NUXmqutisK36OrdvfLKa/M/7+v8BlEK97szxKVOWdX+TJY4dD/kwCYG
+        meVld08EtGodfK7Kd09mykSWgi1m214fs7jqd/rDDyGeN8WKsWeuhKTw1aiY9RiG9CcrsRRn
+        JBpqMRcVJwIA6Ssm7F0CAAA=
+X-CMS-MailID: 20180216112320eucas1p157eae5e9830028e944f23cad1c81c6eb
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180216112320eucas1p104a5cca53f8ee7d9b727479b2a362e93
-X-RootMTR: 20180216112320eucas1p104a5cca53f8ee7d9b727479b2a362e93
-References: <CGME20180216112320eucas1p104a5cca53f8ee7d9b727479b2a362e93@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20180216112320eucas1p157eae5e9830028e944f23cad1c81c6eb
+X-RootMTR: 20180216112320eucas1p157eae5e9830028e944f23cad1c81c6eb
+References: <1518780191-31094-1-git-send-email-m.slodczyk2@partner.samsung.com>
+        <CGME20180216112320eucas1p157eae5e9830028e944f23cad1c81c6eb@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The uprobe feature on ARM64 kernel does not support ARM A32 instruction
-probing, making 32 bit apps running on 64 bit kernel unprobeable.
+Move ARM32 uprobes code from arch/arm/probes/ to a more common location -
+lib/probes/arm/. This code will be used by ARM64 code when uprobing 32-bit
+applications.
 
-This patchset utilizes ARM32 uprobe code in ARM64 tree with following
-modifications:
-- moves ARM32 uprobes code form arch/arm to lib/uprobes/arm to be reused
-by ARM64 code
-- makes adjustments in api so that it suits the one used by ARM64 kernel, e.g.
-struct pt_regs, register numbers
-- takes into account differences between 32 and 64 bit ARM architectures.
-A64 instruction handling is left unchanged.
-
-Detect what kind of instruction is being probed and depending on the result:
-- if an A64 instruction handle it the old way, using existing A64 instructions
-probing code,
-- if an A32 instruction decode it and handle using the new code, moved from
-32 bit arm kernel tree.
-
-Currently following test cases have been carried out with positive results:
-- simulation-able instructions, like: STM, LDM, BLX, BL
-- xol-able instructions, like: STR, LDR, ADD, CMN, CMP
-- branching
-- uretprobes.
-
-This patchset does not implement T32 (Thumb) instructions probing (which is
-also unsupported on "native" ARM32 arch).
-
-Maciej Slodczyk (7):
-  arm64: move arm uprobes code to be reused by arm64
-  arm64: uprobes - fix checkpatch.pl issues
-  arm64: introduce get_swbp_insn() instead of static assignment
-  arm64: change arm64 probes handler prototype
-  arm64: make arm uprobes code reusable by arm64
-  arm64: change arm_probe_decode_insn() function name
-  arm64: uprobes - ARM32 instruction probing
-
- arch/arm/include/asm/probes.h                      |   8 ++
- arch/arm/include/asm/ptrace.h                      |  32 +++++
- arch/arm/include/asm/uprobes.h                     |   2 +-
- arch/arm/probes/Makefile                           |   8 +-
- arch/arm/probes/kprobes/actions-arm.c              |   2 +-
- arch/arm/probes/kprobes/checkers-arm.c             |   4 +-
- arch/arm/probes/kprobes/checkers-common.c          |   4 +-
- arch/arm/probes/kprobes/checkers-thumb.c           |   2 +-
- arch/arm/probes/kprobes/checkers.h                 |   2 +-
- arch/arm/probes/kprobes/core.c                     |   2 +-
- arch/arm/probes/kprobes/core.h                     |   2 +-
- arch/arm/probes/uprobes/Makefile                   |   2 +-
- arch/arm/probes/uprobes/core.c                     |  10 +-
- arch/arm64/include/asm/probes.h                    |  24 +++-
- arch/arm64/include/asm/ptrace.h                    |  21 +++
- arch/arm64/include/asm/uprobes.h                   |  21 ++-
- arch/arm64/kernel/debug-monitors.c                 |   8 ++
- arch/arm64/kernel/probes/Makefile                  |   2 +
- arch/arm64/kernel/probes/decode-insn.c             |  30 ++--
- arch/arm64/kernel/probes/decode-insn.h             |  15 +-
- arch/arm64/kernel/probes/kprobes.c                 |   4 +-
- arch/arm64/kernel/probes/simulate-insn.c           |  32 +++--
- arch/arm64/kernel/probes/simulate-insn.h           |  24 ++--
- arch/arm64/kernel/probes/uprobes.c                 | 121 ++++++++++++++--
- include/linux/uprobes.h                            |   1 +
- kernel/events/uprobes.c                            |  12 +-
- lib/Makefile                                       |   2 +
- lib/probes/Makefile                                |   2 +
- lib/probes/arm/Makefile                            |  11 ++
- .../uprobes => lib/probes/arm}/actions-arm.c       | 153 ++++++++++++++++++---
- {arch/arm/probes => lib/probes/arm}/decode-arm.c   |  57 +++++---
- {arch/arm/probes => lib/probes/arm}/decode-arm.h   |   4 +-
- {arch/arm/probes => lib/probes/arm}/decode.c       |  18 ++-
- {arch/arm/probes => lib/probes/arm}/decode.h       |  48 ++++---
- 34 files changed, 549 insertions(+), 141 deletions(-)
+Signed-off-by: Maciej Slodczyk <m.slodczyk2@partner.samsung.com>
+---
+ arch/arm/probes/Makefile                                  | 8 ++++----
+ arch/arm/probes/kprobes/actions-arm.c                     | 2 +-
+ arch/arm/probes/kprobes/checkers-arm.c                    | 4 ++--
+ arch/arm/probes/kprobes/checkers-common.c                 | 4 ++--
+ arch/arm/probes/kprobes/checkers-thumb.c                  | 2 +-
+ arch/arm/probes/kprobes/checkers.h                        | 2 +-
+ arch/arm/probes/kprobes/core.c                            | 2 +-
+ arch/arm/probes/kprobes/core.h                            | 2 +-
+ arch/arm/probes/uprobes/Makefile                          | 2 +-
+ arch/arm/probes/uprobes/core.c                            | 4 ++--
+ lib/Makefile                                              | 2 ++
+ lib/probes/Makefile                                       | 1 +
+ lib/probes/arm/Makefile                                   | 6 ++++++
+ {arch/arm/probes/uprobes => lib/probes/arm}/actions-arm.c | 4 ++--
+ {arch/arm/probes => lib/probes/arm}/decode-arm.c          | 0
+ {arch/arm/probes => lib/probes/arm}/decode-arm.h          | 0
+ {arch/arm/probes => lib/probes/arm}/decode.c              | 0
+ {arch/arm/probes => lib/probes/arm}/decode.h              | 0
+ 18 files changed, 27 insertions(+), 18 deletions(-)
  create mode 100644 lib/probes/Makefile
  create mode 100644 lib/probes/arm/Makefile
- rename {arch/arm/probes/uprobes => lib/probes/arm}/actions-arm.c (61%)
- rename {arch/arm/probes => lib/probes/arm}/decode-arm.c (95%)
- rename {arch/arm/probes => lib/probes/arm}/decode-arm.h (94%)
- rename {arch/arm/probes => lib/probes/arm}/decode.c (98%)
- rename {arch/arm/probes => lib/probes/arm}/decode.h (94%)
+ rename {arch/arm/probes/uprobes => lib/probes/arm}/actions-arm.c (99%)
+ rename {arch/arm/probes => lib/probes/arm}/decode-arm.c (100%)
+ rename {arch/arm/probes => lib/probes/arm}/decode-arm.h (100%)
+ rename {arch/arm/probes => lib/probes/arm}/decode.c (100%)
+ rename {arch/arm/probes => lib/probes/arm}/decode.h (100%)
 
+diff --git a/arch/arm/probes/Makefile b/arch/arm/probes/Makefile
+index 8b0ea5a..9e22de6 100644
+--- a/arch/arm/probes/Makefile
++++ b/arch/arm/probes/Makefile
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0
+-obj-$(CONFIG_UPROBES)		+= decode.o decode-arm.o uprobes/
+-obj-$(CONFIG_KPROBES)		+= decode.o kprobes/
++subdir-ccflags-y := -I$(srctree)/lib/probes/arm/
++
++obj-$(CONFIG_UPROBES)		+= uprobes/
++obj-$(CONFIG_KPROBES)		+= kprobes/
+ ifdef CONFIG_THUMB2_KERNEL
+ obj-$(CONFIG_KPROBES)		+= decode-thumb.o
+-else
+-obj-$(CONFIG_KPROBES)		+= decode-arm.o
+ endif
+diff --git a/arch/arm/probes/kprobes/actions-arm.c b/arch/arm/probes/kprobes/actions-arm.c
+index b9056d6..fb1179e 100644
+--- a/arch/arm/probes/kprobes/actions-arm.c
++++ b/arch/arm/probes/kprobes/actions-arm.c
+@@ -62,7 +62,7 @@
+ #include <linux/kprobes.h>
+ #include <linux/ptrace.h>
+ 
+-#include "../decode-arm.h"
++#include "decode-arm.h"
+ #include "core.h"
+ #include "checkers.h"
+ 
+diff --git a/arch/arm/probes/kprobes/checkers-arm.c b/arch/arm/probes/kprobes/checkers-arm.c
+index 7b98173..29520a2 100644
+--- a/arch/arm/probes/kprobes/checkers-arm.c
++++ b/arch/arm/probes/kprobes/checkers-arm.c
+@@ -14,8 +14,8 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include "../decode.h"
+-#include "../decode-arm.h"
++#include "decode.h"
++#include "decode-arm.h"
+ #include "checkers.h"
+ 
+ static enum probes_insn __kprobes arm_check_stack(probes_opcode_t insn,
+diff --git a/arch/arm/probes/kprobes/checkers-common.c b/arch/arm/probes/kprobes/checkers-common.c
+index 971119c..afc3a38 100644
+--- a/arch/arm/probes/kprobes/checkers-common.c
++++ b/arch/arm/probes/kprobes/checkers-common.c
+@@ -14,8 +14,8 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include "../decode.h"
+-#include "../decode-arm.h"
++#include "decode.h"
++#include "decode-arm.h"
+ #include "checkers.h"
+ 
+ enum probes_insn checker_stack_use_none(probes_opcode_t insn,
+diff --git a/arch/arm/probes/kprobes/checkers-thumb.c b/arch/arm/probes/kprobes/checkers-thumb.c
+index d608e3b..847f1ee 100644
+--- a/arch/arm/probes/kprobes/checkers-thumb.c
++++ b/arch/arm/probes/kprobes/checkers-thumb.c
+@@ -14,7 +14,7 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include "../decode.h"
++#include "decode.h"
+ #include "../decode-thumb.h"
+ #include "checkers.h"
+ 
+diff --git a/arch/arm/probes/kprobes/checkers.h b/arch/arm/probes/kprobes/checkers.h
+index cf6c9e7..9bbab0d 100644
+--- a/arch/arm/probes/kprobes/checkers.h
++++ b/arch/arm/probes/kprobes/checkers.h
+@@ -17,7 +17,7 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+-#include "../decode.h"
++#include "decode.h"
+ 
+ extern probes_check_t checker_stack_use_none;
+ extern probes_check_t checker_stack_use_unknown;
+diff --git a/arch/arm/probes/kprobes/core.c b/arch/arm/probes/kprobes/core.c
+index 52d1cd1..50c3fcb 100644
+--- a/arch/arm/probes/kprobes/core.c
++++ b/arch/arm/probes/kprobes/core.c
+@@ -33,7 +33,7 @@
+ #include <linux/bug.h>
+ #include <asm/patch.h>
+ 
+-#include "../decode-arm.h"
++#include "decode-arm.h"
+ #include "../decode-thumb.h"
+ #include "core.h"
+ 
+diff --git a/arch/arm/probes/kprobes/core.h b/arch/arm/probes/kprobes/core.h
+index ec5d1f2..4da60f0 100644
+--- a/arch/arm/probes/kprobes/core.h
++++ b/arch/arm/probes/kprobes/core.h
+@@ -20,7 +20,7 @@
+ #define _ARM_KERNEL_KPROBES_H
+ 
+ #include <asm/kprobes.h>
+-#include "../decode.h"
++#include "decode.h"
+ 
+ /*
+  * These undefined instructions must be unique and
+diff --git a/arch/arm/probes/uprobes/Makefile b/arch/arm/probes/uprobes/Makefile
+index e1dc3d0..0d05ba9 100644
+--- a/arch/arm/probes/uprobes/Makefile
++++ b/arch/arm/probes/uprobes/Makefile
+@@ -1 +1 @@
+-obj-$(CONFIG_UPROBES)		+= core.o actions-arm.o
++obj-$(CONFIG_UPROBES)		+= core.o
+diff --git a/arch/arm/probes/uprobes/core.c b/arch/arm/probes/uprobes/core.c
+index d1329f1..8681026 100644
+--- a/arch/arm/probes/uprobes/core.c
++++ b/arch/arm/probes/uprobes/core.c
+@@ -17,8 +17,8 @@
+ #include <asm/opcodes.h>
+ #include <asm/traps.h>
+ 
+-#include "../decode.h"
+-#include "../decode-arm.h"
++#include "decode.h"
++#include "decode-arm.h"
+ #include "core.h"
+ 
+ #define UPROBE_TRAP_NR	UINT_MAX
+diff --git a/lib/Makefile b/lib/Makefile
+index d11c48e..694886a 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -124,6 +124,8 @@ obj-$(CONFIG_ZSTD_COMPRESS) += zstd/
+ obj-$(CONFIG_ZSTD_DECOMPRESS) += zstd/
+ obj-$(CONFIG_XZ_DEC) += xz/
+ obj-$(CONFIG_RAID6_PQ) += raid6/
++obj-$(CONFIG_UPROBES) += probes/
++obj-$(CONFIG_KPROBES) += probes/
+ 
+ lib-$(CONFIG_DECOMPRESS_GZIP) += decompress_inflate.o
+ lib-$(CONFIG_DECOMPRESS_BZIP2) += decompress_bunzip2.o
+diff --git a/lib/probes/Makefile b/lib/probes/Makefile
+new file mode 100644
+index 0000000..534a2b7
+--- /dev/null
++++ b/lib/probes/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_ARM)		+= arm/
+diff --git a/lib/probes/arm/Makefile b/lib/probes/arm/Makefile
+new file mode 100644
+index 0000000..1c97b8f
+--- /dev/null
++++ b/lib/probes/arm/Makefile
+@@ -0,0 +1,6 @@
++ccflags-y += -I$(srctree)/arch/arm/probes/uprobes/
++obj-$(CONFIG_UPROBES)		+= decode.o decode-arm.o actions-arm.o
++obj-$(CONFIG_KPROBES)		+= decode.o
++ifndef CONFIG_THUMB2_KERNEL
++obj-$(CONFIG_KPROBES)		+= decode-arm.o
++endif
+diff --git a/arch/arm/probes/uprobes/actions-arm.c b/lib/probes/arm/actions-arm.c
+similarity index 99%
+rename from arch/arm/probes/uprobes/actions-arm.c
+rename to lib/probes/arm/actions-arm.c
+index 76eb449..a25795a 100644
+--- a/arch/arm/probes/uprobes/actions-arm.c
++++ b/lib/probes/arm/actions-arm.c
+@@ -13,8 +13,8 @@
+ #include <linux/uprobes.h>
+ #include <linux/module.h>
+ 
+-#include "../decode.h"
+-#include "../decode-arm.h"
++#include "decode.h"
++#include "decode-arm.h"
+ #include "core.h"
+ 
+ static int uprobes_substitute_pc(unsigned long *pinsn, u32 oregs)
+diff --git a/arch/arm/probes/decode-arm.c b/lib/probes/arm/decode-arm.c
+similarity index 100%
+rename from arch/arm/probes/decode-arm.c
+rename to lib/probes/arm/decode-arm.c
+diff --git a/arch/arm/probes/decode-arm.h b/lib/probes/arm/decode-arm.h
+similarity index 100%
+rename from arch/arm/probes/decode-arm.h
+rename to lib/probes/arm/decode-arm.h
+diff --git a/arch/arm/probes/decode.c b/lib/probes/arm/decode.c
+similarity index 100%
+rename from arch/arm/probes/decode.c
+rename to lib/probes/arm/decode.c
+diff --git a/arch/arm/probes/decode.h b/lib/probes/arm/decode.h
+similarity index 100%
+rename from arch/arm/probes/decode.h
+rename to lib/probes/arm/decode.h
 -- 
 2.7.4
