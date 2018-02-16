@@ -1,65 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758309AbeBPPtj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:49:39 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35489 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758247AbeBPPth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:49:37 -0500
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>, clm@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fixes for 4.16-rc1
-Date: Fri, 16 Feb 2018 16:47:16 +0100
-Message-Id: <cover.1518793408.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.16.1
+        id S1758353AbeBPPux (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:50:53 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:54443 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758251AbeBPPuv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 10:50:51 -0500
+Date: Fri, 16 Feb 2018 16:50:49 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: airlied@linux.ie, wens@csie.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/sun4i: Handle DRM_MODE_FLAG_**SYNC_POSITIVE
+ correctly
+Message-ID: <20180216155049.r2mc724nfluwrrbe@flea.lan>
+References: <1516474221-114596-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <1516474221-114596-2-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180122085112.7xo2t3x5ag4k2kpl@flea.lan>
+ <aa724bd5-cfb1-128c-af32-db29253f32aa@micronovasrl.com>
+ <59f7b542-3b1d-ff62-e290-37c47f4075ff@micronovasrl.com>
+ <9929d894-53c3-a7e9-a328-a00cfc1ef546@micronovasrl.com>
+ <20180207103905.mtyzgu73mmifyvvj@flea>
+ <653f0438-c55a-02a5-dffb-2ee8e6d9ef4a@micronovasrl.com>
+ <20180208204043.mqryuqhx7a6z4v3b@flea>
+ <e5d49c13-9b8f-d597-508c-10fed5300769@micronovasrl.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3h2no4wlgtkccz5a"
+Content-Disposition: inline
+In-Reply-To: <e5d49c13-9b8f-d597-508c-10fed5300769@micronovasrl.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-we have a few assorted fixes, some of them show up during fstests so
-I gave them more testing. Please pull, thanks.
+--3h2no4wlgtkccz5a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-----------------------------------------------------------------
-The following changes since commit 3acbcbfc8f06d4ade2aab2ebba0a2542a05ce90c:
+On Thu, Feb 15, 2018 at 07:05:56PM +0100, Giulio Benetti wrote:
+> > If so, and if remember the captures properly, the sampling would occur
+> > right before the rise, and not really around the fall.
+> >=20
+> > Would 2/3 be better here?
+>=20
+> Yes, you're right, 2/3 phase is better:
+>=20
+> 1/3 phase: https://pasteboard.co/H4VehON.png
+> 2/3 phase: https://pasteboard.co/H4Veq8a.png
+>=20
+> Take a look at the bit in middle(yellow) sampled by clock(blue).
+>=20
+> Rising edge is almost in the middle of D0 bit.
+>=20
+> >=20
+> > > According to scope captures above on both A20 and A33.
+> > > Unfortunately I don't have other boards for the other SoCs to take ca=
+ptures.
+> > >=20
+> > > What do you think?
+> >=20
+> > I guess we can make that part applicable to all SoCs, we haven't seen
+> > any significant differences on those part.
+>=20
+> So let's keep:
+> - As normal(rising edge) =3D> IO_POL_REG "0x2 =3D> 2/3 phase"
+> - As inverted(falling edge) =3D> IO_POL_REG "0x0 =3D> normal phase"
 
-  btrfs: drop devid as device_list_add() arg (2018-01-29 19:31:16 +0100)
+I was actually thinking 1/3 for rising, 2/3 for falling.
 
-are available in the Git repository at:
+Maxime
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-4.16-rc1-tag
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
 
-for you to fetch changes up to fd649f10c3d21ee9d7542c609f29978bdf73ab94:
+--3h2no4wlgtkccz5a
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  btrfs: Fix use-after-free when cleaning up fs_devs with a single stale device (2018-02-05 17:15:14 +0100)
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Filipe Manana (1):
-      Btrfs: fix null pointer dereference when replacing missing device
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqG/dgACgkQ0rTAlCFN
+r3Rh3Q/9H+/9DM+WcxqeefVe3ycjpTQbmKS83jbAVMT3Bi7v58IblhXp9Nel6xXb
+Iy7S0jrzNXhLCTPJ2b5YJltpYq4Ne4iiwwzZsu5w8IeW0juepWU5J5jkgx9OV+nh
+LjL45vSXMqpg3llDz79ElSnjdF6Ly3BL0EGRkpWjPdn2fQn3dyTNd1MS5t4WY1j9
+OyCIrcQ0e3tqiooZTYo9dWXbgXc/i/Rx7ERc3GNAy67tVS1Ka7ZZXTi4rjCq/WBX
+IJq1TIxZTeMMy9xg6n5Rex388nKQUZ9nigWhk0Do/TNmf1L4UfzuXzafb3KiIb9r
+CAfpvZotcYWQPMoWPsl9sjq2PYPs5nzYa8Mr+OX/Ms/uSqrF5qM9xM0cRW6cLX/i
+jcEaVZx/DUHEwvdLN5y14KdszfMOCnk34M0D2Vac37qhcrj0k5V3NsXwe3xYzyT1
+3PrPHOktnty1eAzLEXj9KyDaOlPEZWeBHOYD9NdRdONsT9svZ9zNV6L+Al2GRhZm
+w/SOCkjTxqkKDxfJezc+I0QKHt/VDAcauhcwEB1hChzduYTbwdNbtXCuVhKHgW/A
+mieyCiYPAogp3m5VQTmHFhne3gO0MOiLQGz0QZo1zQ5+lX7q3Me/I1MXvPTS07TY
+jNLaORoDEqo4WJv4vtMU+jQpqo6EkcVVdIOC1ceK6Lf5kA+1CJk=
+=nyQE
+-----END PGP SIGNATURE-----
 
-Liu Bo (6):
-      Btrfs: fix deadlock in run_delalloc_nocow
-      Btrfs: fix crash due to not cleaning up tree log block's dirty bits
-      Btrfs: fix extent state leak from tree log
-      Btrfs: fix btrfs_evict_inode to handle abnormal inodes correctly
-      Btrfs: fix use-after-free on root->orphan_block_rsv
-      Btrfs: fix unexpected -EEXIST when creating new inode
-
-Nikolay Borisov (2):
-      btrfs: Ignore errors from btrfs_qgroup_trace_extent_post
-      btrfs: Fix use-after-free when cleaning up fs_devs with a single stale device
-
-Zygo Blaxell (1):
-      btrfs: remove spurious WARN_ON(ref->count < 0) in find_parent_nodes
-
- fs/btrfs/backref.c     | 11 ++++++++++-
- fs/btrfs/delayed-ref.c |  3 ++-
- fs/btrfs/extent-tree.c |  4 ++++
- fs/btrfs/inode.c       | 41 ++++++++++++++++++++++++++---------------
- fs/btrfs/qgroup.c      |  9 +++++++--
- fs/btrfs/tree-log.c    | 32 ++++++++++++++++++++++++++++++--
- fs/btrfs/volumes.c     |  1 +
- 7 files changed, 80 insertions(+), 21 deletions(-)
+--3h2no4wlgtkccz5a--
