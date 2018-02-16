@@ -1,50 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031523AbeBPNhG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 08:37:06 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:33872 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031458AbeBPNhE (ORCPT
+        id S1031560AbeBPNis (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 08:38:48 -0500
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:40463 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031458AbeBPNiq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 08:37:04 -0500
-Date: Fri, 16 Feb 2018 14:37:00 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Kieran Bingham <kbingham@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        "moderated list:ARM64 PORT AARCH64 ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 5/5] arm64: dts: renesas: r8a7796: Fix register
- mappings on VSPs
-Message-ID: <20180216133659.s4xf3ovi63fkwuyg@verge.net.au>
-References: <1518602108-1724-1-git-send-email-kbingham@kernel.org>
- <1518602108-1724-6-git-send-email-kbingham@kernel.org>
+        Fri, 16 Feb 2018 08:38:46 -0500
+X-Google-Smtp-Source: AH8x225iHrHw5FIJ4NBR0xXNq9ufRMCxqmOcH85I3WToVQ5fpeO6D0+XeaF3AcHVrUBL6swkS4tq7A==
+Date: Fri, 16 Feb 2018 11:38:41 -0200
+From: rodrigosiqueira <rodrigosiqueiramelo@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: daniel.baluta@nxp.com, linux-iio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iio: apply coding-style into ms5611_probe function
+Message-ID: <20180216133841.3yt4ip3tbck7ihdm@smtp.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1518602108-1724-6-git-send-email-kbingham@kernel.org>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 09:55:08AM +0000, Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> The VSPD includes a CLUT on RPF2. Ensure that the register space is
-> mapped correctly to support this.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+This patch fixes the checkpatch.pl warning and error:
 
-Thanks, applied.
+iio/pressure/ms5611.h:66: ERROR: code indent should use tabs where possible
+iio/pressure/ms5611.h:66: WARNING: please, no spaces at the start of a line
+iio/pressure/ms5611.h:66: ERROR: "foo* bar" should be "foo *bar"
+
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+ drivers/iio/pressure/ms5611.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/pressure/ms5611.h b/drivers/iio/pressure/ms5611.h
+index ccda63c5b3c3..ead9e9f85894 100644
+--- a/drivers/iio/pressure/ms5611.h
++++ b/drivers/iio/pressure/ms5611.h
+@@ -63,7 +63,7 @@ struct ms5611_state {
+ };
+ 
+ int ms5611_probe(struct iio_dev *indio_dev, struct device *dev,
+-                 const char* name, int type);
++		 const char *name, int type);
+ int ms5611_remove(struct iio_dev *indio_dev);
+ 
+ #endif /* _MS5611_H */
+-- 
+2.16.1
