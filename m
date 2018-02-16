@@ -1,206 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752394AbeBPSdL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 13:33:11 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:59242 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751613AbeBPSdK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 13:33:10 -0500
-Date: Fri, 16 Feb 2018 19:33:07 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, David Lechner <david@lechnology.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 2/6] ARM: davinci: update the nand driver names
-Message-ID: <20180216193307.3c4372d8@bbrezillon>
-In-Reply-To: <20180216164712.25898-3-brgl@bgdev.pl>
-References: <20180216164712.25898-1-brgl@bgdev.pl>
-        <20180216164712.25898-3-brgl@bgdev.pl>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752519AbeBPSd3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 13:33:29 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43140 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752429AbeBPSd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 13:33:28 -0500
+Date: Fri, 16 Feb 2018 18:33:20 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: arm64/v4.16-rc1: KASAN: use-after-free Read in finish_task_switch
+Message-ID: <20180216183320.rw7trsakkdtzv5vd@lakrids.cambridge.arm.com>
+References: <20180214120254.qq4w4s42ecxio7lu@lakrids.cambridge.arm.com>
+ <20180214165131.o25r3hhrtrjk3ejq@lakrids.cambridge.arm.com>
+ <254787533.21950.1518634424009.JavaMail.zimbra@efficios.com>
+ <20180215142239.GF16623@arm.com>
+ <20180215164754.GW25201@hirez.programming.kicks-ass.net>
+ <20180215182154.GD15274@arm.com>
+ <1144433342.22716.1518732536600.JavaMail.zimbra@efficios.com>
+ <20180216165330.65rjxjw7qwkei2ob@lakrids.cambridge.arm.com>
+ <1037744516.23063.1518801477666.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1037744516.23063.1518801477666.JavaMail.zimbra@efficios.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Feb 2018 17:47:08 +0100
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Fri, Feb 16, 2018 at 05:17:57PM +0000, Mathieu Desnoyers wrote:
+> ----- On Feb 16, 2018, at 11:53 AM, Mark Rutland mark.rutland@arm.com wrote:
+> > I suspect we have a bogus mmdrop or mmput elsewhere, and do_exit() and
+> > finish_task_switch() aren't to blame.
 > 
-> Since commit d8e22fb4ccac ("ARM: da850: add the nand dev_id to the clock
-> lookup table") we can no longer correctly lookup the nand clock when
-> booting in legacy mode. Said commit added a dev_id to the nand clock
-> which must match and it doesn't correspond with the device name which
-> is "davinci_nand" instead of "davinci-nand".
+> Currently reviewing: fs/proc/base.c: __set_oom_adj()
 > 
-> The driver name has been changed. Update the board files.
-
-Should be squashed in patch 1, otherwise your patch series is not
-bisectable.
-
+>         /*
+>          * Make sure we will check other processes sharing the mm if this is
+>          * not vfrok which wants its own oom_score_adj.
+>          * pin the mm so it doesn't go away and get reused after task_unlock
+>          */
+>         if (!task->vfork_done) {
+>                 struct task_struct *p = find_lock_task_mm(task);
 > 
-> Fixes: d8e22fb4ccac ("ARM: da850: add the nand dev_id to the clock lookup table")
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  arch/arm/mach-davinci/board-da830-evm.c     | 2 +-
->  arch/arm/mach-davinci/board-da850-evm.c     | 2 +-
->  arch/arm/mach-davinci/board-dm355-evm.c     | 2 +-
->  arch/arm/mach-davinci/board-dm355-leopard.c | 2 +-
->  arch/arm/mach-davinci/board-dm365-evm.c     | 2 +-
->  arch/arm/mach-davinci/board-dm644x-evm.c    | 2 +-
->  arch/arm/mach-davinci/board-dm646x-evm.c    | 2 +-
->  arch/arm/mach-davinci/board-mityomapl138.c  | 2 +-
->  arch/arm/mach-davinci/board-neuros-osd2.c   | 2 +-
->  arch/arm/mach-davinci/board-sffsdr.c        | 2 +-
->  10 files changed, 10 insertions(+), 10 deletions(-)
+>                 if (p) {
+>                         if (atomic_read(&p->mm->mm_users) > 1) {
+>                                 mm = p->mm;
+>                                 mmgrab(mm);
+>                         }
+>                         task_unlock(p);
+>                 }
+>         }
 > 
-> diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
-> index f673cd7a6766..f8838c7b174b 100644
-> --- a/arch/arm/mach-davinci/board-da830-evm.c
-> +++ b/arch/arm/mach-davinci/board-da830-evm.c
-> @@ -348,7 +348,7 @@ static struct resource da830_evm_nand_resources[] = {
->  };
->  
->  static struct platform_device da830_evm_nand_device = {
-> -	.name		= "davinci_nand",
-> +	.name		= "davinci-nand",
->  	.id		= 1,
->  	.dev		= {
->  		.platform_data	= &da830_evm_nand_pdata,
-> diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
-> index d898a94f6eae..828194045a2b 100644
-> --- a/arch/arm/mach-davinci/board-da850-evm.c
-> +++ b/arch/arm/mach-davinci/board-da850-evm.c
-> @@ -266,7 +266,7 @@ static struct resource da850_evm_nandflash_resource[] = {
->  };
->  
->  static struct platform_device da850_evm_nandflash_device = {
-> -	.name		= "davinci_nand",
-> +	.name		= "davinci-nand",
->  	.id		= 1,
->  	.dev		= {
->  		.platform_data	= &da850_evm_nandflash_data,
-> diff --git a/arch/arm/mach-davinci/board-dm355-evm.c b/arch/arm/mach-davinci/board-dm355-evm.c
-> index e457f299cd44..58ca7f56e112 100644
-> --- a/arch/arm/mach-davinci/board-dm355-evm.c
-> +++ b/arch/arm/mach-davinci/board-dm355-evm.c
-> @@ -98,7 +98,7 @@ static struct resource davinci_nand_resources[] = {
->  };
->  
->  static struct platform_device davinci_nand_device = {
-> -	.name			= "davinci_nand",
-> +	.name			= "davinci-nand",
->  	.id			= 0,
->  
->  	.num_resources		= ARRAY_SIZE(davinci_nand_resources),
-> diff --git a/arch/arm/mach-davinci/board-dm355-leopard.c b/arch/arm/mach-davinci/board-dm355-leopard.c
-> index be997243447b..196238117f9a 100644
-> --- a/arch/arm/mach-davinci/board-dm355-leopard.c
-> +++ b/arch/arm/mach-davinci/board-dm355-leopard.c
-> @@ -93,7 +93,7 @@ static struct resource davinci_nand_resources[] = {
->  };
->  
->  static struct platform_device davinci_nand_device = {
-> -	.name			= "davinci_nand",
-> +	.name			= "davinci-nand",
->  	.id			= 0,
->  
->  	.num_resources		= ARRAY_SIZE(davinci_nand_resources),
-> diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
-> index e75741fb2c1d..563d66df480b 100644
-> --- a/arch/arm/mach-davinci/board-dm365-evm.c
-> +++ b/arch/arm/mach-davinci/board-dm365-evm.c
-> @@ -159,7 +159,7 @@ static struct resource davinci_nand_resources[] = {
->  };
->  
->  static struct platform_device davinci_nand_device = {
-> -	.name			= "davinci_nand",
-> +	.name			= "davinci-nand",
->  	.id			= 0,
->  	.num_resources		= ARRAY_SIZE(davinci_nand_resources),
->  	.resource		= davinci_nand_resources,
-> diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
-> index 85e6fb33b1ee..e42ae2163c75 100644
-> --- a/arch/arm/mach-davinci/board-dm644x-evm.c
-> +++ b/arch/arm/mach-davinci/board-dm644x-evm.c
-> @@ -173,7 +173,7 @@ static struct resource davinci_evm_nandflash_resource[] = {
->  };
->  
->  static struct platform_device davinci_evm_nandflash_device = {
-> -	.name		= "davinci_nand",
-> +	.name		= "davinci-nand",
->  	.id		= 0,
->  	.dev		= {
->  		.platform_data	= &davinci_evm_nandflash_data,
-> diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-> index cb0a41e83582..614dd211e6fc 100644
-> --- a/arch/arm/mach-davinci/board-dm646x-evm.c
-> +++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-> @@ -108,7 +108,7 @@ static struct resource davinci_nand_resources[] = {
->  };
->  
->  static struct platform_device davinci_nand_device = {
-> -	.name			= "davinci_nand",
-> +	.name			= "davinci-nand",
->  	.id			= 0,
->  
->  	.num_resources		= ARRAY_SIZE(davinci_nand_resources),
-> diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
-> index b73ce7bae81f..bf3659a21897 100644
-> --- a/arch/arm/mach-davinci/board-mityomapl138.c
-> +++ b/arch/arm/mach-davinci/board-mityomapl138.c
-> @@ -422,7 +422,7 @@ static struct resource mityomapl138_nandflash_resource[] = {
->  };
->  
->  static struct platform_device mityomapl138_nandflash_device = {
-> -	.name		= "davinci_nand",
-> +	.name		= "davinci-nand",
->  	.id		= 1,
->  	.dev		= {
->  		.platform_data	= &mityomapl138_nandflash_data,
-> diff --git a/arch/arm/mach-davinci/board-neuros-osd2.c b/arch/arm/mach-davinci/board-neuros-osd2.c
-> index 4da210a1a110..04132494a7c9 100644
-> --- a/arch/arm/mach-davinci/board-neuros-osd2.c
-> +++ b/arch/arm/mach-davinci/board-neuros-osd2.c
-> @@ -107,7 +107,7 @@ static struct resource davinci_ntosd2_nandflash_resource[] = {
->  };
->  
->  static struct platform_device davinci_ntosd2_nandflash_device = {
-> -	.name		= "davinci_nand",
-> +	.name		= "davinci-nand",
->  	.id		= 0,
->  	.dev		= {
->  		.platform_data	= &davinci_ntosd2_nandflash_data,
-> diff --git a/arch/arm/mach-davinci/board-sffsdr.c b/arch/arm/mach-davinci/board-sffsdr.c
-> index d85accf7f760..c8569c8aa6e3 100644
-> --- a/arch/arm/mach-davinci/board-sffsdr.c
-> +++ b/arch/arm/mach-davinci/board-sffsdr.c
-> @@ -83,7 +83,7 @@ static struct resource davinci_sffsdr_nandflash_resource[] = {
->  };
->  
->  static struct platform_device davinci_sffsdr_nandflash_device = {
-> -	.name		= "davinci_nand", /* Name of driver */
-> +	.name		= "davinci-nand", /* Name of driver */
->  	.id		= 0,
->  	.dev		= {
->  		.platform_data	= &davinci_sffsdr_nandflash_data,
+> Considering that mmput() done by exit_mm() is done outside of the
+> task_lock critical section, I wonder how the mm_users load is
+> synchronized ?
 
+That looks suspicious, but I don't think it can result in this
+particular problem.
 
+In find_lock_task_mm() we get the task lock, and check mm != NULL, which
+means that mm->mm_count >= 1 (thanks to the implicit reference
+context_switch()+finish_task_switch() manage). While we hold the task
+lock, task->mm can't change beneath our feet, and hence that reference
+can't be dropped by finish_task_switch().
 
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Thus, immediately after the mmgrab(), we know mm->mm_count >= 2. That
+shouldn't drop below 1 until the subsequent mmdrop(), even after we drop
+the task lock, unless there's a misplaced mmdrop() elsewhere. Locally,
+mmgrab() and mmdrop() are balanced.
+
+However, if mm_users can be incremented behind our back, we might skip
+updating the oom adjustments for other users of the mm.
+
+Thanks,
+Mark.
