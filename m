@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162379AbeBPRku (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 12:40:50 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34464 "EHLO
+        id S1755859AbeBPRlH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 12:41:07 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34444 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162279AbeBPRkt (ORCPT
+        with ESMTP id S1162328AbeBPRks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 12:40:49 -0500
+        Fri, 16 Feb 2018 12:40:48 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: Lee Jones <lee.jones@linaro.org>,
         Daniel Thompson <daniel.thompson@linaro.org>,
@@ -19,9 +19,9 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
         linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, groeck@chromium.org,
         linux-rockchip@lists.infradead.org, kernel@collabora.com
-Subject: [RESEND PATCH v5 5/5] ARM: dts: rockchip: set PWM delay backlight settings for Minnie
-Date: Fri, 16 Feb 2018 18:40:34 +0100
-Message-Id: <20180216174034.15936-5-enric.balletbo@collabora.com>
+Subject: [RESEND PATCH v5 4/5] ARM: dts: rockchip: set PWM delay backlight settings for Veyron.
+Date: Fri, 16 Feb 2018 18:40:33 +0100
+Message-Id: <20180216174034.15936-4-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180216174034.15936-1-enric.balletbo@collabora.com>
 References: <20180216174034.15936-1-enric.balletbo@collabora.com>
@@ -29,39 +29,40 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The minnie devices comes with an AUO B101EAN01 panel which is different
-from default veyron devices, thus the power on/off timing sequence is
-slightly different. The datasheet specifies a pwm delay of 200 ms, so
-update the PMW delay proprieties accordingly.
+For veyron the binding should provide both PWM timings, the delay between
+you enable the PWM and set the enable signal, and the delay between you
+disable the PWM signal and clear the enable signal. Update the binding
+accordingly, in this case the panels connected to the veyron boards have
+a symmetric power sequence, hence the same value is used.
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
 Changes since v4:
- - Rebase on top of mainline.
+ - Rebased on top of mainline.
 Changes since v3:
  - Use new -ms names for proprieties.
- - Fix the delay, should be 200ms instead of 20ms (Pavel)
 Changes since v2:
  - Use new names for proprieties.
 Changes since v1:
- - Add this new patch as minnie has differents timings
+ - Add this new patch to fix current binding on veyron.
 
- arch/arm/boot/dts/rk3288-veyron-minnie.dts | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/rk3288-veyron-minnie.dts b/arch/arm/boot/dts/rk3288-veyron-minnie.dts
-index 544de6027aaa..4c5307e62001 100644
---- a/arch/arm/boot/dts/rk3288-veyron-minnie.dts
-+++ b/arch/arm/boot/dts/rk3288-veyron-minnie.dts
-@@ -123,6 +123,8 @@
- 			240 241 242 243 244 245 246 247
- 			248 249 250 251 252 253 254 255>;
- 	power-supply = <&backlight_regulator>;
-+	post-pwm-on-delay-ms = <200>;
-+	pwm-off-delay-ms = <200>;
- };
+diff --git a/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi b/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
+index be487111d025..b16d570ff029 100644
+--- a/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
++++ b/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
+@@ -95,7 +95,8 @@
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&bl_en>;
+ 		pwms = <&pwm0 0 1000000 0>;
+-		pwm-delay-us = <10000>;
++		post-pwm-on-delay-ms = <10>;
++		pwm-off-delay-ms = <10>;
+ 	};
  
- &emmc {
+ 	gpio-charger {
 -- 
 2.15.1
