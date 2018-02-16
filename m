@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750994AbeBPUeD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 15:34:03 -0500
-Received: from rcdn-iport-6.cisco.com ([173.37.86.77]:1571 "EHLO
-        rcdn-iport-6.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750780AbeBPUd6 (ORCPT
+        id S1751278AbeBPUhr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 15:37:47 -0500
+Received: from rcdn-iport-9.cisco.com ([173.37.86.80]:17582 "EHLO
+        rcdn-iport-9.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750951AbeBPUeC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 15:33:58 -0500
+        Fri, 16 Feb 2018 15:34:02 -0500
 X-IronPort-AV: E=Sophos;i="5.46,520,1511827200";
-   d="scan'208";a="357044583"
+   d="scan'208";a="350021939"
 From: Taras Kondratiuk <takondra@cisco.com>
 To: "H. Peter Anvin" <hpa@zytor.com>, Al Viro <viro@zeniv.linux.org.uk>,
         Arnd Bergmann <arnd@arndb.de>, Rob Landley <rob@landley.net>,
@@ -18,9 +18,9 @@ To: "H. Peter Anvin" <hpa@zytor.com>, Al Viro <viro@zeniv.linux.org.uk>,
 Cc: initramfs@vger.kernel.org, Victor Kamensky <kamensky@cisco.com>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, xe-linux-external@cisco.com
-Subject: [PATCH v3 01/15] Documentation: add newcx initramfs format description
-Date: Fri, 16 Feb 2018 20:33:37 +0000
-Message-Id: <1518813234-5874-2-git-send-email-takondra@cisco.com>
+Subject: [PATCH v3 07/15] initramfs: split header layout information from parsing function
+Date: Fri, 16 Feb 2018 20:33:43 +0000
+Message-Id: <1518813234-5874-8-git-send-email-takondra@cisco.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518813234-5874-1-git-send-email-takondra@cisco.com>
 References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
@@ -30,108 +30,192 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Many of the Linux security/integrity features are dependent on file
-metadata, stored as extended attributes (xattrs), for making decisions.
-These features need to be initialized during initcall and enabled as
-early as possible for complete security coverage.
+Header parsing has hardcoded assumption about header field size and
+layout. It is hard to modify the function to parse a new format.
 
-Initramfs (tmpfs) supports xattrs, but newc CPIO archive format does not
-support including them into the archive.
-
-This patch describes "extended" newc format (newcx) that is based on
-newc and has following changes:
-- extended attributes support
-- increased size of filesize to support files >4GB
-- increased mtime field size to have 64 bits of seconds and added a
-  field for nanoseconds
-- removed unused checksum field
+Move information about size and layout into a data structure to
+make parsing code more generic and simplify adding a new format.
+This also removes some magic numbers.
 
 Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Signed-off-by: Victor Kamensky <kamensky@cisco.com>
 ---
- Documentation/early-userspace/buffer-format.txt | 46 ++++++++++++++++++++++---
- 1 file changed, 41 insertions(+), 5 deletions(-)
+ init/initramfs.c | 122 +++++++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 92 insertions(+), 30 deletions(-)
 
-diff --git a/Documentation/early-userspace/buffer-format.txt b/Documentation/early-userspace/buffer-format.txt
-index e1fd7f9dad16..8349b2f28b4b 100644
---- a/Documentation/early-userspace/buffer-format.txt
-+++ b/Documentation/early-userspace/buffer-format.txt
-@@ -24,6 +24,7 @@ grammar, where:
- 	+	indicates concatenation
- 	GZIP()	indicates the gzip(1) of the operand
- 	ALGN(n)	means padding with null bytes to an n-byte boundary
-+	[n]	means size of field is n bytes
+diff --git a/init/initramfs.c b/init/initramfs.c
+index b3d39c8793be..7f0bbfde94e3 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -150,39 +150,100 @@ static void __init dir_utime(void)
+ 	}
+ }
  
- 	initramfs  := ("\0" | cpio_archive | cpio_gzip_archive)*
- 
-@@ -31,20 +32,33 @@ grammar, where:
- 
- 	cpio_archive := cpio_file* + (<nothing> | cpio_trailer)
- 
--	cpio_file := ALGN(4) + cpio_header + filename + "\0" + ALGN(4) + data
-+	cpio_file := (cpio_newc_file | cpio_newcx_file)
+-static __initdata time64_t mtime;
+-
+ /* cpio header parsing */
+-
+-static __initdata unsigned long ino, major, minor, nlink;
++static __initdata time64_t mtime;
++static __initdata u32 ino, major, minor, nlink, rmajor, rminor;
+ static __initdata umode_t mode;
+-static __initdata unsigned long body_len, name_len;
++static __initdata u32 body_len, name_len;
+ static __initdata uid_t uid;
+ static __initdata gid_t gid;
+-static __initdata unsigned rdev;
++static __initdata u32 mode_u32;
 +
-+	cpio_newc_file := ALGN(4) + cpio_newc_header + filename + "\0" + \
-+			  ALGN(4) + data
++struct cpio_hdr_field {
++	size_t offset;
++	size_t size;
++	void *out;
++	size_t out_size;
++	const char *name;
++};
 +
-+	cpio_newcx_file := ALGN(4) + cpio_newcx_header + filename + "\0" + \
-+			   ALGN(4) + xattrs + ALGN(4) + data
++#define HDR_FIELD(type, field, variable) \
++	{ .offset = offsetof(type, field) + \
++	  BUILD_BUG_ON_ZERO(sizeof(*(variable))*2 < FIELD_SIZEOF(type, field)),\
++	  .size = FIELD_SIZEOF(type, field), \
++	  .out = variable, \
++	  .out_size = sizeof(*(variable)), \
++	  .name = #field }
 +
-+	xattrs := xattr_entry*
++#define NEWC_FIELD(field, variable) \
++		HDR_FIELD(struct cpio_newc_header, field, variable)
 +
-+	xattr_entry := xattr_size[8] + xattr_name + "\0" + xattr_value
- 
- 	cpio_trailer := ALGN(4) + cpio_header + "TRAILER!!!\0" + ALGN(4)
- 
- 
- In human terms, the initramfs buffer contains a collection of
--compressed and/or uncompressed cpio archives (in the "newc" or "crc"
--formats); arbitrary amounts zero bytes (for padding) can be added
--between members.
-+compressed and/or uncompressed cpio archives; arbitrary amounts
-+zero bytes (for padding) can be added between members.
- 
- The cpio "TRAILER!!!" entry (cpio end-of-archive) is optional, but is
- not ignored; see "handling of hard links" below.
- 
--The structure of the cpio_header is as follows (all fields contain
-+xattr_size is a total size of xattr_entry including 8 bytes of
-+xattr_size. xattr_size has the same hexadecimal ASCII encoding as other
-+fields of cpio header (see below).
++#define CPIO_MAX_HEADER_SIZE sizeof(struct cpio_newc_header)
++#define CPIO_MAX_FIELD_SIZE 8
++#define CPIO_MAGIC_SIZE 6
 +
-+The structure of the cpio_newc_header is as follows (all fields contain
- hexadecimal ASCII numbers fully padded with '0' on the left to the
- full width of the field, for example, the integer 4780 is represented
- by the ASCII string "000012ac"):
-@@ -81,6 +95,28 @@ algorithm used.
- If the filename is "TRAILER!!!" this is actually an end-of-archive
- marker; the c_filesize for an end-of-archive marker must be zero.
- 
-+"Extended" newc format (newcx)
-+"newcx" cpio format extends "newc" by increasing size of some fields
-+and adding extended attributes support. cpio_newcx_header structure:
++struct cpio_newc_header {
++	char    c_ino[8];
++	char    c_mode[8];
++	char    c_uid[8];
++	char    c_gid[8];
++	char    c_nlink[8];
++	char    c_mtime[8];
++	char    c_filesize[8];
++	char    c_devmajor[8];
++	char    c_devminor[8];
++	char    c_rdevmajor[8];
++	char    c_rdevminor[8];
++	char    c_namesize[8];
++	char    c_check[8];
++};
 +
-+Field name    Field size	 Meaning
-+c_magic	       6 bytes		 The string "070703"
-+c_ino	       8 bytes		 File inode number
-+c_mode	       8 bytes		 File mode and permissions
-+c_uid	       8 bytes		 File uid
-+c_gid	       8 bytes		 File gid
-+c_nlink	       8 bytes		 Number of links
-+c_mtime	      16 bytes		 Modification time (seconds)
-+c_mtime_nsec   8 bytes		 Modification time (nanoseconds)
-+c_filesize    16 bytes		 Size of data field
-+c_maj	       8 bytes		 Major part of file device number
-+c_min	       8 bytes		 Minor part of file device number
-+c_rmaj	       8 bytes		 Major part of device node reference
-+c_rmin	       8 bytes		 Minor part of device node reference
-+c_namesize     8 bytes		 Length of filename, including final \0
-+c_xattrs_size  8 bytes		 Size of xattrs field
-+
-+Most of the fields match cpio_newc_header. c_chksum field is dropped.
++static struct cpio_hdr_field cpio_newc_header_info[] __initdata = {
++	NEWC_FIELD(c_ino, &ino),
++	NEWC_FIELD(c_mode, &mode_u32),
++	NEWC_FIELD(c_uid, &uid),
++	NEWC_FIELD(c_gid, &gid),
++	NEWC_FIELD(c_nlink, &nlink),
++	NEWC_FIELD(c_mtime, &mtime),
++	NEWC_FIELD(c_filesize, &body_len),
++	NEWC_FIELD(c_devmajor, &major),
++	NEWC_FIELD(c_devminor, &minor),
++	NEWC_FIELD(c_rdevmajor, &rmajor),
++	NEWC_FIELD(c_rdevminor, &rminor),
++	NEWC_FIELD(c_namesize, &name_len),
++	{ 0 },
++};
  
- *** Handling of hard links
+ static void __init parse_header(char *s)
+ {
+-	unsigned long parsed[12];
+-	char buf[9];
+-	int i;
+-
+-	buf[8] = '\0';
+-	for (i = 0; i < 12; i++, s += 8) {
+-		memcpy(buf, s, 8);
+-		parsed[i] = simple_strtoul(buf, NULL, 16);
++	char buf[CPIO_MAX_FIELD_SIZE + 1];
++	struct cpio_hdr_field *field = cpio_newc_header_info;
++
++	while (field->size) {
++		int ret = 0;
++
++		memcpy(buf, s + field->offset, field->size);
++		buf[field->size] = '\0';
++		switch (field->out_size) {
++		case sizeof(u32):
++			ret = kstrtou32(buf, 16, field->out);
++			pr_debug("cpio field %s: %u, buf: %s\n",
++				 field->name, *(u32 *)field->out, buf);
++			break;
++		case sizeof(u64):
++			ret = kstrtou64(buf, 16, field->out);
++			pr_debug("cpio field %s: %llu, buf: %s\n",
++				 field->name, *(u64 *)field->out, buf);
++			break;
++		default:
++			BUG_ON(1);
++		}
++
++		if (ret)
++			pr_err("invalid cpio header field (%d)", ret);
++		field++;
+ 	}
+-	ino = parsed[0];
+-	mode = parsed[1];
+-	uid = parsed[2];
+-	gid = parsed[3];
+-	nlink = parsed[4];
+-	mtime = parsed[5]; /* breaks in y2106 */
+-	body_len = parsed[6];
+-	major = parsed[7];
+-	minor = parsed[8];
+-	rdev = new_encode_dev(MKDEV(parsed[9], parsed[10]));
+-	name_len = parsed[11];
++	mode = mode_u32;
+ }
+ 
+ /* FSM */
+@@ -234,7 +295,7 @@ static __initdata char *header_buf, *symlink_buf, *name_buf;
+ 
+ static int __init do_start(void)
+ {
+-	read_into(header_buf, 6, do_format);
++	read_into(header_buf, CPIO_MAGIC_SIZE, do_format);
+ 	return 0;
+ }
+ 
+@@ -254,15 +315,15 @@ static int __init do_collect(void)
+ 
+ static int __init do_format(void)
+ {
+-	if (memcmp(collected, "070707", 6)==0) {
++	if (memcmp(collected, "070707", CPIO_MAGIC_SIZE) == 0) {
+ 		error("incorrect cpio method used: use -H newc option");
+ 		return 1;
+ 	}
+-	if (memcmp(collected, "070701", 6)) {
++	if (memcmp(collected, "070701", CPIO_MAGIC_SIZE)) {
+ 		error("no cpio magic");
+ 		return 1;
+ 	}
+-	read_into(header_buf, 104, do_header);
++	read_into(header_buf, sizeof(struct cpio_newc_header), do_header);
+ 	return 0;
+ }
+ 
+@@ -374,6 +435,7 @@ static int __init do_create(void)
+ 	} else if (S_ISBLK(mode) || S_ISCHR(mode) ||
+ 		   S_ISFIFO(mode) || S_ISSOCK(mode)) {
+ 		if (maybe_link(name_buf) == 0) {
++			u32 rdev = new_encode_dev(MKDEV(rmajor, rminor));
+ 			sys_mknod(name_buf, mode, rdev);
+ 			sys_chown(name_buf, uid, gid);
+ 			sys_chmod(name_buf, mode);
+@@ -464,7 +526,7 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
+ 	const char *compress_name;
+ 	static __initdata char msg_buf[64];
+ 
+-	header_buf = kmalloc(104, GFP_KERNEL);
++	header_buf = kmalloc(CPIO_MAX_HEADER_SIZE, GFP_KERNEL);
+ 	symlink_buf = kmalloc(PATH_MAX + 1, GFP_KERNEL);
+ 	name_buf = kmalloc(N_ALIGN(PATH_MAX), GFP_KERNEL);
  
 -- 
 2.10.3.dirty
