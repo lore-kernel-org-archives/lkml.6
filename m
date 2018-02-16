@@ -1,46 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750971AbeBPV6t (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 16:58:49 -0500
-Received: from mail-it0-f45.google.com ([209.85.214.45]:50752 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750808AbeBPV6r (ORCPT
+        id S1751058AbeBPV6x (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 16:58:53 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51528 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750993AbeBPV6u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 16:58:47 -0500
-X-Google-Smtp-Source: AH8x226i+Sy92nKaXqRza0Hx+RrFzetn4OsaIsnRsp7E3HIHy0xh4cCa+474y36mENEIMJMVyFjnmP+x6ypSVPHohuc=
-MIME-Version: 1.0
-References: <20180215182208.35003-1-joe.konno@linux.intel.com>
- <CAKv+Gu80pJ5tbGoJqBm8CCKrEZXdkE83c944383KbQ5jREUC0Q@mail.gmail.com>
- <1518814319.4419.10.camel@HansenPartnership.com> <3908561D78D1C84285E8C5FCA982C28F7B37942B@ORSMSX110.amr.corp.intel.com>
- <CALCETrXD4qCwgnDcwnybUXzVk7zyJtzHC2xzLfcZvzrXvAB8PQ@mail.gmail.com>
-In-Reply-To: <CALCETrXD4qCwgnDcwnybUXzVk7zyJtzHC2xzLfcZvzrXvAB8PQ@mail.gmail.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Fri, 16 Feb 2018 21:58:35 +0000
-Message-ID: <CACdnJutPvMPUTWWjS3oRadQAqn+HpRpY+fhO0pXBj6OsQkAAag@mail.gmail.com>
-Subject: Re: [PATCH 0/2] efivars: reading variables can generate SMIs
-To: luto@kernel.org
-Cc: tony.luck@intel.com,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>, joe.konno@linux.intel.com,
-        mingo@kernel.org, bp@alien8.de, linux-efi <linux-efi@vger.kernel.org>,
+        Fri, 16 Feb 2018 16:58:50 -0500
+Date: Fri, 16 Feb 2018 13:58:48 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Wei Wang <wei.w.wang@intel.com>, virtio-dev@lists.oasis-open.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jk@ozlabs.org, ak@linux.intel.com, benjamin.drung@profitbricks.com,
-        pjones@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+        qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>, mhocko@kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>, david@redhat.com,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        cornelia.huck@de.ibm.com, mgorman@techsingularity.net,
+        aarcange@redhat.com, amit.shah@redhat.com,
+        Paolo Bonzini <pbonzini@redhat.com>, liliang.opensource@gmail.com,
+        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
+        riel@redhat.com
+Subject: Re: [PATCH v21 1/5] xbitmap: Introduce xbitmap
+Message-ID: <20180216215848.GB32655@bombadil.infradead.org>
+References: <1515496262-7533-1-git-send-email-wei.w.wang@intel.com>
+ <1515496262-7533-2-git-send-email-wei.w.wang@intel.com>
+ <CAHp75Ve-1-TOVJUZ4anhwkkeq-RhpSg3EmN3N0r09rj6sFrQZQ@mail.gmail.com>
+ <20180216183032.GA7439@bombadil.infradead.org>
+ <CAHp75Vd_tt0bV_OqAOwc=_uWrsF2zP9pMSbxPw_AxF_s9zj-pw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vd_tt0bV_OqAOwc=_uWrsF2zP9pMSbxPw_AxF_s9zj-pw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 1:45 PM Andy Lutomirski <luto@kernel.org> wrote:
-> I'm going to go out on a limb and suggest that the fact that
-> unprivileged users can read efi variables at all is a mistake
-> regardless of SMI issues.
+On Fri, Feb 16, 2018 at 11:45:51PM +0200, Andy Shevchenko wrote:
+> Now, the question about test case. Why do you heavily use BUG_ON?
+> Isn't resulting statistics enough?
 
-Why? They should never contain sensitive material.
-
-> Also, chmod() just shouldn't work on efi variables, and the mode
-> passed to creat() should be ignored.  After all, there's no backing
-> store for the mode.
-
-If the default is 600 then it makes sense to allow a privileged service to
-selectively make certain variables world readable at runtime.
+No.  If any of those tests fail, we want to stop dead.  They'll lead to
+horrendous bugs throughout the kernel if they're wrong.  I think more of
+the in-kernel test suite should stop dead instead of printing a warning.
+Would you want to boot a machine which has a known bug in the page cache,
+for example?
