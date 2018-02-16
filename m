@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758161AbeBPP1K (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:27:10 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35032 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1758132AbeBPP1F (ORCPT
+        id S966643AbeBPP1N (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:27:13 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45378 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1758158AbeBPP1K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:27:05 -0500
+        Fri, 16 Feb 2018 10:27:10 -0500
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
@@ -25,16 +25,16 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         npiggin@gmail.com, bsingharora@gmail.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: [PATCH v8 22/24] mm: Speculative page fault handler return VMA
-Date: Fri, 16 Feb 2018 16:25:36 +0100
+Subject: [PATCH v8 23/24] x86/mm: Add speculative pagefault handling
+Date: Fri, 16 Feb 2018 16:25:37 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18021615-0012-0000-0000-000005B1801E
+x-cbid: 18021615-0020-0000-0000-000003F8815D
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021615-0013-0000-0000-0000192D84BA
-Message-Id: <1518794738-4186-23-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18021615-0021-0000-0000-0000428C8557
+Message-Id: <1518794738-4186-24-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-16_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -46,282 +46,95 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the speculative page fault handler is returning VM_RETRY, there is a
-chance that VMA fetched without grabbing the mmap_sem can be reused by the
-legacy page fault handler.  By reusing it, we avoid calling find_vma()
-again. To achieve, that we must ensure that the VMA structure will not be
-freed in our back. This is done by getting the reference on it (get_vma())
-and by assuming that the caller will call the new service
-can_reuse_spf_vma() once it has grabbed the mmap_sem.
+From: Peter Zijlstra <peterz@infradead.org>
 
-can_reuse_spf_vma() is first checking that the VMA is still in the RB tree
-, and then that the VMA's boundaries matched the passed address and release
-the reference on the VMA so that it can be freed if needed.
+Try a speculative fault before acquiring mmap_sem, if it returns with
+VM_FAULT_RETRY continue with the mmap_sem acquisition and do the
+traditional fault.
 
-In the case the VMA is freed, can_reuse_spf_vma() will have returned false
-as the VMA is no more in the RB tree.
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
+[Clearing of FAULT_FLAG_ALLOW_RETRY is now done in
+ handle_speculative_fault()]
+[Retry with usual fault path in the case VM_ERROR is returned by
+ handle_speculative_fault(). This allows signal to be delivered]
+[Don't build SPF call if !CONFIG_SPECULATIVE_PAGE_FAULT]
+[Try speculative fault path only for multi threaded processes]
+[Try to the VMA fetch during the speculative path in case of retry]
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- include/linux/mm.h |   5 +-
- mm/memory.c        | 136 +++++++++++++++++++++++++++++++++--------------------
- 2 files changed, 88 insertions(+), 53 deletions(-)
+ arch/x86/mm/fault.c | 38 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c383a4e2ceb3..0cd31a37bb3d 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1355,7 +1355,10 @@ extern int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
- 		unsigned int flags);
- #ifdef CONFIG_SPECULATIVE_PAGE_FAULT
- extern int handle_speculative_fault(struct mm_struct *mm,
--				    unsigned long address, unsigned int flags);
-+				    unsigned long address, unsigned int flags,
-+				    struct vm_area_struct **vma);
-+extern bool can_reuse_spf_vma(struct vm_area_struct *vma,
-+			      unsigned long address);
- #endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
- extern int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
- 			    unsigned long address, unsigned int fault_flags,
-diff --git a/mm/memory.c b/mm/memory.c
-index 2ef686405154..1f5ce5ff79af 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4307,13 +4307,22 @@ static int __handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
- /* This is required by vm_normal_page() */
- #error "Speculative page fault handler requires __HAVE_ARCH_PTE_SPECIAL"
- #endif
--
- /*
-  * vm_normal_page() adds some processing which should be done while
-  * hodling the mmap_sem.
-  */
-+
-+/*
-+ * Tries to handle the page fault in a speculative way, without grabbing the
-+ * mmap_sem.
-+ * When VM_FAULT_RETRY is returned, the vma pointer is valid and this vma must
-+ * be checked later when the mmap_sem has been grabbed by calling
-+ * can_reuse_spf_vma().
-+ * This is needed as the returned vma is kept in memory until the call to
-+ * can_reuse_spf_vma() is made.
-+ */
- int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
--			     unsigned int flags)
-+			     unsigned int flags, struct vm_area_struct **vma)
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 800de815519c..d9f9236ccb9a 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1239,6 +1239,9 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
+ 		unsigned long address)
  {
- 	struct vm_fault vmf = {
- 		.address = address,
-@@ -4322,7 +4331,6 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
- 	p4d_t *p4d, p4dval;
- 	pud_t pudval;
- 	int seq, ret = VM_FAULT_RETRY;
--	struct vm_area_struct *vma;
- #ifdef CONFIG_NUMA
- 	struct mempolicy *pol;
- #endif
-@@ -4331,14 +4339,16 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
- 	flags &= ~(FAULT_FLAG_ALLOW_RETRY|FAULT_FLAG_KILLABLE);
- 	flags |= FAULT_FLAG_SPECULATIVE;
+ 	struct vm_area_struct *vma;
++#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
++	struct vm_area_struct *spf_vma = NULL;
++#endif
+ 	struct task_struct *tsk;
+ 	struct mm_struct *mm;
+ 	int fault, major = 0;
+@@ -1336,6 +1339,27 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
+ 	if (error_code & X86_PF_INSTR)
+ 		flags |= FAULT_FLAG_INSTRUCTION;
  
--	vma = get_vma(mm, address);
--	if (!vma)
-+	*vma = get_vma(mm, address);
-+	if (!*vma)
- 		return ret;
-+	vmf.vma = *vma;
- 
--	seq = raw_read_seqcount(&vma->vm_sequence); /* rmb <-> seqlock,vma_rb_erase() */
-+	/* rmb <-> seqlock,vma_rb_erase() */
-+	seq = raw_read_seqcount(&vmf.vma->vm_sequence);
- 	if (seq & 1) {
--		trace_spf_vma_changed(_RET_IP_, vma, address);
--		goto out_put;
-+		trace_spf_vma_changed(_RET_IP_, vmf.vma, address);
-+		return ret;
- 	}
- 
- 	/*
-@@ -4346,9 +4356,9 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
- 	 * with the VMA.
- 	 * This include huge page from hugetlbfs.
- 	 */
--	if (vma->vm_ops) {
--		trace_spf_vma_notsup(_RET_IP_, vma, address);
--		goto out_put;
-+	if (vmf.vma->vm_ops) {
-+		trace_spf_vma_notsup(_RET_IP_, vmf.vma, address);
-+		return ret;
- 	}
- 
- 	/*
-@@ -4356,18 +4366,18 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
- 	 * because vm_next and vm_prev must be safe. This can't be guaranteed
- 	 * in the speculative path.
- 	 */
--	if (unlikely(!vma->anon_vma)) {
--		trace_spf_vma_notsup(_RET_IP_, vma, address);
--		goto out_put;
-+	if (unlikely(!vmf.vma->anon_vma)) {
-+		trace_spf_vma_notsup(_RET_IP_, vmf.vma, address);
-+		return ret;
- 	}
- 
--	vmf.vma_flags = READ_ONCE(vma->vm_flags);
--	vmf.vma_page_prot = READ_ONCE(vma->vm_page_prot);
-+	vmf.vma_flags = READ_ONCE(vmf.vma->vm_flags);
-+	vmf.vma_page_prot = READ_ONCE(vmf.vma->vm_page_prot);
- 
- 	/* Can't call userland page fault handler in the speculative path */
- 	if (unlikely(vmf.vma_flags & VM_UFFD_MISSING)) {
--		trace_spf_vma_notsup(_RET_IP_, vma, address);
--		goto out_put;
-+		trace_spf_vma_notsup(_RET_IP_, vmf.vma, address);
-+		return ret;
- 	}
- 
- 	if (vmf.vma_flags & VM_GROWSDOWN || vmf.vma_flags & VM_GROWSUP) {
-@@ -4376,48 +4386,39 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
- 		 * boundaries but we want to trace it as not supported instead
- 		 * of changed.
- 		 */
--		trace_spf_vma_notsup(_RET_IP_, vma, address);
--		goto out_put;
-+		trace_spf_vma_notsup(_RET_IP_, vmf.vma, address);
-+		return ret;
- 	}
- 
--	if (address < READ_ONCE(vma->vm_start)
--	    || READ_ONCE(vma->vm_end) <= address) {
--		trace_spf_vma_changed(_RET_IP_, vma, address);
--		goto out_put;
-+	if (address < READ_ONCE(vmf.vma->vm_start)
-+	    || READ_ONCE(vmf.vma->vm_end) <= address) {
-+		trace_spf_vma_changed(_RET_IP_, vmf.vma, address);
-+		return ret;
- 	}
- 
--	if (!arch_vma_access_permitted(vma, flags & FAULT_FLAG_WRITE,
-+	if (!arch_vma_access_permitted(vmf.vma, flags & FAULT_FLAG_WRITE,
- 				       flags & FAULT_FLAG_INSTRUCTION,
--				       flags & FAULT_FLAG_REMOTE)) {
--		trace_spf_vma_access(_RET_IP_, vma, address);
--		ret = VM_FAULT_SIGSEGV;
--		goto out_put;
--	}
-+				       flags & FAULT_FLAG_REMOTE))
-+		goto out_segv;
- 
- 	/* This is one is required to check that the VMA has write access set */
- 	if (flags & FAULT_FLAG_WRITE) {
--		if (unlikely(!(vmf.vma_flags & VM_WRITE))) {
--			trace_spf_vma_access(_RET_IP_, vma, address);
--			ret = VM_FAULT_SIGSEGV;
--			goto out_put;
--		}
--	} else if (unlikely(!(vmf.vma_flags & (VM_READ|VM_EXEC|VM_WRITE)))) {
--		trace_spf_vma_access(_RET_IP_, vma, address);
--		ret = VM_FAULT_SIGSEGV;
--		goto out_put;
--	}
-+		if (unlikely(!(vmf.vma_flags & VM_WRITE)))
-+			goto out_segv;
-+	} else if (unlikely(!(vmf.vma_flags & (VM_READ|VM_EXEC|VM_WRITE))))
-+		goto out_segv;
- 
- #ifdef CONFIG_NUMA
- 	/*
- 	 * MPOL_INTERLEAVE implies additional check in mpol_misplaced() which
- 	 * are not compatible with the speculative page fault processing.
- 	 */
--	pol = __get_vma_policy(vma, address);
-+	pol = __get_vma_policy(vmf.vma, address);
- 	if (!pol)
- 		pol = get_task_policy(current);
- 	if (pol && pol->mode == MPOL_INTERLEAVE) {
--		trace_spf_vma_notsup(_RET_IP_, vma, address);
--		goto out_put;
-+		trace_spf_vma_notsup(_RET_IP_, vmf.vma, address);
-+		return ret;
- 	}
- #endif
- 
-@@ -4479,9 +4480,8 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
- 		vmf.pte = NULL;
- 	}
- 
--	vmf.vma = vma;
--	vmf.pgoff = linear_page_index(vma, address);
--	vmf.gfp_mask = __get_fault_gfp_mask(vma);
-+	vmf.pgoff = linear_page_index(vmf.vma, address);
-+	vmf.gfp_mask = __get_fault_gfp_mask(vmf.vma);
- 	vmf.sequence = seq;
- 	vmf.flags = flags;
- 
-@@ -4491,16 +4491,22 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
- 	 * We need to re-validate the VMA after checking the bounds, otherwise
- 	 * we might have a false positive on the bounds.
- 	 */
--	if (read_seqcount_retry(&vma->vm_sequence, seq)) {
--		trace_spf_vma_changed(_RET_IP_, vma, address);
--		goto out_put;
-+	if (read_seqcount_retry(&vmf.vma->vm_sequence, seq)) {
-+		trace_spf_vma_changed(_RET_IP_, vmf.vma, address);
-+		return ret;
- 	}
- 
- 	mem_cgroup_oom_enable();
- 	ret = handle_pte_fault(&vmf);
- 	mem_cgroup_oom_disable();
- 
--	put_vma(vma);
-+	/*
-+	 * If there is no need to retry, don't return the vma to the caller.
-+	 */
-+	if (!(ret & VM_FAULT_RETRY)) {
-+		put_vma(vmf.vma);
-+		*vma = NULL;
++#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
++	if ((error_code & X86_PF_USER) && (atomic_read(&mm->mm_users) > 1)) {
++		fault = handle_speculative_fault(mm, address, flags,
++						 &spf_vma);
++
++		if (!(fault & VM_FAULT_RETRY)) {
++			if (!(fault & VM_FAULT_ERROR)) {
++				perf_sw_event(PERF_COUNT_SW_SPF, 1,
++					      regs, address);
++				goto done;
++			}
++			/*
++			 * In case of error we need the pkey value, but
++			 * can't get it from the spf_vma as it is only returned
++			 * when VM_FAULT_RETRY is returned. So we have to
++			 * retry the page fault with the mmap_sem grabbed.
++			 */
++		}
 +	}
- 
++#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
++
  	/*
- 	 * The task may have entered a memcg OOM situation but
-@@ -4513,9 +4519,35 @@ int handle_speculative_fault(struct mm_struct *mm, unsigned long address,
- 	return ret;
+ 	 * When running in the kernel we expect faults to occur only to
+ 	 * addresses in user space.  All other faults represent errors in
+@@ -1369,7 +1393,16 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
+ 		might_sleep();
+ 	}
  
- out_walk:
--	trace_spf_vma_notsup(_RET_IP_, vma, address);
-+	trace_spf_vma_notsup(_RET_IP_, vmf.vma, address);
- 	local_irq_enable();
--out_put:
-+	return ret;
-+
-+out_segv:
-+	trace_spf_vma_access(_RET_IP_, vmf.vma, address);
-+	/*
-+	 * We don't return VM_FAULT_RETRY so the caller is not expected to
-+	 * retrieve the fetched VMA.
-+	 */
-+	put_vma(vmf.vma);
-+	*vma = NULL;
-+	return VM_FAULT_SIGSEGV;
-+}
-+
-+/*
-+ * This is used to know if the vma fetch in the speculative page fault handler
-+ * is still valid when trying the regular fault path while holding the
-+ * mmap_sem.
-+ * The call to put_vma(vma) must be made after checking the vma's fields, as
-+ * the vma may be freed by put_vma(). In such a case it is expected that false
-+ * is returned.
-+ */
-+bool can_reuse_spf_vma(struct vm_area_struct *vma, unsigned long address)
-+{
-+	bool ret;
-+
-+	ret = !RB_EMPTY_NODE(&vma->vm_rb) &&
-+		vma->vm_start <= address && address < vma->vm_end;
- 	put_vma(vma);
- 	return ret;
- }
+-	vma = find_vma(mm, address);
++#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
++	if (spf_vma) {
++		if (can_reuse_spf_vma(spf_vma, address))
++			vma = spf_vma;
++		else
++			vma = find_vma(mm, address);
++		spf_vma = NULL;
++	} else
++#endif
++		vma = find_vma(mm, address);
+ 	if (unlikely(!vma)) {
+ 		bad_area(regs, error_code, address);
+ 		return;
+@@ -1455,6 +1488,9 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
+ 		return;
+ 	}
+ 
++#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
++done:
++#endif
+ 	/*
+ 	 * Major/minor page fault accounting. If any of the events
+ 	 * returned VM_FAULT_MAJOR, we account it as a major fault.
 -- 
 2.7.4
