@@ -1,102 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758353AbeBPPux (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:50:53 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:54443 "EHLO
+        id S1758388AbeBPPvw convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:51:52 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:54542 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758251AbeBPPuv (ORCPT
+        with ESMTP id S1758369AbeBPPvu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:50:51 -0500
-Date: Fri, 16 Feb 2018 16:50:49 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: airlied@linux.ie, wens@csie.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] drm/sun4i: Handle DRM_MODE_FLAG_**SYNC_POSITIVE
- correctly
-Message-ID: <20180216155049.r2mc724nfluwrrbe@flea.lan>
-References: <1516474221-114596-1-git-send-email-giulio.benetti@micronovasrl.com>
- <1516474221-114596-2-git-send-email-giulio.benetti@micronovasrl.com>
- <20180122085112.7xo2t3x5ag4k2kpl@flea.lan>
- <aa724bd5-cfb1-128c-af32-db29253f32aa@micronovasrl.com>
- <59f7b542-3b1d-ff62-e290-37c47f4075ff@micronovasrl.com>
- <9929d894-53c3-a7e9-a328-a00cfc1ef546@micronovasrl.com>
- <20180207103905.mtyzgu73mmifyvvj@flea>
- <653f0438-c55a-02a5-dffb-2ee8e6d9ef4a@micronovasrl.com>
- <20180208204043.mqryuqhx7a6z4v3b@flea>
- <e5d49c13-9b8f-d597-508c-10fed5300769@micronovasrl.com>
+        Fri, 16 Feb 2018 10:51:50 -0500
+Date: Fri, 16 Feb 2018 16:51:47 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc: David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-mtd@lists.infradead.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Update Boris Brezillon email address
+Message-ID: <20180216165147.41c0d9e7@bbrezillon>
+In-Reply-To: <9c05d969-b488-fbc4-4143-6446d8a6d7ab@partner.samsung.com>
+References: <CGME20180216104523epcas3p1c45769e365a181963f8328237d270854@epcas3p1.samsung.com>
+        <20180216104449.15546-1-boris.brezillon@bootlin.com>
+        <dbe89241-4d05-d369-2894-fdc0b2d80b80@partner.samsung.com>
+        <20180216121619.3edad6fb@bbrezillon>
+        <4086d3a7-c79d-6906-2778-caccd647ffe6@partner.samsung.com>
+        <20180216150050.6051cc26@bbrezillon>
+        <138ed639-992d-2d87-4dd4-973323cdcad7@partner.samsung.com>
+        <20180216155455.36168609@bbrezillon>
+        <9c05d969-b488-fbc4-4143-6446d8a6d7ab@partner.samsung.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3h2no4wlgtkccz5a"
-Content-Disposition: inline
-In-Reply-To: <e5d49c13-9b8f-d597-508c-10fed5300769@micronovasrl.com>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 16 Feb 2018 16:35:27 +0100
+Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
 
---3h2no4wlgtkccz5a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 16.02.2018 15:54, Boris Brezillon wrote:
+> > Adding back all the people that were Cc-ed on the initial email.
+> > 
+> > On Fri, 16 Feb 2018 15:18:21 +0100
+> > Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
+> >   
+> >> On 16.02.2018 15:00, Boris Brezillon wrote:  
+> >>> On Fri, 16 Feb 2018 12:21:53 +0100
+> >>> Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
+> >>>     
+> >>>> On 16.02.2018 12:16, Boris Brezillon wrote:    
+> >>>>> On Fri, 16 Feb 2018 12:07:42 +0100
+> >>>>> Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
+> >>>>>       
+> >>>>>> On 16.02.2018 11:44, Boris Brezillon wrote:      
+> >>>>>>> Free Electrons is now Bootlin.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> >>>>>>> ---
+> >>>>>>> Note that I'm planning to take this patch through the MTD tree.
+> >>>>>>> ---
+> >>>>>>>  .mailmap    |  7 ++++---
+> >>>>>>>  MAINTAINERS | 10 +++++-----
+> >>>>>>>  2 files changed, 9 insertions(+), 8 deletions(-)
+> >>>>>>>
+> >>>>>>> diff --git a/.mailmap b/.mailmap
+> >>>>>>> index e18cab73e209..50c1d6bf36b2 100644
+> >>>>>>> --- a/.mailmap
+> >>>>>>> +++ b/.mailmap
+> >>>>>>> @@ -33,9 +33,10 @@ Axel Lin <axel.lin@gmail.com>
+> >>>>>>>  Ben Gardner <bgardner@wabtec.com>
+> >>>>>>>  Ben M Cahill <ben.m.cahill@intel.com>
+> >>>>>>>  Björn Steinbrink <B.Steinbrink@gmx.de>
+> >>>>>>> -Boris Brezillon <boris.brezillon@free-electrons.com>
+> >>>>>>> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon.dev@gmail.com>
+> >>>>>>> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon@overkiz.com>
+> >>>>>>> +Boris Brezillon <boris.brezillon@bootlin.com>
+> >>>>>>> +Boris Brezillon <boris.brezillon@bootlin.com> <boris.brezillon@free-electrons.com>        
+> >>>>>>
+> >>>>>> ------------------------------------------------------------------ ??????????????????      
+> >>>>>
+> >>>>> Is there a problem with this line?
+> >>>>>       
+> >>>>
+> >>>> I think you want to delete all 'free-electrons', yet here you add this    
+> >>>
+> >>> I'm clearly not a git expert, but according to man git-shortlog [1], the
+> >>> format I'm using here allows mailmap to replace the old email by the
+> >>> new one, which is exactly what I want.
+> >>>
+> >>> [1]https://git-scm.com/docs/git-shortlog
+> >>>     
+> >>
+> >> Ah, I see, but why do you send patch for .mailmap ?
+> >> it is your private file, not global one, I do not want mine .mailmap
+> >> to be replaced by yours :)  
+> > 
+> > No, it's not private, it's part of the git tree.
+> >   
+> >> But beside this, you can use sed script
+> >>
+> >> sed -i -e 's/free-electrons/bootlin/g' .mailmap
+> >>
+> >> Please just resend this with patch for MAINTAINER's only
+> >>  
+> > 
+> > .mailmap is versioned for a good reason, and I don't see why I couldn't
+> > update entries for my emails, especially since those entries already
+> > existed before this patch.  
+> 
+> I am newbie, it looks you are right, sorry for questions.
+> 
 
-On Thu, Feb 15, 2018 at 07:05:56PM +0100, Giulio Benetti wrote:
-> > If so, and if remember the captures properly, the sampling would occur
-> > right before the rise, and not really around the fall.
-> >=20
-> > Would 2/3 be better here?
->=20
-> Yes, you're right, 2/3 phase is better:
->=20
-> 1/3 phase: https://pasteboard.co/H4VehON.png
-> 2/3 phase: https://pasteboard.co/H4Veq8a.png
->=20
-> Take a look at the bit in middle(yellow) sampled by clock(blue).
->=20
-> Rising edge is almost in the middle of D0 bit.
->=20
-> >=20
-> > > According to scope captures above on both A20 and A33.
-> > > Unfortunately I don't have other boards for the other SoCs to take ca=
-ptures.
-> > >=20
-> > > What do you think?
-> >=20
-> > I guess we can make that part applicable to all SoCs, we haven't seen
-> > any significant differences on those part.
->=20
-> So let's keep:
-> - As normal(rising edge) =3D> IO_POL_REG "0x2 =3D> 2/3 phase"
-> - As inverted(falling edge) =3D> IO_POL_REG "0x0 =3D> normal phase"
+No problem, but when you're not sure about something you should not act
+like you know how things should be done.
 
-I was actually thinking 1/3 for rising, 2/3 for falling.
+Regards,
 
-Maxime
+Boris
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
+-- 
+Boris Brezillon, Bootlin (formerly Free Electrons)
 Embedded Linux and Kernel engineering
 http://bootlin.com
-
---3h2no4wlgtkccz5a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqG/dgACgkQ0rTAlCFN
-r3Rh3Q/9H+/9DM+WcxqeefVe3ycjpTQbmKS83jbAVMT3Bi7v58IblhXp9Nel6xXb
-Iy7S0jrzNXhLCTPJ2b5YJltpYq4Ne4iiwwzZsu5w8IeW0juepWU5J5jkgx9OV+nh
-LjL45vSXMqpg3llDz79ElSnjdF6Ly3BL0EGRkpWjPdn2fQn3dyTNd1MS5t4WY1j9
-OyCIrcQ0e3tqiooZTYo9dWXbgXc/i/Rx7ERc3GNAy67tVS1Ka7ZZXTi4rjCq/WBX
-IJq1TIxZTeMMy9xg6n5Rex388nKQUZ9nigWhk0Do/TNmf1L4UfzuXzafb3KiIb9r
-CAfpvZotcYWQPMoWPsl9sjq2PYPs5nzYa8Mr+OX/Ms/uSqrF5qM9xM0cRW6cLX/i
-jcEaVZx/DUHEwvdLN5y14KdszfMOCnk34M0D2Vac37qhcrj0k5V3NsXwe3xYzyT1
-3PrPHOktnty1eAzLEXj9KyDaOlPEZWeBHOYD9NdRdONsT9svZ9zNV6L+Al2GRhZm
-w/SOCkjTxqkKDxfJezc+I0QKHt/VDAcauhcwEB1hChzduYTbwdNbtXCuVhKHgW/A
-mieyCiYPAogp3m5VQTmHFhne3gO0MOiLQGz0QZo1zQ5+lX7q3Me/I1MXvPTS07TY
-jNLaORoDEqo4WJv4vtMU+jQpqo6EkcVVdIOC1ceK6Lf5kA+1CJk=
-=nyQE
------END PGP SIGNATURE-----
-
---3h2no4wlgtkccz5a--
