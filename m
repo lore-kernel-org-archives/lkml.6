@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751228AbeBPUf0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 15:35:26 -0500
-Received: from alln-iport-4.cisco.com ([173.37.142.91]:4040 "EHLO
-        alln-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbeBPUeL (ORCPT
+        id S1751234AbeBPUfm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 15:35:42 -0500
+Received: from alln-iport-6.cisco.com ([173.37.142.93]:35249 "EHLO
+        alln-iport-6.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751091AbeBPUeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 16 Feb 2018 15:34:11 -0500
 X-IronPort-AV: E=Sophos;i="5.46,520,1511827200";
-   d="scan'208";a="71929476"
+   d="scan'208";a="71375540"
 From: Taras Kondratiuk <takondra@cisco.com>
 To: "H. Peter Anvin" <hpa@zytor.com>, Al Viro <viro@zeniv.linux.org.uk>,
         Arnd Bergmann <arnd@arndb.de>, Rob Landley <rob@landley.net>,
@@ -18,9 +18,9 @@ To: "H. Peter Anvin" <hpa@zytor.com>, Al Viro <viro@zeniv.linux.org.uk>,
 Cc: initramfs@vger.kernel.org, Victor Kamensky <kamensky@cisco.com>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, xe-linux-external@cisco.com
-Subject: [PATCH v3 15/15] selinux: delay sid population for rootfs till init is complete
-Date: Fri, 16 Feb 2018 20:33:54 +0000
-Message-Id: <1518813234-5874-19-git-send-email-takondra@cisco.com>
+Subject: [PATCH v3 14/14] selinux: delay sid population for rootfs till init is complete
+Date: Fri, 16 Feb 2018 20:33:53 +0000
+Message-Id: <1518813234-5874-18-git-send-email-takondra@cisco.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518813234-5874-1-git-send-email-takondra@cisco.com>
 References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
