@@ -1,108 +1,183 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2887782-1519390069-2-8861129109663889197
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519390069; b=HoDmy/z/pulLtgOsR3C0L6pDkxn75UZXQ+68EGrXPIZ4YRV
-    JVe9scqPhgaWwSDAqOC4C7rFYMlt66mzaAfkljvxpBHTujyHg+/K+mDyepT7+crk
-    PiTh5vrhBdrnzK2BsqpmHXS39uzMmG0kgdVfB9drp9J9WRRDz7FgZlp1/CekDJOe
-    XnclaLnhzeKsYL8Aj3IO0XOG41ceV/cB4IT77qQwFepB1nM7lcFqc4KO8MroWSKt
-    ArL5iiL5HNPzAa4s9M7lItxAt0t+iVEJa/yu88t5rM2/Ai2KAH3SRAW6MU9ShsCx
-    mWV+TKJgC8eJ+NdV9VcrhhvuNtId2Rew46mDNmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519390069; bh=h/wA687ZOF0MsuyDZFtSK0kVGGDpyWBRIiVqmuzUN3o=; b=h
-    KHiAyoPaxNPdLLvS3Tyj3vQlnkbpayuuq4354Kb/72Il0twMrcWqdCZwRiXt6BAb
-    DVNWJkg/DXTQetvD3BbKmYVUu4dgsxI9QpyTWDu/5D//zTqzh3hJTQ7U2P/j4bZV
-    JVDGj3hQyMJJs/VOTWIZ6/tXNuU5LGuppaI/kGlONsQ3SMUSKj9XygLrn+cJiY6N
-    qLlsAnywf8FZzkPB5Ot6SItwSk24T88RG05bMpd2F0mvIhoKOqutVUl8mEyY4Cpq
-    Lbn9j0ut8JcBd8lyQw1+YVMEINhQEFHOCkiC+ni4tYW6sU3cvkSX50RAx5Pp0IHP
-    s1zib/H4b6aMajCVOL86A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751385AbeBWMrd (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Feb 2018 07:47:33 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48996 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750805AbeBWMrc (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 23 Feb 2018 07:47:32 -0500
-Date: Fri, 23 Feb 2018 13:47:26 +0100
-From: Cornelia Huck <cohuck@redhat.com>
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: mst@redhat.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH] virtio_ring: fix num_free handling in error case
-Message-ID: <20180223134726.3db96065.cohuck@redhat.com>
-In-Reply-To: <20180223114130.16332-1-tiwei.bie@intel.com>
-References: <20180223114130.16332-1-tiwei.bie@intel.com>
-Organization: Red Hat GmbH
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AH8x225/r2QeWdNlFpOnJQu+OkB4VqIfRRH+6llC8s8q8mVNK+GgZzm7MfFzhmCPSpg8uc8ItTc1
+ARC-Seal: i=1; a=rsa-sha256; t=1518806390; cv=none;
+        d=google.com; s=arc-20160816;
+        b=FEk/iS73NESueKZ89BuV2rjW6z9xY+4yNUSGneWozi8bY/U/yp81QYBxZd9Q5ibveZ
+         D1w0vDwrBcUMJDOGQB4Injwbn2G1Tw4Wl/VkDS+mlpE5UazJvaucmemfd9avjXvVO7DX
+         pVmHfiV3svyfNNGMTqftPl9rSwf43rRr7GDaFzbWjI+5kf+hl6TvDvmdn1U3mqk9PwTM
+         9IMHHSDVjZl3M5c0kV35jfGUA9Np+cl9NQUKlEB4pbl04s12JbZQTD1DiAYdVpSx8qwg
+         HEsV6RAsuEjdHZiGpHLbQ28FYGOH4yXi4qPk9LP5cQvc97/d47OsKQY+NdUyJx30Vi4S
+         jjGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature:dkim-filter
+         :arc-authentication-results;
+        bh=079cRTw+jGFXeq0pb+mxnY6zuhGGWvR5yrFHJc3DdNU=;
+        b=uasrto7GBAGQ4celvGPJTWhEtDdfIkZkI2T/T2+T4VtL050M/EcOS70GjPiyB0aOc2
+         sWatYY4SStfVU1UBGAtebTY5RNrMbzQnRJiqvf8Ke8mO7jySMNaiXmXlM86X0O1sQa+A
+         1upa+YylOpwCycguCrE4JpTaQUjqJIlkpnt9Qb7pTLfLnlhLCUw00W6RQF0KLEIt8RXA
+         mvt8q0koV+Gm3oOApWgXVANIlmIfSb3PhZlMJjZztIQH0jZiu/BszGo66eLvfOr4afhy
+         6y/KgnvjqpDx6mgSrctuRchmfEyirw0LzMSBkiWJnqb7vjbPOi8/E2lNcikLHYVaRx96
+         idJQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=LNWb7/mc;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=LNWb7/mc;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBT3013418
+X-Nifty-SrcIP: [125.199.20.195]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Peter Oberparleiter <oberpar@linux.vnet.ibm.com>,
+        kernel-hardening@lists.openwall.com, Jonathan Corbet <corbet@lwn.net>,
+        sparclinux@vger.kernel.org, linux-sh@vger.kernel.org, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, Rich Felker <dalias@libc.org>,
+        Jeff Dike <jdike@addtoit.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        user-mode-linux-devel@lists.sourceforge.net,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@samba.org>,
+        user-mode-linux-user@lists.sourceforge.net,
+        Ingo Molnar <mingo@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Michael Ellerman <mpe@ellerman.id.au>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        Emese Revfy <re.emese@gmail.com>
+Subject: [PATCH 00/23] kconfig: move compiler capability tests to Kconfig
+Date: Sat, 17 Feb 2018 03:38:28 +0900
+Message-Id: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592583929666456907?=
+X-GMAIL-MSGID: =?utf-8?q?1592583929666456907?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 23 Feb 2018 19:41:30 +0800
-Tiwei Bie <tiwei.bie@intel.com> wrote:
+I brushed up the implementation in this version.
 
-> The vq->vq.num_free hasn't been changed when error happens,
-> so it shouldn't be changed when handling the error.
-> 
-> Fixes: 780bc7903a32 ("virtio_ring: Support DMA APIs")
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Michael S. Tsirkin <mst@redhat.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> ---
->  drivers/virtio/virtio_ring.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index eb30f3e09a47..71458f493cf8 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -428,8 +428,6 @@ static inline int virtqueue_add(struct virtqueue *_vq,
->  		i = virtio16_to_cpu(_vq->vdev, vq->vring.desc[i].next);
->  	}
->  
-> -	vq->vq.num_free += total_sg;
-> -
->  	if (indirect)
->  		kfree(desc);
->  
+In the previous RFC, CC_HAS_ was described by using 'option shell=',
+like this:
 
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+config CC_HAS_STACKPROTECTOR
+        bool
+        option shell="$CC -Werror -fstack-protector -c -x c /dev/null"
+
+After I thought a bit more, the following syntax is more grammatical,
+and flexible.
+
+config CC_HAS_STACKPROTECTOR
+        bool
+        default $(shell $CC -Werror -fstack-protector -c -x c /dev/null)
+
+This version supports cc-option, so it can be written as:
+
+config CC_HAS_STACKPROTECTOR
+        bool
+        default $(cc-option -fstack-protector)
+
+To support this in a clean way, I introduced a new concept 'function'
+like we see in Makefiles.
+
+$(shell ...) is a built-in function.  $(cc-option ...) is implemented
+as macro (user-defined function).
+
+I also try cleaning of stack-protector, gcc-plugins since the Makefile
+is so dirty.
+
+Current limitations:
+
+Dependency on outside scripts.
+  For example, scripts/gcc-x86_64-has-stack-protecter.sh is run from
+  Kconfig.  When the shell script is updated, should Kconfig be re-run
+  automatically?
+
+Inter-option dependency:
+  $(call cc-option,...) in Makefile accumulates added options to
+  KBUILD_CFLAGS, but it is difficult to do it in Kconfig.
+  If a compiler option check is dependent on another option,
+  this is a difficult case.  Let's see how significant it is.
+
+Functions are evaluated statically:
+  Functions are only expanded when parsing the Kconfig.  So, it can
+  not refelect user configuration.  If this is required, $(shell )
+  must be dynamically re-calculated depending on other symbols.
+  But, this is difficult, and may cause performance issue.
+
+
+
+Masahiro Yamada (22):
+  kbuild: remove kbuild cache
+  kbuild: remove CONFIG_CROSS_COMPILE support
+  kconfig: add xstrdup() helper
+  kconfig: set SYMBOL_AUTO to the symbol marked with defconfig_list
+  kconfig: move and rename sym_expand_string_value()
+  kconfig: reference environments directly and remove 'option env='
+    syntax
+  kconfig: add function support and implement 'shell' function
+  kconfig: add 'macro' keyword to support user-defined function
+  kconfig: add 'cc-option' macro
+  stack-protector: test compiler capability in Kconfig and drop AUTO
+    mode
+  kconfig: add 'shell-stdout' function
+  kconfig: replace $UNAME_RELEASE with function call
+  kconfig: expand environments/functions in (main)menu, comment, prompt
+  kconfig: show compiler version text in the top comment
+  kconfig: add CC_IS_GCC and GCC_VERSION
+  kconfig: add CC_IS_CLANG and CLANG_VERSION
+  gcov: remove CONFIG_GCOV_FORMAT_AUTODETECT
+  kcov: imply GCC_PLUGINS and GCC_PLUGIN_SANCOV instead of select'ing
+    them
+  gcc-plugins: always build plugins with C++
+  gcc-plugins: move GCC version check for PowerPC to Kconfig
+  gcc-plugins: test GCC plugin support in Kconfig
+  gcc-plugins: enable GCC_PLUGINS for COMPILE_TEST
+
+Sami Tolvanen (1):
+  kbuild: add clang-version.sh
+
+ Documentation/kbuild/kconfig-language.txt |   8 -
+ Kconfig                                   |   4 +-
+ Makefile                                  | 103 ++----------
+ arch/Kconfig                              |  43 +++--
+ arch/powerpc/Kconfig                      |   2 +-
+ arch/sh/Kconfig                           |   4 +-
+ arch/sparc/Kconfig                        |   4 +-
+ arch/tile/Kconfig                         |   2 +-
+ arch/um/Kconfig.common                    |   4 -
+ arch/x86/Kconfig                          |  12 +-
+ arch/x86/um/Kconfig                       |   4 +-
+ init/Kconfig                              |  44 +++---
+ kernel/gcov/Kconfig                       |  18 +--
+ kernel/gcov/Makefile                      |   2 -
+ lib/Kconfig.debug                         |   7 +-
+ scripts/Kbuild.include                    | 101 ++----------
+ scripts/Makefile.gcc-plugins              |  95 ++++-------
+ scripts/clang-version.sh                  |  31 ++++
+ scripts/gcc-plugin.sh                     |  37 +----
+ scripts/gcc-plugins/Makefile              |  15 +-
+ scripts/gcc-x86_32-has-stack-protector.sh |   7 +-
+ scripts/gcc-x86_64-has-stack-protector.sh |   5 -
+ scripts/kconfig/confdata.c                |  33 +---
+ scripts/kconfig/function.c                | 251 ++++++++++++++++++++++++++++++
+ scripts/kconfig/kconf_id.c                |   2 +-
+ scripts/kconfig/kxgettext.c               |   2 +-
+ scripts/kconfig/lkc.h                     |   6 +-
+ scripts/kconfig/lkc_proto.h               |   7 +-
+ scripts/kconfig/menu.c                    |   6 +-
+ scripts/kconfig/symbol.c                  | 139 +++--------------
+ scripts/kconfig/util.c                    | 186 ++++++++++++++++++++--
+ scripts/kconfig/zconf.l                   |  40 ++++-
+ scripts/kconfig/zconf.y                   |  48 +++---
+ 33 files changed, 687 insertions(+), 585 deletions(-)
+ create mode 100755 scripts/clang-version.sh
+ create mode 100644 scripts/kconfig/function.c
+
+-- 
+2.7.4
