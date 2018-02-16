@@ -1,239 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750832AbeBPVO2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 16:14:28 -0500
-Received: from smtprelay0224.hostedemail.com ([216.40.44.224]:49337 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750727AbeBPVO0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 16:14:26 -0500
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:334:355:368:369:379:541:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1535:1544:1593:1594:1605:1711:1730:1747:1777:1792:2110:2376:2393:2553:2559:2562:2828:2908:2911:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3871:3872:3874:4250:4321:4425:4605:5007:6609:7875:7903:7974:8531:10004:10848:11026:11232:11658:11914:12663:12740:12760:12895:13439:14096:14097:14180:14181:14659:14721:21080:21324:21433:21451:21611:21627:30012:30054:30070:30089:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: apple90_60abaa8b8ce61
-X-Filterd-Recvd-Size: 5514
-Message-ID: <1518815662.13169.27.camel@perches.com>
-Subject: Re: [PATCH 0/3] Improve and extend checkpatch.pl Kconfig help text
- checks
-From: Joe Perches <joe@perches.com>
-To: Ulf Magnusson <ulfalizer@gmail.com>, apw@canonical.com,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Date: Fri, 16 Feb 2018 13:14:22 -0800
-In-Reply-To: <20180216202255.25307-1-ulfalizer@gmail.com>
-References: <20180216202255.25307-1-ulfalizer@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
+        id S1750869AbeBPVSP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 16:18:15 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43680 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750727AbeBPVSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 16:18:14 -0500
+Date: Fri, 16 Feb 2018 14:18:10 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Cc: <eric.auger@redhat.com>, <pmorel@linux.vnet.ibm.com>,
+        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <john.garry@huawei.com>, <xuwei5@hisilicon.com>
+Subject: Re: [PATCH v3 2/6] vfio/type1: Check reserve region conflict and
+ update iova list
+Message-ID: <20180216141810.55d754da@w520.home>
+In-Reply-To: <20180215094504.4972-3-shameerali.kolothum.thodi@huawei.com>
+References: <20180215094504.4972-1-shameerali.kolothum.thodi@huawei.com>
+        <20180215094504.4972-3-shameerali.kolothum.thodi@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-02-16 at 21:22 +0100, Ulf Magnusson wrote:
-> Hello,
-> 
-> This patchset contains some improvements for the Kconfig help text check in
-> scripts/checkconfig.pl:
+On Thu, 15 Feb 2018 09:45:00 +0000
+Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
 
-Seems sensible enough to me.
-Signed-off-by: Joe Perches <joe@perches.com>
+> This retrieves the reserved regions associated with dev group and
+> checks for conflicts with any existing dma mappings. Also update
+> the iova list excluding the reserved regions.
+> 
+> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+> ---
+>  drivers/vfio/vfio_iommu_type1.c | 86 ++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 85 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> index 4726f55..4db87a9 100644
+> --- a/drivers/vfio/vfio_iommu_type1.c
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -1303,6 +1303,72 @@ static int vfio_iommu_aper_resize(struct list_head *iova,
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Check reserved region conflicts with existing dma mappings
+> + */
+> +static bool vfio_iommu_resv_conflict(struct vfio_iommu *iommu,
+> +				struct list_head *resv_regions)
+> +{
+> +	struct iommu_resv_region *region;
+> +
+> +	/* Check for conflict with existing dma mappings */
+> +	list_for_each_entry(region, resv_regions, list) {
+> +		if (vfio_find_dma(iommu, region->start, region->length))
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +/*
+> + * Check iova region overlap with  reserved regions and
+> + * exclude them from the iommu iova range
+> + */
+> +static int vfio_iommu_resv_exclude(struct list_head *iova,
+> +					struct list_head *resv_regions)
+> +{
+> +	struct iommu_resv_region *resv;
+> +	struct vfio_iova *n, *next;
+> +
+> +	list_for_each_entry(resv, resv_regions, list) {
+> +		phys_addr_t start, end;
+> +
+> +		start = resv->start;
+> +		end = resv->start + resv->length - 1;
+> +
+> +		list_for_each_entry_safe(n, next, iova, list) {
+> +			int ret = 0;
+> +
+> +			/* No overlap */
+> +			if ((start > n->end) || (end < n->start))
+> +				continue;
+> +			/*
+> +			 * Insert a new node if current node overlaps with the
+> +			 * reserve region to exlude that from valid iova range.
+> +			 * Note that, new node is inserted before the current
+> +			 * node and finally the current node is deleted keeping
+> +			 * the list updated and sorted.
+> +			 */
+> +			if (start > n->start)
+> +				ret = vfio_insert_iova(n->start, start - 1,
+> +								 &n->list);
+> +			if (!ret && end < n->end)
+> +				ret = vfio_insert_iova(end + 1, n->end,
+> +							     &n->list);
+> +			if (ret)
+> +				return ret;
+> +
+> +			list_del(&n->list);
+> +			kfree(n);
+> +		}
+> +	}
+> +
+> +	if (list_empty(iova))
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+>  static int vfio_iommu_get_iova_copy(struct vfio_iommu *iommu,
+>  				struct list_head *iova_copy)
+>  {
+> @@ -1346,7 +1412,8 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+>  	bool resv_msi, msi_remap;
+>  	phys_addr_t resv_msi_base;
+>  	struct iommu_domain_geometry geo;
+> -	struct list_head iova_copy;
+> +	struct list_head iova_copy, group_resv_regions;
+> +	struct iommu_resv_region *resv, *resv_next;
+>  	struct vfio_iova *iova, *iova_next;
+>  
+>  	mutex_lock(&iommu->lock);
+> @@ -1426,6 +1493,14 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+>  		goto out_detach;
+>  	}
+>  
+> +	INIT_LIST_HEAD(&group_resv_regions);
 
->  - Commits 1 and 2 make the check more robust by checking menuconfig symbols
->    and choices as well as symbols defined with 'config', and by making the
->    detection of definition boundaries more reliable.
-> 
->  - Commit 3 adds a check for new '---help---'s being introduced. IMO, 'help'
->    should be encouraged in new code.
-> 
-> All three commits can be applied independently.
-> 
-> The existing code is a bit weird in that it doesn't require symbols with "long"
-> definitions (e.g., many selects) to have help texts. Fixing that is outside the
-> scope of this patchset. I couldn't tell if it was deliberate.
-> 
-> I'm a Perl noob, so check for bad practices. :)
+LIST_HEAD()
 
-Everyone is.  Seems fine.
+> +	iommu_get_group_resv_regions(iommu_group, &group_resv_regions);
+> +
+> +	if (vfio_iommu_resv_conflict(iommu, &group_resv_regions)) {
+> +		ret = -EINVAL;
+> +		goto out_detach;
+> +	}
+> +
+>  	/* Get a copy of the current iova list and work on it */
+>  	INIT_LIST_HEAD(&iova_copy);
+>  	ret = vfio_iommu_get_iova_copy(iommu, &iova_copy);
+> @@ -1437,6 +1512,10 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+>  	if (ret)
+>  		goto out_detach;
+>  
+> +	ret = vfio_iommu_resv_exclude(&iova_copy, &group_resv_regions);
+> +	if (ret)
+> +		goto out_detach;
+> +
+>  	resv_msi = vfio_iommu_has_sw_msi(iommu_group, &resv_msi_base);
+>  
+>  	INIT_LIST_HEAD(&domain->group_list);
+> @@ -1497,6 +1576,9 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+>  	/* Delete the old one and insert new iova list */
+>  	vfio_iommu_insert_iova_copy(iommu, &iova_copy);
+>  
+> +	list_for_each_entry_safe(resv, resv_next, &group_resv_regions, list)
+> +		kfree(resv);
 
-> The changes were tested by running 'checkpatch.pl -f' on some large existing
-> Kconfig files in the kernel and looking for false positives (e.g.
-> arch/{x86,arm}/Kconfig).
-> 
-> This test file was also used, which contains some cases that confused the old
-> code:
-> 
-> 	config BAD_1
-> 		bool "bad 1"
-> 	
-> 	config BAD_2
-> 		bool 'bad 2'
-> 	
-> 	config BAD_3
-> 		bool "bad 3"
-> 		help
-> 		  1
-> 		  2
-> 		  3
-> 	
-> 	menuconfig BAD_4
-> 		bool "bad 4"
-> 		help
-> 		  1
-> 		  2
-> 		  3
-> 	
-> 	config BAD_5
-> 		bool
-> 		prompt "bad 5"
-> 		help
-> 		  1
-> 		  2
-> 		  3
-> 	
-> 	config BAD_6
-> 		bool "bad 6"
-> 		help
-> 		  1
-> 		  2
-> 		  3
-> 	
-> 	if FOO
-> 	
-> 	config BAD_7
-> 		bool "bad 7"
-> 		help
-> 		  1
-> 		  2
-> 		  3
-> 	
-> 	endif
-> 	
-> 	config BAD_8
-> 		bool "bad 8"
-> 		help
-> 		  1
-> 		  2
-> 		  3
-> 	
-> 	source "foo"
-> 	
-> 	config BAD_9
-> 		bool "bad 9"
-> 		---help---
-> 		  1
-> 		  2
-> 		  3
-> 		  4
-> 	
-> 	choice
-> 		bool "bad choice"
-> 		help
-> 		  1
-> 		  2
-> 		  3
-> 	
-> 	endchoice
-> 	
-> 	config OK_1
-> 		bool
-> 	
-> 	config OK_2
-> 		bool "ok 2"
-> 		help
-> 		  1
-> 		  2
-> 		  3
-> 		  4
-> 	
-> 	config OK_3
-> 		tristate "ok 3"
-> 		help
-> 		  1
-> 		  2
-> 		  3
-> 		  4
-> 	
-> 	config OK_4
-> 		tristate
-> 		prompt "ok 4"
-> 		help
-> 		  1
-> 		  2
-> 		  3
-> 		  4
-> 	
-> 	choice
-> 		bool "ok choice"
-> 		help
-> 		  1
-> 		  2
-> 		  3
-> 		  4
-> 	
-> 	endchoice
-> 
-> 
-> This now produces the following warnings:
-> 
-> 	WARNING: please write a paragraph that describes the config symbol fully
-> 	#9: FILE: Kconfig.test_help_check:9:
-> 	+config BAD_1
-> 	
-> 	WARNING: please write a paragraph that describes the config symbol fully
-> 	#12: FILE: Kconfig.test_help_check:12:
-> 	+config BAD_2
-> 	
-> 	WARNING: please write a paragraph that describes the config symbol fully
-> 	#15: FILE: Kconfig.test_help_check:15:
-> 	+config BAD_3
-> 	
-> 	WARNING: please write a paragraph that describes the config symbol fully
-> 	#22: FILE: Kconfig.test_help_check:22:
-> 	+menuconfig BAD_4
-> 	
-> 	WARNING: please write a paragraph that describes the config symbol fully
-> 	#29: FILE: Kconfig.test_help_check:29:
-> 	+config BAD_5
-> 	
-> 	WARNING: please write a paragraph that describes the config symbol fully
-> 	#37: FILE: Kconfig.test_help_check:37:
-> 	+config BAD_6
-> 	
-> 	WARNING: please write a paragraph that describes the config symbol fully
-> 	#46: FILE: Kconfig.test_help_check:46:
-> 	+config BAD_7
-> 	
-> 	WARNING: please write a paragraph that describes the config symbol fully
-> 	#55: FILE: Kconfig.test_help_check:55:
-> 	+config BAD_8
-> 	
-> 	WARNING: prefer 'help' over '---help---' for new help texts
-> 	#64: FILE: Kconfig.test_help_check:64:
-> 	+config BAD_9
-> 	
-> 	WARNING: please write a paragraph that describes the config symbol fully
-> 	#72: FILE: Kconfig.test_help_check:72:
-> 	+choice
-> 	
-> 	total: 0 errors, 10 warnings, 117 lines checked
-> 	
-> 	NOTE: For some of the reported defects, checkpatch may be able to
-> 	      mechanically convert to the typical style using --fix or --fix-inplace.
-> 	
-> 	Kconfig.test_help_check has style problems, please review.
-> 	
-> 	NOTE: If any of the errors are false positives, please report
-> 	      them to the maintainer, see CHECKPATCH in MAINTAINERS.
-> 
-> 
-> Cheers,
-> Ulf
-> 
-> Ulf Magnusson (3):
->   checkpatch: kconfig: recognize more prompts when checking help texts
->   checkpatch: kconfig: check help texts for menuconfig and choice
->   checkpatch: kconfig: prefer 'help' over '---help---'
-> 
->  scripts/checkpatch.pl | 21 +++++++++++++++++----
->  1 file changed, 17 insertions(+), 4 deletions(-)
-> 
+list_del() here and below, also this can be done after the mutex unlock.
+
+> +
+>  	mutex_unlock(&iommu->lock);
+>  
+>  	return 0;
+> @@ -1507,6 +1589,8 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+>  	iommu_domain_free(domain->domain);
+>  	list_for_each_entry_safe(iova, iova_next, &iova_copy, list)
+>  		kfree(iova);
+> +	list_for_each_entry_safe(resv, resv_next, &group_resv_regions, list)
+> +		kfree(resv);
+>  out_free:
+>  	kfree(domain);
+>  	kfree(group);
