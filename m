@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964866AbeBPLYd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 06:24:33 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:47744 "EHLO
+        id S964845AbeBPLYb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 06:24:31 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47757 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935543AbeBPLX2 (ORCPT
+        with ESMTP id S935544AbeBPLX3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 06:23:28 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180216112326euoutp02c6570f384f890e62e86b1b209507e577~Tyozy1I_l2415924159euoutp02f
-X-AuditID: cbfec7f4-b4fc79c0000043e4-dd-5a86bf2b4fa8
+        Fri, 16 Feb 2018 06:23:29 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180216112327euoutp021ca74b11a1703b59d8358609333181ba~Tyo0vsdNq2415924159euoutp02g
+X-AuditID: cbfec7f5-f95739c0000028a9-62-5a86bf2c20a5
 From: Maciej Slodczyk <m.slodczyk2@partner.samsung.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc: linux@armlinux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
@@ -17,193 +17,102 @@ Cc: linux@armlinux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
         namhyung@kernel.org, b.zolnierkie@samsung.com,
         m.szyprowski@samsung.com, k.lewandowsk@samsung.com,
         m.slodczyk2@partner.samsung.com
-Subject: [PATCH 2/7 RESEND] arm64: uprobes - fix checkpatch.pl issues
-Date: Fri, 16 Feb 2018 12:23:06 +0100
-Message-id: <1518780191-31094-3-git-send-email-m.slodczyk2@partner.samsung.com>
+Subject: [PATCH 3/7 RESEND] arm64: introduce get_swbp_insn() instead of
+ static assignment
+Date: Fri, 16 Feb 2018 12:23:07 +0100
+Message-id: <1518780191-31094-4-git-send-email-m.slodczyk2@partner.samsung.com>
 X-Mailer: git-send-email 2.7.4
 In-reply-to: <1518780191-31094-1-git-send-email-m.slodczyk2@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSfSyVURzHned57nMfV1enSzkhf1y1NSKiOa3WUmnP2oqy9cdtK7c8Q7no
-        XkRtReXiIsUMU7LylrxerzPu9f4yS+kKSUwqYQuhZdPb9ei/z+98P+f8fr/tMKRklbJmgkLC
-        OWWIPFhKi6i6rtVXTo56tcxldFmCNeMNNE7QZgtwVVaFAM8XJgPc+fIXgWO/PyaxdmpIgA2N
-        j2jcltEMcFPqCxqXdXwQ4jcteQS+U1hL4Vp9HMDdKS0EnlnsoY5AtjS3FLCGoQGSrS52YLUl
-        iTSb23uGrc6/zbZ+ayLYed1bmr1fUwLYJa2dj0gmOuTPBQdFcsq9h/1EgcNZlWRYoWNUUkol
-        GQPU9hpgyiDojoruZtAaIGIksBggzZqO4oslgFI71AINYNat9DkRf14IULnuC+CLRYBaerNp
-        41M09ED1nfcoI1vCE2gkNoEwSiQ0EMjQk0QYAwvohZL7eKbgLtRcnSw0shh6o/y1rzQ/kx16
-        159IGtkU+qCJmpr1kRCco9HsQjzBS8fR0PSKgGcLNNtdI+TZFhnSkyieUwFqfW/DX84CqHb+
-        40ZwEK2VPFzvRkJzlFaXSfJ7ilGCWsIrLHoys7Che6LV/pyNlZ8BpB/JAA+AdR4wKQFWXIRK
-        EcCp9oVw151VcoUqIiTA+XKoQgv+fYi+393LDaBx7VIbgAyQbhJXpsTJJAJ5pCpa0QYQQ0ot
-        xb46tUwi9pdH3+CUoReVEcGcqg3YMJTUSnxh9y2ZBAbIw7mrHBfGKf+nBGNqHQM0UG9C5Iil
-        TkefjvYJ0oYnzSY/VQ3a77HMjI7K9SuFVe25xw6MNTjbRuAK30XXovI6jVvXea/tK2b2N38O
-        ChU7fbeZW03oys7Jr12J957yY7J+DLtseV6eZLG54A98ffqk59YxfYGHe3tHh3Dg7LjbjlOf
-        c9Lrp5j9ltPQKrB+WEqpAuWuDqRSJf8Lz/hB2AwDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsVy+t/xa7qa+9uiDF4+M7LoureDzaJj00xW
-        i40z1rNavF/Ww2hx9OxfJovGT3OZLTY9vsZqcXnXHDaLQ1P3Mlrs6V/NZrH2yF12i0sHFjBZ
-        NC3bymKxdX8ro8Xx3gNMFi8/nmBxEPBYM28No8flaxeZPTav0PLYtKqTzWPeyUCPzUvqPQ6+
-        28Pk8X7fVTaPvi2rGD0+b5IL4IrisklJzcksSy3St0vgyrg+YwNzwTLtiu7eDcwNjG3KXYwc
-        HBICJhKTX3N1MXJxCAksYZT4s+EGM4TzmVGioekOkMPJwSZgLrH9aAsLiC0i4CZxo7GDCaSI
-        WeAyk8TnBXtZQRLCAq4SPae7mUBsFgFVib2be9hBbF4Bf4klf16wgdgSAnISN891gg3lFAiQ
-        uL9lC9hQIaCatYt+sUxg5FnAyLCKUSS1tDg3PbfYSK84Mbe4NC9dLzk/dxMjMIS3Hfu5ZQdj
-        17vgQ4wCHIxKPLwbelujhFgTy4orcw8xSnAwK4nwBu9rixLiTUmsrEotyo8vKs1JLT7EKM3B
-        oiTOe96gMkpIID2xJDU7NbUgtQgmy8TBKdXAWLdEJ3XbbN1NveZ/ruv+ijrVnV1xfWpm3fNX
-        TJM4L6YL+1YXefmJXVF54c3S+2Qnm6P11JfNzx6p+zRmT5sVcfF2o2G0xX+nY8zvj0VvdvFJ
-        7WUM0P+5J9lKqUM40Xfr86yHRxo35TufkX8z47V8m/r5FWFPX9xp/OsZJl/3+MOys7U5TF/1
-        lViKMxINtZiLihMBJDGM110CAAA=
-X-CMS-MailID: 20180216112321eucas1p1c51df50f06fa2f440fcd4735066d1e61
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0hTURzHO/de766j2W0beHxgMArCSssKT08qRC5YmNBfK6trXlR0U3ad
+        thDTUNmWZgrlAxXNUvOBOd9p0w1tiqioZJamqFDkHz4yEZ/ldfrf55zP9/c9h8OhcOka4UpF
+        qGM5jZqNUpBiounz2sCpkx1pytOGCRkyTraQSG/Kc0B1ubUOaKEsHaDu/i0MJf8pxJFpdtQB
+        jXwsIJH11SeA2jOrSFTT9UOEhjuLMfSsrJFAjR2pANkyOjH0e6mHuEYz1UXVgBkZHcKZ+gpP
+        xlRpIJmi3iCm/u1TxjLfjjEL5i8k86KhEjDLJo/bYqX4cigXFRHHabyvPhSHd5Zn4zHWw48H
+        Z6rxJDDtZASOFKTPwZ6padwIxJSUrgBQb/wnsi+WAZwb3gT7qe1mC2kXZQCm5+eIBCGllwDs
+        1ocITNK+sLk7hRBYTvvDsWQ9Jgzg9AgGR3qeY4KQ0XfhWn0rKTBBH4NFq4u7RRI6ENo6+/dO
+        84DfBgy4wI70bTjV0EAIRZBeIOFqQfFeyA+2jVXhdpbBOVuDyM7u0KC3YHbOBNAy7mYfzgWw
+        cWGGsItLcLMya/cWOO0Es5tydoqonX0J1KdJ7REGTr3O3uu5Dt8MWPceqRTAtiYz8RK4FoMD
+        lcCZ0/KqMI4/q+bivXhWxWvVYV6PolUmsPMh+rZtKy3AvBliBTQFFAclHzJSlVIHNo7XqawA
+        UrhCLvmek6aUSkJZ3RNOE/1Ao43ieCtwowiFs+T+8USllA5jY7lIjovhNPsWoxxdk8B5HzFR
+        AWbHCtflNf7qON3KUZ8VND4YMB7896LOkHJiMSTjPRM98e5WJhsc2eq+ofUtCdD9xC+4fC25
+        2bcZnlV6xc+FYhs3FPJJH+f53myRHzRsNf/qmcsrvxMaZF5PTJiPmXOSxdTWDd1T4d6H4o1M
+        1/z0kfb8QFuC9kbrtILgw9kznriGZ/8DhnNpmAwDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsVy+t/xy7pa+9uiDLp2GFh03dvBZtGxaSar
+        xcYZ61kt3i/rYbQ4evYvk0Xjp7nMFpseX2O1uLxrDpvFoal7GS329K9ms1h75C67xaUDC5gs
+        mpZtZbHYur+V0eJ47wEmi5cfT7A4CHismbeG0ePytYvMHptXaHlsWtXJ5jHvZKDH5iX1Hgff
+        7WHyeL/vKptH35ZVjB6fN8kFcEVx2aSk5mSWpRbp2yVwZRxYPom54JBgxflHa5gbGB/ydTFy
+        ckgImEj8236QrYuRi0NIYAmjxPnNm1ggnM+MEhd27mMHqWITMJfYfrSFBcQWEXCTuNHYwQRS
+        xCxwmUni84K9rCAJYYFoifYpf5lAbBYBVYl53z+ANfMK+EscP3CWEWKdnMTNc53MIDanQIDE
+        /S1bwIYKAdWsXfSLZQIjzwJGhlWMIqmlxbnpucWGesWJucWleel6yfm5mxiBQbzt2M/NOxgv
+        bQw+xCjAwajEw7uhtzVKiDWxrLgy9xCjBAezkghv8L62KCHelMTKqtSi/Pii0pzU4kOM0hws
+        SuK85w0qo4QE0hNLUrNTUwtSi2CyTBycUg2Msod/P3dQYiz+eVPjFEONiIXXpetRi9c9Cu6+
+        GDCPz1RZ9Z/s87iLa3df/1E4/dLCZVmLWJsebnmtvL3rht61Z8/+da5bP4/L5NbcI8Xv3vy7
+        OlmbfbaNrJS+Qh9z3IKzh69f+/qAf5plxqnlT12m63kvO7A64Hs0c/Nu5e8C4pd4VWR2FE/I
+        uKXEUpyRaKjFXFScCAD6R18fXgIAAA==
+X-CMS-MailID: 20180216112322eucas1p2b170bbf0687ebbc03110e42ff807342f
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180216112321eucas1p1c51df50f06fa2f440fcd4735066d1e61
-X-RootMTR: 20180216112321eucas1p1c51df50f06fa2f440fcd4735066d1e61
+X-CMS-RootMailID: 20180216112322eucas1p2b170bbf0687ebbc03110e42ff807342f
+X-RootMTR: 20180216112322eucas1p2b170bbf0687ebbc03110e42ff807342f
 References: <1518780191-31094-1-git-send-email-m.slodczyk2@partner.samsung.com>
-        <CGME20180216112321eucas1p1c51df50f06fa2f440fcd4735066d1e61@eucas1p1.samsung.com>
+        <CGME20180216112322eucas1p2b170bbf0687ebbc03110e42ff807342f@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix checkpatch.pl issues in moved arm uprobes code.
+In uprobes generic code, an arch specific software breakpoint instruction
+is statically assigned with a #define statement. It does not allow to examine
+the context and set the proper arch on runtime, which is the case of uprobing
+either a 32 or 64 bit app on a 64-bit kernel. Introduce get_swbp_insn() with
+weak attribute that will allow to be redefined in ARM64 uprobes code.
 
 Signed-off-by: Maciej Slodczyk <m.slodczyk2@partner.samsung.com>
 ---
- lib/probes/arm/actions-arm.c | 4 ++--
- lib/probes/arm/decode-arm.c  | 1 +
- lib/probes/arm/decode-arm.h  | 4 ++--
- lib/probes/arm/decode.c      | 6 ++++++
- lib/probes/arm/decode.h      | 7 +++++--
- 5 files changed, 16 insertions(+), 6 deletions(-)
+ include/linux/uprobes.h |  1 +
+ kernel/events/uprobes.c | 12 +++++++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/lib/probes/arm/actions-arm.c b/lib/probes/arm/actions-arm.c
-index a25795a..db6017d 100644
---- a/lib/probes/arm/actions-arm.c
-+++ b/lib/probes/arm/actions-arm.c
-@@ -165,10 +165,10 @@ uprobe_decode_ldmstm(probes_opcode_t insn,
- {
- 	struct arch_uprobe *auprobe = container_of(asi, struct arch_uprobe,
- 						   asi);
--	unsigned reglist = insn & 0xffff;
-+	unsigned int reglist = insn & 0xffff;
- 	int rn = (insn >> 16) & 0xf;
- 	int lbit = insn & (1 << 20);
--	unsigned used = reglist | (1 << rn);
-+	unsigned int used = reglist | (1 << rn);
+diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+index 0a294e9..ef61d79 100644
+--- a/include/linux/uprobes.h
++++ b/include/linux/uprobes.h
+@@ -117,6 +117,7 @@ struct uprobes_state {
  
- 	if (rn == 15)
- 		return INSN_REJECTED;
-diff --git a/lib/probes/arm/decode-arm.c b/lib/probes/arm/decode-arm.c
-index f72c33a..3aa2e58 100644
---- a/lib/probes/arm/decode-arm.c
-+++ b/lib/probes/arm/decode-arm.c
-@@ -101,6 +101,7 @@ void __kprobes simulate_mrs(probes_opcode_t insn,
- {
- 	int rd = (insn >> 12) & 0xf;
- 	unsigned long mask = 0xf8ff03df; /* Mask out execution state */
-+
- 	regs->uregs[rd] = regs->ARM_cpsr & mask;
+ extern int set_swbp(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
+ extern int set_orig_insn(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
++extern uprobe_opcode_t get_swbp_insn(void);
+ extern bool is_swbp_insn(uprobe_opcode_t *insn);
+ extern bool is_trap_insn(uprobe_opcode_t *insn);
+ extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 267f6ef..cb7a573 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -216,6 +216,16 @@ static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
  }
  
-diff --git a/lib/probes/arm/decode-arm.h b/lib/probes/arm/decode-arm.h
-index b3b80f6..ed34f03 100644
---- a/lib/probes/arm/decode-arm.h
-+++ b/lib/probes/arm/decode-arm.h
-@@ -66,8 +66,8 @@ void __kprobes simulate_mov_ipsp(probes_opcode_t opcode,
- 
- extern const union decode_item probes_decode_arm_table[];
- 
--enum probes_insn arm_probes_decode_insn(probes_opcode_t,
--		struct arch_probes_insn *, bool emulate,
-+enum probes_insn arm_probes_decode_insn(probes_opcode_t opcode,
-+		struct arch_probes_insn *api, bool emulate,
- 		const union decode_action *actions,
- 		const struct decode_checker *checkers[]);
- 
-diff --git a/lib/probes/arm/decode.c b/lib/probes/arm/decode.c
-index 880ebe0..6840054 100644
---- a/lib/probes/arm/decode.c
-+++ b/lib/probes/arm/decode.c
-@@ -55,6 +55,7 @@ bool load_write_pc_interworks;
- void __init test_load_write_pc_interworking(void)
+ /**
++ * get_swbp_insn - return breakpoint instruction.
++ * Default implementation of get_swbp_insn
++ * Returns architecture-dependent breakpoint instruction opcode
++ */
++uprobe_opcode_t __weak get_swbp_insn(void)
++{
++	return UPROBE_SWBP_INSN;
++}
++
++/**
+  * is_swbp_insn - check if instruction is breakpoint instruction.
+  * @insn: instruction to be checked.
+  * Default implementation of is_swbp_insn
+@@ -1178,7 +1188,7 @@ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
+ static struct xol_area *__create_xol_area(unsigned long vaddr)
  {
- 	int arch = cpu_architecture();
-+
- 	BUG_ON(arch == CPU_ARCH_UNKNOWN);
- 	load_write_pc_interworks = arch >= CPU_ARCH_ARMv5T;
- }
-@@ -69,6 +70,7 @@ bool alu_write_pc_interworks;
- void __init test_alu_write_pc_interworking(void)
- {
- 	int arch = cpu_architecture();
-+
- 	BUG_ON(arch == CPU_ARCH_UNKNOWN);
- 	alu_write_pc_interworks = arch >= CPU_ARCH_ARMv7;
- }
-@@ -151,6 +153,7 @@ static unsigned long __kprobes __check_lt(unsigned long cpsr)
- static unsigned long __kprobes __check_gt(unsigned long cpsr)
- {
- 	unsigned long temp = cpsr ^ (cpsr << 3); /* PSR_N_BIT ^= PSR_V_BIT */
-+
- 	temp |= (cpsr << 1);			 /* PSR_N_BIT |= PSR_Z_BIT */
- 	return (~temp) & PSR_N_BIT;
- }
-@@ -158,6 +161,7 @@ static unsigned long __kprobes __check_gt(unsigned long cpsr)
- static unsigned long __kprobes __check_le(unsigned long cpsr)
- {
- 	unsigned long temp = cpsr ^ (cpsr << 3); /* PSR_N_BIT ^= PSR_V_BIT */
-+
- 	temp |= (cpsr << 1);			 /* PSR_N_BIT |= PSR_Z_BIT */
- 	return temp & PSR_N_BIT;
- }
-@@ -228,6 +232,7 @@ set_emulated_insn(probes_opcode_t insn, struct arch_probes_insn *asi,
- #ifdef CONFIG_THUMB2_KERNEL
- 	if (thumb) {
- 		u16 *ip = (u16 *)asi->insn;
-+
- 		if (is_wide_instruction(insn))
- 			*ip++ = __opcode_to_mem_thumb16(insn >> 16);
- 		*ip++ = __opcode_to_mem_thumb16(insn);
-@@ -465,6 +470,7 @@ probes_decode_insn(probes_opcode_t insn, struct arch_probes_insn *asi,
+ 	struct mm_struct *mm = current->mm;
+-	uprobe_opcode_t insn = UPROBE_SWBP_INSN;
++	uprobe_opcode_t insn = get_swbp_insn();
+ 	struct xol_area *area;
  
- 		case DECODE_TYPE_TABLE: {
- 			struct decode_table *d = (struct decode_table *)h;
-+
- 			next = (struct decode_header *)d->table.table;
- 			break;
- 		}
-diff --git a/lib/probes/arm/decode.h b/lib/probes/arm/decode.h
-index 548d622..43b02fd 100644
---- a/lib/probes/arm/decode.h
-+++ b/lib/probes/arm/decode.h
-@@ -59,6 +59,7 @@ static inline unsigned long it_advance(unsigned long cpsr)
- 		/* We need to shift left ITSTATE<4:0> */
- 		const unsigned long mask = 0x06001c00;  /* Mask ITSTATE<4:0> */
- 		unsigned long it = cpsr & mask;
-+
- 		it <<= 1;
- 		it |= it >> (27 - 10);  /* Carry ITSTATE<2> to correct place */
- 		it &= mask;
-@@ -71,6 +72,7 @@ static inline unsigned long it_advance(unsigned long cpsr)
- static inline void __kprobes bx_write_pc(long pcv, struct pt_regs *regs)
- {
- 	long cpsr = regs->ARM_cpsr;
-+
- 	if (pcv & 0x1) {
- 		cpsr |= PSR_T_BIT;
- 		pcv &= ~0x1;
-@@ -253,7 +255,8 @@ static inline void __kprobes alu_write_pc(long pcv, struct pt_regs *regs)
-  * instruction will be modified to "AND R0, R2, R3, ASL R1" and then placed into
-  * the kprobes instruction slot. This can then be called later by the handler
-  * function emulate_rd12rn16rm0rs8_rwflags (a pointer to which is retrieved from
-- * the indicated slot in the action array), in order to simulate the instruction.
-+ * the indicated slot in the action array), in order to simulate the
-+ * instruction.
-  */
- 
- enum decode_type {
-@@ -282,7 +285,7 @@ enum decode_reg_type {
- 	REG_TYPE_NOPCWB,   /* No PC if load/store write-back flag also set */
- 
- 	/* The following types are used when the encoding for PC indicates
--	 * another instruction form. This distiction only matters for test
-+	 * another instruction form. This distinction only matters for test
- 	 * case coverage checks.
- 	 */
- 	REG_TYPE_NOPCX,	   /* Register must not be PC */
+ 	area = kmalloc(sizeof(*area), GFP_KERNEL);
 -- 
 2.7.4
