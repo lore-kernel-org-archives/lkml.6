@@ -1,118 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932184AbeBPJlK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 04:41:10 -0500
-Received: from mga14.intel.com ([192.55.52.115]:10739 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932120AbeBPJlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 04:41:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,519,1511856000";
-   d="scan'208";a="28542024"
-Message-ID: <1518774066.22495.367.camel@linux.intel.com>
-Subject: Re: [PATCH v1 1/2] x86/platform/atom: Re-use
- DEFINE_SHOW_ATTRIBUTE() macro
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Fri, 16 Feb 2018 11:41:06 +0200
-In-Reply-To: <20180216091020.wyjgsihl25tereeu@gmail.com>
-References: <20180214154317.52290-1-andriy.shevchenko@linux.intel.com>
-         <20180216091020.wyjgsihl25tereeu@gmail.com>
-Organization: Intel Finland Oy
+        id S932207AbeBPJmK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 04:42:10 -0500
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:35412 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932120AbeBPJmJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 04:42:09 -0500
+X-Google-Smtp-Source: AH8x224ZdHf3eJ08S+09n3sNS0skLy64Sh7JnIZIOw4JgbzvGK2hKB0ZipOWp/PvtisaudxXoNOPk6wqAC+r5QlfTjo=
+MIME-Version: 1.0
+In-Reply-To: <20180209161456.18951-1-tony@atomide.com>
+References: <20180209161456.18951-1-tony@atomide.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 16 Feb 2018 10:42:07 +0100
+X-Google-Sender-Auth: N5_iyIBexTzQgzH0qdWPrd8cGIQ
+Message-ID: <CAJZ5v0iF0M+X5vujyaKmXrEWpBEceQ=PX6bhgcwFf8P-q7Cu-Q@mail.gmail.com>
+Subject: Re: [PATCH] PM / wakeirq: Add wakeup name to dedicated wake irqs
+To: Tony Lindgren <tony@atomide.com>
+Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.3-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-02-16 at 10:10 +0100, Ingo Molnar wrote:
-> * Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > ...instead of open coding file operations followed by custom
-> > ->open()
-> > callbacks per each attribute.
-> > 
-> > While here, replace permissions by explicit octal value.
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  arch/x86/platform/atom/punit_atom_debug.c | 13 +------------
-> >  1 file changed, 1 insertion(+), 12 deletions(-)
-> > 
-> > diff --git a/arch/x86/platform/atom/punit_atom_debug.c
-> > b/arch/x86/platform/atom/punit_atom_debug.c
-> > index d49d3be81953..156b445bcf4d 100644
-> > --- a/arch/x86/platform/atom/punit_atom_debug.c
-> > +++ b/arch/x86/platform/atom/punit_atom_debug.c
-> > @@ -109,18 +109,7 @@ static int punit_dev_state_show(struct seq_file
-> > *seq_file, void *unused)
-> >  
-> >  	return 0;
-> >  }
-> > -
-> > -static int punit_dev_state_open(struct inode *inode, struct file
-> > *file)
-> > -{
-> > -	return single_open(file, punit_dev_state_show, inode-
-> > >i_private);
-> > -}
-> > -
-> > -static const struct file_operations punit_dev_state_ops = {
-> > -	.open		= punit_dev_state_open,
-> > -	.read		= seq_read,
-> > -	.llseek		= seq_lseek,
-> > -	.release	= single_release,
-> > -};
-> > +DEFINE_SHOW_ATTRIBUTE(punit_dev_state);
-> >  
-> >  static struct dentry *punit_dbg_file;
-> 
-> Hm, that octal value replacement does not seem to be part of this
-> patch, only the 
-> next patch.
-> 
-> Also, the debugfs_create_file() call still uses the old
-> &punit_dev_state_ops 
-> callback array.
-> 
-> Did a patch hunk go missing?
+On Fri, Feb 9, 2018 at 5:14 PM, Tony Lindgren <tony@atomide.com> wrote:
+> This makes it easy to grep :wakeup /proc/interrupts.
+>
+> Cc: Brian Norris <briannorris@chromium.org>
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Suggested-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>  drivers/base/power/power.h   |  1 +
+>  drivers/base/power/wakeirq.c | 18 +++++++++++++++---
+>  2 files changed, 16 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/base/power/power.h b/drivers/base/power/power.h
+> --- a/drivers/base/power/power.h
+> +++ b/drivers/base/power/power.h
+> @@ -31,6 +31,7 @@ struct wake_irq {
+>         struct device *dev;
+>         unsigned int status;
+>         int irq;
+> +       char *name;
+>  };
+>
+>  extern void dev_pm_arm_wake_irq(struct wake_irq *wirq);
+> diff --git a/drivers/base/power/wakeirq.c b/drivers/base/power/wakeirq.c
+> --- a/drivers/base/power/wakeirq.c
+> +++ b/drivers/base/power/wakeirq.c
+> @@ -112,6 +112,7 @@ void dev_pm_clear_wake_irq(struct device *dev)
+>                 free_irq(wirq->irq, wirq);
+>                 wirq->status &= ~WAKE_IRQ_DEDICATED_MASK;
+>         }
+> +       kfree(wirq->name);
+>         kfree(wirq);
+>  }
+>  EXPORT_SYMBOL_GPL(dev_pm_clear_wake_irq);
+> @@ -175,7 +176,8 @@ static irqreturn_t handle_threaded_wake_irq(int irq, void *_wirq)
+>  int dev_pm_set_dedicated_wake_irq(struct device *dev, int irq)
+>  {
+>         struct wake_irq *wirq;
+> -       int err;
+> +       int err, namelen;
+> +       const char *postfix = ":wakeup";
+>
+>         if (irq < 0)
+>                 return -EINVAL;
+> @@ -184,6 +186,14 @@ int dev_pm_set_dedicated_wake_irq(struct device *dev, int irq)
+>         if (!wirq)
+>                 return -ENOMEM;
+>
+> +       namelen = strlen(dev_name(dev)) + strlen(postfix) + 1;
+> +       wirq->name = kzalloc(namelen, GFP_KERNEL);
+> +       if (!wirq->name) {
+> +               err = -ENOMEM;
+> +               goto err_free;
+> +       }
+> +
+> +       snprintf(wirq->name, namelen, "%s%s", dev_name(dev), postfix);
 
-Ooops, sorry.
-Indeed, it happened to be half baked.
+As Andy said you can do
 
-> 
-> I've added the fixes below to the patch.
+wirq->name = kasprintf(GFP_KERNEL, "%s:wakeup", dev_name(dev));
+if (!wirq->name) {
+        err = -ENOMEM;
+        goto err_free;
+}
 
-Thanks!
-
-> 
-> Thanks,
-> 
-> 	Ingo
-> 
-> --- tip.orig/arch/x86/platform/atom/punit_atom_debug.c
-> +++ tip/arch/x86/platform/atom/punit_atom_debug.c
-> @@ -132,9 +121,9 @@ static int punit_dbgfs_register(struct p
->  	if (!punit_dbg_file)
->  		return -ENXIO;
->  
-> -	dev_state = debugfs_create_file("dev_power_state", S_IFREG |
-> S_IRUGO,
-> +	dev_state = debugfs_create_file("dev_power_state", 0444,
->  					punit_dbg_file, punit_device,
-> -					&punit_dev_state_ops);
-> +					&punit_dev_state_fops);
->  	if (!dev_state) {
->  		pr_err("punit_dev_state register failed\n");
->  		debugfs_remove(punit_dbg_file);
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+here and it will allocate the buffer for you.
