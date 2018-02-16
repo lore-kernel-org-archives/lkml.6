@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755076AbeBPP0C (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:26:02 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55694 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752481AbeBPPZ4 (ORCPT
+        id S1755183AbeBPP0H (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:26:07 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33504 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752481AbeBPP0E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:25:56 -0500
+        Fri, 16 Feb 2018 10:26:04 -0500
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
@@ -25,16 +25,16 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         npiggin@gmail.com, bsingharora@gmail.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: [PATCH v8 01/24] mm: Introduce CONFIG_SPECULATIVE_PAGE_FAULT
-Date: Fri, 16 Feb 2018 16:25:15 +0100
+Subject: [PATCH v8 03/24] powerpc/mm: Define CONFIG_SPECULATIVE_PAGE_FAULT
+Date: Fri, 16 Feb 2018 16:25:17 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18021615-0020-0000-0000-000003F88141
+x-cbid: 18021615-0020-0000-0000-000003F88142
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021615-0021-0000-0000-0000428C853A
-Message-Id: <1518794738-4186-2-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18021615-0021-0000-0000-0000428C853D
+Message-Id: <1518794738-4186-4-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-16_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -46,28 +46,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This configuration variable will be used to build the code needed to
-handle speculative page fault.
+Define CONFIG_SPECULATIVE_PAGE_FAULT for BOOK3S_64 and SMP. This enables
+the Speculative Page Fault handler.
 
-By default it is turned off, and activated depending on architecture
-support.
+Support is only provide for BOOK3S_64 currently because:
+- require CONFIG_PPC_STD_MMU because checks done in
+  set_access_flags_filter()
+- require BOOK3S because we can't support for book3e_hugetlb_preload()
+  called by update_mmu_cache()
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- mm/Kconfig | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/powerpc/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index c782e8fb7235..42be0d92336e 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -760,3 +760,6 @@ config GUP_BENCHMARK
- 	  performance of get_user_pages_fast().
- 
- 	  See tools/testing/selftests/vm/gup_benchmark.c
-+
-+config SPECULATIVE_PAGE_FAULT
-+       bool
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 73ce5dd07642..acf2696a6505 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -233,6 +233,7 @@ config PPC
+ 	select OLD_SIGACTION			if PPC32
+ 	select OLD_SIGSUSPEND
+ 	select SPARSE_IRQ
++	select SPECULATIVE_PAGE_FAULT		if PPC_BOOK3S_64 && SMP
+ 	select SYSCTL_EXCEPTION_TRACE
+ 	select VIRT_TO_BUS			if !PPC64
+ 	#
 -- 
 2.7.4
