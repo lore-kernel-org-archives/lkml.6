@@ -1,157 +1,102 @@
-Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x224QDFLkxnJVEChedRWExUvZaeNEUnKu6siPrnXvrxzyy4VFTLS3PbqgnhkR0lFlw3GNEUg/
-ARC-Seal: i=1; a=rsa-sha256; t=1518806395; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518808673; cv=none;
         d=google.com; s=arc-20160816;
-        b=bIxbaMz/Ht3qbhzQw8vzT3rSMMamufR3iA+RbDNwPALWF9d3IsVNrtt+LqqYIIkLDi
-         9HuR58uvCoAWvJZmRUkZYNqJo1kkLa+XfBo21o4LGa5V7UFCqKNClepiLY5E1HE9+oFf
-         dPgBSoWs8VESyAyPWbY4G7rRYkSj1sYud4yBU+5X4WMhsD+wmhWshWQTYoaswukUxy/6
-         OHfaoBu3j3RQMbc6+1utHIR8PVXjk/SxK/ZVkNvulJAkzENrW3GKQa0xLUxd6tfqS4Md
-         0aSOaYz+/Rv13Tx1n0OpE4GePtAxLLGoEOwt/7I9C8X2aiDkdzw3BWs8wXpY1orgE0i2
-         5nUQ==
+        b=gzluqy2q7H+OcwgZdznVD+mM+c6ijAid2SB+lgXWdgsttb6FGyP6ZMGO20CQjiq/+/
+         QiAaiAbX5i9ENU55+W/Mz0xT0ZcTs9VYlsib/7G0h/XP/QwvIHXpEI4GEvS+KRVVxkD6
+         BjAYLEHmG6fSGakw0TNJFoKKFKRQ5MwQABsskFPiB5+ECpAq61smORk33DHDqJNsr9c+
+         8isThHaEB47ipoc2HJnWQOJFdvnVNkmuyBcD4USQcIlYideM1HXirGgOGB7+11k+RMbq
+         l4sI0A761L0hDu0dSd6VWIXZ45Z/17DKEVoyTSgq77NbIAJCXtnnDh2y3nFZJiyHfdfm
+         uiwQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=6/IoqUTGHai0Czf36phhQJ7Uyzpz6vT0GEH8DaNw/3g=;
-        b=HQsSo6FMOImeOK5BtnWyMb2Je4r4Wpx8zHjjce2E8V7iKQQvutdKRCeJZ2SF3mjf83
-         zbNOvULIdVicQsX6qmtKLMDv6cdWRrKxkq6Ga7jT546Cjv3+yEg/Lejze7Q9cYn/C1Y8
-         6jYI9tLchcMAQj5s66UR1WMP+1cIosI5UzI8KuBgh6c42DN/ooV4830WNVxYeZcBq1vr
-         bZg5Qx4ZV1rD9OAlwRQTgRDRUXsIrT3Gv7XtWS+E/4HWqzzq8ZZDVyFLLg1WUnhNS4al
-         7IJbUmNxhZh5Gd991ohF9Nu3xK1Jx5u2fcJ0mQSaPnb3DSbfTdS5e9RqCO8t8NgrfaRr
-         hGOQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=sodw03NpQu1cnO7enjixBMXFMH+aKOKqCRxdHoRmIEI=;
+        b=Jr24G3cjuuos0DXxvgm5h3rpVHe9+bZsb2lazeE6R+PK7AiJh+yKY8G7X4msmj2EOb
+         e5nBuNoJHq+pIxmh5KHveVgaC/QDFo01EU+Ma0/wUyfSzZs9YllCdZ2+WWwkjYuabUBZ
+         +uDD0lNKu/JmysshgclCUNtjaniLTLIHFifjpXZqlZfljXJ9aKH3pemKB3KycFLmdeh1
+         nPnZKKWzj2BpzDhH0WA+2lHhlBMhbqSjR2Bqg1I/Ds5pufCQiUZrWCvrWhMFULnWldmB
+         iorphxga+pvjy5d6h07BzUU/dlZS2/ibgr/q9zrqsSPSGGHJehov9odJ9uG5aBwyf0mH
+         e9lA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=QV6T0K0+;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=oMxI9B9h;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=QV6T0K0+;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w1GIdBTE013418
-X-Nifty-SrcIP: [125.199.20.195]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 11/23] kconfig: add 'shell-stdout' function
-Date: Sat, 17 Feb 2018 03:38:39 +0900
-Message-Id: <1518806331-7101-12-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=oMxI9B9h;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AH8x224MqifRD8kan11YlZtTMydiYYW7mJrus/51W7LI/UpsjHlKjg91of2OrOyPfo1ppccKC8ur/1sq5Yea7P3411U=
+MIME-Version: 1.0
+Sender: linus971@gmail.com
+In-Reply-To: <1518806331-7101-12-git-send-email-yamada.masahiro@socionext.com>
+References: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com> <1518806331-7101-12-git-send-email-yamada.masahiro@socionext.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 16 Feb 2018 11:17:52 -0800
+X-Google-Sender-Auth: XR3ZjpXv7JOPiZjvVq8BU4XNpCs
+Message-ID: <CA+55aFwQLrrBeXZXK_qUXiGVFNv3qPJS4tNKFacuk0Y0WgZjCA@mail.gmail.com>
+Subject: Re: [PATCH 11/23] kconfig: add 'shell-stdout' function
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>,
+	Kees Cook <keescook@chromium.org>, Randy Dunlap <rdunlap@infradead.org>,
+	Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+	Michal Marek <michal.lkml@markovi.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592583935341216706?=
-X-GMAIL-MSGID: =?utf-8?q?1592583935341216706?=
+X-GMAIL-MSGID: =?utf-8?q?1592586323637721479?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the second built-in function, which retrieves the first line
-of stdout from the given shell command.
+On Fri, Feb 16, 2018 at 10:38 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> This is the second built-in function, which retrieves the first line
+> of stdout from the given shell command.
 
-Example code:
+This is the only part I really don't much like in your patch series.
 
-  config CC_IS_GCC
-          bool
+Most of it is just lovely and looks very nice and powerful, but the
+difference between "$(shell ..." and "$(shell-stdout ..." to me is
+bvery ugly.
+
+Can we *please* make "shell-stdout" go away, and make this just be "shell"?
+
+The rule would be very simple:
+
+ - if the result of the shell command is a failure, the result is 'n'
+
+ - otherwise, the result is the first line of stdout
+
+ - if the result is empty, we replace it with 'y'.
+
+So doing $(shell true) would be 100% equivalent to $(shell echo y),
+and you could still do that
+
           default $(shell $CC --version | grep -q gcc)
 
-  config GCC_VERSION
-          int
-          default $(shell-stdout $srctree/scripts/gcc-version.sh $CC | sed 's/^0*//') if CC_IS_GCC
-          default 0
+because it would just automatically do the right thing.
 
-Result:
+Basically, the only difference is how $(shell ) works in the success
+case: the result won't necessarily be 'y', it will be whatever output.
+But if you want to always turn it into 'y' (say, you don't have a "-q"
+flag for the grep equivalent above), you can always do so with
 
-  $ make -s alldefconfig && tail -n 2 .config
-  CONFIG_CC_IS_GCC=y
-  CONFIG_GCC_VERSION=504
+          default $(shell $CC --version | noqgrep gcc > /dev/null)
 
-  $ make CC=clang -s alldefconfig && tail -n 2 .config
-  # CONFIG_CC_IS_GCC is not set
-  CONFIG_GCC_VERSION=0
+So it seems to me that there is never any fundamental reason why we'd
+want both "shell" and "shell-stdout", since "shell-stdout" is
+fundamentally more powerful than "shell", and can always be used as
+such (and just renamed to "shell").
 
-By the way, function calls can be nested, so the following works.
+Because I really think that it's just much prettier and more intuitive
+to be able to say
 
-Example code:
+        default "/boot/config-$(shell uname --release)"
 
-  config FOO
-          bool
-          default $(shell $(shell-stdout echo $COMMAND_IN_CAPITAL | tr [A-Z] [a-z]))
+without that "-stdout" thing.
 
-Result:
-  $ make -s COMMAND=TRUE alldefconfig && tail -n 1 .config
-  CONFIG_FOO=y
-  $ make -s COMMAND=FALSE alldefconfig && tail -n 1 .config
-  # CONFIG_FOO is not set
+Hmm?
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+But I do want to say how much I liked this series. Just this part
+seemed to result in uglier Kconfig scripts.
 
- scripts/kconfig/function.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
-
-diff --git a/scripts/kconfig/function.c b/scripts/kconfig/function.c
-index f7f154d..266f4ec 100644
---- a/scripts/kconfig/function.c
-+++ b/scripts/kconfig/function.c
-@@ -189,10 +189,56 @@ static char *do_shell(struct function *f, int argc, char *argv[])
- 	return xstrdup(ret == 0 ? "y" : "n");
- }
- 
-+static char *do_shell_stdout(struct function *f, int argc, char *argv[])
-+{
-+	static const char *pre = "(";
-+	static const char *post = ") 2>/dev/null";
-+	FILE *p;
-+	char buf[256];
-+	char *cmd;
-+	int ret;
-+
-+	if (argc != 2)
-+		return NULL;
-+
-+	/*
-+	 * Surround the command with ( ) in case it is piped commands.
-+	 * Also, redirect stderr to /dev/null.
-+	 */
-+	cmd = xmalloc(strlen(pre) + strlen(argv[1]) + strlen(post) + 1);
-+	strcpy(cmd, pre);
-+	strcat(cmd, argv[1]);
-+	strcat(cmd, post);
-+
-+	p = popen(cmd, "r");
-+	if (!p) {
-+		perror(cmd);
-+		goto free;
-+	}
-+	if (fgets(buf, sizeof(buf), p)) {
-+		size_t len = strlen(buf);
-+
-+		if (buf[len - 1] == '\n')
-+			buf[len - 1] = '\0';
-+	} else {
-+		buf[0] = '\0';
-+	}
-+
-+	ret = pclose(p);
-+	if (ret == -1)
-+		perror(cmd);
-+
-+free:
-+	free(cmd);
-+
-+	return xstrdup(buf);
-+}
-+
- void func_init(void)
- {
- 	/* register built-in functions */
- 	func_add("shell", do_shell, NULL);
-+	func_add("shell-stdout", do_shell_stdout, NULL);
- }
- 
- void func_exit(void)
--- 
-2.7.4
+         Linus
