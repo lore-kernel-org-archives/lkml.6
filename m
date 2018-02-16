@@ -1,137 +1,484 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751204AbeBPT0k (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 14:26:40 -0500
-Received: from mail-sn1nam02on0056.outbound.protection.outlook.com ([104.47.36.56]:52688
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751123AbeBPT0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 14:26:30 -0500
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Janakarajan.Natarajan@amd.com;
-Subject: Re: [PATCH v5 0/3] Support Perf Extension on AMD KVM guests
-To: kvm@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>, Len Brown <len.brown@intel.com>,
-        Borislav Petkov <bp@suse.de>, Kyle Huey <me@kylehuey.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-References: <cover.1517850302.git.Janakarajan.Natarajan@amd.com>
-From: "Natarajan, Janakarajan" <Janakarajan.Natarajan@amd.com>
-Message-ID: <7d5fbe31-e24c-8ec6-631e-6909bcef3430@amd.com>
-Date: Fri, 16 Feb 2018 13:26:21 -0600
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <cover.1517850302.git.Janakarajan.Natarajan@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [165.204.77.1]
-X-ClientProxiedBy: BN6PR03CA0064.namprd03.prod.outlook.com (10.173.137.26) To
- DM5PR12MB1369.namprd12.prod.outlook.com (10.168.238.20)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 0db0e650-ac54-4bf9-e64c-08d575732d77
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:DM5PR12MB1369;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1369;3:U1ubUO+DztRDivpOr212AWXm5M4GnLCHmHbXrOGVF8xcm7oacxD42KbFCUJmkZrsax/ecPO4crJw9HPbLglt9yWfWwKzXTFXrGwnPkYpsm3n5F8p/ryH+20RSRLaPRwpbcOi4SmBqOosyccehOqUDKkQbll15s5xi7WZtrefUpfM7uXpes/alDfoWmhkEyCQw8Es2Z+j8YUcYRx8EEHk0Mtfw1QInZXwLfD/Z8Od7sEBeAxsZg4er4klKUBDD0aJ;25:EPY8bDEPXaqJssElgkR/wDkNa3dmh8aqrkNyHNbSXH5ZAgcq4OZDd+aoW4YwEUpN16Ia7zSRI/0B1AKxb6cV7wL401xRUbvFjalE9vfxaR3Xqxoyb+lG2i1tBVd6oUYVdyNkQxU2Vr7yufdNiNCmd3psohcDAA20khZFCKCgrhueL+UzFh3b0pgDw9TfDDPCree6/Sf6pxPfJnersv0wWGsN85QYpAfnQ2xVO+y+wveOMDRC70Y2FKDBATc99PktXV30M0zxHRHCP9vUxK+Wpfu7FGC/IeHlhC3efgd3kdbbj2/hXwqj2AmCvX9bSzy05MwmYDaDdEfHzxLSmhWXwg==;31:LEyrmfZxzFiEw1yacuf29hxz/5ew2iuKLAJDhTnS3sqVcMpn+ShAN5wP7DoeLLkxsFUvl89jgpZiERGn9f7HoRPXvMEVev9ngJ8Wuo7ZGp3laczSMUDo4bIBKDlfIWKkVX6pjqdEsgNbfBbCIC6nxLkdc7xwTlWNyDBjih526Hr18ZLNLWC/jfUawlqtdApNTGNOdPNfSBxr0yt4jFW/FBc9j+4RBuhwokMRNN43M+I=
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1369:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1369;20:eazKcLfig3VZTrRgKNGQwsySmexxISBagULkQAjyAIEJkqv45EREByZHShhqXLrV+GpMfYNvtaMffRO6AnzgCvuMLzYnXmYXwV/ZBYOYk3+6I7RorCn6rjZjh6lx133dzC/9Eu4NK9pkUZth6Jyqfr2Sg9WS+tlgi+LzITDOg1J7OhGzfW70ePz/SOt/Su7hMjC39u7gqOHIGlUIfGrq7PaO1Bc5jrktZdm/OO0q1q72QzcSTiidxoO2NAPxIM+XNQ/dxjDN5/vOB3kW/P5WwXsvY7XEu8PBHiXmP0xlfJs9OjuV1jzPLdSupsVF7lviAnxBgbZxUsaG7s6basoio8nxXMN4Tf7vkq1dUWU5M0Vz0I90nmlZx7G1j2H/1PXeYrpG688MqY3e3uCsO5X58A0HO1ePhjeYzkw+yWzn/qO2HhktlmxFH3LoILAd06XRnHUR2LZ1ZNkaagtLVzVl5M3aRMarAhryPzzNSB3KSSsBhYd0OC9iHCXlhAVBO1n9;4:HHMf31RtTm77pEltKSNhQZ0trTgHOwKEng2JSjAMXs/HTZs78EEld7g4RWrMR/w8CNMhaCUlMFhO0FejPDYM2DsEgNu/ah5muJuXFIPRz42oxiclVkU398aP1If37vAU90WyzfB4UrLUfimZSz8tp5NfwxW1HSZPAxDf+OxlF09Is7Ntx6XP20V2W8YWhQZFqK86yFAAFOvEwX1CdgoRQPFR9cdr0sgFxJ98vZEv4Y0ia5Lmkkj1VwqjVQgkvoonRSCFVaISpK8xRdAb3KSB7w==
-X-Microsoft-Antispam-PRVS: <DM5PR12MB136962270D0FED0A5E4FDE1EE7CB0@DM5PR12MB1369.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231101)(944501161)(10201501046)(3002001)(6055026)(6041288)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR12MB1369;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1369;
-X-Forefront-PRVS: 0585417D7B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(396003)(39380400002)(366004)(376002)(39860400002)(346002)(189003)(199004)(106356001)(31686004)(97736004)(8936002)(81156014)(81166006)(36756003)(86362001)(230700001)(8676002)(105586002)(2486003)(52146003)(53546011)(65956001)(386003)(68736007)(26005)(76176011)(23676004)(77096007)(7736002)(16526019)(7416002)(65806001)(52116002)(66066001)(305945005)(3846002)(6116002)(229853002)(4326008)(31696002)(2906002)(25786009)(478600001)(54906003)(72206003)(58126008)(316002)(83506002)(16576012)(67846002)(65826007)(64126003)(6666003)(2950100002)(47776003)(6486002)(6246003)(90366009)(50466002)(5660300001)(53936002)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1369;H:[10.236.18.253];FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjEyTUIxMzY5OzIzOmg1QTBncXBoQWhKcWlDZG1rWXRsY0U0WHlq?=
- =?utf-8?B?cXFZcFgydHBRNElsbjB3Rzg4dENVY2xCQi9WQUNvbWZlTis1Y2VaQWtVUTU2?=
- =?utf-8?B?NHk0VjVualNVeEo0a1JPenhRb2RNWUdzSFVUMmI1U3VlZnh6cklBbzUyYVVo?=
- =?utf-8?B?aXMyUEdJZ1BGMWhYU21CSGNaK3FQN1Y2VTBUWVMzWmFVNWRCVEYyUWxnbmt0?=
- =?utf-8?B?UU81b1JYbmt0aER3TlJLTlg2UDJUNVF0QWpmOE9tU3RtY1pMU21KTXBvZkpv?=
- =?utf-8?B?KzY2d29oN0pmejRyUjFlc0dCbUU4MGRld3FUdXFrOGZ4bU1saGlNK21zT2dI?=
- =?utf-8?B?bUxyVmJvRjRHdVYyNFN5N2llSG9lL1cvNGZVMFJ4dVlvSE1EbUZsclNldnIv?=
- =?utf-8?B?ODVjTktBQjBUVW5jRStEdnpmZDNpMndNcXlNblIyazlRWUU4TmdMcXVtcWRE?=
- =?utf-8?B?ai9wUEF4ZDBRNThsMGNtUUJyK3Arc0Y0UE5SaytxR0s4WWdMbll1am1idmR0?=
- =?utf-8?B?UTdIdThZRm5UQ3pvMCsvSk5HY29hanI4VUtxRmFsaXFMTXNXdVJGUi9wajlX?=
- =?utf-8?B?bjk0NUs3QzFZQnRLL3NBQm1DaE5ocjhqMXFwMEdWeHk1TmgvNG5NeFE3S2pL?=
- =?utf-8?B?aFhWcGUvVGVzZFlETmNPeUZkWnQ3TkkvUExqWUhzMnF4MTdwMmVIZGZBRmRO?=
- =?utf-8?B?MnNxeEpqY3FLOXF0MWNkanRQOFFNQ2FaSW95TXp2RjlUc1dqZ2tOTlpwNmQv?=
- =?utf-8?B?WTNEczJvU1hHNi9LN1RXVitZMU1seEtHNzZhdmlDYmg0VTYxZ1pKcU9aM1l0?=
- =?utf-8?B?a01sc0xvQTRVWjU0R3Fac2Q2enQzUnFmdGQ0Zk9UYmREaVcwejI2ZE1Fajl0?=
- =?utf-8?B?dFUxS3JCTlViN3o4NnZNWkt4aXZOdGI0c0p6WWJFZVpGM0FWNW9UYTlqbDcv?=
- =?utf-8?B?ODBrSFZiaFMzMmdXaXZYZ3Q5Wk1OdGV0TVpCNHRzR0pDUHZuOFAyM0F3SUho?=
- =?utf-8?B?YTNRYWdnYmwvVnhnNndpNkxjSHAxMlU5QlljRHJaRzkyNE5FN2FMMzdGS3U0?=
- =?utf-8?B?R3BEcXNZeGJpQys4MzFtUFhIeFZXTUJ1TGFJRkRPVVNpQ1lJV0E3dzNJVWhm?=
- =?utf-8?B?UlMrVXZYQ1VKOGNFeUtpMW5lV1lCckw2ZmlLYWc0UEI1akYybUhxaysxY1li?=
- =?utf-8?B?TGI0TXlKS05aZjlBTThvdGw4alRFbUkrWWsvcTllTUZML1Y2NkNqejFKaTBs?=
- =?utf-8?B?ODV5YWpNVlVFaWs1TWgzR01DQ2lDQThvcmIxWGZRck1GVDBzZU1QZStlNE15?=
- =?utf-8?B?VHBnSXpSbVNpT0pmMnZYRnZoak0xc1BBQW5oNW5CR2tkdG5RMTVxdWRnelFi?=
- =?utf-8?B?YVpFcmFuVzF1dlYwQkk5bnV1a1lFN0JHcWI0QTVIcXg1QXZYclBSWmVob0ll?=
- =?utf-8?B?UEZ3cGNjb2Y1MUNuWUtHMUFiMU8vcEJYNngxU3AvMGdROFNwVnFMRDdRK0lh?=
- =?utf-8?B?aWU2bnpXSmNQRDlNRGNHaDY3dmRLUUhFRDNRYVJ5eVRHZllmbHIzcWZlZHZW?=
- =?utf-8?B?dnNCT21RN0hKbVlVWWRrWkgwd1NWcXAxRmVJWTMzbTBtcThKY1pSa09DZkVK?=
- =?utf-8?B?OXlObmFmUlc2ZjZSOGk3REw4WDZleHRUUHF1TEg2WmU4YjNMeGNNZFNDVjRP?=
- =?utf-8?B?WFFJb0NxVFpveXppZDN6SXV2NHdJbUhQZWZQZHByQ0swbDNzNmt5dm9FUGY4?=
- =?utf-8?B?WWwrYm5TSkpNUnZCTFIybGlHYThzbVpYMUp0Z1VmaFRaY0JkYkZXZDIxbWxK?=
- =?utf-8?B?a0ZCZzMzOU5WSHhPTUFuRVYzUndGKzMzbjJNRGhDL29pU0lVbHlXZXV3b2M5?=
- =?utf-8?B?Y1NDLzVUOElyWnVtQm02T1VLUmxPN1VmKzI4UjZZaFFla1NpSlBGT1NRMEhO?=
- =?utf-8?Q?3lKEoXJKoFc9AetulKgGrv9DAc7Wz4=3D?=
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1369;6:vh5gw52LP2Zrxd3jrPOx4DBFH3GDVSvjYyDognA7a0fN9GFZSbJ5O5T+jyLj0kOG2vd9ekdWVEcLzEDYv28Wjvy0VkF4Ww4YaKu7lXe74fegzw+n12Vg9qjjyJ4QT3w6axH/Pd6+OMIuGDqIx1CM3HtrCSdrnTU2tDa2ppLmE734YPCyFBPFyyjMR8i2z37KxqybeITXVf0PfvxS+GMTyOyLbvnAsGqKKgqp/YCuIHLFPW7zqxNbryCTQGFE+hovpfvtDfiADNIUz/XHwoYy/JTg18K7zlbS32NHHRtiuzkhHy/bI9Rl8huhOx0yv/LRAqNbNbND79qaH7w3r6+vUkDmJCmNSE/lW2dfOf46imU=;5:TWFV7AxK2W78/wY+2qGhqjSIX9ZDzUwspmOvJ+ai9tW1SNTTnH2bxqVuZZC+z3nzIXcUDCzMZj5HcadrVK4X7liSDD2uW9dNKANtPavQu1lhshVNW1H0YEuyKWVW6bO7SlBeUMNnfeG+84Vnr00uhsHtlI54j7MzH2W74wlnJEY=;24:cnOa3zlcRiFmmXLTuDSlfCt3yjdzAq4kjjO+/ZWWcbyWoxEddWbsH2va+PQvqcvwte2uqrgUXV0ZoL5xPNScjrW8xGDm13LbxWaxZxABt+Y=;7:qU0QpHMbmV6gx4VNVLaplyopxr1ISt7NAXhlsuud1h9XQ9zywCgjMLH40596doYY/ohoLFSkkMod28IsvtqpneoutPL0B3OXHvokgTJAQnFhxrG+F6eeg98uIvMSxNX+e/RtAgyWjlJni5ewob/n3S4pLSRS5skCJa+c9jS8hzoOlQONhRYV01OHskmgg6cyZi6knWOOe8aGFLzTfDT7hBmj77arPFA7pLQLZ97SjSHXLIskEVLfbtGBzwH0W+S3
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1369;20:ybyVy69Jobe/CpsNRNsiIbzwW5cuUPiWf9EU7vVOgCf3u26SaZObie8jLYgYYevBzgPKbV/RQ7Oci62G5utf+k4pTSYFWiw8gCNpp2BdOfDSFyyeZExjhrB8Oe/8SrVLhdnd7PFVCT4Xf36woRiY7VpMWBz7YHDc/h8L1a0AtCMnxMr2MGwMLFzjMCX3dH7cmWAspy6xM9tXMxQMS6ntGT/5eIf3mXfPYqdCyVNZjZ7z42UNdcKNFQivCj0ysF++
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Feb 2018 19:26:27.6376 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0db0e650-ac54-4bf9-e64c-08d575732d77
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1369
+        id S1751218AbeBPT1R (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 14:27:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56766 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753843AbeBPTTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 14:19:54 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A02B217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 33/41] tools include powerpc: Grab a copy of arch/powerpc/include/uapi/asm/unistd.h
+Date: Fri, 16 Feb 2018 16:17:38 -0300
+Message-Id: <20180216191746.11095-34-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180216191746.11095-1-acme@kernel.org>
+References: <20180216191746.11095-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/2018 1:24 PM, Janakarajan Natarajan wrote:
-> This patchset adds support for Perf Extension on AMD KVM guests.
->
-> When perf runs on a guest with family = 15h || 17h, the MSRs that are
-> accessed, when the Perf Extension flag is made available, differ from
-> the existing K7 MSRs. The accesses are to the AMD Core Performance
-> Extension counters which provide 2 extra counters and new MSRs for both
-> the event select and counter registers.
->
-> Since the new event select and counter MSRs are interleaved and K7 MSRs
-> are contiguous, the logic to map them to the gp_counters[] is changed.
->
-> This patchset has been tested with Family 17h and Opteron G1 guests.
->
-> v1->v2:
-> * Rearranged MSR #defines based on Boris's suggestion.
->
-> v2->v3:
-> * Changed the logic of mapping MSR to gp_counters[] index based on
->    Boris's feedback.
-> * Removed use of family checks based on Radim's feedback.
-> * Removed KVM bugfix patch since it is already applied.
->
-> v3->v4:
-> * Rebased to latest KVM tree.
->
-> v4->v5:
-> * Removed conditional check when exposing Perf Extension flag to
->    guests based on Radim's feedback.
->
-> Janakarajan Natarajan (3):
->    x86/msr: Add AMD Core Perf Extension MSRs
->    x86/kvm: Add support for AMD Core Perf Extension in guest
->    x86/kvm: Expose AMD Core Perf Extension flag to guests
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 
-Are there any concerns regarding this patchset?
+Will be used for generating the syscall id/string translation table.
 
-Thanks.
+Committer notes:
 
->
->   arch/x86/include/asm/msr-index.h |  14 ++++
->   arch/x86/kvm/cpuid.c             |   2 +-
->   arch/x86/kvm/pmu_amd.c           | 140 +++++++++++++++++++++++++++++++++++----
->   arch/x86/kvm/x86.c               |   1 +
->   4 files changed, 142 insertions(+), 15 deletions(-)
->
+Update it already to catch with these csets applied since Ravi first
+submitted this patch:
+
+  3350eb2ea127 powerpc: sys_pkey_mprotect() system call
+  9499ec1b5e82 powerpc: sys_pkey_alloc() and sys_pkey_free() system calls
+
+So now 'perf trace' on ppc now knows about the pkey_ syscals.
+
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org
+Link: http://lkml.kernel.org/r/20180129083417.31240-2-ravi.bangoria@linux.vnet.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/arch/powerpc/include/uapi/asm/unistd.h | 402 +++++++++++++++++++++++++++
+ tools/perf/check-headers.sh                  |   1 +
+ 2 files changed, 403 insertions(+)
+ create mode 100644 tools/arch/powerpc/include/uapi/asm/unistd.h
+
+diff --git a/tools/arch/powerpc/include/uapi/asm/unistd.h b/tools/arch/powerpc/include/uapi/asm/unistd.h
+new file mode 100644
+index 000000000000..389c36fd8299
+--- /dev/null
++++ b/tools/arch/powerpc/include/uapi/asm/unistd.h
+@@ -0,0 +1,402 @@
++/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
++/*
++ * This file contains the system call numbers.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version
++ * 2 of the License, or (at your option) any later version.
++ */
++#ifndef _UAPI_ASM_POWERPC_UNISTD_H_
++#define _UAPI_ASM_POWERPC_UNISTD_H_
++
++
++#define __NR_restart_syscall	  0
++#define __NR_exit		  1
++#define __NR_fork		  2
++#define __NR_read		  3
++#define __NR_write		  4
++#define __NR_open		  5
++#define __NR_close		  6
++#define __NR_waitpid		  7
++#define __NR_creat		  8
++#define __NR_link		  9
++#define __NR_unlink		 10
++#define __NR_execve		 11
++#define __NR_chdir		 12
++#define __NR_time		 13
++#define __NR_mknod		 14
++#define __NR_chmod		 15
++#define __NR_lchown		 16
++#define __NR_break		 17
++#define __NR_oldstat		 18
++#define __NR_lseek		 19
++#define __NR_getpid		 20
++#define __NR_mount		 21
++#define __NR_umount		 22
++#define __NR_setuid		 23
++#define __NR_getuid		 24
++#define __NR_stime		 25
++#define __NR_ptrace		 26
++#define __NR_alarm		 27
++#define __NR_oldfstat		 28
++#define __NR_pause		 29
++#define __NR_utime		 30
++#define __NR_stty		 31
++#define __NR_gtty		 32
++#define __NR_access		 33
++#define __NR_nice		 34
++#define __NR_ftime		 35
++#define __NR_sync		 36
++#define __NR_kill		 37
++#define __NR_rename		 38
++#define __NR_mkdir		 39
++#define __NR_rmdir		 40
++#define __NR_dup		 41
++#define __NR_pipe		 42
++#define __NR_times		 43
++#define __NR_prof		 44
++#define __NR_brk		 45
++#define __NR_setgid		 46
++#define __NR_getgid		 47
++#define __NR_signal		 48
++#define __NR_geteuid		 49
++#define __NR_getegid		 50
++#define __NR_acct		 51
++#define __NR_umount2		 52
++#define __NR_lock		 53
++#define __NR_ioctl		 54
++#define __NR_fcntl		 55
++#define __NR_mpx		 56
++#define __NR_setpgid		 57
++#define __NR_ulimit		 58
++#define __NR_oldolduname	 59
++#define __NR_umask		 60
++#define __NR_chroot		 61
++#define __NR_ustat		 62
++#define __NR_dup2		 63
++#define __NR_getppid		 64
++#define __NR_getpgrp		 65
++#define __NR_setsid		 66
++#define __NR_sigaction		 67
++#define __NR_sgetmask		 68
++#define __NR_ssetmask		 69
++#define __NR_setreuid		 70
++#define __NR_setregid		 71
++#define __NR_sigsuspend		 72
++#define __NR_sigpending		 73
++#define __NR_sethostname	 74
++#define __NR_setrlimit		 75
++#define __NR_getrlimit		 76
++#define __NR_getrusage		 77
++#define __NR_gettimeofday	 78
++#define __NR_settimeofday	 79
++#define __NR_getgroups		 80
++#define __NR_setgroups		 81
++#define __NR_select		 82
++#define __NR_symlink		 83
++#define __NR_oldlstat		 84
++#define __NR_readlink		 85
++#define __NR_uselib		 86
++#define __NR_swapon		 87
++#define __NR_reboot		 88
++#define __NR_readdir		 89
++#define __NR_mmap		 90
++#define __NR_munmap		 91
++#define __NR_truncate		 92
++#define __NR_ftruncate		 93
++#define __NR_fchmod		 94
++#define __NR_fchown		 95
++#define __NR_getpriority	 96
++#define __NR_setpriority	 97
++#define __NR_profil		 98
++#define __NR_statfs		 99
++#define __NR_fstatfs		100
++#define __NR_ioperm		101
++#define __NR_socketcall		102
++#define __NR_syslog		103
++#define __NR_setitimer		104
++#define __NR_getitimer		105
++#define __NR_stat		106
++#define __NR_lstat		107
++#define __NR_fstat		108
++#define __NR_olduname		109
++#define __NR_iopl		110
++#define __NR_vhangup		111
++#define __NR_idle		112
++#define __NR_vm86		113
++#define __NR_wait4		114
++#define __NR_swapoff		115
++#define __NR_sysinfo		116
++#define __NR_ipc		117
++#define __NR_fsync		118
++#define __NR_sigreturn		119
++#define __NR_clone		120
++#define __NR_setdomainname	121
++#define __NR_uname		122
++#define __NR_modify_ldt		123
++#define __NR_adjtimex		124
++#define __NR_mprotect		125
++#define __NR_sigprocmask	126
++#define __NR_create_module	127
++#define __NR_init_module	128
++#define __NR_delete_module	129
++#define __NR_get_kernel_syms	130
++#define __NR_quotactl		131
++#define __NR_getpgid		132
++#define __NR_fchdir		133
++#define __NR_bdflush		134
++#define __NR_sysfs		135
++#define __NR_personality	136
++#define __NR_afs_syscall	137 /* Syscall for Andrew File System */
++#define __NR_setfsuid		138
++#define __NR_setfsgid		139
++#define __NR__llseek		140
++#define __NR_getdents		141
++#define __NR__newselect		142
++#define __NR_flock		143
++#define __NR_msync		144
++#define __NR_readv		145
++#define __NR_writev		146
++#define __NR_getsid		147
++#define __NR_fdatasync		148
++#define __NR__sysctl		149
++#define __NR_mlock		150
++#define __NR_munlock		151
++#define __NR_mlockall		152
++#define __NR_munlockall		153
++#define __NR_sched_setparam		154
++#define __NR_sched_getparam		155
++#define __NR_sched_setscheduler		156
++#define __NR_sched_getscheduler		157
++#define __NR_sched_yield		158
++#define __NR_sched_get_priority_max	159
++#define __NR_sched_get_priority_min	160
++#define __NR_sched_rr_get_interval	161
++#define __NR_nanosleep		162
++#define __NR_mremap		163
++#define __NR_setresuid		164
++#define __NR_getresuid		165
++#define __NR_query_module	166
++#define __NR_poll		167
++#define __NR_nfsservctl		168
++#define __NR_setresgid		169
++#define __NR_getresgid		170
++#define __NR_prctl		171
++#define __NR_rt_sigreturn	172
++#define __NR_rt_sigaction	173
++#define __NR_rt_sigprocmask	174
++#define __NR_rt_sigpending	175
++#define __NR_rt_sigtimedwait	176
++#define __NR_rt_sigqueueinfo	177
++#define __NR_rt_sigsuspend	178
++#define __NR_pread64		179
++#define __NR_pwrite64		180
++#define __NR_chown		181
++#define __NR_getcwd		182
++#define __NR_capget		183
++#define __NR_capset		184
++#define __NR_sigaltstack	185
++#define __NR_sendfile		186
++#define __NR_getpmsg		187	/* some people actually want streams */
++#define __NR_putpmsg		188	/* some people actually want streams */
++#define __NR_vfork		189
++#define __NR_ugetrlimit		190	/* SuS compliant getrlimit */
++#define __NR_readahead		191
++#ifndef __powerpc64__			/* these are 32-bit only */
++#define __NR_mmap2		192
++#define __NR_truncate64		193
++#define __NR_ftruncate64	194
++#define __NR_stat64		195
++#define __NR_lstat64		196
++#define __NR_fstat64		197
++#endif
++#define __NR_pciconfig_read	198
++#define __NR_pciconfig_write	199
++#define __NR_pciconfig_iobase	200
++#define __NR_multiplexer	201
++#define __NR_getdents64		202
++#define __NR_pivot_root		203
++#ifndef __powerpc64__
++#define __NR_fcntl64		204
++#endif
++#define __NR_madvise		205
++#define __NR_mincore		206
++#define __NR_gettid		207
++#define __NR_tkill		208
++#define __NR_setxattr		209
++#define __NR_lsetxattr		210
++#define __NR_fsetxattr		211
++#define __NR_getxattr		212
++#define __NR_lgetxattr		213
++#define __NR_fgetxattr		214
++#define __NR_listxattr		215
++#define __NR_llistxattr		216
++#define __NR_flistxattr		217
++#define __NR_removexattr	218
++#define __NR_lremovexattr	219
++#define __NR_fremovexattr	220
++#define __NR_futex		221
++#define __NR_sched_setaffinity	222
++#define __NR_sched_getaffinity	223
++/* 224 currently unused */
++#define __NR_tuxcall		225
++#ifndef __powerpc64__
++#define __NR_sendfile64		226
++#endif
++#define __NR_io_setup		227
++#define __NR_io_destroy		228
++#define __NR_io_getevents	229
++#define __NR_io_submit		230
++#define __NR_io_cancel		231
++#define __NR_set_tid_address	232
++#define __NR_fadvise64		233
++#define __NR_exit_group		234
++#define __NR_lookup_dcookie	235
++#define __NR_epoll_create	236
++#define __NR_epoll_ctl		237
++#define __NR_epoll_wait		238
++#define __NR_remap_file_pages	239
++#define __NR_timer_create	240
++#define __NR_timer_settime	241
++#define __NR_timer_gettime	242
++#define __NR_timer_getoverrun	243
++#define __NR_timer_delete	244
++#define __NR_clock_settime	245
++#define __NR_clock_gettime	246
++#define __NR_clock_getres	247
++#define __NR_clock_nanosleep	248
++#define __NR_swapcontext	249
++#define __NR_tgkill		250
++#define __NR_utimes		251
++#define __NR_statfs64		252
++#define __NR_fstatfs64		253
++#ifndef __powerpc64__
++#define __NR_fadvise64_64	254
++#endif
++#define __NR_rtas		255
++#define __NR_sys_debug_setcontext 256
++/* Number 257 is reserved for vserver */
++#define __NR_migrate_pages	258
++#define __NR_mbind		259
++#define __NR_get_mempolicy	260
++#define __NR_set_mempolicy	261
++#define __NR_mq_open		262
++#define __NR_mq_unlink		263
++#define __NR_mq_timedsend	264
++#define __NR_mq_timedreceive	265
++#define __NR_mq_notify		266
++#define __NR_mq_getsetattr	267
++#define __NR_kexec_load		268
++#define __NR_add_key		269
++#define __NR_request_key	270
++#define __NR_keyctl		271
++#define __NR_waitid		272
++#define __NR_ioprio_set		273
++#define __NR_ioprio_get		274
++#define __NR_inotify_init	275
++#define __NR_inotify_add_watch	276
++#define __NR_inotify_rm_watch	277
++#define __NR_spu_run		278
++#define __NR_spu_create		279
++#define __NR_pselect6		280
++#define __NR_ppoll		281
++#define __NR_unshare		282
++#define __NR_splice		283
++#define __NR_tee		284
++#define __NR_vmsplice		285
++#define __NR_openat		286
++#define __NR_mkdirat		287
++#define __NR_mknodat		288
++#define __NR_fchownat		289
++#define __NR_futimesat		290
++#ifdef __powerpc64__
++#define __NR_newfstatat		291
++#else
++#define __NR_fstatat64		291
++#endif
++#define __NR_unlinkat		292
++#define __NR_renameat		293
++#define __NR_linkat		294
++#define __NR_symlinkat		295
++#define __NR_readlinkat		296
++#define __NR_fchmodat		297
++#define __NR_faccessat		298
++#define __NR_get_robust_list	299
++#define __NR_set_robust_list	300
++#define __NR_move_pages		301
++#define __NR_getcpu		302
++#define __NR_epoll_pwait	303
++#define __NR_utimensat		304
++#define __NR_signalfd		305
++#define __NR_timerfd_create	306
++#define __NR_eventfd		307
++#define __NR_sync_file_range2	308
++#define __NR_fallocate		309
++#define __NR_subpage_prot	310
++#define __NR_timerfd_settime	311
++#define __NR_timerfd_gettime	312
++#define __NR_signalfd4		313
++#define __NR_eventfd2		314
++#define __NR_epoll_create1	315
++#define __NR_dup3		316
++#define __NR_pipe2		317
++#define __NR_inotify_init1	318
++#define __NR_perf_event_open	319
++#define __NR_preadv		320
++#define __NR_pwritev		321
++#define __NR_rt_tgsigqueueinfo	322
++#define __NR_fanotify_init	323
++#define __NR_fanotify_mark	324
++#define __NR_prlimit64		325
++#define __NR_socket		326
++#define __NR_bind		327
++#define __NR_connect		328
++#define __NR_listen		329
++#define __NR_accept		330
++#define __NR_getsockname	331
++#define __NR_getpeername	332
++#define __NR_socketpair		333
++#define __NR_send		334
++#define __NR_sendto		335
++#define __NR_recv		336
++#define __NR_recvfrom		337
++#define __NR_shutdown		338
++#define __NR_setsockopt		339
++#define __NR_getsockopt		340
++#define __NR_sendmsg		341
++#define __NR_recvmsg		342
++#define __NR_recvmmsg		343
++#define __NR_accept4		344
++#define __NR_name_to_handle_at	345
++#define __NR_open_by_handle_at	346
++#define __NR_clock_adjtime	347
++#define __NR_syncfs		348
++#define __NR_sendmmsg		349
++#define __NR_setns		350
++#define __NR_process_vm_readv	351
++#define __NR_process_vm_writev	352
++#define __NR_finit_module	353
++#define __NR_kcmp		354
++#define __NR_sched_setattr	355
++#define __NR_sched_getattr	356
++#define __NR_renameat2		357
++#define __NR_seccomp		358
++#define __NR_getrandom		359
++#define __NR_memfd_create	360
++#define __NR_bpf		361
++#define __NR_execveat		362
++#define __NR_switch_endian	363
++#define __NR_userfaultfd	364
++#define __NR_membarrier		365
++#define __NR_mlock2		378
++#define __NR_copy_file_range	379
++#define __NR_preadv2		380
++#define __NR_pwritev2		381
++#define __NR_kexec_file_load	382
++#define __NR_statx		383
++#define __NR_pkey_alloc		384
++#define __NR_pkey_free		385
++#define __NR_pkey_mprotect	386
++
++#endif /* _UAPI_ASM_POWERPC_UNISTD_H_ */
+diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+index 790ec25919a0..bf206ffe5c45 100755
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -42,6 +42,7 @@ arch/parisc/include/uapi/asm/errno.h
+ arch/powerpc/include/uapi/asm/errno.h
+ arch/sparc/include/uapi/asm/errno.h
+ arch/x86/include/uapi/asm/errno.h
++arch/powerpc/include/uapi/asm/unistd.h
+ include/asm-generic/bitops/arch_hweight.h
+ include/asm-generic/bitops/const_hweight.h
+ include/asm-generic/bitops/__fls.h
+-- 
+2.14.3
