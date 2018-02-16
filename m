@@ -1,128 +1,98 @@
-Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x2241IIitC6TIEhVOD/JrbGbUdYRusrlzqRghC9RUt43AdE7d61+qw1YgrLLe4xxPxkWdoiNY
-ARC-Seal: i=1; a=rsa-sha256; t=1519145556; cv=none;
+Return-Path: <arnd@arndb.de>
+X-Google-Smtp-Source: AH8x227MGKf5uxgkoRwJBNNEUifBXS+xoct60pvvCtwq+NDd2ec6DR+LkP6uHRcZeg0kbQrM2B9t
+ARC-Seal: i=1; a=rsa-sha256; t=1518817330; cv=none;
         d=google.com; s=arc-20160816;
-        b=U+Fx5O23MC/B9BJgpKzBoVo2GOtommqjatmMUhgHb6FohG2mm9De4/GM6SMpnqBOrU
-         KMR75ULkE0vNeIlNgnXQydogHneYH2afYmtc7GVTiKR/VzBK7loF6+yzUUswVZdfA5RL
-         PR3ELeq+x+9NQsVPaF/Dc1HA9X/rFCmuSbpwGgdEptCDaS5VHF4U+LMc4QszzvrRF5TP
-         2zoFAnhuffy9x0E5VGY474gA3swdWL5go/lqpQnd0eSuQYnmJkGN/+gVmZJ5aj4dpB1X
-         KwES2zhiRD9FR4VMIrs14mY/FyRjqI731+efQVrxOxtYHyU0U3Oj6I9TCbS0x+3LgyxS
-         EITQ==
+        b=WsJYIMfsxRetV/lUDed9RzjcG4cahIcTTdIE7hnpZu14lZsmq8YEjA7LSHuBBvs660
+         FPzDipaTDxjtUOg9V/kfQ0hvyk6cYLz7TnAR8la7uTufKBF+hn1LH8SbYuBxyXplgYR7
+         rjhX4N/hts78egHTNKvy5P7YHzQoOaq2LhYRVPvsubE4iPct+RTqZfL71GxstMvEB7T8
+         Uc7VhIpIEKlwKXvFpiY1eo8S2OoNEbMMfKaHFI2kc5n84b50S0GnfbqRysRpxokV0x6w
+         82t0DdfgpOAJhkCCqUvT8s80+M39DfLsfhrm4SeOqgsuKZBuEsA22BOyN4u8SN2p3yPS
+         lvaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:dkim-filter:arc-authentication-results;
-        bh=47L1W4ar+sIaSJ+7ujaOEoZGmsi72Dps2uHpNlRGfT4=;
-        b=bNvgel8zAnUApVDmHjOB96SyDnzFiAuEtoz0Vo2UxL2QRa+VeiRCKjDHET/d1a7vhQ
-         Fdtw8i47OzPuLiIc9hOXEv/TN+8SfBpdiB/5e6hVzi4PRoyFOYHDbNnPB2gSSda/fN2q
-         KRcih93eYXfZgSoUWYawpL2byJuQ8IdgBPgniIcL5ioqaXYFBlIcRn4h7rKua/Q37lbj
-         VOUSwjXdEBZmzo54LYXT20visY7oS1A3XR2YCoktzXZFSlgJ6yvSeFIFPysyi+FWC918
-         sWATWsg6umRtPAPhfKAjSdPV9cDS5v7XEqTcEMVKHbu42F3MJLiKZOTO1F6z4HmRanYE
-         i2Jw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=DTqi3CMU/ToVfRI+3i475iV1ZutcOqKhVz0BKjGKyhk=;
+        b=PztYRey7oN3c1F2QWHollY8aBgb9xOrOcGsURObFfRP5K5fOpJdjw9RdszPLY70IdU
+         09a53gPQgHBZX8I9qGj+YnC1t7UDOfykh411d8yq+BJxswd/fTwra/quFQ1yRwyIl0eT
+         +7BB0I0zxa5U5o8333y0P08ybTN0MnAJoBAUr7a2ZhILNRjAbMRRH0JV+b3z5pvY+/CB
+         bwMI7xWcx+B0SqfxORPLRB0JIvzxBzm1MdKUKRvBQtMYACD6+11gu2kswsdC/Kx81UJk
+         vJNCIG4EWFz9vEl3r4Q1yiPfwap+/en5iZ64qPtwGno07DI/s4S/wGy8p3JmxNgI4Y+k
+         rS8g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=y2HFoXkW;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.91 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+       spf=neutral (google.com: 212.227.17.13 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=y2HFoXkW;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.91 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w1KGqBej023494
-X-Nifty-SrcIP: [209.85.217.176]
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a2WYKQPJ_y9O_HpgbwN9-b9isKkYJH4niLA02MD2uH+2w@mail.gmail.com>
-References: <20180216214117.1947175-1-arnd@arndb.de> <20180216214117.1947175-4-arnd@arndb.de>
- <CAK7LNAQVSVtXzWXjLRAQXynSvHHbiF1xYLhjLBwPfFOpnX_NRA@mail.gmail.com> <CAK8P3a2WYKQPJ_y9O_HpgbwN9-b9isKkYJH4niLA02MD2uH+2w@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 21 Feb 2018 01:51:30 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATmGVRZv0G2dg+TYhmK6-PXv0b0OMpkzLjuahsYUq+qjQ@mail.gmail.com>
-Message-ID: <CAK7LNATmGVRZv0G2dg+TYhmK6-PXv0b0OMpkzLjuahsYUq+qjQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] Kconfig: add a default allrandom.config
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        "Yann E . MORIN" <yann.morin.1998@free.fr>,
-        Michal Marek <mmarek@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+       spf=neutral (google.com: 212.227.17.13 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-kbuild@vger.kernel.org
+Cc: "Yann E . MORIN" <yann.morin.1998@free.fr>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Michal Marek <mmarek@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH 1/3] Kconfig: disable PROFILE_ALL_BRANCHES for compile testing
+Date: Fri, 16 Feb 2018 22:41:11 +0100
+Message-Id: <20180216214117.1947175-2-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180216214117.1947175-1-arnd@arndb.de>
+References: <20180216214117.1947175-1-arnd@arndb.de>
+X-Provags-ID: V03:K0:fmoMXGGJlTzOB4cQs/MTrS865pX8OurSmi24tep6rOdajbPcgdl
+ LWdXsrFm2Egd/k37n5gWN9yj7PA8OXTaCkEVfusg1X4jL/GzwNJoh/WxyPEKQlKqq9o5rcT
+ 6/JYHL9FiquWul0Jqko2Tei99pw6biWmHa8oTVIq8GbO16pbBVqKXxRE1XHUMn0RiE34hNQ
+ /hpAeUPzD3lezwgulVDpQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:NanqIWh+AxY=:TIukbxs8gEyxQgGMCF+DbU
+ c0hjeb35U1oGhmLHd9dwijue79wIWjwQtYkuyZITKebtR/0Ty7S59J7YIrwnaT0SMO6NNAESX
+ KmUkjdY464ry3v23CzpeaeB51irDDxaGATIUTodRY1qxBMAST0IqDdrGu7bqLvKdEz9Fd38fs
+ Zr4BJ46eXmtbTFWwQDV1NcvGO/Xec36AWSTsUImYkJjTTK1micjYxoaKfnL69YwHQzROJTnhE
+ 2R8SHFMitTOlGHWBPEAcnVcUWAsD0nBcLoPu9kIH7F4W2NJfhR/CLTGPtXxhyAHoUDo+ONhUt
+ 5Bq351b+7tSDBchS6BYATrc2xH6oijz2z5jb5UP79ysGDQfjnbT7ogKkAfCZ2YtXuZYlp88X1
+ RkJMWlgZ1eZdgz/MeuJHFDXGTDybONgfmiIz8YBStXERlw50V8MsnfeSwXrg43QK7d3qIWbsH
+ M3b1u68kzvZoUYIBzQDTZFkLx5U+HMCAVPYA3WJswEoMYze4f6HBux1RvgTxeVv94KH0x/eyA
+ CcGvf951yT9Mt7rbJHoF21UjrRNJjAO6r6hJx+3vyfqxp92JqxpO746htpjijQevrFXkubizT
+ cY4nKPnyuirBeHH4dg3+dmu05kq7Cyf1eXEH/XTE4Osy+edEXIXgszGZOUysBj/kwHyywdF95
+ zZbRuOnTAi1wyKr2rvInJ4nX8R2SLtWnPWKsio8FVjwMvOMgXbmYm1iZ4NjXh3Tgduz48P4uT
+ mA69oZtaGPNAq7m4Ljd3EW9FmJbwWpMEvo98lw==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592595421999203989?=
-X-GMAIL-MSGID: =?utf-8?q?1592939571150626023?=
+X-GMAIL-THRID: =?utf-8?q?1592595400950841912?=
+X-GMAIL-MSGID: =?utf-8?q?1592595400950841912?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-02-20 20:11 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
-> On Tue, Feb 20, 2018 at 10:16 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> 2018-02-17 6:41 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
->>> Building randconfig kernels frequently leads to build errors from
->>> drivers that have additional build dependencies, or that we don't
->>> want to build for compile-testing for some other reason.
->>
->> Can you fix the former case?
->
-> I'm sure it can be done with runtime detection of the tools, not sure if that's
-> a good idea. What we would need here is
->
-> CONFIG_WANXL_BUILD_FIRMWARE: needs to check for as68k and ld68k
-> CONFIG_AIC79XX_BUILD_FIRMWARE: needs flex, bison and berkeley db.
->         I have all those but it still failed to build for me.
-> STANDALONE now (after the removal of sound/oss) only controls
->       ACPI_CUSTOM_DSDT_FILE, we could remove STANDALONE now
->       I think, it doesn't actually get in the way of anything. For the stable
->       kernels, I'd still need to deal with CONFIG_STANDALONE for the oss
->       drivers.
->
-> My feeling right now is that we're better off making both STANDALONE
-> and PREVENT_FIRMWARE_BUILD depend on !COMPILE_TEST,
-> and then find a way to force that.
->
->>> We already have a couple of compile-time options that can deal with this
->>> problem, but the complete set is not documented well.  We also have a
->>> method to override some options during 'make randconfig' and a couple
->>> of other make targets. However, we don't yet combine those two.
->>
->>
->> From this statement,
->>
->> kernel/configs/compile_test.config
->>
->> would make more sense?
->
-> My original thought was that the allrandom.config file name is already
-> documented and I just wanted a more consistent behavior, not come
-> up with something new.
+This can easily double the time for compiling a driver but does not
+provide any benefit for the compile tester, so it's better left disabled.
 
+In addition, any 'inline' function that is not also 'static' and that
+contains an 'if' causes a warning like
 
-I thought this would be used by merge_config.sh,
-but I understood allrandom.config would be better.
+include/linux/string.h:212:2: note: in expansion of macro 'if'
+  if (strscpy(p, q, p_size < q_size ? p_size : q_size) < 0)
+  ^~
+include/linux/compiler.h:162:4: warning: '______f' is static but declared in inline function 'strcpy' which is not static
 
+without this patch, and I could not come up with a nice fix for that.
+In combination with my patch to always enable 'CONFIG_COMPILE_TEST'
+during 'randconfig' builds, we can at least hide these warnings for
+most users.
 
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ kernel/trace/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
->>> This adds a new allrandom.config file to turn on CONFIG_COMPILE_TEST,
->>> CONFIG_STANDALONE and CONFIG_PREVENT_FIRMWARE_BUILD for all randconfig
->>> builds. This in turn disables some other options that we already try
->>> to avoid in 'allmodconfig' builds and that make no sense in a general
->>> randconfig build.
->>>
->>> Building with 'make randconfig KCONFIG_ALLCONFIG=1' should now always
->>
->>
->> Can you type 'make randconfig compile_test.config', instead?
->>
->> (Or 'make allmodconfig compile_test.config' for full-build test)
->>
->>
->> The merge_config has a little bit different logic
->> from KCONFIG_ALLCONFIG=1, but I guess it leads to the almost same result.
->
-> I suspect that one difference in a randconfig kernel is that all options that
-> depend on CONFIG_COMPILE_TEST have a 50% lower chance of getting
-> enabled that way, but eventually they will get enabled.
->
-
-You are right.
-
-The behavior is slightly different.
-
-
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index 434c840e2d82..faaf687b13b1 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -345,6 +345,7 @@ config PROFILE_ANNOTATED_BRANCHES
+ config PROFILE_ALL_BRANCHES
+ 	bool "Profile all if conditionals"
+ 	select TRACE_BRANCH_PROFILING
++	depends on !COMPILE_TEST
+ 	help
+ 	  This tracer profiles all branch conditions. Every if ()
+ 	  taken in the kernel is recorded whether it hit or miss.
 -- 
-Best Regards
-Masahiro Yamada
+2.9.0
