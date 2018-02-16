@@ -1,166 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752297AbeBPTQy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 14:16:54 -0500
-Received: from twosheds.infradead.org ([90.155.92.209]:52778 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751049AbeBPTQu (ORCPT
+        id S1753284AbeBPTRR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 14:17:17 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:37897 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751008AbeBPTRN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 14:16:50 -0500
-Message-ID: <1518808600.7876.49.camel@infradead.org>
-Subject: Re: [tip:x86/pti] x86/speculation: Use IBRS if available before
- calling into firmware
-From: David Woodhouse <dwmw2@infradead.org>
-To: Tim Chen <tim.c.chen@linux.intel.com>, mingo@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        linux-tip-commits@vger.kernel.org
-In-Reply-To: <c77b3da9-136d-9988-119f-e94c86fd34a3@linux.intel.com>
-References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
-         <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
-         <c77b3da9-136d-9988-119f-e94c86fd34a3@linux.intel.com>
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-N2q+Owl2dsFmXZvXOukG"
-Date: Fri, 16 Feb 2018 19:16:40 +0000
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+        Fri, 16 Feb 2018 14:17:13 -0500
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, x86@kernel.org, douly.fnst@cn.fujitsu.com,
+        joro@8bytes.org, uobergfe@redhat.com, prarit@redhat.com
+References: <20180214054656.3780-1-bhe@redhat.com>
+        <20180216093836.v6iq32jycy7sxwln@gmail.com>
+Date: Fri, 16 Feb 2018 13:16:50 -0600
+In-Reply-To: <20180216093836.v6iq32jycy7sxwln@gmail.com> (Ingo Molnar's
+        message of "Fri, 16 Feb 2018 10:38:36 +0100")
+Message-ID: <87a7w8wxr1.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1emlVP-0005Gy-JH;;;mid=<87a7w8wxr1.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/oVQEypiLHsEG2r7fDfNhqi/HL4yOrjGw=
+X-SA-Exim-Connect-IP: 174.19.85.160
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Ingo Molnar <mingo@kernel.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 162 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 3.7 (2.3%), b_tie_ro: 2.7 (1.7%), parse: 1.05 (0.6%),
+        extract_message_metadata: 10 (5.8%), get_uri_detail_list: 1.18 (0.7%),
+        tests_pri_-1000: 4.8 (2.9%), tests_pri_-950: 1.01 (0.6%), tests_pri_-900:
+        0.88 (0.5%), tests_pri_-400: 19 (11.9%), check_bayes: 18 (11.2%), b_tokenize:
+        4.3 (2.6%), b_tok_get_all: 6 (3.9%), b_comp_prob: 1.82 (1.1%),
+        b_tok_touch_all: 3.7 (2.3%), b_finish: 0.75 (0.5%), tests_pri_0: 116 (71.7%),
+        check_dkim_signature: 0.39 (0.2%), check_dkim_adsp: 2.7 (1.7%),
+        tests_pri_500: 3.2 (2.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v5 0/6] x86/apic: Fix restoring boot irq mode in reboot and kexec/kdump
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Ingo Molnar <mingo@kernel.org> writes:
 
---=-N2q+Owl2dsFmXZvXOukG
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+> * Baoquan He <bhe@redhat.com> wrote:
+>
+>> This is v5 post. Newly added patch 0002 includes the change
+>> related to KEXEC_JUMP path. Patch 0003 only includes the
+>> regression fix.
+>> 
+>> A regression bug was introduced in below commit.
+>> commit 522e66464467 ("x86/apic: Disable I/O APIC before shutdown of the local APIC")
+>> 
+>> It caused the action to fail that we try to restore boot irq mode
+>> in reboot and kexec/kdump. Details can be seen in patch 0003.
+>> 
+>> Warning can always be seen during kdump kernel boot on qemu/kvm
+>> platform. Our customer even saw casual kdump kernel hang once in
+>> ~30 attempts during stress testing of kdump on KVM machine.
+>> 
+>> v4->v5:
+>>   Take out the change related to KEXEC_JUMP to a new patch 0002
+>>   according to Eric's suggestion.
+>>   Patch 0003 in this series only includes the regression fix.
+>> 
+>> v3->v4:
+>>   Eric pointed out that in patch 0002 the change related to
+>>   KEXEC_JUMP is not right.
+>>   Correct it.
+>> 
+>>   Add Fixes tag and Cc to stable.
+>
+> Eric, are these patches looking good to you now?
 
-T24gRnJpLCAyMDE4LTAyLTE2IGF0IDEwOjQ0IC0wODAwLCBUaW0gQ2hlbiB3cm90ZToKPiAKPiBJ
-IGVuY291bnRlcmVkIGhhbmcgb24gYSBtYWNoaW5lIGJ1dCBub3Qgb3RoZXJzIHdoZW4gdXNpbmcg
-dGhlIGFib3ZlCj4gbWFjcm8uwqAgSXQgaXMgcHJvYmFibHkgYW4gYWxpZ25tZW50IHRoaW5nIHdp
-dGggQUxURVJOQVRJVkUgYXMgdGhlCj4gcHJvYmxlbSB3ZW50Cj4gYXdheSBhZnRlciBJIG1hZGUg
-dGhlIGNoYW5nZSBiZWxvdzoKPiAKPiBUaW0KPiAKPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYvaW5j
-bHVkZS9hc20vbm9zcGVjLWJyYW5jaC5oCj4gYi9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9ub3NwZWMt
-YnJhbmNoLmgKPiBpbmRleCA4ZjJmZjc0Li4wZjY1YmQyIDEwMDY0NAo+IC0tLSBhL2FyY2gveDg2
-L2luY2x1ZGUvYXNtL25vc3BlYy1icmFuY2guaAo+ICsrKyBiL2FyY2gveDg2L2luY2x1ZGUvYXNt
-L25vc3BlYy1icmFuY2guaAo+IEBAIC0xNDgsNiArMTQ4LDcgQEAgZXh0ZXJuIGNoYXIgX19pbmRp
-cmVjdF90aHVua19lbmRbXTsKPiDCoAo+IMKgI2RlZmluZSBhbHRlcm5hdGl2ZV9tc3Jfd3JpdGUo
-X21zciwgX3ZhbCwgX2ZlYXR1cmUpwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBcCj4gwqDCoMKgwqDC
-oMKgwqAgYXNtIHZvbGF0aWxlKEFMVEVSTkFUSVZFKCIiLMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBcCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAiLmFsaWduIDE2XG5cdCLC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICJtb3ZsICVbbXNyXSwgJSVl
-Y3hcblx0IsKgwqDCoMKgwqDCoCBcCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgIm1vdmwgJVt2YWxdLCAlJWVheFxuXHQiwqDC
-oMKgwqDCoMKgIFwKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCAibW92bCAkMCwgJSVlZHhcblx0IsKgwqDCoMKgwqDCoMKgwqDC
-oMKgIFwKClRoYXQncyB3ZWlyZC4gTm90ZSB0aGF0IC5hbGlnbiBpbiBhbiBhbHRpbnN0ciBzZWN0
-aW9uIGlzbid0IGFjdHVhbGx5CmdvaW5nIHRvIGRvIHdoYXQgeW91J2QgZXhwZWN0OyB0aGUgb2xk
-aW5zdHIgYW5kIGFsdGluc3RyIHNlY3Rpb25zCmFyZW4ndCBuZWNlc3NhcmlseSBhbGlnbmVkIHRo
-ZSBzYW1lLCBzbyBob3dldmVyIG1hbnkgTk9QcyBpdCBpbnNlcnRzCmludG8gdGhlIGFsdGVybmF0
-aXZlLCBtaWdodCBiZSBkZWxpYmVyYXRlbHkgKm1pc2FsaWduaW5nKiBpdCBpbiB0aGUKY29kZSB0
-aGF0IGFjdHVhbGx5IGdldHMgZXhlY3V0ZWQuCgpBcmUgeW91IHN1cmUgeW91J3JlIG5vdCBydW5u
-aW5nIGEga2VybmVsIHdoZXJlIHRoZSBhbHRlcm5hdGl2ZXMgY29kZQp3b3VsZCB0dXJuIHRoYXQg
-YWx0ZXJuYXRpdmUgd2hpY2ggKnN0YXJ0cyogd2l0aCBhIE5PUCwgaW50byAqYWxsKiBOT1BzPw==
+The result of applying the patches looks good.
+Barring whatever fix to header files that kbuild seems to find necessary.
 
+I wish patches 1 2 and 4 were all the same patch.  That I think would
+make reading the patches a bit easier, and make the backports clearer.
+But at this point that is just me bike-shedding.
 
---=-N2q+Owl2dsFmXZvXOukG
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAyMTYxOTE2NDBaMC8GCSqG
-SIb3DQEJBDEiBCDTS5ZJ7dPIUFd+O8AbbhQvlDx3HvL9T/ZDi+n0Ee9gAjCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAJ6jiltWS/Dn
-wsOHQ7YakeF0tM8otQmIPmiAb7RGukocqzduwcIdnYACv0n39zf0O7huERGljVVzIN3iw/Igadwe
-lIPgAbFnTfJ2fsbMlbMwHEPuQLt5JQ3dZ8KY1opY+0maMJFIH0i3VmYeIQf9OUKDZJ0JMjlyKQPg
-OkDOVoNjH0MTN4SOrEcozsKdP7MN/vCGioiagahIyTtijrSfJ4OwZCpYZnpC2guPNumiwmhzSpPi
-C3IHdfJIZqW36fawTqebZoNtcf5zTKh0xxYejtlwMcMR20JfGhhUPJK5nBny1dyQTkczeiqwvhY3
-wZOo6mrT3FWyInHrVSBAA5yaYR8AAAAAAAA=
-
-
---=-N2q+Owl2dsFmXZvXOukG--
+Eric
