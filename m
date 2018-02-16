@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755808AbeBPP0c (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:26:32 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35318 "EHLO
+        id S1755923AbeBPP0m (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:26:42 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42158 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755387AbeBPP02 (ORCPT
+        by vger.kernel.org with ESMTP id S1755826AbeBPP0g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:26:28 -0500
+        Fri, 16 Feb 2018 10:26:36 -0500
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
@@ -25,20 +25,20 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         npiggin@gmail.com, bsingharora@gmail.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: [PATCH v8 10/24] mm: Protect SPF handler against anon_vma changes
-Date: Fri, 16 Feb 2018 16:25:24 +0100
+Subject: [PATCH v8 13/24] mm: Introduce __lru_cache_add_active_or_unevictable
+Date: Fri, 16 Feb 2018 16:25:27 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1518794738-4186-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18021615-0020-0000-0000-000003F8814F
+x-cbid: 18021615-0040-0000-0000-000004348085
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021615-0021-0000-0000-0000428C8545
-Message-Id: <1518794738-4186-11-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18021615-0041-0000-0000-000020D6853E
+Message-Id: <1518794738-4186-14-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-16_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1802160183
@@ -46,55 +46,99 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The speculative page fault handler must be protected against anon_vma
-changes. This is because page_add_new_anon_rmap() is called during the
-speculative path.
-
-In addition, don't try speculative page fault if the VMA don't have an
-anon_vma structure allocated because its allocation should be
-protected by the mmap_sem.
-
-In __vma_adjust() when importer->anon_vma is set, there is no need to
-protect against speculative page faults since speculative page fault
-is aborted if the vma->anon_vma is not set.
-
-When calling page_add_new_anon_rmap() vma->anon_vma is necessarily
-valid since we checked for it when locking the pte and the anon_vma is
-removed once the pte is unlocked. So even if the speculative page
-fault handler is running concurrently with do_unmap(), as the pte is
-locked in unmap_region() - through unmap_vmas() - and the anon_vma
-unlinked later, because we check for the vma sequence counter which is
-updated in unmap_page_range() before locking the pte, and then in
-free_pgtables() so when locking the pte the change will be detected.
+The speculative page fault handler which is run without holding the
+mmap_sem is calling lru_cache_add_active_or_unevictable() but the vm_flags
+is not guaranteed to remain constant.
+Introducing __lru_cache_add_active_or_unevictable() which has the vma flags
+value parameter instead of the vma pointer.
 
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- mm/memory.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/swap.h | 10 ++++++++--
+ mm/memory.c          |  8 ++++----
+ mm/swap.c            |  6 +++---
+ 3 files changed, 15 insertions(+), 9 deletions(-)
 
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index a1a3f4ed94ce..99377b66ea93 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -337,8 +337,14 @@ extern void deactivate_file_page(struct page *page);
+ extern void mark_page_lazyfree(struct page *page);
+ extern void swap_setup(void);
+ 
+-extern void lru_cache_add_active_or_unevictable(struct page *page,
+-						struct vm_area_struct *vma);
++extern void __lru_cache_add_active_or_unevictable(struct page *page,
++						unsigned long vma_flags);
++
++static inline void lru_cache_add_active_or_unevictable(struct page *page,
++						struct vm_area_struct *vma)
++{
++	return __lru_cache_add_active_or_unevictable(page, vma->vm_flags);
++}
+ 
+ /* linux/mm/vmscan.c */
+ extern unsigned long zone_reclaimable_pages(struct zone *zone);
 diff --git a/mm/memory.c b/mm/memory.c
-index 3cc1a13417cf..e37af9af4202 100644
+index bd5de1aa3f7a..bc14973b4eba 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -624,7 +624,9 @@ void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		 * Hide vma from rmap and truncate_pagecache before freeing
- 		 * pgtables
- 		 */
-+		vm_write_begin(vma);
- 		unlink_anon_vmas(vma);
-+		vm_write_end(vma);
- 		unlink_file_vma(vma);
+@@ -2560,7 +2560,7 @@ static int wp_page_copy(struct vm_fault *vmf)
+ 		ptep_clear_flush_notify(vma, vmf->address, vmf->pte);
+ 		page_add_new_anon_rmap(new_page, vma, vmf->address, false);
+ 		mem_cgroup_commit_charge(new_page, memcg, false, false);
+-		lru_cache_add_active_or_unevictable(new_page, vma);
++		__lru_cache_add_active_or_unevictable(new_page, vmf->vma_flags);
+ 		/*
+ 		 * We call the notify macro here because, when using secondary
+ 		 * mmu page tables (such as kvm shadow page tables), we want the
+@@ -3106,7 +3106,7 @@ int do_swap_page(struct vm_fault *vmf)
+ 	if (unlikely(page != swapcache && swapcache)) {
+ 		page_add_new_anon_rmap(page, vma, vmf->address, false);
+ 		mem_cgroup_commit_charge(page, memcg, false, false);
+-		lru_cache_add_active_or_unevictable(page, vma);
++		__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
+ 	} else {
+ 		do_page_add_anon_rmap(page, vma, vmf->address, exclusive);
+ 		mem_cgroup_commit_charge(page, memcg, true, false);
+@@ -3257,7 +3257,7 @@ static int do_anonymous_page(struct vm_fault *vmf)
+ 	inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
+ 	page_add_new_anon_rmap(page, vma, vmf->address, false);
+ 	mem_cgroup_commit_charge(page, memcg, false, false);
+-	lru_cache_add_active_or_unevictable(page, vma);
++	__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
+ setpte:
+ 	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, entry);
  
- 		if (is_vm_hugetlb_page(vma)) {
-@@ -638,7 +640,9 @@ void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 			       && !is_vm_hugetlb_page(next)) {
- 				vma = next;
- 				next = vma->vm_next;
-+				vm_write_begin(vma);
- 				unlink_anon_vmas(vma);
-+				vm_write_end(vma);
- 				unlink_file_vma(vma);
- 			}
- 			free_pgd_range(tlb, addr, vma->vm_end,
+@@ -3509,7 +3509,7 @@ int alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
+ 		inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
+ 		page_add_new_anon_rmap(page, vma, vmf->address, false);
+ 		mem_cgroup_commit_charge(page, memcg, false, false);
+-		lru_cache_add_active_or_unevictable(page, vma);
++		__lru_cache_add_active_or_unevictable(page, vmf->vma_flags);
+ 	} else {
+ 		inc_mm_counter_fast(vma->vm_mm, mm_counter_file(page));
+ 		page_add_file_rmap(page, false);
+diff --git a/mm/swap.c b/mm/swap.c
+index 2d337710218f..85fc6e78ca99 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -455,12 +455,12 @@ void lru_cache_add(struct page *page)
+  * directly back onto it's zone's unevictable list, it does NOT use a
+  * per cpu pagevec.
+  */
+-void lru_cache_add_active_or_unevictable(struct page *page,
+-					 struct vm_area_struct *vma)
++void __lru_cache_add_active_or_unevictable(struct page *page,
++					   unsigned long vma_flags)
+ {
+ 	VM_BUG_ON_PAGE(PageLRU(page), page);
+ 
+-	if (likely((vma->vm_flags & (VM_LOCKED | VM_SPECIAL)) != VM_LOCKED))
++	if (likely((vma_flags & (VM_LOCKED | VM_SPECIAL)) != VM_LOCKED))
+ 		SetPageActive(page);
+ 	else if (!TestSetPageMlocked(page)) {
+ 		/*
 -- 
 2.7.4
