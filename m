@@ -1,105 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750832AbeBPWan (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 17:30:43 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51237 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750727AbeBPWam (ORCPT
+        id S1750902AbeBPWc2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 17:32:28 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:57370 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750743AbeBPWc1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 17:30:42 -0500
-Date: Fri, 16 Feb 2018 23:30:41 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: pali.rohar@gmail.com, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
-        aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com,
-        patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com,
-        clayton@craftyguy.net, martijn@brixit.nl, sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>
-Subject: Nokia N900 camera in v4.16-rc1: ready for testing?
-Message-ID: <20180216223041.GA16010@amd>
+        Fri, 16 Feb 2018 17:32:27 -0500
+From: John Ogness <john.ogness@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] fs/dcache: Avoid the try_lock loops in dentry_kill()
+References: <20180216150933.971-1-john.ogness@linutronix.de>
+        <20180216150933.971-5-john.ogness@linutronix.de>
+        <CA+55aFyo6jrvU62DiwKJZaTnmwLYQe4krNJCbAUui8R+=bDVdQ@mail.gmail.com>
+Date: Fri, 16 Feb 2018 23:32:08 +0100
+In-Reply-To: <CA+55aFyo6jrvU62DiwKJZaTnmwLYQe4krNJCbAUui8R+=bDVdQ@mail.gmail.com>
+        (Linus Torvalds's message of "Fri, 16 Feb 2018 10:03:15 -0800")
+Message-ID: <87y3js36s7.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-02-16, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> On Fri, Feb 16, 2018 at 7:09 AM, John Ogness <john.ogness@linutronix.de> wrote:
+>> dentry_kill() holds dentry->d_lock and needs to acquire both
+>> dentry->d_inode->i_lock and dentry->d_parent->d_lock. This cannot be
+>> done with spin_lock() operations because it's the reverse of the
+>> regular lock order. To avoid ABBA deadlocks it is done with two
+>> trylock loops.
+>>
+>> Trylock loops are problematic in two scenarios:
+>
+> I don't mind this patch series per se (although I would really like Al
+> to ack it), but this particular patch I hate.
+>
+> Why?
+>
+>> Avoid the trylock loops by using dentry_lock_inode() and lock_parent()
+>> which take the locks in the appropriate order. As both functions drop
+>> dentry->lock briefly, this requires rechecking of the dentry content
+>> as it might have changed after dropping the lock.
+>
+> I think the trylock should be done first, and then you don't need that
+> recheck for the common case.
+>
+> I realize that the recheck itself isn't expensive, but it's mostly
+> about the code flow and the comment:
+>
+>> +                * Recheck refcount as it might have been incremented while
+>> +                * d_lock was dropped.
+>
+> the thing is, 99.9% of the time the d_lock wasn't dropped, so that
+> "while d_lock was dropped" comment is misleading.
+>
+> Re-organizing it to do the trylock fastpath explicitly here and not
+> bothering with the re-check etc crid for the common case is the rioght
+> thing to do.
+>
+> And the old code was actually organized exactly that way, with a
+>
+>         if (inode && unlikely(!spin_trylock(&inode->i_lock)))
+>                 goto failed;
+>
+> at the top.
+>
+> But instead of having that unlikely "failed" case do the complex
+> thing, you made the *normal* case do the complex thing.
+>
+> So NAK on this.
 
---UlVJffcvxoiEqYs2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+lock_parent() already has the problem you are referring to. Callers are
+required to recheck the dentry contents and check the returned parent
+because they do not know if the trylock succeeded. See
+d_prune_aliases(), for example.
 
-Hi!
+Would you like my v2 to fixup lock_parent() semantics to address your
+concerns there as well?
 
-Camera should work on N900, with v4.16-rc1. Autofocus should work;
-flash is in the queue.
-
-This patch is needed for non-square image. Patched v4l-utils is very
-much recommened for taking photos.
-
-Sakari: any ideas about this one? This is the bug I showed you in
-Prague...
-
-Best regards,
-								Pavel
-
-commit b685b7b98fc50149779416b33d234e4f9ff6ad0e
-Author: Pavel <pavel@ucw.cz>
-Date:   Mon Feb 13 21:26:51 2017 +0100
-
-    omap3isp: fix VP2SDR bit so capture (not preview) works
-   =20
-    This is neccessary for capture (not preview) to work properly on
-    N900. Why is unknown.
-
-diff --git a/drivers/media/platform/omap3isp/ispccdc.c b/drivers/media/plat=
-form/omap3isp/ispccdc.c
-index b66276a..6435857 100644
---- a/drivers/media/platform/omap3isp/ispccdc.c
-+++ b/drivers/media/platform/omap3isp/ispccdc.c
-@@ -1182,7 +1182,8 @@ static void ccdc_configure(struct isp_ccdc_device *cc=
-dc)
- 	/* Use the raw, unprocessed data when writing to memory. The H3A and
- 	 * histogram modules are still fed with lens shading corrected data.
- 	 */
--	syn_mode &=3D ~ISPCCDC_SYN_MODE_VP2SDR;
-+//	syn_mode &=3D ~ISPCCDC_SYN_MODE_VP2SDR;
-+	syn_mode |=3D ISPCCDC_SYN_MODE_VP2SDR;
-=20
- 	if (ccdc->output & CCDC_OUTPUT_MEMORY)
- 		syn_mode |=3D ISPCCDC_SYN_MODE_WEN;
-@@ -1249,6 +1250,8 @@ static void ccdc_configure(struct isp_ccdc_device *cc=
-dc)
- 			<< ISPCCDC_VERT_LINES_NLV_SHIFT,
- 		       OMAP3_ISP_IOMEM_CCDC, ISPCCDC_VERT_LINES);
-=20
-+	printk("configuring for %d(%d)x%d\n", crop->width, ccdc->video_out.bpl_va=
-lue, crop->height);
-+
- 	ccdc_config_outlineoffset(ccdc, ccdc->video_out.bpl_value,
- 				  format->field);
-=20
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---UlVJffcvxoiEqYs2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlqHW5EACgkQMOfwapXb+vJJzQCgwy/hd+62RIMPOnb+XMUGUHgR
-eeAAn2I8D4cVonrWZZU79Xf+G/xEUlbG
-=Msrx
------END PGP SIGNATURE-----
-
---UlVJffcvxoiEqYs2--
+John Ogness
