@@ -1,79 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754677AbeBPIic (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 03:38:32 -0500
-Received: from mga04.intel.com ([192.55.52.120]:58656 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754538AbeBPIib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 03:38:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,519,1511856000";
-   d="scan'208";a="18189246"
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: linux-integrity@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] tpm: rename TPM_TRANSMIT_RAW -> TPM_TRANSMIT_IGNORE_LOCALITY
-Date: Fri, 16 Feb 2018 10:38:18 +0200
-Message-Id: <20180216083818.5483-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.14.1
+        id S1754759AbeBPIkr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 03:40:47 -0500
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:46013 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754538AbeBPIko (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 03:40:44 -0500
+X-Google-Smtp-Source: AH8x226rmU9ENKYUI5+4QgBdy5BpMzyDg/qe7MpjsZFSonupVwVcdxikqWxwPFtgKo+h/UfeL3d2qoRa+Fc0jzzBysU=
+MIME-Version: 1.0
+In-Reply-To: <20180216082616.25084-2-carlo@caione.org>
+References: <20180216082616.25084-1-carlo@caione.org> <20180216082616.25084-2-carlo@caione.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 16 Feb 2018 09:40:43 +0100
+X-Google-Sender-Auth: c1-4TXrNE9hNdKXFNjukTP9RY6A
+Message-ID: <CAJZ5v0iP5o9-eeyB9JTvPSR97Z+d+=or_5F5QB107GipvteuAw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] ACPI: AC/battery: Add quirk to avoid using PMIC
+To: Carlo Caione <carlo@caione.org>
+Cc: Linux Upstreaming Team <linux@endlessm.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>, Carlo Caione <carlo@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The previous name does not give any picture of the behaviour.
+On Fri, Feb 16, 2018 at 9:26 AM, Carlo Caione <carlo@caione.org> wrote:
+> From: Carlo Caione <carlo@endlessm.com>
+>
+> With commits af3ec837 and dccfae6d a blacklist was introduced to avoid
+> using the ACPI drivers for AC and battery when a native PMIC driver was
+> already present. While this is in general a good idea (because of broken
+> DSDT or proprietary and undocumented ACPI opregions for the ACPI
+> AC/battery devices) we have come across at least one CherryTrail laptop
+> (ECS EF20EA) shipping the AXP288 together with a separate FG controller
+> (a MAX17047) instead of the one embedded in the AXP288.
+>
+> The net effect of blacklisting the ACPI drivers is that on this platform
+> the AC/battery reporting is broken since the information is coming from
+> the AXP288 FG driver, not actually used in hardware.
+>
+> In this case we want to keep using the ACPI AC/battery driver that is
+> able to interface correctly with the real FG controller.
+>
+> We introduce therefore a new quirk to avoid the blacklist.
+>
+> Signed-off-by: Carlo Caione <carlo@endlessm.com>
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm-interface.c  | 2 +-
- drivers/char/tpm/tpm.h            | 4 ++--
- drivers/char/tpm/tpm_vtpm_proxy.c | 3 ++-
- 3 files changed, 5 insertions(+), 4 deletions(-)
+First, please don't split the patches the way you have split them.
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 9e80a953d693..b355f9a0307b 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -431,7 +431,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	/* Store the decision as chip->locality will be changed. */
- 	need_locality = chip->locality == -1;
- 
--	if (!(flags & TPM_TRANSMIT_RAW) &&
-+	if (!(flags & TPM_TRANSMIT_IGNORE_LOCALITY) &&
- 	    need_locality && chip->ops->request_locality)  {
- 		rc = chip->ops->request_locality(chip, 0);
- 		if (rc < 0)
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index f895fba4e20d..1b7625623a8f 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -499,8 +499,8 @@ extern const struct file_operations tpmrm_fops;
- extern struct idr dev_nums_idr;
- 
- enum tpm_transmit_flags {
--	TPM_TRANSMIT_UNLOCKED	= BIT(0),
--	TPM_TRANSMIT_RAW	= BIT(1),
-+	TPM_TRANSMIT_UNLOCKED		= BIT(0),
-+	TPM_TRANSMIT_IGNORE_LOCALITY	= BIT(1),
- };
- 
- ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
-diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-index 1d877cc9af97..f36eaf8d57ff 100644
---- a/drivers/char/tpm/tpm_vtpm_proxy.c
-+++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-@@ -418,7 +418,8 @@ static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
- 	proxy_dev->state |= STATE_DRIVER_COMMAND;
- 
- 	rc = tpm_transmit_cmd(chip, NULL, buf.data, tpm_buf_length(&buf), 0,
--			      TPM_TRANSMIT_UNLOCKED | TPM_TRANSMIT_RAW,
-+			      TPM_TRANSMIT_UNLOCKED |
-+			      TPM_TRANSMIT_IGNORE_LOCALITY,
- 			      "attempting to set locality");
- 
- 	proxy_dev->state &= ~STATE_DRIVER_COMMAND;
--- 
-2.14.1
+Put all battery material into one patch and all AC material into the
+next one.  It is better to introduce things like
+ac_not_use_pmic_quirk() along with the quirks actually using them.
+
+> ---
+>  drivers/acpi/ac.c      | 26 ++++++++++++++++++--------
+>  drivers/acpi/battery.c | 26 ++++++++++++++++++--------
+>  2 files changed, 36 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/acpi/ac.c b/drivers/acpi/ac.c
+> index 47a7ed557bd6..b9a4ca720309 100644
+> --- a/drivers/acpi/ac.c
+> +++ b/drivers/acpi/ac.c
+> @@ -87,6 +87,7 @@ static int acpi_ac_open_fs(struct inode *inode, struct file *file);
+>
+>
+>  static int ac_sleep_before_get_state_ms;
+> +static bool ac_not_use_pmic;
+
+I would use a different name here, this one is confusing IMO.
+
+Something like ac_skip_pmic_blacklist would be better.
