@@ -1,85 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967226AbeBPMjr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 07:39:47 -0500
-Received: from mout.web.de ([212.227.17.11]:35589 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967151AbeBPMjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 07:39:45 -0500
-Subject: [PATCH 2/3] pata_macio: Improve a size determination in two functions
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-ide@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tejun Heo <tj@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <1e87cf7d-eda2-12d9-af01-17f6619cda72@users.sourceforge.net>
-Message-ID: <44765718-d832-c58b-6055-91c7c9b11b73@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 13:39:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1e87cf7d-eda2-12d9-af01-17f6619cda72@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
+        id S967271AbeBPMkh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 07:40:37 -0500
+Received: from smtprelay.synopsys.com ([198.182.47.9]:60938 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967151AbeBPMkf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 07:40:35 -0500
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>
+Subject: arc: mm->mmap_sem gets locked in do_page_fault() in case of OOM
+ killer invocation
+Thread-Topic: mm->mmap_sem gets locked in do_page_fault() in case of OOM
+ killer invocation
+Thread-Index: AQHTpyNUXMYBH9SAIUyk2T8LadpeMQ==
+Date: Fri, 16 Feb 2018 12:40:30 +0000
+Message-ID: <1518784830.3544.33.camel@synopsys.com>
+Accept-Language: en-US, ru-RU
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:SCvE2UaWrJniAtcJEurDR4YblgI0CBHZBJb1UZomcIf4ST2HQIk
- 4GmyUseJgkQ2r5bGfDF3IlI0gP+5KmsCnaQpeKaX6gSRg6DSqQnxBMPsRzKL1M4QDBV/Nlb
- T9Q9/7rX3elXexHk7BINqrtAB+XaQJ0oZA77qBaUIViAyB7OMZlnIu3+FAV44l+6OhBts4b
- wEhSD1qDAidTzpGkXNJTg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:G+Y49GT9jyk=:9LlPEvB/XeJC0eKe2nPGM1
- PLtHvPAoSNsxVfE83DpyOMeNnmrUoBejmaTeF/4eFV07Qe6oTx5cz1/4lOOppFY1VKCpn/EcP
- PFSFYGY0tYiW9QufXAg03kO8VhcyOzmLita1f6ldQYbXV3nIVD9REncvowOdb3x+PDKpKGVWi
- WcBy89iSi4mX9Uu1+1QwYiaaHpNFUjhm7GV/TAHmnHJzBU4iV4x6Kf0xjSXOCWoAGzUaFR1L9
- 2nAaVO3L1iFQO++cc8p6V9lYDsTJFeTOTnqDjjOpX+8kLk896oIXayJFaWWoNXwcKyNZ1uvE6
- H7M4UMjcHIvN8urdWDjJzBXHWUU5M7v9fUTme1yVLzDb/hzvgFtQqWfHhfv5rMKs1EbrA4MlH
- lSwjNtRx1rALQU45rY4m3YNo+Ma6czmQvm8Es/+Cz333/hP3oQjGNv7wAuh9+JyJHirpIFpDt
- 3vnStFJEG7lvLowfrd0cfKelidBjOPXfvJ/9ZhW1PJU8qWAB6zpYsxCUc4q482IFZey+4u8su
- v2qQAPIVvtYykZKFxGvhOTWFJqLJeTpr7aAhrSmxaJ7bqBmwU0dhKd5+iJZxjthW3i3bmqo4Z
- wNLtOSl3CAzdAok4SGtVpG8/pqcxOeHTs7tPtm63EfRH99naHRmdCnvLFKcIFCVvoHwWaxjfp
- yjE3pdRPsqNtAEkORzJWKf8k+G1zY1eRvbdAgjtQ2CVSRbbkEK+p+KUpOvuHFH8FtOAgnMKUA
- OvT3/q585JbrP/7uSRomaam+U1gki68TmqCvyz00lsG4pKilExWlTk6UYdAG2p3vo0WBVvWER
- ogbEXsP3vjQbXtDuuThxEkCq9Id4syXcGozOWrgqyx0Q/cINzs=
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.8.86]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2A9131B80B16FB4EAC4FB40E2B39EC19@internal.synopsys.com>
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1GCehvP005514
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 16 Feb 2018 13:08:14 +0100
+Hi Vineet,
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+While playing with OOM killer I bumped in a pure software deadlock on ARC
+which is even observed in simulation (i.e. it has nothing to do with HW peculiarities).
 
-This issue was detected by using the Coccinelle software.
+What's nice kernel even sees that lock-up if "Lock Debugging" is enabled.
+That's what I see:
+-------------------------------------------->8-------------------------------------------
+# /home/oom-test 450 & /home/oom-test 450
+oom-test invoked oom-killer: gfp_mask=0x14200ca(GFP_HIGHUSER_MOVABLE), nodemask=(null),  order=0, oom_score_adj=0
+CPU: 0 PID: 67 Comm: oom-test Not tainted 4.14.19 #2
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/ata/pata_macio.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Stack Trace:
+  arc_unwind_core.constprop.1+0xd4/0xf8
+  dump_header.isra.6+0x84/0x2f8
+  oom_kill_process+0x258/0x7c8
+  out_of_memory+0xb8/0x5e0
+  __alloc_pages_nodemask+0x922/0xd28
+  handle_mm_fault+0x284/0xd90
+  do_page_fault+0xf6/0x2a0
+  ret_from_exception+0x0/0x8
+Mem-Info:
+active_anon:62276 inactive_anon:341 isolated_anon:0
+ active_file:0 inactive_file:0 isolated_file:0
+ unevictable:0 dirty:0 writeback:0 unstable:0
+ slab_reclaimable:26 slab_unreclaimable:196
+ mapped:105 shmem:578 pagetables:263 bounce:0
+ free:344 free_pcp:39 free_cma:0
+Node 0 active_anon:498208kB inactive_anon:2728kB active_file:0kB inactive_file:0kB unevictable:0kB isolated(anon):0kB isolated(file):0kB mapped:840kB
+dirty:
+0kB writeback:0kB shmem:4624kB writeback_tmp:0kB unstable:0kB all_unreclaimable? no
+Normal free:2752kB min:2840kB low:3544kB high:4248kB active_anon:498208kB inactive_anon:2728kB active_file:0kB inactive_file:0kB unevictable:0kB
+writependin
+g:0kB present:524288kB managed:508584kB mlocked:0kB kernel_stack:240kB pagetables:2104kB bounce:0kB free_pcp:312kB local_pcp:312kB free_cma:0kB
+lowmem_reserve[]: 0 0
+Normal: 0*8kB 0*16kB 0*32kB 1*64kB (M) 1*128kB (M) 0*256kB 1*512kB (M) 0*1024kB 1*2048kB (M) 0*4096kB 0*8192kB = 2752kB
+578 total pagecache pages
+65536 pages RAM
+0 pages HighMem/MovableOnly
+1963 pages reserved
+[ pid ]   uid  tgid total_vm      rss nr_ptes nr_pmds swapents oom_score_adj name
+[   41]     0    41      157      103       3       0        0             0 syslogd
+[   43]     0    43      156      106       3       0        0             0 klogd
+[   63]     0    63      157       99       3       0        0             0 getty
+[   64]     0    64      159      118       3       0        0             0 sh
+[   66]     0    66   115291    31094     124       0        0             0 oom-test
+[   67]     0    67   115291    31004     124       0        0             0 oom-test
+Out of memory: Kill process 66 (oom-test) score 476 or sacrifice child
+Killed process 66 (oom-test) total-vm:922328kB, anon-rss:248328kB, file-rss:0kB, shmem-rss:424kB
 
-diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
-index 9588e685d994..dc40af4c615c 100644
---- a/drivers/ata/pata_macio.c
-+++ b/drivers/ata/pata_macio.c
-@@ -1129,8 +1129,7 @@ static int pata_macio_attach(struct macio_dev *mdev,
- 	macio_enable_devres(mdev);
- 
- 	/* Allocate and init private data structure */
--	priv = devm_kzalloc(&mdev->ofdev.dev,
--			    sizeof(struct pata_macio_priv), GFP_KERNEL);
-+	priv = devm_kzalloc(&mdev->ofdev.dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
-@@ -1273,8 +1272,7 @@ static int pata_macio_pci_attach(struct pci_dev *pdev,
- 	}
- 
- 	/* Allocate and init private data structure */
--	priv = devm_kzalloc(&pdev->dev,
--			    sizeof(struct pata_macio_priv), GFP_KERNEL);
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
--- 
-2.16.1
+============================================
+WARNING: possible recursive locking detected
+4.14.19 #2 Not tainted
+--------------------------------------------
+oom-test/66 is trying to acquire lock:
+ (&mm->mmap_sem){++++}, at: [<80217d50>] do_exit+0x444/0x7f8
+
+but task is already holding lock:
+ (&mm->mmap_sem){++++}, at: [<8021028a>] do_page_fault+0x9e/0x2a0
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&mm->mmap_sem);
+  lock(&mm->mmap_sem);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+1 lock held by oom-test/66:
+ #0:  (&mm->mmap_sem){++++}, at: [<8021028a>] do_page_fault+0x9e/0x2a0
+
+stack backtrace:
+CPU: 0 PID: 66 Comm: oom-test Not tainted 4.14.19 #2
+
+Stack Trace:
+  arc_unwind_core.constprop.1+0xd4/0xf8
+  __lock_acquire+0x582/0x1494
+  lock_acquire+0x3c/0x58
+  down_read+0x1a/0x28
+  do_exit+0x444/0x7f8
+  do_group_exit+0x26/0x8c
+  get_signal+0x1aa/0x7d4
+  do_signal+0x30/0x220
+  resume_user_mode_begin+0x90/0xd8
+-------------------------------------------->8-------------------------------------------
+
+Looking at our code in "arch/arc/mm/fault.c" I may see why "mm->mmap_sem" is not released:
+1. fatal_signal_pending(current) returns non-zero value
+2. ((fault & VM_FAULT_ERROR) && !(fault & VM_FAULT_RETRY)) is false thus up_read(&mm->mmap_sem)
+   is not executed.
+3. It was a user-space process thus we simply return [with "mm->mmap_sem" still held].
+
+See the code snippet below:
+-------------------------------------------->8-------------------------------------------
+	/* If Pagefault was interrupted by SIGKILL, exit page fault "early" */
+	if (unlikely(fatal_signal_pending(current))) {
+		if ((fault & VM_FAULT_ERROR) && !(fault & VM_FAULT_RETRY))
+			up_read(&mm->mmap_sem);
+		if (user_mode(regs))
+			return;
+	}
+-------------------------------------------->8-------------------------------------------
+
+Then we leave page fault handler and before returning to user-space we
+process pending signal which happen to be a death signal and so we end-up executing the
+following code-path (see stack trace above):
+    do_exit() -> exit_mm() -> down_read(&mm->mmap_sem) <-- And here we go locking ourselves for good.
+
+What's interesting most if not all architectures return from page fault handler with
+"mm->mmap_sem" held in case of fatal_signal_pending(). So I would expect the same failure as I see on ARC
+to happen on other arches too... though I was not able to trigger that on ARM (WandBoard Quad).
+
+I think because on ARM and many others the check is a bit different:
+-------------------------------------------->8-------------------------------------------
+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
+		if (!user_mode(regs))
+			goto no_context;
+		return 0;
+	}
+-------------------------------------------->8-------------------------------------------
+
+So to get into problematic code-path (i.e. exit with "mm->mmap_sem" still held) we need
+__do_page_fault() to return VM_FAULT_RETRY. Which makes reproduction even more complicated but
+I think it's still doable :)
+
+The simplest solution here seems to be unconditional up_read(&mm->mmap_sem) before return but
+that's so strange it was not done by that time. Anyways any thought are very welcome!
+
+-Alexey
