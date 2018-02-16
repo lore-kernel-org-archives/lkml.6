@@ -1,31 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935158AbeBPLG0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 06:06:26 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:50439 "EHLO
+        id S935061AbeBPLFK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 06:05:10 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:50367 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934998AbeBPLGY (ORCPT
+        with ESMTP id S935015AbeBPLE7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 06:06:24 -0500
-Date: Fri, 16 Feb 2018 02:55:57 -0800
+        Fri, 16 Feb 2018 06:04:59 -0500
+Date: Fri, 16 Feb 2018 02:53:33 -0800
 From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
-Message-ID: <tip-6657fca06e3ffab8d0b3f9d8b397f5ee498952d7@git.kernel.org>
-Cc: jpoimboe@redhat.com, kirill.shutemov@linux.intel.com,
-        peterz@infradead.org, arjan@linux.intel.com, hpa@zytor.com, bp@suse.de,
-        torvalds@linux-foundation.org, luto@kernel.org, dwmw2@infradead.org,
-        mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        dave.hansen@linux.intel.com, dan.j.williams@intel.com
-Reply-To: dan.j.williams@intel.com, luto@kernel.org, dwmw2@infradead.org,
-        mingo@kernel.org, tglx@linutronix.de, dave.hansen@linux.intel.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, arjan@linux.intel.com,
-        peterz@infradead.org, bp@suse.de, torvalds@linux-foundation.org,
-        jpoimboe@redhat.com, kirill.shutemov@linux.intel.com
-In-Reply-To: <20180214182542.69302-10-kirill.shutemov@linux.intel.com>
-References: <20180214182542.69302-10-kirill.shutemov@linux.intel.com>
+Message-ID: <tip-a7412546d8cb5ad578805060b4006f2a021b5868@git.kernel.org>
+Cc: luto@kernel.org, dave.hansen@linux.intel.com,
+        linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
+        tglx@linutronix.de, hpa@zytor.com, arjan@linux.intel.com, bp@suse.de,
+        dwmw2@infradead.org, dan.j.williams@intel.com,
+        torvalds@linux-foundation.org, jpoimboe@redhat.com,
+        peterz@infradead.org, mingo@kernel.org
+Reply-To: torvalds@linux-foundation.org, jpoimboe@redhat.com,
+        peterz@infradead.org, mingo@kernel.org, luto@kernel.org,
+        dave.hansen@linux.intel.com, tglx@linutronix.de, hpa@zytor.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        dwmw2@infradead.org, dan.j.williams@intel.com, arjan@linux.intel.com,
+        bp@suse.de
+In-Reply-To: <20180214182542.69302-5-kirill.shutemov@linux.intel.com>
+References: <20180214182542.69302-5-kirill.shutemov@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm: Allow to boot without LA57 if
- CONFIG_X86_5LEVEL=y
-Git-Commit-ID: 6657fca06e3ffab8d0b3f9d8b397f5ee498952d7
+Subject: [tip:x86/mm] x86/mm: Adjust vmalloc base and size at boot-time
+Git-Commit-ID: a7412546d8cb5ad578805060b4006f2a021b5868
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,22 +39,17 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6657fca06e3ffab8d0b3f9d8b397f5ee498952d7
-Gitweb:     https://git.kernel.org/tip/6657fca06e3ffab8d0b3f9d8b397f5ee498952d7
+Commit-ID:  a7412546d8cb5ad578805060b4006f2a021b5868
+Gitweb:     https://git.kernel.org/tip/a7412546d8cb5ad578805060b4006f2a021b5868
 Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate: Wed, 14 Feb 2018 21:25:42 +0300
+AuthorDate: Wed, 14 Feb 2018 21:25:37 +0300
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 16 Feb 2018 10:48:49 +0100
+CommitDate: Fri, 16 Feb 2018 10:48:47 +0100
 
-x86/mm: Allow to boot without LA57 if CONFIG_X86_5LEVEL=y
+x86/mm: Adjust vmalloc base and size at boot-time
 
-All pieces of the puzzle are in place and we can now allow to boot with
-CONFIG_X86_5LEVEL=y on a machine without LA57 support.
-
-Kernel will detect that LA57 is missing and fold p4d at runtime.
-
-Update the documentation and the Kconfig option description to reflect the
-change.
+vmalloc area has different placement and size depending on paging mode.
+Let's adjust it during early boot accodring to machine capability.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -67,107 +63,93 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180214182542.69302-10-kirill.shutemov@linux.intel.com
+Link: http://lkml.kernel.org/r/20180214182542.69302-5-kirill.shutemov@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- Documentation/x86/x86_64/5level-paging.txt |  9 +++------
- arch/x86/Kconfig                           |  4 ++--
- arch/x86/boot/compressed/misc.c            | 16 ----------------
- arch/x86/include/asm/required-features.h   |  8 +-------
- 4 files changed, 6 insertions(+), 31 deletions(-)
+ arch/x86/include/asm/pgtable_64_types.h | 16 ++++++++++------
+ arch/x86/kernel/head64.c                |  3 ++-
+ arch/x86/mm/kaslr.c                     |  3 ++-
+ 3 files changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/x86/x86_64/5level-paging.txt b/Documentation/x86/x86_64/5level-paging.txt
-index 087251a..2432a5e 100644
---- a/Documentation/x86/x86_64/5level-paging.txt
-+++ b/Documentation/x86/x86_64/5level-paging.txt
-@@ -20,12 +20,9 @@ Documentation/x86/x86_64/mm.txt
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index 59d971c..6863299 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -102,25 +102,29 @@ extern unsigned int ptrs_per_p4d;
+ #define LDT_PGD_ENTRY		(pgtable_l5_enabled ? LDT_PGD_ENTRY_L5 : LDT_PGD_ENTRY_L4)
+ #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
  
- CONFIG_X86_5LEVEL=y enables the feature.
- 
--So far, a kernel compiled with the option enabled will be able to boot
--only on machines that supports the feature -- see for 'la57' flag in
--/proc/cpuinfo.
--
--The plan is to implement boot-time switching between 4- and 5-level paging
--in the future.
-+Kernel with CONFIG_X86_5LEVEL=y still able to boot on 4-level hardware.
-+In this case additional page table level -- p4d -- will be folded at
-+runtime.
- 
- == User-space and large virtual address space ==
- 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index fcc3f88..1c4f7b6 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1440,8 +1440,8 @@ config X86_5LEVEL
- 
- 	  It will be supported by future Intel CPUs.
- 
--	  Note: a kernel with this option enabled can only be booted
--	  on machines that support the feature.
-+	  A kernel with the option enabled can be booted on machines that
-+	  support 4- or 5-level paging.
- 
- 	  See Documentation/x86/x86_64/5level-paging.txt for more
- 	  information.
-diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
-index 98761a1..b50c424 100644
---- a/arch/x86/boot/compressed/misc.c
-+++ b/arch/x86/boot/compressed/misc.c
-@@ -169,16 +169,6 @@ void __puthex(unsigned long value)
- 	}
- }
- 
--static bool l5_supported(void)
--{
--	/* Check if leaf 7 is supported. */
--	if (native_cpuid_eax(0) < 7)
--		return 0;
--
--	/* Check if la57 is supported. */
--	return native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31));
--}
--
- #if CONFIG_X86_NEED_RELOCS
- static void handle_relocations(void *output, unsigned long output_len,
- 			       unsigned long virt_addr)
-@@ -372,12 +362,6 @@ asmlinkage __visible void *extract_kernel(void *rmode, memptr heap,
- 	console_init();
- 	debug_putstr("early console in extract_kernel\n");
- 
--	if (IS_ENABLED(CONFIG_X86_5LEVEL) && !l5_supported()) {
--		error("This linux kernel as configured requires 5-level paging\n"
--			"This CPU does not support the required 'cr4.la57' feature\n"
--			"Unable to boot - please use a kernel appropriate for your CPU\n");
--	}
--
- 	free_mem_ptr     = heap;	/* Heap */
- 	free_mem_end_ptr = heap + BOOT_HEAP_SIZE;
- 
-diff --git a/arch/x86/include/asm/required-features.h b/arch/x86/include/asm/required-features.h
-index fb3a6de..6847d85 100644
---- a/arch/x86/include/asm/required-features.h
-+++ b/arch/x86/include/asm/required-features.h
-@@ -53,12 +53,6 @@
- # define NEED_MOVBE	0
++#define __VMALLOC_BASE_L4	0xffffc90000000000
++#define __VMALLOC_BASE_L5 	0xffa0000000000000
++
++#define VMALLOC_SIZE_TB_L4	32UL
++#define VMALLOC_SIZE_TB_L5	12800UL
++
+ #ifdef CONFIG_X86_5LEVEL
+-# define VMALLOC_SIZE_TB	_AC(12800, UL)
+-# define __VMALLOC_BASE		_AC(0xffa0000000000000, UL)
+ # define __VMEMMAP_BASE		_AC(0xffd4000000000000, UL)
+ #else
+-# define VMALLOC_SIZE_TB	_AC(32, UL)
+-# define __VMALLOC_BASE		_AC(0xffffc90000000000, UL)
+ # define __VMEMMAP_BASE		_AC(0xffffea0000000000, UL)
  #endif
  
--#ifdef CONFIG_X86_5LEVEL
--# define NEED_LA57	(1<<(X86_FEATURE_LA57 & 31))
--#else
--# define NEED_LA57	0
--#endif
--
- #ifdef CONFIG_X86_64
- #ifdef CONFIG_PARAVIRT
- /* Paravirtualized systems may not have PSE or PGE available */
-@@ -104,7 +98,7 @@
- #define REQUIRED_MASK13	0
- #define REQUIRED_MASK14	0
- #define REQUIRED_MASK15	0
--#define REQUIRED_MASK16	(NEED_LA57)
-+#define REQUIRED_MASK16	0
- #define REQUIRED_MASK17	0
- #define REQUIRED_MASK18	0
- #define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
+ #ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
+ # define VMALLOC_START		vmalloc_base
++# define VMALLOC_SIZE_TB	(pgtable_l5_enabled ? VMALLOC_SIZE_TB_L5 : VMALLOC_SIZE_TB_L4)
+ # define VMEMMAP_START		vmemmap_base
+ #else
+-# define VMALLOC_START		__VMALLOC_BASE
++# define VMALLOC_START		__VMALLOC_BASE_L4
++# define VMALLOC_SIZE_TB	VMALLOC_SIZE_TB_L4
+ # define VMEMMAP_START		__VMEMMAP_BASE
+ #endif /* CONFIG_DYNAMIC_MEMORY_LAYOUT */
+ 
+-#define VMALLOC_END		(VMALLOC_START + _AC((VMALLOC_SIZE_TB << 40) - 1, UL))
++#define VMALLOC_END		(VMALLOC_START + (VMALLOC_SIZE_TB << 40) - 1)
+ 
+ #define MODULES_VADDR		(__START_KERNEL_map + KERNEL_IMAGE_SIZE)
+ /* The module sections ends with the start of the fixmap */
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 876d3bf..22bf201 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -51,7 +51,7 @@ EXPORT_SYMBOL(ptrs_per_p4d);
+ #ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
+ unsigned long page_offset_base __ro_after_init = __PAGE_OFFSET_BASE_L4;
+ EXPORT_SYMBOL(page_offset_base);
+-unsigned long vmalloc_base __ro_after_init = __VMALLOC_BASE;
++unsigned long vmalloc_base __ro_after_init = __VMALLOC_BASE_L4;
+ EXPORT_SYMBOL(vmalloc_base);
+ unsigned long vmemmap_base __ro_after_init = __VMEMMAP_BASE;
+ EXPORT_SYMBOL(vmemmap_base);
+@@ -87,6 +87,7 @@ static void __head check_la57_support(unsigned long physaddr)
+ 	*fixup_int(&pgdir_shift, physaddr) = 48;
+ 	*fixup_int(&ptrs_per_p4d, physaddr) = 512;
+ 	*fixup_long(&page_offset_base, physaddr) = __PAGE_OFFSET_BASE_L5;
++	*fixup_long(&vmalloc_base, physaddr) = __VMALLOC_BASE_L5;
+ }
+ #else
+ static void __head check_la57_support(unsigned long physaddr) {}
+diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+index 7828a7c..641169d 100644
+--- a/arch/x86/mm/kaslr.c
++++ b/arch/x86/mm/kaslr.c
+@@ -50,7 +50,7 @@ static __initdata struct kaslr_memory_region {
+ 	unsigned long size_tb;
+ } kaslr_regions[] = {
+ 	{ &page_offset_base, 0 },
+-	{ &vmalloc_base, VMALLOC_SIZE_TB },
++	{ &vmalloc_base, 0 },
+ 	{ &vmemmap_base, 1 },
+ };
+ 
+@@ -94,6 +94,7 @@ void __init kernel_randomize_memory(void)
+ 		return;
+ 
+ 	kaslr_regions[0].size_tb = 1 << (__PHYSICAL_MASK_SHIFT - TB_SHIFT);
++	kaslr_regions[1].size_tb = VMALLOC_SIZE_TB;
+ 
+ 	/*
+ 	 * Update Physical memory mapping to available and
