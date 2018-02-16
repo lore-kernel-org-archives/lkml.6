@@ -1,83 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965692AbeBPME0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 07:04:26 -0500
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:61346 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965642AbeBPMEX (ORCPT
+        id S965672AbeBPMEY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 07:04:24 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39658 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965036AbeBPMEW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 07:04:23 -0500
-Subject: Re: [PATCH v3 0/2] phy: rockchip-emmc: fixes emmc-phy power on failed
- with rk3399 SoCs
-To: Caesar Wang <wxt@rock-chips.com>
-References: <1515638427-15117-1-git-send-email-wxt@rock-chips.com>
-CC: Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        <linux-arm-kernel@lists.infradead.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <56548710-6b9a-85bc-85de-221ae748d83c@ti.com>
-Date: Fri, 16 Feb 2018 17:33:48 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
-MIME-Version: 1.0
-In-Reply-To: <1515638427-15117-1-git-send-email-wxt@rock-chips.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 16 Feb 2018 07:04:22 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        robh@kernel.org, shegjiu.wang@nxp.com, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com, daniel.baluta@nxp.com, mihai.serban@gmail.com,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: ak4458: Add bindings for AK4458 DAC" to the asoc tree
+In-Reply-To: <1518614467-20613-3-git-send-email-cosmin.samoila@nxp.com>
+Message-Id: <E1emekW-00053C-Hz@debutante>
+Date: Fri, 16 Feb 2018 12:04:20 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch
 
+   ASoC: ak4458: Add bindings for AK4458 DAC
 
-On Thursday 11 January 2018 08:10 AM, Caesar Wang wrote:
-> Hi Kishon,
-> 
-> Since the Shawn isn't available, I take over this series patches for now.
-> 
-> As the original bug had tracked on https://issuetracker.google.com/71561742.
-> In some cases, the mmc phy power on failed during booting up.
-> The log as below:
-> ...
-> [   2.375333] rockchip_emmc_phy_power: caldone timeout.
-> [    2.377815] phy phy-ff770000.syscon:phy@f780.4: phy poweron failed --> -110
-> ...
-> [    2.489295] mmc0: mmc_select_hs400es failed, error -110
-> [    2.489302] mmc0: error -110 whilst initialising MMC card
-> ..
-> 
-> The actual emulate, the wait 5us for calpad busy trimming, that's no enough.
-> We need give the enough margin for it.
-> 
-> Verified on url =
->         https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-4.4
-> This series patches can apply and bring up with kernel-next on rk3399 chromebook.
+has been applied to the asoc tree at
 
-merged now, thanks!
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
--Kishon
-> 
-> -Caesar
-> 
-> 
-> Changes in v3:
-> - As Doug commented on both upstream and gerrit.
->   Change "5, 50" to "0, 50", and the message of print.
-> - As Doug commented on https://patchwork.kernel.org/patch/10154797,
->   Change "1, 50" to "0, 50".
-> 
-> Changes in v2:
-> - print the return valut with regmap_read_poll_timeout failing.
-> - As Brian commented on https://patchwork.kernel.org/patch/10139891/,
->   changed the note and added to print error value with
->   regmap_read_poll_timeout API.
-> 
-> Shawn Lin (2):
->   phy: rockchip-emmc: retry calpad busy trimming
->   phy: rockchip-emmc: use regmap_read_poll_timeout to poll dllrdy
-> 
->  drivers/phy/rockchip/phy-rockchip-emmc.c | 60 +++++++++++++++-----------------
->  1 file changed, 28 insertions(+), 32 deletions(-)
-> 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 17e2304f0ad31d3f9bba4285b7024bf3c3626600 Mon Sep 17 00:00:00 2001
+From: Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
+Date: Wed, 14 Feb 2018 15:21:07 +0200
+Subject: [PATCH] ASoC: ak4458: Add bindings for AK4458 DAC
+
+Document the bindings for AK4458 DAC
+
+Signed-off-by: Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ Documentation/devicetree/bindings/sound/ak4458.txt | 23 ++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/ak4458.txt
+
+diff --git a/Documentation/devicetree/bindings/sound/ak4458.txt b/Documentation/devicetree/bindings/sound/ak4458.txt
+new file mode 100644
+index 000000000000..7839be78448d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/ak4458.txt
+@@ -0,0 +1,23 @@
++AK4458 audio DAC
++
++This device supports I2C mode.
++
++Required properties:
++
++- compatible : "asahi-kasei,ak4458"
++- reg : The I2C address of the device for I2C
++
++Optional properties:
++- reset-gpios: A GPIO specifier for the power down & reset pin
++- mute-gpios: A GPIO specifier for the soft mute pin
++
++Example:
++
++&i2c {
++	ak4458: dac@10 {
++		compatible = "asahi-kasei,ak4458";
++		reg = <0x10>;
++		reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>
++		mute-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>
++	};
++};
+-- 
+2.16.1
