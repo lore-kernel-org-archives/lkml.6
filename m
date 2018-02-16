@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751234AbeBPUfm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 15:35:42 -0500
-Received: from alln-iport-6.cisco.com ([173.37.142.93]:35249 "EHLO
-        alln-iport-6.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751091AbeBPUeL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751112AbeBPUeL (ORCPT <rfc822;w@1wt.eu>);
         Fri, 16 Feb 2018 15:34:11 -0500
+Received: from alln-iport-5.cisco.com ([173.37.142.92]:39133 "EHLO
+        alln-iport-5.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751067AbeBPUeH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 15:34:07 -0500
 X-IronPort-AV: E=Sophos;i="5.46,520,1511827200";
-   d="scan'208";a="71375540"
+   d="scan'208";a="71365216"
 From: Taras Kondratiuk <takondra@cisco.com>
 To: "H. Peter Anvin" <hpa@zytor.com>, Al Viro <viro@zeniv.linux.org.uk>,
         Arnd Bergmann <arnd@arndb.de>, Rob Landley <rob@landley.net>,
@@ -18,9 +18,9 @@ To: "H. Peter Anvin" <hpa@zytor.com>, Al Viro <viro@zeniv.linux.org.uk>,
 Cc: initramfs@vger.kernel.org, Victor Kamensky <kamensky@cisco.com>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, xe-linux-external@cisco.com
-Subject: [PATCH v3 14/14] selinux: delay sid population for rootfs till init is complete
-Date: Fri, 16 Feb 2018 20:33:53 +0000
-Message-Id: <1518813234-5874-18-git-send-email-takondra@cisco.com>
+Subject: [PATCH v3 11/15] gen_init_cpio: add newcx format
+Date: Fri, 16 Feb 2018 20:33:47 +0000
+Message-Id: <1518813234-5874-12-git-send-email-takondra@cisco.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518813234-5874-1-git-send-email-takondra@cisco.com>
 References: <1518813234-5874-1-git-send-email-takondra@cisco.com>
@@ -30,78 +30,154 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Victor Kamensky <kamensky@cisco.com>
+Add "newcx" format that supports extended attributes and has increased
+size of c_mtime and c_filesize fields.
 
-With initramfs cpio format that supports extended attributes
-we need to skip sid population on sys_lsetxattr call from
-initramfs for rootfs if security server is not initialized yet.
+Added -x option to select "newcx" format. Default is "newc".
 
-Otherwise callback in selinux_inode_post_setxattr will try to
-translate give security.selinux label into sid context and since
-security server is not available yet inode will receive default
-sid (typically kernel_t). Note that in the same time proper
-label will be stored in inode xattrs. Later, since inode sid
-would be already populated system will never look back at
-actual xattrs. But if we skip sid population for rootfs and
-we have policy that direct use of xattrs for rootfs, proper
-sid will be filled in from extended attributes one node is
-accessed and server is initialized.
+Refer to Documentation/early-userspace/buffer-format.txt for detailed
+format description.
 
-Note new DELAYAFTERINIT_MNT super block flag is introduced
-to only mark rootfs for such behavior. For other types of
-tmpfs original logic is still used.
-
-Signed-off-by: Victor Kamensky <kamensky@cisco.com>
+Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
 ---
- security/selinux/hooks.c            | 9 ++++++++-
- security/selinux/include/security.h | 1 +
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ usr/gen_init_cpio.c | 69 +++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 48 insertions(+), 21 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index f3fe65589f02..bb25268f734e 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -716,7 +716,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
- 			 */
- 			if (!strncmp(sb->s_type->name, "rootfs",
- 				     sizeof("rootfs")))
--				sbsec->flags |= SBLABEL_MNT;
-+				sbsec->flags |= SBLABEL_MNT|DELAYAFTERINIT_MNT;
+diff --git a/usr/gen_init_cpio.c b/usr/gen_init_cpio.c
+index 7a2a6d85345d..25afd5b4af77 100644
+--- a/usr/gen_init_cpio.c
++++ b/usr/gen_init_cpio.c
+@@ -21,6 +21,8 @@
+ #define xstr(s) #s
+ #define str(s) xstr(s)
  
- 			/* Defer initialization until selinux_complete_init,
- 			   after the initial policy is loaded and the security
-@@ -3253,6 +3253,7 @@ static void selinux_inode_post_setxattr(struct dentry *dentry, const char *name,
++static int newcx;
++static unsigned int cpio_hdr_size;
+ static unsigned int offset;
+ static unsigned int ino = 721;
+ static time_t default_mtime;
+@@ -56,7 +58,7 @@ static void push_rest(const char *name)
+ 	putchar(0);
+ 	offset += name_len;
+ 
+-	tmp_ofs = name_len + 110;
++	tmp_ofs = name_len + cpio_hdr_size;
+ 	while (tmp_ofs & 3) {
+ 		putchar(0);
+ 		offset++;
+@@ -77,6 +79,7 @@ struct cpio_header {
+ 	int rdevmajor;
+ 	int rdevminor;
+ 	size_t namesize;
++	size_t xattrsize;
+ 	unsigned int check;
+ };
+ 
+@@ -84,24 +87,44 @@ static void push_hdr(const struct cpio_header *hdr)
  {
- 	struct inode *inode = d_backing_inode(dentry);
- 	struct inode_security_struct *isec;
-+	struct superblock_security_struct *sbsec;
- 	u32 newsid;
- 	int rc;
+ 	char s[256];
  
-@@ -3261,6 +3262,12 @@ static void selinux_inode_post_setxattr(struct dentry *dentry, const char *name,
- 		return;
- 	}
- 
-+	if (!ss_initialized) {
-+		sbsec = inode->i_sb->s_security;
-+		if (sbsec->flags & DELAYAFTERINIT_MNT)
-+			return;
+-	sprintf(s, "%s%08X%08X%08lX%08lX%08X%08lX"
+-		   "%08X%08X%08X%08X%08X%08X%08X",
+-		"070701",
+-		hdr->ino,
+-		hdr->mode,
+-		(long)hdr->uid,
+-		(long)hdr->gid,
+-		hdr->nlink,
+-		(long)hdr->mtime,
+-		(unsigned int)hdr->filesize,
+-		hdr->devmajor,
+-		hdr->devminor,
+-		hdr->rdevmajor,
+-		hdr->rdevminor,
+-		(unsigned int)hdr->namesize,
+-		hdr->check);
++	if (newcx) {
++		sprintf(s, "%s%08X%08X%08lX%08lX%08X%016llX%08X"
++			   "%016llX%08X%08X%08X%08X%08X%08X",
++			"070703",
++			hdr->ino,
++			hdr->mode,
++			(long)hdr->uid,
++			(long)hdr->gid,
++			hdr->nlink,
++			(long long)hdr->mtime,
++			0,
++			(long long)hdr->filesize,
++			hdr->devmajor,
++			hdr->devminor,
++			hdr->rdevmajor,
++			hdr->rdevminor,
++			(unsigned int)hdr->namesize,
++			(unsigned int)hdr->xattrsize);
++	} else {
++		sprintf(s, "%s%08X%08X%08lX%08lX%08X%08lX"
++			   "%08X%08X%08X%08X%08X%08X%08X",
++			"070701",
++			hdr->ino,
++			hdr->mode,
++			(long)hdr->uid,
++			(long)hdr->gid,
++			hdr->nlink,
++			(long)hdr->mtime,
++			(unsigned int)hdr->filesize,
++			hdr->devmajor,
++			hdr->devminor,
++			hdr->rdevmajor,
++			hdr->rdevminor,
++			(unsigned int)hdr->namesize,
++			hdr->check);
 +	}
-+
- 	rc = security_context_to_sid_force(value, size, &newsid);
- 	if (rc) {
- 		printk(KERN_ERR "SELinux:  unable to map context to SID"
-diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
-index 02f0412d42f2..585acfd6cbcf 100644
---- a/security/selinux/include/security.h
-+++ b/security/selinux/include/security.h
-@@ -52,6 +52,7 @@
- #define ROOTCONTEXT_MNT	0x04
- #define DEFCONTEXT_MNT	0x08
- #define SBLABEL_MNT	0x10
-+#define DELAYAFTERINIT_MNT 0x20
- /* Non-mount related flags */
- #define SE_SBINITIALIZED	0x0100
- #define SE_SBPROC		0x0200
+ 	fputs(s, stdout);
+-	offset += 110;
++	offset += cpio_hdr_size;
+ }
+ 
+ static void cpio_trailer(void)
+@@ -301,7 +324,7 @@ static int cpio_mkfile(const char *name, const char *location,
+ {
+ 	char *filebuf = NULL;
+ 	struct stat buf;
+-	long size;
++	size_t size;
+ 	int file = -1;
+ 	int retval;
+ 	int rc = -1;
+@@ -450,7 +473,7 @@ static int cpio_mkfile_line(const char *line)
+ static void usage(const char *prog)
+ {
+ 	fprintf(stderr, "Usage:\n"
+-		"\t%s [-t <timestamp>] <cpio_list>\n"
++		"\t%s [-t <timestamp>] [-x] <cpio_list>\n"
+ 		"\n"
+ 		"<cpio_list> is a file containing newline separated entries that\n"
+ 		"describe the files to be included in the initramfs archive:\n"
+@@ -527,7 +550,7 @@ int main (int argc, char *argv[])
+ 
+ 	default_mtime = time(NULL);
+ 	while (1) {
+-		int opt = getopt(argc, argv, "t:h");
++		int opt = getopt(argc, argv, "t:h:x");
+ 		char *invalid;
+ 
+ 		if (opt == -1)
+@@ -542,12 +565,16 @@ int main (int argc, char *argv[])
+ 				exit(1);
+ 			}
+ 			break;
++		case 'x':
++			newcx = 1;
++			break;
+ 		case 'h':
+ 		case '?':
+ 			usage(argv[0]);
+ 			exit(opt == 'h' ? 0 : 1);
+ 		}
+ 	}
++	cpio_hdr_size = newcx ? 134 : 110;
+ 
+ 	if (argc - optind != 1) {
+ 		usage(argv[0]);
 -- 
 2.10.3.dirty
