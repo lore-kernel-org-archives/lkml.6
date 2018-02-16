@@ -1,5 +1,5 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-642297-1518941641-2-16508943911007503303
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3785732-1518769604-2-4831530838794460511
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -12,120 +12,141 @@ X-Spam-charsets: plain='utf-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518941641; b=AZqi1Z0zrF5uszBOUF2Ksrg4lGXL4F/d885DRyKOYD5fQ9B
-    E0+mKIWP+oDhD9Cg9OVA+oZIne41l7/4BB4xNHkBmyNT2K8nfSbNogSxS5tMkXBr
-    XaHLmqTwn/1lAUcvD3k0NmA4/3WhySOOZP0dwNFgyr1ZKHVT1dK2coiAH+6sDzX1
-    FFcnQf38oqPw4LVQGWKrOetAUrLiC8LQDm3jCGjnyALfmLDQSeWJKDJhNwbPXBmO
-    86K6OkwJ2KD1Ra+2yK1djao8QLiRJECaayOfLE0qyQpFa4DLEEUfs2fhyFcKyJ9a
-    KhnaQt15pYPIebhCxuBHlD7e4Dp+NJo7KvRrmhQ==
+    t=1518769603; b=fM7xOyozRcmNBi/oIZtoIwWRzMBcjWnBNlAOluvNOftN8Xk
+    gCVOTgbQf78FmaUQsW1G4qLJs27gYKFv35l4AgFOXHIPQGCBtk4noUp8jfZgPUxh
+    va+Rptkyun7oZev4TXG21psOCO1MaWUHjd+0NHaC8uSYl0Z3X88gjY22gTtIcsg7
+    v8BBMObmllLUYROjDg/TBuSkshVQEyabo96v1pTgnjKnVa/UH5lNLPDHhki9VhrB
+    hCjatyj+EKAyJV42/qIuD3sAKjdhp1fehGIoGmznnexrT1uH2pCr20DgixnxtdJQ
+    /VW3eWjQg8NZ7Kk6iSIW2/Qu1ApIfRrJ5W0Pkdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=content-type:mime-version:subject:from
-    :in-reply-to:date:cc:content-transfer-encoding:message-id
-    :references:to:sender:list-id; s=arctest; t=1518941641; bh=Jyu1o
-    tdfIBoER5GgXcRKe1AfQX46RMEJPgja/QAGlLI=; b=aqsYpkOCRHFGrnxucysLy
-    bDouJEQ7aFnOPk9HCh7T0UxanSSpwU7w7Da5UYFb96kgumwUC0APHagA7tQhLffG
-    MsEITb1yyQFhxQpJskSYao+AB9lP5k33RziYP9BAelL2TJ4Mk/iDJoEDdbitnou7
-    iq2KrJSVfkYoNOAdEIXdoucfJ4m2CwXJILnklfw5STNlnyFsPrkr72hD6zlIN0FS
-    qkHF2qLUY70kHI2VPbH8mAonhS3YTWK2/+Py1JNcdB18mSRqlziVsT736R5a4NUC
-    Cl11uoe6QL2zaig3A9rJZ1sX17ueS8N50JCwGv4H7/Q6OAq2qIwRffdeK81UCNDi
-    A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1518769603; bh=n94Rt4cxefnwNAs0rZq20vpEH4mufsZBE9FMc2/9fbQ=; b=T
+    xBjBWpyd/iGbTcx18rSxDCOfaL0sC66V08kdjg2hxSCz+93WMkR7ZqHjLKRfAVjP
+    ajl0qqns4RZ/kfN5RkllVmMfiYqDxAHZFXXWnSVVH5Wi2TiCZqxdcQU8RYV6DXBA
+    TH2E9+1PQMtHba9C9Gror+XnLiFSWh9CaCXgUO3p38qapYS6RTzlGNIPnUcAnMHg
+    kJxSdPGCZyx42uIkuzWeQ+5SEccK32fQ618kWHlKJk+5+8IB4KO/cwGo8u4OioPT
+    BGmPxmAfKmlwzYaNUmvYeTZCgYmZUSq8SrF8t+JFN9W+NOjQVI0BTMlDiMmGxsRR
+    LqsiWI436DDZt+bCxz62Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=VsSjX23M;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MwlnuFou;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=VsSjX23M;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MwlnuFou;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751271AbeBRINp convert rfc822-to-8bit (ORCPT
-        <rfc822;greg@kroah.com>); Sun, 18 Feb 2018 03:13:45 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:49413 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751052AbeBRINm (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Sun, 18 Feb 2018 03:13:42 -0500
-X-Google-Smtp-Source: AH8x224GlocMOK/rNa0LHfoyTv10X7um9rq2XoWv6AE+tDTEv3INRp7MW4P8T4PmNqI0xwP9h8DdGw==
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH] Bluetooth: btusb: Restore QCA Rome suspend/resume fix
- with a "rewritten" version
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <1a08612e-2531-3711-ec0f-a867e86d0009@redhat.com>
-Date: Sun, 18 Feb 2018 16:13:13 +0800
+        id S1754192AbeBPI0m (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Feb 2018 03:26:42 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38781 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754187AbeBPI0k (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 16 Feb 2018 03:26:40 -0500
+X-Google-Smtp-Source: AH8x22701AHeIaNWOmjw+dqPEPDObapxT/9NdZzXlES9UzlMuV5Ty7ZE16cR5kqClB2cQxSV/iFdSQ==
+Subject: udev USB autosupend whitelist (was Re: [PATCH] Bluetooth: btusb:
+ Restore QCA Rome suspend/resume fix with a "rewritten" version)
+To: Brian Norris <briannorris@chromium.org>
 Cc: Marcel Holtmann <marcel@holtmann.org>,
-        Brian Norris <briannorris@chromium.org>,
-        "Gustavo F. Padovan" <gustavo@padovan.org>,
+        Gustavo Padovan <gustavo@padovan.org>,
         Johan Hedberg <johan.hedberg@gmail.com>,
-        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
-        linux-serial@vger.kernel.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
+        linux-bluetooth@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-acpi@vger.kernel.org, stable@vger.kernel.org,
         Leif Liddy <leif.linux@gmail.com>,
         Matthias Kaehlcke <mka@chromium.org>,
-        Daniel Drake <drake@endlessm.com>, matadeen@qti.qualcomm.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Drake <drake@endlessm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        matadeen@qti.qualcomm.com, linux-kernel@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Guenter Roeck <linux@roeck-us.net>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <AC3BE596-68BD-4D15-B06A-B529F9559C13@canonical.com>
 References: <20180108094416.4789-1-hdegoede@redhat.com>
  <20180213022455.GA151190@rodete-desktop-imager.corp.google.com>
  <8cd918fd-bf6f-70ac-e561-e7deffa695f0@redhat.com>
  <20180216022721.GA69988@rodete-desktop-imager.corp.google.com>
- <345b0de8-1a23-d2f8-bc56-507eadf7faa7@redhat.com>
- <6B37F6AC-1103-4FCF-A5DC-4BA236A7B11B@holtmann.org>
- <1a08612e-2531-3711-ec0f-a867e86d0009@redhat.com>
-To: Hans de Goede <hdegoede@redhat.com>
-X-Mailer: Apple Mail (2.3445.5.20)
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <0a13d0f3-8e0d-74df-df9c-2bf0622a9fb6@redhat.com>
+Date: Fri, 16 Feb 2018 09:26:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180216022721.GA69988@rodete-desktop-imager.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hi,
 
+Going a bit off-topic here, so changed the subject.
+I will reply on topic in another mail.
 
-> On 16 Feb 2018, at 8:10 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+On 16-02-18 03:27, Brian Norris wrote:
+> Hi Hans,
 > 
+> On Tue, Feb 13, 2018 at 12:25:55PM +0100, Hans de Goede wrote:
+>> On 13-02-18 03:24, Brian Norris wrote:
+>>> On Mon, Jan 08, 2018 at 10:44:16AM +0100, Hans de Goede wrote:
+>>>> Commit 7d06d5895c15 ("Revert "Bluetooth: btusb: fix QCA...suspend/resume"")
+>>>> removed the setting of the BTUSB_RESET_RESUME quirk for QCA Rome devices,
+>>>> instead favoring adding USB_QUIRK_RESET_RESUME quirks in usb/core/quirks.c.
+>>>>
+>>>> This was done because the DIY BTUSB_RESET_RESUME reset-resume handling
+>>>> has several issues (see the original commit message). An added advantage
+>>>> of moving over to the USB-core reset-resume handling is that it also
+>>>> disables autosuspend for these devices, which is similarly broken on these.
+>>>
+>>> Wait, is autosuspend actually broken for all QCA Rome chipsets? I don't
+>>> think so -- I'm using one now.
+>>
+>> And have you manually enabled USB autosuspend for it, or are you
+>> running something which might have done so, e.g. powertop --auto-tune ?
+>>
+>> Because if you did not do that then you're already not using autosuspend
+>> for your QCA devices and this patch will change nothing.
 > 
-> Ok, I've asked the reporter of:
+> I use a set of udev rules that manually whitelist devices for
+> autosuspend. You can see it here:
 > 
-> https://bugzilla.redhat.com/show_bug.cgi?id=1514836
+> https://chromium.googlesource.com/chromiumos/platform2/+/43728a93f6de137006c6b92fbb2a7cc4f353c9bf/power_manager/udev/gen_autosuspend_rules.py#83
 > 
-> Which is how I got involved in this to provide DMI data and
-> I will whip up a patch for his machine and ask him to test
-> and once that is done submit upstream. This is the only machine
-> I'm aware of though and looking at the history of this I think
-> there will be others.
+> You'll find at least one Rome chip in there.
 
-I have one machine needs the quirk. I’ll also send a patch to
-match its DMI.
+Oh, that is a very interesting link for the work I've been doing to
+improve Linux power-consumption in general:
 
-Kai-Heng
+https://fedoraproject.org/wiki/Changes/ImprovedLaptopBatteryLife
 
-> 
->> I addition we can add a module option to btusb.ko that allows us to force this flag to be set. That way testing this is easy on a vendor kernel. A bunch of the btusb quirks (and also core quirks) can be tested via module options or debugfs.
-> 
-> Yes a module option for this is a good idea.
-> 
-> Regards,
-> 
-> Hans
-> 
-> 
+I was actually planning on at least doing such a list for WWAN modems,
+for btusb my approach has been to just enable it everywhere
+(except for QCA devices as I got bugreports for those).
 
+Note that I plan to eventually submit this whitelist to the
+udev rules which are part of systemd upstream, so if chromeos
+is using systemd too, this is something to be aware of for you.
+
+Question, is the white-listing of the root and rate-limiting
+hubs really necessary? I thought these have this enabled by default?
+
+Also any caveats here I should be aware of?
+
+Regards,
+
+Hans
