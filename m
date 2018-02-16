@@ -1,131 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758388AbeBPPvw convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 10:51:52 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:54542 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758369AbeBPPvu (ORCPT
+        id S1758420AbeBPPxv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 10:53:51 -0500
+Received: from mail-pg0-f42.google.com ([74.125.83.42]:45677 "EHLO
+        mail-pg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758270AbeBPPxs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:51:50 -0500
-Date: Fri, 16 Feb 2018 16:51:47 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-mtd@lists.infradead.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Update Boris Brezillon email address
-Message-ID: <20180216165147.41c0d9e7@bbrezillon>
-In-Reply-To: <9c05d969-b488-fbc4-4143-6446d8a6d7ab@partner.samsung.com>
-References: <CGME20180216104523epcas3p1c45769e365a181963f8328237d270854@epcas3p1.samsung.com>
-        <20180216104449.15546-1-boris.brezillon@bootlin.com>
-        <dbe89241-4d05-d369-2894-fdc0b2d80b80@partner.samsung.com>
-        <20180216121619.3edad6fb@bbrezillon>
-        <4086d3a7-c79d-6906-2778-caccd647ffe6@partner.samsung.com>
-        <20180216150050.6051cc26@bbrezillon>
-        <138ed639-992d-2d87-4dd4-973323cdcad7@partner.samsung.com>
-        <20180216155455.36168609@bbrezillon>
-        <9c05d969-b488-fbc4-4143-6446d8a6d7ab@partner.samsung.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Fri, 16 Feb 2018 10:53:48 -0500
+X-Google-Smtp-Source: AH8x227ZpBtALbqqZJkedqRkaR8YP4bkUxcK7f9FkaxAFMuw/8PLcT8ReN48dpTovc7MIhD49/IjFg==
+Date: Fri, 16 Feb 2018 07:53:45 -0800
+From: Richard Cochran <richardcochran@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] net: dsa: mv88e6xxx: avoid unintended sign
+ extension on a 16 bit shift
+Message-ID: <20180216155345.zlgmmna7u47xgb36@localhost>
+References: <20180215191218.27936-1-colin.king@canonical.com>
+ <20180215202757.GB3080@lunn.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180215202757.GB3080@lunn.ch>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Feb 2018 16:35:27 +0100
-Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
+On Thu, Feb 15, 2018 at 09:27:57PM +0100, Andrew Lunn wrote:
+> Do you prefer this, or making timehi and timelo a u64?
 
-> On 16.02.2018 15:54, Boris Brezillon wrote:
-> > Adding back all the people that were Cc-ed on the initial email.
-> > 
-> > On Fri, 16 Feb 2018 15:18:21 +0100
-> > Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
-> >   
-> >> On 16.02.2018 15:00, Boris Brezillon wrote:  
-> >>> On Fri, 16 Feb 2018 12:21:53 +0100
-> >>> Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
-> >>>     
-> >>>> On 16.02.2018 12:16, Boris Brezillon wrote:    
-> >>>>> On Fri, 16 Feb 2018 12:07:42 +0100
-> >>>>> Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
-> >>>>>       
-> >>>>>> On 16.02.2018 11:44, Boris Brezillon wrote:      
-> >>>>>>> Free Electrons is now Bootlin.
-> >>>>>>>
-> >>>>>>> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> >>>>>>> ---
-> >>>>>>> Note that I'm planning to take this patch through the MTD tree.
-> >>>>>>> ---
-> >>>>>>>  .mailmap    |  7 ++++---
-> >>>>>>>  MAINTAINERS | 10 +++++-----
-> >>>>>>>  2 files changed, 9 insertions(+), 8 deletions(-)
-> >>>>>>>
-> >>>>>>> diff --git a/.mailmap b/.mailmap
-> >>>>>>> index e18cab73e209..50c1d6bf36b2 100644
-> >>>>>>> --- a/.mailmap
-> >>>>>>> +++ b/.mailmap
-> >>>>>>> @@ -33,9 +33,10 @@ Axel Lin <axel.lin@gmail.com>
-> >>>>>>>  Ben Gardner <bgardner@wabtec.com>
-> >>>>>>>  Ben M Cahill <ben.m.cahill@intel.com>
-> >>>>>>>  Björn Steinbrink <B.Steinbrink@gmx.de>
-> >>>>>>> -Boris Brezillon <boris.brezillon@free-electrons.com>
-> >>>>>>> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon.dev@gmail.com>
-> >>>>>>> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon@overkiz.com>
-> >>>>>>> +Boris Brezillon <boris.brezillon@bootlin.com>
-> >>>>>>> +Boris Brezillon <boris.brezillon@bootlin.com> <boris.brezillon@free-electrons.com>        
-> >>>>>>
-> >>>>>> ------------------------------------------------------------------ ??????????????????      
-> >>>>>
-> >>>>> Is there a problem with this line?
-> >>>>>       
-> >>>>
-> >>>> I think you want to delete all 'free-electrons', yet here you add this    
-> >>>
-> >>> I'm clearly not a git expert, but according to man git-shortlog [1], the
-> >>> format I'm using here allows mailmap to replace the old email by the
-> >>> new one, which is exactly what I want.
-> >>>
-> >>> [1]https://git-scm.com/docs/git-shortlog
-> >>>     
-> >>
-> >> Ah, I see, but why do you send patch for .mailmap ?
-> >> it is your private file, not global one, I do not want mine .mailmap
-> >> to be replaced by yours :)  
-> > 
-> > No, it's not private, it's part of the git tree.
-> >   
-> >> But beside this, you can use sed script
-> >>
-> >> sed -i -e 's/free-electrons/bootlin/g' .mailmap
-> >>
-> >> Please just resend this with patch for MAINTAINER's only
-> >>  
-> > 
-> > .mailmap is versioned for a good reason, and I don't see why I couldn't
-> > update entries for my emails, especially since those entries already
-> > existed before this patch.  
-> 
-> I am newbie, it looks you are right, sorry for questions.
-> 
+The latter.
 
-No problem, but when you're not sure about something you should not act
-like you know how things should be done.
+While you are at it, please move the definition of 'ns' to the start
+of the function.
 
-Regards,
-
-Boris
-
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Thanks,
+Richard
