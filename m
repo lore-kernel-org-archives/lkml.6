@@ -1,51 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161203AbeBPQri (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 11:47:38 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:56120 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161071AbeBPQrf (ORCPT
+        id S1161229AbeBPQru (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 11:47:50 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:38550 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161209AbeBPQrs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 11:47:35 -0500
-Date: Fri, 16 Feb 2018 17:47:22 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Progyan Bhattacharya <bprogyan@gmail.com>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Nicholas Mc Guire <der.herr@hofr.at>
-Subject: Re: [PATCH] objtool/x86: Replace Non-standard Range Expression in
- Case
-Message-ID: <20180216164722.GF25201@hirez.programming.kicks-ass.net>
-References: <20180216141947.9324-1-progyanb@acm.org>
- <20180216142513.9520-1-progyanb@acm.org>
- <20180216143511.fo4emxz6webqk7qn@treble>
+        Fri, 16 Feb 2018 11:47:48 -0500
+X-Google-Smtp-Source: AH8x224cIYCcZ7gEOhRk/uFTCS1C/8DQPtR8peSrkp9J/Ro6eLQxChP8LH+EKL2+HOulhe+JbKqT3Q==
+Date: Fri, 16 Feb 2018 08:47:45 -0800
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dylan Reid <dgreid@chromium.org>, huang lin <hl@rock-chips.com>
+Subject: Re: [PATCH v2] ASoC: dmic: Add optional wakeup delay
+Message-ID: <20180216164745.GC99727@google.com>
+References: <20180216022416.208265-1-mka@chromium.org>
+ <20180216024728.GA93733@rodete-desktop-imager.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180216143511.fo4emxz6webqk7qn@treble>
+In-Reply-To: <20180216024728.GA93733@rodete-desktop-imager.corp.google.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 08:35:11AM -0600, Josh Poimboeuf wrote:
-> On Fri, Feb 16, 2018 at 07:55:13PM +0530, Progyan Bhattacharya wrote:
-> > Replace range expressions with seperate individual cases, i.e. convert case 1...3: to case 1: case 2: case 3
-> > Range expression within case statements are non-standard C code and can create issues over compiler and platform variety.
-> > 
-> > While compiling with gcc 4.8 (RHEL) I encountered this error on range expression in case statements:
-> > error: range expressions in switch statements are non-standard [-Werror=pedantic]
-> > 
-> > Signed-off-by: Progyan Bhattacharya <progyanb@acm.org>
-> 
-> Hi Progyan,
-> 
-> Thank you for the patch.
-> 
-> I think this makes the code unnecessarily verbose and less readable.  We
-> rely on many such GCC extensions, and we don't aim to comply with
-> standard C.  And AFAIK, we don't use -Werror=pedantic in the kernel.
+El Thu, Feb 15, 2018 at 06:47:29PM -0800 Brian Norris ha dit:
 
-Agreed, it makes the code actively worse. Just don't use error=pedantic.
+> Hi,
+> 
+> On Thu, Feb 15, 2018 at 06:24:16PM -0800, Matthias Kaehlcke wrote:
+> > On some systems a delay is needed after switching on the clocks, to allow
+> > the output to stabilize and avoid a popping noise at the beginning of
+> > the recording. Add the optional device tree property 'wakeup-delay-ms'
+> > and apply the specified delay after enabling the mic. A blocking delay
+> > can't be applied in dmic_daiops_trigger() since the function is called
+> > in atomic context. Instead use a DAPM event handler to set the enable
+> > GPIO and apply the delay in the handler.
+> > 
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> > Changes in v2:
+> > - use DAPM event handler instead of _prepare() and get rid of
+> >   _trigger()
+> > - skip error check for optional 'wakeup-delay-ms' property
+> > - updated commit message
+> 
+> Looks good to me in general:
+> 
+> Brian Norris <briannorris@chromium.org>
+> 
+> But I don't know much about the audio subsystem. One comment below.
+> 
+> > 
+> >  .../devicetree/bindings/sound/dmic.txt        |  2 +
+> >  sound/soc/codecs/dmic.c                       | 63 ++++++++++---------
+> >  2 files changed, 37 insertions(+), 28 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/sound/dmic.txt b/Documentation/devicetree/bindings/sound/dmic.txt
+> > index f7bf65611453..e957b4136716 100644
+> > --- a/Documentation/devicetree/bindings/sound/dmic.txt
+> > +++ b/Documentation/devicetree/bindings/sound/dmic.txt
+> > @@ -8,6 +8,7 @@ Required properties:
+> >  Optional properties:
+> >  	- dmicen-gpios: GPIO specifier for dmic to control start and stop
+> >  	- num-channels: Number of microphones on this DAI
+> > +	- wakeup-delay-ms: Delay (in ms) after enabling the DMIC
+> >  
+> >  Example node:
+> >  
+> > @@ -15,4 +16,5 @@ Example node:
+> >  		compatible = "dmic-codec";
+> >  		dmicen-gpios = <&gpio4 3 GPIO_ACTIVE_HIGH>;
+> >  		num-channels = <1>;
+> > +		wakeup-delay-ms <50>;
+> >  	};
+> > diff --git a/sound/soc/codecs/dmic.c b/sound/soc/codecs/dmic.c
+> > index cf83c423394d..b5f60ac22ace 100644
+> > --- a/sound/soc/codecs/dmic.c
+> > +++ b/sound/soc/codecs/dmic.c
+> [...]
+> 
+> >  static const struct snd_soc_dapm_widget dmic_dapm_widgets[] = {
+> > -	SND_SOC_DAPM_AIF_OUT("DMIC AIF", "Capture", 0,
+> > -			     SND_SOC_NOPM, 0, 0),
+> > +	SND_SOC_DAPM_AIF_OUT_E("DMIC AIF", "Capture", 0,
+> > +			       SND_SOC_NOPM, 0, 0, dmic_aif_event,
+> > +			       SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_POST_PMD),
+> 
+> Any good reason both are _POST_? It seems like you'd want them to be
+> inverses (e.g., power-power-up, and pre-power-down).
+
+Post-power-up is needed to avoid a popping noise when the clock is
+enabled (see 3a6f9dce6116 ("ASoC: rk3399_gru_sound: fix recording pop
+at first attempt") and disabling the mic before switching off the
+clock (pre-power-down) could cause noise at the end of the recording.
