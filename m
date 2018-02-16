@@ -1,116 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034568AbeBPOzA convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 09:55:00 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:53005 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034553AbeBPOy6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:54:58 -0500
-Date: Fri, 16 Feb 2018 15:54:55 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-mtd@lists.infradead.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Update Boris Brezillon email address
-Message-ID: <20180216155455.36168609@bbrezillon>
-In-Reply-To: <138ed639-992d-2d87-4dd4-973323cdcad7@partner.samsung.com>
-References: <CGME20180216104523epcas3p1c45769e365a181963f8328237d270854@epcas3p1.samsung.com>
-        <20180216104449.15546-1-boris.brezillon@bootlin.com>
-        <dbe89241-4d05-d369-2894-fdc0b2d80b80@partner.samsung.com>
-        <20180216121619.3edad6fb@bbrezillon>
-        <4086d3a7-c79d-6906-2778-caccd647ffe6@partner.samsung.com>
-        <20180216150050.6051cc26@bbrezillon>
-        <138ed639-992d-2d87-4dd4-973323cdcad7@partner.samsung.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1034584AbeBPOzM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 09:55:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44656 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1033854AbeBPOzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 09:55:11 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D21C217C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Fri, 16 Feb 2018 08:55:09 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Sinan Kaya <okaya@codeaurora.org>
+Cc: linux-pci@vger.kernel.org, timur@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V4 26/26] PCI: Remove pci_get_bus_and_slot() function
+Message-ID: <20180216145509.GB11014@bhelgaas-glaptop.roam.corp.google.com>
+References: <1513661883-28662-1-git-send-email-okaya@codeaurora.org>
+ <1513661883-28662-27-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1513661883-28662-27-git-send-email-okaya@codeaurora.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding back all the people that were Cc-ed on the initial email.
-
-On Fri, 16 Feb 2018 15:18:21 +0100
-Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
-
-> On 16.02.2018 15:00, Boris Brezillon wrote:
-> > On Fri, 16 Feb 2018 12:21:53 +0100
-> > Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
-> >   
-> >> On 16.02.2018 12:16, Boris Brezillon wrote:  
-> >>> On Fri, 16 Feb 2018 12:07:42 +0100
-> >>> Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
-> >>>     
-> >>>> On 16.02.2018 11:44, Boris Brezillon wrote:    
-> >>>>> Free Electrons is now Bootlin.
-> >>>>>
-> >>>>> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> >>>>> ---
-> >>>>> Note that I'm planning to take this patch through the MTD tree.
-> >>>>> ---
-> >>>>>  .mailmap    |  7 ++++---
-> >>>>>  MAINTAINERS | 10 +++++-----
-> >>>>>  2 files changed, 9 insertions(+), 8 deletions(-)
-> >>>>>
-> >>>>> diff --git a/.mailmap b/.mailmap
-> >>>>> index e18cab73e209..50c1d6bf36b2 100644
-> >>>>> --- a/.mailmap
-> >>>>> +++ b/.mailmap
-> >>>>> @@ -33,9 +33,10 @@ Axel Lin <axel.lin@gmail.com>
-> >>>>>  Ben Gardner <bgardner@wabtec.com>
-> >>>>>  Ben M Cahill <ben.m.cahill@intel.com>
-> >>>>>  Björn Steinbrink <B.Steinbrink@gmx.de>
-> >>>>> -Boris Brezillon <boris.brezillon@free-electrons.com>
-> >>>>> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon.dev@gmail.com>
-> >>>>> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon@overkiz.com>
-> >>>>> +Boris Brezillon <boris.brezillon@bootlin.com>
-> >>>>> +Boris Brezillon <boris.brezillon@bootlin.com> <boris.brezillon@free-electrons.com>      
-> >>>>
-> >>>> ------------------------------------------------------------------ ??????????????????    
-> >>>
-> >>> Is there a problem with this line?
-> >>>     
-> >>
-> >> I think you want to delete all 'free-electrons', yet here you add this  
-> > 
-> > I'm clearly not a git expert, but according to man git-shortlog [1], the
-> > format I'm using here allows mailmap to replace the old email by the
-> > new one, which is exactly what I want.
-> > 
-> > [1]https://git-scm.com/docs/git-shortlog
-> >   
+On Tue, Dec 19, 2017 at 12:38:02AM -0500, Sinan Kaya wrote:
+> pci_get_bus_and_slot() is restrictive such that it assumes domain=0 as
+> where a PCI device is present. This restricts the device drivers to be
+> reused for other domain numbers.
 > 
-> Ah, I see, but why do you send patch for .mailmap ?
-> it is your private file, not global one, I do not want mine .mailmap
-> to be replaced by yours :)
-
-No, it's not private, it's part of the git tree.
-
-> But beside this, you can use sed script
+> Now that all users of pci_get_bus_and_slot() switched to
+> pci_get_domain_bus_and_slot(), it is now safe to remove this function.
 > 
-> sed -i -e 's/free-electrons/bootlin/g' .mailmap
-> 
-> Please just resend this with patch for MAINTAINER's only
-> 
+> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 
-.mailmap is versioned for a good reason, and I don't see why I couldn't
-update entries for my emails, especially since those entries already
-existed before this patch.
+Applied to pci/deprecate-get-bus-and-slot for v4.17, thanks!
 
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+> ---
+>  include/linux/pci.h | 8 --------
+>  1 file changed, 8 deletions(-)
+> 
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 66cca1c..04cecbe 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -948,11 +948,6 @@ struct pci_dev *pci_get_subsys(unsigned int vendor, unsigned int device,
+>  struct pci_dev *pci_get_slot(struct pci_bus *bus, unsigned int devfn);
+>  struct pci_dev *pci_get_domain_bus_and_slot(int domain, unsigned int bus,
+>  					    unsigned int devfn);
+> -static inline struct pci_dev *pci_get_bus_and_slot(unsigned int bus,
+> -						   unsigned int devfn)
+> -{
+> -	return pci_get_domain_bus_and_slot(0, bus, devfn);
+> -}
+>  struct pci_dev *pci_get_class(unsigned int class, struct pci_dev *from);
+>  int pci_dev_present(const struct pci_device_id *ids);
+>  
+> @@ -1660,9 +1655,6 @@ static inline struct pci_bus *pci_find_next_bus(const struct pci_bus *from)
+>  static inline struct pci_dev *pci_get_slot(struct pci_bus *bus,
+>  						unsigned int devfn)
+>  { return NULL; }
+> -static inline struct pci_dev *pci_get_bus_and_slot(unsigned int bus,
+> -						unsigned int devfn)
+> -{ return NULL; }
+>  static inline struct pci_dev *pci_get_domain_bus_and_slot(int domain,
+>  					unsigned int bus, unsigned int devfn)
+>  { return NULL; }
+> -- 
+> 1.9.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
