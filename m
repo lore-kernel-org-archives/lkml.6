@@ -1,59 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422777AbeBPAG0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 15 Feb 2018 19:06:26 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:39918 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752900AbeBPAGY (ORCPT
+        id S1422818AbeBPAIg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 15 Feb 2018 19:08:36 -0500
+Received: from mail-it0-f45.google.com ([209.85.214.45]:36205 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1422779AbeBPAIe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Feb 2018 19:06:24 -0500
-X-Google-Smtp-Source: AH8x225AFn5LZCCuJWgtWCp8aQzQKBmMVhD6VlaD4/lkp9ZDJIMW2XNAY8aVrmMYGjaN9Lbk7NjUXw==
-From: Minghui Liu <minghui.liu.95@gmail.com>
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: [PATCH] Documentation: Delete reference to the kernel-mentors mailing
- list because the mailing list no longer exists
-Message-Id: <2CD1322F-1638-4591-81B9-595B7EC73327@gmail.com>
-Date: Thu, 15 Feb 2018 16:05:37 -0800
-Cc: sj38.park@gmail.com, mchehab@kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, trivial@kernel.org
-To: corbet@lwn.net
-X-Mailer: Apple Mail (2.3445.5.20)
+        Thu, 15 Feb 2018 19:08:34 -0500
+X-Google-Smtp-Source: AH8x224Ofy5lY7EPA4pDoU1oetK0qHrmNJuN1l5+ZG2M1a0HqZYkCQWfsbsWAW8jxzkdPOTelHwA3UFu7hS92utwmPo=
+MIME-Version: 1.0
+In-Reply-To: <CALCETrVP3BaOapL3eS8Tf=KFeM8VFPqvMoECGRkFa7WPLq=Asw@mail.gmail.com>
+References: <20180215163602.61162-1-namit@vmware.com> <20180215163602.61162-5-namit@vmware.com>
+ <CALCETrUY4uZeG2fz=OQWGuyCOcBBNbep6TaJz82CZSP89=g3-A@mail.gmail.com>
+ <9EB804CA-0EC9-4CBB-965A-F3C8520201E7@gmail.com> <CALCETrVP3BaOapL3eS8Tf=KFeM8VFPqvMoECGRkFa7WPLq=Asw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 15 Feb 2018 16:08:33 -0800
+X-Google-Sender-Auth: r4sVuEEF1Ws1YKbG6TiHwj9iYzU
+Message-ID: <CA+55aFypED6i6pESAnk_RPUon_cyvdP3g-QZg2gspEBNAQWvmQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 4/6] x86: Disable PTI on compatibility mode
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Nadav Amit <nadav.amit@gmail.com>,
+        Pavel Emelyanov <xemul@parallels.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>, Willy Tarreau <w@1wt.eu>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1G06U2t025911
 
->From 2e4a473973a3b2dd841dc73523766c45f990acb5 Mon Sep 17 00:00:00 2001
-From: Minghui Liu <minghui.liu.95@gmail.com>
-Date: Thu, 15 Feb 2018 18:33:14 -0500
-Subject: [PATCH] Documentation: Delete reference to the kernel-mentors mailing
- list because the mailing list no longer exists
+On Thu, Feb 15, 2018 at 3:29 PM, Andy Lutomirski <luto@kernel.org> wrote:
+>
+> It's possible we could get away with adding the prctl but making the
+> default be that only the bitness that matches the program being run is
+> allowed.  After all, it's possible that CRIU is literally the only
+> program that switches bitness using the GDT.  (DOSEMU2 definitely does
+> cross-bitness stuff, but it uses the LDT as far as I know.)  And I've
+> never been entirely sure that CRIU fully counts toward the Linux
+> "don't break ABI" guarantee.
 
-Signed-off-by: Minghui Liu <minghui.liu.95@gmail.com>
----
- Documentation/process/howto.rst | 7 -------
- 1 file changed, 7 deletions(-)
+Ugh.
 
-diff --git a/Documentation/process/howto.rst b/Documentation/process/howto.rst
-index c6875b1..bcd8d1e 100644
---- a/Documentation/process/howto.rst
-+++ b/Documentation/process/howto.rst
-@@ -213,13 +213,6 @@ will learn the basics of getting your patch into the Linux kernel tree,
- and possibly be pointed in the direction of what to go work on next, if
- you do not already have an idea.
- 
--If you already have a chunk of code that you want to put into the kernel
--tree, but need some help getting it in the proper form, the
--kernel-mentors project was created to help you out with this.  It is a
--mailing list, and can be found at:
--
--	https://selenic.com/mailman/listinfo/kernel-mentors
--
- Before making any actual modifications to the Linux kernel code, it is
- imperative to understand how the code in question works.  For this
- purpose, nothing is better than reading through it directly (most tricky
--- 
-1.8.3.1
+There are just _so_ many reasons to dislike that.
+
+It's not that I don't think we could try to encourage it, but this
+whole "security depends on it being in sync" seems really like a
+fundamentally bad design.
+
+> Linus, how would you feel about, by default, preventing 64-bit
+> programs from long-jumping to __USER32_CS and vice versa?
+
+How? It's a standard GDT entry. Are you going to start switching the
+GDT around every context switch?
+
+I *thought* that user space can just do a far jump on its own. But
+it's so long since I had to care that I may have forgotten all the
+requirements for going between "compatibility mode" and real long
+mode.
+
+I just feel this all is a nightmare. I can see how you would want to
+think that compatibility mode doesn't need PTI, but at the same time
+it feels like a really risky move to do this.
+
+I can see one thread being in compatibiilty mode, and another being in
+long mode, and sharing the address space. But even with just one
+thread, I'm not seeing how you keep user mode from going from
+compatibility mode to L mode with just a far jump.
+
+But maybe you have some clever scheme in mind that guarantees that
+there are no issues, or maybe I've just forgotten all the details of
+long mode vs compat mode.
+
+               Linus
