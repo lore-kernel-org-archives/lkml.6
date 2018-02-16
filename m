@@ -1,111 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757987AbeBPOjb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 09:39:31 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45527 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754785AbeBPOja (ORCPT
+        id S1758003AbeBPOkk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 09:40:40 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:41657 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754785AbeBPOki (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:39:30 -0500
-X-Google-Smtp-Source: AH8x225mtNaaaPRpB7JRQIGcsK75VaxLHs9R7kc6FZFdQBpGbjes1KfCPAa29TQQgIIudm8ID40Mrw==
-From: Progyan Bhattacharya <bprogyan@gmail.com>
-X-Google-Original-From: Progyan Bhattacharya <progyanb@acm.org>
-To: linux-kernel@vger.kernel.org
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Nicholas Mc Guire <der.herr@hofr.at>
-Subject: [PATCH] objtool/x86: Replace Non-standard Range Expression in Case
-Date: Fri, 16 Feb 2018 20:09:24 +0530
-Message-Id: <20180216143924.9918-1-progyanb@acm.org>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180216142513.9520-1-progyanb@acm.org>
-References: <20180216142513.9520-1-progyanb@acm.org>
+        Fri, 16 Feb 2018 09:40:38 -0500
+X-Google-Smtp-Source: AH8x227dRTf5qMJuvLAc0bA1yZJqOmb0a7XGpmErV5yNW6jmzzMOx7qsOl+SYdYpQYQiQDHAbbV0KRrb0BkwmwhIgMo=
+MIME-Version: 1.0
+In-Reply-To: <4047b1de-40c6-813e-c410-543954190413@caviumnetworks.com>
+References: <20180214005536.22739-1-david.daney@cavium.com>
+ <CAHp75VcQm-gr0GRszBSRJSZOpdSutRyhVkw-BN_YAwhjaPM4yg@mail.gmail.com> <4047b1de-40c6-813e-c410-543954190413@caviumnetworks.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 16 Feb 2018 16:40:36 +0200
+Message-ID: <CAHp75Vdp1Q2LFRToRTgf+Zr7Pdvcegqu9ObQkpFKZFhXUExnCA@mail.gmail.com>
+Subject: Re: [PATCH v2] rtc: isl12026: Add driver.
+To: David Daney <ddaney@caviumnetworks.com>
+Cc: David Daney <david.daney@cavium.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-rtc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace range expressions with seperate individual cases, i.e. convert case 1...3: to case 1: case 2: case 3
-Range expression within case statements are non-standard C code and can create issues over compiler and platform variety.
+On Thu, Feb 15, 2018 at 9:01 PM, David Daney <ddaney@caviumnetworks.com> wrote:
+> On 02/15/2018 04:45 AM, Andy Shevchenko wrote:
+>> On Wed, Feb 14, 2018 at 2:55 AM, David Daney <david.daney@cavium.com>
+>> wrote:
+>>>
+>>> The ISL12026 is a combination RTC and EEPROM device with I2C
+>>> interface.  The standard RTC driver interface is provided.  The EEPROM
+>>> is accessed via the NVMEM interface via the "eeprom0" directory in the
+>>> sysfs entry for the device.
 
-While compiling with gcc 4.8 (RHEL) I encountered this error on range expression in case statements:
-error: range expressions in switch statements are non-standard [-Werror=pedantic]
+>>> +       /* 2 bytes of address, most significant first */
+>>> +       addr[0] = (offset >> 8) & 0xff;
+>>> +       addr[1] = offset & 0xff;
+>>
+>>
+>> Consider to drop '& 0xff', they are pointless (you have u8 type).
+>
+>
+> Generated code is the same, but the intent of the code is less clear when
+> the explicit masking is removed.  Never the less, since this seems to be
+> impeding progress, I will remove it.
 
-Signed-off-by: Progyan Bhattacharya <progyanb@acm.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Nick Desaulniers <nick.desaulniers@gmail.com>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Nicholas Mc Guire <der.herr@hofr.at>
-Cc: linux-kernel@vger.kernel.org
----
- tools/objtool/arch/x86/decode.c | 35 ++++++++++++++++++++++++++++++++---
- 1 file changed, 32 insertions(+), 3 deletions(-)
+You can use the following:
 
-diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
-index 540a209b78ab..e6803dd79958 100644
---- a/tools/objtool/arch/x86/decode.c
-+++ b/tools/objtool/arch/x86/decode.c
-@@ -143,7 +143,14 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
- 		}
- 		break;
- 
--	case 0x50 ... 0x57:
-+	case 0x50:
-+	case 0x51:
-+	case 0x52:
-+	case 0x53:
-+	case 0x54:
-+	case 0x55:
-+	case 0x56:
-+	case 0x57:
- 
- 		/* push reg */
- 		*type = INSN_STACK;
-@@ -153,7 +160,14 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
- 
- 		break;
- 
--	case 0x58 ... 0x5f:
-+	case 0x58:
-+	case 0x59:
-+	case 0x5a:
-+	case 0x5b:
-+	case 0x5c:
-+	case 0x5d:
-+	case 0x5e:
-+	case 0x5f:
- 
- 		/* pop reg */
- 		*type = INSN_STACK;
-@@ -171,7 +185,22 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
- 		op->dest.type = OP_DEST_PUSH;
- 		break;
- 
--	case 0x70 ... 0x7f:
-+	case 0x70:
-+	case 0x71:
-+	case 0x72:
-+	case 0x73:
-+	case 0x74:
-+	case 0x75:
-+	case 0x76:
-+	case 0x77:
-+	case 0x78:
-+	case 0x79:
-+	case 0x7a:
-+	case 0x7b:
-+	case 0x7c:
-+	case 0x7d:
-+	case 0x7e:
-+	case 0x7f:
- 		*type = INSN_JUMP_CONDITIONAL;
- 		break;
- 
+      addr[0] = offset >> 8;
+      addr[1] = offset >> 0;
+
+>>> +       bool set_bsw, set_sbib;
+>>> +
+
+>>> +       ret = of_property_read_u32(client->dev.of_node,
+>>> +                                  "isil,pwr-bsw", &bsw_val);
+>>> +       set_bsw = (ret == 0);
+
+>> Which is not fully correct. Better to do
+
+> I think it is correct.  The properties are optional, so it it perfectly fine
+> for of_property_read_u32() to fail.  If it fails, we simply keep the current
+> value.  I will add comments to document the intended logic.
+
+OK.
+
+>> set_bsw = of_property_present();
+
+> There are no occurrences of "of_property_present" in my source tree.
+
+Ah, indeed.
+
+
+>> ret = of_property_read...();
+>> if (ret)
+>>    return ret;
+
+What about then
+
+set_bsw = of_property_read_bool();
+
+set_sbid = ...
+
+
+if (!x && !y)
+ return ...
+
+...
+
+if (x) {
+
+}
+
+>>
+>>> +
+>>> +       ret = of_property_read_u32(client->dev.of_node,
+>>> +                                  "isil,pwr-sbib", &sbib_val);
+>>> +       set_sbib = (ret == 0);
+>>
+>>
+>> Ditto.
+
+>>> +               if (set_bsw) {
+>>> +                       if (bsw_val)
+>>> +                               requested_pwr |= ISL12026_REG_PWR_BSW;
+>>> +                       else
+>>> +                               requested_pwr &= ~ISL12026_REG_PWR_BSW;
+>>> +               }
+>>
+>>
+>> Undefined state if no value?
+
+> It is defined.  See above.
+
+It's opaque. Depends on firmware settings, boot loader, etc.
+
+>>> +#ifdef CONFIG_OF
+>> Remove this ugly #ifdef. Your driver OF only one.
+
+> The driver doesn't require OF.
+
+>  By removing the #if (which I will do), the
+> size of the module may be bloated in the non-OF case.  If anybody cares
+> about this, they can add back the #if.
+
+Nobody.
+
+>>> +static const struct of_device_id isl12026_dt_match[] = {
+>>> +       { .compatible = "isil,isl12026" },
+>>> +       { },
+>>> +};
+>>> +MODULE_DEVICE_TABLE(of, isl12026_dt_match);
+
+>>> +               .of_match_table = of_match_ptr(isl12026_dt_match),
+>> Drop of_match_ptr().
+
+> Best to keep it so that the non-OF case is correctly handled.
+
+If you drop above ifdef, you need to drop this macro. And code bloat is not big.
+
+Btw, driver since ->probe_new() is become OF/ACPI only, so, otherwise
+there will be no way to enumerate.
+
 -- 
-Regards,
-Progyan Bhattacharya
-http://codeprogyan.me
-2.16.1
+With Best Regards,
+Andy Shevchenko
