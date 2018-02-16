@@ -1,81 +1,90 @@
-Return-Path: <tcminyard@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518644795; cv=none;
+Return-Path: <haiyue.wang@linux.intel.com>
+X-Google-Smtp-Source: AH8x224TSOywmZY4qNO+fwnEXanWcyG9SYcxYMiDp7G1jIrSzs7PyFd906RR+IccakYAaTSbHJ+J
+ARC-Seal: i=1; a=rsa-sha256; t=1518769624; cv=none;
         d=google.com; s=arc-20160816;
-        b=sNQgOJAwG+UzW2FYtTI9YEwSRNPyiAFlrDr8Wt+hsBHfcWxYqH7ENh39xoeERzmg5T
-         38rHD518h902ZwlBQuXPjn5Su1O6YCfHvGPAxV/bfOWtRvOHbatrjjuAIFnJZ5LD5gB4
-         NiyyCB2rfm32JD9WnaFaKBESq2k3ohSMTh0kp4WEo1M9IRg6L9O1axaH1kbf3TeecciE
-         c0MkmqXSr2v8XL+O+VRJEtTrCab4icSPEW7eqbsb9KZRdwgmlCQ1QnTERUmCOT8NuKXv
-         n4m8pJkymb/C70zZOMsJB94W+SwlWz3Ex6/E4V0Pc4Ih7jMOFb7YeukRKDIYV9Tv38Hq
-         TsyA==
+        b=Q5M2qqCQe8oJDtCYm0uLSSMXcdZ6wEdkgmDmp3XzUPHUbO+BeUfgBUio5ufbUha5O0
+         FR0adLgjas5pSjrlfRtB+F6lOOvQqJ6YslA6/M7NpSteV9hNJviUdxAUfKN4oS1oOHyE
+         6u5TmRqBDWANyGJD3jBiRKtQY95hfP0RFMvTsxAcLlmvVOqSdNDEOniFWPnkiNB4CgJB
+         2FioZDpb4XqzQEWpr0BMFXBCLfp9aDgz3g5tmTAF7WzZSSpHvCivZjcGa7AsRtYk3+Mn
+         VTUoHOVbaz9oP8NMtJ7nQAdVVM0QQhPp+L4lmeU/2mryKcj8J/YYgElo39tHaBbRaL05
+         hN7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:reply-to
-         :sender:dkim-signature:arc-authentication-results;
-        bh=QvWA/VGBkrJmg7IkLhHS0FF7KXKbsoiWPJvgnWz2x6M=;
-        b=q7uwvJk3yUl8gYo9kiJG+5525TrTsanwxrDVcLGPVDQwGBAi3ca7SH2W8fXfObkppe
-         ModiOMtcVfzUwXW15e13A2Zda7gnx4H7+UdiDyjaexc1n+dDkwXfRZ6j9v2sNhJihMMc
-         Wuf9WXTiPCgkSw7o51vnDvAS52P7OLav2gmnK2XNx1f0EutIltVFCMdDoOL1BHsmg4Ja
-         fZlpkA2G4DXVys1ukcwDbBaZArcMRd7ILgg3eAuOi9Q0XA5/sy0lYJk8nAIf8sj3cPZM
-         FwyF2PeaAPHkG1ScVL5wrdBmyoQJdWyI+IChio8K5Vj+PYVnMLonOa5sQS+vVdvbf/9L
-         m/ug==
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=aAjLBraNp8r+oonFVpf4E2BLFKekoNVSFhTcxJ9EhtM=;
+        b=cZAHVOoM7Yn6b5ZRDDRFuKtEZnMR/pXEUaX02rjz1izgJ3NF3fgqA1FyEXcbilDS72
+         nEMaIEy1KkRDH5L7vmlwFh//RiY8azMSTquvKgmqLHScNmapeEFrOun6lsjvNJBhFEiJ
+         QsBAvMO9/O91tRxiFnpRXHSzZ3CzlPqNHC0qVTWpnlrxUzn1V8aAY50gK7pMJXxbGLLQ
+         6quo7294uzQyWfpTfltAJHLomb6q81DZyU8/kGziaTGD1WmgAamejLsIVORiFRYZ3cn8
+         SPrybQ3csEjZvSbqypF2g2qw9izdjt+xfrNhVXlxRulyrzLkk8NU41y4hSDIZjbhGGbQ
+         yydQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=lMYFbIF3;
-       spf=pass (google.com: domain of tcminyard@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=tcminyard@gmail.com
+       spf=pass (google.com: best guess record for domain of haiyue.wang@linux.intel.com designates 134.134.136.100 as permitted sender) smtp.mailfrom=haiyue.wang@linux.intel.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=lMYFbIF3;
-       spf=pass (google.com: domain of tcminyard@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=tcminyard@gmail.com
-X-Google-Smtp-Source: AH8x227GuIdUSMibP0KDX0jp31lu3ytHZphaqOQ+nQTR3WNv2igi/9/Ldky2JdXtr6f30rSeqmXm4A==
-Sender: Corey Minyard <tcminyard@gmail.com>
-Reply-To: minyard@acm.org
+       spf=pass (google.com: best guess record for domain of haiyue.wang@linux.intel.com designates 134.134.136.100 as permitted sender) smtp.mailfrom=haiyue.wang@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,519,1511856000";
+   d="scan'208";a="204771811"
 Subject: Re: [PATCH] ipmi: kcs_bmc: mark expected switch fall-through in
  kcs_bmc_handle_data
-To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+To: minyard@acm.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
  Arnd Bergmann <arnd@arndb.de>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- Haiyue Wang <haiyue.wang@linux.intel.com>
+Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
 References: <20180214173029.GA15661@embeddedor.com>
-From: Corey Minyard <minyard@acm.org>
-Message-ID: <9098c6c8-83e5-5e1f-519b-68e14738c24a@acm.org>
-Date: Wed, 14 Feb 2018 15:46:31 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ <9098c6c8-83e5-5e1f-519b-68e14738c24a@acm.org>
+From: "Wang, Haiyue" <haiyue.wang@linux.intel.com>
+Message-ID: <3b2c65e6-a8bd-9b6c-5b13-c1d80f546215@linux.intel.com>
+Date: Fri, 16 Feb 2018 16:27:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180214173029.GA15661@embeddedor.com>
+In-Reply-To: <9098c6c8-83e5-5e1f-519b-68e14738c24a@acm.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592398376863502226?=
-X-GMAIL-MSGID: =?utf-8?q?1592414485279513230?=
+X-GMAIL-MSGID: =?utf-8?q?1592545377655453476?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/14/2018 11:30 AM, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
 
-Thanks, queued for next release.
 
--corey
-
-> Addresses-Coverity-ID: 1465255 ("Missing break in switch")
-> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-> ---
-> This code was compiled with GCC 7.3.0
+On 2018-02-15 05:46, Corey Minyard wrote:
+> On 02/14/2018 11:30 AM, Gustavo A. R. Silva wrote:
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
 >
->   drivers/char/ipmi/kcs_bmc.c | 1 +
->   1 file changed, 1 insertion(+)
+> Thanks, queued for next release.
 >
-> diff --git a/drivers/char/ipmi/kcs_bmc.c b/drivers/char/ipmi/kcs_bmc.c
-> index 3a3498a..6476bfb 100644
-> --- a/drivers/char/ipmi/kcs_bmc.c
-> +++ b/drivers/char/ipmi/kcs_bmc.c
-> @@ -95,6 +95,7 @@ static void kcs_bmc_handle_data(struct kcs_bmc *kcs_bmc)
->   	switch (kcs_bmc->phase) {
->   	case KCS_PHASE_WRITE_START:
->   		kcs_bmc->phase = KCS_PHASE_WRITE_DATA;
-> +		/* fall through */
->   
->   	case KCS_PHASE_WRITE_DATA:
->   		if (kcs_bmc->data_in_idx < KCS_MSG_BUFSIZ) {
+> -corey
+>
+>> Addresses-Coverity-ID: 1465255 ("Missing break in switch")
+>> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+>> ---
+>> This code was compiled with GCC 7.3.0
+>>
+>>   drivers/char/ipmi/kcs_bmc.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/char/ipmi/kcs_bmc.c b/drivers/char/ipmi/kcs_bmc.c
+>> index 3a3498a..6476bfb 100644
+>> --- a/drivers/char/ipmi/kcs_bmc.c
+>> +++ b/drivers/char/ipmi/kcs_bmc.c
+>> @@ -95,6 +95,7 @@ static void kcs_bmc_handle_data(struct kcs_bmc 
+>> *kcs_bmc)
+>>       switch (kcs_bmc->phase) {
+>>       case KCS_PHASE_WRITE_START:
+>>           kcs_bmc->phase = KCS_PHASE_WRITE_DATA;
+>> +        /* fall through */
+Thanks, Gustavo. I see many modules have '/* fall through */', but I 
+thought it was a just C comment, I didn't
+add it for making code clean. Learned it, thank you! :-)
+>>         case KCS_PHASE_WRITE_DATA:
+>>           if (kcs_bmc->data_in_idx < KCS_MSG_BUFSIZ) {
+>
+>
