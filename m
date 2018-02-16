@@ -1,70 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753821AbeBPHxL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 02:53:11 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47412 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753806AbeBPHxK (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 02:53:10 -0500
-Date: Fri, 16 Feb 2018 08:53:04 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: "Jin, Yao" <yao.jin@linux.intel.com>
-Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com
-Subject: Re: [PATCH] perf report: Fix a memory corrupton issue when enabling
- --branch-history
-Message-ID: <20180216075303.GD14831@krava>
-References: <1518511468-32737-1-git-send-email-yao.jin@linux.intel.com>
- <20180213094551.GA26936@krava>
- <2bfe35a5-f671-90dc-4753-75c8b2215f30@linux.intel.com>
- <9b3483ae-a612-9d69-9671-4ddfea2c440e@linux.intel.com>
+        id S1753878AbeBPH7s (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 02:59:48 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42813 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753847AbeBPH7q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 02:59:46 -0500
+X-Google-Smtp-Source: AH8x2254eZEzKB7OYaz4TFzKDvXzxnJwgwfxf/4tKAiYd4PONHseoo94OGM35L8iooeZ2Q+1Diaapg==
+Date: Fri, 16 Feb 2018 08:59:42 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH/RFC] headers: drop 2 #included headers from
+ <linux/interrupt.h>
+Message-ID: <20180216075942.kmgdyvmluke2s5vg@gmail.com>
+References: <b24b9ec8-4970-65f5-759a-911d4ba2fcf0@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9b3483ae-a612-9d69-9671-4ddfea2c440e@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <b24b9ec8-4970-65f5-759a-911d4ba2fcf0@infradead.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 10:25:31AM +0800, Jin, Yao wrote:
 
-SNIP
+* Randy Dunlap <rdunlap@infradead.org> wrote:
 
-> >  From my opinion, the option '--max-stack' in perf report looks not very
-> > necessary. While it's just my personal opinion, need to hear from more
-> > people. :)
-> > 
-> > Thanks
-> > Jin Yao
-> > 
-> > > thanks,
-> > > jirka
-> > > 
-> > > 
-> > > ---
-> > > diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-> > > index b6140950301e..b50b7b70dcca 100644
-> > > --- a/tools/perf/util/hist.c
-> > > +++ b/tools/perf/util/hist.c
-> > > @@ -879,7 +879,7 @@ iter_prepare_cumulative_entry(struct
-> > > hist_entry_iter *iter,
-> > >        * cumulated only one time to prevent entries more than 100%
-> > >        * overhead.
-> > >        */
-> > > -    he_cache = malloc(sizeof(*he_cache) * (iter->max_stack + 1));
-> > > +    he_cache = malloc(sizeof(*he_cache) * (callchain_cursor.nr + 1));
-> > >       if (he_cache == NULL)
-> > >           return -ENOMEM;
-> > > 
-> 
-> Hi Jiri,
-> 
-> I guess you will post this patch, right?
+> Does anyone know or see why <linux/interrupt.h> needs <linux/linkage.h> or
+> <linux/preempt.h>?  There are no direct uses in <linux/interrupt.h> AFAICT.
 
-yep, later today
+These are likely historical, plus it's a classic 'tragedy of the commons' 
+scenario: it's easy to take away from the "public good" of "clean header 
+dependencies" and very hard to add to it:
 
-jirka
+ - it's very easy to add a new #include line
+
+ - it's very hard to remove one, not just due to the 2^10000 complex Kconfig
+   space, but due to 99% of the developers not testing cross-arch builds
+   (and we don't want to require them to do it)
+
+ - the cost of getting the removal wrong is high (the build breaks for many 
+   people who will be unhappy at the person removing the header), while the 
+   benefit of the removal is low in isolation
+
+Then apply this dynamic for more than 20 years and we get a spaghetti:
+
+ triton:~/tip> grep -c '#include <' include/linux/*.h | sort -n -t: -k +2  | tail -20
+
+ include/linux/device.h:15
+ include/linux/ide.h:16
+ include/linux/module.h:16
+ include/linux/acpi.h:17
+ include/linux/filter.h:17
+ include/linux/init_task.h:17
+ include/linux/mmzone.h:17
+ include/linux/cgroup.h:18
+ include/linux/nfs_fs.h:18
+ include/linux/sched.h:18
+ include/linux/irq.h:19
+ include/linux/pci.h:19
+ include/linux/perf_event.h:23
+ include/linux/blkdev.h:25
+ include/linux/kvm_host.h:26
+ include/linux/mm.h:26
+ include/linux/netdevice.h:26
+ include/linux/skbuff.h:26
+ include/linux/isdn.h:27
+ include/linux/fs.h:39
+
+Plus there's collateral damage as well: there's countless primitives that were 
+forced into the CPP macro space because the header dependencies were too hard. 
+Such code is not just harder to read and maintain, it's more fragile to macro 
+substitution bugs and it's less type safe as well.
+
+I'd argue that due to the basic human dynamics here this calls for tooling help.
+
+In the meanwhile I've applied your patch to tip:core/headers and will do full 
+build testing + fixing, should anything break.
+
+Thanks,
+
+	Ingo
