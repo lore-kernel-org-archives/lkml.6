@@ -1,70 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034500AbeBPOui (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 09:50:38 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:41716 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033381AbeBPOug (ORCPT
+        id S1034517AbeBPOw0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 09:52:26 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:33190 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033381AbeBPOwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:50:36 -0500
-X-Google-Smtp-Source: AH8x224AC8PxnxIvJw6xXGFnWS0kttj+yl3SMgBlCvlgtUfWeG8YFZemid3qK466BfOPUHBFsJXF4YpVSNFnGx+IFE0=
+        Fri, 16 Feb 2018 09:52:23 -0500
+X-Google-Smtp-Source: AH8x224BVfT95g/IWK20AvMKyTR6JGYP/F07Da7/j8g0bXPtAaNVp7Gb/G0OlBhqHmJbHdWcIBVtwk3OhlsYtF1fuaQ=
 MIME-Version: 1.0
-In-Reply-To: <CADXBfmsJPv9Q6W+j=RdzUAHJ9Ya-6zrV9Ns7KMNBHOAnn_BZuA@mail.gmail.com>
-References: <010001602cf53153-39ad69f1-1b39-4e6d-a748-9455a16c2fbd-000000@email.amazonses.com>
- <20171210182152.70ad8fbf@archlinux> <01000160dccefcb4-25edfd89-56f3-486f-88a4-cb8c07253974-000000@email.amazonses.com>
- <20180114104330.2aa7c1fd@archlinux> <20180128094021.572ab366@archlinux>
- <CAHp75VenBEYSZ9okZfGZUmBX+ikL236a9_qjtn-DJtSihw5X+g@mail.gmail.com>
- <20180130160107.000006df@huawei.com> <CAHp75VchRJzp1CM33q18e9x8Uq7bNrPZykz-GdpRgB3=y2C+KQ@mail.gmail.com>
- <CAHp75Vf==OQ=Cx4Nzrd+vAOJshT-oL6L8Y54aWt0cGyJJuacjg@mail.gmail.com>
- <CADXBfmvKF_doLv0Vg0TY4cH_rDBEP5NvJ4jHJf85iuOjJB6TzA@mail.gmail.com>
- <CAHp75VdsDAbgJ1XmhaxA5C8FTcYX7tBa4x_Y4ZYk6Sub510nqw@mail.gmail.com>
- <f42f6acc-cb30-e36d-0c98-42b7e3d40457@pressers.name> <CAHp75VfmH5aNPzBLvm-GrQ-49uyJNNwdjbte3uh_kmaC91bz6A@mail.gmail.com>
- <197f448e-322f-dae4-aa4b-3cc2bd5b16bb@pressers.name> <CAHp75VeVuS51Z7U2P+t3YnfitUtVVAa_8oSbnXCHTY7rqrJUEQ@mail.gmail.com>
- <CAHp75VfPBP0TVt-==0wjcK6Oxg1kVN4mQf5Ji50RBy=SXf6yFw@mail.gmail.com>
- <eed11463-a2f6-0b4d-6138-f5082f97dd5e@pressers.name> <CAHp75Ve=B_=s5cHqcPqaAnQ3bPj+4aHpudwsfX89YqS0-M37xw@mail.gmail.com>
- <CADXBfmsJPv9Q6W+j=RdzUAHJ9Ya-6zrV9Ns7KMNBHOAnn_BZuA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0gowD179tVaAc_8Wy-pV=mAwsO1egs0DfCnA-eEWayJdw@mail.gmail.com>
+References: <20180209161456.18951-1-tony@atomide.com> <CAHp75VcSRxLZJxmqXWpAGypvZa6W2cEAiTF2muJWqdaOYu_TpA@mail.gmail.com>
+ <CAJZ5v0gRtkBf7uu4C_k7ivNGo=JM0bB1PAdr_6Nbbs39OPevHw@mail.gmail.com>
+ <CAHp75VcVNDV9FmPFTBHsJRoiHtOviwC68Wk+aCqhqteZw41ZzQ@mail.gmail.com> <CAJZ5v0gowD179tVaAc_8Wy-pV=mAwsO1egs0DfCnA-eEWayJdw@mail.gmail.com>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 16 Feb 2018 16:50:34 +0200
-Message-ID: <CAHp75Vd2sDgsv6kOpx7T6PrQ1cwi9Xqxzw+8bh_rYJr=RScmQA@mail.gmail.com>
-Subject: Re: [PATCH v2] iio: accel: bmc150: Check for a second ACPI device for BOSC0200
-To: Steve Presser <steve@pressers.name>
-Cc: Hans de Goede <hdegoede@redhat.com>, Hartmut Knaack <knaack.h@gmx.de>,
-        Jeremy Cline <jeremy@jcline.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Jonathan Cameron <jic23@jic23.retrosnub.co.uk>,
-        Lars Kellogg-Stedman <lars@oddbit.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
+Date: Fri, 16 Feb 2018 16:52:22 +0200
+Message-ID: <CAHp75VdxsDiwi8uux3Q4vYhEO1P3w0sePVBcm38RvimKez8XAg@mail.gmail.com>
+Subject: Re: [PATCH] PM / wakeirq: Add wakeup name to dedicated wake irqs
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Tony Lindgren <tony@atomide.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Linux PM <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-iio@vger.kernel.org
+        Brian Norris <briannorris@chromium.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 8:06 PM, Steve Presser <steve@pressers.name> wrote:
-> Hi Andy,
+On Fri, Feb 16, 2018 at 12:54 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Fri, Feb 16, 2018 at 11:39 AM, Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+>> On Fri, Feb 16, 2018 at 11:14 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>>> On Wed, Feb 14, 2018 at 12:23 PM, Andy Shevchenko
+>>> <andy.shevchenko@gmail.com> wrote:
+
+>>> IMO it is somewhat excessive to put the entire sprintf() under a raw
+>>> spinlock and it's not even necessary.
+>>
+>> It's a copy'n'paste of from the rest of functions there.
 >
-> No good news. It looks like the vanilla 4.15 series doesn't boot on this
-> system. Still working on tracking down why/when it broke/if this is due to a
-> Debian patch.
+> Fair enough. :-)
 
-Just in case: you may cherry-pick necessary patches (4 or 5 from the
-tip of mentioned branch) to whatever kernel you are using. Though I'm
-not sure how far v4.15 from v4.12 in a sense of the code it touches.
+>>> The value can change any time after you've dropped the lock and in
+>>> particular before the function returns, so why bother with locking?
+>>> desc will not go away from under you at that point anyway.
+>>
+>> IIRC descriptor's content might be changed, or descriptor itself might
+>> be gone (potential crash).
+>
+> No, desc cannot go away at this point AFAICS due to the kernfs
+> refcounting.  And the lock is *inside* of the desc object anyway, so
+> it doesn't help really against that.
 
-> Would it still be an effective test if I backported the changes to 4.12 (or
-> 4.12-debian)? I know that series boots.
+Oh, indeed.
 
-OK, continue waiting for your testing.
+> The contents may change, but so what?
+>
+> Effectively, you read an int and reading an int is atomic.  It may
+> change after that, but the lock doesn't prevent it from changing.  It
+> only prevents the change from being applied to it before you drop the
+> lock, but why do you care?
 
->> >> Here [1] is the branch with another approach. Can you test it and tell
->> >> if it fixes the issue?
->> >>
->> >> [1]: https://bitbucket.org/andy-shev/linux/branch/topic/iio-acpi
->> >> It's based on linux-next + compiletest branch of IIO subsystem.
-
+So, with explanations above, perhaps we can produce the patch to
+remove those locks from the rest?
 
 -- 
 With Best Regards,
