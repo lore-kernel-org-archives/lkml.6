@@ -1,227 +1,325 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933806AbeBPKnk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 05:43:40 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34788 "EHLO mx1.redhat.com"
+        id S933790AbeBPKng (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 05:43:36 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34792 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933744AbeBPKnc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 05:43:32 -0500
+        id S933757AbeBPKnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 05:43:33 -0500
 From: Hans de Goede <hdegoede@redhat.com>
 To: Tejun Heo <tj@kernel.org>
 Cc: Hans de Goede <hdegoede@redhat.com>, linux-ide@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 08/12] xhci: Add Intel extended cap / otg phy mux handling
-Date: Fri, 16 Feb 2018 11:43:17 +0100
-Message-Id: <20180216104321.8259-9-hdegoede@redhat.com>
+Subject: [PATCH 09/12] usb: roles: Add Intel XHCI USB role switch driver
+Date: Fri, 16 Feb 2018 11:43:18 +0100
+Message-Id: <20180216104321.8259-10-hdegoede@redhat.com>
 In-Reply-To: <20180216104321.8259-1-hdegoede@redhat.com>
 References: <20180216104321.8259-1-hdegoede@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The xHCI controller on various Intel SoCs has an extended cap mmio-range
-which contains registers to control the muxing to the xHCI (host mode)
-or the dwc3 (device mode) and vbus-detection for the otg usb-phy.
+Various Intel SoCs (Cherry Trail, Broxton and others) have an internal USB
+role switch for swiching the OTG USB data lines between the xHCI host
+controller and the dwc3 gadget controller.
 
-Having a role-sw driver included in the xhci code (under drivers/usb/host)
-is not desirable. So this commit adds a simple handler for this extended
-capability, which creates a platform device with the caps mmio region as
-resource, this allows us to write a separate platform role-sw driver for
-the role-switch.
+Note on some Cherry Trail systems there is ACPI/AML code listening to
+edge interrupts on the id-pin (through an _AIE ACPI method) and switching
+the role between ROLE_HOST and ROLE_NONE based on the id-pin. Note it does
+not set the role to ROLE_DEVICE, because device-mode is usually not used
+under Windows.
 
-Note this commit adds a call to the new xhci_ext_cap_init() function
-to xhci_pci_probe(), it is added here because xhci_ext_cap_init() must
-be called only once. If in the future we also want to handle ext-caps
-on non pci xHCI HCDs from xhci_ext_cap_init() a call to it should also
-be added to other bus probe paths.
+The presence of AML code which modifies the cfg0 reg (on some systems)
+means that we our read/write/modify of cfg0 may race with the AML code
+doing the same to avoid this we take the global ACPI lock while doing
+the read/write/modify.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 ---
-Changes in v2:
--Check xHCI controller PCI device-id instead of only checking for the
- Intel Extended capability ID, as the Extended capability ID is used on
- other model Intel xHCI controllers too
+ MAINTAINERS                                    |   6 +
+ drivers/usb/Kconfig                            |   2 +
+ drivers/usb/Makefile                           |   2 +
+ drivers/usb/roles/Kconfig                      |  14 ++
+ drivers/usb/roles/Makefile                     |   1 +
+ drivers/usb/roles/intel-xhci-usb-role-switch.c | 201 +++++++++++++++++++++++++
+ 6 files changed, 226 insertions(+)
+ create mode 100644 drivers/usb/roles/Kconfig
+ create mode 100644 drivers/usb/roles/Makefile
+ create mode 100644 drivers/usb/roles/intel-xhci-usb-role-switch.c
 
-Changes in v3:
--Add a new generic xhci_ext_cap_init() function and handle the new
- XHCI_INTEL_CHT_USB_MUX quirk there.
-
-Changes in v4:
--Stop using Cherry Trail / CHT in various places as other Intel SoCs
- (e.g. Broxton / Apollo Lake) also have this
----
- drivers/usb/host/Makefile        |  2 +-
- drivers/usb/host/xhci-ext-caps.c | 89 ++++++++++++++++++++++++++++++++++++++++
- drivers/usb/host/xhci-ext-caps.h |  2 +
- drivers/usb/host/xhci-pci.c      |  5 +++
- drivers/usb/host/xhci.h          |  2 +
- 5 files changed, 99 insertions(+), 1 deletion(-)
- create mode 100644 drivers/usb/host/xhci-ext-caps.c
-
-diff --git a/drivers/usb/host/Makefile b/drivers/usb/host/Makefile
-index 4ede4ce12366..8a8cffe0b445 100644
---- a/drivers/usb/host/Makefile
-+++ b/drivers/usb/host/Makefile
-@@ -11,7 +11,7 @@ fhci-y += fhci-mem.o fhci-tds.o fhci-sched.o
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3a6334da07d1..385ef9080287 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14385,6 +14385,12 @@ S:	Maintained
+ F:	Documentation/hid/hiddev.txt
+ F:	drivers/hid/usbhid/
  
- fhci-$(CONFIG_FHCI_DEBUG) += fhci-dbg.o
++USB INTEL XHCI ROLE MUX DRIVER
++M:	Hans de Goede <hdegoede@redhat.com>
++L:	linux-usb@vger.kernel.org
++S:	Maintained
++F:	drivers/usb/roles/intel-xhci-usb-role-switch.c
++
+ USB ISP116X DRIVER
+ M:	Olav Kongas <ok@artecdesign.ee>
+ L:	linux-usb@vger.kernel.org
+diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
+index a79198f5f1a6..3f123edba6e8 100644
+--- a/drivers/usb/Kconfig
++++ b/drivers/usb/Kconfig
+@@ -165,6 +165,8 @@ source "drivers/usb/gadget/Kconfig"
  
--xhci-hcd-y := xhci.o xhci-mem.o
-+xhci-hcd-y := xhci.o xhci-mem.o xhci-ext-caps.o
- xhci-hcd-y += xhci-ring.o xhci-hub.o xhci-dbg.o
- xhci-hcd-y += xhci-trace.o
+ source "drivers/usb/typec/Kconfig"
  
-diff --git a/drivers/usb/host/xhci-ext-caps.c b/drivers/usb/host/xhci-ext-caps.c
++source "drivers/usb/roles/Kconfig"
++
+ config USB_LED_TRIG
+ 	bool "USB LED Triggers"
+ 	depends on LEDS_CLASS && LEDS_TRIGGERS
+diff --git a/drivers/usb/Makefile b/drivers/usb/Makefile
+index 060643a1b5c8..7d1b8c82b208 100644
+--- a/drivers/usb/Makefile
++++ b/drivers/usb/Makefile
+@@ -65,3 +65,5 @@ obj-$(CONFIG_USB_COMMON)	+= common/
+ obj-$(CONFIG_USBIP_CORE)	+= usbip/
+ 
+ obj-$(CONFIG_TYPEC)		+= typec/
++
++obj-$(CONFIG_USB_ROLE_SWITCH)	+= roles/
+diff --git a/drivers/usb/roles/Kconfig b/drivers/usb/roles/Kconfig
 new file mode 100644
-index 000000000000..8622d1e95ae7
+index 000000000000..e5c2bfaf8ba5
 --- /dev/null
-+++ b/drivers/usb/host/xhci-ext-caps.c
-@@ -0,0 +1,89 @@
++++ b/drivers/usb/roles/Kconfig
+@@ -0,0 +1,14 @@
++if USB_ROLE_SWITCH
++
++config USB_ROLES_INTEL_XHCI
++	tristate "Intel XHCI USB Role Switch"
++	depends on ACPI && X86 && EXTCON
++	help
++	  Driver for the internal USB role switch for switching the USB data
++	  lines between the xHCI host controller and the dwc3 gadget controller
++	  found on various Intel SoCs.
++
++	  To compile the driver as a module, choose M here: the module will
++	  be called intel-xhci-usb-role-switch.
++
++endif # USB_ROLE_SWITCH
+diff --git a/drivers/usb/roles/Makefile b/drivers/usb/roles/Makefile
+new file mode 100644
+index 000000000000..e44b179ba275
+--- /dev/null
++++ b/drivers/usb/roles/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_USB_ROLES_INTEL_XHCI) += intel-xhci-usb-role-switch.o
+diff --git a/drivers/usb/roles/intel-xhci-usb-role-switch.c b/drivers/usb/roles/intel-xhci-usb-role-switch.c
+new file mode 100644
+index 000000000000..b46c44b0e028
+--- /dev/null
++++ b/drivers/usb/roles/intel-xhci-usb-role-switch.c
+@@ -0,0 +1,201 @@
++// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * XHCI extended capability handling
++ * Intel XHCI (Cherry Trail, Broxton and others) USB OTG role switch driver
 + *
-+ * Copyright (c) 2017 Hans de Goede <hdegoede@redhat.com>
++ * Copyright (c) 2016-2017 Hans de Goede <hdegoede@redhat.com>
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++ * Loosely based on android x86 kernel code which is:
++ *
++ * Copyright (C) 2014 Intel Corp.
++ *
++ * Author: Wu, Hao
 + */
 +
++#include <linux/acpi.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
 +#include <linux/platform_device.h>
-+#include "xhci.h"
++#include <linux/usb/role.h>
 +
-+static void xhci_intel_unregister_pdev(void *arg)
++/* register definition */
++#define DUAL_ROLE_CFG0			0x68
++#define SW_VBUS_VALID			(1 << 24)
++#define SW_IDPIN_EN			(1 << 21)
++#define SW_IDPIN			(1 << 20)
++
++#define DUAL_ROLE_CFG1			0x6c
++#define HOST_MODE			(1 << 29)
++
++#define DUAL_ROLE_CFG1_POLL_TIMEOUT	1000
++
++#define DRV_NAME			"intel_xhci_usb_sw"
++
++struct intel_xhci_usb_data {
++	struct usb_role_switch *role_sw;
++	void __iomem *base;
++};
++
++struct intel_xhci_acpi_match {
++	const char *hid;
++	int hrv;
++};
++
++/*
++ * ACPI IDs for PMICs which do not support separate data and power role
++ * detection (USB ACA detection for micro USB OTG), we allow userspace to
++ * change the role manually on these.
++ */
++static const struct intel_xhci_acpi_match allow_userspace_ctrl_ids[] = {
++	{ "INT33F4",  3 }, /* X-Powers AXP288 PMIC */
++};
++
++static int intel_xhci_usb_set_role(struct device *dev, enum usb_role role)
 +{
-+	platform_device_unregister(arg);
++	struct intel_xhci_usb_data *data = dev_get_drvdata(dev);
++	unsigned long timeout;
++	acpi_status status;
++	u32 glk = -1U;
++	u32 val;
++
++	/*
++	 * On many CHT devices ACPI event (_AEI) handlers read / modify /
++	 * write the cfg0 register, just like we do. Take the ACPI lock
++	 * to avoid us racing with the AML code.
++	 */
++	status = acpi_acquire_global_lock(ACPI_WAIT_FOREVER, &glk);
++	if (ACPI_FAILURE(status) && status != AE_NOT_CONFIGURED) {
++		dev_err(dev, "Error could not acquire lock\n");
++		return -EIO;
++	}
++
++	/* Set idpin value as requested */
++	val = readl(data->base + DUAL_ROLE_CFG0);
++	switch (role) {
++	case USB_ROLE_NONE:
++		val |= SW_IDPIN;
++		val &= ~SW_VBUS_VALID;
++		break;
++	case USB_ROLE_HOST:
++		val &= ~SW_IDPIN;
++		val &= ~SW_VBUS_VALID;
++		break;
++	case USB_ROLE_DEVICE:
++		val |= SW_IDPIN;
++		val |= SW_VBUS_VALID;
++		break;
++	}
++	val |= SW_IDPIN_EN;
++
++	writel(val, data->base + DUAL_ROLE_CFG0);
++
++	acpi_release_global_lock(glk);
++
++	/* In most case it takes about 600ms to finish mode switching */
++	timeout = jiffies + msecs_to_jiffies(DUAL_ROLE_CFG1_POLL_TIMEOUT);
++
++	/* Polling on CFG1 register to confirm mode switch.*/
++	do {
++		val = readl(data->base + DUAL_ROLE_CFG1);
++		if (!!(val & HOST_MODE) == (role == USB_ROLE_HOST))
++			return 0;
++
++		/* Interval for polling is set to about 5 - 10 ms */
++		usleep_range(5000, 10000);
++	} while (time_before(jiffies, timeout));
++
++	dev_warn(dev, "Timeout waiting for role-switch\n");
++	return -ETIMEDOUT;
 +}
 +
-+static int xhci_create_intel_xhci_sw_pdev(struct xhci_hcd *xhci, u32 cap_offset)
++static enum usb_role intel_xhci_usb_get_role(struct device *dev)
 +{
-+	struct usb_hcd *hcd = xhci_to_hcd(xhci);
-+	struct device *dev = hcd->self.controller;
-+	struct platform_device *pdev;
-+	struct resource	res = { 0, };
-+	int ret;
++	struct intel_xhci_usb_data *data = dev_get_drvdata(dev);
++	enum usb_role role;
++	u32 val;
 +
-+	pdev = platform_device_alloc("intel_xhci_usb_sw", PLATFORM_DEVID_NONE);
-+	if (!pdev) {
-+		xhci_err(xhci, "couldn't allocate intel_xhci_usb_sw pdev\n");
++	val = readl(data->base + DUAL_ROLE_CFG0);
++
++	if (!(val & SW_IDPIN))
++		role = USB_ROLE_HOST;
++	else if (val & SW_VBUS_VALID)
++		role = USB_ROLE_DEVICE;
++	else
++		role = USB_ROLE_NONE;
++
++	return role;
++}
++
++static struct usb_role_switch_desc sw_desc = {
++	.set = intel_xhci_usb_set_role,
++	.get = intel_xhci_usb_get_role,
++};
++
++static int intel_xhci_usb_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct intel_xhci_usb_data *data;
++	struct resource *res;
++	resource_size_t size;
++	int i, ret;
++
++	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
 +		return -ENOMEM;
-+	}
 +
-+	res.start = hcd->rsrc_start + cap_offset;
-+	res.end	  = res.start + 0x3ff;
-+	res.name  = "intel_xhci_usb_sw";
-+	res.flags = IORESOURCE_MEM;
-+
-+	ret = platform_device_add_resources(pdev, &res, 1);
-+	if (ret) {
-+		dev_err(dev, "couldn't add resources to intel_xhci_usb_sw pdev\n");
-+		platform_device_put(pdev);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	size = (res->end + 1) - res->start;
++	data->base = devm_ioremap_nocache(dev, res->start, size);
++	if (IS_ERR(data->base)) {
++		ret = PTR_ERR(data->base);
++		dev_err(dev, "Error iomaping registers: %d\n", ret);
 +		return ret;
 +	}
 +
-+	pdev->dev.parent = dev;
++	for (i = 0; i < ARRAY_SIZE(allow_userspace_ctrl_ids); i++)
++		if (acpi_dev_present(allow_userspace_ctrl_ids[i].hid, "1",
++				     allow_userspace_ctrl_ids[i].hrv))
++			sw_desc.allow_userspace_control = true;
 +
-+	ret = platform_device_add(pdev);
-+	if (ret) {
-+		dev_err(dev, "couldn't register intel_xhci_usb_sw pdev\n");
-+		platform_device_put(pdev);
-+		return ret;
-+	}
++	platform_set_drvdata(pdev, data);
 +
-+	ret = devm_add_action_or_reset(dev, xhci_intel_unregister_pdev, pdev);
-+	if (ret) {
-+		dev_err(dev, "couldn't add unregister action for intel_xhci_usb_sw pdev\n");
++	data->role_sw = usb_role_switch_register(dev, &sw_desc);
++	if (IS_ERR(data->role_sw)) {
++		ret = PTR_ERR(data->role_sw);
++		dev_err(dev, "Error registering role-switch: %d\n", ret);
 +		return ret;
 +	}
 +
 +	return 0;
 +}
 +
-+int xhci_ext_cap_init(struct xhci_hcd *xhci)
++int intel_xhci_usb_remove(struct platform_device *pdev)
 +{
-+	void __iomem *base = &xhci->cap_regs->hc_capbase;
-+	u32 cap_offset, val;
-+	int ret;
++	struct intel_xhci_usb_data *data = platform_get_drvdata(pdev);
 +
-+	cap_offset = xhci_find_next_ext_cap(base, 0, 0);
-+
-+	while (cap_offset) {
-+		val = readl(base + cap_offset);
-+
-+		switch (XHCI_EXT_CAPS_ID(val)) {
-+		case XHCI_EXT_CAPS_VENDOR_INTEL:
-+			if (xhci->quirks & XHCI_INTEL_USB_ROLE_SW) {
-+				ret = xhci_create_intel_xhci_sw_pdev(
-+							    xhci, cap_offset);
-+				if (ret)
-+					return ret;
-+			}
-+			break;
-+		}
-+		cap_offset = xhci_find_next_ext_cap(base, cap_offset, 0);
-+	}
-+
++	usb_role_switch_unregister(data->role_sw);
 +	return 0;
 +}
-+EXPORT_SYMBOL_GPL(xhci_ext_cap_init);
-diff --git a/drivers/usb/host/xhci-ext-caps.h b/drivers/usb/host/xhci-ext-caps.h
-index 631e7cc62604..268328c20681 100644
---- a/drivers/usb/host/xhci-ext-caps.h
-+++ b/drivers/usb/host/xhci-ext-caps.h
-@@ -39,6 +39,8 @@
- #define XHCI_EXT_CAPS_ROUTE	5
- /* IDs 6-9 reserved */
- #define XHCI_EXT_CAPS_DEBUG	10
-+/* Vendor caps */
-+#define XHCI_EXT_CAPS_VENDOR_INTEL	192
- /* USB Legacy Support Capability - section 7.1.1 */
- #define XHCI_HC_BIOS_OWNED	(1 << 16)
- #define XHCI_HC_OS_OWNED	(1 << 24)
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index 6c79037876db..4486640d925c 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -164,6 +164,7 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
- 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
- 		 pdev->device == PCI_DEVICE_ID_INTEL_CHERRYVIEW_XHCI) {
- 		xhci->quirks |= XHCI_SSIC_PORT_UNUSED;
-+		xhci->quirks |= XHCI_INTEL_USB_ROLE_SW;
- 	}
- 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
- 	    (pdev->device == PCI_DEVICE_ID_INTEL_CHERRYVIEW_XHCI ||
-@@ -297,6 +298,10 @@ static int xhci_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 		goto dealloc_usb2_hcd;
- 	}
- 
-+	retval = xhci_ext_cap_init(xhci);
-+	if (retval)
-+		goto put_usb3_hcd;
 +
- 	retval = usb_add_hcd(xhci->shared_hcd, dev->irq,
- 			IRQF_SHARED);
- 	if (retval)
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 96099a245c69..5917e3095e2a 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1825,6 +1825,7 @@ struct xhci_hcd {
- /* Reserved. It was XHCI_U2_DISABLE_WAKE */
- #define XHCI_ASMEDIA_MODIFY_FLOWCONTROL	(1 << 28)
- #define XHCI_HW_LPM_DISABLE	(1 << 29)
-+#define XHCI_INTEL_USB_ROLE_SW	(1 << 30)
- 
- 	unsigned int		num_active_eps;
- 	unsigned int		limit_active_eps;
-@@ -2020,6 +2021,7 @@ int xhci_gen_setup(struct usb_hcd *hcd, xhci_get_quirks_t get_quirks);
- void xhci_init_driver(struct hc_driver *drv,
- 		      const struct xhci_driver_overrides *over);
- int xhci_disable_slot(struct xhci_hcd *xhci, u32 slot_id);
-+int xhci_ext_cap_init(struct xhci_hcd *xhci);
- 
- int xhci_suspend(struct xhci_hcd *xhci, bool do_wakeup);
- int xhci_resume(struct xhci_hcd *xhci, bool hibernated);
++static const struct platform_device_id intel_xhci_usb_table[] = {
++	{ .name = DRV_NAME },
++	{},
++};
++MODULE_DEVICE_TABLE(platform, intel_xhci_usb_table);
++
++static struct platform_driver intel_xhci_usb_driver = {
++	.driver = {
++		.name = DRV_NAME,
++	},
++	.id_table = intel_xhci_usb_table,
++	.probe = intel_xhci_usb_probe,
++	.remove = intel_xhci_usb_remove,
++};
++
++module_platform_driver(intel_xhci_usb_driver);
++
++MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
++MODULE_DESCRIPTION("Intel XHCI USB role switch driver");
++MODULE_LICENSE("GPL");
 -- 
 2.14.3
