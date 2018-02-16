@@ -1,60 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965634AbeBPMDV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 07:03:21 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37918 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965036AbeBPMDT (ORCPT
+        id S965692AbeBPME0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 07:04:26 -0500
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:61346 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965642AbeBPMEX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 07:03:19 -0500
-Date: Fri, 16 Feb 2018 12:03:11 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com
-Subject: Re: [PATCH 5/5] regmap: Remove regmap_get_raw_read_max
-Message-ID: <20180216120311.GG5886@sirena.org.uk>
-References: <20180215175220.2691-1-ckeepax@opensource.cirrus.com>
- <20180215175220.2691-5-ckeepax@opensource.cirrus.com>
+        Fri, 16 Feb 2018 07:04:23 -0500
+Subject: Re: [PATCH v3 0/2] phy: rockchip-emmc: fixes emmc-phy power on failed
+ with rk3399 SoCs
+To: Caesar Wang <wxt@rock-chips.com>
+References: <1515638427-15117-1-git-send-email-wxt@rock-chips.com>
+CC: Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <56548710-6b9a-85bc-85de-221ae748d83c@ti.com>
+Date: Fri, 16 Feb 2018 17:33:48 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="1giRMj6yz/+FOIRq"
-Content-Disposition: inline
-In-Reply-To: <20180215175220.2691-5-ckeepax@opensource.cirrus.com>
-X-Cookie: To order, call toll-free.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1515638427-15117-1-git-send-email-wxt@rock-chips.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---1giRMj6yz/+FOIRq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Thu, Feb 15, 2018 at 05:52:20PM +0000, Charles Keepax wrote:
-> Since the handling for max_raw_read is now inside regmap_raw_read there
-> should be no need for client drivers to query as max_raw_read.
+On Thursday 11 January 2018 08:10 AM, Caesar Wang wrote:
+> Hi Kishon,
+> 
+> Since the Shawn isn't available, I take over this series patches for now.
+> 
+> As the original bug had tracked on https://issuetracker.google.com/71561742.
+> In some cases, the mmc phy power on failed during booting up.
+> The log as below:
+> ...
+> [   2.375333] rockchip_emmc_phy_power: caldone timeout.
+> [    2.377815] phy phy-ff770000.syscon:phy@f780.4: phy poweron failed --> -110
+> ...
+> [    2.489295] mmc0: mmc_select_hs400es failed, error -110
+> [    2.489302] mmc0: error -110 whilst initialising MMC card
+> ..
+> 
+> The actual emulate, the wait 5us for calpad busy trimming, that's no enough.
+> We need give the enough margin for it.
+> 
+> Verified on url =
+>         https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-4.4
+> This series patches can apply and bring up with kernel-next on rk3399 chromebook.
 
-No, they might need to know if things are going to be combined into a
-single transaction - some devices have weird sensitivities about bulk
-I/O and so the driver may need to know exactly what's going on when it
-interacts with the device.
+merged now, thanks!
 
---1giRMj6yz/+FOIRq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqGyH4ACgkQJNaLcl1U
-h9C27gf9FGruca1bJJ8HPUq5QqsxtVWtsbh6dN825ZcshAg27PggFmdvvyQtcvmU
-CUdS8sI8dDe/bFQWVy3JJTP5Y387VQIClYQX7rNUO/kaHwr2sCSh478CqE0gIDnl
-ea4MOKRgi9XrxacDC3uzejwjamWdUnqV8Fq/br5MjPSYeJWa53PzJZKfz+5l2G8r
-1XMag8tVCWmPkgsY2VvVmwhv3SSWGY8zYxqot2sGClxhE2NIboQnoeOU3ltomFVq
-lFPtUbc/AoYsEM1taz3YweFgz49XK7yt5TNuUzeCxa4q2Ry3kDeYxiapPYsTZdlQ
-Ez58cGEI+8JtUbRJ3k24RpoNgNLRfg==
-=jr/8
------END PGP SIGNATURE-----
-
---1giRMj6yz/+FOIRq--
+-Kishon
+> 
+> -Caesar
+> 
+> 
+> Changes in v3:
+> - As Doug commented on both upstream and gerrit.
+>   Change "5, 50" to "0, 50", and the message of print.
+> - As Doug commented on https://patchwork.kernel.org/patch/10154797,
+>   Change "1, 50" to "0, 50".
+> 
+> Changes in v2:
+> - print the return valut with regmap_read_poll_timeout failing.
+> - As Brian commented on https://patchwork.kernel.org/patch/10139891/,
+>   changed the note and added to print error value with
+>   regmap_read_poll_timeout API.
+> 
+> Shawn Lin (2):
+>   phy: rockchip-emmc: retry calpad busy trimming
+>   phy: rockchip-emmc: use regmap_read_poll_timeout to poll dllrdy
+> 
+>  drivers/phy/rockchip/phy-rockchip-emmc.c | 60 +++++++++++++++-----------------
+>  1 file changed, 28 insertions(+), 32 deletions(-)
+> 
