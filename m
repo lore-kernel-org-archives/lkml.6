@@ -1,82 +1,106 @@
-Return-Path: <tony.luck@intel.com>
-X-Google-Smtp-Source: AH8x226+eeoJquvOnx0oPFHTbi/sPSjv4qIT1jJmhKhEzN64uwQenOJJnt24JHJYtf37AwiQNio9
-ARC-Seal: i=1; a=rsa-sha256; t=1517936862; cv=none;
-        d=google.com; s=arc-20160816;
-        b=BEuiccoJtO+sYLizg+Aa7mOyk7JqtHgSZrYQSDbU8FxAqJqUSWB961OFfUG2UuDkY5
-         Q71MhXn7dVw7TS+gyLWjp+h9qRryF91nzzfP24ji1i2qXg9HXo1nj1FcqVSoTC15Y/KK
-         P/i+3/ZFD+iTSmo8Gja8x1LjeoeMKjuwW2GjfLieOWX2XQsLXI7xzPXCRIDDTBkGeYzm
-         uJnMYUhuXXVCZ9+pVRAHVvxXKHwfQYJgBlKmFPI1dwTXQKVIYCYtmp2oHdQE7clWwYSW
-         +YbYgS+EmFHjNSK7FNoQ63kt7k+mOsuRvLwkIA67GqUWumRzBVp0S5HUXSyBNdsp6tjO
-         rzCQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:dlp-reaction:dlp-version
-         :dlp-product:content-language:accept-language:in-reply-to:references
-         :message-id:date:thread-index:thread-topic:subject:cc:to:from
-         :arc-authentication-results;
-        bh=a0VNxKzdkgXnZlPi8D9H4tNGSObtcGyl1BJtgz8i9z4=;
-        b=Rl1IUzyCJXL4hopW8FAkKiYRXVb/CK6P6pxJrbbKVOWNqnLYmL+lNiKwInpr2j+r0b
-         eWd5Sn4X57c08EdlsAXYBw03zV0Evh0BkFMBlCiMJXtT00yf8LMDXcbKUu7JMHNpSocr
-         QWXrfd7t2LlBjn3fYKVCilMkJ3rVe1OG4Jhq3KsyQ7rQa9hYjNBaLt9qr4wI3/NmB547
-         CKTp688LP4nzbw/fTa0PxPbyrUDI+SO9xf/EseJWxSK3Ut4ZvKYH4sXO+KE2holJzxhl
-         pqe1hpgqkEgCB+vf6X92jRzx/hhBoVwfL+Nj5JJlNrAVwVZwEIBnd8yEHNCzFYWK3Pow
-         0Sqw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of tony.luck@intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=tony.luck@intel.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of tony.luck@intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=tony.luck@intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,469,1511856000";
-   d="scan'208";a="201671090"
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Masahiro Yamada
-	<yamada.masahiro@socionext.com>
-CC: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, Nicolas Pitre <nicolas.pitre@linaro.org>, "Luis
- R . Rodriguez" <mcgrof@suse.com>, Randy Dunlap <rdunlap@infradead.org>, "Ulf
- Magnusson" <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, "Michal
- Marek" <michal.lkml@markovi.net>, Linus Torvalds
-	<torvalds@linux-foundation.org>, "linux-ia64@vger.kernel.org"
-	<linux-ia64@vger.kernel.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "Yu, Fenghua" <fenghua.yu@intel.com>
-Subject: RE: [PATCH 06/14] kbuild: define PYTHON2 and PYTHON3 variables
- instead of PYTHON
-Thread-Topic: [PATCH 06/14] kbuild: define PYTHON2 and PYTHON3 variables
- instead of PYTHON
-Thread-Index: AQHTnuKvJY4VJBR5TEuLQy09uO1N/6OXo84AgAATbgCAACjFgP//u8Ug
-Date: Tue, 6 Feb 2018 17:07:39 +0000
-Message-ID: <3908561D78D1C84285E8C5FCA982C28F7B369E5D@ORSMSX110.amr.corp.intel.com>
-References: <1517877294-4826-1-git-send-email-yamada.masahiro@socionext.com>
- <1517877294-4826-7-git-send-email-yamada.masahiro@socionext.com>
- <20180206093450.GB31558@kroah.com>
- <CAK7LNAS_29myncTw+6u7fH9BgjzZJfXSN1CJjOjK-qXjPRQ8hQ@mail.gmail.com>
- <20180206131017.GF31804@kroah.com>
-In-Reply-To: <20180206131017.GF31804@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjY1NGIzZWMtZWUyNi00OTBmLTg3MjktZWU5NTBhMTdiY2E4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJRMlN1REp2RXZhQjBUbnRxQWdYbjlPbnI5NlwvQ2QxK0w5WEpuSVBwejNQV2JGc1wvb3BJU3Q3Q29DVlg2enlTVUIifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3975444-1518774505-2-10940663239663116101
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518774505; b=U560qheYKvIxCaIUqj8cLGztO21pc/nts9YacM9Mzk6+/cu
+    i97zgTzTqyRzu8x5xgxvUd7PbxXWCcogtKll2Sb8cqD9SHsBTEIlJHnCBVD6Tpqy
+    BKpQLYowhaRXZwjxcc9yJbCXoipLc/OrMMJpQMUH06pgbBxsHkoTEYAVTuA3s2Kb
+    qoLD0+I4dVLO7I8a7DsNHEjbhKHx9a1s5VNw1bYLB7SsrUzXkmxslQAe59tISJmH
+    I88jBCo8Q0efz8o8JuAakSm6JzSO52b1I3uFWiA2wyHP6tyVF0aNS5PKLo5VkIMp
+    t0GxQrjOCnHvpXQeVePQkNnyUEISS92GJ9FpQ0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1518774505; bh=1nfEYtTDhX/gWJpZ3nAZ1834go
+    +w+XyEeTclRKXgd5Y=; b=rvIPvhdl0cjijeWliqkOj/UI3BSWj7z9Ew+wbTnu9G
+    Y2P0rU8fhb+isdB+Wq/J0wutEYpxV4oFiScyL4SiJWsHQM8Dq+BAd8IIa2YZtqR3
+    Xf9vaIrdfHF+uWyIDFzoqHmoeyEnIl8isKYe3t8dQmj04xX+qGzXuprkwG8S6NbG
+    jEgvbor7x4Ic5+TA4ZL11pwa+p9K+cbcJvXOQkCxi2SpwGiBLNb3SJ35nfHxK+Ci
+    w9W7wt6artSzL3w+6h4evOL1C37znh6fMIar7iqEPsK8ElmTmT82aqITTJNP7Urv
+    R4V8/4vRKspnwAezrKo5ddu8YryvP1Aoxf8HushXdoAw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932414AbeBPJsY (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 16 Feb 2018 04:48:24 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48074 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932325AbeBPJsX (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 16 Feb 2018 04:48:23 -0500
+From: Hans de Goede <hdegoede@redhat.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH] libata: Apply NOLPM quirk to Crucial MX100 512GB SSDs
+Date: Fri, 16 Feb 2018 10:48:20 +0100
+Message-Id: <20180216094820.3587-1-hdegoede@redhat.com>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591609779326365104?=
-X-GMAIL-MSGID: =?utf-8?q?1591672162722875184?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-> That's true, and who knows if python3 is running on ia64 :)
+Various people have reported the Crucial MX100 512GB model not working
+with LPM set to min_power. I've now received a report that it also does
+not work with the new med_power_with_dipm level.
 
-$ python3
--bash: python3: command not found
+It does work with medium_power, but that has no measurable power-savings
+and given the amount of people being bitten by the other levels not
+working, this commit just disables LPM altogether.
 
-So I don't have it installed on my ia64 test/build machine.
+Note all reporters of this have either the 512GB model (max capacity), or
+are not specifying their SSD's size. So for now this quirk assumes this is
+a problem with the 512GB model only.
 
--Tony
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=89261
+Buglink: https://github.com/linrunner/TLP/issues/84
+Cc: stable@vger.kernel.org
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/ata/libata-core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index 3c09122bf038..d8be0fe548f7 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4530,6 +4530,11 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
+ 	{ "PIONEER DVD-RW  DVR-212D",	NULL,	ATA_HORKAGE_NOSETXFER },
+ 	{ "PIONEER DVD-RW  DVR-216D",	NULL,	ATA_HORKAGE_NOSETXFER },
+ 
++	/* The 512GB version of the MX100 has both queued TRIM and LPM issues */
++	{ "Crucial_CT512MX100*",	NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
++						ATA_HORKAGE_ZERO_AFTER_TRIM |
++						ATA_HORKAGE_NOLPM, },
++
+ 	/* devices that don't properly handle queued TRIM commands */
+ 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+-- 
+2.14.3
