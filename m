@@ -1,67 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753951AbeBPIJb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 03:09:31 -0500
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:55287 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753922AbeBPIJ3 (ORCPT
+        id S1753974AbeBPILd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 03:11:33 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47766 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753806AbeBPILc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 03:09:29 -0500
-Subject: Re: [PATCH v2 08/16] mmc: sdhci-omap: Add support to override f_max
- and iodelay from pdata
-To: Tony Lindgren <tony@atomide.com>, Ulf Hansson <ulf.hansson@linaro.org>
-References: <20180205125029.21570-1-kishon@ti.com>
- <20180205125029.21570-9-kishon@ti.com>
- <CAPDyKFrhpry40TCjmQ_-WO-EWa2BCL0eNXLZB_UobGaYbsBiHA@mail.gmail.com>
- <20180214172455.GO6364@atomide.com>
-CC: Adrian Hunter <adrian.hunter@intel.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <d381abaf-8968-ae0f-7dd3-8c10e7220648@ti.com>
-Date: Fri, 16 Feb 2018 13:38:51 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
+        Fri, 16 Feb 2018 03:11:32 -0500
+Date: Fri, 16 Feb 2018 09:11:27 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: arm64/v4.16-rc1: KASAN: use-after-free Read in finish_task_switch
+Message-ID: <20180216081127.GE25181@hirez.programming.kicks-ass.net>
+References: <20180214120254.qq4w4s42ecxio7lu@lakrids.cambridge.arm.com>
+ <20180214150739.GH2992@arm.com>
+ <20180214165131.o25r3hhrtrjk3ejq@lakrids.cambridge.arm.com>
+ <254787533.21950.1518634424009.JavaMail.zimbra@efficios.com>
+ <20180215142239.GF16623@arm.com>
+ <20180215164754.GW25201@hirez.programming.kicks-ass.net>
+ <20180215182154.GD15274@arm.com>
+ <1144433342.22716.1518732536600.JavaMail.zimbra@efficios.com>
+ <206116170.22740.1518739362681.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
-In-Reply-To: <20180214172455.GO6364@atomide.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <206116170.22740.1518739362681.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Wednesday 14 February 2018 10:54 PM, Tony Lindgren wrote:
-> * Ulf Hansson <ulf.hansson@linaro.org> [180214 09:53]:
->> On 5 February 2018 at 13:50, Kishon Vijay Abraham I <kishon@ti.com> wrote:
->>> DRA74x EVM Rev H EVM comes with revision 2.0 silicon. However, earlier
->>> versions of EVM can come with either revision 1.1 or revision 1.0 of
->>> silicon.
->>>
->>> The device-tree file is written to support rev 2.0 of silicon.
->>> pdata-quirks are used to then override the settings needed for
->>> PG 1.1 silicon.
->>>
->>> PG 1.1 silicon has limitations w.r.t frequencies at which MMC1/2/3
->>> can operate as well as different IOdelay numbers.
->>
->> I fail to understand the need for platform data. Why can't DT be used
->> for the older revisions as well?
+Please trim..
 
-It was decided to have dt file for a single soc revision. So the default dts
-corresponds to rev 2.0.
-> 
-> Maybe the silicon revision is not available via soc_device_match()?
+On Fri, Feb 16, 2018 at 12:02:42AM +0000, Mathieu Desnoyers wrote:
+> > My current theory: do_exit() gets preempted after having set current->mm
+> > to NULL, and after having issued mmput(), which brings the mm_count down
+> > to 0.
 
-hmm.. looks like we can get rid of pdata if we use soc_device_match. Thanks for
-the hint.
+No it doesn't..
 
-Regards
-Kishon
+remember, the last thread of a process enters with:
+
+  mm_count == 1 && mm_users == 1
+
+exit_mm() then does mmgrab():
+
+  mm_count == 2 && mm_users == 1
+
+we then do mmput(), which results in:
+
+  mm_count == 1 && mm_users == 0
+
+That last mm_count is for ->active_mm, and will be dropped once we
+schedule to a next user task.
