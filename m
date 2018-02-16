@@ -1,138 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965340AbeBPLuX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 06:50:23 -0500
-Received: from mga02.intel.com ([134.134.136.20]:60284 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935543AbeBPLty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 06:49:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,519,1511856000";
-   d="scan'208";a="18214336"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>, Borislav Petkov <bp@suse.de>,
-        Andi Kleen <ak@linux.intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 1/3] x86/xen: Allow XEN_PV and XEN_PVH to be enabled with X86_5LEVEL
-Date: Fri, 16 Feb 2018 14:49:46 +0300
-Message-Id: <20180216114948.68868-2-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180216114948.68868-1-kirill.shutemov@linux.intel.com>
-References: <20180216114948.68868-1-kirill.shutemov@linux.intel.com>
+        id S965415AbeBPLv6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 06:51:58 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38142 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964875AbeBPLv4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 06:51:56 -0500
+Subject: Re: [PATCH 7/8] arm64: dts: renesas: r8a77995-draak: Add HDMI Out
+ through ADV7511
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>, geert@glider.be,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
+ <1518683903-10681-8-git-send-email-kbingham@kernel.org>
+ <2517305.jdPBFiRQEk@avalon>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <95b1fa2c-8302-e264-2f00-eba5ac34bcd3@ideasonboard.com>
+Date: Fri, 16 Feb 2018 11:51:51 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <2517305.jdPBFiRQEk@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With boot-time switching between paging modes, XEN_PV and XEN_PVH can be
-boot into 4-level paging mode.
+Hi Laurent,
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Tested-by: Juergen Gross <jgross@suse.com>
----
- arch/x86/kernel/head_64.S | 12 ++++++------
- arch/x86/xen/Kconfig      |  5 -----
- arch/x86/xen/mmu_pv.c     | 21 +++++++++++++++++++++
- 3 files changed, 27 insertions(+), 11 deletions(-)
+On 15/02/18 14:16, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> On Thursday, 15 February 2018 10:38:22 EET Kieran Bingham wrote:
+>> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>>
+>> Provide a device node for the ADV7511 as found on the Draak D3 platform.
+>>
+>> The ADV7511 is connected to the DU through a parallel mux chip, and is
+>> configurable in hardware whether it is connected to LVDS0 or LVDS1.
+>>
+>> Connect through to LVDS0 as a default implementation.
+> 
+> You need to model the LVDS decoder in DT too. I know that no driver and no DT 
+> bindings are available at the moment, and I'm aware that this patch enables 
+> the HDMI output on the Draak board, but I don't think it's upstreamable as-is.
 
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index 145d7b95ae29..3e9de0fc97de 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -38,12 +38,12 @@
-  *
-  */
- 
-+#define l4_index(x)	(((x) >> 39) & 511)
- #define pud_index(x)	(((x) >> PUD_SHIFT) & (PTRS_PER_PUD-1))
- 
--#if defined(CONFIG_XEN_PV) || defined(CONFIG_XEN_PVH)
--PGD_PAGE_OFFSET = pgd_index(__PAGE_OFFSET_BASE_L4)
--PGD_START_KERNEL = pgd_index(__START_KERNEL_map)
--#endif
-+L4_PAGE_OFFSET = l4_index(__PAGE_OFFSET_BASE_L4)
-+L4_START_KERNEL = l4_index(__START_KERNEL_map)
-+
- L3_START_KERNEL = pud_index(__START_KERNEL_map)
- 
- 	.text
-@@ -386,9 +386,9 @@ NEXT_PAGE(early_dynamic_pgts)
- #if defined(CONFIG_XEN_PV) || defined(CONFIG_XEN_PVH)
- NEXT_PGD_PAGE(init_top_pgt)
- 	.quad   level3_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
--	.org    init_top_pgt + PGD_PAGE_OFFSET*8, 0
-+	.org    init_top_pgt + L4_PAGE_OFFSET*8, 0
- 	.quad   level3_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
--	.org    init_top_pgt + PGD_START_KERNEL*8, 0
-+	.org    init_top_pgt + L4_START_KERNEL*8, 0
- 	/* (2^48-(2*1024*1024*1024))/(2^39) = 511 */
- 	.quad   level3_kernel_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
- 	.fill	PTI_USER_PGD_FILL,8,0
-diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
-index f605825a04ab..c1f98f32c45f 100644
---- a/arch/x86/xen/Kconfig
-+++ b/arch/x86/xen/Kconfig
-@@ -18,9 +18,6 @@ config XEN_PV
- 	bool "Xen PV guest support"
- 	default y
- 	depends on XEN
--	# XEN_PV is not ready to work with 5-level paging.
--	# Changes to hypervisor are also required.
--	depends on !X86_5LEVEL
- 	select XEN_HAVE_PVMMU
- 	select XEN_HAVE_VPMU
- 	help
-@@ -79,6 +76,4 @@ config XEN_DEBUG_FS
- config XEN_PVH
- 	bool "Support for running as a PVH guest"
- 	depends on XEN && XEN_PVHVM && ACPI
--	# Pre-built page tables are not ready to handle 5-level paging.
--	depends on !X86_5LEVEL
- 	def_bool n
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index aae88fec9941..d20763472920 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -538,6 +538,22 @@ static void xen_set_p4d(p4d_t *ptr, p4d_t val)
- 
- 	xen_mc_issue(PARAVIRT_LAZY_MMU);
- }
-+
-+#if CONFIG_PGTABLE_LEVELS >= 5
-+__visible p4dval_t xen_p4d_val(p4d_t p4d)
-+{
-+	return pte_mfn_to_pfn(p4d.p4d);
-+}
-+PV_CALLEE_SAVE_REGS_THUNK(xen_p4d_val);
-+
-+__visible p4d_t xen_make_p4d(p4dval_t p4d)
-+{
-+	p4d = pte_pfn_to_mfn(p4d);
-+
-+	return native_make_p4d(p4d);
-+}
-+PV_CALLEE_SAVE_REGS_THUNK(xen_make_p4d);
-+#endif  /* CONFIG_PGTABLE_LEVELS >= 5 */
- #endif	/* CONFIG_X86_64 */
- 
- static int xen_pmd_walk(struct mm_struct *mm, pmd_t *pmd,
-@@ -2411,6 +2427,11 @@ static const struct pv_mmu_ops xen_mmu_ops __initconst = {
- 
- 	.alloc_pud = xen_alloc_pmd_init,
- 	.release_pud = xen_release_pmd_init,
-+
-+#if CONFIG_PGTABLE_LEVELS >= 5
-+	.p4d_val = PV_CALLEE_SAVE(xen_p4d_val),
-+	.make_p4d = PV_CALLEE_SAVE(xen_make_p4d),
-+#endif
- #endif	/* CONFIG_X86_64 */
- 
- 	.activate_mm = xen_activate_mm,
--- 
-2.15.1
+Ok, understood. - I'll drop this patch for now until we can schedule time to
+dedicate to looking into this.
+
+I'm sure the archive's will hold on to this patch for us as a starting point :-)
+
+--
+Regards
+
+Kieran
+
+> 
+>> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>> ---
+>>  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 56 +++++++++++++++++++++++
+>>  1 file changed, 56 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+>> b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts index
+>> 668e246dfc5d..df0c7773cb7d 100644
+>> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+>> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+>> @@ -27,6 +27,17 @@
+>>  		stdout-path = "serial0:115200n8";
+>>  	};
+>>
+>> +	hdmi-out {
+>> +		compatible = "hdmi-connector";
+>> +		type = "a";
+>> +
+>> +		port {
+>> +			hdmi_con_out: endpoint {
+>> +				remote-endpoint = <&adv7511_out>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+>>  	vga {
+>>  		compatible = "vga-connector";
+>>
+>> @@ -124,6 +135,39 @@
+>>  		reg = <0x50>;
+>>  		pagesize = <8>;
+>>  	};
+>> +
+>> +	hdmi@39 {
+>> +		compatible = "adi,adv7511w";
+>> +		reg = <0x39>, <0x3f>, <0x38>, <0x3c>;
+>> +		reg-names = "main", "edid", "packet", "cec";
+>> +		interrupt-parent = <&gpio1>;
+>> +		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
+>> +
+>> +		adi,input-depth = <8>;
+>> +		adi,input-colorspace = "rgb";
+>> +		adi,input-clock = "1x";
+>> +		adi,input-style = <1>;
+>> +		adi,input-justification = "evenly";
+>> +
+>> +		ports {
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +
+>> +			port@0 {
+>> +				reg = <0>;
+>> +				adv7511_in: endpoint {
+>> +					remote-endpoint = <&lvds0_out>;
+>> +				};
+>> +			};
+>> +
+>> +			port@1 {
+>> +				reg = <1>;
+>> +				adv7511_out: endpoint {
+>> +					remote-endpoint = <&hdmi_con_out>;
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>>  };
+>>
+>>  &i2c1 {
+>> @@ -146,6 +190,18 @@
+>>  	};
+>>  };
+>>
+>> +&lvds0 {
+>> +	status = "okay";
+>> +
+>> +	ports {
+>> +		port@1 {
+>> +			endpoint {
+>> +				remote-endpoint = <&adv7511_in>;
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>>  &ehci0 {
+>>  	status = "okay";
+>>  };
+> 
+> 
