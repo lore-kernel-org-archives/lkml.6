@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751278AbeBQLiU (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 06:38:20 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:33733 "EHLO
+        id S1751281AbeBQLie (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 06:38:34 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:56209 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750977AbeBQLiR (ORCPT
+        with ESMTP id S1750989AbeBQLic (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 06:38:17 -0500
-Date: Sat, 17 Feb 2018 03:27:56 -0800
-From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-a73e24d240bc136619d382b1268f34d75c9d25ce@git.kernel.org>
-Cc: namhyung@kernel.org, alexander.shishkin@linux.intel.com,
-        dsahern@gmail.com, peterz@infradead.org, jolsa@kernel.org,
-        mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de, acme@redhat.com,
-        linux-kernel@vger.kernel.org
-Reply-To: acme@redhat.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        hpa@zytor.com, tglx@linutronix.de, jolsa@kernel.org, dsahern@gmail.com,
-        peterz@infradead.org, namhyung@kernel.org,
-        alexander.shishkin@linux.intel.com
-In-Reply-To: <20180215122635.24029-9-jolsa@kernel.org>
-References: <20180215122635.24029-9-jolsa@kernel.org>
+        Sat, 17 Feb 2018 06:38:32 -0500
+Date: Sat, 17 Feb 2018 03:38:17 -0800
+From: tip-bot for Thomas Richter <tipbot@zytor.com>
+Message-ID: <tip-4cb7d3ecfca90684ad00f893c34a2028fcc5f764@git.kernel.org>
+Cc: hpa@zytor.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        acme@redhat.com, tglx@linutronix.de, schwidefsky@de.ibm.com,
+        brueckner@linux.vnet.ibm.com, heiko.carstens@de.ibm.com,
+        tmricht@linux.vnet.ibm.com
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
+        tglx@linutronix.de, acme@redhat.com, schwidefsky@de.ibm.com,
+        brueckner@linux.vnet.ibm.com, tmricht@linux.vnet.ibm.com,
+        heiko.carstens@de.ibm.com
+In-Reply-To: <20180213151419.80737-3-tmricht@linux.vnet.ibm.com>
+References: <20180213151419.80737-3-tmricht@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools: Do not create kernel maps in
- sample__resolve()
-Git-Commit-ID: a73e24d240bc136619d382b1268f34d75c9d25ce
+Subject: [tip:perf/core] perf cpuid: Introduce a platform specific cpuid
+ compare function
+Git-Commit-ID: 4cb7d3ecfca90684ad00f893c34a2028fcc5f764
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,52 +36,144 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a73e24d240bc136619d382b1268f34d75c9d25ce
-Gitweb:     https://git.kernel.org/tip/a73e24d240bc136619d382b1268f34d75c9d25ce
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Thu, 15 Feb 2018 13:26:34 +0100
+Commit-ID:  4cb7d3ecfca90684ad00f893c34a2028fcc5f764
+Gitweb:     https://git.kernel.org/tip/4cb7d3ecfca90684ad00f893c34a2028fcc5f764
+Author:     Thomas Richter <tmricht@linux.vnet.ibm.com>
+AuthorDate: Tue, 13 Feb 2018 16:14:18 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Feb 2018 14:25:59 -0300
+CommitDate: Fri, 16 Feb 2018 15:16:57 -0300
 
-perf tools: Do not create kernel maps in sample__resolve()
+perf cpuid: Introduce a platform specific cpuid compare function
 
-There's no need for kernel maps to be allocated at this point - sample
-processing.
+The function get_cpuid_str() is called by perf_pmu__getcpuid() and on
+s390 returns a complete description of the CPU and its capabilities,
+which is a comma separated list.
 
-We search for kernel maps using the kernel map_groups in machine::kmaps
-which is static. If vmlinux maps for any reason still don't exist, the
-search correctly fails because they are not in the map group.
+To map the CPU type with the value defined in the
+pmu-events/arch/s390/mapfile.csv, introduce an architecture specific
+cpuid compare function named strcmp_cpuid_str()
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180215122635.24029-9-jolsa@kernel.org
+The currently used regex algorithm is defined as the weak default and
+will be used if no platform specific one is defined. This matches the
+current behavior.
+
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180213151419.80737-3-tmricht@linux.vnet.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/event.c | 11 -----------
- 1 file changed, 11 deletions(-)
+ tools/perf/arch/s390/util/header.c | 18 +++++++++++++++
+ tools/perf/util/header.h           |  1 +
+ tools/perf/util/pmu.c              | 47 +++++++++++++++++++++++---------------
+ 3 files changed, 48 insertions(+), 18 deletions(-)
 
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index 4644e75..f0a6cbd 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -1588,17 +1588,6 @@ int machine__resolve(struct machine *machine, struct addr_location *al,
- 		return -1;
+diff --git a/tools/perf/arch/s390/util/header.c b/tools/perf/arch/s390/util/header.c
+index a78064c..231294b 100644
+--- a/tools/perf/arch/s390/util/header.c
++++ b/tools/perf/arch/s390/util/header.c
+@@ -146,3 +146,21 @@ char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
+ 		zfree(&buf);
+ 	return buf;
+ }
++
++/*
++ * Compare the cpuid string returned by get_cpuid() function
++ * with the name generated by the jevents file read from
++ * pmu-events/arch/s390/mapfile.csv.
++ *
++ * Parameter mapcpuid is the cpuid as stored in the
++ * pmu-events/arch/s390/mapfile.csv. This is just the type number.
++ * Parameter cpuid is the cpuid returned by function get_cpuid().
++ */
++int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
++{
++	char *cp = strchr(cpuid, ',');
++
++	if (cp == NULL)
++		return -1;
++	return strncmp(cp + 1, mapcpuid, strlen(mapcpuid));
++}
+diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
+index f28aaaa..942bdec 100644
+--- a/tools/perf/util/header.h
++++ b/tools/perf/util/header.h
+@@ -174,4 +174,5 @@ int write_padded(struct feat_fd *fd, const void *bf,
+ int get_cpuid(char *buffer, size_t sz);
  
- 	dump_printf(" ... thread: %s:%d\n", thread__comm_str(thread), thread->tid);
--	/*
--	 * Have we already created the kernel maps for this machine?
--	 *
--	 * This should have happened earlier, when we processed the kernel MMAP
--	 * events, but for older perf.data files there was no such thing, so do
--	 * it now.
--	 */
--	if (sample->cpumode == PERF_RECORD_MISC_KERNEL &&
--	    machine__kernel_map(machine) == NULL)
--		machine__create_kernel_maps(machine);
+ char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused);
++int strcmp_cpuid_str(const char *s1, const char *s2);
+ #endif /* __PERF_HEADER_H */
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 57e38fd..1111d5b 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -576,6 +576,34 @@ char * __weak get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
+ 	return NULL;
+ }
+ 
++/* Return zero when the cpuid from the mapfile.csv matches the
++ * cpuid string generated on this platform.
++ * Otherwise return non-zero.
++ */
++int __weak strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
++{
++	regex_t re;
++	regmatch_t pmatch[1];
++	int match;
++
++	if (regcomp(&re, mapcpuid, REG_EXTENDED) != 0) {
++		/* Warn unable to generate match particular string. */
++		pr_info("Invalid regular expression %s\n", mapcpuid);
++		return 1;
++	}
++
++	match = !regexec(&re, cpuid, 1, pmatch, 0);
++	regfree(&re);
++	if (match) {
++		size_t match_len = (pmatch[0].rm_eo - pmatch[0].rm_so);
++
++		/* Verify the entire string matched. */
++		if (match_len == strlen(cpuid))
++			return 0;
++	}
++	return 1;
++}
++
+ static char *perf_pmu__getcpuid(struct perf_pmu *pmu)
+ {
+ 	char *cpuid;
+@@ -610,31 +638,14 @@ struct pmu_events_map *perf_pmu__find_map(struct perf_pmu *pmu)
+ 
+ 	i = 0;
+ 	for (;;) {
+-		regex_t re;
+-		regmatch_t pmatch[1];
+-		int match;
 -
- 	thread__find_addr_map(thread, sample->cpumode, MAP__FUNCTION, sample->ip, al);
- 	dump_printf(" ...... dso: %s\n",
- 		    al->map ? al->map->dso->long_name :
+ 		map = &pmu_events_map[i++];
+ 		if (!map->table) {
+ 			map = NULL;
+ 			break;
+ 		}
+ 
+-		if (regcomp(&re, map->cpuid, REG_EXTENDED) != 0) {
+-			/* Warn unable to generate match particular string. */
+-			pr_info("Invalid regular expression %s\n", map->cpuid);
++		if (!strcmp_cpuid_str(map->cpuid, cpuid))
+ 			break;
+-		}
+-
+-		match = !regexec(&re, cpuid, 1, pmatch, 0);
+-		regfree(&re);
+-		if (match) {
+-			size_t match_len = (pmatch[0].rm_eo - pmatch[0].rm_so);
+-
+-			/* Verify the entire string matched. */
+-			if (match_len == strlen(cpuid))
+-				break;
+-		}
+ 	}
+ 	free(cpuid);
+ 	return map;
