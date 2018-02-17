@@ -1,63 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751032AbeBQBj7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 20:39:59 -0500
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:46496 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750937AbeBQBj5 (ORCPT
+        id S1751088AbeBQBlG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 20:41:06 -0500
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:63066 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751068AbeBQBlF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 20:39:57 -0500
-X-Google-Smtp-Source: AH8x224mt/3gVp4SYvzo7DnPTDgp/vGlAHs1nFVIALKisDofhLEpf8pFWdsXV/EXo16MlV8uBDcUgBUwkRw3+AmS6+M=
+        Fri, 16 Feb 2018 20:41:05 -0500
+To: Lee Jones <lee.jones@linaro.org>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>, Arnd Bergmann <arnd@arndb.de>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+From: Suman Anna <s-anna@ti.com>
+Subject: syscon regmap for disabled node?
+Message-ID: <e9863f03-f1b5-9158-76f3-37158a0b4cd4@ti.com>
+Date: Fri, 16 Feb 2018 19:40:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180216130229.f3de3aced0c87fe31ad92000@linux-foundation.org>
-References: <1518752264-47238-1-git-send-email-keescook@chromium.org>
- <1518752264-47238-4-git-send-email-keescook@chromium.org> <20180216130229.f3de3aced0c87fe31ad92000@linux-foundation.org>
-From: Kees Cook <keescook@chromium.org>
-Date: Fri, 16 Feb 2018 17:39:55 -0800
-X-Google-Sender-Auth: OrB6QFr27veLl5zY3Rez93n4AQ4
-Message-ID: <CAGXu5j+-6RUATczWB=Sb7pPw0kimv48bDZhgvL3kWwyggQ1fbA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] taint: Add taint for randstruct
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [128.247.58.153]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 1:02 PM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Thu, 15 Feb 2018 19:37:44 -0800 Kees Cook <keescook@chromium.org> wrote:
->
->> --- a/Documentation/sysctl/kernel.txt
->> +++ b/Documentation/sysctl/kernel.txt
->> @@ -991,6 +991,7 @@ ORed together. The letters are seen in "Tainted" line of Oops reports.
->>   16384 (L): A soft lockup has previously occurred on the system.
->>   32768 (K): The kernel has been live patched.
->>   65536 (X): Auxiliary taint, defined and used by for distros.
->> +131072 (T): The kernel was built with the struct randomization plugin.
->
-> Uncle.
->
->
-> From: Andrew Morton <akpm@linux-foundation.org>
-> Subject: Documentation/sysctl/kernel.txt: show taint codes in hex
->
-> The decimal representation is getting a bit hard to follow.
+Hi Pankaj, Arnd, Lee,
 
-The rationale, AIUI, is that /proc/sys/kernel/tainted prints the
-values in decimal. If we change the docs to be hex and leave the
-output decimal, that makes it even harder to examine.
+I am testing some code to use a syscon/regmap interface and I find that
+the syscon/regmap is initialized even on a disabled device node using a
+"syscon" compatible property when I have expected it to fail. Prior to
+commit bdb0066df96e ("mfd: syscon: Decouple syscon interface from
+platform devices"), the driver would have never probed, and the
+of_syscon_register() only checks for the compatible, but not if the
+device node is available. Is this intentional or a bug?
 
-If we change the proc output, will we break userspace? And if we
-change it, maybe avoid numbers at all, and proc should bring the same
-thing that Oops does (the letter codes)? (But then the sysctl would
-need to parse the letters...)
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+regards
+Suman
