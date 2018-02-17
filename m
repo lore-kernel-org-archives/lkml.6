@@ -1,65 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751123AbeBQQKT (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 11:10:19 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35356 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751010AbeBQQKS (ORCPT
+        id S1751116AbeBQQOp (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 11:14:45 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:32979 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751035AbeBQQOn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 11:10:18 -0500
-X-Google-Smtp-Source: AH8x227VwwPIQ3jt9c/LzwwaMyvuD0pAD9jp4+tB6sFh9c2b8JwF9yajKVZ1exmK44Qi1+vV8LEgZA==
-Date: Sat, 17 Feb 2018 08:10:15 -0800
+        Sat, 17 Feb 2018 11:14:43 -0500
+X-Google-Smtp-Source: AH8x2258RVSou3hV1l3uebYRtWMzyq8kakXAmLZoAyDnx5LkxCxoc+ngeqgTkO/IQBiqc2fErnsUhA==
+Date: Sat, 17 Feb 2018 08:14:41 -0800
 From: Guenter Roeck <linux@roeck-us.net>
 To: Jerry Hoemann <jerry.hoemann@hpe.com>
 Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
         linux-kernel@vger.kernel.org, rwright@hpe.com,
         maurice.a.saldivar@hpe.com, mingo@kernel.org,
         marcus.folkesson@gmail.com
-Subject: Re: [v3,02/11] watchdog/hpwdt: remove include files no longer needed.
-Message-ID: <20180217161015.GA6155@roeck-us.net>
-References: <20180215234400.5022-3-jerry.hoemann@hpe.com>
+Subject: Re: [v3,03/11] watchdog/hpwdt: Update nmi_panic message.
+Message-ID: <20180217161441.GA22055@roeck-us.net>
+References: <20180215234400.5022-4-jerry.hoemann@hpe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180215234400.5022-3-jerry.hoemann@hpe.com>
+In-Reply-To: <20180215234400.5022-4-jerry.hoemann@hpe.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 04:43:51PM -0700, Jerry Hoemann wrote:
-> Remove header files used by NMI sourcing and DMI decoding.
+On Thu, Feb 15, 2018 at 04:43:52PM -0700, Jerry Hoemann wrote:
+> Include the nmistat in the nmi_panic message to give support
+> an indication why the NMI was called (e.g. a timeout or generate
+> nmi button.)
 > 
 > Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
-
-This patch should have been merged with the 1st patch of the series,
-since it is logically the same change. However, that does not raise
-to the level of objection.
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
 > ---
->  drivers/watchdog/hpwdt.c | 9 ---------
->  1 file changed, 9 deletions(-)
+>  drivers/watchdog/hpwdt.c | 20 ++++++++++++--------
+>  1 file changed, 12 insertions(+), 8 deletions(-)
 > 
 > diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
-> index 113058644fc3..20a13c5d0285 100644
+> index 20a13c5d0285..07810caabf74 100644
 > --- a/drivers/watchdog/hpwdt.c
 > +++ b/drivers/watchdog/hpwdt.c
-> @@ -28,16 +28,7 @@
->  #include <linux/types.h>
->  #include <linux/uaccess.h>
->  #include <linux/watchdog.h>
-> -#ifdef CONFIG_HPWDT_NMI_DECODING
-> -#include <linux/dmi.h>
-> -#include <linux/spinlock.h>
-> -#include <linux/nmi.h>
-> -#include <linux/kdebug.h>
-> -#include <linux/notifier.h>
-> -#include <asm/set_memory.h>
-> -#endif /* CONFIG_HPWDT_NMI_DECODING */
->  #include <asm/nmi.h>
-> -#include <asm/frame.h>
+> @@ -113,19 +113,23 @@ static int hpwdt_my_nmi(void)
+>   */
+>  static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
+>  {
+> -	if ((ulReason == NMI_UNKNOWN) && !hpwdt_my_nmi())
+> +	unsigned int mynmi = hpwdt_my_nmi();
+> +	static char panic_msg[] =
+> +		"00: An NMI occurred. Depending on your system the reason "
+> +		"for the NMI is logged in any one of the following resources:\n"
+> +		"1. Integrated Management Log (IML)\n"
+> +		"2. OA Syslog\n"
+> +		"3. OA Forward Progress Log\n"
+> +		"4. iLO Event Log";
+> +
+> +	if ((ulReason == NMI_UNKNOWN) && !mynmi)
+
+As mentioned before, I won't accept patches with unnecessary ( ).
+Deferring to Wim.
+
+Guenter
+
+>  		return NMI_DONE;
 >  
->  #define HPWDT_VERSION			"1.4.0"
->  #define SECS_TO_TICKS(secs)		((secs) * 1000 / 128)
+>  	if (allow_kdump)
+>  		hpwdt_stop();
+>  
+> -	nmi_panic(regs, "An NMI occurred. Depending on your system the reason "
+> -		"for the NMI is logged in any one of the following "
+> -		"resources:\n"
+> -		"1. Integrated Management Log (IML)\n"
+> -		"2. OA Syslog\n"
+> -		"3. OA Forward Progress Log\n"
+> -		"4. iLO Event Log");
+> +	hex_byte_pack(panic_msg, mynmi);
+> +	nmi_panic(regs, panic_msg);
+>  
+>  	return NMI_HANDLED;
+>  }
