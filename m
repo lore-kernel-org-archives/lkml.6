@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751216AbeBQLhX (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 06:37:23 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:40287 "EHLO
+        id S1751193AbeBQLhj (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 06:37:39 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:51295 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750830AbeBQLhT (ORCPT
+        with ESMTP id S1751179AbeBQLhV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 06:37:19 -0500
-Date: Sat, 17 Feb 2018 03:25:56 -0800
-From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-8c7f1bb37b29f140e08175132f3abb4d5ad229fc@git.kernel.org>
-Cc: alexander.shishkin@linux.intel.com, tglx@linutronix.de, hpa@zytor.com,
-        jolsa@kernel.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        acme@redhat.com, dsahern@gmail.com, namhyung@kernel.org,
-        peterz@infradead.org
-Reply-To: linux-kernel@vger.kernel.org, acme@redhat.com, mingo@kernel.org,
-        jolsa@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com, peterz@infradead.org,
-        namhyung@kernel.org, dsahern@gmail.com
-In-Reply-To: <20180215122635.24029-5-jolsa@kernel.org>
-References: <20180215122635.24029-5-jolsa@kernel.org>
+        Sat, 17 Feb 2018 06:37:21 -0500
+Date: Sat, 17 Feb 2018 03:37:10 -0800
+From: tip-bot for Thomas Richter <tipbot@zytor.com>
+Message-ID: <tip-eca0fa28cd0df7369701dbee0e30ddce19c039b8@git.kernel.org>
+Cc: hpa@zytor.com, acme@redhat.com, mingo@kernel.org,
+        tmricht@linux.vnet.ibm.com, tglx@linutronix.de, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, brueckner@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, brueckner@linux.vnet.ibm.com,
+        heiko.carstens@de.ibm.com, schwidefsky@de.ibm.com, tglx@linutronix.de,
+        tmricht@linux.vnet.ibm.com, mingo@kernel.org, acme@redhat.com,
+        hpa@zytor.com
+In-Reply-To: <20180213151419.80737-1-tmricht@linux.vnet.ibm.com>
+References: <20180213151419.80737-1-tmricht@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf machine: Move kernel mmap name into struct
- machine
-Git-Commit-ID: 8c7f1bb37b29f140e08175132f3abb4d5ad229fc
+Subject: [tip:perf/core] perf record: Provide detailed information on s390
+ CPU
+Git-Commit-ID: eca0fa28cd0df7369701dbee0e30ddce19c039b8
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,288 +36,214 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8c7f1bb37b29f140e08175132f3abb4d5ad229fc
-Gitweb:     https://git.kernel.org/tip/8c7f1bb37b29f140e08175132f3abb4d5ad229fc
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Thu, 15 Feb 2018 13:26:30 +0100
+Commit-ID:  eca0fa28cd0df7369701dbee0e30ddce19c039b8
+Gitweb:     https://git.kernel.org/tip/eca0fa28cd0df7369701dbee0e30ddce19c039b8
+Author:     Thomas Richter <tmricht@linux.vnet.ibm.com>
+AuthorDate: Tue, 13 Feb 2018 16:14:16 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Feb 2018 14:25:57 -0300
+CommitDate: Fri, 16 Feb 2018 15:15:23 -0300
 
-perf machine: Move kernel mmap name into struct machine
+perf record: Provide detailed information on s390 CPU
 
-It simplifies and centralizes the code. The kernel mmap name is set for
-machine type, which we know from the beginning, so there's no reason to
-generate it every time we need it.
+When perf record ... is setup to record data, the s390 cpu information
+was a fixed string "IBM/S390".
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180215122635.24029-5-jolsa@kernel.org
+Replace this string with one containing more information about the
+machine. The information included in the cpuid is a comma separated
+list:
+
+   manufacturer,type,model-capacity,model[,version,authorization]
+with
+
+- manufacturer: up to 16 byte name of the manufacturer (IBM).
+- type: a four digit number refering to the machine
+  generation.
+- model-capacitiy: up to 16 characters describing number
+  of cpus etc.
+- model: up to 16 characters describing model.
+- version: the CPU-MF counter facility version number,
+  available on LPARs only, omitted on z/VM guests.
+- authorization: the CPU-MF counter facility authorization level,
+  available on LPARs only, omitted on z/VM guests.
+
+Before:
+
+  [root@s8360047 perf]# ./perf record -- sleep 1
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.001 MB perf.data (4 samples) ]
+  [root@s8360047 perf]# ./perf report --header | fgrep cpuid
+   # cpuid : IBM/S390
+  [root@s8360047 perf]#
+
+After:
+
+  [root@s35lp76 perf]# ./perf report --header|fgrep cpuid
+   # cpuid : IBM,3906,704,M03,3.5,002f
+  [root@s35lp76 perf]#
+
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180213151419.80737-1-tmricht@linux.vnet.ibm.com
+[ Use scnprintf instead of strncat to fix build errors on gcc GNU C99 5.4.0 20160609 -march=zEC12 -m64 -mzarch -ggdb3 -O6 -std=gnu99 -fPIC -fno-omit-frame-pointer -funwind-tables -fstack-protector-all ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/build-id.c | 10 +++----
- tools/perf/util/event.c    |  5 +---
- tools/perf/util/machine.c  | 67 +++++++++++++++++++++++-----------------------
- tools/perf/util/machine.h  |  3 +--
- tools/perf/util/symbol.c   |  3 +--
- 5 files changed, 39 insertions(+), 49 deletions(-)
+ tools/perf/arch/s390/util/header.c | 130 +++++++++++++++++++++++++++++++++++--
+ 1 file changed, 125 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
-index 7f85536..537eadd 100644
---- a/tools/perf/util/build-id.c
-+++ b/tools/perf/util/build-id.c
-@@ -316,7 +316,6 @@ static int machine__write_buildid_table(struct machine *machine,
- 					struct feat_fd *fd)
- {
- 	int err = 0;
--	char nm[PATH_MAX];
- 	struct dso *pos;
- 	u16 kmisc = PERF_RECORD_MISC_KERNEL,
- 	    umisc = PERF_RECORD_MISC_USER;
-@@ -338,9 +337,8 @@ static int machine__write_buildid_table(struct machine *machine,
- 			name = pos->short_name;
- 			name_len = pos->short_name_len;
- 		} else if (dso__is_kcore(pos)) {
--			machine__mmap_name(machine, nm, sizeof(nm));
--			name = nm;
--			name_len = strlen(nm);
-+			name = machine->mmap_name;
-+			name_len = strlen(name);
- 		} else {
- 			name = pos->long_name;
- 			name_len = pos->long_name_len;
-@@ -813,12 +811,10 @@ static int dso__cache_build_id(struct dso *dso, struct machine *machine)
- 	bool is_kallsyms = dso__is_kallsyms(dso);
- 	bool is_vdso = dso__is_vdso(dso);
- 	const char *name = dso->long_name;
--	char nm[PATH_MAX];
+diff --git a/tools/perf/arch/s390/util/header.c b/tools/perf/arch/s390/util/header.c
+index 9fa6c3e..a78064c 100644
+--- a/tools/perf/arch/s390/util/header.c
++++ b/tools/perf/arch/s390/util/header.c
+@@ -1,8 +1,9 @@
+ /*
+  * Implementation of get_cpuid().
+  *
+- * Copyright 2014 IBM Corp.
++ * Copyright IBM Corp. 2014, 2018
+  * Author(s): Alexander Yarygin <yarygin@linux.vnet.ibm.com>
++ *	      Thomas Richter <tmricht@linux.vnet.ibm.com>
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License (version 2 only)
+@@ -13,16 +14,135 @@
+ #include <unistd.h>
+ #include <stdio.h>
+ #include <string.h>
++#include <ctype.h>
  
- 	if (dso__is_kcore(dso)) {
- 		is_kallsyms = true;
--		machine__mmap_name(machine, nm, sizeof(nm));
--		name = nm;
-+		name = machine->mmap_name;
- 	}
- 	return build_id_cache__add_b(dso->build_id, sizeof(dso->build_id), name,
- 				     dso->nsinfo, is_kallsyms, is_vdso);
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index 44e603c..4644e75 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -894,8 +894,6 @@ int perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
- 				       struct machine *machine)
- {
- 	size_t size;
--	const char *mmap_name;
--	char name_buff[PATH_MAX];
- 	struct map *map = machine__kernel_map(machine);
- 	struct kmap *kmap;
- 	int err;
-@@ -918,7 +916,6 @@ int perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
- 		return -1;
- 	}
- 
--	mmap_name = machine__mmap_name(machine, name_buff, sizeof(name_buff));
- 	if (machine__is_host(machine)) {
- 		/*
- 		 * kernel uses PERF_RECORD_MISC_USER for user space maps,
-@@ -931,7 +928,7 @@ int perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
- 
- 	kmap = map__kmap(map);
- 	size = snprintf(event->mmap.filename, sizeof(event->mmap.filename),
--			"%s%s", mmap_name, kmap->ref_reloc_sym->name) + 1;
-+			"%s%s", machine->mmap_name, kmap->ref_reloc_sym->name) + 1;
- 	size = PERF_ALIGN(size, sizeof(u64));
- 	event->mmap.header.type = PERF_RECORD_MMAP;
- 	event->mmap.header.size = (sizeof(event->mmap) -
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index c976384..b1f1961 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -48,6 +48,27 @@ static void machine__threads_init(struct machine *machine)
- 	}
- }
- 
-+static int machine__set_mmap_name(struct machine *machine)
-+{
-+	if (machine__is_host(machine)) {
-+		if (symbol_conf.vmlinux_name)
-+			machine->mmap_name = strdup(symbol_conf.vmlinux_name);
-+		else
-+			machine->mmap_name = strdup("[kernel.kallsyms]");
-+	} else if (machine__is_default_guest(machine)) {
-+		if (symbol_conf.default_guest_vmlinux_name)
-+			machine->mmap_name = strdup(symbol_conf.default_guest_vmlinux_name);
-+		else
-+			machine->mmap_name = strdup("[guest.kernel.kallsyms]");
-+	} else {
-+		if (asprintf(&machine->mmap_name, "[guest.kernel.kallsyms.%d]",
-+			 machine->pid) < 0)
-+			machine->mmap_name = NULL;
-+	}
+ #include "../../util/header.h"
++#include "../../util/util.h"
 +
-+	return machine->mmap_name ? 0 : -ENOMEM;
++#define SYSINFO_MANU	"Manufacturer:"
++#define SYSINFO_TYPE	"Type:"
++#define SYSINFO_MODEL	"Model:"
++#define SRVLVL_CPUMF	"CPU-MF:"
++#define SRVLVL_VERSION	"version="
++#define SRVLVL_AUTHORIZATION	"authorization="
++#define SYSINFO		"/proc/sysinfo"
++#define SRVLVL		"/proc/service_levels"
+ 
+ int get_cpuid(char *buffer, size_t sz)
+ {
+-	const char *cpuid = "IBM/S390";
++	char *cp, *line = NULL, *line2;
++	char type[8], model[33], version[8], manufacturer[32], authorization[8];
++	int tpsize = 0, mdsize = 0, vssize = 0, mfsize = 0, atsize = 0;
++	int read;
++	unsigned long line_sz;
++	size_t nbytes;
++	FILE *sysinfo;
++
++	/*
++	 * Scan /proc/sysinfo line by line and read out values for
++	 * Manufacturer:, Type: and Model:, for example:
++	 * Manufacturer:    IBM
++	 * Type:            2964
++	 * Model:           702              N96
++	 * The first word is the Model Capacity and the second word is
++	 * Model (can be omitted). Both words have a maximum size of 16
++	 * bytes.
++	 */
++	memset(manufacturer, 0, sizeof(manufacturer));
++	memset(type, 0, sizeof(type));
++	memset(model, 0, sizeof(model));
++	memset(version, 0, sizeof(version));
++	memset(authorization, 0, sizeof(authorization));
++
++	sysinfo = fopen(SYSINFO, "r");
++	if (sysinfo == NULL)
++		return -1;
++
++	while ((read = getline(&line, &line_sz, sysinfo)) != -1) {
++		if (!strncmp(line, SYSINFO_MANU, strlen(SYSINFO_MANU))) {
++			line2 = line + strlen(SYSINFO_MANU);
++
++			while ((cp = strtok_r(line2, "\n ", &line2))) {
++				mfsize += scnprintf(manufacturer + mfsize,
++						    sizeof(manufacturer) - mfsize, "%s", cp);
++			}
++		}
++
++		if (!strncmp(line, SYSINFO_TYPE, strlen(SYSINFO_TYPE))) {
++			line2 = line + strlen(SYSINFO_TYPE);
++
++			while ((cp = strtok_r(line2, "\n ", &line2))) {
++				tpsize += scnprintf(type + tpsize,
++						    sizeof(type) - tpsize, "%s", cp);
++			}
++		}
++
++		if (!strncmp(line, SYSINFO_MODEL, strlen(SYSINFO_MODEL))) {
++			line2 = line + strlen(SYSINFO_MODEL);
++
++			while ((cp = strtok_r(line2, "\n ", &line2))) {
++				mdsize += scnprintf(model + mdsize, sizeof(type) - mdsize,
++						    "%s%s", model[0] ? "," : "", cp);
++			}
++			break;
++		}
++	}
++	fclose(sysinfo);
+ 
+-	if (strlen(cpuid) + 1 > sz)
++	/* Missing manufacturer, type or model information should not happen */
++	if (!manufacturer[0] || !type[0] || !model[0])
+ 		return -1;
+ 
+-	strcpy(buffer, cpuid);
+-	return 0;
++	/*
++	 * Scan /proc/service_levels and return the CPU-MF counter facility
++	 * version number and authorization level.
++	 * Optional, does not exist on z/VM guests.
++	 */
++	sysinfo = fopen(SRVLVL, "r");
++	if (sysinfo == NULL)
++		goto skip_sysinfo;
++	while ((read = getline(&line, &line_sz, sysinfo)) != -1) {
++		if (strncmp(line, SRVLVL_CPUMF, strlen(SRVLVL_CPUMF)))
++			continue;
++
++		line2 = line + strlen(SRVLVL_CPUMF);
++		while ((cp = strtok_r(line2, "\n ", &line2))) {
++			if (!strncmp(cp, SRVLVL_VERSION,
++				     strlen(SRVLVL_VERSION))) {
++				char *sep = strchr(cp, '=');
++
++				vssize += scnprintf(version + vssize,
++						    sizeof(version) - vssize, "%s", sep + 1);
++			}
++			if (!strncmp(cp, SRVLVL_AUTHORIZATION,
++				     strlen(SRVLVL_AUTHORIZATION))) {
++				char *sep = strchr(cp, '=');
++
++				atsize += scnprintf(authorization + atsize,
++						    sizeof(authorization) - atsize, "%s", sep + 1);
++			}
++		}
++	}
++	fclose(sysinfo);
++
++skip_sysinfo:
++	free(line);
++
++	if (version[0] && authorization[0] )
++		nbytes = snprintf(buffer, sz, "%s,%s,%s,%s,%s",
++				  manufacturer, type, model, version,
++				  authorization);
++	else
++		nbytes = snprintf(buffer, sz, "%s,%s,%s", manufacturer, type,
++				  model);
++	return (nbytes >= sz) ? -1 : 0;
 +}
 +
- int machine__init(struct machine *machine, const char *root_dir, pid_t pid)
- {
- 	int err = -ENOMEM;
-@@ -75,6 +96,9 @@ int machine__init(struct machine *machine, const char *root_dir, pid_t pid)
- 	if (machine->root_dir == NULL)
- 		return -ENOMEM;
- 
-+	if (machine__set_mmap_name(machine))
-+		goto out;
++char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
++{
++	char *buf = malloc(128);
 +
- 	if (pid != HOST_KERNEL_ID) {
- 		struct thread *thread = machine__findnew_thread(machine, -1,
- 								pid);
-@@ -92,8 +116,10 @@ int machine__init(struct machine *machine, const char *root_dir, pid_t pid)
- 	err = 0;
- 
- out:
--	if (err)
-+	if (err) {
- 		zfree(&machine->root_dir);
-+		zfree(&machine->mmap_name);
-+	}
- 	return 0;
++	if (buf && get_cpuid(buf, 128) < 0)
++		zfree(&buf);
++	return buf;
  }
- 
-@@ -186,6 +212,7 @@ void machine__exit(struct machine *machine)
- 	dsos__exit(&machine->dsos);
- 	machine__exit_vdso(machine);
- 	zfree(&machine->root_dir);
-+	zfree(&machine->mmap_name);
- 	zfree(&machine->current_tid);
- 
- 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
-@@ -328,20 +355,6 @@ void machines__process_guests(struct machines *machines,
- 	}
- }
- 
--char *machine__mmap_name(struct machine *machine, char *bf, size_t size)
--{
--	if (machine__is_host(machine))
--		snprintf(bf, size, "[%s]", "kernel.kallsyms");
--	else if (machine__is_default_guest(machine))
--		snprintf(bf, size, "[%s]", "guest.kernel.kallsyms");
--	else {
--		snprintf(bf, size, "[%s.%d]", "guest.kernel.kallsyms",
--			 machine->pid);
--	}
--
--	return bf;
--}
--
- void machines__set_id_hdr_size(struct machines *machines, u16 id_hdr_size)
- {
- 	struct rb_node *node;
-@@ -777,25 +790,13 @@ size_t machine__fprintf(struct machine *machine, FILE *fp)
- 
- static struct dso *machine__get_kernel(struct machine *machine)
- {
--	const char *vmlinux_name = NULL;
-+	const char *vmlinux_name = machine->mmap_name;
- 	struct dso *kernel;
- 
- 	if (machine__is_host(machine)) {
--		vmlinux_name = symbol_conf.vmlinux_name;
--		if (!vmlinux_name)
--			vmlinux_name = DSO__NAME_KALLSYMS;
--
- 		kernel = machine__findnew_kernel(machine, vmlinux_name,
- 						 "[kernel]", DSO_TYPE_KERNEL);
- 	} else {
--		char bf[PATH_MAX];
--
--		if (machine__is_default_guest(machine))
--			vmlinux_name = symbol_conf.default_guest_vmlinux_name;
--		if (!vmlinux_name)
--			vmlinux_name = machine__mmap_name(machine, bf,
--							  sizeof(bf));
--
- 		kernel = machine__findnew_kernel(machine, vmlinux_name,
- 						 "[guest.kernel]",
- 						 DSO_TYPE_GUEST_KERNEL);
-@@ -1295,7 +1296,6 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
- 					      union perf_event *event)
- {
- 	struct map *map;
--	char kmmap_prefix[PATH_MAX];
- 	enum dso_kernel_type kernel_type;
- 	bool is_kernel_mmap;
- 
-@@ -1303,15 +1303,14 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
- 	if (machine__uses_kcore(machine))
- 		return 0;
- 
--	machine__mmap_name(machine, kmmap_prefix, sizeof(kmmap_prefix));
- 	if (machine__is_host(machine))
- 		kernel_type = DSO_TYPE_KERNEL;
- 	else
- 		kernel_type = DSO_TYPE_GUEST_KERNEL;
- 
- 	is_kernel_mmap = memcmp(event->mmap.filename,
--				kmmap_prefix,
--				strlen(kmmap_prefix) - 1) == 0;
-+				machine->mmap_name,
-+				strlen(machine->mmap_name) - 1) == 0;
- 	if (event->mmap.filename[0] == '/' ||
- 	    (!is_kernel_mmap && event->mmap.filename[0] == '[')) {
- 		map = machine__findnew_module_map(machine, event->mmap.start,
-@@ -1322,7 +1321,7 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
- 		map->end = map->start + event->mmap.len;
- 	} else if (is_kernel_mmap) {
- 		const char *symbol_name = (event->mmap.filename +
--				strlen(kmmap_prefix));
-+				strlen(machine->mmap_name));
- 		/*
- 		 * Should be there already, from the build-id table in
- 		 * the header.
-@@ -1363,7 +1362,7 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
- 		up_read(&machine->dsos.lock);
- 
- 		if (kernel == NULL)
--			kernel = machine__findnew_dso(machine, kmmap_prefix);
-+			kernel = machine__findnew_dso(machine, machine->mmap_name);
- 		if (kernel == NULL)
- 			goto out_problem;
- 
-diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-index 5ce860b..cb0a20f 100644
---- a/tools/perf/util/machine.h
-+++ b/tools/perf/util/machine.h
-@@ -43,6 +43,7 @@ struct machine {
- 	bool		  comm_exec;
- 	bool		  kptr_restrict_warned;
- 	char		  *root_dir;
-+	char		  *mmap_name;
- 	struct threads    threads[THREADS__TABLE_SIZE];
- 	struct vdso_info  *vdso_info;
- 	struct perf_env   *env;
-@@ -142,8 +143,6 @@ struct machine *machines__find(struct machines *machines, pid_t pid);
- struct machine *machines__findnew(struct machines *machines, pid_t pid);
- 
- void machines__set_id_hdr_size(struct machines *machines, u16 id_hdr_size);
--char *machine__mmap_name(struct machine *machine, char *bf, size_t size);
--
- void machines__set_comm_exec(struct machines *machines, bool comm_exec);
- 
- struct machine *machine__new_host(void);
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index e366e30..a1a312d 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -1958,8 +1958,7 @@ static int dso__load_guest_kernel_sym(struct dso *dso, struct map *map)
- 		pr_debug("Using %s for symbols\n", kallsyms_filename);
- 	if (err > 0 && !dso__is_kcore(dso)) {
- 		dso->binary_type = DSO_BINARY_TYPE__GUEST_KALLSYMS;
--		machine__mmap_name(machine, path, sizeof(path));
--		dso__set_long_name(dso, strdup(path), true);
-+		dso__set_long_name(dso, machine->mmap_name, false);
- 		map__fixup_start(map);
- 		map__fixup_end(map);
- 	}
