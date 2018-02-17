@@ -1,27 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751260AbeBQLoG (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 06:44:06 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:54081 "EHLO
+        id S1751200AbeBQLrW (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 06:47:22 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:46799 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750975AbeBQLoE (ORCPT
+        with ESMTP id S1751055AbeBQLrV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 06:44:04 -0500
-Date: Sat, 17 Feb 2018 03:43:35 -0800
-From: tip-bot for Baoquan He <tipbot@zytor.com>
-Message-ID: <tip-bee3204ec3c49f6f53add9c3962c9012a5c036fa@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        bhe@redhat.com, hpa@zytor.com, mingo@kernel.org, ebiederm@xmission.com,
-        tglx@linutronix.de, peterz@infradead.org
-Reply-To: ebiederm@xmission.com, mingo@kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, bhe@redhat.com
-In-Reply-To: <20180214054656.3780-7-bhe@redhat.com>
-References: <20180214054656.3780-7-bhe@redhat.com>
+        Sat, 17 Feb 2018 06:47:21 -0500
+Date: Sat, 17 Feb 2018 03:36:10 -0800
+From: tip-bot for Ravi Bangoria <tipbot@zytor.com>
+Message-ID: <tip-8e2ff72aa35e1a8a53894ae46751a83543338e14@git.kernel.org>
+Cc: hpa@zytor.com, acme@redhat.com, alexander.shishkin@linux.intel.com,
+        linux-kernel@vger.kernel.org, brueckner@linux.vnet.ibm.com,
+        mpe@ellerman.id.au, ravi.bangoria@linux.vnet.ibm.com,
+        tglx@linutronix.de, mingo@kernel.org, jolsa@redhat.com,
+        tmricht@linux.vnet.ibm.com, namhyung@kernel.org
+Reply-To: jolsa@redhat.com, tmricht@linux.vnet.ibm.com, namhyung@kernel.org,
+        mpe@ellerman.id.au, tglx@linutronix.de, mingo@kernel.org,
+        ravi.bangoria@linux.vnet.ibm.com, brueckner@linux.vnet.ibm.com,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+        acme@redhat.com, hpa@zytor.com
+In-Reply-To: <20180129083417.31240-3-ravi.bangoria@linux.vnet.ibm.com>
+References: <20180129083417.31240-3-ravi.bangoria@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/apic] x86/apic: Set up through-local-APIC mode on the boot
- CPU if 'noapic' specified
-Git-Commit-ID: bee3204ec3c49f6f53add9c3962c9012a5c036fa
+Subject: [tip:perf/core] perf powerpc: Generate system call table from
+ asm/unistd.h
+Git-Commit-ID: 8e2ff72aa35e1a8a53894ae46751a83543338e14
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,61 +38,107 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bee3204ec3c49f6f53add9c3962c9012a5c036fa
-Gitweb:     https://git.kernel.org/tip/bee3204ec3c49f6f53add9c3962c9012a5c036fa
-Author:     Baoquan He <bhe@redhat.com>
-AuthorDate: Wed, 14 Feb 2018 13:46:56 +0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sat, 17 Feb 2018 11:47:46 +0100
+Commit-ID:  8e2ff72aa35e1a8a53894ae46751a83543338e14
+Gitweb:     https://git.kernel.org/tip/8e2ff72aa35e1a8a53894ae46751a83543338e14
+Author:     Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+AuthorDate: Mon, 29 Jan 2018 14:04:16 +0530
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Fri, 16 Feb 2018 14:55:48 -0300
 
-x86/apic: Set up through-local-APIC mode on the boot CPU if 'noapic' specified
+perf powerpc: Generate system call table from asm/unistd.h
 
-Currently the kdump kernel becomes very slow if 'noapic' is specified.
-Normal kernel doesn't have this bug.
+This should speed up accessing new system calls introduced with the
+kernel rather than waiting for libaudit updates to include them.
 
-Kernel parameter 'noapic' is used to disable IO-APIC in system for
-testing or special purpose. Here the root cause is that in kdump
-kernel LAPIC is disabled since commit:
-
-  522e664644 ("x86/apic: Disable I/O APIC before shutdown of the local APIC")
-
-In this case we need set up through-local-APIC on boot CPU in
-setup_local_APIC().
-
-In normal kernel the legacy irq mode is enabled by the BIOS. If
-it is virtual wire mode, the local-APIC has been enabled and set as
-through-local-APIC.
-
-Though we fixed the regression introduced by commit 522e664644,
-to further improve robustness set up the through-local-APIC mode
-explicitly, do not rely on the default boot IRQ mode.
-
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Reviewed-by: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: douly.fnst@cn.fujitsu.com
-Cc: joro@8bytes.org
-Cc: prarit@redhat.com
-Cc: uobergfe@redhat.com
-Link: http://lkml.kernel.org/r/20180214054656.3780-7-bhe@redhat.com
-[ Rewrote the changelog. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org
+Link: http://lkml.kernel.org/r/20180129083417.31240-3-ravi.bangoria@linux.vnet.ibm.com
+[ Made it generate syscall_32.c as well to fix the build on 32-bit ppc ]
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- arch/x86/kernel/apic/apic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/arch/powerpc/Makefile                   | 25 +++++++++++++++
+ .../perf/arch/powerpc/entry/syscalls/mksyscalltbl  | 37 ++++++++++++++++++++++
+ 2 files changed, 62 insertions(+)
 
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 871018d..2ceac9f 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1570,7 +1570,7 @@ static void setup_local_APIC(void)
- 	 * TODO: set up through-local-APIC from through-I/O-APIC? --macro
- 	 */
- 	value = apic_read(APIC_LVT0) & APIC_LVT_MASKED;
--	if (!cpu && (pic_mode || !value)) {
-+	if (!cpu && (pic_mode || !value || skip_ioapic_setup)) {
- 		value = APIC_DM_EXTINT;
- 		apic_printk(APIC_VERBOSE, "enabled ExtINT on CPU#%d\n", cpu);
- 	} else {
+diff --git a/tools/perf/arch/powerpc/Makefile b/tools/perf/arch/powerpc/Makefile
+index 42dab7c..a111239 100644
+--- a/tools/perf/arch/powerpc/Makefile
++++ b/tools/perf/arch/powerpc/Makefile
+@@ -6,3 +6,28 @@ endif
+ HAVE_KVM_STAT_SUPPORT := 1
+ PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET := 1
+ PERF_HAVE_JITDUMP := 1
++
++#
++# Syscall table generation for perf
++#
++
++out    := $(OUTPUT)arch/powerpc/include/generated/asm
++header32 := $(out)/syscalls_32.c
++header64 := $(out)/syscalls_64.c
++sysdef := $(srctree)/tools/arch/powerpc/include/uapi/asm/unistd.h
++sysprf := $(srctree)/tools/perf/arch/powerpc/entry/syscalls/
++systbl := $(sysprf)/mksyscalltbl
++
++# Create output directory if not already present
++_dummy := $(shell [ -d '$(out)' ] || mkdir -p '$(out)')
++
++$(header64): $(sysdef) $(systbl)
++	$(Q)$(SHELL) '$(systbl)' '64' '$(CC)' $(sysdef) > $@
++
++$(header32): $(sysdef) $(systbl)
++	$(Q)$(SHELL) '$(systbl)' '32' '$(CC)' $(sysdef) > $@
++
++clean::
++	$(call QUIET_CLEAN, powerpc) $(RM) $(header32) $(header64)
++
++archheaders: $(header32) $(header64)
+diff --git a/tools/perf/arch/powerpc/entry/syscalls/mksyscalltbl b/tools/perf/arch/powerpc/entry/syscalls/mksyscalltbl
+new file mode 100755
+index 0000000..ef52e1d
+--- /dev/null
++++ b/tools/perf/arch/powerpc/entry/syscalls/mksyscalltbl
+@@ -0,0 +1,37 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++#
++# Generate system call table for perf. Derived from
++# s390 script.
++#
++# Copyright IBM Corp. 2017
++# Author(s):  Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
++# Changed by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
++
++wordsize=$1
++gcc=$2
++input=$3
++
++if ! test -r $input; then
++	echo "Could not read input file" >&2
++	exit 1
++fi
++
++create_table()
++{
++	local wordsize=$1
++	local max_nr
++
++	echo "static const char *syscalltbl_powerpc_${wordsize}[] = {"
++	while read sc nr; do
++		printf '\t[%d] = "%s",\n' $nr $sc
++		max_nr=$nr
++	done
++	echo '};'
++	echo "#define SYSCALLTBL_POWERPC_${wordsize}_MAX_ID $max_nr"
++}
++
++$gcc -m${wordsize} -E -dM -x c  $input	       \
++	|sed -ne 's/^#define __NR_//p' \
++	|sort -t' ' -k2 -nu	       \
++	|create_table ${wordsize}
