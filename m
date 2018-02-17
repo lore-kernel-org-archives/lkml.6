@@ -1,73 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751056AbeBQDjd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 22:39:33 -0500
-Received: from mga07.intel.com ([134.134.136.100]:21503 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750942AbeBQDjb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 22:39:31 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,522,1511856000";
-   d="scan'208";a="18372791"
-Date: Sat, 17 Feb 2018 11:30:48 +0800
-From: "Du, Changbin" <changbin.du@intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, changbin.du@intel.com,
-        mingo@kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] Documentation: convert trace/ftrace-design.txt to
- rst format
-Message-ID: <20180217033047.nubl47hevaag5m3r@intel.com>
-References: <1518750739-12514-1-git-send-email-changbin.du@intel.com>
- <1518750739-12514-3-git-send-email-changbin.du@intel.com>
- <20180215225705.58984492@vmware.local.home>
- <20180216054952.78718f09@lwn.net>
- <20180216123629.5ac2b373@gandalf.local.home>
+        id S1751049AbeBQEmw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 23:42:52 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:43816 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750948AbeBQEmv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 23:42:51 -0500
+Date: Sat, 17 Feb 2018 12:42:26 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc: alexandre.torgue@st.com, arei.gonglei@huawei.com, corbet@lwn.net,
+        davem@davemloft.net, jasowang@redhat.com, mcoquelin.stm32@gmail.com,
+        mst@redhat.com, fabien.dessenne@st.com,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 0/6] crypto: engine - Permit to enqueue all async
+ requests
+Message-ID: <20180217044226.GA12701@gondor.apana.org.au>
+References: <20180126191534.17569-1-clabbe.montjoie@gmail.com>
+ <20180215155100.GJ7352@gondor.apana.org.au>
+ <20180216153656.GA22492@Red>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180216123629.5ac2b373@gandalf.local.home>
-User-Agent: NeoMutt/20171027-42-ad8712
+In-Reply-To: <20180216153656.GA22492@Red>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 12:36:29PM -0500, Steven Rostedt wrote:
-> On Fri, 16 Feb 2018 05:49:52 -0700
-> Jonathan Corbet <corbet@lwn.net> wrote:
-> 
-> > On Thu, 15 Feb 2018 22:57:05 -0500
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> > > This document is out of date, and I rather have it updated before we
-> > > make it more "available" elsewhere.  
-> > 
-> > Imagine that, an out-of-date doc in the kernel :)
-> > 
-> > Seriously, though, I'd argue that (1) it's already highly available, and
-> > (2) it's useful now.  And (3) who knows when that update will happen?
-> > Unless we have reason to believe that a new version is waiting on the
-> > wings, I don't really see why we would want to delay this work.
-> 
-> Actually, some of these documents I was thinking of labeling as
-> "obsolete" or simply removing them. The ftrace-design one is about
-> how to port ftrace to other architectures, and I already had to correct
-> people that based their work on it.
-> 
-> Yeah, I really need to get some time to update them, but like everyone
-> else, that's just the 90th thing I have to do.
-> 
-> -- Steve
-Reading this doc, I think most of information are still useful for undertading the
-implemeation. So how abount just put a caution at the begining of doc as below 
-defore get updated?
-http://docservice.askxiong.com/linux-kernel/trace/ftrace-design.html
+On Fri, Feb 16, 2018 at 04:36:56PM +0100, Corentin Labbe wrote:
+>
+> As mentionned in the cover letter, all patchs (except documentation one) should be squashed.
+> A kbuild robot reported a build error on cryptodev due to this.
 
-Anyway, I just converted them all. I will send them out. Please comemnt if some
-of them should be removed. 
+It's too late now.  In future if you want the patches to be squashed
+then please send them in one email.
 
--- 
 Thanks,
-Changbin Du
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
