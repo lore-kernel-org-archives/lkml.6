@@ -1,56 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751166AbeBQNHz (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 08:07:55 -0500
-Received: from mga17.intel.com ([192.55.52.151]:57021 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750960AbeBQNHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 08:07:54 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,524,1511856000";
-   d="scan'208";a="30857134"
-Date: Sat, 17 Feb 2018 05:07:53 -0800
-From: "Raj, Ashok" <ashok.raj@intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Ashok Raj <ashok.raj@intel.com>
-Subject: Re: [PATCH 2/3] x86/CPU: Add a microcode loader callback
-Message-ID: <20180217130753.GA25024@araj-mobl1.jf.intel.com>
-References: <20180216112640.11554-1-bp@alien8.de>
- <20180216112640.11554-3-bp@alien8.de>
+        id S1751197AbeBQN1A (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 08:27:00 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:32774 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751068AbeBQN06 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Feb 2018 08:26:58 -0500
+Date: Sat, 17 Feb 2018 14:25:43 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: tim@krieglstein.org, jarkko.nikula@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, preid@electromag.com.au,
+        wsa@the-dreams.de
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: i2c-designware: sound and s2ram broken on Broadwell-U system since
+ commit ca382f5b38f367b6 (add i2c gpio recovery option)
+Message-ID: <20180217132543.GA21571@light.dominikbrodowski.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180216112640.11554-3-bp@alien8.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris
+Dear all,
 
-Sorry this is coming late... Thought i mentioned it earlier.
+on v4.16-rc1+, sound does not work any more on my Dell XPS 13;
+suspend-to-RAM hangs as well. I have bisected this problem down to
+commit ca382f5b38f3; reverting this on top of Linus' latest (1e3510b2b053)
+fixes these issues. A bit info on the system (from a working kernel):
 
-On Fri, Feb 16, 2018 at 12:26:39PM +0100, Borislav Petkov wrote:
->  3 files changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-> index 23fdaf4ec925..856669b90a0c 100644
-> --- a/arch/x86/include/asm/processor.h
-> +++ b/arch/x86/include/asm/processor.h
-> @@ -977,4 +977,5 @@ bool xen_set_default_idle(void);
->  
->  void stop_this_cpu(void *dummy);
->  void df_debug(struct pt_regs *regs, long error_code);
-> +void microcode_check(void);
+00:00.0 Host bridge: Intel Corporation Broadwell-U Host Bridge -OPI (rev 09)
 
-microcode_check() is only called from microcode/core.c
+ls -l /sys/devices/pci0000:00/INT3432:00/i2c-0/i2c-INT343A:00 
+total 0
+lrwxrwxrwx 1 root root    0 Feb 17 14:20 driver -> ../../../../../bus/i2c/drivers/rt286
+lrwxrwxrwx 1 root root    0 Feb 17 14:20 firmware_node -> ../../../../LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/INT3432:00/INT343A:00
+-r--r--r-- 1 root root 4096 Feb 17 14:20 modalias
+-r--r--r-- 1 root root 4096 Feb 17 14:20 name
+drwxr-xr-x 2 root root    0 Feb 17 14:19 power
+lrwxrwxrwx 1 root root    0 Feb 17 14:10 subsystem -> ../../../../../bus/i2c
+-rw-r--r-- 1 root root 4096 Feb 17 14:20 uevent
 
-Could you only list it there instead? common.c has no other
-microcode related functions other than this.?
+>From a working dmesg:
 
-Cheers,
-Ashok
+	sst-acpi INT3438:00: DesignWare DMA Controller, 8 channels
+	haswell-pcm-audio haswell-pcm-audio: Direct firmware load for intel/IntcPP01.bin failed with error -2
+	haswell-pcm-audio haswell-pcm-audio: fw image intel/IntcPP01.bin not available(-2)
+	haswell-pcm-audio haswell-pcm-audio: FW loaded, mailbox readback FW info: type 01, - version: 00.00, build 77, source commit id: 876ac6906f31a43b6772b23c7c983ce9dcb18a19
+	broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> System Pin mapping ok
+	broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Offload0 Pin mapping ok
+	broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Offload1 Pin mapping ok
+	broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Loopback Pin mapping ok
+	broadwell-audio broadwell-audio: rt286-aif1 <-> snd-soc-dummy-dai mapping ok
+	input: broadwell-rt286 Headset as /devices/pci0000:00/INT3438:00/broadwell-audio/sound/card1/input15
+
+And a few snippets from a broken kernel dmesg:
+
+	i2c_designware: probe of INT3432:00 failed with error -38
+	i2c_designware: probe of INT3433:00 failed with error -38
+	broadwell-audio broadwell-audio: ASoC: CPU DAI System Pin not registered
+	broadwell-audio broadwell-audio: ASoC: CODEC DAI rt286-aif1 not registered
+	
+Ideas on how to fix this properly?
+
+Thanks,
+	Dominik
