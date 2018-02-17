@@ -1,82 +1,66 @@
-Return-Path: <ed.cashin@acm.org>
-X-Google-Smtp-Source: AH8x225UEtCgq7IxRJFNi4dybr7mlqOPl14g05HofRK+Hc1Zk0XiTPJmLmcEeKi9TGW7VVSHfDSz
-ARC-Seal: i=1; a=rsa-sha256; t=1518836299; cv=none;
+Return-Path: <julia.lawall@lip6.fr>
+X-Google-Smtp-Source: AH8x226vztaP9Wm+sEADXmDScIgrlCC8Ylb8/pzqzq92qUMB2pcPxASTCSEXvXuA14Jrcyfgm+8q
+ARC-Seal: i=1; a=rsa-sha256; t=1518878262; cv=none;
         d=google.com; s=arc-20160816;
-        b=0CghNZNuC9nUtBlp+Or+yOwA3/2a58jw/OJEXQDSTUY6vfO8rc90Es3tCaudc7rvt2
-         kLr901E9oALEYYDmyefHFWJv9fy9tLZ1uAjxn+XpNB8Gn2n0QIQbJiEcTCfdAv1phRAV
-         pSSkMQIGWK7xR5Cplf4WLvnnStJvQykaOCRHeRGVz/Hn4MKIO0U5wM+MGd4/ZpdYvFHQ
-         a3+ebS1UoF/dJcOFy7eu9Rs8SqC3an8gyiNGONe/J4SgQeSVdELMiPQLtBY2jEfWGWv0
-         V72km15SWes1SPNYbHbmd9xpLiAezcRO9iTU7AH3d0GZiwjYQ1yJBAub5kUUMVkEczp6
-         hksg==
+        b=K+2xS7CewG+d61H4B2EXKjYNJ9NkObCl5PxvD8bP3KAxLSQSvk7S3dE1lGVVlnkPTb
+         R41OcKeq6CYR47Yfn1ACgDdD4HTES7SfDhIXNBdQPb754AcSXEVXyhlmAojlftdiFkHi
+         xv9nwTbg9DTnRUbIwEVzhxwpm/b65enPVTeo/oEjMkDgdkawMvLUWoDpED1mKPsgW5vn
+         20GWtTu38rwFw62qMr4ymh+HRa5CamR2jXm5VJBMN2sTqSmbn+u5ehVPlFY8okDmj41r
+         cG1BDJTTsmnCcYZjMXeq2P1zNCw2Md0yzyGa3Rjkib6rO600RZZ63YsmVyNl+ZOChv5F
+         TUnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=/u7LqPpEKwz8d0XJOkHggRLLggBla/VfiM20iFCvCJM=;
-        b=iUVg1JSjjTWKxWIX7LZSy/jYKSV9tNTjAjybuGK2Ck4ZBEKWwtPtRMD7tO+A3asnsx
-         zk7BGvz+TN/8JAJm4aES5NfW8gkidCn0peUE74SVowX4R6DzgF2Cad9DZcDxTGEZUw88
-         BGjpI+opY8Air4C1EgeynWxjRlas2a8eIIrfT8NIJbTZ2ehZCpLAhclgpfl7zB28Bjkn
-         dNTvsRov0YrH49R6NJiwIOKsF4f93kSj2oPENlmfEmX9QY2RMSjH5rB9lRtOGc/FJX2z
-         Z8bvbjh2UwSOCKkQf3Iyt37+OTILbhmBlyedeUqN6VQFrqlx65jurqaQhqPQUGnjA1TY
-         gRuw==
+        h=mime-version:user-agent:references:message-id:in-reply-to:subject
+         :cc:to:from:date:arc-authentication-results;
+        bh=yGq6HICsQdFqwLnaYSsJSGd/GDGxpRgjB7KVhOMu9eE=;
+        b=GgXVGhW9F11CPFkh/6JMJM6i9rFMsgydE7uXYPo071grnoOjOr5wHM9maWOGj9ISWD
+         f/YJ01C8xYtSCisRrk92wm9NmwBomO222ZqSSaDzgVdNq8mxk+XF2OYk3GtTMYwacvMP
+         MFOQPYsBl/DzKoUTqZQ2dhd4UAFvU1PDSROhslaBxCeFfy7QvXUZY16WOCV+NyiIfWt2
+         ufSvXVpBgN89CraqEQsJaq07BCautb82IXLLDGEVxCsG906FLZwrkNW2Wl1YpBQwNf/W
+         N8kXc8hkINKLcPOT7YLyjJrZBtc2Z1AZyXh/kxdd3eDsfuTDmJboUwW0b+6klTQ1muzo
+         WUVA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning ed.cashin@acm.org does not designate 69.89.23.12 as permitted sender) smtp.mailfrom=ed.cashin@acm.org
+       spf=neutral (google.com: 192.134.164.83 is neither permitted nor denied by domain of julia.lawall@lip6.fr) smtp.mailfrom=julia.lawall@lip6.fr
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning ed.cashin@acm.org does not designate 69.89.23.12 as permitted sender) smtp.mailfrom=ed.cashin@acm.org
-X-Authority-Analysis: v=2.2 cv=G85sK5s5 c=1 sm=1 tr=0
- a=6lV6tj8ir7tGSl/9xQZNPA==:117 a=6lV6tj8ir7tGSl/9xQZNPA==:17
- a=IkcTkHD0fZMA:10 a=Op4juWPpsa0A:10 a=6dSziLGFmYxQ7E99zKgA:9 a=QEXdDO2ut3YA:10
+       spf=neutral (google.com: 192.134.164.83 is neither permitted nor denied by domain of julia.lawall@lip6.fr) smtp.mailfrom=julia.lawall@lip6.fr
+X-IronPort-AV: E=Sophos;i="5.46,525,1511823600";
+   d="scan'208";a="314057946"
+Date: Sat, 17 Feb 2018 15:37:41 +0100 (CET)
+From: Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To: Ed Cashin <ed.cashin@acm.org>
+cc: Aishwarya Pant <aishpant@gmail.com>, linux-kernel@vger.kernel.org,
+    Jonathan Corbet <corbet@lwn.net>, Greg KH <gregkh@linuxfoundation.org>
 Subject: Re: [PATCH] aoe: document sysfs interface
-To: Aishwarya Pant <aishpant@gmail.com>, linux-kernel@vger.kernel.org,
- Jonathan Corbet <corbet@lwn.net>, Greg KH <gregkh@linuxfoundation.org>
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-References: <20180216153900.GA12832@mordor.localdomain>
-From: Ed Cashin <ed.cashin@acm.org>
-Message-ID: <9ddc04c5-eedf-b88a-0cea-bd0c91a2dfcc@acm.org>
-Date: Fri, 16 Feb 2018 21:58:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+In-Reply-To: <9ddc04c5-eedf-b88a-0cea-bd0c91a2dfcc@acm.org>
+Message-ID: <alpine.DEB.2.20.1802171537240.2205@hadrien>
+References: <20180216153900.GA12832@mordor.localdomain> <9ddc04c5-eedf-b88a-0cea-bd0c91a2dfcc@acm.org>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <20180216153900.GA12832@mordor.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box320.bluehost.com
-X-AntiAbuse: Original Domain - linuxfoundation.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - acm.org
-X-BWhitelist: no
-X-Source-IP: 24.99.197.19
-X-Exim-ID: 1emshb-0037GQ-Fj
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-24-99-197-19.hsd1.ga.comcast.net ([10.0.0.86]) [24.99.197.19]:59801
-X-Source-Auth: nobody
-X-Email-Count: 0
-X-Source-Cap: bm9ib2R5Oztib3gzMjAuYmx1ZWhvc3QuY29t
-X-Local-Domain: no
+Content-Type: text/plain; charset=US-ASCII
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592572558446163401?=
-X-GMAIL-MSGID: =?utf-8?q?1592615291670839573?=
+X-GMAIL-MSGID: =?utf-8?q?1592659292950713748?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/16/2018 10:39 AM, Aishwarya Pant wrote:
-> Documentation has been compiled from git commit logs and descriptions in
-> Documentation/aoe/aoe.txt. This should be useful for scripting and
-> tracking changes in the ABI.
-...
-> +What:		/sys/block/etherd*/netif
-...
-> +Description:
-> +		(RO) The name of the network interface on the localhost through
-> +		which we are communicating with the remote AoE device.
 
-I'd recommend changing that to, "network interfaces".
 
-Thanks!
+On Fri, 16 Feb 2018, Ed Cashin wrote:
 
--- 
-   Ed
+> On 02/16/2018 10:39 AM, Aishwarya Pant wrote:
+> > Documentation has been compiled from git commit logs and descriptions in
+> > Documentation/aoe/aoe.txt. This should be useful for scripting and
+> > tracking changes in the ABI.
+> ...
+> > +What:		/sys/block/etherd*/netif
+> ...
+> > +Description:
+> > +		(RO) The name of the network interface on the localhost
+> > through
+> > +		which we are communicating with the remote AoE device.
+>
+> I'd recommend changing that to, "network interfaces".
+
+Should it then be "names"?
+
+julia
