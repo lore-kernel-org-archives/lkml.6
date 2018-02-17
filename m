@@ -1,89 +1,73 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1110653-1518816637-2-6101481578215652118
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518816636; b=Jqv190Y6ffbyBtIrpkpJ+KNDGMAHdXrKNM31UsLtzhlvwt6
-    WR6aKb8lrIH8ug1jS8xe/DHHHnmcs2Fr5msk6EXxSXaiap6uTkfBbxlNBb9u4xMx
-    yW5agO5taBO97mYikVMJElhkyTyqJygMP++g0Y1vhX1pupA8Way8RyROFa0aYMU0
-    D897Z4gLbzy3khg+MVsdHgx4mffnBwZfkymhk5vytq9KkKfFfNNhWytRydMz+BNI
-    wlmtYl+5wp76Bb68GBaYeQPf9WEtHpB91bKsB943CENteWxnihwFTyzAh5AYZyYs
-    2MVqqQQ4Z+xuF1Bwf/J9URfoy3JhT/aJPNbIlzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:from:to:cc:date:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1518816636; bh=J8CXt7JkDnZMVP9sreNebfKEGSAFXrhqwX61+ykviX0=; b=e
-    LOzSpo3EDNsCsGBBQ7sjj/YB22VKlUDXGcS2sTOCNHvKgsgxqsAt4IDOZgQ7J3wh
-    /pCFZOZcEm+Z+7deChg+uF27sPwbtrM6wv85I52o2u6Edv090w2tiCo9U7VarLa9
-    3jFfSp3aePADSTtC0ecPC4AfGQxvBFrJDCVxzF+CUi8yWfN4mGsgZRHxvTuX/CHO
-    sAtCtKaWR/nnPGTI4F1HRQGPMdBkAeSrlFa1U05c7U4/eD9RIIoRhiOGStDmiYgK
-    sq4aQCDcvUDU4lF1Zr85eZ47xAJRYsHssBWelWQIT54g0B4CKESxv51SxXtdlmkg
-    qM1rb+onoaD1qmEG+Ndew==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750934AbeBPV35 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Feb 2018 16:29:57 -0500
-Received: from mga03.intel.com ([134.134.136.65]:42944 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750922AbeBPV3z (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 16 Feb 2018 16:29:55 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,520,1511856000";
-   d="scan'208";a="31463398"
-Subject: [PATCH 2/3] nospec: Allow index argument to have const-qualified
+Return-Path: <tipbot@zytor.com>
+X-Google-Smtp-Source: AH8x225dHaUhyNPMAcBhXD5AKiPVa9nPa1gX2/NZ6lDkZcBhpMP+6JQlv3KsoUhHOvGbAYR3XIP6
+ARC-Seal: i=1; a=rsa-sha256; t=1518863537; cv=none;
+        d=google.com; s=arc-20160816;
+        b=rpF1dW+iMm06ScmAuR2hj/DwybkmssM4PvSpQGj1n4SCMSGzI3/2w2qdQCJzylUnrj
+         9vr8ieaH4JfZW//xeqj1kW6/92zz3istAYvEX/lF51KzyvOcsCtnquXqNFJdPYfd3kar
+         adU6X/S9QT82IjKIwDCyIX8wLbRInsiX2gnIKjnTgJ3ikz691psTTlxhPL24ZIFXnf0a
+         aAmA00O74jwpfjuORV3pbPWtX5fWEEoLkPbs/tdQA9xTeUlnRKLzbHYHb7eSN7Fw8mhb
+         DRuSuWwvawAd8eNijQp17F7B1z05ozkgj12gf3GMx91K2l2u6vz2aUPJT/VGTYt921oB
+         P8vQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=precedence:content-disposition:content-transfer-encoding
+         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
+         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
+         :arc-authentication-results;
+        bh=yTGBBif0lbDAQISpeHIwqJuXp04h6pTUYUt7yXT8FMc=;
+        b=T1IYX0JF8agMrC9y5GTOjpowUyo4FvxajTdB95RWUC41OvBWcHbSvunjhP1/1WrbWD
+         Tuqyd9IgDH5s5al3YSy40LQuOuPs17MmlYEpSLGWNWxFOUuVfB4gyOBbstBbEQSqGoYD
+         +IDUvGfxG0LDvdGQmJRjuv51p9GXGamztyWIgOEnvtwNICf6ikhyk2LMlj8BEwGhtrPK
+         wq3ccOmvXTO2ShJWUbuHreif/OWMHRjG0zKjvg+OaZq3PE4OZEiWcWtnPSoOAL3gTuC6
+         vTqpaY7nK4s5Dspd0qzMd7Z+l45mMiUTBAesryrQ1IVZhvTSx01rpK4u7CnPrM/RKlN/
+         gKMw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Date: Sat, 17 Feb 2018 02:11:00 -0800
+Sender: tip tree robot <tipbot@zytor.com>
+From: tip-bot for Rasmus Villemoes <tipbot@zytor.com>
+Message-ID: <tip-b98c6a160a057d5686a8c54c79cc6c8c94a7d0c8@git.kernel.org>
+Cc: tglx@linutronix.de, will.deacon@arm.com, peterz@infradead.org,
+        linux@rasmusvillemoes.dk, arjan@linux.intel.com,
+        dan.j.williams@intel.com, bp@alien8.de, torvalds@linux-foundation.org,
+        gregkh@linuxfoundation.org, dwmw2@infradead.org, jpoimboe@redhat.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        dave.hansen@linux.intel.com, hpa@zytor.com, luto@kernel.org
+Reply-To: jpoimboe@redhat.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        dave.hansen@linux.intel.com, hpa@zytor.com, luto@kernel.org,
+        gregkh@linuxfoundation.org, dwmw2@infradead.org,
+        dan.j.williams@intel.com, bp@alien8.de, torvalds@linux-foundation.org,
+        tglx@linutronix.de, peterz@infradead.org, linux@rasmusvillemoes.dk,
+        will.deacon@arm.com, arjan@linux.intel.com
+In-Reply-To: <151881604837.17395.10812767547837568328.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <151881604837.17395.10812767547837568328.stgit@dwillia2-desk3.amr.corp.intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] nospec: Allow index argument to have const-qualified
  type
-From: Dan Williams <dan.j.williams@intel.com>
-To: mingo@kernel.org
-Cc: linux-arch@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 16 Feb 2018 13:20:48 -0800
-Message-ID: <151881604837.17395.10812767547837568328.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <151881603700.17395.6474595347527003884.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <151881603700.17395.6474595347527003884.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.17.1-9-g687f
+Git-Commit-ID: b98c6a160a057d5686a8c54c79cc6c8c94a7d0c8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592643852360261406?=
+X-GMAIL-MSGID: =?utf-8?q?1592643852360261406?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Commit-ID:  b98c6a160a057d5686a8c54c79cc6c8c94a7d0c8
+Gitweb:     https://git.kernel.org/tip/b98c6a160a057d5686a8c54c79cc6c8c94a7d0c8
+Author:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+AuthorDate: Fri, 16 Feb 2018 13:20:48 -0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Sat, 17 Feb 2018 08:40:59 +0100
+
+nospec: Allow index argument to have const-qualified type
 
 The last expression in a statement expression need not be a bare
 variable, quoting gcc docs
@@ -107,19 +91,29 @@ of _mask, and the BUILD_BUG_ONs guarantee that _i will get promoted to
 that), so in order not to change the type of the whole expression, add
 a cast back to typeof(_i).
 
-Cc: stable@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arch@vger.kernel.org
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/151881604837.17395.10812767547837568328.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/nospec.h |    3 +--
+ include/linux/nospec.h | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/include/linux/nospec.h b/include/linux/nospec.h
-index d6701e34424f..172a19dc35ab 100644
+index d6701e3..172a19d 100644
 --- a/include/linux/nospec.h
 +++ b/include/linux/nospec.h
 @@ -52,7 +52,6 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
