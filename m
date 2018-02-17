@@ -1,75 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751527AbeBQVIl (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 16:08:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54665 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751253AbeBQVIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 16:08:39 -0500
-Subject: Re: [PATCH 06/10] arm64: dts: actions: Add S900 gpio nodes
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        linus.walleij@linaro.org, robh+dt@kernel.org
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        id S1751489AbeBQVTI (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 16:19:08 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57931 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751262AbeBQVTG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Feb 2018 16:19:06 -0500
+Date: Sat, 17 Feb 2018 22:19:14 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Peter Hutterer <peter.hutterer@who-t.net>
+Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        Bastien Nocera <hadess@hadess.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Chuck Ebbert <cebbert.lkml@gmail.com>,
+        Henrik Rydberg <rydberg@euromail.se>, linux-input@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20180217204433.3095-1-manivannan.sadhasivam@linaro.org>
- <20180217204433.3095-7-manivannan.sadhasivam@linaro.org>
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Organization: SUSE Linux GmbH
-Message-ID: <fb5f904e-a262-df5b-a947-957e579ec4c9@suse.de>
-Date: Sat, 17 Feb 2018 22:08:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Subject: Re: [RFC PATCH] input: Add disable sysfs entry for every input device
+Message-ID: <20180217211914.GB9640@amd>
+References: <1482660296-8432-1-git-send-email-pali.rohar@gmail.com>
+ <1483370825.2420.8.camel@hadess.net>
+ <201701021809.58943@pali>
+ <1483442481.2420.12.camel@hadess.net>
+ <60c21c4d-bb81-342a-45e1-7e92313e05d7@gmail.com>
+ <1483540655.2420.18.camel@hadess.net>
+ <20180102215437.i3x2j6jvxtac4ntt@pali>
+ <1514944049.2523.28.camel@hadess.net>
+ <20180103093133.u7wszegjk2msxryl@pali>
+ <20180109020424.GC29886@jelly>
 MIME-Version: 1.0
-In-Reply-To: <20180217204433.3095-7-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ZfOjI3PrQbgiZnxM"
+Content-Disposition: inline
+In-Reply-To: <20180109020424.GC29886@jelly>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 17.02.2018 um 21:44 schrieb Manivannan Sadhasivam:
-> Add gpio nodes for Actions Semi S900 SoC.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  arch/arm64/boot/dts/actions/s900.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
-> index 0156483f0f4d..e359509ad9d3 100644
-> --- a/arch/arm64/boot/dts/actions/s900.dtsi
-> +++ b/arch/arm64/boot/dts/actions/s900.dtsi
-> @@ -180,6 +180,13 @@
->  			clocks = <&cmu CLK_GPIO>;
->  		};
->  
-> +		gpio: gpio@e01b0000 {
-> +			compatible = "actions,s900-gpio";
-> +			reg = <0x0 0xe01b0000 0x0 0x1000>;
-> +			gpio-controller;
 
-Same as the bindings example, this is lacking gpio-ranges.
+--ZfOjI3PrQbgiZnxM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-https://github.com/afaerber/linux/commit/f4526bbacd75d014a69e6e3ff051638589ee71a3
+Hi!
 
-Also why have only one node? That forces the information about GPIO
-banks into the driver rather than into the DT.
+> > > > So, do you mean to implement this "disable" action as ioctl for
+> > > > particular /dev/input/event* device (instead of sysfs entry)?
+> > >=20
+> > > Yes, so the device can be powered down without the device node being
+> > > closed and made unavailable. I don't know whether that's something
+> > > that's already possible for all cases, but there's already
+> > > opportunistic in a lot of drivers and subsystems.
+> > >=20
+> > > This opens up a whole new wave of potential problems, but it's a more
+> > > generally useful mechanism, I would think.
+> >=20
+> > Ok. How should API for this ioctl looks like? And do you have an idea
+> > for name of that ioctl?
+> >=20
+> > Dmitry, what do you think about it? It is acceptable for you?
+>=20
+> first: sysfs files are pretty terrible because writing to them requires r=
+oot
+> and we don't have the benefit of logind. so for any sysfs toggle expect
+> a nicely integrated userspace solution to be less than optimal.
 
-> +			#gpio-cells = <2>;
-> +		};
-> +
->  		timer: timer@e0228000 {
->  			compatible = "actions,s900-timer";
->  			reg = <0x0 0xe0228000 0x0 0x8000>;
+Well, you can chmod / chown sysfs files.
 
-Regards,
-Andreas
+> besides: 99% of the above is figuring out the policy *when* to disable the
+> device. disabling it is trivial by just closing the evdev nodes and tbh I
+> don't think we (in userspace) should care about whether the device is
+> powered down or now, it should be the default assumption that it is power=
+ed
+> down when not in use.
+>=20
+> for the cases where you must keep the device open but you don't want even=
+ts,=20
+> EVIOCSMASK is likely the best solution. improving the kernel so it powers
+> down the device when the mask excludes all events (and there are no other
+> listeners) could be an interesting task.
 
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+But yes, that sounds like an idea.
+
+BTW in the meantime, someone added this to pmos wiki... this should
+solve some of my problems.
+
+Best regards,
+								Pavel
+
+
+
+FILE=3D~/.screenoff
+if [ -f $FILE ]; then
+ xinput set-prop 8 "Device Enabled" 1
+ xinput set-prop 6 "Device Enabled" 1
+ xinput set-prop 9 "Device Enabled" 1
+ xset dpms force on
+ rm ~/.screenoff
+else
+ xinput set-prop 8 "Device Enabled" 0
+ xinput set-prop 6 "Device Enabled" 0
+ xinput set-prop 9 "Device Enabled" 0
+ xset dpms force off
+ touch ~/.screenoff
+fi
+				=09
+
+   =20
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--ZfOjI3PrQbgiZnxM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqInFIACgkQMOfwapXb+vL/awCfZnFF2Msqonv7wV4aJYaJaADM
+jfUAnilWGYTRsXLO3vwGbdY4aUW3uUw4
+=JgLb
+-----END PGP SIGNATURE-----
+
+--ZfOjI3PrQbgiZnxM--
