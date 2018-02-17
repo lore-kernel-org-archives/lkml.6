@@ -1,56 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751278AbeBQUIn (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 15:08:43 -0500
-Received: from g2t2353.austin.hpe.com ([15.233.44.26]:19084 "EHLO
-        g2t2353.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751131AbeBQUIm (ORCPT
+        id S1751325AbeBQUJ4 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 15:09:56 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:53663 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751159AbeBQUJz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 15:08:42 -0500
-Date: Sat, 17 Feb 2018 13:08:41 -0700
-From: Jerry Hoemann <jerry.hoemann@hpe.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rwright@hpe.com,
-        maurice.a.saldivar@hpe.com, mingo@kernel.org,
-        marcus.folkesson@gmail.com
-Subject: Re: [v3,06/11] watchdog/hpwdt: Select WATCHDOG_CORE
-Message-ID: <20180217200841.GB27788@anatevka.americas.hpqcorp.net>
-Reply-To: Jerry.Hoemann@hpe.com
-References: <20180215234400.5022-7-jerry.hoemann@hpe.com>
- <20180217162130.GA30748@roeck-us.net>
+        Sat, 17 Feb 2018 15:09:55 -0500
+X-ME-Sender: <xms:EoyIWuNK9i51MKlf1-aTU2JojUVLGwcxl1EiwNS12EGKyArWSLUc8w>
+Date: Sat, 17 Feb 2018 18:09:49 -0200
+From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+To: Borislav Petkov <bp@suse.de>
+Cc: Ashok Raj <ashok.raj@intel.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/microcode: Check microcode revision before updating
+ sibling threads
+Message-ID: <20180217200949.dktgcwhb7reopwnk@khazad-dum.debian.net>
+References: <1518806808-4074-1-git-send-email-ashok.raj@intel.com>
+ <20180217134247.sccdynjiqnk2mjby@khazad-dum.debian.net>
+ <20180217142132.GA30848@pd.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180217162130.GA30748@roeck-us.net>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180217142132.GA30848@pd.tnic>
+X-GPG-Fingerprint1: 4096R/0x0BD9E81139CB4807: C467 A717 507B BAFE D3C1  6092
+ 0BD9 E811 39CB 4807
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 17, 2018 at 08:21:30AM -0800, Guenter Roeck wrote:
-> On Thu, Feb 15, 2018 at 04:43:55PM -0700, Jerry Hoemann wrote:
-> > Update Kconfig file to show that hpwdt now selects WATCHDOG_CORE.
-> > 
-> > Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+On Sat, 17 Feb 2018, Borislav Petkov wrote:
+> On Sat, Feb 17, 2018 at 11:42:48AM -0200, Henrique de Moraes Holschuh wrote:
+> > I wonder when this broke,
 > 
-> At this point, WATCHDOG_CORE is not required. This patch should
-> be merged with the next patch, which adds the requirement.
-> 
-> Since it appears that you insist on having it as separate patch,
-> deferring to Wim.
-> 
+> It didn't break - we're just printing the update only once.
 
-I have no objection to squashing these two commits once we have
-agreed upon the actual changes being made.
+It was before that change, when the microcode subsystem still printed a
+message for every CPU that got updated or early-updated.
 
-I re-ordered to address the bisectability question, but kept them
-separate as it is a little bit easier for me to rework patches if
-the patch contains only a single file.
+It was fixed to properly refresh the microcode revision in the percpu
+area right before deciding whether it should update that cpu or not, and
+thus it would skip the second thread on Intel cores because it would
+notice it was already up-to-date.
 
+Maybe it was just the late loader, though...  I'd need to do some git
+log digging.
 
 -- 
-
------------------------------------------------------------------------------
-Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
------------------------------------------------------------------------------
+  Henrique Holschuh
