@@ -1,113 +1,202 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2747092-1518870533-2-1771218312815931802
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518870532; b=VXGpvSZfWty45q2AYhy30aS2q6BSu9EwaExy58dIYSXMKVr
-    i7PEFIyKJ7nICEAGonlc5cNmyAZX8ZrTh5HFvVg0tMpv5CAKDGzm9EH36U46B2ev
-    7oP5yRPXmoYZQXBkBMbYw3Q7vx2EiBv66TscbcwROkr2EMhWtFhlsv82FsqEQNID
-    VaPSycop86QwHpFzS8qFKvr4xONyT+4+s59YWt1Zi5RDlOcUij/VxXbv8J5s+EJP
-    vMQ87JX4r9QdLy23vaE4micToUjIcG0KhNHSEKV6dCroxkEcgclusN28LtMwJHwU
-    WCSAqFh4MeQT+1UJJKdGphA4SipZTiYq+aBYjyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1518870532; bh=+
-    943sPA16GCEhpMSGsrb8RU/y73cvB9k4AvwGmZOELc=; b=m2U3CwhIKP4O5UIAf
-    N9VPtVqLTduDbqTBrNaCJPY19El2oMIw5NKEl8kDCXV0vP4NIHTlwsPA9+mw2S6Y
-    WeeCmalISqEo1yZBBqJv8mHfDVfdq94JKhGwieHVroLGvsSNu+V5uRaegXmYNxDj
-    G+ZB0bZeyl441Fp6QQyRoBZviZpoZk90AXvxoyZf7FxmbcfaOP1oTzS5WYfX+hbk
-    OsL9GomZVQd8uh24KAkiV8H+5EJ8U1on3ttc1vQcrp+BUuLysAhg3OBBiXnR5nmT
-    zknVdPcKkj8tOCuyzQR8cviuzR0wo2Qx85gm7wnt9spkkgr/0caXpf0e1VQOA1wY
-    0L7NQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Sat, 17 Feb 2018 12:53:42 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Yash Omer <yashomer0007@gmail.com>
-Subject: Re: [PATCH] Staging: ks7010: fix unnecessary parentheses in
- ks_hostif.c
-Message-ID: <20180217115342.GB9433@kroah.com>
-References: <20180217095645.22946-1-yashomer0007@gmail.com>
+Return-Path: <tipbot@zytor.com>
+X-Google-Smtp-Source: AH8x2240oCEOxkJyVLSzNId8y0EXnNgoin5xv4oRQiB49TGpU/XSvt4f79nAw2QyAml0NSW6EPnz
+ARC-Seal: i=1; a=rsa-sha256; t=1518868304; cv=none;
+        d=google.com; s=arc-20160816;
+        b=GZ6cvO4Xkh3YVvginB6YZVrVenyuBDNit7gl05Ttm9nuntG81Sl99qp1Ny3sqEhEKN
+         JmXe/wbG1ZdXmpxb194sqezWprnoP7h2hr3wevtcmpCeDq43TQ70LM4WrDrKanH3Q7HR
+         6j8A0EeZEyXFAwuGmy5eB3HLX1nykv/nFPJ6NRB9QNsVe6V9P91QgaOeO9Q9q16rte3X
+         y9rrtpIDZEgIZEwe0HlrI9WhNs+dgX8GNoxW2OYDAYS0jitK8T32sByrEO/7isCh03ce
+         G5Y559ovrm5beLmvwdrR0DR6X5GLhZ+qgYA8fmuKpuyF34/XtWpW8fRvYK6S13VE/mwC
+         588w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=precedence:content-disposition:content-transfer-encoding
+         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
+         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
+         :arc-authentication-results;
+        bh=bLg+LxN5wDHPUUzfoKL6y7K5AtHN6Keuula3/vbk+WQ=;
+        b=XxZREdaYT3fgDz5MzEZ3YAgQ4iGh9ZDI7rAU6JX/Yw+Gs26vintX7Gx3d+K7CKEUI2
+         O/l5CYdLYFBFYPTXiGsmMHenU+Ww8YbsimBp0z+0bMt3D3nRR+UgplP1JIXESqxxB0FR
+         UCtehczCdLo3qj9MqHiUZmRV6Kv7ejMULV945DVOlYfSAfjO9f/D789bz+6j3QCovfvS
+         KA4TkbYdki1hBjMzIDeBpqZ5BQh8FbJG/maGTHC28Vy5VRPAOsGrOFbuwiNeApm4jHBv
+         CFuYPEyLb+X6tmLbzkKcEc/hQXrm7PvTg8PZ7v9Hjrty3vhKeg+WslqnaMVVsSQ2kntk
+         9iuw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Date: Sat, 17 Feb 2018 03:40:13 -0800
+Sender: tip tree robot <tipbot@zytor.com>
+From: tip-bot for Dominik Brodowski <tipbot@zytor.com>
+Message-ID: <tip-9e809d15d6b692fa061d74be7aaab1c79f6784b8@git.kernel.org>
+Cc: arjan@linux.intel.com, mingo@kernel.org, gregkh@linuxfoundation.org,
+        dan.j.williams@intel.com, bp@alien8.de, luto@kernel.org,
+        linux@dominikbrodowski.net, torvalds@linux-foundation.org,
+        dwmw2@infradead.org, jpoimboe@redhat.com, hpa@zytor.com,
+        dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, tglx@linutronix.de
+Reply-To: arjan@linux.intel.com, gregkh@linuxfoundation.org, mingo@kernel.org,
+        dan.j.williams@intel.com, luto@kernel.org, bp@alien8.de,
+        linux@dominikbrodowski.net, torvalds@linux-foundation.org,
+        dwmw2@infradead.org, hpa@zytor.com, dave.hansen@linux.intel.com,
+        jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, tglx@linutronix.de
+In-Reply-To: <20180214175924.23065-2-linux@dominikbrodowski.net>
+References: <20180214175924.23065-2-linux@dominikbrodowski.net>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/entry: Reduce the code footprint of the
+ 'idtentry' macro
+Git-Commit-ID: 9e809d15d6b692fa061d74be7aaab1c79f6784b8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180217095645.22946-1-yashomer0007@gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com,
- driverdev-devel@linuxdriverproject.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592648851534933862?=
+X-GMAIL-MSGID: =?utf-8?q?1592648851534933862?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Feb 17, 2018 at 03:26:45PM +0530, Yash Omer wrote:
-> This patch fixes up unncessary parentheses warning found by checkpatch.pl script
-> 
-> Signed-off-by: Yash Omer<yashomer0007@gmail.com>
-> ---
->  drivers/staging/ks7010/ks_hostif.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-> index 7bd567e233d7..36055652842d 100644
-> --- a/drivers/staging/ks7010/ks_hostif.c
-> +++ b/drivers/staging/ks7010/ks_hostif.c
-> @@ -36,7 +36,7 @@ inline u8 get_BYTE(struct ks_wlan_private *priv)
->  {
->  	u8 data;
->  
-> -	data = *(priv->rxp)++;
-> +	data = *priv->rxp++;
+Commit-ID:  9e809d15d6b692fa061d74be7aaab1c79f6784b8
+Gitweb:     https://git.kernel.org/tip/9e809d15d6b692fa061d74be7aaab1c79f6784b8
+Author:     Dominik Brodowski <linux@dominikbrodowski.net>
+AuthorDate: Wed, 14 Feb 2018 18:59:23 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Sat, 17 Feb 2018 11:14:33 +0100
 
-Oh that's a mess, please just leave the original () there, otherwise you
-have to really remember what order comes first here.  The () gives the
-reader a huge hint as to what is being incremented.
+x86/entry: Reduce the code footprint of the 'idtentry' macro
 
-thanks,
+Play a little trick in the generic PUSH_AND_CLEAR_REGS macro
+to insert the GP registers "above" the original return address.
 
-greg k-h
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+This allows us to (re-)insert the macro in error_entry() and
+paranoid_entry() and to remove it from the idtentry macro. This
+reduces the static footprint significantly:
+
+   text	   data	    bss	    dec	    hex	filename
+  24307	      0	      0	  24307	   5ef3	entry_64.o-orig
+  20987	      0	      0	  20987	   51fb	entry_64.o
+
+Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180214175924.23065-2-linux@dominikbrodowski.net
+[ Small tweaks to comments. ]
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/entry/calling.h  | 11 ++++++++++-
+ arch/x86/entry/entry_64.S | 18 ++++++++----------
+ 2 files changed, 18 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+index dce7092..196b610 100644
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -97,7 +97,7 @@ For 32-bit we have the following conventions - kernel is built with
+ 
+ #define SIZEOF_PTREGS	21*8
+ 
+-.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax
++.macro PUSH_AND_CLEAR_REGS rdx=%rdx rax=%rax save_ret=0
+ 	/*
+ 	 * Push registers and sanitize registers of values that a
+ 	 * speculation attack might otherwise want to exploit. The
+@@ -105,8 +105,14 @@ For 32-bit we have the following conventions - kernel is built with
+ 	 * could be put to use in a speculative execution gadget.
+ 	 * Interleave XOR with PUSH for better uop scheduling:
+ 	 */
++	.if \save_ret
++	pushq	%rsi		/* pt_regs->si */
++	movq	8(%rsp), %rsi	/* temporarily store the return address in %rsi */
++	movq	%rdi, 8(%rsp)	/* pt_regs->di (overwriting original return address) */
++	.else
+ 	pushq   %rdi		/* pt_regs->di */
+ 	pushq   %rsi		/* pt_regs->si */
++	.endif
+ 	pushq	\rdx		/* pt_regs->dx */
+ 	pushq   %rcx		/* pt_regs->cx */
+ 	pushq   \rax		/* pt_regs->ax */
+@@ -131,6 +137,9 @@ For 32-bit we have the following conventions - kernel is built with
+ 	pushq	%r15		/* pt_regs->r15 */
+ 	xorq    %r15, %r15	/* nospec   r15*/
+ 	UNWIND_HINT_REGS
++	.if \save_ret
++	pushq	%rsi		/* return address on top of stack */
++	.endif
+ .endm
+ 
+ .macro POP_REGS pop_rdi=1 skip_r11rcx=0
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 8971bd6..77edc23 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -875,12 +875,8 @@ ENTRY(\sym)
+ 	pushq	$-1				/* ORIG_RAX: no syscall to restart */
+ 	.endif
+ 
+-	/* Save all registers in pt_regs */
+-	PUSH_AND_CLEAR_REGS
+-	ENCODE_FRAME_POINTER
+-
+ 	.if \paranoid < 2
+-	testb	$3, CS(%rsp)			/* If coming from userspace, switch stacks */
++	testb	$3, CS-ORIG_RAX(%rsp)		/* If coming from userspace, switch stacks */
+ 	jnz	.Lfrom_usermode_switch_stack_\@
+ 	.endif
+ 
+@@ -1130,13 +1126,15 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
+ #endif
+ 
+ /*
+- * Switch gs if needed.
++ * Save all registers in pt_regs, and switch gs if needed.
+  * Use slow, but surefire "are we in kernel?" check.
+  * Return: ebx=0: need swapgs on exit, ebx=1: otherwise
+  */
+ ENTRY(paranoid_entry)
+ 	UNWIND_HINT_FUNC
+ 	cld
++	PUSH_AND_CLEAR_REGS save_ret=1
++	ENCODE_FRAME_POINTER 8
+ 	movl	$1, %ebx
+ 	movl	$MSR_GS_BASE, %ecx
+ 	rdmsr
+@@ -1181,12 +1179,14 @@ ENTRY(paranoid_exit)
+ END(paranoid_exit)
+ 
+ /*
+- * Switch gs if needed.
++ * Save all registers in pt_regs, and switch GS if needed.
+  * Return: EBX=0: came from user mode; EBX=1: otherwise
+  */
+ ENTRY(error_entry)
+-	UNWIND_HINT_REGS offset=8
++	UNWIND_HINT_FUNC
+ 	cld
++	PUSH_AND_CLEAR_REGS save_ret=1
++	ENCODE_FRAME_POINTER 8
+ 	testb	$3, CS+8(%rsp)
+ 	jz	.Lerror_kernelspace
+ 
+@@ -1577,8 +1577,6 @@ end_repeat_nmi:
+ 	 * frame to point back to repeat_nmi.
+ 	 */
+ 	pushq	$-1				/* ORIG_RAX: no syscall to restart */
+-	PUSH_AND_CLEAR_REGS
+-	ENCODE_FRAME_POINTER
+ 
+ 	/*
+ 	 * Use paranoid_entry to handle SWAPGS, but no need to use paranoid_exit
