@@ -1,31 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751233AbeBQLiv (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 06:38:51 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:53605 "EHLO
+        id S1751312AbeBQLi7 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 06:38:59 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47019 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751041AbeBQLit (ORCPT
+        with ESMTP id S1751088AbeBQLi5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 06:38:49 -0500
-Date: Sat, 17 Feb 2018 03:28:26 -0800
-From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-ab6e9a99345131cd8e54268d1d0dc04a33f7ed11@git.kernel.org>
-Cc: tglx@linutronix.de, hpa@zytor.com, acme@redhat.com,
-        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@kernel.org, naveen.n.rao@linux.vnet.ibm.com,
-        peterz@infradead.org, mingo@kernel.org, dsahern@gmail.com,
-        namhyung@kernel.org
-Reply-To: namhyung@kernel.org, dsahern@gmail.com, mingo@kernel.org,
-        peterz@infradead.org, naveen.n.rao@linux.vnet.ibm.com,
-        jolsa@kernel.org, alexander.shishkin@linux.intel.com,
-        linux-kernel@vger.kernel.org, acme@redhat.com, hpa@zytor.com,
+        Sat, 17 Feb 2018 06:38:57 -0500
+Date: Sat, 17 Feb 2018 03:38:46 -0800
+From: tip-bot for Thomas Richter <tipbot@zytor.com>
+Message-ID: <tip-b3be39c51cc58eb60c698cf64987e9d465a9263a@git.kernel.org>
+Cc: tmricht@linux.vnet.ibm.com, brueckner@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, acme@redhat.com,
+        heiko.carstens@de.ibm.com, hpa@zytor.com, schwidefsky@de.ibm.com,
+        mingo@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, brueckner@linux.vnet.ibm.com,
+        tmricht@linux.vnet.ibm.com, mingo@kernel.org, schwidefsky@de.ibm.com,
+        hpa@zytor.com, heiko.carstens@de.ibm.com, acme@redhat.com,
         tglx@linutronix.de
-In-Reply-To: <20180215122635.24029-10-jolsa@kernel.org>
-References: <20180215122635.24029-10-jolsa@kernel.org>
+In-Reply-To: <20180213151419.80737-4-tmricht@linux.vnet.ibm.com>
+References: <20180213151419.80737-4-tmricht@linux.vnet.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tests: Use arch__compare_symbol_names to
- compare symbols
-Git-Commit-ID: ab6e9a99345131cd8e54268d1d0dc04a33f7ed11
+Subject: [tip:perf/core] perf test: Fix test case 23 for s390 z/VM or KVM
+ guests
+Git-Commit-ID: b3be39c51cc58eb60c698cf64987e9d465a9263a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,60 +36,81 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ab6e9a99345131cd8e54268d1d0dc04a33f7ed11
-Gitweb:     https://git.kernel.org/tip/ab6e9a99345131cd8e54268d1d0dc04a33f7ed11
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Thu, 15 Feb 2018 13:26:35 +0100
+Commit-ID:  b3be39c51cc58eb60c698cf64987e9d465a9263a
+Gitweb:     https://git.kernel.org/tip/b3be39c51cc58eb60c698cf64987e9d465a9263a
+Author:     Thomas Richter <tmricht@linux.vnet.ibm.com>
+AuthorDate: Tue, 13 Feb 2018 16:14:19 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Feb 2018 14:26:01 -0300
+CommitDate: Fri, 16 Feb 2018 15:16:57 -0300
 
-perf tests: Use arch__compare_symbol_names to compare symbols
+perf test: Fix test case 23 for s390 z/VM or KVM guests
 
-The symbol search called by machine__find_kernel_symbol_by_name is using
-internally arch__compare_symbol_names function to compare 2 symbol
-names, because different archs have different ways of comparing symbols.
-Mostly for skipping '.' prefixes and similar.
+On s390 perf can be executed on a LPAR with support for hardware events
+(i. e. cycles) or on a z/VM or KVM guest where no hardware events are
+supported. In this environment use software event named cpu-clock for
+this test case.
 
-In test 1 when we try to find matching symbols in kallsyms and vmlinux,
-by address and by symbol name. When either is found we compare the pair
-symbol names  by simple strcmp, which is not good enough for reasons
-explained in previous paragraph.
+Use the cpuid infrastructure functions to determine the cpuid on s390
+which contains an indication of the cpu counter facility availability.
 
-On powerpc this can cause lockup, because even thought we found the
-pair, the compared names are different and don't match simple strcmp.
-Following code path is executed, that leads to lockup:
-
-   - we find the pair in kallsyms by sym->start
-next_pair:
-   - we compare the names and it fails
-   - we find the pair by sym->name
-   - the pair addresses match so we call goto next_pair
-     because we assume the names match in this case
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: 031b84c407c3 ("perf probe ppc: Enable matching against dot symbols automatically")
-Link: http://lkml.kernel.org/r/20180215122635.24029-10-jolsa@kernel.org
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180213151419.80737-4-tmricht@linux.vnet.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/vmlinux-kallsyms.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/tests/code-reading.c | 33 +++++++++++++++++++++++++++++----
+ 1 file changed, 29 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/tests/vmlinux-kallsyms.c b/tools/perf/tests/vmlinux-kallsyms.c
-index 5834929..1e5adb6 100644
---- a/tools/perf/tests/vmlinux-kallsyms.c
-+++ b/tools/perf/tests/vmlinux-kallsyms.c
-@@ -125,7 +125,7 @@ int test__vmlinux_matches_kallsyms(struct test *test __maybe_unused, int subtest
+diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
+index 3bf7b14..c7115d3 100644
+--- a/tools/perf/tests/code-reading.c
++++ b/tools/perf/tests/code-reading.c
+@@ -482,6 +482,34 @@ static void fs_something(void)
+ 	}
+ }
  
- 		if (pair && UM(pair->start) == mem_start) {
- next_pair:
--			if (strcmp(sym->name, pair->name) == 0) {
-+			if (arch__compare_symbol_names(sym->name, pair->name) == 0) {
- 				/*
- 				 * kallsyms don't have the symbol end, so we
- 				 * set that by using the next symbol start - 1,
++static const char *do_determine_event(bool excl_kernel)
++{
++	const char *event = excl_kernel ? "cycles:u" : "cycles";
++
++#ifdef __s390x__
++	char cpuid[128], model[16], model_c[16], cpum_cf_v[16];
++	unsigned int family;
++	int ret, cpum_cf_a;
++
++	if (get_cpuid(cpuid, sizeof(cpuid)))
++		goto out_clocks;
++	ret = sscanf(cpuid, "%*[^,],%u,%[^,],%[^,],%[^,],%x", &family, model_c,
++		     model, cpum_cf_v, &cpum_cf_a);
++	if (ret != 5)		 /* Not available */
++		goto out_clocks;
++	if (excl_kernel && (cpum_cf_a & 4))
++		return event;
++	if (!excl_kernel && (cpum_cf_a & 2))
++		return event;
++
++	/* Fall through: missing authorization */
++out_clocks:
++	event = excl_kernel ? "cpu-clock:u" : "cpu-clock";
++
++#endif
++	return event;
++}
++
+ static void do_something(void)
+ {
+ 	fs_something();
+@@ -592,10 +620,7 @@ static int do_test_code_reading(bool try_kcore)
+ 
+ 		perf_evlist__set_maps(evlist, cpus, threads);
+ 
+-		if (excl_kernel)
+-			str = "cycles:u";
+-		else
+-			str = "cycles";
++		str = do_determine_event(excl_kernel);
+ 		pr_debug("Parsing event '%s'\n", str);
+ 		ret = parse_events(evlist, str, NULL);
+ 		if (ret < 0) {
