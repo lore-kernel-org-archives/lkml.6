@@ -1,50 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751102AbeBQAIQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 19:08:16 -0500
-Received: from gloria.sntech.de ([95.129.55.99]:52238 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750787AbeBQAIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 19:08:15 -0500
-From: Heiko Stuebner <heiko@sntech.de>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Brian Norris <briannorris@chromium.org>, dianders@chromium.org,
-        Chris Zhong <zyw@rock-chips.com>, William wu <wulf@rock-chips.com>,
-        hl@rock-chips.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCH v3 3/6] phy: rockchip-typec: enable usb3 host during usb3 phy power on
-Date: Sat, 17 Feb 2018 01:08:07 +0100
-Message-ID: <3430653.U8tW0J7X0D@phil>
-In-Reply-To: <20180216120956.19034-3-enric.balletbo@collabora.com>
-References: <20180216120956.19034-1-enric.balletbo@collabora.com> <20180216120956.19034-3-enric.balletbo@collabora.com>
+        id S1751075AbeBQAJE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 19:09:04 -0500
+Received: from mail-it0-f54.google.com ([209.85.214.54]:54979 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750911AbeBQAJD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 19:09:03 -0500
+X-Google-Smtp-Source: AH8x225mPhpks1qMuDSiYRKpOez7ZjtA9Y0fkxMLnRAGUFuqHlEmuVK7bUkIZ/dzgVZfZHpwLzGk3MYcsRvqu1jqTA4=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20170807195027.13192-1-mjg59@google.com> <CACdnJus-X533K0Bgqjc-MoZ2NbLz0ac9x+rryHUtnjrnmJ+Kmg@mail.gmail.com>
+ <20180215152514.rxmh7webdg2i2fct@redbean> <CACdnJutL7rJE=1bsh45RmvunU-GZJCYaejyznENrAgFB6nbCLA@mail.gmail.com>
+ <ff79053c-4a4c-714e-4098-bf973eaefd63@pmhahn.de>
+In-Reply-To: <ff79053c-4a4c-714e-4098-bf973eaefd63@pmhahn.de>
+From: Matthew Garrett <mjg59@google.com>
+Date: Sat, 17 Feb 2018 00:08:51 +0000
+Message-ID: <CACdnJuv4nKbrzzyJ9dAEgUqNSuZpCF6ARRK91f0fa6639G217g@mail.gmail.com>
+Subject: Re: [PATCH] Make kernel taint on invalid module signatures configurable
+To: pmhahn@pmhahn.de
+Cc: Jessica Yu <jeyu@kernel.org>, Ben Hutchings <ben@decadent.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 16. Februar 2018, 13:09:53 CET schrieb Enric Balletbo i Serra:
-> From: William wu <wulf@rock-chips.com>
-> 
-> We have forced usb3 to work in usb2 only mode in firmware by setting
-> usb3tousb2_en (bit3 of GRF_USB3PHY0/1_CON0) to 1, and setting
-> host_u3_port_disable (bit0 of GRF_USB3OTG0/1_CON1) to 1 and host_u3_port
-> (bit15~12 of GRF_USB3OTG0/1_CON1) to 0. So we need to re-enable usb3
-> host.
-> 
-> Note that the RK3399 TRM suggests that we should keep the whole usb3
-> controller in reset for the duration of the Type-C PHY initialization.
-> However, it's hard to assert the reset in the current framework of
-> reset. And according to the TRM, it doesn't require that we should
-> clear the usb3tousb2 bit before pipe ready. So let's enable the usb3
-> host after pipe ready to avoid the Type-C PHY initialization failure.
-> 
-> Signed-off-by: William wu <wulf@rock-chips.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+On Fri, Feb 16, 2018 at 12:25 AM Philipp Hahn <pmhahn@pmhahn.de> wrote:
+> Sadly didn't work for me :-(
+> If my understanding is correct and iff that would work, Debian (and
+> others) could load their public key into Shim and then use the
+> associated private key for singing their modules.
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+This works for UEFI systems, but distributions have to support non-UEFI as
+well.
