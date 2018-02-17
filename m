@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751127AbeBQFtH (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 00:49:07 -0500
+        id S1751237AbeBQFt0 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 00:49:26 -0500
 Received: from mga18.intel.com ([134.134.136.126]:1052 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751108AbeBQFtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 00:49:05 -0500
+        id S1751133AbeBQFtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Feb 2018 00:49:13 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,523,1511856000";
-   d="scan'208";a="20863341"
+   d="scan'208";a="20863358"
 From: changbin.du@intel.com
 To: corbet@lwn.net, rostedt@goodmis.org
 Cc: mingo@kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, Changbin Du <changbin.du@intel.com>
-Subject: [PATCH 04/17] trace doc: convert trace/tracepoint-analysis.txt to rst format
-Date: Sat, 17 Feb 2018 13:39:37 +0800
-Message-Id: <1518845990-20733-5-git-send-email-changbin.du@intel.com>
+Subject: [PATCH 08/17] trace doc: convert trace/tracepoints.txt to rst format
+Date: Sat, 17 Feb 2018 13:39:41 +0800
+Message-Id: <1518845990-20733-9-git-send-email-changbin.du@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518845990-20733-1-git-send-email-changbin.du@intel.com>
 References: <1518845990-20733-1-git-send-email-changbin.du@intel.com>
@@ -34,189 +34,159 @@ Cc: Steven Rostedt <rostedt@goodmis.org>
 Signed-off-by: Changbin Du <changbin.du@intel.com>
 ---
  Documentation/trace/index.rst                      |  1 +
- ...epoint-analysis.txt => tracepoint-analysis.rst} | 41 ++++++++++++++--------
- 2 files changed, 27 insertions(+), 15 deletions(-)
- rename Documentation/trace/{tracepoint-analysis.txt => tracepoint-analysis.rst} (93%)
+ .../trace/{tracepoints.txt => tracepoints.rst}     | 77 +++++++++++-----------
+ 2 files changed, 41 insertions(+), 37 deletions(-)
+ rename Documentation/trace/{tracepoints.txt => tracepoints.rst} (74%)
 
 diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-index aa2baad..61b5551 100644
+index 353fb8a..c8bbdfc 100644
 --- a/Documentation/trace/index.rst
 +++ b/Documentation/trace/index.rst
-@@ -6,4 +6,5 @@ Linux Tracing Technologies
-    :maxdepth: 2
- 
-    ftrace-design
-+   tracepoint-analysis
+@@ -11,3 +11,4 @@ Linux Tracing Technologies
     ftrace-uses
-diff --git a/Documentation/trace/tracepoint-analysis.txt b/Documentation/trace/tracepoint-analysis.rst
-similarity index 93%
-rename from Documentation/trace/tracepoint-analysis.txt
-rename to Documentation/trace/tracepoint-analysis.rst
-index 058cc6c..a4d3ff2 100644
---- a/Documentation/trace/tracepoint-analysis.txt
-+++ b/Documentation/trace/tracepoint-analysis.rst
-@@ -1,7 +1,7 @@
--		Notes on Analysing Behaviour Using Events and Tracepoints
+    kprobetrace
+    uprobetracer
++   tracepoints
+diff --git a/Documentation/trace/tracepoints.txt b/Documentation/trace/tracepoints.rst
+similarity index 74%
+rename from Documentation/trace/tracepoints.txt
+rename to Documentation/trace/tracepoints.rst
+index a3efac6..6e3ce3b 100644
+--- a/Documentation/trace/tracepoints.txt
++++ b/Documentation/trace/tracepoints.rst
+@@ -1,6 +1,8 @@
+-	             Using the Linux Kernel Tracepoints
++==================================
++Using the Linux Kernel Tracepoints
++==================================
+ 
+-			    Mathieu Desnoyers
++:Author: Mathieu Desnoyers
+ 
+ 
+ This document introduces Linux Kernel Tracepoints and their use. It
+@@ -9,8 +11,8 @@ connect probe functions to them and provides some examples of probe
+ functions.
+ 
+ 
+-* Purpose of tracepoints
 -
--			Documentation written by Mel Gorman
--		PCL information heavily based on email from Ingo Molnar
-+=========================================================
-+Notes on Analysing Behaviour Using Events and Tracepoints
-+=========================================================
-+:Author: Mel Gorman (PCL information heavily based on email from Ingo Molnar)
++Purpose of tracepoints
++----------------------
+ A tracepoint placed in code provides a hook to call a function (probe)
+ that you can provide at runtime. A tracepoint can be "on" (a probe is
+ connected to it) or "off" (no probe is attached). When a tracepoint is
+@@ -31,8 +33,8 @@ header file.
+ They can be used for tracing and performance accounting.
  
- 1. Introduction
- ===============
-@@ -27,18 +27,18 @@ assumed that the PCL tool tools/perf has been installed and is in your path.
- ----------------------
  
- All possible events are visible from /sys/kernel/debug/tracing/events. Simply
--calling
-+calling::
+-* Usage
+-
++Usage
++-----
+ Two elements are required for tracepoints :
  
-   $ find /sys/kernel/debug/tracing/events -type d
+ - A tracepoint definition, placed in a header file.
+@@ -40,52 +42,53 @@ Two elements are required for tracepoints :
  
- will give a fair indication of the number of events available.
+ In order to use tracepoints, you should include linux/tracepoint.h.
  
- 2.2 PCL (Performance Counters for Linux)
---------
-+----------------------------------------
+-In include/trace/events/subsys.h :
++In include/trace/events/subsys.h::
  
- Discovery and enumeration of all counters and events, including tracepoints,
- are available with the perf tool. Getting a list of available events is a
--simple case of:
-+simple case of::
+-#undef TRACE_SYSTEM
+-#define TRACE_SYSTEM subsys
++	#undef TRACE_SYSTEM
++	#define TRACE_SYSTEM subsys
  
-   $ perf list 2>&1 | grep Tracepoint
-   ext4:ext4_free_inode                     [Tracepoint event]
-@@ -57,7 +57,7 @@ simple case of:
+-#if !defined(_TRACE_SUBSYS_H) || defined(TRACE_HEADER_MULTI_READ)
+-#define _TRACE_SUBSYS_H
++	#if !defined(_TRACE_SUBSYS_H) || defined(TRACE_HEADER_MULTI_READ)
++	#define _TRACE_SUBSYS_H
  
- See Documentation/trace/events.txt for a proper description on how events
- can be enabled system-wide. A short example of enabling all events related
--to page allocation would look something like:
-+to page allocation would look something like::
+-#include <linux/tracepoint.h>
++	#include <linux/tracepoint.h>
  
-   $ for i in `find /sys/kernel/debug/tracing/events -name "enable" | grep mm_`; do echo 1 > $i; done
+-DECLARE_TRACE(subsys_eventname,
+-	TP_PROTO(int firstarg, struct task_struct *p),
+-	TP_ARGS(firstarg, p));
++	DECLARE_TRACE(subsys_eventname,
++		TP_PROTO(int firstarg, struct task_struct *p),
++		TP_ARGS(firstarg, p));
  
-@@ -67,6 +67,7 @@ to page allocation would look something like:
- In SystemTap, tracepoints are accessible using the kernel.trace() function
- call. The following is an example that reports every 5 seconds what processes
- were allocating the pages.
-+::
+-#endif /* _TRACE_SUBSYS_H */
++	#endif /* _TRACE_SUBSYS_H */
  
-   global page_allocs
+-/* This part must be outside protection */
+-#include <trace/define_trace.h>
++	/* This part must be outside protection */
++	#include <trace/define_trace.h>
  
-@@ -91,6 +92,7 @@ were allocating the pages.
+-In subsys/file.c (where the tracing statement must be added) :
++In subsys/file.c (where the tracing statement must be added)::
  
- By specifying the -a switch and analysing sleep, the system-wide events
- for a duration of time can be examined.
-+::
+-#include <trace/events/subsys.h>
++	#include <trace/events/subsys.h>
  
-  $ perf stat -a \
- 	-e kmem:mm_page_alloc -e kmem:mm_page_free \
-@@ -118,6 +120,7 @@ basis using set_ftrace_pid.
+-#define CREATE_TRACE_POINTS
+-DEFINE_TRACE(subsys_eventname);
++	#define CREATE_TRACE_POINTS
++	DEFINE_TRACE(subsys_eventname);
  
- Events can be activated and tracked for the duration of a process on a local
- basis using PCL such as follows.
-+::
+-void somefct(void)
+-{
+-	...
+-	trace_subsys_eventname(arg, task);
+-	...
+-}
++	void somefct(void)
++	{
++		...
++		trace_subsys_eventname(arg, task);
++		...
++	}
  
-   $ perf stat -e kmem:mm_page_alloc -e kmem:mm_page_free \
- 		 -e kmem:mm_page_free_batched ./hackbench 10
-@@ -145,6 +148,7 @@ Any workload can exhibit variances between runs and it can be important
- to know what the standard deviation is. By and large, this is left to the
- performance analyst to do it by hand. In the event that the discrete event
- occurrences are useful to the performance analyst, then perf can be used.
-+::
+ Where :
+-- subsys_eventname is an identifier unique to your event
++  - subsys_eventname is an identifier unique to your event
++
+     - subsys is the name of your subsystem.
+     - eventname is the name of the event to trace.
  
-   $ perf stat --repeat 5 -e kmem:mm_page_alloc -e kmem:mm_page_free
- 			-e kmem:mm_page_free_batched ./hackbench 10
-@@ -167,6 +171,7 @@ aggregation of discrete events, then a script would need to be developed.
+-- TP_PROTO(int firstarg, struct task_struct *p) is the prototype of the
+-  function called by this tracepoint.
++  - `TP_PROTO(int firstarg, struct task_struct *p)` is the prototype of the
++    function called by this tracepoint.
  
- Using --repeat, it is also possible to view how events are fluctuating over
- time on a system-wide basis using -a and sleep.
-+::
+-- TP_ARGS(firstarg, p) are the parameters names, same as found in the
+-  prototype.
++  - `TP_ARGS(firstarg, p)` are the parameters names, same as found in the
++    prototype.
  
-   $ perf stat -e kmem:mm_page_alloc -e kmem:mm_page_free \
- 		-e kmem:mm_page_free_batched \
-@@ -188,9 +193,9 @@ When events are enabled the events that are triggering can be read from
- options exist as well. By post-processing the output, further information can
- be gathered on-line as appropriate. Examples of post-processing might include
+-- if you use the header in multiple source files, #define CREATE_TRACE_POINTS
+-  should appear only in one source file.
++  - if you use the header in multiple source files, `#define CREATE_TRACE_POINTS`
++    should appear only in one source file.
  
--  o Reading information from /proc for the PID that triggered the event
--  o Deriving a higher-level event from a series of lower-level events.
--  o Calculating latencies between two events
-+  - Reading information from /proc for the PID that triggered the event
-+  - Deriving a higher-level event from a series of lower-level events.
-+  - Calculating latencies between two events
+ Connecting a function (probe) to a tracepoint is done by providing a
+ probe (function to call) for the specific tracepoint through
+@@ -117,7 +120,7 @@ used to export the defined tracepoints.
  
- Documentation/trace/postprocess/trace-pagealloc-postprocess.pl is an example
- script that can read trace_pipe from STDIN or a copy of a trace. When used
-@@ -200,14 +205,14 @@ and twice to exit.
- Simplistically, the script just reads STDIN and counts up events but it
- also can do more such as
+ If you need to do a bit of work for a tracepoint parameter, and
+ that work is only used for the tracepoint, that work can be encapsulated
+-within an if statement with the following:
++within an if statement with the following::
  
--  o Derive high-level events from many low-level events. If a number of pages
-+  - Derive high-level events from many low-level events. If a number of pages
-     are freed to the main allocator from the per-CPU lists, it recognises
-     that as one per-CPU drain even though there is no specific tracepoint
-     for that event
--  o It can aggregate based on PID or individual process number
--  o In the event memory is getting externally fragmented, it reports
-+  - It can aggregate based on PID or individual process number
-+  - In the event memory is getting externally fragmented, it reports
-     on whether the fragmentation event was severe or moderate.
--  o When receiving an event about a PID, it can record who the parent was so
-+  - When receiving an event about a PID, it can record who the parent was so
-     that if large numbers of events are coming from very short-lived
-     processes, the parent process responsible for creating all the helpers
-     can be identified
-@@ -218,6 +223,7 @@ also can do more such as
- There may also be a requirement to identify what functions within a program
- were generating events within the kernel. To begin this sort of analysis, the
- data must be recorded. At the time of writing, this required root:
-+::
+ 	if (trace_foo_bar_enabled()) {
+ 		int i;
+@@ -139,7 +142,7 @@ The advantage of using the trace_<tracepoint>_enabled() is that it uses
+ the static_key of the tracepoint to allow the if statement to be implemented
+ with jump labels and avoid conditional branches.
  
-   $ perf record -c 1 \
- 	-e kmem:mm_page_alloc -e kmem:mm_page_free \
-@@ -232,6 +238,7 @@ very coarse as a result.
- 
- This record outputted a file called perf.data which can be analysed using
- perf report.
-+::
- 
-   $ perf report
-   # Samples: 30922
-@@ -258,6 +265,7 @@ within the VDSO. With simple binaries, this will often be the case so let's
- take a slightly different example. In the course of writing this, it was
- noticed that X was generating an insane amount of page allocations so let's look
- at it:
-+::
- 
-   $ perf record -c 1 -f \
- 		-e kmem:mm_page_alloc -e kmem:mm_page_free \
-@@ -265,6 +273,7 @@ at it:
- 		-p `pidof X`
- 
- This was interrupted after a few seconds and
-+::
- 
-   $ perf report
-   # Samples: 27666
-@@ -282,6 +291,7 @@ This was interrupted after a few seconds and
- 
- So, almost half of the events are occurring in a library. To get an idea which
- symbol:
-+::
- 
-   $ perf report --sort comm,dso,symbol
-   # Samples: 27666
-@@ -298,6 +308,7 @@ symbol:
-        0.00%     Xorg  [kernel]                                 [k] ftrace_trace_userstack
- 
- To see where within the function pixmanFillsse2 things are going wrong:
-+::
- 
-   $ perf annotate pixmanFillsse2
-   [ ... ]
+-Note: The convenience macro TRACE_EVENT provides an alternative way to
++.. note:: The convenience macro TRACE_EVENT provides an alternative way to
+       define tracepoints. Check http://lwn.net/Articles/379903,
+       http://lwn.net/Articles/381064 and http://lwn.net/Articles/383362
+       for a series of articles with more details.
 -- 
 2.7.4
