@@ -1,62 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751120AbeBQKH7 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 05:07:59 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:39720 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751072AbeBQKH6 (ORCPT
+        id S1751122AbeBQKSF (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 05:18:05 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38022 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751072AbeBQKSE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 05:07:58 -0500
-X-Google-Smtp-Source: AH8x227psZo8Y9ep6clh6rofBlbdPu49+WbMAPbHQK1exw/PdKCs3zJVVkmEtr4hTf+St3yE8MTMSg==
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Jaehoon Chung <jh80.chung@samsung.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC fixes for v.4.16-rc2
-Date: Sat, 17 Feb 2018 11:07:44 +0100
-Message-Id: <1518862064-26269-1-git-send-email-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Sat, 17 Feb 2018 05:18:04 -0500
+X-Google-Smtp-Source: AH8x226fkz95/kT3/SWG7oSi5AAJM/TWwYNDWeM2toE0yxaTwmmdltyP5l0tmfJduNihgX7wudqNiA==
+Date: Sat, 17 Feb 2018 11:17:59 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, x86@kernel.org, douly.fnst@cn.fujitsu.com,
+        joro@8bytes.org, uobergfe@redhat.com, prarit@redhat.com
+Subject: Re: [PATCH v5 0/6] x86/apic: Fix restoring boot irq mode in reboot
+ and kexec/kdump
+Message-ID: <20180217101759.4hn7tdqgudxcq4rk@gmail.com>
+References: <20180214054656.3780-1-bhe@redhat.com>
+ <20180216093836.v6iq32jycy7sxwln@gmail.com>
+ <87a7w8wxr1.fsf@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87a7w8wxr1.fsf@xmission.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
 
-Here's a PR with a couple of MMC fixes intended for v4.16-rc2. Details about the
-highlights are as usual found in the signed tag.
+* Eric W. Biederman <ebiederm@xmission.com> wrote:
 
-Please pull this in!
+> Ingo Molnar <mingo@kernel.org> writes:
+> 
+> > * Baoquan He <bhe@redhat.com> wrote:
+> >
+> >> This is v5 post. Newly added patch 0002 includes the change
+> >> related to KEXEC_JUMP path. Patch 0003 only includes the
+> >> regression fix.
+> >> 
+> >> A regression bug was introduced in below commit.
+> >> commit 522e66464467 ("x86/apic: Disable I/O APIC before shutdown of the local APIC")
+> >> 
+> >> It caused the action to fail that we try to restore boot irq mode
+> >> in reboot and kexec/kdump. Details can be seen in patch 0003.
+> >> 
+> >> Warning can always be seen during kdump kernel boot on qemu/kvm
+> >> platform. Our customer even saw casual kdump kernel hang once in
+> >> ~30 attempts during stress testing of kdump on KVM machine.
+> >> 
+> >> v4->v5:
+> >>   Take out the change related to KEXEC_JUMP to a new patch 0002
+> >>   according to Eric's suggestion.
+> >>   Patch 0003 in this series only includes the regression fix.
+> >> 
+> >> v3->v4:
+> >>   Eric pointed out that in patch 0002 the change related to
+> >>   KEXEC_JUMP is not right.
+> >>   Correct it.
+> >> 
+> >>   Add Fixes tag and Cc to stable.
+> >
+> > Eric, are these patches looking good to you now?
+> 
+> The result of applying the patches looks good.
+> Barring whatever fix to header files that kbuild seems to find necessary.
+> 
+> I wish patches 1 2 and 4 were all the same patch.  That I think would
+> make reading the patches a bit easier, and make the backports clearer.
+> But at this point that is just me bike-shedding.
+> 
+> Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-Kind regards
-Ulf Hansson
+Thank you!
 
-
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
-
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.16-rc1
-
-for you to fetch changes up to 118032be389009b07ecb5a03ffe219a89d421def:
-
-  mmc: bcm2835: Don't overwrite max frequency unconditionally (2018-02-14 11:30:10 +0100)
-
-----------------------------------------------------------------
-MMC host:
- - meson-gx: Revert to earlier tuning process
- - bcm2835: Don't overwrite max frequency unconditionally
-
-----------------------------------------------------------------
-Jerome Brunet (1):
-      Revert "mmc: meson-gx: include tx phase in the tuning process"
-
-Phil Elwell (1):
-      mmc: bcm2835: Don't overwrite max frequency unconditionally
-
- drivers/mmc/host/bcm2835.c      |  3 ++-
- drivers/mmc/host/meson-gx-mmc.c | 19 +------------------
- 2 files changed, 3 insertions(+), 19 deletions(-)
+	Ingo
