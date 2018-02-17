@@ -1,210 +1,346 @@
-Return-Path: <vadimp@mellanox.com>
-X-Google-Smtp-Source: AH8x225aCohp1DDTaVu2QMJ+lCg5ArufQOloNtlS/TIJ6WHdwtjLjXrNDS+/cx+wt/LEJ83Se4zm
-ARC-Seal: i=1; a=rsa-sha256; t=1518552797; cv=none;
+Return-Path: <rdunlap@infradead.org>
+X-Google-Smtp-Source: AH8x227RA5DH5OQDnfk6khkBkC/ZgVGa4SeAu7ko6shpEqs+GQms7pj6TsHY+crGFw6ZSf9VqFRa
+ARC-Seal: i=1; a=rsa-sha256; t=1518826705; cv=none;
         d=google.com; s=arc-20160816;
-        b=SnZq5+NGyWi+OU0+YYoLf8KxmcmwKnKSsV2yZDmvN4eyM6Dl3A7XSEPfko62r8YFv+
-         O/QXmbV1+Yi0UVByIPvhJbye7QZ773A+bXhxhZRJp0AcqjvgKyHkPcr+0pNm8E8XIciJ
-         SYbNEoKH0syz0KmDJt2xjHEBN6hsals/bOcMnik/3NulZlSnR+hnlxvrsHNCDHIw+xfZ
-         JBLLCobNthuCFoB/qIF55unMPs7qtSLkOLkUYA1yaJMhawQEaBy7fcxIcjoDn7k9/izL
-         kAltd3LT+9cxtNm1bCZ4xhL05E0P5vbDQKfN6u3sbxwYsjuaqDVRN5gkPwrDi+eAckl1
-         Qsew==
+        b=OQMNB95/94UAWC9blq+IO8Az3e70SDF539jfaePHbSP8qYami5on6JA28EH/GkRFIA
+         LyrH/Ngb6/QoaGYGhp75kk/mjfxLd6CpAKHjNB7uN2mSa5cwnd9o2nBMW6+Bv4XNe805
+         xxQs425CnS14AOLdgdF0Lk8lACOyyMUQvV8QlR+fu86hIVAdEenfk+9n9dmzggS6KIoP
+         Y4m8exC/IOBkOHuH6wwnfbRGJP+hWSuSuvqBNe74kidrcEi6lmOpb/Q6Ngx+aJ7vAZpO
+         U5bnqN46cEMDss7wdRQPU7NFWvrsn+/tax9rj179wxpAEbNthFIhN2RpMqEjUhyt5fXL
+         1yVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=content-transfer-encoding:content-language:mime-version:user-agent
+         :date:message-id:subject:from:cc:to:dkim-signature
          :arc-authentication-results;
-        bh=gaaouNcL8lZ4dbcoH8PAtdW/Izu/xVl6MiIZypv7BFs=;
-        b=g8fLDgVjj5naqtlL+5paeo4DOd06v4E7piK/XWTqMIKbkBWGlNp8jU4ePwoscySelS
-         iHj7tnDjWd29UxQLLaj4+1kXhT0Jn5khgGV9ojgl19yZ8Dm2ZHUXbURiMcGoizCsSeJJ
-         qz2hxdHyf1Jqblj4wl/PL/vEBDsqO7nlgiboP67e2YMWhevTZ8311EulaL/ow3uBpOHg
-         TKm5rmfx7/IwyiA4K6tJk9dHGFREfocOE5Ffgm6U+WMT0tEoBtHGZGI/e1/eT9ALmon7
-         Mg3/PNKYssz/zlYdzq7P5/vNZfN6WHT3Saq6Yxy/n4MV7HIUYaWCSyMun2RSDBh0PgH3
-         o88g==
+        bh=NJ1tY1rRJxw4JBTC7JL2bZ3B7jOMKzXvDmO903Os4zg=;
+        b=WbZA4712sHL5KxvAxDTOflhm/n7iHNJ/ZTZMyb/UHd658Bx3P6gTnxKpn3WCfIiwZr
+         on8uoxW+BL9FMPwMMdNUFkQLNxltUWzNmnTZrVI3PicoADZkaWafgeZ7iF/zCDNSWgcR
+         sJ9h2EdfmU2AJI+e68AHg/Hvp+DFf4w4iYlr+eQ2ZYs3hlTzsZ7CRuuCDZfAOXkqVR86
+         GmyWGoQGBvzwj5mn4h1N8UyeTMKlUiwrIKbWbbGJGLxXSVSghVjE4U1DLENZx4FwJJHb
+         BrrwCXTsYjwJQhv95h1OFll17kJ/m1HTvRSL3dKMzAexM5+pR0woQNZTFzE9B4nNgfLF
+         S2Ig==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of vadimp@mellanox.com designates 193.47.165.129 as permitted sender) smtp.mailfrom=vadimp@mellanox.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
+       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=j19iYUxB;
+       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2001:8b0:10b:1231::1 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of vadimp@mellanox.com designates 193.47.165.129 as permitted sender) smtp.mailfrom=vadimp@mellanox.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
-From: Vadim Pasternak <vadimp@mellanox.com>
-To: dvhart@infradead.org, andy.shevchenko@gmail.com,
-        gregkh@linuxfoundation.org
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jiri@resnulli.us, michaelsh@mellanox.com,
-        Vadim Pasternak <vadimp@mellanox.com>
-Subject: [PATCH v1 4/4] platform/x86: mlx-platform: Add physical bus number auto detection
-Date: Tue, 13 Feb 2018 22:09:36 +0000
-Message-Id: <1518559776-188942-5-git-send-email-vadimp@mellanox.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1518559776-188942-1-git-send-email-vadimp@mellanox.com>
-References: <1518559776-188942-1-git-send-email-vadimp@mellanox.com>
+       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=j19iYUxB;
+       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2001:8b0:10b:1231::1 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
+To: Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, Fengguang Wu
+ <fengguang.wu@intel.com>, Ingo Molnar <mingo@redhat.com>,
+ Wei Yongjun <weiyongjun1@huawei.com>, Luis Rodriguez <mcgrof@kernel.org>,
+ Mimi Zohar <zohar@linux.vnet.ibm.com>,
+ John Johansen <john.johansen@canonical.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH v2/rollup] headers: untangle kmemleak.h from mm.h
+Message-ID: <e4309f98-3749-93e1-4bb7-d9501a39d015@infradead.org>
+Date: Fri, 16 Feb 2018 16:17:59 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592318018131981276?=
-X-GMAIL-MSGID: =?utf-8?q?1592318018131981276?=
+X-GMAIL-THRID: =?utf-8?q?1592605231408079621?=
+X-GMAIL-MSGID: =?utf-8?q?1592605231408079621?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add physical bus number auto detection mechanism in order to avoid a
-possible collision with I2C physical bus allocation. The mlx-platform
-driver activates i2c-mlxcpld driver with no bus number specification. It
-based on an assumption that on all Mellanox systems physical bus number is
-supposed to be number one. On some X86 systems other I2C drivers, which
-even are not used for Mellanox systems, could come up before i2c-mlxcpld,
-for example i2c_i801, i2c_ismt, i2c-kempld. And in such case a pre-defined
-I2C bus number one, could be busy. In order to avoid such situation,
-with no having special kernel config file disabling unwanted modules or
-with no putting anything to a blacklist, the logic for I2C available bus
-number auto detection is added. To ensure it, mlx-platform driver verifies
-which adapter number is free prior activation of i2c-mlxcpld driver. In
-case numbered adapter one is busy, it shifts to the available number. This
-shift is passed to i2c-mlxcpld driver, the mux base numbers are
-incremented by the this shift value and passed to i2c-mux-reg driver, and
-also this value is passed to mlxreg-hotplug driver.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+Currently <linux/slab.h> #includes <linux/kmemleak.h> for no obvious
+reason. It looks like it's only a convenience, so remove kmemleak.h
+from slab.h and add <linux/kmemleak.h> to any users of kmemleak_*
+that don't already #include it.
+Also remove <linux/kmemleak.h> from source files that do not use it.
+
+This is tested on i386 allmodconfig and x86_64 allmodconfig. It
+would be good to run it through the 0day bot for other $ARCHes.
+I have neither the horsepower nor the storage space for the other
+$ARCHes.
+
+Update: This patch has been extensively build-tested by both the 0day
+bot & kisskb/ozlabs build farms. Both of them reported 2 build failures
+for which patches are included here (in v2).
+
+[slab.h is the second most used header file after module.h; kernel.h
+is right there with slab.h. There could be some minor error in the
+counting due to some #includes having comments after them and I
+didn't combine all of those.]
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Luis R. Rodriguez <mcgrof@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: John Johansen <john.johansen@canonical.com>
+Link: http://kisskb.ellerman.id.au/kisskb/head/13396/
+Reported-by: Michael Ellerman <mpe@ellerman.id.au> # 2 build failures
+Reported-by: Fengguang Wu <fengguang.wu@intel.com> # 2 build failures
 ---
- drivers/platform/mellanox/mlxreg-hotplug.c | 12 ++++---
- drivers/platform/x86/mlx-platform.c        | 53 ++++++++++++++++++++++++++++--
- include/linux/platform_data/mlxreg.h       |  2 ++
- 3 files changed, 61 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/platform/mellanox/mlxreg-hotplug.c b/drivers/platform/mellanox/mlxreg-hotplug.c
-index c1e1c4f..ea9e7f4 100644
---- a/drivers/platform/mellanox/mlxreg-hotplug.c
-+++ b/drivers/platform/mellanox/mlxreg-hotplug.c
-@@ -96,6 +96,8 @@ struct mlxreg_hotplug_priv_data {
- static int mlxreg_hotplug_device_create(struct mlxreg_hotplug_priv_data *priv,
- 					struct mlxreg_core_data *data)
+v2: add patches for build failures in lib/test_firmware.c and
+    security/integrity/digsig.c.
+  + add Ingo's Reviewed-by: tag.
+
+ arch/powerpc/sysdev/dart_iommu.c                          |    1 +
+ arch/powerpc/sysdev/msi_bitmap.c                          |    1 +
+ arch/s390/kernel/nmi.c                                    |    2 +-
+ arch/s390/kernel/smp.c                                    |    1 -
+ arch/sparc/kernel/irq_64.c                                |    1 -
+ arch/x86/kernel/pci-dma.c                                 |    1 -
+ drivers/iommu/exynos-iommu.c                              |    1 +
+ drivers/iommu/mtk_iommu_v1.c                              |    1 -
+ drivers/net/ethernet/ti/cpsw.c                            |    1 +
+ drivers/net/wireless/realtek/rtlwifi/pci.c                |    1 -
+ drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c |    1 -
+ drivers/staging/rtl8188eu/hal/fw.c                        |    2 +-
+ drivers/staging/rtlwifi/pci.c                             |    1 -
+ drivers/virtio/virtio_ring.c                              |    1 -
+ include/linux/slab.h                                      |    1 -
+ kernel/ucount.c                                           |    1 +
+ lib/test_firmware.c                                       |    1 +
+ mm/cma.c                                                  |    1 +
+ mm/memblock.c                                             |    1 +
+ net/core/sysctl_net_core.c                                |    1 -
+ net/ipv4/route.c                                          |    1 -
+ security/apparmor/lsm.c                                   |    1 -
+ security/integrity/digsig.c                               |    1 +
+ 23 files changed, 11 insertions(+), 14 deletions(-)
+
+--- lnx-416-rc1.orig/include/linux/slab.h
++++ lnx-416-rc1/include/linux/slab.h
+@@ -125,7 +125,6 @@
+ #define ZERO_OR_NULL_PTR(x) ((unsigned long)(x) <= \
+ 				(unsigned long)ZERO_SIZE_PTR)
+ 
+-#include <linux/kmemleak.h>
+ #include <linux/kasan.h>
+ 
+ struct mem_cgroup;
+--- lnx-416-rc1.orig/kernel/ucount.c
++++ lnx-416-rc1/kernel/ucount.c
+@@ -10,6 +10,7 @@
+ #include <linux/slab.h>
+ #include <linux/cred.h>
+ #include <linux/hash.h>
++#include <linux/kmemleak.h>
+ #include <linux/user_namespace.h>
+ 
+ #define UCOUNTS_HASHTABLE_BITS 10
+--- lnx-416-rc1.orig/mm/memblock.c
++++ lnx-416-rc1/mm/memblock.c
+@@ -17,6 +17,7 @@
+ #include <linux/poison.h>
+ #include <linux/pfn.h>
+ #include <linux/debugfs.h>
++#include <linux/kmemleak.h>
+ #include <linux/seq_file.h>
+ #include <linux/memblock.h>
+ 
+--- lnx-416-rc1.orig/mm/cma.c
++++ lnx-416-rc1/mm/cma.c
+@@ -35,6 +35,7 @@
+ #include <linux/cma.h>
+ #include <linux/highmem.h>
+ #include <linux/io.h>
++#include <linux/kmemleak.h>
+ #include <trace/events/cma.h>
+ 
+ #include "cma.h"
+--- lnx-416-rc1.orig/drivers/staging/rtl8188eu/hal/fw.c
++++ lnx-416-rc1/drivers/staging/rtl8188eu/hal/fw.c
+@@ -30,7 +30,7 @@
+ #include "rtl8188e_hal.h"
+ 
+ #include <linux/firmware.h>
+-#include <linux/kmemleak.h>
++#include <linux/slab.h>
+ 
+ static void _rtl88e_enable_fw_download(struct adapter *adapt, bool enable)
  {
-+	struct mlxreg_core_hotplug_platform_data *pdata;
-+
- 	/*
- 	 * Return if adapter number is negative. It could be in case hotplug
- 	 * event is not associated with hotplug device.
-@@ -103,10 +105,12 @@ static int mlxreg_hotplug_device_create(struct mlxreg_hotplug_priv_data *priv,
- 	if (data->hpdev.nr < 0)
- 		return 0;
+--- lnx-416-rc1.orig/drivers/iommu/exynos-iommu.c
++++ lnx-416-rc1/drivers/iommu/exynos-iommu.c
+@@ -17,6 +17,7 @@
+ #include <linux/io.h>
+ #include <linux/iommu.h>
+ #include <linux/interrupt.h>
++#include <linux/kmemleak.h>
+ #include <linux/list.h>
+ #include <linux/of.h>
+ #include <linux/of_iommu.h>
+--- lnx-416-rc1.orig/arch/s390/kernel/nmi.c
++++ lnx-416-rc1/arch/s390/kernel/nmi.c
+@@ -15,7 +15,7 @@
+ #include <linux/hardirq.h>
+ #include <linux/log2.h>
+ #include <linux/kprobes.h>
+-#include <linux/slab.h>
++#include <linux/kmemleak.h>
+ #include <linux/time.h>
+ #include <linux/module.h>
+ #include <linux/sched/signal.h>
+--- lnx-416-rc1.orig/arch/powerpc/sysdev/dart_iommu.c
++++ lnx-416-rc1/arch/powerpc/sysdev/dart_iommu.c
+@@ -38,6 +38,7 @@
+ #include <linux/suspend.h>
+ #include <linux/memblock.h>
+ #include <linux/gfp.h>
++#include <linux/kmemleak.h>
+ #include <asm/io.h>
+ #include <asm/prom.h>
+ #include <asm/iommu.h>
+--- lnx-416-rc1.orig/arch/powerpc/sysdev/msi_bitmap.c
++++ lnx-416-rc1/arch/powerpc/sysdev/msi_bitmap.c
+@@ -10,6 +10,7 @@
  
--	data->hpdev.adapter = i2c_get_adapter(data->hpdev.nr);
-+	pdata = dev_get_platdata(&priv->pdev->dev);
-+	data->hpdev.adapter = i2c_get_adapter(data->hpdev.nr +
-+					      pdata->shift_nr);
- 	if (!data->hpdev.adapter) {
- 		dev_err(priv->dev, "Failed to get adapter for bus %d\n",
--			data->hpdev.nr);
-+			data->hpdev.nr + pdata->shift_nr);
- 		return -EFAULT;
- 	}
+ #include <linux/slab.h>
+ #include <linux/kernel.h>
++#include <linux/kmemleak.h>
+ #include <linux/bitmap.h>
+ #include <linux/bootmem.h>
+ #include <asm/msi_bitmap.h>
+--- lnx-416-rc1.orig/drivers/net/ethernet/ti/cpsw.c
++++ lnx-416-rc1/drivers/net/ethernet/ti/cpsw.c
+@@ -35,6 +35,7 @@
+ #include <linux/of_net.h>
+ #include <linux/of_device.h>
+ #include <linux/if_vlan.h>
++#include <linux/kmemleak.h>
  
-@@ -114,8 +118,8 @@ static int mlxreg_hotplug_device_create(struct mlxreg_hotplug_priv_data *priv,
- 					    data->hpdev.brdinfo);
- 	if (!data->hpdev.client) {
- 		dev_err(priv->dev, "Failed to create client %s at bus %d at addr 0x%02x\n",
--			data->hpdev.brdinfo->type, data->hpdev.nr,
--			data->hpdev.brdinfo->addr);
-+			data->hpdev.brdinfo->type, data->hpdev.nr +
-+			pdata->shift_nr, data->hpdev.brdinfo->addr);
+ #include <linux/pinctrl/consumer.h>
  
- 		i2c_put_adapter(data->hpdev.adapter);
- 		data->hpdev.adapter = NULL;
-diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
-index 67f3c6d..7a0bd24 100644
---- a/drivers/platform/x86/mlx-platform.c
-+++ b/drivers/platform/x86/mlx-platform.c
-@@ -85,6 +85,12 @@
- #define MLXPLAT_CPLD_FAN_MASK		GENMASK(3, 0)
- #define MLXPLAT_CPLD_FAN_NG_MASK	GENMASK(5, 0)
+--- lnx-416-rc1.orig/drivers/virtio/virtio_ring.c
++++ lnx-416-rc1/drivers/virtio/virtio_ring.c
+@@ -23,7 +23,6 @@
+ #include <linux/slab.h>
+ #include <linux/module.h>
+ #include <linux/hrtimer.h>
+-#include <linux/kmemleak.h>
+ #include <linux/dma-mapping.h>
+ #include <xen/xen.h>
  
-+/* Default I2C parent bus number */
-+#define MLXPLAT_CPLD_PHYS_ADAPTER_DEF_NR	1
-+
-+/* Maximum number of possible physical buses equipped on system */
-+#define MLXPLAT_CPLD_MAX_PHYS_ADAPTER_NUM	16
-+
- /* Number of channels in group */
- #define MLXPLAT_CPLD_GRP_CHNL_NUM		8
+--- lnx-416-rc1.orig/security/apparmor/lsm.c
++++ lnx-416-rc1/security/apparmor/lsm.c
+@@ -23,7 +23,6 @@
+ #include <linux/sysctl.h>
+ #include <linux/audit.h>
+ #include <linux/user_namespace.h>
+-#include <linux/kmemleak.h>
+ #include <net/sock.h>
  
-@@ -843,10 +849,48 @@ static const struct dmi_system_id mlxplat_dmi_table[] __initconst = {
+ #include "include/apparmor.h"
+--- lnx-416-rc1.orig/drivers/iommu/mtk_iommu_v1.c
++++ lnx-416-rc1/drivers/iommu/mtk_iommu_v1.c
+@@ -25,7 +25,6 @@
+ #include <linux/io.h>
+ #include <linux/iommu.h>
+ #include <linux/iopoll.h>
+-#include <linux/kmemleak.h>
+ #include <linux/list.h>
+ #include <linux/of_address.h>
+ #include <linux/of_iommu.h>
+--- lnx-416-rc1.orig/drivers/staging/rtlwifi/pci.c
++++ lnx-416-rc1/drivers/staging/rtlwifi/pci.c
+@@ -31,7 +31,6 @@
+ #include "efuse.h"
+ #include <linux/interrupt.h>
+ #include <linux/export.h>
+-#include <linux/kmemleak.h>
+ #include <linux/module.h>
  
- MODULE_DEVICE_TABLE(dmi, mlxplat_dmi_table);
+ MODULE_AUTHOR("lizhaoming	<chaoming_li@realsil.com.cn>");
+--- lnx-416-rc1.orig/drivers/net/wireless/realtek/rtlwifi/pci.c
++++ lnx-416-rc1/drivers/net/wireless/realtek/rtlwifi/pci.c
+@@ -31,7 +31,6 @@
+ #include "efuse.h"
+ #include <linux/interrupt.h>
+ #include <linux/export.h>
+-#include <linux/kmemleak.h>
+ #include <linux/module.h>
  
-+static int mlxplat_mlxcpld_verify_bus_topology(int *nr)
-+{
-+	struct i2c_adapter *search_adap;
-+	int shift, i;
-+
-+	/* Scan adapters from expected id to verify it is free. */
-+	*nr = MLXPLAT_CPLD_PHYS_ADAPTER_DEF_NR;
-+	for (i = MLXPLAT_CPLD_PHYS_ADAPTER_DEF_NR; i <
-+	     MLXPLAT_CPLD_MAX_PHYS_ADAPTER_NUM; i++) {
-+		search_adap = i2c_get_adapter(i);
-+		if (search_adap) {
-+			i2c_put_adapter(search_adap);
-+			continue;
-+		}
-+
-+		/* Return if expected parent adapter is free. */
-+		if (i == MLXPLAT_CPLD_PHYS_ADAPTER_DEF_NR)
-+			return 0;
-+		break;
-+	}
-+
-+	/* Return with error if free id for adapter is not found. */
-+	if (i == MLXPLAT_CPLD_MAX_PHYS_ADAPTER_NUM)
-+		return -ENODEV;
-+
-+	/* Shift adapter ids, since expected parent adapter is not free. */
-+	*nr = i;
-+	for (i = 0; i < ARRAY_SIZE(mlxplat_mux_data); i++) {
-+		shift = *nr - mlxplat_mux_data[i].parent;
-+		mlxplat_mux_data[i].parent = *nr;
-+		mlxplat_mux_data[i].base_nr += shift;
-+		if (shift > 0)
-+			mlxplat_hotplug->shift_nr = shift;
-+	}
-+
-+	return 0;
-+}
-+
- static int __init mlxplat_init(void)
+ MODULE_AUTHOR("lizhaoming	<chaoming_li@realsil.com.cn>");
+--- lnx-416-rc1.orig/drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c
++++ lnx-416-rc1/drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c
+@@ -32,7 +32,6 @@
+ #include "../rtl8192ce/def.h"
+ #include "fw_common.h"
+ #include <linux/export.h>
+-#include <linux/kmemleak.h>
+ 
+ static void _rtl92c_enable_fw_download(struct ieee80211_hw *hw, bool enable)
  {
- 	struct mlxplat_priv *priv;
--	int i, err;
-+	int i, nr, err;
+--- lnx-416-rc1.orig/arch/s390/kernel/smp.c
++++ lnx-416-rc1/arch/s390/kernel/smp.c
+@@ -27,7 +27,6 @@
+ #include <linux/err.h>
+ #include <linux/spinlock.h>
+ #include <linux/kernel_stat.h>
+-#include <linux/kmemleak.h>
+ #include <linux/delay.h>
+ #include <linux/interrupt.h>
+ #include <linux/irqflags.h>
+--- lnx-416-rc1.orig/arch/sparc/kernel/irq_64.c
++++ lnx-416-rc1/arch/sparc/kernel/irq_64.c
+@@ -22,7 +22,6 @@
+ #include <linux/seq_file.h>
+ #include <linux/ftrace.h>
+ #include <linux/irq.h>
+-#include <linux/kmemleak.h>
  
- 	if (!dmi_check_system(mlxplat_dmi_table))
- 		return -ENODEV;
-@@ -866,7 +910,12 @@ static int __init mlxplat_init(void)
- 	}
- 	platform_set_drvdata(mlxplat_dev, priv);
+ #include <asm/ptrace.h>
+ #include <asm/processor.h>
+--- lnx-416-rc1.orig/arch/x86/kernel/pci-dma.c
++++ lnx-416-rc1/arch/x86/kernel/pci-dma.c
+@@ -6,7 +6,6 @@
+ #include <linux/bootmem.h>
+ #include <linux/gfp.h>
+ #include <linux/pci.h>
+-#include <linux/kmemleak.h>
  
--	priv->pdev_i2c = platform_device_register_simple("i2c_mlxcpld", -1,
-+	err = mlxplat_mlxcpld_verify_bus_topology(&nr);
-+	if (nr < 0)
-+		goto fail_alloc;
-+
-+	nr = (nr == MLXPLAT_CPLD_MAX_PHYS_ADAPTER_NUM) ? -1 : nr;
-+	priv->pdev_i2c = platform_device_register_simple("i2c_mlxcpld", nr,
- 							 NULL, 0);
- 	if (IS_ERR(priv->pdev_i2c)) {
- 		err = PTR_ERR(priv->pdev_i2c);
-diff --git a/include/linux/platform_data/mlxreg.h b/include/linux/platform_data/mlxreg.h
-index 2629109..2744cff 100644
---- a/include/linux/platform_data/mlxreg.h
-+++ b/include/linux/platform_data/mlxreg.h
-@@ -130,6 +130,7 @@ struct mlxreg_core_platform_data {
-  * @cell_low: location of low aggregation interrupt register;
-  * @mask_low: low aggregation interrupt common mask;
-  * @deferred_nr: I2C adapter number must be exist prior probing execution;
-+ * @shift_nr: I2C adapter numbers must be incremented by this value;
-  */
- struct mlxreg_core_hotplug_platform_data {
- 	struct mlxreg_core_item *items;
-@@ -141,6 +142,7 @@ struct mlxreg_core_hotplug_platform_data {
- 	u32 cell_low;
- 	u32 mask_low;
- 	int deferred_nr;
-+	int shift_nr;
- };
+ #include <asm/proto.h>
+ #include <asm/dma.h>
+--- lnx-416-rc1.orig/net/core/sysctl_net_core.c
++++ lnx-416-rc1/net/core/sysctl_net_core.c
+@@ -15,7 +15,6 @@
+ #include <linux/vmalloc.h>
+ #include <linux/init.h>
+ #include <linux/slab.h>
+-#include <linux/kmemleak.h>
  
- #endif /* __LINUX_PLATFORM_DATA_MLXREG_H */
--- 
-2.1.4
+ #include <net/ip.h>
+ #include <net/sock.h>
+--- lnx-416-rc1.orig/net/ipv4/route.c
++++ lnx-416-rc1/net/ipv4/route.c
+@@ -108,7 +108,6 @@
+ #include <net/rtnetlink.h>
+ #ifdef CONFIG_SYSCTL
+ #include <linux/sysctl.h>
+-#include <linux/kmemleak.h>
+ #endif
+ #include <net/secure_seq.h>
+ #include <net/ip_tunnels.h>
+--- lnx-416-rc1.orig/lib/test_firmware.c
++++ lnx-416-rc1/lib/test_firmware.c
+@@ -21,6 +21,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/delay.h>
+ #include <linux/kthread.h>
++#include <linux/vmalloc.h>
+ 
+ #define TEST_FIRMWARE_NAME	"test-firmware.bin"
+ #define TEST_FIRMWARE_NUM_REQS	4
+--- lnx-416-rc1.orig/security/integrity/digsig.c
++++ lnx-416-rc1/security/integrity/digsig.c
+@@ -18,6 +18,7 @@
+ #include <linux/cred.h>
+ #include <linux/key-type.h>
+ #include <linux/digsig.h>
++#include <linux/vmalloc.h>
+ #include <crypto/public_key.h>
+ #include <keys/system_keyring.h>
+ 
