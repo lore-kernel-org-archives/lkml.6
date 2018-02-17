@@ -1,135 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751066AbeBQDZq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 22:25:46 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53321 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750763AbeBQDZo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 22:25:44 -0500
-X-Google-Smtp-Source: AH8x224hWxrHG5utxMGHsadJMJSgz1bscAYKkCgLS1ERgkagsgOTZivk/uyItW1AkZ42gn5DfOG2lg==
-Date: Sat, 17 Feb 2018 04:25:35 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        mingo@kernel.org, Will Deacon <will.deacon@arm.com>,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH] tools/memory-model: remove rb-dep,
- smp_read_barrier_depends, and lockless_dereference
-Message-ID: <20180217032535.GA1125@andrea>
-References: <20180216165301.GF3617@linux.vnet.ibm.com>
- <Pine.LNX.4.44L0.1802161707350.1402-100000@iolanthe.rowland.org>
+        id S1751056AbeBQDjd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 22:39:33 -0500
+Received: from mga07.intel.com ([134.134.136.100]:21503 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750942AbeBQDjb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 22:39:31 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,522,1511856000";
+   d="scan'208";a="18372791"
+Date: Sat, 17 Feb 2018 11:30:48 +0800
+From: "Du, Changbin" <changbin.du@intel.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, changbin.du@intel.com,
+        mingo@kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] Documentation: convert trace/ftrace-design.txt to
+ rst format
+Message-ID: <20180217033047.nubl47hevaag5m3r@intel.com>
+References: <1518750739-12514-1-git-send-email-changbin.du@intel.com>
+ <1518750739-12514-3-git-send-email-changbin.du@intel.com>
+ <20180215225705.58984492@vmware.local.home>
+ <20180216054952.78718f09@lwn.net>
+ <20180216123629.5ac2b373@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1802161707350.1402-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180216123629.5ac2b373@gandalf.local.home>
+User-Agent: NeoMutt/20171027-42-ad8712
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 05:22:55PM -0500, Alan Stern wrote:
-> Since commit 76ebbe78f739 ("locking/barriers: Add implicit
-> smp_read_barrier_depends() to READ_ONCE()") was merged for the 4.15
-> kernel, it has not been necessary to use smp_read_barrier_depends().
-> Similarly, commit 59ecbbe7b31c ("locking/barriers: Kill
-> lockless_dereference()") removed lockless_dereference() from the
-> kernel.
+On Fri, Feb 16, 2018 at 12:36:29PM -0500, Steven Rostedt wrote:
+> On Fri, 16 Feb 2018 05:49:52 -0700
+> Jonathan Corbet <corbet@lwn.net> wrote:
 > 
-> Since these primitives are no longer part of the kernel, they do not
-> belong in the Linux Kernel Memory Consistency Model.  This patch
-> removes them, along with the internal rb-dep relation, and updates the
-> revelant documentation.
+> > On Thu, 15 Feb 2018 22:57:05 -0500
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > 
+> > > This document is out of date, and I rather have it updated before we
+> > > make it more "available" elsewhere.  
+> > 
+> > Imagine that, an out-of-date doc in the kernel :)
+> > 
+> > Seriously, though, I'd argue that (1) it's already highly available, and
+> > (2) it's useful now.  And (3) who knows when that update will happen?
+> > Unless we have reason to believe that a new version is waiting on the
+> > wings, I don't really see why we would want to delay this work.
 > 
-> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> Actually, some of these documents I was thinking of labeling as
+> "obsolete" or simply removing them. The ftrace-design one is about
+> how to port ftrace to other architectures, and I already had to correct
+> people that based their work on it.
 > 
-> ---
-
-[...]
-
-
-> Index: usb-4.x/tools/memory-model/linux-kernel.def
-> ===================================================================
-> --- usb-4.x/tools/memory-model.orig/linux-kernel.def
-> +++ usb-4.x/tools/memory-model/linux-kernel.def
-> @@ -13,14 +13,12 @@ WRITE_ONCE(X,V) { __store{once}(X,V); }
->  smp_store_release(X,V) { __store{release}(*X,V); }
->  smp_load_acquire(X) __load{acquire}(*X)
->  rcu_assign_pointer(X,V) { __store{release}(X,V); }
-> -lockless_dereference(X) __load{lderef}(X)
->  rcu_dereference(X) __load{deref}(X)
-
-^^^ __load{once}
-
-
->  
->  // Fences
->  smp_mb() { __fence{mb} ; }
->  smp_rmb() { __fence{rmb} ; }
->  smp_wmb() { __fence{wmb} ; }
-> -smp_read_barrier_depends() { __fence{rb_dep}; }
->  smp_mb__before_atomic() { __fence{before-atomic} ; }
->  smp_mb__after_atomic() { __fence{after-atomic} ; }
->  smp_mb__after_spinlock() { __fence{after-spinlock} ; }
-> Index: usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
-> ===================================================================
-> --- usb-4.x/tools/memory-model.orig/Documentation/cheatsheet.txt
-> +++ usb-4.x/tools/memory-model/Documentation/cheatsheet.txt
-> @@ -6,8 +6,7 @@
->  Store, e.g., WRITE_ONCE()            Y                                       Y
->  Load, e.g., READ_ONCE()              Y                              Y        Y
->  Unsuccessful RMW operation           Y                              Y        Y
-> -smp_read_barrier_depends()              Y                       Y   Y
-> -*_dereference()                      Y                          Y   Y        Y
-> +rcu_dereference()                    Y                          Y   Y        Y
->  Successful *_acquire()               R                   Y  Y   Y   Y    Y   Y
->  Successful *_release()         C        Y  Y    Y     W                      Y
->  smp_rmb()                               Y       R        Y      Y        R
-
-Akira's observation about READ_ONCE extends to all (annotated) loads.  In
-fact, it also applies to loads corresponding to unsuccessful RMW operations;
-consider, for example, the following variation of MP+onceassign+derefonce:
-
-C T
-
-{
-y=z;
-z=0;
-}
-
-P0(int *x, int **y)
-{
-	WRITE_ONCE(*x, 1);
-	smp_store_release(y, x);
-}
-
-P1(int **y, int *z)
-{
-	int *r0;
-	int r1;
-
-	r0 = cmpxchg_relaxed(y, z, z);
-	r1 = READ_ONCE(*r0);
-}
-
-exists (1:r0=x /\ 1:r1=0)
-
-The final state is allowed w/o the patch, and forbidden w/ the patch.
-
-This also reminds me of
-
-   5a8897cc7631fa544d079c443800f4420d1b173f
-   ("locking/atomics/alpha: Add smp_read_barrier_depends() to _release()/_relaxed() atomics")
-
-(that we probably want to mention in the commit message).
-
-  Andrea
-
-
+> Yeah, I really need to get some time to update them, but like everyone
+> else, that's just the 90th thing I have to do.
 > 
-> 
+> -- Steve
+Reading this doc, I think most of information are still useful for undertading the
+implemeation. So how abount just put a caution at the begining of doc as below 
+defore get updated?
+http://docservice.askxiong.com/linux-kernel/trace/ftrace-design.html
+
+Anyway, I just converted them all. I will send them out. Please comemnt if some
+of them should be removed. 
+
+-- 
+Thanks,
+Changbin Du
