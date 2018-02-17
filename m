@@ -1,174 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751035AbeBQCVv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 21:21:51 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:50253 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750942AbeBQCVs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 21:21:48 -0500
-Date: Fri, 16 Feb 2018 16:00:36 -0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <alpine.LRH.2.00.1802161336350.22409@sjc-ads-6991.cisco.com>
-References: <1518813234-5874-1-git-send-email-takondra@cisco.com> <1518813234-5874-2-git-send-email-takondra@cisco.com> <d69f329c-8365-bb0e-69ee-774cbea141b2@zytor.com> <72480de8-e6d6-5125-e647-08815eb9f6a7@landley.net> <alpine.LRH.2.00.1802161336350.22409@sjc-ads-6991.cisco.com>
+        id S1751039AbeBQC37 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 21:29:59 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:46258 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750948AbeBQC35 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 21:29:57 -0500
+X-Google-Smtp-Source: AH8x227KWMhRKXbIU9KdwH+GRGM2rSPuCDuSPlVvK4yFUZ61tRJNzRk4Hb5YuVd1dQNr+n8zgRCilQ==
+Subject: Re: [PATCH v3 08/11] watchdog/hpwdt: Programable Pretimeout NMI
+To: Jerry.Hoemann@hpe.com
+Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rwright@hpe.com,
+        maurice.a.saldivar@hpe.com, mingo@kernel.org,
+        marcus.folkesson@gmail.com
+References: <20180215234400.5022-1-jerry.hoemann@hpe.com>
+ <20180215234400.5022-9-jerry.hoemann@hpe.com>
+ <20180216203440.GA31849@roeck-us.net>
+ <20180216234617.GA675@anatevka.americas.hpqcorp.net>
+ <20180216235506.GA26546@roeck-us.net>
+ <20180217015657.GC675@anatevka.americas.hpqcorp.net>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <e46b74ab-cfa2-fdb7-a85c-15e0e311aafe@roeck-us.net>
+Date: Fri, 16 Feb 2018 18:29:54 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v3 01/15] Documentation: add newcx initramfs format description
-To: Victor Kamensky <kamensky@cisco.com>, Rob Landley <rob@landley.net>
-CC: Taras Kondratiuk <takondra@cisco.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James McMechan <james.w.mcmechan@gmail.com>, initramfs@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, xe-linux-external@cisco.com
-From: hpa@zytor.com
-Message-ID: <A5A0727C-B932-49F6-A7D7-AA7CAECECF96@zytor.com>
+In-Reply-To: <20180217015657.GC675@anatevka.americas.hpqcorp.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On February 16, 2018 1:47:35 PM PST, Victor Kamensky <kamensky@cisco.com> wrote:
->
->
->On Fri, 16 Feb 2018, Rob Landley wrote:
->
->>
->> On 02/16/2018 02:59 PM, H. Peter Anvin wrote:
->>> On 02/16/18 12:33, Taras Kondratiuk wrote:
->>>> Many of the Linux security/integrity features are dependent on file
->>>> metadata, stored as extended attributes (xattrs), for making
->decisions.
->>>> These features need to be initialized during initcall and enabled
->as
->>>> early as possible for complete security coverage.
+On 02/16/2018 05:56 PM, Jerry Hoemann wrote:
+> On Fri, Feb 16, 2018 at 03:55:06PM -0800, Guenter Roeck wrote:
+>> On Fri, Feb 16, 2018 at 04:46:17PM -0700, Jerry Hoemann wrote:
+>>> On Fri, Feb 16, 2018 at 12:34:40PM -0800, Guenter Roeck wrote:
+>>>> On Thu, Feb 15, 2018 at 04:43:57PM -0700, Jerry Hoemann wrote:
+> 
+> ...
+> 
+>>>>> @@ -98,12 +106,21 @@ static int hpwdt_settimeout(struct watchdog_device *dev, unsigned int val)
+>>>>>   }
+>>>>>   
+>>>>>   #ifdef CONFIG_HPWDT_NMI_DECODING	/* { */
+>>>>> +static int hpwdt_set_pretimeout(struct watchdog_device *dev, unsigned int val)
+>>>>> +{
+>>>>> +	if (val && (val != PRETIMEOUT_SEC)) {
 >>>>
->>>> Initramfs (tmpfs) supports xattrs, but newc CPIO archive format
->does not
->>>> support including them into the archive.
->>>>
->>>> This patch describes "extended" newc format (newcx) that is based
->on
->>>> newc and has following changes:
->>>> - extended attributes support
->>>> - increased size of filesize to support files >4GB
->>>> - increased mtime field size to have 64 bits of seconds and added a
->>>>   field for nanoseconds
->>>> - removed unused checksum field
->>>>
+>>>> Unnecessary ( )
 >>>
->>> If you are going to implement a new, non-backwards-compatible
->format,
->>> you shouldn't replicate the mistakes of the current format. 
->Specifically:
->>
->> So rather than make minimal changes to the existing format and
->continue to
->> support the existing format (sharing as much code as possible), you
->recommend
->> gratuitous aesthetic changes?
->>
->>> 1. The use of ASCII-encoded fixed-length numbers is an idiotic
->legacy
->>> from an era before there were any portable way of dealing with
->numbers
->>> with prespecified endianness.
->>
->> It lets encoders and decoders easily share code with the existing
->cpio format,
->> which we still intend to be able to read and write.
->>
->>> If you are going to use ASCII, make them
->>> delimited so that they don't have fixed limits, or just use binary.
->>
->> When it's gzipped this accomplishes what? (Other than being
->gratuitously
->> different from the previous iteration?)
->>
->>> The cpio header isn't fixed size, so that argument goes away, in
->fact
->>> the only way to determine the end of the header is to scan forward.
 >>>
->>> 2. Alignment sensitivity!  Because there is no header length
->>> information, the above scan tells you where the header ends, but
->there
->>> is padding before the data, and the size of that padding is only
->defined
->>> by alignment.
->>
->> Again, these are minimal changes to the existing cpio format. You're
->complaining
->> about _cpio_, and that the new stuff isn't _different_ enough from
->it.
->>
->>> 3. Inband encoding of EOF: if you actually have a filename
->"TRAILER!!!"
->>> you have problems.
->>
->> Been there, done that:
->>
->> http://lkml.iu.edu/hypermail/linux/kernel/1801.3/01791.html
->>
->>> But first, before you define a whole new format for which no tools
->exist
->>> (you will have to work with the maintainers of the GNU tools to add
->>> support)
->>
->> No, he's been working with the maintainer of toybox to add support
->(for about a
->> year now), which gets him the Android command line. And the kernel
->has its own
->> built-in tool to generate cpio images anyway.
->>
->> Why would anyone care what the GNU project thinks?
->
->In our internal use of this patch series we do use gnu cpio
->to create initramfs.cpio.
->
->And reference to gnu cpio patch that supports newcx format is
->posted in description for this serieis:
->
->https://raw.githubusercontent.com/victorkamensky/initramfs-xattrs-poky/rocko/meta/recipes-extended/cpio/cpio-2.12/cpio-xattrs.patch
->
->Whether GNU cpio maintainers will accept it is different matter.
->We will try, but we need to start somewhere and agree on
->new format first.
->
->Thanks,
->Victor
->
->>> you should see how complex it would be to support the POSIX
->>> tar/pax format,
->>
->> That argument was had (at length) when initramfs went in over a
->decade ago.
->> There are links in
->Documentation/filesystems/ramfs-rootfs-initramfs.txt to the
->> mailing list entries about it.
->>
->>> which already has all the features you are seeking, and
->>> by now is well-supported.
->>
->> So... tar wasn't well-supported 15 years ago? (Hasn't the kernel
->source always
->> been distributed via tarball back since 0.0.1?)
->>
->> You're suggesting having a whole second codepath that shares no code
->with the
->> existing cpio extractor. Are you suggesting abandoning support for
->the existing
->> initramfs.cpio.gz file format?
->>
->> Rob
->>
+>>> There are several things going on here. I'm not sure which one the above
+>>> comment is intended.
+>>>
+>> The "Unnecessary" refers to the ( ) around the second part of the expression
+>> above. While there may be valid reasons to include extra ( ), I think we
+>> can trust the C compiler to get it right here.
+> 
+> Okay, wasn't sure what you were getting at here.
+> 
+> I trust the C compiler, I don't trust humans.  In compound conditionals,
+> I'll add parens so that the meaning is clear.
+> 
 
-Introducing new, incompatible data formats is an inherently *very* costly operation; unfortunately many engineers don't seem to have a good grip of just *how* expensive it is (see "silly embedded nonsense hacks", "too little, too soon".)
+... and I don't accept patches with excessive ( ) if I catch them, because
+it confuses me since I start looking for a meaning that isn't there.
 
-Cpio itself is a great horror show of just how bad this gets: a bunch of minor tweaks without finding underlying design bugs resulting in a ton of mutually incompatible formats.  "They are almost the same" doesn't help: they are still incompatible.
+> 
+>>> While a pretimeout NMI isn't required by the HW to be enabled, if enabled the
+>>> length of pretimeout is fixed by HW.
+>>>
+>>> I didn't see anything in the API that would allow us to communicate to
+>>> the user this "feature."  timeout at leasst has both min_timeout and max_timeout, but
+>>> I didn't see similar for pretimeout.  I also don't think its reasonable to fail
+>>> here if the requested value is not 9 as the user really has no way of knowing what
+>>> the valid range of pretimeout values are.  So I accept, any non-zero value
+>>> for pretimeout, but then set pretimeout to be 9.
+>>>
+>>> But at the same time, I don't like to silently change a human request
+>>> w/o at least warning.
+>>>
+>> Sorry, I lost you here.
+> 
+> I wasn't sure to what you were objecting to.  I thought you might
+> not have understood why I was converting non-zero values of
+> "pretimeout" to 9.  Was trying to explain the reasoning.
+>  > A problem I see with the watchdog API is that users don't know
+> what is an acceptable range of values for pretimeout.
+> 
+> For HPE proliant systems, one cannot just choose an arbitrary
+> value for pretimeout.
+> 
+> I don't see a reasonable way that a user can determine the valid range
+> for pretimeout for HPE systems given our hardware restrictions.
+> 
 
-Introducing a new incompatible data format without strong justification is engineering malpractice.  Doing it under the non-justification of expedience ("oh, we can share most of the code") is aggravated engineering malpractice.
+I fully understand this, and I did not object to it. Watchdog drivers may and
+are expected to adjust timeouts and pretimeouts to match hardware constraints,
+and user space programs are expected to check the actual values after setting
+timeouts. That is nothing unexpected or special.
 
-It is entirely possible that the modern posix tar/pax format is too complex to be practical in this case – that would be justifying a new format.  But then you are taking the fundamental cost of breakage, and then the new format definitely should not be replicating known defects of another format and without at least some thought about how to avoid it in the future.
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+> 
+>>
+>>>>
+>>>> The actual timeout can be a value smaller than 9 seconds.
+>>>> Minimum is 1 second. What happens if the user configures
+>>>> a timeout of less than 9 seconds as well as a pretimeout ?
+>>>> Will it fire immediately ?
+>>>
+>>> The architecture is silent on this issue.  My experience with
+>>> this is that if timeout < 9 seconds, the NMI is not issued.
+>>> System resets when the timeout expires.  This could be implementation
+>>> dependent.
+>>>
+>>> Note, this is not a new issue.
+>>>
+>> Bad argument.
+> 
+> Not sure exactly to what your objections are.  I'll point out that:
+> 
+> 1) hpwdt has been using pretimeout NMI for watchdog for > 10 years.
+> 2) For 8 years, its been possible to have a timeout < 9 seconds.
+> 3) AFAIK this hasn't proven to be a big issue.
+> 4) I have real questions as to how (or if) to address the issue.
+> 
+
+and I don't see the problem with returning EINVAL, ie rejecting the
+pretimeout, if the selected timeout value is <= 9 seconds.
+
+So the review found a problem (or maybe inconsistency), and you
+refuse to fix it because you don't see the fix as part of this
+patch set, even though it would literally require one or two lines
+of code. Hmm.
+
+> I am perfectly willing to discuss the problem, but I don't think
+> it is a requirement for this patch set.
+> 
+Well, I think it is. But see below.
+
+> 
+>>
+>>> I thought about setting the min timeout to ten seconds to avoid this situation.
+>>>
+>> You could reject reject request to set the pretimeout to a value <= the
+>> timeout.
+> 
+> I think you mis-communicated here.
+> 
+I think you understand what I mean: reject setting a a pretimeout
+if the timeout is set to be <= 9 seconds.
+
+> It is perfectly fine to have a timeout of 30 seconds with the pretimeout of 9 seconds.
+> 
+>>
+>>> I haven't dug into the various user level clients of watchdog so I'm not sure
+>>> what the impact of making this change would be to them.
+>>>
+>>>
+>>>>
+>>>>> +		dev_info(dev->parent, "Setting pretimeout to %d\n", PRETIMEOUT_SEC);
+>>>>
+>>>> Please no ongoing logging noise. This can easily be abused to clog
+>>>> the kernel log.
+>>>
+>>> Good point.  I will look at WARN_ONCE or something similar.
+>>>
+>> A traceback if someone sets a bad timeout ? That would be even worse.
+> 
+> 
+> I am thinking something more in line with setting a static variable if
+> the message had already been printed and not reprinting it.
+> 
+
+That is ok, and different to WARN_ONCE.
+
+I think I'll take a step back at this point. I had also asked you to combine
+a couple of patches (the include file removal and selecting WATCHDOG_CORE),
+which you have not done. We are in severe bike-shedding territory, and that
+affects my ability to look at the patches with a clear head.
+I think I may ask Wim to step in and finalize the review.
+
+Thanks,
+Guenter
