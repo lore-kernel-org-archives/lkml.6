@@ -1,62 +1,309 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751035AbeBQAnb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 19:43:31 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50826 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750940AbeBQAna (ORCPT
+        id S1751049AbeBQA5w (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 19:57:52 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:53362 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750946AbeBQA5u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 19:43:30 -0500
-Date: Fri, 16 Feb 2018 16:43:28 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Matthew Wilcox <willy@infradead.org>,
+        Fri, 16 Feb 2018 19:57:50 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4EFDD6030F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+From: Shanker Donthineni <shankerd@codeaurora.org>
+To: Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Miles Chen <miles.chen@mediatek.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hartley <james.hartley@mips.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v3 1/1] mm: page_alloc: skip over regions of invalid
- pfns on UMA
-Message-Id: <20180216164328.de7d37584409e827c396bf69@linux-foundation.org>
-In-Reply-To: <20180212184759.GI3443@dhcp22.suse.cz>
-References: <20180124143545.31963-1-erosca@de.adit-jv.com>
-        <20180124143545.31963-2-erosca@de.adit-jv.com>
-        <20180129184746.GK21609@dhcp22.suse.cz>
-        <20180203122422.GA11832@vmlxhi-102.adit-jv.com>
-        <20180212150314.GG3443@dhcp22.suse.cz>
-        <20180212161640.GA30811@vmlxhi-102.adit-jv.com>
-        <20180212184759.GI3443@dhcp22.suse.cz>
-X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.23; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        kvmarm <kvmarm@lists.cs.columbia.edu>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Philip Elcan <pelcan@codeaurora.org>,
+        Shanker Donthineni <shankerd@codeaurora.org>
+Subject: [PATCH] arm64: Add support for new control bits CTR_EL0.IDC and CTR_EL0.IDC
+Date: Fri, 16 Feb 2018 18:57:46 -0600
+Message-Id: <1518829066-3558-1-git-send-email-shankerd@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Feb 2018 19:47:59 +0100 Michal Hocko <mhocko@kernel.org> wrote:
+Two point of unification cache maintenance operations 'DC CVAU' and
+'IC IVAU' are optional for implementors as per ARMv8 specification.
+This patch parses the updated CTR_EL0 register definition and adds
+the required changes to skip POU operations if the hardware reports
+CTR_EL0.IDC and/or CTR_EL0.IDC.
 
-> > prerequisite for this is to reach some agreement on what people think is
-> > the best option, which I feel didn't occur yet.
-> 
-> I do not have a _strong_ preference here as well. So I will leave the
-> decision to you.
-> 
-> In any case feel free to add
-> Acked-by: Michal Hocko <mhocko@suse.com>
+CTR_EL0.DIC: Instruction cache invalidation requirements for
+ instruction to data coherence. The meaning of this bit[29].
+  0: Instruction cache invalidation to the point of unification
+     is required for instruction to data coherence.
+  1: Instruction cache cleaning to the point of unification is
+      not required for instruction to data coherence.
 
-I find Michal's version to be a little tidier.
+CTR_EL0.IDC: Data cache clean requirements for instruction to data
+ coherence. The meaning of this bit[28].
+  0: Data cache clean to the point of unification is required for
+     instruction to data coherence, unless CLIDR_EL1.LoC == 0b000
+     or (CLIDR_EL1.LoUIS == 0b000 && CLIDR_EL1.LoUU == 0b000).
+  1: Data cache clean to the point of unification is not required
+     for instruction to data coherence.
 
-Eugeniu, please send Michal's patch at me with a fresh changelog, with
-your signed-off-by and your tested-by and your reported-by and we may
-as well add Michal's (thus-far-missing) signed-off-by ;)
+Signed-off-by: Philip Elcan <pelcan@codeaurora.org>
+Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+---
+ arch/arm64/include/asm/assembler.h | 48 ++++++++++++++++++++++++--------------
+ arch/arm64/include/asm/cache.h     |  2 ++
+ arch/arm64/kernel/cpufeature.c     |  2 ++
+ arch/arm64/mm/cache.S              | 26 ++++++++++++++-------
+ 4 files changed, 51 insertions(+), 27 deletions(-)
+
+diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+index 3c78835..9eaa948 100644
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -30,6 +30,7 @@
+ #include <asm/pgtable-hwdef.h>
+ #include <asm/ptrace.h>
+ #include <asm/thread_info.h>
++#include <asm/cache.h>
+ 
+ 	.macro save_and_disable_daif, flags
+ 	mrs	\flags, daif
+@@ -334,9 +335,9 @@
+  * raw_dcache_line_size - get the minimum D-cache line size on this CPU
+  * from the CTR register.
+  */
+-	.macro	raw_dcache_line_size, reg, tmp
+-	mrs	\tmp, ctr_el0			// read CTR
+-	ubfm	\tmp, \tmp, #16, #19		// cache line size encoding
++	.macro	raw_dcache_line_size, reg, tmp, ctr
++	mrs	\ctr, ctr_el0			// read CTR
++	ubfm	\tmp, \ctr, #16, #19		// cache line size encoding
+ 	mov	\reg, #4			// bytes per word
+ 	lsl	\reg, \reg, \tmp		// actual cache line size
+ 	.endm
+@@ -344,9 +345,9 @@
+ /*
+  * dcache_line_size - get the safe D-cache line size across all CPUs
+  */
+-	.macro	dcache_line_size, reg, tmp
+-	read_ctr	\tmp
+-	ubfm		\tmp, \tmp, #16, #19	// cache line size encoding
++	.macro	dcache_line_size, reg, tmp, ctr
++	read_ctr	\ctr
++	ubfm		\tmp, \ctr, #16, #19	// cache line size encoding
+ 	mov		\reg, #4		// bytes per word
+ 	lsl		\reg, \reg, \tmp	// actual cache line size
+ 	.endm
+@@ -355,9 +356,9 @@
+  * raw_icache_line_size - get the minimum I-cache line size on this CPU
+  * from the CTR register.
+  */
+-	.macro	raw_icache_line_size, reg, tmp
+-	mrs	\tmp, ctr_el0			// read CTR
+-	and	\tmp, \tmp, #0xf		// cache line size encoding
++	.macro	raw_icache_line_size, reg, tmp, ctr
++	mrs	\ctr, ctr_el0			// read CTR
++	and	\tmp, \ctr, #0xf		// cache line size encoding
+ 	mov	\reg, #4			// bytes per word
+ 	lsl	\reg, \reg, \tmp		// actual cache line size
+ 	.endm
+@@ -365,9 +366,9 @@
+ /*
+  * icache_line_size - get the safe I-cache line size across all CPUs
+  */
+-	.macro	icache_line_size, reg, tmp
+-	read_ctr	\tmp
+-	and		\tmp, \tmp, #0xf	// cache line size encoding
++	.macro	icache_line_size, reg, tmp, ctr
++	read_ctr	\ctr
++	and		\tmp, \ctr, #0xf	// cache line size encoding
+ 	mov		\reg, #4		// bytes per word
+ 	lsl		\reg, \reg, \tmp	// actual cache line size
+ 	.endm
+@@ -408,13 +409,21 @@
+  * 	size:		size of the region
+  * 	Corrupts:	kaddr, size, tmp1, tmp2
+  */
+-	.macro dcache_by_line_op op, domain, kaddr, size, tmp1, tmp2
+-	dcache_line_size \tmp1, \tmp2
++	.macro dcache_by_line_op op, domain, kaddr, size, tmp1, tmp2, tmp3
++	dcache_line_size \tmp1, \tmp2, \tmp3
+ 	add	\size, \kaddr, \size
+ 	sub	\tmp2, \tmp1, #1
+ 	bic	\kaddr, \kaddr, \tmp2
+ 9998:
+-	.if	(\op == cvau || \op == cvac)
++	.if	(\op == cvau)
++alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
++	tbnz	\tmp3, #CTR_IDC_SHIFT, 9997f
++	dc	cvau, \kaddr
++alternative_else
++	dc	civac, \kaddr
++	nop
++alternative_endif
++	.elseif (\op == cvac)
+ alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
+ 	dc	\op, \kaddr
+ alternative_else
+@@ -433,6 +442,7 @@
+ 	cmp	\kaddr, \size
+ 	b.lo	9998b
+ 	dsb	\domain
++9997:
+ 	.endm
+ 
+ /*
+@@ -441,10 +451,11 @@
+  *
+  * 	start, end:	virtual addresses describing the region
+  *	label:		A label to branch to on user fault.
+- * 	Corrupts:	tmp1, tmp2
++ * 	Corrupts:	tmp1, tmp2, tmp3
+  */
+-	.macro invalidate_icache_by_line start, end, tmp1, tmp2, label
+-	icache_line_size \tmp1, \tmp2
++	.macro invalidate_icache_by_line start, end, tmp1, tmp2, tmp3, label
++	icache_line_size \tmp1, \tmp2, \tmp3
++	tbnz    \tmp3, #CTR_DIC_SHIFT, 9996f
+ 	sub	\tmp2, \tmp1, #1
+ 	bic	\tmp2, \start, \tmp2
+ 9997:
+@@ -454,6 +465,7 @@
+ 	b.lo	9997b
+ 	dsb	ish
+ 	isb
++9996:
+ 	.endm
+ 
+ /*
+diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
+index ea9bb4e..aea533b 100644
+--- a/arch/arm64/include/asm/cache.h
++++ b/arch/arm64/include/asm/cache.h
+@@ -22,6 +22,8 @@
+ #define CTR_L1IP_MASK		3
+ #define CTR_CWG_SHIFT		24
+ #define CTR_CWG_MASK		15
++#define CTR_IDC_SHIFT		28
++#define CTR_DIC_SHIFT		29
+ 
+ #define CTR_L1IP(ctr)		(((ctr) >> CTR_L1IP_SHIFT) & CTR_L1IP_MASK)
+ 
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 29b1f87..f42bb5a 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -200,6 +200,8 @@ static int __init register_cpu_hwcaps_dumper(void)
+ 
+ static const struct arm64_ftr_bits ftr_ctr[] = {
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, 31, 1, 1),	/* RAO */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DIC_SHIFT, 1, 0),	/* DIC */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_IDC_SHIFT, 1, 0),	/* IDC */
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 24, 4, 0),	/* CWG */
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 20, 4, 0),	/* ERG */
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 1),	/* DminLine */
+diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
+index 758bde7..5764af8 100644
+--- a/arch/arm64/mm/cache.S
++++ b/arch/arm64/mm/cache.S
+@@ -24,6 +24,7 @@
+ #include <asm/cpufeature.h>
+ #include <asm/alternative.h>
+ #include <asm/asm-uaccess.h>
++#include <asm/cache.h>
+ 
+ /*
+  *	flush_icache_range(start,end)
+@@ -50,7 +51,12 @@ ENTRY(flush_icache_range)
+  */
+ ENTRY(__flush_cache_user_range)
+ 	uaccess_ttbr0_enable x2, x3, x4
+-	dcache_line_size x2, x3
++	dcache_line_size x2, x3, x4
++alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
++	tbnz    x4, #CTR_IDC_SHIFT, 8f
++alternative_else
++	nop
++alternative_endif
+ 	sub	x3, x2, #1
+ 	bic	x4, x0, x3
+ 1:
+@@ -60,7 +66,9 @@ user_alt 9f, "dc cvau, x4",  "dc civac, x4",  ARM64_WORKAROUND_CLEAN_CACHE
+ 	b.lo	1b
+ 	dsb	ish
+ 
+-	invalidate_icache_by_line x0, x1, x2, x3, 9f
++8:
++	invalidate_icache_by_line x0, x1, x2, x3, x4, 9f
++
+ 	mov	x0, #0
+ 1:
+ 	uaccess_ttbr0_disable x1, x2
+@@ -82,7 +90,7 @@ ENDPROC(__flush_cache_user_range)
+ ENTRY(invalidate_icache_range)
+ 	uaccess_ttbr0_enable x2, x3, x4
+ 
+-	invalidate_icache_by_line x0, x1, x2, x3, 2f
++	invalidate_icache_by_line x0, x1, x2, x3, x4, 2f
+ 	mov	x0, xzr
+ 1:
+ 	uaccess_ttbr0_disable x1, x2
+@@ -102,7 +110,7 @@ ENDPROC(invalidate_icache_range)
+  *	- size    - size in question
+  */
+ ENTRY(__flush_dcache_area)
+-	dcache_by_line_op civac, sy, x0, x1, x2, x3
++	dcache_by_line_op civac, sy, x0, x1, x2, x3, x4
+ 	ret
+ ENDPIPROC(__flush_dcache_area)
+ 
+@@ -116,7 +124,7 @@ ENDPIPROC(__flush_dcache_area)
+  *	- size    - size in question
+  */
+ ENTRY(__clean_dcache_area_pou)
+-	dcache_by_line_op cvau, ish, x0, x1, x2, x3
++	dcache_by_line_op cvau, ish, x0, x1, x2, x3, x4
+ 	ret
+ ENDPROC(__clean_dcache_area_pou)
+ 
+@@ -140,7 +148,7 @@ ENTRY(__inval_dcache_area)
+  */
+ __dma_inv_area:
+ 	add	x1, x1, x0
+-	dcache_line_size x2, x3
++	dcache_line_size x2, x3, x4
+ 	sub	x3, x2, #1
+ 	tst	x1, x3				// end cache line aligned?
+ 	bic	x1, x1, x3
+@@ -178,7 +186,7 @@ ENTRY(__clean_dcache_area_poc)
+  *	- size    - size in question
+  */
+ __dma_clean_area:
+-	dcache_by_line_op cvac, sy, x0, x1, x2, x3
++	dcache_by_line_op cvac, sy, x0, x1, x2, x3, x4
+ 	ret
+ ENDPIPROC(__clean_dcache_area_poc)
+ ENDPROC(__dma_clean_area)
+@@ -193,7 +201,7 @@ ENDPROC(__dma_clean_area)
+  *	- size    - size in question
+  */
+ ENTRY(__clean_dcache_area_pop)
+-	dcache_by_line_op cvap, sy, x0, x1, x2, x3
++	dcache_by_line_op cvap, sy, x0, x1, x2, x3, x4
+ 	ret
+ ENDPIPROC(__clean_dcache_area_pop)
+ 
+@@ -206,7 +214,7 @@ ENDPIPROC(__clean_dcache_area_pop)
+  *	- size    - size in question
+  */
+ ENTRY(__dma_flush_area)
+-	dcache_by_line_op civac, sy, x0, x1, x2, x3
++	dcache_by_line_op civac, sy, x0, x1, x2, x3, x4
+ 	ret
+ ENDPIPROC(__dma_flush_area)
+ 
+-- 
+Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
