@@ -1,27 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751121AbeBQLeJ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 06:34:09 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:60473 "EHLO
+        id S1751316AbeBQLeR (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 06:34:17 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57341 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750989AbeBQLeI (ORCPT
+        with ESMTP id S1751130AbeBQLeN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 06:34:08 -0500
-Date: Sat, 17 Feb 2018 03:32:55 -0800
-From: tip-bot for Robert Walker <tipbot@zytor.com>
-Message-ID: <tip-256e751cac78739a4de2232450d3681b68b5845e@git.kernel.org>
-Cc: robert.walker@arm.com, mingo@kernel.org, acme@redhat.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        mathieu.poirier@linaro.org, hpa@zytor.com
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de, acme@redhat.com,
-        robert.walker@arm.com, mingo@kernel.org, hpa@zytor.com,
-        mathieu.poirier@linaro.org
-In-Reply-To: <1518607481-4059-3-git-send-email-robert.walker@arm.com>
-References: <1518607481-4059-3-git-send-email-robert.walker@arm.com>
+        Sat, 17 Feb 2018 06:34:13 -0500
+Date: Sat, 17 Feb 2018 03:23:30 -0800
+From: tip-bot for yuzhoujian <tipbot@zytor.com>
+Message-ID: <tip-db06a269ecbb1d71d534fc5713624eeeee0b8f92@git.kernel.org>
+Cc: yuzhoujian@didichuxing.com, linux-kernel@vger.kernel.org,
+        kan.liang@intel.com, wangnan0@huawei.com, dsahern@gmail.com,
+        mingo@kernel.org, alexander.shishkin@linux.intel.com,
+        peterz@infradead.org, acme@redhat.com, hpa@zytor.com,
+        milian.wolff@kdab.com, adrian.hunter@intel.com, tglx@linutronix.de,
+        jolsa@kernel.org, namhyung@kernel.org
+Reply-To: namhyung@kernel.org, jolsa@kernel.org, hpa@zytor.com,
+        adrian.hunter@intel.com, tglx@linutronix.de, milian.wolff@kdab.com,
+        alexander.shishkin@linux.intel.com, acme@redhat.com,
+        peterz@infradead.org, yuzhoujian@didichuxing.com,
+        linux-kernel@vger.kernel.org, wangnan0@huawei.com, kan.liang@intel.com,
+        dsahern@gmail.com, mingo@kernel.org
+In-Reply-To: <1517217923-8302-2-git-send-email-ufo19890607@gmail.com>
+References: <1517217923-8302-2-git-send-email-ufo19890607@gmail.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf inject: Emit instruction records on ETM trace
- discontinuity
-Git-Commit-ID: 256e751cac78739a4de2232450d3681b68b5845e
+Subject: [tip:perf/core] perf stat: Add support to print counts for fixed
+ times
+Git-Commit-ID: db06a269ecbb1d71d534fc5713624eeeee0b8f92
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,181 +40,158 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  256e751cac78739a4de2232450d3681b68b5845e
-Gitweb:     https://git.kernel.org/tip/256e751cac78739a4de2232450d3681b68b5845e
-Author:     Robert Walker <robert.walker@arm.com>
-AuthorDate: Wed, 14 Feb 2018 11:24:40 +0000
+Commit-ID:  db06a269ecbb1d71d534fc5713624eeeee0b8f92
+Gitweb:     https://git.kernel.org/tip/db06a269ecbb1d71d534fc5713624eeeee0b8f92
+Author:     yuzhoujian <yuzhoujian@didichuxing.com>
+AuthorDate: Mon, 29 Jan 2018 10:25:22 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Feb 2018 14:55:45 -0300
+CommitDate: Fri, 16 Feb 2018 10:09:24 -0300
 
-perf inject: Emit instruction records on ETM trace discontinuity
+perf stat: Add support to print counts for fixed times
 
-There may be discontinuities in the ETM trace stream due to overflows or
-ETM configuration for selective trace.  This patch emits an instruction
-sample with the pending branch stack when a TRACE ON packet occurs
-indicating a discontinuity in the trace data.
+Introduce a new option to print counts for fixed number of times and
+update 'perf stat' documentation accordingly.
 
-A new packet type CS_ETM_TRACE_ON is added, which is emitted by the low
-level decoder when a TRACE ON occurs.  The higher level decoder flushes
-the branch stack when this packet is emitted.
+Show below is the output of the new option for perf stat.
 
-Signed-off-by: Robert Walker <robert.walker@arm.com>
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: coresight@lists.linaro.org
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/1518607481-4059-3-git-send-email-robert.walker@arm.com
+  $ perf stat -I 1000 --interval-count 2 -e cycles -a
+  #           time             counts unit events
+           1.002827089         93,884,870      cycles
+           2.004231506         56,573,446      cycles
+
+We can just print the counts for several times with this newly
+introduced option. The usage of it is a little like 'vmstat', and it
+should be used together with "-I" option.
+
+  $ vmstat -n 1 2
+  procs ---------memory-------------- --swap- ----io-- -system-- ------cpu---
+   r  b swpd   free   buff   cache    si   so  bi   bo  in   cs us sy id wa st
+   0  0    0 78270544 547484 51732076  0   0   0   20    1    1  1  0 99  0 0
+   0  0    0 78270512 547484 51732080  0   0   0   16  477 1555  0  0 100 0 0
+
+Changes since v3:
+- merge interval_count check and times check to one line.
+- fix the wrong indent in stat.h
+- use stat_config.times instead of 'times' in cmd_stat function.
+
+Changes since v2:
+- none.
+
+Changes since v1:
+- change the name of the new option "times-print" to "interval-count".
+- keep the new option interval specifically.
+
+Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Kan Liang <kan.liang@intel.com>
+Cc: Milian Wolff <milian.wolff@kdab.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/r/1517217923-8302-2-git-send-email-ufo19890607@gmail.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c |  9 +++
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  1 +
- tools/perf/util/cs-etm.c                        | 80 ++++++++++++++++++-------
- 3 files changed, 67 insertions(+), 23 deletions(-)
+ tools/perf/Documentation/perf-stat.txt |  5 +++++
+ tools/perf/builtin-stat.c              | 20 +++++++++++++++++++-
+ tools/perf/util/stat.h                 |  1 +
+ 3 files changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-index 8ff69df..640af88 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-@@ -328,7 +328,14 @@ cs_etm_decoder__buffer_range(struct cs_etm_decoder *decoder,
- 	}
+diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
+index 823fce7..47a2164 100644
+--- a/tools/perf/Documentation/perf-stat.txt
++++ b/tools/perf/Documentation/perf-stat.txt
+@@ -146,6 +146,11 @@ Print count deltas every N milliseconds (minimum: 10ms)
+ The overhead percentage could be high in some cases, for instance with small, sub 100ms intervals.  Use with caution.
+ 	example: 'perf stat -I 1000 -e cycles -a sleep 5'
  
- 	return ret;
-+}
- 
-+static ocsd_datapath_resp_t
-+cs_etm_decoder__buffer_trace_on(struct cs_etm_decoder *decoder,
-+				const uint8_t trace_chan_id)
-+{
-+	return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-+					     CS_ETM_TRACE_ON);
- }
- 
- static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
-@@ -347,6 +354,8 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
- 		decoder->trace_on = false;
- 		break;
- 	case OCSD_GEN_TRC_ELEM_TRACE_ON:
-+		resp = cs_etm_decoder__buffer_trace_on(decoder,
-+						       trace_chan_id);
- 		decoder->trace_on = true;
- 		break;
- 	case OCSD_GEN_TRC_ELEM_INSTR_RANGE:
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-index a4fdd28..743f5f4 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-@@ -24,6 +24,7 @@ struct cs_etm_buffer {
- 
- enum cs_etm_sample_type {
- 	CS_ETM_RANGE = 1 << 0,
-+	CS_ETM_TRACE_ON = 1 << 1,
- };
- 
- struct cs_etm_packet {
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 6e595d9..1b0d422 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -867,6 +867,7 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
- 	 */
- 	if (etm->synth_opts.last_branch &&
- 	    etmq->prev_packet &&
-+	    etmq->prev_packet->sample_type == CS_ETM_RANGE &&
- 	    etmq->prev_packet->last_instr_taken_branch)
- 		cs_etm__update_last_branch_rb(etmq);
- 
-@@ -920,6 +921,40 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
- 	return 0;
- }
- 
-+static int cs_etm__flush(struct cs_etm_queue *etmq)
-+{
-+	int err = 0;
-+	struct cs_etm_packet *tmp;
++--interval-count times::
++Print count deltas for fixed number of times.
++This option should be used together with "-I" option.
++	example: 'perf stat -I 1000 --interval-count 2 -e cycles -a'
 +
-+	if (etmq->etm->synth_opts.last_branch &&
-+	    etmq->prev_packet &&
-+	    etmq->prev_packet->sample_type == CS_ETM_RANGE) {
-+		/*
-+		 * Generate a last branch event for the branches left in the
-+		 * circular buffer at the end of the trace.
-+		 *
-+		 * Use the address of the end of the last reported execution
-+		 * range
-+		 */
-+		u64 addr = cs_etm__last_executed_instr(etmq->prev_packet);
-+
-+		err = cs_etm__synth_instruction_sample(
-+			etmq, addr,
-+			etmq->period_instructions);
-+		etmq->period_instructions = 0;
-+
-+		/*
-+		 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
-+		 * the next incoming packet.
-+		 */
-+		tmp = etmq->packet;
-+		etmq->packet = etmq->prev_packet;
-+		etmq->prev_packet = tmp;
-+	}
-+
-+	return err;
-+}
-+
- static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
+ --metric-only::
+ Only print computed metrics. Print them in a single line.
+ Don't show any raw values. Not supported with --per-thread.
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 98bf9d3..7d1d761 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -168,6 +168,7 @@ static struct timespec		ref_time;
+ static struct cpu_map		*aggr_map;
+ static aggr_get_id_t		aggr_get_id;
+ static bool			append_file;
++static bool			interval_count;
+ static const char		*output_name;
+ static int			output_fd;
+ static int			print_free_counters_hint;
+@@ -571,6 +572,7 @@ static struct perf_evsel *perf_evsel__reset_weak_group(struct perf_evsel *evsel)
+ static int __run_perf_stat(int argc, const char **argv)
  {
- 	struct cs_etm_auxtrace *etm = etmq->etm;
-@@ -971,32 +1006,31 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
- 					 */
- 					break;
- 
--				/*
--				 * If the packet contains an instruction
--				 * range, generate instruction sequence
--				 * events.
--				 */
--				if (etmq->packet->sample_type & CS_ETM_RANGE)
--					err = cs_etm__sample(etmq);
-+				switch (etmq->packet->sample_type) {
-+				case CS_ETM_RANGE:
-+					/*
-+					 * If the packet contains an instruction
-+					 * range, generate instruction sequence
-+					 * events.
-+					 */
-+					cs_etm__sample(etmq);
+ 	int interval = stat_config.interval;
++	int times = stat_config.times;
+ 	char msg[BUFSIZ];
+ 	unsigned long long t0, t1;
+ 	struct perf_evsel *counter;
+@@ -700,6 +702,8 @@ try_again:
+ 			while (!waitpid(child_pid, &status, WNOHANG)) {
+ 				nanosleep(&ts, NULL);
+ 				process_interval();
++				if (interval_count && !(--times))
 +					break;
-+				case CS_ETM_TRACE_ON:
-+					/*
-+					 * Discontinuity in trace, flush
-+					 * previous branch stack
-+					 */
-+					cs_etm__flush(etmq);
-+					break;
-+				default:
-+					break;
-+				}
  			}
- 		} while (buffer.len > buffer_used);
- 
--		/*
--		 * Generate a last branch event for the branches left in
--		 * the circular buffer at the end of the trace.
--		 */
--		if (etm->sample_instructions &&
--		    etmq->etm->synth_opts.last_branch) {
--			struct branch_stack *bs = etmq->last_branch_rb;
--			struct branch_entry *be =
--				&bs->entries[etmq->last_branch_pos];
--
--			err = cs_etm__synth_instruction_sample(
--				etmq, be->to, etmq->period_instructions);
--			if (err)
--				return err;
--		}
--
-+		if (err == 0)
-+			/* Flush any remaining branch stack entries */
-+			err = cs_etm__flush(etmq);
+ 		}
+ 		waitpid(child_pid, &status, 0);
+@@ -716,8 +720,11 @@ try_again:
+ 		enable_counters();
+ 		while (!done) {
+ 			nanosleep(&ts, NULL);
+-			if (interval)
++			if (interval) {
+ 				process_interval();
++				if (interval_count && !(--times))
++					break;
++			}
+ 		}
  	}
  
- 	return err;
+@@ -1891,6 +1898,8 @@ static const struct option stat_options[] = {
+ 			"command to run after to the measured command"),
+ 	OPT_UINTEGER('I', "interval-print", &stat_config.interval,
+ 		    "print counts at regular interval in ms (>= 10)"),
++	OPT_INTEGER(0, "interval-count", &stat_config.times,
++		    "print counts for fixed number of times"),
+ 	OPT_SET_UINT(0, "per-socket", &stat_config.aggr_mode,
+ 		     "aggregate counts per processor socket", AGGR_SOCKET),
+ 	OPT_SET_UINT(0, "per-core", &stat_config.aggr_mode,
+@@ -2870,6 +2879,15 @@ int cmd_stat(int argc, const char **argv)
+ 				   "The overhead percentage could be high in some cases. "
+ 				   "Please proceed with caution.\n");
+ 	}
++	if (stat_config.times && interval)
++		interval_count = true;
++	else if (stat_config.times && !interval) {
++		pr_err("interval-count option should be used together with "
++				"interval-print.\n");
++		parse_options_usage(stat_usage, stat_options, "interval-count", 0);
++		parse_options_usage(stat_usage, stat_options, "I", 1);
++		goto out;
++	}
+ 
+ 	if (perf_evlist__alloc_stats(evsel_list, interval))
+ 		goto out;
+diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+index dbc6f71..540fbb3 100644
+--- a/tools/perf/util/stat.h
++++ b/tools/perf/util/stat.h
+@@ -90,6 +90,7 @@ struct perf_stat_config {
+ 	bool		scale;
+ 	FILE		*output;
+ 	unsigned int	interval;
++	int		times;
+ 	struct runtime_stat *stats;
+ 	int		stats_num;
+ };
