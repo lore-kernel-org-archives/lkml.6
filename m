@@ -1,49 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751055AbeBQFAK (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 00:00:10 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:20258 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750803AbeBQFAI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 00:00:08 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w1H4xxqE003684
-X-Nifty-SrcIP: [209.85.213.42]
-X-Google-Smtp-Source: AH8x2270w/XIDlXiFGY6512rYk5BiN3iYzrhP0y5A0VsFyYxgQjEgnX1uhpbruhuuqsJWMHq0u+mFaZTPKOGFbTgXPg=
-MIME-Version: 1.0
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sat, 17 Feb 2018 13:59:18 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATZ1MZ8ktrzitgm-f7sT-hGXLz0KPvNb9wCf9xzNm0phw@mail.gmail.com>
-Message-ID: <CAK7LNATZ1MZ8ktrzitgm-f7sT-hGXLz0KPvNb9wCf9xzNm0phw@mail.gmail.com>
-Subject: Plan for DTC re-sync?
-To: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc: Frank Rowand <frowand.list@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Grant Likely <grant.likely@secretlab.ca>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751107AbeBQFBS (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 00:01:18 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:45600 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750951AbeBQFBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Feb 2018 00:01:17 -0500
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: sunxi: Fix multi-cluster SMP support compilation in multi v6/v7 configs
+Date: Sat, 17 Feb 2018 13:01:12 +0800
+Message-Id: <20180217050112.14619-1-wens@csie.org>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Various parts of the assembly code used in the multi-cluster SMP support
+requires ARMv7-A. If the kernel config also has multi v6 support enabled,
+Kbuild defaults to building for armv6k, which does not support some of
+the instructions we use.
 
+Configure the Makefile such that the multi-cluster SMP code is always
+built for ARMv7-A. This is also what mach-exynos does for their MC-SMP
+code.
 
-Do you have a plan to sync scripts/dtc/
-with upstream?
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
 
+This addresses "[sunxi:sunxi/core-for-4.17 1/4] /tmp/ccSQM2rD.s:438:
+Error: selected processor does not support `isb' in ARM mode"
+reported by the kbuild test robot for arm-allmodconfig.
 
+Should we apply it, or squash it in the original patch?
 
-I want the following commit in the upstream DTC project.
+---
+ arch/arm/mach-sunxi/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-commit b260c4f610c004c6e9e36c5f7bbb58d23e605bf1
-Author: Grant Likely <grant.likely@secretlab.ca>
-Date:   Mon Nov 20 17:12:18 2017 +0000
-
-    Fix ambiguous grammar for devicetree rule
-
-
-
-
+diff --git a/arch/arm/mach-sunxi/Makefile b/arch/arm/mach-sunxi/Makefile
+index 3e741e959c7c..3c2c4384357a 100644
+--- a/arch/arm/mach-sunxi/Makefile
++++ b/arch/arm/mach-sunxi/Makefile
+@@ -1,3 +1,4 @@
+ obj-$(CONFIG_ARCH_SUNXI) += sunxi.o
+ obj-$(CONFIG_ARCH_SUNXI_MC_SMP) += mc_smp.o
++CFLAGS_mc_smp.o	+= -march=armv7-a
+ obj-$(CONFIG_SMP) += platsmp.o
 -- 
-Best Regards
-Masahiro Yamada
+2.16.1
