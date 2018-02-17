@@ -1,70 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751164AbeBQKiy (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 05:38:54 -0500
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:54414 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751137AbeBQKiw (ORCPT
+        id S1751131AbeBQKqz (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 05:46:55 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:34696 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750994AbeBQKqy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 05:38:52 -0500
-X-Google-Smtp-Source: AH8x226XriIB9tMZdxSGV5ddHyubA3uAqJuwEmA2TIM+eSqWNbLnwefJk0npzTYTYjylxNMU8Bur0w==
-Date: Sat, 17 Feb 2018 11:38:48 +0100
+        Sat, 17 Feb 2018 05:46:54 -0500
+X-Google-Smtp-Source: AH8x226VVjlOsILg74KsBvRJvuc1E7XGUtXdI/l1zIkfZzyVPO0Q8fselQeH5a/NSfcmVDyzkXgkJg==
+Date: Sat, 17 Feb 2018 11:46:49 +0100
 From: Ingo Molnar <mingo@kernel.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Jason Baron <jbaron@akamai.com>,
-        Borislav Petkov <bp@suse.de>
-Subject: Re: [PATCH v2 1/2] jump_label: Explicitly disable jump labels in
- __init code
-Message-ID: <20180217103848.yiutigxpukxfbtze@gmail.com>
-References: <cover.1518798288.git.jpoimboe@redhat.com>
- <eccf3cf668635c9b46acd6a4e3f57c05dbd8aa93.1518798288.git.jpoimboe@redhat.com>
+To: Baoquan He <bhe@redhat.com>
+Cc: ebiederm@xmission.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, x86@kernel.org, douly.fnst@cn.fujitsu.com,
+        joro@8bytes.org, uobergfe@redhat.com, prarit@redhat.com
+Subject: Re: [PATCH v5 0/6] x86/apic: Fix restoring boot irq mode in reboot
+ and kexec/kdump
+Message-ID: <20180217104649.5xuzspdqkt6zjcud@gmail.com>
+References: <20180214054656.3780-1-bhe@redhat.com>
+ <20180216093836.v6iq32jycy7sxwln@gmail.com>
+ <20180216102437.GA28912@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <eccf3cf668635c9b46acd6a4e3f57c05dbd8aa93.1518798288.git.jpoimboe@redhat.com>
+In-Reply-To: <20180216102437.GA28912@localhost.localdomain>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+* Baoquan He <bhe@redhat.com> wrote:
 
-> +/* Disable any jump label entries in __init code */
-> +void __init jump_label_invalidate_init(void)
-> +{
-> +	struct jump_entry *iter_start = __start___jump_table;
-> +	struct jump_entry *iter_stop = __stop___jump_table;
-> +	struct jump_entry *iter;
-> +
-> +	for (iter = iter_start; iter < iter_stop; iter++)
-> +		if (iter->code >= (unsigned long)_sinittext &&
-> +		    iter->code < (unsigned long)_einittext)
-> +			iter->code = 0;
-> +}
-> +
-> +/* Disable any jump label entries in module init code */
->  static void jump_label_invalidate_module_init(struct module *mod)
->  {
->  	struct jump_entry *iter_start = mod->jump_entries;
->  	struct jump_entry *iter_stop = iter_start + mod->num_jump_entries;
->  	struct jump_entry *iter;
->  
-> -	for (iter = iter_start; iter < iter_stop; iter++) {
-> +	for (iter = iter_start; iter < iter_stop; iter++)
->  		if (within_module_init(iter->code, mod))
->  			iter->code = 0;
-> -	}
+> Thanks for checking this!
+> 
+> I got warning message from kbuild test robot on previous v3 and v4. I
+> guess this v5 post also has the issue since the code is the same, just
+> patch format is changed.
+> 
+> Will report status after investigation.
 
-Why did you remove the curly braces? They are canonical kernel style for 
-multi-line statements.
-
-The new jump_label_invalidate_init() function has that problem too.
+Well, your patches didn't build when CONFIG_IO_APIC is disabled - I have fixed 
+this by the patch below.
 
 Thanks,
 
 	Ingo
+
+---
+ arch/x86/include/asm/io_apic.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/include/asm/io_apic.h b/arch/x86/include/asm/io_apic.h
+index 06fec4426458..fd20a2334885 100644
+--- a/arch/x86/include/asm/io_apic.h
++++ b/arch/x86/include/asm/io_apic.h
+@@ -233,6 +233,7 @@ static inline void io_apic_init_mappings(void) { }
+ 
+ static inline void setup_IO_APIC(void) { }
+ static inline void enable_IO_APIC(void) { }
++static inline void restore_boot_irq_mode(void) { }
+ 
+ #endif
+ 
