@@ -1,59 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751167AbeBQQT1 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 11:19:27 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33264 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751071AbeBQQTZ (ORCPT
+        id S1751148AbeBQQVe (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 11:21:34 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:43700 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751032AbeBQQVc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 11:19:25 -0500
-X-Google-Smtp-Source: AH8x224sV/pN62rbkfRXBRk9ACe7mv0eDhLYkc0NhQuWCZajvwCBI1cOE5aKJa65KNvDvPv4t0vIzw==
-Date: Sat, 17 Feb 2018 08:19:23 -0800
+        Sat, 17 Feb 2018 11:21:32 -0500
+X-Google-Smtp-Source: AH8x224iXYB4WvaR+U/cMKahvmL8kwVDciIqDGRo0kFhYwmvczzvFQrJk9vzPlpQVWFCmF+CpW0xIA==
+Date: Sat, 17 Feb 2018 08:21:30 -0800
 From: Guenter Roeck <linux@roeck-us.net>
 To: Jerry Hoemann <jerry.hoemann@hpe.com>
 Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
         linux-kernel@vger.kernel.org, rwright@hpe.com,
         maurice.a.saldivar@hpe.com, mingo@kernel.org,
         marcus.folkesson@gmail.com
-Subject: Re: [v3,05/11] watchdog/hpwdt: Update Module info.
-Message-ID: <20180217161923.GA27212@roeck-us.net>
-References: <20180215234400.5022-6-jerry.hoemann@hpe.com>
+Subject: Re: [v3,06/11] watchdog/hpwdt: Select WATCHDOG_CORE
+Message-ID: <20180217162130.GA30748@roeck-us.net>
+References: <20180215234400.5022-7-jerry.hoemann@hpe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180215234400.5022-6-jerry.hoemann@hpe.com>
+In-Reply-To: <20180215234400.5022-7-jerry.hoemann@hpe.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 04:43:54PM -0700, Jerry Hoemann wrote:
-> Update Module Author and description to reflect changes in driver.
+On Thu, Feb 15, 2018 at 04:43:55PM -0700, Jerry Hoemann wrote:
+> Update Kconfig file to show that hpwdt now selects WATCHDOG_CORE.
 > 
 > Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
-> ---
->  drivers/watchdog/hpwdt.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
-> index d5989acf3e37..71e49d0ab789 100644
-> --- a/drivers/watchdog/hpwdt.c
-> +++ b/drivers/watchdog/hpwdt.c
-> @@ -425,8 +425,8 @@ static struct pci_driver hpwdt_driver = {
->  	.remove		= hpwdt_exit,
->  };
->  
-> -MODULE_AUTHOR("Tom Mingarelli");
-> -MODULE_DESCRIPTION("hp watchdog driver");
-> +MODULE_AUTHOR("Jerry Hoemann");
-> +MODULE_DESCRIPTION("hpe watchdog driver");
 
-It is quite unusual to replace an author name. The original author is
-still the original author and should be retained. Adding another author
-is fine, but I disagree with the removal.
+At this point, WATCHDOG_CORE is not required. This patch should
+be merged with the next patch, which adds the requirement.
+
+Since it appears that you insist on having it as separate patch,
+deferring to Wim.
 
 Guenter
 
->  MODULE_LICENSE("GPL");
->  MODULE_VERSION(HPWDT_VERSION);
+> ---
+>  drivers/watchdog/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index 6a602f70aaa4..4d219c3fa8b4 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -1108,6 +1108,7 @@ config IT87_WDT
 >  
+>  config HP_WATCHDOG
+>  	tristate "HP ProLiant iLO2+ Hardware Watchdog Timer"
+> +	select WATCHDOG_CORE
+>  	depends on X86 && PCI
+>  	help
+>  	  A software monitoring watchdog and NMI sourcing driver. This driver
