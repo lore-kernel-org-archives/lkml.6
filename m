@@ -1,27 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751317AbeBQLj7 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 06:39:59 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:39445 "EHLO
+        id S1751334AbeBQLkP (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 06:40:15 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:33759 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750960AbeBQLj6 (ORCPT
+        with ESMTP id S1751141AbeBQLkO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 06:39:58 -0500
-Date: Sat, 17 Feb 2018 03:39:44 -0800
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-2k5kutwr4ds36adiakyb4yvy@git.kernel.org>
-Cc: acme@redhat.com, jolsa@kernel.org, wangnan0@huawei.com,
-        adrian.hunter@intel.com, hpa@zytor.com, tmricht@linux.vnet.ibm.com,
-        dsahern@gmail.com, namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@kernel.org, mhiramat@kernel.org
-Reply-To: dsahern@gmail.com, tmricht@linux.vnet.ibm.com, hpa@zytor.com,
-        wangnan0@huawei.com, adrian.hunter@intel.com, acme@redhat.com,
-        jolsa@kernel.org, mhiramat@kernel.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, namhyung@kernel.org
+        Sat, 17 Feb 2018 06:40:14 -0500
+Date: Sat, 17 Feb 2018 03:29:55 -0800
+From: tip-bot for Mathieu Poirier <tipbot@zytor.com>
+Message-ID: <tip-d2785de15f1bd42d613d56bbac5a007e7293b874@git.kernel.org>
+Cc: yao.jin@linux.intel.com, acme@redhat.com, mingo@kernel.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        hpa@zytor.com, mathieu.poirier@linaro.org,
+        alexander.shishkin@linux.intel.com, peterz@infradead.org
+Reply-To: peterz@infradead.org, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, hpa@zytor.com, mathieu.poirier@linaro.org,
+        mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        acme@redhat.com, yao.jin@linux.intel.com
+In-Reply-To: <1518467557-18505-4-git-send-email-mathieu.poirier@linaro.org>
+References: <1518467557-18505-4-git-send-email-mathieu.poirier@linaro.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tests shell lib: Use a wildcard to remove the
- vfs_getname probe
-Git-Commit-ID: 21316ac6803d4a1aadd74b896db8d60a92cd1140
+Subject: [tip:perf/core] perf auxtrace arm: Fixing uninitialised variable
+Git-Commit-ID: d2785de15f1bd42d613d56bbac5a007e7293b874
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,65 +35,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  21316ac6803d4a1aadd74b896db8d60a92cd1140
-Gitweb:     https://git.kernel.org/tip/21316ac6803d4a1aadd74b896db8d60a92cd1140
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Fri, 16 Feb 2018 15:26:51 -0300
+Commit-ID:  d2785de15f1bd42d613d56bbac5a007e7293b874
+Gitweb:     https://git.kernel.org/tip/d2785de15f1bd42d613d56bbac5a007e7293b874
+Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
+AuthorDate: Mon, 12 Feb 2018 13:32:37 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Feb 2018 15:31:12 -0300
+CommitDate: Fri, 16 Feb 2018 14:55:40 -0300
 
-perf tests shell lib: Use a wildcard to remove the vfs_getname probe
+perf auxtrace arm: Fixing uninitialised variable
 
-In some situations the vfs_getname is being added both as requested and
-with a _1 suffix (inlines?):
+When working natively on arm64 the compiler gets pesky and complains
+that variable 'i' is uninitialised, something that breaks the
+compilation.  Here no further checks are needed since variable
+'found_spe' can only be true if variable 'i' has been initialised as
+part of the for loop.
 
-  probe:vfs_getname_1  (on getname_flags:63@acme/git/linux/fs/namei.c with pathname)
-
-This ends up making the cleanup to miss that one, as it removes just
-'probe:vfs_getname', which makes the second test to use this probe point
-to fail, since it finds that leftover from the first test, use a
-wildcard to remove both.
-
-Before:
-
-  # perf test 60 61 62 63
-  60: Use vfs_getname probe to get syscall args filenames   : FAILED!
-  61: probe libc's inet_pton & backtrace it with ping       : Ok
-  62: Check open filename arg using perf trace + vfs_getname: FAILED!
-  63: Add vfs_getname probe to get syscall args filenames   : Ok
-
-After:
-
-  # perf test 60 61 62 63
-  60: Use vfs_getname probe to get syscall args filenames   : Ok
-  61: probe libc's inet_pton & backtrace it with ping       : Ok
-  62: Check open filename arg using perf trace + vfs_getname: Ok
-  63: Add vfs_getname probe to get syscall args filenames   : Ok
-  #
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-2k5kutwr4ds36adiakyb4yvy@git.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/1518467557-18505-4-git-send-email-mathieu.poirier@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/shell/lib/probe_vfs_getname.sh | 2 +-
+ tools/perf/arch/arm/util/auxtrace.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-index 30a950c..1c16e56 100644
---- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-@@ -5,7 +5,7 @@ had_vfs_getname=$?
+diff --git a/tools/perf/arch/arm/util/auxtrace.c b/tools/perf/arch/arm/util/auxtrace.c
+index 2323581..fa639e3 100644
+--- a/tools/perf/arch/arm/util/auxtrace.c
++++ b/tools/perf/arch/arm/util/auxtrace.c
+@@ -68,7 +68,7 @@ struct auxtrace_record
+ 	bool found_spe = false;
+ 	static struct perf_pmu **arm_spe_pmus = NULL;
+ 	static int nr_spes = 0;
+-	int i;
++	int i = 0;
  
- cleanup_probe_vfs_getname() {
- 	if [ $had_vfs_getname -eq 1 ] ; then
--		perf probe -q -d probe:vfs_getname
-+		perf probe -q -d probe:vfs_getname*
- 	fi
- }
- 
+ 	if (!evlist)
+ 		return NULL;
