@@ -1,163 +1,254 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751195AbeBQLpt (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 06:45:49 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38539 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750951AbeBQLpr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 06:45:47 -0500
-Date: Sat, 17 Feb 2018 03:34:24 -0800
-From: tip-bot for Jin Yao <tipbot@zytor.com>
-Message-ID: <tip-b40982e8468b46b8f7f5bba5a7e541ec04a29d7d@git.kernel.org>
-Cc: hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
-        ak@linux.intel.com, alexander.shishkin@linux.intel.com,
-        yao.jin@intel.com, acme@redhat.com, kan.liang@intel.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        yao.jin@linux.intel.com
-Reply-To: peterz@infradead.org, kan.liang@intel.com, yao.jin@linux.intel.com,
-        jolsa@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        hpa@zytor.com, tglx@linutronix.de, acme@redhat.com,
-        alexander.shishkin@linux.intel.com, ak@linux.intel.com,
-        yao.jin@intel.com
-In-Reply-To: <1517223473-14750-1-git-send-email-yao.jin@linux.intel.com>
-References: <1517223473-14750-1-git-send-email-yao.jin@linux.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf report: Fix wrong jump arrow
-Git-Commit-ID: b40982e8468b46b8f7f5bba5a7e541ec04a29d7d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1751049AbeBQMB1 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 07:01:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44898 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750960AbeBQMB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Feb 2018 07:01:26 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A733217CA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Sat, 17 Feb 2018 12:01:21 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: rodrigosiqueira <rodrigosiqueiramelo@gmail.com>
+Cc: knaack.h@gmx.de, lars@metafoo.de, daniel.baluta@nxp.com,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: ade7759: Fix open parenthesis alignment
+Message-ID: <20180217120121.0a5b3be0@archlinux>
+In-Reply-To: <20180210202315.l2jecbrips2g3vuq@smtp.gmail.com>
+References: <20180210202315.l2jecbrips2g3vuq@smtp.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b40982e8468b46b8f7f5bba5a7e541ec04a29d7d
-Gitweb:     https://git.kernel.org/tip/b40982e8468b46b8f7f5bba5a7e541ec04a29d7d
-Author:     Jin Yao <yao.jin@linux.intel.com>
-AuthorDate: Mon, 29 Jan 2018 18:57:53 +0800
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Feb 2018 14:55:47 -0300
+On Sat, 10 Feb 2018 18:23:15 -0200
+rodrigosiqueira <rodrigosiqueiramelo@gmail.com> wrote:
 
-perf report: Fix wrong jump arrow
+> This patch fixes the CHECKs reported by checkpatch.pl for "alignment
+> should match open parenthesis"
+> 
+> Signed-off-by: rodrigosiqueira <rodrigosiqueiramelo@gmail.com>
+Applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to play with it.
 
-When we use perf report interactive annotate view, we can see
-the position of jump arrow is not correct. For example,
+Thanks,
 
-1. perf record -b ...
-2. perf report
-3. In interactive mode, select Annotate 'function'
+Jonathan
 
-Percent│ IPC Cycle
-       │                                if (flag)
-  1.37 │0.4┌──   1      ↓ je     82
-       │   │                                    x += x / y + y / x;
-  0.00 │0.4│  1310        movsd  (%rsp),%xmm0
-  0.00 │0.4│   565        movsd  0x8(%rsp),%xmm4
-       │0.4│              movsd  0x8(%rsp),%xmm1
-       │0.4│              movsd  (%rsp),%xmm3
-       │0.4│              divsd  %xmm4,%xmm0
-  0.00 │0.4│   579        divsd  %xmm3,%xmm1
-       │0.4│              movsd  (%rsp),%xmm2
-       │0.4│              addsd  %xmm1,%xmm0
-       │0.4│              addsd  %xmm2,%xmm0
-  0.00 │0.4│              movsd  %xmm0,(%rsp)
-       │   │                    volatile double x = 1212121212, y = 121212;
-       │   │
-       │   │                    s_randseed = time(0);
-       │   │                    srand(s_randseed);
-       │   │
-       │   │                    for (i = 0; i < 2000000000; i++) {
-  1.37 │0.4└─→      82:   sub    $0x1,%ebx
- 28.21 │0.48    17      ↑ jne    38
-
-The jump arrow in above example is not correct. It should add the
-width of IPC and Cycle.
-
-With this patch, the result is:
-
-Percent│ IPC Cycle
-       │                                if (flag)
-  1.37 │0.48     1     ┌──je     82
-       │               │                        x += x / y + y / x;
-  0.00 │0.48  1310     │  movsd  (%rsp),%xmm0
-  0.00 │0.48   565     │  movsd  0x8(%rsp),%xmm4
-       │0.48           │  movsd  0x8(%rsp),%xmm1
-       │0.48           │  movsd  (%rsp),%xmm3
-       │0.48           │  divsd  %xmm4,%xmm0
-  0.00 │0.48   579     │  divsd  %xmm3,%xmm1
-       │0.48           │  movsd  (%rsp),%xmm2
-       │0.48           │  addsd  %xmm1,%xmm0
-       │0.48           │  addsd  %xmm2,%xmm0
-  0.00 │0.48           │  movsd  %xmm0,(%rsp)
-       │               │        volatile double x = 1212121212, y = 121212;
-       │               │
-       │               │        s_randseed = time(0);
-       │               │        srand(s_randseed);
-       │               │
-       │               │        for (i = 0; i < 2000000000; i++) {
-  1.37 │0.48        82:└─→sub    $0x1,%ebx
- 28.21 │0.48    17      ↑ jne    38
-
-Committer notes:
-
-Please note that only from LBRv5 (according to Jiri) onwards, i.e. >=
-Skylake is that we'll have the cycles counts in each branch record
-entry, so to see the Cycles and IPC columns, and be able to test this
-patch, one need a capable hardware.
-
-While applying this I first tested it on a Broadwell class machine and
-couldn't get those columns, will add code to the annotate browser to
-warn the user about that, i.e. you have branch records, but no cycles,
-use a more recent hardware to get the cycles and IPC columns.
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1517223473-14750-1-git-send-email-yao.jin@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/ui/browsers/annotate.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 2864279..e2f6663 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -319,6 +319,7 @@ static void annotate_browser__draw_current_jump(struct ui_browser *browser)
- 	struct map_symbol *ms = ab->b.priv;
- 	struct symbol *sym = ms->sym;
- 	u8 pcnt_width = annotate_browser__pcnt_width(ab);
-+	int width = 0;
- 
- 	/* PLT symbols contain external offsets */
- 	if (strstr(sym->name, "@plt"))
-@@ -340,13 +341,17 @@ static void annotate_browser__draw_current_jump(struct ui_browser *browser)
- 		to = (u64)btarget->idx;
- 	}
- 
-+	if (ab->have_cycles)
-+		width = IPC_WIDTH + CYCLES_WIDTH;
-+
- 	ui_browser__set_color(browser, HE_COLORSET_JUMP_ARROWS);
--	__ui_browser__line_arrow(browser, pcnt_width + 2 + ab->addr_width,
-+	__ui_browser__line_arrow(browser,
-+				 pcnt_width + 2 + ab->addr_width + width,
- 				 from, to);
- 
- 	if (is_fused(ab, cursor)) {
- 		ui_browser__mark_fused(browser,
--				       pcnt_width + 3 + ab->addr_width,
-+				       pcnt_width + 3 + ab->addr_width + width,
- 				       from - 1,
- 				       to > from ? true : false);
- 	}
+> ---
+>  drivers/staging/iio/meter/ade7759.c | 80 ++++++++++++++++++-------------------
+>  1 file changed, 38 insertions(+), 42 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/meter/ade7759.c b/drivers/staging/iio/meter/ade7759.c
+> index d99cf508d8d0..1decb2b8afab 100644
+> --- a/drivers/staging/iio/meter/ade7759.c
+> +++ b/drivers/staging/iio/meter/ade7759.c
+> @@ -72,8 +72,8 @@ struct ade7759_state {
+>  };
+>  
+>  static int ade7759_spi_write_reg_8(struct device *dev,
+> -		u8 reg_address,
+> -		u8 val)
+> +				   u8 reg_address,
+> +				   u8 val)
+>  {
+>  	int ret;
+>  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> @@ -91,8 +91,8 @@ static int ade7759_spi_write_reg_8(struct device *dev,
+>  
+>  /*Unlocked version of ade7759_spi_write_reg_16 function */
+>  static int __ade7759_spi_write_reg_16(struct device *dev,
+> -		u8 reg_address,
+> -		u16 value)
+> +				      u8 reg_address,
+> +				      u16 value)
+>  {
+>  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+>  	struct ade7759_state *st = iio_priv(indio_dev);
+> @@ -104,8 +104,8 @@ static int __ade7759_spi_write_reg_16(struct device *dev,
+>  }
+>  
+>  static int ade7759_spi_write_reg_16(struct device *dev,
+> -		u8 reg_address,
+> -		u16 value)
+> +				    u8 reg_address,
+> +				    u16 value)
+>  {
+>  	int ret;
+>  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> @@ -119,8 +119,8 @@ static int ade7759_spi_write_reg_16(struct device *dev,
+>  }
+>  
+>  static int ade7759_spi_read_reg_8(struct device *dev,
+> -		u8 reg_address,
+> -		u8 *val)
+> +				  u8 reg_address,
+> +				  u8 *val)
+>  {
+>  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+>  	struct ade7759_state *st = iio_priv(indio_dev);
+> @@ -128,8 +128,9 @@ static int ade7759_spi_read_reg_8(struct device *dev,
+>  
+>  	ret = spi_w8r8(st->us, ADE7759_READ_REG(reg_address));
+>  	if (ret < 0) {
+> -		dev_err(&st->us->dev, "problem when reading 8 bit register 0x%02X",
+> -				reg_address);
+> +		dev_err(&st->us->dev,
+> +			"problem when reading 8 bit register 0x%02X",
+> +			reg_address);
+>  		return ret;
+>  	}
+>  	*val = ret;
+> @@ -138,8 +139,8 @@ static int ade7759_spi_read_reg_8(struct device *dev,
+>  }
+>  
+>  static int ade7759_spi_read_reg_16(struct device *dev,
+> -		u8 reg_address,
+> -		u16 *val)
+> +				   u8 reg_address,
+> +				   u16 *val)
+>  {
+>  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+>  	struct ade7759_state *st = iio_priv(indio_dev);
+> @@ -158,8 +159,8 @@ static int ade7759_spi_read_reg_16(struct device *dev,
+>  }
+>  
+>  static int ade7759_spi_read_reg_40(struct device *dev,
+> -		u8 reg_address,
+> -		u64 *val)
+> +				   u8 reg_address,
+> +				   u64 *val)
+>  {
+>  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+>  	struct ade7759_state *st = iio_priv(indio_dev);
+> @@ -179,8 +180,9 @@ static int ade7759_spi_read_reg_40(struct device *dev,
+>  
+>  	ret = spi_sync_transfer(st->us, xfers, ARRAY_SIZE(xfers));
+>  	if (ret) {
+> -		dev_err(&st->us->dev, "problem when reading 40 bit register 0x%02X",
+> -				reg_address);
+> +		dev_err(&st->us->dev,
+> +			"problem when reading 40 bit register 0x%02X",
+> +			reg_address);
+>  		goto error_ret;
+>  	}
+>  	*val = ((u64)st->rx[1] << 32) | ((u64)st->rx[2] << 24) |
+> @@ -192,8 +194,8 @@ static int ade7759_spi_read_reg_40(struct device *dev,
+>  }
+>  
+>  static ssize_t ade7759_read_8bit(struct device *dev,
+> -		struct device_attribute *attr,
+> -		char *buf)
+> +				 struct device_attribute *attr,
+> +				 char *buf)
+>  {
+>  	int ret;
+>  	u8 val = 0;
+> @@ -207,8 +209,8 @@ static ssize_t ade7759_read_8bit(struct device *dev,
+>  }
+>  
+>  static ssize_t ade7759_read_16bit(struct device *dev,
+> -		struct device_attribute *attr,
+> -		char *buf)
+> +				  struct device_attribute *attr,
+> +				  char *buf)
+>  {
+>  	int ret;
+>  	u16 val = 0;
+> @@ -222,8 +224,8 @@ static ssize_t ade7759_read_16bit(struct device *dev,
+>  }
+>  
+>  static ssize_t ade7759_read_40bit(struct device *dev,
+> -		struct device_attribute *attr,
+> -		char *buf)
+> +				  struct device_attribute *attr,
+> +				  char *buf)
+>  {
+>  	int ret;
+>  	u64 val = 0;
+> @@ -237,9 +239,9 @@ static ssize_t ade7759_read_40bit(struct device *dev,
+>  }
+>  
+>  static ssize_t ade7759_write_8bit(struct device *dev,
+> -		struct device_attribute *attr,
+> -		const char *buf,
+> -		size_t len)
+> +				  struct device_attribute *attr,
+> +				  const char *buf,
+> +				  size_t len)
+>  {
+>  	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+>  	int ret;
+> @@ -255,9 +257,9 @@ static ssize_t ade7759_write_8bit(struct device *dev,
+>  }
+>  
+>  static ssize_t ade7759_write_16bit(struct device *dev,
+> -		struct device_attribute *attr,
+> -		const char *buf,
+> -		size_t len)
+> +				   struct device_attribute *attr,
+> +				   const char *buf,
+> +				   size_t len)
+>  {
+>  	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+>  	int ret;
+> @@ -277,9 +279,7 @@ static int ade7759_reset(struct device *dev)
+>  	int ret;
+>  	u16 val;
+>  
+> -	ret = ade7759_spi_read_reg_16(dev,
+> -			ADE7759_MODE,
+> -			&val);
+> +	ret = ade7759_spi_read_reg_16(dev, ADE7759_MODE, &val);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> @@ -365,9 +365,7 @@ static int ade7759_stop_device(struct device *dev)
+>  	int ret;
+>  	u16 val;
+>  
+> -	ret = ade7759_spi_read_reg_16(dev,
+> -			ADE7759_MODE,
+> -			&val);
+> +	ret = ade7759_spi_read_reg_16(dev, ADE7759_MODE, &val);
+>  	if (ret < 0) {
+>  		dev_err(dev, "unable to power down the device, error: %d\n",
+>  			ret);
+> @@ -404,16 +402,14 @@ static int ade7759_initial_setup(struct iio_dev *indio_dev)
+>  }
+>  
+>  static ssize_t ade7759_read_frequency(struct device *dev,
+> -		struct device_attribute *attr,
+> -		char *buf)
+> +				      struct device_attribute *attr,
+> +				      char *buf)
+>  {
+>  	int ret;
+>  	u16 t;
+>  	int sps;
+>  
+> -	ret = ade7759_spi_read_reg_16(dev,
+> -			ADE7759_MODE,
+> -			&t);
+> +	ret = ade7759_spi_read_reg_16(dev, ADE7759_MODE, &t);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -424,9 +420,9 @@ static ssize_t ade7759_read_frequency(struct device *dev,
+>  }
+>  
+>  static ssize_t ade7759_write_frequency(struct device *dev,
+> -		struct device_attribute *attr,
+> -		const char *buf,
+> -		size_t len)
+> +				       struct device_attribute *attr,
+> +				       const char *buf,
+> +				       size_t len)
+>  {
+>  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+>  	struct ade7759_state *st = iio_priv(indio_dev);
