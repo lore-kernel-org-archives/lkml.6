@@ -1,29 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751257AbeBQLjr (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 06:39:47 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51979 "EHLO
+        id S1751317AbeBQLj7 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 06:39:59 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:39445 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751137AbeBQLjq (ORCPT
+        with ESMTP id S1750960AbeBQLj6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 06:39:46 -0500
-Date: Sat, 17 Feb 2018 03:29:26 -0800
-From: tip-bot for Jin Yao <tipbot@zytor.com>
-Message-ID: <tip-147c508f3004df6e2958f6c8867909531c2a15e2@git.kernel.org>
-Cc: yao.jin@linux.intel.com, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, alexander.shishkin@linux.intel.com, hpa@zytor.com,
-        mathieu.poirier@linaro.org, mingo@kernel.org, tglx@linutronix.de,
-        acme@redhat.com, peterz@infradead.org
-Reply-To: mingo@kernel.org, peterz@infradead.org, acme@redhat.com,
-        tglx@linutronix.de, mathieu.poirier@linaro.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
-        namhyung@kernel.org, yao.jin@linux.intel.com
-In-Reply-To: <1518467557-18505-3-git-send-email-mathieu.poirier@linaro.org>
-References: <1518467557-18505-3-git-send-email-mathieu.poirier@linaro.org>
+        Sat, 17 Feb 2018 06:39:58 -0500
+Date: Sat, 17 Feb 2018 03:39:44 -0800
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-2k5kutwr4ds36adiakyb4yvy@git.kernel.org>
+Cc: acme@redhat.com, jolsa@kernel.org, wangnan0@huawei.com,
+        adrian.hunter@intel.com, hpa@zytor.com, tmricht@linux.vnet.ibm.com,
+        dsahern@gmail.com, namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mingo@kernel.org, mhiramat@kernel.org
+Reply-To: dsahern@gmail.com, tmricht@linux.vnet.ibm.com, hpa@zytor.com,
+        wangnan0@huawei.com, adrian.hunter@intel.com, acme@redhat.com,
+        jolsa@kernel.org, mhiramat@kernel.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, namhyung@kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools: Use target->per_thread and
- target->system_wide flags
-Git-Commit-ID: 147c508f3004df6e2958f6c8867909531c2a15e2
+Subject: [tip:perf/core] perf tests shell lib: Use a wildcard to remove the
+ vfs_getname probe
+Git-Commit-ID: 21316ac6803d4a1aadd74b896db8d60a92cd1140
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,111 +34,65 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  147c508f3004df6e2958f6c8867909531c2a15e2
-Gitweb:     https://git.kernel.org/tip/147c508f3004df6e2958f6c8867909531c2a15e2
-Author:     Jin Yao <yao.jin@linux.intel.com>
-AuthorDate: Mon, 12 Feb 2018 13:32:36 -0700
+Commit-ID:  21316ac6803d4a1aadd74b896db8d60a92cd1140
+Gitweb:     https://git.kernel.org/tip/21316ac6803d4a1aadd74b896db8d60a92cd1140
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Fri, 16 Feb 2018 15:26:51 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Feb 2018 14:55:40 -0300
+CommitDate: Fri, 16 Feb 2018 15:31:12 -0300
 
-perf tools: Use target->per_thread and target->system_wide flags
+perf tests shell lib: Use a wildcard to remove the vfs_getname probe
 
-Mathieu Poirier reports issue in commit ("73c0ca1eee3d perf thread_map:
-Enumerate all threads from /proc") that it has negative impact on 'perf
-record --per-thread'. It has the effect of creating a kernel event for
-each thread in the system for 'perf record --per-thread'.
+In some situations the vfs_getname is being added both as requested and
+with a _1 suffix (inlines?):
 
-Mathieu Poirier's patch ("perf util: Do not reuse target->per_thread flag")
-can fix this issue by creating a new target->all_threads flag.
+  probe:vfs_getname_1  (on getname_flags:63@acme/git/linux/fs/namei.c with pathname)
 
-This patch is based on Mathieu Poirier's patch but it doesn't use a new
-target->all_threads flag. This patch just uses 'target->per_thread &&
-target->system_wide' as a condition to check for all threads case.
+This ends up making the cleanup to miss that one, as it removes just
+'probe:vfs_getname', which makes the second test to use this probe point
+to fail, since it finds that leftover from the first test, use a
+wildcard to remove both.
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Before:
+
+  # perf test 60 61 62 63
+  60: Use vfs_getname probe to get syscall args filenames   : FAILED!
+  61: probe libc's inet_pton & backtrace it with ping       : Ok
+  62: Check open filename arg using perf trace + vfs_getname: FAILED!
+  63: Add vfs_getname probe to get syscall args filenames   : Ok
+
+After:
+
+  # perf test 60 61 62 63
+  60: Use vfs_getname probe to get syscall args filenames   : Ok
+  61: probe libc's inet_pton & backtrace it with ping       : Ok
+  62: Check open filename arg using perf trace + vfs_getname: Ok
+  63: Add vfs_getname probe to get syscall args filenames   : Ok
+  #
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Fixes: 73c0ca1eee3d ("perf thread_map: Enumerate all threads from /proc")
-Link: http://lkml.kernel.org/r/1518467557-18505-3-git-send-email-mathieu.poirier@linaro.org
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-[Fixed checkpatch warning about line over 80 characters]
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-2k5kutwr4ds36adiakyb4yvy@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evlist.c     | 21 ++++++++++++++++++++-
- tools/perf/util/thread_map.c |  4 ++--
- tools/perf/util/thread_map.h |  2 +-
- 3 files changed, 23 insertions(+), 4 deletions(-)
+ tools/perf/tests/shell/lib/probe_vfs_getname.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index e5fc14e..7b7d535 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -1086,11 +1086,30 @@ int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages)
+diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+index 30a950c..1c16e56 100644
+--- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+@@ -5,7 +5,7 @@ had_vfs_getname=$?
  
- int perf_evlist__create_maps(struct perf_evlist *evlist, struct target *target)
- {
-+	bool all_threads = (target->per_thread && target->system_wide);
- 	struct cpu_map *cpus;
- 	struct thread_map *threads;
- 
-+	/*
-+	 * If specify '-a' and '--per-thread' to perf record, perf record
-+	 * will override '--per-thread'. target->per_thread = false and
-+	 * target->system_wide = true.
-+	 *
-+	 * If specify '--per-thread' only to perf record,
-+	 * target->per_thread = true and target->system_wide = false.
-+	 *
-+	 * So target->per_thread && target->system_wide is false.
-+	 * For perf record, thread_map__new_str doesn't call
-+	 * thread_map__new_all_cpus. That will keep perf record's
-+	 * current behavior.
-+	 *
-+	 * For perf stat, it allows the case that target->per_thread and
-+	 * target->system_wide are all true. It means to collect system-wide
-+	 * per-thread data. thread_map__new_str will call
-+	 * thread_map__new_all_cpus to enumerate all threads.
-+	 */
- 	threads = thread_map__new_str(target->pid, target->tid, target->uid,
--				      target->per_thread);
-+				      all_threads);
- 
- 	if (!threads)
- 		return -1;
-diff --git a/tools/perf/util/thread_map.c b/tools/perf/util/thread_map.c
-index 3e1038f..729dad8 100644
---- a/tools/perf/util/thread_map.c
-+++ b/tools/perf/util/thread_map.c
-@@ -323,7 +323,7 @@ out_free_threads:
+ cleanup_probe_vfs_getname() {
+ 	if [ $had_vfs_getname -eq 1 ] ; then
+-		perf probe -q -d probe:vfs_getname
++		perf probe -q -d probe:vfs_getname*
+ 	fi
  }
- 
- struct thread_map *thread_map__new_str(const char *pid, const char *tid,
--				       uid_t uid, bool per_thread)
-+				       uid_t uid, bool all_threads)
- {
- 	if (pid)
- 		return thread_map__new_by_pid_str(pid);
-@@ -331,7 +331,7 @@ struct thread_map *thread_map__new_str(const char *pid, const char *tid,
- 	if (!tid && uid != UINT_MAX)
- 		return thread_map__new_by_uid(uid);
- 
--	if (per_thread)
-+	if (all_threads)
- 		return thread_map__new_all_cpus();
- 
- 	return thread_map__new_by_tid_str(tid);
-diff --git a/tools/perf/util/thread_map.h b/tools/perf/util/thread_map.h
-index 0a806b9..5ec91cf 100644
---- a/tools/perf/util/thread_map.h
-+++ b/tools/perf/util/thread_map.h
-@@ -31,7 +31,7 @@ struct thread_map *thread_map__get(struct thread_map *map);
- void thread_map__put(struct thread_map *map);
- 
- struct thread_map *thread_map__new_str(const char *pid,
--		const char *tid, uid_t uid, bool per_thread);
-+		const char *tid, uid_t uid, bool all_threads);
- 
- struct thread_map *thread_map__new_by_tid_str(const char *tid_str);
  
