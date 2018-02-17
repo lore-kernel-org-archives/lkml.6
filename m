@@ -1,54 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751109AbeBQJlE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 04:41:04 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45340 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751055AbeBQJlD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 04:41:03 -0500
-X-Google-Smtp-Source: AH8x226Tisb2xptxPpe31gflSXVZ01UIiXqKMIB/SYsubWGhk6b5iTBpIWzT3LXpPDD2O3DDC2y7/w==
-Date: Sat, 17 Feb 2018 15:12:22 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: jassisinghbrar@gmail.com
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] maillbox: bcm-flexrm-mailbox: Use dma_pool_zalloc()
-Message-ID: <20180217094222.GA13241@jordon-HP-15-Notebook-PC>
+        id S1751092AbeBQJpx (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 04:45:53 -0500
+Received: from ozlabs.org ([103.22.144.67]:54379 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751032AbeBQJpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Feb 2018 04:45:52 -0500
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: clabbe@baylibre.com, clg@kaod.org, cyrilbur@gmail.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        nfont@linux.vnet.ibm.com, npiggin@gmail.com
+Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.16-3 tag
+Date: Sat, 17 Feb 2018 20:45:46 +1100
+Message-ID: <874lmg3q5x.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use dma_pool_zalloc() instead of dma_pool_alloc + memset
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
- drivers/mailbox/bcm-flexrm-mailbox.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Hi Linus,
 
-diff --git a/drivers/mailbox/bcm-flexrm-mailbox.c b/drivers/mailbox/bcm-flexrm-mailbox.c
-index a8cf433..8ab077f 100644
---- a/drivers/mailbox/bcm-flexrm-mailbox.c
-+++ b/drivers/mailbox/bcm-flexrm-mailbox.c
-@@ -1268,7 +1268,7 @@ static int flexrm_startup(struct mbox_chan *chan)
- 	}
+Please pull some more powerpc fixes for 4.16. Sorry to send a pull
+request on the weekend, and a 2nd one this week, but one of these
+commits fixes a boot crash which would be good to get in before rc2.
 
- 	/* Allocate completion memory */
--	ring->cmpl_base = dma_pool_alloc(ring->mbox->cmpl_pool,
-+	ring->cmpl_base = dma_pool_zalloc(ring->mbox->cmpl_pool,
- 					 GFP_KERNEL, &ring->cmpl_dma_base);
- 	if (!ring->cmpl_base) {
- 		dev_err(ring->mbox->dev,
-@@ -1277,7 +1277,6 @@ static int flexrm_startup(struct mbox_chan *chan)
- 		ret = -ENOMEM;
- 		goto fail_free_bd_memory;
- 	}
--	memset(ring->cmpl_base, 0, RING_CMPL_SIZE);
+cheers
 
- 	/* Request IRQ */
- 	if (ring->irq == UINT_MAX) {
---
-1.9.1
+The following changes since commit 694a20dae6efc3803740971fa9f7c86b8c8d4685:
+
+  Merge tag 'powerpc-4.16-2' of git://git.kernel.org/pub/scm/linux/kernel/g=
+it/powerpc/linux (2018-02-14 10:06:41 -0800)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/po=
+werpc-4.16-3
+
+for you to fetch changes up to 2c10636a0b9c689450e85f9945583920f50337c9:
+
+  powerpc/pseries: Check for zero filled ibm,dynamic-memory property (2018-=
+02-16 21:34:14 +1100)
+
+=2D---------------------------------------------------------------
+powerpc fixes for 4.16 #3
+
+The main attraction is a fix for a bug in the new drmem code, which was cau=
+sing
+an oops on boot on some versions of Qemu.
+
+There's also a fix for XIVE (Power9 interrupt controller) on KVM, as well a=
+s a
+few other minor fixes.
+
+Thanks to:
+  Corentin Labbe, Cyril Bur, C=C3=A9dric Le Goater, Daniel Black, Nathan Fo=
+ntenot,
+  Nicholas Piggin.
+
+=2D---------------------------------------------------------------
+Corentin Labbe (1):
+      powerpc/pseries: Add empty update_numa_cpu_lookup_table() for NUMA=3Dn
+
+Cyril Bur (1):
+      powerpc: Expose TSCR via sysfs only on powernv
+
+C=C3=A9dric Le Goater (1):
+      powerpc/xive: Use hw CPU ids when configuring the CPU queues
+
+Nathan Fontenot (1):
+      powerpc/pseries: Check for zero filled ibm,dynamic-memory property
+
+Nicholas Piggin (1):
+      powerpc/powernv: IMC fix out of bounds memory access at shutdown
+
+ arch/powerpc/include/asm/topology.h       |  3 +++
+ arch/powerpc/kernel/sysfs.c               |  6 ++++--
+ arch/powerpc/mm/drmem.c                   |  8 ++++++++
+ arch/powerpc/platforms/powernv/opal-imc.c |  6 ++++--
+ arch/powerpc/sysdev/xive/spapr.c          | 16 ++++++++++------
+ 5 files changed, 29 insertions(+), 10 deletions(-)
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJah/nKAAoJEFHr6jzI4aWAKOgQAItVhwA3tcBOW3NKygCtJM8C
+7+8uBaNKRH1lOWTYuzSrV8bXYXK39zn/Y7MqupFv0PBY6iqElRYGMSzpMflvvbgi
+JJQtZ23Dxp9fWFUUmHMLKlER9GuM9znLcTG+NBtx8VH6pfhaQ5wjNHsQ06aYb/+z
+qfpIVGZO3axsIuzFRuVaI1Lia/8O/6ATsvb0ruzEHTNCVcX3kA/gK/70MwSkvm09
+7qUy20Mit2KpZnP9/uWRrYJM2WaMzHIGjJ5BcLqyeex4yEEsjZmkUpPbG/FEN2/O
+62mdFnPUDqf73TcPoXJgpcHvK2Z1KyQq3ls+RH2vH+ERTEcE1vDi4xLbfj+D010a
+oRfG57rN8AciBI4+y4XyF3rIOAVN4tgKu4dQ4e4V8Mjrd03UJ//stl+mISrIBnRJ
+hgyoX8GQiv7uF62kJphg8+Wkve2OY9w9PHDHAovzBgrTdtW9zGkTEoHF1f42XXYA
+pFXOWdsbpAzZkAR19MRvRvLsrIreSuZXZGxLxaqqKHKwN56512zmwGkPp7OL3CUt
+pRXVS4SgA4HScSMEJlPtw1OPkcFKK2bKYzpoYsKnsfOJujaNCd7qjtLQCyPDjwlm
+oj0b1TBy7WekwHpskgjLiTH7OT54A+Ydoe1PlmuoOAqPFXGlx4VfTnNzyMb7K1CC
+9ThGh3ChU2dg36svCPTt
+=Uj0g
+-----END PGP SIGNATURE-----
+--=-=-=--
