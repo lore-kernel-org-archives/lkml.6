@@ -1,108 +1,82 @@
-Return-Path: <aishpant@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1518795545; cv=none;
+Return-Path: <ed.cashin@acm.org>
+X-Google-Smtp-Source: AH8x225UEtCgq7IxRJFNi4dybr7mlqOPl14g05HofRK+Hc1Zk0XiTPJmLmcEeKi9TGW7VVSHfDSz
+ARC-Seal: i=1; a=rsa-sha256; t=1518836299; cv=none;
         d=google.com; s=arc-20160816;
-        b=i0zp6L98sBFUsQo8S7O4iod5BJ97yakuPOllCP6SbCef2x9Fnflvo/FJbpaYerOS5C
-         ETDXNLY/AXIVKTZWNHzH2XVUCaMAHTGErXByD7Ctn2BEk/prioI5eVNq8d4x1+INjeYB
-         IQ5MNOoNWjSeyo7pc/VLLzwt2XRd3lWTUfTNnjNPHKL7/U94f6DHrpjAV6TPr23rJaBF
-         +RWdlIycwbEgRnltE1+H9yfMbFK7XPmV4f7wyb3eyoH90bAX0S62HxAlSA0PA8VMucVa
-         KoqmSG9/lw2Lhzp5AqpoUp1PLWUJhOmfyDZSwQHrdsijV2b9qpM4WjjlVNqWTzLUpjsj
-         uE2Q==
+        b=0CghNZNuC9nUtBlp+Or+yOwA3/2a58jw/OJEXQDSTUY6vfO8rc90Es3tCaudc7rvt2
+         kLr901E9oALEYYDmyefHFWJv9fy9tLZ1uAjxn+XpNB8Gn2n0QIQbJiEcTCfdAv1phRAV
+         pSSkMQIGWK7xR5Cplf4WLvnnStJvQykaOCRHeRGVz/Hn4MKIO0U5wM+MGd4/ZpdYvFHQ
+         a3+ebS1UoF/dJcOFy7eu9Rs8SqC3an8gyiNGONe/J4SgQeSVdELMiPQLtBY2jEfWGWv0
+         V72km15SWes1SPNYbHbmd9xpLiAezcRO9iTU7AH3d0GZiwjYQ1yJBAub5kUUMVkEczp6
+         hksg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:dkim-signature:arc-authentication-results;
-        bh=4MP5qzMPnYSu8Np5DEOStRW89XjbQfoLEz8EmSALmr8=;
-        b=XihjXoMSxgKTt/KLlEDgRDnajzkDyo61TjBqH94cMCZGDsobg2IVfdjx35TSM8B5PK
-         H6dvFCMVIb6rEPn5udvwTh3TjCLy4vx8nxf8xSwrVa+UTC94S9uRGCePwapIXi8exGJ3
-         MyAY5zlKozfqg3C3/eatGQKHeh8DUlQ3jXQF3XAZ4G4KqflhvVLLYGgnUPcGidLLf8pq
-         1cEm0Y4liW+xgZh0M5YQWj00RlwH9y7ON9g5oS3gj0zf/4sBmBhWXdI0T+0iGTz+pPP1
-         7q/IY2WIMxJku+h1OAGNmYf7y2dJLvEkHkfPVGwk5ynerhTyO8+0QIJloFeBHOz27FFQ
-         9eiw==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=/u7LqPpEKwz8d0XJOkHggRLLggBla/VfiM20iFCvCJM=;
+        b=iUVg1JSjjTWKxWIX7LZSy/jYKSV9tNTjAjybuGK2Ck4ZBEKWwtPtRMD7tO+A3asnsx
+         zk7BGvz+TN/8JAJm4aES5NfW8gkidCn0peUE74SVowX4R6DzgF2Cad9DZcDxTGEZUw88
+         BGjpI+opY8Air4C1EgeynWxjRlas2a8eIIrfT8NIJbTZ2ehZCpLAhclgpfl7zB28Bjkn
+         dNTvsRov0YrH49R6NJiwIOKsF4f93kSj2oPENlmfEmX9QY2RMSjH5rB9lRtOGc/FJX2z
+         Z8bvbjh2UwSOCKkQf3Iyt37+OTILbhmBlyedeUqN6VQFrqlx65jurqaQhqPQUGnjA1TY
+         gRuw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hso04+jW;
-       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=softfail (google.com: domain of transitioning ed.cashin@acm.org does not designate 69.89.23.12 as permitted sender) smtp.mailfrom=ed.cashin@acm.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hso04+jW;
-       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x227lPHAdQO1eFD0CR2xKvXmXNGJowPrtze3BK95tU9B/IAR4Osdc8Ei+MgNvFlr6Q/94H4nFQg==
-Date: Fri, 16 Feb 2018 21:09:00 +0530
-From: Aishwarya Pant <aishpant@gmail.com>
-To: "Ed L. Cashin" <ed.cashin@acm.org>, linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Greg KH <gregkh@linuxfoundation.org>
+       spf=softfail (google.com: domain of transitioning ed.cashin@acm.org does not designate 69.89.23.12 as permitted sender) smtp.mailfrom=ed.cashin@acm.org
+X-Authority-Analysis: v=2.2 cv=G85sK5s5 c=1 sm=1 tr=0
+ a=6lV6tj8ir7tGSl/9xQZNPA==:117 a=6lV6tj8ir7tGSl/9xQZNPA==:17
+ a=IkcTkHD0fZMA:10 a=Op4juWPpsa0A:10 a=6dSziLGFmYxQ7E99zKgA:9 a=QEXdDO2ut3YA:10
+Subject: Re: [PATCH] aoe: document sysfs interface
+To: Aishwarya Pant <aishpant@gmail.com>, linux-kernel@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, Greg KH <gregkh@linuxfoundation.org>
 Cc: Julia Lawall <julia.lawall@lip6.fr>
-Subject: [PATCH] aoe: document sysfs interface
-Message-ID: <20180216153900.GA12832@mordor.localdomain>
+References: <20180216153900.GA12832@mordor.localdomain>
+From: Ed Cashin <ed.cashin@acm.org>
+Message-ID: <9ddc04c5-eedf-b88a-0cea-bd0c91a2dfcc@acm.org>
+Date: Fri, 16 Feb 2018 21:58:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180216153900.GA12832@mordor.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box320.bluehost.com
+X-AntiAbuse: Original Domain - linuxfoundation.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - acm.org
+X-BWhitelist: no
+X-Source-IP: 24.99.197.19
+X-Exim-ID: 1emshb-0037GQ-Fj
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-24-99-197-19.hsd1.ga.comcast.net ([10.0.0.86]) [24.99.197.19]:59801
+X-Source-Auth: nobody
+X-Email-Count: 0
+X-Source-Cap: bm9ib2R5Oztib3gzMjAuYmx1ZWhvc3QuY29t
+X-Local-Domain: no
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592572558446163401?=
-X-GMAIL-MSGID: =?utf-8?q?1592572558446163401?=
+X-GMAIL-MSGID: =?utf-8?q?1592615291670839573?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Documentation has been compiled from git commit logs and descriptions in
-Documentation/aoe/aoe.txt. This should be useful for scripting and
-tracking changes in the ABI.
+On 02/16/2018 10:39 AM, Aishwarya Pant wrote:
+> Documentation has been compiled from git commit logs and descriptions in
+> Documentation/aoe/aoe.txt. This should be useful for scripting and
+> tracking changes in the ABI.
+...
+> +What:		/sys/block/etherd*/netif
+...
+> +Description:
+> +		(RO) The name of the network interface on the localhost through
+> +		which we are communicating with the remote AoE device.
 
-Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
----
- Documentation/ABI/testing/sysfs-block-aoe | 44 +++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-block-aoe
+I'd recommend changing that to, "network interfaces".
 
-diff --git a/Documentation/ABI/testing/sysfs-block-aoe b/Documentation/ABI/testing/sysfs-block-aoe
-new file mode 100644
-index 000000000000..d197c7770dc0
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-block-aoe
-@@ -0,0 +1,44 @@
-+What:		/sys/block/etherd*/mac
-+Date:		Apr, 2005
-+KernelVersion:	v2.6.12
-+Contact:	Ed L. Cashin <ed.cashin@acm.org>
-+Description:
-+		(RO) The ethernet address of the remote Ata over Ethernet (AoE)
-+		device.
-+
-+What:		/sys/block/etherd*/netif
-+Date:		Apr, 2005
-+KernelVersion:	v2.6.12
-+Contact:	Ed L. Cashin <ed.cashin@acm.org>
-+Description:
-+		(RO) The name of the network interface on the localhost through
-+		which we are communicating with the remote AoE device.
-+
-+What:		/sys/block/etherd*/state
-+Date:		Apr, 2005
-+KernelVersion:	v2.6.12
-+Contact:	Ed L. Cashin <ed.cashin@acm.org>
-+Description:
-+		(RO) Device status. The state attribute is "up" when the device
-+		is ready for I/O and "down" if detected but unusable. The
-+		"down,closewait" state shows that the device is still open and
-+		cannot come up again until it has been closed.  The "up,kickme"
-+		state means that the driver wants to send more commands to the
-+		target but found out there were already the max number of
-+		commands waiting for a response. It will retry again after being
-+		kicked by the periodic timer handler routine.
-+
-+What:		/sys/block/etherd*/firmware-version
-+Date:		Apr, 2005
-+KernelVersion:	v2.6.12
-+Contact:	Ed L. Cashin <ed.cashin@acm.org>
-+Description:
-+		(RO) Version of the firmware in the target.
-+
-+What:		/sys/block/etherd*/payload
-+Date:		Dec, 2012
-+KernelVersion:	v3.10
-+Contact:	Ed L. Cashin <ed.cashin@acm.org>
-+Description:
-+		(RO) The amount of user data transferred (in bytes) inside each AoE
-+		command on the network, network headers excluded.
+Thanks!
+
 -- 
-2.16.1
+   Ed
