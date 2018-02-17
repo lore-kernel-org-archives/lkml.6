@@ -1,511 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751281AbeBQWLd (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 17:11:33 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35118 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751213AbeBQWLb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 17:11:31 -0500
-X-Google-Smtp-Source: AH8x225reyo5Md2SczZAaZkz6RyfoV7VKrLunBIOKkTpRijX3q0RAQFNB1bZuC7bVw89gw0lKZpE+gh3ukhloKw4tAQ=
+        id S1751358AbeBQWXT (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 17:23:19 -0500
+Received: from mail-eopbgr40123.outbound.protection.outlook.com ([40.107.4.123]:15040
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751254AbeBQWXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Feb 2018 17:23:17 -0500
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com;
+Subject: Re: BUG: sleeping function called from invalid context at
+ net/core/sock.c:LINE (3)
+To: Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+749d9d87c294c00ca856@syzkaller.appspotmail.com>,
+        Jon Maloy <jon.maloy@ericsson.com>, Ying Xue <ying.xue@windriver.com>
+Cc: Andrei Vagin <avagin@virtuozzo.com>,
+        David Miller <davem@davemloft.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Florian Westphal <fw@strlen.de>, LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, roman.kapl@sysgo.com,
+        syzkaller-bugs@googlegroups.com, tipc-discussion@lists.sourceforge.net
+References: <001a1143e44e58485f05655fa8ae@google.com>
+ <CACT4Y+bxubQ0yqi777mgQdT6paPS+wWQo79T+jPqztPJ=gTYhw@mail.gmail.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <b6b1e370-d3ba-4db7-228f-a3ccaf502992@virtuozzo.com>
+Date: Sun, 18 Feb 2018 01:23:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20180211215028.16210-2-metux@gmx.de>
-References: <40d4c871-a16a-7b8f-2d4a-422a5a490693@infradead.org>
- <20180211215028.16210-1-metux@gmx.de> <20180211215028.16210-2-metux@gmx.de>
-From: Richard Weinberger <richard.weinberger@gmail.com>
-Date: Sat, 17 Feb 2018 23:11:29 +0100
-Message-ID: <CAFLxGvwHebXuQYwOdG_vnYfjwtdMfCHg5srzjsj1fEaCFm2QGw@mail.gmail.com>
-Subject: Re: [PATCH] p9caps: add Plan9 capability devices
-To: "Enrico Weigelt, metux IT consult" <metux@gmx.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CACT4Y+bxubQ0yqi777mgQdT6paPS+wWQo79T+jPqztPJ=gTYhw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [89.178.229.144]
+X-ClientProxiedBy: HE1PR0102CA0020.eurprd01.prod.exchangelabs.com
+ (2603:10a6:7:14::33) To VI1PR0801MB1341.eurprd08.prod.outlook.com
+ (2603:10a6:800:3a::27)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e7b30654-9efd-43e4-c46a-08d5765507d0
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7153060)(7193020);SRVR:VI1PR0801MB1341;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1341;3:V7CVQ6IFpHhzghmWJZCX9Ddm3byyapo5rULypfzZUs4ap883cp8jYy7vIrqd9MR8wgy4YYhyrQa5WJzH+HtonLJQS7CK56745PA04rTkwU5AnmXWDkz5LPSx+sjBnzpqeIzuY0ZDFaVFNUx64atN6l4M1p0Xu/TPb7sRbo28DCKQKQEqB7yL0XfEqSwjaXD9bFup1LUaM8EfXML03q+elQJ0nCLWG7ZMMESornWHBUhN+/8EBdmUXH5DolzEcJBo;25:OHrDUTcgqMO8qlONZjM5oz18GyxO4dJayM1IblZJj4UuzNJNehRMc7PPuFqrLGC9wRHbSD9RS3JfVsbx126+4R/S46a/kzhyFJv/m1PbMQbQVeFkwA4eDHPFss7FBAzKtRaDoPZGffwirD93mrr6lH7Jw6XQ2Tf4Z19/M0Dkq0G1X8lRrM0HeP7x4+ekDzaMP0DpUJX+l2TakBDP+ej3UFEckvxLg2g6ETd27IqHLkhY2yjTNCu3yCZ0Dewc4G9eiJ8af3/YjbcbO1IPMLAO7hk1nh7WsrWzv0Brt1zRQBCAxugNnHybi9aoDKzqr0JGjYi66+YkfVMfmUCpTC1Lew==;31:YG2T3K9GMVhhVXsVLzbKOTWpeTkrXqqAgBbORQ3iwErvKmmEgjhAC6msLxcOMJwEmJLqwVenJx8jTeL3oRl2gLbM6zF+4rkNNkarG64aXdxbl6DCMSIsdDfT4/CyS/QfEtDW6Y/FkFdMbljtB3xT/6JgjuljQ+5pYjQeiSR4IxRoJVJj/5876gE3i2NwazemI/L4OvdlpH42aN6Kvi/gs9m0Ku08vVfA/+q3iUOOBok=
+X-MS-TrafficTypeDiagnostic: VI1PR0801MB1341:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1341;20:qjDcQkfEpr1N5gDtpg6AH0svXo+7avWgv7d//uXaU7rnFq3+yuzgNKATNT9Df5XIuXURqkbKIQuCkuQYsFKisQOyvN6Nde38ogH5MZ1fIPFNrui/wgF54G1d/5I9xFuL7QxIGcGAT6uYs+rGWvJS0GIGOT7Zc0YCuTdDG9aK+6vY6kiSgK67YlODEBYcNMZ++7iEhrxA/QrB01bPF+XgMNzz9R0IQ1PzvOIREbuVBAysTYBDadXWlOQDfx+aJKcqwo6tRyQx+ne/zVElLT2+sxfpphwp2oTcRYQe7lTLxQYPDUDEPBKi5mB7vbNfXKccW7+QPscEpBzOh/2seIhg5nhc8MV9duZpcOaFeW2b/MJ6qHTeqmhSDYe34WUqVlVnbjZvcAqAe+OVBrKTltNiX0Ity4c9LrmiN/W+LtwFeQA9L6lAHMzHuG/msYZMuZB5IWIdfUaF+z8X1kUcq7rD5Gt9a+1BJ219j03GM+62NczZOWPTq6yl3DxFj8WPi5WF;4:gpeiNOLu7WJ6H9sI9XKuLXF7xWxBAoI0frcvCavPuj+rGtVVMVHOz/lC5NP7As+FPgKEBYuYwU1EQoH6cLDAsi8t8uFKqpAyY+L9lsPXOfLzsQ8NkRxEmn4SyGt+PCJf+Dy4jfI+V6E52LSbYbIhgJrIk6BUrVTZPD59aBXQJJ+cFAplvlam22pXb5AUSp8ifgvq1iMYFDfwYrnSe8Tq8Z/ievvprWJusNuZISHEGJBpRIMFAc2O1qYlgi2iqqXUBpu0kyea1dEx4wakjP02sJ6fvL2BH3xSkSFYQO8RrAwvleLWF5oDX8LT9DtDYUng
+X-Microsoft-Antispam-PRVS: <VI1PR0801MB13413A65CB48004BC3CBC815CDCA0@VI1PR0801MB1341.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(158342451672863);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231101)(944501161)(3002001)(6041288)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:VI1PR0801MB1341;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0801MB1341;
+X-Forefront-PRVS: 058637CA05
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(979002)(6069001)(366004)(39830400003)(39380400002)(346002)(376002)(396003)(199004)(189003)(6512007)(26005)(65826007)(5660300001)(16526019)(106356001)(31686004)(186003)(7416002)(53936002)(6486002)(65956001)(478600001)(2950100002)(316002)(105586002)(110136005)(68736007)(65806001)(58126008)(66066001)(6666003)(6246003)(54906003)(97736004)(7736002)(4326008)(305945005)(47776003)(50466002)(81156014)(81166006)(31696002)(52116002)(8676002)(36756003)(53546011)(86362001)(230700001)(25786009)(8936002)(386003)(2906002)(52146003)(23676004)(2486003)(6116002)(3846002)(76176011)(6506007)(64126003)(83506002)(229853002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0801MB1341;H:localhost.localdomain;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjA4MDFNQjEzNDE7MjM6OFlocUJLdW9UVjVwZThBaDQzbmxEcDY1?=
+ =?utf-8?B?b05TMUxaN2NZVDhxaENHaDhOR05nZ3dRelZZVGhtb003SnZzZ3oveVhJWXpE?=
+ =?utf-8?B?MEJ3TlJqY2hWMTBjeWJEbGRLUGt5eVlmRUpCTFdUTU5MUkJDaWtJSnlMeFhW?=
+ =?utf-8?B?NEFINDNlMVp0TTdGckNrYUplMEVIUjExWXZHand6Q0ljOGl5dTVlWHB1YmNq?=
+ =?utf-8?B?OUJOQW5uNWNWMWg2eVZRNU9ySmtock8vb2VBVldZOVZ6cnF1NFBUWC9SZ3Rp?=
+ =?utf-8?B?YnFsdVpnTVc1RVBNeEJDdEtsTkk4STNBZlJabnFGZ0pJRVI5Z2QvT3F3SHdh?=
+ =?utf-8?B?NjF0bXhUK1pvaWRCdXRveGZGaWNLN2NMS2cwWUpDdG1HaVp0a0c2YXNTc0lC?=
+ =?utf-8?B?Yk9GVmNaQkNIQlk0dmtLSkdiZ3pjOHRiK1VhZnhGV1NZaWVWNDJuTk4xM0Va?=
+ =?utf-8?B?NzVEVkVYQUtGMGZBaERHWWhqcTRYd3FaS2t1RDlKQUxQcjZQTnVrMFU0MXBH?=
+ =?utf-8?B?YjJpd3E5RUpEckZVNWlwY09MSHNIWGxCTmUwalJwbWlxR1hlQ0JablhYZGVr?=
+ =?utf-8?B?Lzh1WEpkOFlJcCt2MGg0Wk01WkxNdDZMU1k4YS92M2RRWTVtZ0VvYTlkUDlh?=
+ =?utf-8?B?MXdKY3VDV2NOR3ZteGJGT1gvSU01K0EzOFd6ZTR0UzF4OExCUmFNMDh0MUFZ?=
+ =?utf-8?B?YnltdEdEdXhSS2tvUVhuVzVoUnozZzl0QUl1NDVKb001RWR4aEZ1ZGoxT3Iy?=
+ =?utf-8?B?RUZKc0V1VUVEYzhveU4wOWFPNXJZTEJ1TFNrcUpJbTlISC9VUTR6allIKytq?=
+ =?utf-8?B?WVpNUzNYVnJqakloRXdnME93RmpmTVE5RFlxWTJSMUtLVTltbXdmSDZDdysx?=
+ =?utf-8?B?cGtUOU5VYkIzSlpyNE5VK1g1WEVaVXRlRncyd3FLeVU3ZEpTdzZXRTJiNzNW?=
+ =?utf-8?B?TDZhd2VPNkVGYktUY0pmV0ZuN2xvNERSVVNLSnh2T3NQSVVEbFc2NUlCM2Nt?=
+ =?utf-8?B?cmU1aERORGttTU1kZHBKM0pYMFgzYW1STXZka2NyNXJnZDRleE9uNUxBVlVL?=
+ =?utf-8?B?andTaFlyTjlZVkR3TWtFTzlsdURPTnpraTNjWjhCN2hGZHhRRzBZODM0c0Zm?=
+ =?utf-8?B?Z1ZFMlcvbGczNEpNbGFuazRpQVg5VkRZZkZ3eFNTZXJwZ0lza1BhelBxTHpj?=
+ =?utf-8?B?ZHE2ZldOZmcwbWUzWG0vaDdVL0ZLeWNqbU5NU1V2MHJuRllESXg4bUloR2JY?=
+ =?utf-8?B?SWpTVzJtVGNUK2lpVzZtNlo3VHgxYm9yVmdiVjVWTFhFd0lMeHViUmtHU2ti?=
+ =?utf-8?B?anc1ckY3ZlU5ZTNtVEJoalA2YnFwKzFuQnZLOThkL3A0U3JWNGdncFJtWXlE?=
+ =?utf-8?B?Mi9aWFc3dHdHSFBVWVBJWWFYMWIrb0lTUkdMUUVrSnlkRUFEREpIZVMzNStQ?=
+ =?utf-8?B?RTNJeDIyOFFpTDNvYWEzTTR2enhCTWtMZ3BETEdVVVhzQU8yeG45bXY0c0RO?=
+ =?utf-8?B?aVhjUzJmMnYzTzdBVFh2ODh4b1lCaTNabE1EVWExNlQ3cHVHRWNZTHdlWko2?=
+ =?utf-8?B?WUJsbHVta1VDa1oxTG1reTFhTU4xaHhydThZR0d3cXZxcEEvbTdBV0k0amlM?=
+ =?utf-8?B?WFhLUUhialNZOGtTb2dEVVlPT0NadDd2R0VOS1hqdkJkMUhFVFV6MnliSFky?=
+ =?utf-8?B?UjBBaGZRRERxNFBEbkN6RUVGdmY0MEYrdWg0eXljeEhkdFBEUjJBbWxqTDRM?=
+ =?utf-8?B?NFJqNEpRRVAydGZvZVpBZmYxVGk1MS9Ya0ROOHpENmtqOWxrb2R0dzZCcm51?=
+ =?utf-8?B?emgxaTBmMWVRRWpwdmlNUEhzTGlRWXphUktmUTEzVlNoa2ZiTXZYb1B3Umtj?=
+ =?utf-8?B?Vk9CdnRhbFNyNFFqeEdweG5Hc1dmOG5ORUxoaUs4R3VBUjNzQVo3VHltWjZM?=
+ =?utf-8?B?ODRmeGIzclhZMm53TGYwYmxOOHlWMGZJSmhhWEZTTEU5QmU2ZVFOVHlqeDR3?=
+ =?utf-8?B?S0s5YnBHb3JkNGlVemYwZnZIRTVJYUcxRCthQ3JBPT0=?=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1341;6:SkbA4ynjZ4RaBaN2BSKJizDXGFSqJjgwpGkPfFKyXix8dROM0agOaZqs+8LNtuWC7ErLhKLgiI8ctj0F41fDbOEvYkbDUBAlm8+0Gzu6ddMz7YSPCageSHA8/ydX15IVhlwBPORmElYf3v0VrpMasZGaIemXz0SlfgutCgwcJdhU1hczCWPYTaIXgL0vGVmrab+Mb0syfsXRJnyFRhcmWQkz1m+WYZ4/FaA+21ssONfRPoq6wuZ4zsQis0KlUGptrTY0DsvvVTSGeQXZUi65ZT407ncwxWuH0o3VrmGlYKRE1uMsZn3KoO3dcfjcSMkKOGIka+9sjIBiZDkRlXf3cYQwUywbZEMMklVKHeSBfY8=;5:/xxOLWA5wrb8hG0VSuDy07AvSKsyz0zJJIXZhTiUmEqhM3K1fR651pKT35oULIFRDjgSxO9Anf06yNLjvgJyaQkrFCfiTZ2ZzBSGRWLzWXt4csesR4oXIUorvflvosEHMAu+wE06mZcxk0oQriha2AqScEZtfu/YARqPD2OcVU0=;24:B5g8KuszP1cpGwi2KGzbp3YQ6oLwEXEmkEjfPrLJLcaqh/g0knftENsYOsp1ylDo7DUfNOAwUC7R2FW3GCY50uAPqitlHIKAK8IPCKwjDPU=;7:PP48UGxFgwMlj66m8KJ8NDQIv4+K+SWobxjN/R5v8Wvs+70XxaUf0AUrtyGgdttnFsvYNb87OplUBM2YA3Mm5tFlmhuPoxfuUYHCsVLKuB9iuaHimBuaS5GbFenDwa1FvbkzOpPbxq/l1+6n7golakvKW95Qr9rh6FM1qZuH1irNLuSfeZZpOt3koaaE3ADbH+GvKUZL8xdA0MK8646sUwEBDnnNUT1Qv+WqL1lV9rbufVKze2Smt+MbZ1957QW0
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1341;20:XVMNWBiU5v6jDmkG5IiWL67CIy27GfBiuUjVjecmjR4dWQguZp/0esY+cQ4VQsErwwRphop5P0W5oG/fYFPCPiuyLUzRQEfeKY5FybPfA4k7huv1cUbIOoDUFRXQkH1iFWLVCmaIM1KeGONV/DZL7SNIPeBFqTNkvcAFTxgem7o=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2018 22:23:10.6181 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e7b30654-9efd-43e4-c46a-08d5765507d0
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0801MB1341
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 10:50 PM, Enrico Weigelt, metux IT consult
-<metux@gmx.de> wrote:
-> From: "Enrico Weigelt, metux IT consult" <info@metux.net>
->
-> This driver implements the Plan9 capability devices, used for
-> switching user id via capability tokens.
->
-> https://9p.io/sys/doc/auth.html
+On 17.02.2018 11:15, Dmitry Vyukov wrote:
+> On Sat, Feb 17, 2018 at 4:00 AM, syzbot
+> <syzbot+749d9d87c294c00ca856@syzkaller.appspotmail.com> wrote:
+>> Hello,
+>>
+>> syzbot hit the following crash on net-next commit
+>> 65bd449c32c2745df61913ab54087e77f9d9b70d (Fri Feb 16 20:26:35 2018 +0000)
+>> Merge branch 'tipc-de-generealize-topology-server'
+> 
+> +tipc maintainers
 
-Please see some nit-picks below.
-I'm still reading the plan9 docs to fully get the big picture.
+This looks to be caused by commit 0ef897be12b8
+"tipc: separate topology server listener socket from subcsriber sockets"
 
-> ---
->  drivers/staging/Kconfig         |   2 +
->  drivers/staging/Makefile        |   1 +
->  drivers/staging/p9caps/Kconfig  |  11 ++
->  drivers/staging/p9caps/Makefile |   1 +
->  drivers/staging/p9caps/p9caps.c | 369 ++++++++++++++++++++++++++++++++++++++++
->  5 files changed, 384 insertions(+)
->  create mode 100644 drivers/staging/p9caps/Kconfig
->  create mode 100644 drivers/staging/p9caps/Makefile
->  create mode 100644 drivers/staging/p9caps/p9caps.c
->
-> diff --git a/drivers/staging/Kconfig b/drivers/staging/Kconfig
-> index 554683912cff..23f325339fe8 100644
-> --- a/drivers/staging/Kconfig
-> +++ b/drivers/staging/Kconfig
-> @@ -118,4 +118,6 @@ source "drivers/staging/vboxvideo/Kconfig"
->
->  source "drivers/staging/pi433/Kconfig"
->
-> +source "drivers/staging/p9caps/Kconfig"
-> +
->  endif # STAGING
-> diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
-> index 6e536020029a..eccdf4643453 100644
-> --- a/drivers/staging/Makefile
-> +++ b/drivers/staging/Makefile
-> @@ -3,6 +3,7 @@
->
->  obj-y                          += media/
->  obj-y                          += typec/
-> +obj-$(CONFIG_PLAN9CAPS)                += p9caps/
->  obj-$(CONFIG_IRDA)             += irda/net/
->  obj-$(CONFIG_IRDA)             += irda/drivers/
->  obj-$(CONFIG_PRISM2_USB)       += wlan-ng/
-> diff --git a/drivers/staging/p9caps/Kconfig b/drivers/staging/p9caps/Kconfig
-> new file mode 100644
-> index 000000000000..b909daaa79ce
-> --- /dev/null
-> +++ b/drivers/staging/p9caps/Kconfig
-> @@ -0,0 +1,11 @@
-> +config PLAN9CAPS
-> +       tristate "Plan 9 capability device"
-> +       default n
-> +       select CRYPTO_HMAC
-> +       select CRYPTO_SHA1
-> +       help
-> +         This module implements the Plan 9 capability devices
-> +         /dev/caphash and /dev/capuse
-> +
-> +         To compile this driver as a module, choose
-> +         M here: the module will be called p9caps.
-> diff --git a/drivers/staging/p9caps/Makefile b/drivers/staging/p9caps/Makefile
-> new file mode 100644
-> index 000000000000..67d38099a249
-> --- /dev/null
-> +++ b/drivers/staging/p9caps/Makefile
-> @@ -0,0 +1 @@
-> +obj-$(CONFIG_PLAN9CAPS)        += p9caps.o
-> diff --git a/drivers/staging/p9caps/p9caps.c b/drivers/staging/p9caps/p9caps.c
-> new file mode 100644
-> index 000000000000..e46b09821c18
-> --- /dev/null
-> +++ b/drivers/staging/p9caps/p9caps.c
-> @@ -0,0 +1,369 @@
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/slab.h>
-> +#include <linux/fs.h>
-> +#include <linux/errno.h>
-> +#include <linux/fcntl.h>
-> +#include <linux/cdev.h>
-> +#include <linux/list.h>
-> +#include <linux/mm.h>
-> +#include <linux/string.h>
-> +#include <linux/scatterlist.h>
-> +#include <linux/cred.h>
-> +#include <linux/err.h>
-> +#include <linux/user_namespace.h>
-> +#include <linux/mutex.h>
-> +#include <crypto/hash.h>
-> +#include <crypto/sha.h>
-> +
-> +/*
-> + * Plan9 /dev/caphash and /dev/capuse device
-> + *
-> + * 2DO: - caphash should only allow one process (per userns)
-> + *      - support textual user names
-> + *      - invalidate old caps
-> + */
-> +
-> +#define DEVICE_CAPUSE  "/dev/capuse"
-> +#define DEVICE_CAPHASH "/dev/caphash"
-> +
-> +struct caphash_entry {
-> +       struct list_head list;
-> +       struct user_namespace *user_ns;
-> +       char data[SHA1_DIGEST_SIZE];
-> +};
-> +
-> +struct caphash_writer {
-> +       struct list_head list;
-> +       struct user_namespace *user_ns;
-> +};
-> +
-> +static dev_t caphash_devid = 0;
-> +static dev_t capuse_devid = 0;
-
-Static vars are already 0, no need to initialize them.
-
-> +static LIST_HEAD(caphash_entries);
-> +static LIST_HEAD(caphash_writers);
-> +
-> +static DEFINE_MUTEX(lock);
-> +
-> +struct crypto_ahash *hmac_tfm = NULL;
-> +
-> +static int caphash_open(struct inode *inode, struct file *filp)
-> +{
-> +       struct caphash_writer *tmp = NULL;
-> +       struct user_namespace *user_ns = current_user_ns();
-> +       int retval = 0;
-> +       struct list_head *pos, *q;
-> +
-> +       /* make sure only one instance per namespace can be opened */
-> +       mutex_lock(&lock);
-> +
-> +       list_for_each_safe(pos, q, &(caphash_writers)) {
-> +               tmp = list_entry(pos, struct caphash_writer, list);
-> +               if (tmp->user_ns == user_ns) {
-> +                       pr_err("already locked in this namespace\n");
-
-So, evil guy opens the device but does not close it, therefore the
-whole service is blocked in a namespace?
-
-In general, I think we should open that device in
-kernel_init_freeable() and hand over the fd to init/systemd.
-As the plan9 docs state "The write-only file /dev/caphash can be
-opened only by the host owner, and only once. Factotum opens this file
-immediately after booting."
-
-> +                       retval = -EBUSY;
-> +                       goto out;
-> +               }
-> +       }
-> +
-> +       if (!(tmp = kzalloc(sizeof(struct caphash_writer), GFP_KERNEL))) {
-> +               retval = -ENOMEM;
-> +               goto out;
-> +       }
-> +
-> +       tmp->user_ns = get_user_ns(user_ns);
-> +       list_add(&(tmp->list), &caphash_writers);
-> +
-> +out:
-> +       mutex_unlock(&lock);
-> +       return retval;
-> +}
-> +
-> +static int caphash_release(struct inode *inode, struct file *filp)
-> +{
-> +       int retval = 0;
-> +       struct user_namespace *user_ns = current_user_ns();
-
-Why not obtaining the user namespace from the open file?
-That way one can close a caphash file hande she never opened.
-Think of open, followed by nsenter, ...
-
-> +       struct list_head *pos, *q;
-> +       struct caphash_entry *tmp;
-> +
-> +       mutex_lock(&lock);
-> +
-> +       list_for_each_safe(pos, q, &(caphash_writers)) {
-> +               tmp = list_entry(pos, struct caphash_entry, list);
-
-list_for_each_entry.
-
-> +               if (tmp->user_ns == user_ns) {
-> +                       list_del(pos);
-> +                       kfree(tmp);
-> +                       goto out;
-> +               }
-> +       }
-> +
-> +out:
-> +       mutex_unlock(&lock);
-> +       return retval;
-> +}
-> +
-> +static ssize_t caphash_write(struct file *filp, const char __user *buf,
-> +                                  size_t count, loff_t *f_pos)
-> +{
-> +       struct caphash_entry *ent;
-> +
-> +       if (count > SHA1_DIGEST_SIZE) {
-> +               pr_err("SHA1 digest size too large: %d\n", count);
-> +               return -E2BIG;
-> +       }
-> +
-> +       if (!(ent = kzalloc(sizeof(struct caphash_entry), GFP_KERNEL)))
-> +               return -ENOMEM;
-> +
-> +       if (copy_from_user(&(ent->data), buf, count)) {
-> +               kfree(ent);
-> +               return -EFAULT;
-> +       }
-> +
-> +       ent->user_ns = get_user_ns(current_user_ns());
-
-Again, why not taking the user namespace from the file handle?
-
-> +       mutex_lock(&lock);
-> +       list_add(&(ent->list), &caphash_entries);
-> +       mutex_unlock(&lock);
-> +
-> +       return count;
-> +}
-> +
-> +/* called w/ lock held. we can relieve this by allocating tfm locally */
-> +static ssize_t hash(const char *src, const char* dst, const char *key, u8 *result)
-> +{
-> +       struct scatterlist sg;
-> +       struct ahash_request *req;
-> +       int retval;
-> +       char *text = NULL;
-> +       size_t text_len;
-> +       int digest_len;
-> +       u8* digest = NULL;
-> +
-> +       text_len = strlen(src)+strlen(dst)+1;           /* src@dst */
-> +       digest_len = crypto_ahash_reqsize(hmac_tfm);
-> +
-> +       digest = kzalloc(digest_len, GFP_KERNEL);
-> +       text = kzalloc(text_len+1, GFP_KERNEL);
-> +
-> +       if (!digest || !text) {
-> +               retval = -ENOMEM;
-> +               goto out;
-> +       }
-> +
-> +       if (!(req = ahash_request_alloc(hmac_tfm, GFP_KERNEL))) {
-> +               pr_err("failed to alloc ahash_request\n");
-> +               retval = -ENOMEM;
-> +               goto out;
-> +       }
-> +
-> +       snprintf(text, text_len+1, "%s@%s", src, dst);
-> +       sg_set_buf(&sg, text, text_len);
-> +
-> +       ahash_request_set_callback(req, 0, NULL, NULL);
-> +       ahash_request_set_crypt(req, &sg, digest, text_len);
-> +
-> +       if ((retval = crypto_ahash_setkey(hmac_tfm, key, strlen(key)))) {
-> +               pr_err("crypto_ahash_setkey() failed ret=%d\n", retval);
-> +               goto out;
-> +       }
-> +
-> +       if ((retval = crypto_ahash_digest(req))) {
-> +               pr_err("digest() failed ret=%d\n", retval);
-> +               goto out;
-> +       }
-> +
-> +       memcpy(result, digest, SHA1_DIGEST_SIZE);
-> +
-> +out:
-> +       kfree(text);
-> +       kfree(digest);
-> +
-> +       return 0;
-> +}
-> +
-> +static inline kuid_t convert_uid(const char* uname)
-> +{
-> +       return make_kuid(current_user_ns(), simple_strtol(uname, NULL, 0));
-> +}
-> +
-> +static ssize_t switch_uid(const char *src_uname, const char *dst_uname)
-> +{
-> +       struct cred *creds = prepare_creds();
-> +
-> +       kuid_t src_uid = convert_uid(src_uname);
-> +       kuid_t dst_uid = convert_uid(dst_uname);
-> +
-> +       if (!uid_eq(src_uid, current_uid())) {
-> +               pr_info("src uid mismatch\n");
-> +               return -EPERM;
-> +       }
-> +
-> +       if (!(creds = prepare_creds()))
-> +               return -ENOMEM;
-> +
-> +       creds->uid = dst_uid;
-> +       creds->euid = dst_uid;
-> +
-> +       pr_info("switching from kuid %d to %d\n", src_uid.val, dst_uid.val);
-> +       return commit_creds(creds);
-> +}
-> +
-> +static ssize_t try_switch(const char* src_uname, const char* dst_uname, const u8* hashval)
-> +{
-> +       struct list_head *pos;
-> +       list_for_each(pos, &(caphash_entries)) {
-> +               struct caphash_entry *tmp = list_entry(pos, struct caphash_entry, list);
-> +               if ((0 == memcmp(hashval, tmp->data, SHA1_DIGEST_SIZE)) &&
-> +                   (tmp->user_ns == current_user_ns())) {
-> +
-> +                       int retval;
-> +
-> +                       if ((retval = switch_uid(src_uname, dst_uname))) {
-> +                               pr_info("uid switch failed\n");
-> +                               return retval;
-> +                       }
-> +
-> +                       tmp = list_entry(pos, struct caphash_entry, list);
-> +                       list_del(pos);
-> +                       put_user_ns(tmp->user_ns);
-> +                       kfree(tmp);
-> +
-> +                       return 0;
-> +               }
-> +       }
-> +
-> +       pr_info("cap not found\n");
-> +
-> +       return -ENOENT;
-> +}
-> +
-> +static ssize_t capuse_write(struct file *filp, const char __user *buf,
-> +                                 size_t count, loff_t *f_pos)
-> +{
-> +       ssize_t retval = count;
-> +       char  *rand_str, *src_uname, *dst_uname;
-> +       u8 hashval[SHA1_DIGEST_SIZE] = { 0 };
-> +       char *cmdbuf;
-> +
-> +       if (!(cmdbuf = kzalloc(count, GFP_KERNEL)))
-
-count is unbound, please apply a limit check.
-
-> +               return -ENOMEM;
-> +
-> +       if (copy_from_user(cmdbuf, buf, count)) {
-> +               retval = -EFAULT;
-> +               goto out_free;
-> +       }
-> +
-> +       {
-> +               char *walk = cmdbuf;
-
-cmdbuf is toxic, make sure it is at least nul-terminated.
-
-> +               src_uname = strsep(&walk, "@");
-> +               dst_uname = strsep(&walk, "@");
-> +               rand_str = walk;
-> +               if (!src_uname || !dst_uname || !rand_str) {
-> +                       retval = -EINVAL;
-> +                       goto out_free;
-> +               }
-> +       }
-> +
-> +       mutex_lock(&lock);
-> +
-> +       if ((retval = hash(src_uname, dst_uname, rand_str, hashval)))
-> +               goto out_unlock;
-> +
-> +       if ((retval = try_switch(src_uname, dst_uname, hashval)))
-> +               goto out_unlock;
-> +
-> +       retval = count;
-> +
-> +out_unlock:
-> +       mutex_unlock(&lock);
-> +
-> +out_free:
-> +       kfree(cmdbuf);
-> +       return retval;
-> +}
-> +
-> +static const struct file_operations caphash_fops = {
-> +       .owner          = THIS_MODULE,
-> +       .write          = caphash_write,
-> +       .open           = caphash_open,
-> +       .release        = caphash_release,
-> +};
-> +
-> +static const struct file_operations capuse_fops = {
-> +       .owner          = THIS_MODULE,
-> +       .write          = capuse_write,
-> +};
-> +
-> +static struct cdev caphash_dev;
-> +static struct cdev capuse_dev;
-> +
-> +static int clear(void)
-> +{
-> +       struct caphash_entry *tmp;
-> +       struct list_head *pos, *q;
-> +
-> +       list_for_each_safe(pos, q, &(caphash_entries)) {
-> +               tmp = list_entry(pos, struct caphash_entry, list);
-
-list_for_each_entry_safe?
-
-> +               list_del(pos);
-> +               kfree(tmp);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static void _cleanup_module(void)
-> +{
-> +       clear();
-> +
-> +       cdev_del(&caphash_dev);
-> +       cdev_del(&capuse_dev);
-> +
-> +       unregister_chrdev_region(caphash_devid, 1);
-> +       unregister_chrdev_region(capuse_devid, 1);
-> +
-> +       if (hmac_tfm)
-
-IS_ERR()? Otherwise you free a error value, if crypto_alloc_ahash() fails.
-
-> +               crypto_free_ahash(hmac_tfm);
-> +}
-> +
-> +static int _init_module(void)
-> +{
-> +       int retval;
-> +
-> +       hmac_tfm = crypto_alloc_ahash("hmac(sha1)", 0, CRYPTO_ALG_ASYNC);
-> +       if (IS_ERR(hmac_tfm)) {
-> +               retval = -PTR_ERR(hmac_tfm);
-> +               pr_err("failed to load transform for hmac(sha1): %d\n", retval);
-> +               goto fail;
-> +       }
-> +
-> +       if ((retval = alloc_chrdev_region(&caphash_devid, 0, 1, DEVICE_CAPHASH)))
-> +               goto fail;
-> +
-> +       if ((retval = alloc_chrdev_region(&capuse_devid, 0, 1, DEVICE_CAPUSE)))
-> +               goto fail;
-> +
-> +       cdev_init(&caphash_dev, &caphash_fops);
-> +       caphash_dev.owner = THIS_MODULE;
-> +       if ((retval = cdev_add(&caphash_dev, caphash_devid, 1)))
-> +               pr_err("failed adding " DEVICE_CAPHASH ": %d\n", retval);
-> +
-> +       cdev_init(&capuse_dev, &capuse_fops);
-> +       capuse_dev.owner = THIS_MODULE;
-> +       if ((retval = cdev_add(&capuse_dev, capuse_devid, 1)))
-> +               pr_err("failed adding " DEVICE_CAPUSE ": %d\n", retval);
-> +
-> +       return 0;
-> +
-> +fail:
-> +       _cleanup_module();
-> +       return retval;
-> +}
-> +
-> +MODULE_AUTHOR("Enrico Weigelt, metux IT consult <info@metux.net>");
-> +MODULE_LICENSE("GPL");
-> +
-> +module_init(_init_module);
-> +module_exit(_cleanup_module);
-> --
-> 2.11.0
->
-
--- 
 Thanks,
-//richard
+Kirill
