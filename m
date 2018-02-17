@@ -1,28 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751262AbeBQLh4 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 06:37:56 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:58361 "EHLO
+        id S1751278AbeBQLiU (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 06:38:20 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:33733 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750771AbeBQLhy (ORCPT
+        with ESMTP id S1750977AbeBQLiR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 06:37:54 -0500
-Date: Sat, 17 Feb 2018 03:37:42 -0800
-From: tip-bot for Thomas Richter <tipbot@zytor.com>
-Message-ID: <tip-c59124fa59757fadc80ad881056a21f98c71b146@git.kernel.org>
-Cc: hpa@zytor.com, heiko.carstens@de.ibm.com, tmricht@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, schwidefsky@de.ibm.com, mingo@kernel.org,
-        brueckner@linux.vnet.ibm.com, acme@redhat.com, tglx@linutronix.de
-Reply-To: linux-kernel@vger.kernel.org, schwidefsky@de.ibm.com,
-        mingo@kernel.org, acme@redhat.com, brueckner@linux.vnet.ibm.com,
-        tglx@linutronix.de, hpa@zytor.com, tmricht@linux.vnet.ibm.com,
-        heiko.carstens@de.ibm.com
-In-Reply-To: <20180213151419.80737-2-tmricht@linux.vnet.ibm.com>
-References: <20180213151419.80737-2-tmricht@linux.vnet.ibm.com>
+        Sat, 17 Feb 2018 06:38:17 -0500
+Date: Sat, 17 Feb 2018 03:27:56 -0800
+From: tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-a73e24d240bc136619d382b1268f34d75c9d25ce@git.kernel.org>
+Cc: namhyung@kernel.org, alexander.shishkin@linux.intel.com,
+        dsahern@gmail.com, peterz@infradead.org, jolsa@kernel.org,
+        mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de, acme@redhat.com,
+        linux-kernel@vger.kernel.org
+Reply-To: acme@redhat.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        hpa@zytor.com, tglx@linutronix.de, jolsa@kernel.org, dsahern@gmail.com,
+        peterz@infradead.org, namhyung@kernel.org,
+        alexander.shishkin@linux.intel.com
+In-Reply-To: <20180215122635.24029-9-jolsa@kernel.org>
+References: <20180215122635.24029-9-jolsa@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf annotate: Scan cpuid for s390 and save machine
- type
-Git-Commit-ID: c59124fa59757fadc80ad881056a21f98c71b146
+Subject: [tip:perf/core] perf tools: Do not create kernel maps in
+ sample__resolve()
+Git-Commit-ID: a73e24d240bc136619d382b1268f34d75c9d25ce
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,67 +36,52 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c59124fa59757fadc80ad881056a21f98c71b146
-Gitweb:     https://git.kernel.org/tip/c59124fa59757fadc80ad881056a21f98c71b146
-Author:     Thomas Richter <tmricht@linux.vnet.ibm.com>
-AuthorDate: Tue, 13 Feb 2018 16:14:17 +0100
+Commit-ID:  a73e24d240bc136619d382b1268f34d75c9d25ce
+Gitweb:     https://git.kernel.org/tip/a73e24d240bc136619d382b1268f34d75c9d25ce
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Thu, 15 Feb 2018 13:26:34 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Feb 2018 15:16:57 -0300
+CommitDate: Fri, 16 Feb 2018 14:25:59 -0300
 
-perf annotate: Scan cpuid for s390 and save machine type
+perf tools: Do not create kernel maps in sample__resolve()
 
-Scan the cpuid string and extract the type number for later use.
+There's no need for kernel maps to be allocated at this point - sample
+processing.
 
-Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Link: http://lkml.kernel.org/r/20180213151419.80737-2-tmricht@linux.vnet.ibm.com
+We search for kernel maps using the kernel map_groups in machine::kmaps
+which is static. If vmlinux maps for any reason still don't exist, the
+search correctly fails because they are not in the map group.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180215122635.24029-9-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/s390/annotate/instructions.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ tools/perf/util/event.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-diff --git a/tools/perf/arch/s390/annotate/instructions.c b/tools/perf/arch/s390/annotate/instructions.c
-index 8c72b44..01df9d8 100644
---- a/tools/perf/arch/s390/annotate/instructions.c
-+++ b/tools/perf/arch/s390/annotate/instructions.c
-@@ -23,12 +23,37 @@ static struct ins_ops *s390__associate_ins_ops(struct arch *arch, const char *na
- 	return ops;
- }
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index 4644e75..f0a6cbd 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -1588,17 +1588,6 @@ int machine__resolve(struct machine *machine, struct addr_location *al,
+ 		return -1;
  
-+static int s390__cpuid_parse(struct arch *arch, char *cpuid)
-+{
-+	unsigned int family;
-+	char model[16], model_c[16], cpumf_v[16], cpumf_a[16];
-+	int ret;
-+
-+	/*
-+	 * cpuid string format:
-+	 * "IBM,family,model-capacity,model[,cpum_cf-version,cpum_cf-authorization]"
-+	 */
-+	ret = sscanf(cpuid, "%*[^,],%u,%[^,],%[^,],%[^,],%s", &family, model_c,
-+		     model, cpumf_v, cpumf_a);
-+	if (ret >= 2) {
-+		arch->family = family;
-+		arch->model = 0;
-+		return 0;
-+	}
-+
-+	return -1;
-+}
-+
- static int s390__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
- {
-+	int err = 0;
-+
- 	if (!arch->initialized) {
- 		arch->initialized = true;
- 		arch->associate_instruction_ops = s390__associate_ins_ops;
-+		if (cpuid)
-+			err = s390__cpuid_parse(arch, cpuid);
- 	}
- 
--	return 0;
-+	return err;
- }
+ 	dump_printf(" ... thread: %s:%d\n", thread__comm_str(thread), thread->tid);
+-	/*
+-	 * Have we already created the kernel maps for this machine?
+-	 *
+-	 * This should have happened earlier, when we processed the kernel MMAP
+-	 * events, but for older perf.data files there was no such thing, so do
+-	 * it now.
+-	 */
+-	if (sample->cpumode == PERF_RECORD_MISC_KERNEL &&
+-	    machine__kernel_map(machine) == NULL)
+-		machine__create_kernel_maps(machine);
+-
+ 	thread__find_addr_map(thread, sample->cpumode, MAP__FUNCTION, sample->ip, al);
+ 	dump_printf(" ...... dso: %s\n",
+ 		    al->map ? al->map->dso->long_name :
