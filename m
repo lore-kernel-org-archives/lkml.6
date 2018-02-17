@@ -1,112 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751379AbeBQUdv (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 15:33:51 -0500
-Received: from g9t5009.houston.hpe.com ([15.241.48.73]:50034 "EHLO
-        g9t5009.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751214AbeBQUdt (ORCPT
+        id S1751434AbeBQUja (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 15:39:30 -0500
+Received: from g9t5008.houston.hpe.com ([15.241.48.72]:45470 "EHLO
+        g9t5008.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751159AbeBQUj3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 15:33:49 -0500
-Date: Sat, 17 Feb 2018 13:33:48 -0700
+        Sat, 17 Feb 2018 15:39:29 -0500
+Date: Sat, 17 Feb 2018 13:39:27 -0700
 From: Jerry Hoemann <jerry.hoemann@hpe.com>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, wim@linux-watchdog.org,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rwright@hpe.com, maurice.a.saldivar@hpe.com, mingo@kernel.org
-Subject: Re: [v3,04/11] watchdog/hpwdt: white space changes
-Message-ID: <20180217203348.GC27788@anatevka.americas.hpqcorp.net>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rwright@hpe.com,
+        maurice.a.saldivar@hpe.com, mingo@kernel.org,
+        marcus.folkesson@gmail.com
+Subject: Re: [v3,05/11] watchdog/hpwdt: Update Module info.
+Message-ID: <20180217203927.GD27788@anatevka.americas.hpqcorp.net>
 Reply-To: Jerry.Hoemann@hpe.com
-References: <20180215234400.5022-5-jerry.hoemann@hpe.com>
- <20180217161734.GA671@roeck-us.net>
- <20180217193208.GA27788@anatevka.americas.hpqcorp.net>
- <20180217202753.GA13626@gmail.com>
+References: <20180215234400.5022-6-jerry.hoemann@hpe.com>
+ <20180217161923.GA27212@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180217202753.GA13626@gmail.com>
+In-Reply-To: <20180217161923.GA27212@roeck-us.net>
 User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 17, 2018 at 09:27:53PM +0100, Marcus Folkesson wrote:
-> On Sat, Feb 17, 2018 at 12:32:08PM -0700, Jerry Hoemann wrote:
-> > On Sat, Feb 17, 2018 at 08:17:34AM -0800, Guenter Roeck wrote:
-> > > On Thu, Feb 15, 2018 at 04:43:53PM -0700, Jerry Hoemann wrote:
-> > > > Minor white space changes and some name clean up.
-> > > > 
-> > > > Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
-> > > > ---
-> > > >  MODULE_DEVICE_TABLE(pci, hpwdt_devices);
-> > > >  
-> > > > @@ -102,7 +100,7 @@ static int hpwdt_time_left(void)
-> > > >  	return TICKS_TO_SECS(ioread16(hpwdt_timer_reg));
-> > > >  }
-> > > >  
-> > > > -#ifdef CONFIG_HPWDT_NMI_DECODING
-> > > > +#ifdef CONFIG_HPWDT_NMI_DECODING	/* { */
-> > > >  static int hpwdt_my_nmi(void)
-> > > >  {
-> > > >  	return ioread8(hpwdt_nmistat) & 0x6;
-> > > > @@ -133,7 +131,7 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
-> > > >  
-> > > >  	return NMI_HANDLED;
-> > > >  }
-> > > > -#endif /* CONFIG_HPWDT_NMI_DECODING */
-> > > > +#endif					/* } */
-> > > 
-> > > I disagree with those changes. While I don't object to adding the '{'
-> > > per se, I find it very useful to have the 'CONFIG_HPWDT_NMI_DECODING'
-> > > with an endif to be able to associate it with the matching #ifdef.
-> 
-> Well, it does not follow our coding style.
-> 
-> Documentation/process/coding-style.rst:
-> 
-> 	At the end of any non-trivial #if or #ifdef block (more than a few lines),
-> 	place a comment after the #endif on the same line, noting the conditional
-> 	expression used.  For instance:
-> 
-> 	.. code-block:: c
-> 
-> 		#ifdef CONFIG_SOMETHING
-> 		...
-> 		#endif /* CONFIG_SOMETHING */
-> 
+On Sat, Feb 17, 2018 at 08:19:23AM -0800, Guenter Roeck wrote:
+> On Thu, Feb 15, 2018 at 04:43:54PM -0700, Jerry Hoemann wrote:
+> > Update Module Author and description to reflect changes in driver.
 > > 
-> > The matching /* { */ and /* } */ allow for quickly the finding of the
-> > matching ifdef/endif.
+> > Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+> > ---
+> >  drivers/watchdog/hpwdt.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
 > > 
-> > In the "vim" editor, the command '%' will take one from one curly paren to its
-> > matching curly paren...
+> > diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
+> > index d5989acf3e37..71e49d0ab789 100644
+> > --- a/drivers/watchdog/hpwdt.c
+> > +++ b/drivers/watchdog/hpwdt.c
+> > @@ -425,8 +425,8 @@ static struct pci_driver hpwdt_driver = {
+> >  	.remove		= hpwdt_exit,
+> >  };
+> >  
+> > -MODULE_AUTHOR("Tom Mingarelli");
+> > -MODULE_DESCRIPTION("hp watchdog driver");
+> > +MODULE_AUTHOR("Jerry Hoemann");
+> > +MODULE_DESCRIPTION("hpe watchdog driver");
 > 
-> '%' in vim let you jump between matching ifdef/endif as well.
+> It is quite unusual to replace an author name. The original author is
+> still the original author and should be retained. Adding another author
+> is fine, but I disagree with the removal.
 
-Interesting.  Didn't know that.  In that light, I'll redact the white space
-changes.
+Wasn't intending to usurp Tom's credit (I left him in as Author in
+comment block at top of file.)  But as Tom has retired,  I didn't want
+anyone having problems with the rewrite of the driver to bother him
+about it.
 
-Thanks 
+I'll redact this change.
 
 > 
-> > 
-> > There is a similar sequence for emacs.
-> > 
-> > > 
-> > > Deferring to Wim.
-> > > 
-> > > Guenter
-> > > 
-> > 
-> > -- 
-> > 
-> > -----------------------------------------------------------------------------
-> > Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
-> > -----------------------------------------------------------------------------
+> Guenter
 > 
-> Thanks,
-> Marcus Folkesson
-
-
+> >  MODULE_LICENSE("GPL");
+> >  MODULE_VERSION(HPWDT_VERSION);
+> >  
 
 -- 
 
