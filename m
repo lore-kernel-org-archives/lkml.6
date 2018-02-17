@@ -1,28 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751174AbeBQLbX (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 06:31:23 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:48695 "EHLO
+        id S1751202AbeBQLbd (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 06:31:33 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47313 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750951AbeBQLbW (ORCPT
+        with ESMTP id S1751179AbeBQLbb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 06:31:22 -0500
-Date: Sat, 17 Feb 2018 03:21:00 -0800
-From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-d9c5f32240f503481291a6d4e7246ee0a128d76d@git.kernel.org>
-Cc: hpa@zytor.com, acme@redhat.com, tglx@linutronix.de, jolsa@kernel.org,
-        dsahern@gmail.com, alexander.shishkin@linux.intel.com,
-        mingo@kernel.org, peterz@infradead.org, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org
-Reply-To: jolsa@kernel.org, dsahern@gmail.com, tglx@linutronix.de,
-        hpa@zytor.com, acme@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        alexander.shishkin@linux.intel.com, peterz@infradead.org
-In-Reply-To: <20180206181813.10943-6-jolsa@kernel.org>
-References: <20180206181813.10943-6-jolsa@kernel.org>
+        Sat, 17 Feb 2018 06:31:31 -0500
+Date: Sat, 17 Feb 2018 03:31:23 -0800
+From: tip-bot for Sangwon Hong <tipbot@zytor.com>
+Message-ID: <tip-577980a00063935815a55f461601579fd5e61f59@git.kernel.org>
+Cc: qpakzk@gmail.com, treeze.taeung@gmail.com, jolsa@kernel.org,
+        acme@redhat.com, namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com
+Reply-To: qpakzk@gmail.com, jolsa@kernel.org, acme@redhat.com,
+        treeze.taeung@gmail.com, linux-kernel@vger.kernel.org,
+        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        mingo@kernel.org
+In-Reply-To: <1518381517-30766-1-git-send-email-qpakzk@gmail.com>
+References: <1518381517-30766-1-git-send-email-qpakzk@gmail.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] tools lib api fs: Add sysfs__read_xll function
-Git-Commit-ID: d9c5f32240f503481291a6d4e7246ee0a128d76d
+Subject: [tip:perf/core] perf kmem: Document a missing option & an argument
+Git-Commit-ID: 577980a00063935815a55f461601579fd5e61f59
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,72 +34,53 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d9c5f32240f503481291a6d4e7246ee0a128d76d
-Gitweb:     https://git.kernel.org/tip/d9c5f32240f503481291a6d4e7246ee0a128d76d
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Tue, 6 Feb 2018 19:18:01 +0100
+Commit-ID:  577980a00063935815a55f461601579fd5e61f59
+Gitweb:     https://git.kernel.org/tip/577980a00063935815a55f461601579fd5e61f59
+Author:     Sangwon Hong <qpakzk@gmail.com>
+AuthorDate: Mon, 12 Feb 2018 05:38:36 +0900
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Feb 2018 10:09:23 -0300
+CommitDate: Fri, 16 Feb 2018 14:55:42 -0300
 
-tools lib api fs: Add sysfs__read_xll function
+perf kmem: Document a missing option & an argument
 
-Adding sysfs__read_xll function to be able to read sysfs files with hex
-numbers in, which do not have 0x prefix.
+First, 'perf kmem' has a '--force' option, but didn't document it on the
+man page. So add it.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180206181813.10943-6-jolsa@kernel.org
+Second, the '--time' option has to get a value, but isn't documented on
+the man page. Describe it.
+
+Signed-off-by: Sangwon Hong <qpakzk@gmail.com>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Taeung Song <treeze.taeung@gmail.com>
+Link: http://lkml.kernel.org/r/1518381517-30766-1-git-send-email-qpakzk@gmail.com
+[ Add blank like after --force block, as requested by Namhyung ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/api/fs/fs.c | 15 +++++++++++++--
- tools/lib/api/fs/fs.h |  1 +
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ tools/perf/Documentation/perf-kmem.txt | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/tools/lib/api/fs/fs.c b/tools/lib/api/fs/fs.c
-index 8b0e4a4..6a12bbf 100644
---- a/tools/lib/api/fs/fs.c
-+++ b/tools/lib/api/fs/fs.c
-@@ -432,7 +432,8 @@ int procfs__read_str(const char *entry, char **buf, size_t *sizep)
- 	return filename__read_str(path, buf, sizep);
- }
+diff --git a/tools/perf/Documentation/perf-kmem.txt b/tools/perf/Documentation/perf-kmem.txt
+index 479fc32..85b8ac6 100644
+--- a/tools/perf/Documentation/perf-kmem.txt
++++ b/tools/perf/Documentation/perf-kmem.txt
+@@ -25,6 +25,10 @@ OPTIONS
+ --input=<file>::
+ 	Select the input file (default: perf.data unless stdin is a fifo)
  
--int sysfs__read_ull(const char *entry, unsigned long long *value)
-+static int sysfs__read_ull_base(const char *entry,
-+				unsigned long long *value, int base)
- {
- 	char path[PATH_MAX];
- 	const char *sysfs = sysfs__mountpoint();
-@@ -442,7 +443,17 @@ int sysfs__read_ull(const char *entry, unsigned long long *value)
- 
- 	snprintf(path, sizeof(path), "%s/%s", sysfs, entry);
- 
--	return filename__read_ull(path, value);
-+	return filename__read_ull_base(path, value, base);
-+}
++-f::
++--force::
++	Don't do ownership validation
 +
-+int sysfs__read_xll(const char *entry, unsigned long long *value)
-+{
-+	return sysfs__read_ull_base(entry, value, 16);
-+}
-+
-+int sysfs__read_ull(const char *entry, unsigned long long *value)
-+{
-+	return sysfs__read_ull_base(entry, value, 0);
- }
+ -v::
+ --verbose::
+         Be more verbose. (show symbol address, etc)
+@@ -61,7 +65,7 @@ OPTIONS
+ 	default, but this option shows live (currently allocated) pages
+ 	instead.  (This option works with --page option only)
  
- int sysfs__read_int(const char *entry, int *value)
-diff --git a/tools/lib/api/fs/fs.h b/tools/lib/api/fs/fs.h
-index 8ebee35..92d03b8 100644
---- a/tools/lib/api/fs/fs.h
-+++ b/tools/lib/api/fs/fs.h
-@@ -40,6 +40,7 @@ int procfs__read_str(const char *entry, char **buf, size_t *sizep);
- int sysctl__read_int(const char *sysctl, int *value);
- int sysfs__read_int(const char *entry, int *value);
- int sysfs__read_ull(const char *entry, unsigned long long *value);
-+int sysfs__read_xll(const char *entry, unsigned long long *value);
- int sysfs__read_str(const char *entry, char **buf, size_t *sizep);
- int sysfs__read_bool(const char *entry, bool *value);
- 
+---time::
++--time=<start>,<stop>::
+ 	Only analyze samples within given time window: <start>,<stop>. Times
+ 	have the format seconds.microseconds. If start is not given (i.e., time
+ 	string is ',x.y') then analysis starts at the beginning of the file. If
