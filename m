@@ -1,69 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751417AbeBQVVa (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 16:21:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55170 "EHLO mx2.suse.de"
+        id S1751303AbeBQV1z (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 16:27:55 -0500
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:40768 "EHLO 1wt.eu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751211AbeBQVV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 16:21:29 -0500
-Subject: Re: [PATCH 10/10] MAINTAINERS: Add Actions Semi S900 pinctrl and gpio
- entries
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        linus.walleij@linaro.org, robh+dt@kernel.org
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180217204433.3095-1-manivannan.sadhasivam@linaro.org>
- <20180217204433.3095-11-manivannan.sadhasivam@linaro.org>
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Organization: SUSE Linux GmbH
-Message-ID: <9a7720b7-586e-8275-db41-19764e40f367@suse.de>
-Date: Sat, 17 Feb 2018 22:21:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751211AbeBQV1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Feb 2018 16:27:54 -0500
+Date: Sat, 17 Feb 2018 22:27:40 +0100
+From: Willy Tarreau <w@1wt.eu>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: geert@linux-m68k.org, triad@df.lth.se, robin@protonic.nl,
+        paul.burton@mips.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] auxdisplay: Replace licenses with SPDX identifiers
+Message-ID: <20180217212740.GB4010@1wt.eu>
+References: <20180217193955.shfhvp3afwiurzfm@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180217204433.3095-11-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180217193955.shfhvp3afwiurzfm@gmail.com>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 17.02.2018 um 21:44 schrieb Manivannan Sadhasivam:
-> Add S900 pinctrl and gpio entries under ARCH_ACTIONS
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Sat, Feb 17, 2018 at 08:39:55PM +0100, Miguel Ojeda wrote:
+> Cc: Willy Tarreau <w@1wt.eu>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Linus Walleij <triad@df.lth.se>
+> Cc: Robin van der Gracht <robin@protonic.nl>
+> Cc: Paul Burton <paul.burton@mips.com>
+> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 > ---
->  MAINTAINERS | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 96b8b6531196..b718be5af680 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1126,11 +1126,15 @@ F:	arch/arm/boot/dts/owl-*
->  F:	arch/arm64/boot/dts/actions/
->  F:	drivers/clocksource/owl-*
->  F:	drivers/soc/actions/
-> +F:	drivers/pinctrl/actions/*
-> +F:	drivers/gpio/gpio-owl.c
->  F:	include/dt-bindings/power/owl-*
->  F:	include/linux/soc/actions/
->  F:	Documentation/devicetree/bindings/arm/actions.txt
->  F:	Documentation/devicetree/bindings/power/actions,owl-sps.txt
->  F:	Documentation/devicetree/bindings/timer/actions,owl-timer.txt
-> +F:	Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
-> +F:	Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+> Please let me know if you agree for your files and I will queue it up.
+> Thanks!
 
-Please retain alphabetical ordering.
+Ack from me.
 
-Regards,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Willy
