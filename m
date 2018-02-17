@@ -1,50 +1,51 @@
 Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AH8x226A3fU0wGswIIr2ovwk6HUdQCW7rkjDHFY9MSLojXCIBr8H5bj0sEzpHHGIQSSH4h5OSdob
-ARC-Seal: i=1; a=rsa-sha256; t=1518863535; cv=none;
+X-Google-Smtp-Source: AH8x224LKL6/DZq6fFLQEaoxFFiyPoV/yHpKjFwQde2o0PQ6k5BWN4i71NSVpTIY5iV2mMtsQTwC
+ARC-Seal: i=1; a=rsa-sha256; t=1518863534; cv=none;
         d=google.com; s=arc-20160816;
-        b=kW6P00QjMOgGZeSi24Qo4FeNjPKD+Ynf3WY1moLXM+JtYKzWvJxbDQLqlwh+Kr3ATn
-         KBPLmrV7YM5fnKOijUk9wHWpbj0+8WOLOy+DqRyPkc+ez/2+poKwjapC6AN2iVAtMBD4
-         lDIpn9ZVYfR4VW8h6VLRs7AR4PC5c8zUcEtA2qoLruoxlANbJ2ZplZ5ifpWNm0wDJcVU
-         WYGFgdfbizybiKkH7CSk80btyFGnkK/YbaWeLm7sUM5tcTgPK1qAyGDMnOnHfLV6XJ9p
-         Fv+7sp2z1W1c8X7lGVpcWdhQDox09cOuNCmkJWOEhCQBReiITxg1+EjFTCBxKIkq8f2+
-         mP4w==
+        b=JVTCRDmPRd6AR+dS56fxJqJBxWYbZtZiG6ABEsI7U4gfNeRqh9xIg9O8c1kkLFOUMd
+         d4RkJ95C+MbTZmF7LYzSRvQQyKHgy+k4e5dj+yiNG6+fHfPl+FJtn3Rg6AO6zLPExbZI
+         Epce55XtS1vaC4w079kJS2J/fBBcqCWjKT+ocexO776GGXy6zkbz+aOfEoQSpQjOKFu4
+         ZkrbNQWI2Db8L513lWorPo471Mvz40EBW5cT/W4waoU9/cWrRHJOYxd//VdqY93IVIJd
+         lfjwKd1U4qLanVSBHnt7VYFHnEYh6S2c0KkAwG8pAce1C6w5q5Ud6A/TOeSkeTZeBwsF
+         6emg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=precedence:content-disposition:content-transfer-encoding
          :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
          :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=FfzvKXQ2pRTaiUvuoRUeFsD3oEHTNul2fB4z74vjSmY=;
-        b=vxAhVS4kkXjMy7fPQjNhLQ6II42QfI8RsOOaQZzqhv0dxlVsV5RzbwGnIoVEiRHDFj
-         Rzno/dCvU4lbldqQbJCukgthfzxjjFRYMONWOI9aR1/KGzOsqc1mwR0DzlLEOY7Ikuv6
-         /kgIf2dmGeoMLF2qm4R9ThkjpdxBqTSoHf6Sy8haYPPBJxg1fM206Qa9mqy/Q9vymQ7u
-         ZaC5hxufn3qcBlEAFBGMNtszH2Bf9HDA5vHIWzUj7KNgiDEKFgf8wxz5Zu9PQNdI40Ae
-         CfVJM2HnziqbpqtAq4vHMiqTQQHGRQtHSdmh0tVnPjYPq5ATKrdtwM1kZgzxkDkIv1Oj
-         U4sA==
+        bh=jR+KjeRD+0nOVrryeYQ0VZKLi2sEEpE9PRebTYirKmM=;
+        b=1D+YPAjCpdyE1vKsZd5KZ+v0ve1LCPqNowUxreYorUyBmfXcokump2je1l++bPf2I3
+         OxkW2I9+qTYGyeuy1HTN0zFJPLRjGiC/mq6EWG7Gby7C3Pyrbqpo6hNPMb0nu4mQqaud
+         PMM0hR8NLB0zfxaHRtt8IIKVWjFs7KFh3HXNsoKG2BLymuiGKmrJsbnjDuME7BDCgGCy
+         HxX5FTNSyfeMQacdBabR9FH+OmO/aRUsqwXSeSa9tl5dvTAacvHwSKbvo3V45oNqzmHU
+         QVTQxcf4h7TUQ/POPr5V5HQ1yLo6opE5mibCIr481wmXt9slWR+U1FWR9yArynuduJpa
+         Fk5Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Sat, 17 Feb 2018 02:11:34 -0800
+Date: Sat, 17 Feb 2018 02:12:03 -0800
 Sender: tip tree robot <tipbot@zytor.com>
-From: tip-bot for Dan Williams <tipbot@zytor.com>
-Message-ID: <tip-eb6174f6d1be16b19cfa43dac296bfed003ce1a6@git.kernel.org>
-Cc: mingo@kernel.org, borntraeger@de.ibm.com, jpoimboe@redhat.com,
-        hpa@zytor.com, bp@alien8.de, linux-kernel@vger.kernel.org,
-        arjan@linux.intel.com, peterz@infradead.org,
+From: tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-3f1f576a195aa266813cbd4ca70291deb61e0129@git.kernel.org>
+Cc: dan.j.williams@intel.com, peterz@infradead.org, jpoimboe@redhat.com,
+        bp@suse.de, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        dwmw2@infradead.org, bp@alien8.de, arjan@linux.intel.com,
         torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-        luto@kernel.org, dwmw2@infradead.org, dan.j.williams@intel.com,
-        tglx@linutronix.de, will.deacon@arm.com, dave.hansen@linux.intel.com
-Reply-To: tglx@linutronix.de, dave.hansen@linux.intel.com, will.deacon@arm.com,
-        arjan@linux.intel.com, luto@kernel.org, dan.j.williams@intel.com,
-        dwmw2@infradead.org, torvalds@linux-foundation.org,
-        gregkh@linuxfoundation.org, peterz@infradead.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, bp@alien8.de, borntraeger@de.ibm.com,
-        mingo@kernel.org, jpoimboe@redhat.com
-In-Reply-To: <151881605404.17395.1341935530792574707.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <151881605404.17395.1341935530792574707.stgit@dwillia2-desk3.amr.corp.intel.com>
+        mingo@kernel.org, ashok.raj@intel.com, dave.hansen@linux.intel.com,
+        luto@kernel.org, hpa@zytor.com
+Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        dwmw2@infradead.org, bp@alien8.de, dan.j.williams@intel.com,
+        peterz@infradead.org, bp@suse.de, jpoimboe@redhat.com,
+        gregkh@linuxfoundation.org, mingo@kernel.org, ashok.raj@intel.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, hpa@zytor.com,
+        arjan@linux.intel.com, torvalds@linux-foundation.org
+In-Reply-To: <20180216112640.11554-2-bp@alien8.de>
+References: <20180216112640.11554-2-bp@alien8.de>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] nospec: Include <asm/barrier.h> dependency
-Git-Commit-ID: eb6174f6d1be16b19cfa43dac296bfed003ce1a6
+Subject: [tip:x86/pti] x86/microcode: Propagate return value from updating
+ functions
+Git-Commit-ID: 3f1f576a195aa266813cbd4ca70291deb61e0129
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -54,33 +55,30 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592643850779332837?=
-X-GMAIL-MSGID: =?utf-8?q?1592643850779332837?=
+X-GMAIL-THRID: =?utf-8?q?1592643849733156883?=
+X-GMAIL-MSGID: =?utf-8?q?1592643849733156883?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  eb6174f6d1be16b19cfa43dac296bfed003ce1a6
-Gitweb:     https://git.kernel.org/tip/eb6174f6d1be16b19cfa43dac296bfed003ce1a6
-Author:     Dan Williams <dan.j.williams@intel.com>
-AuthorDate: Fri, 16 Feb 2018 13:20:54 -0800
+Commit-ID:  3f1f576a195aa266813cbd4ca70291deb61e0129
+Gitweb:     https://git.kernel.org/tip/3f1f576a195aa266813cbd4ca70291deb61e0129
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Fri, 16 Feb 2018 12:26:38 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sat, 17 Feb 2018 08:40:59 +0100
+CommitDate: Sat, 17 Feb 2018 08:43:55 +0100
 
-nospec: Include <asm/barrier.h> dependency
+x86/microcode: Propagate return value from updating functions
 
-The nospec.h header expects the per-architecture header file
-<asm/barrier.h> to optionally define array_index_mask_nospec(). Include
-that dependency to prevent inadvertent fallback to the default
-array_index_mask_nospec() implementation.
+... so that callers can know when microcode was updated and act
+accordingly.
 
-The default implementation may not provide a full mitigation
-on architectures that perform data value speculation.
-
-Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Tested-by: Ashok Raj <ashok.raj@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Ashok Raj <ashok.raj@intel.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
 Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: David Woodhouse <dwmw2@infradead.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -88,23 +86,212 @@ Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-arch@vger.kernel.org
-Link: http://lkml.kernel.org/r/151881605404.17395.1341935530792574707.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: http://lkml.kernel.org/r/20180216112640.11554-2-bp@alien8.de
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/nospec.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/microcode.h      |  9 +++++++--
+ arch/x86/kernel/cpu/microcode/amd.c   | 10 +++++-----
+ arch/x86/kernel/cpu/microcode/core.c  | 33 +++++++++++++++++----------------
+ arch/x86/kernel/cpu/microcode/intel.c | 10 +++++-----
+ 4 files changed, 34 insertions(+), 28 deletions(-)
 
-diff --git a/include/linux/nospec.h b/include/linux/nospec.h
-index 172a19d..e791ebc 100644
---- a/include/linux/nospec.h
-+++ b/include/linux/nospec.h
-@@ -5,6 +5,7 @@
+diff --git a/arch/x86/include/asm/microcode.h b/arch/x86/include/asm/microcode.h
+index 55520cec..7fb1047 100644
+--- a/arch/x86/include/asm/microcode.h
++++ b/arch/x86/include/asm/microcode.h
+@@ -37,7 +37,12 @@ struct cpu_signature {
  
- #ifndef _LINUX_NOSPEC_H
- #define _LINUX_NOSPEC_H
-+#include <asm/barrier.h>
+ struct device;
  
- /**
-  * array_index_mask_nospec() - generate a ~0 mask when index < size, 0 otherwise
+-enum ucode_state { UCODE_ERROR, UCODE_OK, UCODE_NFOUND };
++enum ucode_state {
++	UCODE_OK	= 0,
++	UCODE_UPDATED,
++	UCODE_NFOUND,
++	UCODE_ERROR,
++};
+ 
+ struct microcode_ops {
+ 	enum ucode_state (*request_microcode_user) (int cpu,
+@@ -54,7 +59,7 @@ struct microcode_ops {
+ 	 * are being called.
+ 	 * See also the "Synchronization" section in microcode_core.c.
+ 	 */
+-	int (*apply_microcode) (int cpu);
++	enum ucode_state (*apply_microcode) (int cpu);
+ 	int (*collect_cpu_info) (int cpu, struct cpu_signature *csig);
+ };
+ 
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index 330b846..a998e1a 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -498,7 +498,7 @@ static unsigned int verify_patch_size(u8 family, u32 patch_size,
+ 	return patch_size;
+ }
+ 
+-static int apply_microcode_amd(int cpu)
++static enum ucode_state apply_microcode_amd(int cpu)
+ {
+ 	struct cpuinfo_x86 *c = &cpu_data(cpu);
+ 	struct microcode_amd *mc_amd;
+@@ -512,7 +512,7 @@ static int apply_microcode_amd(int cpu)
+ 
+ 	p = find_patch(cpu);
+ 	if (!p)
+-		return 0;
++		return UCODE_NFOUND;
+ 
+ 	mc_amd  = p->data;
+ 	uci->mc = p->data;
+@@ -523,13 +523,13 @@ static int apply_microcode_amd(int cpu)
+ 	if (rev >= mc_amd->hdr.patch_id) {
+ 		c->microcode = rev;
+ 		uci->cpu_sig.rev = rev;
+-		return 0;
++		return UCODE_OK;
+ 	}
+ 
+ 	if (__apply_microcode_amd(mc_amd)) {
+ 		pr_err("CPU%d: update failed for patch_level=0x%08x\n",
+ 			cpu, mc_amd->hdr.patch_id);
+-		return -1;
++		return UCODE_ERROR;
+ 	}
+ 	pr_info("CPU%d: new patch_level=0x%08x\n", cpu,
+ 		mc_amd->hdr.patch_id);
+@@ -537,7 +537,7 @@ static int apply_microcode_amd(int cpu)
+ 	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
+ 	c->microcode = mc_amd->hdr.patch_id;
+ 
+-	return 0;
++	return UCODE_UPDATED;
+ }
+ 
+ static int install_equiv_cpu_table(const u8 *buf)
+diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+index 319dd65..6fdaf7c 100644
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -374,7 +374,7 @@ static int collect_cpu_info(int cpu)
+ }
+ 
+ struct apply_microcode_ctx {
+-	int err;
++	enum ucode_state err;
+ };
+ 
+ static void apply_microcode_local(void *arg)
+@@ -489,31 +489,29 @@ static void __exit microcode_dev_exit(void)
+ /* fake device for request_firmware */
+ static struct platform_device	*microcode_pdev;
+ 
+-static int reload_for_cpu(int cpu)
++static enum ucode_state reload_for_cpu(int cpu)
+ {
+ 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
+ 	enum ucode_state ustate;
+-	int err = 0;
+ 
+ 	if (!uci->valid)
+-		return err;
++		return UCODE_OK;
+ 
+ 	ustate = microcode_ops->request_microcode_fw(cpu, &microcode_pdev->dev, true);
+-	if (ustate == UCODE_OK)
+-		apply_microcode_on_target(cpu);
+-	else
+-		if (ustate == UCODE_ERROR)
+-			err = -EINVAL;
+-	return err;
++	if (ustate != UCODE_OK)
++		return ustate;
++
++	return apply_microcode_on_target(cpu);
+ }
+ 
+ static ssize_t reload_store(struct device *dev,
+ 			    struct device_attribute *attr,
+ 			    const char *buf, size_t size)
+ {
++	enum ucode_state tmp_ret = UCODE_OK;
+ 	unsigned long val;
++	ssize_t ret = 0;
+ 	int cpu;
+-	ssize_t ret = 0, tmp_ret;
+ 
+ 	ret = kstrtoul(buf, 0, &val);
+ 	if (ret)
+@@ -526,15 +524,18 @@ static ssize_t reload_store(struct device *dev,
+ 	mutex_lock(&microcode_mutex);
+ 	for_each_online_cpu(cpu) {
+ 		tmp_ret = reload_for_cpu(cpu);
+-		if (tmp_ret != 0)
++		if (tmp_ret > UCODE_NFOUND) {
+ 			pr_warn("Error reloading microcode on CPU %d\n", cpu);
+ 
+-		/* save retval of the first encountered reload error */
+-		if (!ret)
+-			ret = tmp_ret;
++			/* set retval for the first encountered reload error */
++			if (!ret)
++				ret = -EINVAL;
++		}
+ 	}
+-	if (!ret)
++
++	if (!ret && tmp_ret == UCODE_UPDATED)
+ 		perf_check_microcode();
++
+ 	mutex_unlock(&microcode_mutex);
+ 	put_online_cpus();
+ 
+diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+index a15db2b..923054a 100644
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -772,7 +772,7 @@ static int collect_cpu_info(int cpu_num, struct cpu_signature *csig)
+ 	return 0;
+ }
+ 
+-static int apply_microcode_intel(int cpu)
++static enum ucode_state apply_microcode_intel(int cpu)
+ {
+ 	struct microcode_intel *mc;
+ 	struct ucode_cpu_info *uci;
+@@ -782,7 +782,7 @@ static int apply_microcode_intel(int cpu)
+ 
+ 	/* We should bind the task to the CPU */
+ 	if (WARN_ON(raw_smp_processor_id() != cpu))
+-		return -1;
++		return UCODE_ERROR;
+ 
+ 	uci = ucode_cpu_info + cpu;
+ 	mc = uci->mc;
+@@ -790,7 +790,7 @@ static int apply_microcode_intel(int cpu)
+ 		/* Look for a newer patch in our cache: */
+ 		mc = find_patch(uci);
+ 		if (!mc)
+-			return 0;
++			return UCODE_NFOUND;
+ 	}
+ 
+ 	/* write microcode via MSR 0x79 */
+@@ -801,7 +801,7 @@ static int apply_microcode_intel(int cpu)
+ 	if (rev != mc->hdr.rev) {
+ 		pr_err("CPU%d update to revision 0x%x failed\n",
+ 		       cpu, mc->hdr.rev);
+-		return -1;
++		return UCODE_ERROR;
+ 	}
+ 
+ 	if (rev != prev_rev) {
+@@ -818,7 +818,7 @@ static int apply_microcode_intel(int cpu)
+ 	uci->cpu_sig.rev = rev;
+ 	c->microcode = rev;
+ 
+-	return 0;
++	return UCODE_UPDATED;
+ }
+ 
+ static enum ucode_state generic_load_microcode(int cpu, void *data, size_t size,
