@@ -1,63 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751167AbeBQSMl (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 13:12:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35036 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751029AbeBQSMk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 13:12:40 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9BCF217A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AH8x224w1/T7ET4uIHB+zH2sA0VZctiOw5os+JZOtIxefWM6rpzLzPUwFPYQJguhdJHVSihd3B17elwTcAuEYlanpZ4=
+        id S1751210AbeBQTIk (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 14:08:40 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:29714 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751049AbeBQTIj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Feb 2018 14:08:39 -0500
+X-UUID: d445fd9e2c4b4d84b9def79fb296b6c0-20180218
+From: <sean.wang@mediatek.com>
+To: <vinod.koul@intel.com>, <dan.j.williams@intel.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC: <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v5 1/3] dt-bindings: dmaengine: Add MediaTek High-Speed DMA controller bindings
+Date: Sun, 18 Feb 2018 03:08:29 +0800
+Message-ID: <94e4a39e05a30f2ca3fafb61d19777f41fa49645.1518857747.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <cover.1518857746.git.sean.wang@mediatek.com>
+References: <cover.1518857746.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <CACdnJuvR4NTdCwp=jT3AoW898EXuq6zakfo5hm6dd9mP-SWoGQ@mail.gmail.com>
-References: <20180215182208.35003-1-joe.konno@linux.intel.com>
- <CAKv+Gu80pJ5tbGoJqBm8CCKrEZXdkE83c944383KbQ5jREUC0Q@mail.gmail.com>
- <1518814319.4419.10.camel@HansenPartnership.com> <3908561D78D1C84285E8C5FCA982C28F7B37942B@ORSMSX110.amr.corp.intel.com>
- <CALCETrXD4qCwgnDcwnybUXzVk7zyJtzHC2xzLfcZvzrXvAB8PQ@mail.gmail.com>
- <CACdnJutPvMPUTWWjS3oRadQAqn+HpRpY+fhO0pXBj6OsQkAAag@mail.gmail.com>
- <3908561D78D1C84285E8C5FCA982C28F7B3795A3@ORSMSX110.amr.corp.intel.com> <CACdnJuvR4NTdCwp=jT3AoW898EXuq6zakfo5hm6dd9mP-SWoGQ@mail.gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Sat, 17 Feb 2018 18:12:18 +0000
-X-Gmail-Original-Message-ID: <CALCETrV0+d-f0GeJ3phcQcyJu1_Uj08ST8x0UBnUzTDcwMR-oQ@mail.gmail.com>
-Message-ID: <CALCETrV0+d-f0GeJ3phcQcyJu1_Uj08ST8x0UBnUzTDcwMR-oQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] efivars: reading variables can generate SMIs
-To: Matthew Garrett <mjg59@google.com>
-Cc: Tony Luck <tony.luck@intel.com>, Andrew Lutomirski <luto@kernel.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Joe Konno <joe.konno@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeremy Kerr <jk@ozlabs.org>, Andi Kleen <ak@linux.intel.com>,
-        Benjamin Drung <benjamin.drung@profitbricks.com>,
-        Peter Jones <pjones@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 10:03 PM, Matthew Garrett <mjg59@google.com> wrote:
-> On Fri, Feb 16, 2018 at 2:02 PM Luck, Tony <tony.luck@intel.com> wrote:
->
->> > If the default is 600 then it makes sense to allow a privileged service
-> to
->> > selectively make certain variables world readable at runtime.
->
->> As soon as you make one variable world readable you are vulnerable to
->> a local user launching a DoS attack by reading that variable over and over
->> generating a flood of SMIs.
->
-> I'm not terribly worried about untrusted users on my laptop, but I would
-> prefer to run as little code as root as possible.
+From: Sean Wang <sean.wang@mediatek.com>
 
-I think that, for the most part, systemwide configuration should not
-be accessible to non-root.  Unprivileged users, in general, have no
-legitimate reason to know that my default boot is Boot0000* Fedora
-HD(1,GPT,ee...,0x800,0x64000)/File(\EFI\fedora\shim.efi).  Even more
-so if I'm network booting.
+Document the devicetree bindings for MediaTek High-Speed DMA controller
+which could be found on MT7623 SoC or other similar Mediatek SoCs.
 
-Alternatively, we could call this a distro issue.  Distros could
-easily change the permissions on /sys/firmware/efi/efivars to disallow
-unprivileged access.
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ .../devicetree/bindings/dma/mtk-hsdma.txt          | 33 ++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/mtk-hsdma.txt
+
+diff --git a/Documentation/devicetree/bindings/dma/mtk-hsdma.txt b/Documentation/devicetree/bindings/dma/mtk-hsdma.txt
+new file mode 100644
+index 0000000..4bb31735
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/mtk-hsdma.txt
+@@ -0,0 +1,33 @@
++MediaTek High-Speed DMA Controller
++==================================
++
++This device follows the generic DMA bindings defined in dma/dma.txt.
++
++Required properties:
++
++- compatible:	Must be one of
++		  "mediatek,mt7622-hsdma": for MT7622 SoC
++		  "mediatek,mt7623-hsdma": for MT7623 SoC
++- reg:		Should contain the register's base address and length.
++- interrupts:	Should contain a reference to the interrupt used by this
++		device.
++- clocks:	Should be the clock specifiers corresponding to the entry in
++		clock-names property.
++- clock-names:	Should contain "hsdma" entries.
++- power-domains: Phandle to the power domain that the device is part of
++- #dma-cells: 	The length of the DMA specifier, must be <1>. This one cell
++		in dmas property of a client device represents the channel
++		number.
++Example:
++
++        hsdma: dma-controller@1b007000 {
++		compatible = "mediatek,mt7623-hsdma";
++		reg = <0 0x1b007000 0 0x1000>;
++		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&ethsys CLK_ETHSYS_HSDMA>;
++		clock-names = "hsdma";
++		power-domains = <&scpsys MT2701_POWER_DOMAIN_ETH>;
++		#dma-cells = <1>;
++	};
++
++DMA clients must use the format described in dma/dma.txt file.
+-- 
+2.7.4
