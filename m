@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751074AbeBQAKA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 16 Feb 2018 19:10:00 -0500
-Received: from gloria.sntech.de ([95.129.55.99]:52322 "EHLO gloria.sntech.de"
+        id S1751072AbeBQAKf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 16 Feb 2018 19:10:35 -0500
+Received: from gloria.sntech.de ([95.129.55.99]:52370 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750859AbeBQAJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Feb 2018 19:09:59 -0500
+        id S1750838AbeBQAKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Feb 2018 19:10:34 -0500
 From: Heiko Stuebner <heiko@sntech.de>
 To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
@@ -16,11 +16,11 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel@collabora.com
-Subject: Re: [PATCH v3 4/6] phy: rockchip-typec: force to USB2 if DP at 4 lanes mode
-Date: Sat, 17 Feb 2018 01:09:52 +0100
-Message-ID: <4816286.2JUx8CKC3E@phil>
-In-Reply-To: <20180216120956.19034-4-enric.balletbo@collabora.com>
-References: <20180216120956.19034-1-enric.balletbo@collabora.com> <20180216120956.19034-4-enric.balletbo@collabora.com>
+Subject: Re: [PATCH v3 5/6] phy: rockchip-typec: support DP phy switch
+Date: Sat, 17 Feb 2018 01:10:27 +0100
+Message-ID: <2116429.ju84df7Jza@phil>
+In-Reply-To: <20180216120956.19034-5-enric.balletbo@collabora.com>
+References: <20180216120956.19034-1-enric.balletbo@collabora.com> <20180216120956.19034-5-enric.balletbo@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -28,21 +28,16 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 16. Februar 2018, 13:09:54 CET schrieb Enric Balletbo i Serra:
+Am Freitag, 16. Februar 2018, 13:09:55 CET schrieb Enric Balletbo i Serra:
 > From: Chris Zhong <zyw@rock-chips.com>
 > 
-> The usb3tousb2_en BIT will be clear to 0 in probe(), it make USB
-> controller work at USB3 mode, and if the USB phy is turned on with DP
-> only mode(4 lanes DP), the rockchip_usb3_phy_power_on() will return
-> directly, so usb3_host_disable and usb3_host_port these 2 BIT will keep
-> a same value as coreboot. In coreboot, these 3 BITs are set as USB2
-> mode, but now one of the bits is changed to USB3, it make USB controller
-> work at a unknown status.
-> 
-> These 3 BITs should be changed to USB2, if the Type-C works at 4 lanes
-> mode, and then switch it back to USB3 mode, when USB disconnect.
+> There are 2 Type-c PHYs in RK3399, but only one DP controller. Hence
+> only one PHY can connect to DP controller at one time, the other should
+> be disconnected. The GRF_SOC_CON26 register has a switch bit to do it,
+> set this bit means enable PHY 1, clear this bit means enable PHY 0.
 > 
 > Signed-off-by: Chris Zhong <zyw@rock-chips.com>
 > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
 
 Reviewed-by: Heiko Stuebner <heiko@sntech.de>
