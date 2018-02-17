@@ -1,78 +1,111 @@
-Return-Path: <keithp@keithp.com>
-X-Google-Smtp-Source: AH8x225WiXL4SPQ7ddZnNAre6EHQywl0whtBVKm0iU4eaRC3wrpz9PRmATbvdCDau0AdxaJp6BAM
-ARC-Seal: i=1; a=rsa-sha256; t=1518848902; cv=none;
+Return-Path: <aishpant@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1518847148; cv=none;
         d=google.com; s=arc-20160816;
-        b=i0E/S5Wv8E9xxV7ZQd1w1hMJtcCXFyUkUZDmnMUod8+J3JLSR7vvU0nLIpJaNN4pun
-         +7KwbeNfVEEkIA7lehT69M3t7YBc/BEN7n8NDUDQpPsXz39dfVI7Ybtvi/hhJBUTUjKd
-         anlnQ6wEntvsHUjeQ9jbH4lByvyEH7hylX04E+52F2L4pWVrxt+OfFYO44rBU/om/nhr
-         aQD6AT8iucbj+OSTQEiOLs1zFyQcCYyPA6Aka7QKG8WLBdfq0I17e7Ij8aBqzaY/kSau
-         vQG/7oDqbF2MIgJbN2MEB6oSKabdjjxPnRGqo6FVXJHI16RLdV6t37esJgyFwwIVTGqu
-         SU8A==
+        b=hEbKwzHoU+0eae37namzjg22mlEbL9JJuWn1eRtfPtOixKjQ/3AxamcV8zxrUafLAt
+         Vw1+zMvg9T+Oruie/jzo3dSdpeFMxkzAxhQ7UfBPkPjKKUoZC17D/XnKkjZqAzas3pRU
+         nh/OPqopc0Mijoo04MYh0bwQEl+5Tx51qApCMlSlDW+CsrQDx+Dcs94kDC9ZU9pRMil+
+         bofIVWrEqz6H6wlLvqy0VMoFgTfV+85rT4UORjlwlA+IPBHuayijWf/34t6V9ILIdXBl
+         F7VJXjwvClrFbtt+xUrcCjOB9w6JROqVv5o3UGiyzxrOYKGeK0bRJHyqGt+4ghmII6si
+         Swiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:arc-authentication-results;
-        bh=xtHwJ52sMmV7BQs5BJsBhg9gjWWzffiyapE7OpIB5wM=;
-        b=ib0e8CZHSAcaN5jielA+MvcNAfFeCUuft7zKSTfaneDNNQgUh3xEeeGhXHXvWU6qZq
-         qzYFolW3mSQYg8SVUoLfqw1HOSEX7iXiO4Gjy7w0evUhixtQQVs2e/FP4OZ6Ljyf5lLK
-         2nEDprOZjHaVHC+o8agT5XYuGpKnM7vUEvcFxwNIhjaVwmM50cGoTzWO4Ju59GZTYsK0
-         SUCgBX0vF7y+eZ+cOAiv8Sxf8WdRwpoWZx2OpcRIbs1208lYouNDn8OiTMfb/pMvFmWz
-         WjU7a3yUY5/R5pVgy2a43aIAl4toBjC34RYz0V3vzrAb8RV8DbCzYntC7dI0iZNh1d2z
-         Y20Q==
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=B3rhD00wkhRFntxAgJaiTxOBqnemgbbzgjtcofqzOP8=;
+        b=a/AgZbjh9TLChm+hTZ6aTG96b34EsBWPb1y+aChgArLLN+rVB8XaBeW+uNu/kZzaG+
+         jB4Tsmxxh8F3c6AKWH9pJ9HEyw4n3G3HF5/XnoAJbzpwM/KrfX9Flu6SynZ50yJ6aaRe
+         JgtEeBox6iTaj1ImgGmeVNoIzfWhf1A7bWpgvFD/MWIt+uht5fUKR6No/GXmoZG/DYpc
+         nS12DSW5Rf/j3D6eil7EurVDJM+uXF0XPd3qpAW+SJ0dYkreMT0eGgIFyb7Q0e7WN54J
+         y1LVHnHw6Kuqx2Dt+0+O10Yo50y3CdPHOQfmpcUZxrpNN+6u+PhZdGNGx6ovcGFpHqo0
+         ATeg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of keithp@keithp.com designates 63.227.221.253 as permitted sender) smtp.mailfrom=keithp@keithp.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=mhOuT/8j;
+       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of keithp@keithp.com designates 63.227.221.253 as permitted sender) smtp.mailfrom=keithp@keithp.com
-From: "Keith Packard" <keithp@keithp.com>
-To: Kees Cook <keescook@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH] USB: chaoskey: Use kasprintf() over strcpy()/strcat()
-In-Reply-To: <20180217045530.GA24226@beast>
-References: <20180217045530.GA24226@beast>
-Date: Fri, 16 Feb 2018 22:28:20 -0800
-Message-ID: <87k1vci0zf.fsf@keithp.com>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=mhOuT/8j;
+       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x227piZ6Tf0Z7isCBp9JPW3ni9zuZrVfQceolTk3oUa18739+wlvQSseVcDXIlgvVD7dpXt9fNg==
+Date: Sat, 17 Feb 2018 11:29:03 +0530
+From: Aishwarya Pant <aishpant@gmail.com>
+To: "Ed L. Cashin" <ed.cashin@acm.org>, linux-kernel@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Greg KH <gregkh@linuxfoundation.org>
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Subject: [PATCH v2] aoe: document sysfs interface
+Message-ID: <20180217055903.GA8350@mordor.localdomain>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592622666371182567?=
-X-GMAIL-MSGID: =?utf-8?q?1592628506308363050?=
+X-GMAIL-THRID: =?utf-8?q?1592626668016122554?=
+X-GMAIL-MSGID: =?utf-8?q?1592626668016122554?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Documentation has been compiled from git commit logs and descriptions in
+Documentation/aoe/aoe.txt. This should be useful for scripting and
+tracking changes in the ABI.
 
-Kees Cook <keescook@chromium.org> writes:
+Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
+---
+Changes in v2:
+- interface -> interfaces in description of netif
 
-> Instead of kmalloc() with manually calculated values followed by
-> multiple strcpy()/strcat() calls, just fold it all into a single
-> kasprintf() call.
->
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+ Documentation/ABI/testing/sysfs-block-aoe | 44 +++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-block-aoe
 
-Reviewed-by: Keith Packard <keithp@keithp.com>
-
-=2D-=20
-=2Dkeith
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEw4O3eCVWE9/bQJ2R2yIaaQAAABEFAlqHy4QACgkQ2yIaaQAA
-ABEcHQ/8DMwcxK/VzNBH0Tvpc7fWqVEqlwDUHhTjIktMzN7AHrMG6DyOEnqs2mmT
-cLSeYLVdUZQOopJ6Cc0aHtp2/V05T5d3BABhuQG8+/gPCXYi/ex0XmIKQoRGBkT1
-vDg+Byn2PSzMall9EjP0V40lycEL9qYVZzV7OOi0Yi9xYnvEuzVp4o6fnqbpaCxl
-k7Tq5DKSvUJTmXMJbxoGaCWYMxuiL9KGTAmTbgZUOjw6+h4bLgblvGUm9Gz4wof+
-W9Mnd7QeZH1m0ISrZbfCRBVkaphD9so1NJNNsMsYW2J0wP/wOBQGkFJ5O/quMsh/
-gDFOkH5iAl1cftEz+S8JtauEm8243eQFxfmiP2sTRt58C4ArIfp0cz0Wop78AXeJ
-wvPT0sknolaOsQRYWVROKwbWomyvkzdKHNJlnaOnAMglHch8ck24tyeB7K+rWEF7
-dLGTojV6+YETvw8q/cYzxYKExmnDu2/okrtKesGPc6T2UI4FCZMAtNEXqv45DDYr
-f6zNLPAxfrxoCweqjulI/5bIoyQmda5K1+cGhfwbTkX0Df81l8/nLAdINx0uNNj9
-CSQNngk3ET1pE6HeRKD3Kydl0nw3oSDgFK6YCMmJ9ltrDXuC4hNewJqS0yyPdifb
-iYvyNw6dXV7xcVGHSc778ctM1G4eQtHGtT0/JyJLbbg/auaMtPM=
-=h6uX
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/Documentation/ABI/testing/sysfs-block-aoe b/Documentation/ABI/testing/sysfs-block-aoe
+new file mode 100644
+index 000000000000..6f0795f7f10c
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-block-aoe
+@@ -0,0 +1,44 @@
++What:		/sys/block/etherd*/mac
++Date:		Apr, 2005
++KernelVersion:	v2.6.12
++Contact:	Ed L. Cashin <ed.cashin@acm.org>
++Description:
++		(RO) The ethernet address of the remote Ata over Ethernet (AoE)
++		device.
++
++What:		/sys/block/etherd*/netif
++Date:		Apr, 2005
++KernelVersion:	v2.6.12
++Contact:	Ed L. Cashin <ed.cashin@acm.org>
++Description:
++		(RO) The name of the network interfaces on the localhost through
++		which we are communicating with the remote AoE device.
++
++What:		/sys/block/etherd*/state
++Date:		Apr, 2005
++KernelVersion:	v2.6.12
++Contact:	Ed L. Cashin <ed.cashin@acm.org>
++Description:
++		(RO) Device status. The state attribute is "up" when the device
++		is ready for I/O and "down" if detected but unusable. The
++		"down,closewait" state shows that the device is still open and
++		cannot come up again until it has been closed.  The "up,kickme"
++		state means that the driver wants to send more commands to the
++		target but found out there were already the max number of
++		commands waiting for a response. It will retry again after being
++		kicked by the periodic timer handler routine.
++
++What:		/sys/block/etherd*/firmware-version
++Date:		Apr, 2005
++KernelVersion:	v2.6.12
++Contact:	Ed L. Cashin <ed.cashin@acm.org>
++Description:
++		(RO) Version of the firmware in the target.
++
++What:		/sys/block/etherd*/payload
++Date:		Dec, 2012
++KernelVersion:	v3.10
++Contact:	Ed L. Cashin <ed.cashin@acm.org>
++Description:
++		(RO) The amount of user data transferred (in bytes) inside each AoE
++		command on the network, network headers excluded.
+-- 
+2.16.1
