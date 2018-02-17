@@ -1,259 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751160AbeBQKtR (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 05:49:17 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33701 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751036AbeBQKtO (ORCPT
+        id S1751169AbeBQKuu (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 05:50:50 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:57678 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751036AbeBQKut (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 05:49:14 -0500
-X-Google-Smtp-Source: AH8x225KirXivdEx2Mez28oXT8WqY0J88BeShqIqgiSZMDUFmWGOlALaW297Y7GlU/CQ00RvkaDL4g==
-Date: Sat, 17 Feb 2018 11:49:09 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, coresight@lists.linaro.org,
-        David Ahern <dsahern@gmail.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Jaecheol Shin <jcgod413@gmail.com>, Jin Yao <yao.jin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@intel.com>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Sat, 17 Feb 2018 05:50:49 -0500
+Date: Sat, 17 Feb 2018 11:50:52 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Frederic Weisbecker <frederic@kernel.org>
+cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Robert Walker <robert.walker@arm.com>, Sangwon Hong <qpakzk@gmail.com>,
-        Stephane Eranian <eranian@google.com>,
-        Taeung Song <treeze.taeung@gmail.com>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Wang Nan <wangnan0@huawei.com>,
-        yuzhoujian <yuzhoujian@didichuxing.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [GIT PULL 00/41] perf/core improvements and fixes
-Message-ID: <20180217104909.sinw52ln3bcyzfms@gmail.com>
-References: <20180216191746.11095-1-acme@kernel.org>
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Luiz Capitulino <lcapitulino@redhat.com>,
+        Christoph Lameter <cl@linux.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Wanpeng Li <kernellwp@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Rik van Riel <riel@redhat.com>
+Subject: Re: [PATCH 4/6] sched/isolation: Offload residual 1Hz scheduler
+ tick
+In-Reply-To: <1518655694-8057-5-git-send-email-frederic@kernel.org>
+Message-ID: <alpine.DEB.2.21.1802171138001.2087@nanos.tec.linutronix.de>
+References: <1518655694-8057-1-git-send-email-frederic@kernel.org> <1518655694-8057-5-git-send-email-frederic@kernel.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180216191746.11095-1-acme@kernel.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 15 Feb 2018, Frederic Weisbecker wrote:
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> When a CPU runs in full dynticks mode, a 1Hz tick remains in order to
+> keep the scheduler stats alive. However this residual tick is a burden
+> for bare metal tasks that can't stand any interruption at all, or want
+> to minimize them.
+> 
+> The usual boot parameters "nohz_full=" or "isolcpus=nohz" will now
+> outsource these scheduler ticks to the global workqueue so that a
+> housekeeping CPU handles those remotely. The sched_class::task_tick()
+> implementations have been audited and look safe to be called remotely
+> as the target runqueue and its current task are passed in parameter
+> and don't seem to be accessed locally.
 
-> Hi Ingo,
-> 
-> 	Please consider pulling, this is on top of tip/perf/urgent.
-> 
-> - Arnaldo
-> 
-> Test results at the end of this message, as usual.
-> 
-> The following changes since commit 297f9233b53a08fd457815e19f1d6f2c3389857b:
-> 
->   kprobes: Propagate error from disarm_kprobe_ftrace() (2018-02-16 09:12:58 +0100)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-core-for-mingo-4.17-20180216
-> 
-> for you to fetch changes up to 21316ac6803d4a1aadd74b896db8d60a92cd1140:
-> 
->   perf tests shell lib: Use a wildcard to remove the vfs_getname probe (2018-02-16 15:31:12 -0300)
-> 
-> ----------------------------------------------------------------
-> perf/core improvements and fixes:
-> 
-> - Fix wrong jump arrow in systems with branch records with cycles,
->   i.e. Intel's >= Skylake (Jin Yao)
-> 
-> - Fix 'perf record --per-thread' problem introduced when
->   implementing 'perf stat --per-thread (Jin Yao)
-> 
-> - Use arch__compare_symbol_names() to fix 'perf test vmlinux',
->   that was using strcmp(symbol names) while the dso routines
->   doing symbol lookups used the arch overridable one, making
->   this test fail in architectures that overrided that function
->   with something other than strcmp() (Jiri Olsa)
-> 
-> - Add 'perf script --show-round-event' to display
->   PERF_RECORD_FINISHED_ROUND entries (Jiri Olsa)
-> 
-> - Fix dwarf unwind for stripped binaries in 'perf test' (Jiri Olsa)
-> 
-> - Use ordered_events for 'perf report --tasks', otherwise we may get
->   artifacts when PERF_RECORD_FORK gets processed before PERF_RECORD_COMM
->   (when they got recorded in different CPUs) (Jiri Olsa)
-> 
-> - Add support to display group output for non group events, i.e.
->   now when one uses 'perf report --group' on a perf.data file
->   recorded without explicitly grouping events with {} (e.g.
->   "perf record -e '{cycles,instructions}'" get the same output
->   that would produce, i.e. see all those non-grouped events in
->   multiple columns, at the same time (Jiri Olsa)
-> 
-> - Skip non-address kallsyms entries, e.g. '(null)' for !root (Jiri Olsa)
-> 
-> - Kernel maps fixes wrt perf.data(report) versus live system (top)
->   (Jiri Olsa)
-> 
-> - Fix memory corruption when using 'perf record -j call -g -a <application>'
->   followed by 'perf report --branch-history' (Jiri Olsa)
-> 
-> - ARM CoreSight fixes (Mathieu Poirier)
-> 
-> - Add inject capability for CoreSight Traces (Robert Waker)
-> 
-> - Update documentation for use of 'perf' + ARM CoreSight (Robert Walker)
-> 
-> - Man pages fixes (Sangwon Hong, Jaecheol Shin)
-> 
-> - Fix some 'perf test' cases on s/390 and x86_64 (some backtraces
->   changed with a glibc update) (Thomas Richter)
-> 
-> - Add detailed CPUID info in the 'perf.data' headers for s/390 to
->   then use it in 'perf annotate' (Thomas Richter)
-> 
-> - Add '--interval-count N' to 'perf stat', to use with -I, i.e.
->   'perf stat -I 1000 --interval-count 2' will show stats every
->    1000ms, two times (yuzhoujian)
-> 
-> - Add 'perf stat --timeout Nms', that will run for that many
->   milliseconds and then stop, printing the counters (yuzhoujian)
-> 
-> - Fix description for 'perf report --mem-modex (Andi Kleen)
-> 
-> - Use a wildcard to remove the vfs_getname probe in the
->   'perf test' shell based test cases (Arnaldo Carvalho de Melo)
-> 
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> ----------------------------------------------------------------
-> Andi Kleen (1):
->       perf report: Fix description for --mem-mode
-> 
-> Arnaldo Carvalho de Melo (1):
->       perf tests shell lib: Use a wildcard to remove the vfs_getname probe
-> 
-> Jaecheol Shin (1):
->       perf annotate: Add missing arguments in Man page
-> 
-> Jin Yao (2):
->       perf tools: Use target->per_thread and target->system_wide flags
->       perf report: Fix wrong jump arrow
-> 
-> Jiri Olsa (18):
->       perf record: Put new line after target override warning
->       perf script: Add --show-round-event to display PERF_RECORD_FINISHED_ROUND
->       tools lib api fs: Add filename__read_xll function
->       tools lib api fs: Add sysfs__read_xll function
->       perf tests: Fix dwarf unwind for stripped binaries
->       perf tools: Fix comment for sort__* compare functions
->       perf report: Ask for ordered events for --tasks option
->       perf report: Add support to display group output for non group events
->       tools lib symbol: Skip non-address kallsyms line
->       perf symbols: Check if we read regular file in dso__load()
->       perf machine: Free root_dir in machine__init() error path
->       perf machine: Move kernel mmap name into struct machine
->       perf machine: Generalize machine__set_kernel_mmap()
->       perf machine: Don't search for active kernel start in __machine__create_kernel_maps
->       perf machine: Remove machine__load_kallsyms()
->       perf tools: Do not create kernel maps in sample__resolve()
->       perf tests: Use arch__compare_symbol_names to compare symbols
->       perf report: Fix memory corruption in --branch-history mode --branch-history
-> 
-> Mathieu Poirier (3):
->       perf cs-etm: Freeing allocated memory
->       perf auxtrace arm: Fixing uninitialised variable
->       perf cs-etm: Properly deal with cpu maps
-> 
-> Ravi Bangoria (3):
->       tools include powerpc: Grab a copy of arch/powerpc/include/uapi/asm/unistd.h
->       perf powerpc: Generate system call table from asm/unistd.h
->       perf trace powerpc: Use generated syscall table
-> 
-> Robert Walker (3):
->       perf cs-etm: Inject capabilitity for CoreSight traces
->       perf inject: Emit instruction records on ETM trace discontinuity
->       coresight: Update documentation for perf usage
-> 
-> Sangwon Hong (2):
->       perf kmem: Document a missing option & an argument
->       perf mem: Document a missing option
-> 
-> Thomas Richter (5):
->       perf record: Provide detailed information on s390 CPU
->       perf annotate: Scan cpuid for s390 and save machine type
->       perf cpuid: Introduce a platform specific cpuid compare function
->       perf test: Fix test case 23 for s390 z/VM or KVM guests
->       perf test: Fix test case inet_pton to accept inlines.
-> 
-> yuzhoujian (2):
->       perf stat: Add support to print counts for fixed times
->       perf stat: Add support to print counts after a period of time
-> 
->  Documentation/trace/coresight.txt                  |  51 +++
->  tools/arch/powerpc/include/uapi/asm/unistd.h       | 402 +++++++++++++++++
->  tools/lib/api/fs/fs.c                              |  44 +-
->  tools/lib/api/fs/fs.h                              |   2 +
->  tools/lib/symbol/kallsyms.c                        |   4 +
->  tools/perf/Documentation/perf-annotate.txt         |   6 +-
->  tools/perf/Documentation/perf-kmem.txt             |   6 +-
->  tools/perf/Documentation/perf-mem.txt              |   4 +
->  tools/perf/Documentation/perf-report.txt           |   5 +-
->  tools/perf/Documentation/perf-script.txt           |   3 +
->  tools/perf/Documentation/perf-stat.txt             |  10 +
->  tools/perf/Makefile.config                         |   2 +
->  tools/perf/arch/arm/util/auxtrace.c                |   2 +-
->  tools/perf/arch/arm/util/cs-etm.c                  |  51 ++-
->  tools/perf/arch/powerpc/Makefile                   |  25 ++
->  .../perf/arch/powerpc/entry/syscalls/mksyscalltbl  |  37 ++
->  tools/perf/arch/s390/annotate/instructions.c       |  27 +-
->  tools/perf/arch/s390/util/header.c                 | 148 ++++++-
->  tools/perf/builtin-record.c                        |   2 +-
->  tools/perf/builtin-report.c                        |   7 +-
->  tools/perf/builtin-script.c                        |  17 +
->  tools/perf/builtin-stat.c                          |  53 ++-
->  tools/perf/check-headers.sh                        |   1 +
->  tools/perf/tests/code-reading.c                    |  33 +-
->  tools/perf/tests/dwarf-unwind.c                    |  46 +-
->  tools/perf/tests/shell/lib/probe_vfs_getname.sh    |   2 +-
->  .../perf/tests/shell/trace+probe_libc_inet_pton.sh |   6 +-
->  tools/perf/tests/vmlinux-kallsyms.c                |   4 +-
->  tools/perf/ui/browsers/annotate.c                  |   9 +-
->  tools/perf/util/build-id.c                         |  10 +-
->  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c    |  74 +++-
->  tools/perf/util/cs-etm-decoder/cs-etm-decoder.h    |   2 +
->  tools/perf/util/cs-etm.c                           | 478 ++++++++++++++++++---
->  tools/perf/util/event.c                            |  16 +-
->  tools/perf/util/evlist.c                           |  21 +-
->  tools/perf/util/header.h                           |   1 +
->  tools/perf/util/hist.c                             |   4 +-
->  tools/perf/util/hist.h                             |   1 -
->  tools/perf/util/machine.c                          | 145 +++----
->  tools/perf/util/machine.h                          |   6 +-
->  tools/perf/util/pmu.c                              |  47 +-
->  tools/perf/util/sort.c                             |   7 +-
->  tools/perf/util/stat.h                             |   2 +
->  tools/perf/util/symbol.c                           |  13 +-
->  tools/perf/util/syscalltbl.c                       |   8 +
->  tools/perf/util/thread_map.c                       |   4 +-
->  tools/perf/util/thread_map.h                       |   2 +-
->  47 files changed, 1577 insertions(+), 273 deletions(-)
->  create mode 100644 tools/arch/powerpc/include/uapi/asm/unistd.h
->  create mode 100755 tools/perf/arch/powerpc/entry/syscalls/mksyscalltbl
+That scares me a bit. Not for the current state of affairs, but we want to
+ensure that this still works in 2 years from now
 
-Pulled, thanks a lot Arnaldo!
+So at least you want to add a comment to task_tick() which explains the
+constraints which come with the remote tick.
 
-	Ingo
+Other than that this looks good!
+
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
