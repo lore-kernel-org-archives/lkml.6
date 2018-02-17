@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751279AbeBQFte (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 00:49:34 -0500
+        id S1751259AbeBQFtb (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 00:49:31 -0500
 Received: from mga02.intel.com ([134.134.136.20]:59982 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751239AbeBQFt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 00:49:28 -0500
+        id S1751133AbeBQFt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Feb 2018 00:49:26 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,523,1511856000";
-   d="scan'208";a="20863419"
+   d="scan'208";a="20863414"
 From: changbin.du@intel.com
 To: corbet@lwn.net, rostedt@goodmis.org
 Cc: mingo@kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, Changbin Du <changbin.du@intel.com>
-Subject: [PATCH 16/17] trace doc: convert trace/intel_th.txt to rst format
-Date: Sat, 17 Feb 2018 13:39:49 +0800
-Message-Id: <1518845990-20733-17-git-send-email-changbin.du@intel.com>
+Subject: [PATCH 15/17] trace doc: convert trace/hwlat_detector.txt to rst fromat
+Date: Sat, 17 Feb 2018 13:39:48 +0800
+Message-Id: <1518845990-20733-16-git-send-email-changbin.du@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518845990-20733-1-git-send-email-changbin.du@intel.com>
 References: <1518845990-20733-1-git-send-email-changbin.du@intel.com>
@@ -33,108 +33,83 @@ add it into Sphinx TOC tree. No essential content change.
 Cc: Steven Rostedt <rostedt@goodmis.org>
 Signed-off-by: Changbin Du <changbin.du@intel.com>
 ---
+ .../{hwlat_detector.txt => hwlat_detector.rst}     | 26 +++++++++++++---------
  Documentation/trace/index.rst                      |  1 +
- Documentation/trace/{intel_th.txt => intel_th.rst} | 43 +++++++++++-----------
- 2 files changed, 23 insertions(+), 21 deletions(-)
- rename Documentation/trace/{intel_th.txt => intel_th.rst} (82%)
+ 2 files changed, 16 insertions(+), 11 deletions(-)
+ rename Documentation/trace/{hwlat_detector.txt => hwlat_detector.rst} (83%)
 
-diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-index eabbbaf..02cc56c 100644
---- a/Documentation/trace/index.rst
-+++ b/Documentation/trace/index.rst
-@@ -19,3 +19,4 @@ Linux Tracing Technologies
-    events-msr
-    mmiotrace
-    hwlat_detector
-+   intel_th
-diff --git a/Documentation/trace/intel_th.txt b/Documentation/trace/intel_th.rst
-similarity index 82%
-rename from Documentation/trace/intel_th.txt
-rename to Documentation/trace/intel_th.rst
-index 7a57165..990f132 100644
---- a/Documentation/trace/intel_th.txt
-+++ b/Documentation/trace/intel_th.rst
-@@ -1,3 +1,4 @@
-+=======================
- Intel(R) Trace Hub (TH)
- =======================
- 
-@@ -18,13 +19,13 @@ via sysfs attributes.
- 
- Currently, the following Intel TH subdevices (blocks) are supported:
-   - Software Trace Hub (STH), trace source, which is a System Trace
--  Module (STM) device,
-+    Module (STM) device,
-   - Memory Storage Unit (MSU), trace output, which allows storing
--  trace hub output in system memory,
-+    trace hub output in system memory,
-   - Parallel Trace Interface output (PTI), trace output to an external
--  debug host via a PTI port,
-+    debug host via a PTI port,
-   - Global Trace Hub (GTH), which is a switch and a central component
--  of Intel(R) Trace Hub architecture.
-+    of Intel(R) Trace Hub architecture.
- 
- Common attributes for output devices are described in
- Documentation/ABI/testing/sysfs-bus-intel_th-output-devices, the most
-@@ -65,41 +66,41 @@ allocated, are accessible via /dev/intel_th0/msc{0,1}.
- Quick example
+diff --git a/Documentation/trace/hwlat_detector.txt b/Documentation/trace/hwlat_detector.rst
+similarity index 83%
+rename from Documentation/trace/hwlat_detector.txt
+rename to Documentation/trace/hwlat_detector.rst
+index 3207717..5739349 100644
+--- a/Documentation/trace/hwlat_detector.txt
++++ b/Documentation/trace/hwlat_detector.rst
+@@ -1,4 +1,8 @@
+-Introduction:
++=========================
++Hardware Latency Detector
++=========================
++
++Introduction
  -------------
  
--# figure out which GTH port is the first memory controller:
-+# figure out which GTH port is the first memory controller::
+ The tracer hwlat_detector is a special purpose tracer that is used to
+@@ -28,7 +32,7 @@ Note that the hwlat detector should *NEVER* be used in a production environment.
+ It is intended to be run manually to determine if the hardware platform has a
+ problem with long system firmware service routines.
  
--$ cat /sys/bus/intel_th/devices/0-msc0/port
--0
-+	$ cat /sys/bus/intel_th/devices/0-msc0/port
-+	0
+-Usage:
++Usage
+ ------
  
--# looks like it's port 0, configure master 33 to send data to port 0:
-+# looks like it's port 0, configure master 33 to send data to port 0::
+ Write the ASCII text "hwlat" into the current_tracer file of the tracing system
+@@ -36,16 +40,16 @@ Write the ASCII text "hwlat" into the current_tracer file of the tracing system
+ redefine the threshold in microseconds (us) above which latency spikes will
+ be taken into account.
  
--$ echo 0 > /sys/bus/intel_th/devices/0-gth/masters/33
-+	$ echo 0 > /sys/bus/intel_th/devices/0-gth/masters/33
+-Example:
++Example::
  
- # allocate a 2-windowed multiblock buffer on the first memory
--# controller, each with 64 pages:
-+# controller, each with 64 pages::
+ 	# echo hwlat > /sys/kernel/tracing/current_tracer
+ 	# echo 100 > /sys/kernel/tracing/tracing_thresh
  
--$ echo multi > /sys/bus/intel_th/devices/0-msc0/mode
--$ echo 64,64 > /sys/bus/intel_th/devices/0-msc0/nr_pages
-+	$ echo multi > /sys/bus/intel_th/devices/0-msc0/mode
-+	$ echo 64,64 > /sys/bus/intel_th/devices/0-msc0/nr_pages
+ The /sys/kernel/tracing/hwlat_detector interface contains the following files:
  
--# enable wrapping for this controller, too:
-+# enable wrapping for this controller, too::
+-width			- time period to sample with CPUs held (usecs)
+-			  must be less than the total window size (enforced)
+-window			- total period of sampling, width being inside (usecs)
++  - width - time period to sample with CPUs held (usecs)
++            must be less than the total window size (enforced)
++  - window - total period of sampling, width being inside (usecs)
  
--$ echo 1 > /sys/bus/intel_th/devices/0-msc0/wrap
-+	$ echo 1 > /sys/bus/intel_th/devices/0-msc0/wrap
+ By default the width is set to 500,000 and window to 1,000,000, meaning that
+ for every 1,000,000 usecs (1s) the hwlat detector will spin for 500,000 usecs
+@@ -67,11 +71,11 @@ The following tracing directory files are used by the hwlat_detector:
  
--# and enable tracing into this port:
-+# and enable tracing into this port::
+ in /sys/kernel/tracing:
  
--$ echo 1 > /sys/bus/intel_th/devices/0-msc0/active
-+	$ echo 1 > /sys/bus/intel_th/devices/0-msc0/active
+- tracing_threshold	- minimum latency value to be considered (usecs)
+- tracing_max_latency	- maximum hardware latency actually observed (usecs)
+- tracing_cpumask	- the CPUs to move the hwlat thread across
+- hwlat_detector/width	- specified amount of time to spin within window (usecs)
+- hwlat_detector/window	- amount of time between (width) runs (usecs)
++ - tracing_threshold	- minimum latency value to be considered (usecs)
++ - tracing_max_latency	- maximum hardware latency actually observed (usecs)
++ - tracing_cpumask	- the CPUs to move the hwlat thread across
++ - hwlat_detector/width	- specified amount of time to spin within window (usecs)
++ - hwlat_detector/window	- amount of time between (width) runs (usecs)
  
- # .. send data to master 33, see stm.txt for more details ..
- # .. wait for traces to pile up ..
--# .. and stop the trace:
-+# .. and stop the trace::
- 
--$ echo 0 > /sys/bus/intel_th/devices/0-msc0/active
-+	$ echo 0 > /sys/bus/intel_th/devices/0-msc0/active
- 
--# and now you can collect the trace from the device node:
-+# and now you can collect the trace from the device node::
- 
--$ cat /dev/intel_th0/msc0 > my_stp_trace
-+	$ cat /dev/intel_th0/msc0 > my_stp_trace
- 
- Host Debugger Mode
--==================
-+------------------
- 
- It is possible to configure the Trace Hub and control its trace
- capture from a remote debug host, which should be connected via one of
+ The hwlat detector's kernel thread will migrate across each CPU specified in
+ tracing_cpumask between each window. To limit the migration, either modify
+diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
+index 4b3d690..eabbbaf 100644
+--- a/Documentation/trace/index.rst
++++ b/Documentation/trace/index.rst
+@@ -18,3 +18,4 @@ Linux Tracing Technologies
+    events-nmi
+    events-msr
+    mmiotrace
++   hwlat_detector
 -- 
 2.7.4
