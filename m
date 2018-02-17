@@ -1,54 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751077AbeBQIsT (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 03:48:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57423 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751011AbeBQIsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 03:48:18 -0500
-From: Juergen Gross <jgross@suse.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@oracle.com
-Subject: [GIT PULL] xen: fixes for 4.16-rc2
-Date: Sat, 17 Feb 2018 09:48:15 +0100
-Message-Id: <20180217084815.4662-1-jgross@suse.com>
-X-Mailer: git-send-email 2.13.6
+        id S1751134AbeBQItN (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 03:49:13 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:33955 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751104AbeBQItM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Feb 2018 03:49:12 -0500
+X-UUID: 3533b52fe5af4334a6d6ec6389c821d7-20180217
+From: <sean.wang@mediatek.com>
+To: <robh+dt@kernel.org>, <rui.zhang@intel.com>, <edubezval@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Shunli Wang <shunli.wang@mediatek.com>
+Subject: [PATCH v2 1/2] dt-bindings: thermal: add binding for MT7622 SoC
+Date: Sat, 17 Feb 2018 16:49:01 +0800
+Message-ID: <c72262a17332a227aa2db39b682db50e2324821a.1518856935.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+From: Sean Wang <sean.wang@mediatek.com>
 
-Please git pull the following tag:
+Add devicetree bindings for MediaTek MT7622 thermal controller
 
- git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-4.16a-rc2-tag
+Changes v1 -> v2: add tag from Rob
 
-xen: fixes for 4.16-rc2
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/thermal/mediatek-thermal.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-It contains fixes for the Xen pvcalls frontend driver, a fix for
-booting Xen pv domains and a fix for the xenbus driver user interface.
-
-
-Thanks.
-
-Juergen
-
- arch/x86/include/asm/smp.h        |   1 +
- arch/x86/kernel/smpboot.c         |  10 +-
- arch/x86/xen/smp.c                |   2 +
- drivers/xen/pvcalls-front.c       | 197 ++++++++++++++++----------------------
- drivers/xen/xenbus/xenbus.h       |   1 +
- drivers/xen/xenbus/xenbus_comms.c |   1 +
- drivers/xen/xenbus/xenbus_xs.c    |   3 +
- 7 files changed, 101 insertions(+), 114 deletions(-)
-
-Joao Martins (1):
-      xenbus: track caller request id
-
-Prarit Bhargava (1):
-      x86/xen: Calculate __max_logical_packages on PV domains
-
-Stefano Stabellini (2):
-      pvcalls-front: introduce a per sock_mapping refcount
-      pvcalls-front: wait for other operations to return when release passive sockets
+diff --git a/Documentation/devicetree/bindings/thermal/mediatek-thermal.txt b/Documentation/devicetree/bindings/thermal/mediatek-thermal.txt
+index 0d73ea5..41d6a44 100644
+--- a/Documentation/devicetree/bindings/thermal/mediatek-thermal.txt
++++ b/Documentation/devicetree/bindings/thermal/mediatek-thermal.txt
+@@ -12,6 +12,7 @@ Required properties:
+   - "mediatek,mt8173-thermal" : For MT8173 family of SoCs
+   - "mediatek,mt2701-thermal" : For MT2701 family of SoCs
+   - "mediatek,mt2712-thermal" : For MT2712 family of SoCs
++  - "mediatek,mt7622-thermal" : For MT7622 SoC
+ - reg: Address range of the thermal controller
+ - interrupts: IRQ for the thermal controller
+ - clocks, clock-names: Clocks needed for the thermal controller. required
+-- 
+2.7.4
