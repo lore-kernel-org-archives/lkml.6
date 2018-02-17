@@ -1,78 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751122AbeBQKSF (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 05:18:05 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38022 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751072AbeBQKSE (ORCPT
+        id S1751133AbeBQKZC (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 05:25:02 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:57637 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751072AbeBQKZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 05:18:04 -0500
-X-Google-Smtp-Source: AH8x226fkz95/kT3/SWG7oSi5AAJM/TWwYNDWeM2toE0yxaTwmmdltyP5l0tmfJduNihgX7wudqNiA==
-Date: Sat, 17 Feb 2018 11:17:59 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, x86@kernel.org, douly.fnst@cn.fujitsu.com,
-        joro@8bytes.org, uobergfe@redhat.com, prarit@redhat.com
-Subject: Re: [PATCH v5 0/6] x86/apic: Fix restoring boot irq mode in reboot
- and kexec/kdump
-Message-ID: <20180217101759.4hn7tdqgudxcq4rk@gmail.com>
-References: <20180214054656.3780-1-bhe@redhat.com>
- <20180216093836.v6iq32jycy7sxwln@gmail.com>
- <87a7w8wxr1.fsf@xmission.com>
+        Sat, 17 Feb 2018 05:25:01 -0500
+Date: Sat, 17 Feb 2018 11:22:50 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Frederic Weisbecker <frederic@kernel.org>
+cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Luiz Capitulino <lcapitulino@redhat.com>,
+        Christoph Lameter <cl@linux.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Wanpeng Li <kernellwp@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Rik van Riel <riel@redhat.com>
+Subject: Re: [PATCH 1/6] sched: Rename init_rq_hrtick to hrtick_rq_init
+In-Reply-To: <1518655694-8057-2-git-send-email-frederic@kernel.org>
+Message-ID: <alpine.DEB.2.21.1802171122370.1473@nanos.tec.linutronix.de>
+References: <1518655694-8057-1-git-send-email-frederic@kernel.org> <1518655694-8057-2-git-send-email-frederic@kernel.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87a7w8wxr1.fsf@xmission.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 15 Feb 2018, Frederic Weisbecker wrote:
 
-* Eric W. Biederman <ebiederm@xmission.com> wrote:
+> Do that rename in order to normalize the hrtick namespace.
+> 
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
-> Ingo Molnar <mingo@kernel.org> writes:
-> 
-> > * Baoquan He <bhe@redhat.com> wrote:
-> >
-> >> This is v5 post. Newly added patch 0002 includes the change
-> >> related to KEXEC_JUMP path. Patch 0003 only includes the
-> >> regression fix.
-> >> 
-> >> A regression bug was introduced in below commit.
-> >> commit 522e66464467 ("x86/apic: Disable I/O APIC before shutdown of the local APIC")
-> >> 
-> >> It caused the action to fail that we try to restore boot irq mode
-> >> in reboot and kexec/kdump. Details can be seen in patch 0003.
-> >> 
-> >> Warning can always be seen during kdump kernel boot on qemu/kvm
-> >> platform. Our customer even saw casual kdump kernel hang once in
-> >> ~30 attempts during stress testing of kdump on KVM machine.
-> >> 
-> >> v4->v5:
-> >>   Take out the change related to KEXEC_JUMP to a new patch 0002
-> >>   according to Eric's suggestion.
-> >>   Patch 0003 in this series only includes the regression fix.
-> >> 
-> >> v3->v4:
-> >>   Eric pointed out that in patch 0002 the change related to
-> >>   KEXEC_JUMP is not right.
-> >>   Correct it.
-> >> 
-> >>   Add Fixes tag and Cc to stable.
-> >
-> > Eric, are these patches looking good to you now?
-> 
-> The result of applying the patches looks good.
-> Barring whatever fix to header files that kbuild seems to find necessary.
-> 
-> I wish patches 1 2 and 4 were all the same patch.  That I think would
-> make reading the patches a bit easier, and make the backports clearer.
-> But at this point that is just me bike-shedding.
-> 
-> Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
-
-Thank you!
-
-	Ingo
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
