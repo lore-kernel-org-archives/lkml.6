@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751237AbeBQFt0 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 00:49:26 -0500
-Received: from mga18.intel.com ([134.134.136.126]:1052 "EHLO mga18.intel.com"
+        id S1751279AbeBQFte (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 00:49:34 -0500
+Received: from mga02.intel.com ([134.134.136.20]:59982 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751133AbeBQFtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 00:49:13 -0500
+        id S1751239AbeBQFt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Feb 2018 00:49:28 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,523,1511856000";
-   d="scan'208";a="20863358"
+   d="scan'208";a="20863419"
 From: changbin.du@intel.com
 To: corbet@lwn.net, rostedt@goodmis.org
 Cc: mingo@kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, Changbin Du <changbin.du@intel.com>
-Subject: [PATCH 08/17] trace doc: convert trace/tracepoints.txt to rst format
-Date: Sat, 17 Feb 2018 13:39:41 +0800
-Message-Id: <1518845990-20733-9-git-send-email-changbin.du@intel.com>
+Subject: [PATCH 16/17] trace doc: convert trace/intel_th.txt to rst format
+Date: Sat, 17 Feb 2018 13:39:49 +0800
+Message-Id: <1518845990-20733-17-git-send-email-changbin.du@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1518845990-20733-1-git-send-email-changbin.du@intel.com>
 References: <1518845990-20733-1-git-send-email-changbin.du@intel.com>
@@ -34,159 +34,107 @@ Cc: Steven Rostedt <rostedt@goodmis.org>
 Signed-off-by: Changbin Du <changbin.du@intel.com>
 ---
  Documentation/trace/index.rst                      |  1 +
- .../trace/{tracepoints.txt => tracepoints.rst}     | 77 +++++++++++-----------
- 2 files changed, 41 insertions(+), 37 deletions(-)
- rename Documentation/trace/{tracepoints.txt => tracepoints.rst} (74%)
+ Documentation/trace/{intel_th.txt => intel_th.rst} | 43 +++++++++++-----------
+ 2 files changed, 23 insertions(+), 21 deletions(-)
+ rename Documentation/trace/{intel_th.txt => intel_th.rst} (82%)
 
 diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-index 353fb8a..c8bbdfc 100644
+index eabbbaf..02cc56c 100644
 --- a/Documentation/trace/index.rst
 +++ b/Documentation/trace/index.rst
-@@ -11,3 +11,4 @@ Linux Tracing Technologies
-    ftrace-uses
-    kprobetrace
-    uprobetracer
-+   tracepoints
-diff --git a/Documentation/trace/tracepoints.txt b/Documentation/trace/tracepoints.rst
-similarity index 74%
-rename from Documentation/trace/tracepoints.txt
-rename to Documentation/trace/tracepoints.rst
-index a3efac6..6e3ce3b 100644
---- a/Documentation/trace/tracepoints.txt
-+++ b/Documentation/trace/tracepoints.rst
-@@ -1,6 +1,8 @@
--	             Using the Linux Kernel Tracepoints
-+==================================
-+Using the Linux Kernel Tracepoints
-+==================================
+@@ -19,3 +19,4 @@ Linux Tracing Technologies
+    events-msr
+    mmiotrace
+    hwlat_detector
++   intel_th
+diff --git a/Documentation/trace/intel_th.txt b/Documentation/trace/intel_th.rst
+similarity index 82%
+rename from Documentation/trace/intel_th.txt
+rename to Documentation/trace/intel_th.rst
+index 7a57165..990f132 100644
+--- a/Documentation/trace/intel_th.txt
++++ b/Documentation/trace/intel_th.rst
+@@ -1,3 +1,4 @@
++=======================
+ Intel(R) Trace Hub (TH)
+ =======================
  
--			    Mathieu Desnoyers
-+:Author: Mathieu Desnoyers
+@@ -18,13 +19,13 @@ via sysfs attributes.
  
+ Currently, the following Intel TH subdevices (blocks) are supported:
+   - Software Trace Hub (STH), trace source, which is a System Trace
+-  Module (STM) device,
++    Module (STM) device,
+   - Memory Storage Unit (MSU), trace output, which allows storing
+-  trace hub output in system memory,
++    trace hub output in system memory,
+   - Parallel Trace Interface output (PTI), trace output to an external
+-  debug host via a PTI port,
++    debug host via a PTI port,
+   - Global Trace Hub (GTH), which is a switch and a central component
+-  of Intel(R) Trace Hub architecture.
++    of Intel(R) Trace Hub architecture.
  
- This document introduces Linux Kernel Tracepoints and their use. It
-@@ -9,8 +11,8 @@ connect probe functions to them and provides some examples of probe
- functions.
+ Common attributes for output devices are described in
+ Documentation/ABI/testing/sysfs-bus-intel_th-output-devices, the most
+@@ -65,41 +66,41 @@ allocated, are accessible via /dev/intel_th0/msc{0,1}.
+ Quick example
+ -------------
  
+-# figure out which GTH port is the first memory controller:
++# figure out which GTH port is the first memory controller::
  
--* Purpose of tracepoints
--
-+Purpose of tracepoints
-+----------------------
- A tracepoint placed in code provides a hook to call a function (probe)
- that you can provide at runtime. A tracepoint can be "on" (a probe is
- connected to it) or "off" (no probe is attached). When a tracepoint is
-@@ -31,8 +33,8 @@ header file.
- They can be used for tracing and performance accounting.
+-$ cat /sys/bus/intel_th/devices/0-msc0/port
+-0
++	$ cat /sys/bus/intel_th/devices/0-msc0/port
++	0
  
+-# looks like it's port 0, configure master 33 to send data to port 0:
++# looks like it's port 0, configure master 33 to send data to port 0::
  
--* Usage
--
-+Usage
-+-----
- Two elements are required for tracepoints :
+-$ echo 0 > /sys/bus/intel_th/devices/0-gth/masters/33
++	$ echo 0 > /sys/bus/intel_th/devices/0-gth/masters/33
  
- - A tracepoint definition, placed in a header file.
-@@ -40,52 +42,53 @@ Two elements are required for tracepoints :
+ # allocate a 2-windowed multiblock buffer on the first memory
+-# controller, each with 64 pages:
++# controller, each with 64 pages::
  
- In order to use tracepoints, you should include linux/tracepoint.h.
+-$ echo multi > /sys/bus/intel_th/devices/0-msc0/mode
+-$ echo 64,64 > /sys/bus/intel_th/devices/0-msc0/nr_pages
++	$ echo multi > /sys/bus/intel_th/devices/0-msc0/mode
++	$ echo 64,64 > /sys/bus/intel_th/devices/0-msc0/nr_pages
  
--In include/trace/events/subsys.h :
-+In include/trace/events/subsys.h::
+-# enable wrapping for this controller, too:
++# enable wrapping for this controller, too::
  
--#undef TRACE_SYSTEM
--#define TRACE_SYSTEM subsys
-+	#undef TRACE_SYSTEM
-+	#define TRACE_SYSTEM subsys
+-$ echo 1 > /sys/bus/intel_th/devices/0-msc0/wrap
++	$ echo 1 > /sys/bus/intel_th/devices/0-msc0/wrap
  
--#if !defined(_TRACE_SUBSYS_H) || defined(TRACE_HEADER_MULTI_READ)
--#define _TRACE_SUBSYS_H
-+	#if !defined(_TRACE_SUBSYS_H) || defined(TRACE_HEADER_MULTI_READ)
-+	#define _TRACE_SUBSYS_H
+-# and enable tracing into this port:
++# and enable tracing into this port::
  
--#include <linux/tracepoint.h>
-+	#include <linux/tracepoint.h>
+-$ echo 1 > /sys/bus/intel_th/devices/0-msc0/active
++	$ echo 1 > /sys/bus/intel_th/devices/0-msc0/active
  
--DECLARE_TRACE(subsys_eventname,
--	TP_PROTO(int firstarg, struct task_struct *p),
--	TP_ARGS(firstarg, p));
-+	DECLARE_TRACE(subsys_eventname,
-+		TP_PROTO(int firstarg, struct task_struct *p),
-+		TP_ARGS(firstarg, p));
+ # .. send data to master 33, see stm.txt for more details ..
+ # .. wait for traces to pile up ..
+-# .. and stop the trace:
++# .. and stop the trace::
  
--#endif /* _TRACE_SUBSYS_H */
-+	#endif /* _TRACE_SUBSYS_H */
+-$ echo 0 > /sys/bus/intel_th/devices/0-msc0/active
++	$ echo 0 > /sys/bus/intel_th/devices/0-msc0/active
  
--/* This part must be outside protection */
--#include <trace/define_trace.h>
-+	/* This part must be outside protection */
-+	#include <trace/define_trace.h>
+-# and now you can collect the trace from the device node:
++# and now you can collect the trace from the device node::
  
--In subsys/file.c (where the tracing statement must be added) :
-+In subsys/file.c (where the tracing statement must be added)::
+-$ cat /dev/intel_th0/msc0 > my_stp_trace
++	$ cat /dev/intel_th0/msc0 > my_stp_trace
  
--#include <trace/events/subsys.h>
-+	#include <trace/events/subsys.h>
+ Host Debugger Mode
+-==================
++------------------
  
--#define CREATE_TRACE_POINTS
--DEFINE_TRACE(subsys_eventname);
-+	#define CREATE_TRACE_POINTS
-+	DEFINE_TRACE(subsys_eventname);
- 
--void somefct(void)
--{
--	...
--	trace_subsys_eventname(arg, task);
--	...
--}
-+	void somefct(void)
-+	{
-+		...
-+		trace_subsys_eventname(arg, task);
-+		...
-+	}
- 
- Where :
--- subsys_eventname is an identifier unique to your event
-+  - subsys_eventname is an identifier unique to your event
-+
-     - subsys is the name of your subsystem.
-     - eventname is the name of the event to trace.
- 
--- TP_PROTO(int firstarg, struct task_struct *p) is the prototype of the
--  function called by this tracepoint.
-+  - `TP_PROTO(int firstarg, struct task_struct *p)` is the prototype of the
-+    function called by this tracepoint.
- 
--- TP_ARGS(firstarg, p) are the parameters names, same as found in the
--  prototype.
-+  - `TP_ARGS(firstarg, p)` are the parameters names, same as found in the
-+    prototype.
- 
--- if you use the header in multiple source files, #define CREATE_TRACE_POINTS
--  should appear only in one source file.
-+  - if you use the header in multiple source files, `#define CREATE_TRACE_POINTS`
-+    should appear only in one source file.
- 
- Connecting a function (probe) to a tracepoint is done by providing a
- probe (function to call) for the specific tracepoint through
-@@ -117,7 +120,7 @@ used to export the defined tracepoints.
- 
- If you need to do a bit of work for a tracepoint parameter, and
- that work is only used for the tracepoint, that work can be encapsulated
--within an if statement with the following:
-+within an if statement with the following::
- 
- 	if (trace_foo_bar_enabled()) {
- 		int i;
-@@ -139,7 +142,7 @@ The advantage of using the trace_<tracepoint>_enabled() is that it uses
- the static_key of the tracepoint to allow the if statement to be implemented
- with jump labels and avoid conditional branches.
- 
--Note: The convenience macro TRACE_EVENT provides an alternative way to
-+.. note:: The convenience macro TRACE_EVENT provides an alternative way to
-       define tracepoints. Check http://lwn.net/Articles/379903,
-       http://lwn.net/Articles/381064 and http://lwn.net/Articles/383362
-       for a series of articles with more details.
+ It is possible to configure the Trace Hub and control its trace
+ capture from a remote debug host, which should be connected via one of
 -- 
 2.7.4
