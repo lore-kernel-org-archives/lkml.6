@@ -1,82 +1,78 @@
-Return-Path: <keescook@chromium.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1518843333; cv=none;
+Return-Path: <keithp@keithp.com>
+X-Google-Smtp-Source: AH8x225WiXL4SPQ7ddZnNAre6EHQywl0whtBVKm0iU4eaRC3wrpz9PRmATbvdCDau0AdxaJp6BAM
+ARC-Seal: i=1; a=rsa-sha256; t=1518848902; cv=none;
         d=google.com; s=arc-20160816;
-        b=wyWoFoG85/LlI7znhm6TZZgAVmgILN/PWdat8XxenWLlgZg9fC9/dLFe8UsDf+4t6K
-         X2X+ZXMl/GHSXNSeXWRk/kfChH59aRfevlCSyo6iZjU1w9Sr5Vmb73CvzoQ/u5fsycOd
-         uqgUn1id0XZ1YFeoM3Ac4Ax5JsFJKK6PDr2BmHZ8n6yzU6nFDkLtK73M6nvWMh6M94/u
-         YMd217DHGpLiK++Rq3RPADDGg9DV92mQ5IfKnHS/zq8SIxxO2iNlzNSmGznsOipRXSoV
-         t8XL57AUkpXR/wcovhuKEkB1o7dF8PGHwUxt9ARVtzpm3P7BooOwSEnfxrzB8trdgKx8
-         4Nwg==
+        b=i0E/S5Wv8E9xxV7ZQd1w1hMJtcCXFyUkUZDmnMUod8+J3JLSR7vvU0nLIpJaNN4pun
+         +7KwbeNfVEEkIA7lehT69M3t7YBc/BEN7n8NDUDQpPsXz39dfVI7Ybtvi/hhJBUTUjKd
+         anlnQ6wEntvsHUjeQ9jbH4lByvyEH7hylX04E+52F2L4pWVrxt+OfFYO44rBU/om/nhr
+         aQD6AT8iucbj+OSTQEiOLs1zFyQcCYyPA6Aka7QKG8WLBdfq0I17e7Ij8aBqzaY/kSau
+         vQG/7oDqbF2MIgJbN2MEB6oSKabdjjxPnRGqo6FVXJHI16RLdV6t37esJgyFwwIVTGqu
+         SU8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :dkim-signature:arc-authentication-results;
-        bh=FaxL6bgENUVAHlWHgfGWCimlX7iU/BMkb9tns2Wb0uY=;
-        b=LSm7t5rYJYth4QUX8LkHzl2iBSKKOk8u3j74qkgSvBRAuzGxWL1BzgDMJC0BL+vBrW
-         /w2MHBj+txFdl6202sofaNwqr9ElWT6/yEKRy5toOD6d1id7faMIINzMy2C9h6KIl/b2
-         aJvRHm8omZq/WZMiubJ//UyLI8ArdG5Fva50kSKWufUkRZYceP1GVHL+CL8hUywgDyuH
-         ORn8v63Oa7tV2/0LcDWovYyv+VLIrv7vbf1DFUZv7BSiECsaN0tJ+X2yNQyU0/hbnrKv
-         f7vjnR0uQ0zJkH3zgLM+z11NQPFiJ9gkYcSKvQG0n3H2CO8ajsA84qH6eynLI+1Z0fP3
-         hLrg==
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:arc-authentication-results;
+        bh=xtHwJ52sMmV7BQs5BJsBhg9gjWWzffiyapE7OpIB5wM=;
+        b=ib0e8CZHSAcaN5jielA+MvcNAfFeCUuft7zKSTfaneDNNQgUh3xEeeGhXHXvWU6qZq
+         qzYFolW3mSQYg8SVUoLfqw1HOSEX7iXiO4Gjy7w0evUhixtQQVs2e/FP4OZ6Ljyf5lLK
+         2nEDprOZjHaVHC+o8agT5XYuGpKnM7vUEvcFxwNIhjaVwmM50cGoTzWO4Ju59GZTYsK0
+         SUCgBX0vF7y+eZ+cOAiv8Sxf8WdRwpoWZx2OpcRIbs1208lYouNDn8OiTMfb/pMvFmWz
+         WjU7a3yUY5/R5pVgy2a43aIAl4toBjC34RYz0V3vzrAb8RV8DbCzYntC7dI0iZNh1d2z
+         Y20Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=DW6S5WW1;
-       spf=pass (google.com: domain of keescook@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@chromium.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: best guess record for domain of keithp@keithp.com designates 63.227.221.253 as permitted sender) smtp.mailfrom=keithp@keithp.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=DW6S5WW1;
-       spf=pass (google.com: domain of keescook@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@chromium.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AH8x225q6CzicPhQwWifsbDcmXWujA5XTE3B2WS0ZbNP79llc65XeSdg8sIvQJYK3xxK2EdmM0Qz0w==
-Date: Fri, 16 Feb 2018 20:55:30 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Keith Packard <keithp@keithp.com>
+       spf=pass (google.com: best guess record for domain of keithp@keithp.com designates 63.227.221.253 as permitted sender) smtp.mailfrom=keithp@keithp.com
+From: "Keith Packard" <keithp@keithp.com>
+To: Kees Cook <keescook@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [PATCH] USB: chaoskey: Use kasprintf() over strcpy()/strcat()
-Message-ID: <20180217045530.GA24226@beast>
+Subject: Re: [PATCH] USB: chaoskey: Use kasprintf() over strcpy()/strcat()
+In-Reply-To: <20180217045530.GA24226@beast>
+References: <20180217045530.GA24226@beast>
+Date: Fri, 16 Feb 2018 22:28:20 -0800
+Message-ID: <87k1vci0zf.fsf@keithp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha256; protocol="application/pgp-signature"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592622666371182567?=
-X-GMAIL-MSGID: =?utf-8?q?1592622666371182567?=
+X-GMAIL-MSGID: =?utf-8?q?1592628506308363050?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Instead of kmalloc() with manually calculated values followed by
-multiple strcpy()/strcat() calls, just fold it all into a single
-kasprintf() call.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Kees Cook <keescook@chromium.org> writes:
+
+> Instead of kmalloc() with manually calculated values followed by
+> multiple strcpy()/strcat() calls, just fold it all into a single
+> kasprintf() call.
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+
 Reviewed-by: Keith Packard <keithp@keithp.com>
----
- drivers/usb/misc/chaoskey.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/usb/misc/chaoskey.c b/drivers/usb/misc/chaoskey.c
-index 716cb515523e..cf5828ce927a 100644
---- a/drivers/usb/misc/chaoskey.c
-+++ b/drivers/usb/misc/chaoskey.c
-@@ -168,14 +168,10 @@ static int chaoskey_probe(struct usb_interface *interface,
- 	 */
- 
- 	if (udev->product && udev->serial) {
--		dev->name = kmalloc(strlen(udev->product) + 1 +
--				    strlen(udev->serial) + 1, GFP_KERNEL);
-+		dev->name = kasprintf(GFP_KERNEL, "%s-%s", udev->product,
-+				      udev->serial);
- 		if (dev->name == NULL)
- 			goto out;
--
--		strcpy(dev->name, udev->product);
--		strcat(dev->name, "-");
--		strcat(dev->name, udev->serial);
- 	}
- 
- 	dev->interface = interface;
--- 
-2.7.4
+=2D-=20
+=2Dkeith
 
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Kees Cook
-Pixel Security
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEw4O3eCVWE9/bQJ2R2yIaaQAAABEFAlqHy4QACgkQ2yIaaQAA
+ABEcHQ/8DMwcxK/VzNBH0Tvpc7fWqVEqlwDUHhTjIktMzN7AHrMG6DyOEnqs2mmT
+cLSeYLVdUZQOopJ6Cc0aHtp2/V05T5d3BABhuQG8+/gPCXYi/ex0XmIKQoRGBkT1
+vDg+Byn2PSzMall9EjP0V40lycEL9qYVZzV7OOi0Yi9xYnvEuzVp4o6fnqbpaCxl
+k7Tq5DKSvUJTmXMJbxoGaCWYMxuiL9KGTAmTbgZUOjw6+h4bLgblvGUm9Gz4wof+
+W9Mnd7QeZH1m0ISrZbfCRBVkaphD9so1NJNNsMsYW2J0wP/wOBQGkFJ5O/quMsh/
+gDFOkH5iAl1cftEz+S8JtauEm8243eQFxfmiP2sTRt58C4ArIfp0cz0Wop78AXeJ
+wvPT0sknolaOsQRYWVROKwbWomyvkzdKHNJlnaOnAMglHch8ck24tyeB7K+rWEF7
+dLGTojV6+YETvw8q/cYzxYKExmnDu2/okrtKesGPc6T2UI4FCZMAtNEXqv45DDYr
+f6zNLPAxfrxoCweqjulI/5bIoyQmda5K1+cGhfwbTkX0Df81l8/nLAdINx0uNNj9
+CSQNngk3ET1pE6HeRKD3Kydl0nw3oSDgFK6YCMmJ9ltrDXuC4hNewJqS0yyPdifb
+iYvyNw6dXV7xcVGHSc778ctM1G4eQtHGtT0/JyJLbbg/auaMtPM=
+=h6uX
+-----END PGP SIGNATURE-----
+--=-=-=--
