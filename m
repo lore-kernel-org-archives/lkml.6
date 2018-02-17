@@ -1,27 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751161AbeBQLmj (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 06:42:39 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:33505 "EHLO
+        id S1751183AbeBQLms (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 06:42:48 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:43995 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750830AbeBQLmi (ORCPT
+        with ESMTP id S1750980AbeBQLmp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 06:42:38 -0500
-Date: Sat, 17 Feb 2018 03:42:10 -0800
-From: tip-bot for Baoquan He <tipbot@zytor.com>
-Message-ID: <tip-339b2ae0cd5d4a58f9efe06e4ee36adbeca59228@git.kernel.org>
-Cc: mingo@kernel.org, ebiederm@xmission.com, bhe@redhat.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        torvalds@linux-foundation.org, peterz@infradead.org
-Reply-To: mingo@kernel.org, bhe@redhat.com, ebiederm@xmission.com,
-        hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, torvalds@linux-foundation.org
-In-Reply-To: <20180214054656.3780-4-bhe@redhat.com>
-References: <20180214054656.3780-4-bhe@redhat.com>
+        Sat, 17 Feb 2018 06:42:45 -0500
+Date: Sat, 17 Feb 2018 03:30:23 -0800
+From: tip-bot for Mathieu Poirier <tipbot@zytor.com>
+Message-ID: <tip-796bfadd831bdef0de06cd0253398c3fe011e459@git.kernel.org>
+Cc: jolsa@redhat.com, namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mathieu.poirier@linaro.org,
+        alexander.shishkin@linux.intel.com, acme@redhat.com,
+        peterz@infradead.org, mingo@kernel.org, hpa@zytor.com
+Reply-To: alexander.shishkin@linux.intel.com, acme@redhat.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        namhyung@kernel.org, jolsa@redhat.com, mathieu.poirier@linaro.org,
+        tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org
+In-Reply-To: <1518478737-24649-1-git-send-email-mathieu.poirier@linaro.org>
+References: <1518478737-24649-1-git-send-email-mathieu.poirier@linaro.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/apic] x86/apic: Fix restoring boot IRQ mode in reboot and
- kexec/kdump
-Git-Commit-ID: 339b2ae0cd5d4a58f9efe06e4ee36adbeca59228
+Subject: [tip:perf/core] perf cs-etm: Properly deal with cpu maps
+Git-Commit-ID: 796bfadd831bdef0de06cd0253398c3fe011e459
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,100 +35,129 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  339b2ae0cd5d4a58f9efe06e4ee36adbeca59228
-Gitweb:     https://git.kernel.org/tip/339b2ae0cd5d4a58f9efe06e4ee36adbeca59228
-Author:     Baoquan He <bhe@redhat.com>
-AuthorDate: Wed, 14 Feb 2018 13:46:53 +0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sat, 17 Feb 2018 11:47:45 +0100
+Commit-ID:  796bfadd831bdef0de06cd0253398c3fe011e459
+Gitweb:     https://git.kernel.org/tip/796bfadd831bdef0de06cd0253398c3fe011e459
+Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
+AuthorDate: Mon, 12 Feb 2018 16:38:57 -0700
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Fri, 16 Feb 2018 14:55:41 -0300
 
-x86/apic: Fix restoring boot IRQ mode in reboot and kexec/kdump
+perf cs-etm: Properly deal with cpu maps
 
-This is a regression fix.
+This patch allows the CoreSight AUX info section to fit topologies where
+only a subset of all available CPUs are present, avoiding at the same
+time accessing the ETM configuration areas of CPUs that have been
+offlined.
 
-Before, to fix erratum AVR31, the following commit:
-
-  522e66464467 ("x86/apic: Disable I/O APIC before shutdown of the local APIC")
-
-... moved the lapic_shutdown() call to after disable_IO_APIC() in the reboot
-and kexec/kdump code paths.
-
-This introduced the following regression: disable_IO_APIC() not only clears
-the IO-APIC, but it also restores boot IRQ mode by setting the
-LAPIC/APIC/IMCR, calling lapic_shutdown() after disable_IO_APIC() will
-disable LAPIC and ruin the possible virtual wire mode setting which
-the code has been trying to do all along.
-
-The consequence is that a KVM guest kernel always prints the warning below
-during kexec/kdump as the kernel boots up:
-
-  [    0.001000] WARNING: CPU: 0 PID: 0 at arch/x86/kernel/apic/apic.c:1467 setup_local_APIC+0x228/0x330
-  [    ........]
-  [    0.001000] Call Trace:
-  [    0.001000]  apic_bsp_setup+0x56/0x74
-  [    0.001000]  x86_late_time_init+0x11/0x16
-  [    0.001000]  start_kernel+0x3c9/0x486
-  [    0.001000]  secondary_startup_64+0xa5/0xb0
-  [    ........]
-  [    0.001000] masked ExtINT on CPU#0
-
-To fix this, just call clear_IO_APIC() to stop the IO-APIC where
-disable_IO_APIC() was called, and call restore_boot_irq_mode() to
-restore boot IRQ mode before a reboot or a kexec/kdump jump.
-
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Reviewed-by: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: douly.fnst@cn.fujitsu.com
-Cc: joro@8bytes.org
-Cc: prarit@redhat.com
-Cc: stable@vger.kernel.org
-Cc: uobergfe@redhat.com
-Fixes: commit 522e66464467 ("x86/apic: Disable I/O APIC before shutdown of the local APIC")
-Link: http://lkml.kernel.org/r/20180214054656.3780-4-bhe@redhat.com
-[ Rewrote the changelog. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/1518478737-24649-1-git-send-email-mathieu.poirier@linaro.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- arch/x86/kernel/crash.c  | 3 ++-
- arch/x86/kernel/reboot.c | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ tools/perf/arch/arm/util/cs-etm.c | 51 +++++++++++++++++++++++++++------------
+ 1 file changed, 36 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-index 10e74d4..1f66804 100644
---- a/arch/x86/kernel/crash.c
-+++ b/arch/x86/kernel/crash.c
-@@ -199,9 +199,10 @@ void native_machine_crash_shutdown(struct pt_regs *regs)
- #ifdef CONFIG_X86_IO_APIC
- 	/* Prevent crash_kexec() from deadlocking on ioapic_lock. */
- 	ioapic_zap_locks();
--	disable_IO_APIC();
-+	clear_IO_APIC();
- #endif
- 	lapic_shutdown();
-+	restore_boot_irq_mode();
- #ifdef CONFIG_HPET_TIMER
- 	hpet_disable();
- #endif
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index 2126b9d..725624b 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -666,7 +666,7 @@ void native_machine_shutdown(void)
- 	 * Even without the erratum, it still makes sense to quiet IO APIC
- 	 * before disabling Local APIC.
- 	 */
--	disable_IO_APIC();
-+	clear_IO_APIC();
- #endif
+diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
+index fbfc055..5c655ad 100644
+--- a/tools/perf/arch/arm/util/cs-etm.c
++++ b/tools/perf/arch/arm/util/cs-etm.c
+@@ -298,12 +298,17 @@ cs_etm_info_priv_size(struct auxtrace_record *itr __maybe_unused,
+ {
+ 	int i;
+ 	int etmv3 = 0, etmv4 = 0;
+-	const struct cpu_map *cpus = evlist->cpus;
++	struct cpu_map *event_cpus = evlist->cpus;
++	struct cpu_map *online_cpus = cpu_map__new(NULL);
  
- #ifdef CONFIG_SMP
-@@ -680,6 +680,7 @@ void native_machine_shutdown(void)
- #endif
+ 	/* cpu map is not empty, we have specific CPUs to work with */
+-	if (!cpu_map__empty(cpus)) {
+-		for (i = 0; i < cpu_map__nr(cpus); i++) {
+-			if (cs_etm_is_etmv4(itr, cpus->map[i]))
++	if (!cpu_map__empty(event_cpus)) {
++		for (i = 0; i < cpu__max_cpu(); i++) {
++			if (!cpu_map__has(event_cpus, i) ||
++			    !cpu_map__has(online_cpus, i))
++				continue;
++
++			if (cs_etm_is_etmv4(itr, i))
+ 				etmv4++;
+ 			else
+ 				etmv3++;
+@@ -311,6 +316,9 @@ cs_etm_info_priv_size(struct auxtrace_record *itr __maybe_unused,
+ 	} else {
+ 		/* get configuration for all CPUs in the system */
+ 		for (i = 0; i < cpu__max_cpu(); i++) {
++			if (!cpu_map__has(online_cpus, i))
++				continue;
++
+ 			if (cs_etm_is_etmv4(itr, i))
+ 				etmv4++;
+ 			else
+@@ -318,6 +326,8 @@ cs_etm_info_priv_size(struct auxtrace_record *itr __maybe_unused,
+ 		}
+ 	}
  
- 	lapic_shutdown();
-+	restore_boot_irq_mode();
++	cpu_map__put(online_cpus);
++
+ 	return (CS_ETM_HEADER_SIZE +
+ 	       (etmv4 * CS_ETMV4_PRIV_SIZE) +
+ 	       (etmv3 * CS_ETMV3_PRIV_SIZE));
+@@ -447,7 +457,9 @@ static int cs_etm_info_fill(struct auxtrace_record *itr,
+ 	int i;
+ 	u32 offset;
+ 	u64 nr_cpu, type;
+-	const struct cpu_map *cpus = session->evlist->cpus;
++	struct cpu_map *cpu_map;
++	struct cpu_map *event_cpus = session->evlist->cpus;
++	struct cpu_map *online_cpus = cpu_map__new(NULL);
+ 	struct cs_etm_recording *ptr =
+ 			container_of(itr, struct cs_etm_recording, itr);
+ 	struct perf_pmu *cs_etm_pmu = ptr->cs_etm_pmu;
+@@ -458,8 +470,21 @@ static int cs_etm_info_fill(struct auxtrace_record *itr,
+ 	if (!session->evlist->nr_mmaps)
+ 		return -EINVAL;
  
- #ifdef CONFIG_HPET_TIMER
- 	hpet_disable();
+-	/* If the cpu_map is empty all CPUs are involved */
+-	nr_cpu = cpu_map__empty(cpus) ? cpu__max_cpu() : cpu_map__nr(cpus);
++	/* If the cpu_map is empty all online CPUs are involved */
++	if (cpu_map__empty(event_cpus)) {
++		cpu_map = online_cpus;
++	} else {
++		/* Make sure all specified CPUs are online */
++		for (i = 0; i < cpu_map__nr(event_cpus); i++) {
++			if (cpu_map__has(event_cpus, i) &&
++			    !cpu_map__has(online_cpus, i))
++				return -EINVAL;
++		}
++
++		cpu_map = event_cpus;
++	}
++
++	nr_cpu = cpu_map__nr(cpu_map);
+ 	/* Get PMU type as dynamically assigned by the core */
+ 	type = cs_etm_pmu->type;
+ 
+@@ -472,15 +497,11 @@ static int cs_etm_info_fill(struct auxtrace_record *itr,
+ 
+ 	offset = CS_ETM_SNAPSHOT + 1;
+ 
+-	/* cpu map is not empty, we have specific CPUs to work with */
+-	if (!cpu_map__empty(cpus)) {
+-		for (i = 0; i < cpu_map__nr(cpus) && offset < priv_size; i++)
+-			cs_etm_get_metadata(cpus->map[i], &offset, itr, info);
+-	} else {
+-		/* get configuration for all CPUs in the system */
+-		for (i = 0; i < cpu__max_cpu(); i++)
++	for (i = 0; i < cpu__max_cpu() && offset < priv_size; i++)
++		if (cpu_map__has(cpu_map, i))
+ 			cs_etm_get_metadata(i, &offset, itr, info);
+-	}
++
++	cpu_map__put(online_cpus);
+ 
+ 	return 0;
+ }
