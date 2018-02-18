@@ -1,49 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751353AbeBRIOz (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 03:14:55 -0500
-Received: from foss.arm.com ([217.140.101.70]:50854 "EHLO foss.arm.com"
+        id S1751314AbeBRI0n (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 03:26:43 -0500
+Received: from ozlabs.org ([103.22.144.67]:54965 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751163AbeBRIOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 03:14:54 -0500
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
-Cc: Ofir Drang <ofir.drang@arm.com>, linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2] checkpatch: add Crypto ON_STACK to declaration_macros
-Date: Sun, 18 Feb 2018 08:13:55 +0000
-Message-Id: <1518941636-4484-1-git-send-email-gilad@benyossef.com>
-X-Mailer: git-send-email 2.7.4
+        id S1751052AbeBRI0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Feb 2018 03:26:41 -0500
+Date: Sun, 18 Feb 2018 19:25:55 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: linux-next: Signed-off-by missing for commit in the tip tree
+Message-ID: <20180218192555.73537987@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/owyJgx.grxFGcTYjGywLaXi"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the crypto API *_ON_STACK to $declaration_macros.
+--Sig_/owyJgx.grxFGcTYjGywLaXi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Resolves the following false warning:
+Hi all,
 
-WARNING: Missing a blank line after declarations
-+			int err;
-+			SHASH_DESC_ON_STACK(desc, ctx_p->shash_tfm);
+Commit
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
----
- scripts/checkpatch.pl | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+  f091f1d6a2b4 ("tools/headers: Synchronize kernel ABI headers, v4.16-rc1")
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 3d40403..7d632645 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -791,7 +791,8 @@ our $FuncArg = qr{$Typecast{0,1}($LvalOrFunc|$Constant|$String)};
- our $declaration_macros = qr{(?x:
- 	(?:$Storage\s+)?(?:[A-Z_][A-Z0-9]*_){0,2}(?:DEFINE|DECLARE)(?:_[A-Z0-9]+){1,6}\s*\(|
- 	(?:$Storage\s+)?[HLP]?LIST_HEAD\s*\(|
--	(?:$Storage\s+)?${Type}\s+uninitialized_var\s*\(
-+	(?:$Storage\s+)?${Type}\s+uninitialized_var\s*\(|
-+	(?:SKCIPHER_REQUEST|SHASH_DESC|AHASH_REQUEST)_ON_STACK\s*\(
- )};
- 
- sub deparenthesize {
--- 
-2.7.4
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/owyJgx.grxFGcTYjGywLaXi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqJOJMACgkQAVBC80lX
+0Gx1JQf/WyWEGejyCrXI7rhrs1PhIZa1S7MopA0YexpxviQGImamRfJEX5ofQr5i
+upd1kb40qKc1gAbxuQ1wIyMFjbyH/BtdhZ3+NpwMzF6wPaQvJeGHLwHiKKcjPW5e
+z+BlfZ2EiXdg2V0Wg/JmHQS4n5EEhuIPe7nsNaHPuBZ/svrcyhZdEpiAAv3s92WE
+O9KbPEG3NIZlw/0SSY4zSWt9K/h7Elp/3sCeQh6bQ9J7XBBadMRNL+efuxVAlVSw
+wxZzbIlR6INuRkbzN0+6q3uGJg4VdEuxfsVh1JryzhFise63vGkXtEivWhIfDJ27
+gdGpUlsgss1AI/o7EwFkTK0zHZ9oBQ==
+=lWW8
+-----END PGP SIGNATURE-----
+
+--Sig_/owyJgx.grxFGcTYjGywLaXi--
