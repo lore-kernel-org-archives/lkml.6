@@ -1,96 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751859AbeBRXCZ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 18:02:25 -0500
-Received: from ozlabs.org ([103.22.144.67]:53473 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750971AbeBRXCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 18:02:24 -0500
-Date: Mon, 19 Feb 2018 10:02:21 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Message-ID: <20180219100221.2da15c53@canb.auug.org.au>
+        id S1751838AbeBRXEU (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 18:04:20 -0500
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:34964 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751038AbeBRXER (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Feb 2018 18:04:17 -0500
+X-Google-Smtp-Source: AH8x22450/T/kYviCY+9OkBWfM5ntb/dmXnqLr6Qzf0UPbjKM9h1OiLzpUb7sVB4MVuZi2sAjUEZPg==
+Date: Sun, 18 Feb 2018 17:04:14 -0600
+From: Rob Herring <robh@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: andy.gross@linaro.org, broonie@kernel.org,
+        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
+        david.brown@linaro.org, mark.rutland@arm.com, lgirdwood@gmail.com,
+        plai@codeaurora.org, bgoswami@codeaurora.org, perex@perex.cz,
+        tiwai@suse.com, linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        rohkumar@qti.qualcomm.com, spatakok@qti.qualcomm.com
+Subject: Re: [PATCH v3 01/25] dt-bindings: soc: qcom: Add bindings for APR bus
+Message-ID: <20180218230414.dkd6kb6kd35arcyv@rob-hp-laptop>
+References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
+ <20180213165837.1620-2-srinivas.kandagatla@linaro.org>
+ <20180213231244.ama4bwsehzuh5sr7@rob-hp-laptop>
+ <ae65a9c8-85a3-5494-f4cc-1038fd8c9bd1@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/acrhl4ZSM1ESndSOb845hAT"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae65a9c8-85a3-5494-f4cc-1038fd8c9bd1@linaro.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/acrhl4ZSM1ESndSOb845hAT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Feb 14, 2018 at 09:13:23AM +0000, Srinivas Kandagatla wrote:
+> Thanks for the review,
+> 
+> On 13/02/18 23:12, Rob Herring wrote:
+> > On Tue, Feb 13, 2018 at 04:58:13PM +0000, srinivas.kandagatla@linaro.org wrote:
+> > > From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > > 
+> > > This patch add dt bindings for Qualcomm APR (Asynchronous Packet Router)
+> > > bus driver. This bus is used for communicating with DSP which provides
+> > > audio and various other services to cpu.
+> > > 
+> > > Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > > ---
+> > >   .../devicetree/bindings/soc/qcom/qcom,apr.txt      | 83 ++++++++++++++++++++++
+> > >   1 file changed, 83 insertions(+)
+> > >   create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+> > > new file mode 100644
+> > > index 000000000000..1b95fbfed348
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+> > > @@ -0,0 +1,83 @@
+> > > +Qualcomm APR (Asynchronous Packet Router) binding
+> > > +
+> > > +This binding describes the Qualcomm APR. APR is a IPC protocol for
+> > > +communication between Application processor and QDSP. APR is mainly
+> > > +used for audio/voice services on the QDSP.
+> > > +
+> > > +- compatible:
+> > > +	Usage: required
+> > > +	Value type: <stringlist>
+> > > +	Definition: must be "qcom,apr-v<VERSION-NUMBER>", example "qcom,apr-v2"
+> > > +
+> > > +- qcom,apr-dest-domain-id
+> > > +	Usage: required
+> > > +	Value type: <prop-encoded-array>
+> > > +	Definition: Destination processor ID.
+> > > +	Possible values are :
+> > > +			1 - APR simulator
+> > > +			2 - PC
+> > > +			3 - MODEM
+> > > +			4 - ADSP
+> > > +			5 - APPS
+> > > +			6 - MODEM2
+> > > +			7 - APPS2
+> > > +
+> > > += APR SERVICES
+> > > +Each subnode of the APR node can represent service tied to this apr. The name
+> > > +of the nodes are not important. The properties of these nodes are defined
+> > > +by the individual bindings for the specific service
+> > > +- but must contain the following property:
+> > > +
+> ...
+> > > += APR DEVICES:
+> > > +Each subnode of the APR node can represent devices tied to this apr, like
+> > > +sound-card. The properties of these nodes are defined by the individual
+> > > +bindings for the specific device.
+> > 
+> > It's not a good design generally to mix different types of nodes at one
+> > level.
+> 
+> I agree, may be I can split the services and devices into different subnodes
+> like below, which should avoid mixing different types of nodes.
+> 
+> Does this sound good to you?
 
-Hi all,
+Seems your original example wasn't so complete...
 
-Today's linux-next merge of the drm tree got a conflict in:
+I don't see why you need all these nodes in the first place. For a 
+single SoC, how much does all this vary?
 
-  drivers/gpu/drm/i915/i915_pmu.h
+> 
+> apr {
+>         compatible = "qcom,apr-v2";
+>         qcom,smd-channels = "apr_audio_svc";
+>         qcom,apr-dest-domain-id = <APR_DOMAIN_ADSP>;
+> 
+>         apr-services {
+>                 q6core {
+>                         qcom,apr-svc-name = "CORE";
+>                         qcom,apr-svc-id = <APR_SVC_ADSP_CORE>;
+>                         compatible = "qcom,q6core";
+>                 };
+> 
+>                 q6afe: q6afe {
+>                         compatible = "qcom,q6afe";
+>                         qcom,apr-svc-name = "AFE";
+>                         qcom,apr-svc-id = <APR_SVC_AFE>;
+>                         #sound-dai-cells = <1>;
+>                 };
+> 
+>                 q6asm: q6asm {
+>                         compatible = "qcom,q6asm";
+>                         qcom,apr-svc-name = "ASM";
+>                         qcom,apr-svc-id = <APR_SVC_ASM>;
+>                         #sound-dai-cells = <1>;
+>                 };
+> 
+>                 q6adm: q6adm {
+>                         compatible = "qcom,q6adm";
+>                         qcom,apr-svc-name = "ADM";
+>                         qcom,apr-svc-id = <APR_SVC_ADM>;
+>                         #sound-dai-cells = <0>;
+>                 };
 
-between commit:
+All these DAI nodes could be a single node and the cell value be the 
+svc-id?
 
-  4c83f0a788cc ("drm/i915/pmu: Fix sleep under atomic in RC6 readout")
+>         };
+> 
+>         apr-devices {
+>                 audio {
+>                         compatible = "qcom,msm8996-snd-card";
 
-from Linus' tree and commit:
+This is a pseudo device. Why not put it at the top level like other 
+sound cards?
 
-  109ec558370f ("drm/i915/pmu: Only enumerate available counters in sysfs")
-
-from the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/i915/i915_pmu.h
-index bb62df15afa4,5a2e013a56bb..000000000000
---- a/drivers/gpu/drm/i915/i915_pmu.h
-+++ b/drivers/gpu/drm/i915/i915_pmu.h
-@@@ -96,10 -94,14 +96,18 @@@ struct i915_pmu=20
-  	 * struct intel_engine_cs.
-  	 */
-  	struct i915_pmu_sample sample[__I915_NUM_PMU_SAMPLERS];
- +	/**
- +	 * @suspended_jiffies_last: Cached suspend time from PM core.
- +	 */
- +	unsigned long suspended_jiffies_last;
-+ 	/**
-+ 	 * @i915_attr: Memory block holding device attributes.
-+ 	 */
-+ 	void *i915_attr;
-+ 	/**
-+ 	 * @pmu_attr: Memory block holding device attributes.
-+ 	 */
-+ 	void *pmu_attr;
-  };
- =20
-  #ifdef CONFIG_PERF_EVENTS
-
---Sig_/acrhl4ZSM1ESndSOb845hAT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqKBf0ACgkQAVBC80lX
-0GxrfQgAkqqbnXetbSRLCjV92RgdyN2NSfF6DmrF0h1Q8Gq25KOLW1YwAgACWakJ
-Aii1O0eaLTrJTFy4qWtgpZj46IHumz89S3snkDsoxsCKyj7AEPrFWyU+v0EzEs2b
-Q/dT357rxjzFDsFJHZxJoH+RzYGx1pVdqjmA3+VhsyaGQahsAtNuG6GSNfoN1lOh
-kPOmC/u9GuzuHpj4FdnlrwZJ3Nm1/OUmBe2odE6MQgT2s/hjAcQEg9mE2behU7yy
-JM8RaXNXljbhbnsRutoriZFNCK/E/QNPOOZjsvbK7Rj0qByuzxBFc+2hhH4tl0ri
-zoF1K0SPbZE3TwenHBdrvWTNeAMn/w==
-=kHbH
------END PGP SIGNATURE-----
-
---Sig_/acrhl4ZSM1ESndSOb845hAT--
+>                         ...
+>                 };
+>         };
+> };
+> 
+> 
+> 
+> 
+> > 
+> > > +
+> > > += EXAMPLE
+> > > +The following example represents a QDSP based sound card on a MSM8996 device
+> > > +which uses apr as communication between Apps and QDSP.
+> > > +
+> > > +	apr {
+> > > +		compatible = "qcom,apr-v2";
+> > > +		qcom,smd-channels = "apr_audio_svc";
+> > > +		qcom,apr-dest-domain-id = <APR_DOMAIN_ADSP>;
+> > > +
+> > > +		q6core {
+> > > +			compatible = "qcom,q6core";
+> > > +			qcom,apr-svc-name = "CORE";
+> > > +			qcom,apr-svc-id = <APR_SVC_ADSP_CORE>;
+> > > +		};
+> > > +
+> > > +		q6afe {
+> > > +			compatible = "qcom,q6afe";
+> > > +			qcom,apr-svc-name = "AFE";
+> > > +			qcom,apr-svc-id = <APR_SVC_AFE>;
+> > > +		};
+> > > +
+> > > +		audio {
+> > > +			compatible = "qcom,msm8996-snd-card";
+> > > +			...
+> > > +		};
+> > > +	};
+> > > -- 
+> > > 2.15.1
+> > > 
