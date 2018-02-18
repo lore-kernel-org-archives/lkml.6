@@ -1,112 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751850AbeBRWuc (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 17:50:32 -0500
-Received: from leo.clearchain.com ([199.73.29.74]:16027 "EHLO
-        mail.clearchain.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751817AbeBRWub (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 17:50:31 -0500
-Date: Mon, 19 Feb 2018 08:50:24 +1000
-From: Peter Hutterer <peter.hutterer@who-t.net>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Chuck Ebbert <cebbert.lkml@gmail.com>,
-        Henrik Rydberg <rydberg@euromail.se>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] input: Add disable sysfs entry for every input device
-Message-ID: <20180218225024.GB5348@jelly>
-References: <1483370825.2420.8.camel@hadess.net>
- <201701021809.58943@pali>
- <1483442481.2420.12.camel@hadess.net>
- <60c21c4d-bb81-342a-45e1-7e92313e05d7@gmail.com>
- <1483540655.2420.18.camel@hadess.net>
- <20180102215437.i3x2j6jvxtac4ntt@pali>
- <1514944049.2523.28.camel@hadess.net>
- <20180103093133.u7wszegjk2msxryl@pali>
- <20180109020424.GC29886@jelly>
- <20180217211914.GB9640@amd>
+        id S1751874AbeBRWwB (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 17:52:01 -0500
+Received: from ozlabs.org ([103.22.144.67]:53829 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750934AbeBRWwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Feb 2018 17:52:00 -0500
+Date: Mon, 19 Feb 2018 09:51:47 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: linux-next: manual merge of the nand tree with Linus' tree
+Message-ID: <20180219095147.0e2fbb15@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180217211914.GB9640@amd>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/W2Pq5CX9hyHyJ=/OH7whiW5"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 17, 2018 at 10:19:14PM +0100, Pavel Machek wrote:
-> Hi!
-> 
-> > > > > So, do you mean to implement this "disable" action as ioctl for
-> > > > > particular /dev/input/event* device (instead of sysfs entry)?
-> > > > 
-> > > > Yes, so the device can be powered down without the device node being
-> > > > closed and made unavailable. I don't know whether that's something
-> > > > that's already possible for all cases, but there's already
-> > > > opportunistic in a lot of drivers and subsystems.
-> > > > 
-> > > > This opens up a whole new wave of potential problems, but it's a more
-> > > > generally useful mechanism, I would think.
-> > > 
-> > > Ok. How should API for this ioctl looks like? And do you have an idea
-> > > for name of that ioctl?
-> > > 
-> > > Dmitry, what do you think about it? It is acceptable for you?
-> > 
-> > first: sysfs files are pretty terrible because writing to them requires root
-> > and we don't have the benefit of logind. so for any sysfs toggle expect
-> > a nicely integrated userspace solution to be less than optimal.
-> 
-> Well, you can chmod / chown sysfs files.
+--Sig_/W2Pq5CX9hyHyJ=/OH7whiW5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-and that's what I meant by "less than optimal" :)
-you're either chmodding, or suid, or any of the other solutions that aren't
-really good in the long run.
+Hi Boris,
 
-> > besides: 99% of the above is figuring out the policy *when* to disable the
-> > device. disabling it is trivial by just closing the evdev nodes and tbh I
-> > don't think we (in userspace) should care about whether the device is
-> > powered down or now, it should be the default assumption that it is powered
-> > down when not in use.
-> > 
-> > for the cases where you must keep the device open but you don't want events, 
-> > EVIOCSMASK is likely the best solution. improving the kernel so it powers
-> > down the device when the mask excludes all events (and there are no other
-> > listeners) could be an interesting task.
-> 
-> But yes, that sounds like an idea.
-> 
-> BTW in the meantime, someone added this to pmos wiki... this should
-> solve some of my problems.
-> 
-> Best regards,
-> 								Pavel
-> 
-> 
-> 
-> FILE=~/.screenoff
-> if [ -f $FILE ]; then
->  xinput set-prop 8 "Device Enabled" 1
->  xinput set-prop 6 "Device Enabled" 1
->  xinput set-prop 9 "Device Enabled" 1
->  xset dpms force on
->  rm ~/.screenoff
-> else
->  xinput set-prop 8 "Device Enabled" 0
->  xinput set-prop 6 "Device Enabled" 0
->  xinput set-prop 9 "Device Enabled" 0
->  xset dpms force off
->  touch ~/.screenoff
-> fi
+Today's linux-next merge of the nand tree got a conflict in:
 
-xinput can resolve device names, using device ids is likely to cause upset.
-http://who-t.blogspot.com/2016/07/xinput-resolves-device-names-and.html
+  drivers/mtd/nand/Kconfig
 
+between commit:
+
+  f23def803861 ("mtd: nand: MTD_NAND_MARVELL should depend on HAS_DMA")
+
+from Linus' tree and commit:
+
+  93db446a424c ("mtd: nand: move raw NAND related code to the raw/ subdir")
+
+from the nand tree.
+
+I fixed it up (I used the latter version of this file and added the
+following merge fix patch) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 19 Feb 2018 09:48:17 +1100
+Subject: [PATCH] mtd: nand: fix up for raw Kconfig move
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/mtd/nand/raw/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
+index e6b8c59f2c0d..736ac887303c 100644
+--- a/drivers/mtd/nand/raw/Kconfig
++++ b/drivers/mtd/nand/raw/Kconfig
+@@ -328,7 +328,7 @@ config MTD_NAND_MARVELL
+ 	tristate "NAND controller support on Marvell boards"
+ 	depends on PXA3xx || ARCH_MMP || PLAT_ORION || ARCH_MVEBU || \
+ 		   COMPILE_TEST
+-	depends on HAS_IOMEM
++	depends on HAS_IOMEM && HAS_DMA
+ 	help
+ 	  This enables the NAND flash controller driver for Marvell boards,
+ 	  including:
+--=20
+2.15.1
+
+--=20
 Cheers,
-   Peter
+Stephen Rothwell
+
+--Sig_/W2Pq5CX9hyHyJ=/OH7whiW5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqKA4MACgkQAVBC80lX
+0Gwp/gf+MOhTFyHJt7CeAgIb4Z9VF9qTp5Mt3k7DrIxUQlb7YZ6N0fxBwBnoq0ha
+E0cXDcDUnjQpcNsy3YfCj7weGzB3XakyD6zOav3VhrMvgWoZGSX40AtzYIzC2n1s
+YqjNz56TCNugGWxLBgfmpywaHMMmk7ynl0xoBhVMkvFr65cTnvPxfdg00QSbdt1A
+x6BPcMhM98SPqxtA5SkSCsbE5TpPCJxB1GLLtEFh69933sCo3XXPXYqDZrt16bpj
+WMOalQQbFMMNLlYD7fzq5xwmXlY2uin2KFWPVwTrHltmztdwYM0XwU91ZuB3EZeC
+VDUWhGQfR5CjnyljZ9s3R1Tt95lB6A==
+=f94W
+-----END PGP SIGNATURE-----
+
+--Sig_/W2Pq5CX9hyHyJ=/OH7whiW5--
