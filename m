@@ -1,86 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751571AbeBRTiB (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 14:38:01 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:37048 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751383AbeBRTiA (ORCPT
+        id S1751603AbeBRToi (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 14:44:38 -0500
+Received: from asavdk3.altibox.net ([109.247.116.14]:44624 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751383AbeBRToh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 14:38:00 -0500
-X-Google-Smtp-Source: AH8x227XVveMlh0WVmXrD92sN+DW9L1o5Pt/pgiQBMFh2M0VfRQSy4NPSVpEMv4vuXzR9yjCZRajNmd5zAvhxDH12Eg=
+        Sun, 18 Feb 2018 14:44:37 -0500
+Date: Sun, 18 Feb 2018 20:44:33 +0100
+From: Sam Ravnborg <sam@ravnborg.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-kbuild@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>, linux-kernel@vger.kernel.org,
+        Marc Herbert <marc.herbert@intel.com>
+Subject: Re: [PATCH 1/2] kconfig: remove check_stdin()
+Message-ID: <20180218194433.GB29324@ravnborg.org>
+References: <1518069400-7037-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-In-Reply-To: <CAOFm3uHHzfV3R3Q9AyhzDLp0uKNHpSTp2MsY3uSL+YsBL6w+dg@mail.gmail.com>
-References: <20180217193955.shfhvp3afwiurzfm@gmail.com> <CAOFm3uHHzfV3R3Q9AyhzDLp0uKNHpSTp2MsY3uSL+YsBL6w+dg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 18 Feb 2018 20:37:59 +0100
-X-Google-Sender-Auth: uFagyqXGF0AMZ_vg0m-H-LG_afk
-Message-ID: <CAMuHMdUpRpa7HtbvMxv3yThMb54-aEiVtvD3QFpdnmVi-uBLfQ@mail.gmail.com>
-Subject: Re: [PATCH] auxdisplay: Replace licenses with SPDX identifiers
-To: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Willy Tarreau <w@1wt.eu>, Linus Walleij <triad@df.lth.se>,
-        robin@protonic.nl, Paul Burton <paul.burton@mips.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518069400-7037-1-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=W9cWqyek c=1 sm=1 tr=0
+        a=ddpE2eP9Sid01c7MzoqXPA==:117 a=ddpE2eP9Sid01c7MzoqXPA==:17
+        a=kj9zAlcOel0A:10 a=6apBCMZNcEVXj91zlXAA:9 a=CjuIK1q_8ugA:10
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philippe,
+On Thu, Feb 08, 2018 at 02:56:39PM +0900, Masahiro Yamada wrote:
+> Except silentoldconfig, valid_stdin is 1, so check_stdin() is no-op.
+> 
+> oldconfig and silentoldconfig work almost in the same way except that
+> the latter generates additional files.  Both ask users for input for
+> new symbols.
+> 
+> I do not know why only silentoldconfig requires stdio be tty.
 
-On Sun, Feb 18, 2018 at 8:04 PM, Philippe Ombredanne
-<pombredanne@nexb.com> wrote:
-> On Sat, Feb 17, 2018 at 8:39 PM, Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
->> Cc: Willy Tarreau <w@1wt.eu>
->> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
->> Cc: Linus Walleij <triad@df.lth.se>
->> Cc: Robin van der Gracht <robin@protonic.nl>
->> Cc: Paul Burton <paul.burton@mips.com>
->> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
->> ---
->
-> <snip>
->
->> diff --git a/include/linux/cfag12864b.h b/include/linux/cfag12864b.h
->> index b454dfce60d9..aa960efc32f6 100644
->> --- a/include/linux/cfag12864b.h
->> +++ b/include/linux/cfag12864b.h
->> @@ -1,25 +1,11 @@
->> +// SPDX-License-Identifier: GPL-2.0
->
-> Per the doc [1] you should be using instead this in a .h:
-> /* SPDX-License-Identifier: GPL-2.0 */
->
-> I know this can be surprising. This has been discussed on list quite
-> lot and the doc has some rationale.
->
-> <snip>
->
->> diff --git a/include/linux/ks0108.h b/include/linux/ks0108.h
->> index cb311798e0bc..2a1c985fedea 100644
->> --- a/include/linux/ks0108.h
->> +++ b/include/linux/ks0108.h
->> @@ -1,25 +1,11 @@
->> +// SPDX-License-Identifier: GPL-2.0
->
-> Same comment as above.
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
->
+The general idea was to error out if stdout was not a tty and
+kconfig wanted to prompt the user for anything.
 
-Obviously we need a check in scripts/checkpatch.pl, to catch this
-before submission...
+So we avoided having a kconfig that would hang waiting for
+user inputs when the user could not see that anything was prompted for.
 
-Care to send a patch?
+The actual implementation may not follow this today as many seems not
+to be aware of this little trick.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+	Sam
