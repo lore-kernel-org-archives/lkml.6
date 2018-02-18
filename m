@@ -1,55 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751535AbeBRORW (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 09:17:22 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:52084 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751335AbeBRORU (ORCPT
+        id S1751560AbeBROUd (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 09:20:33 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:40236 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751335AbeBROUc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 09:17:20 -0500
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-To: tj@kernel.org
-Cc: hdegoede@redhat.com, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH v2] libata: disable LPM for Crucial BX100 SSD 500GB drive
-Date: Sun, 18 Feb 2018 22:17:09 +0800
-Message-Id: <20180218141709.24913-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Sun, 18 Feb 2018 09:20:32 -0500
+X-Google-Smtp-Source: AH8x226ELmk88sxyP+srCEawXUZY8733Qja0YTo17q6x9k+R0l9pHSVaFLhNv8USallg5bNvAUbQudA6iUj1bKCTizA=
+MIME-Version: 1.0
+In-Reply-To: <20180218125802.lu5abzydm2hwxj5p@ltop.local>
+References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com> <20180218125802.lu5abzydm2hwxj5p@ltop.local>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sun, 18 Feb 2018 16:20:31 +0200
+Message-ID: <CAHp75Vdyqsaf31uxrhJXvJEK=npj_jJfyaEUA-NK0CqU_bhtGA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/9] lib/test_printf: Mark big constant with ULL
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Petr Mladek <pmladek@suse.com>, Joe Perches <joe@perches.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After Laptop Mode Tools starts to use min_power for LPM, a user found
-out Crucial BX100 SSD can't get mounted.
+On Sun, Feb 18, 2018 at 2:58 PM, Luc Van Oostenryck
+<luc.vanoostenryck@gmail.com> wrote:
+> On Fri, Feb 16, 2018 at 11:07:03PM +0200, Andy Shevchenko wrote:
+>> Sparse complains that constant is so bit for unsigned long on 64-bit
+>> architecture.
+>>
+>> lib/test_printf.c:217:54: warning: constant 0xffff0123456789ab is so big it is unsigned long
+>> lib/test_printf.c:246:54: warning: constant 0xffff0123456789ab is so big it is unsigned long
+>>
+>> To satisfy everyone, mark the constant with ULL.
+>
+> It should be 'UL' not 'ULL' since for architectures a pointer and
+> a unsigned long have the ame size while on 32bit archs, long long
+> are (or may?) 64bit.
 
-Crucial BX100 SSD 500GB drive don't work well with min_power. This also
-happens to med_power_with_dipm.
+Perhaps, I'll try next week. Though ULL works fine as well.
 
-So let's disable LPM for Crucial BX100 SSD 500GB drive.
-
-BugLink: https://bugs.launchpad.net/bugs/1726930
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
-v2: Only apply the quirk to 500GB variant with firmware version MU02,
-also reorder the quirk entry to make it next to other Crucial disks.
-
- drivers/ata/libata-core.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 28cad49fc846..cb789f8849ae 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4530,6 +4530,9 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
- 	{ "PIONEER DVD-RW  DVR-212D",	NULL,	ATA_HORKAGE_NOSETXFER },
- 	{ "PIONEER DVD-RW  DVR-216D",	NULL,	ATA_HORKAGE_NOSETXFER },
- 
-+	/* Crucial BX100 SSD 500GB has broken LPM support */
-+	{ "CT500BX100SSD1",		"MU02",	ATA_HORKAGE_NOLPM },
-+
- 	/* The 512GB version of the MX100 has both queued TRIM and LPM issues */
- 	{ "Crucial_CT512MX100*",	NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
- 						ATA_HORKAGE_ZERO_AFTER_TRIM |
 -- 
-2.15.1
+With Best Regards,
+Andy Shevchenko
