@@ -1,48 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751560AbeBROUd (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 09:20:33 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:40236 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751335AbeBROUc (ORCPT
+        id S1751598AbeBROXo (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 09:23:44 -0500
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:39643 "EHLO
+        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751335AbeBROXm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 09:20:32 -0500
-X-Google-Smtp-Source: AH8x226ELmk88sxyP+srCEawXUZY8733Qja0YTo17q6x9k+R0l9pHSVaFLhNv8USallg5bNvAUbQudA6iUj1bKCTizA=
+        Sun, 18 Feb 2018 09:23:42 -0500
+X-Google-Smtp-Source: AH8x226zOd9YrKMz7ZJqUF2I5cUD1BW+q3LvBhBAnqwXfRKHVqfXTRcIRxTMRgfgJXabOv123SvlMRt6Zegbcp1Be1k=
 MIME-Version: 1.0
-In-Reply-To: <20180218125802.lu5abzydm2hwxj5p@ltop.local>
-References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com> <20180218125802.lu5abzydm2hwxj5p@ltop.local>
+In-Reply-To: <20180218094135.GA2459@light.dominikbrodowski.net>
+References: <20180217132543.GA21571@light.dominikbrodowski.net>
+ <1518879773.22495.378.camel@linux.intel.com> <1518880180.22495.379.camel@linux.intel.com>
+ <20180217165815.GA1854@light.dominikbrodowski.net> <1518901021.22495.383.camel@linux.intel.com>
+ <20180218094135.GA2459@light.dominikbrodowski.net>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sun, 18 Feb 2018 16:20:31 +0200
-Message-ID: <CAHp75Vdyqsaf31uxrhJXvJEK=npj_jJfyaEUA-NK0CqU_bhtGA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/9] lib/test_printf: Mark big constant with ULL
-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Date: Sun, 18 Feb 2018 16:23:41 +0200
+Message-ID: <CAHp75Vf2sS8c4GubL1MRkrGdpYdn0n5stmzZNnp8axNn3AkEcw@mail.gmail.com>
+Subject: Re: i2c-designware: sound and s2ram broken on Broadwell-U system
+ since commit ca382f5b38f367b6 (add i2c gpio recovery option)
+To: Dominik Brodowski <linux@dominikbrodowski.net>
 Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Tobin C . Harding" <me@tobin.cc>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Petr Mladek <pmladek@suse.com>, Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
+        tim@krieglstein.org, Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Phil Reid <preid@electromag.com.au>, Wolfram Sang <wsa@the-dreams.de>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 18, 2018 at 2:58 PM, Luc Van Oostenryck
-<luc.vanoostenryck@gmail.com> wrote:
-> On Fri, Feb 16, 2018 at 11:07:03PM +0200, Andy Shevchenko wrote:
->> Sparse complains that constant is so bit for unsigned long on 64-bit
->> architecture.
->>
->> lib/test_printf.c:217:54: warning: constant 0xffff0123456789ab is so big it is unsigned long
->> lib/test_printf.c:246:54: warning: constant 0xffff0123456789ab is so big it is unsigned long
->>
->> To satisfy everyone, mark the constant with ULL.
->
-> It should be 'UL' not 'ULL' since for architectures a pointer and
-> a unsigned long have the ame size while on 32bit archs, long long
-> are (or may?) 64bit.
+On Sun, Feb 18, 2018 at 11:41 AM, Dominik Brodowski
+<linux@dominikbrodowski.net> wrote:
+> On Sat, Feb 17, 2018 at 10:57:01PM +0200, Andy Shevchenko wrote:
+>> On Sat, 2018-02-17 at 17:58 +0100, Dominik Brodowski wrote:
 
-Perhaps, I'll try next week. Though ULL works fine as well.
+>> >  Do you still need the DEBUG_GPIO output?
+>>
+>> It would be nice to have, though if it makes difficulties to you, then
+>> don't bother.
+>
+> Note that I have to enable CONFIG_GPIOLIB before I can enable DEBUG_GPIO;
+> CONFIG_PINCTRL was off as well. Maybe some "SELECT" is missing for
+> CONFIG_I2C_DESIGNWARE_BAYTRAIL ?
+
+Ah, so, your configuration misses pin control driver. You need to
+enable it in order to get GPIOs working.
+It might fix your issue w/o my patch.
+
+> The following output is with your patch applied.
+
+...which is useless.
+
+> Do you need it without
+> your fixup patch as well?
+
+Yes, and with enabled pin control driver.
 
 -- 
 With Best Regards,
