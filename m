@@ -1,82 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751692AbeBRWPm (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 17:15:42 -0500
-Received: from pic75-3-78-194-244-226.fbxo.proxad.net ([78.194.244.226]:48288
-        "EHLO mail.corsac.net" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1750858AbeBRWPl (ORCPT
+        id S1751773AbeBRWtM (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 17:49:12 -0500
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:34821 "EHLO
+        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750884AbeBRWtK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 17:15:41 -0500
-Message-ID: <1518992132.2542.5.camel@debian.org>
-Subject: Re: [PATCH v7 0/5] Add Intel IOMMU debugfs support
-From: Yves-Alexis Perez <corsac@debian.org>
-To: "Raj, Ashok" <ashok.raj@intel.com>, Joerg Roedel <joro@8bytes.org>
-Cc: Sohil Mehta <sohil.mehta@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>, Fenghua Yu <fenghua.yu@intel.com>
-Date: Sun, 18 Feb 2018 23:15:32 +0100
-In-Reply-To: <20180213214002.GA27066@otc-nc-03>
-References: <1517619001-148586-1-git-send-email-sohil.mehta@intel.com>
-         <20180213140303.42mbzfxpypljy37l@8bytes.org>
-         <20180213214002.GA27066@otc-nc-03>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-Lsf0i4rxIq4C6g1RKkBY"
-X-Mailer: Evolution 3.26.5-1 
-Mime-Version: 1.0
+        Sun, 18 Feb 2018 17:49:10 -0500
+X-Google-Smtp-Source: AH8x226/j8hHSVCAdsTT/TLj/4QgNMc7JP++ewlwitIkpy62N40f3wfoyJAzmv6GlloTaEqTMjZqOg==
+Date: Sun, 18 Feb 2018 16:49:08 -0600
+From: Rob Herring <robh@kernel.org>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>,
+        Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>,
+        Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Brian Norris <briannorris@google.com>,
+        Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>,
+        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH v3 2/4] dt-bindings: pwm-backlight: add a
+ num-interpolation-steps property.
+Message-ID: <20180218224908.x4s3usv345ywml75@rob-hp-laptop>
+References: <20180208113032.27810-1-enric.balletbo@collabora.com>
+ <20180208113032.27810-3-enric.balletbo@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180208113032.27810-3-enric.balletbo@collabora.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 08, 2018 at 12:30:30PM +0100, Enric Balletbo i Serra wrote:
+> The num-interpolated-steps property specifies the number of
+> interpolated steps between each value of brightness-level table. This is
+> useful for high resolution PWMs to not have to list out every possible
+> value in the brightness-level array.
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+> ---
+> Changes since v2:
+> - Add Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Changes since v1:
+> - Add an example with a small but realistic curve. Suggested by Rob and
+>   Daniel
+> 
+>  .../bindings/leds/backlight/pwm-backlight.txt         | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
 
---=-Lsf0i4rxIq4C6g1RKkBY
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, 2018-02-13 at 13:40 -0800, Raj, Ashok wrote:
-> This version has only hw dumps for now, but we plan to add some other thi=
-ngs
-> like walking 2nd level page-tables, or get some SVM specific data from th=
-e=20
-> driver in the future.=20
-
-Hi,
-
-I'm not sure how much you know about chipsec [1], but with a oneliner [2] y=
-ou
-can have it print a lot of data from Vt-d configuration, including page
-tables. As far as I remember, it doesn't need access to /dev/mem (but I gid=
-n't
-dig to check how it does it).
-
-It might still be useful to have everything from debugfs because it'll alwa=
-ys
-be consistent with the current running kernel, but at least it might help
-users reporting bugs.
-
-[1] https://github.com/chipsec/chipsec
-[2] http://paste.debian.net/1010105
---=20
-Yves-Alexis
---=-Lsf0i4rxIq4C6g1RKkBY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEE8vi34Qgfo83x35gF3rYcyPpXRFsFAlqJ+wUACgkQ3rYcyPpX
-RFvEuQf+NF2yWLkXIM6/XmEXZGQboq4coTLy06M/aT/fQfeUAehE2rBhWQXkmJqF
-JXKFuuy6BXoQ1WW4qq6r/1tanadjeRSDTT2PloE1H/g9wppk9tqXG9S/Dqfzhbjo
-0dc1Ctl7skiO3ioBH77BI5KhjFXBJay9YMvvoNYHg4Fud+M/Ga62IYQUCaa4x2Xp
-mWnLJzY4EPZhQmv1o+ozBVFBltQh2tUER3+W0FHy95OuEv4GaSNhsfrDqhKa0B6a
-+j+278FwoidB9kk8LVrG3xFChl7SGF+r2DCsfCMKHaDJaMvWioTOxaqEwIErU9gX
-C90bwed2cfMu31qNmdnkxG1cuKVenA==
-=egRp
------END PGP SIGNATURE-----
-
---=-Lsf0i4rxIq4C6g1RKkBY--
+Reviewed-by: Rob Herring <robh@kernel.org>
