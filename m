@@ -1,87 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751914AbeBRXgf (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 18:36:35 -0500
-Received: from LGEAMRELO12.lge.com ([156.147.23.52]:33521 "EHLO
-        lgeamrelo12.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751685AbeBRXge (ORCPT
+        id S1751917AbeBRXib (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 18:38:31 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:50299 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751733AbeBRXi3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 18:36:34 -0500
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: byungchul.park@lge.com
-X-Original-SENDERIP: 10.177.222.184
-X-Original-MAILFROM: byungchul.park@lge.com
-Subject: Re: [PATCH] srcu: Fix incorrect condition in srcu_funnel_exp_start()
-To: paulmck@linux.vnet.ibm.com
-Cc: jiangshanlai@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-        kernel-team@lge.com
-References: <1518598794-26752-1-git-send-email-byungchul.park@lge.com>
- <20180214214245.GS3617@linux.vnet.ibm.com>
-From: Byungchul Park <byungchul.park@lge.com>
-Message-ID: <f9abfde2-ad0d-edab-0a2a-a62515ffe870@lge.com>
-Date: Mon, 19 Feb 2018 08:36:30 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sun, 18 Feb 2018 18:38:29 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w1INcEor014761
+X-Nifty-SrcIP: [209.85.213.50]
+X-Google-Smtp-Source: AH8x226OncQ4ZHrS0ikOpKySMx/6eScLsTYOtIptXjFIKtWJ68+L/MBuOivIrDFPYlU40y1ZtRFBdyS1fy+EyrL/CnE=
 MIME-Version: 1.0
-In-Reply-To: <20180214214245.GS3617@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180213075821.24499-1-ulfalizer@gmail.com>
+References: <20180213075821.24499-1-ulfalizer@gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 19 Feb 2018 08:37:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT+FDWeg5MSjx0wNE6vpCN-ZZZ7fSA6L-hND2Jxgefn6g@mail.gmail.com>
+Message-ID: <CAK7LNAT+FDWeg5MSjx0wNE6vpCN-ZZZ7fSA6L-hND2Jxgefn6g@mail.gmail.com>
+Subject: Re: [PATCH v2] Makefile: Fix lying comment re. silentoldconfig
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/15/2018 6:42 AM, Paul E. McKenney wrote:
-> On Wed, Feb 14, 2018 at 05:59:54PM +0900, Byungchul Park wrote:
->> We should've kept sp->srcu_gp_seq_needed_exp the furthest. But
->> it probably fails because of the incorrect condition. Fix it.
->>
->> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
-> 
-> Good catch, and thank you for reviewing the SRCU code, but Ildar Ismagilov
-> beat you to this one.  Please see 574428dee1f3 ("rcu: Fix misprint in
-> srcu_funnel_exp_start") in -rcu.
+2018-02-13 16:58 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+> The comment above the silentoldconfig invocation is outdated.
+> 'make oldconfig' updates just .config and doesn't touch the
+> include/config/ tree.
+>
+> This came up in https://lkml.org/lkml/2018/2/12/415.
+>
+> While fixing the comment, make it more informative by explaining the
+> purpose of the unfortunately named silentoldconfig.
+>
+> I can't make sense of the comment re. auto.conf.cmd and a cleaned tree.
+> include/config/auto.conf and include/config/auto.conf.cmd are both
+> created simultaneously by silentoldconfig (in
+> scripts/kconfig/confdata.c, by conf_write_autoconf()), and nothing seems
+> to remove auto.conf.cmd that wouldn't remove auto.conf. Remove that part
+> of the comment rather than blindly copying it. It might be a leftover
+> from an older way of doing things.
+>
+> The include/config/auto.conf.cmd prerequisite might be there to ensure
+> that silentoldconfig gets rerun if conf_write_autoconf() fails between
+> writing out auto.conf.cmd and auto.conf (a comment in the function
+> indicates that auto.conf is deliberately written out last to mark
+> completion of the operation). It seems the Makefile dependency between
+> include/config/auto.conf and .config would already take care of that
+> though, since include/config/auto.conf would still be out of date re.
+> .config if the operation fails.
+>
+> Cop out and leave the prerequisite in for now.
+>
+> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+> ---
+> Changes in v2:
+> include/config/auto.conf depends on .config, not the other way around, so swap
+> them in some places in the commit message to make it less confusing.
+>
+>  Makefile | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/Makefile b/Makefile
+> index 79ad2bfa24b6..61ed99ad4b1b 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -579,10 +579,13 @@ ifeq ($(KBUILD_EXTMOD),)
+>  # To avoid any implicit rule to kick in, define an empty command
+>  $(KCONFIG_CONFIG) include/config/auto.conf.cmd: ;
+>
+> -# If .config is newer than include/config/auto.conf, someone tinkered
+> -# with it and forgot to run make oldconfig.
+> -# if auto.conf.cmd is missing then we are probably in a cleaned tree so
+> -# we execute the config step to be sure to catch updated Kconfig files
+> +# The actual configuration files used during the build are stored in
+> +# include/generated/ and include/config/. Update them if .config is newer than
+> +# include/config/auto.conf (which mirrors .config).
 
-Hi Paul,
 
-I'm sorry I'm late. It's been Lunar New Year holiday since last
-thursday.
+Yes, the first paragraph perfectly explains the code.
 
-Do you mean:
 
-git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+> +# The include/config/ tree manages dependencies between source files and
+> +# Kconfig symbols and lets us avoid doing a full rebuild whenever the
+> +# configuration is changed. See scripts/basic/fixdep.c
 
-Is this rcu's main dev-tree?
+Do you insist on this paragraph?
 
-Thanks for replying anyway, and happy new year~
+I know silentoldconfig touches include/config/* for extra cleverness,
+but, to me, this looks unnecessary information to
+understand the following code.
 
-> 
-> 							Thanx, Paul
-> 
->> ---
->>   kernel/rcu/srcutree.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
->> index d5cea81..44bc0fa 100644
->> --- a/kernel/rcu/srcutree.c
->> +++ b/kernel/rcu/srcutree.c
->> @@ -626,7 +626,7 @@ static void srcu_funnel_exp_start(struct srcu_struct *sp, struct srcu_node *snp,
->>   		spin_unlock_irqrestore_rcu_node(snp, flags);
->>   	}
->>   	spin_lock_irqsave_rcu_node(sp, flags);
->> -	if (!ULONG_CMP_LT(sp->srcu_gp_seq_needed_exp, s))
->> +	if (ULONG_CMP_LT(sp->srcu_gp_seq_needed_exp, s))
->>   		sp->srcu_gp_seq_needed_exp = s;
->>   	spin_unlock_irqrestore_rcu_node(sp, flags);
->>   }
->> -- 
->> 1.9.1
->>
-> 
-> 
+>  include/config/%.conf: $(KCONFIG_CONFIG) include/config/auto.conf.cmd
+>         $(Q)$(MAKE) -f $(srctree)/Makefile silentoldconfig
+>  else
+
+
+
 
 -- 
-Thanks,
-Byungchul
+Best Regards
+Masahiro Yamada
