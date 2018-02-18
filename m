@@ -1,48 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751998AbeBRXwa (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 18:52:30 -0500
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:44372 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750971AbeBRXw2 (ORCPT
+        id S1751941AbeBRXzM (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 18:55:12 -0500
+Received: from mail-qk0-f176.google.com ([209.85.220.176]:33359 "EHLO
+        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750971AbeBRXzK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 18:52:28 -0500
-X-Google-Smtp-Source: AH8x227asPh7mOkmDkvqCsYCh6BPIxW8HobU7rAcf4k8eHB0Vou/z7knXZcS8CAL3sus6zwnDxXUtA==
-Date: Sun, 18 Feb 2018 17:52:26 -0600
-From: Rob Herring <robh@kernel.org>
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 1/4] dt/bindings: fix binding examples for tegra gmi
- controller
-Message-ID: <20180218235226.ys5sxq5yr3zddsnb@rob-hp-laptop>
-References: <20180210013326.27771-1-marcel@ziswiler.com>
- <20180210013326.27771-2-marcel@ziswiler.com>
+        Sun, 18 Feb 2018 18:55:10 -0500
+X-Google-Smtp-Source: AH8x226aGp8bjI3fIQJJMqqm+byJVLJEMxrOt0BhGmYNkWsuBn/0lC3vINazI6KjjANGwZNwNbfPFYEECtl7MM/GNoM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180210013326.27771-2-marcel@ziswiler.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180218215204.GB22942@eros>
+References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com> <20180218215204.GB22942@eros>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 19 Feb 2018 01:55:09 +0200
+Message-ID: <CAHp75Vda2+1=ToaFL=gRDL1G+CMj4RQZY5nyS50rB=rv7Nx2KA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/9] lib/test_printf: Mark big constant with ULL
+To: "Tobin C. Harding" <me@tobin.cc>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Petr Mladek <pmladek@suse.com>, Joe Perches <joe@perches.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 02:33:22AM +0100, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> Fix devicetree binding examples for the Generic Memory Interface (GMI)
-> bus driver found on Tegra SOCs.
-> 
-> While at it also remove double new lines as a left over from Rob's
-> commit 4da722ca19f3 ("dt-bindings: Remove "status" from examples").
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> ---
-> 
->  Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+On Sun, Feb 18, 2018 at 11:52 PM, Tobin C. Harding <me@tobin.cc> wrote:
+> On Fri, Feb 16, 2018 at 11:07:03PM +0200, Andy Shevchenko wrote:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> What tree does this set apply to please?  I tried mainline rc1 and
+> next-20180216.  Happy to see some code duplication removal from
+> vsprintf.c :)
+
+IIRC latest next, i.e. 20180217.
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
