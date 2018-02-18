@@ -1,69 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751271AbeBRDhA (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 22:37:00 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42769 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751066AbeBRDg7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 22:36:59 -0500
-X-Google-Smtp-Source: AH8x224Xtajk7ocsF5jmZD/kouMManQIOHj1LjFqXEYSwhPH1miydmruslwwuKdLCp22s7aTlSoqJA==
-Message-ID: <1518925012.5730.0.camel@gmail.com>
-Subject: Re: [PATCH] objtool/x86: Replace Non-standard Range Expression in
- Case
-From: Progyan Bhattacharya <bprogyan@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Nicholas Mc Guire <der.herr@hofr.at>
-Date: Sun, 18 Feb 2018 09:06:52 +0530
-In-Reply-To: <20180216164722.GF25201@hirez.programming.kicks-ass.net>
-References: <20180216141947.9324-1-progyanb@acm.org>
-         <20180216142513.9520-1-progyanb@acm.org>
-         <20180216143511.fo4emxz6webqk7qn@treble>
-         <20180216164722.GF25201@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1751338AbeBRDkw (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 22:40:52 -0500
+Received: from vern.gendns.com ([206.190.152.46]:56017 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751085AbeBRDku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Feb 2018 22:40:50 -0500
+Subject: Re: [PATCH 0/7] ARM: davinci: add genpd support
+To: Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180207134553.13510-1-brgl@bgdev.pl>
+ <4dbc57ec-3506-eb1d-e00d-adfe75c3b39b@lechnology.com>
+ <a736d727-5805-94ea-3e40-34fc4a6267ef@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <79a981ae-881f-b358-629c-0b64e48f192d@lechnology.com>
+Date: Sat, 17 Feb 2018 21:41:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <a736d727-5805-94ea-3e40-34fc4a6267ef@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-02-16 at 17:47 +0100, Peter Zijlstra wrote:
-> On Fri, Feb 16, 2018 at 08:35:11AM -0600, Josh Poimboeuf wrote:
-> > On Fri, Feb 16, 2018 at 07:55:13PM +0530, Progyan Bhattacharya
-> > wrote:
-> > > Replace range expressions with seperate individual cases, i.e.
-> > > convert case 1...3: to case 1: case 2: case 3
-> > > Range expression within case statements are non-standard C code
-> > > and can create issues over compiler and platform variety.
-> > > 
-> > > While compiling with gcc 4.8 (RHEL) I encountered this error on
-> > > range expression in case statements:
-> > > error: range expressions in switch statements are non-standard [-
-> > > Werror=pedantic]
-> > > 
-> > > Signed-off-by: Progyan Bhattacharya <progyanb@acm.org>
-> > 
-> > Hi Progyan,
-> > 
-> > Thank you for the patch.
-> > 
-> > I think this makes the code unnecessarily verbose and less
-> > readable.  We
-> > rely on many such GCC extensions, and we don't aim to comply with
-> > standard C.  And AFAIK, we don't use -Werror=pedantic in the
-> > kernel.
+On 02/09/2018 06:42 AM, Sekhar Nori wrote:
+> Hi David,
 > 
-> Agreed, it makes the code actively worse. Just don't use
-> error=pedantic.
+> On Thursday 08 February 2018 04:13 AM, David Lechner wrote:
+>> On 02/07/2018 07:45 AM, Bartosz Golaszewski wrote:
+>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>
+>>> Hi Sekhar et al,
+>>>
+>>> please take a look at the following patches. They add a simple genpd
+>>> driver and use it in DT mode on da850 boards.
+>>>
+>>> I was trying to use genpd in legacy mode too, but couldn't find neither
+>>> any interfaces nor users that would do that. For now I added a check in
+>>> arch/arm/mach-davinci/pm_domain.c that disables the clock pm setup if
+>>> we're using genpd.
+>>>
+>>> This series applies on top of and has been tested with David Lechner's
+>>> for-bartosz branch. It fixes the clock look-up issues we faced with
+>>> lcdc and emac.
+>>
+>> I'm starting to think that it makes more sense to just make the PSC driver
+>> a power-domain and reset provider rather than a clock provider. It is
+>> unfortunate that genpd is DT only.
+> 
+> This will mean that the only way to enable clocks on DaVinci is to use
+> pm_runtime() calls. We do still have drivers which depend on clk api for
+> enabling clocks, so I am not sure its feasible just yet.
+> 
+> I think a question like this can arise for any gate clock.
+> 
 
-But I cannot figure it out how Werror=pedantic flag is being set. :(
- 
--- 
-Regards,
-Progyan Bhattacharya
-(http://codeprogyan.me)
+I've incorporated parts of this series into my v7 work in progress
+using the suggestions I made about using the existing PSC device
+as the power domain provider.
