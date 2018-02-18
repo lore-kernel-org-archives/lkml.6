@@ -1,60 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751355AbeBRMRa (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 07:17:30 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:40328 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751292AbeBRMR2 (ORCPT
+        id S1751361AbeBRMdv (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 07:33:51 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:51452 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751120AbeBRMdu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 07:17:28 -0500
-X-Google-Smtp-Source: AH8x2261pce/wyGYTfFWm/hDTBQUQBEgIiUy1NMZ29HO33hM+PB/vHyg3cIkUx99Ey1/l4YGYoMPuw==
-Subject: Re: [PATCH] drm/edid: Add 6 bpc quirk for CPT panel in Asus UX303LA
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>, airlied@linux.ie
-Cc: daniel.vetter@intel.com, gustavo@padovan.org, seanpaul@chromium.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20180218085359.7817-1-kai.heng.feng@canonical.com>
-From: Mario Kleiner <mario.kleiner.de@gmail.com>
-Message-ID: <d6a3afcb-91e5-dc91-7374-50f4864d7f2f@gmail.com>
-Date: Sun, 18 Feb 2018 13:17:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180218085359.7817-1-kai.heng.feng@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sun, 18 Feb 2018 07:33:50 -0500
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org, mingo@kernel.org, x86@kernel.org,
+        brgerst@gmail.com, luto@kernel.org, jpoimboe@redhat.com
+Cc: torvalds@linux-foundation.org, ak@linux.intel.com, tglx@linutronix.de,
+        dan.j.williams@intel.com
+Subject: [RFC PATCH v2 2/5] x86/entry/64: move ENTER_IRQ_STACK from interrupt macro to helper function
+Date: Sun, 18 Feb 2018 13:31:13 +0100
+Message-Id: <20180218123116.21334-3-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180218123116.21334-1-linux@dominikbrodowski.net>
+References: <20180218123116.21334-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/18/2018 09:53 AM, Kai-Heng Feng wrote:
-> Similar to commit e10aec652f31 ("drm/edid: Add 6 bpc quirk for display
-> AEO model 0."), the EDID reports "DFP 1.x compliant TMDS" but it support
-> 6bpc instead of 8 bpc.
-> 
-> Hence, use 6 bpc quirk for this panel.
-> 
-> Fixes: 196f954e2509 ("drm/i915/dp: Revert "drm/i915/dp: fall back to 18 bpp when sink capability is unknown"")
-> BugLink: https://bugs.launchpad.net/bugs/1749420
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
->   drivers/gpu/drm/drm_edid.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index ddd537914575..d9c8d718e261 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -113,6 +113,9 @@ static const struct edid_quirk {
->   	/* AEO model 0 reports 8 bpc, but is a 6 bpc panel */
->   	{ "AEO", 0, EDID_QUIRK_FORCE_6BPC },
->   
-> +	/* CPT panel of Asus UX303LA reports 8 bpc, but is a 6 bpc panel */
-> +	{ "CPT", 0x17df, EDID_QUIRK_FORCE_6BPC },
-> +
->   	/* Belinea 10 15 55 */
->   	{ "MAX", 1516, EDID_QUIRK_PREFER_LARGE_60 },
->   	{ "MAX", 0x77e, EDID_QUIRK_PREFER_LARGE_60 },
-> 
+Moving the switch to IRQ stack from the interrupt macro to the helper
+function requires some trickery: All ENTER_IRQ_STACK really cares about
+is where the "original" stack -- meaning the GP registers etc. -- is
+stored. Therefore, we need to offset the stored RSP value by 8 whenever
+ENTER_IRQ_STACK is called from within a function. In such cases, and
+after switching to the IRQ stack, we need to push the "original" return
+address (i.e. the return address from the call to the interrupt entry
+function) to the IRQ stack.
 
-Reviewed-by: Mario Kleiner <mario.kleiner.de@gmail.com>
+This trickery allows us to carve another .85k from the text size (it
+would be more except for the additional unwind hints):
+
+   text	   data	    bss	    dec	    hex	filename
+  18006	      0	      0	  18006	   4656	entry_64.o-orig
+  17158	      0	      0	  17158	   4306	entry_64.o
+
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ arch/x86/entry/entry_64.S | 56 ++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 38 insertions(+), 18 deletions(-)
+
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 5690391cb7c7..93a9bea6b969 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -449,9 +449,19 @@ END(irq_entries_start)
+  *
+  * The invariant is that, if irq_count != -1, then the IRQ stack is in use.
+  */
+-.macro ENTER_IRQ_STACK regs=1 old_rsp
++.macro ENTER_IRQ_STACK regs=1 old_rsp save_ret=0
+ 	DEBUG_ENTRY_ASSERT_IRQS_OFF
++
++	.if \save_ret
++	/*
++	 * If save_ret is set, the original stack contains one additional
++	 * entry -- the return address. Therefore, move the address one
++	 * entry below %rsp to \old_rsp.
++	 */
++	leaq	8(%rsp), \old_rsp
++	.else
+ 	movq	%rsp, \old_rsp
++	.endif
+ 
+ 	.if \regs
+ 	UNWIND_HINT_REGS base=\old_rsp
+@@ -497,6 +507,15 @@ END(irq_entries_start)
+ 	.if \regs
+ 	UNWIND_HINT_REGS indirect=1
+ 	.endif
++
++	.if \save_ret
++	/*
++	 * Push the return address to the stack. This return address can
++	 * be found at the "real" original RSP, which was offset by 8 at
++	 * the beginning of this macro.
++	 */
++	pushq	-8(\old_rsp)
++	.endif
+ .endm
+ 
+ /*
+@@ -533,22 +552,7 @@ ENTRY(interrupt_helper)
+ 	PUSH_AND_CLEAR_REGS save_ret=1
+ 	ENCODE_FRAME_POINTER 8
+ 
+-	ret
+-END(interrupt_helper)
+-
+-/* 0(%rsp): ~(interrupt number) */
+-	.macro interrupt func
+-	cld
+-
+-	testb	$3, CS-ORIG_RAX(%rsp)
+-	jz	1f
+-	SWAPGS
+-	call	switch_to_thread_stack
+-1:
+-
+-	call	interrupt_helper
+-
+-	testb	$3, CS(%rsp)
++	testb	$3, CS+8(%rsp)
+ 	jz	1f
+ 
+ 	/*
+@@ -566,10 +570,26 @@ END(interrupt_helper)
+ 	CALL_enter_from_user_mode
+ 
+ 1:
+-	ENTER_IRQ_STACK old_rsp=%rdi
++	ENTER_IRQ_STACK old_rsp=%rdi save_ret=1
+ 	/* We entered an interrupt context - irqs are off: */
+ 	TRACE_IRQS_OFF
+ 
++	ret
++END(interrupt_helper)
++
++/* 0(%rsp): ~(interrupt number) */
++	.macro interrupt func
++	cld
++
++	testb	$3, CS-ORIG_RAX(%rsp)
++	jz	1f
++	SWAPGS
++	call	switch_to_thread_stack
++1:
++
++	call	interrupt_helper
++
++	UNWIND_HINT_REGS indirect=1
+ 	call	\func	/* rdi points to pt_regs */
+ 	.endm
+ 
+-- 
+2.16.1
