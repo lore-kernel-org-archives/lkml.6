@@ -1,113 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751667AbeBRSMY (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 13:12:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751532AbeBRSMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 13:12:23 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7947E2171F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shli@kernel.org
-Date: Sun, 18 Feb 2018 10:12:21 -0800
-From: Shaohua Li <shli@kernel.org>
-To: Heinz Mauelshagen <heinzm@redhat.com>
-Cc: dm-devel@redhat.com, linux-kernel@vger.kernel.org,
-        linux-raid@vger.kernel.org
-Subject: Re: [PATCH] md: fix md_write_start() deadlock w/o metadata devices
-Message-ID: <20180218181221.a5l5nzgav7s6smor@kernel.org>
-References: <054eff295e0cd2df2b11a3f9ba3b3d66e89beb47.1517609290.git.heinzm@redhat.com>
+        id S1751689AbeBRSRN (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 13:17:13 -0500
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:41995 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751492AbeBRSRL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Feb 2018 13:17:11 -0500
+X-Google-Smtp-Source: AH8x227BTgQgpYG6SxN9MRNJUFyX2slZbt9HY68qAkDrWuFw8/azpEe1E+yI9cuoehlBw+pt/AdVtKYxMpw9qoC3kIg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <054eff295e0cd2df2b11a3f9ba3b3d66e89beb47.1517609290.git.heinzm@redhat.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <201802181252.JLYjDsVL%fengguang.wu@intel.com>
+References: <1518752264-47238-2-git-send-email-keescook@chromium.org> <201802181252.JLYjDsVL%fengguang.wu@intel.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Sun, 18 Feb 2018 10:17:09 -0800
+X-Google-Sender-Auth: 5wxXF8eV2ZLrjPtsAI5n__Lz8lw
+Message-ID: <CAGXu5jKCU4HBdQvgqOc4cQpQ7CktO5YFmDSoAeppBDbgimZDiQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] taint: Convert to enum and indexed initialization
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 02, 2018 at 11:13:19PM +0100, Heinz Mauelshagen wrote:
-> If no metadata devices are configured on raid1/4/5/6/10
-> (e.g. via dm-raid), md_write_start() unconditionally waits
-> for superblocks to be written thus deadlocking.
-> 
-> Fix introduces mddev->has_superblocks bool, defines it in md_run()
-> and checks for it in md_write_start() to conditionally avoid waiting.
-> 
-> Once on it, check for non-existing superblocks in md_super_write().
-> 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=198647
-> Fixes: cc27b0c78c796 ("md: fix deadlock between mddev_suspend() and md_write_start()")
+On Sat, Feb 17, 2018 at 9:03 PM, kbuild test robot <lkp@intel.com> wrote:
+> Hi Kees,
+>
+> I love your patch! Yet something to improve:
+>
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.16-rc1 next-20180216]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Kees-Cook/taint-Add-taint-for-randstruct/20180218-100113
+> config: arm64-defconfig (attached as .config)
+> compiler: aarch64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=arm64
+>
+> All errors (new ones prefixed by >>):
+>
+>    /tmp/ccUwVEny.s: Assembler messages:
+>>> /tmp/ccUwVEny.s:897: Error: invalid operands (*UND* and *ABS* sections) for `<<'
+>    /tmp/ccUwVEny.s:932: Error: invalid operands (*UND* and *ABS* sections) for `<<'
+>    /tmp/ccUwVEny.s:1116: Error: invalid operands (*UND* and *ABS* sections) for `<<'
 
-Applied, thanks! 
-> Signed-off-by: Heinz Mauelshagen <heinzm@redhat.com>
+Ugh, it looks like an enum can't be used here because of assembly
+files? I'll try to figure this out...
+
+-Kees
+
+>
 > ---
->  drivers/md/md.c | 10 ++++++++++
->  drivers/md/md.h |  2 ++
->  2 files changed, 12 insertions(+)
-> 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index 0081ace39a64..8a7e7034962c 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -801,6 +801,9 @@ void md_super_write(struct mddev *mddev, struct md_rdev *rdev,
->  	struct bio *bio;
->  	int ff = 0;
->  
-> +	if (!page)
-> +		return;
-> +
->  	if (test_bit(Faulty, &rdev->flags))
->  		return;
->  
-> @@ -5452,6 +5455,7 @@ int md_run(struct mddev *mddev)
->  	 * the only valid external interface is through the md
->  	 * device.
->  	 */
-> +	mddev->has_superblocks = false;
->  	rdev_for_each(rdev, mddev) {
->  		if (test_bit(Faulty, &rdev->flags))
->  			continue;
-> @@ -5465,6 +5469,9 @@ int md_run(struct mddev *mddev)
->  				set_disk_ro(mddev->gendisk, 1);
->  		}
->  
-> +		if (rdev->sb_page)
-> +			mddev->has_superblocks = true;
-> +
->  		/* perform some consistency tests on the device.
->  		 * We don't want the data to overlap the metadata,
->  		 * Internal Bitmap issues have been handled elsewhere.
-> @@ -8049,6 +8056,7 @@ EXPORT_SYMBOL(md_done_sync);
->  bool md_write_start(struct mddev *mddev, struct bio *bi)
->  {
->  	int did_change = 0;
-> +
->  	if (bio_data_dir(bi) != WRITE)
->  		return true;
->  
-> @@ -8081,6 +8089,8 @@ bool md_write_start(struct mddev *mddev, struct bio *bi)
->  	rcu_read_unlock();
->  	if (did_change)
->  		sysfs_notify_dirent_safe(mddev->sysfs_state);
-> +	if (!mddev->has_superblocks)
-> +		return true;
->  	wait_event(mddev->sb_wait,
->  		   !test_bit(MD_SB_CHANGE_PENDING, &mddev->sb_flags) ||
->  		   mddev->suspended);
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index 58cd20a5e85e..fbc925cce810 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -468,6 +468,8 @@ struct mddev {
->  	void (*sync_super)(struct mddev *mddev, struct md_rdev *rdev);
->  	struct md_cluster_info		*cluster_info;
->  	unsigned int			good_device_nr;	/* good device num within cluster raid */
-> +
-> +	bool	has_superblocks:1;
->  };
->  
->  enum recovery_flags {
-> -- 
-> 2.14.3
-> 
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+
+
+-- 
+Kees Cook
+Pixel Security
