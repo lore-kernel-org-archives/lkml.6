@@ -1,59 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751825AbeBRTsa (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 14:48:30 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:39631 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751512AbeBRTsB (ORCPT
+        id S1751773AbeBRTv7 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 14:51:59 -0500
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:47081 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751689AbeBRTv5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 14:48:01 -0500
-X-Google-Smtp-Source: AH8x226+66O/RzAsvkcZ7+CUhD5gXLDMagt1tTfVtBBwAM79JtCtzVbskdbJtI6lVtfk3r8Sei3XQA==
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] ARM: dts: tegra30: Add IRAM node
-Date: Sun, 18 Feb 2018 22:46:55 +0300
-Message-Id: <eca7e53ced963c97e3363d7598fe3778f35e79f2.1518981147.git.digetx@gmail.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <cover.1518981147.git.digetx@gmail.com>
-References: <cover.1518981147.git.digetx@gmail.com>
-In-Reply-To: <cover.1518981147.git.digetx@gmail.com>
-References: <cover.1518981147.git.digetx@gmail.com>
+        Sun, 18 Feb 2018 14:51:57 -0500
+X-Google-Smtp-Source: AH8x225qmyredLz62ciEOjoEu4hAI39GrvNQ1GHZLPffJHal45XhvSf4qoLr6wvojYLsCd0mJ4gUlA==
+Date: Sun, 18 Feb 2018 20:51:53 +0100
+From: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+To: Jonathan Woithe <jwoithe@just42.net>
+Cc: Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] platform/x86: fujitsu-laptop: Define constants for
+ backlight power control
+Message-ID: <20180218195153.GA3665@kmp-mobile.hq.kempniu.pl>
+References: <20180211210727.12130-1-kernel@kempniu.pl>
+ <20180211210727.12130-7-kernel@kempniu.pl>
+ <20180216105014.GB25974@marvin.atrad.com.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180216105014.GB25974@marvin.atrad.com.au>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IRAM is a static RAM that consists of four contiguous 64 KiB blocks,
-it is currently used to store CPU resume code, utilized by the video
-decoder engine and could be used as a general-purpose fast memory.
+> > +/* FUNC interface - backlight power control */
+> > +#define BACKLIGHT_POWER	0x4
+> > +#define BACKLIGHT_OFF	0x3
+> > +#define BACKLIGHT_ON	0x0
+> 
+> A minor detail: BACKLIGHT_OFF and BACKLIGHT_ON are potential parameter
+> values while BACKLIGHT_POWER is essentially a parameter selector.  Should
+> the name of BACKLIGHT_POWER reflect this difference?  It could be difficult
+> to do without making the resulting identifier a little long.  The best I can
+> come up with is BACKLIGHT_PARAM_POWER or (if a saving of one character is
+> desired) BACKLIGHT_PARM_POWER.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra30.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+So, I tried to somehow unify constant naming throughout the module a few
+times by now, but it seems that whichever naming pattern I chose, there
+was always some exception to the rule.  Of course the module code is not
+to blame, it is caused by the firmware treating logically related
+features (like controlling various LEDs) in diverse ways.
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index c3e9f1e847db..833d97206aef 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -91,6 +91,14 @@
- 		};
- 	};
- 
-+	iram@40000000 {
-+		compatible = "mmio-sram";
-+		reg = <0x40000000 0x40000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x40000000 0x40000>;
-+	};
-+
- 	host1x@50000000 {
- 		compatible = "nvidia,tegra30-host1x", "simple-bus";
- 		reg = <0x50000000 0x00024000>;
+Thus, I am perfectly fine with using BACKLIGHT_PARAM_POWER for now,
+because I do not have a better idea yet.  If I ever come up with a
+constant naming scheme that would cover all the constants in the module
+(or at least all those directly related to call_fext_func()), I will
+propose it here.
+
+> > @@ -818,7 +825,8 @@ static int acpi_fujitsu_laptop_add(struct acpi_device *device)
+> >  	/* Sync backlight power status */
+> >  	if (fujitsu_bl && fujitsu_bl->bl_device &&
+> >  	    acpi_video_get_backlight_type() == acpi_backlight_vendor) {
+> > -		if (call_fext_func(fext, FUNC_BACKLIGHT, 0x2, 0x4, 0x0) == 3)
+> > +		if (call_fext_func(fext, FUNC_BACKLIGHT, 0x2, BACKLIGHT_POWER,
+> > +				   0x0) == 3)
+> >  			fujitsu_bl->bl_device->props.power = FB_BLANK_POWERDOWN;
+> >  		else
+> >  			fujitsu_bl->bl_device->props.power = FB_BLANK_UNBLANK;
+> 
+> I'm curious: this fext function call is, I think, returning the current
+> backlight power value.  If that's the case, is the value of 3 used in the
+> test of the return function conceptually BACKLIGHT_OFF, and if so, should we
+> use BACKLIGHT_OFF instead of the numeric constant?  It seems likely given
+> that it results in the backlight power property being set to
+> FB_BLANK_POWERDOWN.
+
+Ah, yes, good catch.  Will fix, thanks.
+
 -- 
-2.16.1
+Best regards,
+Michał Kępień
