@@ -1,233 +1,145 @@
-Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AH8x224B9JoggFaTFcmzRm08aZ5kOvuZZoK6SdLmNd91X3GYbCwGkAi5tr5D8rHDGqmagzxDi53K
-ARC-Seal: i=1; a=rsa-sha256; t=1518901378; cv=none;
-        d=google.com; s=arc-20160816;
-        b=HNKS1Bb6MbhQGnMxowmVvuHmQIHtBjniTryDmOGh6qLoUYQ6dNWSsEnP8vt4Fc2PoO
-         U2CtPTHfMdsb+LbC/XGLof55Wy+jAdqmeMxHMXBDpxe9okd8cNOPTZHDm7RDW39NzLc8
-         ZxadKMc5pXZRNLYZ7VNBvje5f5gT5Mn5bMmckPbE5H71Cs/KnjCsfFcY+n5Iv38GBvMe
-         +n6Iu3J05Aqw/qdDvaMl/TCggikmoo0rkSBAE5h4+6TZ+kj4ZxwPxhJLi8Iu7p8PqXsI
-         dJZfh+5aUaR0TV5xSTlyoBk2nUuStFkhVJgXDEC2XlLRuCbhK90ijM9LuZpAu5wKVlwg
-         5BEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:arc-authentication-results;
-        bh=GLwMjEL2BG6tt8befg+VbHTBe8jxOaW6gDcyqFo9Lmg=;
-        b=F7Eozfd/NSvatpT96D8KTut/QxyahtuXmnvidgzAn2v9XpSZZctcFpvrnL6z8EZ8FI
-         TlupsqXS/jsfR+qWSon1dQiF2u8UrHe9NbaznW4jWY1fm3C5WaYloRrUd0n9Q1HHuQTY
-         2yvbZJ71ayQ2AVafcKS/aCnz4625yCYpkm7cDjwNqr4jLUl7IMwJ5cPVKted2GrMp4PP
-         o2rFkk7FzW/EZ8os21daovEseKzQ6ewxvG9FWr5Kr5Ya1Q6O3IQWEooJxLYE6cjEy5wh
-         X91Pyz95m4RkyDzYkYEDkQ97NuCXUN44MUezV0RRfEx+j9Z4X0h/xbhZev0TppeGb3TQ
-         WS1w==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
-MIME-Version: 1.0
-In-Reply-To: <20180217121741.GC10940@kroah.com>
-References: <20180216222655.23919-1-quytelda@tamalin.org> <20180217121741.GC10940@kroah.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2125575-1518985670-2-5615235118972600748
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES endaro, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1518985669; b=OwvlCdUAgM9cqDVFjF/CtZNXmQfioAFwxsZ7thrgwgPddQA
+    9XVq+9bNWXxuIiJeJHzz9Uld/N08Ep9n6ATRr2C2HepSgwifwwYQMHtG1qYGndeT
+    Wpe+mo48jLLbhCX6pib7OzgLFioN5tgyPYtQ/dftWFbvXuc82pBsD7LY6YYx3nbe
+    0FV8y1Ex0Wr9/AoO3cWTz+L/fT0b/8mIx8nkH0FmwxMkYqi7FsN7hcH4nu/L4A5K
+    9dr2301rSuB9V2tz1/i5KKVqT5gSeL8P+GaUFRaMqGPq7BnOMMoMTfedUvm5V1/q
+    ItPSLY0zecFQSataHdsThuT3JnhmXpHxH9WJCtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1518985669; bh=8
+    5Lbp2+687oBHXeYGw63rZCPuY1PcLLUenjB2fbNzpM=; b=qFS2jFCJRuujm+PuL
+    xPxrJ8bxxp6u4ZVLGxf4BX8O2v8z9phQ0C9eOoY4J4X/BPLfoYFSxRTPqaiqnpSA
+    UF7G+M2zBqQ9oZdVFBYkwK4wxAgQPlt7QDVwaLzfSRNP9qT2f/l1wK7OT6sk8iNF
+    GXuasrSur6a+Ug03QAXWMIuK6eRLE9CMeJ7IpV+BbvU2lFKigBm0T22Su5yd+MNy
+    lI0zrhtghS3VrKx4q9FPDgBdcuTXQHT9f0HdpVJw9GGa0W0b6+o64eYS5raezGSs
+    MI5HwGQgT3Ooo4grOM9P26IKXWDnXNNAoj858Jrm++bnbqmdP2CqMQrrvIu6aKni
+    eSUpQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Quytelda Kahja <quytelda@tamalin.org>
-Date: Sat, 17 Feb 2018 13:02:55 -0800
-X-Gmail-Original-Message-ID: <CAFLvi22jZ8eKaJaPohLtkt=fXYETVuUGngpaHK7u3gqbaR0Ktg@mail.gmail.com>
-Message-ID: <CAFLvi22jZ8eKaJaPohLtkt=fXYETVuUGngpaHK7u3gqbaR0Ktg@mail.gmail.com>
-Subject: Re: [PATCH] Staging: gdm724x: tty: Fix macro argument reuse that
- could cause side-effects.
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: gs051095@gmail.com, devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org
-Content-Type: multipart/alternative; boundary="000000000000fd16f605656ec8c8"
-X-Provags-ID: V03:K0:DhTaEIsYTlrdx9p2K4vpIOr9SJDq2o+lO45c+4AFmFmCIG2WHmJ
- W3x2OY0jjFOpC8oo4lXNfD4RBWT3dhpJqRwZVPEXnRA43UO+TTAGy2B3q4/AdQ0G6bZJSKy
- veBw6RVdnz8FN8sFcamBbz+XjZwhUzP0ZHl0v9UfUScNuz8HPdFjPSk2OQ+IG5/xKouqAZj
- hHcEVsrNoppX3A8cNlpyA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:glcxPj9tpCs=:7bZ8GM050cwpcP8kMY7msJ
- JwkhMHB8apea316U4XZjpanyIIPAa0Br2A/xa5EySO38+3+ZP06D8oLj/mKE/KrEhqKsyyTp0
- k2qYyzEf2Bcq9ucQuNUNxhllHPsjG+n2Lbj+BIOWhslp5Rhk781OJvbxnKJ3Ch8kCvHH0ux4g
- Q0jrKHBbUDFulFYAfEhomsl7lkpCK5VdxMW2FeW712gFCsEptt6D7GNcIYXzo6aYgsoAhzK3L
- bLSYOI9UGDX96g0cmzMW2pGtgeFU4qHLjynBIYWb4SuGYk2ENipkp7A8l00mpLrLuCuv4aX+h
- uqY8LYSIyRv7dZQKgY7C5Jx9GplScpbuwMlWbWs+61PKDGTjhq4I3keVtkhkfyMu9iYibZnk+
- ympnsUbDgAxSh/RaJhZLDzSTSo4+1SqaP2fmNmbn+Xv6MPnS5BNOyQIejoDqnTpTR+kTPevvK
- Ta+zpnm1MCShlOJP9BQr0aWd29wlWUg6PbD/Qj5nE/t202zV5okF9dLxXO40pPl0uGn9HNsUC
- WPo3Pv73EHB8eakDAd/lsPZPXHRYOV8VoMnHL1YquRfMApr5iOoC+zFgt3bKgviZwVhlIk56p
- 2rg9uX8+yTmPaN2oIxvmBGFtTIdT2Ci749ETJsqyqhtrDlKugKYau0o7ruvlimtI+9cTUCBvf
- O+p1ZRH/UPx6k4MOsVfoHttvJYZSR1fRcurVl50HIeS7528yci0vhs+R7OTmUVV8Y0opKSpFe
- aFhI8+GMdEWnX6fm807BzwnXSMCsjflb5jJDYWBhA7K4yII+QA1FtZml2qU=
+To: gregkh@linuxfoundation.org, gs051095@gmail.com, jonathankim@gctsemi.com,
+ deanahn@gctsemi.com
+Subject: [PATCH 1/3] Staging: gdm724x: tty: Remove unnecessary macro
+ 'gdm_tty_send'.
+Date: Sun, 18 Feb 2018 12:26:53 -0800
+Message-Id: <20180218202655.5738-1-quytelda@tamalin.org>
+X-Mailer: git-send-email 2.16.1
+X-Provags-ID: V03:K0:IFZDb1cISmgnRWcZ36QxP+/PMwYniRydSwqJMmoRb/KQ4bOZGRw
+ F9+lK4/QutTsIWp0rQbJayXZHJkvPuWZeRxVxCLat9FXacoLX0o+QCiCr+iezKDbwlUHWb6
+ /+XtA5nPf5jxrJ1x7R4OD29C7Puqyh8v9P1kngf2S+jE/J10ZMJR413SQLMYtxDjvzCk1Y9
+ SpghWlsJ8pTqzuktiXw/w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:cuEItdqh5oI=:1xGc78cac9Ftb289Ao76V9
+ BJYMHxRKtKvXLPoDoy1B7BkVluYQd9AGHaCMOtgeNCkMiFoDw+OwJclcvP/NOv8sz9w6deecL
+ 8M9vdCnbxEPCud6j1rEfZmkgO7tp7KLKmAMvbU4Yzmh64guFVau+c2lVzw00/JhPo4O1KI0ID
+ rhZa9/cQTAG0cpKrbKdgrUMgDF1Mu2b6tZ2pezvJizM7IMixCBWiGHabWJwqFz2SlK4cYB1CN
+ ZDlTEN5wGsGIjPUIGyJjHWKSaSUHMCfdbVkj8j3z5501S8zo/AYM93EyUSnIpslYvUUmzUMvY
+ tGEuo/YfTSLIvyEtb56QwXukYE/z/5ruRmD+l6pt2ACUXu/L9Z/wv5oFTJN00cRHZEWDd68P7
+ yl2NuDFTVskCX4zgU+ZQSAwptaCiiwpCdY5+jG2dCY26WCEKePUPw0xHLG/HA0olHsSRU6a7p
+ It4qxUxGz1ohxDDa5KfLi1vfBLb1YzIJ07tIWJMSAO7H/BAfTJr3DvJTOCiz6deD9zw/ZOgaX
+ A/LeaDvR8pnHrrdo5g5bFnojiftXBwmNweVXoQbNPeXSr+3bojD8zaHIxQXmo6+b0CUe9E+1+
+ WHnsiq/ta75CK88BnMD1/LU77rnjbwRI8Wt0F+IPAK5SF+ChB5V8ECq+C2WsDcuQW2K39FwAU
+ nnPtXQqCJpZN+L5UfkJwYTnK7mX5cO8pnRxqxULXOQynA8+ALxWiOHzG78o+aYRDZimM7AfEP
+ JtBHcy7MAO2ryGVCvEQCoT9vjfYskaq341d31Q==
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Quytelda Kahja <quytelda@tamalin.org>,
+ linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592598228085944882?=
-X-GMAIL-MSGID: =?utf-8?q?1592683532195352611?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---000000000000fd16f605656ec8c8
-Content-Type: text/plain; charset="UTF-8"
+Remove the macro 'gdm_tty_send' which adds unnecessary complexity and has
+arguments that could mistakenly be evaluated multiple times.
 
-Greg,
+Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
+---
+ drivers/staging/gdm724x/gdm_tty.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-Do you mean that the code should make the tty_dev calls explicitly where
-these macros are currently used, or maybe replacing them with "real"
-functions?
+diff --git a/drivers/staging/gdm724x/gdm_tty.c b/drivers/staging/gdm724x/gdm_tty.c
+index fc7682c18f20..1c3853bcfac2 100644
+--- a/drivers/staging/gdm724x/gdm_tty.c
++++ b/drivers/staging/gdm724x/gdm_tty.c
+@@ -37,8 +37,6 @@
+ 
+ #define MUX_TX_MAX_SIZE 2048
+ 
+-#define gdm_tty_send(n, d, l, i, c, b) (\
+-	n->tty_dev->send_func(n->tty_dev->priv_dev, d, l, i, c, b))
+ #define gdm_tty_recv(n, c) (\
+ 	n->tty_dev->recv_func(n->tty_dev->priv_dev, c))
+ #define gdm_tty_send_control(n, r, v, d, l) (\
+@@ -191,13 +189,12 @@ static int gdm_tty_write(struct tty_struct *tty, const unsigned char *buf,
+ 
+ 	while (1) {
+ 		sending_len = min(MUX_TX_MAX_SIZE, remain);
+-		gdm_tty_send(gdm,
+-			     (void *)(buf + sent_len),
+-			     sending_len,
+-			     gdm->index,
+-			     gdm_tty_send_complete,
+-			     gdm
+-			    );
++		gdm->tty_dev->send_func(gdm->tty_dev->priv_dev,
++					(void *)(buf + sent_len),
++					sending_len,
++					gdm->index,
++					gdm_tty_send_complete,
++					gdm);
+ 		sent_len += sending_len;
+ 		remain -= sending_len;
+ 		if (remain <= 0)
+-- 
+2.16.1
 
-Thanks,
-Quytelda Kahja
-
-On Sat, Feb 17, 2018 at 4:17 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
-
-> On Fri, Feb 16, 2018 at 02:26:55PM -0800, Quytelda Kahja wrote:
-> > Fix a coding style warning from checkpatch.pl.  Use GNU extensions to
-> create
-> > references to the results of problem macro arguments when they are
-> evaluated so
-> > that they can be used safely multiple times.
-> >
-> > Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
-> > ---
-> >  drivers/staging/gdm724x/gdm_tty.c | 24 ++++++++++++++++--------
-> >  1 file changed, 16 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/staging/gdm724x/gdm_tty.c
-> b/drivers/staging/gdm724x/gdm_tty.c
-> > index fc7682c18f20..73d39fa86d10 100644
-> > --- a/drivers/staging/gdm724x/gdm_tty.c
-> > +++ b/drivers/staging/gdm724x/gdm_tty.c
-> > @@ -37,14 +37,22 @@
-> >
-> >  #define MUX_TX_MAX_SIZE 2048
-> >
-> > -#define gdm_tty_send(n, d, l, i, c, b) (\
-> > -     n->tty_dev->send_func(n->tty_dev->priv_dev, d, l, i, c, b))
-> > -#define gdm_tty_recv(n, c) (\
-> > -     n->tty_dev->recv_func(n->tty_dev->priv_dev, c))
-> > -#define gdm_tty_send_control(n, r, v, d, l) (\
-> > -     n->tty_dev->send_control(n->tty_dev->priv_dev, r, v, d, l))
-> > -
-> > -#define GDM_TTY_READY(gdm) (gdm && gdm->tty_dev && gdm->port.count)
-> > +#define gdm_tty_send(n, d, l, i, c, b)
->      \
-> > +     ({ typeof(n) n_ = (n);                                          \
-> > +             void *priv_dev = n_->tty_dev->priv_dev;                 \
-> > +             n_->tty_dev->send_func(priv_dev, d, l, i, c, b); })
-> > +#define gdm_tty_recv(n, c)                                   \
-> > +     ({ typeof(n) n_ = (n);                                  \
-> > +             void *priv_dev = n_->tty_dev->priv_dev;         \
-> > +             n_->tty_dev->recv_func(priv_dev, c); })
-> > +#define gdm_tty_send_control(n, r, v, d, l)                          \
-> > +     ({ typeof(n) n_ = (n);                                          \
-> > +             void *priv_dev = n_->tty_dev->priv_dev;                 \
-> > +             n_->tty_dev->send_control(priv_dev, r, v, d, l); })
-> > +
-> > +#define GDM_TTY_READY(gdm)                                           \
-> > +     ({ typeof(gdm) gdm_ = gdm;                                      \
-> > +             gdm_ && gdm_->tty_dev && gdm_->port.count; })
->
-> Ugh, that's a mess.  How about just replacing the use of these odd
-> macros with the "real" call instead?  The fact that they are messing
-> around with the tty_dev call directly is really strange and should be
-> made a lot more obvious, as that probably needs to be fixed up.
->
-> thanks,
->
-> greg k-h
->
-
---000000000000fd16f605656ec8c8
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Greg,<div><br></div><div>Do you mean that the code should =
-make the tty_dev calls explicitly where these macros are currently used, or=
- maybe replacing them with &quot;real&quot; functions?</div><div><br></div>=
-<div>Thanks,</div><div>Quytelda Kahja</div></div><div class=3D"gmail_extra"=
-><br><div class=3D"gmail_quote">On Sat, Feb 17, 2018 at 4:17 AM, Greg KH <s=
-pan dir=3D"ltr">&lt;<a href=3D"mailto:gregkh@linuxfoundation.org" target=3D=
-"_blank">gregkh@linuxfoundation.org</a>&gt;</span> wrote:<br><blockquote cl=
-ass=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;p=
-adding-left:1ex"><div class=3D"HOEnZb"><div class=3D"h5">On Fri, Feb 16, 20=
-18 at 02:26:55PM -0800, Quytelda Kahja wrote:<br>
-&gt; Fix a coding style warning from <a href=3D"http://checkpatch.pl" rel=
-=3D"noreferrer" target=3D"_blank">checkpatch.pl</a>.=C2=A0 Use GNU extensio=
-ns to create<br>
-&gt; references to the results of problem macro arguments when they are eva=
-luated so<br>
-&gt; that they can be used safely multiple times.<br>
-&gt;<br>
-&gt; Signed-off-by: Quytelda Kahja &lt;<a href=3D"mailto:quytelda@tamalin.o=
-rg">quytelda@tamalin.org</a>&gt;<br>
-&gt; ---<br>
-&gt;=C2=A0 drivers/staging/gdm724x/gdm_<wbr>tty.c | 24 ++++++++++++++++----=
-----<br>
-&gt;=C2=A0 1 file changed, 16 insertions(+), 8 deletions(-)<br>
-&gt;<br>
-&gt; diff --git a/drivers/staging/gdm724x/gdm_<wbr>tty.c b/drivers/staging/=
-gdm724x/gdm_<wbr>tty.c<br>
-&gt; index fc7682c18f20..73d39fa86d10 100644<br>
-&gt; --- a/drivers/staging/gdm724x/gdm_<wbr>tty.c<br>
-&gt; +++ b/drivers/staging/gdm724x/gdm_<wbr>tty.c<br>
-&gt; @@ -37,14 +37,22 @@<br>
-&gt;<br>
-&gt;=C2=A0 #define MUX_TX_MAX_SIZE 2048<br>
-&gt;<br>
-&gt; -#define gdm_tty_send(n, d, l, i, c, b) (\<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0n-&gt;tty_dev-&gt;send_func(n-&gt;tty_<wbr>dev-&g=
-t;priv_dev, d, l, i, c, b))<br>
-&gt; -#define gdm_tty_recv(n, c) (\<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0n-&gt;tty_dev-&gt;recv_func(n-&gt;tty_<wbr>dev-&g=
-t;priv_dev, c))<br>
-&gt; -#define gdm_tty_send_control(n, r, v, d, l) (\<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0n-&gt;tty_dev-&gt;send_control(n-&gt;<wbr>tty_dev=
--&gt;priv_dev, r, v, d, l))<br>
-&gt; -<br>
-&gt; -#define GDM_TTY_READY(gdm) (gdm &amp;&amp; gdm-&gt;tty_dev &amp;&amp;=
- gdm-&gt;port.count)<br>
-&gt; +#define gdm_tty_send(n, d, l, i, c, b)=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0\<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0({ typeof(n) n_ =3D (n);=C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 \<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0void *priv_dev =3D n_=
--&gt;tty_dev-&gt;priv_dev;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0\<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0n_-&gt;tty_dev-&gt;se=
-nd_func(priv_<wbr>dev, d, l, i, c, b); })<br>
-&gt; +#define gdm_tty_recv(n, c)=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0\<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0({ typeof(n) n_ =3D (n);=C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 \<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0void *priv_dev =3D n_=
--&gt;tty_dev-&gt;priv_dev;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0\<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0n_-&gt;tty_dev-&gt;re=
-cv_func(priv_<wbr>dev, c); })<br>
-&gt; +#define gdm_tty_send_control(n, r, v, d, l)=C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 \<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0({ typeof(n) n_ =3D (n);=C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 \<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0void *priv_dev =3D n_=
--&gt;tty_dev-&gt;priv_dev;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0\<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0n_-&gt;tty_dev-&gt;se=
-nd_control(<wbr>priv_dev, r, v, d, l); })<br>
-&gt; +<br>
-&gt; +#define GDM_TTY_READY(gdm)=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0\<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0({ typeof(gdm) gdm_ =3D gdm;=C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 \<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0gdm_ &amp;&amp; gdm_-=
-&gt;tty_dev &amp;&amp; gdm_-&gt;port.count; })<br>
-<br>
-</div></div>Ugh, that&#39;s a mess.=C2=A0 How about just replacing the use =
-of these odd<br>
-macros with the &quot;real&quot; call instead?=C2=A0 The fact that they are=
- messing<br>
-around with the tty_dev call directly is really strange and should be<br>
-made a lot more obvious, as that probably needs to be fixed up.<br>
-<br>
-thanks,<br>
-<br>
-greg k-h<br>
-</blockquote></div><br></div>
-
---000000000000fd16f605656ec8c8--
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
