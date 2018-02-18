@@ -1,121 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751474AbeBRQgf (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 11:36:35 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:35058 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751259AbeBRQge (ORCPT
+        id S1751571AbeBRQrH (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 11:47:07 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:39490 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751345AbeBRQrG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 11:36:34 -0500
-Date: Sun, 18 Feb 2018 17:32:11 +0100
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        tim@krieglstein.org, Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Phil Reid <preid@electromag.com.au>, Wolfram Sang <wsa@the-dreams.de>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: i2c-designware: sound and s2ram broken on Broadwell-U system
- since commit ca382f5b38f367b6 (add i2c gpio recovery option)
-Message-ID: <20180218163211.GA1650@light.dominikbrodowski.net>
-References: <20180217132543.GA21571@light.dominikbrodowski.net>
- <1518879773.22495.378.camel@linux.intel.com>
- <1518880180.22495.379.camel@linux.intel.com>
- <20180217165815.GA1854@light.dominikbrodowski.net>
- <1518901021.22495.383.camel@linux.intel.com>
- <20180218094135.GA2459@light.dominikbrodowski.net>
- <CAHp75Vf2sS8c4GubL1MRkrGdpYdn0n5stmzZNnp8axNn3AkEcw@mail.gmail.com>
+        Sun, 18 Feb 2018 11:47:06 -0500
+Subject: Re: Use of GCC plugin instead ISO C
+To: Progyan Bhattacharya <bprogyan@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1518941218.12663.1.camel@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <7bd655df-39a1-2098-0d1c-256c0900b7ed@infradead.org>
+Date: Sun, 18 Feb 2018 08:47:01 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vf2sS8c4GubL1MRkrGdpYdn0n5stmzZNnp8axNn3AkEcw@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1518941218.12663.1.camel@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 18, 2018 at 04:23:41PM +0200, Andy Shevchenko wrote:
-> On Sun, Feb 18, 2018 at 11:41 AM, Dominik Brodowski
-> <linux@dominikbrodowski.net> wrote:
-> > On Sat, Feb 17, 2018 at 10:57:01PM +0200, Andy Shevchenko wrote:
-> >> On Sat, 2018-02-17 at 17:58 +0100, Dominik Brodowski wrote:
+On 02/18/2018 12:06 AM, Progyan Bhattacharya wrote:
+> Hi Again,
 > 
-> >> >  Do you still need the DEBUG_GPIO output?
-> >>
-> >> It would be nice to have, though if it makes difficulties to you, then
-> >> don't bother.
-> >
-> > Note that I have to enable CONFIG_GPIOLIB before I can enable DEBUG_GPIO;
-> > CONFIG_PINCTRL was off as well. Maybe some "SELECT" is missing for
-> > CONFIG_I2C_DESIGNWARE_BAYTRAIL ?
+> According to last time talked, you said me to avoid "-Werror=pedantic"
+> flag to build the GNU specific plugins instead of Standard ISO C. I
+> changed my default compiler flags and tried to rebuild. But I am still
+> getting the same error messages at:
 > 
-> Ah, so, your configuration misses pin control driver. You need to
-> enable it in order to get GPIOs working.
-
-Well, I did not need it in the past to have working sound and working
-suspend to RAM. And it already works if 
-
-	CONFIG_PINCTRL=y
-	CONFIG_DEBUG_PINCTRL=y
-
-	CONFIG_GPIOLIB=y
-	CONFIG_GPIO_ACPI=y
-	CONFIG_DEBUG_GPIO=y
-
-are set (but no PINCTRL or GPIO drivers!).
-
-So I'd suggest to
-
-(a) keep your fixup patch (as things work as previously then),
-
-(b) to have CONFIG_I2C_DESIGNWARE_BAYTRAIL select the appropriate options from
-    above [and CONFIG_XPOWER_PMIC_OPREGION ?] (or depend on it?), or
-
-(c) (probably best) both.
-
-
-> It might fix your issue w/o my patch.
+> 	CC /***/Linux/tools/objtool/arch/x86/decode.o
 > 
-> > The following output is with your patch applied.
+> All of them were arising due to same "-pedantic" flag being enabled.
+> 1. Range expression in Case statements were not allowed.
+> 2. Use of braced-group were not allowed in MACRO definition.
+> 3. Pointer arithmetic with void pointer was not allowed.
 > 
-> ...which is useless.
-> 
-> > Do you need it without
-> > your fixup patch as well?
-> 
-> Yes, and with enabled pin control driver.
+> I took a look on related Makefiles, but found none with "-pedantic" or
+> "-Werror=pedantic" flag.
 
-Well, I've reverted your fixup patch locally and enabled all drivers that I
-could -- including CONFIG_XPOWER_PMIC_OPREGION, CONFIG_MFD_AXP20X, and
-CONFIG_MFD_AXP20X_I2C. But I'm not sure at all that a driver actually became
-active...
+I didn't find "pedantic" in any Makefiles either.
 
-$ dmesg | egrep -i "(gpio|pinctrl|i2c|broadw)"
-[    0.031029] Performance Events: PEBS fmt2+, Broadwell events, 16-deep LBR, full-width counters, Intel PMU driver.
-[    0.079300] pinctrl core: initialized pinctrl subsystem
-[    0.105267] gpio-f7188x: Not a Fintek device at 0x0000002e
-[    0.105285] gpio-f7188x: Not a Fintek device at 0x0000004e
-[    0.621048] i2c_designware INT3432:00: GPIO lookup for consumer scl
-[    0.621053] i2c_designware INT3432:00: using ACPI for GPIO lookup
-[    0.621057] acpi INT3432:00: GPIO: looking up scl-gpios
-[    0.621062] acpi INT3432:00: GPIO: looking up scl-gpio
-[    0.621065] i2c_designware INT3432:00: using lookup tables for GPIO lookup
-[    0.621087] i2c_designware INT3432:00: lookup for GPIO scl failed
-[    0.682478] i2c_designware INT3433:00: GPIO lookup for consumer scl
-[    0.682482] i2c_designware INT3433:00: using ACPI for GPIO lookup
-[    0.682486] acpi INT3433:00: GPIO: looking up scl-gpios
-[    0.682490] acpi INT3433:00: GPIO: looking up scl-gpio
-[    0.682493] i2c_designware INT3433:00: using lookup tables for GPIO lookup
-[    0.682497] i2c_designware INT3433:00: lookup for GPIO scl failed
-[    1.208551] gpio_it87: Unknown Chip found, Chip 1d00 Revision 0
-[    1.870861] input: DLL0665:01 06CB:76AD Touchpad as /devices/pci0000:00/INT3433:00/i2c-1/i2c-DLL0665:01/0018:06CB:76AD.0001/input/input9
-[    1.871601] hid-multitouch 0018:06CB:76AD.0001: input: I2C HID v1.00 Mouse [DLL0665:01 06CB:76AD] on i2c-DLL0665:01
-[    2.015224] broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> System Pin mapping ok
-[    2.015433] broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Offload0 Pin mapping ok
-[    2.015642] broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Offload1 Pin mapping ok
-[    2.015839] broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Loopback Pin mapping ok
-[    2.017899] broadwell-audio broadwell-audio: rt286-aif1 <-> snd-soc-dummy-dai mapping ok
-[    2.025473] input: broadwell-rt286 Headset as /devices/pci0000:00/INT3438:00/broadwell-audio/sound/card1/input15
+You could try (re)building with V=1 on the "make" command line and capture
+the output to see where the "pedantic" is coming from.
 
-Thanks,
-	Dominik
+-- 
+~Randy
