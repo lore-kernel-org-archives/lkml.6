@@ -1,81 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751465AbeBRMeB (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 07:34:01 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:51530 "EHLO
+        id S1751441AbeBRMeA (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 07:34:00 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:51588 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751120AbeBRMdz (ORCPT
+        with ESMTP id S1751368AbeBRMd4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 07:33:55 -0500
+        Sun, 18 Feb 2018 07:33:56 -0500
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, mingo@kernel.org, x86@kernel.org,
         brgerst@gmail.com, luto@kernel.org, jpoimboe@redhat.com
 Cc: torvalds@linux-foundation.org, ak@linux.intel.com, tglx@linutronix.de,
         dan.j.williams@intel.com
-Subject: [RFC PATCH v2 0/5] x86/entry/64: interrupt entry size reduction
-Date: Sun, 18 Feb 2018 13:31:11 +0100
-Message-Id: <20180218123116.21334-1-linux@dominikbrodowski.net>
+Subject: [RFC PATCH v2 3/5] x86/entry/64: move switch_to_thread_stack to interrupt helper function
+Date: Sun, 18 Feb 2018 13:31:14 +0100
+Message-Id: <20180218123116.21334-4-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180218123116.21334-1-linux@dominikbrodowski.net>
+References: <20180218123116.21334-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here is a re-spin of the interrupt entry size reduction patchset, which
-applies on top of tip/pti and tries to implement what Linus suggested a
-few days ago.[*]
+We can also move the SWAPGS and the switch_to_thread_stack to the
+interrupt helper function. As we do not want call depths of two,
+convert switch_to_thread_stack to a macro.
 
-Patch 1/5 provides the most significant cuttings (-3k) and gets us below
-the text size of entry_64.o (by about 2k) compared to before I started
-meddling with it. This patch is unchanged to v1 and seems to be the most
-trivial of this patchset (famous last words), but still requires
-stringent review before being applied.
+However, switch_to_thread_stack has another user in entry_64_compat.S,
+which currently expects it to be a function. To keep the code changes
+in this patch minimal, create a wrapper function.
 
-The other four patches still need more discussion on whether each additional
-step and the code complexity it adds is really worth it. And stringent
-review, of course.
+The switch to a macro means that there is some binary code duplication
+if CONFIG_IA32_EMULATION is enabled. Therefore, the size reduction
+differs whether CONFIG_IA32_EMULATION is enabled or not:
 
-Overall, these patches provide for a sizeable cutting of up to 4.1k compared
-to tip/pti:
-
+CONFIG_IA32_EMULATION=y (-0.13k):
    text	   data	    bss	    dec	    hex	filename
-  19500	      0	      0	  19500	   4c2c	entry_64.o-orig (before 2e3f0098bc45)
-  21088	      0	      0	  21088	   5260	entry_64.o-pti (as of ced5d0bf603f)
-  18006	      0	      0	  18006	   4656	entry_64.o (patch 1/5)
-  16882	      0	      0	  16882	   41f2	entry_64.o (patch 5/5)
+  17158	      0	      0	  17158	   4306	entry_64.o-orig
+  17028	      0	      0	  17028	   4284	entry_64.o
 
-[*] http://lkml.kernel.org/r/CA+55aFwLTF3EtaQ4OpDv2UM41J=EU7gfemv=eVq+uQi31-usSg@mail.gmail.com
+CONFIG_IA32_EMULATION=n (-0.27k):
+   text	   data	    bss	    dec	    hex	filename
+  17158	      0	      0	  17158	   4306	entry_64.o-orig
+  16883	      0	      0	  16883	   41f3	entry_64.o
 
-Changes since v1:
-- patch 1 (unchanged)
-- patch 2:
-	- use leaq 8() instead of mov+addq in ENTER_IRQ_STACK (suggested
-	  by Brian Gerst)
-	- add UNWIND_HINT_REGS indirect=1 after call to interrupt_helper;
-	  update size information accordingly
-- patch 3:
-	- add cld to switch_to_thread_stack wrapper function
-	- improve commit message
-	- update size information
-- patch 4:
-	- add UNWIND_HINT_REGS indirect=1 to the now-removed interrupt
-	  macro
-- patch 5 (NEW):
-	- open-code the DO_SWITCH_TO_THREAD_STACK macro (suggested by
-	  Brian Gerst)
-	- improve (?) UNWIND hints
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ arch/x86/entry/entry_64.S | 64 +++++++++++++++++++++++++++--------------------
+ 1 file changed, 37 insertions(+), 27 deletions(-)
 
-Dominik Brodowski (5):
-  x86/entry/64: move PUSH_AND_CLEAR_REGS from interrupt macro to helper
-    function
-  x86/entry/64: move ENTER_IRQ_STACK from interrupt macro to helper
-    function
-  x86/entry/64: move switch_to_thread_stack to interrupt helper function
-  x86/entry/64: remove interrupt macro
-  x86/entry/64: open-code switch_to_thread_stack
-
- arch/x86/entry/entry_64.S        | 105 +++++++++++++++++++++++----------------
- arch/x86/entry/entry_64_compat.S |  19 ++++++-
- 2 files changed, 81 insertions(+), 43 deletions(-)
-
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 93a9bea6b969..266bfcba3bb5 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -538,6 +538,31 @@ END(irq_entries_start)
+ 	decl	PER_CPU_VAR(irq_count)
+ .endm
+ 
++/*
++ * Switch to the thread stack.  This is called with the IRET frame and
++ * orig_ax on the stack.  (That is, RDI..R12 are not on the stack and
++ * space has not been allocated for them.)
++ */
++.macro DO_SWITCH_TO_THREAD_STACK
++	pushq	%rdi
++	/* Need to switch before accessing the thread stack. */
++	SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
++	movq	%rsp, %rdi
++	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
++	UNWIND_HINT sp_offset=16 sp_reg=ORC_REG_DI
++
++	pushq	7*8(%rdi)		/* regs->ss */
++	pushq	6*8(%rdi)		/* regs->rsp */
++	pushq	5*8(%rdi)		/* regs->eflags */
++	pushq	4*8(%rdi)		/* regs->cs */
++	pushq	3*8(%rdi)		/* regs->ip */
++	pushq	2*8(%rdi)		/* regs->orig_ax */
++	pushq	8(%rdi)			/* return address */
++	UNWIND_HINT_FUNC
++
++	movq	(%rdi), %rdi
++.endm
++
+ /*
+  * Interrupt entry/exit.
+  *
+@@ -545,10 +570,17 @@ END(irq_entries_start)
+  *
+  * Entry runs with interrupts off.
+  */
++/* 8(%rsp): ~(interrupt number) */
+ ENTRY(interrupt_helper)
+ 	UNWIND_HINT_FUNC
+ 	cld
+ 
++	testb	$3, CS-ORIG_RAX+8(%rsp)
++	jz	1f
++	SWAPGS
++	DO_SWITCH_TO_THREAD_STACK
++1:
++
+ 	PUSH_AND_CLEAR_REGS save_ret=1
+ 	ENCODE_FRAME_POINTER 8
+ 
+@@ -581,12 +613,6 @@ END(interrupt_helper)
+ 	.macro interrupt func
+ 	cld
+ 
+-	testb	$3, CS-ORIG_RAX(%rsp)
+-	jz	1f
+-	SWAPGS
+-	call	switch_to_thread_stack
+-1:
+-
+ 	call	interrupt_helper
+ 
+ 	UNWIND_HINT_REGS indirect=1
+@@ -860,33 +886,17 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work_interrupt		smp_irq_work_interrupt
+  */
+ #define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw) + (TSS_ist + ((x) - 1) * 8)
+ 
+-/*
+- * Switch to the thread stack.  This is called with the IRET frame and
+- * orig_ax on the stack.  (That is, RDI..R12 are not on the stack and
+- * space has not been allocated for them.)
+- */
++#if defined(CONFIG_IA32_EMULATION)
++/* entry_64_compat.S::entry_INT80_compat expects this to be an ASM function */
+ ENTRY(switch_to_thread_stack)
+ 	UNWIND_HINT_FUNC
++	cld
+ 
+-	pushq	%rdi
+-	/* Need to switch before accessing the thread stack. */
+-	SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
+-	movq	%rsp, %rdi
+-	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+-	UNWIND_HINT sp_offset=16 sp_reg=ORC_REG_DI
+-
+-	pushq	7*8(%rdi)		/* regs->ss */
+-	pushq	6*8(%rdi)		/* regs->rsp */
+-	pushq	5*8(%rdi)		/* regs->eflags */
+-	pushq	4*8(%rdi)		/* regs->cs */
+-	pushq	3*8(%rdi)		/* regs->ip */
+-	pushq	2*8(%rdi)		/* regs->orig_ax */
+-	pushq	8(%rdi)			/* return address */
+-	UNWIND_HINT_FUNC
++	DO_SWITCH_TO_THREAD_STACK
+ 
+-	movq	(%rdi), %rdi
+ 	ret
+ END(switch_to_thread_stack)
++#endif
+ 
+ .macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1
+ ENTRY(\sym)
 -- 
 2.16.1
