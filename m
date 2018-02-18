@@ -1,197 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751998AbeBRWCy (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 17:02:54 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39468 "EHLO mx1.redhat.com"
+        id S1751816AbeBRWBw (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 17:01:52 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36468 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751734AbeBRWBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 17:01:53 -0500
+        id S1751598AbeBRWBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Feb 2018 17:01:51 -0500
 From: Hans de Goede <hdegoede@redhat.com>
 To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
 Cc: Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/9] ASoC: Intel: sst: Add sst_realloc_stream() function
-Date: Sun, 18 Feb 2018 23:01:42 +0100
-Message-Id: <20180218220146.22485-6-hdegoede@redhat.com>
+Subject: [PATCH 2/9] ASoC: Intel: sst: Remove 2 unused members from stream_info struct
+Date: Sun, 18 Feb 2018 23:01:39 +0100
+Message-Id: <20180218220146.22485-3-hdegoede@redhat.com>
 In-Reply-To: <20180218220146.22485-1-hdegoede@redhat.com>
 References: <20180218220146.22485-1-hdegoede@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the struct snd_sst_alloc_mrfld alloc parameters from the stack
-into struct stream_info and add a new sst_realloc_stream() function which
-can re-alloc a stream with the same parameters as before.
+Remove the unused ops and str_id members from the stream_info struct.
 
-This is a preparation patch for fixing suspend/resume issues with some
-SST / DSP firmware versions.
+While at it also remove some kernel-doc comments for members which have
+already been removed in the past.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- sound/soc/intel/atom/sst/sst.h        |  3 ++
- sound/soc/intel/atom/sst/sst_stream.c | 88 +++++++++++++++++++++--------------
- 2 files changed, 56 insertions(+), 35 deletions(-)
+ sound/soc/intel/atom/sst/sst.h     | 7 -------
+ sound/soc/intel/atom/sst/sst_pvt.c | 1 -
+ 2 files changed, 8 deletions(-)
 
 diff --git a/sound/soc/intel/atom/sst/sst.h b/sound/soc/intel/atom/sst/sst.h
-index f4fd442080b2..a357cd615b59 100644
+index e02e2b4cc08f..1f3107909044 100644
 --- a/sound/soc/intel/atom/sst/sst.h
 +++ b/sound/soc/intel/atom/sst/sst.h
-@@ -180,6 +180,7 @@ struct sst_block {
+@@ -181,21 +181,15 @@ struct sst_block {
+  *
   * @status : stream current state
   * @prev : stream prev state
+- * @ops : stream operation pb/cp/drm...
+- * @bufs: stream buffer list
   * @lock : stream mutex for protecting state
-+ * @alloc_param : parameters used for stream (re-)allocation
   * @pcm_substream : PCM substream
   * @period_elapsed : PCM period elapsed callback
   * @sfreq : stream sampling freq
-@@ -189,6 +190,7 @@ struct stream_info {
+- * @str_type : stream type
+  * @cumm_bytes : cummulative bytes decoded
+- * @str_type : stream type
+- * @src : stream source
+  */
+ struct stream_info {
  	unsigned int		status;
  	unsigned int		prev;
+-	unsigned int		ops;
  	struct mutex		lock;
-+	struct snd_sst_alloc_mrfld alloc_param;
  
  	void			*pcm_substream;
- 	void (*period_elapsed)(void *pcm_substream);
-@@ -429,6 +431,7 @@ struct intel_sst_ops {
- 	void (*post_download)(struct intel_sst_drv *sst);
+@@ -212,7 +206,6 @@ struct stream_info {
+ 
+ 	unsigned int		num_ch;
+ 	unsigned int		pipe_id;
+-	unsigned int		str_id;
+ 	unsigned int		task_id;
  };
  
-+int sst_realloc_stream(struct intel_sst_drv *sst_drv_ctx, int str_id);
- int sst_pause_stream(struct intel_sst_drv *sst_drv_ctx, int id);
- int sst_resume_stream(struct intel_sst_drv *sst_drv_ctx, int id);
- int sst_drop_stream(struct intel_sst_drv *sst_drv_ctx, int id);
-diff --git a/sound/soc/intel/atom/sst/sst_stream.c b/sound/soc/intel/atom/sst/sst_stream.c
-index 7cf5dd1993bc..fcedaa237505 100644
---- a/sound/soc/intel/atom/sst/sst_stream.c
-+++ b/sound/soc/intel/atom/sst/sst_stream.c
-@@ -35,29 +35,31 @@
- 
- int sst_alloc_stream_mrfld(struct intel_sst_drv *sst_drv_ctx, void *params)
+diff --git a/sound/soc/intel/atom/sst/sst_pvt.c b/sound/soc/intel/atom/sst/sst_pvt.c
+index b1e6b8f34a6a..d7d38b0f68db 100644
+--- a/sound/soc/intel/atom/sst/sst_pvt.c
++++ b/sound/soc/intel/atom/sst/sst_pvt.c
+@@ -365,7 +365,6 @@ void sst_init_stream(struct stream_info *stream,
  {
--	struct snd_sst_alloc_mrfld alloc_param;
-+	struct snd_pcm_params *pcm_params;
- 	struct snd_sst_params *str_params;
- 	struct snd_sst_tstamp fw_tstamp;
- 	struct stream_info *str_info;
--	struct snd_sst_alloc_response *response;
--	unsigned int str_id, pipe_id, task_id;
--	int i, num_ch, ret = 0;
--	void *data = NULL;
-+	int i, num_ch, str_id;
+ 	stream->status = STREAM_INIT;
+ 	stream->prev = STREAM_UN_INIT;
+-	stream->ops = ops;
+ }
  
- 	dev_dbg(sst_drv_ctx->dev, "Enter\n");
- 
- 	str_params = (struct snd_sst_params *)params;
--	memset(&alloc_param, 0, sizeof(alloc_param));
--	alloc_param.operation = str_params->ops;
--	alloc_param.codec_type = str_params->codec;
--	alloc_param.sg_count = str_params->aparams.sg_count;
--	alloc_param.ring_buf_info[0].addr =
-+	str_id = str_params->stream_id;
-+	str_info = get_stream_info(sst_drv_ctx, str_id);
-+	if (!str_info)
-+		return -EINVAL;
-+
-+	memset(&str_info->alloc_param, 0, sizeof(str_info->alloc_param));
-+	str_info->alloc_param.operation = str_params->ops;
-+	str_info->alloc_param.codec_type = str_params->codec;
-+	str_info->alloc_param.sg_count = str_params->aparams.sg_count;
-+	str_info->alloc_param.ring_buf_info[0].addr =
- 		str_params->aparams.ring_buf_info[0].addr;
--	alloc_param.ring_buf_info[0].size =
-+	str_info->alloc_param.ring_buf_info[0].size =
- 		str_params->aparams.ring_buf_info[0].size;
--	alloc_param.frag_size = str_params->aparams.frag_size;
-+	str_info->alloc_param.frag_size = str_params->aparams.frag_size;
- 
--	memcpy(&alloc_param.codec_params, &str_params->sparams,
-+	memcpy(&str_info->alloc_param.codec_params, &str_params->sparams,
- 			sizeof(struct snd_sst_stream_params));
- 
- 	/*
-@@ -67,46 +69,62 @@ int sst_alloc_stream_mrfld(struct intel_sst_drv *sst_drv_ctx, void *params)
- 	 * Currently hardcoding as per FW reqm.
- 	 */
- 	num_ch = sst_get_num_channel(str_params);
-+	pcm_params = &str_info->alloc_param.codec_params.uc.pcm_params;
- 	for (i = 0; i < 8; i++) {
- 		if (i < num_ch)
--			alloc_param.codec_params.uc.pcm_params.channel_map[i] = i;
-+			pcm_params->channel_map[i] = i;
- 		else
--			alloc_param.codec_params.uc.pcm_params.channel_map[i] = 0xFF;
-+			pcm_params->channel_map[i] = 0xff;
- 	}
- 
--	str_id = str_params->stream_id;
--	str_info = get_stream_info(sst_drv_ctx, str_id);
--	if (str_info == NULL) {
--		dev_err(sst_drv_ctx->dev, "get stream info returned null\n");
--		return -EINVAL;
--	}
--
--	pipe_id = str_params->device_type;
--	task_id = str_params->task;
- 	sst_drv_ctx->streams[str_id].status = STREAM_INIT;
- 	sst_drv_ctx->streams[str_id].prev = STREAM_UN_INIT;
--	sst_drv_ctx->streams[str_id].pipe_id = pipe_id;
--	sst_drv_ctx->streams[str_id].task_id = task_id;
-+	sst_drv_ctx->streams[str_id].pipe_id = str_params->device_type;
-+	sst_drv_ctx->streams[str_id].task_id = str_params->task;
- 	sst_drv_ctx->streams[str_id].num_ch = num_ch;
- 
- 	if (sst_drv_ctx->info.lpe_viewpt_rqd)
--		alloc_param.ts = sst_drv_ctx->info.mailbox_start +
-+		str_info->alloc_param.ts = sst_drv_ctx->info.mailbox_start +
- 			sst_drv_ctx->tstamp + (str_id * sizeof(fw_tstamp));
- 	else
--		alloc_param.ts = sst_drv_ctx->mailbox_add +
-+		str_info->alloc_param.ts = sst_drv_ctx->mailbox_add +
- 			sst_drv_ctx->tstamp + (str_id * sizeof(fw_tstamp));
- 
- 	dev_dbg(sst_drv_ctx->dev, "alloc tstamp location = 0x%x\n",
--			alloc_param.ts);
-+			str_info->alloc_param.ts);
- 	dev_dbg(sst_drv_ctx->dev, "assigned pipe id 0x%x to task %d\n",
--			pipe_id, task_id);
-+			str_info->pipe_id, str_info->task_id);
-+
-+	return sst_realloc_stream(sst_drv_ctx, str_id);
-+}
-+
-+/**
-+ * sst_realloc_stream - Send msg for (re-)allocating a stream using the
-+ * @sst_drv_ctx  intel_sst_drv context pointer
-+ * @str_id:	 stream ID
-+ *
-+ * Send a msg for (re-)allocating a stream using the parameters previously
-+ * passed to sst_alloc_stream_mrfld() for the same stream ID.
-+ * Return: 0 or negative errno value.
-+ */
-+int sst_realloc_stream(struct intel_sst_drv *sst_drv_ctx, int str_id)
-+{
-+	struct snd_sst_alloc_response *response;
-+	struct stream_info *str_info;
-+	void *data = NULL;
-+	int ret;
-+
-+	str_info = get_stream_info(sst_drv_ctx, str_id);
-+	if (!str_info)
-+		return -EINVAL;
- 
--	/* allocate device type context */
- 	dev_dbg(sst_drv_ctx->dev, "Alloc for str %d pipe %#x\n",
--			str_id, pipe_id);
--	ret = sst_prepare_and_post_msg(sst_drv_ctx, task_id, IPC_CMD,
--			IPC_IA_ALLOC_STREAM_MRFLD, pipe_id, sizeof(alloc_param),
--			&alloc_param, &data, true, true, false, true);
-+		str_id, str_info->pipe_id);
-+
-+	ret = sst_prepare_and_post_msg(sst_drv_ctx, str_info->task_id, IPC_CMD,
-+			IPC_IA_ALLOC_STREAM_MRFLD, str_info->pipe_id,
-+			sizeof(str_info->alloc_param), &str_info->alloc_param,
-+			&data, true, true, false, true);
- 
- 	if (ret < 0) {
- 		dev_err(sst_drv_ctx->dev, "FW alloc failed ret %d\n", ret);
+ int sst_validate_strid(
 -- 
 2.14.3
