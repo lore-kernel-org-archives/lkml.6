@@ -1,61 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751480AbeBRQb4 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 11:31:56 -0500
-Received: from smtprelay0025.hostedemail.com ([216.40.44.25]:42131 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751259AbeBRQby (ORCPT
+        id S1751474AbeBRQgf (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 11:36:35 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:35058 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751259AbeBRQge (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 11:31:54 -0500
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:541:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1801:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3870:3872:4321:4605:5007:9149:10004:10400:10848:11026:11232:11658:11914:12043:12740:12760:12895:13069:13101:13146:13230:13311:13357:13439:14181:14659:14721:21080:21433:21611:21627:30054:30060:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: lunch99_4a7204765923b
-X-Filterd-Recvd-Size: 2239
-Message-ID: <1518971510.1894.2.camel@perches.com>
-Subject: Re: [PATCH] i40evf: remove redundant array comparisons to 0 checks
-From: Joe Perches <joe@perches.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>
-Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan@lists.osuosl.org, netdev <netdev@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
+        Sun, 18 Feb 2018 11:36:34 -0500
+Date: Sun, 18 Feb 2018 17:32:11 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        tim@krieglstein.org, Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Phil Reid <preid@electromag.com.au>, Wolfram Sang <wsa@the-dreams.de>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Sun, 18 Feb 2018 08:31:50 -0800
-In-Reply-To: <CAHp75VcsV4NfR3OiAjjYAowcHmK+rXOsrPN2aHnxBp5hqg+C+g@mail.gmail.com>
-References: <20180215194245.28860-1-colin.king@canonical.com>
-         <CAHp75Vcxt0kkzRaF1Zzkt4hVqcPt0VG61yTLgB7HvG1xwhPUbg@mail.gmail.com>
-         <eb8a38bd-73a0-5f44-5e89-d9ded5be1800@canonical.com>
-         <CAHp75VcsV4NfR3OiAjjYAowcHmK+rXOsrPN2aHnxBp5hqg+C+g@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Subject: Re: i2c-designware: sound and s2ram broken on Broadwell-U system
+ since commit ca382f5b38f367b6 (add i2c gpio recovery option)
+Message-ID: <20180218163211.GA1650@light.dominikbrodowski.net>
+References: <20180217132543.GA21571@light.dominikbrodowski.net>
+ <1518879773.22495.378.camel@linux.intel.com>
+ <1518880180.22495.379.camel@linux.intel.com>
+ <20180217165815.GA1854@light.dominikbrodowski.net>
+ <1518901021.22495.383.camel@linux.intel.com>
+ <20180218094135.GA2459@light.dominikbrodowski.net>
+ <CAHp75Vf2sS8c4GubL1MRkrGdpYdn0n5stmzZNnp8axNn3AkEcw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vf2sS8c4GubL1MRkrGdpYdn0n5stmzZNnp8axNn3AkEcw@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-02-18 at 16:58 +0200, Andy Shevchenko wrote:
-> On Fri, Feb 16, 2018 at 6:53 PM, Colin Ian King
-> <colin.king@canonical.com> wrote:
-> > On 16/02/18 16:51, Andy Shevchenko wrote:
-> > > On Thu, Feb 15, 2018 at 9:42 PM, Colin King <colin.king@canonical.com> wrote:
-> > > > +                       filter->f.mask.tcp_spec.dst_ip[i] |=
-> > > >                                                         cpu_to_be32(0xffffffff);
-> > > 
-> > > Can it be one line then?
-> > 
-> > I re-adjusted the text because checkpatch was complaining.
-> > > 
-> > > > +                       filter->f.mask.tcp_spec.src_ip[i] |=
-> > > >                                                         cpu_to_be32(0xffffffff);
+On Sun, Feb 18, 2018 at 04:23:41PM +0200, Andy Shevchenko wrote:
+> On Sun, Feb 18, 2018 at 11:41 AM, Dominik Brodowski
+> <linux@dominikbrodowski.net> wrote:
+> > On Sat, Feb 17, 2018 at 10:57:01PM +0200, Andy Shevchenko wrote:
+> >> On Sat, 2018-02-17 at 17:58 +0100, Dominik Brodowski wrote:
 > 
-> For the rest OK, but for the above two how much over 80 it went if
-> would be one line?
-> If it 2-3 characters, consider to make it one line. It would increase
-> readability.
+> >> >  Do you still need the DEBUG_GPIO output?
+> >>
+> >> It would be nice to have, though if it makes difficulties to you, then
+> >> don't bother.
+> >
+> > Note that I have to enable CONFIG_GPIOLIB before I can enable DEBUG_GPIO;
+> > CONFIG_PINCTRL was off as well. Maybe some "SELECT" is missing for
+> > CONFIG_I2C_DESIGNWARE_BAYTRAIL ?
+> 
+> Ah, so, your configuration misses pin control driver. You need to
+> enable it in order to get GPIOs working.
 
-Another possibility would be to use temporaries for
-	filter->f.mask.tcp_spec
-and
-	filter->f.data.tcp_spec
-as both are used ~10 times in the function
+Well, I did not need it in the past to have working sound and working
+suspend to RAM. And it already works if 
+
+	CONFIG_PINCTRL=y
+	CONFIG_DEBUG_PINCTRL=y
+
+	CONFIG_GPIOLIB=y
+	CONFIG_GPIO_ACPI=y
+	CONFIG_DEBUG_GPIO=y
+
+are set (but no PINCTRL or GPIO drivers!).
+
+So I'd suggest to
+
+(a) keep your fixup patch (as things work as previously then),
+
+(b) to have CONFIG_I2C_DESIGNWARE_BAYTRAIL select the appropriate options from
+    above [and CONFIG_XPOWER_PMIC_OPREGION ?] (or depend on it?), or
+
+(c) (probably best) both.
+
+
+> It might fix your issue w/o my patch.
+> 
+> > The following output is with your patch applied.
+> 
+> ...which is useless.
+> 
+> > Do you need it without
+> > your fixup patch as well?
+> 
+> Yes, and with enabled pin control driver.
+
+Well, I've reverted your fixup patch locally and enabled all drivers that I
+could -- including CONFIG_XPOWER_PMIC_OPREGION, CONFIG_MFD_AXP20X, and
+CONFIG_MFD_AXP20X_I2C. But I'm not sure at all that a driver actually became
+active...
+
+$ dmesg | egrep -i "(gpio|pinctrl|i2c|broadw)"
+[    0.031029] Performance Events: PEBS fmt2+, Broadwell events, 16-deep LBR, full-width counters, Intel PMU driver.
+[    0.079300] pinctrl core: initialized pinctrl subsystem
+[    0.105267] gpio-f7188x: Not a Fintek device at 0x0000002e
+[    0.105285] gpio-f7188x: Not a Fintek device at 0x0000004e
+[    0.621048] i2c_designware INT3432:00: GPIO lookup for consumer scl
+[    0.621053] i2c_designware INT3432:00: using ACPI for GPIO lookup
+[    0.621057] acpi INT3432:00: GPIO: looking up scl-gpios
+[    0.621062] acpi INT3432:00: GPIO: looking up scl-gpio
+[    0.621065] i2c_designware INT3432:00: using lookup tables for GPIO lookup
+[    0.621087] i2c_designware INT3432:00: lookup for GPIO scl failed
+[    0.682478] i2c_designware INT3433:00: GPIO lookup for consumer scl
+[    0.682482] i2c_designware INT3433:00: using ACPI for GPIO lookup
+[    0.682486] acpi INT3433:00: GPIO: looking up scl-gpios
+[    0.682490] acpi INT3433:00: GPIO: looking up scl-gpio
+[    0.682493] i2c_designware INT3433:00: using lookup tables for GPIO lookup
+[    0.682497] i2c_designware INT3433:00: lookup for GPIO scl failed
+[    1.208551] gpio_it87: Unknown Chip found, Chip 1d00 Revision 0
+[    1.870861] input: DLL0665:01 06CB:76AD Touchpad as /devices/pci0000:00/INT3433:00/i2c-1/i2c-DLL0665:01/0018:06CB:76AD.0001/input/input9
+[    1.871601] hid-multitouch 0018:06CB:76AD.0001: input: I2C HID v1.00 Mouse [DLL0665:01 06CB:76AD] on i2c-DLL0665:01
+[    2.015224] broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> System Pin mapping ok
+[    2.015433] broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Offload0 Pin mapping ok
+[    2.015642] broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Offload1 Pin mapping ok
+[    2.015839] broadwell-audio broadwell-audio: snd-soc-dummy-dai <-> Loopback Pin mapping ok
+[    2.017899] broadwell-audio broadwell-audio: rt286-aif1 <-> snd-soc-dummy-dai mapping ok
+[    2.025473] input: broadwell-rt286 Headset as /devices/pci0000:00/INT3438:00/broadwell-audio/sound/card1/input15
+
+Thanks,
+	Dominik
