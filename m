@@ -1,40 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751684AbeBRVwK (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 16:52:10 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:43633 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751549AbeBRVwJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 16:52:09 -0500
-X-ME-Sender: <xms:iPWJWrWdOY4HCf7Eu6nHUQ0bfM1V86KqDPBP8Cx2t_BFeXKUBHs0nw>
-Date: Mon, 19 Feb 2018 08:52:04 +1100
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux@rasmusvillemoes.dk, Petr Mladek <pmladek@suse.com>,
-        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2 1/9] lib/test_printf: Mark big constant with ULL
-Message-ID: <20180218215204.GB22942@eros>
-References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1751721AbeBRWBu (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 17:01:50 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36452 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751598AbeBRWBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Feb 2018 17:01:49 -0500
+From: Hans de Goede <hdegoede@redhat.com>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/9] ASoC: Intel: sst: Fix Bay Trail suspend/resume issues
+Date: Sun, 18 Feb 2018 23:01:37 +0100
+Message-Id: <20180218220146.22485-1-hdegoede@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 11:07:03PM +0200, Andy Shevchenko wrote:
-...
+Hi All,
 
-Hi Andy,
+Here is a series fixing suspend/resume errors (and broken audio after
+resume) on Bay Trail devices.
 
-What tree does this set apply to please?  I tried mainline rc1 and
-next-20180216.  Happy to see some code duplication removal from
-vsprintf.c :)
+Cherry Trail devices also do not like being suspend while audio is
+playing, but with different sypmtoms instead of SST_ERR_INVALID_STREAM_ID
+errors, if a stream was playing (being allocated is fine, playing is a
+problem) before suspend then after resume we get the following errors:
 
-thanks,
-Tobin.
+  [ 2312.389974] intel_sst_acpi 808622A8:00: sst: Busy wait failed, cant send this msg
+  [ 2312.597976] intel_sst_acpi 808622A8:00: sst: Busy wait failed, cant send this msg
+  ...
+
+Until the stream is stopped and restarted after which things work fine
+again. I've tried enabling the quirk this commit adds for Cherry Trail
+devices too, but that does not help. If anyone has any clues about the CHT
+problem, please let me know.
+
+Regards,
+
+Hans
