@@ -1,106 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751870AbeBRXct (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 18:32:49 -0500
-Received: from ozlabs.org ([103.22.144.67]:46721 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751676AbeBRXcr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 18:32:47 -0500
-Date: Mon, 19 Feb 2018 10:32:45 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        Naveen Manohar <naveen.m@intel.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Message-ID: <20180219103245.54d9ec8c@canb.auug.org.au>
+        id S1751902AbeBRXe5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 18:34:57 -0500
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:37397 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751685AbeBRXez (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Feb 2018 18:34:55 -0500
+X-Google-Smtp-Source: AH8x224PZ2Iu/8W9pQoQre/IYpuZg9RpAe59epJINy/ZE6vdQV7hbLre9hGyDA0BxpFAnaoXaiPtfw==
+Date: Sun, 18 Feb 2018 17:34:53 -0600
+From: Rob Herring <robh@kernel.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org,
+        briannorris@google.com, dtor@google.com, dianders@google.com,
+        devicetree@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 2/3] Input: gpio-keys - allow setting wakeup interrupt
+ trigger type in DT
+Message-ID: <20180218233453.ytvuvggnzx5rhbls@rob-hp-laptop>
+References: <20180209115510.11868-1-jeffy.chen@rock-chips.com>
+ <20180209115510.11868-3-jeffy.chen@rock-chips.com>
+ <20180209234246.GA252335@ban.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/HHneoNZw+Ka6R4tOP6DTBdA"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180209234246.GA252335@ban.mtv.corp.google.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/HHneoNZw+Ka6R4tOP6DTBdA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Feb 09, 2018 at 03:42:47PM -0800, Brian Norris wrote:
+> Hi Jeffy,
+> 
+> On Fri, Feb 09, 2018 at 07:55:09PM +0800, Jeffy Chen wrote:
+> > Allow specifying a different interrupt trigger type for wakeup when
+> > using the gpio-keys input device as a wakeup source.
+> > 
+> > Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+> > ---
+> > 
+> >  Documentation/devicetree/bindings/input/gpio-keys.txt | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/input/gpio-keys.txt b/Documentation/devicetree/bindings/input/gpio-keys.txt
+> > index a94940481e55..61926cef708f 100644
+> > --- a/Documentation/devicetree/bindings/input/gpio-keys.txt
+> > +++ b/Documentation/devicetree/bindings/input/gpio-keys.txt
+> > @@ -26,6 +26,15 @@ Optional subnode-properties:
+> >  	  If not specified defaults to 5.
+> >  	- wakeup-source: Boolean, button can wake-up the system.
+> >  			 (Legacy property supported: "gpio-key,wakeup")
+> > +	- wakeup-trigger-type: Specifies the interrupt trigger type for wakeup.
+> > +		 The value is defined in <dt-bindings/interrupt-controller/irq.h>
+> 
+> Do you really want to codify interrupt triggers here? It seems like most
+> of the information about edge vs. level is already codified elsewhere,
+> so this becomes a little redundant. And in fact, some bindings may be
+> specifying a "gpio", not technically an interrupt (at least not
+> directly), so it feels weird to apply IRQ_* flags to them right here.
+> Anyway, I think he only piece you really want to describe here is, do we
+> wake on "event asserted", "event deasserted", or both. (The "none" case
+> would just mean you shouldn't have the "wakeup-source" property.)
+> 
+> So maybe:
+> 
+> 	wakeup-trigger-type: Specifies whether the key should wake the
+> 	system when asserted, when deasserted, or both. This property is
+> 	only valid for keys that wake up the system (e.g., when the
+> 	"wakeup-source" property is also provided). Supported values
+> 	are:
+> 	  1: asserted
 
-Hi all,
+As wakeup is an IRQ, that's assumed.
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> 	  2: deasserted
 
-sound/soc/amd/acp-da7219-max98357a.c: In function 'cz_da7219_init':
-sound/soc/amd/acp-da7219-max98357a.c:79:22: error: passing argument 1 of 'd=
-a7219_aad_jack_det' from incompatible pointer type [-Werror=3Dincompatible-=
-pointer-types]
-  da7219_aad_jack_det(codec, &cz_jack);
-                      ^~~~~
-In file included from sound/soc/amd/acp-da7219-max98357a.c:38:0:
-sound/soc/amd/../codecs/da7219-aad.h:209:6: note: expected 'struct snd_soc_=
-component *' but argument is of type 'struct snd_soc_codec *'
- void da7219_aad_jack_det(struct snd_soc_component *component, struct snd_s=
-oc_jack *jack);
-      ^~~~~~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
-sound/soc/intel/boards/kbl_da7219_max98357a.c: In function 'kabylake_da7219=
-_codec_init':
-sound/soc/intel/boards/kbl_da7219_max98357a.c:194:22: error: passing argume=
-nt 1 of 'da7219_aad_jack_det' from incompatible pointer type [-Werror=3Dinc=
-ompatible-pointer-types]
-  da7219_aad_jack_det(codec, &ctx->kabylake_headset);
-                      ^~~~~
-In file included from sound/soc/intel/boards/kbl_da7219_max98357a.c:23:0:
-sound/soc/intel/boards/../../codecs/da7219-aad.h:209:6: note: expected 'str=
-uct snd_soc_component *' but argument is of type 'struct snd_soc_codec *'
- void da7219_aad_jack_det(struct snd_soc_component *component, struct snd_s=
-oc_jack *jack);
-      ^~~~~~~~~~~~~~~~~~~
-sound/soc/intel/boards/kbl_da7219_max98357a.c: In function 'kabylake_card_l=
-ate_probe':
-sound/soc/intel/boards/kbl_da7219_max98357a.c:552:34: error: passing argume=
-nt 1 of 'hdac_hdmi_jack_port_init' from incompatible pointer type [-Werror=
-=3Dincompatible-pointer-types]
-  return hdac_hdmi_jack_port_init(codec, &card->dapm);
-                                  ^~~~~
-In file included from sound/soc/intel/boards/kbl_da7219_max98357a.c:21:0:
-sound/soc/intel/boards/../../codecs/hdac_hdmi.h:8:5: note: expected 'struct=
- snd_soc_component *' but argument is of type 'struct snd_soc_codec *'
- int hdac_hdmi_jack_port_init(struct snd_soc_component *component,
-     ^~~~~~~~~~~~~~~~~~~~~~~~
+Just invert the flags for the IRQ.
 
-Caused by commits
+> 	  3: both asserted and deasserted
 
-  608a300fc1f0 ("ASoC: AMD: Add machine driver for ST DA7219 MAX98357")
-  b3ea70ee64ea ("ASoC: Intel: Add Kabylake-y Dialog Maxim machine driver")
+I don't see what would be the usecase. But wouldn't this be any edge 
+(because level certainly doesn't make sense)?
 
-interacting with commit
-
-  451011221711 ("ASoC: hdac_hdmi/nau8825/rt286/rt298/rt5663/da7219: replace=
- codec to component")
-
-I have used the sound-asoc tree from next-20180216 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/HHneoNZw+Ka6R4tOP6DTBdA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqKDR0ACgkQAVBC80lX
-0Gxu9ggAmswgSddAdO27Y5jYHhw3RWntXiPlnEtdbng+8lpKSqhao+CKpsjEy2xw
-i4d1pf1nKgbVFrpCaBuU4Rh6M3ZYl/KpbdmYVV2f7Mj5T0keNtYjenNzgf4eeKF4
-TeuS3VKLt1Ch6wr5ZJh1pZ4PnUJUGX4jdTNbGBwq5EQRm96VvGUBCdb37JAng4zp
-3zO7HQ3/ThB+YY74l7nJQVIYQBA7RlGrbH/8Z2F92Lk+B2P9n/Gc+EATaM8xgw6q
-h1edLdClXcuuiSe3859q9NmU7pnZbPB5aiorsNQ24fKkEZt+YURaUbSj9n9Y9fnZ
-4hzq8xgpu+aUuZGLGYK7r+XaNvzCQA==
-=lFbI
------END PGP SIGNATURE-----
-
---Sig_/HHneoNZw+Ka6R4tOP6DTBdA--
+> 
+> ? We could still make macros out of those, if we want
+> (input/linux-event-codes.h?). And then leave it up to the driver to
+> determine how to translate that into the appropriate edge or level
+> triggers.
+> 
+> Brian
+> 
+> > +		 Only the following flags are supported:
+> > +			IRQ_TYPE_NONE
+> > +			IRQ_TYPE_EDGE_RISING
+> > +			IRQ_TYPE_EDGE_FALLING
+> > +			IRQ_TYPE_EDGE_BOTH
+> > +			IRQ_TYPE_LEVEL_HIGH
+> > +			IRQ_TYPE_LEVEL_LOW
+> >  	- linux,can-disable: Boolean, indicates that button is connected
+> >  	  to dedicated (not shared) interrupt which can be disabled to
+> >  	  suppress events from the button.
+> > -- 
+> > 2.11.0
+> > 
+> > 
