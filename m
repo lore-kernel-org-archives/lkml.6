@@ -1,108 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751902AbeBRXe5 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 18:34:57 -0500
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:37397 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751685AbeBRXez (ORCPT
+        id S1751914AbeBRXgf (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 18:36:35 -0500
+Received: from LGEAMRELO12.lge.com ([156.147.23.52]:33521 "EHLO
+        lgeamrelo12.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751685AbeBRXge (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 18:34:55 -0500
-X-Google-Smtp-Source: AH8x224PZ2Iu/8W9pQoQre/IYpuZg9RpAe59epJINy/ZE6vdQV7hbLre9hGyDA0BxpFAnaoXaiPtfw==
-Date: Sun, 18 Feb 2018 17:34:53 -0600
-From: Rob Herring <robh@kernel.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org,
-        briannorris@google.com, dtor@google.com, dianders@google.com,
-        devicetree@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 2/3] Input: gpio-keys - allow setting wakeup interrupt
- trigger type in DT
-Message-ID: <20180218233453.ytvuvggnzx5rhbls@rob-hp-laptop>
-References: <20180209115510.11868-1-jeffy.chen@rock-chips.com>
- <20180209115510.11868-3-jeffy.chen@rock-chips.com>
- <20180209234246.GA252335@ban.mtv.corp.google.com>
+        Sun, 18 Feb 2018 18:36:34 -0500
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: byungchul.park@lge.com
+X-Original-SENDERIP: 10.177.222.184
+X-Original-MAILFROM: byungchul.park@lge.com
+Subject: Re: [PATCH] srcu: Fix incorrect condition in srcu_funnel_exp_start()
+To: paulmck@linux.vnet.ibm.com
+Cc: jiangshanlai@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        kernel-team@lge.com
+References: <1518598794-26752-1-git-send-email-byungchul.park@lge.com>
+ <20180214214245.GS3617@linux.vnet.ibm.com>
+From: Byungchul Park <byungchul.park@lge.com>
+Message-ID: <f9abfde2-ad0d-edab-0a2a-a62515ffe870@lge.com>
+Date: Mon, 19 Feb 2018 08:36:30 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180209234246.GA252335@ban.mtv.corp.google.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180214214245.GS3617@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 09, 2018 at 03:42:47PM -0800, Brian Norris wrote:
-> Hi Jeffy,
+On 2/15/2018 6:42 AM, Paul E. McKenney wrote:
+> On Wed, Feb 14, 2018 at 05:59:54PM +0900, Byungchul Park wrote:
+>> We should've kept sp->srcu_gp_seq_needed_exp the furthest. But
+>> it probably fails because of the incorrect condition. Fix it.
+>>
+>> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
 > 
-> On Fri, Feb 09, 2018 at 07:55:09PM +0800, Jeffy Chen wrote:
-> > Allow specifying a different interrupt trigger type for wakeup when
-> > using the gpio-keys input device as a wakeup source.
-> > 
-> > Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> > ---
-> > 
-> >  Documentation/devicetree/bindings/input/gpio-keys.txt | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/input/gpio-keys.txt b/Documentation/devicetree/bindings/input/gpio-keys.txt
-> > index a94940481e55..61926cef708f 100644
-> > --- a/Documentation/devicetree/bindings/input/gpio-keys.txt
-> > +++ b/Documentation/devicetree/bindings/input/gpio-keys.txt
-> > @@ -26,6 +26,15 @@ Optional subnode-properties:
-> >  	  If not specified defaults to 5.
-> >  	- wakeup-source: Boolean, button can wake-up the system.
-> >  			 (Legacy property supported: "gpio-key,wakeup")
-> > +	- wakeup-trigger-type: Specifies the interrupt trigger type for wakeup.
-> > +		 The value is defined in <dt-bindings/interrupt-controller/irq.h>
-> 
-> Do you really want to codify interrupt triggers here? It seems like most
-> of the information about edge vs. level is already codified elsewhere,
-> so this becomes a little redundant. And in fact, some bindings may be
-> specifying a "gpio", not technically an interrupt (at least not
-> directly), so it feels weird to apply IRQ_* flags to them right here.
-> Anyway, I think he only piece you really want to describe here is, do we
-> wake on "event asserted", "event deasserted", or both. (The "none" case
-> would just mean you shouldn't have the "wakeup-source" property.)
-> 
-> So maybe:
-> 
-> 	wakeup-trigger-type: Specifies whether the key should wake the
-> 	system when asserted, when deasserted, or both. This property is
-> 	only valid for keys that wake up the system (e.g., when the
-> 	"wakeup-source" property is also provided). Supported values
-> 	are:
-> 	  1: asserted
+> Good catch, and thank you for reviewing the SRCU code, but Ildar Ismagilov
+> beat you to this one.  Please see 574428dee1f3 ("rcu: Fix misprint in
+> srcu_funnel_exp_start") in -rcu.
 
-As wakeup is an IRQ, that's assumed.
+Hi Paul,
 
-> 	  2: deasserted
+I'm sorry I'm late. It's been Lunar New Year holiday since last
+thursday.
 
-Just invert the flags for the IRQ.
+Do you mean:
 
-> 	  3: both asserted and deasserted
+git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
 
-I don't see what would be the usecase. But wouldn't this be any edge 
-(because level certainly doesn't make sense)?
+Is this rcu's main dev-tree?
+
+Thanks for replying anyway, and happy new year~
 
 > 
-> ? We could still make macros out of those, if we want
-> (input/linux-event-codes.h?). And then leave it up to the driver to
-> determine how to translate that into the appropriate edge or level
-> triggers.
+> 							Thanx, Paul
 > 
-> Brian
+>> ---
+>>   kernel/rcu/srcutree.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+>> index d5cea81..44bc0fa 100644
+>> --- a/kernel/rcu/srcutree.c
+>> +++ b/kernel/rcu/srcutree.c
+>> @@ -626,7 +626,7 @@ static void srcu_funnel_exp_start(struct srcu_struct *sp, struct srcu_node *snp,
+>>   		spin_unlock_irqrestore_rcu_node(snp, flags);
+>>   	}
+>>   	spin_lock_irqsave_rcu_node(sp, flags);
+>> -	if (!ULONG_CMP_LT(sp->srcu_gp_seq_needed_exp, s))
+>> +	if (ULONG_CMP_LT(sp->srcu_gp_seq_needed_exp, s))
+>>   		sp->srcu_gp_seq_needed_exp = s;
+>>   	spin_unlock_irqrestore_rcu_node(sp, flags);
+>>   }
+>> -- 
+>> 1.9.1
+>>
 > 
-> > +		 Only the following flags are supported:
-> > +			IRQ_TYPE_NONE
-> > +			IRQ_TYPE_EDGE_RISING
-> > +			IRQ_TYPE_EDGE_FALLING
-> > +			IRQ_TYPE_EDGE_BOTH
-> > +			IRQ_TYPE_LEVEL_HIGH
-> > +			IRQ_TYPE_LEVEL_LOW
-> >  	- linux,can-disable: Boolean, indicates that button is connected
-> >  	  to dedicated (not shared) interrupt which can be disabled to
-> >  	  suppress events from the button.
-> > -- 
-> > 2.11.0
-> > 
-> > 
+> 
+
+-- 
+Thanks,
+Byungchul
