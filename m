@@ -1,130 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751407AbeBRNAX (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 08:00:23 -0500
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:63966
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751292AbeBRNAW (ORCPT
+        id S1751403AbeBRNF0 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 08:05:26 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51323 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751292AbeBRNFZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 08:00:22 -0500
-X-IronPort-AV: E=Sophos;i="5.46,530,1511823600";
-   d="scan'208";a="255176123"
-Date: Sun, 18 Feb 2018 14:00:18 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To: David Daney <david.daney@cavium.com>
-cc: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>,
-        kbuild-all@01.org
-Subject: Re: [PATCH v3] rtc: isl12026: Add driver. (fwd)
-Message-ID: <alpine.DEB.2.20.1802181357370.2777@hadrien>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Sun, 18 Feb 2018 08:05:25 -0500
+X-Google-Smtp-Source: AH8x226KUKEnVTBNoPDI+8dnjCrXTfoNM9kTMErG3WANueJDjBdOGPZyX/C0U/zSRxnBz8XNA8WNnw==
+Date: Sun, 18 Feb 2018 14:05:20 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Jason Baron <jbaron@akamai.com>,
+        Borislav Petkov <bp@suse.de>
+Subject: Re: [PATCH v2 1/2] jump_label: Explicitly disable jump labels in
+ __init code
+Message-ID: <20180218130520.3mmosubvt443756v@gmail.com>
+References: <cover.1518798288.git.jpoimboe@redhat.com>
+ <eccf3cf668635c9b46acd6a4e3f57c05dbd8aa93.1518798288.git.jpoimboe@redhat.com>
+ <20180217103848.yiutigxpukxfbtze@gmail.com>
+ <20180217134035.67jzcc5rwtyyufix@treble>
+ <alpine.DEB.2.21.1802172108240.2087@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1802172108240.2087@nanos.tec.linutronix.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The concern is about the code on line 400.  I'm not seeing where
-num_written could go below 0, in any case.
 
-julia
+* Thomas Gleixner <tglx@linutronix.de> wrote:
 
----------- Forwarded message ----------
-Date: Sun, 18 Feb 2018 20:54:49 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: kbuild@01.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH v3] rtc: isl12026: Add driver.
+> On Sat, 17 Feb 2018, Josh Poimboeuf wrote:
+> > On Sat, Feb 17, 2018 at 11:38:48AM +0100, Ingo Molnar wrote:
+> > > 
+> > > * Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> > > 
+> > > > +/* Disable any jump label entries in __init code */
+> > > > +void __init jump_label_invalidate_init(void)
+> > > > +{
+> > > > +	struct jump_entry *iter_start = __start___jump_table;
+> > > > +	struct jump_entry *iter_stop = __stop___jump_table;
+> > > > +	struct jump_entry *iter;
+> > > > +
+> > > > +	for (iter = iter_start; iter < iter_stop; iter++)
+> > > > +		if (iter->code >= (unsigned long)_sinittext &&
+> > > > +		    iter->code < (unsigned long)_einittext)
+> > > > +			iter->code = 0;
+> > > > +}
+> > > > +
+> > > > +/* Disable any jump label entries in module init code */
+> > > >  static void jump_label_invalidate_module_init(struct module *mod)
+> > > >  {
+> > > >  	struct jump_entry *iter_start = mod->jump_entries;
+> > > >  	struct jump_entry *iter_stop = iter_start + mod->num_jump_entries;
+> > > >  	struct jump_entry *iter;
+> > > >  
+> > > > -	for (iter = iter_start; iter < iter_stop; iter++) {
+> > > > +	for (iter = iter_start; iter < iter_stop; iter++)
+> > > >  		if (within_module_init(iter->code, mod))
+> > > >  			iter->code = 0;
+> > > > -	}
+> > > 
+> > > Why did you remove the curly braces? They are canonical kernel style for 
+> > > multi-line statements.
+> > 
+> > Personally I prefer the more compact version, but I have no problem
+> > changing it.
+> 
+> Yes, it's certainly a matter of taste. Here is the reason why myself and
+> others prefer the version with braces:
+> 
+>        https://marc.info/?l=linux-kernel&m=148467980905537&w=2
 
-CC: kbuild-all@01.org
-In-Reply-To: <20180215195437.29207-1-david.daney@cavium.com>
-References: <20180215195437.29207-1-david.daney@cavium.com>
-TO: David Daney <david.daney@cavium.com>
-CC: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>
-CC: linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>
+Easier visual parsing is indeed one of the primary reasons, but there's 
+two other reasons as well:
 
-Hi David,
+2) code robustness 
 
-I love your patch! Perhaps something to improve:
+For example:
 
-[auto build test WARNING on abelloni/rtc-next]
-[also build test WARNING on v4.16-rc1 next-20180216]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+        for (i = 0; i < 10; i++)
+                if (foo)
+                        bar(i);
+                baz(i);
 
-url:    https://github.com/0day-ci/linux/commits/David-Daney/rtc-isl12026-Add-driver/20180218-072946
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
-:::::: branch date: 13 hours ago
-:::::: commit date: 13 hours ago
+Is probably buggy code, although technically it's valid syntax and will compile 
+just fine.
 
->> drivers/rtc/rtc-isl12026.c:400:8-19: WARNING: Unsigned expression compared with zero: num_written >= 0
+If all multi-line statements have curly braces then this type of bug cannot occur:
 
-# https://github.com/0day-ci/linux/commit/a0c9ca2899586c1317ebcb2ba5d31edde176a58a
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout a0c9ca2899586c1317ebcb2ba5d31edde176a58a
-vim +400 drivers/rtc/rtc-isl12026.c
+        for (i = 0; i < 10; i++) {
+                if (foo)
+                        bar(i);
+                baz(i);
+	}
 
-a0c9ca28 David Daney 2018-02-15  347
-a0c9ca28 David Daney 2018-02-15  348  static int isl12026_nvm_write(void *p, unsigned int offset,
-a0c9ca28 David Daney 2018-02-15  349  			      void *val, size_t bytes)
-a0c9ca28 David Daney 2018-02-15  350  {
-a0c9ca28 David Daney 2018-02-15  351  	struct isl12026 *priv = p;
-a0c9ca28 David Daney 2018-02-15  352  	int ret = -EIO;
-a0c9ca28 David Daney 2018-02-15  353  	u8 *v = val;
-a0c9ca28 David Daney 2018-02-15  354  	size_t chunk_size, num_written;
-a0c9ca28 David Daney 2018-02-15  355  	u8 payload[ISL12026_PAGESIZE + 2]; /* page + 2 address bytes */
-a0c9ca28 David Daney 2018-02-15  356  	struct i2c_msg msgs[] = {
-a0c9ca28 David Daney 2018-02-15  357  		{
-a0c9ca28 David Daney 2018-02-15  358  			.addr	= priv->nvm_client->addr,
-a0c9ca28 David Daney 2018-02-15  359  			.flags	= 0,
-a0c9ca28 David Daney 2018-02-15  360  			.buf	= payload
-a0c9ca28 David Daney 2018-02-15  361  		}
-a0c9ca28 David Daney 2018-02-15  362  	};
-a0c9ca28 David Daney 2018-02-15  363
-a0c9ca28 David Daney 2018-02-15  364  	if (offset >= priv->nvm_cfg.size)
-a0c9ca28 David Daney 2018-02-15  365  		return 0; /* End-of-file */
-a0c9ca28 David Daney 2018-02-15  366  	if (offset + bytes > priv->nvm_cfg.size)
-a0c9ca28 David Daney 2018-02-15  367  		bytes = priv->nvm_cfg.size - offset;
-a0c9ca28 David Daney 2018-02-15  368
-a0c9ca28 David Daney 2018-02-15  369  	mutex_lock(&priv->lock);
-a0c9ca28 David Daney 2018-02-15  370
-a0c9ca28 David Daney 2018-02-15  371  	num_written = 0;
-a0c9ca28 David Daney 2018-02-15  372  	while (bytes) {
-a0c9ca28 David Daney 2018-02-15  373  		chunk_size = round_down(offset, ISL12026_PAGESIZE) +
-a0c9ca28 David Daney 2018-02-15  374  			ISL12026_PAGESIZE - offset;
-a0c9ca28 David Daney 2018-02-15  375  		chunk_size = min(bytes, chunk_size);
-a0c9ca28 David Daney 2018-02-15  376  		/*
-a0c9ca28 David Daney 2018-02-15  377  		 * 2 bytes of address, most significant first, followed
-a0c9ca28 David Daney 2018-02-15  378  		 * by page data bytes
-a0c9ca28 David Daney 2018-02-15  379  		 */
-a0c9ca28 David Daney 2018-02-15  380  		memcpy(payload + 2, v + num_written, chunk_size);
-a0c9ca28 David Daney 2018-02-15  381  		payload[0] = offset >> 8;
-a0c9ca28 David Daney 2018-02-15  382  		payload[1] = offset;
-a0c9ca28 David Daney 2018-02-15  383  		msgs[0].len = chunk_size + 2;
-a0c9ca28 David Daney 2018-02-15  384  		ret = i2c_transfer(priv->nvm_client->adapter,
-a0c9ca28 David Daney 2018-02-15  385  				   msgs, ARRAY_SIZE(msgs));
-a0c9ca28 David Daney 2018-02-15  386  		if (ret != ARRAY_SIZE(msgs)) {
-a0c9ca28 David Daney 2018-02-15  387  			dev_err(priv->nvm_cfg.dev,
-a0c9ca28 David Daney 2018-02-15  388  				"nvmem write error, ret=%d\n", ret);
-a0c9ca28 David Daney 2018-02-15  389  			ret = ret < 0 ? ret : -EIO;
-a0c9ca28 David Daney 2018-02-15  390  			break;
-a0c9ca28 David Daney 2018-02-15  391  		}
-a0c9ca28 David Daney 2018-02-15  392  		bytes -= chunk_size;
-a0c9ca28 David Daney 2018-02-15  393  		offset += chunk_size;
-a0c9ca28 David Daney 2018-02-15  394  		num_written += chunk_size;
-a0c9ca28 David Daney 2018-02-15  395  		msleep(ISL12026_NVMEM_WRITE_TIME);
-a0c9ca28 David Daney 2018-02-15  396  	}
-a0c9ca28 David Daney 2018-02-15  397
-a0c9ca28 David Daney 2018-02-15  398  	mutex_unlock(&priv->lock);
-a0c9ca28 David Daney 2018-02-15  399
-a0c9ca28 David Daney 2018-02-15 @400  	return num_written >= 0 ? num_written : ret;
-a0c9ca28 David Daney 2018-02-15  401  }
-a0c9ca28 David Daney 2018-02-15  402
+3) style consistency
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Nothing is worse than randomly inconsistent coding style, and in arch/x86/ and 
+core kernel code using curly braces is certainly the dominant style:
+
+  # multi-line C statements without braces:
+  $ find arch/x86/ kernel mm -name "*.[ch]" | xargs awk '/for \(.*[^{]$/ { line1=$0; 
+    f=1; next } f == 1 && /if \(.*[^{]$/ { f=0; line2=$0; i=1; next } i == 1 { i=0; 
+    line3=$0; j=1; next } j == 1 && /^$/{j=0; print line1; print line2; print line3; 
+    print; next} { f=0; i=0; j=0; }' |grep 'for (' |wc -l
+  
+  55
+
+  # multi-line C statements with braces:
+  $ find arch/x86 kernel mm -name "*.[ch]" | xargs awk '/for \(.*{$/ { line1=$0; f=1; 
+    next } f == 1 && /if \(.*[^{]$/ { f=0; line2=$0; i=1; next } i == 1 { i=0; 
+    line3=$0; j=1; next } j == 1 && /}/{j=0; print line1; print line2; print line3; 
+    print } { f=0; i=0; j=0; }' |grep 'for (' |wc -l
+
+  116
+
+Thanks,
+
+	Ingo
