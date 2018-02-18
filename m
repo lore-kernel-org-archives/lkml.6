@@ -1,38 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751657AbeBRSHu (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 13:07:50 -0500
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:35009 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751477AbeBRSHt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 13:07:49 -0500
-X-Google-Smtp-Source: AH8x225bOO8D4Y6FQYHrvXOGLygprZM1CqGu7iWwNEA/BL2mrl+WtX4cY90hSEVzL1MJSWHKcHKnQQ==
-Date: Sun, 18 Feb 2018 20:07:45 +0200
-From: Mykola Golub <to.my.trociny@gmail.com>
-To: Josef Bacik <jbacik@fb.com>, Jens Axboe <axboe@kernel.dk>
-Cc: Jason Dillaman <jdillama@redhat.com>, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org
-Subject: nbd: on-the-fly resize does not work any more
-Message-ID: <20180218180744.GC28602@gmail.com>
+        id S1751667AbeBRSMY (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 13:12:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57162 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751532AbeBRSMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Feb 2018 13:12:23 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7947E2171F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shli@kernel.org
+Date: Sun, 18 Feb 2018 10:12:21 -0800
+From: Shaohua Li <shli@kernel.org>
+To: Heinz Mauelshagen <heinzm@redhat.com>
+Cc: dm-devel@redhat.com, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org
+Subject: Re: [PATCH] md: fix md_write_start() deadlock w/o metadata devices
+Message-ID: <20180218181221.a5l5nzgav7s6smor@kernel.org>
+References: <054eff295e0cd2df2b11a3f9ba3b3d66e89beb47.1517609290.git.heinzm@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <054eff295e0cd2df2b11a3f9ba3b3d66e89beb47.1517609290.git.heinzm@redhat.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, Feb 02, 2018 at 11:13:19PM +0100, Heinz Mauelshagen wrote:
+> If no metadata devices are configured on raid1/4/5/6/10
+> (e.g. via dm-raid), md_write_start() unconditionally waits
+> for superblocks to be written thus deadlocking.
+> 
+> Fix introduces mddev->has_superblocks bool, defines it in md_run()
+> and checks for it in md_write_start() to conditionally avoid waiting.
+> 
+> Once on it, check for non-existing superblocks in md_super_write().
+> 
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=198647
+> Fixes: cc27b0c78c796 ("md: fix deadlock between mddev_suspend() and md_write_start()")
 
-It looks like after the recent changes to nbd driver, on-the-fly
-resize has stopped working for rbd-nbd. Particularly this change [1]
-breaks how NBD_SET_SIZE is used for rbd-nbd on-the-fly resize [2].
-
-Could this be fixed?
-
-[1] https://github.com/torvalds/linux/commit/639812a1ed9bf49ae2c026086fbf975339cd1eef
-[2] https://github.com/ceph/ceph/blob/483f14c/src/tools/rbd_nbd/rbd-nbd.cc#L488
-
--- 
-Mykola Golub
+Applied, thanks! 
+> Signed-off-by: Heinz Mauelshagen <heinzm@redhat.com>
+> ---
+>  drivers/md/md.c | 10 ++++++++++
+>  drivers/md/md.h |  2 ++
+>  2 files changed, 12 insertions(+)
+> 
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 0081ace39a64..8a7e7034962c 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -801,6 +801,9 @@ void md_super_write(struct mddev *mddev, struct md_rdev *rdev,
+>  	struct bio *bio;
+>  	int ff = 0;
+>  
+> +	if (!page)
+> +		return;
+> +
+>  	if (test_bit(Faulty, &rdev->flags))
+>  		return;
+>  
+> @@ -5452,6 +5455,7 @@ int md_run(struct mddev *mddev)
+>  	 * the only valid external interface is through the md
+>  	 * device.
+>  	 */
+> +	mddev->has_superblocks = false;
+>  	rdev_for_each(rdev, mddev) {
+>  		if (test_bit(Faulty, &rdev->flags))
+>  			continue;
+> @@ -5465,6 +5469,9 @@ int md_run(struct mddev *mddev)
+>  				set_disk_ro(mddev->gendisk, 1);
+>  		}
+>  
+> +		if (rdev->sb_page)
+> +			mddev->has_superblocks = true;
+> +
+>  		/* perform some consistency tests on the device.
+>  		 * We don't want the data to overlap the metadata,
+>  		 * Internal Bitmap issues have been handled elsewhere.
+> @@ -8049,6 +8056,7 @@ EXPORT_SYMBOL(md_done_sync);
+>  bool md_write_start(struct mddev *mddev, struct bio *bi)
+>  {
+>  	int did_change = 0;
+> +
+>  	if (bio_data_dir(bi) != WRITE)
+>  		return true;
+>  
+> @@ -8081,6 +8089,8 @@ bool md_write_start(struct mddev *mddev, struct bio *bi)
+>  	rcu_read_unlock();
+>  	if (did_change)
+>  		sysfs_notify_dirent_safe(mddev->sysfs_state);
+> +	if (!mddev->has_superblocks)
+> +		return true;
+>  	wait_event(mddev->sb_wait,
+>  		   !test_bit(MD_SB_CHANGE_PENDING, &mddev->sb_flags) ||
+>  		   mddev->suspended);
+> diff --git a/drivers/md/md.h b/drivers/md/md.h
+> index 58cd20a5e85e..fbc925cce810 100644
+> --- a/drivers/md/md.h
+> +++ b/drivers/md/md.h
+> @@ -468,6 +468,8 @@ struct mddev {
+>  	void (*sync_super)(struct mddev *mddev, struct md_rdev *rdev);
+>  	struct md_cluster_info		*cluster_info;
+>  	unsigned int			good_device_nr;	/* good device num within cluster raid */
+> +
+> +	bool	has_superblocks:1;
+>  };
+>  
+>  enum recovery_flags {
+> -- 
+> 2.14.3
+> 
