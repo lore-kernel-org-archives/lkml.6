@@ -1,59 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751588AbeBRO4j (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 09:56:39 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55971 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751440AbeBRO4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 09:56:38 -0500
-Subject: Re: [PATCH] ARM: dts: owl: Convert to new-style SPDX license
- identifiers
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        =?UTF-8?B?5byg5aSp55uK?= <tyzhang@actions-semi.com>,
-        =?UTF-8?B?5qKF5Yip?= <harrymei@actions-semi.com>,
-        Sudeep Kumar <sudeepkumar@cem-solutions.net>,
-        linux-kernel@vger.kernel.org,
-        Thomas Liau <thomas.liau@actions-semi.com>,
-        Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?B?5byg5Lic6aOO?= <zhangdf@actions-semi.com>,
-        =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>,
-        Jeff Chen <jeff.chen@actions-semi.com>
-References: <20180121163943.27330-1-afaerber@suse.de>
-To: linux-arm-kernel@lists.infradead.org
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Organization: SUSE Linux GmbH
-Message-ID: <32d74f00-88ae-686f-d1c7-0608a80efcec@suse.de>
-Date: Sun, 18 Feb 2018 15:56:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751685AbeBRO6P (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 09:58:15 -0500
+Received: from mail-qk0-f176.google.com ([209.85.220.176]:46952 "EHLO
+        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751474AbeBRO6N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Feb 2018 09:58:13 -0500
+X-Google-Smtp-Source: AH8x227AryyS6ZuclJBSd2KUqTSGfQSWZPOUeMTVx5Pu1ybLQxebvNrVS2pAew7LN6fQgVOGRWU+yXWkBLswqQ4kBMk=
 MIME-Version: 1.0
-In-Reply-To: <20180121163943.27330-1-afaerber@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <eb8a38bd-73a0-5f44-5e89-d9ded5be1800@canonical.com>
+References: <20180215194245.28860-1-colin.king@canonical.com>
+ <CAHp75Vcxt0kkzRaF1Zzkt4hVqcPt0VG61yTLgB7HvG1xwhPUbg@mail.gmail.com> <eb8a38bd-73a0-5f44-5e89-d9ded5be1800@canonical.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sun, 18 Feb 2018 16:58:12 +0200
+Message-ID: <CAHp75VcsV4NfR3OiAjjYAowcHmK+rXOsrPN2aHnxBp5hqg+C+g@mail.gmail.com>
+Subject: Re: [PATCH] i40evf: remove redundant array comparisons to 0 checks
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan@lists.osuosl.org, netdev <netdev@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 21.01.2018 um 17:39 schrieb Andreas Färber:
-> Move the SPDX-License-Identifier lines to the top.
-> 
-> Signed-off-by: Andreas Färber <afaerber@suse.de>
-> ---
->  arch/arm/boot/dts/owl-s500-cubieboard6.dts     | 3 +--
->  arch/arm/boot/dts/owl-s500-guitar-bb-rev-b.dts | 3 +--
->  arch/arm/boot/dts/owl-s500-guitar.dtsi         | 3 +--
->  arch/arm/boot/dts/owl-s500-sparky.dts          | 3 +--
->  arch/arm/boot/dts/owl-s500.dtsi                | 3 +--
->  5 files changed, 5 insertions(+), 10 deletions(-)
+On Fri, Feb 16, 2018 at 6:53 PM, Colin Ian King
+<colin.king@canonical.com> wrote:
+> On 16/02/18 16:51, Andy Shevchenko wrote:
+>> On Thu, Feb 15, 2018 at 9:42 PM, Colin King <colin.king@canonical.com> wrote:
 
-Applied to v4.17/dt:
-https://git.kernel.org/pub/scm/linux/kernel/git/afaerber/linux-actions.git/log/?h=v4.17/dt
+>>> +                       filter->f.mask.tcp_spec.dst_ip[i] |=
+>>>                                                         cpu_to_be32(0xffffffff);
+>>
+>> Can it be one line then?
+>
+> I re-adjusted the text because checkpatch was complaining.
 
-Regards,
-Andreas
+>>
+>>> +                       filter->f.mask.tcp_spec.src_ip[i] |=
+>>>                                                         cpu_to_be32(0xffffffff);
+
+For the rest OK, but for the above two how much over 80 it went if
+would be one line?
+If it 2-3 characters, consider to make it one line. It would increase
+readability.
 
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+With Best Regards,
+Andy Shevchenko
