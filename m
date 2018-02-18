@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751279AbeBRAZE convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 17 Feb 2018 19:25:04 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:47921 "EHLO
+        id S1751341AbeBRA1F convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 17 Feb 2018 19:27:05 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57057 "EHLO
         mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751083AbeBRAZC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Feb 2018 19:25:02 -0500
-Date: Sat, 17 Feb 2018 16:24:40 -0800
+        id S1751083AbeBRA1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Feb 2018 19:27:03 -0500
+Date: Sat, 17 Feb 2018 16:26:45 -0800
 User-Agent: K-9 Mail for Android
 In-Reply-To: <1518912912.5667.277.camel@linux.vnet.ibm.com>
 References: <1518813234-5874-1-git-send-email-takondra@cisco.com> <1518813234-5874-2-git-send-email-takondra@cisco.com> <d69f329c-8365-bb0e-69ee-774cbea141b2@zytor.com> <1518912912.5667.277.camel@linux.vnet.ibm.com>
@@ -24,7 +24,7 @@ CC: initramfs@vger.kernel.org, Victor Kamensky <kamensky@cisco.com>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, xe-linux-external@cisco.com
 From: hpa@zytor.com
-Message-ID: <80AFCC79-14B2-4CF2-A601-89B18764C9BC@zytor.com>
+Message-ID: <117FCFDB-EA4C-4C0C-A01E-7C6C86693E6F@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -105,8 +105,6 @@ On February 17, 2018 4:15:12 PM PST, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote
 >
 >Mimi
 
-I'm not trying to derail anything, but I do want to see it done well if it is going to be done.  I have several ideas already, but I may not have a chance to write them down properly until after the weekend due to family obligations.
-
-The assessment of pax/tar is useful; it should be added to the patch documentation in a future set.
+Do you have a description of the gaps you have identified?
 -- 
 Sent from my Android device with K-9 Mail. Please excuse my brevity.
