@@ -1,47 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751817AbeBRUn4 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 15:43:56 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51521 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751648AbeBRUny (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 15:43:54 -0500
-X-Google-Smtp-Source: AH8x2265x8dqFvhKiPG78S/EIPHfg2f/hPYP4/vBebZ1JK3klTMwpUzS3ZoLp11ZiasTHX5xFKImzw==
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Richard Purdie <rpurdie@rpsys.net>
-Subject: [PATCH] MAINTAINERS: Remove Richard Purdie from LED maintainers
-Date: Sun, 18 Feb 2018 21:42:32 +0100
-Message-Id: <1518986552-4289-1-git-send-email-jacek.anaszewski@gmail.com>
-X-Mailer: git-send-email 2.1.4
+        id S1751828AbeBRUtc (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 15:49:32 -0500
+Received: from ozlabs.org ([103.22.144.67]:46335 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751717AbeBRUtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Feb 2018 15:49:31 -0500
+Date: Mon, 19 Feb 2018 07:48:58 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Helge Deller <deller@gmx.de>,
+        Parisc List <linux-parisc@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the parisc-hd tree
+Message-ID: <20180219074858.76ceb66d@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jxv7J2PwE0esSlg_NpOr6l7"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Richard has been inactive on the linux-leds list for a long time.
-After email discussion we agreed on removing him from
-the LED maintainers, which will better reflect the actual status.
+--Sig_/jxv7J2PwE0esSlg_NpOr6l7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Richard Purdie <rpurdie@rpsys.net>
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+Hi all,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e458da6..1ce261c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7909,7 +7909,6 @@ S:	Maintained
- F:	scripts/leaking_addresses.pl
- 
- LED SUBSYSTEM
--M:	Richard Purdie <rpurdie@rpsys.net>
- M:	Jacek Anaszewski <jacek.anaszewski@gmail.com>
- M:	Pavel Machek <pavel@ucw.cz>
- L:	linux-leds@vger.kernel.org
--- 
-2.1.4
+Commit
+
+  6c2dfd2e720d ("parisc: Fix ordering of cache and TLB flushes")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/jxv7J2PwE0esSlg_NpOr6l7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqJ5roACgkQAVBC80lX
+0GwJOgf+JIMKmUYl710cf/Ds1RZNxD5e+CvV55vTMJp9KuvhDLxBRL6w2mhhSxu0
+J7cz9hY35PKWIqHEoZcs4uCT05+Z5Rtqvl4/Nbwf3mGqbbEXTHHS5GxCqqB7Ulkn
+JB0DfwwhEECCDwDXxBYj5KQ/za/z2kWdVfCYUugUvtazTxd0KCwZYVT4ZYQYEbJ8
+Gfca9QCHwJtx/q1dWA9s1C57GrNMNEcdO/o6j7C0sCy+9ENRmz5VwtwvGtfFjIe2
+O9y5ucnfjXE8TbPzh8gJdjrEkzCx2FSxGzhhoTWEaXkDkYfLJ9qqNXRhoHj9Bl35
+2g4pRvWZWwQao2y2vYKmEbyW9nDcXQ==
+=DTqL
+-----END PGP SIGNATURE-----
+
+--Sig_/jxv7J2PwE0esSlg_NpOr6l7--
