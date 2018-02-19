@@ -1,122 +1,92 @@
-Return-Path: <joel.stan@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519025086; cv=none;
+Return-Path: <ben.hutchings@codethink.co.uk>
+X-Google-Smtp-Source: AH8x225WjVeLpFZAaZjUs2cZz9ksJBe29+SCCRESE89/S3/7hR8IRDzaQR3D/dM/Hl4NivcuFSEx
+ARC-Seal: i=1; a=rsa-sha256; t=1519069581; cv=none;
         d=google.com; s=arc-20160816;
-        b=g8hk6hEXPcfHJp9SpkbgoCTLQby40c53tJMDgG2yR3E4BW/GX64YD01eW644eFhFFl
-         FgdQgWb8jCelkWeBovzp37A+ayMYvL1NDV+Tx7tfp2cTP3HW2hEnf14+3cVwoCpba7vK
-         joJ1DSHwcZr5ZDp/V5jIzdisR7I9mTf6f5hw6PaSWWIckgraAGuYH6/TIK1AGCLF0Wlr
-         nUpCCYW+8wXrGuzM3G+DCi+UC3mZokrki1itYAFDtismfmJyhS3bfcgi2LDaHPJWNNHb
-         KKgQvxyXKmEX93EykcShkVZ47c4jQVHh8iYGM1htBZgsomIc37t5DMJV76LgBTvC2pQT
-         dWZQ==
+        b=hHewp2U09LbVv/v15ePpx24CsG3pG76xl/QMJDpW1iPx0bSqtku+0gXp1PVHZgT0Xz
+         0PJ4OcZHq+KVEdy8cdPwCp8RoNhZ65cRGD1F4H4DFAEgquCk3pLfgOtN/mXfPJv2OYdq
+         pBOT4zPFNCEJqIDu3xHEyVVUHQuqPNab01jaLOs+BPQfxRuMeyYALYTYdzeLocj+yPRC
+         reVKBK8v1ocMdX5qhTnSW0rRYpHnQKpXDGvmYPAIluT49FMOqcNaiVRZ/QDsYKpzhCD0
+         Wro5bV7Gmw8CPqQUMlOOxySYIurS1TAi/WBu1fNrjm3ViaXWhm89z30LUZ3tlXCapEg/
+         Jk2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:sender
-         :dkim-signature:arc-authentication-results;
-        bh=tZFg/IZta6nugTj/dTirBEO0g/WAhdCuEkjt5MXATSc=;
-        b=Y5rt2D2HkTid0Px5Vd2wr9MfP5CBiZ9TfXqa8WPD3j55nfKdM1bt+roYUEcbAIQVlC
-         oBDwW8UXIIOzES2TKGQAY0kPuuq4wkz7ctDPW0FPlMeZK2/dPHOY8ykquxEKcqFZe06S
-         JBzJvuGd7pnsu+guvRGqYgBBlX7MYnfY3+8INPTrw1r8Vzh/7GFm91IFPqhptQso4nRZ
-         s6lT3YAglg9iAXaIxbL+iYcUqP1lm4FymBCPhEIV5498TU1MtEZR1Lz5Sd+qs2/FTw39
-         opQI6euzahcJOI2lssZY5OJKUxE1DqbmBm6upMkZX8BqpwysfVmWuwugvWtoo/XvKYgJ
-         FTiQ==
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:date:cc:to:from:subject:message-id
+         :arc-authentication-results;
+        bh=SE7vWyAIXXfmRukYaNDNYycRwN1+aP2MrK5+GwZsRfk=;
+        b=bA8YAcrr372zx24PNceHNuDA4mCmF8RHmtOaAuxH4WRRPRQgiTPTiF4mbWvqqVBXb1
+         iDbsLtqTKm3N8FxmEhrBHKH/Bdw2S2J7CDVEMlIzDbaWB9qoTqX6H6de7QWxQF06YRSk
+         Azq8OCEJIF9cXPoStC6evn9rhd+AFDqs2bA7eSOxp90u2rnkVqUtkArrzvptCofi5jNe
+         DlQr3yvUAsGZmH3tbDscgwSI5gqqa8Ae13bqRVPxbEpaPg+wt96ZPg0KPWUhUQhmfo8C
+         iICmnlT3AmB1xsHOwqj1WZdD+QFsenfdJE6uu3xjDfiZQ7Z6lLGXTrmK89xjnR5wjZPg
+         roLQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=o8fiYaz4;
-       spf=pass (google.com: domain of joel.stan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joel.stan@gmail.com
+       spf=pass (google.com: domain of ben.hutchings@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=ben.hutchings@codethink.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=o8fiYaz4;
-       spf=pass (google.com: domain of joel.stan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joel.stan@gmail.com
-X-Google-Smtp-Source: AH8x226YRJazxhB8OYNr6PeWbjs9uhsPg1frRisNM2NIE1WlYmpXPr3WDh8ICgD4QhhITTjovXS5rA==
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Cyril Bur <cyrilbur@gmail.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Lei YU <mine260309@gmail.com>
-Subject: [PATCH v2 1/3] dt-bindings: aspeed-lpc: Document LPC Host Interface Controller
-Date: Mon, 19 Feb 2018 17:54:20 +1030
-Message-Id: <20180219072422.22733-2-joel@jms.id.au>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180219072422.22733-1-joel@jms.id.au>
-References: <20180219072422.22733-1-joel@jms.id.au>
+       spf=pass (google.com: domain of ben.hutchings@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=ben.hutchings@codethink.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
+Message-ID: <1519069573.3422.63.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 60/74] ipv6: fix udpv6 sendmsg crash caused by too
+ small MTU
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+To: Mike Maloney <maloney@google.com>, Eric Dumazet <edumazet@google.com>
+Cc: stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>, "David S.
+ Miller" <davem@davemloft.net>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>
+Date: Mon, 19 Feb 2018 20:46:13 +0100
+In-Reply-To: <20180129123850.261403857@linuxfoundation.org>
+References: <20180129123847.507563674@linuxfoundation.org>
+	 <20180129123850.261403857@linuxfoundation.org>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592813249308453980?=
-X-GMAIL-MSGID: =?utf-8?q?1592813249308453980?=
+X-GMAIL-THRID: =?utf-8?q?1590958513642109340?=
+X-GMAIL-MSGID: =?utf-8?q?1592859904830603673?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The LPC Host Interface Controller is part of a BMC SoC that is used for
-communication with the host.
+On Mon, 2018-01-29 at 13:57 +0100, Greg Kroah-Hartman wrote:
+> 4.4-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Mike Maloney <maloney@google.com>
+> 
+> 
+> [ Upstream commit 749439bfac6e1a2932c582e2699f91d329658196 ]
+[...]
+> --- a/net/ipv6/ip6_output.c
+> +++ b/net/ipv6/ip6_output.c
+> @@ -1246,14 +1246,16 @@ static int ip6_setup_cork(struct sock *s
+>  	v6_cork->tclass = tclass;
+>  	if (rt->dst.flags & DST_XFRM_TUNNEL)
+>  		mtu = np->pmtudisc >= IPV6_PMTUDISC_PROBE ?
+> -		      rt->dst.dev->mtu : dst_mtu(&rt->dst);
+> +		      READ_ONCE(rt->dst.dev->mtu) : dst_mtu(&rt->dst);
+>  	else
+>  		mtu = np->pmtudisc >= IPV6_PMTUDISC_PROBE ?
+> -		      rt->dst.dev->mtu : dst_mtu(rt->dst.path);
+> +		      READ_ONCE(rt->dst.dev->mtu) : dst_mtu(rt->dst.path);
+>  	if (np->frag_size < mtu) {
+>  		if (np->frag_size)
+>  			mtu = np->frag_size;
+>  	}
+> +	if (mtu < IPV6_MIN_MTU)
+> +		return -EINVAL;
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
-v2:
- - Move the content to below the Host Node Children heading
- - Add Rob's review tag
----
- .../devicetree/bindings/mfd/aspeed-lpc.txt         | 41 ++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+This error path appears to leak a reference to rt->dst.
 
-diff --git a/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt b/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
-index 514d82ced95b..69aadee00d5f 100644
---- a/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
-+++ b/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
-@@ -109,9 +109,50 @@ lpc: lpc@1e789000 {
- 	};
- };
- 
-+BMC Node Children
-+==================
-+
-+
- Host Node Children
- ==================
- 
-+LPC Host Interface Controller
-+-------------------
-+
-+The LPC Host Interface Controller manages functions exposed to the host such as
-+LPC firmware hub cycles, configuration of the LPC-to-AHB mapping, UART
-+management and bus snoop configuration.
-+
-+Required properties:
-+
-+- compatible:	One of:
-+		"aspeed,ast2400-lpc-ctrl";
-+		"aspeed,ast2500-lpc-ctrl";
-+
-+- reg:		contains offset/length values of the host interface controller
-+		memory regions
-+
-+- clocks:	contains a phandle to the syscon node describing the clocks.
-+		There should then be one cell representing the clock to use
-+
-+- memory-region: A phandle to a reserved_memory region to be used for the LPC
-+		to AHB mapping
-+
-+- flash:	A phandle to the SPI flash controller containing the flash to
-+		be exposed over the LPC to AHB mapping
-+
-+Example:
-+
-+lpc-host@80 {
-+	lpc_ctrl: lpc-ctrl@0 {
-+		compatible = "aspeed,ast2500-lpc-ctrl";
-+		reg = <0x0 0x80>;
-+		clocks = <&syscon ASPEED_CLK_GATE_LCLK>;
-+		memory-region = <&flash_memory>;
-+		flash = <&spi>;
-+	};
-+};
-+
- LPC Host Controller
- -------------------
- 
+Ben.
+
+>  	cork->base.fragsize = mtu;
+>  	if (dst_allfrag(rt->dst.path))
+>  		cork->base.flags |= IPCORK_ALLFRAG;
+> 
+> 
+> 
 -- 
-2.15.1
+Ben Hutchings
+Software Developer, Codethink Ltd.
