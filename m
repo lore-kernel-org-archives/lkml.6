@@ -1,52 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752053AbeBSEtb (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 23:49:31 -0500
-Received: from ozlabs.org ([103.22.144.67]:35717 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751893AbeBSEta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 23:49:30 -0500
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, tmricht@linux.vnet.ibm.com,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 1/3] tools include powerpc: Grab a copy of arch/powerpc/include/uapi/asm/unistd.h
-In-Reply-To: <20180216175002.GC16919@kernel.org>
-References: <20180129083417.31240-1-ravi.bangoria@linux.vnet.ibm.com> <20180129083417.31240-2-ravi.bangoria@linux.vnet.ibm.com> <20180216165245.GD24436@kernel.org> <20180216165616.GF24436@kernel.org> <20180216170336.GG24436@kernel.org> <20180216170812.GA16919@kernel.org> <20180216172901.GB16919@kernel.org> <20180216175002.GC16919@kernel.org>
-Date: Mon, 19 Feb 2018 15:49:28 +1100
-Message-ID: <87a7w5lh2f.fsf@concordia.ellerman.id.au>
+        id S1751423AbeBSF6U (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 00:58:20 -0500
+Received: from LGEAMRELO12.lge.com ([156.147.23.52]:41646 "EHLO
+        lgeamrelo12.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750985AbeBSF6T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 00:58:19 -0500
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: namhyung@kernel.org
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date: Mon, 19 Feb 2018 14:58:16 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: changbin.du@intel.com
+Cc: jolsa@redhat.com, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, kernel-team@lge.com
+Subject: Re: [PATCH v4] perf ftrace: Append an EOL when write tracing files
+Message-ID: <20180219055816.GC1583@sejong>
+References: <1519007609-14551-1-git-send-email-changbin.du@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1519007609-14551-1-git-send-email-changbin.du@intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnaldo Carvalho de Melo <acme@kernel.org> writes:
+On Mon, Feb 19, 2018 at 10:33:29AM +0800, changbin.du@intel.com wrote:
+> From: Changbin Du <changbin.du@intel.com>
+> 
+> Before this change, the '--graph-funcs', '--nograph-funcs' and
+> '--trace-funcs' options didn't work as expected when the <func> doesn't
+> exist. Because the kernel side hid possible errors.
+> 
+> $ sudo ./perf ftrace -a --graph-depth 1 --graph-funcs abcdefg
+>  0)   0.140 us    |  rcu_all_qs();
+>  3)   0.304 us    |  mutex_unlock();
+>  0)   0.153 us    |  find_vma();
+>  3)   0.088 us    |  __fsnotify_parent();
+>  0)   6.145 us    |  handle_mm_fault();
+>  3)   0.089 us    |  fsnotify();
+>  3)   0.161 us    |  __sb_end_write();
+>  3)   0.710 us    |  SyS_close();
+>  3)   7.848 us    |  exit_to_usermode_loop();
+> 
+> On above example, I specified function filter 'abcdefg' but all functions
+> are enabled. The expected error is hidden.
+> 
+> The original fix is to make the kernel support '\0' as end of string:
+> https://lkml.org/lkml/2018/1/16/116
+> 
+> But above fix cannot be compatible with old kernels. Then Namhyung Kim
+> suggest adding a space after function name.
+> 
+> This patch will append an '\n' when write tracing file. After this fix,
+> the perf will report correct error state. Also let it print an error if
+> reset_tracing_files() fails.
+> 
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Changbin Du <changbin.du@intel.com>
 
-> Em Fri, Feb 16, 2018 at 02:29:01PM -0300, Arnaldo Carvalho de Melo escreveu:
->> Humm, we need to create two tables, one for 32-bit and another for 64,
->> even with ppc not having (AFAIK) clashes in syscall numbers for 32/64...
->> 
->> Trying to do it now.
->
-> Now seems to work, take a look at my perf/core branch, should be one of the first few csets.
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-LGTM. Thanks for fixing this up.
+Thanks,
+Namhyung
 
-cheers
 
-> perfbuilder@cc1a85517216:/git/perf$ grep 192 /tmp/build/perf/arch/powerpc/include/generated/asm/syscalls_32.c 
-> 	[192] = "mmap2",
-> perfbuilder@cc1a85517216:/git/perf$ powerpc-linux-gnu-gcc --version
-> powerpc-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.4) 5.4.0 20160609
-> perfbuilder@cc1a85517216:/git/perf$
->
-> perfbuilder@9d7fc9dcfb73:/git/perf$ grep 192 /tmp/build/perf/arch/powerpc/include/generated/asm/syscalls_32.c
-> 	[192] = "mmap2",
-> perfbuilder@9d7fc9dcfb73:/git/perf$ grep 192 /tmp/build/perf/arch/powerpc/include/generated/asm/syscalls_64.c
-> perfbuilder@9d7fc9dcfb73:/git/perf$ powerpc64-linux-gnu-gcc --version
-> powerpc64-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.1) 5.4.0 20160609
-> perfbuilder@9d7fc9dcfb73:/git/perf$ 
+> 
+> ---
+> v4: check strdup() return. (Kim)
+> v3: Took Kim's suggestion that add a space after function name.
+> v2: Rebase.
+> ---
+>  tools/perf/builtin-ftrace.c | 18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+> index 25a42ac..f42f228 100644
+> --- a/tools/perf/builtin-ftrace.c
+> +++ b/tools/perf/builtin-ftrace.c
+> @@ -72,6 +72,7 @@ static int __write_tracing_file(const char *name, const char *val, bool append)
+>  	ssize_t size = strlen(val);
+>  	int flags = O_WRONLY;
+>  	char errbuf[512];
+> +	char *val_copy;
+>  
+>  	file = get_tracing_file(name);
+>  	if (!file) {
+> @@ -91,12 +92,23 @@ static int __write_tracing_file(const char *name, const char *val, bool append)
+>  		goto out;
+>  	}
+>  
+> -	if (write(fd, val, size) == size)
+> +	/*
+> +	 * Copy the original value and append a '\n'. Without this,
+> +	 * the kernel can hide possible errors.
+> +	 */
+> +	val_copy = strdup(val);
+> +	if (!val_copy)
+> +		goto out_close;
+> +	val_copy[size] = '\n';
+> +
+> +	if (write(fd, val_copy, size + 1) == size + 1)
+>  		ret = 0;
+>  	else
+>  		pr_debug("write '%s' to tracing/%s failed: %s\n",
+>  			 val, name, str_error_r(errno, errbuf, sizeof(errbuf)));
+>  
+> +	free(val_copy);
+> +out_close:
+>  	close(fd);
+>  out:
+>  	put_tracing_file(file);
+> @@ -280,8 +292,10 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace, int argc, const char **argv)
+>  	signal(SIGCHLD, sig_handler);
+>  	signal(SIGPIPE, sig_handler);
+>  
+> -	if (reset_tracing_files(ftrace) < 0)
+> +	if (reset_tracing_files(ftrace) < 0) {
+> +		pr_err("failed to reset ftrace\n");
+>  		goto out;
+> +	}
+>  
+>  	/* reset ftrace buffer */
+>  	if (write_tracing_file("trace", "0") < 0)
+> -- 
+> 2.7.4
+> 
