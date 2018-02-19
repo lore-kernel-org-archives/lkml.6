@@ -1,71 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752617AbeBSL0V (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 06:26:21 -0500
-Received: from foss.arm.com ([217.140.101.70]:57624 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752528AbeBSL0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 06:26:20 -0500
-Date: Mon, 19 Feb 2018 11:26:16 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
+        id S1752630AbeBSL0u (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 06:26:50 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42651 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752519AbeBSL0t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 06:26:49 -0500
+X-Google-Smtp-Source: AH8x227jc2k69l2WAXg9BV0Jq99Kfp5ysqm6eV0pr1ozMmRVKYCCUI/oNFJA2jinHpFqiDT81HIoTA==
+From: Jan Glauber <jglauber@cavium.com>
+X-Google-Original-From: Jan Glauber <jglauber@caviumnetworks.com>
+Date: Mon, 19 Feb 2018 12:26:45 +0100
 To: Will Deacon <will.deacon@arm.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: arm64/v4.16-rc1: KASAN: use-after-free Read in finish_task_switch
-Message-ID: <20180219112615.qresrsvi5qdlw6y3@armageddon.cambridge.arm.com>
-References: <20180214120254.qq4w4s42ecxio7lu@lakrids.cambridge.arm.com>
- <20180214150739.GH2992@arm.com>
- <20180214165131.o25r3hhrtrjk3ejq@lakrids.cambridge.arm.com>
- <254787533.21950.1518634424009.JavaMail.zimbra@efficios.com>
- <20180215142239.GF16623@arm.com>
+Cc: John Garry <john.garry@huawei.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>, bhupesh.linux@gmail.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: Fix compilation error while accessing
+ MPIDR_HWID_BITMASK from .S files
+Message-ID: <20180219111747.GA25218@wintermute>
+References: <1519022394-11326-1-git-send-email-bhsharma@redhat.com>
+ <36bd758c-dd49-edef-cc1a-20f5b43f5011@huawei.com>
+ <20180219110238.GA30394@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180215142239.GF16623@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180219110238.GA30394@arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 02:22:39PM +0000, Will Deacon wrote:
-> Instead, we've come up with a more plausible sequence that can in theory
-> happen on a single CPU:
+Hi Will,
+
+I just hit the same issue with 4.16-rc2. The patch makes it compilable
+again.
+
+--Jan
+
+On Mon, Feb 19, 2018 at 11:02:39AM +0000, Will Deacon wrote:
+> Hi John,
 > 
-> <task foo calls exit()>
+> On Mon, Feb 19, 2018 at 10:19:35AM +0000, John Garry wrote:
+> > On 19/02/2018 06:39, Bhupesh Sharma wrote:
+> > >Since commit e1a50de37860b3a93a9d643b09638db5aff47650 (arm64: cputype:
+> > >Silence Sparse warnings), compilation of arm64 architecture is broken
+> > >with the following error messages:
+> > >
+> > >  AR      arch/arm64/kernel/built-in.o
+> > >  arch/arm64/kernel/head.S: Assembler messages:
+> > >  arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
+> > >  arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
+> > >  arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
+> > >  arch/arm64/kernel/head.S:677: Error: junk at end of line, first
+> > >  unrecognized character is `L'
+> > >  arch/arm64/kernel/head.S:677: Error: unexpected characters following
+> > >  instruction at operand 2 -- `movz x1,:abs_g1_s:0xff00ffffffUL'
+> > >  arch/arm64/kernel/head.S:677: Error: unexpected characters following
+> > >  instruction at operand 2 -- `movk x1,:abs_g0_nc:0xff00ffffffUL'
+> > >
+> > >This patch fixes the same by using the UL() macro correctly for
+> > >assigning the MPIDR_HWID_BITMASK macro value.
+> > >
+> > >Signed-off-by: Bhupesh Sharma <bhsharma@redhat.com>
+> > >---
+> > > arch/arm64/include/asm/cputype.h | 2 +-
+> > > 1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > >diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
+> > >index eda8c5f629fc..350c76a1d15b 100644
+> > >--- a/arch/arm64/include/asm/cputype.h
+> > >+++ b/arch/arm64/include/asm/cputype.h
+> > >@@ -20,7 +20,7 @@
+> > >
+> > > #define MPIDR_UP_BITMASK	(0x1 << 30)
+> > > #define MPIDR_MT_BITMASK	(0x1 << 24)
+> > >-#define MPIDR_HWID_BITMASK	0xff00ffffffUL
+> > >+#define MPIDR_HWID_BITMASK	UL(0xff00ffffff)
+> > 
+> > Works for me.
+> > 
+> > FYI, I am using (old) gcc-linaro-4.8-2015.06-x86_64_aarch64.
 > 
-> do_exit
-> 	exit_mm
-> 		mmgrab(mm);			// foo's mm has count +1
-> 		BUG_ON(mm != current->active_mm);
-> 		task_lock(current);
-> 		current->mm = NULL;
-> 		task_unlock(current);
+> Just to confirm: are you saying that this patch fixes the build for you,
+> or that mainline builds for you and the patch is not needed?
 > 
-> <irq and ctxsw to kthread>
-
-[...]
-
-> mmdrop(mm);					// foo's mm has count -1
+> Cheers,
 > 
-> At this point, we've got an imbalanced count on the mm and could free it
-> prematurely as seen in the KASAN log. A subsequent context-switch away
-> from foo would therefore result in a use-after-free.
-
-Peter already dismissed an algorithm issue here but I thought I'd give
-model checking a go (it only deals with mm_users/mm_count; also added a
-heavily simplified exec_mmap() in the loop):
-
-https://git.kernel.org/pub/scm/linux/kernel/git/cmarinas/kernel-tla.git/tree/ctxsw.tla
-
-As expected, it didn't show any problems (though it does not take memory
-ordering into account).
-
-Now, there are lots of other mmget/mmput and mmgrab/mmdrop throughout
-the kernel and finding an imbalanced call needs more work.
-
--- 
-Catalin
+> Will
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
