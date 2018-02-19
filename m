@@ -1,189 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752568AbeBSKel (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 05:34:41 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:42466 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752377AbeBSKej (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 05:34:39 -0500
+        id S1752526AbeBSKhk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 05:37:40 -0500
+Received: from mail01.prevas.se ([62.95.78.3]:1867 "EHLO mail01.prevas.se"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752322AbeBSKhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 05:37:39 -0500
+X-IronPort-AV: E=Sophos;i="5.46,534,1511823600";
+   d="scan'208";a="3264749"
+Subject: Re: 500 ms delay in time saved into RTC
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Igor Plyatov <plyatov@gmail.com>
+CC: <linux-kernel@vger.kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>, <rtc-linux@googlegroups.com>,
+        <util-linux@vger.kernel.org>
+References: <30ae185f-28c9-54f1-2884-4ee7801b130e@gmail.com>
+ <34f50661-85f5-eb46-3ff7-45f0c2bb5960@prevas.dk>
+ <c91e0079-c31f-715d-bb2e-648af34565d7@gmail.com>
+ <20180219100754.GL14177@piout.net>
+From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Message-ID: <33e30f44-c774-1130-0461-4b48a58f9c4a@prevas.dk>
+Date: Mon, 19 Feb 2018 11:37:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20180219100754.GL14177@piout.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date: Mon, 19 Feb 2018 16:04:38 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, Wolfram Sang <wsa@the-dreams.de>,
-        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/12] i2c: qup: schedule EOT and FLUSH tags at the end of
- transfer
-In-Reply-To: <dcb7b543-3474-e573-cdc0-010cda5c2d67@codeaurora.org>
-References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
- <1517644697-30806-5-git-send-email-absahu@codeaurora.org>
- <dcb7b543-3474-e573-cdc0-010cda5c2d67@codeaurora.org>
-Message-ID: <1347ec85b53728e3eec771ea78bcbe5f@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+X-Originating-IP: [172.16.8.31]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-15 20:01, Sricharan R wrote:
-> Hi Abhishek,
+On 2018-02-19 11:07, Alexandre Belloni wrote:
+> On 19/02/2018 at 12:16:04 +0300, Igor Plyatov wrote:
+>> Dear Rasmus,
+>>
+>> thank you very much for explanation!
+>>
+>> I have set "RTC_SET_DELAY_SECS = 0.0" in hwclock.c and got acceptable
+>> result.
+>>
+>> It wonder why such critical function does not implemented on kernel level in
+>> RTC driver?
+>> It is very strange to rely on specific HW in user space SW.
+>>
 > 
-> On 2/3/2018 1:28 PM, Abhishek Sahu wrote:
->> A single BAM transfer can have multiple read and write messages.
->> The EOT and FLUSH tags should be scheduled at the end of BAM HW
->> descriptors. Since the READ and WRITE can be present in any order
->> so for some of the cases, these tags are not being written
->> correctly.
->> 
->> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->> ---
->>  drivers/i2c/busses/i2c-qup.c | 54 
->> ++++++++++++++++++++------------------------
->>  1 file changed, 24 insertions(+), 30 deletions(-)
->> 
->> diff --git a/drivers/i2c/busses/i2c-qup.c 
->> b/drivers/i2c/busses/i2c-qup.c
->> index bb83a2967..6357aff 100644
->> --- a/drivers/i2c/busses/i2c-qup.c
->> +++ b/drivers/i2c/busses/i2c-qup.c
->> @@ -560,7 +560,7 @@ static int qup_i2c_set_tags_smb(u16 addr, u8 
->> *tags, struct qup_i2c_dev *qup,
->>  }
->> 
->>  static int qup_i2c_set_tags(u8 *tags, struct qup_i2c_dev *qup,
->> -			    struct i2c_msg *msg,  int is_dma)
->> +			    struct i2c_msg *msg)
->>  {
->>  	u16 addr = i2c_8bit_addr_from_msg(msg);
->>  	int len = 0;
->> @@ -601,11 +601,6 @@ static int qup_i2c_set_tags(u8 *tags, struct 
->> qup_i2c_dev *qup,
->>  	else
->>  		tags[len++] = data_len;
->> 
->> -	if ((msg->flags & I2C_M_RD) && last && is_dma) {
->> -		tags[len++] = QUP_BAM_INPUT_EOT;
->> -		tags[len++] = QUP_BAM_FLUSH_STOP;
->> -	}
->> -
->>  	return len;
->>  }
->> 
->> @@ -614,7 +609,7 @@ static int qup_i2c_issue_xfer_v2(struct 
->> qup_i2c_dev *qup, struct i2c_msg *msg)
->>  	int data_len = 0, tag_len, index;
->>  	int ret;
->> 
->> -	tag_len = qup_i2c_set_tags(qup->blk.tags, qup, msg, 0);
->> +	tag_len = qup_i2c_set_tags(qup->blk.tags, qup, msg);
->>  	index = msg->len - qup->blk.data_len;
->> 
->>  	/* only tags are written for read */
->> @@ -710,7 +705,7 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev 
->> *qup, struct i2c_msg *msg,
->>  			while (qup->blk.pos < blocks) {
->>  				tlen = (i == (blocks - 1)) ? rem : limit;
->>  				tags = &qup->start_tag.start[off + len];
->> -				len += qup_i2c_set_tags(tags, qup, msg, 1);
->> +				len += qup_i2c_set_tags(tags, qup, msg);
->>  				qup->blk.data_len -= tlen;
->> 
->>  				/* scratch buf to read the start and len tags */
->> @@ -738,17 +733,11 @@ static int qup_i2c_bam_do_xfer(struct 
->> qup_i2c_dev *qup, struct i2c_msg *msg,
->>  				return ret;
->> 
->>  			off += len;
->> -			/* scratch buf to read the BAM EOT and FLUSH tags */
->> -			ret = qup_sg_set_buf(&qup->brx.sg[rx_buf++],
->> -					     &qup->brx.tag.start[0],
->> -					     2, qup, DMA_FROM_DEVICE);
->> -			if (ret)
->> -				return ret;
->>  		} else {
->>  			while (qup->blk.pos < blocks) {
->>  				tlen = (i == (blocks - 1)) ? rem : limit;
->>  				tags = &qup->start_tag.start[off + tx_len];
->> -				len = qup_i2c_set_tags(tags, qup, msg, 1);
->> +				len = qup_i2c_set_tags(tags, qup, msg);
->>  				qup->blk.data_len -= tlen;
->> 
->>  				ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++],
->> @@ -768,26 +757,31 @@ static int qup_i2c_bam_do_xfer(struct 
->> qup_i2c_dev *qup, struct i2c_msg *msg,
->>  			}
->>  			off += tx_len;
->> 
->> -			if (idx == (num - 1)) {
->> -				len = 1;
->> -				if (rx_buf) {
->> -					qup->btx.tag.start[0] =
->> -							QUP_BAM_INPUT_EOT;
->> -					len++;
->> -				}
->> -				qup->btx.tag.start[len - 1] =
->> -							QUP_BAM_FLUSH_STOP;
->> -				ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++],
->> -						     &qup->btx.tag.start[0],
->> -						     len, qup, DMA_TO_DEVICE);
->> -				if (ret)
->> -					return ret;
->> -			}
->>  		}
->>  		idx++;
->>  		msg++;
->>  	}
-> 
->  While here, can you please split above the if, else in to two
-> separate functions ?
->  and probably one more function for handling the NACK case down below.
-> The function
->  size at the moment is too big.
-> 
+> Because of the way the API is designed, handling the MC146818A oddity is
+> not possible in the driver (i.e. 50% of the time, it will be too late
+> to handle it).
 
-  Sure. Already I split this function into 2 functions in
-  [PATCH 09/12] i2c: qup: fix buffer overflow for multiple msg of maximum 
-xfer len
-  which is making function size smaller. I will check if I can split in 
-more
-  functions.
+Well, I suppose one could implement an ioctl that would not actually
+take a struct rtctime from userspace but simply use the current value of
+clock_realtime (which is what 99% of rtc_set_times are using anyway),
+and doing it as accurately as possible (which requires implementations
+in each driver) - i.e., have the kernel do the appropriate sleeping
+which is currently done in userspace: a generic implementation of that
+ioctl would sleep until clock_realtime is a whole second, while the x86
+driver could sleep until a .5 second. Sure, clock_realtime can jump or
+get adjusted while we sleep, and we can oversleep for all kinds of
+reasons, but the kernel is in a much better position to do the sleeping
+and knowing when to attempt the rtc setting than userspace.
 
->> 
->> +	/* schedule the EOT and FLUSH I2C tags */
->> +	len = 1;
->> +	if (rx_buf) {
->> +		qup->btx.tag.start[0] = QUP_BAM_INPUT_EOT;
->> +		len++;
->> +
->> +		/* scratch buf to read the BAM EOT and FLUSH tags */
->> +		ret = qup_sg_set_buf(&qup->brx.sg[rx_buf++],
->> +				     &qup->brx.tag.start[0],
->> +				     2, qup, DMA_FROM_DEVICE);
->> +		if (ret)
->> +			return ret;
->> +	}
->> +
->> +	qup->btx.tag.start[len - 1] = QUP_BAM_FLUSH_STOP;
->> +	ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++], &qup->btx.tag.start[0],
->> +			     len, qup, DMA_TO_DEVICE);
->> +	if (ret)
->> +		return ret;
->> +
-> 
->   May be you can change the commit to make it explicit to say what is 
-> being
->   fixed, like "current code is broken when there is sequence of
-> wr,rd,wr" like that.
->   Agree on this fix otherwise.
-> 
+Said ioctl could also take an integer offset to apply to the
+clock_realtime value to support setting the rtc to some non-UTC timezone.
 
-  Thanks. I will update the commit message to include the failure
-  case which will give clear idea.
+> You can use busybox hwclock which has the x86 insanity commented out:
+> https://git.busybox.net/busybox/tree/util-linux/hwclock.c 
 
-  Thanks,
-  Abhishek
+No, the code that is commented out is code that would actually try to do
+the rtc setting at a whole (system clock) second, which is what one
+wants on non-x86. It is apparently commented out because aiming for a
+whole second is not the right thing to do on some platforms (i.e., x86).
+So the current busybox code, on rtcs which set the fractional part to 0,
+end up discarding (losing) some uniformly distributed number from [0,1]
+instead of consistently .5 seconds.
+
+Also, AFAIR, the busybox code which implements the --hctosys doesn't do
+anything to do it right after the rtc has incremented, losing another
+[0, 1] uniformly.
+
+Rasmus
