@@ -1,79 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751524AbeBSN4w (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 08:56:52 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38807 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750998AbeBSN4u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 08:56:50 -0500
-X-Google-Smtp-Source: AH8x227uwWICjA31KkadA9mvi+ojFWi0HG+1agsjLpw0WQMuqGmWIgjA3GigZtcJTSDrNr8EMidUOg==
-Date: Mon, 19 Feb 2018 16:56:46 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Abdul Haleem <abdhalee@linux.vnet.ibm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-mm@kvack.org,
-        kirill.shutemov@linux.intel.com, mpe <mpe@ellerman.id.au>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        sachinp <sachinp@linux.vnet.ibm.com>
-Subject: Re: [mainline][Memory off/on][83e3c48] kernel Oops with memory
- hot-unplug on ppc
-Message-ID: <20180219135646.lsmxkbgdwrjdlwxy@node.shutemov.name>
-References: <1517840664.647.17.camel@abdul.in.ibm.com>
- <20180219134735.GN21134@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180219134735.GN21134@dhcp22.suse.cz>
-User-Agent: NeoMutt/20171215
+        id S1752344AbeBSN5T (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 08:57:19 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47884 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751528AbeBSN5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 08:57:17 -0500
+Message-ID: <1519048631.2870.25.camel@redhat.com>
+Subject: Re: BUG: sleeping function called from invalid context at
+ net/core/sock.c:LINE (3)
+From: Paolo Abeni <pabeni@redhat.com>
+To: Jon Maloy <jon.maloy@ericsson.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+749d9d87c294c00ca856@syzkaller.appspotmail.com>,
+        Ying Xue <ying.xue@windriver.com>
+Cc: Andrei Vagin <avagin@virtuozzo.com>,
+        David Miller <davem@davemloft.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Florian Westphal <fw@strlen.de>, LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        "roman.kapl@sysgo.com" <roman.kapl@sysgo.com>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        "tipc-discussion@lists.sourceforge.net"
+        <tipc-discussion@lists.sourceforge.net>
+Date: Mon, 19 Feb 2018 14:57:11 +0100
+In-Reply-To: <BN6PR15MB155309E2A35F66298DAD8E2E9AC80@BN6PR15MB1553.namprd15.prod.outlook.com>
+References: <001a1143e44e58485f05655fa8ae@google.com>
+         <CACT4Y+bxubQ0yqi777mgQdT6paPS+wWQo79T+jPqztPJ=gTYhw@mail.gmail.com>
+         <b6b1e370-d3ba-4db7-228f-a3ccaf502992@virtuozzo.com>
+         <BN6PR15MB155309E2A35F66298DAD8E2E9AC80@BN6PR15MB1553.namprd15.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 02:47:35PM +0100, Michal Hocko wrote:
-> [CC Kirill - I have a vague recollection that there were some follow ups
->  for 83e3c48729d9 ("mm/sparsemem: Allocate mem_section at runtime for
->  CONFIG_SPARSEMEM_EXTREME=y"). Does any of them apply to this issue?]
+On Mon, 2018-02-19 at 13:23 +0000, Jon Maloy wrote:
+> I don't understand this one. tipc_topsrv_stop() can only be trigged
+> from a user doing rmmod(), and I double checked that this is running
+> in user mode.
+> How does the call chain you are reporting occur?
 
-All fixups are in v4.15.
+tipc_topsrv_stop() is called also at net namespace destruction time:
 
-> On Mon 05-02-18 19:54:24, Abdul Haleem wrote:
-> > 
-> > Greetings,
-> > 
-> > Kernel Oops seen when memory hot-unplug on powerpc mainline kernel.
-> > 
-> > Machine: Power6 PowerVM ppc64
-> > Kernel: 4.15.0
-> > Config: attached
-> > gcc: 4.8.2
-> > Test: Memory hot-unplug of a memory block
-> > echo offline > /sys/devices/system/memory/memory<x>/state
-> > 
-> > The faulty instruction address points to the code path:
-> > 
-> > # gdb -batch vmlinux -ex 'list *(0xc000000000238330)'
-> > 0xc000000000238330 is in get_pfnblock_flags_mask
-> > (./include/linux/mmzone.h:1157).
-> > 1152	#endif
-> > 1153	
-> > 1154	static inline struct mem_section *__nr_to_section(unsigned long nr)
-> > 1155	{
-> > 1156	#ifdef CONFIG_SPARSEMEM_EXTREME
-> > 1157		if (!mem_section)
-> > 1158			return NULL;
-> > 1159	#endif
-> > 1160		if (!mem_section[SECTION_NR_TO_ROOT(nr)])
-> > 1161			return NULL;
-> > 
-> > 
-> > The code was first introduced with commit( 83e3c48: mm/sparsemem:
-> > Allocate mem_section at runtime for CONFIG_SPARSEMEM_EXTREME=y)
+static void __net_exit tipc_exit_net(struct net *net)
+{
+	tipc_topsrv_stop(net);
+#...
 
-Any chance to bisect it?
+I *think* the following should fix the issue, but I'm unsure if it's
+safe.
 
-Could you check if the commit just before 83e3c48729d9 is fine?
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git master
 
--- 
- Kirill A. Shutemov
+---
+diff --git a/net/tipc/topsrv.c b/net/tipc/topsrv.c
+index 02013e00f287..63f35eae7236 100644
+--- a/net/tipc/topsrv.c
++++ b/net/tipc/topsrv.c
+@@ -693,9 +693,9 @@ void tipc_topsrv_stop(struct net *net)
+        }
+        __module_get(lsock->ops->owner);
+        __module_get(lsock->sk->sk_prot_creator->owner);
+-       sock_release(lsock);
+        srv->listener = NULL;
+        spin_unlock_bh(&srv->idr_lock);
++       sock_release(lsock);
+        tipc_topsrv_work_stop(srv);
+        idr_destroy(&srv->conn_idr);
+        kfree(srv);
