@@ -1,61 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752678AbeBSLb3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 06:31:29 -0500
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:53868 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752389AbeBSLb1 (ORCPT
+        id S1752612AbeBSLcm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 06:32:42 -0500
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:40411 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752521AbeBSLck (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 06:31:27 -0500
-X-Google-Smtp-Source: AH8x226WJ9X3x9L8HY/GYM+FgPYxriPeVf+bzepHqAGtH/iVmgA9ODK4awYVGej7zchxldH4up4khA==
-Subject: Re: 500 ms delay in time saved into RTC
-To: Karel Zak <kzak@redhat.com>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Cc: linux-kernel@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        rtc-linux@googlegroups.com, util-linux@vger.kernel.org,
-        J William Piggott <elseifthen@gmx.com>
-References: <30ae185f-28c9-54f1-2884-4ee7801b130e@gmail.com>
- <34f50661-85f5-eb46-3ff7-45f0c2bb5960@prevas.dk>
- <20180219110328.n7yjorinjm3xxckr@ws.net.home>
-From: Igor Plyatov <plyatov@gmail.com>
-Message-ID: <0ce68f3f-fec7-1f1c-e70b-331c0752f6d6@gmail.com>
-Date: Mon, 19 Feb 2018 14:31:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 19 Feb 2018 06:32:40 -0500
+X-Google-Smtp-Source: AH8x227masSpacXy9HjsDV+ICOfjjEKQIv4/tSmrYFU6kcKvGaipLPw1I5Q8aNIjlyYlewJ+Z5jxzKwgWzfDnmViXcI=
 MIME-Version: 1.0
-In-Reply-To: <20180219110328.n7yjorinjm3xxckr@ws.net.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <1514904162-11201-12-git-send-email-sudeep.holla@arm.com>
+References: <1514904162-11201-1-git-send-email-sudeep.holla@arm.com> <1514904162-11201-12-git-send-email-sudeep.holla@arm.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 19 Feb 2018 12:32:39 +0100
+X-Google-Sender-Auth: XW_eujaIlE_U-GSKWz7f0iYn4L8
+Message-ID: <CAK8P3a31CMsLUSm0rsHLdvM4sbjZ6fwocKmA1JiuCtF97vj3PQ@mail.gmail.com>
+Subject: Re: [PATCH v5 11/20] firmware: arm_scmi: add support for polling
+ based SCMI transfers
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: ALKML <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
+        Roy Franz <roy.franz@cavium.com>,
+        Harb Abdulhamid <harba@codeaurora.org>, Nishanth Menon <nm@ti.com>,
+        Loc Ho <lho@apm.com>, Alexey Klimov <klimov.linux@gmail.com>,
+        Ryan Harkin <Ryan.Harkin@arm.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Karel,
+On Tue, Jan 2, 2018 at 3:42 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
 
+> +#define SCMI_MAX_POLLING_TIMEOUT_NS    (100 * NSEC_PER_USEC)
+>  /**
+>   * scmi_do_xfer() - Do one transfer
+>   *
+> @@ -389,14 +406,30 @@ int scmi_do_xfer(const struct scmi_handle *handle, struct scmi_xfer *xfer)
 
-> Would be possible to somehow detect what is the right default setting for
-> --delay? I mean for example detect architecture / clock HW, etc.
->
-> I have no problem with --delay, but it's tuning for advanced users and
-> HW specific stuff. It would be nice to have something more portable.
->
->      Karel
->
+> +       if (xfer->hdr.poll_completion) {
+> +               ktime_t stop, cur;
+> +
+> +               stop = ktime_add_ns(ktime_get(), SCMI_MAX_POLLING_TIMEOUT_NS);
+> +               do {
+> +                       udelay(5);
+> +                       cur = ktime_get();
+> +               } while (!scmi_xfer_poll_done(info, xfer) &&
+> +                        ktime_before(cur, stop));
 
-As I understood, issue exists only at x86 platform, where 
-MC146818-compatible RTC used.
+The 5 microsecond back-off isn't that much smaller than the 100 microsecond
+timeout, given that udelay() often waits much longer than the specified time.
 
-But even if you will correctly detect platform, there is no guaranty to 
-get exactly MC146818 RTC. RTC can be other type. It even can be not 
-single in the system.
+How did you come up with those two numbers? Are you sure this is better
+than just using a cpu_relax() instead of the udelay()?
 
-What is more or less usable is "/sys/class/rtc/rtcX/name" file, which 
-contains driver name.
-For x86 and MC146818-compatible RTC its name is "rtc_cmos". And it can 
-be used to distinguish RTC type by hwclock utility.
-
-Best wishes.
---
-Igor Plyatov
+      Arnd
