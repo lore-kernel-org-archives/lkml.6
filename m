@@ -1,130 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752053AbeBSBVi (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 20:21:38 -0500
-Received: from LGEAMRELO12.lge.com ([156.147.23.52]:41889 "EHLO
-        lgeamrelo12.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751971AbeBSBVh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 20:21:37 -0500
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: namhyung@kernel.org
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-Date: Mon, 19 Feb 2018 10:21:34 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: changbin.du@intel.com
-Cc: jolsa@redhat.com, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, kernel-team@lge.com
-Subject: Re: [PATCH v3] perf ftrace: Append an EOL when write tracing files
-Message-ID: <20180219012134.GA1583@sejong>
-References: <1518576264-16436-1-git-send-email-changbin.du@intel.com>
+        id S1752080AbeBSBrJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 20:47:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42300 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751984AbeBSBrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Feb 2018 20:47:08 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 697C32176F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AH8x224YlpcwxxLb2cHBGhleaZb65KTeEvsyHEHT7ifAH5H1mA30WrlCMhjwslaYdDqSAQKaEkpjPwres36JmNHBCig=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1518576264-16436-1-git-send-email-changbin.du@intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1519000156-14319-1-git-send-email-frowand.list@gmail.com>
+References: <1519000156-14319-1-git-send-email-frowand.list@gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Sun, 18 Feb 2018 19:46:46 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLa83SKe5vbCkU8pwjPzBszsHrWQEA-ThMMciMwLO1XmA@mail.gmail.com>
+Message-ID: <CAL_JsqLa83SKe5vbCkU8pwjPzBszsHrWQEA-ThMMciMwLO1XmA@mail.gmail.com>
+Subject: Re: [PATCH] of: Kconfig: OF_OVERLAY, select OF_EARLY_FLATTREE
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Wed, Feb 14, 2018 at 10:44:24AM +0800, changbin.du@intel.com wrote:
-> From: Changbin Du <changbin.du@intel.com>
-> 
-> Before this change, the '--graph-funcs', '--nograph-funcs' and
-> '--trace-funcs' options didn't work as expected when the <func> doesn't
-> exist. Because the kernel side hid possible errors.
-> 
-> $ sudo ./perf ftrace -a --graph-depth 1 --graph-funcs abcdefg
->  0)   0.140 us    |  rcu_all_qs();
->  3)   0.304 us    |  mutex_unlock();
->  0)   0.153 us    |  find_vma();
->  3)   0.088 us    |  __fsnotify_parent();
->  0)   6.145 us    |  handle_mm_fault();
->  3)   0.089 us    |  fsnotify();
->  3)   0.161 us    |  __sb_end_write();
->  3)   0.710 us    |  SyS_close();
->  3)   7.848 us    |  exit_to_usermode_loop();
-> 
-> On above example, I specified function filter 'abcdefg' but all functions
-> are enabled. The expected error is hidden.
-> 
-> The original fix is to make the kernel support '\0' as end of string:
-> https://lkml.org/lkml/2018/1/16/116
-> 
-> But above fix cannot be compatible with old kernels. Then Namhyung Kim
-> suggest adding a space after function name.
-> 
-> This patch will append an '\n' when write tracing file. After this fix,
-> the perf will report correct error state. Also let it print an error if
-> reset_tracing_files() fails.
-> 
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Signed-off-by: Changbin Du <changbin.du@intel.com>
-> 
+On Sun, Feb 18, 2018 at 6:29 PM,  <frowand.list@gmail.com> wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
+>
+> kbuild test robot reported a new warning for a recent patch:
+>>> drivers/of/overlay.c:832:2: error: implicit declaration of function 'of_fdt_unflatten_tree' [-Werror=implicit-function-declaration]
+>      of_fdt_unflatten_tree(new_fdt, NULL, &overlay_root);
+>
+> The cause is that the prototype for of_fdt_unflatten_tree() in
+> include/linux/of_fdt.c is guarded by OF_EARLY_FLATTREE.
+>
+> This was a pre-existing problem for any overlay related caller of
+> of_fdt_unflatten_device_tree(), who was then going to pass the
+> unflattened tree to of_overlay_apply().  After the patch that triggered
+> this warning, all other overlay callers of of_fdt_unflatten_device_tree()
+> no longer exist, so adding the select to OF_OVERLAY is a sufficient fix.
+>
+> To reproduce the warning:
+>   Use the .config attached to https://lkml.org/lkml/2018/2/17/268
+>   make ARCH=i386 olddefconfig
+>   make ARCH=i386 CC=gcc-7 drivers/of/overlay.o
+>
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 > ---
-> v3: Took Kim's suggestion that add a space after function name.
-> v2: Rebase.
-> ---
->  tools/perf/builtin-ftrace.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
-> index 25a42ac..9ffd748 100644
-> --- a/tools/perf/builtin-ftrace.c
-> +++ b/tools/perf/builtin-ftrace.c
-> @@ -72,6 +72,7 @@ static int __write_tracing_file(const char *name, const char *val, bool append)
->  	ssize_t size = strlen(val);
->  	int flags = O_WRONLY;
->  	char errbuf[512];
-> +	char *val_copy;
->  
->  	file = get_tracing_file(name);
->  	if (!file) {
-> @@ -91,12 +92,20 @@ static int __write_tracing_file(const char *name, const char *val, bool append)
->  		goto out;
->  	}
->  
-> -	if (write(fd, val, size) == size)
-> +	/*
-> +	 * Copy the original value and append a '\n'. Without this,
-> +	 * the kernel can hide possible errors.
-> +	 */
-> +	val_copy = strdup(val);
+>  drivers/of/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+> index 783e0870bd22..00a6abfaaec7 100644
+> --- a/drivers/of/Kconfig
+> +++ b/drivers/of/Kconfig
+> @@ -92,6 +92,7 @@ config OF_RESOLVE
+>  config OF_OVERLAY
+>         bool "Device Tree overlays"
+>         select OF_DYNAMIC
+> +       select OF_EARLY_FLATTREE
 
-Please check the return value.
+If we do this, we might as well kill OF_EARLY_FLATTREE. What platform
+really boots from not FDT, but uses DT without overlays?
 
-Thanks,
-Namhyung
-
-
-> +	val_copy[size] = '\n';
-> +
-> +	if (write(fd, val_copy, size + 1) == size + 1)
->  		ret = 0;
->  	else
->  		pr_debug("write '%s' to tracing/%s failed: %s\n",
->  			 val, name, str_error_r(errno, errbuf, sizeof(errbuf)));
->  
-> +	free(val_copy);
->  	close(fd);
->  out:
->  	put_tracing_file(file);
-> @@ -280,8 +289,10 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace, int argc, const char **argv)
->  	signal(SIGCHLD, sig_handler);
->  	signal(SIGPIPE, sig_handler);
->  
-> -	if (reset_tracing_files(ftrace) < 0)
-> +	if (reset_tracing_files(ftrace) < 0) {
-> +		pr_err("failed to reset ftrace\n");
->  		goto out;
-> +	}
->  
->  	/* reset ftrace buffer */
->  	if (write_tracing_file("trace", "0") < 0)
-> -- 
-> 2.7.4
-> 
+Rob
