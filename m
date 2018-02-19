@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932170AbeBSTtp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 14:49:45 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44990 "EHLO
+        id S932132AbeBSTtl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 14:49:41 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:45038 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753808AbeBSTq1 (ORCPT
+        with ESMTP id S1753720AbeBSTq3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 14:46:27 -0500
+        Mon, 19 Feb 2018 14:46:29 -0500
 From: Matthew Wilcox <willy@infradead.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v7 47/61] shmem: Convert shmem_tag_pins to XArray
-Date: Mon, 19 Feb 2018 11:45:42 -0800
-Message-Id: <20180219194556.6575-48-willy@infradead.org>
+Subject: [PATCH v7 53/61] shmem: Comment fixups
+Date: Mon, 19 Feb 2018 11:45:48 -0800
+Message-Id: <20180219194556.6575-54-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180219194556.6575-1-willy@infradead.org>
 References: <20180219194556.6575-1-willy@infradead.org>
@@ -23,74 +23,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Simplify the locking by taking the spinlock while we walk the tree on
-the assumption that many acquires and releases of the lock will be
-worse than holding the lock for a (potentially) long time.
-
-We could replicate the same locking behaviour with the xarray, but would
-have to be careful that the xa_node wasn't RCU-freed under us before we
-took the lock.
+Remove the last mentions of radix tree from various comments.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/shmem.c | 39 ++++++++++++++++-----------------------
- 1 file changed, 16 insertions(+), 23 deletions(-)
+ mm/shmem.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 0179f9aa7d0e..5b70fbdec605 100644
+index c24c4cb76c43..68aeff336822 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -2601,35 +2601,28 @@ static loff_t shmem_file_llseek(struct file *file, loff_t offset, int whence)
- 
- static void shmem_tag_pins(struct address_space *mapping)
- {
--	struct radix_tree_iter iter;
--	void **slot;
--	pgoff_t start;
-+	XA_STATE(xas, &mapping->pages, 0);
- 	struct page *page;
-+	unsigned int tagged = 0;
- 
- 	lru_add_drain();
--	start = 0;
--	rcu_read_lock();
- 
--	radix_tree_for_each_slot(slot, &mapping->pages, &iter, start) {
--		page = radix_tree_deref_slot(slot);
--		if (!page || radix_tree_exception(page)) {
--			if (radix_tree_deref_retry(page)) {
--				slot = radix_tree_iter_retry(&iter);
--				continue;
--			}
--		} else if (page_count(page) - page_mapcount(page) > 1) {
--			xa_lock_irq(&mapping->pages);
--			radix_tree_tag_set(&mapping->pages, iter.index,
--					   SHMEM_TAG_PINNED);
--			xa_unlock_irq(&mapping->pages);
--		}
-+	xas_lock_irq(&xas);
-+	xas_for_each(&xas, page, ULONG_MAX) {
-+		if (xa_is_value(page))
-+			continue;
-+		if (page_count(page) - page_mapcount(page) > 1)
-+			xas_set_tag(&xas, SHMEM_TAG_PINNED);
- 
--		if (need_resched()) {
--			slot = radix_tree_iter_resume(slot, &iter);
--			cond_resched_rcu();
--		}
-+		if (++tagged % XA_CHECK_SCHED)
-+			continue;
-+
-+		xas_pause(&xas);
-+		xas_unlock_irq(&xas);
-+		cond_resched();
-+		xas_lock_irq(&xas);
- 	}
--	rcu_read_unlock();
-+	xas_unlock_irq(&xas);
+@@ -743,7 +743,7 @@ void shmem_unlock_mapping(struct address_space *mapping)
  }
  
  /*
+- * Remove range of pages and swap entries from radix tree, and free them.
++ * Remove range of pages and swap entries from page cache, and free them.
+  * If !unfalloc, truncate or punch hole; if unfalloc, undo failed fallocate.
+  */
+ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+@@ -1118,10 +1118,10 @@ static int shmem_unuse_inode(struct shmem_inode_info *info,
+ 		 * We needed to drop mutex to make that restrictive page
+ 		 * allocation, but the inode might have been freed while we
+ 		 * dropped it: although a racing shmem_evict_inode() cannot
+-		 * complete without emptying the radix_tree, our page lock
++		 * complete without emptying the page cache, our page lock
+ 		 * on this swapcache page is not enough to prevent that -
+ 		 * free_swap_and_cache() of our swap entry will only
+-		 * trylock_page(), removing swap from radix_tree whatever.
++		 * trylock_page(), removing swap from page cache whatever.
+ 		 *
+ 		 * We must not proceed to shmem_add_to_page_cache() if the
+ 		 * inode has been freed, but of course we cannot rely on
+@@ -1187,7 +1187,7 @@ int shmem_unuse(swp_entry_t swap, struct page *page)
+ 			false);
+ 	if (error)
+ 		goto out;
+-	/* No radix_tree_preload: swap entry keeps a place for page in tree */
++	/* No memory allocation: swap entry occupies the slot for the page */
+ 	error = -EAGAIN;
+ 
+ 	mutex_lock(&shmem_swaplist_mutex);
+@@ -1863,7 +1863,7 @@ alloc_nohuge:		page = shmem_alloc_and_acct_page(gfp, inode,
+ 		spin_unlock_irq(&info->lock);
+ 		goto repeat;
+ 	}
+-	if (error == -EEXIST)	/* from above or from radix_tree_insert */
++	if (error == -EEXIST)
+ 		goto repeat;
+ 	return error;
+ }
+@@ -2475,7 +2475,7 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ }
+ 
+ /*
+- * llseek SEEK_DATA or SEEK_HOLE through the radix_tree.
++ * llseek SEEK_DATA or SEEK_HOLE through the page cache.
+  */
+ static pgoff_t shmem_seek_hole_data(struct address_space *mapping,
+ 				    pgoff_t index, pgoff_t end, int whence)
+@@ -2563,7 +2563,7 @@ static loff_t shmem_file_llseek(struct file *file, loff_t offset, int whence)
+ }
+ 
+ /*
+- * We need a tag: a new tag would expand every radix_tree_node by 8 bytes,
++ * We need a tag: a new tag would expand every xa_node by 8 bytes,
+  * so reuse a tag which we firmly believe is never set or cleared on shmem.
+  */
+ #define SHMEM_TAG_PINNED        PAGECACHE_TAG_TOWRITE
 -- 
 2.16.1
