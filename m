@@ -1,54 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753996AbeBSTzp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 14:55:45 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36190 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753727AbeBSTzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 14:55:42 -0500
-Subject: Re: [PATCH v3 3/3] s390/setup : enable display support for KVM guest
-To: Farhan Ali <alifm@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: geert@linux-m68k.org, borntraeger@de.ibm.com, tomi.valkeinen@ti.com,
-        b.zolnierkie@samsung.com
-References: <cover.1519053920.git.alifm@linux.vnet.ibm.com>
- <8a6103fcc2b05f4426dcf6573a2175ffe6211403.1519053920.git.alifm@linux.vnet.ibm.com>
-From: Thomas Huth <thuth@redhat.com>
-Message-ID: <b7e118a9-9920-07bc-ccac-f72f451fccea@redhat.com>
-Date: Mon, 19 Feb 2018 20:55:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <8a6103fcc2b05f4426dcf6573a2175ffe6211403.1519053920.git.alifm@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1753964AbeBSTzb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 14:55:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44838 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753733AbeBSTqU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 14:46:20 -0500
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v7 35/61] mm: Convert truncate to XArray
+Date: Mon, 19 Feb 2018 11:45:30 -0800
+Message-Id: <20180219194556.6575-36-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180219194556.6575-1-willy@infradead.org>
+References: <20180219194556.6575-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19.02.2018 16:47, Farhan Ali wrote:
-> The S390 architecture does not support any graphics hardware,
-> but with the latest support for Virtio GPU in Linux and Virtio
-> GPU emulation in QEMU, it's possible to enable graphics for
-> S390 using the Virtio GPU device.
-> 
-> To enable display we need to enable the Linux Virtual Terminal (VT)
-> layer for S390. But the VT subsystem initializes quite early
-> at boot so we need a dummy console driver till the Virtio GPU
-> driver is initialized and we can run the framebuffer console.
-> 
-> The framebuffer console over a Virtio GPU device can be run
-> in combination with the serial SCLP console (default on S390).
-> The SCLP console can still be accessed by management applications
-> (eg: via Libvirt's virsh console).
-> 
-> Signed-off-by: Farhan Ali <alifm@linux.vnet.ibm.com>
-> Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> ---
->  arch/s390/kernel/setup.c      | 2 ++
->  drivers/tty/Kconfig           | 2 +-
->  drivers/video/console/Kconfig | 2 +-
->  3 files changed, 4 insertions(+), 2 deletions(-)
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Reviewed-by: Thomas Huth <thuth@redhat.com>
+This is essentially xa_cmpxchg() with the locking handled above us,
+and it doesn't have to handle replacing a NULL entry.
+
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ mm/truncate.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+diff --git a/mm/truncate.c b/mm/truncate.c
+index 3fe1e7461684..9267c1a12a31 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -33,15 +33,12 @@
+ static inline void __clear_shadow_entry(struct address_space *mapping,
+ 				pgoff_t index, void *entry)
+ {
+-	struct radix_tree_node *node;
+-	void **slot;
++	XA_STATE(xas, &mapping->pages, index);
+ 
+-	if (!__radix_tree_lookup(&mapping->pages, index, &node, &slot))
++	xas_set_update(&xas, workingset_update_node);
++	if (xas_load(&xas) != entry)
+ 		return;
+-	if (*slot != entry)
+-		return;
+-	__radix_tree_replace(&mapping->pages, node, slot, NULL,
+-			     workingset_update_node);
++	xas_store(&xas, NULL);
+ 	mapping->nrexceptional--;
+ }
+ 
+@@ -738,10 +735,10 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
+ 		index++;
+ 	}
+ 	/*
+-	 * For DAX we invalidate page tables after invalidating radix tree.  We
++	 * For DAX we invalidate page tables after invalidating page cache.  We
+ 	 * could invalidate page tables while invalidating each entry however
+ 	 * that would be expensive. And doing range unmapping before doesn't
+-	 * work as we have no cheap way to find whether radix tree entry didn't
++	 * work as we have no cheap way to find whether page cache entry didn't
+ 	 * get remapped later.
+ 	 */
+ 	if (dax_mapping(mapping)) {
+-- 
+2.16.1
