@@ -1,62 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752592AbeBSK6x (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 05:58:53 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:34332 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752468AbeBSK6w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 05:58:52 -0500
-X-Google-Smtp-Source: AH8x227trOlTSD56LeudusWEEkFUC7vEYcR137ebRSWd70jnCLa5wf5ihUCc1Aoik/1yF7ZG8x9CJpKqrkq64FdbvpM=
-MIME-Version: 1.0
-In-Reply-To: <1519022394-11326-1-git-send-email-bhsharma@redhat.com>
-References: <1519022394-11326-1-git-send-email-bhsharma@redhat.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 19 Feb 2018 11:58:50 +0100
-X-Google-Sender-Auth: a2v0UbngJKw3T9b1PCSv3WT30Hc
-Message-ID: <CAK8P3a2v9s8A8u+aRYgkQJL+TBmEauwuyFzPb_gnvU=1ZkntRA@mail.gmail.com>
+        id S1752554AbeBSLCc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 06:02:32 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57398 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752486AbeBSLCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 06:02:31 -0500
+Date: Mon, 19 Feb 2018 11:02:39 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: John Garry <john.garry@huawei.com>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bhupesh.linux@gmail.com
 Subject: Re: [PATCH] arm64: Fix compilation error while accessing
  MPIDR_HWID_BITMASK from .S files
-To: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        bhupesh.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20180219110238.GA30394@arm.com>
+References: <1519022394-11326-1-git-send-email-bhsharma@redhat.com>
+ <36bd758c-dd49-edef-cc1a-20f5b43f5011@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <36bd758c-dd49-edef-cc1a-20f5b43f5011@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 7:39 AM, Bhupesh Sharma <bhsharma@redhat.com> wrote:
-> Since commit e1a50de37860b3a93a9d643b09638db5aff47650 (arm64: cputype:
-> Silence Sparse warnings), compilation of arm64 architecture is broken
-> with the following error messages:
->
->   AR      arch/arm64/kernel/built-in.o
->   arch/arm64/kernel/head.S: Assembler messages:
->   arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
->   arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
->   arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
->   arch/arm64/kernel/head.S:677: Error: junk at end of line, first
->   unrecognized character is `L'
->   arch/arm64/kernel/head.S:677: Error: unexpected characters following
->   instruction at operand 2 -- `movz x1,:abs_g1_s:0xff00ffffffUL'
->   arch/arm64/kernel/head.S:677: Error: unexpected characters following
->   instruction at operand 2 -- `movk x1,:abs_g0_nc:0xff00ffffffUL'
->
-> This patch fixes the same by using the UL() macro correctly for
-> assigning the MPIDR_HWID_BITMASK macro value.
->
-> Signed-off-by: Bhupesh Sharma <bhsharma@redhat.com>
+Hi John,
 
-Saw the same thing in the kernelci report for linux-next.
+On Mon, Feb 19, 2018 at 10:19:35AM +0000, John Garry wrote:
+> On 19/02/2018 06:39, Bhupesh Sharma wrote:
+> >Since commit e1a50de37860b3a93a9d643b09638db5aff47650 (arm64: cputype:
+> >Silence Sparse warnings), compilation of arm64 architecture is broken
+> >with the following error messages:
+> >
+> >  AR      arch/arm64/kernel/built-in.o
+> >  arch/arm64/kernel/head.S: Assembler messages:
+> >  arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
+> >  arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
+> >  arch/arm64/kernel/head.S:677: Error: found 'L', expected: ')'
+> >  arch/arm64/kernel/head.S:677: Error: junk at end of line, first
+> >  unrecognized character is `L'
+> >  arch/arm64/kernel/head.S:677: Error: unexpected characters following
+> >  instruction at operand 2 -- `movz x1,:abs_g1_s:0xff00ffffffUL'
+> >  arch/arm64/kernel/head.S:677: Error: unexpected characters following
+> >  instruction at operand 2 -- `movk x1,:abs_g0_nc:0xff00ffffffUL'
+> >
+> >This patch fixes the same by using the UL() macro correctly for
+> >assigning the MPIDR_HWID_BITMASK macro value.
+> >
+> >Signed-off-by: Bhupesh Sharma <bhsharma@redhat.com>
+> >---
+> > arch/arm64/include/asm/cputype.h | 2 +-
+> > 1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> >diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
+> >index eda8c5f629fc..350c76a1d15b 100644
+> >--- a/arch/arm64/include/asm/cputype.h
+> >+++ b/arch/arm64/include/asm/cputype.h
+> >@@ -20,7 +20,7 @@
+> >
+> > #define MPIDR_UP_BITMASK	(0x1 << 30)
+> > #define MPIDR_MT_BITMASK	(0x1 << 24)
+> >-#define MPIDR_HWID_BITMASK	0xff00ffffffUL
+> >+#define MPIDR_HWID_BITMASK	UL(0xff00ffffff)
+> 
+> Works for me.
+> 
+> FYI, I am using (old) gcc-linaro-4.8-2015.06-x86_64_aarch64.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Just to confirm: are you saying that this patch fixes the build for you,
+or that mainline builds for you and the patch is not needed?
 
-Note that when referencing a commit, it's best to abbreviate the commit
-ID to the first 12 characters like "e1a50de37860". You can also a line like
+Cheers,
 
-Fixes: e1a50de37860 ("arm64: cputype: Silence Sparse warnings")
-
-which is the standard format to describe such regressions.
-
-       Arnd
+Will
