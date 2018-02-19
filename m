@@ -1,91 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753551AbeBSTEr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 14:04:47 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53090 "EHLO
+        id S1753614AbeBSTE6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 14:04:58 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53112 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753452AbeBSTEq (ORCPT
+        with ESMTP id S1753560AbeBSTE5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 14:04:46 -0500
-Date: Mon, 19 Feb 2018 20:04:42 +0100
+        Mon, 19 Feb 2018 14:04:57 -0500
+Date: Mon, 19 Feb 2018 20:04:54 +0100
 From: Pavel Machek <pavel@ucw.cz>
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, pali.rohar@gmail.com,
-        sre@kernel.org, kernel list <linux-kernel@vger.kernel.org>,
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: pali.rohar@gmail.com, sre@kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
         aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com,
         patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com,
         clayton@craftyguy.net, martijn@brixit.nl,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org
-Subject: next-20180219: camera problems on n900
-Message-ID: <20180219181715.GA19366@amd>
-References: <20171227210543.GA19719@amd>
- <20171227211718.favif66afztygfje@kekkonen.localdomain>
- <20171228202453.GA20142@amd>
- <20171229093855.hz44vpssb5mufzop@valkosipuli.retiisi.org.uk>
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>
+Subject: Re: v4.13 on nokia n900: oops during tethering
+Message-ID: <20180219190454.GB19366@amd>
+References: <20180212201000.GA25608@amd>
+ <20180213222412.GA1116@mara.localdomain>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="NklN7DEeGtkPCoo3"
+        protocol="application/pgp-signature"; boundary="cPi+lWm09sJ+d57q"
 Content-Disposition: inline
-In-Reply-To: <20171229093855.hz44vpssb5mufzop@valkosipuli.retiisi.org.uk>
+In-Reply-To: <20180213222412.GA1116@mara.localdomain>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---NklN7DEeGtkPCoo3
+--cPi+lWm09sJ+d57q
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > > > In v4.14, back camera on N900 works. On v4.15-rc1.. it works for few
-> > > > seconds, but then I get repeated oopses.
-> > > >=20
-> > > > On v4.15-rc0.5 (commit ed30b147e1f6e396e70a52dbb6c7d66befedd786),
-> > > > camera does not start.	 =20
-> > > >=20
-> > > > Any ideas what might be wrong there?
-> > >=20
-> > > What kind of oopses do you get?
+> On Mon, Feb 12, 2018 at 09:10:00PM +0100, Pavel Machek wrote:
+> > Hi!
 > >=20
-> > Hmm. bisect pointed to commit that can't be responsible.... Ideas
-> > welcome.
+> > During tethering, I got oops in ssi_stop_tx(), followed by failure of
+> > GPRS. I used GPRS tethering a lot with some older kernel, and it was
+> > stable for hours.
+> >=20
+> > It seems v4.12 has the same problem. In v4.15 usb networking does not
+> > work at all, so I can't test... v4.10 seems to have similar problem. (T=
+esting is
+> > slighlty tricky, as my internet connection is ... tethering using
+> > N900.)
 >=20
-> Hi Pavel,
->=20
-> I tested N9 and capture appears to be working from the CSI-2 receiver
-> (media tree master, i.e. v4.15-rc3 now).
->=20
-> Which pipeline did you use?
+> Based on a quick look ssi_stop_tx() is called too many times (i.e. once
+> more than ssi_start_tx()). This would appear to be an interal problem
+> with the SSI codebase (or whatever lies there; I don't know the current
+> codebase).
 
-I tested next-20180219 and camera does not work there. It leads to
-nasty oops. I tried to capture the oops with dmesg > file, and that
-one oopsed, too. usb networking also has problems... fun.
+If I change BUG_ON in ssi_stop_tx() to warning and return, I see the
+warning and system survives it.
 
-Camera works ok in V4.16-rc1, but if I use the camera, next shutdown
-will oops. I'll try to collect more data there, too.
+> Did this work in the past? When? There appear to have been changes in IRQ
+> handling some time in 2016...
 
+Actually, I'm not sure any more :-(. I did have tethering running
+overnight some time ago, but it was on slower mobile data, and over
+wifi.
 									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---NklN7DEeGtkPCoo3
+--cPi+lWm09sJ+d57q
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlqLH8oACgkQMOfwapXb+vKrMwCgvQzZUCCQd86YKbYEfqyLpZyt
-0lwAoLJQMkFEUbNfoS3m7W8vc2dtCyWr
-=M7hn
+iEYEARECAAYFAlqLH9YACgkQMOfwapXb+vIHsACdHeFJXa7lW8T4XvB/Fmk9W9xp
+0v0AniVhg8FnM63kPy+jXVlcHtH0eGvO
+=dZOh
 -----END PGP SIGNATURE-----
 
---NklN7DEeGtkPCoo3--
+--cPi+lWm09sJ+d57q--
