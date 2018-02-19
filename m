@@ -1,99 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752832AbeBSOrj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 09:47:39 -0500
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:36282 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751446AbeBSOrh (ORCPT
+        id S1752891AbeBSOrs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 09:47:48 -0500
+Received: from mailout3.hostsharing.net ([176.9.242.54]:52499 "EHLO
+        mailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752469AbeBSOrp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 09:47:37 -0500
-X-Google-Smtp-Source: AH8x227m+4uh50vfC2STiPNvKPMWKMgH0suDxGGF1aWznDW/kH9cAf8DN/UkAMI8H1MGvvFGEfpzTw==
-Date: Mon, 19 Feb 2018 08:47:35 -0600
-From: Rob Herring <robh@kernel.org>
-To: Ludovic Barre <ludovic.Barre@st.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Gerald Baeza <gerald.baeza@st.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org
-Subject: Re: [PATCH 1/5] dt-bindings: mmc: document the stm32 sdmmc bindings
-Message-ID: <20180219144735.sbxa76z6aik3w453@rob-hp-laptop>
-References: <1518701697-14242-1-git-send-email-ludovic.Barre@st.com>
- <1518701697-14242-2-git-send-email-ludovic.Barre@st.com>
+        Mon, 19 Feb 2018 09:47:45 -0500
+Date: Mon, 19 Feb 2018 15:47:42 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Dave Airlie <airlied@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Ismo Toijala <ismo.toijala@gmail.com>, nouveau@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, Liviu Dudau <Liviu.Dudau@arm.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [Intel-gfx] [Nouveau] [PATCH 0/5] Fix deadlock on runtime
+ suspend in DRM drivers
+Message-ID: <20180219144742.yffm3ptzyrslccjj@wunner.de>
+References: <cover.1518338788.git.lukas@wunner.de>
+ <20180219113443.GU22199@phenom.ffwll.local>
+ <20180219115817.4e5ml4jdh22kbvs4@wunner.de>
+ <20180219140553.GA22199@phenom.ffwll.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1518701697-14242-2-git-send-email-ludovic.Barre@st.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180219140553.GA22199@phenom.ffwll.local>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 02:34:53PM +0100, Ludovic Barre wrote:
-> From: Ludovic Barre <ludovic.barre@st.com>
+On Mon, Feb 19, 2018 at 03:05:53PM +0100, Daniel Vetter wrote:
+> On Mon, Feb 19, 2018 at 12:58:17PM +0100, Lukas Wunner wrote:
+> > On Mon, Feb 19, 2018 at 12:34:43PM +0100, Daniel Vetter wrote:
+> > > Well, userspace expects hotplug events, even when we runtime suspend
+> > > stuff. Hence waking shit up with polling. Imo ignoring hotplug events is a
+> > > pretty serious policy decision which is ok in the context of
+> > > vga_switcheroo, but not really as an automatic thing. E.g. usb also wakes
+> > > up if you plug something in, even with all the runtime pm stuff enabled.
+> > > Same for sata and everything else.
+> > 
+> > On the MacBook Pro, the HPD pin of external DP and HDMI ports goes into
+> > the gmux controller, which sends an interrupt on hotplug even if the GPU
+> > is powered down.
+> > 
+> > Apparently Optimus has a similar functionality, cf. 3a6536c51d5d.
 > 
-> Document the binding for stm32 sdmmc controller.
-> 
-> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-> ---
->  .../devicetree/bindings/mmc/st,stm32-sdmmc.txt     | 35 ++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mmc/st,stm32-sdmmc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/st,stm32-sdmmc.txt b/Documentation/devicetree/bindings/mmc/st,stm32-sdmmc.txt
-> new file mode 100644
-> index 0000000..52eb1f8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/st,stm32-sdmmc.txt
-> @@ -0,0 +1,35 @@
-> +* STMicroelectronics STM32 SDMMC controller
-> +
-> +The highspeed MMC host controller on STM32 soc family
-> +provides an interface for MMC, SD and SDIO types of memory cards.
-> +
-> +This file documents differences between the core properties described
-> +by mmc.txt and the properties used by the sdmmc driver.
-> +
-> +Required properties:
-> + - compatible: Should be "st,stm32h7-sdmmc"
-> + - reg: mmc controller base registers
-> + - interrupts: Should contain the interrupt number
-> + - clocks: Should contain phandle for the clock feeding the controller
-> + - resets: Should contain phandle for the reset feeding the controller
-> +
-> +Optional property:
-> +- st,dirpol: Allow to select direction polarity of external voltage
+> Yeah, for vga_switcheroo and gmux setups shutting down polling explicitly
+> makes sense. I think ideally we'd stop polling in the gmux handler somehow
+> (maybe by dropping the relevant DRM_CONNECTOR_POLL flags, or outright
+> stopping it all). But not when runtime suspending the entire gpu (e.g.
+> idle system that shuts down the screen and everything, before it decides
+> a few minutes later to do a full system suspend).
 
-This doesn't need to be so terse. Perhaps "st,dir-output-high".
+nouveau, radeon and amdgpu currently use runtime PM *only* on hybrid
+graphics laptops.
 
-> +  transceiver (which manage data and command direction).
-> +  if set: Voltage transceiver IOs are driven as output when direction signals are high,
-> +  else: Voltage transceiver IOs are driven as output when direction signals are low.
-> +- st,negedge: generate data & command on sdmmc clock falling edge
+Should the drivers later be extended to also use runtime PM in other
+scenarios (desktop machines, eGPUs), they can easily detect whether
+to disable polling on runtime suspend by calling apple_gmux_present()
+on Macs or the equivalent for Optimus/ATPX.
 
-st,neg-edge
+Thanks,
 
-> +- st,pin-ckin: use sdmmc_ckin pin from an external driver to sample
-> +  the receive data (example: with voltage switch transceiver).
-
-st,use-ckin
-
-> +
-> +Example:
-> +	sdmmc1: sdmmc@52007000 {
-
-mmc@...
-
-> +		compatible = "st,stm32h7-sdmmc";
-> +		reg = <0x52007000 0x1000>;
-> +		interrupts = <49>;
-> +		clocks = <&rcc SDMMC1_CK>;
-> +		resets = <&rcc SDMMC1_R>;
-> +		bus-width = <4>;
-> +		cap-sd-highspeed;
-> +		cap-mmc-highspeed;
-> +	};
-> -- 
-> 2.7.4
-> 
+Lukas
