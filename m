@@ -1,65 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752137AbeBSJO2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 04:14:28 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:63363 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751866AbeBSJO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 04:14:26 -0500
-Subject: Re: [PATCH 16/18] crypto: talitos - do hw_context DMA mapping outside
- the requests
-To: =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <cover.1507284818.git.christophe.leroy@c-s.fr>
- <e47bf94ae44f23230b1647e31c9623f1075d3b79.1507284818.git.christophe.leroy@c-s.fr>
- <VI1PR0402MB3342A0A8530F74D408CA2F0298FC0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
- <2338eb8d-a26a-9722-d667-5a9785b32977@c-s.fr>
- <VI1PR0402MB3342D90D574C8829701882BE98C90@VI1PR0402MB3342.eurprd04.prod.outlook.com>
- <630c313c-5eca-224d-a5ac-fb3f2783573a@c-s.fr>
- <VI1PR0402MB334256E1706A4E1AED09F4A598C80@VI1PR0402MB3342.eurprd04.prod.outlook.com>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <d5809df9-fc17-03da-b7f4-038d973dbd1f@c-s.fr>
-Date: Mon, 19 Feb 2018 10:14:24 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        id S1752152AbeBSJQL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 04:16:11 -0500
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:41120 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751866AbeBSJQJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 04:16:09 -0500
+X-Google-Smtp-Source: AH8x227YWRy6z33TDM0lRwbouknXB4WJjBdgu7KWPlXeqrNq/F8DMCOmAvSirl0IumOtiUEv9z8scw==
+Subject: Re: 500 ms delay in time saved into RTC
+To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc: linux-kernel@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        rtc-linux@googlegroups.com, util-linux@vger.kernel.org
+References: <30ae185f-28c9-54f1-2884-4ee7801b130e@gmail.com>
+ <34f50661-85f5-eb46-3ff7-45f0c2bb5960@prevas.dk>
+From: Igor Plyatov <plyatov@gmail.com>
+Message-ID: <c91e0079-c31f-715d-bb2e-648af34565d7@gmail.com>
+Date: Mon, 19 Feb 2018 12:16:04 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <VI1PR0402MB334256E1706A4E1AED09F4A598C80@VI1PR0402MB3342.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=windows-1258; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <34f50661-85f5-eb46-3ff7-45f0c2bb5960@prevas.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dear Rasmus,
 
+thank you very much for explanation!
 
-Le 19/02/2018 à 09:30, Horia Geantã a écrit :
-> On 2/19/2018 9:58 AM, Christophe LEROY wrote:
->> Le 18/02/2018 à 18:14, Horia Geantã a écrit :
->>> There is no ahash_exit() callback mirroring ahash_init().
->>>
->>> The clean-up of request ctx should be done in the last states of the hash flows
->>> described here:
->>> https://www.kernel.org/doc/html/latest/crypto/devel-algos.html#cipher-definition-with-struct-shash-alg-and-ahash-alg
->>> for e.g. in the final() callback.
+I have set "RTC_SET_DELAY_SECS = 0.0" in hwclock.c and got acceptable 
+result.
+
+It wonder why such critical function does not implemented on kernel 
+level in RTC driver?
+It is very strange to rely on specific HW in user space SW.
+
+Best wishes.
+--
+Igor Plyatov
+
+> On 2018-02-19 07:40, Igor Plyatov wrote:
+>> Hi!
 >>
->> Unfortunatly it seems that we can't rely on those finalising functions
->> being called all the time.
->> If you look into test_ahash_jiffies() for instance, in case of error the
->> call of crypto_hash_final() is skipped.
-> 
-> If test_ahash_jiffies() errors before calling crypto_ahash_final(req), this
-> means a previous callback failed.
-> Accordingly, DMA unmapping should be performed also on the corresponding errors
-> paths in the driver.
-> 
-
-And what about ALGIF path from user space ?
-What if the user never calls the last sendmsg() which will call 
-hash_finup() ?
-
-Christophe
+>> I have board based on AT91SAM9G20 (ARM926EJ-S CPU), Linux-4.9.36 kernel
+>> and RTC chip DS1340 (rtc-ds1307.c driver).
+>>
+>> RTC chip connected by means of I2C-bus, without HW IRQ line connected.
+>>
+>> Kernel configured to not use embedded functions for time getting at
+>> startup and saving at shutdown:
+>> CONFIG_RTC_CLASS=y
+>> # CONFIG_RTC_HCTOSYS is not set
+>> # CONFIG_RTC_SYSTOHC is not set
+>> CONFIG_RTC_INTF_DEV_UIE_EMUL=y
+>> CONFIG_RTC_DRV_DS1307=y
+>> CONFIG_RTC_DRV_DS1307_CENTURY=y
+>>
+>> The hwclock utility is from util-linux-2.29.1.
+>>
+>> The OS does not have external time synchronization sources like NTP, PTP
+>> or else.
+>>
+>> Generally I need to achieve error within +-20 ms when RTC's time copied
+>> into OS or back from OS into RTC.
+>>
+>> I have made measurements during startup and shutdown of OS and have
+>> found 500 ms delay introduced into RTC's time, when "hwclock --utc
+>> --systohc" executed.
+>>
+>> Logical analyzer show to me I2C-bus transactions and PPS signal
+>> generated by Linux. And I see 500 ms delay is between of rising edge of
+>> PPS signal (start of OS second) and moment when time saved into RTC.
+>>
+>> Please explain, why this happens? Is this due to absence of IRQ line for
+>> RTC or due to a bug in the hwclock, or kernel bug or I have missed
+>> something else?
+> cc += util-linux@vger.kernel.org
+>
+> It's because util-linux's hwclock still assumes the world is x86. See
+> this comment in the util-linux source code:
+>
+>          /*
+>           * The Hardware Clock can only be set to any integer time plus one
+>           * half second.  The integer time is required because there is no
+>           * interface to set or get a fractional second.  The additional half
+>           * second is because the Hardware Clock updates to the following
+>           * second precisely 500 ms (not 1 second!) after you release the
+>           * divider reset (after setting the new time) - see description of
+>           * DV2, DV1, DV0 in Register A in the MC146818A data sheet (and note
+>
+> So if hwclock is asked to --systohc at time 01:02:03.x, it waits until
+> the time is 01:02:03.5 to set the rtc to 01:02:03, or if that has
+> already passed, waits until  01:02:04.5 and sets it to 01:02:04.
+>
+> On our ARM BSP we patch util-linux to have the "implicit fractional
+> part" configurable, and trying to upstream something like that has been
+> on my todo-list for quite a while. See
+>
+> https://raw.githubusercontent.com/oe-lite/base/master/recipes/util-linux/util-linux-2.29/hwclock-tweak-delay.patch
+>
+> for the patch we currently use (on top of that, we change the 0.5
+> initializer to 0.0 to avoid having to always pass the --delay argument).
+> Incidentally, it seems we're on the same util-linux version, so you
+> should be able to try out that patch and see if it works for you.
+>
+> Rasmus
