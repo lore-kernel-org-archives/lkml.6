@@ -1,71 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752080AbeBSBrJ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 20:47:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42300 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751984AbeBSBrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 20:47:08 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 697C32176F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
-X-Google-Smtp-Source: AH8x224YlpcwxxLb2cHBGhleaZb65KTeEvsyHEHT7ifAH5H1mA30WrlCMhjwslaYdDqSAQKaEkpjPwres36JmNHBCig=
+        id S1752137AbeBSBvM (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 20:51:12 -0500
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:39242 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751984AbeBSBvK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Feb 2018 20:51:10 -0500
+X-Google-Smtp-Source: AH8x227on7nYoqo9mfBX+VTisaWsj+PZ4TO42veSjyYoY78zziGlHDCUNKmUWoUJxdPI9/LSoSs/jg==
+Date: Sun, 18 Feb 2018 19:51:08 -0600
+From: Rob Herring <robh@kernel.org>
+To: Amelie Delaunay <amelie.delaunay@st.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: phy: add support for STM32 USB PHY
+ Controller (USBPHYC)
+Message-ID: <20180219015108.bxt6qn7tz53ydguv@rob-hp-laptop>
+References: <1518438929-5254-1-git-send-email-amelie.delaunay@st.com>
+ <1518438929-5254-2-git-send-email-amelie.delaunay@st.com>
 MIME-Version: 1.0
-In-Reply-To: <1519000156-14319-1-git-send-email-frowand.list@gmail.com>
-References: <1519000156-14319-1-git-send-email-frowand.list@gmail.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Sun, 18 Feb 2018 19:46:46 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLa83SKe5vbCkU8pwjPzBszsHrWQEA-ThMMciMwLO1XmA@mail.gmail.com>
-Message-ID: <CAL_JsqLa83SKe5vbCkU8pwjPzBszsHrWQEA-ThMMciMwLO1XmA@mail.gmail.com>
-Subject: Re: [PATCH] of: Kconfig: OF_OVERLAY, select OF_EARLY_FLATTREE
-To: Frank Rowand <frowand.list@gmail.com>
-Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Pantelis Antoniou <panto@antoniou-consulting.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518438929-5254-2-git-send-email-amelie.delaunay@st.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 18, 2018 at 6:29 PM,  <frowand.list@gmail.com> wrote:
-> From: Frank Rowand <frank.rowand@sony.com>
->
-> kbuild test robot reported a new warning for a recent patch:
->>> drivers/of/overlay.c:832:2: error: implicit declaration of function 'of_fdt_unflatten_tree' [-Werror=implicit-function-declaration]
->      of_fdt_unflatten_tree(new_fdt, NULL, &overlay_root);
->
-> The cause is that the prototype for of_fdt_unflatten_tree() in
-> include/linux/of_fdt.c is guarded by OF_EARLY_FLATTREE.
->
-> This was a pre-existing problem for any overlay related caller of
-> of_fdt_unflatten_device_tree(), who was then going to pass the
-> unflattened tree to of_overlay_apply().  After the patch that triggered
-> this warning, all other overlay callers of of_fdt_unflatten_device_tree()
-> no longer exist, so adding the select to OF_OVERLAY is a sufficient fix.
->
-> To reproduce the warning:
->   Use the .config attached to https://lkml.org/lkml/2018/2/17/268
->   make ARCH=i386 olddefconfig
->   make ARCH=i386 CC=gcc-7 drivers/of/overlay.o
->
-> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+On Mon, Feb 12, 2018 at 01:35:28PM +0100, Amelie Delaunay wrote:
+> This patch adds the device tree bindings description for STM32 USBPHYC
+> (USB PHY Controller).
+> 
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
 > ---
->  drivers/of/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
-> index 783e0870bd22..00a6abfaaec7 100644
-> --- a/drivers/of/Kconfig
-> +++ b/drivers/of/Kconfig
-> @@ -92,6 +92,7 @@ config OF_RESOLVE
->  config OF_OVERLAY
->         bool "Device Tree overlays"
->         select OF_DYNAMIC
-> +       select OF_EARLY_FLATTREE
+>  .../devicetree/bindings/phy/phy-stm32-usbphyc.txt  | 46 ++++++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/phy-stm32-usbphyc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/phy-stm32-usbphyc.txt b/Documentation/devicetree/bindings/phy/phy-stm32-usbphyc.txt
+> new file mode 100644
+> index 0000000..1e65e0a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/phy-stm32-usbphyc.txt
+> @@ -0,0 +1,46 @@
+> +STMicroelectronics STM32 USB HS PHY controller
+> +
+> +The STM32 USBPHYC block contains a dual port High Speed UTMI+ PHY and a UTMI
+> +switch. It controls PHY configuration and status, and the UTMI+ switch that
+> +selects either OTG or HOST controller for the second PHY port. It also sets
+> +PLL configuration.
+> +
+> +USBPHYC
+> +  |_ PLL
+> +  |
+> +  |_ PHY port#1 _________________ HOST controller
+> +  |                                      |
+> +  |_ PHY port#2_______                   |
+> +  |                   |_                 |
+> +  |_ UTMI switch_____/ 1|________________|
+> +                    |   |________________
+> +                     \_0|                |
+> +		                  OTG controller
+> +
+> +Required properties:
+> +- compatible: must be "st,stm32mp1-usbphyc"
+> +- reg: address and length of the usb phy control register set
+> +- clocks: phandle + clock specifier for the PLL phy clock
+> +- phy-supply: from the generic phy bindings, phandle to the regulator
+> +  providing 3V3 power to the PHY, see phy-bindings.txt
+> +- vdda1v1-supply: phandle to the regulator providing 1V1 power to the PHY
+> +- vdda1v8-supply: phandle to the regulator providing 1V8 power to the PHY
+> +
+> +Optional properties:
+> +- assigned-clocks: phandle + clock specifier for the PLL phy clock
+> +- assigned-clock-parents: the PLL phy clock parent
+> +- resets: phandle + reset specifier
+> +- st,port2-switch-to-host: select HOST controller on UTMI switch for port#2
 
-If we do this, we might as well kill OF_EARLY_FLATTREE. What platform
-really boots from not FDT, but uses DT without overlays?
+This one seems very specific. If another device had the mux on a 
+different port number you'd need a new property for example.
 
-Rob
+But really I think this should be determined by either a USB connector 
+node (a binding is in the works) or cable detection.
+
+> +
+> +
+> +Example:
+> +		usbphyc: usbphyc@5a006000 {
+
+usb-phy@...
+
+> +			compatible = "st,stm32mp1-usbphyc";
+> +			reg = <0x5a006000 0x1000>;
+> +			clocks = <&rcc_clk USBPHY_K>;
+> +			resets = <&rcc_rst USBPHY_R>;
+> +			st,port2-switch-to-host;
+> +			phy-supply = <&vdd_usb>;
+> +			vdda1v1-supply = <&reg11>;
+> +			vdda1v8-supply = <&reg18>
+> +		};
+> -- 
+> 2.7.4
+> 
