@@ -1,32 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751798AbeBSOWA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 09:22:00 -0500
-Received: from wp227.webpack.hosteurope.de ([80.237.132.234]:51372 "EHLO
+        id S1752403AbeBSO0Y (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 09:26:24 -0500
+Received: from wp227.webpack.hosteurope.de ([80.237.132.234]:59464 "EHLO
         wp227.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750978AbeBSOV7 (ORCPT
+        by vger.kernel.org with ESMTP id S1750978AbeBSO0X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 09:21:59 -0500
-Subject: Re: Linux 4.16-rc1: regression bisected, Debian kernel package tool
- make-kpkg stalls indefinitely during kernel build due to commit "kconfig:
- remove check_stdin()"
-To: Sander Eikelenboom <linux@eikelenboom.it>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>
-Cc: srivasta@debian.org, linux-kernel <linux-kernel@vger.kernel.org>
-References: <b7f71558-0e57-cacb-280c-a9d3baa030b2@eikelenboom.it>
+        Mon, 19 Feb 2018 09:26:23 -0500
+Subject: Re: DM Regression in 4.16-rc1 - read() returns data when it shouldn't
+To: Milan Broz <gmazyland@gmail.com>, NeilBrown <neilb@suse.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        device-mapper development <dm-devel@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
 From: Thorsten Leemhuis <regressions@leemhuis.info>
-Message-ID: <55ef3f98-61e3-69e9-4b65-a80efd1998ac@leemhuis.info>
-Date: Mon, 19 Feb 2018 14:45:09 +0100
+Message-ID: <5fca4e3f-536c-9c52-31bb-927e8ab5b6c8@leemhuis.info>
+Date: Mon, 19 Feb 2018 14:44:23 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <b7f71558-0e57-cacb-280c-a9d3baa030b2@eikelenboom.it>
+In-Reply-To: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1519050119;48089a85;
-X-HE-SMSGID: 1enlkk-0007wk-3D
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1519050383;d4a060d7;
+X-HE-SMSGID: 1enljz-0007ar-MW
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -34,7 +32,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 JFYI: This issues is tracked in the regression reports for Linux 4.16
 (http://bit.ly/lnxregrep416 ) with this id:
 
-Linux-Regression-ID: lr#2fd778
+Linux-Regression-ID: lr#9e195f
 
 Please include this line in the comment section of patches that are
 supposed to fix the issue. Please also mention the string once in other
@@ -46,65 +44,90 @@ here: http://bit.ly/lnxregtrackid
 
 Thx for your help. Ciao, Thorsten
 
-On 12.02.2018 20:01, Sander Eikelenboom wrote:
-> L.S.,
+On 14.02.2018 14:02, Milan Broz wrote:
+> Hi,
 > 
-> The Debian kernel-package tool make-kpkg for easy building of upstream kernels on Debian fails with linux 4.16-rc1.
+> the commit (found by bisect)
 > 
-> The tool (perl script) while invoked with:
->     make-kpkg --initrd --append_to_version -20180212 kernel_image
+>   commit 18a25da84354c6bb655320de6072c00eda6eb602
+>   Author: NeilBrown <neilb@suse.com>
+>   Date:   Wed Sep 6 09:43:28 2017 +1000
 > 
-> On a git tree with a .config from the previous kernel release, so new KConfig questions have to be asked on new or changed options.
+>     dm: ensure bio submission follows a depth-first tree walk
 > 
-> The script stalls indefinitely while it seems to be excuting:
->     exec make kpkg_version=13.018+nmu1 -f /usr/share/kernel-package/ruleset/minimal.mk debian APPEND_TO_VERSION=-t440s-20180212  INITRD=YES
+> cause serious regression while reading from DM device.
 > 
-> After using ctrl-c to break out it, i get:
->    ^CFailed to create a ./debian directory: No such file or directory at /usr/bin/make-kpkg line 970.
->  
+> The reproducer is below, basically it tries to simulate failure we see in cryptsetup
+> regression test: we have DM device with error and zero target and try to read
+> "passphrase" from it (it is test for 64 bit offset error path):
 > 
-> Bisection turned up as culprit:
->     commit d2a04648a5dbc3d1d043b35257364f0197d4d868
->     kconfig: remove check_stdin()
->     
->     Except silentoldconfig, valid_stdin is 1, so check_stdin() is no-op.
->     
->     oldconfig and silentoldconfig work almost in the same way except that
->     the latter generates additional files under include/.  Both ask users
->     for input for new symbols.
->     
->     I do not know why only silentoldconfig requires stdio be tty.
->     
->       $ rm -f .config; touch .config
->       $ yes "" | make oldconfig > stdout
->       $ rm -f .config; touch .config
->       $ yes "" | make silentoldconfig > stdout
->       make[1]: *** [silentoldconfig] Error 1
->       make: *** [silentoldconfig] Error 2
->       $ tail -n 4 stdout
->       Console input/output is redirected. Run 'make oldconfig' to update configuration.
->     
->       scripts/kconfig/Makefile:40: recipe for target 'silentoldconfig' failed
->       Makefile:507: recipe for target 'silentoldconfig' failed
->     
->     Redirection is useful, for example, for testing where we want to give
->     particular key inputs from a test file, then check the result.
->     
->     Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->     Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
+> Test device:
+> # dmsetup table test
+> 0 10000000 error 
+> 10000000 1000000 zero 
 > 
-> Reverting this specific commit makes make-kpkg work again as usual.
+> We try to run this operation:
+>   lseek64(fd, 5119999988, SEEK_CUR); // this should seek to error target sector
+>   read(fd, buf, 13); // this should fail, if we seek to error part of the device
 > 
-> Version of the kernel-package used:
-> ii  kernel-package                                              13.018+nmu1 
+> While on 4.15 the read properly fails:
+>   Seek returned 5119999988.
+>   Read returned -1.
+> 
+> for 4.16 it actually succeeds returning some random data
+> (perhaps kernel memory, so this bug is even more dangerous):
+>   Seek returned 5119999988.
+>   Read returned 13.
+> 
+> Full reproducer below:
+> 
+> #define _GNU_SOURCE
+> #define _LARGEFILE64_SOURCE
+> #include <stdio.h>
+> #include <stddef.h>
+> #include <stdint.h>
+> #include <stdlib.h>
+> #include <unistd.h>
+> #include <fcntl.h>
+> #include <inttypes.h>
+> 
+> int main (int argc, char *argv[])
+> {
+>         char buf[13];
+>         int fd;
+>         //uint64_t offset64 = 5119999999;
+>         uint64_t offset64 =   5119999988;
+>         off64_t r;
+>         ssize_t bytes;
+> 
+>         system("echo -e \'0 10000000 error\'\\\\n\'10000000 1000000 zero\' | dmsetup create test");
+> 
+>         fd = open("/dev/mapper/test", O_RDONLY);
+>         if (fd == -1) {
+>                 printf("open fail\n");
+>                 return 1;
+>         }
+> 
+>         r = lseek64(fd, offset64, SEEK_CUR);
+>         printf("Seek returned %" PRIu64 ".\n", r);
+>         if (r < 0) {
+>                 printf("seek fail\n");
+>                 close(fd);
+>                 return 2;
+>         }
+> 
+>         bytes = read(fd, buf, 13);
+>         printf("Read returned %d.\n", (int)bytes);
+> 
+>         close(fd);
+>         return 0;
+> }
 > 
 > 
-> I also cc'ed the Debian developer who maintains the kernel-package package: Manoj Srivastava
+> Please let me know if you need more info to reproduce it.
 > 
-> --
-> Sander
+> Milan
 > 
-> 
-> http://news.gmane.org/find-root.php?message_id=b7f71558-0e57-cacb-280c-a9d3baa030b2%40eikelenboom.it 
-> http://mid.gmane.org/b7f71558-0e57-cacb-280c-a9d3baa030b2%40eikelenboom.it
+> http://news.gmane.org/find-root.php?message_id=70cda2a3-f246-d45b-f600-1f9d15ba22ff%40gmail.com 
+> http://mid.gmane.org/70cda2a3-f246-d45b-f600-1f9d15ba22ff%40gmail.com
 > 
