@@ -1,50 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753184AbeBSPzl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 10:55:41 -0500
-Received: from mail-qk0-f182.google.com ([209.85.220.182]:42483 "EHLO
-        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753064AbeBSPzj (ORCPT
+        id S1753213AbeBSP5r (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 10:57:47 -0500
+Received: from mail-qt0-f172.google.com ([209.85.216.172]:42555 "EHLO
+        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753143AbeBSP5o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 10:55:39 -0500
-X-Google-Smtp-Source: AH8x225pHJ3PI87DX91frkQecu1ahznAO2pI0WE3zFfIQL9JnWt2D2c/uKyJ4M3t/wIXz5s673btXOzkkRP7F8o4nmA=
+        Mon, 19 Feb 2018 10:57:44 -0500
+X-Google-Smtp-Source: AH8x225+HabFbSAXH2xEVNm5gFz9MEfkR0/LS0V5y/2SjF6YD78fo8kQoZX22qMvW9R8KxXAWu+HfWIFI74AIcEPCmo=
 MIME-Version: 1.0
-In-Reply-To: <1510330017-32200-1-git-send-email-sudeep.holla@arm.com>
-References: <1510330017-32200-1-git-send-email-sudeep.holla@arm.com>
+In-Reply-To: <1510586871-27478-1-git-send-email-brian.starkey@arm.com>
+References: <1510586871-27478-1-git-send-email-brian.starkey@arm.com>
 From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Mon, 19 Feb 2018 15:55:37 +0000
-X-Google-Sender-Auth: 0S667elz7e4zuWtz6s_B-uf1cKs
-Message-ID: <CAPKp9ubFmhRGaLvB5_Z-WCXiJZYH_W=V43e+Py1DWMk03rrMeg@mail.gmail.com>
-Subject: Re: [PATCH] clk: versatile: add min/max rate boundaries for vexpress
- osc clock
-To: open list <linux-kernel@vger.kernel.org>
-Cc: Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Date: Mon, 19 Feb 2018 15:57:42 +0000
+X-Google-Sender-Auth: 3grX-P7ROmt1_1SRKkL3jLtiI04
+Message-ID: <CAPKp9uZY_4Hm9oq_aBdWPAhvZv-LbxezWu3rU86kw9+kFAXJ6g@mail.gmail.com>
+Subject: Re: [PATCH] clk: versatile: Remove WARNs in ->round_rate()
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: open list <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Brian Starkey <brian.starkey@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 10, 2017 at 4:06 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> Clock framework has a provider API(clk_hw_set_rate_range) to set the
-> min/max rate of a clock. Use the same to set the boundaries for the
-> vexpress osc clock.
+On Mon, Nov 13, 2017 at 3:27 PM, Brian Starkey <brian.starkey@arm.com> wrote:
+> clk_round_rate() is intended to be used to round a given clock rate to
+> the closest one achievable by the actual clock. This implies that the
+> input to clk_round_rate() is expected to be unachievable - and such
+> cases shouldn't be treated as exceptional.
 >
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->  drivers/clk/versatile/clk-vexpress-osc.c | 1 +
->  1 file changed, 1 insertion(+)
+> To reflect this, remove the WARN_ONs which trigger when an unachievable
+> clock rate is passed to vexpress_osc_round_rate().
 >
-> Hi Stephen,
->
-> Just a quick question, does the clk core ensure the round_rate request
-> to the clock provider is within this bounds ? A quick grep suggests it's
-> used after the call to round_rate in clk_calc_new_rates. I can't recall
-> the details from when you introduced clk_hw_set_rate_range.
->
+> Reported-by: Vladimir Murzin <vladimir.murzin@arm.com>
+> Signed-off-by: Brian Starkey <brian.starkey@arm.com>
+> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 
-Ping !
+Ping!
