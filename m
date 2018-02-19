@@ -1,39 +1,40 @@
 Return-Path: <linus971@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519062268; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1519063310; cv=none;
         d=google.com; s=arc-20160816;
-        b=mCPT1gIXeZUdcPZwR/ot4353PRNwvHcrV4tRHX4zzLJNsnHKsLr/QO3UU5swR9WO2i
-         2qdgwbafZK2/98WwC7tuBxlGgm2znbpw91ZhJUsbksNSQhFFrAke4N13kNMMyghNwhEc
-         UvYpYH02PQC2o3zqSvCvR2x/acXW3dxEvnmYtuj4e8QdWitG3cBkaYi7M3DLXpLjiBUT
-         zY3mO0MdkANgcOYNSGqeeuyI0VYq+Z+6i1mAyYaQFPA7gnRnvGUrvpv6qFDwpD+tYlsP
-         nWi5pMi2+fMzqhpMBLsnkJ1lSh3jO0/89C3w4giWLMosA6jZ8FjSRhveGJlit4ifrcwF
-         3k8w==
+        b=I7yJjfTcM3mV3R1Yk0ILdEYF4RI1+u4OFjGW/JUdzHB9G7OdwYE1PJsue4HBIjqUK0
+         ygm6xtApOg5vhVWGvNebpaOmqralQ8mto0+HwYi7cvdvEdbDfRjOv0ippYJxeRbh9uab
+         ODVpmrm7oXRrEIZfxr7x2061lEpIJhKBBWyUvC1bSLayINCrfjpv6jaPsBKfVnTgeOIK
+         hiEoWTUWZnLxnyDBKECIhOQO89Ojtl/NG6tNIYexG4OnCjs7K3wZ22Y+KARUW2P3XmGl
+         obtYpnKOab+ZDVq30zyCxC/98TBwyKCo7osljE5CamN/OuVhWS6N5Eh8eiLunWQ+yINj
+         319Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:arc-authentication-results;
-        bh=goZO8zOSfL4zsbl+jU/gJFZNdnJLSzlijW0hKE6tW9s=;
-        b=Ksu62KwZ8oIpnUog3f50D77+i2AEhuThdZLXxQAia7BI6BfHjAEWUd5t46b9cSw82U
-         DFQkDbSyxDAIkoV33jveGSFMGWM9RvEKaOxn2PSp7mRVQDxnS2Mzs0IbURcxbBv13xin
-         TkdJrmHRdtdAy0G+fU8ZdzEvqPZrV0Y6aR/uGuLsrjrsPyK1Ani7sQMcQro+ZYc7EhgX
-         /hZO0g2748bRKShahcxPMpuSftJKLDD6royv9b4WIo5mhlHp1pMRby9IEglL/GnYO2vl
-         yrj7H39xsOHzRV8PxU912Rj1Bt2H9hUq9GKYYblLGByRgkLu2jIpGh1Yb1yfAm/etr2Q
-         V5dA==
+        bh=D431nH4uraH26hudm9RfCf6WzTWGjisC1tteRyGypHM=;
+        b=NWY3lu5OQo/GJvuYaSMQsKoNeLkgCdezneUC39WY82jzUZR+axcpMv73pjHirVGIeO
+         tNJr1yiTZ+bkYc1p8Qzf87zhZ6q7KsePj6wHeUyj2OrxI48DpU3sQHb+IT6/NBai/bG4
+         cSoW9Vqj9ANb2u5axNituSgZFD/MX/nSBbRC4epWMDF3TA098I9B3N4JdOpt2m2ifww7
+         5AOrXGo4978pN06dr71c2gm05W5V6tnFVkvoq6k0VA75hPGdxv9fmfuUUYxOLey6RJ7l
+         /niHDYqQ3eivAb5CC16WNEqd71SkBGgeDYEfmcMf/sdBdWD5rHamHBifNePaRgoNC2jO
+         iGgg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=lNwgslu1;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=S9Q0hnVt;
        spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=lNwgslu1;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=S9Q0hnVt;
        spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
-X-Google-Smtp-Source: AH8x227TgbFDYYLBDxWog+/gNA6VzrWtKR2uhsDJeIufeIEzoUIICBscg6AADMqP3NZw/5VK1rAi2bRwCSzgwNbUy4M=
+X-Google-Smtp-Source: AH8x225oRXn/Ip0pCejJuA8Lq1ZlysdcTzyli/DJw7Xt6wVkM/5P/9k7kYxDOTAWwNQdHeIcW5a3cF9uyLLs1Jo3t4w=
 MIME-Version: 1.0
 Sender: linus971@gmail.com
-In-Reply-To: <20180219044845.7cnqpgyiinn6hkyb@huvuddator>
+In-Reply-To: <CA+55aFwiRzpSRW8xhoMs9cbFFXZGmEyyVa4a7aeZzQGYuO211w@mail.gmail.com>
 References: <1518806331-7101-1-git-send-email-yamada.masahiro@socionext.com>
  <1518806331-7101-12-git-send-email-yamada.masahiro@socionext.com>
- <CA+55aFwQLrrBeXZXK_qUXiGVFNv3qPJS4tNKFacuk0Y0WgZjCA@mail.gmail.com> <20180219044845.7cnqpgyiinn6hkyb@huvuddator>
+ <CA+55aFwQLrrBeXZXK_qUXiGVFNv3qPJS4tNKFacuk0Y0WgZjCA@mail.gmail.com>
+ <20180219044845.7cnqpgyiinn6hkyb@huvuddator> <CA+55aFwiRzpSRW8xhoMs9cbFFXZGmEyyVa4a7aeZzQGYuO211w@mail.gmail.com>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 19 Feb 2018 09:44:28 -0800
-X-Google-Sender-Auth: e1mrKvabN4MwqGju5ZNeS9-zIgA
-Message-ID: <CA+55aFwiRzpSRW8xhoMs9cbFFXZGmEyyVa4a7aeZzQGYuO211w@mail.gmail.com>
+Date: Mon, 19 Feb 2018 10:01:49 -0800
+X-Google-Sender-Auth: e-scQpScvHKUmUEpO5iY3zDvhww
+Message-ID: <CA+55aFzu8+yaAGvdZMRYJWWZmv_OnFnocnvUiSKcAyNQ1z9kmQ@mail.gmail.com>
 Subject: Re: [PATCH 11/23] kconfig: add 'shell-stdout' function
 To: Ulf Magnusson <ulfalizer@gmail.com>
 Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
@@ -45,43 +46,54 @@ Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592583935341216706?=
-X-GMAIL-MSGID: =?utf-8?q?1592852238022444365?=
+X-GMAIL-MSGID: =?utf-8?q?1592853330204976586?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Feb 18, 2018 at 8:48 PM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
-> On Fri, Feb 16, 2018 at 11:17:52AM -0800, Linus Torvalds wrote:
->>
->> Can we *please* make "shell-stdout" go away, and make this just be "shell"?
->>
->> The rule would be very simple:
->>
->>  - if the result of the shell command is a failure, the result is 'n'
->>
->>  - otherwise, the result is the first line of stdout
->>
->>  - if the result is empty, we replace it with 'y'.
+On Mon, Feb 19, 2018 at 9:44 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> Could there be cases where you'd legitimately want to put empty output
-> from a command in a string (that would be common enough to matter)?
-> That'd get messier with the above rule, as it never generates an empty
-> string as output.
+> I do like your "success"/"stdout" more than "shell"/"shell-stdout",
+> because with that naming I don't get the feeling that one should
+> subsume the other.
 
-Hmm. Maybe. Something like "LOCALVERSION_AUTO" might want that where
-you add a version string if something is true, and maybe you'd use a
-shell script for it and generate it at Kconfig time.
+Hmm. Thinking about it some more, I really would prefer just "$(shell
+...)" everywhere.
 
-I'm not seeing anything like that right now, but I could imagine it in
-theory, so your worry is valid.
+But it would be nice if perhaps the error handling would match the
+context somehow.
 
-> Would you still be as opposed (or more opposed...) to having two
-> functions if they were called something like 'success' and 'stdout'
-> instead?
+I'm wondering if this might tie into the whole quoting discussion in
+the other thread.
 
-Maybe the naming is indeed what annoyed me the most.
+Because the rule could be:
 
-I do like your "success"/"stdout" more than "shell"/"shell-stdout",
-because with that naming I don't get the feeling that one should
-subsume the other.
+(a) unquoted $(shell ) is a bool, and failing is ok (and turns into
+y/n depending on whether successful or failing)
 
-          Linus
+So
+
+  config CC_IS_GCC
+          bool
+          default $(shell $CC --version | grep -q gcc)
+
+works automatically.
+
+(b) but with quoting, $(shell ) is a string, and failing is an error
+
+So
+
+  config GCC_VERSION
+          int
+          default "$(shell-stdout $srctree/scripts/gcc-version.sh $CC
+| sed 's/^0*//')" if CC_IS_GCC
+          default 0
+
+would need those quotes, and if the shell-script returns a failure,
+we'd _abort_.
+
+Which is actually what we want there.
+
+Hmm? Is that too nasty?
+
+                Linus
