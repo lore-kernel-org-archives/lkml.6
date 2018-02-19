@@ -1,82 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752279AbeBSJeg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 04:34:36 -0500
-Received: from mga03.intel.com ([134.134.136.65]:60997 "EHLO mga03.intel.com"
+        id S1752439AbeBSJeo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 04:34:44 -0500
+Received: from mga02.intel.com ([134.134.136.20]:57343 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752098AbeBSJee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 04:34:34 -0500
+        id S1752344AbeBSJel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 04:34:41 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.46,534,1511856000";
-   d="scan'208";a="29074276"
-Subject: Re: [PATCH v2 15/16] mmc: sdhci-omap: Add SPDX identifier
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180205125029.21570-1-kishon@ti.com>
- <20180205125029.21570-16-kishon@ti.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <2011736b-9c4c-41e2-2dd7-a3ec86d3b180@intel.com>
-Date: Mon, 19 Feb 2018 11:33:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+   d="scan'208";a="31882159"
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Bjorn Helgaas <helgaas@kernel.org>, Sinan Kaya <okaya@codeaurora.org>
+Cc: linux-pci@vger.kernel.org, timur@codeaurora.org,
+        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list\:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V3 09/29] drm/i915: deprecate pci_get_bus_and_slot()
+In-Reply-To: <20180216145444.GA11014@bhelgaas-glaptop.roam.corp.google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <1511801886-6753-1-git-send-email-okaya@codeaurora.org> <1511801886-6753-10-git-send-email-okaya@codeaurora.org> <20180216145444.GA11014@bhelgaas-glaptop.roam.corp.google.com>
+Date: Mon, 19 Feb 2018 11:34:34 +0200
+Message-ID: <87bmglb9w5.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180205125029.21570-16-kishon@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/18 14:50, Kishon Vijay Abraham I wrote:
-> The SPDX identifier is a legally binding shorthand, which can be used
-> instead of the full boiler plate text. Update sdhci-omap driver with the
-> correct SPDX license identifier.
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+On Fri, 16 Feb 2018, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> On Mon, Nov 27, 2017 at 11:57:46AM -0500, Sinan Kaya wrote:
+>> pci_get_bus_and_slot() is restrictive such that it assumes domain=0 as
+>> where a PCI device is present. This restricts the device drivers to be
+>> reused for other domain numbers.
+>> 
+>> Getting ready to remove pci_get_bus_and_slot() function in favor of
+>> pci_get_domain_bus_and_slot().
+>> 
+>> Extract the domain number from drm_device and pass it into
+>> pci_get_domain_bus_and_slot() function.
+>> 
+>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+>
+> I don't know what happened to this, and it didn't make it into
+> v4.16-rc1.  I applied it to pci/deprecate-get-bus-and-slot for v4.17
+> along with the patch that actually removes pci_get_bus_and_slot().
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+It fell between the cracks as we couldn't apply it before getting a
+backmerge on the dependency. Sorry about that.
 
-> ---
->  drivers/mmc/host/sdhci-omap.c | 22 ++++------------------
->  1 file changed, 4 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-> index 863f6736c2fe..d44918172197 100644
-> --- a/drivers/mmc/host/sdhci-omap.c
-> +++ b/drivers/mmc/host/sdhci-omap.c
-> @@ -1,21 +1,7 @@
-> -/**
-> - * SDHCI Controller driver for TI's OMAP SoCs
-> - *
-> - * Copyright (C) 2017 Texas Instruments
-> - * Author: Kishon Vijay Abraham I <kishon@ti.com>
-> - *
-> - * This program is free software: you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 of
-> - * the License as published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> - */
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (c) 2018 Texas Instruments
-> +// SDHCI Controller driver for TI's OMAP SoCs
-> +// Author: Kishon Vijay Abraham I <kishon@ti.com>
->  
->  #include <linux/delay.h>
->  #include <linux/mmc/slot-gpio.h>
-> 
+Ack for merging through your tree.
+
+Thanks,
+Jani.
+
+
+>
+>> ---
+>>  drivers/gpu/drm/i915/i915_drv.c | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
+>> index 9f45cfe..5a8cb79 100644
+>> --- a/drivers/gpu/drm/i915/i915_drv.c
+>> +++ b/drivers/gpu/drm/i915/i915_drv.c
+>> @@ -419,7 +419,10 @@ static int i915_getparam(struct drm_device *dev, void *data,
+>>  
+>>  static int i915_get_bridge_dev(struct drm_i915_private *dev_priv)
+>>  {
+>> -	dev_priv->bridge_dev = pci_get_bus_and_slot(0, PCI_DEVFN(0, 0));
+>> +	int domain = pci_domain_nr(dev_priv->drm.pdev->bus);
+>> +
+>> +	dev_priv->bridge_dev =
+>> +		pci_get_domain_bus_and_slot(domain, 0, PCI_DEVFN(0, 0));
+>>  	if (!dev_priv->bridge_dev) {
+>>  		DRM_ERROR("bridge device not found\n");
+>>  		return -1;
+>> -- 
+>> 1.9.1
+>> 
+>> 
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+-- 
+Jani Nikula, Intel Open Source Technology Center
