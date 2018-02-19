@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753503AbeBSRHW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 12:07:22 -0500
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:48285 "EHLO
+        id S1753502AbeBSRIp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 12:08:45 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:34989 "EHLO
         relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753316AbeBSRHQ (ORCPT
+        with ESMTP id S1753184AbeBSRHD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 12:07:16 -0500
+        Mon, 19 Feb 2018 12:07:03 -0500
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
         geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
@@ -16,9 +16,9 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
         linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v9 09/11] media: i2c: tw9910: Remove soc_camera dependencies
-Date: Mon, 19 Feb 2018 17:59:42 +0100
-Message-Id: <1519059584-30844-10-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH v9 06/11] media: i2c: ov772x: Remove soc_camera dependencies
+Date: Mon, 19 Feb 2018 17:59:39 +0100
+Message-Id: <1519059584-30844-7-git-send-email-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
@@ -26,10 +26,14 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove soc_camera framework dependencies from tw9910 sensor driver.
+Remove soc_camera framework dependencies from ov772x sensor driver.
 - Handle clock and gpios
 - Register async subdevice
 - Remove soc_camera specific g/s_mbus_config operations
+- Change image format colorspace from JPEG to SRGB as the two use the
+  same colorspace information but JPEG makes assumptions on color
+  components quantization that do not apply to the sensor
+- Remove sizes crop from get_selection as driver can't scale
 - Add kernel doc to driver interface header file
 - Adjust build system
 
@@ -38,61 +42,62 @@ as other platforms depends on soc_camera-based CEU driver.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- drivers/media/i2c/Kconfig  |   9 +++
+ drivers/media/i2c/Kconfig  |  11 +++
  drivers/media/i2c/Makefile |   1 +
- drivers/media/i2c/tw9910.c | 162 ++++++++++++++++++++++++++++-----------------
- include/media/i2c/tw9910.h |   9 +++
- 4 files changed, 120 insertions(+), 61 deletions(-)
+ drivers/media/i2c/ov772x.c | 172 ++++++++++++++++++++++++++++++---------------
+ include/media/i2c/ov772x.h |   6 +-
+ 4 files changed, 133 insertions(+), 57 deletions(-)
 
 diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index e71e968..0460613 100644
+index 9f18cd2..e71e968 100644
 --- a/drivers/media/i2c/Kconfig
 +++ b/drivers/media/i2c/Kconfig
-@@ -423,6 +423,15 @@ config VIDEO_TW9906
+@@ -645,6 +645,17 @@ config VIDEO_OV5670
  	  To compile this driver as a module, choose M here: the
- 	  module will be called tw9906.
+ 	  module will be called ov5670.
  
-+config VIDEO_TW9910
-+	tristate "Techwell TW9910 video decoder"
-+	depends on VIDEO_V4L2 && I2C
++config VIDEO_OV772X
++	tristate "OmniVision OV772x sensor support"
++	depends on I2C && VIDEO_V4L2
++	depends on MEDIA_CAMERA_SUPPORT
 +	---help---
-+	  Support for Techwell TW9910 NTSC/PAL/SECAM video decoder.
++	  This is a Video4Linux2 sensor-level driver for the OmniVision
++	  OV772x camera.
 +
 +	  To compile this driver as a module, choose M here: the
-+	  module will be called tw9910.
++	  module will be called ov772x.
 +
- config VIDEO_VPX3220
- 	tristate "vpx3220a, vpx3216b & vpx3214c video decoders"
- 	depends on VIDEO_V4L2 && I2C
+ config VIDEO_OV7640
+ 	tristate "OmniVision OV7640 sensor support"
+ 	depends on I2C && VIDEO_V4L2
 diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index b0489a1..23c3ac6 100644
+index c0f94cd..b0489a1 100644
 --- a/drivers/media/i2c/Makefile
 +++ b/drivers/media/i2c/Makefile
-@@ -48,6 +48,7 @@ obj-$(CONFIG_VIDEO_TVP7002) += tvp7002.o
- obj-$(CONFIG_VIDEO_TW2804) += tw2804.o
- obj-$(CONFIG_VIDEO_TW9903) += tw9903.o
- obj-$(CONFIG_VIDEO_TW9906) += tw9906.o
-+obj-$(CONFIG_VIDEO_TW9910) += tw9910.o
- obj-$(CONFIG_VIDEO_CS3308) += cs3308.o
- obj-$(CONFIG_VIDEO_CS5345) += cs5345.o
- obj-$(CONFIG_VIDEO_CS53L32A) += cs53l32a.o
-diff --git a/drivers/media/i2c/tw9910.c b/drivers/media/i2c/tw9910.c
-index bdb5e0a..96792df 100644
---- a/drivers/media/i2c/tw9910.c
-+++ b/drivers/media/i2c/tw9910.c
+@@ -68,6 +68,7 @@ obj-$(CONFIG_VIDEO_OV5670) += ov5670.o
+ obj-$(CONFIG_VIDEO_OV6650) += ov6650.o
+ obj-$(CONFIG_VIDEO_OV7640) += ov7640.o
+ obj-$(CONFIG_VIDEO_OV7670) += ov7670.o
++obj-$(CONFIG_VIDEO_OV772X) += ov772x.o
+ obj-$(CONFIG_VIDEO_OV7740) += ov7740.o
+ obj-$(CONFIG_VIDEO_OV9650) += ov9650.o
+ obj-$(CONFIG_VIDEO_OV13858) += ov13858.o
+diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
+index 8063835..23106d7 100644
+--- a/drivers/media/i2c/ov772x.c
++++ b/drivers/media/i2c/ov772x.c
 @@ -1,6 +1,9 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * tw9910 Video Driver
+  * ov772x Camera Driver
   *
 + * Copyright (C) 2017 Jacopo Mondi <jacopo+renesas@jmondi.org>
 + *
   * Copyright (C) 2008 Renesas Solutions Corp.
   * Kuninori Morimoto <morimoto.kuninori@renesas.com>
   *
-@@ -10,12 +13,10 @@
+@@ -9,27 +12,25 @@
   * Copyright 2006-7 Jonathan Corbet <corbet@lwn.net>
   * Copyright (C) 2008 Magnus Damm
   * Copyright (C) 2008, Guennadi Liakhovetski <kernel@pengutronix.de>
@@ -103,37 +108,83 @@ index bdb5e0a..96792df 100644
   */
  
 +#include <linux/clk.h>
++#include <linux/delay.h>
 +#include <linux/gpio/consumer.h>
++#include <linux/i2c.h>
  #include <linux/init.h>
+ #include <linux/kernel.h>
  #include <linux/module.h>
- #include <linux/i2c.h>
-@@ -25,9 +26,7 @@
+-#include <linux/i2c.h>
+ #include <linux/slab.h>
+-#include <linux/delay.h>
  #include <linux/v4l2-mediabus.h>
  #include <linux/videodev2.h>
  
+ #include <media/i2c/ov772x.h>
 -#include <media/soc_camera.h>
- #include <media/i2c/tw9910.h>
 -#include <media/v4l2-clk.h>
- #include <media/v4l2-subdev.h>
++
+ #include <media/v4l2-ctrls.h>
+-#include <media/v4l2-subdev.h>
++#include <media/v4l2-device.h>
+ #include <media/v4l2-image-sizes.h>
++#include <media/v4l2-subdev.h>
  
- #define GET_ID(val)  ((val & 0xF8) >> 3)
-@@ -228,8 +227,10 @@ struct tw9910_scale_ctrl {
+ /*
+  * register offset
+@@ -393,8 +394,10 @@ struct ov772x_win_size {
+ struct ov772x_priv {
+ 	struct v4l2_subdev                subdev;
+ 	struct v4l2_ctrl_handler	  hdl;
+-	struct v4l2_clk			 *clk;
++	struct clk			 *clk;
+ 	struct ov772x_camera_info        *info;
++	struct gpio_desc		 *pwdn_gpio;
++	struct gpio_desc		 *rstb_gpio;
+ 	const struct ov772x_color_format *cfmt;
+ 	const struct ov772x_win_size     *win;
+ 	unsigned short                    flag_vflip:1;
+@@ -409,7 +412,7 @@ struct ov772x_priv {
+ static const struct ov772x_color_format ov772x_cfmts[] = {
+ 	{
+ 		.code		= MEDIA_BUS_FMT_YUYV8_2X8,
+-		.colorspace	= V4L2_COLORSPACE_JPEG,
++		.colorspace	= V4L2_COLORSPACE_SRGB,
+ 		.dsp3		= 0x0,
+ 		.dsp4		= DSP_OFMT_YUV,
+ 		.com3		= SWAP_YUV,
+@@ -417,7 +420,7 @@ static const struct ov772x_color_format ov772x_cfmts[] = {
+ 	},
+ 	{
+ 		.code		= MEDIA_BUS_FMT_YVYU8_2X8,
+-		.colorspace	= V4L2_COLORSPACE_JPEG,
++		.colorspace	= V4L2_COLORSPACE_SRGB,
+ 		.dsp3		= UV_ON,
+ 		.dsp4		= DSP_OFMT_YUV,
+ 		.com3		= SWAP_YUV,
+@@ -425,7 +428,7 @@ static const struct ov772x_color_format ov772x_cfmts[] = {
+ 	},
+ 	{
+ 		.code		= MEDIA_BUS_FMT_UYVY8_2X8,
+-		.colorspace	= V4L2_COLORSPACE_JPEG,
++		.colorspace	= V4L2_COLORSPACE_SRGB,
+ 		.dsp3		= 0x0,
+ 		.dsp4		= DSP_OFMT_YUV,
+ 		.com3		= 0x0,
+@@ -550,7 +553,7 @@ static int ov772x_reset(struct i2c_client *client)
+ }
  
- struct tw9910_priv {
- 	struct v4l2_subdev		subdev;
--	struct v4l2_clk			*clk;
-+	struct clk			*clk;
- 	struct tw9910_video_info	*info;
-+	struct gpio_desc		*pdn_gpio;
-+	struct gpio_desc		*rstb_gpio;
- 	const struct tw9910_scale_ctrl	*scale;
- 	v4l2_std_id			norm;
- 	u32				revision;
-@@ -582,13 +583,66 @@ static int tw9910_s_register(struct v4l2_subdev *sd,
+ /*
+- * soc_camera_ops function
++ * subdev ops
+  */
+ 
+ static int ov772x_s_stream(struct v4l2_subdev *sd, int enable)
+@@ -650,13 +653,65 @@ static int ov772x_s_register(struct v4l2_subdev *sd,
  }
  #endif
  
-+static int tw9910_power_on(struct tw9910_priv *priv)
++static int ov772x_power_on(struct ov772x_priv *priv)
 +{
 +	struct i2c_client *client = v4l2_get_subdevdata(&priv->subdev);
 +	int ret;
@@ -144,8 +195,8 @@ index bdb5e0a..96792df 100644
 +			return ret;
 +	}
 +
-+	if (priv->pdn_gpio) {
-+		gpiod_set_value(priv->pdn_gpio, 0);
++	if (priv->pwdn_gpio) {
++		gpiod_set_value(priv->pwdn_gpio, 1);
 +		usleep_range(500, 1000);
 +	}
 +
@@ -174,62 +225,76 @@ index bdb5e0a..96792df 100644
 +	return 0;
 +}
 +
-+static int tw9910_power_off(struct tw9910_priv *priv)
++static int ov772x_power_off(struct ov772x_priv *priv)
 +{
 +	clk_disable_unprepare(priv->clk);
 +
-+	if (priv->pdn_gpio) {
-+		gpiod_set_value(priv->pdn_gpio, 1);
++	if (priv->pwdn_gpio) {
++		gpiod_set_value(priv->pwdn_gpio, 0);
 +		usleep_range(500, 1000);
 +	}
 +
 +	return 0;
 +}
 +
- static int tw9910_s_power(struct v4l2_subdev *sd, int on)
+ static int ov772x_s_power(struct v4l2_subdev *sd, int on)
  {
- 	struct i2c_client *client = v4l2_get_subdevdata(sd);
+-	struct i2c_client *client = v4l2_get_subdevdata(sd);
 -	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
- 	struct tw9910_priv *priv = to_tw9910(client);
+ 	struct ov772x_priv *priv = to_ov772x(sd);
  
 -	return soc_camera_set_power(&client->dev, ssdd, priv->clk, on);
-+	return on ? tw9910_power_on(priv) :
-+		    tw9910_power_off(priv);
++	return on ? ov772x_power_on(priv) :
++		    ov772x_power_off(priv);
  }
  
- static int tw9910_set_frame(struct v4l2_subdev *sd, u32 *width, u32 *height)
-@@ -614,7 +668,7 @@ static int tw9910_set_frame(struct v4l2_subdev *sd, u32 *width, u32 *height)
- 	 * set bus width
- 	 */
- 	val = 0x00;
--	if (SOCAM_DATAWIDTH_16 == priv->info->buswidth)
-+	if (priv->info->buswidth == 16)
- 		val = LEN;
+ static const struct ov772x_win_size *ov772x_select_win(u32 width, u32 height)
+@@ -855,6 +910,8 @@ static int ov772x_get_selection(struct v4l2_subdev *sd,
+ 		struct v4l2_subdev_pad_config *cfg,
+ 		struct v4l2_subdev_selection *sel)
+ {
++	struct ov772x_priv *priv = to_ov772x(sd);
++
+ 	if (sel->which != V4L2_SUBDEV_FORMAT_ACTIVE)
+ 		return -EINVAL;
  
- 	ret = tw9910_mask_set(client, OPFORM, LEN, val);
-@@ -799,8 +853,7 @@ static int tw9910_video_probe(struct i2c_client *client)
- 	/*
- 	 * tw9910 only use 8 or 16 bit bus width
- 	 */
--	if (SOCAM_DATAWIDTH_16 != priv->info->buswidth &&
--	    SOCAM_DATAWIDTH_8  != priv->info->buswidth) {
-+	if (priv->info->buswidth != 16 && priv->info->buswidth != 8) {
- 		dev_err(&client->dev, "bus width error\n");
- 		return -ENODEV;
- 	}
-@@ -856,45 +909,6 @@ static int tw9910_enum_mbus_code(struct v4l2_subdev *sd,
+@@ -863,12 +920,9 @@ static int ov772x_get_selection(struct v4l2_subdev *sd,
+ 	switch (sel->target) {
+ 	case V4L2_SEL_TGT_CROP_BOUNDS:
+ 	case V4L2_SEL_TGT_CROP_DEFAULT:
+-		sel->r.width = OV772X_MAX_WIDTH;
+-		sel->r.height = OV772X_MAX_HEIGHT;
+-		return 0;
+ 	case V4L2_SEL_TGT_CROP:
+-		sel->r.width = VGA_WIDTH;
+-		sel->r.height = VGA_HEIGHT;
++		sel->r.width = priv->win->rect.width;
++		sel->r.height = priv->win->rect.height;
+ 		return 0;
+ 	default:
+ 		return -EINVAL;
+@@ -914,6 +968,9 @@ static int ov772x_set_fmt(struct v4l2_subdev *sd,
+ 	mf->height = win->rect.height;
+ 	mf->field = V4L2_FIELD_NONE;
+ 	mf->colorspace = cfmt->colorspace;
++	mf->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
++	mf->quantization = V4L2_QUANTIZATION_DEFAULT;
++	mf->xfer_func = V4L2_XFER_FUNC_DEFAULT;
+ 
+ 	if (format->which == V4L2_SUBDEV_FORMAT_TRY) {
+ 		cfg->try_fmt = *mf;
+@@ -997,24 +1054,8 @@ static int ov772x_enum_mbus_code(struct v4l2_subdev *sd,
  	return 0;
  }
  
--static int tw9910_g_mbus_config(struct v4l2_subdev *sd,
+-static int ov772x_g_mbus_config(struct v4l2_subdev *sd,
 -				struct v4l2_mbus_config *cfg)
 -{
 -	struct i2c_client *client = v4l2_get_subdevdata(sd);
 -	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
 -
 -	cfg->flags = V4L2_MBUS_PCLK_SAMPLE_RISING | V4L2_MBUS_MASTER |
--		V4L2_MBUS_VSYNC_ACTIVE_HIGH | V4L2_MBUS_VSYNC_ACTIVE_LOW |
--		V4L2_MBUS_HSYNC_ACTIVE_HIGH | V4L2_MBUS_HSYNC_ACTIVE_LOW |
+-		V4L2_MBUS_VSYNC_ACTIVE_HIGH | V4L2_MBUS_HSYNC_ACTIVE_HIGH |
 -		V4L2_MBUS_DATA_ACTIVE_HIGH;
 -	cfg->type = V4L2_MBUS_PARALLEL;
 -	cfg->flags = soc_camera_apply_board_flags(ssdd, cfg);
@@ -237,148 +302,125 @@ index bdb5e0a..96792df 100644
 -	return 0;
 -}
 -
--static int tw9910_s_mbus_config(struct v4l2_subdev *sd,
--				const struct v4l2_mbus_config *cfg)
--{
--	struct i2c_client *client = v4l2_get_subdevdata(sd);
--	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
--	u8 val = VSSL_VVALID | HSSL_DVALID;
--	unsigned long flags = soc_camera_apply_board_flags(ssdd, cfg);
--
--	/*
--	 * set OUTCTR1
--	 *
--	 * We use VVALID and DVALID signals to control VSYNC and HSYNC
--	 * outputs, in this mode their polarity is inverted.
--	 */
--	if (flags & V4L2_MBUS_HSYNC_ACTIVE_LOW)
--		val |= HSP_HI;
--
--	if (flags & V4L2_MBUS_VSYNC_ACTIVE_LOW)
--		val |= VSP_HI;
--
--	return i2c_smbus_write_byte_data(client, OUTCTR1, val);
--}
--
- static int tw9910_g_tvnorms(struct v4l2_subdev *sd, v4l2_std_id *norm)
- {
- 	*norm = V4L2_STD_NTSC | V4L2_STD_PAL;
-@@ -905,8 +919,6 @@ static const struct v4l2_subdev_video_ops tw9910_subdev_video_ops = {
- 	.s_std		= tw9910_s_std,
- 	.g_std		= tw9910_g_std,
- 	.s_stream	= tw9910_s_stream,
--	.g_mbus_config	= tw9910_g_mbus_config,
--	.s_mbus_config	= tw9910_s_mbus_config,
- 	.g_tvnorms	= tw9910_g_tvnorms,
+ static const struct v4l2_subdev_video_ops ov772x_subdev_video_ops = {
+ 	.s_stream	= ov772x_s_stream,
+-	.g_mbus_config	= ov772x_g_mbus_config,
  };
  
-@@ -935,15 +947,14 @@ static int tw9910_probe(struct i2c_client *client,
- 	struct tw9910_video_info	*info;
- 	struct i2c_adapter		*adapter =
- 		to_i2c_adapter(client->dev.parent);
--	struct soc_camera_subdev_desc	*ssdd = soc_camera_i2c_to_desc(client);
- 	int ret;
+ static const struct v4l2_subdev_pad_ops ov772x_subdev_pad_ops = {
+@@ -1038,12 +1079,11 @@ static int ov772x_probe(struct i2c_client *client,
+ 			const struct i2c_device_id *did)
+ {
+ 	struct ov772x_priv	*priv;
+-	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
+-	struct i2c_adapter	*adapter = to_i2c_adapter(client->dev.parent);
++	struct i2c_adapter	*adapter = client->adapter;
+ 	int			ret;
  
 -	if (!ssdd || !ssdd->drv_priv) {
+-		dev_err(&client->dev, "OV772X: missing platform data!\n");
 +	if (!client->dev.platform_data) {
- 		dev_err(&client->dev, "TW9910: missing platform data!\n");
++		dev_err(&client->dev, "Missing ov772x platform data\n");
  		return -EINVAL;
  	}
  
--	info = ssdd->drv_priv;
-+	info = client->dev.platform_data;
+@@ -1059,7 +1099,7 @@ static int ov772x_probe(struct i2c_client *client,
+ 	if (!priv)
+ 		return -ENOMEM;
  
- 	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA)) {
- 		dev_err(&client->dev,
-@@ -959,13 +970,37 @@ static int tw9910_probe(struct i2c_client *client,
+-	priv->info = ssdd->drv_priv;
++	priv->info = client->dev.platform_data;
  
- 	v4l2_i2c_subdev_init(&priv->subdev, client, &tw9910_subdev_ops);
+ 	v4l2_i2c_subdev_init(&priv->subdev, client, &ov772x_subdev_ops);
+ 	v4l2_ctrl_handler_init(&priv->hdl, 3);
+@@ -1073,22 +1113,42 @@ static int ov772x_probe(struct i2c_client *client,
+ 	if (priv->hdl.error)
+ 		return priv->hdl.error;
  
 -	priv->clk = v4l2_clk_get(&client->dev, "mclk");
--	if (IS_ERR(priv->clk))
-+	priv->clk = clk_get(&client->dev, "xti");
-+	if (PTR_ERR(priv->clk) == -ENOENT) {
-+		priv->clk = NULL;
-+	} else if (IS_ERR(priv->clk)) {
-+		dev_err(&client->dev, "Unable to get xti clock\n");
- 		return PTR_ERR(priv->clk);
-+	}
-+
-+	priv->pdn_gpio = gpiod_get_optional(&client->dev, "pdn",
-+					    GPIOD_OUT_HIGH);
-+	if (IS_ERR(priv->pdn_gpio)) {
-+		dev_info(&client->dev, "Unable to get GPIO \"pdn\"");
-+		ret = PTR_ERR(priv->pdn_gpio);
-+		goto error_clk_put;
-+	}
++	priv->clk = clk_get(&client->dev, "xclk");
+ 	if (IS_ERR(priv->clk)) {
++		dev_err(&client->dev, "Unable to get xclk clock\n");
+ 		ret = PTR_ERR(priv->clk);
+-		goto eclkget;
++		goto error_ctrl_free;
+ 	}
  
- 	ret = tw9910_video_probe(client);
- 	if (ret < 0)
+-	ret = ov772x_video_probe(priv);
+-	if (ret < 0) {
 -		v4l2_clk_put(priv->clk);
+-eclkget:
+-		v4l2_ctrl_handler_free(&priv->hdl);
+-	} else {
+-		priv->cfmt = &ov772x_cfmts[0];
+-		priv->win = &ov772x_win_sizes[0];
++	priv->pwdn_gpio = gpiod_get_optional(&client->dev, "pwdn",
++					     GPIOD_OUT_LOW);
++	if (IS_ERR(priv->pwdn_gpio)) {
++		dev_info(&client->dev, "Unable to get GPIO \"pwdn\"");
++		ret = PTR_ERR(priv->pwdn_gpio);
++		goto error_clk_put;
+ 	}
+ 
++	ret = ov772x_video_probe(priv);
++	if (ret < 0)
 +		goto error_gpio_put;
++
++	priv->cfmt = &ov772x_cfmts[0];
++	priv->win = &ov772x_win_sizes[0];
 +
 +	ret = v4l2_async_register_subdev(&priv->subdev);
 +	if (ret)
 +		goto error_gpio_put;
 +
-+	return ret;
++	return 0;
 +
 +error_gpio_put:
-+	if (priv->pdn_gpio)
-+		gpiod_put(priv->pdn_gpio);
++	if (priv->pwdn_gpio)
++		gpiod_put(priv->pwdn_gpio);
 +error_clk_put:
 +	clk_put(priv->clk);
- 
++error_ctrl_free:
++	v4l2_ctrl_handler_free(&priv->hdl);
++
  	return ret;
  }
-@@ -973,7 +1008,12 @@ static int tw9910_probe(struct i2c_client *client,
- static int tw9910_remove(struct i2c_client *client)
+ 
+@@ -1096,7 +1156,9 @@ static int ov772x_remove(struct i2c_client *client)
  {
- 	struct tw9910_priv *priv = to_tw9910(client);
+ 	struct ov772x_priv *priv = to_ov772x(i2c_get_clientdata(client));
+ 
 -	v4l2_clk_put(priv->clk);
-+
-+	if (priv->pdn_gpio)
-+		gpiod_put(priv->pdn_gpio);
 +	clk_put(priv->clk);
-+	v4l2_device_unregister_subdev(&priv->subdev);
-+
++	if (priv->pwdn_gpio)
++		gpiod_put(priv->pwdn_gpio);
+ 	v4l2_device_unregister_subdev(&priv->subdev);
+ 	v4l2_ctrl_handler_free(&priv->hdl);
  	return 0;
- }
+@@ -1119,6 +1181,6 @@ static struct i2c_driver ov772x_i2c_driver = {
  
-@@ -994,6 +1034,6 @@ static struct i2c_driver tw9910_i2c_driver = {
+ module_i2c_driver(ov772x_i2c_driver);
  
- module_i2c_driver(tw9910_i2c_driver);
- 
--MODULE_DESCRIPTION("SoC Camera driver for tw9910");
-+MODULE_DESCRIPTION("V4L2 driver for TW9910 video decoder");
+-MODULE_DESCRIPTION("SoC Camera driver for ov772x");
++MODULE_DESCRIPTION("V4L2 driver for OV772x image sensor");
  MODULE_AUTHOR("Kuninori Morimoto");
  MODULE_LICENSE("GPL v2");
-diff --git a/include/media/i2c/tw9910.h b/include/media/i2c/tw9910.h
-index 90bcf1f..bec8f7b 100644
---- a/include/media/i2c/tw9910.h
-+++ b/include/media/i2c/tw9910.h
-@@ -18,6 +18,9 @@
+diff --git a/include/media/i2c/ov772x.h b/include/media/i2c/ov772x.h
+index 00dbb7c..27d087b 100644
+--- a/include/media/i2c/ov772x.h
++++ b/include/media/i2c/ov772x.h
+@@ -48,8 +48,10 @@ struct ov772x_edge_ctrl {
+ 	.threshold = (t & OV772X_EDGE_THRESHOLD_MASK),	\
+ }
  
- #include <media/soc_camera.h>
- 
+-/*
+- * ov772x camera info
 +/**
-+ * tw9910_mpout_pin - MPOUT (multi-purpose output) pin functions
-+ */
- enum tw9910_mpout_pin {
- 	TW9910_MPO_VLOSS,
- 	TW9910_MPO_HLOCK,
-@@ -29,6 +32,12 @@ enum tw9910_mpout_pin {
- 	TW9910_MPO_RTCO,
- };
- 
-+/**
-+ * tw9910_video_info -	tw9910 driver interface structure
-+ * @buswidth:		Parallel data bus width (8 or 16).
-+ * @mpout:		Selected function of MPOUT (multi-purpose output) pin.
-+ *			See &enum tw9910_mpout_pin
-+ */
- struct tw9910_video_info {
- 	unsigned long		buswidth;
- 	enum tw9910_mpout_pin	mpout;
++ * ov772x_camera_info -	ov772x driver interface structure
++ * @flags:		Sensor configuration flags
++ * @edgectrl:		Sensor edge control
+  */
+ struct ov772x_camera_info {
+ 	unsigned long		flags;
 -- 
 2.7.4
