@@ -1,141 +1,129 @@
-Return-Path: <Steffen.Klassert@secunet.com>
-X-Google-Smtp-Source: AH8x226qujUr2XNn/awynMOjNGnrn+3eCNmR7DeeiIYi15z1DEig2o9xG16P4vH2HrYGXTW+HPCe
-ARC-Seal: i=1; a=rsa-sha256; t=1519120390; cv=none;
+Return-Path: <cw00.choi@samsung.com>
+X-Google-Smtp-Source: AH8x225sjhV2SGyewhtqj/2hRrrUscOr/2mNjMTzRGbkNXKIPAHVBK+K422BXRX4ub5hApIFQYyU
+ARC-Seal: i=1; a=rsa-sha256; t=1519035797; cv=none;
         d=google.com; s=arc-20160816;
-        b=U60jCevDxjTwPj5lJbvRUFb9HNMQ7MrItgS7M072GMvO/mVdwbbOl1CZdWz8e/0+M9
-         1RXHusR0MLA1otYcxhd/wdolO1wglCXGWzWWPrKq1u7Sd69+VONTCJVdnySmTkcvbATl
-         W3mEH6cntArPBcmsHjHKN2DubV5yKphb9Rg7/RiU3bgh+UyNVKmdhSMHBvFuIH/mSpLS
-         XJhrvgpeQPCtcqSo5q/VFJZmlPCULrXZHrN/K7jK6oZ7NT5ZQGvqz7qWa9KvUa+zALb3
-         w4lNkpT73rDJ4mXXGkWr0JxQLSQNSzSnObl6w4mQ6Cf91DuQgpNHFTQCFBMwt8Vj4FAQ
-         8IvA==
+        b=MhYoUjxuIZvQMjvpZ0ayqDl5QCdw4h3akXVanmgBOYlfg7OzzxOPLbVEH0leBqtrTt
+         bweovc4JAYAyCntZppXlRQNM90hdJhODMrkw59rQ1SP/mKFUhhn6VBt7BcUJDlwAgqF6
+         nOloh1QVDUFWAaiwU8z0tc7PC+8uufbjBPgGFhJ4mveyJ5zP6zvpaq4rqCGaluASn7vr
+         ztOflh0qhLfEvomtYhGtR8axmNrpFsKLbDg/r9zLnu9GlTjF0cyN0Vwq9OwOrUn1rmmZ
+         ndn739LCZ1/0goN/NfaqfyGONNfvAblYyjTsRPf+QiV2hyv1VVJCsAZigRgWfUSnYfeo
+         8WMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=0PelpJtVQPt7sfYjk8bF7CvQc5I5K1WQmU5nXfxX6Ms=;
-        b=hJ4q3zDT9s7s3SYpwt2VkvPrIql/LD6UPQzWmqV1q1IULbYopkw9VM0VZL+cy/HYUB
-         mQIvZ7HATjNTjBQXoHRXuwDL8gsd34iA9fXhZ8pGNji0t5ngTncfQ6I5beAuxNGToemX
-         KPwHpbr+mGiZawnTL2PZ24al+6cKmYltSb0IrhByoSwHDyulJ51WUBXTrxJB0JuiMpsn
-         tuPAxbEgahNJ4dXM0yCp2DWS6uwSzIceK8G03lJwra04VR9hUDcCLItgM4kbVP8Q9aC+
-         eXRyDtQqZWPDtuof6uiWu5kcl/vF2TTiGfSy3ZeMaZkVHgnGOuJE8qW/fiWatI6qMAKw
-         nAWg==
+        h=references:dlp-filter:cms-type:content-transfer-encoding:subject:cc
+         :to:mime-version:user-agent:organization:from:date:message-id
+         :dkim-signature:dkim-filter:arc-authentication-results;
+        bh=pIGmxO7hT28qvAZIj3WVKJQ9Zly4I9mmmnTHPznC7v0=;
+        b=QR74XSxhoJcYWv7D1j/FMy3OEi+vEBXtzh+Xnjxn84KkFUr4jJH3DBnpfcgXWUJ/RX
+         2q1vSZ3t/hY1SHdBtVkaH9Y8qzDZuglxeHd7AudNSSLTANY2m2RghsuS4M4WtwSDQvCw
+         x/SKteGUcDFxT+t5/dLaY1n30GqsyV3N7258TT593579on392IULQsWeQQWNq+ninUWi
+         W9n68wybpaqmJf2uZcsaZX9LPFG6pvwMsO4XrUe6gZzo0PtdbMeru3EOV2Qct5K4Ogmz
+         2oYQr8VH96kG75M3M5WrFLOl+07z/MHYRNMrp342KlqrAcJ45l9wbuSAmcFz77IwPfxQ
+         Sp1Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of steffen.klassert@secunet.com designates 62.96.220.36 as permitted sender) smtp.mailfrom=Steffen.Klassert@secunet.com
+       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=jSLIq4RU;
+       spf=pass (google.com: domain of cw00.choi@samsung.com designates 203.254.224.25 as permitted sender) smtp.mailfrom=cw00.choi@samsung.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of steffen.klassert@secunet.com designates 62.96.220.36 as permitted sender) smtp.mailfrom=Steffen.Klassert@secunet.com
-Date: Tue, 20 Feb 2018 10:53:07 +0100
-From: Steffen Klassert <steffen.klassert@secunet.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-CC: syzbot <syzbot+7d03c810e50aaedef98a@syzkaller.appspotmail.com>,
-	<dzickus@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "H.
- Peter Anvin" <hpa@zytor.com>, Kate Stewart <kstewart@linuxfoundation.org>,
-	LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	<npiggin@gmail.com>, Philippe Ombredanne <pombredanne@nexb.com>,
-	<syzkaller-bugs@googlegroups.com>, Thomas Gleixner <tglx@linutronix.de>,
-	"the arch/x86 maintainers" <x86@kernel.org>, Herbert Xu
-	<herbert@gondor.apana.org.au>, David Miller <davem@davemloft.net>, netdev
-	<netdev@vger.kernel.org>
-Subject: Re: INFO: rcu detected stall in xfrm_confirm_neigh
-Message-ID: <20180220095307.lh4m6m43354i7cal@gauss3.secunet.de>
-References: <001a1141ba9ea381f70565057687@google.com>
- <CACT4Y+Z-iMWQccvthBAb2Ze4GjkVAm-B7m=b+KYg8AqEn4gw1Q@mail.gmail.com>
- <CACT4Y+aHScQyOybzx22irqKE+B=xU79+zfgSnjCHZT6gqF89Hw@mail.gmail.com>
- <20180219072243.vk7ow4gdpqhz5gbp@gauss3.secunet.de>
- <CACT4Y+ZNFC0sBUd+ikf64N6vv26v-GcqD+M2p7q=gDDw-LkBQQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZNFC0sBUd+ikf64N6vv26v-GcqD+M2p7q=gDDw-LkBQQ@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-G-Data-MailSecurity-for-Exchange-State: 0
-X-G-Data-MailSecurity-for-Exchange-Error: 0
-X-G-Data-MailSecurity-for-Exchange-Sender: 23
-X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
-X-G-Data-MailSecurity-for-Exchange-Guid: C0D6CA9D-99E1-4956-818A-5E094A0E0A00
+       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=jSLIq4RU;
+       spf=pass (google.com: domain of cw00.choi@samsung.com designates 203.254.224.25 as permitted sender) smtp.mailfrom=cw00.choi@samsung.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180219102315epoutp02ff4d58907f41a7cb48937356f1df54ea~UswIAhsOz1355813558epoutp02C
+X-AuditID: b6c32a38-adbff70000001054-e9-5a8aa593c430
+Message-id: <5A8AA592.40209@samsung.com>
+Date: Mon, 19 Feb 2018 19:23:14 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+	Thunderbird/31.6.0
+MIME-version: 1.0
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	=?UTF-8?B?Iuy1nOywrOyasCAoc2Ftc3VuZy5jb20pIg==?= <cw00.choi@samsung.com>,
+	"Chanwoo Choi (chanwoo@kernel.org)" <chanwoo@kernel.org>,
+	=?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, myungjoo.ham@samsung.com
+Subject: [GIT PULL] extcon fixes for v4.16-rc3
+Content-type: text/plain; charset="utf-8"
+Content-transfer-encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOKsWRmVeSWpSXmKPExsWy7bCmvu7kpV1RBmuecFhMvHGFxeL6l+es
+	Fs2L17NZTLo/gcXi8q45bBa3G1ewObB5bFrVyeaxf+4ado++LasYPT5vkgtgiUq1yUhNTEkt
+	UkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAFarqRQlphTChQKSCwu
+	VtK3synKLy1JVcjILy6xVYo2NDTSMzQw1zMyMtIzMY61MjIFKklIzeg5K1twlK/i1Z0HbA2M
+	k3m6GDk5JARMJF78vsjSxcjFISSwg1Fi78JdrBDOd0aJD9O7WWCqDjeeYYRI7GaU2Lz+KZRz
+	j1Hib88NVpAqXgENiWMrJ4PZLAKqEjcn7mIHsdkEtCT2v7jBBmLzCyhKXP3xmBHEFhWIkNg5
+	/xs7RK+gxI/J98C2iQDNeXn0FthNzALTmCRW/msDKxIW0JNYtPI2M4jNLKAp8eLLJBYIW15i
+	85q3zCANEgIr2CQON99jhbjbRWLmhheMELawxKvjW4AGcQDZ0hKXjtpC1LczSrTvnQfVPIVR
+	4tz1e0wQDcYSzxZ2MUFs4JN497WHFaKZV6KjTQiixEPi09+VUOWOEutfPAHbJSQQK7F9QQPL
+	BEbZWUiem4Xk7llI7l7AyLyKUSy1oDg3PbXYsMBErzgxt7g0L10vOT93EyM4kWlZ7GDcc87n
+	EKMAB6MSD6/Axs4oIdbEsuLK3EOMEhzMSiK8FiFdUUK8KYmVValF+fFFpTmpxYcYTYERMZFZ
+	SjQ5H5hk80riDU0sDUzMjICJytLQUEmcNyDAJUpIID2xJDU7NbUgtQimj4mDU6qBsV78yJSX
+	2XmZUW9uX1iepZn4x7p17qTNp0IsVz3cqsRqntulukdQV6+nbQHPj9gn2qfspfWWpK9bEOqy
+	/7mjm7V9Ztp1jn8/RL2+OMw0i9XrMpTuCfue+0o9d9uDNKGaxLfx260friy0W/R5e/GTG9eN
+	pv1IiXla1KuzvzL61p/oG0Wu3U/6lViKMxINtZiLihMB3WRYkHoDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsVy+t9jAd1JS7uiDB585LeYeOMKi8X1L89Z
+	LZoXr2ezmHR/AovF5V1z2CxuN65gc2Dz2LSqk81j/9w17B59W1YxenzeJBfAEsVlk5Kak1mW
+	WqRvl8CV0XNWtuAoX8WrOw/YGhgn83QxcnJICJhIHG48w9jFyMUhJLCTUeLZkTOsIAkhgQeM
+	EucPc4PYvAIaEsdWTgaLswioStycuIsdxGYT0JLY/+IGG4jNL6AocfXHY6BBHByiAhES3Scq
+	IVoFJX5MvscCYosAjXl59BYLyC5mgWlMEjuPnQHrFRbQk1i08jYzSC+zgLrElCm5IGFmAXmJ
+	zWveMk9g5JuFZNQshKpZSKoWMDKvYpRMLSjOTc8tNiowzEst1ytOzC0uzUvXS87P3cQIDNFt
+	h7X6djDeXxJ/iFGAg1GJh1dgY2eUEGtiWXFl7iFGCQ5mJRFei5CuKCHelMTKqtSi/Pii0pzU
+	4kOM0hwsSuK8t/OORQoJpCeWpGanphakFsFkmTg4pRoYNwUHP7m8qNOZV/3iL8uoT8xyqvYO
+	+R/X+Ju95l1U2iW9bZ3w9x9b6iptOq03zfjUvGXzz5V+Tjunyb3x+xtmVXNurqBj44K61UY2
+	Zg3K7Jud+A5wbtWyu3p9SXDRpD3/566PiZ4iKinqE8psHBj4+Xrpp1Jeh30abzz/qOuZix++
+	+yUndI6/EktxRqKhFnNRcSIAkKS8pE0CAAA=
+X-CMS-MailID: 20180219102314epcas1p19ec4367b2623c25334fb1530393ec8fb
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180219102314epcas1p19ec4367b2623c25334fb1530393ec8fb
+X-RootMTR: 20180219102314epcas1p19ec4367b2623c25334fb1530393ec8fb
+References: <CGME20180219102314epcas1p19ec4367b2623c25334fb1530393ec8fb@epcas1p1.samsung.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592209203961806699?=
-X-GMAIL-MSGID: =?utf-8?q?1592913182599756640?=
+X-GMAIL-THRID: =?utf-8?q?1592824480666817122?=
+X-GMAIL-MSGID: =?utf-8?q?1592824480666817122?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Feb 19, 2018 at 11:05:38AM +0100, Dmitry Vyukov wrote:
-> On Mon, Feb 19, 2018 at 8:22 AM, Steffen Klassert
-> <steffen.klassert@secunet.com> wrote:
-> >> > <syzbot+7d03c810e50aaedef98a@syzkaller.appspotmail.com> wrote:
-> >> >> Hello,
-> >> >>
-> >> >> syzbot hit the following crash on net-next commit
-> >> >> 9515a2e082f91457db0ecff4b65371d0fb5d9aad (Thu Jan 25 03:37:38 2018 +0000)
-> >> >> net/ipv4: Allow send to local broadcast from a socket bound to a VRF
-> >> >>
-> >> >> So far this crash happened 6 times on net-next.
-> >> >> Unfortunately, I don't have any reproducer for this crash yet.
-> >> >> Raw console output is attached.
-> >> >> compiler: gcc (GCC) 7.1.1 20170620
-> >> >> .config is attached.
-> >> >
-> >> >
-> >> > +xfrm maintainers
-> >>
-> >> Here is a C repro:
-> >> https://gist.githubusercontent.com/dvyukov/92c67ba9afaaa960bcfbdc6ef549ac10/raw/786f9221c1d707c7f4a15effcb1d5997dd4f8638/gistfile1.txt
-> >
-> > Seems like syzbot does not know about this reproducer.
-> >
-> > I've send a patch to test and got this as the reply:
-> >
-> > This crash does not have a reproducer. I cannot test it.
-> 
-> Yes, it does not know about the reproducer. I've extracted it
-> manually, these hangs are sometimes hard to reproduce. For syzbot this
-> bug does not have a reproducer.
-> Have you tried to run the reproducer? For me it reproduced the bug
-> quite reliably.
+Dear Greg,
 
-I've tried the reproducer, it does not trigger with my kernel
-config and with your config my machine does not boot. So it
-was just easy to ask syzbot for a test.
+This is extcon-fixes pull request for v4.16-rc3. I add detailed description of
+this pull request on below. Please pull extcon with following updates.
 
-Anyway, Florian Westphal did a test and confirmed that
-the patch fixes the issue. I've just applied the fix
-below to the ipsec tree.
+Best Regards,
+Chanwoo Choi
 
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
-Subject: [PATCH] xfrm: Fix infinite loop in xfrm_get_dst_nexthop with transport mode.
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
 
-On transport mode we forget to fetch the child dst_entry
-before we continue the while loop, this leads to an infinite
-loop. Fix this by fetching the child dst_entry before we
-continue the while loop.
+are available in the git repository at:
 
-Fixes: 0f6c480f23f4 ("xfrm: Move dst->path into struct xfrm_dst")
-Reported-by: syzbot+7d03c810e50aaedef98a@syzkaller.appspotmail.com
-Tested-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
----
- net/xfrm/xfrm_policy.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-fixes-for-4.16-rc3
 
-diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
-index 150d46633ce6..625b3fca5704 100644
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -2732,14 +2732,14 @@ static const void *xfrm_get_dst_nexthop(const struct dst_entry *dst,
- 	while (dst->xfrm) {
- 		const struct xfrm_state *xfrm = dst->xfrm;
- 
-+		dst = xfrm_dst_child(dst);
-+
- 		if (xfrm->props.mode == XFRM_MODE_TRANSPORT)
- 			continue;
- 		if (xfrm->type->flags & XFRM_TYPE_REMOTE_COADDR)
- 			daddr = xfrm->coaddr;
- 		else if (!(xfrm->type->flags & XFRM_TYPE_LOCAL_COADDR))
- 			daddr = &xfrm->id.daddr;
--
--		dst = xfrm_dst_child(dst);
- 	}
- 	return daddr;
- }
--- 
-2.14.1
+for you to fetch changes up to 0434352d3d2e950cf5e743f6062abd87de22f960:
+
+  extcon: int3496: process id-pin first so that we start with the right status (2018-02-14 06:37:33 +0900)
+
+----------------------------------------------------------------
+Update extcon for v4.16-rc3
+
+This patch fixes issue of X-power extcon-axp288 and Intel extcon-int3496 driver.
+- For extcon-int3496 driver,
+Process id-pin first so that we start with the right status in order to fix
+a race where the initial work might still be running while other drivers
+were already calling extcon_get_state().
+
+- For extcon-axp288 driver,
+Revert the patch[1] which were applied to v4.16-rc1 because there are better
+ways with usb-role-switch and constify the axp288_pwr_up_down_info array.
+[1] 60ed99961469a3 ("extcon: axp288: Redo charger type detection a couple of seconds after probe()")
+
+----------------------------------------------------------------
+Hans de Goede (3):
+      extcon: axp288: Constify the axp288_pwr_up_down_info array
+      Revert "extcon: axp288: Redo charger type detection a couple of seconds after probe()"
+      extcon: int3496: process id-pin first so that we start with the right status
+
+ drivers/extcon/extcon-axp288.c        | 36 ++++-------------------------------
+ drivers/extcon/extcon-intel-int3496.c |  3 ++-
+ 2 files changed, 6 insertions(+), 33 deletions(-)
