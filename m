@@ -1,69 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752529AbeBSK1U (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 05:27:20 -0500
-Received: from mga07.intel.com ([134.134.136.100]:13279 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752309AbeBSK1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 05:27:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,534,1511856000";
-   d="scan'208";a="176413070"
-Subject: Re: [PATCH v3 0/3] xen: re-enable booting as Xen PVH guest
-To: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
-        x86@kernel.org
-Cc: lenb@kernel.org, boris.ostrovsky@oracle.com, hpa@zytor.com,
-        tglx@linutronix.de, mingo@redhat.com
-References: <20180219100906.14265-1-jgross@suse.com>
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Organization: Intel Technology Poland Sp. z o. o., KRS 101882, ul. Slowackiego
- 173, 80-298 Gdansk
-Message-ID: <209b38ec-aab4-ea5f-70a2-3f9bdb1f52a1@intel.com>
-Date: Mon, 19 Feb 2018 11:27:15 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752547AbeBSK2r (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 05:28:47 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:46254 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752380AbeBSK2p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 05:28:45 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Date: Mon, 19 Feb 2018 10:28:38 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Rob Herring <robh@kernel.org>
+CC: <lee.jones@linaro.org>, <mark.rutland@arm.com>,
+        <linus.walleij@linaro.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
+Subject: Re: [PATCH 2/2] mfd: arizona: Update DT doc to support more standard
+ reset binding
+Message-ID: <20180219102838.mcu3wkrvfkaf2ty4@localhost.localdomain>
+References: <20180214155512.17218-1-ckeepax@opensource.cirrus.com>
+ <20180214155512.17218-2-ckeepax@opensource.cirrus.com>
+ <20180219031335.75rw2bdlyrxjt4ff@rob-hp-laptop>
 MIME-Version: 1.0
-In-Reply-To: <20180219100906.14265-1-jgross@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180219031335.75rw2bdlyrxjt4ff@rob-hp-laptop>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1802190131
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/19/2018 11:09 AM, Juergen Gross wrote:
-> The Xen PVH boot protocol passes vital information to the kernel via
-> a start_info block. One of the data transferred is the physical address
-> of the RSDP table.
->
-> Unfortunately PVH support in the kernel didn't use that passed address
-> for RSDP, but relied on the legacy mechanism searching for the RSDP in
-> low memory. After a recent change in Xen putting the RSDP to a higher
-> address booting as PVH guest is now failing.
->
-> This small series repairs that by passing the RSDP address from the
-> start_info block to ACPI handling.
->
-> Changes in V3:
-> - instead of using a weak function add a function pointer to x86_init
->    for obtaining the RSDP address
->
-> Juergen Gross (3):
->    acpi: introduce acpi_arch_get_root_pointer() for getting rsdp address
->    x86/acpi: add a new x86_init_acpi structure to x86_init_ops
->    x86/xen: add pvh specific rsdp address retrieval function
->
->   arch/x86/include/asm/acpi.h     |  7 +++++++
->   arch/x86/include/asm/x86_init.h |  9 +++++++++
->   arch/x86/kernel/x86_init.c      |  5 +++++
->   arch/x86/xen/enlighten_pvh.c    | 14 +++++++++++---
->   drivers/acpi/osl.c              |  5 ++++-
->   include/linux/acpi.h            |  7 +++++++
->   6 files changed, 43 insertions(+), 4 deletions(-)
->
-The series is fine by me:
+On Sun, Feb 18, 2018 at 09:13:35PM -0600, Rob Herring wrote:
+> On Wed, Feb 14, 2018 at 03:55:12PM +0000, Charles Keepax wrote:
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> > ---
+> >  Documentation/devicetree/bindings/mfd/arizona.txt | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Documentation/devicetree/bindings/mfd/arizona.txt
+> > index bdd017686ea5..a1557220825e 100644
+> > --- a/Documentation/devicetree/bindings/mfd/arizona.txt
+> > +++ b/Documentation/devicetree/bindings/mfd/arizona.txt
+> > @@ -50,7 +50,7 @@ Required properties:
+> >  
+> >  Optional properties:
+> >  
+> > -  - wlf,reset : GPIO specifier for the GPIO controlling /RESET
+> > +  - wlf,reset-gpios : GPIO specifier for the GPIO controlling /RESET
+> 
+> Just reset-gpios is widely used, so you can use that and drop the 
+> vendor.
+> 
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Yes sorry should have realised that will drop the prefix and
+resend.
+
+Thanks,
+Charles
