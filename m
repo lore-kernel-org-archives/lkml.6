@@ -1,60 +1,201 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753770AbeBSUCs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 15:02:48 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:37967 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753699AbeBSUCq (ORCPT
+        id S932114AbeBSUDL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 15:03:11 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44552 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753629AbeBSTqH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 15:02:46 -0500
-X-Google-Smtp-Source: AH8x224XKzExp6R1mj2JtgwZ5iIS5gfxWu3nQ6NbCXdjGhuEU64KuLebTBa2iA/Ag+5SXwpYCDxbQw==
-Date: Mon, 19 Feb 2018 14:02:43 -0600
-From: Rob Herring <robh@kernel.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>, dianders@chromium.org,
-        Chris Zhong <zyw@rock-chips.com>, William wu <wulf@rock-chips.com>,
-        hl@rock-chips.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCH v3 2/6] dt-bindings: phy-rockchip-typec: deprecate some
- register properties.
-Message-ID: <20180219200243.mluxhx35wimphydc@rob-hp-laptop>
-References: <20180216120956.19034-1-enric.balletbo@collabora.com>
- <20180216120956.19034-2-enric.balletbo@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180216120956.19034-2-enric.balletbo@collabora.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Mon, 19 Feb 2018 14:46:07 -0500
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v7 08/61] xarray: Add the xa_lock to the radix_tree_root
+Date: Mon, 19 Feb 2018 11:45:03 -0800
+Message-Id: <20180219194556.6575-9-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180219194556.6575-1-willy@infradead.org>
+References: <20180219194556.6575-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 16, 2018 at 01:09:52PM +0100, Enric Balletbo i Serra wrote:
-> As now the following register properties are in the driver, document as
-> deprecated these properties and recommend to not use them on new bindings.
-> 
-> The deprecated properties are:
-> 
-> - rockchip,typec-conn-dir : the register of type-c connector direction
-> - rockchip,usb3tousb2-en : the register of type-c force usb3 to usb2
->                            enable control.
-> - rockchip,external-psm : the register of type-c phy external psm clock
->                           selection.
-> - rockchip,pipe-status : the register of type-c phy pipe status.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> Changes since v2:
-> - Apply the nit suggested by Heiko Stuebner.
-> Changes since v1:
-> - This patch is new on these series and is just a documentation update
->   due patch [1/6]
-> 
->  .../devicetree/bindings/phy/phy-rockchip-typec.txt | 33 +++++-----------------
->  1 file changed, 7 insertions(+), 26 deletions(-)
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+This results in no change in structure size on 64-bit x86 as it fits in
+the padding between the gfp_t and the void *.
+
+Initialising the spinlock requires a name for the benefit of lockdep,
+so RADIX_TREE_INIT() now needs to know the name of the radix tree it's
+initialising, and so do IDR_INIT() and IDA_INIT().
+
+Also add the xa_lock() and xa_unlock() family of wrappers to make it
+easier to use the lock.  If we could rely on -fplan9-extensions in
+the compiler, we could avoid all of this syntactic sugar, but that
+wasn't added until gcc 4.6.
+
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ fs/f2fs/gc.c                   |  2 +-
+ include/linux/idr.h            | 19 ++++++++++---------
+ include/linux/radix-tree.h     |  7 +++++--
+ include/linux/xarray.h         | 24 ++++++++++++++++++++++++
+ kernel/pid.c                   |  2 +-
+ tools/include/linux/spinlock.h |  1 +
+ 6 files changed, 42 insertions(+), 13 deletions(-)
+ create mode 100644 include/linux/xarray.h
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index aa720cc44509..7aa15134180e 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1006,7 +1006,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ 	unsigned int init_segno = segno;
+ 	struct gc_inode_list gc_list = {
+ 		.ilist = LIST_HEAD_INIT(gc_list.ilist),
+-		.iroot = RADIX_TREE_INIT(GFP_NOFS),
++		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
+ 	};
+ 
+ 	trace_f2fs_gc_begin(sbi->sb, sync, background,
+diff --git a/include/linux/idr.h b/include/linux/idr.h
+index 913c335054f0..e856f4e0ab35 100644
+--- a/include/linux/idr.h
++++ b/include/linux/idr.h
+@@ -32,27 +32,28 @@ struct idr {
+ #define IDR_RT_MARKER	(ROOT_IS_IDR | (__force gfp_t)			\
+ 					(1 << (ROOT_TAG_SHIFT + IDR_FREE)))
+ 
+-#define IDR_INIT_BASE(base) {						\
+-	.idr_rt = RADIX_TREE_INIT(IDR_RT_MARKER),			\
++#define IDR_INIT_BASE(name, base) {					\
++	.idr_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER),			\
+ 	.idr_base = (base),						\
+ 	.idr_next = 0,							\
+ }
+ 
+ /**
+  * IDR_INIT() - Initialise an IDR.
++ * @name: Name of IDR.
+  *
+  * A freshly-initialised IDR contains no IDs.
+  */
+-#define IDR_INIT	IDR_INIT_BASE(0)
++#define IDR_INIT(name)	IDR_INIT_BASE(name, 0)
+ 
+ /**
+- * DEFINE_IDR() - Define a statically-allocated IDR
+- * @name: Name of IDR
++ * DEFINE_IDR() - Define a statically-allocated IDR.
++ * @name: Name of IDR.
+  *
+  * An IDR defined using this macro is ready for use with no additional
+  * initialisation required.  It contains no IDs.
+  */
+-#define DEFINE_IDR(name)	struct idr name = IDR_INIT
++#define DEFINE_IDR(name)	struct idr name = IDR_INIT(name)
+ 
+ /**
+  * idr_get_cursor - Return the current position of the cyclic allocator
+@@ -219,10 +220,10 @@ struct ida {
+ 	struct radix_tree_root	ida_rt;
+ };
+ 
+-#define IDA_INIT	{						\
+-	.ida_rt = RADIX_TREE_INIT(IDR_RT_MARKER | GFP_NOWAIT),		\
++#define IDA_INIT(name)	{						\
++	.ida_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER | GFP_NOWAIT),	\
+ }
+-#define DEFINE_IDA(name)	struct ida name = IDA_INIT
++#define DEFINE_IDA(name)	struct ida name = IDA_INIT(name)
+ 
+ int ida_pre_get(struct ida *ida, gfp_t gfp_mask);
+ int ida_get_new_above(struct ida *ida, int starting_id, int *p_id);
+diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
+index 6c4e2e716dac..34149e8b5f73 100644
+--- a/include/linux/radix-tree.h
++++ b/include/linux/radix-tree.h
+@@ -110,20 +110,23 @@ struct radix_tree_node {
+ #define ROOT_TAG_SHIFT	(__GFP_BITS_SHIFT)
+ 
+ struct radix_tree_root {
++	spinlock_t		xa_lock;
+ 	gfp_t			gfp_mask;
+ 	struct radix_tree_node	__rcu *rnode;
+ };
+ 
+-#define RADIX_TREE_INIT(mask)	{					\
++#define RADIX_TREE_INIT(name, mask)	{				\
++	.xa_lock = __SPIN_LOCK_UNLOCKED(name.xa_lock),			\
+ 	.gfp_mask = (mask),						\
+ 	.rnode = NULL,							\
+ }
+ 
+ #define RADIX_TREE(name, mask) \
+-	struct radix_tree_root name = RADIX_TREE_INIT(mask)
++	struct radix_tree_root name = RADIX_TREE_INIT(name, mask)
+ 
+ #define INIT_RADIX_TREE(root, mask)					\
+ do {									\
++	spin_lock_init(&(root)->xa_lock);				\
+ 	(root)->gfp_mask = (mask);					\
+ 	(root)->rnode = NULL;						\
+ } while (0)
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+new file mode 100644
+index 000000000000..2dfc8006fe64
+--- /dev/null
++++ b/include/linux/xarray.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++#ifndef _LINUX_XARRAY_H
++#define _LINUX_XARRAY_H
++/*
++ * eXtensible Arrays
++ * Copyright (c) 2017 Microsoft Corporation
++ * Author: Matthew Wilcox <mawilcox@microsoft.com>
++ */
++
++#include <linux/spinlock.h>
++
++#define xa_trylock(xa)		spin_trylock(&(xa)->xa_lock)
++#define xa_lock(xa)		spin_lock(&(xa)->xa_lock)
++#define xa_unlock(xa)		spin_unlock(&(xa)->xa_lock)
++#define xa_lock_bh(xa)		spin_lock_bh(&(xa)->xa_lock)
++#define xa_unlock_bh(xa)	spin_unlock_bh(&(xa)->xa_lock)
++#define xa_lock_irq(xa)		spin_lock_irq(&(xa)->xa_lock)
++#define xa_unlock_irq(xa)	spin_unlock_irq(&(xa)->xa_lock)
++#define xa_lock_irqsave(xa, flags) \
++				spin_lock_irqsave(&(xa)->xa_lock, flags)
++#define xa_unlock_irqrestore(xa, flags) \
++				spin_unlock_irqrestore(&(xa)->xa_lock, flags)
++
++#endif /* _LINUX_XARRAY_H */
+diff --git a/kernel/pid.c b/kernel/pid.c
+index ed6c343fe50d..157fe4b19971 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -70,7 +70,7 @@ int pid_max_max = PID_MAX_LIMIT;
+  */
+ struct pid_namespace init_pid_ns = {
+ 	.kref = KREF_INIT(2),
+-	.idr = IDR_INIT,
++	.idr = IDR_INIT(init_pid_ns.idr),
+ 	.pid_allocated = PIDNS_ADDING,
+ 	.level = 0,
+ 	.child_reaper = &init_task,
+diff --git a/tools/include/linux/spinlock.h b/tools/include/linux/spinlock.h
+index 4ed569fcb139..b21b586b9854 100644
+--- a/tools/include/linux/spinlock.h
++++ b/tools/include/linux/spinlock.h
+@@ -7,6 +7,7 @@
+ 
+ #define spinlock_t		pthread_mutex_t
+ #define DEFINE_SPINLOCK(x)	pthread_mutex_t x = PTHREAD_MUTEX_INITIALIZER;
++#define __SPIN_LOCK_UNLOCKED(x)	(pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER
+ 
+ #define spin_lock_irqsave(x, f)		(void)f, pthread_mutex_lock(x)
+ #define spin_unlock_irqrestore(x, f)	(void)f, pthread_mutex_unlock(x)
+-- 
+2.16.1
