@@ -1,97 +1,133 @@
-Return-Path: <arnd@arndb.de>
-X-Google-Smtp-Source: AH8x227ATCKx+bxx97Vidowds+i7c3qcnJfk1z4Q5HxFF4dHIB11lub+gR6nMjAE0p17mzuawuTG
-ARC-Seal: i=1; a=rsa-sha256; t=1519035281; cv=none;
-        d=google.com; s=arc-20160816;
-        b=AqS/z7IZGl4OAWl3u41Mvs0/FdFnRjE7JqiffZ7xutWTywkIyjQBbd6bqYOG67afxf
-         xF/a9g5awi578pM3k1GBACewlPtw/wjepBQEHN0qLSEDbre/Gutm4RcCQJEnidcNEBBk
-         +L1pW4sX8dT/7E9vZFETAUe6o6oGiNzAMpeXFm7SwgcqqvprdDu9kRDs86m/KY1NO4XS
-         f/oWNe6ZOj9cjwCKOprOoiabhtice6UtU3thGwpBwNGE3gs2zIGbfYxE1oT7nkFrLFzr
-         ItqU9CsyTxcd51j3aQl+gfhrCvKrC6BuDZAppbjaMqBmc5WP2iRAatyfjYiGo99EvO+f
-         Xv1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=3EXdaR8klswLR8IkrfgcsX4O2930oPg7dMD1Fm2rf48=;
-        b=IdiziSamazzQ9+EMfyjfvd3YbcBnYMtDqSayfZgKUTn+7b08MGtkyqUXyuFvwFZs1E
-         Yw5IGG5ch754Wgquyc2bQA7yhxcrlCx4sTne2HrWOcKXWwJNXFJFnPMd5oxSyCfpvwuw
-         ObBDfohLjP2A89za790TDdwwL7p+kLh7iqNiTML0rZNBJVaK5tqeY4l+R6OWT/aPK2JE
-         Vz6ogoXVB4MIhpcnsMwWnUAcfCPsCPAJTDdkkUZOAqcWlQsfEI4FN/1lumOtyJVE+HtT
-         k5ifeTuG5rFJYSDvW1kryITY2GsznyduyJ1xf+SKE6coSwgMGUntKIAM8bBDXRsFTpCX
-         k9Bg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 212.227.126.131 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 212.227.126.131 is neither permitted nor denied by best guess record for domain of arnd@arndb.de) smtp.mailfrom=arnd@arndb.de
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3989416-1519035290-2-1174319422550589825
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519035290; b=rfdyhBcT3kX1fqmL2jEWFJR3EQ9FoLdqn0JirOGBvqAvVf3
+    sBVo4CxOwJwwYfr+CfN1/Oom/Fo+BF0zUKDSvLnqfn8Ya1LHT76fvrTLweN5dJg7
+    YZCb/s0OFzI2L1lsOMCwkfmR43qhEYa0MywDWUsKSxo6wRzXveGk0Dw/Ko1vrQ+B
+    4cmhZ2FckLkRyjCpjvE2fQg0aMG9llul0xnOsCQwd/0XdrtGdi0iqA2TwZhJrbMf
+    V8A0mmztjYDcRsL1AKOY0x1dF6uEK13ggaYEgP51DS5+C3J44c4fzakSSh6Z6cmq
+    6caRqybjwGf4OAt9Zl7LZW21k9cxWxwLvRFo/mg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519035290;
+    bh=YypF0AsCEGINYErsUqxl6taiwphy9R62gNPfwBm3g2s=; b=U6QlWAnwoG8C
+    mtDGrgPQwQdoG0zej4DPS4mlXvmEP9cgkzEl3opri3Bm8B9jBb9k+DNrPn0OG1Tq
+    9HyO89cn6GJJVRt616p7gdyPJDYuar6NflNF2BfJw3r3iwpuVYjz03vuJM9XxXwZ
+    ulXonaCflekItR1QI1WFTXEckl0dKgrmF0C8590OVEA99fQM9YD7iT/HDB5oPm/W
+    4GCcML7Sq+aQsH4xfTiedXSfq3stuIejAR7hLiUq2EF6qw1JKBRe6AWSNszHJT1u
+    //+8FsJajmxMSKsbJtxrYVXv+/lwlGr51mZ602ZZ86GcZF2f/y3OaOn7wjKGv//F
+    +9kMgc/e/Q==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752474AbeBSKOr (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Feb 2018 05:14:47 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:51893 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752580AbeBSKOq (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 19 Feb 2018 05:14:46 -0500
 From: Arnd Bergmann <arnd@arndb.de>
 To: stable@vger.kernel.org
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org
-Subject: [4.9-stable 4/9] binfmt_elf: compat: avoid unused function warning
-Date: Mon, 19 Feb 2018 11:13:23 +0100
-Message-Id: <20180219101343.2922561-5-arnd@arndb.de>
+Cc: Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [4.9-stable 3/9] arm64: sunxi: always enable reset controller
+Date: Mon, 19 Feb 2018 11:13:22 +0100
+Message-Id: <20180219101343.2922561-4-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180219101343.2922561-1-arnd@arndb.de>
 References: <20180219101343.2922561-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:a7vjXUQbrfLAs8RrB/FR6oKJwbxpj3OpY3fqd2uZTcuqz0pmMmO
- uCeETK/I3J/yklsDp5aZM5vkmgVzNK6BYygow0iowzqxca11SQmDUs7RuXdIayEvQVy9iKy
- B/eEqCoc/a8HSX/jNMoeCyq8cyoMiA8AHlidWvGaWXqr+gz0gsZA1bvJxLEIBqQzvWNxKsk
- y4oKoMH3Gtz6w6Hdv+fhw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:S7avwsTmh4Q=:DnZ0WXJgMnPCo+nCmBCX0M
- xfZTMdg3l0qCJAnseO4sF7IMg36CC5Q5U9taziUEIgiQeWVTFc70QFnZbonkv6mDfoAae5AZy
- xK4FDWXXWN0qyKYfIghuVIRQIKbqPitdFeNav+oQDpiiw4487LNS+xm1xvldogRrLkuBX4Dfs
- famku1grCL3y6ZBvQJao5cIveY+hD9BC3pRrfSjyYiKXi7Mu/u1XL1le/LuyykUBkDCxPmpzQ
- LvjBUiI7B8rQlO7Vy5DkzwVXaZ7WnBrqExP3Q6tvka7GO5Db4Oz2oGKJAl3An5fpFZh5Bv3Zo
- xWDkNK/1625AInuwwjaF2UaHrRErdpnKVWE0ZFpLBMpF6oFnc3OjEQrDkBv/ScBCA4/YDWgK1
- M3VUMF3/F/Sp9y/Pi+7Otkt4lDANmrmVMb3C0sKyMjJ9H2CkD8owNPVqEhnr6iVBdVD95MMQ8
- NfNe79sokfqX3HBsaRuG72E43pq47h4PKprPIvAkRwhhYMJYlggv7jb1mRDxWa7VCjmM17sHm
- h7ivSoeS5z6VkWDS90v4fHsYqnutusTUs77wflSqO36wh2B9KR6OHpvbkocJe03q1U4Tt6xVn
- mRAaGotAwEfeIpwLM3GDSVvctnSRTeJZEIkx7KF04y4tTtIjvY2SGXGUiiHZCvcgdzqIW2OsH
- 068tDTe3rVD+fRtYeiMVhoJ5cDK8GbkbW+FfA6CSqPqeoTrP0pl5C7xwagV26OXv3vdkPCGfd
- AfblSubCEVe6S/iaJ8l/h1W3Cq3o6e5zlY4JgQ==
+X-Provags-ID: V03:K0:tMCeZj4ZxRzuXKk+bs225PbrCm1K75mbKhfmWB6ArkiQeGAn+S9
+ CJXPaDoBa7BcmNUrUy+eC9EHtDa/8tpoMoAgiJjPU/L3WUlLJwuUV+Yt9pbvrml3cnAKYwJ
+ MMw/Fd4b4jZpeu+cNLtIWVlU+NlHzPpEr0qBsExUIj3lXa2RbEfqpbKdyi5+n/6Vxkd4/ns
+ O5yvh609TJLk2PPd0O98w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:2Tny1puwKZI=:Efxnl/p8rvwDrebzszd8/u
+ Xh/n+Sia56i4+Gr2kzOr8bgMoFOwwsvZdEIChnaXR8gL/2KM9wHdGQTXGDUXlFvlBZWiFJk1c
+ UuNGxyE7J4sdXGu3X6vTrc1u4bwPzVaUr6lIZpaBHXxEas5OqKYKPrBNmOiO7PunYu4qrC1EF
+ KhB3zPbf1RHR9+3r3EpCu1PWtBx1YQlkCN2Kt9QxJ8neN0pes4S1+b7FXlO0+GMmq9gYzza6W
+ 5J5ddzufaRvTzeHFV0D8BJX+HWCXjWlIYOAuaKl3RN9m2qr/URWZPviB34UEPalcNIMyYvOdW
+ L8UlBaw5gthWp5SPrfIYuXT0dnCcOocGBckc2kPCzvJxFH09Xv+SOXtVEtyPWaGkXY/V9n9U3
+ ZafvkcYlNd4TYc7YVnX6YCXX3KAUIq3TMKO6uJl0FN9cIavqbufWjB8aukE4RpMLP9L8xxdMc
+ UUZFRIZMF14yOTtCUwGE7m5766Y66qXDEeiviU9Tni9H/0Kif56bIzvYBzeoq3T7JqYlYCYYp
+ Yh3oeMswB97NwluwGv84oe+yE/NTSszZt28Lajc9TX07F/oYMWw+g6Y+ChLrjxkUYbiBfvdAd
+ aK77x7BO37nGaXlO3r8jXnpDn0nonSbfsRFoqbGrzRUt/4PRUIwdI7NXV8Z3ETJY6Hb9yBoT/
+ /NqnKAz/7rS/Qr2AeGpKk+cJfdWODW486z5zRygQg7tpC5IYAoR6H1daz03EceGvbKyFf5KNX
+ ogzlth8vonxfx1KHAcrY2gorvc1JCcuY4ofd1g==
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592823939768715590?=
-X-GMAIL-MSGID: =?utf-8?q?1592823939768715590?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-When CONFIG_ELF_CORE is disabled, we get a harmless warning in the compat
-version of binfmt_elf:
+commit 900a9020af7a023f9b64c919fddf8a7486108962 upstream.
 
-fs/compat_binfmt_elf.c:58:13: error: 'cputime_to_compat_timeval' defined but not used [-Werror=unused-function]
+The sunxi clk driver causes a link error when the reset controller
+subsystem is disabled:
 
-This was addressed in mainline Linux as part of a larger rework with commit
-cd19c364b313 ("fs/binfmt: Convert obsolete cputime type to nsecs").
+drivers/clk/built-in.o: In function `sun4i_ve_clk_setup':
+:(.init.text+0xd040): undefined reference to `reset_controller_register'
+drivers/clk/built-in.o: In function `sun4i_a10_display_init':
+:(.init.text+0xe5e0): undefined reference to `reset_controller_register'
+drivers/clk/built-in.o: In function `sunxi_usb_clk_setup':
+:(.init.text+0x10074): undefined reference to `reset_controller_register'
 
-For 4.9 and earlier, this just shuts up the warning by adding an #ifdef
-around the function definition.
+We already force it to be enabled on arm32 and some other arm64 platforms,
+but not on arm64/sunxi. This adds the respective Kconfig statements to
+also select it here.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+[arnd: manually rebased to 4.9]
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/compat_binfmt_elf.c | 2 ++
+ arch/arm64/Kconfig.platforms | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/fs/compat_binfmt_elf.c b/fs/compat_binfmt_elf.c
-index 4d24d17bcfc1..943be5ecfcd9 100644
---- a/fs/compat_binfmt_elf.c
-+++ b/fs/compat_binfmt_elf.c
-@@ -51,6 +51,7 @@
- #define elf_prstatus	compat_elf_prstatus
- #define elf_prpsinfo	compat_elf_prpsinfo
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 101794f5ce10..08a4497f70a6 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -2,9 +2,11 @@ menu "Platform selection"
  
-+#ifdef CONFIG_ELF_CORE
- /*
-  * Compat version of cputime_to_compat_timeval, perhaps this
-  * should be an inline in <linux/compat.h>.
-@@ -63,6 +64,7 @@ static void cputime_to_compat_timeval(const cputime_t cputime,
- 	value->tv_sec = tv.tv_sec;
- 	value->tv_usec = tv.tv_usec;
- }
-+#endif
+ config ARCH_SUNXI
+ 	bool "Allwinner sunxi 64-bit SoC Family"
++	select ARCH_HAS_RESET_CONTROLLER
+ 	select GENERIC_IRQ_CHIP
+ 	select PINCTRL
+ 	select PINCTRL_SUN50I_A64
++	select RESET_CONTROLLER
+ 	help
+ 	  This enables support for Allwinner sunxi based SoCs like the A64.
  
- #undef cputime_to_timeval
- #define cputime_to_timeval cputime_to_compat_timeval
 -- 
 2.9.0
