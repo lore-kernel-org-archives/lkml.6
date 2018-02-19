@@ -1,102 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753233AbeBSQBY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 11:01:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51956 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751701AbeBSQBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 11:01:23 -0500
-Date: Mon, 19 Feb 2018 17:01:22 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
-Subject: [PATCH v3] printk: Relocate wake_klogd check close to the end of
- console_unlock()
-Message-ID: <20180219160122.upqkpbbffm3rth6p@pathway.suse.cz>
-References: <20180208130402.15157-1-pmladek@suse.com>
- <20180219155817.yfo7yrnz4vyzxerx@pathway.suse.cz>
+        id S1753291AbeBSQBo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 11:01:44 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:53703 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753219AbeBSQBl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 11:01:41 -0500
+From: Amelie DELAUNAY <amelie.delaunay@st.com>
+To: Philippe Ombredanne <pombredanne@nexb.com>
+CC: Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "Alexandre TORGUE" <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/6] mfd: Add ST Multi-Function eXpander core driver
+Thread-Topic: [PATCH 2/6] mfd: Add ST Multi-Function eXpander core driver
+Thread-Index: AQHToOkCMgAtE6p6MUacifCOH+p/o6OgoRsAgAAkOYCACx2zAA==
+Date: Mon, 19 Feb 2018 16:00:48 +0000
+Message-ID: <889cec8c-5a3a-ffc5-e6fa-aa388485e601@st.com>
+References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
+ <1518100057-23234-3-git-send-email-amelie.delaunay@st.com>
+ <20180212120600.5cghrzz4jqvvkgz6@dell>
+ <CAOFm3uH+DLcOqiSV0z0N6JnmSk+JfTF3bfkC0_2kdFT-eDMr8A@mail.gmail.com>
+In-Reply-To: <CAOFm3uH+DLcOqiSV0z0N6JnmSk+JfTF3bfkC0_2kdFT-eDMr8A@mail.gmail.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.44]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7693714657D62040ADFB3C50F73EB2A2@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180219155817.yfo7yrnz4vyzxerx@pathway.suse.cz>
-User-Agent: NeoMutt/20170421 (1.8.2)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-19_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1JG1n42013635
 
-From: Tejun Heo <tj@kernel.org>
+Thanks Philippe,
 
-We mark for waking up klogd whenever we see a new message sequence in
-the main loop.  However, the actual wakeup is always at the end of the
-function and we can easily test for the wakeup condition when we do
-the final should-we-repeat check.
+I will take this into account for V2.
 
-Move the wake_klogd condition check out of the main loop.  This avoids
-doing the same thing repeatedly and groups similar checks into a
-common place.
+Regards,
+Amelie
 
-This fixes a race introduced by the commit dbdda842fe96f8932 ("printk: Add
-console owner and waiter logic to load balance console writes").
-The current console owner might process the newly added message before
-the related printk() start waiting for the console lock. Then the lock
-is passed without waking klogd. The new owner sees the already updated
-seen_seq and does not know that the wakeup is needed.
-
-Fixes: dbdda842fe96f8932 ("printk: Add console owner and waiter logic to load balance console writes")
-Signed-off-by: Tejun Heo <tj@kernel.org>
-[pmladek@suse.com: Fix and describe a new race with console waiter]
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
----
-Changes against v2:
-
-+ check wake_klogd only when really leaving
-
- kernel/printk/printk.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index db4b9b8929eb..aaa28c1409ab 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2335,10 +2335,6 @@ void console_unlock(void)
- 
- 		printk_safe_enter_irqsave(flags);
- 		raw_spin_lock(&logbuf_lock);
--		if (seen_seq != log_next_seq) {
--			wake_klogd = true;
--			seen_seq = log_next_seq;
--		}
- 
- 		if (console_seq < log_first_seq) {
- 			len = sprintf(text, "** %u printk messages dropped **\n",
-@@ -2416,14 +2412,22 @@ void console_unlock(void)
- 
- 	up_console_sem();
- 
-+	raw_spin_lock(&logbuf_lock);
- 	/*
- 	 * Someone could have filled up the buffer again, so re-check if there's
- 	 * something to flush. In case we cannot trylock the console_sem again,
- 	 * there's a new owner and the console_unlock() from them will do the
- 	 * flush, no worries.
- 	 */
--	raw_spin_lock(&logbuf_lock);
- 	retry = console_seq != log_next_seq;
-+	/*
-+	 * Check whether userland needs notification. Do this only when really
-+	 * leaving to avoid race with console_trylock_spinning().
-+	 */
-+	if (seen_seq != log_next_seq && !retry) {
-+		wake_klogd = true;
-+		seen_seq = log_next_seq;
-+	}
- 	raw_spin_unlock(&logbuf_lock);
- 	printk_safe_exit_irqrestore(flags);
- 
--- 
-2.13.6
+On 02/12/2018 03:15 PM, Philippe Ombredanne wrote:
+> Amelie,
+> 
+> On Mon, Feb 12, 2018 at 1:06 PM, Lee Jones <lee.jones@linaro.org> wrote:
+>> On Thu, 08 Feb 2018, Amelie Delaunay wrote:
+>>
+>>> ST Multi-Function eXpander (MFX) is a slave controller using I2C
+>>> for communication with the main MCU. Main features are:
+>>> - 16 fast GPIOs individually configurable in input/output
+>>> - 8 alternate GPIOs individually configurable in input/output
+>>> - Main MCU IDD measurement
+>>> - Resistive touchscreen controller
+>>>
+>>> Only GPIO expander (16 fast GPIOs + 8 alternate) feature is
+>>> supported for the moment.
+>>>
+>>> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+> 
+> <snip>
+> 
+>>> --- /dev/null
+>>> +++ b/drivers/mfd/st-mfx.c
+>>> @@ -0,0 +1,526 @@
+>>> +/*
+>>> + * STMicroelectronics Multi-Function eXpander (ST-MFX) Core Driver
+>>> + *
+>>> + * Copyright (C) 2017, STMicroelectronics - All Rights Reserved
+>>> + * Author(s): Amelie Delaunay <amelie.delaunay@st.com> for STMicroelectronics.
+>>
+>> You don't need to put "for STMicroelectronics".  This was something we
+>> made up when submitting from a different (!st.com) email address.
+>>
+>>> + * License terms: GPL V2.0.
+>>> + *
+>>> + * st-mfx Core Driver is free software; you can redistribute it and/or modify it
+>>> + * under the terms of the GNU General Public License version 2 as published by
+>>> + * the Free Software Foundation.
+>>> + *
+>>> + * st-mfx Core Driver is distributed in the hope that it will be useful, but
+>>> + * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+>>> + * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+>>> + * details.
+>>> + *
+>>> + * You should have received a copy of the GNU General Public License along with
+>>> + * st-mfx Core Driver. If not, see <http://www.gnu.org/licenses/>.
+>>
+>> You should be able to use the short version of the licensing
+>> agreement.  Also, please grep for "SPDX".
+> 
+> You can check the doc for the (fairly new) way to remove legalese
+> boilerplate at Documentation/process/license-rules.rst or [1]
+> It helps keep the focus on the code and less on licensing!
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
+> 
