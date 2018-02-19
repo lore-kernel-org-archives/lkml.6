@@ -1,139 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752486AbeBSJ7u (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 04:59:50 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35196 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752142AbeBSJ7t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 04:59:49 -0500
-X-Google-Smtp-Source: AH8x227Wbu7Q7MANQFvloM33l7oSFRFcBNCxNUIWX7yuAf4r/zEGLAjrkdYqJPuFoJSbjmojRrmtDQ==
-Date: Mon, 19 Feb 2018 10:59:45 +0100
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Shreeya Patel <shreeya.patel23498@gmail.com>
-Cc: Chris Wilson <chris@chris-wilson.co.uk>, daniel@ffwll.ch,
-        airlied@redhat.com, airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, seanpaul@chromium.org
-Subject: Re: [PATCH] gpu/drm/udl: Replace struct_mutex with driver private
- lock
-Message-ID: <20180219095945.GQ22199@phenom.ffwll.local>
-Mail-Followup-To: Shreeya Patel <shreeya.patel23498@gmail.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>, airlied@redhat.com,
-        airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, seanpaul@chromium.org
-References: <1518178256-17157-1-git-send-email-shreeya.patel23498@gmail.com>
- <151817873639.28809.8475696517820926336@mail.alporthouse.com>
- <1518268651.3820.4.camel@gmail.com>
+        id S1752322AbeBSKBJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 05:01:09 -0500
+Received: from lhrrgout.huawei.com ([194.213.3.17]:26626 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752129AbeBSKBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 05:01:08 -0500
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+CC: "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>,
+        "xuwei (O)" <xuwei5@huawei.com>
+Subject: RE: [PATCH v3 2/6] vfio/type1: Check reserve region conflict and
+ update iova list
+Thread-Topic: [PATCH v3 2/6] vfio/type1: Check reserve region conflict and
+ update iova list
+Thread-Index: AQHTpkHzP3l07Mrork29+TliCTbhtaOnegMAgAQIQeA=
+Date: Mon, 19 Feb 2018 10:00:53 +0000
+Message-ID: <5FC3163CFD30C246ABAA99954A238FA838648B14@FRAEML521-MBX.china.huawei.com>
+References: <20180215094504.4972-1-shameerali.kolothum.thodi@huawei.com>
+        <20180215094504.4972-3-shameerali.kolothum.thodi@huawei.com>
+ <20180216141810.55d754da@w520.home>
+In-Reply-To: <20180216141810.55d754da@w520.home>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.202.227.237]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1518268651.3820.4.camel@gmail.com>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.9.3 (2018-01-21)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 06:47:31PM +0530, Shreeya Patel wrote:
-> On Fri, 2018-02-09 at 12:18 +0000, Chris Wilson wrote:
-> > Quoting Shreeya Patel (2018-02-09 12:10:56)
-> > > 
-> > > dev->struct_mutex is the Big DRM Lock and the only bit where
-> > > it’s mandatory is serializing GEM buffer object destruction.
-> > > Which unfortunately means drivers have to keep track of that
-> > > lock and either call unreference or unreference_locked
-> > > depending upon context. Core GEM doesn’t have a need for
-> > > struct_mutex any more since kernel 4.8.
-> > > 
-> > > For drivers that need struct_mutex it should be replaced by a
-> > > driver
-> > > private lock.
-> > In that regard, dev->struct_mutex is already a driver private lock.
-> > The
-> > impetus is to reduce a big lock into lots of little locks where
-> > contention deems prudent.
-> 
-> Ok. I'll make the changes in the commit message.
 
-udl_driver_load would be a good place. Also, running with
-CONFIG_PROVE_LOCKING enabled will catch this stuff. On that note, do you
-have the hardware to test your changes? If not we need to find someone who
-can do that.
 
-Also please switch udl from the gem_free_object to the
-gem_free_object_unlocked hook.
--Daniel
+> -----Original Message-----
+> From: Alex Williamson [mailto:alex.williamson@redhat.com]
+> Sent: Friday, February 16, 2018 9:18 PM
+> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+> Cc: eric.auger@redhat.com; pmorel@linux.vnet.ibm.com;
+> kvm@vger.kernel.org; linux-kernel@vger.kernel.org; Linuxarm
+> <linuxarm@huawei.com>; John Garry <john.garry@huawei.com>; xuwei (O)
+> <xuwei5@huawei.com>
+> Subject: Re: [PATCH v3 2/6] vfio/type1: Check reserve region conflict and
+> update iova list
+> 
+> On Thu, 15 Feb 2018 09:45:00 +0000
+> Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
+> 
+> > This retrieves the reserved regions associated with dev group and
+> > checks for conflicts with any existing dma mappings. Also update
+> > the iova list excluding the reserved regions.
+> >
+> > Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+> > ---
+> >  drivers/vfio/vfio_iommu_type1.c | 86
+> ++++++++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 85 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/vfio/vfio_iommu_type1.c
+> b/drivers/vfio/vfio_iommu_type1.c
+> > index 4726f55..4db87a9 100644
+> > --- a/drivers/vfio/vfio_iommu_type1.c
+> > +++ b/drivers/vfio/vfio_iommu_type1.c
+> > @@ -1303,6 +1303,72 @@ static int vfio_iommu_aper_resize(struct
+> list_head *iova,
+> >  	return 0;
+> >  }
+> >
+> > +/*
+> > + * Check reserved region conflicts with existing dma mappings
+> > + */
+> > +static bool vfio_iommu_resv_conflict(struct vfio_iommu *iommu,
+> > +				struct list_head *resv_regions)
+> > +{
+> > +	struct iommu_resv_region *region;
+> > +
+> > +	/* Check for conflict with existing dma mappings */
+> > +	list_for_each_entry(region, resv_regions, list) {
+> > +		if (vfio_find_dma(iommu, region->start, region->length))
+> > +			return true;
+> > +	}
+> > +
+> > +	return false;
+> > +}
+> > +
+> > +/*
+> > + * Check iova region overlap with  reserved regions and
+> > + * exclude them from the iommu iova range
+> > + */
+> > +static int vfio_iommu_resv_exclude(struct list_head *iova,
+> > +					struct list_head *resv_regions)
+> > +{
+> > +	struct iommu_resv_region *resv;
+> > +	struct vfio_iova *n, *next;
+> > +
+> > +	list_for_each_entry(resv, resv_regions, list) {
+> > +		phys_addr_t start, end;
+> > +
+> > +		start = resv->start;
+> > +		end = resv->start + resv->length - 1;
+> > +
+> > +		list_for_each_entry_safe(n, next, iova, list) {
+> > +			int ret = 0;
+> > +
+> > +			/* No overlap */
+> > +			if ((start > n->end) || (end < n->start))
+> > +				continue;
+> > +			/*
+> > +			 * Insert a new node if current node overlaps with the
+> > +			 * reserve region to exlude that from valid iova range.
+> > +			 * Note that, new node is inserted before the current
+> > +			 * node and finally the current node is deleted keeping
+> > +			 * the list updated and sorted.
+> > +			 */
+> > +			if (start > n->start)
+> > +				ret = vfio_insert_iova(n->start, start - 1,
+> > +								 &n->list);
+> > +			if (!ret && end < n->end)
+> > +				ret = vfio_insert_iova(end + 1, n->end,
+> > +							     &n->list);
+> > +			if (ret)
+> > +				return ret;
+> > +
+> > +			list_del(&n->list);
+> > +			kfree(n);
+> > +		}
+> > +	}
+> > +
+> > +	if (list_empty(iova))
+> > +		return -EINVAL;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int vfio_iommu_get_iova_copy(struct vfio_iommu *iommu,
+> >  				struct list_head *iova_copy)
+> >  {
+> > @@ -1346,7 +1412,8 @@ static int vfio_iommu_type1_attach_group(void
+> *iommu_data,
+> >  	bool resv_msi, msi_remap;
+> >  	phys_addr_t resv_msi_base;
+> >  	struct iommu_domain_geometry geo;
+> > -	struct list_head iova_copy;
+> > +	struct list_head iova_copy, group_resv_regions;
+> > +	struct iommu_resv_region *resv, *resv_next;
+> >  	struct vfio_iova *iova, *iova_next;
+> >
+> >  	mutex_lock(&iommu->lock);
+> > @@ -1426,6 +1493,14 @@ static int vfio_iommu_type1_attach_group(void
+> *iommu_data,
+> >  		goto out_detach;
+> >  	}
+> >
+> > +	INIT_LIST_HEAD(&group_resv_regions);
+> 
+> LIST_HEAD()
 
-> > 
-> > > 
-> > > Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
-> > > ---
-> > >  drivers/gpu/drm/udl/udl_dmabuf.c | 5 +++--
-> > >  drivers/gpu/drm/udl/udl_drv.h    | 1 +
-> > >  2 files changed, 4 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/udl/udl_dmabuf.c
-> > > b/drivers/gpu/drm/udl/udl_dmabuf.c
-> > > index 2867ed1..120d2d9 100644
-> > > --- a/drivers/gpu/drm/udl/udl_dmabuf.c
-> > > +++ b/drivers/gpu/drm/udl/udl_dmabuf.c
-> > > @@ -76,6 +76,7 @@ static struct sg_table *udl_map_dma_buf(struct
-> > > dma_buf_attachment *attach,
-> > >         struct udl_drm_dmabuf_attachment *udl_attach = attach-
-> > > >priv;
-> > >         struct udl_gem_object *obj = to_udl_bo(attach->dmabuf-
-> > > >priv);
-> > >         struct drm_device *dev = obj->base.dev;
-> > > +       struct udl_device *udl = dev->dev_private;
-> > >         struct scatterlist *rd, *wr;
-> > >         struct sg_table *sgt = NULL;
-> > >         unsigned int i;
-> > > @@ -112,7 +113,7 @@ static struct sg_table *udl_map_dma_buf(struct
-> > > dma_buf_attachment *attach,
-> > >                 return ERR_PTR(-ENOMEM);
-> > >         }
-> > >  
-> > > -       mutex_lock(&dev->struct_mutex);
-> > > +       mutex_lock(&udl->urbs.plock);
-> > >  
-> > >         rd = obj->sg->sgl;
-> > >         wr = sgt->sgl;
-> > > @@ -137,7 +138,7 @@ static struct sg_table *udl_map_dma_buf(struct
-> > > dma_buf_attachment *attach,
-> > >         attach->priv = udl_attach;
-> > >  
-> > >  err_unlock:
-> > > -       mutex_unlock(&dev->struct_mutex);
-> > > +       mutex_unlock(&udl->urbs.plock);
-> > >         return sgt;
-> > >  }
-> > >  
-> > > diff --git a/drivers/gpu/drm/udl/udl_drv.h
-> > > b/drivers/gpu/drm/udl/udl_drv.h
-> > > index 2a75ab8..24cca17 100644
-> > > --- a/drivers/gpu/drm/udl/udl_drv.h
-> > > +++ b/drivers/gpu/drm/udl/udl_drv.h
-> > > @@ -39,6 +39,7 @@ struct urb_node {
-> > >  
-> > >  struct urb_list {
-> > >         struct list_head list;
-> > > +       struct mutex plock;
-> > >         spinlock_t lock;
-> > >         struct semaphore limit_sem;
-> > >         int available;
-> > This hasn't seen much testing as it lacks a mutex_init, and one would
-> > wish for a description of what it is guarding.
-> 
-> Yes, I'll add mutex_init but I am not sure that in which function I
-> should add it as there is no probe or init function.
-> 
-> Also I will add the description for the lock.
-> 
-> Thanks 
-> > -Chris
+Ok.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> > +	iommu_get_group_resv_regions(iommu_group, &group_resv_regions);
+> > +
+> > +	if (vfio_iommu_resv_conflict(iommu, &group_resv_regions)) {
+> > +		ret = -EINVAL;
+> > +		goto out_detach;
+> > +	}
+> > +
+> >  	/* Get a copy of the current iova list and work on it */
+> >  	INIT_LIST_HEAD(&iova_copy);
+> >  	ret = vfio_iommu_get_iova_copy(iommu, &iova_copy);
+> > @@ -1437,6 +1512,10 @@ static int vfio_iommu_type1_attach_group(void
+> *iommu_data,
+> >  	if (ret)
+> >  		goto out_detach;
+> >
+> > +	ret = vfio_iommu_resv_exclude(&iova_copy, &group_resv_regions);
+> > +	if (ret)
+> > +		goto out_detach;
+> > +
+> >  	resv_msi = vfio_iommu_has_sw_msi(iommu_group, &resv_msi_base);
+> >
+> >  	INIT_LIST_HEAD(&domain->group_list);
+> > @@ -1497,6 +1576,9 @@ static int vfio_iommu_type1_attach_group(void
+> *iommu_data,
+> >  	/* Delete the old one and insert new iova list */
+> >  	vfio_iommu_insert_iova_copy(iommu, &iova_copy);
+> >
+> > +	list_for_each_entry_safe(resv, resv_next, &group_resv_regions, list)
+> > +		kfree(resv);
+> 
+> list_del() here and below, also this can be done after the mutex unlock.
+
+Ok. I thought that as the reserved regions are local to this function, list_del() is
+not required.  Same for the iova_copy in the first patch as well(which I missed to
+comment there).
+
+Thanks,
+Shameer 
+
+> > +
+> >  	mutex_unlock(&iommu->lock);
+> >
+> >  	return 0;
+> > @@ -1507,6 +1589,8 @@ static int vfio_iommu_type1_attach_group(void
+> *iommu_data,
+> >  	iommu_domain_free(domain->domain);
+> >  	list_for_each_entry_safe(iova, iova_next, &iova_copy, list)
+> >  		kfree(iova);
+> > +	list_for_each_entry_safe(resv, resv_next, &group_resv_regions, list)
+> > +		kfree(resv);
+> >  out_free:
+> >  	kfree(domain);
+> >  	kfree(group);
