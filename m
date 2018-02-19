@@ -1,420 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753589AbeBSROt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 12:14:49 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:59416 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753250AbeBSROp (ORCPT
+        id S1753544AbeBSRPE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 12:15:04 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:33116 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1753265AbeBSROq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 12:14:45 -0500
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "Alexandre TORGUE" <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 3/6] gpio: Add GPIO support for the ST Multi-Function
- eXpander
-Thread-Topic: [PATCH 3/6] gpio: Add GPIO support for the ST Multi-Function
- eXpander
-Thread-Index: AQHToOkDMk7LryqMCE6GHDVul6FkVaOj/t4AgAf4mAA=
-Date: Mon, 19 Feb 2018 17:13:57 +0000
-Message-ID: <32166cf0-5384-c313-f1be-4c27baf40ccf@st.com>
-References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
- <1518100057-23234-4-git-send-email-amelie.delaunay@st.com>
- <CAHp75VfuEd5fgjv40A27hOgj_Nd_LK2Yh=oBR-8qgPc+gSiiQw@mail.gmail.com>
-In-Reply-To: <CAHp75VfuEd5fgjv40A27hOgj_Nd_LK2Yh=oBR-8qgPc+gSiiQw@mail.gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.47]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E6578396D7806846A36DC1D02A147D85@st.com>
+        Mon, 19 Feb 2018 12:14:46 -0500
+Date: Mon, 19 Feb 2018 12:14:45 -0500 (EST)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: Andrea Parri <parri.andrea@gmail.com>
+cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        <mingo@kernel.org>, Will Deacon <will.deacon@arm.com>,
+        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
+        <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH] tools/memory-model: remove rb-dep, smp_read_barrier_depends,
+ and lockless_dereference
+In-Reply-To: <20180217151413.GA3785@andrea>
+Message-ID: <Pine.LNX.4.44L0.1802191158320.1361-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-19_08:,,
- signatures=0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w1JHEs3X024889
 
+On Sat, 17 Feb 2018, Andrea Parri wrote:
 
+> > Akira's observation about READ_ONCE extends to all (annotated) loads.  In
+> > fact, it also applies to loads corresponding to unsuccessful RMW operations;
+> > consider, for example, the following variation of MP+onceassign+derefonce:
+> > 
+> > C T
+> > 
+> > {
+> > y=z;
+> > z=0;
+> > }
+> > 
+> > P0(int *x, int **y)
+> > {
+> > 	WRITE_ONCE(*x, 1);
+> > 	smp_store_release(y, x);
+> > }
+> > 
+> > P1(int **y, int *z)
+> > {
+> > 	int *r0;
+> > 	int r1;
+> > 
+> > 	r0 = cmpxchg_relaxed(y, z, z);
+> > 	r1 = READ_ONCE(*r0);
+> > }
+> > 
+> > exists (1:r0=x /\ 1:r1=0)
+> > 
+> > The final state is allowed w/o the patch, and forbidden w/ the patch.
+> > 
+> > This also reminds me of
+> > 
+> >    5a8897cc7631fa544d079c443800f4420d1b173f
+> >    ("locking/atomics/alpha: Add smp_read_barrier_depends() to _release()/_relaxed() atomics")
+> > 
+> > (that we probably want to mention in the commit message).
+> 
+> Please also notice that 5a8897cc7631f only touched alpha's atomic.h:
+> I see no corresponding commit/change on {,cmp}xchg.h (where the "mb"
+> is currently conditionally executed).
 
-On 02/14/2018 04:30 PM, Andy Shevchenko wrote:
-> On Thu, Feb 8, 2018 at 4:27 PM, Amelie Delaunay <amelie.delaunay@st.com> wrote:
->> ST Multi-Function eXpander (MFX) can be used as GPIO expander.
->> It has 16 fast GPIOs and can have 8 extra alternate GPIOs
->> when other MFX features are not enabled.
-> 
->> +config GPIO_ST_MFX
->> +       bool "ST-MFX GPIOs"
->> +       depends on MFD_ST_MFX
->> +       depends on OF_GPIO
->> +       select GPIOLIB_IRQCHIP
->> +       help
->> +         GPIO driver for STMicroelectronics Multi-Function eXpander.
->> +
->> +         This provides GPIO interface supporting inputs and outputs.
-> 
->> +/*
->> + * STMicroelectronics Multi-Function eXpander (ST-MFX) - GPIO expander driver.
->> + *
->> + * Copyright (C) 2017, STMicroelectronics - All Rights Reserved
->> + * Author(s): Amelie Delaunay <amelie.delaunay@st.com> for STMicroelectronics.
-> 
->> + * License terms: GPL V2.0.
->> + *
->> + * st-mfx-gpio is free software; you can redistribute it and/or modify it
->> + * under the terms of the GNU General Public License version 2 as published by
->> + * the Free Software Foundation.
->> + *
->> + * st-mfx-gpio is distributed in the hope that it will be useful, but
->> + * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
->> + * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
->> + * details.
->> + *
->> + * You should have received a copy of the GNU General Public License along with
->> + * st-mfx-gpio. If not, see <http://www.gnu.org/licenses/>.
-> 
-> Use SPDX instead.
-> 
-OK.
->> + */
-> 
->> +#include <linux/of_gpio.h>
-> 
->> +/* MFX has a maximum of 24 gpios, with 8 gpios per bank, so 3 banks maximum */
->> +#define NR_MAX_GPIOS           24
->> +#define NR_GPIOS_PER_BANK      8
->> +#define NR_MAX_BANKS           (NR_MAX_GPIOS / NR_GPIOS_PER_BANK)
-> 
->> +#define get_bank(offset)       ((u8)((offset) / NR_GPIOS_PER_BANK))
->> +#define get_mask(offset)       ((u8)BIT((offset) % NR_GPIOS_PER_BANK))
-> 
-> I would rather keep it consistent, i.e.
-> get_bank() [as is]
-> get_mask -> get_shift() [w/o BIT() macro]
-> 
-#define get_shift(offset)       ((u8)((offset) % NR_GPIOS_PER_BANK))
-u8 mask = (u8)BIT(get_shift(offset));
-I'm not sure consistency is more important than readability and 
-convenience ?
+This leaves us with a question: Do we want to change the kernel by
+adding memory barriers after unsuccessful RMW operations on Alpha, or
+do we want to change the model by excluding such operations from
+address dependencies?
 
->> +enum { REG_IRQ_SRC, REG_IRQ_EVT, REG_IRQ_TYPE, NR_CACHE_IRQ_REGS };
-> 
-> Please, do one item per line.
-> 
-OK.
+Note that operations like atomic_add_unless() already include memory 
+barriers.
 
->> +/*
->> + * This is MFX-specific flags, overloading Linux-specific of_gpio_flags,
->> + * needed in of_xlate callback.
-> 
->> + * on MFX: - if GPIO is output:
-> 
-> Split to two lines.
-> 
-OK.
-
->> + *             * (0) means PUSH_PULL
->> + *             * OF_GPIO_SINGLE_ENDED (=2) means OPEN-DRAIN
->> + *        - if GPIO is input:
->> + *             * (0) means NO_PULL
->> + *             * OF_MFX_GPI_PUSH_PULL (=2) means PUSH_PULL
->> + *
->> + *             * OF_MFX_GPIO_PULL_UP programs pull up resistor on the GPIO,
->> + *               whatever its direction, without this flag, depending on
->> + *               GPIO type and direction, it programs either no pull or
->> + *               pull down resistor.
->> + */
->> +enum of_mfx_gpio_flags {
->> +       OF_MFX_GPI_PUSH_PULL = 0x2,
->> +       OF_MFX_GPIO_PULL_UP = 0x4,
-> 
-> These have misleading prefix. OF_ is reserved for general OF stuff.
-> 
-You're right. I will fix it in V2.
-
->> +};
->> +
->> +struct mfx_gpio {
->> +       struct gpio_chip gc;
->> +       struct mfx *mfx;
-> 
->> +       struct device *dev;
-> 
-> Don't you have it in gc above as a parent device?
-> 
-Yes, I agree to remove it.
-
->> +       struct mutex irq_lock; /* IRQ bus lock */
->> +       u32 flags[NR_MAX_GPIOS];
->> +       /* Caches of interrupt control registers for bus_lock */
->> +       u8 regs[NR_CACHE_IRQ_REGS][NR_MAX_BANKS];
->> +       u8 oldregs[NR_CACHE_IRQ_REGS][NR_MAX_BANKS];
->> +};
-> 
->> +static int mfx_gpio_direction_input(struct gpio_chip *gc,
->> +                                   unsigned int offset)
->> +{
->> +       struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
->> +       struct mfx *mfx = mfx_gpio->mfx;
->> +       u8 reg_type = MFX_REG_GPIO_TYPE + get_bank(offset);
->> +       u8 reg_pupd = MFX_REG_GPIO_PUPD + get_bank(offset);
->> +       u8 reg_dir = MFX_REG_GPIO_DIR + get_bank(offset);
->> +       u8 mask = get_mask(offset);
->> +       int ret;
->> +
->> +       /*
->> +        * In case of input direction, there is actually no way to apply some
->> +        * configuration in hardware, as it can be done with
->> +        * .set_config in case of output direction. That's why we apply
->> +        * here the MFX specific-flags.
->> +        */
->> +       if (mfx_gpio->flags[offset] & OF_MFX_GPI_PUSH_PULL)
->> +               ret = mfx_set_bits(mfx, reg_type, mask, mask);
->> +       else
->> +               ret = mfx_set_bits(mfx, reg_type, mask, 0);
-> 
->> +
-> 
-> Redundant empty line.
-> 
-OK.
-
->> +       if (ret)
->> +               return ret;
->> +
->> +       if (mfx_gpio->flags[offset] & OF_MFX_GPIO_PULL_UP)
->> +               ret = mfx_set_bits(mfx, reg_pupd, mask, mask);
->> +       else
->> +               ret = mfx_set_bits(mfx, reg_pupd, mask, 0);
-> 
->> +
-> 
-> Ditto.
-> 
-OK.
-
->> +       if (ret)
->> +               return ret;
->> +
->> +       return mfx_set_bits(mfx, reg_dir, mask, 0);
->> +}
-> 
->> +static void mfx_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
->> +{
->> +       struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
->> +       struct mfx *mfx = mfx_gpio->mfx;
->> +       u16 i;
->> +
->> +       for (i = 0; i < gc->ngpio; i++) {
->> +               int gpio = i + gc->base;
->> +               const char *label = gpiochip_is_requested(gc, i);
->> +               int dir = mfx_gpio_get_direction(gc, i);
->> +               int val = mfx_gpio_get(gc, i);
->> +               u8 mask = get_mask(i);
->> +               u8 reg;
->> +               int type, pupd;
->> +               int irqsrc, irqevt, irqtype, irqpending;
-> 
->> +               if (!label)
->> +                       label = "Unrequested";
-> 
-> I would rather put label = gpiochip_...(); immediately before this
-> condition for better readability.
-> 
-You're right.
-
->> +
->> +               seq_printf(s, " gpio-%-3d (%-20.20s) ", gpio, label);
->> +
-> 
->> +               reg = MFX_REG_IRQ_GPI_PENDING + get_bank(i);
->> +               irqpending = mfx_reg_read(mfx, reg);
->> +               if (irqpending < 0)
->> +                       return;
->> +               irqpending = !!(irqpending & mask);
->> +
-> 
->> +               if (!dir) {
-> 
-> Why not to use
-> 
-> if (dir) {
-> 
-> ?
-> 
-My brain orders things in ascending order, I think it is the reason why 
-this code manages false cases (=0) before the others.
-
->> +                       seq_printf(s, "out %s ", val ? "high" : "low");
->> +                       if (type)
->> +                               seq_puts(s, "open drain ");
->> +                       else
->> +                               seq_puts(s, "push pull ");
->> +                       if (pupd && type)
->> +                               seq_puts(s, "with internal pull-up ");
->> +                       else
->> +                               seq_puts(s, "without internal pull-up ");
->> +               } else {
->> +                       seq_printf(s, "in %s ", val ? "high" : "low");
->> +                       if (type)
->> +                               seq_printf(s, "with internal pull-%s ",
->> +                                          pupd ? "up" : "down");
->> +                       else
->> +                               seq_printf(s, "%s ",
->> +                                          pupd ? "floating" : "analog");
->> +               }
->> +
->> +               if (irqsrc) {
->> +                       seq_printf(s, "IRQ generated on %s %s",
->> +                                  !irqevt ?
->> +                                  (!irqtype ? "Low level" : "High level") :
->> +                                  (!irqtype ? "Falling edge" : "Rising edge"),
->> +                                  irqpending ? "(pending)" : "");
-> 
-> Why do you use negative conditions? Use positive ones.
-> 
-OK, I will make the effort in V2.
->> +               }
->> +
->> +               seq_puts(s, "\n");
->> +       }
->> +}
-> 
->> +static void mfx_gpio_irq_toggle_trigger(struct gpio_chip *gc, int offset)
->> +{
->> +       struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
->> +       struct mfx *mfx = mfx_gpio->mfx;
->> +       u8 bank = get_bank(offset);
->> +       u8 mask = get_mask(offset);
->> +       int val = mfx_gpio_get(gc, offset);
->> +
-> 
->> +       if (val < 0) {
->> +               dev_err(mfx_gpio->dev, "can't get value of gpio%d: ret=%d\n",
->> +                       offset, val);
-> 
-> Is it somehow useful on err level?
-> 
-I can drop it.
->> +               return;
->> +       }
-> 
->> +}
-> 
->> +static int mfx_gpio_irq_set_type(struct irq_data *d, unsigned int type)
->> +{
->> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
->> +       struct mfx_gpio *mfx_gpio = gpiochip_get_data(gc);
->> +       int bank = get_bank(d->hwirq);
->> +       int mask = get_mask(d->hwirq);
->> +
-> 
->> +       if ((type & IRQ_TYPE_LEVEL_LOW) || (type & IRQ_TYPE_LEVEL_HIGH))
-> 
-> IRQ_TYPE_LEVEL_MASK?
-> 
-You're right.
->> +               mfx_gpio->regs[REG_IRQ_EVT][bank] &= ~mask;
->> +       else
->> +               mfx_gpio->regs[REG_IRQ_EVT][bank] |= mask;
->> +
->> +       if ((type & IRQ_TYPE_EDGE_RISING) || (type & IRQ_TYPE_LEVEL_HIGH))
-> 
-> IRQ_TYPE_EDGE_BOTH ?
-> 
-No, here I test EDGE_RISING and LEVEL_HIGH, so mixing EDGE and LEVEL type.
->> +               mfx_gpio->regs[REG_IRQ_TYPE][bank] |= mask;
->> +       else
->> +               mfx_gpio->regs[REG_IRQ_TYPE][bank] &= ~mask;
->> +
-> 
->> +}
-> 
->> +static void mfx_gpio_irq_lock(struct irq_data *d)
-> 
-> Missed annotation that this acquires a lock.
-> 
-It is .irq_bus_lock and .irq_bus_sync_unlock. Description is available 
-in include/linux/irq.h:
-  * @irq_bus_lock:	function to lock access to slow bus (i2c) chips
-  * @irq_bus_sync_unlock:function to sync and unlock slow bus (i2c) chips
->> +static void mfx_gpio_irq_sync_unlock(struct irq_data *d)
-> 
-> Ditto for releasing lock.
-> 
->> +static irqreturn_t mfx_gpio_irq(int irq, void *dev)
->> +{
->> +       struct mfx_gpio *mfx_gpio = dev;
->> +       struct mfx *mfx = mfx_gpio->mfx;
->> +       int num_banks = mfx->num_gpio / 8;
->> +       u8 status[num_banks];
-> 
->> +       int ret;
->> +       u8 bank;
-> 
-> Swap lines.
-> 
-OK.
->> +
->> +       ret = mfx_block_read(mfx, MFX_REG_IRQ_GPI_PENDING, ARRAY_SIZE(status),
->> +                            status);
->> +       if (ret < 0) {
-> 
->> +               dev_err(mfx_gpio->dev, "can't get IRQ_GPI_PENDING: %d\n", ret);
-> 
-> In IRQ context on err level? Hmm...
-> 
-OK I will remove it in V2.
->> +               return IRQ_NONE;
->> +       }
->> +
->> +       for (bank = 0; bank < ARRAY_SIZE(status); bank++) {
->> +               u8 stat = status[bank];
->> +
->> +               if (!stat)
->> +                       continue;
->> +
-> 
->> +               while (stat) {
->> +                       int bit = __ffs(stat);
-> 
-> for_each_set_bit() ?
-> 
-You're right.
->> +                       int offset = bank * NR_GPIOS_PER_BANK + bit;
->> +                       int gpio_irq = irq_find_mapping(mfx_gpio->gc.irq.domain,
->> +                                                       offset);
->> +                       int irq_trigger = irq_get_trigger_type(gpio_irq);
->> +
->> +                       handle_nested_irq(gpio_irq);
->> +                       stat &= ~(BIT(bit));
->> +
->> +                       if (irq_trigger & IRQ_TYPE_EDGE_BOTH)
->> +                               mfx_gpio_irq_toggle_trigger(&mfx_gpio->gc,
->> +                                                           offset);
->> +               }
->> +
->> +               mfx_reg_write(mfx, MFX_REG_IRQ_GPI_ACK + bank, status[bank]);
->> +       }
->> +
->> +       return IRQ_HANDLED;
->> +}
-> 
-
-Thanks for review,
-Amelie
+Alan
