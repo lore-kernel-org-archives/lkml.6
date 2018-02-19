@@ -1,261 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753455AbeBSQ6p (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 11:58:45 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:32812 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753346AbeBSQ6l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 11:58:41 -0500
-X-Google-Smtp-Source: AH8x227GRzGlIAW6m7Kl5ZCAagvxmyeE16q6MvVWwIXDsDMale13zLMxEZWdQZ5bUAJhKrxu0AivIg==
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@baylibre.com>,
-        David Lechner <david@lechnology.com>
-Subject: [PATCH v4] reset: add support for non-DT systems
-Date: Mon, 19 Feb 2018 17:58:37 +0100
-Message-Id: <20180219165837.28913-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.16.1
+        id S1753463AbeBSQ7Q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 11:59:16 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45732 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753274AbeBSQ5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 11:57:05 -0500
+From: John Garry <john.garry@huawei.com>
+To: <mika.westerberg@linux.intel.com>, <rafael@kernel.org>,
+        <lorenzo.pieralisi@arm.com>, <rjw@rjwysocki.net>,
+        <hanjun.guo@linaro.org>, <robh+dt@kernel.org>, <bhelgaas@google.com>,
+        <arnd@arndb.de>, <mark.rutland@arm.com>, <olof@lixom.net>,
+        <dann.frazier@canonical.com>, <andy.shevchenko@gmail.com>,
+        <robh@kernel.org>
+CC: <joe@perches.com>, <benh@kernel.crashing.org>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-acpi@vger.kernel.org>, <linuxarm@huawei.com>, <minyard@acm.org>,
+        <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <rdunlap@infradead.org>
+Subject: [PATCH v14 5/9] OF: Add missing I/O range exception for indirect-IO devices
+Date: Tue, 20 Feb 2018 01:48:36 +0800
+Message-ID: <1519062520-198902-6-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1519062520-198902-1-git-send-email-john.garry@huawei.com>
+References: <1519062520-198902-1-git-send-email-john.garry@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: Zhichang Yuan <yuanzhichang@hisilicon.com>
 
-The reset framework only supports device-tree. There are some platforms
-however, which need to use it even in legacy, board-file based mode.
+There are some special ISA/LPC devices that work on a specific I/O range
+where it is not correct to specify a 'ranges' property in DTS parent node
+as cpu addresses translated from DTS node are only for memory space on
+some architectures, such as Arm64. Without the parent 'ranges' property,
+current of_translate_address() return an error.
+Here we add special handlings for this case.
+During the OF address translation, some checkings will be perfromed to
+identify whether the device node is registered as indirect-IO. If yes,
+the I/O translation will be done in a different way from that one of PCI
+MMIO. In this way, the I/O 'reg' property of the special ISA/LPC devices
+will be parsed correctly.
 
-An example of such architecture is the DaVinci family of SoCs which
-supports both device tree and legacy boot modes and we don't want to
-introduce any regressions.
-
-We're currently working on converting the platform from its hand-crafted
-clock API to using the common clock framework. Part of the overhaul will
-be representing the chip's power sleep controller's reset lines using
-the reset framework.
-
-This changeset extends the core reset code with new reset lookup
-structures. Each lookup table contains a set of lookup entries which
-allow the reset core to associate reset lines with devices (by
-comparing the dev_id and con_id strings).
-
-Machine code can register a set of reset lines using this lookup table
-and concerned devices can access them using the regular reset_control
-API.
-
-The new lookup function is only called as a fallback in case the
-of_node field is NULL and doesn't change anything for current users.
-
-Tested with a dummy reset driver with several lookup entries.
-
-An example lookup table can be found below:
-
-static struct platform_device foobar_reset_dev = {
-        .name = "foobar-reset",
-};
-
-static struct reset_lookup_entry foobar_reset_lookup_entries[] = {
-        { .con_id = "foo",    id = 15 },
-        { .con_id = "bar",    id = 5  },
-};
-
-static struct reset_lookup_table foobar_reset_lookup_table = {
-        .dev_id = "foobar-device",
-        .entries = foobar_reset_lookup_entries,
-        .num_entries = ARRAY_SIZE(foobar_reset_lookup_entries),
-        .dev = &foobar_reset_dev.dev,
-};
-
-Cc: Sekhar Nori <nsekhar@ti.com>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: David Lechner <david@lechnology.com>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
+Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>    #earlier draft
+Acked-by: Rob Herring <robh@kernel.org>
 ---
-v1 -> v2:
-- renamed the new function to __reset_control_get_from_lookup()
-- added a missing break; when a matching entry is found
-- rearranged the code in __reset_control_get() - we can no longer get to the
-  return at the bottom, so remove it and return from
-  __reset_control_get_from_lookup() if __of_reset_control_get() fails
-- return -ENOENT from reset_contol_get() if we can't find a matching entry,
-  prevously returned -EINVAL referred to the fact that we passed a device
-  without the of_node which is no longer an error condition
-- add a comment about needing a sentinel in the lookup table
+ drivers/of/address.c | 92 +++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 76 insertions(+), 16 deletions(-)
 
-v2 -> v3:
-- added the reset id number field to the lookup struct so that we don't need
-  to rely on the array index
-
-v3 -> v4:
-- separated the driver and lookup table registration logic by adding a
-  function meant to be called by machine-specific code that adds a lookup
-  table to the internal list
-- the correct reset controller is now found by first finding the lookup
-  table associated with it, then finding the actual reset controller by
-  the associated device
-
- drivers/reset/core.c             | 75 +++++++++++++++++++++++++++++++++++++++-
- include/linux/reset-controller.h | 32 +++++++++++++++++
- 2 files changed, 106 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index da4292e9de97..fc6abdaf44f2 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -23,6 +23,9 @@
- static DEFINE_MUTEX(reset_list_mutex);
- static LIST_HEAD(reset_controller_list);
+diff --git a/drivers/of/address.c b/drivers/of/address.c
+index cdf047b..2db8b56 100644
+--- a/drivers/of/address.c
++++ b/drivers/of/address.c
+@@ -5,6 +5,7 @@
+ #include <linux/fwnode.h>
+ #include <linux/io.h>
+ #include <linux/ioport.h>
++#include <linux/logic_pio.h>
+ #include <linux/module.h>
+ #include <linux/of_address.h>
+ #include <linux/pci.h>
+@@ -562,9 +563,14 @@ static int of_translate_one(struct device_node *parent, struct of_bus *bus,
+  * that translation is impossible (that is we are not dealing with a value
+  * that can be mapped to a cpu physical address). This is not really specified
+  * that way, but this is traditionally the way IBM at least do things
++ *
++ * Whenever the translation fails, the *host pointer will be set to the
++ * device that had registered logical PIO mapping, and the return code is
++ * relative to that node.
+  */
+ static u64 __of_translate_address(struct device_node *dev,
+-				  const __be32 *in_addr, const char *rprop)
++				  const __be32 *in_addr, const char *rprop,
++				  struct device_node **host)
+ {
+ 	struct device_node *parent = NULL;
+ 	struct of_bus *bus, *pbus;
+@@ -577,6 +583,7 @@ static u64 __of_translate_address(struct device_node *dev,
+ 	/* Increase refcount at current level */
+ 	of_node_get(dev);
  
-+static DEFINE_MUTEX(reset_lookup_mutex);
-+static LIST_HEAD(reset_lookup_list);
-+
- /**
-  * struct reset_control - a reset control
-  * @rcdev: a pointer to the reset controller device
-@@ -493,6 +496,76 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
- }
- EXPORT_SYMBOL_GPL(__of_reset_control_get);
++	*host = NULL;
+ 	/* Get parent & match bus type */
+ 	parent = of_get_parent(dev);
+ 	if (parent == NULL)
+@@ -597,6 +604,8 @@ static u64 __of_translate_address(struct device_node *dev,
  
-+/**
-+ * reset_add_lookup_table - add a new reset lookup table
-+ * @table: new reset lookup table
-+ */
-+void reset_add_lookup_table(struct reset_lookup_table *table)
-+{
-+	mutex_lock(&reset_lookup_mutex);
-+	list_add_tail(&table->list, &reset_lookup_list);
-+	mutex_unlock(&reset_lookup_mutex);
-+}
-+EXPORT_SYMBOL_GPL(reset_add_lookup_table);
+ 	/* Translate */
+ 	for (;;) {
++		struct logic_pio_hwaddr *iorange;
 +
-+static struct reset_control *
-+reset_control_find_device(struct device *dev, unsigned int id, bool shared)
-+{
-+	struct reset_controller_dev *rcdev;
-+	struct reset_control *rstc = NULL;
-+
-+	mutex_lock(&reset_list_mutex);
-+
-+	list_for_each_entry(rcdev, &reset_controller_list, list) {
-+		if (rcdev->dev == dev) {
-+			rstc = __reset_control_get_internal(rcdev, id, shared);
+ 		/* Switch to parent bus */
+ 		of_node_put(dev);
+ 		dev = parent;
+@@ -609,6 +618,19 @@ static u64 __of_translate_address(struct device_node *dev,
+ 			break;
+ 		}
+ 
++		/*
++		 * For indirectIO device which has no ranges property, get
++		 * the address from reg directly.
++		 */
++		iorange = find_io_range_by_fwnode(&dev->fwnode);
++		if (iorange && (iorange->flags != PIO_CPU_MMIO)) {
++			result = of_read_number(addr + 1, na - 1);
++			pr_debug("indirectIO matched(%s) 0x%llx\n",
++					of_node_full_name(dev), result);
++			*host = of_node_get(dev);
 +			break;
 +		}
-+	}
 +
-+	mutex_unlock(&reset_list_mutex);
-+
-+	return rstc;
-+}
-+
-+static struct reset_control *
-+__reset_control_get_from_lookup(struct device *dev, const char *con_id,
-+				bool shared, bool optional)
-+{
-+	const struct reset_lookup_entry *entry;
-+	const char *dev_id = dev_name(dev);
-+	struct reset_control *rstc = NULL;
-+	struct reset_lookup_table *table;
-+	int i;
-+
-+	mutex_lock(&reset_lookup_mutex);
-+
-+	list_for_each_entry(table, &reset_lookup_list, list) {
-+		if (strcmp(table->dev_id, dev_id))
-+			continue;
-+
-+		for (i = 0; i < table->num_entries; i++) {
-+			entry = &table->entries[i];
-+
-+			if ((!con_id && !entry->con_id) ||
-+			    !strcmp(con_id, entry->con_id)) {
-+				rstc = reset_control_find_device(table->dev,
-+								 entry->id,
-+								 shared);
-+				goto out;
-+			}
-+		}
-+	}
-+
-+out:
-+	mutex_unlock(&reset_lookup_mutex);
-+
-+	if (!rstc)
-+		return optional ? NULL : ERR_PTR(-ENOENT);
-+
-+	return rstc;
-+}
-+
- struct reset_control *__reset_control_get(struct device *dev, const char *id,
- 					  int index, bool shared, bool optional)
+ 		/* Get new parent bus and counts */
+ 		pbus = of_match_bus(parent);
+ 		pbus->count_cells(dev, &pna, &pns);
+@@ -640,13 +662,32 @@ static u64 __of_translate_address(struct device_node *dev,
+ 
+ u64 of_translate_address(struct device_node *dev, const __be32 *in_addr)
  {
-@@ -500,7 +573,7 @@ struct reset_control *__reset_control_get(struct device *dev, const char *id,
- 		return __of_reset_control_get(dev->of_node, id, index, shared,
- 					      optional);
- 
--	return optional ? NULL : ERR_PTR(-EINVAL);
-+	return __reset_control_get_from_lookup(dev, id, shared, optional);
+-	return __of_translate_address(dev, in_addr, "ranges");
++	struct device_node *host;
++	u64 ret;
++
++	ret = __of_translate_address(dev, in_addr, "ranges", &host);
++	if (host) {
++		of_node_put(host);
++		return OF_BAD_ADDR;
++	}
++
++	return ret;
  }
- EXPORT_SYMBOL_GPL(__reset_control_get);
+ EXPORT_SYMBOL(of_translate_address);
  
-diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
-index adb88f8cefbc..b92090b177b7 100644
---- a/include/linux/reset-controller.h
-+++ b/include/linux/reset-controller.h
-@@ -22,6 +22,36 @@ struct reset_control_ops {
- 	int (*status)(struct reset_controller_dev *rcdev, unsigned long id);
- };
+ u64 of_translate_dma_address(struct device_node *dev, const __be32 *in_addr)
+ {
+-	return __of_translate_address(dev, in_addr, "dma-ranges");
++	struct device_node *host;
++	u64 ret;
++
++	ret = __of_translate_address(dev, in_addr, "dma-ranges", &host);
++
++	if (host) {
++		of_node_put(host);
++		return OF_BAD_ADDR;
++	}
++
++	return ret;
+ }
+ EXPORT_SYMBOL(of_translate_dma_address);
  
-+/**
-+ * struct reset_lookup_entry - a single entry in a reset lookup table
-+ *
-+ * @con_id: name of the reset line (can be NULL)
-+ * @id: ID of the reset controller in the reset controller device
-+ */
-+struct reset_lookup_entry {
-+	const char *con_id;
-+	unsigned long id;
-+};
+@@ -688,29 +729,48 @@ const __be32 *of_get_address(struct device_node *dev, int index, u64 *size,
+ }
+ EXPORT_SYMBOL(of_get_address);
+ 
++static u64 of_translate_ioport(struct device_node *dev, const __be32 *in_addr,
++			u64 size)
++{
++	u64 taddr;
++	unsigned long port;
++	struct device_node *host;
 +
-+/**
-+ * struct reset_lookup_table - reset controller lookup table
-+ *
-+ * @list: internal list of lookup tables
-+ * @dev: reset controller device associated with this table
-+ * @dev_id: name of the device associated with the resets in this table
-+ * @entries: list of reset lookup entries
-+ * @num_entries: number of reset lookup entries
-+ */
-+struct reset_lookup_table {
-+	struct list_head list;
-+	struct device *dev;
-+	const char *dev_id;
-+	struct reset_lookup_entry *entries;
-+	size_t num_entries;
-+};
++	taddr = __of_translate_address(dev, in_addr, "ranges", &host);
++	if (host) {
++		/* host specific port access */
++		port = logic_pio_trans_hwaddr(&host->fwnode, taddr, size);
++		of_node_put(host);
++	} else {
++		/* memory mapped I/O range */
++		port = pci_address_to_pio(taddr);
++	}
 +
-+void reset_add_lookup_table(struct reset_lookup_table *table);
++	if (port == (unsigned long)-1)
++		return OF_BAD_ADDR;
 +
- struct module;
- struct device_node;
- struct of_phandle_args;
-@@ -34,6 +64,7 @@ struct of_phandle_args;
-  * @list: internal list of reset controller devices
-  * @reset_control_head: head of internal list of requested reset controls
-  * @of_node: corresponding device tree node as phandle target
-+ * @dev: corresponding device (as fallback when not using OF)
-  * @of_reset_n_cells: number of cells in reset line specifiers
-  * @of_xlate: translation function to translate from specifier as found in the
-  *            device tree to id as given to the reset control ops
-@@ -45,6 +76,7 @@ struct reset_controller_dev {
- 	struct list_head list;
- 	struct list_head reset_control_head;
- 	struct device_node *of_node;
-+	struct device *dev;
- 	int of_reset_n_cells;
- 	int (*of_xlate)(struct reset_controller_dev *rcdev,
- 			const struct of_phandle_args *reset_spec);
++	return port;
++}
++
+ static int __of_address_to_resource(struct device_node *dev,
+ 		const __be32 *addrp, u64 size, unsigned int flags,
+ 		const char *name, struct resource *r)
+ {
+ 	u64 taddr;
+ 
+-	if ((flags & (IORESOURCE_IO | IORESOURCE_MEM)) == 0)
++	if (flags & IORESOURCE_MEM)
++		taddr = of_translate_address(dev, addrp);
++	else if (flags & IORESOURCE_IO)
++		taddr = of_translate_ioport(dev, addrp, size);
++	else
+ 		return -EINVAL;
+-	taddr = of_translate_address(dev, addrp);
++
+ 	if (taddr == OF_BAD_ADDR)
+ 		return -EINVAL;
+ 	memset(r, 0, sizeof(struct resource));
+-	if (flags & IORESOURCE_IO) {
+-		unsigned long port;
+-		port = pci_address_to_pio(taddr);
+-		if (port == (unsigned long)-1)
+-			return -EINVAL;
+-		r->start = port;
+-		r->end = port + size - 1;
+-	} else {
+-		r->start = taddr;
+-		r->end = taddr + size - 1;
+-	}
++
++	r->start = taddr;
++	r->end = taddr + size - 1;
+ 	r->flags = flags;
+ 	r->name = name ? name : dev->full_name;
+ 
 -- 
-2.16.1
+1.9.1
