@@ -1,119 +1,153 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1841884-1518710366-2-16523391510524685108
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1518710365; b=RVN+D/5B2+/Z652KCnw4eosGaC1rYXR9LqCsiLGYl6IHf4K
-    hC6FJWdMuAfcLElD0Jr+ZxaIQwDBdopFJ4XB7ggNsSQ1tmzH1gJI+yREgxw75U0F
-    0cu+eTxz5f73jQgfU4vKKxy7G0R1kA4bFda1kJojD+fYWHa6IifjqVUyrqrH8dE1
-    hYdv0tejE9zCY74CZ5aO7LqQ5niRLielPnhKlri3Ompq+gNbDj7swrTTKG38tS/D
-    889m/rp+LY0wmjR7h1/KTPp1cuzyD8mWQK4cpVZgDyRTP5KDy+swVLsglfBimd/U
-    0KjfqUw6J1mthR5uM5UMaHotw2nPfekQi6V7t4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1518710365; bh=IHhIIeqSwYo8RftaynS+VT57dM
-    TTrOUotn0DbQNerjg=; b=XfHBdYdlqjQMpEnTEaAE3UJEIJcAx2oxwVTuM/1VoM
-    U2H0OdkokeQFNAhG7//89EnYpUpUJp/oyDD0ulT2J6hvQzGScpC/5wE7Bk+AfzsV
-    lUWUR2oEPahte1DTLJv4YPrfbq+ic4zWQE6SvgwmYV0r/QlnrXqYPvchlr6kYo3+
-    Qewwfc+3Yr1tYKkjB7xO/Atr0fKbfnDcZKSyYgPngNieYsuPw6EgFiFkVwI/XO38
-    9pF1vCtqh3dl/lLejdSHT/g/yg3MxPhFUxnvePr/exKG4lN4DUwV84g6cuE5gRap
-    LtHjVzq+exu9mnDCKNOFLUknbKg5qayiXrUGimuinrTw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425400AbeBOP6n (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Feb 2018 10:58:43 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:24415 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1424805AbeBOPrB (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Thu, 15 Feb 2018 10:47:01 -0500
-From: Amelie Delaunay <amelie.delaunay@st.com>
-To: John Youn <johnyoun@synopsys.com>, Felipe Balbi <balbi@kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH 2/2] usb: dwc2: fix STM32F7 USB OTG HS compatible
-Date: Thu, 15 Feb 2018 16:46:41 +0100
-Message-ID: <1518709601-17232-4-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1518709601-17232-1-git-send-email-amelie.delaunay@st.com>
-References: <1518709601-17232-1-git-send-email-amelie.delaunay@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-15_06:,,
+Return-Path: <khandual@linux.vnet.ibm.com>
+X-Google-Smtp-Source: AH8x226KT8FydbBrae4E/VSyiJlN3nKZyo1VNUCYXdfwDiYnZvjM1QBeBs4R05CJ55IE/85kT8AE
+ARC-Seal: i=1; a=rsa-sha256; t=1519049274; cv=none;
+        d=google.com; s=arc-20160816;
+        b=MhU6Ff/9k676765rxxEH2gjjeY97VdznL5mcfh8zy3ehhJQKXJ8CxL9erlNURLhaxB
+         OQ2gZGlL3kPEAx4MqZ68fEIIEUe7QszCWEXHVuutymPwbiAezw94nWVfsbGFHcS5R4sa
+         joJkl4ZcPIE1yK/eBii4qaD12O6HZW4XgWPn54Iq8bs6TUlqusPavDYJMswED2gUwIFB
+         sKAD9iNp1vM2mh//T7hhaZRm+HUxgG2/mZzyqxjD54rDCU0urZkRd518xqkyWDC8EsHF
+         Ylyh3iLWsvJ1VaykOItMbPUWwAjx4KnJV7hGG9Lxj1Mbc5SF33g3H4QHpK0Z9BXP6H8j
+         EJgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=mHT6h95Er0Fd+YNAmv5fIRt1g9c9MjycQGdoYMxpzzY=;
+        b=a0ylFMXLEk8dk25WYuRn/BH9TUAd+77eZF5hmlQDOvnS+j+zrI1HZ0l18hm4/2MhBf
+         OLw9YuCvG/CRYi1eII6QeIkEQ9erdtkNutPiOw6V/u4SIONcKPcUC4Jd7ltMP0eJpzMn
+         V5G5Bw/61DKQHT8NWCh1EJQQ3WW/7CliZVXmAeuFp3xe2ssiGnegfPFc9VtXKjHGqTrr
+         MukMM277O4tCmotuH0MK2ZCQzMELFiQY1INAGUAqMv7G5gvpvcE535eujHFODPtYj0DA
+         mZIjwTuvRxAuenTC/NmhP8XKNihFiDjTBMjCZckuiyhyxP5fSMjTL10q+gnIoJkc80wp
+         e0XQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of khandual@linux.vnet.ibm.com) smtp.mailfrom=khandual@linux.vnet.ibm.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 148.163.156.1 is neither permitted nor denied by best guess record for domain of khandual@linux.vnet.ibm.com) smtp.mailfrom=khandual@linux.vnet.ibm.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        bart.vanassche@wdc.com, jthumshirn@suse.de, axboe@kernel.dk,
+        chris@chris-wilson.co.uk, tvrtko.ursulin@intel.com
+Cc: khandual@linux.vnet.ibm.com
+Subject: [PATCH V3] lib/scatterlist: Add SG_CHAIN and SG_LAST macros for LSB encodings
+Date: Mon, 19 Feb 2018 19:37:39 +0530
+X-Mailer: git-send-email 2.9.3
+X-TM-AS-GCONF: 00
+x-cbid: 18021914-0008-0000-0000-000004D13D01
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18021914-0009-0000-0000-00001E6448B0
+Message-Id: <20180219140739.24383-1-khandual@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-19_06:,,
  signatures=0
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ malwarescore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802190176
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592838612913137336?=
+X-GMAIL-MSGID: =?utf-8?q?1592838612913137336?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch fixes compatible for STM32F7 USB OTG HS and consistently rename
-dw2_set_params function.
-The v2 former patch [1] had been acked by Paul Young, but v1 was merged.
+This replaces scatterlist->page_link LSB encodings with SG_CHAIN and
+SG_LAST definitions without any functional change. While here also
+add macro definitions SG_PAGE_BITS and SG_PAGE_MASK.
 
-[1] https://patchwork.kernel.org/patch/9925573/
-
-Fixes: d8fae8b93682 ("usb: dwc2: add support for STM32F7xx USB OTG HS")
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
 ---
- drivers/usb/dwc2/params.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Changes in V3:
+- Changed SG_END as SG_LAST due to a build failure
+- Added SG_PAGE_BITS and SG_PAGE_MASK as per Tvrtko
+- Used BIT() macro as per Chris
 
-diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c
-index 03fd20f..c4a4749 100644
---- a/drivers/usb/dwc2/params.c
-+++ b/drivers/usb/dwc2/params.c
-@@ -137,7 +137,7 @@ static void dwc2_set_stm32f4x9_fsotg_params(struct dwc2_hsotg *hsotg)
- 	p->activate_stm_fs_transceiver = true;
+Changes in V2:
+- Changed SG_EMARK as SG_END as per Johannes and Tvrtko
+- Added 'UL' to the constants as per Bart
+
+ include/linux/scatterlist.h | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
+
+diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
+index 22b2131bcdcd..494b84c7f3c8 100644
+--- a/include/linux/scatterlist.h
++++ b/include/linux/scatterlist.h
+@@ -66,15 +66,20 @@ struct sg_table {
+ 
+ #define SG_MAGIC	0x87654321
+ 
++#define SG_CHAIN	BIT(0)
++#define SG_LAST		BIT(1)
++#define SG_PAGE_BITS	(SG_CHAIN | SG_LAST)
++#define SG_PAGE_MASK	(~SG_PAGE_BITS)
++
+ /*
+  * We overload the LSB of the page pointer to indicate whether it's
+  * a valid sg entry, or whether it points to the start of a new scatterlist.
+  * Those low bits are there for everyone! (thanks mason :-)
+  */
+-#define sg_is_chain(sg)		((sg)->page_link & 0x01)
+-#define sg_is_last(sg)		((sg)->page_link & 0x02)
++#define sg_is_chain(sg)		((sg)->page_link & SG_CHAIN)
++#define sg_is_last(sg)		((sg)->page_link & SG_LAST)
+ #define sg_chain_ptr(sg)	\
+-	((struct scatterlist *) ((sg)->page_link & ~0x03))
++	((struct scatterlist *) ((sg)->page_link & SG_PAGE_MASK))
+ 
+ /**
+  * sg_assign_page - Assign a given page to an SG entry
+@@ -88,13 +93,13 @@ struct sg_table {
+  **/
+ static inline void sg_assign_page(struct scatterlist *sg, struct page *page)
+ {
+-	unsigned long page_link = sg->page_link & 0x3;
++	unsigned long page_link = sg->page_link & SG_PAGE_BITS;
+ 
+ 	/*
+ 	 * In order for the low bit stealing approach to work, pages
+ 	 * must be aligned at a 32-bit boundary as a minimum.
+ 	 */
+-	BUG_ON((unsigned long) page & 0x03);
++	BUG_ON((unsigned long) page & SG_PAGE_BITS);
+ #ifdef CONFIG_DEBUG_SG
+ 	BUG_ON(sg->sg_magic != SG_MAGIC);
+ 	BUG_ON(sg_is_chain(sg));
+@@ -130,7 +135,7 @@ static inline struct page *sg_page(struct scatterlist *sg)
+ 	BUG_ON(sg->sg_magic != SG_MAGIC);
+ 	BUG_ON(sg_is_chain(sg));
+ #endif
+-	return (struct page *)((sg)->page_link & ~0x3);
++	return (struct page *)((sg)->page_link & SG_PAGE_MASK);
  }
  
--static void dwc2_set_stm32f7xx_hsotg_params(struct dwc2_hsotg *hsotg)
-+static void dwc2_set_stm32f7_hsotg_params(struct dwc2_hsotg *hsotg)
- {
- 	struct dwc2_core_params *p = &hsotg->params;
+ /**
+@@ -178,7 +183,8 @@ static inline void sg_chain(struct scatterlist *prv, unsigned int prv_nents,
+ 	 * Set lowest bit to indicate a link pointer, and make sure to clear
+ 	 * the termination bit if it happens to be set.
+ 	 */
+-	prv[prv_nents - 1].page_link = ((unsigned long) sgl | 0x01) & ~0x02;
++	prv[prv_nents - 1].page_link = ((unsigned long) sgl | SG_CHAIN)
++					& ~SG_LAST;
+ }
  
-@@ -164,8 +164,8 @@ const struct of_device_id dwc2_of_match_table[] = {
- 	{ .compatible = "st,stm32f4x9-fsotg",
- 	  .data = dwc2_set_stm32f4x9_fsotg_params },
- 	{ .compatible = "st,stm32f4x9-hsotg" },
--	{ .compatible = "st,stm32f7xx-hsotg",
--	  .data = dwc2_set_stm32f7xx_hsotg_params },
-+	{ .compatible = "st,stm32f7-hsotg",
-+	  .data = dwc2_set_stm32f7_hsotg_params },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, dwc2_of_match_table);
+ /**
+@@ -198,8 +204,8 @@ static inline void sg_mark_end(struct scatterlist *sg)
+ 	/*
+ 	 * Set termination bit, clear potential chain bit
+ 	 */
+-	sg->page_link |= 0x02;
+-	sg->page_link &= ~0x01;
++	sg->page_link |= SG_LAST;
++	sg->page_link &= ~SG_CHAIN;
+ }
+ 
+ /**
+@@ -215,7 +221,7 @@ static inline void sg_unmark_end(struct scatterlist *sg)
+ #ifdef CONFIG_DEBUG_SG
+ 	BUG_ON(sg->sg_magic != SG_MAGIC);
+ #endif
+-	sg->page_link &= ~0x02;
++	sg->page_link &= ~SG_LAST;
+ }
+ 
+ /**
 -- 
-2.7.4
-
+2.11.0
