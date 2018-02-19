@@ -1,76 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752623AbeBSLiv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 06:38:51 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:40781 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752389AbeBSLiu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 06:38:50 -0500
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: linux-snps-arc@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Subject: [PATCH] clocksource/arc_timer: Halt GFRC together with ARC cores
-Date: Mon, 19 Feb 2018 14:38:46 +0300
-Message-Id: <20180219113846.2312-1-abrodkin@synopsys.com>
-X-Mailer: git-send-email 2.14.3
+        id S1752632AbeBSLn0 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 06:43:26 -0500
+Received: from mga03.intel.com ([134.134.136.65]:1048 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752528AbeBSLnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 06:43:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,534,1511856000";
+   d="scan'208";a="18732371"
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
+ granting locality
+Thread-Topic: [PATCH 1/2 v3] tpm: cmd_ready command can be issued only after
+ granting locality
+Thread-Index: AQHTqXSOCW/YZdaFTEqM/gtR9RwwAKOrln9Q
+Date: Mon, 19 Feb 2018 11:43:19 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B942240B1@hasmsx108.ger.corp.intel.com>
+References: <20180214134319.4400-1-tomas.winkler@intel.com>
+ <20180214134319.4400-2-tomas.winkler@intel.com>
+ <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
+In-Reply-To: <20180219112700.yfoywzegqzrpynlk@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDM4YzgyZTgtMDZjNS00NzlkLWE0MzMtMTYxNDNmOWVkZWIyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJrSGpndFwvQnlwdUFNK0Z4aW1Meks2V0FtTmlEXC90QXNxakhjOHgwN3FvdDdGMFMzVnNMcGV0SDRRc2pCbEhIbUcifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.12.116.195]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently GFRC is running regardless state of ARC cores in the SMP cluster.
-That means even if ARC cores are halted when doing JTAG debugging GFRC
-[our source of wall-time] continues to run giving us unexpected warnings
-once we allow ARC cores to run due to some tasks being stuck for too
-long.
+> 
+> On Wed, Feb 14, 2018 at 03:43:18PM +0200, Tomas Winkler wrote:
+> >  	if (need_locality && chip->ops->relinquish_locality) {
+> > -		chip->ops->relinquish_locality(chip, chip->locality);
+> > +		/* this coud be on error path, don't override error code */
+> > +		int l_rc = chip->ops->relinquish_locality(chip, chip->locality);
+> 
+> All local variable declarations must be in the beginning of the function.
 
-Starting from ARC HS v3.0 it's possible to tie GFRC to state of up-to 4
-ARC cores with help of GFRC's CORE register where we set a mask for
-cores which state we need to rely on.
+Who says?
 
-For now we set GFRC to be halted whenever either of 4 ARC cores
-(currently max number of ARC cores in SMP cluster) is halted.
 
-That setting is safe for clusters with fewer ARC cores as well because
-bits for missign cores won't be written anyways.
+> 
+> > +
+> > +		if (l_rc) {
+> > +			dev_err(&chip->dev, "%s: relinquish_locality: error
+> %d\n",
+> > +				__func__, l_rc);
+> > +			rc = l_rc;
+> > +		}
+> 
+> Your comment about not overriding error code is incorrect. 
 
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
----
- drivers/clocksource/arc_timer.c | 7 +++++++
- include/soc/arc/mcip.h          | 1 +
- 2 files changed, 8 insertions(+)
+Please explain? 
 
-diff --git a/drivers/clocksource/arc_timer.c b/drivers/clocksource/arc_timer.c
-index 4927355f9cbe..6c21b3634be0 100644
---- a/drivers/clocksource/arc_timer.c
-+++ b/drivers/clocksource/arc_timer.c
-@@ -93,6 +93,13 @@ static int __init arc_cs_setup_gfrc(struct device_node *node)
- 		return -ENXIO;
- 	}
- 
-+	/*
-+	 * Halt GFRC if either of 4 cores in SMP cluster is halted.
-+	 * Only works for ARC HS v3.0+, on earlier versions has no effect.
-+	 * 	TODO: set mask only for used cores.
-+	 */
-+	__mcip_cmd_data(CMD_GFRC_SET_CORE, 0, 0xf);
-+
- 	ret = arc_get_timer_clk(node);
- 	if (ret)
- 		return ret;
-diff --git a/include/soc/arc/mcip.h b/include/soc/arc/mcip.h
-index c2d1b15da136..1dd1d1317907 100644
---- a/include/soc/arc/mcip.h
-+++ b/include/soc/arc/mcip.h
-@@ -40,6 +40,7 @@ struct mcip_cmd {
- 
- #define CMD_GFRC_READ_LO		0x42
- #define CMD_GFRC_READ_HI		0x43
-+#define CMD_GFRC_SET_CORE		0x47
- 
- #define CMD_IDU_ENABLE			0x71
- #define CMD_IDU_DISABLE			0x72
--- 
-2.14.3
+> The value of 'rc' should be never overridden, which kind of supports to "just
+> print" behavior that we had for a locality error.
+
+You are not consistent, you've agreed with propagating it to user space. 
+The error will  be propagated in case of an error in locality relinquish
+the device is pretty much in non functional state and provious errors do not matter much,
+but rc value won't be modified if locality_reliquish succeeds.
+
+> Is your fix somehow dependent on changing relinquish_locality() behavior? If
+> not, please remove this change. If you want to contribute such behavioral
+> change, you should make a separate patch of it.
+
+The issue is structural, this is required just because the relinquish locality  is inside the error path handling.
+
+> Now it's like a trojan horse bundled inside a bug fix.
+
+Not sure I understand your methaphore. 
+Please review again.
+
+Thanks
+Tomas
