@@ -1,44 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752335AbeBSDLD (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 18 Feb 2018 22:11:03 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:35839 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752200AbeBSDLB (ORCPT
+        id S1752369AbeBSDNj (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 18 Feb 2018 22:13:39 -0500
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:41768 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752218AbeBSDNh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Feb 2018 22:11:01 -0500
-X-Google-Smtp-Source: AH8x2273HZES9W0RvrvQULhStSJqjCD1Qlo8JzEcqL4bxU6E2tfx8wfRv19gK+NzQlNlq6wnlnc7cg==
-Date: Sun, 18 Feb 2018 21:10:59 -0600
+        Sun, 18 Feb 2018 22:13:37 -0500
+X-Google-Smtp-Source: AH8x227QHbNEJUcDNBLUqmG0OMNZKhSWu+ckm0wKILokqjxbK+oC2xkjLYtC+k2VJyaGUL8fg7t9Gg==
+Date: Sun, 18 Feb 2018 21:13:35 -0600
 From: Rob Herring <robh@kernel.org>
-To: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: PCI: MediaTek: fix dtc warnings
-Message-ID: <20180219031059.jdv3q4big6c4ra7p@rob-hp-laptop>
-References: <9940757fe2889f46d0de214c5f277bf3c2074205.1518577579.git.ryder.lee@mediatek.com>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: lee.jones@linaro.org, mark.rutland@arm.com, linus.walleij@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com
+Subject: Re: [PATCH 2/2] mfd: arizona: Update DT doc to support more standard
+ reset binding
+Message-ID: <20180219031335.75rw2bdlyrxjt4ff@rob-hp-laptop>
+References: <20180214155512.17218-1-ckeepax@opensource.cirrus.com>
+ <20180214155512.17218-2-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9940757fe2889f46d0de214c5f277bf3c2074205.1518577579.git.ryder.lee@mediatek.com>
+In-Reply-To: <20180214155512.17218-2-ckeepax@opensource.cirrus.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 11:27:58AM +0800, Ryder Lee wrote:
-> dtc recently added PCI bus checks. Fix these warnings:
-> 
-> Warning (pci_bridge): Node /pcie@1a140000/pcie@0,0 missing bus-range for PCI bridge
-> Warning (pci_bridge): Node /pcie@1a140000/pcie@1,0 missing bus-range for PCI bridge
-> Warning (pci_bridge): Node /pcie@1a140000/pcie@2,0 missing bus-range for PCI bridge
-> Warning (unit_address_format): Failed prerequisite 'pci_bridge'
-> Warning (pci_device_reg): Failed prerequisite 'pci_bridge'
-> Warning (pci_device_bus_num): Failed prerequisite 'pci_bridge'
-> 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+On Wed, Feb 14, 2018 at 03:55:12PM +0000, Charles Keepax wrote:
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 > ---
->  Documentation/devicetree/bindings/pci/mediatek-pcie.txt | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
+>  Documentation/devicetree/bindings/mfd/arizona.txt | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Documentation/devicetree/bindings/mfd/arizona.txt
+> index bdd017686ea5..a1557220825e 100644
+> --- a/Documentation/devicetree/bindings/mfd/arizona.txt
+> +++ b/Documentation/devicetree/bindings/mfd/arizona.txt
+> @@ -50,7 +50,7 @@ Required properties:
+>  
+>  Optional properties:
+>  
+> -  - wlf,reset : GPIO specifier for the GPIO controlling /RESET
+> +  - wlf,reset-gpios : GPIO specifier for the GPIO controlling /RESET
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Just reset-gpios is widely used, so you can use that and drop the 
+vendor.
+
+>  
+>    - clocks: Should reference the clocks supplied on MCLK1 and MCLK2
+>    - clock-names: Should contains two strings:
+> @@ -70,6 +70,10 @@ Optional properties:
+>      Documentation/devicetree/bindings/regulator/regulator.txt
+>      (wm5102, wm5110, wm8280, wm8997, wm8998, wm1814)
+>  
+> +Deprecated properties:
+> +
+> +  - wlf,reset : GPIO specifier for the GPIO controlling /RESET
+> +
+>  Also see child specific device properties:
+>    Regulator - ../regulator/arizona-regulator.txt
+>    Extcon    - ../extcon/extcon-arizona.txt
+> -- 
+> 2.11.0
+> 
