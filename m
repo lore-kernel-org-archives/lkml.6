@@ -1,57 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752486AbeBSKZQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 05:25:16 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44270 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752275AbeBSKZP (ORCPT
+        id S1752518AbeBSK0m (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 05:26:42 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36388 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752275AbeBSK0j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 05:25:15 -0500
-From: Thomas Richter <tmricht@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.vnet.ibm.com>
-Subject: [PATCH] perf s390: Fix reading cpuid model information
-Date: Mon, 19 Feb 2018 11:24:44 +0100
-X-Mailer: git-send-email 2.13.5
-X-TM-AS-GCONF: 00
-x-cbid: 18021910-0020-0000-0000-000003F92A13
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18021910-0021-0000-0000-0000428D3270
-Message-Id: <20180219102444.96900-1-tmricht@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-19_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1802190130
+        Mon, 19 Feb 2018 05:26:39 -0500
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Mon, 19 Feb 2018 15:56:38 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, Wolfram Sang <wsa@the-dreams.de>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/12] i2c: qup: remove redundant variables for BAM SG
+ count
+In-Reply-To: <a20dc9c0-e012-d1a5-e182-5c7ddbcc8515@codeaurora.org>
+References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
+ <1517644697-30806-4-git-send-email-absahu@codeaurora.org>
+ <a20dc9c0-e012-d1a5-e182-5c7ddbcc8515@codeaurora.org>
+Message-ID: <796cbb857fe16266403d286e8047698a@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit feb3d2d955c8 (perf record: Provide detailed information
-on s390 CPU") fixed a  build error on Ubuntu. However the
-fix uses the wrong size to print the model information.
+On 2018-02-09 07:46, Sricharan R wrote:
+> Hi Abhishek,
+> 
+> On 2/3/2018 1:28 PM, Abhishek Sahu wrote:
+>> The rx_nents and tx_nents are redundant. rx_buf and tx_buf can
+>> be used for total number of SG entries.
+>> 
+>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+>> ---
+>>  drivers/i2c/busses/i2c-qup.c | 26 ++++++++++----------------
+>>  1 file changed, 10 insertions(+), 16 deletions(-)
+>> 
+>> diff --git a/drivers/i2c/busses/i2c-qup.c 
+>> b/drivers/i2c/busses/i2c-qup.c
+>> index c68f433..bb83a2967 100644
+>> --- a/drivers/i2c/busses/i2c-qup.c
+>> +++ b/drivers/i2c/busses/i2c-qup.c
+>> @@ -692,7 +692,7 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev 
+>> *qup, struct i2c_msg *msg,
+>>  	struct dma_async_tx_descriptor *txd, *rxd = NULL;
+>>  	int ret = 0, idx = 0, limit = QUP_READ_LIMIT;
+>>  	dma_cookie_t cookie_rx, cookie_tx;
+>> -	u32 rx_nents = 0, tx_nents = 0, len, blocks, rem;
+>> +	u32 len, blocks, rem;
+>>  	u32 i, tlen, tx_len, tx_buf = 0, rx_buf = 0, off = 0;
+>>  	u8 *tags;
+>> 
+> 
+>  This is correct. Just a nit, may be rx/tx_buf can be changed to
+>  rx/tx_count to make it more clear.
+> 
 
-Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
----
- tools/perf/arch/s390/util/header.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  Yes, rx/tx_count will be more meaningful. rx/tx_buf gives the
+  impression that it is uchar buffer.  I will change that.
 
-diff --git a/tools/perf/arch/s390/util/header.c b/tools/perf/arch/s390/util/header.c
-index 231294b80dc4..a4c30f1c70be 100644
---- a/tools/perf/arch/s390/util/header.c
-+++ b/tools/perf/arch/s390/util/header.c
-@@ -81,7 +81,7 @@ int get_cpuid(char *buffer, size_t sz)
- 			line2 = line + strlen(SYSINFO_MODEL);
- 
- 			while ((cp = strtok_r(line2, "\n ", &line2))) {
--				mdsize += scnprintf(model + mdsize, sizeof(type) - mdsize,
-+				mdsize += scnprintf(model + mdsize, sizeof(model) - mdsize,
- 						    "%s%s", model[0] ? "," : "", cp);
- 			}
- 			break;
--- 
-2.14.3
+  Thanks,
+  Abhishek
