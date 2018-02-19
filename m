@@ -1,59 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932294AbeBSXnu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 18:43:50 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:37854 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932241AbeBSXnt (ORCPT
+        id S932283AbeBSXqV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 18:46:21 -0500
+Received: from edison.jonmasters.org ([173.255.233.168]:59960 "EHLO
+        edison.jonmasters.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932232AbeBSXqU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 18:43:49 -0500
-Date: Mon, 19 Feb 2018 18:43:43 -0500 (EST)
-Message-Id: <20180219.184343.1801583131809551924.davem@davemloft.net>
-To: fthain@telegraphics.com.au
-Cc: netdev@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+        Mon, 19 Feb 2018 18:46:20 -0500
+To: Florian Fainelli <f.fainelli@gmail.com>,
+        Timur Tabi <timur@codeaurora.org>,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net 2/4] net/8390: Fix msg_enable patch snafu
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <alpine.LNX.2.21.1802200844340.8@nippy.intranet>
-References: <db538e6962eb16045ec85c15aee2b9b30eedcce5.1519007130.git.fthain@telegraphics.com.au>
-        <20180219.141137.2095980245673495027.davem@davemloft.net>
-        <alpine.LNX.2.21.1802200844340.8@nippy.intranet>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Cc: tchalamarla@cavium.com, rrichter@cavium.com, opendmb@gmail.com,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1518479125-14428-1-git-send-email-f.fainelli@gmail.com>
+ <ca6c47f9-86df-bcdb-bbe1-eac9db68ec33@codeaurora.org>
+ <ffc090d5-62c9-e608-32e2-8d13d01234e6@gmail.com>
+ <f5d6d768-d354-56b5-ce0c-4f46d4e6d642@codeaurora.org>
+ <126b2cc2-a61e-b30d-1ff9-ea30af7abf57@gmail.com>
+From: Jon Masters <jcm@jonmasters.org>
+Organization: World Organi{s,z}ation Of Broken Dreams
+Message-ID: <9a5190d1-eb8d-0275-d8d9-39de622a679c@jonmasters.org>
+Date: Mon, 19 Feb 2018 18:46:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <126b2cc2-a61e-b30d-1ff9-ea30af7abf57@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 81.171.212.148
+X-SA-Exim-Mail-From: jcm@jonmasters.org
+Subject: Re: [PATCH] arm64: Make L1_CACHE_SHIFT configurable
+X-SA-Exim-Version: 4.2.1 (built Sun, 08 Nov 2009 07:31:22 +0000)
+X-SA-Exim-Scanned: Yes (on edison.jonmasters.org)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
-Date: Tue, 20 Feb 2018 09:01:11 +1100 (AEDT)
+On 02/12/2018 07:17 PM, Florian Fainelli wrote:
+> On 02/12/2018 04:10 PM, Timur Tabi wrote:
+>> On 02/12/2018 05:57 PM, Florian Fainelli wrote:
+>>> That is debatable, is there a good publicly available table of what the
+>>> typical L1 cache line size is on ARMv8 platforms?
 
-> On Mon, 19 Feb 2018, David Miller wrote:
-> 
->> From: Finn Thain <fthain@telegraphics.com.au>
->> Date: Sun, 18 Feb 2018 21:39:17 -0500 (EST)
->> 
->> > The lib8390 module parameter 'msg_enable' doesn't do anything useful:
->> > it causes an ancient version string to be logged.
->> 
->> Since you are removing the last reference to this 'version' string
->> you should remove it as well.
->> 
->> I'm surprised the compiler doesn't warn about this.
->> 
-> 
-> I compile-tested every 8390 module and I didn't come across any compiler 
-> bugs.
-> 
-> Please take another look. I think you'll find that lib8390.c is always 
-> #included by a module which does define that symbol.
+With a server hat on...
 
-But nothing references 'version' after you remove the log message.
+There are many ARMv8 server platforms that do 64b today, but future
+designs are likely to head toward 128b (for a variety of reasons). Many
+of the earlier designs were 64b because that's what certain other arches
+were using in their server cores. I doubt Vulcan will remain a unique
+and special case for very long. On the CCIX side of things, I've been
+trying to push people to go with 128b lines in future designs too.
 
-You can therefore delete it.
-
-And I'm politely asking you to.
-
-Thank you.
+Jon.
