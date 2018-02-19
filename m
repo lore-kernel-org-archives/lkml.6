@@ -1,94 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752439AbeBSJeo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 04:34:44 -0500
-Received: from mga02.intel.com ([134.134.136.20]:57343 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752344AbeBSJel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 04:34:41 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,534,1511856000";
-   d="scan'208";a="31882159"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Bjorn Helgaas <helgaas@kernel.org>, Sinan Kaya <okaya@codeaurora.org>
-Cc: linux-pci@vger.kernel.org, timur@codeaurora.org,
-        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list\:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V3 09/29] drm/i915: deprecate pci_get_bus_and_slot()
-In-Reply-To: <20180216145444.GA11014@bhelgaas-glaptop.roam.corp.google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <1511801886-6753-1-git-send-email-okaya@codeaurora.org> <1511801886-6753-10-git-send-email-okaya@codeaurora.org> <20180216145444.GA11014@bhelgaas-glaptop.roam.corp.google.com>
-Date: Mon, 19 Feb 2018 11:34:34 +0200
-Message-ID: <87bmglb9w5.fsf@intel.com>
+        id S1752291AbeBSJgl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 04:36:41 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:43013 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751941AbeBSJgj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 04:36:39 -0500
+X-Google-Smtp-Source: AH8x224HnPTnUPLIjlUrrN3Zfzb+YtkuAOtwt6rnvknOSaj4SfO2gay2DHuISNQGr/Ky21iOXr1SNA==
+Date: Mon, 19 Feb 2018 10:36:35 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, hpa@zytor.com,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [tip:x86/pti] x86/speculation: Use IBRS if available before
+ calling into firmware
+Message-ID: <20180219093635.su3hqx5bn2jibnoi@gmail.com>
+References: <1518362359-1005-1-git-send-email-dwmw@amazon.co.uk>
+ <tip-670c3e8da87fa4046a55077b1409cf250865a203@git.kernel.org>
+ <c77b3da9-136d-9988-119f-e94c86fd34a3@linux.intel.com>
+ <1518808600.7876.49.camel@infradead.org>
+ <66f94cb1-8160-56e0-680c-2e847ae05893@linux.intel.com>
+ <20180217102616.vcwatxsgj2vunlew@gmail.com>
+ <20180219092017.GN25201@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180219092017.GN25201@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Feb 2018, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> On Mon, Nov 27, 2017 at 11:57:46AM -0500, Sinan Kaya wrote:
->> pci_get_bus_and_slot() is restrictive such that it assumes domain=0 as
->> where a PCI device is present. This restricts the device drivers to be
->> reused for other domain numbers.
->> 
->> Getting ready to remove pci_get_bus_and_slot() function in favor of
->> pci_get_domain_bus_and_slot().
->> 
->> Extract the domain number from drm_device and pass it into
->> pci_get_domain_bus_and_slot() function.
->> 
->> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
->
-> I don't know what happened to this, and it didn't make it into
-> v4.16-rc1.  I applied it to pci/deprecate-get-bus-and-slot for v4.17
-> along with the patch that actually removes pci_get_bus_and_slot().
 
-It fell between the cracks as we couldn't apply it before getting a
-backmerge on the dependency. Sorry about that.
+* Peter Zijlstra <peterz@infradead.org> wrote:
 
-Ack for merging through your tree.
+> On Sat, Feb 17, 2018 at 11:26:16AM +0100, Ingo Molnar wrote:
+> > Note that PeterZ was struggling with intermittent boot hangs yesterday as well, 
+> > which hangs came and went during severeal (fruitless) bisection attempts. Then at 
+> > a certain point the hangs went away altogether.
+> > 
+> > The symptoms for both his and your hangs are consistent with an alignment 
+> > dependent bug.
+> 
+> Mine would consistently hang right after
+> 
+>   "Freeing SMP alternatives memory: 44K"
+> 
+> At one point I bisected it to commit:
+> 
+>   a06cc94f3f8d ("x86/build: Drop superfluous ALIGN from the linker script")
+
+So, just to make sure this commit had no effect: I cannot really see anything 
+wrong with that commit, it does a single substantial change, which is to remove 
+this explicit alignment:
+
+                . = ALIGN(8);
+                TEXT_TEXT
+
+which seems fine to me, since it expanded to:
+
+                . = ALIGN(8);
+                ALIGN_FUNCTION();                                       \
+		...
+
+which expanded to:
+
+                . = ALIGN(8);
+		. = ALIGN(8);
+		...
+
+... which duplication the commit removed.
+
+... where all the relevant defitions of TEXT_TEXT and ALIGN_FUNCTION are 
+unconditional and not overriden anywhere for arch/x86 builds.
+
+I.e. the commit is a NOP AFAICS.
 
 Thanks,
-Jani.
 
-
->
->> ---
->>  drivers/gpu/drm/i915/i915_drv.c | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
->> index 9f45cfe..5a8cb79 100644
->> --- a/drivers/gpu/drm/i915/i915_drv.c
->> +++ b/drivers/gpu/drm/i915/i915_drv.c
->> @@ -419,7 +419,10 @@ static int i915_getparam(struct drm_device *dev, void *data,
->>  
->>  static int i915_get_bridge_dev(struct drm_i915_private *dev_priv)
->>  {
->> -	dev_priv->bridge_dev = pci_get_bus_and_slot(0, PCI_DEVFN(0, 0));
->> +	int domain = pci_domain_nr(dev_priv->drm.pdev->bus);
->> +
->> +	dev_priv->bridge_dev =
->> +		pci_get_domain_bus_and_slot(domain, 0, PCI_DEVFN(0, 0));
->>  	if (!dev_priv->bridge_dev) {
->>  		DRM_ERROR("bridge device not found\n");
->>  		return -1;
->> -- 
->> 1.9.1
->> 
->> 
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
--- 
-Jani Nikula, Intel Open Source Technology Center
+	Ingo
