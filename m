@@ -1,111 +1,70 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-260567-1519053565-2-2225644528553589113
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519053565; b=p6++tL3/BosbxtU50cKPUirpR7Shg6/CWzh1yHB/Bt7h8HV
-    PtOz5YKEiBFab4igNRIW0wcqkLoNDUHsBP/I1T6IFNeBBQxoY9IQeCOyEf5YUiMo
-    /1cwcRMxYftTZ1UpvrliOtQwu6ZHBApFnR3jHM3ZJMLsrPgoSg5VreSsnK5xZekS
-    WNMUjfZGiDcf0AVXNxMquENBHbIW3g8Fr3T2TPnNI5aiTHOBoz+W6Wr1UCX3ghmu
-    yEvXazMnT2Til+5EX5oi7wKWE7DO3HWGW0flB9VuuoBNUy0DSuUcu/Ns4xeKJzui
-    V1gLUwpb0AmuhqsNVsgrbAaCxjS6MQ4yprEAtiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:message-id:from:to:cc:subject
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519053565; bh=1K0qzKeILN8cR2xQVhmyAuW1rC
-    TG6fpAoTXq7DowKiE=; b=RAynFJz6HoOiKxRiO+CcXH4dD7T7fF5756mT0c0irA
-    PN41cN5xFLbi3BXNjOP1ZKaim/3DqifZxjpvzrD6BNBifIOfsS5u2aJyYlHKzS89
-    affjOQ3fEtaUg7b2vGFJElzYxJMkHeFnNc3HD8bCx3O6IEjg71i7ypmD/vWw2LtZ
-    OPxPiueEf/Recm64pLTlb4ZQeLdUDzItRSXKVfGCsDdlsZllDQ4sbHPZLlZ4lpPa
-    fTc9XH8PPmsua7c9j8st6I/EiFJcp3aRhKDj+LJnF77Yusi5o0ZvL0/OmxsajmFd
-    VwilLosEhiD+ToYoDmaM/4FgVNFTLaoJBwCaS2WDiltg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.de header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.de header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753103AbeBSPS4 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Feb 2018 10:18:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47244 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753097AbeBSPSz (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Feb 2018 10:18:55 -0500
-Date: Mon, 19 Feb 2018 16:18:54 +0100
-Message-ID: <s5hmv05hush.wl-tiwai@suse.de>
+Return-Path: <tiwai@suse.de>
+X-Google-Smtp-Source: AH8x22754o9GHSMNPjw8eDfJGwTXmOB695+5cIi/HgRcxcM5AX5q6a+NIGGoi8e+G7WuxvT1n8TW
+ARC-Seal: i=1; a=rsa-sha256; t=1519055191; cv=none;
+        d=google.com; s=arc-20160816;
+        b=qg2qxdnbH0CHF7cQuk2PLoUAknTXN4OWGhskyL3+7pFlTg9GEbdHOGDKAviS+sJpyE
+         r4x6nKPQQishju6PzlrZWnHjzS//reaNx1V/an6FrSDc+Zv8/GUJM1UYoydmj37xeLVh
+         yBqzpdJzxg6PCoz5R0Q9pN8r5xUqjebXwlycQV8O8fRN8uR5nxA4vl0POK4RbfJiSNzX
+         RF3mj11p3z4DxDlDFPM6+D7R4scVZb8AW3aIpfSw6dj67fUCKsgnCgvWL627UWrTgf44
+         AbObXJJAmT2aZtm3LZ6lG+o7P4ZP8boUJJeFpxKx4Ry02aTsdLem3FV9aCDgPT6jznVF
+         wy2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:subject:cc:to:from
+         :message-id:date:arc-authentication-results;
+        bh=5lxCFoQboQp6CZvjr7KezmrtZNtcZaCAYT+MVq733bQ=;
+        b=hVMJQg71J57PH8imQ4TOq+lkKis1lS/F7jBeXwjhU80iRypRtcMF0x3ZXlCDQxXqzj
+         gYScWUvpxYrE/mEsaQCzaQt5cYy7IYfvx7UZynZm3soT//MRgZYjDdrWtmqOMDLFcYEN
+         hFUe5zzwWde60IFcc960sVujqzJ5260FWDR+JatwBynjDpQ3F93fdSc0/WFxxo2tVmWB
+         aq4m6aKcTDYjnavx2/J+bE2ne+Nd7Po1vW5t0NAb8kUGo/b3UXrW+OXzPEiak3GHMVcz
+         apKSFz/8nLXM/3eiKgkHxgvcXbBVYpfwXl3UOca/EbkqJ1FfNHut8Vy7uzk09Hmra89y
+         CM9Q==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of tiwai@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=tiwai@suse.de
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of tiwai@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=tiwai@suse.de
+Date: Mon, 19 Feb 2018 16:46:29 +0100
+Message-ID: <s5hinathtii.wl-tiwai@suse.de>
 From: Takashi Iwai <tiwai@suse.de>
-To: Andres Bertens <abertensu@yahoo.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        ben@decadent.org.uk
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andres Bertens <abertensu@yahoo.com>,
+    linux-kernel@vger.kernel.org,
+    stable@vger.kernel.org,
+    ben@decadent.org.uk
 Subject: Re: Linux 3.16.54: suspend stops working.
-In-Reply-To: <02c917a9-83ad-6510-fe7d-9ab8b4519041@yahoo.com>
+In-Reply-To: <2f37c140-3cd4-e1e6-9c41-631b637d4883@yahoo.com>
 References: <02c917a9-83ad-6510-fe7d-9ab8b4519041@yahoo.com>
+	<s5hmv05hush.wl-tiwai@suse.de>
+	<2f37c140-3cd4-e1e6-9c41-631b637d4883@yahoo.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
 Content-Type: text/plain; charset=US-ASCII
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
+X-GMAIL-THRID: =?utf-8?q?1592844816031933182?=
+X-GMAIL-MSGID: =?utf-8?q?1592844816031933182?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 19 Feb 2018 16:06:55 +0100,
+On Mon, 19 Feb 2018 16:36:03 +0100,
 Andres Bertens wrote:
 > 
-> Hi there!
+> Hi,
 > 
-> If of any interest to you, upgrading to linux 3.16.54 from 3.16.53,
-> suspend stops working. The same is for upgrading from linux 4.4.114 to
-> 4.4.115.
+> Yes sir, supend works with the attached patch!
 > 
-> Checking pm-utils log:
-> 
-> /usr/lib/pm-utils/pm-functions: line 259: echo: write error: Resource
-> temporarily unavailable
-> 
-> And line 259 is:
-> do_suspend() { echo -n "mem" >/sys/power/state; }
-> 
-> 
-> 
-> Reverting patch:
->    commit 02cbce8576a31df8fca54aaec91ee081076bd79d
->    Author: Takashi Iwai <tiwai@suse.de>
->    Date:   Tue Jan 9 23:11:03 2018 +0100
-> 
->        ALSA: seq: Make ioctls race-free
-> 
->        commit b3defb791b26ea0683a93a4f49c77ec45ec96f10 upstream.
-> 
-> makes it work again!
+> As for using some sequencer audio stuff, I have enabled
+> CONFIG_SND_SEQUENCER and some others *SEQ* as modules in my kernel
+> config. Nothing else to my knowledge.
 
-Just a blind shot: could you try the patch below instead?
+Good to hear!
 
-And, are you using some sequencer audio stuff?
+Greg, could you revert the previous one and apply the new one instead?
+Below is with a more description explaining the difference.
+
+Or if you prefer an incremental patch instead of revert and re-apply,
+let me know.  I'll cook it.
 
 
 thanks,
@@ -115,6 +74,8 @@ Takashi
 -- 8< --
 From: Takashi Iwai <tiwai@suse.de>
 Subject: [PATCH] ALSA: seq: Make ioctls race-free (revised)
+
+commit b3defb791b26ea0683a93a4f49c77ec45ec96f10 upstream.
 
 The ALSA sequencer ioctls have no protection against racy calls while
 the concurrent operations may lead to interfere with each other.  As
@@ -126,6 +87,14 @@ As a slightly big hammer solution, this patch introduces the mutex to
 make each ioctl exclusive.  Although this may reduce performance via
 parallel ioctl calls, usually it's not demanded for sequencer usages,
 hence it should be negligible.
+
+[ NOTE: this is the revised backport of the commit b3defb791b26.
+  We had another backport (e.g. 623e5c8ae32b in 4.4.115), but it
+  applies the new mutex also to the code paths via faked
+  kernel-to-kernel ioctls, and it seems leading to a deadlock, as
+  reported recently as a regression.  This revised patch takes the
+  mutex only in the code path invoked by user-space, just like the
+  original fix patch does -- tiwai ]
 
 Reported-by: Luo Quan <a4651386@163.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
