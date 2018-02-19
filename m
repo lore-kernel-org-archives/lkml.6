@@ -1,84 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753143AbeBSPhB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 10:37:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56308 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753086AbeBSPhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 10:37:00 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7066F2178E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AH8x227cJ07Ygv2pzxwBtv2VF/EddQKPaXCCanxCTCawxOkTJuK4bodHeSqpIHHu0XDOaqDEKWZIWxtvpSdntQBz6Yo=
+        id S1753061AbeBSPib (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 10:38:31 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45710 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752587AbeBSPia (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 10:38:30 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C9C760240
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+From: Shanker Donthineni <shankerd@codeaurora.org>
+To: Christoffer Dall <christoffer.dall@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>
+Cc: Vikram Sethi <vikrams@codeaurora.org>,
+        Shanker Donthineni <shankerd@codeaurora.org>
+Subject: [PATCH] KVM: arm/arm64: No need to zero CNTVOFF in kvm_timer_vcpu_put() for VHE
+Date: Mon, 19 Feb 2018 09:38:07 -0600
+Message-Id: <1519054687-14405-1-git-send-email-shankerd@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <49fc21ac-4630-b90c-04fb-31740354b35b@kapsi.fi>
-References: <1517901757-15353-1-git-send-email-mperttunen@nvidia.com>
- <1517901757-15353-7-git-send-email-mperttunen@nvidia.com> <20180209225402.uexw7vlzwflo7zmr@rob-hp-laptop>
- <49fc21ac-4630-b90c-04fb-31740354b35b@kapsi.fi>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 19 Feb 2018 09:36:38 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJXUDzrWJ+yKR7Ow6==j=k5yZgjrXehfHtDyOC0RAiGAw@mail.gmail.com>
-Message-ID: <CAL_JsqJXUDzrWJ+yKR7Ow6==j=k5yZgjrXehfHtDyOC0RAiGAw@mail.gmail.com>
-Subject: Re: [PATCH v2 6/7] arm64: tegra: Add Tegra194 chip device tree
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>, Mark Rutland <mark.rutland@arm.com>,
-        talho@nvidia.com, linux-tegra@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 5:56 AM, Mikko Perttunen <cyndis@kapsi.fi> wrote:
-> On 10.02.2018 00:54, Rob Herring wrote:
->>
->> On Tue, Feb 06, 2018 at 09:22:36AM +0200, Mikko Perttunen wrote:
->>>
->>> ...
->>> index 000000000000..dcc6eea52684
->>> --- /dev/null
->>> +++ b/include/dt-bindings/clock/tegra194-clock.h
+In AArch64/AArch32, the virtual counter uses a fixed virtual offset
+of zero in the following situations as per ARMv8 specifications:
 
->>> + */
->>> +
->>> +#ifndef __ABI_MACH_T194_CLOCK_H
->>> +#define __ABI_MACH_T194_CLOCK_H
->>> +
->>> +/** @file */
->>> +
->>> +/** @brief output of mux controlled by TEGRA194_CLK_SOC_ACTMON */
->>> +#define TEGRA194_CLK_ACTMON                    1
->>> +/** @brief output of gate CLK_ENB_ADSP */
->>
->>
->> These comments don't add much and make readability horrible.
->
->
-> The comments allow mapping each define to the clocks defined in the chip
-> technical reference manual.
+1) HCR_EL2.E2H is 1, and CNTVCT_EL0/CNTVCT are read from EL2.
+2) HCR_EL2.{E2H, TGE} is {1, 1}, and either:
+   — CNTVCT_EL0 is read from Non-secure EL0 or EL2.
+   — CNTVCT is read from Non-secure EL0.
 
-If that's not obvious from the define name, then fix the define name.
-Looks like in most cases it is.
+So, no need to zero CNTVOFF_EL2/CNTVOFF for VHE case.
 
-> The file also comes as is from the firmware team
-> so I'd prefer to keep changes to a minimum.
+Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+---
+ virt/kvm/arm/arch_timer.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-I can appreciate that and perhaps if this was something imported at
-some frequency then it would be worthwhile to maintain formatting. But
-this is an ABI and defined by the hardware (as opposed to BPMP
-firmware) so it generally shouldn't ever change. And bindings should
-be complete, so if you plan periodic additions to it, that's a
-separate problem.
-
-> We have done this previously
-> with the BPMP ABI and device tree binding headers for the Tegra186.
-
-Generally, we don't accept doxygen comments in the kernel tree.
-There's only a handful of cases that seem to have sneaked in.
-
-Rob
+diff --git a/virt/kvm/arm/arch_timer.c b/virt/kvm/arm/arch_timer.c
+index 70268c0..86eca324 100644
+--- a/virt/kvm/arm/arch_timer.c
++++ b/virt/kvm/arm/arch_timer.c
+@@ -541,9 +541,11 @@ void kvm_timer_vcpu_put(struct kvm_vcpu *vcpu)
+ 	 * The kernel may decide to run userspace after calling vcpu_put, so
+ 	 * we reset cntvoff to 0 to ensure a consistent read between user
+ 	 * accesses to the virtual counter and kernel access to the physical
+-	 * counter.
++	 * counter of non-VHE case. For VHE, the virtual counter uses a fixed
++	 * virtual offset of zero, so no need to zero CNTVOFF_EL2 register.
+ 	 */
+-	set_cntvoff(0);
++	if (!has_vhe())
++		set_cntvoff(0);
+ }
+ 
+ /*
+-- 
+Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
