@@ -1,90 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752590AbeBSKjm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 05:39:42 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:41033 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752447AbeBSKjk (ORCPT
+        id S1752611AbeBSKju convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 05:39:50 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:58521 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752447AbeBSKjr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 05:39:40 -0500
-X-Google-Smtp-Source: AH8x224+I8qCqDp9/62baTLuevRDQHbMjpKnu05y+IYtkVWjgD4m99eEBpP46zEWmLSwBFcFI3UyQw==
-Date: Mon, 19 Feb 2018 10:39:36 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Thierry Reding <thierry.reding@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        linux-rockchip@lists.infradead.org, kernel@collabora.com
-Subject: Re: [RESEND PATCH v5 2/5] dt-bindings: pwm-backlight: add PWM delay
- proprieties.
-Message-ID: <20180219103936.vsvzbiwr3g7oqsyh@dell>
-References: <20180216174034.15936-1-enric.balletbo@collabora.com>
- <20180216174034.15936-2-enric.balletbo@collabora.com>
- <20180219092247.estv4d2v6cbopx6z@dell>
- <4692672.MjQUXlf6O3@phil>
+        Mon, 19 Feb 2018 05:39:47 -0500
+Date: Mon, 19 Feb 2018 11:39:45 +0100
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: wens@csie.org, linux@armlinux.org.uk, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        clabbe.montjoie@gmail.com, thomas.petazzoni@bootlin.com,
+        quentin.schulz@bootlin.com
+Subject: Re: [PATCH v3 1/7] ARM: sun8i: smp: Add support for A83T
+Message-ID: <20180219113945.686dc4ee@dell-desktop.home>
+In-Reply-To: <20180219090401.5uxmwtnkd7oadaxx@flea.lan>
+References: <20180219081837.15482-1-mylene.josserand@bootlin.com>
+        <20180219081837.15482-2-mylene.josserand@bootlin.com>
+        <20180219090401.5uxmwtnkd7oadaxx@flea.lan>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4692672.MjQUXlf6O3@phil>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Feb 2018, Heiko Stuebner wrote:
-> Am Montag, 19. Februar 2018, 10:22:47 CET schrieb Lee Jones:
-> > On Fri, 16 Feb 2018, Enric Balletbo i Serra wrote:
-> > 
-> > > Hardware needs a delay between setting an initial (non-zero) PWM and
-> > > enabling the backlight using GPIO. The post-pwm-on-delay-ms specifies
-> > > this delay in milli seconds. Hardware also needs a delay between disabing
-> > > the backlight using GPIO and setting PWM value to 0. The pwm-off-delay-ms
-> > > is this delay in milli seconds.
-> > > 
-> > > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > > Acked-by: Pavel Machek <pavel@ucw.cz>
-> > > ---
-> > > Based on the original Huang Lin <hl@rock-chips.com> work.
-> > > 
-> > > Changes since v4:
-> > >  - Rebase on top of mainline.
-> > > Changes since v3:
-> > >  - Replace us for ms.
-> > >  - Add Acked-by: Pavel Machek <pavel@ucw.cz>
-> > > Changes since v2:
-> > >  - Use separate properties (Rob Herring)
-> > > Changes since v1:
-> > >  - As suggested by Daniel Thompson
-> > >    - Do not assume power-on delay and power-off delay will be the same
-> > > 
-> > >  Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt | 6 ++++++
-> > >  1 file changed, 6 insertions(+)
-> > 
-> > Looks like this still needs an Ack.
-> > 
-> > Also, you didn't supply a 0th (cover-letter) patch, so I have no idea
-> > of patch history or your future intentions.
-> > 
-> > Are there build-time dependencies between them or can each patch be
-> > merged via their respective trees without the fear of merge/build
-> > failure?
-> 
-> When looking at the patches, there do not seem to be any build-time
-> dependencies between the patch 1-3 (backlight) and 4+5 devicetree,
-> so after Rob hopefully has time to look at the binding change, I'd suspect
-> you take the code changes and I'll take the dts changes.
+Hello Maxime,
 
-Works for me.
+On Mon, 19 Feb 2018 10:04:01 +0100
+Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+
+> Hi,
+> 
+> On Mon, Feb 19, 2018 at 09:18:31AM +0100, Mylène Josserand wrote:
+> > Add the support for A83T.
+> > 
+> > A83T SoC has an additional register than A80 to handle CPU configurations:
+> > R_CPUS_CFG. Information about the register comes from Allwinner's BSP
+> > driver.
+> > An important difference is the Power Off Gating register for clusters
+> > which is BIT(4) in case of SUN9I-A80 and BIT(0) in case of SUN8I-A83T.
+> > 
+> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>  
+> 
+> This is some high-level review, but you should split this patch in
+> three:
+>   - One to refactor the current code to split the DT parsing function
+>     (and rename the function to sun9i_smp_dt_parse) and the variable renames
+>   - One to enable the A83t SMP (with the function called sun8i_a83t_smp_dt_parse)
+>   - One to enable the A83t hotplug (merged with your last patch)
+
+Thank you for the review.
+Sure, I will split my patch in three.
+
+> 
+> Also, you're calling a lot of times of_machine_is_compatible, and this
+> is quite inefficient. You should call it once and store the result.
+
+True.
+
+Thanks,
+
+Mylène
 
 -- 
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
