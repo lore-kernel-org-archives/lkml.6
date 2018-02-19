@@ -1,91 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752469AbeBSOBT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 09:01:19 -0500
-Received: from mail-qk0-f180.google.com ([209.85.220.180]:40363 "EHLO
-        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750978AbeBSOBR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 09:01:17 -0500
-X-Google-Smtp-Source: AH8x224MwsaaVbwQFk+CdBLmLMlp90bq/vC9v101ChVkxm9o923Qk/Ed53ioZHKoBpvuxZERkE0prCfpHAbCtq7WGZI=
+        id S1752857AbeBSOBi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 09:01:38 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59478 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752686AbeBSOBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 09:01:35 -0500
+Date: Mon, 19 Feb 2018 14:01:43 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mingo@kernel.org
+Subject: Re: [RFC PATCH 3/5] asm-generic/bitops/atomic.h: Rewrite using
+ atomic_fetch_*
+Message-ID: <20180219140142.GD30394@arm.com>
+References: <1518708575-12284-1-git-send-email-will.deacon@arm.com>
+ <1518708575-12284-4-git-send-email-will.deacon@arm.com>
+ <20180215170847.GD25181@hirez.programming.kicks-ass.net>
+ <20180215182049.GC15274@arm.com>
+ <20180216102100.GB25201@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20180218163211.GA1650@light.dominikbrodowski.net>
-References: <20180217132543.GA21571@light.dominikbrodowski.net>
- <1518879773.22495.378.camel@linux.intel.com> <1518880180.22495.379.camel@linux.intel.com>
- <20180217165815.GA1854@light.dominikbrodowski.net> <1518901021.22495.383.camel@linux.intel.com>
- <20180218094135.GA2459@light.dominikbrodowski.net> <CAHp75Vf2sS8c4GubL1MRkrGdpYdn0n5stmzZNnp8axNn3AkEcw@mail.gmail.com>
- <20180218163211.GA1650@light.dominikbrodowski.net>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 19 Feb 2018 16:01:15 +0200
-Message-ID: <CAHp75VeEPyuonH+Yji9B1mMgaYvw7god0MQW8z52722kfOAaJg@mail.gmail.com>
-Subject: Re: i2c-designware: sound and s2ram broken on Broadwell-U system
- since commit ca382f5b38f367b6 (add i2c gpio recovery option)
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        tim@krieglstein.org, Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Phil Reid <preid@electromag.com.au>, Wolfram Sang <wsa@the-dreams.de>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180216102100.GB25201@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 18, 2018 at 6:32 PM, Dominik Brodowski
-<linux@dominikbrodowski.net> wrote:
-> On Sun, Feb 18, 2018 at 04:23:41PM +0200, Andy Shevchenko wrote:
->> On Sun, Feb 18, 2018 at 11:41 AM, Dominik Brodowski
->> <linux@dominikbrodowski.net> wrote:
->> > On Sat, Feb 17, 2018 at 10:57:01PM +0200, Andy Shevchenko wrote:
->> >> On Sat, 2018-02-17 at 17:58 +0100, Dominik Brodowski wrote:
->>
->> >> >  Do you still need the DEBUG_GPIO output?
->> >>
->> >> It would be nice to have, though if it makes difficulties to you, then
->> >> don't bother.
->> >
->> > Note that I have to enable CONFIG_GPIOLIB before I can enable DEBUG_GPIO;
->> > CONFIG_PINCTRL was off as well. Maybe some "SELECT" is missing for
->> > CONFIG_I2C_DESIGNWARE_BAYTRAIL ?
->>
->> Ah, so, your configuration misses pin control driver. You need to
->> enable it in order to get GPIOs working.
->
-> Well, I did not need it in the past to have working sound and working
-> suspend to RAM. And it already works if
->
->         CONFIG_PINCTRL=y
->         CONFIG_DEBUG_PINCTRL=y
->
->         CONFIG_GPIOLIB=y
->         CONFIG_GPIO_ACPI=y
->         CONFIG_DEBUG_GPIO=y
->
-> are set (but no PINCTRL or GPIO drivers!).
->
-> So I'd suggest to
->
-> (a) keep your fixup patch (as things work as previously then),
+Hi Peter,
 
-You may answer to mail with the patch by giving a Tested-by tag.
+On Fri, Feb 16, 2018 at 11:21:00AM +0100, Peter Zijlstra wrote:
+> On Thu, Feb 15, 2018 at 06:20:49PM +0000, Will Deacon wrote:
+> > On Thu, Feb 15, 2018 at 06:08:47PM +0100, Peter Zijlstra wrote:
+> > > On Thu, Feb 15, 2018 at 03:29:33PM +0000, Will Deacon wrote:
+> > > > +static inline void __clear_bit_unlock(unsigned int nr,
+> > > > +				      volatile unsigned long *p)
+> > > > +{
+> > > > +	unsigned long old;
+> > > >  
+> > > > +	p += BIT_WORD(nr);
+> > > > +	old = READ_ONCE(*p);
+> > > > +	old &= ~BIT_MASK(nr);
+> > > > +	smp_store_release(p, old);
+> > > 
+> > > This should be atomic_set_release() I think, for the special case where
+> > > atomics are implemented with spinlocks, see the 'fun' case in
+> > > Documentation/atomic_t.txt.
+> > 
+> > My understanding of __clear_bit_unlock is that there is guaranteed to be
+> > no concurrent accesses to the same word, so why would it matter whether
+> > locks are used to implement atomics?
+> 
+> 
+> commit f75d48644c56a31731d17fa693c8175328957e1d
+> Author: Peter Zijlstra <peterz@infradead.org>
+> Date:   Wed Mar 9 12:40:54 2016 +0100
+> 
+>     bitops: Do not default to __clear_bit() for __clear_bit_unlock()
+>     
+>     __clear_bit_unlock() is a special little snowflake. While it carries the
+>     non-atomic '__' prefix, it is specifically documented to pair with
+>     test_and_set_bit() and therefore should be 'somewhat' atomic.
+>     
+>     Therefore the generic implementation of __clear_bit_unlock() cannot use
+>     the fully non-atomic __clear_bit() as a default.
+>     
+>     If an arch is able to do better; is must provide an implementation of
+>     __clear_bit_unlock() itself.
+>     
+>     Specifically, this came up as a result of hackbench livelock'ing in
+>     slab_lock() on ARC with SMP + SLUB + !LLSC.
+>     
+>     The issue was incorrect pairing of atomic ops.
+>     
+>      slab_lock() -> bit_spin_lock() -> test_and_set_bit()
+>      slab_unlock() -> __bit_spin_unlock() -> __clear_bit()
+>     
+>     The non serializing __clear_bit() was getting "lost"
+>     
+>      80543b8e:      ld_s       r2,[r13,0] <--- (A) Finds PG_locked is set
+>      80543b90:      or         r3,r2,1    <--- (B) other core unlocks right here
+>      80543b94:      st_s       r3,[r13,0] <--- (C) sets PG_locked (overwrites unlock)
 
-> (b) to have CONFIG_I2C_DESIGNWARE_BAYTRAIL select the appropriate options from
->     above [and CONFIG_XPOWER_PMIC_OPREGION ?] (or depend on it?), or
+Ah, so it's problematic for the case where atomics are built using locks.
+Got it. I'll err on the side of caution here and have the asm-generic header
+(which should be bitops/lock.h not bitops/atomic.h) conditionally define
+__clear_bit_unlock as clear_bit_lock unless the architecture has provided
+its own implementation.
 
-I don't think there is such dependency.
+Thanks,
 
-Jarkko, what do you think?
-
->> Yes, and with enabled pin control driver.
->
-> Well, I've reverted your fixup patch locally and enabled all drivers that I
-> could -- including CONFIG_XPOWER_PMIC_OPREGION, CONFIG_MFD_AXP20X, and
-> CONFIG_MFD_AXP20X_I2C. But I'm not sure at all that a driver actually became
-> active...
-
--ENOSYS is returned when !GPIOLIB. That what made behaviour different
-in the first place.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Will
