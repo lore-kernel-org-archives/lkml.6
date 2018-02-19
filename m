@@ -1,81 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752865AbeBSNca (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 08:32:30 -0500
-Received: from mail-pg0-f48.google.com ([74.125.83.48]:35299 "EHLO
-        mail-pg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752745AbeBSNc2 (ORCPT
+        id S1752853AbeBSNgH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 08:36:07 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52700 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752822AbeBSNgF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 08:32:28 -0500
-X-Google-Smtp-Source: AH8x227DIj4mmdV+ULrFn7k6PV5UnlI6WS9cA9pXcsqfkvM4opdgkIbyVpOMAR6q9CGbO80SY2W3pP9jJJNguZVRdJQ=
+        Mon, 19 Feb 2018 08:36:05 -0500
+Subject: Re: [PATCH] s390/console: enable dummy console for vt
+To: Christian Borntraeger <borntraeger@de.ibm.com>,
+        Thomas Huth <thuth@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
+        Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        uml-devel <user-mode-linux-devel@lists.sourceforge.net>
+References: <2324e2cc-ff55-4d57-2807-c7f72f9ea0ca@de.ibm.com>
+ <20180215111423.96598-1-borntraeger@de.ibm.com>
+ <CAMuHMdWCK1V3PWXHMNZUmFVMCSqi5xhs72mT_M=gE96TSzMN9w@mail.gmail.com>
+ <f621e016-3811-b9c5-e044-779adc6b420c@redhat.com>
+ <4116f119-b96e-a8c1-359a-dde488d61212@de.ibm.com>
+From: Farhan Ali <alifm@linux.vnet.ibm.com>
+Date: Mon, 19 Feb 2018 08:35:56 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <BN6PR15MB155309E2A35F66298DAD8E2E9AC80@BN6PR15MB1553.namprd15.prod.outlook.com>
-References: <001a1143e44e58485f05655fa8ae@google.com> <CACT4Y+bxubQ0yqi777mgQdT6paPS+wWQo79T+jPqztPJ=gTYhw@mail.gmail.com>
- <b6b1e370-d3ba-4db7-228f-a3ccaf502992@virtuozzo.com> <BN6PR15MB155309E2A35F66298DAD8E2E9AC80@BN6PR15MB1553.namprd15.prod.outlook.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 19 Feb 2018 14:32:06 +0100
-Message-ID: <CACT4Y+ZKxgzKHw5AG=SRp8n3R5SxH10d-T8WFvV2ayJNy79bjA@mail.gmail.com>
-Subject: Re: BUG: sleeping function called from invalid context at
- net/core/sock.c:LINE (3)
-To: Jon Maloy <jon.maloy@ericsson.com>
-Cc: Kirill Tkhai <ktkhai@virtuozzo.com>,
-        syzbot <syzbot+749d9d87c294c00ca856@syzkaller.appspotmail.com>,
-        Ying Xue <ying.xue@windriver.com>, Andrei Vagin <avagin@virtuozzo.com>,
-        David Miller <davem@davemloft.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Florian Westphal <fw@strlen.de>, LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        "roman.kapl@sysgo.com" <roman.kapl@sysgo.com>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
-        "tipc-discussion@lists.sourceforge.net"
-        <tipc-discussion@lists.sourceforge.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <4116f119-b96e-a8c1-359a-dde488d61212@de.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18021913-0048-0000-0000-0000023BA27C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008560; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00992009; UDB=6.00503937; IPR=6.00771354;
+ MB=3.00019635; MTD=3.00000008; XFM=3.00000015; UTC=2018-02-19 13:36:01
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18021913-0049-0000-0000-0000442F1B05
+Message-Id: <b2615fca-2784-4f0a-2f21-7e7074c6760b@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-19_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1802190169
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 2:23 PM, Jon Maloy <jon.maloy@ericsson.com> wrote:
-> I don't understand this one. tipc_topsrv_stop() can only be trigged from a user doing rmmod(), and I double checked that this is running in user mode.
-> How does the call chain you are reporting occur?
-
-Hi Jon,
-
-Please see the original syzbot report, it includes all known
-information about the bug (including a reproducer program):
-https://groups.google.com/forum/#!topic/syzkaller-bugs/jWAs6YWMp9g
 
 
-
-
->> -----Original Message-----
->> From: Kirill Tkhai [mailto:ktkhai@virtuozzo.com]
->> Sent: Saturday, February 17, 2018 23:23
->> To: Dmitry Vyukov <dvyukov@google.com>; syzbot
->> <syzbot+749d9d87c294c00ca856@syzkaller.appspotmail.com>; Jon Maloy
->> <jon.maloy@ericsson.com>; Ying Xue <ying.xue@windriver.com>
->> Cc: Andrei Vagin <avagin@virtuozzo.com>; David Miller
->> <davem@davemloft.net>; Eric W. Biederman <ebiederm@xmission.com>;
->> Florian Westphal <fw@strlen.de>; LKML <linux-kernel@vger.kernel.org>;
->> netdev <netdev@vger.kernel.org>; Nicolas Dichtel
->> <nicolas.dichtel@6wind.com>; roman.kapl@sysgo.com; syzkaller-
->> bugs@googlegroups.com; tipc-discussion@lists.sourceforge.net
->> Subject: Re: BUG: sleeping function called from invalid context at
->> net/core/sock.c:LINE (3)
+On 02/15/2018 07:02 AM, Christian Borntraeger wrote:
+> 
+> 
+> On 02/15/2018 12:57 PM, Thomas Huth wrote:
+>> On 15.02.2018 12:26, Geert Uytterhoeven wrote:
+>>> Hi Christian,
+>>>
+>>> On Thu, Feb 15, 2018 at 12:14 PM, Christian Borntraeger
+>>> <borntraeger@de.ibm.com> wrote:
+>>>> To enable the virtual terminal layer with virtio-gpu, we need to
+>>>> provide the dummy console. This console is hidden behind CONFIG_IOMEM
+>>>> via the graphics support. Instead of fully enabling the graphic
+>>>> drivers lets just provide a Kconfig option for the dummy console.
+>>>>
+>>>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>>>> ---
+>>>> New version: instead of moving around the graphic and console stuff,
+>>>> let's just keep an s390 specific variant of CONFIG_DUMMY_CONSOLE
+>>>>   arch/s390/Kconfig | 5 +++++
+>>>>   1 file changed, 5 insertions(+)
+>>>>
+>>>> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+>>>> index cbe1d978693a..a69690f616f3 100644
+>>>> --- a/arch/s390/Kconfig
+>>>> +++ b/arch/s390/Kconfig
+>>>> @@ -952,6 +952,11 @@ config S390_HYPFS_FS
+>>>>
+>>>>   source "arch/s390/kvm/Kconfig"
+>>>>
+>>>> +config DUMMY_CONSOLE
+>>>> +       bool
+>>>> +       depends on VT
+>>>> +       default y
+>>>> +
+>>>>   config S390_GUEST
+>>>>          def_bool y
+>>>>          prompt "s390 support for virtio devices"
+>>>
+>>> Really?
+>>>
+>>> You already have your own copy of HAS_IOMEM, which makes it hard for
+>>> people to track which one applies where.
 >>
->> On 17.02.2018 11:15, Dmitry Vyukov wrote:
->> > On Sat, Feb 17, 2018 at 4:00 AM, syzbot
->> > <syzbot+749d9d87c294c00ca856@syzkaller.appspotmail.com> wrote:
->> >> Hello,
->> >>
->> >> syzbot hit the following crash on net-next commit
->> >> 65bd449c32c2745df61913ab54087e77f9d9b70d (Fri Feb 16 20:26:35 2018
->> >> +0000) Merge branch 'tipc-de-generealize-topology-server'
->> >
->> > +tipc maintainers
->>
->> This looks to be caused by commit 0ef897be12b8
->> "tipc: separate topology server listener socket from subcsriber sockets"
->>
->> Thanks,
->> Kirill
+>> I think I agree with Geert - let's better fix this in a proper way
+>> instead of doing hacks like this. I guess there will be other
+>> architectures in the future that might want to use the dummy console
+>> without CONFIG_IOMEM, so fixing this in drivers/video/ instead sounds
+>> better to me.
+> 
+> The question is, what is the proper fix?
+> 
+
+How about we only fence off sub menu items such as DRM or GPU or Fbdev, 
+which actually uses io memory, in drivers/video/Kconfig? Similar to what 
+Thomas suggested for moving the CONFIG_IOMEM dependency for fbdevs?
