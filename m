@@ -1,57 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753401AbeBSRa1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 12:30:27 -0500
-Received: from vern.gendns.com ([206.190.152.46]:50523 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753353AbeBSRaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 12:30:25 -0500
-Subject: Re: [v2,7/8] clk: divider: read-only divider can propagate rate
- change
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180214134340.17242-8-jbrunet@baylibre.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <f1d4688b-87ce-01df-ab94-72bf20579330@lechnology.com>
-Date: Mon, 19 Feb 2018 11:30:38 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1753409AbeBSRbL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 12:31:11 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:33233 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753337AbeBSRbI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 12:31:08 -0500
+X-Google-Smtp-Source: AH8x22429Nc/+Ai0xKqKPnfEXJ89MlfeZ0Z5BNi0QPQtO4/8vbNzEM8kpB0xx0u+D+F+AQi482Pvcw==
+Date: Mon, 19 Feb 2018 23:00:59 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, liuwei@actions-semi.com,
+        mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+        devicetree@vger.kernel.org, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/10] MAINTAINERS: Add Actions Semi S900 pinctrl and
+ gpio entries
+Message-ID: <20180219173059.t2ezyjkszkr6wsf7@linaro.org>
+References: <20180217204433.3095-1-manivannan.sadhasivam@linaro.org>
+ <20180217204433.3095-11-manivannan.sadhasivam@linaro.org>
+ <9a7720b7-586e-8275-db41-19764e40f367@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20180214134340.17242-8-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9a7720b7-586e-8275-db41-19764e40f367@suse.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/14/2018 07:43 AM, Jerome Brunet wrote:
-> When a divider clock has CLK_DIVIDER_READ_ONLY set, it means that the
-> register shall be left un-touched, but it does not mean the clock
-> should stop rate propagation if CLK_SET_RATE_PARENT is set
+On Sat, Feb 17, 2018 at 10:21:27PM +0100, Andreas Färber wrote:
+> Am 17.02.2018 um 21:44 schrieb Manivannan Sadhasivam:
+> > Add S900 pinctrl and gpio entries under ARCH_ACTIONS
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  MAINTAINERS | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 96b8b6531196..b718be5af680 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -1126,11 +1126,15 @@ F:	arch/arm/boot/dts/owl-*
+> >  F:	arch/arm64/boot/dts/actions/
+> >  F:	drivers/clocksource/owl-*
+> >  F:	drivers/soc/actions/
+> > +F:	drivers/pinctrl/actions/*
+> > +F:	drivers/gpio/gpio-owl.c
+> >  F:	include/dt-bindings/power/owl-*
+> >  F:	include/linux/soc/actions/
+> >  F:	Documentation/devicetree/bindings/arm/actions.txt
+> >  F:	Documentation/devicetree/bindings/power/actions,owl-sps.txt
+> >  F:	Documentation/devicetree/bindings/timer/actions,owl-timer.txt
+> > +F:	Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
+> > +F:	Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
 > 
-> This is properly handled in qcom clk-regmap-divider but it was not in
-> the generic divider
-> 
-> To fix this situation, introduce a new helper function
-> divider_ro_round_rate, on the same model as divider_round_rate.
-> 
-> Fixes: e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
+> Please retain alphabetical ordering.
+>
+Okay.
 
-Working for me with the davinci clk drivers I am developing.
-
-Tested-By: David Lechner <david@lechnology.com>
+Thanks,
+Mani 
+> Regards,
+> Andreas
+> 
+> -- 
+> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+> GF: Felix Imendörffer, Jane Smithard, Graham Norton
+> HRB 21284 (AG Nürnberg)
