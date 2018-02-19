@@ -1,133 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752403AbeBSO0Y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 09:26:24 -0500
-Received: from wp227.webpack.hosteurope.de ([80.237.132.234]:59464 "EHLO
-        wp227.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750978AbeBSO0X (ORCPT
+        id S1752619AbeBSO2d (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 09:28:33 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:47390 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751446AbeBSO2c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 09:26:23 -0500
-Subject: Re: DM Regression in 4.16-rc1 - read() returns data when it shouldn't
-To: Milan Broz <gmazyland@gmail.com>, NeilBrown <neilb@suse.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        device-mapper development <dm-devel@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Message-ID: <5fca4e3f-536c-9c52-31bb-927e8ab5b6c8@leemhuis.info>
-Date: Mon, 19 Feb 2018 14:44:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 19 Feb 2018 09:28:32 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Date: Mon, 19 Feb 2018 14:28:16 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH v2 1/2] mfd: arizona: Update reset pin to use GPIOD
+Message-ID: <20180219142816.ccrkxthzmtpopnw5@localhost.localdomain>
+References: <20180219133038.21995-1-ckeepax@opensource.cirrus.com>
+ <CAHp75Vc6ok2s0fiQi9ePgmf4BVyO5N125B6iE1jnqWmgWF01Ng@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <70cda2a3-f246-d45b-f600-1f9d15ba22ff@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1519050383;d4a060d7;
-X-HE-SMSGID: 1enljz-0007ar-MW
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vc6ok2s0fiQi9ePgmf4BVyO5N125B6iE1jnqWmgWF01Ng@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=930 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1802190180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-JFYI: This issues is tracked in the regression reports for Linux 4.16
-(http://bit.ly/lnxregrep416 ) with this id:
+On Mon, Feb 19, 2018 at 03:36:29PM +0200, Andy Shevchenko wrote:
+> On Mon, Feb 19, 2018 at 3:30 PM, Charles Keepax
+> <ckeepax@opensource.cirrus.com> wrote:
+> > Now GPIOD has support for both pdata systems and for non-standard DT
+> > bindings the Arizona reset GPIO can be converted to use it.
+> 
+> >  static inline void arizona_enable_reset(struct arizona *arizona)
+> >  {
+> > -       if (arizona->pdata.reset)
+> > -               gpio_set_value_cansleep(arizona->pdata.reset, 0);
+> > +       gpiod_set_value_cansleep(arizona->pdata.reset, 0);
+> >  }
+> 
+> Did you try that code when !GPIOLIB ?
+> 
+> Or driver depends on it?
+> 
 
-Linux-Regression-ID: lr#9e195f
+Hmm... yeah ok maybe I need to leave that if (reset) in, didn't
+realise all those stubs straight up call WARNs. Although seems a bit
+of a shame as gpiod_set_value_cansleep will do the NULL check as well.
 
-Please include this line in the comment section of patches that are
-supposed to fix the issue. Please also mention the string once in other
-mailinglist threads or different bug tracking entries if you or someone
-else start to discuss the issue there. By including that string you make
-it a whole lot easier to track where an issue gets discussed and how far
-patches to fix it have made it. For more details on this please see
-here: http://bit.ly/lnxregtrackid
+Looks like attempt 3 it is :-)
 
-Thx for your help. Ciao, Thorsten
-
-On 14.02.2018 14:02, Milan Broz wrote:
-> Hi,
-> 
-> the commit (found by bisect)
-> 
->   commit 18a25da84354c6bb655320de6072c00eda6eb602
->   Author: NeilBrown <neilb@suse.com>
->   Date:   Wed Sep 6 09:43:28 2017 +1000
-> 
->     dm: ensure bio submission follows a depth-first tree walk
-> 
-> cause serious regression while reading from DM device.
-> 
-> The reproducer is below, basically it tries to simulate failure we see in cryptsetup
-> regression test: we have DM device with error and zero target and try to read
-> "passphrase" from it (it is test for 64 bit offset error path):
-> 
-> Test device:
-> # dmsetup table test
-> 0 10000000 error 
-> 10000000 1000000 zero 
-> 
-> We try to run this operation:
->   lseek64(fd, 5119999988, SEEK_CUR); // this should seek to error target sector
->   read(fd, buf, 13); // this should fail, if we seek to error part of the device
-> 
-> While on 4.15 the read properly fails:
->   Seek returned 5119999988.
->   Read returned -1.
-> 
-> for 4.16 it actually succeeds returning some random data
-> (perhaps kernel memory, so this bug is even more dangerous):
->   Seek returned 5119999988.
->   Read returned 13.
-> 
-> Full reproducer below:
-> 
-> #define _GNU_SOURCE
-> #define _LARGEFILE64_SOURCE
-> #include <stdio.h>
-> #include <stddef.h>
-> #include <stdint.h>
-> #include <stdlib.h>
-> #include <unistd.h>
-> #include <fcntl.h>
-> #include <inttypes.h>
-> 
-> int main (int argc, char *argv[])
-> {
->         char buf[13];
->         int fd;
->         //uint64_t offset64 = 5119999999;
->         uint64_t offset64 =   5119999988;
->         off64_t r;
->         ssize_t bytes;
-> 
->         system("echo -e \'0 10000000 error\'\\\\n\'10000000 1000000 zero\' | dmsetup create test");
-> 
->         fd = open("/dev/mapper/test", O_RDONLY);
->         if (fd == -1) {
->                 printf("open fail\n");
->                 return 1;
->         }
-> 
->         r = lseek64(fd, offset64, SEEK_CUR);
->         printf("Seek returned %" PRIu64 ".\n", r);
->         if (r < 0) {
->                 printf("seek fail\n");
->                 close(fd);
->                 return 2;
->         }
-> 
->         bytes = read(fd, buf, 13);
->         printf("Read returned %d.\n", (int)bytes);
-> 
->         close(fd);
->         return 0;
-> }
-> 
-> 
-> Please let me know if you need more info to reproduce it.
-> 
-> Milan
-> 
-> http://news.gmane.org/find-root.php?message_id=70cda2a3-f246-d45b-f600-1f9d15ba22ff%40gmail.com 
-> http://mid.gmane.org/70cda2a3-f246-d45b-f600-1f9d15ba22ff%40gmail.com
-> 
+Thanks,
+Charles
