@@ -1,163 +1,353 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752013AbeBSH0c (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 02:26:32 -0500
-Received: from vegas.theobroma-systems.com ([144.76.126.164]:33502 "EHLO
-        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751698AbeBSH0a (ORCPT
+        id S1752066AbeBSH1P (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 02:27:15 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44841 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751520AbeBSH1N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 02:26:30 -0500
-From: Klaus Goger <klaus.goger@theobroma-systems.com>
-To: linux-rockchip@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
-        Klaus Goger <klaus.goger@theobroma-systems.com>
-Subject: [PATCH v2] arm64: dts: rockchip: add OPPs for rk3368-lion
-Date: Mon, 19 Feb 2018 08:26:26 +0100
-Message-Id: <20180219072626.31874-1-klaus.goger@theobroma-systems.com>
-X-Mailer: git-send-email 2.11.0
+        Mon, 19 Feb 2018 02:27:13 -0500
+X-Google-Smtp-Source: AH8x2276gAmo1DemQsgcp3bZA/QXzEH2zQqM7XsfRTTqu7iAwyqP+Bd7QKlppqlbVYGs68Ru04TTIA==
+Subject: Re: [PATCH 2/8] lightnvm: show generic geometry in sysfs
+To: Javier Gonzalez <javier@cnexlabs.com>
+Cc: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
+References: <1518530768-20956-1-git-send-email-javier@cnexlabs.com>
+ <1518530768-20956-3-git-send-email-javier@cnexlabs.com>
+ <caa2634b-63bf-3a35-ed53-220aab2bd05a@lightnvm.io>
+ <E53B65E9-3D1A-49BB-AA5D-F3D2C4032484@cnexlabs.com>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <dc558965-9c1f-26f1-9274-12a6f8057825@lightnvm.io>
+Date: Mon, 19 Feb 2018 08:27:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <E53B65E9-3D1A-49BB-AA5D-F3D2C4032484@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds CPU operation points for the RK3368. We only add them to the
-the RK3368-uQ7 SoM (Lion) because patches for the SoC where reverted
-in the past.
-commit 6354a06cbaa8 ("Revert "arm64: dts: rockchip: Add basic cpu
-frequencies for RK3368"")
+On 02/16/2018 07:35 AM, Javier Gonzalez wrote:
+> 
+>> On 15 Feb 2018, at 02.20, Matias Bjørling <mb@lightnvm.io> wrote:
+>>
+>> On 02/13/2018 03:06 PM, Javier González wrote:
+>>> From: Javier González <javier@javigon.com>
+>>> Apart from showing the geometry returned by the different identify
+>>> commands, provide the generic geometry too, as this is the geometry that
+>>> targets will use to describe the device.
+>>> Signed-off-by: Javier González <javier@cnexlabs.com>
+>>> ---
+>>>   drivers/nvme/host/lightnvm.c | 146 ++++++++++++++++++++++++++++---------------
+>>>   1 file changed, 97 insertions(+), 49 deletions(-)
+>>> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+>>> index 97739e668602..7bc75182c723 100644
+>>> --- a/drivers/nvme/host/lightnvm.c
+>>> +++ b/drivers/nvme/host/lightnvm.c
+>>> @@ -944,8 +944,27 @@ static ssize_t nvm_dev_attr_show(struct device *dev,
+>>>   		return scnprintf(page, PAGE_SIZE, "%u.%u\n",
+>>>   						dev_geo->major_ver_id,
+>>>   						dev_geo->minor_ver_id);
+>>> -	} else if (strcmp(attr->name, "capabilities") == 0) {
+>>> -		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.cap);
+>>> +	} else if (strcmp(attr->name, "clba") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.clba);
+>>> +	} else if (strcmp(attr->name, "csecs") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.csecs);
+>>> +	} else if (strcmp(attr->name, "sos") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.sos);
+>>> +	} else if (strcmp(attr->name, "ws_min") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.ws_min);
+>>> +	} else if (strcmp(attr->name, "ws_opt") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.ws_opt);
+>>> +	} else if (strcmp(attr->name, "maxoc") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.maxoc);
+>>> +	} else if (strcmp(attr->name, "maxocpu") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.maxocpu);
+>>> +	} else if (strcmp(attr->name, "mw_cunits") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.mw_cunits);
+>>> +	} else if (strcmp(attr->name, "media_capabilities") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.mccap);
+>>> +	} else if (strcmp(attr->name, "max_phys_secs") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n",
+>>> +				ndev->ops->max_phys_sect);
+>>>   	} else if (strcmp(attr->name, "read_typ") == 0) {
+>>>   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.trdt);
+>>>   	} else if (strcmp(attr->name, "read_max") == 0) {
+>>> @@ -984,19 +1003,8 @@ static ssize_t nvm_dev_attr_show_12(struct device *dev,
+>>>     	attr = &dattr->attr;
+>>>   -	if (strcmp(attr->name, "vendor_opcode") == 0) {
+>>> -		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.vmnt);
+>>> -	} else if (strcmp(attr->name, "device_mode") == 0) {
+>>> -		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.dom);
+>>> -	/* kept for compatibility */
+>>> -	} else if (strcmp(attr->name, "media_manager") == 0) {
+>>> -		return scnprintf(page, PAGE_SIZE, "%s\n", "gennvm");
+>>> -	} else if (strcmp(attr->name, "ppa_format") == 0) {
+>>> +	if (strcmp(attr->name, "ppa_format") == 0) {
+>>>   		return nvm_dev_attr_show_ppaf((void *)&dev_geo->c.addrf, page);
+>>> -	} else if (strcmp(attr->name, "media_type") == 0) {	/* u8 */
+>>> -		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.mtype);
+>>> -	} else if (strcmp(attr->name, "flash_media_type") == 0) {
+>>> -		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.fmtype);
+>>>   	} else if (strcmp(attr->name, "num_channels") == 0) {
+>>>   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->num_ch);
+>>>   	} else if (strcmp(attr->name, "num_luns") == 0) {
+>>> @@ -1011,8 +1019,6 @@ static ssize_t nvm_dev_attr_show_12(struct device *dev,
+>>>   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.fpg_sz);
+>>>   	} else if (strcmp(attr->name, "hw_sector_size") == 0) {
+>>>   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.csecs);
+>>> -	} else if (strcmp(attr->name, "oob_sector_size") == 0) {/* u32 */
+>>> -		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.sos);
+>>>   	} else if (strcmp(attr->name, "prog_typ") == 0) {
+>>>   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.tprt);
+>>>   	} else if (strcmp(attr->name, "prog_max") == 0) {
+>>> @@ -1021,13 +1027,21 @@ static ssize_t nvm_dev_attr_show_12(struct device *dev,
+>>>   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.tbet);
+>>>   	} else if (strcmp(attr->name, "erase_max") == 0) {
+>>>   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.tbem);
+>>> +	} else if (strcmp(attr->name, "vendor_opcode") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.vmnt);
+>>> +	} else if (strcmp(attr->name, "device_mode") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.dom);
+>>> +	/* kept for compatibility */
+>>> +	} else if (strcmp(attr->name, "media_manager") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%s\n", "gennvm");
+>>> +	} else if (strcmp(attr->name, "capabilities") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.cap);
+>>> +	} else if (strcmp(attr->name, "media_type") == 0) {	/* u8 */
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.mtype);
+>>> +	} else if (strcmp(attr->name, "flash_media_type") == 0) {
+>>> +		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.fmtype);
+>>>   	} else if (strcmp(attr->name, "multiplane_modes") == 0) {
+>>>   		return scnprintf(page, PAGE_SIZE, "0x%08x\n", dev_geo->c.mpos);
+>>> -	} else if (strcmp(attr->name, "media_capabilities") == 0) {
+>>> -		return scnprintf(page, PAGE_SIZE, "0x%08x\n", dev_geo->c.mccap);
+>>> -	} else if (strcmp(attr->name, "max_phys_secs") == 0) {
+>>> -		return scnprintf(page, PAGE_SIZE, "%u\n",
+>>> -				ndev->ops->max_phys_sect);
+>>>   	} else {
+>>>   		return scnprintf(page, PAGE_SIZE,
+>>>   			"Unhandled attr(%s) in `nvm_dev_attr_show_12`\n",
+>>> @@ -1035,6 +1049,17 @@ static ssize_t nvm_dev_attr_show_12(struct device *dev,
+>>>   	}
+>>>   }
+>>>   +static ssize_t nvm_dev_attr_show_lbaf(struct nvm_addr_format *lbaf,
+>>> +					 char *page)
+>>> +{
+>>> +	return scnprintf(page, PAGE_SIZE,
+>>> +		"0x%02x%02x%02x%02x%02x%02x%02x%02x\n",
+>>> +				lbaf->ch_offset, lbaf->ch_len,
+>>> +				lbaf->lun_offset, lbaf->lun_len,
+>>> +				lbaf->chk_offset, lbaf->chk_len,
+>>> +				lbaf->sec_offset, lbaf->sec_len);
+>>> +}
+>>> +
+>>>   static ssize_t nvm_dev_attr_show_20(struct device *dev,
+>>>   		struct device_attribute *dattr, char *page)
+>>>   {
+>>> @@ -1048,20 +1073,14 @@ static ssize_t nvm_dev_attr_show_20(struct device *dev,
+>>>     	attr = &dattr->attr;
+>>>   -	if (strcmp(attr->name, "groups") == 0) {
+>>> +	if (strcmp(attr->name, "lba_format") == 0) {
+>>> +		return nvm_dev_attr_show_lbaf((void *)&dev_geo->c.addrf, page);
+>>> +	} else if (strcmp(attr->name, "groups") == 0) {
+>>>   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->num_ch);
+>>>   	} else if (strcmp(attr->name, "punits") == 0) {
+>>>   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->num_lun);
+>>>   	} else if (strcmp(attr->name, "chunks") == 0) {
+>>>   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.num_chk);
+>>> -	} else if (strcmp(attr->name, "clba") == 0) {
+>>> -		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.clba);
+>>> -	} else if (strcmp(attr->name, "ws_min") == 0) {
+>>> -		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.ws_min);
+>>> -	} else if (strcmp(attr->name, "ws_opt") == 0) {
+>>> -		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.ws_opt);
+>>> -	} else if (strcmp(attr->name, "mw_cunits") == 0) {
+>>> -		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.mw_cunits);
+>>>   	} else if (strcmp(attr->name, "write_typ") == 0) {
+>>>   		return scnprintf(page, PAGE_SIZE, "%u\n", dev_geo->c.tprt);
+>>>   	} else if (strcmp(attr->name, "write_max") == 0) {
+>>> @@ -1086,7 +1105,19 @@ static ssize_t nvm_dev_attr_show_20(struct device *dev,
+>>>     /* general attributes */
+>>>   static NVM_DEV_ATTR_RO(version);
+>>> -static NVM_DEV_ATTR_RO(capabilities);
+>>> +
+>>> +static NVM_DEV_ATTR_RO(ws_min);
+>>> +static NVM_DEV_ATTR_RO(ws_opt);
+>>> +static NVM_DEV_ATTR_RO(mw_cunits);
+>>> +static NVM_DEV_ATTR_RO(maxoc);
+>>> +static NVM_DEV_ATTR_RO(maxocpu);
+>>> +
+>>> +static NVM_DEV_ATTR_RO(media_capabilities);
+>>> +static NVM_DEV_ATTR_RO(max_phys_secs);
+>>> +
+>>> +static NVM_DEV_ATTR_RO(clba);
+>>> +static NVM_DEV_ATTR_RO(csecs);
+>>> +static NVM_DEV_ATTR_RO(sos);
+>>>     static NVM_DEV_ATTR_RO(read_typ);
+>>>   static NVM_DEV_ATTR_RO(read_max);
+>>> @@ -1105,42 +1136,53 @@ static NVM_DEV_ATTR_12_RO(num_blocks);
+>>>   static NVM_DEV_ATTR_12_RO(num_pages);
+>>>   static NVM_DEV_ATTR_12_RO(page_size);
+>>>   static NVM_DEV_ATTR_12_RO(hw_sector_size);
+>>> -static NVM_DEV_ATTR_12_RO(oob_sector_size);
+>>>   static NVM_DEV_ATTR_12_RO(prog_typ);
+>>>   static NVM_DEV_ATTR_12_RO(prog_max);
+>>>   static NVM_DEV_ATTR_12_RO(erase_typ);
+>>>   static NVM_DEV_ATTR_12_RO(erase_max);
+>>>   static NVM_DEV_ATTR_12_RO(multiplane_modes);
+>>> -static NVM_DEV_ATTR_12_RO(media_capabilities);
+>>> -static NVM_DEV_ATTR_12_RO(max_phys_secs);
+>>> +static NVM_DEV_ATTR_12_RO(capabilities);
+>>>     static struct attribute *nvm_dev_attrs_12[] = {
+>>>   	&dev_attr_version.attr,
+>>> -	&dev_attr_capabilities.attr,
+>>> -
+>>> -	&dev_attr_vendor_opcode.attr,
+>>> -	&dev_attr_device_mode.attr,
+>>> -	&dev_attr_media_manager.attr,
+>>>   	&dev_attr_ppa_format.attr,
+>>> -	&dev_attr_media_type.attr,
+>>> -	&dev_attr_flash_media_type.attr,
+>>> +
+>>>   	&dev_attr_num_channels.attr,
+>>>   	&dev_attr_num_luns.attr,
+>>>   	&dev_attr_num_planes.attr,
+>>>   	&dev_attr_num_blocks.attr,
+>>>   	&dev_attr_num_pages.attr,
+>>>   	&dev_attr_page_size.attr,
+>>> +
+>>>   	&dev_attr_hw_sector_size.attr,
+>>> -	&dev_attr_oob_sector_size.attr,
+>>> +
+>>> +	&dev_attr_clba.attr,
+>>> +	&dev_attr_csecs.attr,
+>>> +	&dev_attr_sos.attr,
+>>> +
+>>> +	&dev_attr_ws_min.attr,
+>>> +	&dev_attr_ws_opt.attr,
+>>> +	&dev_attr_maxoc.attr,
+>>> +	&dev_attr_maxocpu.attr,
+>>> +	&dev_attr_mw_cunits.attr,
+>>> +
+>>> +	&dev_attr_media_capabilities.attr,
+>>> +	&dev_attr_max_phys_secs.attr,
+>>> +
+>>
+>> This breaks user-space. The intention is for user-space to decide
+>> based on version id. Then it can either retrieve the 1.2 or 2.0
+>> attributes. The 2.0 attributes should not be available when a device
+>> is 1.2.
+>>
+> 
+> Why does it break it? I'm only adding new entries.
+> 
+> The objective is to expose the genneric geometry, since this is the
+> structure that is passed on to the targets. Since some of the values are
+> calculated, there is value on exposing this information, I believe.
+> 
+> Another way of doing it, is adding the generic geometry at the target
+> level, showing what base values it is getting, including the real number
+> of channels/groups and luns/pus.
+> 
+> Would this be better in your opinion?
+> 
 
-Signed-off-by: Klaus Goger <klaus.goger@theobroma-systems.com>
+No. It should be one set of attributes for 1.2 (keep the way it is 
+today), and then separate 2.0 attributes. User-space should then 
+identify either by either 1 or 2 in the version attribute.
 
----
+> 
+>>>   	&dev_attr_read_typ.attr,
+>>>   	&dev_attr_read_max.attr,
+>>>   	&dev_attr_prog_typ.attr,
+>>>   	&dev_attr_prog_max.attr,
+>>>   	&dev_attr_erase_typ.attr,
+>>>   	&dev_attr_erase_max.attr,
+>>> +
+>>> +	&dev_attr_vendor_opcode.attr,
+>>> +	&dev_attr_device_mode.attr,
+>>> +	&dev_attr_media_manager.attr,
+>>> +	&dev_attr_capabilities.attr,
+>>> +	&dev_attr_media_type.attr,
+>>> +	&dev_attr_flash_media_type.attr,
+>>>   	&dev_attr_multiplane_modes.attr,
+>>> -	&dev_attr_media_capabilities.attr,
+>>> -	&dev_attr_max_phys_secs.attr,
+>>>     	NULL,
+>>>   };
+>>> @@ -1152,12 +1194,9 @@ static const struct attribute_group nvm_dev_attr_group_12 = {
+>>>     /* 2.0 values */
+>>>   static NVM_DEV_ATTR_20_RO(groups);
+>>> +static NVM_DEV_ATTR_20_RO(lba_format);
+>>>   static NVM_DEV_ATTR_20_RO(punits);
+>>>   static NVM_DEV_ATTR_20_RO(chunks);
+>>> -static NVM_DEV_ATTR_20_RO(clba);
+>>> -static NVM_DEV_ATTR_20_RO(ws_min);
+>>> -static NVM_DEV_ATTR_20_RO(ws_opt);
+>>> -static NVM_DEV_ATTR_20_RO(mw_cunits);
+>>>   static NVM_DEV_ATTR_20_RO(write_typ);
+>>>   static NVM_DEV_ATTR_20_RO(write_max);
+>>>   static NVM_DEV_ATTR_20_RO(reset_typ);
+>>> @@ -1165,16 +1204,25 @@ static NVM_DEV_ATTR_20_RO(reset_max);
+>>>     static struct attribute *nvm_dev_attrs_20[] = {
+>>>   	&dev_attr_version.attr,
+>>> -	&dev_attr_capabilities.attr,
+>>> +	&dev_attr_lba_format.attr,
+>>>     	&dev_attr_groups.attr,
+>>>   	&dev_attr_punits.attr,
+>>>   	&dev_attr_chunks.attr,
+>>> +
+>>>   	&dev_attr_clba.attr,
+>>> +	&dev_attr_csecs.attr,
+>>> +	&dev_attr_sos.attr,
+>>
+>> csecs and sos are derived from the the generic block device data structures.
+> 
+> As mentioned above, it is to represent the generic geometry.
 
- arch/arm64/boot/dts/rockchip/rk3368-lion.dtsi | 80 +++++++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
+They are not part of the 2.0 spec. The fields can be derived from elsewhere.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3368-lion.dtsi b/arch/arm64/boot/dts/rockchip/rk3368-lion.dtsi
-index 1315972412df..a0bcf35b1605 100644
---- a/arch/arm64/boot/dts/rockchip/rk3368-lion.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3368-lion.dtsi
-@@ -11,6 +11,70 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	cluster0_opp: opp-table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp00 {
-+			opp-hz = /bits/ 64 <408000000>;
-+			opp-microvolt = <950000 950000 1350000>;
-+			clock-latency-ns = <40000>;
-+		};
-+		opp01 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <950000 950000 1350000>;
-+		};
-+		opp02 {
-+			opp-hz = /bits/ 64 <816000000>;
-+			opp-microvolt = <975000 975000 1350000>;
-+		};
-+		opp03 {
-+			opp-hz = /bits/ 64 <1008000000>;
-+			opp-microvolt = <1050000 1050000 1350000>;
-+		};
-+		opp04 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <1150000 1150000 1350000>;
-+		};
-+		opp05 {
-+			opp-hz = /bits/ 64 <1416000000>;
-+			opp-microvolt = <1300000 1300000 1350000>;
-+			turbo-mode;
-+		};
-+		opp06 {
-+			opp-hz = /bits/ 64 <1512000000>;
-+			opp-microvolt = <1300000 1300000 1350000>;
-+			turbo-mode;
-+		};
-+	};
-+
-+	cluster1_opp: opp-table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp00 {
-+			opp-hz = /bits/ 64 <408000000>;
-+			opp-microvolt = <950000 950000 1350000>;
-+			clock-latency-ns = <40000>;
-+		};
-+		opp01 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <950000 950000 1350000>;
-+		};
-+		opp02 {
-+			opp-hz = /bits/ 64 <816000000>;
-+			opp-microvolt = <1025000 1025000 1350000>;
-+		};
-+		opp03 {
-+			opp-hz = /bits/ 64 <1008000000>;
-+			opp-microvolt = <1125000 1125000 1350000>;
-+		};
-+		opp04 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <1225000 1225000 1350000>;
-+		};
-+	};
-+
- 	ext_gmac: gmac-clk {
- 		compatible = "fixed-clock";
- 		clock-frequency = <125000000>;
-@@ -105,35 +169,51 @@
- };
- 
- &cpu_l0 {
-+	clocks = <&cru ARMCLKL>;
- 	cpu-supply = <&vdd_cpu>;
-+	operating-points-v2 = <&cluster1_opp>;
- };
- 
- &cpu_l1 {
-+	clocks = <&cru ARMCLKL>;
- 	cpu-supply = <&vdd_cpu>;
-+	operating-points-v2 = <&cluster1_opp>;
- };
- 
- &cpu_l2 {
-+	clocks = <&cru ARMCLKL>;
- 	cpu-supply = <&vdd_cpu>;
-+	operating-points-v2 = <&cluster1_opp>;
- };
- 
- &cpu_l3 {
-+	clocks = <&cru ARMCLKL>;
- 	cpu-supply = <&vdd_cpu>;
-+	operating-points-v2 = <&cluster1_opp>;
- };
- 
- &cpu_b0 {
-+	clocks = <&cru ARMCLKB>;
- 	cpu-supply = <&vdd_cpu>;
-+	operating-points-v2 = <&cluster0_opp>;
- };
- 
- &cpu_b1 {
-+	clocks = <&cru ARMCLKB>;
- 	cpu-supply = <&vdd_cpu>;
-+	operating-points-v2 = <&cluster0_opp>;
- };
- 
- &cpu_b2 {
-+	clocks = <&cru ARMCLKB>;
- 	cpu-supply = <&vdd_cpu>;
-+	operating-points-v2 = <&cluster0_opp>;
- };
- 
- &cpu_b3 {
-+	clocks = <&cru ARMCLKB>;
- 	cpu-supply = <&vdd_cpu>;
-+	operating-points-v2 = <&cluster0_opp>;
- };
- 
- &emmc {
--- 
-2.11.0
+> 
+>>
+>>> +
+>>>   	&dev_attr_ws_min.attr,
+>>>   	&dev_attr_ws_opt.attr,
+>>> +	&dev_attr_maxoc.attr,
+>>> +	&dev_attr_maxocpu.attr,
+>>
+>> When the maxoc/maxocpu are in another patch, these changes can be included.
+> 
+> ok.
+> 
+>>
+>>>   	&dev_attr_mw_cunits.attr,
+>>>   +	&dev_attr_media_capabilities.attr,
+>>
+>> What is the meaning of media in this context? The 2.0 spec defines
+>> vector copy and double resets in its capabilities, it does not have
+>> media in mind.
+>>
+> 
+> It refers to the mcap (vector copy and double resets for now, as you
+> mention). I kept the name, name, but I can rename it if it is better...
+> 
+>>> +	&dev_attr_max_phys_secs.attr,
+>>> +
+>>
+>> I kill max_phys_secs in another patch. It has been made redundant
+>> after null_blk has been removed.
+> 
+> I'll answer this on the patch - I have a questions here.
+> 
+>>>   	&dev_attr_read_typ.attr,
+>>>   	&dev_attr_read_max.attr,
+>>>   	&dev_attr_write_typ.attr,
+> 
+> Javier
+> 
