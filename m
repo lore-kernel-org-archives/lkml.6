@@ -1,132 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752191AbeBSJms (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 04:42:48 -0500
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:40642 "EHLO
-        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751941AbeBSJmq (ORCPT
+        id S1752249AbeBSJoD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 04:44:03 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40468 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752129AbeBSJoB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 04:42:46 -0500
-X-Google-Smtp-Source: AH8x225jtYrQqvICXpcrRe75GrhKUwvRftkGVuCp+va+VU0Hwe2ZQrHS2jdt9McydI+UOR1TFBd7bwcqiFpqkejeRr0=
+        Mon, 19 Feb 2018 04:44:01 -0500
+X-Google-Smtp-Source: AH8x226xdd5z3mijyR/DJxTwZo+E6N5nmUQzKHn8VE9FZsJ/7ye4185CQVGumLKwFi502UsIjw8UoA==
+Date: Mon, 19 Feb 2018 10:43:57 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Colin King <colin.king@canonical.com>
+Cc: Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/bochs: make structure bochs_bo_driver static
+Message-ID: <20180219094357.GL22199@phenom.ffwll.local>
+Mail-Followup-To: Colin King <colin.king@canonical.com>,
+        Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180207111353.30261-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=UqPt5d=Kw4JBFZVgSNwvDZDCNd_ORV66MwWMxMJpW-eQ@mail.gmail.com>
-References: <20180130202913.28724-1-thierry.escande@collabora.com>
- <20180130202913.28724-34-thierry.escande@collabora.com> <1517403243.14302.1.camel@pengutronix.de>
- <CAOw6vbKsG=B7vV5_NcwgeAc-=guRN1Xh-dCxKytkDeOjayatLw@mail.gmail.com>
- <CAD=FV=UB+ovYFSi2aB_qe3igX3K7BxMWaEEoNPx1UMdscKwQtQ@mail.gmail.com>
- <CAFqH_50OxDDfXjGPyNgtyu-qFn3zGqrLYprLtPJyHDYRDEczGQ@mail.gmail.com> <CAD=FV=UqPt5d=Kw4JBFZVgSNwvDZDCNd_ORV66MwWMxMJpW-eQ@mail.gmail.com>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Mon, 19 Feb 2018 10:42:45 +0100
-Message-ID: <CAFqH_53DVTc4+EWTcMDMW5Fxg59GMgX=UCSO++ovNHCL=E2t0g@mail.gmail.com>
-Subject: Re: [PATCH v3 33/43] drm/panel: simple: Change mode for Sharp lq123p1jx31
-To: Doug Anderson <dianders@chromium.org>
-Cc: Sean Paul <seanpaul@chromium.org>, Haixia Shi <hshi@chromium.org>,
-        Lin Huang <hl@rock-chips.com>, David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        =?UTF-8?Q?=C3=98rjan_Eide?= <orjan.eide@arm.com>,
-        Zain Wang <wzz@rock-chips.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180207111353.30261-1-colin.king@canonical.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Feb 07, 2018 at 11:13:53AM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The structure bochs_bo_driver is local to the source and does not need to
+> be in global scope, so make it static.
+> 
+> Cleans up sparse warning:
+> drivers/gpu/drm/bochs/bochs_mm.c:197:22: warning: symbol 'bochs_bo_driver'
+> was not declared. Should it be static?
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-2018-02-16 21:54 GMT+01:00 Doug Anderson <dianders@chromium.org>:
-> Hi,
->
-> On Fri, Feb 16, 2018 at 4:34 AM, Enric Balletbo Serra
-> <eballetbo@gmail.com> wrote:
->> Hi,
->>
->> 2018-01-31 17:52 GMT+01:00 Doug Anderson <dianders@chromium.org>:
->>> Hi,
->>>
->>>
->>> On Wed, Jan 31, 2018 at 7:16 AM, Sean Paul <seanpaul@chromium.org> wrote:
->>>> On Wed, Jan 31, 2018 at 7:54 AM, Lucas Stach <l.stach@pengutronix.de> wrote:
->>>>> Am Dienstag, den 30.01.2018, 21:29 +0100 schrieb Thierry Escande:
->>>>>> From: Sean Paul <seanpaul@chromium.org>
->>>>>>
->>>>>> Change the mode for Sharp lq123p1jx31 panel to something more
->>>>>> rockchip-friendly such that we can use the fixed PLLs to
->>>>>> generate the pixel clock
->>>>>
->>>>> This should really switch to a display timing instead of exposing a
->>>>> single mode. The display timing has min, typical, max tuples for all
->>>>> the timings values, which would allow the attached driver to vary the
->>>>> timings inside the allowed bounds if it makes sense.
->>>>>
->>>>> Trying to hit a specific pixel clock to free up a PLL is exactly one of
->>>>> the use cases envisioned for the display timings stuff.
->>>>>
->>>>
->>>> Agreed, I think we had this discussion the first time around. We
->>>> should drop this patch.
->>>>
->>>> Thanks for catching this!
->>>
->>> Are you sure we should drop this?  In order for things to work
->>> properly (not generate noise on the digitizer or other EMI), this
->>> needs to run at a very specific pixel clock with very specific
->>> blanking times.  I know that earlier we had slightly different
->>> blanking times and Samsung came back and said that there was noise on
->>> the digitizer.  I could be wrong, but I don't think there's any way
->>> currently to be able to specify exactly what timings should be used on
->>> a particular board.
->>>
->>> Don't get be wrong--I think a patch such as this one that claims a
->>> single board's timings as the "right" ones for a generic panel is a
->>> bit of a hack.  ...but at the same time there are no other users of
->>> this panel (that I know of) in mainline and the timings presented here
->>> are certainly sane timings for this panel.
->>>
->>> In any case, previous discussion at: https://patchwork.kernel.org/patch/9614603/
->>>
->>>
->>> ...oh, and looking at the previous discussion reminds me that the
->>> timings presented in this here patch are actually not the right ones
->>> (they have the right PLL, but the wrong blankings to avoid the noise
->>> issues).  See <//chromium-review.googlesource.com/381015>
->>>
->>
->> As Thierry no longer has the hardware to test these patch series, I'll
->> take care of these and follow the upstreaming process. I think that
->> doesn't make sense send a v4 version of all 43 patches for this
->> change. Right now, only this patch received comments so I'll wait a
->> bit more for if we can get the other patches reviewed. If the others
->> are fine just and I don't need to send a new version just don't apply
->> this one and I will send a second version of that specific patch. Or
->> even better, is really trivial what needs to be changed, so maybe the
->> maintainer can do it? ;)
->
-> Just as a heads up, Sean Paul has a series of patches to replace this
-> patch.  The following are IDs from patchwork.kernel.org:
->
-> 10207583 New          [v3,1/6] dt-bindings: Clarify timing subnode use
-> as panel-timing
-> 10207585 New          [v3,2/6] dt-bindings: Add headings to
-> simple-panel bindings
-> 10207591 New          [v3,3/6] dt-bindings: Add panel-timing subnode
-> to simple-panel
-> 10207593 New          [v3,4/6] drm/panel: simple: Add ability to
-> override typical timing
-> 10207595 New          [v3,5/6] drm/panel: simple: Use display_timing
-> for lq123p1jx31
-> 10207603 New          [v3,6/6] arm64: dts: rockchip: Specify override
-> mode for kevin panel
->
-> -Doug
+Applied to drm-misc-next, thanks.
+-Daniel
 
-Nice, I was not aware of these, I'll test. That means that this patch
-can be removed from these series as the Sean solution is a lot better.
-Just a note that this patch can be removed without any collateral
-impact on the other patches, so just ignore it.
+> ---
+>  drivers/gpu/drm/bochs/bochs_mm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/bochs/bochs_mm.c b/drivers/gpu/drm/bochs/bochs_mm.c
+> index 704e879711e4..b1d5aee46316 100644
+> --- a/drivers/gpu/drm/bochs/bochs_mm.c
+> +++ b/drivers/gpu/drm/bochs/bochs_mm.c
+> @@ -194,7 +194,7 @@ static struct ttm_tt *bochs_ttm_tt_create(struct ttm_bo_device *bdev,
+>  	return tt;
+>  }
+>  
+> -struct ttm_bo_driver bochs_bo_driver = {
+> +static struct ttm_bo_driver bochs_bo_driver = {
+>  	.ttm_tt_create = bochs_ttm_tt_create,
+>  	.ttm_tt_populate = ttm_pool_populate,
+>  	.ttm_tt_unpopulate = ttm_pool_unpopulate,
+> -- 
+> 2.15.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-Regards,
- Enric
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
