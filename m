@@ -1,97 +1,223 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932228AbeBSUaD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 15:30:03 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37720 "EHLO mail.skyhub.de"
+        id S1753896AbeBSUWt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 15:22:49 -0500
+Received: from vern.gendns.com ([206.190.152.46]:58441 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932214AbeBSU2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 15:28:51 -0500
-From: Borislav Petkov <bp@alien8.de>
-To: X86 ML <x86@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 0/5] x86/dumpstack: Cleanups and user opcode bytes Code: section
-Date: Mon, 19 Feb 2018 21:28:21 +0100
-Message-Id: <20180219202826.19797-1-bp@alien8.de>
-X-Mailer: git-send-email 2.13.0
+        id S1753854AbeBSUWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 15:22:46 -0500
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
+        David Lechner <david@lechnology.com>
+Subject: [PATCH v7 06/42] clk: davinci: Add platform information for TI DM365 PLL
+Date: Mon, 19 Feb 2018 14:21:27 -0600
+Message-Id: <1519071723-31790-7-git-send-email-david@lechnology.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+This adds platform-specific declarations for the PLL clocks on TI
+DM365 based systems.
 
-Hi,
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-so I've been thinking about doing this for a while now: be able to dump
-the opcode bytes around the user rIP just like we do for kernel faults.
+v7 changes:
+- split registration functions for each PLL
+- Add platform_device_id lookup
 
-Why?
+v6 changes:
+- Added dm365_pll{1,2}_info with controller-specific information
+- Changed OBSCLK data
+- Add empty lines between function calls
 
-See patch 5's commit message. That's why I've marked it RFC.
 
-The rest is cleanups: we're copying the opcodes byte-by-byte and that's
-just wasteful.
+ drivers/clk/davinci/Makefile    |   1 +
+ drivers/clk/davinci/pll-dm365.c | 119 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/pll.c       |   2 +
+ drivers/clk/davinci/pll.h       |   3 +
+ 4 files changed, 125 insertions(+)
+ create mode 100644 drivers/clk/davinci/pll-dm365.c
 
-Also, we're using probe_kernel_read() underneath and it does
-__copy_from_user_inatomic() which makes copying user opcode bytes
-trivial.
-
-With that, it looks like this:
-
-[  696.837457] strsep[1733]: segfault at 40066b ip 00007fad558fccf8 sp 00007ffc5e662520 error 7 in libc-2.26.so[7fad55876000+1ad000]
-[  696.837538] Code: 1b 48 89 fd 48 89 df e8 77 99 f9 ff 48 01 d8 80 38 00 75 17 48 c7 45 00 00 00 00 00 48 83 c4 08 48 89 d8 5b 5d c3 0f 1f 44 00 00 <c6> 00 00 48 83 c0 01 48 89 45 00 48 83 c4 08 48 89 d8 5b 5d c3
-
-and the code matches, as expected:
-
-0000000000086cc0 <__strsep_g@@GLIBC_2.2.5>:
-   86cc0:       55                      push   %rbp
-   86cc1:       53                      push   %rbx
-   86cc2:       48 83 ec 08             sub    $0x8,%rsp
-   86cc6:       48 8b 1f                mov    (%rdi),%rbx
-   86cc9:       48 85 db                test   %rbx,%rbx
-   86ccc:       74 1b                   je     86ce9 <__strsep_g@@GLIBC_2.2.5+0x29>
-   86cce:       48 89 fd                mov    %rdi,%rbp
-   86cd1:       48 89 df                mov    %rbx,%rdi
-   86cd4:       e8 77 99 f9 ff          callq  20650 <*ABS*+0x854e0@plt>
-   86cd9:       48 01 d8                add    %rbx,%rax
-   86cdc:       80 38 00                cmpb   $0x0,(%rax)
-   86cdf:       75 17                   jne    86cf8 <__strsep_g@@GLIBC_2.2.5+0x38>
-   86ce1:       48 c7 45 00 00 00 00    movq   $0x0,0x0(%rbp)
-   86ce8:       00 
-   86ce9:       48 83 c4 08             add    $0x8,%rsp
-   86ced:       48 89 d8                mov    %rbx,%rax
-   86cf0:       5b                      pop    %rbx
-   86cf1:       5d                      pop    %rbp
-   86cf2:       c3                      retq   
-   86cf3:       0f 1f 44 00 00          nopl   0x0(%rax,%rax,1)
-   86cf8:       c6 00 00                movb   $0x0,(%rax)
-   86cfb:       48 83 c0 01             add    $0x1,%rax
-   86cff:       48 89 45 00             mov    %rax,0x0(%rbp)
-   86d03:       48 83 c4 08             add    $0x8,%rsp
-   86d07:       48 89 d8                mov    %rbx,%rax
-   86d0a:       5b                      pop    %rbx
-   86d0b:       5d                      pop    %rbp
-   86d0c:       c3                      retq
-
-Comments and suggestions are welcome!
-
-Thx.
-
-Borislav Petkov (5):
-  x86/dumpstack: Unify show_regs()
-  x86/dumpstack: Carve out Code: dumping into a function
-  x86/dumpstack: Improve opcodes dumping in the Code: section
-  x86/dumpstack: Add loglevel argument to show_opcodes()
-  x86/fault: Dump user opcode bytes on fatal faults
-
- arch/x86/include/asm/stacktrace.h |  3 +-
- arch/x86/kernel/dumpstack.c       | 64 +++++++++++++++++++++++++++++++++++++--
- arch/x86/kernel/dumpstack_32.c    | 42 -------------------------
- arch/x86/kernel/dumpstack_64.c    | 42 -------------------------
- arch/x86/mm/fault.c               |  7 +++--
- 5 files changed, 68 insertions(+), 90 deletions(-)
-
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 6720bd0..353aa02 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -5,4 +5,5 @@ obj-y += pll.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
++obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= pll-dm365.o
+ endif
+diff --git a/drivers/clk/davinci/pll-dm365.c b/drivers/clk/davinci/pll-dm365.c
+new file mode 100644
+index 0000000..8654ca7
+--- /dev/null
++++ b/drivers/clk/davinci/pll-dm365.c
+@@ -0,0 +1,119 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PLL clock descriptions for TI DM365
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/bitops.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/types.h>
++
++#include "pll.h"
++
++#define OCSEL_OCSRC_ENABLE	0
++
++static const struct davinci_pll_clk_info dm365_pll1_info __initconst = {
++	.name = "pll1",
++	.pllm_mask = GENMASK(9, 0),
++	.pllm_min = 1,
++	.pllm_max = 1023,
++	.flags = PLL_HAS_CLKMODE | PLL_HAS_PREDIV | PLL_HAS_POSTDIV |
++		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_PLLM_2X,
++};
++
++static const struct davinci_pll_sysclk_info dm365_pll1_sysclk_info[] __initconst = {
++	SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(5, pll1_sysclk5, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(6, pll1_sysclk6, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(7, pll1_sysclk7, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(8, pll1_sysclk8, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(9, pll1_sysclk9, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	{ }
++};
++
++/*
++ * This is a bit of a hack to make OCSEL[OCSRC] on DM365 look like OCSEL[OCSRC]
++ * on DA850. On DM365, OCSEL[OCSRC] is just an enable/disable bit instead of a
++ * multiplexer. By modeling it as a single parent mux clock, the clock code will
++ * still do the right thing in this case.
++ */
++static const char * const dm365_pll_obsclk_parent_names[] __initconst = {
++	"oscin",
++};
++
++static u32 dm365_pll_obsclk_table[] = {
++	OCSEL_OCSRC_ENABLE,
++};
++
++static const struct davinci_pll_obsclk_info dm365_pll1_obsclk_info __initconst = {
++	.name = "pll1_obsclk",
++	.parent_names = dm365_pll_obsclk_parent_names,
++	.num_parents = ARRAY_SIZE(dm365_pll_obsclk_parent_names),
++	.table = dm365_pll_obsclk_table,
++	.ocsrc_mask = BIT(4),
++};
++
++static const struct davinci_pll_clk_info dm365_pll2_info __initconst = {
++	.name = "pll2",
++	.pllm_mask = GENMASK(9, 0),
++	.pllm_min = 1,
++	.pllm_max = 1023,
++	.flags = PLL_HAS_PREDIV | PLL_HAS_POSTDIV | PLL_POSTDIV_ALWAYS_ENABLED |
++		 PLL_PLLM_2X,
++};
++
++static const struct davinci_pll_sysclk_info dm365_pll2_sysclk_info[] __initconst = {
++	SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(2, pll2_sysclk2, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(3, pll2_sysclk3, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(4, pll2_sysclk4, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(5, pll2_sysclk5, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	{ }
++};
++
++static const struct davinci_pll_obsclk_info dm365_pll2_obsclk_info __initconst = {
++	.name = "pll2_obsclk",
++	.parent_names = dm365_pll_obsclk_parent_names,
++	.num_parents = ARRAY_SIZE(dm365_pll_obsclk_parent_names),
++	.table = dm365_pll_obsclk_table,
++	.ocsrc_mask = BIT(4),
++};
++
++int __init dm365_pll1_init(struct device *dev, void __iomem *base)
++{
++	const struct davinci_pll_sysclk_info *info;
++
++	davinci_pll_clk_register(dev, &dm365_pll1_info, "ref_clk", base);
++
++	davinci_pll_auxclk_register(dev, "pll1_auxclk", base);
++
++	davinci_pll_sysclkbp_clk_register(dev, "pll1_sysclkbp", base);
++
++	davinci_pll_obsclk_register(dev, &dm365_pll1_obsclk_info, base);
++
++	for (info = dm365_pll1_sysclk_info; info->name; info++)
++		davinci_pll_sysclk_register(dev, info, base);
++
++	return 0;
++}
++
++int __init dm365_pll2_init(struct device *dev, void __iomem *base)
++{
++	const struct davinci_pll_sysclk_info *info;
++
++	davinci_pll_clk_register(dev, &dm365_pll2_info, "oscin", base);
++
++	davinci_pll_auxclk_register(dev, "pll2_auxclk", base);
++
++	davinci_pll_obsclk_register(dev, &dm365_pll2_obsclk_info, base);
++
++	for (info = dm365_pll2_sysclk_info; info->name; info++)
++		davinci_pll_sysclk_register(dev, info, base);
++
++	return 0;
++}
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index f72ea30..c8dd3fa 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -758,6 +758,8 @@ static const struct platform_device_id davinci_pll_id_table[] = {
+ 	{ .name = "da850-pll1",  .driver_data = (kernel_ulong_t)da850_pll1_init  },
+ 	{ .name = "dm355-pll1",  .driver_data = (kernel_ulong_t)dm355_pll1_init  },
+ 	{ .name = "dm355-pll2",  .driver_data = (kernel_ulong_t)dm355_pll2_init  },
++	{ .name = "dm365-pll1",  .driver_data = (kernel_ulong_t)dm365_pll1_init  },
++	{ .name = "dm365-pll2",  .driver_data = (kernel_ulong_t)dm365_pll2_init  },
+ 	{ }
+ };
+ 
+diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+index 6bd73d7..b911c8a 100644
+--- a/drivers/clk/davinci/pll.h
++++ b/drivers/clk/davinci/pll.h
+@@ -129,4 +129,7 @@ int of_da850_pll1_init(struct device *dev, void __iomem *base);
+ int dm355_pll1_init(struct device *dev, void __iomem *base);
+ int dm355_pll2_init(struct device *dev, void __iomem *base);
+ 
++int dm365_pll1_init(struct device *dev, void __iomem *base);
++int dm365_pll2_init(struct device *dev, void __iomem *base);
++
+ #endif /* __CLK_DAVINCI_PLL_H___ */
 -- 
-2.13.0
+2.7.4
