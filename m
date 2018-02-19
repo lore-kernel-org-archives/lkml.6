@@ -1,60 +1,114 @@
-Return-Path: <corbet@lwn.net>
-X-Google-Smtp-Source: AH8x224CDOUtSIe0DFax+D8c8faY0nmhmF4SEJ3vdvhcceAaK79bCRlVlZp6vuFYLY6I2yzyd/7J
-ARC-Seal: i=1; a=rsa-sha256; t=1519399129; cv=none;
+Return-Path: <aishpant@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519064219; cv=none;
         d=google.com; s=arc-20160816;
-        b=IL1buDtoYJewRbeooC7AAHuOvCL7K8l+ZkCfA8UUwFsgczBCXzfxpQSgHZrH6y2UBx
-         u1Blb+loLs57X5h/P6oqKjW1uhKz5pYP/gLzPUeks9Fqi7SaMKQwkFPQtZfn1PjYfqk1
-         ixDlDSc7AGmsR3uGql4ztOGsTHvBvOD40qrmYqtiewOYCtX86V7WKA037UyLLrgYiVx/
-         DYMj8GVXwIj3mNsubxRsgRShayGjnay46xrxhjyvjZRpRxunnE4XqzU2/LYpHCnFQMZR
-         oSpfU8lV0DC66FFLzD4fiRfjETwdiEAOuDtvDJSztCc5LsWn5RuDewpsK1sakj6Ffipx
-         56FA==
+        b=U+LSv5dvWyDxwyzq3YI9BfS672i9vsr5hGse8+f8piZhCsL+qUQ7ysPbk6ZwmNuzii
+         wLmq2oa7AOVx3fqeC2SIv0yILnopex2QEznDvNKkg9KG1szO83dn3NKHiy9V6DmkMpin
+         w7QwWO6GgSSPjCsATjMwKNQ42SLXGr6ZVFFDX+ceXd5Nbu79/PQ7kl71vu2dMinsw6uj
+         EzY9yb4UcZpRzrmJ5etrUIG+Sawhr6uJvd+7+1cQU0ejB4hQP6EGDJBZ4BKEWE8Pr19h
+         MLvTvet2sOzDmahg1Ke+kToWnZmSjS6aIW4kpJovltIqf+fnq/XZkypc8ill3UHJHIIu
+         pEgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date
-         :arc-authentication-results;
-        bh=kNwHT6nO1RsNQrqym/0l5gfONifMT34KRtCawKQgcMo=;
-        b=YFwCQIsS58zgQzlEUy5MP2oKu/ZU53TGpQHKWzZ0MMJp0iBRJSSgSk+VUN//oN2vgM
-         VYDHeTE9kfA2m/EM4cCViqEetE9bZfYJccQ7tnZe8pCxYWsd1jchP6OfpdUlep4vjlzV
-         tYN1LkDKVsb/CQaWuSYrW8gf7SuKXRSjy+rBoMY2EmtbGdVNauall7UvXpwNxYLIsqnW
-         C6r1QjFO8HiyMC3tbDITfOwyVZLMh2505nJB0lTkB0uEE1Y0Nb3nEyNoXkzUuOUkgNF/
-         cugc1fuyYxUYZrb9+X103EjyTmNvipX6RknFnzb9WDgEQEbc21JfwYDUo2yq7Z55LiFI
-         6nhg==
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=9gW8qYjV9B2Sso8JTYmP6oASb8hC0DGhwEVLtVfRRog=;
+        b=Y6GZoptbNBdQ1Ffx3cpu3GfEOwPFdvPEKfxwj4VNWiwFJrVP/5E+M2ukeM/+mgAiJZ
+         nJ+naIL7Cq4ZlhOnAwpzi4J4K0vCcDOlaDv29o2pNpAkiZcEC2doyvQtXkYgPV6/slGV
+         M7bfsBqRIvSECJhnwRK8PcAb/OUQR9M9BsEACuWurOs1KehKOLpKHaIYWh7SFZ+JnbLI
+         WAS3kmV7vJOVTMie0cL/fKy1qGKO8GendUEcTkX74RoaNY1AqoAcFUnfjWVJbB+CqBRG
+         DvI8qKFj96j8rjRt7iSrMgfTBRjMSKjM0KZDPKgNabzWHkuH9+XL76xRtf9qmfNBFO97
+         kDCg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of corbet@lwn.net designates 45.79.88.28 as permitted sender) smtp.mailfrom=corbet@lwn.net
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pp0/hvng;
+       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of corbet@lwn.net designates 45.79.88.28 as permitted sender) smtp.mailfrom=corbet@lwn.net
-Date: Fri, 23 Feb 2018 08:18:48 -0700
-From: Jonathan Corbet <corbet@lwn.net>
-To: Aishwarya Pant <aishpant@gmail.com>
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH
- <gregkh@linuxfoundation.org>, Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH v5] Documentation/ABI: update infiniband sysfs
- interfaces
-Message-ID: <20180223081848.5c974009@lwn.net>
-In-Reply-To: <20180210074104.GA3160@mordor.localdomain>
-References: <20180210074104.GA3160@mordor.localdomain>
-Organization: LWN.net
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pp0/hvng;
+       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AH8x2249CKOaqnepyaChyxuc3j2cP0fGZD5ATd7fFIUMXON0ybxpyrygJJTLKEy1Xvq1gDFlo2ow7w==
+Date: Mon, 19 Feb 2018 23:46:53 +0530
+From: Aishwarya Pant <aishpant@gmail.com>
+To: "Ed L. Cashin" <ed.cashin@acm.org>, linux-kernel@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Greg KH <gregkh@linuxfoundation.org>
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Subject: [PATCH v3] aoe: document sysfs interface
+Message-ID: <20180219181653.GA2925@mordor.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591998650635035491?=
-X-GMAIL-MSGID: =?utf-8?q?1593205462134281093?=
+X-GMAIL-THRID: =?utf-8?q?1592854282679037569?=
+X-GMAIL-MSGID: =?utf-8?q?1592854282679037569?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, 10 Feb 2018 13:11:04 +0530
-Aishwarya Pant <aishpant@gmail.com> wrote:
+Documentation has been compiled from git commit logs and descriptions in
+Documentation/aoe/aoe.txt. This should be useful for scripting and
+tracking changes in the ABI.
 
-> Add documentation for core and hardware specific infiniband interfaces.
-> The descriptions have been collected from git commit logs, reading
-> through code and data sheets. Some drivers have incomplete doc and are
-> annotated with the comment '[to be documented]'.
-> 
-> Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
-> Reviewed-by: Hal Rosenstock <hal@mellanox.com>
+Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
+---
+Changes in v3:
+- name -> names in description of netif
+v2:
+- interface -> interfaces in description of netif
 
-Applied to the docs tree, thanks.
+ Documentation/ABI/testing/sysfs-block-aoe | 45 +++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-block-aoe
 
-jon
+diff --git a/Documentation/ABI/testing/sysfs-block-aoe b/Documentation/ABI/testing/sysfs-block-aoe
+new file mode 100644
+index 000000000000..b5837765bcdd
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-block-aoe
+@@ -0,0 +1,45 @@
++What:		/sys/block/etherd*/mac
++Date:		Apr, 2005
++KernelVersion:	v2.6.12
++Contact:	Ed L. Cashin <ed.cashin@acm.org>
++Description:
++		(RO) The ethernet address of the remote Ata over Ethernet (AoE)
++		device.
++
++What:		/sys/block/etherd*/netif
++Date:		Apr, 2005
++KernelVersion:	v2.6.12
++Contact:	Ed L. Cashin <ed.cashin@acm.org>
++Description:
++		(RO) The names of the network interfaces on the localhost (comma
++		separated) through which we are communicating with the remote
++		AoE device.
++
++What:		/sys/block/etherd*/state
++Date:		Apr, 2005
++KernelVersion:	v2.6.12
++Contact:	Ed L. Cashin <ed.cashin@acm.org>
++Description:
++		(RO) Device status. The state attribute is "up" when the device
++		is ready for I/O and "down" if detected but unusable. The
++		"down,closewait" state shows that the device is still open and
++		cannot come up again until it has been closed.  The "up,kickme"
++		state means that the driver wants to send more commands to the
++		target but found out there were already the max number of
++		commands waiting for a response. It will retry again after being
++		kicked by the periodic timer handler routine.
++
++What:		/sys/block/etherd*/firmware-version
++Date:		Apr, 2005
++KernelVersion:	v2.6.12
++Contact:	Ed L. Cashin <ed.cashin@acm.org>
++Description:
++		(RO) Version of the firmware in the target.
++
++What:		/sys/block/etherd*/payload
++Date:		Dec, 2012
++KernelVersion:	v3.10
++Contact:	Ed L. Cashin <ed.cashin@acm.org>
++Description:
++		(RO) The amount of user data transferred (in bytes) inside each AoE
++		command on the network, network headers excluded.
+-- 
+2.16.1
