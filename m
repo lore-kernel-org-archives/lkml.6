@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753653AbeBSTqH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 14:46:07 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44500 "EHLO
+        id S1753684AbeBSTqK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 14:46:10 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44504 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753466AbeBSTqF (ORCPT
+        with ESMTP id S1753531AbeBSTqF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Feb 2018 14:46:05 -0500
 From: Matthew Wilcox <willy@infradead.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v7 01/61] radix tree test suite: Check reclaim bit
-Date: Mon, 19 Feb 2018 11:44:56 -0800
-Message-Id: <20180219194556.6575-2-willy@infradead.org>
+Subject: [PATCH v7 03/61] arm64: Turn flush_dcache_mmap_lock into a no-op
+Date: Mon, 19 Feb 2018 11:44:58 -0800
+Message-Id: <20180219194556.6575-4-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180219194556.6575-1-willy@infradead.org>
 References: <20180219194556.6575-1-willy@infradead.org>
@@ -23,29 +23,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-In order to test the memory allocation failure paths, the radix tree
-test suite fails allocations if __GFP_NOWARN is set.  That happens to work
-for the radix tree implementation, but the semantics we really want are
-that we want to fail allocations which are not GFP_KERNEL.  Do this
-by failing allocations which don't have the DIRECT_RECLAIM bit set.
+ARM64 doesn't walk the VMA tree in its flush_dcache_page()
+implementation, so has no need to take the tree_lock.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Reviewed-by: Will Deacon <will.deacon@arm.com>
 ---
- tools/testing/radix-tree/linux.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/include/asm/cacheflush.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/radix-tree/linux.c b/tools/testing/radix-tree/linux.c
-index 6903ccf35595..f7f3caed3650 100644
---- a/tools/testing/radix-tree/linux.c
-+++ b/tools/testing/radix-tree/linux.c
-@@ -29,7 +29,7 @@ void *kmem_cache_alloc(struct kmem_cache *cachep, int flags)
- {
- 	struct radix_tree_node *node;
+diff --git a/arch/arm64/include/asm/cacheflush.h b/arch/arm64/include/asm/cacheflush.h
+index bef9f418f089..550b0abea953 100644
+--- a/arch/arm64/include/asm/cacheflush.h
++++ b/arch/arm64/include/asm/cacheflush.h
+@@ -137,10 +137,8 @@ static inline void __flush_icache_all(void)
+ 	dsb(ish);
+ }
  
--	if (flags & __GFP_NOWARN)
-+	if (!(flags & __GFP_DIRECT_RECLAIM))
- 		return NULL;
+-#define flush_dcache_mmap_lock(mapping) \
+-	spin_lock_irq(&(mapping)->tree_lock)
+-#define flush_dcache_mmap_unlock(mapping) \
+-	spin_unlock_irq(&(mapping)->tree_lock)
++#define flush_dcache_mmap_lock(mapping)		do { } while (0)
++#define flush_dcache_mmap_unlock(mapping)	do { } while (0)
  
- 	pthread_mutex_lock(&cachep->lock);
+ /*
+  * We don't appear to need to do anything here.  In fact, if we did, we'd
 -- 
 2.16.1
