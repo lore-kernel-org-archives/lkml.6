@@ -1,181 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753284AbeBSP6a (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 10:58:30 -0500
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:35904 "EHLO
+        id S1753297AbeBSP7p (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 10:59:45 -0500
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:33799 "EHLO
         mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753267AbeBSP60 (ORCPT
+        with ESMTP id S1753109AbeBSP7n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 10:58:26 -0500
-X-Google-Smtp-Source: AH8x224zN7MWD8o/9Etp2a6qbFzmkEHQ6cN3nN/FAzzukDjnvFtdyHbMrKFNlQvl90EqHVr6BFK01g==
-Date: Mon, 19 Feb 2018 09:58:22 -0600
+        Mon, 19 Feb 2018 10:59:43 -0500
+X-Google-Smtp-Source: AH8x2275elUzocIZcPosv5YW09NSVJNS2/JkMJ757WSzHduDMCzfZl13YhJIEQRWZn22ymAQJSmtqw==
+Date: Mon, 19 Feb 2018 09:59:39 -0600
 From: Rob Herring <robh@kernel.org>
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 02/10] dt-bindings: introduce RPMH RSC bindings for
- Qualcomm SoCs
-Message-ID: <20180219155822.4js35b53vu3wwt52@rob-hp-laptop>
-References: <20180215173507.10989-1-ilina@codeaurora.org>
- <20180215173507.10989-3-ilina@codeaurora.org>
+To: Moritz Fischer <moritz.fischer@ettus.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, mark.rutland@arm.com, sre@kernel.org,
+        Moritz Fischer <mdf@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: power: reset: gpio-poweroff: Add
+ 'timeout' property
+Message-ID: <20180219155939.uutemv6wnlxqa7oy@rob-hp-laptop>
+References: <20180215204926.23347-1-moritz.fischer@ettus.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180215173507.10989-3-ilina@codeaurora.org>
+In-Reply-To: <20180215204926.23347-1-moritz.fischer@ettus.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 10:34:59AM -0700, Lina Iyer wrote:
-> Add device binding documentation for Qualcomm Technology Inc's RPMH RSC
-> driver. The hardware block is used for communicating resource state
-> requests for shared resources.
+On Thu, Feb 15, 2018 at 12:49:25PM -0800, Moritz Fischer wrote:
+> From: Moritz Fischer <mdf@kernel.org>
 > 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> Add 'timeout' property to support boards where the 3s timeout that the
+> current driver defaults to is too short.
+> 
+> Signed-off-by: Moritz Fischer <mdf@kernel.org>
 > ---
-
-Changes in v2?
-
->  .../devicetree/bindings/arm/msm/rpmh-rsc.txt       | 146 +++++++++++++++++++++
->  1 file changed, 146 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/msm/rpmh-rsc.txt
+>  Documentation/devicetree/bindings/power/reset/gpio-poweroff.txt | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/msm/rpmh-rsc.txt b/Documentation/devicetree/bindings/arm/msm/rpmh-rsc.txt
-> new file mode 100644
-> index 000000000000..6cb36ae98bf9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/msm/rpmh-rsc.txt
-> @@ -0,0 +1,146 @@
-> +RPMH RSC:
-> +------------
-> +
-> +RPMH is the mechanism for communicating with the hardened resource
-> +accelerators. Requests to the resources can be written to the TCS mailbox
-> +registers and using a (addr, val) pair and triggered. Messages in the TCS are
-> +then sent in sequence over an internal bus.
-> +
-> +The hardware block (Direct Resource Voter or DRV) is a part of the h/w entity
-> +(Resource State Coordinator a.k.a RSC) that can handle a multiple sleep and
-> +active/wake resource requests. Multiple such DRVs can exist in a SoC and can
-> +be written to from Linux. The structure of each DRV follows the same template
-> +with a few variations that are captured by the properties here.
-> +
-> +Each DRV could have 'm' TCS instances. Each TCS could have 'n' slots. Each
-> +slot has a header (u32), address (u32), data (u32), status (u32) and a
-> +read-response (u32). A TCS when triggered will send all the enabled commands
-> +of the 'n' commands in that slot in sequence.
-> +
-> +A TCS may be triggered from Linux or triggered by the F/W after all the CPUs
-> +have powered off to facilitate idle power saving. TCS could be classified as -
-> +
-> +	SLEEP,  /* Triggered by F/W */
-> +	WAKE,   /* Triggered by F/W */
-> +	ACTIVE, /* Triggered by Linux */
-> +	CONTROL /* Triggered by F/W */
-> +
-> +The order in which they are described in the DT, should match the hardware
-> +configuration.
-> +
-> +Requests can be made for the state of a resource, when the subsystem is active
-> +or idle. When all subsystems like Modem, GPU, CPU are idle, the resource state
-> +will be an aggregate of the sleep votes from each of those subsystem. Drivers
-> +may request a sleep value for their shared resources in addition to the active
-> +mode requests.
-> +
-> +Control requests are instance specific requests that may or may not reach an
-> +accelerator. Only one platform device in Linux can request a control channel
-> +on a DRV.
-> +
-> +CONTROLLER:
-> +----------
-> +
-> +PROPERTIES:
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: Should be "qcom,rpmh-rsc".
-> +
-> +- reg:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: The first register specifies the base address of the DRV.
-> +	            The second register specifies the start address of the
-> +	            TCS.
-> +
-> +- reg-names:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: Maps the register specified in the reg property. Must be
-> +	            "drv" and "tcs".
-> +
-> +- interrupts:
-> +	Usage: required
-> +	Value type: <prop-encoded-interrupt>
-> +	Definition: The interrupt that trips when a message complete/response
-> +	           is received for this DRV from the accelerators.
-> +
-> +- qcom,drv-id:
-> +	Usage: required
-> +	Value type: <u32>
-> +	Definition: the id of the DRV in the RSC block.
-> +
-> +- qcom,tcs-config:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: the tuple defining the configuration of TCS.
-> +	            Must have 2 cells which describe each TCS type.
-> +	            <type number_of_tcs>.
-> +	            The order of the TCS must match the hardware
-> +	            configuration.
-> +	- Cell #1 (TCS Type): TCS types to be specified -
-> +		SLEEP_TCS
-> +		WAKE_TCS
-> +		ACTIVE_TCS
-> +		CONTROL_TCS
-> +	- Cell #2 (Number of TCS): <u32>
-> +
-> +- label:
-> +	Usage: optional
-> +	Value type: <string>
-> +	Definition: Name for the RSC. The name would be used in trace logs.
-> +
-> +Platform drivers that want to use the RSC to communicate with RPMH must
+> diff --git a/Documentation/devicetree/bindings/power/reset/gpio-poweroff.txt b/Documentation/devicetree/bindings/power/reset/gpio-poweroff.txt
+> index e62d53d844cc..c2459c7d45d5 100644
+> --- a/Documentation/devicetree/bindings/power/reset/gpio-poweroff.txt
+> +++ b/Documentation/devicetree/bindings/power/reset/gpio-poweroff.txt
+> @@ -27,6 +27,8 @@ Optional properties:
+>    it to an output when the power-off handler is called. If this optional
+>    property is not specified, the GPIO is initialized as an output in its
+>    inactive state.
+> +- timeout: Time to wait before asserting a WARN_ON(1). If nothing is
+> +           specified, 3000 ms is used.
 
-Platform driver is a linux term. DT is not a platform driver 
-instantiation language.
+Needs unit suffix as defined in property-units.txt.
 
-> +specify their bindings as child of the corresponding RSC controllers.
+>  
+>  Examples:
+>  
+> @@ -34,3 +36,9 @@ gpio-poweroff {
+>  	compatible = "gpio-poweroff";
+>  	gpios = <&gpio 4 0>;
+>  };
 > +
-> +EXAMPLE 1:
-> +
-> +For a TCS whose RSC base address is is 0x179C0000 and is at a DRV id of 2, the
-> +register offsets for DRV2 start at 0D00, the register calculations are like
-> +this -
-> +First tuple: 0x179C0000 + 0x10000 * 2 = 0x179E0000
-> +Second tuple: 0x179E0000 + 0xD00 = 0x179E0D00
-> +
-> +	apps_rsc: rsc@179e000 {
-> +		label = "apps_rsc";
-> +		compatible = "qcom,rpmh-rsc";
-> +		reg = <0x179e0000 0x10000>, <0x179e0d00 0x3000>;
-> +		reg-names = "drv", "tcs";
-> +		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>
-> +		qcom,drv-id = <2>;
-> +		qcom,tcs-config = <SLEEP_TCS   3>,
-> +				  <WAKE_TCS    3>,
-> +				  <ACTIVE_TCS  2>,
-> +				  <CONTROL_TCS 1>;
-> +
-> +		foo-clk {
-> +			compatible = "foo-clk";
+> +gpio-poweroff {
+> +	compatible = "gpio-poweroff";
+> +	gpios = <&gpio 4 0>;
+> +	timeout = <3000>;
 
-What is this? Child nodes need to be documented too.
+Just add to the existing example.
 
-> +		};
-> +	};
-> +
+> +};
+> -- 
+> 2.16.1
+> 
