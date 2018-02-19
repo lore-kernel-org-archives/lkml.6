@@ -1,52 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753027AbeBSOtK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 09:49:10 -0500
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:41361 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751505AbeBSOtH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 09:49:07 -0500
-X-Google-Smtp-Source: AH8x227tILHqsR0882CgUexROVoPzpvvMW0w3TfXk795FKTBSJWeVyOX0Bg/Cx9yEOh7ie/M2fMi+g==
-Date: Mon, 19 Feb 2018 08:49:05 -0600
-From: Rob Herring <robh@kernel.org>
-To: Brendan Higgins <brendanhiggins@google.com>
-Cc: Tali Perry <tali.perry1@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>, Rick Altherr <raltherr@google.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Nancy Yuen <yuenn@google.com>, Patrick Venture <venture@google.com>
-Subject: Re: [PATCH v2 1/1] clk: npcm750: update text with fixed clocks
-Message-ID: <20180219144905.bfrycjnas7dcuo34@rob-hp-laptop>
-References: <1518701959-22899-1-git-send-email-tali.perry1@gmail.com>
- <1518701959-22899-2-git-send-email-tali.perry1@gmail.com>
- <CAFd5g44gBJp0-mYEWGdyiA67BCi2pZWAG2bYPS-WdJEwH1oA5A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1753045AbeBSOtS convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 09:49:18 -0500
+Received: from prv-mh.provo.novell.com ([137.65.248.74]:50986 "EHLO
+        prv-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752839AbeBSOtR (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:4:1>);
+        Mon, 19 Feb 2018 09:49:17 -0500
+Message-Id: <5A8AF1F802000078001A91E1@prv-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Mon, 19 Feb 2018 07:49:12 -0700
+From: "Jan Beulich" <JBeulich@suse.com>
+To: <mingo@elte.hu>, <tglx@linutronix.de>, <hpa@zytor.com>
+Cc: <keescook@chromium.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] x86/asm: improve how GEN_*_SUFFIXED_RMWcc() specify
+ clobbers
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Content-Disposition: inline
-In-Reply-To: <CAFd5g44gBJp0-mYEWGdyiA67BCi2pZWAG2bYPS-WdJEwH1oA5A@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 02:38:12PM -0800, Brendan Higgins wrote:
-> On Thu, Feb 15, 2018 at 5:39 AM, Tali Perry <tali.perry1@gmail.com> wrote:
-> >
-> > Signed-off-by: Tali Perry <tali.perry1@gmail.com>
-> >
->  <snip>
-> 
-> I think this should probably be rolled into [PATCH v2 1/1] npcm750: add fixed
-> clocks (moved from drivers/clk/clk-npcm7xx.c):
-> https://www.spinics.net/lists/arm-kernel/msg634678.html
+Commit df3405245a ("x86/asm: Add suffix macro for GEN_*_RMWcc()")
+introduced "suffix" RMWcc operations, adding bogus clobber specifiers:
+For one, on x86 there's no point explicitly clobbering "cc". In fact,
+with gcc properly fixed, this results in an overlap being detected by
+the compiler between outputs and clobbers. Further more it seems bad
+practice to me to have clobber specification and use of the clobbered
+register(s) disconnected - it should rather be at the invocation place
+of that GEN_{UN,BIN}ARY_SUFFIXED_RMWcc() macros that the clobber is
+specified which this particular invocation needs.
 
-No, binding docs, dts files and driver code should all be separate 
-patches.
+Drop the "cc" clobber altogether and move the "cx" one to refcount.h.
 
-Rob
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
+Cc: Kees Cook <keescook@chromium.org>
+---
+ arch/x86/include/asm/refcount.h |    4 ++--
+ arch/x86/include/asm/rmwcc.h    |   16 ++++++++--------
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+--- 4.16-rc2/arch/x86/include/asm/refcount.h
++++ 4.16-rc2-x86-rmwcc-clobbers/arch/x86/include/asm/refcount.h
+@@ -67,13 +67,13 @@ static __always_inline __must_check
+ bool refcount_sub_and_test(unsigned int i, refcount_t *r)
+ {
+ 	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl", REFCOUNT_CHECK_LT_ZERO,
+-				  r->refs.counter, "er", i, "%0", e);
++				  r->refs.counter, "er", i, "%0", e, "cx");
+ }
+ 
+ static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
+ {
+ 	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl", REFCOUNT_CHECK_LT_ZERO,
+-				 r->refs.counter, "%0", e);
++				 r->refs.counter, "%0", e, "cx");
+ }
+ 
+ static __always_inline __must_check
+--- 4.16-rc2/arch/x86/include/asm/rmwcc.h
++++ 4.16-rc2-x86-rmwcc-clobbers/arch/x86/include/asm/rmwcc.h
+@@ -2,8 +2,7 @@
+ #ifndef _ASM_X86_RMWcc
+ #define _ASM_X86_RMWcc
+ 
+-#define __CLOBBERS_MEM		"memory"
+-#define __CLOBBERS_MEM_CC_CX	"memory", "cc", "cx"
++#define __CLOBBERS_MEM(clb...)	"memory", ## clb
+ 
+ #if !defined(__GCC_ASM_FLAG_OUTPUTS__) && defined(CC_HAVE_ASM_GOTO)
+ 
+@@ -40,18 +39,19 @@ do {									\
+ #endif /* defined(__GCC_ASM_FLAG_OUTPUTS__) || !defined(CC_HAVE_ASM_GOTO) */
+ 
+ #define GEN_UNARY_RMWcc(op, var, arg0, cc)				\
+-	__GEN_RMWcc(op " " arg0, var, cc, __CLOBBERS_MEM)
++	__GEN_RMWcc(op " " arg0, var, cc, __CLOBBERS_MEM())
+ 
+-#define GEN_UNARY_SUFFIXED_RMWcc(op, suffix, var, arg0, cc)		\
++#define GEN_UNARY_SUFFIXED_RMWcc(op, suffix, var, arg0, cc, clobbers...)\
+ 	__GEN_RMWcc(op " " arg0 "\n\t" suffix, var, cc,			\
+-		    __CLOBBERS_MEM_CC_CX)
++		    __CLOBBERS_MEM(clobbers))
+ 
+ #define GEN_BINARY_RMWcc(op, var, vcon, val, arg0, cc)			\
+ 	__GEN_RMWcc(op __BINARY_RMWcc_ARG arg0, var, cc,		\
+-		    __CLOBBERS_MEM, vcon (val))
++		    __CLOBBERS_MEM(), vcon (val))
+ 
+-#define GEN_BINARY_SUFFIXED_RMWcc(op, suffix, var, vcon, val, arg0, cc)	\
++#define GEN_BINARY_SUFFIXED_RMWcc(op, suffix, var, vcon, val, arg0, cc,	\
++				  clobbers...)				\
+ 	__GEN_RMWcc(op __BINARY_RMWcc_ARG arg0 "\n\t" suffix, var, cc,	\
+-		    __CLOBBERS_MEM_CC_CX, vcon (val))
++		    __CLOBBERS_MEM(clobbers), vcon (val))
+ 
+ #endif /* _ASM_X86_RMWcc */
