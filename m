@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753099AbeBSQLS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 11:11:18 -0500
-Received: from mail-ve1eur01on0082.outbound.protection.outlook.com ([104.47.1.82]:51239
+        id S1753158AbeBSQLY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 11:11:24 -0500
+Received: from mail-ve1eur01on0059.outbound.protection.outlook.com ([104.47.1.59]:39872
         "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752857AbeBSQLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 11:11:14 -0500
+        id S1752857AbeBSQLT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 11:11:19 -0500
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=madalin.bucur@nxp.com;
 From: Madalin Bucur <madalin.bucur@nxp.com>
 To: netdev@vger.kernel.org
 Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
         Madalin Bucur <madalin.bucur@nxp.com>
-Subject: [PATCH net-next 1/4] dpaa_eth: fix SG mapping
-Date: Mon, 19 Feb 2018 10:10:41 -0600
-Message-Id: <20180219161044.30279-2-madalin.bucur@nxp.com>
+Subject: [PATCH net-next 3/4] dpaa_eth: refactor frag count checking
+Date: Mon, 19 Feb 2018 10:10:43 -0600
+Message-Id: <20180219161044.30279-4-madalin.bucur@nxp.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180219161044.30279-1-madalin.bucur@nxp.com>
 References: <20180219161044.30279-1-madalin.bucur@nxp.com>
@@ -28,44 +28,44 @@ X-ClientProxiedBy: MWHPR06CA0020.namprd06.prod.outlook.com
  (2603:10a6:802:f::15)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: f0d4315a-5924-4fc5-63e6-08d577b364c6
+X-MS-Office365-Filtering-Correlation-Id: ee9e9acd-9704-4eca-16a6-08d577b36804
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:VI1PR04MB3278;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB3278;3:bLJTZ83sK2kf/IZkuvjZrWkx1Ljfjvjx9uB7VIeFwAKq/h+fVNcOp3Zjq28y9XtR1nORytV9HT5aHUbyrNs4Efu9xT2gcGJZF8z/6scslXJHDIXpDl5WwfaenMWoQuFQPm/H6Xdtsip3DK0RE05ocy62ZoTfmGH00YJey7FR/+ZPlLQ0dlsjtCavfeQQfxKL7+mOcGVlLCGvfHHi8nHJm7PzhE/szdltE6ZUaFTPL4KVCbpuzZKfO7OfN9ID9lC6;25:ZUQ6PTvDMeYlybrBbeqrconKzV/w8c3v9b1C+rgq4FBOFcVLSG3CDYvr7QrdlecKJyFPjHIXIda3UiHj/F6BM5QCDYWDmAfzFkZXTlU+e1gPR1vZvUaKVtykpMet6jl9/gxTP0jhtzmAa3t/JBbdAPUkGYSVK4TqL9UKctWYeqCq78WkALmwrANqAOGi48ch1BKN/Uc2O3RwyGAAYP1HSvIPt3w7nR7ARjTo7wonQQDnYsF2ytOt4edv+npMwWOlyIJzcl2ocWCh88wlTpVVmbGHpQ7ab/83/FuzI5qaHewhfx+2N+pJSmiSjvUOVJRi7iQheZ38DD2f3zUT4DgKEQ==;31:VOehWudLQ9Y3gth/eTVmvFtGPrOzjSdPO28/xacY9drp1koqYhLjRxeiFw6DnayVDH34gCbxcS1GWkNXy7EQG5vTfie9O8gNyzUNLhO2Z3mZgMMsT1FRzgdNY7dWxMBSMjh/Oy8lmVVe+zLFNCw4zSaG5IAGMbK06libeCbGvahIMJ16lXUi2vNqHFGzSMIT8bx038NyZqIpzkpsqI5War9TtpVShzyhQRoI79AZOcI=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB3278;3:svICvCFyAat1tgyAKgoj56xbkd/VwgGsZBr6GwI3zE/PcoPDGQ70N6E1jm8UDlSs/ODjwabuld988mUmXpb3B5pfffoNipj/A/YOUqyM53q88WDJ8kFGLpeUQXU55raGaztTJCOpIy5U2rZscLyOXIGK9wALJv8LoIqHpG85/RH46eLye08682xwCYdRAG2bSWW37wmn4/BhumueqjhCGvTRj9ttuyOQ+YR4XSDTtMK//9Eli65t70E01JMTk48W;25:LTrz6Y/QgFs7baTk+kyuiOP9t3lSftEHbjzwgFj/t/HBi/eFRu4IL9xeP4Ps2WfuTQXz7D+jLAJfo3VrrfMUpFFDeTdVSITmT3g/Af/uZ97wkmzzSNbr9YUgHKdsT05n1uewvZoPQiRZkhMt/Md/K6aiXuO6g/I2BcWKFq5zGzz+1nMTkmIZUihYcV10m4H7PAwqd8GqJCUG5eJgpyIwEelinaEqyAFhO7VkElhNrwV1P1vURxmC7eu5+1oMX1kyUaQpUoueNSZHSWZIIhQWSaty8q6V5BSwkyXx0XUCOtoq6pJDWxmeN1z1vJujQ3biJikSx/jI/9pc+U2yvkmeiw==;31:c7PNstRPdivjRXGyVYq1lvH4m763ruuSaP9EjVdGSJ0pVo9kzmmT9KFnaJX+r/veZlIRI26418sb414paYB5/NlSDqTKzZD3rkwHNNwook2h4YX8j7wGWa6cwmjVwq9EmUYu3El6WIRIGxme7/MNxYFfIZ47Ix5kh7yJ9CT3bpOvKnXw19NROCKlIsxU5iB7NgQDR+c6t73oBxuJrFq/rmNiLGDqn1w6G47vApKbv20=
 X-MS-TrafficTypeDiagnostic: VI1PR04MB3278:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB3278;20:EtiDUTs5qpZv2TXPe81s4BSqH5oxR7fJ3H9PoyevVN72BNiZzwURhsn/zG/veREcfFO5U6v4eYcIWCP39LkHKa6rCcOX1VCDdFqLt4Rbda/ZPnrocX+jgvEJqC4YoNtIWm+lb/hc9afUZ5vOx9zqpANm+jZwyQc15Q1nzO7NeIDjkilhCwy9o03mb3tG/FWe8GlnmGQ3jwv0ElRcjiFJJpsRDTuAZtUQz46NHvX14LC1X/C2SngnAKOq8cfrprdLFg05rTylXZ8dMBD3rt+vfshKXG4yWdM5nQVrV5KAxUKV/fHs5pPlUBZNzuvlUTyHrRmOQjJ987/7V63SFCxPk1W60C1un8iwku6E5RJggkW5pWQ31X3XMCbKLlkhPfM7n+G1n3a5Nu0AHy+KppyS6TbcJRSHA6nzd7AzqOx2Pgoke6mcig35QX1+7c/JbTBf+E9h+dAqZh2/lI6uvhvpM3LLtv8t+lRsDg231d8NEM8suCOqT3ZSM1W7doKNMvzk;4:My6zN1g5YDMGMiwg6xfSav9i46zSiufF1GNIhauruCyGj5Dz/Iypeq6N/A2eqrfjgJfltHCvHLi7tvOGhOSMYRKnH7AiviHfLD8orUTkQohGzRKtc5w3mrXXLtJMDSfJUy5tgrn+fMBtEb2LPU2GhJCncWSvL7yQ1OC9elrrfI0YtfMkGfMogEUu0tMSwj196QSPD4NuQz8uqfhPVVRwdvRD34g3wPZF1JtaEGKO1MHm8WYXzUVfOvAd515cwRkOMBXXyRoBgB5d2sQzpvTLx+HrwE8A4SEijv1KU1dgp8fPsdwVpGsQCdg76lXpd182
-X-Microsoft-Antispam-PRVS: <VI1PR04MB32780F1E1FB6A8AF45D88C19ECC80@VI1PR04MB3278.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB3278;20:Vw6qTpHIjngMbhFByvL9m+2lwtXDRlDzrfOOo2ZcK3RbRIC+15KewlwObCiyc/B9cpOHAVjuFMxZ85kVYtIGx8J0EcEqGOt9MOQvE8fZZ2MnvDd7kyDbB3KfIj0Fo4OmTRPL/y6aERyuqG0kcY8a+oqXHCXPBTqkdcNMyjos3arlV6E7hRdO7FMPeWMbqxwVIBZst7LM7XSkRryZQEjmk8SOsR8nzO+ggs8CeFAoChVrBLUOUTqoYrQHkjPweWXboUYGK6CUJlgf3ovr7ZGfaSq7xeqBEwZSVlteBf2Em/Oue5Q48XEwebuzC8nIdGpSkLiptXMQVZO2p6TyX3pvB2RJ+WzXy+PbHYR/4TkD3hbO2vgVIAOjp7EiDzZXXwsqg2r/2BagnCUSuZHut+Gybnzy0vj2aLCM6I5ovA7AY+hkCPQQA2jhdN5+CFC4mg504ModDu77m4JMjRDttxThOpjHfWDSmDP+NMGtXfVI5TcRwRkDh9Bz5GNRYizBp8IP;4:J/Hoj5ug9eGT6hRUWtS+Lu3uMe+7+d4X2LnM2sIRNoU0h2vzYHofkzYTZrbgy9q5VpK7Z/a6RcxzDHAkYyldXGKBwSsKDuG64WMpppPXKk9c2S9STdr5nqv0AfQPHz5c0Xjd5utSNIuooly7TB4MbUAsZwDAj8EXAFzgesmSBgTcR5rrtsSKDnEMXV4fzlcgTsQJ5RMJQNfFYiSrH1xmH99SyzvFSTTKyt/FbsqZnnSi9hhqY8an1rj/0/MiBiwKcSu4vgTqIt9uq5Xqq78weX3Zwjzr45BH8pFHzKKvDdSYgJN9de9/gwPGLoyd7RDO
+X-Microsoft-Antispam-PRVS: <VI1PR04MB32782D8DAECF63645E1E19B4ECC80@VI1PR04MB3278.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001056)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231101)(944501161)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:VI1PR04MB3278;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB3278;
 X-Forefront-PRVS: 0588B2BD96
 X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(366004)(39380400002)(39860400002)(199004)(189003)(68736007)(105586002)(26005)(43066004)(6486002)(16526019)(3846002)(81156014)(81166006)(6116002)(66066001)(8676002)(1076002)(186003)(2906002)(47776003)(86362001)(50226002)(2361001)(3450700001)(2351001)(478600001)(6506007)(386003)(4326008)(7736002)(36756003)(76176011)(52116002)(51416003)(48376002)(50466002)(305945005)(25786009)(6512007)(6916009)(5660300001)(2950100002)(8936002)(6666003)(316002)(106356001)(16586007)(97736004)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3278;H:rhuath.am.freescale.net;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR04MB3278;23:LWK6x4eLIjc7v65e3JJ7PMa9z999qzY+uZ+ZbN+K7?=
- =?us-ascii?Q?UZjKfrImCJCV216+4eSiEZe/448ZLeCRwTC3VG7wyfooJGi0rlQGILxRZLgD?=
- =?us-ascii?Q?UHyg8V03Xx271cRrc3nQwbsocbCQZm0Yu83Nz0aPB9Cr3R43ppsT8TGIb2TB?=
- =?us-ascii?Q?WOZECOYtB90tH1eBwm5feEtyetiehiF6mDHFZ1rHdWPqrqNE6ew9SfPf5AJc?=
- =?us-ascii?Q?TqOl6YngpNsivyAue1/HVjSnILwq/3HRqDnyTzqDJYi0obCL6quHpXVYA1Xw?=
- =?us-ascii?Q?iOvODdy5jdSVV/oKcR8ikrnYXelNkgmsvILgvmAsDYNfqXX3LwoPb2ts5+1T?=
- =?us-ascii?Q?njTcVsbh+BL3cAC4wiL91I309wabnOkmPR6Zr3q+ukvt9XLVT51beGwMF2Qg?=
- =?us-ascii?Q?5XrJ4MCNZ2Lh9Q3XlLEcbk/WJOdXZlAWIE0ljRSCMpUyj90mX5xAEyMx9zNm?=
- =?us-ascii?Q?fLOJoKNU8sKPjOvQi//7LjFtQucDaiASeZettNjt0mgKoI83wGOu4LdZOGQK?=
- =?us-ascii?Q?vvRDevI1+qADVH0bRQIadSwTyHEsHLUotQClT4eJwtjbC2WLgf7Sj/Ba3jPA?=
- =?us-ascii?Q?YSAuxgm76p65O73+oSYMzQMNPSRMmJIwl8M9bFYpLz9sMUkJ5XQ8igY3en+H?=
- =?us-ascii?Q?U1AuWoFSn16FVmbaR6dGqxEFOsdOUn9EX6x3+wtBGNEM8iAMRP+/41CPg6q2?=
- =?us-ascii?Q?sNp1kzEm7HdfZNujW8Jaef5y+qv3R/cRi8kzUhiVCbsBpYT1ObK2OmAi/T8I?=
- =?us-ascii?Q?z3E5IwAlHdunUcHj1/Po3AWbE9cNITaDZM0RVzbUfEjHovGH81K4n8aQPwmg?=
- =?us-ascii?Q?+XUTlOxNnTNxyL1RVAQhVBOIa8W7BAMAvHhvho4a0kim1fVV7uwcBHwR64on?=
- =?us-ascii?Q?Y35tVInYvDO4utxaYoWuMaqGjcXwiFbu7nToNpskMCOVU7VwM0Gvkyya41RC?=
- =?us-ascii?Q?zu6PqSv90i3ZZ1C9/KMc7YAwMgEl2REHfL4QvR3GsrsQMWpFGipcSexCFPcu?=
- =?us-ascii?Q?4E0AdlbEEs1PejnXJ0cf5bUoLTMoXvYvI+bw8YNnQUahqBfrhnWFG6J9CIGl?=
- =?us-ascii?Q?d737qIiw6DDcDjfw6tUXJF2OLJzhWOHH0Zd3GXABULFsD8kJRGlEeWTjm01C?=
- =?us-ascii?Q?IoackIprZ13yoUYMllAcbhT9w9IH4SiW0Cc7ciLdz/ku1RMFi130SjbC7sj0?=
- =?us-ascii?Q?K8sVI1VR4aHjvJcsSwgUWHp8PjL28Q3uEOe?=
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB3278;6:CLXet71cOvTe0ZCS7q/03sj26KebAXns6K+ACjunm/V1RP0x6ma30qozJBo3X6iDsE99Uy0mBxB8A0X+zsKgNFmWgoRI4cXtYQ6JxS6Zt6ozvnBm5stC0EzU/jM/9U2AlyRV+yS4YGDC7EEoommDCKXS6rdlNXc2HBmvRNC09MGMNnFerRHyjvKPHE6P3SYVKqX8s1G8rDzeQRDh4T9waB3VVE8FYZUzs2FbUsowF/TTwBTP9qWq7gET7SmBHNzd2/Akn64uWZG56BLda8Angvsua4ydvvCAgYVEcR0g5e/wtGwPeeNilAY3D/xMfq5zmPdW01cdwqIBEa0B7+1mXQKjH6qtv8EvI1U3/jGwAes=;5:wm8Dh7//GG5glS22hLiEHbpD1YD0A2rcmV2vaouQc2zXqtDUxfuNtxQjsZ2D+XTog7k0KtFTsAp0/1NbEhko0MdPHS9TaCsSgke9H3hbrejmwQqmhimihDNPTkER3yGIPcs1bj1do88bsGUAYltZ8TDkso+C85qlSKTbp519ZNo=;24:KV6EsaezVZB990ck4Ct0uxIFEA/Oyt3Ox4dNAQPYConT7SgNpVHklfKl/o7PTMNXskPGEd7vb9w5fokD/Q03NtXLA3U7hYLUV1QGRv1Pegk=;7:fxNmT+QwYTfwFAjMk9/05ofA4HCG8aC+HzzdzjBrspf5rxG1dGYmG8XpIUOtwHygNBK1ns+/p6hXppWS22tzAv3VAdJYYspqF9nOocol6RKx6TLf3HbpRUCLe8HEHQcNlqNhvqvcPrDihJX4TYMEiUkrJQB3+DQpMI/FUfBgGESIRy+yxDQMXusY3+4ijD/AGft8c4zVp8GAAKM5btlWVY2YvQ0X0d2kjL/9SSZhet4qrUtm/cZzNHrxfWf57IH1
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR04MB3278;23:6F8QzY632olWhkqhMH+ez/p6intkJZ4i8tegjn+qC?=
+ =?us-ascii?Q?qIorlF3/CbcHsULyjAn78j4A0KmkBwTbpsfU7jNs6egend4t6dP3bA6t42+n?=
+ =?us-ascii?Q?ayz/oZlxs+dA8yl+E87pgZuyXL8RtzOxWIhD5y8J1Bur+ZKpmdWcVZ+OY3pr?=
+ =?us-ascii?Q?OPirCY/hEif3V2dMtiD0dmMbQsRBFJjHJ8wLultPU2FEhHyVFLQ5Z7vyrvkj?=
+ =?us-ascii?Q?8GOkZb2cNplBwNypS3PABKL9w+MYoUBUtgz0R+Iv2V/CW7z7Q3AppSllxdR8?=
+ =?us-ascii?Q?zhSxzMhzm/nrb4S5JS+xuUxPkAqkdl5YgauMWnktlE4ZBPhj1GQZTFabo99+?=
+ =?us-ascii?Q?5NacjbGD5Ufu2H/lf5QENzQOgtaWOi28X7/B71CpeOWZZli91r4dLuGuHOV8?=
+ =?us-ascii?Q?W0BGDZHLap+daskOwS26G8yM46NO6xWPaELp/M3UXK8SvkfBT/ogVwC31+yl?=
+ =?us-ascii?Q?QEOEss3oB4LYkSF5jari+yD+zorj56vwj2hj4zKXYj+krOOtyyhbCVa4oSrS?=
+ =?us-ascii?Q?rohllQSw6FzHbckKi8bfVcFWRqyzatYILK+wO+PmRwe5o4cN1WmDHX+X3Ur9?=
+ =?us-ascii?Q?7za56vaILkhJ86t2UYa1jeRFWLb+nrn6V2sr4OGMWZJl1X/ZGC9Aj8sk/slo?=
+ =?us-ascii?Q?xMocnWYTvsOYQIPuKHCx7+pB9D8mVRUovfRLTV0bLAhVH3ZW8Cc60DM6zsCK?=
+ =?us-ascii?Q?lcLC9xRFHizDCdDS78sSbl9vcZ8mFPKKP7PdWJHDkUcA7uDHBkzMavcSaB4v?=
+ =?us-ascii?Q?KgbTtLhZEzgL+94/bO5RTD9VO1EZcS+K6Du3I6uAmdd8LGeKP4pAaWViRq5f?=
+ =?us-ascii?Q?HHFx+kgcbjOgI/Wh/SUU2FqJXJr4eO2JCOhxGpkA9YfCVGIITcN82/1evImz?=
+ =?us-ascii?Q?r6/AbrwDI5ZSnUO42227dj7wDlMo3BR+q7sfnENEDUuovuutjSorMTmgcK+0?=
+ =?us-ascii?Q?xs+K9iXz83UbJd45qMBTe+5052ZWayHtly7cvcCVandKkyApRYo6PAODWin1?=
+ =?us-ascii?Q?QbnaGUeYadlfkblqez7aRB+2bv7P6q9VnXeyW7cqVGnFM/VTi9m4X7isfSuR?=
+ =?us-ascii?Q?tSWqYRfx0QkTH48LeQ3AVdDTlmdobyu0TcKj1bQuqRz8O6MxVXdg4vxqR2z8?=
+ =?us-ascii?Q?BPydUlDU26TPzXRiJ7eMxK+Vn7QjUHeFri9JYyn5kgUTdtwgqXPDyaa/gnr5?=
+ =?us-ascii?Q?IfAevuIJtu/rB737Pev2dasW3BC1bviKp/K?=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB3278;6:128k5kGj9u6CXXzhTKoxtljG7NpsJrNFSwsbNTNhZtQxWyJ7s1ae1XqyC/89e0/P2iH9N/LppxX2R9BgIrhz/PZVoc6zhfZRw5eHtLrEe0nUWQrq2kp+PJHqjp615YXprXVicyi6Dbc1LGt5pLNQWBMoMvT+JQn16otS8h2S1zeAtPxy6Qi+tksh6VddcTWAxxVi64MXx87BHDJaOO5gmM7h8zIkMQQdmJARnkHC+noTR1Gb1ngjpMza5UJl6r+QfA0MG87iUVv85+H5rwINYxwdhuxqzMmOg4p/AvwCxVjoiP9UcvKPIz0i3U6nk3AY9r9KBcKJn04y7baWfiX6f2iRZ8olVO7x5w1JLpTQpPg=;5:T9srj2S/C0Z44yEu9Vmwz7BIbDVLQ0iY1ErxlbLyg23QS7H2h3Ec8Igo0M9Z3c6E9QjILdAmjQv24pCXd6zE8Iat08ypUoAdbRo6mNpJhj9LbIPIkMoX0JGrvjkKuOBT0tc8QPwHLc8s7HrjZp9ZlHdEU+n19G2a/gmtv6gujXI=;24:xd3XQ6IhDghibARpkwbQb/5U3Pkh2OKrwSmnBwPHhmYklXFhv+krEvBIcc9eJPGRxM1f9LRUcRZfg+UEc1Znp/tmbATReHxH4wwm3/hUiLc=;7:hX5v3WGc6l8h8zp3otOoglY+48VZV3jTr3LjV+SMugYILKG0spLDmirBqMn9L+hc7XcHAfoswLpTZelgiC4c1lZNOk5XBWcSLf8tSrPZ67GAWLcvQ3p+Xkwwhmt+SH+p8VvhR9ZpMu0DOPqvX9Fpq8GRjW+dkwZsMfQso2ncI9a3mWTMWtF3ui/eMc/Q1/GgPYxZIQrtexdJqET5nWnnv7EmA6pmDORadAZHts1Lj0GwCXo4yTdacUx2AoqwB3vk
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2018 16:11:10.3711
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2018 16:11:15.8086
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f0d4315a-5924-4fc5-63e6-08d577b364c6
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee9e9acd-9704-4eca-16a6-08d577b36804
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3278
@@ -73,78 +73,46 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An issue in the code mapping the skb fragments into
-scatter-gather frames was evidentiated by netperf
-TCP_SENDFILE tests. This patch addresses the issue.
-
 Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
 ---
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 27 ++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index a998c36..a5afa60 100644
+index 5e43840..2f53e8b 100644
 --- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
 +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -1889,7 +1889,7 @@ static int skb_to_sg_fd(struct dpaa_priv *priv,
- 	void *buffer_start;
- 	skb_frag_t *frag;
- 	dma_addr_t addr;
--	size_t frag_len;
-+	size_t buff_len;
- 	void *sgt_buf;
+@@ -2055,19 +2055,23 @@ static int dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+ 	/* MAX_SKB_FRAGS is equal or larger than our dpaa_SGT_MAX_ENTRIES;
+ 	 * make sure we don't feed FMan with more fragments than it supports.
+ 	 */
+-	if (nonlinear &&
+-	    likely(skb_shinfo(skb)->nr_frags < DPAA_SGT_MAX_ENTRIES)) {
+-		/* Just create a S/G fd based on the skb */
+-		err = skb_to_sg_fd(priv, skb, &fd);
+-		percpu_priv->tx_frag_skbuffs++;
+-	} else {
++	if (unlikely(nonlinear &&
++		     (skb_shinfo(skb)->nr_frags >= DPAA_SGT_MAX_ENTRIES))) {
+ 		/* If the egress skb contains more fragments than we support
+ 		 * we have no choice but to linearize it ourselves.
+ 		 */
+-		if (unlikely(nonlinear) && __skb_linearize(skb))
++		if (__skb_linearize(skb))
+ 			goto enomem;
  
- 	/* get a page frag to store the SGTable */
-@@ -1916,8 +1916,10 @@ static int skb_to_sg_fd(struct dpaa_priv *priv,
- 		goto csum_failed;
- 	}
- 
-+	/* SGT[0] is used by the linear part */
- 	sgt = (struct qm_sg_entry *)(sgt_buf + priv->tx_headroom);
--	qm_sg_entry_set_len(&sgt[0], skb_headlen(skb));
-+	buff_len = skb_headlen(skb);
-+	qm_sg_entry_set_len(&sgt[0], buff_len);
- 	sgt[0].bpid = FSL_DPAA_BPID_INV;
- 	sgt[0].offset = 0;
- 	addr = dma_map_single(dev, skb->data,
-@@ -1930,27 +1932,28 @@ static int skb_to_sg_fd(struct dpaa_priv *priv,
- 	qm_sg_entry_set64(&sgt[0], addr);
- 
- 	/* populate the rest of SGT entries */
--	frag = &skb_shinfo(skb)->frags[0];
--	frag_len = frag->size;
--	for (i = 1; i <= nr_frags; i++, frag++) {
-+	for (i = 0; i < nr_frags; i++) {
-+		frag = &skb_shinfo(skb)->frags[i];
-+		buff_len = frag->size;
- 		WARN_ON(!skb_frag_page(frag));
- 		addr = skb_frag_dma_map(dev, frag, 0,
--					frag_len, dma_dir);
-+					buff_len, dma_dir);
- 		if (unlikely(dma_mapping_error(dev, addr))) {
- 			dev_err(dev, "DMA mapping failed");
- 			err = -EINVAL;
- 			goto sg_map_failed;
- 		}
- 
--		qm_sg_entry_set_len(&sgt[i], frag_len);
--		sgt[i].bpid = FSL_DPAA_BPID_INV;
--		sgt[i].offset = 0;
-+		qm_sg_entry_set_len(&sgt[i + 1], buff_len);
-+		sgt[i + 1].bpid = FSL_DPAA_BPID_INV;
-+		sgt[i + 1].offset = 0;
- 
- 		/* keep the offset in the address */
--		qm_sg_entry_set64(&sgt[i], addr);
--		frag_len = frag->size;
-+		qm_sg_entry_set64(&sgt[i + 1], addr);
- 	}
--	qm_sg_entry_set_f(&sgt[i - 1], frag_len);
+-		/* Finally, create a contig FD from this skb */
++		nonlinear = skb_is_nonlinear(skb);
++	}
 +
-+	/* Set the final bit in the last used entry of the SGT */
-+	qm_sg_entry_set_f(&sgt[nr_frags], buff_len);
- 
- 	qm_fd_set_sg(fd, priv->tx_headroom, skb->len);
- 
++	if (nonlinear) {
++		/* Just create a S/G fd based on the skb */
++		err = skb_to_sg_fd(priv, skb, &fd);
++		percpu_priv->tx_frag_skbuffs++;
++	} else {
++		/* Create a contig FD from this skb */
+ 		err = skb_to_contig_fd(priv, skb, &fd, &offset);
+ 	}
+ 	if (unlikely(err < 0))
 -- 
 2.1.0
