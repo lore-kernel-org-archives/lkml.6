@@ -1,119 +1,268 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752697AbeBSPl7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 10:41:59 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:40029 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752048AbeBSPl6 (ORCPT
+        id S1753202AbeBSPpR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 10:45:17 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59796 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753009AbeBSPpG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 10:41:58 -0500
-X-Google-Smtp-Source: AH8x226zPYbfujukx77hTHQCdIITE+Su+MM1BoYCbC7xzLmFF4bv94feLf33jPYIbKmqnvoJicNg3g==
-Reply-To: christian.koenig@amd.com
-Subject: Re: [PATCH 1/3] locking/ww_mutex: cleanup lock->ctx usage in amdgpu
-To: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20180215141944.4332-1-christian.koenig@amd.com>
- <20180219152421.GQ22199@phenom.ffwll.local>
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <cbfec1ed-d01f-1d4f-c3c0-cc04b93bc58c@gmail.com>
-Date: Mon, 19 Feb 2018 16:41:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180219152421.GQ22199@phenom.ffwll.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Mon, 19 Feb 2018 10:45:06 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180219154503euoutp027caec951bbb542486dcc9b017d089762~UxJFsl3ba1439314393euoutp02Q
+X-AuditID: cbfec7f2-5ffe19c000011644-47-5a8af0faefb5
+From: Maciej Purski <m.purski@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Kamil Debski <kamil@wypas.org>, Jeongtae Park <jtp.park@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Thibault Saunier <thibault.saunier@osg.samsung.com>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Hoegeun Kwon <hoegeun.kwon@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Maciej Purski <m.purski@samsung.com>
+Subject: [PATCH 1/8] clk: Add clk_bulk_alloc functions
+Date: Mon, 19 Feb 2018 16:43:59 +0100
+Message-id: <1519055046-2399-2-git-send-email-m.purski@samsung.com>
+X-Mailer: git-send-email 2.7.4
+In-reply-to: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0iTYRTHe977zMXrtHrQWDIKupCmdHmgC4YGb2jghz6ExGzVi0lq452z
+        VlFZ1Ny8X8pLVkKiMbTm2qxWRi1zpeXSyuwyFeyipWiZhVquzVe//c/5/875nw+HwWVOMphJ
+        TkvnhTRVioLyIxpbJlxrJkeNCWsnWyLR+xvtJMptf4ahikE9gRrKbpLo9fgIhUYLywEaqTVS
+        qKi3gEAfbGYCDQ3XYai5/g2GBno6CFT+VE+i/P7vOHK5zDR6cWaIRpb+LhL9yOkh0St7JYVy
+        zDYSlbkeYMhxoQmgqsH3BKpvdtOoxvIXQx2t29HjIe+S6a4GApUVD1Jo7GERHiXnXnV14NxI
+        9zmaK5lqILm7FW6as5gMFHf7dx/J9WY7Me5W9SnOmu/t51lNgBuzyLnXzZl0vH+C3+YDfEpy
+        Bi+Eb93rdzDnvJlUZ68+Wun6g58GEwojkDCQXQcnHYWYEfgxMvY6gJ7KG0AsxgC0TbnJOUpv
+        uEaIRg2At3PbaLHwAOguyfc6DEOxq2CdPtE3EMS2AHjlbpyPwdnfNCyYfAR8RiC7ATpsvTOa
+        YJfDzuZPwDcrZaOhrT9WDJPDd+0G3KclbAzsu9dE+fZAtoeGLf+GMRGKgc88VkrUgfCb00qL
+        egk0ZD2aZY7DjnH7LHMCZn4wzzKb4FiRdSYAZxfAosZS3HcDZKUw67xMRDiYl/uZEPU2WK6v
+        nTlZxpYCeLk7ugAEV4F5JrCY12pSk3hNRBp/JEyjStVo05LC9h9OtQDve7VNO3/eAeOd+xyA
+        ZYDCX8q6jQkyUpWh0aU6AGRwRZA0rtvbkh5Q6Y7xwuFEQZvCaxwghCEUi6XKFScTZGySKp0/
+        xPNqXphzMUYSfBrMj9/t2PXx5craL1cLL1XZdc9/CU6TVh2wx7919P5lg7yteD3z4Kz2c8CK
+        AaUyo29hdtVSt074qgvamVgXYXfcnJbsL0kUdigjFkUa48PzGrdUblR2RllNA1OtyWffTrvk
+        oWRmdaDHv8Ju40zG1a4hj/LisuEnAaFNbVisOqRaQWgOqiJW4YJG9R+DFDWbWgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsVy+t/xa7o/PnRFGTx+KGlxa905VovecyeZ
+        LGa9bGex2DhjPavFla/v2Sw+TJzJaPF+eRebxaT7E1gsbm/dwGLx5u0aJosja68yWby4d5HF
+        YuaJdlaL/sevmS3On9/AbnG26Q27xabH11gtPvbcY7W4vGsOm0XPhq2sFjPO72OyODR1L6PF
+        gpe3WCzWHrnLbrFs0x8mi4unXC0OvwEa8u/aRhaLGZNfsll8PjCJ2UHO4/K1i8we72+0sntM
+        +b2R1WPnrLvsHptWdbJ5bP/2gNXjfvdxJo/NS+o9tvQDxfu2rGL0+LxJzuPKkUb2AJ4oLpuU
+        1JzMstQifbsEroyetg2sBd3aFXPOf2duYPyp1MXIySEhYCLR3rmYpYuRi0NIYAmjxM9rW5kg
+        nEYmib6elaxdjBwcbAJaEmva40HiIgLHGCUe3lnMCtLNLPCHXaKvoQDEFhYwkzi09T4jiM0i
+        oCpx6cgTRpBeXgFnia2PvSGWyUncPNfJDGJzCrhIPNi9lw3EFgIqOX//EtsERp4FjAyrGEVS
+        S4tz03OLDfWKE3OLS/PS9ZLzczcxAmNs27Gfm3cwXtoYfIhRgINRiYdX4G5XlBBrYllxZe4h
+        RgkOZiURXp8bQCHelMTKqtSi/Pii0pzU4kOM0hwsSuK85w0qo4QE0hNLUrNTUwtSi2CyTByc
+        Ug2M7C3vfOZeD/yyesr21hWh/zdfWuAR3sJZ7WN4JFzD1zdFtl4n+6H/zeSdXFuXMwa5n3QN
+        6yn5E1VXrViq9I0t0/fmpt/761V9ErS3cep8C3J42Kkr6qH/f7Wl0e2d+jr6jx+vsJ4asVcv
+        NqlBNkk8SjjtjeXFdHPpKb5XOgQsCqcH2nybqKnEUpyRaKjFXFScCAAV15HkrQIAAA==
+X-CMS-MailID: 20180219154456eucas1p15f4073beaf61312238f142f217a8bb3c
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180219154456eucas1p15f4073beaf61312238f142f217a8bb3c
+X-RootMTR: 20180219154456eucas1p15f4073beaf61312238f142f217a8bb3c
+References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
+        <CGME20180219154456eucas1p15f4073beaf61312238f142f217a8bb3c@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 19.02.2018 um 16:24 schrieb Daniel Vetter:
-> On Thu, Feb 15, 2018 at 03:19:42PM +0100, Christian König wrote:
->> amdgpu needs to verify if userspace sends us valid addresses and the simplest
->> way of doing this is to check if the buffer object is locked with the ticket
->> of the current submission.
->>
->> Clean up the access to the ww_mutex internals by providing a function
->> for this and extend the check to the thread owning the underlying mutex.
->>
->> Signed-off-by: Christian König <christian.koenig@amd.com>
->> ---
->>   drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c |  3 ++-
->>   include/linux/ww_mutex.h               | 17 +++++++++++++++++
->>   2 files changed, 19 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
->> index eaa3cb0c3ad1..4c04b560e358 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
->> @@ -1594,7 +1594,8 @@ int amdgpu_cs_find_mapping(struct amdgpu_cs_parser *parser,
->>   	*map = mapping;
->>   
->>   	/* Double check that the BO is reserved by this CS */
->> -	if (READ_ONCE((*bo)->tbo.resv->lock.ctx) != &parser->ticket)
->> +	if (!ww_mutex_is_owned_by(&(*bo)->tbo.resv->lock, current,
->> +				  &parser->ticket))
->>   		return -EINVAL;
->>   
->>   	if (!((*bo)->flags & AMDGPU_GEM_CREATE_VRAM_CONTIGUOUS)) {
->> diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
->> index 39fda195bf78..dd580db289e8 100644
->> --- a/include/linux/ww_mutex.h
->> +++ b/include/linux/ww_mutex.h
->> @@ -358,4 +358,21 @@ static inline bool ww_mutex_is_locked(struct ww_mutex *lock)
->>   	return mutex_is_locked(&lock->base);
->>   }
->>   
->> +/**
->> + * ww_mutex_is_owned_by - is the w/w mutex locked by this task in that context
->> + * @lock: the mutex to be queried
->> + * @task: the task structure to check
->> + * @ctx: the w/w acquire context to test
->> + *
->> + * Returns true if the mutex is locked in the context by the given task, false
->> + * otherwise.
->> + */
->> +static inline bool ww_mutex_is_owned_by(struct ww_mutex *lock,
->> +					struct task_struct *task,
->> +					struct ww_acquire_ctx *ctx)
->> +{
->> +	return likely(__mutex_owner(&lock->base) == task) &&
->> +		READ_ONCE(lock->ctx) == ctx;
-> Just comparing the context should be good enough. If you ever pass a
-> ww_acquire_ctx which does not belong to your own thread your seriously
-> wreaking things much worse already (and if we do catch that, should
-> probably lock the ctx to a given task when ww-mutex debugging is enabled).
->
-> That also simplifies the function signature.
->
-> Of course that means if you don't have a ctx, you can't test ownership of
-> a ww_mute, but I think that's not a really valid use-case.
+When a driver is going to use clk_bulk_get() function, it has to
+initialize an array of clk_bulk_data, by filling its id fields.
 
-Well exactly that is the use case in TTM, see patch #3 in this series.
+Add a new function to the core, which dynamically allocates
+clk_bulk_data array and fills its id fields. Add clk_bulk_free()
+function, which frees the array allocated by clk_bulk_alloc() function.
+Add a managed version of clk_bulk_alloc().
 
-In TTM the evicted BOs are trylocked and so we need a way of testing for 
-ownership without a context.
+Signed-off-by: Maciej Purski <m.purski@samsung.com>
+---
+ drivers/clk/clk-bulk.c   | 16 ++++++++++++
+ drivers/clk/clk-devres.c | 37 +++++++++++++++++++++++++---
+ include/linux/clk.h      | 64 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 113 insertions(+), 4 deletions(-)
 
-Christian.
-
->   And not needed
-> for cmd submission, where you need the ctx anyway.
->
-> Besides this interface nit looks all good. With the task check&parameter
-> removed:
->
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
->
-> -Daniel
->
->> +}
->> +
->>   #endif
->> -- 
->> 2.14.1
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+index 4c10456..2f16941 100644
+--- a/drivers/clk/clk-bulk.c
++++ b/drivers/clk/clk-bulk.c
+@@ -19,6 +19,22 @@
+ #include <linux/clk.h>
+ #include <linux/device.h>
+ #include <linux/export.h>
++#include <linux/slab.h>
++
++struct clk_bulk_data *clk_bulk_alloc(int num_clocks, const char *const *clk_ids)
++{
++	struct clk_bulk_data *ptr;
++	int i;
++
++	ptr = kcalloc(num_clocks, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	for (i = 0; i < num_clocks; i++)
++		ptr[i].id = clk_ids[i];
++
++	return ptr;
++}
+ 
+ void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
+ {
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index d854e26..2115b97 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -9,6 +9,39 @@
+ #include <linux/export.h>
+ #include <linux/gfp.h>
+ 
++struct clk_bulk_devres {
++	struct clk_bulk_data *clks;
++	int num_clks;
++};
++
++static void devm_clk_alloc_release(struct device *dev, void *res)
++{
++	struct clk_bulk_devres *devres = res;
++
++	clk_bulk_free(devres->clks);
++}
++
++struct clk_bulk_data *devm_clk_bulk_alloc(struct device *dev, int num_clks,
++					  const char *const *clk_ids)
++{
++	struct clk_bulk_data **ptr, *clk_bulk;
++
++	ptr = devres_alloc(devm_clk_alloc_release,
++			   num_clks * sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	clk_bulk = clk_bulk_alloc(num_clks, clk_ids);
++	if (clk_bulk) {
++		*ptr = clk_bulk;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return clk_bulk;
++}
++
+ static void devm_clk_release(struct device *dev, void *res)
+ {
+ 	clk_put(*(struct clk **)res);
+@@ -34,10 +67,6 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ }
+ EXPORT_SYMBOL(devm_clk_get);
+ 
+-struct clk_bulk_devres {
+-	struct clk_bulk_data *clks;
+-	int num_clks;
+-};
+ 
+ static void devm_clk_bulk_release(struct device *dev, void *res)
+ {
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 4c4ef9f..7d66f41 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -15,6 +15,7 @@
+ #include <linux/err.h>
+ #include <linux/kernel.h>
+ #include <linux/notifier.h>
++#include <linux/slab.h>
+ 
+ struct device;
+ struct clk;
+@@ -240,6 +241,52 @@ static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
+ #endif
+ 
+ #ifdef CONFIG_HAVE_CLK
++
++/**
++ * clk_bulk_alloc - allocates an array of clk_bulk_data and fills their
++ *		    id field
++ * @num_clks: number of clk_bulk_data
++ * @clk_ids: array of clock consumer ID's
++ *
++ * This function allows drivers to dynamically create an array of clk_bulk_data
++ * and fill their id field in one operation. If successful, it allows calling
++ * clk_bulk_get on the pointer returned by this function.
++ *
++ * Returns a pointer to a clk_bulk_data array, or valid IS_ERR() condition
++ * containing errno.
++ */
++struct clk_bulk_data *clk_bulk_alloc(int num_clks, const char *const *clk_ids);
++
++/**
++ * devm_clk_bulk_alloc - allocates an array of clk_bulk_data and fills their
++ *			 id field
++ * @dev: device for clock "consumer"
++ * @num_clks: number of clk_bulk_data
++ * @clk_ids: array of clock consumer ID's
++ *
++ * This function allows drivers to dynamically create an array of clk_bulk_data
++ * and fill their id field in one operation with management, the array will
++ * automatically be freed when the device is unbound. If successful, it allows
++ * calling clk_bulk_get on the pointer returned by this function.
++ *
++ * Returns a pointer to a clk_bulk_data array, or valid IS_ERR() condition
++ * containing errno.
++ */
++struct clk_bulk_data *devm_clk_bulk_alloc(struct device *dev, int num_clks,
++					  const char * const *clk_ids);
++
++/**
++ * clk_bulk_free - frees the array of clk_bulk_data
++ * @clks: pointer to clk_bulk_data array
++ *
++ * This function frees the array allocated by clk_bulk_data. It must be called
++ * when all clks are freed.
++ */
++static inline void clk_bulk_free(struct clk_bulk_data *clks)
++{
++	kfree(clks);
++}
++
+ /**
+  * clk_get - lookup and obtain a reference to a clock producer.
+  * @dev: device for clock "consumer"
+@@ -598,6 +645,23 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id);
+ 
+ #else /* !CONFIG_HAVE_CLK */
+ 
++static inline struct clk_bulk_data *clk_bulk_alloc(int num_clks,
++						   const char **clk_ids)
++{
++	return NULL;
++}
++
++static inline struct clk_bulk_data *devm_clk_bulk_alloc(struct device *dev,
++							int num_clks,
++							const char **clk_ids)
++{
++	return NULL;
++}
++
++static inline void clk_bulk_free(struct clk_bulk_data *clks)
++{
++}
++
+ static inline struct clk *clk_get(struct device *dev, const char *id)
+ {
+ 	return NULL;
+-- 
+2.7.4
