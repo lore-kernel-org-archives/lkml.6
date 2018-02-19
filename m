@@ -1,180 +1,135 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4116716-1519041155-2-648908199593804194
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3946214-1519035443-2-6263542351169772376
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.195, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.001, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.001, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='iso-8859-1'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519041154; b=BW2a9br1KpamrI02Z32Wxohw4CZ/1gRSI+wuavxFhpAH0PH
-    /LMsa1Poj0Wxat99I/ktubHV5PmD9vMYT+A7nbKN57PS/aUweL/XTEi28p9VKNut
-    +tpgZLRSylx2n/IcDKm1oRGcaGVMm2DL+Xk2gWe6BWKsNBC5vbitUokxbF4jR7su
-    D1IK8Iv00jHPylJA2kaxg6e5sVzxAnPzVThKb6hmE+zuVj6Xp+ziyNm1jgbzFRt7
-    Nob4jwIElAXjdqPZsfz3DkM33ZG2GTQnezZ9OJtx8bSH4v23y8m6WnV82M5tV/tp
-    npiTAv3RN4+EvccT3NF0vtxPZDsIp9idjp/lmMw==
+    t=1519035443; b=GEK5n/ZYR929mF+VCmZUtDZPRsa97WMGeruSTSsOT8dzWwy
+    qMrScLI6uqgVhjnupq+yhRkpzjJeQwaAXqIM7DOP4V0+gKkqo5Qv+DElGbJRqL3b
+    IED1fFlwQf6cpidB6sdEAP/286fdsfMZCMqmb0O3V5ncrzLTDvl/i+QWUPK4FbT6
+    SRIEmtRhmSGr2i0W8snuQbzrMtvpEjWNiq5izrhKWA/u+bhGYvdUJh9xAiKulNuy
+    c9O72wuQe/PJSpk4NDOO6tmQpD4FAycCxU3IB01Sf23vuif9pilaH1uE/KW1NIqh
+    UDXGh9KYzcsbwVV9sdsWDKT2nLUCuwDyB0xvDbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1519041154; bh=a
-    3XXI59yIWrrcrZZBSXoIGcRed8gHGcmVbL0Qa1NuQc=; b=Eqq1KOW7cHRJOkEBP
-    5Sj0XUI/zW574tGhxJPiTYi2Vg+HK0MO7ETRn2iksn5+QlDHMsmlzvTQrIqqTpd9
-    C5IKwm31jmCmqmTjPmrmWETg0btGVdoYs9GfMnxslorpMPGZAxDs3irta/bI1EyR
-    NMlHbqJ5er0FGZlSBdplYbsrQGj5yJhZLXL1DcWIZj4SEy+e3A4jV1xcSddhDz7A
-    L5+Za2p1SuCAEpympu4EruK5BqYtRJMGZYWjRgt99Sl3U2JI1MB46gTSRu5gLaNr
-    vGAbpzXGRyZ5lg9KiZB71gXhVDLjHsidZy7qwSQ5cZZaZZYj1iTDdquYdvjNpLrl
-    vOyEA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=MYKvbGnN x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519035443;
+    bh=Ii+avSz21BmFlUaAjvoIbGQV+ejvmloj3ZbsWuMKEdM=; b=Y6jYAuVVhdas
+    GU7ibOIq/xXhcNCTGwAu+RJkI0H2kwDMX61n8nPmkqF7h7AyN3oCA68UM9zHKsZw
+    PRzh87y4sR217ToIZNDi/ILlYC04XqVC6H7Oea69DpxLGCyNQUnLVEUD4HGf+qRE
+    RX2Y7mktAkOiN3EH0nxbQZCqWazoqwuaokaWdzjr2KD0EtcFt4pnlYjoxM1ukLtn
+    ufoCod9m8I03i49zodCnditCmaJ+dCSlfMW8EdSK/PYzUlGWKJz0tu7ntXbKUUY+
+    qYG7PLap1mlU0YFFY/W3FIwKjB0AFrH++9lJgGqBA9/u4CEKgor1P6HaIB2p5W9w
+    WYFFBay/Yw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BCGrjEIp;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=MYKvbGnN x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BCGrjEIp;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AH8x22447vxP03Azvn5CkAcTsx6dwGkgs+W8IUycp/oovabVTBT10FIg/C4Q/YCssXL8ka6gSJtMJQ==
-Date: Mon, 19 Feb 2018 08:52:22 -0300
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH] staging: iio/meter: add name to function definition
- arguments
-Message-ID: <20180219115222.r7uvuhvt2reetd4g@smtp.gmail.com>
-References: <20180216125041.qfvg7xtpulc54tk6@smtp.gmail.com>
- <1518785796.9517.25.camel@nxp.com>
- <20180216131658.h7b2y2ckkucetnzj@smtp.gmail.com>
- <20180217140834.2947e5e4@archlinux>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180217140834.2947e5e4@archlinux>
-User-Agent: NeoMutt/20171215
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
- "lars@metafoo.de" <lars@metafoo.de>,
- "Michael.Hennerich@analog.com" <Michael.Hennerich@analog.com>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>, "knaack.h@gmx.de" <knaack.h@gmx.de>,
- Daniel Baluta <daniel.baluta@nxp.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752344AbeBSKQh (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 19 Feb 2018 05:16:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53148 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752530AbeBSKOk (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 19 Feb 2018 05:14:40 -0500
+From: Juergen Gross <jgross@suse.com>
+To: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-acpi@vger.kernel.org, x86@kernel.org
+Cc: rafael.j.wysocki@intel.com, lenb@kernel.org,
+        boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
+        mingo@redhat.com, Juergen Gross <jgross@suse.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v3 3/3] x86/xen: add pvh specific rsdp address retrieval function
+Date: Mon, 19 Feb 2018 11:09:06 +0100
+Message-Id: <20180219100906.14265-4-jgross@suse.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180219100906.14265-1-jgross@suse.com>
+References: <20180219100906.14265-1-jgross@suse.com>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Jonathan,
+Add pvh_get_root_pointer() for Xen PVH guests to communicate the
+address of the RSDP table given to the kernel via Xen start info.
 
-> On Fri, 16 Feb 2018 11:16:58 -0200
-> Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
-> =
+This makes the kernel boot again in PVH mode after on recent Xen the
+RSDP was moved to higher addresses. So up to that change it was pure
+luck that the legacy method to locate the RSDP was working when
+running as PVH mode.
 
-> > Hi Daniel
-> > =
+Cc: <stable@vger.kernel.org> # 4.11
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ arch/x86/xen/enlighten_pvh.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-> > > Hi Rodrigo,
-> > > =
-
-> > > I think this is a nice finding. One comment inline:
-> > > =
-
-> > > On Vi, 2018-02-16 at 10:50 -0200, rodrigosiqueira wrote:  =
-
-> > > > This patch fixes the checkpatch.pl warning:
-> > > > =
-
-> > > > drivers/staging/iio/meter/ade7854.h:157: WARNING: function definiti=
-on
-> > > > argument 'struct device *' should also have an identifier name...
-> > > >=A0
-> > > > +	int (*read_reg_32)(struct device *dev, u16 reg_address, u32 *val);
-> > > > +	int (*write_reg_8)(struct device *dev, u16 reg_address, u8 value)=
-;  =
-
-> > > =
-
-> > > =
-
-> > > Any particular reason for using val vs value? I get that one is a poi=
-nter
-> > > and another a plain type, but I think the name should be the same.  =
-
-> > =
-
-> > Before I selected the name, I figure out that read_reg_* and write_reg_*
-> > was assigned inside the iio/meter/ade7754-(i2c|spi).c files by function
-> > like ade7754_*_read_reg_* and ade7754_*_write_reg_* .
-> > =
-
-> > I considered to use 'value' name for both functions parameters, however,
-> > I noticed that function ade7754_*_write_reg_* adopted the name 'value'
-> > for the last argument and ade7754_*_read_reg_* named the last argument
-> > as 'val'. So, for consistency sake between the header file and the c
-> > code, I decided to use the same parameter name patterns.
-> > =
-
-> Hohum. It isn't even that consistent ;)
-> =
-
-> ade7754_write_reg_8 uses val and ade7754_write_reg_16 uses value.
-> =
-
-> I would suggest another patch to make them all val.
-
-Thanks for the review. I will send another patch as you recommended.
-
-Rodrigo Siqueira
- =
-
-> Thanks,
-> =
-
-> Jonathan
-> > =
-
-> > > thanks,
-> > > Daniel.
-> > >  =
-
-> > =
-
-> > Thanks =
-
-> =
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
+index 436c4f003e17..aa1c6a6831a9 100644
+--- a/arch/x86/xen/enlighten_pvh.c
++++ b/arch/x86/xen/enlighten_pvh.c
+@@ -6,6 +6,7 @@
+ #include <asm/io_apic.h>
+ #include <asm/hypervisor.h>
+ #include <asm/e820/api.h>
++#include <asm/x86_init.h>
+ 
+ #include <asm/xen/interface.h>
+ #include <asm/xen/hypercall.h>
+@@ -16,15 +17,20 @@
+ /*
+  * PVH variables.
+  *
+- * xen_pvh and pvh_bootparams need to live in data segment since they
+- * are used after startup_{32|64}, which clear .bss, are invoked.
++ * xen_pvh pvh_bootparams and pvh_start_info need to live in data segment
++ * since they are used after startup_{32|64}, which clear .bss, are invoked.
+  */
+ bool xen_pvh __attribute__((section(".data"))) = 0;
+ struct boot_params pvh_bootparams __attribute__((section(".data")));
++struct hvm_start_info pvh_start_info __attribute__((section(".data")));
+ 
+-struct hvm_start_info pvh_start_info;
+ unsigned int pvh_start_info_sz = sizeof(pvh_start_info);
+ 
++static u64 pvh_get_root_pointer(void)
++{
++	return pvh_start_info.rsdp_paddr;
++}
++
+ static void __init init_pvh_bootparams(void)
+ {
+ 	struct xen_memory_map memmap;
+@@ -71,6 +77,8 @@ static void __init init_pvh_bootparams(void)
+ 	 */
+ 	pvh_bootparams.hdr.version = 0x212;
+ 	pvh_bootparams.hdr.type_of_loader = (9 << 4) | 0; /* Xen loader */
++
++	x86_init.acpi.get_root_pointer = pvh_get_root_pointer;
+ }
+ 
+ /*
+-- 
+2.13.6
