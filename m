@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932128AbeBST7n (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 14:59:43 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44710 "EHLO
+        id S1753824AbeBSUAq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 15:00:46 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44658 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753703AbeBSTqP (ORCPT
+        with ESMTP id S1753695AbeBSTqN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 14:46:15 -0500
+        Mon, 19 Feb 2018 14:46:13 -0500
 From: Matthew Wilcox <willy@infradead.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v7 26/61] page cache: Add page_cache_range_empty function
-Date: Mon, 19 Feb 2018 11:45:21 -0800
-Message-Id: <20180219194556.6575-27-willy@infradead.org>
+Subject: [PATCH v7 21/61] xarray: Add xa_destroy
+Date: Mon, 19 Feb 2018 11:45:16 -0800
+Message-Id: <20180219194556.6575-22-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180219194556.6575-1-willy@infradead.org>
 References: <20180219194556.6575-1-willy@infradead.org>
@@ -23,165 +23,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-btrfs has its own custom function for determining whether the page cache
-has any pages in a particular range.  Move this functionality to the
-page cache, and call it from btrfs.
+This function frees all the internal memory allocated to the xarray
+and reinitialises it to be empty.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/btrfs/btrfs_inode.h  |  7 ++++-
- fs/btrfs/inode.c        | 70 -------------------------------------------------
- include/linux/pagemap.h |  2 ++
- mm/filemap.c            | 26 ++++++++++++++++++
- 4 files changed, 34 insertions(+), 71 deletions(-)
+ include/linux/xarray.h |  1 +
+ lib/xarray.c           | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
 
-diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-index 63f0ccc92a71..a48bd6e0a0bb 100644
---- a/fs/btrfs/btrfs_inode.h
-+++ b/fs/btrfs/btrfs_inode.h
-@@ -365,6 +365,11 @@ static inline void btrfs_print_data_csum_error(struct btrfs_inode *inode,
- 			logical_start, csum, csum_expected, mirror_num);
- }
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 85dd909586f0..96773f83ae03 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -229,6 +229,7 @@ void *xa_find_after(struct xarray *xa, unsigned long *index,
+ 		unsigned long max, xa_tag_t) __attribute__((nonnull(2)));
+ unsigned int xa_extract(struct xarray *, void **dst, unsigned long start,
+ 		unsigned long max, unsigned int n, xa_tag_t);
++void xa_destroy(struct xarray *);
  
--bool btrfs_page_exists_in_range(struct inode *inode, loff_t start, loff_t end);
-+static inline bool btrfs_page_exists_in_range(struct inode *inode,
-+						loff_t start, loff_t end)
-+{
-+	return page_cache_range_empty(inode->i_mapping, start >> PAGE_SHIFT,
-+							end >> PAGE_SHIFT);
-+}
- 
- #endif
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index fbb4291fcc57..89ce4d90e7f6 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -7425,76 +7425,6 @@ noinline int can_nocow_extent(struct inode *inode, u64 offset, u64 *len,
- 	return ret;
- }
- 
--bool btrfs_page_exists_in_range(struct inode *inode, loff_t start, loff_t end)
--{
--	struct radix_tree_root *root = &inode->i_mapping->pages;
--	bool found = false;
--	void **pagep = NULL;
--	struct page *page = NULL;
--	unsigned long start_idx;
--	unsigned long end_idx;
--
--	start_idx = start >> PAGE_SHIFT;
--
--	/*
--	 * end is the last byte in the last page.  end == start is legal
--	 */
--	end_idx = end >> PAGE_SHIFT;
--
--	rcu_read_lock();
--
--	/* Most of the code in this while loop is lifted from
--	 * find_get_page.  It's been modified to begin searching from a
--	 * page and return just the first page found in that range.  If the
--	 * found idx is less than or equal to the end idx then we know that
--	 * a page exists.  If no pages are found or if those pages are
--	 * outside of the range then we're fine (yay!) */
--	while (page == NULL &&
--	       radix_tree_gang_lookup_slot(root, &pagep, NULL, start_idx, 1)) {
--		page = radix_tree_deref_slot(pagep);
--		if (unlikely(!page))
--			break;
--
--		if (radix_tree_exception(page)) {
--			if (radix_tree_deref_retry(page)) {
--				page = NULL;
--				continue;
--			}
--			/*
--			 * Otherwise, shmem/tmpfs must be storing a swap entry
--			 * here so return it without attempting to raise page
--			 * count.
--			 */
--			page = NULL;
--			break; /* TODO: Is this relevant for this use case? */
--		}
--
--		if (!page_cache_get_speculative(page)) {
--			page = NULL;
--			continue;
--		}
--
--		/*
--		 * Has the page moved?
--		 * This is part of the lockless pagecache protocol. See
--		 * include/linux/pagemap.h for details.
--		 */
--		if (unlikely(page != *pagep)) {
--			put_page(page);
--			page = NULL;
--		}
--	}
--
--	if (page) {
--		if (page->index <= end_idx)
--			found = true;
--		put_page(page);
--	}
--
--	rcu_read_unlock();
--	return found;
--}
--
- static int lock_extent_direct(struct inode *inode, u64 lockstart, u64 lockend,
- 			      struct extent_state **cached_state, int writing)
- {
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 0db127c3ccac..34d4fa3ad1c5 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -245,6 +245,8 @@ pgoff_t page_cache_next_gap(struct address_space *mapping,
- 			     pgoff_t index, unsigned long max_scan);
- pgoff_t page_cache_prev_gap(struct address_space *mapping,
- 			     pgoff_t index, unsigned long max_scan);
-+bool page_cache_range_empty(struct address_space *mapping,
-+				pgoff_t index, pgoff_t max);
- 
- #define FGP_ACCESSED		0x00000001
- #define FGP_LOCK		0x00000002
-diff --git a/mm/filemap.c b/mm/filemap.c
-index ce74aba33c85..778a551f6713 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1397,6 +1397,32 @@ pgoff_t page_cache_prev_gap(struct address_space *mapping,
- }
- EXPORT_SYMBOL(page_cache_prev_gap);
- 
-+bool page_cache_range_empty(struct address_space *mapping, pgoff_t index,
-+				pgoff_t max)
-+{
-+	struct page *page;
-+	XA_STATE(xas, &mapping->pages, index);
-+
-+	rcu_read_lock();
-+	do {
-+		page = xas_find(&xas, max);
-+		if (xas_retry(&xas, page))
-+			continue;
-+		/* Shadow entries don't count */
-+		if (xa_is_value(page))
-+			continue;
-+		/*
-+		 * We don't need to try to pin this page; we're about to
-+		 * release the RCU lock anyway.  It is enough to know that
-+		 * there was a page here recently.
-+		 */
-+	} while (0);
-+	rcu_read_unlock();
-+
-+	return page != NULL;
-+}
-+EXPORT_SYMBOL_GPL(page_cache_range_empty);
-+
  /**
-  * find_get_entry - find and get a page cache entry
-  * @mapping: the address_space to search
+  * xa_init() - Initialise an empty XArray.
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 124bbfec66ae..080ed0fc3feb 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -1468,6 +1468,34 @@ unsigned int xa_extract(struct xarray *xa, void **dst, unsigned long start,
+ }
+ EXPORT_SYMBOL(xa_extract);
+ 
++/**
++ * xa_destroy() - Free all internal data structures.
++ * @xa: XArray.
++ *
++ * After calling this function, the XArray is empty and has freed all memory
++ * allocated for its internal data structures.  You are responsible for
++ * freeing the objects referenced by the XArray.
++ *
++ * Context: Any context.  Takes and releases the xa_lock, interrupt-safe.
++ */
++void xa_destroy(struct xarray *xa)
++{
++	XA_STATE(xas, xa, 0);
++	unsigned long flags;
++	void *entry;
++
++	xas.xa_node = NULL;
++	xas_lock_irqsave(&xas, flags);
++	entry = xa_head_locked(xa);
++	RCU_INIT_POINTER(xa->xa_head, NULL);
++	xas_init_tags(&xas);
++	/* lockdep checks we're still holding the lock in xas_free_nodes() */
++	if (xa_is_node(entry))
++		xas_free_nodes(&xas, xa_to_node(entry));
++	xas_unlock_irqrestore(&xas, flags);
++}
++EXPORT_SYMBOL(xa_destroy);
++
+ #ifdef XA_DEBUG
+ void xa_dump_node(const struct xa_node *node)
+ {
 -- 
 2.16.1
