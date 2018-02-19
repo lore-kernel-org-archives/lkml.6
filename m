@@ -1,62 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753588AbeBSS6g (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 13:58:36 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:46566 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753456AbeBSS6e (ORCPT
+        id S1753608AbeBSTAH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 14:00:07 -0500
+Received: from mail-pl0-f52.google.com ([209.85.160.52]:40537 "EHLO
+        mail-pl0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753476AbeBSTAE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 13:58:34 -0500
-X-Google-Smtp-Source: AH8x227aM24ENSkUMXKq7CqWC/35YQVPv5kNvAtaLsvqNA3ITuHg9Zl1BXLcmEQP9iPmB/E2RoBdRZuX+r0a4lcC7eA=
+        Mon, 19 Feb 2018 14:00:04 -0500
+X-Google-Smtp-Source: AH8x226Re8fShg5ZqPS00E/3qMFyKf/EhEOotSJi9ItMYeFFwG6NzCE03NBXP1IJpVcIo75zsO3eyxZaAT99RUA3hM0=
 MIME-Version: 1.0
-In-Reply-To: <1516779566.2508.41.camel@sipsolutions.net>
-References: <001a1143c56ef80bb405636ca341@google.com> <1516779566.2508.41.camel@sipsolutions.net>
+In-Reply-To: <CADvbK_fKDbUnAkdLrgm6rgj895Gb06AK7HaT0s9VD=zdF+vf6Q@mail.gmail.com>
+References: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
+ <CAM_iQpVo0iSXKSR=Qc+7syn77BnhE2R72M2u5YfJF=fBkJHjsw@mail.gmail.com>
+ <7fd7e3b3-77b1-0936-b169-d08b946bedc7@iogearbox.net> <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
+ <efa5811c-0a01-a4af-ade2-71ef5dbc4eaf@gmail.com> <CADvbK_dgEa5g0ynY4F8pX6LuuBwW4e42rK_TFuRhY1=2G5zinw@mail.gmail.com>
+ <CADvbK_fKDbUnAkdLrgm6rgj895Gb06AK7HaT0s9VD=zdF+vf6Q@mail.gmail.com>
 From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 19 Feb 2018 19:58:13 +0100
-Message-ID: <CACT4Y+bziyU+32umG=VD7wCbxpsKoGkbAypDwQS=PivfGSzypA@mail.gmail.com>
-Subject: Re: WARNING in check_flush_dependency
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: syzbot <syzbot+41cdaf4232c50e658934@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>, syzkaller-bugs@googlegroups.com
+Date: Mon, 19 Feb 2018 19:59:43 +0100
+Message-ID: <CACT4Y+aV_v6zNS6Ac1u1cB2GZ7QhjNxBeg0FNabUhrndt5CqZw@mail.gmail.com>
+Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
+To: Xin Long <lucien.xin@gmail.com>
+Cc: David Ahern <dsahern@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Dan Streetman <ddstreet@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Tommi Rantala <tommi.t.rantala@nokia.com>,
+        Alexey Kodanev <alexey.kodanev@oracle.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        linux-sctp@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 24, 2018 at 8:39 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Mon, 2018-01-22 at 23:39 -0800, syzbot wrote:
->> Hello,
+On Sat, Feb 3, 2018 at 1:15 PM, Xin Long <lucien.xin@gmail.com> wrote:
+>>> On 1/30/18 1:57 PM, David Ahern wrote:
+>>>> On 1/30/18 1:08 PM, Daniel Borkmann wrote:
+>>>>> On 01/30/2018 07:32 PM, Cong Wang wrote:
+>>>>>> On Tue, Jan 30, 2018 at 4:09 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>>>>>>> Hello,
+>>>>>>>
+>>>>>>> The following program creates a hang in unregister_netdevice.
+>>>>>>> cleanup_net work hangs there forever periodically printing
+>>>>>>> "unregister_netdevice: waiting for lo to become free. Usage count = 3"
+>>>>>>> and creation of any new network namespaces hangs forever.
+>>>>>>
+>>>>>> Interestingly, this is not reproducible on net-next.
+>>>>>
+>>>>> The most recent change on netns refcnt was 4ee806d51176 ("net: tcp: close
+>>>>> sock if net namespace is exiting") in net/net-next from 5 days ago, maybe
+>>>>> fixed due to that?
+>>>>>
+>>>>
+>>>> This appears to be the commit introducing the refcnt leak:
+>>>>
+>>>> $ git bisect bad
+>>>> dbc2b5e9a09e9a6664679a667ff81cff6e5f2641 is the first bad commit
+>>>> commit dbc2b5e9a09e9a6664679a667ff81cff6e5f2641
+>>>> Author: Xin Long <lucien.xin@gmail.com>
+>>>> Date:   Fri May 12 14:39:52 2017 +0800
+>>>>
+>>>>     sctp: fix src address selection if using secondary addresses for ipv6
+>>>>
+>>>>
+>>>> v4.14 is bad. Running bisect in the background while doing other things....
+>>>>
+>>>
+>>> Interesting. The commit that avoids the refcnt leak is
+>>>
+>>> commit 955ec4cb3b54c7c389a9f830be7d3ae2056b9212
+>>> Author: David Ahern <dsahern@gmail.com>
+>>> Date:   Wed Jan 24 19:45:29 2018 -0800
+>>>
+>>>     net/ipv6: Do not allow route add with a device that is down
+>>>
+>>> That commit does not intentionally address the problem so it is just
+>>> masking the problematic code introduced by the commit above.
+>> Thanks, David A.
 >>
->> syzbot hit the following crash on upstream commit
->> 0d665e7b109d512b7cae3ccef6e8654714887844 (Fri Jan 19 12:49:24 2018 +0000)
->> mm, page_vma_mapped: Drop faulty pointer arithmetics in check_pte()
->>
->> So far this crash happened 23 times on net-next, upstream.
->> C reproducer is attached.
->> syzkaller reproducer is attached.
->> Raw console output is attached.
->> compiler: gcc (GCC) 7.1.1 20170620
->> .config is attached.
->> user-space arch: i386
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+41cdaf4232c50e658934@syzkaller.appspotmail.com
->> It will help syzbot understand when the bug is fixed. See footer for
->> details.
->> If you forward the report, please keep this part and the footer.
->>
->> ------------[ cut here ]------------
->> workqueue: WQ_MEM_RECLAIM hwsim_wq:destroy_radio is
->> flushing !WQ_MEM_RECLAIM events_highpri:flush_backlog
->> WARNING: CPU: 0 PID: 3706 at kernel/workqueue.c:2439
->> check_flush_dependency+0x239/0x380 kernel/workqueue.c:2435
->> Kernel panic - not syncing: panic_on_warn set ...
+>> I'm still on a trip. will look into this asap.
 >
-> Yeah, we clearly shouldn't have WQ_RECLAIM set on this workqueue...
+> Alexey and Tommi already had the patches for this issue on
+> both SCTP v4 and v6 dst_get, Thanks.
 
-Hi Johannes,
 
-Do you mind to send a patch to fix this?
+
+Is this meant to be fixed already? I am still seeing this on the
+latest upstream tree.
