@@ -1,59 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752877AbeBSNkj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 08:40:39 -0500
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:33808 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752666AbeBSNkg (ORCPT
+        id S1752889AbeBSNnn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 08:43:43 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:43245 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752772AbeBSNnl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 08:40:36 -0500
-X-Google-Smtp-Source: AH8x2255YmlBvFdpMj5LQ7S6UftenvEtBcF3I2jOk+rcewhynQ/2kg7O60sik29+gefksNf2qWXhOw==
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 2/8] lightnvm: show generic geometry in sysfs
-From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javigon.napster@gmail.com>
-X-Mailer: iPhone Mail (15D60)
-In-Reply-To: <dc558965-9c1f-26f1-9274-12a6f8057825@lightnvm.io>
-Date: Mon, 19 Feb 2018 14:40:32 +0100
-Cc: Javier Gonzalez <javier@cnexlabs.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
-Message-Id: <F72BAE57-88B8-447B-B0D2-7EB6AE8105A2@gmail.com>
-References: <1518530768-20956-1-git-send-email-javier@cnexlabs.com> <1518530768-20956-3-git-send-email-javier@cnexlabs.com> <caa2634b-63bf-3a35-ed53-220aab2bd05a@lightnvm.io> <E53B65E9-3D1A-49BB-AA5D-F3D2C4032484@cnexlabs.com> <dc558965-9c1f-26f1-9274-12a6f8057825@lightnvm.io>
-To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
+        Mon, 19 Feb 2018 08:43:41 -0500
+X-Google-Smtp-Source: AH8x225Qo6UK8iq4IzAdJD1qHrDvdDKDr2Bt/GXb4i7JO6hQGemUdd0DIQy8lYJEGZ4rBkolGaYe3/7wf03eFEatF8s=
+MIME-Version: 1.0
+In-Reply-To: <209b38ec-aab4-ea5f-70a2-3f9bdb1f52a1@intel.com>
+References: <20180219100906.14265-1-jgross@suse.com> <209b38ec-aab4-ea5f-70a2-3f9bdb1f52a1@intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 19 Feb 2018 15:43:40 +0200
+Message-ID: <CAHp75VfWRtTXQ02PuYG9xceEb8sQ0UhiixcW4nzxCV+cqW-6tQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] xen: re-enable booting as Xen PVH guest
+To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Juergen Gross <jgross@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        xen-devel@lists.xenproject.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>, x86@kernel.org,
+        Len Brown <lenb@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w1JDep4B021488
 
+On Mon, Feb 19, 2018 at 12:27 PM, Rafael J. Wysocki
+<rafael.j.wysocki@intel.com> wrote:
+> On 2/19/2018 11:09 AM, Juergen Gross wrote:
+>>
+>> The Xen PVH boot protocol passes vital information to the kernel via
+>> a start_info block. One of the data transferred is the physical address
+>> of the RSDP table.
+>>
+>> Unfortunately PVH support in the kernel didn't use that passed address
+>> for RSDP, but relied on the legacy mechanism searching for the RSDP in
+>> low memory. After a recent change in Xen putting the RSDP to a higher
+>> address booting as PVH guest is now failing.
+>>
+>> This small series repairs that by passing the RSDP address from the
+>> start_info block to ACPI handling.
+>>
+>> Changes in V3:
+>> - instead of using a weak function add a function pointer to x86_init
+>>    for obtaining the RSDP address
+>>
+>> Juergen Gross (3):
+>>    acpi: introduce acpi_arch_get_root_pointer() for getting rsdp address
+>>    x86/acpi: add a new x86_init_acpi structure to x86_init_ops
+>>    x86/xen: add pvh specific rsdp address retrieval function
+>>
+>>   arch/x86/include/asm/acpi.h     |  7 +++++++
+>>   arch/x86/include/asm/x86_init.h |  9 +++++++++
+>>   arch/x86/kernel/x86_init.c      |  5 +++++
+>>   arch/x86/xen/enlighten_pvh.c    | 14 +++++++++++---
+>>   drivers/acpi/osl.c              |  5 ++++-
+>>   include/linux/acpi.h            |  7 +++++++
+>>   6 files changed, 43 insertions(+), 4 deletions(-)
+>>
+> The series is fine by me:
+>
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
->>> This breaks user-space. The intention is for user-space to decide
->>> based on version id. Then it can either retrieve the 1.2 or 2.0
->>> attributes. The 2.0 attributes should not be available when a device
->>> is 1.2.
->>> 
->> Why does it break it? I'm only adding new entries.
->> The objective is to expose the genneric geometry, since this is the
->> structure that is passed on to the targets. Since some of the values are
->> calculated, there is value on exposing this information, I believe.
->> Another way of doing it, is adding the generic geometry at the target
->> level, showing what base values it is getting, including the real number
->> of channels/groups and luns/pus.
->> Would this be better in your opinion?
-> 
-> No. It should be one set of attributes for 1.2 (keep the way it is today), and then separate 2.0 attributes. User-space should then identify either by either 1 or 2 in the version attribute.
-> 
->>>> ...
+Don't know much about Xen, though the ACPI / x86 stubs are exactly
+what I'm wanting!
+Thanks.
 
->>> csecs and sos are derived from the the generic block device data structures.
->> As mentioned above, it is to represent the generic geometry.
-> 
-> They are not part of the 2.0 spec. The fields can be derived from elsewhere.
->>> 
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Ok. Thanks for looking into it. 
-
-Javier. 
+-- 
+With Best Regards,
+Andy Shevchenko
