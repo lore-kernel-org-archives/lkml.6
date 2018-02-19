@@ -1,61 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753202AbeBSQ3X (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 11:29:23 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56114 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752906AbeBSQ3W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 11:29:22 -0500
-Date: Mon, 19 Feb 2018 16:29:19 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/9] ASoC: Intel: sst: Free streams on suspend, re-alloc
- on resume
-Message-ID: <20180219162919.GH32761@sirena.org.uk>
-References: <20180218220146.22485-1-hdegoede@redhat.com>
- <20180218220146.22485-7-hdegoede@redhat.com>
- <CAHp75VfjpRngR9_vE2SrHA_NRZdsap-2bEdRD6OEK63CTPBw2g@mail.gmail.com>
- <e32ac973-fb6a-37f9-ed65-b6865c13d9dd@redhat.com>
+        id S1753224AbeBSQ3b (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 11:29:31 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33352 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752897AbeBSQ31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 11:29:27 -0500
+Subject: Re: [PATCH 1/8] clk: Add clk_bulk_alloc functions
+To: Maciej Purski <m.purski@samsung.com>, linux-media@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: David Airlie <airlied@linux.ie>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kamil Debski <kamil@wypas.org>, Andrzej Hajda <a.hajda@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Thibault Saunier <thibault.saunier@osg.samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, Hoegeun Kwon <hoegeun.kwon@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>, Jeongtae Park <jtp.park@samsung.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>
+References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
+ <CGME20180219154456eucas1p15f4073beaf61312238f142f217a8bb3c@eucas1p1.samsung.com>
+ <1519055046-2399-2-git-send-email-m.purski@samsung.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <b67b5043-f5e5-826a-f0b8-f7cf722c61e6@arm.com>
+Date: Mon, 19 Feb 2018 16:29:12 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="YrlhzR9YrZtruaFS"
-Content-Disposition: inline
-In-Reply-To: <e32ac973-fb6a-37f9-ed65-b6865c13d9dd@redhat.com>
-X-Cookie: You enjoy the company of other people.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1519055046-2399-2-git-send-email-m.purski@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Maciej,
 
---YrlhzR9YrZtruaFS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 19/02/18 15:43, Maciej Purski wrote:
+> When a driver is going to use clk_bulk_get() function, it has to
+> initialize an array of clk_bulk_data, by filling its id fields.
+> 
+> Add a new function to the core, which dynamically allocates
+> clk_bulk_data array and fills its id fields. Add clk_bulk_free()
+> function, which frees the array allocated by clk_bulk_alloc() function.
+> Add a managed version of clk_bulk_alloc().
 
-On Mon, Feb 19, 2018 at 03:02:03PM +0100, Hans de Goede wrote:
+Seeing how every subsequent patch ends up with the roughly this same stanza:
 
-> The is the net/* style of multi-line comments which is used in quite a few
-> places in the sounds/soc dir. I think both styles are accepted under sound/soc?
+	x = devm_clk_bulk_alloc(dev, num, names);
+	if (IS_ERR(x)
+		return PTR_ERR(x);
+	ret = devm_clk_bulk_get(dev, x, num);
 
-I really don't care, whatever people want.
+I wonder if it might be better to simply implement:
 
---YrlhzR9YrZtruaFS
-Content-Type: application/pgp-signature; name="signature.asc"
+	int devm_clk_bulk_alloc_get(dev, &x, num, names)
 
------BEGIN PGP SIGNATURE-----
+that does the whole lot in one go, and let drivers that want to do more 
+fiddly things continue to open-code the allocation.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqK+14ACgkQJNaLcl1U
-h9AcrAf+Oa1kwtn+F3OxjO6vMJ0wlpfaRV4PiBRE00x5nXkIZ5s7TjhBDRIFcueL
-9rCVOnG8d5WrFIebs1sSmA5rzc3CotLd51z+iQ3fyuXJ11MjVwKgKHBWmwY7P4Df
-UJyCxUsa5ztsXj4CkGubAay4lZVOqgsgRWgvISUHJBQuWAfic3HuwqPBDGSR4DoA
-GnL+magPc/QoqbbnVpbsEzuZ+vKonil2IAzUdFSBOMOXt5Lb1Yw3ESIwbgAoA7ib
-1eNxjBSse9KK05K5BWHKMjZt0ZBLBkKt1WRFIu1SBcMI66+Uw9DtZnY7/opp7MG9
-F2ic4Tft1qhhF/5Ezs5zgyDEIIXAug==
-=XXvy
------END PGP SIGNATURE-----
+But perhaps that's an abstraction too far... I'm not all that familiar 
+with the lie of the land here.
 
---YrlhzR9YrZtruaFS--
+> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+> ---
+>   drivers/clk/clk-bulk.c   | 16 ++++++++++++
+>   drivers/clk/clk-devres.c | 37 +++++++++++++++++++++++++---
+>   include/linux/clk.h      | 64 ++++++++++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 113 insertions(+), 4 deletions(-)
+> 
+
+[...]
+> @@ -598,6 +645,23 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id);
+>   
+>   #else /* !CONFIG_HAVE_CLK */
+>   
+> +static inline struct clk_bulk_data *clk_bulk_alloc(int num_clks,
+> +						   const char **clk_ids)
+> +{
+> +	return NULL;
+
+Either way, is it intentional not returning an ERR_PTR() value in this 
+case? Since NULL will pass an IS_ERR() check, it seems a bit fragile for 
+an allocation call to apparently succeed when the whole API is 
+configured out (and I believe introducing new uses of IS_ERR_OR_NULL() 
+is in general strongly discouraged.)
+
+Robin.
+
+> +}
+> +
+> +static inline struct clk_bulk_data *devm_clk_bulk_alloc(struct device *dev,
+> +							int num_clks,
+> +							const char **clk_ids)
+> +{
+> +	return NULL;
+> +}
+> +
+> +static inline void clk_bulk_free(struct clk_bulk_data *clks)
+> +{
+> +}
+> +
+>   static inline struct clk *clk_get(struct device *dev, const char *id)
+>   {
+>   	return NULL;
+> 
