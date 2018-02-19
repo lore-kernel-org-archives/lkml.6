@@ -1,264 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753395AbeBSROC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 12:14:02 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:32975 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753367AbeBSRN6 (ORCPT
+        id S1753491AbeBSRLe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 12:11:34 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:38847 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753427AbeBSRLc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 12:13:58 -0500
-X-Google-Smtp-Source: AH8x224yy9bHoSN3NLQ+WB33achqtuZSQnsvG/IvR9xkW+mRfDfb2B8guOY2heRTfFXzdyfGeEcxSA==
-Date: Mon, 19 Feb 2018 22:43:47 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, liuwei@actions-semi.com,
-        mp-cs@actions-semi.com, 96boards@ucrobotics.com,
-        devicetree@vger.kernel.org, daniel.thompson@linaro.org,
-        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] dt-bindings: pinctrl: Add bindings for Actions
- S900 SoC
-Message-ID: <20180219171347.kdxibfd4vfuajudj@linaro.org>
-References: <20180217204433.3095-1-manivannan.sadhasivam@linaro.org>
- <20180217204433.3095-2-manivannan.sadhasivam@linaro.org>
- <77989e71-3cde-bb01-e07d-a9a809751a9b@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <77989e71-3cde-bb01-e07d-a9a809751a9b@suse.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Mon, 19 Feb 2018 12:11:32 -0500
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose.Abreu@synopsys.com, vbhadram@nvidia.com,
+        Niklas Cassel <niklass@axis.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 1/7] net: stmmac: set MSS for each tx DMA channel
+Date: Mon, 19 Feb 2018 18:11:09 +0100
+Message-Id: <20180219171116.15326-2-niklas.cassel@axis.com>
+X-Mailer: git-send-email 2.14.2
+In-Reply-To: <20180219171116.15326-1-niklas.cassel@axis.com>
+References: <20180219171116.15326-1-niklas.cassel@axis.com>
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
-On Sat, Feb 17, 2018 at 10:03:53PM +0100, Andreas Färber wrote:
-> Am 17.02.2018 um 21:44 schrieb Manivannan Sadhasivam:
-> > Add pinctrl bindings for Actions Semi S900 SoC
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  .../bindings/pinctrl/actions,s900-pinctrl.txt      | 171 +++++++++++++++++++++
-> >  1 file changed, 171 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
-> > new file mode 100644
-> > index 000000000000..ee7d3ecd9bd9
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
-> > @@ -0,0 +1,171 @@
-> > +Actions Semi S900 Pin Controller
-> 
-> So you are targeting to have one bindings file per SoC?
-> 
-Yes. Similar to what Qcom drivers are doing! Having a single
-binding will look messy if we add support for other
-OWL family SoC's like S500, S700...
-> > +
-> > +This binding describes the pin controller found in the S900 SoC.
-> > +
-> > +Required Properties:
-> > +
-> > +- compatible:   Should be "actions,s900-pinctrl"
-> > +- reg:          Should contain the register base address and size of
-> > +                the pin controller.
-> > +- clocks:       phandle of the clock feeding the pin controller
-> > +
-> > +Please refer to pinctrl-bindings.txt in this directory for details of the
-> > +common pinctrl bindings used by client devices, including the meaning of the
-> > +phrase "pin configuration node".
-> > +
-> > +The pin configuration nodes act as a container for an arbitrary number of
-> > +subnodes. Each of these subnodes represents some desired configuration for a
-> > +pin, a group, or a list of pins or groups. This configuration can include the
-> > +mux function to select on those group(s), and various pin configuration
-> > +parameters, such as pull-up, drive strength, etc.
-> > +
-> > +PIN CONFIGURATION NODES:
-> > +
-> > +The name of each subnode is not important; all subnodes should be enumerated
-> > +and processed purely based on their content.
-> > +
-> > +Each subnode only affects those parameters that are explicitly listed. In
-> > +other words, a subnode that lists a mux function but no pin configuration
-> > +parameters implies no information about any pin configuration parameters.
-> > +Similarly, a pin subnode that describes a pullup parameter implies no
-> > +information about e.g. the mux function.
-> > +
-> > +Pinmux functions are available only for the pin groups while pinconf
-> > +parameters are available for both pin groups and individual pins.
-> > +
-> > +The following generic properties as defined in pinctrl-bindings.txt are valid
-> > +to specify in a pin configuration subnode:
-> > +
-> > +Required Properties:
-> > +
-> > +- pins:           An array of strings, each string containing the name of a pin.
-> > +                  These pins are used for selecting the pull control and schmitt
-> > +                  trigger parameters. The following are the list of pins
-> > +                  available:
-> > +
-> > +                  ETH_TXD0, ETH_TXD1, ETH_TXEN, ETH_RXER, ETH_CRS_DV,
-> > +                  ETH_RXD1, ETH_RXD0, ETH_REF_CLK, ETH_MDC, ETH_MDIO,
-> > +                  SIRQ0, SIRQ1, SIRQ2, I2S_D0, I2S_BCLK0, I2S_LRCLK0,
-> > +                  I2S_MCLK0, I2S_D1, I2S_BCLK1, I2S_LRCLK1, I2S_MCLK1,
-> > +                  PCM1_IN, PCM1_CLK, PCM1_SYNC, PCM1_OUT, ERAM_A5,
-> > +                  ERAM_A6, ERAM_A7, ERAM_A8, ERAM_A9, ERAM_A10, ERAM_A11,
-> > +                  LVDS_OEP, LVDS_OEN, LVDS_ODP, LVDS_ODN, LVDS_OCP,
-> > +                  LVDS_OCN, LVDS_OBP, LVDS_OBN, LVDS_OAP, LVDS_OAN,
-> > +                  LVDS_EEP, LVDS_EEN, LVDS_EDP, LVDS_EDN, LVDS_ECP,
-> > +                  LVDS_ECN, LVDS_EBP, LVDS_EBN, LVDS_EAP, LVDS_EAN,
-> > +                  SD0_D0, SD0_D1, SD0_D2, SD0_D3, SD1_D0, SD1_D1,
-> > +                  SD1_D2, SD1_D3, SD0_CMD, SD0_CLK, SD1_CMD, SD1_CLK,
-> > +                  SPI0_SCLK, SPI0_SS, SPI0_MISO, SPI0_MOSI, UART0_RX,
-> > +                  UART0_TX, UART2_RX, UART2_TX, UART2_RTSB, UART2_CTSB,
-> > +                  UART3_RX, UART3_TX, UART3_RTSB, UART3_CTSB, UART4_RX,
-> > +                  UART4_TX, I2C0_SCLK, I2C0_SDATA, I2C1_SCLK, I2C1_SDATA,
-> > +                  I2C2_SCLK, I2C2_SDATA, CSI0_DN0, CSI0_DP0, CSI0_DN1,
-> > +                  CSI0_DP1, CSI0_CN, CSI0_CP, CSI0_DN2, CSI0_DP2, CSI0_DN3,
-> > +                  CSI0_DP3, DSI_DP3, DSI_DN3, DSI_DP1, DSI_DN1, DSI_CP,
-> > +                  DSI_CN, DSI_DP0, DSI_DN0, DSI_DP2, DSI_DN2, SENSOR0_PCLK,
-> > +                  CSI1_DN0,CSI1_DP0,CSI1_DN1, CSI1_DP1, CSI1_CN, CSI1_CP,
-> > +                  SENSOR0_CKOUT, NAND0_D0, NAND0_D1, NAND0_D2, NAND0_D3,
-> > +                  NAND0_D4, NAND0_D5, NAND0_D6, NAND0_D7, NAND0_DQS,
-> > +                  NAND0_DQSN, NAND0_ALE, NAND0_CLE, NAND0_CEB0, NAND0_CEB1,
-> > +                  NAND0_CEB2, NAND0_CEB3, NAND1_D0, NAND1_D1, NAND1_D2,
-> > +                  NAND1_D3, NAND1_D4, NAND1_D5, NAND1_D6, NAND1_D7, NAND1_DQS,
-> > +                  NAND1_DQSN, NAND1_ALE, NAND1_CLE, NAND1_CEB0, NAND1_CEB1,
-> > +                  NAND1_CEB2, NAND1_CEB3, SGPIO0, SGPIO1, SGPIO2, SGPIO3
-> 
-> Should be lower-case?
-> 
-Okay.
-> > +
-> > +- groups:         An array of strings, each string containing the name of a pin
-> > +                  group. These pin groups are used for selecting the pinmux
-> > +                  functions. The following are the list of pin groups available:
-> > +
-> > +                  mfp0_22, mfp0_21_20_eth_mdc, mfp0_21_20_eth_mdio,
-> > +                  mfp0_19_sirq0, mfp0_19_sirq1, mfp0_18_16_eth_txd0,
-> > +                  mfp0_18_16_eth_txd1, mfp0_15_13_eth_txen, mfp0_15_13_eth_rxer,
-> > +                  mfp0_12_11, mfp0_10_8_eth_rxd1, mfp0_10_8_eth_rxd0, mfp0_7_6,
-> > +                  mfp0_5_i2s_d0, mfp0_5_i2s_d1, mfp0_4_3, mfp0_2_i2s0,
-> > +                  mfp0_2_i2s1, mfp0_1_0_pcm1_in_out, mfp0_1_0_pcm1_clk,
-> > +                  mfp0_1_0_pcm1_sync, mfp1_31_29_eram_a5, mfp1_31_29_eram_a6,
-> > +                  mfp1_31_29_eram_a7, mfp1_28_26_eram_a8, mfp1_28_26_eram_a9,
-> > +                  mfp1_28_26_eram_a10, mfp1_25_23, mfp1_22_lvds_oep_odn,
-> > +                  mfp1_22_lvds_ocp_obn, mfp1_22_lvds_oap_oan, mfp1_21_lvds_e,
-> > +                  mfp1_5_4, mfp1_3_1_spi0_ss, mfp1_3_1_spi0_miso, mfp2_23,
-> > +                  mfp2_22, mfp2_21, mfp2_20, mfp2_19_17, mfp2_16_14, mfp2_13_11,
-> > +                  mfp2_10_9, mfp2_8_7, mfp2_6_5, mfp2_4_3, mfp2_2_0, mfp3_27,
-> > +                  mfp3_21_19, mfp3_18_16, mfp3_15, mfp3_14, mfp3_13,
-> > +                  mfp3_12_dsi_dp3_dn1, mfp3_12_dsi_cp_dn0, mfp3_12_dsi_dp2_dn2,
-> > +                  mfp3_11, mfp3_10_nand1_ceb3, mfp3_10_nand1_ceb0, mfp3_9,
-> > +                  mfp3_8
-> > +
-> > +                  These pin groups are used for selecting the drive strength
-> > +                  parameters.
-> > +
-> > +                  drv0_31_30, drv0_29_28, drv0_27_26, drv0_25_24, drv0_23_22,
-> > +                  drv0_21_20, drv0_19_18, drv0_17_16, drv0_15_14, drv0_13_12,
-> > +                  drv0_11_10, drv0_9_8, drv0_7_6, drv0_5_4, drv0_3_2, drv0_1_0,
-> > +                  drv1_29_28, drv1_27_26, drv1_25_24, drv1_23_22, drv1_21_20,
-> > +                  drv1_19_18, drv1_17_16, drv1_15_14, drv1_13_12, drv1_11_10,
-> > +                  drv1_9_8, drv1_7_6, drv1_5_4, drv2_31_30, drv2_29_28,
-> > +                  drv2_27_26, drv2_21_20
-> > +
-> > +                  These pin groups are used for selecting the slew rate
-> > +                  parameters.
-> > +
-> > +                  sr0_15, sr0_14, sr0_13, sr0_12, sr0_11, sr0_10, sr0_9, sr0_8,
-> > +                  sr0_7, sr0_6, sr0_5, sr0_4, sr0_3, sr0_2, sr0_1, sr0_0,
-> > +                  sr1_25, sr1_24, sr1_23, sr1_22, sr1_21, sr1_20, sr1_19,
-> > +                  sr1_18, sr2_31, sr2_30, sr2_29, sr2_25
-> > +
-> > +- function:       An array of strings, each string containing the name of the
-> > +                  pinmux functions. These functions can only be selected by
-> > +                  the corresponding pin groups. The following are the list of
-> > +                  pinmux functions available:
-> > +
-> > +                  eram, eth_rmii, eth_smii, spi0, spi1, spi2, spi3, sens0,
-> > +                  uart0, uart1, uart2, uart3, uart4, uart5, uart6, i2s0, i2s1,
-> > +                  pcm0, pcm1, jtag, pwm0, pwm1, pwm2, pwm3, pwm4, pwm5, sd0,
-> > +                  sd1, sd2, sd3, i2c0, i2c1, i2c2, i2c3, i2c4, i2c5, lvds,
-> > +                  usb30, usb20, gpu, mipi_csi0, mipi_csi1, mipi_dsi, nand0,
-> > +                  nand1, spdif, sirq0, sirq1, sirq2
-> > +
-> > +Optional Properties:
-> > +
-> > +- bias-bus-hold:  No arguments. The specified pins should retain the previous
-> > +                  state value.
-> > +- bias-high-impedance: No arguments. The specified pins should be configured
-> > +                  as high impedance.
-> > +- bias-pull-down: No arguments. The specified pins should be configued as
-> 
-> configured
-> 
-Ack.
-> > +                  pull down.
-> > +- bias-pull-up:   No arguments. The specified pins should be configued as
-> 
-> ditto
-> 
-Ack.
-> > +                  pull up.
-> > +- input-schmitt-enable: No arguments: Enable schmitt trigger for the specified
-> > +                  pins
-> > +- input-schmitt-disable: No arguments: Disable schmitt trigger for the specified
-> > +                  pins
-> > +- slew-rate:      Integer. Sets slew rate for the specified pins.
-> > +                  Valid values are:
-> > +                  <0>  - Slow
-> > +                  <1>  - Fast
-> > +- drive-strength: Integer. Selects the drive strength for the specified
-> > +                  pins.
-> > +                  Valid values are:
-> > +                  <2>  - mA
-> > +                  <4>  - mA
-> > +                  <8>  - mA
-> > +                  <12> - mA
-> 
-> This looks weird and should get a better explanation: <2> - 2 mA?
-> Or "... drive strength in mA for ..." and drop "- mA"?
-> 
-How about,
+The DMA engine in dwmac4 can segment a large TSO packet to several
+smaller packets of (max) size Maximum Segment Size (MSS).
 
-drive-strength: Integer. Selects the drive strength for the specified
-                pins in mA.
-                Valid values are:
-                2
-                4
-                8
-                12
+The DMA engine fetches and saves the MSS via a context descriptor.
 
-Thanks,
-Mani
-> > +
-> > +Example:
-> > +
-> > +          pinctrl: pinctrl@e01b0000 {
-> > +                  compatible = "actions,s900-pinctrl";
-> > +                  reg = <0x0 0xe01b0000 0x0 0x1000>;
-> > +                  clocks = <&cmu CLK_GPIO>;
-> > +
-> > +                  uart2-default: uart2-default {
-> > +                          pinmux {
-> > +                                  groups = "mfp1_22_lvds_oep_odn";
-> > +                                  function = "uart2";
-> > +                          };
-> > +                          pinconf {
-> > +                                  groups = "drv1_27_26";
-> > +                                  drive-strength = <12>;
-> > +                          };
-> > +                  };
-> > +          };
-> 
-> Regards,
-> Andreas
-> 
-> -- 
-> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-> GF: Felix Imendörffer, Jane Smithard, Graham Norton
-> HRB 21284 (AG Nürnberg)
+This context decriptor has to be provided to each tx DMA channel.
+To ensure that this is done, move struct member mss from stmmac_priv
+to stmmac_tx_queue.
+
+stmmac_reset_queues_param() now also resets mss, together with other
+queue parameters, so reset of mss value can be removed from
+stmmac_resume().
+
+init_dma_tx_desc_rings() now also resets mss, together with other
+queue parameters, so reset of mss value can be removed from
+stmmac_open().
+
+This fixes tx queue timeouts for dwmac4, with DT property
+snps,tx-queues-to-use > 1, when running iperf3 with multiple threads.
+
+Fixes: ce736788e8a9 ("net: stmmac: adding multiple buffers for TX")
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h      |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 13 +++++--------
+ 2 files changed, 6 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+index a916e13624eb..75161e1b7e55 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+@@ -58,6 +58,7 @@ struct stmmac_tx_queue {
+ 	unsigned int dirty_tx;
+ 	dma_addr_t dma_tx_phy;
+ 	u32 tx_tail_addr;
++	u32 mss;
+ };
+ 
+ struct stmmac_rx_queue {
+@@ -138,7 +139,6 @@ struct stmmac_priv {
+ 	spinlock_t ptp_lock;
+ 	void __iomem *mmcaddr;
+ 	void __iomem *ptpaddr;
+-	u32 mss;
+ 
+ #ifdef CONFIG_DEBUG_FS
+ 	struct dentry *dbgfs_dir;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 7ad841434ec8..d38bf38f12f5 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -1355,6 +1355,7 @@ static int init_dma_tx_desc_rings(struct net_device *dev)
+ 
+ 		tx_q->dirty_tx = 0;
+ 		tx_q->cur_tx = 0;
++		tx_q->mss = 0;
+ 
+ 		netdev_tx_reset_queue(netdev_get_tx_queue(priv->dev, queue));
+ 	}
+@@ -1946,6 +1947,7 @@ static void stmmac_tx_err(struct stmmac_priv *priv, u32 chan)
+ 						     (i == DMA_TX_SIZE - 1));
+ 	tx_q->dirty_tx = 0;
+ 	tx_q->cur_tx = 0;
++	tx_q->mss = 0;
+ 	netdev_tx_reset_queue(netdev_get_tx_queue(priv->dev, chan));
+ 	stmmac_start_tx_dma(priv, chan);
+ 
+@@ -2632,7 +2634,6 @@ static int stmmac_open(struct net_device *dev)
+ 
+ 	priv->dma_buf_sz = STMMAC_ALIGN(buf_sz);
+ 	priv->rx_copybreak = STMMAC_RX_COPYBREAK;
+-	priv->mss = 0;
+ 
+ 	ret = alloc_dma_desc_resources(priv);
+ 	if (ret < 0) {
+@@ -2872,10 +2873,10 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	mss = skb_shinfo(skb)->gso_size;
+ 
+ 	/* set new MSS value if needed */
+-	if (mss != priv->mss) {
++	if (mss != tx_q->mss) {
+ 		mss_desc = tx_q->dma_tx + tx_q->cur_tx;
+ 		priv->hw->desc->set_mss(mss_desc, mss);
+-		priv->mss = mss;
++		tx_q->mss = mss;
+ 		tx_q->cur_tx = STMMAC_GET_ENTRY(tx_q->cur_tx, DMA_TX_SIZE);
+ 	}
+ 
+@@ -4436,6 +4437,7 @@ static void stmmac_reset_queues_param(struct stmmac_priv *priv)
+ 
+ 		tx_q->cur_tx = 0;
+ 		tx_q->dirty_tx = 0;
++		tx_q->mss = 0;
+ 	}
+ }
+ 
+@@ -4481,11 +4483,6 @@ int stmmac_resume(struct device *dev)
+ 
+ 	stmmac_reset_queues_param(priv);
+ 
+-	/* reset private mss value to force mss context settings at
+-	 * next tso xmit (only used for gmac4).
+-	 */
+-	priv->mss = 0;
+-
+ 	stmmac_clear_descriptors(priv);
+ 
+ 	stmmac_hw_setup(ndev, false);
+-- 
+2.14.2
