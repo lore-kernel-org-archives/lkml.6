@@ -1,245 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752490AbeBSKFz convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 05:05:55 -0500
-Received: from lhrrgout.huawei.com ([194.213.3.17]:26627 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752370AbeBSKFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 05:05:52 -0500
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: Alex Williamson <alex.williamson@redhat.com>
-CC: "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>,
-        "xuwei (O)" <xuwei5@huawei.com>
-Subject: RE: [PATCH v3 5/6] vfio/type1: Add IOVA range capability support
-Thread-Topic: [PATCH v3 5/6] vfio/type1: Add IOVA range capability support
-Thread-Index: AQHTpkH2bkEz1obYekandfuFFj5ANaOniSiAgAP7prA=
-Date: Mon, 19 Feb 2018 10:05:40 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA838648B26@FRAEML521-MBX.china.huawei.com>
-References: <20180215094504.4972-1-shameerali.kolothum.thodi@huawei.com>
-        <20180215094504.4972-6-shameerali.kolothum.thodi@huawei.com>
- <20180216151223.381bfcf9@w520.home>
-In-Reply-To: <20180216151223.381bfcf9@w520.home>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1752481AbeBSKH5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 05:07:57 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:57757 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752245AbeBSKHz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 05:07:55 -0500
+Date: Mon, 19 Feb 2018 11:07:54 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Igor Plyatov <plyatov@gmail.com>
+Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        linux-kernel@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
+        rtc-linux@googlegroups.com, util-linux@vger.kernel.org
+Subject: Re: 500 ms delay in time saved into RTC
+Message-ID: <20180219100754.GL14177@piout.net>
+References: <30ae185f-28c9-54f1-2884-4ee7801b130e@gmail.com>
+ <34f50661-85f5-eb46-3ff7-45f0c2bb5960@prevas.dk>
+ <c91e0079-c31f-715d-bb2e-648af34565d7@gmail.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c91e0079-c31f-715d-bb2e-648af34565d7@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> -----Original Message-----
-> From: Alex Williamson [mailto:alex.williamson@redhat.com]
-> Sent: Friday, February 16, 2018 10:12 PM
-> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-> Cc: eric.auger@redhat.com; pmorel@linux.vnet.ibm.com;
-> kvm@vger.kernel.org; linux-kernel@vger.kernel.org; Linuxarm
-> <linuxarm@huawei.com>; John Garry <john.garry@huawei.com>; xuwei (O)
-> <xuwei5@huawei.com>
-> Subject: Re: [PATCH v3 5/6] vfio/type1: Add IOVA range capability support
+On 19/02/2018 at 12:16:04 +0300, Igor Plyatov wrote:
+> Dear Rasmus,
 > 
-> On Thu, 15 Feb 2018 09:45:03 +0000
-> Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
+> thank you very much for explanation!
 > 
-> > This  allows the user-space to retrieve the supported IOVA
-> > range(s), excluding any reserved regions. The implementation
-> > is based on capability chains, added to VFIO_IOMMU_GET_INFO ioctl.
-> >
-> > Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> > ---
-> >  drivers/vfio/vfio_iommu_type1.c | 92
-> +++++++++++++++++++++++++++++++++++++++++
-> >  include/uapi/linux/vfio.h       | 23 +++++++++++
-> >  2 files changed, 115 insertions(+)
-> >
-> > diff --git a/drivers/vfio/vfio_iommu_type1.c
-> b/drivers/vfio/vfio_iommu_type1.c
-> > index dae01c5..21e575c 100644
-> > --- a/drivers/vfio/vfio_iommu_type1.c
-> > +++ b/drivers/vfio/vfio_iommu_type1.c
-> > @@ -1925,6 +1925,68 @@ static int
-> vfio_domains_have_iommu_cache(struct vfio_iommu *iommu)
-> >  	return ret;
-> >  }
-> >
-> > +static int vfio_add_iova_cap(struct vfio_info_cap *caps,
-> > +		 struct vfio_iommu_type1_info_cap_iova_range *cap_iovas,
-> > +		 size_t size)
-> > +{
-> > +	struct vfio_info_cap_header *header;
-> > +	struct vfio_iommu_type1_info_cap_iova_range *iova_cap;
-> > +
-> > +	header = vfio_info_cap_add(caps, size,
-> > +
-> 	VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE, 1);
-> > +	if (IS_ERR(header))
-> > +		return PTR_ERR(header);
-> > +
-> > +	iova_cap = container_of(header,
-> > +			struct vfio_iommu_type1_info_cap_iova_range,
-> header);
-> > +	iova_cap->nr_iovas = cap_iovas->nr_iovas;
-> > +	memcpy(iova_cap->iova_ranges, cap_iovas->iova_ranges,
-> > +		cap_iovas->nr_iovas * sizeof(*cap_iovas->iova_ranges));
-> > +	return 0;
-> > +}
-> > +
-> > +static int vfio_build_iommu_iova_caps(struct vfio_iommu *iommu,
-> > +				struct vfio_info_cap *caps)
-> > +{
-> > +	struct vfio_iommu_type1_info_cap_iova_range *cap_iovas;
-> > +	struct vfio_iova *iova;
-> > +	size_t size;
-> > +	int iovas = 0, i = 0, ret;
-> > +
-> > +	mutex_lock(&iommu->lock);
-> > +
-> > +	list_for_each_entry(iova, &iommu->iova_list, list)
-> > +		iovas++;
-> > +
-> > +	if (!iovas) {
-> > +		ret = -EINVAL;
-> > +		goto out_unlock;
-> > +	}
-> > +
-> > +	size = sizeof(*cap_iovas) + (iovas * sizeof(*cap_iovas->iova_ranges));
-> > +
-> > +	cap_iovas = kzalloc(size, GFP_KERNEL);
-> > +	if (!cap_iovas) {
-> > +		ret = -ENOMEM;
-> > +		goto out_unlock;
-> > +	}
-> > +
-> > +	cap_iovas->nr_iovas = iovas;
-> > +
-> > +	list_for_each_entry(iova, &iommu->iova_list, list) {
-> > +		cap_iovas->iova_ranges[i].start = iova->start;
-> > +		cap_iovas->iova_ranges[i].end = iova->end;
-> > +		i++;
-> > +	}
-> > +
-> > +	ret = vfio_add_iova_cap(caps, cap_iovas, size);
-> > +
-> > +	kfree(cap_iovas);
-> > +out_unlock:
-> > +	mutex_unlock(&iommu->lock);
-> > +	return ret;
-> > +}
-> > +
-> >  static long vfio_iommu_type1_ioctl(void *iommu_data,
-> >  				   unsigned int cmd, unsigned long arg)
-> >  {
-> > @@ -1946,6 +2008,8 @@ static long vfio_iommu_type1_ioctl(void
-> *iommu_data,
-> >  		}
-> >  	} else if (cmd == VFIO_IOMMU_GET_INFO) {
-> >  		struct vfio_iommu_type1_info info;
-> > +		struct vfio_info_cap caps = { .buf = NULL, .size = 0 };
-> > +		int ret;
-> >
-> >  		minsz = offsetofend(struct vfio_iommu_type1_info,
-> iova_pgsizes);
-> >
-> > @@ -1959,6 +2023,34 @@ static long vfio_iommu_type1_ioctl(void
-> *iommu_data,
-> >
-> >  		info.iova_pgsizes = vfio_pgsize_bitmap(iommu);
-> >
-> > +		if (info.argsz == minsz)
-> > +			goto done;
+> I have set "RTC_SET_DELAY_SECS = 0.0" in hwclock.c and got acceptable
+> result.
 > 
-> I don't think the above branch should exist, we want to tell the user
-> via argsz and flags that capabilities exist even if they only passed
-> the previous structure size through.
-
-Ok. I will remove this.
- 
-> > +
-> > +		ret = vfio_build_iommu_iova_caps(iommu, &caps);
-> > +		if (ret)
-> > +			return ret;
-> > +
-> > +		if (caps.size) {
-> > +			info.flags |= VFIO_IOMMU_INFO_CAPS;
-> > +			minsz = offsetofend(struct vfio_iommu_type1_info,
-> > +							 cap_offset);
+> It wonder why such critical function does not implemented on kernel level in
+> RTC driver?
+> It is very strange to rely on specific HW in user space SW.
 > 
-> Only update minsz if this is within the provided argsz.
 
-Ok.
+Because of the way the API is designed, handling the MC146818A oddity is
+not possible in the driver (i.e. 50% of the time, it will be too late
+to handle it).
 
-> > +			if (info.argsz < sizeof(info) + caps.size) {
-> > +				info.argsz = sizeof(info) + caps.size;
-> > +				info.cap_offset = 0;
-> 
-> IOW, if cap_offset doesn't get copied to the user, that's ok, we've
-> provided them the flag and argsz they need to recognize it's there and
-> call with a sufficient buffer next time.
+You can use busybox hwclock which has the x86 insanity commented out:
+https://git.busybox.net/busybox/tree/util-linux/hwclock.c
 
-Ok. I will change the logic here.
 
-Thanks,
-Shameer
-
-> > +			} else {
-> > +				vfio_info_cap_shift(&caps, sizeof(info));
-> > +				if (copy_to_user((void __user *)arg +
-> > +						sizeof(info), caps.buf,
-> > +						caps.size)) {
-> > +					kfree(caps.buf);
-> > +					return -EFAULT;
-> > +				}
-> > +				info.cap_offset = sizeof(info);
-> > +			}
-> > +
-> > +			kfree(caps.buf);
-> > +		}
-> > +done:
-> >  		return copy_to_user((void __user *)arg, &info, minsz) ?
-> >  			-EFAULT : 0;
-> >
-> > diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> > index c743721..46b49e9 100644
-> > --- a/include/uapi/linux/vfio.h
-> > +++ b/include/uapi/linux/vfio.h
-> > @@ -589,7 +589,30 @@ struct vfio_iommu_type1_info {
-> >  	__u32	argsz;
-> >  	__u32	flags;
-> >  #define VFIO_IOMMU_INFO_PGSIZES (1 << 0)	/* supported page sizes info */
-> > +#define VFIO_IOMMU_INFO_CAPS	(1 << 1)	/* Info supports caps */
-> >  	__u64	iova_pgsizes;		/* Bitmap of supported page sizes */
-> > +	__u32   cap_offset;	/* Offset within info struct of first cap */
-> > +};
-> > +
-> > +/*
-> > + * The IOVA capability allows to report the valid IOVA range(s)
-> > + * excluding any reserved regions associated with dev group. Any dma
-> > + * map attempt outside the valid iova range will return error.
-> > + *
-> > + * The structures below define version 1 of this capability.
-> > + */
-> > +#define VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE  1
-> > +
-> > +struct vfio_iova_range {
-> > +	__u64	start;
-> > +	__u64	end;
-> > +};
-> > +
-> > +struct vfio_iommu_type1_info_cap_iova_range {
-> > +	struct vfio_info_cap_header header;
-> > +	__u32	nr_iovas;
-> > +	__u32	reserved;
-> > +	struct vfio_iova_range iova_ranges[];
-> >  };
-> >
-> >  #define VFIO_IOMMU_GET_INFO _IO(VFIO_TYPE, VFIO_BASE + 12)
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
