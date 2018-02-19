@@ -1,25 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752465AbeBSIUY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 03:20:24 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:54568 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752067AbeBSITE (ORCPT
+        id S1752517AbeBSIUs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 03:20:48 -0500
+Received: from vegas.theobroma-systems.com ([144.76.126.164]:56163 "EHLO
+        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751760AbeBSITC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 03:19:04 -0500
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: maxime.ripard@bootlin.com, wens@csie.org, linux@armlinux.org.uk,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, clabbe.montjoie@gmail.com,
-        thomas.petazzoni@bootlin.com, mylene.josserand@bootlin.com,
-        quentin.schulz@bootlin.com
-Subject: [PATCH v3 3/7] ARM: dts: sun8i: Add PRCM device node for the A83T dtsi
-Date: Mon, 19 Feb 2018 09:18:33 +0100
-Message-Id: <20180219081837.15482-4-mylene.josserand@bootlin.com>
+        Mon, 19 Feb 2018 03:19:02 -0500
+From: Klaus Goger <klaus.goger@theobroma-systems.com>
+To: linux-rockchip@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
+        Klaus Goger <klaus.goger@theobroma-systems.com>
+Subject: [PATCH v3 0/2] arm64: dts: rockchip: enable I2S codec on rk3399-puma-haikou
+Date: Mon, 19 Feb 2018 09:18:52 +0100
+Message-Id: <20180219081855.34400-1-klaus.goger@theobroma-systems.com>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180219081837.15482-1-mylene.josserand@bootlin.com>
-References: <20180219081837.15482-1-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -27,30 +22,33 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we found in Sun9i-A80, PRCM is a collection of clock controls,
-reset controls, and various power switches/gates.
-It is used with CPUCFG for SMP bringup and CPU hotplugging.
+Enables the audio codec on the Haikou Baseboard when used with a RK3399-Q7.
 
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Changes in v3:
+- split i2s0 move from rk3399-puma-haikou.dts to rk3399-puma.dtsi into it's
+  own patch
+- use dasheѕ in node names
+- added missing vin-supply properties to regulators
+  had to add an additional regulator to model this correctly
+- simple overwrite pins in i2s0_2ch_bus instead of deleting and redefining
+  the node
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index e45bab836620..3e7317ec3e43 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -699,6 +699,11 @@
- 			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		prcm@1f01400 {
-+			compatible = "allwinner,sun8i-a83t-prcm";
-+			reg = <0x1f01400 0x400>;
-+		};
-+
- 		r_ccu: clock@1f01400 {
- 			compatible = "allwinner,sun8i-a83t-r-ccu";
- 			reg = <0x01f01400 0x400>;
+Changes in v2:
+- reordered entries as suggested in review
+- removed a conflicting i2s definition in rk3399-puma-haikou.dts
+  i2s0 was already enabled in rk3399-puma.dtsi as it should be,
+  so reuse it and fix the incorrect rockchip,*-channels values
+- add a patch to the series that definies a generic i2s0-2ch-bus
+- overwrite the generic pin definition of i2s0-2ch-bus with a specific
+  one used in the Haikou with RK3399-Q7 setup
+
+Klaus Goger (2):
+  arm64: dts: rockchip: move i2s0 node from baseboard to SoM
+  arm64: dts: rockchip: enable I2S codec on rk3399-puma-haikou
+
+ .../arm64/boot/dts/rockchip/rk3399-puma-haikou.dts | 71 +++++++++++++++++++---
+ arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi      | 22 +++++++
+ 2 files changed, 85 insertions(+), 8 deletions(-)
+
 -- 
 2.11.0
