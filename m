@@ -1,64 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752619AbeBSO2d (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 09:28:33 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:47390 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751446AbeBSO2c (ORCPT
+        id S1752640AbeBSOaI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 09:30:08 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53520 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751447AbeBSOaG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 09:28:32 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Date: Mon, 19 Feb 2018 14:28:16 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH v2 1/2] mfd: arizona: Update reset pin to use GPIOD
-Message-ID: <20180219142816.ccrkxthzmtpopnw5@localhost.localdomain>
-References: <20180219133038.21995-1-ckeepax@opensource.cirrus.com>
- <CAHp75Vc6ok2s0fiQi9ePgmf4BVyO5N125B6iE1jnqWmgWF01Ng@mail.gmail.com>
+        Mon, 19 Feb 2018 09:30:06 -0500
+X-Google-Smtp-Source: AH8x224EwDK9R+GnqpUlCz/VrqCWudVnyd5jEoDhvCmzgFE1VPNw8NneBVFDcMyO+HjVVvL6W4B1Lg==
+Date: Mon, 19 Feb 2018 15:30:02 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        airlied@linux.ie, daniel.vetter@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: Re: [PATCH] drm/simple_kms_helper: Fix NULL pointer dereference with
+ no active CRTC
+Message-ID: <20180219143002.GC22199@phenom.ffwll.local>
+Mail-Followup-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        airlied@linux.ie, daniel.vetter@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <1518511456-28257-1-git-send-email-andr2000@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHp75Vc6ok2s0fiQi9ePgmf4BVyO5N125B6iE1jnqWmgWF01Ng@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=930 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1802190180
+In-Reply-To: <1518511456-28257-1-git-send-email-andr2000@gmail.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 03:36:29PM +0200, Andy Shevchenko wrote:
-> On Mon, Feb 19, 2018 at 3:30 PM, Charles Keepax
-> <ckeepax@opensource.cirrus.com> wrote:
-> > Now GPIOD has support for both pdata systems and for non-standard DT
-> > bindings the Arizona reset GPIO can be converted to use it.
+On Tue, Feb 13, 2018 at 10:44:16AM +0200, Oleksandr Andrushchenko wrote:
+> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 > 
-> >  static inline void arizona_enable_reset(struct arizona *arizona)
-> >  {
-> > -       if (arizona->pdata.reset)
-> > -               gpio_set_value_cansleep(arizona->pdata.reset, 0);
-> > +       gpiod_set_value_cansleep(arizona->pdata.reset, 0);
-> >  }
+> It is possible that drm_simple_kms_plane_atomic_check called
+> with no CRTC set, e.g. when user-space application sets CRTC_ID/FB_ID
+> to 0 before doing any actual drawing. This leads to NULL pointer
+> dereference because in this case new CRTC state is NULL and must be
+> checked before accessing.
 > 
-> Did you try that code when !GPIOLIB ?
+> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> ---
+>  drivers/gpu/drm/drm_simple_kms_helper.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> Or driver depends on it?
-> 
+> diff --git a/drivers/gpu/drm/drm_simple_kms_helper.c b/drivers/gpu/drm/drm_simple_kms_helper.c
+> index 9ca8a4a59b74..a05eca9cec8b 100644
+> --- a/drivers/gpu/drm/drm_simple_kms_helper.c
+> +++ b/drivers/gpu/drm/drm_simple_kms_helper.c
+> @@ -121,8 +121,10 @@ static int drm_simple_kms_plane_atomic_check(struct drm_plane *plane,
+>  	pipe = container_of(plane, struct drm_simple_display_pipe, plane);
+>  	crtc_state = drm_atomic_get_new_crtc_state(plane_state->state,
+>  						   &pipe->crtc);
+> -	if (!crtc_state->enable)
+> -		return 0; /* nothing to check when disabling or disabled */
+> +
+> +	if (!crtc_state || !crtc_state->enable)
+> +		/* nothing to check when disabling or disabled or no CRTC set */
+> +		return 0;
+>  
+>  	if (crtc_state->enable)
+>  		drm_mode_get_hv_timing(&crtc_state->mode,
 
-Hmm... yeah ok maybe I need to leave that if (reset) in, didn't
-realise all those stubs straight up call WARNs. Although seems a bit
-of a shame as gpiod_set_value_cansleep will do the NULL check as well.
+Hm, this is a bit annoying, since the can_position = false parameter to
+drm_atomic_helper_check_plane_state is supposed to catch all this. Would
+moving all the checks after the call to that helper, and gating them on
+plane_state->visible also work?
 
-Looks like attempt 3 it is :-)
+We'd need to add a guarantee to drm_atomic_helper_check_plane_state that
+it can cope with crtc_state == NULL, but I think that's a good idea
+anyway. Atm it shouldn't end up looking at the crtc_state pointer in that
+case.
 
-Thanks,
-Charles
+Otherwise we'll just go with your fix, but it feels all a bit too fragile,
+hence why I want to explore more robust options a bit.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
