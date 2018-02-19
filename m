@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753704AbeBSSXf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 13:23:35 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5252 "EHLO huawei.com"
+        id S1753747AbeBSSXz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 13:23:55 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5251 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753434AbeBSSWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753435AbeBSSWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Feb 2018 13:22:16 -0500
 From: John Garry <john.garry@huawei.com>
 To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
@@ -13,9 +13,9 @@ CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
         Xiaofei Tan <tanxiaofei@huawei.com>,
         John Garry <john.garry@huawei.com>
-Subject: [PATCH 2/8] scsi: hisi_sas: support the property of signal attenuation for v2 hw
-Date: Tue, 20 Feb 2018 03:13:25 +0800
-Message-ID: <1519067611-206638-3-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 5/8] scsi: hisi_sas: increase timer expire of internal abort task
+Date: Tue, 20 Feb 2018 03:13:28 +0800
+Message-ID: <1519067611-206638-6-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1519067611-206638-1-git-send-email-john.garry@huawei.com>
 References: <1519067611-206638-1-git-send-email-john.garry@huawei.com>
@@ -29,89 +29,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Xiaofei Tan <tanxiaofei@huawei.com>
 
-The register SAS_PHY_CTRL is configured according to signal quality.
-The signal quality is calculated by signal attenuation of hardware
-physical link. It may be different for different PCB layout.
+The current 110ms expiry time is not long enough for the internal
+abort task.
 
-So, in order to give better support to new board, this patch add
-support to reading the devicetree property, signal-attenuation.
-Of course, we still keep an default value in driver to adapt old
-board.
+The reason is that the internal abort task could be blocked in HW
+if the HW is retrying to set up link. The internal abort task will
+be executed only when the retry process finished.
+
+The maximum time is 5s for the retry of setting up link. So, the timer
+expire should be more than 5s. This patch increases it from 110ms to 6s.
 
 Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 39 +++++++++++++++++++++++++++++++++-
- 1 file changed, 38 insertions(+), 1 deletion(-)
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index 4ccb61e..ab6db50 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -406,6 +406,17 @@ struct hisi_sas_err_record_v2 {
- 	__le32 dma_rx_err_type;
- };
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index 9d16372..9ff8790 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -871,6 +871,7 @@ static void hisi_sas_tmf_timedout(struct timer_list *t)
  
-+struct signal_attenuation_s {
-+	u32 de_emphasis;
-+	u32 preshoot;
-+	u32 boost;
-+};
-+
-+struct sig_atten_lu_s {
-+	const struct signal_attenuation_s *att;
-+	u32 sas_phy_ctrl;
-+};
-+
- static const struct hisi_sas_hw_error one_bit_ecc_errors[] = {
- 	{
- 		.irq_msk = BIT(SAS_ECC_INTR_DQE_ECC_1B_OFF),
-@@ -1130,9 +1141,16 @@ static void phys_try_accept_stp_links_v2_hw(struct hisi_hba *hisi_hba)
- 	}
- }
+ #define TASK_TIMEOUT 20
+ #define TASK_RETRY 3
++#define INTERNAL_ABORT_TIMEOUT 6
+ static int hisi_sas_exec_internal_tmf_task(struct domain_device *device,
+ 					   void *parameter, u32 para_len,
+ 					   struct hisi_sas_tmf_task *tmf)
+@@ -1574,7 +1575,7 @@ static int hisi_sas_query_task(struct sas_task *task)
+ 	task->task_proto = device->tproto;
+ 	task->task_done = hisi_sas_task_done;
+ 	task->slow_task->timer.function = hisi_sas_tmf_timedout;
+-	task->slow_task->timer.expires = jiffies + msecs_to_jiffies(110);
++	task->slow_task->timer.expires = jiffies + INTERNAL_ABORT_TIMEOUT*HZ;
+ 	add_timer(&task->slow_task->timer);
  
-+static const struct signal_attenuation_s x6000 = {9200, 0, 10476};
-+static const struct sig_atten_lu_s sig_atten_lu[] = {
-+	{ &x6000, 0x3016a68 },
-+};
-+
- static void init_reg_v2_hw(struct hisi_hba *hisi_hba)
- {
- 	struct device *dev = hisi_hba->dev;
-+	u32 sas_phy_ctrl = 0x30b9908;
-+	u32 signal[3];
- 	int i;
- 
- 	/* Global registers init */
-@@ -1176,9 +1194,28 @@ static void init_reg_v2_hw(struct hisi_hba *hisi_hba)
- 	hisi_sas_write32(hisi_hba, AXI_AHB_CLK_CFG, 1);
- 	hisi_sas_write32(hisi_hba, HYPER_STREAM_ID_EN_CFG, 1);
- 
-+	/* Get sas_phy_ctrl value to deal with TX FFE issue. */
-+	if (!device_property_read_u32_array(dev, "signal-attenuation",
-+					signal, ARRAY_SIZE(signal))) {
-+		for (i = 0; i < ARRAY_SIZE(sig_atten_lu); i++) {
-+			const struct sig_atten_lu_s *lookup = &sig_atten_lu[i];
-+			const struct signal_attenuation_s *att = lookup->att;
-+
-+			if ((signal[0] == att->de_emphasis) &&
-+			    (signal[1] == att->preshoot) &&
-+			    (signal[2] == att->boost)) {
-+				sas_phy_ctrl = lookup->sas_phy_ctrl;
-+				break;
-+			}
-+		}
-+
-+		if (i == ARRAY_SIZE(sig_atten_lu))
-+			dev_warn(dev, "unknown signal attenuation values, using default PHY ctrl config\n");
-+	}
-+
- 	for (i = 0; i < hisi_hba->n_phy; i++) {
- 		hisi_sas_phy_write32(hisi_hba, i, PROG_PHY_LINK_RATE, 0x855);
--		hisi_sas_phy_write32(hisi_hba, i, SAS_PHY_CTRL, 0x30b9908);
-+		hisi_sas_phy_write32(hisi_hba, i, SAS_PHY_CTRL, sas_phy_ctrl);
- 		hisi_sas_phy_write32(hisi_hba, i, SL_TOUT_CFG, 0x7d7d7d7d);
- 		hisi_sas_phy_write32(hisi_hba, i, SL_CONTROL, 0x0);
- 		hisi_sas_phy_write32(hisi_hba, i, TXID_AUTO, 0x2);
+ 	res = hisi_sas_internal_abort_task_exec(hisi_hba, sas_dev->device_id,
 -- 
 1.9.1
