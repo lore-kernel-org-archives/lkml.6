@@ -1,54 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752683AbeBSLwZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 06:52:25 -0500
-Received: from mga18.intel.com ([134.134.136.126]:58030 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752519AbeBSLwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 06:52:24 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,534,1511856000";
-   d="scan'208";a="31164950"
-Date: Mon, 19 Feb 2018 13:52:21 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2 v3] tpm: separate cmd_ready/go_idle from runtime_pm
-Message-ID: <20180219115221.7kd3ks7mrzmw36mz@linux.intel.com>
-References: <20180214134319.4400-1-tomas.winkler@intel.com>
- <20180214134319.4400-3-tomas.winkler@intel.com>
-MIME-Version: 1.0
+        id S1752717AbeBSLxX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 06:53:23 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:22316 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752644AbeBSLxV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 06:53:21 -0500
+To: peterz@infradead.org
+Cc: torvalds@linux-foundation.org, davej@codemonkey.org.uk,
+        npiggin@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, mhocko@kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH v2] lockdep: Fix fs_reclaim warning.
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <20180129102746.GQ2269@hirez.programming.kicks-ass.net>
+        <201801292047.EHC05241.OHSQOJOVtFMFLF@I-love.SAKURA.ne.jp>
+        <20180129135547.GR2269@hirez.programming.kicks-ass.net>
+        <201802012036.FEE78102.HOMFFOtJVFOSQL@I-love.SAKURA.ne.jp>
+        <201802082043.FFJ39503.SVQFFFOJMHLOtO@I-love.SAKURA.ne.jp>
+In-Reply-To: <201802082043.FFJ39503.SVQFFFOJMHLOtO@I-love.SAKURA.ne.jp>
+Message-Id: <201802192052.CGB00556.VHOOFJSQOMFLtF@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Mon, 19 Feb 2018 20:52:45 +0900
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180214134319.4400-3-tomas.winkler@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 03:43:19PM +0200, Tomas Winkler wrote:
-> We cannot use go_idle cmd_ready commands via runtime_pm handles
-> as with the introduction of localities this is no longer an optional
-> feature, while runtime pm can be not enabled.
-> Though cmd_ready/go_idle provides power saving feature, it's also part of
-> TPM2 protocol and should be called explicitly.
-> This patch exposes cmd_read/go_idle via tpm class ops and removes
-> runtime pm support as it is not used by any driver.
+Peter, are you OK with this patch?
+
+Tetsuo Handa wrote:
+> From 361d37a7d36978020dfb4c11ec1f4800937ccb68 Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Thu, 8 Feb 2018 10:35:35 +0900
+> Subject: [PATCH v2] lockdep: Fix fs_reclaim warning.
 > 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Dave Jones reported fs_reclaim lockdep warnings.
+> 
+>   ============================================
+>   WARNING: possible recursive locking detected
+>   4.15.0-rc9-backup-debug+ #1 Not tainted
+>   --------------------------------------------
+>   sshd/24800 is trying to acquire lock:
+>    (fs_reclaim){+.+.}, at: [<0000000084f438c2>] fs_reclaim_acquire.part.102+0x5/0x30
+> 
+>   but task is already holding lock:
+>    (fs_reclaim){+.+.}, at: [<0000000084f438c2>] fs_reclaim_acquire.part.102+0x5/0x30
+> 
+>   other info that might help us debug this:
+>    Possible unsafe locking scenario:
+> 
+>          CPU0
+>          ----
+>     lock(fs_reclaim);
+>     lock(fs_reclaim);
+> 
+>    *** DEADLOCK ***
+> 
+>    May be due to missing lock nesting notation
+> 
+>   2 locks held by sshd/24800:
+>    #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000001a069652>] tcp_sendmsg+0x19/0x40
+>    #1:  (fs_reclaim){+.+.}, at: [<0000000084f438c2>] fs_reclaim_acquire.part.102+0x5/0x30
+> 
+>   stack backtrace:
+>   CPU: 3 PID: 24800 Comm: sshd Not tainted 4.15.0-rc9-backup-debug+ #1
+>   Call Trace:
+>    dump_stack+0xbc/0x13f
+>    __lock_acquire+0xa09/0x2040
+>    lock_acquire+0x12e/0x350
+>    fs_reclaim_acquire.part.102+0x29/0x30
+>    kmem_cache_alloc+0x3d/0x2c0
+>    alloc_extent_state+0xa7/0x410
+>    __clear_extent_bit+0x3ea/0x570
+>    try_release_extent_mapping+0x21a/0x260
+>    __btrfs_releasepage+0xb0/0x1c0
+>    btrfs_releasepage+0x161/0x170
+>    try_to_release_page+0x162/0x1c0
+>    shrink_page_list+0x1d5a/0x2fb0
+>    shrink_inactive_list+0x451/0x940
+>    shrink_node_memcg.constprop.88+0x4c9/0x5e0
+>    shrink_node+0x12d/0x260
+>    try_to_free_pages+0x418/0xaf0
+>    __alloc_pages_slowpath+0x976/0x1790
+>    __alloc_pages_nodemask+0x52c/0x5c0
+>    new_slab+0x374/0x3f0
+>    ___slab_alloc.constprop.81+0x47e/0x5a0
+>    __slab_alloc.constprop.80+0x32/0x60
+>    __kmalloc_track_caller+0x267/0x310
+>    __kmalloc_reserve.isra.40+0x29/0x80
+>    __alloc_skb+0xee/0x390
+>    sk_stream_alloc_skb+0xb8/0x340
+>    tcp_sendmsg_locked+0x8e6/0x1d30
+>    tcp_sendmsg+0x27/0x40
+>    inet_sendmsg+0xd0/0x310
+>    sock_write_iter+0x17a/0x240
+>    __vfs_write+0x2ab/0x380
+>    vfs_write+0xfb/0x260
+>    SyS_write+0xb6/0x140
+>    do_syscall_64+0x1e5/0xc05
+>    entry_SYSCALL64_slow_path+0x25/0x25
+> 
+> This warning is caused by commit d92a8cfcb37ecd13 ("locking/lockdep: Rework
+> FS_RECLAIM annotation") which replaced lockdep_set_current_reclaim_state()/
+> lockdep_clear_current_reclaim_state() in __perform_reclaim() and
+> lockdep_trace_alloc() in slab_pre_alloc_hook() with fs_reclaim_acquire()/
+> fs_reclaim_release(). Since __kmalloc_reserve() from __alloc_skb() adds
+> __GFP_NOMEMALLOC | __GFP_NOWARN to gfp_mask, and all reclaim path simply
+> propagates __GFP_NOMEMALLOC, fs_reclaim_acquire() in slab_pre_alloc_hook()
+> is trying to grab the 'fake' lock again when __perform_reclaim() already
+> grabbed the 'fake' lock.
+> 
+> The
+> 
+>   /* this guy won't enter reclaim */
+>   if ((current->flags & PF_MEMALLOC) && !(gfp_mask & __GFP_NOMEMALLOC))
+>           return false;
+> 
+> test which causes slab_pre_alloc_hook() to try to grab the 'fake' lock
+> was added by commit cf40bd16fdad42c0 ("lockdep: annotate reclaim context
+> (__GFP_NOFS)"). But that test is outdated because PF_MEMALLOC thread won't
+> enter reclaim regardless of __GFP_NOMEMALLOC after commit 341ce06f69abfafa
+> ("page allocator: calculate the alloc_flags for allocation only once")
+> added the PF_MEMALLOC safeguard (
+> 
+>   /* Avoid recursion of direct reclaim */
+>   if (p->flags & PF_MEMALLOC)
+>           goto nopage;
+> 
+> in __alloc_pages_slowpath()).
+> 
+> Thus, let's fix outdated test by removing __GFP_NOMEMALLOC test and allow
+> __need_fs_reclaim() to return false.
+> 
+> Reported-and-tested-by: Dave Jones <davej@codemonkey.org.uk>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Nick Piggin <npiggin@gmail.com>
 > ---
-> V2: resent
-> V3: resent
-
-Only the cover letter needs a backlog but the code change looks
-good to me.
-
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
-/Jarkko
+>  mm/page_alloc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 81e18ce..19fb76b 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -3590,7 +3590,7 @@ static bool __need_fs_reclaim(gfp_t gfp_mask)
+>  		return false;
+>  
+>  	/* this guy won't enter reclaim */
+> -	if ((current->flags & PF_MEMALLOC) && !(gfp_mask & __GFP_NOMEMALLOC))
+> +	if (current->flags & PF_MEMALLOC)
+>  		return false;
+>  
+>  	/* We're only interested __GFP_FS allocations for now */
+> -- 
+> 1.8.3.1
+> 
