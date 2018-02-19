@@ -1,67 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753061AbeBSPib (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 10:38:31 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:45710 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752587AbeBSPia (ORCPT
+        id S1753138AbeBSPjU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 10:39:20 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33076 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753016AbeBSPjS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 10:38:30 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C9C760240
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
-From: Shanker Donthineni <shankerd@codeaurora.org>
-To: Christoffer Dall <christoffer.dall@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>
-Cc: Vikram Sethi <vikrams@codeaurora.org>,
-        Shanker Donthineni <shankerd@codeaurora.org>
-Subject: [PATCH] KVM: arm/arm64: No need to zero CNTVOFF in kvm_timer_vcpu_put() for VHE
-Date: Mon, 19 Feb 2018 09:38:07 -0600
-Message-Id: <1519054687-14405-1-git-send-email-shankerd@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Mon, 19 Feb 2018 10:39:18 -0500
+X-Google-Smtp-Source: AH8x225DG6PoMEVaMclZ3gjMt6cCVI4PhSYKuL7qA15g8RdulxviglLAPamBHJ5s/ilif8Sr2/zmTw==
+Date: Mon, 19 Feb 2018 16:39:13 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Jonathan Corbet <corbet@lwn.net>, Jani Nikula <jani.nikula@intel.com>,
+        intel-gfx@lists.freedesktop.org, Tom Saeger <tom.saeger@oracle.com>,
+        linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: Re: [Intel-gfx] [PATCH 0/6] Add support for in-line nested struct
+ comments
+Message-ID: <20180219153913.GU22199@phenom.ffwll.local>
+Mail-Followup-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jani Nikula <jani.nikula@intel.com>,
+        intel-gfx@lists.freedesktop.org, Tom Saeger <tom.saeger@oracle.com>,
+        linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+References: <cover.1518788761.git.mchehab@s-opensource.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1518788761.git.mchehab@s-opensource.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In AArch64/AArch32, the virtual counter uses a fixed virtual offset
-of zero in the following situations as per ARMv8 specifications:
+On Fri, Feb 16, 2018 at 11:48:14AM -0200, Mauro Carvalho Chehab wrote:
+> This series fix two bugs at kernel-doc.rst examples and add support
+> for in-line nested struct comments.
+> 
+> It also converts one documentation at intel_dpio_phy to use it,
+> in order to give a practical example about how to use it.
+> 
+> Mauro Carvalho Chehab (6):
+>   doc-guide: kernel-doc: fix example for nested_foobar struct
+>   doc-guide: kernel-doc: fix example for inlined comments
+>   doc-guide: kernel-doc: move in-line section to be after nested struct
+>   scripts: kernel-doc: support in-line comments on nested structs/unions
+>   doc-guide: kernel-doc: add examples about nested union/structs
+>   drm: intel_dpio_phy: fix kernel-doc comments at nested struct
 
-1) HCR_EL2.E2H is 1, and CNTVCT_EL0/CNTVCT are read from EL2.
-2) HCR_EL2.{E2H, TGE} is {1, 1}, and either:
-   — CNTVCT_EL0 is read from Non-secure EL0 or EL2.
-   — CNTVCT is read from Non-secure EL0.
+Oh, this is cool. Thanks a lot for doing this.
+-Daniel
 
-So, no need to zero CNTVOFF_EL2/CNTVOFF for VHE case.
+> 
+>  Documentation/doc-guide/kernel-doc.rst | 69 ++++++++++++++++++++--------------
+>  drivers/gpu/drm/i915/intel_dpio_phy.c  |  2 +-
+>  scripts/kernel-doc                     |  2 +-
+>  3 files changed, 43 insertions(+), 30 deletions(-)
+> 
+> -- 
+> 2.14.3
+> 
+> 
+> _______________________________________________
+> Intel-gfx mailing list
+> Intel-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
 
-Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
----
- virt/kvm/arm/arch_timer.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/virt/kvm/arm/arch_timer.c b/virt/kvm/arm/arch_timer.c
-index 70268c0..86eca324 100644
---- a/virt/kvm/arm/arch_timer.c
-+++ b/virt/kvm/arm/arch_timer.c
-@@ -541,9 +541,11 @@ void kvm_timer_vcpu_put(struct kvm_vcpu *vcpu)
- 	 * The kernel may decide to run userspace after calling vcpu_put, so
- 	 * we reset cntvoff to 0 to ensure a consistent read between user
- 	 * accesses to the virtual counter and kernel access to the physical
--	 * counter.
-+	 * counter of non-VHE case. For VHE, the virtual counter uses a fixed
-+	 * virtual offset of zero, so no need to zero CNTVOFF_EL2 register.
- 	 */
--	set_cntvoff(0);
-+	if (!has_vhe())
-+		set_cntvoff(0);
- }
- 
- /*
 -- 
-Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
