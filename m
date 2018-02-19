@@ -1,80 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752488AbeBSIt5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 03:49:57 -0500
-Received: from mail.free-electrons.com ([62.4.15.54]:55895 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752066AbeBSItz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 03:49:55 -0500
-Date: Mon, 19 Feb 2018 09:49:44 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@bootlin.com>
-Cc: wens@csie.org, linux@armlinux.org.uk, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clabbe.montjoie@gmail.com, thomas.petazzoni@bootlin.com,
-        quentin.schulz@bootlin.com
-Subject: Re: [PATCH v3 5/7] arm: dts: sun8i: a83t: Add CCI-400 node
-Message-ID: <20180219084944.iqrdzhpl63gdf6wy@flea.lan>
-References: <20180219081837.15482-1-mylene.josserand@bootlin.com>
- <20180219081837.15482-6-mylene.josserand@bootlin.com>
+        id S1752219AbeBSIwH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 03:52:07 -0500
+Received: from mga04.intel.com ([192.55.52.120]:32021 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751866AbeBSIwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 03:52:06 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.46,534,1511856000";
+   d="scan'208";a="28254422"
+Subject: Re: [PATCH v2 09/16] mmc: sdhci: Add quirk to disable HW timeout
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180205125029.21570-1-kishon@ti.com>
+ <20180205125029.21570-10-kishon@ti.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <cda22332-ed17-9309-4989-19765744879b@intel.com>
+Date: Mon, 19 Feb 2018 10:51:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3wtrrwihokkagakw"
-Content-Disposition: inline
-In-Reply-To: <20180219081837.15482-6-mylene.josserand@bootlin.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180205125029.21570-10-kishon@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 05/02/18 14:50, Kishon Vijay Abraham I wrote:
+> Add quirk to disable HW timeout if the requested timeout is more than
+> the maximum obtainable timeout.
+> 
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/mmc/host/sdhci.c | 12 ++++++++++++
+>  drivers/mmc/host/sdhci.h |  7 +++++++
+>  2 files changed, 19 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 070aff9c108f..1aa74b4682f3 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -735,6 +735,12 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+>  		DBG("Too large timeout 0x%x requested for CMD%d!\n",
+>  		    count, cmd->opcode);
+>  		count = 0xE;
+> +		if (host->quirks2 & SDHCI_QUIRK2_DISABLE_HW_TIMEOUT) {
+> +			host->ier &= ~SDHCI_INT_DATA_TIMEOUT;
+> +			sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
+> +			sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
+> +			host->hw_timeout_disabled = true;
+> +		}
 
---3wtrrwihokkagakw
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+sdhci_calc_timeout() is really for calculations so please do this in
+sdhci_set_timeout() instead (i.e. change sdhci_calc_timeout() to return
+whether the timeout is too big).  Note that you need to cater for the "/*
+Unspecified timeout, assume max */" case and the
+SDHCI_QUIRK_BROKEN_TIMEOUT_VAL case.
 
-Hi,
+Also if SDHCI_INT_DATA_TIMEOUT is not being disabled, check here to
+re-enable it and leave sdhci_request_done() alone. i.e.
 
-On Mon, Feb 19, 2018 at 09:18:35AM +0100, Myl=E8ne Josserand wrote:
-> +				interrupts =3D <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
-> +				<GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
-> +				<GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,
-> +				<GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
-> +				<GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>,
-> +				<GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
-> +				<GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
-> +				<GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
+	else if (!(host->ier & SDHCI_INT_DATA_TIMEOUT)) {
+		host->ier |= SDHCI_INT_DATA_TIMEOUT;
+		sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
+		sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
+	}
 
-You should align these blocks on the first one in the array.
+Maybe make a separate subroutine for the update:
 
-Thanks!
-Maxime
+void sdhci_set_data_timeout_irq(struct sdhci_host *host, bool enable)
+{
+	if (enable)
+		host->ier |= SDHCI_INT_DATA_TIMEOUT;
+	else
+		host->ier &= ~SDHCI_INT_DATA_TIMEOUT;
+	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
+	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
+}
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
 
---3wtrrwihokkagakw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqKj6cACgkQ0rTAlCFN
-r3S60w//c/kfpgsnq89Es2YlR9bEb/fuju59qDYxfA2CDHmr9hi/SnyFDq9aU2wo
-0SvMOf8oF9xuoEosEHEjDS255JOYkDeBO0umWDqDfCwnwT0bCshNRClZNtcDs4ge
-uFDV730/dHWjTqvYgoSO0jAjz8nRhvaKPf9VEZuGBxlS0i/RSfLzx4Ss+86b6APp
-yUJpQRVgCDwmb9+MHHIA6Rv3mYKjR82v64y2nfO8r3E0a6aHMfobKiK84G0zEFL1
-T3byG3Zg1Oiyox2r7hsdZ6UgJMni74WPqTMzu+RbOpgVcfH90xIt5HuMmHVEgYfc
-/THLtT92c0cuR+4JMGcSWddkFjCTaKmY2KLmM+Uvg5XRDcT+5mKhrOGsjqirw9kc
-/FdS6+GIMSumOJmZ966OhFcTbOhZqPxiKKJ9umz6VXPj15A5mtL0vgSRawjkUn0Q
-ahbbA5hD6dfYzUIPYi9YM92jbS0PepbHrMkrhvagHsz+ymVDAg3qbssupiVED+o2
-a1A7QoByjZgRlgHaehKLy3KnJdUbbzkiZAnf2nekP+tU+7cUHokeMdmeFN0mzKeX
-tGnufSIQEerMcC03nzqYd7EINBCEW6hOTOCWsua+0T7M+NcGHtS3FspMSReveL0C
-Gli2z3FB6NT87BdYy5l+pnJMq7e3yK4xFxDsrP2/I3tD0zV5omg=
-=kjdy
------END PGP SIGNATURE-----
-
---3wtrrwihokkagakw--
+>  	}
+>  
+>  	return count;
+> @@ -2349,6 +2355,12 @@ static bool sdhci_request_done(struct sdhci_host *host)
+>  	}
+>  
+>  	sdhci_del_timer(host, mrq);
+> +	if (sdhci_data_line_cmd(mrq->cmd) && host->hw_timeout_disabled) {
+> +		host->ier |= SDHCI_INT_DATA_TIMEOUT;
+> +		sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
+> +		sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
+> +		host->hw_timeout_disabled = false;
+> +	}
+>  
+>  	/*
+>  	 * Always unmap the data buffers if they were mapped by
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index afab26fd70e6..3a967a56fcc3 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -437,6 +437,11 @@ struct sdhci_host {
+>  #define SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN		(1<<15)
+>  /* Controller has CRC in 136 bit Command Response */
+>  #define SDHCI_QUIRK2_RSP_136_HAS_CRC			(1<<16)
+> +/*
+> + * Disable HW timeout if the requested timeout is more than the maximum
+> + * obtainable timeout
+> + */
+> +#define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT			(1<<17)
+>  
+>  	int irq;		/* Device IRQ */
+>  	void __iomem *ioaddr;	/* Mapped address */
+> @@ -522,6 +527,8 @@ struct sdhci_host {
+>  	unsigned int            ocr_avail_mmc;
+>  	u32 ocr_mask;		/* available voltages */
+>  
+> +	bool			hw_timeout_disabled;
+> +
+>  	unsigned		timing;		/* Current timing */
+>  
+>  	u32			thread_isr;
+> 
