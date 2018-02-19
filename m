@@ -1,70 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752295AbeBSJrz convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 04:47:55 -0500
-Received: from mga06.intel.com ([134.134.136.31]:51491 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752232AbeBSJry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 04:47:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.46,534,1511856000";
-   d="scan'208";a="35806284"
-Content-Type: text/plain; charset="utf-8"
+        id S1752418AbeBSJsc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 04:48:32 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37791 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752208AbeBSJsa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 04:48:30 -0500
+X-Google-Smtp-Source: AH8x227L3GtOJE/2jgJb8w4y8hi50h5U2VyIdXysSkOqAXElqiU/eRnQl+zt+vAwkn5Ebm/kqfSXpA==
+Subject: Re: [PATCH v2 3/3] power: supply: axp288_fuel_gauge: Do not register
+ FG on ECS EF20EA
+To: Sebastian Reichel <sre@kernel.org>, Carlo Caione <carlo@caione.org>
+Cc: linux@endlessm.com, rjw@rjwysocki.net, lenb@kernel.org, wens@csie.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, Carlo Caione <carlo@endlessm.com>
+References: <20180216082616.25084-1-carlo@caione.org>
+ <20180216082616.25084-4-carlo@caione.org>
+ <20180216142655.heommid67q3g22qt@earth.universe>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <ea75cd5f-9937-8b95-d96a-761fcd091594@redhat.com>
+Date: Mon, 19 Feb 2018 10:48:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Bjorn Helgaas <helgaas@kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Sinan Kaya <okaya@codeaurora.org>
-From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-In-Reply-To: <87bmglb9w5.fsf@intel.com>
-Cc: linux-pci@vger.kernel.org, timur@codeaurora.org,
-        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <1511801886-6753-1-git-send-email-okaya@codeaurora.org>
- <1511801886-6753-10-git-send-email-okaya@codeaurora.org>
- <20180216145444.GA11014@bhelgaas-glaptop.roam.corp.google.com>
- <87bmglb9w5.fsf@intel.com>
-Message-ID: <151903366919.5458.4766479266211215742@jlahtine-desk.ger.corp.intel.com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH V3 09/29] drm/i915: deprecate pci_get_bus_and_slot()
-Date: Mon, 19 Feb 2018 11:47:49 +0200
+In-Reply-To: <20180216142655.heommid67q3g22qt@earth.universe>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jani Nikula (2018-02-19 11:34:34)
-> On Fri, 16 Feb 2018, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > On Mon, Nov 27, 2017 at 11:57:46AM -0500, Sinan Kaya wrote:
-> >> pci_get_bus_and_slot() is restrictive such that it assumes domain=0 as
-> >> where a PCI device is present. This restricts the device drivers to be
-> >> reused for other domain numbers.
-> >> 
-> >> Getting ready to remove pci_get_bus_and_slot() function in favor of
-> >> pci_get_domain_bus_and_slot().
-> >> 
-> >> Extract the domain number from drm_device and pass it into
-> >> pci_get_domain_bus_and_slot() function.
-> >> 
-> >> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-> >
-> > I don't know what happened to this, and it didn't make it into
-> > v4.16-rc1.  I applied it to pci/deprecate-get-bus-and-slot for v4.17
-> > along with the patch that actually removes pci_get_bus_and_slot().
-> 
-> It fell between the cracks as we couldn't apply it before getting a
-> backmerge on the dependency. Sorry about that.
-> 
-> Ack for merging through your tree.
+Hi,
 
-I just retested the patch and it still passes CI. We also now have the
-dependency in our tree through the backmerge, so I can send this for the
-next drm-next pull request. Either way suits me.
+On 16-02-18 15:26, Sebastian Reichel wrote:
+> Hi,
+> 
+> On Fri, Feb 16, 2018 at 08:26:16AM +0000, Carlo Caione wrote:
+>> From: Carlo Caione <carlo@endlessm.com>
+>>
+>> The ECS EF20EA laptop ships an AXP288 but it is actually using a
+>> different, separate FG chip for AC and battery monitoring. On this
+>> laptop we need to keep using the regular ACPI driver and disable the
+>> AXP288 FG to avoid reporting two batteries to userspace.
+>>
+>> Signed-off-by: Carlo Caione <carlo@endlessm.com>
+>> ---
+> 
+> It looks like this could be applied independently of the ACPI
+> patches to the power-supply tree?
 
-Regards, Joonas
+Yes this can be applied independently.
+
+Regards,
+
+Hans
+
+
+
+> 
+> -- Sebastian
+> 
+>>   drivers/power/supply/axp288_fuel_gauge.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/power/supply/axp288_fuel_gauge.c b/drivers/power/supply/axp288_fuel_gauge.c
+>> index 4cc6e038dfdd..903891a9bcf0 100644
+>> --- a/drivers/power/supply/axp288_fuel_gauge.c
+>> +++ b/drivers/power/supply/axp288_fuel_gauge.c
+>> @@ -708,6 +708,12 @@ static const struct dmi_system_id axp288_fuel_gauge_blacklist[] = {
+>>   			DMI_MATCH(DMI_BOARD_VERSION, "V1.1"),
+>>   		},
+>>   	},
+>> +	{
+>> +		/* ECS EF20EA */
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "EF20EA"),
+>> +		},
+>> +	},
+>>   	{}
+>>   };
+>>   
+>> -- 
+>> 2.14.1
+>>
