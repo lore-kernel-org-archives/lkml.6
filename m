@@ -1,110 +1,122 @@
-Return-Path: <cyrilbur@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519082401; cv=none;
+Return-Path: <joel.stan@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519025086; cv=none;
         d=google.com; s=arc-20160816;
-        b=L3MRtFXuPPuFFbI8TBlWRddL/ivblJYGlacfPqYkdMaPHv1v/wn0scH65xnkw2bSEz
-         DMF9sJ5TQjsRct87I2ytZqfn63Neq3j6ztQwiHgg2531WkoU1zwsmPGpzEnYnECprgKy
-         ReoG3Nd2n63cUuiocDoi2cS4QJ2ieM1fMoUEXVAdAW03+h1n20FDh37IYywx6DP2f+OJ
-         ntNZuS/r7x6SXqj8OuOaEB4ANx9amxqJcN5VYisUp5i5TksU4QSVvnJ4UturYSgHl7j1
-         D5Jdl7GuRkAlFn002lW7fTRi2mQSm8EvYOq+y6ZK8oFOeE4CsTA3wOWkdkAMYm/1v+13
-         r9WQ==
+        b=g8hk6hEXPcfHJp9SpkbgoCTLQby40c53tJMDgG2yR3E4BW/GX64YD01eW644eFhFFl
+         FgdQgWb8jCelkWeBovzp37A+ayMYvL1NDV+Tx7tfp2cTP3HW2hEnf14+3cVwoCpba7vK
+         joJ1DSHwcZr5ZDp/V5jIzdisR7I9mTf6f5hw6PaSWWIckgraAGuYH6/TIK1AGCLF0Wlr
+         nUpCCYW+8wXrGuzM3G+DCi+UC3mZokrki1itYAFDtismfmJyhS3bfcgi2LDaHPJWNNHb
+         KKgQvxyXKmEX93EykcShkVZ47c4jQVHh8iYGM1htBZgsomIc37t5DMJV76LgBTvC2pQT
+         dWZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:dkim-signature
-         :arc-authentication-results;
-        bh=In8GoS+mKov6FZu5BkYCQvLLJwbCfKDzMnV9z69voj0=;
-        b=FYhgdswbr5v/lqlL6QN/Ws8yjlYHFCu7GpDQchmRyhfuX/+xS1p+tFmN8MK/aCh/RB
-         /JT895EQJrBjW/yotVUX0w3JJCaaHwTiznzEpJZ+T+3Dd5EH9t+lpHObjHiPz7GnCrIn
-         3LNE8F+uN277ZwFH5p9AZH7j9kAYNsfWJyKn4h9GWR0oPpe2NVmbg8URagvw3idCnhDm
-         d+nIwmNyscNWdPHbpr7ueCyEGVWCpxWr+dyhdlwXL/a00NDBpNK3LOWDH6VMsLj+POfm
-         MmMOZrvftgXwZ+k/d/TKnCjwP5kRuYlmY4lis/65UQJgw5+iYPecYhKCStAUGcbx+CEV
-         y2mQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:sender
+         :dkim-signature:arc-authentication-results;
+        bh=tZFg/IZta6nugTj/dTirBEO0g/WAhdCuEkjt5MXATSc=;
+        b=Y5rt2D2HkTid0Px5Vd2wr9MfP5CBiZ9TfXqa8WPD3j55nfKdM1bt+roYUEcbAIQVlC
+         oBDwW8UXIIOzES2TKGQAY0kPuuq4wkz7ctDPW0FPlMeZK2/dPHOY8ykquxEKcqFZe06S
+         JBzJvuGd7pnsu+guvRGqYgBBlX7MYnfY3+8INPTrw1r8Vzh/7GFm91IFPqhptQso4nRZ
+         s6lT3YAglg9iAXaIxbL+iYcUqP1lm4FymBCPhEIV5498TU1MtEZR1Lz5Sd+qs2/FTw39
+         opQI6euzahcJOI2lssZY5OJKUxE1DqbmBm6upMkZX8BqpwysfVmWuwugvWtoo/XvKYgJ
+         FTiQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZOpyLiLm;
-       spf=pass (google.com: domain of cyrilbur@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=cyrilbur@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=o8fiYaz4;
+       spf=pass (google.com: domain of joel.stan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joel.stan@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZOpyLiLm;
-       spf=pass (google.com: domain of cyrilbur@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=cyrilbur@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AH8x227wl6fAVaRBYY8jHpsECttMkFlCSIV2sACePNMSTsK8plTpcsPdmjdbI6d3tze9qnIn02DQ+w==
-Message-ID: <1519082393.6563.0.camel@gmail.com>
-Subject: Re: [PATCH v2 3/3] misc: aspeed-lpc-ctrl: Enable FWH and A2H bridge
- cycles
-From: Cyril Bur <cyrilbur@gmail.com>
-To: Joel Stanley <joel@jms.id.au>, Lee Jones <lee.jones@linaro.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring
- <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>, Benjamin
- Herrenschmidt <benh@kernel.crashing.org>, Ryan Chen
- <ryan_chen@aspeedtech.com>, Lei YU <mine260309@gmail.com>
-Date: Tue, 20 Feb 2018 10:19:53 +1100
-In-Reply-To: <20180219072422.22733-4-joel@jms.id.au>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=o8fiYaz4;
+       spf=pass (google.com: domain of joel.stan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joel.stan@gmail.com
+X-Google-Smtp-Source: AH8x226YRJazxhB8OYNr6PeWbjs9uhsPg1frRisNM2NIE1WlYmpXPr3WDh8ICgD4QhhITTjovXS5rA==
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Cyril Bur <cyrilbur@gmail.com>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Lei YU <mine260309@gmail.com>
+Subject: [PATCH v2 1/3] dt-bindings: aspeed-lpc: Document LPC Host Interface Controller
+Date: Mon, 19 Feb 2018 17:54:20 +1030
+Message-Id: <20180219072422.22733-2-joel@jms.id.au>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180219072422.22733-1-joel@jms.id.au>
 References: <20180219072422.22733-1-joel@jms.id.au>
-	 <20180219072422.22733-4-joel@jms.id.au>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592813270854938491?=
-X-GMAIL-MSGID: =?utf-8?q?1592873348917890786?=
+X-GMAIL-THRID: =?utf-8?q?1592813249308453980?=
+X-GMAIL-MSGID: =?utf-8?q?1592813249308453980?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 2018-02-19 at 17:54 +1030, Joel Stanley wrote:
-> To date this driver has relied on prevous state from out of tree hacks
-> and vendor u-boot trees in order to have the host be able to access
-> data over the LPC bus.
-> 
-> Now we explicitly enable the AHB to LPC bridge and FWH cycles from when
-> the user first configures the address to map. We chose to do this then
-> as before that time there is no way for the kernel to know where it is
-> safe to point the LPC window.
-> 
-> Tested-by: Lei YU <mine260309@gmail.com>
-> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
+The LPC Host Interface Controller is part of a BMC SoC that is used for
+communication with the host.
 
-Reviewed-by: Cyril Bur <cyrilbur@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+v2:
+ - Move the content to below the Host Node Children heading
+ - Add Rob's review tag
+---
+ .../devicetree/bindings/mfd/aspeed-lpc.txt         | 41 ++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-> ---
->  drivers/misc/aspeed-lpc-ctrl.c | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/aspeed-lpc-ctrl.c b/drivers/misc/aspeed-lpc-ctrl.c
-> index 1827b7aa6674..a024f8042259 100644
-> --- a/drivers/misc/aspeed-lpc-ctrl.c
-> +++ b/drivers/misc/aspeed-lpc-ctrl.c
-> @@ -21,6 +21,10 @@
->  
->  #define DEVICE_NAME	"aspeed-lpc-ctrl"
->  
-> +#define HICR5 0x0
-> +#define HICR5_ENL2H	BIT(8)
-> +#define HICR5_ENFWH	BIT(10)
-> +
->  #define HICR7 0x8
->  #define HICR8 0xc
->  
-> @@ -155,8 +159,18 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, unsigned int cmd,
->  		if (rc)
->  			return rc;
->  
-> -		return regmap_write(lpc_ctrl->regmap, HICR8,
-> -			(~(map.size - 1)) | ((map.size >> 16) - 1));
-> +		rc = regmap_write(lpc_ctrl->regmap, HICR8,
-> +				(~(map.size - 1)) | ((map.size >> 16) - 1));
-> +		if (rc)
-> +			return rc;
-> +
-> +		/*
-> +		 * Enable LPC FHW cycles. This is required for the host to
-> +		 * access the regions specified.
-> +		 */
-> +		return regmap_update_bits(lpc_ctrl->regmap, HICR5,
-> +				HICR5_ENFWH | HICR5_ENL2H,
-> +				HICR5_ENFWH | HICR5_ENL2H);
->  	}
->  
->  	return -EINVAL;
+diff --git a/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt b/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
+index 514d82ced95b..69aadee00d5f 100644
+--- a/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
++++ b/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
+@@ -109,9 +109,50 @@ lpc: lpc@1e789000 {
+ 	};
+ };
+ 
++BMC Node Children
++==================
++
++
+ Host Node Children
+ ==================
+ 
++LPC Host Interface Controller
++-------------------
++
++The LPC Host Interface Controller manages functions exposed to the host such as
++LPC firmware hub cycles, configuration of the LPC-to-AHB mapping, UART
++management and bus snoop configuration.
++
++Required properties:
++
++- compatible:	One of:
++		"aspeed,ast2400-lpc-ctrl";
++		"aspeed,ast2500-lpc-ctrl";
++
++- reg:		contains offset/length values of the host interface controller
++		memory regions
++
++- clocks:	contains a phandle to the syscon node describing the clocks.
++		There should then be one cell representing the clock to use
++
++- memory-region: A phandle to a reserved_memory region to be used for the LPC
++		to AHB mapping
++
++- flash:	A phandle to the SPI flash controller containing the flash to
++		be exposed over the LPC to AHB mapping
++
++Example:
++
++lpc-host@80 {
++	lpc_ctrl: lpc-ctrl@0 {
++		compatible = "aspeed,ast2500-lpc-ctrl";
++		reg = <0x0 0x80>;
++		clocks = <&syscon ASPEED_CLK_GATE_LCLK>;
++		memory-region = <&flash_memory>;
++		flash = <&spi>;
++	};
++};
++
+ LPC Host Controller
+ -------------------
+ 
+-- 
+2.15.1
