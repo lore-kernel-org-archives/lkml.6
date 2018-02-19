@@ -1,70 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751528AbeBSN6r (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 08:58:47 -0500
-Received: from wp227.webpack.hosteurope.de ([80.237.132.234]:43808 "EHLO
-        wp227.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750978AbeBSN6q (ORCPT
+        id S1751541AbeBSOAK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 09:00:10 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55928 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750978AbeBSOAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 08:58:46 -0500
-Subject: Linux 4.16: Reported regressions as of Monday, 2018-02-19 (Was: Linux
- 4.16-rc2)
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org, Jonathan Corbet <corbet@lwn.net>
-References: <CA+55aFwDnBq9V6TVbc82DzVYpf-ELF7UcYzHuY0ei1Xjnob+0A@mail.gmail.com>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Message-ID: <8af706ec-e1a8-fe16-e11b-6422ac845239@leemhuis.info>
-Date: Mon, 19 Feb 2018 14:58:43 +0100
+        Mon, 19 Feb 2018 09:00:09 -0500
+X-Google-Smtp-Source: AH8x227D3SO8rkEklTL+0mzHLwBQNAKekbmYoDV+QOp84SFHL5JJ4oqP7+akXcqq58MUV76EB7Rvfg==
+Subject: Re: [PATCH 1/9] ASoC: Intel: sst: Fix error-code check in
+ sst_pause_stream()
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180218220146.22485-1-hdegoede@redhat.com>
+ <20180218220146.22485-2-hdegoede@redhat.com>
+ <CAHp75VeANVAbjq69x2k3mEkodhzWctQ58EVOz90CjgnS5K+UTQ@mail.gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <f7f6b692-365d-a406-8d6d-f6422ac656f8@redhat.com>
+Date: Mon, 19 Feb 2018 15:00:06 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFwDnBq9V6TVbc82DzVYpf-ELF7UcYzHuY0ei1Xjnob+0A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+In-Reply-To: <CAHp75VeANVAbjq69x2k3mEkodhzWctQ58EVOz90CjgnS5K+UTQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1519048726;0e9bee34;
-X-HE-SMSGID: 1enlxr-0003BA-TT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi! Find below my first regression report for Linux 4.16. It lists 2
-regressions I'm currently aware of.
+Hi,
 
-Are you aware of any other regressions? Then please let me know by mail
-(a simple bounce or forward to the email address is enough!).
+On 19-02-18 14:47, Andy Shevchenko wrote:
+> On Mon, Feb 19, 2018 at 12:01 AM, Hans de Goede <hdegoede@redhat.com> wrote:
+>> The value returned by sst_prepare_and_post_msg() is a negated SST_ERR_*
+>> value, so we must check for -SST_ERR_INVALID_STREAM_ID. Note that
+>> sst_pause_resume() already has the correct check.
+>>
+> 
+> Should it have Fixes tag?
 
-For details see http://bit.ly/lnxregtrackid And please tell me if there
-is anything in the report that shouldn't be there.
+According to git blame this goes back to the original commit introducing
+the file, so I don't think that that is helpful.
 
-Ciao, Thorsten
+Regards,
 
-P.S.: Sorry, I didn't find spare time to work on regression reporting
-and related issues during the 4.15 cycle. I also have a huge todo list
-after the regression tracking discussion during maintainer and kernel
-summit last fall. I will try to work on that that sooner or later; that
-in the end will change nearly all the aspects of regression tracking is
-done currently. But that will take some time (which I struggle to find
-currently :-/ ) to realize, so for this cycle  I'm continuing to do
-regression reports like I used to do them.
+Hans
 
-== Current regressions ==
 
-Debian kernel package tool make-kpkg stalls indefinitely during kernel
-build due to commit "kconfig: remove check_stdin()"
-Status: stalled after some discussions
-Note: Shouldn't be a problem to back this one out either if it turns out
-to cause massive amounts of pain in practice I guess, even if it's the
-Debian tools doing something weird.
-Reported: 2018-02-12
-https://marc.info/?l=linux-kernel&m=151846414807219
-Cause: d2a04648a5dbc3d1d043b35257364f0197d4d868
-Linux-Regression-ID: 2fd778
 
-DM Regression: read() returns data when it shouldn't
-Status: Developers are looking into it
-Reported: 2018-02-14
-https://marc.info/?l=linux-kernel&m=151861337518109&w=2
-Cause: 18a25da84354c6bb655320de6072c00eda6eb602
-Linux-Regression-ID: 9e195f
+> 
+>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>> ---
+>>   sound/soc/intel/atom/sst/sst_stream.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/sound/soc/intel/atom/sst/sst_stream.c b/sound/soc/intel/atom/sst/sst_stream.c
+>> index 7ee6aeb7e0af..b082b0922a7a 100644
+>> --- a/sound/soc/intel/atom/sst/sst_stream.c
+>> +++ b/sound/soc/intel/atom/sst/sst_stream.c
+>> @@ -253,7 +253,7 @@ int sst_pause_stream(struct intel_sst_drv *sst_drv_ctx, int str_id)
+>>                  if (retval == 0) {
+>>                          str_info->prev = str_info->status;
+>>                          str_info->status = STREAM_PAUSED;
+>> -               } else if (retval == SST_ERR_INVALID_STREAM_ID) {
+>> +               } else if (retval == -SST_ERR_INVALID_STREAM_ID) {
+>>                          retval = -EINVAL;
+>>                          mutex_lock(&sst_drv_ctx->sst_lock);
+>>                          sst_clean_stream(str_info);
+>> --
+>> 2.14.3
+>>
+> 
+> 
+> 
