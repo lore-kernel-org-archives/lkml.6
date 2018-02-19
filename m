@@ -1,59 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753072AbeBSPGB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 10:06:01 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:19664 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752834AbeBSPFp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 10:05:45 -0500
-From: Olivier Moysan <olivier.moysan@st.com>
-To: <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <alsa-devel@alsa-project.org>,
-        <robh@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <kernel@stlinux.com>, <linux-kernel@vger.kernel.org>,
-        <olivier.moysan@st.com>
-CC: <arnaud.pouliquen@st.com>, <benjamin.gaignard@st.com>
-Subject: [RFC PATCH 1/3] ASoC: stm32: Add S/PDIF to SAI bindings
-Date: Mon, 19 Feb 2018 16:00:35 +0100
-Message-ID: <1519052437-24011-2-git-send-email-olivier.moysan@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1519052437-24011-1-git-send-email-olivier.moysan@st.com>
-References: <1519052437-24011-1-git-send-email-olivier.moysan@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.16]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-19_07:,,
- signatures=0
+        id S1753137AbeBSPGV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 10:06:21 -0500
+Received: from prv-mh.provo.novell.com ([137.65.248.74]:59412 "EHLO
+        prv-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753118AbeBSPGT (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:3:1>);
+        Mon, 19 Feb 2018 10:06:19 -0500
+Message-Id: <5A8AF5F602000078001A9230@prv-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Mon, 19 Feb 2018 08:06:14 -0700
+From: "Jan Beulich" <JBeulich@suse.com>
+To: <mingo@elte.hu>, <tglx@linutronix.de>, <hpa@zytor.com>
+Cc: <linux-kernel@vger.kernel.org>
+Subject: [PATCH] x86-64/realmode: add instruction suffix
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add S/PDIF IEC6958 protocol support to STM32 SAI bindings.
+Omitting suffixes from instructions in AT&T mode is bad practice when
+operand size cannot be determined by the assembler from register
+operands, and is likely going to be warned about by upstream gas in the
+future (mine does already). Add the single missing suffix here.
 
-Signed-off-by: olivier moysan <olivier.moysan@st.com>
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
 ---
- Documentation/devicetree/bindings/sound/st,stm32-sai.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/realmode/rm/trampoline_64.S |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/st,stm32-sai.txt b/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
-index b1acc1a..f301cdf 100644
---- a/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
-+++ b/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
-@@ -45,6 +45,12 @@ SAI subnodes Optional properties:
- 	This property sets SAI sub-block as slave of another SAI sub-block.
- 	Must contain the phandle and index of the sai sub-block providing
- 	the synchronization.
-+  - st,iec60958: support S/PDIF IEC6958 protocol for playback
-+	IEC60958 protocol is not available for capture.
-+	By default, custom protocol is assumed, meaning that protocol is
-+	configured according to protocol defined in related DAI link node,
-+	such as i2s, left justified, right justified, dsp and pdm protocols.
-+	Note: ac97 protocol is not supported by SAI driver
- 
- The device node should contain one 'port' child node with one child 'endpoint'
- node, according to the bindings defined in Documentation/devicetree/bindings/
--- 
-1.9.1
+--- 4.16-rc2/arch/x86/realmode/rm/trampoline_64.S
++++ 4.16-rc2-x86_64-realmode-insn-suffix/arch/x86/realmode/rm/trampoline_64.S
+@@ -102,7 +102,7 @@ ENTRY(startup_32)
+ 	 * don't we'll eventually crash trying to execute encrypted
+ 	 * instructions.
+ 	 */
+-	bt	$TH_FLAGS_SME_ACTIVE_BIT, pa_tr_flags
++	btl	$TH_FLAGS_SME_ACTIVE_BIT, pa_tr_flags
+ 	jnc	.Ldone
+ 	movl	$MSR_K8_SYSCFG, %ecx
+ 	rdmsr
