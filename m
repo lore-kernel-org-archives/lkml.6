@@ -1,43 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752090AbeBTNCE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Feb 2018 08:02:04 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:55420 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751782AbeBTNB7 (ORCPT
+        id S1752149AbeBTNCL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Feb 2018 08:02:11 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:46618 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752119AbeBTNCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Feb 2018 08:01:59 -0500
-Date: Mon, 19 Feb 2018 16:10:11 +0100
+        Tue, 20 Feb 2018 08:02:09 -0500
+Date: Mon, 19 Feb 2018 15:05:53 +0100
 From: Peter Zijlstra <peterz@infradead.org>
-To: Morten Rasmussen <morten.rasmussen@arm.com>
-Cc: mingo@redhat.com, valentin.schneider@arm.com, dietmar.eggemann@arm.com,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] sched/fair: Avoid unnecessary balancing of
- asymmetric capacity groups
-Message-ID: <20180219151011.GI25181@hirez.programming.kicks-ass.net>
-References: <1518711654-23503-1-git-send-email-morten.rasmussen@arm.com>
- <1518711654-23503-5-git-send-email-morten.rasmussen@arm.com>
+To: Will Deacon <will.deacon@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mingo@kernel.org
+Subject: Re: [RFC PATCH 3/5] asm-generic/bitops/atomic.h: Rewrite using
+ atomic_fetch_*
+Message-ID: <20180219140553.GT25201@hirez.programming.kicks-ass.net>
+References: <1518708575-12284-1-git-send-email-will.deacon@arm.com>
+ <1518708575-12284-4-git-send-email-will.deacon@arm.com>
+ <20180215170847.GD25181@hirez.programming.kicks-ass.net>
+ <20180215182049.GC15274@arm.com>
+ <20180216103520.GC25201@hirez.programming.kicks-ass.net>
+ <20180219140151.GE30394@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1518711654-23503-5-git-send-email-morten.rasmussen@arm.com>
+In-Reply-To: <20180219140151.GE30394@arm.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 15, 2018 at 04:20:51PM +0000, Morten Rasmussen wrote:
-> +/*
-> + * group_similar_cpu_capacity: Returns true if the minimum capacity of the
-> + * compared groups differ by less than 12.5%.
-> + */
-> +static inline bool
-> +group_similar_cpu_capacity(struct sched_group *sg, struct sched_group *ref)
-> +{
-> +	long diff = sg->sgc->min_capacity - ref->sgc->min_capacity;
-> +	long max = max(sg->sgc->min_capacity, ref->sgc->min_capacity);
-> +
-> +	return abs(diff) < max >> 3;
-> +}
+On Mon, Feb 19, 2018 at 02:01:51PM +0000, Will Deacon wrote:
+> If it's defined, then we could consider using cmpxchg64 to build atomic64
+> instead of the locks. But even then, I'm not sure we're really helping
+> anybody out in practice.
 
-This seems a fairly random and dodgy heuristic.
+yeah, most 64bit archs have more atomics or ll/sc and would not use it
+anyway I suppose.
