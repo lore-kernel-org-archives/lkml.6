@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753676AbeBSRMe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 12:12:34 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:38937 "EHLO
+        id S1753596AbeBSRLt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 12:11:49 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:38880 "EHLO
         bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753365AbeBSRMA (ORCPT
+        with ESMTP id S1753449AbeBSRLq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 12:12:00 -0500
+        Mon, 19 Feb 2018 12:11:46 -0500
 From: Niklas Cassel <niklas.cassel@axis.com>
 To: Giuseppe Cavallaro <peppe.cavallaro@st.com>,
         Alexandre Torgue <alexandre.torgue@st.com>
 Cc: Jose.Abreu@synopsys.com, vbhadram@nvidia.com,
         Niklas Cassel <niklass@axis.com>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 6/7] net: stmmac: add error handling in stmmac_mtl_setup()
-Date: Mon, 19 Feb 2018 18:11:14 +0100
-Message-Id: <20180219171116.15326-7-niklas.cassel@axis.com>
+Subject: [PATCH net-next 3/7] net: stmmac: WARN if tx_skbuff entries are reused before cleared
+Date: Mon, 19 Feb 2018 18:11:11 +0100
+Message-Id: <20180219171116.15326-4-niklas.cassel@axis.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180219171116.15326-1-niklas.cassel@axis.com>
 References: <20180219171116.15326-1-niklas.cassel@axis.com>
@@ -24,119 +24,63 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The device tree binding for stmmac says:
+The current code assumes that a tx_skbuff entry has been cleared
+by stmmac_tx_clean() before stmmac_xmit()/stmmac_tso_xmit()
+assigns a new skb to that entry. However, since we never check
+the current value before overwriting it, it is theoretically
+possible that a non-NULL value is overwritten.
 
-- Multiple TX Queues parameters: below the list of all the parameters to
-                                 configure the multiple TX queues:
-        - snps,tx-queues-to-use: number of TX queues to be used in the driver
-	[...]
-        - For each TX queue
-		[...]
-
-However, if one specifies snps,tx-queues-to-use = 2,
-but omits the queue subnodes, or defines just one queue subnode,
-since the driver appears to initialize queues with sane default
-values, we will get tx queue timeouts.
-
-This is because the initialization code only initializes
-as many queues as it finds subnodes. Potentially leaving
-some queues uninitialized.
-
-To avoid hard to debug issues, return an error if the number
-of subnodes differ from snps,tx-queues-to-use/snps,rx-queues-to-use.
+Add WARN_ONs to verify that each entry in tx_skbuff is NULL
+before it is assigned a new value.
 
 Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
 ---
- .../net/ethernet/stmicro/stmmac/stmmac_platform.c  | 29 ++++++++++++++++++----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 05f122b8424a..bcfac84cf6fb 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -135,13 +135,14 @@ static struct stmmac_axi *stmmac_axi_setup(struct platform_device *pdev)
-  * stmmac_mtl_setup - parse DT parameters for multiple queues configuration
-  * @pdev: platform device
-  */
--static void stmmac_mtl_setup(struct platform_device *pdev,
--			     struct plat_stmmacenet_data *plat)
-+static int stmmac_mtl_setup(struct platform_device *pdev,
-+			    struct plat_stmmacenet_data *plat)
- {
- 	struct device_node *q_node;
- 	struct device_node *rx_node;
- 	struct device_node *tx_node;
- 	u8 queue = 0;
-+	int ret = 0;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 24afe7733cde..9881df126227 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -2794,6 +2794,7 @@ static void stmmac_tso_allocator(struct stmmac_priv *priv, unsigned int des,
  
- 	/* For backwards-compatibility with device trees that don't have any
- 	 * snps,mtl-rx-config or snps,mtl-tx-config properties, we fall back
-@@ -159,12 +160,12 @@ static void stmmac_mtl_setup(struct platform_device *pdev,
+ 	while (tmp_len > 0) {
+ 		tx_q->cur_tx = STMMAC_GET_ENTRY(tx_q->cur_tx, DMA_TX_SIZE);
++		WARN_ON(tx_q->tx_skbuff[tx_q->cur_tx]);
+ 		desc = tx_q->dma_tx + tx_q->cur_tx;
  
- 	rx_node = of_parse_phandle(pdev->dev.of_node, "snps,mtl-rx-config", 0);
- 	if (!rx_node)
--		return;
-+		return ret;
- 
- 	tx_node = of_parse_phandle(pdev->dev.of_node, "snps,mtl-tx-config", 0);
- 	if (!tx_node) {
- 		of_node_put(rx_node);
--		return;
-+		return ret;
+ 		desc->des0 = cpu_to_le32(des + (total_len - tmp_len));
+@@ -2878,6 +2879,7 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		priv->hw->desc->set_mss(mss_desc, mss);
+ 		tx_q->mss = mss;
+ 		tx_q->cur_tx = STMMAC_GET_ENTRY(tx_q->cur_tx, DMA_TX_SIZE);
++		WARN_ON(tx_q->tx_skbuff[tx_q->cur_tx]);
  	}
  
- 	/* Processing RX queues common config */
-@@ -220,6 +221,11 @@ static void stmmac_mtl_setup(struct platform_device *pdev,
- 
- 		queue++;
+ 	if (netif_msg_tx_queued(priv)) {
+@@ -2888,6 +2890,7 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
  	}
-+	if (queue != plat->rx_queues_to_use) {
-+		ret = -EINVAL;
-+		dev_err(&pdev->dev, "Not all RX queues were configured\n");
-+		goto out;
-+	}
  
- 	/* Processing TX queues common config */
- 	if (of_property_read_u32(tx_node, "snps,tx-queues-to-use",
-@@ -281,10 +287,18 @@ static void stmmac_mtl_setup(struct platform_device *pdev,
+ 	first_entry = tx_q->cur_tx;
++	WARN_ON(tx_q->tx_skbuff[first_entry]);
  
- 		queue++;
- 	}
-+	if (queue != plat->tx_queues_to_use) {
-+		ret = -EINVAL;
-+		dev_err(&pdev->dev, "Not all TX queues were configured\n");
-+		goto out;
-+	}
+ 	desc = tx_q->dma_tx + first_entry;
+ 	first = desc;
+@@ -3062,6 +3065,7 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
  
-+out:
- 	of_node_put(rx_node);
- 	of_node_put(tx_node);
- 	of_node_put(q_node);
-+
-+	return ret;
- }
+ 	entry = tx_q->cur_tx;
+ 	first_entry = entry;
++	WARN_ON(tx_q->tx_skbuff[first_entry]);
  
- /**
-@@ -376,6 +390,7 @@ stmmac_probe_config_dt(struct platform_device *pdev, const char **mac)
- 	struct device_node *np = pdev->dev.of_node;
- 	struct plat_stmmacenet_data *plat;
- 	struct stmmac_dma_cfg *dma_cfg;
-+	int rc;
+ 	csum_insertion = (skb->ip_summed == CHECKSUM_PARTIAL);
  
- 	plat = devm_kzalloc(&pdev->dev, sizeof(*plat), GFP_KERNEL);
- 	if (!plat)
-@@ -499,7 +514,11 @@ stmmac_probe_config_dt(struct platform_device *pdev, const char **mac)
+@@ -3090,6 +3094,7 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		bool last_segment = (i == (nfrags - 1));
  
- 	plat->axi = stmmac_axi_setup(pdev);
+ 		entry = STMMAC_GET_ENTRY(entry, DMA_TX_SIZE);
++		WARN_ON(tx_q->tx_skbuff[entry]);
  
--	stmmac_mtl_setup(pdev, plat);
-+	rc = stmmac_mtl_setup(pdev, plat);
-+	if (rc) {
-+		stmmac_remove_config_dt(pdev, plat);
-+		return ERR_PTR(rc);
-+	}
- 
- 	/* clock setup */
- 	plat->stmmac_clk = devm_clk_get(&pdev->dev,
+ 		if (likely(priv->extend_desc))
+ 			desc = (struct dma_desc *)(tx_q->dma_etx + entry);
 -- 
 2.14.2
