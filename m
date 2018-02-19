@@ -1,92 +1,73 @@
-Return-Path: <brgl@bgdev.pl>
-ARC-Seal: i=1; a=rsa-sha256; t=1519655555; cv=none;
+Return-Path: <helgaas@kernel.org>
+X-Google-Smtp-Source: AH8x2248FK4p6vj56sWCQJkZ+gPf8SQIHTsno8BX3mS2wL2srOrxa+WCaSQasMVyIoV3B3rpMWHy
+ARC-Seal: i=1; a=rsa-sha256; t=1519082035; cv=none;
         d=google.com; s=arc-20160816;
-        b=VPvGPpdl+5aGMeUoVQflQhMDF6mpIsoZ6yC6bvajU0l0+Fhx7euHSh1z+JPRTKjEAm
-         nGPzfeFyPV9cQaVyYjdS/6mYeflu18bmrkh4NNunxNDypzvMIDxGnEprn4mrxf6pcSx9
-         gqez6jKFiyN01JhPdS+bT+Xo2JVnGcGZM/brIIcgXgILFazQ5kWmsmpZn7vvh8puB64z
-         41mu1I0DDONS7RQIQdKspBD4aA+MwHrkvMrhhU/4YkwhMlOSWcn/i6dBVixK6E7yzJ2K
-         byDwiGQLWOYIhw7EFpbflTzgKWS8RxOMofXjAa9lIMmRZjqWMQeZTJXpBpib66LswDOD
-         WVoA==
+        b=VV2T1RXrRFYQsyiD8ZFPdfh0exPlzuVC25qagW/DoiMGTfjnGToP6X/ZYagm9kQDX8
+         l+Wov6fHjWl0S9BQDA9cHQbPHOCyXWAg5Bnw4WPaMDwZ7E3OHV5tMLCZhn+kAkbRu3CU
+         4+wBonjTPiMQFR93fXRDgcpY3hboB5zXAQltbLCJ2qjqr6vXzKPnsZzkDDufQQc0TGk8
+         DWjE71pZq2UNwbDmaP5gk5eGmVBdOrZV1JsNW1Xlik973N6NyQ3NBPNE0omF1bAS4z5G
+         gpr6PYD33nHS/bn0umt5RjVSPEcJnXvYh27HuuyDg2OcwbvdVWeFZVa95BouY/KI07ZB
+         fxig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=DPdt8/ZrYwx9y/rtcqlJZjTTCt42nlLPYgQfb3Y06O0=;
-        b=UCLCj4pIgNao/T4t2voKZpFUCiEUWtyVF4548WatWhOiPWzTyugguJaWvUnayhLi5J
-         htVun5mzzrYDhIxmYlpe/MECTaEK7KOJgoZlaYYTNENxV/ZmjZdQNk+aFJaCcEDVg10J
-         0f30TszrJKaZs4Fb8T4XQ49b8rfHwvfP15wTbcamItjIUpee8J4/gpZdv91SBw70g+lw
-         UfutJqJGxLJdDVogrDmC+hF2j7Geefw0h1RjyKUrbllnrCwoqW6Xq7G/aHiiiyQzeRHg
-         CZKADkyAes5R5OkyABvKiMtnOKEvXkhIJJ7+Fhlvf4TWEjGgmMH/ZzU8bEvO19qq6zlf
-         /V3Q==
+        h=content-transfer-encoding:mime-version:user-agent:message-id:date
+         :cc:to:from:subject:dmarc-filter:arc-authentication-results;
+        bh=zEfHI6X1iPsWpGf8ZGnjNNhvvsUCnlgMXXX8bSU9VJM=;
+        b=QLvpL0JDpEZFDcvKmdiiUXgDCb8vQbYUEVr+x/+gwlcKP8jqoN82Gy2YTG0dzo06qs
+         DUIjqhi8VQ6Ap37Bm9N6MEcs3rbPWVgsFEXGgWB0tHFf29zWgDaeuyu1toRkPC8dhTcj
+         lVG+Tf9PYPwgyW2v3iHHUiG3KJEn6ntvMep7k59H1FRvz/znTysGjs6t+BLXK9D2Ss2J
+         Jd6K83q6AL2x7emRtqcxSzYlVF5XWc/+tXj+7YLwmF7fHsPXW6e7aoXke0rAbNnPTwCi
+         EOsz2Vx7WMwg3qltEJaUTwnhHgWWEtE13HH/l4fUAyr0Fq2Lgk9TvJNy5OGZ6mYvr52d
+         eNzg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=RQTQBhOP;
-       spf=neutral (google.com: 209.85.220.41 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
+       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=RQTQBhOP;
-       spf=neutral (google.com: 209.85.220.41 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
-X-Google-Smtp-Source: AG47ELtRF0wJ59WSM0yJin9ETtw6AmTvUosn/jWWwMtOtd237Rk7KFUrEnQdRQliJ9GlD8SmhNQHd95rWHnEP7NTMIo=
+       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABE8121104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Subject: [PATCH v1 0/2] PCI/PM: Add comments,
+ allow PM of conventional & hotplug bridges
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
+ Mathias Nyman <mathias.nyman@intel.com>, linux-pm@vger.kernel.org,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org,
+ Lukas Wunner <lukas@wunner.de>, Peter Wu <peter@lekensteyn.nl>,
+ Qipeng Zha <qipeng.zha@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Andreas Noever <andreas.noever@gmail.com>, Dave Airlie <airlied@gmail.com>,
+ Qi Zheng <qi.zheng@intel.com>
+Date: Mon, 19 Feb 2018 17:13:53 -0600
+Message-ID: <151908155159.37696.9710083237704994886.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20180226152620.6740b458@endymion>
-References: <20180226102000.1b76640e@endymion> <CAMRc=MernxfN-P29HnLUFzAiX-UiFx32ZYZW_v6_BH9dXnfCfw@mail.gmail.com>
- <20180226152620.6740b458@endymion>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 26 Feb 2018 15:32:35 +0100
-Message-ID: <CAMRc=McpCp5BQ61B6Gwd2OcuJq_aeT2fqwFRPF7xum-gn4yRXQ@mail.gmail.com>
-Subject: Re: [PATCH] eeprom: New ee1004 driver for DDR4 memory
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux I2C <linux-i2c@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593454680453951468?=
-X-GMAIL-MSGID: =?utf-8?q?1593474344359858461?=
+X-GMAIL-THRID: =?utf-8?q?1592872963859410883?=
+X-GMAIL-MSGID: =?utf-8?q?1592872963859410883?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-02-26 15:26 GMT+01:00 Jean Delvare <jdelvare@suse.de>:
-> Hi Bartosz,
->
-> On Mon, 26 Feb 2018 14:40:42 +0100, Bartosz Golaszewski wrote:
->> 2018-02-26 10:20 GMT+01:00 Jean Delvare <jdelvare@suse.de>:
->> > The EEPROMs which hold the SPD data on DDR4 memory modules are no
->> > longer standard AT24C02-compatible EEPROMs. They are 512-byte EEPROMs
->> > which use only 1 I2C address for data access. You need to switch
->> > between the lower page and the upper page of data by sending commands
->> > on the SMBus.
->> >
->> > Signed-off-by: Jean Delvare <jdelvare@suse.de>
->> > ---
->> >  drivers/misc/eeprom/Kconfig  |   11 +
->> >  drivers/misc/eeprom/Makefile |    1
->> >  drivers/misc/eeprom/ee1004.c |  281 +++++++++++++++++++++++++++++++++++++++++++
->> >  3 files changed, 293 insertions(+)
->>
->> is there any reason not to use regmap as is done currently in at24? It
->> would spare you a lot of code.
->
-> No specific reason, just the fact that I never used regmap before so
-> the idea did not occur to me. I can give it a try, but my driver is
-> already pretty simple so I'm curious if there's really anything to win.
-> Let's see.
->
+Add comments to help explain why the code in pci_bridge_d3_possible()
+doesn't match the spec (we disallow D3 for conventional PCI bridges and for
+hotplug bridges, and the spec seems to suggest that D3 could work in both
+of those situations).
 
-You wouldn't need to check i2c functionalities and could simplify the
-read functions.
+Make "pcie_port_pm=force" and "pcie_port_pm=off" apply to all PCI bridges
+including conventional PCI bridges and hotplug bridges.  This is a little
+speculative.  Those parameters are risky to begin with (otherwise
+"pcie_port_pm=force" would be the default); this would make them more
+general-purpose but obviously also even more risky.
 
-> Is there any documentation available on how to convert an existing
-> driver to use regmap?
->
+---
 
-Take a look at the series from Heiner[1].
+Bjorn Helgaas (2):
+      PCI: Add PCIe port runtime suspend details
+      PCI: Allow user to request power management of conventional and hotplug bridges
 
-> --
-> Jean Delvare
-> SUSE L3 Support
 
-I'm also seeing that you exported the sysfs eeprom attribute by hand.
-I think you should register the driver as nvmem provider and set the
-compat flag in nvmem config instead.
-
-Thanks,
-Bart
-
-[1] http://patchwork.ozlabs.org/project/linux-i2c/list/?series=15614&state=*
+ Documentation/admin-guide/kernel-parameters.txt |    8 ++---
+ drivers/pci/pci.c                               |   40 +++++++++++++++++------
+ 2 files changed, 34 insertions(+), 14 deletions(-)
