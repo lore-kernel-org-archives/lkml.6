@@ -1,108 +1,125 @@
-Return-Path: <valdis@vt.edu>
-X-Google-Smtp-Source: AH8x225ZwNycZrgtRR0eA0YXc9PSzKFQHu98RP+gQ6kVlK0cL6nD0SrbwxZbdkEZkIyw+IhoMiux
-ARC-Seal: i=1; a=rsa-sha256; t=1519082912; cv=none;
+Return-Path: <helgaas@kernel.org>
+X-Google-Smtp-Source: AH8x2244RGjyIDdA64UDKVKUohlT2UAKiLI0LOmZHltQxRzz3svRslZDxcwjWtBjyJAV5VQOVbL/
+ARC-Seal: i=1; a=rsa-sha256; t=1519082041; cv=none;
         d=google.com; s=arc-20160816;
-        b=S4TGyvSCc85nGAJd2NQRVfvBjblzMIIlRvR424N8NFbCzGfejTl/7560Lhd0KqnVYB
-         hA6FRHRveC6PFBOZisqFjQzEHky2S0lTVnJwo+KWlm6duiuPmIL5YG2dGtUZF034/IRY
-         ZhtwqGQ4LCw65w/IkJURFlsp0YrjELXW2y3TsXprDu4ZrAfZkfxn6RLSEc0quxWyHyGa
-         rt08hUyv7MhT8piqMOxoO7baBJKfcaHYrXY3Pjg0wnCD69gS7G2I1uGne5tXtImI3g3P
-         UlJrsLzovwgAi/5VJoe4TrSnRfcIM4VPidkAM+TdPNMSXtKj5MTOn2Z1Jp1y6jvP4Jf4
-         IAHA==
+        b=XIRGsWjH5hA5gyQC/wmDMbthazpxf3JWW18HSBXuyig4bVdHxD8txwQDB3A2UBU+DP
+         Lzy9RO5yOA06BjBrCO9aE+n4KQq9Sz404y4YaJkd9GsXaQKYidu/i8fWmogtsphbd5ri
+         cGcQ9bf+bzEHt18/JbYeXCU0/e88sT/t7b7GkWvzMo7I32lfwg7umoIEhEelcnMgPDVF
+         hvsC77S4FYA5NOfUDw7+Aa/BiqGC8becvsLJyrQe+06jBi4TeRdIMbp4gnX46h3RytsT
+         iJTNDZjc96cjpklL3bXIPF08b84q6kHely1wk+xmhfXpFIsak1oiNWv3+NeB+huHg5ad
+         XnaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:content-transfer-encoding:mime-version:references
-         :in-reply-to:subject:cc:to:from:sender:arc-authentication-results;
-        bh=B1zSPhnk5R9JgqrgdjfouPmooFz2RU/U7PMH4s2puKs=;
-        b=TzT0s+mTph7EiySm+6JaPb76BGuSS2D3vg/PD3fNNQ+nre6W8q/3vY2GSG5f5EanV3
-         uIy8gkUOFrpe4yFORvHaeT2XtVK52m2scwrVxtiR/ft0jQLLBqpMIZ466w9DdslS70IJ
-         mFOJ4s34NlkagQ+CBa0KtrEfWO1NSDcZeg3P5OrkBh3d0PEuuEgd0vPVU6HAA9b6zRyx
-         00DOpREclPQ3+xno3c3BPkMLB0vVybfTsr77UkyVoMH1xqb7zmhrILRFdqACS88i+M4w
-         rc97FzkBOQ/OXSoXeFzOlgk1onji402i04+25OjRjUPu8Mb4N6UPiBdbvHfHmWFiZ/xb
-         TSTQ==
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:date:cc:to:from:subject:dmarc-filter
+         :arc-authentication-results;
+        bh=Jxs1mO8Ks+yRoqjhU2BtI6HNl51HCK1ZVXmUB1J5PvM=;
+        b=jRcUfUku6FAYo29ZxyYUWwprj5uEGJc/beY4W4YrxljTDCUCj5Ra3/pWdJTxaX9vcG
+         Y+NobmFGDCTbdC/5APusSOYE/c5j4jK4PoRVmPbSLwTm37hkBUNHrcWfaTkCC+RNqRNj
+         UHk9NfQJvnyVml8L6Ew4y56TX+uVkeKNlK7MmZIl98nXcjuUQZYEJt9I1aR3Plrmnbg7
+         vVBGPzdYx6FR4WkLsfSsDYGAj22ZmJQkP8GrmoriytaWH/N9HbioBzj8cyAUoixYPDFg
+         yXizyVZx+6HGlMFx3YFKOV6kBdUdlfmDySvLvmsa0i3+SIqKNwN3g7BUUG5CI1tZIokO
+         0Ghw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of valdis@vt.edu designates 2607:b400:92:8300:0:c6:2117:b0e as permitted sender) smtp.mailfrom=valdis@vt.edu;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=vt.edu
+       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of valdis@vt.edu designates 2607:b400:92:8300:0:c6:2117:b0e as permitted sender) smtp.mailfrom=valdis@vt.edu;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=vt.edu
-Sender: Valdis Kletnieks <valdis@vt.edu>
-From: valdis.kletnieks@vt.edu
-X-Google-Original-From: Valdis.Kletnieks@vt.edu
-X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, Mathias Nyman <mathias.nyman@intel.com>,
-        linux-pm@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-kernel@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Peter Wu <peter@lekensteyn.nl>, Qipeng Zha <qipeng.zha@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Dave Airlie <airlied@gmail.com>, Qi Zheng <qi.zheng@intel.com>
-Subject: Re: [PATCH v1 2/2] PCI: Allow user to request power management of conventional and hotplug bridges
-In-Reply-To: <151908204614.37696.12828004282495415825.stgit@bhelgaas-glaptop.roam.corp.google.com>
+       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD50121785
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Subject: [PATCH v1 1/2] PCI: Add PCIe port runtime suspend details
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
+ Mathias Nyman <mathias.nyman@intel.com>, linux-pm@vger.kernel.org,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org,
+ Lukas Wunner <lukas@wunner.de>, Peter Wu <peter@lekensteyn.nl>,
+ Qipeng Zha <qipeng.zha@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Andreas Noever <andreas.noever@gmail.com>, Dave Airlie <airlied@gmail.com>,
+ Qi Zheng <qi.zheng@intel.com>
+Date: Mon, 19 Feb 2018 17:14:00 -0600
+Message-ID: <151908203999.37696.12678235610905422348.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <151908155159.37696.9710083237704994886.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <151908155159.37696.9710083237704994886.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <151908204614.37696.12828004282495415825.stgit@bhelgaas-glaptop.roam.corp.google.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1519082904_3347P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Date: Mon, 19 Feb 2018 18:28:24 -0500
-Message-ID: <7778.1519082904@turing-police.cc.vt.edu>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592872976935903628?=
-X-GMAIL-MSGID: =?utf-8?q?1592873884741000472?=
+X-GMAIL-THRID: =?utf-8?q?1592872970483997772?=
+X-GMAIL-MSGID: =?utf-8?q?1592872970483997772?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---==_Exmh_1519082904_3347P
-Content-Type: text/plain; charset=us-ascii
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-On Mon, 19 Feb 2018 17:14:06 -0600, Bjorn Helgaas said:
+Add details about how we decide whether we can put a PCI bridge in D3.
+9d26d3a8f1b0 ("PCI: Put PCIe ports into D3 during suspend") added this
+support to reduce power consumption on Intel Sunrise Point and Broxton
+platforms.
 
-> Change "pcie_port_pm=force" to enable power management of conventional PCI
-> bridges and hotplug bridges as well as PCIe ports.  As with the previous
-> PCIe port-only behavior, this is not expected to work in all systems.
+In some cases we don't use D3 for bridges even when it should work, simply
+because it's impractical to test the configuration, or we tripped over some
+possible hardware issue on older platforms.  Links to discussion of the
+PCIe port runtime power management patches, which includes mention of these
+issues, are below.
 
-This part says the behavior changes - which is itself a Bad Idea unless you
-have a deprecation cut-over across several releases.  The general rule is that
-you're not allowed to break somebody's kernel without a lot of warning.
-Remember that there's probably a lot of embedded systems that hardcode their
-boot cmdline and changing the behavior can result in a failed boot - which can
-be a royal bitch to debug if the embedded system doesn't have a console.....
+No functional change.
 
-In addition, it doesn't match the actual patch, which documents the boot
-parameter as being removed, rather than the behavior changed:
+Link: v1: https://lkml.kernel.org/r/1456750566-116248-1-git-send-email-mika.westerberg@linux.intel.com
+Link: v2: https://lkml.kernel.org/r/1460111790-92836-1-git-send-email-mika.westerberg@linux.intel.com
+Link: v3: https://lkml.kernel.org/r/1460628268-16204-1-git-send-email-mika.westerberg@linux.intel.com
+Link: v4: https://lkml.kernel.org/r/1461578004-129094-1-git-send-email-mika.westerberg@linux.intel.com
+Link: v5: https://lkml.kernel.org/r/1461919919-120102-1-git-send-email-mika.westerberg@linux.intel.com
+Link: v6: https://lkml.kernel.org/r/1464855435-32960-1-git-send-email-mika.westerberg@linux.intel.com
+Link: https://lkml.kernel.org/r/2858019.9TUCWsDpTB@aspire.rjw.lan
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ drivers/pci/pci.c |   19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 1d1d53f85ddd..4660105ec851 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-
-> @@ -3143,10 +3147,6 @@
->  		compat	Treat PCIe ports as PCI-to-PCI bridges, disable the PCIe
->  			ports driver.
->
-> -	pcie_port_pm=	[PCIE] PCIe port power management handling:
-> -		off	Disable power management of all PCIe ports
-> -		force	Forcibly enable power management of all PCIe ports
-> -
-
-And *that* doesn't match the rest of the patch, which never touches the handling
-of that parameter, either changing it or removing it.
-
---==_Exmh_1519082904_3347P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.8.0 04/21/2017
-
-iQEVAwUBWotdmI0DS38y7CIcAQIFNgf/Voo1PhvVYqriKAKxYoK9fDPbW7e5I/CQ
-RyGJmtTIvp+AZNCcZUv1OMQYitmPzUPDSDcYcwaDDRS/y06kV78U+lE+rpr1OuPA
-k6DLH7LX3vM30nHY6Pt2uxeDWK7otdCByBZwrrFMo0IqJle/2sK/RcFfkr3B1+24
-wo8QO3Gnq/u44KMaGaEUz3plZN2z0ZcKPf3Wffy6CTPSzwy38K55tbjqhylhpYJL
-HQ5LYC6WP2LsAAQ8jJ3VeZGY9OoVZcz2c1JH9PxdIrFr3R5zcYmEQhGBPmya3yF9
-J/jqc10cp0fx9YiexZxU+UdaaZpK3Yf5/rdoX7AWB2ZdhqnTEFpBIw==
-=TDtU
------END PGP SIGNATURE-----
-
---==_Exmh_1519082904_3347P--
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index f6a4dd10d9b0..75db77cf3f8f 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -2260,6 +2260,13 @@ bool pci_bridge_d3_possible(struct pci_dev *bridge)
+ {
+ 	unsigned int year;
+ 
++	/*
++	 * In principle we should be able to put conventional PCI bridges
++	 * into D3.  We only support it for PCIe because (a) we want to
++	 * save power on new (2015 and newer) SoCs that can enter deep
++	 * low-power states only if PCIe Root Ports are in D3 and (b) we
++	 * don't want to risk regressions on older hardware.
++	 */
+ 	if (!pci_is_pcie(bridge))
+ 		return false;
+ 
+@@ -2276,6 +2283,14 @@ bool pci_bridge_d3_possible(struct pci_dev *bridge)
+ 		 * hotplug ports handled by firmware in System Management Mode
+ 		 * may not be put into D3 by the OS (Thunderbolt on non-Macs).
+ 		 * For simplicity, disallow in general for now.
++		 *
++		 * Per PCIe r4.0, sec 6.7.3.4, if the form factor requires
++		 * wake support, a hot-plug capable Downstream Port must
++		 * support generation of a wakeup event on hot-plug events
++		 * that occur when the system is in a sleep state or the
++		 * Port is in device state D1, D2, or D3hot.  Therefore, it
++		 * might be possible to use D3 even for hot-plug Ports, but
++		 * for now we do not.
+ 		 */
+ 		if (bridge->is_hotplug_bridge)
+ 			return false;
+@@ -2285,7 +2300,9 @@ bool pci_bridge_d3_possible(struct pci_dev *bridge)
+ 
+ 		/*
+ 		 * It should be safe to put PCIe ports from 2015 or newer
+-		 * to D3.
++		 * to D3.  We have vague reports of possible hardware
++		 * issues when putting older PCIe ports into D3.  See
++		 * changelog.
+ 		 */
+ 		if (dmi_get_date(DMI_BIOS_DATE, &year, NULL, NULL) &&
+ 		    year >= 2015) {
