@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753399AbeBSQ5M (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 19 Feb 2018 11:57:12 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:45760 "EHLO huawei.com"
+        id S1753386AbeBSQ5K (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 19 Feb 2018 11:57:10 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45686 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753300AbeBSQ5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Feb 2018 11:57:06 -0500
+        id S1753233AbeBSQ5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Feb 2018 11:57:03 -0500
 From: John Garry <john.garry@huawei.com>
 To: <mika.westerberg@linux.intel.com>, <rafael@kernel.org>,
         <lorenzo.pieralisi@arm.com>, <rjw@rjwysocki.net>,
@@ -18,9 +18,9 @@ CC: <joe@perches.com>, <benh@kernel.crashing.org>,
         <linux-acpi@vger.kernel.org>, <linuxarm@huawei.com>, <minyard@acm.org>,
         <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
         <rdunlap@infradead.org>
-Subject: [PATCH v14 3/9] PCI: Add fwnode handler as input param of pci_register_io_range()
-Date: Tue, 20 Feb 2018 01:48:34 +0800
-Message-ID: <1519062520-198902-4-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v14 7/9] ACPI / scan: do not enumerate Indirect IO host children
+Date: Tue, 20 Feb 2018 01:48:38 +0800
+Message-ID: <1519062520-198902-8-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1519062520-198902-1-git-send-email-john.garry@huawei.com>
 References: <1519062520-198902-1-git-send-email-john.garry@huawei.com>
@@ -32,106 +32,67 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gabriele Paoloni <gabriele.paoloni@huawei.com>
+Through the logical PIO framework systems which otherwise have
+no IO space access to legacy ISA/LPC devices may access these
+devices through so-called "indirect IO" method. In this, IO
+space accesses for non-PCI hosts are redirected to a host
+LLDD to manually generate the IO space (bus) accesses. Hosts
+are able to register a region in logical PIO space to map to
+its bus address range.
 
-In preparation for having the PCI MMIO helpers to use the new generic
-I/O space management(logical PIO) we need to add the fwnode handler as
-extra input parameter.
-This patch changes the signature of pci_register_io_range() and of
-its callers as needed.
+Indirect IO child devices have an associated host-specific bus
+address. Special translation is required to map between
+a logical PIO address for a device and it's host bus address.
 
-Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Since in the ACPI tables the child device IO resources would
+be the host-specific values, it is required the ACPI scan code
+should not enumerate these devices, and that this should be
+the responsibility of the host driver so that it can "fixup"
+the resources so that they map to the appropriate logical PIO
+addresses.
+
+To avoid enumerating these child devices, we check whether
+the parent for a device is a member of a known list of
+"indirect IO" hosts. For now, the HiSilicon LPC host
+controller ID is added.
+
+To flag a device to not be enumerated, we reuse the existing
+serial bus slave flag.
+
+Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/acpi/pci_root.c | 8 +++++---
- drivers/of/address.c    | 4 +++-
- drivers/pci/pci.c       | 3 ++-
- include/linux/pci.h     | 3 ++-
- 4 files changed, 12 insertions(+), 6 deletions(-)
+ drivers/acpi/scan.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
-index 6fc204a..1213479 100644
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@ -729,7 +729,8 @@ static void acpi_pci_root_validate_resources(struct device *dev,
- 	}
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index 8e63d93..c1a60852 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -1524,11 +1524,25 @@ static int acpi_check_serial_bus_slave(struct acpi_resource *ares, void *data)
+ 	return -1;
  }
  
--static void acpi_pci_root_remap_iospace(struct resource_entry *entry)
-+static void acpi_pci_root_remap_iospace(struct fwnode_handle *fwnode,
-+			struct resource_entry *entry)
++static bool acpi_is_indirect_io_slave(struct acpi_device *device)
++{
++	struct acpi_device *parent = device->parent;
++	const struct acpi_device_id indirect_io_hosts[] = {
++		{"HISI0191", 0},
++		{}
++	};
++
++	return parent && !acpi_match_device_ids(parent, indirect_io_hosts);
++}
++
+ static bool acpi_is_serial_bus_slave(struct acpi_device *device)
  {
- #ifdef PCI_IOBASE
- 	struct resource *res = entry->res;
-@@ -738,7 +739,7 @@ static void acpi_pci_root_remap_iospace(struct resource_entry *entry)
- 	resource_size_t length = resource_size(res);
- 	unsigned long port;
+ 	struct list_head resource_list;
+ 	bool is_serial_bus_slave = false;
  
--	if (pci_register_io_range(cpu_addr, length))
-+	if (pci_register_io_range(fwnode, cpu_addr, length))
- 		goto err;
- 
- 	port = pci_address_to_pio(cpu_addr);
-@@ -780,7 +781,8 @@ int acpi_pci_probe_root_resources(struct acpi_pci_root_info *info)
- 	else {
- 		resource_list_for_each_entry_safe(entry, tmp, list) {
- 			if (entry->res->flags & IORESOURCE_IO)
--				acpi_pci_root_remap_iospace(entry);
-+				acpi_pci_root_remap_iospace(&device->fwnode,
-+						entry);
- 
- 			if (entry->res->flags & IORESOURCE_DISABLED)
- 				resource_list_destroy_entry(entry);
-diff --git a/drivers/of/address.c b/drivers/of/address.c
-index ce4d3d8..cdf047b 100644
---- a/drivers/of/address.c
-+++ b/drivers/of/address.c
-@@ -2,6 +2,7 @@
- #define pr_fmt(fmt)	"OF: " fmt
- 
- #include <linux/device.h>
-+#include <linux/fwnode.h>
- #include <linux/io.h>
- #include <linux/ioport.h>
- #include <linux/module.h>
-@@ -333,7 +334,8 @@ int of_pci_range_to_resource(struct of_pci_range *range,
- 
- 	if (res->flags & IORESOURCE_IO) {
- 		unsigned long port;
--		err = pci_register_io_range(range->cpu_addr, range->size);
-+		err = pci_register_io_range(&np->fwnode, range->cpu_addr,
-+				range->size);
- 		if (err)
- 			goto invalid_range;
- 		port = pci_address_to_pio(range->cpu_addr);
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 4666a01..07290a3 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -3455,7 +3455,8 @@ struct io_range {
-  * Record the PCI IO range (expressed as CPU physical address + size).
-  * Return a negative value if an error has occured, zero otherwise
-  */
--int pci_register_io_range(phys_addr_t addr, resource_size_t size)
-+int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
-+			resource_size_t	size)
- {
- 	int err = 0;
- 
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 25b7a35..17cc998 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1221,7 +1221,8 @@ int __must_check pci_bus_alloc_resource(struct pci_bus *bus,
- 			void *alignf_data);
- 
- 
--int pci_register_io_range(phys_addr_t addr, resource_size_t size);
-+int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
-+			resource_size_t size);
- unsigned long pci_address_to_pio(phys_addr_t addr);
- phys_addr_t pci_pio_to_address(unsigned long pio);
- int pci_remap_iospace(const struct resource *res, phys_addr_t phys_addr);
++	if (acpi_is_indirect_io_slave(device))
++		return true;
++
+ 	/* Macs use device properties in lieu of _CRS resources */
+ 	if (x86_apple_machine &&
+ 	    (fwnode_property_present(&device->fwnode, "spiSclkPeriod") ||
 -- 
 1.9.1
